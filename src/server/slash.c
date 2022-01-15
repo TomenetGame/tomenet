@@ -622,6 +622,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					cave_type *c_ptr;
 					cave_type **zcave;
 
+					/* Disable auto-destroy feature inside houses */
+					if (prefix(messagelc, "/xdis") && inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py)) return;
+
 					/* get our grid */
 					if (!(zcave = getcave(wpos))) return;
 					c_ptr = &zcave[p_ptr->py][p_ptr->px];
@@ -683,7 +686,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						}
 						/* Take total of one turn */
 						p_ptr->energy -= level_speed(&p_ptr->wpos);
-						return;
 					} else {
 						/* Get the object */
 						o_ptr = &o_list[c_ptr->o_idx];
@@ -708,8 +710,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 							p_ptr->destroyed_floor_item = TRUE;
 							whats_under_your_feet(Ind, FALSE);
 						}
-						return;
 					}
+					return;
 				}
 			}
 

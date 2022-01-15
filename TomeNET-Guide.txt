@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 14. January 2022 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 15. January 2022 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.7.4b - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1111,10 +1111,12 @@ They all start with a slash '/' hence they're called slash commands:
 /acol       Display a table of all animated colours.
             To see a table of the normal colours, use /col.
 
-/adestroy   This toggles the client option 'auto_destroy' manually.
-            Destroy item (on the floor) if matches auto-destroy rules.
+/adestroy   This toggles the client option 'auto_destroy'.
+            The option controls destroying items (on the floor) if matching
+            auto-destroy rules. See that option's explanation for more info.
             Also see slash command '/apickup' and '/daunmatched' which
             go with this one.
+            Auto-destroying does not trigger inside houses.
 
 /afk        toggle AFK (away from keyboard) mode if you have to take a
             quick break from playing.
@@ -1137,8 +1139,8 @@ They all start with a slash '/' hence they're called slash commands:
 
 /apickup    This toggles the client option 'auto_pickup' manually.
             This will toggle the characters behaviour when seeing
-            an item under character: Whether it will automatically attempt
-            to pick it up or not.
+            an item under character: Whether it will automatically attempt to
+            pick it up or not. See that option's explanation for more info.
             Also see slash command '/adestroy' which goes with this one.
 
 /autotag
@@ -1221,6 +1223,11 @@ They all start with a slash '/' hence they're called slash commands:
 
 /cversion
 /cver       Displays the client's version information in detail.
+
+/destroy_all_unmatched
+            Toggles the client option 'destroy_all_unmatched'.
+            See that option's explanation for more information.
+            Auto-destroying does not trigger inside houses.
 
 /shuffle [32|52 <jokers>]
             Prepares a new deck of cards.
@@ -2249,6 +2256,7 @@ auto_pickup option) and '/adestroy' (toggls auto_destroy option).
 Instead of using a '#' wildcard-rule, you can also toggle the option
 'destroy_all_unmatched' (which can also be toggled via '/daunmatched' slash
 command), this option requires 'auto_destroy' option to be enabled.
+Auto-destroying does not trigger inside houses.
 
 
 
@@ -4029,6 +4037,7 @@ self-explaining or that are especially important are listed in detail here:
         always destroy up items (if you are in a fight or in your house).
         Note that the item is destroyed on the floor and not picked up first,
         so this is feasible to use against curse-no-drop items too.
+        Auto-destroying does not trigger inside houses.
 
     Destroy all items that didn't match any rule (destroy_all_unmatched)
         This requires 'auto_destroy' option to be enabled and will do the same
@@ -4039,6 +4048,7 @@ self-explaining or that are especially important are listed in detail here:
         destroyed, or there are no more items under the character.
         Option could be toggled through slash command '/daunmatched', this
         allows creating macros for fast toggling.
+        Auto-destroying does not trigger inside houses.
 
  (8) Check Server Options
     Displays a list of the server rules and configuration.
