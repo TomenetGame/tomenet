@@ -444,7 +444,7 @@
   #define GUIDE_LINES_MAX 25000 //note: the guide is currently 20038 lines long
  #endif
 
- /* Use regex.h to offer regexp in-game guide searching */
+ /* Use regex.h to offer regexp in-game guide searching; and now also auto-inscription regexp matching */
  #define REGEX_SEARCH
 
  /* Alchemy Satchels as inventory extension */

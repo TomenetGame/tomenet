@@ -11,6 +11,14 @@
  #include <dirent.h> /* we now need it for scanning for audio packs too */
 //#endif
 
+/* For extract_url(): able to utilize regexps? */
+#define REGEX_URL
+
+#if defined(REGEX_SEARCH) || defined(REGEX_URL)
+ #include <regex.h>
+ #define REGEXP_ARRAY_SIZE 1
+#endif
+
 #define MACRO_USE_CMD	0x01
 #define MACRO_USE_STD	0x02
 #define MACRO_USE_HYB	0x04
@@ -1696,11 +1704,6 @@ static void c_prt_n(byte attr, char *str, int y, int x, int n) {
 }
 
 /* Helper function for copy_to_clipboard */
-#define REGEX_URL
-#ifdef REGEX_URL
- #include <regex.h>
- #define REGEXP_ARRAY_SIZE 1
-#endif
 static void extract_url(char *buf_esc, char *buf_prev, int end_of_name) {
 	char *c, *c2, *be = NULL;
 
@@ -7370,6 +7373,12 @@ void auto_inscriptions(void) {
 
 	char fff[1024];
 
+#ifdef REGEX_SEARCH
+	int ires = -999;
+	regex_t re_src;
+	char *regptr;
+#endif
+
 	/* Save screen */
 	Term_save();
 
@@ -7385,7 +7394,7 @@ void auto_inscriptions(void) {
 			/* Describe */
 			Term_putstr(15,  0, -1, TERM_L_UMBER, format("*** Current Auto-Inscriptions List, page %d/%d ***", cur_page + 1, max_page + 1));
 			Term_putstr(2, 21, -1, TERM_L_UMBER, "(2/8) go down/up, (SPACE/BKSP or p) page down/up, (P) chat-paste, (ESC) exit");
-			Term_putstr(2, 22, -1, TERM_L_UMBER, "(e/d/c) Edit (# wildcard, ! force)/Delete/CLEAR ALL  (a) Auto-pickup/destroy");
+			Term_putstr(2, 22, -1, TERM_L_UMBER, "(e or RET/? or h/d/c) Edit/Help/Delete/CLEAR ALL, (a) Auto-pickup/destroy");
 			Term_putstr(2, 23, -1, TERM_L_UMBER, "(l/s/S) Load/save auto-inscriptions from/to an '.ins' file / to 'global.ins'");
 
 			for (i = 0; i < AUTOINS_PAGESIZE; i++) {
@@ -7421,6 +7430,43 @@ void auto_inscriptions(void) {
 		case ':':
 			/* Allow to chat, to tell exact inscription-related stuff to other people easily */
 			cmd_message();
+			break;
+		case '?':
+		case 'h':
+			Term_clear();
+			i = 1;
+
+			Term_putstr( 0, i++, -1, TERM_WHITE, "Help about editing item name matches (left column) and the");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " auto-inscriptions that are applied (right column):");
+			i++;
+
+			Term_putstr( 0, i++, -1, TERM_YELLOW, "Editing item name matches:");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "The item name you enter is used as a partial match.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "If you prefix it with a '!' then any existing inscription will");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "be overwritten. Otherwise just trivial ones are, eg discount tags.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "You can use '#' as wildcards, eg \"Rod#Healing\".");
+#ifdef REGEX_SEARCH
+			Term_putstr( 0, i++, -1, TERM_WHITE, "If you prefix a line with '$' the string will be interpreted as regexp.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "In a regexp string, the '#' will no longer have a wildcard function.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "If you want to combine '!' and '$', have the '!' go first: !$regexp.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "Regular expressions are parsed case-insensitively.");
+#endif
+			i++;
+
+			Term_putstr( 0, i++, -1, TERM_YELLOW, "Editing item inscriptions to be applied:");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "No special rules here, it works the same as manual inscriptions.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "So you could even specify \"@@\" if you want a power-inscription.");
+			Term_putstr(25, 23, -1, TERM_L_BLUE, "(Press any key to go back)");
+			i++;
+
+			Term_putstr( 0, i++, -1, TERM_YELLOW, "Troubleshooting:");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "The auto-inscription menu tries to merge all applicable .ins files:");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "global.ins, <race>.ins, <trait>.ins, <class>.ins, <charname>.ins.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "So if you have 'ghost' inscriptions popping up, look for these files");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "and modify/delete them as you see fit. The 'cleanest' result will");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "occur if you delete all .ins files except for <charname>.ins.");
+
+			inkey();
 			break;
 		case 'P':
 			/* Paste currently selected entry to chat */
@@ -7547,6 +7593,23 @@ void auto_inscriptions(void) {
 			Term_putstr(11, cur_line + 1, -1, TERM_WHITE, buf_ptr);
 			/* ok */
 			strcpy(auto_inscription_match[cur_page * AUTOINS_PAGESIZE + cur_line], buf_ptr);
+
+#ifdef REGEX_SEARCH
+			/* Actually test regexp for validity right away, so we can avoid spam/annoyance/searching later. */
+			/* Check for '$' prefix, forcing regexp interpretation */
+			regptr = buf_ptr;
+			if (regptr[0] == '!') regptr++;
+			if (regptr[0] == '$') {
+				regptr++;
+				ires = regcomp(&re_src, regptr, REG_EXTENDED | REG_ICASE);
+				if (ires != 0) {
+					c_message_add(format("\377oInvalid regular expression in auto-inscription #%d.", cur_page * AUTOINS_PAGESIZE + cur_line + 1));
+					/* Re-colour the line to indicate error */
+					Term_putstr(11, cur_line + 1, -1, TERM_L_RED, buf_ptr);
+				}
+				regfree(&re_src);
+			}
+#endif
 
 			/* Clear previous tag string */
 			Term_putstr(56, cur_line + 1, -1, TERM_L_GREEN, "                    ");

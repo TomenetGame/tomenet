@@ -291,6 +291,7 @@ static void Init_receive(void) {
 	playing_receive[PKT_FIRE]		= Receive_fire;
 	playing_receive[PKT_STAND]		= Receive_stand;
 	playing_receive[PKT_STAND_ONE]		= Receive_stand_one;
+	playing_receive[PKT_STAND_AUTO]		= Receive_stand_auto;
 	playing_receive[PKT_DESTROY]		= Receive_destroy;
 	playing_receive[PKT_LOOK]		= Receive_look;
 
@@ -9531,16 +9532,46 @@ static int Receive_stand(int ind) {
 		return n;
 	}
 
-	//if (p_ptr) { 		/* disallow picking up items while paralyzed: */
-	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
+	if (!p_ptr) return -1;
+
+	/* disallow picking up items while paralyzed: */
+	if (p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_stay(player, 2, FALSE);
 		return 2;
-	} else if (p_ptr) {
-		Packet_printf(&connp->q, "%c", ch);
-		return 0;
+	}
+	Packet_printf(&connp->q, "%c", ch);
+	return 0;
+}
+/* Same as picking up an item, just that we know it's triggered by auto-pickup */
+static int Receive_stand_auto(int ind) {
+	connection_t *connp = Conn[ind];
+	player_type *p_ptr = NULL;
+	char ch;
+	int n, player = -1;
+
+	if (connp->id != -1) {
+		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_MOV);
+		p_ptr = Players[player];
 	}
 
-	return -1;
+	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return n;
+	}
+
+	if (!p_ptr) return -1;
+
+	/* Don't apply auto-pickup inside houses */
+	if (inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py)) return 2;
+
+	/* disallow picking up items while paralyzed: */
+	if (p_ptr->energy >= level_speed(&p_ptr->wpos)) {
+		do_cmd_stay(player, 2, FALSE);
+		return 2;
+	}
+	Packet_printf(&connp->q, "%c", ch);
+	return 0;
 }
 static int Receive_stand_one(int ind) {
 	connection_t *connp = Conn[ind];
@@ -9559,16 +9590,15 @@ static int Receive_stand_one(int ind) {
 		return n;
 	}
 
-	//if (p_ptr) { 		/* disallow picking up items while paralyzed: */
-	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
+	if (!p_ptr) return -1;
+
+	/* disallow picking up items while paralyzed: */
+	if (p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_stay(player, 2, TRUE);
 		return 2;
-	} else if (p_ptr) {
-		Packet_printf(&connp->q, "%c", ch);
-		return 0;
 	}
-
-	return -1;
+	Packet_printf(&connp->q, "%c", ch);
+	return 0;
 }
 
 static int Receive_destroy(int ind) {

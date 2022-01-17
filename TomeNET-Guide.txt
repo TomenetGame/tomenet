@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 15. January 2022 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 17. January 2022 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.7.4b - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1142,6 +1142,7 @@ They all start with a slash '/' hence they're called slash commands:
             an item under character: Whether it will automatically attempt to
             pick it up or not. See that option's explanation for more info.
             Also see slash command '/adestroy' which goes with this one.
+            Auto-pickup does not trigger inside houses.
 
 /autotag
 /at         Apply auto-inscription settings to current inventory.
@@ -2207,11 +2208,12 @@ there is an auto-inscription feature which you can access with '&' key.
 Remotely similar to the macro menu, a list of auto-inscriptions appears (which
 by default is empty).
 
-Press 'e' to edit the first auto-inscription. A cursor will appear, allowing
-you to input a partial item name. For example type in 'of Healing' (without the
-quotes). Hit ENTER key to confirm. Now the cursor will allow you to enter an
-inscription, a little bit further to the right on the screen. For example type
-in '@q1' (again without the quotes) and confirm with ENTER key again.
+Press 'e' or press ENTER to edit the first auto-inscription. A cursor will
+appear, allowing you to input a partial item name. For example type in
+'of Healing' (without the quotes). Hit ENTER key to confirm. Now the cursor
+will allow you to enter an inscription, a little bit further to the right on
+the screen. For example type in '@q1' (again without the quotes) and confirm
+with ENTER key again.
 
 Now you have just set up an auto-inscription that will automatically inscribe
 '@q1' whenever any item is added to your inventory which has a name containing
@@ -2230,6 +2232,12 @@ the auto-pickup and auto-destroy features (see below).
 If you put a '!' as first character of a search string, it will force the
 inscription to overwrite existing inscriptions in any case (usually it only
 overwrites trivial inscriptions such as price discount tags).
+
+Instead of relying on wild cards, you can also use regular expressions.
+To make the game parse an inscription as regexp, prefix it with a '$', eg
+"$drag.*mail".
+If you use both '!' and '$', put the '!' first, eg: "!$drag.*mail".
+Regexps are always parsed case-insensitively.
 
 Auto-inscription files can be saved and will be loaded automatically in the
 same manner as macro files, if the filename matches your race, trait, class or
@@ -2253,10 +2261,10 @@ rules will be ignored accordingly. (The sole '#' will not work for inscribing).
 The client options 'auto_pickup' and 'auto_destroy' must be enabled for these
 functions to work. This can also be done via slash commands '/apickup' (toggles
 auto_pickup option) and '/adestroy' (toggls auto_destroy option).
-Instead of using a '#' wildcard-rule, you can also toggle the option
+Instead of using a "#" wildcard-rule, you can also toggle the option
 'destroy_all_unmatched' (which can also be toggled via '/daunmatched' slash
 command), this option requires 'auto_destroy' option to be enabled.
-Auto-destroying does not trigger inside houses.
+Auto-destroying and auto-pickup do not trigger inside houses.
 
 
 
@@ -4019,6 +4027,7 @@ self-explaining or that are especially important are listed in detail here:
         Option could be toggled through slash command '/apickup', this allows
         creating macros for fast toggling as you usually don't want to
         always pick up items (if you are in a fight or in your house).
+        Auto-pickup does not trigger inside houses.
 
     Destroy item if it matches auto-destroy rules (auto_destroy)
         Enables auto-destroy. Auto-destroy uses the auto-inscriptions rules

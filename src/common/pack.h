@@ -258,6 +258,9 @@
 #define PKT_MUSIC_VOL		200	/* background music at specific volume */
 #define PKT_WHATS_UNDER_YOUR_FEET		201
 
+#define PKT_STAND_AUTO		202
+
+
 /*
  * Possible error codes returned
  */

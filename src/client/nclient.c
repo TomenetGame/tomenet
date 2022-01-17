@@ -36,6 +36,11 @@
 
 #include <sys/time.h>
 
+#ifdef REGEX_SEARCH
+ #include <regex.h>
+ #define REGEXP_ARRAY_SIZE 1
+#endif
+
 
 /* for weather - keep in sync with c-xtra1.c, do_weather()! */
 #define PANEL_X	(SCREEN_PAD_LEFT)
@@ -4724,6 +4729,11 @@ void apply_auto_pickup(char *item_name) {
 	char *ex2, ex_buf2[ONAME_LEN];
 	char *match;
 	bool found = FALSE, dau = c_cfg.destroy_all_unmatched && c_cfg.auto_destroy;
+#ifdef REGEX_SEARCH
+	int ires = -999;
+	regex_t re_src;
+	regmatch_t pmatch[REGEXP_ARRAY_SIZE + 1];
+#endif
 
 	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
 		match = auto_inscription_match[i];
@@ -4740,38 +4750,69 @@ void apply_auto_pickup(char *item_name) {
 			break;
 		}
 
-		/* '#' wildcard allowed: a random number (including 0) of random chars */
-		/* prepare */
-		strcpy(ex_buf, match);
-		ex2 = item_name;
-		found = FALSE;
+		/* Strip '!' prefix, as it is only for inscribing, not for auto-pickup */
+		if (match[0] == '!') match++;
+#ifdef REGEX_SEARCH
+		/* Check for '$' prefix, forcing regexp interpretation */
+		if (match[0] == '$') {
+			match++;
 
-		do {
-			ex = strstr(ex_buf, "#");
-			if (ex == NULL) {
-				if (strstr(ex2, ex_buf)) found = TRUE;
-				break;
-			} else {
-				/* get partial string up to before the '#' */
-				strncpy(ex_buf2, ex_buf, ex - ex_buf);
-				ex_buf2[ex - ex_buf] = '\0';
-				/* test partial string for match */
-				ex2 = strstr(ex2, ex_buf2);
-				if (ex2 == NULL) break; /* no match! */
-				/* this partial string matched, discard and continue with next part */
-				/* advance searching position in the item name */
-				ex2 += strlen(ex_buf2);
-				/* get next part of search string */
-				strcpy(ex_buf, ex + 1);
-				/* no more search string left? exit */
-				if (!strlen(ex_buf)) break;
-				/* no more item name left although search string is finished? exit with negative result */
-				if (!strlen(ex2)) {
-					found = FALSE;
-					break;
-				}
+			ires = regcomp(&re_src, match, REG_EXTENDED | REG_ICASE);
+			if (ires != 0) {
+				c_message_add(format("\377yInvalid regular expression (%d) in auto-inscription #%d.", ires, i));
+				continue;
 			}
-		} while (TRUE);
+			if (regexec(&re_src, item_name, REGEXP_ARRAY_SIZE, pmatch, 0)) {
+				regfree(&re_src);
+				continue;
+			}
+			if (pmatch[0].rm_so == -1) {
+				regfree(&re_src);
+				continue;
+			}
+			/* Actually disallow searches that match empty strings */
+			if (pmatch[0].rm_eo - pmatch[0].rm_so == 0) {
+				regfree(&re_src);
+				continue;
+			}
+			found = TRUE;
+
+		} else
+#endif
+		{
+			/* '#' wildcard allowed: a random number (including 0) of random chars */
+			/* prepare */
+			strcpy(ex_buf, match);
+			ex2 = item_name;
+			found = FALSE;
+
+			do {
+				ex = strstr(ex_buf, "#");
+				if (ex == NULL) {
+					if (strstr(ex2, ex_buf)) found = TRUE;
+					break;
+				} else {
+					/* get partial string up to before the '#' */
+					strncpy(ex_buf2, ex_buf, ex - ex_buf);
+					ex_buf2[ex - ex_buf] = '\0';
+					/* test partial string for match */
+					ex2 = strstr(ex2, ex_buf2);
+					if (ex2 == NULL) break; /* no match! */
+					/* this partial string matched, discard and continue with next part */
+					/* advance searching position in the item name */
+					ex2 += strlen(ex_buf2);
+					/* get next part of search string */
+					strcpy(ex_buf, ex + 1);
+					/* no more search string left? exit */
+					if (!strlen(ex_buf)) break;
+					/* no more item name left although search string is finished? exit with negative result */
+					if (!strlen(ex2)) {
+						found = FALSE;
+						break;
+					}
+				}
+			} while (TRUE);
+		}
 
 		if (found) break;
 	}
@@ -4788,7 +4829,7 @@ void apply_auto_pickup(char *item_name) {
 	if (c_cfg.auto_destroy && auto_inscription_autodestroy[i])
 		Send_msg("/xdis fa"); /* didn't find a better way */
 	else if (c_cfg.auto_pickup && auto_inscription_autopickup[i])
-		Send_stay();
+		Send_stay_auto();
 }
 
 /* Apply client-side auto-inscriptions - C. Blue
@@ -4799,6 +4840,11 @@ void apply_auto_inscriptions(int slot, bool force) {
 	char *ex2, ex_buf2[ONAME_LEN];
 	char *match, tag_buf[ONAME_LEN];
 	bool auto_inscribe, found;
+#ifdef REGEX_SEARCH
+	int ires = -999;
+	regex_t re_src;
+	regmatch_t pmatch[REGEXP_ARRAY_SIZE + 1];
+#endif
 
 	/* skip empty items */
 	if (!strlen(inventory_name[slot])) return;
@@ -4878,43 +4924,73 @@ void apply_auto_inscriptions(int slot, bool force) {
 		/* 'all items' super wildcard? - this only works for auto-pickup/destroy, not for auto-inscribing */
 		if (!strcmp(match, "#")) continue;
 
-		/* found a matching inscription? */
- #if 0 /* no '#' wildcard allowed */
-		if (strstr(inventory_name[slot], match)) break;
- #else /* '#' wildcard allowed: a random number (including 0) of random chars */
-		/* prepare */
-		strcpy(ex_buf, match);
-		ex2 = inventory_name[slot];
-		found = FALSE;
+#ifdef REGEX_SEARCH
+		/* Check for '$' prefix, forcing regexp interpretation */
+		if (match[0] == '$') {
+			match++;
 
-		do {
-			ex = strstr(ex_buf, "#");
-			if (ex == NULL) {
-				if (strstr(ex2, ex_buf)) found = TRUE;
-				break;
-			} else {
-				/* get partial string up to before the '#' */
-				strncpy(ex_buf2, ex_buf, ex - ex_buf);
-				ex_buf2[ex - ex_buf] = '\0';
-				/* test partial string for match */
-				ex2 = strstr(ex2, ex_buf2);
-				if (ex2 == NULL) break; /* no match! */
-				/* this partial string matched, discard and continue with next part */
-				/* advance searching position in the item name */
-				ex2 += strlen(ex_buf2);
-				/* get next part of search string */
-				strcpy(ex_buf, ex + 1);
-				/* no more search string left? exit */
-				if (!strlen(ex_buf)) break;
-				/* no more item name left although search string is finished? exit with negative result */
-				if (!strlen(ex2)) {
-					found = FALSE;
-					break;
-				}
+			ires = regcomp(&re_src, match, REG_EXTENDED | REG_ICASE);
+			if (ires != 0) {
+				//too spammy when auto-inscribing the whole inventory -- c_message_add(format("\377yInvalid regular expression (%d) in auto-inscription #%d.", ires, i));
+				continue;
 			}
-		} while (TRUE);
-		if (found) break;
+			if (regexec(&re_src, inventory_name[slot], REGEXP_ARRAY_SIZE, pmatch, 0)) {
+				regfree(&re_src);
+				continue;
+			}
+			if (pmatch[0].rm_so == -1) {
+				regfree(&re_src);
+				continue;
+			}
+			/* Actually disallow searches that match empty strings */
+			if (pmatch[0].rm_eo - pmatch[0].rm_so == 0) {
+				regfree(&re_src);
+				continue;
+			}
+			found = TRUE;
+
+		} else
+#endif
+		{
+			/* found a matching inscription? */
+ #if 0 /* no '#' wildcard allowed */
+			if (strstr(inventory_name[slot], match)) break;
+ #else /* '#' wildcard allowed: a random number (including 0) of random chars */
+			/* prepare */
+			strcpy(ex_buf, match);
+			ex2 = inventory_name[slot];
+			found = FALSE;
+
+			do {
+				ex = strstr(ex_buf, "#");
+				if (ex == NULL) {
+					if (strstr(ex2, ex_buf)) found = TRUE;
+					break;
+				} else {
+					/* get partial string up to before the '#' */
+					strncpy(ex_buf2, ex_buf, ex - ex_buf);
+					ex_buf2[ex - ex_buf] = '\0';
+					/* test partial string for match */
+					ex2 = strstr(ex2, ex_buf2);
+					if (ex2 == NULL) break; /* no match! */
+					/* this partial string matched, discard and continue with next part */
+					/* advance searching position in the item name */
+					ex2 += strlen(ex_buf2);
+					/* get next part of search string */
+					strcpy(ex_buf, ex + 1);
+					/* no more search string left? exit */
+					if (!strlen(ex_buf)) break;
+					/* no more item name left although search string is finished? exit with negative result */
+					if (!strlen(ex2)) {
+						found = FALSE;
+						break;
+					}
+				}
+			} while (TRUE);
+		}
  #endif
+
+		if (found) break;
 	}
 	/* no match found? */
 	if (i == MAX_AUTO_INSCRIPTIONS) return;
@@ -5155,12 +5231,21 @@ int Send_tunnel(int dir) {
 
 int Send_stay(void) {
 	int	n;
+
 	if ((n = Packet_printf(&wbuf, "%c", PKT_STAND)) <= 0) return n;
 	return 1;
 }
 int Send_stay_one(void) {
 	int	n;
 	if ((n = Packet_printf(&wbuf, "%c", PKT_STAND_ONE)) <= 0) return n;
+	return 1;
+}
+int Send_stay_auto(void) {
+	int	n;
+
+	if (is_older_than(&server_version, 4, 7, 4, 4, 0, 0)) return Send_stay();
+
+	if ((n = Packet_printf(&wbuf, "%c", PKT_STAND_AUTO)) <= 0) return n;
 	return 1;
 }
 

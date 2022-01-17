@@ -74,6 +74,7 @@ static int Receive_drop(int ind);
 static int Receive_fire(int ind);
 static int Receive_stand(int ind);
 static int Receive_stand_one(int ind);
+static int Receive_stand_auto(int ind);
 static int Receive_destroy(int ind);
 static int Receive_look(int ind);
 

@@ -771,6 +771,7 @@ extern int Send_drop_gold(s32b amt);
 extern int Send_tunnel(int dir);
 extern int Send_stay(void);
 extern int Send_stay_one(void);
+extern int Send_stay_auto(void);
 extern int Send_toggle_search(void);
 extern int Send_rest(void);
 extern int Send_go_up(void);
