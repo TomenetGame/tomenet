@@ -9,6 +9,11 @@
 #include <sys/types.h>
 #include <dirent.h>
 
+#ifdef REGEX_SEARCH
+ #include <regex.h>
+ #define REGEXP_ARRAY_SIZE 1
+#endif
+
 
 /* Does WINDOWS client use the user's home folder instead of the TomeNET folder for 'scpt' and 'user' subfolders?
    This may be required in Windows 7 and higher, where access rights could cause problems when writing to these folders. - C. Blue */
@@ -1842,6 +1847,11 @@ void load_auto_inscriptions(cptr name) {
 	char file_name[256], vtag[5];
 	int i, c, j, c_eff, version, vmaj, vmin, vex;
 	bool replaced;
+#ifdef REGEX_SEARCH
+	int ires = -999;
+	regex_t re_src;
+	char *regptr;
+#endif
 
 	strncpy(file_name, name, 249);
 	file_name[249] = '\0';
@@ -1943,7 +1953,7 @@ void load_auto_inscriptions(cptr name) {
 		while (strlen(auto_inscription_match[c]) && c < MAX_AUTO_INSCRIPTIONS) c++;
 		if (c == MAX_AUTO_INSCRIPTIONS) {
 			/* give a warning maybe */
-//			c_msg_print("Auto-inscriptions partially loaded and merged.");
+			//c_msg_print("Auto-inscriptions partially loaded and merged.");
 			fclose(fp);
 			return;
 		}
@@ -2048,6 +2058,21 @@ void load_auto_inscriptions(cptr name) {
 		}
 		/* set slot */
 		strcpy(auto_inscription_match[c_eff], buf);
+#ifdef REGEX_SEARCH
+		/* Actually test regexp for validity right away, so we can avoid spam/annoyance/searching later. */
+		/* Check for '$' prefix, forcing regexp interpretation */
+		regptr = buf;
+		if (regptr[0] == '!') regptr++;
+		if (regptr[0] == '$') {
+			regptr++;
+			ires = regcomp(&re_src, regptr, REG_EXTENDED | REG_ICASE);
+			if (ires != 0) {
+				auto_inscription_invalid[c_eff] = TRUE;
+				c_message_add(format("\377oInvalid regular expression in auto-inscription #%d.", c_eff + 1));
+			} else auto_inscription_invalid[c_eff] = FALSE;
+			regfree(&re_src);
+		}
+#endif
 
 		/* try to read according tag */
 		if (fgets(buf, 22, fp) == NULL) {

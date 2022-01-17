@@ -7400,12 +7400,14 @@ void auto_inscriptions(void) {
 			for (i = 0; i < AUTOINS_PAGESIZE; i++) {
 				/* build a whole line */
 				strcpy(match_buf, "\377s<\377w");
+				if (auto_inscription_invalid[cur_page * AUTOINS_PAGESIZE + i]) strcat(match_buf, "\377R");
 				strcat(match_buf, auto_inscription_match[cur_page * AUTOINS_PAGESIZE + i]);
 				strcat(match_buf, "\377s>");
 				strcpy(tag_buf, "\377y");
 				strcat(tag_buf, auto_inscription_tag[cur_page * AUTOINS_PAGESIZE + i]);
-				sprintf(fff, "%3d) %-50s%s <%s\377s>", cur_page * AUTOINS_PAGESIZE + i + 1, match_buf,
+				sprintf(fff, "%3d) %-50s%s %s<%s\377s>", cur_page * AUTOINS_PAGESIZE + i + 1, match_buf,
 				    auto_inscription_autodestroy[cur_page * AUTOINS_PAGESIZE + i] ? "\377RA\377-" : (auto_inscription_autopickup[cur_page * AUTOINS_PAGESIZE + i] ? "\377Ga\377-" : " "),
+				    auto_inscription_invalid[cur_page * AUTOINS_PAGESIZE + i] ? "  " : "", /* silyl sprintf %- formatting.. */
 				    tag_buf);
 
 				Term_putstr(5, i + 1, -1, TERM_WHITE, fff);
@@ -7603,10 +7605,11 @@ void auto_inscriptions(void) {
 				regptr++;
 				ires = regcomp(&re_src, regptr, REG_EXTENDED | REG_ICASE);
 				if (ires != 0) {
+					auto_inscription_invalid[cur_page * AUTOINS_PAGESIZE + cur_line] = TRUE;
 					c_message_add(format("\377oInvalid regular expression in auto-inscription #%d.", cur_page * AUTOINS_PAGESIZE + cur_line + 1));
 					/* Re-colour the line to indicate error */
 					Term_putstr(11, cur_line + 1, -1, TERM_L_RED, buf_ptr);
-				}
+				} else auto_inscription_invalid[cur_page * AUTOINS_PAGESIZE + cur_line] = FALSE;
 				regfree(&re_src);
 			}
 #endif

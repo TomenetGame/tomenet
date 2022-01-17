@@ -301,6 +301,9 @@ char auto_inscription_match[MAX_AUTO_INSCRIPTIONS][41];
 char auto_inscription_tag[MAX_AUTO_INSCRIPTIONS][21];
 bool auto_inscription_autopickup[MAX_AUTO_INSCRIPTIONS];
 bool auto_inscription_autodestroy[MAX_AUTO_INSCRIPTIONS];
+#ifdef REGEX_SEARCH
+bool auto_inscription_invalid[MAX_AUTO_INSCRIPTIONS];
+#endif
 
 /* Monster health memory (health_redraw) */
 int mon_health_num;

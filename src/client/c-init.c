@@ -323,6 +323,9 @@ void initialize_player_ins_files(void) {
 		strcpy(auto_inscription_tag[i], "");
 		auto_inscription_autopickup[i] = FALSE;
 		auto_inscription_autodestroy[i] = FALSE;
+#ifdef REGEX_SEARCH
+		auto_inscription_invalid[i] = FALSE;
+#endif
 	}
 
 #if 0 /* disabled, since everyone only has 1 account anyway. It just disturbs macros if you have a character of same name. */
