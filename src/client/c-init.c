@@ -323,6 +323,7 @@ void initialize_player_ins_files(void) {
 		strcpy(auto_inscription_tag[i], "");
 		auto_inscription_autopickup[i] = FALSE;
 		auto_inscription_autodestroy[i] = FALSE;
+		auto_inscription_force[i] = FALSE;
 #ifdef REGEX_SEARCH
 		auto_inscription_invalid[i] = FALSE;
 #endif

@@ -2229,8 +2229,10 @@ So '#' stands for any number (including zero) or sequence of characters.
 Wildcards cannot be used as prefix or suffix and not on their own, except for
 the auto-pickup and auto-destroy features (see below).
 
-If you put a '!' as first character of a search string, it will force the
-inscription to overwrite existing inscriptions in any case (usually it only
+The following information about force-inscribing will be deprecated in 4.7.4b+.
+Instead of an '!' prefix, force-inscribing will be toggled via 'f' key:
+If you put an '!' as first character of a search string, it will force the
+inscription to overwrite existing inscriptions always (otherwise it only
 overwrites trivial inscriptions such as price discount tags).
 
 Instead of relying on wild cards, you can also use regular expressions.

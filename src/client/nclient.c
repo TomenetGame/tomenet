@@ -4739,7 +4739,7 @@ void apply_auto_pickup(char *item_name) {
 		match = auto_inscription_match[i];
 
 		/* skip empty auto-inscriptions */
-		if (!strlen(match)) continue;
+		if (!match[0]) continue;
 
 		/* do nothing if match is not set to auto-pickup (for items we dont want to pickup nor destroy, mainly for chests) */
 		if (!(c_cfg.auto_pickup && auto_inscription_autopickup[i]) && !(c_cfg.auto_destroy && auto_inscription_autodestroy[i]) && !dau) continue;
@@ -4751,7 +4751,7 @@ void apply_auto_pickup(char *item_name) {
 		}
 
 		/* Strip '!' prefix, as it is only for inscribing, not for auto-pickup */
-		if (match[0] == '!') match++;
+		//legacy --  if (match[0] == '!') match++;
 #ifdef REGEX_SEARCH
 		/* Check for '$' prefix, forcing regexp interpretation */
 		if (match[0] == '$') {
@@ -4905,20 +4905,26 @@ void apply_auto_inscriptions(int slot, bool force) {
 	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
 		match = auto_inscription_match[i];
 		/* skip empty auto-inscriptions */
-		if (!strlen(match)) continue;
+		if (!match[0]) continue;
  #if 0 /* disallow empty inscription? */
-		if (!strlen(auto_inscription_tag[i])) continue;
+		if (!auto_inscription_tag[i][0]) continue;
  #endif
 
  #if 1 /* is '!' available? */
-		/* if item already has an inscription, only allow to overwrite it
-		    if auto-inscription begins with '!', which stands for 'always overwrite' */
+		/* if item already has an inscription, only allow to overwrite it if 'forced'. */
 		if (!auto_inscribe) {
+  #if 0 /* legacy '!' marker, deprecated */
+		/* if auto-inscription begins with '!', which stands for 'always overwrite' */
 			if (match[0] != '!') continue;
 			else match++;
 			/* already carrying this very inscription? don't need to inscribe it AGAIN then */
-			if (!strcmp(auto_inscription_tag[i], tag_buf)) return;
+			if (!strcmp(auto_inscription_tag[i], tag_buf)) continue;
 		} else if (match[0] == '!') match++;
+  #else
+			if (!auto_inscription_force[i]) continue;
+			if (!strcmp(auto_inscription_tag[i], tag_buf)) continue;
+		}
+  #endif
  #endif
 
 		/* 'all items' super wildcard? - this only works for auto-pickup/destroy, not for auto-inscribing */

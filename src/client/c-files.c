@@ -1829,7 +1829,7 @@ void save_auto_inscriptions(cptr name) {
 
 	/* write inscriptions (2 lines each) */
 	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
-		fprintf(fp, "%s\n", auto_inscription_match[i]);
+		fprintf(fp, "%s%s\n", auto_inscription_force[i] ? "!" : "", auto_inscription_match[i]);
 		fprintf(fp, "%s\n", auto_inscription_tag[i]);
 		fprintf(fp, "%d\n", auto_inscription_autopickup[i]);
 		fprintf(fp, "%d\n", auto_inscription_autodestroy[i]);
@@ -2056,13 +2056,19 @@ void load_auto_inscriptions(cptr name) {
 			c--;
 			c_eff = -c - 1;
 		}
+		/* legacy conversion */
+		auto_inscription_force[c_eff] = FALSE;
+		if (buf[0] == '!') {
+			auto_inscription_force[c_eff] = TRUE;
+			strcpy(auto_inscription_match[c_eff], buf + 1);
+		} else
 		/* set slot */
 		strcpy(auto_inscription_match[c_eff], buf);
 #ifdef REGEX_SEARCH
 		/* Actually test regexp for validity right away, so we can avoid spam/annoyance/searching later. */
 		/* Check for '$' prefix, forcing regexp interpretation */
-		regptr = buf;
-		if (regptr[0] == '!') regptr++;
+		regptr = auto_inscription_match[c_eff];
+		//legacy --  if (regptr[0] == '!') regptr++;
 		if (regptr[0] == '$') {
 			regptr++;
 			ires = regcomp(&re_src, regptr, REG_EXTENDED | REG_ICASE);

@@ -387,6 +387,7 @@ extern char auto_inscription_match[MAX_AUTO_INSCRIPTIONS][41];
 extern char auto_inscription_tag[MAX_AUTO_INSCRIPTIONS][21];
 extern bool auto_inscription_autopickup[MAX_AUTO_INSCRIPTIONS];
 extern bool auto_inscription_autodestroy[MAX_AUTO_INSCRIPTIONS];
+extern bool auto_inscription_force[MAX_AUTO_INSCRIPTIONS];
 #ifdef REGEX_SEARCH
 extern bool auto_inscription_invalid[MAX_AUTO_INSCRIPTIONS];
 #endif

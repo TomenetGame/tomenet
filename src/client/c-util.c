@@ -7394,7 +7394,7 @@ void auto_inscriptions(void) {
 			/* Describe */
 			Term_putstr(15,  0, -1, TERM_L_UMBER, format("*** Current Auto-Inscriptions List, page %d/%d ***", cur_page + 1, max_page + 1));
 			Term_putstr(2, 21, -1, TERM_L_UMBER, "(2/8) go down/up, (SPACE/BKSP or p) page down/up, (P) chat-paste, (ESC) exit");
-			Term_putstr(2, 22, -1, TERM_L_UMBER, "(e or RET/? or h/d/c) Edit/Help/Delete/CLEAR ALL, (a) Auto-pickup/destroy");
+			Term_putstr(2, 22, -1, TERM_L_UMBER, "(e,RET/?,h/f/d/c) Edit/Help/Force/Delete/CLEAR ALL, (a) Auto-pickup/destroy");
 			Term_putstr(2, 23, -1, TERM_L_UMBER, "(l/s/S) Load/save auto-inscriptions from/to an '.ins' file / to 'global.ins'");
 
 			for (i = 0; i < AUTOINS_PAGESIZE; i++) {
@@ -7410,7 +7410,7 @@ void auto_inscriptions(void) {
 				    auto_inscription_invalid[cur_page * AUTOINS_PAGESIZE + i] ? "  " : "", /* silyl sprintf %- formatting.. */
 				    tag_buf);
 
-				Term_putstr(5, i + 1, -1, TERM_WHITE, fff);
+				Term_putstr(5, i + 1, -1, auto_inscription_force[cur_page * AUTOINS_PAGESIZE + i] ? TERM_L_BLUE : TERM_WHITE, fff);
 			}
 		}
 		redraw = TRUE;
@@ -7436,21 +7436,24 @@ void auto_inscriptions(void) {
 		case '?':
 		case 'h':
 			Term_clear();
-			i = 1;
+			i = 0;
 
-			Term_putstr( 0, i++, -1, TERM_WHITE, "Help about editing item name matches (left column) and the");
-			Term_putstr( 0, i++, -1, TERM_WHITE, " auto-inscriptions that are applied (right column):");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "Editing item name matches (left column) and applied inscription (right column):");
 			i++;
 
 			Term_putstr( 0, i++, -1, TERM_YELLOW, "Editing item name matches:");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "The item name you enter is used as a partial match.");
+#if 0 /* legacy '!' marker */
 			Term_putstr( 0, i++, -1, TERM_WHITE, "If you prefix it with a '!' then any existing inscription will");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "be overwritten. Otherwise just trivial ones are, eg discount tags.");
+#endif
 			Term_putstr( 0, i++, -1, TERM_WHITE, "You can use '#' as wildcards, eg \"Rod#Healing\".");
 #ifdef REGEX_SEARCH
 			Term_putstr( 0, i++, -1, TERM_WHITE, "If you prefix a line with '$' the string will be interpreted as regexp.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "In a regexp string, the '#' will no longer have a wildcard function.");
+ #if 0 /* legacy '!' marker */
 			Term_putstr( 0, i++, -1, TERM_WHITE, "If you want to combine '!' and '$', have the '!' go first: !$regexp.");
+ #endif
 			Term_putstr( 0, i++, -1, TERM_WHITE, "Regular expressions are parsed case-insensitively.");
 #endif
 			i++;
@@ -7458,7 +7461,11 @@ void auto_inscriptions(void) {
 			Term_putstr( 0, i++, -1, TERM_YELLOW, "Editing item inscriptions to be applied:");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "No special rules here, it works the same as manual inscriptions.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "So you could even specify \"@@\" if you want a power-inscription.");
-			Term_putstr(25, 23, -1, TERM_L_BLUE, "(Press any key to go back)");
+#if 1 /* '!' has been replaced */
+			Term_putstr( 0, i++, -1, TERM_WHITE, "Press 'f' to toggle force-inscribing, which will overwrite an existing");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "Inscription always. Otherwise just trivial ones, eg discount tags.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "A light blue inscription index number indicates forced-mode.");
+#endif
 			i++;
 
 			Term_putstr( 0, i++, -1, TERM_YELLOW, "Troubleshooting:");
@@ -7468,6 +7475,7 @@ void auto_inscriptions(void) {
 			Term_putstr( 0, i++, -1, TERM_WHITE, "and modify/delete them as you see fit. The 'cleanest' result will");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "occur if you delete all .ins files except for <charname>.ins.");
 
+			Term_putstr(25, 23, -1, TERM_L_BLUE, "(Press any key to go back)");
 			inkey();
 			break;
 		case 'P':
@@ -7600,7 +7608,7 @@ void auto_inscriptions(void) {
 			/* Actually test regexp for validity right away, so we can avoid spam/annoyance/searching later. */
 			/* Check for '$' prefix, forcing regexp interpretation */
 			regptr = buf_ptr;
-			if (regptr[0] == '!') regptr++;
+			//legacy mode --  if (regptr[0] == '!') regptr++;
 			if (regptr[0] == '$') {
 				regptr++;
 				ires = regcomp(&re_src, regptr, REG_EXTENDED | REG_ICASE);
@@ -7677,6 +7685,14 @@ void auto_inscriptions(void) {
 				else
 					auto_inscription_autodestroy[i] = TRUE;
 			}
+			redraw = TRUE;
+			break;
+		case 'f':
+			/* toggle force-inscribe (same as '!' prefix) */
+			i = cur_page * AUTOINS_PAGESIZE + cur_line;
+			auto_inscription_force[i] = !auto_inscription_force[i];
+			/* if we changed to 'forced', we may need to reapply - note that competing inscriptions aren't well-defined here */
+			if (auto_inscription_force[i]) for (i = 0; i <= INVEN_TOTAL; i++) apply_auto_inscriptions(i, FALSE);
 			redraw = TRUE;
 			break;
 		default:
