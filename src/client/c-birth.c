@@ -413,7 +413,7 @@ race_redraw:
 		}
 
 		if (c == '?') {
-			cmd_the_guide(0, 0, NULL);
+			cmd_the_guide(3, 0, "races");
 			continue;
 		}
 
@@ -671,7 +671,7 @@ trait_redraw:
 #endif
 
 		if (c == '?') {
-			cmd_the_guide(0, 0, NULL);
+			cmd_the_guide(3, 0, "traits");
 			continue;
 		}
 
@@ -899,7 +899,7 @@ class_redraw:
 		}
 
 		if (c == '?') {
-			cmd_the_guide(0, 0, NULL);
+			cmd_the_guide(3, 0, "classes");
 			continue;
 		}
 
@@ -1320,7 +1320,7 @@ static bool choose_stat_order(void) {
 			if (!auto_reincarnation) c = inkey();
 
 			if (c == '?') {
-				cmd_the_guide(0, 0, NULL);
+				cmd_the_guide(3, 0, "attributes");
 				continue;
 			}
 
@@ -1539,7 +1539,7 @@ static bool choose_mode(void) {
 #endif
 
 			if (c == '?') {
-				cmd_the_guide(0, 0, NULL);
+				cmd_the_guide(3, 0, "modes");
 				continue;
 			}
 
@@ -1683,7 +1683,7 @@ static bool choose_mode(void) {
 #endif
 
 		if (c == '?') {
-			cmd_the_guide(0, 0, NULL);
+			cmd_the_guide(3, 0, "modes");
 			continue;
 		}
 
@@ -1831,7 +1831,7 @@ static bool choose_body_modification(void) {
 #endif
 
 		if (c == '?') {
-			cmd_the_guide(0, 0, NULL);
+			cmd_the_guide(3, 0, "body");
 			continue;
 		}
 
