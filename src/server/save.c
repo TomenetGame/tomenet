@@ -314,6 +314,7 @@ static void wr_monster(monster_type *m_ptr) {
 	wr_byte(m_ptr->poisoned);
 	wr_byte(m_ptr->blinded);
 	wr_byte(m_ptr->silenced);
+	wr_s32b(m_ptr->suspended);
 	wr_u16b(m_ptr->hold_o_idx);
 	wr_u16b(m_ptr->clone);
 	wr_s16b(m_ptr->mind);
@@ -843,6 +844,7 @@ static void wr_extra(int Ind) {
 	wr_byte(p_ptr->breath_element);
 	wr_s16b(p_ptr->blind);
 	wr_s16b(p_ptr->paralyzed);
+	wr_s32b(p_ptr->suspended);
 	wr_s16b(p_ptr->confused);
 	wr_s16b(p_ptr->food);
 	wr_s32b(p_ptr->go_turn);

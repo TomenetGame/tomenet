@@ -9206,9 +9206,15 @@ void dungeon(void) {
 			Players[i]->last_gold_drop_timer = 0;
 			Players[i]->go_turn = 0;
 			Players[i]->item_order_turn = turn + HOUR; //ew, well this should be fine
+			if (Players[i]->suspended) Players[i]->suspended = cfg.fps * 2; /* hrm */
 
 			/* Pft: */
 			Players[i]->test_turn = 0;
+		}
+		/* Process the monsters */
+		for (k = m_top - 1; k >= 0; k--) {
+			i = m_fast[k];
+			if (m_list[i].suspended) m_list[i].suspended = cfg.fps * 2; /* hrrm */
 		}
 		/* Reset to full duration again, lucky hunters */
 		for (i = 0; i < MAX_XORDERS; i++)

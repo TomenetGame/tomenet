@@ -941,6 +941,7 @@ static void rd_monster(monster_type *m_ptr) {
 		rd_byte(&m_ptr->blinded);
 		rd_byte(&m_ptr->silenced);
 	}
+	if (!s_older_than(4, 7, 13)) rd_s32b(&m_ptr->suspended);
 
 	rd_u16b(&m_ptr->hold_o_idx);
 	rd_u16b(&m_ptr->clone);
@@ -1858,6 +1859,7 @@ static bool rd_extra(int Ind) {
 
 	rd_s16b(&p_ptr->blind);
 	rd_s16b(&p_ptr->paralyzed);
+	if (!older_than(4, 7, 13)) rd_s32b(&p_ptr->suspended);
 	rd_s16b(&p_ptr->confused);
 	rd_s16b(&p_ptr->food);
 	rd_s32b(&p_ptr->go_turn);
