@@ -899,14 +899,18 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 					/* Watch total object name length */
 					o_ptr->note = o_ptr->note_utag = 0;
-					object_desc(Ind, o_name, o_ptr, TRUE, 3);
-					if (ONAME_LEN - ((int)strlen(o_name)) - 1 >= 0) { /* paranoia -- item name not too long already, leaving no room for an inscription at all? */
-						/* inscription too long? cut it down */
-						if (strlen(o_name) + strlen(powins) >= ONAME_LEN) powins[ONAME_LEN - strlen(o_name) - 1] = 0;
+					/* Not just an empty inscription aka no notable powers? */
+					if (powins[4]) {
+						/* Prepare to inscribe */
+						object_desc(Ind, o_name, o_ptr, TRUE, 3);
+						if (ONAME_LEN - ((int)strlen(o_name)) - 1 >= 0) { /* paranoia -- item name not too long already, leaving no room for an inscription at all? */
+							/* inscription too long? cut it down */
+							if (strlen(o_name) + strlen(powins) >= ONAME_LEN) powins[ONAME_LEN - strlen(o_name) - 1] = 0;
 
-						/* Save the inscription */
-						o_ptr->note = quark_add(powins);
-						o_ptr->note_utag = 0;
+							/* Save the inscription */
+							o_ptr->note = quark_add(powins);
+							o_ptr->note_utag = 0;
+						}
 					}
 				} else {
 					/* Normal tagging */

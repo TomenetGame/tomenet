@@ -2232,6 +2232,7 @@ void do_cmd_observe(int Ind, int item) {
 void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 	u32b f1, f2, f3, f4, f5, f6, esp, tmpf1, tmpf2, tmpf3, tmp;
 	bool i_f = FALSE, i_c = FALSE, i_e = FALSE, i_a = FALSE, i_p = FALSE, i_w = FALSE, i_n = FALSE;
+	int l = strlen(powins);
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
@@ -2286,7 +2287,7 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 			}
 		}
 
-		if (powins[0] && powins[strlen(powins) - 1] == ',') powins[strlen(powins) - 1] = 0;
+		if (strlen(powins) != l && powins[strlen(powins) - 1] == ',') powins[strlen(powins) - 1] = 0;
 		/* Don't show actual magical properties of books */
 		return;
 	}
@@ -2382,7 +2383,7 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 		if (f2 & (TR2_IM_WATER)) i_w = TRUE;
 		if (f2 & (TR2_IM_NETHER)) i_n = TRUE;
 		if ((tmp = (i_f || i_c || i_e || i_a || i_p || i_w || i_n))) {
-			if (powins[0] && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
+			if (strlen(powins) != l && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 			strcat(powins, "*");
 			if (i_f) strcat(powins, "F");
 			if (i_c) strcat(powins, "C");
@@ -2398,7 +2399,7 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 	{
 		if (!(i_f && i_c && i_e && i_a)) {
 			if ((f2 & TR2_RES_FIRE) && (f2 & TR2_RES_COLD) && (f2 & TR2_RES_ELEC) && (f2 & TR2_RES_ACID)) {
-				if (!tmp && powins[0] && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
+				if (!tmp && strlen(powins) != l && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 				strcat(powins, "Base");
 			} else {
 				i_f = (f2 & TR2_RES_FIRE) && !(f2 & TR2_IM_FIRE);
@@ -2406,7 +2407,7 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 				i_e = (f2 & TR2_RES_ELEC) && !(f2 & TR2_IM_ELEC);
 				i_a = (f2 & TR2_RES_ACID) && !(f2 & TR2_IM_ACID);
 				if (i_f | i_c | i_e | i_a) {
-					if (!tmp && powins[0] && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
+					if (!tmp && strlen(powins) != l && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 					if (i_f) strcat(powins, "f");
 					if (i_c) strcat(powins, "c");
 					if (i_e) strcat(powins, "e");
@@ -2470,7 +2471,7 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 		tmp = tmpf1 || tmpf2 || tmpf3;
 	}
 	if (tmp) {
-		if (powins[0] && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
+		if (strlen(powins) != l && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 
 		if (f3 & (TR3_SH_ELEC | TR3_SH_COLD | TR3_SH_FIRE)) strcat(powins, "A");
 		if (f3 & TR3_SH_ELEC) strcat(powins, "E");
@@ -2503,10 +2504,10 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 	}
 	if (esp) {
 		if (esp & ESP_ALL) {
-			if (powins[0] && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
+			if (strlen(powins) != l && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 			strcat(powins, "ESP");
 		} else if (!redux) {
-			if (!tmp && powins[0] && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
+			if (!tmp && strlen(powins) != l && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 			strcat(powins, "~");
 			if (esp & ESP_SPIDER) strcat(powins, "S");
 			if (esp & ESP_ORC) strcat(powins, "o");
@@ -2538,7 +2539,7 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 
 	/* -- exploding ammo -- */
 	if (is_ammo(o_ptr->tval) && (o_ptr->pval != 0)) {
-		if (powins[0]) strcat(powins, " ");
+		if (strlen(powins) != l) strcat(powins, " ");
 		strcat(powins, "(");
 		switch (o_ptr->pval) {
 		case GF_ELEC: strcat(powins, "Lightning"); break;
@@ -2589,7 +2590,7 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 #endif
 		if (am < 0) am = 0;
 
-		if (powins[0] && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
+		if (strlen(powins) != l && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 		strcat(powins, format("%d%%", am));
 	}
 }
@@ -2640,14 +2641,18 @@ bool check_power_inscribe(int Ind, object_type *o_ptr, char *o_name_old, cptr in
 
 	/* Watch total object name length */
 	o_ptr->note = o_ptr->note_utag = 0;
-	object_desc(Ind, o_name, o_ptr, TRUE, 3);
-	if (ONAME_LEN - ((int)strlen(o_name)) - 1 >= 0) { /* paranoia -- item name not too long already, leaving no room for an inscription at all? */
-		/* inscription too long? cut it down */
-		if (strlen(o_name) + strlen(powins) >= ONAME_LEN) powins[ONAME_LEN - strlen(o_name) - 1] = 0;
+	/* Not just an empty inscription aka no notable powers? */
+	if (powins[4]) {
+		/* Prepare to inscribe */
+		object_desc(Ind, o_name, o_ptr, TRUE, 3);
+		if (ONAME_LEN - ((int)strlen(o_name)) - 1 >= 0) { /* paranoia -- item name not too long already, leaving no room for an inscription at all? */
+			/* inscription too long? cut it down */
+			if (strlen(o_name) + strlen(powins) >= ONAME_LEN) powins[ONAME_LEN - strlen(o_name) - 1] = 0;
 
-		/* Save the inscription */
-		o_ptr->note = quark_add(powins);
-		o_ptr->note_utag = 0;
+			/* Save the inscription */
+			o_ptr->note = quark_add(powins);
+			o_ptr->note_utag = 0;
+		}
 	}
 
 	if (Ind) {

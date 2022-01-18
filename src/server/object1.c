@@ -1744,7 +1744,7 @@ static char *object_desc_str(char *t, cptr s) {
 	while (*s) {
 #if defined(POWINS_DYNAMIC) && !defined(POWINS_DYNAMIC_CLIENTSIDE)
 		/* Hide the internal server-side markers */
-		if (*s == '@' && *(s + 1) == '&') {
+		if (*s == '@' && (*(s + 1) == '&' || *(s + 1) == '^')) {
 			s += 2;
 			continue;
 		}
