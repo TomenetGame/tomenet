@@ -4060,7 +4060,6 @@ void do_cmd_look(int Ind, int dir) {
 	cptr p1 = "A ", p2 = "", info = "";
 	struct c_special *cs_ptr;
 
-	char o_name[ONAME_LEN];
 	char out_val[MSG_LEN], tmp_val[MSG_LEN];
 
 	if(!(zcave = getcave(wpos))) return;
@@ -4201,6 +4200,7 @@ void do_cmd_look(int Ind, int dir) {
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
+	/* Another player */
 	if (c_ptr->m_idx < 0 && p_ptr->play_vis[0-c_ptr->m_idx] &&
 	    (!Players[0-c_ptr->m_idx]->admin_dm || player_sees_dm(Ind))) {
 		q_ptr = Players[0 - c_ptr->m_idx];
@@ -4221,9 +4221,14 @@ void do_cmd_look(int Ind, int dir) {
 			snprintf(out_val, sizeof(out_val), "%s the %s%s", q_ptr->name, get_prace2(q_ptr), get_ptitle(q_ptr, FALSE));
 #endif
 		}
+	/* A monster */
 	} else if (c_ptr->m_idx > 0 && p_ptr->mon_vis[c_ptr->m_idx]) {	/* TODO: handle monster mimics */
 		bool done_unique;
+		char m_name[MNAME_LEN];
+
 		m_ptr = &m_list[c_ptr->m_idx];
+		monster_desc(Ind, m_name, c_ptr->m_idx, 8);
+		m_name[0] = toupper(m_name[0]);
 
 		/* a unique which the looker already killed? */
 		if ((r_info[m_ptr->r_idx].flags1 & RF1_UNIQUE) &&
@@ -4238,7 +4243,8 @@ void do_cmd_look(int Ind, int dir) {
 		if (m_ptr->questor)
 			snprintf(out_val, sizeof(out_val), "\377%c%s (Lv %d, %s)",
 			    m_ptr->questor_invincible ? 'G' : ((m_ptr->questor_hostile & 0x1) ? 'R' : 'G'),
-			    r_name_get(&m_list[c_ptr->m_idx]),
+			    //r_name_get(&m_list[c_ptr->m_idx]),
+			    m_name,
 			    m_ptr->level, look_mon_desc(c_ptr->m_idx));
 		else
 #if 0 /* attach 'slain' for uniques we already killed */
@@ -4249,11 +4255,15 @@ void do_cmd_look(int Ind, int dir) {
 #else /* use different colour for uniques we already killed */
 		snprintf(out_val, sizeof(out_val), "%s%s (Lv %d, %s%s)",
 		    done_unique ? "\377D" : "",
-		    r_name_get(&m_list[c_ptr->m_idx]),
+		    //r_name_get(&m_list[c_ptr->m_idx]),
+		    m_name,
 		    m_ptr->level, look_mon_desc(c_ptr->m_idx),
 		    m_ptr->clone ? ", clone" : "");
 #endif
+	/* An object */
 	} else if (c_ptr->o_idx) {
+		char o_name[ONAME_LEN];
+
 		o_ptr = &o_list[c_ptr->o_idx];
 
 		/* Format string */
@@ -4296,7 +4306,7 @@ void do_cmd_look(int Ind, int dir) {
 				strcpy(out_val, tmp_val);
 			}
 		}
-
+	/* A floor feature */
 	} else {
 		int feat = f_info[c_ptr->feat].mimic;
 		cptr name = f_name + f_info[feat].name;
