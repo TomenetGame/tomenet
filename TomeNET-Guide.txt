@@ -12277,6 +12277,7 @@ Bows                x               x
 Crossbows           x               x
 Wooden boomerangs   x               x
 Metal boomerangs    x
+Razor boomerangs    x
 
 Swords              x
 Axes                x               x
