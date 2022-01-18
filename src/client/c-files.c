@@ -1252,6 +1252,13 @@ void peruse_file(void) {
 
 		/* allow chatting, as it's now also possible within stores */
 		if (k == ':') cmd_message();
+#ifdef USE_SOUND_2010
+		/* allow toggling music/master too */
+		else if (k == KTRL('C')) toggle_music(FALSE);
+		else if (k == KTRL('N')) toggle_master(FALSE);
+		else if (k == KTRL('X')) toggle_music(FALSE);//rl
+		else if (k == KTRL('V')) toggle_master(FALSE);//rl
+#endif
 		/* and very handy for *ID*ing: inscribe this item */
 		if (k == '{') cmd_inscribe(USE_INVEN | USE_EQUIP);
 		if (k == '}') cmd_uninscribe(USE_INVEN | USE_EQUIP);
