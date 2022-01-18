@@ -8500,7 +8500,7 @@ static bool no_nearby_dungeontown(struct worldpos *wpos) {
    TODO: Move this into a specific d_info flag that boosts a monster's rarity! */
 #define HACK_MONSTER_RARITIES
 static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
-	int i, k, y, x, y1 = 0, x1 = 0, dun_lev;
+	int i, k, y, x, y1, x1, dun_lev;
 #ifdef ARCADE_SERVER
 	int mx, my;
 #endif
@@ -8596,6 +8596,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 		/* add the arena */
 		//keep objects that may be on the floor...... but get rid of monsters
+		x1 = y1 = 0;
 		i = process_dungeon_file("t_arena_mirror.txt", wpos, &y1, &x1, SCREEN_HGT, SCREEN_WID, TRUE);
 		if (p_ptr->temp_misc_1 & 0x80) {
 			int startx, starty;
@@ -8604,7 +8605,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			startx = level_down_x(wpos);
 			starty = level_down_y(wpos);
 
-			y1 = 0; x1 = 53;
+			x1 = 53; y1 = 0;
 			i = process_dungeon_file("t_way.txt", wpos, &y1, &x1, SCREEN_HGT, SCREEN_WID, TRUE);
 			zcave[2][65].feat = 29; zcave[2][65].info = 7;
 			zcave[11][33].feat = 235; zcave[11][33].info = 7;
@@ -8653,6 +8654,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		level_generation_time = TRUE;
 
 		/* add the party */
+		x1 = y1 = 0;
 		if (wpos->wz == 1 || wpos->wz == -1) {
 			//keep objects that may be on the floor...... but get rid of monsters
 			i = process_dungeon_file("t_party.txt", wpos, &y1, &x1, SCREEN_HGT, SCREEN_WID, TRUE);
@@ -8665,6 +8667,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			s_printf("DF-party (%s(%s)L%d:%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev, i);
 		} else process_dungeon_file("t_balcony.txt", wpos, &y1, &x1, SCREEN_HGT, SCREEN_WID, TRUE);
 		level_generation_time = FALSE;
+		return;
 	}
 	/* Always generate basic death fate from template for a bit more visuals, instead of the auto-generated, basically empty floor? */
 	/* The 'useless' death fate, starvation incoming: */
@@ -8686,6 +8689,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 		if (!(zcave = getcave(wpos))) return;
 		level_generation_time = TRUE;
+		x1 = y1 = 0;
 		i = process_dungeon_file("t_ruins.txt", wpos, &y1, &x1, SCREEN_HGT, SCREEN_WID, TRUE);
 		level_generation_time = FALSE;
 		s_printf("DF-ruins (%s(%s)L%d:%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev, i);
@@ -9737,7 +9741,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	if (dun_lev >= (in_irondeepdive(wpos) ? 10 : 12) && dun_lev <= 20 &&
 	    p_ptr && p_ptr->prace == RACE_MAIA && !p_ptr->ptrait) {
 		//5 + randint(dun->row_rooms - 5), x1 = randint(dun->col_rooms - 5);
-		int x, y, x1, y1, tries = 2000;
+		int tries = 2000;
 		do {
 			x1 = rand_int(dun->l_ptr->wid - 6) + 3;
 			y1 = rand_int(dun->l_ptr->hgt - 6) + 3;
@@ -9822,44 +9826,44 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 #endif
 
 #ifdef ARCADE_SERVER
-	if(wpos->wz > 0) {
-		for(mx = 1; mx < 131; mx++) {
-			for(my = 1; my < 43; my++) {
+	if (wpos->wz > 0) {
+		for (mx = 1; mx < 131; mx++) {
+			for (my = 1; my < 43; my++) {
 				cave_set_feat(wpos, my, mx, 1);
 			}
 		}
 	}
-	if(wpos->wz > 0 && wpos->wz < 7) {
-		for(my = 1; my < 8; my++) {
-			for(mx = 63; mx < 70; mx++) {
+	if (wpos->wz > 0 && wpos->wz < 7) {
+		for (my = 1; my < 8; my++) {
+			for (mx = 63; mx < 70; mx++) {
 				 cave_set_feat(wpos, my, mx, 209);
 			}
 		}
-		for(my = 36; my < 43; my++) {
-			for(mx = 63; mx < 70; mx++) {
+		for (my = 36; my < 43; my++) {
+			for (mx = 63; mx < 70; mx++) {
 				 cave_set_feat(wpos, my, mx, 209);
 			}
 		}
- 		for(my = 19; my < 26; my++) {
-			for(mx = 1; mx < 8; mx++) {
+ 		for (my = 19; my < 26; my++) {
+			for (mx = 1; mx < 8; mx++) {
 				cave_set_feat(wpos, my, mx, 209);
 			}
 		}
-		for(my = 19; my < 26; my++) {
-			for(mx = 124; mx < 131; mx++) {
+		for (my = 19; my < 26; my++) {
+			for (mx = 124; mx < 131; mx++) {
 				cave_set_feat(wpos, my, mx, 209);
 			}
 		}
 	}
 	if (wpos->wz == 7) {
-		for(mx = 1; mx<21; mx++) 
+		for (mx = 1; mx<21; mx++) 
 			cave_set_feat(wpos, 11, mx, 61);
-		for(mx = 1; mx < 12; mx++)
+		for (mx = 1; mx < 12; mx++)
 			cave_set_feat(wpos, mx, 21, 61);
 	}
 	if (wpos->wz == 9) {
-		for(mx = 1; mx < 131; mx++) {
-			for(my = 1; my < 43; my++) {
+		for (mx = 1; mx < 131; mx++) {
+			for (my = 1; my < 43; my++) {
 				cave_set_feat(wpos, my, mx, 187);
 			}
 		}
@@ -10045,14 +10049,14 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 					for (k = 0; k < (8 - 1 + 3); k++)
 					if (r < 3) {
 						switch (k % 8) {
-						case 0:x1 = x - 1; y1 = y - 1; break;
-						case 1:x1 = x; y1 = y - 1; break;
-						case 2:x1 = x + 1; y1 = y - 1; break;
-						case 3:x1 = x + 1; y1 = y; break;
-						case 4:x1 = x + 1; y1 = y + 1; break;
-						case 5:x1 = x; y1 = y + 1; break;
-						case 6:x1 = x - 1; y1 = y + 1; break;
-						case 7:x1 = x - 1; y1 = y; break;
+						case 0: x1 = x - 1; y1 = y - 1; break;
+						case 1: x1 = x; y1 = y - 1; break;
+						case 2: x1 = x + 1; y1 = y - 1; break;
+						case 3: x1 = x + 1; y1 = y; break;
+						case 4: x1 = x + 1; y1 = y + 1; break;
+						case 5: x1 = x; y1 = y + 1; break;
+						case 6: x1 = x - 1; y1 = y + 1; break;
+						case 7: x1 = x - 1; y1 = y; break;
 						}
 						cr_ptr = &zcave[y1][x1];
 						if ((f_info[cr_ptr->feat].flags1 & FF1_WALL)) {
@@ -10074,8 +10078,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 								if (build_special_store == 1) {
 									if (cfg.dungeon_shop_type == 999){
 										switch (rand_int(3)) {
-										case 1:cs_ptr->sc.omni = STORE_JEWELX;break; /*Rare Jewelry Shop */
-										case 2:cs_ptr->sc.omni = STORE_SHOESX;break; /*Rare Footwear Shop */
+										case 1: cs_ptr->sc.omni = STORE_JEWELX;break; /*Rare Jewelry Shop */
+										case 2: cs_ptr->sc.omni = STORE_SHOESX;break; /*Rare Footwear Shop */
 										default: cs_ptr->sc.omni = STORE_BLACKS;break; /*The Secret Black Market */
 										}
 									} else {
