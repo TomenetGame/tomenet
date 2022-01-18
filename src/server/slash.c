@@ -296,6 +296,23 @@ static void do_cmd_refresh(int Ind) {
 	return;
 }
 
+/* Helper function to convert human-readable inventory slot letters to internal inventor[] indices.
+   Capital letters for equipment slots.
+   If Ind is =! 0 an error message will be sent to that player if the slot is out of range. */
+static int a2slot(int Ind, char slot, bool inven, bool equip) {
+	/* convert to valid inventory slot */
+	if (inven && slot >= 'a' && slot <= 'w') return (slot - 'a');
+	/* check for valid equipment slot */
+	if (equip && slot >= 'A' && slot <= 'N') return (slot - 'A' + INVEN_PACK);
+	/* invalid slot */
+	if (Ind) {
+		if (inven && equip) msg_print(Ind, "\377oValid inventory slots are a-w or A-N for equipment. Please try again.");
+		else if (inven) msg_print(Ind, "\377oValid inventory slots are a-w. Please try again.");
+		else /* assume equip */ msg_print(Ind, "\377oValid equipment slots are A-N. Please try again.");
+	}
+	return -1;
+}
+
 /*
  * Slash commands - huge hack function for command expansion.
  *
@@ -1765,20 +1782,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 		else if (prefix(messagelc, "/empty") || prefix(messagelc, "/emp")) {
 			int slot;
+
 			//return;//disabled for anti-cheeze
 			if (!tk) {
 				msg_print(Ind, "\377oUsage: /empty (inventory slot letter)");
 				return;
 			}
-			slot = (char)(token[1][0]);
-			/* convert to upper case ascii code */
-			if (slot >= 'a' && slot <= 'z') slot -= 32;
-			/* check for valid inventory slot */
-			if (slot < 'A' || slot > 'W') {
-				msg_print(Ind, "\377oValid inventory slots are a-w (or A-W). Please try again.");
-				return;
-			}
-			do_cmd_empty_potion(Ind, slot - 'A');
+			if ((slot = a2slot(Ind, token[1][0], TRUE, FALSE)) == -1) return;
+			do_cmd_empty_potion(Ind, slot);
 			return;
 		}
 		else if ((prefix(messagelc, "/dice") || !strcmp(message, "/d") ||
@@ -3207,6 +3218,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				else if (!strcmp("set", token[2])) {
 					char *time_string;
+
 					msg_print(Ind, "\377B[@] \377oUsage: /auction set <inventory slot> <starting price> <buyout price> <duration>");
 					msg_print(Ind, "\377B[@] \377wSets up an auction.");
 					msg_print(Ind, "\377B[@] \377wInventory slot is the item's letter in your inventory.");
@@ -3301,7 +3313,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (!strncmp("set", token[1], 3)) {
 				if (tk < 5) msg_print(Ind, "\377B[@] \377oUsage: /auction set <inventory slot> <starting price> <buyout price> <duration>");
 				else {
-					n = auction_set(Ind, token[2][0] - 'a', token[3], token[4], token[5]);
+					int slot;
+
+					if ((slot = a2slot(Ind, token[2][0], TRUE, FALSE)) == -1) return;
+					n = auction_set(Ind, slot, token[3], token[4], token[5]);
 					if (n) auction_print_error(Ind, n);
 				}
 			}
@@ -3529,13 +3544,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			cave_type **zcave = getcave(&p_ptr->wpos);
 
 			/* need to specify one parm: the potion used for colouring */
-			if (tk == 1) k = message3[0] - 97;
-			if (!tk || tk > 1 || k < 0 || k >= INVEN_PACK) {
+			if (tk != 1) {
 				msg_print(Ind, "\377oUsage:     /paint <inventory slot>");
 				msg_print(Ind, "\377oExample:   /paint f");
 				msg_print(Ind, "\377oWhere the slot must be a potion which determines the colour.");
 				return;
 			}
+			if ((k = a2slot(Ind, token[1][0], TRUE, FALSE)) == -1) return;
 
 			/* Check for a house door next to us */
 			for (x = p_ptr->px - 1; x <= p_ptr->px + 1; x++) {
@@ -7130,12 +7145,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 
-				if (atoi(token[1]) < 0 || atoi(token[1]) >= INVEN_TOTAL) {
-					msg_print(Ind, "\377oInvalid inventory slot.");
-					return;
-				}
+				if ((k = a2slot(Ind, token[1][0], TRUE, TRUE)) == -1) return;
 
-				o_ptr = &p_ptr->inventory[atoi(token[1])];
+				o_ptr = &p_ptr->inventory[k];
 				if (o_ptr->name1 != ART_RANDART) {
 					if (o_ptr->name1) {
 						msg_print(Ind, "\377oIt's a static art. Aborting.");
@@ -7229,12 +7241,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				object_type *o_ptr;
 				int tries = 1;
 
-				if (atoi(token[1]) < 1 || atoi(token[1]) >= INVEN_TOTAL) {
-					msg_print(Ind, "\377oInvalid inventory slot.");
-					return;
-				}
+				if ((k = a2slot(Ind, token[1][0], TRUE, TRUE)) == -1) return;
 
-				o_ptr = &p_ptr->inventory[atoi(token[1]) - 1];
+				o_ptr = &p_ptr->inventory[k];
 				if (o_ptr->name1 != ART_RANDART) {
 					if (o_ptr->name1) {
 						msg_print(Ind, "\377oIt's a static art. Aborting.");
@@ -7284,11 +7293,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "\377oUsage: /reego <inventory-slot>");
 					return;
 				}
-				if (atoi(token[1]) < 1 || atoi(token[1]) >= INVEN_TOTAL) {
-					msg_print(Ind, "\377oInvalid inventory slot.");
-					return;
-				}
-				o_ptr = &p_ptr->inventory[atoi(token[1]) - 1];
+
+				if ((k = a2slot(Ind, token[1][0], TRUE, TRUE)) == -1) return;
+				o_ptr = &p_ptr->inventory[k];
 				if (!o_ptr->name2) {
 					msg_print(Ind, "\377oNot an ego item.");
 					return;
@@ -8937,14 +8944,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "\377oUsage: /costs <inventory-slot>");
 					return;
 				}
-				if (atoi(token[1]) < 1 || atoi(token[1]) >= INVEN_TOTAL) {
-					msg_print(Ind, "\377oInvalid inventory slot.");
-					return;
-				}
-				o_ptr = &p_ptr->inventory[atoi(token[1]) - 1];
+				if ((k = a2slot(Ind, token[1][0], TRUE, TRUE)) == -1) return;
+				o_ptr = &p_ptr->inventory[k];
 				object_desc(Ind, o_name, o_ptr, TRUE, 0);
 				msg_format(Ind, "Overview for item %s in slot %d:",
-				    o_name, atoi(token[1]));
+				    o_name, k);
 				msg_format(Ind, "Flag cost: %d; for artifact: %d.",
 				    flag_cost(o_ptr, o_ptr->pval), artifact_flag_cost(o_ptr, o_ptr->pval));
 				msg_format(Ind, "Your value: %" PRId64 ".", object_value(Ind, o_ptr));
@@ -9453,6 +9457,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "\377oUsage: /madart <slot>");
 					return;
 				}
+				if ((k = a2slot(Ind, token[1][0], TRUE, TRUE)) == -1) return;
 				o_ptr = &p_ptr->inventory[k];
 				if (!o_ptr->tval) {
 					msg_print(Ind, "\377oInventory slot empty.");
@@ -9551,6 +9556,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "\377oUsage: /measureart <slot>");
 					return;
 				}
+				if ((k = a2slot(Ind, token[1][0], TRUE, TRUE)) == -1) return;
 				o_ptr = &p_ptr->inventory[k];
 				if (!o_ptr->tval) {
 					msg_print(Ind, "\377oInventory slot empty.");
@@ -10506,13 +10512,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "\377oUsage: /testrandart <inventory-slot>");
 					return;
 				}
-
-				if (atoi(token[1]) < 1 || atoi(token[1]) >= INVEN_TOTAL) {
-					msg_print(Ind, "\377oInvalid inventory slot.");
-					return;
-				}
-
-				o_ptr = &p_ptr->inventory[atoi(token[1]) - 1];
+				if ((k = a2slot(Ind, token[1][0], TRUE, TRUE)) == -1) return;
+				o_ptr = &p_ptr->inventory[k];
 				if (o_ptr->name1 != ART_RANDART) {
 					if (o_ptr->name1) {
 						msg_print(Ind, "\377oIt's a static art. Aborting.");
