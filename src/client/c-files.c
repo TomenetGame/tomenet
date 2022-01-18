@@ -1902,11 +1902,11 @@ void load_auto_inscriptions(cptr name) {
 #if 0 /* completely overwrite/erase current auto-inscriptions */
 	/* load inscriptions (2 lines each) */
 	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
-		if (fgets(auto_inscription_match[i], 41, fp) == NULL)
+		if (fgets(auto_inscription_match[i], AUTOINS_MATCH_LEN, fp) == NULL)
 			strcpy(auto_inscription_match[i], "");
 		if (strlen(auto_inscription_match[i])) auto_inscription_match[i][strlen(auto_inscription_match[i]) - 1] = '\0';
 
-		if (fgets(auto_inscription_tag[i], 21, fp) == NULL)
+		if (fgets(auto_inscription_tag[i], AUTOINS_TAG_LEN, fp) == NULL)
 			strcpy(auto_inscription_tag[i], "");
 		if (strlen(auto_inscription_tag[i])) auto_inscription_tag[i][strlen(auto_inscription_tag[i]) - 1] = '\0';
 	}
@@ -1921,7 +1921,7 @@ void load_auto_inscriptions(cptr name) {
 		replaced = FALSE;
 
 		/* try to read a match */
-		if (fgets(buf, 42, fp) == NULL) {
+		if (fgets(buf, AUTOINS_MATCH_LEN + 1, fp) == NULL) {
 			fclose(fp);
 			return;
 		}
@@ -1930,7 +1930,7 @@ void load_auto_inscriptions(cptr name) {
 		/* skip empty matches */
 		if (buf[0] == '\0') {
 			/* try to read according tag */
-			if (fgets(buf, 22, fp) == NULL) {
+			if (fgets(buf, AUTOINS_TAG_LEN + 1, fp) == NULL) {
 				fclose(fp);
 				return;
 			}
@@ -1942,7 +1942,7 @@ void load_auto_inscriptions(cptr name) {
 		for (j = 0; j < MAX_AUTO_INSCRIPTIONS; j++) {
 			if (!strcmp(buf, auto_inscription_match[j])) {
 				/* try to read according tag */
-				if (fgets(buf, 22, fp) == NULL) {
+				if (fgets(buf, AUTOINS_TAG_LEN + 1, fp) == NULL) {
 					fclose(fp);
 					return;
 				}
@@ -1968,7 +1968,7 @@ void load_auto_inscriptions(cptr name) {
 		strcpy(auto_inscription_match[c], buf);
 
 		/* load according tag */
-		if (fgets(buf, 22, fp) == NULL) {
+		if (fgets(buf, AUTOINS_TAG_LEN + 1, fp) == NULL) {
 			fclose(fp);
 			return;
 		}
@@ -1985,7 +1985,7 @@ void load_auto_inscriptions(cptr name) {
 		replaced = FALSE;
 
 		/* try to read a match */
-		if (fgets(buf, 42, fp) == NULL) {
+		if (fgets(buf, AUTOINS_MATCH_LEN + 1, fp) == NULL) {
 			//fclose(fp);
 			break;
 		}
@@ -1994,7 +1994,7 @@ void load_auto_inscriptions(cptr name) {
 		/* skip empty matches */
 		if (buf[0] == '\0') {
 			/* try to read according tag */
-			if (fgets(buf, 22, fp) == NULL) {
+			if (fgets(buf, AUTOINS_TAG_LEN + 1, fp) == NULL) {
 				//fclose(fp);
 				break;
 			}
@@ -2023,7 +2023,7 @@ void load_auto_inscriptions(cptr name) {
 		for (j = 0; j < MAX_AUTO_INSCRIPTIONS; j++) {
 			if (!strcmp(buf, auto_inscription_match[j])) {
 				/* try to read according tag */
-				if (fgets(buf, 22, fp) == NULL) {
+				if (fgets(buf, AUTOINS_TAG_LEN, fp) == NULL) {
 					//fclose(fp);
 					break;
 				}

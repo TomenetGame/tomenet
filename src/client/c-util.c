@@ -7369,7 +7369,7 @@ void auto_inscriptions(void) {
 	bool redraw = TRUE, quit = FALSE;
 
 	char tmp[160], buf[1024], *buf_ptr;
-	char match_buf[41 + 8], tag_buf[21 + 2];
+	char match_buf[AUTOINS_MATCH_LEN + 8], tag_buf[AUTOINS_TAG_LEN + 2];
 
 	char fff[1024];
 
@@ -7405,18 +7405,18 @@ void auto_inscriptions(void) {
 				strcat(match_buf, "\377s>");
 				strcpy(tag_buf, "\377y");
 				strcat(tag_buf, auto_inscription_tag[cur_page * AUTOINS_PAGESIZE + i]);
-				sprintf(fff, "%3d) %-50s%s %s<%s\377s>", cur_page * AUTOINS_PAGESIZE + i + 1, match_buf,
+				sprintf(fff, "%3d %-60s %s%s<%s\377s>", cur_page * AUTOINS_PAGESIZE + i + 1, match_buf,
 				    auto_inscription_autodestroy[cur_page * AUTOINS_PAGESIZE + i] ? "\377RA\377-" : (auto_inscription_autopickup[cur_page * AUTOINS_PAGESIZE + i] ? "\377Ga\377-" : " "),
 				    auto_inscription_invalid[cur_page * AUTOINS_PAGESIZE + i] ? "  " : "", /* silyl sprintf %- formatting.. */
 				    tag_buf);
 
-				Term_putstr(5, i + 1, -1, auto_inscription_force[cur_page * AUTOINS_PAGESIZE + i] ? TERM_L_BLUE : TERM_WHITE, fff);
+				Term_putstr(2, i + 1, -1, auto_inscription_force[cur_page * AUTOINS_PAGESIZE + i] ? TERM_L_BLUE : TERM_WHITE, fff);
 			}
 		}
 		redraw = TRUE;
 
 		/* display editing 'cursor' */
-		Term_putstr(1, cur_line + 1, -1, TERM_SELECTOR, ">>>");
+		Term_putstr(0, cur_line + 1, -1, TERM_SELECTOR, ">");
 
 		/* make cursor invisible */
 		Term_set_cursor(0);
@@ -7508,7 +7508,7 @@ void auto_inscriptions(void) {
 			break;
 		case 'n':
 		case '2':
-			Term_putstr(1, cur_line + 1, -1, TERM_ORANGE, "   ");
+			Term_putstr(0, cur_line + 1, -1, TERM_ORANGE, " ");
 			cur_line++;
 			redraw = FALSE;
 			if (cur_line >= AUTOINS_PAGESIZE) {
@@ -7519,7 +7519,7 @@ void auto_inscriptions(void) {
 			}
 			break;
 		case '8':
-			Term_putstr(1, cur_line + 1, -1, TERM_ORANGE, "   ");
+			Term_putstr(0, cur_line + 1, -1, TERM_ORANGE, " ");
 			cur_line--;
 			redraw = FALSE;
 			if (cur_line < 0) {
@@ -7583,12 +7583,12 @@ void auto_inscriptions(void) {
 		case '\n':
 		case '\r':
 			/* Clear previous matching string */
-			Term_putstr(10, cur_line + 1, -1, TERM_L_GREEN, "                                         ");
+			Term_putstr(6, cur_line + 1, -1, TERM_L_GREEN, "                                                     ");
 			/* Go to the correct location */
-			Term_gotoxy(11, cur_line + 1);
+			Term_gotoxy(7, cur_line + 1);
 			strcpy(buf, auto_inscription_match[cur_page * AUTOINS_PAGESIZE + cur_line]);
 			/* Get a new matching string */
-			if (!askfor_aux(buf, 40, 0)) continue;
+			if (!askfor_aux(buf, AUTOINS_MATCH_LEN - 1, 0)) continue;
 
 			buf_ptr = buf;
 			/* special hack: allow just a '#' match */
@@ -7599,8 +7599,8 @@ void auto_inscriptions(void) {
 				while (*(buf_ptr + strlen(buf_ptr) - 1) == '#') *(buf_ptr + strlen(buf_ptr) - 1) = '\0';
 			}
 
-			Term_putstr(10, cur_line + 1, -1, TERM_L_GREEN, "                                         ");
-			Term_putstr(11, cur_line + 1, -1, TERM_WHITE, buf_ptr);
+			Term_putstr(6, cur_line + 1, -1, TERM_L_GREEN, "                                                     ");
+			Term_putstr(7, cur_line + 1, -1, TERM_WHITE, buf_ptr);
 			/* ok */
 			strcpy(auto_inscription_match[cur_page * AUTOINS_PAGESIZE + cur_line], buf_ptr);
 
@@ -7623,12 +7623,12 @@ void auto_inscriptions(void) {
 #endif
 
 			/* Clear previous tag string */
-			Term_putstr(56, cur_line + 1, -1, TERM_L_GREEN, "                    ");
+			Term_putstr(62, cur_line + 1, -1, TERM_L_GREEN, "                ");
 			/* Go to the correct location */
-			Term_gotoxy(57, cur_line + 1);
+			Term_gotoxy(63, cur_line + 1);
 			strcpy(buf, auto_inscription_tag[cur_page * AUTOINS_PAGESIZE + cur_line]);
 			/* Get a new tag string */
-			if (!askfor_aux(buf, 20, 0)) {
+			if (!askfor_aux(buf, AUTOINS_TAG_LEN - 1, 0)) {
 				/* in case match was changed, we may also need to reapply */
 				for (i = 0; i <= INVEN_TOTAL; i++) apply_auto_inscriptions(i, FALSE);
 				continue;
@@ -7637,7 +7637,7 @@ void auto_inscriptions(void) {
 			for (i = 0; i <= INVEN_TOTAL; i++) apply_auto_inscriptions(i, FALSE);
 
 			/* comfort hack - fake advancing ;) */
-			Term_putstr(1, cur_line + 1, -1, TERM_ORANGE, "   ");
+			Term_putstr(0, cur_line + 1, -1, TERM_ORANGE, " ");
 			cur_line++;
 			if (cur_line >= AUTOINS_PAGESIZE) {
 				cur_line = 0;
@@ -7662,13 +7662,13 @@ void auto_inscriptions(void) {
 			break;
 		case 'c':
 			for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
-				strcpy(auto_inscription_match[i], "");
-				strcpy(auto_inscription_tag[i], "");
+				auto_inscription_match[i][0] = 0;
+				auto_inscription_tag[i][0] = 0;
 				auto_inscription_autopickup[i] = FALSE;
 				auto_inscription_autodestroy[i] = FALSE;
 			}
 			/* comfort hack - jump to first line */
-			Term_putstr(1, cur_line + 1, -1, TERM_ORANGE, "   ");
+			Term_putstr(0, cur_line + 1, -1, TERM_ORANGE, " ");
 			cur_line = cur_page = 0;
 			redraw = TRUE;
 			break;

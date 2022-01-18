@@ -297,8 +297,8 @@ bool s_NO_PK = FALSE, s_PVP_MAIA = FALSE;
 u32b sflags_TEMP = 0x0;
 
 /* Auto-inscriptions */
-char auto_inscription_match[MAX_AUTO_INSCRIPTIONS][41];
-char auto_inscription_tag[MAX_AUTO_INSCRIPTIONS][21];
+char auto_inscription_match[MAX_AUTO_INSCRIPTIONS][AUTOINS_MATCH_LEN];
+char auto_inscription_tag[MAX_AUTO_INSCRIPTIONS][AUTOINS_TAG_LEN];
 bool auto_inscription_autopickup[MAX_AUTO_INSCRIPTIONS];
 bool auto_inscription_autodestroy[MAX_AUTO_INSCRIPTIONS];
 bool auto_inscription_force[MAX_AUTO_INSCRIPTIONS];

@@ -319,8 +319,8 @@ void initialize_player_ins_files(void) {
 
 	/* start with empty auto-inscriptions list */
 	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
-		strcpy(auto_inscription_match[i], "");
-		strcpy(auto_inscription_tag[i], "");
+		auto_inscription_match[i][0] = 0;
+		auto_inscription_tag[i][0] = 0;
 		auto_inscription_autopickup[i] = FALSE;
 		auto_inscription_autodestroy[i] = FALSE;
 		auto_inscription_force[i] = FALSE;
