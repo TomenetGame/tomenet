@@ -435,7 +435,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		wakeup_monsters(Ind, -1);
 		return;
 	}
-	else if (prefix(messagelc, "/scream") || prefix(messagelc, "/scr")) {
+	else if (prefix(messagelc, "/scream") || (prefix(messagelc, "/scr") && !prefix(messagelc, "/screen"))) {
 		break_cloaking(Ind, 6);
 		if (colon++) {
 			colon_u++;
@@ -9445,6 +9445,16 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 							recall_player(Ind, "");
 							return;
 						}
+				return;
+			}
+			else if (prefix(messagelc, "/screenflash")) { /* testing - send screenflash request */
+				/* Usage: /screenflash [char/accname] */
+
+				i = name_lookup(Ind, message3, FALSE, TRUE, FALSE);
+				if (!i) return;
+
+				msg_format(Ind, "Sent screenflash to '%s'.", message3);
+				Send_screenflash(Ind);
 				return;
 			}
 			else if (prefix(messagelc, "/madart")) { /* try to create a very specific randart - C. Blue */

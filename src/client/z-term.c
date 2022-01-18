@@ -2228,6 +2228,7 @@ errr Term_clear(void) {
 
 
 	do_animate_lightning(TRUE);
+	do_animate_screenflash(TRUE);
 
 	/* Cursor usable */
 	Term->scr->cu = 0;
@@ -2811,6 +2812,7 @@ errr Term_save(void) {
  	if (screen_icky > 3) return(0);
 
 	//do_animate_lightning(TRUE); - done in Term_clear() instead
+	//do_animate_screenflash(TRUE); - done in Term_clear() instead
 
  	term_win_copy(Term->mem[screen_icky++], Term->scr, w, h);
 

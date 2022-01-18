@@ -1358,6 +1358,7 @@ struct monster_type {
 	byte confused;			/* Monster is confused */
 	byte stunned;			/* Monster is stunned */
 	byte paralyzed;			/* Monster is paralyzed (unused) */
+	s32b suspended;			/* Monster is suspended (paralyzed-alike) */
 	byte bleeding;			/* Monster is bleeding (unused) */
 	byte poisoned;			/* Monster is poisoned (unused) */
 	byte blinded;			/* monster appears confused (unused: wrapped as confusion currently) */
@@ -2785,6 +2786,7 @@ struct player_type {
 	s16b slow;			/* Timed -- Slow */
 	s16b blind;			/* Timed -- Blindness */
 	s16b paralyzed;			/* Timed -- Paralysis */
+	s32b suspended;			/* Timed till turn-value - suspended (paralyzed-alike) */
 	s16b stopped;			/* Timed -- Confined on a hostile rune of protection */
 	s16b confused;			/* Timed -- Confusion */
 	s16b afraid;			/* Timed -- Fear */

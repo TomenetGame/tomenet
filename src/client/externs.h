@@ -719,6 +719,7 @@ extern int cloud_xm100[10], cloud_ym100[10], cloud_xfrac[10], cloud_yfrac[10];
 
 extern void fix_playerlist(void);
 extern void do_animate_lightning(bool reset);
+extern void do_animate_screenflash(bool reset);
 
 /* c-xtra2.c */
 extern void do_cmd_messages(void);
@@ -742,6 +743,8 @@ extern char mangrc_filename[100];
 extern int ticks, ticks10, existing_characters, command_confirmed;
 extern int animate_lightning, animate_lightning_vol, animate_lightning_type;
 extern short animate_lightning_icky;
+extern int animate_screenflash;
+extern short animate_screenflash_icky;
 extern void do_flicker(void);
 extern void do_mail(void);
 extern void update_ticks(void);

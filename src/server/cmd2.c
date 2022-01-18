@@ -4995,10 +4995,17 @@ void do_cmd_bash(int Ind, int dir) {
 			cave_set_feat_live(&p_ptr->wpos, y, x, FEAT_SHATTERED_MIRROR);
 			msg_print(Ind, "You bash the mirror and it shatters into a thousand pieces.");
 			msg_print(Ind, " But the image of yourself that you saw in it.. is still there!");
+
+			p_ptr->suspended = turn + cfg.fps * 3; //short break to grasp the situation ^^
+			p_ptr->redraw |= PR_STATE;
 #ifdef USE_SOUND_2010
 			//sound(Ind, "shatter_potion", NULL, SFX_TYPE_MISC, TRUE);
 			sound_floor_vol(wpos, "shatter_potion", NULL, SFX_TYPE_MISC, 100); //^^'
-			sound_floor_vol(wpos, "thunder", NULL, SFX_TYPE_AMBIENT, 100); //ambient, for implied lightning visuals
+			if (is_atleast(&p_ptr->version, 4, 7, 4, 4, 0, 0)) {
+				sound_floor_vol(wpos, "destruction", NULL, SFX_TYPE_MISC, 100);
+				Send_screenflash(Ind);
+			} else
+				sound_floor_vol(wpos, "thunder", NULL, SFX_TYPE_AMBIENT, 100); //ambient, for implied lightning visuals
 #endif
 			summon_override_checks = SO_ALL;
 			temp = 10;
@@ -5020,7 +5027,7 @@ void do_cmd_bash(int Ind, int dir) {
 						   So we do init base stats here, but we will need to keep updating them on the fly all the time: */
 						py2mon_init_base(m_ptr, p_ptr);
 					}
-				}
+				} else s_printf("MIRROR misplaced for '%s' (%d)!\n", p_ptr->name, Ind); //paranoia?
 			} else s_printf("MIRROR placement failed for '%s' (%d)!\n", p_ptr->name, Ind); //paranoia?
 			summon_override_checks = SO_NONE;
 		}

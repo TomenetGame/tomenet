@@ -17,6 +17,11 @@
 /* Don't display 'Trait' if traits aren't available */
 #define HIDE_UNAVAILABLE_TRAIT
 
+#define ANIM_OFFSET 16 /* palette index offset for animated colours (might need to be 0 for Windows if PALANIM_SWAP is ever used) */
+/* Animate not just the extended 'outside world' colours, that are used for day/night lightning,
+   but also the classic static colours that are used for everything else, allowing this to work inside a dungeon: */
+#define ANIM_FULL_PALETTE
+
 #ifdef USE_SOUND_2010
 int animate_lightning_type = SFX_TYPE_AMBIENT;
 #else /* sigh - todo: decouple lightning animation from actually using sound */
@@ -24,6 +29,9 @@ int animate_lightning_type = 0;
 #endif
 int animate_lightning = 0, animate_lightning_vol = 100;
 short int animate_lightning_icky = 0;
+
+int animate_screenflash = 0;
+short int animate_screenflash_icky = 0;
 
 /*
  * Print character info at given row, column in a 13 char field
@@ -3623,17 +3631,90 @@ void window_stuff(void) {
 	}
 }
 
-#define AL_OFFSET 16 /* palette index offset for animated colours (might need to be 0 for Windows if PALANIM_SWAP is ever used) */
-/* Animate not just the extended 'outside world' colours, that are used for day/night lightning,
-   but also the classic static colours that are used for everything else, allowing this to work inside a dungeon: */
-#define AL_FULL_PALETTE_ANIM
+#define LF_END 20 /* duration of the lightning flash */
+void do_animate_screenflash(bool reset) {
+	int i;
+	static bool active = FALSE; /* Don't overwrite palette backup from overlapping lightning strikes */
+	static byte or[16], og[16], ob[16];
+#ifdef ANIM_FULL_PALETTE
+	static byte or0[16], og0[16], ob0[16];
+#endif
+
+	/* Prematurely end flash animation? */
+	if (reset) {
+		if (active) {
+			if (c_cfg.palette_animation) {
+				for (i = 1; i < 16; i++) set_palette(i + ANIM_OFFSET, or[i], og[i], ob[i]);
+#ifdef ANIM_FULL_PALETTE
+				for (i = 1; i < 16; i++) set_palette(i, or0[i], og0[i], ob0[i]);
+#endif
+				set_palette(128, 0, 0, 0); //refresh
+			}
+			active = FALSE;
+		}
+		return;
+	}
+
+	/* Animate palette */
+	if (!c_cfg.disable_lightning && !animate_screenflash_icky && c_cfg.palette_animation) switch (animate_screenflash) {
+	case 1:
+		/* First thing: Backup all colours before temporarily manipulating them */
+		if (!active) {
+			for (i = 1; i < 16; i++) get_palette(i + ANIM_OFFSET, &or[i], &og[i], &ob[i]);
+#ifdef ANIM_FULL_PALETTE
+			for (i = 1; i < 16; i++) get_palette(i, &or0[i], &og0[i], &ob0[i]);
+#endif
+			active = TRUE;
+		}
+
+		for (i = 1; i < 16; i++) set_palette(i + ANIM_OFFSET, 0xFF, 0xFF, 0xFF);
+#ifdef ANIM_FULL_PALETTE
+		for (i = 1; i < 16; i++) set_palette(i, 0xFF, 0xFF, 0xFF);
+#endif
+
+		set_palette(128, 0, 0, 0); //refresh
+		break;
+	default:
+		for (i = 1; i < 16; i++)
+			set_palette(i + ANIM_OFFSET,
+			    or[i] + ((0xFF - or[i]) * (LF_END - animate_screenflash)) / (LF_END - 1),
+			    og[i] + ((0xFF - og[i]) * (LF_END - animate_screenflash)) / (LF_END - 1),
+			    ob[i] + ((0xFF - ob[i]) * (LF_END - animate_screenflash)) / (LF_END - 1));
+#ifdef ANIM_FULL_PALETTE
+		for (i = 1; i < 16; i++)
+			set_palette(i,
+			    or0[i] + ((0xFF - or0[i]) * (LF_END - animate_screenflash)) / (LF_END - 1),
+			    og0[i] + ((0xFF - og0[i]) * (LF_END - animate_screenflash)) / (LF_END - 1),
+			    ob0[i] + ((0xFF - ob0[i]) * (LF_END - animate_screenflash)) / (LF_END - 1));
+#endif
+
+		set_palette(128, 0, 0, 0); //refresh
+		break;
+	case LF_END:
+		/* Restore all colours to what they were before */
+		if (active) {
+			for (i = 1; i < 16; i++) set_palette(i + ANIM_OFFSET, or[i], og[i], ob[i]);
+#ifdef ANIM_FULL_PALETTE
+			for (i = 1; i < 16; i++) set_palette(i, or0[i], og0[i], ob0[i]);
+#endif
+			set_palette(128, 0, 0, 0); //refresh
+			active = FALSE;
+		}
+		break;
+	}
+
+	/* Proceed through steps */
+	animate_screenflash++;
+	if (animate_screenflash == LF_END + 1) animate_screenflash = 0;
+}
+
 #define AL_END 12 /* duration of the lightning flash */
 #define AL_DECOUPLED /* because thunderclap happens too quickly, so decouple it from lightning animation speed */
 void do_animate_lightning(bool reset) {
 	int i;
 	static bool active = FALSE; /* Don't overwrite palette backup from overlapping lightning strikes */
 	static byte or[16], og[16], ob[16];
-#ifdef AL_FULL_PALETTE_ANIM
+#ifdef ANIM_FULL_PALETTE
 	static byte or0[16], og0[16], ob0[16];
 #endif
 #ifdef AL_DECOUPLED
@@ -3644,8 +3725,8 @@ void do_animate_lightning(bool reset) {
 	if (reset) {
 		if (active) {
 			if (c_cfg.palette_animation) {
-				for (i = 1; i < 16; i++) set_palette(i + AL_OFFSET, or[i], og[i], ob[i]);
-#ifdef AL_FULL_PALETTE_ANIM
+				for (i = 1; i < 16; i++) set_palette(i + ANIM_OFFSET, or[i], og[i], ob[i]);
+#ifdef ANIM_FULL_PALETTE
 				for (i = 1; i < 16; i++) set_palette(i, or0[i], og0[i], ob0[i]);
 #endif
 				set_palette(128, 0, 0, 0); //refresh
@@ -3660,25 +3741,25 @@ void do_animate_lightning(bool reset) {
 	case 1:
 		/* First thing: Backup all colours before temporarily manipulating them */
 		if (!active) {
-			for (i = 1; i < 16; i++) get_palette(i + AL_OFFSET, &or[i], &og[i], &ob[i]);
-#ifdef AL_FULL_PALETTE_ANIM
+			for (i = 1; i < 16; i++) get_palette(i + ANIM_OFFSET, &or[i], &og[i], &ob[i]);
+#ifdef ANIM_FULL_PALETTE
 			for (i = 1; i < 16; i++) get_palette(i, &or0[i], &og0[i], &ob0[i]);
 #endif
 			active = TRUE;
 		}
 
-		//set_palette(1 + AL_OFFSET, 0x99, 0x99, 0x99); //white(17)
-		set_palette(2 + AL_OFFSET, 0xCC, 0xCC, 0xFF); //slate(18)
-		set_palette(4 + AL_OFFSET, 0xFF, 0x77, 0x88); //red(20)
-		set_palette(5 + AL_OFFSET, 0x33, 0xFF, 0x33); //green(21)
-		set_palette(6 + AL_OFFSET, 0x44, 0x66, 0xFF); //blue(22)
-		set_palette(7 + AL_OFFSET, 0xAD, 0x88, 0x33); //umber(23)
-		set_palette(8 + AL_OFFSET, 0x88, 0x88, 0x88); //ldark(24)
-		set_palette(9 + AL_OFFSET, 0xEE, 0xEE, 0xEE); //lwhite(25)
-		set_palette(13 + AL_OFFSET, 0xBB, 0xFF, 0xBB); //lgreen(29)
-		set_palette(15 + AL_OFFSET, 0xF7, 0xCD, 0x85); //lumber(31)
+		//set_palette(1 + ANIM_OFFSET, 0x99, 0x99, 0x99); //white(17)
+		set_palette(2 + ANIM_OFFSET, 0xCC, 0xCC, 0xFF); //slate(18)
+		set_palette(4 + ANIM_OFFSET, 0xFF, 0x77, 0x88); //red(20)
+		set_palette(5 + ANIM_OFFSET, 0x33, 0xFF, 0x33); //green(21)
+		set_palette(6 + ANIM_OFFSET, 0x44, 0x66, 0xFF); //blue(22)
+		set_palette(7 + ANIM_OFFSET, 0xAD, 0x88, 0x33); //umber(23)
+		set_palette(8 + ANIM_OFFSET, 0x88, 0x88, 0x88); //ldark(24)
+		set_palette(9 + ANIM_OFFSET, 0xEE, 0xEE, 0xEE); //lwhite(25)
+		set_palette(13 + ANIM_OFFSET, 0xBB, 0xFF, 0xBB); //lgreen(29)
+		set_palette(15 + ANIM_OFFSET, 0xF7, 0xCD, 0x85); //lumber(31)
 
-#ifdef AL_FULL_PALETTE_ANIM
+#ifdef ANIM_FULL_PALETTE
 		//set_palette(1, 0x99, 0x99, 0x99); //white(17)
 		set_palette(2, 0xCC, 0xCC, 0xFF); //slate(18)
 		set_palette(4, 0xFF, 0x77, 0x88); //red(20)
@@ -3696,8 +3777,8 @@ void do_animate_lightning(bool reset) {
 	case AL_END:
 		/* Restore all colours to what they were before */
 		if (active) {
-			for (i = 1; i < 16; i++) set_palette(i + AL_OFFSET, or[i], og[i], ob[i]);
-#ifdef AL_FULL_PALETTE_ANIM
+			for (i = 1; i < 16; i++) set_palette(i + ANIM_OFFSET, or[i], og[i], ob[i]);
+#ifdef ANIM_FULL_PALETTE
 			for (i = 1; i < 16; i++) set_palette(i, or0[i], og0[i], ob0[i]);
 #endif
 			set_palette(128, 0, 0, 0); //refresh
@@ -3763,7 +3844,9 @@ void do_weather(bool no_weather) {
 
 	/* --- experimental stuff --- */
 
-		/* Testing: lightning lighting via palette animation */
+		/* Screen flash via palette animation */
+		if (animate_screenflash) do_animate_screenflash(FALSE);
+		/* Lightning lighting via palette animation */
 		if (animate_lightning) do_animate_lightning(FALSE);
 	}
 	if (no_weather) return;

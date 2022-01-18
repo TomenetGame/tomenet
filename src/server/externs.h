@@ -1215,6 +1215,8 @@ extern int Send_request_abort(int Ind);
 extern void Send_delayed_request_str(int Ind, int id, char *prompt, char *std);
 extern void Send_delayed_request_cfr(int Ind, int id, char *prompt, char default_choice);
 
+extern int Send_screenflash(int ind);
+
 extern void Handle_direction(int Ind, int dir);
 extern void Handle_clear_buffer(int Ind);
 extern int Send_sanity(int ind, byte attr, cptr msg);

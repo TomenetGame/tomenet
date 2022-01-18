@@ -417,7 +417,7 @@ static void prt_state(int Ind) {
 	bool p, s, r;
 
 	/* Paralysis */
-	if (p_ptr->paralyzed) p = TRUE;
+	if (p_ptr->paralyzed || p_ptr->suspended) p = TRUE;
 	else p = FALSE;
 
 	/* Searching */

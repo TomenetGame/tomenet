@@ -9000,6 +9000,25 @@ int Send_whats_under_you_feet(int Ind, char *o_name, bool crossmod_item, bool ca
 		return Packet_printf(&connp->c, "%c%c%c%c%s", PKT_WHATS_UNDER_YOUR_FEET, crossmod_item, cant_see, on_pile, o_name);
 }
 
+int Send_screenflash(int Ind) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for screenflash (%d.%d.%d)",
+			Ind, connp->state, connp->id));
+		return 0;
+	}
+
+	if (is_atleast(&connp->version, 4, 7, 4, 4, 0, 0))
+		return Packet_printf(&connp->c, "%c", PKT_SCREENFLASH);
+	return 1;
+}
+
+
+/* --------------------------------------------------------------------------*/
+
+
 /*
  * Return codes for the "Receive_XXX" functions are as follows:
  *

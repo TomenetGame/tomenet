@@ -259,6 +259,7 @@
 #define PKT_WHATS_UNDER_YOUR_FEET		201
 
 #define PKT_STAND_AUTO		202
+#define PKT_SCREENFLASH		203
 
 
 /*

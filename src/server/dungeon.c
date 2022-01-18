@@ -3935,7 +3935,14 @@ static void process_player_begin(int Ind) {
 	if (p_ptr->paralyzed)
 		p_ptr->energy = 0;
 #endif
-
+	/* Specialty when we want to sync events and keep players and monsters on a short hiatus for reading story or w/e */
+	if (p_ptr->suspended) {
+		if (p_ptr->suspended > turn) p_ptr->energy = 0;
+		else {
+			p_ptr->suspended = 0;
+			p_ptr->redraw |= PR_STATE;
+		}
+	}
 
 	/* Hack -- semi-constant hallucination */
 	if (p_ptr->image && (randint(10) < 1)) p_ptr->redraw |= (PR_MAP);

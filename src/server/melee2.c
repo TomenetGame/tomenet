@@ -11508,6 +11508,11 @@ void process_monsters(void) {
 
 		/* Added for Valinor; also used by target dummy - C. Blue */
 		if (r_ptr->flags7 & RF7_NEVER_ACT) m_ptr->energy = 0;
+		/* Specialty when we want to sync events and keep players and monsters on a short hiatus for reading story or w/e */
+		if (m_ptr->suspended) {
+			if (m_ptr->suspended > turn) m_ptr->energy = 0;
+			else m_ptr->suspended = 0;
+		}
 		/* And for death fate */
 		if (m_ptr->status == M_STATUS_FRIENDLY) {
 			cave_type *c_ptr;

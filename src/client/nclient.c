@@ -187,6 +187,8 @@ static void Receive_init(void) {
 	receive_tbl[PKT_WEATHERCOL]	= Receive_weather_colouring;
 	receive_tbl[PKT_MUSIC_VOL]	= Receive_music_vol;
 	receive_tbl[PKT_WHATS_UNDER_YOUR_FEET]	= Receive_whats_under_you_feet;
+
+	receive_tbl[PKT_SCREENFLASH]	= Receive_screenflash;
 }
 
 
@@ -3714,6 +3716,18 @@ int Receive_target_info(void) {
 
 	/* Move the cursor */
 	Term_gotoxy(x, y);
+
+	return 1;
+}
+
+int Receive_screenflash(void) {
+	int	n;
+	char	ch;
+
+	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
+
+	animate_screenflash = 1;
+	animate_screenflash_icky = screen_icky; /* Actually don't animate palette while screen is icky maybe.. */
 
 	return 1;
 }

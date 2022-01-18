@@ -3595,6 +3595,8 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 		m_ptr->energy = -rand_int(((level_speed(wpos) - 1750) * 3) / 2);//delay by 0..2/3s - " -, very lenient ^^
 	}
 #endif
+	/* short break at the start */
+	if (r_idx == RI_MIRROR) m_ptr->suspended = turn + cfg.fps * 3;
 
 
 	strcpy(buf, (r_name + r_ptr->name));
@@ -3715,6 +3717,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	}
 	if (r_idx == RI_PUMPKIN1 || r_idx == RI_PUMPKIN2 || r_idx == RI_PUMPKIN3)
 		s_printf("HALLOWEEN: The Great Pumpkin (%d) was created on %d,%d,%d (%d HP)\n", r_idx, wpos->wx, wpos->wy, wpos->wz, m_ptr->maxhp);
+	if (r_idx == RI_MIRROR) s_printf("Mirror was created on %d\n", dlev);
 
 	/* Handle floor feelings */
 	/* Special events don't necessarily influence floor feelings */
