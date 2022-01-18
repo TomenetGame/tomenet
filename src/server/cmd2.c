@@ -130,7 +130,7 @@ void do_cmd_go_up(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	cave_type *c_ptr;
-	struct worldpos *wpos = &p_ptr->wpos, old_wpos;
+	struct worldpos *wpos = &p_ptr->wpos, old_wpos = p_ptr->wpos;
 	bool tower = FALSE, dungeon = FALSE, surface = FALSE;
 	cave_type **zcave;
 #ifndef RPG_SERVER
@@ -385,6 +385,9 @@ void do_cmd_go_up(int Ind) {
 		}
 #endif
 
+		/* S(he) is no longer afk */
+		un_afk_idle(Ind);
+
 		/* disable WoR hint */
 		p_ptr->warning_wor = 1;
 		p_ptr->warning_wor2 = 1;
@@ -409,23 +412,7 @@ void do_cmd_go_up(int Ind) {
 			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
 		}}
 #endif
-	}
-
-	/* S(he) is no longer afk */
-	un_afk_idle(Ind);
-
-	/* Remove the player from the old location */
-	c_ptr->m_idx = 0;
-
-	/* Show everyone that's he left */
-	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
-
-	/* Forget his lite and viewing area */
-	forget_lite(Ind);
-	forget_view(Ind);
-
-	/* Hack -- take a turn */
-	p_ptr->energy -= level_speed(&p_ptr->wpos);
+	} else un_afk_idle(Ind); /* S(he) is no longer afk */
 
 	/* Success */
 	if (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS) {
@@ -672,19 +659,27 @@ void do_cmd_go_up(int Ind) {
 
 			p_ptr->new_level_method = LEVEL_PROB_TRAVEL;
 			msg_print(Ind, "You float upwards.");
-
-			/* A player has left this depth -- process partially here */
-			wpcopy(&old_wpos, wpos);
-			old_wpos.wz = z; /* restore original z, since we were looking ahead already */
 		}
 #endif
 	}
+
+	/* Remove the player from the old location */
+	c_ptr->m_idx = 0;
+
+	/* Show everyone that's he left */
+	everyone_lite_spot(&old_wpos, p_ptr->py, p_ptr->px);
+
+	/* Forget his lite and viewing area */
+	forget_lite(Ind);
+	forget_view(Ind);
+
+	/* Hack -- take a turn */
+	p_ptr->energy -= level_speed(&old_wpos);
 
 	/* A player has left this depth */
 #ifdef PROBTRAVEL_AVOIDS_OTHERS
 	if (p_ptr->new_level_method != LEVEL_PROB_TRAVEL) {
 #endif
-		wpcopy(&old_wpos, wpos);
 		wpos->wz++;
 #ifdef PROBTRAVEL_AVOIDS_OTHERS
 	}
@@ -868,7 +863,7 @@ void do_cmd_go_down(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	cave_type *c_ptr;
-	struct worldpos *wpos = &p_ptr->wpos, old_wpos;
+	struct worldpos *wpos = &p_ptr->wpos, old_wpos = p_ptr->wpos;
 	bool tower = FALSE, dungeon = FALSE, surface = FALSE;
 	cave_type **zcave;
 #ifndef RPG_SERVER
@@ -955,6 +950,7 @@ void do_cmd_go_down(int Ind) {
 	if (c_ptr->feat == FEAT_BETWEEN) {
 		if (d_ptr && !d_ptr->type && d_ptr->theme == DI_DEATH_FATE) {
 			un_afk_idle(Ind);
+
 			c_ptr->m_idx = 0;
 			everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
 			forget_lite(Ind);
@@ -967,6 +963,7 @@ void do_cmd_go_down(int Ind) {
 			p_ptr->new_level_flag = TRUE;
 			new_players_on_depth(wpos, 1, TRUE);
 			//forget_view(Ind); //the_sandman
+
 			msg_print(Ind, "You leave the party, passing through a gate obscured by magical fog...");
 			set_invuln_short(Ind, STAIR_GOI_LENGTH);
 			if (!players_on_depth(&old_wpos)) {
@@ -1007,6 +1004,9 @@ void do_cmd_go_down(int Ind) {
 					return;
 				}
 			}
+
+			/* S(he) is no longer afk */
+			un_afk_idle(Ind);
 
 			msg_format(Ind, "%s disintegrates in a flurry of colours...", p_ptr->inventory[i].number != 1 ? "One of your glass shards" : "Your glass shard");
 			inven_item_increase(Ind, i, -1);
@@ -1233,6 +1233,9 @@ void do_cmd_go_down(int Ind) {
 		}
 #endif
 
+		/* S(he) is no longer afk */
+		un_afk_idle(Ind);
+
 		/* disable WoR hint */
 		p_ptr->warning_wor = 1;
 		p_ptr->warning_wor2 = 1;
@@ -1257,23 +1260,7 @@ void do_cmd_go_down(int Ind) {
 			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
 		}}
 #endif
-	}
-
-	/* S(he) is no longer afk */
-	un_afk_idle(Ind);
-
-	/* Remove the player from the old location */
-	c_ptr->m_idx = 0;
-
-	/* Show everyone that's he left */
-	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
-
-	/* Forget his lite and viewing area */
-	forget_lite(Ind);
-	forget_view(Ind);
-
-	/* Hack -- take a turn */
-	p_ptr->energy -= level_speed(&p_ptr->wpos);
+	} else un_afk_idle(Ind); /* S(he) is no longer afk */
 
 	/* Success */
 	if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE) {
@@ -1519,19 +1506,27 @@ void do_cmd_go_down(int Ind) {
 
 			p_ptr->new_level_method = LEVEL_PROB_TRAVEL;
 			msg_print(Ind, "You float downwards.");
-
-			/* A player has left this depth -- process partially here */
-			wpcopy(&old_wpos, wpos);
-			old_wpos.wz = z; /* restore original z, since we were looking ahead already */
 		}
 #endif
 	}
+
+	/* Remove the player from the old location */
+	c_ptr->m_idx = 0;
+
+	/* Show everyone that's he left */
+	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
+
+	/* Forget his lite and viewing area */
+	forget_lite(Ind);
+	forget_view(Ind);
+
+	/* Hack -- take a turn */
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	/* A player has left this depth */
 #ifdef PROBTRAVEL_AVOIDS_OTHERS
 	if (p_ptr->new_level_method != LEVEL_PROB_TRAVEL) {
 #endif
-		wpcopy(&old_wpos, wpos);
 		wpos->wz--;
 #ifdef PROBTRAVEL_AVOIDS_OTHERS
 	}
