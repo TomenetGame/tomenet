@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 17. January 2022 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 18. January 2022 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.7.4b - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -9713,8 +9713,9 @@ property, ie ego-power), so if you want to create a melee-oriented priest,
 you will usually pick blunt weapons (or 'Martial Arts' instead, for weaponless
 combat, making more for a monk-style character).
 
-However, if you have a choice or don't care about a few skill points more, you
-may want to consider the following table to help you make a decision:
+However, aside from just skill point calculations there are some advantages and
+drawbacks to each weapon class, so you may want to consider the following table
+to help you make a decision:
 
 
 Type       1h/1.5+2h abundance  2h top damage/weight  Base item level 1+1.5h/2h
@@ -9724,13 +9725,16 @@ Axes*      medium / medium      high / heavy          low / high
 Blunt      medium / high        high / very heavy     low / mid
 Polearms*  low / high           high / medium         low / mid
 -------------------------------------------------------------------------------
+
  * Note that these weapon types can (partially) obtain VORPAL mod from 'Sharp'
  or 'Spinning' ego power (see (5.8)):
+
  ** For randarts, only swords can spawn the VORPAL (see (5.8)) mod:
  Damage-wise 2h-swords with VORPAL flag can make up somewhat for the damage gap
  towards the top tier weapons of the other weapon classes.
  VORPAL mod makes an especially big difference in scenarios that are low on
  critical hits (ie no CRIT item flag or Critical-strike skill being applied).
+
 
 For example if you stick with dual-wielding two weapons, you might want to go
 with swords and definitely not with polearms, since there are a lot of 1h
