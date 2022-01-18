@@ -4064,36 +4064,30 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			if (!strcmp(token[1], "rs")) {
-				p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = 0;
+				p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = p_ptr->test_hurt = 0;
 				p_ptr->test_turn = turn;
 				p_ptr->test_turn_idle = 0;
 				msg_print(Ind, "Attack count, damage and healing done have been reset to zero.");
-#ifdef TEST_SERVER
 				p_ptr->test_attacks = 0;
-#endif
 				return;
 			}
 			if (!strcmp(token[1], "rsw")) {
-				p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = 0;
+				p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = p_ptr->test_hurt = 0;
 				p_ptr->test_turn = 0;
 				p_ptr->test_turn_idle = 0;
 				msg_print(Ind, "Attack count, damage and healing done have been reset to zero");
 				msg_print(Ind, " and put on hold until your next attack, which will start the counter.");
-#ifdef TEST_SERVER
 				p_ptr->test_attacks = 0;
-#endif
 				return;
 			}
 			if (!strcmp(token[1], "rsx")) {
-				p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = 0;
+				p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = p_ptr->test_hurt = 0;
 				p_ptr->test_turn = 0;
 				p_ptr->test_turn_idle = cfg.fps * 5;
 				msg_print(Ind, "Attack count, damage and healing done have been reset to zero");
 				msg_print(Ind, " and put on hold until your next attack, which will start the counter.");
 				msg_print(Ind, " Ceasing attacks for 5 seconds will stop and auto-evaluate the result.");
-#ifdef TEST_SERVER
 				p_ptr->test_attacks = 0;
-#endif
 				return;
 			}
 
@@ -11589,6 +11583,7 @@ void tym_evaluate(int Ind) {
 	msg_print(Ind, EVALPF"Your total damage and healing done since login or last reset:");
 	msg_format(Ind, EVALPF"    \377oTotal damage done   : %8d", p_ptr->test_dam);
 	msg_format(Ind, EVALPF"    \377gTotal healing done  : %8d", p_ptr->test_heal);
+	if (is_admin(p_ptr)) msg_format(Ind, EVALPF"    \377RTotal damage taken  : %8d", p_ptr->test_hurt);
 	msg_print(Ind, EVALPF"  Damage and healing done over # of attacks and amount of time passed:");
 
 	if (p_ptr->test_count == 0)
@@ -11604,12 +11599,12 @@ void tym_evaluate(int Ind) {
 		    tmp, ((p_ptr->test_heal * 10) / p_ptr->test_count) % 10);
 		else msg_format(Ind, EVALPF"    \377g    Average healing done: %8ld", tmp);
 	}
-#ifdef TEST_SERVER
-	if (p_ptr->test_attacks == 0)
-		msg_print(Ind, EVALPF"    \377wNo attempts to attack were made yet.");
-	else
-		msg_format(Ind, EVALPF"    \377wHit with %d out of %d attacks (%d%%)", p_ptr->test_count, p_ptr->test_attacks, (100 * p_ptr->test_count) / p_ptr->test_attacks);
-#endif
+	if (is_admin(p_ptr)) { /* for now admin only - under construction? */
+		if (p_ptr->test_attacks == 0)
+			msg_print(Ind, EVALPF"    \377wNo attempts to attack were made yet.");
+		else
+			msg_format(Ind, EVALPF"    \377wHit with %d out of %d attacks (%d%%)", p_ptr->test_count, p_ptr->test_attacks, (100 * p_ptr->test_count) / p_ptr->test_attacks);
+	}
 
 	if (p_ptr->test_turn == 0) {
 		msg_print(Ind, EVALPF"    \377sNo time-based result available,");

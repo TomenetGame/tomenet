@@ -6582,9 +6582,7 @@ void do_cmd_fire(int Ind, int dir) {
 					cave_type *c_ptr = &zcave[y][x];
 					q_ptr = Players[0 - c_ptr->m_idx];
 
- #ifdef TEST_SERVER
 					p_ptr->test_attacks++;
- #endif
 					/* AD hack -- "pass over" players in same party */
 #ifdef KURZEL_PK
 					if ((
@@ -6856,9 +6854,7 @@ void do_cmd_fire(int Ind, int dir) {
 				/* Do not hit pets - the_sandman */
 				if (m_ptr->pet) break;
 
-#ifdef TEST_SERVER
 				p_ptr->test_attacks++;
-#endif
 				/* Check the visibility */
 				visible = p_ptr->mon_vis[c_ptr->m_idx];
 
@@ -7991,9 +7987,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 			} else {
 				c_ptr = &zcave[y][x];
 
-#ifdef TEST_SERVER
 				p_ptr->test_attacks++;
-#endif
 				q_ptr = Players[0 - c_ptr->m_idx];
 
 				/* Check the visibility */
@@ -8074,9 +8068,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 			monster_type *m_ptr = &m_list[c_ptr->m_idx];
                         monster_race *r_ptr = race_inf(m_ptr);
 
-#ifdef TEST_SERVER
 			p_ptr->test_attacks++;
-#endif
 			/* Check the visibility */
 			visible = p_ptr->mon_vis[c_ptr->m_idx];
 

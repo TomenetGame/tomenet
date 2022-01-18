@@ -1858,7 +1858,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	int old_num, new_num;
 
 
-	/* Note: We ignore admin_invuln and also invuln here */
+	/* Note: We ignore safe zones, admin_invuln and also invuln here */
 	if (IS_PLAYER(Ind_attacker)) {
 		player_type *q_ptr = Players[Ind_attacker];
 
@@ -1867,6 +1867,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 		q_ptr->test_dam += damage;
 		q_ptr->idle_attack = 0;
 	}
+	p_ptr->test_hurt += damage;
 
 	/* Amulet of Immortality */
 	if (p_ptr->admin_invuln) return;

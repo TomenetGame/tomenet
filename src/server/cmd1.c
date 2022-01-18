@@ -2895,9 +2895,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 		chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
 		if (p_ptr->blind) chance >>= 1;
 
-#ifdef TEST_SERVER
 		p_ptr->test_attacks++;
-#endif
 		/* Test for hit */
 		pierced = FALSE;
 #ifndef PVP_AC_REDUCTION
@@ -4066,9 +4064,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 		if (helpless || !magik(block)) block = 0;
 		if (helpless || !magik(parry)) parry = 0;
 
-#ifdef TEST_SERVER
 		p_ptr->test_attacks++;
-#endif
 		/* Test for hit */
 		if (instakills(Ind) || backstab ||
 		    test_hit_melee(chance, m_ptr->ac, p_ptr->mon_vis[c_ptr->m_idx]) ||

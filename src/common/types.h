@@ -3397,9 +3397,8 @@ struct player_type {
 	char admin_parm[MAX_CHARS];	/* optional special admin command parameter (hacky o_O) */
 
 	u32b test_count, test_dam, test_heal, test_turn, test_turn_idle;
-#ifdef TEST_SERVER
-	u32b test_attacks;
-#endif
+	u32b test_hurt; /* total damage we <should have> received, ignoring safe zones, invuln and admin_invuln. */
+	u32b test_attacks; /* count # of attempted attacks. (test_count is # of successful attacks.) */
 
 	/* give players certain warnings, meant to guide newbies along, and remember
 	   if we already gave a specific warning, so we don't spam the player with it
