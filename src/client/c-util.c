@@ -9155,7 +9155,8 @@ static void do_cmd_options_colourblindness(void) {
 #endif
 		l++;
 
-		Term_putstr(0, l++, -1, TERM_WHITE, "(\377yc\377w) Set a specific palette entry");
+		if (c_cfg.palette_animation) Term_putstr(0, l++, -1, TERM_WHITE, "(\377yc\377w) Set a specific palette entry");
+		else l++;
 		l++;
 
 		Term_putstr(60, 1, -1, TERM_L_WHITE, " Current palette:");
@@ -9168,19 +9169,25 @@ static void do_cmd_options_colourblindness(void) {
 			    client_color_map[i] & 0x0000FF));
 		}
 
-		Term_putstr(0, l++, -1, TERM_WHITE, "(\377yn\377w) Set palette to normal colours");
-		Term_putstr(0, l++, -1, TERM_WHITE, "(\377yd\377w) Set palette to Deuteranopia colours");
-		Term_putstr(0, l++, -1, TERM_WHITE, "(\377yp\377w) Set palette to Protanopia colours");
-		Term_putstr(0, l++, -1, TERM_WHITE, "(\377yt\377w) Set palette to Tritanopia colours");
-		l++;
+		if (c_cfg.palette_animation) {
+			Term_putstr(0, l++, -1, TERM_WHITE, "(\377yn\377w) Set palette to normal colours");
+			Term_putstr(0, l++, -1, TERM_WHITE, "(\377yd\377w) Set palette to Deuteranopia colours");
+			Term_putstr(0, l++, -1, TERM_WHITE, "(\377yp\377w) Set palette to Protanopia colours");
+			Term_putstr(0, l++, -1, TERM_WHITE, "(\377yt\377w) Set palette to Tritanopia colours");
+			l++;
 
 #ifdef WINDOWS
-		Term_putstr(0, l++, -1, TERM_WHITE, "(\377ys\377w) Save (modified) palette to current INI file");
-		Term_putstr(0, l++, -1, TERM_WHITE, "(\377yr\377w) Reset palette to values from current INI file");
+			Term_putstr(0, l++, -1, TERM_WHITE, "(\377ys\377w) Save (modified) palette to current INI file");
+			Term_putstr(0, l++, -1, TERM_WHITE, "(\377yr\377w) Reset palette to values from current INI file");
 #else
-		Term_putstr(0, l++, -1, TERM_WHITE, "(\377ys\377w) Save (modified) palette to current rc-file");
-		Term_putstr(0, l++, -1, TERM_WHITE, "(\377yr\377w) Reset palette to values from current rc-file");
+			Term_putstr(0, l++, -1, TERM_WHITE, "(\377ys\377w) Save (modified) palette to current rc-file");
+			Term_putstr(0, l++, -1, TERM_WHITE, "(\377yr\377w) Reset palette to values from current rc-file");
 #endif
+		} else {
+			Term_putstr(0, l++, -1, TERM_L_RED, "Sorry, palette-related colour options are not");
+			Term_putstr(0, l++, -1, TERM_L_RED, "modifiable in command-line client mode (GCU).");
+			l += 5;
+		}
 
 		/* Hide cursor */
 		Term->scr->cx = Term->wid;
@@ -9204,6 +9211,7 @@ static void do_cmd_options_colourblindness(void) {
 			continue;
 
 		case 'c':
+			if (!c_cfg.palette_animation) continue;
 			l = OCB_CMD_Y;
 			Term_putstr(0, l, -1, TERM_L_WHITE, "Enter the colour index (1-15): ");
 			strcpy(buf, "1");
@@ -9270,6 +9278,7 @@ static void do_cmd_options_colourblindness(void) {
 			break;
 
 		case 'n':
+			if (!c_cfg.palette_animation) continue;
 #ifndef EXTENDED_COLOURS_PALANIM
 			for (i = 0; i < 16; i++) {
 #else
@@ -9281,6 +9290,7 @@ static void do_cmd_options_colourblindness(void) {
 			break;
 
 		case 'd':
+			if (!c_cfg.palette_animation) continue;
 #ifndef EXTENDED_COLOURS_PALANIM
 			for (i = 0; i < 16; i++) {
 #else
@@ -9292,6 +9302,7 @@ static void do_cmd_options_colourblindness(void) {
 			break;
 
 		case 'p':
+			if (!c_cfg.palette_animation) continue;
 #ifndef EXTENDED_COLOURS_PALANIM
 			for (i = 0; i < 16; i++) {
 #else
@@ -9303,6 +9314,7 @@ static void do_cmd_options_colourblindness(void) {
 			break;
 
 		case 't':
+			if (!c_cfg.palette_animation) continue;
 #ifndef EXTENDED_COLOURS_PALANIM
 			for (i = 0; i < 16; i++) {
 #else
@@ -9314,6 +9326,7 @@ static void do_cmd_options_colourblindness(void) {
 			break;
 
 		case 's':
+			if (!c_cfg.palette_animation) continue;
 #ifdef WINDOWS
 			for (i = 1; i < 16; i++) {
 				sprintf(buf, "Colormap_%d", i);
@@ -9330,6 +9343,7 @@ static void do_cmd_options_colourblindness(void) {
 			break;
 
 		case 'r':
+			if (!c_cfg.palette_animation) continue;
 #ifndef EXTENDED_COLOURS_PALANIM
 			for (i = 0; i < 16; i++) {
 #else
@@ -9362,7 +9376,7 @@ static void do_cmd_options_colourblindness(void) {
 		if (!go) break;
 
 		/* Redraw ALL windows with new palette colours */
-		refresh_palette();
+		if (!c_cfg.palette_animation) refresh_palette();
 	}
 }
 

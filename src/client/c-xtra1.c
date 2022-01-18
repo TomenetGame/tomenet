@@ -3643,11 +3643,13 @@ void do_animate_lightning(bool reset) {
 	/* Prematurely end lightning animation? */
 	if (reset) {
 		if (active) {
-			if (c_cfg.palette_animation) for (i = 1; i < 16; i++) set_palette(i + AL_OFFSET, or[i], og[i], ob[i]);
+			if (c_cfg.palette_animation) {
+				for (i = 1; i < 16; i++) set_palette(i + AL_OFFSET, or[i], og[i], ob[i]);
 #ifdef AL_FULL_PALETTE_ANIM
-			for (i = 1; i < 16; i++) set_palette(i, or0[i], og0[i], ob0[i]);
+				for (i = 1; i < 16; i++) set_palette(i, or0[i], og0[i], ob0[i]);
 #endif
-			set_palette(128, 0, 0, 0); //refresh
+				set_palette(128, 0, 0, 0); //refresh
+			}
 			active = FALSE;
 		}
 		return;
@@ -3658,25 +3660,23 @@ void do_animate_lightning(bool reset) {
 	case 1:
 		/* First thing: Backup all colours before temporarily manipulating them */
 		if (!active) {
-			if (c_cfg.palette_animation) for (i = 1; i < 16; i++) get_palette(i + AL_OFFSET, &or[i], &og[i], &ob[i]);
+			for (i = 1; i < 16; i++) get_palette(i + AL_OFFSET, &or[i], &og[i], &ob[i]);
 #ifdef AL_FULL_PALETTE_ANIM
 			for (i = 1; i < 16; i++) get_palette(i, &or0[i], &og0[i], &ob0[i]);
 #endif
 			active = TRUE;
 		}
 
-		if (c_cfg.palette_animation) {
-			//set_palette(1 + AL_OFFSET, 0x99, 0x99, 0x99); //white(17)
-			set_palette(2 + AL_OFFSET, 0xCC, 0xCC, 0xFF); //slate(18)
-			set_palette(4 + AL_OFFSET, 0xFF, 0x77, 0x88); //red(20)
-			set_palette(5 + AL_OFFSET, 0x33, 0xFF, 0x33); //green(21)
-			set_palette(6 + AL_OFFSET, 0x44, 0x66, 0xFF); //blue(22)
-			set_palette(7 + AL_OFFSET, 0xAD, 0x88, 0x33); //umber(23)
-			set_palette(8 + AL_OFFSET, 0x88, 0x88, 0x88); //ldark(24)
-			set_palette(9 + AL_OFFSET, 0xEE, 0xEE, 0xEE); //lwhite(25)
-			set_palette(13 + AL_OFFSET, 0xBB, 0xFF, 0xBB); //lgreen(29)
-			set_palette(15 + AL_OFFSET, 0xF7, 0xCD, 0x85); //lumber(31)
-		}
+		//set_palette(1 + AL_OFFSET, 0x99, 0x99, 0x99); //white(17)
+		set_palette(2 + AL_OFFSET, 0xCC, 0xCC, 0xFF); //slate(18)
+		set_palette(4 + AL_OFFSET, 0xFF, 0x77, 0x88); //red(20)
+		set_palette(5 + AL_OFFSET, 0x33, 0xFF, 0x33); //green(21)
+		set_palette(6 + AL_OFFSET, 0x44, 0x66, 0xFF); //blue(22)
+		set_palette(7 + AL_OFFSET, 0xAD, 0x88, 0x33); //umber(23)
+		set_palette(8 + AL_OFFSET, 0x88, 0x88, 0x88); //ldark(24)
+		set_palette(9 + AL_OFFSET, 0xEE, 0xEE, 0xEE); //lwhite(25)
+		set_palette(13 + AL_OFFSET, 0xBB, 0xFF, 0xBB); //lgreen(29)
+		set_palette(15 + AL_OFFSET, 0xF7, 0xCD, 0x85); //lumber(31)
 
 #ifdef AL_FULL_PALETTE_ANIM
 		//set_palette(1, 0x99, 0x99, 0x99); //white(17)
@@ -3696,7 +3696,7 @@ void do_animate_lightning(bool reset) {
 	case AL_END:
 		/* Restore all colours to what they were before */
 		if (active) {
-			if (c_cfg.palette_animation) for (i = 1; i < 16; i++) set_palette(i + AL_OFFSET, or[i], og[i], ob[i]);
+			for (i = 1; i < 16; i++) set_palette(i + AL_OFFSET, or[i], og[i], ob[i]);
 #ifdef AL_FULL_PALETTE_ANIM
 			for (i = 1; i < 16; i++) set_palette(i, or0[i], og0[i], ob0[i]);
 #endif
