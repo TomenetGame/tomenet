@@ -2724,6 +2724,7 @@ void do_cmd_uninscribe(int Ind, int item) {
  * Inscribe an object with a comment
  */
 void do_cmd_inscribe(int Ind, int item, cptr inscription) {
+	char tmp[MSG_LEN];
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 	char o_name[ONAME_LEN], modins[MAX_CHARS];
@@ -2750,6 +2751,14 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 	    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE)
 	    ) && !is_admin(p_ptr)) {
 		msg_print(Ind, "Cannot inscribe this item.");
+		return;
+	}
+
+	/* Since someone inscribed a piece of wood for shops subparly.. */
+	strcpy(tmp, inscription);
+	if (handle_censor(tmp)) {
+		s_printf("cmd_inscribe(): censored <%s>.\n", inscription);
+		msg_print(Ind, "Invalid inscription, check your wording please.");
 		return;
 	}
 
