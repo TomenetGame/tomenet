@@ -3656,7 +3656,7 @@ void do_animate_screenflash(bool reset) {
 	}
 
 	/* Animate palette */
-	if (!c_cfg.disable_lightning && !animate_screenflash_icky && c_cfg.palette_animation) switch (animate_screenflash) {
+	if (/* !c_cfg.disable_lightning && */ !animate_screenflash_icky && c_cfg.palette_animation) switch (animate_screenflash) {
 	case 1:
 		/* First thing: Backup all colours before temporarily manipulating them */
 		if (!active) {
