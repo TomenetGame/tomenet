@@ -9164,6 +9164,6 @@ extern int PlayerUID;
 //#define __GRID_DEBUG(Ind, wpos, feat, location, info)	if ((feat) == FEAT_HIGHLY_PROTECTED && !in_trainingtower(wpos)) s_printf("__GRID_DEBUG: %s, %d - (%d) '%s' (%d,%d,%d)\n", location, info, Ind, (Ind) > 0 ? Players[Ind]->name : "-", (wpos)->wx, (wpos)->wy, (wpos)->wz);
 
 #ifdef CLIENT_SIDE
- #define AUTOINS_MATCH_LEN 53
+ #define AUTOINS_MATCH_LEN 55
  #define AUTOINS_TAG_LEN 17
 #endif

@@ -7361,14 +7361,17 @@ Chain_Macro:
 	if (were_recording) Send_redraw(0);
 }
 
-
+#define INTEGRATED_SELECTOR /* Allows for a match length of 55 instead of 53 */
 #define AUTOINS_PAGESIZE 20
 void auto_inscriptions(void) {
 	int i, max_page = (MAX_AUTO_INSCRIPTIONS + AUTOINS_PAGESIZE - 1) / AUTOINS_PAGESIZE - 1;
 	static int cur_line = 0, cur_page = 0;
+#ifdef INTEGRATED_SELECTOR
+	static int prev_line = 0;
+#endif
 	bool redraw = TRUE, quit = FALSE;
 
-	char tmp[160], buf[1024], *buf_ptr;
+	char tmp[160], buf[1024], *buf_ptr, c;
 	char match_buf[AUTOINS_MATCH_LEN + 8], tag_buf[AUTOINS_TAG_LEN + 2];
 
 	char fff[1024];
@@ -7398,26 +7401,63 @@ void auto_inscriptions(void) {
 			Term_putstr(2, 23, -1, TERM_L_UMBER, "(l/s/S) Load/save auto-inscriptions from/to an '.ins' file / to 'global.ins'");
 
 			for (i = 0; i < AUTOINS_PAGESIZE; i++) {
+#ifdef INTEGRATED_SELECTOR
+				if (i == cur_line) c = '4'; //TERM_SELECTOR
+				else
+#endif
+				c = 's'; //TERM_SLATE
 				/* build a whole line */
-				strcpy(match_buf, "\377s<\377w");
+				strcpy(match_buf, format("\377%c<\377w", c));
 				if (auto_inscription_invalid[cur_page * AUTOINS_PAGESIZE + i]) strcat(match_buf, "\377R");
 				strcat(match_buf, auto_inscription_match[cur_page * AUTOINS_PAGESIZE + i]);
-				strcat(match_buf, "\377s>");
+				strcat(match_buf, format("\377%c>", c));
 				strcpy(tag_buf, "\377y");
 				strcat(tag_buf, auto_inscription_tag[cur_page * AUTOINS_PAGESIZE + i]);
-				sprintf(fff, "%3d %-60s %s%s<%s\377s>", cur_page * AUTOINS_PAGESIZE + i + 1, match_buf,
+				sprintf(fff, "%3d %-62s %s%s<%s\377%c>", cur_page * AUTOINS_PAGESIZE + i + 1, match_buf, /* spacing = AUTOINS_MATCH_LEN + 7 */
 				    auto_inscription_autodestroy[cur_page * AUTOINS_PAGESIZE + i] ? "\377RA\377-" : (auto_inscription_autopickup[cur_page * AUTOINS_PAGESIZE + i] ? "\377Ga\377-" : " "),
 				    auto_inscription_invalid[cur_page * AUTOINS_PAGESIZE + i] ? "  " : "", /* silyl sprintf %- formatting.. */
-				    tag_buf);
+				    tag_buf, c);
 
+#ifdef INTEGRATED_SELECTOR
+				Term_putstr(0, i + 1, -1, auto_inscription_force[cur_page * AUTOINS_PAGESIZE + i] ? TERM_L_BLUE : TERM_WHITE, fff);
+#else
 				Term_putstr(2, i + 1, -1, auto_inscription_force[cur_page * AUTOINS_PAGESIZE + i] ? TERM_L_BLUE : TERM_WHITE, fff);
+#endif
 			}
 		}
+#ifdef INTEGRATED_SELECTOR
+		else {
+			for (i = 0; i < AUTOINS_PAGESIZE; i++) {
+				if (i == cur_line) c = '4'; //TERM_SELECTOR
+				else if (i == prev_line) c = 's'; //TERM_SLATE
+				else continue;
+				/* build a whole line */
+				strcpy(match_buf, format("\377%c<\377w", c));
+				if (auto_inscription_invalid[cur_page * AUTOINS_PAGESIZE + i]) strcat(match_buf, "\377R");
+				strcat(match_buf, auto_inscription_match[cur_page * AUTOINS_PAGESIZE + i]);
+				strcat(match_buf, format("\377%c>", c));
+				strcpy(tag_buf, "\377y");
+				strcat(tag_buf, auto_inscription_tag[cur_page * AUTOINS_PAGESIZE + i]);
+				sprintf(fff, "%3d %-62s %s%s<%s\377%c>", cur_page * AUTOINS_PAGESIZE + i + 1, match_buf, /* spacing = AUTOINS_MATCH_LEN + 7 */
+				    auto_inscription_autodestroy[cur_page * AUTOINS_PAGESIZE + i] ? "\377RA\377-" : (auto_inscription_autopickup[cur_page * AUTOINS_PAGESIZE + i] ? "\377Ga\377-" : " "),
+				    auto_inscription_invalid[cur_page * AUTOINS_PAGESIZE + i] ? "  " : "", /* silyl sprintf %- formatting.. */
+				    tag_buf, c);
+
+#ifdef INTEGRATED_SELECTOR
+				Term_putstr(0, i + 1, -1, auto_inscription_force[cur_page * AUTOINS_PAGESIZE + i] ? TERM_L_BLUE : TERM_WHITE, fff);
+#else
+				Term_putstr(2, i + 1, -1, auto_inscription_force[cur_page * AUTOINS_PAGESIZE + i] ? TERM_L_BLUE : TERM_WHITE, fff);
+#endif
+			}
+		}
+		prev_line = cur_line;
+#endif
 		redraw = TRUE;
 
 		/* display editing 'cursor' */
+#ifndef INTEGRATED_SELECTOR
 		Term_putstr(0, cur_line + 1, -1, TERM_SELECTOR, ">");
-
+#endif
 		/* make cursor invisible */
 		Term_set_cursor(0);
 		inkey_flag = TRUE;
@@ -7508,7 +7548,9 @@ void auto_inscriptions(void) {
 			break;
 		case 'n':
 		case '2':
-			Term_putstr(0, cur_line + 1, -1, TERM_ORANGE, " ");
+#ifndef INTEGRATED_SELECTOR
+			Term_putstr(0, cur_line + 1, -1, TERM_SELECTOR, " ");
+#endif
 			cur_line++;
 			redraw = FALSE;
 			if (cur_line >= AUTOINS_PAGESIZE) {
@@ -7519,7 +7561,9 @@ void auto_inscriptions(void) {
 			}
 			break;
 		case '8':
-			Term_putstr(0, cur_line + 1, -1, TERM_ORANGE, " ");
+#ifndef INTEGRATED_SELECTOR
+			Term_putstr(0, cur_line + 1, -1, TERM_SELECTOR, " ");
+#endif
 			cur_line--;
 			redraw = FALSE;
 			if (cur_line < 0) {
@@ -7582,10 +7626,11 @@ void auto_inscriptions(void) {
 		case '6':
 		case '\n':
 		case '\r':
+//INTEGRATED_SELECTOR: - 2
 			/* Clear previous matching string */
-			Term_putstr(6, cur_line + 1, -1, TERM_L_GREEN, "                                                     ");
+			Term_putstr(6 - 2, cur_line + 1, -1, TERM_L_GREEN, "                                                       ");
 			/* Go to the correct location */
-			Term_gotoxy(7, cur_line + 1);
+			Term_gotoxy(7 - 2, cur_line + 1);
 			strcpy(buf, auto_inscription_match[cur_page * AUTOINS_PAGESIZE + cur_line]);
 			/* Get a new matching string */
 			if (!askfor_aux(buf, AUTOINS_MATCH_LEN - 1, 0)) continue;
@@ -7599,8 +7644,9 @@ void auto_inscriptions(void) {
 				while (*(buf_ptr + strlen(buf_ptr) - 1) == '#') *(buf_ptr + strlen(buf_ptr) - 1) = '\0';
 			}
 
-			Term_putstr(6, cur_line + 1, -1, TERM_L_GREEN, "                                                     ");
-			Term_putstr(7, cur_line + 1, -1, TERM_WHITE, buf_ptr);
+//INTEGRATED_SELECTOR: - 2
+			Term_putstr(6 - 2, cur_line + 1, -1, TERM_L_GREEN, "                                                       ");
+			Term_putstr(7 - 2, cur_line + 1, -1, TERM_WHITE, buf_ptr);
 			/* ok */
 			strcpy(auto_inscription_match[cur_page * AUTOINS_PAGESIZE + cur_line], buf_ptr);
 
@@ -7637,7 +7683,9 @@ void auto_inscriptions(void) {
 			for (i = 0; i <= INVEN_TOTAL; i++) apply_auto_inscriptions(i, FALSE);
 
 			/* comfort hack - fake advancing ;) */
-			Term_putstr(0, cur_line + 1, -1, TERM_ORANGE, " ");
+#ifndef INTEGRATED_SELECTOR
+			Term_putstr(0, cur_line + 1, -1, TERM_SELECTOR, " ");
+#endif
 			cur_line++;
 			if (cur_line >= AUTOINS_PAGESIZE) {
 				cur_line = 0;
@@ -7668,7 +7716,9 @@ void auto_inscriptions(void) {
 				auto_inscription_autodestroy[i] = FALSE;
 			}
 			/* comfort hack - jump to first line */
-			Term_putstr(0, cur_line + 1, -1, TERM_ORANGE, " ");
+#ifndef INTEGRATED_SELECTOR
+			Term_putstr(0, cur_line + 1, -1, TERM_SELECTOR, " ");
+#endif
 			cur_line = cur_page = 0;
 			redraw = TRUE;
 			break;
