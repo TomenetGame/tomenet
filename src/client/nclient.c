@@ -3481,7 +3481,7 @@ int Receive_store_action(void) {
 
 int Receive_store(void) {
 	int	n, price;
-	char	ch, pos, name[ONAME_LEN], tval, sval, powers[MAX_CHARS];
+	char	ch, pos, name[ONAME_LEN], tval, sval, powers[MAX_CHARS_WIDE];
 	byte	attr;
 	s16b	wgt, num, pval;
 
@@ -3505,8 +3505,8 @@ int Receive_store(void) {
 	store.stock[(int)pos].tval = tval;
 	store.stock[(int)pos].attr = attr;
 	store.stock[(int)pos].pval = pval;
-	strncpy(store_powers[(int) pos], powers, MAX_CHARS - 1);
-	store_powers[(int) pos][MAX_CHARS - 1] = 0;
+	strncpy(store_powers[(int) pos], powers, MAX_CHARS_WIDE - 1);
+	store_powers[(int) pos][MAX_CHARS_WIDE - 1] = 0;
 
 	/* Request a redraw of the store inventory */
 	redraw_store = TRUE;

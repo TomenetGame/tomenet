@@ -5052,18 +5052,43 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, &forge, fff);
 
 	/* specialty: recognize custom spell books and display their contents! - C. Blue */
-	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval)) {
-		if (!o_ptr->xtra1) fprintf(fff, "It contains no spells yet.\n");
-		else fprintf(fff,"It contains spells:\n");
-		if (o_ptr->xtra1) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra1 - 1)));
-		if (o_ptr->xtra2) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra2 - 1)));
-		if (o_ptr->xtra3) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra3 - 1)));
-		if (o_ptr->xtra4) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra4 - 1)));
-		if (o_ptr->xtra5) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra5 - 1)));
-		if (o_ptr->xtra6) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra6 - 1)));
-		if (o_ptr->xtra7) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra7 - 1)));
-		if (o_ptr->xtra8) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra8 - 1)));
-		if (o_ptr->xtra9) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra9 - 1)));
+	if (o_ptr->tval == TV_BOOK) {
+		if (is_custom_tome(o_ptr->sval)) {
+			if (!o_ptr->xtra1) fprintf(fff, "It contains no spells yet.\n");
+			else fprintf(fff,"It contains spells:\n");
+			if (o_ptr->xtra1) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra1 - 1)));
+			if (o_ptr->xtra2) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra2 - 1)));
+			if (o_ptr->xtra3) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra3 - 1)));
+			if (o_ptr->xtra4) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra4 - 1)));
+			if (o_ptr->xtra5) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra5 - 1)));
+			if (o_ptr->xtra6) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra6 - 1)));
+			if (o_ptr->xtra7) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra7 - 1)));
+			if (o_ptr->xtra8) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra8 - 1)));
+			if (o_ptr->xtra9) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra9 - 1)));
+		} else if (o_ptr->sval != SV_SPELLBOOK && is_admin(p_ptr)) { /* Predefined book (handbook or tome) */
+			char powers[MSG_LEN], tmp[MAX_CHARS], *pp;
+
+			powers[0] = 0;
+			power_inscribe(o_ptr, TRUE, powers); //TRUE:redux
+			pp = powers;
+			/* split long line */
+			do {
+				strncpy(tmp, pp, MAX_CHARS - 1);
+				if (strlen(pp) < 80) {
+					fprintf(fff, " %s\n", tmp);
+					break;
+				}
+
+				/* keep reducing string char by char until we hit a ',' separator, for a clean cut */
+				while (tmp[strlen(tmp) - 1] != ',' && tmp[strlen(tmp) - 1] != 0 && strlen(tmp) >= 60) tmp[strlen(tmp) - 1] = 0;
+				/* if we didn't find a separator, just reset to taking the whole line */
+				if (strlen(tmp) < 60) strncpy(tmp, pp, MAX_CHARS - 1);
+				tmp[MAX_CHARS - 1] = 0;
+
+				fprintf(fff, " %s\n", tmp);
+				pp += strlen(tmp);
+			} while (TRUE);
+		}
 	}
 
 	/* Hack: Stop here if the item wasn't *ID*ed and we still were allowed to read so far (player stores maybe?) */

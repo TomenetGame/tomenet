@@ -2376,7 +2376,7 @@ static void display_entry(int Ind, int pos) {
 	object_type	*o_ptr;
 	s64b		x;
 
-	char		o_name[ONAME_LEN], powers[MAX_CHARS];
+	char		o_name[ONAME_LEN], powers[MAX_CHARS_WIDE];
 	byte		attr;
 #ifdef IDDC_DED_DISCOUNT
 	int		wgt = -1;

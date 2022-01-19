@@ -153,7 +153,7 @@ extern c_store_extra c_store;
 extern unsigned char store_price_mul;
 extern int store_prices[STORE_INVEN_MAX];
 extern char store_names[STORE_INVEN_MAX][ONAME_LEN];
-extern char store_powers[STORE_INVEN_MAX][MAX_CHARS];
+extern char store_powers[STORE_INVEN_MAX][MAX_CHARS_WIDE];
 extern s16b store_num;
 
 extern char spell_info[MAX_REALM + 9][9][9][80];
