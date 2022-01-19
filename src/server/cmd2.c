@@ -137,6 +137,9 @@ void do_cmd_go_up(int Ind) {
 	bool one_way = FALSE;
 #endif
 	int i;
+#ifdef PROBTRAVEL_AVOIDS_OTHERS
+	int z;
+#endif
 #ifdef NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
 	struct dun_level *l_ptr;
 #endif
@@ -218,6 +221,7 @@ void do_cmd_go_up(int Ind) {
 	    (!p_ptr->prob_travel || (c_ptr->info & CAVE_STCK)))
 	{
 		struct worldpos twpos;
+
 		wpcopy(&twpos, wpos);
 		if (twpos.wz < 0) twpos.wz++;
 		if (!p_ptr->ghost) {
@@ -618,7 +622,7 @@ void do_cmd_go_up(int Ind) {
 			   probtravel into it, we'll get the "You float into.." message followed by the
 			   failure message, which is a bit ugly. :-p */
 
-			int i, z = wpos->wz, z_max;
+			int i, z_max;
 			player_type *q_ptr;
 			bool skip, arrived = FALSE;
 
@@ -651,8 +655,12 @@ void do_cmd_go_up(int Ind) {
 					break;
 				}
 			} while (wpos->wz < z_max);
+
+			z = wpos->wz; /* Remember new depth in case of successful probtravel */
+			wpos->wz = old_wpos.wz; /* restore our depth for now, it will be set to z again when handling successful probtravel. */
+
+			/* Unsuccessful probtravel */
 			if (!arrived) {
-				wpos->wz = z; //restore our depth
 				msg_print(Ind, "There is a magical discharge in the air as probability travel fails!");
 				return;
 			}
@@ -667,14 +675,14 @@ void do_cmd_go_up(int Ind) {
 	c_ptr->m_idx = 0;
 
 	/* Show everyone that's he left */
-	everyone_lite_spot(&old_wpos, p_ptr->py, p_ptr->px);
+	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
 
 	/* Forget his lite and viewing area */
 	forget_lite(Ind);
 	forget_view(Ind);
 
 	/* Hack -- take a turn */
-	p_ptr->energy -= level_speed(&old_wpos);
+	p_ptr->energy -= level_speed(wpos);
 
 	/* A player has left this depth */
 #ifdef PROBTRAVEL_AVOIDS_OTHERS
@@ -682,7 +690,7 @@ void do_cmd_go_up(int Ind) {
 #endif
 		wpos->wz++;
 #ifdef PROBTRAVEL_AVOIDS_OTHERS
-	}
+	} else wpos->wz = z; /* Set depth to probtravel result, possibly having skipped some floors. */
 #endif
 	new_players_on_depth(&old_wpos, -1, TRUE);
 	p_ptr->new_level_flag = TRUE;
@@ -870,6 +878,9 @@ void do_cmd_go_down(int Ind) {
 	bool one_way = FALSE; //ironman, no_up, force_down
 #endif
 	int i;
+#ifdef PROBTRAVEL_AVOIDS_OTHERS
+	int z;
+#endif
 #ifdef NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
 	struct dun_level *l_ptr;
 #endif
@@ -1466,7 +1477,7 @@ void do_cmd_go_down(int Ind) {
 			   probtravel into it, we'll get the "You float into.." message followed by the
 			   failure message, which is a bit ugly. :-p */
 
-			int i, z = wpos->wz, z_min;
+			int i, z_min;
 			player_type *q_ptr;
 			bool skip, arrived = FALSE;
 
@@ -1498,8 +1509,12 @@ void do_cmd_go_down(int Ind) {
 					break;
 				}
 			} while (wpos->wz > z_min);
+
+			z = wpos->wz; /* Remember new depth in case of successful probtravel */
+			wpos->wz = old_wpos.wz; /* restore our depth for now, it will be set to z again when handling successful probtravel. */
+
+			/* Unsuccessful probtravel */
 			if (!arrived) {
-				wpos->wz = z; //restore our depth
 				msg_print(Ind, "There is a magical discharge in the air as probability travel fails!");
 				return;
 			}
@@ -1529,7 +1544,7 @@ void do_cmd_go_down(int Ind) {
 #endif
 		wpos->wz--;
 #ifdef PROBTRAVEL_AVOIDS_OTHERS
-	}
+	} else wpos->wz = z; /* Set depth to probtravel result, possibly having skipped some floors. */
 #endif
 	new_players_on_depth(&old_wpos, -1, TRUE);
 	p_ptr->new_level_flag = TRUE;
