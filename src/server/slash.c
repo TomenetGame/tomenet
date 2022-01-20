@@ -6212,10 +6212,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				WIPE(o_ptr, object_type);
 
 				if (!tk) {
-					msg_print(Ind, "\377oUsage:    /nwish [<#skip>:]<item name>");
-					msg_print(Ind, "\377oExample:  /nwish 1:probing");
+					msg_print(Ind, "\377oUsage:    /nwish [<#skip>:][#amount ]<item name>");
+					msg_print(Ind, "\377oExample:  /nwish 1:3 probing");
 					return;
 				}
+
+				/* check for skips */
 				if ((s = strchr(message3, ':'))) {
 					k = atoi(message3);
 					item = s + 1;;
@@ -6223,6 +6225,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					k = 0;
 					item = message3;
 				}
+				/* check for amount */
+				if ((tk = atoi(item))) {
+					item = strchr(item, ' ');
+					if (!item) return; //bad syntax
+					item += 1;
+				} else tk = 1;
 
 				/* todo: actually allow ego power prefix/postfix */
 
@@ -6277,12 +6285,18 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				object_known(o_ptr);
 				o_ptr->owner = 0;
 				o_ptr->level = 1;
+				o_ptr->number = tk;
 
 #ifdef NEW_MDEV_STACKING
 				if (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF) o_ptr->pval *= o_ptr->number;
 #endif
-				(void)inven_carry(Ind, o_ptr);
+				k = inven_carry(Ind, o_ptr);
+				if (k >= 0) {
+					char o_name[ONAME_LEN];
 
+					object_desc(Ind, o_name, o_ptr, TRUE, 3);
+					msg_format(Ind, "You have %s (%c).", o_name, index_to_label(k));
+				}
 				return;
 			}
 			/* wish a true artifact by name */
@@ -6356,12 +6370,18 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				object_known(o_ptr);
 				o_ptr->owner = 0;
 				//o_ptr->level = 1;
+				o_ptr->number = 1;
 
 #ifdef NEW_MDEV_STACKING
 				if (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF) o_ptr->pval *= o_ptr->number;
 #endif
-				(void)inven_carry(Ind, o_ptr);
+				k = inven_carry(Ind, o_ptr);
+				if (k >= 0) {
+					char o_name[ONAME_LEN];
 
+					object_desc(Ind, o_name, o_ptr, TRUE, 3);
+					msg_format(Ind, "You have %s (%c).", o_name, index_to_label(k));
+				}
 				return;
 			}
 			else if (prefix(messagelc, "/trap")) { // ||	prefix(messagelc, "/tr")) conflicts with /trait maybe
