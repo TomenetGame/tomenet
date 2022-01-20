@@ -7695,8 +7695,14 @@ void auto_inscriptions(void) {
 			}
 			break;
 		case 'd':
-			strcpy(auto_inscription_match[cur_page * AUTOINS_PAGESIZE + cur_line], "");
-			strcpy(auto_inscription_tag[cur_page * AUTOINS_PAGESIZE + cur_line], "");
+			auto_inscription_match[cur_page * AUTOINS_PAGESIZE + cur_line][0] = 0;
+			auto_inscription_tag[cur_page * AUTOINS_PAGESIZE + cur_line][0] = 0;
+			auto_inscription_autopickup[cur_page * AUTOINS_PAGESIZE + cur_line] = FALSE;
+			auto_inscription_autodestroy[cur_page * AUTOINS_PAGESIZE + cur_line] = FALSE;
+			auto_inscription_force[cur_page * AUTOINS_PAGESIZE + cur_line] = FALSE;
+#ifdef REGEX_SEARCH
+			auto_inscription_invalid[cur_page * AUTOINS_PAGESIZE + cur_line] = FALSE;
+#endif
 #if 0
 			/* also auto-advance by 1 line, for convenience */
 			cur_line++;
@@ -7714,6 +7720,10 @@ void auto_inscriptions(void) {
 				auto_inscription_tag[i][0] = 0;
 				auto_inscription_autopickup[i] = FALSE;
 				auto_inscription_autodestroy[i] = FALSE;
+				auto_inscription_force[i] = FALSE;
+#ifdef REGEX_SEARCH
+				auto_inscription_invalid[i] = FALSE;
+#endif
 			}
 			/* comfort hack - jump to first line */
 #ifndef INTEGRATED_SELECTOR
