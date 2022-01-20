@@ -8966,7 +8966,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		int who, ox = m_ptr->fx, oy = m_ptr->fy;
 
 		m_ptr->extra++; //we begin here at 3 basically
-		if (m_ptr->extra == 10) floor_msg_format(wpos, "The guy in blue robes mumbles something about having a cool cave beer..");
+		if (m_ptr->extra == 10) floor_msg_format(wpos, "The guy in blue robes mumbles something about having a \377Bcool \377Lcave beer\377w..");
 		if (m_ptr->extra < 6) ;
 		else if (m_ptr->extra < 26) { //move right
 			zcave[oy][ox].m_idx = 0;
