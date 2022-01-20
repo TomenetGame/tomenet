@@ -2521,11 +2521,12 @@
 #define EFF_LAST		0x00000002	/* The wave lasts */
 #define EFF_STORM		0x00000004	/* The area follows the player */
 #define EFF_WALL		0x00000008	/* A cloud shaped like a beam */
-#define EFF_CROSSHAIR_A		0x00000010
-#define EFF_CROSSHAIR_B		0x00000020
-#define EFF_CROSSHAIR_C		0x00000040
+#define EFF_CROSSHAIR_A		0x00000010	/* Arcade Server */
+#define EFF_CROSSHAIR_B		0x00000020	/* Arcade Server */
+#define EFF_CROSSHAIR_C		0x00000040	/* Arcade Server */
 #define EFF_THINWAVE		0x00000080	/* Same as wave, but thickness 1 instead of 3 (hits each target only once instead of three times) */
 #define EFF_VORTEX		0x00000100	/* The area follows the target - Kurzel */
+#define EFF_SEEKER		0x00000200	/* Real-time-moving homing projectile */
 
 #define EFF_FALLING_STAR	0x00400000
 #define EFF_THUNDER_VISUAL	0x00800000	/* For 'Thunderstorm' spell electrocution */
@@ -5975,8 +5976,7 @@
 #define RF8_PSEUDO_UNIQUE	0x04000000	/* Not a unique monster (does not appear in the uniques list), but named/looks like one (added for Santa Claus); monster form cannot be learnt by mimics. Cannot be cloned. */
 #define RF8_GENO_PERSIST	0x08000000	/* Don't automatically genocide/compact this monster */
 #define RF8_GENO_NO_THIN		0x10000000	/* Don't genocide this monster when thinning out surface spawns */
-//#define RF8_XXX				0x20000000	/* xxx */
-//^hole
+//HOLE
 #define RF8_WILD_SWAMP			0x40000000	/* ToDo: Implement Swamp */
 #define RF8_WILD_TOO			0x80000000
 
@@ -5997,16 +5997,16 @@
  */
 #define RF9_DROP_CORPSE		0x00000001
 #define RF9_DROP_SKELETON	0x00000002
-#define RF9_HAS_LITE		0x00000004	/* Carries a lite */
-#define RF9_MIMIC		0x00000008	/* REALLY looks like an object ... only nastier */
+#define RF9_HAS_LITE		0x00000004		/* Carries a lite */
+#define RF9_MIMIC		0x00000008		/* REALLY looks like an object ... only nastier */
 #define RF9_HAS_EGG			0x00000010	/* Can be monster's eggs -- used in r_info but not in the code */
 #define RF9_IMPRESSED			0x00000020	/* The monster can follow you on each level until he dies */
 #define RF9_SUSCEP_ACID			0x00000040	/* Susceptible to acid */
 #define RF9_SUSCEP_ELEC			0x00000080	/* Susceptible to lightning */
-#define RF9_SUSCEP_POIS		0x00000100	/* Susceptible to poison */
-#define RF9_KILL_TREES		0x00000200	/* Monster can eat trees */
-#define RF9_WYRM_PROTECT	0x00000400	/* The monster is protected by great wyrms of power: They'll be summoned if it's killed */
-#define RF9_NO_CREDIT		0x00000800	/* Monster won't give any kill/form credit. */
+#define RF9_SUSCEP_POIS		0x00000100		/* Susceptible to poison */
+#define RF9_KILL_TREES		0x00000200		/* Monster can eat trees */
+#define RF9_WYRM_PROTECT	0x00000400		/* The monster is protected by great wyrms of power: They'll be summoned if it's killed */
+#define RF9_NO_CREDIT		0x00000800		/* Monster won't give any kill/form credit. */
 #define RF9_ONLY_DEPTH			0x00001000	/* The monster can only be generated at the GIVEN depth */
 #define RF9_SPECIAL_GENE		0x00002000	/* The monster can only be generated in special conditions like quests, special dungeons, ... NOTE: currently no effect! */
 #define RF9_NO_REDUCE			0x00004000	/* The monster cannot be afflicted by non-temporary stat-reducing effects */
@@ -6055,10 +6055,11 @@
 #define RF0_DROP_2			0x00002000	/* Drop exactly 2 items/gold piles */
 #define RF0_S_DEMONS			0x00004000	/* Summon Demons -- unused */
 #define RF0_S_DRAGONS			0x00008000	/* Summon Dragons -- unused */
-#define RF0_S_HI_DEMON		0x00010000	/* Summon Greater Demon (Tzeentch) */
-#define RF0_S_HI_DRAGON		0x00020000	/* Summon Ancient Dragon -- unused */
-#define RF0_BR_ICE		0x00040000	/* For Bahamuth */
-#define RF0_BR_WATER		0x00080000	/* Finally no more antimagic field vs water hounds :p */
+#define RF0_S_HI_DEMON		0x00010000		/* Summon Greater Demon (Tzeentch) */
+#define RF0_S_HI_DRAGON		0x00020000		/* Summon Ancient Dragon -- unused */
+#define RF0_BR_ICE		0x00040000		/* For Bahamuth */
+#define RF0_BR_WATER		0x00080000		/* Finally no more antimagic field vs water hounds :p */
+#define RF0_ADMINISTRATIVE_PUSH		0x00100000	/* Push back */
 
 #define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT)		/* | RF0_NO_NEST */
 

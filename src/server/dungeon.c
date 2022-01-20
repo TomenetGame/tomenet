@@ -1174,6 +1174,9 @@ static void process_effects(void) {
 				} else if ((e_ptr->flags & EFF_FALLING_STAR)) {
 					c_ptr->effect = 0;
 					everyone_lite_spot(wpos, j, i);
+				} else if ((e_ptr->flags & EFF_SEEKER)) {
+					c_ptr->effect = 0;
+					everyone_lite_spot(wpos, j, i);
  				}
 			}
 
@@ -1654,6 +1657,16 @@ static void process_effects(void) {
 					}
 				}
 			}
+		}
+
+		/* Seeker missiles */
+		else if (e_ptr->flags & EFF_SEEKER) {
+			if (e_ptr->tx < e_ptr->cx) e_ptr->cx--;
+			if (e_ptr->tx > e_ptr->cx) e_ptr->cx++;
+			if (e_ptr->ty < e_ptr->cy) e_ptr->cy--;
+			if (e_ptr->ty > e_ptr->cy) e_ptr->cy++;
+			c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
+			apply_effect(k, &who, wpos, e_ptr->cx, e_ptr->cy, c_ptr);
 		}
 
 		/* Drift snowflakes */

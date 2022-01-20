@@ -1235,6 +1235,65 @@ if (season_halloween) {
 	return (spells[rand_int(num)]);
 }
 
+static void adminstrative_push(int Ind, monster_type *m_ptr, cave_type **zcave) {
+	int x, y, d, xs, ys;
+	player_type *p_ptr = Players[Ind];
+	struct worldpos *wpos = &p_ptr->wpos;
+
+	/* RF0_ADMINISTRATIVE_PUSH */
+	if (m_ptr->r_idx != RI_BLUE) return;
+
+	if (p_ptr->px == m_ptr->fx || p_ptr->py == m_ptr->fy) d = 2;
+	else d = 1;
+
+	if (p_ptr->px < m_ptr->fx) x = p_ptr->px - d;
+	else if (p_ptr->px > m_ptr->fx) x = p_ptr->px + d;
+	else x = p_ptr->px;
+	if (p_ptr->py < m_ptr->fy) y = p_ptr->py - d;
+	else if (p_ptr->py > m_ptr->fy) y = p_ptr->py + d;
+	else y = p_ptr->py;
+
+	if (!in_bounds(y, x)) {
+		xs = x;
+		ys = y;
+		scatter(wpos, &ys, &xs, y, x, 1, FALSE);
+		x = xs;
+		y = ys;
+		if (!in_bounds(y, x)) return; /* paranoia? */
+	}
+
+	/* Pushed against a wall so we cannot move? Or actual displacement? */
+#ifdef USE_SOUND_2010
+	sound(Ind, "flash_bomb", NULL, SFX_TYPE_MON_SPELL, TRUE); /* or throw_boulder perhaps */
+#endif
+	if (x == p_ptr->px && y == p_ptr->py) msg_print(Ind, "\377wYou are struck by an irresistable force!");
+	else {
+		msg_print(Ind, "\377wYou are pushed back by an irresistable force!");
+
+		ys = p_ptr->py;
+		xs = p_ptr->px;
+		p_ptr->py = y;
+		p_ptr->px = x;
+		grid_affects_player(Ind, xs, ys);
+
+		zcave[ys][xs].m_idx = 0;
+		zcave[y][x].m_idx = 0 - Ind;
+		cave_midx_debug(wpos, y, x, -Ind);
+		everyone_lite_spot(wpos, ys, xs);
+		everyone_lite_spot(wpos, y, x);
+
+		verify_panel(Ind);
+		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+		p_ptr->update |= (PU_DISTANCE);
+		p_ptr->window |= (PW_OVERHEAD);
+		if (!p_ptr->death) handle_stuff(Ind);
+	}
+	break_cloaking(Ind, 0);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
+	set_stun(Ind, p_ptr->stun + 10);
+}
+
 /* Check if player intercept's a monster's attempt to do something */
 //bool monst_check_grab(int Ind, int m_idx, cptr desc)
 /* Don't allow interception of multiple players to stack? */
@@ -1394,6 +1453,8 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 			    format("\377%c%s intercepts %s'%s attempt to %s!", COLOUR_IC_NEAR, q_ptr->name, m_name_real, bgen_real, desc),
 			    format("\377%c%s intercepts %s'%s attempt to %s!", COLOUR_IC_NEAR, q_ptr->name, m_name, bgen, desc),
 			    format("\377%c%s intercepts it!", COLOUR_IC_NEAR, q_ptr->name));
+
+			adminstrative_push(i, m_ptr, zcave);
 			return TRUE;
 		}
 #else
@@ -1439,6 +1500,8 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 		    format("\377%c%s intercepts %s'%s attempt to %s!", COLOUR_IC_NEAR, Players[i_top]->name, m_name_real, bgen_real, desc),
 		    format("\377%c%s intercepts %s'%s attempt to %s!", COLOUR_IC_NEAR, Players[i_top]->name, m_name, bgen, desc),
 		    format("\377%c%s intercepts it!", COLOUR_IC_NEAR, Players[i_top]->name));
+
+		adminstrative_push(i_top, m_ptr, zcave);
 		return TRUE;
 	}
  #ifdef COMBO_AM_IC_CAP
@@ -1475,7 +1538,7 @@ static bool monst_check_antimagic(int Ind, int m_idx) {
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* this one just cannot be suppressed */
-	if (m_ptr->r_idx == RI_LIVING_LIGHTNING) return FALSE;
+	if (m_ptr->r_idx == RI_LIVING_LIGHTNING || m_ptr->r_idx == RI_BLUE) return FALSE;
 
 	/* bad hack: Also abuse this function to check for silence-effect - C. Blue */
 	if (m_ptr->silenced > 0 && magik(ANTIMAGIC_CAP)) { //could also use INTERCEPT_CAP instead
@@ -2198,16 +2261,18 @@ bool make_attack_spell(int Ind, int m_idx) {
 	/* Abort if no spell was chosen */
 	if (!thrown_spell) return (FALSE);
 
-#if 0
-	if (thrown_spell > 127 && l_ptr && l_ptr->flags1 & LF1_NO_MAGIC)
-		return(FALSE);
-#endif	// 0
+#if 0 /* currently, NO_MAGIC only inhibits player's wraithform and probtravel */
+	if (thrown_spell >= RF5_OFFSET && l_ptr && l_ptr->flags1 & LF1_NO_MAGIC) return(FALSE);
+#endif
 
 	/* Extract the monster level */
 	rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
 
 #ifndef STUPID_MONSTER_SPELLS
-	if (!stupid && (thrown_spell >= 128 || thrown_spell == 98)) { //98 = S_ANIMAL
+	/* Check for spell failure chance and generic interception for 'real' spells */
+	if (!stupid &&
+	    ((thrown_spell >= RF5_OFFSET && thrown_spell != RF6_OFFSET + 4 && thrown_spell != RF6_OFFSET + 5) /* Blink and TPort have their own checks! */
+	    || thrown_spell == RF4_OFFSET + 2)) { /* S_ANIMAL, which is misplaced in the RF4 category, so we need to hardcode its check here */
 		int factor = 0;
 
 		/* Extract the 'stun' factor */
@@ -2215,10 +2280,12 @@ bool make_attack_spell(int Ind, int m_idx) {
 		if (m_ptr->stunned) factor += 15;
 		if (m_ptr->r_idx == RI_MIRROR) factor /= 5;
 
-		if (magik(25 - (rlev + 3) / 4) || magik(factor)) {
+		/* Fail chance */
+		if (m_ptr->r_idx != RI_BLUE && (magik(25 - (rlev + 3) / 4) || magik(factor))) {
 			if (direct) msg_format(Ind, "%^s tries to cast a spell, but fails.", m_name);
 			return (TRUE);
 		}
+
  #ifdef GENERIC_INTERCEPTION
 		if (monst_check_grab(m_idx, 85, "cast")) return (TRUE);
  #else
@@ -3287,7 +3354,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 */
 		//if (monst_check_grab(Ind, m_idx)) break;
 		/* it's low b/c check for spellcast is already done */
-		if (monst_check_grab(m_idx, 50, "teleport")) break;
+		if (monst_check_grab(m_idx, 50, "cast")) break;
 		if (teleport_away(m_idx, 10) && visible) {
 			//disturb(Ind, 1, 0);
 			if (blind) msg_print(Ind, "You hear something blink away.");
@@ -3316,7 +3383,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		}
 */
 		//if (monst_check_grab(Ind, m_idx)) break;
-		if (monst_check_grab(m_idx, 50, "teleport")) break;
+		if (monst_check_grab(m_idx, 50, "cast")) break;
 		if (teleport_away(m_idx, MAX_SIGHT * 2 + 5) && visible) {
 			//disturb(Ind, 1, 0);
 			if (blind) msg_print(Ind, "You hear something teleport away.");

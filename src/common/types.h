@@ -643,18 +643,20 @@ struct cave_type {
 /* Lasting spell effects(clouds, ..) */
 typedef struct effect_type effect_type;
 struct effect_type {
-	s16b	interval;	/* How quickly does it tick (10 = normal, once per 10 frames at 0 ft depth) */
-	s16b    time;           /* For how long */
-	s16b    dam;            /* How much damage */
-	u32b    type;           /* Of which type */ /* GF_XXX, for now */
-	s32b	  whot;           /* Effect target, p_ptr->target_who - Kurzel */
-	s16b    cy;             /* Center of the cast */
-	s16b    cx;             /* Center of the cast */
-	s16b    rad;            /* Radius */
-	u32b    flags;          /* Flags */
-
-	s32b	who;		/* Who caused this effect (0-id if player) */
+	s32b who;		/* Who caused this effect (0-id if player) */
 	worldpos wpos;		/* Where in the world */
+
+	s16b interval;		/* How quickly does it tick (10 = normal, once per 10 frames at 0 ft depth) */
+	s16b time;		/* For how long */
+	s16b dam;		/* How much damage */
+	u32b type;		/* Of which damage type - GF_XXX for now */
+	s16b rad;		/* Radius */
+	u32b flags;		/* Flags */
+
+	s16b cy;		/* Center of the cast */
+	s16b cx;		/* Center of the cast */
+	s32b whot;		/* Effect target, p_ptr->target_who - Kurzel */
+	s16b tx, ty, cflags;	/* Target x,y and control-flags */
 };
 
 /*
@@ -744,7 +746,7 @@ struct object_type {
 	s16b ac;			/* Normal AC */
 	byte dd, ds;			/* Damage dice/sides */
 
-	u16b ident;			/* Special flags  */
+	u16b ident;			/* Special flags */
 	s32b timeout;			/* Timeout Counter: amount of fuel left until it is depleted. */
 	s32b timeout_magic;		/* Timeout Counter: amount of power left until it is depleted, can be discharged. */
 	s32b recharging;		/* Auto-recharge-state of auto-recharging items (rods and activatable items). */
