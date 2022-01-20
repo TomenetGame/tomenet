@@ -1661,12 +1661,42 @@ static void process_effects(void) {
 
 		/* Seeker missiles */
 		else if (e_ptr->flags & EFF_SEEKER) {
+#if 0
+			player_type *p_ptr;
+
+			/* imprint target player coords until we get relatively close, then it's free flight and player can more easily evade */
+			if (e_ptr->time > 10 && e_ptr->whot && e_ptr->whot <= NumPlayers) {
+				p_ptr = Players[e_ptr->whot];
+				if (inarea(&p_ptr->wpos, wpos)) {
+					e_ptr->tx = p_ptr->px;
+					e_ptr->ty = p_ptr->py;
+				}
+			}
+#endif
+
+			/* needed? */
+			e_ptr->rad = 0;
+
+			/* steer */
 			if (e_ptr->tx < e_ptr->cx) e_ptr->cx--;
 			if (e_ptr->tx > e_ptr->cx) e_ptr->cx++;
 			if (e_ptr->ty < e_ptr->cy) e_ptr->cy--;
 			if (e_ptr->ty > e_ptr->cy) e_ptr->cy++;
+
+			/* imprint on map grid */
 			c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
 			apply_effect(k, &who, wpos, e_ptr->cx, e_ptr->cy, c_ptr);
+
+			/* Impact? */
+			if (!e_ptr->time) {
+				int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO;
+
+				(void)project(PROJECTOR_UNUSUAL, 1, wpos, e_ptr->cy, e_ptr->cx, 10, GF_LITE, flg, "");
+#ifdef USE_SOUND_2010
+				//if (p_ptr->sfx_monsterattack)
+				sound_near_site(e_ptr->cy, e_ptr->cx, wpos, 0, "fireworks_big", "cast_ball", SFX_TYPE_MON_SPELL, FALSE);
+#endif
+			}
 		}
 
 		/* Drift snowflakes */

@@ -6207,13 +6207,21 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				object_type forge;
 				object_type *o_ptr = &forge;
 				int exact = -1, prefix = -1, closest = -1, closest_dis = 9999;
-				char *s;
+				char *s, *item;
 
 				WIPE(o_ptr, object_type);
 
 				if (!tk) {
-					msg_print(Ind, "\377oUsage: /nwish <item name>");
+					msg_print(Ind, "\377oUsage:    /nwish [<#skip>:]<item name>");
+					msg_print(Ind, "\377oExample:  /nwish 1:probing");
 					return;
+				}
+				if ((s = strchr(message3, ':'))) {
+					k = atoi(message3);
+					item = s + 1;;
+				} else {
+					k = 0;
+					item = message3;
 				}
 
 				/* todo: actually allow ego power prefix/postfix */
@@ -6224,14 +6232,29 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					k_ptr = &k_info[i];
 					//if (!k_ptr->k_idx) continue;
 
-					s = my_strcasestr(k_name + k_ptr->name, message3);
+					s = my_strcasestr(k_name + k_ptr->name, item);
 					if (!s) continue;
-					if (!strcasecmp(k_name + k_ptr->name, message3)) {
+
+					if (!strcasecmp(k_name + k_ptr->name, item)) {
+						if (k) {
+							k--;
+							continue;
+						}
 						exact = i;
 						break;
 					}
-					else if (prefix == -1 && s == k_name + k_ptr->name) prefix = i;
+					else if (prefix == -1 && s == k_name + k_ptr->name) {
+						if (k) {
+							k--;
+							continue;
+						}
+						prefix = i;
+					}
 					else if (s - (k_name + k_ptr->name) < closest_dis) {
+						if (k) {
+							k--;
+							continue;
+						}
 						closest = i;
 						closest_dis = s - (k_name + k_ptr->name);
 					}
@@ -6267,13 +6290,21 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				artifact_type *a_ptr = NULL;
 				object_type forge, *o_ptr = &forge;
 				int kidx;
-				char o_name[ONAME_LEN];
+				char o_name[ONAME_LEN], *s, *item;
 
 				WIPE(o_ptr, object_type);
 
 				if (!tk) {
-					msg_print(Ind, "\377oUsage: /awish <artifact name>");
+					msg_print(Ind, "\377oUsage:    /awish [<#skip>:]<artifact name>");
+					msg_print(Ind, "\377oExample:  /awish 1:Dungeon Master");
 					return;
+				}
+				if ((s = strchr(message3, ':'))) {
+					k = atoi(message3);
+					item = s + 1;;
+				} else {
+					k = 0;
+					item = message3;
 				}
 
 				/* Hack -- Guess at "correct" values for tval_to_char[] */
@@ -6287,7 +6318,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					//object_desc(0, o_name, o_ptr, TRUE, 0);
 					object_desc(0, o_name, o_ptr, TRUE, 256);//short name is enough
 
-					if (!my_strcasestr(o_name, message3)) continue;
+					if (!my_strcasestr(o_name, item)) continue;
+					if (k) {
+						k--;
+						continue;
+					}
 					break;
 				}
 				if (i == max_a_idx) {
@@ -11472,6 +11507,17 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/testmisc")) {
+				char pattacker[80];
+
+				strcpy(pattacker, "");
+
+				int flg = PROJECT_GRID | PROJECT_STAY;
+
+				project_time_effect = EFF_SEEKER;
+				project_interval = 20;
+				project_time = 100; /* just any value long enough to traverse the screen */
+
+				(void)project(Ind, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px + 10, 0, GF_LITE, flg, pattacker);
 				return;
 			}
 		}

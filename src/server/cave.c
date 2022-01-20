@@ -8824,11 +8824,18 @@ int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpo
 	effects[i].whot = 0;
 	effects[i].cx = cx;
 	effects[i].cy = cy;
-	if ((who < 0 && who > PROJECTOR_UNUSUAL) && (project_time_effect & EFF_VORTEX)) {
+	if ((project_time_effect & EFF_VORTEX) && (who < 0 && who > PROJECTOR_UNUSUAL)) {
 		if (target_okay(0-who)) {
 			effects[i].whot = Players[0-who]->target_who;
 			effects[i].cy = Players[0-who]->target_row;
 			effects[i].cx = Players[0-who]->target_col;
+		}
+	}
+	if ((project_time_effect & EFF_SEEKER) && (who < 0 && who > PROJECTOR_UNUSUAL)) {
+		if (target_okay(0-who)) {
+			effects[i].whot = Players[0-who]->target_who;
+			effects[i].ty = Players[0-who]->py;
+			effects[i].tx = Players[0-who]->px;
 		}
 	}
 	effects[i].rad = rad;
