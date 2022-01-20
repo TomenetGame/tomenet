@@ -9030,8 +9030,15 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	*/
 	if (!(zcave = getcave(wpos))) return;
 
+
 	if (m_ptr->r_idx == RI_BLUE && m_ptr->extra > 1) {
 		int who, ox = m_ptr->fx, oy = m_ptr->fy;
+
+#ifdef PROCESS_MONSTERS_DISTRIBUTE
+		if ((turn - (turn % MONSTER_TURNS)) % (MONSTER_TURNS * 2)) return;
+#else
+		if (turn % (MONSTER_TURNS * 2)) return;
+#endif
 
 		m_ptr->extra++; //we begin here at 3 basically
 		if (m_ptr->extra == 10) floor_msg_format(wpos, "The guy in blue robes mumbles something about having a \377Bcool \377Lcave beer\377w..");
@@ -11451,7 +11458,9 @@ void process_monsters_astar(void) {
 
 
 /*
- * Process all the "live" monsters, once per game turn.
+ * Process all the "live" monsters,
+ * once per game turn if PROCESS_MONSTERS_DISTRIBUTE or
+ * once per (turn % MONSTER_TURNS) otherwise.
  *
  * During each game turn, we scan through the list of all the "live" monsters,
  * (backwards, so we can excise any "freshly dead" monsters), energizing each
