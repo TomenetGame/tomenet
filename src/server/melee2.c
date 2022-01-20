@@ -1940,6 +1940,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	char		m_name[MNAME_LEN], m_name_real[MNAME_LEN];
 	char		m_poss[MNAME_LEN];
 	char		ddesc[MNAME_LEN];
+	bool		admin = m_ptr->r_idx == RI_BLUE;
 
 	/* Target location */
 	int x = p_ptr->px;
@@ -2281,7 +2282,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		if (m_ptr->r_idx == RI_MIRROR) factor /= 5;
 
 		/* Fail chance */
-		if (m_ptr->r_idx != RI_BLUE && (magik(25 - (rlev + 3) / 4) || magik(factor))) {
+		if (!admin && (magik(25 - (rlev + 3) / 4) || magik(factor))) {
 			if (direct) msg_format(Ind, "%^s tries to cast a spell, but fails.", m_name);
 			return (TRUE);
 		}
