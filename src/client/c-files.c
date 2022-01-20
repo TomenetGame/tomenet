@@ -1850,10 +1850,10 @@ void save_auto_inscriptions(cptr name) {
 /* Load Auto-Inscription file (*.ins) - C. Blue */
 void load_auto_inscriptions(cptr name) {
 	FILE *fp;
-	char buf[1024];
+	char buf[1024], *bufptr;
 	char file_name[256], vtag[5];
 	int i, c, j, c_eff, version, vmaj, vmin, vex;
-	bool replaced;
+	bool replaced, force;
 #ifdef REGEX_SEARCH
 	int ires = -999;
 	regex_t re_src;
@@ -1983,31 +1983,27 @@ void load_auto_inscriptions(cptr name) {
 	c = 0; /* current internal auto-inscription slot to set */
 	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
 		replaced = FALSE;
+		force = FALSE;
 
 		/* try to read a match */
-		if (fgets(buf, AUTOINS_MATCH_LEN + 1, fp) == NULL) {
-			//fclose(fp);
-			break;
+		if (fgets(buf, AUTOINS_MATCH_LEN + 2, fp) == NULL) break;
+		if (buf[0]) buf[strlen(buf) - 1] = 0;
+		bufptr = buf;
+		if (*bufptr == '!') {
+			force = TRUE;
+			bufptr++;
 		}
-		if (strlen(buf)) buf[strlen(buf) - 1] = '\0';
+		bufptr[AUTOINS_MATCH_LEN - 1] = 0;
 
 		/* skip empty matches */
-		if (buf[0] == '\0') {
+		if (*bufptr == '\0') {
 			/* try to read according tag */
-			if (fgets(buf, AUTOINS_TAG_LEN + 1, fp) == NULL) {
-				//fclose(fp);
-				break;
-			}
+			if (fgets(buf, AUTOINS_TAG_LEN + 1, fp) == NULL) break;
+			if (buf[0]) buf[strlen(buf) - 1] = 0;
 			/* try to read automation flags */
 			if (version >= 3) {
-				if (fgets(buf, 5, fp) == NULL) {
-					//fclose(fp);
-					break;
-				}
-				if (fgets(buf, 5, fp) == NULL) {
-					//fclose(fp);
-					break;
-				}
+				if (fgets(buf, 5, fp) == NULL) break;
+				if (fgets(buf, 5, fp) == NULL) 	break;
 			}
 			continue;
 		}
@@ -2021,39 +2017,32 @@ void load_auto_inscriptions(cptr name) {
 		/* check for duplicate entry (if it already exists)
 		   and replace older entry simply */
 		for (j = 0; j < MAX_AUTO_INSCRIPTIONS; j++) {
-			if (!strcmp(buf, auto_inscription_match[j])) {
-				/* try to read according tag */
-				if (fgets(buf, AUTOINS_TAG_LEN, fp) == NULL) {
-					//fclose(fp);
-					break;
-				}
-				if (strlen(buf)) buf[strlen(buf) - 1] = '\0';
-				strcpy(auto_inscription_tag[j], buf);
+			if (strcmp(bufptr, auto_inscription_match[j])) continue;
 
-				/* try to read automation flags */
-				if (version >= 3) {
-					if (fgets(buf, 5, fp) == NULL) {
-						//fclose(fp);
-						break;
-					}
-					auto_inscription_autopickup[j] = atoi(buf);
-					if (fgets(buf, 5, fp) == NULL) {
-						//fclose(fp);
-						break;
-					}
-					auto_inscription_autodestroy[j] = atoi(buf);
-				}
+			/* try to read according tag */
+			if (fgets(buf, AUTOINS_TAG_LEN, fp) == NULL) break;
+			if (buf[0]) buf[strlen(buf) - 1] = 0;
+			strcpy(auto_inscription_tag[j], buf);
+			auto_inscription_force[j] = force;
 
-				replaced = TRUE;
-				break;
+			/* try to read automation flags */
+			if (version >= 3) {
+				if (fgets(buf, 5, fp) == NULL) break;
+				auto_inscription_autopickup[j] = atoi(buf);
+				if (fgets(buf, 5, fp) == NULL) break;
+				auto_inscription_autodestroy[j] = atoi(buf);
 			}
+
+			replaced = TRUE;
+			break;
 		}
 		if (replaced) continue;
+
 		if (j < MAX_AUTO_INSCRIPTIONS) break; //premature ending -> broken .ins file
 
 		/* search for free match-slot */
 		if (c >= 0) {
-			while (strlen(auto_inscription_match[c]) && c < MAX_AUTO_INSCRIPTIONS) c++;
+			while (auto_inscription_match[c][0] && c < MAX_AUTO_INSCRIPTIONS) c++;
 			if (c == MAX_AUTO_INSCRIPTIONS) {
 				c = -1;
 				c_eff = 0;
@@ -2063,19 +2052,13 @@ void load_auto_inscriptions(cptr name) {
 			c--;
 			c_eff = -c - 1;
 		}
-		/* legacy conversion */
-		auto_inscription_force[c_eff] = FALSE;
-		if (buf[0] == '!') {
-			auto_inscription_force[c_eff] = TRUE;
-			strcpy(auto_inscription_match[c_eff], buf + 1);
-		} else
 		/* set slot */
-		strcpy(auto_inscription_match[c_eff], buf);
+		strcpy(auto_inscription_match[c_eff], bufptr);
+		auto_inscription_force[c_eff] = force;
 #ifdef REGEX_SEARCH
 		/* Actually test regexp for validity right away, so we can avoid spam/annoyance/searching later. */
 		/* Check for '$' prefix, forcing regexp interpretation */
 		regptr = auto_inscription_match[c_eff];
-		//legacy --  if (regptr[0] == '!') regptr++;
 		if (regptr[0] == '$') {
 			regptr++;
 			ires = regcomp(&re_src, regptr, REG_EXTENDED | REG_ICASE);
@@ -2088,24 +2071,15 @@ void load_auto_inscriptions(cptr name) {
 #endif
 
 		/* try to read according tag */
-		if (fgets(buf, 22, fp) == NULL) {
-			//fclose(fp);
-			break;
-		}
-		if (strlen(buf)) buf[strlen(buf) - 1] = '\0';
+		if (fgets(buf, AUTOINS_TAG_LEN + 1, fp) == NULL) break;
+		if (buf[0]) buf[strlen(buf) - 1] = 0;
 		strcpy(auto_inscription_tag[c_eff], buf);
 
 		/* try to read automation flags */
 		if (version >= 3) {
-			if (fgets(buf, 5, fp) == NULL) {
-				//fclose(fp);
-				break;
-			}
+			if (fgets(buf, 5, fp) == NULL) break;
 			auto_inscription_autopickup[c_eff] = atoi(buf);
-			if (fgets(buf, 5, fp) == NULL) {
-				//fclose(fp);
-				break;
-			}
+			if (fgets(buf, 5, fp) == NULL) break;
 			auto_inscription_autodestroy[c_eff] = atoi(buf);
 		}
 
