@@ -5017,7 +5017,8 @@ void apply_auto_inscriptions(int slot, bool force) {
 
 	/* send the new inscription */
 	/* security hack: avoid infinite looping */
-	if (strstr(auto_inscription_tag[i], "% off") == NULL &&
+	if (auto_inscription_tag[i][0] && /* since the auto-ins line might just be used for auto-pickup, don't inscribe empty inscriptions (mad spam on looting) */
+	    strstr(auto_inscription_tag[i], "% off") == NULL &&
 	    strcmp(auto_inscription_tag[i], "cursed") &&
 	    strcmp(auto_inscription_tag[i], "on sale") &&
 	    strcmp(auto_inscription_tag[i], "stolen"))
