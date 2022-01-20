@@ -11471,6 +11471,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				    p_ptr->version.major, p_ptr->version.minor, p_ptr->version.patch, p_ptr->version.extra, p_ptr->version.branch, p_ptr->version.build, p_ptr->version.os);
 				return;
 			}
+			else if (prefix(messagelc, "/testmisc")) {
+				return;
+			}
 		}
 	}
 
