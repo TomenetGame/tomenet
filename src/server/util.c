@@ -1888,6 +1888,9 @@ void handle_music(int Ind) {
 		if (p_ptr->wpos.wz == 1 || p_ptr->wpos.wz == -1) Send_music(Ind, 98, 55); //party/halloween
 		else Send_music_vol(Ind, 98, 55, 20);
 		return;
+	} else if (d_ptr && d_ptr->type == DI_DEATH_FATE && (l_ptr->flags2 & LF2_BROKEN)) {
+		Send_music(Ind, 99, 47); //misc/highlander, or 13 for generic-iron
+		return;
 	}
 
 	/* No-tele grid: Re-use 'terrifying' bgm for this */
@@ -2046,18 +2049,18 @@ void handle_music(int Ind) {
 			else if (night_surface) {
 				/* Nightly wilderness music */
 				switch (season) {
-				case SEASON_SPRING: Send_music(Ind, 104, 10);
-				case SEASON_SUMMER: Send_music(Ind, 106, 10);
-				case SEASON_AUTUMN: Send_music(Ind, 108, 10);
-				case SEASON_WINTER: Send_music(Ind, 110, 10);
+				case SEASON_SPRING: Send_music(Ind, 105, 10);
+				case SEASON_SUMMER: Send_music(Ind, 107, 10);
+				case SEASON_AUTUMN: Send_music(Ind, 109, 10);
+				case SEASON_WINTER: Send_music(Ind, 111, 10);
 				}
 			} else {
 				/* Daily wilderness music */
 				switch (season) {
-				case SEASON_SPRING: Send_music(Ind, 103, 9);
-				case SEASON_SUMMER: Send_music(Ind, 105, 9);
-				case SEASON_AUTUMN: Send_music(Ind, 107, 9);
-				case SEASON_WINTER: Send_music(Ind, 109, 9);
+				case SEASON_SPRING: Send_music(Ind, 104, 9);
+				case SEASON_SUMMER: Send_music(Ind, 106, 9);
+				case SEASON_AUTUMN: Send_music(Ind, 108, 9);
+				case SEASON_WINTER: Send_music(Ind, 110, 9);
 				}
 			}
 			return;
@@ -2065,18 +2068,18 @@ void handle_music(int Ind) {
 			if (night_surface) {
 				/* Nightly wilderness music */
 				switch (season) {
-				case SEASON_SPRING: Send_music(Ind, 104, 10);
-				case SEASON_SUMMER: Send_music(Ind, 106, 10);
-				case SEASON_AUTUMN: Send_music(Ind, 108, 10);
-				case SEASON_WINTER: Send_music(Ind, 110, 10);
+				case SEASON_SPRING: Send_music(Ind, 105, 10);
+				case SEASON_SUMMER: Send_music(Ind, 107, 10);
+				case SEASON_AUTUMN: Send_music(Ind, 109, 10);
+				case SEASON_WINTER: Send_music(Ind, 111, 10);
 				}
 			} else {
 				/* Daily wilderness music */
 				switch (season) {
-				case SEASON_SPRING: Send_music(Ind, 103, 9);
-				case SEASON_SUMMER: Send_music(Ind, 105, 9);
-				case SEASON_AUTUMN: Send_music(Ind, 107, 9);
-				case SEASON_WINTER: Send_music(Ind, 109, 9);
+				case SEASON_SPRING: Send_music(Ind, 104, 9);
+				case SEASON_SUMMER: Send_music(Ind, 106, 9);
+				case SEASON_AUTUMN: Send_music(Ind, 108, 9);
+				case SEASON_WINTER: Send_music(Ind, 110, 9);
 				}
 			}
 			return;
