@@ -1850,7 +1850,7 @@ void save_auto_inscriptions(cptr name) {
 /* Load Auto-Inscription file (*.ins) - C. Blue */
 void load_auto_inscriptions(cptr name) {
 	FILE *fp;
-	char buf[1024], *bufptr;
+	char buf[1024], *bufptr, dummy[1024], *rptr;
 	char file_name[256], vtag[5];
 	int i, c, j, c_eff, version, vmaj, vmin, vex;
 	bool replaced, force;
@@ -1987,6 +1987,7 @@ void load_auto_inscriptions(cptr name) {
 
 		/* try to read a match */
 		if (fgets(buf, AUTOINS_MATCH_LEN + 2, fp) == NULL) break;
+		if (!strchr(buf, 10)) rptr = fgets(dummy, 1024, fp); /* read and discard overflow */
 		if (buf[0]) buf[strlen(buf) - 1] = 0;
 		bufptr = buf;
 		if (*bufptr == '!') {
@@ -1996,9 +1997,10 @@ void load_auto_inscriptions(cptr name) {
 		bufptr[AUTOINS_MATCH_LEN - 1] = 0;
 
 		/* skip empty matches */
-		if (*bufptr == '\0') {
+		if (*bufptr == 0) {
 			/* try to read according tag */
 			if (fgets(buf, AUTOINS_TAG_LEN + 1, fp) == NULL) break;
+			if (!strchr(buf, 10)) rptr = fgets(dummy, 1024, fp); /* read and discard overflow */
 			if (buf[0]) buf[strlen(buf) - 1] = 0;
 			/* try to read automation flags */
 			if (version >= 3) {
@@ -2020,7 +2022,8 @@ void load_auto_inscriptions(cptr name) {
 			if (strcmp(bufptr, auto_inscription_match[j])) continue;
 
 			/* try to read according tag */
-			if (fgets(buf, AUTOINS_TAG_LEN, fp) == NULL) break;
+			if (fgets(buf, AUTOINS_TAG_LEN + 1, fp) == NULL) break;
+			if (!strchr(buf, 10)) rptr = fgets(dummy, 1024, fp); /* read and discard overflow */
 			if (buf[0]) buf[strlen(buf) - 1] = 0;
 			strcpy(auto_inscription_tag[j], buf);
 			auto_inscription_force[j] = force;
@@ -2072,6 +2075,7 @@ void load_auto_inscriptions(cptr name) {
 
 		/* try to read according tag */
 		if (fgets(buf, AUTOINS_TAG_LEN + 1, fp) == NULL) break;
+		if (!strchr(buf, 10)) rptr = fgets(dummy, 1024, fp); /* read and discard overflow */
 		if (buf[0]) buf[strlen(buf) - 1] = 0;
 		strcpy(auto_inscription_tag[c_eff], buf);
 
@@ -2084,6 +2088,7 @@ void load_auto_inscriptions(cptr name) {
 		}
 
 		if (c >= 0) c++;
+		(void)rptr; /*stfu already, compiler O_O*/
 	}
 	//c_msg_print("Auto-inscriptions loaded/merged.");
 	fclose(fp);
