@@ -4420,7 +4420,7 @@ bool recharge_aux(int Ind, int item, int pow) {
 		/* Recharge */
 		else {
 			/* Rechange amount */
-			t = (pow * damroll(2, 4));
+			t = pow - 1 + (damroll(2, 4 * pow));
 
 			/* Recharge by that amount */
 			if (o_ptr->pval > t) o_ptr->pval -= t;
