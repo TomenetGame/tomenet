@@ -1385,7 +1385,8 @@ D:2:A shattered mirror lies on the floor, its shards twinkling magically.
 
 N:236:barred floor
 G:.:w
-F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW | NO_ARTICLE | ENTER_FROM_SPECIAL
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW
+F:NO_ARTICLE | ENTER_FROM_SPECIAL
 
 
 # NOTE: 255 is reserved for special purpose ('not done yet' indicator)
