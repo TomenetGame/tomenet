@@ -8884,7 +8884,7 @@ void process_player_change_wpos(int Ind) {
 		}
 	}
 
-	if (p_ptr->warning_depth != 2 && p_ptr->wpos.wz && !in_deathfate(&p_ptr->wpos)) {
+	if (p_ptr->warning_depth != 2 && p_ptr->wpos.wz && !in_deathfate_x(&p_ptr->wpos)) {
 		/* Too low to get any exp? */
 		if (dlv < det_req_level(p_ptr->lev) - 5) {
 			if (p_ptr->warning_depth != 2 ) {
@@ -8898,7 +8898,7 @@ void process_player_change_wpos(int Ind) {
 		}
 		/* Too low to get 100% exp? */
 		else if (dlv < det_req_level(p_ptr->lev)) {
-			if (!p_ptr->warning_depth && p_ptr->wpos.wz && !in_deathfate(&p_ptr->wpos)) {
+			if (!p_ptr->warning_depth) {
 				msg_print(Ind, "\377yYour level is quite high compared to the dungeon floor you're currently on!");
 				msg_print(Ind, "\377yFor that reason the depth is shown in yellow colour (instead of white) in the");
 				msg_print(Ind, "\377ybottom right corner of the main window, indicating that you will gain reduced");

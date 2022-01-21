@@ -8677,6 +8677,7 @@ void grid_affects_player(int Ind, int ox, int oy) {
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	if (c_ptr->feat == FEAT_FAKE_WALL) {
+		msg_print(Ind, "\377sYou don't feel resistance as you cross the wall, just a little static charge in the air as you find yourself in another strange location..");
 		p_ptr->auto_transport = AT_PARTY;
 		return;
 	}
