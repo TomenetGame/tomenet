@@ -11526,7 +11526,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				    p_ptr->version.major, p_ptr->version.minor, p_ptr->version.patch, p_ptr->version.extra, p_ptr->version.branch, p_ptr->version.build, p_ptr->version.os);
 				return;
 			}
-			else if (prefix(messagelc, "/testmisc")) {
+			else if (prefix(messagelc, "/testmisc1")) {
 				char pattacker[80];
 
 				strcpy(pattacker, "");
@@ -11538,6 +11538,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				project_time = 100; /* just any value long enough to traverse the screen */
 
 				(void)project(Ind, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px + 10, 0, GF_LITE, flg, pattacker);
+				return;
+			}
+			else if (prefix(messagelc, "/testmisc2")) {
+#ifdef TEST_SERVER
+				mon_meteor_swarm(Ind, PROJECTOR_UNUSUAL, GF_METEOR, 250, p_ptr->px + 5, p_ptr->py, 2);
+#endif
 				return;
 			}
 		}

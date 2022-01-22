@@ -768,10 +768,11 @@ static void cloud(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad
 #endif
 
 #ifdef TEST_SERVER
-static void mon_meteor_swarm(int Ind, int m_idx, int typ, int dam, int x, int y, int rad) {
+void mon_meteor_swarm(int Ind, int m_idx, int typ, int dam, int x, int y, int rad) {
 	player_type *p_ptr = Players[Ind];
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_NODO | PROJECT_NODF;
 
+	project_time_effect = EFF_METEOR;
 	project_time = 10;
 	project_interval = 5;
 
