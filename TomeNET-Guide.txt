@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 18. January 2022 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 22. January 2022 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.7.4b - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -4460,8 +4460,8 @@ These difficulty settings are called 'character modes':
 (3.1a) Character Modes
 ----------------------
 
-Mode: 'Normal'
---------------
+Normal (3 lives)
+----------------
 A normal character will turn into a ghost if he dies. The ghost can be revived
 by either visiting a temple or another living player using a magic scroll of
 life when standing adjacent to the ghost. The ghost will return to the world
@@ -4471,8 +4471,8 @@ permanently, watch out!
 Depending on the server configuration the number of times a ghost is limited,
 standard is 3 lifes.
 
-Mode: 'Everlasting'
--------------------
+Everlasting (infinite resurrections)
+------------------------------------
 Create an everlasting character for an infinite amount of resurrections (with
 the exception that they too are completely destroyed if they die to insanity.)
 Everlasting characters can become king/queen, but cannot enter the high-score.
@@ -4489,16 +4489,16 @@ each other without problems.
 Everlasting characters can additionally use the 'Instant Resurrection' feature
 offered by town temples, see (4.5a).
 
-Mode: 'Unworldly' (no-ghost)
-----------------------------
+Unworldly (no-ghost)
+--------------------
 Unworldly characters are like normal characters, but they have only one life.
 So if they die they cannot revive but are completely erased (no ghost will be
 created.)
 Note: This is the traditional rogue-like gaming mode.
 Unworldly characters will receive 25% bonus on their high score.
 
-Mode: 'Soloist' (no-ghost and no PC-trading)
---------------------------------------------
+Soloist (no-ghost and no PC-trading)
+------------------------------------
 This is exactly like above 'Unworldly' mode, except you cannot do any trading
 ie exchange of items or gold with other player characters. You can use all NPC
 stores as usual though.
@@ -4509,8 +4509,8 @@ This mode allows you to have a 'single-player' experience of traditional
 rogue-like gaming. But of course you could still ask other players in chat to
 help you out of a dire situation..
 
-Mode: 'Hellish' (extra hard no-ghost)
--------------------------------------
+Hellish (extra hard no-ghost)
+-----------------------------
 These are unworldly characters with extra penalties:
 -1 point malus on each of the 6 character attributes
 -healing is reduced by 25%
@@ -4520,8 +4520,8 @@ These are unworldly characters with extra penalties:
 -max number of melee attacks per round is reduced by 1.
 Hellish characters receive 50% bonus on their high score.
 
-Mode: 'PvP'
------------
+PvP (gameplay almost limited to killing other PvP players)
+----------------------------------------------------------
 This is a special restricted mode that has nothing to do with normal gameplay.
 If you're new to the game, it's absolutely not recommended to choose this.
 More information about 'PvP' mode is given in (6.13).
@@ -4537,12 +4537,12 @@ beginners to choose 'normal body' and NOT 'fruit bat'. ;)
 (3.1b) Body Modifications
 -------------------------
 
-Body: 'Normal body'
--------------------
+Normal body
+-----------
 This is what you should pick in most cases and especially as a new player.
 
-Body: 'Fruit bat' (Batty)
--------------------------
+Fruit bat (dubbed "batty", less limbs than normal body)
+-------------------------------------------------------
 A fruit bat is like a normal character, just not in humanoid shape but in bat
 form! Fruit bats cannot equip weapons, boots or gloves.
 These restrictions won't change even if they choose a class which can make use
