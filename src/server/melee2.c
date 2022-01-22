@@ -776,7 +776,7 @@ void mon_meteor_swarm(int Ind, int m_idx, int typ, int dam, int x, int y, int ra
 	player_type *p_ptr = Players[Ind];
 	int flg = PROJECT_DUMY | PROJECT_STAY | PROJECT_JUMP;
 
-	project_time_effect = EFF_METEOR;
+	project_time_effect = EFF_METEOR | EFF_DUMMY;
 	/* 30/5: about 3 seconds before detonation */
 	project_time = 30;
 	project_interval = 5;
