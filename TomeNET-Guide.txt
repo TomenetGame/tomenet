@@ -11553,7 +11553,7 @@ Restore Life Levels
                 that your experience has been drained by it being displayed in
                 yellow colour instead of the usual light green.
                 Note that this potion does not restore experience you lost by
-                dying (there is no way to restore experience loss by death).
+                dying (there is no way to restore experience loss from death).
 Restore Mana    Restores 500 MP. ('You feel your head clearing')
 *Restore Mana*  Restores 1000 MP. ('You feel your head clearing')
 Ruination       Take 10d10 damage. All stats are decreased by 25 (restorable).
