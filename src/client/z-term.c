@@ -785,6 +785,7 @@ byte flick_colour(byte attr) {
 		/* Fall through should not happen, just silence the compiler */
 		__attribute__ ((fallthrough));
 	case TERM_SELECTOR2:
+#if 0 /* somewhat calm still */
 		switch ((unsigned)ticks % 10) {
 		case 0: case 1:
 			return TERM_L_RED;
@@ -796,6 +797,17 @@ byte flick_colour(byte attr) {
 		//case 9: //case 10: case 11:
 			return TERM_L_DARK;
 		}
+#else /* faster */
+		switch ((unsigned)ticks % 8) {
+		case 0: case 1:
+			return TERM_L_RED;
+		case 2: case 3:
+		case 7: case 6:
+			return TERM_RED;
+		case 4: case 5:
+			return TERM_L_DARK;
+		}
+#endif
 		/* Fall through should not happen, just silence the compiler */
 		__attribute__ ((fallthrough));
 
