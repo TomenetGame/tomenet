@@ -533,7 +533,7 @@ static cptr r_info_flags0[] = {
 	"BR_ICE",
 	"BR_WATER",//20
 	"ADMINISTRATIVE_PUSH",
-	"X00200000",
+	"METEOR_SWARM",
 	"X00400000",
 	"X00800000",//24
 	"X01000000",
@@ -4673,6 +4673,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 	}
 
 	r_info[RI_BLUE].flags6 &= ~RF6_HEAL;
+	r_info[RI_BLUE].flags0 &= ~(RF0_ADMINISTRATIVE_PUSH | RF0_METEOR_SWARM);
 
 	/* No version yet */
 	if (!okay) return (2);

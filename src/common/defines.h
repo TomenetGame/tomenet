@@ -6060,6 +6060,7 @@
 #define RF0_BR_ICE		0x00040000		/* For Bahamuth */
 #define RF0_BR_WATER		0x00080000		/* Finally no more antimagic field vs water hounds :p */
 #define RF0_ADMINISTRATIVE_PUSH		0x00100000	/* Push back */
+#define RF0_METEOR_SWARM		0x00200000
 
 #define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT)		/* | RF0_NO_NEST */
 

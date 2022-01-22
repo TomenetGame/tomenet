@@ -730,14 +730,14 @@ static void beam(int Ind, int m_idx, int typ, int dam_hp) {
 	player_type *p_ptr = Players[Ind];
 	int flg = PROJECT_STOP | PROJECT_KILL;
 
-#ifdef USE_SOUND_2010
- #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
+ #ifdef USE_SOUND_2010
+  #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 	if (p_ptr->sfx_monsterattack) sound(Ind, "cast_beam", NULL, SFX_TYPE_MON_SPELL, TRUE);
- #else
+  #else
 	if (p_ptr->sfx_monsterattack) sound(Ind, "cast_beam", NULL, SFX_TYPE_MON_SPELL, TRUE);
 	sound_near_monster_atk(m_idx, Ind, "cast_beam", NULL, SFX_TYPE_MON_SPELL);
+  #endif
  #endif
-#endif
 	/* Target the player with a bolt attack */
 	(void)project(m_idx, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam_hp, typ, flg, p_ptr->attacker);
 }
@@ -754,16 +754,29 @@ static void cloud(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad
 	project_time = duration;
 	project_interval = interval;
 
-#ifdef USE_SOUND_2010
- #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
+ #ifdef USE_SOUND_2010
+  #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 	if (p_ptr->sfx_monsterattack) sound(Ind, "cast_cloud", NULL, SFX_TYPE_MON_SPELL, TRUE);
- #else
+  #else
 	if (p_ptr->sfx_monsterattack) sound(Ind, "cast_cloud", NULL, SFX_TYPE_MON_SPELL, TRUE);
 	sound_near_monster_atk(m_idx, Ind, "cast_cloud", NULL, SFX_TYPE_MON_SPELL);
+  #endif
  #endif
-#endif
 	/* Target the player with a ball attack */
 	(void)project(m_idx, rad, &p_ptr->wpos, y, x, dam_hp, typ, flg, p_ptr->attacker);
+}
+#endif
+
+#ifdef TEST_SERVER
+static void mon_meteor_swarm(int Ind, int m_idx, int typ, int dam, int x, int y, int rad) {
+	player_type *p_ptr = Players[Ind];
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_NODO | PROJECT_NODF;
+
+	project_time = 10;
+	project_interval = 5;
+
+	/* Target the player with a ball attack */
+	(void)project(m_idx, rad, &p_ptr->wpos, y, x, dam, typ, flg, p_ptr->attacker);
 }
 #endif
 
@@ -8951,6 +8964,7 @@ static player_type *get_melee_target(monster_race *r_ptr, monster_type *m_ptr, c
 
 /*
  * Process a monster
+ * Called by process_monsters() at same frequency.
  *
  * The monster is known to be within 100 grids of the player
  *
@@ -9102,6 +9116,24 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		}
 		return;
 	}
+#ifdef TEST_SERVER //still not implemented though
+	/* RF0_METEOR_SWARM */
+	else if (m_ptr->r_idx == RI_BLUE && m_ptr->hp < m_ptr->maxhp) {
+ #ifdef PROCESS_MONSTERS_DISTRIBUTE
+		if (!rand_int(cfg.fps * 5))
+ #else
+		if (!rand_int((cfg.fps / MONSTER_TURNS) * 5))
+ #endif
+		{
+			int count = 4, x = p_ptr->px, y = p_ptr->py, xs = x, ys = y;
+
+			for (i = 0; i < count; i++) {
+				scatter(wpos, &ys, &xs, y, x, 4, TRUE);
+				mon_meteor_swarm(Ind, m_idx, GF_METEOR, 250, x, y, 2);
+			}
+		}
+	}
+#endif
 
 	/* If the monster can't see the player */
 	inv = player_invis(Ind, m_ptr, m_ptr->cdis);
@@ -11473,7 +11505,7 @@ void process_monsters_astar(void) {
 /*
  * Process all the "live" monsters,
  * once per game turn if PROCESS_MONSTERS_DISTRIBUTE or
- * once per (turn % MONSTER_TURNS) otherwise.
+ * once per !(turn % MONSTER_TURNS) otherwise.
  *
  * During each game turn, we scan through the list of all the "live" monsters,
  * (backwards, so we can excise any "freshly dead" monsters), energizing each

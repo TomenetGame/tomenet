@@ -5956,7 +5956,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Acquire monster pointer */
 	m_ptr = &m_list[c_ptr->m_idx];
 
-	if (m_ptr->r_idx == RI_BLUE && (flg & PROJECT_BOUN) && typ != GF_CODE) return FALSE;
+	if (m_ptr->r_idx == 900 + 200 + 48 + 4 && (flg & PROJECT_BOUN) && typ != 90 + 19) return FALSE;
 
 	/* There are a couple specific checks for this below, but we just handle everything with this one check here, for now */
 	if (m_ptr->status == M_STATUS_FRIENDLY) return FALSE;
