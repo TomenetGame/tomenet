@@ -3697,7 +3697,11 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 		(*ap) = TERM_STARLITE;
 		(*cp) = rand_int(3) ? '.' : '+';
 	}
-
+	/* display falling star */
+	if ((effects[c_ptr->effect].flags & EFF_METEOR)) {
+		(*ap) = TERM_SELECTOR;
+		(*cp) = '+';
+	}
 	/* for 'Thunderstorm' spell */
 	if ((effects[c_ptr->effect].flags & EFF_THUNDER_VISUAL)) {
 		(*ap) = TERM_THUNDER;

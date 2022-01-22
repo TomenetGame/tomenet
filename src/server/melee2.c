@@ -672,7 +672,7 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int rad) {
 	(void)project(m_idx, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam_hp, typ, flg, p_ptr->attacker);
 }
 #endif	/*0*/
-static void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad) {
+void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad) {
 	player_type *p_ptr = Players[Ind];
 
 #ifdef USE_SOUND_2010

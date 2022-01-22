@@ -1095,8 +1095,8 @@ static void process_effects(void) {
 
 		/* Handle spell effects */
 		for (l = 0; l < tdi[e_ptr->rad]; l++) {
-			j = e_ptr->cy + tdy[l];
 			i = e_ptr->cx + tdx[l];
+			j = e_ptr->cy + tdy[l];
 			if (!in_bounds2(wpos, j, i)) continue;
 
 			c_ptr = &zcave[j][i];
@@ -1257,6 +1257,18 @@ static void process_effects(void) {
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 					}
 				}
+			}
+
+			/* Generate meteor effects */
+			else if (e_ptr->flags & EFF_METEOR) {
+				if (e_ptr->rad < e_ptr->time - 1) {
+					if ((i == e_ptr->cx && j == e_ptr->cy)
+					    || (i == e_ptr->cx - 1 && j == e_ptr->cy)
+					    || (i == e_ptr->cx + 1 && j == e_ptr->cy)
+					    || (i == e_ptr->cx && j == e_ptr->cy - 1)
+					    || (i == e_ptr->cx && j == e_ptr->cy + 1))
+						apply_effect(k, &who, wpos, i, j, c_ptr);
+				} else ball(e_ptr->whot, who, GF_METEOR, 250, j, i, 2);
 			}
 
 			/* Generate lightning effects -- effect_xtra: -1\ 0| 1/ 2_ */

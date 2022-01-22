@@ -1024,6 +1024,7 @@ extern void curse_equipment(int Ind, int chance, int heavy_chance);
 extern void process_npcs(void);
 extern bool mon_allowed_pickup(int tval);
 extern int world_check_antimagic(int Ind);
+extern void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad);
 
 /* monster.c */
 /* monster1.c monster2.c */
