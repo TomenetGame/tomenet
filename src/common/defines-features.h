@@ -12,6 +12,7 @@
 
 /* --------------------------------------------------------------------------*/
 /* Features that are allowed in all build types, ie server-type independant: */
+/* --------------------------------------------------------------------------*/
 
 /* Distinguished light colour for flaming lites, magic lights, vampire light */
 #define CAVE_LITE_COLOURS
@@ -322,13 +323,11 @@
 #ifdef ENABLE_OCCULT
  #define ENABLE_DEATHKNIGHT
 
- //#if defined(TEST_SERVER) || defined(TEST_CLIENT)
   #define ENABLE_HELLKNIGHT	/* Allow 'Corrupted Paladins' aka Hell Knights. Requires ENABLE_OCCULT. */
   #ifdef ENABLE_HELLKNIGHT
    #define ENABLE_OHERETICISM	/* Enable 'Hereticism' occult school for Hell Knights */
    #define ENABLE_CPRIEST	/* Allow 'Corrupted Priest', keeping its normal class name. Should assume ENABLE_HELLKNIGHT. */
   #endif
- //#endif
 
  #define ENABLE_OUNLIFE	/* Enable 'Nether' occult school for Death Knights */
  #ifdef ENABLE_OUNLIFE /* forced implication code-wise! */
@@ -345,8 +344,14 @@
 #define ENABLE_DEMOLITIONIST 5
 /* Restrict finding ENABLE_DEMOLITIONIST items to within the IDDC. Usage of found items is not restricted however. */
 //#define DEMOLITIONIST_IDDC_ONLY
+/* Restrict placing blast charges to within the IDDC, for debugging/testing purpose */
+//#define DEMOLITIONIST_BLAST_IDDC_ONLY
 
+
+
+/* ------------------------------------------------------------------------------------------------- */
 /* --------------------- TESTING/EXPERIMENTAL - This stuff is hot alpha/beta.. --------------------- */
+/* ------------------------------------------------------------------------------------------------- */
 
 /* Finally create some usage for the so far functionless altars - C. Blue
    Ideas: Pray (1) or Sacrifice item (2).
@@ -359,7 +364,9 @@
 
 
 
+/* ------------------------------------------------------------------------- */
 /* --------------------- Server-type dependant features -------------------- */
+/* ------------------------------------------------------------------------- */
 
 /* Specific settings for rpg-server ("ironman server") only */
 #ifdef RPG_SERVER
@@ -406,13 +413,13 @@
 
 /* Specific settings for main-server only */
 #if !defined(RPG_SERVER) && !defined(TEST_SERVER) && !defined(ARCADE_SERVER)
- /* Restrict placing blast charges to within the IDDC, for debugging/testing purpose */
- //#define DEMOLITIONIST_BLAST_IDDC_ONLY
 #endif
 
 
 
-/* ------------------------ Client-side only features -----------------------*/
+/* -------------------------------------------------------------------------- */
+/* ------------------------ Client-side only features ----------------------- */
+/* -------------------------------------------------------------------------- */
 
 #ifdef CLIENT_SIDE
 //Originally for hybrid clients to do both old and new runemastery, now unused.
@@ -456,7 +463,11 @@
  #define GUIDE_BOOKMARKS 20
 #endif
 
-/* ----------------- Misc flags induced by above definitions ----------------*/
+
+
+/* -------------------------------------------------------------------------- */
+/* ----------------- Misc flags induced by above definitions ---------------- */
+/* -------------------------------------------------------------------------- */
 
 /* Use new shields with block/deflect values instead of traditional ac/+ac ? */
 #ifdef ENABLE_NEW_MELEE
@@ -495,6 +506,9 @@
    so 800 would result in 8000 minutes aka ~6 days. */
 #define VISIT_TIME_CAP 800
 
+
+
+/* --------------------------------------------------------------------------*/
 
 /* Enable/undefine specific features locally */
 #include "defines-features-local.h"
