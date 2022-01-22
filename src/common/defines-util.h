@@ -91,6 +91,7 @@
 
  #define TERM_SELECTOR	59
  #define TERM_SMOOTHPAL	60
+ #define TERM_SELECTOR2	61
 
  #ifdef EXTENDED_BG_COLOURS
   #define TERM2_BLUE	63

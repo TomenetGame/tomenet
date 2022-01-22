@@ -3328,7 +3328,8 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 		f_ptr = &f_info[feat];
 
 		/* Special terrain effect */
-		if (c_ptr->effect) {
+		if (c_ptr->effect
+		    && !((effects[c_ptr->effect].flags & EFF_METEOR) && (c_ptr->m_idx || !(f_info[c_ptr->feat].flags1 & FF1_FLOOR)))){
 #if 0
 			(*ap) = spell_color(effects[c_ptr->effect].type);
 #else /* allow 'transparent' spells */
@@ -3697,10 +3698,14 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 		(*ap) = TERM_STARLITE;
 		(*cp) = rand_int(3) ? '.' : '+';
 	}
-	/* display falling star */
-	if ((effects[c_ptr->effect].flags & EFF_METEOR)) {
-		(*ap) = TERM_SELECTOR;
-		(*cp) = '+';
+	/* display meteor target marker */
+	if ((effects[c_ptr->effect].flags & EFF_METEOR) && !c_ptr->m_idx && (f_info[c_ptr->feat].flags1 & FF1_FLOOR)) {
+		(*ap) = is_older_than(&p_ptr->version, 4, 7, 4, 4, 0, 0) ? TERM_SELECTOR : TERM_SELECTOR2;
+		switch (c_ptr->effect_xtra) {
+		case 0: (*cp) = '+'; break;
+		case 1: (*cp) = '-'; break;
+		case 2: (*cp) = '|'; break;
+		}
 	}
 	/* for 'Thunderstorm' spell */
 	if ((effects[c_ptr->effect].flags & EFF_THUNDER_VISUAL)) {
@@ -8819,7 +8824,9 @@ int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpo
 		who2 = 0 - Players[0 - who]->id;
 #endif
 
+//s_printf("eff %d,%d\n", who, who2);
 	if ((i = effect_pop(who2)) == -1) return -1;
+//s_printf("eff %d\n", i);
 	effects[i].interval = interval;
 	effects[i].type = type;
 	effects[i].dam = dam;
@@ -8835,12 +8842,15 @@ int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpo
 			effects[i].cx = Players[0-who]->target_col;
 		}
 	}
-	if ((project_time_effect & EFF_SEEKER) && (who < 0 && who > PROJECTOR_UNUSUAL)) {
+	else if ((project_time_effect & EFF_SEEKER) && (who < 0 && who > PROJECTOR_UNUSUAL)) {
 		if (target_okay(0-who)) {
 			effects[i].whot = Players[0-who]->target_who;
 			effects[i].ty = Players[0-who]->py;
 			effects[i].tx = Players[0-who]->px;
 		}
+	}
+	else if (project_time_effect & EFF_METEOR) {
+		effects[i].whot = PROJECTOR_UNUSUAL; //could be replaced by m_idx for better kill msg
 	}
 	effects[i].rad = rad;
 	effects[i].who = who2;

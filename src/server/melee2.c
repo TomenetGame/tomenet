@@ -674,6 +674,7 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int rad) {
 #endif	/*0*/
 void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad) {
 	player_type *p_ptr = Players[Ind];
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO;
 
 #ifdef USE_SOUND_2010
  #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
@@ -708,14 +709,18 @@ void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad) {
 		sound(Ind, "stone_wall", NULL, SFX_TYPE_MON_SPELL, TRUE);
 		sound_near_monster_atk(m_idx, Ind, "stone_wall", NULL, SFX_TYPE_MON_SPELL);
 	}
+	else if (typ == GF_METEOR) {
+		sound(Ind, "detonation", NULL, SFX_TYPE_MON_SPELL, TRUE);
+		/* everyone nearby the monster can hear it too, even if no LOS */
+		sound_near_monster_atk(m_idx, Ind, "detonation", NULL, SFX_TYPE_MON_SPELL);
+		//sound_near_site(m_list[m_idx].fy, m_list[m_idx].fx, &m_list[m_idx].wpos, Ind, "detonation", NULL, SFX_TYPE_MON_SPELL, FALSE);
+	}
 	else if (p_ptr->sfx_monsterattack) {
 		sound(Ind, "cast_ball", NULL, SFX_TYPE_MON_SPELL, TRUE);
 		sound_near_monster_atk(m_idx, Ind, "cast_ball", NULL, SFX_TYPE_MON_SPELL);
 	}
  #endif
 #endif
-
-	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO;
 
 	/* Target the player with a ball attack */
 	(void)project(m_idx, rad, &p_ptr->wpos, y, x, dam_hp, typ, flg, p_ptr->attacker);
@@ -767,19 +772,21 @@ static void cloud(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad
 }
 #endif
 
-#ifdef TEST_SERVER
 void mon_meteor_swarm(int Ind, int m_idx, int typ, int dam, int x, int y, int rad) {
 	player_type *p_ptr = Players[Ind];
-	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_NODO | PROJECT_NODF;
+	int flg = PROJECT_DUMY | PROJECT_STAY | PROJECT_JUMP;
 
 	project_time_effect = EFF_METEOR;
-	project_time = 10;
+	/* 30/5: about 3 seconds before detonation */
+	project_time = 30;
 	project_interval = 5;
 
-	/* Target the player with a ball attack */
-	(void)project(m_idx, rad, &p_ptr->wpos, y, x, dam, typ, flg, p_ptr->attacker);
+	/* Note: We don't actually use 'rad'. The projection only affects one grid, aka rad 0, from where on it unfolds.
+	   The actual 'meteor'-style effect will then use a hard-coded radius that might differ.
+	   So, todo maybe: Somehow carry over the specified 'rad' instead of it being a dummy. */
+	//(void)project(Ind, 0, &p_ptr->wpos, y, x, dam, typ, flg, p_ptr->attacker);
+	(void)project(Ind, 0, &p_ptr->wpos, y, x, dam, typ, flg, p_ptr->attacker);
 }
-#endif
 
 
 /*
@@ -6464,7 +6471,9 @@ static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr,
 		if (r_ptr->flags2 & RF2_STUPID) return (TRUE);
 
 		e_ptr = &effects[c_ptr->effect_past];
+
 		if (e_ptr->who == m_idx) return (TRUE); /* It's mine :) */
+		if (e_ptr->flags & EFF_DUMMY) return TRUE;
 
 		dam = approx_damage(m_idx, e_ptr->dam, e_ptr->type);
 		return (m_ptr->hp >= dam * 20);
@@ -6476,6 +6485,7 @@ static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr,
 
 	/* It's mine :) */
 	if (e_ptr->who == m_idx) return (TRUE);
+	if (e_ptr->flags & EFF_DUMMY) return TRUE;
 
 	/* Use new function 'approx_damage()' for this - C. Blue */
 	dam = approx_damage(m_idx, e_ptr->dam, e_ptr->type);
@@ -9117,24 +9127,37 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		}
 		return;
 	}
-#ifdef TEST_SERVER //still not implemented though
 	/* RF0_METEOR_SWARM */
 	else if (m_ptr->r_idx == RI_BLUE && m_ptr->hp < m_ptr->maxhp) {
- #ifdef PROCESS_MONSTERS_DISTRIBUTE
-		if (!rand_int(cfg.fps * 5))
- #else
-		if (!rand_int((cfg.fps / MONSTER_TURNS) * 5))
- #endif
-		{
-			int count = 4, x = p_ptr->px, y = p_ptr->py, xs = x, ys = y;
+//s_printf("turn %d\n", ((turn - (turn % MONSTER_TURNS)) % (MONSTER_TURNS * 10)));
+#ifdef PROCESS_MONSTERS_DISTRIBUTE
+		if (!((turn - (turn % MONSTER_TURNS)) % (MONSTER_TURNS * 10))) {
+#else
+		if (!(turn % (MONSTER_TURNS * 10)) {
+#endif
+			int x, y, xs, ys, angle2, angle3;
+			int dam = 250, rad = 1, jitter = 2, dist = 4;
 
-			for (i = 0; i < count; i++) {
-				scatter(wpos, &ys, &xs, y, x, 4, TRUE);
-				mon_meteor_swarm(Ind, m_idx, GF_METEOR, 250, x, y, 2);
-			}
+			x = p_ptr->px; y = p_ptr->py;
+			xs = x; ys = y;
+			scatter(wpos, &ys, &xs, y, x, jitter, TRUE);
+			mon_meteor_swarm(Ind, m_idx, GF_METEOR, dam, xs, ys, rad);
+
+			angle2 = rand_int(8);
+			angle3 = rand_int(7);
+			if (angle3 == angle2) angle3++;
+
+			x = p_ptr->px + ddx[angle2 + 1] * dist; y = p_ptr->py + ddy[angle2 + 1] * dist;
+			xs = x; ys = y;
+			scatter(wpos, &ys, &xs, y, x, jitter, TRUE);
+			mon_meteor_swarm(Ind, m_idx, GF_METEOR, dam, xs, ys, rad);
+
+			x = p_ptr->px + ddx[angle3 + 1] * dist; y = p_ptr->py + ddy[angle3 + 1] * dist;
+			xs = x; ys = y;
+			scatter(wpos, &ys, &xs, y, x, jitter, TRUE);
+			mon_meteor_swarm(Ind, m_idx, GF_METEOR, dam, xs, ys, rad);
 		}
 	}
-#endif
 
 	/* If the monster can't see the player */
 	inv = player_invis(Ind, m_ptr, m_ptr->cdis);

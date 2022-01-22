@@ -916,19 +916,21 @@ static void apply_effect(int k, int *who, struct worldpos *wpos, int x, int y, c
 	everyone_lite_spot(wpos, y, x);
 
 	/* Apply damage -- maybe efficient to add a skip here for non-damaging visual-only effects? */
-	project(*who, 0, wpos, y, x, e_ptr->dam, e_ptr->type, flg, "");
+	if (!(e_ptr->flags & EFF_DUMMY))
+		project(*who, 0, wpos, y, x, e_ptr->dam, e_ptr->type, flg, "");
 
-	/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
-	if (*who < 0 && *who != PROJECTOR_EFFECT && *who != PROJECTOR_PLAYER &&
-	    Players[0 - *who]->conn == NOT_CONNECTED) {
-		/* Make the effect friendly after death - mikaelh */
-		*who = PROJECTOR_PLAYER;
-	}
-	/* Storms end instantly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
-	if ((e_ptr->flags & EFF_STORM || e_ptr->flags & EFF_VORTEX)
-	    && (*who == PROJECTOR_PLAYER || Players[0 - *who]->death)) {
-		erase_effects(k);
-		*who = 0;
+		/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
+		if (*who < 0 && *who != PROJECTOR_EFFECT && *who != PROJECTOR_PLAYER &&
+		    Players[0 - *who]->conn == NOT_CONNECTED) {
+			/* Make the effect friendly after death - mikaelh */
+			*who = PROJECTOR_PLAYER;
+		}
+		/* Storms end instantly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
+		if ((e_ptr->flags & EFF_STORM || e_ptr->flags & EFF_VORTEX)
+		    && (*who == PROJECTOR_PLAYER || Players[0 - *who]->death)) {
+			erase_effects(k);
+			*who = 0;
+		}
 	}
 #else
 	/* Old way - just imprint and redraw */
@@ -1113,19 +1115,21 @@ static void process_effects(void) {
 			   Apply colour animation and damage projection, erase effect if timeout results from projection somehow */
 			if (c_ptr->effect == k) {
 				/* Apply damage */
-				project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
+				if (!(e_ptr->flags & EFF_DUMMY)) {
+					project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
 
-				/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
-				if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
-				    Players[0 - who]->conn == NOT_CONNECTED) {
-					/* Make the effect friendly after death - mikaelh */
-					who = PROJECTOR_PLAYER;
-				}
-				/* Storms end instantly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
-				if ((e_ptr->flags & EFF_STORM || e_ptr->flags & EFF_VORTEX)
-				    && (who == PROJECTOR_PLAYER || Players[0 - who]->death)) {
-					erase_effects(k);
-					break;
+					/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
+					if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
+					    Players[0 - who]->conn == NOT_CONNECTED) {
+						/* Make the effect friendly after death - mikaelh */
+						who = PROJECTOR_PLAYER;
+					}
+					/* Storms end instantly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
+					if ((e_ptr->flags & EFF_STORM || e_ptr->flags & EFF_VORTEX)
+					    && (who == PROJECTOR_PLAYER || Players[0 - who]->death)) {
+						erase_effects(k);
+						break;
+					}
 				}
  #ifndef EXTENDED_TERM_COLOURS
   #ifdef ANIMATE_EFFECTS
@@ -1261,14 +1265,19 @@ static void process_effects(void) {
 
 			/* Generate meteor effects */
 			else if (e_ptr->flags & EFF_METEOR) {
-				if (e_ptr->rad < e_ptr->time - 1) {
-					if ((i == e_ptr->cx && j == e_ptr->cy)
-					    || (i == e_ptr->cx - 1 && j == e_ptr->cy)
-					    || (i == e_ptr->cx + 1 && j == e_ptr->cy)
-					    || (i == e_ptr->cx && j == e_ptr->cy - 1)
-					    || (i == e_ptr->cx && j == e_ptr->cy + 1))
+				if (e_ptr->time) {
+					if (i == e_ptr->cx) {
 						apply_effect(k, &who, wpos, i, j, c_ptr);
-				} else ball(e_ptr->whot, who, GF_METEOR, 250, j, i, 2);
+						if (j == e_ptr->cy) c_ptr->effect_xtra = 0;
+						else c_ptr->effect_xtra = 2;
+					} else {
+						if (j == e_ptr->cy) {
+							apply_effect(k, &who, wpos, i, j, c_ptr);
+							c_ptr->effect_xtra = 1;
+						}
+					}
+				} else if (i == e_ptr->cx && j == e_ptr->cy)
+					ball(who, e_ptr->whot, e_ptr->type, e_ptr->dam, j, i, 1);
 			}
 
 			/* Generate lightning effects -- effect_xtra: -1\ 0| 1/ 2_ */
@@ -1559,19 +1568,21 @@ static void process_effects(void) {
 			   Apply colour animation and damage projection, erase effect if timeout results from projection somehow */
 			if (c_ptr->effect == k) {
 				/* Apply damage */
-				if (!skip) project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
+				if (!skip && !(e_ptr->flags & EFF_DUMMY)) {
+					project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
 
-				/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
-				if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
-				    Players[0 - who]->conn == NOT_CONNECTED) {
-					/* Make the effect friendly after death - mikaelh */
-					who = PROJECTOR_PLAYER;
-				}
-				/* Storms end instantly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
-				if ((e_ptr->flags & EFF_STORM || e_ptr->flags & EFF_VORTEX)
-				    && (who == PROJECTOR_PLAYER || Players[0 - who]->death)) {
-					erase_effects(k);
-					break;
+					/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
+					if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
+					    Players[0 - who]->conn == NOT_CONNECTED) {
+						/* Make the effect friendly after death - mikaelh */
+						who = PROJECTOR_PLAYER;
+					}
+					/* Storms end instantly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
+					if ((e_ptr->flags & EFF_STORM || e_ptr->flags & EFF_VORTEX)
+					    && (who == PROJECTOR_PLAYER || Players[0 - who]->death)) {
+						erase_effects(k);
+						break;
+					}
 				}
  #ifndef EXTENDED_TERM_COLOURS
   #ifdef ANIMATE_EFFECTS
@@ -1614,12 +1625,14 @@ static void process_effects(void) {
 
 				if (los(wpos, e_ptr->cy, e_ptr->cx, j, i) && (distance(e_ptr->cy, e_ptr->cx, j, i) <= e_ptr->rad)) {
 					apply_effect(k, &who, wpos, i, j, c_ptr);
-					project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
+					if (!(e_ptr->flags & EFF_DUMMY)) {
+						project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
 
-					/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
-					if (Players[0 - who]->conn == NOT_CONNECTED || Players[0 - who]->death) {
-						erase_effects(k);
-						break;
+						/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
+						if (Players[0 - who]->conn == NOT_CONNECTED || Players[0 - who]->death) {
+							erase_effects(k);
+							break;
+						}
 					}
 				}
 			}
@@ -1654,7 +1667,8 @@ static void process_effects(void) {
 			if (e_ptr->rad == 0) {
 				c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
 				c_ptr->effect = k;
-				project(who, 0, wpos, e_ptr->cy, e_ptr->cx, e_ptr->dam, e_ptr->type, flg, "");
+				if (!(e_ptr->flags & EFF_DUMMY))
+					project(who, 0, wpos, e_ptr->cy, e_ptr->cx, e_ptr->dam, e_ptr->type, flg, "");
 				everyone_lite_spot(wpos, e_ptr->cy, e_ptr->cx);
 			} else {
 				for (l = 0; l < tdi[e_ptr->rad]; l++) {
@@ -1664,7 +1678,8 @@ static void process_effects(void) {
 					c_ptr = &zcave[j][i];
 					if (los(wpos, e_ptr->cy, e_ptr->cx, j, i) && (distance(e_ptr->cy, e_ptr->cx, j, i) <= e_ptr->rad)) {
 						c_ptr->effect = k;
-						project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
+						if (!(e_ptr->flags & EFF_DUMMY))
+							project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
 						everyone_lite_spot(wpos, j, i);
 					}
 				}

@@ -9628,10 +9628,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		if (blind) msg_print(Ind, "Something bounces!");
 		else {
-			if (p_ptr->play_vis[0 - who])
-				msg_format(Ind, "%^s attack bounces!", m_name_gen);
-			else
-				msg_print(Ind, "Its attack bounces!");
+			if (who && who > PROJECTOR_UNUSUAL) {
+				if (p_ptr->play_vis[0 - who]) msg_format(Ind, "%^s attack bounces!", m_name_gen);
+				else msg_print(Ind, "Its attack bounces!");
+			} else msg_print(Ind, "The attack bounces!");
 		}
 
 		/*if ((who != PROJECTOR_TRAP) && who)  isn't this wrong? */
@@ -12759,11 +12759,21 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		   remove the final tick to keep correct amount of damage applications. */
 		if (!no_initial_damage) project_time--;
 
-		/* Hack for fireworks: Radius 0 */
+		/* Hack for fireworks and co: Radius 0, so it does't get projected around,
+		   but for the actual effect we need to set the correct non-zero rad here: */
 		if (rad == 0) {
-			effect = new_effect(who, typ, dam, project_time, project_interval, wpos,
-			    (y + y2) / 2, (x + x2) / 2, dist_hack / 2 + 1,
-			    project_time_effect);
+			if ((project_time_effect & EFF_FIREWORKS1) ||
+			    (project_time_effect & EFF_FIREWORKS2) ||
+			    (project_time_effect & EFF_FIREWORKS3))
+				effect = new_effect(who, typ, dam, project_time, project_interval, wpos,
+				    (y + y2) / 2, (x + x2) / 2, dist_hack / 2 + 1,
+				    project_time_effect);
+			else if (project_time_effect & EFF_METEOR)
+				effect = new_effect(who, typ, dam, project_time, project_interval, wpos,
+				    y2, x2, 1, project_time_effect);
+			else
+				effect = new_effect(who, typ, dam, project_time, project_interval, wpos,
+				    y2, x2, 0, project_time_effect);
 #ifdef ARCADE_SERVER
 #if 0
 			/* Note: Should this be here or at the EFF_WALL (Firewall) handling code further above, actually? - C. Blue */
@@ -12813,6 +12823,10 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		if (no_initial_damage) return FALSE;
 	}
 
+	/* PROJECT_DUMY means we don't have to project on floor/items/monsters/players,
+	   because the effect was just for visual entertainment.. - C. Blue */
+	if (flg & PROJECT_DUMY) return(FALSE);
+
 	/* Check features */
 	if (flg & PROJECT_GRID) {
 		/* Start with "dist" of zero */
@@ -12834,10 +12848,6 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			if (project_f(0 - who, who, dist, wpos, y, x, dam, typ, flg)) notice = TRUE;
 		}
 	}
-
-	/* PROJECT_DUMY means we don't have to project on floor/items/monsters/players,
-	   because the effect was just for visual entertainment.. - C. Blue */
-	if (flg & PROJECT_DUMY) return(FALSE);
 
 	/* Check objects */
 	if (flg & PROJECT_ITEM) {
@@ -12863,7 +12873,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 
 	/* Check monsters */
 	/* eww, hope traps won't kill the server here..	- Jir - */
-	if ((flg & PROJECT_KILL) && !players_only) {
+	if ((flg & PROJECT_KILL) && !players_only && !(typ == GF_METEOR && who == PROJECTOR_UNUSUAL)) {
 		/* Start with "dist" of zero */
 		dist = 0;
 

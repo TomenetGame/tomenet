@@ -2529,6 +2529,7 @@
 #define EFF_SEEKER		0x00000200	/* Real-time-moving homing projectile */
 #define EFF_METEOR		0x00000400	/* Announce that a meteor will be landing here, then have it crash down */
 
+#define EFF_DUMMY		0x00200000	/* Effect deals no damage to anything */
 #define EFF_FALLING_STAR	0x00400000
 #define EFF_THUNDER_VISUAL	0x00800000	/* For 'Thunderstorm' spell electrocution */
 #define EFF_LIGHTNING1		0x01000000	/* For Nether Realm finishing */
@@ -7429,6 +7430,7 @@ extern int PlayerUID;
 
  #define TERM_SELECTOR	59
  #define TERM_SMOOTHPAL	60
+ #define TERM_SELECTOR2	61
 
  #ifdef EXTENDED_BG_COLOURS
   #define TERM2_BLUE	63
