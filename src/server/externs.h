@@ -842,6 +842,7 @@ extern void timed_shutdown(int k, bool terminate);
 extern bool stale_level(struct worldpos *wpos, int grace);
 extern int recall_depth_idx(struct worldpos *wpos, player_type *p_ptr);
 extern int get_recall_depth(struct worldpos *wpos, player_type *p_ptr);
+extern void erase_effects(int effect);
 
 #ifdef CLIENT_SIDE_WEATHER
  #ifndef CLIENT_WEATHER_GLOBAL

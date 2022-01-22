@@ -10754,6 +10754,11 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 				msg_print_near_monster(m_idx, "calls it a day..");
 				m_ptr->extra = 2;
+				m_ptr->extra2 = 0;
+
+				for (i = 0; i < MAX_EFFECTS; i++)
+					if (effects[i].flags & EFF_METEOR)
+						erase_effects(i);
 
 				s_printf("MIRROR2: %s (%d/%d) won.\n", p_ptr->name, p_ptr->max_plv, p_ptr->max_lev);
 				return FALSE;

@@ -8975,7 +8975,9 @@ static player_type *get_melee_target(monster_race *r_ptr, monster_type *m_ptr, c
 
 /*
  * Process a monster
- * Called by process_monsters() at same frequency.
+ * Called by process_monsters() at same frequency, but only when we have enough
+ * energy to act, so it cannot be synchronized to turns easily, in case we want
+ * to do special stuff.
  *
  * The monster is known to be within 100 grids of the player
  *
@@ -9059,11 +9061,12 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	if (m_ptr->r_idx == RI_BLUE && m_ptr->extra > 1) {
 		int who, ox = m_ptr->fx, oy = m_ptr->fy;
 
-#ifdef PROCESS_MONSTERS_DISTRIBUTE
-		if ((turn - (turn % MONSTER_TURNS)) % (MONSTER_TURNS * 2)) return;
-#else
-		if (turn % (MONSTER_TURNS * 2)) return;
-#endif
+		/* Don't move too quickly to watch nicely */
+		if (m_ptr->extra2 < 1) {
+			m_ptr->extra2++;
+			return;
+		}
+		m_ptr->extra2 = 0;
 
 		m_ptr->extra++; //we begin here at 3 basically
 		if (m_ptr->extra == 10) floor_msg_format(wpos, "The guy in blue robes mumbles something about having a \377Bcool \377Lcave beer\377w..");
@@ -9129,19 +9132,15 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	}
 	/* RF0_METEOR_SWARM */
 	else if (m_ptr->r_idx == RI_BLUE && m_ptr->hp < m_ptr->maxhp) {
-//s_printf("turn %d\n", ((turn - (turn % MONSTER_TURNS)) % (MONSTER_TURNS * 10)));
-#ifdef PROCESS_MONSTERS_DISTRIBUTE
-		if (!((turn - (turn % MONSTER_TURNS)) % (MONSTER_TURNS * 10))) {
-#else
-		if (!(turn % (MONSTER_TURNS * 10)) {
-#endif
+		m_ptr->extra2++;
+		if (m_ptr->extra2 == 30) {
 			int x, y, xs, ys, angle2, angle3;
 			int dam = 250, rad = 1, jitter = 2, dist = 4;
 
 			x = p_ptr->px; y = p_ptr->py;
 			xs = x; ys = y;
 			scatter(wpos, &ys, &xs, y, x, jitter, TRUE);
-			mon_meteor_swarm(Ind, m_idx, GF_METEOR, dam, xs, ys, rad);
+			if (!zcave[ys][xs].effect) mon_meteor_swarm(Ind, m_idx, GF_METEOR, dam, xs, ys, rad);
 
 			angle2 = rand_int(8);
 			angle3 = rand_int(7);
@@ -9150,12 +9149,14 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 			x = p_ptr->px + ddx[angle2 + 1] * dist; y = p_ptr->py + ddy[angle2 + 1] * dist;
 			xs = x; ys = y;
 			scatter(wpos, &ys, &xs, y, x, jitter, TRUE);
-			mon_meteor_swarm(Ind, m_idx, GF_METEOR, dam, xs, ys, rad);
+			if (!zcave[ys][xs].effect) mon_meteor_swarm(Ind, m_idx, GF_METEOR, dam, xs, ys, rad);
 
 			x = p_ptr->px + ddx[angle3 + 1] * dist; y = p_ptr->py + ddy[angle3 + 1] * dist;
 			xs = x; ys = y;
 			scatter(wpos, &ys, &xs, y, x, jitter, TRUE);
-			mon_meteor_swarm(Ind, m_idx, GF_METEOR, dam, xs, ys, rad);
+			if (!zcave[ys][xs].effect) mon_meteor_swarm(Ind, m_idx, GF_METEOR, dam, xs, ys, rad);
+
+			m_ptr->extra2 = 0;
 		}
 	}
 

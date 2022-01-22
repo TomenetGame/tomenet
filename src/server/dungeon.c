@@ -859,7 +859,7 @@ static void regenmana(int Ind, int percent) {
 #ifdef pelpel
 
 /* Wipeout the effects	- Jir - */
-static void erase_effects(int effect) {
+void erase_effects(int effect) {
 	int i, j, l;
 	effect_type *e_ptr = &effects[effect];
 	worldpos *wpos = &e_ptr->wpos;

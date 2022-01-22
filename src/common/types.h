@@ -1432,7 +1432,8 @@ struct monster_type {
 	byte intercepted;		/* remember best interception cap of adjacent players to determine reduction of subsequent antimagic field chances to avoid excessive suppression */
 #endif
 
-	s32b extra;			/* extra flag for debugging/testing purpose; also used for robins and target dummy's "snowiness" now; new: also for Sauron boosting; for Morgoth "roar" sfx */
+	s32b extra, extra2;		/* (not saved) extra flags for debugging/testing purpose;
+					   extra: also used for robins and target dummy's "snowiness" now; new: also for Sauron boosting; for Morgoth "roar" sfx */
 
 #ifdef MONSTER_ASTAR
 	s32b astar_idx;			/* index in available A* arrays. A* is expensive, so we only provide a couple of instances for a few monsters to use */

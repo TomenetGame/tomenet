@@ -11541,7 +11541,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/testmisc2")) {
-				mon_meteor_swarm(Ind, PROJECTOR_UNUSUAL, GF_METEOR, 250, p_ptr->px + 5, p_ptr->py, 2);
+				//mon_meteor_swarm(Ind, PROJECTOR_UNUSUAL, GF_METEOR, 250, p_ptr->px + 5, p_ptr->py, 2);
 				return;
 			}
 		}
