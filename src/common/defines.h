@@ -2527,6 +2527,7 @@
 #define EFF_THINWAVE		0x00000080	/* Same as wave, but thickness 1 instead of 3 (hits each target only once instead of three times) */
 #define EFF_VORTEX		0x00000100	/* The area follows the target - Kurzel */
 #define EFF_SEEKER		0x00000200	/* Real-time-moving homing projectile */
+#define EFF_METEOR		0x00000400	/* Announce that a meteor will be landing here, then have it crash down */
 
 #define EFF_FALLING_STAR	0x00400000
 #define EFF_THUNDER_VISUAL	0x00800000	/* For 'Thunderstorm' spell electrocution */
