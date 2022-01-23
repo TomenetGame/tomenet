@@ -4915,7 +4915,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			msg_print(Ind, " (t) \377ttime\377w  (V) \377Vgravity\377w (i) \377iice\377w    (K) \377Kunbreath\377w (Q) \377Qdisintegration\377w (Y) \377Ywater");
 			msg_print(Ind, " (k) \377knuke\377w  (l) \377lplasma\377w  (P) \377Ppsi\377w    (j) \377jholy orb\377w (J) \377Jholy fire\377w      (X) \377Xhellfire");
 			msg_print(Ind, " (1) \3771havoc\377w (E) \377Emeteor\377w  (Z) \377Zember\377w  (z) \377zthunder\377w  (O) \377Odetonation\377w     (0) \3770starlight");
-			msg_print(Ind, " (2) \3772lamp light\377w  (3) \3773shaded lamp light\377w  (4) \3774menu selector\377w  (5) \3775palette test");
+			msg_print(Ind, " (2) \3772lamp light\377w (3) \3773shaded lamp\377w (4) \3774menu selector\377w (5) \3775palette test\377w (6) \3776marker");
 			return;
 		}
 		else if (prefix(messagelc, "/setorder")) { /* Non-admin version - Set custom list position for this character in the account overview screen on login */
