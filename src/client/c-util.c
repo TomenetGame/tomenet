@@ -5949,17 +5949,22 @@ Chain_Macro:
 					Term_putstr(6, l++, -1, TERM_L_GREEN, "o\377w/\377GO\377w/\377Gp) Load a macro file. \377w/\377G Modify an option. \377w/\377G Change equipment.");
 					Term_putstr(2, l++, -1, TERM_L_GREEN, "q\377w/\377Gr\377w/\377Gs\377w/\377Gt\377w/\377Gu) Directional running \377w/\377G tunneling \377w/\377G disarming \377w/\377G bashing \377w/\377G closing.");
 
-					/* Hack: Hide the cursor */
-					Term->scr->cx = Term->wid;
-					Term->scr->cu = 1;
 
 					while (TRUE) {
+						/* Hack: Hide the cursor */
+						Term->scr->cx = Term->wid;
+						Term->scr->cu = 1;
+
 						switch (choice = inkey()) {
 						case ESCAPE:
 						//case 'p': <-this is mw_equip now
 						case '\010': /* backspace */
 							i = -1; /* leave */
 							break;
+						case ':':
+							/* specialty: allow chatting from within here (only in macro wizard step 1) */
+							cmd_message();
+							continue;
 						case KTRL('T'):
 							/* Take a screenshot */
 							xhtml_screenshot("screenshot????");
