@@ -836,7 +836,7 @@ static void place_between(struct worldpos *wpos, int y, int x) {
 			struct dun_level *l_ptr;
 			cave_type **zcave;
 
-			if (!(rand_int(1)) && !in_irondeepdive(wpos)
+			if (!(rand_int(1)) && !in_irondeepdive(wpos) && !in_hallsofmandos(wpos) /* Iron/ForceDown/NoUp/NoExitXXX: allow for now */
 			    && ((l_ptr = getfloor(wpos))) && !(l_ptr->flags2 & LF2_BROKEN)
 			    && ((zcave = getcave(wpos))) && (zcave[y][x].info & CAVE_STCK)) {
 				l_ptr->flags2 |= LF2_BROKEN;
