@@ -958,7 +958,7 @@ D:1:You cannot break down this marble balustrade.
 N:159:magma intrusion
 G:%:D
 M:50
-F:WALL | NO_WALK | NOTICE | SUPPORT_LIGHT | LAMP_LITE_OPTIONAL
+F:WALL | NO_WALK | SUPPORT_LIGHT | LAMP_LITE_OPTIONAL
 F:DONT_NOTICE_RUNNING | PERMANENT | BOUNDARY
 D:1:This magma wall seems astonishingly solid.
 
