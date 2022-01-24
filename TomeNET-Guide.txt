@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 22. January 2022 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 24. January 2022 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.7.4b - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -7597,6 +7597,9 @@ Will this be the end of you as you cannot seem to spot a way to escape?
  your character's level. But unlike in IDDC this is only true for characters
  up to level 49. Characters of level 50+ will receive depth-restricted XP.
 -The Halls of Mandos are barred to any unique monsters!
+-Various more or less basic stores, including a library, will spawn in addition
+ to the usual dungeon stores. Also (like in the IDDC) a deep supply store can
+ spawn on very deep floors.
 
 
 (4.5c2) Example dungeon depth relations
