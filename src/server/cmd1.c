@@ -4773,6 +4773,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 #endif
 						}
 
+						if (m_ptr->r_idx == RI_BLUE) drain_heal >>= 1;
 						hp_player_quiet(Ind, drain_heal, TRUE);
 						/* We get to keep some of it! */
 					}

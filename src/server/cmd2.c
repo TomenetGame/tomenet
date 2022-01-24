@@ -7119,6 +7119,7 @@ void do_cmd_fire(int Ind, int dir) {
 										drain_msg = FALSE;
 									}
 
+									if (m_ptr->r_idx == RI_BLUE) drain_heal >>= 1;
 									hp_player_quiet(Ind, drain_heal, TRUE);
 									/* We get to keep some of it! */
 								}
