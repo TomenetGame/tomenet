@@ -3705,6 +3705,11 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 		case 0: (*cp) = '+'; break;
 		case 1: (*cp) = '-'; break;
 		case 2: (*cp) = '|'; break;
+		/* and in case we do draw diagonals too: */
+		case 3: (*cp) = '/'; break;
+		case 4: (*cp) = '\\'; break;
+		case 5: (*cp) = '\\'; break;
+		case 6: (*cp) = '/'; break;
 		}
 	}
 	/* for 'Thunderstorm' spell */

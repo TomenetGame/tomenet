@@ -1275,6 +1275,12 @@ static void process_effects(void) {
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 							c_ptr->effect_xtra = 1;
 						}
+#if 0 /* draw diagonals too? - no, too much clutter */
+						else {
+							apply_effect(k, &who, wpos, i, j, c_ptr);
+							c_ptr->effect_xtra = 3 + (j < e_ptr->cy ? 0 : 1) + (i < e_ptr->cx ? 0 : 2);
+						}
+#endif
 					}
 				} else if (i == e_ptr->cx && j == e_ptr->cy)
 					ball(who, e_ptr->whot, e_ptr->type, e_ptr->dam, j, i, 1);

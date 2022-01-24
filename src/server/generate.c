@@ -2546,7 +2546,7 @@ static void build_type1(struct worldpos *wpos, int by0, int bx0, player_type *p_
 				c_ptr = &zcave[y][x2 - 1];
 				c_ptr->feat = FEAT_PERM_INNER;
 			}
-		} else {
+		} else { /* this never seems to be true for this type of room - they are always wider than high */
 			for (x = x1 + 2; x <= x2 - 2; x += 3) {
 				c_ptr = &zcave[y1 + 1][x];
 				c_ptr->feat = FEAT_PERM_INNER;

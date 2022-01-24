@@ -9135,7 +9135,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		m_ptr->extra2++;
 		if (m_ptr->extra2 == 30) {
 			int x, y, xs, ys, angle2, angle3;
-			int dam = 300, rad = 1, jitter = 2, dist = 3;
+			int dam = 300, rad = 1, jitter = 2, dist = 3; //dist 3 if we don't draw diagonals, otherwise 4 recommended or it looks cluttered
 
 			x = p_ptr->px; y = p_ptr->py;
 			xs = x; ys = y;
