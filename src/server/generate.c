@@ -2468,6 +2468,10 @@ static void build_type1(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	int y, x = 1, y2, x2, yval, xval;
 	int y1, x1, xsize, ysize;
 
+	/* For Halls of Mandos */
+	dungeon_type *d_ptr = getdungeon(wpos);
+	bool mandos = d_ptr && d_ptr->type == DI_HALLS_OF_MANDOS;
+
 	bool light;
 	cave_type *c_ptr;
 
@@ -2534,6 +2538,23 @@ static void build_type1(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		c_ptr->feat = feat_wall_outer;
 	}
 
+	if (mandos) {
+		if (y2 - y1 > x2 - x1) {
+			for (y = y1 + 2; y <= y2 - 2; y += 3) {
+				c_ptr = &zcave[y][x1 + 1];
+				c_ptr->feat = FEAT_PERM_INNER;
+				c_ptr = &zcave[y][x2 - 1];
+				c_ptr->feat = FEAT_PERM_INNER;
+			}
+		} else {
+			for (x = x1 + 2; x <= x2 - 2; x += 3) {
+				c_ptr = &zcave[y1 + 1][x];
+				c_ptr->feat = FEAT_PERM_INNER;
+				c_ptr = &zcave[y2 - 1][x];
+				c_ptr->feat = FEAT_PERM_INNER;
+			}
+		}
+	} else
 
 	/* Hack -- Occasional pillar room */
 	if (rand_int(20) == 0) {
