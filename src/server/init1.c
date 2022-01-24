@@ -1084,6 +1084,7 @@ static cptr d_info_flags1[] = {
 	"NO_DOORS",
 	"WATER_RIVER",
 	"LAVA_RIVER",
+
 	"WATER_RIVERS",
 	"LAVA_RIVERS",
 	"CAVE",
@@ -1092,6 +1093,7 @@ static cptr d_info_flags1[] = {
 	"HOT",
 	"COLD",
 	"FORCE_DOWN",
+
 	"FORGET",
 	"NO_DESTROY",
 	"SAND_VEIN",
@@ -1100,6 +1102,7 @@ static cptr d_info_flags1[] = {
 	"DAMAGE_FEAT",
 	"FLAT",
 	"TOWER",
+
 	"RANDOM_TOWNS",
 	"DOUBLE",
 	"LIFE_LEVEL",
