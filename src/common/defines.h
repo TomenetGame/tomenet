@@ -6478,7 +6478,7 @@
 #define DF1_FLAT		0x00400000L	/* Creates paths to next areas at edge of level, like Barrowdowns */
 #define DF1_TOWER		0x00800000L	/* You start at bottom and go up rather than the reverse */
 
-#define DF1_RANDOM_TOWNS	0x01000000L	/* Allow random towns */
+#define DF1_RANDOM_TOWNS	0x01000000L	/* Allow random towns -- this flag is a relic and not implemented */
 #define DF1_DOUBLE		0x02000000L	/* Creates double-walled dungeon like Helcaraxe and Erebor --- UNUSED */
 #define DF1_LIFE_LEVEL		0x04000000L	/* Creates dungeon level on modified 'game of life' algorithm --- UH, CHECK */
 #define DF1_EVOLVE		0x08000000L	/* Evolving, pulsing levels like Heart of the Earth --- UNUSED */
