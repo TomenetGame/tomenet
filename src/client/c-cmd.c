@@ -4348,7 +4348,11 @@ void cmd_check_misc(void) {
 
 	Term_putstr(40, row, -1, TERM_WHITE, "\377s(Type \377y/ex\377s in chat for extra info)");
 
+#if 0
 	Term_putstr(0, 22, -1, TERM_BLUE, "Command: ");
+#else
+	Term_putstr( 5, row, -1, TERM_WHITE, "(\377oI\377w) Convert screenshot to PNG");
+#endif
 
 	while (i != ESCAPE) {
 		Term_putstr(0,  0, -1, TERM_BLUE, "Display current knowledge");
@@ -4517,6 +4521,82 @@ void cmd_check_misc(void) {
 			case 'G': case 'W': case 'P': case 'R': case 'L':
 				c_message_add("Sorry, cannot open browser in terminal-mode.");
 				break;
+#endif
+
+#ifdef TEST_CLIENT
+			case 'I':
+			{
+				char buf[1024], file_name[256];
+				int k;
+				FILE *fp;
+
+				/* Use chrome, chromium or firefox to create a png screenshot from xhtml
+				   We prefer chrome/chromium since it allows setting background to transparent (or black) instead of white.
+				   BIG_MAP: 640x750, normal map: 640x420.  - C. Blue */
+				if (!screenshot_filename[0]) break;
+				path_build(buf, 1024, ANGBAND_DIR_USER, screenshot_filename);
+
+ #ifdef USE_X11
+				/* Get full path of xhtml screenshot file (the browsers suck and won't work with a relative path) */
+				k = system(format("readlink -f %s > __tmp__", buf));
+				if (k) return; //error
+				if (!(fp = fopen("__tmp__", "r"))) return; //error
+				if (!fgets(buf, 1024, fp)) {
+					fclose(fp);
+					return; //error
+				}
+				fclose(fp);
+				buf[strlen(buf) - 1] = 0; //remove trailing newline
+				strcat(buf, ".xhtml");
+
+				/* Get relative path of target image file (suddenly the browsers are fine with it) */
+				path_build(file_name, 1024, ANGBAND_DIR_USER, "_screenshot.png");
+				if (k) return; //error
+
+				/* Try chromium, then chrome, then firefox */
+				k = system("chromium --version");
+				if (!k) {
+					c_msg_format("chromium --headless --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
+					    screen_hgt == MAX_SCREEN_HGT ? "640x750" : "640x420",
+					    file_name,
+					    buf);
+					/* Randomly hangs, sometimes just works, wut */
+					k = system(format("chromium --headless --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
+					    screen_hgt == MAX_SCREEN_HGT ? "640x750" : "640x420",
+					    file_name,
+					    buf));
+					if (k) c_msg_print("Automatic PNG screenshot with 'chromium' failed.");
+				} else {
+					k = system("chrome --version");
+					if (!k) {
+						c_msg_format("chromium --headless --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
+						    screen_hgt == MAX_SCREEN_HGT ? "640x750" : "640x420",
+						    file_name,
+						    buf);
+						/* Untested */
+						k = system(format("chromium --headless --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
+						    screen_hgt == MAX_SCREEN_HGT ? "640x750" : "640x420",
+						    file_name,
+						    buf));
+					if (k) c_msg_print("Automatic PNG screenshot with 'chromium' failed.");
+					} else {
+						k = system("firefox --version");
+						if (!k) {
+							c_msg_format("firefox --headless --window-size %s --screenshot %s file://%s",
+							    screen_hgt == MAX_SCREEN_HGT ? "640,750" : "640,420",
+							    file_name,
+							    buf);
+							k = system(format("firefox --headless --window-size %s --screenshot %s file://%s",
+							    screen_hgt == MAX_SCREEN_HGT ? "640,750" : "640,420",
+							    file_name,
+							    buf));
+						}
+						/* else: failure */
+					}
+				}
+				break;
+			}
+ #endif
 #endif
 
 			default:

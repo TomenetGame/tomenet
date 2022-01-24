@@ -689,3 +689,5 @@ char bookmark_name[GUIDE_BOOKMARKS][60];
 #endif
 unsigned char lamp_fainting = 0;
 bool insanity_death = FALSE;
+
+char screenshot_filename[1024] = { 0 };

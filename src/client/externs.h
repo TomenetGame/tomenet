@@ -1136,3 +1136,5 @@ extern char bookmark_name[GUIDE_BOOKMARKS][60];
 #endif
 extern unsigned char lamp_fainting;
 extern bool insanity_death;
+
+extern char screenshot_filename[1024];

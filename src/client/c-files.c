@@ -1796,77 +1796,11 @@ void xhtml_screenshot(cptr name) {
 
 	fclose(fp);
 
-	if (!silent_dump) {
-		c_msg_format("Screenshot saved to %s.xhtml", file_name);
+	if (!silent_dump) c_msg_format("Screenshot saved to %s.xhtml", file_name);
+	else silent_dump = FALSE;
 
-#if 0
-#ifdef TEST_CLIENT
-		/* Use chrome, chromium or firefox to create a png screenshot from xhtml
-		   We prefer chrome/chromium since it allows setting background to transparent (or black) instead of white.
-		   BIG_MAP: 640x750, normal map: 640x420.  - C. Blue */
- #ifdef USE_X11
-		/* Get full path of xhtml screenshot file (the browsers suck and won't work with a relative path) */
-		path_build(buf, 1024, ANGBAND_DIR_USER, file_name);
-		i = system(format("readlink -f %s > __tmp__", buf));
-		if (i) return; //error
-		if (!(fp = fopen("__tmp__", "r"))) return; //error
-		if (!fgets(buf, 1024, fp)) {
-			fclose(fp);
-			return; //error
-		}
-		fclose(fp);
-		buf[strlen(buf) - 1] = 0; //remove trailing newline
-		strcat(buf, ".xhtml");
-
-		/* Get relative path of target image file (suddenly the browsers are fine with it) */
-		path_build(file_name, 1024, ANGBAND_DIR_USER, "_screenshot.png");
-		if (i) return; //error
-
-		/* Try chromium, then chrome, then firefox */
-		i = system("chromium --version");
-		if (!i) {
-			c_msg_format("chromium --headless --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
-			    screen_hgt == MAX_SCREEN_HGT ? "640x750" : "640x420",
-			    file_name,
-			    buf);
-			/* Randomly hangs, sometimes just works, wut */
-			i = system(format("chromium --headless --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
-			    screen_hgt == MAX_SCREEN_HGT ? "640x750" : "640x420",
-			    file_name,
-			    buf));
-			if (i) c_msg_print("Automatic PNG screenshot with 'chromium' failed.");
-		} else {
-			i = system("chrome --version");
-			if (!i) {
-				c_msg_format("chromium --headless --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
-				    screen_hgt == MAX_SCREEN_HGT ? "640x750" : "640x420",
-				    file_name,
-				    buf);
-				/* Untested */
-				i = system(format("chromium --headless --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
-				    screen_hgt == MAX_SCREEN_HGT ? "640x750" : "640x420",
-				    file_name,
-				    buf));
-			if (i) c_msg_print("Automatic PNG screenshot with 'chromium' failed.");
-			} else {
-				i = system("firefox --version");
-				if (!i) {
-					c_msg_format("firefox --headless --window-size %s --screenshot %s file://%s",
-					    screen_hgt == MAX_SCREEN_HGT ? "640,750" : "640,420",
-					    file_name,
-					    buf);
-					i = system(format("firefox --headless --window-size %s --screenshot %s file://%s",
-					    screen_hgt == MAX_SCREEN_HGT ? "640,750" : "640,420",
-					    file_name,
-					    buf));
-				}
-				/* else: failure */
-			}
-		}
- #endif
-#endif
-#endif
-	} else silent_dump = FALSE;
+	/* For PNG screenshot */
+	strcpy(screenshot_filename, file_name);
 }
 
 
