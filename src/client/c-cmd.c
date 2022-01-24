@@ -4348,7 +4348,7 @@ void cmd_check_misc(void) {
 
 	Term_putstr(40, row, -1, TERM_WHITE, "\377s(Type \377y/ex\377s in chat for extra info)");
 
-#if 0
+#ifndef TEST_CLIENT
 	Term_putstr(0, 22, -1, TERM_BLUE, "Command: ");
 #else
 	Term_putstr( 5, row, -1, TERM_WHITE, "(\377oI\377w) Convert screenshot to PNG");
