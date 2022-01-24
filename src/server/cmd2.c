@@ -5023,9 +5023,9 @@ void do_cmd_bash(int Ind, int dir) {
 				sound_floor_vol(wpos, "thunder", NULL, SFX_TYPE_AMBIENT, 100); //ambient, for implied lightning visuals
 #endif
 			summon_override_checks = SO_ALL;
-			temp = 20;
-			do scatter(wpos, &y2, &x2, y, x + 1, 1, TRUE);
-			while (!(in_bounds(y2, x2) && cave_empty_bold(zcave, y2, x2)) && --temp);
+			temp = 50;
+			do scatter(wpos, &y2, &x2, y, x, 1, TRUE);
+			while (!(in_bounds(y2, x2) && cave_empty_bold(zcave, y2, x2) && distance(y2, x2, p_ptr->py, p_ptr->px) > 1) && --temp);
 			if (!place_monster_one(&p_ptr->wpos, y2, x2, RI_MIRROR, 0, 0, 0, 0, 0)) {
 				/* Success */
 				monster_type *m_ptr;
