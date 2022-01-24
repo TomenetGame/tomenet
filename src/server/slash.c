@@ -9513,7 +9513,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (!i) return;
 
 				msg_format(Ind, "Sent screenflash to '%s'.", message3);
-				Send_screenflash(Ind);
+				Send_screenflash(i);
 				return;
 			}
 			else if (prefix(messagelc, "/madart")) { /* try to create a very specific randart - C. Blue */
