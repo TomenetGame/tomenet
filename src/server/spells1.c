@@ -7103,6 +7103,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		no_dam = TRUE;
 		if (seen) obvious = TRUE;
 
+		/* Hack for wands of heal monster, to have significance against non-low monsters too */
+		if (dam == 9999) dam = damroll(3, 4) + m_ptr->maxhp / 10;
+
 		/* Wake up */
 		m_ptr->csleep = 0;
 		/* Heal */

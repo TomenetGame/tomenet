@@ -4166,7 +4166,11 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 
 	case SV_WAND_HEAL_MONSTER:
 		typ = GF_OLD_HEAL;
+#if 0 /* traditional way */
 		dam = damroll(4, 6);
+#else /* add percentage so it has any significant effect on non-low monsters (hill orc ~ break point) */
+		dam = damroll(3, 4) + m_ptr->maxhp / 10;
+#endif
 		break;
 	case SV_WAND_HASTE_MONSTER:
 		typ = GF_OLD_SPEED;
