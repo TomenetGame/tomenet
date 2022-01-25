@@ -5828,21 +5828,23 @@ int Send_stamina(int Ind, int mst, int cst) {
 
 	if (!is_newer_than(&connp->version, 4, 4, 1, 2, 0, 0)) return(0);
 
+#if 0 /* Implemented shield-bashing enemies, and it uses stamina, so everyone could do it. */
 	/* can we use stamina at all? */
 	if (is_newer_than(&p_ptr->version, 4, 4, 1, 3, 0, 0) &&
 	    (p_ptr->pclass == CLASS_MAGE || p_ptr->pclass == CLASS_PRIEST ||
-#ifdef ENABLE_CPRIEST
+ #ifdef ENABLE_CPRIEST
 	    p_ptr->pclass == CLASS_CPRIEST ||
-#endif
+ #endif
 	    p_ptr->pclass == CLASS_SHAMAN)
-#ifdef ENABLE_DRACONIAN_TRAITS
+ #ifdef ENABLE_DRACONIAN_TRAITS
 	    /* may breathe elements for stamina */
 	    && p_ptr->prace != RACE_DRACONIAN
-#endif
+ #endif
 	    ) {
 		mst = -9999;
 		cst = -9999;
 	}
+#endif
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
