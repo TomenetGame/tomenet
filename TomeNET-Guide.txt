@@ -12891,8 +12891,8 @@ If there is no safe (ie non-wall) grid next to a player when he gets hit by an
 earthquake, he will take a lot of damage. Otherwise the player has a chance to
 dodge the quake and take less or even no damage. The dodge chance is affected
 by the player's Dodging skill and whether he is Shadow Running.
-Damage taken by earthquakes is further reduced if proficient in the 'Earth'
-magic school. (Wraithform will not help against earthquakes in any way.)
+Damage taken by earthquakes is halved if the player has trained 'Earth' school
+to 50.000 or if he is in wraithform, these two stack for 3/4 reduction total.
 
 
 

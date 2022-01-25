@@ -5942,12 +5942,13 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 				if (!sn) {
 					/* Message and damage */
 					damage = 300;
-					if (get_skill(p_ptr, SKILL_EARTH) == 50) damage /= 2;
+					if (get_skill(p_ptr, SKILL_EARTH) == 50) damage = (damage + 1) / 2;
+					if (p_ptr->tim_wraith) damage = (damage + 1) / 2;
 					/* Cap the damage - mikaelh */
-					if (damage + p_ptr->total_damage > 300) {
+					if (damage + p_ptr->total_damage > 300)
 						damage = 300 - p_ptr->total_damage;
-					}
-					if (damage) msg_format(Ind, "You are severely crushed for \377o%d\377w damage!", damage);
+					if (damage)
+						msg_format(Ind, "You are severely crushed for \377o%d\377w damage!", damage);
 
 					/* Stun only once - mikaelh */
 					if (p_ptr->total_damage == 0) {
@@ -5967,8 +5968,9 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 							msg_format(Ind, "\377%cYou nimbly dodge the blast and take no damage!", COLOUR_DODGE_GOOD);
 							break;
 						case 2:
-							damage = damroll(10, 4);
-							if (get_skill(p_ptr, SKILL_EARTH) == 50) damage /= 2;
+							damage = damroll(10, 6);
+							if (get_skill(p_ptr, SKILL_EARTH) == 50) damage = (damage + 1) / 2;
+							if (p_ptr->tim_wraith) damage = (damage + 1) / 2;
 							/* Cap the damage - mikaelh */
 							if (damage + p_ptr->total_damage > 300)
 								damage = 300 - p_ptr->total_damage;
@@ -5982,8 +5984,9 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 							}
 							break;
 						case 3:
-							damage = damroll(30, 4);
-							if (get_skill(p_ptr, SKILL_EARTH) == 50) damage /= 2;
+							damage = damroll(30, 6);
+							if (get_skill(p_ptr, SKILL_EARTH) == 50) damage = (damage + 1) / 2;
+							if (p_ptr->tim_wraith) damage = (damage + 1) / 2;
 							/* Cap the damage - mikaelh */
 							if (damage + p_ptr->total_damage > 300)
 								damage = 300 - p_ptr->total_damage;
