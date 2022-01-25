@@ -8353,7 +8353,7 @@ static void do_cmd_options_win(void) {
 static int font_name_cmp(const void *a, const void *b) {
    #if 0 /* simple way */
 	return strcmp((const char*)a, (const char*)b);
-   #elseif 0 /* sort in single-digit numbers before double-digit ones */
+   #elif 0 /* sort in single-digit numbers before double-digit ones */
 	char at[256], bt[256];
 	at[0] = '0';
 	bt[0] = '0';
