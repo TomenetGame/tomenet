@@ -4523,20 +4523,177 @@ void cmd_check_misc(void) {
 				break;
 #endif
 
-#ifdef TEST_CLIENT
+//#ifdef TEST_CLIENT
 			case 'I':
 			{
-				char buf[1024], file_name[256];
+ #define SCREENSHOT_TARGET "tomenet-screenshot.png"
+				char buf[1024], file_name[1024], command[1024];
 				int k;
 				FILE *fp;
 
+ #ifdef WINDOWS
+				char path[1024], *c = path, *c2, tmp[1024], executable[1024];
+
+				if (!screenshot_filename[0]) break;
+				// When NULL is passed to GetModuleHandle, the handle of the exe itself is returned
+				HMODULE hModule = GetModuleHandle(NULL);
+				if (hModule != NULL) {
+					// Use GetModuleFileName() with module handle to get the path
+					GetModuleFileName(hModule, path, (sizeof(path)));
+				} else {
+					c_message_add("Screenshot: Module handle is NULL");
+					break;
+				}
+				while ((c2 = strchr(c, '\\'))) c = c2 + 1;
+				if (c == path) break; /* Error: No valid path. */
+				*c = 0; //remove 'TomeNET.exe' from path
+
+				/* Build source xthml filename with full path */
+				strcpy(buf, "file://");
+				strcat(buf, path);
+				path_build(file_name, 1024, ANGBAND_DIR_USER, screenshot_filename);
+				strcat(buf, file_name);
+				strcat(buf, ".xhtml");
+
+				/* Put into quotations */
+				strcpy(tmp, "\"");
+				strcat(tmp, buf);
+				strcat(tmp, "\"");
+				strcpy(buf, tmp);
+
+				/* Build target image file name with full path */
+				path_build(file_name, 1024, ANGBAND_DIR_USER, SCREENSHOT_TARGET);
+				strcat(path, file_name);
+				strcpy(file_name, path);
+
+				/* Put into quotations */
+				strcpy(tmp, "\"");
+				strcat(tmp, file_name);
+				strcat(tmp, "\"");
+				strcpy(file_name, tmp);
+
+				/* Try chromium, then chrome, then firefox */
+#if 1 /* skip Chromium on Windows OS for now */
+				if (FALSE) {
+#else
+				k = system("chromium.exe --version"); // - ?
+				//k = system("reg query \"HKEY_CURRENT_USER\\Software\\Google\\Chrome\\BLBeacon\" /v version");
+				if (!k) {
+#endif
+					/* Obtain path to browser */
+					system("reg query \"HKEY_CLASSES_ROOT\\ChromiumHTML\\shell\\open\\command\" /ve > __temp__"); //<- just guessed the reg value, VERIFY!
+					fp = fopen("__temp__", "r");
+					fgets(tmp, 1024, fp);
+					fgets(tmp, 1024, fp);
+					fgets(tmp, 1024, fp);
+					fclose(fp);
+					c = strchr(tmp, '"');
+					if (!c) break; //error
+					strcpy(executable, "\"");
+					strcat(executable, c + 1);
+					c = strchr(executable + 1, '"');
+					if (!c) break; //error
+					*c = 0;
+					strcat(executable, "\"");
+					remove("__temp__");
+
+					sprintf(command, "%s --headless --default-background-color=00000000 --window-size=%s --screenshot=%s %s",
+					    executable,
+					    screen_hgt == MAX_SCREEN_HGT ? "640x650" : "640x365",
+					    file_name,
+					    buf);
+
+					fp = fopen("__temp__.bat", "w");
+					fputs(command, fp);
+					fclose(fp);
+					k = system("__temp__.bat");
+					remove("__temp__.bat");
+
+					if (k) c_msg_format("PNG screenshot via 'Chromium' failed (%d).", k);
+					else c_msg_format("PNG screenshot via 'Chromium' saved to %s.", SCREENSHOT_TARGET);
+				} else {
+					//k = system("chrome.exe --version");  -- chrome is buggy and doesn't report but just starts up
+					k = system("reg query \"HKEY_CURRENT_USER\\Software\\Google\\Chrome\\BLBeacon\" /v version");
+					if (!k) {
+						/* Obtain path to browser */
+						system("reg query \"HKEY_CLASSES_ROOT\\ChromeHTML\\shell\\open\\command\" /ve > __temp__");
+						fp = fopen("__temp__", "r");
+						fgets(tmp, 1024, fp);
+						fgets(tmp, 1024, fp);
+						fgets(tmp, 1024, fp);
+						fclose(fp);
+						c = strchr(tmp, '"');
+						if (!c) break; //error
+						strcpy(executable, "\"");
+						strcat(executable, c + 1);
+						c = strchr(executable + 1, '"');
+						if (!c) break; //error
+						*c = 0;
+						strcat(executable, "\"");
+						remove("__temp__");
+
+						sprintf(command, "%s --headless --default-background-color=00000000 --window-size=%s --screenshot=%s %s",
+						    executable,
+						    screen_hgt == MAX_SCREEN_HGT ? "640x650" : "640x365",
+						    file_name,
+						    buf);
+
+						fp = fopen("__temp__.bat", "w");
+						fputs(command, fp);
+						fclose(fp);
+						k = system("__temp__.bat");
+						remove("__temp__.bat");
+
+						if (k) c_msg_format("Automatic PNG screenshot with 'Chrome' failed (%d).", k);
+						else c_msg_format("PNG screenshot via 'Chrome' saved to %s.", SCREENSHOT_TARGET);
+					} else {
+						//k = system("firefox --version --headless");  -- error 9009 "file not found" wut? due to bad path escaping/quoting without using a .bat file probably
+						k = system("reg query \"HKEY_CURRENT_USER\\Software\\Mozilla\\Firefox\" /v OldDefaultBrowserCommand");
+						if (!k) {
+							/* Obtain path to browser */
+							system("reg query \"HKEY_CLASSES_ROOT\\Applications\\firefox.exe\\shell\\open\\command\" /ve > __temp__");
+							fp = fopen("__temp__", "r");
+							fgets(tmp, 1024, fp);
+							fgets(tmp, 1024, fp);
+							fgets(tmp, 1024, fp);
+							fclose(fp);
+							c = strchr(tmp, '"');
+							if (!c) break; //error
+							strcpy(executable, "\"");
+							strcat(executable, c + 1);
+							c = strchr(executable + 1, '"');
+							if (!c) break; //error
+							*c = 0;
+							strcat(executable, "\"");
+							remove("__temp__");
+
+							sprintf(command, "%s --headless --window-size %s --screenshot %s %s",
+							    executable,
+							    screen_hgt == MAX_SCREEN_HGT ? "660,835" : "660,470",
+							    file_name,
+							    buf);
+
+							fp = fopen("__temp__.bat", "w");
+							fputs(command, fp);
+							fclose(fp);
+							k = system("__temp__.bat");
+							remove("__temp__.bat");
+
+							if (k) c_msg_format("Automatic PNG screenshot with 'Firefox' failed (%d).", k);
+							else c_msg_format("PNG screenshot via 'Firefox' saved to %s.", SCREENSHOT_TARGET);
+						}
+						/* else: failure */
+					}
+				}
+				break;
+ #endif
+ #ifdef USE_X11
 				/* Use chrome, chromium or firefox to create a png screenshot from xhtml
 				   We prefer chrome/chromium since it allows setting background to transparent (or black) instead of white.
 				   BIG_MAP: 640x750, normal map: 640x420.  - C. Blue */
 				if (!screenshot_filename[0]) break;
 				path_build(buf, 1024, ANGBAND_DIR_USER, screenshot_filename);
 
- #ifdef USE_X11
 				/* Get full path of xhtml screenshot file (the browsers suck and won't work with a relative path) */
 				k = system(format("readlink -f %s > __tmp__", buf));
 				if (k) return; //error
@@ -4550,54 +4707,52 @@ void cmd_check_misc(void) {
 				strcat(buf, ".xhtml");
 
 				/* Get relative path of target image file (suddenly the browsers are fine with it) */
-				path_build(file_name, 1024, ANGBAND_DIR_USER, "_screenshot.png");
+				path_build(file_name, 1024, ANGBAND_DIR_USER, SCREENSHOT_TARGET);
 				if (k) return; //error
 
 				/* Try chromium, then chrome, then firefox */
 				k = system("chromium --version");
 				if (!k) {
-					c_msg_format("chromium --headless --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
+					sprintf(command, "chromium --headless --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
 					    screen_hgt == MAX_SCREEN_HGT ? "640x750" : "640x420",
 					    file_name,
 					    buf);
+					//c_msg_print(command);
 					/* Randomly hangs, sometimes just works, wut */
-					k = system(format("chromium --headless --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
-					    screen_hgt == MAX_SCREEN_HGT ? "640x750" : "640x420",
-					    file_name,
-					    buf));
-					if (k) c_msg_print("Automatic PNG screenshot with 'chromium' failed.");
+					k = system(command);
+					if (k) c_msg_format("PNG screenshot with 'chromium' failed (%d).", k);
+					else c_msg_format("PNG screenshot via 'chromium' saved to %s.", SCREENSHOT_TARGET);
 				} else {
 					k = system("chrome --version");
 					if (!k) {
-						c_msg_format("chromium --headless --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
+						sprintf(command, "chrome --headless --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
 						    screen_hgt == MAX_SCREEN_HGT ? "640x750" : "640x420",
 						    file_name,
 						    buf);
+						//c_msg_print(command);
 						/* Untested */
-						k = system(format("chromium --headless --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
-						    screen_hgt == MAX_SCREEN_HGT ? "640x750" : "640x420",
-						    file_name,
-						    buf));
-					if (k) c_msg_print("Automatic PNG screenshot with 'chromium' failed.");
+						k = system(command);
+						if (k) c_msg_format("PNG screenshot with 'chrome' failed (%d).", k);
+						else c_msg_format("PNG screenshot via 'chrome' saved to %s.", SCREENSHOT_TARGET);
 					} else {
 						k = system("firefox --version");
 						if (!k) {
-							c_msg_format("firefox --headless --window-size %s --screenshot %s file://%s",
+							sprintf(command, "firefox --headless --window-size %s --screenshot %s file://%s",
 							    screen_hgt == MAX_SCREEN_HGT ? "640,750" : "640,420",
 							    file_name,
 							    buf);
-							k = system(format("firefox --headless --window-size %s --screenshot %s file://%s",
-							    screen_hgt == MAX_SCREEN_HGT ? "640,750" : "640,420",
-							    file_name,
-							    buf));
+							//c_msg_print(command);
+							k = system(command);
+							if (k) c_msg_format("PNG screenshot with 'firefox' failed (%d).", k);
+							else c_msg_format("PNG screenshot via 'firefox' saved to %s.", SCREENSHOT_TARGET);
 						}
 						/* else: failure */
 					}
 				}
 				break;
-			}
  #endif
-#endif
+			}
+//#endif /* TEST_CLIENT */
 
 			default:
 				bell();
