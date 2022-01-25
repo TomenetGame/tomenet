@@ -630,6 +630,8 @@ extern void do_cmd_force_stack(int Ind, int item);
 extern bool wraith_access(int Ind);
 extern void whats_under_your_feet(int Ind, bool force);
 extern bool remember_sense(int Ind, int slot, object_type *o_ptr);
+extern void py_bash_mon(int Ind, int y, int x);
+extern void py_bash_py(int Ind, int y, int x);
 
 /* cmd2.c */
 extern cptr get_house_owner(struct c_special *cs_ptr);

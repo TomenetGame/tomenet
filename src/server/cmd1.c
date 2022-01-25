@@ -4996,6 +4996,659 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	suppress_message = FALSE;
 }
 
+/* Bash a monster for stun effect and a little damage, costs stamina to avoid stun-spam into k.o.. - C. Blue
+   Simple handling: No brands, cannot crit, no vampirism, no quake, just STR, shield weight, combat skill.
+   Also, independant of combat stance actually - we perceive the shield bash more as a fighting technique than an attack. */
+void py_bash_mon(int Ind, int y, int x) {
+	player_type	*p_ptr = Players[Ind];
+	int		stun_effect, chance, owner_Ind = 0, resist_stun = 0;
+	int		k;
+
+	char		m_name[MNAME_LEN], hit_desc[MAX_CHARS_WIDE];
+	monster_type	*m_ptr;
+	monster_race	*r_ptr;
+
+	bool		fear = FALSE, did_stun = FALSE;
+
+	int		block;
+
+	bool		helpless, uniq_bell = FALSE;
+	char		uniq = 'w';
+
+	struct worldpos	*wpos = &p_ptr->wpos;
+	cave_type	**zcave;
+	cave_type 	*c_ptr;
+
+#ifndef NEW_SHIELDS_NO_AC
+	int mon_acid = 0, mon_fire = 0;
+#endif
+	int i;
+
+
+	/* Hack -- suppress messages */
+	if (p_ptr->taciturn_messages) suppress_message = TRUE;
+
+	if (!p_ptr->num_blow) {
+		msg_print(Ind, "Not cannot attack.");
+		return;
+	}
+
+	if (p_ptr->cst < 6) {
+		msg_print(Ind, "Not enough stamina!");
+		return;
+	}
+	p_ptr->cst -= 6;
+	p_ptr->redraw |= PR_STAMINA;
+	redraw_stuff(Ind);
+
+	if (!(zcave = getcave(wpos))) return;
+	c_ptr = &zcave[y][x];
+
+	m_ptr = &m_list[c_ptr->m_idx];
+	r_ptr = race_inf(m_ptr);
+	helpless = (m_ptr->csleep || m_ptr->stunned > 100 || m_ptr->confused);
+
+	/* Disturb the player */
+	disturb(Ind, 0, 0);
+
+	/* Extract monster name (or "it") */
+	monster_desc(Ind, m_name, c_ptr->m_idx, 0);
+
+	/* Auto-Recall if possible and visible */
+	if (p_ptr->mon_vis[c_ptr->m_idx]) recent_track(m_ptr->r_idx);
+	/* Track a new monster */
+	if (p_ptr->mon_vis[c_ptr->m_idx]) health_track(Ind, c_ptr->m_idx);
+
+	if (m_ptr->status == M_STATUS_FRIENDLY) return;
+
+	/* is it a unique we already got kill credit for? */
+	if ((r_ptr->flags1 & RF1_UNIQUE) &&
+	    p_ptr->r_killed[m_ptr->r_idx] == 1) {
+		uniq = 'D';
+		if (p_ptr->warn_unique_credit) uniq_bell = TRUE;
+	}
+
+	/* can't attack while in WRAITHFORM */
+	/* wraithed players can attack wraithed monsters - mikaelh */
+	if (p_ptr->tim_wraith && !is_admin(p_ptr) &&
+	    ((r_ptr->flags2 & RF2_KILL_WALL) || !(r_ptr->flags2 & RF2_PASS_WALL))) /* lil fix (Morgoth) - C. Blue */
+		return;
+
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+
+	/* try to find its owner online */
+	if (m_ptr->owner)
+		for (i = NumPlayers; i > 0; i--)
+			if (m_ptr->owner == Players[i]->id) {
+				owner_Ind = i;
+				break;
+			}
+
+#if 0 /* golems get attacked by other players */
+	if ((m_ptr->owner == p_ptr->id && !p_ptr->confused &&
+		p_ptr->mon_vis[c_ptr->m_idx]) ||
+		(m_ptr->owner != p_ptr->id && m_ptr->pet)) //dont kill pets either, meanie!
+#else /* prevent golems being attacked by other players */
+	if ((m_ptr->owner == p_ptr->id && !p_ptr->confused && p_ptr->mon_vis[c_ptr->m_idx]) ||
+	    (m_ptr->owner == p_ptr->id && m_ptr->pet) || //dont kill pets either, meanie!
+	    //!owner_Ind || /* don't attack ownerless golems */
+	    (owner_Ind && !check_hostile(Ind, owner_Ind))) /* only attack if owner is hostile */
+#endif
+	{
+		int ox = m_ptr->fx, oy = m_ptr->fy, nx = p_ptr->px, ny = p_ptr->py;
+
+		msg_format(Ind, "You swap positions with %s.", m_name);
+
+		/* Update the new location */
+		zcave[ny][nx].m_idx = c_ptr->m_idx;
+		/* Update the old location */
+		zcave[oy][ox].m_idx = -Ind;
+
+		/* Move the monster */
+		m_ptr->fy = ny;
+		m_ptr->fx = nx;
+		store_exit(Ind);
+		p_ptr->py = oy;
+		p_ptr->px = ox;
+
+		cave_midx_debug(wpos, oy, ox, -Ind);
+
+		/* Update the monster (new location) */
+		update_mon(zcave[ny][nx].m_idx, TRUE);
+		/* Redraw the old grid */
+		everyone_lite_spot(wpos, oy, ox);
+		/* Redraw the new grid */
+		everyone_lite_spot(wpos, ny, nx);
+		/* Check for new panel (redraw map) */
+		verify_panel(Ind);
+		/* Update stuff */
+		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+		/* Update the monsters */
+		p_ptr->update |= (PU_DISTANCE);
+		/* Window stuff */
+		p_ptr->window |= (PW_OVERHEAD);
+		/* Handle stuff XXX XXX XXX */
+		handle_stuff(Ind);
+
+		return;
+	}
+
+	/* Handle player fear */
+	if (p_ptr->afraid) {
+		msg_format(Ind, "You are too afraid to attack %s!", m_name);
+		suppress_message = FALSE;
+		/* Done */
+		return;
+	}
+
+	/* Cannot 'bash' monsters without shield */
+	if (p_ptr->inventory[INVEN_WIELD].tval != TV_SHIELD && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) {
+		msg_format(Ind, "You need a shield to bash others effectively.");
+		return;
+	}
+
+	/* check whether monster can be bashed */
+	if (m_ptr->monfear) {
+		msg_print(Ind, "You cannot bash monsters that are running away from you.");
+		return;
+	}
+
+	/* cannot wield the shield? */
+	if (p_ptr->heavy_shield) {
+		msg_print(Ind, "Your shield is too heavy for you to bash with it effectively.");
+		return;
+	}
+
+	/* cloaking mode stuff */
+	break_cloaking(Ind, 0);
+	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
+	/* Disturb the monster */
+	m_ptr->csleep = 0;
+
+	/* Calculate damage from shield weight (50..120,160 for AA) and strength */
+	k = 0;
+	/* Edge case: use the nastier of our two shields - if allowed even */
+	if (p_ptr->inventory[INVEN_WIELD].tval == TV_SHIELD) k = p_ptr->inventory[INVEN_WIELD].weight;
+	if (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD && p_ptr->inventory[INVEN_ARM].weight > k) k = p_ptr->inventory[INVEN_ARM].weight;
+	/* Add our strength */
+	k /= 10;
+	k += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128); //-2..+15
+	k += rand_int(3);
+	/* Apply the player damage boni */
+	//k += p_ptr->to_d + p_ptr->to_d_melee;
+
+	/* Calculate stun effect */
+	stun_effect = adj_str_td[p_ptr->stat_ind[A_STR]] - 128; //-2..+15
+	stun_effect += get_skill_scale(p_ptr, SKILL_COMBAT, 10);
+	stun_effect += 3 + rand_int(3); //ensure it's at least >= 1
+
+	/* Calculate chance to hit (includes -here drastically reduced- enemy AC to determine 'miss') */
+	chance = 60 + 2 * (7 + adj_dex_th[p_ptr->stat_ind[A_STR]] - 128); //-7..+20
+	if (p_ptr->blind) chance >>= 1;
+
+	/* Plan ahead if a missed attack would be a blocked or parried one or just an
+	   [hitchance-vs-AC-induced] miss. 'Piercing' requires this to be calculated ahead now. */
+	block = 0;
+	if (strchr("hHJkpPtyn", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
+	    !(r_ptr->flags3 & RF3_ANIMAL) &&
+	    !(r_ptr->flags8 & RF8_NO_BLOCK)) {
+#ifdef USE_BLOCKING
+		block = 10;
+#endif
+	}
+	/* Evaluate: 0 = no, other values = yes */
+	if (helpless || !magik(block)) block = 0;
+
+	p_ptr->test_attacks++;
+	/* Test for hit */
+	if (instakills(Ind) || !block ||
+	    test_hit_melee(chance, m_ptr->ac / 3, p_ptr->mon_vis[c_ptr->m_idx])) {
+#ifdef USE_SOUND_2010
+		if (p_ptr->sfx_combat) sound(Ind, "bash", "hit_blunt", SFX_TYPE_ATTACK, FALSE);
+#else
+		//sound(Ind, SOUND_HIT);
+#endif
+		sprintf(hit_desc, "You bash %s", m_name);
+
+		i = k; /* Nazgul won't reduce our damage */
+		if (!instakills(Ind)) do_nazgul(Ind, &i, r_ptr, -1);
+
+		if (stun_effect && (k < m_ptr->hp)) {
+			/* Stun the monster */
+			if (r_ptr->flags3 & RF3_NO_STUN) {
+				msg_format(Ind, "%^s is unaffected.", m_name);
+			} else {
+				if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags3 & RF3_UNDEAD)) resist_stun += 500;
+#if 0 /* normal roll for stun chance */
+				if (rand_int(1000) > (50 + r_ptr->level + resist_stun)) {
+#else /* more guaranteed stun, in the light of already having had to roll for test_hit_melee() to get here even */
+				if (rand_int(5000) > (50 + r_ptr->level + resist_stun * 5)) {
+#endif
+					m_ptr->stunned += stun_effect;
+					did_stun = TRUE;
+				} else msg_format(Ind, "%^s resists the effect!", m_name);
+			}
+		}
+
+#ifndef NEW_SHIELDS_NO_AC
+		/* Does the weapon take damage from hitting acidic/fiery/aquatic monsters? */
+		for (i = 0; i < 4; i++) {
+			if (r_ptr->blow[i].effect == RBE_ACID) mon_acid++;
+			if (r_ptr->blow[i].effect == RBE_FIRE) mon_fire++;
+		}
+		if (mon_acid + mon_fire) {
+			if (randint(mon_acid + mon_fire) > mon_acid) {
+				if (magik(5)) shield_takes_damage(Ind, GF_FIRE);
+			} else {
+				if (magik(10)) shield_takes_damage(Ind, GF_ACID);
+			}
+		}
+#endif
+
+		/* No negative damage */
+		if (k < 0) k = 0;
+
+		if (m_ptr->r_idx == RI_MIRROR) k = (k * MIRROR_REDUCE_DAM_TAKEN_MELEE + 99) / 100;
+
+		/* for admins: kill a target in one hit */
+		if (instakills(Ind)) k = m_ptr->hp + 1;
+		else if (p_ptr->admin_godly_strike) {
+			p_ptr->admin_godly_strike--;
+			if (!(r_ptr->flags1 & RF1_UNIQUE)) k = m_ptr->hp + 1;
+		}
+
+		/* Don't apply effects if monster just dies from this attack anyway */
+		if (k > m_ptr->hp) did_stun = FALSE;
+
+		if (r_ptr->flags1 & RF1_UNIQUE) {
+			msg_format(Ind, "\377%c%s for \377e%d \377%cdamage.", uniq, hit_desc, k, uniq);
+			if (uniq_bell) Send_beep(Ind);
+		}
+		else msg_format(Ind, "%s for \377g%d \377wdamage.", hit_desc, k);
+
+		if (did_stun) {
+			if (m_ptr->stunned > 100)
+				msg_format(Ind, "\377y%^s is knocked out.", m_name);
+			else if (m_ptr->stunned > 50)
+				msg_format(Ind, "\377y%^s is heavily stunned.", m_name);
+			else
+				msg_format(Ind, "\377y%^s is stunned.", m_name);
+		}
+
+		/* target dummy */
+		if (m_ptr->r_idx == RI_TARGET_DUMMY1 || m_ptr->r_idx == RI_TARGET_DUMMY2) {
+			/* Hack: Reduce snow on it during winter season :) */
+			m_ptr->extra -= 30;
+			if (m_ptr->extra < 0) m_ptr->extra = 0;
+				if ((m_ptr->r_idx == RI_TARGET_DUMMY2) && (m_ptr->extra < 30)) {
+				m_ptr->r_idx = RI_TARGET_DUMMY1;
+				everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+			}
+		}
+		if (m_ptr->r_idx == RI_TARGET_DUMMYA1 || m_ptr->r_idx == RI_TARGET_DUMMYA2) {
+			/* Hack: Reduce snow on it during winter season :) */
+			m_ptr->extra -= 30;
+			if (m_ptr->extra < 0) m_ptr->extra = 0;
+				if ((m_ptr->r_idx == RI_TARGET_DUMMYA2) && (m_ptr->extra < 30)) {
+				m_ptr->r_idx = RI_TARGET_DUMMYA1;
+				everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+			}
+		}
+
+		/* Damage, check for fear and death */
+		if (mon_take_hit(Ind, c_ptr->m_idx, k, &fear, NULL)) {
+			/* Exploding Attack - Kurzel */
+			//if (p_ptr->nimbus) do_nimbus(Ind, y, x);  -- unsure
+
+			fear = FALSE; /* paranoia */
+			/* monster is dead */
+		}
+
+		/* Monster is still alive */
+		else {
+#ifdef ENABLE_OHERETICISM
+			/* Extend ongoing 'Boundless Hate' spell thanks to Traumaturgy feedback? */
+			if (p_ptr->hate_prolong == 1) p_ptr->hate_prolong = 2;
+#endif
+
+			touch_zap_player(Ind, c_ptr->m_idx);
+			/* todo maybe: handle player death from getting zapped? */
+
+			/* Exploding Attack - Kurzel */
+			//if (p_ptr->nimbus) do_nimbus(Ind, y, x); -- unsure
+
+		}
+	}
+
+	/* Player misses */
+	else {
+		/* Message */
+		if (block) {
+			sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
+			hit_desc[2] = toupper(hit_desc[2]);
+			msg_print(Ind, hit_desc);
+#ifdef USE_SOUND_2010
+			if (p_ptr->sfx_defense) sound(Ind, "block_shield", NULL, SFX_TYPE_ATTACK, FALSE);
+#endif
+		} else {
+			msg_format(Ind, "You miss %s.", m_name);
+#ifdef USE_SOUND_2010
+			if (p_ptr->sfx_combat) sound(Ind, "miss", NULL, SFX_TYPE_ATTACK, FALSE);
+#else
+			sound(Ind, SOUND_MISS);
+#endif
+		}
+	}
+
+	/* Hack -- delay fear messages */
+	if (fear && p_ptr->mon_vis[c_ptr->m_idx] && !(m_ptr->csleep || m_ptr->stunned > 100)) {
+#ifdef USE_SOUND_2010
+#else
+		sound(Ind, SOUND_FLEE);
+#endif
+
+		/* Message */
+		if (m_ptr->r_idx != RI_MORGOTH)
+			msg_format(Ind, "%^s flees in terror!", m_name);
+		else
+			msg_format(Ind, "%^s retreats!", m_name);
+	}
+
+	suppress_message = FALSE;
+}
+
+/* Bash a player for stun effect and a little damage, costs stamina to avoid stun-spam into k.o.. - C. Blue
+   Simple handling: No brands, cannot crit, no vampirism, no quake, just STR, shield weight, combat skill.
+   Also, independant of combat stance actually - we perceive the shield bash more as a fighting technique than an attack. */
+void py_bash_py(int Ind, int y, int x) {
+	int		Ind2;
+	player_type	*p_ptr = Players[Ind], *q_ptr;
+	int		stun_effect, chance;
+	int		k;
+
+	char		q_name[NAME_LEN], hit_desc[MAX_CHARS_WIDE];
+
+	bool		did_stun = FALSE;
+	bool		no_pk;
+
+	struct worldpos	*wpos = &p_ptr->wpos;
+	cave_type	**zcave;
+	cave_type 	*c_ptr;
+
+#ifndef NEW_SHIELDS_NO_AC
+	int py_acid = 0, py_fire = 0;
+#endif
+
+
+	/* Hack -- suppress messages */
+	if (p_ptr->taciturn_messages) suppress_message = TRUE;
+
+	if (!p_ptr->num_blow) {
+		msg_print(Ind, "Not cannot attack.");
+		return;
+	}
+
+	if (p_ptr->cst < 6) {
+		msg_print(Ind, "Not enough stamina!");
+		return;
+	}
+	p_ptr->cst -= 6;
+	p_ptr->redraw |= PR_STAMINA;
+	redraw_stuff(Ind);
+
+	if (!(zcave = getcave(wpos))) return;
+	c_ptr = &zcave[y][x];
+
+	Ind2 = 0 - c_ptr->m_idx;
+	q_ptr = Players[Ind2];
+
+	no_pk = ((zcave[p_ptr->py][p_ptr->px].info & CAVE_NOPK) ||
+	    (zcave[q_ptr->py][q_ptr->px].info & CAVE_NOPK));
+
+	/* Disturb the players */
+	disturb(Ind, 0, 0);
+	disturb(Ind2, 0, 0);
+
+	/* Extract name */
+	player_desc(Ind, q_name, Ind2, 0);
+
+	/* Track player health */
+	if (p_ptr->play_vis[Ind2]) health_track(Ind, c_ptr->m_idx);
+
+	/* can't attack while in WRAITHFORM */
+	/* wraithed players can attack wraithed monsters - mikaelh */
+	if (p_ptr->tim_wraith && !is_admin(p_ptr) && !q_ptr->tim_wraith) return;
+
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+
+	if (!check_hostile(Ind, Ind2)) { /* only attack if player is hostile */
+		int ox = q_ptr->px, oy = q_ptr->py, nx = p_ptr->px, ny = p_ptr->py;
+
+		msg_format(Ind, "You swap positions with %s.", q_name);
+		msg_format(Ind2, "%^s swaps positions with you.", p_ptr->name);
+
+		/* Update the new location */
+		zcave[ny][nx].m_idx = -Ind2;
+		/* Update the old location */
+		zcave[oy][ox].m_idx = -Ind;
+
+		/* Move the playerr */
+		q_ptr->py = ny;
+		q_ptr->px = nx;
+		store_exit(Ind);
+		store_exit(Ind2);
+		p_ptr->py = oy;
+		p_ptr->px = ox;
+
+		cave_midx_debug(wpos, oy, ox, -Ind);
+
+		/* Redraw the old grid */
+		everyone_lite_spot(wpos, oy, ox);
+		/* Redraw the new grid */
+		everyone_lite_spot(wpos, ny, nx);
+		/* Check for new panel (redraw map) */
+		verify_panel(Ind);
+		verify_panel(Ind2);
+		/* Update stuff */
+		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+		q_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+		/* Update the monsters */
+		p_ptr->update |= (PU_DISTANCE);
+		q_ptr->update |= (PU_DISTANCE);
+		/* Window stuff */
+		p_ptr->window |= (PW_OVERHEAD);
+		q_ptr->window |= (PW_OVERHEAD);
+		/* Handle stuff XXX XXX XXX */
+		handle_stuff(Ind);
+		handle_stuff(Ind2);
+
+		return;
+	}
+
+	/* Handle player fear */
+	if (p_ptr->afraid) {
+		msg_format(Ind, "You are too afraid to attack %s!", q_name);
+		suppress_message = FALSE;
+		/* Done */
+		return;
+	}
+
+	/* Cannot 'bash' monsters without shield */
+	if (p_ptr->inventory[INVEN_WIELD].tval != TV_SHIELD && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) {
+		msg_format(Ind, "You need a shield to bash others effectively.");
+		return;
+	}
+
+#if 0
+	/* check whether player can be bashed */
+	if (q_ptr->afraid) {
+		msg_print(Ind, "You cannot bash someone who is running away from you.");
+		return;
+	}
+#endif
+
+	/* cannot wield the shield? */
+	if (p_ptr->heavy_shield) {
+		msg_print(Ind, "Your shield is too heavy for you to bash with it effectively.");
+		return;
+	}
+
+	/* cloaking mode stuff */
+	break_cloaking(Ind2, 0);
+	break_cloaking(Ind, 0);
+	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_precision(Ind2);
+	stop_shooting_till_kill(Ind);
+	stop_shooting_till_kill(Ind2);
+
+	/* Calculate damage from shield weight (50..120,160 for AA) and strength */
+	k = 0;
+	/* Edge case: use the nastier of our two shields - if allowed even */
+	if (p_ptr->inventory[INVEN_WIELD].tval == TV_SHIELD) k = p_ptr->inventory[INVEN_WIELD].weight;
+	if (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD && p_ptr->inventory[INVEN_ARM].weight > k) k = p_ptr->inventory[INVEN_ARM].weight;
+	/* Add our strength */
+	k /= 10;
+	k += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128); //-2..+15
+	k += rand_int(3);
+	/* Apply the player damage boni */
+	//k += p_ptr->to_d + p_ptr->to_d_melee;
+
+	k /= PVP_MELEE_DAM_REDUCTION;
+	if (!k) k = 1;
+
+	/* Calculate stun effect */
+	stun_effect = adj_str_td[p_ptr->stat_ind[A_STR]] - 128; //-2..+15
+	stun_effect += get_skill_scale(p_ptr, SKILL_COMBAT, 10);
+	stun_effect += 3 + rand_int(3); //ensure it's at least >= 1
+	/* Apply enemy combat experience */
+	stun_effect -= get_skill_scale(q_ptr, SKILL_COMBAT, 10);
+	if (stun_effect < 1) stun_effect = 1;
+
+	/* Calculate chance to hit (includes -here drastically reduced- enemy AC to determine 'miss') */
+	chance = 60 + 2 * (7 + adj_dex_th[p_ptr->stat_ind[A_STR]] - 128); //-7..+20
+	if (p_ptr->blind) chance >>= 1;
+
+#ifdef USE_BLOCKING
+	if (q_ptr->shield_deflect && (!q_ptr->weapon_parry || magik(q_ptr->combat_stance == 1 ? 75 : 50))) {
+		if (magik(apply_block_chance(q_ptr, q_ptr->shield_deflect + 0))) {
+			msg_format(Ind, "\377%c%s blocks your attack!", COLOUR_BLOCK_PLY, q_name);
+			switch (p_ptr->name[strlen(p_ptr->name) - 1]) {
+			case 's': case 'x': case 'z':
+				msg_format(0 - c_ptr->m_idx, "\377%cYou block %s' attack!", COLOUR_BLOCK_GOOD, p_ptr->name);
+				break;
+			default:
+				msg_format(0 - c_ptr->m_idx, "\377%cYou block %s's attack!", COLOUR_BLOCK_GOOD, p_ptr->name);
+			}
+ #ifdef USE_SOUND_2010
+			if (p_ptr->sfx_defense) sound(Ind, "block_shield", NULL, SFX_TYPE_ATTACK, FALSE);
+ #endif
+
+		suppress_message = FALSE;
+		return;
+		}
+	}
+#endif
+
+	p_ptr->test_attacks++;
+	/* Test for hit */
+	if (instakills(Ind) || test_hit_melee(chance, (q_ptr->ac + q_ptr->to_a) > AC_CAP ? AC_CAP : q_ptr->ac + q_ptr->to_a, 1)) {
+#ifdef USE_SOUND_2010
+		if (p_ptr->sfx_combat) sound(Ind, "bash", "hit_blunt", SFX_TYPE_ATTACK, FALSE);
+#else
+		//sound(Ind, SOUND_HIT);
+#endif
+		sprintf(hit_desc, "You bash %s", q_name);
+
+		if (stun_effect && (k < q_ptr->chp)) {
+			/* Stun the player */
+#if 0 /* normal roll for stun chance */
+			if (rand_int(1000) > (50 + q_ptr->lev)) {
+#else /* more guaranteed stun, in the light of already having had to roll for test_hit_melee() to get here even */
+			if (rand_int(5000) > (50 + q_ptr->lev)) {
+#endif
+				msg_format(Ind, "\377y%^s is stunned.", q_name);
+
+				set_stun(Ind2, q_ptr->stun + stun_effect);
+				did_stun = TRUE;
+			} else msg_format(Ind, "%^s resists the effect!", q_name);
+		}
+
+#ifndef NEW_SHIELDS_NO_AC
+		/* Does the weapon take damage from hitting acidic/fiery/aquatic monsters? */
+		if (q_ptr->brand_acid) py_acid++;
+		if (q_ptr->brand_fire) py_fire++;
+		if (py_acid + py_fire) {
+			if (randint(py_acid + py_fire) > py_acid) {
+				if (magik(5)) shield_takes_damage(Ind, GF_FIRE);
+			} else {
+				if (magik(10)) shield_takes_damage(Ind, GF_ACID);
+			}
+		}
+#endif
+
+		/* No negative damage */
+		if (k < 0) k = 0;
+
+		/* Don't apply effects if monster just dies from this attack anyway */
+		if (k > q_ptr->chp) did_stun = FALSE;
+
+		if (did_stun) {
+			if (q_ptr->stun > 100)
+				msg_format(Ind, "\377y%^s is knocked out.", q_name);
+			else if (q_ptr->stun > 50)
+				msg_format(Ind, "\377y%^s is heavily stunned.", q_name);
+			else
+				msg_format(Ind, "\377y%^s is stunned.", q_name);
+		}
+
+		/* Cannot kill on this grid? */
+		if (no_pk) {
+			if (k > q_ptr->chp) k = q_ptr->chp;
+		}
+
+		/* no_pk handled */
+		if (cfg.use_pk_rules == PK_RULES_NEVER && q_ptr->chp - k <= 0) {
+			msg_format(Ind, "\374You have beaten %s", q_ptr->name);
+			msg_format(0 - c_ptr->m_idx, "\374%s has beaten you up!", p_ptr->name);
+			teleport_player(0 - c_ptr->m_idx, 400, TRUE);
+
+			/* End of the fight */
+			return;
+		}
+
+		/* Damage, check for fear and death */
+		take_hit(0 - c_ptr->m_idx, k, p_ptr->name, Ind);
+		if (q_ptr->death) return;
+
+		/* Player is still alive */
+#ifdef ENABLE_OHERETICISM
+		/* Extend ongoing 'Boundless Hate' spell thanks to Traumaturgy feedback? */
+		if (p_ptr->hate_prolong == 1) p_ptr->hate_prolong = 2;
+#endif
+
+		py_touch_zap_player(Ind, Ind2);
+		/* todo maybe: handle player death from getting zapped? */
+
+		/* Exploding Attack - Kurzel */
+		//if (p_ptr->nimbus) do_nimbus(Ind, y, x); -- unsure
+	}
+
+	/* Player misses */
+	else {
+		msg_format(Ind, "You miss %s.", q_name);
+#ifdef USE_SOUND_2010
+		if (p_ptr->sfx_combat) sound(Ind, "miss", NULL, SFX_TYPE_ATTACK, FALSE);
+#else
+		sound(Ind, SOUND_MISS);
+#endif
+	}
+
+	suppress_message = FALSE;
+}
+
 
 /*
  * Attacking something, figure out what and spawn appropriately.

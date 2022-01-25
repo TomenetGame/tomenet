@@ -4987,21 +4987,25 @@ void do_cmd_bash(int Ind, int dir) {
 
 		/* Monster in the way */
 		if (c_ptr->m_idx > 0) {
+#if 0 /* normal way */
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-
-			/* Message */
-			//msg_print(Ind, "There is a monster in the way!");
-
 			/* Attack with all BpR */
 			py_attack(Ind, y, x, TRUE);
+#else /* new 2022 */
+			py_bash_mon(Ind, y, x);
+#endif
 		}
 		/* Player in the way */
 		else if (c_ptr->m_idx < 0 && cfg.use_pk_rules != PK_RULES_NEVER && check_hostile(Ind, -c_ptr->m_idx)) {
+#if 0 /* normal way */
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 			/* Attack with all BpR */
 			py_attack(Ind, y, x, TRUE);
+#else /* new 2022 */
+			py_bash_py(Ind, y, x);
+#endif
 		}
 		else if (c_ptr->feat == FEAT_GRAND_MIRROR) {
 			int x2, y2;
