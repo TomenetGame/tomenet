@@ -4301,6 +4301,7 @@ void cmd_check_misc(void) {
 
 	Term_save();
 	Term_clear();
+	topline_icky = TRUE;
 	//Term_putstr(0,  0, -1, TERM_BLUE, "Display current knowledge");
 
 	Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377y1\377w) Artifacts found");
@@ -4699,11 +4700,11 @@ void cmd_check_misc(void) {
 
 			/* Get full path of xhtml screenshot file (the browsers suck and won't work with a relative path) */
 			k = system(format("readlink -f %s > __tmp__", buf));
-			if (k) return; //error
-			if (!(fp = fopen("__tmp__", "r"))) return; //error
+			if (k) break; //error
+			if (!(fp = fopen("__tmp__", "r"))) break; //error
 			if (!fgets(buf, 1024, fp)) {
 				fclose(fp);
-				return; //error
+				break; //error
 			}
 			fclose(fp);
 			buf[strlen(buf) - 1] = 0; //remove trailing newline
@@ -4711,7 +4712,7 @@ void cmd_check_misc(void) {
 
 			/* Get relative path of target image file (suddenly the browsers are fine with it) */
 			path_build(file_name, 1024, ANGBAND_DIR_USER, SCREENSHOT_TARGET);
-			if (k) return; //error
+			if (k) break; //error
 
 			/* Try chromium, then chrome, then firefox */
 			k = system("chromium --version");
@@ -4762,6 +4763,8 @@ void cmd_check_misc(void) {
 			bell();
 		}
 	}
+
+	topline_icky = FALSE;
 	Term_load();
 	(void)res;
 }
