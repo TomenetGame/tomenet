@@ -4682,7 +4682,8 @@ void cmd_check_misc(void) {
 							if (k) c_msg_format("Automatic PNG screenshot with 'Firefox' failed (%d).", k);
 							else c_msg_format("PNG screenshot via 'Firefox' saved to %s.", SCREENSHOT_TARGET);
 						}
-						/* else: failure */
+						/* failure */
+						else c_msg_print("\377yFor PNG creation, either Chrome or Firefox must be installed!");
 					}
 				}
 				break;
@@ -4746,7 +4747,8 @@ void cmd_check_misc(void) {
 							if (k) c_msg_format("PNG screenshot with 'firefox' failed (%d).", k);
 							else c_msg_format("PNG screenshot via 'firefox' saved to %s.", SCREENSHOT_TARGET);
 						}
-						/* else: failure */
+						/* failure */
+						else c_msg_print("\377yFor PNG creation, either Chromium, Chrome or Firefox must be installed!");
 					}
 				}
 				break;
