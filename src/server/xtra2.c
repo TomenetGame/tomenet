@@ -8808,13 +8808,15 @@ void player_death(int Ind) {
 			else {
 				if (penalty) {
 					/* Lose either inventory or equipment, less severe than normal death */
-#if 0
+#if 1
  #ifdef DEATH_PACK_ITEM_LOST
 					inven_death_damage(Ind, TRUE);
  #endif
 #else
  #ifdef DEATH_EQ_ITEM_LOST
 					equip_death_damage(Ind, TRUE);
+ #elif DEATH_PACK_ITEM_LOST
+					inven_death_damage(Ind, TRUE);
  #endif
 #endif
 					recall_player(Ind, "\377oYour mind is hazy.. you feel like you woke up from a dream!");
@@ -8823,8 +8825,8 @@ void player_death(int Ind) {
 			}
 
 			p_ptr->safe_sane = TRUE;
-			/* Apply small penalty for death */
-			if (!ge_secure) { /* except if we were in a special event that protects */
+			/* Apply small penalty for death -- This is what happens in the Training Tower for example */
+			if (!ge_secure) { /* ..if we weren't in a special event that protects */
 #ifndef ARCADE_SERVER
 				p_ptr->au = p_ptr->au * 4 / 5;
 				p_ptr->max_exp = (p_ptr->max_exp * 4 + 1) / 5; /* never drop below 1! (Highlander Tournament exploit) */
