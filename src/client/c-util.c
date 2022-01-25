@@ -7568,18 +7568,30 @@ void auto_inscriptions(void) {
 		case ESCAPE:
 			quit = TRUE; /* hack to leave loop */
 			break;
+		case '3': //pgdn
+		case 'n':
 		case ' ':
 			cur_page++;
 			if (cur_page > max_page) cur_page = 0;
 			redraw = TRUE;
 			break;
-		case '\b':
+		case '9': //pgup
 		case 'p':
+		case '\b':
 			cur_page--;
 			if (cur_page < 0) cur_page = max_page;
 			redraw = TRUE;
 			break;
-		case 'n':
+		case '1': //end
+			cur_page = max_page;
+			cur_line = 0;
+			redraw = TRUE;
+			break;
+		case '7': //home
+			cur_page = 0;
+			cur_line = 0;
+			redraw = TRUE;
+			break;
 		case '2':
 #ifndef INTEGRATED_SELECTOR
 			Term_putstr(0, cur_line + 1, -1, TERM_SELECTOR, " ");
