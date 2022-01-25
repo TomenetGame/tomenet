@@ -5033,14 +5033,6 @@ void py_bash_mon(int Ind, int y, int x) {
 		return;
 	}
 
-	if (p_ptr->cst < 6) {
-		msg_print(Ind, "Not enough stamina!");
-		return;
-	}
-	p_ptr->cst -= 6;
-	p_ptr->redraw |= PR_STAMINA;
-	redraw_stuff(Ind);
-
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
@@ -5158,6 +5150,14 @@ void py_bash_mon(int Ind, int y, int x) {
 		msg_print(Ind, "Your shield is too heavy for you to bash with it effectively.");
 		return;
 	}
+
+	if (p_ptr->cst < 6) {
+		msg_print(Ind, "Not enough stamina!");
+		return;
+	}
+	p_ptr->cst -= 6;
+	p_ptr->redraw |= PR_STAMINA;
+	redraw_stuff(Ind);
 
 	/* cloaking mode stuff */
 	break_cloaking(Ind, 0);
@@ -5390,14 +5390,6 @@ void py_bash_py(int Ind, int y, int x) {
 		return;
 	}
 
-	if (p_ptr->cst < 6) {
-		msg_print(Ind, "Not enough stamina!");
-		return;
-	}
-	p_ptr->cst -= 6;
-	p_ptr->redraw |= PR_STAMINA;
-	redraw_stuff(Ind);
-
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
@@ -5494,6 +5486,14 @@ void py_bash_py(int Ind, int y, int x) {
 		msg_print(Ind, "Your shield is too heavy for you to bash with it effectively.");
 		return;
 	}
+
+	if (p_ptr->cst < 6) {
+		msg_print(Ind, "Not enough stamina!");
+		return;
+	}
+	p_ptr->cst -= 6;
+	p_ptr->redraw |= PR_STAMINA;
+	redraw_stuff(Ind);
 
 	/* cloaking mode stuff */
 	break_cloaking(Ind2, 0);
