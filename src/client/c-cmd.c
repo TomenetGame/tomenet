@@ -4367,221 +4367,259 @@ void cmd_check_misc(void) {
 
 		choice = 0;
 		switch (i) {
-			case '3':
-				/* Send it */
-				cmd_uniques();
-				break;
-			case '1':
-				cmd_artifacts();
-				break;
-			case '2':
-				inkey_msg_old = inkey_msg;
-				inkey_msg = TRUE;
-				get_com("What kind of monsters? (ESC for all, @ for learnt, SPACE for uniques):", &choice);
-				inkey_msg = inkey_msg_old;
-				if (choice <= ESCAPE) choice = 0;
-				if (choice == ' ') {
-					choice = 0;
-					uniques = TRUE;
-				} else uniques = FALSE;
+		case '3':
+			/* Send it */
+			cmd_uniques();
+			break;
+		case '1':
+			cmd_artifacts();
+			break;
+		case '2':
+			inkey_msg_old = inkey_msg;
+			inkey_msg = TRUE;
+			get_com("What kind of monsters? (ESC for all, @ for learnt, SPACE for uniques):", &choice);
+			inkey_msg = inkey_msg_old;
+			if (choice <= ESCAPE) choice = 0;
+			if (choice == ' ') {
+				choice = 0;
+				uniques = TRUE;
+			} else uniques = FALSE;
 
-				/* allow specifying minlev? */
-				if (is_newer_than(&server_version, 4, 5, 4, 0, 0, 0)) {
-					row = c_get_quantity("Specify minimum level? (ESC for none): ", 255);
-					if (is_atleast(&server_version, 4, 7, 3, 0, 0, 0))
-						Send_special_line(SPECIAL_FILE_MONSTER, choice + row * 100000 + (uniques ? 100000000 : 0));
-					else
-						Send_special_line(SPECIAL_FILE_MONSTER, choice + row * 100000);
-				} else
-					Send_special_line(SPECIAL_FILE_MONSTER, choice);
-				break;
-			case '4':
-				inkey_msg_old = inkey_msg;
-				inkey_msg = TRUE;
-				get_com("What type of objects? (ESC for all):", &choice);
-				inkey_msg = inkey_msg_old;
-				if (choice <= ESCAPE) choice = 0;
-				Send_special_line(SPECIAL_FILE_OBJECT, choice);
-				break;
-			case '5':
-				Send_special_line(SPECIAL_FILE_TRAP, 0);
-				break;
-			case '9':
-				Send_special_line(SPECIAL_FILE_HOUSE, 0);
-				break;
-			case '8':
-				Send_special_line(SPECIAL_FILE_RECALL, 0);
-				break;
-			case '0':
-				cmd_map(1);
-				break;
-			case '6':
-				artifact_lore();
-				break;
-			case '7':
-				monster_lore();
-				break;
-			case 'a':
-				cmd_players();
-				break;
-			case 'b':
-				cmd_player_equip();
-				break;
-			case 'c':
-				cmd_high_scores();
-				break;
-			case 'd':
-				Send_special_line(SPECIAL_FILE_SERVER_SETTING, 0);
-				break;
-			case 'e':
-				/* Set the hook */
-				special_line_type = SPECIAL_FILE_RFE;
+			/* allow specifying minlev? */
+			if (is_newer_than(&server_version, 4, 5, 4, 0, 0, 0)) {
+				row = c_get_quantity("Specify minimum level? (ESC for none): ", 255);
+				if (is_atleast(&server_version, 4, 7, 3, 0, 0, 0))
+					Send_special_line(SPECIAL_FILE_MONSTER, choice + row * 100000 + (uniques ? 100000000 : 0));
+				else
+					Send_special_line(SPECIAL_FILE_MONSTER, choice + row * 100000);
+			} else
+				Send_special_line(SPECIAL_FILE_MONSTER, choice);
+			break;
+		case '4':
+			inkey_msg_old = inkey_msg;
+			inkey_msg = TRUE;
+			get_com("What type of objects? (ESC for all):", &choice);
+			inkey_msg = inkey_msg_old;
+			if (choice <= ESCAPE) choice = 0;
+			Send_special_line(SPECIAL_FILE_OBJECT, choice);
+			break;
+		case '5':
+			Send_special_line(SPECIAL_FILE_TRAP, 0);
+			break;
+		case '9':
+			Send_special_line(SPECIAL_FILE_HOUSE, 0);
+			break;
+		case '8':
+			Send_special_line(SPECIAL_FILE_RECALL, 0);
+			break;
+		case '0':
+			cmd_map(1);
+			break;
+		case '6':
+			artifact_lore();
+			break;
+		case '7':
+			monster_lore();
+			break;
+		case 'a':
+			cmd_players();
+			break;
+		case 'b':
+			cmd_player_equip();
+			break;
+		case 'c':
+			cmd_high_scores();
+			break;
+		case 'd':
+			Send_special_line(SPECIAL_FILE_SERVER_SETTING, 0);
+			break;
+		case 'e':
+			/* Set the hook */
+			special_line_type = SPECIAL_FILE_RFE;
 
-				/* Call the file perusal */
-				peruse_file();
-				break;
-			case 'f':
-				Send_special_line(SPECIAL_FILE_MOTD2, 0);
-				break;
-			case 'h':
-				show_motd(0);
-				break;
-			case 'i':
-				do_cmd_messages();
-				break;
-			case 'j':
-				do_cmd_messages_important();
-				break;
-			case 'l':
-				cmd_lagometer();
-				break;
-			case '?':
-				cmd_help();
-				break;
-			case 'g':
-				cmd_the_guide(0, 0, NULL);
-				break;
-			case ESCAPE:
-			case KTRL('Q'):
-				break;
-			case KTRL('T'):
-				xhtml_screenshot("screenshot????");
-				break;
-			case ':':
-				cmd_message();
-				break;
+			/* Call the file perusal */
+			peruse_file();
+			break;
+		case 'f':
+			Send_special_line(SPECIAL_FILE_MOTD2, 0);
+			break;
+		case 'h':
+			show_motd(0);
+			break;
+		case 'i':
+			do_cmd_messages();
+			break;
+		case 'j':
+			do_cmd_messages_important();
+			break;
+		case 'l':
+			cmd_lagometer();
+			break;
+		case '?':
+			cmd_help();
+			break;
+		case 'g':
+			cmd_the_guide(0, 0, NULL);
+			break;
+		case ESCAPE:
+		case KTRL('Q'):
+			break;
+		case KTRL('T'):
+			xhtml_screenshot("screenshot????");
+			break;
+		case ':':
+			cmd_message();
+			break;
 
 #if defined(USE_X11) || defined(WINDOWS)
-			case 'T': FILEMAN("."); break;
-			case 'U': FILEMAN(ANGBAND_DIR_USER); break;
-			case 'S':
-				path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
-				if (!check_dir2(path)) {
-					c_message_add("\377yA folder 'sound' doesn't exist. Press 'X' instead to go to the 'xtra' folder.");
-					break;
-				}
-				FILEMAN(path);
+		case 'T': FILEMAN("."); break;
+		case 'U': FILEMAN(ANGBAND_DIR_USER); break;
+		case 'S':
+			path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
+			if (!check_dir2(path)) {
+				c_message_add("\377yA folder 'sound' doesn't exist. Press 'X' instead to go to the 'xtra' folder.");
 				break;
-			case 'M':
-				path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
-				if (!check_dir2(path)) {
-					c_message_add("\377yA folder 'music' doesn't exist. Press 'X' instead to go to the 'xtra' folder.");
-					break;
-				}
-				FILEMAN(path);
+			}
+			FILEMAN(path);
+			break;
+		case 'M':
+			path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
+			if (!check_dir2(path)) {
+				c_message_add("\377yA folder 'music' doesn't exist. Press 'X' instead to go to the 'xtra' folder.");
 				break;
-			case 'X':
-				FILEMAN(ANGBAND_DIR_XTRA);
-				break;
-			case 'G':
-				URLMAN("http://github.com/TomenetGame/");
-				break;
-			case 'W':
-				URLMAN("https://www.tomenet.eu/");
-				break;
-			case 'P':
-				/* Le quality de liferino~ */
-				if (p_ptr->mode & MODE_EVERLASTING) {
-					URLMAN("https://www.tomenet.eu/pstores.php?mode=el");
-				} else {
-					URLMAN("https://www.tomenet.eu/pstores.php");
-				}
-				break;
-			case 'R':
-				URLMAN("https://muuttuja.org/tomenet/monsters/index.php");
-				break;
-			case 'L': //ow http
-				URLMAN("http://angband.oook.cz/ladder-browse.php?v=TomeNET");
-				break;
+			}
+			FILEMAN(path);
+			break;
+		case 'X':
+			FILEMAN(ANGBAND_DIR_XTRA);
+			break;
+		case 'G':
+			URLMAN("http://github.com/TomenetGame/");
+			break;
+		case 'W':
+			URLMAN("https://www.tomenet.eu/");
+			break;
+		case 'P':
+			/* Le quality de liferino~ */
+			if (p_ptr->mode & MODE_EVERLASTING) {
+				URLMAN("https://www.tomenet.eu/pstores.php?mode=el");
+			} else {
+				URLMAN("https://www.tomenet.eu/pstores.php");
+			}
+			break;
+		case 'R':
+			URLMAN("https://muuttuja.org/tomenet/monsters/index.php");
+			break;
+		case 'L': //ow http
+			URLMAN("http://angband.oook.cz/ladder-browse.php?v=TomeNET");
+			break;
 #else
-			/* USE_GCU (without USE_X11) and any other unknown OS.. */
-			case 'T': case 'U': case 'S': case 'M': case 'X':
-				c_message_add("Sorry, cannot open file manager in terminal-mode.");
-				break;
-			case 'G': case 'W': case 'P': case 'R': case 'L':
-				c_message_add("Sorry, cannot open browser in terminal-mode.");
-				break;
+		/* USE_GCU (without USE_X11) and any other unknown OS.. */
+		case 'T': case 'U': case 'S': case 'M': case 'X':
+			c_message_add("Sorry, cannot open file manager in terminal-mode.");
+			break;
+		case 'G': case 'W': case 'P': case 'R': case 'L':
+			c_message_add("Sorry, cannot open browser in terminal-mode.");
+			break;
 #endif
 
 //#ifdef TEST_CLIENT
-			case 'I':
-			{
+		case 'I':
+			if (!screenshot_filename[0]) {
+				c_msg_print("\377yYou have not made a screenshot yet this session (CTRL+T).");
+				break;
+			}
+		{
  #define SCREENSHOT_TARGET "tomenet-screenshot.png"
-				char buf[1024], file_name[1024], command[1024];
-				int k;
-				FILE *fp;
+			char buf[1024], file_name[1024], command[1024];
+			int k;
+			FILE *fp;
 
  #ifdef WINDOWS
-				char path[1024], *c = path, *c2, tmp[1024], executable[1024];
+			char path[1024], *c = path, *c2, tmp[1024], executable[1024];
 
-				if (!screenshot_filename[0]) break;
-				// When NULL is passed to GetModuleHandle, the handle of the exe itself is returned
-				HMODULE hModule = GetModuleHandle(NULL);
-				if (hModule != NULL) {
-					// Use GetModuleFileName() with module handle to get the path
-					GetModuleFileName(hModule, path, (sizeof(path)));
-				} else {
-					c_message_add("Screenshot: Module handle is NULL");
-					break;
-				}
-				while ((c2 = strchr(c, '\\'))) c = c2 + 1;
-				if (c == path) break; /* Error: No valid path. */
-				*c = 0; //remove 'TomeNET.exe' from path
+			// When NULL is passed to GetModuleHandle, the handle of the exe itself is returned
+			HMODULE hModule = GetModuleHandle(NULL);
+			if (hModule != NULL) {
+				// Use GetModuleFileName() with module handle to get the path
+				GetModuleFileName(hModule, path, (sizeof(path)));
+			} else {
+				c_message_add("Screenshot: Module handle is NULL");
+				break;
+			}
+			while ((c2 = strchr(c, '\\'))) c = c2 + 1;
+			if (c == path) break; /* Error: No valid path. */
+			*c = 0; //remove 'TomeNET.exe' from path
 
-				/* Build source xthml filename with full path */
-				strcpy(buf, "file://");
-				strcat(buf, path);
-				path_build(file_name, 1024, ANGBAND_DIR_USER, screenshot_filename);
-				strcat(buf, file_name);
-				strcat(buf, ".xhtml");
+			/* Build source xthml filename with full path */
+			strcpy(buf, "file://");
+			strcat(buf, path);
+			path_build(file_name, 1024, ANGBAND_DIR_USER, screenshot_filename);
+			strcat(buf, file_name);
+			strcat(buf, ".xhtml");
 
-				/* Put into quotations */
-				strcpy(tmp, "\"");
-				strcat(tmp, buf);
-				strcat(tmp, "\"");
-				strcpy(buf, tmp);
+			/* Put into quotations */
+			strcpy(tmp, "\"");
+			strcat(tmp, buf);
+			strcat(tmp, "\"");
+			strcpy(buf, tmp);
 
-				/* Build target image file name with full path */
-				path_build(file_name, 1024, ANGBAND_DIR_USER, SCREENSHOT_TARGET);
-				strcat(path, file_name);
-				strcpy(file_name, path);
+			/* Build target image file name with full path */
+			path_build(file_name, 1024, ANGBAND_DIR_USER, SCREENSHOT_TARGET);
+			strcat(path, file_name);
+			strcpy(file_name, path);
 
-				/* Put into quotations */
-				strcpy(tmp, "\"");
-				strcat(tmp, file_name);
-				strcat(tmp, "\"");
-				strcpy(file_name, tmp);
+			/* Put into quotations */
+			strcpy(tmp, "\"");
+			strcat(tmp, file_name);
+			strcat(tmp, "\"");
+			strcpy(file_name, tmp);
 
-				/* Try chromium, then chrome, then firefox */
+			/* Try chromium, then chrome, then firefox */
 #if 1 /* skip Chromium on Windows OS for now */
-				if (FALSE) {
+			if (FALSE) {
 #else
-				k = system("chromium.exe --version"); // - ?
-				//k = system("reg query \"HKEY_CURRENT_USER\\Software\\Google\\Chrome\\BLBeacon\" /v version");
-				if (!k) {
+			k = system("chromium.exe --version"); // - ?
+			//k = system("reg query \"HKEY_CURRENT_USER\\Software\\Google\\Chrome\\BLBeacon\" /v version");
+			if (!k) {
 #endif
+				/* Obtain path to browser */
+				system("reg query \"HKEY_CLASSES_ROOT\\ChromiumHTML\\shell\\open\\command\" /ve > __temp__"); //<- just guessed the reg value, VERIFY!
+				fp = fopen("__temp__", "r");
+				fgets(tmp, 1024, fp);
+				fgets(tmp, 1024, fp);
+				fgets(tmp, 1024, fp);
+				fclose(fp);
+				c = strchr(tmp, '"');
+				if (!c) break; //error
+				strcpy(executable, "\"");
+				strcat(executable, c + 1);
+				c = strchr(executable + 1, '"');
+				if (!c) break; //error
+				*c = 0;
+				strcat(executable, "\"");
+				remove("__temp__");
+
+				sprintf(command, "%s --headless --default-background-color=00000000 --window-size=%s --screenshot=%s %s",
+				    executable,
+				    screen_hgt == MAX_SCREEN_HGT ? "640x650" : "640x365",
+				    file_name,
+				    buf);
+
+				fp = fopen("__temp__.bat", "w");
+				fputs(command, fp);
+				fclose(fp);
+				k = system("__temp__.bat");
+				remove("__temp__.bat");
+
+				if (k) c_msg_format("PNG screenshot via 'Chromium' failed (%d).", k);
+				else c_msg_format("PNG screenshot via 'Chromium' saved to %s.", SCREENSHOT_TARGET);
+			} else {
+				//k = system("chrome.exe --version");  -- chrome is buggy and doesn't report but just starts up
+				k = system("reg query \"HKEY_CURRENT_USER\\Software\\Google\\Chrome\\BLBeacon\" /v version");
+				if (!k) {
 					/* Obtain path to browser */
-					system("reg query \"HKEY_CLASSES_ROOT\\ChromiumHTML\\shell\\open\\command\" /ve > __temp__"); //<- just guessed the reg value, VERIFY!
+					system("reg query \"HKEY_CLASSES_ROOT\\ChromeHTML\\shell\\open\\command\" /ve > __temp__");
 					fp = fopen("__temp__", "r");
 					fgets(tmp, 1024, fp);
 					fgets(tmp, 1024, fp);
@@ -4609,14 +4647,14 @@ void cmd_check_misc(void) {
 					k = system("__temp__.bat");
 					remove("__temp__.bat");
 
-					if (k) c_msg_format("PNG screenshot via 'Chromium' failed (%d).", k);
-					else c_msg_format("PNG screenshot via 'Chromium' saved to %s.", SCREENSHOT_TARGET);
+					if (k) c_msg_format("Automatic PNG screenshot with 'Chrome' failed (%d).", k);
+					else c_msg_format("PNG screenshot via 'Chrome' saved to %s.", SCREENSHOT_TARGET);
 				} else {
-					//k = system("chrome.exe --version");  -- chrome is buggy and doesn't report but just starts up
-					k = system("reg query \"HKEY_CURRENT_USER\\Software\\Google\\Chrome\\BLBeacon\" /v version");
+					//k = system("firefox --version --headless");  -- error 9009 "file not found" wut? due to bad path escaping/quoting without using a .bat file probably
+					k = system("reg query \"HKEY_CURRENT_USER\\Software\\Mozilla\\Firefox\" /v OldDefaultBrowserCommand");
 					if (!k) {
 						/* Obtain path to browser */
-						system("reg query \"HKEY_CLASSES_ROOT\\ChromeHTML\\shell\\open\\command\" /ve > __temp__");
+						system("reg query \"HKEY_CLASSES_ROOT\\Applications\\firefox.exe\\shell\\open\\command\" /ve > __temp__");
 						fp = fopen("__temp__", "r");
 						fgets(tmp, 1024, fp);
 						fgets(tmp, 1024, fp);
@@ -4632,9 +4670,9 @@ void cmd_check_misc(void) {
 						strcat(executable, "\"");
 						remove("__temp__");
 
-						sprintf(command, "%s --headless --default-background-color=00000000 --window-size=%s --screenshot=%s %s",
+						sprintf(command, "%s --headless --window-size %s --screenshot %s %s",
 						    executable,
-						    screen_hgt == MAX_SCREEN_HGT ? "640x650" : "640x365",
+						    screen_hgt == MAX_SCREEN_HGT ? "660,835" : "660,470",
 						    file_name,
 						    buf);
 
@@ -4644,120 +4682,84 @@ void cmd_check_misc(void) {
 						k = system("__temp__.bat");
 						remove("__temp__.bat");
 
-						if (k) c_msg_format("Automatic PNG screenshot with 'Chrome' failed (%d).", k);
-						else c_msg_format("PNG screenshot via 'Chrome' saved to %s.", SCREENSHOT_TARGET);
-					} else {
-						//k = system("firefox --version --headless");  -- error 9009 "file not found" wut? due to bad path escaping/quoting without using a .bat file probably
-						k = system("reg query \"HKEY_CURRENT_USER\\Software\\Mozilla\\Firefox\" /v OldDefaultBrowserCommand");
-						if (!k) {
-							/* Obtain path to browser */
-							system("reg query \"HKEY_CLASSES_ROOT\\Applications\\firefox.exe\\shell\\open\\command\" /ve > __temp__");
-							fp = fopen("__temp__", "r");
-							fgets(tmp, 1024, fp);
-							fgets(tmp, 1024, fp);
-							fgets(tmp, 1024, fp);
-							fclose(fp);
-							c = strchr(tmp, '"');
-							if (!c) break; //error
-							strcpy(executable, "\"");
-							strcat(executable, c + 1);
-							c = strchr(executable + 1, '"');
-							if (!c) break; //error
-							*c = 0;
-							strcat(executable, "\"");
-							remove("__temp__");
-
-							sprintf(command, "%s --headless --window-size %s --screenshot %s %s",
-							    executable,
-							    screen_hgt == MAX_SCREEN_HGT ? "660,835" : "660,470",
-							    file_name,
-							    buf);
-
-							fp = fopen("__temp__.bat", "w");
-							fputs(command, fp);
-							fclose(fp);
-							k = system("__temp__.bat");
-							remove("__temp__.bat");
-
-							if (k) c_msg_format("Automatic PNG screenshot with 'Firefox' failed (%d).", k);
-							else c_msg_format("PNG screenshot via 'Firefox' saved to %s.", SCREENSHOT_TARGET);
-						}
-						/* failure */
-						else c_msg_print("\377yFor PNG creation, either Chrome or Firefox must be installed!");
+						if (k) c_msg_format("Automatic PNG screenshot with 'Firefox' failed (%d).", k);
+						else c_msg_format("PNG screenshot via 'Firefox' saved to %s.", SCREENSHOT_TARGET);
 					}
+					/* failure */
+					else c_msg_print("\377yFor PNG creation, either Chrome or Firefox must be installed!");
 				}
-				break;
+			}
+			break;
  #endif
  #ifdef USE_X11
-				/* Use chrome, chromium or firefox to create a png screenshot from xhtml
-				   We prefer chrome/chromium since it allows setting background to transparent (or black) instead of white.
-				   BIG_MAP: 640x750, normal map: 640x420.  - C. Blue */
-				if (!screenshot_filename[0]) break;
-				path_build(buf, 1024, ANGBAND_DIR_USER, screenshot_filename);
+			/* Use chrome, chromium or firefox to create a png screenshot from xhtml
+			   We prefer chrome/chromium since it allows setting background to transparent (or black) instead of white.
+			   BIG_MAP: 640x750, normal map: 640x420.  - C. Blue */
+			path_build(buf, 1024, ANGBAND_DIR_USER, screenshot_filename);
 
-				/* Get full path of xhtml screenshot file (the browsers suck and won't work with a relative path) */
-				k = system(format("readlink -f %s > __tmp__", buf));
-				if (k) return; //error
-				if (!(fp = fopen("__tmp__", "r"))) return; //error
-				if (!fgets(buf, 1024, fp)) {
-					fclose(fp);
-					return; //error
-				}
+			/* Get full path of xhtml screenshot file (the browsers suck and won't work with a relative path) */
+			k = system(format("readlink -f %s > __tmp__", buf));
+			if (k) return; //error
+			if (!(fp = fopen("__tmp__", "r"))) return; //error
+			if (!fgets(buf, 1024, fp)) {
 				fclose(fp);
-				buf[strlen(buf) - 1] = 0; //remove trailing newline
-				strcat(buf, ".xhtml");
+				return; //error
+			}
+			fclose(fp);
+			buf[strlen(buf) - 1] = 0; //remove trailing newline
+			strcat(buf, ".xhtml");
 
-				/* Get relative path of target image file (suddenly the browsers are fine with it) */
-				path_build(file_name, 1024, ANGBAND_DIR_USER, SCREENSHOT_TARGET);
-				if (k) return; //error
+			/* Get relative path of target image file (suddenly the browsers are fine with it) */
+			path_build(file_name, 1024, ANGBAND_DIR_USER, SCREENSHOT_TARGET);
+			if (k) return; //error
 
-				/* Try chromium, then chrome, then firefox */
-				k = system("chromium --version");
+			/* Try chromium, then chrome, then firefox */
+			k = system("chromium --version");
+			if (!k) {
+				sprintf(command, "chromium --headless --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
+				    screen_hgt == MAX_SCREEN_HGT ? "640x750" : "640x420",
+				    file_name,
+				    buf);
+				//c_msg_print(command);
+				/* Randomly hangs, sometimes just works, wut */
+				k = system(command);
+				if (k) c_msg_format("PNG screenshot with 'chromium' failed (%d).", k);
+				else c_msg_format("PNG screenshot via 'chromium' saved to %s.", SCREENSHOT_TARGET);
+			} else {
+				k = system("chrome --version");
 				if (!k) {
-					sprintf(command, "chromium --headless --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
+					sprintf(command, "chrome --headless --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
 					    screen_hgt == MAX_SCREEN_HGT ? "640x750" : "640x420",
 					    file_name,
 					    buf);
 					//c_msg_print(command);
-					/* Randomly hangs, sometimes just works, wut */
+					/* Untested */
 					k = system(command);
-					if (k) c_msg_format("PNG screenshot with 'chromium' failed (%d).", k);
-					else c_msg_format("PNG screenshot via 'chromium' saved to %s.", SCREENSHOT_TARGET);
+					if (k) c_msg_format("PNG screenshot with 'chrome' failed (%d).", k);
+					else c_msg_format("PNG screenshot via 'chrome' saved to %s.", SCREENSHOT_TARGET);
 				} else {
-					k = system("chrome --version");
+					k = system("firefox --version");
 					if (!k) {
-						sprintf(command, "chrome --headless --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
-						    screen_hgt == MAX_SCREEN_HGT ? "640x750" : "640x420",
+						sprintf(command, "firefox --headless --window-size %s --screenshot %s file://%s",
+						    screen_hgt == MAX_SCREEN_HGT ? "640,750" : "640,420",
 						    file_name,
 						    buf);
 						//c_msg_print(command);
-						/* Untested */
 						k = system(command);
-						if (k) c_msg_format("PNG screenshot with 'chrome' failed (%d).", k);
-						else c_msg_format("PNG screenshot via 'chrome' saved to %s.", SCREENSHOT_TARGET);
-					} else {
-						k = system("firefox --version");
-						if (!k) {
-							sprintf(command, "firefox --headless --window-size %s --screenshot %s file://%s",
-							    screen_hgt == MAX_SCREEN_HGT ? "640,750" : "640,420",
-							    file_name,
-							    buf);
-							//c_msg_print(command);
-							k = system(command);
-							if (k) c_msg_format("PNG screenshot with 'firefox' failed (%d).", k);
-							else c_msg_format("PNG screenshot via 'firefox' saved to %s.", SCREENSHOT_TARGET);
-						}
-						/* failure */
-						else c_msg_print("\377yFor PNG creation, either Chromium, Chrome or Firefox must be installed!");
+						if (k) c_msg_format("PNG screenshot with 'firefox' failed (%d).", k);
+						else c_msg_format("PNG screenshot via 'firefox' saved to %s.", SCREENSHOT_TARGET);
 					}
+					/* failure */
+					else c_msg_print("\377yFor PNG creation, either Chromium, Chrome or Firefox must be installed!");
 				}
-				break;
- #endif
 			}
+			break;
+ #endif
+		}
 //#endif /* TEST_CLIENT */
 
-			default:
-				bell();
+		default:
+			bell();
 		}
 	}
 	Term_load();
