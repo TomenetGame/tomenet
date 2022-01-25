@@ -12887,6 +12887,13 @@ same as goes for monsters erased by *destruction* or genocide.
 Earthquakes actually erases objects completely, so potions caught up in one
 will not cause any shatter-effects.
 
+If there is no safe (ie non-wall) grid next to a player when he gets hit by an
+earthquake, he will take a lot of damage. Otherwise the player has a chance to
+dodge the quake and take less or even no damage. The dodge chance is affected
+by the player's Dodging skill and whether he is Shadow Running.
+Damage taken by earthquakes is further reduced if proficient in the 'Earth'
+magic school. (Wraithform will not help against earthquakes in any way.)
+
 
 
 (5.14) Curses
