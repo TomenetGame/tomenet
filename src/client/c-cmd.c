@@ -2468,6 +2468,8 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				if (!strcasecmp(buf, "ac")) strcpy(buf, "armour class");
 				/* Expand 'tc' to 'Treasure Class' */
 				if (!strcasecmp(buf, "tc")) strcpy(buf, "treasure class");
+				/* Expand 'am' to 'Anti-Magic' */
+				if (!strcasecmp(buf, "am")) strcpy(buf, "anti-magic");
 
 				/* Melee weapon classes */
 				if (my_strcasestr(buf, "weap") && my_strcasestr(buf, "clas")) strcpy(buf, "weapon types");
