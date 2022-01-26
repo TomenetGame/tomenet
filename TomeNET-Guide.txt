@@ -20361,6 +20361,8 @@ The techniques are as follows:
         to use your current target, which must be within melee range.
         Calling this technique via B/f key will have you specify a target or a
         direction instead.
+        In the macro wizard you therefore can pick either way by selecting from
+        the list to create a fighting-technique-macro or a bashing-macro.
     Distract            1 stamina
         Your character will attempt to appear wimpy and a non-worthy target to
         adjacent monsters, in hope of making them attack another player who

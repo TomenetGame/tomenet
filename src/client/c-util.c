@@ -6713,10 +6713,14 @@ Chain_Macro:
 						choice = mw_prfele; /* hack - remember */
 						break;
 
+					case mw_dir_bash:
+						/* can be shield-bash attack, so we need to call the target-selector */
+						if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)f*t");
+						else strcpy(buf2, "\\e)B*t");
+						break;
 					case mw_dir_run:
 					case mw_dir_tunnel:
 					case mw_dir_disarm:
-					case mw_dir_bash:
 					case mw_dir_close:
 						clear_from(8);
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please pick the specific, fixed direction:");
@@ -6754,7 +6758,10 @@ Chain_Macro:
 						/* exit? */
 						if (i == -2) continue;
 
+						/* This is the default start for running-macros, instead of "\e)", but it probably doesn't matter..
+						   And since we're lazy we just use it for all of these minor functions here below. */
 						strcpy(buf2, "\\e\\e\\\\");
+
 						switch (choice) {
 						case mw_dir_run:
 							strcat(buf2, ".");
@@ -7160,7 +7167,7 @@ Chain_Macro:
 							/* Get a specific fixed direction */
 							if (choice == 'd') {
 								clear_from(8);
-								Term_putstr(10, 10, -1, TERM_GREEN, "Please pick the specific, fixed direction or '?':");
+								Term_putstr(10, 10, -1, TERM_GREEN, "Please pick the specific, fixed direction or '%':");
 
 								Term_putstr(25, 13, -1, TERM_L_GREEN, " 7  8  9");
 								Term_putstr(25, 14, -1, TERM_GREEN, "  \\ | / ");
