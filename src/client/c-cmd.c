@@ -4463,8 +4463,10 @@ void cmd_check_misc(void) {
 		case 'g':
 			cmd_the_guide(0, 0, NULL);
 			break;
-		case ESCAPE:
 		case KTRL('Q'):
+			i = ESCAPE;
+			/* fall through */
+		case ESCAPE:
 			break;
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????");
@@ -4730,7 +4732,10 @@ void cmd_check_misc(void) {
 				/* Randomly hangs, sometimes just works, wut */
 				k = system(command);
 				if (k) c_msg_format("PNG screenshot with 'chromium' failed (%d).", k);
-				else c_msg_format("PNG screenshot via 'chromium' saved to %s.", SCREENSHOT_TARGET);
+				else {
+					c_msg_format("PNG screenshot via 'chromium' saved to %s.", SCREENSHOT_TARGET);
+					i = ESCAPE; /* quit knowledge menu on success */
+				}
 			} else {
 				k = system("chrome --version");
 				if (!k) {
@@ -4742,7 +4747,10 @@ void cmd_check_misc(void) {
 					/* Untested */
 					k = system(command);
 					if (k) c_msg_format("PNG screenshot with 'chrome' failed (%d).", k);
-					else c_msg_format("PNG screenshot via 'chrome' saved to %s.", SCREENSHOT_TARGET);
+					else {
+						c_msg_format("PNG screenshot via 'chrome' saved to %s.", SCREENSHOT_TARGET);
+						i = ESCAPE; /* quit knowledge menu on success */
+					}
 				} else {
 					k = system("firefox --version");
 					if (!k) {
@@ -4753,7 +4761,10 @@ void cmd_check_misc(void) {
 						//c_msg_print(command);
 						k = system(command);
 						if (k) c_msg_format("PNG screenshot with 'firefox' failed (%d).", k);
-						else c_msg_format("PNG screenshot via 'firefox' saved to %s.", SCREENSHOT_TARGET);
+						else {
+							c_msg_format("PNG screenshot via 'firefox' saved to %s.", SCREENSHOT_TARGET);
+							i = ESCAPE; /* quit knowledge menu on success */
+						}
 					}
 					/* failure */
 					else c_msg_print("\377yFor PNG creation, either Chromium, Chrome or Firefox must be installed!");
