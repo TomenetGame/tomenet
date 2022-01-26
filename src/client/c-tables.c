@@ -568,7 +568,7 @@ cptr melee_techniques[16] = {
 #endif
 
   "Apply Poison",
-  "TechB", /*"Knock Back",*/
+  "Knockback",
   "Track Animals",
   "Perceive Noise",
 
@@ -578,9 +578,9 @@ cptr melee_techniques[16] = {
   "Assassinate", /*"Charge",*/
 
   "Berserk",
-  "TechE", /*"Jump",*/
+  "Jump",
   "Shadow Run",
-  "TechF", /*"Shadow Jump",*/
+  "Shadow Jump",
 };
 
 cptr ranged_techniques[16] =
