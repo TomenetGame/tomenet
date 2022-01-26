@@ -4352,7 +4352,8 @@ void cmd_check_misc(void) {
 #ifndef TEST_CLIENT
 	Term_putstr(0, 22, -1, TERM_BLUE, "Command: ");
 #else
-	Term_putstr( 5, row, -1, TERM_WHITE, "(\377oI\377w) Convert screenshot to PNG");
+	Term_putstr( 5, row++, -1, TERM_WHITE, "(\377o~\377w) Convert last screenshot to");
+	Term_putstr( 5, row,   -1, TERM_WHITE, "    a PNG and leave this menu");
 #endif
 
 	while (i != ESCAPE) {
@@ -4525,19 +4526,23 @@ void cmd_check_misc(void) {
 #endif
 
 //#ifdef TEST_CLIENT
-		case 'I':
+		//case 'I':
+		case '~':
 			if (!screenshot_filename[0]) {
 				c_msg_print("\377yYou have not made a screenshot yet this session (CTRL+T).");
 				break;
 			}
 		{
- #define SCREENSHOT_TARGET "tomenet-screenshot.png"
+// #define SCREENSHOT_TARGET "tomenet-screenshot.png"
+ #define SCREENSHOT_TARGET (format("%s.png", screenshot_filename))
+
 			char buf[1024], file_name[1024], command[1024];
 			int k;
 			FILE *fp;
 
  #ifdef WINDOWS
 			char path[1024], *c = path, *c2, tmp[1024], executable[1024];
+
 
 			// When NULL is passed to GetModuleHandle, the handle of the exe itself is returned
 			HMODULE hModule = GetModuleHandle(NULL);
