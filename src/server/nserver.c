@@ -5828,7 +5828,6 @@ int Send_stamina(int Ind, int mst, int cst) {
 
 	if (!is_newer_than(&connp->version, 4, 4, 1, 2, 0, 0)) return(0);
 
-#if 0 /* Implemented shield-bashing enemies, and it uses stamina, so everyone could do it. */
 	/* can we use stamina at all? */
 	if (is_newer_than(&p_ptr->version, 4, 4, 1, 3, 0, 0) &&
 	    (p_ptr->pclass == CLASS_MAGE || p_ptr->pclass == CLASS_PRIEST ||
@@ -5844,7 +5843,6 @@ int Send_stamina(int Ind, int mst, int cst) {
 		mst = -9999;
 		cst = -9999;
 	}
-#endif
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -10770,7 +10768,7 @@ static int Receive_bash(int ind) {
 	}
 
 	/* Sanity check */
-	if (bad_dir(dir)) return 1;
+	if (bad_dir1(player, &dir)) return 1;
 
 	/* all this is temp just to make it work */
 	if (p_ptr->command_rep == -1) {
@@ -12395,6 +12393,8 @@ void Handle_direction(int Ind, int dir) {
 		p_ptr->current_aux = -1;
 		p_ptr->current_realm = -1;
 		p_ptr->current_fire = -1;
+		p_ptr->current_bash = -1;
+		p_ptr->current_bash = -1;
 		p_ptr->current_throw = -1;
 		p_ptr->current_breath = 0;
 		return;
@@ -12424,6 +12424,8 @@ void Handle_direction(int Ind, int dir) {
 		do_cmd_aim_wand(Ind, p_ptr->current_wand, dir);
 	else if (p_ptr->current_fire != -1)
 		do_cmd_fire(Ind, dir);
+	else if (p_ptr->current_bash != -1)
+		do_cmd_bash(Ind, dir);
 	else if (p_ptr->current_throw != -1)
 		do_cmd_throw(Ind, dir, p_ptr->current_throw, 0);
 	else if (p_ptr->current_breath != 0)

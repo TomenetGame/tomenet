@@ -4996,6 +4996,21 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	suppress_message = FALSE;
 }
 
+void py_bash(int Ind, int y, int x) {
+	cave_type	**zcave;
+	cave_type 	*c_ptr;
+
+	if (!(zcave = getcave(&Players[Ind]->wpos))) return;
+	c_ptr = &zcave[y][x];
+
+	/* Check for monster */
+	if (c_ptr->m_idx > 0)
+		py_bash_mon(Ind, y, x);
+	/* Check for player */
+	else if (c_ptr->m_idx < 0 && cfg.use_pk_rules != PK_RULES_NEVER)
+		py_bash_py(Ind, y, x);
+}
+
 /* Bash a monster for stun effect and a little damage, costs stamina to avoid stun-spam into k.o.. - C. Blue
    Simple handling: No brands, cannot crit, no vampirism, no quake, just STR, shield weight, combat skill.
    Also, independant of combat stance actually - we perceive the shield bash more as a fighting technique than an attack. */
@@ -5028,8 +5043,13 @@ void py_bash_mon(int Ind, int y, int x) {
 	/* Hack -- suppress messages */
 	if (p_ptr->taciturn_messages) suppress_message = TRUE;
 
+	if (!(p_ptr->melee_techniques & MT_BASH)) {
+		msg_print(Ind, "You are not proficient in shield-bashing opponents.");
+		return;
+	}
+
 	if (!p_ptr->num_blow) {
-		msg_print(Ind, "Not cannot attack.");
+		msg_print(Ind, "You cannot attack.");
 		return;
 	}
 
@@ -5158,6 +5178,8 @@ void py_bash_mon(int Ind, int y, int x) {
 	p_ptr->cst -= 6;
 	p_ptr->redraw |= PR_STAMINA;
 	redraw_stuff(Ind);
+
+s_printf("TECHNIQUE_MELEE: %s - bash\n", p_ptr->name);
 
 	/* cloaking mode stuff */
 	break_cloaking(Ind, 0);
@@ -5385,8 +5407,13 @@ void py_bash_py(int Ind, int y, int x) {
 	/* Hack -- suppress messages */
 	if (p_ptr->taciturn_messages) suppress_message = TRUE;
 
+	if (!(p_ptr->melee_techniques & MT_BASH)) {
+		msg_print(Ind, "You are not proficient in shield-bashing opponents.");
+		return;
+	}
+
 	if (!p_ptr->num_blow) {
-		msg_print(Ind, "Not cannot attack.");
+		msg_print(Ind, "You cannot attack.");
 		return;
 	}
 
@@ -5494,6 +5521,8 @@ void py_bash_py(int Ind, int y, int x) {
 	p_ptr->cst -= 6;
 	p_ptr->redraw |= PR_STAMINA;
 	redraw_stuff(Ind);
+
+s_printf("TECHNIQUE_MELEE: %s - bash\n", p_ptr->name);
 
 	/* cloaking mode stuff */
 	break_cloaking(Ind2, 0);

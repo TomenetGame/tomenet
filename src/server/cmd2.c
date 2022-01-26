@@ -4951,14 +4951,26 @@ void do_cmd_bash(int Ind, int dir) {
 		if (!is_admin(p_ptr)) return;
 	}
 
+	/* New '+' feat in 4.4.6.2 */
+	if (dir == 11) {
+		get_aim_dir(Ind);
+		p_ptr->current_bash = 1;
+		return;
+	}
+
 	if ((p_ptr->fruit_bat && !p_ptr->body_monster) ||
 	    (p_ptr->body_monster && !(r_ptr->flags2 & RF2_BASH_DOOR)))
 		bash_type = 2;
 
 	/* Get a "repeated" direction */
 	if (dir) {
-		/* hack: bashing onto our grid causes random direction of distance 1 */
-		if (dir == 5) {
+		/* Check for "target request" and valid _melee range_ target */
+		if (dir == 5 && target_okay(Ind) && distance(p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col)) {
+			x = p_ptr->target_col;
+			y = p_ptr->target_row;
+		}
+		/* hack: bashing onto our grid while not having a valid target causes random direction of distance 1 (this is a QoL hack for looting piles) */
+		else if (dir == 5) {
 			dir = randint(8);
 			if (dir == 5) dir = 9;
 
@@ -4967,7 +4979,9 @@ void do_cmd_bash(int Ind, int dir) {
 			/* Bash location */
 			y = p_ptr->py;
 			x = p_ptr->px;
-		} else {
+		}
+		/* Bash into a user-specified direction */
+		else {
 			/* Bash location */
 			y = p_ptr->py + ddy[dir];
 			x = p_ptr->px + ddx[dir];

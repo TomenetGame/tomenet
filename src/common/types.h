@@ -2764,6 +2764,7 @@ struct player_type {
 	s16b current_item;
 	s16b current_aux;
 	s16b current_fire;
+	s16b current_bash;
 	s16b current_throw;
 	s16b current_book;
 	s16b current_rcraft;

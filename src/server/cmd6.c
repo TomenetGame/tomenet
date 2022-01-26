@@ -8353,6 +8353,22 @@ s_printf("TECHNIQUE_MELEE: %s - sprint\n", p_ptr->name);
 s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
+
+	case 2:	if (!(p_ptr->melee_techniques & MT_BASH)) return; /* Bash */
+		//msg_print(Ind, "To use Bash, instead press '%s' (or create a macro for that key).", p_ptr->rogue_like_commands ? "f", "B");  -- not any more
+//s_printf("TECHNIQUE_MELEE: %s - bash\n", p_ptr->name);  -- logged in cmd1.c in py_bash..() instead
+		//if (!target_okay(Ind)) { msg_print(Ind, "You don't have a target."); return; }  -- wrong, as target_okay() acquires a new target, overwriting our designated one
+		if (!p_ptr->target_who) { msg_print(Ind, "You don't have a target."); return; }
+		else {
+			if (distance(p_ptr->target_row, p_ptr->target_col, p_ptr->py, p_ptr->px) > 1) {
+				msg_print(Ind, "Your target isn't in melee range.");
+				return;
+			}
+		}
+		py_bash(Ind, p_ptr->target_row, p_ptr->target_col);
+		p_ptr->warning_technique_melee = 1;
+		break;
+
 	case 3:	if (!(p_ptr->melee_techniques & MT_DISTRACT)) return; /* Distract */
 		if (p_ptr->cst < 1) { msg_print(Ind, "Not enough stamina!"); return; }
 		p_ptr->cst -= 1;

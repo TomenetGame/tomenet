@@ -9102,7 +9102,7 @@ extern int PlayerUID;
 
 #define MT_SPRINT	0x0001
 #define MT_TAUNT	0x0002
-#define MT_JUMP		0x0004
+#define MT_BASH		0x0004
 #define MT_DISTRACT	0x0008
 
 #if 0
@@ -9123,9 +9123,9 @@ extern int PlayerUID;
 #define MT_ASSA		0x0800
 
 #define MT_BERSERK	0x1000
-#define MT_SJUMP	0x2000
+#define MT_JUMP		0x2000
 #define MT_SRUN		0x4000
-#define MT_ICLOAK	0x8000
+#define MT_SJUMP	0x8000
 
 /* Ranged techniques */
 #define RT_NONE		0x0000

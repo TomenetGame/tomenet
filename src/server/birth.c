@@ -2714,6 +2714,7 @@ static void player_setup(int Ind, bool new) {
 	p_ptr->current_aux = -1;
 	p_ptr->current_realm = -1;
 	p_ptr->current_fire = -1;
+	p_ptr->current_bash = -1;
 	p_ptr->current_throw = -1;
 	p_ptr->current_breath = 0;
 

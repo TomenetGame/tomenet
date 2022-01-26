@@ -757,7 +757,8 @@ B       f       1) bash/force something (ie a stuck door).
                 If the door crashes open, it softens the sleep of nearby asleep
                 monsters somewhat (similar in effect to the /cough command).
 
-                2) shield-bash an enemy. This action costs 6 stamina.
+                2) use the fighting technique "Bash", if learnt, to shield-bash
+                an enemy. This action costs 6 stamina and requires a shield.
                 It will inflict damage depending on shield weight and your
                 strength and a stun effect (modified by Combat skill) on your
                 target. Your chance to hit depends on your dexterity and the
@@ -20349,6 +20350,17 @@ The techniques are as follows:
         and -if you and an ally both stand next to the same monster- to draw
         its attention from your ally and make it attack you instead.
         (Taunting costs a quarter of a turn of energy.)
+    Bash                6 stamina
+        This technique can als be used directly by pressing 'B' (normal keymap)
+        or 'f' (rogue-like keymap)< to perform a shield-bash against an enemy.
+        This technique obviously requires wielding a shield.
+        It will inflict damage depending on shield weight and your strength and
+        a stun effect (modified by Combat skill) on your target. Your chance to
+        hit depends on your dexterity and the enemy AC.
+        Calling this technique from the Fighting Techniques menu will attempt
+        to use your current target, which must be within melee range.
+        Calling this technique via B/f key will have you specify a target or a
+        direction instead.
     Distract            1 stamina
         Your character will attempt to appear wimpy and a non-worthy target to
         adjacent monsters, in hope of making them attack another player who
