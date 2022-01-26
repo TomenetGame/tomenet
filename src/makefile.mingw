@@ -228,7 +228,10 @@ NCC = gcc
 
 # Compile a client with 'test client' version/tag
 #tomenet.test.exe: CFLAGS += -DTEST_CLIENT -Og
-tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O0
+# -O0 produced false positives in Windows Defender and others since some 2020 mingw-gcc update..
+#tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O0
+# while -O3 (and maybe -O2?) seem to fix that as workaround
+tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O3
 tomenet.test.exe: PPFLAGS = -DTEST_CLIENT
 
 
