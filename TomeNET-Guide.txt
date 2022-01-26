@@ -11730,7 +11730,7 @@ Rune of Protection
                 Creates a rune on the ground that monsters cannot cross nor
                 summon on. Monsters have a chance to break it on each turn.
                 Weak monsters will rarely succeed while powerful monsters may
-                break it quickly.
+                break it quickly. Monsters of level 98+ can instantly break it.
 
 Rumour          Makes a random rumour come to your character's (and everyone
                 else's characters') mind. Has no further effect and is not
@@ -18399,7 +18399,8 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
                     Creates a rune on the ground that monsters cannot cross
                     nor summon on. Monsters have a chance to break it on each
                     turn. Weak monsters will rarely succeed while powerful
-                    monsters may break it quickly.
+                    monsters may break it quickly.  Monsters of level 98+ can
+                    instantly break it.
                     Required skill level for first spell level: 35.
 
     Martyrdom       You burn in holy fire making you invincible for 15 seconds
@@ -19376,9 +19377,9 @@ Enhanced spell types have fixed parameters; other spell types may be modified.
                     Required skill level for first spell level: 30.
 
     Glyph           Traces an explosive glyph of warding onto the floor.
-    (Enhanced)      Monsters may not cross nor summon upon the glyph, however
-                    strong monsters may break the glyph. In this case, the
-                    monster will be enveloped by a damaging explosion.
+    (Enhanced)      Monsters may not summon upon the glyph, however when a
+                    monster moves onto it, it will break and the monster will
+                    be enveloped by a damaging explosion.
                     You cannot auto-retaliate with this spell type.
                     Required skill level for first spell level: 35.
 
