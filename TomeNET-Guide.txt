@@ -761,8 +761,7 @@ B       f       1) bash/force something (ie a stuck door).
                 an enemy. This action costs 6 stamina and requires a shield.
                 It will inflict damage depending on shield weight and your
                 strength and a stun effect (modified by Combat skill) on your
-                target. Your chance to hit depends on your dexterity and the
-                enemy AC.
+                target. For details, see (6.12).
 
 l       x       look at a player/monster/object (use direction keys for
                 targetting). Similar to targetting, while looking you can press
