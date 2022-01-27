@@ -7568,7 +7568,8 @@ See (4.3) under "Dungeon Types" -> "Experimental dungeons" for more details.
 enter any dungeon you like at any character level.
 
 (***) Death Fate:
-Will this be the end of you as you cannot seem to spot a way to escape?
+Will this be the end of you as you cannot seem to spot a way to escape? Or is
+there some kind of ancient secret hidden in here?
 Notes: Death in here is like in the Training Tower, but with additional random
 inventory damage like form a 'normal' death; equipment is safe though.
 
