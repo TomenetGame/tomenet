@@ -11671,7 +11671,8 @@ void tym_evaluate(int Ind) {
 	msg_print(Ind, EVALPF"Your total damage and healing done since login or last reset:");
 	msg_format(Ind, EVALPF"    \377oTotal damage done   : %8d", p_ptr->test_dam);
 	msg_format(Ind, EVALPF"    \377gTotal healing done  : %8d", p_ptr->test_heal);
-	if (is_admin(p_ptr)) msg_format(Ind, EVALPF"    \377RTotal damage taken  : %8d", p_ptr->test_hurt);
+	//if (is_admin(p_ptr))
+	msg_format(Ind, EVALPF"    \377RTotal damage taken  : %8d", p_ptr->test_hurt);
 	msg_print(Ind, EVALPF"  Damage and healing done over # of attacks and amount of time passed:");
 
 	if (p_ptr->test_count == 0)
@@ -11687,7 +11688,8 @@ void tym_evaluate(int Ind) {
 		    tmp, ((p_ptr->test_heal * 10) / p_ptr->test_count) % 10);
 		else msg_format(Ind, EVALPF"    \377g    Average healing done: %8ld", tmp);
 	}
-	if (is_admin(p_ptr)) { /* for now admin only - under construction? */
+	//if (is_admin(p_ptr))
+	{ /* for now admin only - under construction? */
 		if (p_ptr->test_attacks == 0)
 			msg_print(Ind, EVALPF"    \377wNo attempts to attack were made yet.");
 		else
