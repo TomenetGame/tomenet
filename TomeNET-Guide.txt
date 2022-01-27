@@ -6754,10 +6754,9 @@ staircase colours (also visible on the world map):
 
 -Dungeons that allow neither recalling out, nor floating or providing stairs!
  There is usually only one such dungeon and that is the 'Death Fate'.
- Its entrance is a dark-flickering staircase, it has only one floor and you
- might just starve to death there as monsters will not spawn there like in
- 'normal' dungeons.
- (The 'Death Fate' dungeon does actually not count as an 'ironman' dungeon.)
+ Its entrance is a dark-flickering staircase.
+ (The 'Death Fate' dungeon does actually not count as an 'ironman' dungeon and
+ provides some special stuff, see (4.5c).)
 
 -Experimental dungeons. There might be an experimental dungeon available, which
  has special flags that are very unusual:
@@ -7570,6 +7569,8 @@ enter any dungeon you like at any character level.
 
 (***) Death Fate:
 Will this be the end of you as you cannot seem to spot a way to escape?
+Notes: Death in here is like in the Training Tower, but with additional random
+inventory damage like form a 'normal' death; equipment is safe though.
 
 (****) Cloud Planes details:
 -To enter the Cloud Planes a player must carry the 'King'/'Queen' title,
