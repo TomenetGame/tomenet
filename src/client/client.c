@@ -388,8 +388,8 @@ static bool read_mangrc(cptr filename) {
 
 			/* big_map hint */
 			if (!strncmp(buf, "hintBigmap", 10)) {
-				if (bigmap_hint) firstrun = FALSE;
 				bigmap_hint = FALSE;
+				firstrun = FALSE;
 			}
 
 			/*** Everything else is ignored ***/
@@ -689,10 +689,10 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 #endif
 			}
 
-			if (!creds_only) {
+			//if (!creds_only) {
 				/* hack: disable one-time hint */
 				if (bigmap_hint) fputs("\nhintBigmap\n", config2);
-			}
+			//}
 
 			fclose(config);
 			fclose(config2);

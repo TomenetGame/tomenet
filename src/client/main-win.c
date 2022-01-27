@@ -1085,10 +1085,8 @@ static void load_prefs(void) {
 
 	load_prefs_aux(&data[7], "Term-7 window");
 
-	if (bigmap_hint) {
-		bigmap_hint = (GetPrivateProfileInt("Base", "HintBigmap", 1, ini_file) != 0);
-		if (!bigmap_hint) firstrun = FALSE;
-	} else bigmap_hint = (GetPrivateProfileInt("Base", "HintBigmap", 1, ini_file) != 0);
+	bigmap_hint = (GetPrivateProfileInt("Base", "HintBigmap", 1, ini_file) != 0);
+	if (!bigmap_hint) firstrun = FALSE;
 	WritePrivateProfileString("Base", "HintBigmap", "0", ini_file);
 
 #ifdef USE_SOUND

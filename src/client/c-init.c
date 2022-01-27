@@ -3934,6 +3934,7 @@ void client_init(char *argv1, bool skip) {
 	Send_options();
 
 	/* Handle asking for big_map mode on first time startup */
+	if (c_cfg.big_map) bigmap_hint = firstrun = FALSE;
 #if defined(USE_X11) || defined(WINDOWS)
 	if (bigmap_hint && !c_cfg.big_map && strcmp(ANGBAND_SYS, "gcu") && ask_for_bigmap()) {
 	        c_cfg.big_map = TRUE;
@@ -4104,6 +4105,8 @@ void client_init(char *argv1, bool skip) {
 bool ask_for_bigmap_generic(void) {
 	int ch;
 	bool ok;
+
+	bigmap_hint = FALSE;
 
 	Term_clear();
 	Term_putstr(10, 3, -1, TERM_ORANGE, "Do you want to double the height of this window?");
