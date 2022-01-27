@@ -8542,6 +8542,7 @@ void player_death(int Ind) {
 	bool world_broadcast = TRUE, just_fruitbat_transformation = (p_ptr->fruit_bat == -1);
 	bool was_total_winner = p_ptr->total_winner, retire = FALSE;
 	bool in_iddc = in_irondeepdive(&p_ptr->wpos);
+	bool finally_killed; /* non-suicide no-rez-death */
 
 
 	/* Cancel any pending Word of Recall, of course. */
@@ -9326,6 +9327,17 @@ void player_death(int Ind) {
 		p_ptr->au = 0;
 	}
 
+	/* Check for non-suicide final death, to prevent true artifacts from dropping by a winner if he cannot resurrect anyway.
+	   Note that suicide is excluded, as it can be/is handled separately - at least leave the option open
+	   (currently, true arts won't be dropped either in case of winner-suicide, as it makes sense.) */
+	finally_killed =
+	    ((p_ptr->ghost || (hell && !p_ptr->suicided)) ||
+	    insanity ||
+	    streq(p_ptr->died_from, "indecisiveness") ||
+	    streq(p_ptr->died_from, "indetermination") ||
+	    ((p_ptr->lives == 1 + 1) && cfg.lifes && !p_ptr->suicided &&
+	    !(p_ptr->mode & MODE_EVERLASTING)));
+
 	/* Drop/lose items -------------------------------------------------- */
 
 	/* Don't "lose" items on suicide (they all poof anyway, except for true arts possibly) */
@@ -9393,6 +9405,17 @@ void player_death(int Ind) {
 			}
 
 			/* and if we were a total winner, don't drop any true artifacts */
+			if (true_artifact_p(o_ptr) &&
+			    ((cfg.anti_arts_hoard && undepositable_artifact_p(o_ptr)) ||
+			    (p_ptr->total_winner && !winner_artifact_p(o_ptr) && cfg.kings_etiquette))) {
+				questitem_d(o_ptr, o_ptr->number);
+				/* set the artifact as unfound */
+				handle_art_d(o_ptr->name1);
+				/* Don't drop the artifact */
+				continue;
+			}
+		} else if (finally_killed) {
+			/* If we were a total winner, don't drop any true artifacts */
 			if (true_artifact_p(o_ptr) &&
 			    ((cfg.anti_arts_hoard && undepositable_artifact_p(o_ptr)) ||
 			    (p_ptr->total_winner && !winner_artifact_p(o_ptr) && cfg.kings_etiquette))) {
@@ -9513,12 +9536,7 @@ void player_death(int Ind) {
 	Send_item_newest(Ind, -1);
 
 	/* Get rid of him if he's a ghost or suffers a no-ghost death */
-	if ((p_ptr->ghost || (hell && !p_ptr->suicided)) ||
-	    insanity ||
-	    streq(p_ptr->died_from, "indecisiveness") ||
-	    streq(p_ptr->died_from, "indetermination") ||
-	    ((p_ptr->lives == 1 + 1) && cfg.lifes && !p_ptr->suicided &&
-	    !(p_ptr->mode & MODE_EVERLASTING))) {
+	if (finally_killed) {
 		/* Tell players */
 		if (insanity) {
 			/* Tell him */
@@ -9833,7 +9851,7 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 		return;
 	}
 
-	/* --- non-noghost-death: everlasting or more lives left --- */
+	/* --- non-noghost-death: everlasting or more lives left or suicide --- */
 	/* Add to legends log if he was a winner */
 	if (p_ptr->total_winner && !is_admin(p_ptr) && !p_ptr->suicided) {
 		l_printf("%s \\{r%s (%d) lost %s royal title by death\n", showdate(), p_ptr->name, p_ptr->lev, p_ptr->male ? "his" : "her");
