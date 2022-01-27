@@ -8494,10 +8494,31 @@ Cut                     Cuts will make you lose HP continuously.
                         (mostly undead forms), the player becomes immune to
                         cut effects.
                         Cuts from shards can be avoided with shard resistance.
+                        Cure Light/Serious Wounds potions can heal cuts a bit,
+                        while Cure Critical Wounds and better, and any means of
+                        'Curing' will completely heal cuts.
 
 Poison  -Poisoned       The player will continuously lose Hit Points.
                         Resisting poison will prevent the player from getting
                         poisoned (compare (5.6)).
+                        Slow Poison (potions) will reduce the speed at which
+                        poison ticks and drains your HP. Best is of course to
+                        have means of Cure/Neutralize Poison, 'Curing', Healing
+                        or some Lembas, which will all completely cure poison.
+
+Hallucination           These are random wrong visual, like wrong symbols and
+                        colours for monster and other players.
+                        You can't believe what you are seeing!
+                        This effect is pretty annoying as you cannot clearly
+                        see what kind of monsters you are up against, making a
+                        fight potentially risky. You will also get wrong kill
+                        messages when you slay monsters while hallucinating.
+                        There are several ways to cure hallucinations, such as
+                        mushrooms of Cure Paranoia, Lembas, 'Curing' and any
+                        insanity-curing potions.
+                        Hallucinations can be induced as a one-time effect for
+                        example by eating a mushroom of hallucination, but also
+                        as a recurring flashback when your Sanity is reduced.
 
 Not really a status effect but..
 Switch places           Monsters that have MOVE_BODY flag may switch place with
