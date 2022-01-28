@@ -6605,6 +6605,7 @@ else s_printf("\n");
 		break;
 	}
 #endif
+s_printf("freq=%d, magicness=%d\n", r_ptr->freq_spell, magicness);
 }
 void py2mon_update_equip(monster_type *m_ptr, player_type *p_ptr) {
 	//monster_race *r_ptr = &r_info[RI_MIRROR];
