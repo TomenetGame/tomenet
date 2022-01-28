@@ -6035,8 +6035,13 @@ else s_printf("\n");
 	if (p_ptr->resist_nexus) r_ptr->flags3 |= RF3_RES_NEXU;
 	if (p_ptr->resist_water) r_ptr->flags3 |= RF3_RES_WATE;
 	if (p_ptr->resist_disen) r_ptr->flags3 |= RF3_RES_DISE;
-	//if (p_ptr->resist_sound) r_ptr->flags3 |= RF3_NO_STUN; //hmm
-	r_ptr->flags3 |= RF3_NO_STUN; //just give it, because the monster won't heal in time to recover from k.o.
+#if 0
+	if (p_ptr->resist_sound) r_ptr->flags3 |= RF3_NO_STUN; //hmm
+#else
+	/* Just give it, because the monster won't heal in time to recover from k.o.
+	   Unfair advantage though: MA users can get stunned from kicks and punches. */
+	r_ptr->flags3 |= RF3_NO_STUN;
+#endif
 
 	/* Too harsh? Double resist = immunity */
 	if (p_ptr->resist_acid && p_ptr->oppose_acid) r_ptr->flags3 |= RF3_IM_ACID;
