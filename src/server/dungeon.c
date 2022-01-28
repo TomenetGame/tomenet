@@ -6681,8 +6681,13 @@ static void do_unstat(struct worldpos *wpos, byte fast_unstat) {
 				j = 60 * 60; //1h
 				break;
 			case 2: //DI_DEATH_FATE
+#if 0 /* Not working instantly. Done in process_player_change_wpos() instead. */
+				new_players_on_depth(wpos, 0, FALSE);
+				if (getcave(wpos)) dealloc_dungeon_level(wpos);
+#else
 				j = 0;
 				break;
+#endif
 			default: //normal (fast_unstat = FALSE)
 				j = cfg.level_unstatic_chance * getlevel(wpos) * 60;
 				break;
@@ -8527,6 +8532,9 @@ void process_player_change_wpos(int Ind) {
 		}
 	}
 #endif
+
+	/* Immediately reset floor */
+	if (in_deathfate(&p_ptr->wpos_old) && getcave(&p_ptr->wpos_old)) dealloc_dungeon_level(&p_ptr->wpos_old);
 
 	wpcopy(&p_ptr->wpos_old, &p_ptr->wpos);
 
