@@ -405,6 +405,9 @@
  #define LIMIT_SPELLS		/* Allow player to limit the level of spells he casts */
 
  //#define ENABLE_SUBINVEN	/* Alchemy Satchels as inventory extension */
+
+ /* Just for debugging - unbind savegames from accounts */
+ #define IGNORE_SAVEGAME_MISMATCH
 #endif
 
 /* Specific settings for Arcade server only */

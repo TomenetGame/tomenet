@@ -4707,6 +4707,9 @@ static int Receive_login(int ind) {
 		//s_printf("success = %d\n", check_account_reason);
 		switch (check_account_reason) {
 		case 0: //NOT OK
+#ifdef IGNORE_SAVEGAME_MISMATCH
+			break;
+#endif
 			/* fail login here */
 			Destroy_connection(ind, "Name already in use by another player.");
 			return(-1);

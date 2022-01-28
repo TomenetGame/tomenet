@@ -1583,7 +1583,9 @@ static bool rd_extra(int Ind) {
 	rd_string(p_ptr->name, 32);
 	if (strcmp(p_ptr->name, login_char_name)) {
 		s_printf("$INTRUSION$ - %s tried to use savegame %s\n", p_ptr->name, login_char_name);
+#ifdef IGNORE_SAVEGAME_MISMATCH
 		return (1);
+#endif
 	}
 
 	rd_string(p_ptr->died_from, 80);
