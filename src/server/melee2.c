@@ -1062,6 +1062,15 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u3
 
 		/*** Try to pick an appropriate spell type ***/
 
+		/* Hurt significantly, attempt to heal */
+		if (m_ptr->r_idx == RI_MIRROR && has_heal && (m_ptr->hp <= m_ptr->maxhp / 2 || m_ptr->stunned)) {
+			/* Choose heal spell */
+			f4_mask = (RF4_HEAL_MASK);
+			f5_mask = (RF5_HEAL_MASK);
+			f6_mask = (RF6_HEAL_MASK);
+			f0_mask = (RF0_HEAL_MASK);
+		} else
+
 		/* Hurt badly or afraid, attempt to flee */
 		/* If too far, attempt to change position */
 		if (has_escape && (
