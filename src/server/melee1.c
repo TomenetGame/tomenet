@@ -3061,6 +3061,9 @@ bool make_attack_melee(int Ind, int m_idx) {
 				tmp = monster_critical(d_dice, d_side, damage_org);
 #endif
 
+				/* Simulate Martial Arts techniques */
+				if (m_ptr->r_idx == RI_MIRROR && !tmp && !rand_int(4)) tmp = 1 + rand_int(2);
+
 				/* Roll for damage */
 				switch (tmp) {
 					case 0: k = 0; break;
