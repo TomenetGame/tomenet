@@ -20443,7 +20443,7 @@ W:127:0:150:0
 E:1:1:2:2:1:2
 O:0:0:0:0
 F:BLUEBAND | GENO_NO_THIN | FORCE_MAXHP | NO_CREDIT | NO_REDUCE | DROP_CHOSEN
-F:IM_TELE | NO_FEAR
+F:IM_TELE | NO_FEAR | NONLIVING
 D:Upon shattering the grand mirror, the adventurer's image suddenly came to life!
 D:Showing no hesitation, empathy or doubt it attacked immediately!
 

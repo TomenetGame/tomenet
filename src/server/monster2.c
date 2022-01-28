@@ -5842,11 +5842,14 @@ void set_mon_num_hook(struct worldpos *wpos) {
 void py2mon_init(void) {
 	monster_race *r_ptr = &r_info[RI_MIRROR];
 
+
+
 	/* Hack: Reset stats to maintenance parameters hard-coded in r_info, in case this is not the first time spawn */
 	r_ptr->flags1 = RF1_FORCE_MAXHP | RF1_DROP_CHOSEN; //no effect actually as we set HP manually
 	r_ptr->flags2 = r_ptr->flags3 = r_ptr->flags4 = r_ptr->flags5 = r_ptr->flags6 = r_ptr->flags7 = 0x0;
+	r_ptr->flags3 = RF3_NONLIVING;
 	r_ptr->flags8 = RF8_BLUEBAND | RF8_GENO_NO_THIN;
-	r_ptr->flags9 = RF9_NO_CREDIT | RF9_NO_REDUCE;
+	r_ptr->flags9 = RF9_NO_CREDIT | RF9_NO_REDUCE | RF9_IM_TELE;
 	r_ptr->flags0 = 0x0;
 	/* Extra stats that are always granted to init tactical challenge: */
 	r_ptr->flags3 |= RF3_NO_FEAR | RF3_NO_CONF | RF3_NO_SLEEP; //just prevent 'mental' conditions, so stun is still allowed
