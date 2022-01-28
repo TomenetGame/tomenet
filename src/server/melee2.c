@@ -1062,15 +1062,6 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u3
 
 		/*** Try to pick an appropriate spell type ***/
 
-		/* Hurt significantly, attempt to heal */
-		if (m_ptr->r_idx == RI_MIRROR && has_heal && (m_ptr->hp <= m_ptr->maxhp / 2 || m_ptr->stunned)) {
-			/* Choose heal spell */
-			f4_mask = (RF4_HEAL_MASK);
-			f5_mask = (RF5_HEAL_MASK);
-			f6_mask = (RF6_HEAL_MASK);
-			f0_mask = (RF0_HEAL_MASK);
-		} else
-
 		/* Hurt badly or afraid, attempt to flee */
 		/* If too far, attempt to change position */
 		if (has_escape && (
@@ -1082,6 +1073,15 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u3
 			f5_mask = (RF5_ESCAPE_MASK);
 			f6_mask = (RF6_ESCAPE_MASK);
 			f0_mask = (RF0_ESCAPE_MASK);
+		}
+
+		/* Hurt significantly, attempt to heal */
+		else if (m_ptr->r_idx == RI_MIRROR && has_heal && (m_ptr->hp <= m_ptr->maxhp / 2 || m_ptr->stunned)) {
+			/* Choose heal spell */
+			f4_mask = (RF4_HEAL_MASK);
+			f5_mask = (RF5_HEAL_MASK);
+			f6_mask = (RF6_HEAL_MASK);
+			f0_mask = (RF0_HEAL_MASK);
 		}
 
 		/* Still hurt badly, couldn't flee, attempt to heal */
@@ -2300,6 +2300,10 @@ bool make_attack_spell(int Ind, int m_idx) {
 	rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
 
 #ifndef STUPID_MONSTER_SPELLS
+	/* For Mirror Image: Assume that the player always uses Potions of Healing and Scrolls of Teleportation */
+	if (m_ptr->r_idx == RI_MIRROR && (thrown_spell == RF6_OFFSET + 2 || thrown_spell == RF6_OFFSET + 5))
+		; //cannot fail, cannot antimagic
+	else
 	/* Check for spell failure chance and generic interception for 'real' spells */
 	if (!stupid &&
 	    ((thrown_spell >= RF5_OFFSET && thrown_spell != RF6_OFFSET + 4 && thrown_spell != RF6_OFFSET + 5) /* Blink and TPort have their own checks! */
@@ -3271,11 +3275,13 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 	/* RF6_HEAL */
 	case RF6_OFFSET+2:
-		if (monst_check_antimagic(Ind, m_idx)) break;
-		if (visible) {
-			//disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
-			else msg_format(Ind, "%^s concentrates on %s wounds.", m_name, m_poss);
+		if (m_ptr->r_idx != RI_MIRROR) { /* uses potions! */
+			if (monst_check_antimagic(Ind, m_idx)) break;
+			if (visible) {
+				//disturb(Ind, 1, 0);
+				if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+				else msg_format(Ind, "%^s concentrates on %s wounds.", m_name, m_poss);
+			}
 		}
 
 		/* Some heal data for 'rlev * 6' ('1' means 100%, assuming max hp dice):
@@ -3400,7 +3406,11 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 	/* RF6_TPORT */
 	case RF6_OFFSET+5:
-		if (monst_check_antimagic(Ind, m_idx)) break;
+		if (m_ptr->r_idx != RI_MIRROR) { /* uses scrolls! */
+			if (monst_check_antimagic(Ind, m_idx)) break;
+			//if (monst_check_grab(Ind, m_idx)) break;
+			if (monst_check_grab(m_idx, 50, "cast")) break;
+		}
 
 		/* No teleporting within no-tele vaults and such */
 		if (zcave[oy][ox].info & CAVE_STCK) {
@@ -3408,13 +3418,11 @@ bool make_attack_spell(int Ind, int m_idx) {
 			break;
 		}
 
-/*		if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+		/* if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 			msg_format(Ind, "%^s fails to teleport.", m_name);
 			break;
-		}
-*/
-		//if (monst_check_grab(Ind, m_idx)) break;
-		if (monst_check_grab(m_idx, 50, "cast")) break;
+		} */
+
 		if (teleport_away(m_idx, MAX_SIGHT * 2 + 5) && visible) {
 			//disturb(Ind, 1, 0);
 			if (blind) msg_print(Ind, "You hear something teleport away.");
