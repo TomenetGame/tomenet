@@ -2468,6 +2468,13 @@ static void init_windows(void) {
 	}
 
 
+#if 0 /* This has only been reported on X11 (XFCE4) so far, so 0'ed here for now */
+	/* For position restoration: It randomly fails when we use devilspie to undecorate. This small delay
+	   might give the window manager et al enough time to handle everything correctly, hopefully. - C. Blue */
+	usleep(100000);
+#endif
+
+
 	/* Load .INI preferences */
 	load_prefs();
 
