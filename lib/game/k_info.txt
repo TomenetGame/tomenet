@@ -617,7 +617,7 @@ N:72:& Scythe~ of Slicing
 G:/:B
 I:22:30:0
 W:60:0:300:3500
-A:60/3
+A:60/5
 P:0:10d4:5:5:0
 F:SHOW_MODS | MUST2H | VORPAL
 F:IGNORE_ACID | IGNORE_FIRE
@@ -3245,7 +3245,7 @@ F:SHOW_MODS | MUST2H
 
 ##### For Halloween #####
 
-#N:388:& Candy Corn~
+#N:388:& Candy Corn~   --todo: adjust '> 25' checks in the code, damn hard-coding
 #G:`:o
 #I:80:26:3000
 #W:0:0:2:2
@@ -7638,7 +7638,7 @@ N:985:& Hunting Spear~
 G:/:g
 I:22:1:0
 W:5:0:60:200
-A:5/5
+A:5/4:15/4
 P:0:1d6:7:0:0
 F:SHOW_MODS | SLAY_ANIMAL
 
@@ -7762,7 +7762,7 @@ W:65:0:360:2100
 A:65/8
 P:0:7d6:0:0:0
 #P:0:5d9:0:0:0
-F:SHOW_MODS | MUST2H | IGNORE_FIRE | BRAND_FIRE | EVIL
+F:SHOW_MODS | MUST2H | IGNORE_FIRE | IGNORE_ACID | BRAND_FIRE | EVIL
 
 #Placeholder that prevents item corruption in case k_info.txt doesn't meet
 #saved items in the server's savefile anymore after having been edited. - C. Blue

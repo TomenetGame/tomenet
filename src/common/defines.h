@@ -3187,19 +3187,23 @@
 #define is_ammo(tval)	(((tval) == TV_SHOT) || ((tval) == TV_ARROW) || ((tval) == TV_BOLT))
 #define is_melee_weapon(tval)	(((tval) == TV_SWORD) || ((tval) == TV_BLUNT) || ((tval) == TV_AXE) || ((tval) == TV_POLEARM))
 #define is_ranged_weapon(tval)	((tval) == TV_BOW || (tval) == TV_BOOMERANG)
-#define is_throwing_weapon(o_ptr)	(((o_ptr)->tval == TV_SWORD && ((o_ptr)->sval == SV_DAGGER || (o_ptr)->sval == SV_MAIN_GAUCHE)) || \
-					((o_ptr)->tval == TV_POLEARM && ((o_ptr)->sval == SV_HUNTING_SPEAR || (o_ptr)->sval == SV_SPEAR || (o_ptr)->sval == SV_TRIDENT || (o_ptr)->sval == SV_BROAD_SPEAR || (o_ptr)->sval == SV_TRIFURCATE_SPEAR)) || \
-					(o_ptr)->tval == TV_AXE)
+#define is_throwing_weapon(o_ptr) ( \
+	((o_ptr)->tval == TV_SWORD && ((o_ptr)->sval == SV_DAGGER || (o_ptr)->sval == SV_MAIN_GAUCHE)) || \
+	((o_ptr)->tval == TV_POLEARM && ((o_ptr)->sval == SV_HUNTING_SPEAR || (o_ptr)->sval == SV_SPEAR || (o_ptr)->sval == SV_TRIDENT || (o_ptr)->sval == SV_BROAD_SPEAR || (o_ptr)->sval == SV_TRIFURCATE_SPEAR)) || \
+	(o_ptr)->tval == TV_AXE )
 #define is_weapon(tval)		(is_melee_weapon(tval) || is_ranged_weapon(tval))
+/* For shops that only offer 'basic' items. Rarity at least /4 or /5. Execptions or special considerations listed behind each type line, if any. */
 #define is_rare_weapon(tval,sval) ( \
-	(((tval) == TV_SWORD) && ((sval) >= SV_BLADE_OF_CHAOS)) || /* blade of chaos, dark sword, bluesteel, shadow */ \
-	(((tval) == TV_BLUNT) && ((sval) == SV_MACE_OF_DISRUPTION || (sval) == SV_DEMON_HAMMER || (sval) == SV_SCOURGE_OF_REPENTANCE)) || \
-	(((tval) == TV_AXE) && ((sval) == SV_THUNDER_AXE)) || \
-	(((tval) == TV_POLEARM) && (sval) == SV_SCYTHE_OF_SLICING) )
+	((tval) == TV_SWORD && ((sval) >= SV_BLADE_OF_CHAOS || (sval) >= SV_BLUESTEEL_BLADE || (sval) >= SV_SHADOW_BLADE)) || /* dark sword (needed by unbelievers), unsure about shadow blade */ \
+	((tval) == TV_BLUNT && ((sval) == SV_MACE_OF_DISRUPTION || (sval) == SV_DEMON_HAMMER || (sval) == SV_SCOURGE_OF_REPENTANCE)) || \
+	((tval) == TV_AXE && ((sval) == SV_THUNDER_AXE || (sval) == SV_INFERNAL_AXE)) || /* hunting spear (low dice, just for fun) */ \
+	((tval) == TV_POLEARM && ((sval) == SV_SCYTHE_OF_SLICING || (sval) == SV_DRAGON_LANCE)) )
 #define is_nonmetallic_weapon(tval,sval) \
 	(((tval) == TV_BLUNT && ((sval) == SV_CLUB || (sval) == SV_WHIP || (sval) == SV_QUARTERSTAFF)) || \
 	((tval) == TV_BOOMERANG && ((sval) == SV_BOOM_WOOD || (sval) == SV_BOOM_S_WOOD)) || ((tval) == TV_BOW && ((sval) == SV_SLING || (sval) == SV_SHORT_BOW || (sval) == SV_LONG_BOW)))
 	/* || (sval) == SV_THREE_PIECE_ROD) -- metal connectors, maybe enough */
+#define is_slicing_polearm(sval) \
+	((sval) == SV_SICKLE || (sval) == SV_FAUCHARD || (sval) == SV_RHOMPHAIA || (sval) == SV_GLAIVE || (sval) == SV_SCYTHE || (sval) == SV_SCYTHE_OF_SLICING)
 #define is_magic_device(tval)	(((tval) == TV_WAND) || ((tval) == TV_STAFF) || ((tval) == TV_ROD))
 #define is_rare_magic_device(tval,sval) ( \
 	((tval) == TV_WAND && ((sval) == SV_WAND_ANNIHILATION || (sval) == SV_WAND_ROCKETS || (sval) == SV_WAND_WALL_CREATION || (sval) == SV_WAND_TELEPORT_TO)) || \
@@ -3335,6 +3339,7 @@
 #define SV_GOLEM_GOLD			5
 #define SV_GOLEM_MITHRIL		6
 #define SV_GOLEM_ADAM			7
+#define SV_GOLEM_MATERIAL_MAX		7 /* marker for end of basic golem materials */
 #define SV_GOLEM_ARM			8
 #define SV_GOLEM_LEG			9
 #define SV_GOLEM_ATTACK			200
@@ -3366,7 +3371,7 @@
 
 
 /*
- * Special "sval" limit -- first "normal" food
+ * Special "sval" limit -- first "normal" food (aka, unflavoured item, the irony..)
  */
 #define SV_FOOD_MIN_FOOD	20
 #define SV_FOOD_MAX_FOOD	49
@@ -3507,6 +3512,7 @@
 #define SV_GREAT_AXE			25	/* 4d4 */
 #define SV_HEAVY_WAR_AXE		28	/* 3d8 */
 #define SV_SLAUGHTER_AXE		30	/* 5d7 */
+#define SV_INFERNAL_AXE			32	/* 7d6 */
 #define SV_THUNDER_AXE			33	/* 6d8 */
 
 /* The "sval" values for TV_POLEARM */
@@ -4165,6 +4171,7 @@
 #define SV_FOOD_RESTORE_STR		17
 #define SV_FOOD_RESTORE_CON		18
 #define SV_FOOD_RESTORING		19
+#define SV_FOOD_MUSHROOMS_MAX		19 /* marker where mushroom svals end */
 /* many missing mushrooms */
 /* mangband-oriented wilderness crops */
 #define	SV_FOOD_POTATO			20

@@ -11405,9 +11405,6 @@ For more information about items and especially ego items see (7.4).
 
 Weapons & Armour
 ----------------
-Blade of Chaos  Resists chaos and produces chaotic effects (see (5.8)).
-Bluesteel Blade Cannot rust (not damaged by water attacks) and are especially
-                sharp (see 'VORPAL' under (5.8)).
 Dark Sword      Dark Swords have a so-called 'anti-magic field', which
                 prevents the user from using magic devices or casting spells,
                 and also has a chance to interrupt nearby monsters and players
@@ -11436,74 +11433,96 @@ Dark Sword      Dark Swords have a so-called 'anti-magic field', which
                 Similarly, if there are multiple players around nearby who have
                 anti-magic fields affecting the same monster then only the
                 strongest AM field will work, overriding the weaker ones.
-Demon Hammer    Slays demons.
+
+                Dark swords cannot be enchanted nor disenchanted and do not
+                take damage from water or fire.
+Shadow Blade    Resists darkness and provides a fixed stealth bonus of +2.
+                Does not get damaged by acid, water or fire.
+Bluesteel Blade Especially sharp (see 'VORPAL' under (5.8)).
+                Does not get damaged by water or fire.
+Blade of Chaos  Resists chaos and produces chaotic effects (see (5.8)).
+                Does not get damaged by fire, acid and water.
+Scourge of Repentance
+                Slays undead and demons.
+                Does not get damaged by water, acid, or fire.
+Demon Hammer    *Slays* demons. Does not get damaged by water, acid or fire.
+Mace of Disruption
+                *Slays* undead. Not damaged by water, acid or fire.
 Hunting Spear   Slays animals.
-Mace of Disruption      Slays undead.
-Scourge of Repentance   Slays undead.
-Scythe of Slicing       Slays dragons and animals.
-Shadow Blade    Resists darkness, cannot be damaged by acid or water, provides
-                a fixed stealth bonus of +2.
+Dragon Lance    *Slays* dragons.
+                Does not get damaged by water, acid, or fire.
+Scythe of Slicing
+                Especially sharp (see 'VORPAL' under (5.8)).
+                Does not get damaged by water, acid, or fire.
 Slaughter Axe   Slays animals.
-Thunder Axe     Slays giants, provides lightning brand and resistance.
+Infernal Axe    Fire-branded. Will never gain ego powers or artifact powers that
+                harm (aka hit point drain) an undead or demonic wielder.
+                Does not get damaged by water, acid or fire.
+Thunder Axe     Slays giants, is lightning-branded. Is not damaged by fire.
+                Does not get damaged by water, acid or fire.
+Weapons of Morgul
+                These are terribly cursed weapons that aren't good for
+                anything, just try to get rid of them. Since they have
+                a heavy curse on them, you need to either use a scroll
+                of *remove curse* or use enchant scrolls to break it.
+                For details about the enchant-scrolls trick, which is
+                usually much cheaper, see paragraph '(5.14) Curses'.
+                Wielding a weapon of Morgul will allow you to see the
+                invisible but also infect you with the Black Breath,
+                drain your experience and aggravate nearby monsters.
+                Note that this weapon can auto-recurse itself when you
+                move it between equipment and inventory, so when you
+                uncursed it drop it to the ground right away!
+                If you find a weapon of morgul, inscribe it '!w' to
+                prevent wielding it accidentally.
+                Against Nazgul however, Morgul weapons will resist
+                destruction same like artifacts and the Stormbringer.
+Weapons of Nothingness
+                Similarly terribly cursed as weapons of Morgul. You
+                are unable to strike while wielding this weapon.
+                Fortunately you can just drop or destroy these weapons
+                via 'd'/'k' keys just like any other items, right away.
+                See 'Weapons of Morgul' right above on how to break the
+                curse of this weapon to get rid of it.
+                Note that this weapon can auto-recurse itself when you
+                move it between equipment and inventory, so when you
+                uncursed it drop it to the ground right away!
+Weapons of Slaying
+ (SLAY_WEAP)    These weapons can have greatly boosted damage dice
+                and sometimes poison brand.
+                If it's a sword, axe or slice-type polearm it could
+                also get a 'vorpal' effect - see 'VORPAL' under (5.8).
 
-Weapons of Morgul       These are terribly cursed weapons that aren't good for
-                        anything, just try to get rid of them. Since they have
-                        a heavy curse on them, you need to either use a scroll
-                        of *remove curse* or use enchant scrolls to break it.
-                        For details about the enchant-scrolls trick, which is
-                        usually much cheaper, see paragraph '(5.14) Curses'.
-                        Wielding a weapon of Morgul will allow you to see the
-                        invisible but also infect you with the Black Breath,
-                        drain your experience and aggravate nearby monsters.
-                        Note that this weapon can auto-recurse itself when you
-                        move it between equipment and inventory, so when you
-                        uncursed it drop it to the ground right away!
-                        If you find a weapon of morgul, inscribe it '!w' to
-                        prevent wielding it accidentally.
-                        Against Nazgul however, Morgul weapons will resist
-                        destruction same like artifacts and the Stormbringer.
-Weapons of Nothingness  Similarly terribly cursed as weapons of Morgul. You
-                        are unable to strike while wielding this weapon.
-                        Fortunately you can just drop or destroy these weapons
-                        via 'd'/'k' keys just like any other items, right away.
-                        See 'Weapons of Morgul' right above on how to break the
-                        curse of this weapon to get rid of it.
-                        Note that this weapon can auto-recurse itself when you
-                        move it between equipment and inventory, so when you
-                        uncursed it drop it to the ground right away!
+Magic ammunition
+                (Magic Arrows, Magic Bolts, Magic Shots).
+                Those will return into your quiver magically, so just
+                having one will already serve, as long as it isn't
+                destroyed by some elemental attack..
+                Artifact ammunition of any type auto-returns too, same
+                as magic ammunition.
+Silver ammunition
+                *Slays* undead.
+Ethereal ammunition
+                Magically returns after being fired, has a small chance
+                to fade away instead though.
 
-Weapons of Slaying      These weapons can have greatly boosted damage dice
- (SLAY_WEAP)            and sometimes poison brand.
-                        If it's a sword, axe or slice-type polearm it could
-                        also get a 'vorpal' effect - see 'VORPAL' under (5.8).
-
-Magic ammunition (Magic Arrows, Magic Bolts, Magic Shots).
-                Those will return into your quiver magically, so just having
-                one will already serve, as long as it isn't destroyed by some
-                elemental attack..
-                Artifact ammunition of any type auto-returns too, same as
-                magic ammunition.
-Silver ammunition       *Slays* undead.
-Ethereal ammunition     Magically returns after being fired, has a small chance
-                        to fade away instead though.
-
-Blasted armour          Armour that has the prefix "blasted" has much less +AC
-                        bonus than usual, in most cases the +AC value is deeply
-                        in the negative numbers.
-                        However, other than bad +AC the armour is not cursed or
-                        impared in any way, and may still be usable, especially
-                        if you use scrolls of enchant armour to 'repair' it.
-
-Dragonrider Coat                Resists heat & cold.
+Blasted armour  Armour that has the prefix "blasted" has much less +AC
+                bonus than usual, in most cases the +AC value is deeply
+                in the negative numbers.
+                However, other than bad +AC the armour is not cursed or
+                impared in any way, and may still be usable, especially
+                if you use scrolls of enchant armour to 'repair' it.
+Dragonrider Coat
+                Resists heat & cold.
 Elven Cloak     Increases your stealth, searching ability and luck.
                 For details about luck see LUCK flag in (5.8).
 Elven Gloves    Regenerate hit points and mana points.
-Multi-hued Dragon Scale Mail    Gives base + poison resistance (base means
-                                fire/cold/lightning/acid) and two random
-                                immunities out of those five.
-                                For example one MHDSM might give fire and cold
-                                immunity, while another MHDSM gives poison and
-                                lightning immunity.
+Multi-hued Dragon Scale Mail
+                Gives base + poison resistance ('base' resistance means
+                fire/cold/lightning/acid) and two random immunities out of
+                those five.
+                For example one MHDSM might give fire and cold immunity,
+                while another MHDSM gives poison and lightning immunity.
 Royal Armour    Super-heavy armour that can only be worn by (fallen) winners,
                 'winner' meaning queens, kings, empresses and emperors.
                 (These armour pieces usually have a level requirement of 51 or
@@ -11513,7 +11532,8 @@ Royal Armour    Super-heavy armour that can only be worn by (fallen) winners,
                 or shields that will display
                 "It is to be used by royalties exclusively."
                 in violet colour when inspected/examined.
-Serpent Scale Mail              Resists acid.
+Serpent Scale Mail
+                Resists acid.
 Shadow Cloak    Makes you hard to spot for other players, regarding
                 a) them seeing you
                 b) them being able to look at your current equipment.
@@ -11735,8 +11755,9 @@ Obliteration    Removes all monsters that are close to you.
                 experience points, loot or monster-form for mimics.)
 Parchments      These contain informations about the game, they won't
                 disappear if you read them.
-Protection from evil    Repels evil creatures that try to attack you in melee.
-                        See the prayer 'Protection from evil' in (6.8)!
+Protection from evil
+                Repels evil creatures that try to attack you in melee.
+                See the prayer 'Protection from evil' in (6.8)!
 Recharging      Recharges a magical device (rod, wand or staff, see (5.21)).
 Remove Curse    Breaks lesser curses on items, allowing you to unwear or
                 destroy them. Note that many items can be sold for good cash
@@ -11759,9 +11780,10 @@ Rune of Protection
 Rumour          Makes a random rumour come to your character's (and everyone
                 else's characters') mind. Has no further effect and is not
                 necessarily true even.
-Wilderness Mapping  Maps the wilderness area around the worldmap sector you
-                    are currently within. These scrolls also sometimes carry
-                    an inscription telling the location of a hidden dungeon.
+Wilderness Mapping
+                Maps the wilderness area around the worldmap sector you
+                are currently within. These scrolls also sometimes carry
+                an inscription telling the location of a hidden dungeon.
 Word of Recall  Use it to quickly travel from the town or the wilderness into a
                 dungeon or tower within your current sector.
                 It can also be used to travel between towns or on the worldmap

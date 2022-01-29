@@ -822,7 +822,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		switch (o_ptr->tval) {
 		case TV_GOLEM:
 			/* Buy massive pieces of wood/metal for forging/fletching! */
-			if (o_ptr->sval > 7) return FALSE;
+			if (o_ptr->sval > SV_GOLEM_MATERIAL_MAX) return FALSE;
 		case TV_BOOTS:
 		case TV_GLOVES:
 		case TV_CROWN:
@@ -845,7 +845,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		switch (o_ptr->tval) {
 		case TV_GOLEM:
 			/* Buy massive pieces of wood/metal for forging/fletching! */
-			if (o_ptr->sval > 7) return FALSE;
+			if (o_ptr->sval > SV_GOLEM_MATERIAL_MAX) return FALSE;
 		case TV_SHOT:
 		case TV_BOLT:
 		case TV_ARROW:
@@ -1034,8 +1034,9 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 			if (get_book_name_color(o_ptr) != TERM_L_GREEN) return FALSE;
 			break;
 		case TV_FOOD:
-			if ((o_ptr->sval <= 19) || (o_ptr->sval == 50) || (o_ptr->sval == 40) ||
-			    (o_ptr->sval == 37) || (o_ptr->sval == 38) || (o_ptr->sval == 39))
+			if ((o_ptr->sval <= SV_FOOD_MUSHROOMS_MAX) || (o_ptr->sval == SV_FOOD_UNMAGIC) ||
+			    (o_ptr->sval == SV_FOOD_WAYBREAD) || (o_ptr->sval == SV_FOOD_ATHELAS) || /* wowie */
+			    (o_ptr->sval == SV_FOOD_PINT_OF_ALE) || (o_ptr->sval == SV_FOOD_PINT_OF_WINE))
 				 break;
 			return (FALSE);
 		case TV_POTION:
@@ -1073,7 +1074,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		switch (o_ptr->tval) {
 		case TV_GOLEM:
 			/* Buy massive pieces of wood/metal for forging/fletching! */
-			if (o_ptr->sval > 7) return FALSE;
+			if (o_ptr->sval > SV_GOLEM_MATERIAL_MAX) return FALSE;
 		case TV_BOOTS:
 		case TV_GLOVES:
 		case TV_CROWN:
@@ -1103,7 +1104,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		switch (o_ptr->tval) {
 		case TV_GOLEM:
 			/* Buy massive pieces of wood/metal for forging/fletching! */
-			if (o_ptr->sval > 7) return FALSE;
+			if (o_ptr->sval > SV_GOLEM_MATERIAL_MAX) return FALSE;
 		case TV_SHOT:
 		case TV_BOLT:
 		case TV_ARROW:

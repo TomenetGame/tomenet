@@ -6564,7 +6564,7 @@ byte get_book_name_color(object_type *o_ptr) {
 			return get_spellbook_name_colour(o_ptr->xtra1 - 1);
 		else
 			return TERM_WHITE; /* unused custom book */
-	} else { /* School Tomes */
+	} else { /* School Tomes -- hard-coding partyyyeh ._. */
 		/* priests */
 		if ((o_ptr->sval >= 12 && o_ptr->sval <= 15) ||
 		    o_ptr->sval == 53 || o_ptr->sval == 56)
