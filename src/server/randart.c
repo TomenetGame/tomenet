@@ -2902,7 +2902,7 @@ void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *lim
 
 		/*if (k_ptr->tval == TV_SWORD && (randint(4) == 1))*/
 		if (k_ptr->tval != TV_BLUNT &&
-		    !(k_ptr->tval == TV_POLEARM && is_slicing_polearm(k_ptr->sval)) &&
+		    !(k_ptr->tval == TV_POLEARM && !is_slicing_polearm(k_ptr->sval)) &&
 		    randint(3) == 1)
 			a_ptr->flags5 |= TR5_VORPAL;
 	}
