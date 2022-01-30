@@ -11440,7 +11440,10 @@ Shadow Blade    Resists darkness and provides a fixed stealth bonus of +2.
                 Does not get damaged by acid, water or fire.
 Bluesteel Blade Especially sharp (see 'VORPAL' under (5.8)).
                 Does not get damaged by water or fire.
-Blade of Chaos  Resists chaos and produces chaotic effects (see (5.8)).
+Blade of Chaos  Grants chaos resistance and produces chaotic effects on hits,
+                which in most cases means either life drain or confuse target,
+                with other (in turn detrimental to the wielder) effects being
+                very rare, see (5.8) for details on CHAOTIC flag.
                 As a specialty, this weapon will never gain ego powers or
                 artifact powers that harm (aka hit point drain) an undead or
                 demonic wielder.
