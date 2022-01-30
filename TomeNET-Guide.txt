@@ -11441,6 +11441,9 @@ Shadow Blade    Resists darkness and provides a fixed stealth bonus of +2.
 Bluesteel Blade Especially sharp (see 'VORPAL' under (5.8)).
                 Does not get damaged by water or fire.
 Blade of Chaos  Resists chaos and produces chaotic effects (see (5.8)).
+                As a specialty, this weapon will never gain ego powers or
+                artifact powers that harm (aka hit point drain) an undead or
+                demonic wielder.
                 Does not get damaged by fire, acid and water.
 Scourge of Repentance
                 Slays undead and demons.
@@ -11455,8 +11458,9 @@ Scythe of Slicing
                 Especially sharp (see 'VORPAL' under (5.8)).
                 Does not get damaged by water, acid, or fire.
 Slaughter Axe   Slays animals.
-Infernal Axe    Fire-branded. Will never gain ego powers or artifact powers
-                that harm (aka hit point drain) an undead or demonic wielder.
+Infernal Axe    Fire-branded. As a specialty, this weapon will never gain ego
+                powers or artifact powers that harm (aka hit point drain) an
+                undead or demonic wielder.
                 Does not get damaged by water, acid or fire.
 Thunder Axe     Slays giants, is lightning-branded. Is not damaged by fire.
                 Does not get damaged by water, acid or fire.
