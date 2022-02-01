@@ -3733,9 +3733,10 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 
 
 		/* PernA flags	- Jir - */
-		/* Process 'T' for "Tval/Sval" (up to 5 lines) */
+		/* Process 'T' for "Tval/Sval" (up to 10 [MAX_EGO_BASETYPES] lines) */
 		if (buf[0] == 'T') {
 			int tv, minsv, maxsv;
+
 			if (cur_t == MAX_EGO_BASETYPES) {
 				s_printf("ERROR: Exceeded MAX_EGO_BASETYPES in ego index %d.\n", error_idx);
 				return (1);
