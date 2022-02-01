@@ -1051,6 +1051,9 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 
 	/* Check the slot */
 	slot = wield_slot(Ind, o_ptr);
+#ifdef EQUIPPABLE_DIGGERS
+	if (o_ptr->tval == TV_DIGGING && (alt_slots & 0x2)) slot = INVEN_WIELD;
+#endif
 
 	if (!item_tester_hook_wear(Ind, slot)) {
 		msg_print(Ind, "You may not wield that item.");
@@ -1074,6 +1077,12 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+
+#ifdef EQUIPPABLE_DIGGERS
+	/* Remove MUST2H flag from diggers when equipping into the tool slot,
+	   or the shield will be taken off as a side effect. */
+	if (o_ptr->tval == TV_DIGGING && slot != INVEN_WIELD) f4 &= ~TR4_MUST2H;
+#endif
 
 #if 0 /* For now disabled because of the following problem: Instant-resurrection users would get to keep their stuff equipped, but others would be unable to re-equip! */
 	/* Royalties only? */

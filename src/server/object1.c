@@ -4625,10 +4625,16 @@ void observe_aux(int Ind, object_type *o_ptr) {
 	else if (is_melee_weapon(o_ptr->tval)) display_weapon_handling(Ind, &forge, NULL);
 	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, &forge, NULL);
 
-	if (wield_slot(Ind, o_ptr) == INVEN_WIELD) {
+	if (wield_slot(Ind, o_ptr) == INVEN_WIELD
+	    //|| is_armour(o_ptr->tval)
+ #ifdef EQUIPPABLE_DIGGERS
+	    || o_ptr->tval == TV_DIGGING
+ #endif
+	    ) {
 		/* copied from object1.c.. */
 		object_type forge, forge2, *old_ptr = &forge, *old_ptr2 = &forge2;
 		long tim_wraith = p_ptr->tim_wraith;
+
 		object_copy(old_ptr, &p_ptr->inventory[INVEN_WIELD]);
 		object_copy(&p_ptr->inventory[INVEN_WIELD], o_ptr);
 		p_ptr->inventory[INVEN_WIELD].number = 1; /* fix weight */
@@ -4649,12 +4655,7 @@ void observe_aux(int Ind, object_type *o_ptr) {
 		suppress_boni = FALSE;
 		suppress_message = FALSE;
 		p_ptr->tim_wraith = tim_wraith;
-	}
-
-	if (wield_slot(Ind, o_ptr) != INVEN_WIELD
-	    //&& !is_armour(o_ptr->tval)
-	    )
-		msg_print(Ind, "\377s  You have no special knowledge about that item.");
+	} else msg_print(Ind, "\377s  You have no special knowledge about that item.");
 }
 #else /* new way: display an info screen as for identify_fully_aux(), for additional k_info information - C. Blue */
 bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item);
@@ -5706,7 +5707,11 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 	if (buf_tmp_n) fprintf(fff, "%s.\n", buf_tmp);
 
 	/* Damage display for weapons */
-	if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
+	if (wield_slot(Ind, o_ptr) == INVEN_WIELD
+#ifdef EQUIPPABLE_DIGGERS
+	    || o_ptr->tval == TV_DIGGING
+#endif
+	    )
 		display_weapon_damage(Ind, &forge, fff, f1);
 
 	/* Damage display for ranged weapons */
@@ -5886,8 +5891,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
  * Convert an inventory index into a one character label
  * Note that the label does NOT distinguish inven/equip.
  */
-s16b index_to_label(int i)
-{
+s16b index_to_label(int i) {
 	/* Indexes for "inven" are easy */
 	if (i < INVEN_WIELD) return (I2A(i));
 
@@ -5900,10 +5904,8 @@ s16b index_to_label(int i)
  * Convert a label into the index of an item in the "inven"
  * Return "-1" if the label does not indicate a real item
  */
-s16b label_to_inven(int Ind, int c)
-{
+s16b label_to_inven(int Ind, int c) {
 	player_type *p_ptr = Players[Ind];
-
 	int i;
 
 	/* Convert */
@@ -5924,10 +5926,8 @@ s16b label_to_inven(int Ind, int c)
  * Convert a label into the index of a item in the "equip"
  * Return "-1" if the label does not indicate a real item
  */
-s16b label_to_equip(int Ind, int c)
-{
+s16b label_to_equip(int Ind, int c) {
 	player_type *p_ptr = Players[Ind];
-
 	int i;
 
 	/* Convert */
@@ -5954,62 +5954,62 @@ s16b wield_slot(int Ind, object_type *o_ptr) {
 
 	/* Slot for equipment */
 	switch (o_ptr->tval) {
-		case TV_DIGGING:
-		case TV_TOOL:
-			return (INVEN_TOOL);
+	case TV_DIGGING:
+	case TV_TOOL:
+		return (INVEN_TOOL);
 
-		case TV_BLUNT:
-		case TV_POLEARM:
-		case TV_SWORD:
-		case TV_AXE:
-		case TV_MSTAFF:
-			return (INVEN_WIELD);
+	case TV_BLUNT:
+	case TV_POLEARM:
+	case TV_SWORD:
+	case TV_AXE:
+	case TV_MSTAFF:
+		return (INVEN_WIELD);
 
-		case TV_BOW:
-		case TV_BOOMERANG:
-		case TV_INSTRUMENT:
-			return (INVEN_BOW);
+	case TV_BOW:
+	case TV_BOOMERANG:
+	case TV_INSTRUMENT:
+		return (INVEN_BOW);
 
-		case TV_RING:
-			/* Use the right hand first */
-			if (Ind && !p_ptr->inventory[INVEN_RIGHT].k_idx) return (INVEN_RIGHT);
+	case TV_RING:
+		/* Use the right hand first */
+		if (Ind && !p_ptr->inventory[INVEN_RIGHT].k_idx) return (INVEN_RIGHT);
 
-			/* Use the left hand for swapping (by default) */
-			return (INVEN_LEFT);
+		/* Use the left hand for swapping (by default) */
+		return (INVEN_LEFT);
 
-		case TV_AMULET:
-			return (INVEN_NECK);
+	case TV_AMULET:
+		return (INVEN_NECK);
 
-		case TV_LITE:
-			return (INVEN_LITE);
+	case TV_LITE:
+		return (INVEN_LITE);
 
-		case TV_DRAG_ARMOR:
-		case TV_HARD_ARMOR:
-		case TV_SOFT_ARMOR:
-			return (INVEN_BODY);
+	case TV_DRAG_ARMOR:
+	case TV_HARD_ARMOR:
+	case TV_SOFT_ARMOR:
+		return (INVEN_BODY);
 
-		case TV_CLOAK:
-			return (INVEN_OUTER);
+	case TV_CLOAK:
+		return (INVEN_OUTER);
 
-		case TV_SHIELD:
-			return (INVEN_ARM);
+	case TV_SHIELD:
+		return (INVEN_ARM);
 
-		case TV_CROWN:
-		case TV_HELM:
-			return (INVEN_HEAD);
+	case TV_CROWN:
+	case TV_HELM:
+		return (INVEN_HEAD);
 
-		case TV_GLOVES:
-			return (INVEN_HANDS);
+	case TV_GLOVES:
+		return (INVEN_HANDS);
 
-		case TV_BOOTS:
-			return (INVEN_FEET);
+	case TV_BOOTS:
+		return (INVEN_FEET);
 
-		case TV_SHOT:
-			return (INVEN_AMMO);
-		case TV_ARROW:
-			return (INVEN_AMMO);
-		case TV_BOLT:
-			return (INVEN_AMMO);
+	case TV_SHOT:
+		return (INVEN_AMMO);
+	case TV_ARROW:
+		return (INVEN_AMMO);
+	case TV_BOLT:
+		return (INVEN_AMMO);
 	}
 
 	/* No slot available */
@@ -6020,50 +6020,39 @@ s16b wield_slot(int Ind, object_type *o_ptr) {
 /*
  * Return a string mentioning how a given item is carried
  */
-cptr mention_use(int Ind, int i)
-{
+cptr mention_use(int Ind, int i) {
 	player_type *p_ptr = Players[Ind];
-
 	cptr p;
 
 	/* Examine the location */
-	switch (i)
-	{
-		case INVEN_WIELD: p = "Wielding"; break;
-		case INVEN_BOW:   p = "Shooting"; break;
-		case INVEN_LEFT:  p = "On left hand"; break;
-		case INVEN_RIGHT: p = "On right hand"; break;
-		case INVEN_NECK:  p = "Around neck"; break;
-		case INVEN_LITE:  p = "Light source"; break;
-		case INVEN_BODY:  p = "On body"; break;
-		case INVEN_OUTER: p = "About body"; break;
-		case INVEN_ARM:   p = "On off-hand"; break; //was 'On arm'
-		case INVEN_HEAD:  p = "On head"; break;
-		case INVEN_HANDS: p = "On hands"; break;
-		case INVEN_FEET:  p = "On feet"; break;
-		default:          p = "In pack"; break;
+	switch (i) {
+	case INVEN_WIELD: p = "Wielding"; break;
+	case INVEN_BOW:   p = "Shooting"; break;
+	case INVEN_LEFT:  p = "On left hand"; break;
+	case INVEN_RIGHT: p = "On right hand"; break;
+	case INVEN_NECK:  p = "Around neck"; break;
+	case INVEN_LITE:  p = "Light source"; break;
+	case INVEN_BODY:  p = "On body"; break;
+	case INVEN_OUTER: p = "About body"; break;
+	case INVEN_ARM:   p = "On off-hand"; break; //was 'On arm'
+	case INVEN_HEAD:  p = "On head"; break;
+	case INVEN_HANDS: p = "On hands"; break;
+	case INVEN_FEET:  p = "On feet"; break;
+	default:          p = "In pack"; break;
 	}
 
 	/* Hack -- Heavy weapon */
-	if (i == INVEN_WIELD || (i == INVEN_ARM && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) /* dual-wield, not that needed here though */
-	{
+	if (i == INVEN_WIELD || (i == INVEN_ARM && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) /* dual-wield, not that needed here though */ {
 		object_type *o_ptr;
 		o_ptr = &p_ptr->inventory[i];
-		if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10)
-		{
-			p = "Just lifting";
-		}
+		if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10) p = "Just lifting";
 	}
 
 	/* Hack -- Heavy bow */
-	if (i == INVEN_BOW)
-	{
+	if (i == INVEN_BOW) {
 		object_type *o_ptr;
 		o_ptr = &p_ptr->inventory[i];
-		if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10)
-		{
-			p = "Just holding";
-		}
+		if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10) p = "Just holding";
 	}
 
 	/* Return the result */
@@ -6075,51 +6064,40 @@ cptr mention_use(int Ind, int i)
  * Return a string describing how a given item is being worn.
  * Currently, only used for items in the equipment, not inventory.
  */
-cptr describe_use(int Ind, int i)
-{
+cptr describe_use(int Ind, int i) {
 	player_type *p_ptr = Players[Ind];
-
 	cptr p;
 
-	switch (i)
-	{
-		/* you attack players too, none? */
-//		case INVEN_WIELD: p = "attacking monsters with"; break;
-		case INVEN_WIELD: p = "attacking enemies with"; break;
-		case INVEN_BOW:   p = "shooting missiles with"; break;
-		case INVEN_LEFT:  p = "wearing on your left hand"; break;
-		case INVEN_RIGHT: p = "wearing on your right hand"; break;
-		case INVEN_NECK:  p = "wearing around your neck"; break;
-		case INVEN_LITE:  p = "using to light the way"; break;
-		case INVEN_BODY:  p = "wearing on your body"; break;
-		case INVEN_OUTER: p = "wearing on your back"; break;
-		case INVEN_ARM:   p = "wielding in off-hand"; break;//was "wearing on your arm"
-		case INVEN_HEAD:  p = "wearing on your head"; break;
-		case INVEN_HANDS: p = "wearing on your hands"; break;
-		case INVEN_FEET:  p = "wearing on your feet"; break;
-		default:          p = "carrying in your pack"; break;
+	switch (i) {
+	/* you attack players too, none? */
+	//case INVEN_WIELD: p = "attacking monsters with"; break;
+	case INVEN_WIELD: p = "attacking enemies with"; break;
+	case INVEN_BOW:   p = "shooting missiles with"; break;
+	case INVEN_LEFT:  p = "wearing on your left hand"; break;
+	case INVEN_RIGHT: p = "wearing on your right hand"; break;
+	case INVEN_NECK:  p = "wearing around your neck"; break;
+	case INVEN_LITE:  p = "using to light the way"; break;
+	case INVEN_BODY:  p = "wearing on your body"; break;
+	case INVEN_OUTER: p = "wearing on your back"; break;
+	case INVEN_ARM:   p = "wielding in off-hand"; break;//was "wearing on your arm"
+	case INVEN_HEAD:  p = "wearing on your head"; break;
+	case INVEN_HANDS: p = "wearing on your hands"; break;
+	case INVEN_FEET:  p = "wearing on your feet"; break;
+	default:          p = "carrying in your pack"; break;
 	}
 
 	/* Hack -- Heavy weapon */
-	if (i == INVEN_WIELD || (i == INVEN_ARM && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) /* dual-wield, not that needed here though */
-	{
+	if (i == INVEN_WIELD || (i == INVEN_ARM && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) /* dual-wield, not that needed here though */ {
 		object_type *o_ptr;
 		o_ptr = &p_ptr->inventory[i];
-		if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10)
-		{
-			p = "just lifting";
-		}
+		if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10) p = "just lifting";
 	}
 
 	/* Hack -- Heavy bow */
-	if (i == INVEN_BOW)
-	{
+	if (i == INVEN_BOW) {
 		object_type *o_ptr;
 		o_ptr = &p_ptr->inventory[i];
-		if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10)
-		{
-			p = "just holding";
-		}
+		if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10) p = "just holding";
 	}
 
 	/* Return the result */
@@ -6133,8 +6111,7 @@ cptr describe_use(int Ind, int i)
 /*
  * Check an item against the item tester info
  */
-bool item_tester_okay(object_type *o_ptr)
-{
+bool item_tester_okay(object_type *o_ptr) {
 	/* Hack -- allow listing empty slots */
 	if (item_tester_full) return (TRUE);
 
@@ -6145,21 +6122,18 @@ bool item_tester_okay(object_type *o_ptr)
 	if (o_ptr->tval == TV_GOLD) return (FALSE);
 
 	/* Check the tval */
-	if (item_tester_tval)
-	{
+	if (item_tester_tval) {
 		if (!(item_tester_tval == o_ptr->tval)) return (FALSE);
 	}
 
 	/* Check the hook */
-	if (item_tester_hook)
-	{
+	if (item_tester_hook) {
 		if (!(*item_tester_hook)(o_ptr)) return (FALSE);
 	}
 
 	/* Assume okay */
 	return (TRUE);
 }
-
 
 
 

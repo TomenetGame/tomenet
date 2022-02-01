@@ -3256,7 +3256,15 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
  #endif
 #endif
 
-	int cfeat, y, x, power = p_ptr->skill_dig + (quiet_borer ? 20000 : 0);
+	int cfeat, y, x;
+#ifndef EQUIPPABLE_DIGGERS
+	int power = p_ptr->skill_dig + (quiet_borer ? 20000 : 0);
+#else
+	int power = (p_ptr->skill_dig > p_ptr->skill_dig2 ? p_ptr->skill_dig : p_ptr->skill_dig2) + (quiet_borer ? 20000 : 0);
+	bool swapped = FALSE;
+	object_type object_storage;
+#endif
+
 	u32b cinfo;
 	int mining = get_skill(p_ptr, SKILL_DIG);
 	int dug_feat = FEAT_NONE, tval = 0, sval = 0, special_k_idx = 0; //chest / golem base material / rune
@@ -3295,6 +3303,29 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
 		return;
 	}
+
+#ifdef EQUIPPABLE_DIGGERS
+//s_printf("pow %d, sd %d, sd2 %d.  ", power, p_ptr->skill_dig, p_ptr->skill_dig2);
+	/* Do we wield a digging tool in the "wield" slot? */
+	if (o2_ptr->k_idx && o2_ptr->tval == TV_DIGGING) {
+		/* If we don't wield a digging tool in the tool slot, use the one in the wield slot instead */
+		if (!o_ptr->k_idx || o_ptr->tval != TV_DIGGING) {
+			/* Hack: Temporarily switch the two slots! */
+			object_storage = *o_ptr;
+			*o_ptr = *o2_ptr;
+			*o2_ptr = object_storage;
+			swapped = TRUE;
+		}
+		/* We wield two digging tools. Pick the stronger of the two automatically */
+		else if (p_ptr->skill_dig2 > p_ptr->skill_dig) {
+			/* Hack: Temporarily switch the two slots! */
+			object_storage = *o_ptr;
+			*o_ptr = *o2_ptr;
+			*o2_ptr = object_storage;
+			swapped = TRUE;
+		}
+	}
+#endif
 
 	/* check if our weapons can help hacking down wood etc */
 	if (o2_ptr->k_idx && !p_ptr->heavy_wield) {
@@ -3427,6 +3458,14 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			if (istownarea(&p_ptr->wpos, MAX_TOWNAREA)) {
 				msg_print(Ind, "The floor around the town area seems very solid.");
 				p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+#ifdef EQUIPPABLE_DIGGERS
+				if (swapped) {
+					/* Unhack */
+					object_storage = *o_ptr;
+					*o_ptr = *o2_ptr;
+					*o2_ptr = object_storage;
+				}
+#endif
 				return;
 			}
 
@@ -3534,12 +3573,28 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				//sound(Ind, NULL, NULL, SFX_TYPE_STOP, TRUE); /* Stop "hit_floor"/"tunnel_rock" sfx */
 				earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 7);
 			}
+#ifdef EQUIPPABLE_DIGGERS
+			if (swapped) {
+				/* Unhack */
+				object_storage = *o_ptr;
+				*o_ptr = *o2_ptr;
+				*o2_ptr = object_storage;
+			}
+#endif
 			return;
 		}
 
 		msg_print(Ind, "You see nothing there to tunnel through.");
 		disturb(Ind, 0, 0);
 		p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
+#ifdef EQUIPPABLE_DIGGERS
+		if (swapped) {
+			/* Unhack */
+			object_storage = *o_ptr;
+			*o_ptr = *o2_ptr;
+			*o2_ptr = object_storage;
+		}
+#endif
 		return;
 	}
 
@@ -3547,6 +3602,14 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	if ((f_ptr->flags1 & FF1_DOOR) && cfeat != FEAT_SECRET) {
 		/* Try opening it instead */
 		do_cmd_open(Ind, dir);
+#ifdef EQUIPPABLE_DIGGERS
+		if (swapped) {
+			/* Unhack */
+			object_storage = *o_ptr;
+			*o_ptr = *o2_ptr;
+			*o2_ptr = object_storage;
+		}
+#endif
 		return;
 	}
 
@@ -3558,6 +3621,14 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		msg_print(Ind, f_text + f_ptr->tunnel);
 		/* Nope */
 		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+#ifdef EQUIPPABLE_DIGGERS
+		if (swapped) {
+			/* Unhack */
+			object_storage = *o_ptr;
+			*o_ptr = *o2_ptr;
+			*o2_ptr = object_storage;
+		}
+#endif
 		return;
 	}
 
@@ -3565,6 +3636,14 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	else if (!allow_terraforming(wpos, FEAT_TREE)) {
 		msg_print(Ind, "You may not tunnel in this area.");
 		p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
+#ifdef EQUIPPABLE_DIGGERS
+		if (swapped) {
+			/* Unhack */
+			object_storage = *o_ptr;
+			*o_ptr = *o2_ptr;
+			*o2_ptr = object_storage;
+		}
+#endif
 		return;
 	}
 
@@ -3575,6 +3654,14 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		msg_print(Ind, "There is a monster in the way!");
 		/* Attack */
 		py_attack(Ind, y, x, TRUE);
+#ifdef EQUIPPABLE_DIGGERS
+		if (swapped) {
+			/* Unhack */
+			object_storage = *o_ptr;
+			*o_ptr = *o2_ptr;
+			*o2_ptr = object_storage;
+		}
+#endif
 		return;
 	}
 
@@ -3987,12 +4074,28 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			/* quartz */
 			if (power <= 20) {
 				msg_format(Ind, "%s quartz vein.", INDICATE_IMPOSSIBLE);
+ #ifdef EQUIPPABLE_DIGGERS
+				if (swapped) {
+					/* Unhack */
+					object_storage = *o_ptr;
+					*o_ptr = *o2_ptr;
+					*o2_ptr = object_storage;
+				}
+ #endif
 				return;
 			}
 		} else if (!soft) {
 			/* magma */
 			if (power <= 10) {
 				msg_format(Ind, "%s magma intrusion.", INDICATE_IMPOSSIBLE);
+ #ifdef EQUIPPABLE_DIGGERS
+				if (swapped) {
+					/* Unhack */
+					object_storage = *o_ptr;
+					*o_ptr = *o2_ptr;
+					*o2_ptr = object_storage;
+				}
+ #endif
 				return;
 			}
 		}
@@ -4212,6 +4315,14 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			/* Message */
 			msg_print(Ind, f_text + f_info[featm].tunnel);
 			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+#ifdef EQUIPPABLE_DIGGERS
+			if (swapped) {
+				/* Unhack */
+				object_storage = *o_ptr;
+				*o_ptr = *o2_ptr;
+				*o2_ptr = object_storage;
+			}
+#endif
 			return;
 		}
 
@@ -4275,6 +4386,14 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		/* Let us observe (and halt tunneling) if it's impossible for us to make a dent into this material */
 		if (power <= diff_plus) {
 			msg_format(Ind, "%s %s.", INDICATE_IMPOSSIBLE, f_name + f_info[featm].name);
+ #ifdef EQUIPPABLE_DIGGERS
+			if (swapped) {
+				/* Unhack */
+				object_storage = *o_ptr;
+				*o_ptr = *o2_ptr;
+				*o2_ptr = object_storage;
+			}
+ #endif
 			return;
 		}
 #endif
@@ -4338,6 +4457,14 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		/* Let us observe (and halt tunneling) if it's impossible for us to make a dent into this material */
 		if (power <= 40) {
 			msg_format(Ind, "%s %s.", INDICATE_IMPOSSIBLE, f_name + f_info[cfeat].name);
+ #ifdef EQUIPPABLE_DIGGERS
+			if (swapped) {
+				/* Unhack */
+				object_storage = *o_ptr;
+				*o_ptr = *o2_ptr;
+				*o2_ptr = object_storage;
+			}
+ #endif
 			return;
 		}
 #endif
@@ -4418,6 +4545,14 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		/* Let us observe (and halt tunneling) if it's impossible for us to make a dent into this material */
 		if (power <= 30) {
 			msg_format(Ind, "%s %s.", INDICATE_IMPOSSIBLE, f_name + f_info[cfeat].name);
+ #ifdef EQUIPPABLE_DIGGERS
+			if (swapped) {
+				/* Unhack */
+				object_storage = *o_ptr;
+				*o_ptr = *o2_ptr;
+				*o2_ptr = object_storage;
+			}
+ #endif
 			return;
 		}
 #endif
@@ -4483,6 +4618,15 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	/* Cancel repetition unless we can continue */
 	if (!more) disturb(Ind, 0, 0);
 	else if (p_ptr->always_repeat) p_ptr->command_rep = PKT_TUNNEL;
+
+#ifdef EQUIPPABLE_DIGGERS
+	if (swapped) {
+		/* Unhack */
+		object_storage = *o_ptr;
+		*o_ptr = *o2_ptr;
+		*o2_ptr = object_storage;
+	}
+#endif
 }
 
 

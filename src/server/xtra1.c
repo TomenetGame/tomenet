@@ -2753,7 +2753,7 @@ int get_weaponmastery_skill(player_type *p_ptr, object_type *o_ptr) {
 	case TV_POLEARM:	return SKILL_POLEARM;
 	/* not a weapon */
 	case TV_SHIELD:		return -1;
-	/* unknown weapon type */
+	/* unknown weapon type (TV_MSTAFF, maybe TV_DIGGING [EQUIPPABLE_DIGGERS]) */
 	default:		return -1;
 	}
 }
@@ -3343,6 +3343,9 @@ void calc_boni(int Ind) {
 
 	/* Base skill -- digging */
 	p_ptr->skill_dig = 0;
+#ifdef EQUIPPABLE_DIGGERS
+	p_ptr->skill_dig2 = 0;
+#endif
 
 	/* Special admin items */
 	p_ptr->admin_invuln = p_ptr->admin_invinc = FALSE;
@@ -4008,7 +4011,15 @@ void calc_boni(int Ind) {
 			if (k_ptr->flags1 & TR1_INFRA) { p_ptr->see_infra += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].infr += o_ptr->bpval; }
 
 			/* Affect digging (factor of 20) */
+#ifndef EQUIPPABLE_DIGGERS
 			if (k_ptr->flags1 & TR1_TUNNEL) { p_ptr->skill_dig += (o_ptr->bpval * 20); csheet_boni[i-INVEN_WIELD].dig += o_ptr->bpval; }
+#else
+			if (k_ptr->flags1 & TR1_TUNNEL) {
+				csheet_boni[i-INVEN_WIELD].dig += o_ptr->bpval;
+				if (i == INVEN_TOOL) p_ptr->skill_dig += (o_ptr->bpval * 20);
+				else p_ptr->skill_dig2 += (o_ptr->bpval * 20);
+			}
+#endif
 
 			/* Affect speed */
 			if (k_ptr->flags1 & TR1_SPEED) { p_ptr->pspeed += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].spd += o_ptr->bpval; }
@@ -4129,7 +4140,15 @@ void calc_boni(int Ind) {
 		if (f1 & TR1_INFRA) { p_ptr->see_infra += pval; csheet_boni[i-INVEN_WIELD].infr += pval; }
 
 		/* Affect digging (factor of 20) */
+#ifndef EQUIPPABLE_DIGGERS
 		if (f1 & TR1_TUNNEL) { p_ptr->skill_dig += (pval * 20); csheet_boni[i-INVEN_WIELD].dig += pval; }
+#else
+		if (f1 & TR1_TUNNEL) {
+			csheet_boni[i-INVEN_WIELD].dig += pval;
+			if (i == INVEN_TOOL) p_ptr->skill_dig += (o_ptr->pval * 20);
+			else p_ptr->skill_dig2 += (o_ptr->pval * 20);
+		}
+#endif
 
 		/* Affect speed */
 		if (f1 & TR1_SPEED) { p_ptr->pspeed += pval; csheet_boni[i-INVEN_WIELD].spd += pval; }
@@ -5380,6 +5399,7 @@ void calc_boni(int Ind) {
 	/* Add in the "bonus spells" */
 	p_ptr->num_spell += extra_spells;
 
+
 	/* Examine the "tool" */
 	o_ptr = &p_ptr->inventory[INVEN_TOOL];
 
@@ -5391,9 +5411,25 @@ void calc_boni(int Ind) {
 		p_ptr->skill_dig += o_ptr->to_h;
 		p_ptr->skill_dig += o_ptr->to_d;
 
-		p_ptr->skill_dig += p_ptr->skill_dig *
-		    get_skill_scale(p_ptr, SKILL_DIG, 200) / 100;
+		p_ptr->skill_dig += p_ptr->skill_dig * get_skill_scale(p_ptr, SKILL_DIG, 200) / 100;
 	}
+
+#ifdef EQUIPPABLE_DIGGERS
+	/* Examine the "weapon" tool */
+	o_ptr = &p_ptr->inventory[INVEN_WIELD];
+
+	/* Boost digging skill by tool weight */
+	if (o_ptr->k_idx && o_ptr->tval == TV_DIGGING) {
+		p_ptr->skill_dig2 += (o_ptr->weight / 10);
+
+		/* Hack -- to_h/to_d added to digging (otherwise meanless) */
+		p_ptr->skill_dig2 += o_ptr->to_h;
+		p_ptr->skill_dig2 += o_ptr->to_d;
+
+		p_ptr->skill_dig2 += p_ptr->skill_dig2 * get_skill_scale(p_ptr, SKILL_DIG, 200) / 100;
+	}
+#endif
+
 
 	/* Examine the "shield" */
 	o_ptr = &p_ptr->inventory[INVEN_ARM];
@@ -6099,6 +6135,9 @@ void calc_boni(int Ind) {
 
 	/* Affect Skill -- digging (STR) */
 	p_ptr->skill_dig += adj_str_dig[p_ptr->stat_ind[A_STR]];
+#ifdef EQUIPPABLE_DIGGERS
+	p_ptr->skill_dig2 += adj_str_dig[p_ptr->stat_ind[A_STR]];
+#endif
 
 	/* Affect Skill -- disarming (Level, by Class) */
 	//p_ptr->skill_dis += (p_ptr->cp_ptr->x_dis * get_skill(p_ptr, SKILL_DISARM)) / 10;
@@ -6560,6 +6599,9 @@ void calc_boni(int Ind) {
 
 	/* Limit Skill -- digging from 1 up */
 	if (p_ptr->skill_dig < 1) p_ptr->skill_dig = 1;
+#ifdef EQUIPPABLE_DIGGERS
+	if (p_ptr->skill_dig2 < 1) p_ptr->skill_dig2 = 1;
+#endif
 
 	if ((p_ptr->anti_magic) && (p_ptr->skill_sav < 95)) p_ptr->skill_sav = 95;
 

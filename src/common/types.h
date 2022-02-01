@@ -3069,6 +3069,9 @@ struct player_type {
 	s16b skill_thb;			/* Skill: To hit (shooting) */
 	s16b skill_tht;			/* Skill: To hit (throwing) */
 	s16b skill_dig;			/* Skill: Digging */
+#ifdef EQUIPPABLE_DIGGERS
+	s16b skill_dig2;		/* Skill: Digging, equipped digger in weapon slot */
+#endif
 
 	s16b num_blow;			/* Number of blows */
 	s16b num_fire;			/* Number of shots */

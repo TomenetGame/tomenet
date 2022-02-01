@@ -353,6 +353,10 @@
 /* --------------------- TESTING/EXPERIMENTAL - This stuff is hot alpha/beta.. --------------------- */
 /* ------------------------------------------------------------------------------------------------- */
 
+/* Allow to press alt-wield (shift+W) to equip a digging tool into the weapon slot! (4.7.4b+ test).
+   Note that digging tools must all receive MUST2H flag for this. - C. Blue */
+#define EQUIPPABLE_DIGGERS
+
 /* Finally create some usage for the so far functionless altars - C. Blue
    Ideas: Pray (1) or Sacrifice item (2).
    1) Gain extra quirks/buffs, but apply a behavioral restriction too? (Eg +luck, but mustn't kill GOOD monsters)
