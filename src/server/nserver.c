@@ -10722,6 +10722,16 @@ static int Receive_activate(int ind) {
 		return n;
 	}
 
+#ifdef ENABLE_SUBINVEN
+	if (item >= 100) {
+		int i = item % 100, s = item / 100 - 1;
+
+		if (i > get_subinven_size(p_ptr->inventory[s].sval)) return 1;
+		do_cmd_activate(player, item, 0);
+		return 2;
+	}
+#endif
+
 	/* Sanity check - mikaelh */
 	if (item >= INVEN_TOTAL)
 		return 1;
@@ -11201,8 +11211,7 @@ static int Receive_direction(int ind)
 	return 1;
 }
 
-static int Receive_item(int ind)
-{
+static int Receive_item(int ind) {
 	connection_t *connp = Conn[ind];
 	char ch;
 	s16b item;
@@ -11220,6 +11229,13 @@ static int Receive_item(int ind)
 		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
 	}
+
+#ifdef ENABLE_SUBINVEN
+	if (item >= 100 && p_ptr) {
+		Handle_item(player, item);
+		return 1;
+	}
+#endif
 
 	/* Sanity check - mikaelh */
 	if (item >= INVEN_TOTAL)

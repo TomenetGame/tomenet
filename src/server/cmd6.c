@@ -5453,7 +5453,13 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		set_tim_wraith(Ind, 0);
 #endif	// 0
 
-
+#ifdef ENABLE_SUBINVEN
+	if (item >= 100) {
+		o_ptr = &p_ptr->subinventory[item / 100 - 1][item % 100];
+		/* For now, only allow demo-alch from here */
+		if (o_ptr->tval != TV_CHEMICAL) return;
+	} else
+#endif
 	/* Get the item (in the pack) */
 	if (item >= 0) {
 		o_ptr = &p_ptr->inventory[item];
@@ -5466,6 +5472,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 
 	/* dual-wield hack: cannot activate items if armour is too heavy.
 	   Spectral weapons will not drain life either ;). */
+#ifdef ENABLE_SUBINVEN
+	if (item < 100)
+#endif
 	if (item == INVEN_ARM && o_ptr->tval != TV_SHIELD && p_ptr->rogue_heavyarmor) {
 		msg_format(Ind, "\377oYour armour is too heavy for dual-wielding, preventing activation of your secondary weapon.");
 #ifdef ENABLE_XID_MDEV

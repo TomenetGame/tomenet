@@ -10584,7 +10584,14 @@ void inven_item_describe(int Ind, int item) {
  */
 void inven_item_increase(int Ind, int item, int num) {
 	player_type *p_ptr = Players[Ind];
+#ifdef ENABLE_SUBINVEN
+	object_type *o_ptr;
+
+	if (item >= 100) o_ptr = &p_ptr->subinventory[item / 100 - 1][item % 100];
+	else o_ptr = &p_ptr->inventory[item];
+#else
 	object_type *o_ptr = &p_ptr->inventory[item];
+#endif
 
 	/* Lost all 'item_newest'? */
 	if (-num >= o_ptr->number && item == p_ptr->item_newest) Send_item_newest(Ind, -1);
@@ -10635,7 +10642,37 @@ void inven_item_increase(int Ind, int item, int num) {
  */
 bool inven_item_optimize(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
+#ifdef ENABLE_SUBINVEN
+	object_type *o_ptr;
+
+	if (item >= 100) {
+		int i, s = item / 100 - 1;
+		object_type *s_ptr = &p_ptr->inventory[s];
+
+		o_ptr = &p_ptr->subinventory[s][item % 100];
+
+		/* Only optimize real items */
+		if (!o_ptr->k_idx) {
+			invwipe(o_ptr); /* hack just for paranoia: make sure it's erased */
+			return (FALSE);
+		}
+
+		/* Erase object in subinven, slide followers */
+		o_ptr->tval = o_ptr->k_idx = o_ptr->number = 0;
+
+		/* Slide everything down */
+		for (i = item % 100; i < get_subinven_size(s_ptr->sval); i++) {
+			/* Structure copy */
+			p_ptr->subinventory[s][i] = p_ptr->subinventory[s][i + 1];
+			display_subinven_aux(Ind, s, i);
+		}
+
+		return TRUE;
+	}
+	else o_ptr = &p_ptr->inventory[item];
+#else
 	object_type *o_ptr = &p_ptr->inventory[item];
+#endif
 
 	/* Only optimize real items */
 	if (!o_ptr->k_idx) {

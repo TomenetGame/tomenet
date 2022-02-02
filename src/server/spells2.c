@@ -9066,8 +9066,12 @@ static bool mixmix_to_mixture(object_type *o_ptr, object_type *o2_ptr, object_ty
 /* Mix two chemicals to form a new chemical, a mixture, or create a finished product aka a blast charge - C. Blue */
 void mix_chemicals(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
+#ifdef ENABLE_SUBINVEN
+	object_type *o_ptr, *o2_ptr;
+#else
 	object_type *o_ptr = &p_ptr->inventory[p_ptr->current_activation]; /* Ingredient #2 */
 	object_type *o2_ptr = &p_ptr->inventory[item]; /* Ingredient #1 */
+#endif
 	object_type forge, *q_ptr = &forge; /* Result (Ingredient, mixture or finished blast charge) */
 	char o_name[ONAME_LEN];
 	int i = 0;
@@ -9077,6 +9081,18 @@ void mix_chemicals(int Ind, int item) {
 
 	byte cc = 0, su = 0, sp = 0, as = 0, mp = 0, mh = 0, me = 0, mc = 0, vi = 0, ru = 0; // ..., vitriol, rust (? from rusty mail? / metal + water)
 	byte lo = 0, wa = 0, sw = 0, ac = 0; //lamp oil (flask), water (potion), salt water (potion), acid(?)/vitriol TV_CHEMICAL
+
+#ifdef ENABLE_SUBINVEN
+	if (item < 100) {
+		if (p_ptr->current_activation >= 100) return; //don't allow mixing item from satchel with item from inven
+		o_ptr = &p_ptr->inventory[p_ptr->current_activation]; /* Ingredient #2 */
+		o2_ptr = &p_ptr->inventory[item]; /* Ingredient #1 */
+	} else {
+		if (p_ptr->current_activation < 100) return; //don't allow mixing item from satchel with item from inven
+		o_ptr = &p_ptr->subinventory[p_ptr->current_activation / 100 - 1][p_ptr->current_activation % 100]; /* Ingredient #2 */
+		o2_ptr = &p_ptr->subinventory[item / 100 - 1][item % 100]; /* Ingredient #1 */
+	}
+#endif
 
 	/* Sanity checks */
 	switch (o_ptr->tval) {
