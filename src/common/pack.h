@@ -264,7 +264,7 @@
 #define PKT_SCREENFLASH		203
 
 //#ifdef ENABLE_SUBINVEN  --defines are not included in pack.h, so we cannot make this conditional
- #define PKT_SI_MOVE		204
+ #define PKT_SI_MOVE		204	/* Used by client and by server for slightly different purpose each (!) */
  #define PKT_SI_REMOVE		205
 //#endif
 

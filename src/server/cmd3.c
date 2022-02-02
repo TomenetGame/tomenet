@@ -4757,8 +4757,9 @@ void do_cmd_query_symbol(int Ind, char sym) {
 #endif // 0
 
 #ifdef ENABLE_SUBINVEN
-/* Attempt to move as much as possible of an inventory item stack into a subinventory container */
-static void subinven_move_aux(int Ind, int islot, int sslot) {
+/* Attempt to move as much as possible of an inventory item stack into a subinventory container.
+   Returns TRUE if fully stowed. */
+static bool subinven_move_aux(int Ind, int islot, int sslot) {
 	object_type *i_ptr = &Players[Ind]->inventory[islot];
 	object_type *s_ptr = &Players[Ind]->inventory[sslot];
 	object_type *o_ptr;
@@ -4766,7 +4767,7 @@ static void subinven_move_aux(int Ind, int islot, int sslot) {
 
 	/* Look for free spaces or spaces to merge with */
 	for (i = 0; i < get_subinven_size(s_ptr->sval); i++) {
-		o_ptr = &Players[Ind]->subinventory[islot][sslot];
+		o_ptr = &Players[Ind]->subinventory[sslot][i];
 		if (o_ptr->tval) {
 			/* Hack 'number' to allow merging stacks partially */
 			if (i_ptr->number + o_ptr->number > 99) i_ptr->number = 99 - o_ptr->number;
@@ -4774,17 +4775,26 @@ static void subinven_move_aux(int Ind, int islot, int sslot) {
 			if (object_similar(Ind, o_ptr, i_ptr, 0x4)) {
 				object_absorb(Ind, o_ptr, i_ptr);
 				i_ptr->number = inum - i_ptr->number; /* Unhack 'number' */
+				/* Manually do this here for now: Update subinven slot for client. */
+				display_subinven_aux(Ind, sslot, i);
+				/* That was the rest of the stack? Done. */
 				if (!i_ptr->number) break;
-			} else
+			} else /* Couldn't use this slot at all */
 				i_ptr->number = inum; /* Unhack 'number' */
 		} else {
+			/* Fully move to a free slot. Done. */
 			*o_ptr = *i_ptr;
-			i_ptr->number = 0; /* Mark as fully moved, for erasure */
+			i_ptr->number = 0; /* Mark for erasure */
+			o_ptr = &Players[Ind]->subinventory[sslot][i];
+			/* Manually do this here for now: Update subinven slot for client. */
+			display_subinven_aux(Ind, sslot, i);
+			break;
 		}
 	}
 
 	/* Managed to merge fully? Erase source object then. */
 	if (!i_ptr->number) {
+#if 1
 		/* -- This is partial code from inven_item_optimize() -- */
 
 		player_type *p_ptr = Players[Ind];
@@ -4795,7 +4805,7 @@ static void subinven_move_aux(int Ind, int islot, int sslot) {
 		/* Slide everything down */
 		for (i = islot; i < INVEN_PACK; i++) {
 			/* Structure copy */
-			p_ptr->inventory[i] = p_ptr->inventory[i+1];
+			p_ptr->inventory[i] = p_ptr->inventory[i + 1];
 
 			if (i == p_ptr->item_newest) Send_item_newest(Ind, i - 1);
 		}
@@ -4806,12 +4816,24 @@ static void subinven_move_aux(int Ind, int islot, int sslot) {
 
 		/* Erase the "final" slot */
 		invwipe(&p_ptr->inventory[i]);
+#else
+		//p_ptr->notice |= (PN_COMBINE);
+		//p_ptr->window |= (PW_INVEN | PW_PLAYER);
+		inven_item_optimize(Ind, islot);
+#endif
+
+		/* Fully moved */
+		return TRUE;
 	}
+
+	/* Still not fully moved */
+	return FALSE;
 }
 void do_cmd_subinven_move(int Ind, int islot) {
 	player_type *p_ptr = Players[Ind];
 	object_type *i_ptr, *s_ptr;
-	int amt, i;
+	int amt, i, tval, sval;
+	bool all = FALSE;
 
 	/* Error checks */
 	if (islot < 0) return;
@@ -4819,12 +4841,15 @@ void do_cmd_subinven_move(int Ind, int islot) {
 
 	i_ptr = &p_ptr->inventory[islot];
 	if (!i_ptr->tval) return;
+
+	tval = i_ptr->tval;
+	sval = i_ptr->sval;
 	amt = i_ptr->number;
 
 	/* Message */
 	//msg_format(Ind, "You drop %d pieces of %s.", amt, k_name + k_info[tmp_obj.k_idx].name);
 
-	for (i = 0; i < INVEN_TOTAL; i++) {
+	for (i = 0; i < INVEN_PACK; i++) {
 		s_ptr = &p_ptr->inventory[i];
 		/* Scan for existing subinventories */
 		if (s_ptr->tval != TV_SUBINVEN) continue;
@@ -4837,11 +4862,23 @@ void do_cmd_subinven_move(int Ind, int islot) {
 			continue;
 		}
 		/* Eligible subinventory found, try to move as much as possible */
-		subinven_move_aux(Ind, islot, i);
+		if (subinven_move_aux(Ind, islot, i)) {
+			all = TRUE;
+			break;
+		}
 	}
 
+	/* Moved anything at all?
+	   Keep in mind that on moving all the object is now something different as it has been excised!
+	   So we cannot reference to it anymore in that case and use 'all' instead. */
+	if (all) msg_print(Ind, "You stow all of it.");
+	else if (amt - i_ptr->number == 0) {
+		msg_print(Ind, "No free bag space to stow that item.");
+		return;
+	} else msg_print(Ind, "You have at least enough bag space to stow some of it.");
+
 #ifdef USE_SOUND_2010
-	sound_item(Ind, i_ptr->tval, i_ptr->sval, "drop_");
+	sound_item(Ind, tval, sval, "drop_");
 #endif
 
 	//break_cloaking(Ind, 5);

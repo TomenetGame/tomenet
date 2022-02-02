@@ -417,6 +417,9 @@ extern int Send_various(int Ind, int height, int weight, int age, int sc);
 extern int Send_stat(int Ind, int stat, int max, int cur, int cur_base);
 extern int Send_history(int Ind, int line, cptr hist);
 extern int Send_inven(int Ind, char pos, byte attr, int wgt, int amt, byte tval, cptr name);
+#ifdef ENABLE_SUBINVEN
+extern int Send_subinven(int Ind, char ipos, char pos, byte attr, int wgt, int amt, byte tval, cptr name);
+#endif
 extern int Send_equip(int Ind, char pos, byte attr, int wgt, byte tval, cptr name);
 extern int Send_title(int Ind, cptr title);
 /*extern int Send_level(int Ind, int max, int cur);*/

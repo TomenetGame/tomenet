@@ -6234,6 +6234,48 @@ void display_inven(int Ind) {
 #endif
 }
 
+#ifdef ENABLE_SUBINVEN
+/* For now very simple */
+void display_subinven_aux(int Ind, int islot, int slot) {
+	player_type	*p_ptr = Players[Ind];
+	object_type	*o_ptr;
+	byte		attr = TERM_WHITE;
+	char		tmp_val[80];
+	char		o_name[ONAME_LEN];
+	int		wgt;
+
+	o_ptr = &p_ptr->subinventory[islot][slot];
+
+	/* Start with an empty "index" */
+	tmp_val[0] = tmp_val[1] = tmp_val[2] = ' ';
+
+	/* Prepare an "index" */
+	tmp_val[0] = index_to_label(slot);
+
+	object_desc(Ind, o_name, o_ptr, TRUE, 4);
+
+	/* Get a color */
+	if (can_use_admin(Ind, o_ptr)) {
+		/* Get a color for a book */
+		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
+		/* all other items */
+		else attr = get_attr_from_tval(o_ptr);
+	} else attr = TERM_L_DARK; /* unusable item */
+
+	/* You can inscribe with !U to force TERM_L_DARK colouring (more visibility tuning!) */
+	if (check_guard_inscription(o_ptr->note, 'U')) attr = TERM_L_DARK;
+
+	/* Hack -- fake monochrome */
+	if (!use_color) attr = TERM_WHITE;
+
+	/* Display the weight if needed */
+	wgt = o_ptr->weight; //* o_ptr->number;
+
+	/* Send the info to the client */
+	Send_subinven(Ind, islot, tmp_val[0], attr, wgt, o_ptr, o_name);
+}
+#endif
+
 /*
  * Choice window "shadow" of the "show_equip()" function
  */

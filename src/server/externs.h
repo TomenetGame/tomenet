@@ -1145,6 +1145,9 @@ extern int Send_various(int ind, int hgt, int wgt, int age, int sc, cptr body);
 extern int Send_stat(int Ind, int stat, int max, int cur, int s_ind, int max_base);
 extern int Send_history(int Ind, int line, cptr hist);
 extern int Send_inven(int ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name);
+#ifdef ENABLE_SUBINVEN
+extern int Send_subinven(int ind, char ipos, char pos, byte attr, int wgt, object_type *o_ptr, cptr name);
+#endif
 extern int Send_inven_wide(int ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name);
 extern int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name);
 extern int Send_equip_availability(int Ind, int slot);
@@ -1307,6 +1310,9 @@ extern s16b inven_carry(int Ind, object_type *o_ptr);
 extern void inven_carry_equip(int Ind, object_type *o_ptr);
 extern bool item_tester_okay(object_type *o_ptr);
 extern void display_inven(int Ind);
+#ifdef ENABLE_SUBINVEN
+extern void display_subinven_aux(int Ind, int islot, int slot);
+#endif
 extern void display_equip(int Ind);
 extern void display_invenequip(int Ind);
 extern byte get_book_name_color(object_type *o_ptr);

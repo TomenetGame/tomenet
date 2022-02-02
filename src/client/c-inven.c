@@ -615,6 +615,10 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	i1 = 0;
 	i2 = INVEN_PACK - 1;
 
+#ifdef ENABLE_SUBINVEN
+	if (using_subinventory) i2 = get_subinven_size(inventory[using_subinventory].sval);
+#endif
+
 	/* Forbid inventory */
 	if (!inven) i2 = -1;
 

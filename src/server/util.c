@@ -2551,11 +2551,28 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 			else if (sval >= SV_GOLEM_ATTACK) {
 				item = "scroll"; break; }
 			item = "golem_misc"; break;
+#ifdef ENABLE_DEMOLITIONIST
+		case TV_CHEMICAL: item = "powder"; break;
+		case TV_CHARGE: item = "rune"; break;
+#endif
 		case TV_SPECIAL:
 			switch (sval) {
 			case SV_SEAL: item = "seal"; break;
 			}
 			break;
+#ifdef ENABLE_SUBINVEN
+		case TV_SUBINVEN:
+			switch (sval) {
+			case SV_SI_SATCHEL: item = "armour_light"; break; //a textile bag, basically
+			case SV_SI_CHEST_SMALL_WOODEN: item = "chest"; break;
+			case SV_SI_CHEST_SMALL_IRON: item = "chest"; break;
+			case SV_SI_CHEST_SMALL_STEEL: item = "chest"; break;
+			case SV_SI_CHEST_LARGE_WOODEN: item = "chest"; break;
+			case SV_SI_CHEST_LARGE_IRON: item = "chest"; break;
+			case SV_SI_CHEST_LARGE_STEEL: item = "chest"; break;
+			}
+			break;
+#endif
 	}
 
 	/* no sound effect available? */

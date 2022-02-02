@@ -189,6 +189,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_WHATS_UNDER_YOUR_FEET]	= Receive_whats_under_you_feet;
 
 	receive_tbl[PKT_SCREENFLASH]	= Receive_screenflash;
+	receive_tbl[PKT_SI_MOVE]	= Receive_subinven;
 }
 
 
@@ -1928,6 +1929,72 @@ int Receive_inven(void) {
 
 	return 1;
 }
+
+#ifdef ENABLE_SUBINVEN
+int Receive_subinven(void) {
+	int n, ipos;
+	char ch;
+	char iposc, pos, attr, tval, sval, uses_dir = 0;
+	s16b wgt, amt, pval, name1 = 0;
+	char name[ONAME_LEN], *insc;
+ #if defined(POWINS_DYNAMIC) && defined(POWINS_DYNAMIC_CLIENTSIDE)
+	char tmp[ONAME_LEN];
+ #endif
+
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%hu%hd%c%c%hd%hd%c%I", &ch, &iposc, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, &name1, &uses_dir, name)) <= 0)
+		return n;
+	ipos = (int)iposc;
+
+	/* Check that the inventory slot is valid - mikaelh */
+	if (ipos < 0 || ipos > INVEN_PACK) return 0;
+	if (pos < 'a' || pos > 'x') return 0;
+
+        /* Hack -- The color is stored in the sval, since we don't use it for anything else */
+        /* Hack -- gotta ahck to work around the previous hackl .. damn I hate that */
+		/* I'm one of those who really hate it .. Jir */
+		/* I hated it too much I swapped them	- Jir - */
+	subinventory[ipos][pos - 'a'].sval = sval;
+	subinventory[ipos][pos - 'a'].tval = tval;
+	subinventory[ipos][pos - 'a'].pval = pval;
+	subinventory[ipos][pos - 'a'].name1 = name1;
+	subinventory[ipos][pos - 'a'].attr = attr;
+	subinventory[ipos][pos - 'a'].weight = wgt;
+	subinventory[ipos][pos - 'a'].number = amt;
+	subinventory[ipos][pos - 'a'].uses_dir = uses_dir & 0x1;
+	subinventory[ipos][pos - 'a'].ident = uses_dir & 0x6; //new hack in 4.7.1.2+ for ITH_ID/ITH_STARID
+
+ #if defined(POWINS_DYNAMIC) && defined(POWINS_DYNAMIC_CLIENTSIDE)
+	/* Strip "@&" markers, as these are a purely server-side thing */
+	while ((insc = strstr(name, "@&"))) {
+		strcpy(tmp, insc + 2);
+		strcpy(insc, tmp);
+	}
+	/* Strip "@^" markers, as these are a purely server-side thing */
+	while ((insc = strstr(name, "@^"))) {
+		strcpy(tmp, insc + 2);
+		strcpy(insc, tmp);
+	}
+ #endif
+
+	/* check for special "fake-artifact" inscription using '#' char */
+	if ((insc = strchr(name, '\373'))) {
+		subinventory_inscription[ipos][pos - 'a'] = insc - name;
+		subinventory_inscription_len[ipos][pos - 'a'] = insc[1] - 1;
+		/* delete the special code garbage from the name to make it human-readable */
+		do {
+			*insc = *(insc + 2);
+			insc++;
+		} while (*(insc + 1));
+	} else subinventory_inscription[ipos][pos - 'a'] = 0;
+
+	strncpy(subinventory_name[ipos][pos - 'a'], name, ONAME_LEN - 1);
+
+	/* Window stuff */
+	//p_ptr->window |= (PW_INVEN);
+
+	return 1;
+}
+#endif
 
 /* Receive xtra data of an item. Added for customizable spell tomes - C. Blue */
 int Receive_inven_wide(void) {

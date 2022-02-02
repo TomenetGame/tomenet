@@ -6028,6 +6028,38 @@ int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, name);
 }
 
+#ifdef ENABLE_SUBINVEN
+int Send_subinven(int Ind, char ipos, char pos, byte attr, int wgt, object_type *o_ptr, cptr name) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+	char uses_dir = 0; /* flag whether a rod requires a direction for zapping or not */
+
+	if (!is_newer_than(&Players[Ind]->version, 4, 7, 4, 4, 0, 0)) return 0;
+
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+
+	/* Mark rods that require a direction */
+	if (o_ptr->tval == TV_ROD && rod_requires_direction(Ind, o_ptr))
+		uses_dir = 1;
+
+	/* Mark activatable items that require a direction */
+	if (activation_requires_direction(o_ptr)
+	    //appearently not for A'able items >_>	    || !object_aware_p(Ind, o_ptr))
+	    ) {
+		uses_dir = 1;
+	}
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for inven (%d.%d.%d)",
+		    Ind, connp->state, connp->id));
+		return 0;
+	}
+
+//s_printf("%d %d %d %d %hu %hd %d %d %hd %hd %d %s \n", PKT_SI_MOVE, ipos, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
+	return Packet_printf(&connp->c, "%c%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_SI_MOVE, ipos, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
+}
+#endif
+
 /* Added for custom books */
 int Send_inven_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;

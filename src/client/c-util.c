@@ -11003,3 +11003,27 @@ void clear_macros(void) {
 	for (i = 0; i < 256; i++) macro__use[i] = 0;
 }
 #endif
+
+/* Currently duplicate from common/common.c, where the #ifdef doesn't guard.. */
+#ifdef ENABLE_SUBINVEN
+int get_subinven_size(int sval) {
+	/* Set sizes of particular types of subinventories */
+	switch (sval) {
+	case SV_SI_SATCHEL:
+		return SI_SATCHEL_SIZE;
+	case SV_SI_CHEST_SMALL_WOODEN:
+		return SI_CHEST_SMALL_WOODEN_SIZE;
+	case SV_SI_CHEST_SMALL_IRON:
+		return SI_CHEST_SMALL_IRON_SIZE;
+	case SV_SI_CHEST_SMALL_STEEL:
+		return SI_CHEST_SMALL_STEEL_SIZE;
+	case SV_SI_CHEST_LARGE_WOODEN:
+		return SI_CHEST_LARGE_WOODEN_SIZE;
+	case SV_SI_CHEST_LARGE_IRON:
+		return SI_CHEST_LARGE_IRON_SIZE;
+	case SV_SI_CHEST_LARGE_STEEL:
+		return SI_CHEST_LARGE_STEEL_SIZE;
+	}
+	return INVEN_PACK; /* Default size of a subinventory is same as normal backpack size */
+}
+#endif
