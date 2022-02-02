@@ -64,6 +64,18 @@ bool item_tester_okay(object_type *o_ptr) {
 
 
 static bool get_item_okay(int i) {
+#ifdef ENABLE_SUBINVEN
+	if (using_subinven != -1) {
+		/* Illegal items */
+		if ((i < 0) || (i >= using_subinven_size)) return (FALSE);
+
+		/* Verify the item */
+		if (!item_tester_okay(&subinventory[using_subinven][i])) return (FALSE);
+
+		/* Assume okay */
+		return (TRUE);
+	}
+#endif
 	/* Illegal items */
 	if ((i < 0) || (i >= INVEN_TOTAL)) return (FALSE);
 
@@ -156,6 +168,9 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 	if (inven_first) {
 		start = inven ? 0 : INVEN_WIELD;
 		stop = equip ? INVEN_TOTAL : INVEN_PACK;
+#ifdef ENABLE_SUBINVEN
+		if (using_subinven != -1 && stop == INVEN_PACK) stop = using_subinven_size;
+#endif
 		step = 1;
 	} else {
 		start = (equip ? INVEN_TOTAL : INVEN_PACK) - 1;
@@ -183,11 +198,20 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 			i = j;
 		}
 
+#ifdef ENABLE_SUBINVEN
+		if (using_subinven != -1) buf = subinventory_name[using_subinven][i];
+		else
+#endif
 		buf = inventory_name[i];
 
 		/* Skip empty objects */
 		if (!buf[0]) continue;
 
+#ifdef ENABLE_SUBINVEN
+		if (using_subinven != -1) {
+			if (!item_tester_okay(&subinventory[using_subinven][i])) continue;
+		} else
+#endif
 		/* Skip items that don't fit (for mkey) */
 		if (!item_tester_okay(&inventory[i])) continue;
 
@@ -220,6 +244,33 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 					}
 
 					if (!(buf1p = strstr(buf1, " of "))) buf1p = buf1; //skip item's article/amount
+#ifdef ENABLE_SUBINVEN
+					if (using_subinven != -1)
+					for (k = 0; k <= using_subinven_size; k++) {
+						if (k == i) continue;
+						strcpy(buf3, subinventory_name[using_subinven][k]);
+						buf3p = buf3;
+						while (*buf3p) {
+							/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+							   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+							if (*buf3p == '@') buf3p ++;
+							else *buf3p = tolower(*buf3p);
+							buf3p++;
+						}
+						if (strstr(buf3, "charging)") || strstr(buf3, "(#)") || strstr(buf3, "(~)") || /* rods (and other devices, in theory) */
+						    strstr(buf3, "(0 charges") || strstr(buf3, "{empty}")) /* wands, staves */
+							continue;
+
+						if (!(buf3p = strstr(buf3, " of "))) buf3p = buf3; //skip item's article/amount
+						s3 = strchr(buf3, '@');
+						if (subinventory[using_subinven][k].tval == subinventory[using_subinven][i].tval && /* unnecessary check, but whatever */
+						    s3 && s3[1] == tag) {
+							i = k;
+							break;
+						}
+					}
+					else
+#endif
 					for (k = 0; k <= INVEN_PACK; k++) {
 						if (k == i) continue;
 						strcpy(buf3, inventory_name[k]);
@@ -245,6 +296,16 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 					}
 				}
 #ifdef SMART_SWAP /* not really cool, with the ' of ' hack.. problem was eg 'ring' vs 'rings' */
+ #ifdef ENABLE_SUBINVEN
+				/* short way.. */
+				if (using_subinven != -1) {
+					/* Save the actual inventory ID */
+					*cp = i;
+
+					/* Success */
+					return (TRUE);
+				}
+ #endif
 				postpone = FALSE;
 				if (multi && i <= INVEN_PACK) {
 					/* Check for same item in the equipment, if found, search inventory for a non-same alternative */
@@ -319,6 +380,30 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 					}
 
 					if (!(buf1p = strstr(buf1, " of "))) buf1p = buf1; //skip item's article/amount
+#ifdef ENABLE_SUBINVEN
+					if (using_subinven != -1)
+					for (k = 0; k <= using_subinven_size; k++) {
+						if (k == i) continue;
+						strcpy(buf3, subinventory_name[using_subinven][k]);
+						buf3p = buf3;
+						while (*buf3p) {
+							/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+							   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+							if (*buf3p == '@') buf3p ++;
+							else *buf3p = tolower(*buf3p);
+							buf3p++;
+						}
+
+						if (!(buf3p = strstr(buf3, " of "))) buf3p = buf3; //skip item's article/amount
+						s3 = strchr(buf3, '@');
+						if (subinventory[using_subinven][k].tval == subinventory[using_subinven][i].tval && /* unnecessary check, but whatever */
+						    s3 && s3[1] == command_cmd && s3[2] == tag) {
+							i = k;
+							break;
+						}
+					}
+					else
+#endif
 					for (k = 0; k <= INVEN_PACK; k++) {
 						if (k == i) continue;
 						strcpy(buf3, inventory_name[k]);
@@ -341,6 +426,16 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 					}
 				}
 #ifdef SMART_SWAP /* not really cool, with the ' of ' hack.. problem was eg 'ring' vs 'rings' */
+ #ifdef ENABLE_SUBINVEN
+				/* short way.. */
+				if (using_subinven != -1) {
+					/* Save the actual inventory ID */
+					*cp = i;
+
+					/* Success */
+					return (TRUE);
+				}
+ #endif
 				postpone = FALSE;
 				if (multi && i <= INVEN_PACK) {
 					/* Check for same item in the equipment, if found, search inventory for a non-same alternative */
@@ -431,6 +526,77 @@ bool get_item_hook_find_obj(int *item, int mode) {
 	if (!get_string(get_item_hook_find_obj_what, buf, 79))
 		return FALSE;
 
+#ifdef ENABLE_SUBINVEN
+    if (using_subinven != -1) {
+	for (j = 0; j < using_subinven_size; j++) {
+		i = j;
+
+		object_type *o_ptr = &subinventory[using_subinven][i];
+
+		if (!item_tester_okay(o_ptr)) continue;
+
+ #if 0
+		if (my_strcasestr(subinventory_name[using_subinven][i], buf)) {
+ #else
+		strcpy(buf1, subinventory_name[using_subinven][i]);
+		strcpy(buf2, buf);
+		ptr = buf1;
+		while (*ptr) {
+			/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+			   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+			if (*ptr == '@') ptr ++;
+			else *ptr = tolower(*ptr);
+			ptr++;
+		}
+		ptr = buf2;
+		while (*ptr) {
+			/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+			   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+			if (*ptr == '@') ptr += 2;
+			*ptr = tolower(*ptr);
+			ptr++;
+		}
+		if (strstr(buf1, buf2)) {
+ #endif
+			if (charged && (
+			    strstr(buf1, "charging)") || strstr(buf1, "(#)") || strstr(buf1, "(~)") || /* rods (and other devices, in theory) */
+			    strstr(buf1, "(0 charges") || strstr(buf1, "{empty}") /* wands, staves */
+			    )) {
+				/* Especially added for non-stackable rods (Havoc): check for same rod, but not 'charging' */
+				char *buf1p, *buf3p;
+				int k;
+
+				if (!(buf1p = strstr(buf1, " of "))) buf1p = buf1; //skip item's article/amount
+				for (k = 0; k <= using_subinven_size; k++) {
+					if (k == i) continue;
+					strcpy(buf3, subinventory_name[using_subinven][k]);
+					ptr = buf3;
+					while (*ptr) {
+						/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+						   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+						if (*ptr == '@') ptr++;
+						else *ptr = tolower(*ptr);
+						ptr++;
+					}
+					if (strstr(buf3, "charging)") || strstr(buf3, "(#)") || strstr(buf3, "(~)") || /* rods (and other devices, in theory) */
+					    strstr(buf3, "(0 charges") || strstr(buf3, "{empty}")) /* wands, staves */
+						continue;
+
+					if (!(buf3p = strstr(buf3, " of "))) buf3p = buf3; //skip item's article/amount
+					if (subinventory[using_subinven][k].tval == subinventory[using_subinven][i].tval && /* unnecessary check, but whatever */
+					    strstr(buf3, buf2)) {
+						i = k;
+						break;
+					}
+				}
+			}
+			*item = i;
+			return TRUE;
+		}
+	}
+	return FALSE;
+    } else
+#endif
 	for (j = inven_first ? 0 : INVEN_TOTAL - 1;
 	    inven_first ? (j < INVEN_TOTAL) : (j >= 0);
 	    inven_first ? j++ : j--) {
@@ -616,7 +782,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	i2 = INVEN_PACK - 1;
 
 #ifdef ENABLE_SUBINVEN
-	if (using_subinventory) i2 = get_subinven_size(inventory[using_subinventory].sval);
+	if (using_subinven != -1) i2 = using_subinven_size;
 #endif
 
 	/* Forbid inventory */
@@ -676,6 +842,11 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		p_ptr->window |= PW_INVEN;
 		window_stuff();
 
+		/* we just hand the encoded item through to the final functions instead..
+#ifdef ENABLE_SUBINVEN
+		if (using_subinven) item += (using_subinven + 1) * 100;
+#endif
+		*/
 		return item;
 	}
 
@@ -729,6 +900,10 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			//n2 = I2A(i2);
 
 			/* Redraw if needed */
+#ifdef ENABLE_SUBINVEN
+			if (command_see && using_subinven != -1) show_subinven(using_subinven);
+			else
+#endif
 			if (command_see) show_inven();
 		}
 
@@ -881,7 +1056,15 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 				else bell_silent();
 				break;
 			}
-
+#ifdef ENABLE_SUBINVEN
+			if (using_subinven != -1) {
+				if ((k < using_subinven_size) ? !inven : !equip) {
+					if (c_cfg.item_error_beep) bell();
+					else bell_silent();
+					break;
+				}
+			} else
+#endif
 			/* Hack -- verify item */
 			if ((k < INVEN_WIELD) ? !inven : !equip) {
 				if (c_cfg.item_error_beep) bell();
@@ -1065,6 +1248,9 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	/* restore macro handling hack to default state */
 	abort_prompt = FALSE;
 
-	/* Return TRUE if something was picked */
+	/* Return item if something was picked */
+#ifdef ENABLE_SUBINVEN
+	//if (using_subinven != -1) item += (using_subinven + 1) * 100;
+#endif
 	return (item);
 }

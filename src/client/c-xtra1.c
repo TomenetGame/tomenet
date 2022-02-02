@@ -2085,6 +2085,12 @@ static void fix_inven(void) {
 		Term_activate(old);
 	}
 
+#ifdef ENABLE_SUBINVEN
+	if (showing_inven && showing_inven == screen_icky) {
+		if (using_subinven != -1) show_subinven(using_subinven);
+		else show_inven();
+	} else
+#endif
 	if (showing_inven && showing_inven == screen_icky) show_inven();
 
 	/* Assume that this could've been in response to a wield/takeoff/swap command we issued */

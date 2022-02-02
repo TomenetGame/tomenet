@@ -2221,6 +2221,24 @@ void do_cmd_observe(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 
+#ifdef ENABLE_SUBINVEN
+	int sub, i;
+
+	if (item >= 100) {
+		sub = item / 100 - 1;
+		i = item % 100;
+
+		o_ptr = &(p_ptr->subinventory[sub][i]);
+
+		/* Require full knowledge */
+		if (!(o_ptr->ident & ID_MENTAL) && !is_admin(p_ptr)) observe_aux(Ind, o_ptr, item);
+		/* Describe it fully */
+		else if (!identify_fully_aux(Ind, o_ptr, FALSE, item)) msg_print(Ind, "You see nothing special.");
+
+		return;
+	}
+#endif
+
 	/* Get the item (in the pack) */
 	if (item >= 0) o_ptr = &(p_ptr->inventory[item]);
 	/* Get the item (on the floor) */

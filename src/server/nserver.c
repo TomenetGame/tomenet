@@ -9567,6 +9567,12 @@ static int Receive_observe(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
+#ifdef ENABLE_SUBINVEN
+	if (item >= 100) {
+		if (item / 100 - 1 >= INVEN_TOTAL) return 1;
+		if ((item % 100) >= get_subinven_size(p_ptr->inventory[item / 100 - 1].sval)) return 1;
+	} else
+#endif
 	if (item >= INVEN_TOTAL) return 1;
 
 	if (p_ptr) do_cmd_observe(player, item);

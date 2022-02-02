@@ -719,7 +719,7 @@ static void cmd_subinven_remove(int islot) {
 
 	if (!c_get_item(&item, "Unstow what? ", (USE_INVEN | USE_EXTRA))) return;
 
-	Send_subinven_remove(islot, item);
+	Send_subinven_remove(item); //item contains encoded slot (+1 *100)
 }
 #endif
 
@@ -833,7 +833,8 @@ void cmd_subinven(int islot) {
 	show_subinven(islot);
 
 	/* Redirect all inventory-related commands to this subinventory */
-	using_subinventory = islot;
+	using_subinven = islot;
+	using_subinven_size = subinven_size;
 
 	while (TRUE) {
 		ch = inkey();
@@ -883,7 +884,7 @@ void cmd_subinven(int islot) {
 		/* Additional commands specifically replacing/allowing backpack-related commands for subinventories: */
 
 		/* Move item to backpack inventory - let's abuse equipment-related commands for the heck of it */
-		case 't': cmd_subinven_remove(using_subinventory); continue;
+		case 't': cmd_subinven_remove(using_subinven); continue;
 
 		/* More basic functions */
 		case 'K': cmd_force_stack(); continue;
@@ -912,7 +913,7 @@ void cmd_subinven(int islot) {
 	}
 
 	/* End redirection of inventory-related commands, as we left the subinventory */
-	using_subinventory = -1;
+	using_subinven = -1;
 
 	screen_line_icky = -1;
 	screen_column_icky = -1;

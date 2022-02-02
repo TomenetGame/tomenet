@@ -5399,6 +5399,14 @@ int Send_wield(int item) {
 
 int Send_observe(int item) {
 	int	n;
+
+#ifdef ENABLE_SUBINVEN
+	if (using_subinven != -1) {
+		/* Hacky encoding */
+		if ((n = Packet_printf(&wbuf, "%c%hd", PKT_OBSERVE, item + (using_subinven + 1) * 100)) <= 0) return n;
+		return 1;
+	}
+#endif
 	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_OBSERVE, item)) <= 0) return n;
 	return 1;
 }
@@ -5830,11 +5838,11 @@ int Send_subinven_move(int item) {
 	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_SI_MOVE, item)) <= 0) return n;
 	return 1;
 }
-int Send_subinven_remove(int islot, int item) {
-	int n;
+int Send_subinven_remove(int item) {
+	int n, islot = item / 100 - 1;
 
 	if (!is_newer_than(&server_version, 4, 7, 4, 4, 0, 0)) return 1;
-	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_SI_REMOVE, islot, item)) <= 0) return n;
+	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_SI_REMOVE, islot, item % 100)) <= 0) return n;
 	return 1;
 }
 #endif

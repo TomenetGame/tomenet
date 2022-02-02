@@ -138,7 +138,7 @@ extern int inventory_inscription_len[INVEN_TOTAL];
 extern int item_newest;
 
 #ifdef ENABLE_SUBINVEN
-extern int item_newest_subinven, using_subinventory;
+extern int item_newest_subinven, using_subinven, using_subinven_size;
 extern object_type subinventory[INVEN_PACK][SUBINVEN_PACK];
 extern char subinventory_name[INVEN_PACK][SUBINVEN_PACK][ONAME_LEN];
 extern int subinventory_inscription[INVEN_PACK][SUBINVEN_PACK];
@@ -862,7 +862,7 @@ extern int Send_client_setup(void);
 extern int Send_audio(void);
 #ifdef ENABLE_SUBINVEN
 extern int Send_subinven_move(int item);
-extern int Send_subinven_remove(int islot, int item);
+extern int Send_subinven_remove(int item);
 #endif
 
 /* skills.c */

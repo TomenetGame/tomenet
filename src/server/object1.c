@@ -4570,13 +4570,13 @@ void observe_aux(int Ind, object_type *o_ptr) {
 	/* Description */
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
-#ifdef PLAYER_STORES
+ #ifdef PLAYER_STORES
 	if (p_ptr->store_num <= -2 && o_ptr->note) player_stores_cut_inscription(o_name);
 	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE) {
 		msg_format(Ind, "\377sIt's a cheque worth \377y%d\377s gold pieces.", ps_get_cheque_value(o_ptr));
 		return;
 	}
-#endif
+ #endif
 
 	/* Not *identified* */
 	object_copy(&forge, o_ptr);
@@ -4593,9 +4593,9 @@ void observe_aux(int Ind, object_type *o_ptr) {
 	/* Sigil */
 	if (o_ptr->sigil) msg_format(Ind, "\377B  It is emblazoned with a sigil of %s.", string_exec_lua(0, format("return rcraft_name(%d)", o_ptr->sigil)));
 
-#ifdef ENABLE_DEMOLITIONIST
+ #ifdef ENABLE_DEMOLITIONIST
 	if (o_ptr->tval == TV_CHARGE) msg_format(Ind, "\377s  Its default fuse length will burn down in %d seconds.", o_ptr->pval);
-#endif
+ #endif
 
 	switch (o_ptr->tval) {
 	case TV_BLUNT:
@@ -4932,6 +4932,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 #endif
 
 #ifdef NEW_ID_SCREEN
+ #ifdef ENABLE_SUBINVEN
+	if (item < 100)
+ #endif
 	/* Temporary brands -- kinda hacky that they use p_ptr instead of o_ptr.. */
 	if (p_ptr->melee_brand && is_melee_weapon(o_ptr->tval) && (item == INVEN_WIELD || item == INVEN_ARM))
 		switch (p_ptr->melee_brand_t) {
