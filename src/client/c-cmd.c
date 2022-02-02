@@ -719,7 +719,7 @@ static void cmd_subinven_remove(int islot) {
 
 	if (!c_get_item(&item, "Unstow what? ", (USE_INVEN | USE_EXTRA))) return;
 
-	Send_subinven_remove(item); //item contains encoded slot (+1 *100)
+	Send_subinven_remove(item);
 }
 #endif
 
@@ -830,13 +830,15 @@ void cmd_subinven(int islot) {
 	sound(browseinven_sound_idx, SFX_TYPE_COMMAND, 100, 0);
  #endif
 
-	show_subinven(islot);
+	//show_subinven(islot); --moved into the loop
 
 	/* Redirect all inventory-related commands to this subinventory */
 	using_subinven = islot;
 	using_subinven_size = subinven_size;
 
 	while (TRUE) {
+		show_subinven(islot);
+
 		ch = inkey();
 		/* allow pasting item into chat */
 		if (ch >= 'A' && ch < 'A' + subinven_size) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
@@ -887,11 +889,12 @@ void cmd_subinven(int islot) {
 		case 't': cmd_subinven_remove(using_subinven); continue;
 
 		/* More basic functions */
-		case 'K': cmd_force_stack(); continue;
-		case 'H': cmd_apply_autoins(); continue;
+//postponed
+//		case 'K': cmd_force_stack(); continue;
+//		case 'H': cmd_apply_autoins(); continue;
 
 		/* Specifically required for DEMOLITIONIST chemicals */
-		case 'A': cmd_activate(); continue;
+		case 'a': cmd_activate(); continue; // 'A' is item-to-chat pasting, oops
 
 		/* Misc stuff that could be considered */
 #if 0
@@ -1007,6 +1010,25 @@ void cmd_drop(byte flag) {
 	get_item_extra_hook = get_item_hook_find_obj;
 
 	if (!c_get_item(&item, "Drop what? ", (flag | USE_EXTRA))) return;
+
+#ifdef ENABLE_SUBINVEN
+	if (using_subinven) {
+		/* Get an amount */
+		if (subinventory[using_subinven][item % 100].number > 1) {
+			if (is_cheap_misc(subinventory[using_subinven][item % 100].tval) && c_cfg.whole_ammo_stack && !verified_item
+			    && (item % 100) < INVEN_WIELD) /* <- new: ignore whole_ammo_stack for equipped ammo, so it can easily be shared */
+				amt = subinventory[using_subinven][item % 100].number;
+			else {
+				inkey_letter_all = TRUE;
+				amt = c_get_quantity("How many ('a' or spacebar for all)? ", subinventory[using_subinven][item % 100].number);
+			}
+		}
+		else amt = 1;
+
+		Send_drop(item, amt);
+		return;
+	}
+#endif
 
 	/* Get an amount */
 	if (inventory[item].number > 1) {
@@ -1173,6 +1195,35 @@ void cmd_destroy(byte flag) {
 	get_item_extra_hook = get_item_hook_find_obj;
 
 	if (!c_get_item(&item, "Destroy what? ", (flag | USE_EXTRA))) return;
+
+
+#ifdef ENABLE_SUBINVEN
+	if (using_subinven) {
+		/* Get an amount */
+		if (subinventory[using_subinven][item % 100].number > 1) {
+			if (is_cheap_misc(subinventory[using_subinven][item % 100].tval) && c_cfg.whole_ammo_stack && !verified_item) amt = subinventory[using_subinven][item % 100].number;
+			else {
+				inkey_letter_all = TRUE;
+				amt = c_get_quantity("How many ('a' or spacebar for all)? ", subinventory[using_subinven][item % 100].number);
+			}
+		} else amt = 1;
+
+		/* Sanity check */
+		if (!amt) return;
+
+		if (!c_cfg.no_verify_destroy) {
+			if (subinventory[using_subinven][item % 100].number == amt)
+				sprintf(out_val, "Really destroy %s?", subinventory_name[using_subinven][item % 100]);
+			else
+				sprintf(out_val, "Really destroy %d of your %s?", amt, subinventory_name[using_subinven][item % 100]);
+			if (!get_check2(out_val, FALSE)) return;
+		}
+
+		/* Send it */
+		Send_destroy(item, amt);
+		return;
+	}
+#endif
 
 	/* Get an amount */
 	if (inventory[item].number > 1) {
@@ -1422,6 +1473,21 @@ void cmd_activate(void) {
 	//if (!c_get_item(&item, "Activate what? ", (USE_EQUIP | USE_INVEN | EQUIP_FIRST | USE_EXTRA)))
 	if (!c_get_item(&item, "Activate what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA)))
 		return;
+
+#ifdef ENABLE_SUBINVEN
+	if (using_subinven) {
+		/* Send it */
+		/* Does item require aiming? (Always does if not yet identified) */
+		if (subinventory[using_subinven][item % 100].uses_dir == 0) {
+			/* (also called if server is outdated, since uses_dir will be 0 then) */
+			Send_activate(item);
+		} else {
+			if (!get_dir(&dir)) return;
+			Send_activate_dir(item, dir);
+		}
+		return;
+	}
+#endif
 
 	/* Send it */
 	/* Does item require aiming? (Always does if not yet identified) */

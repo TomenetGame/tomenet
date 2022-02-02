@@ -842,11 +842,6 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		p_ptr->window |= PW_INVEN;
 		window_stuff();
 
-		/* we just hand the encoded item through to the final functions instead..
-#ifdef ENABLE_SUBINVEN
-		if (using_subinven) item += (using_subinven + 1) * 100;
-#endif
-		*/
 		return item;
 	}
 
@@ -1088,6 +1083,9 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 			/* Use that item */
 			(*cp) = k;
+#ifdef ENABLE_SUBINVEN
+			if (using_subinven != -1) (*cp) += (using_subinven + 1) * 100;
+#endif
 			item = TRUE;
 			done = TRUE;
 			break;
@@ -1116,6 +1114,9 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 			/* Accept that choice */
 			(*cp) = k;
+#ifdef ENABLE_SUBINVEN
+			if (using_subinven != -1) (*cp) += (using_subinven + 1) * 100;
+#endif
 			item = TRUE;
 			done = TRUE;
 			break;
@@ -1126,6 +1127,9 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 			if (extra && get_item_extra_hook(&i, mode)) {
 				(*cp) = i;
+#ifdef ENABLE_SUBINVEN
+				if (using_subinven != -1) (*cp) += (using_subinven + 1) * 100;
+#endif
 				item = TRUE;
 				done = TRUE;
 			} else if (c_cfg.item_error_beep) bell();
@@ -1200,6 +1204,9 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 			/* Accept that choice */
 			(*cp) = k;
+#ifdef ENABLE_SUBINVEN
+			if (using_subinven != -1) (*cp) += (using_subinven + 1) * 100;
+#endif
 			item = TRUE;
 			done = TRUE;
 
@@ -1248,9 +1255,9 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	/* restore macro handling hack to default state */
 	abort_prompt = FALSE;
 
-	/* Return item if something was picked */
+	/* Return TRUE if something was picked */
 #ifdef ENABLE_SUBINVEN
-	//if (using_subinven != -1) item += (using_subinven + 1) * 100;
+	//if (using_subinven != -1) cp += (using_subinven + 1) * 100;
 #endif
 	return (item);
 }

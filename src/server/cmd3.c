@@ -4911,5 +4911,58 @@ void do_cmd_subinven_move(int Ind, int islot) {
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 }
 void do_cmd_subinven_remove(int Ind, int islot, int slot) {
+	player_type *p_ptr = Players[Ind];
+	object_type *s_ptr, *o_ptr;
+	int i;
+
+	if (islot < 0 || islot >= INVEN_PACK) return;
+	s_ptr = &p_ptr->inventory[islot];
+	if (!s_ptr->tval || s_ptr->tval != TV_SUBINVEN) return;
+
+	if (slot < 0 || slot >= get_subinven_size(s_ptr->sval)) return;
+	o_ptr = &p_ptr->subinventory[islot][slot];
+	if (!o_ptr->tval) return;
+
+	inven_carry(Ind, o_ptr);
+
+	/* Erase object in subinven, slide followers */
+	o_ptr->tval = o_ptr->k_idx = o_ptr->number = 0;
+#if 1
+	/* -- This is partial code from inven_item_optimize() -- */
+
+	/* Slide everything down */
+	for (i = slot; i < get_subinven_size(s_ptr->sval); i++) {
+		/* Structure copy */
+		p_ptr->subinventory[islot][i] = p_ptr->subinventory[islot][i + 1];
+		display_subinven_aux(Ind, islot, i);
+	}
+
+	/* Update inventory indeces - mikaelh */
+	//inven_index_erase(Ind, islot);
+	//inven_index_slide(Ind, islot + 1, -1, INVEN_PACK);
+
+	/* Erase the "final" slot */
+	//invwipe(&p_ptr->inventory[i]);
+#else
+	//p_ptr->notice |= (PN_COMBINE);
+	//p_ptr->window |= (PW_INVEN | PW_PLAYER);
+	//--todo: implement for subinvens?-- inven_item_optimize(Ind, slot);
+#endif
+
+
+#ifdef USE_SOUND_2010
+	//sound_item(Ind, tval, sval, "drop_");
+#endif
+
+	//break_cloaking(Ind, 5);
+	//break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
+
+	/* Window stuff */
+	//p_ptr->window |= (PW_INVEN | PW_PLAYER);
+
+	/* Take a turn */
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
 }
 #endif

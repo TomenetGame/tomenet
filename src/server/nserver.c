@@ -13637,7 +13637,8 @@ static int Receive_si_move(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	char ch;
-	int n, player = -1, islot;
+	int n, player = -1;
+	short int islot;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
@@ -13651,7 +13652,7 @@ static int Receive_si_move(int ind) {
 	}
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
-		do_cmd_subinven_move(player, islot);
+		do_cmd_subinven_move(player, (int)islot);
 		return 2;
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd", ch, islot);
@@ -13663,7 +13664,8 @@ static int Receive_si_remove(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	char ch;
-	int n, player = -1, islot, slot;
+	int n, player = -1;
+	short int islot, slot;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
@@ -13677,7 +13679,7 @@ static int Receive_si_remove(int ind) {
 	}
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
-		do_cmd_subinven_remove(player, islot, slot);
+		do_cmd_subinven_remove(player, (int)islot, (int)slot);
 		return 2;
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd%hd", ch, islot, slot);
