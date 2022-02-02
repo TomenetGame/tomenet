@@ -5526,8 +5526,7 @@ void cmd_browse(void) {
 
 #ifdef ENABLE_SUBINVEN
 	if (o_ptr->tval == TV_SUBINVEN) {
-		//browse_subinven(item); //original debug/testing function, copy-pasted from browse_school_spell()
-		cmd_subinven(item); //should eventually migrate to this function (from browse_subinven)
+		cmd_subinven(item);
 		return;
 	}
 #endif
