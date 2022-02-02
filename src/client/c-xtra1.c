@@ -1791,34 +1791,8 @@ void show_subinven(int islot) {
 	byte	out_color[23];
 	char	out_desc[23][ONAME_LEN];
 
-	int subinven_size = INVEN_PACK; /* Default size of a subinventory is same as normal backpack size */
 	object_type *i_ptr = &inventory[islot];
-
-
-	switch (i_ptr->sval) {
-	case SV_SI_SATCHEL:
-		subinven_size = SI_SATCHEL_SIZE;
-		break;
-	case SV_SI_CHEST_SMALL_WOODEN:
-		subinven_size = SI_CHEST_SMALL_WOODEN_SIZE;
-		break;
-	case SV_SI_CHEST_SMALL_IRON:
-		subinven_size = SI_CHEST_SMALL_IRON_SIZE;
-		break;
-	case SV_SI_CHEST_SMALL_STEEL:
-		subinven_size = SI_CHEST_SMALL_STEEL_SIZE;
-		break;
-	case SV_SI_CHEST_LARGE_WOODEN:
-		subinven_size = SI_CHEST_LARGE_WOODEN_SIZE;
-		break;
-	case SV_SI_CHEST_LARGE_IRON:
-		subinven_size = SI_CHEST_LARGE_IRON_SIZE;
-		break;
-	case SV_SI_CHEST_LARGE_STEEL:
-		subinven_size = SI_CHEST_LARGE_STEEL_SIZE;
-		break;
-	}
-
+	int subinven_size = get_subinven_size(i_ptr->sval);
 
 #ifdef USE_SOUND_2010
  #if 0 /* actually too spammy because the inventory is opened for a lot of fast-paced actions all the time. */

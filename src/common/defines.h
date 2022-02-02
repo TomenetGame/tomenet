@@ -41,7 +41,7 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		7
 #define VERSION_PATCH		4
-#define VERSION_EXTRA		4
+#define VERSION_EXTRA		5
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -4571,7 +4571,7 @@
 #define USE_EQUIP	0x0001	/* Allow equip items */
 #define USE_INVEN	0x0002	/* Allow inven items */
 #define USE_FLOOR	0x0004	/* Allow floor items */
-#define USE_EXTRA	0x0008	/* Allow extra items */
+#define USE_EXTRA	0x0008	/* Allow extra items, aka call item by name instead of slot */
 #define INVEN_FIRST	0x0010	/* Seach for inscription tag in inventory first */
 #define SPECIAL_REQ	0x0020	/* Allow pressing '-' key to switch the request in a special way */
 #define USE_LIMIT	0x0040	/* Allow spell level limit */

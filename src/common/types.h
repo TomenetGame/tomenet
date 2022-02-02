@@ -2474,6 +2474,10 @@ struct player_type {
 	int inventory_revision;		/* Current inventory ID */
 	char inventory_changed;		/* Inventory has changed since last update to the client */
 
+#ifdef ENABLE_SUBINVEN
+	object_type subinventory[INVEN_PACK][SUBINVEN_PACK];	/* Player's subinventories */
+#endif
+
 	s32b total_weight;		/* Total weight being carried */
 
 	s16b inven_cnt;			/* Number of items in inventory */

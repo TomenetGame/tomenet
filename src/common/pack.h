@@ -15,6 +15,23 @@
 #define PKT_ACK			8
 #define PKT_TALK		9
 
+
+/* HACK -- used for SKILL_INIT */
+#define PKT_SKILL_INIT_NAME     0
+#define PKT_SKILL_INIT_DESC     1
+#define PKT_SKILL_INIT_MKEY     2
+
+/* Not hack - file transfer packet subtypes */
+/* DO NOT TOUCH - work in progress */
+#define PKT_FILE_DATA		1
+#define PKT_FILE_END		2
+#define PKT_FILE_CHECK		3
+#define PKT_FILE_ACK		4	/* acknowledge whatever */
+#define PKT_FILE_ERR		5	/* failure - close */
+#define PKT_FILE_SUM		6	/* checksum reply */
+#define	PKT_FILE_INIT		7	/* initiate a transfer */
+
+
 #define PKT_START		10
 #define PKT_END			11
 #define PKT_LOGIN		12
@@ -201,21 +218,6 @@
 #define PKT_PING		166 /* Ping packet */
 /* 167+ are further below.. */
 
-/* HACK -- used for SKILL_INIT */
-#define PKT_SKILL_INIT_NAME     0
-#define PKT_SKILL_INIT_DESC     1
-#define PKT_SKILL_INIT_MKEY     2
-
-/* Not hack - file transfer packet subtypes */
-/* DO NOT TOUCH - work in progress */
-#define PKT_FILE_DATA		1
-#define PKT_FILE_END		2
-#define PKT_FILE_CHECK		3
-#define PKT_FILE_ACK		4	/* acknowledge whatever */
-#define PKT_FILE_ERR		5	/* failure - close */
-#define PKT_FILE_SUM		6	/* checksum reply */
-#define	PKT_FILE_INIT		7	/* initiate a transfer */
-
 /* new things for v4.4.1 or 4.4.0d (dual-wield & co) - C. Blue */
 #define PKT_SIP			167
 #define PKT_TELEKINESIS		168
@@ -260,6 +262,11 @@
 
 #define PKT_STAND_AUTO		202
 #define PKT_SCREENFLASH		203
+
+//#ifdef ENABLE_SUBINVEN  --defines are not included in pack.h, so we cannot make this conditional
+ #define PKT_SI_MOVE		204
+ #define PKT_SI_REMOVE		205
+//#endif
 
 
 /*

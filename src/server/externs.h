@@ -35,6 +35,9 @@ extern byte mh_attr(int max);
 extern char *my_strcasestr(const char *big, const char *little);
 extern char *my_strcasestr_skipcol(const char *big, const char *little, byte strict);
 extern char *roman_suffix(char* cname);
+#ifdef ENABLE_SUBINVEN
+extern int get_subinven_size(int sval);
+#endif
 
 /* common/files.c */
 extern int local_file_init(int ind, unsigned short fnum, char *fname);
@@ -705,6 +708,10 @@ extern void do_cmd_query_symbol(int Ind, char sym);
 extern bool item_tester_hook_wear(int Ind, int slot);
 extern void power_inscribe(object_type *o_ptr, bool redux, char *powins);
 extern bool check_power_inscribe(int Ind, object_type *o_ptr, char *o_name, cptr inscription);
+#ifdef ENABLE_SUBINVEN
+extern void do_cmd_subinven_move(int Ind, int islot);
+extern void do_cmd_subinven_remove(int Ind, int islot, int slot);
+#endif
 
 /* cmd4.c */
 extern void do_cmd_check_artifacts(int Ind, int line);

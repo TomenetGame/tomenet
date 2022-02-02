@@ -177,6 +177,12 @@ static int Receive_client_setup_R(int ind);
 
 static int Receive_audio(int ind);
 
+#ifdef ENABLE_SUBINVEN
+static int Receive_si_move(int ind);
+static int Receive_si_remove(int ind);
+#endif
+
+
 int Setup_net_server(void);
 bool Destroy_connection(int ind, char *reason);
 int Check_connection(char *real, char *nick, char *addr);

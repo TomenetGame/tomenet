@@ -5755,6 +5755,25 @@ int Send_change_password(char *old_pass, char *new_pass) {
 	return 1;
 }
 
+#ifdef ENABLE_SUBINVEN
+int Send_subinven_move(int item) {
+	int n;
+
+	if (!is_newer_than(&server_version, 4, 7, 4, 4, 0, 0)) return 1;
+	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_SI_MOVE, item)) <= 0) return n;
+	return 1;
+}
+int Send_subinven_remove(int islot, int item) {
+	int n;
+
+	if (!is_newer_than(&server_version, 4, 7, 4, 4, 0, 0)) return 1;
+	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_SI_REMOVE, islot, item)) <= 0) return n;
+	return 1;
+}
+#endif
+
+
+
 /*
  * Update the current time, which is stored in 100 ms "ticks".
  * I hope that Windows systems have gettimeofday on them by default.

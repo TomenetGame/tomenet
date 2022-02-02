@@ -4624,8 +4624,7 @@ void do_cmd_locate(int Ind, int dir) {
  * The table of "symbol info" -- each entry is a string of the form
  * "X:desc" where "X" is the trigger, and "desc" is the "info".
  */
-static cptr ident_info[] =
-{
+static cptr ident_info[] = {
 	" :A dark grid",
 	"!:A potion (or oil)",
 	"\":An amulet (or necklace)",
@@ -4730,8 +4729,7 @@ static cptr ident_info[] =
  *
  * Note that the player ghosts are ignored. XXX XXX XXX
  */
-void do_cmd_query_symbol(int Ind, char sym)
-{
+void do_cmd_query_symbol(int Ind, char sym) {
 	int		i;
 	char	buf[128];
 
@@ -4741,18 +4739,14 @@ void do_cmd_query_symbol(int Ind, char sym)
 		return;
 
 	/* Find that character info, and describe it */
-	for (i = 0; ident_info[i]; ++i)
-	{
+	for (i = 0; ident_info[i]; ++i) {
 		if (sym == ident_info[i][0]) break;
 	}
 
 	/* Describe */
-	if (ident_info[i])
-	{
+	if (ident_info[i]) {
 		sprintf(buf, "%c - %s.", sym, ident_info[i] + 2);
-	}
-	else
-	{
+	} else {
 		sprintf(buf, "%c - %s.", sym, "Unknown Symbol");
 	}
 
@@ -4761,3 +4755,106 @@ void do_cmd_query_symbol(int Ind, char sym)
 }
 
 #endif // 0
+
+#ifdef ENABLE_SUBINVEN
+/* Attempt to move as much as possible of an inventory item stack into a subinventory container */
+static void subinven_move_aux(int Ind, int islot, int sslot) {
+	object_type *i_ptr = &Players[Ind]->inventory[islot];
+	object_type *s_ptr = &Players[Ind]->inventory[sslot];
+	object_type *o_ptr;
+	int i, inum = i_ptr->number;
+
+	/* Look for free spaces or spaces to merge with */
+	for (i = 0; i < get_subinven_size(s_ptr->sval); i++) {
+		o_ptr = &Players[Ind]->subinventory[islot][sslot];
+		if (o_ptr->tval) {
+			/* Hack 'number' to allow merging stacks partially */
+			if (i_ptr->number + o_ptr->number > 99) i_ptr->number = 99 - o_ptr->number;
+			/* Merge partially or fully */
+			if (object_similar(Ind, o_ptr, i_ptr, 0x4)) {
+				object_absorb(Ind, o_ptr, i_ptr);
+				i_ptr->number = inum - i_ptr->number; /* Unhack 'number' */
+				if (!i_ptr->number) break;
+			} else
+				i_ptr->number = inum; /* Unhack 'number' */
+		} else {
+			*o_ptr = *i_ptr;
+			i_ptr->number = 0; /* Mark as fully moved, for erasure */
+		}
+	}
+
+	/* Managed to merge fully? Erase source object then. */
+	if (!i_ptr->number) {
+		/* -- This is partial code from inven_item_optimize() -- */
+
+		player_type *p_ptr = Players[Ind];
+
+		/* One less item */
+		p_ptr->inven_cnt--;
+
+		/* Slide everything down */
+		for (i = islot; i < INVEN_PACK; i++) {
+			/* Structure copy */
+			p_ptr->inventory[i] = p_ptr->inventory[i+1];
+
+			if (i == p_ptr->item_newest) Send_item_newest(Ind, i - 1);
+		}
+
+		/* Update inventory indeces - mikaelh */
+		inven_index_erase(Ind, islot);
+		inven_index_slide(Ind, islot + 1, -1, INVEN_PACK);
+
+		/* Erase the "final" slot */
+		invwipe(&p_ptr->inventory[i]);
+	}
+}
+void do_cmd_subinven_move(int Ind, int islot) {
+	player_type *p_ptr = Players[Ind];
+	object_type *i_ptr, *s_ptr;
+	int amt, i;
+
+	/* Error checks */
+	if (islot < 0) return;
+	if (islot >= INVEN_PACK) return;
+
+	i_ptr = &p_ptr->inventory[islot];
+	if (!i_ptr->tval) return;
+	amt = i_ptr->number;
+
+	/* Message */
+	//msg_format(Ind, "You drop %d pieces of %s.", amt, k_name + k_info[tmp_obj.k_idx].name);
+
+	for (i = 0; i < INVEN_TOTAL; i++) {
+		s_ptr = &p_ptr->inventory[i];
+		/* Scan for existing subinventories */
+		if (s_ptr->tval != TV_SUBINVEN) continue;
+		switch (s_ptr->sval) {
+		/* Check item to move against valid tvals to be put into specific container (subinventory) types */
+		case SV_SI_SATCHEL:
+			if (i_ptr->tval != TV_CHEMICAL) continue;
+			break;
+		default:
+			continue;
+		}
+		/* Eligible subinventory found, try to move as much as possible */
+		subinven_move_aux(Ind, islot, i);
+	}
+
+#ifdef USE_SOUND_2010
+	sound_item(Ind, i_ptr->tval, i_ptr->sval, "drop_");
+#endif
+
+	//break_cloaking(Ind, 5);
+	//break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_PLAYER);
+
+	/* Take a turn */
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+}
+void do_cmd_subinven_remove(int Ind, int islot, int slot) {
+}
+#endif

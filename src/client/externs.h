@@ -860,6 +860,10 @@ extern int Send_request_cfr(int id, int cfr);
 extern void apply_auto_inscriptions(int slot, bool force);
 extern int Send_client_setup(void);
 extern int Send_audio(void);
+#ifdef ENABLE_SUBINVEN
+extern int Send_subinven_move(int item);
+extern int Send_subinven_remove(int islot, int item);
+#endif
 
 /* skills.c */
 extern s16b get_skill(int skill);
@@ -912,6 +916,9 @@ extern char *my_strcasestr_skipcol(const char *big, const char *little, byte str
 extern char *my_strstr_skipcol(const char *big, const char *little, byte strict);
 extern char *roman_suffix(char* cname);
 extern bool wearable_p(object_type *o_ptr);
+#ifdef ENABLE_SUBINVEN
+extern int get_subinven_size(int sval);
+#endif
 
 /* common/files.c */
 extern int local_file_init(int ind, unsigned short fnum, char *fname);

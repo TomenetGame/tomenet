@@ -3844,7 +3844,8 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 
 /*
  * Allow one item to "absorb" another, assuming they are similar.
- * Note: j_ptr is the 'new' item that gets dropped/added to an existing one.
+ * Note: j_ptr is the 'new' item that gets dropped/added to an existing one:
+ * o_ptr = dest, j_ptr = src.
  */
 void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 	int total = o_ptr->number + j_ptr->number;

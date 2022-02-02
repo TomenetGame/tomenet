@@ -694,6 +694,35 @@ void cmd_disarm(void) {
 	Send_disarm(dir);
 }
 
+#ifdef ENABLE_SUBINVEN
+/* This will (on server-side)..
+   a) automatically pick the fitting subinventories
+   b) automatically move the most possible amount
+*/
+static void cmd_subinven_move(void) {
+	int item;
+
+	item_tester_hook = NULL;
+	get_item_hook_find_obj_what = "Item name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
+
+	if (!c_get_item(&item, "Stow what? ", (USE_INVEN | USE_EXTRA))) return;
+
+	Send_subinven_move(item);
+}
+static void cmd_subinven_remove(int islot) {
+	int item;
+
+	item_tester_hook = NULL;
+	get_item_hook_find_obj_what = "Item name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
+
+	if (!c_get_item(&item, "Unstow what? ", (USE_INVEN | USE_EXTRA))) return;
+
+	Send_subinven_remove(islot, item);
+}
+#endif
+
 void cmd_inven(void) {
 	char ch; /* props to 'potato' and the korean team from sarang.net for the idea - C. Blue */
 	int c;
@@ -716,12 +745,8 @@ void cmd_inven(void) {
 
 	while (TRUE) {
 		ch = inkey();
-		if (ch == KTRL('T')) {
-			xhtml_screenshot("screenshot????");
-			break;
-		}
 		/* allow pasting item into chat */
-		else if (ch >= 'A' && ch < 'A' + INVEN_PACK) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
+		if (ch >= 'A' && ch < 'A' + INVEN_PACK) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
 			c = ch - 'A';
 
 			if (inventory[c].tval) {
@@ -739,29 +764,34 @@ void cmd_inven(void) {
 			}
 			break;
 		}
-		else if (ch == 'x') {
+		else switch (ch) {
+		case KTRL('T'):
+			xhtml_screenshot("screenshot????");
+			break;
+		case 'x':
 			cmd_observe(USE_INVEN);
 			continue;
-		}
-		else if (ch == 'd') {
+		case 'd':
 			cmd_drop(USE_INVEN);
 			continue;
-		}
-		else if (ch == 'k' || ch == KTRL('D')) {
+		case 'k':
+		case KTRL('D'):
 			cmd_destroy(USE_INVEN);
 			continue;
-		}
-		else if (ch == '{') {
+		case '{':
 			cmd_inscribe(USE_INVEN);
 			continue;
-		}
-		else if (ch == '}') {
+		case '}':
 			cmd_uninscribe(USE_INVEN);
 			continue;
-		}
-		else if (ch == ':') {
+		case ':':
 			cmd_message();
 			continue;
+#ifdef ENABLE_SUBINVEN
+		/* Additional commands specifically replacing/allowing backpack-related commands for subinventories: */
+		/* Move item to backpack inventory - let's abuse equipment-related commands for the heck of it */
+		case 'w': cmd_subinven_move(); continue;
+#endif
 		}
 
 		/* Default, eg ESC: */
@@ -787,8 +817,8 @@ void cmd_subinven(int islot) {
 	char ch;
 	int c;
 	char buf[MSG_LEN];
-	int subinven_size = INVEN_PACK; /* Default size of a subinventory is same as normal backpack size */
 	object_type *i_ptr = &inventory[islot];
+	int subinven_size = get_subinven_size(i_ptr->sval);
 
 	Term_save();
 	showing_inven = screen_icky;
@@ -799,31 +829,6 @@ void cmd_subinven(int islot) {
 	/* Note: We don't play the sound in show_inven() itself because that will be too spammy. */
 	sound(browseinven_sound_idx, SFX_TYPE_COMMAND, 100, 0);
  #endif
-
-	/* Set sizes of particular types of subinventories */
-	switch (i_ptr->sval) {
-	case SV_SI_SATCHEL:
-		subinven_size = SI_SATCHEL_SIZE;
-		break;
-	case SV_SI_CHEST_SMALL_WOODEN:
-		subinven_size = SI_CHEST_SMALL_WOODEN_SIZE;
-		break;
-	case SV_SI_CHEST_SMALL_IRON:
-		subinven_size = SI_CHEST_SMALL_IRON_SIZE;
-		break;
-	case SV_SI_CHEST_SMALL_STEEL:
-		subinven_size = SI_CHEST_SMALL_STEEL_SIZE;
-		break;
-	case SV_SI_CHEST_LARGE_WOODEN:
-		subinven_size = SI_CHEST_LARGE_WOODEN_SIZE;
-		break;
-	case SV_SI_CHEST_LARGE_IRON:
-		subinven_size = SI_CHEST_LARGE_IRON_SIZE;
-		break;
-	case SV_SI_CHEST_LARGE_STEEL:
-		subinven_size = SI_CHEST_LARGE_STEEL_SIZE;
-		break;
-	}
 
 	show_subinven(islot);
 
@@ -877,7 +882,8 @@ void cmd_subinven(int islot) {
 
 		/* Additional commands specifically replacing/allowing backpack-related commands for subinventories: */
 
-		/* Move item to backpack inventory */
+		/* Move item to backpack inventory - let's abuse equipment-related commands for the heck of it */
+		case 't': cmd_subinven_remove(using_subinventory); continue;
 
 		/* More basic functions */
 		case 'K': cmd_force_stack(); continue;
@@ -936,12 +942,8 @@ void cmd_equip(void) {
 
 	while (TRUE) {
 		ch = inkey();
-		if (ch == KTRL('T')) {
-			xhtml_screenshot("screenshot????");
-			break;
-		}
 		/* allow pasting item into chat */
-		else if (ch >= 'A' && ch < 'A' + (INVEN_TOTAL - INVEN_WIELD)) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
+		if (ch >= 'A' && ch < 'A' + (INVEN_TOTAL - INVEN_WIELD)) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
 			c = ch - 'A';
 			if (inventory[INVEN_WIELD + c].tval) {
 				snprintf(buf, MSG_LEN - 1, "\377s%s", inventory_name[INVEN_WIELD + c]);
@@ -959,27 +961,29 @@ void cmd_equip(void) {
 			}
 			break;
 		}
-		else if (ch == 'x') {
+		else switch(ch) {
+		case KTRL('T'):
+			xhtml_screenshot("screenshot????");
+			break;
+		case 'x':
 			cmd_observe(USE_EQUIP);
 			continue;
-		}
-		else if /* collides! ((c_cfg.rogue_like_commands && ch == 'T') || (!c_cfg.rogue_like_commands && ch == 't')) */
-		    (ch == 't') {
+		/* collides! ((c_cfg.rogue_like_commands && ch == 'T') || (!c_cfg.rogue_like_commands && ch == 't')) */
+		case 't':
 			cmd_take_off();
 			continue;
-		}
-		else if (ch == '{') {
+		case '{':
 			cmd_inscribe(USE_EQUIP);
 			continue;
-		}
-		else if (ch == '}') {
+		case '}':
 			cmd_uninscribe(USE_EQUIP);
 			continue;
-		}
-		else if (ch == ':') {
+		case ':':
 			cmd_message();
 			continue;
 		}
+
+		/* Default, eg ESC: */
 		break;
 	}
 

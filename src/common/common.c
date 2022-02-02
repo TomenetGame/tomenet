@@ -694,3 +694,26 @@ bool wearable_p(object_type *o_ptr) {
 	/* Nope */
 	return (FALSE);
 }
+
+#ifdef ENABLE_SUBINVEN
+int get_subinven_size(int sval) {
+	/* Set sizes of particular types of subinventories */
+	switch (sval) {
+	case SV_SI_SATCHEL:
+		return SI_SATCHEL_SIZE;
+	case SV_SI_CHEST_SMALL_WOODEN:
+		return SI_CHEST_SMALL_WOODEN_SIZE;
+	case SV_SI_CHEST_SMALL_IRON:
+		return SI_CHEST_SMALL_IRON_SIZE;
+	case SV_SI_CHEST_SMALL_STEEL:
+		return SI_CHEST_SMALL_STEEL_SIZE;
+	case SV_SI_CHEST_LARGE_WOODEN:
+		return SI_CHEST_LARGE_WOODEN_SIZE;
+	case SV_SI_CHEST_LARGE_IRON:
+		return SI_CHEST_LARGE_IRON_SIZE;
+	case SV_SI_CHEST_LARGE_STEEL:
+		return SI_CHEST_LARGE_STEEL_SIZE;
+	}
+	return INVEN_PACK; /* Default size of a subinventory is same as normal backpack size */
+}
+#endif
