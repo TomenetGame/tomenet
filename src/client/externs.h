@@ -74,7 +74,7 @@ extern int get_spell(s32b *sn, cptr prompt, int book);
 extern void show_browse(object_type *o_ptr);
 extern void browse_school_spell(int item, int book, int pval);
 #ifdef ENABLE_SUBINVEN
-extern void browse_subinven(int subinven_sval);
+extern void browse_subinven(int islot);
 #endif
 extern void do_study(int book);
 extern void do_cast(int book);
@@ -139,13 +139,13 @@ extern char inventory_name[INVEN_TOTAL][ONAME_LEN];
 extern int inventory_inscription[INVEN_TOTAL];
 extern int inventory_inscription_len[INVEN_TOTAL];
 extern int item_newest;
-#ifdef ENABLE_SUBINVEN
-extern int item_newest_subinven;
 
-extern object_type subinventory[MAX_SUBINVEN][INVEN_TOTAL];
-extern char subinventory_name[MAX_SUBINVEN][INVEN_TOTAL][ONAME_LEN];
-extern int subinventory_inscription[MAX_SUBINVEN][INVEN_TOTAL];
-extern int subinventory_inscription_len[MAX_SUBINVEN][INVEN_TOTAL];
+#ifdef ENABLE_SUBINVEN
+extern int item_newest_subinven, using_subinventory;
+extern object_type subinventory[INVEN_PACK][SUBINVEN_PACK];
+extern char subinventory_name[INVEN_PACK][SUBINVEN_PACK][ONAME_LEN];
+extern int subinventory_inscription[INVEN_PACK][SUBINVEN_PACK];
+extern int subinventory_inscription_len[INVEN_PACK][SUBINVEN_PACK];
 #endif
 
 extern store_type store;
@@ -676,7 +676,7 @@ extern void prt_basic(void);
 extern void health_redraw(int num, byte attr);
 extern void show_inven(void);
 #ifdef ENABLE_SUBINVEN
-extern void show_subinven(int subinven_sval);
+extern void show_subinven(int islot);
 #endif
 extern void show_equip(void);
 extern void display_player(int hist);

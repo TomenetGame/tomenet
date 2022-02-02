@@ -408,7 +408,7 @@
 
  #define LIMIT_SPELLS		/* Allow player to limit the level of spells he casts */
 
- //#define ENABLE_SUBINVEN	/* Alchemy Satchels as inventory extension */
+ #define ENABLE_SUBINVEN	/* Alchemy Satchels as inventory extension */
 
  /* Just for debugging - unbind savegames from accounts */
  #define IGNORE_SAVEGAME_MISMATCH
@@ -463,7 +463,7 @@
 
  /* Alchemy Satchels as inventory extension */
  #ifdef TEST_CLIENT
-  //#define ENABLE_SUBINVEN
+  #define ENABLE_SUBINVEN
  #endif
 
  /* Enable bookmarking feature? */

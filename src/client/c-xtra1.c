@@ -1777,7 +1777,7 @@ void show_inven(void) {
 }
 
 #ifdef ENABLE_SUBINVEN
-void show_subinven(int subinven_sval) {
+void show_subinven(int islot) {
 	int	i, j, k, l, z = 0;
 	int	col, len, lim;
 	long int wgt, totalwgt = 0;
@@ -1791,16 +1791,32 @@ void show_subinven(int subinven_sval) {
 	byte	out_color[23];
 	char	out_desc[23][ONAME_LEN];
 
-	int max_subinven = INVEN_TOTAL;
+	int subinven_size = INVEN_PACK; /* Default size of a subinventory is same as normal backpack size */
+	object_type *i_ptr = &inventory[islot];
 
 
-	/* paranoia */
-	if (subinven_sval > MAX_SUBINVEN) return;
-
-	switch (subinven_sval) {
+	switch (i_ptr->sval) {
 	case SV_SI_SATCHEL:
-		max_subinven = 9;
-		//max_subinven = return 11;
+		subinven_size = SI_SATCHEL_SIZE;
+		break;
+	case SV_SI_CHEST_SMALL_WOODEN:
+		subinven_size = SI_CHEST_SMALL_WOODEN_SIZE;
+		break;
+	case SV_SI_CHEST_SMALL_IRON:
+		subinven_size = SI_CHEST_SMALL_IRON_SIZE;
+		break;
+	case SV_SI_CHEST_SMALL_STEEL:
+		subinven_size = SI_CHEST_SMALL_STEEL_SIZE;
+		break;
+	case SV_SI_CHEST_LARGE_WOODEN:
+		subinven_size = SI_CHEST_LARGE_WOODEN_SIZE;
+		break;
+	case SV_SI_CHEST_LARGE_IRON:
+		subinven_size = SI_CHEST_LARGE_IRON_SIZE;
+		break;
+	case SV_SI_CHEST_LARGE_STEEL:
+		subinven_size = SI_CHEST_LARGE_STEEL_SIZE;
+		break;
 	}
 
 
@@ -1824,8 +1840,8 @@ void show_subinven(int subinven_sval) {
 
 
 	/* Find the "final" slot */
-	for (i = 0; i < max_subinven; i++) {
-		o_ptr = &subinventory[subinven_sval][i];
+	for (i = 0; i < subinven_size; i++) {
+		o_ptr = &subinventory[islot][i];
 
 		/* Track non-empty slots */
 		if (o_ptr->tval) z = i + 1;
@@ -1833,13 +1849,13 @@ void show_subinven(int subinven_sval) {
 
 	/* Display the inventory */
 	for (k = 0, i = 0; i < z; i++) {
-		o_ptr = &subinventory[subinven_sval][i];
+		o_ptr = &subinventory[islot][i];
 
 		/* Is this item acceptable? */
 		if (!item_tester_okay(o_ptr)) continue;
 
 		/* Describe the object */
-		strcpy(o_name, subinventory_name[subinven_sval][i]);
+		strcpy(o_name, subinventory_name[islot][i]);
 
 		/* Hack -- enforce max length */
 		o_name[lim] = '\0';
@@ -1875,7 +1891,7 @@ void show_subinven(int subinven_sval) {
 		i = out_index[j];
 
 		/* Get the item */
-		o_ptr = &subinventory[subinven_sval][i];
+		o_ptr = &subinventory[islot][i];
 
 		/* Clear the line */
 		prt("", j + 1, col ? col - 2 : col);
@@ -1917,7 +1933,7 @@ void show_subinven(int subinven_sval) {
 	if (j && (j < 23)) prt("", j + 1, col ? col - 2 : col);
 
 	/* Notify if inventory is actually empty */
-	if (!k) prt("(Your inventory is empty)", 1, 13);
+	if (!k) prt("(This bag is empty)", 1, 13);
 
 	/* Save the new column */
 	command_gap = col;

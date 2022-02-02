@@ -2069,34 +2069,24 @@ void do_breath() {
 }
 
 #ifdef ENABLE_SUBINVEN
- #ifdef NO_RUST_NO_HYDROXIDE
-  #define SI_SATCHEL_SIZE 9
- #else
-  #define SI_SATCHEL_SIZE 11
- #endif
 /* This doesn't belong into c-spell.c, it's just here cause it's created based on browse_school_spell() sorta */
-void browse_subinven(int subinven_sval) {
+#if 0 /* migrated from this testing function to cmd_subinven() */
+void browse_subinven(int islot) {
 	int i;
 	int num = 0, where = 1;
 	int ask;
 	char choice;
 	char out_val[160], out_val2[160];
 
-	/* paranoia */
-	if (subinven_sval > MAX_SUBINVEN) return;
-
-#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
 	sound(browseinven_sound_idx, SFX_TYPE_COMMAND, 100, 0);
-#endif
+ #endif
 
-	for (i = 0; i < INVEN_TOTAL; i++) {
-		if (!subinventory[subinven_sval][i].tval) break;
-		num++;
-	}
+num = SUBINVEN_PACK;//debug
 
 	/* Build a prompt (accept all spells) */
 	if (num)
-		strnfmt(out_val2, 78, "(Contents %c-%c, ESC=exit) which spell? ", I2A(0), I2A(num - 1));
+		strnfmt(out_val2, 78, "(Contents %c-%c, ESC=exit) which item? ", I2A(0), I2A(num - 1));
 	else
 		strnfmt(out_val2, 78, "Your satchel is empty - ESC=exit");
 
@@ -2113,7 +2103,7 @@ void browse_subinven(int subinven_sval) {
 		/* Restore the screen (ie Term_load() without 'popping' it) */
 		Term_restore();
 
-		show_subinven(subinven_sval);
+		show_subinven(islot);
 
 		/* Note verify */
 		ask = (isupper(choice));
@@ -2133,7 +2123,8 @@ void browse_subinven(int subinven_sval) {
 		/* Restore the screen */
 		/* Term_load(); */
 
-		show_subinven(subinven_sval);
+		//show_subinven(i);
+		Send_paste_msg(subinventory_name[islot][i]);
 
 		/* Allow rest of the screen starting at this line to keep getting updated instead of staying frozen */
 		screen_line_icky = where;
@@ -2144,4 +2135,5 @@ void browse_subinven(int subinven_sval) {
 	/* Restore the screen */
 	Term_load();
 }
+#endif
 #endif

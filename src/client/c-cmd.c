@@ -763,6 +763,8 @@ void cmd_inven(void) {
 			cmd_message();
 			continue;
 		}
+
+		/* Default, eg ESC: */
 		break;
 	}
 
@@ -780,84 +782,131 @@ void cmd_inven(void) {
 }
 
 #ifdef ENABLE_SUBINVEN
-void cmd_subinven(int subinven_sval) {
-	char ch; /* props to 'potato' and the korean team from sarang.net for the idea - C. Blue */
+/* Display the subinventory inside a 'pouch' in a specific inventory slot */
+void cmd_subinven(int islot) {
+	char ch;
 	int c;
 	char buf[MSG_LEN];
-	int max_subinven = INVEN_PACK;
+	int subinven_size = INVEN_PACK; /* Default size of a subinventory is same as normal backpack size */
+	object_type *i_ptr = &inventory[islot];
 
-	/* First, erase our current location */
-
-	/* Then, save the screen */
 	Term_save();
 	showing_inven = screen_icky;
 
 	command_gap = 50;
 
-#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
 	/* Note: We don't play the sound in show_inven() itself because that will be too spammy. */
 	sound(browseinven_sound_idx, SFX_TYPE_COMMAND, 100, 0);
-#endif
+ #endif
 
-	switch (subinven_sval) {
+	/* Set sizes of particular types of subinventories */
+	switch (i_ptr->sval) {
 	case SV_SI_SATCHEL:
-		max_subinven = 9;
-		//max_subinven = return 11;
+		subinven_size = SI_SATCHEL_SIZE;
+		break;
+	case SV_SI_CHEST_SMALL_WOODEN:
+		subinven_size = SI_CHEST_SMALL_WOODEN_SIZE;
+		break;
+	case SV_SI_CHEST_SMALL_IRON:
+		subinven_size = SI_CHEST_SMALL_IRON_SIZE;
+		break;
+	case SV_SI_CHEST_SMALL_STEEL:
+		subinven_size = SI_CHEST_SMALL_STEEL_SIZE;
+		break;
+	case SV_SI_CHEST_LARGE_WOODEN:
+		subinven_size = SI_CHEST_LARGE_WOODEN_SIZE;
+		break;
+	case SV_SI_CHEST_LARGE_IRON:
+		subinven_size = SI_CHEST_LARGE_IRON_SIZE;
+		break;
+	case SV_SI_CHEST_LARGE_STEEL:
+		subinven_size = SI_CHEST_LARGE_STEEL_SIZE;
+		break;
 	}
 
-	show_subinven(subinven_sval);
+	show_subinven(islot);
+
+	/* Redirect all inventory-related commands to this subinventory */
+	using_subinventory = islot;
 
 	while (TRUE) {
 		ch = inkey();
-		if (ch == KTRL('T')) {
-			xhtml_screenshot("screenshot????");
-			break;
-		}
 		/* allow pasting item into chat */
-		else if (ch >= 'A' && ch < 'A' + max_subinven) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
+		if (ch >= 'A' && ch < 'A' + subinven_size) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
 			c = ch - 'A';
 
-			if (subinventory[subinven_sval][c].tval) {
-				snprintf(buf, MSG_LEN - 1, "\377s%s", subinventory_name[subinven_sval][c]);
+			if (subinventory[islot][c].tval) {
+				snprintf(buf, MSG_LEN - 1, "\377s%s", subinventory_name[islot][c]);
 				buf[MSG_LEN - 1] = 0;
 				/* if item inscriptions contains a colon we might need
 				   another colon to prevent confusing it with a private message */
-				if (strchr(subinventory_name[subinven_sval][c], ':')) {
-					buf[strchr(subinventory_name[subinven_sval][c], ':') - subinventory_name[subinven_sval][c] + strlen(buf) - strlen(subinventory_name[subinven_sval][c]) + 1] = '\0';
+				if (strchr(subinventory_name[islot][c], ':')) {
+					buf[strchr(subinventory_name[islot][c], ':') - subinventory_name[islot][c] + strlen(buf) - strlen(subinventory_name[islot][c]) + 1] = '\0';
 					if (strchr(buf, ':') == &buf[strlen(buf) - 1])
 						strcat(buf, ":");
-					strcat(buf, strchr(subinventory_name[subinven_sval][c], ':') + 1);
+					strcat(buf, strchr(subinventory_name[islot][c], ':') + 1);
 				}
 				Send_paste_msg(buf);
 			}
 			break;
 		}
-		else if (ch == 'x') {
+		else switch (ch) {
+		case KTRL('T'):
+			xhtml_screenshot("screenshot????");
+			break;
+		case 'x':
 			cmd_observe(USE_INVEN);
 			continue;
-		}
-		else if (ch == 'd') {
+		case 'd':
 			cmd_drop(USE_INVEN);
 			continue;
-		}
-		else if (ch == 'k' || ch == KTRL('D')) {
+		case 'k':
+		case KTRL('D'):
 			cmd_destroy(USE_INVEN);
 			continue;
-		}
-		else if (ch == '{') {
+		case '{':
 			cmd_inscribe(USE_INVEN);
 			continue;
-		}
-		else if (ch == '}') {
+		case '}':
 			cmd_uninscribe(USE_INVEN);
 			continue;
-		}
-		else if (ch == ':') {
+		case ':':
 			cmd_message();
 			continue;
+
+		/* Additional commands specifically replacing/allowing backpack-related commands for subinventories: */
+
+		/* Move item to backpack inventory */
+
+		/* More basic functions */
+		case 'K': cmd_force_stack(); continue;
+		case 'H': cmd_apply_autoins(); continue;
+
+		/* Specifically required for DEMOLITIONIST chemicals */
+		case 'A': cmd_activate(); continue;
+
+		/* Misc stuff that could be considered */
+#if 0
+		case 'F': cmd_refill(); continue;
+		case 'E': cmd_eat(); continue;
+		case 'v': cmd_throw(); continue;
+#endif
+
+		/* Ohoho.. mada mada - super experimental hypothetical */
+#if 0
+		case 'a': cmd_aim_wand(); continue;
+		case 'u': cmd_use_staff(); continue;
+		case 'z': cmd_zap_rod(); continue;
+#endif
 		}
+
+		/* Default, eg ESC: */
 		break;
 	}
+
+	/* End redirection of inventory-related commands, as we left the subinventory */
+	using_subinventory = -1;
 
 	screen_line_icky = -1;
 	screen_column_icky = -1;
@@ -5477,8 +5526,8 @@ void cmd_browse(void) {
 
 #ifdef ENABLE_SUBINVEN
 	if (o_ptr->tval == TV_SUBINVEN) {
-		//browse_subinven(o_ptr->sval);
-		cmd_subinven(o_ptr->sval);
+		//browse_subinven(item); //original debug/testing function, copy-pasted from browse_school_spell()
+		cmd_subinven(item); //should eventually migrate to this function (from browse_subinven)
 		return;
 	}
 #endif

@@ -32,13 +32,14 @@ char inventory_name[INVEN_TOTAL][ONAME_LEN];	/* The client-side copy of the inve
 int inventory_inscription[INVEN_TOTAL];	/* Position in an item name where a special inscription begins */
 int inventory_inscription_len[INVEN_TOTAL];	/* Length of a special inscription */
 int item_newest = -1;
-#ifdef ENABLE_SUBINVEN
-int item_newest_subinven = -1;
 
-object_type subinventory[MAX_SUBINVEN][INVEN_TOTAL];
-char subinventory_name[MAX_SUBINVEN][INVEN_TOTAL][ONAME_LEN];
-int subinventory_inscription[MAX_SUBINVEN][INVEN_TOTAL];
-int subinventory_inscription_len[MAX_SUBINVEN][INVEN_TOTAL];
+#ifdef ENABLE_SUBINVEN
+int item_newest_subinven = -1, using_subinventory = -1;
+object_type subinventory[INVEN_PACK][SUBINVEN_PACK];
+char subinventory_name[INVEN_PACK][SUBINVEN_PACK][ONAME_LEN];
+int subinventory_inscription[INVEN_PACK][SUBINVEN_PACK];
+int subinventory_inscription_len[INVEN_PACK][SUBINVEN_PACK
+];
 #endif
 
 store_type store;			/* The general info about the current store */

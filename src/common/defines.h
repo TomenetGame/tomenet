@@ -1926,8 +1926,26 @@
 #define INVEN_TOTAL	38	/* since they start at 0, max slot index is INVEN_TOTAL - 1 (!) */
 /* Number of equipment slots, INVEN_TOTAL ... INVEN_TOTAL + INVEN_EQ - 1 */
 #define INVEN_EQ	(INVEN_TOTAL - INVEN_WIELD)
+
 #ifdef ENABLE_SUBINVEN
- #define MAX_SUBINVEN 0
+ /* Max space inside any single sub-inventory (pendant to INVEN_TOTAL).
+    Subinventories currently don't feature an 'overflow' slot unlike normal inventories.
+    We currently have 9 (11 with rust+hydroxide) chemicals (the reason of implementing subinventories actually). */
+ #define SUBINVEN_PACK INVEN_PACK
+ /* Set sizes of different subinven types */
+ /* SV_SI_SATCHEL: */
+ #ifdef NO_RUST_NO_HYDROXIDE /* 9 vs 11 types of chemicals, of which 6 vs 8 are sort of 'basic' */
+  #define SI_SATCHEL_SIZE 6
+ #else
+  #define SI_SATCHEL_SIZE 8
+ #endif
+ /* TVal-converted chests - no difference for objects of great weight and little weight for now, same as normal backpack */
+ #define SI_CHEST_SMALL_WOODEN_SIZE	2
+ #define SI_CHEST_SMALL_IRON_SIZE	3
+ #define SI_CHEST_SMALL_STEEL_SIZE	3
+ #define SI_CHEST_LARGE_WOODEN_SIZE	3
+ #define SI_CHEST_LARGE_IRON_SIZE	4
+ #define SI_CHEST_LARGE_STEEL_SIZE	4
 #endif
 
 
@@ -4384,7 +4402,14 @@
 #endif
 
 /* svals for TV_SUBINVEN */
-#define SV_SI_SATCHEL			0
+#define SV_SI_SATCHEL			0	/* Stores DEMOLITIONIST ingredients */
+#define SV_SI_CHEST_SMALL_WOODEN	1	/* TV_CHEST option: Convert tval on opening one successfully (ie not ruined) to TV_SUBINVEN */
+#define SV_SI_CHEST_SMALL_IRON		2
+#define SV_SI_CHEST_SMALL_STEEL		3
+#define SV_SI_CHEST_MIN_LARGE		4	/* marker */
+#define SV_SI_CHEST_LARGE_WOODEN	5
+#define SV_SI_CHEST_LARGE_IRON		6
+#define SV_SI_CHEST_LARGE_STEEL		7
 
 /* svals for TV_SPECIAL */
 #define SV_SEAL				0	/* for invalid items */
