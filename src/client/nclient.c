@@ -189,7 +189,9 @@ static void Receive_init(void) {
 	receive_tbl[PKT_WHATS_UNDER_YOUR_FEET]	= Receive_whats_under_you_feet;
 
 	receive_tbl[PKT_SCREENFLASH]	= Receive_screenflash;
+#ifdef ENABLE_SUBINVEN
 	receive_tbl[PKT_SI_MOVE]	= Receive_subinven;
+#endif
 }
 
 
