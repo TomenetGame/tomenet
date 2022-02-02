@@ -461,13 +461,19 @@
  /* Use regex.h to offer regexp in-game guide searching; and now also auto-inscription regexp matching */
  #define REGEX_SEARCH
 
- /* Alchemy Satchels as inventory extension */
+ /* Enable bookmarking feature? */
+ #define GUIDE_BOOKMARKS 20
+
+/* Alchemy Satchels as inventory extension */
  #ifdef TEST_CLIENT
   #define ENABLE_SUBINVEN
  #endif
+#endif
 
- /* Enable bookmarking feature? */
- #define GUIDE_BOOKMARKS 20
+/* Not compiled with CLIENT_SIDE as one of the functions is inside common/ folder */
+/* Alchemy Satchels as inventory extension */
+#ifdef TEST_CLIENT
+ #define ENABLE_SUBINVEN
 #endif
 
 
