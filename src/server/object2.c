@@ -10906,6 +10906,11 @@ bool inven_carry_okay(int Ind, object_type *o_ptr, byte tolerance) {
 	int i;
 	object_type *j_ptr;
 
+#ifdef SUBINVEN_LIMIT_GROUP /* By having this check here, we don't need it in telekinesis_aux() actually */
+	int subinven_group = (o_ptr->tval == TV_SUBINVEN) ? get_subinven_group(o_ptr->sval) : -1;
+
+	if (subinven_group == -1)
+#endif
 	/* Empty slot? */
 	if (p_ptr->inven_cnt < INVEN_PACK) return (TRUE);
 
@@ -10914,9 +10919,16 @@ bool inven_carry_okay(int Ind, object_type *o_ptr, byte tolerance) {
 		/* Get that item */
 		j_ptr = &p_ptr->inventory[i];
 
+#ifdef SUBINVEN_LIMIT_GROUP
+		if (subinven_group != -1 && j_ptr->tval == TV_SUBINVEN && get_subinven_group(j_ptr->sval) == subinven_group) return FALSE;
+#endif
+
 		/* Check if the two items can be combined */
 		if (object_similar(Ind, j_ptr, o_ptr, tolerance)) return (TRUE);
 	}
+#ifdef SUBINVEN_LIMIT_GROUP
+	if (p_ptr->inven_cnt < INVEN_PACK) return (TRUE);
+#endif
 
 	/* Hack -- try quiver slot (see inven_carry) */
 	//if (object_similar(Ind, &p_ptr->inventory[INVEN_AMMO], o_ptr, 0x0)) return (TRUE);

@@ -1679,6 +1679,9 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			return;
 		}
 
+//#ifdef SUBINVEN_LIMIT_GROUP  -- rely on inven_carry_okay() for now
+//#endif
+
 		if (p_ptr->IDDC_logscum && !o_ptr->owner) {//o_ptr->owner != p_ptr->id) {
 			msg_print(Ind, "\377oThis floor has become stale, take a staircase to move on!");
 			if (!is_admin(p_ptr)) return;

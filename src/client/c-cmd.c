@@ -867,17 +867,17 @@ void cmd_subinven(int islot) {
 			cmd_observe(USE_INVEN);
 			continue;
 		case 'd':
-			cmd_drop(USE_INVEN);
+			cmd_drop(USE_INVEN);		//todo
 			continue;
 		case 'k':
 		case KTRL('D'):
-			cmd_destroy(USE_INVEN);
+			cmd_destroy(USE_INVEN);		//todo
 			continue;
 		case '{':
-			cmd_inscribe(USE_INVEN);
+			cmd_inscribe(USE_INVEN);	//todo
 			continue;
 		case '}':
-			cmd_uninscribe(USE_INVEN);
+			cmd_uninscribe(USE_INVEN);	//todo
 			continue;
 		case ':':
 			cmd_message();
@@ -889,12 +889,12 @@ void cmd_subinven(int islot) {
 		case 't': cmd_subinven_remove(using_subinven); continue;
 
 		/* More basic functions */
-//postponed
-//		case 'K': cmd_force_stack(); continue;
-//		case 'H': cmd_apply_autoins(); continue;
+		//postponed
+		//case 'K': cmd_force_stack(); continue;
+		//case 'H': cmd_apply_autoins(); continue;
 
 		/* Specifically required for DEMOLITIONIST chemicals */
-		case 'a': cmd_activate(); continue; // 'A' is item-to-chat pasting, oops
+		case 'a': cmd_activate(); continue; // 'A' is item-to-chat pasting, oops	//todo
 
 		/* Misc stuff that could be considered */
 #if 0

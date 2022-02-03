@@ -4884,6 +4884,9 @@ void do_cmd_subinven_move(int Ind, int islot) {
 			all = TRUE;
 			break;
 		}
+#ifdef SUBINVEN_LIMIT_GROUP
+		break;
+#endif
 	}
 
 	/* Moved anything at all?

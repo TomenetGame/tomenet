@@ -1928,6 +1928,9 @@
 #define INVEN_EQ	(INVEN_TOTAL - INVEN_WIELD)
 
 #ifdef ENABLE_SUBINVEN
+ /* Allow only one of each subinven group type per player?
+    Ie 1 Alchemy Satchel + 1 Chest (all chests belong into the same 'group' together, the 'chests' group), etc.. */
+ #define SUBINVEN_LIMIT_GROUP
  /* Max space inside any single sub-inventory (pendant to INVEN_TOTAL).
     Subinventories currently don't feature an 'overflow' slot unlike normal inventories.
     We currently have 9 (11 with rust+hydroxide) chemicals (the reason of implementing subinventories actually). */
@@ -4405,11 +4408,23 @@
 #define SV_SI_SATCHEL			0	/* Stores DEMOLITIONIST ingredients */
 #define SV_SI_CHEST_SMALL_WOODEN	1	/* TV_CHEST option: Convert tval on opening one successfully (ie not ruined) to TV_SUBINVEN */
 #define SV_SI_CHEST_SMALL_IRON		2
-#define SV_SI_CHEST_SMALL_STEEL		3
+#define SV_SI_CHEST_SMALL_STEEL	3
 #define SV_SI_CHEST_MIN_LARGE		4	/* marker */
 #define SV_SI_CHEST_LARGE_WOODEN	5
 #define SV_SI_CHEST_LARGE_IRON		6
-#define SV_SI_CHEST_LARGE_STEEL		7
+#define SV_SI_CHEST_LARGE_STEEL	7
+
+/* Only allow one subinven from each type group per player?
+   (We only define helper markers for those groups that have more than one member,
+   so not for the alchemy satchel, but indeed for the different types of chests.) */
+#ifdef SUBINVEN_LIMIT_GROUP
+ #define SV_SI_GROUP_CHEST_MIN		1
+ #define SV_SI_GROUP_CHEST_MAX		7
+
+ #define get_subinven_group(sval) \
+    ((sval) == SV_SI_SATCHEL ? SV_SI_SATCHEL : ((sval) >= SV_SI_GROUP_CHEST_MIN && (sval) <= SV_SI_GROUP_CHEST_MAX ? SV_SI_GROUP_CHEST_MIN : -1))
+#endif
+
 
 /* svals for TV_SPECIAL */
 #define SV_SEAL				0	/* for invalid items */

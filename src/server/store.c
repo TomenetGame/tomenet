@@ -2965,6 +2965,9 @@ void store_stole(int Ind, int item) {
 	/* Check that it's a real item - mikaelh */
 	if (!o_ptr->tval) return;
 
+//#ifdef SUBINVEN_LIMIT_GROUP  -- rely on inven_carry_okay() for now
+//#endif
+
 	if (p_ptr->store_num == STORE_HOME || p_ptr->store_num == STORE_HOME_DUN) {
 		msg_print(Ind, "You don't steal from your home!");
 		return;
@@ -3413,6 +3416,9 @@ void store_purchase(int Ind, int item, int amt) {
 
 	/* Check that it's a real item - mikaelh */
 	if (!o_ptr->tval) return;
+
+//#ifdef SUBINVEN_LIMIT_GROUP  -- rely on inven_carry_okay() for now
+//#endif
 
 #ifdef PLAYER_STORES
 	/* Consistency check: Make sure noone inside a mang-house store
@@ -6010,6 +6016,9 @@ void home_purchase(int Ind, int item, int amt) {
 
 	/* Check that it's a real item - mikaelh */
 	if (!o_ptr->tval) return;
+
+//#ifdef SUBINVEN_LIMIT_GROUP  -- rely on inven_carry_okay() for now
+//#endif
 
 	/* check whether client tries to buy more than the store has */
 	if (o_ptr->number < amt) {
