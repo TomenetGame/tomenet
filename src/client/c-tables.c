@@ -218,7 +218,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.big_map,		FALSE,	1,	0, 7, TRUE,
 	    "big_map",			"Double height of the map shown in the main window" },
 
-	{ &c_cfg.font_map_solid_walls,	FALSE,	1,	0, 8, TRUE,
+	{ &c_cfg.font_map_solid_walls,	TRUE,	1,	0, 8, TRUE,
 	    "font_map_solid_walls",	"Certain fonts only: Walls look like solid blocks" },
 	{ &c_cfg.view_animated_lite,	TRUE,	1,	0, 9, TRUE,
 	    "view_animated_lite",	"Animate lantern light, flickering in colour" },

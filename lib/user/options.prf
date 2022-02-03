@@ -68,7 +68,7 @@ X:player_list2
 Y:censor_swearing
 Y:safe_macros
 
-X:font_map_solid_walls
+Y:font_map_solid_walls
 Y:view_animated_lite
 Y:wall_lighting
 Y:view_lamp_walls
