@@ -10577,7 +10577,7 @@ void inven_item_charges(int Ind, int item) {
  */
 void inven_item_describe(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-	object_type *o_ptr;// = &dummy_object;
+	object_type *o_ptr = &dummy_object;
 	char o_name[ONAME_LEN];
 
 	get_inven_item(Ind, item, o_ptr);

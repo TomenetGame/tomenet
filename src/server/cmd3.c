@@ -330,7 +330,7 @@ void equip_thrown(int Ind, int slot, object_type *o_ptr, int original_number) {
 int inven_drop(int Ind, int item, int amt) {
 	player_type *p_ptr = Players[Ind];
 
-	object_type		*o_ptr;// = &dummy_object;
+	object_type		*o_ptr = &dummy_object;
 	object_type		 tmp_obj;
 
 	cptr		act;
@@ -1702,7 +1702,7 @@ void do_cmd_takeoff(int Ind, int item, int amt) {
 void do_cmd_drop(int Ind, int item, int quantity) {
 	player_type *p_ptr = Players[Ind];
 	byte override = 0;
-	object_type *o_ptr;//= &dummy_object;
+	object_type *o_ptr = &dummy_object;
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	cave_type **zcave = getcave(&p_ptr->wpos);
 
