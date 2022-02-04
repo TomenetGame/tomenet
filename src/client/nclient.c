@@ -1992,6 +1992,8 @@ int Receive_subinven(void) {
 	strncpy(subinventory_name[ipos][pos - 'a'], name, ONAME_LEN - 1);
 
 	//problem: update subinventory live. eg after activation-consumption, but also after unstow w/ latency?
+	//maybe this, bad style?
+	if (using_subinven != -1) show_subinven(ipos);
 
 	return 1;
 }

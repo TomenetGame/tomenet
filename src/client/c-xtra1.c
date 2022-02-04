@@ -1839,7 +1839,7 @@ void show_inven(void) {
 	if (j && (j < 23)) prt("", j + 1, col ? col - 2 : col);
 
 	/* Notify if inventory is actually empty */
-	if (!k) prt("(Your inventory is empty)", 1, 13);
+	if (!k) prt("(Your inventory is empty)", 1, SCREEN_PAD_LEFT);
 
 	/* Save the new column */
 	command_gap = col;
@@ -1932,6 +1932,11 @@ void show_subinven(int islot) {
 	/* Find the column to start in */
 	col = (len > 76) ? 0 : (79 - len);
 
+	/* The ugly method of overwriting the subinven via show_subinven() in Receive_subinven()
+	   will cause 'This container is empty' residue here, so clear it up first.
+	   Bad hack again:*/
+	prt("                                                                   ", 1, SCREEN_PAD_LEFT);
+
 	/* Output each entry */
 	for (j = 0; j < k; j++) {
 		/* Get the index */
@@ -1983,7 +1988,11 @@ void show_subinven(int islot) {
 	if (j && (j < 23)) prt("", j + 1, col ? col - 2 : col);
 
 	/* Notify if inventory is actually empty */
-	if (!k) prt("(This container is empty)", 1, 13);
+	if (!k) prt("(This container is empty)", 1, SCREEN_PAD_LEFT);
+
+	/* hack: hide cursor */
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
 
 	/* Save the new column */
 	command_gap = col;

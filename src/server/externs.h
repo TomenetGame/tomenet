@@ -714,6 +714,7 @@ extern void do_cmd_subinven_remove(int Ind, int islot, int slot);
  #ifdef SUBINVEN_LIMIT_GROUP
 extern bool subinven_group_player(int Ind, int group, int slot);
  #endif
+extern bool subinven_move_aux(int Ind, int islot, int sslot);
 #endif
 
 /* cmd4.c */

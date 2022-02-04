@@ -4746,7 +4746,7 @@ void do_cmd_query_symbol(int Ind, char sym) {
 #ifdef ENABLE_SUBINVEN
 /* Attempt to move as much as possible of an inventory item stack into a subinventory container.
    Returns TRUE if fully stowed. */
-static bool subinven_move_aux(int Ind, int islot, int sslot) {
+bool subinven_move_aux(int Ind, int islot, int sslot) {
 	object_type *i_ptr = &Players[Ind]->inventory[islot];
 	object_type *s_ptr = &Players[Ind]->inventory[sslot];
 	object_type *o_ptr;
