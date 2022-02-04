@@ -10608,6 +10608,8 @@ void inven_item_increase(int Ind, int item, int num) {
 	object_type *o_ptr = &p_ptr->inventory[item];
 #endif
 
+	if (!num) return;
+
 	/* Lost all 'item_newest'? */
 	if (-num >= o_ptr->number && item == p_ptr->item_newest) Send_item_newest(Ind, -1);
 
@@ -10628,6 +10630,18 @@ void inven_item_increase(int Ind, int item, int num) {
 
 		/* Add the weight */
 		p_ptr->total_weight += (num * o_ptr->weight);
+
+#ifdef ENABLE_SUBINVEN
+		if (item >= 100) {
+			/* Update the slot 'manually' */
+			display_subinven_aux(Ind, item / 100 - 1, item % 100);
+
+			/* If losing quest items, the quest goal might get unset again! */
+			if ((p_ptr->quest_any_r || p_ptr->quest_any_r_target) && num < 0) quest_check_ungoal_r(Ind, o_ptr, -num);
+
+			return;
+		}
+#endif
 
 		/* Recalculate bonuses */
 		p_ptr->update |= (PU_BONUS);
@@ -10672,8 +10686,8 @@ bool inven_item_optimize(int Ind, int item) {
 			return (FALSE);
 		}
 
-		/* Erase object in subinven, slide followers */
-		o_ptr->tval = o_ptr->k_idx = o_ptr->number = 0;
+		/* Only optimize empty items */
+		if (o_ptr->number) return (FALSE);
 
 		/* Slide everything down */
 		for (i = item % 100; i < get_subinven_size(s_ptr->sval); i++) {

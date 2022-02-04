@@ -4840,6 +4840,10 @@ void do_cmd_subinven_move(int Ind, int islot) {
 		msg_print(Ind, "\377yYou cannot stow a chest.");
 		return;
 	}
+	if (i_ptr->questor) {
+		msg_print(Ind, "\377yYou cannot stow a questor item.");
+		return;
+	}
 
 	tval = i_ptr->tval;
 	sval = i_ptr->sval;
