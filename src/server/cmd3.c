@@ -341,7 +341,7 @@ int inven_drop(int Ind, int item, int amt) {
 
 
 	/* Access the slot to be dropped */
-	get_inven_item(Ind, item, o_ptr);
+	get_inven_item(Ind, item, &o_ptr);
 
 	/* Not too many */
 	if (amt > o_ptr->number) amt = o_ptr->number;
@@ -1707,7 +1707,7 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 	cave_type **zcave = getcave(&p_ptr->wpos);
 
 	/* Access the object from the item index */
-	get_inven_item(Ind, item, o_ptr);
+	get_inven_item(Ind, item, &o_ptr);
 s_printf("drop: %d,tv %d, sv%d\n", item, o_ptr->tval, o_ptr->sval);
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);

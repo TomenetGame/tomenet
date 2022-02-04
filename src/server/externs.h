@@ -2050,9 +2050,9 @@ extern void condense_name(char *condensed, cptr name);
 extern int similar_names(const char *name1, const char *name2);
 extern void verify_expfact(int Ind, int p);
 extern bool verify_inven_item(int Ind, int item);
-extern void get_inven_item(int Ind, int item, object_type *o_ptr);
+extern void get_inven_item(int Ind, int item, object_type **o_ptr);
 #ifdef ENABLE_SUBINVEN
-extern void get_subinven_item(int Ind, int item, object_type *o_ptr, int *sitem, int *iitem);
+extern void get_subinven_item(int Ind, int item, object_type **o_ptr, int *sitem, int *iitem);
 #endif
 
 

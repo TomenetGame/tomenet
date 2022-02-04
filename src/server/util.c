@@ -9359,29 +9359,29 @@ bool verify_inven_item(int Ind, int item) {
 /* Get an item in the player's inventory or -not implemented- on the floor.
    Returns FALSE if item is illegal (out of bounds), otherwise TRUE.
    NOTE: We assume the item is legal as a previous verify_inven_item() happened in nserver.c! */
-void get_inven_item(int Ind, int item, object_type *o_ptr) {
+void get_inven_item(int Ind, int item, object_type **o_ptr) {
 #ifdef ENABLE_SUBINVEN
 	/* This function can be used for subinventories too, if using get_subinven_item() were overkill. */
 	if (item > 100) {
-		o_ptr = &Players[Ind]->subinventory[item / 100 - 1][item % 100];
+		*o_ptr = &Players[Ind]->subinventory[item / 100 - 1][item % 100];
 		return;
 	}
 #endif
 
 	/* Get the item (in the pack) */
-	if (item >= 0) o_ptr = &Players[Ind]->inventory[item];
+	if (item >= 0) *o_ptr = &Players[Ind]->inventory[item];
 	/* Get the item (on the floor) - not implemented really */
-	else o_ptr = &o_list[0 - item];
+	else *o_ptr = &o_list[0 - item];
 }
 
 #ifdef ENABLE_SUBINVEN
 /* Translate encoded item (>=100) to subinventory index,
    or just identity if it's not a subinventory, so it includes get_inven_item() functionality.
-   If both Ind and o_ptr are not 0/NULL, o_ptr will be set to point to the indexed object.
+   If both Ind and **o_ptr are not 0/NULL, o_ptr will be set to point to the indexed object.
    Ind should be non-zero, to ensure correct check of legal size for the subinventory.
-   The pointers sitem and iitem are optional and hence can both be NULL.
+   The pointers *sitem and *iitem are optional and hence can both be NULL.
    NOTE: We assume the item is legal as a previous verify_inven_item() happened in nserver.c! */
-void get_subinven_item(int Ind, int item, object_type *o_ptr, int *sitem, int *iitem) {
+void get_subinven_item(int Ind, int item, object_type **o_ptr, int *sitem, int *iitem) {
 	int i = item; /* For memory safety, in case item and iitem are the same object */
 
 	/* Not a subinventory but just a 'direct' item? */
@@ -9391,7 +9391,7 @@ void get_subinven_item(int Ind, int item, object_type *o_ptr, int *sitem, int *i
 		if (iitem) *iitem = i;
 
 		/* Optionally set o_ptr already for convenience */
-		if (Ind && o_ptr) o_ptr = &Players[Ind]->inventory[i];
+		if (Ind && o_ptr) *o_ptr = &Players[Ind]->inventory[i];
 
 		return;
 	}
@@ -9402,6 +9402,6 @@ void get_subinven_item(int Ind, int item, object_type *o_ptr, int *sitem, int *i
 	if (iitem) *iitem = i % 100;
 
 	/* Optionally set o_ptr already for convenience */
-	if (Ind && o_ptr && sitem && iitem) o_ptr = &Players[Ind]->subinventory[*sitem][*iitem];
+	if (Ind && o_ptr && sitem && iitem) *o_ptr = &Players[Ind]->subinventory[*sitem][*iitem];
 }
 #endif

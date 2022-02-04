@@ -10580,7 +10580,7 @@ void inven_item_describe(int Ind, int item) {
 	object_type *o_ptr = &dummy_object;
 	char o_name[ONAME_LEN];
 
-	get_inven_item(Ind, item, o_ptr);
+	get_inven_item(Ind, item, &o_ptr);
 
 	/* Hack -- suppress msg */
 	if (p_ptr->taciturn_messages) return;
