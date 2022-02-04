@@ -672,6 +672,7 @@ extern void prt_stun(int stun);
 extern void prt_basic(void);
 extern void health_redraw(int num, byte attr);
 extern void show_inven(void);
+extern void show_inven_header(void);
 #ifdef ENABLE_SUBINVEN
 extern void show_subinven(int islot);
 #endif

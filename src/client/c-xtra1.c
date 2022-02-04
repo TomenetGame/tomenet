@@ -1632,6 +1632,74 @@ static void display_equip(void) {
 	}
 }
 
+/* Just show the header line for show_inven(): Mainly the total weight.
+   This is used for easy redrawal within 'i' screen when using commands from within it that erase the topline. */
+void show_inven_header(void) {
+	int	i, j, k, z = 0;
+	long int wgt, totalwgt = 0;
+
+	object_type *o_ptr;
+
+	char	tmp_val[80];
+
+	int	out_index[23];
+
+
+	/* Find the "final" slot */
+	for (i = 0; i < INVEN_PACK; i++) {
+		o_ptr = &inventory[i];
+
+		/* Track non-empty slots */
+		if (o_ptr->tval) z = i + 1;
+	}
+
+	/* Display the inventory */
+	for (k = 0, i = 0; i < z; i++) {
+		o_ptr = &inventory[i];
+
+		/* Is this item acceptable? */
+		if (!item_tester_okay(o_ptr)) continue;
+
+		/* Save the object index, color, and descrtiption */
+		out_index[k] = i;
+
+		/* Advance to next "line" */
+		k++;
+	}
+
+	/* Output each entry */
+	for (j = 0; j < k; j++) {
+		/* Get the index */
+		i = out_index[j];
+
+		/* Get the item */
+		o_ptr = &inventory[i];
+
+		wgt = o_ptr->weight * o_ptr->number;
+		totalwgt += wgt;
+	}
+
+	/* Display the weight if needed */
+	if (c_cfg.show_weights && totalwgt
+	    && !topline_icky) { /* <- for when we're inside cmd_inven() and pressed 'x' to examine an item, while a live-inve-timeout-update is coming in (only happens for equip atm tho, so not needed here) */
+		if (totalwgt < 10000) /* still fitting into 3 digits? */
+			(void)sprintf(tmp_val, "Total: %3li.%1li lb", totalwgt / 10, totalwgt % 10);
+		else if (totalwgt < 10000000) /* still fitting into 3 digits? */
+			(void)sprintf(tmp_val, "Total: %3lik%1li lb", totalwgt / 10000, (totalwgt % 10000) / 1000);
+		else
+			(void)sprintf(tmp_val, "Total: %3liM%1li lb", totalwgt / 10000000, (totalwgt % 10000000) / 1000000);
+		c_put_str(TERM_L_BLUE, tmp_val, 0, 64);
+	}
+
+#ifdef ENABLE_SUBINVEN
+	/* Mention the two basic commands for handling subinventories */
+	c_put_str(TERM_L_BLUE, "Inventory - 'w': stow items, 'b': browse books or containers.", 0, 0);
+#endif
+
+	/* hack: hide cursor */
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
+}
 
 /*
  * Display the inventory.
@@ -1761,6 +1829,11 @@ void show_inven(void) {
 			(void)sprintf(tmp_val, "Total: %3liM%1li lb", totalwgt / 10000000, (totalwgt % 10000000) / 1000000);
 		c_put_str(TERM_L_BLUE, tmp_val, 0, 64);
 	}
+
+#ifdef ENABLE_SUBINVEN
+	/* Mention the two basic commands for handling subinventories */
+	c_put_str(TERM_L_BLUE, "Inventory - 'w': stow items, 'b': browse books or containers.", 0, 0);
+#endif
 
 	/* Make a "shadow" below the list (only if needed) */
 	if (j && (j < 23)) prt("", j + 1, col ? col - 2 : col);
@@ -1902,6 +1975,11 @@ void show_subinven(int islot) {
 			(void)sprintf(tmp_val, "Total: %3liM%1li lb", totalwgt / 10000000, (totalwgt % 10000000) / 1000000);
 		c_put_str(TERM_L_BLUE, tmp_val, 0, 64);
 	}
+
+#ifdef ENABLE_SUBINVEN
+	/* Mention the two basic commands for handling subinventories */
+	c_put_str(TERM_L_BLUE, "Container inventory - 't': unstow items.", 0, 0);
+#endif
 
 	/* Make a "shadow" below the list (only if needed) */
 	if (j && (j < 23)) prt("", j + 1, col ? col - 2 : col);

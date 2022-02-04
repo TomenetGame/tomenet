@@ -744,6 +744,9 @@ void cmd_inven(void) {
 	show_inven();
 
 	while (TRUE) {
+		/* Redraw these in case some command from below has erased the topline */
+		show_inven_header();
+
 		ch = inkey();
 		/* allow pasting item into chat */
 		if (ch >= 'A' && ch < 'A' + INVEN_PACK) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
@@ -787,10 +790,16 @@ void cmd_inven(void) {
 		case ':':
 			cmd_message();
 			continue;
+		case 'b': /* Added for ENABLE_SUBINVEN, but it's fine in general, just need to clean up first, which is done in cmd_browse().. */
+			cmd_browse();
+			/* ..and cmd_browse() also knows to restore our state */
+			continue;
 #ifdef ENABLE_SUBINVEN
 		/* Additional commands specifically replacing/allowing backpack-related commands for subinventories: */
 		/* Move item to backpack inventory - let's abuse equipment-related commands for the heck of it */
-		case 'w': cmd_subinven_move(); continue;
+		case 'w':
+			cmd_subinven_move();
+			continue;
 #endif
 		}
 
@@ -5558,9 +5567,31 @@ static bool item_tester_browsable(object_type *o_ptr) {
 	    );
 }
 
+static void cmd_browse_aux_restore(void) {
+	/* For unknown reason the top line text from show_subinven() remained on screen even after Term_load() */
+	clear_topline();
+
+	Term_save();
+	showing_inven = screen_icky;
+	command_gap = 50;
+	show_inven();
+}
 void cmd_browse(void) {
 	int item;
 	object_type *o_ptr;
+	bool from_inven = showing_inven;
+
+	/* For some reason, cmd_browse() always shows the list when called form within inventory screen,
+	   so we need this here in front instead of after the c_get_item() prompt below.. */
+	/* Hack: We were called form inventory? */
+	if (from_inven) {
+		/* Leave inventory screen first */
+		screen_line_icky = -1;
+		screen_column_icky = -1;
+		showing_inven = FALSE;
+		Term_load();
+		Flush_queue();
+	}
 
 /* commented out because first, admins are usually ghosts;
    second, we might want a 'ghost' tome or something later,
@@ -5578,8 +5609,8 @@ void cmd_browse(void) {
 
 	item_tester_hook = item_tester_browsable;
 
-	if (!c_get_item(&item, "Browse which book/satchel? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG))) {
-		if (item == -2) c_msg_print("You have no books that you can read, nor satchels to check.");
+	if (!c_get_item(&item, "Browse which book/container? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG))) {
+		if (item == -2) c_msg_print("You have no books that you can read, nor containers to peruse.");
 		return;
 	}
 #else
@@ -5593,21 +5624,25 @@ void cmd_browse(void) {
 		return;
 	}
 #endif
+
 	o_ptr = &inventory[item];
 
 #ifdef ENABLE_SUBINVEN
 	if (o_ptr->tval == TV_SUBINVEN) {
 		cmd_subinven(item);
+		if (from_inven) cmd_browse_aux_restore();
 		return;
 	}
 #endif
 	if (o_ptr->tval == TV_BOOK) {
 		browse_school_spell(item, o_ptr->sval, o_ptr->pval);
+		if (from_inven) cmd_browse_aux_restore();
 		return;
 	}
 
 	/* Show it */
 	show_browse(o_ptr);
+	if (from_inven) cmd_browse_aux_restore();
 }
 
 void cmd_ghost(void) {
