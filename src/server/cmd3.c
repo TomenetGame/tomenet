@@ -4851,6 +4851,8 @@ static bool subinven_move_aux(int Ind, int islot, int sslot) {
 	/* Still not fully moved */
 	return FALSE;
 }
+/* Tries to move the item or item stack in one inventory slot completely into
+   the first available and eligible subinventory. */
 void do_cmd_subinven_move(int Ind, int islot) {
 	player_type *p_ptr = Players[Ind];
 	object_type *i_ptr, *s_ptr;
@@ -4863,6 +4865,12 @@ void do_cmd_subinven_move(int Ind, int islot) {
 
 	i_ptr = &p_ptr->inventory[islot];
 	if (!i_ptr->tval) return;
+
+	/* Not eligible ever */
+	if (i_ptr->tval == TV_SUBINVEN) {
+		msg_print(Ind, "\377yYou cannot place one container into another.");
+		return;
+	}
 
 	tval = i_ptr->tval;
 	sval = i_ptr->sval;
