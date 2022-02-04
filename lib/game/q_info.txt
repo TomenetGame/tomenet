@@ -382,19 +382,19 @@ yR:-:Choosing a fitting dungeon to [[explore]]? Or are you wondering about
 yR:-:the public [[events]] that are taking place from time to time? I could
 yR:-:also have a look at your [[equipment]] if you like.
 
-Y:0:0:-:*prepar*:-:255
-Y:0:0:-:*inven*:-:255
+Y:0:0:-:*prep*:-:255
+Y:0:0:-:*inv*:-:255
 Y:0:0:-:*pack*:-:255
-y:-1:-1:-:*prepar*
-yY:*inven*:*pack*
+y:-1:-1:-:*prep*
+yY:*inv*:*pack*
 yR:-://quest_towneltalk("$$c", 0)
 
-Y:0:0:-:*equip*:-:255
-y:-1:-1:-:*equip*
+Y:0:0:-:*eq*:-:255
+y:-1:-1:-:*eq*
 yR:-://quest_towneltalk("$$c", 1)
 
-Y:0:0:-:*skill*:-:255
-y:-1:-1:-:*skill*
+Y:0:0:-:*skil*:-:255
+y:-1:-1:-:*skil*
 yR:-://quest_towneltalk("$$c", 2)
 
 Y:0:0:-:*stat*:-:255
@@ -405,12 +405,12 @@ Y:0:0:-:*part*:-:255
 y:-1:-1:-:*part*
 yR:-://quest_towneltalk("$$c", 4)
 
-Y:0:0:-:*explor*:-:255
-y:-1:-1:-:*explor*
+Y:0:0:-:*exp*:-:255
+y:-1:-1:-:*exp*
 yR:-://quest_towneltalk("$$c", 5)
 
-Y:0:0:-:*event*:-:255
-y:-1:-1:-:*event*
+Y:0:0:-:*ev*:-:255
+y:-1:-1:-:*ev*
 yR:-://quest_towneltalk("$$c", 6)
 
 
