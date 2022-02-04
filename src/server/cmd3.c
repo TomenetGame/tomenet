@@ -374,6 +374,11 @@ int inven_drop(int Ind, int item, int amt) {
 	}
 #endif
 
+#ifdef ENABLE_SUBINVEN
+	/* If we drop a subinventory, remove all items and place them into the player's inventory */
+	if (o_ptr->tval == TV_SUBINVEN && amt >= o_ptr->number) empty_subinven(Ind, item);
+#endif
+
 	/* Make a "fake" object */
 	tmp_obj = *o_ptr;
 	tmp_obj.number = amt;
@@ -2158,6 +2163,11 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 	}
 
 	if (is_magic_device(o_ptr->tval)) divide_charged_item(NULL, o_ptr, quantity);
+
+#ifdef ENABLE_SUBINVEN
+	/* If we destroy a subinventory, remove all items and place them into the player's inventory */
+	if (o_ptr->tval == TV_SUBINVEN && quantity >= o_ptr->number) empty_subinven(Ind, item);
+#endif
 
 	/* Eliminate the item (from the pack) */
 	if (item >= 0) {
@@ -4901,18 +4911,13 @@ void do_cmd_subinven_move(int Ind, int islot) {
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 }
-void do_cmd_subinven_remove(int Ind, int islot, int slot) {
+/* live: if TRUE, item changes are sent to client. */
+void subinven_remove_aux(int Ind, int islot, int slot) {
 	player_type *p_ptr = Players[Ind];
-	object_type *s_ptr, *o_ptr;
+	object_type *o_ptr;
 	int i;
 
-	if (islot < 0 || islot >= INVEN_PACK) return;
-	s_ptr = &p_ptr->inventory[islot];
-	if (!s_ptr->tval || s_ptr->tval != TV_SUBINVEN) return;
-
-	if (slot < 0 || slot >= get_subinven_size(s_ptr->sval)) return;
 	o_ptr = &p_ptr->subinventory[islot][slot];
-	if (!o_ptr->tval) return;
 
 	inven_carry(Ind, o_ptr);
 
@@ -4922,7 +4927,7 @@ void do_cmd_subinven_remove(int Ind, int islot, int slot) {
 	/* -- This is partial code from inven_item_optimize() -- */
 
 	/* Slide everything down */
-	for (i = slot; i < get_subinven_size(s_ptr->sval); i++) {
+	for (i = slot; i < get_subinven_size(p_ptr->inventory[islot].sval); i++) {
 		/* Structure copy */
 		p_ptr->subinventory[islot][i] = p_ptr->subinventory[islot][i + 1];
 		display_subinven_aux(Ind, islot, i);
@@ -4941,20 +4946,28 @@ void do_cmd_subinven_remove(int Ind, int islot, int slot) {
  #else
 	//p_ptr->notice |= (PN_COMBINE);
 	//p_ptr->window |= (PW_INVEN | PW_PLAYER);
-	//--todo: implement for subinvens?-- inven_item_optimize(Ind, slot);
  #endif
+	/* Window stuff */
+	//if (live) p_ptr->window |= (PW_INVEN | PW_PLAYER);
+}
+void do_cmd_subinven_remove(int Ind, int islot, int slot) {
+	player_type *p_ptr = Players[Ind];
+	object_type *s_ptr, *o_ptr;
 
- #ifdef USE_SOUND_2010
-	//sound_item(Ind, tval, sval, "drop_");
- #endif
+	if (islot < 0 || islot >= INVEN_PACK) return;
+	s_ptr = &p_ptr->inventory[islot];
+	if (!s_ptr->tval || s_ptr->tval != TV_SUBINVEN) return;
+
+	if (slot < 0 || slot >= get_subinven_size(s_ptr->sval)) return;
+	o_ptr = &p_ptr->subinventory[islot][slot];
+	if (!o_ptr->tval) return;
+
+	subinven_remove_aux(Ind, islot, slot);
 
 	//break_cloaking(Ind, 5);
 	//break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
-
-	/* Window stuff */
-	//p_ptr->window |= (PW_INVEN | PW_PLAYER);
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);

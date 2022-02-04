@@ -710,11 +710,12 @@ extern void power_inscribe(object_type *o_ptr, bool redux, char *powins);
 extern bool check_power_inscribe(int Ind, object_type *o_ptr, char *o_name, cptr inscription);
 #ifdef ENABLE_SUBINVEN
 extern void do_cmd_subinven_move(int Ind, int islot);
+extern bool subinven_move_aux(int Ind, int islot, int sslot);
 extern void do_cmd_subinven_remove(int Ind, int islot, int slot);
+extern void subinven_remove_aux(int Ind, int islot, int slot);
  #ifdef SUBINVEN_LIMIT_GROUP
 extern bool subinven_group_player(int Ind, int group, int slot);
  #endif
-extern bool subinven_move_aux(int Ind, int islot, int sslot);
 #endif
 
 /* cmd4.c */
@@ -1315,6 +1316,7 @@ extern void inven_carry_equip(int Ind, object_type *o_ptr);
 extern bool item_tester_okay(object_type *o_ptr);
 extern void display_inven(int Ind);
 #ifdef ENABLE_SUBINVEN
+extern void display_subinven(int Ind, int islot);
 extern void display_subinven_aux(int Ind, int islot, int slot);
 #endif
 extern void display_equip(int Ind);
@@ -2054,6 +2056,8 @@ extern bool verify_inven_item(int Ind, int item);
 extern void get_inven_item(int Ind, int item, object_type **o_ptr);
 #ifdef ENABLE_SUBINVEN
 extern void get_subinven_item(int Ind, int item, object_type **o_ptr, int *sitem, int *iitem);
+extern void empty_subinven(int Ind, int item);
+extern void erase_subinven(int Ind, int item);
 #endif
 
 

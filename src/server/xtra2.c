@@ -8345,6 +8345,16 @@ static void inven_death_damage(int Ind, int verbose) {
 			}
 			questitem_d(o_ptr, o_ptr->number);
 
+#ifdef ENABLE_SUBINVEN
+ #if 0
+			/* If we lose a subinventory, remove all items and place them into the player's inventory */
+			if (o_ptr->tval == TV_SUBINVEN) empty_subinven(Ind, j);
+ #else
+			/* If we lose a subinventory, destroy the contents with it */
+			if (o_ptr->tval == TV_SUBINVEN) erase_subinven(Ind, j);
+ #endif
+#endif
+
 			inven_item_increase(Ind, j, -(o_ptr->number));
 			inven_item_optimize(Ind, j);
 			inventory_loss++;

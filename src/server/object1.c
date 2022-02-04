@@ -6293,6 +6293,18 @@ void display_subinven_aux(int Ind, int islot, int slot) {
 	/* Send the info to the client */
 	Send_subinven(Ind, islot, tmp_val[0], attr, wgt, o_ptr, o_name);
 }
+/* Send whole subinventory contents of one container */
+void display_subinven(int Ind, int islot) {
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr = &p_ptr->inventory[islot];
+	int i;
+
+	/* paranoia */
+	if (o_ptr->tval != TV_SUBINVEN) return;
+
+	for (i = 0; i < get_subinven_size(o_ptr->sval); i++)
+		display_subinven_aux(Ind, islot, i);
+}
 #endif
 
 /*

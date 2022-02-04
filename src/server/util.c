@@ -9404,4 +9404,30 @@ void get_subinven_item(int Ind, int item, object_type **o_ptr, int *sitem, int *
 	/* Optionally set o_ptr already for convenience */
 	if (Ind && o_ptr && sitem && iitem) *o_ptr = &Players[Ind]->subinventory[*sitem][*iitem];
 }
+/* Empty a subinventory, moving all contents to the player inventory, causing overflow if not enough space. */
+void empty_subinven(int Ind, int item) {
+	player_type *p_ptr = Players[Ind];
+	int i, s = get_subinven_size(p_ptr->inventory[item].sval);
+
+	/* Empty everything first, without live-updating the slots (FALSE) */
+	for (i = 0; i < s; i++) {
+		inven_carry(Ind, &p_ptr->subinventory[item][i]);
+		invwipe(&p_ptr->subinventory[item][i]);
+	}
+
+	/* Then, efficiently update it completely at once */
+	display_subinven(Ind, item);
+}
+/* Erase all contents of a subinventory. Does not delete the subinventory container item iteself. */
+void erase_subinven(int Ind, int item) {
+	player_type *p_ptr = Players[Ind];
+	int i, s = get_subinven_size(p_ptr->inventory[item].sval);
+
+	/* Empty everything first, without live-updating the slots (FALSE) */
+	for (i = 0; i < s; i++)
+		invwipe(&p_ptr->subinventory[item][i]);
+
+	/* Then, efficiently update it completely at once */
+	display_subinven(Ind, item);
+}
 #endif
