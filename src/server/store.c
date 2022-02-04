@@ -810,6 +810,11 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_BOTTLE:
 		case TV_CHEST:
 			break;
+#ifdef ENABLE_SUBINVEN
+		case TV_SUBINVEN: /* Chest clones */
+			if (o_ptr->sval < SV_SI_GROUP_CHEST_MIN || o_ptr->sval > SV_SI_GROUP_CHEST_MAX) return FALSE;
+			break;
+#endif
 		default:
 			return (FALSE);
 		}
@@ -887,6 +892,17 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 	case STORE_DEEPSUPPLY:
 		/* Analyze the type */
 		switch (o_ptr->tval) {
+#ifdef ENABLE_SUBINVEN
+		case TV_SUBINVEN:
+			if (o_ptr->sval != SV_SI_SATCHEL) return FALSE;
+			break;
+#endif
+#ifdef ENABLE_DEMOLITIONIST
+		case TV_TOOL:
+			if (o_ptr->sval != SV_TOOL_GRINDER) return FALSE;
+			break;
+		case TV_CHEMICAL:
+#endif
 		case TV_SCROLL:
 		case TV_POTION:
 		case TV_POTION2:
@@ -894,9 +910,6 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_FIRESTONE:
 		/* ok finally */
 		case TV_BOTTLE:
-#ifdef ENABLE_DEMOLITIONIST
-		case TV_CHEMICAL:
-#endif
 			break;
 		default:
 			return (FALSE);
@@ -1693,7 +1706,7 @@ static void store_create(store_type *st_ptr) {
 			/* Hack -- fake level for apply_magic() */
 
 			/* 'Fake town' dungeon stores don't have a sensible 'town level', use dungeon level instead */
-			if (st_ptr->st_idx >= 70 && st_ptr->st_idx <= 79) {
+			if (st_ptr->st_idx >= STORE_GENERAL_DUN && st_ptr->st_idx <= STORE_RUNE_DUN) {
 				level = return_level(st_ptr, town[st_ptr->town].dlev_depth);
 			} else {
 				level = return_level(st_ptr, town[st_ptr->town].baselevel); /* note: it's margin is random! */
