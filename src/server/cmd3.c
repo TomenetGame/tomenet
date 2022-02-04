@@ -4833,7 +4833,11 @@ void do_cmd_subinven_move(int Ind, int islot) {
 
 	/* Not eligible ever */
 	if (i_ptr->tval == TV_SUBINVEN) {
-		msg_print(Ind, "\377yYou cannot place one container into another.");
+		msg_print(Ind, "\377yYou cannot stow any type of container.");
+		return;
+	}
+	if (i_ptr->tval == TV_CHEST) {
+		msg_print(Ind, "\377yYou cannot stow a chest.");
 		return;
 	}
 
