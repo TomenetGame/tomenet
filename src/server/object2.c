@@ -10682,6 +10682,10 @@ bool inven_item_optimize(int Ind, int item) {
 			display_subinven_aux(Ind, s, i);
 		}
 
+		/* Erase the "final" slot */
+		invwipe(&p_ptr->subinventory[s][i]);
+		display_subinven_aux(Ind, s, i);
+
 		return TRUE;
 	}
 	else o_ptr = &p_ptr->inventory[item];

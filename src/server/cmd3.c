@@ -1988,12 +1988,7 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	/* Get the item (in the pack) */
-	if (item >= 0) o_ptr = &(p_ptr->inventory[item]);
-	/* Get the item (on the floor) */
-	else {
-		if (-item >= o_max) return FALSE; /* item doesn't exist */
-		o_ptr = &o_list[0 - item];
-	}
+	get_inven_item(Ind, item, &o_ptr);
 
 	/* Describe the object */
 	old_number = o_ptr->number;
@@ -2675,16 +2670,8 @@ void do_cmd_uninscribe(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 
-
 	/* Get the item (in the pack) */
-	if (item >= 0) o_ptr = &(p_ptr->inventory[item]);
-	/* Get the item (on the floor) */
-	else {
-		if (-item >= o_max)
-			return; /* item doesn't exist */
-
-		o_ptr = &o_list[0 - item];
-	}
+	get_inven_item(Ind, item, &o_ptr);
 
 	/* Nothing to remove */
 	if (!o_ptr->note) {
@@ -2711,6 +2698,13 @@ void do_cmd_uninscribe(int Ind, int item) {
 	o_ptr->note = 0;
 	o_ptr->note_utag = 0;
 
+#ifdef ENABLE_SUBINVEN
+	if (item >= 100) {
+		display_subinven_aux(Ind, item / 100 - 1, item % 100);
+		return;
+	}
+#endif
+
 	/* Combine the pack */
 	p_ptr->notice |= (PN_COMBINE);
 
@@ -2730,16 +2724,8 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 	const char *qins;
 	char *c;
 
-
 	/* Get the item (in the pack) */
-	if (item >= 0) o_ptr = &(p_ptr->inventory[item]);
-	/* Get the item (on the floor) */
-	else {
-		if (-item >= o_max)
-			return; /* item doesn't exist */
-
-		o_ptr = &o_list[0 - item];
-	}
+	get_inven_item(Ind, item, &o_ptr);
 
 	/* small hack, make shirt logos permanent */
 	if (o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT && !is_admin(p_ptr)) {
@@ -2888,6 +2874,13 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 	/* Save the inscription */
 	o_ptr->note = quark_add(inscription);
 	o_ptr->note_utag = 0;
+
+#ifdef ENABLE_SUBINVEN
+	if (item >= 100) {
+		display_subinven_aux(Ind, item / 100 - 1, item % 100);
+		return;
+	}
+#endif
 
 	/* Combine the pack */
 	p_ptr->notice |= (PN_COMBINE);
@@ -4926,6 +4919,10 @@ void do_cmd_subinven_remove(int Ind, int islot, int slot) {
 		p_ptr->subinventory[islot][i] = p_ptr->subinventory[islot][i + 1];
 		display_subinven_aux(Ind, islot, i);
 	}
+
+	/* Erase the "final" slot */
+	invwipe(&p_ptr->subinventory[islot][i]);
+	display_subinven_aux(Ind, islot, i);
 
 	/* Update inventory indeces - mikaelh */
 	//inven_index_erase(Ind, islot);

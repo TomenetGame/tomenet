@@ -1991,9 +1991,6 @@ int Receive_subinven(void) {
 
 	strncpy(subinventory_name[ipos][pos - 'a'], name, ONAME_LEN - 1);
 
-	/* Window stuff */
-	//p_ptr->window |= (PW_INVEN);
-
 	return 1;
 }
 #endif

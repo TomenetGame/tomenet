@@ -1976,10 +1976,8 @@ void show_subinven(int islot) {
 		c_put_str(TERM_L_BLUE, tmp_val, 0, 64);
 	}
 
-#ifdef ENABLE_SUBINVEN
 	/* Mention the two basic commands for handling subinventories */
-	c_put_str(TERM_L_BLUE, "Container inventory - 't': unstow items.", 0, 0);
-#endif
+	c_put_str(TERM_L_BLUE, "Container inventory - 't': unstow items, 'a': activate chemicals.", 0, 0);
 
 	/* Make a "shadow" below the list (only if needed) */
 	if (j && (j < 23)) prt("", j + 1, col ? col - 2 : col);

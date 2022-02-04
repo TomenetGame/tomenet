@@ -5457,22 +5457,16 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		set_tim_wraith(Ind, 0);
 #endif	// 0
 
+	get_inven_item(Ind, item, &o_ptr);
 #ifdef ENABLE_SUBINVEN
 	if (item >= 100) {
-		o_ptr = &p_ptr->subinventory[item / 100 - 1][item % 100];
 		/* For now, only allow demo-alch from here */
-		if (o_ptr->tval != TV_CHEMICAL) return;
-	} else
+		if (o_ptr->tval != TV_CHEMICAL) {
+			msg_print(Ind, "You can only activate chemicals inside alchemy satchels.");
+			return;
+		}
+	}
 #endif
-	/* Get the item (in the pack) */
-	if (item >= 0) {
-		o_ptr = &p_ptr->inventory[item];
-	}
-	/* Get the item (on the floor) */
-	else {
-		if (-item >= o_max) return; /* item doesn't exist */
-		o_ptr = &o_list[0 - item];
-	}
 
 	/* dual-wield hack: cannot activate items if armour is too heavy.
 	   Spectral weapons will not drain life either ;). */

@@ -831,7 +831,6 @@ void cmd_subinven(int islot) {
 
 	Term_save();
 	showing_inven = screen_icky;
-
 	command_gap = 50;
 
  #ifdef USE_SOUND_2010
@@ -846,6 +845,7 @@ void cmd_subinven(int islot) {
 	using_subinven_size = subinven_size;
 
 	while (TRUE) {
+		topline_icky = TRUE; /* Server replies after commands like drop, destroy.. will overwrite our header line otherwise, when they arrive. */
 		show_subinven(islot);
 
 		ch = inkey();
@@ -876,18 +876,18 @@ void cmd_subinven(int islot) {
 			cmd_observe(USE_INVEN);
 			continue;
 		case 'd':
-			cmd_drop(USE_INVEN);		//todo
-			continue;
+			cmd_drop(USE_INVEN);
+			break; /* Need to refresh the subinven list, as soon as the server replies with the subinventory-update, so leave for now */
 		case 'k':
 		case KTRL('D'):
 			cmd_destroy(USE_INVEN);		//todo
-			continue;
+			break; /* Need to refresh the subinven list, as soon as the server replies with the subinventory-update, so leave for now */
 		case '{':
 			cmd_inscribe(USE_INVEN);	//todo
-			continue;
+			break; /* Need to refresh the subinven list, as soon as the server replies with the subinventory-update, so leave for now */
 		case '}':
 			cmd_uninscribe(USE_INVEN);	//todo
-			continue;
+			break; /* Need to refresh the subinven list, as soon as the server replies with the subinventory-update, so leave for now */
 		case ':':
 			cmd_message();
 			continue;
@@ -903,7 +903,9 @@ void cmd_subinven(int islot) {
 		//case 'H': cmd_apply_autoins(); continue;
 
 		/* Specifically required for DEMOLITIONIST chemicals */
-		case 'a': cmd_activate(); continue; // 'A' is item-to-chat pasting, oops	//todo
+		case 'a':
+			cmd_activate(); // 'A' is item-to-chat pasting, oops	//todo
+			break; /* Need to refresh the subinven list, as soon as the server replies with the subinventory-update, so leave for now */
 
 		/* Misc stuff that could be considered */
 #if 0
