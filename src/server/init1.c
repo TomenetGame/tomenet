@@ -6520,7 +6520,7 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 			/* Get the index */
 			st_ptr->table[item_idx][1] = rar1;
 			/* Hack -- 256 as a sval means all possible items */
-			st_ptr->table[item_idx++][0] = (sv1 < 256)?lookup_kind(tv1, sv1):tv1 + 10000;
+			st_ptr->table[item_idx++][0] = (sv1 < 256) ? lookup_kind(tv1, sv1) : tv1 + 10000;
 
 			st_ptr->table_num = item_idx;
 
