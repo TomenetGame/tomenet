@@ -2673,5 +2673,3 @@ extern int dbgvar1b, dbgvar2b, dbgvar3b, dbgvar4b, dbgvar5b, dbgvar6b;
 extern char dbgvars[MAX_CHARS];
 
 extern bool pvp_disabled;
-
-extern object_type dummy_object;
