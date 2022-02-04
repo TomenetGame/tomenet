@@ -797,7 +797,7 @@ void cmd_inven(void) {
 #ifdef ENABLE_SUBINVEN
 		/* Additional commands specifically replacing/allowing backpack-related commands for subinventories: */
 		/* Move item to backpack inventory - let's abuse equipment-related commands for the heck of it */
-		case 'w':
+		case 's':
 			cmd_subinven_move();
 			continue;
 #endif
@@ -843,6 +843,7 @@ void cmd_subinven(int islot) {
 	/* Redirect all inventory-related commands to this subinventory */
 	using_subinven = islot;
 	using_subinven_size = subinven_size;
+	using_subinven_item = -1;
 
 	while (TRUE) {
 		topline_icky = TRUE; /* Server replies after commands like drop, destroy.. will overwrite our header line otherwise, when they arrive. */
@@ -905,7 +906,11 @@ void cmd_subinven(int islot) {
 		/* Specifically required for DEMOLITIONIST chemicals */
 		case 'a':
 			cmd_activate(); // 'A' is item-to-chat pasting, oops	//todo
-			break; /* Need to refresh the subinven list, as soon as the server replies with the subinventory-update, so leave for now */
+			continue;
+			/* Hmm, we might need or not need to refresh the subinven list, as soon as the server replies with the subinventory-update,
+			   depending on whether we Receive_item() for a 2nd item to participate, or not.
+			   While just break; would be required to update our inventory for 1-item-activations, we should stay within cmd_subinven()
+			   context to process the Receive_item() request within the same satchel.. Let's introduce 'using_subinven_item' maybe. */
 
 		/* Misc stuff that could be considered */
 #if 0
@@ -928,6 +933,7 @@ void cmd_subinven(int islot) {
 
 	/* End redirection of inventory-related commands, as we left the subinventory */
 	using_subinven = -1;
+	using_subinven_item = -1;
 
 	screen_line_icky = -1;
 	screen_column_icky = -1;
@@ -937,6 +943,9 @@ void cmd_subinven(int islot) {
 	/* restore the screen */
 	Term_load();
 	/* print our new location */
+
+	topline_icky = FALSE;
+	clear_topline_forced();
 
 	/* Flush any events */
 	Flush_queue();
@@ -1491,6 +1500,7 @@ void cmd_activate(void) {
 		/* Does item require aiming? (Always does if not yet identified) */
 		if (subinventory[using_subinven][item % 100].uses_dir == 0) {
 			/* (also called if server is outdated, since uses_dir will be 0 then) */
+			using_subinven_item = item; /* allow mixing chemicals directly from satchels */
 			Send_activate(item);
 		} else {
 			if (!get_dir(&dir)) return;
@@ -2614,7 +2624,8 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					fallback_uppercase = 4;
 					continue;
 				}
-				if (my_strcasestr("charges", buf) && strlen(buf) >= 5 && !my_strcasestr(buf, "re")) {
+				if ((my_strcasestr("charges", buf) && strlen(buf) >= 5 && !my_strcasestr(buf, "re")) ||
+				    (my_strcasestr(buf, "reci") && !my_strcasestr(buf, "preci"))) { //recipes
 					strcpy(buf, "CHARGE TYPE");
 					fallback = TRUE;
 					fallback_uppercase = 4;

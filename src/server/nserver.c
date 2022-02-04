@@ -11223,16 +11223,16 @@ static int Receive_item(int ind) {
 		return n;
 	}
 
+	/* Sanity check - mikaelh */
+	if (!verify_inven_item(player, item)) return 1;
+
 #ifdef ENABLE_SUBINVEN
 	if (item >= 100 && p_ptr) {
+		/* Handle directly? */
 		Handle_item(player, item);
 		return 1;
 	}
 #endif
-
-	/* Sanity check - mikaelh */
-	if (item >= INVEN_TOTAL)
-		return 1;
 
 	if (p_ptr) {
 		item = replay_inven_changes(player, item);

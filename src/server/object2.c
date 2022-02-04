@@ -10675,6 +10675,8 @@ bool inven_item_optimize(int Ind, int item) {
 		/* Erase object in subinven, slide followers */
 		o_ptr->tval = o_ptr->k_idx = o_ptr->number = 0;
 
+s_printf("optimizing item %d (s %d, i%d)\n", item, s, item % 100);
+
 		/* Slide everything down */
 		for (i = item % 100; i < get_subinven_size(s_ptr->sval); i++) {
 			/* Structure copy */

@@ -1693,7 +1693,7 @@ void show_inven_header(void) {
 
 #ifdef ENABLE_SUBINVEN
 	/* Mention the two basic commands for handling subinventories */
-	c_put_str(TERM_L_BLUE, "Inventory - 'w': stow items, 'b': browse books or containers.", 0, 0);
+	c_put_str(TERM_L_BLUE, "Inventory - 's': stow items, 'b': browse books or containers.", 0, 0);
 #endif
 
 	/* hack: hide cursor */
@@ -1832,7 +1832,7 @@ void show_inven(void) {
 
 #ifdef ENABLE_SUBINVEN
 	/* Mention the two basic commands for handling subinventories */
-	c_put_str(TERM_L_BLUE, "Inventory - 'w': stow items, 'b': browse books or containers.", 0, 0);
+	c_put_str(TERM_L_BLUE, "Inventory - 's': stow items, 'b': browse books or containers.", 0, 0);
 #endif
 
 	/* Make a "shadow" below the list (only if needed) */

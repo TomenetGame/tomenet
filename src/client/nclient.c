@@ -1991,6 +1991,8 @@ int Receive_subinven(void) {
 
 	strncpy(subinventory_name[ipos][pos - 'a'], name, ONAME_LEN - 1);
 
+	//problem: update subinventory live. eg after activation-consumption, but also after unstow w/ latency?
+
 	return 1;
 }
 #endif
@@ -3060,7 +3062,11 @@ int Receive_item(void) {
 		if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
 	}
 
-	if (!screen_icky && !topline_icky) {
+	if ((!screen_icky && !topline_icky)
+#ifdef ENABLE_SUBINVEN
+	    || using_subinven_item != -1
+#endif
+	    ) {
 		switch (th) {
 		case ITH_NONE:
 		default:
