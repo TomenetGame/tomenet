@@ -7,7 +7,7 @@ function quest_towneltalk(Ind, msg, topic)
 	local hinted, hintsub, i, w, x, y, z
 
 	hinted = 0
-	hintsub = 0
+	hintsub = 0 --subsequent hints that chain grammatically for nice flow of text
 	if player.admin_dm ~= 0 then admin = 1 else admin = 0 end
 
 	--tips regarding equipping [prepare|preparing|preparationS],skilling [skillS],
@@ -81,9 +81,9 @@ function quest_towneltalk(Ind, msg, topic)
 				end
 				if x == 1 then
 					if hinted == 1 then
-						msg_print(Ind, "\252\255UThat ring of power in your backpack, you cannot use it as it isn't yours! If you want to get rid of it you will need a scroll of *remove curse*! A normal scroll of remove curse will not suffice as it is heavily cursed!")
+						msg_print(Ind, "\252\255UAlso, about that Ring of Power in your backpack, you cannot use it as it isn't yours! If you want to get rid of it you will need a scroll of *remove curse*! A normal scroll of remove curse will not suffice as it is heavily cursed!")
 					else
-						msg_print(Ind, "\252\255UOh "..msg.."! That ring of power in your backpack, you cannot use it as it isn't yours! If you want to get rid of it you will need a scroll of *remove curse*! A normal scroll of remove curse will not suffice as it is heavily cursed!")
+						msg_print(Ind, "\252\255UOh "..msg.."! That Ring of Power in your backpack, you cannot use it as it isn't yours! If you want to get rid of it you will need a scroll of *remove curse*! A normal scroll of remove curse will not suffice as it is heavily cursed!")
 					end
 					hinted = 1
 				end
@@ -162,6 +162,8 @@ function quest_towneltalk(Ind, msg, topic)
 					end
 				end
 			end
+
+			hintsub = 0
 			if x == 0 then
 				if hinted == 1 then
 					msg_print(Ind, "\252\255UIf you don't have means of escape, you should buy scrolls of phase door from the alchemist (the blue '5') in town.")
@@ -182,6 +184,7 @@ function quest_towneltalk(Ind, msg, topic)
 					msg_print(Ind, "\252\255UOh "..msg..", if you don't have healing spells available, you should buy potions to cure at least serious wounds from the temple (the green '4') in town.")
 				end
 				hinted = 1
+				hintsub = 1
 			end
 		elseif player.lev < 30 then
 			for i = 0, INVEN_PACK do
@@ -212,6 +215,8 @@ function quest_towneltalk(Ind, msg, topic)
 					end
 				end
 			end
+
+			hintsub = 0
 			if x == 0 then
 				if hinted == 1 then
 					msg_print(Ind, "\252\255UIf you don't have means of escape, you should buy scrolls of phase door from the alchemist (the blue '5') in town.")
@@ -223,7 +228,11 @@ function quest_towneltalk(Ind, msg, topic)
 			end
 			if z == 0 then
 				if hinted == 1 then
-					msg_print(Ind, "\252\255UIf you can afford it you should buy a scroll or at least a staff of teleportation to get out of more serious trouble easily.")
+					if hintsub == 1 then
+						msg_print(Ind, "\252\255UAnd if you can afford it you should buy a scroll or at least a staff of teleportation to get out of more serious trouble easily.")
+					else
+						msg_print(Ind, "\252\255UIf you can afford it you should buy a scroll or at least a staff of teleportation to get out of more serious trouble easily.")
+					end
 				else
 					msg_print(Ind, "\252\255UOh "..msg..", if you can afford it you should buy a scroll or at least a staff of teleportation to get out of more serious trouble easily.")
 				end
@@ -241,14 +250,25 @@ function quest_towneltalk(Ind, msg, topic)
 					msg_print(Ind, "\252\255UOh "..msg..", if you don't have healing spells available, you should buy potions of cure critical wounds from the temple (the green '4') in town.")
 				end
 				hinted = 1
+				hintsub = 1
 			end
 		else -- lev 30+
+			hintsub = 0
 			for i = 0, INVEN_PACK do
 				--check for escapes
 				if player.inventory[i + 1].tval == 70 then --TV_SCROLL
 					--SV_SCROLL_TELEPORT
 					if player.inventory[i + 1].sval == 9 then
 						x = 1
+						if player.inventory[i + 1].sval == 9 and player.inventory[i + 1].number < 5 then
+							if hinted == 1 then
+								msg_print(Ind, "\252\255UYour stack of teleportation scrolls is running dangerously low, you should buy more!")
+							else
+								msg_print(Ind, "\252\255UOh "..msg..", your stack of teleportation scrolls is running dangerously low, you should buy more!")
+							end
+							hinted = 1
+							hintsub = 1
+						end
 					end
 				end
 				--check for heals
@@ -256,6 +276,19 @@ function quest_towneltalk(Ind, msg, topic)
 					 --SV_POTION_HEALING
 					if player.inventory[i + 1].sval == 38 then
 						y = 1
+						if player.inventory[i + 1].sval == 9 and player.inventory[i + 1].number < 10 then
+							if hinted == 1 then
+								if hintsub == 1 then
+									msg_print(Ind, "\252\255UYour supply of healing potions is running dangerously low, too!")
+								else
+									msg_print(Ind, "\252\255UYour supply of healing potions is running dangerously low, you should buy more!")
+								end
+							else
+								msg_print(Ind, "\252\255UOh "..msg..", your supply of healing potions is running dangerously low, you should buy more!")
+							end
+							hinted = 1
+							hintsub = 1
+						end
 					end
 				end
 				--check for speed
@@ -263,6 +296,19 @@ function quest_towneltalk(Ind, msg, topic)
 					 --SV_POTION_SPEED
 					if player.inventory[i + 1].sval == 29 then
 						z = 1
+						if player.inventory[i + 1].sval == 9 and player.inventory[i + 1].number < 6 then
+							if hinted == 1 then
+								if hintsub == 1 then
+									msg_print(Ind, "\252\255USame goes for your supply of speed potins!")
+								else
+									msg_print(Ind, "\252\255UYour supply of speed potions is running dangerously low, you should buy more!")
+								end
+							else
+								msg_print(Ind, "\252\255UOh "..msg..", your supply of speed potions is running dangerously low, you should buy more!")
+							end
+							hinted = 1
+							hintsub = 1
+						end
 					end
 				end
 				--check for resist
@@ -270,9 +316,24 @@ function quest_towneltalk(Ind, msg, topic)
 					 --SV_POTION_RESISTANCE
 					if player.inventory[i + 1].sval == 60 then
 						w = 1
+						if player.inventory[i + 1].sval == 9 and player.inventory[i + 1].number < 5 then
+							if hinted == 1 then
+								if hintsub == 1 then
+									msg_print(Ind, "\252\255UAnd your supply of resistance potions needs restocking as well!")
+								else
+									msg_print(Ind, "\252\255UYour supply of resistance potions is running dangerously low, you should buy more!")
+								end
+							else
+								msg_print(Ind, "\252\255UOh "..msg..", your supply of resistance potions is running dangerously low, you should buy more!")
+							end
+							hinted = 1
+							hintsub = 1
+						end
 					end
 				end
 			end
+
+			hintsub = 0
 			if x == 0 then
 				if hinted == 1 then
 					msg_print(Ind, "\252\255UYou should buy scrolls of teleportation from the black market to be able to get out of bigger trouble fast.")
@@ -285,12 +346,24 @@ function quest_towneltalk(Ind, msg, topic)
 			if y == 0 then
 				if hinted == 1 then
 					if hintsub == 1 then
-						msg_print(Ind, "\252\255ULikewise if you don't have healing spells available, you should buy potions of healing there too.")
+						--msg_print(Ind, "\252\255ULikewise if you don't have healing spells available, you should buy potions of healing there too.")
+						msg_print(Ind, "\252\255ULikewise, if you aren't a master healer, you should buy potions of healing there too.")
+						if get_skill_value(Ind, SKILL_NECROMANCY) >= 10 then
+							msg_print(Ind, "\252\255U I can sense that you are adept in Necromancy, but that alone is not enough!")
+						end
 					else
-						msg_print(Ind, "\252\255UIf you don't have healing spells available, you should buy potions of healing from the black market.")
+						--msg_print(Ind, "\252\255UIf you don't have healing spells available, you should buy potions of healing from the black market.")
+						msg_print(Ind, "\252\255UIf you aren't a master healer, you should buy potions of healing from the black market.")
+						if get_skill_value(Ind, SKILL_NECROMANCY) >= 10 then
+							msg_print(Ind, "\252\255U I can sense that you are adept in Necromancy, but that alone is not enough!")
+						end
 					end
 				else
-					msg_print(Ind, "\252\255UOh "..msg..", if you don't have healing spells available, you should buy potions of healing from the black market.")
+					--msg_print(Ind, "\252\255UOh "..msg..", if you don't have healing spells available, you should buy potions of healing from the black market.")
+					msg_print(Ind, "\252\255UOh "..msg..", if you aren't a master healer, you should buy potions of healing from the black market.")
+					if get_skill_value(Ind, SKILL_NECROMANCY) >= 10 then
+						msg_print(Ind, "\252\255U I can sense that you are adept in Necromancy, but that alone is not enough!")
+					end
 				end
 				hinted = 1
 				hintsub = 1
@@ -319,6 +392,7 @@ function quest_towneltalk(Ind, msg, topic)
 					msg_print(Ind, "\252\255UOh "..msg..", if you don't have resistance spells available, you should buy potions of resistance from the black market.")
 				end
 				hinted = 1
+				hintsub = 1
 			end
 		end
 	end
@@ -339,7 +413,7 @@ function quest_towneltalk(Ind, msg, topic)
 				msg_print(Ind, "\252\255UYou should look for poison resistance. I heard that Amulets of the Serpents are relatively easy to acquire for that need.")
 				hinted = 1
 			end
-			if player.resist_fire == 0 or player.resist_cold == 0 or player.resist_acid == 0 or player.resist_elec == 0 then
+			if (player.resist_fire == 0 and player.immune_fire == 0) or (player.resist_cold == 0 and player.immune_cold == 0) or (player.resist_acid == 0 and player.immune_acid == 0) or (player.resist_elec == 0 and player.immune_elec == 0) then
 				msg_print(Ind, "\252\255UYou definitely want resistance to the four basic elements, fire and cold, acid and lightning!")
 				hinted = 1
 			end
@@ -348,7 +422,7 @@ function quest_towneltalk(Ind, msg, topic)
 				msg_print(Ind, "\252\255UYou might want to look out for Free Action, or you might get paralzyed by a monster and become unable to defend yourself or flee!")
 				hinted = 1
 			end
-			if player.resist_fire == 0 or player.resist_cold == 0 or player.resist_acid == 0 or player.resist_elec == 0 then
+			if (player.resist_fire == 0 and player.immune_fire == 0) or (player.resist_cold == 0 and player.immune_cold == 0) or (player.resist_acid == 0 and player.immune_acid == 0) or (player.resist_elec == 0 and player.immune_elec == 0) then
 				msg_print(Ind, "\252\255UYou probably want to complete your array of resistances to the four basic elements, fire and cold, acid and lightning.")
 				hinted = 1
 			end
