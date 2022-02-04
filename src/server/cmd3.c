@@ -330,7 +330,7 @@ void equip_thrown(int Ind, int slot, object_type *o_ptr, int original_number) {
 int inven_drop(int Ind, int item, int amt) {
 	player_type *p_ptr = Players[Ind];
 
-	object_type		*o_ptr;
+	object_type		*o_ptr;// = &dummy_object;
 	object_type		 tmp_obj;
 
 	cptr		act;
@@ -341,7 +341,7 @@ int inven_drop(int Ind, int item, int amt) {
 
 
 	/* Access the slot to be dropped */
-	o_ptr = &(p_ptr->inventory[item]);
+	get_inven_item(Ind, item, o_ptr);
 
 	/* Not too many */
 	if (amt > o_ptr->number) amt = o_ptr->number;
@@ -360,6 +360,9 @@ int inven_drop(int Ind, int item, int amt) {
 #endif
 
 #ifdef VAMPIRES_INV_CURSED
+ #ifdef ENABLE_SUBINVEN
+	if (item < 100)
+ #endif
 	if (item >= INVEN_WIELD) {
 		if (p_ptr->prace == RACE_VAMPIRE) reverse_cursed(o_ptr);
  #ifdef ENABLE_HELLKNIGHT
@@ -394,6 +397,10 @@ int inven_drop(int Ind, int item, int amt) {
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 
+#ifdef ENABLE_SUBINVEN
+	if (item >= 100) act = "Dropped";
+	else
+#endif
 	/* What are we "doing" with the object */
 	if (amt < o_ptr->number)
 		act = "Dropped";
@@ -413,57 +420,10 @@ int inven_drop(int Ind, int item, int amt) {
 	/* Message */
 	object_desc(Ind, o_name, &tmp_obj, TRUE, 3);
 
-#if 0 //DSMs don't poly anymore due to cheeziness. They breathe instead.
-	/* Polymorph back */
-	if ((item == INVEN_BODY) && (o_ptr->tval == TV_DRAG_ARMOR)) {
-		/* Well, so we gotta check if the player, in case he is a
-		mimic, is using a form that can _only_ come from the armor */
-		//if (p_ptr->pclass == CLASS_MIMIC) //Adventurers can also have mimic skill
-		//{
-			switch (o_ptr->sval) {
-			case SV_DRAGON_BLACK:
-			j = race_index("Ancient black dragon"); break;
-			case SV_DRAGON_BLUE:
-			j = race_index("Ancient blue dragon"); break;
-			case SV_DRAGON_WHITE:
-			j = race_index("Ancient white dragon"); break;
-			case SV_DRAGON_RED:
-			j = race_index("Ancient red dragon"); break;
-			case SV_DRAGON_GREEN:
-			j = race_index("Ancient green dragon"); break;
-			case SV_DRAGON_MULTIHUED:
-			j = race_index("Ancient multi-hued dragon"); break;
-			case SV_DRAGON_PSEUDO:
-			j = race_index("Ethereal drake"); break;
-			//j = race_index("Pseudo dragon"); break;
-			case SV_DRAGON_SHINING:
-			j = race_index("Ethereal dragon"); break;
-			case SV_DRAGON_LAW:
-			j = race_index("Great Wyrm of Law"); break;
-			case SV_DRAGON_BRONZE:
-			j = race_index("Ancient bronze dragon"); break;
-			case SV_DRAGON_GOLD:
-			j = race_index("Ancient gold dragon"); break;
-			case SV_DRAGON_CHAOS:
-			j = race_index("Great Wyrm of Chaos"); break;
-			case SV_DRAGON_BALANCE:
-			j = race_index("Great Wyrm of Balance"); break;
-			case SV_DRAGON_POWER:
-			j = race_index("Great Wyrm of Power"); break;
-			}
-			if ((p_ptr->body_monster == j) &&
-			    ((p_ptr->r_mimicry[j] < r_info[j].level) ||
-			    (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100))))
-				do_mimic_change(Ind, 0, TRUE);
-		/*}
-		else
-		{
-			do_mimic_change(Ind, 0, TRUE);
-		}*/
-	}
-#endif
-
 #if POLY_RING_METHOD == 0
+ #ifdef ENABLE_SUBINVEN
+	if (item < 100)
+ #endif
 	/* Polymorph back */
 	/* XXX this can cause strange things for players with mimicry skill.. */
 	if ((item == INVEN_LEFT || item == INVEN_RIGHT) &&
@@ -482,6 +442,9 @@ int inven_drop(int Ind, int item, int amt) {
 	}
 #endif
 
+#ifdef ENABLE_SUBINVEN
+	if (item < 100)
+#endif
 	/* Check if item gave WRAITH form */
 	if ((k_info[o_ptr->k_idx].flags3 & TR3_WRAITH) && p_ptr->tim_wraith && item >= INVEN_WIELD) {
 		s_printf("DROP_EXPLOIT (wraith): %s dropped %s\n", p_ptr->name, o_name);
@@ -490,6 +453,9 @@ int inven_drop(int Ind, int item, int amt) {
 #endif
 	}
 
+#ifdef ENABLE_SUBINVEN
+	if (item < 100)
+#endif
 	/* Artifacts */
 	if (o_ptr->name1) {
 		artifact_type *a_ptr;
@@ -508,6 +474,9 @@ int inven_drop(int Ind, int item, int amt) {
 	}
 
 #ifdef ENABLE_STANCES
+ #ifdef ENABLE_SUBINVEN
+	if (item < 100)
+ #endif
 	/* take care of combat stances */
  #ifndef ALLOW_SHIELDLESS_DEFENSIVE_STANCE
 	if ((item == INVEN_ARM && p_ptr->combat_stance == 1) ||
@@ -534,6 +503,11 @@ int inven_drop(int Ind, int item, int amt) {
 		o_ptr->sigil = 0;
 		o_ptr->sseed = 0;
 	}
+
+#ifdef ENABLE_SUBINVEN
+	if (item >= 100) ;
+	else
+#endif
 	/* Reset temporary brand enchantments */
 	if (p_ptr->ammo_brand && item == INVEN_AMMO) set_ammo_brand(Ind, 0, p_ptr->ammo_brand_t, 0);
 	/* for now, if one of dual-wielded weapons is stashed away the brand fades for both..
@@ -1728,17 +1702,13 @@ void do_cmd_takeoff(int Ind, int item, int amt) {
 void do_cmd_drop(int Ind, int item, int quantity) {
 	player_type *p_ptr = Players[Ind];
 	byte override = 0;
-	object_type *o_ptr;
+	object_type *o_ptr;//= &dummy_object;
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	cave_type **zcave = getcave(&p_ptr->wpos);
 
-	/* Get the item (in the pack) */
-	if (item >= 0) o_ptr = &(p_ptr->inventory[item]);
-	/* Get the item (on the floor) */
-	else {
-		if (-item >= o_max) return; /* item doesn't exist */
-		o_ptr = &o_list[0 - item];
-	}
+	/* Access the object from the item index */
+	get_inven_item(Ind, item, o_ptr);
+s_printf("drop: %d,tv %d, sv%d\n", item, o_ptr->tval, o_ptr->sval);
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
@@ -1801,6 +1771,9 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 #endif
 	    )) override = 1;
 
+#ifdef ENABLE_SUBINVEN
+	if (item < 100)
+#endif
 	/* Cannot remove cursed items */
 	if (cursed_p(o_ptr)) {
 		if ((item >= INVEN_WIELD) ) {

@@ -3443,7 +3443,7 @@ void store_purchase(int Ind, int item, int amt) {
 
 	/* Hack (for SUBINVEN_LIMIT_GROUP especially! But also good to apply in general):
 	   Some objects are not allowed to stack in the player's inventory, but can be offered stackedly in stores. */
-	if (!object_similar(Ind, o_ptr, o_ptr, tolerance)) amt = 1;
+	if (!object_similar(Ind, o_ptr, o_ptr, tolerance | 0x20)) amt = 1;
 
 #ifdef PLAYER_STORES
 	/* Consistency check: Make sure noone inside a mang-house store
@@ -6044,7 +6044,7 @@ void home_purchase(int Ind, int item, int amt) {
 
 	/* Hack (for SUBINVEN_LIMIT_GROUP especially! But also good to apply in general):
 	   Some objects are not allowed to stack in the player's inventory, but can be stored stackedly in homes. */
-	if (!object_similar(Ind, o_ptr, o_ptr, 0x0)) amt = 1;
+	if (!object_similar(Ind, o_ptr, o_ptr, 0x20)) amt = 1;
 
 	/* check whether client tries to buy more than the store has */
 	if (o_ptr->number < amt) {

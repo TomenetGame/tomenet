@@ -714,6 +714,6 @@ int get_subinven_size(int sval) {
 	case SV_SI_CHEST_LARGE_STEEL:
 		return SI_CHEST_LARGE_STEEL_SIZE;
 	}
-	return INVEN_PACK; /* Default size of a subinventory is same as normal backpack size */
+	return 0; /* Invalid or unknown container */
 }
 #endif

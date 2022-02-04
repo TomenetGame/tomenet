@@ -9327,3 +9327,81 @@ void verify_expfact(int Ind, int p) {
 	}
 	return;
 }
+
+/* Based on Mikaelh's sanity check, extended to this helper function for subinventories. */
+bool verify_inven_item(int Ind, int item) {
+#ifdef ENABLE_SUBINVEN
+	if (item >= 100) {
+		/* Verify container location, must be inside inventory */
+		if (item / 100 - 1 < 0) return FALSE;
+		if (item / 100 - 1 >= INVEN_PACK) return FALSE;
+		if (Players[Ind]->inventory[item / 100 - 1].tval != TV_SUBINVEN) return FALSE;
+
+		/* Verify item location inside container */
+		if (item % 100 < 0) return FALSE; //is this even... compiler specs please
+		if ((item % 100) >= get_subinven_size(Players[Ind]->inventory[item / 100 - 1].sval)) return FALSE;
+
+		return TRUE;
+	}
+#endif
+	/* Allow item on floor? - not really implemented  */
+#if 0
+	if (-item >= o_max) return FALSE;
+#else
+	/* Disallow items on floor. */
+	if (item < 0) return FALSE;
+#endif
+	/* Item in inventory */
+	if (item >= INVEN_TOTAL) return FALSE;
+	return TRUE;
+}
+
+/* Get an item in the player's inventory or -not implemented- on the floor.
+   Returns FALSE if item is illegal (out of bounds), otherwise TRUE.
+   NOTE: We assume the item is legal as a previous verify_inven_item() happened in nserver.c! */
+void get_inven_item(int Ind, int item, object_type *o_ptr) {
+#ifdef ENABLE_SUBINVEN
+	/* This function can be used for subinventories too, if using get_subinven_item() were overkill. */
+	if (item > 100) {
+		o_ptr = &Players[Ind]->subinventory[item / 100 - 1][item % 100];
+		return;
+	}
+#endif
+
+	/* Get the item (in the pack) */
+	if (item >= 0) o_ptr = &Players[Ind]->inventory[item];
+	/* Get the item (on the floor) - not implemented really */
+	else o_ptr = &o_list[0 - item];
+}
+
+#ifdef ENABLE_SUBINVEN
+/* Translate encoded item (>=100) to subinventory index,
+   or just identity if it's not a subinventory, so it includes get_inven_item() functionality.
+   If both Ind and o_ptr are not 0/NULL, o_ptr will be set to point to the indexed object.
+   Ind should be non-zero, to ensure correct check of legal size for the subinventory.
+   The pointers sitem and iitem are optional and hence can both be NULL.
+   NOTE: We assume the item is legal as a previous verify_inven_item() happened in nserver.c! */
+void get_subinven_item(int Ind, int item, object_type *o_ptr, int *sitem, int *iitem) {
+	int i = item; /* For memory safety, in case item and iitem are the same object */
+
+	/* Not a subinventory but just a 'direct' item? */
+	if (i < 100) {
+		/* Normal inven/equip item */
+		if (sitem) *sitem = -1;
+		if (iitem) *iitem = i;
+
+		/* Optionally set o_ptr already for convenience */
+		if (Ind && o_ptr) o_ptr = &Players[Ind]->inventory[i];
+
+		return;
+	}
+
+	/* Determine container slot in backpack */
+	if (sitem) *sitem = i / 100 - 1;
+	/* Determine item slot inside the container */
+	if (iitem) *iitem = i % 100;
+
+	/* Optionally set o_ptr already for convenience */
+	if (Ind && o_ptr && sitem && iitem) o_ptr = &Players[Ind]->subinventory[*sitem][*iitem];
+}
+#endif

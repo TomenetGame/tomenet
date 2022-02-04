@@ -5903,6 +5903,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
  * Note that the label does NOT distinguish inven/equip.
  */
 s16b index_to_label(int i) {
+#ifdef ENABLE_SUBINVEN
+	if (i >= 100) return (I2A(i % 100));
+#endif
+
 	/* Indexes for "inven" are easy */
 	if (i < INVEN_WIELD) return (I2A(i));
 

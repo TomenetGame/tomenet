@@ -9458,14 +9458,7 @@ static int Receive_drop(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-#ifdef ENABLE_SUBINVEN
-	if (item >= 100) {
-		if (item / 100 - 1 >= INVEN_TOTAL) return 1;
-		if ((item % 100) >= get_subinven_size(p_ptr->inventory[item / 100 - 1].sval)) return 1;
-	} else
-#endif
-	if (item >= INVEN_TOTAL)
-		return 1;
+	if (!verify_inven_item(player, item)) return 1;
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
@@ -9574,14 +9567,7 @@ static int Receive_observe(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-#ifdef ENABLE_SUBINVEN
-	if (item >= 100) {
-		if (item / 100 - 1 >= INVEN_TOTAL) return 1;
-		if ((item % 100) >= get_subinven_size(p_ptr->inventory[item / 100 - 1].sval)) return 1;
-	} else
-#endif
-	if (item >= INVEN_TOTAL)
-		return 1;
+	if (!verify_inven_item(player, item)) return 1;
 
 	if (p_ptr) do_cmd_observe(player, item);
 
@@ -9693,14 +9679,7 @@ static int Receive_destroy(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-#ifdef ENABLE_SUBINVEN
-	if (item >= 100) {
-		if (item / 100 - 1 >= INVEN_TOTAL) return 1;
-		if ((item % 100) >= get_subinven_size(p_ptr->inventory[item / 100 - 1].sval)) return 1;
-	} else
-#endif
-	if (item >= INVEN_TOTAL)
-		return 1;
+	if (!verify_inven_item(player, item)) return 1;
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
@@ -10126,7 +10105,7 @@ static int Receive_quaff(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (item >= INVEN_TOTAL) return 1;
+	if (item >= INVEN_PACK) return 1;
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
@@ -10164,7 +10143,7 @@ static int Receive_read(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (item >= INVEN_TOTAL) return 1;
+	if (item >= INVEN_PACK) return 1;
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
@@ -10425,7 +10404,7 @@ static int Receive_wield(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (item >= INVEN_TOTAL) return 1;
+	if (item >= INVEN_PACK) return 1;
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
@@ -10632,14 +10611,7 @@ static int Receive_inscribe(int ind) {
 	inscription[MAX_CHARS - 1] = '\0';
 
 	/* Sanity check - mikaelh */
-#ifdef ENABLE_SUBINVEN
-	if (item >= 100) {
-		if (item / 100 - 1 >= INVEN_TOTAL) return 1;
-		if ((item % 100) >= get_subinven_size(p_ptr->inventory[item / 100 - 1].sval)) return 1;
-	} else
-#endif
-	if (item >= INVEN_TOTAL)
-		return 1;
+	if (!verify_inven_item(player, item)) return 1;
 
 	if (p_ptr) {
 		item = replay_inven_changes(player, item);
@@ -10673,14 +10645,7 @@ static int Receive_uninscribe(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-#ifdef ENABLE_SUBINVEN
-	if (item >= 100) {
-		if (item / 100 - 1 >= INVEN_TOTAL) return 1;
-		if ((item % 100) >= get_subinven_size(p_ptr->inventory[item / 100 - 1].sval)) return 1;
-	} else
-#endif
-	if (item >= INVEN_TOTAL)
-		return 1;
+	if (!verify_inven_item(player, item)) return 1;
 
 	if (p_ptr) {
 		item = replay_inven_changes(player, item);

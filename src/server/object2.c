@@ -3447,7 +3447,7 @@ s64b object_value(int Ind, object_type *o_ptr) {
  */
 bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolerance) {
 	player_type *p_ptr = NULL;
-	int total = o_ptr->number + j_ptr->number;
+	int total = (j_ptr == o_ptr ? o_ptr->number : o_ptr->number + j_ptr->number);
 	bool unknown = !((k_info[o_ptr->k_idx].flags3 & TR3_EASY_KNOW) && (k_info[j_ptr->k_idx].flags3 & TR3_EASY_KNOW))
 	    && (!Ind || !object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr));
 
@@ -10548,6 +10548,11 @@ void inven_item_charges(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &p_ptr->inventory[item];
 
+#ifdef ENABLE_SUBINVEN
+	/* Ignore for now */
+	if (item >= 100) return;
+#endif
+
 	/* Require staff/wand */
 	if ((o_ptr->tval != TV_STAFF) && (o_ptr->tval != TV_WAND)) return;
 
@@ -10572,8 +10577,10 @@ void inven_item_charges(int Ind, int item) {
  */
 void inven_item_describe(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-	object_type *o_ptr = &p_ptr->inventory[item];
+	object_type *o_ptr;// = &dummy_object;
 	char o_name[ONAME_LEN];
+
+	get_inven_item(Ind, item, o_ptr);
 
 	/* Hack -- suppress msg */
 	if (p_ptr->taciturn_messages) return;
