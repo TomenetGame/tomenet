@@ -3601,6 +3601,11 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		/* automatically know the location of IDDC dungeon */
 		p_ptr->wild_map[(WPOS_IRONDEEPDIVE_X + WPOS_IRONDEEPDIVE_Y * MAX_WILD_X) / 8] |=
 		    (1U << ((WPOS_IRONDEEPDIVE_X + WPOS_IRONDEEPDIVE_Y * MAX_WILD_X) % 8));
+ #ifdef DED_IDDC_MANDOS
+		/* automatically know the location of Halls of Mandos */
+		p_ptr->wild_map[(hallsofmandos_wpos_x + hallsofmandos_wpos_y * MAX_WILD_X) / 8] |=
+		    (1U << ((hallsofmandos_wpos_x + hallsofmandos_wpos_y * MAX_WILD_X) % 8));
+ #endif
 	}
 #endif
 

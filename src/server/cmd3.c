@@ -3164,7 +3164,11 @@ void do_cmd_steal(int Ind, int dir) {
 	}
 
 	/* IDDC - don't get exp */
-	if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)) {
+	if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
+#ifdef DED_IDDC_MANDOS
+	    && !in_hallsofmandos(&p_ptr->wpos)
+#endif
+	    ) {
 		msg_print(Ind, "You cannot steal from someone or your life would be forfeit.");
 		return;
 	}

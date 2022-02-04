@@ -1042,6 +1042,9 @@
 /* IDDC special buff: Regain a random drained attribute on levelup. */
 #define IDDC_LEVELUP_RESTORES_STAT
 
+/* IDDC-only characters: Alternatively allow entering the Halls of Mandos! */
+#define DED_IDDC_MANDOS
+
 
 /* Maximum amount of gold that can be farmed from townies before you get 1 XP
    from it. This is an anti-cheeze for Highlander Tournament and Ironman Deep

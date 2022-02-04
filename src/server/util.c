@@ -7713,6 +7713,9 @@ bool gain_au(int Ind, u32b amt, bool quiet, bool exempt) {
 	} else {
 #ifdef EVENT_TOWNIE_GOLD_LIMIT
 		if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
+ #ifdef DED_IDDC_MANDOS
+		    && !in_hallsofmandos(&p_ptr->wpos)
+ #endif
 		    && p_ptr->gold_picked_up == EVENT_TOWNIE_GOLD_LIMIT) {
 			msg_print(Ind, "\377yYou cannot collect any more cash or your life would be forfeit.");
 			return FALSE;

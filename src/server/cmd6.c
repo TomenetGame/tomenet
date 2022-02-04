@@ -267,7 +267,11 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 		if (magik(10)) {
 			msg_print(Ind, "Yuk, that food tasted awful.");
 			if (p_ptr->max_lev < 2 &&
-			    !((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)))
+			    !((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
+#ifdef DED_IDDC_MANDOS
+			     && !in_hallsofmandos(&p_ptr->wpos)
+#endif
+			    ))
 				gain_exp(Ind, 1);
 			break;
 		}

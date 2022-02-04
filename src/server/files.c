@@ -1098,7 +1098,7 @@ unsigned int total_points(int Ind) {
 	bonusd = 100;
 	if (p_ptr->mode & MODE_NO_GHOST) bonusm += 25;
 	if (p_ptr->mode & MODE_HARD) bonusm += 25;
-	if (p_ptr->mode & MODE_DED_IDDC) bonusm += 25;
+	if (p_ptr->mode & MODE_DED_IDDC) bonusm += 25; /* Ok for Mandos too @ DED_IDDC_MANDOS */
 
 	/* Overflow notes: Currently the system has a maximum reachable score for
 	   Level 100 (admin-only, player stops at 99), 999 999 999 XP,

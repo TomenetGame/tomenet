@@ -4351,6 +4351,33 @@ void recall_player(int Ind, char *message) {
 		sprintf(buf, "\374\377a***\377s%s made it through the Halls of Mandos!\377a***", p_ptr->name);
 		msg_broadcast(Ind, buf);
 		l_printf("%s \\{U%s (%d) made it through the Halls of Mandos\n", showdate(), p_ptr->name, p_ptr->lev);
+
+#ifdef DED_IDDC_MANDOS
+		/* enforce dedicated Ironman Deep Dive Challenge character slot usage */
+		if (p_ptr->mode & MODE_DED_IDDC) {
+			msg_print(Ind, "\377aYou return to town and may retire ('Q') when ready.");
+			//msg_print(Ind, "\377aIf you enter a dungeon or tower, \377Rretirement\377a is assumed \377Rautomatically\377a.");
+
+			process_player_change_wpos(Ind);
+			p_ptr->recall_pos.wx = cfg.town_x;
+			p_ptr->recall_pos.wy = cfg.town_y;
+
+			wpcopy(&old_wpos, &p_ptr->wpos);
+			wpcopy(&p_ptr->wpos, &p_ptr->recall_pos);
+			new_players_on_depth(&old_wpos, -1, TRUE);
+			s_printf("Recalled: %s from %d,%d,%d to %d,%d,%d.\n", p_ptr->name,
+			    old_wpos.wx, old_wpos.wy, old_wpos.wz,
+			    p_ptr->recall_pos.wx, p_ptr->recall_pos.wy, p_ptr->recall_pos.wz);
+			p_ptr->new_level_flag = TRUE;
+			new_players_on_depth(&p_ptr->wpos, 1, TRUE);
+			set_invuln_short(Ind, RECALL_GOI_LENGTH);	// It runs out if attacking anyway
+			p_ptr->word_recall = 0;
+			process_player_change_wpos(Ind);
+
+			/* Restrict character to world surface */
+			//p_ptr->iron_winner_ded = TRUE; --not a winner from Mandos-conquering
+		}
+#endif
 	}
 }
 

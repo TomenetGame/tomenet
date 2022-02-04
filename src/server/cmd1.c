@@ -6542,11 +6542,20 @@ static void moved_player(int Ind, player_type *p_ptr, cave_type **zcave, int ox,
 					    ((WPOS_IRONDEEPDIVE_Z > 0 && (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)) ||
 					    (WPOS_IRONDEEPDIVE_Z < 0 && (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE)))) {
 						msg_print(Ind, "\374\377oWARNING: \377yThe dark grey staircase indicates an 'Ironman' dungeon,");
-						msg_print(Ind, "\374\377y         this particular one being the 'Ironman Deep Dive Challenge'.");
+						msg_print(Ind, "\374\377y         this particular one being the 'Ironman Deep Dive Challenge'!");
 						if (p_ptr->mode & MODE_DED_IDDC)
 							msg_print(Ind, "\374\377y         If you enter, you cannot escape until you make it to the bottom!");
 						else
 							msg_print(Ind, "\374\377y         If you enter, you cannot escape until you reach Menegroth!");
+#ifdef DED_IDDC_MANDOS
+					/* Give a special hint for the Halls of Mandos, so DED_IDDC people aren't nervous they got the wrong dungeon aka "did I turn off the stove?" */
+					} else if (wpos->wx == hallsofmandos_wpos_x && wpos->wy == hallsofmandos_wpos_y &&
+					    ((hallsofmandos_wpos_z > 0 && (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)) ||
+					    (hallsofmandos_wpos_z < 0 && (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE)))) {
+						msg_print(Ind, "\374\377oWARNING: \377yThe dark grey staircase indicates an 'Ironman' dungeon,");
+						msg_print(Ind, "\374\377y         this particular one being the otherworldly Halls of Mandos!");
+						msg_print(Ind, "\374\377y         If you enter, you cannot escape until you make it to the bottom!");
+#endif
 					} else {
 						msg_print(Ind, "\374\377oWARNING: \377yThe dark grey staircase indicates an 'Ironman' dungeon!");
 						msg_print(Ind, "\374\377y         That means that you cannot escape until you reach the bottom and");

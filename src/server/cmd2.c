@@ -157,8 +157,16 @@ void do_cmd_go_up(int Ind) {
 	if (wpos->wz == 0) surface = TRUE;
 
 	if ((p_ptr->mode & MODE_DED_IDDC) && surface) {
-		if (p_ptr->wpos.wx != WPOS_IRONDEEPDIVE_X || p_ptr->wpos.wy != WPOS_IRONDEEPDIVE_Y || 1 != WPOS_IRONDEEPDIVE_Z) {
+		if ((p_ptr->wpos.wx != WPOS_IRONDEEPDIVE_X || p_ptr->wpos.wy != WPOS_IRONDEEPDIVE_Y || 1 != WPOS_IRONDEEPDIVE_Z)
+#ifdef DED_IDDC_MANDOS
+		    && (p_ptr->wpos.wx != hallsofmandos_wpos_x || p_ptr->wpos.wy != hallsofmandos_wpos_y || 1 != hallsofmandos_wpos_z)
+#endif
+		    ) {
+#ifdef DED_IDDC_MANDOS
+			msg_print(Ind, "\377yYou may only enter the Ironman Deep Dive Challenge or the Halls of Mandos!");
+#else
 			msg_print(Ind, "\377yYou may not enter any other dungeon besides the Ironman Deep Dive Challenge!");
+#endif
 			return;
 		}
 #ifdef DED_IDDC_AWARE
@@ -1047,8 +1055,16 @@ void do_cmd_go_down(int Ind) {
 	}
 
 	if ((p_ptr->mode & MODE_DED_IDDC) && surface) {
-		if  (p_ptr->wpos.wx != WPOS_IRONDEEPDIVE_X || p_ptr->wpos.wy != WPOS_IRONDEEPDIVE_Y || -1 != WPOS_IRONDEEPDIVE_Z) {
+		if ((p_ptr->wpos.wx != WPOS_IRONDEEPDIVE_X || p_ptr->wpos.wy != WPOS_IRONDEEPDIVE_Y || -1 != WPOS_IRONDEEPDIVE_Z)
+#ifdef DED_IDDC_MANDOS
+		    && (p_ptr->wpos.wx != hallsofmandos_wpos_x || p_ptr->wpos.wy != hallsofmandos_wpos_y || -1 != hallsofmandos_wpos_z)
+#endif
+		    ) {
+#ifdef DED_IDDC_MANDOS
+			msg_print(Ind, "\377yYou may only enter the Ironman Deep Dive Challenge or the Halls of Mandos!");
+#else
 			msg_print(Ind, "\377yYou may not enter any other dungeon besides the Ironman Deep Dive Challenge!");
+#endif
 			return;
 		}
 #ifdef DED_IDDC_AWARE

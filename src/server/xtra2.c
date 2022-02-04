@@ -5282,7 +5282,11 @@ void gain_exp(int Ind, s64b amount) {
 	if (is_admin(p_ptr) && p_ptr->lev >= 99) return;
 
 	/* enforce dedicated Ironman Deep Dive Challenge character slot usage */
-	if (amount && (p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)) {
+	if (amount && (p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
+#ifdef DED_IDDC_MANDOS
+	    && !in_hallsofmandos(&p_ptr->wpos)
+#endif
+	    ) {
 #if 0 /* poof when gaining exp prematurely */
 		msg_print(Ind, "\377RYou failed to enter the Ironman Deep Dive Challenge!");
 		strcpy(p_ptr->died_from, "indetermination");
@@ -5612,6 +5616,9 @@ static bool r_killed_creditable(int Ind, int m_idx) {
 	if (p_ptr->IDDC_logscum) return FALSE;
 	/* enforce dedicated Ironman Deep Dive Challenge character slot usage */
 	if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
+#ifdef DED_IDDC_MANDOS
+	    && !in_hallsofmandos(&p_ptr->wpos)
+#endif
 	    && r_ptr->mexp) /* Allow kills in Bree */
 		return FALSE;
 
@@ -5967,6 +5974,9 @@ bool monster_death(int Ind, int m_idx) {
 	if (p_ptr->IDDC_logscum) return FALSE;
 	/* enforce dedicated Ironman Deep Dive Challenge character slot usage */
 	if ((p_ptr->mode & MODE_DED_IDDC) && !in_iddc
+#ifdef DED_IDDC_MANDOS
+	    && !in_hallsofmandos(&p_ptr->wpos)
+#endif
 	    && r_ptr->mexp) /* Allow kills in Bree */
 		return FALSE;
 	/* clones don't drop treasure or complete quests.. */
@@ -10602,7 +10612,11 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 
 	if (!iddc && !mandos) {
 		if (p_ptr->mode & MODE_DED_IDDC) {
+#ifdef DED_IDDC_MANDOS
+			msg_print(Ind, "\377yYou can only acquire an ex-order when you are inside IDDC or Halls of Mandos!");
+#else
 			msg_print(Ind, "\377yYou can only acquire an extermination order when you are inside the IDDC!");
+#endif
 			msg_print(Ind, "\377yUse the /xo (short for /xorder) command after you entered it.");
 			return FALSE;
 		}
