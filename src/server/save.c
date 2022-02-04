@@ -677,6 +677,7 @@ static void wr_extra(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	int i, j;
+	int k;
 	u16b tmp16u = 0;
 	byte tmp8u = 0;
 
@@ -1074,6 +1075,34 @@ static void wr_extra(int Ind) {
 	wr_u16b(p_ptr->cards_hearts);
 	wr_u16b(p_ptr->cards_spades);
 	wr_u16b(p_ptr->cards_clubs);
+
+	/* Subinventory (ENABLE_SUBINVEN) */
+#ifdef ENABLE_SUBINVEN
+	/* Write number of stored subinventories */
+	j = 0;
+	for (i = 0; i <= INVEN_PACK; i++)
+		if (p_ptr->inventory[i].tval == TV_SUBINVEN) j++;
+	tmp8u = (byte)j;
+	wr_byte(tmp8u);
+	/* Iterate through subinventories */
+	for (i = 0; i <= INVEN_PACK; i++) {
+		if (p_ptr->inventory[i].tval != TV_SUBINVEN) continue;
+
+		/* Write subinventory slot */
+		tmp8u = (byte)i;
+		wr_byte(tmp8u);
+
+		/* Write subinventory size */
+		tmp8u = (byte)get_subinven_size(p_ptr->inventory[i].sval);
+		wr_byte(tmp8u);
+
+		/* Write the items */
+		for (k = 0; k < tmp8u; k++)
+			wr_item(&p_ptr->subinventory[i][k]);
+	}
+#else
+	wr_byte(0);
+#endif
 }
 
 /*

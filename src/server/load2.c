@@ -1567,8 +1567,10 @@ static void rd_wild(wilderness_type *w_ptr) {
 
 static bool rd_extra(int Ind) {
 	player_type *p_ptr = Players[Ind];
+	object_type forge;
 
 	int i, j;
+	int k, l, m;
 	monster_race *r_ptr;
 	char login_char_name[80];
 
@@ -2390,6 +2392,31 @@ if (p_ptr->updated_savegame == 0) {
 		rd_u16b(&p_ptr->cards_hearts);
 		rd_u16b(&p_ptr->cards_spades);
 		rd_u16b(&p_ptr->cards_clubs);
+	}
+
+	/* Subinventory (ENABLE_SUBINVEN) */
+	if (!older_than(4, 7, 14)) {
+		/* Read number of stored subinventories */
+		rd_byte(&tmp8u);
+		j = (int)tmp8u;
+	} else j = 0;
+	/* Iterate through subinventories */
+	for (i = 0; i < j; i++) {
+		/* Read subinventory slot */
+		rd_byte(&tmp8u);
+		m = (int)tmp8u;
+		/* Read subinventory size */
+		rd_byte(&tmp8u);
+		k = (int)tmp8u;
+		/* Read the items */
+		for (l = 0; l < k; l++) {
+			rd_item(&forge);
+#ifdef ENABLE_SUBINVEN
+			p_ptr->subinventory[m][l] = forge;
+#else
+			/* discard */
+#endif
+		}
 	}
 
 	/* Success */
