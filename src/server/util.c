@@ -9362,7 +9362,7 @@ bool verify_inven_item(int Ind, int item) {
 void get_inven_item(int Ind, int item, object_type **o_ptr) {
 #ifdef ENABLE_SUBINVEN
 	/* This function can be used for subinventories too, if using get_subinven_item() were overkill. */
-	if (item > 100) {
+	if (item >= 100) {
 		*o_ptr = &Players[Ind]->subinventory[item / 100 - 1][item % 100];
 		return;
 	}
