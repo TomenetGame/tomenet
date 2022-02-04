@@ -1012,7 +1012,7 @@ void cmd_drop(byte flag) {
 	if (!c_get_item(&item, "Drop what? ", (flag | USE_EXTRA))) return;
 
 #ifdef ENABLE_SUBINVEN
-	if (using_subinven) {
+	if (using_subinven != -1) {
 		/* Get an amount */
 		if (subinventory[using_subinven][item % 100].number > 1) {
 			if (is_cheap_misc(subinventory[using_subinven][item % 100].tval) && c_cfg.whole_ammo_stack && !verified_item
@@ -1198,7 +1198,7 @@ void cmd_destroy(byte flag) {
 
 
 #ifdef ENABLE_SUBINVEN
-	if (using_subinven) {
+	if (using_subinven != -1) {
 		/* Get an amount */
 		if (subinventory[using_subinven][item % 100].number > 1) {
 			if (is_cheap_misc(subinventory[using_subinven][item % 100].tval) && c_cfg.whole_ammo_stack && !verified_item) amt = subinventory[using_subinven][item % 100].number;
@@ -1475,7 +1475,7 @@ void cmd_activate(void) {
 		return;
 
 #ifdef ENABLE_SUBINVEN
-	if (using_subinven) {
+	if (using_subinven != -1) {
 		/* Send it */
 		/* Does item require aiming? (Always does if not yet identified) */
 		if (subinventory[using_subinven][item % 100].uses_dir == 0) {
