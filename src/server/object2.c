@@ -7088,6 +7088,9 @@ static int which_theme(int tval) {
 #ifdef ENABLE_DEMOLITIONIST
 	case TV_CHARGE:
 #endif
+#ifdef ENABLE_SUBINVEN
+	case TV_SUBINVEN:
+#endif
 		return 4; //tools
 
 	default: //paranoia
