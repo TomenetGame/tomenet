@@ -4411,23 +4411,21 @@
 #define SV_SI_SATCHEL			0	/* Stores DEMOLITIONIST ingredients */
 #define SV_SI_CHEST_SMALL_WOODEN	1	/* TV_CHEST option: Convert tval on opening one successfully (ie not ruined) to TV_SUBINVEN */
 #define SV_SI_CHEST_SMALL_IRON		2
-#define SV_SI_CHEST_SMALL_STEEL	3
+#define SV_SI_CHEST_SMALL_STEEL		3
 #define SV_SI_CHEST_MIN_LARGE		4	/* marker */
 #define SV_SI_CHEST_LARGE_WOODEN	5
 #define SV_SI_CHEST_LARGE_IRON		6
-#define SV_SI_CHEST_LARGE_STEEL	7
+#define SV_SI_CHEST_LARGE_STEEL		7
 
 /* Only allow one subinven from each type group per player?
    (We only define helper markers for those groups that have more than one member,
    so not for the alchemy satchel, but indeed for the different types of chests.) */
+#define SV_SI_GROUP_CHEST_MIN		1	/* Define chest markers even outside of SUBINVEN_LIMIT_GROUP, as they are useful for store_will_buy() checks on TV_SUBINVEN. */
+#define SV_SI_GROUP_CHEST_MAX		7
 #ifdef SUBINVEN_LIMIT_GROUP
- #define SV_SI_GROUP_CHEST_MIN		1
- #define SV_SI_GROUP_CHEST_MAX		7
-
  #define get_subinven_group(sval) \
     ((sval) == SV_SI_SATCHEL ? SV_SI_SATCHEL : ((sval) >= SV_SI_GROUP_CHEST_MIN && (sval) <= SV_SI_GROUP_CHEST_MAX ? SV_SI_GROUP_CHEST_MIN : -1))
 #endif
-
 
 /* svals for TV_SPECIAL */
 #define SV_SEAL				0	/* for invalid items */
