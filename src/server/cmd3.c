@@ -4890,7 +4890,7 @@ void do_cmd_subinven_move(int Ind, int islot) {
 	/* Moved anything at all?
 	   Keep in mind that on moving all the object is now something different as it has been excised!
 	   So we cannot reference to it anymore in that case and use 'all' instead. */
-	if (all) msg_print(Ind, "You stow all of it.");
+	if (all) ;//kind of spammy - msg_print(Ind, "You stow all of it.");
 	else if (amt - i_ptr->number == 0) {
 		msg_print(Ind, "No free bag space to stow that item.");
 		return;
