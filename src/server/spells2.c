@@ -9493,6 +9493,17 @@ void mix_chemicals(int Ind, int item) {
 	if (q_ptr->tval == TV_CHARGE) s_printf("CHARGE: %s (%d, %d) created %s.\n", p_ptr->name, p_ptr->lev, get_skill(p_ptr, SKILL_DIG), o_name);
 	if (q_ptr->tval == TV_SCROLL) s_printf("FIREWORK: %s (%d, %d) created %s.\n", p_ptr->name, p_ptr->lev, get_skill(p_ptr, SKILL_DIG), o_name);
 	i = inven_carry(Ind, q_ptr);
+#ifdef ENABLE_SUBINVEN
+	/* If both ingredients were from a satchel, try to place the result there too, if it's TV_CHEMICAL. */
+	if (p_ptr->current_activation >= 100 && item >= 100 && q_ptr->tval == TV_CHEMICAL) {
+		//do_cmd_subinven_move(Ind, islot);
+		if (subinven_move_aux(Ind, i, item / 100 - 1)) {
+			//no index available, o laziness :/
+			msg_format(Ind, "You have %s.", o_name, index_to_label(i));
+			return;
+		}
+	}
+#endif
 	if (i != -1) msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
 }
 /* Determine the sensorial properties of a chemical mixture */
