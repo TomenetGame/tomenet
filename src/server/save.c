@@ -1101,6 +1101,7 @@ static void wr_extra(int Ind) {
 			wr_item(&p_ptr->subinventory[i][k]);
 	}
 #else
+	(void)k; /* discard */
 	wr_byte(0);
 #endif
 }

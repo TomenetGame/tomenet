@@ -2414,7 +2414,7 @@ if (p_ptr->updated_savegame == 0) {
 #ifdef ENABLE_SUBINVEN
 			p_ptr->subinventory[m][l] = forge;
 #else
-			/* discard */
+			(void)m; /* discard */
 #endif
 		}
 	}
