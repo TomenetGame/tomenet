@@ -1935,7 +1935,8 @@ void show_subinven(int islot) {
 	/* The ugly method of overwriting the subinven via show_subinven() in Receive_subinven()
 	   will cause 'This container is empty' residue here, so clear it up first.
 	   Bad hack again:*/
-	prt("                                                                   ", 1, SCREEN_PAD_LEFT);
+//	prt("                                                                   ", 1, SCREEN_PAD_LEFT);
+	prt("                                                                                ", 1, 0);
 
 	/* Output each entry */
 	for (j = 0; j < k; j++) {
