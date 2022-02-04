@@ -7672,9 +7672,28 @@ bool destroy_traps_touch(int Ind, int rad) {
 }
 bool destroy_traps_doors_touch(int Ind, int rad) {
 	player_type *p_ptr = Players[Ind];
+#if 1
+	int i;
+	bool seen = FALSE;
+	object_type *o_ptr;
+
+	/* QoL Hack: Since this is a PBAoE spell, the character's backpack in the epicentre should also be treated! */
+	for (i = 0; i < INVEN_PACK; i++) {
+		o_ptr = &p_ptr->inventory[i];
+		if (o_ptr->tval != TV_CHEST) continue;
+		if (o_ptr->pval <= 0) continue;
+		/* Disarm and unlock */
+		o_ptr->pval = -o_ptr->pval;
+		/* Identify */
+		object_known(o_ptr);
+		/* Notify and observe */
+		msg_print(Ind, "Click!");
+		seen = TRUE;
+	}
+#endif
 
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE | PROJECT_NODF | PROJECT_NODO;
-	return (project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_TRAP_DOOR, flg, ""));
+	return seen || (project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_TRAP_DOOR, flg, ""));
 }
 
 bool sleep_monsters_touch(int Ind) {
