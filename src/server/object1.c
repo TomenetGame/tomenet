@@ -6200,6 +6200,10 @@ void display_inven(int Ind) {
 		/* You can inscribe with !U to force TERM_L_DARK colouring (more visibility tuning!) */
 		if (check_guard_inscription(o_ptr->note, 'U')) attr = TERM_L_DARK;
 
+#ifdef SUBINVEN_LIMIT_GROUP
+		if (o_ptr->tval == TV_SUBINVEN && subinven_group_player(Ind, get_subinven_group(o_ptr->sval), i)) attr = TERM_L_DARK;
+#endif
+
 		/* Hack -- fake monochrome */
 		if (!use_color) attr = TERM_WHITE;
 
@@ -6392,6 +6396,10 @@ void display_invenequip(int Ind) {
 
 		/* You can inscribe with !U to force TERM_L_DARK colouring (more visibility tuning!) */
 		if (check_guard_inscription(o_ptr->note, 'U')) attr = TERM_L_DARK;
+
+#ifdef SUBINVEN_LIMIT_GROUP
+		if (o_ptr->tval == TV_SUBINVEN && subinven_group_player(Ind, get_subinven_group(o_ptr->sval), i)) attr = TERM_L_DARK;
+#endif
 
 		/* Hack -- fake monochrome */
 		if (!use_color) attr = TERM_WHITE;

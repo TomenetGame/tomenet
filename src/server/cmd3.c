@@ -4812,7 +4812,7 @@ static bool subinven_move_aux(int Ind, int islot, int sslot) {
 
 	/* Managed to merge fully? Erase source object then. */
 	if (!i_ptr->number) {
-#if 1
+ #if 1
 		/* -- This is partial code from inven_item_optimize() -- */
 
 		player_type *p_ptr = Players[Ind];
@@ -4834,11 +4834,11 @@ static bool subinven_move_aux(int Ind, int islot, int sslot) {
 
 		/* Erase the "final" slot */
 		invwipe(&p_ptr->inventory[i]);
-#else
+ #else
 		//p_ptr->notice |= (PN_COMBINE);
 		//p_ptr->window |= (PW_INVEN | PW_PLAYER);
 		inven_item_optimize(Ind, islot);
-#endif
+ #endif
 
 		/* Fully moved */
 		return TRUE;
@@ -4884,9 +4884,9 @@ void do_cmd_subinven_move(int Ind, int islot) {
 			all = TRUE;
 			break;
 		}
-#ifdef SUBINVEN_LIMIT_GROUP
+ #ifdef SUBINVEN_LIMIT_GROUP
 		break;
-#endif
+ #endif
 	}
 
 	/* Moved anything at all?
@@ -4898,9 +4898,9 @@ void do_cmd_subinven_move(int Ind, int islot) {
 		return;
 	} else msg_print(Ind, "You have at least enough bag space to stow some of it.");
 
-#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
 	sound_item(Ind, tval, sval, "drop_");
-#endif
+ #endif
 
 	//break_cloaking(Ind, 5);
 	//break_shadow_running(Ind);
@@ -4930,7 +4930,7 @@ void do_cmd_subinven_remove(int Ind, int islot, int slot) {
 
 	/* Erase object in subinven, slide followers */
 	o_ptr->tval = o_ptr->k_idx = o_ptr->number = 0;
-#if 1
+ #if 1
 	/* -- This is partial code from inven_item_optimize() -- */
 
 	/* Slide everything down */
@@ -4946,16 +4946,15 @@ void do_cmd_subinven_remove(int Ind, int islot, int slot) {
 
 	/* Erase the "final" slot */
 	//invwipe(&p_ptr->inventory[i]);
-#else
+ #else
 	//p_ptr->notice |= (PN_COMBINE);
 	//p_ptr->window |= (PW_INVEN | PW_PLAYER);
 	//--todo: implement for subinvens?-- inven_item_optimize(Ind, slot);
-#endif
+ #endif
 
-
-#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
 	//sound_item(Ind, tval, sval, "drop_");
-#endif
+ #endif
 
 	//break_cloaking(Ind, 5);
 	//break_shadow_running(Ind);
@@ -4968,4 +4967,22 @@ void do_cmd_subinven_remove(int Ind, int islot, int slot) {
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 }
+
+ #ifdef SUBINVEN_LIMIT_GROUP
+/* Check if player already carries a specific subinven group type bag.
+   If inventory 'slot' is not -1, then this slot will be allowed
+   if it is the first slot containing the group type bag. */
+bool subinven_group_player(int Ind, int group, int slot) {
+	int i;
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr;
+
+	for (i = 0; i <= (slot == -1 ? INVEN_PACK : slot - 1); i++) {
+		o_ptr = &p_ptr->inventory[i];
+		if (o_ptr->tval != TV_SUBINVEN) continue;
+		if (group == get_subinven_group(o_ptr->sval)) return TRUE;
+	}
+	return FALSE;
+}
+ #endif
 #endif

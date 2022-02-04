@@ -2450,6 +2450,10 @@ static void display_entry(int Ind, int pos) {
 		/* grey out if mode doesn't meet */
 		if (compat_pomode(Ind, o_ptr)) attr = TERM_L_DARK;
 
+#ifdef SUBINVEN_LIMIT_GROUP
+		if (o_ptr->tval == TV_SUBINVEN && subinven_group_player(Ind, get_subinven_group(o_ptr->sval), -1)) attr = TERM_L_DARK;
+#endif
+
 		/* Only show the weight of an individual item */
 		wgt = o_ptr->weight;
 
@@ -2547,6 +2551,10 @@ static void display_entry(int Ind, int pos) {
 
 		/* grey out if mode doesn't meet */
 		if (compat_pomode(Ind, o_ptr)) attr = TERM_L_DARK;
+
+#ifdef SUBINVEN_LIMIT_GROUP
+		if (o_ptr->tval == TV_SUBINVEN && subinven_group_player(Ind, get_subinven_group(o_ptr->sval), -1)) attr = TERM_L_DARK;
+#endif
 
 		/* Only show the weight of an individual item */
 		wgt = o_ptr->weight;
@@ -3420,6 +3428,10 @@ void store_purchase(int Ind, int item, int amt) {
 //#ifdef SUBINVEN_LIMIT_GROUP  -- rely on inven_carry_okay() for now
 //#endif
 
+	/* Hack (for SUBINVEN_LIMIT_GROUP especially! But also good to apply in general):
+	   Some objects are not allowed to stack in the player's inventory, but can be offered stackedly in stores. */
+	if (!object_similar(Ind, o_ptr, o_ptr, tolerance)) amt = 1;
+
 #ifdef PLAYER_STORES
 	/* Consistency check: Make sure noone inside a mang-house store
 	   has actually picked up or otherwise modified the item we're buying. */
@@ -3571,9 +3583,6 @@ void store_purchase(int Ind, int item, int amt) {
 		msg_print(Ind, "\377yYou cannot purchase used goods or your life would be forfeit.");
 		return;
 	}
-
-	/* Assume the player wants just one of them */
-	/*amt = 1;*/
 
 	/* Hack -- get a "sample" object */
 	sell_obj = *o_ptr;
@@ -6020,6 +6029,10 @@ void home_purchase(int Ind, int item, int amt) {
 //#ifdef SUBINVEN_LIMIT_GROUP  -- rely on inven_carry_okay() for now
 //#endif
 
+	/* Hack (for SUBINVEN_LIMIT_GROUP especially! But also good to apply in general):
+	   Some objects are not allowed to stack in the player's inventory, but can be stored stackedly in homes. */
+	if (!object_similar(Ind, o_ptr, o_ptr, 0x0)) amt = 1;
+
 	/* check whether client tries to buy more than the store has */
 	if (o_ptr->number < amt) {
 		s_printf("$INTRUSION(HOME)$ Too high amount %d of %d! Bought by %s.\n", amt, o_ptr->number, p_ptr->name);
@@ -6365,6 +6378,10 @@ void display_house_entry(int Ind, int pos, house_type *h_ptr) {
 	
 	/* Let's fade out the items we CAN'T use too inside our own houses */
 	if (!can_use_admin(Ind, o_ptr)) attr = TERM_L_DARK;
+
+#ifdef SUBINVEN_LIMIT_GROUP
+	if (o_ptr->tval == TV_SUBINVEN && subinven_group_player(Ind, get_subinven_group(o_ptr->sval), -1)) attr = TERM_L_DARK;
+#endif
 
 	/* Only show the weight of an individual item */
 	wgt = o_ptr->weight;

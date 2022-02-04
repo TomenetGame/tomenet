@@ -3442,6 +3442,7 @@ s64b object_value(int Ind, object_type *o_ptr) {
  * +0x4 - tolerance for discount and inscription
  *        (added for dropping items on top of stacks inside houses)
  * +0x8 - ignore non-matching inscriptions. For player stores, which erase inscriptions on purchase anyway!
+ * +0x10 - item is dropped on the floor, not in player's inventory (SUBINVEN_LIMIT_GROUP)
  * -- C. Blue
  */
 bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolerance) {
@@ -3463,6 +3464,10 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		return(TRUE);
 	}
 
+#ifdef SUBINVEN_LIMIT_GROUP
+	/* Special bags never stack in someone's ivnentory, but allow stacking them on the floor (eg in houses) */
+	if (o_ptr->tval == TV_SUBINVEN && !(tolerance & 0x10)) return FALSE;
+#endif
 	/* Don't EVER stack questors oO */
 	if (o_ptr->questor) return FALSE;
 	/* Don't ever stack special quest items */
@@ -9954,7 +9959,7 @@ int drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, in
 			next_o_idx = j_ptr->next_o_idx;
 
 			/* Check for possible combination */
-			if (object_similar(Ind, o_ptr, j_ptr, 0x4)) comb = TRUE;
+			if (object_similar(Ind, o_ptr, j_ptr, 0x4 | 0x10)) comb = TRUE;
 
 			/* Count objects */
 			k++;
@@ -10178,7 +10183,7 @@ int drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, in
 		next_o_idx = q_ptr->next_o_idx;
 
 		/* Check for combination */
-		if (object_similar(Ind, o_ptr, q_ptr, 0x4)) {
+		if (object_similar(Ind, o_ptr, q_ptr, 0x4 | 0x10)) {
 			/* Combine the items */
 			object_absorb(0, q_ptr, o_ptr);
 
@@ -10906,10 +10911,12 @@ bool inven_carry_okay(int Ind, object_type *o_ptr, byte tolerance) {
 	int i;
 	object_type *j_ptr;
 
+#if 0 /* Allow carrying multiple redundant bags, but just don't utilize them */
 #ifdef SUBINVEN_LIMIT_GROUP /* By having this check here, we don't need it in telekinesis_aux() actually */
 	int subinven_group = (o_ptr->tval == TV_SUBINVEN) ? get_subinven_group(o_ptr->sval) : -1;
 
 	if (subinven_group == -1)
+#endif
 #endif
 	/* Empty slot? */
 	if (p_ptr->inven_cnt < INVEN_PACK) return (TRUE);
@@ -10919,15 +10926,18 @@ bool inven_carry_okay(int Ind, object_type *o_ptr, byte tolerance) {
 		/* Get that item */
 		j_ptr = &p_ptr->inventory[i];
 
+#if 0 /* See comment above */
 #ifdef SUBINVEN_LIMIT_GROUP
 		if (subinven_group != -1 && j_ptr->tval == TV_SUBINVEN && get_subinven_group(j_ptr->sval) == subinven_group) return FALSE;
 #endif
-
+#endif
 		/* Check if the two items can be combined */
 		if (object_similar(Ind, j_ptr, o_ptr, tolerance)) return (TRUE);
 	}
+#if 0 /* See comment above */
 #ifdef SUBINVEN_LIMIT_GROUP
 	if (p_ptr->inven_cnt < INVEN_PACK) return (TRUE);
+#endif
 #endif
 
 	/* Hack -- try quiver slot (see inven_carry) */

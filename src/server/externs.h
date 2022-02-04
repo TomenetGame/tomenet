@@ -711,6 +711,9 @@ extern bool check_power_inscribe(int Ind, object_type *o_ptr, char *o_name, cptr
 #ifdef ENABLE_SUBINVEN
 extern void do_cmd_subinven_move(int Ind, int islot);
 extern void do_cmd_subinven_remove(int Ind, int islot, int slot);
+ #ifdef SUBINVEN_LIMIT_GROUP
+extern bool subinven_group_player(int Ind, int group, int slot);
+ #endif
 #endif
 
 /* cmd4.c */

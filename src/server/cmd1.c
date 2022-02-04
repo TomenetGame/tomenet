@@ -1433,6 +1433,12 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		object_known(o_ptr);
 	}
 
+#ifdef SUBINVEN_LIMIT_GROUP
+	/* Hack for bags, since they are allowed to stack on the floor (eg inside houses)
+	   but not in the player inventory: */
+	if (o_ptr->tval == TV_SUBINVEN) pick_one = TRUE;
+#endif
+
 	/* Describe the object */
 	if (pick_one && !is_ammo(o_ptr->tval)) { //hack the name, but 'pick_one' is currently not implemeted for ammo
 		int num = o_ptr->number;
