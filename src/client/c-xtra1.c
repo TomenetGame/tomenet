@@ -1907,7 +1907,7 @@ void show_subinven(int islot) {
 	if (j && (j < 23)) prt("", j + 1, col ? col - 2 : col);
 
 	/* Notify if inventory is actually empty */
-	if (!k) prt("(This bag is empty)", 1, 13);
+	if (!k) prt("(This container is empty)", 1, 13);
 
 	/* Save the new column */
 	command_gap = col;

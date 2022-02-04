@@ -1931,6 +1931,8 @@
 #define INVEN_EQ	(INVEN_TOTAL - INVEN_WIELD)
 
 #ifdef ENABLE_SUBINVEN
+ /* Allow chests to be used as storage containers after having opened them once? */
+ #define SUBINVEN_CHESTS
  /* Allow only one of each subinven group type per player?
     Ie 1 Alchemy Satchel + 1 Chest (all chests belong into the same 'group' together, the 'chests' group), etc.. */
  #define SUBINVEN_LIMIT_GROUP

@@ -642,6 +642,10 @@ static byte default_tval_to_attr(int tval) {
 		//return TERM_UMBER; //too close to ranged weapons maybe
 		return TERM_YELLOW;
 #endif
+#ifdef ENABLE_SUBINVEN
+	case TV_SUBINVEN:
+		return TERM_WHITE; /* Really depends on subtype later */
+#endif
 	}
 
 	return (TERM_WHITE);
@@ -2737,15 +2741,16 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		/* Not searched yet */
 		if (!known) {
 			/* Nothing */
+#ifdef SUBINVEN_CHESTS
+			t = object_desc_str(t, " (shut tight)"); /* To visually distinguish this lootable chest from subinven-chests in our inventory */
+#endif
 		}
-
 		/* May be "empty" */
 		else if (!o_ptr->pval)
 			t = object_desc_str(t, " (empty)");
 		/* May be "disarmed" */
 		else if (o_ptr->pval < 0)
 			t = object_desc_str(t, " (disarmed)");
-
 		/* Describe the traps, if any */
 		else if (o_ptr->pval) {
 			/* Describe the traps */
@@ -2760,6 +2765,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			}
 			t = object_desc_str(t, ")");
 		}
+#ifdef SUBINVEN_CHESTS
+		else t = object_desc_str(t, " (locked)");/* To visually distinguish this lootable chest from subinven-chests in our inventory */
+#endif
 	}
 
 	/* Display the item like a weapon */
@@ -6621,6 +6629,13 @@ byte get_book_name_color(object_type *o_ptr) {
 
 byte get_attr_from_tval(object_type *o_ptr) {
 	int attr = tval_to_attr[o_ptr->tval];
+
+#ifdef ENABLE_SUBINVEN
+	if (o_ptr->tval == TV_SUBINVEN) switch(get_subinven_group(o_ptr->sval)) {
+		case SV_SI_SATCHEL: attr = tval_to_attr[TV_CHEMICAL]; break;
+		case SV_SI_GROUP_CHEST_MIN: attr = tval_to_attr[TV_CHEST]; break;
+	}
+#endif
 
 #ifdef ENABLE_DEMOLITIONIST
 	if (o_ptr->tval == TV_CHEMICAL && o_ptr->sval == SV_MIXTURE)

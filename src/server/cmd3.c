@@ -4883,10 +4883,13 @@ void do_cmd_subinven_move(int Ind, int islot) {
 		s_ptr = &p_ptr->inventory[i];
 		/* Scan for existing subinventories */
 		if (s_ptr->tval != TV_SUBINVEN) continue;
-		switch (s_ptr->sval) {
+		switch (get_subinven_group(s_ptr->sval)) { //(s_ptr->sval) {
 		/* Check item to move against valid tvals to be put into specific container (subinventory) types */
 		case SV_SI_SATCHEL:
 			if (i_ptr->tval != TV_CHEMICAL) continue;
+			break;
+		case SV_SI_GROUP_CHEST_MIN:
+			/* Allow all storable items in chests */
 			break;
 		default:
 			continue;
