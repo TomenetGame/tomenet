@@ -5571,6 +5571,13 @@ void do_cmd_activate(int Ind, int item, int dir) {
 
 		/* Hack -- activating bottles */
 		if (o_ptr->tval == TV_BOTTLE) {
+#ifdef ENABLE_SUBINV
+			/* Cannot fill empty bottles that are stored inside a chest.. */
+			if (item >= 100) {
+				msg_print(Ind, "You cannot fill bottles that are stowed away.");
+				return;
+			}
+#endif
 			do_cmd_fill_bottle(Ind);
 			return;
 		}
