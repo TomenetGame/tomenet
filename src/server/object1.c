@@ -6317,7 +6317,8 @@ void display_subinven(int Ind, int islot) {
 	/* paranoia */
 	if (o_ptr->tval != TV_SUBINVEN) return;
 
-	for (i = 0; i < get_subinven_size(o_ptr->sval); i++)
+//	for (i = 0; i < get_subinven_size(o_ptr->sval); i++)
+	for (i = 0; i < o_ptr->bpval; i++)
 		display_subinven_aux(Ind, islot, i);
 }
 #endif

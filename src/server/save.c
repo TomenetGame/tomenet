@@ -1093,7 +1093,8 @@ static void wr_extra(int Ind) {
 		wr_byte(tmp8u);
 
 		/* Write subinventory size */
-		tmp8u = (byte)get_subinven_size(p_ptr->inventory[i].sval);
+//		tmp8u = (byte)get_subinven_size(p_ptr->inventory[i].sval);
+		tmp8u = (byte)(p_ptr->inventory[i].bpval);
 		wr_byte(tmp8u);
 
 		/* Write the items */

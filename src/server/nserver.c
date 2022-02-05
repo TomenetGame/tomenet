@@ -10731,7 +10731,8 @@ static int Receive_activate(int ind) {
 #ifdef ENABLE_SUBINVEN /* For DEMOLITIONIST crafting */
 	if (item >= 100) {
 		if (item / 100 - 1 >= INVEN_TOTAL) return 1;
-		if ((item % 100) >= get_subinven_size(p_ptr->inventory[item / 100 - 1].sval)) return 1;
+//		if ((item % 100) >= get_subinven_size(p_ptr->inventory[item / 100 - 1].sval)) return 1;
+		if ((item % 100) >= p_ptr->inventory[item / 100 - 1].bpval) return 1;
 
 		/* Call directly here to skip that repeat-stuff? */
 		do_cmd_activate(player, item, 0);

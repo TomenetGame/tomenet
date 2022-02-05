@@ -2176,6 +2176,61 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			/* Window stuff */
 			p_ptr->window |= (PW_EQUIP | PW_PLAYER);
 		}
+#ifdef ENABLE_SUBINVEN
+		/* Try to put into a specialized bag automatically */
+		/* For now, only DEMOLITIONIST stuff */
+		if (o_ptr->tval == TV_CHEMICAL) {
+			int i;
+			object_type *s_ptr;
+
+			for (i = 0; i < INVEN_PACK; i++) {
+				s_ptr = &p_ptr->inventory[i];
+				/* Subinvens are at the top of the inventory, except for 'special' objects */
+				if (s_ptr->tval == TV_SPECIAL) continue;
+				if (s_ptr->tval != TV_SUBINVEN) break;
+
+				/* For TV_CHEMICAL */
+				if (s_ptr->sval != SV_SI_SATCHEL) continue;
+
+				/* Eligible subinventory found, try to move as much as possible */
+				if (subinven_stow_aux(Ind, o_ptr, i)) break; /* If complete stack was moved, we're done */
+ #ifdef SUBINVEN_LIMIT_GROUP
+				break;
+ #endif
+			}
+
+			if (!o_ptr->number) delete_it = TRUE;
+			else delete_it = FALSE;
+
+			/* Delete original */
+			if (delete_it) {
+				delete_object_idx(c_ptr->o_idx, FALSE);
+
+				/* Hack -- tell the player of the next object on the pile */
+				whats_under_your_feet(Ind, FALSE);
+
+				/* Tell the client */
+				Send_floor(Ind, 0);
+
+				try_pickup = FALSE;
+			} else if (!pick_one) {
+				/* ^ if we didn't delete it, additionally try to pick up the rest of the pile */
+				o_ptr = &o_list[c_ptr->o_idx];
+			} else try_pickup = FALSE; //we only wanted to pick up one anyway, which we put into our bow slot now
+
+			/* Recalculate boni */
+			p_ptr->update |= (PU_BONUS);
+
+			/* Recalculate mana */
+			p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
+
+			/* Redraw */
+			p_ptr->redraw |= (PR_PLUSSES | PR_ARMOR);
+
+			/* Window stuff */
+			//p_ptr->window |= (PW_EQUIP | PW_PLAYER);
+		}
+#endif
 
 		/* hack for 'pick_one' (needed for inven_carry_okay() too, or rather for the object_similar() check inside of it */
 		if (pick_one) o_ptr->number = 1;

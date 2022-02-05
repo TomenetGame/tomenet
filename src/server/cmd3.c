@@ -4754,6 +4754,69 @@ void do_cmd_query_symbol(int Ind, char sym) {
 #endif // 0
 
 #ifdef ENABLE_SUBINVEN
+/* Attempt to stow as much as possible of an object (stack) into a subinventory container.
+   Increases player's total_weight.
+   Returns TRUE if fully stowed. */
+bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
+	player_type *p_ptr = Players[Ind];
+	object_type *s_ptr = &p_ptr->inventory[sslot];
+	object_type *o_ptr;
+	int i, inum = i_ptr->number;
+	char o_name[ONAME_LEN];
+
+	/* Look for free spaces or spaces to merge with */
+//	for (i = 0; i < get_subinven_size(s_ptr->sval); i++) {
+	for (i = 0; i < s_ptr->bpval; i++) {
+		o_ptr = &p_ptr->subinventory[sslot][i];
+		if (o_ptr->tval) {
+			/* Hack 'number' to allow merging stacks partially */
+			if (i_ptr->number + o_ptr->number > 99) i_ptr->number = 99 - o_ptr->number;
+			/* Merge partially or fully */
+			if (object_similar(Ind, o_ptr, i_ptr, 0x4)) {
+				object_absorb(Ind, o_ptr, i_ptr);
+				/* Describe the object */
+				object_desc(Ind, o_name, i_ptr, TRUE, 3);
+				msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
+
+				i_ptr->number = inum - i_ptr->number; /* Unhack 'number' */
+				/* Manually do this here for now: Update subinven slot for client. */
+				display_subinven_aux(Ind, sslot, i);
+				/* That was the rest of the stack? Done. */
+				if (!i_ptr->number) break;
+			} else /* Couldn't use this slot at all */
+				i_ptr->number = inum; /* Unhack 'number' */
+		} else {
+			/* Fully move to a free slot. Done. */
+			*o_ptr = *i_ptr;
+			o_ptr->marked = 0;
+			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
+			/* Describe the object */
+			object_desc(Ind, o_name, i_ptr, TRUE, 3);
+			msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
+
+			i_ptr->number = 0; /* Mark for erasure */
+			/* Manually do this here for now: Update subinven slot for client. */
+			display_subinven_aux(Ind, sslot, i);
+			break;
+		}
+	}
+
+	/* No free space at all? */
+	if (inum == i_ptr->number) return FALSE;
+
+	/* Assume object got added from outside to our inventory. */
+	p_ptr->total_weight += (inum - i_ptr->number) * i_ptr->weight;
+
+	/* Managed to merge fully? Erase source object then. */
+	if (!i_ptr->number) {
+		/* Fully moved */
+		return TRUE;
+	}
+
+	/* Still not fully moved */
+	return FALSE;
+}
+
 /* Attempt to move as much as possible of an inventory item stack into a subinventory container.
    Returns TRUE if fully stowed. */
 bool subinven_move_aux(int Ind, int islot, int sslot) {
@@ -4764,7 +4827,8 @@ bool subinven_move_aux(int Ind, int islot, int sslot) {
 	int i, inum = i_ptr->number, wgt = p_ptr->total_weight;
 
 	/* Look for free spaces or spaces to merge with */
-	for (i = 0; i < get_subinven_size(s_ptr->sval); i++) {
+//	for (i = 0; i < get_subinven_size(s_ptr->sval); i++) {
+	for (i = 0; i < s_ptr->bpval; i++) {
 		o_ptr = &p_ptr->subinventory[sslot][i];
 		if (o_ptr->tval) {
 			/* Hack 'number' to allow merging stacks partially */
@@ -4783,7 +4847,6 @@ bool subinven_move_aux(int Ind, int islot, int sslot) {
 			/* Fully move to a free slot. Done. */
 			*o_ptr = *i_ptr;
 			i_ptr->number = 0; /* Mark for erasure */
-			o_ptr = &p_ptr->subinventory[sslot][i];
 			/* Manually do this here for now: Update subinven slot for client. */
 			display_subinven_aux(Ind, sslot, i);
 			break;
@@ -4936,7 +4999,8 @@ void subinven_remove_aux(int Ind, int islot, int slot) {
 	/* -- This is partial code from inven_item_optimize() -- */
 
 	/* Slide everything down */
-	for (i = slot; i < get_subinven_size(p_ptr->inventory[islot].sval); i++) {
+//	for (i = slot; i < get_subinven_size(p_ptr->inventory[islot].sval); i++) {
+	for (i = slot; i < p_ptr->inventory[islot].bpval; i++) {
 		/* Structure copy */
 		p_ptr->subinventory[islot][i] = p_ptr->subinventory[islot][i + 1];
 		display_subinven_aux(Ind, islot, i);
@@ -4967,7 +5031,8 @@ void do_cmd_subinven_remove(int Ind, int islot, int slot) {
 	s_ptr = &p_ptr->inventory[islot];
 	if (!s_ptr->tval || s_ptr->tval != TV_SUBINVEN) return;
 
-	if (slot < 0 || slot >= get_subinven_size(s_ptr->sval)) return;
+//	if (slot < 0 || slot >= get_subinven_size(s_ptr->sval)) return;
+	if (slot < 0 || slot >= s_ptr->bpval) return;
 	o_ptr = &p_ptr->subinventory[islot][slot];
 	if (!o_ptr->tval) return;
 

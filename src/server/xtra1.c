@@ -3846,7 +3846,8 @@ void calc_boni(int Ind) {
 
 #ifdef ENABLE_SUBINVEN
 		if (o_ptr->tval == TV_SUBINVEN) {
-			w = get_subinven_size(o_ptr->sval);
+//			w = get_subinven_size(o_ptr->sval);
+			w = o_ptr->bpval;
 			for (j = 0; j < w; j++) {
 				o2_ptr = &p_ptr->subinventory[i][j];
 				if (!o2_ptr->k_idx) break;
