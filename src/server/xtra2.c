@@ -4131,9 +4131,16 @@ bool bless_temp_luck(int Ind, int pow, int dur) {
 		notice = TRUE;
 	}
 
-	/* Use the value */
-	p_ptr->bless_temp_luck = dur;
-	p_ptr->bless_temp_luck_power = pow;
+	/* Stack duration if current power was not lower than the one to be applied */
+	if (p_ptr->bless_temp_luck && p_ptr->bless_temp_luck_power >= pow) {
+		/* Feedback about duration prolongation succeeding */
+		msg_print(Ind, "\376\377gYou feel luck will be on your side for even longer.");
+		p_ptr->bless_temp_luck += dur;
+		p_ptr->bless_temp_luck_power = pow;
+	} else {
+		p_ptr->bless_temp_luck = dur;
+		p_ptr->bless_temp_luck_power = pow;
+	}
 
 	/* Nothing to notice */
 	if (!notice) return (FALSE);
