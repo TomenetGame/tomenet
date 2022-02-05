@@ -357,6 +357,9 @@
    Note that digging tools must all receive MUST2H flag for this. - C. Blue */
 #define EQUIPPABLE_DIGGERS
 
+/* Alchemy Satchels (and chests, for now) as inventory extension - C. Blue */
+#define ENABLE_SUBINVEN
+
 /* Finally create some usage for the so far functionless altars - C. Blue
    Ideas: Pray (1) or Sacrifice item (2).
    1) Gain extra quirks/buffs, but apply a behavioral restriction too? (Eg +luck, but mustn't kill GOOD monsters)
@@ -407,8 +410,6 @@
  #define TELEPORT_SURPRISES 5	/* monsters are surprised for a short moment (0.1s * n) if a player long-range teleported next to them */
 
  #define LIMIT_SPELLS		/* Allow player to limit the level of spells he casts */
-
- #define ENABLE_SUBINVEN	/* Alchemy Satchels as inventory extension */
 
  /* Just for debugging - unbind savegames from accounts */
  #define IGNORE_SAVEGAME_MISMATCH
@@ -463,17 +464,6 @@
 
  /* Enable bookmarking feature? */
  #define GUIDE_BOOKMARKS 20
-
-/* Alchemy Satchels as inventory extension */
- #ifdef TEST_CLIENT
-  #define ENABLE_SUBINVEN
- #endif
-#endif
-
-/* Not compiled with CLIENT_SIDE as one of the functions is inside common/ folder */
-/* Alchemy Satchels as inventory extension */
-#ifdef TEST_CLIENT
- #define ENABLE_SUBINVEN
 #endif
 
 
