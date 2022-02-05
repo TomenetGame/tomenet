@@ -3655,6 +3655,14 @@ static int Handle_login(int ind) {
 	/* Tell the meta server about the new player */
 	Report_to_meta(META_UPDATE);
 
+#ifdef ENABLE_SUBINVEN
+	/* Initially send him the loaded subinventories */
+	for (i = 0; i < INVEN_PACK; i++) {
+		if (p_ptr->inventory[i].tval != TV_SUBINVEN) continue;
+		display_subinven(NumPlayers, i);
+	}
+#endif
+
 	return 0;
 }
 
