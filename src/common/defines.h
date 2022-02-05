@@ -2568,6 +2568,16 @@
 #define EFF_SNOWING		0x80000000	/* For WINTER_SEASON */
 
 
+
+/* Treasure classes aka 'kind themes' */
+#define TC_JUNK		0
+#define TC_TREASURE	1
+#define TC_COMBAT	2
+#define TC_MAGIC	3
+#define TC_TOOLS	4
+#define TC_AMOUNT	5	/* Amount of different treasure classes, listed above */
+
+
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
 

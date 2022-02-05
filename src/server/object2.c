@@ -1031,14 +1031,14 @@ errr get_obj_num_prep(u32b resf) {
 		tval = k_info[k_idx].tval;
 		sval = k_info[k_idx].sval;
 		//force generation of a sword, if generating a combat item at all
-		if ((resf & RESF_COND_SWORD) && which_theme(tval) == 2) {
+		if ((resf & RESF_COND_SWORD) && which_theme(tval) == TC_COMBAT) {
 			if (tval != TV_SWORD) p = 0;
 			else if (sval == SV_DARK_SWORD) p >>= 2; //don't overdo it..
 		}
 		//force generation of a dark sword, if generating a combat item at all
-		if ((resf & RESF_COND_DARKSWORD) && which_theme(tval) == 2 && (tval != TV_SWORD || sval != SV_DARK_SWORD)) p = 0;
+		if ((resf & RESF_COND_DARKSWORD) && which_theme(tval) == TC_COMBAT && (tval != TV_SWORD || sval != SV_DARK_SWORD)) p = 0;
 		//force generation of a blunt, if generating a combat at all
-		if ((resf & RESF_COND_BLUNT) && which_theme(tval) == 2 && tval != TV_BLUNT) p = 0;
+		if ((resf & RESF_COND_BLUNT) && which_theme(tval) == TC_COMBAT && tval != TV_BLUNT) p = 0;
 		//force generation of a non-sword weapon, if generating a _weapon_ at all
 		if ((resf & RESF_CONDF_NOSWORD) && is_melee_weapon(tval) && tval == TV_SWORD) p = 0;
 		//prevent generation of a mage staff -- Saruman specialty
@@ -1046,11 +1046,11 @@ errr get_obj_num_prep(u32b resf) {
 		//force generation of a mage staff:
 		if (resf & RESF_CONDF_MSTAFF && tval != TV_MSTAFF) p = 0;
 		//force generation of a sling or sling-ammo, if generating a combat item at all
-		if ((resf & RESF_COND_SLING) && which_theme(tval) == 2 && (tval != TV_BOW || sval != SV_SLING) && tval != TV_SHOT) p = 0;
+		if ((resf & RESF_COND_SLING) && which_theme(tval) == TC_COMBAT && (tval != TV_BOW || sval != SV_SLING) && tval != TV_SHOT) p = 0;
 		//force generation of a ranged weapon or ammo, if generating a combat item at all
-		if ((resf & RESF_COND_RANGED) && which_theme(tval) == 2 && !is_ranged_weapon(tval) && !is_ammo(tval)) p = 0;
+		if ((resf & RESF_COND_RANGED) && which_theme(tval) == TC_COMBAT && !is_ranged_weapon(tval) && !is_ammo(tval)) p = 0;
 		//force generation of a rune, if generating a magic item at all
-		if ((resf & RESF_CONDF_RUNE) && which_theme(tval) == 3 && tval != TV_RUNE) p = 0;
+		if ((resf & RESF_CONDF_RUNE) && which_theme(tval) == TC_MAGIC && tval != TV_RUNE) p = 0;
 #endif
 #if FORCED_DROPS == 2 /* way 2/2 */
 		/* Check for special item types. - C. Blue
@@ -7028,14 +7028,14 @@ static int which_theme(int tval) {
 #ifdef ENABLE_DEMOLITIONIST
 	case TV_CHEMICAL:
 #endif
-		return 0; //junk
+		return TC_JUNK;
 
 	case TV_CHEST:
 	case TV_CROWN:
 	case TV_DRAG_ARMOR:
 	case TV_AMULET:
 	case TV_RING:
-		return 1; //treasure
+		return TC_TREASURE;
 
 	case TV_SHOT:
 	case TV_ARROW:
@@ -7051,7 +7051,7 @@ static int which_theme(int tval) {
 	case TV_SHIELD:
 	case TV_SOFT_ARMOR:
 	case TV_HARD_ARMOR:
-		return 2; //combat
+		return TC_COMBAT;
 
 	case TV_MSTAFF:
 	case TV_STAFF:
@@ -7074,7 +7074,7 @@ static int which_theme(int tval) {
 	case TV_DAEMON_BOOK:
  #endif
 	case TV_BOOK:
-		return 3; //magic
+		return TC_MAGIC;
 
 	case TV_LITE:
 	case TV_CLOAK:
@@ -7091,7 +7091,7 @@ static int which_theme(int tval) {
 #ifdef ENABLE_SUBINVEN
 	case TV_SUBINVEN:
 #endif
-		return 4; //tools
+		return TC_TOOLS;
 
 	default: //paranoia
 		s_printf("ERROR: uncategorized item %d\n", tval);
@@ -7127,14 +7127,14 @@ static int kind_is_normal(int k_idx, u32b resf) {
 	int tc_p = kind_is_legal(k_idx, resf);
 
 	switch (which_theme(k_info[k_idx].tval)) {
-	case 1: return (tc_p * tc_bias_treasure) / 500;
-	case 2: return (tc_p * tc_bias_combat) / 500;
-	case 3: return (tc_p * tc_bias_magic) / 500;
-	case 4: return (tc_p * tc_bias_tools) / 500;
-	case 0: return (tc_p * tc_bias_junk) / 500;
+	case TC_TREASURE: return (tc_p * tc_bias_treasure) / 500;
+	case TC_COMBAT: return (tc_p * tc_bias_combat) / 500;
+	case TC_MAGIC: return (tc_p * tc_bias_magic) / 500;
+	case TC_TOOLS: return (tc_p * tc_bias_tools) / 500;
+	case TC_JUNK: return (tc_p * tc_bias_junk) / 500;
 	}
 	//-1, unclassified item (paranoia)
-	return tc_p / 5;
+	return tc_p / TC_AMOUNT;
 }
 
 /*
@@ -7356,14 +7356,14 @@ static int kind_is_good(int k_idx, u32b resf) {
 		if (k_ptr->cost < 200) return 0; //except items that are really not GOOD
 
 		switch (which_theme(k_ptr->tval)) {
-		case 1: return (tc_p * tc_biasg_treasure) / 500;
-		case 2: return (tc_p * tc_biasg_combat) / 500;
-		case 3: return (tc_p * tc_biasg_magic) / 500;
-		case 4: return (tc_p * tc_biasg_tools) / 500;
-		case 0: return (tc_p * tc_biasg_junk) / 500;
+		case TC_TREASURE: return (tc_p * tc_biasg_treasure) / 500;
+		case TC_COMBAT: return (tc_p * tc_biasg_combat) / 500;
+		case TC_MAGIC: return (tc_p * tc_biasg_magic) / 500;
+		case TC_TOOLS: return (tc_p * tc_biasg_tools) / 500;
+		case TC_JUNK: return (tc_p * tc_biasg_junk) / 500;
 		}
 		//-1, unclassified item (paranoia)
-		return tc_p / 5;
+		return tc_p / TC_AMOUNT;
 	}
 	//note: no tools atm :/ could add +2/+3 diggers?
 
@@ -7374,14 +7374,14 @@ static int kind_is_good(int k_idx, u32b resf) {
 
 #if 0
 	switch (which_theme(k_ptr->tval)) {
-	case 1: return (tc_p * tc_biasg_treasure) / 500;
-	case 2: return (tc_p * tc_biasg_combat) / 500;
-	case 3: return (tc_p * tc_biasg_magic) / 500;
-	case 4: return (tc_p * tc_biasg_tools) / 500;
-	case 0: return (tc_p * tc_biasg_junk) / 500;
+	case TC_TREASURE: return (tc_p * tc_biasg_treasure) / 500;
+	case TC_COMBAT: return (tc_p * tc_biasg_combat) / 500;
+	case TC_MAGIC: return (tc_p * tc_biasg_magic) / 500;
+	case TC_TOOLS: return (tc_p * tc_biasg_tools) / 500;
+	case TC_JUNK: return (tc_p * tc_biasg_junk) / 500;
 	}
 	//-1, unclassified item (paranoia)
-	return tc_p / 5;
+	return tc_p / TC_AMOUNT;
 #endif
 #if 1
 	return (tc_p * 1) / 100; //absolute minimum chance that is guaranteed to be not 0 for any rarest item: 1%.
@@ -7633,14 +7633,14 @@ static int kind_is_great(int k_idx, u32b resf) {
 		if (k_ptr->cost <= 7000) return 0; //except items that are really not GREAT (Note though: Artifact Ale is 5k :/)
 
 		switch (which_theme(k_ptr->tval)) {
-		case 1: return (tc_p * tc_biasr_treasure) / 500;
-		case 2: return (tc_p * tc_biasr_combat) / 500;
-		case 3: return (tc_p * tc_biasr_magic) / 500;
-		case 4: return (tc_p * tc_biasr_tools) / 500;
-		case 0: return (tc_p * tc_biasr_junk) / 500;
+		case TC_TREASURE: return (tc_p * tc_biasr_treasure) / 500;
+		case TC_COMBAT: return (tc_p * tc_biasr_combat) / 500;
+		case TC_MAGIC: return (tc_p * tc_biasr_magic) / 500;
+		case TC_TOOLS: return (tc_p * tc_biasr_tools) / 500;
+		case TC_JUNK: return (tc_p * tc_biasr_junk) / 500;
 		}
 		//-1, unclassified item (paranoia)
-		return tc_p / 5;
+		return tc_p / TC_AMOUNT;
 	}
 	//note: no tools atm :/ could add +2/+3 diggers?
 
@@ -7651,14 +7651,14 @@ static int kind_is_great(int k_idx, u32b resf) {
 
 #if 0
 	switch (which_theme(k_ptr->tval)) {
-	case 1: return (tc_p * tc_biasr_treasure) / 500;
-	case 2: return (tc_p * tc_biasr_combat) / 500;
-	case 3: return (tc_p * tc_biasr_magic) / 500;
-	case 4: return (tc_p * tc_biasr_tools) / 500;
-	case 0: return (tc_p * tc_biasr_junk) / 500;
+	case TC_TREASURE: return (tc_p * tc_biasr_treasure) / 500;
+	case TC_COMBAT: return (tc_p * tc_biasr_combat) / 500;
+	case TC_MAGIC: return (tc_p * tc_biasr_magic) / 500;
+	case TC_TOOLS: return (tc_p * tc_biasr_tools) / 500;
+	case TC_JUNK: return (tc_p * tc_biasr_junk) / 500;
 	}
 	//-1, unclassified item (paranoia)
-	return tc_p / 5;
+	return tc_p / TC_AMOUNT;
 #endif
 #if 1
 	return (tc_p * 1) / 100; //absolute minimum chance that is guaranteed to be not 0 for any rarest item: 1%.
@@ -13155,23 +13155,23 @@ void init_treasure_classes(void) {
 		total += table[i].prob2;
 		t = which_theme(k_info[table[i].index].tval);
 		switch (t) {
-		case 1:
+		case TC_TREASURE:
 			total_treasure += table[i].prob2;
 			//s_printf("1: %s, ", k_name + k_info[table[i].index].name);
 			continue;
-		case 2:
+		case TC_COMBAT:
 			total_combat += table[i].prob2;
 			//s_printf("2: %s, ", k_name + k_info[table[i].index].name);
 			continue;
-		case 3:
+		case TC_MAGIC:
 			total_magic += table[i].prob2;
 			//s_printf("3: %s, ", k_name + k_info[table[i].index].name);
 			continue;
-		case 4:
+		case TC_TOOLS:
 			total_tools += table[i].prob2;
 			//s_printf("4: %s, ", k_name + k_info[table[i].index].name);
 			continue;
-		case 0:
+		case TC_JUNK:
 			total_junk += table[i].prob2;
 			//s_printf("5: %s, ", k_name + k_info[table[i].index].name);
 			continue;
@@ -13216,23 +13216,23 @@ void init_treasure_classes(void) {
 		total += table[i].prob2;
 		t = which_theme(k_info[table[i].index].tval);
 		switch (t) {
-		case 1:
+		case TV_TREASURE:
 			total_treasure += table[i].prob2;
 			//s_printf("1: %s, ", k_name + k_info[table[i].index].name);
 			continue;
-		case 2:
+		case TC_COMBAT:
 			total_combat += table[i].prob2;
 			//s_printf("2: %s, ", k_name + k_info[table[i].index].name);
 			continue;
-		case 3:
+		case TC_MAGIC:
 			total_magic += table[i].prob2;
 			//s_printf("3: %s, ", k_name + k_info[table[i].index].name);
 			continue;
-		case 4:
+		case TC_TOOLS:
 			total_tools += table[i].prob2;
 			//s_printf("4: %s, ", k_name + k_info[table[i].index].name);
 			continue;
-		case 0:
+		case TC_JUNK:
 			total_junk += table[i].prob2;
 			//s_printf("5: %s, ", k_name + k_info[table[i].index].name);
 			continue;
@@ -13277,23 +13277,23 @@ void init_treasure_classes(void) {
 		total += table[i].prob2;
 		t = which_theme(k_info[table[i].index].tval);
 		switch (t) {
-		case 1:
+		case TC_TREASURE:
 			total_treasure += table[i].prob2;
 			//s_printf("1: %s, ", k_name + k_info[table[i].index].name);
 			continue;
-		case 2:
+		case TC_COMBAT:
 			total_combat += table[i].prob2;
 			//s_printf("2: %s, ", k_name + k_info[table[i].index].name);
 			continue;
-		case 3:
+		case TC_MAGIC:
 			total_magic += table[i].prob2;
 			//s_printf("3: %s, ", k_name + k_info[table[i].index].name);
 			continue;
-		case 4:
+		case TC_TOOLS:
 			total_tools += table[i].prob2;
 			//s_printf("4: %s, ", k_name + k_info[table[i].index].name);
 			continue;
-		case 0:
+		case TC_JUNK:
 			total_junk += table[i].prob2;
 			//s_printf("5: %s, ", k_name + k_info[table[i].index].name);
 			continue;
