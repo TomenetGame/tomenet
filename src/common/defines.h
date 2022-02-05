@@ -1930,34 +1930,6 @@
 /* Number of equipment slots, INVEN_TOTAL ... INVEN_TOTAL + INVEN_EQ - 1 */
 #define INVEN_EQ	(INVEN_TOTAL - INVEN_WIELD)
 
-#ifdef ENABLE_SUBINVEN
- /* Unify inventory colour of subinventories. If not defined, they will have different colours depending on their group type. */
- #define SUBINVEN_UNIFIED_COLOUR
- /* Allow chests to be used as storage containers after having opened them once? */
- #define SUBINVEN_CHESTS
- /* Allow only one of each subinven group type per player?
-    Ie 1 Alchemy Satchel + 1 Chest (all chests belong into the same 'group' together, the 'chests' group), etc.. */
- #define SUBINVEN_LIMIT_GROUP
- /* Max space inside any single sub-inventory (pendant to INVEN_TOTAL).
-    Subinventories currently don't feature an 'overflow' slot unlike normal inventories.
-    We currently have 9 (11 with rust+hydroxide) chemicals (the reason of implementing subinventories actually). */
- #define SUBINVEN_PACK INVEN_PACK
- /* Set sizes of different subinven types */
- /* SV_SI_SATCHEL: */
- #ifdef NO_RUST_NO_HYDROXIDE /* 9 vs 11 types of chemicals, of which 6 vs 8 are sort of 'basic' */
-  #define SI_SATCHEL_SIZE 6
- #else
-  #define SI_SATCHEL_SIZE 8
- #endif
- /* TVal-converted chests - no difference for objects of great weight and little weight for now, same as normal backpack */
- #define SI_CHEST_SMALL_WOODEN_SIZE	2
- #define SI_CHEST_SMALL_IRON_SIZE	3
- #define SI_CHEST_SMALL_STEEL_SIZE	3
- #define SI_CHEST_LARGE_WOODEN_SIZE	3
- #define SI_CHEST_LARGE_IRON_SIZE	4
- #define SI_CHEST_LARGE_STEEL_SIZE	4
-#endif
-
 
 /*
  * A "stack" of items is limited to less than 100 items (hard-coded).
@@ -4419,6 +4391,35 @@
  #define CF_WA		0x0800
  #define CF_SW		0x1000
  #define CF_AC		0x2000
+#endif
+
+
+#ifdef ENABLE_SUBINVEN
+ /* Unify inventory colour of subinventories. If not defined, they will have different colours depending on their group type. */
+ #define SUBINVEN_UNIFIED_COLOUR
+ /* Allow chests to be used as storage containers after having opened them once? */
+ #define SUBINVEN_CHESTS
+ /* Allow only one of each subinven group type per player?
+    Ie 1 Alchemy Satchel + 1 Chest (all chests belong into the same 'group' together, the 'chests' group), etc.. */
+ #define SUBINVEN_LIMIT_GROUP
+ /* Max space inside any single sub-inventory (pendant to INVEN_TOTAL).
+    Subinventories currently don't feature an 'overflow' slot unlike normal inventories.
+    We currently have 9 (11 with rust+hydroxide) chemicals (the reason of implementing subinventories actually). */
+ #define SUBINVEN_PACK INVEN_PACK
+ /* Set sizes of different subinven types */
+ /* SV_SI_SATCHEL: */
+ #ifdef NO_RUST_NO_HYDROXIDE /* 9 vs 11 types of chemicals, of which 6 vs 8 are sort of 'basic' */
+  #define SI_SATCHEL_SIZE 6
+ #else
+  #define SI_SATCHEL_SIZE 8
+ #endif
+ /* TVal-converted chests - no difference for objects of great weight and little weight for now, same as normal backpack */
+ #define SI_CHEST_SMALL_WOODEN_SIZE	2
+ #define SI_CHEST_SMALL_IRON_SIZE	3
+ #define SI_CHEST_SMALL_STEEL_SIZE	3
+ #define SI_CHEST_LARGE_WOODEN_SIZE	3
+ #define SI_CHEST_LARGE_IRON_SIZE	4
+ #define SI_CHEST_LARGE_STEEL_SIZE	4
 #endif
 
 /* svals for TV_SUBINVEN */
