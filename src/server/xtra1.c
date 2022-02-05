@@ -3843,6 +3843,17 @@ void calc_boni(int Ind) {
 
 		p_ptr->inven_cnt++;
 		p_ptr->total_weight += o_ptr->weight * o_ptr->number;
+
+#ifdef ENABLE_SUBINVEN
+		if (o_ptr->tval == TV_SUBINVEN) {
+			w = get_subinven_size(o_ptr->sval);
+			for (j = 0; j < w; j++) {
+				o2_ptr = &p_ptr->subinventory[i][j];
+				if (!o2_ptr->k_idx) break;
+				p_ptr->total_weight += o2_ptr->weight * o2_ptr->number;
+			}
+		}
+#endif
 	}
 
 	/* Apply the bonus from Druidism */

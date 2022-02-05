@@ -2413,6 +2413,7 @@ if (p_ptr->updated_savegame == 0) {
 			rd_item(&forge);
 #ifdef ENABLE_SUBINVEN
 			p_ptr->subinventory[m][l] = forge;
+			p_ptr->total_weight += (forge.number * forge.weight);
 #else
 			(void)m; /* discard */
 #endif
