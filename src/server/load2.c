@@ -2408,6 +2408,9 @@ if (p_ptr->updated_savegame == 0) {
 		/* Read subinventory size */
 		rd_byte(&tmp8u);
 		k = (int)tmp8u;
+		/* We haven't read the inventory yet, as rd_extra() happens before rd_inventory(),
+		   so we don't know the currently valid size (pval) of this container yet,
+		   in case it has changed since this savefile was created. */
 		/* Read the items */
 		for (l = 0; l < k; l++) {
 			rd_item(&forge);
