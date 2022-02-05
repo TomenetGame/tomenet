@@ -10972,18 +10972,18 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 				while(ok == 0) {
 					ok = 1;
 					part = randint(4);
-					if(part == 1 && head == 1)
+					if (part == 1 && head == 1)
 						ok = 0;
-					if(part == 2 && arm == 2)
+					if (part == 2 && arm == 2)
 						ok = 0;
-					if(part == 4 && leg == 2)
+					if (part == 4 && leg == 2)
 						ok = 0;
 				}
-				if(part == 1)
+				if (part == 1)
 					head++;
-				if(part == 2)
+				if (part == 2)
 					arm++;
-				if(part == 4)
+				if (part == 4)
 					leg++;
 				invcopy(o_ptr, lookup_kind(TV_SKELETON, part));
 				object_known(o_ptr);
