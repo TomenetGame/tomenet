@@ -4604,7 +4604,11 @@ void observe_aux(int Ind, object_type *o_ptr) {
  #ifdef ENABLE_DEMOLITIONIST
 	if (o_ptr->tval == TV_CHARGE) msg_format(Ind, "\377s  Its default fuse length will burn down in %d seconds.", o_ptr->pval);
  #endif
-
+ #ifdef ENABLE_SUBINVEN
+  #ifdef SUBINVEN_LIMIT_GROUP
+	if (o_ptr->tval == TV_SUBINVEN) msg_format(Ind, "\377s  You cannot use more than one of this type of container.");
+  #endif
+ #endif
 	switch (o_ptr->tval) {
 	case TV_BLUNT:
 		msg_print(Ind, "\377s  It's a blunt weapon."); break;
@@ -4929,6 +4933,12 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 	}
 #endif
 
+#ifdef ENABLE_SUBINVEN
+ #ifdef SUBINVEN_LIMIT_GROUP
+	if (o_ptr->tval == TV_SUBINVEN) fprintf(fff, "\377WYou cannot use more than one of this type of container at a time.\n");
+ #endif
+#endif
+
 	/* Questor object! */
 	if (o_ptr->questor) quest_interact(Ind, o_ptr->quest - 1, o_ptr->questor_idx, fff);
 
@@ -5133,7 +5143,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 		}
 #endif
 
-	if (o_ptr->discount) fprintf(fff, "\377WThe value of this item is %d%% less than usual.\n", o_ptr->discount);
+		if (o_ptr->discount) fprintf(fff, "\377WThe value of this item is %d%% less than usual.\n", o_ptr->discount);
 
 #ifdef PLAYER_STORES
  #ifdef HOME_APPRAISAL
