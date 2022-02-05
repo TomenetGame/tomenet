@@ -5437,6 +5437,9 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				    && o_ptr->tval != TV_GAME
 				    && !is_ammo(o_ptr->tval)
 				    && o_ptr->tval != TV_CHEST
+#ifdef ENABLE_SUBINVEN
+				    && o_ptr->tval != TV_SUBINVEN
+#endif
 				    && o_ptr->tval != TV_BOOK
 #ifdef ENABLE_DEMOLITIONIST
 				    && o_ptr->tval != TV_CHARGE

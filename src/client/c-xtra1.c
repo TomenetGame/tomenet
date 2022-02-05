@@ -1680,7 +1680,8 @@ void show_inven_header(void) {
 		if (o_ptr->tval == TV_SUBINVEN) {
 			object_type *o2_ptr;;
 
-			for (z = 0; z < get_subinven_size(o_ptr->sval); z++) {
+			//for (z = 0; z < get_subinven_size(o_ptr->sval); z++) {
+			for (z = 0; z < o_ptr->pval; z++) {
 				o2_ptr = &subinventory[i][z];
 				totalwgt += o2_ptr->weight * o2_ptr->number;
 			}
@@ -1828,7 +1829,8 @@ void show_inven(void) {
 			if (o_ptr->tval == TV_SUBINVEN) {
 				object_type *o2_ptr;;
 
-				for (z = 0; z < get_subinven_size(o_ptr->sval); z++) {
+				//for (z = 0; z < get_subinven_size(o_ptr->sval); z++) {
+				for (z = 0; z < o_ptr->pval; z++) {
 					o2_ptr = &subinventory[i][z];
 					totalwgt += o2_ptr->weight * o2_ptr->number;
 				}
@@ -1885,7 +1887,7 @@ void show_subinven(int islot) {
 	char	out_desc[23][ONAME_LEN];
 
 	object_type *i_ptr = &inventory[islot];
-	int subinven_size = get_subinven_size(i_ptr->sval);
+	int subinven_size = i_ptr->pval; //get_subinven_size(i_ptr->sval);
 
 #ifdef USE_SOUND_2010
  #if 0 /* actually too spammy because the inventory is opened for a lot of fast-paced actions all the time. */

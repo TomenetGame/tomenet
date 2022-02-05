@@ -5989,6 +5989,7 @@ int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 	char uses_dir = 0; /* flag whether a rod requires a direction for zapping or not */
+	s16b pval = 0;
 
 	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 
@@ -6014,26 +6015,31 @@ int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 		return 0;
 	}
 
+	if (o_ptr->tval == TV_BOOK) pval = o_ptr->pval;
+#ifdef ENABLE_SUBINVEN
+	else if (o_ptr->tval == TV_SUBINVEN) pval = o_ptr->bpval;
+#endif
+
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
 		if (is_newer_than(&p_ptr2->version, 4, 5, 2, 0, 0, 0))
-			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
 		else if (is_newer_than(&p_ptr2->version, 4, 4, 5, 10, 0, 0))
-			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%c%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, uses_dir, name);
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%c%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, uses_dir, name);
 		else if (is_newer_than(&p_ptr2->version, 4, 4, 4, 2, 0, 0))
-			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, name);
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, name);
 		else
-			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, name);
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, name);
 	}
 
 	if (is_newer_than(&Players[Ind]->version, 4, 5, 2, 0, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
 	else if (is_newer_than(&Players[Ind]->version, 4, 4, 5, 10, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, uses_dir, name);
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, uses_dir, name);
 	else if (is_newer_than(&Players[Ind]->version, 4, 4, 4, 2, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, name);
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, name);
 	else
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, name);
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, name);
 }
 
 #ifdef ENABLE_SUBINVEN

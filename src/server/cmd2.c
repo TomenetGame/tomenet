@@ -1730,6 +1730,8 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
 	o_ptr->tval = TV_SUBINVEN;
 	/* o_ptr->sval is mapped identically! */
 	o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
+	/* Fill in bpval */
+	o_ptr->bpval = k_info[o_ptr->k_idx].pval;
 #endif
 
 	/* Known */
