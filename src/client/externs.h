@@ -478,7 +478,7 @@ extern void cmd_message(void);
 extern void cmd_party(void);
 extern void cmd_fire(void);
 extern void cmd_throw(void);
-extern void cmd_browse(void);
+extern void cmd_browse(int item);
 extern void cmd_study(void);
 extern void cmd_cast(void);
 extern void cmd_pray(void);

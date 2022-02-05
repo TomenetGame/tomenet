@@ -138,6 +138,11 @@ static void cmd_all_in_one(void) {
 		/* (Un)Combine it */
 		Send_activate(item);
 		break;
+#ifdef ENABLE_SUBINVEN
+	case TV_SUBINVEN:
+		cmd_browse(item);
+		break;
+#endif
 	/* Presume it's sort of spellbook */
 	case TV_BOOK:
 	default:
@@ -266,7 +271,7 @@ void process_command() {
 
 	/*** Spell casting ***/
 
-	case 'b': cmd_browse(); break;
+	case 'b': cmd_browse(-1); break;
 	case 'G': do_cmd_skill(); break;
 	case 'm': do_cmd_activate_skill(); break;
 	case 'U': cmd_ghost(); break;
@@ -798,7 +803,7 @@ void cmd_inven(void) {
 			cmd_message();
 			continue;
 		case 'b': /* Added for ENABLE_SUBINVEN, but it's fine in general, just need to clean up first, which is done in cmd_browse().. */
-			cmd_browse();
+			cmd_browse(-1);
 			/* ..and cmd_browse() also knows to restore our state */
 			continue;
 #ifdef ENABLE_SUBINVEN
@@ -5596,8 +5601,9 @@ static void cmd_browse_aux_restore(void) {
 	command_gap = 50;
 	show_inven();
 }
-void cmd_browse(void) {
-	int item;
+/* Normal usage: If item is -1 the user gets prompted.
+   'item' is for usage with cmd_all_in_one(). */
+void cmd_browse(int item) {
 	object_type *o_ptr;
 	bool from_inven = showing_inven;
 
@@ -5623,29 +5629,45 @@ void cmd_browse(void) {
 	}
 #endif
 
+	if (item == -1) {
 #ifdef ENABLE_SUBINVEN
-	get_item_hook_find_obj_what = "Book/satchel name? ";
-	get_item_extra_hook = get_item_hook_find_obj;
+		get_item_hook_find_obj_what = "Book/satchel name? ";
+		get_item_extra_hook = get_item_hook_find_obj;
 
-	item_tester_hook = item_tester_browsable;
+		item_tester_hook = item_tester_browsable;
 
-	if (!c_get_item(&item, "Browse which book/container? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG))) {
-		if (item == -2) c_msg_print("You have no books that you can read, nor containers to peruse.");
-		return;
-	}
+		if (!c_get_item(&item, "Browse which book/container? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG))) {
+			if (item == -2) c_msg_print("You have no books that you can read, nor containers to peruse.");
+			return;
+		}
 #else
-	get_item_hook_find_obj_what = "Book name? ";
-	get_item_extra_hook = get_item_hook_find_obj;
+		get_item_hook_find_obj_what = "Book name? ";
+		get_item_extra_hook = get_item_hook_find_obj;
 
-	item_tester_hook = item_tester_browsable;
+		item_tester_hook = item_tester_browsable;
 
-	if (!c_get_item(&item, "Browse which book? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG))) {
-		if (item == -2) c_msg_print("You have no books that you can read.");
-		return;
-	}
+		if (!c_get_item(&item, "Browse which book? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG))) {
+			if (item == -2) c_msg_print("You have no books that you can read.");
+			return;
+		}
 #endif
+	}
 
 	o_ptr = &inventory[item];
+
+	if (o_ptr->tval != TV_BOOK
+#ifdef ENABLE_SUBINVEN
+	    && o_ptr->tval != TV_SUBINVEN
+#endif
+	    ) {
+#ifdef ENABLE_SUBINVEN
+		c_msg_print("That is not a book to browse, nor a container to peruse.");
+#else
+		c_msg_print("That is not a book to browse.");
+#endif
+		return;
+	}
+
 
 #ifdef ENABLE_SUBINVEN
 	if (o_ptr->tval == TV_SUBINVEN) {
