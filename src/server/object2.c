@@ -13216,7 +13216,7 @@ void init_treasure_classes(void) {
 		total += table[i].prob2;
 		t = which_theme(k_info[table[i].index].tval);
 		switch (t) {
-		case TV_TREASURE:
+		case TC_TREASURE:
 			total_treasure += table[i].prob2;
 			//s_printf("1: %s, ", k_name + k_info[table[i].index].name);
 			continue;
