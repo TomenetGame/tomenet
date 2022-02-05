@@ -706,6 +706,13 @@ static void cmd_subinven_move(void) {
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
+	for (item = 0; item < INVEN_PACK; item++)
+		if (inventory[item].tval == TV_SUBINVEN) break;
+	if (item == INVEN_PACK) {
+		c_message_add("You don't carry any containers.");
+		return;
+	}
+
 	if (!c_get_item(&item, "Stow what? ", (USE_INVEN | USE_EXTRA))) return;
 
 	Send_subinven_move(item);
