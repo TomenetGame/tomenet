@@ -11056,11 +11056,11 @@ item that you will find on the floor:
    in the ~7 monster lore. The lore displays the first four classes, while the
    5th is 'hidden' and is the rest chance not covered by the first four:
 
-    -Combat:
-     Weapons, armour (except for boots and cloaks), shields, ammunition.
-
     -Treasure (named 'Valuables' in ~7 monster spoilers):
      Rings, amulets, dragon scale mails, crowns and chests.
+
+    -Combat:
+     Weapons, armour (except for boots and cloaks), shields, ammunition.
 
     -Magic:
      Mage staves, wands, staves, rods, runes, potions, scrolls (except for
