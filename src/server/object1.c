@@ -645,7 +645,7 @@ static byte default_tval_to_attr(int tval) {
 #ifdef ENABLE_SUBINVEN
 	case TV_SUBINVEN:
  #ifdef SUBINVEN_UNIFIED_COLOUR
-		return TERM_SLATE: /* Use same as chests */
+		return TERM_SLATE; /* Use same as chests */
  #else
 		return TERM_WHITE; /* Really depends on subtype later */
  #endif
