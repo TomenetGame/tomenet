@@ -1931,6 +1931,8 @@
 #define INVEN_EQ	(INVEN_TOTAL - INVEN_WIELD)
 
 #ifdef ENABLE_SUBINVEN
+ /* Unify inventory colour of subinventories. If not defined, they will have different colours depending on their group type. */
+ #define SUBINVEN_UNIFIED_COLOUR
  /* Allow chests to be used as storage containers after having opened them once? */
  #define SUBINVEN_CHESTS
  /* Allow only one of each subinven group type per player?
