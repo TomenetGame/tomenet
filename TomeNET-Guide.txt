@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 1. February 2022 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 5. February 2022 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.7.4b - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2804,7 +2804,10 @@ Note that ToME and TomeNET although both coming from similar roots are actually
 quite different games that are maintained by different persons/teams.
 
 If you want to download the source code, you can get it from www.tomenet.eu in
-the download section.
+the download section or from our github repository at
+ https://github.com/TomenetGame/tomenet
+or just clone it via command-line git command to your pc like this:
+ git clone https://github.com/TomenetGame/tomenet.git
 
 
 (1.1a) Where do I get in contact?
