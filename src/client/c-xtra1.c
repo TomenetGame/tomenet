@@ -1635,14 +1635,14 @@ static void display_equip(void) {
 /* Just show the header line for show_inven(): Mainly the total weight.
    This is used for easy redrawal within 'i' screen when using commands from within it that erase the topline. */
 void show_inven_header(void) {
-	int	i, j, k, z = 0;
-	long int wgt, totalwgt = 0;
+	int i, j, k, z = 0;
+	long int totalwgt = 0;
 
 	object_type *o_ptr;
 
-	char	tmp_val[80];
+	char tmp_val[80];
 
-	int	out_index[23];
+	int out_index[23];
 
 
 	/* Find the "final" slot */
@@ -1675,8 +1675,17 @@ void show_inven_header(void) {
 		/* Get the item */
 		o_ptr = &inventory[i];
 
-		wgt = o_ptr->weight * o_ptr->number;
-		totalwgt += wgt;
+		totalwgt += o_ptr->weight * o_ptr->number;
+#ifdef ENABLE_SUBINVEN
+		if (o_ptr->tval == TV_SUBINVEN) {
+			object_type *o2_ptr;;
+
+			for (z = 0; z < get_subinven_size(o_ptr->sval); z++) {
+				o2_ptr = &subinventory[i][z];
+				totalwgt += o2_ptr->weight * o2_ptr->number;
+			}
+		}
+#endif
 	}
 
 	/* Display the weight if needed */
@@ -1815,6 +1824,16 @@ void show_inven(void) {
 				(void)sprintf(tmp_val, "%3lik%1li lb", wgt / 10000, (wgt % 10000) / 1000);
 			put_str(tmp_val, j + 1, 71);
 			totalwgt += wgt;
+#ifdef ENABLE_SUBINVEN
+			if (o_ptr->tval == TV_SUBINVEN) {
+				object_type *o2_ptr;;
+
+				for (z = 0; z < get_subinven_size(o_ptr->sval); z++) {
+					o2_ptr = &subinventory[i][z];
+					totalwgt += o2_ptr->weight * o2_ptr->number;
+				}
+			}
+#endif
 		}
 	}
 
@@ -1850,6 +1869,7 @@ void show_inven(void) {
 }
 
 #ifdef ENABLE_SUBINVEN
+//todo: topline_icky is (wrongfully?) TRUE, so the totalwgt isn't shown!
 void show_subinven(int islot) {
 	int	i, j, k, l, z = 0;
 	int	col, len, lim;

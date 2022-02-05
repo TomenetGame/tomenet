@@ -4757,14 +4757,15 @@ void do_cmd_query_symbol(int Ind, char sym) {
 /* Attempt to move as much as possible of an inventory item stack into a subinventory container.
    Returns TRUE if fully stowed. */
 bool subinven_move_aux(int Ind, int islot, int sslot) {
-	object_type *i_ptr = &Players[Ind]->inventory[islot];
-	object_type *s_ptr = &Players[Ind]->inventory[sslot];
+	player_type *p_ptr = Players[Ind];
+	object_type *i_ptr = &p_ptr->inventory[islot];
+	object_type *s_ptr = &p_ptr->inventory[sslot];
 	object_type *o_ptr;
-	int i, inum = i_ptr->number;
+	int i, inum = i_ptr->number, wgt = p_ptr->total_weight;
 
 	/* Look for free spaces or spaces to merge with */
 	for (i = 0; i < get_subinven_size(s_ptr->sval); i++) {
-		o_ptr = &Players[Ind]->subinventory[sslot][i];
+		o_ptr = &p_ptr->subinventory[sslot][i];
 		if (o_ptr->tval) {
 			/* Hack 'number' to allow merging stacks partially */
 			if (i_ptr->number + o_ptr->number > 99) i_ptr->number = 99 - o_ptr->number;
@@ -4782,7 +4783,7 @@ bool subinven_move_aux(int Ind, int islot, int sslot) {
 			/* Fully move to a free slot. Done. */
 			*o_ptr = *i_ptr;
 			i_ptr->number = 0; /* Mark for erasure */
-			o_ptr = &Players[Ind]->subinventory[sslot][i];
+			o_ptr = &p_ptr->subinventory[sslot][i];
 			/* Manually do this here for now: Update subinven slot for client. */
 			display_subinven_aux(Ind, sslot, i);
 			break;
@@ -4819,9 +4820,15 @@ bool subinven_move_aux(int Ind, int islot, int sslot) {
 		inven_item_optimize(Ind, islot);
  #endif
 
+		/* Hack: Restore weight, since we didn't lose anything, but just moved it. */
+		p_ptr->total_weight = wgt;
+
 		/* Fully moved */
 		return TRUE;
 	}
+
+	/* Hack: Restore weight, since we didn't lose anything, but just moved it. */
+	p_ptr->total_weight = wgt;
 
 	/* Still not fully moved */
 	return FALSE;
@@ -4918,6 +4925,8 @@ void subinven_remove_aux(int Ind, int islot, int slot) {
 	int i;
 
 	o_ptr = &p_ptr->subinventory[islot][slot];
+
+	p_ptr->total_weight -= o_ptr->number * o_ptr->weight;
 
 	inven_carry(Ind, o_ptr);
 
