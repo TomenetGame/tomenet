@@ -644,7 +644,11 @@ static byte default_tval_to_attr(int tval) {
 #endif
 #ifdef ENABLE_SUBINVEN
 	case TV_SUBINVEN:
+ #ifdef SUBINVEN_UNIFIED_COLOUR
+		return TERM_SLATE: /* Use same as chests */
+ #else
 		return TERM_WHITE; /* Really depends on subtype later */
+ #endif
 #endif
 	}
 
@@ -1647,6 +1651,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			if (flag_count) {
 				byte flag_pick = randint(flag_count) - 1;
 				byte category = flag_category[flag_pick];
+
 				if (category == 1) {
 					switch (flag_pool[flag_pick]) {
 						case TR1_STR: { if (!((*f2) & TR2_SUST_STR) && randint(2) == 1) (*f2) |= TR2_SUST_STR; break; }
@@ -6657,10 +6662,12 @@ byte get_attr_from_tval(object_type *o_ptr) {
 	int attr = tval_to_attr[o_ptr->tval];
 
 #ifdef ENABLE_SUBINVEN
+ #ifndef SUBINVEN_UNIFIED_COLOUR
 	if (o_ptr->tval == TV_SUBINVEN) switch(get_subinven_group(o_ptr->sval)) {
 		case SV_SI_SATCHEL: attr = tval_to_attr[TV_CHEMICAL]; break;
 		case SV_SI_GROUP_CHEST_MIN: attr = tval_to_attr[TV_CHEST]; break;
 	}
+ #endif
 #endif
 
 #ifdef ENABLE_DEMOLITIONIST

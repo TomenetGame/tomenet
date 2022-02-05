@@ -3902,9 +3902,11 @@ P:0:4d7:0:0:0
 
 ##### Special bags (ENABLE_SUBINVEN; unique-carried if SUBINVEN_LIMIT_GROUP) - C. Blue #####
 
-#hmm, maybe use ~ like for chests, for all TV_SUBINVEN?
+#hmm, maybe use ~ like for chests, for all TV_SUBINVEN? Many colours already used up for ~ though, only o/G/b/B left.
+#then again, & stands for runes already. Maybe ~ is best.
 $ENABLE_SUBINVEN$N:452:& Alchemy Satchel~
-$ENABLE_SUBINVEN$G:&:y
+#$ENABLE_SUBINVEN$G:&:y
+$ENABLE_SUBINVEN$G:~:o
 $ENABLE_SUBINVEN$I:126:0:0
 $ENABLE_SUBINVEN$W:127:0:30:300
 $ENABLE_SUBINVEN$A:127/0
