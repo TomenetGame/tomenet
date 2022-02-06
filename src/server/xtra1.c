@@ -7528,6 +7528,22 @@ void window_stuff(int Ind) {
 		fix_inven(Ind);
 	}
 
+#ifdef ENABLE_SUBINVEN
+	/* Display inventory */
+	if (p_ptr->window & PW_SUBINVEN) {
+		int i;
+
+		/* Currently only purpose: Initially send him the character-loaded subinventories.
+		   Was originally done in nserver.c:Handle_login() but didn't work out on live servers. */
+		for (i = 0; i < INVEN_PACK; i++) {
+			if (p_ptr->inventory[i].tval != TV_SUBINVEN) continue;
+			display_subinven(Ind, i);
+		}
+
+		p_ptr->window &= ~(PW_SUBINVEN);
+	}
+#endif
+
 	/* Display equipment */
 	if (p_ptr->window & PW_EQUIP) {
 		p_ptr->window &= ~(PW_EQUIP);

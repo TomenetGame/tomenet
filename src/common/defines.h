@@ -4725,6 +4725,9 @@
 #define PW_OBJECT	0x00004000L	/* Display object recall */
 #define PW_ALLITEMS	0x00008000L	/* Display all inventory and equipment (all slots count as 'changed') */
 #define PW_ALLITEMS_FWD	0x00010000L	/* Display all inventory for mind-linking player */
+#ifdef ENABLE_SUBINVEN
+ #define PW_SUBINVEN	0x00020000L	/* (Initially) send all subinventory contents to the player */
+#endif
 
 
 

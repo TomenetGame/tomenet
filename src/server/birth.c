@@ -2811,6 +2811,9 @@ static void player_setup(int Ind, bool new) {
 	/* Update his inventory, equipment, and spell info */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
+#ifdef ENABLE_SUBINVEN
+	p_ptr->window |= PW_SUBINVEN;
+#endif
 
 	p_ptr->master_move_hook = NULL; /* just in case its not */
 
