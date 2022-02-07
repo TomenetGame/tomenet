@@ -3655,16 +3655,6 @@ static int Handle_login(int ind) {
 	/* Tell the meta server about the new player */
 	Report_to_meta(META_UPDATE);
 
-#if 0 /* too early? fails on live server apparently. It's fine on local test server though. Moved to newly added PW_SUBINVEN instead. */
-#ifdef ENABLE_SUBINVEN
-	/* Initially send him the loaded subinventories */
-	for (i = 0; i < INVEN_PACK; i++) {
-		if (p_ptr->inventory[i].tval != TV_SUBINVEN) continue;
-		display_subinven(NumPlayers, i);
-	}
-#endif
-#endif
-
 	return 0;
 }
 
@@ -11449,23 +11439,6 @@ static int Receive_store_leave(int ind) {
 		handle_store_leave(player);
 	}
 
-#if 0
- #if 0
-	/* hack -- update night/day in wilderness levels */
-	/* XXX it's not so good place to do such things -
-	 * prolly we'll need PU_SUN or sth.		- Jir - */
-	if (!p_ptr->wpos.wz) {
-		if (IS_DAY) world_surface_day(&p_ptr->wpos); 
-		else world_surface_night(&p_ptr->wpos);
-	}
- #else
-	if (!p_ptr->wpos.wz) {
-		if (IS_DAY) player_day(player);
-		else player_night(player);
-	}
- #endif
-#endif
-
 	return 1;
 }
 
@@ -11700,8 +11673,12 @@ static int Receive_redraw(int ind) {
 		}
 #ifdef USE_SOUND_2010
 		else {
+			/* These two fail on login with low latency, giving warnings in the log file.
+			   It's not a problem though as they are re-initialized a moment later, then successfully. */
+ #if 1 /* todo because of 'connection not ready' msg on logon: fix so this isn't called before client has properly logged on anymre, and copy this to PW_INIT (and resolve the panic there) */
 			handle_music(player);
 			handle_ambient_sfx(player, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos, FALSE);
+ #endif
 		}
 #endif
 		return 1;

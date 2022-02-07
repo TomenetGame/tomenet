@@ -2516,6 +2516,7 @@ static void player_setup(int Ind, bool new) {
 
 	/* hack -- update night/day on world surface */
 	if (!wpos->wz) {
+#if 1 /* todo because of 'connection not ready' msg on logon: move to PW_INIT (and resolve the panic there) */
 		/* hack: temporarily allow the player to be called in wild
 		   view update routines (player_day/player_night) */
 		//NumPlayers++;
@@ -2532,6 +2533,7 @@ static void player_setup(int Ind, bool new) {
 
 		p_ptr->view_perma_grids = i;
 		//NumPlayers--;
+#endif
 
 		/* Don't allow players to save in houses they don't own -> teleport them - C. Blue */
 		/* Assumption: wpos.wz==0 and CAVE_ICKY -> we're inside a house*/
@@ -2811,9 +2813,8 @@ static void player_setup(int Ind, bool new) {
 	/* Update his inventory, equipment, and spell info */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
-#ifdef ENABLE_SUBINVEN
-	p_ptr->window |= PW_SUBINVEN;
-#endif
+	/* Finally, do various initialisations that couldn't be done in the early login state so far. */
+	p_ptr->window |= PW_INIT;
 
 	p_ptr->master_move_hook = NULL; /* just in case its not */
 

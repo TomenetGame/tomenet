@@ -1013,6 +1013,21 @@ static void fix_inven(int Ind) {
 	display_inven(Ind);
 }
 
+#ifdef ENABLE_SUBINVEN
+	/* Refresh subinventory */
+static void fix_subinven(int Ind) {
+	int i;
+	player_type *p_ptr = Players[Ind];
+
+	/* Currently only purpose: Initially send him the character-loaded subinventories.
+	   Was originally done in nserver.c:Handle_login() but didn't work out on live servers. */
+	for (i = 0; i < INVEN_PACK; i++) {
+		if (p_ptr->inventory[i].tval != TV_SUBINVEN) continue;
+		display_subinven(Ind, i);
+	}
+}
+#endif
+
 /*
  * Hack -- display equipment in sub-windows
  */
@@ -7528,21 +7543,40 @@ void window_stuff(int Ind) {
 		fix_inven(Ind);
 	}
 
-#ifdef ENABLE_SUBINVEN
-	/* Display inventory */
-	if (p_ptr->window & PW_SUBINVEN) {
-		int i;
+	if (p_ptr->window & PW_INIT) {
+		p_ptr->window &= ~PW_INIT;
 
-		/* Currently only purpose: Initially send him the character-loaded subinventories.
-		   Was originally done in nserver.c:Handle_login() but didn't work out on live servers. */
-		for (i = 0; i < INVEN_PACK; i++) {
-			if (p_ptr->inventory[i].tval != TV_SUBINVEN) continue;
-			display_subinven(Ind, i);
+#ifdef ENABLE_SUBINVEN
+		//if (p_ptr->window & PW_SUBINVEN) { p_ptr->window &= ~(PW_SUBINVEN); }
+		fix_subinven(Ind);
+#endif
+
+#if 0 /* panic save, disable the ~PW_INIT clearing to cause it. */
+		/* Need to repeat this here, because in player_setup()->IS_DAY check the conn-state was not CONN_PLAYING yet, so connection wasn't ready to transmit weather colours */
+		/* hack -- update night/day on world surface */
+		if (!p_ptr->wpos.wz) {
+			int i;
+
+			/* hack: temporarily allow the player to be called in wild
+			   view update routines (player_day/player_night) */
+			//NumPlayers++;
+
+			/* hack #2: assume his (so far not loaded!) options are
+			   set the way that he remembers all town features */
+			i = p_ptr->view_perma_grids;
+			p_ptr->view_perma_grids = TRUE;
+
+			if (IS_DAY) player_day(Ind);
+			else player_night(Ind);
+
+			p_ptr->view_perma_grids = i;
+			//NumPlayers--;
 		}
 
-		p_ptr->window &= ~(PW_SUBINVEN);
-	}
+		handle_music(Ind);
+		handle_ambient_sfx(Ind, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos, FALSE);
 #endif
+	}
 
 	/* Display equipment */
 	if (p_ptr->window & PW_EQUIP) {
