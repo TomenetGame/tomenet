@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 5. February 2022 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 9. February 2022 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.7.4b - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -399,7 +399,7 @@ compile the game under '(2.1) Installing/updating TomeNET'.
 
 -A few other important keys are:
  ~   knowledge menu (all of your character's knowledge, plus artifact/monster
-     spoilers under ~6 and ~7 respectively.)
+     spoilers under ~6 and ~7 respectively.) Or type "/know" in chat.
  =   game options menu.
  %   macro menu ('macros' are hotkeys, allowing you to bind certain actions to
      a single key press). (More about macros in (3.6) up to (3.9b).)
@@ -903,6 +903,8 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
         the same they have to enter for their ability:
           'Polymorph self into a specific form'
         In ~7 you can check out all features of a monster.
+        You can also enter the slash command "/know" in chat to access the
+        knowledge menu (without quotes).
 
 @       displays a list of players currently on the server.
         Note that a yellow '(I)' before a name stands for 'invalid', and means

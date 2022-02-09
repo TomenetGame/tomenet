@@ -5236,6 +5236,10 @@ void cmd_message(void) {
 			}
 			inkey_msg = FALSE;
 			return;
+		} else if (!strcasecmp(buf, "/know")) { /* Someone claimed that he doesn't have a '~' key ">_>.. */
+			cmd_check_misc();
+			inkey_msg = FALSE;
+			return;
 		}
 
 		Send_msg(buf);
