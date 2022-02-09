@@ -2722,7 +2722,7 @@ bool contains_significant_reactive_metal(object_type *o_ptr) {
 		return TRUE;
 #ifdef ENABLE_SUBINVEN
 	/* converted chests */
-	case TV_SUBINVEN
+	case TV_SUBINVEN:
 		switch (o_ptr->sval) {
 		case SV_SI_CHEST_SMALL_IRON:
 		case SV_SI_CHEST_LARGE_IRON:
@@ -2788,7 +2788,7 @@ bool contains_significant_wood(object_type *o_ptr) {
 		return FALSE;
 #ifdef ENABLE_SUBINVEN
 	/* converted chests */
-	case TV_SUBINVEN
+	case TV_SUBINVEN:
 		switch (o_ptr->sval) {
 		case SV_SI_CHEST_SMALL_WOODEN:
 		case SV_SI_CHEST_LARGE_WOODEN:
