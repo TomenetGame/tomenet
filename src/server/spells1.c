@@ -2720,6 +2720,18 @@ bool contains_significant_reactive_metal(object_type *o_ptr) {
 	case TV_DIGGING:
 	case TV_SPIKE:
 		return TRUE;
+#ifdef ENABLE_SUBINVEN
+	/* converted chests */
+	case TV_SUBINVEN
+		switch (o_ptr->sval) {
+		case SV_SI_CHEST_SMALL_IRON:
+		case SV_SI_CHEST_LARGE_IRON:
+		case SV_SI_CHEST_SMALL_STEEL:
+		case SV_SI_CHEST_LARGE_STEEL:
+			return TRUE;
+		}
+		return FALSE;
+#endif
 	case TV_CHEST:
 		switch (o_ptr->sval) {
 		case SV_CHEST_RUINED:
@@ -2774,14 +2786,23 @@ bool contains_significant_wood(object_type *o_ptr) {
 			return TRUE;
 		}
 		return FALSE;
+#ifdef ENABLE_SUBINVEN
+	/* converted chests */
+	case TV_SUBINVEN
+		switch (o_ptr->sval) {
+		case SV_SI_CHEST_SMALL_WOODEN:
+		case SV_SI_CHEST_LARGE_WOODEN:
+			return TRUE;
+		}
+		return FALSE;
+#endif
 	case TV_CHEST:
 		switch (o_ptr->sval) {
-		case SV_CHEST_RUINED:
 		case SV_CHEST_SMALL_WOODEN:
 		case SV_CHEST_LARGE_WOODEN:
-			return FALSE;
+			return TRUE;
 		}
-		return TRUE;
+		return FALSE;
 	case TV_TRAPKIT:
 		switch (o_ptr->sval) {
 		case SV_TRAPKIT_SLING:
