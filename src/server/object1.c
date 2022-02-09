@@ -4572,8 +4572,8 @@ bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id) {
 	return FALSE;
 }
 
-/* Display examine (x/I) text of an item we haven't *identified* yet */
-#ifndef NEW_ID_SCREEN /* old way: paste some info directly into chat */
+/* Display examine (x/I) text of an item we haven't *identified* yet. */
+#ifndef NEW_ID_SCREEN /* old way: paste some info directly into chat. */
 void observe_aux(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 	char o_name[ONAME_LEN];
@@ -4675,17 +4675,18 @@ void observe_aux(int Ind, object_type *o_ptr) {
 	} else msg_print(Ind, "\377s  You have no special knowledge about that item.");
 }
 #else /* new way: display an info screen as for identify_fully_aux(), for additional k_info information - C. Blue */
-bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item);
-void observe_aux(int Ind, object_type *o_ptr, int item) {
-	(void)identify_combo_aux(Ind, o_ptr, FALSE, item);
+/* If inventory 'slot' isn't specified it must be -1. */
+bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot);
+void observe_aux(int Ind, object_type *o_ptr, int slot) {
+	(void)identify_combo_aux(Ind, o_ptr, FALSE, slot);
 }
-bool identify_fully_aux(int Ind, object_type *o_ptr, bool assume_aware, int item) {
+bool identify_fully_aux(int Ind, object_type *o_ptr, bool assume_aware, int slot) {
 	/* special hack (added for *id*ed items in player stores):
 	   we cannot fully inspect a flavoured item if we don't know the flavour yet */
 	if (!assume_aware && !object_aware_p(Ind, o_ptr))
-		return identify_combo_aux(Ind, o_ptr, FALSE, item);
+		return identify_combo_aux(Ind, o_ptr, FALSE, slot);
 
-	return identify_combo_aux(Ind, o_ptr, TRUE, item);
+	return identify_combo_aux(Ind, o_ptr, TRUE, slot);
 }
 #endif
 
@@ -4698,8 +4699,9 @@ bool identify_fully_aux(int Ind, object_type *o_ptr, bool assume_aware, int item
 #ifndef NEW_ID_SCREEN
 bool identify_fully_aux(int Ind, object_type *o_ptr) {
 #else
-/* combined handling of non-id, id, *id* info screens: */
-bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
+/* combined handling of non-id, id, *id* info screens:
+   If inventory 'slot' isn't used it must be -1. */
+bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot) {
 	bool id = full || object_known_p(Ind, o_ptr); /* item has undergone basic ID (or is easy-know and basic)? */
 	bool can_have_hidden_powers = FALSE, eff_full = full;
 	ego_item_type *e_ptr;
@@ -4956,10 +4958,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 
 #ifdef NEW_ID_SCREEN
  #ifdef ENABLE_SUBINVEN
-	if (item < 100)
+	if (slot < 100)
  #endif
 	/* Temporary brands -- kinda hacky that they use p_ptr instead of o_ptr.. */
-	if (p_ptr->melee_brand && is_melee_weapon(o_ptr->tval) && (item == INVEN_WIELD || item == INVEN_ARM))
+	if (p_ptr->melee_brand && is_melee_weapon(o_ptr->tval) && (slot == INVEN_WIELD || slot == INVEN_ARM))
 		switch (p_ptr->melee_brand_t) {
 		case TBRAND_ELEC:
 			fprintf(fff, "\377BLightning charge has been applied to it temporarily.\n");
@@ -5117,6 +5119,26 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 			} while (TRUE);
 		}
 	}
+
+#ifdef ENABLE_SUBINVEN
+	/* Display special bag contents */
+	if (o_ptr->tval == TV_SUBINVEN && slot != -1) {
+		object_type *o2_ptr = &p_ptr->subinventory[slot][0];
+
+		if (!o2_ptr->k_idx) fprintf(fff, "\377WIt can hold up to %d items or stacks and is currently empty.\n.", o_ptr->bpval);
+		else {
+			char o2_name[ONAME_LEN];
+
+			fprintf(fff, "\377WIt can hold up to %d items or stacks and currently contains:\n", o_ptr->bpval);
+			for (j = 0; j < o_ptr->bpval; j++) {
+				o2_ptr = &p_ptr->subinventory[slot][j];
+				if (!o2_ptr->k_idx) break;
+				object_desc(Ind, o2_name, o2_ptr, TRUE, 3);
+				fprintf(fff, "\377W %c) %s.\n", index_to_label(j), o2_name);
+			}
+		}
+	}
+#endif
 
 	/* Hack: Stop here if the item wasn't *ID*ed and we still were allowed to read so far (player stores maybe?) */
 	if (!(o_ptr->ident & ID_MENTAL) && !is_admin(p_ptr)
