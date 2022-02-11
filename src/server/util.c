@@ -9345,7 +9345,9 @@ bool verify_inven_item(int Ind, int item) {
 		return TRUE;
 	}
 #endif
-	/* Allow item on floor? - not really implemented  */
+	/* Allow item on floor? -
+	   The player shouldn't be able to specify those by index atm, and since this function is only used to
+	   validate player input we can (have to?) skip items on the floor: */
 #if 0
 	if (-item >= o_max) return FALSE;
 #else
@@ -9357,7 +9359,7 @@ bool verify_inven_item(int Ind, int item) {
 	return TRUE;
 }
 
-/* Get an item in the player's inventory or -not implemented- on the floor.
+/* Get an item in the player's inventory or (for /dis and /xdis) on the floor.
    Returns FALSE if item is illegal (out of bounds), otherwise TRUE.
    NOTE: We assume the item is legal as a previous verify_inven_item() happened in nserver.c! */
 void get_inven_item(int Ind, int item, object_type **o_ptr) {
@@ -9371,7 +9373,7 @@ void get_inven_item(int Ind, int item, object_type **o_ptr) {
 
 	/* Get the item (in the pack) */
 	if (item >= 0) *o_ptr = &Players[Ind]->inventory[item];
-	/* Get the item (on the floor) - not implemented really */
+	/* Get the item (on the floor) */
 	else *o_ptr = &o_list[0 - item];
 }
 

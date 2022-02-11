@@ -1992,7 +1992,7 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 	char o_name[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
-	/* Get the item (in the pack) */
+	/* Get the item (in the pack, or when called by /dis or /xdis on the floor!) */
 	get_inven_item(Ind, item, &o_ptr);
 
 	/* Describe the object */
@@ -2165,8 +2165,8 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 	if (is_magic_device(o_ptr->tval)) divide_charged_item(NULL, o_ptr, quantity);
 
 #ifdef ENABLE_SUBINVEN
-	/* If we destroy a subinventory, remove all items and place them into the player's inventory */
-	if (o_ptr->tval == TV_SUBINVEN && quantity >= o_ptr->number) empty_subinven(Ind, item);
+	/* If we destroy a subinventory - that was not on the floor already! - , remove all items and place them into the player's inventory */
+	if (o_ptr->tval == TV_SUBINVEN && item >= 0 && quantity >= o_ptr->number) empty_subinven(Ind, item);
 #endif
 
 	/* Eliminate the item (from the pack) */
