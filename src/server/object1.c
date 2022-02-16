@@ -4163,10 +4163,10 @@ static void display_shooter_damage(int Ind, object_type *o_ptr, FILE *fff, u32b 
 
 /* display how much AC an armour would add for us (for MA users!) and
    especially if it would encumber us, so we won't have to guess in shops - C. Blue */
-static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff) {
-	player_type *p_ptr = Players[Ind], p_backup;
+static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff, int Ind_target) {
+	player_type *p_ptr = Ind_target ? Players[Ind_target] : Players[Ind], p_backup;
 	object_type forge, *old_ptr = &forge;
-	int slot = wield_slot(Ind, o_ptr); /* slot the item goes into */
+	int slot;
 
 	bool old_cumber_armor = p_ptr->cumber_armor;
 	bool old_awkward_armor = p_ptr->awkward_armor;
@@ -4179,6 +4179,9 @@ static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff) {
 
 	/* save timed effects that might be changed on weapon switching */
 	long tim_wraith = p_ptr->tim_wraith;
+
+	if (!Ind_target) Ind_target = Ind;
+	slot = wield_slot(Ind, o_ptr); /* slot the item goes into */
 
 	/* since his mana or HP might get changed or even nulled, backup player too! */
 	COPY(&p_backup, p_ptr, player_type);
@@ -4198,8 +4201,8 @@ static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff) {
 	/* Hack -- hush the messages up */
 	suppress_message = TRUE;
 	suppress_boni = TRUE;
-	calc_boni(Ind);
-	calc_mana(Ind);
+	calc_boni(Ind_target);
+	calc_mana(Ind_target);
 
 	/* Gained encumberment? */
 	if ((p_ptr->cumber_armor && !old_cumber_armor) ||
@@ -4282,8 +4285,8 @@ static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff) {
 	/* get our armour back */
 	object_copy(&p_ptr->inventory[slot], old_ptr);
 
-	calc_boni(Ind);
-	calc_mana(Ind);
+	calc_boni(Ind_target);
+	calc_mana(Ind_target);
 	suppress_boni = FALSE;
 	suppress_message = FALSE;
 
@@ -4295,8 +4298,8 @@ static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff) {
 }
 
 /* display weapon encumberment changes, so we won't have to guess in shops - C. Blue */
-static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff) {
-	player_type *p_ptr = Players[Ind], p_backup;
+static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff, int Ind_target) {
+	player_type *p_ptr = Ind_target ? Players[Ind_target] : Players[Ind], p_backup;
 	object_type forge, *old_ptr = &forge, forge2, *old_ptr2 = &forge2;
 
 	bool old_heavy_wield = p_ptr->heavy_wield;
@@ -4306,6 +4309,8 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff) {
 
 	/* save timed effects that might be changed on weapon switching */
 	long tim_wraith = p_ptr->tim_wraith;
+
+	if (!Ind_target) Ind_target = Ind;
 
 	/* since his mana or HP might get changed or even nulled, backup player too! */
 	COPY(&p_backup, p_ptr, player_type);
@@ -4331,8 +4336,8 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff) {
 	/* Hack -- hush the messages up */
 	suppress_message = TRUE;
 	suppress_boni = TRUE;
-	calc_boni(Ind);
-	calc_mana(Ind);
+	calc_boni(Ind_target);
+	calc_mana(Ind_target);
 
 	/* Gained encumberment? */
 	if ((p_ptr->awkward_wield && !old_awkward_wield) ||
@@ -4419,8 +4424,8 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff) {
 	object_copy(&p_ptr->inventory[INVEN_WIELD], old_ptr);
 	object_copy(&p_ptr->inventory[INVEN_ARM], old_ptr2);
 
-	calc_boni(Ind);
-	calc_mana(Ind);
+	calc_boni(Ind_target);
+	calc_mana(Ind_target);
 	suppress_message = FALSE;
 	suppress_boni = FALSE;
 
@@ -4432,8 +4437,8 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff) {
 }
 
 /* display ranged weapon encumberment changes, so we won't have to guess in shops - C. Blue */
-static void display_shooter_handling(int Ind, object_type *o_ptr, FILE *fff) {
-	player_type *p_ptr = Players[Ind], p_backup;
+static void display_shooter_handling(int Ind, object_type *o_ptr, FILE *fff, int Ind_target) {
+	player_type *p_ptr = Ind_target ? Players[Ind_target] : Players[Ind], p_backup;
 	object_type forge, *old_ptr = &forge;
 
 	bool old_heavy_shoot = p_ptr->heavy_shoot;
@@ -4441,6 +4446,8 @@ static void display_shooter_handling(int Ind, object_type *o_ptr, FILE *fff) {
 
 	/* save timed effects that might be changed on weapon switching */
 	long tim_wraith = p_ptr->tim_wraith;
+
+	if (!Ind_target) Ind_target = Ind;
 
 	/* since his mana or HP might get changed or even nulled, backup player too! */
 	COPY(&p_backup, p_ptr, player_type);
@@ -4461,8 +4468,8 @@ static void display_shooter_handling(int Ind, object_type *o_ptr, FILE *fff) {
 	/* Hack -- hush the messages up */
 	suppress_message = TRUE;
 	suppress_boni = TRUE;
-	calc_boni(Ind);
-	calc_mana(Ind);
+	calc_boni(Ind_target);
+	calc_mana(Ind_target);
 
 	/* Gained encumberment? */
 	if (p_ptr->heavy_shoot && !old_heavy_shoot) {
@@ -4487,8 +4494,8 @@ static void display_shooter_handling(int Ind, object_type *o_ptr, FILE *fff) {
 	/* get our weapon back */
 	object_copy(&p_ptr->inventory[INVEN_BOW], old_ptr);
 
-	calc_boni(Ind);
-	calc_mana(Ind);
+	calc_boni(Ind_target);
+	calc_mana(Ind_target);
 	suppress_message = FALSE;
 	suppress_boni = FALSE;
 
@@ -4638,9 +4645,9 @@ void observe_aux(int Ind, object_type *o_ptr) {
 
 	if (is_throwing_weapon(o_ptr)) msg_print(Ind, "\377s  It can be used as an effective throwing weapon.");
 
-	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, &forge, NULL);
-	else if (is_melee_weapon(o_ptr->tval)) display_weapon_handling(Ind, &forge, NULL);
-	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, &forge, NULL);
+	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, &forge, NULL, Ind_target);
+	else if (is_melee_weapon(o_ptr->tval)) display_weapon_handling(Ind, &forge, NULL, Ind_target);
+	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, &forge, NULL, Ind_target);
 
 	if (wield_slot(Ind, o_ptr) == INVEN_WIELD
 	    //|| is_armour(o_ptr->tval)
@@ -5078,10 +5085,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		fprintf(fff, "\377vIt may only be worn by kings and queens!\377w\n");
 	}
 
-	/* TODO: 3rd party observe via Ind_target */
-	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, &forge, fff);
-	else if (is_melee_weapon(o_ptr->tval)) display_weapon_handling(Ind, &forge, fff);
-	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, &forge, fff);
+	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, &forge, fff, Ind_target);
+	else if (is_melee_weapon(o_ptr->tval)) display_weapon_handling(Ind, &forge, fff, Ind_target);
+	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, &forge, fff, Ind_target);
 
 	/* specialty: recognize custom spell books and display their contents! - C. Blue */
 	if (o_ptr->tval == TV_BOOK) {
@@ -5764,7 +5770,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 #endif
 	    )
 		/* TODO: 3rd party observe via Ind_target */
-		display_weapon_damage(Ind, &forge, fff, f1);
+		display_weapon_damage(Ind_target, &forge, fff, f1);
 
 	/* Damage display for ranged weapons */
 	if (wield_slot(0, o_ptr) == INVEN_BOW) {
@@ -5798,10 +5804,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 				}
 			}
 			/* TODO: 3rd party observe via Ind_target */
-			display_shooter_damage(Ind, &forge, fff, f1, ammo_f1);
+			display_shooter_damage(Ind_target, &forge, fff, f1, ammo_f1);
 		} else
 			/* TODO: 3rd party observe via Ind_target */
-			display_boomerang_damage(Ind, &forge, fff, f1);
+			display_boomerang_damage(Ind_target, &forge, fff, f1);
 	}
 
 	/* Breakage/Damage display for ammo */
@@ -5840,7 +5846,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 
 		fprintf(fff, "\377WIt has %d%% chances to break upon hit.\n", breakage_chance(o_ptr));
 		/* TODO: 3rd party observe via Ind_target */
-		display_ammo_damage(Ind, &forge, fff, f1, shooter_f1);
+		display_ammo_damage(Ind_target, &forge, fff, f1, shooter_f1);
 	}
 
 #if 1 /* display trigger chance for magic devices? */
