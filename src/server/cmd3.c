@@ -4775,7 +4775,7 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 			if (object_similar(Ind, o_ptr, i_ptr, 0x4)) {
 				object_absorb(Ind, o_ptr, i_ptr);
 				/* Describe the object */
-				object_desc(Ind, o_name, i_ptr, TRUE, 3);
+				object_desc(Ind, o_name, o_ptr, TRUE, 3);
 				msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
 
 				i_ptr->number = inum - i_ptr->number; /* Unhack 'number' */
@@ -4791,7 +4791,7 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 			o_ptr->marked = 0;
 			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 			/* Describe the object */
-			object_desc(Ind, o_name, i_ptr, TRUE, 3);
+			object_desc(Ind, o_name, o_ptr, TRUE, 3);
 			msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
 
 			i_ptr->number = 0; /* Mark for erasure */
