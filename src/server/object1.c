@@ -4698,10 +4698,13 @@ bool identify_fully_aux(int Ind, object_type *o_ptr, bool assume_aware, int slot
  */
 #ifndef NEW_ID_SCREEN
 bool identify_fully_aux(int Ind, object_type *o_ptr) {
+	player_type *p_ptr = Players[Ind];
 #else
 /* combined handling of non-id, id, *id* info screens:
    If inventory 'slot' isn't used it must be -1. */
 bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int Ind_target) {
+	player_type *p_ptr = Players[Ind];
+	player_type *pt_ptr = (Ind_target ? Players[Ind_target] : p_ptr);
 	bool id = full || object_known_p(Ind, o_ptr); /* item has undergone basic ID (or is easy-know and basic)? */
 	bool can_have_hidden_powers = FALSE, eff_full = full;
 	ego_item_type *e_ptr;
@@ -4710,7 +4713,6 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	object_type forge;
 	bool am_unknown = FALSE;
 #endif
-	player_type *p_ptr = Players[Ind];
 	int j, am;
 	u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5 = 0, f6 = 0, esp = 0;
 	FILE *fff;
@@ -4746,7 +4748,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 
 		/* hack for inspecting items in stores, which are supposed to
 		   be fully identified even though we aren't aware of them yet */
-		Players[Ind]->obj_aware[o_ptr->k_idx] = TRUE;
+		p_ptr->obj_aware[o_ptr->k_idx] = TRUE;
 
 	        /* Describe the result */
 		/* in case we just *ID* it because an admin inspected it */
@@ -4755,7 +4757,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		else object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 		/* unhack */
-		Players[Ind]->obj_aware[o_ptr->k_idx] = aware_tmp;
+		p_ptr->obj_aware[o_ptr->k_idx] = aware_tmp;
 
 		/* create virtual object here too, just because we're lazy */
 		object_copy(&forge, o_ptr);
@@ -4886,7 +4888,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 #endif
 
 #ifdef PLAYER_STORES
-	if (p_ptr->store_num <= -2 && o_ptr->note) player_stores_cut_inscription(o_name);
+	if (pt_ptr->store_num <= -2 && o_ptr->note) player_stores_cut_inscription(o_name);
 	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE) {
 		fprintf(fff, "\377sIt's a cheque worth \377y%d\377s gold pieces.\n", ps_get_cheque_value(o_ptr));
  #ifdef KIND_DIZ
@@ -4961,8 +4963,8 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (slot < 100)
  #endif
 	/* Temporary brands -- kinda hacky that they use p_ptr instead of o_ptr.. */
-	if (p_ptr->melee_brand && is_melee_weapon(o_ptr->tval) && (slot == INVEN_WIELD || slot == INVEN_ARM))
-		switch (p_ptr->melee_brand_t) {
+	if (pt_ptr->melee_brand && is_melee_weapon(o_ptr->tval) && (slot == INVEN_WIELD || slot == INVEN_ARM))
+		switch (pt_ptr->melee_brand_t) {
 		case TBRAND_ELEC:
 			fprintf(fff, "\377BLightning charge has been applied to it temporarily.\n");
 			break;
@@ -5076,6 +5078,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		fprintf(fff, "\377vIt may only be worn by kings and queens!\377w\n");
 	}
 
+	/* TODO: 3rd party observe via Ind_target */
 	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, &forge, fff);
 	else if (is_melee_weapon(o_ptr->tval)) display_weapon_handling(Ind, &forge, fff);
 	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, &forge, fff);
@@ -5085,15 +5088,15 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		if (is_custom_tome(o_ptr->sval)) {
 			if (!o_ptr->xtra1) fprintf(fff, "It contains no spells yet.\n");
 			else fprintf(fff,"It contains spells:\n");
-			if (o_ptr->xtra1) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra1 - 1)));
-			if (o_ptr->xtra2) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra2 - 1)));
-			if (o_ptr->xtra3) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra3 - 1)));
-			if (o_ptr->xtra4) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra4 - 1)));
-			if (o_ptr->xtra5) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra5 - 1)));
-			if (o_ptr->xtra6) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra6 - 1)));
-			if (o_ptr->xtra7) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra7 - 1)));
-			if (o_ptr->xtra8) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra8 - 1)));
-			if (o_ptr->xtra9) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra9 - 1)));
+			if (o_ptr->xtra1) fprintf(fff, "- %s\n", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra1 - 1)));
+			if (o_ptr->xtra2) fprintf(fff, "- %s\n", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra2 - 1)));
+			if (o_ptr->xtra3) fprintf(fff, "- %s\n", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra3 - 1)));
+			if (o_ptr->xtra4) fprintf(fff, "- %s\n", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra4 - 1)));
+			if (o_ptr->xtra5) fprintf(fff, "- %s\n", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra5 - 1)));
+			if (o_ptr->xtra6) fprintf(fff, "- %s\n", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra6 - 1)));
+			if (o_ptr->xtra7) fprintf(fff, "- %s\n", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra7 - 1)));
+			if (o_ptr->xtra8) fprintf(fff, "- %s\n", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra8 - 1)));
+			if (o_ptr->xtra9) fprintf(fff, "- %s\n", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra9 - 1)));
 		} else if (o_ptr->sval != SV_SPELLBOOK && is_admin(p_ptr)) { /* Predefined book (handbook or tome) */
 			char powers[MSG_LEN], tmp[MAX_CHARS], *pp;
 
@@ -5123,7 +5126,6 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 #ifdef ENABLE_SUBINVEN
 	/* Display special bag contents */
 	if (o_ptr->tval == TV_SUBINVEN && slot != -1) {
-		player_type *pt_ptr = (Ind_target ? Players[Ind_target] : p_ptr);
 		object_type *o2_ptr = &pt_ptr->subinventory[slot][0];
 
 		if (!o2_ptr->k_idx) fprintf(fff, "\377WIt can hold up to %d items or stacks and is currently empty.\n.", o_ptr->bpval);
@@ -5149,7 +5151,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	    ) {
 #if 1 /* display breakage for ammo and trigger chance for magic devices even if not *id*ed? */
 		if (eff_full) {
-			if (wield_slot(Ind, o_ptr) == INVEN_AMMO)
+			if (wield_slot(0, o_ptr) == INVEN_AMMO)
 				fprintf(fff, "\377WIt has %d%% chances to break upon hit///.\n", breakage_chance(o_ptr));
 
  #if 1 /* display trigger chance for magic devices? */
@@ -5158,10 +5160,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 			    && o_ptr->tval != TV_CHEMICAL && o_ptr->tval != TV_CHARGE
   #endif
 			    && o_ptr->tval != TV_BOOK) {
-				if (!get_skill(p_ptr, SKILL_ANTIMAGIC)) {
+				if (!get_skill(pt_ptr, SKILL_ANTIMAGIC)) {
 					byte chance, permille;
 
-					chance = activate_magic_device_chance(Ind, o_ptr, &permille);
+					chance = activate_magic_device_chance(pt_ptr->Ind, o_ptr, &permille);
 					if (chance == 99) fprintf(fff, "\377WYou have a 99.%d%% chance to successfully activate this magic device.\n", permille);
 					else fprintf(fff, "\377WYou have a %d%% chance to successfully activate this magic device.\n", chance);
 				} else
@@ -5548,7 +5550,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (f3 & (TR3_BLESSED)) {
 #if 0 /* already given under red 'encumberments' above these lines.. */
 		/* BLESSED items give icky_wield to Corrupted? */
-		if (p_ptr->ptrait == TRAIT_CORRUPTED) fprintf(fff, "\377oIt has been blessed by the gods.\n");
+		if (pt_ptr->ptrait == TRAIT_CORRUPTED) fprintf(fff, "\377oIt has been blessed by the gods.\n");
 		else
 #endif
 		fprintf(fff, "It has been blessed by the gods.\n");
@@ -5636,7 +5638,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 
 	if (f5 & (TR5_DRAIN_HP)) {
 		/* Note: This assumes that there is no possible double-ego power that also has DRAIN_HP besides 'Spectral', otherwise this message might turn out incorrect.. */
-		if (p_ptr->prace == RACE_VAMPIRE && (o_ptr->name2 == EGO_SPECTRAL || o_ptr->name2b == EGO_SPECTRAL))
+		if (pt_ptr->prace == RACE_VAMPIRE && (o_ptr->name2 == EGO_SPECTRAL || o_ptr->name2b == EGO_SPECTRAL))
 			fprintf(fff, "\377DIt drains health, but as a true vampire you are unaffected.\n");
 		else fprintf(fff, "\377DIt drains your health.\n");
 	}
@@ -5679,19 +5681,19 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		fprintf(fff, "\377DIt's possessed by mad wrath!\n");
 
 	/* also show anti-undead/demon life drain */
-	switch ((j = anti_undead(o_ptr, p_ptr))) {
+	switch ((j = anti_undead(o_ptr, pt_ptr))) {
 	case 1: fprintf(fff, "\377oIts power is adverse to undead, draining your health.\n"); break;
 	case 2: //fprintf(fff, "\377oIts power is adverse to undead, preventing your health from regenerating.\n"); break;
 		fprintf(fff, "\377oIts power is adverse to undead, hampering your health regeneration.\n"); break;
 	}
-	if (!j) switch ((j = anti_demon(o_ptr, p_ptr))) {
+	if (!j) switch ((j = anti_demon(o_ptr, pt_ptr))) {
 	case 1: fprintf(fff, "\377oIts power is adverse to demons, draining your health.\n"); break;
 	case 2: //fprintf(fff, "\377oIts power is adverse to demons, preventing your health from regenerating.\n"); break;
 		fprintf(fff, "\377oIts power is adverse to demons, hampering your health regeneration.\n"); break;
 	}
 	/* BLESSED items harm all Corrupted beings in general? */
 #if 0 /* 0ed: just make it icky_wield instead */
-	if (!j && p_ptr->ptrait == TRAIT_CORRUPTED && (f3 & TR3_BLESSED))
+	if (!j && pt_ptr->ptrait == TRAIT_CORRUPTED && (f3 & TR3_BLESSED))
 		//fprintf(fff, "\377oIts power is adverse to corruption, draining your health.\n");
 		fprintf(fff, "\377oIts power is adverse to corruption, hampering your health regeneration.\n");
 #endif
@@ -5756,18 +5758,19 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (buf_tmp_n) fprintf(fff, "%s.\n", buf_tmp);
 
 	/* Damage display for weapons */
-	if (wield_slot(Ind, o_ptr) == INVEN_WIELD
+	if (wield_slot(0, o_ptr) == INVEN_WIELD
 #ifdef EQUIPPABLE_DIGGERS
 	    || o_ptr->tval == TV_DIGGING
 #endif
 	    )
+		/* TODO: 3rd party observe via Ind_target */
 		display_weapon_damage(Ind, &forge, fff, f1);
 
 	/* Damage display for ranged weapons */
-	if (wield_slot(Ind, o_ptr) == INVEN_BOW) {
+	if (wield_slot(0, o_ptr) == INVEN_BOW) {
 		if (o_ptr->tval == TV_BOW) {
 			u32b ammo_f1 = 0, dummy;
-			object_type *x_ptr = &p_ptr->inventory[INVEN_AMMO];
+			object_type *x_ptr = &pt_ptr->inventory[INVEN_AMMO];
 			if (x_ptr->k_idx) {
 				if ((x_ptr->ident & ID_MENTAL)) {
 					object_flags(x_ptr, &ammo_f1, &dummy, &dummy, &dummy, &dummy, &dummy, &dummy);
@@ -5794,15 +5797,17 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 					}
 				}
 			}
+			/* TODO: 3rd party observe via Ind_target */
 			display_shooter_damage(Ind, &forge, fff, f1, ammo_f1);
 		} else
+			/* TODO: 3rd party observe via Ind_target */
 			display_boomerang_damage(Ind, &forge, fff, f1);
 	}
 
 	/* Breakage/Damage display for ammo */
-	if (eff_full && wield_slot(Ind, o_ptr) == INVEN_AMMO) {
+	if (eff_full && wield_slot(0, o_ptr) == INVEN_AMMO) {
 		u32b shooter_f1 = 0, dummy;
-		object_type *x_ptr = &p_ptr->inventory[INVEN_BOW];
+		object_type *x_ptr = &pt_ptr->inventory[INVEN_BOW];
 		if (x_ptr->k_idx && x_ptr->tval == TV_BOW &&
 		    (( (x_ptr->sval == SV_SHORT_BOW || x_ptr->sval == SV_LONG_BOW) && o_ptr->tval == TV_ARROW) ||
 		     ( (x_ptr->sval == SV_LIGHT_XBOW || x_ptr->sval == SV_HEAVY_XBOW) && o_ptr->tval == TV_BOLT) ||
@@ -5834,6 +5839,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		}
 
 		fprintf(fff, "\377WIt has %d%% chances to break upon hit.\n", breakage_chance(o_ptr));
+		/* TODO: 3rd party observe via Ind_target */
 		display_ammo_damage(Ind, &forge, fff, f1, shooter_f1);
 	}
 
@@ -5843,10 +5849,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	    && o_ptr->tval != TV_CHEMICAL && o_ptr->tval != TV_CHARGE
  #endif
 	    && o_ptr->tval != TV_BOOK) {
-		if (!get_skill(p_ptr, SKILL_ANTIMAGIC)) {
+		if (!get_skill(pt_ptr, SKILL_ANTIMAGIC)) {
 			byte chance, permille;
 
-			chance = activate_magic_device_chance(Ind, o_ptr, &permille);
+			chance = activate_magic_device_chance(p_ptr->Ind, o_ptr, &permille);
 			if (chance == 99) fprintf(fff, "\377WYou have a 99.%d%% chance to successfully activate this magic device.\n", permille);
 			else fprintf(fff, "\377WYou have a %d%% chance to successfully activate this magic device.\n", chance);
 		} else
@@ -5923,7 +5929,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 
 #if 0 /* moved to client-side, clean! */
 	/* hack: apply client-side auto-inscriptions */
-	if (!p_ptr->inventory_changes) Send_inventory_revision(Ind);
+	if (p_ptr == pt_ptr && !p_ptr->inventory_changes) Send_inventory_revision(Ind);
 #endif
 
 	/* Let the client know it's about to get some info */
