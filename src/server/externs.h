@@ -1292,7 +1292,7 @@ extern void object_desc_store(int Ind, char *buf, object_type *o_ptr, int pref, 
 extern bool identify_fully_aux(int Ind, object_type *o_ptr, bool assume_aware);
 extern void observe_aux(int Ind, object_type *o_ptr);
 #else
-extern bool identify_fully_aux(int Ind, object_type *o_ptr, bool assume_aware, int slot);
+extern bool identify_fully_aux(int Ind, object_type *o_ptr, bool assume_aware, int slot, int Ind_target);
 extern void observe_aux(int Ind, object_type *o_ptr, int slot);
 #endif
 extern s16b index_to_label(int i);

@@ -708,7 +708,7 @@ void lua_recalc_char(int Ind) {
 }
 
 void lua_examine_item(int Ind, int Ind_target, int item) {
-	identify_fully_aux(Ind, &Players[Ind_target]->inventory[item], FALSE, item);
+	identify_fully_aux(Ind, &Players[Ind_target]->inventory[item], FALSE, item, Ind_target != Ind ? Ind_target : 0);
 }
 
 void lua_determine_level_req(int Ind, int item) {

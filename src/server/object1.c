@@ -4676,17 +4676,17 @@ void observe_aux(int Ind, object_type *o_ptr) {
 }
 #else /* new way: display an info screen as for identify_fully_aux(), for additional k_info information - C. Blue */
 /* If inventory 'slot' isn't specified it must be -1. */
-bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot);
+bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int Ind_target);
 void observe_aux(int Ind, object_type *o_ptr, int slot) {
-	(void)identify_combo_aux(Ind, o_ptr, FALSE, slot);
+	(void)identify_combo_aux(Ind, o_ptr, FALSE, slot, 0);
 }
-bool identify_fully_aux(int Ind, object_type *o_ptr, bool assume_aware, int slot) {
+bool identify_fully_aux(int Ind, object_type *o_ptr, bool assume_aware, int slot, int Ind_target) {
 	/* special hack (added for *id*ed items in player stores):
 	   we cannot fully inspect a flavoured item if we don't know the flavour yet */
 	if (!assume_aware && !object_aware_p(Ind, o_ptr))
-		return identify_combo_aux(Ind, o_ptr, FALSE, slot);
+		return identify_combo_aux(Ind, o_ptr, FALSE, slot, Ind_target);
 
-	return identify_combo_aux(Ind, o_ptr, TRUE, slot);
+	return identify_combo_aux(Ind, o_ptr, TRUE, slot, Ind_target);
 }
 #endif
 
@@ -4701,7 +4701,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr) {
 #else
 /* combined handling of non-id, id, *id* info screens:
    If inventory 'slot' isn't used it must be -1. */
-bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot) {
+bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int Ind_target) {
 	bool id = full || object_known_p(Ind, o_ptr); /* item has undergone basic ID (or is easy-know and basic)? */
 	bool can_have_hidden_powers = FALSE, eff_full = full;
 	ego_item_type *e_ptr;
@@ -5123,7 +5123,8 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot) {
 #ifdef ENABLE_SUBINVEN
 	/* Display special bag contents */
 	if (o_ptr->tval == TV_SUBINVEN && slot != -1) {
-		object_type *o2_ptr = &p_ptr->subinventory[slot][0];
+		player_type *pt_ptr = (Ind_target ? Players[Ind_target] : p_ptr);
+		object_type *o2_ptr = &pt_ptr->subinventory[slot][0];
 
 		if (!o2_ptr->k_idx) fprintf(fff, "\377WIt can hold up to %d items or stacks and is currently empty.\n.", o_ptr->bpval);
 		else {
@@ -5131,7 +5132,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot) {
 
 			fprintf(fff, "\377WIt can hold up to %d items or stacks and currently contains:\n", o_ptr->bpval);
 			for (j = 0; j < o_ptr->bpval; j++) {
-				o2_ptr = &p_ptr->subinventory[slot][j];
+				o2_ptr = &pt_ptr->subinventory[slot][j];
 				if (!o2_ptr->k_idx) break;
 				object_desc(Ind, o2_name, o2_ptr, TRUE, 3);
 				fprintf(fff, "\377W %c) %s.\n", index_to_label(j), o2_name);

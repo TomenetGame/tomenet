@@ -4330,7 +4330,7 @@ void store_examine(int Ind, int item) {
 	/* Require full knowledge */
 	if (!(o_ptr->ident & ID_MENTAL) && !is_admin(p_ptr)) observe_aux(Ind, o_ptr, -1);
 	/* Describe it fully */
-	else if (!identify_fully_aux(Ind, o_ptr, assume_aware, -1)) msg_print(Ind, "You see nothing special.");
+	else if (!identify_fully_aux(Ind, o_ptr, assume_aware, -1, 0)) msg_print(Ind, "You see nothing special.");
 
 	return;
 }
@@ -6302,7 +6302,7 @@ void home_examine(int Ind, int item) {
 	/* Require full knowledge */
 	if (!(o_ptr->ident & ID_MENTAL) && !is_admin(p_ptr)) observe_aux(Ind, o_ptr, -1);
 	/* Describe it fully */
-	else if (!identify_fully_aux(Ind, o_ptr, FALSE, -1)) msg_print(Ind, "You see nothing special.");
+	else if (!identify_fully_aux(Ind, o_ptr, FALSE, -1, 0)) msg_print(Ind, "You see nothing special.");
 
 	return;
 }

@@ -4212,7 +4212,7 @@ bool identify_fully_item(int Ind, int item) {
 		           o_name);
 
 	/* Describe it fully */
-	(void)identify_fully_aux(Ind, o_ptr, FALSE, item);
+	(void)identify_fully_aux(Ind, o_ptr, FALSE, item, 0);
 
 	/* Did we use up an item? */
 	if (p_ptr->using_up_item >= 0) {
