@@ -9407,6 +9407,29 @@ void get_subinven_item(int Ind, int item, object_type **o_ptr, int *sitem, int *
 	/* Optionally set o_ptr already for convenience */
 	if (Ind && o_ptr && sitem && iitem) *o_ptr = &Players[Ind]->subinventory[*sitem][*iitem];
 }
+/* Reduce the size of a subinventory if it was an older version while the newer ones have less capacity.
+   If 'check' is TRUE, the subinventory will be scanned for current usage. This must be done whenever it is
+   not guaranteed to currently carry at most as many items as the new limit. */
+void verify_subinven_size(int Ind, int slot, bool check) {
+	player_type *p_ptr = Players[Ind];
+	object_type *s_ptr = &p_ptr->inventory[slot];
+	int i;
+
+	/* If our subinventory was an older version and its capacity nowadays is smaller,
+	   update it with the downgrade (opposite to load.c where it's an upgrade only) */
+	if (s_ptr->bpval == k_info[s_ptr->k_idx].pval) return;
+
+	for (i = slot; i < s_ptr->bpval; i++) {
+		if (p_ptr->subinventory[slot][i].k_idx) continue;
+
+		/* Shrink to correct new size */
+		if (i <= k_info[s_ptr->k_idx].pval) s_ptr->bpval = k_info[s_ptr->k_idx].pval;
+		/* Shrink to at least somewhat smaller size for now */
+		else s_ptr->bpval = i;
+
+		break;
+	}
+}
 /* Empty a subinventory, moving all contents to the player inventory, causing overflow if not enough space. */
 void empty_subinven(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
@@ -9421,6 +9444,8 @@ void empty_subinven(int Ind, int item) {
 
 	/* Then, efficiently update it completely at once */
 	display_subinven(Ind, item);
+
+	verify_subinven_size(Ind, item, FALSE);
 }
 /* Erase all contents of a subinventory. Does not delete the subinventory container item iteself. */
 void erase_subinven(int Ind, int item) {
@@ -9434,5 +9459,7 @@ void erase_subinven(int Ind, int item) {
 
 	/* Then, efficiently update it completely at once */
 	display_subinven(Ind, item);
+
+	verify_subinven_size(Ind, item, FALSE);
 }
 #endif

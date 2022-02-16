@@ -4984,13 +4984,16 @@ void do_cmd_subinven_move(int Ind, int islot) {
 /* live: if TRUE, item changes are sent to client. */
 void subinven_remove_aux(int Ind, int islot, int slot) {
 	player_type *p_ptr = Players[Ind];
-	object_type *o_ptr;
+	object_type *o_ptr, *s_ptr;
 	int i;
 
+	s_ptr = &p_ptr->inventory[islot];
 	o_ptr = &p_ptr->subinventory[islot][slot];
 
 	p_ptr->total_weight -= o_ptr->number * o_ptr->weight;
 
+	/* Careful! We assume that subinventories are always above all other items,
+	   or this call might invalidate our s_ptr and o_ptr references: */
 	inven_carry(Ind, o_ptr);
 
 	/* Erase object in subinven, slide followers */
@@ -4999,8 +5002,8 @@ void subinven_remove_aux(int Ind, int islot, int slot) {
 	/* -- This is partial code from inven_item_optimize() -- */
 
 	/* Slide everything down */
-//	for (i = slot; i < get_subinven_size(p_ptr->inventory[islot].sval); i++) {
-	for (i = slot; i < p_ptr->inventory[islot].bpval; i++) {
+//	for (i = slot; i < get_subinven_size(s_ptr->sval); i++) {
+	for (i = slot; i < s_ptr->bpval; i++) {
 		/* Structure copy */
 		p_ptr->subinventory[islot][i] = p_ptr->subinventory[islot][i + 1];
 		display_subinven_aux(Ind, islot, i);
@@ -5022,6 +5025,8 @@ void subinven_remove_aux(int Ind, int islot, int slot) {
  #endif
 	/* Window stuff */
 	//if (live) p_ptr->window |= (PW_INVEN | PW_PLAYER);
+
+	verify_subinven_size(Ind, islot, TRUE);
 }
 void do_cmd_subinven_remove(int Ind, int islot, int slot) {
 	player_type *p_ptr = Players[Ind];

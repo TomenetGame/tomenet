@@ -821,6 +821,11 @@ static void rd_item(object_type *o_ptr) {
 
 	/* fix rods stuck in charging state (from recharge spell) */
 	if (o_ptr->tval == TV_ROD && !o_ptr->pval && o_ptr->bpval) o_ptr->bpval = 0;
+
+#ifdef ENABLE_SUBINVEN
+	/* Update storage capacity in case it was increased */
+	if (o_ptr->tval == TV_SUBINVEN && o_ptr->bpval < k_info[o_ptr->k_idx].pval) o_ptr->bpval = k_info[o_ptr->k_idx].pval;
+#endif
 }
 
 

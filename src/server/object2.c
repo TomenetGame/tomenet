@@ -10701,6 +10701,8 @@ bool inven_item_optimize(int Ind, int item) {
 		invwipe(&p_ptr->subinventory[s][i]);
 		display_subinven_aux(Ind, s, i);
 
+		verify_subinven_size(Ind, s, TRUE);
+
 		return TRUE;
 	}
 	else o_ptr = &p_ptr->inventory[item];

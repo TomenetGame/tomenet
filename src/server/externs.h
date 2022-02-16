@@ -2059,6 +2059,7 @@ extern void get_inven_item(int Ind, int item, object_type **o_ptr);
 extern void get_subinven_item(int Ind, int item, object_type **o_ptr, int *sitem, int *iitem);
 extern void empty_subinven(int Ind, int item);
 extern void erase_subinven(int Ind, int item);
+extern void verify_subinven_size(int Ind, int slot, bool check);
 #endif
 
 

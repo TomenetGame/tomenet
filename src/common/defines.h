@@ -4354,11 +4354,11 @@
  #define SV_SALTPETRE		3	/* large amount, oxygen source boosting combustion speed */
  #define SV_AMMONIA_SALT	4	/* alternative to saltpetre, provides option: just lamp oil as 2nd ingredient! (huge amount salt, tiny amount oil) */
  #define SV_METAL_POWDER	5	/* for flashy effects *_* */
- #define SV_METAL_HYDROXIDE	6	/* additional tier I oxygen source - make shit more potent */
+ #define SV_METAL_HYDROXIDE	6	/* [optional] additional tier I oxygen source - make shit more potent */
  #define SV_METAL_PEROXIDE	7	/* additional tier II oxygen source - make shit MORE potent */
  #define SV_METAL_PERCHLORATE	8	/* additional tier III oxygen source - make shit *MORE* potent */
  #define SV_VITRIOL		9	/* (sulphates) alternative for flask of acid */
- #define SV_RUST		10	/* metaloxide.. we limit it to iron I guess.. */
+ #define SV_RUST		10	/* [optional] metaloxide.. we limit it to iron I guess.. */
  #define SV_WOOD_CHIPS		11
  #define SV_MIXTURE		99	/* Mixture of the above ingredients. Uses xtra1/2/3 to bitwise store the ingredients that went into it so far, the 3 variables indicating the amounts of each bit, eg 2xsalpeter+1x... */
 /* Helper indices for ingredients -- IMPORTANT: For ingredients in TV_CHEMICAL these must match the sval up to 10! */
@@ -4406,14 +4406,15 @@
     Subinventories currently don't feature an 'overflow' slot unlike normal inventories.
     We currently have 9 (11 with rust+hydroxide) chemicals (the reason of implementing subinventories actually). */
  #define SUBINVEN_PACK INVEN_PACK
- /* Set sizes of different subinven types */
- /* SV_SI_SATCHEL: */
- #ifdef NO_RUST_NO_HYDROXIDE /* 9 vs 11 types of chemicals, of which 6 vs 8 are sort of 'basic' */
-  #define SI_SATCHEL_SIZE 6
+
+ /* -- Set sizes of different subinven types -- ALL DEPRECATED! We use k_info pval -> object bpval for that now. -- */
+  /* SV_SI_SATCHEL: */
+ #ifdef NO_RUST_NO_HYDROXIDE /* 9 vs 11 types of chemicals, of which 6 vs 7 are found almost-directly, and 7 vs 8..9 are trivially crafted. Currently satchels can hold mixtures too. */
+  #define SI_SATCHEL_SIZE 7
  #else
-  #define SI_SATCHEL_SIZE 8
+  #define SI_SATCHEL_SIZE 9
  #endif
- /* TVal-converted chests - no difference for objects of great weight and little weight for now, same as normal backpack */
+  /* TVal-converted chests - no difference for objects of great weight and little weight for now, same as normal backpack */
  #define SI_CHEST_SMALL_WOODEN_SIZE	2
  #define SI_CHEST_SMALL_IRON_SIZE	3
  #define SI_CHEST_SMALL_STEEL_SIZE	3
