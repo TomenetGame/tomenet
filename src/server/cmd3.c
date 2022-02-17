@@ -4831,6 +4831,8 @@ bool subinven_move_aux(int Ind, int islot, int sslot) {
 	for (i = 0; i < s_ptr->bpval; i++) {
 		o_ptr = &p_ptr->subinventory[sslot][i];
 		if (o_ptr->tval) {
+			/* Slot has no more stacking capacity? */
+			if (o_ptr->number == 99) continue;
 			/* Hack 'number' to allow merging stacks partially */
 			if (i_ptr->number + o_ptr->number > 99) i_ptr->number = 99 - o_ptr->number;
 			/* Merge partially or fully */
