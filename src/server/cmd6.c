@@ -5870,16 +5870,16 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			//inven_item_describe(Ind, item);
 			inven_item_optimize(Ind, item);
 
+			/* Place charcoal into inventory */
 #ifdef ENABLE_SUBINVEN
-			/* Place charcoal into inventory */
-			i = inven_carry(Ind, ox_ptr);
-			/* Automatically move it into the same bag if possible */
-			//do_cmd_subinven_move(Ind, islot);
-			subinven_move_aux(Ind, i, item / 100 - 1);
-			return;
+			if (item >= 100) {
+				i = inven_carry(Ind, ox_ptr);
+				/* Automatically move it into the same bag if possible */
+				//do_cmd_subinven_move(Ind, islot);
+				(void)subinven_move_aux(Ind, i, item / 100 - 1);
+				return;
+			}
 #endif
-
-			/* Place charcoal into inventory */
 			inven_carry(Ind, ox_ptr);
 			return;
 		}
