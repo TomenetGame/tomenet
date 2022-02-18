@@ -3149,6 +3149,10 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	/* Note "tried" if the object has been tested unsuccessfully */
 	else if (!aware && (Ind && object_tried_p(Ind, o_ptr)))
 		strcpy(tmp_val, "tried");
+	/* Note 100% discount and write it a bit special */
+	else if (o_ptr->discount == 100) {
+		strcat(tmp_val, "unsalable");
+	}
 	/* Note the discount, if any */
 	else if (o_ptr->discount) {
 		object_desc_num(tmp_val, o_ptr->discount);
