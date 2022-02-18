@@ -4445,7 +4445,8 @@
 
 /* svals for TV_SPECIAL */
 #define SV_SEAL				0	/* for invalid items */
-#define SV_CUSTOM_OBJECT		1	/* fun vanity objects, customizable by admins */
+#define SV_CUSTOM_OBJECT		1	/* fun vanity objects, customizable by admins: xtra1 = ap, xtra2 = cp, xtra3 = commands: */
+						/* 0x1 eat, 0x2 quaff, 0x4 read, 0x10 activate-no-am, 0x20 activate-am, 0x40 activate-dir-no-am, 0x80 activate-dir-am */
 #define SV_QUEST			2	/* a custom quest item (not to be confused with questors) */
 
 

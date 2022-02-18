@@ -6274,7 +6274,7 @@ void display_inven(int Ind) {
 
 		/* Send the info to the client */
 		if (is_newer_than(&p_ptr->version, 4, 4, 1, 7, 0, 0)) {
-			if (o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) {
+			if ((o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) && (o_ptr->tval != TV_SPECIAL || o_ptr->sval != SV_CUSTOM_OBJECT)) {
 				Send_inven(Ind, tmp_val[0], attr, wgt, o_ptr, o_name);
 			} else {
 				Send_inven_wide(Ind, tmp_val[0], attr, wgt, o_ptr, o_name);
@@ -6484,7 +6484,7 @@ void display_invenequip(int Ind) {
 
 		/* Send the info to the client */
 		if (is_newer_than(&p_ptr->version, 4, 4, 1, 7, 0, 0)) {
-			if (o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) {
+			if ((o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) && (o_ptr->tval != TV_SPECIAL || o_ptr->sval != SV_CUSTOM_OBJECT)) {
 				Send_inven(Ind, tmp_val[0], attr, wgt, o_ptr, o_name);
 			} else {
 				Send_inven_wide(Ind, tmp_val[0], attr, wgt, o_ptr, o_name);

@@ -429,6 +429,8 @@ void do_cmd_eat_food(int Ind, int item) {
 	bool keep = FALSE, flipped = FALSE;
 
 
+	//if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x1)) {
+
 	/* Restrict choices to food */
 	item_tester_tval = TV_FOOD;
 
@@ -1159,6 +1161,8 @@ void do_cmd_quaff_potion(int Ind, int item) {
 	object_type *o_ptr, forge;
 	bool flipped = FALSE;
 
+
+	//if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x2)) {
 
 	/* Restrict choices to potions (apparently meanless) */
 	item_tester_tval = TV_POTION;
@@ -3073,6 +3077,8 @@ void do_cmd_read_scroll(int Ind, int item) {
 		s_printf("%s EFFECT: Confusion prevented scroll for %s.\n", showtime(), p_ptr->name);
 		return;
 	}
+
+	//if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x4)) {
 
 	/* Restrict choices to scrolls */
 	item_tester_tval = TV_SCROLL;
@@ -5484,6 +5490,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		return;
 	}
 
+	//if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x10)) {
+
 	/* Anti-magic checks */
 	if (o_ptr->tval != TV_BOTTLE /* hack.. */
 #ifdef ENABLE_DEMOLITIONIST
@@ -5526,6 +5534,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			return;
 		}
 	}
+
+	//if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x20)) {
 
 	/* If the item can be equipped, it MUST be equipped to be activated */
 	if ((item < INVEN_WIELD) && wearable_p(o_ptr)) {
@@ -7000,6 +7010,8 @@ void do_cmd_activate_dir(int Ind, int dir) {
 		o_ptr = &o_list[0 - item];
 	}
 
+	//if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x40)) {
+
 #if 0	/* if 0: All these checks are duplicate, no? They are already done in do_cmd_activate().
 	   The problem is with randomized checks, in this case the p_ptr->antimagic one,
 	   which hence changes the probability by being called duplicately! */
@@ -7026,6 +7038,8 @@ void do_cmd_activate_dir(int Ind, int dir) {
 		}
 	}
 #endif
+
+	//if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x80)) {
 
 	/* If the item can be equipped, it MUST be equipped to be activated */
 	if ((item < INVEN_WIELD) && wearable_p(o_ptr)) {

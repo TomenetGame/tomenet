@@ -26,6 +26,7 @@ static bool item_tester_edible(object_type *o_ptr) {
 	if (o_ptr->tval == TV_FOOD) return TRUE;
 	if (o_ptr->tval == TV_FIRESTONE) return TRUE;
 	if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) return TRUE;
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x1)) return TRUE;
 
 	return FALSE;
 }
@@ -1357,6 +1358,7 @@ static bool item_tester_quaffable(object_type *o_ptr) {
 			(o_ptr->sval == SV_FOOD_PINT_OF_ALE ||
 			 o_ptr->sval == SV_FOOD_PINT_OF_WINE) )
 			return TRUE;
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x2)) return TRUE;
 
 	return FALSE;
 }
@@ -1380,6 +1382,7 @@ void cmd_quaff(void) {
 static bool item_tester_readable(object_type *o_ptr) {
 	if (o_ptr->tval == TV_SCROLL) return TRUE;
 	if (o_ptr->tval == TV_PARCHMENT) return TRUE;
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x4)) return TRUE;
 
 	return FALSE;
 }

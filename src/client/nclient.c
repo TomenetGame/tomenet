@@ -2012,6 +2012,7 @@ int Receive_inven_wide(void) {
 	char tmp[ONAME_LEN];
 #endif
 
+//add uses_dir, for SV_CUSTOM_OBJECT
 	if (is_newer_than(&server_version, 4, 7, 1, 1, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I%c", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, &name1,
 		    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9, name, &ident)) <= 0)
