@@ -1212,6 +1212,11 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 	object_type	*j_ptr;
 	s16b o_tv = o_ptr->tval, o_sv = o_ptr->sval, j_tv, j_sv;
 
+#ifdef ENABLE_SUBINVEN
+	/* Hack so subinventories are placed at the very first slots even before custom objects */
+	if (o_tv == TV_SUBINVEN) o_tv = TV_MAX + 1;
+#endif
+
 #ifdef ENABLE_DEMOLITIONIST
 	/* Hack so they don't end up too close to orange amulets sometimes */
 	if (o_tv == TV_CHARGE) o_tv = 9;
@@ -1290,6 +1295,11 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 
 			j_tv = j_ptr->tval;
 			j_sv = j_ptr->sval;
+
+#ifdef ENABLE_SUBINVEN
+			/* Hack so subinventories are placed at the very first slots even before custom objects */
+			if (j_tv == TV_SUBINVEN) j_tv = TV_MAX + 1;
+#endif
 
 #ifdef ENABLE_DEMOLITIONIST
 			/* Hack so they don't end up too close to orange amulets sometimes */
@@ -5609,6 +5619,11 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr) {
 	object_type *j_ptr;
 	s16b o_tv = o_ptr->tval, o_sv = o_ptr->sval, j_tv, j_sv;
 
+#ifdef ENABLE_SUBINVEN
+	/* Hack so subinventories are placed at the very first slots even before custom objects */
+	if (o_tv == TV_SUBINVEN) o_tv = TV_MAX + 1;
+#endif
+
 #ifdef ENABLE_DEMOLITIONIST
 	/* Hack so they don't end up too close to orange amulets sometimes */
 	if (o_tv == TV_CHARGE) o_tv = 9;
@@ -5650,6 +5665,11 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr) {
 
 			j_tv = j_ptr->tval;
 			j_sv = j_ptr->sval;
+
+#ifdef ENABLE_SUBINVEN
+			/* Hack so subinventories are placed at the very first slots even before custom objects */
+			if (j_tv == TV_SUBINVEN) j_tv = TV_MAX + 1;
+#endif
 
 #ifdef ENABLE_DEMOLITIONIST
 			/* Hack so they don't end up too close to orange amulets sometimes */
