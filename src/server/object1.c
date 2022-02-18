@@ -5770,7 +5770,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 #endif
 	    )
 		/* TODO: 3rd party observe via Ind_target */
-		display_weapon_damage(Ind_target, &forge, fff, f1);
+		display_weapon_damage(Ind_target ? Ind_target : Ind, &forge, fff, f1);
 
 	/* Damage display for ranged weapons */
 	if (wield_slot(0, o_ptr) == INVEN_BOW) {
@@ -5804,10 +5804,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 				}
 			}
 			/* TODO: 3rd party observe via Ind_target */
-			display_shooter_damage(Ind_target, &forge, fff, f1, ammo_f1);
+			display_shooter_damage(Ind_target ? Ind_target : Ind, &forge, fff, f1, ammo_f1);
 		} else
 			/* TODO: 3rd party observe via Ind_target */
-			display_boomerang_damage(Ind_target, &forge, fff, f1);
+			display_boomerang_damage(Ind_target ? Ind_target : Ind, &forge, fff, f1);
 	}
 
 	/* Breakage/Damage display for ammo */
@@ -5846,7 +5846,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 
 		fprintf(fff, "\377WIt has %d%% chances to break upon hit.\n", breakage_chance(o_ptr));
 		/* TODO: 3rd party observe via Ind_target */
-		display_ammo_damage(Ind_target, &forge, fff, f1, shooter_f1);
+		display_ammo_damage(Ind_target ? Ind_target : Ind, &forge, fff, f1, shooter_f1);
 	}
 
 #if 1 /* display trigger chance for magic devices? */
