@@ -2768,6 +2768,15 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 
 	if (check_power_inscribe(Ind, o_ptr, o_name, inscription)) return;
 
+	/* Special inscriptions for dropping items in the inn that aren't meant to be sold to shops but to be actually used by others:
+	   This inscription does not actually change the item's current inscription, but only applies 100% discount. */
+	if (!strcmp(inscription, "!%")) {
+		msg_format(Ind, "Making %s unsalable.", o_name);
+		msg_print(Ind, NULL);
+		o_ptr->discount = 100;
+		return;
+	}
+
 	/* Message */
 	msg_format(Ind, "Inscribing %s.", o_name);
 	msg_print(Ind, NULL);
