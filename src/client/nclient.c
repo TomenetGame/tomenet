@@ -5094,6 +5094,8 @@ void apply_auto_inscriptions(int slot, bool force) {
 	/* security hack: avoid infinite looping */
 	if (auto_inscription_tag[i][0] && /* since the auto-ins line might just be used for auto-pickup, don't inscribe empty inscriptions (mad spam on looting) */
 	    strstr(auto_inscription_tag[i], "% off") == NULL &&
+	    strcmp(auto_inscription_tag[i], "unsalable") &&
+	    /* These last three are actually NOT empty inscriptions, so they don't really need checking here: */
 	    strcmp(auto_inscription_tag[i], "cursed") &&
 	    strcmp(auto_inscription_tag[i], "on sale") &&
 	    strcmp(auto_inscription_tag[i], "stolen"))
