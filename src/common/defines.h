@@ -1368,13 +1368,17 @@
 #define RI_LEPER		13
 #define RI_NOVICE_MAGE		46
 #define RI_NOVICE_MAGE_F	93
+#define RI_NURGLING		139
 #define RI_UFTHAK		260
+#define RI_BEARER_NURGLE	268
 #define RI_DOOR_MIMIC		311
 #define RI_VAMPIRIC_MIST	365
 #define RI_VAMPIRE_BAT		391
+#define RI_BEAST_NURGLE		422
 #define RI_HALF_TROLL		491	/* TROLL_REGENERATION */
 #define RI_BLOODLETTER		523
 #define RI_SANTA1		733	/* terror santa from hell */
+#define RI_GUO			736
 #ifdef ENABLE_OHERETICISM
  #define RI_BLOODTHIRSTER	758
 #endif

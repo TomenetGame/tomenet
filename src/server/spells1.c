@@ -5956,6 +5956,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	bool quiet; /* no message output at all, monster takes no damage from players either and won't drop anything on death */
 	bool quiet_dam = FALSE; /* no damage message output, no pain message */
 	bool no_dam = FALSE; /* only use when no damage is applied: don't call mon_take_hit() so the monster isn't woken up, no pain message/damage message since no damage is applied (monster can theoretically die though) */
+	bool hates_heal;
 
 	int plev = 25; /* replacement dummy for when a monster isn't
 			  affected by a real player but by eg a trap */
@@ -6085,11 +6086,14 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		note_dies = " is destroyed";
 	}
 
+	/* Undead and those of Nurgle hate healing */
+	hates_heal = (r_ptr->flags3 & RF3_UNDEAD) || ((r_ptr->flags3 & RF3_DEMON) && (m_ptr->r_idx == RI_GUO || m_ptr->r_idx == RI_NURGLING || m_ptr->r_idx == RI_BEARER_NURGLE || m_ptr->r_idx == RI_BEAST_NURGLE));
+
 	/* Hack: GF_LIFEHEAL might heal or kill a monster */
 	if (typ == GF_LIFEHEAL) {
-		if (r_ptr->flags3 & RF3_UNDEAD) typ = GF_HOLY_FIRE;
+		if (hates_heal) typ = GF_HOLY_FIRE;
 		else typ = GF_OLD_HEAL;
-	}
+	} else if (typ == GF_OLD_HEAL && hates_heal) typ = GF_HOLY_FIRE;
 
 	/* Analyze the damage type */
 	switch (typ) {
@@ -7489,6 +7493,13 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (seen) obvious = TRUE;
 			note = " crackles in the light";
 			note_dies = " evaporates into thin air";
+		} else if (hates_heal) { /* Only demons remain */
+#ifdef OLD_MONSTER_LORE
+			if (seen) r_ptr->r_flags3 |= RF3_DEMON;
+#endif
+			if (seen) obvious = TRUE;
+			note = " shivers in the light";
+			note_dies = " dissolves";
 		} else {
 			no_dam = TRUE;
 			quiet = TRUE;
@@ -13153,14 +13164,13 @@ int approx_damage(int m_idx, int dam, int typ) {
 
 	bool resist = FALSE;
 
+	bool hates_heal = (r_ptr->flags3 & RF3_UNDEAD) || ((r_ptr->flags3 & RF3_DEMON) && (m_ptr->r_idx == RI_GUO || m_ptr->r_idx == RI_NURGLING || m_ptr->r_idx == RI_BEARER_NURGLE || m_ptr->r_idx == RI_BEAST_NURGLE));
+
 	/* Hack: GF_LIFEHEAL might heal or kill a monster */
 	if (typ == GF_LIFEHEAL) {
-		if (r_ptr->flags3 & RF3_UNDEAD) {
-			typ = GF_HOLY_FIRE;
-		} else {
-			typ = GF_OLD_HEAL;
-		}
-	}
+		if (hates_heal) typ = GF_HOLY_FIRE;
+		else typ = GF_OLD_HEAL;
+	} else if (typ == GF_OLD_HEAL && hates_heal) typ = GF_HOLY_FIRE;
 
 	switch (typ) {
 	case GF_SILENCE:
@@ -13696,8 +13706,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 		break;
 
 	case GF_HEALINGCLOUD:
-		if (!(r_ptr->flags3 & RF3_UNDEAD))
-			dam = 0;
+		if (!hates_heal) dam = 0;
 		break;
 
 	case GF_WATERPOISON:
