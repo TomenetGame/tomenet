@@ -1816,28 +1816,9 @@ bool lose_all_info(int Ind) {
 
 		/* Remove "default inscriptions" */
 		if (o_ptr->note && (o_ptr->ident & ID_SENSE)) {
-#if 0
-			/* Access the inscription */
-			cptr q = quark_str(o_ptr->note);
-
-			/* Hack -- Remove auto-inscriptions */
-			if ((streq(q, "cursed")) ||
-			    //"uncursed"?
-			    (streq(q, "broken")) ||
-			    (streq(q, "good")) ||
-			    (streq(q, "average")) ||
-			    (streq(q, "excellent")) ||
-			    (streq(q, "worthless")) ||
-			    (streq(q, "special")) ||
-			    (streq(q, "terrible"))) {
-				/* Forget the inscription */
-				o_ptr->note = 0;
-			}
-#else
 			note_crop_pseudoid(note2, noteid, quark_str(o_ptr->note));
 			if (!note2[0]) o_ptr->note = o_ptr->note_utag = 0;//utag is paranoia
 			else o_ptr->note = quark_add(note2);
-#endif
 		}
 
 		/* Hack -- Clear the "empty" flag */
