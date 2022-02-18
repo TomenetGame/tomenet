@@ -18362,7 +18362,7 @@ school.
 
 - Mind
 
-    Confuse         Confuses a monsters.
+    Confusion       Confuses a monsters.
                     Required skill level for first spell level: 5.
 
                     Tier II: Level 20.

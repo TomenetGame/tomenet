@@ -239,7 +239,7 @@ guide_spell = {
     "Disenchantment Beam",
     "Hellfire", --59
 
-    "Confuse",
+    "Confusion",
     "Stun",
     "Sense Minds",
     "Telekinesis I",
