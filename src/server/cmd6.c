@@ -8432,7 +8432,8 @@ s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 			return;
 		}
 		for (i = 0; i < INVEN_WIELD; i++)
-			if (object_known_p(Ind, &p_ptr->inventory[i]) && /* skip unknown items */
+			if (//object_known_p(Ind, &p_ptr->inventory[i]) && /* skip unknown items */
+			    object_aware_p(Ind, &p_ptr->inventory[i]) && /* skip unknown items */
 			    ((p_ptr->inventory[i].tval == TV_POTION && p_ptr->inventory[i].sval == SV_POTION_POISON) ||
 			    (p_ptr->inventory[i].tval == TV_FOOD &&
 			    (p_ptr->inventory[i].sval == SV_FOOD_POISON || p_ptr->inventory[i].sval == SV_FOOD_UNHEALTH)))) {
