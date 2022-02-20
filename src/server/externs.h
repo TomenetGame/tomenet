@@ -720,10 +720,10 @@ extern bool subinven_group_player(int Ind, int group, int slot);
 #endif
 
 /* cmd4.c */
-extern void do_cmd_check_artifacts(int Ind, int line);
-extern void do_cmd_check_uniques(int Ind, int line);
-extern void do_cmd_check_players(int Ind, int line);
-extern void do_admin_cmd_check_players(int Ind, int line);
+extern void do_cmd_check_artifacts(int Ind, int line, char *srcstr);
+extern void do_cmd_check_uniques(int Ind, int line, char *srcstr);
+extern void do_cmd_check_players(int Ind, int line, char *srcstr);
+//extern void do_admin_cmd_check_players(int Ind, int line, char *srcstr);  //NOT IMPLEMENTED
 extern void do_cmd_check_player_equip(int Ind, int line);
 extern void do_cmd_check_server_settings(int Ind);
 extern void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev, bool uniques);
@@ -732,7 +732,7 @@ extern void do_cmd_show_known_item_letter(int Ind, char *letter);
 extern void do_cmd_knowledge_traps(int Ind);
 extern void do_cmd_knowledge_dungeons(int Ind);
 extern void do_cmd_time(int Ind);
-extern void do_cmd_check_other(int Ind, int line);
+extern void do_cmd_check_other(int Ind, int line, char *srcstr);
 extern void do_cmd_check_other_prepare(int Ind, char *path, char *title);
 extern void do_cmd_check_extra_info(int Ind, bool admin);
 extern void show_autoret(int Ind, byte typ, bool verbose);
@@ -883,7 +883,7 @@ extern errr check_time(void);
 extern errr check_load(void);
 extern void read_times(void);
 extern void show_news(void);
-extern errr show_file(int Ind, cptr name, cptr what, int line, int color, int divl);
+extern errr show_file(int Ind, cptr name, cptr what, int line, int color, int divl, char *srcstr);
 extern void do_cmd_help(int Ind, int line);
 extern bool process_player_name(int Ind, bool sf);
 extern void get_name(int Ind);
@@ -1213,6 +1213,7 @@ extern int Send_AFK(int ind, byte afk);
 extern int Send_encumberment(int ind, byte cumber_armor, byte awkward_armor, byte cumber_glove, byte heavy_wield, byte heavy_shield, byte heavy_shoot,
         byte icky_wield, byte awkward_wield, byte easy_wield, byte cumber_weight, byte monk_heavyarmor, byte rogue_heavyarmor, byte awkward_shoot, byte heavy_swim);
 extern int Send_special_line(int ind, int max, int line, byte attr, cptr buf);
+extern int Send_special_line_pos(int ind, int line);
 extern int Send_floor(int ind, char tval);
 extern int Send_pickup_check(int ind, cptr buf);
 extern int Send_party(int Ind, bool leave, bool clear);
@@ -1556,7 +1557,7 @@ extern int s_shutdown(void);
 extern int s_printf(const char *str, ...) __attribute__ ((format (printf, 1, 2)));
 extern bool s_setupr(char *str);
 extern bool rfe_printf(char *str, ...) __attribute__ ((format (printf, 1, 2)));
-extern bool do_cmd_view_rfe(int Ind,char *str, int line);
+extern bool do_cmd_view_rfe(int Ind, char *str, int line, char *srcstr);
 extern int c_printf(char *str, ...) __attribute__ ((format (printf, 1, 2)));
 extern int p_printf(char *str, ...) __attribute__ ((format (printf, 1, 2)));
 extern int l_printf(char *str, ...) __attribute__ ((format (printf, 1, 2)));

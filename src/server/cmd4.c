@@ -73,7 +73,7 @@
  */
 /* colour art list depending on item type? (non-admins only) */
 #define COLOURED_ARTS
-void do_cmd_check_artifacts(int Ind, int line) {
+void do_cmd_check_artifacts(int Ind, int line, char *srcstr) {
 	int i, j, k, z;
 #ifdef ARTS_PRE_SORT
 	int i0;
@@ -333,7 +333,7 @@ void do_cmd_check_artifacts(int Ind, int line) {
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "Artifacts Owned", line, 0, 0);
+	show_file(Ind, file_name, "Artifacts Owned", line, 0, 0, srcstr);
 
 	/* Remove the file */
 	fd_kill(file_name);
@@ -351,7 +351,7 @@ void do_cmd_check_artifacts(int Ind, int line) {
  */
 /* Pfft, we should rewrite show_file so that we can change
  * the colour for each letter!	- Jir - */
-void do_cmd_check_uniques(int Ind, int line) {
+void do_cmd_check_uniques(int Ind, int line, char *srcstr) {
 	monster_race *r_ptr;
 
 	int i, j, kk;
@@ -597,7 +597,7 @@ void do_cmd_check_uniques(int Ind, int line) {
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "Unique Monster List", line, 0, 0);
+	show_file(Ind, file_name, "Unique Monster List", line, 0, 0, srcstr);
 
 	/* Remove the file */
 	fd_kill(file_name);
@@ -1396,7 +1396,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
  * The player's name, race, class, and experience level are shown.
  */
 #define ADMIN_EXTRA_STATISTICS /* display some extra marker(s) for admins to check certain statistics (eg client options) */
-void do_cmd_check_players(int Ind, int line) {
+void do_cmd_check_players(int Ind, int line, char *srcstr) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	int k, lines = 0, compaction = (p_ptr->player_list ? 2 : 0) + (p_ptr->player_list2 ? 1 : 0) ;
 	FILE *fff;
@@ -1817,11 +1817,11 @@ if ((compaction == 1 || compaction == 2) /*#ifdef COMPACT_PLAYERLIST*/
 	/* Display the file contents */
 if ((compaction == 1 || compaction == 2) /*#ifdef COMPACT_PLAYERLIST*/
     && !big_map) {
-	show_file(Ind, file_name, "Players Online", line, 0, 3); //expand to divisable by 3 # of lines (which means +1)
+	show_file(Ind, file_name, "Players Online", line, 0, 3, srcstr); //expand to divisable by 3 # of lines (which means +1)
 } else if (big_map && compaction == 0) {//#else
-	show_file(Ind, file_name, "Players Online", line, 0, 4); //reduce to divisable by 4 # of lines (which means -2)
+	show_file(Ind, file_name, "Players Online", line, 0, 4, srcstr); //reduce to divisable by 4 # of lines (which means -2)
 } else {
-	show_file(Ind, file_name, "Players Online", line, 0, 0);
+	show_file(Ind, file_name, "Players Online", line, 0, 0, srcstr);
 }//#endif
 
 	/* Remove the file */
@@ -2315,7 +2315,7 @@ void do_cmd_check_player_equip(int Ind, int line) {
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "Equipment of Inspectable Players", line, 0, 0);
+	show_file(Ind, file_name, "Equipment of Inspectable Players", line, 0, 0, NULL);
 
 	/* Remove the file */
 	fd_kill(file_name);
@@ -3886,7 +3886,7 @@ void do_cmd_check_other_prepare(int Ind, char *path, char *title) {
  * Scroll through *ID* or Self Knowledge information.
  */
 //void do_cmd_check_other(int Ind, int line, int color)
-void do_cmd_check_other(int Ind, s32b line) {
+void do_cmd_check_other(int Ind, s32b line, char *srcstr) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Make sure the player is allowed to */
@@ -3894,10 +3894,10 @@ void do_cmd_check_other(int Ind, s32b line) {
 
 	/* Display the file contents */
 	if (p_ptr->cur_file_title[0])
-		show_file(Ind, p_ptr->cur_file, p_ptr->cur_file_title, line, 0, 0);
+		show_file(Ind, p_ptr->cur_file, p_ptr->cur_file_title, line, 0, 0, srcstr);
 	else
-		show_file(Ind, p_ptr->cur_file, "Information", line, 0, 0);
-//	show_file(Ind, p_ptr->cur_file, "Extra Info", line, color, 0);
+		show_file(Ind, p_ptr->cur_file, "Information", line, 0, 0, srcstr);
+	//show_file(Ind, p_ptr->cur_file, "Extra Info", line, color, 0, srcstr);
 
 #if 0
 	/* Remove the file */
@@ -3908,7 +3908,7 @@ void do_cmd_check_other(int Ind, s32b line) {
 }
 
 #if 0
-void do_cmd_check_other(int Ind, s32b line) {
+void do_cmd_check_other(int Ind, s32b line, char *srcstr) {
 	player_type *p_ptr = Players[Ind];
 	int n = 0;
 	FILE *fff;
@@ -3940,7 +3940,7 @@ void do_cmd_check_other(int Ind, s32b line) {
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "Extra Info", line, 0, 0);
+	show_file(Ind, file_name, "Extra Info", line, 0, 0, srcstr);
 
 	/* Remove the file */
 	fd_kill(file_name);

@@ -74,6 +74,7 @@ bool perusing;				/* Are we browinsg a help file or similar? */
 s16b last_line_info;			/* Last line of info we've received */
 s32b max_line;				/* Maximum amount of "special" info */
 s32b cur_line;				/* Current displayed line of "special" info */
+bool line_searching = FALSE;
 int cur_col;
 #ifdef BIGMAP_MINDLINK_HACK
 s16b last_line_y = 0;			/* for big_map mindlink differences */

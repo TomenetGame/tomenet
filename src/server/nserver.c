@@ -8184,6 +8184,21 @@ int Send_special_line(int Ind, s32b max, s32b line, byte attr, cptr buf) {
 	}
 }
 
+int Send_special_line_pos(int Ind, int line) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+
+	if (!is_newer_than(&Players[Ind]->version, 4, 7, 4, 5, 0, 0)) return 1;
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for line pos (%d.%d.%d)",
+			Ind, connp->state, connp->id));
+		return 0;
+	}
+
+	return Packet_printf(&connp->c, "%c%d", PKT_SPECIAL_LINE_POS, line);
+}
+
 int Send_floor(int Ind, char tval) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 
@@ -11900,23 +11915,26 @@ static int Receive_clear_actions(int ind) {
 static int Receive_special_line(int ind) {
 	connection_t *connp = Conn[ind];
 	int player = -1, n;
-	char ch, type;
+	char ch, type, srcstr[80];
 	s32b line;
 
 	if (connp->id != -1) player = GetInd[connp->id];
 		else player = 0;
 
-	if (is_newer_than(&connp->version, 4, 4, 7, 0, 0, 0)) {
+	if (is_newer_than(&connp->version, 4, 7, 4, 5, 0, 0)) {
+		if ((n = Packet_scanf(&connp->r, "%c%c%d%s", &ch, &type, &line, srcstr)) <= 0) {
+			if (n == -1) Destroy_connection(ind, "read error");
+			return n;
+		}
+	} else if (is_newer_than(&connp->version, 4, 4, 7, 0, 0, 0)) {
 		if ((n = Packet_scanf(&connp->r, "%c%c%d", &ch, &type, &line)) <= 0) {
-			if (n == -1)
-				Destroy_connection(ind, "read error");
+			if (n == -1) Destroy_connection(ind, "read error");
 			return n;
 		}
 	} else {
 		s16b old_line;
 		if ((n = Packet_scanf(&connp->r, "%c%c%hd", &ch, &type, &old_line)) <= 0) {
-			if (n == -1)
-				Destroy_connection(ind, "read error");
+			if (n == -1) Destroy_connection(ind, "read error");
 			return n;
 		}
 		line = old_line;
@@ -11935,19 +11953,19 @@ static int Receive_special_line(int ind) {
 				fd_kill(Players[player]->infofile);
 			break;
 		case SPECIAL_FILE_UNIQUE:
-			do_cmd_check_uniques(player, line);
+			do_cmd_check_uniques(player, line, srcstr);
 			break;
 		case SPECIAL_FILE_ARTIFACT:
-			do_cmd_check_artifacts(player, line);
+			do_cmd_check_artifacts(player, line, srcstr);
 			break;
 		case SPECIAL_FILE_PLAYER:
-			do_cmd_check_players(player, line);
+			do_cmd_check_players(player, line, srcstr);
 			break;
 		case SPECIAL_FILE_PLAYER_EQUIP:
 			do_cmd_check_player_equip(player, line);
 			break;
 		case SPECIAL_FILE_OTHER:
-			do_cmd_check_other(player, line);
+			do_cmd_check_other(player, line, srcstr);
 			break;
 		case SPECIAL_FILE_SCORES:
 			display_scores(player, line);
@@ -11958,11 +11976,11 @@ static int Receive_special_line(int ind) {
 		/* Obsolete, just left for compatibility (DELETEME) */
 		case SPECIAL_FILE_LOG:
 			if (is_admin(Players[player]))
-				do_cmd_view_rfe(player, "tomenet.log", line);
+				do_cmd_view_rfe(player, "tomenet.log", line, srcstr);
 			break;
 		case SPECIAL_FILE_RFE:
 			if (is_admin(Players[player]) || cfg.public_rfe)
-				do_cmd_view_rfe(player, "tomenet.rfe", line);
+				do_cmd_view_rfe(player, "tomenet.rfe", line, srcstr);
 			break;
 		case SPECIAL_FILE_MOTD2:
 			show_motd2(player);

@@ -267,6 +267,7 @@
  #define PKT_SI_MOVE		204	/* Used by client and by server for slightly different purpose each (!) */
  #define PKT_SI_REMOVE		205
 //#endif
+#define PKT_SPECIAL_LINE_POS	206
 
 
 /*

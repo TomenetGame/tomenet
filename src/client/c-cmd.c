@@ -1869,8 +1869,8 @@ static char *fgets_inverse(char *buf, int max, FILE *f) {
 #define TOPICSEARCH_ALT_BASIC
 void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_string) {
 	static int line = 0, line_before_search = 0, jumped_to_line = 0;
-	static char lastsearch[MAX_CHARS] = "";
-	static char lastchapter[MAX_CHARS] = "";
+	static char lastsearch[MAX_CHARS] = { 0 };
+	static char lastchapter[MAX_CHARS] = { 0 };
 
 	bool inkey_msg_old, within, within_col, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE, restore_pos = FALSE;
 	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
@@ -4550,11 +4550,11 @@ void cmd_check_misc(void) {
 			if (is_newer_than(&server_version, 4, 5, 4, 0, 0, 0)) {
 				row = c_get_quantity("Specify minimum level? (ESC for none): ", 255);
 				if (is_atleast(&server_version, 4, 7, 3, 0, 0, 0))
-					Send_special_line(SPECIAL_FILE_MONSTER, choice + row * 100000 + (uniques ? 100000000 : 0));
+					Send_special_line(SPECIAL_FILE_MONSTER, choice + row * 100000 + (uniques ? 100000000 : 0), "");
 				else
-					Send_special_line(SPECIAL_FILE_MONSTER, choice + row * 100000);
+					Send_special_line(SPECIAL_FILE_MONSTER, choice + row * 100000, "");
 			} else
-				Send_special_line(SPECIAL_FILE_MONSTER, choice);
+				Send_special_line(SPECIAL_FILE_MONSTER, choice, "");
 			break;
 		case '4':
 			inkey_msg_old = inkey_msg;
@@ -4562,16 +4562,16 @@ void cmd_check_misc(void) {
 			get_com("What type of objects? (ESC for all):", &choice);
 			inkey_msg = inkey_msg_old;
 			if (choice <= ESCAPE) choice = 0;
-			Send_special_line(SPECIAL_FILE_OBJECT, choice);
+			Send_special_line(SPECIAL_FILE_OBJECT, choice, "");
 			break;
 		case '5':
-			Send_special_line(SPECIAL_FILE_TRAP, 0);
+			Send_special_line(SPECIAL_FILE_TRAP, 0, "");
 			break;
 		case '9':
-			Send_special_line(SPECIAL_FILE_HOUSE, 0);
+			Send_special_line(SPECIAL_FILE_HOUSE, 0, "");
 			break;
 		case '8':
-			Send_special_line(SPECIAL_FILE_RECALL, 0);
+			Send_special_line(SPECIAL_FILE_RECALL, 0, "");
 			break;
 		case '0':
 			cmd_map(1);
@@ -4592,7 +4592,7 @@ void cmd_check_misc(void) {
 			cmd_high_scores();
 			break;
 		case 'd':
-			Send_special_line(SPECIAL_FILE_SERVER_SETTING, 0);
+			Send_special_line(SPECIAL_FILE_SERVER_SETTING, 0, "");
 			break;
 		case 'e':
 			/* Set the hook */
@@ -4602,7 +4602,7 @@ void cmd_check_misc(void) {
 			peruse_file();
 			break;
 		case 'f':
-			Send_special_line(SPECIAL_FILE_MOTD2, 0);
+			Send_special_line(SPECIAL_FILE_MOTD2, 0, "");
 			break;
 		case 'h':
 			show_motd(0);

@@ -192,6 +192,7 @@ static void Receive_init(void) {
 #ifdef ENABLE_SUBINVEN
 	receive_tbl[PKT_SI_MOVE]	= Receive_subinven;
 #endif
+	receive_tbl[PKT_SPECIAL_LINE_POS]	= Receive_special_line_pos;
 }
 
 
@@ -4032,6 +4033,9 @@ int Receive_special_line(void) {
 	ab = attr;
 	ap = TERM_WHITE;
 
+	/* For searching, when we allow empty lines at the end of the file, we have to clear previously displayed stuff. */
+	if (!line) clear_from(2);
+
 	/* Hack - prepare for a special sized page (# of lines divisable by n) */
 	if (line >= 21 + HGT_PLUS) {
 		//21 -> % 1, 22 -> %2, 23 -> %3..
@@ -4049,10 +4053,14 @@ int Receive_special_line(void) {
 			   (Prompt consistent with peruse_file() in c-files.c.)*/
 			/* indicate EOF by different status line colour */
 			if (cur_line + special_page_size >= max_line)
-				c_prt(TERM_ORANGE, format("[Space/p/Enter/Backspace/# to navigate, ESC to exit.] (%d-%d/%d)",
+				c_prt(TERM_ORANGE, format("[Space/p/Enter/BkSpc/g/G/#%s to navigate, ESC to exit.] (%d-%d/%d)",
+				    //(p_ptr->admin_dm || p_ptr->admin_wiz) ? "/s/d" : "",
+				    "/s/d",
 				    cur_line + 1, max_line , max_line), 23 + HGT_PLUS, 0);
 			else
-				c_prt(TERM_L_WHITE, format("[Space/p/Enter/Backspace/# to navigate, ESC to exit.] (%d-%d/%d)",
+				c_prt(TERM_L_WHITE, format("[Space/p/Enter/BkSpc/g/G/#%s to navigate, ESC to exit.] (%d-%d/%d)",
+				    //(p_ptr->admin_dm || p_ptr->admin_wiz) ? "/s/d" : "",
+				    "/s/d",
 				    cur_line + 1, cur_line + special_page_size, max_line), 23 + HGT_PLUS, 0);
 		}
 	}
@@ -4068,7 +4076,7 @@ int Receive_special_line(void) {
 	   do_cmd_help_aux() in files.c */
 	if (cur_line > max_line - special_page_size &&
 	    cur_line < max_line) {
-		cur_line = max_line - special_page_size;
+		if (!line_searching) cur_line = max_line - special_page_size;
 		if (cur_line < 0) cur_line = 0;
 	}
 
@@ -4081,9 +4089,11 @@ int Receive_special_line(void) {
 		Term_locate(&x, &y);
 
 		/* Hack: 'Title line' */
-		if (line == -1) phys_line = 0;
-		/* Normal line */
-		else {
+		if (line == -1) {
+			/* Never scroll the title bar */
+			phys_line = 0;
+			c_put_str(attr, buf, phys_line, 0);
+		} else { /* Normal line */
 			phys_line = line +
 			    (special_page_size == 21 + HGT_PLUS ? 1 : 2) + /* 1 extra usable line for 21-lines mode? */
 			    (special_page_size < 20 + HGT_PLUS ? 1 : 0); /* only 40 lines on 42-lines BIG_MAP? -> slighly improved visuals ;) */
@@ -4093,28 +4103,36 @@ int Receive_special_line(void) {
 
 			/* Always clear the whole line first */
 			Term_erase(0, phys_line, 255);
-		}
 
-		/* Apply horizontal scroll */
-		/* For horizontal scrolling: Parse correct colour code that we might have skipped */
-		if (cur_col) {
-			for (p = 0; p < cur_col; p++) {
-				if (buf[p] != '\377') continue;
-				if (buf[p + 1] == '.') attr = ap;
-				else if (isalphanum(buf[p + 1])) {
-					ap = ab;
-					attr = ab = color_char_to_attr(buf[p + 1]);
+			/* Apply horizontal scroll */
+			/* For horizontal scrolling: Parse correct colour code that we might have skipped */
+			if (cur_col) {
+				for (p = 0; p < cur_col; p++) {
+					if (buf[p] != '\377') continue;
+					if (buf[p + 1] == '.') attr = ap;
+					else if (isalphanum(buf[p + 1])) {
+						ap = ab;
+						attr = ab = color_char_to_attr(buf[p + 1]);
+					}
 				}
 			}
-		}
 
-		/* Finally print the actual line */
-		if (strlen(buf) >= cur_col) /* catch too far horizontal scrolling */
-			c_put_str(attr, buf + cur_col, phys_line, 0);
+			/* Finally print the actual line */
+			if (strlen(buf) >= cur_col) /* catch too far horizontal scrolling */
+				c_put_str(attr, buf + cur_col, phys_line, 0);
+		}
 
 		/* restore cursor position */
 		Term_gotoxy(x, y);
 	}
+
+	return 1;
+}
+int Receive_special_line_pos(void) {
+	int	n;
+	char	ch;
+
+	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &cur_line)) <= 0) return n;
 
 	return 1;
 }
@@ -5680,10 +5698,12 @@ int Send_clear_actions(void) {
 	return 1;
 }
 
-int Send_special_line(int type, s32b line) {
+int Send_special_line(int type, s32b line, char *srcstr) {
 	int	n;
 
-	if (is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
+	if (is_newer_than(&server_version, 4, 7, 4, 5, 0, 0)) {
+		if ((n = Packet_printf(&wbuf, "%c%c%d%s", PKT_SPECIAL_LINE, type, line, srcstr ? srcstr : "")) <= 0) return n; // <- just allow NULL pointer too, just in case..
+	} else if (is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
 		if ((n = Packet_printf(&wbuf, "%c%c%d", PKT_SPECIAL_LINE, type, line)) <= 0) return n;
 	} else {
 		if ((n = Packet_printf(&wbuf, "%c%c%hd", PKT_SPECIAL_LINE, type, line)) <= 0) return n;

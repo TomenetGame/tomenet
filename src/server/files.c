@@ -548,10 +548,11 @@ void display_player(int Ind)
  *             *changed it to 'div3_line', for cleaner addition of more of this type.
  *             *changed it to 'divl' to be most flexible.
  */
-static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color, int divl)
-{
+#define SERVER_SIDE_SEARCH
+static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color, int divl, char *srcstr) {
 	int lines_per_page = 20 + HGT_PLUS;
-	int i, k = 0;
+	bool searching = (srcstr && srcstr[0]), found = FALSE;
+	int i, k = 0, srclinepre = -1, srclinepost = -1, srcline = -1;
 	/* Number of "real" lines passed by */
 	s32b next = 0;
 	/* Number of "real" lines in the file */
@@ -603,9 +604,9 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 		}
 	}
 
-	/* Wipe finder */
+	/* Wipe finder */	//NOT IMPLEMENTED! Superseded by srcstr now. Delete.
 	strcpy(finder, "");
-	/* Wipe shower */
+	/* Wipe shower */	//NOT IMPLEMENTED! Superseded by srcstr now. Delete.
 	strcpy(shower, "");
 	/* Wipe caption */
 	strcpy(caption, "");
@@ -695,7 +696,27 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 
 		/* Count the "real" lines */
 		next++;
+
+#ifdef SERVER_SIDE_SEARCH
+		/* Pre-Search: Find 1st match from start of file and 1st match after current line */
+		if (searching) {
+			if (srclinepre == -1 && next < line + 1 && my_strcasestr(buf, srcstr)) srclinepre = next - 1;
+			if (srclinepost == -1 && next > line + 1 && my_strcasestr(buf, srcstr)) srclinepost = next - 1;
+		}
+#endif
 	}
+#ifdef SERVER_SIDE_SEARCH
+	/* Found a searching match? */
+	if (searching && (srclinepre != -1 || srclinepost != -1)) {
+		/* Found a match before wrapping around? Discard the match that comes after wrapping around then. */
+		if (srclinepost != -1) {
+			srclinepre = -1;
+			line = srclinepost;
+		} else line = srclinepre;
+		srcline = line;
+	}
+#endif
+//msg_format(Ind, "searching=%d,srcstr=%s,size=%d,line=%d,srcline=%d,pre=%d,post=%d", searching, srcstr, size, line, srcline, srclinepre, srclinepost);
 
 	/* Save the number of "real" lines */
 	size = next;
@@ -703,11 +724,26 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 	if (use_title) size--;
 #endif
 
+#ifdef SERVER_SIDE_SEARCH
+	if (srcline != -1) {
+ #if 0 /* Allow, for when we're searching. Or getting subsequent matches will become annoying. */
+		/* Don't allow empty lines at the end, except if the file simply is that small. */
+		if (line > size - lines_per_page) {
+			line = size - lines_per_page;
+			if (line < 0) line = 0;
+		}
+ #endif
+		Send_special_line_pos(Ind, line);
+	}
+#endif
 
 	/* Display the file */
 	/* Restart when necessary */
 	if (line >= size) line = 0;
 
+#ifdef SERVER_SIDE_SEARCH
+	if (!searching)
+#endif
 	/* (Consistent behavior with peruse_file() in c-files.c
 	   and Receive_special_line() in nclient.c.) */
 	if (line > size - lines_per_page) {
@@ -744,7 +780,6 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 		if (my_fgets(fff, buf, 1024, FALSE)) break;
 	}
 
-
 	/* Dump the next 20 lines of the file */
 	for (i = 0; i < lines_per_page; ) {
 		byte attr = TERM_WHITE;
@@ -761,22 +796,38 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 		/* Count the "real" lines */
 		next++;
 
+/* NOT IMPLEMENTED. Now superseded by srcstr. Delete. */
 		/* Hack -- keep searching */
 		if (find && !i && !strstr(buf, find)) continue;
 
 		/* Hack -- stop searching */
 		find = NULL;
+/* --- */
 
-		if (buf[0] == '\n') continue;
+		/* Hm, why skip empty lines actually? */
+		//if (buf[0] == '\n') continue;
 
 #if 0	// This will now be done by \377? codes! - C. Blue
 		/* Extract color */
 		if (color) attr = color_char_to_attr(buf[0]);
 #endif
 
+/* NOT IMPLEMENTED. Now superseded by srcstr. Delete. */
 		/* Hack -- show matches */
 		if (shower[0] && strstr(buf, shower)) attr = TERM_YELLOW;
+/* --- */
 
+#ifndef SERVER_SIDE_SEARCH /* Client-side only search: Start searching at current line + 1 and fail at wrapping around */
+		/* Skip more lines if we're searching */
+		if (!i && srcstr && srcstr[0]) {
+			if (!my_strcasestr(buf, srcstr)) continue;
+			found = TRUE;
+		}
+#else /* Server-side search: Wrapping and cancelling possible. */
+		/* We did pre-searching during pre-parsing above already */
+		//if (!i && searching) found = TRUE;
+		if (searching && srcline == line + i) found = TRUE;
+#endif
 		/* Hacks for log file: Colourize certain lines for better visual distinguishability. */
 		if (buf[0] == '[') { /* Chat lines */
 			buf_tmp[1] = 's';
@@ -801,6 +852,12 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 			strcpy(buf, buf_tmp);
 		} else if (strstr(buf, "[INVAL]")) { /* Invalid accounts */
 			buf_tmp[1] = 'R';
+			strncpy(buf_tmp + 2, buf, 1021);
+			buf_tmp[1023] = 0;
+			strcpy(buf, buf_tmp);
+		} else if (found) {
+			found = FALSE;
+			buf_tmp[1] = 'y'; /* Mark match; least priority. */
 			strncpy(buf_tmp + 2, buf, 1021);
 			buf_tmp[1023] = 0;
 			strcpy(buf, buf_tmp);
@@ -843,7 +900,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
  */
 void do_cmd_help(int Ind, int line) {
 	/* Peruse the main help file */
-	(void)do_cmd_help_aux(Ind, Players[Ind]->rogue_like_commands ? "tomenet-rl.hlp" : "tomenet.hlp", "Welcome to TomeNET", line, FALSE, 0);
+	(void)do_cmd_help_aux(Ind, Players[Ind]->rogue_like_commands ? "tomenet-rl.hlp" : "tomenet.hlp", "Welcome to TomeNET", line, FALSE, 0, NULL);
 }
 
 
@@ -856,10 +913,9 @@ void do_cmd_help(int Ind, int line) {
  * XXX XXX XXX Use this function for commands such as the
  * "examine object" command.
  */
-errr show_file(int Ind, cptr name, cptr what, s32b line, int color, int divl)
-{
+errr show_file(int Ind, cptr name, cptr what, s32b line, int color, int divl, char *srcstr) {
 	/* Peruse the requested file */
-	(void)do_cmd_help_aux(Ind, name, what, line, color, divl);
+	(void)do_cmd_help_aux(Ind, name, what, line, color, divl, srcstr);
 
 	/* Success */
 	return (0);
@@ -1982,7 +2038,7 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "High Scores", line, 0, 5);
+	show_file(Ind, file_name, "High Scores", line, 0, 5, NULL);
 
 	/* Remove the file */
 	fd_kill(file_name);

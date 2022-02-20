@@ -1133,6 +1133,9 @@ void show_motd(int delay) {
 void peruse_file(void) {
 	char k = 0;
 	bool guide_hack = FALSE;
+	char tmp[80];
+	static char srcstr[80] = { 0 };
+	bool searching = FALSE;
 
 	/* Initialize */
 	cur_line = 0;
@@ -1155,13 +1158,16 @@ void peruse_file(void) {
 		/* if (k != 1) Term_clear(); */
 
 		/* Send the command */
-		Send_special_line(special_line_type, cur_line);
+		line_searching = searching;
+		Send_special_line(special_line_type, cur_line, searching ? srcstr : "");
+		searching = FALSE;
 
 		/* Show a general "title" */
-#if 0 /* Don't just print the version as a title, better keep the line free in \
+#if 0
+	/* Don't just print the version as a title, better keep the line free in \
 	 that case - ideal for the new 21-lines feature (odd_line / div-3 lines). \
 	 This should be kept in sync with Receive_special_line() in nclient.c! */
-//		prt(format("[%s]", shortVersion), 0, 0);
+		//prt(format("[%s]", shortVersion), 0, 0);
 		prt(format("[TomeNET %d.%d.%d%s]",
 			VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG), 0, 0);
 #endif
@@ -1169,10 +1175,14 @@ void peruse_file(void) {
 		/* Prompt. (Consistent with prompt in Receive_special_line() in nclient.c.) */
 		/* indicate EOF by different status line colour */
 		if (cur_line + special_page_size >= max_line)
-			c_prt(TERM_ORANGE, format("[Space/p/Enter/Backspace/# to navigate, ESC to exit.] (%d-%d/%d)",
+			c_prt(TERM_ORANGE, format("[Space/p/Enter/BkSpc/g/G/#%s to navigate, ESC to exit.] (%d-%d/%d)",
+			    //(p_ptr->admin_dm || p_ptr->admin_wiz) ? "/s/d" : "",
+			    "/s/d",
 			    cur_line + 1, max_line , max_line), 23 + HGT_PLUS, 0);
 		else
-			c_prt(TERM_L_WHITE, format("[Space/p/Enter/Backspace/# to navigate, ESC to exit.] (%d-%d/%d)",
+			c_prt(TERM_L_WHITE, format("[Space/p/Enter/BkSpc/g/G/#%s to navigate, ESC to exit.] (%d-%d/%d)",
+			    //(p_ptr->admin_dm || p_ptr->admin_wiz) ? "/s/d" : "",
+			    "/s/d",
 			    cur_line + 1, cur_line + special_page_size, max_line), 23 + HGT_PLUS, 0);
 		/* Get a keypress -
 		   hack: update max_line to its real value as soon as possible */
@@ -1190,13 +1200,27 @@ void peruse_file(void) {
 		k = inkey();
 		if (k == 1) continue;
 
+		line_searching = FALSE;
 
 		/* Hack -- go to a specific line */
 		if (k == '#') {
-			char tmp[80];
 			prt(format("Goto Line(max %d): ", max_line), 23 + HGT_PLUS, 0);
 			strcpy(tmp, "0");
 			if (askfor_aux(tmp, 10, 0)) cur_line = atoi(tmp);
+		}
+
+		if (p_ptr->admin_dm || p_ptr->admin_wiz) {
+			/* Hack -- search for string */
+			if (k == 's') {
+				prt(format("Search for text: ", max_line), 23 + HGT_PLUS, 0);
+				tmp[0] = 0;
+				if (askfor_aux(tmp, 60, 0)) {
+					searching = TRUE;
+					strcpy(srcstr, tmp);
+				}
+			}
+			/* Search for next occurance */
+			if (k == 'd' && srcstr[0]) searching = TRUE;
 		}
 
 		/* Hack -- Allow backing up */
@@ -1230,7 +1254,8 @@ void peruse_file(void) {
 		/* Advance one page */
 		if (k == ' ' || k == KTRL('D')) {
 			cur_line += special_page_size;
-#if 1 /* take a break at end of list before wrapping around \
+#if 1
+	/* take a break at end of list before wrapping around \
 	 (consistent with behavior in nclient.c: Receive_special_line() \
 	 and with do_cmd_help_aux() in files.c.) */
 			if (cur_line > max_line - special_page_size &&
@@ -1292,12 +1317,10 @@ void peruse_file(void) {
 		}
 
 		/* Check maximum line */
-#if 1 /* don't allow 'empty lines' at end of list but wrap around immediately */
-		if (cur_line > max_line - special_page_size)
-#else
-		if (cur_line >= max_line)
-#endif
-			cur_line = 0;
+		/* don't allow 'empty lines' at end of list but wrap around immediately */
+		if (cur_line >= max_line) cur_line = 0;
+		/* Except when searching, or getting subsequent matches would become annoying.. */
+		else if (!searching && cur_line > max_line - special_page_size) cur_line = max_line - special_page_size;
 		/* ..and wrap around backwards too */
 		else if (cur_line < 0) {
 			cur_line = max_line - special_page_size;
@@ -1306,7 +1329,7 @@ void peruse_file(void) {
 	}
 
 	/* Tell the server we're done looking */
-	Send_special_line(SPECIAL_FILE_NONE, 0);
+	Send_special_line(SPECIAL_FILE_NONE, 0, "");
 
 	/* No longer using file perusal */
 	special_line_type = 0;

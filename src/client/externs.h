@@ -175,6 +175,7 @@ extern bool shopping, perusing;
 extern s16b last_line_info;
 extern s32b cur_line;
 extern s32b max_line;
+extern bool line_searching;
 extern int cur_col;
 #ifdef BIGMAP_MINDLINK_HACK
 extern s16b last_line_y;
@@ -824,7 +825,7 @@ extern int Send_store_sell(int item, int amt);
 extern int Send_store_leave(void);
 extern int Send_store_confirm(void);
 extern int Send_redraw(char mode);
-extern int Send_special_line(int type, s32b line);
+extern int Send_special_line(int type, s32b line, char *srcstr);
 extern int Send_party(s16b command, cptr buf);
 extern int Send_guild(s16b command, cptr buf);
 extern int Send_guild_config(s16b command, u32b flags, cptr buf);

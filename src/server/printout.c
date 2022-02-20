@@ -124,7 +124,7 @@ extern bool rfe_printf(char *str, ...) {
 
 #if 1	// obsolete, use do_cmd_check_other_prepare() instead!
 /* better move to cmd4.c? */
-extern bool do_cmd_view_rfe(int Ind, char *str, int line) {
+extern bool do_cmd_view_rfe(int Ind, char *str, int line, char *srcstr) {
 	//player_type *p_ptr = Players[Ind];
 	/* Path buffer */
 	char    path[MAX_PATH_LENGTH];
@@ -139,7 +139,7 @@ extern bool do_cmd_view_rfe(int Ind, char *str, int line) {
 	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, str);
 
 	/* Display the file contents */
-	show_file(Ind, path, str, line, FALSE, 0);
+	show_file(Ind, path, str, line, FALSE, 0, srcstr);
 	return(TRUE);
 }
 #endif	// 0

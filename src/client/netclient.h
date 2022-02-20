@@ -86,6 +86,7 @@ int Receive_boni_col(void);
 int Receive_mini_map(void);
 int Receive_mini_map_pos(void);
 int Receive_special_line(void);
+int Receive_special_line_pos(void);
 int Receive_floor(void);
 int Receive_pickup_check(void);
 int Receive_party(void);

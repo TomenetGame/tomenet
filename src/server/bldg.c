@@ -62,8 +62,8 @@ static bool is_state_aux(int Ind, store_type *s_ptr, int state)
 /* Display a list of 'achievements' in chronological order - C. Blue */
 static void race_legends(int Ind) {
 	char path[MAX_PATH_LENGTH];
-//	cptr name = "legends.log";
-//	(void)do_cmd_help_aux(Ind, name, NULL, line, FALSE, 0);
+	//cptr name = "legends.log";
+	//(void)do_cmd_help_aux(Ind, name, NULL, line, FALSE, 0);
 	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends-rev.log");
 	do_cmd_check_other_prepare(Ind, path, "Latest Occurances");
 }
@@ -320,7 +320,7 @@ static void arena_comm(int cmd) {
 		screen_save();
 
 		/* Peruse the arena help file */
-		(void)show_file("arena.txt", NULL, 0, 0, 0);
+		(void)show_file("arena.txt", NULL, 0, 0, 0, NULL);
 
 		/* Load screen */
 		screen_load();
@@ -459,7 +459,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 	if (cmd == BACT_GAMBLE_RULES) {
 		/* Peruse the gambling help file */
-		//(void)show_file(Ind, "gambling.txt", NULL, 0, 0, 0);
+		//(void)show_file(Ind, "gambling.txt", NULL, 0, 0, 0, NULL);
 
 		/* Get the filename */
 		char    path[MAX_PATH_LENGTH];
@@ -969,7 +969,7 @@ static void town_history(void) {
 	screen_save();
 
 	/* Peruse the building help file */
-	(void)show_file("bldg.txt", NULL, 0, 0, 0);
+	(void)show_file("bldg.txt", NULL, 0, 0, 0, NULL);
 #ifdef USE_SOUND_2010
 	sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
 #endif

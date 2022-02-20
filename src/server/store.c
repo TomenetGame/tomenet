@@ -6574,8 +6574,8 @@ void do_cmd_trad_house(int Ind) {
 void view_cheeze_list(int Ind) {
 	char    path[MAX_PATH_LENGTH];
 
-//	cptr name = "cheeze.log";
-//	(void)do_cmd_help_aux(Ind, name, NULL, line, FALSE, 0);
+	//cptr name = "cheeze.log";
+	//(void)do_cmd_help_aux(Ind, name, NULL, line, FALSE, 0);
 
 	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "cheeze-pub.log");
 	do_cmd_check_other_prepare(Ind, path, "Top Guilty Cheezers");

@@ -112,7 +112,7 @@ extern int Send_store_sell(int item, int amt);
 extern int Send_store_leave(void);
 extern int Send_store_confirm(void);
 extern int Send_redraw(char mode);
-extern int Send_special_line(int type, int line);
+extern int Send_special_line(int type, int line, char *srcstr);
 extern int Send_party(s16b command, cptr buf);
 extern int Send_guild(s16b command, cptr buf);
 extern int Send_purchase_house(int dir);
