@@ -827,7 +827,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 /* --- */
 
 		/* Hm, why skip empty lines actually? */
-		//if (buf[0] == '\n') continue;
+		if (buf[0] == '\n') continue;
 
 #if 0	// This will now be done by \377? codes! - C. Blue
 		/* Extract color */
