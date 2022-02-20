@@ -6039,7 +6039,7 @@ int Send_subinven(int Ind, char ipos, char pos, byte attr, int wgt, object_type 
 	connection_t *connp = Conn[Players[Ind]->conn];
 	char uses_dir = 0; /* flag whether a rod requires a direction for zapping or not */
 
-	if (!is_newer_than(&Players[Ind]->version, 4, 7, 4, 4, 0, 0)) return 0;
+	if (is_older_than(&Players[Ind]->version, 4, 7, 4, 5, 0, 0)) return 0;
 
 	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 
@@ -8187,7 +8187,7 @@ int Send_special_line(int Ind, s32b max, s32b line, byte attr, cptr buf) {
 int Send_special_line_pos(int Ind, int line) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 
-	if (!is_newer_than(&Players[Ind]->version, 4, 7, 4, 5, 0, 0)) return 1;
+	if (is_older_than(&Players[Ind]->version, 4, 7, 4, 6, 0, 0)) return 1;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -11921,7 +11921,7 @@ static int Receive_special_line(int ind) {
 	if (connp->id != -1) player = GetInd[connp->id];
 		else player = 0;
 
-	if (is_newer_than(&connp->version, 4, 7, 4, 5, 0, 0)) {
+	if (!is_older_than(&connp->version, 4, 7, 4, 6, 0, 0)) {
 		if ((n = Packet_scanf(&connp->r, "%c%c%d%s", &ch, &type, &line, srcstr)) <= 0) {
 			if (n == -1) Destroy_connection(ind, "read error");
 			return n;
