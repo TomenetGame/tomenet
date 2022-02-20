@@ -6093,7 +6093,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	if (typ == GF_LIFEHEAL) {
 		if (hates_heal) typ = GF_HOLY_FIRE;
 		else typ = GF_OLD_HEAL;
-	} else if (typ == GF_OLD_HEAL && hates_heal) typ = GF_HOLY_FIRE;
+	} else if (typ == GF_OLD_HEAL && hates_heal) {
+		typ = GF_HOLY_FIRE;
+		/* Unhack wand-hack */
+		if (dam == 9999) dam = damroll(20, 30);
+	}
 
 	/* Analyze the damage type */
 	switch (typ) {
@@ -13170,7 +13174,11 @@ int approx_damage(int m_idx, int dam, int typ) {
 	if (typ == GF_LIFEHEAL) {
 		if (hates_heal) typ = GF_HOLY_FIRE;
 		else typ = GF_OLD_HEAL;
-	} else if (typ == GF_OLD_HEAL && hates_heal) typ = GF_HOLY_FIRE;
+	} else if (typ == GF_OLD_HEAL && hates_heal) {
+		typ = GF_HOLY_FIRE;
+		/* Unhack wand-hack */
+		if (dam == 9999) dam = 310;
+	}
 
 	switch (typ) {
 	case GF_SILENCE:
