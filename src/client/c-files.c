@@ -1135,7 +1135,7 @@ void peruse_file(void) {
 	bool guide_hack = FALSE;
 	char tmp[80];
 	static char srcstr[80] = { 0 };
-	bool searching = FALSE;
+	bool searching = FALSE, reverse = FALSE;
 
 	/* Initialize */
 	cur_line = 0;
@@ -1159,7 +1159,14 @@ void peruse_file(void) {
 
 		/* Send the command */
 		line_searching = searching;
-		Send_special_line(special_line_type, cur_line, searching ? srcstr : "");
+		if (searching) {
+			if (reverse) {
+				strcpy(tmp, "\373"); /* Hack: Marker for 'reverse' */
+				strcat(tmp, srcstr);
+				reverse = FALSE;
+			} else strcpy(tmp, srcstr);
+		}
+		Send_special_line(special_line_type, cur_line, searching ? tmp : "");
 		searching = FALSE;
 
 		/* Show a general "title" */
@@ -1176,13 +1183,13 @@ void peruse_file(void) {
 		/* indicate EOF by different status line colour */
 		if (cur_line + special_page_size >= max_line)
 			c_prt(TERM_ORANGE, format("[Space/p/Enter/BkSpc/g/G/#%s to navigate, ESC to exit.] (%d-%d/%d)",
-			    //(p_ptr->admin_dm || p_ptr->admin_wiz) ? "/s/d" : "",
-			    "/s/d",
+			    //(p_ptr->admin_dm || p_ptr->admin_wiz) ? "/s/d/D" : "",
+			    "/s/d/D",
 			    cur_line + 1, max_line , max_line), 23 + HGT_PLUS, 0);
 		else
 			c_prt(TERM_L_WHITE, format("[Space/p/Enter/BkSpc/g/G/#%s to navigate, ESC to exit.] (%d-%d/%d)",
-			    //(p_ptr->admin_dm || p_ptr->admin_wiz) ? "/s/d" : "",
-			    "/s/d",
+			    //(p_ptr->admin_dm || p_ptr->admin_wiz) ? "/s/d/D" : "",
+			    "/s/d/D",
 			    cur_line + 1, cur_line + special_page_size, max_line), 23 + HGT_PLUS, 0);
 		/* Get a keypress -
 		   hack: update max_line to its real value as soon as possible */
@@ -1209,19 +1216,20 @@ void peruse_file(void) {
 			if (askfor_aux(tmp, 10, 0)) cur_line = atoi(tmp);
 		}
 
-		if (p_ptr->admin_dm || p_ptr->admin_wiz) {
-			/* Hack -- search for string */
-			if (k == 's') {
-				prt(format("Search for text: ", max_line), 23 + HGT_PLUS, 0);
-				tmp[0] = 0;
-				if (askfor_aux(tmp, 60, 0)) {
-					searching = TRUE;
-					strcpy(srcstr, tmp);
-				}
+		/* Hack -- search for string */
+		if (k == 's') {
+			prt(format("Search for text: ", max_line), 23 + HGT_PLUS, 0);
+			//tmp[0] = 0;
+			strcpy(tmp, srcstr);
+			if (askfor_aux(tmp, 60, 0)) {
+				searching = TRUE;
+				strcpy(srcstr, tmp);
 			}
-			/* Search for next occurance */
-			if (k == 'd' && srcstr[0]) searching = TRUE;
 		}
+		/* Search for next occurance */
+		if (k == 'd' && srcstr[0]) searching = TRUE;
+		/* Search for previous occurance */
+		if (k == 'D' && srcstr[0]) searching = reverse = TRUE;
 
 		/* Hack -- Allow backing up */
 		if (k == '-') {

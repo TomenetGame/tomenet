@@ -551,8 +551,8 @@ void display_player(int Ind)
 #define SERVER_SIDE_SEARCH
 static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color, int divl, char *srcstr) {
 	int lines_per_page = 20 + HGT_PLUS;
-	bool searching = (srcstr && srcstr[0]), found = FALSE;
-	int i, k = 0, srclinepre = -1, srclinepost = -1, srcline = -1;
+	bool searching = (srcstr && srcstr[0]), found = FALSE, reverse = FALSE;
+	int i, k = 0, srclinepre = -1, srclinepost = -1, srcline = -1, srclinerev = -1, srclinerevwrap = -1;
 	/* Number of "real" lines passed by */
 	s32b next = 0;
 	/* Number of "real" lines in the file */
@@ -581,6 +581,13 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 #ifdef HELP_AUX_GRABS_TITLE
 	bool use_title = FALSE;
 #endif
+
+	/* Hack: Reverse search? */
+	if (searching && srcstr[0] == '\373') {
+		strcpy(buf, srcstr + 1);
+		strcpy(srcstr, buf);
+		reverse = TRUE;
+	}
 
 	if (is_newer_than(&Players[Ind]->version, 4, 4, 7, 0, 0, 0)) {
 		/* use first line in the file as stationary title */
@@ -702,18 +709,33 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 		if (searching) {
 			if (srclinepre == -1 && next < line + 1 && my_strcasestr(buf, srcstr)) srclinepre = next - 1;
 			if (srclinepost == -1 && next > line + 1 && my_strcasestr(buf, srcstr)) srclinepost = next - 1;
+			if (next < line + 1 && my_strcasestr(buf, srcstr)) srclinerev = next - 1;
+			if (next > line + 1 && my_strcasestr(buf, srcstr)) srclinerevwrap = next - 1;
 		}
 #endif
 	}
 #ifdef SERVER_SIDE_SEARCH
 	/* Found a searching match? */
-	if (searching && (srclinepre != -1 || srclinepost != -1)) {
-		/* Found a match before wrapping around? Discard the match that comes after wrapping around then. */
-		if (srclinepost != -1) {
-			srclinepre = -1;
-			line = srclinepost;
-		} else line = srclinepre;
-		srcline = line;
+	if (searching) {
+		if (reverse) {
+			if (srclinerev != -1 || srclinerevwrap != -1) {
+				/* Found a match before wrapping around? Discard the match that comes after wrapping around then. */
+				if (srclinerev != -1) {
+					srclinerevwrap = -1;
+					line = srclinerev;
+				} else line = srclinerevwrap;
+				srcline = line;
+			}
+		} else {
+			if (srclinepre != -1 || srclinepost != -1) {
+				/* Found a match before wrapping around? Discard the match that comes after wrapping around then. */
+				if (srclinepost != -1) {
+					srclinepre = -1;
+					line = srclinepost;
+				} else line = srclinepre;
+				srcline = line;
+			}
+		}
 	}
 #endif
 //msg_format(Ind, "searching=%d,srcstr=%s,size=%d,line=%d,srcline=%d,pre=%d,post=%d", searching, srcstr, size, line, srcline, srclinepre, srclinepost);
