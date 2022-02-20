@@ -1136,6 +1136,7 @@ void peruse_file(void) {
 	char tmp[80];
 	static char srcstr[80] = { 0 };
 	bool searching = FALSE, reverse = FALSE;
+	bool old_inkey_msg;
 
 	/* Initialize */
 	cur_line = 0;
@@ -1213,7 +1214,10 @@ void peruse_file(void) {
 		if (k == '#') {
 			prt(format("Goto Line(max %d): ", max_line), 23 + HGT_PLUS, 0);
 			strcpy(tmp, "0");
+			old_inkey_msg = inkey_msg;
+			inkey_msg = TRUE;
 			if (askfor_aux(tmp, 10, 0)) cur_line = atoi(tmp);
+			inkey_msg = old_inkey_msg;
 		}
 
 		/* Hack -- search for string */
@@ -1221,10 +1225,13 @@ void peruse_file(void) {
 			prt(format("Search for text: ", max_line), 23 + HGT_PLUS, 0);
 			//tmp[0] = 0;
 			strcpy(tmp, srcstr);
+			old_inkey_msg = inkey_msg;
+			inkey_msg = TRUE;
 			if (askfor_aux(tmp, 60, 0)) {
 				searching = TRUE;
 				strcpy(srcstr, tmp);
 			}
+			inkey_msg = old_inkey_msg;
 		}
 		/* Search for next occurance */
 		if (k == 'd' && srcstr[0]) searching = TRUE;
