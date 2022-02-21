@@ -9433,8 +9433,16 @@ void verify_subinven_size(int Ind, int slot, bool check) {
 /* Empty a subinventory, moving all contents to the player inventory, causing overflow if not enough space. */
 void empty_subinven(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-//	int i, s = get_subinven_size(p_ptr->inventory[item].sval);
+	//int i, s = get_subinven_size(p_ptr->inventory[item].sval);
 	int i, s = p_ptr->inventory[item].bpval;
+
+	/* Hack: Ensure basic cleanup in case weird container size changes happened in k_info */
+	if (!s) {
+		invwipe(&p_ptr->subinventory[item][0]);
+		display_subinven(Ind, item);
+		verify_subinven_size(Ind, item, FALSE);
+		return;
+	}
 
 	/* Empty everything first, without live-updating the slots (FALSE) */
 	for (i = 0; i < s; i++) {
@@ -9450,8 +9458,16 @@ void empty_subinven(int Ind, int item) {
 /* Erase all contents of a subinventory. Does not delete the subinventory container item iteself. */
 void erase_subinven(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-//	int i, s = get_subinven_size(p_ptr->inventory[item].sval);
+	//int i, s = get_subinven_size(p_ptr->inventory[item].sval);
 	int i, s = p_ptr->inventory[item].bpval;
+
+	/* Hack: Ensure basic cleanup in case weird container size changes happened in k_info */
+	if (!s) {
+		invwipe(&p_ptr->subinventory[item][0]);
+		display_subinven(Ind, item);
+		verify_subinven_size(Ind, item, FALSE);
+		return;
+	}
 
 	/* Empty everything first, without live-updating the slots (FALSE) */
 	for (i = 0; i < s; i++)
