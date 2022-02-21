@@ -2245,7 +2245,7 @@ static void player_setup(int Ind, bool new) {
 			case GE_HIGHLANDER:
 				p_ptr->global_event_temp = PEVF_NONE;
 				for (i = 0; i < INVEN_TOTAL; i++) /* Erase the highlander amulets */
-					if (p_ptr->inventory[i].tval == TV_AMULET && 
+					if (p_ptr->inventory[i].tval == TV_AMULET &&
 					    (p_ptr->inventory[i].sval == SV_AMULET_HIGHLANDS || p_ptr->inventory[i].sval == SV_AMULET_HIGHLANDS2)) {
 					    inven_item_increase(Ind, i, -p_ptr->inventory[i].number);
 						inven_item_optimize(Ind, i);
