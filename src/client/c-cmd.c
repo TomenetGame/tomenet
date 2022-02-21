@@ -746,6 +746,9 @@ void cmd_inven(void) {
 	/* Then, save the screen */
 	Term_save();
 	showing_inven = screen_icky;
+#ifdef ENABLE_SUBINVEN
+	topline_icky = TRUE;
+#endif
 
 	command_gap = 50;
 
@@ -823,11 +826,19 @@ void cmd_inven(void) {
 	screen_line_icky = -1;
 	screen_column_icky = -1;
 
+#ifdef ENABLE_SUBINVEN
+	topline_icky = FALSE;
+#endif
 	showing_inven = FALSE;
 
 	/* restore the screen */
 	Term_load();
 	/* print our new location */
+
+#ifdef ENABLE_SUBINVEN
+	/* Get rid of the header displaying s/b keys from show_inven_header() again: */
+	clear_topline();
+#endif
 
 	/* Flush any events */
 	Flush_queue();
