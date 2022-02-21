@@ -4230,6 +4230,11 @@ void store_confirm(int Ind) {
 	/* Analyze the prices (and comment verbally) */
 	/*purchase_analyze(price, value, dummy);*/
 
+#ifdef ENABLE_SUBINVEN
+	/* If we drop a subinventory, remove all items and place them into the player's inventory */
+	if (o_ptr->tval == TV_SUBINVEN && amt >= o_ptr->number) empty_subinven(Ind, item);
+#endif
+
 	/* Take the item from the player, describe the result */
 	inven_item_increase(Ind, item, -amt);
 	inven_item_describe(Ind, item);
@@ -5936,6 +5941,11 @@ void home_sell(int Ind, int item, int amt) {
 
 	/* Analyze the prices (and comment verbally) */
 	/*purchase_analyze(price, value, dummy);*/
+
+#ifdef ENABLE_SUBINVEN
+	/* If we drop a subinventory, remove all items and place them into the player's inventory */
+	if (o_ptr->tval == TV_SUBINVEN && amt >= o_ptr->number) empty_subinven(Ind, item);
+#endif
 
 	/* Take the item from the player, describe the result */
 	inven_item_increase(Ind, item, -amt);
