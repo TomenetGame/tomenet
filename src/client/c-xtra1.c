@@ -85,7 +85,28 @@ void cnv_stat(int val, char *out_val) {
 		else sprintf(out_val, "    %2d", val);
 	}
 }
+static int reduce_stat(int val, int reduce) {
+	int bonus;
 
+	if (val <= 18) return (val - reduce);
+
+	/* Split it up */
+	bonus = (val - 18);
+	val = 18;
+	/* Reduce */
+	if (bonus >= reduce * 10) bonus -= reduce * 10;
+	else {
+		if (bonus % 10) {
+			bonus -= bonus % 10;
+			reduce--;
+		}
+		reduce -= bonus / 10;
+		bonus = 0;
+		if (reduce) val -= reduce;
+	}
+	/* Combine again */
+	return (val + bonus);
+}
 
 /*
  * Print character stat in given row, column
@@ -2842,7 +2863,7 @@ void display_player(int hist) {
 		/* Display the stats */
 		for (i = 0; i < 6; i++) {
 			/* Special treatment of "injured" stats */
-			if (p_ptr->stat_use[i] < p_ptr->stat_top[i]){
+			if (p_ptr->stat_use[i] < p_ptr->stat_top[i]) {
 				int value;
 
 				/* Use lowercase stat name */
@@ -2864,11 +2885,41 @@ void display_player(int hist) {
 				cnv_stat(value, buf);
 
 				/* Display the maximum stat (modified) */
-				if(p_ptr->stat_max[i] < (18 + 100))
+				if (p_ptr->stat_tmp[i]) { /* Boosted? */
+					c_put_str(TERM_L_BLUE, buf, y_row1 + i, 73);
+				} else {
+					if (p_ptr->stat_max[i] < 18 + 100)
+						c_put_str(TERM_L_GREEN, buf, y_row1 + i, 73);
+					else c_put_str(TERM_L_UMBER, buf, y_row1 + i, 73);
+				}
+			}
+			/* Special treatment of boosted stats */
+			else if (p_ptr->stat_tmp[i]) {
+				int value;
+
+				/* Use lowercase stat name */
+				put_str(stat_names_reduced[i], y_row1 + i, 61);
+
+				/* Get the current stat */
+				value = p_ptr->stat_use[i];
+
+				/* Obtain the current stat (modified) */
+				cnv_stat(value, buf);
+
+				/* Display the current stat (modified) */
+				c_put_str(TERM_L_BLUE, buf, y_row1 + i, 66);
+
+				/* Acquire the max stat */
+				value = reduce_stat(p_ptr->stat_top[i], p_ptr->stat_tmp[i]);
+
+				/* Obtain the maximum stat (modified) */
+				cnv_stat(value, buf);
+
+				/* Display the unboosted maximum stat (modified) */
+				if (reduce_stat(p_ptr->stat_max[i], p_ptr->stat_tmp[i]) < 18 + 100)
 					c_put_str(TERM_L_GREEN, buf, y_row1 + i, 73);
 				else c_put_str(TERM_L_UMBER, buf, y_row1 + i, 73);
 			}
-
 			/* Normal treatment of "normal" stats */
 			else {
 				/* Assume uppercase stat name */
@@ -2878,7 +2929,7 @@ void display_player(int hist) {
 				cnv_stat(p_ptr->stat_use[i], buf);
 
 				/* Display the current stat (modified) */
-				if (p_ptr->stat_max[i] < (18 + 100)) c_put_str(TERM_L_GREEN, buf, y_row1 + i, 66);
+				if (p_ptr->stat_max[i] < 18 + 100) c_put_str(TERM_L_GREEN, buf, y_row1 + i, 66);
 				else c_put_str(TERM_L_UMBER, buf, 1 + i, 66);
 			}
 		}

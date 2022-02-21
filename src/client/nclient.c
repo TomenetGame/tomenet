@@ -1709,13 +1709,19 @@ int Receive_stat(void) {
 	int	n;
 	char	ch;
 	char	stat;
-	s16b	max, cur, s_ind, max_base;
+	s16b	max, cur, s_ind, max_base, tmp = 0;
 	bool	boosted;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd%hd%hd", &ch, &stat, &max, &cur, &s_ind, &max_base)) <= 0)
-		return n;
+	if (is_atleast(&server_version, 4, 7, 4, 6, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd%hd%hd%hd", &ch, &stat, &max, &cur, &s_ind, &max_base, &tmp)) <= 0)
+			return n;
+	} else {
+		if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd%hd%hd", &ch, &stat, &max, &cur, &s_ind, &max_base)) <= 0)
+			return n;
+	}
 
-	if (stat & 0x10) {
+	if (tmp) boosted = TRUE;
+	else if (stat & 0x10) { /* Hack no longer used since 4.7.4.6 */
 		stat &= ~0x10;
 		boosted = TRUE;
 	} else boosted = FALSE;
@@ -1724,6 +1730,7 @@ int Receive_stat(void) {
 	p_ptr->stat_use[(int) stat] = cur;
 	p_ptr->stat_ind[(int) stat] = s_ind;
 	p_ptr->stat_max[(int) stat] = max_base;
+	p_ptr->stat_tmp[(int) stat] = tmp;
 
 	if (screen_icky) Term_switch(0);
 	prt_stat(stat, boosted);

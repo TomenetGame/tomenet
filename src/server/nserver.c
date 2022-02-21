@@ -5935,9 +5935,10 @@ int Send_various(int Ind, int hgt, int wgt, int age, int sc, cptr body) {
 	return Packet_printf(&connp->c, "%c%hu%hu%hu%hu%s", PKT_VARIOUS, hgt, wgt, age, sc, body);
 }
 
-int Send_stat(int Ind, int stat, int max, int cur, int s_ind, int max_base) {
+int Send_stat(int Ind, int stat) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL, *p_ptr = Players[Ind];
+	int max = p_ptr->stat_top[stat], cur = p_ptr->stat_use[stat], s_ind = p_ptr->stat_ind[stat], max_base = p_ptr->stat_max[stat], tmp = p_ptr->stat_tmp[stat];
 	/* Don't display boosted indicator if we were at '***' already anyway */
 	bool boosted = (p_ptr->stat_tmp[stat] != 0 && max - p_ptr->stat_tmp[stat] < 238);
 
@@ -5950,13 +5951,17 @@ int Send_stat(int Ind, int stat, int max, int cur, int s_ind, int max_base) {
 
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		if (boosted && is_atleast(&p_ptr2->version, 4, 7, 3, 0, 0, 0))
+		if (is_atleast(&p_ptr2->version, 4, 7, 4, 6, 0, 0))
+			Packet_printf(&connp2->c, "%c%c%hd%hd%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind, max_base, tmp);
+		else if (boosted && is_atleast(&p_ptr2->version, 4, 7, 3, 0, 0, 0))
 			Packet_printf(&connp2->c, "%c%c%hd%hd%hd%hd", PKT_STAT, stat | 0x10, max, cur, s_ind, max_base);
 		else
 			Packet_printf(&connp2->c, "%c%c%hd%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind, max_base);
 	}
 
-	if (boosted && is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 0))
+	if (is_atleast(&p_ptr->version, 4, 7, 4, 6, 0, 0))
+		return Packet_printf(&connp->c, "%c%c%hd%hd%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind, max_base, tmp);
+	else if (boosted && is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 0))
 		return Packet_printf(&connp->c, "%c%c%hd%hd%hd%hd", PKT_STAT, stat | 0x10, max, cur, s_ind, max_base);
 	else
 		return Packet_printf(&connp->c, "%c%c%hd%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind, max_base);

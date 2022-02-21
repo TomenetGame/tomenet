@@ -485,13 +485,13 @@ static void display_player_middle(int Ind) {
 		adv_exp = 0;
 	else {
 		s64b adv_prev = 0;
-#ifndef ALT_EXPRATIO
+ #ifndef ALT_EXPRATIO
 		s64b adv = ((s64b)player_exp[p_ptr->lev - 1] * (s64b)p_ptr->expfact / 100L);
 		if (p_ptr->lev > 1) adv_prev = ((s64b)player_exp[p_ptr->lev - 2] * (s64b)p_ptr->expfact / 100L);
-#else
+ #else
 		s64b adv = (s64b)player_exp[p_ptr->lev - 1];
 		if (p_ptr->lev > 1) adv_prev = (s64b)player_exp[p_ptr->lev - 2];
-#endif
+ #endif
 		adv_exp = (s32b)(adv);
 		adv_exp_prev = (s32b)(adv_prev);
 	}
@@ -526,7 +526,7 @@ void display_player(int Ind)
 	/* Send all the stats */
 	for (i = 0; i < 6; i++)
 	{
-		Send_stat(Ind, i, p_ptr->stat_top[i], p_ptr->stat_use[i]);
+		Send_stat(Ind, i);
 	}
 
 	/* Extra info */

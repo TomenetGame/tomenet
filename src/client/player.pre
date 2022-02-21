@@ -421,6 +421,7 @@ struct player_type {
 	s16b stat_top[6];	/* Maximal modified stats */
 
 	s16b stat_add[6];	/* Modifiers to stat values */
+	s16b stat_tmp[6];	/* Modifiers to stat values */
 	s16b stat_ind[6];	/* Indexes into stat tables */
 
 	bool immune_acid;	/* Immunity to acid */

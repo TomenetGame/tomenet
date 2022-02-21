@@ -1148,7 +1148,7 @@ extern int Send_stamina(int Ind, int mst, int cst);
 extern int Send_sp(int Ind, int msp, int csp);
 extern int Send_char_info(int Ind, int race, int class, int trait, int sex, int mode, int lives, cptr name);
 extern int Send_various(int ind, int hgt, int wgt, int age, int sc, cptr body);
-extern int Send_stat(int Ind, int stat, int max, int cur, int s_ind, int max_base);
+extern int Send_stat(int Ind, int stat);
 extern int Send_history(int Ind, int line, cptr hist);
 extern int Send_inven(int ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name);
 #ifdef ENABLE_SUBINVEN
