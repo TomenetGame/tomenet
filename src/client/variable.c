@@ -35,11 +35,10 @@ int item_newest = -1;
 
 #ifdef ENABLE_SUBINVEN
 int item_newest_subinven = -1, using_subinven = -1, using_subinven_size = SUBINVEN_PACK, using_subinven_item = -1;
-object_type subinventory[INVEN_PACK][SUBINVEN_PACK];
-char subinventory_name[INVEN_PACK][SUBINVEN_PACK][ONAME_LEN];
-int subinventory_inscription[INVEN_PACK][SUBINVEN_PACK];
-int subinventory_inscription_len[INVEN_PACK][SUBINVEN_PACK
-];
+object_type subinventory[INVEN_PACK + 1][SUBINVEN_PACK + 1];
+char subinventory_name[INVEN_PACK + 1][SUBINVEN_PACK + 1][ONAME_LEN];
+int subinventory_inscription[INVEN_PACK + 1][SUBINVEN_PACK + 1];
+int subinventory_inscription_len[INVEN_PACK + 1][SUBINVEN_PACK + 1];
 #endif
 
 store_type store;			/* The general info about the current store */

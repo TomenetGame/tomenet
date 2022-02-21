@@ -2399,6 +2399,12 @@ if (p_ptr->updated_savegame == 0) {
 		rd_u16b(&p_ptr->cards_clubs);
 	}
 
+#ifdef ENABLE_SUBINVEN
+	/* Paranoia? Clear subinventory first */
+	for (i = 0; i <= INVEN_PACK; i++)
+		for (j = 0; j <= SUBINVEN_PACK; j++)
+			invwipe(&p_ptr->subinventory[i][j]);
+#endif
 	/* Subinventory (ENABLE_SUBINVEN) */
 	if (!older_than(4, 7, 14)) {
 		/* Read number of stored subinventories */

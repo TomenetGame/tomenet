@@ -2475,7 +2475,7 @@ struct player_type {
 	char inventory_changed;		/* Inventory has changed since last update to the client */
 
 #ifdef ENABLE_SUBINVEN
-	object_type subinventory[INVEN_PACK][SUBINVEN_PACK];	/* Player's subinventories */
+	object_type subinventory[INVEN_PACK + 1][SUBINVEN_PACK + 1];	/* Player's subinventories */
 #endif
 
 	s32b total_weight;		/* Total weight being carried */

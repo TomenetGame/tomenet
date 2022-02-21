@@ -139,10 +139,10 @@ extern int item_newest;
 
 #ifdef ENABLE_SUBINVEN
 extern int item_newest_subinven, using_subinven, using_subinven_size, using_subinven_item;
-extern object_type subinventory[INVEN_PACK][SUBINVEN_PACK];
-extern char subinventory_name[INVEN_PACK][SUBINVEN_PACK][ONAME_LEN];
-extern int subinventory_inscription[INVEN_PACK][SUBINVEN_PACK];
-extern int subinventory_inscription_len[INVEN_PACK][SUBINVEN_PACK];
+extern object_type subinventory[INVEN_PACK + 1][SUBINVEN_PACK + 1];
+extern char subinventory_name[INVEN_PACK + 1][SUBINVEN_PACK + 1][ONAME_LEN];
+extern int subinventory_inscription[INVEN_PACK + 1][SUBINVEN_PACK + 1];
+extern int subinventory_inscription_len[INVEN_PACK + 1][SUBINVEN_PACK + 1];
 #endif
 
 extern store_type store;
