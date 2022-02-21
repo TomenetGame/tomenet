@@ -4800,12 +4800,16 @@ bool mon_hit_trap(int m_idx) {
 	}
 	if (who > 0 && p_ptr->mon_vis[m_idx]) monster_desc(who, m_name, m_idx, 0);
 
+
+	/* === Determine trap damage and monster-disarming chance === */
+
 	/* Trap power is the trapper's Trapping skill + 5:
 	   It is used further below for 1) damage calculations and 2) disarming calculations. */
 	trapping = cs_ptr->sc.montrap.difficulty + 5;
 
+	/* --- Determine whether a monster disarms the trap instead of setting it off --- */
 
-	/* Determine whether a monster disarms the trap instead of setting it off */
+	/* - Trap disarming difficulty - */
 
 	/* High level players hide traps better */
 	difficulty = (trapping * 3) / 2;
@@ -4819,6 +4823,23 @@ bool mon_hit_trap(int m_idx) {
 
 	/* Some traps are well-hidden */
 	if (f1 & TR1_STEALTH) difficulty += 10 * (kit_o_ptr->pval);
+
+	/* Get trap disarming difficulty */
+	difficulty = (kit_o_ptr->ac + kit_o_ptr->to_a);
+
+	/* Non-projectile trap kits are slightly harder to handle -
+	   idea is that these are not as spammable, especially when they consume
+	   valuable ressources (except for runes though which are reusable, hmm) */
+	switch (kit_o_ptr->sval) {
+	case SV_TRAPKIT_SLING:
+	case SV_TRAPKIT_BOW:
+	case SV_TRAPKIT_XBOW:
+		break;
+	default:
+		difficulty += 15;
+	}
+
+	/* - Monster disarming ability - */
 
 	/* Higher level monsters are smarter */
 	disarming = (50 + m_ptr->level) / 2;
@@ -4845,20 +4866,15 @@ bool mon_hit_trap(int m_idx) {
 		}
 	}
 
-	/* Get trap disarming difficulty */
-	difficulty = (kit_o_ptr->ac + kit_o_ptr->to_a);
-
-	/* Non-projectile trap kits are slightly harder to handle -
-	   idea is that these are not as spammable, especially when they consume
-	   valuable ressources (except for runes though which are reusable, hmm) */
-	switch (kit_o_ptr->sval) {
-	case SV_TRAPKIT_SLING:
-	case SV_TRAPKIT_BOW:
-	case SV_TRAPKIT_XBOW:
-		break;
-	default:
-		difficulty += 15;
-	}
+	/* Some example values, with standard shooter traps (so no +15 diff bonus) and standard monsters:
+		Skill	MonLev	trapping	diff0	d-unlit	dis0	chance0 (250+diff-dis)	~chance (300>chance0)
+		1	1	6		9	39	25	234/264			1/5	1/8
+		10	20	16		24	54	35	239/269			1/5	1/9
+		20	40	26		39	69	45	244/274			1/5	1/12
+		30	60	36		54	84	55	249/279			1/6	1/15
+		40	80	46		69	99	65	254/284			1/6	1/20
+		50	100	56		84	114	75	259/289			1/7	1/27
+	*/
 
 	/* Check if the monster disarms the trap */
 	if (randint(300) > (250 + difficulty - disarming)) disarm = TRUE;
