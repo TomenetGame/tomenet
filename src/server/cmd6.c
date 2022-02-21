@@ -9069,6 +9069,11 @@ bool create_snowball(int Ind, cave_type *c_ptr) {
 		    a) it needs too many extra checks everywhere and
 		    b) timeout is shown while pval is hidden, which is nice! */
 		forge.pval = 150 + rand_int(51);
+		if (!inven_carry_okay(Ind, &forge, 0x0)) {
+			msg_print(Ind, "You have no room in your inventory to pick up snow.");
+			p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
+			return FALSE;
+		}
 		inven_carry(Ind, &forge);
 		msg_print(Ind, "You pick up some snow and form a snowball.");
 
