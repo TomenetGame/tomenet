@@ -9435,6 +9435,9 @@ void empty_subinven(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	//int i, s = get_subinven_size(p_ptr->inventory[item].sval);
 	int i, s = p_ptr->inventory[item].bpval;
+	object_type *o_ptr;
+	char o_name[ONAME_LEN];
+	bool overflow_msg = FALSE;
 
 	/* Hack: Ensure basic cleanup in case weird container size changes happened in k_info */
 	if (!s) {
@@ -9446,7 +9449,18 @@ void empty_subinven(int Ind, int item) {
 
 	/* Empty everything first, without live-updating the slots (FALSE) */
 	for (i = 0; i < s; i++) {
-		inven_carry(Ind, &p_ptr->subinventory[item][i]);
+		o_ptr = &p_ptr->subinventory[item][i];
+		if (inven_carry_okay(Ind, o_ptr, 0x0)) item = inven_carry(Ind, o_ptr);
+		else {
+			if (!overflow_msg) msg_format(Ind, "\376\377oYour pack overflows!");
+			overflow_msg = TRUE;
+			object_desc(Ind, o_name, o_ptr, TRUE, 3);
+			msg_format(Ind, "\376\377oYou drop %s.", o_name);
+#ifdef USE_SOUND_2010
+			sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
+#endif
+			drop_near_severe(Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+		}
 		invwipe(&p_ptr->subinventory[item][i]);
 	}
 

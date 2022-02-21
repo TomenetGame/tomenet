@@ -4796,6 +4796,9 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 				/* Describe the object */
 				object_desc(Ind, o_name, o_ptr, TRUE, 3);
 				msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
+ #ifdef USE_SOUND_2010
+				sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
+ #endif
 
 				i_ptr->number = inum - i_ptr->number; /* Unhack 'number' */
 				/* Manually do this here for now: Update subinven slot for client. */
@@ -4812,6 +4815,9 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 			/* Describe the object */
 			object_desc(Ind, o_name, o_ptr, TRUE, 3);
 			msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
+ #ifdef USE_SOUND_2010
+			sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
+ #endif
 
 			i_ptr->number = 0; /* Mark for erasure */
 			/* Manually do this here for now: Update subinven slot for client. */
@@ -4862,6 +4868,9 @@ bool subinven_move_aux(int Ind, int islot, int sslot) {
 				/* Describe the object */
 				object_desc(Ind, o_name, o_ptr, TRUE, 3);
 				msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
+ #ifdef USE_SOUND_2010
+				sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
+ #endif
 
 				i_ptr->number = inum - i_ptr->number; /* Unhack 'number' */
 				/* Manually do this here for now: Update subinven slot for client. */
@@ -4878,6 +4887,9 @@ bool subinven_move_aux(int Ind, int islot, int sslot) {
 			/* Describe the object */
 			object_desc(Ind, o_name, o_ptr, TRUE, 3);
 			msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
+ #ifdef USE_SOUND_2010
+			sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
+ #endif
 
 			i_ptr->number = 0; /* Mark for erasure */
 			/* Manually do this here for now: Update subinven slot for client. */
@@ -4934,7 +4946,7 @@ bool subinven_move_aux(int Ind, int islot, int sslot) {
 void do_cmd_subinven_move(int Ind, int islot) {
 	player_type *p_ptr = Players[Ind];
 	object_type *i_ptr, *s_ptr;
-	int amt, i, tval, sval;
+	int amt, i;
 	bool all = FALSE;
 
 	/* Error checks */
@@ -4976,8 +4988,6 @@ void do_cmd_subinven_move(int Ind, int islot) {
 		return;
 	}
 
-	tval = i_ptr->tval;
-	sval = i_ptr->sval;
 	amt = i_ptr->number;
 
 	/* Message */
@@ -5017,10 +5027,6 @@ void do_cmd_subinven_move(int Ind, int islot) {
 		return;
 	} else msg_print(Ind, "You have at least enough bag space to stow some of it.");
 
- #ifdef USE_SOUND_2010
-	sound_item(Ind, tval, sval, "drop_");
- #endif
-
 	//break_cloaking(Ind, 5);
 	//break_shadow_running(Ind);
 	stop_precision(Ind);
@@ -5032,7 +5038,7 @@ void do_cmd_subinven_move(int Ind, int islot) {
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 }
-/* live: if TRUE, item changes are sent to client. */
+/* This function assumes that there IS inventory space to move to. */
 void subinven_remove_aux(int Ind, int islot, int slot) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr, *s_ptr;
@@ -5047,10 +5053,12 @@ void subinven_remove_aux(int Ind, int islot, int slot) {
 	/* Careful! We assume that subinventories are always above all other items,
 	   or this call might invalidate our s_ptr and o_ptr references: */
 	i = inven_carry(Ind, o_ptr);
-	/* Describe the object */
-	if (i != -1) {
+	if (i != -1) { /* Paranoia, as this function ASSUMES that there is free space. */
 		object_desc(Ind, o_name, o_ptr, TRUE, 3);
 		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
+ #ifdef USE_SOUND_2010
+		sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
+ #endif
 	}
 
 	/* Erase object in subinven, slide followers */
@@ -5059,7 +5067,7 @@ void subinven_remove_aux(int Ind, int islot, int slot) {
 	/* -- This is partial code from inven_item_optimize() -- */
 
 	/* Slide everything down */
-//	for (i = slot; i < get_subinven_size(s_ptr->sval); i++) {
+	//for (i = slot; i < get_subinven_size(s_ptr->sval); i++) {
 	for (i = slot; i < s_ptr->bpval; i++) {
 		/* Structure copy */
 		p_ptr->subinventory[islot][i] = p_ptr->subinventory[islot][i + 1];
