@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 18. February 2022 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 21. February 2022 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.7.4b - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -7968,11 +7968,23 @@ Teleport-To     - after triggering, if the monster is still alive, it will be
 
 If monsters notice a trap they can try to disarm it:
 
-A pval (that's a number in round parentheses, eg (+2)) increases the trap's
-"stealth", making it well-hidden and therefore harder for monsters to notice.
+- A trap kit that has a pval (that's a number in round parentheses, eg (+2))
+  increases the trap's "stealth", making it well-hidden and therefore harder
+  for monsters to notice and disarm.
 
-The "armour class" bonus of a trap kit, given in brackets (eg [+8]) increases
-the trap's complexity, making it harder for monsters to disarm the trap.
+- A trap kit that has an "armour class" bonus, shown in brackets (eg [+8])
+  increases the trap's complexity, making it harder for monsters to disarm.
+
+- Animals, empty-minded and stupid monsters have practically no chance to
+  disarm traps. Rogueish or ranger monsters and similar have a higher chance
+  to disarm traps.
+
+- Shooter traps (catapult, arrow, bolt) are somewhat easier to disarm than the
+  other, more elaborate types.
+
+- If your trap is placed on a grid that is dark instead of lit, the monster
+  will have a significantly lower chance to disarm it. In general, you always
+  want to place your traps on non-lit grids for this reason.
 
 Trap kits and ammo that were disarmed by a monster cannot be recovered.
 
