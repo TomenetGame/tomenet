@@ -9654,6 +9654,11 @@ void grind_chemicals(int Ind, int item) {
 	i = 1 + 10 - 1000 / (i + 90);
 	i = (i >> 1) + 1; //experimental: reduce a bit further..
 
+#ifdef ENABLE_SUBINVEN
+	/* If we grind a subinventory (chest!), remove all items and place them into the player's inventory */
+	if (o_ptr->tval == TV_SUBINVEN && o_ptr->number <= 1) empty_subinven(Ind, item);
+#endif
+
 	/* Erase the ingredient in the pack --
 	   we only grind 1 'piece' of an object at a time, not the whole stack */
 	inven_item_increase(Ind, item, -1);

@@ -10247,6 +10247,11 @@ void pack_overflow(int Ind) {
 		/* Drop it (carefully) near the player */
 		drop_near_severe(Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 
+#ifdef ENABLE_SUBINVEN
+		/* Paranoia? - If we drop a subinventory, remove all items and place them into the player's inventory */
+		if (o_ptr->tval == TV_SUBINVEN) empty_subinven(Ind, i);
+#endif
+
 		/* Decrease the item, optimize. */
 		inven_item_increase(Ind, i, -amt);
 		inven_item_optimize(Ind, i);

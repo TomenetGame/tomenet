@@ -281,6 +281,11 @@ static bool do_eat_item(int Ind, int m_idx) {
 		/* Don't steal artifacts  -CFT */
 		if (artifact_p(o_ptr)) continue;
 
+#ifdef ENABLE_SUBINVEN
+		/* Don't steal subinventories, too annoying probably */
+		if (o_ptr->tval == TV_SUBINVEN) continue;
+#endif
+
 		/* Don't steal keys */
 		if (!mon_allowed_pickup(o_ptr->tval)) continue;
 

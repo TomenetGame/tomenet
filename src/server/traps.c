@@ -897,6 +897,11 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 					/* Don't steal artifacts  -CFT */
 					if (artifact_p(j_ptr)) continue;
 
+#ifdef ENABLE_SUBINVEN
+					/* Don't steal subinventories - too complicated implications */
+					if (j_ptr->tval == TV_SUBINVEN) continue;
+#endif
+
 					/* Create the item */
 					q_ptr = &forge;
 					object_copy(q_ptr, j_ptr);

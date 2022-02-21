@@ -7953,6 +7953,11 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	/* Reduce and describe inventory */
 	if (item >= 0) {
 		if (!returning) {
+#ifdef ENABLE_SUBINVEN
+			/* If we drop a subinventory, remove all items and place them into the player's inventory */
+			if (o_ptr->tval == TV_SUBINVEN && moved_number >= o_ptr->number) empty_subinven(Ind, item);
+#endif
+
 			inven_item_increase(Ind, item, -moved_number);
 			inven_item_describe(Ind, item);
 			inven_item_optimize(Ind, item);

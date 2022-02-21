@@ -3416,7 +3416,15 @@ void do_cmd_steal(int Ind, int dir) {
 				/* Give a somewhat misleading message, to not spoil him that he actually was protected */
 				msg_print(Ind, "The object itself seems to evade your hand!");
 				s_printf("StealingPvP: %s fails to steal from %s (chance %d%%): restricted item (4).\n", p_ptr->name, q_ptr->name, success);
-			} else {
+			}
+#ifdef ENABLE_SUBINVEN
+			/* Don't allow stealing subinventories, too complicated implications */
+			else if (o_ptr->tval == TV_SUBINVEN) {
+				msg_print(Ind, "The object itself seems to evade your hand!");
+				s_printf("StealingPvP: %s fails to steal from %s (chance %d%%): restricted item (5).\n", p_ptr->name, q_ptr->name, success);
+			}
+#endif
+			else {
 				/* Turn level 0 food into level 1 food - mikaelh */
 				if (o_ptr->level == 0 && shareable_starter_item(o_ptr)) {
 					o_ptr->level = 1;
@@ -4933,6 +4941,24 @@ void do_cmd_subinven_move(int Ind, int islot) {
 	}
 	if (i_ptr->questor) {
 		msg_print(Ind, "\377yYou cannot stow a questor item.");
+		return;
+	}
+	if (i_ptr->tval == TV_AMULET && (i_ptr->sval == SV_AMULET_HIGHLANDS || i_ptr->sval == SV_AMULET_HIGHLANDS2)) {
+		msg_print(Ind, "\377yYou cannot stow event items.");
+		return;
+	}
+	/* A bit annoying to handle maybe, just forbid for now */
+	if (true_artifact_p(i_ptr)) {
+		msg_print(Ind, "\377yYou cannot stow true artifacts.");
+		return;
+	}
+	/* TODO: Implement mdev recharging and items melting/going bad for subinvens */
+	if (i_ptr->tval == TV_GAME && i_ptr->sval == SV_SNOWBALL) {
+		msg_print(Ind, "\377yYou cannot stow snowballs.");
+		return;
+	}
+	if (i_ptr->tval == TV_POTION && i_ptr->sval == SV_POTION_BLOOD) {
+		msg_print(Ind, "\377yYou cannot stow blood potions.");
 		return;
 	}
 

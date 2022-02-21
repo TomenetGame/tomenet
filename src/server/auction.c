@@ -816,6 +816,11 @@ int auction_set(int Ind, int slot, cptr starting_price_string, cptr buyout_price
 	o_ptr->number = 1;
 	if (is_magic_device(o_ptr->tval)) divide_charged_item(o_ptr, &p_ptr->inventory[slot], 1);
 
+#ifdef ENABLE_SUBINVEN
+	/* If we auction a subinventory, remove all items and place them into the player's inventory */
+	if (o_ptr->tval == TV_SUBINVEN && 1 >= o_ptr->number) empty_subinven(Ind, item);
+#endif
+
 	inven_item_increase(Ind, slot, -1);
 	inven_item_describe(Ind, slot);
 	inven_item_optimize(Ind, slot);

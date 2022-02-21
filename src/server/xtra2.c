@@ -13572,6 +13572,11 @@ void telekinesis_aux(int Ind, int item) {
 	sound_item(Ind, q_ptr->tval, q_ptr->sval, "pickup_");
 #endif
 
+#ifdef ENABLE_SUBINVEN
+	/* If we send a (stack of) subinventory, remove all items and place them into the player's inventory */
+	if (q_ptr->tval == TV_SUBINVEN) empty_subinven(Ind, item);
+#endif
+
 	/* Wipe it */
 	inven_item_increase(Ind, item, -99);
 	inven_item_describe(Ind, item);

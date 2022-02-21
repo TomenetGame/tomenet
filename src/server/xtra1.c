@@ -10095,6 +10095,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			}
 		}
 
+
 		/* WINNERS_ONLY item restrictions - even for admins ;) */
 		if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) &&
 #ifdef FALLEN_WINNERSONLY
@@ -10136,6 +10137,11 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		mail_duration[i] = MERCHANT_MAIL_DURATION;
 		mail_COD[i] = p_ptr->mail_COD;
 		mail_xfee[i] = p_ptr->mail_xfee;
+
+#ifdef ENABLE_SUBINVEN
+		/* If we send a subinventory, remove all items and place them into the player's inventory */
+		if (o_ptr->tval == TV_SUBINVEN) empty_subinven(Ind, p_ptr->mail_item);
+#endif
 
 		inven_item_increase(Ind, p_ptr->mail_item, -o_ptr->number);
 		inven_item_describe(Ind, p_ptr->mail_item);
