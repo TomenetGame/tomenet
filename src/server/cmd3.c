@@ -4771,8 +4771,8 @@ void do_cmd_query_symbol(int Ind, char sym) {
 #endif // 0
 
 #ifdef ENABLE_SUBINVEN
-/* Attempt to stow as much as possible of an object (stack) into a subinventory container.
-   Increases player's total_weight.
+/* Attempt to stow as much as possible of an object (stack) from OUTSIDE our inventory into a subinventory container.
+   Increases player's total_weight. Does not delete source item if moved, just reduces its number (down to 0).
    Returns TRUE if fully stowed. */
 bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 	player_type *p_ptr = Players[Ind];
@@ -4782,10 +4782,12 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 	char o_name[ONAME_LEN];
 
 	/* Look for free spaces or spaces to merge with */
-//	for (i = 0; i < get_subinven_size(s_ptr->sval); i++) {
+	//for (i = 0; i < get_subinven_size(s_ptr->sval); i++) {
 	for (i = 0; i < s_ptr->bpval; i++) {
 		o_ptr = &p_ptr->subinventory[sslot][i];
 		if (o_ptr->tval) {
+			/* Slot has no more stacking capacity? */
+			if (o_ptr->number == 99) continue;
 			/* Hack 'number' to allow merging stacks partially */
 			if (i_ptr->number + o_ptr->number > 99) i_ptr->number = 99 - o_ptr->number;
 			/* Merge partially or fully */
@@ -4835,6 +4837,7 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 }
 
 /* Attempt to move as much as possible of an inventory item stack into a subinventory container.
+   Keeps total weight constant. Deletes source inventory item on successful complete move.
    Returns TRUE if fully stowed. */
 bool subinven_move_aux(int Ind, int islot, int sslot) {
 	player_type *p_ptr = Players[Ind];
@@ -4842,9 +4845,10 @@ bool subinven_move_aux(int Ind, int islot, int sslot) {
 	object_type *s_ptr = &p_ptr->inventory[sslot];
 	object_type *o_ptr;
 	int i, inum = i_ptr->number, wgt = p_ptr->total_weight;
+	char o_name[ONAME_LEN];
 
 	/* Look for free spaces or spaces to merge with */
-//	for (i = 0; i < get_subinven_size(s_ptr->sval); i++) {
+	//for (i = 0; i < get_subinven_size(s_ptr->sval); i++) {
 	for (i = 0; i < s_ptr->bpval; i++) {
 		o_ptr = &p_ptr->subinventory[sslot][i];
 		if (o_ptr->tval) {
@@ -4855,6 +4859,10 @@ bool subinven_move_aux(int Ind, int islot, int sslot) {
 			/* Merge partially or fully */
 			if (object_similar(Ind, o_ptr, i_ptr, 0x4)) {
 				object_absorb(Ind, o_ptr, i_ptr);
+				/* Describe the object */
+				object_desc(Ind, o_name, o_ptr, TRUE, 3);
+				msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
+
 				i_ptr->number = inum - i_ptr->number; /* Unhack 'number' */
 				/* Manually do this here for now: Update subinven slot for client. */
 				display_subinven_aux(Ind, sslot, i);
@@ -4865,6 +4873,12 @@ bool subinven_move_aux(int Ind, int islot, int sslot) {
 		} else {
 			/* Fully move to a free slot. Done. */
 			*o_ptr = *i_ptr;
+			o_ptr->marked = 0;
+			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
+			/* Describe the object */
+			object_desc(Ind, o_name, o_ptr, TRUE, 3);
+			msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
+
 			i_ptr->number = 0; /* Mark for erasure */
 			/* Manually do this here for now: Update subinven slot for client. */
 			display_subinven_aux(Ind, sslot, i);
@@ -5023,6 +5037,7 @@ void subinven_remove_aux(int Ind, int islot, int slot) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr, *s_ptr;
 	int i;
+	char o_name[ONAME_LEN];
 
 	s_ptr = &p_ptr->inventory[islot];
 	o_ptr = &p_ptr->subinventory[islot][slot];
@@ -5031,7 +5046,12 @@ void subinven_remove_aux(int Ind, int islot, int slot) {
 
 	/* Careful! We assume that subinventories are always above all other items,
 	   or this call might invalidate our s_ptr and o_ptr references: */
-	inven_carry(Ind, o_ptr);
+	i = inven_carry(Ind, o_ptr);
+	/* Describe the object */
+	if (i != -1) {
+		object_desc(Ind, o_name, o_ptr, TRUE, 3);
+		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
+	}
 
 	/* Erase object in subinven, slide followers */
 	o_ptr->tval = o_ptr->k_idx = o_ptr->number = 0;
