@@ -5468,7 +5468,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	if (item >= 100) {
 		/* For now, only allow demo-alch from here */
 		if (o_ptr->tval != TV_CHEMICAL) {
-			msg_print(Ind, "You can only activate chemicals inside alchemy satchels.");
+			msg_print(Ind, "In a container you can only activate demolition-related chemicals.");
 			return;
 		}
 	}
