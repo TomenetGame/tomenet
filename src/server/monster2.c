@@ -1459,7 +1459,7 @@ static cptr r_name_garbled_get(int *r_idx) {
  *
  * Mode Flags:
  *   0x01 --> Objective (or Reflexive)
- *   0x02 --> Possessive (or Reflexive)
+ *   0x02 --> Possessive (or Reflexive) - no article
  *   0x04 --> Use indefinites for hidden monsters ("something")
  *   0x08 --> Use indefinites for visible monsters ("a kobold")
  *   0x10 --> Pronominalize hidden monsters
@@ -1581,6 +1581,9 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode) {
 			(void)strcpy(desc, name);
 		}
 
+		/* Omit article */
+		else if (mode & 0x01) (void)strcpy(desc, name);
+
 		/* It could be an indefinite monster */
 		else if (mode & 0x08) {
 			/* XXX Check plurality for "some" */
@@ -1693,6 +1696,9 @@ void monster_desc2(char *desc, monster_type *m_ptr, int mode) {
 			/* Start with the name (thus nominative and objective) */
 			(void)strcpy(desc, name);
 		}
+
+		/* Omit article */
+		else if (mode & 0x01) (void)strcpy(desc, name);
 
 		/* It could be an indefinite monster */
 		else if (mode & 0x08) {

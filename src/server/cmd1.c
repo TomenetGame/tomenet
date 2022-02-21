@@ -3820,7 +3820,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	object_type	*o_ptr = NULL;
 	bool		do_quake = FALSE;
 
-	char		m_name[MNAME_LEN], hit_desc[MAX_CHARS_WIDE], mbname[MNAME_LEN];
+	char		m_name[MNAME_LEN], m_name_raw[MNAME_LEN], hit_desc[MAX_CHARS_WIDE], mbname[MNAME_LEN];
 	monster_type	*m_ptr;
 	monster_race	*r_ptr;
 
@@ -3891,6 +3891,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 
 	/* Extract monster name (or "it") */
 	monster_desc(Ind, m_name, c_ptr->m_idx, 0);
+	monster_desc(Ind, m_name_raw, c_ptr->m_idx, 0x01);
 	/* Prepare lower-case'd name for elementality tests */
 	strcpy(mbname, m_name);
 	mbname[0] = tolower(mbname[0]);
@@ -4604,16 +4605,16 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				backstab = FALSE;
 				if (martial) {
 					if (r_ptr->flags1 & RF1_UNIQUE) {
-						msg_format(Ind, "\377%cYou twist the neck of the sleeping %s for \377e%d \377%cdamage.", uniq, m_name, k, uniq);
+						msg_format(Ind, "\377%cYou twist the neck of the sleeping %s for \377e%d \377%cdamage.", uniq, m_name_raw, k, uniq);
 						if (uniq_bell) Send_beep(Ind);
 					}
-					else msg_format(Ind, "You twist the neck of the sleeping %s for \377p%d \377wdamage.", m_name, k);
+					else msg_format(Ind, "You twist the neck of the sleeping %s for \377p%d \377wdamage.", m_name_raw, k);
 				} else {
 					if (r_ptr->flags1 & RF1_UNIQUE) {
-						msg_format(Ind, "\377%cYou stab the helpless, sleeping %s for \377e%d \377%cdamage.", uniq, m_name, k, uniq);
+						msg_format(Ind, "\377%cYou stab the helpless, sleeping %s for \377e%d \377%cdamage.", uniq, m_name_raw, k, uniq);
 						if (uniq_bell) Send_beep(Ind);
 					}
-					else msg_format(Ind, "You stab the helpless, sleeping %s for \377p%d \377wdamage.", m_name, k);
+					else msg_format(Ind, "You stab the helpless, sleeping %s for \377p%d \377wdamage.", m_name_raw, k);
 				}
 			}
 			else if (stab_fleeing) {
@@ -4626,10 +4627,10 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 					else msg_format(Ind, "You strike the back of %s for \377p%d \377wdamage.", m_name, k);
 				} else {
 					if (r_ptr->flags1 & RF1_UNIQUE) {
-						msg_format(Ind, "You backstab the fleeing %s for \377e%d \377wdamage.", m_name, k);
+						msg_format(Ind, "You backstab the fleeing %s for \377e%d \377wdamage.", m_name_raw, k);
 						if (uniq_bell) Send_beep(Ind);
 					}
-					else msg_format(Ind, "\377%cYou backstab the fleeing %s for \377p%d \377%cdamage.", uniq, m_name, k, uniq);
+					else msg_format(Ind, "\377%cYou backstab the fleeing %s for \377p%d \377%cdamage.", uniq, m_name_raw, k, uniq);
 				}
 			}
 			//else if ((r_ptr->flags1 & RF1_UNIQUE) && (!martial)) msg_format(Ind, "You hit %s for \377p%d \377wdamage.", m_name, k);
