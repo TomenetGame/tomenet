@@ -9805,6 +9805,7 @@ static bool dropped_the_one_ring(struct worldpos *wpos, cave_type *c_ptr) {
 /*
  * Let an item 'o_ptr' fall to the ground at or near (y,x).
  * The initial location is assumed to be "in_bounds()".
+ * (This function is called by drop_near_severe() too.)
  *
  * This function takes a parameter "chance".  This is the percentage
  * chance that the item will "disappear" instead of drop.  If the object
