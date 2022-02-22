@@ -4451,8 +4451,9 @@
 #define SV_SEAL				0	/* for invalid items */
 #define SV_CUSTOM_OBJECT		1	/* fun vanity objects, customizable by admins: xtra1 = ap, xtra2 = cp, xtra3 = commands: */
 						/* 0x0001 eat, 0x0002 quaff, 0x0004 read, 0x0010 activate-no-am, 0x0020 activate-am, 0x0040 activate-dir-no-am, 0x0080 activate-dir-am,
-						   0x0100 wear/wield.
-						   xtra4 = parameter for xtra3: wear/wield slot. */
+						   0x0100 wear/wield, 0x0200 wear/wield faking another item.
+						   Parameter for xtra3 = 0x0100: xtra4 = wear/wield slot.
+						   Parameter for xtra3 = 0x0200: xtra4 = fake tval, xtra5 = fake sval, xtra6 = fake bpval [, xtra7 = fake name2, xtra8 = fake name2b, xtra9 = fake pval] . */
 #define SV_QUEST			2	/* a custom quest item (not to be confused with questors) */
 
 
