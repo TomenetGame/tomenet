@@ -696,6 +696,7 @@ bool item_tester_hook_chemical(object_type *o_ptr) {
 
 /*
  * set a trap .. it's out of place somewhat.	- Jir -
+ * (item_kit is -1 when called normally via m skills menu.)
  */
 void do_trap(int item_kit) {
 	int item_load;
