@@ -668,7 +668,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 						}
 					}
 				}
-				*item = i;
+				*item = i + (l + 1) * 100;
 				return TRUE;
 			}
 		}
