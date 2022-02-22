@@ -423,13 +423,12 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 void do_cmd_eat_food(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 
-	int			ident, lev;
+	int ident, lev;
+	int feed = 0;
 
-	object_type		*o_ptr;
+	object_type *o_ptr;
 	bool keep = FALSE, flipped = FALSE;
 
-
-	//if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x1)) {
 
 	/* Restrict choices to food */
 	item_tester_tval = TV_FOOD;
@@ -450,9 +449,11 @@ void do_cmd_eat_food(int Ind, int item) {
 	if (!can_use_verbose(Ind, o_ptr)) return;
 
 
-	if (o_ptr->tval != TV_FOOD && o_ptr->tval != TV_FIRESTONE && !(o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL)) {
-//(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to eat non-food!");
-		return;
+	if (!(o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0001))) {
+		if (o_ptr->tval != TV_FOOD && o_ptr->tval != TV_FIRESTONE && !(o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL)) {
+			//(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to eat non-food!");
+			return;
+		}
 	}
 
 	if (p_ptr->prace == RACE_ENT && !p_ptr->body_monster) {
@@ -470,8 +471,8 @@ void do_cmd_eat_food(int Ind, int item) {
 	}
 
 	/* Let the player stay afk while eating,
-	   since we assume he's resting ;) - C. Blue */
-/*	un_afk_idle(Ind); */
+	   since we assume he's resting ;) - C. Blue
+	un_afk_idle(Ind); */
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -490,8 +491,7 @@ void do_cmd_eat_food(int Ind, int item) {
 	lev = k_info[o_ptr->k_idx].level;
 
 	/* (not quite) Normal foods */
-	if (o_ptr->tval == TV_FOOD)
-		ident = eat_food(Ind, o_ptr->sval, o_ptr, &keep);
+	if (o_ptr->tval == TV_FOOD) ident = eat_food(Ind, o_ptr->sval, o_ptr, &keep);
 	/* Firestones */
 	else if (o_ptr->tval == TV_FIRESTONE) {
 		bool dragon = FALSE;
@@ -551,34 +551,41 @@ void do_cmd_eat_food(int Ind, int item) {
 			}
 		}
 	} else if (o_ptr->tval == TV_GAME) msg_print(Ind, "Brrrrr.."); //snowball
-
+	else /* Special object? */ msg_print(Ind, "*chomp*...");
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-	/* The player is now aware of the object */
-	if (ident && !object_aware_p(Ind, o_ptr)) {
-		flipped = object_aware(Ind, o_ptr);
-		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
-	}
+	if (o_ptr->tval != TV_SPECIAL) {
+		/* The player is now aware of the object */
+		if (ident && !object_aware_p(Ind, o_ptr)) {
+			flipped = object_aware(Ind, o_ptr);
+			if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
+		}
 
-	/* We have tried it */
-	object_tried(Ind, o_ptr, flipped);
+		/* We have tried it */
+		object_tried(Ind, o_ptr, flipped);
+	}
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 
 	/* Food can feed the player */
+	if (o_ptr->tval != TV_SPECIAL) feed = o_ptr->weight * 500; /* For comparison, a ration at 1.0 lbs feeds for 5000 */
+	else feed = o_ptr->pval;
+
 	if (!p_ptr->suscep_life)
-		(void)set_food(Ind, p_ptr->food + o_ptr->pval);
+		(void)set_food(Ind, p_ptr->food + feed);
 	else if (p_ptr->prace != RACE_VAMPIRE)
-		(void)set_food(Ind, p_ptr->food + o_ptr->pval / 3);
+		(void)set_food(Ind, p_ptr->food + feed / 3);
 
 
 	/* Hack -- really allow certain foods to be "preserved" */
 	if (keep) return;
 
+	if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
+	questitem_d(o_ptr, 1);
 
 	/* Destroy a food in the pack */
 	if (item >= 0) {
@@ -613,7 +620,6 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 
 	/* Analyze the potion */
 	if (tval == TV_POTION) {
-
 		switch (sval) {
 		case SV_POTION_WATER:
 		case SV_POTION_APPLE_JUICE:
@@ -1161,9 +1167,6 @@ void do_cmd_quaff_potion(int Ind, int item) {
 	object_type *o_ptr, forge;
 	bool flipped = FALSE;
 
-
-	//if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x2)) {
-
 	/* Restrict choices to potions (apparently meanless) */
 	item_tester_tval = TV_POTION;
 
@@ -1188,9 +1191,11 @@ void do_cmd_quaff_potion(int Ind, int item) {
 
 	if (!can_use_verbose(Ind, o_ptr)) return;
 
-	if ((o_ptr->tval != TV_POTION) && (o_ptr->tval != TV_POTION2)) {
-		//(may happen on death, from macro spam)	msg_print(Ind, "SERVER ERROR: Tried to quaff non-potion!");
-		return;
+	if (!(o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0002))) {
+		if ((o_ptr->tval != TV_POTION) && (o_ptr->tval != TV_POTION2)) {
+			//(may happen on death, from macro spam)	msg_print(Ind, "SERVER ERROR: Tried to quaff non-potion!");
+			return;
+		}
 	}
 
 	/* S(he) is no longer afk */
@@ -1213,35 +1218,38 @@ void do_cmd_quaff_potion(int Ind, int item) {
 
 	process_hooks(HOOK_QUAFF, "d", Ind);
 
-	ident = quaff_potion(Ind, o_ptr->tval, o_ptr->sval, o_ptr->pval);
+	if (o_ptr->tval != TV_SPECIAL) ident = quaff_potion(Ind, o_ptr->tval, o_ptr->sval, o_ptr->pval);
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-	/* An identification was made */
-	if (ident && !object_aware_p(Ind, o_ptr)) {
-		flipped = object_aware(Ind, o_ptr);
-		//object_known(o_ptr);//only for object1.c artifact potion description... maybe obsolete
-		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
-	}
+	if (o_ptr->tval != TV_SPECIAL) {
+		/* An identification was made */
+		if (ident && !object_aware_p(Ind, o_ptr)) {
+			flipped = object_aware(Ind, o_ptr);
+			//object_known(o_ptr);//only for object1.c artifact potion description... maybe obsolete
+			if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
+		}
 
-	/* The item has been tried */
-	object_tried(Ind, o_ptr, flipped);
+		/* The item has been tried */
+		object_tried(Ind, o_ptr, flipped);
+	}
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
-
-	/* Potions can feed the player */
-	if (p_ptr->prace == RACE_VAMPIRE) {
-		if (o_ptr->sval == SV_POTION_BLOOD) set_food(Ind, o_ptr->pval + p_ptr->food);
-	} else if (p_ptr->prace == RACE_ENT) {
-		if (o_ptr->sval == SV_POTION_WATER) (void)set_food(Ind, p_ptr->food + WATER_ENT_FOOD);
-		else (void)set_food(Ind, p_ptr->food + (o_ptr->pval * 2));
-	} else if (p_ptr->suscep_life) {
-		(void)set_food(Ind, p_ptr->food + (o_ptr->pval * 2) / 3);
-	} else
-		(void)set_food(Ind, p_ptr->food + o_ptr->pval);
+	if (o_ptr->tval != TV_SPECIAL) {
+		/* Potions can feed the player */
+		if (p_ptr->prace == RACE_VAMPIRE) {
+			if (o_ptr->sval == SV_POTION_BLOOD) set_food(Ind, o_ptr->pval + p_ptr->food);
+		} else if (p_ptr->prace == RACE_ENT) {
+			if (o_ptr->sval == SV_POTION_WATER) (void)set_food(Ind, p_ptr->food + WATER_ENT_FOOD);
+			else (void)set_food(Ind, p_ptr->food + (o_ptr->pval * 2));
+		} else if (p_ptr->suscep_life) {
+			(void)set_food(Ind, p_ptr->food + (o_ptr->pval * 2) / 3);
+		} else
+			(void)set_food(Ind, p_ptr->food + o_ptr->pval);
+	}
 
 	if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
 	questitem_d(o_ptr, 1);
@@ -3078,8 +3086,6 @@ void do_cmd_read_scroll(int Ind, int item) {
 		return;
 	}
 
-	//if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x4)) {
-
 	/* Restrict choices to scrolls */
 	item_tester_tval = TV_SCROLL;
 
@@ -3095,22 +3101,23 @@ void do_cmd_read_scroll(int Ind, int item) {
 		o_ptr = &o_list[0 - item];
 	}
 
-	if (no_lite(Ind) && !(p_ptr->ghost && (o_ptr->tval == TV_PARCHMENT) && (o_ptr->sval == SV_PARCHMENT_DEATH)))
-	{
+	if (no_lite(Ind) && !(p_ptr->ghost && (o_ptr->tval == TV_PARCHMENT) && (o_ptr->sval == SV_PARCHMENT_DEATH))) {
 		msg_print(Ind, "You have no light to read by.");
 		s_printf("%s EFFECT: No-light prevented scroll for %s.\n", showtime(), p_ptr->name);
 		return;
 	}
 
-	if( check_guard_inscription( o_ptr->note, 'r' )) {
+	if (check_guard_inscription( o_ptr->note, 'r')) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		s_printf("%s EFFECT: Inscription prevented scroll for %s.\n", showtime(), p_ptr->name);
 		return;
 	};
 
-	if (o_ptr->tval != TV_SCROLL && o_ptr->tval != TV_PARCHMENT) {
-//(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to read non-scroll!");
-		return;
+	if (!(o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0004))) {
+		if (o_ptr->tval != TV_SCROLL && o_ptr->tval != TV_PARCHMENT) {
+			//(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to read non-scroll!");
+			return;
+		}
 	}
 
 	if (!can_use_verbose(Ind, o_ptr)) return;
@@ -3175,9 +3182,9 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 	if (antichance > ANTIMAGIC_CAP) antichance = ANTIMAGIC_CAP;/* AM cap */
 	/* Got disrupted ? */
 	if (magik(antichance)) {
-#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
 		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
-#endif
+ #endif
 		msg_print(Ind, "Your anti-magic field disrupts the scroll.");
 		return;
 	}
@@ -3201,11 +3208,12 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 	used_up = TRUE;
 
 #ifdef USE_SOUND_2010
-	if (o_ptr->sval != SV_SCROLL_FIREWORK) /* these just combust and cause 'launch' sfx instead */
+	if (o_ptr->tval != TV_SCROLL || o_ptr->sval != SV_SCROLL_FIREWORK) /* these just combust and cause 'launch' sfx instead */
 	sound(Ind, "read_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
-	ident = read_scroll(Ind, o_ptr->tval, o_ptr->sval, o_ptr, item, &used_up, &keep);
+	if (o_ptr->tval != TV_SPECIAL)
+		ident = read_scroll(Ind, o_ptr->tval, o_ptr->sval, o_ptr, item, &used_up, &keep);
 
 	break_cloaking(Ind, 4);
 	break_shadow_running(Ind);
@@ -3217,14 +3225,16 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-	/* An identification was made */
-	if (ident && !object_aware_p(Ind, o_ptr)) {
-		flipped = object_aware(Ind, o_ptr);
-		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
-	}
+	if (o_ptr->tval != TV_SPECIAL) {
+		/* An identification was made */
+		if (ident && !object_aware_p(Ind, o_ptr)) {
+			flipped = object_aware(Ind, o_ptr);
+			if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
+		}
 
-	/* The item was tried */
-	object_tried(Ind, o_ptr, flipped);
+		/* The item was tried */
+		object_tried(Ind, o_ptr, flipped);
+	}
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
@@ -3253,7 +3263,7 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 		inven_item_increase(Ind, item, -1);
 
 		/* Hack -- allow certain scrolls to be "preserved" */
-		if (!used_up) return;
+		if (!used_up && o_ptr->tval != TV_SPECIAL) return;
 
 		inven_item_describe(Ind, item);
 		inven_item_optimize(Ind, item);
@@ -5490,7 +5500,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		return;
 	}
 
-	//if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x10)) {
+	//if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0010)) {
 
 	/* Anti-magic checks */
 	if (o_ptr->tval != TV_BOTTLE /* hack.. */
@@ -5535,7 +5545,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		}
 	}
 
-	//if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x20)) {
+	//if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0020)) {
 
 	/* If the item can be equipped, it MUST be equipped to be activated */
 	if ((item < INVEN_WIELD) && wearable_p(o_ptr)) {
@@ -7010,7 +7020,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 		o_ptr = &o_list[0 - item];
 	}
 
-	//if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x40)) {
+	//if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0040)) {
 
 #if 0	/* if 0: All these checks are duplicate, no? They are already done in do_cmd_activate().
 	   The problem is with randomized checks, in this case the p_ptr->antimagic one,
@@ -7039,7 +7049,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 	}
 #endif
 
-	//if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x80)) {
+	//if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0080)) {
 
 	/* If the item can be equipped, it MUST be equipped to be activated */
 	if ((item < INVEN_WIELD) && wearable_p(o_ptr)) {

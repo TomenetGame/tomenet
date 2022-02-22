@@ -3472,6 +3472,13 @@ static bool item_tester_hook_weapon(object_type *o_ptr) {
 	case TV_BOOMERANG:
 	case TV_AXE:
 		return (TRUE);
+	/* Special object hack */
+	case TV_SPECIAL:
+		if (o_ptr->sval != SV_CUSTOM_OBJECT || !(o_ptr->xtra3 & 0x0100)) return FALSE;
+		/* Paranoia - check for valid equipment slot */
+		if (o_ptr->xtra4 < INVEN_WIELD || o_ptr->xtra4 > INVEN_TOOL) return FALSE;
+		/* Equippable special object */
+		return TRUE;
 	}
 
 	return (FALSE);
