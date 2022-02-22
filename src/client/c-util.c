@@ -7640,7 +7640,7 @@ void auto_inscriptions(void) {
 
 			/* Process the given filename */
 			load_auto_inscriptions(tmp);
-			for (i = 0; i <= INVEN_TOTAL; i++) apply_auto_inscriptions(i, FALSE);
+			for (i = 0; i < INVEN_TOTAL; i++) apply_auto_inscriptions(i, FALSE);
 			break;
 		case 's':
 			/* Prompt */
@@ -7728,11 +7728,11 @@ void auto_inscriptions(void) {
 			/* Get a new tag string */
 			if (!askfor_aux(buf, AUTOINS_TAG_LEN - 1, 0)) {
 				/* in case match was changed, we may also need to reapply */
-				for (i = 0; i <= INVEN_TOTAL; i++) apply_auto_inscriptions(i, FALSE);
+				for (i = 0; i < INVEN_TOTAL; i++) apply_auto_inscriptions(i, FALSE);
 				continue;
 			}
 			strcpy(auto_inscription_tag[cur_page * AUTOINS_PAGESIZE + cur_line], buf);
-			for (i = 0; i <= INVEN_TOTAL; i++) apply_auto_inscriptions(i, FALSE);
+			for (i = 0; i < INVEN_TOTAL; i++) apply_auto_inscriptions(i, FALSE);
 
 			/* comfort hack - fake advancing ;) */
 #ifndef INTEGRATED_SELECTOR
@@ -7804,7 +7804,7 @@ void auto_inscriptions(void) {
 			i = cur_page * AUTOINS_PAGESIZE + cur_line;
 			auto_inscription_force[i] = !auto_inscription_force[i];
 			/* if we changed to 'forced', we may need to reapply - note that competing inscriptions aren't well-defined here */
-			if (auto_inscription_force[i]) for (i = 0; i <= INVEN_TOTAL; i++) apply_auto_inscriptions(i, FALSE);
+			if (auto_inscription_force[i]) for (i = 0; i < INVEN_TOTAL; i++) apply_auto_inscriptions(i, FALSE);
 			redraw = TRUE;
 			break;
 		default:

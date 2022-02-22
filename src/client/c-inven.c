@@ -323,7 +323,7 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 					}
 
 					if (!(buf1p = strstr(buf1, " of "))) buf1p = buf1; //skip item's article/amount
-					for (k = INVEN_WIELD; k <= INVEN_TOTAL; k++) {
+					for (k = INVEN_WIELD; k < INVEN_TOTAL; k++) {
 						strcpy(buf3, inventory_name[k]);
 						buf3p = buf3;
 						while (*buf3p) {
@@ -345,7 +345,7 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 							break;
 						}
 					}
-					if (k <= INVEN_TOTAL && i_found != -1) postpone = TRUE;
+					if (k < INVEN_TOTAL && i_found != -1) postpone = TRUE;
 				}
 			    if (!postpone) {
 #endif
@@ -453,7 +453,7 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 					}
 
 					if (!(buf1p = strstr(buf1, " of "))) buf1p = buf1; //skip item's article/amount
-					for (k = INVEN_WIELD; k <= INVEN_TOTAL; k++) {
+					for (k = INVEN_WIELD; k < INVEN_TOTAL; k++) {
 						strcpy(buf3, inventory_name[k]);
 						buf3p = buf3;
 						while (*buf3p) {
@@ -475,7 +475,7 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 							break;
 						}
 					}
-					if (k <= INVEN_TOTAL && i_found != -1) postpone = TRUE;
+					if (k < INVEN_TOTAL && i_found != -1) postpone = TRUE;
 				}
 			    if (!postpone) {
 #endif
@@ -599,7 +599,81 @@ bool get_item_hook_find_obj(int *item, int mode) {
 	}
 	return FALSE;
     } else if (mode & subinven) {
-	
+	/* Scan all subinvens for item name match */
+	int l;
+
+	for (l = 0; l < INVEN_PACK; l++) {
+		/* Assume that subinvens are always at the beginning of the inventory! */
+		if (inventory[l].tval != TV_SUBINVEN) break;
+
+		for (j = 0; j < inventory[l].pval; j++) {
+			i = j;
+
+			object_type *o_ptr = &subinventory[l][i];
+
+			if (!item_tester_okay(o_ptr)) continue;
+
+ #if 0
+			if (my_strcasestr(subinventory_name[l][i], buf)) {
+ #else
+			strcpy(buf1, subinventory_name[l][i]);
+			strcpy(buf2, buf);
+			ptr = buf1;
+			while (*ptr) {
+				/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+				   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+				if (*ptr == '@') ptr ++;
+				else *ptr = tolower(*ptr);
+				ptr++;
+			}
+			ptr = buf2;
+			while (*ptr) {
+				/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+				   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+				if (*ptr == '@') ptr += 2;
+				*ptr = tolower(*ptr);
+				ptr++;
+			}
+			if (strstr(buf1, buf2)) {
+ #endif
+				if (charged && (
+				    strstr(buf1, "charging)") || strstr(buf1, "(#)") || strstr(buf1, "(~)") || /* rods (and other devices, in theory) */
+				    strstr(buf1, "(0 charges") || strstr(buf1, "{empty}") /* wands, staves */
+				    )) {
+					/* Especially added for non-stackable rods (Havoc): check for same rod, but not 'charging' */
+					char *buf1p, *buf3p;
+					int k;
+
+					if (!(buf1p = strstr(buf1, " of "))) buf1p = buf1; //skip item's article/amount
+					for (k = 0; k < inventory[l].pval; k++) {
+						if (k == i) continue;
+						strcpy(buf3, subinventory_name[l][k]);
+						ptr = buf3;
+						while (*ptr) {
+							/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+							   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+							if (*ptr == '@') ptr++;
+							else *ptr = tolower(*ptr);
+							ptr++;
+						}
+						if (strstr(buf3, "charging)") || strstr(buf3, "(#)") || strstr(buf3, "(~)") || /* rods (and other devices, in theory) */
+						    strstr(buf3, "(0 charges") || strstr(buf3, "{empty}")) /* wands, staves */
+							continue;
+
+						if (!(buf3p = strstr(buf3, " of "))) buf3p = buf3; //skip item's article/amount
+						if (subinventory[l][k].tval == subinventory[l][i].tval && /* unnecessary check, but whatever */
+						    strstr(buf3, buf2)) {
+							i = k;
+							break;
+						}
+					}
+				}
+				*item = i;
+				return TRUE;
+			}
+		}
+	}
+	return FALSE;
     }
 #endif
 	for (j = inven_first ? 0 : INVEN_TOTAL - 1;
@@ -646,7 +720,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 				int k;
 
 				if (!(buf1p = strstr(buf1, " of "))) buf1p = buf1; //skip item's article/amount
-				for (k = INVEN_WIELD; k <= INVEN_TOTAL; k++) {
+				for (k = INVEN_WIELD; k < INVEN_TOTAL; k++) {
 					strcpy(buf3, inventory_name[k]);
 					ptr = buf3;
 					while (*ptr) {
@@ -666,7 +740,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 						break;
 					}
 				}
-				if (k <= INVEN_TOTAL && i_found != -1) continue;
+				if (k < INVEN_TOTAL && i_found != -1) continue;
 			}
 #endif
 			if (charged && (

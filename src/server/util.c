@@ -9422,9 +9422,11 @@ void verify_subinven_size(int Ind, int slot, bool check) {
 
 	/* If our subinventory was an older version and its capacity nowadays is smaller,
 	   update it with the downgrade (opposite to load.c where it's an upgrade only) */
+
+	/* Size is fine? */
 	if (s_ptr->bpval == k_info[s_ptr->k_idx].pval) return;
 
-	for (i = slot; i < s_ptr->bpval; i++) {
+	for (i = 0; i < s_ptr->bpval; i++) {
 		if (p_ptr->subinventory[slot][i].k_idx) continue;
 
 		/* Shrink to correct new size */
