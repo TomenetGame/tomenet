@@ -763,6 +763,9 @@ void cmd_inven(void) {
 	show_inven();
 
 	while (TRUE) {
+#ifdef ENABLE_SUBINVEN
+topline_icky = TRUE; //needed AGAIN. A failed 'stow' command causes topline to get partially overwritten by the server's error response msg. -_-
+#endif
 		/* Redraw these in case some command from below has erased the topline */
 		show_inven_header();
 
