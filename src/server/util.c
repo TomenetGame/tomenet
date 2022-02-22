@@ -9457,10 +9457,15 @@ void empty_subinven(int Ind, int item) {
 	/* Empty everything first, without live-updating the slots (FALSE) */
 	for (i = 0; i < s; i++) {
 		o_ptr = &p_ptr->subinventory[item][i];
-		if (!o_ptr->tval) continue; /* Paranoia. Could also just 'break' here instead. */
+		if (!o_ptr->tval) break;
 
-		if (inven_carry_okay(Ind, o_ptr, 0x0)) item = inven_carry(Ind, o_ptr);
-		else {
+		if (inven_carry_okay(Ind, o_ptr, 0x0)) {
+			item = inven_carry(Ind, o_ptr);
+			if (item != -1) {
+				object_desc(Ind, o_name, o_ptr, TRUE, 3);
+				msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
+			}
+		} else {
 			if (!overflow_msg) msg_format(Ind, "\376\377oYour pack overflows!");
 			overflow_msg = TRUE;
 			object_desc(Ind, o_name, o_ptr, TRUE, 3);

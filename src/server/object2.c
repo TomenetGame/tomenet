@@ -10677,6 +10677,7 @@ bool inven_item_optimize(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 #ifdef ENABLE_SUBINVEN
 	object_type *o_ptr;
+	int s;
 
 	if (item >= 100) {
 		int i, s = item / 100 - 1;
@@ -10733,8 +10734,17 @@ bool inven_item_optimize(int Ind, int item) {
 		/* Slide everything down */
 		for (i = item; i < INVEN_PACK; i++) {
 			/* Structure copy */
-			p_ptr->inventory[i] = p_ptr->inventory[i+1];
-
+			p_ptr->inventory[i] = p_ptr->inventory[i + 1];
+#ifdef ENABLE_SUBINVEN
+			if (p_ptr->inventory[i].tval == TV_SUBINVEN) {
+				for (s = 0; s < p_ptr->inventory[i].bpval; s++) {
+					p_ptr->subinventory[i][s] = p_ptr->subinventory[i + 1][s];
+					invwipe(&p_ptr->subinventory[i + 1][s]);
+				}
+				display_subinven(Ind, i);
+				display_subinven(Ind, i + 1);
+			}
+#endif
 			if (i == p_ptr->item_newest) Send_item_newest(Ind, i - 1);
 		}
 
@@ -11197,7 +11207,19 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 		/* Structure slide (make room) */
 		for (k = n; k >= i; k--) {
 			/* Hack -- Slide the item */
-			p_ptr->inventory[k+1] = p_ptr->inventory[k];
+			p_ptr->inventory[k + 1] = p_ptr->inventory[k];
+#ifdef ENABLE_SUBINVEN
+			if (p_ptr->inventory[k + 1].tval == TV_SUBINVEN) {
+				int s;
+
+				for (s = 0; s < p_ptr->inventory[k + 1].bpval; s++) {
+					p_ptr->subinventory[k + 1][s] = p_ptr->subinventory[k][s];
+					invwipe(&p_ptr->subinventory[k][s]);
+				}
+				display_subinven(Ind, k + 1);
+				display_subinven(Ind, k);
+			}
+#endif
 		}
 
 		/* Update inventory indeces - mikaelh */
