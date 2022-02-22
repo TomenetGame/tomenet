@@ -9485,11 +9485,7 @@ void mix_chemicals(int Ind, int item) {
 	/* If both ingredients were from a satchel, try to place the result there too, if it's TV_CHEMICAL. */
 	if (p_ptr->current_activation >= 100 && item >= 100 && q_ptr->tval == TV_CHEMICAL) {
 		//do_cmd_subinven_move(Ind, islot);
-		if (subinven_move_aux(Ind, i, item / 100 - 1)) {
-			//no index available, o laziness :/
-			msg_format(Ind, "You have %s.", o_name, index_to_label(i));
-			return;
-		}
+		if (subinven_move_aux(Ind, i, item / 100 - 1)) return; /* Includes message */
 	}
 #endif
 	if (i != -1) msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));

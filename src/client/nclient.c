@@ -3140,6 +3140,11 @@ int Receive_item(void) {
 		}
 
 		clear_topline();
+#ifdef ENABLE_SUBINVEN
+		if (using_subinven == -1) {
+			if (!c_get_item(&item, "Which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | USE_SUBINVEN))) return 1;
+		} else
+#endif
 		if (!c_get_item(&item, "Which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA))) return 1;
 		Send_item(item);
 	} else {
