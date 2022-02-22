@@ -1732,8 +1732,8 @@ c_msg_format("%c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c",
 		if (!c || (c[4] != ':' && c[5] != ':')) c = NULL; else c2 = NULL;
 		if (!c) c = c2;
 		if (c) {
-			if (prefix(c, "https://")) c2 = c + 8; //silyl compiler warning
-			else if (prefix(c, "http://")) c2 = c + 7;
+			if (prefix(c, "https://")) c2 = c + 8;
+			else if (prefix(c, "http://")) c2 = c + 7; //silyl compiler warning
 			else if (prefix(c, "www.")) c2 = c + 4;
 			else c2 = NULL; //kill compiler warning
 
