@@ -4436,6 +4436,7 @@
 #define SV_SI_CHEST_LARGE_WOODEN	5
 #define SV_SI_CHEST_LARGE_IRON		6
 #define SV_SI_CHEST_LARGE_STEEL		7
+#define SV_SI_TRAPKIT_BAG		8
 
 /* Only allow one subinven from each type group per player?
    (We only define helper markers for those groups that have more than one member,

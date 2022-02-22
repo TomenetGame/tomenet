@@ -5009,6 +5009,9 @@ void do_cmd_subinven_move(int Ind, int islot) {
 		case SV_SI_SATCHEL:
 			if (i_ptr->tval != TV_CHEMICAL) continue;
 			break;
+		case SV_SI_TRAPKIT_BAG:
+			if (i_ptr->tval != TV_TRAPKIT) continue;
+			break;
 		case SV_SI_GROUP_CHEST_MIN:
 			/* Allow all storable items in chests */
 			break;

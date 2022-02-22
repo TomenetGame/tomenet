@@ -812,8 +812,9 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 			break;
 #ifdef ENABLE_SUBINVEN
 		case TV_SUBINVEN: /* Chest clones */
-			if (o_ptr->sval < SV_SI_GROUP_CHEST_MIN || o_ptr->sval > SV_SI_GROUP_CHEST_MAX) return FALSE;
-			break;
+			if (o_ptr->sval >= SV_SI_GROUP_CHEST_MIN && o_ptr->sval <= SV_SI_GROUP_CHEST_MAX) return TRUE;
+			if (o_ptr->sval == SV_SI_TRAPKIT_BAG) return TRUE;
+			return FALSE;
 #endif
 		default:
 			return (FALSE);
@@ -1140,6 +1141,11 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		break;
 
 	case STORE_STRADER: /* For ironman dungeons */
+#ifdef ENABLE_SUBINVEN
+		case TV_SUBINVEN:
+			if (o_ptr->sval != SV_SI_TRAPKIT_BAG) return FALSE;
+			break;
+#endif
 		/* doesn't like very cheap items */
 		if (object_value(Ind, o_ptr) < 10) return (FALSE);
 		break;

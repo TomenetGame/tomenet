@@ -2061,6 +2061,7 @@ extern void get_subinven_item(int Ind, int item, object_type **o_ptr, int *sitem
 extern void empty_subinven(int Ind, int item);
 extern void erase_subinven(int Ind, int item);
 extern void verify_subinven_size(int Ind, int slot, bool check);
+extern int get_subinven_group(int sval);
 #endif
 
 

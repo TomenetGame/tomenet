@@ -3897,9 +3897,6 @@ A:60/4
 P:0:4d7:0:0:0
 
 
-# first HOLE 452-457 (-bags)
-
-
 ##### Special bags (ENABLE_SUBINVEN; unique-carried if SUBINVEN_LIMIT_GROUP) - C. Blue #####
 
 #hmm, maybe use ~ like for chests, for all TV_SUBINVEN? Many colours already used up for ~ though, only o/G/b/B left.
@@ -4384,8 +4381,19 @@ I:45:37:0
 W:100:0:2:5000000
 F:INSTA_ART
 
+# For trappers - they already need to carry all the ammo.
+$ENABLE_SUBINVEN$N:512:& Trap kit bag~
+$ENABLE_SUBINVEN$G:~:b
+$ENABLE_SUBINVEN$I:126:8:8
+$ENABLE_SUBINVEN$W:1:0:50:1500
+#$ENABLE_SUBINVEN$A:127/0
+$ENABLE_SUBINVEN$A:10/10:20/20
+$ENABLE_SUBINVEN$P:0:1d1:0:0:0
+$ENABLE_SUBINVEN$F:EASY_KNOW
+$ENABLE_SUBINVEN$D:A bag for compact storing of trap kits.
 
-# HOLE 512-520
+
+# HOLE 513-520
 ### Room for new objects added after 511 (Zangband 2.1.0): 512-575
 
 

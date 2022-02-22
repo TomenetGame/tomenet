@@ -2563,13 +2563,18 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 #ifdef ENABLE_SUBINVEN
 		case TV_SUBINVEN:
 			switch (sval) {
-			case SV_SI_SATCHEL: item = "armour_light"; break; //a textile bag, basically
-			case SV_SI_CHEST_SMALL_WOODEN: item = "chest"; break;
-			case SV_SI_CHEST_SMALL_IRON: item = "chest"; break;
-			case SV_SI_CHEST_SMALL_STEEL: item = "chest"; break;
-			case SV_SI_CHEST_LARGE_WOODEN: item = "chest"; break;
-			case SV_SI_CHEST_LARGE_IRON: item = "chest"; break;
-			case SV_SI_CHEST_LARGE_STEEL: item = "chest"; break;
+			case SV_SI_SATCHEL:
+			case SV_SI_TRAPKIT_BAG:
+				item = "armour_light"; //a textile bag, basically
+				break;
+			case SV_SI_CHEST_SMALL_WOODEN:
+			case SV_SI_CHEST_SMALL_IRON:
+			case SV_SI_CHEST_SMALL_STEEL:
+			case SV_SI_CHEST_LARGE_WOODEN:
+			case SV_SI_CHEST_LARGE_IRON:
+			case SV_SI_CHEST_LARGE_STEEL:
+				item = "chest";
+				break;
 			}
 			break;
 #endif
@@ -9493,7 +9498,7 @@ void erase_subinven(int Ind, int item) {
 	verify_subinven_size(Ind, item, FALSE);
 }
  #ifdef SUBINVEN_LIMIT_GROUP
-int get_subinven_group(sval) {
+int get_subinven_group(int sval) {
 	switch (sval) {
 	case SV_SI_SATCHEL:
 	case SV_SI_TRAPKIT_BAG:
