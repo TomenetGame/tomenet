@@ -26,7 +26,7 @@ static bool item_tester_edible(object_type *o_ptr) {
 	if (o_ptr->tval == TV_FOOD) return TRUE;
 	if (o_ptr->tval == TV_FIRESTONE) return TRUE;
 	if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) return TRUE;
-	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x1)) return TRUE;
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0001)) return TRUE;
 
 	return FALSE;
 }
@@ -144,10 +144,13 @@ static void cmd_all_in_one(void) {
 		cmd_browse(item);
 		break;
 #endif
+	case TV_SPECIAL:
+		/* Todo maybe - implement something */
+		break;
 	/* Presume it's sort of spellbook */
 	case TV_BOOK:
 	default:
-	{
+	    {
 		int i;
 		bool done = FALSE;
 
@@ -172,7 +175,7 @@ static void cmd_all_in_one(void) {
 			}
 		}
 		break;
-	}
+	    }
 	}
 }
 
@@ -416,7 +419,7 @@ void cmd_stay_one(void) {
    1 = force worldmap
 */
 void cmd_map(char mode) {
-	char ch, dir = 0;
+	char ch, dir = 0x00;
 	bool sel = FALSE;
 
 	/* Hack -- if the screen is already icky, ignore this command */
@@ -476,7 +479,7 @@ void cmd_map(char mode) {
 					if (minimap_sely < CL_WINDOW_HGT - 2) minimap_sely++;
 					continue;
 				}
-				dir = 0x2;
+				dir = 0x02;
 				break;
 			} else if (ch == '6' || ch == 'l') {
 				if (sel) {
@@ -484,7 +487,7 @@ void cmd_map(char mode) {
 					if (minimap_selx < 8 + 64 - 1) minimap_selx++;
 					continue;
 				}
-				dir = 0x4;
+				dir = 0x04;
 				break;
 			} else if (ch == '8' || ch == 'k') {
 				if (sel) {
@@ -492,7 +495,7 @@ void cmd_map(char mode) {
 					if (minimap_sely > 1) minimap_sely--;
 					continue;
 				}
-				dir = 0x8;
+				dir = 0x08;
 				break;
 			} else if (ch == '4' || ch == 'h') {
 				if (sel) {
@@ -509,7 +512,7 @@ void cmd_map(char mode) {
 					if (minimap_selx > 8) minimap_selx--;
 					continue;
 				}
-				dir = 0x2 | 0x10;
+				dir = 0x02 | 0x10;
 				break;
 			} else if (ch == '3' || ch == 'n') {
 				if (sel) {
@@ -518,7 +521,7 @@ void cmd_map(char mode) {
 					if (minimap_selx < 8 + 64 - 1) minimap_selx++;
 					continue;
 				}
-				dir = 0x2 | 0x4;
+				dir = 0x02 | 0x04;
 				break;
 			} else if (ch == '9' || ch == 'u') {
 				if (sel) {
@@ -527,7 +530,7 @@ void cmd_map(char mode) {
 					if (minimap_selx < 8 + 64 - 1) minimap_selx++;
 					continue;
 				}
-				dir = 0x8 | 0x10;
+				dir = 0x08 | 0x10;
 				break;
 			} else if (ch == '7' || ch == 'y') {
 				if (sel) {
@@ -536,7 +539,7 @@ void cmd_map(char mode) {
 					if (minimap_selx > 8) minimap_selx--;
 					continue;
 				}
-				dir = 0x8 | 0x4;
+				dir = 0x08 | 0x04;
 				break;
 			} else if (ch == '5' || ch == ' ') {
 				if (sel) {
@@ -547,7 +550,7 @@ void cmd_map(char mode) {
 					minimap_selchar = minimap_char;
 					continue;
 				}
-				dir = 0;
+				dir = 0x00;
 				break;
 			}
 			/* manual grid selection on the map */
@@ -1369,7 +1372,7 @@ static bool item_tester_quaffable(object_type *o_ptr) {
 			(o_ptr->sval == SV_FOOD_PINT_OF_ALE ||
 			 o_ptr->sval == SV_FOOD_PINT_OF_WINE) )
 			return TRUE;
-	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x2)) return TRUE;
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0002)) return TRUE;
 
 	return FALSE;
 }
@@ -1393,7 +1396,7 @@ void cmd_quaff(void) {
 static bool item_tester_readable(object_type *o_ptr) {
 	if (o_ptr->tval == TV_SCROLL) return TRUE;
 	if (o_ptr->tval == TV_PARCHMENT) return TRUE;
-	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x4)) return TRUE;
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0004)) return TRUE;
 
 	return FALSE;
 }
