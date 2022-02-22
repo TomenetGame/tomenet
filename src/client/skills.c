@@ -699,20 +699,32 @@ bool item_tester_hook_chemical(object_type *o_ptr) {
  */
 void do_trap(int item_kit) {
 	int item_load;
-	object_type *o_ptr;
+	object_type *o_ptr = NULL;
 
 	if (item_kit < 0) {
 		item_tester_tval = TV_TRAPKIT;
 		get_item_hook_find_obj_what = "Trap kit name? ";
 		get_item_extra_hook = get_item_hook_find_obj;
+#ifdef ENABLE_SUBINVEN
+		if (!c_get_item(&item_kit, "Use which trapping kit? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG | USE_SUBINVEN))) {
+			if (item_kit == -2) c_msg_print("You have no trapping kits.");
+			if (parse_macro && c_cfg.safe_macros) flush_now();//Term_flush();
+			return;
+		}
+#else
 		if (!c_get_item(&item_kit, "Use which trapping kit? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG))) {
 			if (item_kit == -2) c_msg_print("You have no trapping kits.");
 			if (parse_macro && c_cfg.safe_macros) flush_now();//Term_flush();
 			return;
 		}
+#endif
 	}
 
-	o_ptr = &inventory[item_kit];
+#ifdef ENABLE_SUBINVEN
+	if (item_kit >= 100) o_ptr = &subinventory[item_kit / 100 - 1][item_kit % 100];
+	else
+#endif
+	if (!o_ptr) o_ptr = &inventory[item_kit];
 
 	/* Trap kits need a second object */
 	switch (o_ptr->sval) {

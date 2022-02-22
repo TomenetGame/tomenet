@@ -1511,6 +1511,9 @@ void cmd_eat(void) {
 
 void cmd_activate(void) {
 	int item, dir;
+#ifdef ENABLE_SUBINVEN
+	int sub = -1;
+#endif
 
 	/* Allow all items */
 	item_tester_hook = NULL;
@@ -1519,15 +1522,21 @@ void cmd_activate(void) {
 
 	/* Currently, most activatable items must be worn as they are equippable items.
 	   Exceptions are: Custom books, book of the dead, golem scrolls and runes. */
+#ifdef ENABLE_SUBINVEN
+	if (using_subinven == -1) {
+		if (!c_get_item(&item, "Activate what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | USE_SUBINVEN))) return;
+		if (item >= 100) sub = item / 100 - 1;
+	} else
+#endif
 	//if (!c_get_item(&item, "Activate what? ", (USE_EQUIP | USE_INVEN | EQUIP_FIRST | USE_EXTRA)))
-	if (!c_get_item(&item, "Activate what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA)))
-		return;
+	if (!c_get_item(&item, "Activate what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA))) return;
 
 #ifdef ENABLE_SUBINVEN
-	if (using_subinven != -1) {
+	if (using_subinven != -1 || sub != -1) {
+		if (sub == -1) sub = using_subinven;
 		/* Send it */
 		/* Does item require aiming? (Always does if not yet identified) */
-		if (subinventory[using_subinven][item % 100].uses_dir == 0) {
+		if (subinventory[sub][item % 100].uses_dir == 0) {
 			/* (also called if server is outdated, since uses_dir will be 0 then) */
 			using_subinven_item = item; /* allow mixing chemicals directly from satchels */
 			Send_activate(item);

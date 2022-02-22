@@ -521,6 +521,9 @@ bool get_item_hook_find_obj(int *item, int mode) {
 	int i_found = -1;
 #endif
 	bool charged = (mode & CHECK_CHARGED) != 0;
+#ifdef ENABLE_SUBINVEN
+	bool subinven = (mode & USE_SUBINVEN);
+#endif
 
 	strcpy(buf, "");
 	if (!get_string(get_item_hook_find_obj_what, buf, 79))
@@ -595,7 +598,9 @@ bool get_item_hook_find_obj(int *item, int mode) {
 		}
 	}
 	return FALSE;
-    } else
+    } else if (mode & subinven) {
+	
+    }
 #endif
 	for (j = inven_first ? 0 : INVEN_TOTAL - 1;
 	    inven_first ? (j < INVEN_TOTAL) : (j >= 0);
@@ -728,6 +733,9 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	bool special_req = FALSE;
 	bool newest = FALSE;
 	bool equip_first = FALSE;
+#ifdef ENABLE_SUBINVEN
+	bool subinven = FALSE, found_subinven = FALSE;
+#endif
 
 	bool safe_input = FALSE;
 
@@ -755,6 +763,9 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	newest = (item_newest != -1); /* experimental: always on if available */
 	if (mode & USE_LIMIT) limit = TRUE;
 	if (mode & EQUIP_FIRST) equip_first = TRUE;
+#ifdef ENABLE_SUBINVEN
+	if (mode & USE_SUBINVEN) subinven = extra = TRUE; /* Since we cannot list normal inven + subinven at the same time, we NEED 'extra' access via item name */
+#endif
 
 	/* Too long description - shorten? */
 	if (special_req && newest) spammy = TRUE;
@@ -792,6 +803,26 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	while ((i1 <= i2) && (!get_item_okay(i1))) i1++;
 	while ((i1 <= i2) && (!get_item_okay(i2))) i2--;
 
+#ifdef ENABLE_SUBINVEN
+	if (subinven) {
+		int j;
+
+		/* Also scan all subinventories for at least one valid item */
+		for (k = 0; k < INVEN_PACK; k++) {
+			if (inventory[k].tval != TV_SUBINVEN) continue;
+			/* Check all specialized container types. Chests are not eligible. */
+			if (inventory[k].sval != SV_SI_SATCHEL && inventory[k].sval != SV_SI_TRAPKIT_BAG) continue;
+
+			using_subinven = k;
+			for (j = 0; j < inventory[k].pval; j++) {
+				if (!get_item_okay(j)) continue;
+				found_subinven = TRUE;
+				break;
+			}
+			using_subinven = -1;
+		}
+	}
+#endif
 
 	/* Full equipment */
 	e1 = INVEN_WIELD;
@@ -807,7 +838,11 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	command_see = c_cfg.always_show_lists;
 	command_wrk = FALSE;
 
-	if ((i1 > i2) && (e1 > e2)) {
+	if ((i1 > i2) && (e1 > e2)
+#ifdef ENABLE_SUBINVEN
+	    && !found_subinven
+#endif
+	    ) {
 		/* Cancel command_see */
 		command_see = FALSE;
 
