@@ -18729,6 +18729,9 @@ spell failure rate. All Unlife spells use WIS.)
 
     Darkness        Causes a burst of darkness around you, possibly blinding
                     nearby creatures.
+                    If you are a trapper, you are probably aware that monster
+                    traps on non-lit grids have a significantly reduced chance
+                    to get disarmed by monsters (compare (4.7)).
                     Required skill level for first spell level: 20.
 
     Shadow Gate     Teleports you to the nearest opponent in line of sight.
