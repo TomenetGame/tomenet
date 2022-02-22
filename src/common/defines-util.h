@@ -7,8 +7,11 @@
 /*
  * Bit flags for the "c_get_item" function
  */
-#define USE_EQUIP	0x01	/* Allow equip items */
-#define USE_INVEN	0x02	/* Allow inven items */
+#define USE_EQUIP	0x0001	/* Allow equip items */
+#define USE_INVEN	0x0002	/* Allow inven items */
+#ifdef ENABLE_SUBINVEN
+ #define USE_SUBINVEN	0x1000	/* Allow subinventory items */
+#endif
 
 
 #define TERM_DARK	0	/* 'd' */	/* 0,0,0 */
