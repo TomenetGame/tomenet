@@ -9455,6 +9455,8 @@ void empty_subinven(int Ind, int item) {
 	/* Empty everything first, without live-updating the slots (FALSE) */
 	for (i = 0; i < s; i++) {
 		o_ptr = &p_ptr->subinventory[item][i];
+		if (!o_ptr->tval) continue; /* Paranoia. Could also just 'break' here instead. */
+
 		if (inven_carry_okay(Ind, o_ptr, 0x0)) item = inven_carry(Ind, o_ptr);
 		else {
 			if (!overflow_msg) msg_format(Ind, "\376\377oYour pack overflows!");
@@ -9466,6 +9468,7 @@ void empty_subinven(int Ind, int item) {
 #endif
 			drop_near_severe(Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 		}
+
 		invwipe(&p_ptr->subinventory[item][i]);
 	}
 
