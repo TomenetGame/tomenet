@@ -10115,7 +10115,6 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			return;
 		}
 
-		msg_format(Ind, "Thanks, %s! We have sent a package on its way.", p_ptr->male ? "sir" : "ma'am");
 		if (!p_ptr->mail_COD) {
 			p_ptr->au -= p_ptr->mail_fee;
 			p_ptr->redraw |= PR_GOLD;
@@ -10127,7 +10126,6 @@ void handle_request_return_str(int Ind, int id, char *str) {
  #ifdef USE_SOUND_2010
 		sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
  #endif
-
 		mail_forge[i] = *o_ptr; // we accept a full item stack actually
 		strcpy(mail_sender[i], p_ptr->name);
 		strcpy(mail_target[i], str);
@@ -10145,6 +10143,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		inven_item_describe(Ind, p_ptr->mail_item);
 		inven_item_optimize(Ind, p_ptr->mail_item);
 
+		msg_format(Ind, "Thanks, %s! We have sent a package on its way.", p_ptr->male ? "sir" : "ma'am");
 		object_desc(0, o_name, &mail_forge[i], TRUE, 3);
 		s_printf("MERCHANT_MAIL:(SENT) <%s> to <%s> sent: %s.\n", p_ptr->name, mail_target[i], o_name);
 		return; }
