@@ -858,7 +858,7 @@ void do_takeoff_impossible(int Ind) {
 void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	player_type *p_ptr = Players[Ind];
 
-	int slot, num = 1, takeoff_slot = 0;
+	int slot, slot_base, num = 1, takeoff_slot = 0;
 	bool item_fits_dual = FALSE, equip_fits_dual = TRUE, all_cursed = FALSE;
 	bool slot1 = (p_ptr->inventory[INVEN_WIELD].k_idx != 0);
 	bool slot2 = (p_ptr->inventory[INVEN_ARM].k_idx != 0);
@@ -881,6 +881,12 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	   Notes: There is no inscription to prevent this (eg !w or !t).
 	          'item' is actually ignored for this function. */
 	if ((alt_slots & 0x8) != 0) {
+		/* Prevent chaos for now >_< */
+		if (p_ptr->inventory[INVEN_WIELD].tval == TV_SPECIAL || p_ptr->inventory[INVEN_ARM].tval == TV_SPECIAL) {
+			msg_print(Ind, "Cannot quick-swap special objects. Please use wear/wield and take-off commands.");
+			return;
+		}
+
 		/* paranoia? could probably be caused by bad timing, disarming, etc */
 		if (!(slot1 && slot2)) {
 			msg_print(Ind, "Swapping weapons failed, as you no longer wield two weapons.");
@@ -1029,7 +1035,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	}
 
 	/* Check the slot */
-	slot = wield_slot(Ind, o_ptr);
+	slot_base = slot = wield_slot(Ind, o_ptr);
 #ifdef EQUIPPABLE_DIGGERS
 	if (o_ptr->tval == TV_DIGGING && (alt_slots & 0x2)) slot = INVEN_WIELD;
 #endif
@@ -1222,7 +1228,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	}
 
 	/* Shields can't be wielded with a two-handed weapon */
-	if (o_ptr->tval == TV_SHIELD && (x_ptr = &p_ptr->inventory[INVEN_WIELD])) {
+	if (slot_base == INVEN_ARM && (x_ptr = &p_ptr->inventory[INVEN_WIELD])) {
 		/* Extract the flags */
 		object_flags(x_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
@@ -1332,6 +1338,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	/* display some warnings if the item will severely conflict with Martial Arts skill */
 	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS)) {
 		if ((is_melee_weapon(o_ptr->tval) ||
+		    (o_ptr->tval == TV_SPECIAL && o_ptr->xtra4 == INVEN_WIELD) ||
 		    o_ptr->tval == TV_MSTAFF ||
 #ifndef ENABLE_MA_BOOMERANG
 		    o_ptr->tval == TV_BOOMERANG ||
@@ -1345,7 +1352,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 		    && !p_ptr->inventory[INVEN_WIELD].k_idx
 		    && (!p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) /* for dual-wielders */
 			ma_warning_weapon = TRUE;
-		else if (o_ptr->tval == TV_SHIELD &&
+		else if (slot_base == INVEN_ARM &&
 		    (!p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) /* for dual-wielders */
 			ma_warning_shield = TRUE;
 	}
@@ -1360,7 +1367,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 
 	/* for Hobbits wearing boots -> give message */
 	if (p_ptr->prace == RACE_HOBBIT &&
-	    o_ptr->tval == TV_BOOTS && !p_ptr->inventory[slot].k_idx) {
+	    slot_base == INVEN_FEET && !p_ptr->inventory[slot].k_idx) {
 		hobbit_warning = TRUE;
 	}
 
@@ -1440,7 +1447,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 			break;
 		case INVEN_ARM:
 			act = "You are wielding";
-			if (p_ptr->melee_brand && o_ptr->tval != TV_SHIELD) set_melee_brand(Ind, 0, p_ptr->melee_brand_t, 0); /* dual-wield */
+			if (p_ptr->melee_brand && slot_base != INVEN_ARM) set_melee_brand(Ind, 0, p_ptr->melee_brand_t, 0); /* dual-wield */
 			break;
 		case INVEN_BOW: act = "You are shooting with"; break;
 		case INVEN_LITE: act = "Your light source is"; break;
@@ -1532,7 +1539,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	}
 
 	/* Give additional warning messages if item prevents a certain ability */
-	if (o_ptr->tval == TV_SHIELD) {
+	if (slot_base == INVEN_ARM) {
 		if (get_skill(p_ptr, SKILL_DODGE))
 			msg_print(Ind, "\377yYou cannot dodge attacks while wielding a shield.");
 		if (get_skill(p_ptr, SKILL_MARTIAL_ARTS))

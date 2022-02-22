@@ -553,7 +553,7 @@ void do_cmd_eat_food(int Ind, int item) {
 	} else if (o_ptr->tval == TV_GAME) msg_print(Ind, "Brrrrr.."); //snowball
 	else if (o_ptr->tval == TV_SPECIAL) { /* Edible custom object? */
 		msg_print(Ind, "*chomp*...");
-		//todo: exec lua!
+		exec_lua(0, format("custom_object(%d,%d)", Ind, item));
 	}
 
 	/* Combine / Reorder the pack (later) */
@@ -1222,9 +1222,7 @@ void do_cmd_quaff_potion(int Ind, int item) {
 	process_hooks(HOOK_QUAFF, "d", Ind);
 
 	if (o_ptr->tval != TV_SPECIAL) ident = quaff_potion(Ind, o_ptr->tval, o_ptr->sval, o_ptr->pval);
-	else {
-		//todo: exec lua!
-	}
+	else exec_lua(0, format("custom_object(%d,%d)", Ind, item));
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -3220,9 +3218,8 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 
 	if (o_ptr->tval != TV_SPECIAL)
 		ident = read_scroll(Ind, o_ptr->tval, o_ptr->sval, o_ptr, item, &used_up, &keep);
-	else {
-		//todo: exec lua!
-	}
+	else
+		exec_lua(0, format("custom_object(%d,%d)", Ind, item));
 
 	break_cloaking(Ind, 4);
 	break_shadow_running(Ind);

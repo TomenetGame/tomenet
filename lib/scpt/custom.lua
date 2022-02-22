@@ -160,3 +160,8 @@ end
 function beta(Ind, code)
 	--msg_print(Ind, "beta="..code)
 end
+
+--For usable custom objects:
+function custom_object(Ind, item)
+
+end
