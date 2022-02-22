@@ -74,6 +74,19 @@ static bool get_item_okay(int i) {
 
 		/* Assume okay */
 		return (TRUE);
+	} else if (i >= 100) {
+		int s = i / 100 - 1;
+
+		i = i % 100;
+
+		/* Illegal items */
+		if ((i < 0) || (i >= inventory[s].pval)) return (FALSE);
+
+		/* Verify the item */
+		if (!item_tester_okay(&subinventory[s][i])) return (FALSE);
+
+		/* Assume okay */
+		return (TRUE);
 	}
 #endif
 	/* Illegal items */
@@ -598,7 +611,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 		}
 	}
 	return FALSE;
-    } else if (mode & subinven) {
+    } else if (subinven) {
 	/* Scan all subinvens for item name match */
 	int l;
 
@@ -887,13 +900,11 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			/* Check all specialized container types. Chests are not eligible. */
 			if (inventory[k].sval != SV_SI_SATCHEL && inventory[k].sval != SV_SI_TRAPKIT_BAG) continue;
 
-			using_subinven = k;
 			for (j = 0; j < inventory[k].pval; j++) {
-				if (!get_item_okay(j)) continue;
+				if (!get_item_okay((k + 1) * 100 + j)) continue;
 				found_subinven = TRUE;
 				break;
 			}
-			using_subinven = -1;
 		}
 	}
 #endif
