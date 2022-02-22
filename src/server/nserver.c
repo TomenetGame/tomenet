@@ -9788,10 +9788,47 @@ static int Receive_activate_skill(int ind) {
 	    /* some abilities don't require energy: */
 	    mkey == MKEY_DODGE || mkey == MKEY_PARRYBLOCK ||
 	    mkey == MKEY_SHOOT_TILL_KILL || mkey == MKEY_DUAL_MODE)) {
-		/* Sanity check - mikaelh */
+		/* Ability-dependant sanity checking */
+		switch (mkey) {
+		case MKEY_DUAL_MODE:
+		//case MKEY_UNUSED:
+		case MKEY_MIMICRY:
+		case MKEY_SHOOT_TILL_KILL:
+		case MKEY_MELEE:
+		case MKEY_RANGED:
+		case MKEY_DODGE:
+		case MKEY_FLETCHERY:
+		case MKEY_RCRAFT:
+		case MKEY_STANCE:
+		case MKEY_PARRYBLOCK:
+		case MKEY_AURA_FEAR:
+		case MKEY_AURA_SHIVER:
+		case MKEY_AURA_DEATH:
+		case MKEY_BREATH:
+		case MKEY_PICK_BREATH:
+			break;
+		case MKEY_TRAP:
+		case MKEY_SCHOOL:
+#ifdef ENABLE_SUBINVEN /* For trapkit setting */
+			if (book >= 100) {
+				if (book / 100 - 1 >= INVEN_TOTAL) return 1;
+				//if ((book % 100) >= get_subinven_size(p_ptr->inventory[book / 100 - 1].sval)) return 1;
+				if ((book % 100) >= p_ptr->inventory[book / 100 - 1].bpval) return 1;
+			} else
+#endif
+			if (book >= INVEN_TOTAL) return 1;
+			break;
+		}
+		/* Sanity checks - mikaelh */
+#ifdef ENABLE_SUBINVEN /* For trapkit setting */
+		if (item >= 100) {
+			if (item / 100 - 1 >= INVEN_TOTAL) return 1;
+			//if ((item % 100) >= get_subinven_size(p_ptr->inventory[item / 100 - 1].sval)) return 1;
+			if ((item % 100) >= p_ptr->inventory[item / 100 - 1].bpval) return 1;
+		} else
+#endif
 		if (item >= INVEN_TOTAL) return 1;
 		if (bad_dir3(player, &dir)) return 1;
-
 
 		p_ptr->current_char = (old == player) ? TRUE : FALSE;
 

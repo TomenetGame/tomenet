@@ -3251,6 +3251,10 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 	}
 
 	/* Get the objects */
+#ifdef ENABLE_SUBINVEN
+	if (item_kit >= 100) o_ptr = &p_ptr->subinventory[item_kit / 100 - 1][item_kit % 100];
+	else
+#endif
 	o_ptr = &p_ptr->inventory[item_kit];
 	j_ptr = &p_ptr->inventory[item_load];
 
