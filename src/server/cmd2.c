@@ -1039,7 +1039,7 @@ void do_cmd_go_down(int Ind) {
 			recall_player(Ind, "");
 			return;
 		}
-		msg_print(Ind, "The gate flashes silvery for a moment but it seems broken.");
+		msg_print(Ind, "The gate twinkles silvery for a moment but it seems broken.");
 		return;
 	}
 
