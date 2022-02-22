@@ -9492,4 +9492,17 @@ void erase_subinven(int Ind, int item) {
 
 	verify_subinven_size(Ind, item, FALSE);
 }
+ #ifdef SUBINVEN_LIMIT_GROUP
+int get_subinven_group(sval) {
+	switch (sval) {
+	case SV_SI_SATCHEL:
+	case SV_SI_TRAPKIT_BAG:
+		return sval; //identity
+	default:
+		//combine multiple choices to a single group, using the first element as its identifier
+		if (sval >= SV_SI_GROUP_CHEST_MIN && sval <= SV_SI_GROUP_CHEST_MAX) return SV_SI_GROUP_CHEST_MIN;
+	}
+	return -1;
+}
+ #endif
 #endif

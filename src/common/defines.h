@@ -4442,10 +4442,6 @@
    so not for the alchemy satchel, but indeed for the different types of chests.) */
 #define SV_SI_GROUP_CHEST_MIN		1	/* Define chest markers even outside of SUBINVEN_LIMIT_GROUP, as they are useful for store_will_buy() checks on TV_SUBINVEN. */
 #define SV_SI_GROUP_CHEST_MAX		7
-#ifdef SUBINVEN_LIMIT_GROUP
- #define get_subinven_group(sval) \
-    ((sval) == SV_SI_SATCHEL ? SV_SI_SATCHEL : ((sval) >= SV_SI_GROUP_CHEST_MIN && (sval) <= SV_SI_GROUP_CHEST_MAX ? SV_SI_GROUP_CHEST_MIN : -1))
-#endif
 
 /* svals for TV_SPECIAL */
 #define SV_SEAL				0	/* for invalid items */
