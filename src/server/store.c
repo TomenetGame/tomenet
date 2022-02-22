@@ -3731,6 +3731,28 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 				can_use(Ind, &sell_obj);//##UNH
 				sell_obj.iron_trade = p_ptr->iron_trade;
 				sell_obj.iron_turn = -1;
+
+#ifdef ENABLE_SUBINVEN
+				/* Describe the final result */
+				o_ptr = &sell_obj;
+
+				/* Try to put into a specialized bag automatically */
+				switch (o_ptr->tval) {
+				case TV_CHEMICAL: /* DEMOLITIONIST stuff */
+					(void)auto_stow(Ind, SV_SI_SATCHEL, o_ptr, -1, FALSE);
+					break;
+				case TV_TRAPKIT:
+					(void)auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, -1, FALSE);
+					break;
+				}
+
+				/* If we couldn't stow everything, pick up the rest normally */
+				if (o_ptr->number) {
+					item_new = inven_carry(Ind, &sell_obj);
+					object_desc(Ind, o_name, &p_ptr->inventory[item_new], TRUE, 3);
+					msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item_new));
+				}
+#else
 				item_new = inven_carry(Ind, &sell_obj);
 
 				/* Describe the final result */
@@ -3738,6 +3760,7 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 
 				/* Message */
 				msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item_new));
+#endif
 
 				/* Handle stuff */
 				handle_stuff(Ind);
@@ -3779,7 +3802,7 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 		}
 	}
 
-	/* Home is much easier */
+	/* Home is much easier -- DEPRECATED, we use home_purchase() instead. */
 	else {
 		/* Carry the item */
 		can_use(Ind, &sell_obj);//##UNH correct?
@@ -6197,7 +6220,7 @@ void home_purchase(int Ind, int item, int amt) {
 		/* If level diff. is too large, target player is too low,
 		   and items aren't loot of a dead player, this might be cheeze! */
  #if 0
-		if ((lev > p_ptr->lev + 7) && (p_ptr->lev < 40) && (name)) {
+6		if ((lev > p_ptr->lev + 7) && (p_ptr->lev < 40) && (name)) {
 		s_printf("%s -CHEEZY- Item transaction from %s(%d) to %s(%d) at (%d,%d,%d):\n  %s\n",
 				showtime(), name ? name : "(Dead player)", lev,
 				p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
@@ -6239,8 +6262,29 @@ void home_purchase(int Ind, int item, int amt) {
 	}
 #endif  // CHEEZELOG_LEVEL
 
-	/* Carry the item */
+
 	can_use(Ind, &sell_obj);//##UNH correct?
+#ifdef ENABLE_SUBINVEN
+	o_ptr = &sell_obj;
+
+	/* Try to put into a specialized bag automatically */
+	switch (o_ptr->tval) {
+	case TV_CHEMICAL: /* DEMOLITIONIST stuff */
+		(void)auto_stow(Ind, SV_SI_SATCHEL, o_ptr, -1, FALSE);
+		break;
+	case TV_TRAPKIT:
+		(void)auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, -1, FALSE);
+		break;
+	}
+
+	/* If we couldn't stow everything, pick up the rest normally */
+	if (o_ptr->number) {
+		item_new = inven_carry(Ind, &sell_obj);
+		object_desc(Ind, o_name, &p_ptr->inventory[item_new], TRUE, 3);
+		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item_new));
+	}
+#else
+	/* Carry the item */
 	item_new = inven_carry(Ind, &sell_obj);
 
 	/* Describe just the result */
@@ -6248,6 +6292,9 @@ void home_purchase(int Ind, int item, int amt) {
 
 	/* Message */
 	msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item_new));
+#endif
+
+
 #ifdef USE_SOUND_2010
 	sound_item(Ind, sell_obj.tval, sell_obj.sval, "pickup_");
 #endif

@@ -636,6 +636,9 @@ extern bool remember_sense(int Ind, int slot, object_type *o_ptr);
 extern void py_bash(int Ind, int y, int x);
 extern void py_bash_mon(int Ind, int y, int x);
 extern void py_bash_py(int Ind, int y, int x);
+#ifdef ENABLE_SUBINVEN
+extern bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one);
+#endif
 
 /* cmd2.c */
 extern cptr get_house_owner(struct c_special *cs_ptr);
