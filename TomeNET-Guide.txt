@@ -14891,6 +14891,8 @@ stated.
                                 -shoot with ranged weapons,
                                 -use a void jumpgate,
                                 -set a monster trap.
+                                That's it. So calmness does not affect, for
+                                example, spellcasting.
                                 Calmness does not depend on the enemy's level.
 
     .Trapping                   Improves your ability to set traps:
