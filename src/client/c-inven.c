@@ -673,7 +673,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 			}
 		}
 	}
-	return FALSE;
+	/* Fall through and scan inventory normally, after we didn't find anything in subinvens. */
     }
 #endif
 	for (j = inven_first ? 0 : INVEN_TOTAL - 1;
