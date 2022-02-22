@@ -764,7 +764,7 @@ void cmd_inven(void) {
 
 	while (TRUE) {
 #ifdef ENABLE_SUBINVEN
-topline_icky = TRUE; //needed AGAIN. A failed 'stow' command causes topline to get partially overwritten by the server's error response msg. -_-
+topline_icky = TRUE; //needed AGAIN. A failed 'stow' command causes topline to get partially overwritten by the server's error response msg. -_- so probably c_get_item unsets ickiness.
 #endif
 		/* Redraw these in case some command from below has erased the topline */
 		show_inven_header();
