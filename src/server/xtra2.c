@@ -14555,6 +14555,7 @@ bool imprison(int Ind, u16b time, char *reason) {
 		nzcave = getcave(&houses[i].wpos);
 		if (rand_int(2)) for (j = randint(2); j; j--) {
 			int x, y;
+
 			//abuse 'id'
 			id = 10;
 			while (--id) {
@@ -14584,6 +14585,8 @@ bool imprison(int Ind, u16b time, char *reason) {
 	wpcopy(&old_wpos, &p_ptr->wpos);
 	wpcopy(&p_ptr->wpos, &houses[i].wpos);
 	new_players_on_depth(&old_wpos, -1, TRUE);
+	/* Since it was a 'manual' recall - need to add worldmap discovery info manually */
+	p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) / 8] |= (1U << ((p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) % 8));
 
 	p_ptr->py = houses[i].y;
 	p_ptr->px = houses[i].x;
