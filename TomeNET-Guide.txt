@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 21. February 2022 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 24. February 2022 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.7.4b - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -10571,6 +10571,9 @@ Nexus           Nexus attacks can have extremely nasty side-effects if you
                  This change is permanent and there is no remedy against it
                  except for getting hit by more nexus deliberately and hoping
                  for a 'good' scramble result eventually.
+                 If you have maximized your stats with stat potions, the stat
+                 swapping will not affect you anymore, since it does not swap
+                 the race/class boni, but just your base stats.
                 -Destroy items in your inventory.
                  ("Your backpack starts to scramble")
                 Resistance will cut damage to 6/7..6/12.

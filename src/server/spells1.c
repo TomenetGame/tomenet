@@ -4127,7 +4127,6 @@ static void apply_nexus(int Ind, monster_type *m_ptr, int Ind_attacker) {
 			break;
 		}
 		msg_print(Ind, "\376\377oYour body starts to scramble...");
-		s_printf("NEXUS_SCRAMBLE: %s\n", p_ptr->name);
 
 		/* Pick a pair of stats */
 		ii = rand_int(6);
@@ -4141,6 +4140,7 @@ static void apply_nexus(int Ind, monster_type *m_ptr, int Ind_attacker) {
 		p_ptr->stat_max[jj] = max1;
 		p_ptr->stat_cur[jj] = cur1;
 		p_ptr->update |= (PU_BONUS | PU_MANA | PU_HP | PU_SANITY);
+		s_printf("NEXUS_SCRAMBLE: %s (%d<->%d)\n", p_ptr->name, ii, jj);
 		break;
 	case 8:
 		if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) break;
@@ -4195,7 +4195,6 @@ static void apply_morph(int Ind, int power, char * killer, int Ind_attacker) {
 		}
 
 		msg_print(Ind, "\376\377oYour body starts to scramble...");
-		s_printf("MORPH_SCRAMBLE: %s\n", p_ptr->name);
 
 		/* Pick a pair of stats */
 		ii = rand_int(6);
@@ -4212,6 +4211,7 @@ static void apply_morph(int Ind, int power, char * killer, int Ind_attacker) {
 		p_ptr->stat_cur[jj] = cur1;
 
 		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SANITY);
+		s_printf("MORPH_SCRAMBLE: %s (%d<->%d)\n", p_ptr->name, ii, jj);
 
 		break;
 	case 2:
