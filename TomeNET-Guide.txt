@@ -14983,6 +14983,12 @@ stated.
                                 For more details about swimming see (4.15).
 
     .Climbing                   You need this at 01.000 to be able to climb.
+                                Climbing allows you to pass mountain terrain
+                                without the need for a climbing set, special
+                                boots or magical means.
+                                Dwarves have little use for this skill as they
+                                learn climbing intrinsically when they reach
+                                level 30.
 
     .Digging                    How well you are able to dig. Also affects
                                 your chance to find items (from digging only),
@@ -15519,8 +15525,8 @@ create a character!):
     'Dodging' and 'Digging'.
 
 - Dwarf
-    Dwarves can never be blinded and at level 30 they learn to travel across
-    even the highest mountain regions.
+    Dwarves can never be blinded and at level 30 they gain intrinsic 'Climbing'
+    allowing them to travel mountain regions easily.
     Dwarves are the headstrong miners and fighters of legend. Since dungeons
     are the natural home of a dwarf, they are excellent choices for a warrior
     or priest. Dwarves tend to be stronger and tougher but slower and less
