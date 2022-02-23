@@ -1715,6 +1715,7 @@ void cmd_character(void) {
 	char ch = 0;
 	int done = 0;
 	char tmp[MAX_CHARS];
+	static int sel = 0;
 
 	/* Save screen */
 	Term_save();
@@ -1723,45 +1724,89 @@ void cmd_character(void) {
 		/* Display player info */
 		display_player(csheet_page);
 
+		switch (sel) {
+		case 0: c_put_str(TERM_ORANGE, ">", 3, 0); break;
+		case 1: c_put_str(TERM_ORANGE, ">", 4, 0); break;
+		case 2: c_put_str(TERM_ORANGE, ">", 5, 0); break;
+		case 3: c_put_str(TERM_ORANGE, ">", 6, 0); break;
+		case 4: c_put_str(TERM_ORANGE, ">", 7, 0); break;
+		case 5: c_put_str(TERM_ORANGE, ">", 15, 0); break;
+		case 6: c_put_str(TERM_ORANGE, ">", 16, 0); break;
+		case 7: c_put_str(TERM_ORANGE, ">", 17, 0); break;
+		case 8: c_put_str(TERM_ORANGE, ">", 18, 0); break;
+		case 9: c_put_str(TERM_ORANGE, ">", 15, 27); break;
+		case 10: c_put_str(TERM_ORANGE, ">", 16, 27); break;
+		case 11: c_put_str(TERM_ORANGE, ">", 17, 27); break;
+		case 12: c_put_str(TERM_ORANGE, ">", 18, 27); break;
+		case 13: c_put_str(TERM_ORANGE, ">", 18, 54); break;
+		}
+
 		/* Window Display */
 		p_ptr->window |= PW_PLAYER;
 		window_stuff();
-		
+
 		/* Display message */
-		prt("[ESC to quit, f to make a chardump, h to toggle history / abilities]", 22, 1);
+		prt("[ESC: quit, f: chardump, h: history/abilities, 2/8/RETURN: navigate/help]", 22, 1);
 
 		/* Wait for key */
 		ch = inkey();
 
-		/* specialty: allow chatting from within here -- to tell others about your lineage ;) - C. Blue */
-		if (ch == ':') {
+		switch (ch) {
+		case '2':
+			sel++;
+			if (sel == 2 && !p_ptr->body_monster) sel++;
+			if (sel == 3 && !p_ptr->ptrait) sel++;
+			if (sel == 14) sel = 0;
+			break;
+		case '8':
+			sel--;
+			if (sel == 3 && !p_ptr->ptrait) sel--;
+			if (sel == 2 && !p_ptr->body_monster) sel--;
+			if (sel == -1) sel = 13;
+			break;
+		case '\n': case '\r':
+			switch (sel) {
+			case 0: cmd_the_guide(3, 0, race_info[race].title); break;
+			case 1: cmd_the_guide(3, 0, class_info[class].title); break;
+			case 2: cmd_the_guide(3, 0, "mimicry details"); break;
+			case 3: cmd_the_guide(3, 0, trait_info[trait].title); break;
+			case 4: cmd_the_guide(3, 0, "character modes"); break;
+			case 5: cmd_the_guide(3, 0, "FIGHTING$$"); break;
+			case 6: cmd_the_guide(3, 0, "BOWS/THROW$$"); break;
+			case 7: cmd_the_guide(3, 0, "SAVING THROW$$"); break;
+			case 8: cmd_the_guide(3, 0, "STEALTH$$"); break;
+			case 9: cmd_the_guide(3, 0, "PERCEPTION$$"); break;
+			case 10: cmd_the_guide(3, 0, "SEARCHING$$"); break;
+			case 11: cmd_the_guide(3, 0, "DISARMING$$"); break;
+			case 12: cmd_the_guide(3, 0, "MAGIC DEVICE$$"); break;
+			case 13: cmd_the_guide(3, 0, "INFRA-VISION$$"); break;
+			}
+			break;
+		case ':':
+			/* specialty: allow chatting from within here -- to tell others about your lineage ;) - C. Blue */
 			cmd_message();
-			continue;
-		}
-
-		/* Check for "display history" */
-		if (ch == 'h' || ch == 'H') {
+			break;
+		case 'h': case 'H':
+			/* Check for "display history" */
 			/* Toggle */
 			csheet_page++; if (csheet_page == 3) csheet_page = 0; //loop
-		}
-
-		/* Dump */
-		if ((ch == 'f') || (ch == 'F')) {
+			break;
+		case 'f': case 'F':
+			/* Dump */
 			strnfmt(tmp, MAX_CHARS - 1, "%s.txt", cname);
 			if (get_string("Filename(you can post it to http://angband.oook.cz/): ", tmp, MAX_CHARS - 1)) {
 				if (tmp[0] && (tmp[0] != ' '))
 					file_character(tmp, FALSE);
 			}
-		}
-
-		/* Take a screenshot */
-		if (ch == KTRL('T'))
+			break;
+		case KTRL('T'):
+			/* Take a screenshot */
 			xhtml_screenshot("screenshot????");
-
-		/* Check for quit */
-		if (ch == 'q' || ch == 'Q' || ch == ESCAPE || ch == 'C') {
+			break;
+		case 'q': case 'Q': case ESCAPE: case 'C':
 			/* Quit */
 			done = 1;
+			break;
 		}
 	}
 

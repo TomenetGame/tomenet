@@ -356,16 +356,24 @@ char *my_strcasestr(const char *big, const char *little) {
     2 - same as (1) and it must not start on a lower-case letter (to ensure it's not just inside some random text).
     3 - same as (2) and also search only for all-caps (for item flags)
     4 - same as (3) and it must be at the beginning of the line without tolerating spaces, to rule out that we're inside some paragraph already. */
-char *my_strcasestr_skipcol(const char *big, const char *little, byte strict) {
+char *my_strcasestr_skipcol(const char *big, const char *littlex, byte strict) {
 	const char *ret = NULL;
 	int cnt = 0, cnt2 = 0, cnt_offset;
-	int L = strlen(little), l;
+	int L, l;
+	bool end_of_line;
+	char little[MSG_LEN];
 
 	/* para stuff that is necessary */
 	if (big == NULL) return NULL; //cannot find anything in a place that doesn't exist
-	if (little == NULL) return NULL; //something that doesn't exist, cannot be found.. (was 'return big')
-	if (*little == 0) return (char*)big;
+	if (littlex == NULL) return NULL; //something that doesn't exist, cannot be found.. (was 'return big')
+	if (*littlex == 0) return (char*)big;
 	if (*big == 0) return NULL; //at least this one is required, was glitching in-game guide search! oops..
+
+	strcpy(little, littlex);
+	/* Check for '$$' end-of-line marker */
+	end_of_line = strlen(little) >= 4 && little[strlen(little) - 1] == '$' && little[strlen(little) - 2] == '$';
+	if (end_of_line) little[strlen(little) - 2] = 0;
+	L = strlen(little);
 
 	if (strict) { /* switch to strict mode */
 		bool just_spaces = (strict == 4 ? FALSE : TRUE);
@@ -403,7 +411,16 @@ char *my_strcasestr_skipcol(const char *big, const char *little, byte strict) {
 				cnt2++;
 			}
 
-			if (L == l) return (char*)ret;
+			if (L == l) {
+#if 1 /* Enable '$' force-end-of-line marker */
+				if (end_of_line && big[cnt + cnt2 + cnt_offset]) {
+					cnt++;
+					if (!big[cnt]) return NULL;
+					continue;
+				}
+#endif
+				return (char*)ret;
+			}
 			if (!just_spaces) return NULL; /* failure: not at the beginning of the line (tolerating colour codes) */
 			cnt++;
 		} while (big[cnt] != '\0');
