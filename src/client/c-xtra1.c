@@ -3303,7 +3303,7 @@ void display_player(int hist) {
 			if (csheet_boni[i].cb[6] & CB7_IFOOD) { c_put_str(TERM_L_UMBER, "*", 13, 25 + i); header_color[1][12] = TERM_L_UMBER; }
 			if (csheet_boni[i].cb[6] & CB7_RVAMP) {
 				if ((i == 0) || (i == 1) || (i == 2) || (i == 12)
-				    || ((i == 14) && ((p_ptr->body_monster == 365) || (p_ptr->body_monster == 391))) //Hack: use * for 100% weapon/ammo or v-bat/mist forms
+				    || ((i == 14) && ((p_ptr->body_monster == RI_VAMPIRIC_MIST) || (p_ptr->body_monster == RI_VAMPIRE_BAT))) //Hack: use * for 100% weapon/ammo or v-bat/mist forms
 				    || (i == 14 && race == RACE_VAMPIRE && get_skill(SKILL_NECROMANCY) == 50 && get_skill(SKILL_TRAUMATURGY) == 50)) { //Nasty hack: Assume that having full trauma+necro gives 100% vamp actually
 					c_put_str(TERM_WHITE, "*", 14, 25 + i); header_color[1][13] = TERM_WHITE;
 				} else { c_put_str(TERM_WHITE, "+", 14, 25 + i); header_color[1][13] = TERM_WHITE; }
