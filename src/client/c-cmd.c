@@ -1766,10 +1766,10 @@ void cmd_character(void) {
 			break;
 		case '\n': case '\r':
 			switch (sel) {
-			case 0: cmd_the_guide(3, 0, race_info[race].title); break;
-			case 1: cmd_the_guide(3, 0, class_info[class].title); break;
+			case 0: cmd_the_guide(3, 0, (char*)race_info[race].title); break;
+			case 1: cmd_the_guide(3, 0, (char*)class_info[class].title); break;
 			case 2: cmd_the_guide(3, 0, "mimicry details"); break;
-			case 3: cmd_the_guide(3, 0, trait_info[trait].title); break;
+			case 3: cmd_the_guide(3, 0, (char*)trait_info[trait].title); break;
 			case 4: cmd_the_guide(3, 0, "character modes"); break;
 			case 5: cmd_the_guide(3, 0, "FIGHTING$$"); break;
 			case 6: cmd_the_guide(3, 0, "BOWS/THROW$$"); break;
