@@ -190,9 +190,9 @@ static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start) 
 	Term_get_size(&wid, &hgt);
 
 	if (c_cfg.rogue_like_commands)
-		c_prt(TERM_WHITE, " === TomeNET Skills Screen ===  [move:j,k,g,G,#  fold:<CR>,c,o  advance:l]", 0, 0);
+		c_prt(TERM_WHITE, " === TomeNET Skills Screen ===  [move:j,k,g,G,# fold:<CR>,c,o advance:l help:?]", 0, 0);
 	else
-		c_prt(TERM_WHITE, " === TomeNET Skills Screen ===  [move:2,8,g,G,#  fold:<CR>,c,o  advance:6]", 0, 0);
+		c_prt(TERM_WHITE, " === TomeNET Skills Screen ===  [move:2,8,g,G,# fold:<CR>,c,o advance:6 help:?]", 0, 0);
 
 	//c_prt((p_ptr->skill_points) ? TERM_L_BLUE : TERM_L_RED,
 	Term_putstr(0, 1, -1, (p_ptr->skill_points) ? TERM_L_BLUE : TERM_L_RED,
@@ -309,6 +309,8 @@ void do_cmd_skill() {
 
 		/* Leave the skill screen */
 		if (c == ESCAPE || c == KTRL('Q')) break;
+
+		else if (c == '?') cmd_the_guide(3, 0, (char*)s_info[table[sel][0]].name);
 
 		/* Take a screenshot */
 		else if (c == KTRL('T')) xhtml_screenshot("screenshot????");
