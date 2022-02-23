@@ -1730,15 +1730,25 @@ void cmd_character(void) {
 		case 2: c_put_str(TERM_ORANGE, ">", 5, 0); break;
 		case 3: c_put_str(TERM_ORANGE, ">", 6, 0); break;
 		case 4: c_put_str(TERM_ORANGE, ">", 7, 0); break;
-		case 5: c_put_str(TERM_ORANGE, ">", 15, 0); break;
-		case 6: c_put_str(TERM_ORANGE, ">", 16, 0); break;
-		case 7: c_put_str(TERM_ORANGE, ">", 17, 0); break;
-		case 8: c_put_str(TERM_ORANGE, ">", 18, 0); break;
-		case 9: c_put_str(TERM_ORANGE, ">", 15, 27); break;
-		case 10: c_put_str(TERM_ORANGE, ">", 16, 27); break;
-		case 11: c_put_str(TERM_ORANGE, ">", 17, 27); break;
-		case 12: c_put_str(TERM_ORANGE, ">", 18, 27); break;
-		case 13: c_put_str(TERM_ORANGE, ">", 18, 54); break;
+
+		case 5: c_put_str(TERM_ORANGE, ">", 1, 60); break;
+		case 6: c_put_str(TERM_ORANGE, ">", 2, 60); break;
+		case 7: c_put_str(TERM_ORANGE, ">", 3, 60); break;
+		case 8: c_put_str(TERM_ORANGE, ">", 4, 60); break;
+		case 9: c_put_str(TERM_ORANGE, ">", 5, 60); break;
+		case 10: c_put_str(TERM_ORANGE, ">", 6, 60); break;
+
+		case 11: c_put_str(TERM_ORANGE, ">", 15, 0); break;
+		case 12: c_put_str(TERM_ORANGE, ">", 16, 0); break;
+		case 13: c_put_str(TERM_ORANGE, ">", 17, 0); break;
+		case 14: c_put_str(TERM_ORANGE, ">", 18, 0); break;
+		case 15: c_put_str(TERM_ORANGE, ">", 15, 27); break;
+		case 16: c_put_str(TERM_ORANGE, ">", 16, 27); break;
+		case 17: c_put_str(TERM_ORANGE, ">", 17, 27); break;
+		case 18: c_put_str(TERM_ORANGE, ">", 18, 27); break;
+		case 19: c_put_str(TERM_ORANGE, ">", 15, 54); break;
+		case 20: c_put_str(TERM_ORANGE, ">", 16, 54); break;
+		case 21: c_put_str(TERM_ORANGE, ">", 18, 54); break;
 		}
 
 		/* Window Display */
@@ -1756,13 +1766,13 @@ void cmd_character(void) {
 			sel++;
 			if (sel == 2 && !p_ptr->body_monster) sel++;
 			if (sel == 3 && !p_ptr->ptrait) sel++;
-			if (sel == 14) sel = 0;
+			if (sel > 21) sel = 0;
 			break;
 		case '8':
 			sel--;
 			if (sel == 3 && !p_ptr->ptrait) sel--;
 			if (sel == 2 && !p_ptr->body_monster) sel--;
-			if (sel == -1) sel = 13;
+			if (sel < 0) sel = 21;
 			break;
 		case '\n': case '\r':
 			switch (sel) {
@@ -1771,15 +1781,25 @@ void cmd_character(void) {
 			case 2: cmd_the_guide(3, 0, "mimicry details"); break;
 			case 3: cmd_the_guide(3, 0, (char*)trait_info[trait].title); break;
 			case 4: cmd_the_guide(3, 0, "character modes"); break;
-			case 5: cmd_the_guide(3, 0, "FIGHTING$$"); break;
-			case 6: cmd_the_guide(3, 0, "BOWS/THROW$$"); break;
-			case 7: cmd_the_guide(3, 0, "SAVING THROW$$"); break;
-			case 8: cmd_the_guide(3, 0, "STEALTH$$"); break;
-			case 9: cmd_the_guide(3, 0, "PERCEPTION$$"); break;
-			case 10: cmd_the_guide(3, 0, "SEARCHING$$"); break;
-			case 11: cmd_the_guide(3, 0, "DISARMING$$"); break;
-			case 12: cmd_the_guide(3, 0, "MAGIC DEVICE$$"); break;
-			case 13: cmd_the_guide(3, 0, "INFRA-VISION$$"); break;
+
+			case 5: cmd_the_guide(3, 0, "Strength (STR)"); break;
+			case 6: cmd_the_guide(3, 0, "Dexterity (DEX)"); break;
+			case 7: cmd_the_guide(3, 0, "Intelligence (INT)"); break;
+			case 8: cmd_the_guide(3, 0, "Wisdom (WIS)"); break;
+			case 9: cmd_the_guide(3, 0, "Constitution (CON)"); break;
+			case 10: cmd_the_guide(3, 0, "Charisma (CHR)"); break;
+
+			case 11: cmd_the_guide(3, 0, "FIGHTING$$"); break;
+			case 12: cmd_the_guide(3, 0, "BOWS/THROW$$"); break;
+			case 13: cmd_the_guide(3, 0, "SAVING THROW$$"); break;
+			case 14: cmd_the_guide(3, 0, "STEALTH$$"); break;
+			case 15: cmd_the_guide(3, 0, "PERCEPTION$$"); break;
+			case 16: cmd_the_guide(3, 0, "SEARCHING$$"); break;
+			case 17: cmd_the_guide(3, 0, "DISARMING$$"); break;
+			case 18: cmd_the_guide(3, 0, "MAGIC DEVICE$$"); break;
+			case 19: cmd_the_guide(3, 0, "BLOWS/ROUND$$"); break;
+			case 20: cmd_the_guide(3, 0, "SHOTS/ROUND$$"); break;
+			case 21: cmd_the_guide(3, 0, "INFRA-VISION$$"); break;
 			}
 			break;
 		case ':':
@@ -3387,6 +3407,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				search_uppercase = FALSE;
 				break;
 			}
+			/* Exception: If first char is not alpha-num, don't do uppercase restriction (for "(STR)" etc) */
+			if (!isalphanum(searchstr[0])) search_uppercase_ok = FALSE;
+			/* Check and go */
 			if (!search_uppercase_ok) search_uppercase = FALSE; /* must contain at least 1 (upper-case) letter */
 
 			/* Hack: Skip 'Going..' etc */
