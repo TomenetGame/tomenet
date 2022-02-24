@@ -950,8 +950,25 @@ G:o:w
 F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
 D:1:You cannot break down this marble balustrade.
 
+#--visual bug: gets shaded outside of lamp rad
+# Fireplace (Inn)
+N:131:hearthfire
+G:*:f
+E:2d5:2:FIRE
+D:0:The blazing fire burns you!
+F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT | GLOW | NO_SHADE
+D:0:The inn's hearthfire.
+#--visual bug: gets shaded outside of lamp rad
+N:132:hearthfire's embers
+#using hellfire instead of embers for the ash-grey part ^^
+G:*:X
+E:1d3:2:FIRE
+D:0:The glowing embers burn you!
+F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT | GLOW | NO_SHADE
+D:0:Embers of the inn's hearthfire.
 
-# HOLE 131..158 -------------------------------------------------------------
+
+# HOLE 133..158 -------------------------------------------------------------
 
 
 #permanent magma vein
