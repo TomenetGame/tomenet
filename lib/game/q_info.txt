@@ -18,7 +18,7 @@ V:1.0.0
 # (optional - player requirements) I:privileged:individual (MUST BE 1 or 2):minlv:maxlv:races:classes:modenorm:modeel:modepvp:fruitbat(1=real,2=real or fake):monsterform:questdonecreditstage
 # (optional - prerequisites) E:list of colon-separated prequest codenames (up to 5) which must have been completed to pick up this quest
 # (optional - quest spawn times) T:night:day:morning:forenoon:noon:afternoon:evening:midnight:deepnight:starttime:stoptime
-# (optional - quest ending/respawn) U:endingstage (0 = none):duration:cooldown (in minutes. Duration = max_duration after accepting it after which the quest is automatically failed.)
+# (optional - quest ending/respawn) U:endingstage (0 = none):duration:cooldown (in minutes. Duration = max_duration after accepting it after which the quest is automatically failed - atm not implemented.)
 
 # There can be up to 30 Q-lines, for up to 30 questors
 # Q (for type=monster)  :type:lite:ridx:reidx:char:attr:minlv:maxlv:name
