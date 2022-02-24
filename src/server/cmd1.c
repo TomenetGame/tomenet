@@ -1355,10 +1355,16 @@ void whats_under_your_feet(int Ind, bool force) {
    If the item was from the floor, o_idx must be specified, otherwise it must be -1.
    Returns TRUE if we have to set try_pickup = FALSE in carry() */
 bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one) {
-	int i;
+	int i, num;
 	object_type *s_ptr;
 	player_type *p_ptr = Players[Ind];
 	bool delete_it;
+
+	/* Hack number */
+	if (pick_one) {
+		num = o_ptr->number;
+		o_ptr->number = 1;
+	}
 
 	for (i = 0; i < INVEN_PACK; i++) {
 		s_ptr = &p_ptr->inventory[i];
@@ -1375,6 +1381,9 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
  #endif
 	}
 
+	/* Unhack number */
+	if (pick_one) o_ptr->number += num - 1;
+
 	if (!o_ptr->number) delete_it = TRUE;
 	else delete_it = FALSE;
 
@@ -1387,9 +1396,10 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 	/* Window stuff */
 	//p_ptr->window |= (PW_EQUIP | PW_PLAYER);
 
+	/* If it was not an item from the floor, we'll discard/delete it manually */
 	if (o_idx == -1) return delete_it;
 
-	/* Delete original */
+	/* We picked up everything there was! Delete original */
 	if (delete_it) {
 		delete_object_idx(o_idx, FALSE);
 
@@ -1401,11 +1411,13 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 
 		return TRUE;
 	} else if (!pick_one) {
-		/* ^ if we didn't delete it, additionally try to pick up the rest of the pile */
-		o_ptr = &o_list[o_idx];
+		/* There are still items left in the stack, and we didn't try to pick up just one,
+		   so additionally try now to pick up the rest of this pile normally */
+		//o_ptr = &o_list[o_idx];
 		return FALSE;
 	}
-	return TRUE; //we only wanted to pick up one anyway
+	/* We tried to pick_one, but still failed to stow it! So try to pick it up normally now. */
+	return FALSE;
 }
 #endif
 
@@ -2240,10 +2252,10 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		/* Try to put into a specialized bag automatically */
 		switch (o_ptr->tval) {
 		case TV_CHEMICAL: /* DEMOLITIONIST stuff */
-			if (auto_stow(Ind, SV_SI_SATCHEL, o_ptr, c_ptr->o_idx, pick_one)) try_pickup = FALSE;
+			if (auto_stow(Ind, SV_SI_SATCHEL, o_ptr, c_ptr->o_idx, pick_one)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
 			break;
 		case TV_TRAPKIT:
-			if (auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, c_ptr->o_idx, pick_one)) try_pickup = FALSE;
+			if (auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, c_ptr->o_idx, pick_one)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
 			break;
 		}
 #endif
