@@ -4117,6 +4117,8 @@ bool set_food(int Ind, int v) {
 
 /*
  * Set "p_ptr->bless_temp_luck" - note: currently bless_temp_... aren't saved/loaded! (ie expire on logout)
+ * NOTE: This works different than the other set_..():
+ * pow must be -1 if we're just ticking down in dungeon.c, otherwise the new buff is stacked in duration!
  */
 bool bless_temp_luck(int Ind, int pow, int dur) {
 	player_type *p_ptr = Players[Ind];
@@ -4131,16 +4133,23 @@ bool bless_temp_luck(int Ind, int pow, int dur) {
 		notice = TRUE;
 	}
 
-	/* Stack duration if current power was not lower than the one to be applied */
-	if (p_ptr->bless_temp_luck && p_ptr->bless_temp_luck_power >= pow) {
-		/* Feedback about duration prolongation succeeding */
-		msg_print(Ind, "\376\377gYou feel luck will be on your side for even longer.");
-		p_ptr->bless_temp_luck += dur;
-		p_ptr->bless_temp_luck_power = pow;
-	} else {
-		p_ptr->bless_temp_luck = dur;
-		p_ptr->bless_temp_luck_power = pow;
+	/* Specialty: Not just counting down but stacking another buff in duration? */
+	if (pow != -1) {
+		/* Stack duration if current power was not lower than the one to be applied */
+		if (p_ptr->bless_temp_luck && p_ptr->bless_temp_luck_power >= pow) {
+			/* Feedback about duration prolongation succeeding */
+			msg_print(Ind, "\376\377gYou feel luck will be on your side for even longer.");
+			p_ptr->bless_temp_luck += dur;
+			p_ptr->bless_temp_luck_power = pow;
+		}
+		/* Override old buff with stronger buff, reset duration */
+		else {
+			p_ptr->bless_temp_luck = dur;
+			p_ptr->bless_temp_luck_power = pow;
+		}
 	}
+	/* Just tick down in dungeon.c */
+	else p_ptr->bless_temp_luck = dur;
 
 	/* Nothing to notice */
 	if (!notice) return (FALSE);
