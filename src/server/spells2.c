@@ -9101,6 +9101,9 @@ void mix_chemicals(int Ind, int item) {
 	}
 #endif
 
+	/* Cannot mix a single non-mixture chemical with itself */
+	if (item == p_ptr->current_activation && o_ptr->number < 2 && !(o_ptr->tval == TV_CHEMICAL && o_ptr->sval == SV_MIXTURE)) return;
+
 	/* Sanity checks */
 	switch (o_ptr->tval) {
 	case TV_CHEMICAL: case TV_POTION: case TV_FLASK: break; /* Note: Actually the first item can only be TV_CHEMICAL because the others cannot be activated. */
