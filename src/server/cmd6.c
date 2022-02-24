@@ -8420,7 +8420,7 @@ s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
 		if (!p_ptr->target_who) { msg_print(Ind, "You don't have a target."); return; }
 		else {
 			if (distance(p_ptr->target_row, p_ptr->target_col, p_ptr->py, p_ptr->px) > 1) {
-				msg_print(Ind, "Your target isn't in melee range.");
+				msg_print(Ind, "No melee target in range.");
 				return;
 			}
 		}
