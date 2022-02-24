@@ -1784,9 +1784,9 @@ void cmd_character(void) {
 			case 4: cmd_the_guide(3, 0, "character modes"); break;
 
 			case 5: cmd_the_guide(3, 0, "Strength (STR)"); break;
-			case 6: cmd_the_guide(3, 0, "Dexterity (DEX)"); break;
-			case 7: cmd_the_guide(3, 0, "Intelligence (INT)"); break;
-			case 8: cmd_the_guide(3, 0, "Wisdom (WIS)"); break;
+			case 6: cmd_the_guide(3, 0, "Intelligence (INT)"); break;
+			case 7: cmd_the_guide(3, 0, "Wisdom (WIS)"); break;
+			case 8: cmd_the_guide(3, 0, "Dexterity (DEX)"); break;
 			case 9: cmd_the_guide(3, 0, "Constitution (CON)"); break;
 			case 10: cmd_the_guide(3, 0, "Charisma (CHR)"); break;
 
