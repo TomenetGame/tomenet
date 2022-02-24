@@ -4612,10 +4612,10 @@ void check_experience(int Ind) {
 	/* Gain levels while possible */
 #ifndef ALT_EXPRATIO
 	while ((p_ptr->lev < (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL)) &&
-			(p_ptr->exp >= ((s64b)(((s64b)player_exp[p_ptr->lev-1] * (s64b)p_ptr->expfact) / 100L))))
+	    (p_ptr->exp >= ((s64b)(((s64b)player_exp[p_ptr->lev-1] * (s64b)p_ptr->expfact) / 100L))))
 #else
 	while ((p_ptr->lev < (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL)) &&
-			(p_ptr->exp >= (s64b)player_exp[p_ptr->lev-1]))
+	    (p_ptr->exp >= (s64b)player_exp[p_ptr->lev-1]))
 #endif
 	{
 		if (p_ptr->inval && p_ptr->lev >= 25) {
@@ -4707,10 +4707,10 @@ void check_experience(int Ind) {
 	/* Remember maximum level (the one displayed if life levels were restored right now) */
 #ifndef ALT_EXPRATIO
 	while ((p_ptr->max_lev < (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL)) &&
-			(p_ptr->max_exp >= ((s64b)(((s64b)player_exp[p_ptr->max_lev-1] * (s64b)p_ptr->expfact) / 100L))))
+	    (p_ptr->max_exp >= ((s64b)(((s64b)player_exp[p_ptr->max_lev-1] * (s64b)p_ptr->expfact) / 100L))))
 #else
 	while ((p_ptr->max_lev < (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL)) &&
-			(p_ptr->max_exp >= (s64b)player_exp[p_ptr->max_lev-1]))
+	    (p_ptr->max_exp >= (s64b)player_exp[p_ptr->max_lev-1]))
 #endif
 	{
 		/* Gain a level */
@@ -5286,7 +5286,7 @@ void gain_exp(int Ind, s64b amount) {
 	player_type *p_ptr = Players[Ind];//, *p_ptr2=NULL;
 	//int Ind2 = 0;
 
-	if (is_admin(p_ptr) && p_ptr->lev >= 99) return;
+	//why?  if (is_admin(p_ptr) && p_ptr->lev >= 99) return;
 
 	/* enforce dedicated Ironman Deep Dive Challenge character slot usage */
 	if (amount && (p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)

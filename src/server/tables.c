@@ -1393,7 +1393,7 @@ s32b player_exp[PY_MAX_LEVEL + 1] = {
 	999999000L,//      440000000L,//100 PY_MAX_LEVEL
 	999999998L,//      460000000L,//<-not sure why 101 and the 'dummy' one for 102 are needed tho
 
-	999999999L // dummy, == PY_MAX_EXP
+	999999999L // dummy, == PY_MAX_EXP in defines.h
 };
 
 

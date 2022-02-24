@@ -176,20 +176,28 @@ static void prt_level(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	s64b adv_exp, adv_exp_prev = 0;
 
-	if (p_ptr->lev >= (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL))
+	if (p_ptr->lev >= (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL)) {
 		adv_exp = 0;
+		/* Just for exp_bar display of remaining xp till PY_MAX_EXP: */
 #ifndef ALT_EXPRATIO
-	else adv_exp = (s64b)((s64b)player_exp[p_ptr->lev - 1] * (s64b)p_ptr->expfact / 100L);
+		adv_exp_prev = ((s64b)player_exp[(is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL) - 2] * (s64b)p_ptr->expfact / 100L);
 #else
-	else adv_exp = (s64b)player_exp[p_ptr->lev - 1];
+		adv_exp_prev = (s64b)player_exp[(is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL) - 2];
+#endif
+	} else {
+#ifndef ALT_EXPRATIO
+		adv_exp = (s64b)((s64b)player_exp[p_ptr->lev - 1] * (s64b)p_ptr->expfact / 100L);
+#else
+		adv_exp = (s64b)player_exp[p_ptr->lev - 1];
 #endif
 
-	if (p_ptr->lev > 1)
+		if (p_ptr->lev > 1)
 #ifndef ALT_EXPRATIO
-		adv_exp_prev = (s64b)((s64b)player_exp[p_ptr->lev - 2] * (s64b)p_ptr->expfact / 100L);
+			adv_exp_prev = (s64b)((s64b)player_exp[p_ptr->lev - 2] * (s64b)p_ptr->expfact / 100L);
 #else
-		adv_exp_prev = (s64b)player_exp[p_ptr->lev - 2];
+			adv_exp_prev = (s64b)player_exp[p_ptr->lev - 2];
 #endif
+	}
 
 	Send_experience(Ind, p_ptr->lev, p_ptr->max_exp, p_ptr->exp, adv_exp, adv_exp_prev);
 }
@@ -202,20 +210,28 @@ static void prt_exp(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	s64b adv_exp, adv_exp_prev = 0;
 
-	if (p_ptr->lev >= (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL))
+	if (p_ptr->lev >= (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL)) {
 		adv_exp = 0;
+		/* Just for exp_bar display of remaining xp till PY_MAX_EXP: */
 #ifndef ALT_EXPRATIO
-	else adv_exp = (s64b)((s64b)player_exp[p_ptr->lev - 1] * (s64b)p_ptr->expfact / 100L);
+		adv_exp_prev = ((s64b)player_exp[(is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL) - 2] * (s64b)p_ptr->expfact / 100L);
 #else
-	else adv_exp = (s64b)player_exp[p_ptr->lev - 1];
+		adv_exp_prev = (s64b)player_exp[(is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL) - 2];
+#endif
+	} else {
+#ifndef ALT_EXPRATIO
+		adv_exp = (s64b)((s64b)player_exp[p_ptr->lev - 1] * (s64b)p_ptr->expfact / 100L);
+#else
+		adv_exp = (s64b)player_exp[p_ptr->lev - 1];
 #endif
 
-	if (p_ptr->lev > 1)
+		if (p_ptr->lev > 1)
 #ifndef ALT_EXPRATIO
-		adv_exp_prev = (s64b)((s64b)player_exp[p_ptr->lev - 2] * (s64b)p_ptr->expfact / 100L);
+			adv_exp_prev = (s64b)((s64b)player_exp[p_ptr->lev - 2] * (s64b)p_ptr->expfact / 100L);
 #else
-		adv_exp_prev = (s64b)player_exp[p_ptr->lev - 2];
+			adv_exp_prev = (s64b)player_exp[p_ptr->lev - 2];
 #endif
+	}
 
 	Send_experience(Ind, p_ptr->lev, p_ptr->max_exp, p_ptr->exp, adv_exp, adv_exp_prev);
 }

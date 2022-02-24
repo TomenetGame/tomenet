@@ -475,7 +475,7 @@ static void display_player_middle(int Ind) {
 	show_todam_m += bmd;
 
 	/* Dump the bonuses to hit/dam */
-//	Send_plusses(Ind, show_tohit_m, show_todam_m, show_tohit_r, show_todam_r, p_ptr->to_h_melee, p_ptr->to_d_melee);
+	//Send_plusses(Ind, show_tohit_m, show_todam_m, show_tohit_r, show_todam_r, p_ptr->to_h_melee, p_ptr->to_d_melee);
 	Send_plusses(Ind, 0, 0, show_tohit_r, show_todam_r, show_tohit_m, show_todam_m);
 
 	/* Dump the armor class bonus */
@@ -483,6 +483,13 @@ static void display_player_middle(int Ind) {
 
 	if (p_ptr->lev >= (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL))
 		adv_exp = 0;
+		/* Just for exp_bar display of remaining xp till PY_MAX_EXP: */
+ #ifndef ALT_EXPRATIO
+		adv_prev = ((s64b)player_exp[(is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL) - 2] * (s64b)p_ptr->expfact / 100L);
+ #else
+		adv_prev = (s64b)player_exp[(is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL) - 2];
+ #endif
+		adv_exp_prev = (s32b)(adv_prev);
 	else {
 		s64b adv_prev = 0;
  #ifndef ALT_EXPRATIO
@@ -510,12 +517,9 @@ static void display_player_middle(int Ind) {
  *
  * The top two and bottom two lines are left blank.
  */
-void display_player(int Ind)
-{
+void display_player(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
 	int i;
-
 
 	/* Send basic information */
 	Send_char_info(Ind, p_ptr->prace, p_ptr->pclass, p_ptr->ptrait, p_ptr->male, p_ptr->mode, p_ptr->lives - 1, p_ptr->name);
@@ -524,10 +528,7 @@ void display_player(int Ind)
 	Send_various(Ind, p_ptr->ht, p_ptr->wt, p_ptr->age, p_ptr->sc);
 
 	/* Send all the stats */
-	for (i = 0; i < 6; i++)
-	{
-		Send_stat(Ind, i);
-	}
+	for (i = 0; i < 6; i++) Send_stat(Ind, i);
 
 	/* Extra info */
 	display_player_middle(Ind);

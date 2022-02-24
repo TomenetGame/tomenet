@@ -170,33 +170,38 @@ void prt_title(cptr title) {
 //#define EXP_BAR_NO_DRAINED TERM_UMBER
 
 void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv, s32b adv_prev) {
-	char tmp[32], exp_bar_char;
-	int colour = (level < max_lev) ? TERM_YELLOW : TERM_L_GREEN;
-	int x, y;
+	char tmp[32], tmp2[32], exp_bar_char;
+	int colour, x, y;
 	int scale = adv - adv_prev;
+
+	/* (Catch bug with setlev(100) command - todo: just fix the command..) */
+	if (!cur && level > 1) return;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
 	Term_putstr(0, ROW_LEVEL, -1, TERM_WHITE, "LEVEL ");
+	//Level 100 (admins): If we cut off LEVEL to LEVE, just cut it off 1 more to LEV to look better -_-
+	if (max_plv >= 100) sprintf(tmp, "%4d", level);
+	else sprintf(tmp, "%3d", level);
 
-	sprintf(tmp, "%2d", level);
-
+	colour = (level < max_lev) ? TERM_YELLOW : (level < PY_MAX_PLAYER_LEVEL ? TERM_L_GREEN : (level < PY_MAX_LEVEL ? TERM_L_UMBER : TERM_BLUE));
 	if (max_lev == max_plv) {
-		Term_putstr(COL_LEVEL + 6, ROW_LEVEL, -1, colour, "    ");
-		Term_putstr(COL_LEVEL + 10, ROW_LEVEL, -1, colour, tmp);
+		Term_putstr(COL_LEVEL + 5, ROW_LEVEL, -1, colour, "    ");
+		Term_putstr(COL_LEVEL + 9 + 3 - strlen(tmp), ROW_LEVEL, -1, colour, tmp);
 	} else {
-		Term_putstr(COL_LEVEL + 6, ROW_LEVEL, -1, colour, tmp);
-		sprintf(tmp, "(%2d)", max_plv);
-		Term_putstr(COL_LEVEL + 8, ROW_LEVEL, -1, TERM_L_GREEN, tmp);
+		sprintf(tmp2, "(%d)", max_plv);
+		Term_putstr(COL_LEVEL + 9 + 3 - strlen(tmp) - strlen(tmp2), ROW_LEVEL, -1, colour, tmp);
+		Term_putstr(COL_LEVEL + 9 + 3 - strlen(tmp2), ROW_LEVEL, -1, TERM_SLATE, tmp2);
 	}
 
+	colour = (p_ptr->exp < p_ptr->max_exp) ? TERM_YELLOW : (p_ptr->exp < PY_MAX_EXP ? TERM_L_GREEN : TERM_L_UMBER);
 	if (!c_cfg.exp_bar) {
 		if (!c_cfg.exp_need)
 			sprintf(tmp, "%9d", (int)cur);
 		else {
 			if (level >= PY_MAX_PLAYER_LEVEL || !adv)
-				(void)sprintf(tmp, "*********");
+				(void)sprintf(tmp, "      ***");
 			else {
 				/* Hack -- display in minus (to avoid confusion chez player) */
 				(void)sprintf(tmp, "%9d", (int)(cur - adv));
@@ -206,7 +211,7 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 
 		if (cur >= max) {
 			Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "XP ");
-			Term_putstr(COL_EXP + 3, ROW_EXP, -1, TERM_L_GREEN, tmp);
+			Term_putstr(COL_EXP + 3, ROW_EXP, -1, colour, tmp);
 		} else {
 			Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "Xp ");
 			Term_putstr(COL_EXP + 3, ROW_EXP, -1, TERM_YELLOW, tmp);
@@ -223,53 +228,64 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 		else exp_bar_char = '#';
 
 		if (level >= PY_MAX_PLAYER_LEVEL || !adv || !scale) {
-			(void)sprintf(tmp, "*********");
+			if (cur < PY_MAX_EXP) {
+				exp_bar_char = '*';
+				adv = PY_MAX_EXP;
+				scale = adv - adv_prev;
 
-			if (cur >= max) {
-				Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "XP ");
-				Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_HI, tmp);
+				if (cur >= max) {
+					Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "XP ");
+					Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_HI, tmp);
+				} else {
+					Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "Xp ");
+					Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_HI_DRAINED, tmp);
+				}
 			} else {
-				Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "Xp ");
-				Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_HI_DRAINED, tmp);
+				(void)sprintf(tmp, "      ***");
+
+				Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "XP ");
+				Term_putstr(COL_EXP + 3, ROW_EXP, -1, TERM_L_UMBER, tmp);
+
+				/* restore cursor position */
+				Term_gotoxy(x, y);
+
+				return;
 			}
-
-			/* restore cursor position */
-			Term_gotoxy(x, y);
-
-			return;
 		}
 #ifndef EXP_BAR_FINESCALE
-		else {//if (!c_cfg.exp_need) {
+		//if (!c_cfg.exp_need) {
 			int got = ((cur - adv_prev) * 10) / scale, i;
 
 			for (i = 0; i < got; i++) tmp[i] = exp_bar_char;
 			tmp[i] = 0;
+		//}
  #if 0
-		} else {
+		else {
 			int got = ((cur - adv_prev) * 10) / scale, i;
 
 			for (i = 0; i < got; i++) tmp[i] = '-'; //10 'filled bubbles' = next level, so only need to display 9!
 			for (i = got; i < 9; i++) tmp[i] = exp_bar_char;
 			tmp[i] = 0;
- #endif
 		}
+ #endif
 #else /* finer double-scale 0..10 in 0.5 steps :D */
-		else {//if (!c_cfg.exp_need) {
+		//if (!c_cfg.exp_need) {
 			int got = ((cur - adv_prev) * 20 + half_exp) / scale, i;
 			got_org = got;
 
 			for (i = 0; i < got / 2; i++) tmp[i] = exp_bar_char;
 			tmp[i] = 0;
+		//}
  #if 0
-		} else {
+		else {
 			int got = ((cur - adv_prev) * 20 + half_exp) / scale, i;
 			got_org = got;
 
 			for (i = 0; i < got / 2; i++) tmp[i] = '-'; //10 'filled bubbles' = next level, so only need to display 9!
 			for (i = got / 2; i < 9; i++) tmp[i] = exp_bar_char;
 			tmp[i] = 0;
- #endif
 		}
+ #endif
 #endif
 
 #ifdef EXP_BAR_FILLDARK
@@ -321,10 +337,10 @@ void prt_gold(int gold) {
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
-	put_str("AU ", ROW_GOLD, COL_GOLD);
-	sprintf(tmp, "%9d", gold);
-	if (p_ptr->au < 1000000000) strcat(tmp, " "); //hack to correctly clear line for players moving huge amounts
-	c_put_str(TERM_L_GREEN, tmp, ROW_GOLD, COL_GOLD + 3);
+	sprintf(tmp, "%10d", gold);
+	if (tmp[0] != ' ') put_str("$ ", ROW_GOLD, COL_GOLD);
+	else put_str("AU ", ROW_GOLD, COL_GOLD);
+	c_put_str(TERM_L_GREEN, tmp, ROW_GOLD, COL_GOLD + 2);
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);
