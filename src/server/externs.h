@@ -1270,7 +1270,7 @@ extern int Send_idle(int Ind, bool idle);
 extern int Send_Guide(int Ind, byte search_type, int lineno, const char* search_string);
 
 extern int Send_indicators(int Ind, u32b indicators);
-extern int Send_weather_colouring(int Ind, byte col_raindrop, byte col_snowflake);
+extern int Send_weather_colouring(int Ind, byte col_raindrop, byte col_snowflake, byte col_sandgrain, char c_sandgrain);
 extern int Send_whats_under_you_feet(int Ind, char *o_name, bool crossmod_item, bool cant_see, bool on_pile);
 
 /* object1.c */

@@ -1898,7 +1898,7 @@ bool player_day(int Ind) {
 
 
 	/* Weather effect colouring may differ depending on daytime */
-	Send_weather_colouring(Ind, TERM_WATE, TERM_WHITE);
+	Send_weather_colouring(Ind, TERM_WATE, TERM_WHITE, TERM_L_UMBER, '+');
 
 
 	/* Shade map and darken/forget features */
@@ -1958,7 +1958,7 @@ bool player_night(int Ind) {
 
 
 	/* Weather effect colouring may differ depending on daytime */
-	Send_weather_colouring(Ind, TERM_BLUE, TERM_WHITE);
+	Send_weather_colouring(Ind, TERM_BLUE, TERM_WHITE, TERM_L_UMBER, '+');
 
 
 	/* Shade map and darken/forget features */
@@ -10984,7 +10984,7 @@ static void cloud_move(int i, bool newly_created) {
 					w_ptr->weather_type = 2; /* always snow in icy waste */
 					break;
 				case WILD_DESERT:
-					w_ptr->weather_type = 1; /* never snow in desert */
+					w_ptr->weather_type = 3; /* always sandstorm in desert */
 					break;
 				default:
 					/* depends on season */
@@ -11043,15 +11043,15 @@ if (NumPlayers && Players[NumPlayers]->wpos.wx == x && Players[NumPlayers]->wpos
 #endif
 
 				w_ptr->weather_intensity =
-				    (w_ptr->weather_type == 2 && (!w_ptr->weather_wind || w_ptr->weather_wind >= 3)) ?
+				    ((w_ptr->weather_type == 2 || w_ptr->weather_type == 3) && (!w_ptr->weather_wind || w_ptr->weather_wind >= 3)) ?
 				    5 : 8;
 				w_ptr->weather_speed =
 #if 1 /* correct! (this is a different principle than 'weather_intensity' above) */
-				    (w_ptr->weather_type == 2) ? WEATHER_SNOW_MULT * WEATHER_GEN_TICKS :
+				    (w_ptr->weather_type == 2 || w_ptr->weather_type == 3) ? WEATHER_SNOW_MULT * WEATHER_GEN_TICKS :
 				    /* hack: for non-windy rainfall, accelerate raindrop falling speed by 1: */
 				    (w_ptr->weather_wind ? 1 * WEATHER_GEN_TICKS : WEATHER_GEN_TICKS - 1);
 #else /* just for testing stuff */
-				    (w_ptr->weather_type == 2 && (!w_ptr->weather_wind || w_ptr->weather_wind >= 3)) ?
+				    ((w_ptr->weather_type == 2 || w_ptr->weather_type == 3) && (!w_ptr->weather_wind || w_ptr->weather_wind >= 3)) ?
 				    WEATHER_SNOW_MULT * WEATHER_GEN_TICKS : 1 * WEATHER_GEN_TICKS;
 #endif
 				break;

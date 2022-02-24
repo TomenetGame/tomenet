@@ -9489,7 +9489,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					for (y = 0; y < 64; y++)
 						if (wild_info[y][x].weather_type > 0 &&
 						    (wild_info[y][x].weather_type == 1 || //rain
-						    wild_info[y][x].weather_type == 2) && //snow
+						    wild_info[y][x].weather_type == 2 || //snow
+						    wild_info[y][x].weather_type == 3) && //sandstorm
 						    wild_info[y][x].cloud_idx[0] > 0 &&
 						    wild_info[y][x].cloud_x1[0] > 0) {
 							/* skip sectors 'before' us? (counting from bottom left corner) */

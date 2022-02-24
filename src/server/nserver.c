@@ -3054,8 +3054,8 @@ static int Handle_login(int ind) {
 	p_printf("%s +  %03d  %s\n", showtime(), NumPlayers, traffic);
 
 	/* Need to repeat this here, because in player_setup()->IS_DAY check the conn-state was not CONN_PLAYING yet, so connection wasn't ready to transmit weather colours */
-	if (IS_DAY) Send_weather_colouring(NumPlayers, TERM_WATE, TERM_WHITE);
-	else Send_weather_colouring(NumPlayers, TERM_BLUE, TERM_WHITE);
+	if (IS_DAY) Send_weather_colouring(NumPlayers, TERM_WATE, TERM_WHITE, TERM_L_UMBER, '+');
+	else Send_weather_colouring(NumPlayers, TERM_BLUE, TERM_WHITE, TERM_L_UMBER, '+');
 
 #ifdef EXTENDED_COLOURS_PALANIM
 	world_surface_palette_player(NumPlayers);
@@ -8660,6 +8660,9 @@ int Send_weather(int Ind, int weather_type, int weather_wind, int weather_gen_sp
 #ifdef TEST_SERVER
 if (weather_type > 0) s_printf("weather_type: %d\n", weather_type);
 #endif
+
+	if (is_older_than(&connp->version, 4, 7, 4, 6, 0, 0) && weather_type == 3) weather_type = 1; //fall back to old rain in the desert, pft
+
 	n = Packet_printf(&connp->c, "%c%d%d%d%d%d%d%d%d", PKT_WEATHER,
 	    weather_type, weather_wind, weather_gen_speed, weather_intensity, weather_speed,
 	    Players[Ind]->panel_col_prt, Players[Ind]->panel_row_prt, c);
@@ -9036,7 +9039,7 @@ int Send_playerlist(int Ind) {
 	return 1;
 }
 
-int Send_weather_colouring(int Ind, byte col_raindrop, byte col_snowflake) {
+int Send_weather_colouring(int Ind, byte col_raindrop, byte col_snowflake, byte col_sandgrain, char c_sandgrain) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 
 	if (is_older_than(&Players[Ind]->version, 4, 7, 3, 1, 0, 0)) return 1;
@@ -9047,7 +9050,10 @@ int Send_weather_colouring(int Ind, byte col_raindrop, byte col_snowflake) {
 		return 0;
 	}
 
-	return Packet_printf(&connp->c, "%c%c%c", PKT_WEATHERCOL, col_raindrop, col_snowflake);
+	if (is_atleast(&connp->version, 4, 7, 4, 6, 0, 0))
+		return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_WEATHERCOL, col_raindrop, col_snowflake, col_sandgrain, c_sandgrain);
+	else
+		return Packet_printf(&connp->c, "%c%c%c", PKT_WEATHERCOL, col_raindrop, col_snowflake);
 }
 
 int Send_whats_under_you_feet(int Ind, char *o_name, bool crossmod_item, bool cant_see, bool on_pile) {

@@ -707,7 +707,7 @@ extern void apply_auto_pickup(char *item_name);
 extern int p_speed;
 extern bool no_tele_grid;
 extern void do_weather(bool no_weather);
-extern int weather_type, weather_wind, weather_gen_speed, weather_intensity, weather_speed_rain, weather_speed_snow;
+extern int weather_type, weather_wind, weather_gen_speed, weather_intensity, weather_speed_rain, weather_speed_snow, weather_speed_sand;
 extern int weather_elements, weather_element_x[1024], weather_element_y[1024], weather_element_ydest[1024], weather_element_type[1024];
 extern int weather_panel_x, weather_panel_y;
 extern bool weather_panel_changed;
@@ -1134,7 +1134,8 @@ extern char cfg_musicpackfolder[1024];
 extern int NumPlayers;
 extern char playerlist[1000][MAX_CHARS_WIDE * 2];
 
-extern byte col_raindrop, col_snowflake;
+extern byte col_raindrop, col_snowflake, col_sandgrain;
+extern char c_sandgrain;
 extern bool custom_font_warning;
 #ifdef GUIDE_BOOKMARKS
 extern int bookmark_line[GUIDE_BOOKMARKS];

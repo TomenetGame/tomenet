@@ -264,14 +264,15 @@ int p_speed = 110;
 bool no_tele_grid = FALSE;
 
 /* for weather */
-int weather_type = 0; /* stop(-1)/none/rain/snow; hacks: +20000, +10000, +n*10 */
+int weather_type = 0; /* stop(-1)/none/rain/snow/sandstorm; hacks: +20000, +10000, +n*10 */
 int weather_gen_speed = 0; /* speed at which new weather elements are generated */
 int weather_wind = 0; /* current gust of wind if any (1 west, 2 east, 3 strong west, 4 strong east) */
-int weather_intensity = 1; /* density of raindrops / snowflakes */
+int weather_intensity = 1; /* density of raindrops/snowflakes/sandgrains */
 int weather_speed_rain = 999; /* [3] */
 int weather_speed_snow = 999; /* speed at which snowflakes move aka a second wind
         		  parameter (doesnt make sense for raindrops) [9] */
-int weather_elements = 0; /* current amount of raindrops/snowflakes on the move */
+int weather_speed_sand = 999;
+int weather_elements = 0; /* current amount of raindrops/snowflakes/sandgrains on the move */
 int weather_element_x[1024], weather_element_y[1024], weather_element_ydest[1024], weather_element_type[1024];
 int weather_panel_x = -1, weather_panel_y = -1; /* part of the map we're viewing on screen, top left corner */
 bool weather_panel_changed = FALSE; /* view got updated anyway by switching panel? */
@@ -682,7 +683,8 @@ int within_cmd_player_ticks;
 int NumPlayers = 0;
 char playerlist[1000][MAX_CHARS_WIDE * 2];
 
-byte col_raindrop = TERM_BLUE, col_snowflake = TERM_WHITE;
+byte col_raindrop = TERM_BLUE, col_snowflake = TERM_WHITE, col_sandgrain = TERM_L_UMBER;
+char c_sandgrain = '+';
 bool custom_font_warning = FALSE;
 #ifdef GUIDE_BOOKMARKS
 int bookmark_line[GUIDE_BOOKMARKS];

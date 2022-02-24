@@ -4658,7 +4658,7 @@ int Receive_ping(void) {
 
 /* client-side weather, server-controlled - C. Blue
    Transmitted parameters:
-   weather_type = -1, 0, 1, 2: stop, none, rain, snow
+   weather_type = -1, 0, 1, 2, 3: stop, none, rain, snow, sandstorm
    weather_type +10 * n: pre-generate n steps
 */
 int Receive_weather(void) {
@@ -4729,7 +4729,8 @@ int Receive_weather(void) {
 	/* for mix of rain/snow in same sector:
 	   keep old rain/snow particles at their remembered speed */
 	if (weather_type != -1) {
-		if (weather_type % 10 == 2) weather_speed_snow = ws;
+		if (weather_type % 10 == 3) weather_speed_sand = ws;
+		else if (weather_type % 10 == 2) weather_speed_snow = ws;
 		else if (weather_type % 10 == 1) weather_speed_rain = ws;
 	}
 
@@ -5297,7 +5298,11 @@ int Receive_weather_colouring(void) {
 	int n;
 	char ch;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c", &ch, &col_raindrop, &col_snowflake)) <= 0) return n;
+	if (is_atleast(&server_version, 4, 7, 4, 6, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &col_raindrop, &col_snowflake, &col_sandgrain, &c_sandgrain)) <= 0) return n;
+	} else {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c", &ch, &col_raindrop, &col_snowflake)) <= 0) return n;
+	}
 	return 1;
 }
 
@@ -6050,6 +6055,9 @@ void do_ping() {
 				} else if (weather_type % 10 == 2) { //snow
 					if (weather_wind >= 1 && weather_wind <= 2) sound_weather(snow2_sound_idx);
 					else sound_weather(snow1_sound_idx);
+				} else if (weather_type % 10 == 3) { //sandstorm, uses same intensity as snowstorm basically, ie there is no 'light' sandstorm
+					if (weather_wind >= 1 && weather_wind <= 2) sound_weather(snow2_sound_idx);
+					else sound_weather(snow1_sound_idx);
 				}
 			}
  #endif
@@ -6076,6 +6084,9 @@ void do_ping() {
 					if (weather_wind >= 1 && weather_wind <= 2) sound_weather_vol(rain2_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
 					else sound_weather_vol(rain1_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
 				} else if (weather_type % 10 == 2) { //snow
+					if (weather_wind >= 1 && weather_wind <= 2) sound_weather_vol(snow2_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
+					else sound_weather_vol(snow1_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
+				} else if (weather_type % 10 == 3) { //sandstorm - we use snow intensity and sfx too
 					if (weather_wind >= 1 && weather_wind <= 2) sound_weather_vol(snow2_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
 					else sound_weather_vol(snow1_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
 				}

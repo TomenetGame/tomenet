@@ -3993,7 +3993,7 @@ void do_animate_lightning(bool reset) {
 #endif
 }
 
-/* Handle weather (rain and snow) client-side - C. Blue
+/* Handle weather (rain, snow, sandstorm) client-side - C. Blue
  * Note: keep following defines in sync with nclient.c, beginning of file.
  * do_weather() is called by do_ping() which is called every frame.
  * 'no_weather': Only perform lighting-flash palette animation and play thunderclap sfx (provided those were caused by a non-weather source). */
@@ -4003,9 +4003,9 @@ void do_animate_lightning(bool reset) {
 void do_weather(bool no_weather) {
 	int i, j, intensity;
 	static int weather_gen_ticks = 0, weather_ticks10 = 0;
-	static int weather_wind_ticks = 0, weather_speed_snow_ticks = 0, weather_speed_rain_ticks = 0; /* sub-ticks when weather really is processed */
+	static int weather_wind_ticks = 0, weather_speed_sand_ticks = 0, weather_speed_snow_ticks = 0, weather_speed_rain_ticks = 0; /* sub-ticks when weather really is processed */
 	bool wind_west_effective = FALSE, wind_east_effective = FALSE; /* horizontal movement */
-	bool gravity_effective_rain = FALSE, gravity_effective_snow = FALSE; /* vertical movement */
+	bool gravity_effective_rain = FALSE, gravity_effective_snow = FALSE, gravity_effective_sand = FALSE; /* vertical movement */
 	bool redraw = FALSE;
 	int x, y, dx, dy, d; /* distance calculations (cloud centre) */
 	static int cloud_movement_ticks = 0, cloud_movement_lasttick = 0;
@@ -4054,7 +4054,7 @@ void do_weather(bool no_weather) {
 		weather_type -= 10000;
 		/* reset wind ticks and speed ticks to possibly synch them */
 		weather_wind_ticks = 0;
-		weather_speed_snow_ticks = weather_speed_rain_ticks = 0;
+		weather_speed_sand_ticks = weather_speed_snow_ticks = weather_speed_rain_ticks = 0;
 	}
 
 	if (redraw) {
@@ -4087,6 +4087,11 @@ void do_weather(bool no_weather) {
 					Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
 					    PANEL_Y + weather_element_y[i] - weather_panel_y,
 					    col_snowflake, '*');
+				} else if (weather_element_type[i] == 3) {
+					/* display sand grain */
+					Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
+					    PANEL_Y + weather_element_y[i] - weather_panel_y,
+					    col_sandgrain, c_sandgrain);
 				}
 			}
 		}
@@ -4168,7 +4173,7 @@ void do_weather(bool no_weather) {
 		/* factor in received intensity */
 		intensity *= weather_intensity;
 
-		/* create weather elements, ie rain drops or snow flakes */
+		/* create weather elements, ie rain drops, snow flakes, sand grains */
 		if (weather_elements <= 1024 - intensity) {
 			for (i = 0; i < intensity; i++) {
 				/* generate random starting pos */
@@ -4209,7 +4214,8 @@ void do_weather(bool no_weather) {
 				weather_element_x[weather_elements] = x;
 				weather_element_y[weather_elements] = y;
 
-				weather_element_type[weather_elements] = (weather_type == 3 ? (rand_int(2) ? 1 : 2) : weather_type);
+				//weather_element_type[weather_elements] = (weather_type == 3 ? (rand_int(2) ? 1 : 2) : weather_type);   <-- 3 is sandstorm now
+				weather_element_type[weather_elements] = weather_type;
 				weather_element_ydest[weather_elements] = y + SKY_ALTITUDE;
 
 				/* since pos passed any checks, increase counter to acknowledge */
@@ -4236,6 +4242,7 @@ void do_weather(bool no_weather) {
 	/* vertical movement: check whether elements are to be pulled by gravity this time */
 	weather_speed_rain_ticks++;
 	weather_speed_snow_ticks++;
+	weather_speed_sand_ticks++;
 
 	if (weather_speed_rain_ticks == weather_speed_rain) {
 		gravity_effective_rain = TRUE;
@@ -4245,9 +4252,13 @@ void do_weather(bool no_weather) {
 		gravity_effective_snow = TRUE;
 		weather_speed_snow_ticks = 0;
 	}
+	if (weather_speed_sand_ticks == weather_speed_sand) {
+		gravity_effective_sand = TRUE;
+		weather_speed_sand_ticks = 0;
+	}
 
 	/* nothing to do this time? - exit */
-	if (!gravity_effective_rain && !gravity_effective_snow && !wind_west_effective && !wind_east_effective)
+	if (!gravity_effective_rain && !gravity_effective_snow && !gravity_effective_sand && !wind_west_effective && !wind_east_effective)
 		return;
 
 
@@ -4383,6 +4394,47 @@ void do_weather(bool no_weather) {
 				Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
 				    PANEL_Y + weather_element_y[i] - weather_panel_y,
 				    col_snowflake, '*');
+			}
+		}
+		/* advance sand grain - weather_speed should be high always for a sand storm */
+		else if (weather_element_type[i] == 3) {
+			/* perform movement (y:speed, x:wind) */
+			if (gravity_effective_sand) weather_element_y[i]++;
+			if (wind_west_effective && !rand_int(weather_wind)) weather_element_x[i]++;
+			else if (wind_east_effective && !rand_int(weather_wind)) weather_element_x[i]--;
+
+			/* pac-man effect for leaving screen to the left/right */
+			if (weather_element_x[i] < 1) weather_element_x[i] = MAX_WID - 2;
+			else if (weather_element_x[i] > MAX_WID - 2) weather_element_x[i] = 1;
+
+			/* left screen or reached destination? terminate it */
+			if (weather_element_y[i] > MAX_HGT - 2 ||
+			    weather_element_y[i] > weather_element_ydest[i]) {
+				/* excise this effect */
+				for (j = i + 1; j < weather_elements; j++) {
+					weather_element_x[j - 1] = weather_element_x[j];
+					weather_element_y[j - 1] = weather_element_y[j];
+					weather_element_ydest[j - 1] = weather_element_ydest[j];
+					weather_element_type[j - 1] = weather_element_type[j];
+				}
+				weather_elements--;
+				i--;
+			}
+#ifdef BIGMAP_MINDLINK_HACK
+			/* big_map mindlink visuals hack */
+			else if (last_line_y <= SCREEN_HGT &&
+			    weather_element_y[i] >= weather_panel_y + SCREEN_HGT)
+				;
+#endif
+			/* only for elements within visible panel screen area */
+			else if (weather_element_x[i] >= weather_panel_x &&
+			    weather_element_x[i] < weather_panel_x + screen_wid &&
+			    weather_element_y[i] >= weather_panel_y &&
+			    weather_element_y[i] < weather_panel_y + screen_hgt) {
+				/* display sand grain */
+				Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
+				    PANEL_Y + weather_element_y[i] - weather_panel_y,
+				    col_sandgrain, c_sandgrain);
 			}
 		}
 	}
