@@ -4046,7 +4046,7 @@ bool set_food(int Ind, int v) {
 				p_ptr->warning_hungry = 2;
 				if (p_ptr->prace == RACE_VAMPIRE) {
 					msg_print(Ind, "\374\377RWARNING: You are 'weak' from hunger. Drink some blood by killing monsters");
-					msg_print(Ind, "\374\377R         monsters in melee (close combat). Town monsters will work too.");
+					msg_print(Ind, "\374\377R         in melee (close combat). Town creatures will work too.");
 				} else if (p_ptr->prace == RACE_ENT) {
 					msg_print(Ind, "\374\377RWARNING: You are 'weak' from hunger. Find something to drink or rest");
 					msg_print(Ind, "\374\377R         (\377oSHIFT+r\377R) on earth/dirt/grass/water floor tiles for a while.");
@@ -4065,7 +4065,7 @@ bool set_food(int Ind, int v) {
 				p_ptr->warning_hungry = 1;
 				if (p_ptr->prace == RACE_VAMPIRE) {
 					msg_print(Ind, "\374\377oWARNING: Your character is 'hungry'. Drink some blood by killing some");
-					msg_print(Ind, "\374\377o         monsters in melee (close combat). Town monsters will work too.");
+					msg_print(Ind, "\374\377o         monsters in melee (close combat). Town creatures will work too.");
 				} else if (p_ptr->prace == RACE_ENT) {
 					msg_print(Ind, "\374\377oWARNING: Your character is 'hungry'. Find something to drink or rest ");
 					msg_print(Ind, "\374\377o         (\377RSHIFT+r\377o) on earth/dirt/grass/water floor tiles for a while.");
