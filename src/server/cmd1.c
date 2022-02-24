@@ -5280,9 +5280,11 @@ void py_bash_mon(int Ind, int y, int x) {
 		msg_print(Ind, "Not enough stamina!");
 		return;
 	}
+#ifndef TEST_SERVER
 	p_ptr->cst -= 6;
 	p_ptr->redraw |= PR_STAMINA;
 	redraw_stuff(Ind);
+#endif
 
 s_printf("TECHNIQUE_MELEE: %s - bash\n", p_ptr->name);
 
