@@ -310,7 +310,12 @@ void do_cmd_skill() {
 		/* Leave the skill screen */
 		if (c == ESCAPE || c == KTRL('Q')) break;
 
-		else if (c == '?') cmd_the_guide(3, 0, (char*)s_info[table[sel][0]].name);
+		else if (c == '?') {
+			/* Exception for runecraft, since the runes are not spells/schools:
+			   Just redirect to runecraft in general. */
+			if (s_info[table[sel][0]].father == SKILL_SCHOOL_RUNECRAFT) cmd_the_guide(3, 0, "Runecraft");
+			else cmd_the_guide(3, 0, (char*)s_info[table[sel][0]].name);
+		}
 
 		/* Take a screenshot */
 		else if (c == KTRL('T')) xhtml_screenshot("screenshot????");
