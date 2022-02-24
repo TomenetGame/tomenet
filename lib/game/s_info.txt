@@ -19,8 +19,7 @@
 
 # E:exclusive skill:exclusive skill
 # O:skill:opposing skill%percent
-# A:skill:friendly skill%percent
-# (NOTE: not A: but f: ?)
+# f:skill:friendly skill%percent
 
 # T:father:child
 
