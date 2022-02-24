@@ -246,7 +246,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.alert_offpanel_dam,	TRUE,	7,	0, 20, TRUE,
 	    "alert_offpanel_dam",	"Beep when taking damage while looking elsewhere" },
 
-	{ &c_cfg.exp_bar,		TRUE,	6,	0, 21, TRUE, //moved to page 3 in 4.7.2 to make room for alert_starvation
+	{ &c_cfg.exp_bar,		TRUE,	4,	0, 21, TRUE, //moved to page 3 in 4.7.2 to make room for alert_starvation
 	    "exp_bar",			"Show experience bar instead of a number" },
 
     //page 2 - 22
@@ -549,7 +549,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.destroy_all_unmatched,	FALSE,	8, 0,	141, TRUE,
 	    "destroy_all_unmatched",	"Destroys ALL unmatched items. (Like A'#' in &.)" },
 
-	{ &c_cfg.equip_text_colour,	FALSE,	4, 0,	142, TRUE,
+	{ &c_cfg.equip_text_colour,	FALSE,	6, 0,	142, TRUE,
 	    "equip_text_colour",	"Display equipment indices/weight in yellow" },
 };
 
