@@ -17459,14 +17459,33 @@ form and those which can still be forged by a mimic. Latter ones are named
 monster form.
 
 A player can use a ring that carries a monster form, by wearing it and
-activating it. The user needs a mimicry skill of at least 1/2 the level of
-the monster in order to activate the ring and must be eligible to use that form
-in general (shamans cannot use certain forms). The ring will disintegrate and
-the player will polymorph into the according form for the number of turns the
-ring specified. The turns are depending on floor speed, which means they will
-run out faster on shallow levels and slower on deeper levels relative to
-real time, but in fact always at same speed in character time! (See (4.14) for
-more information about the in-game time system.)
+activating it, which will consume the ring and store the form in the player's
+memory temporarily.
+Only one ring form at a time can be stored. If the player activates another
+monster ring, the first form wil be forgotten and replaced with the new one.
+
+To successfully activate a monster form ring, the following three conditions
+must be met:
+
+- The user needs a mimicry skill of at least 1/2 the level of the monster, and
+must have killed enough monsters to have learned the form normally, in order to
+activate the ring, or activation will fail with a message saying
+"The ring flashes briefly, but nothing happens."
+
+- Also the character must be eligible to use that form in general, for example
+shamans cannot use certain forms. If the character is not eligible, activation
+will fail with a message "The ring starts to glow brightly, then fades again".
+
+- Last but not least, rings cannot be used to store level 0 forms such as Bree
+townsfolk, in which case activation will fail with a message saying
+"The ring starts to glow brightly, then fades again."
+
+On successful activation the ring will disintegrate and the player will
+polymorph into the according form for the number of turns the ring specified.
+The turns are depending on floor speed, which means they will run out faster on
+shallow levels and slower on deeper levels relative to real time, but in fact
+always at same speed in character time! (See (4.14) for more information about
+the in-game time system.)
 As a rule of thumb, a dungeon turn lasts about 1 second on average (noticably
 less in town or very shallow levels).
 However, the remaining polymorph duration will stop decreasing while you are
@@ -17484,7 +17503,7 @@ out the player will receive a warning message about this, and his appearance
 will start to flicker between the temporary form and his normal form, to
 indicate visually that it won't last very much longer.
 
-Players can also create monster rings out of 'polymorph player' rings, by
+Players can also create monster rings from "Polymorphing of Player" rings, by
 mimicking the according form, then wearing the ring and activating it.
 The ring will turn into a ring of polymorphing of the current monster form.
 However, to create such a ring it is required that the player has already
@@ -17506,7 +17525,7 @@ form level              ring level
 Polymorph rings contain a certain amount of energy that cannot be changed,
 which determined for how long the player will keep the form until he polymorphs
 back to normal.
-If a player forges a ring, his 'Magic Device' skill helps to obtain a high
+If a player forges a ring, his 'Magic Device' skill helps to obtain a higher
 amount of energy in the ring.
 
 

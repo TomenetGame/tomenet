@@ -6910,9 +6910,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				if (!o_ptr->pval) {
 					if ((p_ptr->r_mimicry[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
 					    (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level))
-						msg_print(Ind, "Nothing happens");
+						msg_print(Ind, "The ring flashes briefly, but nothing happens.");
 					else if (r_info[p_ptr->body_monster].level == 0)
-						msg_print(Ind, "The ring starts to glow brightly, then fades again");
+						msg_print(Ind, "The ring starts to glow brightly, then fades again.");
 					else {
 						msg_format(Ind, "The form of the ring seems to change to a small %s.", r_info[p_ptr->body_monster].name + r_name);
 						o_ptr->pval = p_ptr->body_monster;
