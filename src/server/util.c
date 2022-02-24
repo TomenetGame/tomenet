@@ -7712,8 +7712,8 @@ bool gain_au(int Ind, u32b amt, bool quiet, bool exempt) {
 	player_type *p_ptr = Players[Ind];
 
 	/* hack: prevent s32b overflow */
-	if (2000000000 - amt < p_ptr->au) {
-		if (!quiet) msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
+	if (PY_MAX_GOLD - amt < p_ptr->au) {
+		if (!quiet) msg_format(Ind, "\377yYou cannot carry more than %d gold!", PY_MAX_GOLD);
 		return FALSE;
 	} else {
 #ifdef EVENT_TOWNIE_GOLD_LIMIT

@@ -10311,8 +10311,8 @@ void handle_request_return_num(int Ind, int id, int num) {
 			msg_print(Ind, "\377yThe requested payment must be at least 1 Au.");
 			return;
 		}
-		if (num > 2000000000 / 2) { //let's play it safe..
-			msg_print(Ind, "\377yThat is too much, the maximum allowed amount is 1 000 000 000 Au.");
+		if (num > PY_MAX_GOLD / 2) { //let's play it safe..
+			msg_format(Ind, "\377yThat is too much, the maximum allowed amount is %d Au.", PY_MAX_GOLD / 2);
 			return;
 		}
 		p_ptr->mail_xfee = num;

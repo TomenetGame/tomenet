@@ -2554,7 +2554,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 
 				p_ptr->au -= amt;
 				/* hack: prevent s32b overflow */
-				if (!(2000000000 - amt < q_ptr->au)) {
+				if (!(PY_MAX_GOLD - amt < q_ptr->au)) {
 					q_ptr->au += amt;
 					msg_print(k, "Your purse feels heavier.");
 					q_ptr->redraw |= PR_GOLD;

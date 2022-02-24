@@ -3873,7 +3873,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if (p_ptr->au < p_ptr->lev * p_ptr->lev) tip = p_ptr->au;
 			else tip = p_ptr->lev * p_ptr->lev;
 
-			if (2000000000 - tip < q_ptr->au) {
+			if (PY_MAX_GOLD - tip < q_ptr->au) {
 				switch (q_ptr->name[strlen(q_ptr->name) - 1]) {
 				case 's': case 'x': case 'z':
 					msg_format(Ind, "%s' pockets are already bulging from money, you cannot tip this filthy rich bastard.", q_ptr->name);

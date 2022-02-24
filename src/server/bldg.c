@@ -658,8 +658,8 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 			if (win) {
 				msg_print(Ind, "YOU WON");
 				/* hack: prevent s32b overflow */
-				if (2000000000 - (odds * wager) < p_ptr->au) {
-					msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
+				if (PY_MAX_GOLD - (odds * wager) < p_ptr->au) {
+					msg_format(Ind, "\377yYou cannot carry more than %d gold!", PY_MAX_GOLD);
 				} else {
 					p_ptr->au = p_ptr->au + (odds * wager);
 					/* Prevent a very far-fetched IDDC/Highlander exploit ^^ */
@@ -2409,8 +2409,8 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 				price += object_value_real(&inventory[i]); //missing "* inventory[i].number"?
 
 			/* hack: prevent s32b overflow */
-			if (2000000000 - p_ptr->au < price) {
-				price = 2000000000;
+			if (PY_MAX_GOLD - p_ptr->au < price) {
+				price = PY_MAX_GOLD;
 			} else
 				price += p_ptr->au;
 
@@ -2421,15 +2421,14 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			req = get_quantity("How much would you like to get? ", price);
 			if (req > 100000) req = 100000;
 
-			if (2000000000 - req < p_ptr->loan) {
-				msg_format(Ind, "\377yYou cannot have a greater loan than 2 billion worth of gold!");
+			if (PY_MAX_GOLD - req < p_ptr->loan) {
+				msg_format(Ind, "\377yYou cannot have a greater loan than %d gold!", PY_MAX_GOLD);
 				break;
 			}
 
 			if (!gain_au(Ind, req, FALSE, FALSE)) break;
 
 			p_ptr->loan += req;
-			//? if (p_ptr->au > PY_MAX_GOLD) p_ptr->au = PY_MAX_GOLD;
 			p_ptr->loan_time += req;
 
 			msg_format(Ind, "You receive %i gold pieces", req);
@@ -2471,8 +2470,8 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			if (gold < 1) break;
 
 			/* hack: prevent s32b overflow */
-			if (2000000000 - gold < p_ptr->balance) {
-				msg_format(Ind, "\377yYou cannot deposit more than 2 billion worth of gold!");
+			if (PY_MAX_GOLD - gold < p_ptr->balance) {
+				msg_format(Ind, "\377yYou cannot deposit more than %d gold!", PY_MAX_GOLD);
 				break;
 			}
 
@@ -2492,8 +2491,8 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			if (gold < 1) break;
 
 			/* hack: prevent s32b overflow */
-			if (2000000000 - gold < p_ptr->au) {
-				msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
+			if (PY_MAX_GOLD - gold < p_ptr->au) {
+				msg_format(Ind, "\377yYou cannot carry more than %d gold!", PY_MAX_GOLD);
 				break;
 			}
 

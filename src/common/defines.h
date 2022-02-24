@@ -1835,7 +1835,8 @@
 #define PY_MAX_EXP	999999999L	/* Maximum exp */
 //#define PY_MAX_EXP	4899999996L	/* Maximum exp */
 //#define PY_MAX_EXP	3899999997L	/* Maximum exp */
-#define PY_MAX_GOLD	999999999L	/* Maximum gold: 999 M  --  no effect currently */
+//#define PY_MAX_GOLD	999999999L	/* Maximum gold: 999 M  --  no effect currently */
+#define PY_MAX_GOLD	2000000000L	/* Maximum gold, limited by long int and 'rounded' down for visual appeal. ^^- */
 #define PY_MAX_PLAYER_LEVEL	99	/* Maximum level attainable by a player (non-admin) */
 #define PY_MAX_LEVEL		100	/* Maximum level allowed technically */
 

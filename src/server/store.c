@@ -4739,7 +4739,7 @@ bool merchant_mail_carry(int Ind, int i) {
 	player_type *p_ptr = Players[Ind];
 
 	if (mail_forge[i].tval == TV_GOLD) {
-		if (2000000000 - mail_forge[i].pval < p_ptr->au) {
+		if (PY_MAX_GOLD - mail_forge[i].pval < p_ptr->au) {
 			msg_print(Ind, "\374\377yYou are currently carrying too much gold to receive a payment!");
 			return FALSE;
 		}
@@ -7140,9 +7140,9 @@ static s64b player_store_inscribed(object_type *o_ptr, u32b price, bool appraise
 		/* catch overflows */
 		if (final_price < 100) final_price = 100;
 		if (final_price > 1000) final_price = 1000;
-		if (price > 2000000000 / ((final_price + 99) / 100)) final_price = 2000000000; //absolute maximum price
+		if (price > PY_MAX_GOLD / ((final_price + 99) / 100)) final_price = PY_MAX_GOLD; //absolute maximum price
 		else {
-			if (price <= 2000000) final_price = (price * final_price) / 100;
+			if (price <= PY_MAX_GOLD / 1000) final_price = (price * final_price) / 100;
 			else final_price = (price / 100) * final_price;
 		}
 		return final_price;
@@ -7158,21 +7158,21 @@ static s64b player_store_inscribed(object_type *o_ptr, u32b price, bool appraise
 
 	/* add rudimentary usage of 'k' and 'M' */
 	if ((strchr(buf, 'k') || strchr(buf, 'K')) &&
-	    final_price <= 2000000)
+	    final_price <= PY_MAX_GOLD / 1000)
 		final_price *= 1000;
 	if ((strchr(buf, 'm') || strchr(buf, 'M')) &&
-	    final_price <= 2000)
+	    final_price <= PY_MAX_GOLD / 1000000)
 		final_price *= 1000000;
 
-	if (final_price > 2000000000) final_price = 2000000000; //absolute maximum price
+	if (final_price > PY_MAX_GOLD) final_price = PY_MAX_GOLD; //absolute maximum price
 	/* cannot be negative (paranoia, '-' cought above) */
 	if (final_price <= 0) return price;
 
 	/* do we want to set or to increase the base price? */
 	if (increase) {
 		/* never overflow (cap at 2*10^9) */
-		if (price <= 2000000000 - final_price) final_price += price;
-		else final_price = 2000000000;
+		if (price <= PY_MAX_GOLD - final_price) final_price += price;
+		else final_price = PY_MAX_GOLD;
 	} else if (final_price < price)
 		final_price = price;
 
@@ -7701,7 +7701,7 @@ s_printf("PLAYER_STORE_HANDLE: new mass, mang, owner %s (%d), %s, value %d, buye
 
 		/* Write back additional value to the cheque */
 		old_value = ps_get_cheque_value(cheque_ptr);
-		if (old_value <= 2000000000 - value) {
+		if (old_value <= PY_MAX_GOLD - value) {
 			ps_set_cheque_value(cheque_ptr, old_value + value);
 		} else {
 			/* erm, our cheque is already worth 2 bill? oO

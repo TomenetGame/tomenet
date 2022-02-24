@@ -3045,7 +3045,7 @@ void display_player(int hist) {
 		} else {
 			prt_lnum("Exp to Adv.", exp_adv, y_row2 + 3, SECOND2_COL, TERM_L_GREEN);
 		}
-		prt_lnum("Gold (Au)  ", p_ptr->au, y_row2 + 4, SECOND2_COL, TERM_L_GREEN);
+		prt_lnum("Gold (Au)  ", p_ptr->au, y_row2 + 4, SECOND2_COL, p_ptr->au < PY_MAX_GOLD ? TERM_L_GREEN : TERM_L_UMBER);
 #ifndef NEW_COMPRESSED_DUMP_AC
  #ifdef HIDE_UNAVAILABLE_TRAIT
 		if (trait != 0)
