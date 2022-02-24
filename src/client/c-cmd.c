@@ -1756,7 +1756,7 @@ void cmd_character(void) {
 		window_stuff();
 
 		/* Display message */
-		prt("[ESC: quit, f: chardump, h: history/abilities, 2/8/RETURN: navigate/help]", 22, 1);
+		prt("[ESC: quit, f: chardump, h: history/abilities, 2/8: select -> ?: help]", 22, 1);
 
 		/* Wait for key */
 		ch = inkey();
@@ -1774,7 +1774,8 @@ void cmd_character(void) {
 			if (sel == 2 && !p_ptr->body_monster) sel--;
 			if (sel < 0) sel = 21;
 			break;
-		case '\n': case '\r':
+		//case '\n': case '\r':
+		case '?':
 			switch (sel) {
 			case 0: cmd_the_guide(3, 0, (char*)race_info[race].title); break;
 			case 1: cmd_the_guide(3, 0, (char*)class_info[class].title); break;
