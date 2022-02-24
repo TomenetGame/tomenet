@@ -2861,7 +2861,7 @@ void display_player(int hist) {
 		}
 
 		/* Age, Height, Weight, Social */
-#define SECOND_COL 36
+#define SECOND_COL 33
 		put_str(format("Age         :\377B %6d", (int)p_ptr->age), y_row1, SECOND_COL);
 		put_str(format("Height      :\377B %6d", (int)p_ptr->ht), y_row1 + 1, SECOND_COL);
 		put_str(format("Weight      :\377B %6d", (int)p_ptr->wt), y_row1 + 2, SECOND_COL);
