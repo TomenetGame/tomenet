@@ -138,7 +138,7 @@ STARLIGHT_I = add_spell {
 		if get_level(Ind, STARLIGHT_I, 50) >= 10 then
 			lite_area(Ind, 19 + get_level(Ind, STARLIGHT_I, 50), 4)
 		else
-			msg_print(Ind, "You are surrounded by a globe of light")
+			msg_print(Ind, "You are surrounded by a globe of light.")
 			lite_room(Ind, player.wpos, player.py, player.px)
 		end
 	end,
@@ -164,7 +164,7 @@ STARLIGHT_II = add_spell {
 	["mana_max"] = 	15,
 	["fail"] = 	-20,
 	["spell"] = 	function()
-		msg_print(Ind, "You are surrounded by a globe of light")
+		msg_print(Ind, "You are surrounded by a globe of light.")
 		lite_room(Ind, player.wpos, player.py, player.px)
 		fire_ball(Ind, GF_LITE, 0, (10 + get_level(Ind, STARLIGHT_I, 75)) * 2, 5 + get_level(Ind, STARLIGHT_I, 6), " calls a globe of light for")
 	end,

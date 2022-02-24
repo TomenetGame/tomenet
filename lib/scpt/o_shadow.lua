@@ -70,7 +70,7 @@ OBLIND_II = add_spell {
 	["direction"] = FALSE,
 	["spell"] = 	function()
 		--1..gl(7) starting at rad 2, or just gl(9) starting at rad 1
-		msg_print(Ind, "You are surrounded by darkness")
+		msg_print(Ind, "You are surrounded by darkness.")
 		fire_ball(Ind, GF_DARK_WEAK, 0, 8192 + 10 + get_level(Ind, OBLIND_I, 80), 1 + get_level(Ind, OBLIND_II, 7), " calls darkness for")
 	end,
 	["info"] = 	function()
