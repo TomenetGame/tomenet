@@ -1720,35 +1720,41 @@ void cmd_character(void) {
 	/* Save screen */
 	Term_save();
 
+	/* Init and re-init between relogs*/
+	if (sel == 0 && !p_ptr->fruit_bat) sel++;
+	if (sel == 3 && !strcasecmp(c_p_ptr->body_name, "Player")) sel++;
+	if (sel == 4 && !p_ptr->ptrait) sel++;
+
 	while (!done) {
 		/* Display player info */
 		display_player(csheet_page);
 
 		switch (sel) {
-		case 0: c_put_str(TERM_ORANGE, ">", 3, 0); break;
-		case 1: c_put_str(TERM_ORANGE, ">", 4, 0); break;
-		case 2: c_put_str(TERM_ORANGE, ">", 5, 0); break;
-		case 3: c_put_str(TERM_ORANGE, ">", 6, 0); break;
-		case 4: c_put_str(TERM_ORANGE, ">", 7, 0); break;
+		case 0: c_put_str(TERM_ORANGE, ">", 2, 0); break;
+		case 1: c_put_str(TERM_ORANGE, ">", 3, 0); break;
+		case 2: c_put_str(TERM_ORANGE, ">", 4, 0); break;
+		case 3: c_put_str(TERM_ORANGE, ">", 5, 0); break;
+		case 4: c_put_str(TERM_ORANGE, ">", 6, 0); break;
+		case 5: c_put_str(TERM_ORANGE, ">", 7, 0); break;
 
-		case 5: c_put_str(TERM_ORANGE, ">", 1, 60); break;
-		case 6: c_put_str(TERM_ORANGE, ">", 2, 60); break;
-		case 7: c_put_str(TERM_ORANGE, ">", 3, 60); break;
-		case 8: c_put_str(TERM_ORANGE, ">", 4, 60); break;
-		case 9: c_put_str(TERM_ORANGE, ">", 5, 60); break;
-		case 10: c_put_str(TERM_ORANGE, ">", 6, 60); break;
+		case 6: c_put_str(TERM_ORANGE, ">", 1, 60); break;
+		case 7: c_put_str(TERM_ORANGE, ">", 2, 60); break;
+		case 8: c_put_str(TERM_ORANGE, ">", 3, 60); break;
+		case 9: c_put_str(TERM_ORANGE, ">", 4, 60); break;
+		case 10: c_put_str(TERM_ORANGE, ">", 5, 60); break;
+		case 11: c_put_str(TERM_ORANGE, ">", 6, 60); break;
 
-		case 11: c_put_str(TERM_ORANGE, ">", 15, 0); break;
-		case 12: c_put_str(TERM_ORANGE, ">", 16, 0); break;
-		case 13: c_put_str(TERM_ORANGE, ">", 17, 0); break;
-		case 14: c_put_str(TERM_ORANGE, ">", 18, 0); break;
-		case 15: c_put_str(TERM_ORANGE, ">", 15, 27); break;
-		case 16: c_put_str(TERM_ORANGE, ">", 16, 27); break;
-		case 17: c_put_str(TERM_ORANGE, ">", 17, 27); break;
-		case 18: c_put_str(TERM_ORANGE, ">", 18, 27); break;
-		case 19: c_put_str(TERM_ORANGE, ">", 15, 54); break;
-		case 20: c_put_str(TERM_ORANGE, ">", 16, 54); break;
-		case 21: c_put_str(TERM_ORANGE, ">", 18, 54); break;
+		case 12: c_put_str(TERM_ORANGE, ">", 15, 0); break;
+		case 13: c_put_str(TERM_ORANGE, ">", 16, 0); break;
+		case 14: c_put_str(TERM_ORANGE, ">", 17, 0); break;
+		case 15: c_put_str(TERM_ORANGE, ">", 18, 0); break;
+		case 16: c_put_str(TERM_ORANGE, ">", 15, 27); break;
+		case 17: c_put_str(TERM_ORANGE, ">", 16, 27); break;
+		case 18: c_put_str(TERM_ORANGE, ">", 17, 27); break;
+		case 19: c_put_str(TERM_ORANGE, ">", 18, 27); break;
+		case 20: c_put_str(TERM_ORANGE, ">", 15, 54); break;
+		case 21: c_put_str(TERM_ORANGE, ">", 16, 54); break;
+		case 22: c_put_str(TERM_ORANGE, ">", 18, 54); break;
 		}
 
 		/* Window Display */
@@ -1764,43 +1770,48 @@ void cmd_character(void) {
 		switch (ch) {
 		case '2':
 			sel++;
-			if (sel == 2 && !strcasecmp(c_p_ptr->body_name, "Player")) sel++;
-			if (sel == 3 && !p_ptr->ptrait) sel++;
-			if (sel > 21) sel = 0;
+			if (sel > 22) sel = 0;
+			if (sel == 0 && !p_ptr->fruit_bat) sel++;
+			if (sel == 3 && !strcasecmp(c_p_ptr->body_name, "Player")) sel++;
+			if (sel == 4 && !p_ptr->ptrait) sel++;
+			if (sel > 22) sel = 0;
 			break;
 		case '8':
 			sel--;
-			if (sel == 3 && !p_ptr->ptrait) sel--;
-			if (sel == 2 && !strcasecmp(c_p_ptr->body_name, "Player")) sel--;
-			if (sel < 0) sel = 21;
+			if (sel < 0) sel = 22;
+			if (sel == 0 && !p_ptr->fruit_bat) sel--;
+			if (sel == 4 && !p_ptr->ptrait) sel--;
+			if (sel == 3 && !strcasecmp(c_p_ptr->body_name, "Player")) sel--;
+			if (sel < 0) sel = 22;
 			break;
 		//case '\n': case '\r':
 		case '?':
 			switch (sel) {
-			case 0: cmd_the_guide(3, 0, (char*)race_info[race].title); break;
-			case 1: cmd_the_guide(3, 0, (char*)class_info[class].title); break;
-			case 2: cmd_the_guide(3, 0, "mimicry details"); break;
-			case 3: cmd_the_guide(3, 0, (char*)trait_info[trait].title); break;
-			case 4: cmd_the_guide(3, 0, "character modes"); break;
+			case 0: cmd_the_guide(3, 0, "body mod"); break;
+			case 1: cmd_the_guide(3, 0, (char*)race_info[race].title); break;
+			case 2: cmd_the_guide(3, 0, (char*)class_info[class].title); break;
+			case 3: cmd_the_guide(3, 0, "mimicry details"); break;
+			case 4: cmd_the_guide(3, 0, (char*)trait_info[trait].title); break;
+			case 5: cmd_the_guide(3, 0, "character modes"); break;
 
-			case 5: cmd_the_guide(3, 0, "Strength (STR)"); break;
-			case 6: cmd_the_guide(3, 0, "Intelligence (INT)"); break;
-			case 7: cmd_the_guide(3, 0, "Wisdom (WIS)"); break;
-			case 8: cmd_the_guide(3, 0, "Dexterity (DEX)"); break;
-			case 9: cmd_the_guide(3, 0, "Constitution (CON)"); break;
-			case 10: cmd_the_guide(3, 0, "Charisma (CHR)"); break;
+			case 6: cmd_the_guide(3, 0, "Strength (STR)"); break;
+			case 7: cmd_the_guide(3, 0, "Intelligence (INT)"); break;
+			case 8: cmd_the_guide(3, 0, "Wisdom (WIS)"); break;
+			case 9: cmd_the_guide(3, 0, "Dexterity (DEX)"); break;
+			case 10: cmd_the_guide(3, 0, "Constitution (CON)"); break;
+			case 11: cmd_the_guide(3, 0, "Charisma (CHR)"); break;
 
-			case 11: cmd_the_guide(3, 0, "FIGHTING$$"); break;
-			case 12: cmd_the_guide(3, 0, "BOWS/THROW$$"); break;
-			case 13: cmd_the_guide(3, 0, "SAVING THROW$$"); break;
-			case 14: cmd_the_guide(3, 0, "STEALTH$$"); break;
-			case 15: cmd_the_guide(3, 0, "PERCEPTION$$"); break;
-			case 16: cmd_the_guide(3, 0, "SEARCHING$$"); break;
-			case 17: cmd_the_guide(3, 0, "DISARMING$$"); break;
-			case 18: cmd_the_guide(3, 0, "MAGIC DEVICE$$"); break;
-			case 19: cmd_the_guide(3, 0, "BLOWS/ROUND$$"); break;
-			case 20: cmd_the_guide(3, 0, "SHOTS/ROUND$$"); break;
-			case 21: cmd_the_guide(3, 0, "INFRA-VISION$$"); break;
+			case 12: cmd_the_guide(3, 0, "FIGHTING$$"); break;
+			case 13: cmd_the_guide(3, 0, "BOWS/THROW$$"); break;
+			case 14: cmd_the_guide(3, 0, "SAVING THROW$$"); break;
+			case 15: cmd_the_guide(3, 0, "STEALTH$$"); break;
+			case 16: cmd_the_guide(3, 0, "PERCEPTION$$"); break;
+			case 17: cmd_the_guide(3, 0, "SEARCHING$$"); break;
+			case 18: cmd_the_guide(3, 0, "DISARMING$$"); break;
+			case 19: cmd_the_guide(3, 0, "MAGIC DEVICE$$"); break;
+			case 20: cmd_the_guide(3, 0, "BLOWS/ROUND$$"); break;
+			case 21: cmd_the_guide(3, 0, "SHOTS/ROUND$$"); break;
+			case 22: cmd_the_guide(3, 0, "INFRA-VISION$$"); break;
 			}
 			break;
 		case ':':

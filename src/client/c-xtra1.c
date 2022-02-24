@@ -2815,50 +2815,57 @@ void display_player(int hist) {
 		clear_from(0);
 
 		/* Name, Sex, Race, Class */
-		put_str("Name        :", y_row1, 1);
-		put_str("Sex         :", y_row1 + 1, 1);
-		put_str("Race        :", y_row1 + 2, 1);
-		put_str("Class       :", y_row1 + 3, 1);
-		put_str("Body        :", y_row1 + 4, 1);
+#define FIRST_COL 8
+		put_str("Name :", y_row1, 1);
+		put_str("Sex  :", y_row1 + 1, 1);
+		put_str("Race :", y_row1 + 2, 1);
+		put_str("Class:", y_row1 + 3, 1);
+		put_str("Body :", y_row1 + 4, 1);
 #ifdef NEW_COMPRESSED_DUMP_AC
  #ifdef HIDE_UNAVAILABLE_TRAIT
 		if (trait != 0)
  #endif
 		{
-			put_str("Trait       :", y_row1 + 5, 1);
-			c_put_str(TERM_L_BLUE, trait_info[trait].title, y_row1 + 5, 15);
+			put_str("Trait:", y_row1 + 5, 1);
+			c_put_str(TERM_L_BLUE, trait_info[trait].title, y_row1 + 5, FIRST_COL);
 		}
 #endif
-		put_str("Mode        :", y_rowmode, 1);
+		put_str("Mode :", y_rowmode, 1);
 
-		c_put_str(TERM_L_BLUE, cname, y_row1, 15);
-		c_put_str(TERM_L_BLUE, (p_ptr->male ? "Male" : "Female"), y_row1 + 1, 15);
-		c_put_str(TERM_L_BLUE, race_info[race].title, y_row1 + 2, 15);
-		c_put_str(TERM_L_BLUE, class_info[class].title, y_row1 + 3, 15);
-		c_put_str(TERM_L_BLUE, c_p_ptr->body_name, y_row1 + 4, 15);
+		c_put_str(TERM_L_BLUE, cname, y_row1, FIRST_COL);
+#if 1 /* Also print body modification here? */
+		if (p_ptr->fruit_bat)
+			c_put_str(TERM_L_BLUE, (p_ptr->male ? "Male (Fruit bat)" : "Female (Fruit bat)"), y_row1 + 1, FIRST_COL);
+		else
+			c_put_str(TERM_L_BLUE, (p_ptr->male ? "Male" : "Female"), y_row1 + 1, FIRST_COL);
+#endif
+		c_put_str(TERM_L_BLUE, race_info[race].title, y_row1 + 2, FIRST_COL);
+		c_put_str(TERM_L_BLUE, class_info[class].title, y_row1 + 3, FIRST_COL);
+		c_put_str(TERM_L_BLUE, c_p_ptr->body_name, y_row1 + 4, FIRST_COL);
 		if (p_ptr->mode & MODE_PVP)
-			c_put_str(TERM_YELLOW, "PvP (one life)", y_rowmode, 15);
+			c_put_str(TERM_YELLOW, "PvP (one life)", y_rowmode, FIRST_COL);
 		else if (p_ptr->mode & MODE_EVERLASTING)
-			c_put_str(TERM_L_BLUE, "Everlasting (infinite lives)", y_rowmode, 15);
+			c_put_str(TERM_L_BLUE, "Everlasting (infinite lives)", y_rowmode, FIRST_COL);
 		else if ((p_ptr->mode & MODE_NO_GHOST) && (p_ptr->mode & MODE_HARD))
-			c_put_str(TERM_RED, "Hellish (one life, extra hard)", y_rowmode, 15);
+			c_put_str(TERM_RED, "Hellish (one life, extra hard)", y_rowmode, FIRST_COL);
 		else if ((p_ptr->mode & MODE_NO_GHOST) && (p_ptr->mode & MODE_SOLO))
-			c_put_str(TERM_L_DARK, "Soloist (one life)", y_rowmode, 15);
+			c_put_str(TERM_L_DARK, "Soloist (one life)", y_rowmode, FIRST_COL);
 		else if (p_ptr->mode & MODE_NO_GHOST)
-			c_put_str(TERM_L_DARK, "Unworldly (one life)", y_rowmode, 15);
+			c_put_str(TERM_L_DARK, "Unworldly (one life)", y_rowmode, FIRST_COL);
 		else if (p_ptr->mode & MODE_HARD) {
-			if (p_ptr->lives == -1) c_put_str(TERM_SLATE, "Hard (extra hard, 3 lives)", y_rowmode, 15);
-			else c_put_str(TERM_SLATE, format("Hard (extra hard, %d of 3 lives left)", p_ptr->lives), y_rowmode, 15);
+			if (p_ptr->lives == -1) c_put_str(TERM_SLATE, "Hard (extra hard, 3 lives)", y_rowmode, FIRST_COL);
+			else c_put_str(TERM_SLATE, format("Hard (extra hard, %d of 3 lives left)", p_ptr->lives), y_rowmode, FIRST_COL);
 		} else {/*(p_ptr->mode == MODE_NORMAL)*/
-			if (p_ptr->lives == -1) c_put_str(TERM_WHITE, "Normal (3 lives)", y_rowmode, 15);
-			else c_put_str(TERM_WHITE, format("Normal (%d of 3 lives left)", p_ptr->lives), y_rowmode, 15);
+			if (p_ptr->lives == -1) c_put_str(TERM_WHITE, "Normal (3 lives)", y_rowmode, FIRST_COL);
+			else c_put_str(TERM_WHITE, format("Normal (%d of 3 lives left)", p_ptr->lives), y_rowmode, FIRST_COL);
 		}
 
 		/* Age, Height, Weight, Social */
-		prt_num("Age          ", (int)p_ptr->age, y_row1, 32, TERM_L_BLUE);
-		prt_num("Height       ", (int)p_ptr->ht, y_row1 + 1, 32, TERM_L_BLUE);
-		prt_num("Weight       ", (int)p_ptr->wt, y_row1 + 2, 32, TERM_L_BLUE);
-		prt_num("Social Class ", (int)p_ptr->sc, y_row1 + 3, 32, TERM_L_BLUE);
+#define SECOND_COL 36
+		put_str(format("Age         :\377B %6d", (int)p_ptr->age), y_row1, SECOND_COL);
+		put_str(format("Height      :\377B %6d", (int)p_ptr->ht), y_row1 + 1, SECOND_COL);
+		put_str(format("Weight      :\377B %6d", (int)p_ptr->wt), y_row1 + 2, SECOND_COL);
+		put_str(format("Social Class:\377B %6d", (int)p_ptr->sc), y_row1 + 3, SECOND_COL);
 
 		/* Display the stats */
 		for (i = 0; i < 6; i++) {
