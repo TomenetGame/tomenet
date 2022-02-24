@@ -3033,15 +3033,15 @@ void display_player(int hist) {
 #endif
 
 #define SECOND2_COL 26
-		prt_num("Level        ", (int)p_ptr->lev, y_row2, SECOND2_COL, TERM_L_GREEN);
+		prt_num("Level        ", (int)p_ptr->lev, y_row2, SECOND2_COL, p_ptr->lev < PY_MAX_PLAYER_LEVEL ? TERM_L_GREEN : TERM_L_UMBER);
 		if (p_ptr->exp >= p_ptr->max_exp)
-			prt_lnum("Experience ", p_ptr->exp, y_row2 + 1, SECOND2_COL, TERM_L_GREEN);
+			prt_lnum("Experience ", p_ptr->exp, y_row2 + 1, SECOND2_COL, p_ptr->exp < PY_MAX_EXP ? TERM_L_GREEN : TERM_L_UMBER);
 		else
 			prt_lnum("Experience ", p_ptr->exp, y_row2 + 1, SECOND2_COL, TERM_YELLOW);
-		prt_lnum("Max Exp    ", p_ptr->max_exp, y_row2 + 2, SECOND2_COL, TERM_L_GREEN);
+		prt_lnum("Max Exp    ", p_ptr->max_exp, y_row2 + 2, SECOND2_COL, p_ptr->max_exp < PY_MAX_EXP ? TERM_L_GREEN : TERM_L_UMBER);
 		if (p_ptr->lev >= PY_MAX_PLAYER_LEVEL || !exp_adv) {
 			put_str("Exp to Adv.", y_row2 + 3, SECOND2_COL);
-			c_put_str(TERM_L_UMBER, "  *********", y_row2 + 3, SECOND2_COL + 11);
+			c_put_str(TERM_L_UMBER, "     ***   ", y_row2 + 3, SECOND2_COL + 11);
 		} else {
 			prt_lnum("Exp to Adv.", exp_adv, y_row2 + 3, SECOND2_COL, TERM_L_GREEN);
 		}
