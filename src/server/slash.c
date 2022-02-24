@@ -6422,9 +6422,19 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				wiz_dark(Ind);
 				return;
 			}
+			else if (prefix(messagelc, "/lr")) { /* lite room, no damage, but can wake up. */
+				msg_print(Ind, "You are surrounded by a globe of light.");
+				lite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+				return;
+			}
+			else if (prefix(messagelc, "/la")) { /* lite area (globe of light), 0 damage, but can wake up. Parameter = radius [2] */
+				if (!tk) lite_area(Ind, 0, 2);
+				lite_area(Ind, 0, k);
+				return;
+			}
 			else if (prefix(messagelc, "/equip") || prefix(messagelc, "/eq")) {
 				if (tk) admin_outfit(Ind, k);
-//				else admin_outfit(Ind, -1);
+				//else admin_outfit(Ind, -1);
 				else {
 					msg_print(Ind, "usage: /eq (realm no.)");
 					msg_print(Ind, "    Mage(0) Pray(1) sorc(2) fight(3) shad(4) hunt(5) psi(6) None(else)");
