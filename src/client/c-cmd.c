@@ -1764,14 +1764,14 @@ void cmd_character(void) {
 		switch (ch) {
 		case '2':
 			sel++;
-			if (sel == 2 && !p_ptr->body_monster) sel++;
+			if (sel == 2 && !strcasecmp(c_p_ptr->body_name, "Player")) sel++;
 			if (sel == 3 && !p_ptr->ptrait) sel++;
 			if (sel > 21) sel = 0;
 			break;
 		case '8':
 			sel--;
 			if (sel == 3 && !p_ptr->ptrait) sel--;
-			if (sel == 2 && !p_ptr->body_monster) sel--;
+			if (sel == 2 && !strcasecmp(c_p_ptr->body_name, "Player")) sel--;
 			if (sel < 0) sel = 21;
 			break;
 		//case '\n': case '\r':

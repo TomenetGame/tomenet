@@ -3303,12 +3303,12 @@ void display_player(int hist) {
 			if (csheet_boni[i].cb[6] & CB7_IFOOD) { c_put_str(TERM_L_UMBER, "*", 13, 25 + i); header_color[1][12] = TERM_L_UMBER; }
 			if (csheet_boni[i].cb[6] & CB7_RVAMP) {
 				if ((i == 0) || (i == 1) || (i == 2) || (i == 12)
-				    || ((i == 14) && ((p_ptr->body_monster == RI_VAMPIRIC_MIST) || (p_ptr->body_monster == RI_VAMPIRE_BAT))) //Hack: use * for 100% weapon/ammo or v-bat/mist forms
+				    || ((i == 14) && (!strcasecmp(c_p_ptr->body_name, "Vampiric mist") || !strcasecmp(c_p_ptr->body_name, "Vampire bat"))) //Hack: use * for 100% weapon/ammo or v-bat/mist forms
 				    || (i == 14 && race == RACE_VAMPIRE && get_skill(SKILL_NECROMANCY) == 50 && get_skill(SKILL_TRAUMATURGY) == 50)) { //Nasty hack: Assume that having full trauma+necro gives 100% vamp actually
 					c_put_str(TERM_WHITE, "*", 14, 25 + i); header_color[1][13] = TERM_WHITE;
 				} else { c_put_str(TERM_WHITE, "+", 14, 25 + i); header_color[1][13] = TERM_WHITE; }
 			}
-			if (p_ptr->fruit_bat == 1 && p_ptr->body_monster == 0) { c_put_str(TERM_WHITE, "+", 14, 25 + 14); header_color[1][13] = TERM_WHITE; } //Mega Hack: Hardcode 50% vamp as a fruit bat! Maybe incorrect for mimics? - Kurzel
+			if (p_ptr->fruit_bat == 1 && !strcasecmp(c_p_ptr->body_name, "Player")) { c_put_str(TERM_WHITE, "+", 14, 25 + 14); header_color[1][13] = TERM_WHITE; } //Mega Hack: Hardcode 50% vamp as a fruit bat! Maybe incorrect for mimics? - Kurzel
 			if (csheet_boni[i].cb[6] & CB7_RAUID) { c_put_str(TERM_WHITE, "+", 15, 25 + i); header_color[1][14] = TERM_WHITE; }
 			if (csheet_boni[i].cb[6] & CB7_RREFL) { c_put_str(TERM_WHITE, "+", 16, 25 + i); header_color[1][15] = TERM_WHITE; }
 			if (csheet_boni[i].cb[6] & CB7_RAMSH) { c_put_str(TERM_YELLOW, "+", 17, 25 + i); header_color[1][16] = TERM_YELLOW; }
