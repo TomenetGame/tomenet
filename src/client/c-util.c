@@ -9834,8 +9834,8 @@ static void print_tomb(cptr reason) {
 		c_put_str(TERM_L_UMBER, buf, 12-2, STONE_COL_SHORT);
 #else
 		(void)sprintf(tmp, "Lv: %d, Exp: %d", (int)p_ptr->lev, p_ptr->exp);
-		center_string_short(buf, tmp);
-		c_put_str(TERM_L_UMBER, buf, 11-2, STONE_COL_SHORT);
+		center_string(buf, tmp);
+		c_put_str(TERM_L_UMBER, buf, 11-2, STONE_COL);
 #endif
 		/* XXX usually 0 */
 		(void)sprintf(tmp, "AU: %d", p_ptr->au);
