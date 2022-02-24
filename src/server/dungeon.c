@@ -4807,6 +4807,8 @@ static bool process_player_end_aux(int Ind) {
 							msg_print(Ind,"\377oYou are weakened by the exertion of swimming!");
 							dec_stat(Ind, A_STR, 10, STAT_DEC_TEMPORARY);
 						}
+						 /* Inventory can be immune, but cold immunity cannot avert drowning */
+						if (cold_place(&p_ptr->wpos)) (void)cold_dam(Ind, hit, "drowning", 0);
 						take_hit(Ind, hit, "drowning", 0);
 					}
 				}
