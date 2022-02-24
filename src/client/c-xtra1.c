@@ -3057,7 +3057,7 @@ void display_player(int hist) {
 		prt_lnum("Max Exp    ", p_ptr->max_exp, y_row2 + 2, SECOND2_COL, p_ptr->max_exp < PY_MAX_EXP ? TERM_L_GREEN : TERM_L_UMBER);
 		if (p_ptr->lev >= PY_MAX_PLAYER_LEVEL || !exp_adv) {
 			put_str("Exp to Adv.", y_row2 + 3, SECOND2_COL);
-			c_put_str(TERM_L_UMBER, "     ***   ", y_row2 + 3, SECOND2_COL + 11);
+			c_put_str(TERM_L_UMBER, "        ***", y_row2 + 3, SECOND2_COL + 11);
 		} else {
 			prt_lnum("Exp to Adv.", exp_adv, y_row2 + 3, SECOND2_COL, TERM_L_GREEN);
 		}
