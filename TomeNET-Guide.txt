@@ -17029,11 +17029,11 @@ eldritch horror (see (6.3) under Saving Throw).
 
 (6.7) Mimicry details
 ---------------------
-If a mimicry-user polymorphs into a certain monster form, abilities and stats
-will be averaged between the normal ('@') body and the form. In most cases if
-the form is performing worse than @-form in a certain field, the @-form will
-dominate and the ability will be only slightly worse than normal, if even at
-all.
+If a mimicry-user polymorphs into a certain monster form, stats and some
+abilities will be averaged between the normal ('@') body and the form. In most
+cases if the form is performing worse than @-form in a certain field, the '@'
+form (ie the normal 'player' form) will dominate and the ability will be only
+slightly worse than normal, if even at all.
 The averaging is done because the mimic with all his equipment polymorphs into
 the target form. It's not like the polymorphing is done first and afterwards
 armour, weapon or jewelry is equipped.
