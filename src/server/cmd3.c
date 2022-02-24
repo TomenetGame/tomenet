@@ -2633,6 +2633,8 @@ bool check_power_inscribe(int Ind, object_type *o_ptr, char *o_name_old, cptr in
 	if (Ind) {
 		msg_format(Ind, "Power-inscribing %s.", o_name_old);
 		msg_print(Ind, NULL);
+
+		Players[Ind]->warning_powins = 1;
 	}
 
 	/* Copy part of the inscription before @@/@@@ */

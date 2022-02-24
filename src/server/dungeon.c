@@ -9071,6 +9071,19 @@ void process_player_change_wpos(int Ind) {
 		p_ptr->warning_dungeon = 1;
 	}
 
+	if (!p_ptr->warning_powins) {
+		for (j = 1; j < INVEN_PACK; j++) {
+			if (!p_ptr->inventory[j].tval) break;
+			if (p_ptr->inventory[j].tval != TV_BOOK || !is_custom_tome(p_ptr->inventory[j].sval)) continue;
+
+			msg_print(Ind, "\374\377yHINT: Press \377y{{\377- to power-inscribe your custom books, eg a codex.");
+			msg_print(Ind, "\374\377y      When prompted for inscription, just enter: \377y@@@");
+			s_printf("warning_powins: %s\n", p_ptr->name);
+			p_ptr->warning_powins = 1;
+			break;
+		}
+	}
+
 	/* Hack -- jail her/him */
 	if (!p_ptr->wpos.wz && p_ptr->tim_susp
 #ifdef JAIL_TOWN_AREA

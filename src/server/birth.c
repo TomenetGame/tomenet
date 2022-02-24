@@ -2976,6 +2976,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_sellunid = 1;
 		p_ptr->warning_edmt = 1;
 		p_ptr->warning_stealing = 1;
+		p_ptr->warning_powins = 1;
 		return;
 	}
 

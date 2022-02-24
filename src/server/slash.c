@@ -855,7 +855,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				j = INVEN_PACK - 1;
 			}
 
-			for(i = h; i <= j; i++) {
+			for (i = h; i <= j; i++) {
 				o_ptr = &(p_ptr->inventory[i]);
 				if (!o_ptr->tval) break;
 
