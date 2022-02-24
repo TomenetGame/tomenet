@@ -8050,7 +8050,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		break;
 	case GF_DOMINATE:
 		if (!quiet) {
-			if ((!(r_ptr->flags1 & (RF1_UNIQUE|RF1_NEVER_MOVE)) &&
+			if ((!(r_ptr->flags1 & (RF1_UNIQUE | RF1_NEVER_MOVE)) &&
+			    //!(r_ptr->flags7 & RF7_NO_DEATH)
 			    !(r_ptr->flags9 & RF9_IM_PSI) && !(r_ptr->flags7 & RF7_MULTIPLY)) ||
 			    is_admin(p_ptr))
 				m_ptr->owner = p_ptr->id;
@@ -8617,7 +8618,13 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		do_fear = FALSE;
 		do_conf = FALSE;
 		do_blind = FALSE;
-		do_sleep = FALSE;
+		/* do_sleep is for some reason the only status effect that also sets a note right away..
+		   (..since it is also the only status effect that doesn't allow damage at the same time
+		   (would wake up!) so it cannot conflict with a damage-note.) */
+		if (do_sleep) {
+			do_sleep = FALSE;
+			note = NULL;
+		}
 		do_stun = FALSE;
 		do_poly = FALSE;
 		do_dist = FALSE; //Redundant. Questors are IM_TELE by default anyway though. Otherwise they could still be TELE_TO'ed.
