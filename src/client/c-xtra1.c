@@ -340,7 +340,7 @@ void prt_gold(int gold) {
 	sprintf(tmp, "%10d", gold);
 	if (tmp[0] != ' ') put_str("$ ", ROW_GOLD, COL_GOLD);
 	else put_str("AU ", ROW_GOLD, COL_GOLD);
-	c_put_str(TERM_L_GREEN, tmp, ROW_GOLD, COL_GOLD + 2);
+	c_put_str(gold < PY_MAX_GOLD ? TERM_L_GREEN : TERM_L_UMBER, tmp, ROW_GOLD, COL_GOLD + 2);
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);
