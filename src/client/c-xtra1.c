@@ -3032,25 +3032,26 @@ void display_player(int hist) {
 		prt_num("Total AC    ", tmp + p_ptr->dis_to_a, y_row2 + 4, 1, tmpc);
 #endif
 
-		prt_num("Level      ", (int)p_ptr->lev, y_row2, 28, TERM_L_GREEN);
+#define SECOND2_COL 26
+		prt_num("Level        ", (int)p_ptr->lev, y_row2, SECOND2_COL, TERM_L_GREEN);
 		if (p_ptr->exp >= p_ptr->max_exp)
-			prt_lnum("Experience ", p_ptr->exp, y_row2 + 1, 28, TERM_L_GREEN);
+			prt_lnum("Experience ", p_ptr->exp, y_row2 + 1, SECOND2_COL, TERM_L_GREEN);
 		else
-			prt_lnum("Experience ", p_ptr->exp, y_row2 + 1, 28, TERM_YELLOW);
-		prt_lnum("Max Exp    ", p_ptr->max_exp, y_row2 + 2, 28, TERM_L_GREEN);
+			prt_lnum("Experience ", p_ptr->exp, y_row2 + 1, SECOND2_COL, TERM_YELLOW);
+		prt_lnum("Max Exp    ", p_ptr->max_exp, y_row2 + 2, SECOND2_COL, TERM_L_GREEN);
 		if (p_ptr->lev >= PY_MAX_PLAYER_LEVEL || !exp_adv) {
-			put_str("Exp to Adv.", y_row2 + 3, 28);
-			c_put_str(TERM_L_GREEN, "    *****", y_row2 + 3, 28 + 11);
+			put_str("Exp to Adv.", y_row2 + 3, SECOND2_COL);
+			c_put_str(TERM_L_UMBER, "  *********", y_row2 + 3, SECOND2_COL + 11);
 		} else {
-			prt_lnum("Exp to Adv.", exp_adv, y_row2 + 3, 28, TERM_L_GREEN);
+			prt_lnum("Exp to Adv.", exp_adv, y_row2 + 3, SECOND2_COL, TERM_L_GREEN);
 		}
-		prt_lnum("Gold       ", p_ptr->au, y_row2 + 4, 28, TERM_L_GREEN);
+		prt_lnum("Gold (Au)  ", p_ptr->au, y_row2 + 4, SECOND2_COL, TERM_L_GREEN);
 #ifndef NEW_COMPRESSED_DUMP_AC
  #ifdef HIDE_UNAVAILABLE_TRAIT
 		if (trait != 0)
  #endif
 		{
-			put_str("Trait", y_row2 + 5, 28);
+			put_str("Trait", y_row2 + 5, SECOND2_COL);
 			c_put_str(TERM_L_BLUE, trait_info[trait].title, y_row2 + 5, 39);
 		}
 #endif

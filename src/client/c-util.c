@@ -4279,7 +4279,7 @@ void prt_lnum(cptr header, s32b num, int row, int col, byte color) {
 	char out_val[32];
 
 	put_str(header, row, col);
-	(void)sprintf(out_val, "%9d", (int)num);
+	(void)sprintf(out_val, "%11d", (int)num); /* Increased form 9 to 11 just for gold (~2 billion limit) */
 	c_put_str(color, out_val, row, col + len);
 }
 
