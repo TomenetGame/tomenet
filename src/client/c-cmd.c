@@ -4612,7 +4612,9 @@ bool png_screenshot(void) {
 		strcat(executable, "\"");
 		remove("__temp__");
 
-		sprintf(command, "%s --headless --default-background-color=00000000 --window-size=%s --screenshot=%s %s",
+		//bug with webdriver_manager.chrome: requires --disable-gpu to work with headless, or "ERROR:gpu_init.cc(426) Passthrough is not supported, GL is disabled" heppens.
+			//--disable-software-rasterizer
+		sprintf(command, "%s --headless --disable-gpu --default-background-color=00000000 --window-size=%s --screenshot=%s %s",
 		    executable,
 		    screen_hgt == MAX_SCREEN_HGT ? "640x650" : "640x365",
 		    file_name,
@@ -4650,7 +4652,9 @@ bool png_screenshot(void) {
 			strcat(executable, "\"");
 			remove("__temp__");
 
-			sprintf(command, "%s --headless --default-background-color=00000000 --window-size=%s --screenshot=%s %s",
+			//bug with webdriver_manager.chrome: requires --disable-gpu to work with headless, or "ERROR:gpu_init.cc(426) Passthrough is not supported, GL is disabled" heppens.
+			//--disable-software-rasterizer
+			sprintf(command, "%s --headless --disable-gpu --default-background-color=00000000 --window-size=%s --screenshot=%s %s",
 			    executable,
 			    screen_hgt == MAX_SCREEN_HGT ? "640x650" : "640x365",
 			    file_name,
@@ -4738,7 +4742,9 @@ bool png_screenshot(void) {
 	/* Try chromium, then chrome, then firefox */
 	k = system("chromium --version");
 	if (!k) {
-		sprintf(command, "chromium --headless --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
+		//bug with webdriver_manager.chrome: requires --disable-gpu to work with headless, or "ERROR:gpu_init.cc(426) Passthrough is not supported, GL is disabled" heppens.
+		//--disable-software-rasterizer
+		sprintf(command, "chromium --headless --disable-gpu --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
 		    screen_hgt == MAX_SCREEN_HGT ? "640x750" : "640x420",
 		    file_name,
 		    buf);
@@ -4753,7 +4759,9 @@ bool png_screenshot(void) {
 	} else {
 		k = system("chrome --version");
 		if (!k) {
-			sprintf(command, "chrome --headless --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
+			//bug with webdriver_manager.chrome: requires --disable-gpu to work with headless, or "ERROR:gpu_init.cc(426) Passthrough is not supported, GL is disabled" heppens.
+			//--disable-software-rasterizer
+			sprintf(command, "chrome --headless --disable-gpu --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
 			    screen_hgt == MAX_SCREEN_HGT ? "640x750" : "640x420",
 			    file_name,
 			    buf);
