@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 24. February 2022 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 25. February 2022 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.7.4b - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1527,6 +1527,9 @@ They all start with a slash '/' hence they're called slash commands:
             so you only get those kifus emailed that the character played on
             which you used the command. (SGF is the 'Smart Game Format'.)
 
+/know       Client-side command that invokes the knowledge menu, same as if the
+            user pressed '~' key.
+
 /leave
 /exit
 /quit      Leaves the game, same as pressing CTRL+Q.
@@ -1603,6 +1606,11 @@ They all start with a slash '/' hence they're called slash commands:
 /pbbs <text>    Same usage as /bbs, but only readable/writable for party
                 members. So it's a party-internal BBS.
                 To read its contents, type /pbbs without any <text>.
+
+/png        Client-side command that invokes creation of a PNG screenshot from
+            a previously taken xhtml screenshot, same as if the user pressed
+            the '~' key while already inside the knowledge menu ('~' too), ie
+            double-tapping the '~' key.
 
 /pkill
 /pk         Toggles the player's status regarding participation in 'PK' actions
