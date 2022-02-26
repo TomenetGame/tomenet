@@ -6679,12 +6679,16 @@ cptr get_day(int day) {
 
 /* Fuzzy: Will allow one-off colour,
    Compact: Will increase stack size by factor [100] for all particular colour ranges. */
-int gold_colour(int amt, bool fuzzy, bool compact) {
-	int i, unit = 1;
+int gold_colour(s32b amt, bool fuzzy, bool compact) {
+	s32b i;
+	int unit = 1;
 
 	//for (i = amt; i > 99; i >>= 1, unit++) /* naught */; --old
 
 #if 1
+	/* Limit to avoid overflow freeze */
+	if (amt > 1000000000) amt = 1000000000;
+
 	/* special: perform pre-rounding, to achieve smoother looking transitions */
 	for (i = 1; i * 10 <= amt; i *= 10);
 	/* keep first 2 digits, discard the rest */
