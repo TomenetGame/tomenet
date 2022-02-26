@@ -1729,32 +1729,35 @@ void cmd_character(void) {
 		/* Display player info */
 		display_player(csheet_page);
 
-		switch (sel) {
-		case 0: c_put_str(TERM_ORANGE, ">", 2, 0); break;
-		case 1: c_put_str(TERM_ORANGE, ">", 3, 0); break;
-		case 2: c_put_str(TERM_ORANGE, ">", 4, 0); break;
-		case 3: c_put_str(TERM_ORANGE, ">", 5, 0); break;
-		case 4: c_put_str(TERM_ORANGE, ">", 6, 0); break;
-		case 5: c_put_str(TERM_ORANGE, ">", 7, 0); break;
+		if (csheet_page == 1 && sel >= 12) sel = 0;
+		if (csheet_page != 2) {
+			switch (sel) {
+			case 0: c_put_str(TERM_ORANGE, ">", 2, 0); break;
+			case 1: c_put_str(TERM_ORANGE, ">", 3, 0); break;
+			case 2: c_put_str(TERM_ORANGE, ">", 4, 0); break;
+			case 3: c_put_str(TERM_ORANGE, ">", 5, 0); break;
+			case 4: c_put_str(TERM_ORANGE, ">", 6, 0); break;
+			case 5: c_put_str(TERM_ORANGE, ">", 7, 0); break;
 
-		case 6: c_put_str(TERM_ORANGE, ">", 1, 60); break;
-		case 7: c_put_str(TERM_ORANGE, ">", 2, 60); break;
-		case 8: c_put_str(TERM_ORANGE, ">", 3, 60); break;
-		case 9: c_put_str(TERM_ORANGE, ">", 4, 60); break;
-		case 10: c_put_str(TERM_ORANGE, ">", 5, 60); break;
-		case 11: c_put_str(TERM_ORANGE, ">", 6, 60); break;
+			case 6: c_put_str(TERM_ORANGE, ">", 1, 60); break;
+			case 7: c_put_str(TERM_ORANGE, ">", 2, 60); break;
+			case 8: c_put_str(TERM_ORANGE, ">", 3, 60); break;
+			case 9: c_put_str(TERM_ORANGE, ">", 4, 60); break;
+			case 10: c_put_str(TERM_ORANGE, ">", 5, 60); break;
+			case 11: c_put_str(TERM_ORANGE, ">", 6, 60); break;
 
-		case 12: c_put_str(TERM_ORANGE, ">", 15, 0); break;
-		case 13: c_put_str(TERM_ORANGE, ">", 16, 0); break;
-		case 14: c_put_str(TERM_ORANGE, ">", 17, 0); break;
-		case 15: c_put_str(TERM_ORANGE, ">", 18, 0); break;
-		case 16: c_put_str(TERM_ORANGE, ">", 15, 27); break;
-		case 17: c_put_str(TERM_ORANGE, ">", 16, 27); break;
-		case 18: c_put_str(TERM_ORANGE, ">", 17, 27); break;
-		case 19: c_put_str(TERM_ORANGE, ">", 18, 27); break;
-		case 20: c_put_str(TERM_ORANGE, ">", 15, 54); break;
-		case 21: c_put_str(TERM_ORANGE, ">", 16, 54); break;
-		case 22: c_put_str(TERM_ORANGE, ">", 18, 54); break;
+			case 12: c_put_str(TERM_ORANGE, ">", 15, 0); break;
+			case 13: c_put_str(TERM_ORANGE, ">", 16, 0); break;
+			case 14: c_put_str(TERM_ORANGE, ">", 17, 0); break;
+			case 15: c_put_str(TERM_ORANGE, ">", 18, 0); break;
+			case 16: c_put_str(TERM_ORANGE, ">", 15, 27); break;
+			case 17: c_put_str(TERM_ORANGE, ">", 16, 27); break;
+			case 18: c_put_str(TERM_ORANGE, ">", 17, 27); break;
+			case 19: c_put_str(TERM_ORANGE, ">", 18, 27); break;
+			case 20: c_put_str(TERM_ORANGE, ">", 15, 54); break;
+			case 21: c_put_str(TERM_ORANGE, ">", 16, 54); break;
+			case 22: c_put_str(TERM_ORANGE, ">", 18, 54); break;
+			}
 		}
 
 		/* Window Display */
@@ -1783,9 +1786,11 @@ void cmd_character(void) {
 			if (sel == 4 && !p_ptr->ptrait) sel--;
 			if (sel == 3 && !strcasecmp(c_p_ptr->body_name, "Player")) sel--;
 			if (sel < 0) sel = 22;
+			if (csheet_page == 1 && sel >= 12) sel = 11;
 			break;
 		//case '\n': case '\r':
 		case '?':
+			if (csheet_page == 2) break;
 			switch (sel) {
 			case 0: cmd_the_guide(3, 0, "body mod"); break;
 			case 1: cmd_the_guide(3, 0, (char*)race_info[race].title); break;
