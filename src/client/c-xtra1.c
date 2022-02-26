@@ -331,8 +331,9 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
  * Prints current gold
  */
 void prt_gold(int gold) {
-	char tmp[32];
 	int x, y;
+#if 1
+	char tmp[10 + 1];
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
@@ -340,7 +341,52 @@ void prt_gold(int gold) {
 	sprintf(tmp, "%10d", gold);
 	if (tmp[0] != ' ') put_str("$ ", ROW_GOLD, COL_GOLD);
 	else put_str("AU ", ROW_GOLD, COL_GOLD);
+
 	c_put_str(gold < PY_MAX_GOLD ? TERM_L_GREEN : TERM_L_UMBER, tmp, ROW_GOLD, COL_GOLD + 2);
+#else /* Doesn't look nice colour-wise, despite being easier to interpret :/ */
+	char tmp[(2 + 3) * 4 + 1], tmp2[12 + 1];
+	bool bright = TRUE;
+	int slen = 0, triplet = 0;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
+	if (gold < PY_MAX_GOLD) {
+		/* Assume max of 4 triplets aka 12-digit number */
+		sprintf(tmp2, "%12d", gold);
+		/* Init string */
+		memset(tmp, 0, sizeof(tmp)); //paranoia vs '= { 0 }' in non-global scope >.>
+
+		/* Iterate over triplets, adding them with alternating colour (bright/non-bright) */
+		do {
+			/* Empty leading triplet(s)? Skip. */
+			if (tmp2[triplet * 3 + 2] == ' ') {
+				strcat(tmp, "     "); /* 2 chars colour code + 3 chars triplet */
+				slen += 5;
+				triplet++;
+				continue;
+			}
+
+			/* First, add the colour code (2 characters) */
+			strcat(tmp, bright ? "\377G" : "\377g");
+			slen += 2;
+
+			/* Now add the upcoming triplet (3 characters) */
+			tmp[slen++] = tmp2[triplet * 3];
+			tmp[slen++] = tmp2[triplet * 3 + 1];
+			tmp[slen++] = tmp2[triplet * 3 + 2];
+			triplet++;
+
+			/* Prepare for next triplet */
+			bright = !bright;
+		} while (triplet < 4);
+	} else sprintf(tmp, "%14d", gold); /* +2 for non-existant colour code at the beginning */
+
+	if (tmp[4] != ' ') put_str("$ ", ROW_GOLD, COL_GOLD);
+	else put_str("AU ", ROW_GOLD, COL_GOLD);
+
+	c_put_str(gold < PY_MAX_GOLD ? TERM_L_GREEN : TERM_L_UMBER, tmp + 4, ROW_GOLD, COL_GOLD + 2); /* Make up for 10 -> 12 (and +1 for colour code, we skip the first one!) number size expansion for triplet-processing */
+#endif
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);
