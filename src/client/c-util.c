@@ -4177,16 +4177,16 @@ s32b c_get_quantity(cptr prompt, s32b max) {
 	if (!get_string(prompt, buf, QUANTITY_WIDTH)) return (0);
 
 #if 1
-	/* special hack to enable old 'any letter = all' hack without interfering with 'k'/'M' for kilo/mega: */
-	if ((buf[0] == 'k' || buf[0] == 'K' || buf[0] == 'm' || buf[0] == 'M') && buf[1]
+	/* special hack to enable old 'any letter = all' hack without interfering with 'k'/'M'/'G'/ for kilo/mega/giga: */
+	if ((buf[0] == 'k' || buf[0] == 'K' || buf[0] == 'm' || buf[0] == 'M' || buf[0] == 'g' || buf[0] == 'G') && buf[1]
 	    && (buf[1] < '0' || buf[1] > '9')) {
 		//all..
 		buf[0] = 'a';
 		buf[1] = 0;
 	} else
 
-	/* new method slightly extended: allow leading 'k' or 'm' too */
-	if ((buf[0] == 'k' || buf[0] == 'K' || buf[0] == 'm' || buf[0] == 'M') && buf[1]) {
+	/* new method slightly extended: allow leading 'k' or 'M' or 'G' too */
+	if ((buf[0] == 'k' || buf[0] == 'K' || buf[0] == 'm' || buf[0] == 'M' || buf[0] == 'g' || buf[0] == 'G') && buf[1]) {
 		/* add leading '0' to revert it to the usual format */
 		for (i = QUANTITY_WIDTH + 1; i >= 1; i--) buf[i] = buf[i - 1];
 		buf[0] = '0';
@@ -4197,6 +4197,7 @@ s32b c_get_quantity(cptr prompt, s32b max) {
 	i1 = atoi(bi1);
 	if ((buf[n] == 'k' || buf[n] == 'K') && n > 0) mul = 1000;
 	else if (buf[n] == 'm' || buf[n] == 'M') mul = 1000000;
+	else if (buf[n] == 'g' || buf[n] == 'G') mul = 1000000000;
 	if (mul > 1) {
 		n++;
 		i = 0;
@@ -4217,6 +4218,7 @@ s32b c_get_quantity(cptr prompt, s32b max) {
 
 		if (mul == 1000) bi2[3] = '\0';
 		else if (mul == 1000000) bi2[6] = '\0';
+		else if (mul == 1000000000) bi2[9] = '\0';
 
 		i2 = atoi(bi2);
 		amt = i1 * mul + i2;
@@ -4232,6 +4234,8 @@ s32b c_get_quantity(cptr prompt, s32b max) {
 		amt = amt * 1000;
 	else if (strchr(buf, 'm') || strchr(buf, 'M')
 		amt = amt * 1000000;
+	else if (strchr(buf, 'g') || strchr(buf, 'G')
+		amt = amt * 1000000000;
 #endif
 
 
@@ -4242,7 +4246,7 @@ s32b c_get_quantity(cptr prompt, s32b max) {
 	    ) {
 		if (max >= 0) amt = max;
 		/* hack for dropping gold (max is -1) */
-		else amt = 1000000000;
+		else amt = PY_MAX_GOLD;
 	}
 
 	/* Enforce the maximum, if maximum is defined */
