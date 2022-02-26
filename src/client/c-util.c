@@ -4149,7 +4149,7 @@ s32b c_get_quantity(cptr prompt, s32b max) {
 	char tmp[80];
 	char buf[80];
 
-	char bi1[80], bi2[6 + 1];
+	char bi1[80], bi2[9 + 1];
 	int n = 0, i = 0, j = 0;
 	s32b i1 = 0, i2 = 0, mul = 1;
 
