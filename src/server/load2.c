@@ -1208,7 +1208,7 @@ static void rd_mail() {
 			rd_string(dummy, NAME_LEN);
 			rd_s16b(&dummy_i);
 			if (!s_older_than(4, 6, 9)) {
-				rd_s16b(&dummy_i);
+				rd_s32b(&dummy_l);
 				rd_byte(&tmp8u);
 				rd_u32b(&dummy_l);
 			}
@@ -1235,7 +1235,7 @@ static void rd_mail() {
 		rd_string(dummy, NAME_LEN);
 		rd_s16b(&dummy_i);
 		if (!s_older_than(4, 6, 9)) {
-			rd_s16b(&dummy_i);
+			rd_s32b(&dummy_l);
 			rd_byte(&tmp8u);
 			rd_u32b(&dummy_l);
 		}
