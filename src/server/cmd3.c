@@ -1922,6 +1922,7 @@ void do_cmd_drop_gold(int Ind, s32b amt) {
 		return;
 */
 	}
+	if (amt > PY_MAX_GOLD) amt = PY_MAX_GOLD;
 	if (amt <= 0) return;
 
 	/* Setup the object */
