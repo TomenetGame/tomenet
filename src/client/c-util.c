@@ -4206,10 +4206,10 @@ s32b c_get_quantity(cptr prompt, s32b max) {
 //Send_msg(format("%s-%s", bi1, bi2));
 
 		i = 0;
-		while (i < 6) {
+		while (i < 9) {
 			if (bi2[i] == '\0') {
 				j = i;
-				while (j < 6) bi2[j++] = '0';
+				while (j < 9) bi2[j++] = '0';
 				break;
 			}
 			i++;
