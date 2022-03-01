@@ -4176,6 +4176,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned, w, 100);//assume NO ADMIN!
 				//Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
 #endif
+
+				/* TODO: Do everything done in player_birth() for MODE_PVP here too */
+
 				return;
 			}
 			/* We want to convert into ded.iddc? */
@@ -4230,6 +4233,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					/* automatically know the location of IDDC dungeon */
 					p_ptr->wild_map[(WPOS_IRONDEEPDIVE_X + WPOS_IRONDEEPDIVE_Y * MAX_WILD_X) / 8] |=
 					    (1U << ((WPOS_IRONDEEPDIVE_X + WPOS_IRONDEEPDIVE_Y * MAX_WILD_X) % 8));
+  #ifdef DED_IDDC_MANDOS
+					/* automatically know the location of Halls of Mandos */
+					p_ptr->wild_map[(hallsofmandos_wpos_x + hallsofmandos_wpos_y * MAX_WILD_X) / 8] |=
+					    (1U << ((hallsofmandos_wpos_x + hallsofmandos_wpos_y * MAX_WILD_X) % 8));
+  #endif
  #endif
 				}
 				p_ptr->warning_worldmap = 1;
