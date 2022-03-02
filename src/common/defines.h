@@ -6525,7 +6525,7 @@
 
 /*** Dungeon type flags -- DG ***/
 
-#define DF1_PRINCIPAL		0x00000001L	/* Is a principal dungeon --- UNUSED */
+#define DF1_PRINCIPAL		0x00000001L	/* Is a principal dungeon --- These don't provide certain boni meant for incentivising visiting */
 #define DF1_MAZE		0x00000002L	/* Is a maze-type dungeon */
 #define DF1_SMALLEST		0x00000004L	/* Creates VERY small levels like The Maze */
 #define DF1_SMALL		0x00000008L	/* Creates small levels like Dol Goldor */
