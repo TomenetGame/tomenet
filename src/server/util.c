@@ -7588,6 +7588,7 @@ void reindex_dungeons() {
 				dungeon_x[dungeon_id_max] = x;
 				dungeon_y[dungeon_id_max] = y;
 				dungeon_tower[dungeon_id_max] = TRUE;
+				dungeon_ditype[dungeon_id_max] = d_ptr->type;
 
 				/* Initialize all dungeons at 'low rest bonus' */
 				set_dungeon_bonus(dungeon_id_max, TRUE);
@@ -7602,6 +7603,7 @@ void reindex_dungeons() {
 				dungeon_x[dungeon_id_max] = x;
 				dungeon_y[dungeon_id_max] = y;
 				dungeon_tower[dungeon_id_max] = FALSE;
+				dungeon_ditype[dungeon_id_max] = d_ptr->type;
 
 				/* Initialize all dungeons at 'low rest bonus' */
 				set_dungeon_bonus(dungeon_id_max, TRUE);

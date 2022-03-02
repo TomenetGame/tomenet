@@ -1022,6 +1022,7 @@ int dungeon_x[MAX_D_IDX * 2], dungeon_y[MAX_D_IDX * 2];
 u16b dungeon_visit_frequency[MAX_D_IDX * 2];   /* how often players enter this dungeon */
 bool dungeon_tower[MAX_D_IDX * 2], dungeon_visit_check[MAX_D_IDX * 2];
 int dungeon_bonus[MAX_D_IDX * 2];
+int dungeon_ditype[MAX_D_IDX * 2];
 #endif
 
 bool jails_enabled = TRUE;

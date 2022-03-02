@@ -3820,6 +3820,7 @@ void new_rd_wild() {
 					dungeon_x[d_ptr->id] = x;
 					dungeon_y[d_ptr->id] = y;
 					dungeon_tower[d_ptr->id] = FALSE;
+					dungeon_ditype[d_ptr->id] = d_ptr->type;
 				}
 #endif
 				if (d_ptr->type == DI_NETHER_REALM) {
@@ -3912,6 +3913,7 @@ void new_rd_wild() {
 					dungeon_x[d_ptr->id] = x;
 					dungeon_y[d_ptr->id] = y;
 					dungeon_tower[d_ptr->id] = TRUE;
+					dungeon_ditype[d_ptr->id] = d_ptr->type;
 				}
 #endif
 				if (d_ptr->type == DI_NETHER_REALM) {

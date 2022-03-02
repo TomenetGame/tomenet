@@ -2641,6 +2641,7 @@ extern int dungeon_x[MAX_D_IDX * 2], dungeon_y[MAX_D_IDX * 2];
 extern u16b dungeon_visit_frequency[MAX_D_IDX * 2];
 extern bool dungeon_tower[MAX_D_IDX * 2], dungeon_visit_check[MAX_D_IDX * 2];
 extern int dungeon_bonus[MAX_D_IDX * 2];
+extern int dungeon_ditype[MAX_D_IDX * 2];
 #endif
 
 extern bool jails_enabled;

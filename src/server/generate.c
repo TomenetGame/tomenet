@@ -11590,6 +11590,7 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, 
 	dungeon_x[dungeon_id_max] = wpos->wx;
 	dungeon_y[dungeon_id_max] = wpos->wy;
 	dungeon_tower[dungeon_id_max] = tower;
+	dungeon_ditype[dungeon_id_max] = type;
 	/* mostly affects highlander dungeon: */
 	set_dungeon_bonus(dungeon_id_max, TRUE);
 	s_printf("adding dungeon of index %d.\n", dungeon_id_max);
