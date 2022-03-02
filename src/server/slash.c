@@ -4240,14 +4240,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
   #endif
  #endif
 				}
-				p_ptr->warning_worldmap = 1;
-				p_ptr->warning_dungeon = 1;
-				p_ptr->warning_wor = 1;
-				p_ptr->warning_wor2 = 1;
-				p_ptr->warning_ghost = 1;
-				p_ptr->warning_death = 1;
-				p_ptr->warning_instares = 1;
-				p_ptr->warning_depth = 2;
+				disable_specific_warnings(p_ptr);
+				//p_ptr->warning_worldmap = 1;
 #endif
 				return;
 			}
