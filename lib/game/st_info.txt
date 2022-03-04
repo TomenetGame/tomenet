@@ -66,7 +66,7 @@ T:15:46:4
 T:12:46:5
 T:9:46:6
 #mummy wrapping
-T:5:12:7
+T:15:12:7
 #piece of wood? (player store sign) - maybe don't make it available from npc shops at all!
 #T:1:11:7
 $ENABLE_SUBINVEN$T:50:126:8
@@ -374,7 +374,7 @@ T:10:71:37
 #pot of *restore mana* - shouldn't be buyable. too exquisite!
 #T:5:*Restore Mana*
 #mummy wrapping
-T:5:12:7
+T:15:12:7
 I:50:Blood Bond
 #A:30:0:1:2:3:4
 A:0:0:1:2:3:4
@@ -1186,7 +1186,7 @@ T:100:15:256
 T:100:46:256
 T:100:46:256
 #mummy wrapping, climbing set
-T:5:12:7
+T:15:12:7
 T:5:12:0
 $ENABLE_SUBINVEN$T:50:126:8
 #A:0:0:1:2:3:4	(removed for IDDC_IRON_COOP)
