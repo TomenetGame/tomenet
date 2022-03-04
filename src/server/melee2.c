@@ -9086,7 +9086,19 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		m_ptr->extra2 = 0;
 
 		m_ptr->extra++; //we begin here at 3 basically
-		if (m_ptr->extra == 10) floor_msg_format(wpos, "The guy in blue robes mumbles something about having a \377Bcold \377Lcave brew\377w..");
+		if (m_ptr->extra == 10) {
+			floor_msg_format(wpos, "The guy in blue robes mumbles something about having a \377Bcold \377Lcave brew\377w..");
+			for (i = 1; i <= NumPlayers; i++) {
+				player_type *q_ptr = Players[i];
+
+				/* Skip disconnected players */
+				if (q_ptr->conn == NOT_CONNECTED) continue;
+				/* Skip players not on this depth */
+				if (!inarea(&q_ptr->wpos, wpos)) continue;
+
+				Send_music(Ind, -4, -4);
+			}
+		}
 		if (m_ptr->extra < 6) ;
 		else if (m_ptr->extra < 22) { //move right
 			zcave[oy][ox].m_idx = 0;

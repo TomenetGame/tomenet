@@ -1889,6 +1889,10 @@ void handle_music(int Ind) {
 		else Send_music_vol(Ind, 98, 55, 20);
 		return;
 	} else if (d_ptr && d_ptr->type == DI_DEATH_FATE && (l_ptr->flags2 & LF2_BROKEN)) {
+		if (zcave[2][55].feat == FEAT_UNSEALED_DOOR) {
+			Send_music(Ind, -4, -4);
+			return;
+		}
 		Send_music(Ind, 99, 47); //misc/highlander, or 13 for generic-iron
 		return;
 	}
