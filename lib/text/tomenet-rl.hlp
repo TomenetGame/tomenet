@@ -1,19 +1,19 @@
-To look at the TomeNET 'Guide', open it in your TomeNET folder or online at
+To read the TomeNET-Guide double-click it in your TomeNET folder, or read it at
 http://www.tomenet.eu/ or simply press '\{B?\{w' again here to view it in-game!
 
 Don't get discouraged! If you are new to TomeNET, you will die..... a lot.
 But, as you get more experienced you will become better at surviving. Have fun!
 
-1. chat with ':' (colon) key, say hi after logging on.
-2. the training tower is a good place to start. It's entrance is symbol is '\{g<\{w'.
+1. chat with ':' (colon) key, say hi after logging on. :D
+2. the training tower is a good place to start. It's entrance symbol is '\{g<\{w'.
    Press SHIFT+m to see a map of town to see where it is located.
 3. press CTRL+q to quit and auto-save window layout. Do it in town to be safe!
 \{D===============================================================================
- Press SPACEBAR to scroll down (if in half-size view) or ESC to exit this help
-                              Default keys:
- (non-rogue-like, you can find the rogue-like key set in the guide in (0.2))
-\{D===============================================================================
- Use the NUMBER PAD (or arrows) to move. Press together with SHIFT key to run.
+ Press SPACEBAR to scroll down (if in half-size view) or ESC to exit this help.
+ Use the NUMBER PAD (or arrows) to move, hold \{BSHIFT key to run\{w instead of walk.
+
+                        Default keys (rogue-like keymap):
+\{D-------------------------------------------------------------------------------
 z  Zap wand    A  Activate      !  Show BBS        ,  Predefined 'reply' macro
 P  Browse book f  Bash door     #  Highscores         for private chat messages
 c  Close door  C  Character     $  Drop gold       "  Load prf file (abs path)
