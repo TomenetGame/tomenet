@@ -5068,8 +5068,8 @@ cptr player_title_special[MAX_CLASS][5][4] = {
 	{
 		{"Master Manipulator", "Master Manipulator", "M.Manipultr.", "M.Manipultr.", },
 		{"Master Controller", "Master Controller", "M.Controllr.", "M.Controllr.", },
-		{"Alterator", "Alterator", "Alterator", "Alterator", },
 		{"Reality Shifter", "Reality Shifter", "Real.Shifter", "Real.Shifter", },
+		{"Alterator", "Alterator", "Alterator", "Alterator", },
 		{"Truth", "Truth", "Truth", "Truth", },
 	},
 
