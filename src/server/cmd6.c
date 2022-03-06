@@ -3593,23 +3593,19 @@ void do_cmd_use_staff(int Ind, int item) {
 	/* Restrict choices to wands */
 	item_tester_tval = TV_STAFF;
 
-	/* Get the item (in the pack) */
-	if (item >= 0) o_ptr = &p_ptr->inventory[item];
-	/* Get the item (on the floor) */
-	else {
-		if (-item >= o_max) {
+	get_inven_item(Ind, item, &o_ptr);
+
+	if (-item >= o_max) {
 #ifdef ENABLE_XID_MDEV
  #ifndef XID_REPEAT
-			p_ptr->current_item = -1;
-			XID_paranoia(p_ptr);
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
  #endif
 #endif
-			return; /* item doesn't exist */
-		}
-		o_ptr = &o_list[0 - item];
+		return; /* item doesn't exist */
 	}
 
-	if( check_guard_inscription( o_ptr->note, 'u' )) {
+	if (check_guard_inscription(o_ptr->note, 'u')) {
 		msg_print(Ind, "The item's inscription prevents it.");
 #ifdef ENABLE_XID_MDEV
  #ifndef XID_REPEAT
@@ -3643,7 +3639,7 @@ void do_cmd_use_staff(int Ind, int item) {
 
 	/* Mega-Hack -- refuse to use a pile from the ground */
 	if ((item < 0) && (o_ptr->number > 1)) {
-		msg_print(Ind, "You must first pick up the staffs.");
+		msg_print(Ind, "You must first pick up the staff.");
 #ifdef ENABLE_XID_MDEV
  #ifndef XID_REPEAT
 		p_ptr->current_item = -1;
@@ -3773,8 +3769,8 @@ void do_cmd_use_staff(int Ind, int item) {
 	/* XXX Hack -- unstack if necessary */
 	if ((item >= 0) && (o_ptr->number > 1)) {
 		/* Make a fake item */
-		object_type tmp_obj;
-		tmp_obj = *o_ptr;
+		object_type tmp_obj = *o_ptr;
+
 		tmp_obj.number = 1;
 
 		/* Restore the charges */
@@ -4467,22 +4463,18 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 	/* Restrict choices to rods */
 	item_tester_tval = TV_ROD;
 
-	/* Get the item (in the pack) */
-	if (item >= 0)
-		o_ptr = &p_ptr->inventory[item];
-	/* Get the item (on the floor) */
-	else {
-		if (-item >= o_max) {
+	get_inven_item(Ind, item, &o_ptr);
+
+	if (-item >= o_max) {
 #ifdef ENABLE_XID_MDEV
  #ifndef XID_REPEAT
-			p_ptr->current_item = -1;
-			XID_paranoia(p_ptr);
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
  #endif
 #endif
-			return; /* item doesn't exist */
-		}
-		o_ptr = &o_list[0 - item];
+		return; /* item doesn't exist */
 	}
+
 	if (check_guard_inscription(o_ptr->note, 'z')) {
 		msg_print(Ind, "The item's inscription prevents it.");
 #ifdef ENABLE_XID_MDEV
@@ -4508,7 +4500,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 
 	/* Mega-Hack -- refuse to zap a pile from the ground */
 	if ((item < 0) && (o_ptr->number > 1)) {
-		msg_print(Ind, "You must first pick up the rods.");
+		msg_print(Ind, "You must first pick up the rod.");
 #ifdef ENABLE_XID_MDEV
  #ifndef XID_REPEAT
 		p_ptr->current_item = -1;
@@ -4731,19 +4723,17 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 
 	item = p_ptr->current_rod;
 
-	/* Get the item (in the pack) */
-	if (item >= 0) {
-		o_ptr = &p_ptr->inventory[item];
-	}
-	/* Get the item (on the floor) */
-	else {
-		if (-item >= o_max) {
-			p_ptr->shooting_till_kill = FALSE;
-			return; /* item doesn't exist */
-		}
+#ifdef ENABLE_SUBINVEN
+	/* Paranoia - no directional rods from within bags */
+	if (item >= 100) return;
+#endif
+	get_inven_item(Ind, item, &o_ptr);
 
-		o_ptr = &o_list[0 - item];
+	if (-item >= o_max) {
+		p_ptr->shooting_till_kill = FALSE;
+		return; /* item doesn't exist */
 	}
+
 	if (o_ptr->tval != TV_ROD) {
 //(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to zap non-rod!");
 		p_ptr->shooting_till_kill = FALSE;

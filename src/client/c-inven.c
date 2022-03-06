@@ -897,8 +897,8 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		/* Also scan all subinventories for at least one valid item */
 		for (k = 0; k < INVEN_PACK; k++) {
 			if (inventory[k].tval != TV_SUBINVEN) continue;
-			/* Check all specialized container types. Chests are not eligible. */
-			if (inventory[k].sval != SV_SI_SATCHEL && inventory[k].sval != SV_SI_TRAPKIT_BAG) continue;
+			/* Check all _specialized_ container types. Chests are not eligible. */
+			if (inventory[k].sval >= SV_SI_CHEST_SMALL_WOODEN && inventory[k].sval <= SV_SI_CHEST_LARGE_STEEL) continue;
 
 			for (j = 0; j < inventory[k].pval; j++) {
 				if (!get_item_okay((k + 1) * 100 + j)) continue;

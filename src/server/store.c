@@ -944,6 +944,11 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 			/* Just because of novice mages dropping this... */
 			if (o_ptr->sval != SV_SALTPETRE) return FALSE; else break;
 #endif
+#ifdef ENABLE_SUBINVEN
+		case TV_SUBINVEN:
+			if (o_ptr->sval != SV_SI_MDEVP_WRAPPING) return FALSE;
+			break;
+#endif
 		default:
 			return (FALSE);
 		}
@@ -3744,6 +3749,13 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 				case TV_TRAPKIT:
 					(void)auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, -1, FALSE);
 					break;
+				case TV_ROD:
+					/* Unknown rods cannot be stowed as we don't want to reveal whether they need an activation or not */
+					if (rod_requires_direction(Ind, o_ptr)) break;
+					/* fall through */
+				case TV_STAFF:
+					(void)auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, -1, FALSE);
+					break;
 				}
 
 				/* If we couldn't stow everything, pick up the rest normally */
@@ -6274,6 +6286,13 @@ void home_purchase(int Ind, int item, int amt) {
 		break;
 	case TV_TRAPKIT:
 		(void)auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, -1, FALSE);
+		break;
+	case TV_ROD:
+		/* Unknown rods cannot be stowed as we don't want to reveal whether they need an activation or not */
+		if (rod_requires_direction(Ind, o_ptr)) break;
+		/* fall through */
+	case TV_STAFF:
+		(void)auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, -1, FALSE);
 		break;
 	}
 

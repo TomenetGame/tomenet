@@ -9815,25 +9815,14 @@ static int Receive_activate_skill(int ind) {
 			break;
 		case MKEY_TRAP:
 		case MKEY_SCHOOL:
-#ifdef ENABLE_SUBINVEN /* For trapkit setting */
-			if (book >= 100) {
-				if (book / 100 - 1 >= INVEN_TOTAL) return 1;
-				//if ((book % 100) >= get_subinven_size(p_ptr->inventory[book / 100 - 1].sval)) return 1;
-				if ((book % 100) >= p_ptr->inventory[book / 100 - 1].bpval) return 1;
-			} else
-#endif
-			if (book >= INVEN_TOTAL) return 1;
+			/* Sanity check - mikaelh */
+			if (!verify_inven_item(player, book)) return 1;
 			break;
 		}
-		/* Sanity checks - mikaelh */
-#ifdef ENABLE_SUBINVEN /* For trapkit setting */
-		if (item >= 100) {
-			if (item / 100 - 1 >= INVEN_TOTAL) return 1;
-			//if ((item % 100) >= get_subinven_size(p_ptr->inventory[item / 100 - 1].sval)) return 1;
-			if ((item % 100) >= p_ptr->inventory[item / 100 - 1].bpval) return 1;
-		} else
-#endif
-		if (item >= INVEN_TOTAL) return 1;
+
+		/* Sanity check - mikaelh */
+		if (!verify_inven_item(player, item)) return 1;
+
 		if (bad_dir3(player, &dir)) return 1;
 
 		p_ptr->current_char = (old == player) ? TRUE : FALSE;
@@ -10370,7 +10359,7 @@ static int Receive_use(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (item >= INVEN_TOTAL) return 1;
+	if (!verify_inven_item(player, item)) return 1;
 
 #ifdef XID_REPEAT
 	if (p_ptr->delayed_spell == -2) {
@@ -10511,8 +10500,7 @@ static int Receive_zap(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (item >= INVEN_TOTAL)
-		return 1;
+	if (!verify_inven_item(player, item)) return 1;
 
 #ifdef XID_REPEAT
 	if (p_ptr->delayed_spell == -3) {
@@ -10783,21 +10771,8 @@ static int Receive_activate(int ind) {
 		return n;
 	}
 
-#ifdef ENABLE_SUBINVEN /* For DEMOLITIONIST crafting */
-	if (item >= 100) {
-		if (item / 100 - 1 >= INVEN_TOTAL) return 1;
-//		if ((item % 100) >= get_subinven_size(p_ptr->inventory[item / 100 - 1].sval)) return 1;
-		if ((item % 100) >= p_ptr->inventory[item / 100 - 1].bpval) return 1;
-
-		/* Call directly here to skip that repeat-stuff? */
-		do_cmd_activate(player, item, 0);
-		return 2;
-	}
-#endif
-
 	/* Sanity check - mikaelh */
-	if (item >= INVEN_TOTAL)
-		return 1;
+	if (!verify_inven_item(player, item)) return 1;
 
 	/* all this is temp just to make it work */
 	if (p_ptr->command_rep == -1) {
@@ -11295,14 +11270,6 @@ static int Receive_item(int ind) {
 
 	/* Sanity check - mikaelh */
 	if (!verify_inven_item(player, item)) return 1;
-
-#ifdef ENABLE_SUBINVEN
-	if (item >= 100 && p_ptr) {
-		/* Handle directly? */
-		Handle_item(player, item);
-		return 1;
-	}
-#endif
 
 	if (p_ptr) {
 		item = replay_inven_changes(player, item);

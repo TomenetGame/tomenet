@@ -8687,8 +8687,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						c_ptr = &zcave[y][x];
 						o_idx = c_ptr->o_idx;
 						if (o_idx) {
-							if (o_idx > o_max) {
-								msg_format(Ind, "Non-existent object (o_idx > o_max) (o_idx=%d, o_max=%d) found at (x=%d,y=%d)", c_ptr->o_idx, o_max, x, y);
+							if (o_idx >= o_max) {
+								msg_format(Ind, "Non-existent object (o_idx >= o_max) (o_idx=%d, o_max=%d) found at (x=%d,y=%d)", c_ptr->o_idx, o_max, x, y);
 								continue;
 							}
 							o_ptr = &o_list[o_idx];
@@ -8702,8 +8702,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 							/* more objects on this grid? */
 							while (o_ptr->next_o_idx) {
 								o_idx = o_ptr->next_o_idx;
-								if (o_idx > o_max) {
-									msg_format(Ind, "Non-existent object (o_idx > o_max) (o_idx=%d) found under a pile at (x=%d,y=%d)", c_ptr->o_idx, x, y);
+								if (o_idx >= o_max) {
+									msg_format(Ind, "Non-existent object (o_idx >= o_max) (o_idx=%d) found under a pile at (x=%d,y=%d)", c_ptr->o_idx, x, y);
 									break;
 								}
 								o_ptr = &o_list[o_idx];
@@ -8744,8 +8744,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						c_ptr = &zcave[y][x];
 						o_idx = c_ptr->o_idx;
 						if (o_idx) {
-							if (o_idx > o_max) {
-								msg_format(Ind, "Erased reference to a non-existent (o_idx > o_max) object (o_idx=%d, o_max=%d) found at (x=%d,y=%d)", c_ptr->o_idx, o_max, x, y);
+							if (o_idx >= o_max) {
+								msg_format(Ind, "Erased reference to a non-existent (o_idx >= o_max) object (o_idx=%d, o_max=%d) found at (x=%d,y=%d)", c_ptr->o_idx, o_max, x, y);
 								c_ptr->o_idx = 0;
 								continue;
 							}
@@ -8764,8 +8764,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 							/* more objects on this grid? */
 							while (o_ptr->next_o_idx) {
 								o_idx = o_ptr->next_o_idx;
-								if (o_idx > o_max) {
-									msg_format(Ind, "Erased an invalid reference (o_idx > o_max) (o_idx=%d) from a pile at (x=%d,y=%d)", c_ptr->o_idx, x, y);
+								if (o_idx >= o_max) {
+									msg_format(Ind, "Erased an invalid reference (o_idx >= o_max) (o_idx=%d) from a pile at (x=%d,y=%d)", c_ptr->o_idx, x, y);
 									o_ptr->next_o_idx = 0;
 									break;
 								}

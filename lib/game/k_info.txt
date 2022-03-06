@@ -4392,8 +4392,18 @@ $ENABLE_SUBINVEN$P:0:1d1:0:0:0
 $ENABLE_SUBINVEN$F:EASY_KNOW
 $ENABLE_SUBINVEN$D:A bag for compact storing of trap kits.
 
+$ENABLE_SUBINVEN$N:513:& Passive-device wrapping~
+$ENABLE_SUBINVEN$G:~:W
+$ENABLE_SUBINVEN$I:126:9:6
+$ENABLE_SUBINVEN$W:1:0:50:4500
+#$ENABLE_SUBINVEN$A:127/0
+$ENABLE_SUBINVEN$A:15/20:30/30
+$ENABLE_SUBINVEN$P:0:1d1:0:0:0
+$ENABLE_SUBINVEN$F:EASY_KNOW
+$ENABLE_SUBINVEN$D:A magical cloth for storing devices that don't need to be aimed actively.
 
-# HOLE 513-520
+
+# HOLE 514-520
 ### Room for new objects added after 511 (Zangband 2.1.0): 512-575
 
 

@@ -10748,7 +10748,7 @@ bool inven_item_optimize(int Ind, int item) {
 			if (i == p_ptr->item_newest) Send_item_newest(Ind, i - 1);
 		}
 
-		/* Update inventory indeces - mikaelh */
+		/* Update inventory indices - mikaelh */
 		inven_index_erase(Ind, item);
 		inven_index_slide(Ind, item + 1, -1, INVEN_PACK);
 
@@ -11222,7 +11222,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 #endif
 		}
 
-		/* Update inventory indeces - mikaelh */
+		/* Update inventory indices - mikaelh */
 		inven_index_slide(Ind, i, 1, n);
 
 		/* Paranoia -- Wipe the new slot */
@@ -11395,7 +11395,7 @@ void combine_pack(int Ind) {
 					p_ptr->inventory[k] = p_ptr->inventory[k+1];
 				}
 
-				/* Update inventory indeces - mikaelh */
+				/* Update inventory indices - mikaelh */
 				inven_index_move(Ind, j, i);
 				inven_index_slide(Ind, i + 1, -1, INVEN_PACK);
 
@@ -11558,7 +11558,7 @@ void reorder_pack(int Ind) {
 
 		if (p_ptr->item_newest == i) Send_item_newest(Ind, j);
 
-		/* Update inventory indeces - mikaelh */
+		/* Update inventory indices - mikaelh */
 		inven_index_slide(Ind, j, 1, i - 1);
 		inven_index_move(Ind, i, j);
 
@@ -12106,6 +12106,7 @@ u32b make_resf(player_type *p_ptr) {
 
 /*
  * Items have been slided in the inventory - mikaelh
+ * -- Maybe todo: Update for ENABLE_SUBINVEN
  */
 void inven_index_slide(int Ind, s16b begin, s16b mod, s16b end)
 {
@@ -12144,6 +12145,7 @@ void inven_index_slide(int Ind, s16b begin, s16b mod, s16b end)
 
 /*
  * Items have been moved in the inventory - mikaelh
+ * -- Maybe todo: Update for ENABLE_SUBINVEN
  */
 void inven_index_move(int Ind, s16b slot, s16b new_slot)
 {
@@ -12179,6 +12181,7 @@ void inven_index_move(int Ind, s16b slot, s16b new_slot)
 
 /*
  * Items have been erased from the inventory - mikaelh
+ * -- Maybe todo: Update for ENABLE_SUBINVEN
  */
 void inven_index_erase(int Ind, s16b slot)
 {
@@ -12214,6 +12217,7 @@ void inven_index_erase(int Ind, s16b slot)
 
 /*
  * Apply recorded changes to an inventory slot number - mikaelh
+ * -- Maybe todo: Update for ENABLE_SUBINVEN
  */
 s16b replay_inven_changes(int Ind, s16b slot)
 {
@@ -12242,6 +12246,7 @@ s16b replay_inven_changes(int Ind, s16b slot)
 
 /*
  * Client is now aware of the inventory changes so they can be removed - mikaelh
+ * -- Maybe todo: Update for ENABLE_SUBINVEN
  */
 void inven_confirm_revision(int Ind, int revision)
 {

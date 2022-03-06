@@ -2569,6 +2569,7 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 			switch (sval) {
 			case SV_SI_SATCHEL:
 			case SV_SI_TRAPKIT_BAG:
+			case SV_SI_MDEVP_WRAPPING:
 				item = "armour_light"; //a textile bag, basically
 				break;
 			case SV_SI_CHEST_SMALL_WOODEN:
@@ -9354,7 +9355,7 @@ bool verify_inven_item(int Ind, int item) {
 
 		/* Verify item location inside container */
 		if (item % 100 < 0) return FALSE; //is this even... compiler specs please
-//		if ((item % 100) >= get_subinven_size(Players[Ind]->inventory[item / 100 - 1].sval)) return FALSE;
+		//if ((item % 100) >= get_subinven_size(Players[Ind]->inventory[item / 100 - 1].sval)) return FALSE;
 		if ((item % 100) >= Players[Ind]->inventory[item / 100 - 1].bpval) return FALSE;
 
 		return TRUE;
@@ -9375,8 +9376,8 @@ bool verify_inven_item(int Ind, int item) {
 }
 
 /* Get an item in the player's inventory or (for /dis and /xdis) on the floor.
-   Returns FALSE if item is illegal (out of bounds), otherwise TRUE.
-   NOTE: We assume the item is legal as a previous verify_inven_item() happened in nserver.c! */
+   NOTE: We assume the item is legal as a previous verify_inven_item() happened in nserver.c!
+         So it is not neccesary to check if -item >= o_max. */
 void get_inven_item(int Ind, int item, object_type **o_ptr) {
 #ifdef ENABLE_SUBINVEN
 	/* This function can be used for subinventories too, if using get_subinven_item() were overkill. */
@@ -9522,6 +9523,7 @@ int get_subinven_group(int sval) {
 	switch (sval) {
 	case SV_SI_SATCHEL:
 	case SV_SI_TRAPKIT_BAG:
+	case SV_SI_MDEVP_WRAPPING:
 		return sval; //identity
 	default:
 		//combine multiple choices to a single group, using the first element as its identifier

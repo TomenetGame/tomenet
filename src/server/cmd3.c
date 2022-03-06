@@ -4926,7 +4926,7 @@ bool subinven_move_aux(int Ind, int islot, int sslot) {
 			if (i == p_ptr->item_newest) Send_item_newest(Ind, i - 1);
 		}
 
-		/* Update inventory indeces - mikaelh */
+		/* Update inventory indices - mikaelh */
 		inven_index_erase(Ind, islot);
 		inven_index_slide(Ind, islot + 1, -1, INVEN_PACK);
 
@@ -5012,11 +5012,14 @@ void do_cmd_subinven_move(int Ind, int islot) {
 		case SV_SI_SATCHEL:
 			if (i_ptr->tval != TV_CHEMICAL) continue;
 			break;
+		case SV_SI_GROUP_CHEST_MIN:
+			/* Allow all storable items in chests */
+			break;
 		case SV_SI_TRAPKIT_BAG:
 			if (i_ptr->tval != TV_TRAPKIT) continue;
 			break;
-		case SV_SI_GROUP_CHEST_MIN:
-			/* Allow all storable items in chests */
+		case SV_SI_MDEVP_WRAPPING:
+			if (i_ptr->tval != TV_STAFF && (i_ptr->tval != TV_ROD || rod_requires_direction(Ind, i_ptr))) continue;
 			break;
 		default:
 			continue;
@@ -5091,7 +5094,7 @@ void subinven_remove_aux(int Ind, int islot, int slot) {
 	invwipe(&p_ptr->subinventory[islot][i]);
 	display_subinven_aux(Ind, islot, i);
 
-	/* Update inventory indeces - mikaelh */
+	/* Update inventory indices - mikaelh */
 	//inven_index_erase(Ind, islot);
 	//inven_index_slide(Ind, islot + 1, -1, INVEN_PACK);
 

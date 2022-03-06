@@ -2257,6 +2257,12 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		case TV_TRAPKIT:
 			if (auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, c_ptr->o_idx, pick_one)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
 			break;
+		case TV_ROD:
+			if (rod_requires_direction(Ind, o_ptr)) break;
+			/* Fall through */
+		case TV_STAFF:
+			if (auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, c_ptr->o_idx, pick_one)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
+			break;
 		}
 #endif
 
