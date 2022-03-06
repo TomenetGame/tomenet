@@ -12213,6 +12213,7 @@ void inven_index_erase(int Ind, s16b slot)
 
 /*
  * Apply recorded changes to an inventory slot number - mikaelh
+ * Note that slot can be -1 for MKEY_SCHOOL handling for example. Seems fine.
  * -- Maybe todo: Update for ENABLE_SUBINVEN
  */
 s16b replay_inven_changes(int Ind, s16b slot)

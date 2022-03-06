@@ -9821,7 +9821,7 @@ static int Receive_activate_skill(int ind) {
 		}
 
 		/* Sanity check - mikaelh */
-		if (!verify_inven_item(player, item)) return 1;
+		if (item != -1 && !verify_inven_item(player, item)) return 1;
 
 		if (bad_dir3(player, &dir)) return 1;
 
@@ -9961,6 +9961,7 @@ static int Receive_activate_skill(int ind) {
 				msg_print(player, "Command failed because item is gone.");
 				return 1;
 			}
+			/* Note that item can be -1 if the spell doesn't use any inventory item (unlike eg Telekinesis) */
 			item = replay_inven_changes(player, item);
 			if (item == 0xFF) {
 				msg_print(player, "Command failed because item is gone.");
