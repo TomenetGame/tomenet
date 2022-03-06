@@ -651,8 +651,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					}
 
 					if (c_ptr->feat == FEAT_PROTECTED && !wpos->wz) {
-						msg_print(Ind, "You cannot destroy items inside an inn.");
-						return;
+						o_ptr = &o_list[c_ptr->o_idx];
+						/* Allow getting rid of unusable items */
+						if (o_ptr->level) {
+							msg_print(Ind, "You cannot destroy items inside an inn.");
+							return;
+						}
 					}
 
 					if (pile) {
