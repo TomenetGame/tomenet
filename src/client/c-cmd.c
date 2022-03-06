@@ -1445,7 +1445,11 @@ void cmd_use_staff(void) {
 	get_item_hook_find_obj_what = "Staff name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
+#ifdef ENABLE_SUBINVEN
+	if (!c_get_item(&item, "Use which staff? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG | USE_SUBINVEN))) {
+#else
 	if (!c_get_item(&item, "Use which staff? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG))) {
+#endif
 		if (item == -2) c_msg_print("You don't have any staves.");
 		return;
 	}
@@ -1456,15 +1460,37 @@ void cmd_use_staff(void) {
 
 void cmd_zap_rod(void) {
 	int item, dir;
+#ifdef ENABLE_SUBINVEN
+	int sub = -1;
+#endif
 
 	item_tester_tval = TV_ROD;
 	get_item_hook_find_obj_what = "Rod name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
+#ifdef ENABLE_SUBINVEN
+	if (!c_get_item(&item, "Zap which rod? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG | USE_SUBINVEN))) {
+#else
 	if (!c_get_item(&item, "Zap which rod? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG))) {
+#endif
 		if (item == -2) c_msg_print("You don't have any rods.");
 		return;
 	}
+#ifdef ENABLE_SUBINVEN
+	if (sub != -1) {
+		/* Send it */
+		/* Does item require aiming? (Always does if not yet identified) */
+		if (subinventory[sub][item % 100].uses_dir == 0) {
+			/* (also called if server is outdated, since uses_dir will be 0 then) */
+			using_subinven_item = item; /* allow mixing chemicals directly from satchels */
+			Send_activate(item);
+		} else { /* Actually directional rods are not allowed to be used from within a subinventory, but anyway.. */
+			if (!get_dir(&dir)) return;
+			Send_activate_dir(item, dir);
+		}
+		return;
+	}
+#endif
 
 	/* Send it */
 	if (inventory[item].uses_dir == 0) {

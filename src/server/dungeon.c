@@ -6162,6 +6162,46 @@ static bool process_player_end_aux(int Ind) {
 				j++;
 			}
 		}
+
+#ifdef ENABLE_SUBINVEN
+		if (o_ptr->tval == TV_SUBINVEN && o_ptr->sval == SV_SI_MDEVP_WRAPPING) {
+			int k, size = o_ptr->bpval;
+
+			for (k = 0; k < size; k++) {
+				o_ptr = &p_ptr->subinventory[i][k];
+
+				/* Examine all charging rods */
+				if ((o_ptr->tval == TV_ROD) && (o_ptr->pval)) {
+ #ifndef NEW_MDEV_STACKING
+					/* Charge it */
+					o_ptr->pval--;
+  #if 0 /* zap_rod() already applies individually reduced "uncharge" based on Magic Device skill, so this is redundant. And it's not used for rods on the floor. */
+					/* Charge it further */
+					if (o_ptr->pval && magik(p_ptr->skill_dev))
+						o_ptr->pval--;
+  #endif
+ #else
+					/* Charge it */
+					o_ptr->pval -= o_ptr->number;
+					if (o_ptr->pval < 0) o_ptr->pval = 0; //can happen by rod-stack-splitting (divide_charged_item())
+					/* Reset it from 'charging' state to charged state */
+					if (!o_ptr->pval) o_ptr->bpval = 0;
+ #endif
+
+					/* Notice changes */
+					if (!(o_ptr->pval)) {
+						if (check_guard_inscription(o_ptr->note, 'C')) {
+							object_desc(Ind, o_name, o_ptr, FALSE, 256);
+							msg_format(Ind, "Your %s (%c)(%c) ha%s finished charging.", o_name, index_to_label(i), index_to_label(k), o_ptr->number == 1 ? "s" : "ve");
+						}
+						j++; //not needed, since we redraw subinven here directly instead of using PW_INVEN. Todo: Implement PW_SUBINVEN and all (slide inven etc).
+						/* Redraw subinven item */
+						display_subinven_aux(Ind, i, k);
+					}
+				}
+			}
+		}
+#endif
 	}
 
 	/* Notice changes */

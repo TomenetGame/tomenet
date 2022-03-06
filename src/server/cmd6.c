@@ -3717,6 +3717,11 @@ void do_cmd_use_staff(int Ind, int item) {
 		o_ptr->changed = !o_ptr->changed;
 		p_ptr->window |= (PW_INVEN);
 
+#ifdef ENABLE_SUBINVEN
+		/* Redraw subinven item */
+		if (item >= 100) display_subinven_aux(Ind, item / 100 - 1, item % 100);
+#endif
+
 #ifdef ENABLE_XID_MDEV
  #ifndef XID_REPEAT
 		p_ptr->current_item = -1;
@@ -3792,6 +3797,11 @@ void do_cmd_use_staff(int Ind, int item) {
 	/* Describe charges on the floor */
 	else
 		floor_item_charges(0 - item);
+
+#ifdef ENABLE_SUBINVEN
+	/* Redraw subinven item */
+	if (item >= 100) display_subinven_aux(Ind, item / 100 - 1, item % 100);
+#endif
 }
 
 
@@ -4697,6 +4707,11 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 		/* Message */
 		msg_print(Ind, "You unstack your rod.");
 	}
+#endif
+
+#ifdef ENABLE_SUBINVEN
+	/* Redraw subinven item */
+	if (item >= 100) display_subinven_aux(Ind, item / 100 - 1, item % 100);
 #endif
 }
 

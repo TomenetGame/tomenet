@@ -10549,13 +10549,9 @@ void divide_charged_item(object_type *onew_ptr, object_type *o_ptr, int amt) {
  * Describe the charges on an item in the inventory.
  */
 void inven_item_charges(int Ind, int item) {
-	player_type *p_ptr = Players[Ind];
-	object_type *o_ptr = &p_ptr->inventory[item];
+	object_type *o_ptr;
 
-#ifdef ENABLE_SUBINVEN
-	/* Ignore for now */
-	if (item >= 100) return;
-#endif
+	get_inven_item(Ind, item, &o_ptr);
 
 	/* Require staff/wand */
 	if ((o_ptr->tval != TV_STAFF) && (o_ptr->tval != TV_WAND)) return;
