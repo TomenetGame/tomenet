@@ -5011,7 +5011,14 @@ Sub-inventory:
 --------------
 Starting in clients after 4.7.4b, there are 'container' items that provide a
 small inventory in themselves, thereby extending your total inventory space.
-However, you can only ever use one of each category at the same time:
+However, you can only ever use one of each category at the same time.
+
+To stow items from your inventory into a subinventory, press 'i' first to
+invoke your inventory, then 's' to stow an item or stack of items.
+
+Subinventories can be browsed via 'b' (same key as used for browsing books).
+While browsing a subinventory, you can press 't' to unstow an item or stack,
+putting it back into your (normal) inventory.
 
 - Chest
   Using chests is not very feasible as their weight is usually very high and
@@ -5020,19 +5027,39 @@ However, you can only ever use one of each category at the same time:
   When you empty a chest you found, it turns into a 'usable' chest and you will
   be able to store a few of your own items in it.
 
+  In general, you cannot access or do much with items inside chests, for
+  example you cannot quaff potions or read scrolls. Only the generic commands
+  (listed further below) will be usable.
+
 - Alchemy Satchel
   This satchel stores chemicals and mixtures related to the Demolitionist
   perk acquired via Digging skill (6.2), and allows you to mix chemicals right
-  from within it.
+  from within it via 'a' key, while browsing the satchel.
+  Alternatively you can activate them as usual with SHIFT+A, but then you have
+  to use the '@' feature (call by item name) in the prompt,
+  or simply create a macro using the macro wizard, which does it this way too.
 
 - Trap kit bag
   This bag compactly stores a surprising amount of trap kits and allows you to
   deploy them straight from within.
+  To do so, you must use the '@' feature (call by item name) in the prompt,
+  or simply create a macro using the macro wizard, which does it this way too.
 
 - Passive-device wrapping
   This bag can hold magic devices that do not require a directional activation
   (all staves and some rods) and allows you to use them straight from within.
+  To do so, you must use the '@' feature (call by item name) in the prompt,
+  or simply create a macro using the macro wizard, which does it this way too.
 
+A few generic commands are always available in any subinventory:
+  - Chat (:).
+  - Screenshot (CTRL+T).
+  - Inspect item (x).
+  - Drop an item (d).
+  - Destroy (kill) an item (k or CTRL+D).
+  - Inscribe or uninscribe an item ({ or }).
+  - Pasting an item into chat via SHIFT+slot.
+  - Unstown item, ie put it back to inventory (t).
 
 
 (3.4a) Start-up equipment
