@@ -5020,6 +5020,14 @@ Subinventories can be browsed via 'b' (same key as used for browsing books).
 While browsing a subinventory, you can press 't' to unstow an item or stack,
 putting it back into your (normal) inventory.
 
+If you drop or destroy a subinventory container item, all items will be removed
+from it and placed into your inventory. Items that don't fit in will be dropped
+to the ground instead.
+If you carry two containers of the same category, you will only be able to use
+one of them.
+
+There are four categories of subinventories:
+
 - Chest
   Using chests is not very feasible as their weight is usually very high and
   will hence slow you down, while they at the same time do not provide much
