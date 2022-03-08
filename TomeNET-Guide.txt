@@ -5035,8 +5035,8 @@ putting it back into your (normal) inventory.
   This satchel stores chemicals and mixtures related to the Demolitionist
   perk acquired via Digging skill (6.2), and allows you to mix chemicals right
   from within it via 'a' key, while browsing the satchel.
-  Alternatively you can activate them as usual with SHIFT+A, but then you have
-  to use the '@' feature (call by item name) in the prompt,
+  Alternatively you can activate them from the outside as usual with SHIFT+A,
+  but then you have to use the '@' feature (call by item name) in the prompt,
   or simply create a macro using the macro wizard, which does it this way too.
 
 - Trap kit bag
@@ -5050,6 +5050,12 @@ putting it back into your (normal) inventory.
   (all staves and some rods) and allows you to use them straight from within.
   To do so, you must use the '@' feature (call by item name) in the prompt,
   or simply create a macro using the macro wizard, which does it this way too.
+
+As you noticed, for now from outside the subinventory you cannot access any
+items inside except if you use the '@' (call by item name) feature in the item
+prompt. This might get improved in a future (maintenance) release. But since
+the macro wizard actually creates call-by-name macros anyway, you can just use
+it if you are unsure.
 
 A few generic commands are always available in any subinventory:
   - Chat (:).
