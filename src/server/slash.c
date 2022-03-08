@@ -654,7 +654,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						o_ptr = &o_list[c_ptr->o_idx];
 						/* Allow getting rid of unusable items */
 						if (o_ptr->level) {
-							msg_print(Ind, "You cannot destroy items inside an inn.");
+							msg_print(Ind, "You cannot destroy items that aren't level 0 inside an inn.");
 							return;
 						}
 					}
