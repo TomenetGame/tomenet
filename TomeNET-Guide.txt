@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 25. February 2022 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 8. March 2022 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.7.4b - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -11177,14 +11177,17 @@ other such occurances..
 --------------------------------
 FEATHER ('It makes you fall down gently like a feather.')
         'Feather Falling'.
-        Lets you resist gravitation damage somewhat.
-        Lets you float down gently if you accidentally stumble into pit-style
-        traps.
+        Prevents you from slipping on icy floor.
+        Lets you float down gently if you accidentally stumble into trap doors,
+        pits or chasms, preventing any fall damage, including inventory damage.
         Enables you to cross 'dark pits' terrain type (see (4.4)).
+        Lets you resist gravitation damage somewhat.
 LEVITATE
         ('It allows you to levitate.')
-        Allows you to cross over water areas without drowning. Enables you to
-        hover high enough to pass trees and bushes easily.
+        Allows you to cross over water areas very swiftly and without drowning
+        or your inventory or equipment taking damage.
+        Lets you cross over rubble.
+        Enables you to hover high enough to pass trees and bushes easily.
         Note that levitation automatically also gives feather falling, so see
         'FEATHER' above for further benefits granted by that ability.
 XTRA_SHOTS
@@ -14167,16 +14170,14 @@ stated.
                                 You get +1 extra attack at 1,10,20,30,40,45,50
                                 each, so up to +7 blows per round in total.
 
-                                At 10 you receive Feather Falling.
-                                At 15 your character gets fear resistance.
-                                At 20 your character gets confusion resistance.
-                                Gives you 'Free Action' (immunity to paralysis)
-                                at skill level 25.
+                                At 10 you gain Feather Falling (see (5.8)).
+                                At 15 you gain fear resistance.
+                                At 20 you gain confusion resistance.
+                                At 25 you get Free Action (paralysis immunity).
                                 At 30 you're able to swim without problems.
-                                At 40 your movement is perfected enough to
-                                cross even highest mountains.
+                                At 40 you're able to climb mountains easily.
                                 At 50 a martial artist will learn the
-                                technique of levitation!
+                                technique of levitation (see (5.8)).
 
                                 The dice of martial arts special moves
                                 (which your character will use automatically
