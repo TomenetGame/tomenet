@@ -5007,8 +5007,8 @@ haul back to town to sell it, you could just equip it anyway to just use that
 weapon slot in your equipment as a +1 extension of your inventory, and then
 teleport back to town right away (via a scroll of Word of Recall).
 
-Sub-inventory:
---------------
+Subinventory:
+-------------
 Starting in clients after 4.7.4b, there are 'container' items that provide a
 small inventory in themselves, thereby extending your total inventory space.
 However, you can only ever use one of each category at the same time.
