@@ -9450,13 +9450,17 @@ void verify_subinven_size(int Ind, int slot, bool check) {
 /* Empty a subinventory, moving all contents to the player inventory, causing overflow if not enough space. */
 void empty_subinven(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-	int i, s = p_ptr->inventory[item].bpval;
+	int i, s = p_ptr->inventory[item].bpval, k;
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
 	bool overflow_msg = FALSE;
 
 	/* Hack: Ensure basic cleanup in case weird container size changes happened in k_info */
 	if (!s) {
+		/* Log for checking :/ */
+		object_desc(0, o_name, &p_ptr->inventory[item], TRUE, 3);
+		s_printf("empty_subinven(<%s>,<%s>): Zero-capacity!\n", p_ptr->name, o_name);
+
 		invwipe(&p_ptr->subinventory[item][0]);
 		display_subinven(Ind, item);
 		verify_subinven_size(Ind, item, FALSE);
@@ -9469,11 +9473,11 @@ void empty_subinven(int Ind, int item) {
 		if (!o_ptr->tval) break;
 
 		if (inven_carry_okay(Ind, o_ptr, 0x0)) {
-			item = inven_carry(Ind, o_ptr);
-			if (item != -1) {
+			k = inven_carry(Ind, o_ptr);
+			if (k != -1) { /* Paranoia, as we just checked for inven_carry_okay, it must be != -1 */
 				object_desc(Ind, o_name, o_ptr, TRUE, 3);
-				msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
-			}
+				msg_format(Ind, "You have %s (%c).", o_name, index_to_label(k));
+			} else s_printf("empty_subinven(%d) PARANOIA.\n", Ind);
 		} else {
 			if (!overflow_msg) msg_format(Ind, "\376\377oYour pack overflows!");
 			overflow_msg = TRUE;
