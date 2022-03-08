@@ -9355,7 +9355,6 @@ bool verify_inven_item(int Ind, int item) {
 
 		/* Verify item location inside container */
 		if (item % 100 < 0) return FALSE; //is this even... compiler specs please
-		//if ((item % 100) >= get_subinven_size(Players[Ind]->inventory[item / 100 - 1].sval)) return FALSE;
 		if ((item % 100) >= Players[Ind]->inventory[item / 100 - 1].bpval) return FALSE;
 
 		return TRUE;
@@ -9451,7 +9450,6 @@ void verify_subinven_size(int Ind, int slot, bool check) {
 /* Empty a subinventory, moving all contents to the player inventory, causing overflow if not enough space. */
 void empty_subinven(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-	//int i, s = get_subinven_size(p_ptr->inventory[item].sval);
 	int i, s = p_ptr->inventory[item].bpval;
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
@@ -9498,7 +9496,6 @@ void empty_subinven(int Ind, int item) {
 /* Erase all contents of a subinventory. Does not delete the subinventory container item iteself. */
 void erase_subinven(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-	//int i, s = get_subinven_size(p_ptr->inventory[item].sval);
 	int i, s = p_ptr->inventory[item].bpval;
 
 	/* Hack: Ensure basic cleanup in case weird container size changes happened in k_info */

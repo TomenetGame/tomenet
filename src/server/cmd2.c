@@ -1728,6 +1728,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
 #ifdef SUBINVEN_CHESTS
 	/* Convert opened and therefore now empty chests to usable containers */
 	o_ptr->tval = TV_SUBINVEN;
+	o_ptr->sval += SV_SI_CHEST_CONVERSION;
 	/* o_ptr->sval is mapped identically! */
 	o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 	/* Fill in bpval */

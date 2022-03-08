@@ -2487,6 +2487,12 @@ static bool hates_acid(object_type *o_ptr) {
 	/* Ouch */
 	case TV_CHEST:
 		return (TRUE);
+#ifdef ENABLE_SUBINVEN
+	case TV_SUBINVEN:
+		/* Mimic normal chests */
+		if (o_ptr->sval >= SV_SI_CHEST_SMALL_WOODEN && o_ptr->sval <= SV_SI_CHEST_LARGE_STEEL) return TRUE;
+		return FALSE; //for now..
+#endif
 
 	/* Junk is useless */
 	case TV_SKELETON:
@@ -2560,6 +2566,12 @@ bool hates_fire(object_type *o_ptr) {
 		if (o_ptr->sval == SV_CHEST_RUINED ||
 		    o_ptr->sval == SV_CHEST_SMALL_WOODEN || o_ptr->sval == SV_CHEST_LARGE_WOODEN) return(TRUE);
 		return (FALSE);
+#ifdef ENABLE_SUBINVEN
+	case TV_SUBINVEN:
+		/* Mimic normal chests */
+		if (o_ptr->sval == SV_SI_CHEST_SMALL_WOODEN || o_ptr->sval == SV_SI_CHEST_LARGE_WOODEN) return TRUE;
+		return FALSE; //for now..
+#endif
 
 	/* Staffs/Scrolls burn */
 	case TV_STAFF:

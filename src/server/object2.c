@@ -10691,7 +10691,6 @@ bool inven_item_optimize(int Ind, int item) {
 		if (o_ptr->number) return (FALSE);
 
 		/* Slide everything down */
-//		for (i = item % 100; i < get_subinven_size(s_ptr->sval); i++) {
 		for (i = item % 100; i < s_ptr->bpval; i++) {
 			/* Structure copy */
 			p_ptr->subinventory[s][i] = p_ptr->subinventory[s][i + 1];

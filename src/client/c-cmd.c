@@ -857,7 +857,7 @@ void cmd_subinven(int islot) {
 	int c;
 	char buf[MSG_LEN];
 	object_type *i_ptr = &inventory[islot];
-	int subinven_size = i_ptr->pval; //get_subinven_size(i_ptr->sval);
+	int subinven_size = i_ptr->pval;
 
 	Term_save();
 	showing_inven = screen_icky;

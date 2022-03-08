@@ -4813,7 +4813,6 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 	char o_name[ONAME_LEN];
 
 	/* Look for free spaces or spaces to merge with */
-	//for (i = 0; i < get_subinven_size(s_ptr->sval); i++) {
 	for (i = 0; i < s_ptr->bpval; i++) {
 		o_ptr = &p_ptr->subinventory[sslot][i];
 		if (o_ptr->tval) {
@@ -4885,7 +4884,6 @@ bool subinven_move_aux(int Ind, int islot, int sslot) {
 	char o_name[ONAME_LEN];
 
 	/* Look for free spaces or spaces to merge with */
-	//for (i = 0; i < get_subinven_size(s_ptr->sval); i++) {
 	for (i = 0; i < s_ptr->bpval; i++) {
 		o_ptr = &p_ptr->subinventory[sslot][i];
 		if (o_ptr->tval) {
@@ -5104,7 +5102,6 @@ void subinven_remove_aux(int Ind, int islot, int slot) {
 	/* -- This is partial code from inven_item_optimize() -- */
 
 	/* Slide everything down */
-	//for (i = slot; i < get_subinven_size(s_ptr->sval); i++) {
 	for (i = slot; i < s_ptr->bpval; i++) {
 		/* Structure copy */
 		p_ptr->subinventory[islot][i] = p_ptr->subinventory[islot][i + 1];
@@ -5138,7 +5135,6 @@ void do_cmd_subinven_remove(int Ind, int islot, int slot) {
 	s_ptr = &p_ptr->inventory[islot];
 	if (!s_ptr->tval || s_ptr->tval != TV_SUBINVEN) return;
 
-//	if (slot < 0 || slot >= get_subinven_size(s_ptr->sval)) return;
 	if (slot < 0 || slot >= s_ptr->bpval) return;
 	o_ptr = &p_ptr->subinventory[islot][slot];
 	if (!o_ptr->tval) return;

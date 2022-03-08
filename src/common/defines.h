@@ -4409,39 +4409,29 @@
     We currently have 9 (11 with rust+hydroxide) chemicals (the reason of implementing subinventories actually). */
  #define SUBINVEN_PACK INVEN_PACK
 
- /* -- Set sizes of different subinven types -- ALL DEPRECATED! We use k_info pval -> object bpval for that now. -- */
+ /* -- Sizes of different subinven types -- We use k_info pval -> object bpval for specifying the size, in k_info. -- */
   /* SV_SI_SATCHEL: */
- #ifdef NO_RUST_NO_HYDROXIDE /* 9 vs 11 types of chemicals, of which 6 vs 7 are found almost-directly, and 7 vs 8..9 are trivially crafted. Currently satchels can hold mixtures too. */
-  #define SI_SATCHEL_SIZE 7
- #else
-  #define SI_SATCHEL_SIZE 9
- #endif
-  /* TVal-converted chests - no difference for objects of great weight and little weight for now, same as normal backpack */
- #define SI_CHEST_SMALL_WOODEN_SIZE	2
- #define SI_CHEST_SMALL_IRON_SIZE	3
- #define SI_CHEST_SMALL_STEEL_SIZE	3
- #define SI_CHEST_LARGE_WOODEN_SIZE	3
- #define SI_CHEST_LARGE_IRON_SIZE	4
- #define SI_CHEST_LARGE_STEEL_SIZE	4
+ /* NO_RUST_NO_HYDROXIDE? -> 9 vs 11 types of chemicals, of which 6 vs 7 are found almost-directly, and 7 vs 8..9 are trivially crafted. Currently satchels can hold mixtures too. */
 #endif
 
 /* svals for TV_SUBINVEN */
-#define SV_SI_CHEST_SMALL_WOODEN	1	/* TV_CHEST option: Convert tval on opening one successfully (ie not ruined) to TV_SUBINVEN */
-#define SV_SI_CHEST_SMALL_IRON		2
-#define SV_SI_CHEST_SMALL_STEEL		3
-#define SV_SI_CHEST_MIN_LARGE		4	/* marker */
-#define SV_SI_CHEST_LARGE_WOODEN	5
-#define SV_SI_CHEST_LARGE_IRON		6
-#define SV_SI_CHEST_LARGE_STEEL		7
-#define SV_SI_SATCHEL			12	/* Stores DEMOLITIONIST ingredients */
-#define SV_SI_TRAPKIT_BAG		13
-#define SV_SI_MDEVP_WRAPPING		14
+#define SV_SI_SATCHEL			0	/* Stores DEMOLITIONIST ingredients */
+#define SV_SI_TRAPKIT_BAG		1
+#define SV_SI_MDEVP_WRAPPING		2
+#define SV_SI_CHEST_CONVERSION		100	/* marker for converting looted chests to subinven-chests */
+#define SV_SI_CHEST_SMALL_WOODEN	101	/* TV_CHEST option: Convert tval on opening one successfully (ie not ruined) to TV_SUBINVEN */
+#define SV_SI_CHEST_SMALL_IRON		102
+#define SV_SI_CHEST_SMALL_STEEL		103
+#define SV_SI_CHEST_MIN_LARGE		104	/* marker */
+#define SV_SI_CHEST_LARGE_WOODEN	105
+#define SV_SI_CHEST_LARGE_IRON		106
+#define SV_SI_CHEST_LARGE_STEEL		107
 
 /* Only allow one subinven from each type group per player?
    (We only define helper markers for those groups that have more than one member,
    so not for the alchemy satchel, but indeed for the different types of chests.) */
-#define SV_SI_GROUP_CHEST_MIN		1	/* Define chest markers even outside of SUBINVEN_LIMIT_GROUP, as they are useful for store_will_buy() checks on TV_SUBINVEN. */
-#define SV_SI_GROUP_CHEST_MAX		7
+#define SV_SI_GROUP_CHEST_MIN		SV_SI_CHEST_SMALL_WOODEN	/* Define chest markers even outside of SUBINVEN_LIMIT_GROUP, as they are useful for store_will_buy() checks on TV_SUBINVEN. */
+#define SV_SI_GROUP_CHEST_MAX		SV_SI_CHEST_LARGE_STEEL
 
 /* svals for TV_SPECIAL */
 #define SV_SEAL				0	/* for invalid items */

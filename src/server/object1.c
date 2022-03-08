@@ -6364,7 +6364,6 @@ void display_subinven(int Ind, int islot) {
 	/* paranoia */
 	if (o_ptr->tval != TV_SUBINVEN) return;
 
-//	for (i = 0; i < get_subinven_size(o_ptr->sval); i++)
 	for (i = 0; i < o_ptr->bpval; i++)
 		display_subinven_aux(Ind, islot, i);
 }
@@ -6711,7 +6710,7 @@ byte get_attr_from_tval(object_type *o_ptr) {
 
 #ifdef ENABLE_SUBINVEN
  #ifndef SUBINVEN_UNIFIED_COLOUR
-	if (o_ptr->tval == TV_SUBINVEN) switch(get_subinven_group(o_ptr->sval)) {
+	if (o_ptr->tval == TV_SUBINVEN) switch (get_subinven_group(o_ptr->sval)) {
 		case SV_SI_GROUP_CHEST_MIN: attr = tval_to_attr[TV_CHEST]; break;
 		case SV_SI_SATCHEL: attr = tval_to_attr[TV_CHEMICAL]; break;
 		case SV_SI_TRAPKIT_BAG: attr = TERM_BLUE; break; //rogueish

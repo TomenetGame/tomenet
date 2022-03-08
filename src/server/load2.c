@@ -543,9 +543,15 @@ static void rd_item(object_type *o_ptr) {
 	if (o_ptr->tval == TV_SUBINVEN) {
 		/* Update tvals - 2022/03/08 */
 		switch (o_ptr->sval) {
-		case 0: o_ptr->sval = 12; break;
-		case 8: o_ptr->sval = 13; break;
-		case 9: o_ptr->sval = 14; break;
+		case 1: o_ptr->sval = 101; break;
+		case 2: o_ptr->sval = 102; break;
+		case 3: o_ptr->sval = 103; break;
+		case 5: o_ptr->sval = 105; break;
+		case 6: o_ptr->sval = 106; break;
+		case 7: o_ptr->sval = 107; break;
+		case 12: o_ptr->sval = 0; break;
+		case 13: o_ptr->sval = 1; break;
+		case 14: o_ptr->sval = 2; break;
 		}
 	}
 #endif
