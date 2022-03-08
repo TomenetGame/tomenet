@@ -1814,6 +1814,42 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 	}
 #endif
 
+	/* Stop littering towns */
+	if (o_ptr->level == 0 &&
+	    //o_ptr->owner == p_ptr->id &&
+	    istown(&p_ptr->wpos) &&
+	    !exceptionally_shareable_item(o_ptr) && o_ptr->tval != TV_GAME &&
+	    !(o_ptr->tval == TV_PARCHMENT && (o_ptr->sval == SV_DEED_HIGHLANDER || o_ptr->sval == SV_DEED_DUNGEONKEEPER))) {
+		msg_print(Ind, "\377yPlease don't litter the town with level 0 items which are unusable");
+		if (p_ptr->rogue_like_commands)
+			msg_print(Ind, "\377y by other players. Use '\377oCTRL+d\377y' to destroy an item instead.");
+		else
+			msg_print(Ind, "\377y by other players. Use '\377ok\377y' to destroy an item instead.");
+		if (!is_admin(p_ptr)) return;
+	}
+	/* Stop littering inns */
+	if (zcave && inside_inn(p_ptr, &zcave[p_ptr->py][p_ptr->px])) {
+		/* No curse-no-drop + heavy-curse stuff */
+		if ((f4 & TR4_CURSE_NO_DROP) && (f3 & (TR3_HEAVY_CURSE | TR3_PERMA_CURSE | TR3_AUTO_CURSE))) {
+			msg_print(Ind, "\377yYou may not drop this dangerously cursed item here.");
+			if (!is_admin(p_ptr)) return;
+		}
+		/* No other items that people might not be able to pick up and that hence block space */
+		if (o_ptr->questor) {
+			msg_print(Ind, "\377yYou may not drop a questor item inside an inn.");
+			if (!is_admin(p_ptr)) return;
+		}
+		if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup) {
+			msg_print(Ind, "\377yYou may not drop a true artifact inside an inn.");
+			if (!is_admin(p_ptr)) return;
+		}
+		if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) {
+			msg_print(Ind, "\377yYou may not drop an item inside an inn that can only be picked up by royalties.");
+			if (!is_admin(p_ptr)) return;
+		}
+	}
+
+	/* Avoid "pseudo-identifying" the item by attempting to drop it */
 	if (object_known_p(Ind, o_ptr)) {
 #if 0 /* would prevent ppl from getting rid of unsellable artifacts */
 		if (true_artifact_p(o_ptr) && !is_admin(p_ptr) &&
@@ -1835,26 +1871,8 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 		}
 	}
 
-	/* stop littering inns */
-	if (o_ptr->level == 0 && o_ptr->owner == p_ptr->id && istown(&p_ptr->wpos) &&
-	    !exceptionally_shareable_item(o_ptr) && o_ptr->tval != TV_GAME &&
-	    !(o_ptr->tval == TV_PARCHMENT && (o_ptr->sval == SV_DEED_HIGHLANDER || o_ptr->sval == SV_DEED_DUNGEONKEEPER))) {
-		msg_print(Ind, "\377yPlease don't litter the town with level 0 items which are unusable");
-		if (p_ptr->rogue_like_commands)
-			msg_print(Ind, "\377y by other players. Use '\377oCTRL+d\377y' to destroy an item instead.");
-		else
-			msg_print(Ind, "\377y by other players. Use '\377ok\377y' to destroy an item instead.");
-		if (!is_admin(p_ptr)) return;
-	}
-	/* no curse-no-drop + heavy-curse stuff */
-	if ((f4 & TR4_CURSE_NO_DROP) && (f3 & (TR3_HEAVY_CURSE | TR3_PERMA_CURSE | TR3_AUTO_CURSE))
-	    && zcave && inside_inn(p_ptr, &zcave[p_ptr->py][p_ptr->px])) {
-		msg_print(Ind, "\377yYou may not drop this dangerously cursed item here.");
-		if (!is_admin(p_ptr)) return;
-	}
-
 	/* Let's not end afk for this - C. Blue */
-/* 	un_afk_idle(Ind); */
+	/* un_afk_idle(Ind); */
 
 	/* Extra message, for override-drop */
 	if (override == 2) {
