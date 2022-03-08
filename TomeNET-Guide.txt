@@ -5057,6 +5057,8 @@ invoke your inventory, then 's' to stow an item or stack of items.
 Subinventories can be browsed via 'b' (same key as used for browsing books).
 While browsing a subinventory, you can press 't' to unstow an item or stack,
 putting it back into your (normal) inventory.
+Alternatively, just for a quick check of contents, you can inspect (SHIFT+i) a
+subinventory container. You cannot interact with the contents this way though.
 
 If you drop or destroy a subinventory container item, all items will be removed
 from it and placed into your inventory. Items that don't fit in will be dropped
