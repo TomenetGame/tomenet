@@ -12129,6 +12129,8 @@ Chests              Chests may contain treasures or items. Usually, chests
                     Chests have an increased chance to drop good items, same as
                     monsters that have DROP_GOOD flag.
                     Also see (5.7c) for more information.
+                    After client 4.7.4b, emptied chests can be used for storing
+                    items to extend your inventory slightly, see (3.4).
 Climbing set        Allows you to travel over mountain fields.
                     Info for mimics & co: In order to be able to use it, your
                     appearance form must have arms and fingers. (Equip it!)
