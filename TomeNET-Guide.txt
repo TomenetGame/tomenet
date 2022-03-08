@@ -70,9 +70,10 @@ Contents
     (3.2)   The display (user-interface)
     (3.2a)  The encumberment bar
     (3.3)   Behaviour, chat messages and chat modes
-    (3.4)   Start-up equipment & how to use it
-    (3.4a)  Item basics
-    (3.4b)  Item trading rules and exceptions
+    (3.4)   Inventory and equipment
+    (3.4a)  Start-up equipment & how to use it
+    (3.4b)  Item basics
+    (3.4c)  Item trading rules and exceptions
     (3.5)   Preparing the first time for fighting enemies
     (3.6)   Creating basic macros & inscribing items (IMPORTANT)
     (3.7)   Creating macros for ranged attacks & abilities (spells)
@@ -586,6 +587,10 @@ W       W       wear/wield an item, same as 'w', but tries to use the second
                 If you try to dig while having a digging tool equipped in the
                 weapon slot and another one in the tool slot, the better one of
                 the two will be used automatically.
+
+                You won't get weapon-skill specific boni applied in combat
+                though, as digging tools count as neither of any of the four
+                weapon classes.
 
 t       T       take off an item. (Note: Item inscription must still be @t)
 
@@ -4945,7 +4950,92 @@ chat input and copy that one to the clipboard.
 
 
 
-(3.4) Start-up equipment
+(3.4) Inventory and equipment
+-----------------------------
+In TomeNET, your character has two different 'places' for items:
+Inventory and equipment.
+
+Your inventory is your backpack - if you pick up loot from the ground, it will
+in almost all cases land in your backpack aka inventory.
+Your inventory is displayed in a sub-window of its own, labelled 'Inventory'
+appropriately. Asides from that you can also invoke your inventory in the main
+window by pressing the 'i' key.
+Inventory slots are indiscriminate, the order doesn't matter, you can always
+access any item equally, no matter where in your backpack it resides.
+
+Your equipment, in contrast, are all items that you are wearing on your body.
+The equipment consists of defined slots that fulfil a specific purpose each.
+Like the inventory, your equipment has its own sub-window, labelled 'Equipment'
+and again you can invoke it anytime in the main window too by pressing the 'e'
+key.
+
+Equippable items can only be active while equipped:
+Weapons, armour, magic rings and amulets, a lantern or a digging tool, ammo in
+your quiver - all of these must be equipped (via 'w' key to wear/wield an item)
+in order to have effect.
+If you don't want to use a certain item anymore, you can take it off again with
+'t' key (or 'T' in rogue-like key set), putting it back into your inventory.
+
+Light sources that run on fuel (torches and brass lanterns) will put the fuel
+consumption on hold while in your inventory. Their fuel will only be consumed
+while you have them equipped.
+
+In many item prompts, such as when identifying or enchanting an item, you will
+see the option to press the '/' key to toggle between inventory and equipment,
+so you can for example enchant your weapon without having to take it off first.
+Also, item prompts will allow you to press '*' key to see the full list of
+potentially eligible items (for whatever action the prompt is about).
+
+Inventory and equipment can both take damage sometimes!
+In general, your backpack (aka inventory) is much more prone to damage, while
+your equipment will only rarely take damage, usually when fighting nasty
+elemental monsters that for example cause your weapon to corrode on hit.
+For details see (5.10) and for equipment specifically (5.10a).
+If you find a great item, for example from Smeagol, Wormtongue or Robin Hood
+early on, it can be a good idea to equip the item immediately ('w' key) so it
+is much less likely to get destroyed by some unfortunate elemental attack in a
+subsequent fight before you finally reach town.
+
+Unused equipment slots can still be useful to carry more loot back to town for
+selling. For example, even if your character doesn't use a shooter weapon, you
+can still place some expensive enchanted ammunition you found into your quiver
+to free up one inventory slot, and -when you are back in town- even sell it
+directly from your quiver to a shop.
+Or if you are a martial artist who doesn't use weapons but your inventory is
+already full and there is another expensive weapon on the floor you'd like to
+haul back to town to sell it, you could just equip it anyway to just use that
+weapon slot in your equipment as a +1 extension of your inventory, and then
+teleport back to town right away (via a scroll of Word of Recall).
+
+Sub-inventory:
+--------------
+Starting in clients after 4.7.4b, there are 'container' items that provide a
+small inventory in themselves, thereby extending your total inventory space.
+However, you can only ever use one of each category at the same time:
+
+- Chest
+  Using chests is not very feasible as their weight is usually very high and
+  will hence slow you down, while they at the same time do not provide much
+  space really, but anyway:
+  When you empty a chest you found, it turns into a 'usable' chest and you will
+  be able to store a few of your own items in it.
+
+- Alchemy Satchel
+  This satchel stores chemicals and mixtures related to the Demolitionist
+  perk acquired via Digging skill (6.2), and allows you to mix chemicals right
+  from within it.
+
+- Trap kit bag
+  This bag compactly stores a surprising amount of trap kits and allows you to
+  deploy them straight from within.
+
+- Passive-device wrapping
+  This bag can hold magic devices that do not require a directional activation
+  (all staves and some rods) and allows you to use them straight from within.
+
+
+
+(3.4a) Start-up equipment
 ------------------------
 Every new player has some items right from the beginning, in the past those
 came stored in the inventory but nowadays they are immediately equipped.
@@ -4980,7 +5070,7 @@ equipment. It's the "Gazette". Press 'r' to read it. It may contain some notes
 about the server or hints for newbies.
 
 
-(3.4a) Item basics
+(3.4b) Item basics
 ------------------
 When you've logged in and look at your inventory (your backpack, basically),
 ie the items your character starts with, you will see various item names that
@@ -5138,14 +5228,15 @@ a Wooden Torch {+,0} (with 2500 turns of light)
     refueling it (this makes sense if you are using a torch that provides
     special magic powers).
 
-If you buy a shovel or pick from store '1' to dig up treasure veins, it looks
-like this:
+Finally, about digging tools: If you buy a shovel or pick from store '1' to
+dig up treasure veins, it looks like this:
 a Pick {+,1} (0,+2) (+1)
-    The to-hit and to-dam bonus do not count for fighting, but instead slightly
-    help digging. The main factor though is the (+1). For digging tools, this
-    bonus describes their main digging power. The to-hit and to-dam effect is
-    rather small compared to this main factor. Also, the weight of your digging
-    tool also has a little effect (the heavier the better).
+    The to-hit and to-dam bonus slightly increase the item's digging power.
+    The main factor though is the (+1). For digging tools, this bonus describes
+    their main digging power. (Each (+1) point is worth 20 points of either
+    to-hit or to-dam enchantment effect regarding digging.)
+    Also, the weight of your digging tool also has some effect, the heavier the
+    better (each lb is worth as much as 1 point to-hit or to-dam enchantment).
 Later on in the game you might find 'ego' digging tools, for example:
 a Pick of Digging {+,9} (+5,+9) (+1) (+3)
     It's basically same as the normal pick, except it has a second (+3) mod at
@@ -5154,8 +5245,12 @@ a Pick of Digging {+,9} (+5,+9) (+1) (+3)
     So overall you can just view it as if it was a Pick (+4) (1 plus 3).
 (See (5.20) for details about digging.)
 
+While you can (via Shift+w) equip a digging tool in your weapon slot and then
+use it as both, a weapon and a digging tool, you won't get mastery-specific
+boni applied as digging tools count as neither of any of the weapon classes.
 
-(3.4b) Item trading rules and exceptions
+
+(3.4c) Item trading rules and exceptions
 ----------------------------------------
 The following item sharing rules apply to a standard server configuration.
 It is possible that a server runs certain alterations of some aspects.
@@ -7618,7 +7713,7 @@ Death Fate unstatices immediately after you leave.
 -Instant resurrection does not work in the Nether Realm.
 -It is possible for everlasting and non-everlasting characters who usually
  cannot form a party to actually team up in the Nether Realm! This is called a
- cross-mode party, for more information see (3.4b).
+ cross-mode party, for more information see (3.4c).
 
 (******) Halls of Mandos details:
 -Getting out of the Halls of Mandos will be complemented with an entry
@@ -13534,7 +13629,7 @@ Tunnelling might reveal special floor features, items or gold (walls that are
 displayed as a '*' symbol will reveal cash worth of gems or precious metal, but
 those walls might not always show it until you use 'Treasure Detection' or
 'Treasure Location' magic), see 'Digging' skill in (6.2) for details.
-Also see (3.4a) for more information on digging tool mods.
+Also see (3.4b) for more information on digging tool mods.
 
 If you haven't got a digging tool equipped, or if it's just a basic shovel (+1)
 then wielding a sword or especially an axe can work as pseudo-digger when you
@@ -15040,7 +15135,7 @@ stated.
                                 For hacking away spider webs, certain polearms
                                 used for slashing (scythes and sickles) may
                                 help too, at least as well as swords or axes.
-                                See (3.4a) for more information on digging
+                                See (3.4b) for more information on digging
                                 tools and (5.20) for technical details on
                                 digging.
 
@@ -20133,7 +20228,7 @@ Parties:
     you will be prompted to rename the party. Only the party owner can do this.
 
     Specialty: Everlasting and non-everlasting players can team up while
-               inside the Nether Realm and trade loot, see (3.4b) and (4.5c).
+               inside the Nether Realm and trade loot, see (3.4c) and (4.5c).
 
 -Create or rename an 'Iron Team' party
     Allows you to create an iron team if you aren't in one yet, or rename your
@@ -20156,7 +20251,7 @@ Parties:
     If you aren't in a party, you will see "Add yourself to party" instead!
     This will allow you to add this character to a party, provided that at
     least one of your other characters is already a member of it.
-    This does not work for cross-adding to nether realm parties (see (3.4b)
+    This does not work for cross-adding to nether realm parties (see (3.4c)
     and (4.5c)).
     It only works for cross-adding to IDDC parties if your already partied
     character is currently in the IDDC.
