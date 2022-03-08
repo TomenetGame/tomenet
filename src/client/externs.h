@@ -919,7 +919,7 @@ extern char *my_strstr_skipcol(const char *big, const char *little, byte strict)
 extern char *roman_suffix(char* cname);
 extern bool wearable_p(object_type *o_ptr);
 #ifdef ENABLE_SUBINVEN
-extern int get_subinven_size(int sval);
+//extern int get_subinven_size(int sval);
 #endif
 
 /* common/files.c */

@@ -36,7 +36,7 @@ extern char *my_strcasestr(const char *big, const char *little);
 extern char *my_strcasestr_skipcol(const char *big, const char *little, byte strict);
 extern char *roman_suffix(char* cname);
 #ifdef ENABLE_SUBINVEN
-extern int get_subinven_size(int sval);
+//extern int get_subinven_size(int sval);
 #endif
 
 /* common/files.c */

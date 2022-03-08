@@ -713,14 +713,12 @@ bool wearable_p(object_type *o_ptr) {
 }
 
 #ifdef ENABLE_SUBINVEN
-/* Deprecated as we store it in o_ptr->pval now, so client won't need to be updated in case of changes.
+#if 0 /* Deprecated as we store it in o_ptr->pval now, so client won't need to be updated in case of changes.
    Would be nice to store it in xtraN, but those are only transmitted via Send_inven_wide(), maybe not needed.
    pval works just as well, just needed the exception vs disenchantment, same as for chests. */
 int get_subinven_size(int sval) {
 	/* Set sizes of particular types of subinventories */
 	switch (sval) {
-	case SV_SI_SATCHEL:
-		return SI_SATCHEL_SIZE;
 	case SV_SI_CHEST_SMALL_WOODEN:
 		return SI_CHEST_SMALL_WOODEN_SIZE;
 	case SV_SI_CHEST_SMALL_IRON:
@@ -733,7 +731,10 @@ int get_subinven_size(int sval) {
 		return SI_CHEST_LARGE_IRON_SIZE;
 	case SV_SI_CHEST_LARGE_STEEL:
 		return SI_CHEST_LARGE_STEEL_SIZE;
+	case SV_SI_SATCHEL:
+		return SI_SATCHEL_SIZE;
 	}
 	return 0; /* Invalid or unknown container */
 }
+#endif
 #endif

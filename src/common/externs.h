@@ -742,7 +742,7 @@ extern bool is_newer_than(version_type *version, int major, int minor, int patch
 extern bool is_older_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build);
 extern bool is_same_as(version_type *version, int major, int minor, int patch, int extra, int branch, int build);
 #ifdef ENABLE_SUBINVEN
-extern int get_subinven_size(int sval);
+//extern int get_subinven_size(int sval);
 #endif
 
 /*
