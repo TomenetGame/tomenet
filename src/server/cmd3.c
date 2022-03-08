@@ -1829,8 +1829,10 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 	}
 	/* Stop littering inns */
 	if (zcave && inside_inn(p_ptr, &zcave[p_ptr->py][p_ptr->px])) {
-		/* No curse-no-drop + heavy-curse stuff */
-		if ((f4 & TR4_CURSE_NO_DROP) && (f3 & (TR3_HEAVY_CURSE | TR3_PERMA_CURSE | TR3_AUTO_CURSE))) {
+		/* No nothingness / curse-no-drop + heavy-curse stuff */
+		if (o_ptr->name2 == EGO_NOTHINGNESS ||
+		    ((f4 & TR4_CURSE_NO_DROP) && (f3 & (TR3_HEAVY_CURSE | TR3_PERMA_CURSE | TR3_AUTO_CURSE)))
+		    ) {
 			msg_print(Ind, "\377yYou may not drop this dangerously cursed item here.");
 			if (!is_admin(p_ptr)) return;
 		}
