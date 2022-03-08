@@ -8662,9 +8662,9 @@ if (weather_type > 0) s_printf("weather_type: %d\n", weather_type);
 #endif
 
 	/* Sandstorm hacks */
-	if (weather_type == 3) {
+	if (weather_type % 10 == 3) {
 		/* Outdated client? fall back to old rain in the desert, pft */
-		if (is_older_than(&connp->version, 4, 7, 4, 6, 0, 0)) weather_type = 1;
+		if (is_older_than(&connp->version, 4, 7, 4, 6, 0, 0)) weather_type = (weather_type / 10) * 10 + 1;
 		/* No wind? No storm then */
 		else if (!weather_wind) weather_type = 0;
 		/* Not enough wind? Turn it up (aka set it to either max west (1) or max east (2)) */
