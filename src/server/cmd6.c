@@ -552,7 +552,7 @@ void do_cmd_eat_food(int Ind, int item) {
 		}
 	} else if (o_ptr->tval == TV_GAME) msg_print(Ind, "Brrrrr.."); //snowball
 	else if (o_ptr->tval == TV_SPECIAL) { /* Edible custom object? */
-		msg_print(Ind, "*chomp*...");
+		msg_print(Ind, "*chomp*..."); //munch?..
 		exec_lua(0, format("custom_object(%d,%d)", Ind, item));
 	}
 
