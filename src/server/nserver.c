@@ -8661,7 +8661,15 @@ int Send_weather(int Ind, int weather_type, int weather_wind, int weather_gen_sp
 if (weather_type > 0) s_printf("weather_type: %d\n", weather_type);
 #endif
 
-	if (is_older_than(&connp->version, 4, 7, 4, 6, 0, 0) && weather_type == 3) weather_type = 1; //fall back to old rain in the desert, pft
+	/* Sandstorm hacks */
+	if (weather_type == 3) {
+		/* Outdated client? fall back to old rain in the desert, pft */
+		if (is_older_than(&connp->version, 4, 7, 4, 6, 0, 0)) weather_type = 1;
+		/* No wind? No storm then */
+		else if (!weather_wind) weather_type = 0;
+		/* Not enough wind? Turn it up (aka set it to either max west (1) or max east (2)) */
+		else if (weather_wind > 2) weather_wind = (weather_wind - 1) % 2 + 1;
+	}
 
 	n = Packet_printf(&connp->c, "%c%d%d%d%d%d%d%d%d", PKT_WEATHER,
 	    weather_type, weather_wind, weather_gen_speed, weather_intensity, weather_speed,

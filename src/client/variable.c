@@ -266,7 +266,7 @@ bool no_tele_grid = FALSE;
 /* for weather */
 int weather_type = 0; /* stop(-1)/none/rain/snow/sandstorm; hacks: +20000, +10000, +n*10 */
 int weather_gen_speed = 0; /* speed at which new weather elements are generated */
-int weather_wind = 0; /* current gust of wind if any (1 west, 2 east, 3 strong west, 4 strong east) */
+int weather_wind = 0; /* current gust of wind if any (1 west, 2 east, 3 strong west, 4 strong east) <- wrong? 1/2 are the strongest winds? */
 int weather_intensity = 1; /* density of raindrops/snowflakes/sandgrains */
 int weather_speed_rain = 999; /* [3] */
 int weather_speed_snow = 999; /* speed at which snowflakes move aka a second wind
