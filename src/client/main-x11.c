@@ -2679,7 +2679,7 @@ if (term_prefs[7].visible) {
 
 	/* For position restoration: It randomly fails when we use devilspie to undecorate. This small delay
 	   might give the window manager et al enough time to handle everything correctly, hopefully. - C. Blue */
-	usleep(100000);
+	usleep(200000);
 
 	/* restore window coordinates from .tomenetrc */
 	for (i = 0; i <= 7; i++) { /* MAX_TERM_DATA should be defined for X11 too.. */
