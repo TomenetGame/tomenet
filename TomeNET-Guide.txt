@@ -5053,7 +5053,7 @@ There are four categories of subinventories:
   To do so, you must use the '@' feature (call by item name) in the prompt,
   or simply create a macro using the macro wizard, which does it this way too.
 
-- Passive-device wrapping
+- Antistatic wrapping
   This bag can hold magic devices that do not require a directional activation
   (all staves and some rods) and allows you to use them straight from within.
   To do so, you must use the '@' feature (call by item name) in the prompt,
@@ -14737,7 +14737,7 @@ stated.
                                 devices, the skill and the ability.
 
                                 To reduce inventory space usage go to the magic
-                                shop and buy a Passive-device wrapping.
+                                shop and buy a antistatic wrapping.
 
 .Anti-magic                     Generated from your strong disbelief in magic
  (1.000)                        an anti-magic field surrounds you, preventing
