@@ -4426,7 +4426,6 @@
 #endif
 
 /* svals for TV_SUBINVEN */
-#define SV_SI_SATCHEL			0	/* Stores DEMOLITIONIST ingredients */
 #define SV_SI_CHEST_SMALL_WOODEN	1	/* TV_CHEST option: Convert tval on opening one successfully (ie not ruined) to TV_SUBINVEN */
 #define SV_SI_CHEST_SMALL_IRON		2
 #define SV_SI_CHEST_SMALL_STEEL		3
@@ -4434,8 +4433,9 @@
 #define SV_SI_CHEST_LARGE_WOODEN	5
 #define SV_SI_CHEST_LARGE_IRON		6
 #define SV_SI_CHEST_LARGE_STEEL		7
-#define SV_SI_TRAPKIT_BAG		8
-#define SV_SI_MDEVP_WRAPPING		9
+#define SV_SI_SATCHEL			12	/* Stores DEMOLITIONIST ingredients */
+#define SV_SI_TRAPKIT_BAG		13
+#define SV_SI_MDEVP_WRAPPING		14
 
 /* Only allow one subinven from each type group per player?
    (We only define helper markers for those groups that have more than one member,

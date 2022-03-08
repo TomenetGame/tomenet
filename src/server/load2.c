@@ -539,6 +539,17 @@ static void rd_item(object_type *o_ptr) {
 	/* --- Process/verify the item --- */
 
 
+#ifdef ENABLE_SUBINVEN
+	if (o_ptr->tval == TV_SUBINVEN) {
+		/* Update tvals - 2022/03/08 */
+		switch (o_ptr->sval) {
+		case 0: o_ptr->sval = 12; break;
+		case 8: o_ptr->sval = 13; break;
+		case 9: o_ptr->sval = 14; break;
+		}
+	}
+#endif
+
 	/* Obtain k_idx from tval/sval instead :) */
 	if (o_ptr->k_idx)	/* zero is cipher :) */
 		o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
@@ -823,8 +834,10 @@ static void rd_item(object_type *o_ptr) {
 	if (o_ptr->tval == TV_ROD && !o_ptr->pval && o_ptr->bpval) o_ptr->bpval = 0;
 
 #ifdef ENABLE_SUBINVEN
-	/* Update storage capacity in case it was increased */
-	if (o_ptr->tval == TV_SUBINVEN && o_ptr->bpval < k_info[o_ptr->k_idx].pval) o_ptr->bpval = k_info[o_ptr->k_idx].pval;
+	if (o_ptr->tval == TV_SUBINVEN) {
+		/* Update storage capacity in case it was increased */
+		if (o_ptr->bpval < k_info[o_ptr->k_idx].pval) o_ptr->bpval = k_info[o_ptr->k_idx].pval;
+	}
 #endif
 }
 

@@ -6712,8 +6712,8 @@ byte get_attr_from_tval(object_type *o_ptr) {
 #ifdef ENABLE_SUBINVEN
  #ifndef SUBINVEN_UNIFIED_COLOUR
 	if (o_ptr->tval == TV_SUBINVEN) switch(get_subinven_group(o_ptr->sval)) {
-		case SV_SI_SATCHEL: attr = tval_to_attr[TV_CHEMICAL]; break;
 		case SV_SI_GROUP_CHEST_MIN: attr = tval_to_attr[TV_CHEST]; break;
+		case SV_SI_SATCHEL: attr = tval_to_attr[TV_CHEMICAL]; break;
 		case SV_SI_TRAPKIT_BAG: attr = TERM_BLUE; break; //rogueish
 		case SV_SI_MDEVP_WRAPPING: attr = TERM_L_WHITE; break;
 	}
