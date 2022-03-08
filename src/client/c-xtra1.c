@@ -2040,8 +2040,12 @@ void show_subinven(int islot) {
 	/* The ugly method of overwriting the subinven via show_subinven() in Receive_subinven()
 	   will cause 'This container is empty' residue here, so clear it up first.
 	   Bad hack again:*/
-//	prt("                                                                   ", 1, SCREEN_PAD_LEFT);
+	//prt("                                                                   ", 1, SCREEN_PAD_LEFT);
 	prt("                                                                                ", 1, 0);
+	/* ...but since then again weather particles will overwrite the left part of the blankness which
+	   is out of range of the actual item lines which almost always start way more to the right,
+	   we need to adjust the icky-column just for this to ward against ugly particle tearing -_- nice bad-crap cascade there */
+	screen_column_icky = SCREEN_PAD_LEFT + 1;
 
 	/* Output each entry */
 	for (j = 0; j < k; j++) {
@@ -2096,7 +2100,11 @@ void show_subinven(int islot) {
 	if (j && (j < 23)) prt("", j + 1, col ? col - 2 : col);
 
 	/* Notify if inventory is actually empty */
-	if (!k) prt("(This container is empty)", 1, SCREEN_PAD_LEFT);
+	if (!k) {
+		prt("(This container is empty)", 1, SCREEN_PAD_LEFT);
+		/* Hack as if k was 1, to protect this 'is empty' text from weather particles etc, geez */
+		screen_line_icky = 1 + 1 + 1;
+	}
 
 	/* hack: hide cursor */
 	Term->scr->cx = Term->wid;
