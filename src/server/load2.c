@@ -540,6 +540,7 @@ static void rd_item(object_type *o_ptr) {
 
 
 #ifdef ENABLE_SUBINVEN
+#if 0
 	if (o_ptr->tval == TV_SUBINVEN) {
 		/* Update tvals - 2022/03/08 */
 		switch (o_ptr->sval) {
@@ -554,6 +555,7 @@ static void rd_item(object_type *o_ptr) {
 		case 14: o_ptr->sval = 2; break;
 		}
 	}
+#endif
 #endif
 
 	/* Obtain k_idx from tval/sval instead :) */
