@@ -5047,13 +5047,13 @@ There are four categories of subinventories:
   but then you have to use the '@' feature (call by item name) in the prompt,
   or simply create a macro using the macro wizard, which does it this way too.
 
-- Trap kit bag
+- Trap Kit Bag
   This bag compactly stores a surprising amount of trap kits and allows you to
   deploy them straight from within.
   To do so, you must use the '@' feature (call by item name) in the prompt,
   or simply create a macro using the macro wizard, which does it this way too.
 
-- Antistatic wrapping
+- Antistatic Wrapping
   This bag can hold magic devices that do not require a directional activation
   (all staves and some rods) and allows you to use them straight from within.
   To do so, you must use the '@' feature (call by item name) in the prompt,

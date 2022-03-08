@@ -4382,7 +4382,7 @@ W:100:0:2:5000000
 F:INSTA_ART
 
 # For trappers - they already need to carry all the ammo.
-$ENABLE_SUBINVEN$N:512:& Trap kit bag~
+$ENABLE_SUBINVEN$N:512:& Trap Kit Bag~
 $ENABLE_SUBINVEN$G:~:b
 $ENABLE_SUBINVEN$I:126:1:8
 $ENABLE_SUBINVEN$W:1:0:50:1500
@@ -4392,7 +4392,7 @@ $ENABLE_SUBINVEN$P:0:1d1:0:0:0
 $ENABLE_SUBINVEN$F:EASY_KNOW
 $ENABLE_SUBINVEN$D:A bag for compact storing of trap kits.
 
-$ENABLE_SUBINVEN$N:513:& Antistatic wrapping~
+$ENABLE_SUBINVEN$N:513:& Antistatic Wrapping~
 $ENABLE_SUBINVEN$G:~:W
 $ENABLE_SUBINVEN$I:126:2:6
 $ENABLE_SUBINVEN$W:1:0:50:4500
