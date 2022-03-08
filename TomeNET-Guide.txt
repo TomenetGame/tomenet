@@ -3172,6 +3172,28 @@ repository packages don't provide it. If you want to compile it anyway then see
 has short instructions on how to compile 7-zip from source in Linux.
 
 
+Optional dependencies on Windows:
+---------------------------------
+To make use of all features of the game, there are the following optional
+programs you can install on Windows:
+- explorer and xcopy (these are already installed by default in any Windows
+  version): For installing/updating audio packs and opening URLs and folders
+  from within the knowledge (~) menu.
+- 7-zip (www.7-zip.org): For installing or updating audio packs.
+- Firefox or Chrome or Chromium: For making PNG screenshots.
+
+Optional dependencies on Linux:
+-------------------------------
+To make use of all features of the game, there are the following optional
+packages you can install on Linux:
+- xdg-utils (for xdg-open) on X11: For opening folders and URLs from whithin
+  the knowledge (~) menu.
+- xclip: For using copy/paste capabilities.
+- coreutils (for readlink) and Firefox or Chrome or Chromium:
+  For making PNG screenshots.
+- 7-zip: 7zG on X11, 7z on GCU. For installing or updating audio packs.
+
+
 Installation from scratch:
 --------------------------
 (Covered are Windows, Linux, OS X, FreeBSD.)
@@ -4857,18 +4879,23 @@ chat message, is to type in a 'slash command', that are certain commands that
 all begin on a "/", for example:  /afk   or   /ex
 You can see a list of slash commands in (0.2b).
 
-Last but no least you can use colours in messages. To change the message colour
-put a { followed by a colour code somewhere into your message line.
+
+Colour codes
+------------
+You can use colours in your chat messages. To change the message colour,
+put a '{' followed by a colour code somewhere into your message line.
 Example:
         {pHi!               <- results in a 'poison-coloured' Hi!
         I see some {vh {Bto the east
                             <- results in "I see some h in the east"
                                where the 'h' is violet. The rest of the
                                message is light blue (standard colour).
+
 If you cannot see coloured messages in your secondary Tomenet windows other
 than the big main window, check your client option settings by typing  =1
 and looking for 'Flicker messages in recall' (recall_flicker). Set it to
 'yes'.
+
 If you want to type the character '{' in a chat message, rather than using
 it for a colour code, type it twice '{{'. It will become '{'.
 
@@ -4898,16 +4925,24 @@ use '{-', for example: {rRed Text{gGreen now{-Red again.
 
 Note: 'multi' colour is also the 'chaos' colour for any chaos-based attacks.
 
+To see the actual colours in-game, log in and type the /col or the /acol
+command in chat, to see all colours (col) or animated colours (acol) in action.
+
+
+Name colours
+------------
 You will observe that character names in chat lines have different colours too,
-indicating character modes:
+indicating character modes (see (3.1a) for more info about modes):
   White           Normal mode player.
   Light blue      Everlasting mode player.
   Dark grey       No-ghost / hellish mode player.
+  Light grey      Soloist mode player.
   Yellow          Player is a PvP mode character.
-indicating special character status:
-  Violet          Player character is king / queen.
-  Dark blue       Player is admin.
-  Red             Player is a ghost (ie dead, maybe ask if he needs help).
+And indicating special character status:
+  Violet          Player character is a 'winner' ie has beaten the game boss,
+                  Morgoth, the Lord of Darkness.
+  Red             Player is a ghost (ie dead, maybe ask if he needs help)!
+  Dark blue       Not a player but a game administrator.
 
 
 Chat modes:
@@ -4939,11 +4974,14 @@ Last but not last you can use the following slash commands for chat effects:
         aka visible to other players that are close to  your current location.
         Eg "/s hello there, so we meet in this place!".
 
+
+Copy/paste from and into chat:
+------------------------------
 Similar to message scrollback (CTRL+O/P), you can copy/paste while in the chat
 prompt, too:
 CTRL+K will copy the currently written text in your active chat prompt to the
-OS clipboard (requires xclip to be installed on Linux/OSX), and CTRL+K will
-paste the current OS clipboard into your chat prompt )thereby erasing anything
+OS clipboard (requires xclip to be installed on Linux/OSX), and CTRL+L will
+paste the current OS clipboard into your chat prompt, thereby erasing anything
 you were aleady typing in).
 Double-tapping CTRL+K will specifically attempt to extract an URL from your
 chat input and copy that one to the clipboard.
