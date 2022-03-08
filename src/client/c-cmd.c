@@ -911,13 +911,13 @@ void cmd_subinven(int islot) {
 			break; /* Need to refresh the subinven list, as soon as the server replies with the subinventory-update, so leave for now */
 		case 'k':
 		case KTRL('D'):
-			cmd_destroy(USE_INVEN);		//todo
+			cmd_destroy(USE_INVEN);
 			break; /* Need to refresh the subinven list, as soon as the server replies with the subinventory-update, so leave for now */
 		case '{':
-			cmd_inscribe(USE_INVEN);	//todo
+			cmd_inscribe(USE_INVEN);
 			break; /* Need to refresh the subinven list, as soon as the server replies with the subinventory-update, so leave for now */
 		case '}':
-			cmd_uninscribe(USE_INVEN);	//todo
+			cmd_uninscribe(USE_INVEN);
 			break; /* Need to refresh the subinven list, as soon as the server replies with the subinventory-update, so leave for now */
 		case ':':
 			cmd_message();
@@ -935,6 +935,9 @@ void cmd_subinven(int islot) {
 
 		/* Specifically required for DEMOLITIONIST chemicals */
 		case 'a':
+			/* Restricted now to satchel only, no good really for other cases */
+			if (i_ptr->sval != SV_SI_SATCHEL) break;
+
 			cmd_activate(); // 'A' is item-to-chat pasting, oops	//todo
 			continue;
 			/* Hmm, we might need or not need to refresh the subinven list, as soon as the server replies with the subinventory-update,
