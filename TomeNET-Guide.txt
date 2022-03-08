@@ -14728,6 +14728,9 @@ stated.
                                 See (6.10) for more information on magic
                                 devices, the skill and the ability.
 
+                                To reduce inventory space usage, get a
+                                Passive-device wrapping from the magic shop.
+
 .Anti-magic                     Generated from your strong disbelief in magic
  (1.000)                        an anti-magic field surrounds you, preventing
                                 nearby monsters and players from casting
@@ -15083,6 +15086,9 @@ stated.
                                       to create macros so you can place a trap
                                       by simply pressing a single button.
 
+                                      To reduce inventory space usage, get a
+                                      trap kit bag from the general store.
+
 +Health                         Increases your hit points by 2 for each point.
  (0.500)                        Note that this gain stacks with +LIFE items
                                 (compare '+LIFE' in (5.8)).
@@ -15210,6 +15216,9 @@ stated.
                                 If you don't want ingredients to drop to reduce
                                 loot clutter, You can turn them off (and on
                                 again) with the /demo command.
+
+                                To reduce inventory space usage, get an
+                                Alchemy Satchel from the alchemist in town.
 
 The abilities Swimming, Digging and Climbing are also granted by items you
 can find. Those are for example items that grants you levitation, so you may
