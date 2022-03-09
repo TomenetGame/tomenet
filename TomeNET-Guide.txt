@@ -20850,13 +20850,13 @@ Warrior     |    2     4     5                                 6     20
 Istar       |
 Priest      |
 Corr.Priest |
-Rogue       |    2     3            4    5      8 (P)   11                  50
+Rogue       |    2     3            4    5    8 (PN)    11                  50
 Mimic       |    4     7    13                                20
 Archer      |
 Paladin     |    5     7     9                                20
 Death Knight|    5     9    10                                20
 Helll Knight|    5     9    11                                20
-Ranger      |    3     8    13                  7 (T)         17
+Ranger      |    3     8    13                7 (TA)          17
 Adventurer  |    3     5    13
 Druid       |    5
 Shaman      |
