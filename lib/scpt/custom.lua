@@ -172,14 +172,14 @@ end
 function cron_1h(timestamp, h, m, s)
 	lua_s_print(timestamp.."_CRON1H_"..h..":"..m..":"..s.."\n")
 
-	if mod(h,2)==0 then
+	if mod(h,2) == 0 then
 		lua_start_global_event(0, 1, ">")
 	end
-	if mod(h,2)==1 then
+	if mod(h,2) == 1 then
 		lua_start_global_event(0, 5, ">")
 	end
 
-	if mod(h,3)==0 then
+	if mod(h,3) == 0 then
 		lua_start_global_event(0, 3, "")
 	end
 end
