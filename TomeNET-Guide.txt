@@ -23342,7 +23342,7 @@ Solution:   After having resized windows via mouse, restart the game once
 
 PROBLEM 28: While I am creating a new character, I got disconnected with a
             "Timeout 04" error message.
-Solution:   You have about 20 minutes to complete the character creation
+Solution:   You have about 40 minutes to complete the character creation
             process. If you exceed this time, you will timeout and get
             disconnected.
 
