@@ -2881,7 +2881,7 @@ A:75/1
 N:345:& Iron Spike~
 G:~:W
 I:5:0:0
-W:1:0:10:1
+W:1:0:4:1
 A:1/1
 P:0:1d1:0:0:0
 D:It can be used to jam doors.
