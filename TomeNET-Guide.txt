@@ -14437,8 +14437,8 @@ stated.
                                 Also increases 'Bows/Throw' ability somewhat,
                                 which in turn further increases hit chance.
 
-                                Allows you to learn some shooting techniques
-                                and the ability to craft ammunition,
+                                Allows you to learn shooting techniques and to
+                                gain the ability to craft ammunition,
                                 accessible via 'm', see (6.12) for details.
 
                                 Increases your chance to score critical hits.
@@ -20657,14 +20657,17 @@ Depending on your class, your character is able to gain access to certain
 fighting techniques that cost 'Stamina' to use. Warriors, rangers, paladins
 and mimics will learn all of them eventually, while rogues may learn sprint
 and taunt, and some rogue-specific techniques.
+
 Similarly, by training archery your character will gain access to a couple of
 ranged techniques.
 
-All techniques are accessable via 'm' key, also see (3.7a).
+All techniques are accessable via 'm' key, also see (3.7a) and can of course
+be put on hotkeys, for example by using the macro wizard.
 
-The time your character learns a certain technique varies, depending on your
-class, see the table at the bottom of this section. The order in which they
-are learnt is the same though.
+The time your character learns a certain fighting technique and which ones it
+will actually learn varies, depending on your class, see the table at the
+bottom of this section. The order in which they are learnt is the same for all
+classes though.
 
 The techniques are as follows:
 
@@ -20768,8 +20771,8 @@ The techniques are as follows:
     Other fighting techniques:
     --------------------------
     Steam Blast         -
-        Learnt by skilling 'Trapping' or - if the Demolitionist perk is enabled
-        - 'Digging' to at least 10.000.
+        Learnt by skilling 'Trapping' or (additionally, if the Demolitionist
+        perk is enabled) 'Digging' to at least 10.000.
         Requires a fumes trap kit and a potion both inscribed '!S'. They will
         be consumed and a steam blast charge is planted on the lock of the next
         door the player bumps into. The player must not move or the skill will
@@ -20840,21 +20843,25 @@ Stamina regenerates slowly over time, faster while resting. Your CONstitution
 stat and 'Health' skill will further improve regeneration speed.
 
 Different classes learn fighting techniques at the following levels, if at all:
-            | Sprint Taunt Distract Percv.N. Flashbomb Spin Berserk Shadowrun
-------------+----------------------------------------------------------------
-Warrior     |    2     4                                 6     20
+            | Sprint Taunt Bash Dist. Poison Percv.N. Flash. Spin Berserk S.Run
+            |                                Track A.
+------------+------------------------------------------------------------------
+Warrior     |    2     4     5                                 6     20
 Istar       |
 Priest      |
-Rogue       |    2     3       6        9        12                     50
-Mimic       |   13    16                                20
+Corr.Priest |
+Rogue       |    2     3            4    5      8      11                   50
+Mimic       |    4     7    13                                20
 Archer      |
-Paladin     |   11    17                                20
-Ranger      |    5     9                                17
-Adventurer  |    6    15
+Paladin     |    5     7     9                                20
+Death Knight|    5     9    10                                20
+Helll Knight|    5     9    11                                20
+Ranger      |    3     8    13                  7             17
+Adventurer  |    3     5    13
 Druid       |    5
 Shaman      |
-Runemaster  |    4     9
-Mindcrafter |          8      12
+Runemaster  |    4     6
+Mindcrafter |          8    13     12
 
 
 
