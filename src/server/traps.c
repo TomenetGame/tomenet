@@ -3469,6 +3469,14 @@ void do_cmd_disarm_mon_trap_aux(int Ind, worldpos *wpos, int y, int x) {
 				p_ptr->window |= PW_EQUIP;
 			} else {
 				/* Try to just place it into the inventory, or drop it to the floor if full */
+#ifdef ENABLE_SUBINVEN
+				//note: could also stow devices from disarmed device traps, if they can actually be used for trapping from their bag (currently they can't)
+				if (q_ptr->tval == TV_TRAPKIT) {
+					(void)auto_stow(Ind, SV_SI_TRAPKIT_BAG, q_ptr, -1, FALSE);
+					/* If we could stow it, we're done with this item */
+					if (!q_ptr->number) continue;
+				}
+#endif
 				slot = inven_carry(Ind, q_ptr);
 				if (slot >= 0) {
 					//inven_item_describe(Ind, slot);
