@@ -2759,6 +2759,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 				/* Expand 'AC' to 'Armour Class' */
 				if (!strcasecmp(buf, "ac")) strcpy(buf, "armour class");
+				else if (my_strcasestr(buf, "armo") && my_strcasestr(buf, "clas")) strcpy(buf, "armour class"); //translate armor class to armour class
 				/* Expand 'tc' to 'Treasure Class' */
 				if (!strcasecmp(buf, "tc")) strcpy(buf, "treasure class");
 				/* Expand 'am' to 'Anti-Magic' */
