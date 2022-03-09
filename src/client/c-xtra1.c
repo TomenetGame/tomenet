@@ -2043,7 +2043,7 @@ void show_subinven(int islot) {
 	/* ...but since then again weather particles will overwrite the left part of the blankness which
 	   is out of range of the actual item lines which almost always start way more to the right,
 	   we need to adjust the icky-column just for this to ward against ugly particle tearing -_- nice bad-crap cascade there */
-	screen_column_icky = SCREEN_PAD_LEFT + 1;
+	screen_column_icky = 0; //SCREEN_PAD_LEFT + 1;
 
 	/* Output each entry */
 	for (j = 0; j < k; j++) {
