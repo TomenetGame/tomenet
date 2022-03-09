@@ -14405,7 +14405,7 @@ stated.
 
                                 The higher base level the monster has (rlevel)
                                 the harder it is to intercept it.
-                                Also, interception chance is recuded greatly
+                                Also, interception chance is reduced greatly
                                 while you are blind and you aren't able to
                                 intercept at all while you are
                                 stunned, confused, paralyzed, resting, cloaked
