@@ -5361,7 +5361,7 @@ byte mtech_lev[MAX_CLASS][16] = {
 	{5,	9,	10,	0,	0,	0,	0,	0,	0,	0,	20,	0,	0,	0,	0,	0},	//death knight
 #endif
 #ifdef ENABLE_HELLKNIGHT
-	{5,	9,	11,	0,	0,	0,	0,	0,	0,	0,	20,	0,	0,	0,	0,	0},	//hell knight
+	{5,	9,	11,	0,	0,	0,	0,	0,	0,	0,	20,	0,	35,	0,	0,	0},	//hell knight
 #endif
 #ifdef ENABLE_CPRIEST
 	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//corrupted priest

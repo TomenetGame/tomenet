@@ -20725,7 +20725,7 @@ The techniques are as follows:
         hitting some or all monsters multiple times, based on your number of
         blows/round!
         (Spinning around costs a turn of energy.)
-    Berserk             10 stamina   (warriors only)
+    Berserk             10 stamina
         Temporary effects: Heals you for 30 HP, increases CHP and MHP by 20,
         become fearless, -10 malus to ac and +10 to strength.
         (Entering berserk rage does not cost movement energy.)
@@ -20855,7 +20855,7 @@ Mimic       |    4     7    13                                20
 Archer      |
 Paladin     |    5     7     9                                20
 Death Knight|    5     9    10                                20
-Helll Knight|    5     9    11                                20
+Helll Knight|    5     9    11                                20     35
 Ranger      |    3     8    13                7 (TA)          17
 Adventurer  |    3     5    13
 Druid       |    5
