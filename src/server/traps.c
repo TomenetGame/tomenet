@@ -3374,6 +3374,12 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 	inven_item_describe(Ind, item_kit);
 	inven_item_increase(Ind, item_load, -num);
 	inven_item_describe(Ind, item_load);
+#ifdef ENABLE_SUBINVEN
+	if (item_kit >= 100) inven_item_optimize(Ind, item_kit);
+	/* Optimize load, or a 'number = 0' staff will not get erased from subinven and its remaining charges
+	   will stack with itself when the item is placed in here again after trap went off or was disarmed! */
+	if (item_load >= 100) inven_item_optimize(Ind, item_load);
+#endif
 	for (i = 0; i < INVEN_TOTAL; i++)
 		if (inven_item_optimize(Ind, i)) break;
 	for (i = 0; i < INVEN_TOTAL; i++)
