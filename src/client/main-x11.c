@@ -2175,7 +2175,9 @@ static char color_name[16 * 2][8] = {
 #ifdef EXTENDED_BG_COLOURS
  static cptr color_ext_name[1][2] = {	/* TERM2_BLUE */
 	//{"#0000ff", "#444444", },
-	{"#ffffff", "#0000ff", },
+	//{"#ffffff", "#0000ff", },
+	//{"#666666", "#0000ff", },
+	{"#aaaaaa", "#000044", },
 };
 #endif
 static void enable_common_colormap_x11() {

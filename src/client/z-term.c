@@ -509,6 +509,7 @@ static char get_shimmer_color() {
 }
 #endif
 
+/* Called every FL_SPEED tick, which is [1] (100ms). */
 byte flick_colour(byte attr) {
 #if !defined(EXTENDED_COLOURS_PALANIM) || defined(EXTENDED_TERM_COLOURS)
 	byte flags = attr;//(remember flags) obsolete: & 0xE0;
@@ -852,8 +853,19 @@ byte flick_colour(byte attr) {
 			}
 		} else {
 			/* Use a special colour for this */
-#if 1 /* needed to implement palette animation for TERM2_ colour hack first */
-			set_palette(TERM2_BLUE, 0, 0, (ticks % 8) * 32);
+#if 0 /* slowish, flickers, not smooth */
+			if (ticks % 4 == 0) {
+				switch ((ticks % 32) / 4) {
+				case 0: set_palette(TERM2_BLUE, 0, 0, 0 * 8); break;
+				case 1: set_palette(TERM2_BLUE, 0, 0, 4 * 8); break;
+				case 2: set_palette(TERM2_BLUE, 0, 0, 8 * 8); break;
+				case 3: set_palette(TERM2_BLUE, 0, 0, 12 * 8); break;
+				case 4: set_palette(TERM2_BLUE, 0, 0, 16 * 8); break;
+				case 5: set_palette(TERM2_BLUE, 0, 0, 12 * 8); break;
+				case 6: set_palette(TERM2_BLUE, 0, 0, 8 * 8); break;
+				case 7: set_palette(TERM2_BLUE, 0, 0, 4 * 8); break;
+				}
+			}
 #endif
 			return TERM2_BLUE;
 		}

@@ -1092,8 +1092,14 @@ G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | LAMP_LITE | NO_SHADE | BOUNDARY
 
+#like 183, but special extended colour (testing)
+N:184:permanent wall
+G:#:7
+F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING | LAMP_LITE | NO_SHADE | BOUNDARY
 
-# HOLE 184..186 -------------------------------------------------------------
+
+# HOLE 185..186 -------------------------------------------------------------
 
 
 # 187 --> terrain -- deep water
