@@ -4749,8 +4749,8 @@ void do_cmd_disarm(int Ind, int dir) {
 		      (c_ptr->feat <= FEAT_TRAP_TAIL)) &&
 		    (o_ptr->tval != TV_CHEST))
 
-//			!(c_ptr->special.sc.ptr->found)) &&
-#endif	// 0
+		    //!(c_ptr->special.sc.ptr->found)) &&
+#endif
 
 		if ((!t_idx || !cs_ptr->sc.trap.found) &&
 		    (o_ptr->tval != TV_CHEST) &&
@@ -4878,7 +4878,7 @@ void do_cmd_disarm(int Ind, int dir) {
 		}
 
 		/* Disarm the trap */
-/*		else if (c_ptr->feat == FEAT_MON_TRAP) */
+		/*else if (c_ptr->feat == FEAT_MON_TRAP) */
 		if (!done && cs_ptr->type == CS_MON_TRAP) { /* same thing.. */
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
@@ -4962,7 +4962,7 @@ void do_cmd_disarm(int Ind, int dir) {
 
 			/* Extract trap "power" */
 			power = t_info[t_idx].difficulty * 3;
-//			power = 5;
+			//power = 5;
 
 			/* Extract the difficulty */
 			j = i - power;
@@ -5013,7 +5013,7 @@ void do_cmd_disarm(int Ind, int dir) {
 
 				/* Remove the trap */
 				cs_erase(c_ptr, cs_ptr);
-//				c_ptr->feat = FEAT_FLOOR;
+				//c_ptr->feat = FEAT_FLOOR;
 
 #if 1
 				/* Forget the "field mark" */
