@@ -867,7 +867,11 @@ byte flick_colour(byte attr) {
 				}
 			}
 #endif
+#ifdef EXTENDED_BG_COLOURS
 			return TERM2_BLUE;
+#else /* dummy */
+			return TERM_L_BLUE;
+#endif
 		}
 		/* Fall through should not happen, just silence the compiler */
 		__attribute__ ((fallthrough));
