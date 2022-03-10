@@ -784,7 +784,7 @@ byte flick_colour(byte attr) {
 		}
 		/* Fall through should not happen, just silence the compiler */
 		__attribute__ ((fallthrough));
-	case TERM_SELECTOR2:
+	case TERM_SEL_RED:
 #if 0 /* somewhat calm still */
 		switch ((unsigned)ticks % 10) {
 		case 0: case 1:
@@ -818,6 +818,45 @@ byte flick_colour(byte attr) {
 			return TERM_L_DARK;
 		}
 #endif
+		/* Fall through should not happen, just silence the compiler */
+		__attribute__ ((fallthrough));
+	case TERM_SEL_BLUE:
+		/* Dual-animation! Use palette animation if available, colour-rotation otherwise */
+		if (TRUE
+#ifdef EXTENDED_BG_COLOURS
+		    && !c_cfg.palette_animation
+#endif
+		    ) {
+			switch ((unsigned)ticks % 14) {
+#if 0
+			case 0: case 1: case 2:
+			case 13: case 14: case 15:
+				return TERM_BLUE;
+			case 3: case 4: case 5:
+			case 10: case 11: case 12:
+				return TERM_SLATE;
+			case 6: case 7: case 8: case 9:
+				return TERM_L_BLUE;
+#else
+			case 0: case 1:
+			case 14: case 15:
+				return TERM_BLUE;
+			case 2: case 3:
+			case 12: case 13:
+				return TERM_SLATE;
+			case 7: case 8:
+			case 4: case 5: case 6:
+			case 9: case 10: case 11:
+				return TERM_L_BLUE;
+#endif
+			}
+		} else {
+			/* Use a special colour for this */
+#if 1 /* needed to implement palette animation for TERM2_ colour hack first */
+			set_palette(TERM2_BLUE, 0, 0, (ticks % 8) * 32);
+#endif
+			return TERM2_BLUE;
+		}
 		/* Fall through should not happen, just silence the compiler */
 		__attribute__ ((fallthrough));
 

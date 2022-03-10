@@ -967,8 +967,12 @@ D:0:The glowing embers burn you!
 F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT | GLOW | NO_SHADE
 D:0:Embers of the inn's hearthfire.
 
+N:133:off-grid floor
+G:.:7
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW | NO_ARTICLE
 
-# HOLE 133..158 -------------------------------------------------------------
+
+# HOLE 134..158 -------------------------------------------------------------
 
 
 #permanent magma vein

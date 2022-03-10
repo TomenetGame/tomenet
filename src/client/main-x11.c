@@ -1903,7 +1903,7 @@ static errr Term_text_x11(int x, int y, int n, byte a, cptr s) {
  #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x1F]);
  #else
-	if (a == TERM2_BLUE) a = 1xF + 1;
+	if (a == TERM2_BLUE) a = 0x1F + 1;
 	Infoclr_set(clr[a & 0x2F]);
  #endif
 #endif
@@ -2173,8 +2173,9 @@ static char color_name[16 * 2][8] = {
 #endif
 };
 #ifdef EXTENDED_BG_COLOURS
- static cptr color_ext_name[1][2] = {
-	{"#0000ff", "#444444", },
+ static cptr color_ext_name[1][2] = {	/* TERM2_BLUE */
+	//{"#0000ff", "#444444", },
+	{"#ffffff", "#0000ff", },
 };
 #endif
 static void enable_common_colormap_x11() {
@@ -3136,6 +3137,17 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	if (c == 127 || c == 128) return; //just discard refresh marker
 #endif
 
+#ifdef EXTENDED_BG_COLOURS
+	/* Remap special colours to correct array indices:
+	   TERM2_BLUE was initialized as +1 extra colour added to the normal array of 16 or 32 console colours, so its index will be 16 (0..15 +1) or 32 (0..15 x2 +1). */
+	if (c == TERM2_BLUE)
+ #ifndef EXTENDED_COLOURS_PALANIM
+		c = 16;
+ #else
+		c = 32;
+ #endif
+#endif
+
 	color_table[c][1] = r;
 	color_table[c][2] = g;
 	color_table[c][3] = b;
@@ -3158,6 +3170,12 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	else if (c) cname = color_name[1];
 #else
 	cname = color_name[c];
+#endif
+#ifdef EXTENDED_BG_COLOURS
+	if (c == 16 || c == 32) /* remapped TERM2_BLUE, see above */
+		/* Actually animate the 'bg' colour instead of the 'fg' colour (testing purpose) */
+		Infoclr_init_ccn(color_ext_name[0][0], cname, "cpy", 0);
+	else
 #endif
 	Infoclr_init_ccn(cname, "bg", "cpy", 0);
 

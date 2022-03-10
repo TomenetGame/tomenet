@@ -7498,7 +7498,8 @@ extern int PlayerUID;
 
  #define TERM_SELECTOR	59
  #define TERM_SMOOTHPAL	60
- #define TERM_SELECTOR2	61
+ #define TERM_SEL_RED	61
+ #define TERM_SEL_BLUE	62
 
  #ifdef EXTENDED_BG_COLOURS
   #define TERM2_BLUE	63

@@ -3700,7 +3700,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 	}
 	/* display meteor target marker */
 	if ((effects[c_ptr->effect].flags & EFF_METEOR) && !c_ptr->m_idx && (f_info[c_ptr->feat].flags1 & FF1_FLOOR)) {
-		(*ap) = is_older_than(&p_ptr->version, 4, 7, 4, 4, 0, 0) ? TERM_SELECTOR : TERM_SELECTOR2;
+		(*ap) = is_older_than(&p_ptr->version, 4, 7, 4, 4, 0, 0) ? TERM_SELECTOR : TERM_SEL_RED;
 		switch (c_ptr->effect_xtra) {
 		case 0: (*cp) = '+'; break;
 		case 1: (*cp) = '-'; break;

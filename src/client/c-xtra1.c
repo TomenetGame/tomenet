@@ -4131,7 +4131,8 @@ void do_weather(bool no_weather) {
 					/* display raindrop */
 					Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
 					    PANEL_Y + weather_element_y[i] - weather_panel_y,
-#ifdef EXTENDED_BG_COLOURS /* use rain to test the extended background colour */
+#if 0
+//#ifdef EXTENDED_BG_COLOURS /* use rain to test the extended background colour */
 					    rand_int(2) ? TERM2_BLUE : TERM_ORANGE, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
 #else
 					    col_raindrop, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
@@ -4400,8 +4401,8 @@ void do_weather(bool no_weather) {
 				/* display raindrop */
 				Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
 				    PANEL_Y + weather_element_y[i] - weather_panel_y,
-
-#ifdef EXTENDED_BG_COLOURS /* use rain to test the extended background colour */
+#if 0
+//#ifdef EXTENDED_BG_COLOURS /* use rain to test the extended background colour */
 				    rand_int(2) ? TERM2_BLUE : TERM_ORANGE, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
 #else
 				    col_raindrop, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));

@@ -479,6 +479,8 @@ static cptr ANGBAND_DIR_XTRA_SOUND;
  *
  * XXX XXX XXX The color codes below were taken from "main-ibm.c".
  */
+
+//todo: implement   #ifdef EXTENDED_BG_COLOURS
 #ifndef EXTENDED_COLOURS_PALANIM
  static COLORREF win_clr[16] = {
 #else
@@ -4423,6 +4425,9 @@ void set_palette(byte c, byte r, byte g, byte b) {
    #endif
   #endif
 			win_clr[i] = win_clr_buf[i];
+ #endif
+ #ifdef EXTENDED_BG_COLOURS
+			//todo:implement   win_clr[16 + 16] = win_clr_buf[16 + 16];
  #endif
 
 		/* Activate the palette */

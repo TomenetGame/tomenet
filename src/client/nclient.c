@@ -5909,6 +5909,8 @@ int Send_subinven_remove(int item) {
  * Some Windows implementations (e.g. MinGW) of gettimeofday have a low resolution.
  * timeGetTime should provide a 1 ms resolution.
  *  - mikaelh
+ *
+ * (Notes: ticks will count up continuously until overflowing int, while ticks10 just run from 0 to 9.)
  */
 void update_ticks() {
 	struct timeval cur_time;
