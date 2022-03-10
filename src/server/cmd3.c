@@ -4975,7 +4975,10 @@ bool subinven_move_aux(int Ind, int islot, int sslot) {
 void do_cmd_subinven_move(int Ind, int islot) {
 	player_type *p_ptr = Players[Ind];
 	object_type *i_ptr, *s_ptr;
-	int amt, i;
+	int amt, i, t;
+ #ifdef SUBINVEN_LIMIT_GROUP
+	int prev_type = -1;
+ #endif
 	bool all = FALSE;
 
 	/* Error checks */
@@ -5025,8 +5028,13 @@ void do_cmd_subinven_move(int Ind, int islot) {
 	for (i = 0; i < INVEN_PACK; i++) {
 		s_ptr = &p_ptr->inventory[i];
 		/* Scan for existing subinventories */
-		if (s_ptr->tval != TV_SUBINVEN) continue;
-		switch (get_subinven_group(s_ptr->sval)) { //(s_ptr->sval) {
+		if (s_ptr->tval != TV_SUBINVEN) break; /* This assumes that subinvens are always the top-most items of the inventory! */
+		t = get_subinven_group(s_ptr->sval);
+ #ifdef SUBINVEN_LIMIT_GROUP
+		if (t == prev_type) continue; /* This assumes that subinvens are sorted by svals, which is true for all inventory items actually. */
+		prev_type = t;
+ #endif
+		switch (t) {
 		/* Check item to move against valid tvals to be put into specific container (subinventory) types */
 		case SV_SI_GROUP_CHEST_MIN:
 			/* Allow all storable items in chests */
@@ -5045,11 +5053,12 @@ void do_cmd_subinven_move(int Ind, int islot) {
 		}
 		/* Eligible subinventory found, try to move as much as possible */
 		if (subinven_move_aux(Ind, islot, i)) {
+			/* Successfully moved ALL items! We're done. */
 			all = TRUE;
 			break;
 		}
  #ifdef SUBINVEN_LIMIT_GROUP
-		break;
+		//break;  -- replaced by 'continue;' further above
  #endif
 	}
 
