@@ -104,6 +104,7 @@ bool (*item_tester_hook)(object_type *o_ptr);
 
 int special_line_type;
 int special_page_size;
+char special_line_title[ONAME_LEN], special_line_first[ONAME_LEN];
 
 bool inkey_base = FALSE;
 bool inkey_scan = FALSE;

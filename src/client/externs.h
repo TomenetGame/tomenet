@@ -214,6 +214,7 @@ extern bool item_tester_hook_chemical(object_type *o_ptr); //ENABLE_DEMOLITIONIS
 
 extern int special_line_type;
 extern int special_page_size;
+extern char special_line_title[ONAME_LEN], special_line_first[ONAME_LEN];
 
 extern bool inkey_base;
 extern bool inkey_scan;

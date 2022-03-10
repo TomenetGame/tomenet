@@ -4104,8 +4104,12 @@ int Receive_special_line(void) {
 		if (line == -1) {
 			/* Never scroll the title bar */
 			phys_line = 0;
+			strcpy(special_line_title, buf);
 			c_put_str(attr, buf, phys_line, 0);
 		} else { /* Normal line */
+			/* Hack: Catch first content line for item inspections -> guide invocation hack */
+			if (!cur_line && !line) strcpy(special_line_first, buf);
+
 			phys_line = line +
 			    (special_page_size == 21 + HGT_PLUS ? 1 : 2) + /* 1 extra usable line for 21-lines mode? */
 			    (special_page_size < 20 + HGT_PLUS ? 1 : 0); /* only 40 lines on 42-lines BIG_MAP? -> slighly improved visuals ;) */

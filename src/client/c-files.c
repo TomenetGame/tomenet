@@ -1331,6 +1331,27 @@ void peruse_file(void) {
 			break;
 		}
 
+#if 0 /* not useful :/ only very few items are practicably checkable this way */
+		/* Supahack: Pressing ? while looking at an item invokes the guide for that item's details if available */
+		if (k == '?' && special_line_type == SPECIAL_FILE_OTHER && cur_line == 0 &&
+		    (strstr(special_line_title, "Item Details") || strstr(special_line_title, "Basic Item Informatios"))) {
+			char uppercase[ONAME_LEN];
+			int i = 0, j = 4;
+
+			while (special_line_first[j] && special_line_first[j] != '{') {
+				uppercase[i] = toupper(special_line_first[j]);
+				i++;
+				j++;
+			}
+			uppercase[i] = 0;
+			if (uppercase[i - 1] == ' ') uppercase[i - 1] = 0;
+			if (!strncmp(uppercase, "AN ", 2)) cmd_the_guide(3, 0, uppercase + 3);
+			else if (!strncmp(uppercase, "A ", 2)) cmd_the_guide(3, 0, uppercase + 2);
+			else cmd_the_guide(3, 0, uppercase);
+			continue;
+		}
+#endif
+
 		/* Check maximum line */
 		/* don't allow 'empty lines' at end of list but wrap around immediately */
 		if (cur_line >= max_line) cur_line = 0;
