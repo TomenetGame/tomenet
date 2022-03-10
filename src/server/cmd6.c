@@ -3602,7 +3602,7 @@ void do_cmd_use_staff(int Ind, int item) {
 			return;
 		}
 		if (p_ptr->inventory[item / 100 - 1].sval != SV_SI_SATCHEL) {
-			msg_print(Ind, "\377yAntistatic wrappings are the only eligble sub-containers for using staves.");
+			msg_print(Ind, "\377yAntistatic wrappings are the only eligible sub-containers for using staves.");
 			return;
 		}
 	}
@@ -4499,7 +4499,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 			return;
 		}
 		if (p_ptr->inventory[item / 100 - 1].sval != SV_SI_MDEVP_WRAPPING) {
-			msg_print(Ind, "\377yAntistatic wrappings are the only eligble sub-containers for zapping rods.");
+			msg_print(Ind, "\377yAntistatic wrappings are the only eligible sub-containers for zapping rods.");
 			return;
 		}
 	}
@@ -5529,7 +5529,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			return;
 		}
 		if (p_ptr->inventory[item / 100 - 1].sval != SV_SI_SATCHEL) {
-			msg_print(Ind, "\377yAlchemy Satchels are the only eligble sub-containers for activating chemicals.");
+			msg_print(Ind, "\377yAlchemy Satchels are the only eligible sub-containers for activating chemicals.");
 			return;
 		}
 	}

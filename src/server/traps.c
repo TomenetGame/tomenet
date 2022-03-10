@@ -3260,7 +3260,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 			return;
 		}
 		if (p_ptr->inventory[item_kit / 100 - 1].sval != SV_SI_TRAPKIT_BAG) {
-			msg_print(Ind, "\377yTrap Kit Bags are the only eligble sub-containers for using trap kits.");
+			msg_print(Ind, "\377yTrap Kit Bags are the only eligible sub-containers for using trap kits.");
 			return;
 		}
 
