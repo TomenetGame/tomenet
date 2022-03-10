@@ -3252,7 +3252,20 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 
 	/* Get the objects */
 #ifdef ENABLE_SUBINVEN
-	if (item_kit >= 100) o_ptr = &p_ptr->subinventory[item_kit / 100 - 1][item_kit % 100];
+	if (item_kit >= 100) {
+		/* Sanity checks */
+		if (p_ptr->inventory[item_kit / 100 - 1].tval != TV_SUBINVEN) {
+			msg_print(Ind, "ERROR: Not a subinventory.");
+			s_printf("ERROR: Not a subinventory. (%s, %i)\n", p_ptr->name, item_kit / 100 - 1);
+			return;
+		}
+		if (p_ptr->inventory[item_kit / 100 - 1].sval != SV_SI_TRAPKIT_BAG) {
+			msg_print(Ind, "\377yTrap Kit Bags are the only eligble sub-containers for using trap kits.");
+			return;
+		}
+
+		o_ptr = &p_ptr->subinventory[item_kit / 100 - 1][item_kit % 100];
+	}
 	else
 #endif
 	o_ptr = &p_ptr->inventory[item_kit];

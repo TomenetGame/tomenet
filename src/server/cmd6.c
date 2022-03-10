@@ -3593,6 +3593,21 @@ void do_cmd_use_staff(int Ind, int item) {
 	/* Restrict choices to wands */
 	item_tester_tval = TV_STAFF;
 
+#ifdef ENABLE_SUBINVEN
+	if (item >= 100) {
+		/* Sanity checks */
+		if (p_ptr->inventory[item / 100 - 1].tval != TV_SUBINVEN) {
+			msg_print(Ind, "ERROR: Not a subinventory.");
+			s_printf("ERROR: Not a subinventory. (%s, %i)\n", p_ptr->name, item / 100 - 1);
+			return;
+		}
+		if (p_ptr->inventory[item / 100 - 1].sval != SV_SI_SATCHEL) {
+			msg_print(Ind, "\377yAntistatic wrappings are the only eligble sub-containers for using staves.");
+			return;
+		}
+	}
+#endif
+
 	get_inven_item(Ind, item, &o_ptr);
 
 	if (-item >= o_max) {
@@ -4474,6 +4489,21 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 	item_tester_tval = TV_ROD;
 
 	get_inven_item(Ind, item, &o_ptr);
+
+#ifdef ENABLE_SUBINVEN
+	if (item >= 100) {
+		/* Sanity checks */
+		if (p_ptr->inventory[item / 100 - 1].tval != TV_SUBINVEN) {
+			msg_print(Ind, "ERROR: Not a subinventory.");
+			s_printf("ERROR: Not a subinventory. (%s, %i)\n", p_ptr->name, item / 100 - 1);
+			return;
+		}
+		if (p_ptr->inventory[item / 100 - 1].sval != SV_SI_MDEVP_WRAPPING) {
+			msg_print(Ind, "\377yAntistatic wrappings are the only eligble sub-containers for zapping rods.");
+			return;
+		}
+	}
+#endif
 
 	if (-item >= o_max) {
 #ifdef ENABLE_XID_MDEV
@@ -5490,6 +5520,16 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		/* For now, only allow demo-alch from here */
 		if (o_ptr->tval != TV_CHEMICAL) {
 			msg_print(Ind, "In a container you can only activate demolition-related chemicals.");
+			return;
+		}
+		/* Sanity checks */
+		if (p_ptr->inventory[item / 100 - 1].tval != TV_SUBINVEN) {
+			msg_print(Ind, "ERROR: Not a subinventory.");
+			s_printf("ERROR: Not a subinventory. (%s, %i)\n", p_ptr->name, item / 100 - 1);
+			return;
+		}
+		if (p_ptr->inventory[item / 100 - 1].sval != SV_SI_SATCHEL) {
+			msg_print(Ind, "\377yAlchemy Satchels are the only eligble sub-containers for activating chemicals.");
 			return;
 		}
 	}
