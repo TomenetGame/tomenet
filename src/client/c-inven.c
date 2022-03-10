@@ -239,7 +239,8 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 			/* Check the normal tags */
 			if (s[1] == tag) {
 				if (charged && (
-				    strstr(buf, "charging)") || strstr(buf, "(#)") || strstr(buf, "(~)") || /* rods (and other devices, in theory) */
+				    strstr(buf, "(charging)") || strstr(buf, "(#)") || /* rods (and other devices, in theory) */
+				    //(partially charging) || strstr(buf, "(~)")
 				    strstr(buf, "(0 charges") || strstr(buf, "{empty}") /* wands, staves */
 				    )) {
 					/* Check for same item in the equipment, if found, search inventory for a non-same alternative */
@@ -270,7 +271,9 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 							else *buf3p = tolower(*buf3p);
 							buf3p++;
 						}
-						if (strstr(buf3, "charging)") || strstr(buf3, "(#)") || strstr(buf3, "(~)") || /* rods (and other devices, in theory) */
+						/* Skip fully charging stacks */
+						if (strstr(buf3, "(charging)") || strstr(buf3, "(#)") || /* rods (and other devices, in theory) */
+						    //(partially charging) || strstr(buf3, "(~)")
 						    strstr(buf3, "(0 charges") || strstr(buf3, "{empty}")) /* wands, staves */
 							continue;
 
@@ -295,7 +298,9 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 							else *buf3p = tolower(*buf3p);
 							buf3p++;
 						}
-						if (strstr(buf3, "charging)") || strstr(buf3, "(#)") || strstr(buf3, "(~)") || /* rods (and other devices, in theory) */
+						/* Skip fully charging stacks */
+						if (strstr(buf3, "(charging)") || strstr(buf3, "(#)") || /* rods (and other devices, in theory) */
+						    //(partiallu charging) || strstr(buf3, "(~)")
 						    strstr(buf3, "(0 charges") || strstr(buf3, "{empty}")) /* wands, staves */
 							continue;
 
@@ -375,7 +380,8 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 			/* Check the special tags */
 			if ((s[1] == command_cmd) && (s[2] == tag)) {
 				if (charged && (
-				    strstr(buf, "charging)") || strstr(buf, "(#)") || strstr(buf, "(~)") || /* rods (and other devices, in theory) */
+				    strstr(buf, "(charging)") || strstr(buf, "(#)") || /* rods (and other devices, in theory) */
+				    //(partially charging) || strstr(buf, "(~)")
 				    strstr(buf, "(0 charges") || strstr(buf, "{empty}") /* wands, staves */
 				    )) {
 					/* Check for same item in the equipment, if found, search inventory for a non-same alternative */
@@ -575,7 +581,8 @@ bool get_item_hook_find_obj(int *item, int mode) {
 		if (strstr(buf1, buf2)) {
  #endif
 			if (charged && (
-			    strstr(buf1, "charging)") || strstr(buf1, "(#)") || strstr(buf1, "(~)") || /* rods (and other devices, in theory) */
+			    strstr(buf1, "(charging)") || strstr(buf1, "(#)") || /* rods (and other devices, in theory) */
+			    //(partially charging) || strstr(buf1, "(~)")
 			    strstr(buf1, "(0 charges") || strstr(buf1, "{empty}") /* wands, staves */
 			    )) {
 				/* Especially added for non-stackable rods (Havoc): check for same rod, but not 'charging' */
@@ -594,7 +601,9 @@ bool get_item_hook_find_obj(int *item, int mode) {
 						else *ptr = tolower(*ptr);
 						ptr++;
 					}
-					if (strstr(buf3, "charging)") || strstr(buf3, "(#)") || strstr(buf3, "(~)") || /* rods (and other devices, in theory) */
+					/* Skip fully charging stacks */
+					if (strstr(buf3, "(charging)") || strstr(buf3, "(#)") || /* rods (and other devices, in theory) */
+					    //(partially charging) || strstr(buf3, "(~)")
 					    strstr(buf3, "(0 charges") || strstr(buf3, "{empty}")) /* wands, staves */
 						continue;
 
@@ -650,7 +659,8 @@ bool get_item_hook_find_obj(int *item, int mode) {
 			if (strstr(buf1, buf2)) {
  #endif
 				if (charged && (
-				    strstr(buf1, "charging)") || strstr(buf1, "(#)") || strstr(buf1, "(~)") || /* rods (and other devices, in theory) */
+				    strstr(buf1, "(charging)") || strstr(buf1, "(#)") || /* rods (and other devices, in theory) */
+				    //(partially charging) || strstr(buf1, "(~)")
 				    strstr(buf1, "(0 charges") || strstr(buf1, "{empty}") /* wands, staves */
 				    )) {
 					/* Especially added for non-stackable rods (Havoc): check for same rod, but not 'charging' */
@@ -669,7 +679,9 @@ bool get_item_hook_find_obj(int *item, int mode) {
 							else *ptr = tolower(*ptr);
 							ptr++;
 						}
-						if (strstr(buf3, "charging)") || strstr(buf3, "(#)") || strstr(buf3, "(~)") || /* rods (and other devices, in theory) */
+						/* Skip fully charging stacks */
+						if (strstr(buf3, "(charging)") || strstr(buf3, "(#)") || /* rods (and other devices, in theory) */
+						    //(partially charging) || strstr(buf3, "(~)")
 						    strstr(buf3, "(0 charges") || strstr(buf3, "{empty}")) /* wands, staves */
 							continue;
 
@@ -757,7 +769,8 @@ bool get_item_hook_find_obj(int *item, int mode) {
 			}
 #endif
 			if (charged && (
-			    strstr(buf1, "charging)") || strstr(buf1, "(#)") || strstr(buf1, "(~)") || /* rods (and other devices, in theory) */
+			    strstr(buf1, "(charging)") || strstr(buf1, "(#)") || /* rods (and other devices, in theory) */
+			    //(partially charging) || strstr(buf1, "(~)")
 			    strstr(buf1, "(0 charges") || strstr(buf1, "{empty}") /* wands, staves */
 			    )) {
 				/* Especially added for non-stackable rods (Havoc): check for same rod, but not 'charging' */
@@ -776,7 +789,9 @@ bool get_item_hook_find_obj(int *item, int mode) {
 						else *ptr = tolower(*ptr);
 						ptr++;
 					}
-					if (strstr(buf3, "charging)") || strstr(buf3, "(#)") || strstr(buf3, "(~)") || /* rods (and other devices, in theory) */
+					/* Skip fully charging stacks */
+					if (strstr(buf3, "(charging)") || strstr(buf3, "(#)") || /* rods (and other devices, in theory) */
+					    //(partially charging) || strstr(buf3, "(~)")
 					    strstr(buf3, "(0 charges") || strstr(buf3, "{empty}")) /* wands, staves */
 						continue;
 
