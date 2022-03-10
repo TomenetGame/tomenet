@@ -761,12 +761,20 @@ void do_trap(int item_kit) {
 
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
+#ifdef ENABLE_SUBINVEN
+	/* Allow getting magic devices from a device bag (and any load item from chests, as a consequence too) */
+	if (!c_get_item(&item_load, "Load with what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | NO_FAIL_MSG | USE_SUBINVEN))) {
+		if (item_load == -2) c_msg_print("You have nothing to load that trap with.");
+		if (parse_macro && c_cfg.safe_macros) flush_now();//Term_flush();
+		return;
+	}
+#else
 	if (!c_get_item(&item_load, "Load with what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | NO_FAIL_MSG))) {
 		if (item_load == -2) c_msg_print("You have nothing to load that trap with.");
 		if (parse_macro && c_cfg.safe_macros) flush_now();//Term_flush();
 		return;
 	}
-
+#endif
 
 	/* Send it */
 	Send_activate_skill(MKEY_TRAP, item_kit, item_load, 0, 0, 0);

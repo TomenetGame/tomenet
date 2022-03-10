@@ -3250,28 +3250,19 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 		return;
 	}
 
-	/* Get the objects */
+	/* Sanity-check and get the objects */
+	if (!verify_inven_item(Ind, item_kit)) return;
 #ifdef ENABLE_SUBINVEN
-	if (item_kit >= 100) {
-		/* Sanity checks */
-		if (p_ptr->inventory[item_kit / 100 - 1].tval != TV_SUBINVEN) {
-			msg_print(Ind, "ERROR: Not a subinventory.");
-			s_printf("ERROR: Not a subinventory. (%s, %i)\n", p_ptr->name, item_kit / 100 - 1);
-			return;
-		}
-		if (p_ptr->inventory[item_kit / 100 - 1].sval != SV_SI_TRAPKIT_BAG) {
-			msg_print(Ind, "\377yTrap Kit Bags are the only eligible sub-containers for using trap kits.");
-			return;
-		}
-
-		o_ptr = &p_ptr->subinventory[item_kit / 100 - 1][item_kit % 100];
+	if (item_kit >= 100 && p_ptr->inventory[item_kit / 100 - 1].sval != SV_SI_TRAPKIT_BAG) {
+		msg_print(Ind, "\377yTrap Kit Bags are the only eligible sub-containers for using trap kits.");
+		return;
 	}
-	else
 #endif
-	o_ptr = &p_ptr->inventory[item_kit];
-	j_ptr = &p_ptr->inventory[item_load];
-
+	get_inven_item(Ind, item_kit, &o_ptr);
 	if (!can_use_verbose(Ind, o_ptr)) return;
+
+	if (!verify_inven_item(Ind, item_load)) return;
+	get_inven_item(Ind, item_load, &j_ptr);
 	if (!can_use_verbose(Ind, j_ptr)) return;
 
 	/* Trap kits need a second object */
