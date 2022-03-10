@@ -357,7 +357,8 @@ char *my_strcasestr(const char *big, const char *little) {
     1 - search for occurances only at the beginning of a line (tolerating colour codes and spaces)
     2 - same as (1) and it must not start on a lower-case letter (to ensure it's not just inside some random text).
     3 - same as (2) and also search only for all-caps (for item flags)
-    4 - same as (3) and it must be at the beginning of the line without tolerating spaces, to rule out that we're inside some paragraph already. */
+    4 - same as (3) and it must be at the beginning of the line without tolerating spaces, to rule out that we're inside some paragraph already.
+   $$: Additionally, ending 'littlex' on "$$" will force it to be matched at the end of a line only. */
 char *my_strcasestr_skipcol(const char *big, const char *littlex, byte strict) {
 	const char *ret = NULL;
 	int cnt = 0, cnt2 = 0, cnt_offset;
