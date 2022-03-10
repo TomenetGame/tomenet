@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 8. March 2022 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 10. March 2022 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.7.4b - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -9464,7 +9464,9 @@ reason. The ending date means that somewhen after the beginning of that day,
 the event will end:
 
 Halloween
-    Running from 26th October till 3rd November.
+    Running from 26th October till 2nd November.
+    If seasons run at 2x speed, then also from 26th April till 2nd May.
+
     The server will recall all players (20 minutes ahead warning will be
     displayed) and restart. After that, Halloween is live and costumes can be
     found and stored costumes can be worn again.
@@ -9507,7 +9509,9 @@ Halloween
     ironman-style.)
 
 Christmas
-    Running from 23th December to 27th December.
+    Running from 23rd December to 27th December.
+    If seasons run at 2x speed, then also from 23rd June till 27th June.
+
     The server will recall all players (20 minutes ahead warning will be
     displayed) and restart, after which the event is live.
     During christmas, costumes can be worn again and you might even find Santa
@@ -9516,6 +9520,8 @@ Christmas
 
 New year's eve
     Running from 31st December to 1st January.
+    If seasons run at 2x speed, then also from 31st June till 1st July.
+
     Fireworks will be launched into the sky of the town of Bree.
     While it's night and fireworks are being launched, magic that lights up the
     world surface will not work.
@@ -9534,6 +9540,9 @@ Three time systems are relevant for the players' game experience:
  In-game time passes 20x as fast as real-time (see below for more info).
  This time also controls day/night changes, where the sun rises at 5am and
  night falls at 9pm.
+ Note that the four seaons however (and seasonal events with them) do not
+ pass that quickly but just at 2x real-time speed (or maybe even exactly at
+ real-time speed, depending on server settings).
 
 -in-game 'turns' (the /ex command tells you how fast you can move, ie how much
                  you can move each turn)
@@ -9557,6 +9566,8 @@ inform the player, not the character played.
 
 Scheduling of seasonal events or of event scheduling in general (the frequency
 at which events are invoked) are also handled by calculating real time.
+The four seasons (and seasonal events) will pass at 2x real time though (or
+exactly real time, depending on server settings).
 
 Basically all other things in-game are measured by the passing of 'game turns'
 and in in-game time, ie the time of the day as seen by your character, not by
@@ -9583,6 +9594,10 @@ Even store orders and the Merchants Guild mail system work in in-game time and
 tell your character how long their deliveries will take, not you as the player,
 so when they speak of "hours" or "days", fear not, it'll be much faster in
 real time.
+
+The four seasons however are inconsistent with the day/night speed:
+A full cycle lasts for half a real-time year, or (depending on server settings)
+even a whole real-time year.
 
 
 More technical stuff about 'game turns' and how time for your character's
