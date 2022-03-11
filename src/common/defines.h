@@ -6131,6 +6131,7 @@
 #define RF0_BR_WATER		0x00080000		/* Finally no more antimagic field vs water hounds :p */
 #define RF0_ADMINISTRATIVE_PUSH		0x00100000	/* Push back */
 #define RF0_METEOR_SWARM		0x00200000
+#define RF0_ADMINISTRATIVE_HOLD		0x00400000	/* Irresistible paralysis */
 
 #define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT)		/* | RF0_NO_NEST */
 

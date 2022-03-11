@@ -1265,12 +1265,11 @@ if (season_halloween) {
 	return (spells[rand_int(num)]);
 }
 
-static void adminstrative_push(int Ind, monster_type *m_ptr, cave_type **zcave) {
+static void administrative_push(int Ind, monster_type *m_ptr, cave_type **zcave) {
 	int x, y, d, xs, ys;
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 
-	/* RF0_ADMINISTRATIVE_PUSH */
 	if (m_ptr->r_idx != RI_BLUE) return;
 
 	if (p_ptr->px == m_ptr->fx || p_ptr->py == m_ptr->fy) d = 2;
@@ -1484,7 +1483,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 			    format("\377%c%s intercepts %s'%s attempt to %s!", COLOUR_IC_NEAR, q_ptr->name, m_name, bgen, desc),
 			    format("\377%c%s intercepts it!", COLOUR_IC_NEAR, q_ptr->name));
 
-			adminstrative_push(i, m_ptr, zcave);
+			administrative_push(i, m_ptr, zcave);
 			return TRUE;
 		}
 #else
@@ -1531,7 +1530,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 		    format("\377%c%s intercepts %s'%s attempt to %s!", COLOUR_IC_NEAR, Players[i_top]->name, m_name, bgen, desc),
 		    format("\377%c%s intercepts it!", COLOUR_IC_NEAR, Players[i_top]->name));
 
-		adminstrative_push(i_top, m_ptr, zcave);
+		administrative_push(i_top, m_ptr, zcave);
 		return TRUE;
 	}
  #ifdef COMBO_AM_IC_CAP
