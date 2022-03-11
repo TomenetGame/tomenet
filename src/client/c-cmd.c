@@ -4091,6 +4091,7 @@ static void monster_lore(void) {
 	/* for skipping pages forward/backward if there are more matches than lines */
 	int pageoffset = 0, skipped;
 	bool more_results;
+	//char *hyphen;
 
 	Term_save();
 
@@ -4099,9 +4100,10 @@ static void monster_lore(void) {
 	Term_clear();
 	Term_putstr(2,  2, -1, TERM_WHITE, "Enter (partial) monster name to refine the search:");
 	//Term_putstr(2,  3, -1, TERM_WHITE, "Or type '#' and its index, or '!' and its symbol and colour or 'm' or 'M'.");
-	Term_putstr(2,  3, -1, TERM_WHITE, "Or type '#' and its index, or '!' and its symbol and colour (m=ANY, M=MULTI).");
 	//Term_putstr(2,  3, -1, TERM_WHITE, "Or press '!' followed by a monster symbol and a colour symbol or 'm' or 'M'.");
 	//Term_putstr(2,  4, -1, TERM_WHITE, "Press RETURN to display lore about the selected monster.");
+	//Term_putstr(2,  3, -1, TERM_WHITE, "Or type '#' and its index, or '!' and its symbol and colour (m=ANY, M=MULTI).");
+	Term_putstr(2,  3, -1, TERM_WHITE, "Or #<index> or !<symbol><colour> (m=ANY, M=MULTI) or $LLL-LLL (level range).");
 
 	while (TRUE) {
 		Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Monster Lore ***");
@@ -4116,8 +4118,79 @@ static void monster_lore(void) {
 		skipped = 0;
 		more_results = FALSE;
 
+		/* Entering a '$' first means "search for monster level range" */
+		if (s[0] == '$') {
+			int levs = atoi(s + 1), leve;
+			char *h = strchr(s, '-');
+
+			if (levs < 0) levs = 0; /* levs was omitted? start at 0 */
+			if (h) {
+				leve = atoi(h + 1);
+				if (!leve) leve = 999; /* '-' was given but no end level -> open end */
+			} else leve = levs;
+
+			if (s[1] && !pageoffset) for (i = 1; i < monster_list_idx; i++) {
+				/* match? */
+				if (monster_list_level[i] >= levs && monster_list_level[i] <= leve) {
+					selected = monster_list_code[i];
+					selected_list = i;
+#if 0
+					Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d, \377%c%c\377%c, L%-3d)  %s",
+					    monster_list_code[i], monster_list_symbol[i][0], monster_list_symbol[i][1], selected_line == 0 ? 'y' : 'u', monster_list_level[i], monster_list_name[i]));
+#else
+					if (Client_setup.r_char[monster_list_code[i]]) {
+						Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%c\377%c/\377%c%c\377%c)  %s",
+							monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]));
+					} else {
+						Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%-3c\377%c)  %s",
+							monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], selected_line == 0 ? 'y' : 'u', monster_list_name[i]));
+					}
+#endif
+					list_idx[0] = i;
+					n++;
+					break;
+				}
+			}
+			/* check for more matches */
+			for (i = 1; i < monster_list_idx && n < MONSTER_LORE_LIST_SIZE + 1; i++) { /* '+ 1' for 'more_results' hack */
+				/* direct match above already? */
+				if (i == selected_list) continue;
+
+				if (monster_list_level[i] >= levs && monster_list_level[i] <= leve) {
+					/* hack - found more results than fit on currently displayed page? */
+					if (n == MONSTER_LORE_LIST_SIZE) {
+						more_results = TRUE;
+						break;
+					}
+					if (skipped < pageoffset * 17) {
+						skipped++;
+						continue;
+					}
+
+					if (n == 0) {
+						selected = monster_list_code[i];
+						selected_list = i;
+					}
+#if 0
+					Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_YELLOW : TERM_UMBER, format("(%4d, \377%c%c\377%c, L%-3d)  %s",
+					    monster_list_code[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_level[i], monster_list_name[i]));
+#else
+					if (Client_setup.r_char[monster_list_code[i]]) {
+						Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%c\377%c/\377%c%c\377%c)  %s",
+							monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]));
+					} else {
+						Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%-3c\377%c)  %s",
+							monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_name[i]));
+					}
+#endif
+					list_idx[n] = i;
+					n++;
+				}
+			}
+		}
+
 		/* Entering a '!' first means "search for monster symbol instead" */
-		if (s[0] == '!') {
+		else if (s[0] == '!') {
 			if (s[1] && !pageoffset) for (i = 1; i < monster_list_idx; i++) {
 				/* match? */
 				if (monster_list_symbol[i][1] == s[1] &&
@@ -4196,6 +4269,7 @@ static void monster_lore(void) {
 				}
 			}
 		}
+
 		/* Classic: Search for monster name */
 		else {
 			/* hack 1: direct match always takes top position
@@ -4383,14 +4457,15 @@ static void monster_lore(void) {
 		}
 
 		/* navigate in the list (up/down) */
-		if (s[0] != '#' && c == '8') { //rl:'k'
+		//if (s[0] == '$') hyphen = strchr(s, '-');
+		if (s[0] != '#' && (s[0] != '$' || strlen(s) >= 8) && c == '8') { //rl:'k'
 			if (n > 0) {
 				if (selected_line > 0) selected_line--;
 				else selected_line = n - 1;
 			}
 			continue;
 		}
-		if (s[0] != '#' && c == '2') { //rl:'j'
+		if (s[0] != '#' && (s[0] != '$' || strlen(s) >= 8) && c == '2') { //rl:'j'
 			if (n > 0) {
 				if (selected_line < n - 1) selected_line++;
 				else selected_line = 0;
@@ -4399,18 +4474,18 @@ static void monster_lore(void) {
 		}
 
 		/* page up/down in the search results */
-		if (s[0] != '#' && c == '9') { //rl:?
+		if (s[0] != '#' && (s[0] != '$' || strlen(s) >= 8) && c == '9') { //rl:?
 			if (pageoffset > 0) pageoffset--;
 			continue;
 		}
-		if (s[0] != '#' && c == '3') { //rl:?
+		if (s[0] != '#' && (s[0] != '$' || strlen(s) >= 8) && c == '3') { //rl:?
 			if (pageoffset < 100 /* silyl */
 			    && more_results)
 				pageoffset++;
 			continue;
 		}
 		/* home key to reset */
-		if (s[0] != '#' && c == '7') { //rl:?
+		if (s[0] != '#' && (s[0] != '$' || strlen(s) >= 8) && c == '7') { //rl:?
 			pageoffset = 0;
 			continue;
 		}
@@ -4440,7 +4515,7 @@ static void monster_lore(void) {
 		/* name too long? */
 		if (strlen(s) >= (s[0] == '!' ? 3 : 20)) continue;
 		/* build name */
-		if (s[0] != '!') c = toupper(c); /* We're looking for a name, not a symbol */
+		if (s[0] != '!' && s[0] != '$') c = toupper(c); /* We're looking for a name, not a symbol */
 		strcat(s, format("%c", c));
 		pageoffset = 0;
 	}
