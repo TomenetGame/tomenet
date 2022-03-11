@@ -1204,8 +1204,8 @@ static bool choose_stat_order(void) {
 #endif
 
 		c_put_str(TERM_L_UMBER,"   - Strength -    ", DIZ_ROW, 30);
-		c_put_str(TERM_YELLOW, "   How quickly you can strike.", DIZ_ROW + 1, 30);
-		c_put_str(TERM_YELLOW, "   How much you can carry and wield.", DIZ_ROW + 2, 30);
+		c_put_str(TERM_YELLOW, "   How quickly you can strike with weapons.", DIZ_ROW + 1, 30);
+		c_put_str(TERM_YELLOW, "   How much you can carry and wear/wield.", DIZ_ROW + 2, 30);
 		c_put_str(TERM_YELLOW, "   How much damage your strikes inflict.", DIZ_ROW + 3, 30);
 		c_put_str(TERM_YELLOW, "   How easily you can bash, throw and dig.", DIZ_ROW + 4, 30);
 		c_put_str(TERM_YELLOW, "   Slightly improves your swimming.", DIZ_ROW + 5, 30);
@@ -1376,7 +1376,7 @@ static bool choose_stat_order(void) {
 			if (c == '2' || c == '8' || c == 'j' || c == 'k') {
 				switch (j) {
 				case 0:	c_put_str(TERM_L_UMBER,"   - Strength -    ", DIZ_ROW, 30);
-					c_put_str(TERM_YELLOW, "   How quickly you can strike.                  ", DIZ_ROW + 1, 30);
+					c_put_str(TERM_YELLOW, "   How quickly you can strike with weapons.     ", DIZ_ROW + 1, 30);
 					c_put_str(TERM_YELLOW, "   How much you can carry and wear/wield.       ", DIZ_ROW + 2, 30);
 					c_put_str(TERM_YELLOW, "   How much damage your strikes inflict.        ", DIZ_ROW + 3, 30);
 					c_put_str(TERM_YELLOW, "   How easily you can bash, throw and dig.      ", DIZ_ROW + 4, 30);
@@ -1406,7 +1406,7 @@ static bool choose_stat_order(void) {
 					c_put_str(TERM_YELLOW, "                                                ", DIZ_ROW + 8, 30);
 					break;
 				case 3:	c_put_str(TERM_L_UMBER,"   - Dexterity -   ", DIZ_ROW, 30);
-					c_put_str(TERM_YELLOW, "   How quickly you can strike.                  ", DIZ_ROW + 1, 30);
+					c_put_str(TERM_YELLOW, "   How quickly you can strike with weapons.     ", DIZ_ROW + 1, 30);
 					c_put_str(TERM_YELLOW, "   Reduces your chance to miss.                 ", DIZ_ROW + 2, 30);
 					c_put_str(TERM_YELLOW, "   Opponents will miss very slightly more often.", DIZ_ROW + 3, 30);
 					c_put_str(TERM_YELLOW, "   Helps your stealing skills (if any).         ", DIZ_ROW + 4, 30);
