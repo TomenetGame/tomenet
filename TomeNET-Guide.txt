@@ -9069,15 +9069,16 @@ Highlander Tournament (pvp, only one can win, 2+ participants)
     The winner will receive a deed that can be 'r'ead, and turned in at Bree's
     Mayor Office for either an item that fits the needs of the character (it
     checks which skills you have trained to determine the item), or the deed
-    can be turned in for a temporary luck boost (multiple deed buffs do stack
-    in duration up to ~ 1 hour if it's the same buff power). Usually you will
-    want the item.
+    can be turned in for a temporary luck boost that lasts about 20 minutes
+    (multiple deed buffs do stack in duration up to ~ 1 hour if it's the same
+    buff power). Usually you will want the item.
     However, you can trade the deed to someone else, who can then go and redeem
     it for luck for that character of his (although the luck bonus he gets will
     be somewhat lower than what the original owner would receive).
     All losers will also receive a deed on the next character they log in with
-    which can be turned in for a small temporary luck bonus (multiple deed
-    buffs do stack in duration up to ~ 1 hour if it's the same buff power).
+    which can be turned in for a small temporary luck bonus that lasts about
+    20 minutes (multiple deed buffs do stack in duration up to ~ 1 hour if it's
+    the same buff power).
     The luck buffs are on hold while on the world surface, so you won't lose
     buff time from running around.
     If you die in this event, your character will get erased, even if it was
@@ -9113,17 +9114,18 @@ Highlander Tournament (pvp, only one can win, 2+ participants)
     When only one player is left, he will be the designated winner, and
     teleported back to Bree. He automatically receives a victory deed in his
     inventory which he can exchange at the Mayor's office in the town hall.
-    It can be exchanged for eiter an item or a temporary luck bonus (multiple
-    deed buffs stack in duration up to ~ 1 hour if the buff power is the same,
-    and are on hold while on the world surface).
+    It can be exchanged for eiter an item or a temporary luck bonus that lasts
+    about 20 minutes (multiple deed buffs stack in duration up to ~ 1 hour if
+    the buff power is the same, and are on hold while on the world surface).
     He can also give this deed to another character if he wishes, although in
     that case it can only be exchanged for a luck bonus, not an item, and the
     bonus will be somewhat lower than for the Highlander champion himself.
 
     All losers will also receive a 'contenders deed' on the next character they
     log on with, which can be exchanged at the Mayor's office for small
-    temporary luck bonus (note that it vanishes when you log off. Multiple
-    deed buffs stack in duration up to ~ 1 hour if it's the same buff power.
+    temporary luck bonus that lasts for about 20 minutes (note that it vanishes
+    when you log off. Multiple deed buffs stack in duration up to ~ 1 hour if
+    it's the same buff power.
     The buff is on hold while you are on the world's surface).
 
     A note regarding turning in a deed for an item:
@@ -9195,7 +9197,7 @@ Dungeon Keeper (everyone can win, 1+ participants)
     character a player logs on with after losing in the event will receive it.
 
     Winner parchments can be turned in for either an item or a temporary luck
-    buff (about 30 minutes duration). This buff won't stack with the luck buff
+    buff (about 20 minutes duration). This buff won't stack with the luck buff
     from loser parchments, so don't overwrite it accidentally! Buffs will stack
     in duration up to ~ 1 hour when their buff power is the same though.
     The item will depend on how you have spent your skill points, so make sure
@@ -11924,13 +11926,15 @@ Cheques         These are automatically generated in player stores when someone
                 For more information see (4.10a).
 Deeds           Some of the parchments are deeds, which are used as rewards
                 for various purpose, such as events (see (4.13)) and
-                pvp fights of PvP mode-characters (see(6.13)).
+                pvp fights of PvP mode-characters (see (6.13)).
                 Press 'r' to read a deed, which will usually tell you what to
                 do with it. In most cases, you have to turn it in at the
                 mayor's office in Bree (one of the '+' doors in town).
                 Some deeds can be traded to other characters, but usually they
                 will get a lesser reward (eg a luck buff instead of an item)
                 than the original owner could have gotten.
+                Luck buffs usually last about 20 minutes each or 30 minutes on
+                the Ironman server.
                 Note that temporary luck buffs from deeds stack in duration up
                 to ~ 1 hour as long as their buff power is the same, and also
                 will end prematurely when you log out before the buff ran out.
