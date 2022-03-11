@@ -4138,8 +4138,16 @@ bool bless_temp_luck(int Ind, int pow, int dur) {
 		/* Stack duration if current power was not lower than the one to be applied */
 		if (p_ptr->bless_temp_luck && p_ptr->bless_temp_luck_power >= pow) {
 			/* Feedback about duration prolongation succeeding */
-			msg_print(Ind, "\376\377gYou feel luck will be on your side for even longer.");
+			int d = p_ptr->bless_temp_luck;
+
 			p_ptr->bless_temp_luck += dur;
+			if (p_ptr->bless_temp_luck > 60 * 60 * 2) p_ptr->bless_temp_luck = 60 * 60 * 2; /* Stacking limit at about 1 hour */
+			if (p_ptr->bless_temp_luck - d >= 60 * 10 * 2) /* Gained at least ~ 10 min? */
+				msg_print(Ind, "\376\377gYou feel luck will be on your side for even longer.");
+			else if (p_ptr->bless_temp_luck - d >= 60 * 3 * 2) /* Gained at least ~ 3 min? */
+				msg_print(Ind, "\376\377gYou feel luck will be on your side for a little longer.");
+			/* else no message to indicate we're close to the stacking limit */
+
 			p_ptr->bless_temp_luck_power = pow;
 		}
 		/* Override old buff with stronger buff, reset duration */
