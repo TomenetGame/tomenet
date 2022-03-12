@@ -7502,10 +7502,6 @@ extern int PlayerUID;
  #define TERM_SEL_RED	61
  #define TERM_SEL_BLUE	62
 
- #ifdef EXTENDED_BG_COLOURS
-  #define TERM2_BLUE	63
- #endif
-
  #ifdef EXTENDED_COLOURS_PALANIM
   #define TERMA_OFFSET	64
   /* Clones of the 16 default colours, aka 'really used' colours (non-compounds), for palette animation. */
@@ -7559,6 +7555,16 @@ extern int PlayerUID;
  #define TERM_PVP	0x40	/* 64: black & red MASK, for active PvP-hostility (or stormbringer) */
  /* Reserved attr values - do not exceed */
  #define TERM_RESERVED	0x80	/* 128 */
+#endif
+#ifdef EXTENDED_BG_COLOURS
+ #define TERMX_START	80
+ #define TERMX_AMT	1
+ #define TERMX_BLUE	80
+#endif
+#ifdef EXTENDED_COLOURS_PALANIM
+ #define BASE_PALETTE_SIZE 32
+#else
+ #define BASE_PALETTE_SIZE 16
 #endif
 
 

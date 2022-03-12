@@ -481,13 +481,19 @@ static cptr ANGBAND_DIR_XTRA_SOUND;
  */
 
 /* These colors are overwritten with the generic, OS-independant client_color_map[] in enable_common_colormap_win()! */
-#ifndef EXTENDED_COLOURS_PALANIM
- static COLORREF win_clr[16] = {
-#else
- #ifdef PALANIM_OPTIMIZED2
-  static COLORREF win_clr_buf[16 * 2];
+#ifdef PALANIM_OPTIMIZED2
+ #ifndef EXTENDED_BG_COLOURS
+   static COLORREF win_clr_buf[BASE_PALETTE_SIZE];
+ #else
+   static COLORREF win_clr_buf_bg[BASE_PALETTE_SIZE + TERMX_AMT];
+   static COLORREF win_clr_buf[BASE_PALETTE_SIZE + TERMX_AMT];
  #endif
- static COLORREF win_clr[16 * 2] = {
+#endif
+#ifndef EXTENDED_BG_COLOURS
+ static COLORREF win_clr[BASE_PALETTE_SIZE] = {
+#else
+ static COLORREF win_clr_bg[BASE_PALETTE_SIZE + TERMX_AMT];
+ static COLORREF win_clr[BASE_PALETTE_SIZE + TERMX_AMT] = {
 #endif
 	PALETTERGB(0x00, 0x00, 0x00),  /* 0 0 0  Dark */
 	PALETTERGB(0xFF, 0xFF, 0xFF),  /* 4 4 4  White */
@@ -555,29 +561,40 @@ static void enable_common_colormap_win(void) {
 #ifdef EXTENDED_BG_COLOURS
 	int j;
 
-	#define REDX(i)   (client_ext_color_map[i] >> 16 & 0xFF)
-	#define GREENX(i) (client_ext_color_map[i] >> 8 & 0xFF)
-	#define BLUEX(i)  (client_ext_color_map[i] & 0xFF)
+	#define REDX(i)   (client_ext_color_map[i][0] >> 16 & 0xFF)
+	#define GREENX(i) (client_ext_color_map[i][0] >> 8 & 0xFF)
+	#define BLUEX(i)  (client_ext_color_map[i][0] & 0xFF)
+	#define REDXBG(i)   (client_ext_color_map[i][1] >> 16 & 0xFF)
+	#define GREENXBG(i) (client_ext_color_map[i][1] >> 8 & 0xFF)
+	#define BLUEXBG(i)  (client_ext_color_map[i][1] & 0xFF)
 #endif
 
 	#define RED(i)   (client_color_map[i] >> 16 & 0xFF)
 	#define GREEN(i) (client_color_map[i] >> 8 & 0xFF)
 	#define BLUE(i)  (client_color_map[i] & 0xFF)
 
-#ifndef EXTENDED_COLOURS_PALANIM
-	for (i = 0; i < 16; i++) {
-#else
-	for (i = 0; i < 16 * 2; i++) {
-#endif
+	for (i = 0; i < BASE_PALETTE_SIZE; i++) {
 		win_clr[i] = PALETTERGB(RED(i), GREEN(i), BLUE(i));
 #ifdef PALANIM_OPTIMIZED2
 		win_clr_buf[i] = win_clr[i];
 #endif
+#ifdef EXTENDED_BG_COLOURS
+		/* The standard colours (0-15) all have black background traditionally */
+		win_clr_bg[i] = PALETTERGB(RED(0), GREEN(0), BLUE(0));
+ #ifdef PALANIM_OPTIMIZED2
+		win_clr_buf_bg[i] = win_clr_bg[i];
+ #endif
+#endif
 	}
 
 #ifdef EXTENDED_BG_COLOURS
-	for (j = i; j < i + 1; j++) {
-		//win_clr[j] = PALETTERGB(REDX(j - i), GREENX(j - i), BLUEX(j - i));
+	for (j = i; j < i + TERMX_AMT; j++) {
+		win_clr[j] = PALETTERGB(REDX(j - i), GREENX(j - i), BLUEX(j - i));
+		win_clr_bg[j] = PALETTERGB(REDXBG(j - i), GREENXBG(j - i), BLUEXBG(j - i));
+ #ifdef PALANIM_OPTIMIZED2
+		win_clr_buf[j] = win_clr[j];
+		win_clr_buf_bg[j] = win_clr_bg[j];
+ #endif
 	}
 #endif
 }
@@ -1178,11 +1195,8 @@ static void new_palette(void) {
 #endif
 
 	/* Size of palette */
-#ifndef EXTENDED_COLOURS_PALANIM
-	pLogPalSize = sizeof(LOGPALETTE) + (16+nEntries)*sizeof(PALETTEENTRY);
-#else
-	pLogPalSize = sizeof(LOGPALETTE) + (16+16+nEntries)*sizeof(PALETTEENTRY);
-#endif
+	pLogPalSize = sizeof(LOGPALETTE) + (BASE_PALETTE_SIZE + nEntries)*sizeof(PALETTEENTRY);
+
 	/* Allocate palette */
 	pLogPal = (LPLOGPALETTE)mem_alloc(pLogPalSize);
 
@@ -1190,21 +1204,14 @@ static void new_palette(void) {
 	pLogPal->palVersion = 0x300;
 
 	/* Make room for bitmap and normal data */
-#ifndef EXTENDED_COLOURS_PALANIM
-	pLogPal->palNumEntries = nEntries + 16;
-#else
-	pLogPal->palNumEntries = nEntries + 16 + 16;
-#endif
+	pLogPal->palNumEntries = nEntries + BASE_PALETTE_SIZE;
+
 	/* Save the bitmap data */
 	for (i = 0; i < nEntries; i++)
 		pLogPal->palPalEntry[i] = lppe[i];
 
 	/* Save the normal data */
-#ifndef EXTENDED_COLOURS_PALANIM
-	for (i = 0; i < 16; i++) {
-#else
-	for (i = 0; i < 16 + 16; i++) {
-#endif
+	for (i = 0; i < BASE_PALETTE_SIZE; i++) {
 		LPPALETTEENTRY p;
 
 		/* Access the entry */
@@ -1286,7 +1293,7 @@ static void new_palette_ps(void) {
 
 	/* Use the bitmap */
 	if (hBmPal) {
-		lppeSize = 256*sizeof(PALETTEENTRY);
+		lppeSize = 256 * sizeof(PALETTEENTRY);
 		lppe = (LPPALETTEENTRY)mem_alloc(lppeSize);
 		nEntries = GetPaletteEntries(hBmPal, 0, 255, lppe);
 		if (nEntries == 0) quit("Corrupted bitmap palette");
@@ -1296,7 +1303,7 @@ static void new_palette_ps(void) {
  #endif
 
 	/* Size of palette */
-	pLogPalSize = sizeof(LOGPALETTE) + (16+nEntries)*sizeof(PALETTEENTRY);
+	pLogPalSize = sizeof(LOGPALETTE) + (16 + nEntries)*sizeof(PALETTEENTRY);
 
 	/* Allocate palette */
 	pLogPal = (LPLOGPALETTE)mem_alloc(pLogPalSize);
@@ -1833,11 +1840,7 @@ static errr Term_xtra_win_react(void) {
 		bool change = FALSE;
 
 		/* Save the default colors */
-#ifndef EXTENDED_COLOURS_PALANIM
-		for (i = 0; i < 16; i++) {
-#else
-		for (i = 0; i < 16 + 16; i++) {
-#endif
+		for (i = 0; i < BASE_PALETTE_SIZE; i++) {
 			/* Extract desired values */
 			rv = color_table[i][1];
 			gv = color_table[i][2];
@@ -2346,35 +2349,60 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 #endif
 
 #ifdef OPTIMIZE_DRAWING
+
 	if (old_attr != a) {
 		/* Foreground color */
-		if (colors16)
+		if (colors16) {
 			SetTextColor(hdc, PALETTEINDEX(win_pal[a & 0x0F]));
-		else
+ #ifdef EXTENDED_BG_COLOURS
+			//SetBkColor(hdc, PALETTEINDEX(win_pal_bg[a & 0x0F]));  -- would need rgb-value specific manual mapping, not for now
+ #endif
+		} else {
  #ifndef EXTENDED_COLOURS_PALANIM
 			SetTextColor(hdc, win_clr[a & 0x0F]);
+  #ifdef EXTENDED_BG_COLOURS
+			SetBkColor(hdc, PALETTEINDEX(win_clr_bg[a & 0x0F]));
+  #endif
  #else
 			SetTextColor(hdc, win_clr[a & 0x1F]);
+  #ifdef EXTENDED_BG_COLOURS
+			SetBkColor(hdc, PALETTEINDEX(win_clr_bg[a & 0x1F]));
+  #endif
  #endif
+		}
 		old_attr = a;
 	}
 
 	/* Dump the text */
 	ExtTextOut(hdc, rc.left, rc.top, ETO_OPAQUE | ETO_CLIPPED, &rc,
 	           s, n, NULL);
+
 #else
+
 	/* Background color */
+ #ifndef EXTENDED_BG_COLOURS
 	SetBkColor(hdc, RGB(0, 0, 0));
+ #endif
 
 	/* Foreground color */
-	if (colors16)
+	if (colors16) {
 		SetTextColor(hdc, PALETTEINDEX(win_pal[a & 0x0F]));
-	else
+ #ifdef EXTENDED_BG_COLOURS
+		//SetBkColor(hdc, PALETTEINDEX(win_pal_bg[a & 0x0F]));  -- would need rgb-value specific manual mapping, not for now
+ #endif
+	} else {
  #ifndef EXTENDED_COLOURS_PALANIM
 		SetTextColor(hdc, win_clr[a & 0x0F]);
+  #ifdef EXTENDED_BG_COLOURS
+		SetBkColor(hdc, PALETTEINDEX(win_clr_bg[a & 0x0F]));
+  #endif
  #else
 		SetTextColor(hdc, win_clr[a & 0x1F]);
+  #ifdef EXTENDED_BG_COLOURS
+		SetBkColor(hdc, PALETTEINDEX(win_clr_bg[a & 0x1F]));
+  #endif
  #endif
+	}
 
 	/* Use the font */
 	SelectObject(hdc, td->font_id);
@@ -2385,6 +2413,7 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 
 	/* Release DC */
 	ReleaseDC(td->w, hdc);
+
 #endif
 
 	/* Success */
@@ -3917,11 +3946,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 
 	/* Make a copy to use in colour blindness menu when we want to reset palette to default values.
 	   This must happen before we read the config file, as it contains colour-(re)definitions. */
-#ifndef EXTENDED_COLOURS_PALANIM
-	for (i = 0; i < 16; i++) client_color_map_org[i] = client_color_map[i];
-#else
-	for (i = 0; i < 16 * 2; i++) client_color_map_org[i] = client_color_map[i];
-#endif
+	for (i = 0; i < BASE_PALETTE_SIZE; i++) client_color_map_org[i] = client_color_map[i];
 
 	/* assume defaults */
 	strcpy(cfg_soundpackfolder, "sound");
@@ -3976,11 +4001,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 	ReleaseDC(NULL, hdc);
 #ifdef USE_GRAPHICS
 	/* Initialize "color_table" */
- #ifndef EXTENDED_COLOURS_PALANIM
-	for (i = 0; i < 16; i++) {
- #else
-	for (i = 0; i < 16 + 16; i++) {
- #endif
+	for (i = 0; i < BASE_PALETTE_SIZE; i++) {
 		/* Save the "complex" codes */
 		color_table[i][1] = GetRValue(win_clr[i]);
 		color_table[i][2] = GetGValue(win_clr[i]);
@@ -4469,6 +4490,11 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	}
 #else
 	if (c == 127 || c == 128) return; //just discard refresh marker
+#endif
+
+#ifdef ENABLE_BG_COLOURS
+	/* For now don't allow palette animation of extended-bg colours */
+	if (c >= BASE_PALETTE_SIZE) return;
 #endif
 
 #ifdef PALANIM_SWAP

@@ -253,7 +253,7 @@ term *Term = NULL;
 /* Check if a TERM_ colour is NOT animated */
 static bool term_nanim(byte ta) {
 #ifdef EXTENDED_BG_COLOURS
-	if (ta == TERM2_BLUE) return TRUE;
+	if (ta >= TERMX_START && ta < TERMX_START + TERMX_AMT) return TRUE;
 #endif
 #ifdef EXTENDED_COLOURS_PALANIM
 	if (ta >= TERMA_DARK && ta <= TERMA_L_UMBER) return TRUE;
@@ -267,16 +267,12 @@ static bool term_nanim(byte ta) {
 byte term2attr(byte ta) {
 #ifdef EXTENDED_BG_COLOURS
 	/* Experimental extra colours beyond normal 16/32 term colours. */
- #ifndef EXTENDED_COLOURS_PALANIM
-	if (ta == TERM2_BLUE) return 0xF + 1;
- #else
-	if (ta == TERM2_BLUE) return 0x1F + 1;
- #endif
+	if (ta >= TERMX_START && ta < TERMX_START + TERMX_AMT) return BASE_PALETTE_SIZE + ta - TERMX_START;
 #endif
 
 #ifdef EXTENDED_COLOURS_PALANIM
 	/* Extended base colour. Pass its location within the extended array range. */
-	if (ta >= TERMA_DARK && ta <= TERMA_L_UMBER) return ta - TERMA_OFFSET + 16; /* Use 'real' extended terminal colours ie 16..31. */
+	if (ta >= TERMA_DARK && ta <= TERMA_L_UMBER) return 16 + ta - TERMA_OFFSET; /* Use 'real' extended terminal colours ie 16..31. */
 #endif
 
 	/* Animated colour, pick one animation stage. */
@@ -898,19 +894,19 @@ byte flick_colour(byte attr) {
 #if 0 /* slowish, flickers, not smooth */
 			if (ticks % 4 == 0) {
 				switch ((ticks % 32) / 4) {
-				case 0: set_palette(term2attr(TERM2_BLUE), 0, 0, 0 * 8); break;
-				case 1: set_palette(term2attr(TERM2_BLUE), 0, 0, 4 * 8); break;
-				case 2: set_palette(term2attr(TERM2_BLUE), 0, 0, 8 * 8); break;
-				case 3: set_palette(term2attr(TERM2_BLUE), 0, 0, 12 * 8); break;
-				case 4: set_palette(term2attr(TERM2_BLUE), 0, 0, 16 * 8); break;
-				case 5: set_palette(term2attr(TERM2_BLUE), 0, 0, 12 * 8); break;
-				case 6: set_palette(term2attr(TERM2_BLUE), 0, 0, 8 * 8); break;
-				case 7: set_palette(term2attr(TERM2_BLUE), 0, 0, 4 * 8); break;
+				case 0: set_palette(term2attr(TERMX_BLUE), 0, 0, 0 * 8); break;
+				case 1: set_palette(term2attr(TERMX_BLUE), 0, 0, 4 * 8); break;
+				case 2: set_palette(term2attr(TERMX_BLUE), 0, 0, 8 * 8); break;
+				case 3: set_palette(term2attr(TERMX_BLUE), 0, 0, 12 * 8); break;
+				case 4: set_palette(term2attr(TERMX_BLUE), 0, 0, 16 * 8); break;
+				case 5: set_palette(term2attr(TERMX_BLUE), 0, 0, 12 * 8); break;
+				case 6: set_palette(term2attr(TERMX_BLUE), 0, 0, 8 * 8); break;
+				case 7: set_palette(term2attr(TERMX_BLUE), 0, 0, 4 * 8); break;
 				}
 			}
 #endif
 #ifdef EXTENDED_BG_COLOURS
-			return term2attr(TERM2_BLUE);
+			return term2attr(TERMX_BLUE);
 #else /* dummy */
 			return TERM_L_BLUE;
 #endif

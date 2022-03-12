@@ -1075,21 +1075,13 @@ extern bool macro_processing_exclusive;
 
 extern int max_chars_per_account;
 
-#ifndef EXTENDED_COLOURS_PALANIM
-extern u32b client_color_map[16];
-extern u32b client_color_map_org[16];
-extern u32b client_color_map_deu[16];
-extern u32b client_color_map_pro[16];
-extern u32b client_color_map_tri[16];
-#else
-extern u32b client_color_map[16 * 2];
-extern u32b client_color_map_org[16 * 2];
-extern u32b client_color_map_deu[16 * 2];
-extern u32b client_color_map_pro[16 * 2];
-extern u32b client_color_map_tri[16 * 2];
-#endif
+extern u32b client_color_map[BASE_PALETTE_SIZE];
+extern u32b client_color_map_org[BASE_PALETTE_SIZE];
+extern u32b client_color_map_deu[BASE_PALETTE_SIZE];
+extern u32b client_color_map_pro[BASE_PALETTE_SIZE];
+extern u32b client_color_map_tri[BASE_PALETTE_SIZE];
 #ifdef EXTENDED_BG_COLOURS
-extern u32b client_ext_color_map[1][2];
+extern u32b client_ext_color_map[TERMX_AMT][2];
 #endif
 extern const char colour_name[16][9];
 extern bool lighterdarkblue;

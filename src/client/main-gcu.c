@@ -243,11 +243,7 @@ static int can_use_256_color = TRUE;
  * Simple Angband to Curses color conversion table
  */
 
- #ifndef EXTENDED_COLOURS_PALANIM
- static int colortable[16];
- #else
- static int colortable[16 + 16];
- #endif
+ static int colortable[BASE_PALETTE_SIZE];
 
 //todo: EXTENDED_BG_COLOURS
 
@@ -786,6 +782,11 @@ static errr Term_text_gcu(int x, int y, int n, byte a, cptr s) {
 	/* Move the cursor and dump the string */
 	wmove(td->win, y, x);
 
+#ifdef EXTENDED_BG_COLOURS
+	/* For now disable extended colours in gcu client: */
+	if (a >= TERMX_START && a < TERMX_START + TERMX_AMT) a = TERM_WHITE;
+#endif
+
 	a = term2attr(a);
 
 #ifdef A_COLOR
@@ -926,21 +927,13 @@ errr init_gcu(void) {
 	/* Attempt to use customized colors */
 	if (can_fix_color) {
 		/* Prepare the color pairs */
- #ifndef EXTENDED_COLOURS_PALANIM
-		for (i = 0; i < 16; i++)
- #else
-		for (i = 0; i < 16 + 16; i++)
- #endif
+		for (i = 0; i < BASE_PALETTE_SIZE; i++)
 			init_pair(i, i, COLOR_BLACK);	/*black */
 
 		/* XXX XXX XXX Take account of "gamma correction" */
 
 		/* Store original terminal colours to remember them and restore them on exit: */
- #ifndef EXTENDED_COLOURS_PALANIM
-		for (i = 0; i < 16; i++)
- #else
-		for (i = 0; i < 16 + 16; i++)
- #endif
+		for (i = 0; i < BASE_PALETTE_SIZE; i++)
 			color_content(i, &cor[i], &cog[i], &cob[i]);
 
 		/* Using the real colours if terminal supports redefining -  thanks Pepe for the patch */
@@ -949,30 +942,19 @@ errr init_gcu(void) {
 		#define RED(i)   (((client_color_map[i] >> 16 & 0xff) * 1000 + 127) / 255)
 		#define GREEN(i) (((client_color_map[i] >> 8 & 0xff) * 1000 + 127) / 255)
 		#define BLUE(i)  (((client_color_map[i] & 0xff) * 1000 + 127) / 255)
- #ifndef EXTENDED_COLOURS_PALANIM
-		for (i = 0; i < 16; i++)
- #else
-		for (i = 0; i < 16 + 16; i++)
- #endif
+
+		for (i = 0; i < BASE_PALETTE_SIZE; i++) {
 			init_color(i, RED(i), GREEN(i), BLUE(i));
 
-		/* Prepare the "Angband Colors" */
- #ifndef EXTENDED_COLOURS_PALANIM
-		for (i = 0; i < 16; i++)
- #else
-		for (i = 0; i < 16 + 16; i++)
- #endif
+			/* Prepare the "Angband Colors" */
 			colortable[i] = (COLOR_PAIR(i % 16) | A_NORMAL);
+		}
 	}
 
 	else if (can_use_256_color) {
 		int j;
- #ifndef EXTENDED_COLOURS_PALANIM
-		int color_palette[16] = { 0 };
- #else
-		int color_palette[16 + 16] = { 0 };
- #endif
-		
+		int color_palette[BASE_PALETTE_SIZE] = { 0 };
+
 		/* Read the fixed color palette from the colours given to us by our terminal we're running in */
 		for (i = 0; i < 256; i++)
 			color_content(i, &cor[i], &cog[i], &cob[i]);
@@ -1001,19 +983,11 @@ errr init_gcu(void) {
 		}
 
 		/* Prepare the color pairs */
- #ifndef EXTENDED_COLOURS_PALANIM
-		for (i = 0; i < 16; i++)
- #else
-		for (i = 0; i < 16 + 16; i++)
- #endif
+		for (i = 0; i < BASE_PALETTE_SIZE; i++)
 			init_pair(i, color_palette[i], COLOR_BLACK);
 
 		/* Prepare the "Angband Colors" */
- #ifndef EXTENDED_COLOURS_PALANIM
-		for (i = 0; i < 16; i++)
- #else
-		for (i = 0; i < 16 + 16; i++)
- #endif
+		for (i = 0; i < BASE_PALETTE_SIZE; i++)
 			colortable[i] = (COLOR_PAIR(i) | A_NORMAL);
 	}
 

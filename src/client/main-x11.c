@@ -1161,19 +1161,12 @@ static infoclr *xor;
 /*
  * Color table
  */
-#ifndef EXTENDED_COLOURS_PALANIM
- #ifndef EXTENDED_BG_COLOURS
-  static infoclr *clr[16];
- #else
-  static infoclr *clr[16 + 1];
- #endif
+#ifndef EXTENDED_BG_COLOURS
+ static infoclr *clr[BASE_PALETTE_SIZE];
 #else
- #ifndef EXTENDED_BG_COLOURS
-  static infoclr *clr[16 * 2];
- #else
-  static infoclr *clr[16 * 2 + 1];
- #endif
+ static infoclr *clr[BASE_PALETTE_SIZE + TERMX_AMT];
 #endif
+
 /*
  * Forward declare
  */
@@ -2173,7 +2166,7 @@ static char color_name[16 * 2][8] = {
 #endif
 };
 #ifdef EXTENDED_BG_COLOURS
- static cptr color_ext_name[1][2] = {	/* TERM2_BLUE */
+ static char color_ext_name[TERMX_AMT][2][8] = {	/* TERMX_BLUE */
 	//{"#0000ff", "#444444", },
 	//{"#ffffff", "#0000ff", },
 	//{"#666666", "#0000ff", },
@@ -2183,18 +2176,14 @@ static char color_name[16 * 2][8] = {
 static void enable_common_colormap_x11() {
 	int i;
 
-#ifndef EXTENDED_COLOURS_PALANIM
-	for (i = 0; i < 16; i++) {
-#else
-	for (i = 0; i < 16 + 16; i++) {
-#endif
+	for (i = 0; i < BASE_PALETTE_SIZE; i++) {
 		unsigned long c = client_color_map[i];
 
 		sprintf(color_name[i], "#%06lx", c & 0xffffffL);
 	}
 
 #ifdef EXTENDED_BG_COLOURS
-	for (i = 0; i < 1; i++) {
+	for (i = 0; i < TERMX_AMT; i++) {
 		unsigned long c = client_ext_color_map[i][0], b = client_ext_color_map[i][1];
 
 		sprintf(color_ext_name[i][0], "#%06lx", c & 0xffffffL);
@@ -2464,9 +2453,8 @@ errr init_x11(void) {
 	Infoclr_set (xor);
 	Infoclr_init_ccn ("fg", "bg", "xor", 0);
 
-#ifndef EXTENDED_COLOURS_PALANIM
 	/* Prepare the colors (including "black") */
-	for (i = 0; i < 16; ++i) {
+	for (i = 0; i < BASE_PALETTE_SIZE; ++i) {
 		cptr cname = color_name[0];
 
 		MAKE(clr[i], infoclr);
@@ -2475,45 +2463,19 @@ errr init_x11(void) {
 		else if (i) cname = color_name[1];
 		Infoclr_init_ccn (cname, "bg", "cpy", 0);
 	}
- #ifdef EXTENDED_BG_COLOURS
+#ifdef EXTENDED_BG_COLOURS
 	/* Prepare the extended background-using colors */
-	for (i = 0; i < 1; ++i) {
+	for (i = 0; i < TERMX_AMT; ++i) {
 		cptr cname = color_name[0], cname2 = color_name[0];
 
-		MAKE(clr[16 + i], infoclr);
-		Infoclr_set (clr[16 + i]);
+		MAKE(clr[BASE_PALETTE_SIZE + i], infoclr);
+		Infoclr_set (clr[BASE_PALETTE_SIZE + i]);
 		if (Metadpy->color) {
 			cname = color_ext_name[i][0];
 			cname2 = color_ext_name[i][1];
 		}
 		Infoclr_init_ccn (cname, cname2, "cpy", 0);
 	}
- #endif
-#else
-	/* Prepare the colors (including "black") */
-	for (i = 0; i < 16 * 2; ++i) {
-		cptr cname = color_name[0];
-
-		MAKE(clr[i], infoclr);
-		Infoclr_set (clr[i]);
-		if (Metadpy->color) cname = color_name[i];
-		else if (i) cname = color_name[1];
-		Infoclr_init_ccn (cname, "bg", "cpy", 0);
-	}
- #ifdef EXTENDED_BG_COLOURS
-	/* Prepare the extended background-using colors */
-	for (i = 0; i < 1; ++i) {
-		cptr cname = color_name[0], cname2 = color_name[0];
-
-		MAKE(clr[32 + i], infoclr);
-		Infoclr_set (clr[32 + i]);
-		if (Metadpy->color) {
-			cname = color_ext_name[i][0];
-			cname2 = color_ext_name[i][1];
-		}
-		Infoclr_init_ccn (cname, cname2, "cpy", 0);
-	}
- #endif
 #endif
 
 
@@ -3158,26 +3120,45 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	sprintf(cn, "#%06lx", code);
 
 	/* Activate changes */
+#ifndef EXTENDED_BG_COLOURS
 	if (strcmp(color_name[c], cn))
 		/* Apply the desired color */
 		strcpy(color_name[c], cn);
+#else
+	/* Testing // For extended-bg colours, for now just animate the background part */
+	if (c >= BASE_PALETTE_SIZE) { /* TERMX_.. */
+		if (strcmp(color_ext_name[c - BASE_PALETTE_SIZE], cn))
+			/* Apply the desired color */
+			strcpy(color_name[c - BASE_PALETTE_SIZE], cn);
+	} else {
+		/* Normal colour: Just set the foreground part */
+		if (strcmp(color_name[c], cn))
+			/* Apply the desired color */
+			strcpy(color_name[c], cn);
+	}
+#endif
 
 	/* Activate the palette */
 	XFreeGC(Metadpy->dpy, clr[c]->gc);
 	//MAKE(clr[c], infoclr);
-	Infoclr_set (clr[c]);
+	Infoclr_set(clr[c]);
+
 #if 0 /* no colours on this display? */
 	if (Metadpy->color) cname = color_name[c];
 	else if (c) cname = color_name[1];
 #else
 	cname = color_name[c];
 #endif
+
 #ifdef EXTENDED_BG_COLOURS
-	if (c == 16 || c == 32) /* remapped TERM2_BLUE, see above */
+	/* Just for testing for now.. */
+	if (c >= BASE_PALETTE_SIZE) { /* TERMX_.. */
 		/* Actually animate the 'bg' colour instead of the 'fg' colour (testing purpose) */
 		Infoclr_init_ccn(color_ext_name[0][0], cname, "cpy", 0);
+	}
 	else
 #endif
+
 	Infoclr_init_ccn(cname, "bg", "cpy", 0);
 
 #ifndef PALANIM_OPTIMIZED

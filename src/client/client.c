@@ -964,11 +964,7 @@ int main(int argc, char **argv) {
 
 	/* Make a copy to use in colour blindness menu when we want to reset palette to default values.
 	   This must happen before we read the config file, as it contains colour-(re)definitions. */
-#ifndef EXTENDED_COLOURS_PALANIM
-	for (i = 0; i < 16; i++) client_color_map_org[i] = client_color_map[i];
-#else
-	for (i = 0; i < 16 * 2; i++) client_color_map_org[i] = client_color_map[i];
-#endif
+	for (i = 0; i < BASE_PALETTE_SIZE; i++) client_color_map_org[i] = client_color_map[i];
 
 	/* assume defaults */
 	strcpy(cfg_soundpackfolder, "sound");

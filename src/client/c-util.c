@@ -9395,11 +9395,7 @@ static void do_cmd_options_colourblindness(void) {
 
 		case 'n':
 			if (!c_cfg.palette_animation) continue;
-#ifndef EXTENDED_COLOURS_PALANIM
-			for (i = 0; i < 16; i++) {
-#else
-			for (i = 0; i < 16 * 2; i++) {
-#endif
+			for (i = 0; i < BASE_PALETTE_SIZE; i++) {
 				client_color_map[i] = client_color_map_org[i];
 				set_palette(i, (client_color_map[i] & 0xFF0000) >> 16, (client_color_map[i] & 0x00FF00) >> 8, (client_color_map[i] & 0x0000FF));
 			}
@@ -9407,11 +9403,7 @@ static void do_cmd_options_colourblindness(void) {
 
 		case 'd':
 			if (!c_cfg.palette_animation) continue;
-#ifndef EXTENDED_COLOURS_PALANIM
-			for (i = 0; i < 16; i++) {
-#else
-			for (i = 0; i < 16 * 2; i++) {
-#endif
+			for (i = 0; i < BASE_PALETTE_SIZE; i++) {
 				client_color_map[i] = client_color_map_deu[i];
 				set_palette(i, (client_color_map[i] & 0xFF0000) >> 16, (client_color_map[i] & 0x00FF00) >> 8, client_color_map[i] & 0x0000FF);
 			}
@@ -9419,11 +9411,7 @@ static void do_cmd_options_colourblindness(void) {
 
 		case 'p':
 			if (!c_cfg.palette_animation) continue;
-#ifndef EXTENDED_COLOURS_PALANIM
-			for (i = 0; i < 16; i++) {
-#else
-			for (i = 0; i < 16 * 2; i++) {
-#endif
+			for (i = 0; i < BASE_PALETTE_SIZE; i++) {
 				client_color_map[i] = client_color_map_pro[i];
 				set_palette(i, (client_color_map[i] & 0xFF0000) >> 16, (client_color_map[i] & 0x00FF00) >> 8, client_color_map[i] & 0x0000FF);
 			}
@@ -9431,11 +9419,7 @@ static void do_cmd_options_colourblindness(void) {
 
 		case 't':
 			if (!c_cfg.palette_animation) continue;
-#ifndef EXTENDED_COLOURS_PALANIM
-			for (i = 0; i < 16; i++) {
-#else
-			for (i = 0; i < 16 * 2; i++) {
-#endif
+			for (i = 0; i < BASE_PALETTE_SIZE; i++) {
 				client_color_map[i] = client_color_map_tri[i];
 				set_palette(i, (client_color_map[i] & 0xFF0000) >> 16, (client_color_map[i] & 0x00FF00) >> 8, client_color_map[i] & 0x0000FF);
 			}
@@ -9460,11 +9444,7 @@ static void do_cmd_options_colourblindness(void) {
 
 		case 'r':
 			if (!c_cfg.palette_animation) continue;
-#ifndef EXTENDED_COLOURS_PALANIM
-			for (i = 0; i < 16; i++) {
-#else
-			for (i = 0; i < 16 * 2; i++) {
-#endif
+			for (i = 0; i < BASE_PALETTE_SIZE; i++) {
 				client_color_map[i] = client_color_map_org[i];
 				if ((i == 6 || i == 16 + 6) && lighterdarkblue && client_color_map[i] == 0x0000ff)
 #ifdef WINDOWS
