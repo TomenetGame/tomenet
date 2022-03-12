@@ -863,7 +863,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 			strncpy(buf_tmp + 2, buf, 1021);
 			buf_tmp[1023] = 0;
 			strcpy(buf, buf_tmp);
-		} else if ((c = strstr(buf, " committed suicide.")) && *(c - 3) != '(' && !(*(c - 3) == '1' && *(c - 2) == '0')) { /* Suicides of level 11+ (PvP chars start at 10) */
+		} else if ((c = strstr(buf, " committed suicide.")) && *(c - 3) != '(' && !(*(c - 3) == '1' && *(c - 2) == '0')) { /* Suicides of level 11+ (PvP chars start at 20) */
 			buf_tmp[1] = 'D';
 			strncpy(buf_tmp + 2, buf, 1021);
 			buf_tmp[1023] = 0;
