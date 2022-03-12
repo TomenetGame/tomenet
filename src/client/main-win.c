@@ -480,7 +480,7 @@ static cptr ANGBAND_DIR_XTRA_SOUND;
  * XXX XXX XXX The color codes below were taken from "main-ibm.c".
  */
 
-//todo: implement   #ifdef EXTENDED_BG_COLOURS
+/* These colors are overwritten with the generic, OS-independant client_color_map[] in enable_common_colormap_win()! */
 #ifndef EXTENDED_COLOURS_PALANIM
  static COLORREF win_clr[16] = {
 #else
@@ -552,6 +552,13 @@ void enable_readability_blue_win(void) {
 }
 static void enable_common_colormap_win(void) {
 	int i;
+#ifdef EXTENDED_BG_COLOURS
+	int j;
+
+	#define REDX(i)   (client_ext_color_map[i] >> 16 & 0xFF)
+	#define GREENX(i) (client_ext_color_map[i] >> 8 & 0xFF)
+	#define BLUEX(i)  (client_ext_color_map[i] & 0xFF)
+#endif
 
 	#define RED(i)   (client_color_map[i] >> 16 & 0xFF)
 	#define GREEN(i) (client_color_map[i] >> 8 & 0xFF)
@@ -567,6 +574,12 @@ static void enable_common_colormap_win(void) {
 		win_clr_buf[i] = win_clr[i];
 #endif
 	}
+
+#ifdef EXTENDED_BG_COLOURS
+	for (j = i; j < i + 1; j++) {
+		//win_clr[j] = PALETTERGB(REDX(j - i), GREENX(j - i), BLUEX(j - i));
+	}
+#endif
 }
 
 

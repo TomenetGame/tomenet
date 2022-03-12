@@ -220,9 +220,9 @@ static int active = 0;
  * Hack -- define "A_BRIGHT" to be "A_BOLD", because on many
  * machines, "A_BRIGHT" produces ugly "inverse" video.
  */
-#ifndef A_BRIGHT
-# define A_BRIGHT A_BOLD
-#endif
+ #ifndef A_BRIGHT
+ # define A_BRIGHT A_BOLD
+ #endif
 
 /*
  * Software flag -- we are allowed to use color
@@ -248,6 +248,8 @@ static int can_use_256_color = TRUE;
  #else
  static int colortable[16 + 16];
  #endif
+
+//todo: EXTENDED_BG_COLOURS
 
 #endif
 
@@ -933,6 +935,7 @@ errr init_gcu(void) {
 
 		/* XXX XXX XXX Take account of "gamma correction" */
 
+		/* Store original terminal colours to remember them and restore them on exit: */
  #ifndef EXTENDED_COLOURS_PALANIM
 		for (i = 0; i < 16; i++)
  #else
@@ -970,10 +973,9 @@ errr init_gcu(void) {
 		int color_palette[16 + 16] = { 0 };
  #endif
 		
-		/* Read the fixed color palette */
-		for (i = 0; i < 256; i++) {
+		/* Read the fixed color palette from the colours given to us by our terminal we're running in */
+		for (i = 0; i < 256; i++)
 			color_content(i, &cor[i], &cog[i], &cob[i]);
-		}
 
 		/* Find the closest match in the palette for each desired color */
 		for (i = 0; i < 16; i++) {
@@ -985,6 +987,7 @@ errr init_gcu(void) {
 
 			for (j = 0; j < 256; j++) {
 				int distance = abs(want_red - cor[j]) + abs(want_green - cog[j]) + abs(want_blue - cob[j]);
+
 				if (distance < best_distance) {
 					best_distance = distance;
 					best_idx = j;
@@ -1129,6 +1132,7 @@ void enable_readability_blue_gcu(void) {
 
 void gcu_restore_colours(void) {
 	int i;
+
 	for (i = 0; i < 16; i++) init_color(i, cor[i], cog[i], cob[i]);
 }
 

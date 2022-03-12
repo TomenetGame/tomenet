@@ -492,6 +492,11 @@ u32b client_color_map[16 * 2] = {
 	0xc79d55,	/* LIGHT UMBER */
 #endif
 };
+#ifndef EXTENDED_BG_COLOURS
+u32b client_ext_color_map[1][2] = {
+	{ 0xffffff, 0x000077 },	/* experimental TERM2_BLUE */
+};
+#endif
 #ifndef EXTENDED_COLOURS_PALANIM
 u32b client_color_map_org[16];
 #else

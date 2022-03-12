@@ -2111,7 +2111,7 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
  *
  * Colors courtesy of: Torbj|rn Lindgren <tl@ae.chalmers.se>
  *
- * These colors may no longer be valid...
+ * These colors are overwritten with the generic, OS-independant client_color_map[] in enable_common_colormap_x11()!
  */
 #ifndef EXTENDED_COLOURS_PALANIM
 static char color_name[16][8] = {
@@ -2192,6 +2192,15 @@ static void enable_common_colormap_x11() {
 
 		sprintf(color_name[i], "#%06lx", c & 0xffffffL);
 	}
+
+#ifdef EXTENDED_BG_COLOURS
+	for (i = 0; i < 1; i++) {
+		unsigned long c = client_ext_color_map[i][0], b = client_ext_color_map[i][1];
+
+		sprintf(color_ext_name[i][0], "#%06lx", c & 0xffffffL);
+		sprintf(color_ext_name[i][1], "#%06lx", b & 0xffffffL);
+	}
+#endif
 }
 
 void enable_readability_blue_x11(void) {
