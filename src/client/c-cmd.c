@@ -365,7 +365,12 @@ void process_command() {
 		break;
 #endif
 
-	case '!': cmd_BBS(); break;
+	case '!':
+#if 1
+		cmd_BBS(); break;
+#else /* For debugging */
+		c_msg_format("%d->%d", TERM2_BLUE, term2attr(TERM2_BLUE)); break;
+#endif
 #if 0 /* only for debugging purpose - dump some client-side special config */
 	case KTRL('C'): c_msg_format("Client FPS: %d", cfg_client_fps); break;
 #endif
