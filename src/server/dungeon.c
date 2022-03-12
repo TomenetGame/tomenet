@@ -8603,7 +8603,11 @@ void process_player_change_wpos(int Ind) {
 #endif
 
 	/* Immediately reset floor */
-	if (in_deathfate(&p_ptr->wpos_old) && getcave(&p_ptr->wpos_old)) dealloc_dungeon_level(&p_ptr->wpos_old);
+	if (in_deathfate(&p_ptr->wpos_old) && getcave(&p_ptr->wpos_old)
+	    /* ..if no more players are on it */
+	    && !players_on_depth(&p_ptr->wpos_old)
+	    )
+		dealloc_dungeon_level(&p_ptr->wpos_old);
 
 	wpcopy(&p_ptr->wpos_old, &p_ptr->wpos);
 
