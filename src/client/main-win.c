@@ -2326,6 +2326,8 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 	/* Acquire DC */
 	hdc = myGetDC(td->w);
 
+	a = term2attr(a);
+
 #ifdef PALANIM_SWAP
 	a = (a + 16) % 32;
 #endif

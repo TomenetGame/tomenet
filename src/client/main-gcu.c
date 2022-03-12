@@ -784,6 +784,8 @@ static errr Term_text_gcu(int x, int y, int n, byte a, cptr s) {
 	/* Move the cursor and dump the string */
 	wmove(td->win, y, x);
 
+	a = term2attr(a);
+
 #ifdef A_COLOR
 	/* Set the color */
 	if (can_use_color) wattrset(td->win, colortable[a & 0x0F]);

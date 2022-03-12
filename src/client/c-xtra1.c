@@ -17,7 +17,13 @@
 /* Don't display 'Trait' if traits aren't available */
 #define HIDE_UNAVAILABLE_TRAIT
 
-#define ANIM_OFFSET 16 /* palette index offset for animated colours (might need to be 0 for Windows if PALANIM_SWAP is ever used) */
+#ifndef PALANIM_SWAP
+ #define ANIM_OFFSET 16 /* palette index offset for animated colours (might need to be 0 for Windows if PALANIM_SWAP is ever used) */
+ #define ANIM_BASE 0 /* Counterpart to ANIM_OFFSET: The start of the basic, normal palette. Usually 0, except for Windows if PALANIM_SWAP is ever used. */
+#else
+ #define ANIM_OFFSET 0 /* palette index offset for animated colours (might need to be 0 for Windows if PALANIM_SWAP is ever used) */
+ #define ANIM_BASE 16 /* Counterpart to ANIM_OFFSET: The start of the basic, normal palette. Usually 0, except for Windows if PALANIM_SWAP is ever used. */
+#endif
 /* Animate not just the extended 'outside world' colours, that are used for day/night lightning,
    but also the classic static colours that are used for everything else, allowing this to work inside a dungeon: */
 #define ANIM_FULL_PALETTE
@@ -3879,7 +3885,7 @@ void do_animate_screenflash(bool reset) {
 			if (c_cfg.palette_animation) {
 				for (i = 1; i < 16; i++) set_palette(i + ANIM_OFFSET, or[i], og[i], ob[i]);
 #ifdef ANIM_FULL_PALETTE
-				for (i = 1; i < 16; i++) set_palette(i, or0[i], og0[i], ob0[i]);
+				for (i = 1; i < 16; i++) set_palette(i + ANIM_BASE, or0[i], og0[i], ob0[i]);
 #endif
 				set_palette(128, 0, 0, 0); //refresh
 			}
@@ -3895,14 +3901,14 @@ void do_animate_screenflash(bool reset) {
 		if (!active) {
 			for (i = 1; i < 16; i++) get_palette(i + ANIM_OFFSET, &or[i], &og[i], &ob[i]);
 #ifdef ANIM_FULL_PALETTE
-			for (i = 1; i < 16; i++) get_palette(i, &or0[i], &og0[i], &ob0[i]);
+			for (i = 1; i < 16; i++) get_palette(i + ANIM_BASE, &or0[i], &og0[i], &ob0[i]);
 #endif
 			active = TRUE;
 		}
 
 		for (i = 1; i < 16; i++) set_palette(i + ANIM_OFFSET, 0xFF, 0xFF, 0xFF);
 #ifdef ANIM_FULL_PALETTE
-		for (i = 1; i < 16; i++) set_palette(i, 0xFF, 0xFF, 0xFF);
+		for (i = 1; i < 16; i++) set_palette(i + ANIM_BASE, 0xFF, 0xFF, 0xFF);
 #endif
 
 		set_palette(128, 0, 0, 0); //refresh
@@ -3915,7 +3921,7 @@ void do_animate_screenflash(bool reset) {
 			    ob[i] + ((0xFF - ob[i]) * (LF_END - animate_screenflash)) / (LF_END - 1));
 #ifdef ANIM_FULL_PALETTE
 		for (i = 1; i < 16; i++)
-			set_palette(i,
+			set_palette(i + ANIM_BASE,
 			    or0[i] + ((0xFF - or0[i]) * (LF_END - animate_screenflash)) / (LF_END - 1),
 			    og0[i] + ((0xFF - og0[i]) * (LF_END - animate_screenflash)) / (LF_END - 1),
 			    ob0[i] + ((0xFF - ob0[i]) * (LF_END - animate_screenflash)) / (LF_END - 1));
@@ -3928,7 +3934,7 @@ void do_animate_screenflash(bool reset) {
 		if (active) {
 			for (i = 1; i < 16; i++) set_palette(i + ANIM_OFFSET, or[i], og[i], ob[i]);
 #ifdef ANIM_FULL_PALETTE
-			for (i = 1; i < 16; i++) set_palette(i, or0[i], og0[i], ob0[i]);
+			for (i = 1; i < 16; i++) set_palette(i + ANIM_BASE, or0[i], og0[i], ob0[i]);
 #endif
 			set_palette(128, 0, 0, 0); //refresh
 			active = FALSE;
@@ -3960,7 +3966,7 @@ void do_animate_lightning(bool reset) {
 			if (c_cfg.palette_animation) {
 				for (i = 1; i < 16; i++) set_palette(i + ANIM_OFFSET, or[i], og[i], ob[i]);
 #ifdef ANIM_FULL_PALETTE
-				for (i = 1; i < 16; i++) set_palette(i, or0[i], og0[i], ob0[i]);
+				for (i = 1; i < 16; i++) set_palette(i + ANIM_BASE, or0[i], og0[i], ob0[i]);
 #endif
 				set_palette(128, 0, 0, 0); //refresh
 			}
@@ -3976,7 +3982,7 @@ void do_animate_lightning(bool reset) {
 		if (!active) {
 			for (i = 1; i < 16; i++) get_palette(i + ANIM_OFFSET, &or[i], &og[i], &ob[i]);
 #ifdef ANIM_FULL_PALETTE
-			for (i = 1; i < 16; i++) get_palette(i, &or0[i], &og0[i], &ob0[i]);
+			for (i = 1; i < 16; i++) get_palette(i + ANIM_BASE, &or0[i], &og0[i], &ob0[i]);
 #endif
 			active = TRUE;
 		}
@@ -4012,7 +4018,7 @@ void do_animate_lightning(bool reset) {
 		if (active) {
 			for (i = 1; i < 16; i++) set_palette(i + ANIM_OFFSET, or[i], og[i], ob[i]);
 #ifdef ANIM_FULL_PALETTE
-			for (i = 1; i < 16; i++) set_palette(i, or0[i], og0[i], ob0[i]);
+			for (i = 1; i < 16; i++) set_palette(i + ANIM_BASE, or0[i], og0[i], ob0[i]);
 #endif
 			set_palette(128, 0, 0, 0); //refresh
 			active = FALSE;

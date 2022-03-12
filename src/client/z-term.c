@@ -250,6 +250,43 @@ term *Term = NULL;
 /*** Local routines ***/
 
 
+/* Check if a TERM_ colour is NOT animated */
+static bool term_nanim(byte ta) {
+#ifdef EXTENDED_BG_COLOURS
+	if (ta == TERM2_BLUE) return TRUE;
+#endif
+#ifdef EXTENDED_COLOURS_PALANIM
+	if (ta >= TERMA_DARK && ta <= TERMA_L_UMBER) return TRUE;
+#endif
+	if (ta < TERM_MULTI) return TRUE;
+
+	return FALSE;
+}
+
+/* Translate a TERM_ colour into an actual terminal colour to draw on screen */
+byte term2attr(byte ta) {
+#ifdef EXTENDED_BG_COLOURS
+	/* Experimental extra colours beyond normal 16/32 term colours. */
+ #ifndef EXTENDED_COLOURS_PALANIM
+	if (ta == TERM2_BLUE) return 0xF + 1;
+ #else
+	if (ta == TERM2_BLUE) return 0x1F + 1;
+ #endif
+#endif
+
+#ifdef EXTENDED_COLOURS_PALANIM
+	/* Extended base colour. Pass its location within the extended array range. */
+	if (ta >= TERMA_DARK && ta <= TERMA_L_UMBER) return ta - TERMA_OFFSET + 16; /* Use 'real' extended terminal colours ie 16..31. */
+#endif
+
+	/* Animated colour, pick one animation stage. */
+	if (ta >= TERM_MULTI) return flick_colour(ta);
+
+	/* Base colour, pass through. */
+	return ta;
+}
+
+
 /*
  * Nuke a term_win (see below)
  */
@@ -509,7 +546,12 @@ static char get_shimmer_color() {
 }
 #endif
 
-/* Called every FL_SPEED tick, which is [1] (100ms). */
+/* Called every FL_SPEED tick, which is [1] (100ms).
+   This function must return an existing palette colour index ie 0..15
+   or 0..31 for extended palette (EXTENDED_COLOURS_PALANIM),
+   possibly +1 or more for experimental extended colours (EXTENDED_BG_COLOURS).
+   If a colour should rather be resolved to another animated colour, it must use
+   flick_colour(_desired_animated_colour_) or term2attr() for that so it does return a valid palette index again. */
 byte flick_colour(byte attr) {
 #if !defined(EXTENDED_COLOURS_PALANIM) || defined(EXTENDED_TERM_COLOURS)
 	byte flags = attr;//(remember flags) obsolete: & 0xE0;
@@ -856,19 +898,19 @@ byte flick_colour(byte attr) {
 #if 0 /* slowish, flickers, not smooth */
 			if (ticks % 4 == 0) {
 				switch ((ticks % 32) / 4) {
-				case 0: set_palette(TERM2_BLUE, 0, 0, 0 * 8); break;
-				case 1: set_palette(TERM2_BLUE, 0, 0, 4 * 8); break;
-				case 2: set_palette(TERM2_BLUE, 0, 0, 8 * 8); break;
-				case 3: set_palette(TERM2_BLUE, 0, 0, 12 * 8); break;
-				case 4: set_palette(TERM2_BLUE, 0, 0, 16 * 8); break;
-				case 5: set_palette(TERM2_BLUE, 0, 0, 12 * 8); break;
-				case 6: set_palette(TERM2_BLUE, 0, 0, 8 * 8); break;
-				case 7: set_palette(TERM2_BLUE, 0, 0, 4 * 8); break;
+				case 0: set_palette(term2attr(TERM2_BLUE), 0, 0, 0 * 8); break;
+				case 1: set_palette(term2attr(TERM2_BLUE), 0, 0, 4 * 8); break;
+				case 2: set_palette(term2attr(TERM2_BLUE), 0, 0, 8 * 8); break;
+				case 3: set_palette(term2attr(TERM2_BLUE), 0, 0, 12 * 8); break;
+				case 4: set_palette(term2attr(TERM2_BLUE), 0, 0, 16 * 8); break;
+				case 5: set_palette(term2attr(TERM2_BLUE), 0, 0, 12 * 8); break;
+				case 6: set_palette(term2attr(TERM2_BLUE), 0, 0, 8 * 8); break;
+				case 7: set_palette(term2attr(TERM2_BLUE), 0, 0, 4 * 8); break;
 				}
 			}
 #endif
 #ifdef EXTENDED_BG_COLOURS
-			return TERM2_BLUE;
+			return term2attr(TERM2_BLUE);
 #else /* dummy */
 			return TERM_L_BLUE;
 #endif
@@ -877,7 +919,11 @@ byte flick_colour(byte attr) {
 		__attribute__ ((fallthrough));
 
 	default:
-		return(attr);
+#if 0 /* old way: xhtml_screenshot() would call us on ANY colour, even non-animated */
+		return(attr); /* basically only happens in screenshot function, where flick_colour() is used indiscriminately on ALL colours even those not animated.. pft */
+#else /* new way: better fail-safe, more consistent */
+		return TERM_L_WHITE; //safe-fail, so whatever we were trying to do we won't exceed any basic colour array stuff..
+#endif
 	}
 }
 
@@ -905,26 +951,19 @@ void flicker() {
 	/* Handle lamp fainting */
 	if (lamp_fainting) lamp_fainting--;
 
-	for(i = 0; i < ANGBAND_TERM_MAX; i++) {
+	for (i = 0; i < ANGBAND_TERM_MAX; i++) {
 		tterm = ang_term[i];
 		if (!tterm) continue;
 		y2 = tterm->hgt;
 		x2 = tterm->wid;
 		Term_activate(tterm);
-		for(y = 0; y < y2; y++) {
-			for(x = 0; x < x2; x++) {
+		for (y = 0; y < y2; y++) {
+			for (x = 0; x < x2; x++) {
 				attr = tterm->scr->a[y][x];
 				ch = tterm->scr->c[y][x];
 
 				/* Unanimated colour? Skip then. */
-#ifdef EXTENDED_COLOURS_PALANIM
-				if (attr < TERM_MULTI || (attr >= TERMA_DARK && attr <= TERMA_L_UMBER)) continue;
-#else
-				if (attr < TERM_MULTI) continue;
-#endif
-#ifdef EXTENDED_BG_COLOURS
-				if (attr == TERM2_BLUE) continue;
-#endif
+				if (term_nanim(attr)) continue;
 
 #ifdef ATMOSPHERIC_INTRO
 				if (!in_game && (attr == TERM_FIRE || attr == TERM_FIRETHIN))
@@ -947,8 +986,6 @@ void flicker() {
 						break;
 					}
 #endif
-
-				attr = flick_colour(attr);
 
 				(void)((*tterm->text_hook)(x, y, 1, attr, &ch));
 			}
@@ -1064,7 +1101,7 @@ static void Term_fresh_row_text_wipe(int y) {
 		nc = old_cc[x] = scr_cc[x];
 
 		/* Notice unchanged areas */
-		if ((na == oa) && (nc == oc)) {
+		if (na == oa && nc == oc) {
 			/* Flush as needed (see above) */
 			if (n) {
 				/* Terminate the thread */
@@ -1100,15 +1137,7 @@ static void Term_fresh_row_text_wipe(int y) {
 			}
 
 			/* Save the new color */
- #ifdef EXTENDED_COLOURS_PALANIM
-			if (na >= TERMA_DARK && na <= TERMA_L_UMBER) fa = na - TERMA_OFFSET + 16; /* Use 'real' extended terminal colours ie 16..31 */
-			else
- #endif
-			if (na >= TERM_MULTI) fa = flick_colour(na);
-			else fa = na;
- #ifdef EXTENDED_BG_COLOURS
-			if (na == TERM2_BLUE) fa = na;
- #endif
+			fa = na;
 		}
 
 		/* Start a new thread, if needed */
@@ -1139,15 +1168,7 @@ static void Term_fresh_row_text_wipe(int y) {
 			}
 
 			/* Save the new color */
- #ifdef EXTENDED_COLOURS_PALANIM
-			if (na >= TERMA_DARK && na <= TERMA_L_UMBER) fa = na - TERMA_OFFSET + 16; /* Use 'real' extended terminal colours ie 16..31 */
-			else
- #endif
-			if (na >= TERM_MULTI) fa = flick_colour(na);
-			else fa = na;
- #ifdef EXTENDED_BG_COLOURS
-			if (na == TERM2_BLUE) fa = na;
- #endif
+			fa = na;
 
 			fx = x;
 		}
@@ -1288,16 +1309,7 @@ static void Term_fresh_row_text_text(int y) {
 			}
 
 			/* Save the new color */
- #ifdef EXTENDED_COLOURS_PALANIM
-			if (na >= TERM_MULTI && (na < TERMA_DARK || na > TERMA_L_UMBER))
- #else
-			if (na >= TERM_MULTI)
- #endif
-				fa = flick_colour(na);
-			else fa = na;
- #ifdef EXTENDED_BG_COLOURS
-			if (na == TERM2_BLUE) fa = na;
- #endif
+			fa = na;
 
 			fx = x;
 		}

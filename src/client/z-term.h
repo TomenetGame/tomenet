@@ -250,6 +250,8 @@ extern term *Term;
 
 /**** Available Functions ****/
 
+extern byte term2attr(byte ta);
+
 extern errr Term_user(int n);
 extern errr Term_xtra(int n, int v);
 
@@ -295,6 +297,4 @@ extern errr term_init(term *t, int w, int h, int k);
 extern byte flick_colour(byte attr);
 extern void flicker(void);
 
-
 #endif
-

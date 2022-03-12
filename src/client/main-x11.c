@@ -1891,19 +1891,19 @@ static errr Term_curs_x11(int x, int y) {
  * Draw a number of characters (XXX Consider using "cpy" mode)
  */
 static errr Term_text_x11(int x, int y, int n, byte a, cptr s) {
+	a = term2attr(a);
+
 	/* Draw the text in Xor */
 #ifndef EXTENDED_COLOURS_PALANIM
  #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x0F]);
  #else
-	if (a == TERM2_BLUE) a = 0xF + 1;
 	Infoclr_set(clr[a & 0x1F]);
  #endif
 #else
  #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x1F]);
  #else
-	if (a == TERM2_BLUE) a = 0x1F + 1;
 	Infoclr_set(clr[a & 0x2F]);
  #endif
 #endif
@@ -3118,6 +3118,7 @@ void animate_palette(void) {
 	}
 }
 #define PALANIM_OPTIMIZED /* KEEP SAME AS SERVER! */
+/* Accept a palette entry index (NOT a TERM_ colour) and sets its R/G/B values from 0..255. - C. Blue */
 void set_palette(byte c, byte r, byte g, byte b) {
 	unsigned long code;
 	char cn[8];
@@ -3137,17 +3138,6 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	}
 #else
 	if (c == 127 || c == 128) return; //just discard refresh marker
-#endif
-
-#ifdef EXTENDED_BG_COLOURS
-	/* Remap special colours to correct array indices:
-	   TERM2_BLUE was initialized as +1 extra colour added to the normal array of 16 or 32 console colours, so its index will be 16 (0..15 +1) or 32 (0..15 x2 +1). */
-	if (c == TERM2_BLUE)
- #ifndef EXTENDED_COLOURS_PALANIM
-		c = 16;
- #else
-		c = 32;
- #endif
 #endif
 
 	color_table[c][1] = r;
@@ -3190,6 +3180,7 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	Term_activate(&old_td->t);
 #endif
 }
+/* Gets R/G/B values from 0..255 for a specific terminal palette entry (not for a TERM_ colour). */
 void get_palette(byte c, byte *r, byte *g, byte *b) {
 	u32b cref = clr[c]->fg;
 
@@ -3197,6 +3188,7 @@ void get_palette(byte c, byte *r, byte *g, byte *b) {
 	*g = (cref & 0x00FF00) >> 8;
 	*b = (cref & 0x0000FF);
 }
+/* Redraw all term windows with current palette values. */
 void refresh_palette(void) {
 	int i;
 	term_data *old_td = (term_data*)(Term->data);

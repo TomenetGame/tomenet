@@ -1586,7 +1586,7 @@ errr file_character(cptr name, bool quiet) {
  * Some code borrowed from ToME
  */
 void xhtml_screenshot(cptr name) {
-	static cptr color_table[17] = {
+	static cptr color_table[16 + 1] = {
 		"#000000",	/* BLACK */
 		"#ffffff",	/* WHITE */
 		"#9d9d9d",	/* GRAY */
@@ -1616,6 +1616,9 @@ void xhtml_screenshot(cptr name) {
 		"#c79d55",	/* LIGHTBROWN */
 		"#f0f0f0",	/* Invalid color */
 	};
+#ifdef EXTENDED_BG_COLOURS
+//todo: implement
+#endif
 
 	FILE *fp;
 	byte *scr_aa;
@@ -1748,7 +1751,8 @@ void xhtml_screenshot(cptr name) {
 #ifdef EXTENDED_COLOURS_PALANIM
 	if (cur_attr >= TERMA_DARK && cur_attr <= TERMA_L_UMBER) cur_attr = cur_attr - TERMA_OFFSET; /* Use the basic colours instead of the palette-animated ones */
 #endif
-	prt_attr = flick_colour(cur_attr);
+	prt_attr = term2attr(cur_attr);
+	/* safe-fail: can happen if an EXTENDED_BG_COLOUR is used but not defined here (see color_table[] above): */
 	if (prt_attr > N_ELEMENTS(color_table) - 1) prt_attr = N_ELEMENTS(color_table) - 1;
 	fprintf(fp, "<span style=\"color: %s\">", color_table[prt_attr]);
 
@@ -1769,7 +1773,8 @@ void xhtml_screenshot(cptr name) {
 
 				/* right now just pick a random colour for flickering colours
 				 * maybe add some javascript for real flicker later */
-				prt_attr = flick_colour(cur_attr);
+				prt_attr = term2attr(cur_attr);
+				/* safe-fail: can happen if an EXTENDED_BG_COLOUR is used but not defined here (see color_table[] above): */
 				if (prt_attr > N_ELEMENTS(color_table) - 1) prt_attr = N_ELEMENTS(color_table) - 1;
 				strcpy(&buf[bytes], color_table[prt_attr]);
 				bytes += 7;
