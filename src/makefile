@@ -267,7 +267,8 @@ X11BASE = /usr/X11R6
 #
 ## With SDL
 #CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -D_DEFAULT_SOURCE -DACC32 -fPIE
-CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
+#CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
+CFLAGS = -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl-config --libs` -lSDL_mixer
 LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl-config --libs` -lSDL_mixer
 ACCEDIT_LIBS = -lcurses -lcrypt
@@ -394,10 +395,10 @@ LDFLAGS += -Wl,-z,relro -Wl,-z,now
 #CFLAGS = -Wall -pipe -g -DUSE_X11 -DUSE_GCU -DSOLARIS -I/usr/openwin/include
 #LIBS = -L/usr/openwin/lib -R/usr/openwin/lib -lX11 -lsocket -lnsl -lcurses
 
-
+# Normal (non-test) client uses optimizations
+tomenet: CFLAGS += -g -O2
 # Compile a client with 'test client' version/tag
-tomenet.test: CFLAGS += -DTEST_CLIENT -Og
-# -O0
+tomenet.test: CFLAGS += -DTEST_CLIENT -g3 -O0
 tomenet.test: PPFLAGS = -DTEST_CLIENT
 
 
