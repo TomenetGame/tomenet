@@ -9969,6 +9969,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 	else if (!p_ptr->total_winner) {
 		/* assume newb_suicide option for world broadcasts */
 		if (p_ptr->max_plv == 1) world_broadcast = FALSE;
+		if ((p_ptr->mode & MODE_PVP) && p_ptr->max_plv == MIN_PVP_LEVEL) world_broadcast = FALSE;
 
 		snprintf(buf, sizeof(buf), "\374\377D%s committed suicide.", p_ptr->name);
 		s_printf("%s - %s (%d) committed suicide.\n", showtime(), p_ptr->name, p_ptr->lev);
