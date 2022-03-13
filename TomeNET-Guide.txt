@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 10. March 2022 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 13. March 2022 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.7.4b - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -9066,24 +9066,14 @@ Highlander Tournament (pvp, only one can win, 2+ participants)
     number to sign up for participation.
     It's a deathmatch with 10 minutes of preparation time, and only newly
     created characters with 0 experience may join it.
-    The winner will receive a deed that can be 'r'ead, and turned in at Bree's
-    Mayor Office for either an item that fits the needs of the character (it
-    checks which skills you have trained to determine the item), or the deed
-    can be turned in for a temporary luck boost that lasts about 20 minutes
-    (multiple deed buffs do stack in duration up to ~ 1 hour if it's the same
-    buff power). Usually you will want the item.
-    However, you can trade the deed to someone else, who can then go and redeem
-    it for luck for that character of his (although the luck bonus he gets will
-    be somewhat lower than what the original owner would receive).
-    All losers will also receive a deed on the next character they log in with
-    which can be turned in for a small temporary luck bonus that lasts about
-    20 minutes (multiple deed buffs do stack in duration up to ~ 1 hour if it's
-    the same buff power).
-    The luck buffs are on hold while on the world surface, so you won't lose
-    buff time from running around.
     If you die in this event, your character will get erased, even if it was
     an everlasting-mode character.
-    For details about luck see LUCK flag in (5.8).
+
+    The winner will receive a deed that can be 'r'ead, and turned in at Bree's
+    Mayor Office for either an item or a small temporary luck bonus.
+    All losers will also receive a deed on the next character they log in with
+    which can be turned in for a very small temporary luck bonus.
+    See "Reward Deeds" further below for details on reward deeds.
 
     Detailed course of the event:
 
@@ -9114,30 +9104,13 @@ Highlander Tournament (pvp, only one can win, 2+ participants)
     When only one player is left, he will be the designated winner, and
     teleported back to Bree. He automatically receives a victory deed in his
     inventory which he can exchange at the Mayor's office in the town hall.
-    It can be exchanged for eiter an item or a temporary luck bonus that lasts
-    about 20 minutes (multiple deed buffs stack in duration up to ~ 1 hour if
-    the buff power is the same, and are on hold while on the world surface).
-    He can also give this deed to another character if he wishes, although in
-    that case it can only be exchanged for a luck bonus, not an item, and the
-    bonus will be somewhat lower than for the Highlander champion himself.
 
     All losers will also receive a 'contenders deed' on the next character they
-    log on with, which can be exchanged at the Mayor's office for small
-    temporary luck bonus that lasts for about 20 minutes (note that it vanishes
-    when you log off. Multiple deed buffs stack in duration up to ~ 1 hour if
-    it's the same buff power.
-    The buff is on hold while you are on the world's surface).
+    log on with, which can be exchanged at the Mayor's office for very small
+    temporary luck bonus.
 
-    A note regarding turning in a deed for an item:
-    The item you get will be random but still depend on your character's skill
-    points spent. So you should not turn in the deed before you actually spent
-    your skill points. For example if you spend several points into
-    Sword-mastery then _if_ you receive a weapon it will actually be a sword.
-    See (8.5) for details!
-    Highlander Tournament rewards can theoretically end up with a higher item
-    value in gold than rewards from other events. A crown of telepathy for
-    example is not obtainable from Dungeon Keeper, but can be obtained here.
-    Reward items cannot be sold to stores though.
+    Highlander Tournament deeds can create somewhat more valuable reward items
+    than the Dungeon Keeper event.
 
 Arena Monster Challenge (no losses or gains, for testing your abilities)
     The wizards of Arena Monster Challenge (tm) have prepared a spectacular
@@ -9172,17 +9145,22 @@ Dungeon Keeper (everyone can win, 1+ participants)
     Except for a brass lantern which you can buy from town
     store '1' (general store), no items are required for this event.
 
+    All winners will receive a deed that can be 'r'ead, and turned in at Bree's
+    Mayor Office for either an item or a small temporary luck bonus.
+    All losers will also receive a deed on the next character they log in with
+    which can be turned in for a very small temporary luck bonus.
+    See "Reward Deeds" further below for details on reward deeds.
+
+    Detailed course of the event:
+
     When the event starts, all participants are transported into a labyrinth of
     rooms made of impenetrable walls but connected by doors or even void jump
     gates.
     The goal is to find one of four escape beacon, which is a light green '>'.
     Everyone who steps on an escape beacon and presses the '>' key will be
     teleported to Bree and has thereby successfully escaped the maze and
-    qualified as a winner.
+    receive a winner's deed they can turn in at the mayor's office in Bree.
 
-    It does not matter who the first or last is to leave, everyone who manages
-    to get out, wins, and gets a parchment for reward that can be turned in at
-    the mayor's office.
     After about 5 minutes, the dungeon floor however will crackle, and be
     flooded more and more with lava. Time is running out. Now the players who
     haven't escaped yet should hurry, before the maze is completely submerged
@@ -9192,26 +9170,8 @@ Dungeon Keeper (everyone can win, 1+ participants)
     horrible guardian, the Horned Reaper. It can sense your presence and if it
     manages to catch you, there is no hope of survival.
 
-    Players who do not manage to escape, but die, still get a small reward. It
-    is again a parchment that can be turned in at the mayor's office. The next
-    character a player logs on with after losing in the event will receive it.
-
-    Winner parchments can be turned in for either an item or a temporary luck
-    buff (about 20 minutes duration). This buff won't stack with the luck buff
-    from loser parchments, so don't overwrite it accidentally! Buffs will stack
-    in duration up to ~ 1 hour when their buff power is the same though.
-    The item will depend on how you have spent your skill points, so make sure
-    to distribute some skill points first before turning in a parchment for an
-    item reward. See (8.5) for details!
-    The winner parchments can also be given to other characters, but those will
-    only be able to exchange them for a luck buff, not for an item-
-
-    Loser parchments are not tradable and can only be turned in for a small
-    temporary luck buff (about 30 minutes duration).
-    For details about luck see LUCK flag in (5.8).
-
-    The luck buffs are on hold while on the world surface, so you won't lose
-    buff time from running around.
+    It does not matter who the first or last is to find the exit, everyone who
+    manages to get out, wins.
 
     Hints:
     -The Horned Reaper in this maze bashes doors instead of opening them.
@@ -9223,6 +9183,50 @@ Dungeon Keeper (everyone can win, 1+ participants)
     -It is known that in a world of squares, moving diagonally has a certain
      advantage.
 
+Reward deeds:
+    Some events hand out deeds to winners (sometimes dubbed victory deeds) and
+    maybe also to losers (sometimes dubbed contender deeds).
+    If it was an event that erases losers, the contender deed is usually
+    received on the next character you log on with.
+    These deeds can be 'r'ead and turned in at the mayor's office in Bree, the
+    biggest building in town, north-east area of the town center.
+
+    Winner deeds
+    -------------
+    Winner deeds can be turned in for an item tailored to the character!
+    The game checks some details like which skills you have trained and also
+    your character sheet and equipment to some degree, to determine the item,
+    so make sure you are prepared before turning it in!
+    For details on how to optimise this, see (8.5) Reward item creation.
+    Alternatively the deed can be turned in for a small temporary luck boost
+    that lasts about 60 min (90 on Ironman server). Usually the item is
+    preferable over the buff.
+
+    However, you can also trade the winner deed to another character, who can
+    then go and redeem it for luck (not for an item), although the luck bonus
+    that character gets will be lower than what the owner would have gotten:
+    Just as high as a contender deed's bonus.
+    The buff duration of a traded deed will still be the same as it would have
+    been for the owner though.
+
+    Loser deeds
+    -----------
+    Contender deeds will also receive a deed on the next character they log in
+    with which can be turned in for a very small temporary luck bonus that
+    lasts about 20 minutes (30 on Ironman server); multiple deed buffs do stack
+    in duration up to ~ 1 hour, provided it's the same buff power (ie same tier
+    of deed). Contender deeds are not tradable.
+
+    Further information
+    -------------------
+    The luck buffs are on hold while on the world surface, so you won't lose
+    buff time from running around in the town area or travelling to dungeons.
+    For details about luck, see LUCK flag in (5.8).
+
+    Highlander Tournament rewards can theoretically end up with a higher item
+    value in gold than rewards from other events. A crown of telepathy for
+    example is not obtainable from Dungeon Keeper, but can be obtained here.
+    Reward items cannot be sold to stores though.
 
 Asides from extermination orders and events, there is another, permanently
 available challenge that waits for you to tackle it:
