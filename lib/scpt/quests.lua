@@ -447,6 +447,7 @@ function quest_towneltalk(Ind, msg, topic)
 		--redundant flags
 		--if we dual-wield a wrong weapon type, tell about one-hand mode
 		--maybe add dual-wield cheap hint for warriors/rangers/HK that are naked
+		--tell about using a shield of weapon is 1h (and not could2h)
 	end
 
 	--*** skills ***
