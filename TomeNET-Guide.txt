@@ -1958,13 +1958,14 @@ The !* inscription, a "combo" shortcut inscription:
     !k          Prevent killing (destroying) an item. (Note that '!k' on a
                 torch also prevents using that torch to refuel another one.)
     !s          Prevent selling an item to shop (!s).
-                For example, if you found an artifact and you want to avoid
-                (d)ropping it, (s)elling it, or (v) throwing it away
-                accidentally you could eithee inscribe it !dsv or just !* .
     !v          Prevent throwing an item away.
     !=          Automatically pick the item up from the floor.
    (!h          Prevent selling a house key. Keys usually aren't used anymore
                 though.)
+
+    For example, if you found a great item and you want to avoid accidentally..
+    (d)ropping it, (s)elling it, (v) throwing it or (k)illing it, you could
+    either inscribe it   !dsvk   or just   !*   (implies != too, but whatever).
 
 The !+ inscription:
     Does the same as !* except that it does not prevent dropping an item,
