@@ -1831,7 +1831,7 @@ static bool choose_body_modification(void) {
 #endif
 
 		if (c == '?') {
-			cmd_the_guide(3, 0, "body");
+			cmd_the_guide(3, 0, "body mod");
 			continue;
 		}
 

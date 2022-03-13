@@ -1755,7 +1755,7 @@ void cmd_character(void) {
 	Term_save();
 
 	/* Init and re-init between relogs*/
-	if (sel == 0 && !p_ptr->fruit_bat) sel++;
+	//if (sel == 0 && !p_ptr->fruit_bat) sel++;
 	if (sel == 3 && !strcasecmp(c_p_ptr->body_name, "Player")) sel++;
 	if (sel == 4 && !p_ptr->ptrait) sel++;
 
@@ -1808,7 +1808,7 @@ void cmd_character(void) {
 		case '2':
 			sel++;
 			if (sel > 22) sel = 0;
-			if (sel == 0 && !p_ptr->fruit_bat) sel++;
+			//if (sel == 0 && !p_ptr->fruit_bat) sel++;
 			if (sel == 3 && !strcasecmp(c_p_ptr->body_name, "Player")) sel++;
 			if (sel == 4 && !p_ptr->ptrait) sel++;
 			if (sel > 22) sel = 0;
@@ -1816,7 +1816,7 @@ void cmd_character(void) {
 		case '8':
 			sel--;
 			if (sel < 0) sel = 22;
-			if (sel == 0 && !p_ptr->fruit_bat) sel--;
+			//if (sel == 0 && !p_ptr->fruit_bat) sel--;
 			if (sel == 4 && !p_ptr->ptrait) sel--;
 			if (sel == 3 && !strcasecmp(c_p_ptr->body_name, "Player")) sel--;
 			if (sel < 0) sel = 22;
