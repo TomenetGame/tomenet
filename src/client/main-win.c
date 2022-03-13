@@ -2345,7 +2345,7 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 	a = term2attr(a);
 
 #ifdef PALANIM_SWAP
-	a = (a + 16) % 32;
+	if (a < BASE_PALETTE_SIZE) a = (a + 16) % 32;
 #endif
 
 #ifdef OPTIMIZE_DRAWING
@@ -2361,12 +2361,12 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
  #ifndef EXTENDED_COLOURS_PALANIM
 			SetTextColor(hdc, win_clr[a & 0x0F]);
   #ifdef EXTENDED_BG_COLOURS
-			SetBkColor(hdc, PALETTEINDEX(win_clr_bg[a & 0x0F]));
+			SetBkColor(hdc, win_clr_bg[a & 0x0F]);
   #endif
  #else
 			SetTextColor(hdc, win_clr[a & 0x1F]);
   #ifdef EXTENDED_BG_COLOURS
-			SetBkColor(hdc, PALETTEINDEX(win_clr_bg[a & 0x1F]));
+			SetBkColor(hdc, win_clr_bg[a & 0x1F]);
   #endif
  #endif
 		}
@@ -4498,7 +4498,7 @@ void set_palette(byte c, byte r, byte g, byte b) {
 #endif
 
 #ifdef PALANIM_SWAP
-	c = (c + 16) % 32;
+	if (c < BASE_PALETTE_SIZE) c = (c + 16) % 32;
 #endif
 
 	/* Need complex color mode for palette animation */
