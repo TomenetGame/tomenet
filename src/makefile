@@ -400,7 +400,9 @@ tomenet: CFLAGS += -g -O2
 # Compile a client with 'test client' version/tag
 tomenet.test: CFLAGS += -DTEST_CLIENT -g3 -O0
 tomenet.test: PPFLAGS = -DTEST_CLIENT
-
+# Server is compiled with optimizations
+tomenet.server: CFLAGS += -g -O2
+accedit: CFLAGS += -g -O2
 
 # Lua
 SRCS += $(LUASRCS)
