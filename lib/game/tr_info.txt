@@ -905,8 +905,8 @@ F:FLOOR | DOOR | CHEST
 F:SPECIAL_GENE
 
 N:182:Garbage Filling Trap
-#I:7:30:5:5:30:0d0:W:80 make it non-exploitable regarding exp from disarming
-I:7:30:5:5:30:0d0:W:100
+#I:7:30:5:5:30:0d0:y:80 make it non-exploitable regarding exp from disarming
+I:7:30:5:5:30:0d0:y:100
 D:You feel like a dustbinman!
 F:FLOOR | DOOR | CHEST
 
@@ -1014,7 +1014,7 @@ F:FLOOR | CHEST | DOOR
 F:SPECIAL_GENE
 
 N:202:Trap of Unlight
-I:4:70:10:10:10:0d0:W:10
+I:4:70:10:10:10:0d0:y:10
 D:Your light goes out!
 F:FLOOR | CHEST | DOOR
 

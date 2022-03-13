@@ -8052,7 +8052,7 @@ Trap symbols ('^') come in different colours. Here's an overview:
   bright white    teleport traps
   orange          dungeon/trap rearrangment traps
   violet          summoning traps
-  yellow          item-affecting traps
+  yellow          traps that affect your items or money or give you items
   red             character status-affecting traps
   green           elemental bolt traps
   light blue      elemental ball traps
