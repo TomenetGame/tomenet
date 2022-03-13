@@ -1449,10 +1449,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (p_ptr->recall_pos.wx < 0) p_ptr->recall_pos.wx = 0;
 				if (p_ptr->recall_pos.wy < 0) p_ptr->recall_pos.wy = 0;
 				break;
-//			default:	/* follow the inscription */
+			//default:	/* follow the inscription */
 				/* TODO: support tower */
-//				p_ptr->recall_pos.wz = 0 - p_ptr->max_dlv;
-//				p_ptr->recall_pos.wz = 0;
+				//p_ptr->recall_pos.wz = 0 - p_ptr->max_dlv;
+				//p_ptr->recall_pos.wz = 0;
 			}
 
 			return;
@@ -1482,7 +1482,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 		else if (prefix(messagelc, "/news"))  {
-			char    path[MAX_PATH_LENGTH];
+			char path[MAX_PATH_LENGTH];
+
 			path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, "news.txt");
 			do_cmd_check_other_prepare(Ind, path, "News");
 			return;
