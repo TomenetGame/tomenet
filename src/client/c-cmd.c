@@ -4965,13 +4965,13 @@ void cmd_check_misc(void) {
 	Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377ya\377w) Players online");
 	Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377yb\377w) Other players' equipments");
 	Term_putstr( 5, row + 2, -1, TERM_WHITE, "(\377yc\377w) High Scores");
-	Term_putstr( 5, row + 3, -1, TERM_WHITE, "(\377yd\377w) Server settings");
-	Term_putstr( 5, row + 4, -1, TERM_WHITE, "(\377ye\377w) Opinions (if available)");
+	Term_putstr( 5, row + 3, -1, TERM_WHITE, "(\377yd\377w) Recent Deaths");
+	Term_putstr( 5, row + 4, -1, TERM_WHITE, "(\377ye\377w) Lag-o-meter");
 	Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377yf\377w) News (Message of the day)");
 	Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377yh\377w) Intro screen");
-	Term_putstr(40, row + 2, -1, TERM_WHITE, "(\377yi\377w) Message history");
-	Term_putstr(40, row + 3, -1, TERM_WHITE, "(\377yj\377w) Chat history");
-	Term_putstr(40, row + 4, -1, TERM_WHITE, "(\377yl\377w) Lag-o-meter");
+	Term_putstr(40, row + 2, -1, TERM_WHITE, "(\377yi\377w) Server settings");
+	Term_putstr(40, row + 3, -1, TERM_WHITE, "(\377yj\377w) Message history");
+	Term_putstr(40, row + 4, -1, TERM_WHITE, "(\377yk\377w) Chat history");
 	row += 6;
 
 	Term_putstr( 5, row, -1, TERM_WHITE, "(\377y?\377w) Help");
@@ -5079,14 +5079,10 @@ void cmd_check_misc(void) {
 			cmd_high_scores();
 			break;
 		case 'd':
-			Send_special_line(SPECIAL_FILE_SERVER_SETTING, 0, "");
+			Send_special_line(SPECIAL_FILE_DEATHS, 0, "");
 			break;
 		case 'e':
-			/* Set the hook */
-			special_line_type = SPECIAL_FILE_RFE;
-
-			/* Call the file perusal */
-			peruse_file();
+			cmd_lagometer();
 			break;
 		case 'f':
 			Send_special_line(SPECIAL_FILE_MOTD2, 0, "");
@@ -5095,13 +5091,13 @@ void cmd_check_misc(void) {
 			show_motd(0);
 			break;
 		case 'i':
-			do_cmd_messages();
+			Send_special_line(SPECIAL_FILE_SERVER_SETTING, 0, "");
 			break;
 		case 'j':
-			do_cmd_messages_important();
+			do_cmd_messages();
 			break;
-		case 'l':
-			cmd_lagometer();
+		case 'k':
+			do_cmd_messages_important();
 			break;
 		case '?':
 			cmd_help();
@@ -7043,7 +7039,6 @@ static void cmd_master_aux_system() {
 		Term_clear();
 		Term_putstr(0, 2, -1, TERM_BLUE, "System commands");
 		Term_putstr(5, 4, -1, TERM_WHITE, "(1) View tomenet.log");
-		Term_putstr(5, 5, -1, TERM_WHITE, "(2) View tomenet.rfe");
 		Term_putstr(5, 7, -1, TERM_WHITE, "(e) Execute script command");
 		Term_putstr(5, 8, -1, TERM_WHITE, "(u) Upload script file");
 		Term_putstr(5, 9, -1, TERM_WHITE, "(c) Execute local script command");
@@ -7057,20 +7052,7 @@ static void cmd_master_aux_system() {
 			xhtml_screenshot("screenshot????");
 			break;
 		case '1':
-			/* Set the hook */
-			special_line_type = SPECIAL_FILE_LOG;
-
-			/* Call the file perusal */
-			peruse_file();
-
-			break;
-		case '2':
-			/* Set the hook */
-			special_line_type = SPECIAL_FILE_RFE;
-
-			/* Call the file perusal */
-			peruse_file();
-
+			Send_special_line(SPECIAL_FILE_LOG, 0, "");
 			break;
 		case 'e':
 			cmd_script_exec();

@@ -11997,15 +11997,19 @@ static int Receive_special_line(int ind) {
 		case SPECIAL_FILE_HELP:
 			do_cmd_help(player, line);
 			break;
-		/* Obsolete, just left for compatibility (DELETEME) */
-		case SPECIAL_FILE_LOG:
-			if (is_admin(Players[player]))
-				do_cmd_view_rfe(player, "tomenet.log", line, srcstr);
-			break;
-		case SPECIAL_FILE_RFE:
-			if (is_admin(Players[player]) || cfg.public_rfe)
-				do_cmd_view_rfe(player, "tomenet.rfe", line, srcstr);
-			break;
+		case SPECIAL_FILE_LOG: { /* not 100% obsolete: callable from admin commands menu actually still */
+			char path[MAX_PATH_LENGTH];
+
+			if (!is_admin(Players[player])) break;
+			path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet.log");
+			do_cmd_check_other_prepare(player, path, "Logfile");
+			break; }
+		case SPECIAL_FILE_DEATHS: {
+			char path[MAX_PATH_LENGTH];
+
+			path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet-deaths-short.txt");
+			do_cmd_check_other_prepare(player, path, "Recent Deaths");
+			break; }
 		case SPECIAL_FILE_MOTD2:
 			show_motd2(player);
 			break;

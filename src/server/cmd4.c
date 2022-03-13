@@ -3857,7 +3857,7 @@ void do_cmd_time(int Ind) {
 	strcat(desc2, desc);
 	msg_print(Ind, desc2);
 
-#endif	// 0
+#endif
 }
 
 /*

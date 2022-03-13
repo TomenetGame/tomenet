@@ -1559,7 +1559,7 @@ They all start with a slash '/' hence they're called slash commands:
 /motd
 /snotes     Shows the current server notes that are displayed at login.
 
-/news       Shows the login screen, same as ~f, but in monochrome.
+/news       Shows the login screen, same as ~h, but in monochrome.
 
 /naked      Same as /bed.
 
@@ -1841,7 +1841,7 @@ They all start with a slash '/' hence they're called slash commands:
 /version [x]
 /ver       Displays the server version.
            If used with any parameter it will display the server settings too,
-           same as pressing ~d (knowledge menu -> server settings).
+           same as pressing ~i (knowledge menu -> server settings).
 
 /whisper <text>
 /wh         Whispers <text> to players currently standing right next to you.
@@ -2033,7 +2033,7 @@ Player-store inscription:
 Items that 'can cause Earthquakes':
     !Q          Prevents the item from causing an earthquake. This usually
                 only works on the artifact "The Mighty Hammer 'Grond'".
-                (Press keys  ~d  in the game to check server settings.)
+                (Press keys  ~i  in the game to check server settings.)
                 See (5.13) for more information about earthquakes.
 
 Weapons/ammo, devices and spells:
@@ -6560,7 +6560,7 @@ fields) then your items will be scattered randomly over the whole level.
 
 Last but not least, non-validated players and characters below level 3 don't
 drop their items on death, their loot will vanish forever. (The level depends
-on server settings, so check them via ~d to verify.)
+on server settings, so check them via ~i to verify.)
 
 
 Ghosts
@@ -11417,7 +11417,7 @@ LIFE ('It affects your hit points.')
         to mimics' final HP but the lower base HP.)
         LIFE affects your complete hit point pool, including the additional
         HP a character gained from 'Health' skill.
-        +LIFE on randarts will (depending on server options, see ~d in-game)
+        +LIFE on randarts will (depending on server options, see ~i in-game)
         usually only affect player characters who are royalty ie winners who
         have beaten Morgoth and hence have a violet coloured name in chat.
 AGGRAVATE ('It aggravates nearby creatures.')
@@ -11537,7 +11537,7 @@ CHAOTIC ('It produces chaotic effects.')
         a) drain life (VAMPIRIC, see (5.15)) (very likely).
         b) earthquake (see (5.13) for details).
            (If enabled in the server settings, it can be suppressed with
-           the !Q inscription. See (0.3) for !Q settings or press ~d in game.
+           the !Q inscription. See (0.3) for !Q settings or press ~i in game.
            Usually, !Q only works on the artifact "Grond".)
         c) confuse target (very likely).
         d) teleport target away.
@@ -11554,7 +11554,7 @@ IMPACT ('It can cause earthquakes.')
         Causes earthquakes randomly, the higher the damage dealt the higher the
         chance. See (5.13) for details about earthquakes.
         (If enabled in the server settings, it can be suppressed with
-        the !Q inscription. See (0.3) for !Q settings or press ~d in game.
+        the !Q inscription. See (0.3) for !Q settings or press ~i in game.
         Usually, !Q _only_ works on the Mighty Hammer 'Grond'.)
 FUEL_LITE ('It provides light when fueled.')
         A light source that needs to be fueled, otherwise it runs out.
@@ -11613,7 +11613,7 @@ WINNERS_ONLY
         empresses) and fallen winners (those who lost their title because they
         died).
         This item can only be found by certain characters, see server options
-        in-game via ~d for details.
+        in-game via ~i for details.
 
 (NO_SEED
         An ego item that is never created randomly (in terms of abilities
@@ -22422,7 +22422,7 @@ Light sources
      a) the player is a winner (Queen/King/Empress/Emperor) or
      b) the server has the 'Fallen Kings Etiquette' enabled, meaning that
         players who won once but then died cannot use static artifacts either
-        (press '~' followed by 'd' to check the server settings), and the
+        (press '~' followed by 'i' to check the server settings), and the
         player is actually a fallen winner who lost his title due to death,
         AND his level is at least 50.
      If a player actually wears/wields a +LIFE randart, the +LIFE mod will only

@@ -1560,7 +1560,6 @@ extern int s_shutdown(void);
 extern int s_printf(const char *str, ...) __attribute__ ((format (printf, 1, 2)));
 extern bool s_setupr(char *str);
 extern bool rfe_printf(char *str, ...) __attribute__ ((format (printf, 1, 2)));
-extern bool do_cmd_view_rfe(int Ind, char *str, int line, char *srcstr);
 extern int c_printf(char *str, ...) __attribute__ ((format (printf, 1, 2)));
 extern int p_printf(char *str, ...) __attribute__ ((format (printf, 1, 2)));
 extern int l_printf(char *str, ...) __attribute__ ((format (printf, 1, 2)));
