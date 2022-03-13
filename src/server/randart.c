@@ -843,7 +843,7 @@ static void add_ability(artifact_type *a_ptr) {
 					a_ptr->flags1 |= TR1_SLAY_TROLL;
 				else if ((rsub < 24) && !(a_ptr->flags1 & TR1_MULTMASK))
 					a_ptr->flags1 |= TR1_SLAY_GIANT;
-#if 0 /*too powerful on gloves - Art Gloves 'soul cure' can help.*/
+#if 0 /*too powerful on gloves - Art Gloves 'soul grip' can help.*/
 				else if (r < 25) && !(a_ptr->flags1 & TR1_MULTMASK))
 					a_ptr->flags1 |= TR1_KILL_DRAGON;
 				else if (r < 26) && !(a_ptr->flags1 & TR1_MULTMASK))

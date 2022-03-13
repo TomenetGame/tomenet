@@ -204,7 +204,7 @@ music_info[10].desc},
 {208, "clairvoyance every 200..1000+d150 turns"},
 --case ART_BILBO:--214
 {214, "destroying doors and traps every 5..30+d10 turns"},
---case ART_SOULCURE:--232
+--case ART_SOULGRIP:--232
 {232, "holy prayer (+20 AC) every 50..150+d100 turns"},
 --case ART_AMUGROM:--233
 {233, "temporary resistance boost every 50..150+d50 turns"},

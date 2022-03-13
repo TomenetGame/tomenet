@@ -6700,7 +6700,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			destroy_traps_touch(Ind, 1);
 			o_ptr->recharging = 30 + randint(10) - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 			break;
-		case ART_SOULCURE:
+		case ART_SOULGRIP:
 			if (p_ptr->suscep_life) {
 				take_hit(Ind, damroll(30, 3), "The Set of Leather Gloves 'Soul Grip'", 0);
 				o_ptr->recharging = 150 + randint(100) - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
