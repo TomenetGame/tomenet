@@ -4721,24 +4721,30 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Take damage from poison */
 	if (p_ptr->poisoned) {
+		int p = p_ptr->mhp / 30;
+
+		if (!p) p = 1;
 		if (p_ptr->slow_poison == 1) {
 			p_ptr->slow_poison = 2;
 			/* Take damage */
 			p_ptr->died_from_ridx = 0;
-			take_hit(Ind, 1, "poison", p_ptr->poisoned_attacker);
+			take_hit(Ind, p, "poison", p_ptr->poisoned_attacker);
 		} else if (p_ptr->slow_poison == 2) {
 			p_ptr->slow_poison = 1;
 		} else {
 			/* Take damage */
 			p_ptr->died_from_ridx = 0;
-			take_hit(Ind, 1, "poison", p_ptr->poisoned_attacker);
+			take_hit(Ind, p, "poison", p_ptr->poisoned_attacker);
 		}
 	}
 	/* Suffer from disease */
 	if (p_ptr->diseased) {
+		int p = p_ptr->mhp / 30;
+
+		if (!p) p = 1;
 		/* Take damage */
 		p_ptr->died_from_ridx = 0;
-		take_hit(Ind, 1, "disease", p_ptr->poisoned_attacker);
+		take_hit(Ind, p, "disease", p_ptr->poisoned_attacker);
 	}
 
 	/* Misc. terrain effects */
