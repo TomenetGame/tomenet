@@ -4303,6 +4303,14 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 			    c_ptr->info, c_ptr->feat, c_ptr->o_idx, c_ptr->m_idx, c_ptr->effect);
 		}
 
+#if 0 /* not really needed */
+#ifdef SOLO_REKING
+		msg_format(Ind, "SR %d, SR_Au %d, SR_laston %ld", p_ptr->solo_reking, p_ptr->solo_reking_au, p_ptr->solo_reking_laston);
+#endif
+#endif
+		msg_format(Ind, "Firework dungeon: %s", get_dun_name(-1, -1, FALSE, NULL, firework_dungeon, FALSE));
+		msg_format(Ind, "season_halloween: %d, season_xmas: %d, season_newyearseve: %d.", season_halloween, season_xmas, season_newyearseve);
+
 		switch (cfg.runlevel) {
 		case 2051: msg_print(Ind, "\377y* XtremelyLow-server-shutdown command pending *"); break;
 		case 2048: msg_print(Ind, "\377y* Empty-server-shutdown command pending *"); break;
@@ -4325,14 +4333,6 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 				msg_format(Ind, "\374\377I*** \377RServer termination in %d seconds (auto-recall). \377I***", shutdown_recall_timer);
 			break;
 		}
-
-#if 0 /* not really needed */
-#ifdef SOLO_REKING
-		msg_format(Ind, "SR %d, SR_Au %d, SR_laston %ld", p_ptr->solo_reking, p_ptr->solo_reking_au, p_ptr->solo_reking_laston);
-#endif
-#endif
-		msg_format(Ind, "Firework dungeon: %s", get_dun_name(-1, -1, FALSE, NULL, firework_dungeon, FALSE));
-		msg_format(Ind, "season_halloween: %d, season_xmas: %d, season_newyearseve: %d.", season_halloween, season_xmas, season_newyearseve);
 	}
 
 	msg_print(Ind, " ");
