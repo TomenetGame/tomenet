@@ -785,6 +785,7 @@ static errr Term_text_gcu(int x, int y, int n, byte a, cptr s) {
 #ifdef EXTENDED_BG_COLOURS
 	/* For now disable extended colours in gcu client: */
 	if (a >= TERMX_START && a < TERMX_START + TERMX_AMT) a = TERM_WHITE;
+	else
 #endif
 
 	a = term2attr(a);
