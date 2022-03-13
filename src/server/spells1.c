@@ -10842,7 +10842,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* The druid spell; Note that it _damages_ undead-players instead of healing :-) - the_sandman */
 	case GF_HEALINGCLOUD:
-		if (p_ptr->ghost || p_ptr->suscep_good || p_ptr->suscep_life) {
+		if (p_ptr->ghost || p_ptr->suscep_life) {
 			if (rand_int(100) < p_ptr->skill_sav)
 				msg_print(Ind, "You shudder, but you resist the effect!");
 			else {
@@ -11419,7 +11419,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		break;
 
-	/* Hand of Doom */
+	/* Hand of Doom -- currently unused */
 	case GF_HAND_DOOM:
 		/* Teleport to nowhere..? */
 		if (who >= 0 || who <= PROJECTOR_UNUSUAL) break;
@@ -11439,7 +11439,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		break;
 
-	case GF_AWAY_UNDEAD:
+	case GF_AWAY_UNDEAD: /* currently unused */
 		if (p_ptr->martyr) {
 			dam = 0;
 			break;
@@ -11486,7 +11486,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 	/* Teleport evil (Use "dam" as "power") */
-	case GF_AWAY_EVIL:
+	case GF_AWAY_EVIL: /* currently unused (away_evil() unused too) */
 		if (p_ptr->martyr) {
 			dam = 0;
 			break;
@@ -11578,7 +11578,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 	/* Turn undead (Use "dam" as "power") */
-	case GF_TURN_UNDEAD:
+	case GF_TURN_UNDEAD: /* currently unused */
 		/* Only affect undead */
 		if (p_ptr->ghost || p_ptr->suscep_life) {
 			if (p_ptr->resist_fear && !p_ptr->ghost) msg_print(Ind, "You are unaffected!");
@@ -11593,7 +11593,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 	/* Turn evil (Use "dam" as "power") */
-	case GF_TURN_EVIL:
+	case GF_TURN_EVIL: /* currently unused */
 		/* Only affect evil */
 		if (p_ptr->suscep_good) {
 			if (p_ptr->resist_fear) msg_print(Ind, "You are unaffected!");
@@ -11704,6 +11704,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			int chance = p_ptr->skill_sav;
 
+			/* 'GOOD' players get 1.5x chance to resist (Angels' intrinsic resistance!) */
 			if (p_ptr->suscep_evil) chance = chance + (100 - chance) / 2;
 			if (chance > 95) chance = 95;
 
