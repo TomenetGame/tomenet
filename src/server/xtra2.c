@@ -11323,9 +11323,8 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			gain = (m_ptr->level > gain ? gain : m_ptr->level);
 			gain_sp = gain;
 
-			if (skill >= 15) gain = (2 + gain) * (2 + gain) * (2 + gain) / 327;
-			else gain = ((3 + skill) * (3 +  skill) - 9) / 21;
-
+			if (skill >= 15) gain = (2 + gain) * (2 + gain) * (2 + gain) / 327; //15:+15,20:+32;30:+100,40:+226,50:+429
+			else gain = ((3 + skill) * (3 +  skill) - 9) / 21; //3:+1,5:+2,10:+7,14:+13
 			if (!gain) gain = 1; /* level 0 monsters (and super-low skill) give some energy too */
 
 #if 0 /* strange values I guess */
@@ -11336,8 +11335,8 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			else gain_sp /= 10;
 			if (!gain_sp && magik(25)) gain_sp = 1; /* level 0 monsters have chance to give energy too */
 #else
-			gain_sp = ((gain_sp + 1) * (gain_sp + 1)) / 75;
-			if (!gain_sp) gain_sp = 1; /* level 0 monsters give energy */
+			gain_sp = ((gain_sp + 1) * (gain_sp + 1)) / 75; //8:+1,12:+2,20:+5,25:+9,30:+12,40:+22,50:+34
+			if (!gain_sp) gain_sp = 1; /* level 0 monsters / low skill still give energy */
 #endif
 
 			if (((p_ptr->chp < p_ptr->mhp) || (p_ptr->csp < p_ptr->msp))
@@ -11368,6 +11367,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		    /* not too far away? */
 		    && (ABS(m_ptr->fx - p_ptr->px) <= 1 && ABS(m_ptr->fy - p_ptr->py) <= 1)) {
 			int feed = m_ptr->maxhp + 100;
+
 			feed = (6 - (300 / feed)) * 100;//300..600
 			if (r_ptr->flags3 & RF3_DEMON) feed /= 2;
 			if (r_ptr->d_char == 'A') feed /= 3;
