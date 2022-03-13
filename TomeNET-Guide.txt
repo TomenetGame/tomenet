@@ -10937,6 +10937,38 @@ Some monsters and players are susceptible against certain elements. For example
 fire hounds are susceptible against cold attacks and Ents are susceptible
 against fire attacks.
 
+Some susceptibilities can only be acquired by mimicking a monster that has
+those. Here is a table of all susceptibilities players can get affected by:
+- Fire          Ents
+- Cold          By mimicry only
+- Acid          By mimicry only
+- Electricity   By mimicry only
+- Light         Dark-elves, Vampires
+- Evil          Enlightened trait of Maiar
+- Good          Vampires, Corrupted trait of Maiar
+- Life          Vampires
+Most of these are self-explaining, but some seem obscure, here is what you get
+hurt from when susceptible to one of the three obscure ones:
+Evil:   Double damage from holy based attacks (holy orb, holy fire)
+Good:   Double damage from hellfire attacks;
+        eating Lembas;
+        reading blessing or PfE scroll;
+        using dispel evil or holiness staff;
+        dispel evil effects;
+        activating the true arts of Ingwe, Carlammas, Fundin Bluecloak, Himring
+Life:   Eating Lembas or sprigs of Athelas; quaffing potion of life;
+        reading blessing or PfE scroll;
+        using holiness staff;
+        cleansing cloud spell, soul curing spell;
+        dispel undead effects;
+        activating the true art Soul Grip;
+        equipping non-cursed items with strong anti-undead powers will apply a
+        hit point drain effect.
+Lastly there is an implicit susceptibility of demonic forms (mimicry) and
+especially the class Hell Knight (similar to life-susceptibility):
+        equipping non-cursed items with strong anti-demon powers will apply a
+        hit point drain effect.
+
 Branded physical attacks vs monsters:
 Susceptibility of a monster will result in a doubled multiplier for
 branded attacks. Example: If the player hits a Cold Hound with a
