@@ -6951,9 +6951,9 @@ void reward_deed_blessing(int Ind, int item) {
 		/* it's inaccurate, due to hack-like process_player_end_aux call timing
 		   (about once every 31 turns on wz=0), but who cares :) */
 #ifdef RPG_SERVER /* longer duration since dungeons are all ironman; also you can hardly trade parchments on RPG */
-		bless_temp_luck(Ind, traded_deed ? 1 : 2, 60 * 30 * 2); /* somewhere around 30 minutes */
+		bless_temp_luck(Ind, traded_deed ? 1 : 2, 60 * 60 * 2); /* somewhere around 60 minutes */
 #else
-		bless_temp_luck(Ind, traded_deed ? 1 : 2, 60 * 20 * 2); /* somewhere around 20 minutes */
+		bless_temp_luck(Ind, traded_deed ? 1 : 2, 60 * 90 * 2); /* somewhere around 90 minutes */
 #endif
 		break;
 	case SV_DEED2_DUNGEONKEEPER:
