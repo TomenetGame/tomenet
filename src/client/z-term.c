@@ -271,7 +271,8 @@ byte term2attr(byte ta) {
 #endif
 
 #ifdef EXTENDED_COLOURS_PALANIM
-	/* Extended base colour. Pass its location within the extended array range. */
+	/* Extended base colour. Pass its location within the extended array range.
+	   The base colours + these extended clones of them for palette animation together define BASE_PALETTE_SIZE (16 (no animation) or 32 (duplicated palette for animation)). */
 	if (ta >= TERMA_DARK && ta <= TERMA_L_UMBER) return 16 + ta - TERMA_OFFSET; /* Use 'real' extended terminal colours ie 16..31. */
 #endif
 
