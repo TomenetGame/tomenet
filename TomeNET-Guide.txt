@@ -10954,13 +10954,13 @@ Good:   Double damage from hellfire attacks;
         eating Lembas;
         reading blessing or PfE scroll;
         using dispel evil or holiness staff;
-        dispel evil effects;
+        hostile dispel evil effects;
         activating the true arts of Ingwe, Carlammas, Fundin Bluecloak, Himring
 Life:   Eating Lembas or sprigs of Athelas; quaffing potion of life;
         reading blessing or PfE scroll;
         using holiness staff;
         cleansing cloud spell, soul curing spell;
-        dispel undead effects;
+        hostile dispel undead effects;
         activating the true art Soul Grip;
         equipping non-cursed items with strong anti-undead powers will apply a
         hit point drain effect.
