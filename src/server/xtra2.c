@@ -9972,7 +9972,11 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 		if ((p_ptr->mode & MODE_PVP) && p_ptr->max_plv == MIN_PVP_LEVEL) world_broadcast = FALSE;
 
 		snprintf(buf, sizeof(buf), "\374\377D%s committed suicide.", p_ptr->name);
-		s_printf("%s - %s (%d) committed suicide.\n", showtime(), p_ptr->name, p_ptr->lev);
+		/* Avoid death log spam with pvp min lev suicides */
+		if ((p_ptr->mode & MODE_PVP) && p_ptr->max_plv == MIN_PVP_LEVEL)
+			s_printf("%s - %s (%d) committed pvp-suicide.\n", showtime(), p_ptr->name, p_ptr->lev); /* just so the death-log script won't trigger on 'committed suicide' */
+		else
+			s_printf("%s - %s (%d) committed suicide.\n", showtime(), p_ptr->name, p_ptr->lev);
 		death_type = DEATH_QUIT;
 s_printf("CHARACTER_TERMINATION: SUICIDE race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
 	} else {
