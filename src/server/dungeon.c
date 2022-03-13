@@ -4718,33 +4718,36 @@ static bool process_player_end_aux(int Ind) {
 	bypass_invuln = TRUE;
 
 	/*** Damage over Time ***/
+#define POISON_DIV 30
 
 	/* Take damage from poison */
 	if (p_ptr->poisoned) {
-		int p = p_ptr->mhp / 30;
+		k = p_ptr->mhp / POISON_DIV;
+		k += (rand_int(POISON_DIV) < p_ptr->mhp % POISON_DIV) ? 1 : 0;
+		if (!k) k = 1;
 
-		if (!p) p = 1;
 		if (p_ptr->slow_poison == 1) {
 			p_ptr->slow_poison = 2;
 			/* Take damage */
 			p_ptr->died_from_ridx = 0;
-			take_hit(Ind, p, "poison", p_ptr->poisoned_attacker);
+			take_hit(Ind, k, "poison", p_ptr->poisoned_attacker);
 		} else if (p_ptr->slow_poison == 2) {
 			p_ptr->slow_poison = 1;
 		} else {
 			/* Take damage */
 			p_ptr->died_from_ridx = 0;
-			take_hit(Ind, p, "poison", p_ptr->poisoned_attacker);
+			take_hit(Ind, k, "poison", p_ptr->poisoned_attacker);
 		}
 	}
 	/* Suffer from disease */
 	if (p_ptr->diseased) {
-		int p = p_ptr->mhp / 30;
+		k = p_ptr->mhp / POISON_DIV;
+		k += (rand_int(POISON_DIV) < p_ptr->mhp % POISON_DIV) ? 1 : 0;
+		if (!k) k = 1;
 
-		if (!p) p = 1;
 		/* Take damage */
 		p_ptr->died_from_ridx = 0;
-		take_hit(Ind, p, "disease", p_ptr->poisoned_attacker);
+		take_hit(Ind, k, "disease", p_ptr->poisoned_attacker);
 	}
 
 	/* Misc. terrain effects */
