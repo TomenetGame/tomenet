@@ -3953,18 +3953,9 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 	char buf[MAX_CHARS_WIDE];
 	int alim = cfg.acc_house_limit;
 	int ahou = acc_get_houses(p_ptr->accountname);
+	int lev = p_ptr->lev;
 
 	msg_print(Ind, " ");
-#ifndef TEST_SERVER
-	if (admin) {
-#endif
-		u32b td = (cfg.fps * 86400 - (turn % (cfg.fps * 86400))) / cfg.fps;
-		int h = td / 3600, m = (td - h * 3600) / 60, s = td - h * 3600 - m * 60;
-		msg_format(Ind, "The game turn: %d (CRON_24H in %02d:%02d:%02d)", turn, h, m, s);
-#ifndef TEST_SERVER
-	}
-#endif
-
 	do_cmd_time(Ind);
 
 	if (!(p_ptr->mode & (MODE_EVERLASTING | MODE_PVP | MODE_NO_GHOST)))
@@ -4227,51 +4218,6 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 	}
 #endif
 
-	if (admin) {
-		cave_type **zcave;
-		cave_type *c_ptr;
-
-		//msg_format(Ind, "your sanity: %d/%d", p_ptr->csane, p_ptr->msane);
-		msg_format(Ind, "server status: m_max(%d) o_max(%d)",
-		    m_max, o_max);
-
-		msg_print(Ind, "Colour test - \377ddark \377wwhite \377sslate \377oorange \377rred \377ggreen \377bblue \377uumber");
-		msg_print(Ind, "\377Dl_dark \377Wl_white \377vviolet \377yyellow \377Rl_red \377Gl_green \377Bl_blue \377Ul_umber");
-		if (!(zcave = getcave(&p_ptr->wpos))) {
-			msg_print(Ind, "\377rOops, the cave's not allocated!!");
-			return;
-		}
-		c_ptr = &zcave[p_ptr->py][p_ptr->px];
-		msg_format(Ind, "(x:%d y:%d) info:%d feat:%d o_idx:%d m_idx:%d effect:%d",
-		    p_ptr->px, p_ptr->py,
-		    c_ptr->info, c_ptr->feat, c_ptr->o_idx, c_ptr->m_idx, c_ptr->effect);
-
-		switch (cfg.runlevel) {
-		case 2051: msg_print(Ind, "\377y* XtremelyLow-server-shutdown command pending *"); break;
-		case 2048: msg_print(Ind, "\377y* Empty-server-shutdown command pending *"); break;
-		case 2047: msg_print(Ind, "\377y* Low-server-shutdown command pending *"); break;
-		case 2046: msg_print(Ind, "\377y* VeryLow-server-shutdown command pending *"); break;
-		case 2045: msg_print(Ind, "\377y* None-server-shutdown command pending *"); break;
-		case 2044: msg_print(Ind, "\377y* ActiveVeryLow-server-shutdown command pending *"); break;
-		case 2043:
-		//msg_print(NumPlayers, "\377y* Recall-server-shutdown command pending *");
-			if (shutdown_recall_timer >= 120)
-				msg_format(Ind, "\374\377I*** \377RServer shutdown in %d minutes (auto-recall). \377I***", shutdown_recall_timer / 60);
-			else
-				msg_format(Ind, "\374\377I*** \377RServer shutdown in %d seconds (auto-recall). \377I***", shutdown_recall_timer);
-			break;
-		case 2042:
-		//msg_print(NumPlayers, "\377y* Recall-server-shutdown command pending *");
-			if (shutdown_recall_timer >= 120)
-				msg_format(Ind, "\374\377I*** \377RServer termination in %d minutes (auto-recall). \377I***", shutdown_recall_timer / 60);
-			else
-				msg_format(Ind, "\374\377I*** \377RServer termination in %d seconds (auto-recall). \377I***", shutdown_recall_timer);
-			break;
-		}
-	}
-
-	int lev = p_ptr->lev;
-
 	if (p_ptr->pclass == CLASS_DRUID) { /* compare mimic_druid in defines.h */
 		if (lev >= 5) msg_print(Ind, "\377GYou know how to change into a Cave Bear (#160) and Panther (#198)");
 		if (lev >= 10) msg_print(Ind, "\377GYou know how to change into a Grizzly Bear (#191) and Yeti (#154)");
@@ -4321,25 +4267,72 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 
 	/* display PvP kills */
 	if (p_ptr->kills) msg_format(Ind, "\377rYou have defeated %d opponents.", p_ptr->kills_own);
-
-#ifdef SOLO_REKING
-	if (admin) {
-		msg_format(Ind, "SR %d, SR_Au %d, SR_laston %ld", p_ptr->solo_reking, p_ptr->solo_reking_au, p_ptr->solo_reking_laston);
-		msg_format(Ind, "Firework dungeon: %s", get_dun_name(-1, -1, FALSE, NULL, firework_dungeon, FALSE));
-	}
-#endif
-
-	if (admin) {
-		msg_format(Ind, "season_halloween: %d, season_xmas: %d, season_newyearseve: %d.", season_halloween, season_xmas, season_newyearseve);
-		alim = (86400 - (turn % (cfg.fps * 86400)) / cfg.fps) / 60; //abuse alim by reuse
-		if (alim < 60) msg_format(Ind, "Next 24h maintenance cycle in %d minutes.", alim);
-		else msg_format(Ind, "Next 24h maintenance cycle in %d hours %d minutes.", alim / 60, alim % 60);
-	}
-
 	/* Active store order? */
 	if (p_ptr->item_order_store) {
 		msg_format(Ind, "\377yYou still have an order open at the %s in %s.",
 		    st_name + st_info[p_ptr->item_order_store - 1].name, town_profile[town[p_ptr->item_order_town].type].name);
+	}
+
+
+	if (admin) {
+		cave_type **zcave;
+		cave_type *c_ptr;
+
+		u32b td = (cfg.fps * 86400 - (turn % (cfg.fps * 86400))) / cfg.fps;
+		int h = td / 3600, m = (td - h * 3600) / 60, s = td - h * 3600 - m * 60;
+		u32b td1 = (cfg.fps * 3600 - (turn % (cfg.fps * 3600))) / cfg.fps;
+		int m1 = td1 / 60, s1 = td1 - m1 * 60;
+
+		msg_print(Ind, "\377b - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
+
+		msg_format(Ind, "The game turn: %d (CRON_24H in %02d:%02d:%02d, CRON_1H in %02d:%02d)", turn, h, m, s, m1, s1);
+
+		//msg_format(Ind, "your sanity: %d/%d", p_ptr->csane, p_ptr->msane);
+		msg_format(Ind, "server status: m_max(%d) o_max(%d)",
+		    m_max, o_max);
+
+#if 0 /* not really needed */
+		msg_print(Ind, "Colour test - \377ddark \377wwhite \377sslate \377oorange \377rred \377ggreen \377bblue \377uumber");
+		msg_print(Ind, "\377Dl_dark \377Wl_white \377vviolet \377yyellow \377Rl_red \377Gl_green \377Bl_blue \377Ul_umber");
+#endif
+		if (!(zcave = getcave(&p_ptr->wpos))) msg_print(Ind, "\377rOops, the cave's not allocated!!");
+		else {
+			c_ptr = &zcave[p_ptr->py][p_ptr->px];
+			msg_format(Ind, "(x:%d y:%d) info:%d feat:%d o_idx:%d m_idx:%d effect:%d",
+			    p_ptr->px, p_ptr->py,
+			    c_ptr->info, c_ptr->feat, c_ptr->o_idx, c_ptr->m_idx, c_ptr->effect);
+		}
+
+		switch (cfg.runlevel) {
+		case 2051: msg_print(Ind, "\377y* XtremelyLow-server-shutdown command pending *"); break;
+		case 2048: msg_print(Ind, "\377y* Empty-server-shutdown command pending *"); break;
+		case 2047: msg_print(Ind, "\377y* Low-server-shutdown command pending *"); break;
+		case 2046: msg_print(Ind, "\377y* VeryLow-server-shutdown command pending *"); break;
+		case 2045: msg_print(Ind, "\377y* None-server-shutdown command pending *"); break;
+		case 2044: msg_print(Ind, "\377y* ActiveVeryLow-server-shutdown command pending *"); break;
+		case 2043:
+		//msg_print(NumPlayers, "\377y* Recall-server-shutdown command pending *");
+			if (shutdown_recall_timer >= 120)
+				msg_format(Ind, "\374\377I*** \377RServer shutdown in %d minutes (auto-recall). \377I***", shutdown_recall_timer / 60);
+			else
+				msg_format(Ind, "\374\377I*** \377RServer shutdown in %d seconds (auto-recall). \377I***", shutdown_recall_timer);
+			break;
+		case 2042:
+		//msg_print(NumPlayers, "\377y* Recall-server-shutdown command pending *");
+			if (shutdown_recall_timer >= 120)
+				msg_format(Ind, "\374\377I*** \377RServer termination in %d minutes (auto-recall). \377I***", shutdown_recall_timer / 60);
+			else
+				msg_format(Ind, "\374\377I*** \377RServer termination in %d seconds (auto-recall). \377I***", shutdown_recall_timer);
+			break;
+		}
+
+#if 0 /* not really needed */
+#ifdef SOLO_REKING
+		msg_format(Ind, "SR %d, SR_Au %d, SR_laston %ld", p_ptr->solo_reking, p_ptr->solo_reking_au, p_ptr->solo_reking_laston);
+#endif
+#endif
+		msg_format(Ind, "Firework dungeon: %s", get_dun_name(-1, -1, FALSE, NULL, firework_dungeon, FALSE));
+		msg_format(Ind, "season_halloween: %d, season_xmas: %d, season_newyearseve: %d.", season_halloween, season_xmas, season_newyearseve);
 	}
 
 	msg_print(Ind, " ");
