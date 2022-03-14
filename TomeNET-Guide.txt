@@ -18567,6 +18567,9 @@ school.
                     Tier II: Level 20.
                     Lets you see invisible for a while.        (auto-project)
 
+    Reveal Ways     Detects doors/stairs/ways within a radius. (auto-project)
+                    Required skill level for first spell level: 6.
+
     Identify        Identifies an item that you carry or have equipped.
                     Required skill level for first spell level: 8.
 
@@ -18576,9 +18579,6 @@ school.
                     Tier III: Level 35.
                     Identifies all items that you carry or have equipped and
                     identifies all items on the floor around you.
-
-    Reveal Ways     Detects doors/stairs/ways within a radius. (auto-project)
-                    Required skill level for first spell level: 9.
 
     Vision          Detects the dungeon layout around you.
                     Required skill level for first spell level: 18.
