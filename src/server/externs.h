@@ -1418,6 +1418,7 @@ void reverse_cursed(object_type *o_ptr);
 #endif
 extern void apply_XID(int Ind, object_type *o_ptr, int slot);
 extern void init_treasure_classes(void);
+extern int check_for_wand_of_wonder(int sval, struct worldpos *wpos);
 
 /* party.c */
 extern void account_check(int Ind);

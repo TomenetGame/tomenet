@@ -13370,3 +13370,24 @@ void init_treasure_classes(void) {
 
 	s_printf("Initialized Treasure Class Biasses (great)  : %4d%%, %4d%%, %4d%%, %4d%%, %4d%%.\n", tc_biasr_treasure, tc_biasr_combat, tc_biasr_magic, tc_biasr_tools, tc_biasr_junk);
 }
+
+/* Translates a wand of wonder into one of the svals it can randomly mirror.
+   *wpos can be NULL if no restrictions are necessary. */
+int check_for_wand_of_wonder(int sval, struct worldpos *wpos) {
+	if (sval != SV_WAND_WONDER) return sval; /* identity */
+
+	/* Restrict: Leave out some especially powerful spells for pvp balance reasons. */
+	/* Highlander Tournament or PvP-arena */
+	if (wpos && !wpos->wx && !wpos->wy && ((!wpos->wz && sector00separation) || wpos->wz > 0)) {
+		/* no ball spell effects for cheap mass zapping in PvP */
+		sval = rand_int(SV_WAND_WONDER - 4 - 2 - 1);
+		if (sval >= SV_WAND_DRAIN_LIFE) sval += 2; /* skip drain life and polymorph */
+		if (sval == SV_WAND_CHARM_MONSTER) sval++; /* not implemented, so skip it */
+		return sval;
+	}
+
+	/* Randomly ranslate, subtract any not implemented wand types */
+	sval = rand_int(SV_WAND_WONDER - 1);
+	if (sval == SV_WAND_CHARM_MONSTER) sval++; /* not implemented, so skip it */
+	return sval;
+}

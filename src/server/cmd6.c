@@ -4028,18 +4028,10 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 	sval = o_ptr->sval;
 
 	/* XXX Hack -- Wand of wonder can do anything before it */
-	if (sval == SV_WAND_WONDER) {
-		sval = rand_int(SV_WAND_WONDER);
-		/* limit wand of wonder damage in Highlander Tournament */
-		if (!p_ptr->wpos.wx && !p_ptr->wpos.wy && !p_ptr->wpos.wz && sector00separation) {
-			/* no high wand effects for cheap mass zapping in PvP */
-			sval = rand_int(SV_WAND_WONDER - 8 - 2);
-			if (sval >= SV_WAND_DRAIN_LIFE) sval += 2;
-		}
-	}
+	sval = check_for_wand_of_wonder(sval, &p_ptr->wpos);
 
 	/* Analyze the wand */
-	switch (sval % 1000) {
+	switch (sval % 1000) { /* err, what's the % 1000 for?... */
 	case SV_WAND_HEAL_MONSTER:
 		if (heal_monster(Ind, dir)) ident = TRUE;
 		break;

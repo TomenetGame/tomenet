@@ -4200,7 +4200,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 	bool perc = FALSE, fixed = FALSE;
 
 	/* Depend on wand type */
-	switch ((o_ptr->sval == SV_WAND_WONDER) ? rand_int(SV_WAND_WONDER) : o_ptr->sval) {
+	switch (check_for_wand_of_wonder(sval, &m_ptr->wpos)) {
 	case SV_WAND_DISARMING:
 	case SV_WAND_TRAP_DOOR_DEST:
 		return (FALSE);
