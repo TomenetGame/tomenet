@@ -9073,9 +9073,9 @@ Highlander Tournament (pvp, only one can win, 2+ participants)
     an everlasting-mode character.
 
     The winner will receive a deed that can be 'r'ead, and turned in at Bree's
-    Mayor Office for either an item or a small temporary luck bonus.
-    All losers will also receive a deed on the next character they log in with
-    which can be turned in for a very small temporary luck bonus.
+    Mayor Office for either an item or a temporary luck bonus.
+    All losers will also receive a contender's deed on the next character they
+    log in with which can be turned in for a very small temporary luck bonus.
     See "Reward Deeds" further below for details on reward deeds.
 
     Detailed course of the event:
@@ -9107,10 +9107,6 @@ Highlander Tournament (pvp, only one can win, 2+ participants)
     When only one player is left, he will be the designated winner, and
     teleported back to Bree. He automatically receives a victory deed in his
     inventory which he can exchange at the Mayor's office in the town hall.
-
-    All losers will also receive a 'contenders deed' on the next character they
-    log on with, which can be exchanged at the Mayor's office for very small
-    temporary luck bonus.
 
     Highlander Tournament deeds can create somewhat more valuable reward items
     than the Dungeon Keeper event.
@@ -9149,9 +9145,9 @@ Dungeon Keeper (everyone can win, 1+ participants)
     store '1' (general store), no items are required for this event.
 
     All winners will receive a deed that can be 'r'ead, and turned in at Bree's
-    Mayor Office for either an item or a small temporary luck bonus.
-    All losers will also receive a deed on the next character they log in with
-    which can be turned in for a very small temporary luck bonus.
+    Mayor Office for either an item or a temporary luck bonus.
+    All losers will also receive an autograph deed on the next character they
+    log in with which can be turned in for a very small temporary luck bonus.
     See "Reward Deeds" further below for details on reward deeds.
 
     Detailed course of the event:
@@ -9201,24 +9197,25 @@ Reward deeds:
     your character sheet and equipment to some degree, to determine the item,
     so make sure you are prepared before turning it in!
     For details on how to optimise this, see (8.5) Reward item creation.
-    Alternatively the deed can be turned in for a small temporary luck boost
-    that lasts about 60 min (90 on Ironman server). Usually the item is
-    preferable over the buff.
+    Alternatively the deed can be turned in for a temporary luck bonus that
+    lasts about 60 min (90 on Ironman server). Usually the item is preferable
+    over the buff.
 
     However, you can also trade the winner deed to another character, who can
     then go and redeem it for luck (not for an item), although the luck bonus
-    that character gets will be lower than what the owner would have gotten:
+    that character gets will be smaller than what the owner would have gotten:
     Just as high as a contender deed's bonus.
     The buff duration of a traded deed will still be the same as it would have
     been for the owner though.
 
     Loser deeds
     -----------
-    Contender deeds will also receive a deed on the next character they log in
-    with which can be turned in for a very small temporary luck bonus that
-    lasts about 20 minutes (30 on Ironman server); multiple deed buffs do stack
-    in duration up to ~ 1 hour, provided it's the same buff power (ie same tier
-    of deed). Contender deeds are not tradable.
+    Players who didn't win will also (depending on the event) receive a deed
+    on the next character they log in with, which can be turned in for a very
+    small temporary luck bonus that lasts about 20 minutes (30 on the Ironman
+    server); multiple deed buffs do stack in duration up to ~ 1 hour, provided
+    it's the same buff power (ie same tier of deed). Contender deeds are not
+    tradable so they can only be redeemer by the character that received them.
 
     Further information
     -------------------
