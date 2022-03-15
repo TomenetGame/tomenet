@@ -9784,7 +9784,14 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
  #endif
 
 			disturb(Ind, 1, 0);
+ #if 1 /* Should shield-blocking a ball spell fully nullify it? */
 			return TRUE;
+ #else /* ..or just halve the damage? Note that block chance for ball attacks is already halved above. */
+			if (dam) {
+				dam >>= 1;
+				if (!dam) dam = 1;
+			}
+ #endif
 		}
 	}
 #endif
