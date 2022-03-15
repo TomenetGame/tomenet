@@ -1507,12 +1507,27 @@ static bool choose_mode(void) {
 
 		c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 		if (valid_dna) {
+#if 1
 			if (((dna_sex & MODE_HARD) == MODE_HARD) && ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST)) c_put_str(TERM_SLATE, "Hellish", 9, CHAR_COL);
 			else if (((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) && ((dna_sex & MODE_SOLO) == MODE_SOLO)) c_put_str(TERM_SLATE, "Soloist", 9, CHAR_COL);
-			else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c_put_str(TERM_SLATE, "No Ghost", 9, CHAR_COL);
+			else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c_put_str(TERM_SLATE, "No Ghost", 9, CHAR_COL);// -- redundant wording, instead:
 			else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c_put_str(TERM_SLATE, "Everlasting", 9, CHAR_COL);
 			else if ((dna_sex & MODE_PVP) == MODE_PVP) c_put_str(TERM_SLATE, "PvP", 9, CHAR_COL);
 			else c_put_str(TERM_SLATE, "Normal", 9, CHAR_COL);
+#else
+			if (dna_sex & MODE_DED_IDDC) {
+				if (((dna_sex & MODE_HARD) == MODE_HARD) && ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST)) c_put_str(TERM_SLATE, "Hellish", 9, CHAR_COL);
+				else if (((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) && ((dna_sex & MODE_SOLO) == MODE_SOLO)) c_put_str(TERM_SLATE, "Soloist", 9, CHAR_COL);
+				else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c_put_str(TERM_SLATE, "No Ghost", 9, CHAR_COL);// -- redundant wording, instead:
+				else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c_put_str(TERM_SLATE, "IDDC", 9, CHAR_COL);
+				//invalid -- else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c_put_str(TERM_SLATE, "Everlasting", 9, CHAR_COL);
+				//invalid -- must be in ded-pvp bracket below -- else if ((dna_sex & MODE_PVP) == MODE_PVP) c_put_str(TERM_SLATE, "PvP", 9, CHAR_COL);
+				//invalid -- else c_put_str(TERM_SLATE, "Normal", 9, CHAR_COL);
+				else c_put_str(TERM_SLATE, "IDDC", 9, CHAR_COL); //paranoia
+			} else { /* MODE_DED_PVP */
+				c_put_str(TERM_SLATE, "PvP", 9, CHAR_COL); //must be MODE_PVP
+			}
+#endif
 		}
 
 		if (auto_reincarnation) {
@@ -1547,22 +1562,22 @@ static bool choose_mode(void) {
 				clear_from(15);
 				return FALSE;
 			} else if (c == 'p' && !s_RPG) {
-				sex |= MODE_PVP;
+				sex |= MODE_PVP | MODE_DED_PVP;
 				c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 				c_put_str(TERM_L_BLUE, "PvP", 9, CHAR_COL);
 				break;
 			} else if (c == 'i') {
-				sex |= MODE_NO_GHOST;
+				sex |= MODE_NO_GHOST | MODE_DED_IDDC;
 				c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 				c_put_str(TERM_L_BLUE, "No Ghost", 9, CHAR_COL);
 				break;
 			} else if (c == 'H') {
-				sex |= (MODE_NO_GHOST | MODE_HARD);
+				sex |= (MODE_NO_GHOST | MODE_HARD | MODE_DED_IDDC);
 				c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 				c_put_str(TERM_L_BLUE, "Hellish", 9, CHAR_COL);
 				break;
 			} else if (c == 's') {
-				sex |= (MODE_NO_GHOST | MODE_SOLO);
+				sex |= (MODE_NO_GHOST | MODE_SOLO | MODE_DED_IDDC);
 				c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 				c_put_str(TERM_L_BLUE, "Soloist", 9, CHAR_COL);
 				break;
@@ -1593,6 +1608,10 @@ static bool choose_mode(void) {
 					else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c = 'i';
 					else if ((dna_sex & MODE_PVP) == MODE_PVP && !s_RPG) c = 'p';
 					else c = 'i';
+					/* Fix dedicated modes */
+					if (!(dna_sex & (MODE_PVP | MODE_DED_PVP))) dna_sex |= MODE_DED_IDDC;
+					else dna_sex |= MODE_DED_PVP;
+
 					hazard = TRUE;
 					//prevent endless loop on RPG server
 					if (s_RPG && (c == 'p')) {
