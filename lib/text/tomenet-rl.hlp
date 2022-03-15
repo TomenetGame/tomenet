@@ -11,13 +11,13 @@ But, as you get more experienced you will become better at surviving. Have fun!
 \{D===============================================================================
  Press SPACEBAR to scroll down (if in half-size view) or ESC to exit this help.
  Use the NUMBER PAD (or arrows) to move, hold \{BSHIFT key to run\{w instead of walk.
-
-                        Default keys (rogue-like keymap):
+                Default keys (rogue-like keymap, ^ denotes CTRL):
+\{sKeys that already have predefined macros on them are coloured grey like this.
 \{D-------------------------------------------------------------------------------
-z  Zap wand    A  Activate      !  Show BBS        ,  Predefined 'reply' macro
-P  Browse book f  Bash door     #  Highscores         for private chat messages
-c  Close door  C  Character     $  Drop gold       "  Load prf file (abs path)
-d  Drop        D  Disarm        %  Macro menu      SPACE   Stop auto-repeating
+z  Zap wand    A  Activate      !  Show BBS        |   Uniques slain list
+P  Peruse book f  Bash door                        =   Options menu
+c  Close door  C  Character     $  Drop gold       "   Load prf file (abs path)
+d  Drop        D  Disarm        %  Macro menu      \   Bypass the keymap (raw)
 e  Equip       E  Eat           &  Auto inscribe   ^Z  Pick up one item
 t  Fire        F  Refill light  (  Friendly target ^X  Toggle music
 \{Bg  Take item\{w   G  Skills        )  Clear buffer    ^V  Toggle all audio
@@ -25,16 +25,16 @@ t  Fire        F  Refill light  (  Friendly target ^X  Toggle music
 i  Inventory   I  Examine       .  Run                 switch chat mode
 ^A Steal                        /  Use item        ^I  Lagometer or
 ^D Destroy     ^C Force-stack   \{B:  Chat\{w                switch chat mode
-x  Look        ^W Locate (map)  ;  Guide search    ^O  Chat history
-m  Use ability M  Show minimap  ?  Help/Guide      ^P  All message history
+x  Look        ^W Locate (map)  \{B<  Go up\{w           ^O  Chat history
+m  Use ability M  Show minimap  \{B>  Go down\{w         ^P  All message history
 o  Open door      (also try ~0) \{B@  Player list\{w     ^R  Redraw screen
 p  Open mind   \{BO  Party menu\{w    ~  Knowledge menu  ^S  Spike a door
 q  Quaff       \{BQ  Suicide\{w       +  Tunnel (dig)    ^T  Screenshot
 r  Read scroll R  Rest          {  Inscribe        \{B^Q  Quit the game (and
-s  Search      #  Search mode   }  Uninscribe        \{B(auto-save window layout)
-\{BT  Take off\{w       (toggle)      |  Uniques
-Z  Use staff   +  Tunnel (dig)  '  Inspect nearby/lowbie players/party members
-v  Throw       V  Cloak         _  Sip from fountain/show item on the floor
-\{Bw  Wear/Wield\{w  W  Wear/Wield 2  =  Options
-S  Swap        X  Predefined    \{B<  Go up\{w           (*) Use X to quickly switch
-a  Aim rod        x0-macro (*)  \{B>  Go down\{w         equipment inscribed @x0.
+s  Search      #  Search mode   }  Uninscribe          \{B(auto-save window layout)
+\{BT  Take off\{w       (toggle)      '  Inspect nearby/lowbie players/party members
+Z  Use staff   +  Tunnel (dig)  _  Sip from fountain/show item on the floor
+v  Throw       V  Cloak         ?  Help/Guide      SPACE   Stop auto-repeating
+\{Bw  Wear/Wield\{w  W  Wear/Wield 2  ;  \{sGuide search    \{w[\{s  Repeat chat command
+S  Swap        a  Aim rod       X\{s  Swap equipable items inscribed @x0
+\{w,\{s  Reply to a private message\{w   F1\{s Fire your ranged weapon at closest monster
