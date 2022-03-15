@@ -7663,10 +7663,10 @@ void intshuffle(int *array, int size) {
    todo: actually create own types for these. would also make DF3_JAIL_DUNGEON obsolete.
    If 'extra' is set, special info is added: Town name, to keep the two Angbands apart. */
 char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type, bool extra) {
-	static char *jail = "Jail Dungeon";
-	static char *pvp_arena = "PvP Arena";
-	static char *highlander = "Highlands";
-	static char *irondeepdive = "Ironman Deep Dive Challenge";
+	static char *jail = "The Jail Dungeon";
+	static char *pvp_arena = "The PvP Arena";
+	static char *highlander = "The Highlands";
+	static char *irondeepdive = "The Ironman Deep Dive Challenge";
 
 	/* hacks for 'extra' info, ugh */
 	static char *angband_lothlorien = "Angband (Lothlorien)";

@@ -45,7 +45,7 @@ V:4.0.0
 ### Wilderness(purely cosmetic, never used) ###
 # (actually, not used but often refered)
 
-N:0:Wilderness
+N:0:The Wilderness
 D:Wil:a way to the Wilderness
 W:0:0:0:0:0:14:500
 L:89:800:199:200:1:0:0:0:0:0
@@ -158,7 +158,7 @@ M:IM_FIRE
 # Levels 166-196
 # guarded by Zu-Aon, w/ Ring of Phasing, which opens the last gate to Valinor
 # HARDCODING-WARNINGS: netherrealm_bottom/netherrealm_level/special stores depend on NR going from dlev 166 to 166 + 30
-N:6:Nether Realm
+N:6:The Nether Realm
 D:Nth:a magical portal to the Nether Realm.
 B:80
 #W:666:696:40:0:14:160
@@ -569,7 +569,7 @@ M:MULTIPLY
 #S:MULTIPLY
 
 # Used by the death fate
-N:28:Death Fate
+N:28:The Death Fate
 D:Dth:a fated death.
 W:1:1:1:0:30:255
 L:1:1000:1:0:1:0:0:0:0:0

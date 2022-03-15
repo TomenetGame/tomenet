@@ -2387,10 +2387,10 @@ void do_cmd_knowledge_dungeons(int Ind) {
 				i = d_ptr->type;
 
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
-				if (admin && !d_ptr->known) fprintf(fff, " \377D(%2d,%2d)  \377w%-30s", x, y, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
+				if (admin && !d_ptr->known) fprintf(fff, " \377D(%2d,%2d)  \377w%-31s", x, y, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
 				else
 #endif
-				fprintf(fff, " \377u(%2d,%2d)  \377w%-30s", x, y, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
+				fprintf(fff, " \377u(%2d,%2d)  \377w%-31s", x, y, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
 #ifndef SEPARATE_RECALL_DEPTHS
 				if (admin) {
 					fprintf(fff, "  Lev: %3d-%3d  Req: %3d  type: %3d",
@@ -2508,10 +2508,10 @@ void do_cmd_knowledge_dungeons(int Ind) {
 				i = d_ptr->type;
 
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
-				if (admin && !d_ptr->known) fprintf(fff, " \377D(%2d,%2d)  \377w%-30s", x, y, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));
+				if (admin && !d_ptr->known) fprintf(fff, " \377D(%2d,%2d)  \377w%-31s", x, y, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));
 				else
 #endif
-				fprintf(fff, " \377u(%2d,%2d)  \377w%-30s", x, y, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));
+				fprintf(fff, " \377u(%2d,%2d)  \377w%-31s", x, y, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));
 #ifndef SEPARATE_RECALL_DEPTHS
 				if (admin) {
 					fprintf(fff, "  Lev: %3d-%3d  Req: %3d  type: %3d",
@@ -2645,10 +2645,10 @@ void do_cmd_knowledge_dungeons(int Ind) {
 		{
 			/* Describe the town locations */
 			if (admin)
-				fprintf(fff, " \377u(%2d,%2d)\377w %-30s  Lev: %3d", x, y,
+				fprintf(fff, " \377u(%2d,%2d)\377w %-31s  Lev: %3d", x, y,
 				    town_profile[town[i].type].name, town[i].baselevel);
 			else
-				fprintf(fff, " \377u(%2d,%2d)\377w %-30s", x, y,
+				fprintf(fff, " \377u(%2d,%2d)\377w %-31s", x, y,
 				    town_profile[town[i].type].name);
 
 			if (p_ptr->town_x == x && p_ptr->town_y == y)

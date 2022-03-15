@@ -6314,14 +6314,14 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 	else if (in_pvparena(wpos)) {
 		ville = TRUE;
 		desc = "Arena";
-		loc_pre = "an";
+		loc_pre = "in an";
 	}
 #if 0
 	/* Hack for Arena Monster Challenge */
 	else if (in_arena(wpos->wx)) {
 		ville = TRUE;
 		desc = "Arena";
-		loc_pre = "an";
+		loc_pre = "in an";
 	}
 #endif
 #ifdef IRONDEEPDIVE_FIXED_TOWNS
