@@ -4257,6 +4257,8 @@ then run 'sudo mkfontdir' in /usr/share/fonts/misc (if that's the folder where
 you placed the fonts) to add them to fonts.dir file. You can verify that all is
 fine by doing 'fc-list' and 'xlsfonts'. TomeNET doesn't use fontconfig but it's
 probably a good idea to register the fonts in both, fontconfig and X11.
+Fedora 33: Tokariew wrote information about installing fonts on this OS here:
+ https://github.com/TomenetGame/tomenet/issues/15
 
 Since you might need/want to use mapping files to remap terrain features to the
 characters in your font, you can create font-preference files that contain
