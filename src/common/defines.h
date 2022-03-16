@@ -8586,6 +8586,7 @@ extern int PlayerUID;
 #define BACT_F_STORE_ITEM	0x01
 #define BACT_F_INVENTORY	0x02
 #define BACT_F_GOLD		0x04
+#define BACT_F_ID_INVENTORY 	0x08
 #define BACT_F_HARDCODE		0x80
 
 /* Town types, not to be confused with town default indices */

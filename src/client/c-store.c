@@ -534,6 +534,7 @@ static void store_do_command(int num, bool one) {
 	char            out_val[160];
 	/* BIG_MAP leads to big shops */
 	int entries = (screen_hgt == MAX_SCREEN_HGT) ? 26 : 12;
+	int get_item_mode = 0;
 
 	i = amt = gold = item = item2 = 0;
 
@@ -580,7 +581,17 @@ static void store_do_command(int num, bool one) {
 	}
 
 	if (c_store.flags[num] & BACT_F_INVENTORY) {
-		if (!c_get_item(&item, "Which item? ", (USE_EQUIP | USE_INVEN)))
+		get_item_mode = (USE_EQUIP | USE_INVEN);
+
+		if (c_store.flags[num] & BACT_F_ID_INVENTORY) {
+			get_item_extra_hook = get_item_hook_find_obj;
+			item_tester_hook = item_tester_hook_starid;
+			get_item_hook_find_obj_what = "Which item? "; /* Seems it's not needed, but just in case */
+
+			get_item_mode |= USE_EXTRA;
+		}
+
+		if (!c_get_item(&item, "Which item? ", get_item_mode))
 			return;
 	}
 
