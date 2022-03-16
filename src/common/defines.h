@@ -5253,7 +5253,7 @@
 #define TR3_NO_MAGIC			0x00000020L     /* Anti-magic */
 #define TR3_WRAITH			0x00000040L     /* Wraithform */
 #define TR3_TY_CURSE			0x00000080L     /* The Ancient Curse */
-#define TR3_EASY_KNOW		0x00000100L	/* Aware -> Known */
+#define TR3_EASY_KNOW		0x00000100L	/* Aware -> Known, aka no ID necessary. (May need *ID* though if this type of item can really gain name1/2/2b.) */
 #define TR3_HIDE_TYPE		0x00000200L	/* Hide "pval" description */
 #define TR3_SHOW_MODS		0x00000400L	/* Always show Tohit/Todam */
 #define TR3_INSTA_ART		0x00000800L	/* Item must be a (true) artifact */
