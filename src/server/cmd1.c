@@ -2346,6 +2346,10 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				if (!o_ptr->owner) {
 					o_ptr->owner = p_ptr->id;
 					o_ptr->mode = p_ptr->mode;
+
+					/* One-time imprint "*identifyability*" for client's ITH_STARID/item_tester_hook_starid: */
+					if (!maybe_hidden_powers(Ind, o_ptr, FALSE)) o_ptr->ident |= ID_NO_HIDDEN;
+
 					/* Actually only imprint iron_trade on newly owned items. This allows us to have stolen items be unexchangeable in IDDC if we want that: */
 					o_ptr->iron_trade = p_ptr->iron_trade;
 					if (o_ptr->iron_turn != -1) //paranoia

@@ -5103,6 +5103,7 @@
 #define ID_BROKEN	0x0080	/* Item is permanently worthless */
 #define ID_SENSED_ONCE	0x0100	/* Item was at least sensed once, maybe even IDed. (anti-exploit) */
 #define ID_SENSE_HEAVY	0x0200	/* Item was deeply pseudo-identified (felt_heavy) */
+#define ID_NO_HIDDEN	0x0400	/* Item obviously cannot have hidden powers and hence *ID*ing it wouldn't have any effect */
 
 
 
@@ -6830,7 +6831,7 @@
 	 !(T)->name1 && !(T)->name2 && !(T)->name2b))
 
 #define object_fully_known_p(IND, T) \
-	(object_known_p(IND,T) && ((T)->ident & ID_MENTAL))
+	(object_known_p(IND,T) && ((T)->ident & (ID_MENTAL | ID_NO_HIDDEN)))
 
 
 /*
