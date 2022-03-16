@@ -6331,6 +6331,7 @@ bool monster_death(int Ind, int m_idx) {
 			invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_SULFUR));
 			s_printf("CHEMICAL: %s found sulfur (kill).\n", p_ptr->name);
 			forge.owner = p_ptr->id;
+			forge.ident |= ID_NO_HIDDEN;
 			forge.mode = p_ptr->mode;
 			forge.iron_trade = p_ptr->iron_trade;
 			forge.iron_turn = turn;
@@ -6349,6 +6350,7 @@ bool monster_death(int Ind, int m_idx) {
 			invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_VITRIOL));
 			s_printf("CHEMICAL: %s found vitriol (kill).\n", p_ptr->name);
 			forge.owner = p_ptr->id;
+			forge.ident |= ID_NO_HIDDEN;
 			forge.mode = p_ptr->mode;
 			forge.iron_trade = p_ptr->iron_trade;
 			forge.iron_turn = turn;
@@ -6367,6 +6369,7 @@ bool monster_death(int Ind, int m_idx) {
 			invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_AMMONIA_SALT));
 			s_printf("CHEMICAL: %s found ammonia salt (kill).\n", p_ptr->name);
 			forge.owner = p_ptr->id;
+			forge.ident |= ID_NO_HIDDEN;
 			forge.mode = p_ptr->mode;
 			forge.iron_trade = p_ptr->iron_trade;
 			forge.iron_turn = turn;
@@ -6391,6 +6394,7 @@ bool monster_death(int Ind, int m_idx) {
 					invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_SALTPETRE));
 					s_printf("CHEMICAL: %s found saltpetre (kill).\n", p_ptr->name);
 					forge.owner = p_ptr->id;
+					forge.ident |= ID_NO_HIDDEN;
 					forge.mode = p_ptr->mode;
 					forge.iron_trade = p_ptr->iron_trade;
 					forge.iron_turn = turn;
@@ -6411,6 +6415,7 @@ bool monster_death(int Ind, int m_idx) {
 					invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_AMMONIA_SALT));
 					s_printf("CHEMICAL: %s found ammonia salt (kill).\n", p_ptr->name);
 					forge.owner = p_ptr->id;
+					forge.ident |= ID_NO_HIDDEN;
 					forge.mode = p_ptr->mode;
 					forge.iron_trade = p_ptr->iron_trade;
 					forge.iron_turn = turn;
@@ -6918,6 +6923,8 @@ if (cfg.unikill_format) {
 			qq_ptr->iron_trade = p_ptr->iron_trade;
 			qq_ptr->iron_turn = turn;
 			if (true_artifact_p(qq_ptr)) determine_artifact_timeout(qq_ptr->name1, wpos);
+			/* One-time imprint "*identifyability*" for client's ITH_STARID/item_tester_hook_starid: */
+			if (!maybe_hidden_powers(Ind, qq_ptr, FALSE)) qq_ptr->ident |= ID_NO_HIDDEN;
 #endif
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 			s_printf("..dropped.\n");
@@ -7567,6 +7574,7 @@ if (cfg.unikill_format) {
 //#ifdef PRE_OWN_DROP_CHOSEN -- learning potion must always be level 0
 			qq_ptr->level = 0;
 			qq_ptr->owner = p_ptr->id;
+			qq_ptr->ident |= ID_NO_HIDDEN;
 			qq_ptr->mode = p_ptr->mode;
 			//learning potion must never be tradeable. for non-IDDC_IRON_COOP it actually would be, if any mob dropped it - which none does, fortunately:
 			//qq_ptr->iron_trade = p_ptr->iron_trade;
@@ -7647,6 +7655,7 @@ if (cfg.unikill_format) {
 //#ifdef PRE_OWN_DROP_CHOSEN -- learning potion must always be level 0
 			qq_ptr->level = 0;
 			qq_ptr->owner = p_ptr->id;
+			qq_ptr->ident |= ID_NO_HIDDEN;
 			qq_ptr->mode = p_ptr->mode;
 			//learning potion must never be tradeable. for non-IDDC_IRON_COOP it actually would be, if any mob dropped it - which none does, fortunately:
 			//qq_ptr->iron_trade = p_ptr->iron_trade;
@@ -10156,6 +10165,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 		object_known(o_ptr);
 		object_aware(Ind, o_ptr);
 		o_ptr->owner = p_ptr->id;
+		o_ptr->ident |= ID_NO_HIDDEN;
 		o_ptr->mode = p_ptr->mode;
 		o_ptr->iron_trade = p_ptr->iron_trade;
 		o_ptr->iron_turn = turn;
@@ -10188,6 +10198,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 		object_known(o_ptr);
 		object_aware(Ind, o_ptr);
 		o_ptr->owner = p_ptr->id;
+		o_ptr->ident |= ID_NO_HIDDEN;
 		o_ptr->mode = p_ptr->mode;
 		o_ptr->iron_trade = p_ptr->iron_trade;
 		o_ptr->iron_turn = turn;

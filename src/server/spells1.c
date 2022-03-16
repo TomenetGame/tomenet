@@ -4514,6 +4514,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_CHARCOAL));
 				forge.owner = p_ptr->id;
+				forge.ident |= ID_NO_HIDDEN;
 				forge.mode = p_ptr->mode;
 				forge.iron_trade = p_ptr->iron_trade;
 				forge.iron_turn = turn;
@@ -5697,6 +5698,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 					invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_CHARCOAL));
 					forge.owner = p_ptr->id;
+					forge.ident |= ID_NO_HIDDEN;
 					forge.mode = p_ptr->mode;
 					forge.iron_trade = p_ptr->iron_trade;
 					forge.iron_turn = turn;

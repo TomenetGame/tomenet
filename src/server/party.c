@@ -1476,6 +1476,7 @@ static bool guild_name_legal(int Ind, char *name) {
 			o_ptr->pval = index;
 			o_ptr->level = 1;
 			o_ptr->owner = p_ptr->id;
+			o_ptr->ident |= ID_NO_HIDDEN;
 			o_ptr->mode = p_ptr->mode;
 			object_known(o_ptr);
 			object_aware(Ind, o_ptr);
@@ -1645,6 +1646,7 @@ int guild_create(int Ind, cptr name) {
 	o_ptr->pval = index;
 	o_ptr->level = 1;
 	o_ptr->owner = p_ptr->id;
+	o_ptr->ident |= ID_NO_HIDDEN;
 	o_ptr->mode = p_ptr->mode;
 	o_ptr->iron_trade = p_ptr->iron_trade;
 	//o_ptr->iron_turn = turn;

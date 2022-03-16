@@ -7502,6 +7502,7 @@ static bool player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 	/* bind it to the correct mode to avoid exploiting;
 	   as a side effect, this tells us who bought our wares ;) */
 	cheque.owner = p_ptr->id; /* set owner to buyer */
+	cheque.ident |= ID_NO_HIDDEN;
 	cheque.mode = p_ptr->mode;
 	cheque.level = 1; /* as long as owner is set to the buyer's id, this must be > 0 */
 

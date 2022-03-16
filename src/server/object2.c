@@ -6046,7 +6046,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 
 		/* clear flags from pre-artified item, simulating
 		   generation of a brand new object. */
-		o_ptr->ident &= ~(ID_MENTAL | ID_BROKEN | ID_CURSED);
+		o_ptr->ident &= ~(ID_MENTAL | ID_BROKEN | ID_CURSED | ID_NO_HIDDEN);
 
 		/* Hack -- extract the "broken" flag */
 		if (!a_ptr->cost) o_ptr->ident |= ID_BROKEN;
@@ -7938,6 +7938,10 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 			forge.owner = forge.killer;
 			forge.mode = Players[Ind]->mode;
 			forge.iron_trade = Players[Ind]->iron_trade;
+
+			/* One-time imprint "*identifyability*" for client's ITH_STARID/item_tester_hook_starid: */
+			if (!maybe_hidden_powers(Ind, &forge, FALSE)) forge.ident |= ID_NO_HIDDEN;
+
 			if (opening_chest) forge.iron_turn = opening_chest;
 			else forge.iron_turn = turn;
 			if (true_artifact_p(&forge)) {
@@ -11233,6 +11237,9 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 		o_ptr->owner = p_ptr->id;
 		o_ptr->mode = p_ptr->mode;
 		if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &o_ptr->wpos); /* paranoia? */
+
+		/* One-time imprint "*identifyability*" for client's ITH_STARID/item_tester_hook_starid: */
+		if (!maybe_hidden_powers(Ind, o_ptr, FALSE)) o_ptr->ident |= ID_NO_HIDDEN;
 	}
 
 	/* Auto id ? */
