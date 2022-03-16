@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 13. March 2022 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 16. March 2022 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.7.4b - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -23770,5 +23770,9 @@ PROBLEM 65: A recent Windows 10 update from end of 2020 or beginning 2021 seems
             "Font file corrupted"
 Solution:   A workaround is to run TomeNET as privileged user or as super user
             (administrator).
+
+PROBLEM 66: Tokariew found out about a linking problem when cross-compiling
+            TomeNET on Fedora 33 with mingw-gcc10.
+Solution:   Using the linker flag  -fstack-protector  resolved this.
 
 ===============================================================================
