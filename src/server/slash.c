@@ -1550,6 +1550,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
+			/* If we just entered "/?" don't display the help screen but invoke the guide instead */
+			if (prefix(messagelc, "/?")) {
+				Send_Guide(Ind, 0, 0, NULL);
+				return;
+			}
+
 			do_slash_brief_help(Ind);
 
 #if 0 /* this invokes the old slash command help */

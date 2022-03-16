@@ -1479,9 +1479,11 @@ They all start with a slash '/' hence they're called slash commands:
 
 /help [topic]
 /he
-/?          Without 'topic' parameter, this shows a list of all command keys
+/?
+            Without 'topic' parameter, /help shows a list of all command keys
             (same as pressing '?' key) and additionally lists a few most
             commonly used slash commands.
+            Without 'topic' parameter, /? invokes the guide.
             Optionally, a topic can be specified - in this case a guide search
             will be conducted on that topic. For example enter:   /? ac
 /?c         Shortcut to your character's class description in the guide.
