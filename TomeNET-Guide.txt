@@ -17821,8 +17821,8 @@ Small kobold     1  Actually very weak, but it has poison resistance. This way
 (or normal kobold)  this form may help you to kill Rotting corpses (see below)
                     which have poisonous melee attacks. ;)
                     Not really useful other than that.
-Blue yeek        2  Very weak, but has acid resistance and can actually pass
-(or brown yeek)     tree terrain, making it useful in dungeons with lots of
+*Blue yeek       2  Very weak, but has acid resistance and can actually pass
+(or *brown yeek)    tree terrain, making it useful in dungeons with lots of
                     trees allowing for an easy escape from danger by simply
                     retreating into trees - except against enemies that can
                     also pass trees of course, eg any animals.
