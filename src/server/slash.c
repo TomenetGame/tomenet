@@ -6292,8 +6292,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				//apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, RESF_NONE);
 				apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, o_ptr->name1 || o_ptr->name2, o_ptr->name1 || o_ptr->name2, FALSE, RESF_NONE);
 				o_ptr->discount = 0;
-				object_known(o_ptr);
 				o_ptr->owner = 0;
+				o_ptr->ident &= ~ID_NO_HIDDEN;
+				object_known(o_ptr);
 				o_ptr->level = 1;
 				o_ptr->number = tk;
 
@@ -6377,8 +6378,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				//apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, o_ptr->name1 || o_ptr->name2, o_ptr->name1 || o_ptr->name2, FALSE, RESF_NONE);
 
 				o_ptr->discount = 0;
-				object_known(o_ptr);
 				o_ptr->owner = 0;
+				o_ptr->ident &= ~ID_NO_HIDDEN;
+				object_known(o_ptr);
 				//o_ptr->level = 1;
 				o_ptr->number = 1;
 
@@ -8603,6 +8605,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					j_ptr = &o_list[o_idx];
 					object_copy(j_ptr, o_ptr);
 					j_ptr->owner = 0;
+					j_ptr->ident &= ~ID_NO_HIDDEN;
 					j_ptr->mode = 0;
 					j_ptr->held_m_idx = m_idx;
 					j_ptr->next_o_idx = m_ptr->hold_o_idx;
@@ -8638,6 +8641,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				o_ptr = &p_ptr->inventory[k];
 				o_ptr->owner = 0;
+				o_ptr->ident &= ~ID_NO_HIDDEN;
 				o_ptr->mode = 0;
 				p_ptr->window |= PW_INVEN;
 				return;
