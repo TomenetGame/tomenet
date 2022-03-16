@@ -1415,6 +1415,9 @@ void object_known(object_type *o_ptr) {
 	/* Now we know about the item */
 	o_ptr->ident |= (ID_KNOWN | ID_SENSED_ONCE);
 
+	/* One-time imprint "*identifyability*" for client's ITH_STARID/item_tester_hook_starid: */
+	if (!maybe_hidden_powers(0, o_ptr, FALSE)) o_ptr->ident |= ID_NO_HIDDEN;
+
 	/* Artifact becomes 'found' status - omg it must already become
 	'found' if a player picks it up! That gave headaches! */
 	if (true_artifact_p(o_ptr)) handle_art_ipara(o_ptr->name1);

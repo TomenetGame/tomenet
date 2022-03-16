@@ -4520,7 +4520,7 @@ static void display_shooter_handling(int Ind, object_type *o_ptr, FILE *fff, int
 
 /* New helper function for @@/@@@ inscriptions: Check if item might have hidden powers (in which case the inscription is declined).
   ignore_id: If TRUE, the function ignores the item's ID_MENTAL state (aka *identified*) and hence can still return TRUE in that case. Added for shop-pasting.
-  Ind is allowed to be 0 for the edge case of power-reinscribing when curse-flipping.
+  Ind is allowed to be 0 for the edge case of power-reinscribing when curse-flipping. And now also for use in object_known() to check for ID_NO_HIDDEN application.
 */
 bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id) {
 	bool aware = !Ind || object_aware_p(Ind, o_ptr);

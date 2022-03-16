@@ -1723,7 +1723,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
 
 	/* Empty */
 	o_ptr->pval = 0;
-	o_ptr->ident |= ID_KNOWN; /* obsolete-- easy to see it's empty and that's it */
+	o_ptr->ident |= ID_KNOWN | ID_NO_HIDDEN; /* obsolete-- easy to see it's empty and that's it */
 
 #ifdef SUBINVEN_CHESTS
 	/* Convert opened and therefore now empty chests to usable containers */

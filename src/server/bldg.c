@@ -1514,7 +1514,11 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 			o_ptr->name1 = ART_ANDURIL;
 			apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 			o_ptr->level = 30; //a little bonus - Anduril/Claymore have base level 40 actually
-			if (id) o_ptr->ident |= ID_KNOWN;
+			if (id) {
+				o_ptr->ident |= ID_KNOWN;
+				/* One-time imprint "*identifyability*" for client's ITH_STARID/item_tester_hook_starid: */
+				if (!maybe_hidden_powers(Ind, o_ptr, FALSE)) o_ptr->ident |= ID_NO_HIDDEN;
+			}
 			can_use(Ind, o_ptr);
 
 			/* We might be wearing/wielding the item */

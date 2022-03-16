@@ -5222,6 +5222,6 @@ static void destroy_chest(object_type *o_ptr) {
 		o_ptr->sval = SV_CHEST_RUINED; /* Ruined chest now */
 		o_ptr->pval = 0; /* untrapped */
 		//o_ptr->bpval = 0;
-		o_ptr->ident |= ID_KNOWN; /* easy to see it's a goner */
+		o_ptr->ident |= ID_KNOWN | ID_NO_HIDDEN; /* easy to see it's a goner */
 	}
 }
