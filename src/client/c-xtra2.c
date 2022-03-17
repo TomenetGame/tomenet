@@ -221,7 +221,8 @@ void do_cmd_messages(void) {
 				/* Lines can contain a lot of colour codes that would override this one, so we have to strip them first */
 				while (*tm) {
 					if (*tm == '\377') {
-						tm += 2;
+						tm++;
+						if (*tm) tm++;
 						continue;
 					}
 					*tc = *tm;
@@ -229,10 +230,10 @@ void do_cmd_messages(void) {
 					tm++;
 				}
 				*tc = 0;
-				Term_putstr(0, 21 + HGT_PLUS-j, -1, TERM_SELECTOR, tmp);
+				Term_putstr(0, 21 + HGT_PLUS - j, -1, TERM_SELECTOR, tmp);
 			} else { /* Normal line processing (ie no shower set) */
 				/* Dump the messages, bottom to top */
-				Term_putstr(0, 21 + HGT_PLUS-j, -1, a, (char*)msg3);
+				Term_putstr(0, 21 + HGT_PLUS - j, -1, a, (char*)msg3);
 			}
 			t = strlen(msg3);
 		}
@@ -326,7 +327,7 @@ void do_cmd_messages(void) {
 
 			/* Scan messages */
 			for (z = i + 1; z < n; z++) {
-				cptr str = message_str(z);
+				cptr str = message_recall[z];//message_str(z);
 
 				/* Handle "shower" */
 				if (my_strcasestr(str, finder)) {
@@ -516,7 +517,8 @@ void do_cmd_messages_important(void) {
 				/* Lines can contain a lot of colour codes that would override this one, so we have to strip them first */
 				while (*tm) {
 					if (*tm == '\377') {
-						tm += 2;
+						tm++;
+						if (*tm) tm++;
 						continue;
 					}
 					*tc = *tm;
@@ -620,7 +622,7 @@ void do_cmd_messages_important(void) {
 
 			/* Scan messages */
 			for (z = i + 1; z < n; z++) {
-				cptr str = message_str_impscroll(z);
+				cptr str = message_important[z];//message_str_impscroll(z);
 
 				/* Handle "shower" */
 				if (my_strcasestr(str, finder)) {
