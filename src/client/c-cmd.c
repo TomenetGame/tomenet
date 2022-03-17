@@ -2060,6 +2060,29 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 	/* invoked for a specific topic? */
 	*buf_override = 0;
 
+#ifdef GUIDE_BOOKMARKS
+	/* Hack: Quick bookmark access */
+	if (init_search_type == 3 && strlen(init_search_string) == 1 && init_search_string[0] >= 'a' && init_search_string[0] <= 't') {
+		i = init_search_string[0] - 'a';
+		/* Jump to bookmark */
+		if (!bookmark_line[i]) {
+			c_message_add(format("\377yBookmark %c) does not exist.", init_search_string[0]));
+			return;
+		}
+		jumped_to_line = bookmark_line[i] + 1; //Remember, just as a small QoL thingy
+ #if 0
+		line = jumped_to_line - 1;
+		if (line > guide_lastline - maxlines) line = guide_lastline - maxlines;
+		if (line < 0) line = 0;
+ #else
+		init_search_type = 4; //We jump to the bookmark's line # now
+		init_lineno = jumped_to_line;
+		if (init_lineno > guide_lastline - maxlines) init_lineno = guide_lastline - maxlines;
+		if (init_lineno < 0) init_lineno = 0;
+ #endif
+	}
+#endif
+
 	/* Hack: Translate specific searches from all-uppercase to chapter: */
 	if (init_search_type == 2 || init_search_type == 3) {
 		strcpy(buf, init_search_string);
@@ -3610,7 +3633,8 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			while (TRUE) {
 				Term_clear();
 				Term_putstr(23,  0, -1, TERM_L_BLUE, "[The Guide - Bookmarks Menu]");
-				Term_putstr(14,  2, -1, TERM_WHITE, format("(You can set a maximum amount of %d bookmarks)", GUIDE_BOOKMARKS));
+				//Term_putstr(14,  2, -1, TERM_WHITE, format("(You can set a maximum amount of %d bookmarks)", GUIDE_BOOKMARKS));
+				Term_putstr(1,  2, -1, TERM_WHITE, format("(You can set a maximum amount of %d bookmarks. Use '\377s/? a-t\377w' for quick access.)", GUIDE_BOOKMARKS));
 				for (i = 0; i < GUIDE_BOOKMARKS; i++) {
 					if (!bookmark_line[i]) {
 						//break;
@@ -5224,7 +5248,7 @@ void cmd_message(void) {
 				buf[i] = '\377';
 
 				/* remember last colour; for item pasting below */
-//				c = buf[i + 1];
+				//c = buf[i + 1];
 			}
 		}
 
@@ -5487,6 +5511,12 @@ void cmd_message(void) {
 			(void)png_screenshot();
 			inkey_msg = FALSE;
 			return;
+#ifdef GUIDE_BOOKMARKS
+		} else if (prefix(buf, "/? ") && strlen(buf) == 4 && buf[3] >= 'a' && buf[3] <= 't') { /* Quick bookmark access */
+			cmd_the_guide(3, 0, format("%c", buf[3]));
+			inkey_msg = FALSE;
+			return;
+#endif
 		}
 
 		Send_msg(buf);

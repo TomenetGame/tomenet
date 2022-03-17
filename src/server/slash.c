@@ -1518,6 +1518,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		else if (prefix(messagelc, "/help") || prefix(messagelc, "/he") || prefix(messagelc, "/?")) {
 			char path[MAX_PATH_LENGTH];
 
+#if 0 /* done client-side instead */
+			/* Quick bookmark access? */
+			if (strlen(message2) == 1 && message2[0] >= 'a' && message2[0] <= 'z') {
+				Send_Guide(Ind, 0, 0, format("BOOKMARK-%c", message2[0]));
+				return;
+			}
+#endif
+
 			/* Special case: Search for a specific topic - in this case, invoke the Guide on client-side instead with a search performed for the topic specified! */
 			if (tk) {
 				bool allcapsok = FALSE, allcaps = TRUE, dot = FALSE;

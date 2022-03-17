@@ -1488,6 +1488,8 @@ They all start with a slash '/' hence they're called slash commands:
             Without 'topic' parameter, /? invokes the guide.
             Optionally, a topic can be specified - in this case a guide search
             will be conducted on that topic. For example enter:   /? ac
+            To quickly access your guide bookmarks, just specify the bookmark's
+            index character as topic, eg "/? a" for the first bookmark a).
 /?c         Shortcut to your character's class description in the guide.
 /?r         Shortcut to your character's race description in the guide.
 /?t         Shortcut to your character's race trait in the guide.
