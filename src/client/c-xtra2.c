@@ -172,7 +172,7 @@ void do_cmd_messages(void) {
 		n = nn;  /* new total # of messages in our new array */
 		r = 0;	/* how many times the message is Repeated */
 		s = 0;	/* how many lines Saved */
-		k = 0;	/* end of buffer flag */
+		k = 0;	/* end of buffer flag, but used arithmetically; secondary use as key buffer */
 		msg = NULL;
 
 		/* Dump up to 20 lines of messages */
@@ -214,10 +214,26 @@ void do_cmd_messages(void) {
 			} else msg3 = msg;
 
 			/* Handle "shower" */
-			if (shower[0] && strstr(msg3, shower)) a = TERM_YELLOW;
+			if (shower[0] && my_strcasestr(msg3, shower)) {
+				char tmp[MSG_LEN], *tc = tmp;
+				const char *tm = msg3;
 
-			/* Dump the messages, bottom to top */
-			Term_putstr(0, 21 + HGT_PLUS-j, -1, a, (char*)msg3);
+				/* Lines can contain a lot of colour codes that would override this one, so we have to strip them first */
+				while (*tm) {
+					if (*tm == '\377') {
+						tm += 2;
+						continue;
+					}
+					*tc = *tm;
+					tc++;
+					tm++;
+				}
+				*tc = 0;
+				Term_putstr(0, 21 + HGT_PLUS-j, -1, TERM_SELECTOR, tmp);
+			} else { /* Normal line processing (ie no shower set) */
+				/* Dump the messages, bottom to top */
+				Term_putstr(0, 21 + HGT_PLUS-j, -1, a, (char*)msg3);
+			}
 			t = strlen(msg3);
 		}
 
@@ -226,7 +242,7 @@ void do_cmd_messages(void) {
 		    i, i + j - 1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
-		prt("['p' older, 'n' newer, 'f' for filedump, CTRL+K to copy last line, ESC to exit]", 23 + HGT_PLUS, 0);
+		prt("[p/n/g/G/# navi, f filedump, CTRL+K copy last line, / search, = show, ESC exit]", 23 + HGT_PLUS, 0);
 
 		/* Get a command */
 		k = inkey();
@@ -292,10 +308,11 @@ void do_cmd_messages(void) {
 		/* Hack -- handle find */
 		/* FIXME -- (x4) compressing seems to ruin it */
 		if (k == '/') {
+			int z;
 			/* suppress hybrid macros */
 			bool inkey_msg_old = inkey_msg;
+
 			inkey_msg = TRUE;
-			int z;
 
 			/* Prompt */
 			prt("Find: ", 23 + HGT_PLUS, 0);
@@ -312,7 +329,7 @@ void do_cmd_messages(void) {
 				cptr str = message_str(z);
 
 				/* Handle "shower" */
-				if (strstr(str, finder)) {
+				if (my_strcasestr(str, finder)) {
 					/* New location */
 					i = z;
 
@@ -429,7 +446,7 @@ void do_cmd_messages_important(void) {
 	char shower[80] = "";
 	char finder[80] = "";
 
-	cptr msg, msg2, msg_raw = NULL;
+	cptr msg = "", msg_raw = NULL, msg3;
 
 	/* Create array to store message buffer for important messags  */
 	/* (This is an expensive hit, move to c-init.c?  But this only */
@@ -439,35 +456,17 @@ void do_cmd_messages_important(void) {
 
 	/* Display messages in different colors */
 
-#if 0 /* before 4.6.0: we filter all eligible messages from the generic 'message' buffer to display here */
-	/* Total messages */
-	n = message_num();
-	nn = 0;  /* number of new messages */
-
-	/* Filter message buffer for "important messages" add to message_important*/
-//	for (i = 0; i < n; i++)
-	for (i = n - 1; i >= 0; i--) { /* traverse from oldest to newest message */
-		msg = message_str(i);
-
-		if (msg[0] == '\376') {
-			/* strip control code */
-			if (msg[0] == '\376') msg++;
-			message_important[nn] = msg;
-			nn++;
-		}
-	}
-#else /* we use a dedicated important-scrollback-buffer to allow longer scrollbacks after message buffer got flooded with lots of combat messages */
+	/* we use a dedicated important-scrollback-buffer to allow longer scrollbacks after message buffer got flooded with lots of combat messages */
 	/* Total messages */
 	n = message_num_impscroll();
 	nn = 0;  /* number of new messages */
 
 	/* Filter message buffer for "important messages" add to message_important*/
-//	for (i = 0; i < n; i++)
+	//for (i = 0; i < n; i++)
 	for (i = n - 1; i >= 0; i--) { /* traverse from oldest to newest message */
 		message_important[nn] = message_str_impscroll(i);
 		nn++;
 	}
-#endif
 
 	/* Start on first message */
 	i = 0;
@@ -489,32 +488,47 @@ void do_cmd_messages_important(void) {
 
 		/* Dump up to 20 lines of messages */
 		for (j = 0; (j < 20 + HGT_PLUS) && (i + j < n); j++) {
-			msg = message_important[nn - 1 - (i + j)]; /* because of inverted traversal direction, see further above */
-			if (!j) msg_raw = msg; //remember the bottom-most line
-			//cptr msg = message_important[i + j];
 			a = ab = ap = TERM_WHITE;
 
+			msg = message_important[nn - 1 - (i + j)]; /* because of inverted traversal direction, see further above */
+			if (!j) msg_raw = msg; //remember the bottom-most line
+
 			/* Apply horizontal scroll */
-			msg2 = msg;
-			msg = ((int) strlen(msg) >= q) ? (msg + q) : "";
+			msg3 = ((int) strlen(msg) >= q) ? (msg + q) : "";
 
 			/* For horizontal scrolling: Parse correct colour code that we might have skipped */
 			if (q) {
 				for (p = 0; p < q; p++) {
-					if (msg2[p] != '\377') continue;
-					if (msg2[p + 1] == '.') a = ap;
-					else if (isalpha(msg2[p + 1]) || isdigit(msg2[p + 1])) {
+					if (msg[p] != '\377') continue;
+					if (msg[p + 1] == '.') a = ap;
+					else if (isalpha(msg[p + 1]) || isdigit(msg[p + 1])) {
 						ap = ab;
-						a = ab = color_char_to_attr(msg2[p + 1]);
+						a = ab = color_char_to_attr(msg[p + 1]);
 					}
 				}
-			}
+			} else msg3 = msg;
 
 			/* Handle "shower" */
-			if (shower[0] && strstr(msg, shower)) a = TERM_YELLOW;
+			if (shower[0] && my_strcasestr(msg3, shower)) {
+				char tmp[MSG_LEN], *tc = tmp;
+				const char *tm = msg3;
 
-			/* Dump the messages, bottom to top */
-			Term_putstr(0, 21 + HGT_PLUS - j, -1, a, (char*)msg);
+				/* Lines can contain a lot of colour codes that would override this one, so we have to strip them first */
+				while (*tm) {
+					if (*tm == '\377') {
+						tm += 2;
+						continue;
+					}
+					*tc = *tm;
+					tc++;
+					tm++;
+				}
+				*tc = 0;
+				Term_putstr(0, 21 + HGT_PLUS - j, -1, TERM_SELECTOR, tmp);
+			} else { /* Normal line processing (ie no shower set) */
+				/* Dump the messages, bottom to top */
+				Term_putstr(0, 21 + HGT_PLUS - j, -1, a, (char*)msg3);
+			}
 		}
 
 		/* Display header XXX XXX XXX */
@@ -522,7 +536,7 @@ void do_cmd_messages_important(void) {
 		    i, i + j - 1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
-		prt("['p' older, 'n' newer, 'f' for filedump, CTRL+K to copy last line, ESC to exit]", 23 + HGT_PLUS, 0);
+		prt("[p/n/g/G/# navi, f filedump, CTRL+K copy last line, / search, = show, ESC exit]", 23 + HGT_PLUS, 0);
 
 		/* Get a command */
 		k = inkey();
@@ -588,11 +602,11 @@ void do_cmd_messages_important(void) {
 
 		/* Hack -- handle find */
 		if (k == '/') {
+			int z;
 			/* suppress hybrid macros */
 			bool inkey_msg_old = inkey_msg;
-			inkey_msg = TRUE;
 
-			int z;
+			inkey_msg = TRUE;
 
 			/* Prompt */
 			prt("Find: ", 23 + HGT_PLUS, 0);
@@ -606,14 +620,10 @@ void do_cmd_messages_important(void) {
 
 			/* Scan messages */
 			for (z = i + 1; z < n; z++) {
-#if 0
-				cptr str = message_str(z);
-#else
 				cptr str = message_str_impscroll(z);
-#endif
 
 				/* Handle "shower" */
-				if (strstr(str, finder)) {
+				if (my_strcasestr(str, finder)) {
 					/* New location */
 					i = z;
 
