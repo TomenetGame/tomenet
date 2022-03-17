@@ -12186,10 +12186,10 @@ Amulet of Sustenance    sustain all six attributes, provide 'Hold Life'
                         Ability can be helpful for melee fighters, especially
                         if they enter an ironman dungeon which they cannot
                         leave early in case they need to restore drained stats.
-Ring of Cunningness     increase and sustain strength and intelligence.
+Ring of Prowess         increase and sustain strength and intelligence.
 Ring of Tenacity        increase and sustain strength and wisdom.
 Ring of Might           increase and sustain strength and constitution.
-Ring of Ready Wit       increase and sustain dexterity and intelligence.
+Ring of Cunningness     increase and sustain dexterity and intelligence.
 Ring of Gallantry       increase and sustain dexterity and wisdom.
 Ring of Toughness       increase and sustain dexterity and constitution.
 Ring of Preparedness    increase and sustain constitution and intelligence.
