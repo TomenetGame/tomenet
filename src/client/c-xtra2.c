@@ -215,7 +215,7 @@ void do_cmd_messages(void) {
 						a = ab = color_char_to_attr(msg[p + 1]);
 					}
 				}
-			} else msg3 = msg;
+			}
 
 			/* Handle "shower" */
 			if (shower[0] && my_strcasestr(msg3, shower)) {
@@ -239,6 +239,9 @@ void do_cmd_messages(void) {
 				/* Dump the messages, bottom to top */
 				Term_putstr(0, 21 + HGT_PLUS - j, -1, a, (char*)msg3);
 			}
+
+			/* For bundling of subsequent identical lines:
+			   Remember length of the actual line that has possibly also been vertically-scrolled */
 			t = strlen(msg3);
 		}
 
@@ -339,7 +342,8 @@ void do_cmd_messages(void) {
 					i = z;
 
 					/* Hack -- also show */
-					strcpy(shower, str);
+					//strcpy(shower, str);  --not the whole line, just the search string, or we only highlight exact duplicate lines somewhere
+					strcpy(shower, finder); //make the search string also the highlight show-string
 
 					/* Done */
 					break;
@@ -498,6 +502,8 @@ void do_cmd_messages_important(void) {
 			msg = message_important[nn - 1 - (i + j)]; /* because of inverted traversal direction, see further above */
 			if (!j) msg_raw = msg; //remember the bottom-most line
 
+			/* Note: msg2 is not used in this function as we don't do bundling of identical subsequent lines here unlike in do_cmd_messages(). */
+
 			/* Apply horizontal scroll */
 			msg3 = ((int) strlen(msg) >= q) ? (msg + q) : "";
 
@@ -511,7 +517,7 @@ void do_cmd_messages_important(void) {
 						a = ab = color_char_to_attr(msg[p + 1]);
 					}
 				}
-			} else msg3 = msg;
+			}
 
 			/* Handle "shower" */
 			if (shower[0] && my_strcasestr(msg3, shower)) {
@@ -634,7 +640,8 @@ void do_cmd_messages_important(void) {
 					i = z;
 
 					/* Hack -- also show */
-					strcpy(shower, str);
+					//strcpy(shower, str);  --not the whole line, just the search string, or we only highlight exact duplicate lines somewhere
+					strcpy(shower, finder); //make the search string also the highlight show-string
 
 					/* Done */
 					break;
