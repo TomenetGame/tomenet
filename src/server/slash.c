@@ -1521,7 +1521,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #if 0 /* done client-side instead */
 			/* Quick bookmark access? */
 			if (strlen(message2) == 1 && message2[0] >= 'a' && message2[0] <= 'z') {
-				Send_Guide(Ind, 0, 0, format("BOOKMARK-%c", message2[0]));
+				Send_Guide(Ind, 3, 0, format("%c", message2[0]));
 				return;
 			}
 #endif
