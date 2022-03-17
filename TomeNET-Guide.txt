@@ -1038,11 +1038,13 @@ CTRL+P  view previous messages.
         On Linux/OSX this requires 'xclip' to be installed.
         Hint: Tapping CTRL+K twice will try to extract an URL from the bottom-
         most line and copy that to the OS clipboard instead, if it finds one.
+        Note that the search function here works in reverse from bottom to top.
 
 CTRL+O  view previous chat messages.
         Press CTRL+K in here to copy the bottom-most line to the OS clipboard
         (or double-tap to try and extract a URL and copy that one instead).
         On Linux/OSX this requires 'xclip' to be installed.
+        Note that the search function here works in reverse from bottom to top.
 
 CTRL+Q  save your character & quit the game. (You should do this in town!)
         This also automatically saves some settings, like window layout (the
