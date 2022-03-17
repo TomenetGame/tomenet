@@ -1364,7 +1364,7 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 	},
 #endif
 #ifdef ENABLE_HELLKNIGHT
-	{
+	{ /* -- Note: Not going to be applied, as this class starts at initiation, not at birth! -- */
 		/* Hell Knight (Corrupted Paladin) */
 		{ TV_SWORD, SV_LONG_SWORD, 0 },
 		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0 },
@@ -1375,7 +1375,7 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 	},
 #endif
 #ifdef ENABLE_CPRIEST
-	{
+	{ /* -- Note: Not going to be applied, as this class starts at initiation, not at birth! -- */
 		/* Corrupted Priest */
 		{ TV_BLUNT, SV_MACE, 0 },
 		{ TV_POTION, SV_POTION_HEALING, 0 },
@@ -1518,7 +1518,7 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 	},
 #endif
 #ifdef ENABLE_HELLKNIGHT
-	{
+	{ /* -- Note: Not going to be applied, as this class starts at initiation, not at birth! -- */
 		/* Hell Knight (Corrupted Paladin) */
 		{ TV_HELM, SV_METAL_CAP, 0 },
 		{ TV_CLOAK, SV_CLOAK, 0 },
@@ -1529,7 +1529,7 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 	},
 #endif
 #ifdef ENABLE_CPRIEST
-	{
+	{ /* -- Note: Not going to be applied, as this class starts at initiation, not at birth! -- */
 		/* Corrupted Priest */
 		{ TV_HELM, SV_CLOTH_CAP, 0 },
 		{ TV_POTION, SV_POTION_HEALING, 0 },
