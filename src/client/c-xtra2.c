@@ -190,6 +190,7 @@ void do_cmd_messages(void) {
 				j--;
 				s++;
 				if (i + j + s < n - 1) continue;
+				/* We reached the final message in our scrollback buffer and it was a duplicate */
 				k = 1;
 			}
 
@@ -197,6 +198,9 @@ void do_cmd_messages(void) {
 				Term_putstr(t < 72 ? t : 72, 21 + HGT_PLUS - j + 1 - k, -1, a, format(" (x%d)", r + 1));
 				r = 0;
 			}
+
+			/* Final message reached and already added to duplicates, we don't have anything more to display */
+			if (k) break;
 
 			/* Apply horizontal scroll */
 			msg3 = ((int) strlen(msg) >= q) ? (msg + q) : "";
