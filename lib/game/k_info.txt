@@ -1151,7 +1151,7 @@ A:15/1
 F:CON | DEX | HIDE_TYPE
 F:SUST_CON | SUST_DEX
 
-N:135:Ready Wit
+N:135:Prowess
 G:=:d
 I:45:25:0
 W:15:0:2:500
