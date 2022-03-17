@@ -250,7 +250,7 @@ void do_cmd_messages(void) {
 		    i, i + j - 1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
-		prt("[p/n/g/G/# navi, f filedump, CTRL+K copy last line, / search, = show, ESC exit]", 23 + HGT_PLUS, 0);
+		prt("[p/n/g/G/# navi, f filedump, CTRL+K copy last line, / search, = mark, ESC exit]", 23 + HGT_PLUS, 0);
 
 		/* Get a command */
 		k = inkey();
@@ -300,7 +300,7 @@ void do_cmd_messages(void) {
 			bool inkey_msg_old = inkey_msg;
 			inkey_msg = TRUE;
 			/* Prompt */
-			prt("Show: ", 23 + HGT_PLUS, 0);
+			prt("Mark: ", 23 + HGT_PLUS, 0);
 
 			/* Get a "shower" string, or continue */
 			if (!askfor_aux(shower, 79, 0)) {
@@ -548,7 +548,7 @@ void do_cmd_messages_important(void) {
 		    i, i + j - 1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
-		prt("[p/n/g/G/# navi, f filedump, CTRL+K copy last line, / search, = show, ESC exit]", 23 + HGT_PLUS, 0);
+		prt("[p/n/g/G/# navi, f filedump, CTRL+K copy last line, / search, = mark, ESC exit]", 23 + HGT_PLUS, 0);
 
 		/* Get a command */
 		k = inkey();
@@ -599,7 +599,7 @@ void do_cmd_messages_important(void) {
 			inkey_msg = TRUE;
 
 			/* Prompt */
-			prt("Show: ", 23 + HGT_PLUS, 0);
+			prt("Mark: ", 23 + HGT_PLUS, 0);
 
 			/* Get a "shower" string, or continue */
 			if (!askfor_aux(shower, 79, 0)) {
