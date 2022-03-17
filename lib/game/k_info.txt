@@ -83,7 +83,7 @@ G:,:d
 I:80:4:500
 W:10:0:1:200
 A:10/1
-D:Hurts your sanity and causes temporary hallucination.
+D:Chaos damage to your sanity, causing hallucinations. Restores a little mana.
 
 N:5:Cure Poison
 G:,:d
