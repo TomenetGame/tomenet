@@ -146,6 +146,18 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 			if (set_image(Ind, p_ptr->image + rand_int(250) + 250))
 				ident = TRUE;
 		}
+		/* new in 2022 - just to actually 'do' something - emergency usage (yay for Chaos Lineage) */
+		if (p_ptr->csp < p_ptr->msp
+#ifdef MARTYR_NO_MANA
+		    && !p_ptr->martyr
+#endif
+		    ) {
+			p_ptr->csp += 15;
+			if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
+			p_ptr->redraw |= (PR_MANA);
+			p_ptr->window |= (PW_PLAYER);
+			ident = TRUE;
+		}
 		break;
 
 	case SV_FOOD_PARALYSIS:
