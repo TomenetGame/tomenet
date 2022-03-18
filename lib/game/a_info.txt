@@ -1499,7 +1499,7 @@ D:creatures of the earth.
 
 N:107:of Wrath
 I:22:5:2
-W:27:30:90:80000
+W:27:30:100:80000
 P:0:4d7:16:18:0
 F:STR | DEX | HIDE_TYPE | CHAOTIC | DRAIN_MANA | SPECIAL_GENE |
 F:SLAY_EVIL | KILL_UNDEAD | RES_LITE | RES_DARK | SEE_INVIS |
@@ -1513,7 +1513,7 @@ D:evil and undead.
 
 N:108:of Ulmo
 I:22:5:4
-W:50:90:70:120000
+W:50:90:100:120000
 P:0:3d7:19:19:0
 F:DEX | HIDE_TYPE |
 F:SLAY_DRAGON | SLAY_ANIMAL | FREE_ACT | HOLD_LIFE | IM_ACID |
@@ -1529,7 +1529,7 @@ D:of the undead, and is utterly in command of the element of water.
 
 N:109:'Avavir'
 I:22:17:4
-W:15:8:220:18000
+W:15:8:200:18000
 P:0:6d4:12:12:10
 F:DEX | CHR | HIDE_TYPE |
 F:BRAND_COLD | BRAND_FIRE | FREE_ACT | RES_FIRE | RES_COLD |
@@ -3080,15 +3080,15 @@ D:surprise to the unaware victim, striking the vital points,
 D:and devouring its life force.
 
 
-# Trifurcate Spear 'Misericordia'
+# Awl-Pike 'Misericordia'
 
 N:247:'Misericordia'
-I:22:26:2
+I:22:4:2
 W:40:40:140:90000
-P:0:3d7:40:15:0
+P:0:2d11:40:15:0
 F:SHOW_MODS | STR | DEX | CHR | RES_FEAR | IM_COLD | RES_DISEN
 F:SLAY_EVIL | KILL_UNDEAD | SLAY_DEMON
-D:This spear never misses when it comes to giving the final blow.
+D:This awl-pike never misses when it comes to giving the final blow.
 
 
 # Thunder Axe 'Twilight'
@@ -3108,7 +3108,7 @@ D:possessed, this axe splits skull and torso of even the mightiest foes.
 
 N:249:'Impaler'
 I:22:7:0
-W:8:10:100:25000
+W:8:10:80:25000
 P:0:1d10:25:10:0
 F:SHOW_MODS | RES_FEAR | ESP_UNIQUE | RES_COLD | BRAND_COLD
 D:Driving right through the chest, piercing strongest armour.
@@ -3468,12 +3468,12 @@ D:and the icy earth swung blind and blackening in the moonless air. And the
 D:clouds perish'd, Darkness had no need of aid from them, she was the Universe."
 
 
-# The Awl-Pike 'Warp Spear'
+# The Long Spear 'Warp Spear'
 
 N:280:'Warp Spear'
-I:22:4:0
-W:55:30:100:0
-P:0:2d20:20:-20:0
+I:22:26:0
+W:55:30:130:0
+P:0:3d13:20:-20:0
 F:SHOW_MODS | CURSED | HEAVY_CURSE | AUTO_CURSE | CHAOTIC | RES_CHAOS
 F:ACTIVATE | RETURNING
 D:A strange, translucent weapon with flashes of blue light running through it
@@ -3485,7 +3485,7 @@ D:imbued by corruption this spear is.
 
 N:281:of Utumno
 I:22:9:-9
-W:40:40:130:0
+W:40:40:120:0
 P:0:3d4:16:26:0
 F:SHOW_MODS | CURSED | HEAVY_CURSE | ESP_GOOD | INT | WIS | DEX | SLAY_ANIMAL
 F:RES_FIRE | RES_ACID | RES_COLD | RES_ELEC | IM_POISON | RES_DARK | RES_NEXUS
