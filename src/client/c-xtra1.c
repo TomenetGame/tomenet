@@ -192,7 +192,7 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 	else sprintf(tmp, "%3d", level);
 
 	colour = (level < max_lev) ? TERM_YELLOW : (level < PY_MAX_PLAYER_LEVEL ? TERM_L_GREEN : (level < PY_MAX_LEVEL ? TERM_L_UMBER : TERM_BLUE));
-	if (max_lev == max_plv) {
+	if (max_lev >= max_plv) { /* In rare cases max_lev can actually exceed max_plv, if player had drained xp and meanwhile gained enough xp that the spillover into max_exp crossed the level threshold! */
 		Term_putstr(COL_LEVEL + 5, ROW_LEVEL, -1, colour, "    ");
 		Term_putstr(COL_LEVEL + 9 + 3 - strlen(tmp), ROW_LEVEL, -1, colour, tmp);
 	} else {
