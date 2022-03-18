@@ -4250,9 +4250,16 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					p_ptr->wild_map[(WPOS_IRONDEEPDIVE_X + WPOS_IRONDEEPDIVE_Y * MAX_WILD_X) / 8] |=
 					    (1U << ((WPOS_IRONDEEPDIVE_X + WPOS_IRONDEEPDIVE_Y * MAX_WILD_X) % 8));
   #ifdef DED_IDDC_MANDOS
-					/* automatically know the location of Halls of Mandos */
-					p_ptr->wild_map[(hallsofmandos_wpos_x + hallsofmandos_wpos_y * MAX_WILD_X) / 8] |=
-					    (1U << ((hallsofmandos_wpos_x + hallsofmandos_wpos_y * MAX_WILD_X) % 8));
+					/* automatically learn the location.. IF it has already been discovered in general! */
+					{
+						dungeon_type *d_ptr;
+
+						if (hallsofmandos_wpos_z > 0) d_ptr = wild_info[hallsofmandos_wpos_y][hallsofmandos_wpos_x].tower;
+						else d_ptr = wild_info[hallsofmandos_wpos_y][hallsofmandos_wpos_x].dungeon;
+						if (d_ptr->known)
+							p_ptr->wild_map[(hallsofmandos_wpos_x + hallsofmandos_wpos_y * MAX_WILD_X) / 8] |=
+							    (1U << ((hallsofmandos_wpos_x + hallsofmandos_wpos_y * MAX_WILD_X) % 8));
+					}
   #endif
  #endif
 				}
@@ -7116,7 +7123,30 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				else d_ptr = wild->dungeon;
 
 				d_ptr->known = 0x0;
-				msg_print(Ind, "Dungeon is know UNKNOWN.");
+				msg_print(Ind, "\377rDungeon is know UNKNOWN.");
+				return;
+			}
+			else if (prefix(messagelc, "/knowdun")) { /* (Just for adding IDDC on test server) */
+				worldpos *tpos = &p_ptr->wpos;
+				cave_type **zcave, *c_ptr;
+				wilderness_type *wild = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
+				struct dungeon_type *d_ptr;
+
+				if (!(zcave = getcave(tpos))) {
+					msg_print(Ind, "Fatal: Couldn't acquire zcave!");
+					return;
+				}
+				c_ptr = &zcave[p_ptr->py][p_ptr->px];
+				if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_MORE) {
+					msg_print(Ind, "Error: Not standing on a staircase grid.");
+					return;
+				}
+
+				if (c_ptr->feat == FEAT_LESS) d_ptr = wild->tower;
+				else d_ptr = wild->dungeon;
+
+				d_ptr->known = 0x1 | 0x2 | 0x4 | 0x8; /* Entrance seen, base level known, depth known, boss known */
+				msg_print(Ind, "\377GDungeon is know FULLY KNOWN.");
 				return;
 			}
 			else if (prefix(messagelc, "/anotes")) {

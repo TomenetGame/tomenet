@@ -9722,7 +9722,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	}
 
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
-	/* we now 'learned' the max level of this dungeon */
+	/* we now 'learned' the max depth of this dungeon */
 	if (d_ptr->maxdepth == ABS(wpos->wz) && p_ptr && !is_admin(p_ptr)) {
 		d_ptr->known |= 0x4;
 		/* automatically learn if there is no dungeon boss */
@@ -11610,9 +11610,15 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, 
 		d_ptr->flags3 = flags3;
 		d_ptr->maxdepth = maxdep;
 	}
+	/* It's the Ironman Deep Dive Challenge? */
 	if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y &&
-	    (tower ? (WPOS_IRONDEEPDIVE_Z > 0) : (WPOS_IRONDEEPDIVE_Z < 0)))
+	    (tower ? (WPOS_IRONDEEPDIVE_Z > 0) : (WPOS_IRONDEEPDIVE_Z < 0))) {
+		/* Set special IDDC flags */
 		d_ptr->flags3 |= DF3_NO_DUNGEON_BONUS | DF3_EXP_20 | DF3_LUCK_PROG_IDDC;
+		/* Dungeon is fully known right from the start without requiring discovery:
+		   Entrance seen, base level known, depth known, 'boss' known. */
+		d_ptr->known = 0x1 | 0x2 | 0x4 | 0x8;
+	}
 
 #ifdef RPG_SERVER /* Make towers/dungeons harder - C. Blue */
 	/* If this dungeon was originally intended to be 'real' ironman,
