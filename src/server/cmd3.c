@@ -1874,6 +1874,12 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 		}
 	}
 
+	if (!p_ptr->warning_drop_town && istown(&p_ptr->wpos) && !(zcave && inside_inn(p_ptr, &zcave[p_ptr->py][p_ptr->px]))) {
+		msg_print(Ind, "\374\377oWARNING: Items dropped in town outside of the inn might disappear quickly!");
+		s_printf("warning_drop_town: %s\n", p_ptr->name);
+		p_ptr->warning_drop_town = 1;
+	}
+
 	/* Let's not end afk for this - C. Blue */
 	/* un_afk_idle(Ind); */
 

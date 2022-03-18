@@ -2977,6 +2977,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_edmt = 1;
 		p_ptr->warning_stealing = 1;
 		p_ptr->warning_powins = 1;
+		p_ptr->warning_drop_town = 1;
 		return;
 	}
 
@@ -3172,6 +3173,8 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_depth = 1;
 		p_ptr->warning_partyexp = 1;
 		p_ptr->warning_status_blindness = p_ptr->warning_status_confusion = 1;
+		p_ptr->warning_powins = 1;
+		p_ptr->warning_drop_town = 1;
 	}
 	if (p_ptr->max_plv > 40) {
 		p_ptr->warning_status_stun = 1;
