@@ -6804,13 +6804,13 @@ void view_exploration_history(int Ind) {
 			else strcpy(bn, " no guardian");
 		}
 
-		fprintf(fff, " \377u%-30s (%2d,%2d)  %s%s  %s\n",
+		fprintf(fff, " \377u%-31s  (%2d,%2d) %s%s  %s\n",
 		    get_dun_name(dungeon_x[i], dungeon_y[i], dungeon_tower[i],
 		    getdungeon(&((struct worldpos){dungeon_x[i], dungeon_y[i], dungeon_tower[i] ? 1 : -1})), 0, FALSE),
 		    dungeon_x[i], dungeon_y[i],
 		    (known & 0x2) ? format("%4dft", d_ptr->baselevel * 50) : "",
-		    (known & 0x4) ? format(" - %4dft", (d_ptr->baselevel + d_ptr->maxdepth - 1) * 50) : "",
-		    (known & 0x8) ? bn : "");
+		    (known & 0x4) ? format("-%4dft", (d_ptr->baselevel + d_ptr->maxdepth - 1) * 50) : "",
+		    (known & 0x8) ? bn : ""); /* We assume that the boss can only be known if the max depth is known, otherwise formatting might suck a bit */
 	}
 
 	if (none) fprintf(fff, "\n\377u    Nobody has ever discovered a dungeon in this town's history!\n");
