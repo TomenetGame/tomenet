@@ -3968,6 +3968,9 @@ void quest_reply(int Ind, int q_idx, char *str) {
 	for (i = 0; i < q_ptr->keywords; i++) {
 		q_key = &q_ptr->keyword[i];
 
+		/* Only allowed for admins? (Testing/debugging) */
+		if (q_key->admin_only && !is_admin(p_ptr)) continue;
+
 		if (!q_key->stage_ok[stage] || /* no more keywords? */
 		    !q_key->questor_ok[questor_idx]) continue;
 

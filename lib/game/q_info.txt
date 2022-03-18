@@ -58,7 +58,8 @@ V:1.0.0
 #   this is a hack: This stage's dialogue will actually mimic the stage dialogue from the stage of the absolute value of 'examine' argument. NOTE: You must not refer to another cloned dialogue!
 # (optional - for questor dialogue) Wr:questor:stage:default reply line (replaces the 'has nothing to say about that' line)
 #   use $$Q or $$q up to one time, to insert the questor's name! Q = show in light umber (for active talk), q = show in dark umber (for passive narration)
-# (optional - up to 100x - dialogue keywords) Y:questor (-1 for any):stage (-1 for any*):flags:keyword (or "y" for 1st keyword and "n" for second, for a yes/no choice; or $$p1 to $$p5 for up to 5 different randomly generated passwords):changeflags:nextstage (or 255 for dont change stage)
+# (optional - up to 100x - dialogue keywords) Y:questor (-1 for any):stage (-1 for any*):flags:keyword(*see comment below):changeflags:nextstage (or 255 for dont change stage)
+#   (*) ..or "y" for 1st keyword and "n" for second, for a yes/no choice, or $$p1 to $$p5 for up to 5 different randomly generated passwords, "~" for empty keyword or "~"-prefixed keyword for admins-only.
 # (optional - after a Y-line) YQ:list of further questors (their index numbers, 0..29) for which this keyword is valid, separated by colons
 # (optional - after a Y-line) YS:list of further stages during which this keyword is valid, separated by colons
 # (optional - up to 50x - replies to keywords) y:questor (-1 for any):stage (-1 for any):flags:keyword
@@ -129,6 +130,7 @@ V:1.0.0
 #   $$P will substitute the amount of party members (0 for no party).
 # -About keywords:
 #   "~" means the empty keyword "", user can just press ENTER key without writing anything to trigger it.
+#   a keyword prefixed with "~" means that only admins can use it. This prefix can only be used in Y-lines, NOT in any sublines (eg yY-lines).
 #   if the FIRST MATCHING (questor+stage) keyword is "y" it brings up a yes/no prompt. The second questor/stage-matching keyword should be "n".
 #   (*) Keywords set to 'any stage' (-1) are not sufficient to stop an otherwise empty stage from terminate nor to prompt a quest_dialogue() on their own.
 # -About global 'flags':
@@ -412,6 +414,11 @@ yR:-://quest_towneltalk("$$c", 5)
 Y:0:0:-:*ev*:-:255
 y:-1:-1:-:*ev*
 yR:-://quest_towneltalk("$$c", 6)
+
+#for admin testing
+Y:0:0:-:~adminall:-:255
+y:-1:-1:-:adminall
+yR:-://quest_towneltalk("$$c", -2)
 
 
 #Talk to a roaming guard who patrols Menegroth

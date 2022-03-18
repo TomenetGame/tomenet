@@ -3,6 +3,10 @@
 -- all be named 'quest_' and end on the 'internal quest codename'.  - C. Blue
 
 -- Purpose: The Town Elder gives you advice based on your actual current character's details!
+-- msg: the class name (eg 'adventurer').
+-- topic: -2 = display ALL advice (0..max), admin only. -1 is omitted as that one is already displayed on 'accepting' the quest.
+--        -1 = display generic advice, always shown, that is very important (ghost status, black breath..).
+--        0..max = different help topics, specified by the player.
 function quest_towneltalk(Ind, msg, topic)
 	local hinted, hintsub, i, w, x, y, z
 
@@ -14,7 +18,7 @@ function quest_towneltalk(Ind, msg, topic)
 	-- dungeoneering [explore|exploring|exploration],events [eventS],partying [partyING|parties]
 	--warn about redundant resses [equipMENT]/ encumberments/hunger/light [status|state]
 
-	if admin == 1 then msg_print(Ind, "Topic #"..topic) end
+	if admin == 1 then msg_print(Ind, "Topic = "..topic) end
 
 	--*** generic advice that is so important that it's always given ***
 	if topic == -1 then
@@ -43,6 +47,7 @@ function quest_towneltalk(Ind, msg, topic)
 				hinted = 1
 			end
 			--BpR:
+--[[  moved down to topic #0 for now, more indepth too
 			if player.pclass == CLASS_WARRIOR or player.pclass == CLASS_PALADIN or player.pclass == CLASS_MIMIC or player.pclass == CLASS_ROGUE then
 				if player.num_blow < 2 then
 					msg_print(Ind, "\252\255UFor a "..msg.." you attack too slowly. Your number of blows per round (BpR) should at least be 2!")
@@ -54,6 +59,7 @@ function quest_towneltalk(Ind, msg, topic)
 					hinted = 1
 				end
 			end
+]]
 			--Cursed non-artifact equipment on lowbies:
 			if player.lev < 20 or admin == 1 then
 				x = 0
@@ -105,7 +111,7 @@ function quest_towneltalk(Ind, msg, topic)
 	end
 
 	--*** preparation/inventory ***
-	if topic == 0 then
+	if topic == 0 or topic == -2 then
 		--encumberment too for MA (and Dodging?)
 		if player.monk_heavyarmor == 1 then
 			msg_print(Ind, "\252\255UIt seems your armour weight negatively impacts your martial arts performance, hindering your abilities!");
@@ -395,10 +401,55 @@ function quest_towneltalk(Ind, msg, topic)
 				hintsub = 1
 			end
 		end
+
+		-- only 1 BpR as melee fighter: Hint about +STR forms/rings
+		if player.num_blow == 1 and
+		   (player.pclass == CLASS_WARRIOR or player.pclass == CLASS_ROGUE or player.pclass == CLASS_MIMIC or player.pclass == CLASS_PALADIN or
+		    player.pclass == CLASS_RANGER or player.pclass == CLASS_MINDCRAFTER or player.pclass == CLASS_DEATHKNIGHT or player.pclass == CLASS_HELLKNIGHT or
+		    player.s_info[SKILL_SWORD+1].value >= 1000 or player.s_info[SKILL_BLUNT+1].value >= 1000 or
+		    player.s_info[SKILL_AXE+1].value >= 1000 or player.s_info[SKILL_POLEARM+1].value >= 1000 or
+		    player.s_info[SKILL_CRITS+1].value >= 1000) then
+			-- are we wielding a weapon at all..?
+			if player.inventory[INVEN_WIELD+1].k_idx == 0 and (player.inventory[INVEN_ARM+1].k_idx == 0 or player.inventory[INVEN_WIELD+2].tval == 34) then --INVEN_ARM,34=TV_SHIELD
+				msg_print(Ind, "\252\255UYou seem to have skill in weapon handling, yet you are not wielding a weapon.")
+				hinted = 1
+			-- Dual-wield tip first, if it can remedy the 1 bpr, we don't need to pester the player moar for now..
+			elseif player.s_info[SKILL_DUAL+1].value == 1000 and
+			    (player.inventory[INVEN_ARM+1].k_idx == 0 or player.inventory[INVEN_WIELD+2].tval == 34) then --INVEN_ARM,34=TV_SHIELD
+				msg_print(Ind, "\252\255USince I can see you only have 1 BpR, aka 1 attack per round, you could try")
+				msg_print(Ind, "\252\255Uusing light armour and dual-wielding two light weapons, to get at least 2 BpR!")
+				hinted = 1
+			-- first, verify that DEX is at least 10.
+			-- Only for warriors this doesn't matter if STR is high enough.
+			-- For rogues on the other hand, DEX is a main stat and should be high.
+			elseif (player.stat_use[A_DEX+1] < 10 and player.pclass ~= CLASS_WARRIOR) or
+			   (player.stat_use[A_DEX+1] < 15 and player.pclass == CLASS_ROGUE) then
+				msg_print(Ind, "\252\255UYour dexterity seems very low, making it hard to fight in melee.")
+				msg_print(Ind, "\252\255UIf you plan on doing melee combat you should look for items that increase it!")
+				msg_print(Ind, "\252\255URings are easiest to obtain. At mid levels you should buy potions of dexterity.")
+				hinted = 1
+			-- either not enough STR or weapon too heavy:
+			else
+				-- display tip about easiest way to raise STR: using a stat ring
+				msg_print(Ind, "\252\255USince I can see you only have 1 BpR, aka attack per round, I must say that")
+				msg_print(Ind, "\252\255Ueither your weapon is too heavy or your strength is too low for melee combat!")
+				msg_print(Ind, "\252\255UIf even using a very light weapon of at most 3.0 lb weight doesn't help you to")
+				msg_print(Ind, "\252\255Uobtain at least 2 BpR then you should look for items that increase strength!")
+				msg_print(Ind, "\252\255URings are easiest to obtain. At mid levels you should buy potions of strength.")
+				hinted = 1
+				-- display additional tip about using a +STR form
+				if (player.s_info[SKILL_MIMIC+1].value > 0 and player.prace ~= RACE_VAMPIRE) or
+				   player.pclass == CLASS_MIMIC or player.pclass == CLASS_SHAMAN then
+					msg_print(Ind, "\252\255UAlso as a potential mimicry user you could try out forms that give a bonus")
+					msg_print(Ind, "\252\255Uto strength, such as trolls, Forest Troll being the easiest and most useful.")
+					hinted = 1
+				end
+			end
+		end
 	end
 
 	--*** equipment ***
-	if topic == 1 then
+	if topic == 1 or topic == -2 then
 		--resistances
 		if player.lev >= 29 or admin == 1 then
 			if player.free_act == 0 then
@@ -451,33 +502,35 @@ function quest_towneltalk(Ind, msg, topic)
 	end
 
 	--*** skills ***
-	if topic == 2 then
+	if topic == 2 or topic == -2 then
 		--if someone has trained spell skills, tell him to actually get the important spell scrolls for those
 		--tell him how to create macros
 		
 	end
 
 	--*** status ***
-	if topic == 3 then
+	if topic == 3 or topic == -2 then
 		--check for rather low attributes, eg CON, with advice how to improve it. Also stealth. And drained stats.
 		
 	end
 
 	--*** partying ***
-	if topic == 4 then
+	if topic == 4 or topic == -2 then
 	end
 
 	--*** dungeon exploration ***
-	if topic == 5 then
+	if topic == 5 or topic == -2 then
 		msg_print(Ind, "\252\255UGo to the town hall, the largest building in Bree! The right side entrance is the mathom house. There you can see a list of all known dungeons and also find out which ones haven't been explored recently, giving you bonus XP!")
 		hinted = 1
 	end
 
 	--*** events ***
-	if topic == 6 then
+	if topic == 6 or topic == -2 then
 		msg_print(Ind, "\252\255UTo check for ongoing events, type '/evinfo' into chat. Events take place regularly every 1 or 2 hours.")
 		hinted = 1
 	end
+
+	--- Done ---
 
 	if hinted == 0 then
 		msg_print(Ind, "\252\255UYou seem to be doing fine, "..msg..".")

@@ -473,6 +473,7 @@ typedef struct qi_stage {
    a change in quest stage. */
 typedef struct qi_keyword {
 	char keyword[QI_KEYWORD_LEN];			/* each convo may allow the player to reply with up to m keywords a 30 chars; 'Y' as 1st keyword and 'N' as 2nd trigger a yes/no hack */
+	bool admin_only;				/* this keyword can only be used by admins (for testing/debugging) */
 	bool questor_ok[QI_QUESTORS];			/* this keyword is valid for which questor(s) ? */
 	bool stage_ok[QI_STAGES], any_stage;		/* this keyword is valid during which stage(s) ? any_stage is an extra marker for quest_dialogue() */
 	u16b flags;					/* required flags configuration for a keyword to be enabled */
@@ -562,7 +563,7 @@ typedef struct quest_info {
 
     /* QUESTOR (quest giver) RESTRICTIONS: */
 	/* player restrictions */
-	byte privilege;					/* quest can only be acquired by admins (for testing them etc) */
+	byte privilege;					/* quest can only be acquired by privileged (1), very priv. (2), admins (3) (for testing/debugging etc) */
 	byte minlev, maxlev;				/* eligible player level range (0 for any) */
 	u32b races, classes;				/* eligible player classes/races (CFx/RFx flags) */
 	bool mode_norm, mode_el, mode_pvp;		/* are these character modes eligible to join? (normal = normal/uw/hell) */
