@@ -987,6 +987,8 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
         For details about slash commands, see further below in this paragraph.
         There is also a /say command for talking to players nearby, and a
         /shout command for waking up monsters! See further below.
+        To copy/paste text from and to chat, see CTRL+K/CTRL+L keys under
+        subchapter (0.2a) further below.
 
 '       lets you peek at the equipment of party members or players within
         sight.
