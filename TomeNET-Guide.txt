@@ -16413,12 +16413,15 @@ create a character!):
     their advantage in hit points, ie the extra hit points they gain from such
     forms will diminish as they continue to rise to very high character levels.
 
-    Hint: Maybe there's a friendly mimicry-user around who can forge some
+    Hints: Maybe there's a friendly mimicry-user around who can forge some
     'Rings of Polymorphing' for you from forms he or she no longer uses.
     As for all shape-shifters going with fruit bat body modification is not
     recommended, since it will restrict your equipment even if you polymorph.
     Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm), or Martial
     Arts if you don't want to use weapons, and always keep it maximized.
+    Forms giving a strength bonus are relatively common, eg Forest Troll, so if
+    your BpR is close to a break point and just requires +1 or +2 more STR, try
+    using troll form to see if its STR bonus gives you that juicy +1 BpR.
 
 - Archer
     Archers aren't good at fighting, but can deliever extremely high damage
@@ -16635,6 +16638,10 @@ create a character!):
     recommended, since it will restrict your equipment even if you polymorph.
     Note that all 'O' Ogre type monsters count as 'giants' too, so their forms
     are usable in shaman mimicry.
+    A tip for weapon-using shamans who are short on STR for gaining more BpR:
+    Forms giving a strength bonus are relatively common, eg Forest Troll, so if
+    your BpR is close to a break point and just requires +1 or +2 more STR, try
+    using troll form to see if its STR bonus gives you that juicy +1 BpR.
 
 - Runemaster
     Runemasters use arcane symbols or 'runes' to summon pure elemental magic.
