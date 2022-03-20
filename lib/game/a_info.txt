@@ -3468,7 +3468,7 @@ D:and the icy earth swung blind and blackening in the moonless air. And the
 D:clouds perish'd, Darkness had no need of aid from them, she was the Universe."
 
 
-# The Long Spear 'Warp Spear'
+# The Great Spear 'Warp Spear'
 
 N:280:'Warp Spear'
 I:22:26:0

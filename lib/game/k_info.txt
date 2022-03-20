@@ -4480,7 +4480,7 @@ A:5/10
 P:0:1d1:0:0:0
 F:EASY_KNOW | IGNORE_FIRE | LITE1
 
-N:528:& Long Spear~
+N:528:& Great Spear~
 G:/:o
 I:22:26:0
 W:17:0:160:500
