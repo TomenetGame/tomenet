@@ -1,7 +1,7 @@
 
 
 
-{R			TomeNET server - v4.7.4a
+{R			TomeNET server - v4.8.0
   
 {r			"Tales of Middle Earth"
 

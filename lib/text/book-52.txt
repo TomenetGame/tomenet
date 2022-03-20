@@ -1,11 +1,11 @@
             /---------------------------------------------+
            /     TomeNET Gazette                          |
-           |                          issued 14/Sep/2020  /
+           |                          issued 20/Mar/2022  /
            +---------------------------------------------/
 
 A manual to the game can be found in your TomeNET folder, it's the file
 'TomeNET-Guide.txt', or read it online at www.tomenet.eu or in-game even by
-pressing ~ g or (if your client is at least v4.7.3) by double-tapping '?'.
+pressing ~ g or (if your client is at least v4.8.0) by double-tapping '?'.
 
 For a quick command key overview, press '?' key.
 Press : to chat with other players, press CTRL+U for the audio mixer.
