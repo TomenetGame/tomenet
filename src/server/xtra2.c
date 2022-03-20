@@ -1542,7 +1542,7 @@ bool set_tim_wraithstep(int Ind, int v) {
  * Note that blindness is currently the only thing which can affect
  * "player_can_see_bold()".
  */
-bool set_blind(int Ind, int v) {
+bool set_blind(int Ind, int v) { /* bad status effect */
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -1551,9 +1551,6 @@ bool set_blind(int Ind, int v) {
 	/* the admin wizard can not be blinded */
 	if (p_ptr->admin_wiz) return 1;
 
-/* instead put into dungeon.c for faster recovery
-	if (get_skill(p_ptr, SKILL_HCURING) >= 30) v /= 2;
-*/
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
@@ -1621,7 +1618,7 @@ bool set_blind(int Ind, int v) {
 /*
  * Set "p_ptr->confused", notice observable changes
  */
-bool set_confused(int Ind, int v) {
+bool set_confused(int Ind, int v) { /* bad status effect */
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -1629,8 +1626,6 @@ bool set_confused(int Ind, int v) {
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
-
-	if (get_skill(p_ptr, SKILL_MIND) >= 30) v /= 2;
 
 	/* Open */
 	if (v) {
@@ -1696,7 +1691,7 @@ void set_pushed(int Ind, int dir) {
 /*
  * Set "p_ptr->poisoned", notice observable changes
  */
-bool set_poisoned(int Ind, int v, int attacker) {
+bool set_poisoned(int Ind, int v, int attacker) { /* bad status effect */
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -1705,9 +1700,6 @@ bool set_poisoned(int Ind, int v, int attacker) {
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
-/* instead put into dungeon.c for faster recovery
-	if (get_skill(p_ptr, SKILL_HCURING) >= 30) v /= 2;
-*/
 	/* Open */
 	if (v) {
 		if (!p_ptr->poisoned) {
@@ -1748,7 +1740,7 @@ bool set_poisoned(int Ind, int v, int attacker) {
 	/* Result */
 	return (TRUE);
 }
-bool set_diseased(int Ind, int v, int attacker) {
+bool set_diseased(int Ind, int v, int attacker) { /* bad status effect */
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -1761,9 +1753,6 @@ bool set_diseased(int Ind, int v, int attacker) {
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
-/* instead put into dungeon.c for faster recovery
-	if (get_skill(p_ptr, SKILL_HCURING) >= 30) v /= 2;
-*/
 	/* Open */
 	if (v) {
 		if (!p_ptr->diseased) {
@@ -1809,7 +1798,7 @@ bool set_diseased(int Ind, int v, int attacker) {
 /*
  * Set "p_ptr->afraid", notice observable changes
  */
-bool set_afraid(int Ind, int v) {
+bool set_afraid(int Ind, int v) { /* bad status effect */
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -1859,7 +1848,7 @@ bool set_afraid(int Ind, int v) {
 /*
  * Set "p_ptr->paralyzed", notice observable changes
  */
-bool set_paralyzed(int Ind, int v) {
+bool set_paralyzed(int Ind, int v) { /* bad status effect */
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -1910,7 +1899,7 @@ bool set_paralyzed(int Ind, int v) {
 }
 
 /* Added for Rune-of-Protection traps in PvP - C. Blue */
-bool set_stopped(int Ind, int v) {
+bool set_stopped(int Ind, int v) { /* bad status effect */
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -1965,17 +1954,13 @@ bool set_stopped(int Ind, int v) {
  *
  * Note that we must redraw the map when hallucination changes.
  */
-bool set_image(int Ind, int v) {
+bool set_image(int Ind, int v) { /* bad status effect */
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
-/* instead put into dungeon.c for faster recovery
-	if (get_skill(p_ptr, SKILL_MIND) >= 30) v /= 2;
-	if (get_skill(p_ptr, SKILL_HCURING) >= 50) v /= 2;
-*/
 	/* Open */
 	if (v) {
 		if (!p_ptr->image) {
@@ -2084,7 +2069,7 @@ bool set_fast(int Ind, int v, int p) {
 /*
  * Set "p_ptr->slow", notice observable changes
  */
-bool set_slow(int Ind, int v) {
+bool set_slow(int Ind, int v) { /* bad status effect */
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -3045,7 +3030,7 @@ bool set_oppose_pois(int Ind, int v) {
 
 
 /* like set_stun() but ignoring stance defense */
-bool set_stun_raw(int Ind, int v) {
+bool set_stun_raw(int Ind, int v) { /* bad status effect */
 	player_type *p_ptr = Players[Ind];
 	int old_aux, new_aux;
 	bool notice = FALSE;
@@ -3152,7 +3137,7 @@ bool set_stun_raw(int Ind, int v) {
  *
  * Note the special code to only notice "range" changes.
  */
-bool set_stun(int Ind, int v) {
+bool set_stun(int Ind, int v) { /* bad status effect */
 	player_type *p_ptr = Players[Ind];
 	int old_aux, new_aux;
 	bool notice = FALSE;
@@ -3269,19 +3254,16 @@ bool set_stun(int Ind, int v) {
  *
  * Note the special code to only notice "range" changes.
  */
-bool set_cut(int Ind, int v, int attacker) {
+bool set_cut(int Ind, int v, int attacker) { /* bad status effect */
 	player_type *p_ptr = Players[Ind];
 	int old_aux, new_aux;
 	bool notice = FALSE;
 
 	if (p_ptr->martyr && v) return FALSE;
 
-	/* Hack -- Force good values */
-	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
-
-/* instead put into dungeon.c for faster recovery
-	if (get_skill(p_ptr, SKILL_HCURING) >= 40) v /= 2;
-*/
+	/* Hack -- Force good values -- allow up to 1000 (Mortal Wound starts at 800..1000) */
+	//v = (v > cfg.spell_stack_limit * 5) ? cfg.spell_stack_limit * 5 : (v < 0) ? 0 : v;
+	v = (v > 1001) ? 1001 : (v < 0) ? 0 : v;
 
 	/* p_ptr->no_cut? for mimic forms that cannot bleed */
 	if (p_ptr->no_cut) v = 0;
@@ -3290,34 +3272,34 @@ bool set_cut(int Ind, int v, int attacker) {
 	if (v && p_ptr->ghost) v = 0;
 
 	/* Mortal wound */
-	if (p_ptr->cut > 1000) old_aux = 7;
+	if (p_ptr->cut >= CUT_MORTAL_WOUND) old_aux = 7;
 	/* Deep gash */
-	else if (p_ptr->cut > 200) old_aux = 6;
+	else if (p_ptr->cut >= 200) old_aux = 6;
 	/* Severe cut */
-	else if (p_ptr->cut > 100) old_aux = 5;
+	else if (p_ptr->cut >= 100) old_aux = 5;
 	/* Nasty cut */
-	else if (p_ptr->cut > 50) old_aux = 4;
+	else if (p_ptr->cut >= 50) old_aux = 4;
 	/* Bad cut */
-	else if (p_ptr->cut > 25) old_aux = 3;
+	else if (p_ptr->cut >= 25) old_aux = 3;
 	/* Light cut */
-	else if (p_ptr->cut > 10) old_aux = 2;
+	else if (p_ptr->cut >= 10) old_aux = 2;
 	/* Graze */
 	else if (p_ptr->cut > 0) old_aux = 1;
 	/* None */
 	else old_aux = 0;
 
 	/* Mortal wound */
-	if (v > 1000) new_aux = 7;
+	if (v >= CUT_MORTAL_WOUND) new_aux = 7;
 	/* Deep gash */
-	else if (v > 200) new_aux = 6;
+	else if (v >= 200) new_aux = 6;
 	/* Severe cut */
-	else if (v > 100) new_aux = 5;
+	else if (v >= 100) new_aux = 5;
 	/* Nasty cut */
-	else if (v > 50) new_aux = 4;
+	else if (v >= 50) new_aux = 4;
 	/* Bad cut */
-	else if (v > 25) new_aux = 3;
+	else if (v >= 25) new_aux = 3;
 	/* Light cut */
-	else if (v > 10) new_aux = 2;
+	else if (v >= 10) new_aux = 2;
 	/* Graze */
 	else if (v > 0) new_aux = 1;
 	/* None */
@@ -3327,38 +3309,32 @@ bool set_cut(int Ind, int v, int attacker) {
 	if (new_aux > old_aux) {
 		/* Describe the state */
 		switch (new_aux) {
-			/* Graze */
-			case 1:
+		/* Graze */
+		case 1:
 			msg_print(Ind, "You have been given a graze.");
 			break;
-
-			/* Light cut */
-			case 2:
+		/* Light cut */
+		case 2:
 			msg_print(Ind, "You have been given a light cut.");
 			break;
-
-			/* Bad cut */
-			case 3:
+		/* Bad cut */
+		case 3:
 			msg_print(Ind, "You have been given a bad cut.");
 			break;
-
-			/* Nasty cut */
-			case 4:
+		/* Nasty cut */
+		case 4:
 			msg_print(Ind, "You have been given a nasty cut.");
 			break;
-
-			/* Severe cut */
-			case 5:
+		/* Severe cut */
+		case 5:
 			msg_print(Ind, "You have been given a severe cut.");
 			break;
-
-			/* Deep gash */
-			case 6:
+		/* Deep gash */
+		case 6:
 			msg_print(Ind, "You have been given a deep gash.");
 			break;
-
-			/* Mortal wound */
-			case 7:
+		/* Mortal wound */
+		case 7:
 			msg_print(Ind, "You have been given a mortal wound.");
 			break;
 		}
@@ -3371,8 +3347,8 @@ bool set_cut(int Ind, int v, int attacker) {
 	else if (new_aux < old_aux) {
 		/* Describe the state */
 		switch (new_aux) {
-			/* None */
-			case 0:
+		/* None */
+		case 0:
 			msg_print(Ind, "You are no longer bleeding.");
 			if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 			p_ptr->cut_attacker = 0;

@@ -4719,6 +4719,7 @@ static bool process_player_end_aux(int Ind) {
 
 	/*** Damage over Time ***/
 #define POISON_DIV 30
+#define CUT_DIV 400
 
 	/* Take damage from poison */
 	if (p_ptr->poisoned) {
@@ -4732,6 +4733,8 @@ static bool process_player_end_aux(int Ind) {
 			p_ptr->died_from_ridx = 0;
 			take_hit(Ind, k, "poison", p_ptr->poisoned_attacker);
 		} else if (p_ptr->slow_poison == 2) {
+			p_ptr->slow_poison = 3;
+		} else if (p_ptr->slow_poison == 3) {
 			p_ptr->slow_poison = 1;
 		} else {
 			/* Take damage */
@@ -4947,16 +4950,21 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Take damage from cuts */
 	if (p_ptr->cut) {
-		/* Mortal wound or Deep Gash */
-		if (p_ptr->cut > 200) i = 3;
-		/* Severe cut */
-		else if (p_ptr->cut > 100) i = 2;
-		/* Other cuts */
-		else i = 1;
+		k = p_ptr->mhp / CUT_DIV;
+		k += (rand_int(CUT_DIV) < p_ptr->mhp % CUT_DIV) ? 1 : 0;
+		if (!k) k = 1;
+
+		if (p_ptr->cut >= CUT_MORTAL_WOUND) i = 7;	/* Mortal wound */
+		if (p_ptr->cut >= 200) i = 6;	/* Deep gash */
+		if (p_ptr->cut >= 100) i = 5;	/* Severe cut */
+		if (p_ptr->cut >= 50) i = 4;	/* Nasty cut */
+		if (p_ptr->cut >= 25) i = 3;	/* Bad cut */
+		if (p_ptr->cut >= 10) i = 2;	/* Light cut */
+		else i = 1;			/* Graze */
 
 		/* Take damage */
 		p_ptr->died_from_ridx = 0;
-		take_hit(Ind, i, "a fatal wound", p_ptr->cut_attacker);
+		take_hit(Ind, i * k, "a fatal wound", p_ptr->cut_attacker);
 	}
 
 
@@ -5358,7 +5366,9 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Hack -- Hallucinating */
 	if (p_ptr->image) {
-		int adjust = 1 + minus_health;
+		int adjust = 1;
+
+		if (get_skill(p_ptr, SKILL_MIND) >= 30) adjust++;
 		if (get_skill(p_ptr, SKILL_HCURING) >= 50) adjust++;
 		(void)set_image(Ind, p_ptr->image - adjust);
 	}
@@ -5366,6 +5376,7 @@ static bool process_player_end_aux(int Ind) {
 	/* Blindness */
 	if (p_ptr->blind) {
 		int adjust = 1 + minus_health;
+
 		if (get_skill(p_ptr, SKILL_HCURING) >= 30) adjust++;
 		(void)set_blind(Ind, p_ptr->blind - adjust);
 	}
@@ -5395,14 +5406,18 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Paralysis */
 	if (p_ptr->paralyzed && p_ptr->paralyzed != 255) /* hack */
-		(void)set_paralyzed(Ind, p_ptr->paralyzed - 1);// - minus_health
+		(void)set_paralyzed(Ind, p_ptr->paralyzed - 1);
 
 	/* Confinement */
 	if (p_ptr->stopped) (void)set_stopped(Ind, p_ptr->stopped - 1);
 
 	/* Confusion */
-	if (p_ptr->confused)
-		(void)set_confused(Ind, p_ptr->confused - minus - minus_combat - minus_health);
+	if (p_ptr->confused) {
+		int adjust = minus + minus_combat;
+
+		if (get_skill(p_ptr, SKILL_MIND) >= 30) adjust *= 2;
+		(void)set_confused(Ind, p_ptr->confused - adjust);
+	}
 
 	/* Afraid */
 	if (p_ptr->afraid)
@@ -5414,7 +5429,7 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Slow */
 	if (p_ptr->slow)
-		(void)set_slow(Ind, p_ptr->slow - minus_magic); // - minus_health
+		(void)set_slow(Ind, p_ptr->slow - minus_magic);
 
 #ifdef ENABLE_MAIA
 	if (p_ptr->divine_crit)
@@ -5625,26 +5640,26 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Poison */
 	if (p_ptr->poisoned) {
-		int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
+		int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] / 2 + minus); //0..4->1..5
+
+		if (get_skill(p_ptr, SKILL_HCURING) >= 30) adjust += 3; //1..8
+		adjust += minus_health; //minus_health is 0..2 -> 1..10
 
 		/* Apply some healing */
-		if (get_skill(p_ptr, SKILL_HCURING) >= 30) adjust *= 2;
-
-		//(void)set_poisoned(Ind, p_ptr->poisoned - adjust - minus_health * 2, p_ptr->poisoned_attacker);
-		(void)set_poisoned(Ind, p_ptr->poisoned - (adjust + minus_health) * (minus_health + 1), p_ptr->poisoned_attacker);
+		(void)set_poisoned(Ind, p_ptr->poisoned - adjust, p_ptr->poisoned_attacker);
 
 		if (!p_ptr->poisoned) p_ptr->slow_poison = 0;
 	}
 
 	/* Disease */
 	if (p_ptr->diseased) {
-		int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
+		int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] / 2 + minus); //0..4->1..5
+
+		if (get_skill(p_ptr, SKILL_HCURING) >= 30) adjust += 3; //1..8
+		adjust += minus_health; //minus_health is 0..2 -> 1..10
 
 		/* Apply some healing */
-		if (get_skill(p_ptr, SKILL_HCURING) >= 30) adjust *= 2;
-
-		//(void)set_diseased(Ind, p_ptr->diseased - adjust - minus_health * 2, p_ptr->poisoned_attacker);
-		(void)set_diseased(Ind, p_ptr->diseased - (adjust + minus_health) * (minus_health + 1), p_ptr->poisoned_attacker);
+		(void)set_diseased(Ind, p_ptr->diseased - adjust, p_ptr->poisoned_attacker);
 	}
 
 	/* Stun */
@@ -5661,17 +5676,18 @@ static bool process_player_end_aux(int Ind) {
 	if (p_ptr->cut) {
 		int adjust = minus;// = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
 
-		/* Biofeedback always helps */
+		/* Hack -- Truly "mortal" wound */
+		if (p_ptr->cut >= CUT_MORTAL_WOUND) {
+			/* Holiness > worldly bandages, always helps */
+			if (get_skill(p_ptr, SKILL_HCURING) >= 40) adjust = 2;
+			else adjust = 0;
+		} else {
+			if (get_skill(p_ptr, SKILL_HCURING) >= 40) adjust *= 2; //..which is also 2 (minus is always 1 here)
+		}
+		/* Biofeedback always helps (Draconian firestone effect) */
 		if (p_ptr->biofeedback) adjust += 5;
 
-		/* Hack -- Truly "mortal" wound */
-		if (p_ptr->cut > 1000) adjust = 0;
-
-		if (get_skill(p_ptr, SKILL_HCURING) >= 40) adjust *= 2;
-
 		/* Apply some healing */
-		//(void)set_cut(Ind, p_ptr->cut - adjust - minus_health * 2, p_ptr->cut_attacker);
-		//(void)set_cut(Ind, p_ptr->cut - (adjust + minus_health) * (minus_health + 1), p_ptr->cut_attacker);
 		(void)set_cut(Ind, p_ptr->cut - adjust * (minus_health + 1), p_ptr->cut_attacker);
 	}
 

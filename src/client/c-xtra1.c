@@ -1332,22 +1332,14 @@ void prt_cut(int cut) {
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
-	if (cut > 1000)
-		c_put_str(TERM_L_RED, "Mortal wound", ROW_CUT, COL_CUT);
-	else if (cut > 200)
-		c_put_str(TERM_RED, "Deep gash  ", ROW_CUT, COL_CUT);
-	else if (cut > 100)
-		c_put_str(TERM_RED, "Severe cut  ", ROW_CUT, COL_CUT);
-	else if (cut > 50)
-		c_put_str(TERM_ORANGE, "Nasty cut   ", ROW_CUT, COL_CUT);
-	else if (cut > 25)
-		c_put_str(TERM_ORANGE, "Bad cut     ", ROW_CUT, COL_CUT);
-	else if (cut > 10)
-		c_put_str(TERM_YELLOW, "Light cut  ", ROW_CUT, COL_CUT);
-	else if (cut)
-		c_put_str(TERM_YELLOW, "Graze     ", ROW_CUT, COL_CUT);
-	else
-		put_str("            ", ROW_CUT, COL_CUT);
+	if (cut >= CUT_MORTAL_WOUND) c_put_str(TERM_L_RED,      "Mortal wound", ROW_CUT, COL_CUT);
+	else if (cut >= 200) c_put_str(TERM_RED,   "Deep gash   ", ROW_CUT, COL_CUT);
+	else if (cut >= 100) c_put_str(TERM_RED,   "Severe cut  ", ROW_CUT, COL_CUT);
+	else if (cut >= 50) c_put_str(TERM_ORANGE, "Nasty cut   ", ROW_CUT, COL_CUT);
+	else if (cut >= 25) c_put_str(TERM_ORANGE, "Bad cut     ", ROW_CUT, COL_CUT);
+	else if (cut >= 10) c_put_str(TERM_YELLOW, "Light cut   ", ROW_CUT, COL_CUT);
+	else if (cut) c_put_str(TERM_YELLOW,      "Graze       ", ROW_CUT, COL_CUT);
+	else put_str(				  "            ", ROW_CUT, COL_CUT);
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);
@@ -1362,14 +1354,10 @@ void prt_stun(int stun) {
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
-	if (stun > 100)
-		c_put_str(TERM_RED, "Knocked out ", ROW_STUN, COL_STUN);
-	else if (stun > 50)
-		c_put_str(TERM_ORANGE, "Heavy stun  ", ROW_STUN, COL_STUN);
-	else if (stun)
-		c_put_str(TERM_ORANGE, "Stun        ", ROW_STUN, COL_STUN);
-	else
-		put_str("            ", ROW_STUN, COL_STUN);
+	if (stun > 100) c_put_str(TERM_RED, "Knocked out ", ROW_STUN, COL_STUN);
+	else if (stun > 50) c_put_str(TERM_ORANGE, "Heavy stun  ", ROW_STUN, COL_STUN);
+	else if (stun) c_put_str(TERM_ORANGE, "Stun        ", ROW_STUN, COL_STUN);
+	else put_str("            ", ROW_STUN, COL_STUN);
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);

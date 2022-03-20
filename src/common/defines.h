@@ -1859,6 +1859,8 @@
 //#define PY_REGEN_HPBASE		1492		/* Min amount hp regen*2^16 */  <- works negatively at ~<=215 HP, positively at ~>=260 HP
 #define PY_REGEN_MNBASE		524		/* Min amount mana regen*2^16 */
 
+/* Cut thresholds */
+#define CUT_MORTAL_WOUND	800	/* Was 1000 */
 
 
 /*** Option Definitions ***/

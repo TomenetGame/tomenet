@@ -48,8 +48,9 @@
 /* Similar purpose macro (also for take_hit)
    (Note: While i > 0 can also mean special PROJECTOR_... causes,
    i < 0 is exclusively reserved for monsters.) */
-#define IS_PLAYER(i)	(i > 0 && i <= NumPlayers)
-#define IS_MONSTER(i)	(i < 0)
+#define IS_PLAYER(i)		((i) > 0 && (i) <= NumPlayers)
+#define IS_OTHER_PLAYER(i, Ind)	((i) > 0 && (i) <= NumPlayers && (i) != Ind)
+#define IS_MONSTER(i)		((i) < 0)
 
 /* Take damage before applying polymorph effect?
    Traditionally, polymorph would cancel damage instead. - C. Blue */
@@ -1858,7 +1859,8 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	int old_num, new_num;
 
 
-	/* Note: We ignore safe zones, admin_invuln and also invuln here */
+	/* Note: We ignore safe zones, admin_invuln and also invuln here.
+	   Todo: Don't count DoTs eg poisoning. */
 	if (IS_PLAYER(Ind_attacker)) {
 		player_type *q_ptr = Players[Ind_attacker];
 
@@ -1882,7 +1884,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	if (p_ptr->death) return;
 
 	/* towns are safe-zones from ALL hostile actions - except blood bond */
-	if (IS_PLAYER(Ind_attacker)) {
+	if (IS_OTHER_PLAYER(Ind_attacker, Ind)) {
 		if ((istown(&p_ptr->wpos) || istown(&Players[Ind_attacker]->wpos)) &&
 		    (!check_blood_bond(Ind_attacker, Ind) ||
 		     p_ptr->afk || Players[Ind_attacker]->afk))
@@ -1951,7 +1953,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	} */
 
 	/* for MODE_PVP only: prevent easy fleeing from PvP encounter >=) */
-	if (IS_PLAYER(Ind_attacker) || in_pvparena(&p_ptr->wpos)) {
+	if (IS_OTHER_PLAYER(Ind_attacker, Ind) || in_pvparena(&p_ptr->wpos)) {
 		p_ptr->pvp_prevent_tele = PVP_COOLDOWN_TELEPORT;
 		p_ptr->redraw |= PR_DEPTH;
 	}
@@ -2092,7 +2094,7 @@ destined_defeat:
 
 	/* Dead player */
 	if (p_ptr->chp < 0) {
-		if (IS_PLAYER(Ind_attacker)) {
+		if (IS_OTHER_PLAYER(Ind_attacker, Ind)) {
 			if (check_blood_bond(Ind, Ind_attacker)) {
 				player_type *p2_ptr = Players[Ind_attacker];
 				p_ptr->chp = p_ptr->mhp;
@@ -2193,7 +2195,7 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 
 #if 0 //Ind_attacker not available - players cannot cast insanity-draining effects on other players anyway
 	/* towns are safe-zones from ALL hostile actions - except blood bond */
-	if (IS_PLAYER(Ind_attacker)) {
+	if (IS_OTHER_PLAYER(Ind_attacker, Ind)) {
 		if ((istown(&p_ptr->wpos) || istown(&Players[Ind_attacker]->wpos)) &&
 		    (!check_blood_bond(Ind_attacker, Ind) ||
 		     p_ptr->afk || Players[Ind_attacker]->afk))
@@ -3347,7 +3349,7 @@ int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	if (p_ptr->suscep_acid && !(p_ptr->resist_acid || p_ptr->oppose_acid)) dam = dam * 2;
 
 	/* Don't kill inventory in bloodbond... */
-	if (IS_PLAYER(Ind_attacker) && check_blood_bond(Ind, Ind_attacker)) breakable = FALSE;
+	if (IS_OTHER_PLAYER(Ind_attacker, Ind) && check_blood_bond(Ind, Ind_attacker)) breakable = FALSE;
 	/* ..or in AMC */
 	if (safe_area(Ind)) breakable = FALSE;
 
@@ -3395,7 +3397,7 @@ int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	if (p_ptr->suscep_elec && !(p_ptr->resist_elec || p_ptr->oppose_elec)) dam = dam * 2;
 
 	/* Don't kill inventory in bloodbond... */
-	if (IS_PLAYER(Ind_attacker) && check_blood_bond(Ind, Ind_attacker)) breakable = FALSE;
+	if (IS_OTHER_PLAYER(Ind_attacker, Ind) && check_blood_bond(Ind, Ind_attacker)) breakable = FALSE;
 	/* ..or in AMC */
 	if (safe_area(Ind)) breakable = FALSE;
 
@@ -3439,7 +3441,7 @@ int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	if (p_ptr->suscep_fire && !(p_ptr->resist_fire || p_ptr->oppose_fire)) dam = dam * 2;
 
 	/* Don't kill inventory in bloodbond... */
-	if (IS_PLAYER(Ind_attacker) && check_blood_bond(Ind, Ind_attacker)) breakable = FALSE;
+	if (IS_OTHER_PLAYER(Ind_attacker, Ind) && check_blood_bond(Ind, Ind_attacker)) breakable = FALSE;
 	/* ..or in AMC */
 	if (safe_area(Ind)) breakable = FALSE;
 
@@ -3508,7 +3510,7 @@ int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	if (p_ptr->suscep_cold && !(p_ptr->resist_cold || p_ptr->oppose_cold)) dam = dam * 2;
 
 	/* Don't kill inventory in bloodbond... */
-	if (IS_PLAYER(Ind_attacker) && check_blood_bond(Ind, Ind_attacker)) breakable = FALSE;
+	if (IS_OTHER_PLAYER(Ind_attacker, Ind) && check_blood_bond(Ind, Ind_attacker)) breakable = FALSE;
 	/* ..or in AMC */
 	if (safe_area(Ind)) breakable = FALSE;
 
@@ -10816,8 +10818,17 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			(void)set_confused(Ind, 0);
 		if (hack_dam & 0x800) { /* CLW */
 			(void)set_blind(Ind, 0);
-			(void)set_cut(Ind, 0, 0);
 		}
+		if (p_ptr->cut && p_ptr->cut < CUT_MORTAL_WOUND) {
+			if (hack_dam & 0x2000) /* CCW */
+				(void)set_cut(Ind, p_ptr->cut - 250, 0);
+			else if (hack_dam & 0x1000) /* CSW */
+				(void)set_cut(Ind, p_ptr->cut - 50, 0);
+			else if (hack_dam & 0x800) { /* CLW */
+				(void)set_cut(Ind, p_ptr->cut - 20, 0);
+			}
+		}
+
 		if (hack_dam & 0x400) { /* holy curing PBAoE */
 			if (Ind != -who) dam = (dam * 3) / 2; /* heals allies for 3/4 of the self-heal amount */
 		}
@@ -10839,12 +10850,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #endif
 		{
 			//(spammy) msg_format_near(Ind, "\377g%s has been healed for %d hit points!.", p_ptr->name, dam);
-			if (IS_PLAYER(-who) /* paranoia? */
-			     && -who != Ind) { /* don't notify ourselves about healing ourselves */
+			if (IS_OTHER_PLAYER(-who, Ind)) { /* paranoia? also don't notify ourselves about healing ourselves */
 				msg_format(-who, "\377w%s has been healed for \377g%d\377w hit points.", p_ptr->name, dam);
 				msg_format(Ind, "\377g%s heals you for %d hit points", Players[-who]->name, dam);
 			} else msg_format(Ind, "\377gYou are healed for %d hit points", dam);
-				hp_player_quiet(Ind, dam, FALSE);
+			hp_player_quiet(Ind, dam, FALSE);
 			dam = 0;
 		}
 		break;
