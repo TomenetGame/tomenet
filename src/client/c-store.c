@@ -46,7 +46,7 @@ static void display_entry(int pos, int entries) {
 	if (wgt >= 0 || store_num == STORE_HOME || store_num == STORE_HOME_DUN) { /* <0: player store hack */
 		(void)sprintf(out_val, "%c) ", I2A(i));
 		prt(out_val, i + 6, 0);
-	}
+	} else prt("", i + 6, 0); /* Just clear the line (for pieces of wood used as labels) */
 
 	/* Describe an item in the home */
 	if (store_num == STORE_HOME || store_num == STORE_HOME_DUN) {
