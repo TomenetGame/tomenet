@@ -2792,6 +2792,14 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				if (!strcasecmp(buf, "tc")) strcpy(buf, "treasure class");
 				/* Expand 'am' to 'Anti-Magic' */
 				if (!strcasecmp(buf, "am")) strcpy(buf, "anti-magic");
+				/* Bag/Bags redirect to 'Subinventory' */
+				if (!strcasecmp(buf, "bag") || !strcasecmp(buf, "bags") || my_strcasestr(buf, "container") ||
+				    my_strcasestr(buf, "subinv") || my_strcasestr(buf, "sub-inv") || my_strcasestr(buf, "sub inv")) {
+					strcpy(buf, "Subinventory:");
+					fallback = TRUE;
+					fallback_uppercase = 4;
+					continue;
+				}
 
 				/* Melee weapon classes */
 				if (my_strcasestr(buf, "weap") && my_strcasestr(buf, "clas")) strcpy(buf, "weapon types");
