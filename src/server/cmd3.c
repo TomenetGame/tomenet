@@ -2811,6 +2811,19 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 		msg_format(Ind, "Making %s unsalable.", o_name);
 		msg_print(Ind, NULL);
 		o_ptr->discount = 100;
+
+		/* Redraw the updated item */
+#ifdef ENABLE_SUBINVEN
+		if (item >= 100) {
+			display_subinven_aux(Ind, item / 100 - 1, item % 100);
+			return;
+		}
+#endif
+		/* Combine the pack */
+		p_ptr->notice |= (PN_COMBINE);
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
 		return;
 	}
 
