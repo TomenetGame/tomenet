@@ -2537,11 +2537,23 @@ static void display_entry(int Ind, int pos) {
 			/* Items inscribed '@S:' are just 'sign' dummies */
 			if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_WOOD_PIECE && /* only 'wood pieces' can become store signs */
 			    o_ptr->note && (ps_sign = strstr(quark_str(o_ptr->note), "@S:"))) {
+ #if 1 /* left-aligned sign */
 				ps_sign += 3;
-				strcpy(o_name, " =[ ");
-				if (!strlen(ps_sign)) strcat(o_name, "<an empty sign>");
-				else strncat(o_name, ps_sign, 70);
-				strcat(o_name, " ]=");
+				strcpy(o_name, " -=[ ");
+				if (!strlen(ps_sign)) strcat(o_name, "<a blank sign>");
+				else strncat(o_name, ps_sign, 70 - 5 - 5);
+				strcat(o_name, " ]=- ");
+ #else /* center-aligned sign */
+				char tmp[ONAME_LEN], tmp2[ONAME_LEN];
+				ps_sign += 3;
+				strcpy(tmp, " =[ ");
+				if (!strlen(ps_sign)) strcat(tmp, "<a blank sign>");
+				else strncat(tmp, ps_sign, 70);
+				strcat(tmp, " ]=");
+				strncpy(tmp2, tmp, strlen(tmp) / 2);
+				tmp2[strlen(tmp) / 2] = 0;
+				sprintf(o_name, "%35s%s", tmp2, tmp + strlen(tmp2));
+ #endif
 				handle_censor(o_name);
 			} else
 
