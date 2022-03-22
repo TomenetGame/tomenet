@@ -8730,8 +8730,8 @@ Poison  -Poisoned       The player will continuously lose Hit Points.
                         poisoned (compare (5.6)).
                         Slow Poison (potions) will reduce the speed at which
                         poison ticks and drains your HP. Best is of course to
-                        have means of Cure/Neutralize Poison, 'Curing', Healing
-                        or some Lembas, which will all completely cure poison.
+                        have means of Cure/Neutralize Poison, 'Curing', or some
+                        Lembas, which will all completely cure poison.
 
 Hallucination           These are random wrong visual, like wrong symbols and
                         colours for monster and other players.
@@ -12115,7 +12115,7 @@ Annihilation    Wand only: Drains 10..20% life from your target.
 Clone Monster   Duplicates a monster. The duplicate, aka 'clone', does not give
                 experience, drop items, or count as form credit for mimicry
                 users.
-Curing          Cures being gorged, poison and cuts,
+Curing          Cures being gorged, poison, diseases and cuts,
                 removes blindness/confusion/stun/hallucinations.
 *Destruction*   See 'Scrolls'.
 Detection       Detects treasures, objects, traps, secret doors, stairs and
@@ -12140,7 +12140,7 @@ Healing         Staves:
                 Heals 100 to 400 hit points, depending on magic device skill,
                 cures stun and cuts.
 Holiness        Dispels nearby evil. Also protects you from evil for a while.
-                Cures poison/cuts, removes fear/stun, heals you somewhat.
+                Cures poison/disease/cuts, removes fear/stun, heals somewhat.
 Magi            Restores your intelligence and 500 mana points.
                 ('You feel your head clearing')
 Perception      Identifies a specific item.
