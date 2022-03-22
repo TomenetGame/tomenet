@@ -17899,12 +17899,13 @@ Illusionist and Druid
                     (Later on, 'Mage' is a mid-level form that also provides
                     haste spell and is actually more common to find.)
                     (These two do not occur in packs.)
-*Ogre           13  This form can cross thick woods and mountain terrain.
+*Ogre           13  This strong form can cross forest and mountain terrain.
                     Note that Ogres also count as giants which means that
                     shamans can use this form too.
                     (This monster occurs somewhat more rarely than the others.)
 Black orc       13  Good HP, good melee damage, +1 extra shot w/ slings/bows.
-Lizard man      16  High HP, can swim easily, resists water, immune to acid.
+*Black Ogre     15  Slightly stronger than Ogre but cannot move through woods.
+Lizard man      16  Good HP, can swim easily, resists water, immune to acid.
                     (This monster occurs somewhat more rarely than the others.)
 *Ogrillon       16  Very high HP for its level, good melee damage.
                     Note that Ogrillons also count as giants which means that
