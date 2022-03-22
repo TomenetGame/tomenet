@@ -21002,7 +21002,7 @@ by an opponent! The special rules that apply are as follows:
  or in the Arena Monster Challenge: They will just die for real there.
 -yellow name in chat, yellow * marker in @-list, completely yellow entry
  in @-list if viewed by another PvP mode char.
--start at level 10 and with about 10000 Au.
+-start at level 20 and with about 10000 Au.
 -reach level 30 at most.
 -cannot team up or exchange goods with non-PVP chars.
 -will automatically be hostile to all other PVP chars, except for towns which
