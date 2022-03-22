@@ -4694,6 +4694,9 @@ static bool process_player_end_aux(int Ind) {
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 	char o_name[ONAME_LEN];
 	bool warm_place = TRUE;
+#if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
+	bool intrinsic_regen = FALSE;
+#endif
 
 	int minus = 1;
 	int minus_magic = 1;
@@ -5140,14 +5143,20 @@ static bool process_player_end_aux(int Ind) {
 	/* Regeneration ability - in pvp, damage taken is greatly reduced, so regen must not nullify the remaining damage easily */
 #ifdef TROLL_REGENERATION
 	/* Experimental - Trolls are super-regenerators (hard-coded) */
-	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'T' && p_ptr->body_monster != RI_HALF_TROLL) regen_amount *= (p_ptr->mode & MODE_PVP) ? 2 : 4;
-	else if (p_ptr->prace == RACE_HALF_TROLL || p_ptr->body_monster == RI_HALF_TROLL) regen_amount *= (p_ptr->mode & MODE_PVP) ? 2 : 3;
-	else
+	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'T' && p_ptr->body_monster != RI_HALF_TROLL) {
+		regen_amount *= (p_ptr->mode & MODE_PVP) ? 2 : 4;
+		intrinsic_regen = TRUE;
+	} else if (p_ptr->prace == RACE_HALF_TROLL || p_ptr->body_monster == RI_HALF_TROLL) {
+		regen_amount *= (p_ptr->mode & MODE_PVP) ? 2 : 3;
+		intrinsic_regen = TRUE;
+	} else
 #endif
 #ifdef HYDRA_REGENERATION
 	/* Experimental - Hydras are super-regenerators aka regrowing heads */
-	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'M') regen_amount *= (p_ptr->mode & MODE_PVP) ? 2 : 4;
-	else
+	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'M') {
+		regen_amount *= (p_ptr->mode & MODE_PVP) ? 2 : 4;
+		intrinsic_regen = TRUE;
+	} else
 #endif
 	if (p_ptr->regenerate) regen_amount *= 2;
 
@@ -5171,7 +5180,14 @@ static bool process_player_end_aux(int Ind) {
 	}
 
 	/* Poisoned or cut yields no healing */
-	if (p_ptr->poisoned || p_ptr->diseased || p_ptr->cut || p_ptr->sun_burn)
+	if (p_ptr->poisoned || p_ptr->diseased || p_ptr->sun_burn
+#if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
+	    /* Trolls and Hydras continue to regenerate even while cut (it's the whole point of their regen) */
+	    || (p_ptr->cut && !intrinsic_regen)
+#else
+	    || p_ptr->cut
+#endif
+		)
 		regen_amount = 0;
 
 	/* But Biofeedback always helps -- TODO: Test the results a bit */

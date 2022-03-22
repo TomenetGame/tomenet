@@ -8724,6 +8724,8 @@ Cut                     Cuts will make you lose HP continuously.
                         Cure Light/Serious Wounds potions can heal cuts a bit,
                         while Cure Critical Wounds and Healing work much better
                         and any means of 'Curing' will completely heal cuts.
+                        Note that half-trolls, trolls and hydras can continue
+                        regenerating HP even while cut.
 
 Poison   -Poisoned      The player will continuously lose Hit Points.
                         Resisting poison will prevent the player from getting
@@ -15832,11 +15834,12 @@ create a character!):
     bad at searching, disarming, perception, and stealth. They are so ugly
     that a Half-Orc grimaces in their presence. They need to eat often but
     they also regenerate hit point especially quickly (1.5x as fast as from
-    'regeneration' flag, doesn't stack with any regen items). Thanks to
-    their thick skin, they also get an (albeit very small) bonus to armour
-    class. Half-Trolls get bonus on 'Blunt-mastery', 'Health'. They receive a
-    large penalty 'Climbing' and huge penalties on 'Critical-strike', 'Magic',
-    'Sorcery', 'Archery' and 'Swimming'.
+    'regeneration' flag, doesn't stack with any regen items) and even keep
+    regenerating while still suffering from cuts.
+    Thanks to their thick skin, they also get an (albeit very small) bonus to
+    armour class. Half-Trolls get bonus on 'Blunt-mastery', 'Health'. They
+    receive a large penalty 'Climbing' and huge penalties on 'Critical-strike',
+    'Magic', 'Sorcery', 'Archery' and 'Swimming'.
 
 - Dunadan
     Dunadain have their constitution sustained. Dunadain are a race of hardy
@@ -17612,9 +17615,11 @@ All orcs        Resist darkness.
 All trolls      Sustain strength. Extraordinary HP regeneration (2x as fast as
                 from 'REGEN' flag, doesn't stack with items. 1.5x as fast for
                 Half-Troll form).
+                They even continue regenerating while suffering open cuts.
 All giants      Sustain strength.
 All hydras      Extraordinary HP regeneration (2x as fast as from 'REGEN' flag,
                 doesn't stack with items), as they regrow their heads!
+                They even continue regenerating while suffering open cuts.
 All monsters with stone skin (HURT_ROCK flag)
                 Shard resistance.
 All dragonriders
