@@ -17873,6 +17873,8 @@ Large kobold     5  As all kobolds it has poison resistance. It also has a lot
                     of hit points and very good AC for its level.
 Rotting corpse   8  Free action, resists confusion/fear/cold, poison immunity,
                     brands melee attacks with poison, decent AC.
+                    Despite its lack of physical thoughness this is a very
+                    underrated form considering all the beneficial abilities.
 *Phantom warrior 8  Useful only for shamans because it has no limbs!
                     This form can pass solid walls!
                     Also gives fear/sound/insanity resistance, free action,
