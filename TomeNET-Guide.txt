@@ -11165,12 +11165,15 @@ Items display the following pseudo-id tags:
 -Useless items (not cursed)     {broken}
 -Cursed artifacts / egos        {terrible}
 
+'Terrible' doesn't need to mean useless. Some cursed artifacts can be very
+powerful, rings of power dropped by Nazgul especially. Also, heavily cursed
+items, including artifacts, will flip negative values into positive ones when
+equipped by a vampire (excluding mimicked ones) or hell knight (again excluding
+mimicry forms).
+
 ('worthless' and 'broken' sort of overlap, depending on item base type.
 For example rods without value will be worthless instead of broken, while
 armour will be broken, and ego armour without value will be worthless again.)
-
-Terrible doesn't need to equal useless. Some cursed artifacts can be very
-powerful, rings of power dropped by Nazgul especially.
 
 Note that potions don't have 'egos' or 'artifacts', scrolls don't have
 artifacts either, but some of the potions and scrolls show similar pseudo-id
