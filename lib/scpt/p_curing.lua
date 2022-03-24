@@ -378,6 +378,7 @@ HCURING_III = add_spell {
 				set_food(Ind, PY_FOOD_MAX - 1)
 			end
 			set_poisoned(Ind, 0, 0)
+			set_diseased(Ind, 0, 0)
 			set_cut(Ind, 0, 0)
 			set_blind(Ind, 0)
 			set_confused(Ind, 0)
@@ -389,8 +390,8 @@ HCURING_III = add_spell {
 			return ""
 			end,
 	["desc"] = 	{
-			"Treats stomach ache, neutralizes poison, heals cuts",
-			"and cures blindness, confusion, stun and hallucinations.",
+			"Treats stomach ache, neutralizes poison, cures diseases, heals",
+			"cuts and cures blindness, confusion, stun and hallucinations.",
 			"***Automatically projecting***",
 	}
 }
