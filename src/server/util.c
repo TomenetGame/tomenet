@@ -4774,47 +4774,62 @@ int handle_censor(char *line) {
 
  #ifdef ENABLE_MULTILINE_CENSOR
 int handle_ml_censor(int Ind, char *line) {
-	int l, cl, effl = MSG_LEN / NAME_LEN - 1; // - 1: accomodate for spacers
-	char multiline[MSG_LEN];
+	int cl;
 	player_type *p_ptr = Players[Ind];
+	char tmpbuf[MSG_LEN];
 
-//s_printf("ML_CENSOR called.\n");
 	/* Attempt single-line censor first and quit if that already succeeds */
 	cl = handle_censor(line);
 	if (cl) {
 		/* We have to clear the buffer after a successful detection */
-		for (l = 0; l < NAME_LEN; l++) p_ptr->prev_chat_line[l][0] = 0;
-
+		p_ptr->multi_chat_line[0] = 0;
 		return cl;
 	}
 
-//s_printf("ML_CENSOR processing..\n");
-	/* Add chat line to array.. */
-	for (l = 0; l < NAME_LEN - 1; l++)
-		strcpy(p_ptr->prev_chat_line[l], p_ptr->prev_chat_line[l + 1]);
-	strcpy(p_ptr->prev_chat_line[NAME_LEN - 1], line);
+	/* Construct relevant line to check, from the beginnning and ending parts of chat input lines.
+	   Note: We abuse 'NAME_LEN' also as limiter for swear word length. */
 
-	/* Construct relevant line to check, from the ending parts of chat input lines */
-	multiline[0] = 0;
-	for (l = 0; l < NAME_LEN; l++) {
-		cl = strlen(p_ptr->prev_chat_line[l]);
-		if (cl < effl) strcat(multiline, p_ptr->prev_chat_line[l]);
-		else strcat(multiline, &p_ptr->prev_chat_line[l][cl - effl]);
-		/* add spacer. This is done because otherwise eg "hi" + "a" + "s" + "s" would just pass as it is "one word" */
-		strcat(multiline, " ");
+	/* Make room by discarding a bit of the beginning of the line, that has already long been checked */
+	if (strlen(p_ptr->multi_chat_line) >= MSG_LEN - NAME_LEN * 2 - 2) {
+		strcpy(tmpbuf, p_ptr->multi_chat_line + NAME_LEN * 2 + 2);
+		strcpy(p_ptr->multi_chat_line, tmpbuf);
 	}
-//s_printf("ML_CENSOR: %s\n", multiline);
 
-	/* Check if we pass just fine */
-	cl = handle_censor(multiline);
+	/* Line is long -> add beginning and end of new line? */
+	if (strlen(line) > NAME_LEN * 2) {
+		/* Add the beginning */
+		strncat(p_ptr->multi_chat_line, line, NAME_LEN);
+		/* Check if we pass just fine */
+//s_printf("ML_CENSOR(1): %s\n", p_ptr->multi_chat_line);
+		cl = handle_censor(p_ptr->multi_chat_line);
+		if (cl) {
+			/* We have to clear the buffer after a successful detection */
+			p_ptr->multi_chat_line[0] = 0;
+		}
+		/* Add spacer (maybe superfluous) */
+		strcat(p_ptr->multi_chat_line, " ");
+		/* Add the ending, for next time */
+		strcat(p_ptr->multi_chat_line, line + strlen(line) - 1 -  NAME_LEN);
+	} else { /* Line is short -> add the whole line */
+		strcat(p_ptr->multi_chat_line, line);
+		/* Add spacer. This is done because otherwise eg "hi" + "a" + "s" + "s" would just pass as it is "one word" */
+		strcat(p_ptr->multi_chat_line, " ");
+		/* Check if we pass just fine */
+//s_printf("ML_CENSOR(2): %s\n", p_ptr->multi_chat_line);
+		cl = handle_censor(p_ptr->multi_chat_line);
+		if (cl) {
+			/* We have to clear the buffer after a successful detection */
+			p_ptr->multi_chat_line[0] = 0;
+		}
+	}
+
+	/* We're clear? */
 	if (!cl) return 0;
 
 	/* Problem: the already written lines cannot be retracted/censored anymore.
 	   So as "alleviation" we simply increase the punishment :D.
 	   Plus, we can at least censor the final line */
 	strcpy(line, " ***"); //whatever, just start on a space in case this was a slash command, to ensure it still is processed as one, as intended.
-	/* We have to clear the buffer after a successful detection */
-	for (l = 0; l < NAME_LEN; l++) p_ptr->prev_chat_line[l][0] = 0;
 
 	return (cl + 1);
 }

@@ -3556,7 +3556,7 @@ struct player_type {
 
 	bool destroyed_floor_item;
 
-	char prev_chat_line[NAME_LEN][MSG_LEN]; //ENABLE_MULTILINE_CENSOR
+	char multi_chat_line[MSG_LEN]; //ENABLE_MULTILINE_CENSOR
 };
 
 typedef struct boni_col boni_col;
