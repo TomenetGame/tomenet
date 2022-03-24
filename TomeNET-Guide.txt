@@ -11167,9 +11167,9 @@ Items display the following pseudo-id tags:
 
 'Terrible' doesn't need to mean useless. Some cursed artifacts can be very
 powerful, rings of power dropped by Nazgul especially. Also, heavily cursed
-items, including artifacts, will flip negative values into positive ones when
-equipped by a vampire (excluding mimicked ones) or hell knight (again excluding
-mimicry forms).
+items, including artifacts (and excluding weapons of nothingness) will flip
+their negative values into positive ones when equipped by a true vampire (ie
+excluding mimicked ones) or hell knight (again excluding mimicry forms).
 
 ('worthless' and 'broken' sort of overlap, depending on item base type.
 For example rods without value will be worthless instead of broken, while
