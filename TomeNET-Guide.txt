@@ -10954,14 +10954,14 @@ against fire attacks.
 
 Some susceptibilities can only be acquired by mimicking a monster that has
 those. Here is a table of all susceptibilities players can get affected by:
-- Fire          Ents
-- Cold          By mimicry only
-- Acid          By mimicry only
-- Electricity   By mimicry only
-- Light         Dark-elves, Vampires
-- Evil          Enlightened trait of Maiar
-- Good          Vampires, Corrupted trait of Maiar
-- Life          Vampires
+ -Fire          Ents
+ -Cold          By mimicry only
+ -Acid          By mimicry only
+ -Electricity   By mimicry only
+ -Light         Dark-elves, Vampires
+ -Evil          Enlightened trait of Maiar
+ -Good          Vampires, Corrupted trait of Maiar
+ -Life          Vampires
 Most of these are self-explaining, but some seem obscure, here is what you get
 hurt from when susceptible to one of the three obscure ones:
 Evil:   Double damage from holy based attacks (holy orb, holy fire)
