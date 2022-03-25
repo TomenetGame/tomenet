@@ -19439,7 +19439,7 @@ F:RAND_50 | RAND_25 | DROP_60 | HAS_LITE | CAN_SPEAK |
 $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
-D:It is someone costumed for Halloween festival!
+D:A ghastly appearance breaking out of the nearby woods!
 
 N:1090:Spook
 G:G:w
@@ -19453,7 +19453,7 @@ F:RAND_50 | RAND_25 | DROP_60 | HAS_LITE | CAN_SPEAK |
 $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
-D:It is someone costumed for Halloween festival!
+D:Did it just float out of that wall behind you?
 
 N:1091:Rampant Zombie
 G:z:s
@@ -19467,7 +19467,7 @@ F:RAND_50 | RAND_25 | DROP_60 | HAS_LITE | CAN_SPEAK |
 $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
-D:It is someone costumed for Halloween festival!
+D:Digging itself out of the earth it is not finding any rest.
 
 N:1092:Vampire Apparition
 G:V:b
@@ -19481,7 +19481,7 @@ F:RAND_50 | RAND_25 | DROP_60 | HAS_LITE | CAN_SPEAK |
 $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
-D:It is someone costumed for Halloween festival!
+D:It's baring its teeth at you!
 
 N:1093:Lost Goblin
 G:h:W
@@ -19495,7 +19495,7 @@ F:RAND_50 | RAND_25 | DROP_60 | HAS_LITE | CAN_SPEAK |
 $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
-D:It is someone costumed for Halloween festival!
+D:This one seems oddly far away from the orc caves.
 
 N:1094:Moving Bones
 G:s:w
@@ -19509,7 +19509,7 @@ F:RAND_50 | RAND_25 | DROP_60 | HAS_LITE | CAN_SPEAK |
 $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
-D:It is someone costumed for Halloween festival!
+D:With rattling noises it unsteadily moves towards you!
 
 N:1095:Frankenstein's Monster
 G:U:g
@@ -19523,7 +19523,7 @@ F:RAND_50 | RAND_25 | DROP_60 | HAS_LITE | CAN_SPEAK |
 $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
-D:It is someone costumed for Halloween festival!
+D:Shut the windows and bar the doors!
 
 N:1096:Freddy Krueger
 G:z:r
@@ -19537,8 +19537,7 @@ F:RAND_50 | RAND_25 | DROP_60 | HAS_LITE | CAN_SPEAK |
 $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
-D:The nightmare on Elmstreet.
-D:But it is just someone costumed for Halloween festival!
+D:Behold, a nightmare on Greenway!
 
 
 #More monsters:
