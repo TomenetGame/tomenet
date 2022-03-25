@@ -411,12 +411,12 @@ function quest_towneltalk(Ind, msg, topic)
 		    player.s_info[SKILL_AXE+1].value >= 1000 or player.s_info[SKILL_POLEARM+1].value >= 1000 or
 		    player.s_info[SKILL_CRITS+1].value >= 1000) then
 			-- are we wielding a weapon at all..?
-			if player.inventory[INVEN_WIELD+1].k_idx == 0 and (player.inventory[INVEN_ARM+1].k_idx == 0 or player.inventory[INVEN_WIELD+2].tval == 34) then --INVEN_ARM,34=TV_SHIELD
+			if player.inventory[INVEN_WIELD+1].k_idx == 0 and (player.inventory[INVEN_WIELD+2].k_idx == 0 or player.inventory[INVEN_WIELD+2].tval == 34) then --INVEN_ARM,34=TV_SHIELD
 				msg_print(Ind, "\252\255UYou seem to have skill in weapon handling, yet you are not wielding a weapon.")
 				hinted = 1
 			-- Dual-wield tip first, if it can remedy the 1 bpr, we don't need to pester the player moar for now..
 			elseif player.s_info[SKILL_DUAL+1].value == 1000 and
-			    (player.inventory[INVEN_ARM+1].k_idx == 0 or player.inventory[INVEN_WIELD+2].tval == 34) then --INVEN_ARM,34=TV_SHIELD
+			    (player.inventory[INVEN_WIELD+2].k_idx == 0 or player.inventory[INVEN_WIELD+2].tval == 34) then --INVEN_ARM,34=TV_SHIELD
 				msg_print(Ind, "\252\255USince I can see you only have 1 BpR, aka 1 attack per round, you could try")
 				msg_print(Ind, "\252\255Uusing light armour and dual-wielding two light weapons, to get at least 2 BpR!")
 				hinted = 1
