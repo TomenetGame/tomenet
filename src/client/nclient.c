@@ -4971,7 +4971,7 @@ void apply_auto_inscriptions(int slot, bool force) {
 #endif
 
 	/* skip empty items */
-	if (!strlen(inventory_name[slot])) return;
+	if (!inventory[slot].tval) return;
 
 	/* haaaaack: check for existing inscription! */
 	auto_inscribe = FALSE;
