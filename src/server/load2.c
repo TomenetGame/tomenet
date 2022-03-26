@@ -1225,9 +1225,9 @@ static void rd_mail() {
 	for (i = 0; i < j; i++) {
 		if (i >= MAX_MERCHANT_MAILS) {
 			rd_item(&dummy_o);
-			rd_string(dummy, NAME_LEN);
-			rd_string(dummy, NAME_LEN);
-			rd_string(dummy, NAME_LEN);
+			rd_string(dummy, CNAME_LEN);
+			rd_string(dummy, CNAME_LEN);
+			rd_string(dummy, ACCNAME_LEN);
 			rd_s16b(&dummy_i);
 			if (!s_older_than(4, 6, 9)) {
 				rd_s32b(&dummy_s);
@@ -1237,9 +1237,9 @@ static void rd_mail() {
 			continue;
 		}
 		rd_item(&mail_forge[i]);
-		rd_string(mail_sender[i], NAME_LEN);
-		rd_string(mail_target[i], NAME_LEN);
-		rd_string(mail_target_acc[i], NAME_LEN);
+		rd_string(mail_sender[i], CNAME_LEN);
+		rd_string(mail_target[i], CNAME_LEN);
+		rd_string(mail_target_acc[i], ACCNAME_LEN);
 		rd_s16b(&mail_duration[i]);
 		if (!s_older_than(4, 6, 9)) {
 			rd_s32b(&mail_timeout[i]);
@@ -1252,9 +1252,9 @@ static void rd_mail() {
 	rd_s16b(&j);
 	for (i = 0; i < j; i++) {
 		rd_obj(&dummy_o);
-		rd_string(dummy, NAME_LEN);
-		rd_string(dummy, NAME_LEN);
-		rd_string(dummy, NAME_LEN);
+		rd_string(dummy, CNAME_LEN);
+		rd_string(dummy, CNAME_LEN);
+		rd_string(dummy, ACCNAME_LEN);
 		rd_s16b(&dummy_i);
 		if (!s_older_than(4, 6, 9)) {
 			rd_s32b(&dummy_s);
