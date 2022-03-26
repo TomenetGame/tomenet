@@ -2062,7 +2062,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 #ifdef GUIDE_BOOKMARKS
 	/* Hack: Quick bookmark access */
-	if (init_search_type == 3 && strlen(init_search_string) == 1 && init_search_string[0] >= 'a' && init_search_string[0] <= 't') {
+	if (init_search_type == 3 && init_search_string && strlen(init_search_string) == 1 && init_search_string[0] >= 'a' && init_search_string[0] <= 't') {
 		i = init_search_string[0] - 'a';
 		/* Jump to bookmark */
 		if (!bookmark_line[i]) {
@@ -2084,7 +2084,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 #endif
 
 	/* Hack: Translate specific searches from all-uppercase to chapter: */
-	if (init_search_type == 2 || init_search_type == 3) {
+	if ((init_search_type == 2 || init_search_type == 3) && init_search_string) {
 		strcpy(buf, init_search_string);
 
 		/* 'Troubleshooting' section, directly access it */
@@ -2111,6 +2111,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		/* clean up */
 		buf[0] = 0;
 	}
+
+	/* Searching for a slash command? Always translate to uppercase 's'earch */
+	if (init_search_string && init_search_string[0] == '/') init_search_type = 2;
 
 	switch (init_search_type) {
 	case 1:
@@ -3489,13 +3492,14 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			search_uppercase = 4;
 			search_uppercase_ok = FALSE;
 			for (n = 0; searchstr[n]; n++) {
-				if (!search_uppercase_ok && isalpha(searchstr[n])) search_uppercase_ok = TRUE;
+				if (!search_uppercase_ok && isalpha(searchstr[n])) search_uppercase_ok = TRUE; /* Need at least one alpha char to initiate an upper-case search scenario */
 				if (searchstr[n] == toupper(searchstr[n])) continue;
 				search_uppercase = FALSE;
 				break;
 			}
-			/* Exception: If first char is not alpha-num, don't do uppercase restriction (for "(STR)" etc) */
-			if (!isalphanum(searchstr[0])) search_uppercase_ok = FALSE;
+			/* Exception: If first char is not alpha-num, don't do uppercase restriction (for "(STR)" etc);
+			   exception from exception: Allow upper-case search for slash commands! */
+			if (!isalphanum(searchstr[0]) && searchstr[0] != '/') search_uppercase_ok = FALSE;
 			/* Check and go */
 			if (!search_uppercase_ok) search_uppercase = FALSE; /* must contain at least 1 (upper-case) letter */
 
