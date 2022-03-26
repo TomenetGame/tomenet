@@ -11548,11 +11548,15 @@ LUCK ('It affects your luck.')
         Note: Luck does NOT affect which base item type drops, ie whether it is
         a dragon scale mail or a cloth hat.
 NO_MAGIC ('Anti-magic shell')
-        Raises your saving throw to 95%, making you nearly immune to any
-        malicious magical influence (like paralysation or slowness, but also to
-        monsters cursing you). Also prevents you from using any magic device or
-        casting spells. You can still use scrolls and potions though.
-        For more information about Saving Throw see (6.3).
+        Raises your saving throw to 95%, making you nearly immune to malicious
+        magical status effects that depend on your character doing a saving
+        throw check to resist, eg paralysation or slowness, and also a
+        monster's 'curse' attack ("points at you and curses" and worse).
+        The anti-magic shell will not prevent monsters from casting spells or
+        reduce or negate any damage taken from magic spells though.
+        It also prevents you from using any magic device or casting spells.
+        You can still use scrolls and potions though. For more information
+        about Saving Throw see (6.3).
 ANTIMAGIC ('Anti-magic field')
         Prevents you from using any magic device or casting spells, also
         prevents nearby monsters and other players from casting spells (but
