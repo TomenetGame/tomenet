@@ -10517,8 +10517,8 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 					if (pid) {
 						acc = lookup_accountname(pid);
 						if (acc) strcpy(mail_target_acc[i], acc);
-						else s_printf("MAIL_ERROR: payment acc '%s'\n", sender);
-					} else s_printf("MAIL_ERROR: payment id '%s'\n", sender);
+						else s_printf("MERCHANT_MAIL_ERROR: payment acc '%s'\n", sender);
+					} else s_printf("MERCHANT_MAIL_ERROR: payment id '%s'\n", sender);
 
 					mail_duration[i] = MERCHANT_MAIL_DURATION;
 					mail_COD[i] = FALSE;

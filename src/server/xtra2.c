@@ -8128,8 +8128,8 @@ void merchant_mail_death(const char pname[CNAME_LEN]) {
 
 		/* Mail was already returned because original receipient didn't exist anymore? */
 		if (mail_timeout[i] < 0) {
-			s_printf("MAIL_ERROR_RETURN: dead sender and dead receipient - Sender %s, Target %s\n", mail_sender[i], mail_target[i]);
-			s_printf("MAIL_ERROR_ERASED.\n");
+			s_printf("MERCHANT_MAIL_ERROR_RETURN: dead sender and dead receipient - Sender %s, Target %s\n", mail_sender[i], mail_target[i]);
+			s_printf("MERCHANT_MAIL_ERROR_ERASED.\n");
 			/* delete mail! */
 			mail_sender[i][0] = 0;
 			continue;
@@ -8143,7 +8143,7 @@ void merchant_mail_death(const char pname[CNAME_LEN]) {
 		mail_duration[i] = MERCHANT_MAIL_DURATION;
  #endif
 
-		s_printf("MAIL_ERROR_RETURN: dead receipient - Sender %s, Target %s\n", mail_sender[i], mail_target[i]);
+		s_printf("MERCHANT_MAIL_ERROR_RETURN: dead receipient - Sender %s, Target %s\n", mail_sender[i], mail_target[i]);
 		strcpy(tmp, mail_sender[i]);
 		strcpy(mail_sender[i], mail_target[i]);
 		strcpy(mail_target[i], tmp);
@@ -8152,11 +8152,11 @@ void merchant_mail_death(const char pname[CNAME_LEN]) {
 
 		pid = lookup_player_id(mail_target[i]);
 		if (!pid) {
-			s_printf("MAIL_ERROR: no pid - Sender %s, Target %s\n", mail_sender[i], mail_target[i]);
+			s_printf("MERCHANT_MAIL_ERROR: no pid - Sender %s, Target %s\n", mail_sender[i], mail_target[i]);
 			/* special: the mail bounced back to a character that no longer exists!
 			   Since the receipient just died, the mail now gets deleted,
 			   since noone can pick it up anymore. */
-			s_printf("MAIL_ERROR_ERASED.\n");
+			s_printf("MERCHANT_MAIL_ERROR_ERASED.\n");
 			/* delete mail! */
 			mail_sender[i][0] = 0;
 		}

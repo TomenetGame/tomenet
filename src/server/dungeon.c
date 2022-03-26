@@ -8225,7 +8225,7 @@ static void process_merchant_mail(void) {
 					}
   #endif
 
-					s_printf("MAIL_ERROR_ERASED (1st bounce).\n");
+					s_printf("MERCHANT_MAIL_ERROR_ERASED (1st bounce).\n");
 					/* delete mail! */
 					mail_sender[i][0] = 0;
 					/* leave structure */
@@ -8274,19 +8274,19 @@ static void process_merchant_mail(void) {
 
 				pid = lookup_player_id(mail_target[i]);
 				if (!pid) {
-					s_printf("MAIL_ERROR: no pid - Sender %s, Target %s\n", mail_sender[i], mail_target[i]);
+					s_printf("MERCHANT_MAIL_ERROR: no pid - Sender %s, Target %s\n", mail_sender[i], mail_target[i]);
 					/* special: the mail bounced back to a character that no longer exists!
 					   if this happens with the new receipient too, the mail gets deleted,
 					   since noone can pick it up anymore. */
 					if (erase) {
-						s_printf("MAIL_ERROR_ERASED.\n");
+						s_printf("MERCHANT_MAIL_ERROR_ERASED.\n");
 						/* delete mail! */
 						mail_sender[i][0] = 0;
 					}
 				} else {
 					acc = lookup_accountname(pid);
 					if (acc) strcpy(mail_target_acc[i], acc);
-					else s_printf("MAIL_ERROR_RETURN: no acc - Sender %s, Target %s\n", mail_sender[i], mail_target[i]);
+					else s_printf("MERCHANT_MAIL_ERROR_RETURN: no acc - Sender %s, Target %s\n", mail_sender[i], mail_target[i]);
 				}
 			}
 		}

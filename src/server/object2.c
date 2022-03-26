@@ -12461,7 +12461,7 @@ bool erase_or_locate_artifact(int a_idx, bool erase) {
 			return TRUE;
 		}
 
-		s_printf("MAIL_ERROR_ERASED:FLUENT_ARTIFACT_RESETS.\n");
+		s_printf("MERCHANT_MAIL_ERROR_ERASED:FLUENT_ARTIFACT_RESETS.\n");
 		/* delete mail! */
 		mail_sender[i][0] = 0;
 
