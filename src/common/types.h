@@ -678,8 +678,8 @@ struct effect_type {
 
 typedef struct object_type object_type;
 struct object_type {
-	s32b owner;			/* Player that found it */
-	s32b killer;			/* Player that killed the monster/opened the chest/etc causing the item to drop (for handling Soloist mode) */
+	s32b owner;			/* Player id that found it */
+	s32b killer;			/* Player id that killed the monster/opened the chest/etc causing the item to drop (for handling Soloist mode) */
 	s16b level;			/* Level req */
 
 	s16b k_idx;			/* Kind index (zero if "dead") */
