@@ -607,7 +607,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* Note: '/xdis' is just for future backward compatibility of auto_pickup. */
 			object_type *o_ptr;
 			u32b f1, f2, f3, f4, f5, f6, esp;
-			bool nontag = FALSE, baseonly = FALSE, pile = FALSE;
+			bool nontag = FALSE, baseonly = FALSE, pile = FALSE, inscr = FALSE;
+			cptr inscr_str;
 
 			//if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			if (p_ptr->energy < 0) return;
@@ -624,7 +625,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					parm++;
 				}
 
-				if (*parm == 'a')
+				if (*parm == 'i') {
+					inscr = TRUE;
+					if (tk < 2) return; /* no inscription specified */
+					inscr_str = strchr(message3, 'i') + 2;
+				} else if (*parm == 'a')
 					nontag = TRUE;
 				else if (*parm == 'b')
 					nontag = baseonly = TRUE;
@@ -668,30 +673,43 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						while (o_ptr->k_idx) {
 							noidx = o_ptr->next_o_idx;
 
-							/* keep inscribed items? */
-							if (!nontag && o_ptr->note) {
-								if (!noidx) {
-									/* Take total of one turn */
-									p_ptr->energy -= level_speed(&p_ptr->wpos);
-									return;
+							/* destroy all items with specific inscription? */
+							if (inscr) {
+								if (!o_ptr->note || strcmp(quark_str(o_ptr->note), inscr_str)) {
+									if (!noidx) {
+										/* Take total of one turn */
+										p_ptr->energy -= level_speed(&p_ptr->wpos);
+										return;
+									}
+									o_ptr = &o_list[noidx];
+									continue;
 								}
-								o_ptr = &o_list[noidx];
-								continue;
-							}
+							} else {
+								/* keep inscribed items? */
+								if (!nontag && o_ptr->note) {
+									if (!noidx) {
+										/* Take total of one turn */
+										p_ptr->energy -= level_speed(&p_ptr->wpos);
+										return;
+									}
+									o_ptr = &o_list[noidx];
+									continue;
+								}
 
-							/* destroy base items (non-egos)? */
-							if (baseonly && object_known_p(Ind, o_ptr) &&
-							    (o_ptr->name1 || o_ptr->name2 || o_ptr->name2b ||
-							    /* let exploding ammo count as ego.. pft */
-							    (is_ammo(o_ptr->tval) && o_ptr->pval))
-							    && !cursed_p(o_ptr)) {
-								if (!noidx) {
-									/* Take total of one turn */
-									p_ptr->energy -= level_speed(&p_ptr->wpos);
-									return;
+								/* destroy base items (non-egos)? */
+								if (baseonly && object_known_p(Ind, o_ptr) &&
+								    (o_ptr->name1 || o_ptr->name2 || o_ptr->name2b ||
+								    /* let exploding ammo count as ego.. pft */
+								    (is_ammo(o_ptr->tval) && o_ptr->pval))
+								    && !cursed_p(o_ptr)) {
+									if (!noidx) {
+										/* Take total of one turn */
+										p_ptr->energy -= level_speed(&p_ptr->wpos);
+										return;
+									}
+									o_ptr = &o_list[noidx];
+									continue;
 								}
-								o_ptr = &o_list[noidx];
-								continue;
 							}
 
 							do_cmd_destroy(Ind, -c_ptr->o_idx, o_ptr->number);
@@ -712,16 +730,21 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						o_ptr = &o_list[c_ptr->o_idx];
 						if (!o_ptr->k_idx) return;
 
-						/* keep inscribed items? */
-						if (!nontag && o_ptr->note) return;
+						/* destroy all items with specific inscription? */
+						if (inscr) {
+							if (!o_ptr->note || strcmp(quark_str(o_ptr->note), inscr_str)) return;
+						} else {
+							/* keep inscribed items? */
+							if (!nontag && o_ptr->note) return;
 
-						/* destroy base items (non-egos)? */
-						if (baseonly && object_known_p(Ind, o_ptr) &&
-						    (o_ptr->name1 || o_ptr->name2 || o_ptr->name2b ||
-						    /* let exploding ammo count as ego.. pft */
-						    (is_ammo(o_ptr->tval) && o_ptr->pval))
-						    && !cursed_p(o_ptr))
-							return;
+							/* destroy base items (non-egos)? */
+							if (baseonly && object_known_p(Ind, o_ptr) &&
+							    (o_ptr->name1 || o_ptr->name2 || o_ptr->name2b ||
+							    /* let exploding ammo count as ego.. pft */
+							    (is_ammo(o_ptr->tval) && o_ptr->pval))
+							    && !cursed_p(o_ptr))
+								return;
+						}
 
 						if (do_cmd_destroy(Ind, -c_ptr->o_idx, o_ptr->number)) {
 							/* Take a turn only once per entering a grid */
@@ -743,73 +766,79 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
+				/* destroy all items with specific inscription? */
+				if (inscr) {
+					if (!o_ptr->note || strcmp(quark_str(o_ptr->note), inscr_str)) continue;
+				} else {
 #if 1 /* check for: tag _equals_ pseudo id tag */
-				/* skip items inscribed with more than a single non-greatpseudo-ID tag */
-				if (o_ptr->note &&
-				    strcmp(quark_str(o_ptr->note), "terrible") &&
-				    strcmp(quark_str(o_ptr->note), "cursed") &&
-				    strcmp(quark_str(o_ptr->note), "uncursed") &&
-				    strcmp(quark_str(o_ptr->note), "broken") &&
-				    strcmp(quark_str(o_ptr->note), "average") &&
-				    strcmp(quark_str(o_ptr->note), "good") &&
-//				    strcmp(quark_str(o_ptr->note), "excellent"))
-				    strcmp(quark_str(o_ptr->note), "worthless"))
-					continue;
+					/* skip items inscribed with more than a single non-greatpseudo-ID tag */
+					if (o_ptr->note &&
+					    strcmp(quark_str(o_ptr->note), "terrible") &&
+					    strcmp(quark_str(o_ptr->note), "cursed") &&
+					    strcmp(quark_str(o_ptr->note), "uncursed") &&
+					    strcmp(quark_str(o_ptr->note), "broken") &&
+					    strcmp(quark_str(o_ptr->note), "average") &&
+					    strcmp(quark_str(o_ptr->note), "good") &&
+//					    strcmp(quark_str(o_ptr->note), "excellent"))
+					    strcmp(quark_str(o_ptr->note), "worthless"))
+						continue;
 #else /* check for: tag _contains_  pseudo id tag */
-				if (o_ptr->note &&
-				    !strstr(quark_str(o_ptr->note), "terrible") &&
-				    !strstr(quark_str(o_ptr->note), "cursed") &&
-				    !strstr(quark_str(o_ptr->note), "uncursed") &&
-				    !strstr(quark_str(o_ptr->note), "broken") &&
-				    !strstr(quark_str(o_ptr->note), "average") &&
-				    !strstr(quark_str(o_ptr->note), "good") &&
-//				    !strstr(quark_str(o_ptr->note), "excellent"))
-				    !strstr(quark_str(o_ptr->note), "worthless"))
-					continue;
-
-				/* skip items that are tagged as unkillable */
-				if (check_guard_inscription(o_ptr->note, 'k')) continue;
-				/* skip items that seem to be tagged as being in use */
-				if (strchr(quark_str(o_ptr->note), '@')) continue;
-#endif
-
-				/* destroy base items (non-egos)? */
-				if (baseonly && object_known_p(Ind, o_ptr) &&
-				    (o_ptr->name1 || o_ptr->name2 || o_ptr->name2b ||
-				    /* let exploding ammo count as ego.. pft */
-				    (is_ammo(o_ptr->tval) && o_ptr->pval))
-				    && !cursed_p(o_ptr))
-					continue;
-
-				/* destroy non-inscribed items too? */
-				if (!nontag && !o_ptr->note &&
-				    /* Handle {cursed} */
-				    !(cursed_p(o_ptr) &&
-				    (object_known_p(Ind, o_ptr) ||
-				    (o_ptr->ident & ID_SENSE))))
-					/* special extra hack: destroy cheap EASY_KNOW shields even if not called with 'a' or 'b'! */
-					if ((o_ptr->tval != TV_SHIELD || o_ptr->sval > SV_LARGE_METAL_SHIELD)
-					    || o_ptr->name1 || o_ptr->name2 || o_ptr->name3)
+					if (o_ptr->note &&
+					    !strstr(quark_str(o_ptr->note), "terrible") &&
+					    !strstr(quark_str(o_ptr->note), "cursed") &&
+					    !strstr(quark_str(o_ptr->note), "uncursed") &&
+					    !strstr(quark_str(o_ptr->note), "broken") &&
+					    !strstr(quark_str(o_ptr->note), "average") &&
+					    !strstr(quark_str(o_ptr->note), "good") &&
+//					    !strstr(quark_str(o_ptr->note), "excellent"))
+					    !strstr(quark_str(o_ptr->note), "worthless"))
 						continue;
 
-				/* Player might wish to identify it first */
-				if (k_info[o_ptr->k_idx].has_flavor &&
-				    !p_ptr->obj_aware[o_ptr->k_idx])
-					continue;
+					/* skip items that are tagged as unkillable */
+					if (check_guard_inscription(o_ptr->note, 'k')) continue;
+					/* skip items that seem to be tagged as being in use */
+					if (strchr(quark_str(o_ptr->note), '@')) continue;
+#endif
+
+					/* destroy base items (non-egos)? */
+					if (baseonly && object_known_p(Ind, o_ptr) &&
+					    (o_ptr->name1 || o_ptr->name2 || o_ptr->name2b ||
+					    /* let exploding ammo count as ego.. pft */
+					    (is_ammo(o_ptr->tval) && o_ptr->pval))
+					    && !cursed_p(o_ptr))
+						continue;
+
+					/* destroy non-inscribed items too? */
+					if (!nontag && !o_ptr->note &&
+					    /* Handle {cursed} */
+					    !(cursed_p(o_ptr) &&
+					    (object_known_p(Ind, o_ptr) ||
+					    (o_ptr->ident & ID_SENSE))))
+						/* special extra hack: destroy cheap EASY_KNOW shields even if not called with 'a' or 'b'! */
+						if ((o_ptr->tval != TV_SHIELD || o_ptr->sval > SV_LARGE_METAL_SHIELD)
+						    || o_ptr->name1 || o_ptr->name2 || o_ptr->name3)
+							continue;
+
+					/* Player might wish to identify it first */
+					if (k_info[o_ptr->k_idx].has_flavor &&
+					    !p_ptr->obj_aware[o_ptr->k_idx])
+						continue;
+
+					/* Hack: basic /dis doesn't kill DSMs */
+					if (!nontag && o_ptr->tval == TV_DRAG_ARMOR) continue;
+
+#if 0 /* too easy! */
+					/* Hack -- filter by value */
+					if (k && (!object_known_p(Ind, o_ptr) ||
+					    object_value_real(Ind, o_ptr) > k))
+						continue;
+#endif
+				}
 
 				/* Hrm, this cannot be destroyed */
 				if (((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr)) ||
 				    like_artifact_p(o_ptr))
 					resist = TRUE;
-#if 0 /* too easy! */
-				/* Hack -- filter by value */
-				if (k && (!object_known_p(Ind, o_ptr) ||
-				    object_value_real(Ind, o_ptr) > k))
-					continue;
-#endif
-
-				/* Hack: basic /dis doesn't kill DSMs */
-				if (!nontag && o_ptr->tval == TV_DRAG_ARMOR) continue;
 
 				/* Avoid being somewhat spammy, since arts can't be destroyed */
 				if (like_artifact_p(o_ptr)) continue;
