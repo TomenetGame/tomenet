@@ -1809,7 +1809,7 @@ void cmd_character(void) {
 			sel++;
 			if (sel > 22) sel = 0;
 			//if (sel == 0 && !p_ptr->fruit_bat) sel++;
-			if (sel == 3 && !strcasecmp(c_p_ptr->body_name, "Player")) sel++;
+			//if (sel == 3 && !strcasecmp(c_p_ptr->body_name, "Player")) sel++;
 			if (sel == 4 && !p_ptr->ptrait) sel++;
 			if (sel > 22) sel = 0;
 			break;
@@ -1818,7 +1818,7 @@ void cmd_character(void) {
 			if (sel < 0) sel = 22;
 			//if (sel == 0 && !p_ptr->fruit_bat) sel--;
 			if (sel == 4 && !p_ptr->ptrait) sel--;
-			if (sel == 3 && !strcasecmp(c_p_ptr->body_name, "Player")) sel--;
+			//if (sel == 3 && !strcasecmp(c_p_ptr->body_name, "Player")) sel--;
 			if (sel < 0) sel = 22;
 			if (csheet_page == 1 && sel >= 12) sel = 11;
 			break;
