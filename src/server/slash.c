@@ -11647,6 +11647,30 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				//mon_meteor_swarm(Ind, PROJECTOR_UNUSUAL, GF_METEOR, 250, p_ptr->px + 5, p_ptr->py, 2);
 				return;
 			}
+			else if (prefix(messagelc, "/invfill")) { /* fill inventory randomly with trash/consumables */
+				int l, q = 0;
+				object_type forge;
+				u32b f1, f2, f3, f4, f5, f6, esp;
+
+				if (tk) q = quark_add(message3);
+
+				while (TRUE) {
+					l = rand_int(max_k_idx);
+					if (!k_info[l].tval || !k_info[l].chance[0]) continue;
+					invcopy(&forge, l);
+					if (forge.tval != TV_POTION && forge.tval != TV_SCROLL && forge.tval != TV_JUNK && forge.tval != TV_SKELETON) continue;
+					object_flags(&forge, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+					if (f3 & TR3_INSTA_ART) continue;
+					forge.owner = p_ptr->id;
+					forge.mode = p_ptr->mode;
+					forge.iron_trade = p_ptr->iron_trade;
+					forge.iron_turn = turn;
+					forge.note = q;
+					if (!inven_carry_okay(Ind, &forge, 0x0)) break;
+					inven_carry(Ind, &forge);
+				}
+				return;
+			}
 		}
 	}
 
