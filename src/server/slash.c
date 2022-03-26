@@ -4700,7 +4700,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 		else if (prefix(messagelc, "/who")) { /* returns account name to which the given character name belongs -- user version of /characc[l] */
-			u32b p_id;
+			s32b p_id;
 			cptr acc;
 			bool online = FALSE;
 
@@ -8091,7 +8091,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/characc")) { /* and /characcl; returns account name to which the given character name belongs -- extended version of /who */
-				u32b p_id;
+				s32b p_id;
 				cptr accname;
 				struct account acc;
 
@@ -8445,7 +8445,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/partymodefix")) {
-				u32b p_id;
+				s32b p_id;
 				s_printf("Fixing party modes..\n");
 				for (i = 1; i < MAX_PARTIES; i++) {
 					if (!parties[i].members) continue;
@@ -10611,7 +10611,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/charlaston")) {
 				unsigned long int s, sl;
 				time_t now;
-				u32b p_id;
+				s32b p_id;
 
 				if (!tk) {
 					msg_print(Ind, "No player specified.");
@@ -11458,6 +11458,46 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "End of merchants guild mail list.");
 				return;
 			}
+			else if (prefix(messagelc, "/rmgmail")) { //redirect merchants guild mail
+				int idx;
+				s32b p_id;
+				const char *cname, *aname;
+				char o_name_short[ONAME_LEN];
+
+				if (!tk || message3[0] < '0' || message3[0] > '9' || !(cname = strchr(message3, ':')) || *(cname + 1) == 0) {
+					msg_print(Ind, "Usage: /rmgmail <index#>:<character>");
+					return;
+				}
+
+				/* Player related checks */
+				idx = atoi(message3);
+				cname++;
+				p_id = lookup_player_id(cname);
+				if (!p_id) {
+					msg_print(Ind, "\377yPlayer not found.");
+					return;
+				}
+				aname = lookup_accountname(p_id);
+				if (!aname) {
+					msg_print(Ind, "\377y***Player's account name not found.***");
+					return;
+				}
+
+				/* Mail related checks */
+				if (idx < 0 || idx >= MAX_MERCHANT_MAILS) {
+					msg_format(Ind, "\377yMail index must range from 0 to %d.", MAX_MERCHANT_MAILS - 1);
+					return;
+				}
+				if (!mail_sender[idx][0]) msg_print(Ind, "\377yWarning: That mail has no sender."); /* Still allow, though */
+
+				/* Success */
+				object_desc(0, o_name_short, &mail_forge[idx], TRUE, 256);
+				msg_format(Ind, " Redirected mail #%d from %s (%s) to %s (%s):", idx, mail_target[idx], mail_target_acc[idx], cname, aname);
+				strcpy(mail_target[idx], cname);
+				strcpy(mail_target_acc[idx], aname);
+				msg_format(Ind, "  \377s<%s>", o_name_short);
+				return;
+			}
 #endif
 #ifdef EXTENDED_COLOURS_PALANIM
 			else if (prefix(messagelc, "/setpalette")) { //debug set_palette() etc
@@ -11638,7 +11678,7 @@ static void do_slash_brief_help(int Ind){
 void get_laston(char *name, char *response, bool admin, bool colour) {
 	unsigned long int s, sla = 0, slp = 0;
 	time_t now;
-	u32b p_id;
+	s32b p_id;
 	bool acc_found = FALSE;
 	int i;
 	struct account acc;
