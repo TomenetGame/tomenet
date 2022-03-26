@@ -1320,6 +1320,10 @@ void peruse_file(void) {
 		if (k == '6' || k == '>' || k == 'l') {
 			/* Scroll right */
 			cur_col = cur_col + 40;
+			if (cur_col >= ONAME_LEN) { /* Prevent buffer overflow: buf[] in Receive_special_line(). */
+				cur_col -= 40;
+				if (cur_col < 0) cur_col = 0; /* Edge case, paranoia. */
+			}
 
 			/* Success */
 			continue;

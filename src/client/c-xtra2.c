@@ -289,6 +289,10 @@ void do_cmd_messages(void) {
 		if (k == '6' || k == '>' || k == 'l') {
 			/* Scroll right */
 			q = q + 40;
+			if (q >= ONAME_LEN) { /* Prevent buffer overflow. We just pick an arbitrary value here, randomly picked from Receive_special_line():buf[]. */
+				q -= 40;
+				if (q < 0) q = 0; /* Edge case, paranoia. */
+			}
 
 			/* Success */
 			continue;
@@ -587,6 +591,10 @@ void do_cmd_messages_important(void) {
 		if (k == '6' || k == '>' || k == 'l') {
 			/* Scroll right */
 			q = q + 40;
+			if (q >= ONAME_LEN) { /* Prevent buffer overflow. We just pick an arbitrary value here, randomly picked from Receive_special_line():buf[]. */
+				q -= 40;
+				if (q < 0) q = 0; /* Edge case, paranoia. */
+			}
 
 			/* Success */
 			continue;
