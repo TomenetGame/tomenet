@@ -582,7 +582,7 @@ w       w       wear/wield an item from your inventory (weapons, rings,
 W       W       wear/wield an item, same as 'w', but tries to use the second
                 available slot in case two inventory slots are both egligible.
 
-                Starting in 4.7.4b this can also be used to wield a digging
+                Starting in 4.8.0 this can also be used to wield a digging
                 tool as a weapon. You will still use it for digging too.
                 If you try to dig while having a digging tool equipped in the
                 weapon slot and another one in the tool slot, the better one of
@@ -2282,8 +2282,9 @@ So '#' stands for any number (including zero) or sequence of characters.
 Wildcards cannot be used as prefix or suffix and not on their own, except for
 the auto-pickup and auto-destroy features (see below).
 
-The following information about force-inscribing will be deprecated in 4.7.4b+.
-Instead of an '!' prefix, force-inscribing will be toggled via 'f' key:
+This following paragraph about force-inscribing is deprecated since 4.8.0,
+as instead of an '!' prefix force-inscribing will now be toggled via 'f' key
+in the auto-inscriptions menu instead:
 If you put an '!' as first character of a search string, it will force the
 inscription to overwrite existing inscriptions always (otherwise it only
 overwrites trivial inscriptions such as price discount tags).
@@ -5072,7 +5073,7 @@ teleport back to town right away (via a scroll of Word of Recall).
 
 Subinventory:
 -------------
-Starting in clients after 4.7.4b, there are 'container' items that provide a
+Starting in game version 4.8.0, there are 'container' items that provide a
 small inventory in themselves, thereby extending your total inventory space.
 However, you can only ever use one of each category at the same time.
 
@@ -12270,7 +12271,7 @@ Chests              Chests may contain treasures or items. Usually, chests
                     Chests have an increased chance to drop good items, same as
                     monsters that have DROP_GOOD flag.
                     Also see (5.7c) for more information.
-                    After client 4.7.4b, emptied chests can be used for storing
+                    Since client 4.8.0, emptied chests can be used for storing
                     items to extend your inventory slightly, see (3.4).
 Climbing set        Allows you to travel over mountain fields.
                     Info for mimics & co: In order to be able to use it, your
@@ -12330,7 +12331,7 @@ Mattock/Pick/Shovel Diggers, improving your digging capabilities.
                     (scythes and sickles) may help too, at least as well as
                     swords or axes. (see 'Digging' skill in (6.2) and (5.20)
                     for more information about digging).
-                    Starting in 4.7.4b you can press SHIFT+W to wield a digging
+                    Starting in 4.8.0 you can press SHIFT+W to wield a digging
                     tool as a weapon. You will still use it for digging too.
                     If you try to dig while having a digging tool equipped in
                     the weapon slot and another one in the tool slot, the
@@ -13819,7 +13820,7 @@ at least as well as swords or axes against spider webs.
 Wielding a 1.5-handed weapon in only 1 hand will decrease your digging chance
 though, so take off your shield for best results.)
 
-Last but not least, starting in 4.7.4b you can press SHIFT+W to wield a digging
+Last but not least, starting in 4.8.0 you can press SHIFT+W to wield a digging
 tool as a weapon. You will still use it for digging too. If you try to dig
 while having a digging tool equipped in the weapon slot and another one in the
 tool slot, the better one of the two will be used automatically.
