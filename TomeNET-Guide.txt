@@ -8670,8 +8670,8 @@ you already removed might linger there for a bit more.
 The player can suffer from various effects caused by monsters, traps or
 himself. Against several of these effects the 'Saving Throw' ability helps
 to decide whether it will be resisted or not (especially true for effects
-that are cast by monsters on the player - see (6.3) for more details on
-Saving Throw).
+that are cast by monsters on the player - see (6.3) for more details
+on Saving Throw).
 The various effects are:
 
 For 'Fear', 'Blindness', 'Confusion' and 'Paralysis' - please see (5.6).
@@ -11550,8 +11550,7 @@ LUCK ('It affects your luck.')
 NO_MAGIC ('Anti-magic shell')
         Raises your saving throw to 95%, making you nearly immune to malicious
         magical status effects that depend on your character doing a saving
-        throw check to resist, eg paralysation or slowness, and also a
-        monster's 'curse' attack ("points at you and curses" and worse).
+        throw check to resist, see 'Saving Throw' under (6.3) for a list.
         The anti-magic shell will not prevent monsters from casting spells or
         reduce or negate any damage taken from magic spells though.
         It also prevents you from using any magic device or casting spells.
@@ -15653,14 +15652,15 @@ Saving Throw
     How well you can resist attacks that have influence on your status
     other than just hit points (except for monster curses, which can be
     prevented too). Saving throw is rolled (possibly modified) against:
-    -Cause Wounds spells ("Monster points at you and curses/incanting terribly/
-     screaming the word 'DIE'")
+    -Cause Wounds spells (player spell) and monster curses (monsters' version
+     of the cause wounds spell, ie an attack where the monster points at you
+     and curses: "Monster points at you and curses/incanting terribly/screaming
+     the word 'DIE'", depending on the spell's power level).
     -Fear and paralysation melee attacks
     -Confusion, fear, blindness, slowness, paralysation spell effects
     -Non-friendly teleportation effects
     -All nexus/morph effects (except polymorphing from bat form back to normal)
     -Unmagic effects
-    -Direct damage curses (the ones screamed by monsters at you)
     -Suffering damage from dispelling effects
     -Psi attacks of all sorts (damage and effects), including mind-blanking and
      the terribly adverse effects of an encounter with an eldritch horror,
@@ -15724,15 +15724,15 @@ Here is a list which ability changes depend on which factors:
 (The factors in relation to the values in (6.5) are marked by underscores.
 All other factors listed here are further modifications, independant of (6.5).)
 
-Fighting        _'Combat'_, _'Weaponmastery'_, melee +hit boni
-Bows/Throw      _'Combat'_, _'Archery'_, ranged +hit boni
-Saving Throw    Wisdom, _level_, AM-shell
-Stealth         Mimic form weight, stealth items, _'Stealth'_, cloaking,
+ Fighting        _'Combat'_, _'Weaponmastery'_, melee +hit boni
+ Bows/Throw      _'Combat'_, _'Archery'_, ranged +hit boni
+ Saving Throw    Wisdom, _level_, AM-shell
+ Stealth         Mimic form weight, stealth items, _'Stealth'_, cloaking,
                 'Martial Arts'
-Perception      search items, _'Sneakiness'_
-Searching       search items, _'Sneakiness'_, cloaking
-Disarming       Intelligence, dexterity, _'Trapping'_
-Magic Device    Intelligence, _'Magic Device'_
+ Perception      search items, _'Sneakiness'_
+ Searching       search items, _'Sneakiness'_, cloaking
+ Disarming       Intelligence, dexterity, _'Trapping'_
+ Magic Device    Intelligence, _'Magic Device'_
 
 
 For age, height, weight, social class and gender see (6.14).
