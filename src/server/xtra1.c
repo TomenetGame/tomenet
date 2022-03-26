@@ -9984,8 +9984,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			return;
 		}
 		acc = lookup_accountname(pid);
-		if (acc) strcpy(accname, acc);
-		else { //paranoia
+		if (!acc) { //paranoia
 			msg_format(Ind, "\377ySorry, that character does not have an account.");
 			return;
 		}
@@ -10190,8 +10189,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			return;
 		}
 		acc = lookup_accountname(pid);
-		if (acc) strcpy(accname, acc);
-		else { //paranoia
+		if (!acc) { //paranoia
 			msg_format(Ind, "\377ySorry, that character does not have an account.");
 			return;
 		}
