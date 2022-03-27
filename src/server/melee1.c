@@ -261,9 +261,14 @@ static bool do_eat_item(int Ind, int m_idx) {
 	object_type		*o_ptr;
 	char			o_name[ONAME_LEN];
 	int i, k;
+#ifdef ENABLE_SUBINVEN
+	int j, l;
+	object_type *os_ptr;
+#endif
 
         /* Amulet of Immortality */
-        if (p_ptr->admin_invuln) return FALSE;
+	//if (p_ptr->admin_invuln) return FALSE;
+	if (p_ptr->admin_invinc) return FALSE;
 
 	if (safe_area(Ind)) return TRUE;
 
@@ -275,16 +280,38 @@ static bool do_eat_item(int Ind, int m_idx) {
 		/* Obtain the item */
 		o_ptr = &p_ptr->inventory[i];
 
-		/* Accept real items */
+		/* Skip empty slots */
 		if (!o_ptr->k_idx) continue;
-
-		/* Don't steal artifacts  -CFT */
-		if (artifact_p(o_ptr)) continue;
 
 #ifdef ENABLE_SUBINVEN
 		/* Don't steal subinventories, too annoying probably */
+ #if 0
 		if (o_ptr->tval == TV_SUBINVEN) continue;
+ #else		/* Steal item from within a subinventory */
+		if (o_ptr->tval == TV_SUBINVEN) {
+			for (l = 0; l < 10; l++) {
+				/* Pick an item */
+				j = rand_int(o_ptr->bpval);
+
+				/* Obtain the item */
+				os_ptr = &p_ptr->subinventory[i][j];
+
+				/* Skip empty slots */
+				if (!os_ptr->k_idx) continue;
+
+				o_ptr = os_ptr;
+				l = i; /* Keep i just for easy access when displaying stealing message */
+				i = (i + 1) * 100 + j; /* Encode index for global inventory (inven+subinvens) */
+				break;
+			}
+			/* Resume trying to steal from normal inventory */
+			if (l == 10) continue;
+		}
+ #endif
 #endif
+
+		/* Don't steal artifacts  -CFT */
+		if (artifact_p(o_ptr)) continue;
 
 		/* Don't steal keys */
 		if (!mon_allowed_pickup(o_ptr->tval)) continue;
@@ -293,9 +320,16 @@ static bool do_eat_item(int Ind, int m_idx) {
 		object_desc(Ind, o_name, o_ptr, FALSE, 3);
 
 		/* Message */
+#ifdef ENABLE_SUBINVEN
+		if (i >= 100)
+			msg_format(Ind, "\376\377o%sour %s (%c)(%c) was stolen!",
+			    ((o_ptr->number > 1) ? "One of y" : "Y"),
+			    o_name, index_to_label(l), index_to_label(j));
+		else
+#endif
 		msg_format(Ind, "\376\377o%sour %s (%c) was stolen!",
-				((o_ptr->number > 1) ? "One of y" : "Y"),
-				o_name, index_to_label(i));
+		    ((o_ptr->number > 1) ? "One of y" : "Y"),
+		    o_name, index_to_label(i));
 
 		/* Option */
 #ifdef MONSTER_INVENTORY
@@ -1542,7 +1576,6 @@ bool make_attack_melee(int Ind, int m_idx) {
 					}
 
 					else blinked = obvious = do_eat_item(Ind, m_idx);
-
 					break;
 
 				case RBE_EAT_FOOD:
