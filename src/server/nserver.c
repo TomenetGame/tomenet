@@ -3211,7 +3211,8 @@ static int Handle_login(int ind) {
 		msg_print(NumPlayers, "\374\377y --- Your client is outdated! Get the latest one from www.tomenet.eu ---");
 		msg_print(NumPlayers, "\374\377y     WARNING: We can ONLY provide support if you use latest clients!");
 	} else if (is_older_than(&p_ptr->version, VERSION_MAJOR_LATEST, VERSION_MINOR_LATEST, VERSION_PATCH_LATEST, VERSION_EXTRA_LATEST, VERSION_BRANCH_LATEST, VERSION_BUILD_LATEST)) {
-		msg_print(NumPlayers, "\374\377D --- Your client is NOT the latest version, it's not 'outdated' though. ---");
+		msg_print(NumPlayers, "\374\377D --- Your client is NOT the latest version, it's not outdated though. ---");
+		msg_print(NumPlayers, "\374\377D     WARNING: We can ONLY provide support if you use latest clients!");
 	}
 #endif
 #ifdef USE_SOUND_2010
