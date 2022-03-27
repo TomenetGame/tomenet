@@ -9331,8 +9331,17 @@ plog(format("similar: n1='%s',n2='%s'", name1, name2));
 		diff++;
 	}
 	//too little difference between names? forbidden!
-	if ((diff >= 5 && diff > (diff2 * (words ? 6 : 5)) / 10) || (diff < 5 && !words && diff2 < diff + 2)) {
-		s_printf("similar_names (6): name1 '%s', name2 '%s'\n", name1, name2);
+#if 0 /* normal */
+	if (diff >= 5 && diff > (diff2 * (words ? 6 : 5)) / 10) {
+	if (diff < 5 && !words && diff2 < diff + 2) {
+#endif
+	 /* more lenient */
+	if (diff >= 5 && diff > (diff2 * (words ? 6 : 6)) / 10) {
+		s_printf("similar_names (6a): name1 '%s', name2 '%s'\n", name1, name2);
+		return 6;
+	}
+	if (diff < 5 && !words && diff2 < diff + 2) {
+		s_printf("similar_names (6b): name1 '%s', name2 '%s'\n", name1, name2);
 		return 6;
 	}
 
