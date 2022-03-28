@@ -12010,7 +12010,7 @@ static int Receive_special_line(int ind) {
 			char path[MAX_PATH_LENGTH];
 
 			path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet-deaths-short.txt");
-			do_cmd_check_other_prepare(player, path, "Recent Deaths");
+			do_cmd_check_other_prepare(player, path, "Recent Deaths (some low ones omitted)");
 			break; }
 		case SPECIAL_FILE_MOTD2:
 			show_motd2(player);
