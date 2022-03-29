@@ -2014,7 +2014,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 	static char lastsearch[MAX_CHARS] = { 0 };
 	static char lastchapter[MAX_CHARS] = { 0 };
 
-	bool inkey_msg_old, within, within_col, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE, restore_pos = FALSE;
+	bool inkey_msg_old, within, within_col, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE, restore_pos = FALSE, marking = FALSE;
 	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
 	int searchline = -1, within_cnt = 0, c = 0, n, line_presearch = line;
 	char searchstr[MAX_CHARS], withinsearch[MAX_CHARS], chapter[MAX_CHARS]; //chapter[8]; -- now also used for terms
@@ -2168,7 +2168,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (guide_lastline - line) + 1, guide_lastline + 1));
 		else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, guide_lastline + 1));
 #ifdef REGEX_SEARCH
-		Term_putstr(26, bottomline, -1, TERM_L_BLUE, " s/r/R,d,D/f,S,c,#:srch,nxt,prv,reset,chapter,line");
+		Term_putstr(26, bottomline, -1, TERM_L_BLUE, " s/r/R,d,D/f,a,S,c,#:src,nxt,prv,mark,rs,chpt,line");
  #ifdef GUIDE_BOOKMARKS
 		Term_putstr(77, bottomline, -1, TERM_L_UMBER, "b/B");
  #endif
@@ -2343,6 +2343,13 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					n--;
 					continue;
 				}
+			}
+
+			/* Just mark last search's results within currently visible guide piece */
+			else if (marking) {
+				marking = FALSE;
+				strcpy(withinsearch, searchstr);
+				searchstr[0] = 0;
 			}
 
 			/* Search for specific string? */
@@ -2674,7 +2681,11 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			}
 		}
 		/* normal manual operation (resumed) */
-		if (!c_override) c = inkey();
+		if (!c_override) {
+			inkey_interact_macros = TRUE;
+			c = inkey();
+			inkey_interact_macros = FALSE;
+		}
 
 		switch (c) {
 		/* specialty: allow chatting from within here */
@@ -3571,6 +3582,13 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			strcpy(searchstr, lastsearch);
 			searchline = line - 1; //init searchline for string-search
 			continue;
+		/* Mark current search results on currently visible guide part */
+		case 'a':
+			if (!lastsearch[0]) continue;
+
+			strcpy(searchstr, lastsearch);
+			marking = TRUE;
+			continue;
 		/* search for previous occurance of the previously used search keyword */
 		case 'D':
 		case 'f':
@@ -3696,41 +3714,41 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			i = 1;
 			Term_putstr( 0, i++, -1, TERM_WHITE, "At the bottom of the guide screen you will see the following line:");
 #ifdef REGEX_SEARCH
-			Term_putstr(26,   i, -1, TERM_L_BLUE, "s/r/R,d,D/f,S,c,#:srch,nxt,prv,reset,chapter,line");
+			Term_putstr(26,   i, -1, TERM_L_BLUE, " s/r/R,d,D/f,a,S,c,#:src,nxt,prv,mark,rs,chpt,line");
  #ifdef GUIDE_BOOKMARKS
 			Term_putstr(77,   i, -1, TERM_L_UMBER, "b/B");
  #endif
 #else
-			Term_putstr(26,   i, -1, TERM_L_BLUE, "s,d,D/f,S,c,#:srch,nxt,prv,reset,chapter,line");
+			Term_putstr(26,   i, -1, TERM_L_BLUE, " s,d,D/f,S,c,#:srch,nxt,prv,reset,chapter,line");
  #ifdef GUIDE_BOOKMARKS
 			Term_putstr(74,   i, -1, TERM_L_UMBER, "b/B");
  #endif
 #endif
-			Term_putstr( 7,   i, -1, TERM_SLATE,  "SPC/n,p,ENTER,BCK,ESC");
+			Term_putstr( 7,   i, -1, TERM_SLATE,  "SPC/n,p,ENT,BCK,ESC");
 			Term_putstr( 0, i++, -1, TERM_YELLOW, "?:Help");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "Those keys can be used to navigate the guide. Here's a detailed explanation:");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "  Space or 'n':    Move down by one page");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "  'p'         :    Move up by one page");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "  's'         :    Search for a text string (use all upper-case for strict mode)");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " Space,'n' / 'p': Move down / up by one page (ENTER/BACKSPACE move by one line).");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 's'            : Search for a text string (use all uppercase for strict mode).");
 #ifdef REGEX_SEARCH
-			Term_putstr( 0, i++, -1, TERM_WHITE, "  'r'/'R'     :    Search for a regular expression ('R' = case-sensitive)");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "  'd'         :    ..after 's/r/R', this jumps to the next match");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "  'D' or 'f'  :    ..after 's/r/R', this jumps to the previous match");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 'r'/'R'        : Search for a regular expression ('R' = case-sensitive).");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 'd'            : ..after 's/r/R', this jumps to the next match.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 'D' or 'f'     : ..after 's/r/R', this jumps to the previous match.");
 #else
-			Term_putstr( 0, i++, -1, TERM_WHITE, "  'd'         :    ..after 's', this jumps to the next match");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "  'D' or 'f'  :    ..after 's', this jumps to the previous match");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 'd'            : ..after 's', this jumps to the next match.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 'D' or 'f'     : ..after 's', this jumps to the previous match.");
 #endif
-			Term_putstr( 0, i++, -1, TERM_WHITE, "  'S'         :    ..resets screen to where you were before you did a search.");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "  'c'         :    Chapter Search. This is a special search that will skip most");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "                   basic text and only match specific topics and keywords.");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "                   Use this when searching for races, classes, skills, spells,");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "                   schools, techniques, dungeons, bosses, events, lineages,");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "                   depths, stair types, or actual chapter titles or indices.");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "  '#'         :    Jump to a specific line number.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 'a'            : Mark all search results on currently visible guide part.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 'S'            : ..resets screen to where you were before you did a search.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 'c'            : Chapter Search. This is a special search that will skip most");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "                  basic text and only match specific topics and keywords.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "                  Use this when searching for races, classes, skills, spells,");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "                  schools, techniques, dungeons, bosses, events, lineages,");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "                  depths, stair types, or actual chapter titles or indices.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " '#'            : Jump to a specific line number.");
 #ifdef GUIDE_BOOKMARKS
-			Term_putstr( 0, i++, -1, TERM_WHITE, "  'b'/'B'     :    Open bookmark menu / add bookmark at current position.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 'b'/'B'        : Open bookmark menu / add bookmark at current position.");
 #endif
-			Term_putstr( 0, i++, -1, TERM_WHITE, "  ESC         :    The Escape key will exit the guide screen.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " ESC            : The Escape key will exit the guide screen.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "In addition, the arrow keys and the number pad keys can be used, and the keys");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "PgUp/PgDn/Home/End should work both on the main keyboard and the number pad.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "This might depend on your specific OS flavour and desktop environment though.");
