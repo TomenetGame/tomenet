@@ -9273,10 +9273,7 @@ void player_death(int Ind) {
 			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 				o_ptr = &p_ptr->inventory[i];
 				object_flags(o_ptr, &dummy, &dummy, &dummy, &dummy, &f5, &dummy, &dummy);
-				if ((f5 & TR5_WINNERS_ONLY)) {
-					bypass_inscrption = TRUE;
-					inven_takeoff(Ind, i, 255, FALSE);
-				}
+				if ((f5 & TR5_WINNERS_ONLY)) inven_takeoff(Ind, i, 255, FALSE, TRUE);
 			}
  #endif
 

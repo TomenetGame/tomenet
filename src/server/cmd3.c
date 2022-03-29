@@ -20,14 +20,14 @@
 #define BATS_ALLOW_BODY
 
 
-bool bypass_inscrption = FALSE;
 /*
  * Move an item from equipment list to pack
  * Note that only one item at a time can be wielded per slot.
  * Note that taking off an item when "full" will cause that item
  * to fall to the ground.
+ * force: Ignore !t inscription.
  */
-void inven_takeoff(int Ind, int item, int amt, bool called_from_wield) {
+void inven_takeoff(int Ind, int item, int amt, bool called_from_wield, bool force) {
 	player_type	*p_ptr = Players[Ind];
 	int		posn; //, j;
 	object_type	*o_ptr;
@@ -42,11 +42,10 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield) {
 	/* Paranoia */
 	if (amt <= 0) return;
 
-	if ((!bypass_inscrption) && check_guard_inscription( o_ptr->note, 't' )) {
+	if (!force && check_guard_inscription( o_ptr->note, 't' )) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
 	}
-	bypass_inscrption = FALSE;
 
 #ifdef VAMPIRES_INV_CURSED
 	if (p_ptr->prace == RACE_VAMPIRE) reverse_cursed(o_ptr);
@@ -326,8 +325,9 @@ void equip_thrown(int Ind, int slot, object_type *o_ptr, int original_number) {
 
 /*
  * Drops (some of) an item from inventory to "near" the current location
+ * force: bypass !d inscription.
  */
-int inven_drop(int Ind, int item, int amt) {
+int inven_drop(int Ind, int item, int amt, bool force) {
 	player_type *p_ptr = Players[Ind];
 
 	object_type		*o_ptr;
@@ -349,11 +349,10 @@ int inven_drop(int Ind, int item, int amt) {
 	if (amt <= 0) return -1;
 
 	/* check for !d  or !* in inscriptions */
-	if (!bypass_inscrption && check_guard_inscription(o_ptr->note, 'd')) {
+	if (!force && check_guard_inscription(o_ptr->note, 'd')) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return -1;
 	}
-	bypass_inscrption = FALSE;
 
 #ifdef USE_SOUND_2010
 	sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
@@ -821,7 +820,6 @@ void do_takeoff_impossible(int Ind) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 
-	bypass_inscrption = TRUE;
 	for (k = INVEN_WIELD; k < INVEN_TOTAL; k++) {
 		o_ptr = &p_ptr->inventory[k];
 		if ((o_ptr->k_idx) && /* following is a hack for dual-wield.. */
@@ -834,14 +832,13 @@ void do_takeoff_impossible(int Ind) {
 			if (f3 & TR3_PERMA_CURSE) continue;
 
 			/* Ahah TAKE IT OFF ! */
-			inven_takeoff(Ind, k, 255, FALSE);
+			inven_takeoff(Ind, k, 255, FALSE, TRUE);
 		}
 		/* new: also redisplay empty slots as '(unavailable)' after a form change, if they are */
 		if (!o_ptr->k_idx) Send_equip_availability(Ind, k);
 		/* for druids/shamans: climbing set may not work with form even though it is equippable! */
 		else if (k == INVEN_TOOL) Send_equip_availability(Ind, k);
 	}
-	bypass_inscrption = FALSE;
 }
 
 /*
@@ -1179,7 +1176,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 		/* if we don't wield a main weapon, we can use the temporary object for the arm-object, taking it off later.. */
 		if (!p_ptr->inventory[INVEN_WIELD].k_idx) takeoff_slot = INVEN_ARM;
 		else {
-			inven_takeoff(Ind, INVEN_ARM, 255, TRUE);
+			inven_takeoff(Ind, INVEN_ARM, 255, TRUE, FALSE);
 			if (item >= 0) {
 				item = replay_inven_changes(Ind, item);
 				o_ptr = &(p_ptr->inventory[item]);
@@ -1214,7 +1211,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 		/* if we don't wield a main weapon, we can use the temporary object for the arm-object, taking it off later.. */
 		if (!p_ptr->inventory[INVEN_WIELD].k_idx) takeoff_slot = INVEN_ARM;
 		else {
-			inven_takeoff(Ind, INVEN_ARM, 255, TRUE);
+			inven_takeoff(Ind, INVEN_ARM, 255, TRUE, FALSE);
 			if (item >= 0) {
 				item = replay_inven_changes(Ind, item);
 				o_ptr = &(p_ptr->inventory[item]);
@@ -1252,7 +1249,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 			/* if we don't wield a secondary weapon or a shield, we can use the temporary object for the arm-object, taking it off later.. */
 			if (!p_ptr->inventory[INVEN_ARM].k_idx) takeoff_slot = INVEN_WIELD;
 			else {
-				inven_takeoff(Ind, INVEN_WIELD, 255, TRUE);
+				inven_takeoff(Ind, INVEN_WIELD, 255, TRUE, FALSE);
 				if (item >= 0) {
 					item = replay_inven_changes(Ind, item);
 					o_ptr = &(p_ptr->inventory[item]);
@@ -1412,7 +1409,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 		if (takeoff_slot != INVEN_AMMO) {
 			if (ot_ptr->k_idx) {
 				/* Take off existing item */
-				(void)inven_takeoff(Ind, takeoff_slot, 255, TRUE);
+				(void)inven_takeoff(Ind, takeoff_slot, 255, TRUE, FALSE);
 			}
 		} else {
 			if (ot_ptr->k_idx) {
@@ -1421,7 +1418,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 				   However, this doesn't work for cursed items or artefacts. - C. Blue */
 				if (takeoff_slot != slot || !object_similar(Ind, ot_ptr, &tmp_obj, 0x1)) {
 					/* Take off existing item */
-					(void)inven_takeoff(Ind, takeoff_slot, 255, TRUE);
+					(void)inven_takeoff(Ind, takeoff_slot, 255, TRUE, FALSE);
 				} else {
 					// tmp_obj.number += o_ptr->number;
 					object_absorb(Ind, &tmp_obj, ot_ptr);
@@ -1704,7 +1701,7 @@ void do_cmd_takeoff(int Ind, int item, int amt) {
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 
 	/* Take off the item */
-	inven_takeoff(Ind, item, amt, FALSE);
+	inven_takeoff(Ind, item, amt, FALSE, FALSE);
 }
 
 
@@ -1919,7 +1916,7 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 
 	/* Drop (some of) the item */
-	inven_drop(Ind, item, quantity);
+	inven_drop(Ind, item, quantity, FALSE);
 }
 
 
@@ -3605,9 +3602,9 @@ void do_cmd_steal(int Ind, int dir) {
 				if (j == INVEN_BODY) continue;
 
 				/* An artifact 'resists' */
-				if (true_artifact_p(o_ptr) && rand_int(100) > 2)
-					continue;
-				inven_drop(Ind, j, randint(o_ptr->number * 2));
+				if (true_artifact_p(o_ptr) && rand_int(100) > 2) continue;
+
+				inven_drop(Ind, j, randint(o_ptr->number * 2), TRUE);
 			}
 		}
 

@@ -1143,10 +1143,8 @@ void lua_fix_equip_slots(int Ind) {
 			    p_ptr->inventory[i].tval == TV_RING)
 				continue;
 
-			bypass_inscrption = TRUE;
-			inven_takeoff(Ind, i, 255, FALSE);
+			inven_takeoff(Ind, i, 255, FALSE, TRUE);
 	}
-	bypass_inscrption = FALSE;
 
 	/* excise bugged zero-items */
 	/* (same as in do_cmd_refresh) */
@@ -1274,9 +1272,7 @@ void lua_takeoff_costumes(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	if ((p_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p_ptr->inventory[INVEN_BODY].sval == SV_COSTUME)) {
-		bypass_inscrption = TRUE;
-		inven_takeoff(Ind, INVEN_BODY, 255, FALSE);
-		bypass_inscrption = FALSE;
+		inven_takeoff(Ind, INVEN_BODY, 255, FALSE, TRUE);
 		msg_print(Ind, "It's not that time of the year anymore.");
 	}
 }

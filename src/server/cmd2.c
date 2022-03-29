@@ -7440,7 +7440,7 @@ void do_cmd_fire(int Ind, int dir) {
 					inven_item_optimize(Ind, item);
 					drop_near_severe(Ind, &throw_obj, 0, wpos, y, x);
 #else /* silly - like failing to catch it instead of it not returning ;-p */
-					inven_drop(Ind, INVEN_BOW, 1);
+					inven_drop(Ind, INVEN_BOW, 1, TRUE);
 #endif
 				} else {
 					msg_format(Ind, "\377oYour %s is destroyed.",o_name);

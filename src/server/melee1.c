@@ -454,8 +454,7 @@ static bool do_seduce(int Ind, int m_idx) {
 			/* Describe the result */
 			object_desc(Ind, o_name, o_ptr, FALSE, 0);
 			msg_format(Ind, "%^s seduces you and you take off your %s...", m_name, o_name);
-			bypass_inscrption = TRUE;
-			inven_takeoff(Ind, j, 255, FALSE);
+			inven_takeoff(Ind, j, 255, FALSE, TRUE);
 			break;
 		}
 
@@ -2729,10 +2728,9 @@ bool make_attack_melee(int Ind, int m_idx) {
 							sound(Ind, "disarm_weapon", "", SFX_TYPE_ATTACK, FALSE);
 #endif
 							//msg_format(Ind, "\377r%^s disarms you!", m_name);
-							bypass_inscrption = TRUE;
 							object_desc(0, o_name, o_ptr, FALSE, 3);
 							if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && magik(98)) {
-								inven_takeoff(Ind, slot, 1, FALSE);
+								inven_takeoff(Ind, slot, 1, FALSE, TRUE);
 								s_printf("%s EFFECT: Disarmed (takeoff) %s: %s.\n", showtime(), p_ptr->name, o_name);
 							} else {
 #ifdef DISARM_SCATTER
@@ -2754,7 +2752,7 @@ bool make_attack_melee(int Ind, int m_idx) {
  #ifdef DISARM_SCATTER
 								o_idx =
  #endif
-								    inven_drop(Ind, slot, 1);
+								    inven_drop(Ind, slot, 1, TRUE);
 #endif
 #ifdef DISARM_SCATTER
 								if (o_idx == -1) s_printf("DISARM: ITEM DESTROYED.\n");
@@ -2789,11 +2787,10 @@ bool make_attack_melee(int Ind, int m_idx) {
 							sound(Ind, "disarm_weapon", "", SFX_TYPE_ATTACK, FALSE);
 #endif
 							//msg_format(Ind, "\377r%^s disarms you!", m_name);
-							bypass_inscrption = TRUE;
 							o_ptr = &p_ptr->inventory[INVEN_WIELD];
 							object_desc(0, o_name, o_ptr, FALSE, 3);
 							if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && magik(98)) {
-								inven_takeoff(Ind, INVEN_WIELD, 1, FALSE);
+								inven_takeoff(Ind, INVEN_WIELD, 1, FALSE, TRUE);
 								s_printf("%s EFFECT: Disarmed (dual, takeoff) %s: %s.\n", showtime(), p_ptr->name, o_name);
 							} else {
 #ifdef DISARM_SCATTER
@@ -2804,7 +2801,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 #ifdef DISARM_SCATTER
 								o_idx =
 #endif
-								    inven_drop(Ind, INVEN_WIELD, 1);
+								    inven_drop(Ind, INVEN_WIELD, 1, TRUE);
 								s_printf("%s EFFECT: Disarmed (dual, drop) %s: %s.\n", showtime(), p_ptr->name, o_name);
 #ifdef DISARM_SCATTER
 								if (o_idx == -1) s_printf("DISARM: ITEM DESTROYED.\n");
@@ -2830,7 +2827,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 							o_ptr = &p_ptr->inventory[INVEN_ARM];
 							object_desc(0, o_name, o_ptr, FALSE, 3);
 							if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && magik(98)) {
-								inven_takeoff(Ind, INVEN_ARM, 1, FALSE);
+								inven_takeoff(Ind, INVEN_ARM, 1, FALSE, TRUE);
 								s_printf("%s EFFECT: Disarmed (dual, takeoff) %s: %s.\n", showtime(), p_ptr->name, o_name);
 							} else {
 #ifdef DISARM_SCATTER
@@ -2841,7 +2838,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 #ifdef DISARM_SCATTER
 								o_idx =
 #endif
-								    inven_drop(Ind, INVEN_ARM, 1);
+								    inven_drop(Ind, INVEN_ARM, 1, TRUE);
 								s_printf("%s EFFECT: Disarmed (dual, drop) %s: %s.\n", showtime(), p_ptr->name, o_name);
 #ifdef DISARM_SCATTER
 								if (o_idx == -2) s_printf("DISARM: ITEM DESTROYED.\n");
