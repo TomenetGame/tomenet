@@ -754,9 +754,6 @@ void cmd_inven(void) {
 	/* Then, save the screen */
 	Term_save();
 	showing_inven = screen_icky;
-#ifdef ENABLE_SUBINVEN
-	topline_icky = TRUE;
-#endif
 
 	command_gap = 50;
 
@@ -766,13 +763,17 @@ void cmd_inven(void) {
 #endif
 
 	show_inven();
+#ifdef ENABLE_SUBINVEN
+	/* Do this after we called show_inven() so total weight is displayed too, in the topline. */
+	topline_icky = TRUE;
+#endif
 
 	while (TRUE) {
-#ifdef ENABLE_SUBINVEN
-topline_icky = TRUE; //needed AGAIN. A failed 'stow' command causes topline to get partially overwritten by the server's error response msg. -_- so probably c_get_item unsets ickiness.
-#endif
 		/* Redraw these in case some command from below has erased the topline */
 		show_inven_header();
+#ifdef ENABLE_SUBINVEN
+topline_icky = TRUE; /* Needed AGAIN. A failed 'stow' command causes topline to get partially overwritten by the server's error response msg. -_- so probably c_get_item unsets ickiness. */
+#endif
 
 		ch = inkey();
 		/* allow pasting item into chat */

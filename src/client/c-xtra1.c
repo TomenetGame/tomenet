@@ -1457,16 +1457,18 @@ void prt_extra_status(cptr status) {
 /* Enable bright red colour for actual packet loss? */
 #define BRIGHTRED_PACKETLOSS
 void prt_lagometer(int lag) {
-	if (shopping) return;
 	int attr = TERM_L_GREEN;
 	int num;
 	int x, y;
+	bool hidden;
+
+	if (shopping) return; /* Lag-o-meter not visible as shop screens encompass the whole main window */
 
 	/* disable(d)? */
 	if (!lagometer_enabled) return;
 	if (lag == -1) {
 		if (screen_icky) Term_switch(0);
-//		Term_putstr(COL_LAG, ROW_LAG, 12, TERM_L_DARK, "[//////////]");
+		//Term_putstr(COL_LAG, ROW_LAG, 12, TERM_L_DARK, "[//////////]");
 		Term_putstr(COL_LAG, ROW_LAG, 12, TERM_L_DARK, "[----------]");
 		if (screen_icky) Term_switch(0);
 		return;
@@ -1503,7 +1505,7 @@ void prt_lagometer(int lag) {
 #endif
 
 	/* remember cursor position */
-	Term_locate(&x, &y);
+	hidden = Term_locate(&x, &y);
 
 	if (screen_icky) Term_switch(0);
 
@@ -1516,6 +1518,7 @@ void prt_lagometer(int lag) {
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);
+	if (hidden) Term->scr->cu = 1;
 }
 
 /*
@@ -1767,7 +1770,10 @@ void show_inven_header(void) {
 
 	/* Display the weight if needed */
 	if (c_cfg.show_weights && totalwgt
-	    && !topline_icky) { /* <- for when we're inside cmd_inven() and pressed 'x' to examine an item, while a live-inve-timeout-update is coming in (only happens for equip atm tho, so not needed here) */
+#if 0 /* Disabled the topline_icky check, as we get ONLY called in cmd_inven(), and not from live-updating inventory timeouts: */
+	    && !topline_icky /* <- for when we're inside cmd_inven() and pressed 'x' to examine an item, while a live-inven-timeout-update is coming in (only happens for equip atm tho, so not needed here) */
+#endif
+	    ) {
 		if (totalwgt < 10000) /* still fitting into 3 digits? */
 			(void)sprintf(tmp_val, "Total: %3li.%1li lb", totalwgt / 10, totalwgt % 10);
 		else if (totalwgt < 10000000) /* still fitting into 3 digits? */
@@ -1916,7 +1922,7 @@ void show_inven(void) {
 
 	/* Display the weight if needed */
 	if (c_cfg.show_weights && totalwgt
-	    && !topline_icky) { /* <- for when we're inside cmd_inven() and pressed 'x' to examine an item, while a live-inve-timeout-update is coming in (only happens for equip atm tho, so not needed here) */
+	    && !topline_icky) { /* <- for when we're inside cmd_inven() and pressed 'x' to examine an item, while a live-inven-timeout-update is coming in (only happens for equip atm tho, so not needed here) */
 		if (totalwgt < 10000) /* still fitting into 3 digits? */
 			(void)sprintf(tmp_val, "Total: %3li.%1li lb", totalwgt / 10, totalwgt % 10);
 		else if (totalwgt < 10000000) /* still fitting into 3 digits? */
