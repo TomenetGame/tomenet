@@ -951,7 +951,10 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 			/* This prevents teleporting into broken vaults where layouts overlap :/ annoying bug */
 			if (zcave[y][x].info & CAVE_STCK) continue;
 			/* No teleporting into monster nests (experimental, 2008-05-26) */
-			if (zcave[y][x].info & CAVE_NEST_PIT) continue;
+			if (zcave[y][x].info & CAVE_NEST_PIT) {
+				/* Exception: We're teleporting due to leaving a (dungeon) store and distance is just 1! */
+				if (!left_shop || d != 1) continue;
+			}
 			/* For instant-resurrection into sickbay: avoid ppl blinking into there on purpose, disturbing the patients -_- */
 			if (zcave[y][x].info & CAVE_PROT) continue;
 			if (f_info[zcave[y][x].feat].flags1 & FF1_PROTECTED) continue;
