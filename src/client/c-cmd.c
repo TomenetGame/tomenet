@@ -2683,9 +2683,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		}
 		/* normal manual operation (resumed) */
 		if (!c_override) {
-			inkey_interact_macros = TRUE;
+			//inkey_interact_macros = TRUE; /* Advantage: Macros in Backspace etc won't interfere; Drawback: Cannot use up/down while numlock is off. */
 			c = inkey();
-			inkey_interact_macros = FALSE;
+			//inkey_interact_macros = FALSE;
 		}
 
 		switch (c) {
