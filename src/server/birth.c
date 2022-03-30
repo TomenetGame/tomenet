@@ -1318,7 +1318,7 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 
 	{
 		/* Druid */
-		{ TV_POTION, SV_POTION_HEROISM, 0 },
+		{ TV_POTION, SV_POTION_CURE_POISON, 0 },
 		{ TV_POTION, SV_POTION_CURE_CRITICAL, 0 },
 		{ TV_POTION, SV_POTION_INVIS, 0 },
 		{ TV_AMULET, SV_AMULET_SLOW_DIGEST, 0 },
@@ -1474,7 +1474,7 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 
 	{
 		/* Druid */
-		{ TV_POTION, SV_POTION_HEROISM, 0 },
+		{ TV_POTION, SV_POTION_CURE_POISON, 0 },
 		{ TV_POTION, SV_POTION_CURE_CRITICAL, 0 },
 		{ TV_POTION, SV_POTION_INVIS, 0 },
 		{ TV_AMULET, SV_AMULET_SLOW_DIGEST, 0 },
