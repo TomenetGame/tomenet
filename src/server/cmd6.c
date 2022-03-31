@@ -587,7 +587,7 @@ void do_cmd_eat_food(int Ind, int item) {
 
 
 	/* Food can feed the player */
-	if (o_ptr->tval != TV_SPECIAL) feed = o_ptr->weight * 500; /* For comparison, a ration at 1.0 lbs feeds for 5000 */
+	if (o_ptr->tval == TV_SPECIAL) feed = o_ptr->weight * 500; /* For comparison, a ration at 1.0 lbs (weight=10) feeds for 5000 */
 	else feed = o_ptr->pval;
 
 	if (!p_ptr->suscep_life)
