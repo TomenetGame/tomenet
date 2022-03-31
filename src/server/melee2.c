@@ -9430,7 +9430,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	if (m_ptr->no_move) {
 		m_ptr->no_move--;
 		//m_ptr->monfear = 0; }
-		if (!m_ptr->no_move) msg_print_near_monster(m_idx, "is no longer frozen to the ground.");
+		if (!m_ptr->no_move) {
+			if (m_ptr->r_idx == RI_PANDA) msg_print_near_monster(m_idx, "gets back up on its feet.");
+			else msg_print_near_monster(m_idx, "is no longer frozen to the ground.");
+		}
 	}
 
 	/* Get the origin */
@@ -10531,12 +10534,13 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 					/* Describe observable situations */
  #if 0
 					if (player_has_los_bold(Ind, ny, nx))
-						msg_format(Ind, "%^s eats %s.", m_name, o_name); /* ^^ */
+						msg_format(Ind, "%^s starts eating %s.", m_name, o_name); /* ^^ */
  #else
-					msg_print_near_monster(m_idx, format("eats %s.", o_name));
+					msg_print_near_monster(m_idx, format("starts eating %s.", o_name));
  #endif
 
-					m_ptr->energy -= level_speed(&m_ptr->wpos) * 8;//seconds, approx. 8 is max due to s16b overflow!
+					//m_ptr->energy -= level_speed(&m_ptr->wpos) * 8;//seconds, approx. 8 is max due to s16b overflow!
+					m_ptr->no_move = 15; //alernative method, comes with proper hacked message when it ends, too :)
 
 					/* Delete the object */
 					delete_object(wpos, ny, nx, TRUE);
