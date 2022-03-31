@@ -3614,7 +3614,7 @@ void do_cmd_use_staff(int Ind, int item) {
 			s_printf("ERROR: Not a subinventory. (%s, %i)\n", p_ptr->name, item / 100 - 1);
 			return;
 		}
-		if (p_ptr->inventory[item / 100 - 1].sval != SV_SI_SATCHEL) {
+		if (p_ptr->inventory[item / 100 - 1].sval != SV_SI_MDEVP_WRAPPING) {
 			msg_print(Ind, "\377yAntistatic wrappings are the only eligible sub-containers for using staves.");
 			return;
 		}
