@@ -2169,7 +2169,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (guide_lastline - line) + 1, guide_lastline + 1));
 		else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, guide_lastline + 1));
 #ifdef REGEX_SEARCH
-		Term_putstr(26, bottomline, -1, TERM_L_BLUE, " s/r/R,d,D/f,a,S,c,#:src,nxt,prv,mark,rs,chpt,line");
+		Term_putstr(26, bottomline, -1, TERM_L_BLUE, " s/r/R,d,D/f,a/A,S,c,#:src,nx,pv,mark,rs,chpt,line");
  #ifdef GUIDE_BOOKMARKS
 		Term_putstr(77, bottomline, -1, TERM_L_UMBER, "b/B");
  #endif
@@ -3590,6 +3590,34 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			strcpy(searchstr, lastsearch);
 			marking = TRUE;
 			continue;
+		/* Enter a new (non-regexp) mark string and mark it on currently visible guide part */
+		case 'A':
+#ifdef REGEX_SEARCH
+			search_regexp = FALSE;
+#endif
+			Term_erase(0, bottomline, 80);
+			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter mark string: ");
+#if 0
+			searchstr[0] = 0;
+#else
+			/* life hack: if we searched for a non-numerical chapter string, make it auto-search target
+			   for a (possibly happening subsequently to the chapter search) normal search too */
+ #if 0
+			if (lastchapter[0] != '(') strcpy(searchstr, lastchapter);
+			else searchstr[0] = 0;
+ #else
+			strcpy(searchstr, lastchapter);
+ #endif
+#endif
+			inkey_msg_old = inkey_msg;
+			inkey_msg = TRUE;
+			askfor_aux(searchstr, MAX_CHARS - 1, 0);
+			inkey_msg = inkey_msg_old;
+			if (!searchstr[0]) continue;
+
+			strcpy(lastsearch, searchstr);
+			marking = TRUE;
+			continue;
 		/* search for previous occurance of the previously used search keyword */
 		case 'D':
 		case 'f':
@@ -3715,7 +3743,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			i = 1;
 			Term_putstr( 0, i++, -1, TERM_WHITE, "At the bottom of the guide screen you will see the following line:");
 #ifdef REGEX_SEARCH
-			Term_putstr(26,   i, -1, TERM_L_BLUE, " s/r/R,d,D/f,a,S,c,#:src,nxt,prv,mark,rs,chpt,line");
+			Term_putstr(26,   i, -1, TERM_L_BLUE, " s/r/R,d,D/f,a/A,S,c,#:src,nx,pv,mark,rs,chpt,line");
  #ifdef GUIDE_BOOKMARKS
 			Term_putstr(77,   i, -1, TERM_L_UMBER, "b/B");
  #endif
@@ -3731,14 +3759,14 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			Term_putstr( 0, i++, -1, TERM_WHITE, " Space,'n' / 'p': Move down / up by one page (ENTER/BACKSPACE move by one line).");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " 's'            : Search for a text string (use all uppercase for strict mode).");
 #ifdef REGEX_SEARCH
-			Term_putstr( 0, i++, -1, TERM_WHITE, " 'r'/'R'        : Search for a regular expression ('R' = case-sensitive).");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 'r' / 'R'      : Search for a regular expression ('R' = case-sensitive).");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " 'd'            : ..after 's/r/R', this jumps to the next match.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " 'D' or 'f'     : ..after 's/r/R', this jumps to the previous match.");
 #else
 			Term_putstr( 0, i++, -1, TERM_WHITE, " 'd'            : ..after 's', this jumps to the next match.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " 'D' or 'f'     : ..after 's', this jumps to the previous match.");
 #endif
-			Term_putstr( 0, i++, -1, TERM_WHITE, " 'a'            : Mark all search results on currently visible guide part.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 'a' / 'A'      : Mark old/new search results on currently visible guide part.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " 'S'            : ..resets screen to where you were before you did a search.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " 'c'            : Chapter Search. This is a special search that will skip most");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "                  basic text and only match specific topics and keywords.");
@@ -3747,7 +3775,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			Term_putstr( 0, i++, -1, TERM_WHITE, "                  depths, stair types, or actual chapter titles or indices.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " '#'            : Jump to a specific line number.");
 #ifdef GUIDE_BOOKMARKS
-			Term_putstr( 0, i++, -1, TERM_WHITE, " 'b'/'B'        : Open bookmark menu / add bookmark at current position.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 'b' / 'B'      : Open bookmark menu / add bookmark at current position.");
 #endif
 			Term_putstr( 0, i++, -1, TERM_WHITE, " ESC            : The Escape key will exit the guide screen.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "In addition, the arrow keys and the number pad keys can be used, and the keys");
