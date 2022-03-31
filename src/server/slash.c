@@ -5899,6 +5899,36 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				return;
 			}
+			else if (prefix(messagelc, "/pandahi")) { /* tele-to's or summons the panda to you */
+				int m_idx;
+				monster_type *m_ptr;
+				bool found = FALSE;
+
+				for (k = m_top - 1; k >= 0; k--) {
+					m_idx = m_fast[k];
+					m_ptr = &m_list[m_idx];
+					if (m_ptr->r_idx != RI_PANDA || !inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
+					teleport_to_player(Ind, m_idx);
+					found = TRUE;
+				}
+				if (!found) (void)summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, RI_PANDA, 0, 1);
+				return;
+			}
+			else if (prefix(messagelc, "/pandabye")) { /* removes the panda from current floor */
+				int m_idx;
+				monster_type *m_ptr;
+				i = 0;
+
+				for (k = m_top - 1; k >= 0; k--) {
+					m_idx = m_fast[k];
+					m_ptr = &m_list[m_idx];
+					if (m_ptr->r_idx != RI_PANDA || !inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
+					delete_monster_idx(m_idx, TRUE);
+					i++;
+				}
+				msg_format(Ind, "Deleted %d pandas.", i);
+				return;
+			}
 			else if (prefix(messagelc, "/untrap")) { /* remove all traps from floor */
 				cave_type **zcave, *c_ptr;
 				struct c_special *cs_ptr;
