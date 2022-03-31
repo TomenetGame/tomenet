@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 29. March 2022 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 31. March 2022 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.8.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1709,6 +1709,11 @@ They all start with a slash '/' hence they're called slash commands:
 /say <text>
 /s          Speaks <text> to players who are currently nearby your position,
             instead of sending your message to everyone on the server.
+/sayme['] <text>
+/sme        Write an emote to players who are currently nearby your position,
+            instead of sending it to everyone on the server.
+            The <'> apostrophe can be used to express genitivum.
+            Example: /sme's supplies are running low!
 
 /shout <text>
             Shout <text> loudly, will wake up monsters. (Same as "/yell".)
