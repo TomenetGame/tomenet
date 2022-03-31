@@ -5130,7 +5130,8 @@ There are four categories of subinventories:
   To do so, you must use the '@' feature (call by item name) in the prompt,
   or simply create a macro using the macro wizard, which does it this way too.
   Unknown rods are never eligible to be placed in this bag.
-  Note that !C inscription (to alert when charged) works inside bags just fine.
+  Note that !C inscription (to alert when charged) on your magic devices works
+  just fine when they are inside bags, just as usual.
 
 As you noticed, for now from outside the subinventory you cannot access any
 items inside except if you use the '@' (call by item name) feature in the item
