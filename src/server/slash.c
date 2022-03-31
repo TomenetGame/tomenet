@@ -3712,7 +3712,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			/* hack: real Panda */
-			if (!strcasecmp(message3, "Panda")) {
+			if (!strcasecmp(message3, "Panda") || !strcasecmp(message3, "the Panda") || !strcasecmp(message3, "a Panda")) {
 				int idx;
 				monster_type *m_ptr;
 
