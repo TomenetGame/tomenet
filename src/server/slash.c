@@ -7177,6 +7177,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/reloadmotd")) {
 				/* update MotD changes on the fly */
 				exec_lua(0, format("set_motd()"));
+				return;
 			}
 			else if (prefix(messagelc, "/anotes")) {
 				int notes = 0;
