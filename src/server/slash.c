@@ -2593,10 +2593,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if (server_warning[0]) msg_format(Ind, "\377R*** Note: %s ***", server_warning);
 			return;
 		}
-		else if (prefix(messagelc, "/reloadmotd")) {
-			/* update MotD changes on the fly */
-			exec_lua(0, format("set_motd()"));
-		}
 		else if (prefix(messagelc, "/notes")) {
 			int notes = 0;
 			for (i = 0; i < MAX_NOTES; i++) {
@@ -3209,7 +3205,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 #ifdef AUCTION_SYSTEM
-		else if (prefix(messagelc, "/auc")) {
+		else if (prefix(messagelc, "/auc") || prefix(messagelc, "/auction")) {
 			int n;
 
 			if (p_ptr->inval) {
@@ -7177,6 +7173,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				d_ptr->known = 0x1 | 0x2 | 0x4 | 0x8; /* Entrance seen, base level known, depth known, boss known */
 				msg_print(Ind, "\377GDungeon is know FULLY KNOWN.");
 				return;
+			}
+			else if (prefix(messagelc, "/reloadmotd")) {
+				/* update MotD changes on the fly */
+				exec_lua(0, format("set_motd()"));
 			}
 			else if (prefix(messagelc, "/anotes")) {
 				int notes = 0;
