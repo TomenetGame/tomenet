@@ -17917,9 +17917,13 @@ Rotting corpse   8  Free action, resists confusion/fear/cold, poison immunity,
                     This form can pass solid walls!
                     Also gives fear/sound/insanity resistance, free action,
                     poison immunity, and you won't bleed from cuts.
-Tengu           10  High HP, good AC, can blink/teleport and more, resists fear
-                    and fire, can levitate. A secret tip for form hunters!
-                    (Does not occur in packs.)
+Tengu           10  Moves quickly, high HP, good AC, can blink/teleport and
+                    more, resists fear and fire, can levitate. A secret tip
+                    for form hunters! (Does not occur in packs.)
+                    Even if you have a better form already, you can still use
+                    this form's teleportation (or any other) ability by making
+                    a macro in the macro wizard that changes to Tengu,
+                    teleports, and then changes back to your previous form.
 *Master yeek    12  Although everyone knows that Yeek = weak, this particular
                     kind of Yeek can cast some interesting magic spells.
                     And as a plus it's actually immune to acid.
@@ -17983,9 +17987,20 @@ Dark-elven Lord 20  Good HP, resists darkness but is susceptible to light-based
                     his array of spells that boosts his speed further.
                     This monster occurs somewhat rarely.
                     (Does not occur in packs.)
+                    Even if you have a better form already, you can still use
+                    this form's haste-self (or any other) ability by making a
+                    macro in the macro wizard that changes to Dark-elven Lord,
+                    hastes self, and then changes back to your previous form.
 
 (The number is the monster level and therefore the amount of monsters you need
 to kill to learn the form.)
+
+Some of these forms have useful abilities, mainly teleport, haste self and heal
+which you might want to use even though you already use another, better overall
+form. The solution is to just create a macro (using the macro wizard is the
+easiest way) that polymorphs into the form with the useful spell, then casts it
+and then polymorphs you back to your previous form, all in one macro, ie in one
+keypress!
 
 Of course some of these forms might also be useful for martial arts users.
 (Note that martial artists cannot make use of ranged weapons or weapons in
