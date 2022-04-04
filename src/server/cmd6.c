@@ -168,38 +168,40 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 		break;
 
 	case SV_FOOD_WEAKNESS:
-		if (!p_ptr->suscep_life) take_hit(Ind, damroll(6, 6), "poisonous food", 0);
+		if (!p_ptr->suscep_life) take_hit(Ind, damroll(4, 4), "bad food", 0);
 		(void)do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL);
 		ident = TRUE;
 		break;
 
 	case SV_FOOD_SICKNESS:
-		if (!p_ptr->suscep_life) take_hit(Ind, damroll(6, 6), "poisonous food", 0);
+		if (!p_ptr->suscep_life) take_hit(Ind, damroll(5, 5), "bad food", 0);
 		(void)do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL);
 		ident = TRUE;
 		break;
 
 	case SV_FOOD_STUPIDITY:
-		if (!p_ptr->suscep_life) take_hit(Ind, damroll(8, 8), "poisonous food", 0);
+		if (!p_ptr->suscep_life) take_hit(Ind, damroll(3, 3), "bad food", 0);
 		(void)do_dec_stat(Ind, A_INT, STAT_DEC_NORMAL);
 		ident = TRUE;
 		break;
 
 	case SV_FOOD_NAIVETY:
-		if (!p_ptr->suscep_life) take_hit(Ind, damroll(8, 8), "poisonous food", 0);
+		if (!p_ptr->suscep_life) take_hit(Ind, damroll(3, 3), "bad food", 0);
 		(void)do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL);
 		ident = TRUE;
 		break;
 
 	case SV_FOOD_UNHEALTH:
-		if (!p_ptr->suscep_life) take_hit(Ind, damroll(10, 10), "poisonous food", 0);
+		if (!p_ptr->suscep_life) take_hit(Ind, damroll(10, 10), "bad food", 0);
 		(void)do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL);
 		ident = TRUE;
 		break;
 
 	case SV_FOOD_DISEASE:
-		if (!p_ptr->suscep_life) take_hit(Ind, damroll(10, 10), "poisonous food", 0);
+		if (!p_ptr->suscep_life) take_hit(Ind, damroll(8, 8), "contaminated food", 0);
 		(void)do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL);
+		/* but wait, there's more */
+		set_diseased(Ind, p_ptr->diseased + rand_int(10) + 10, 0);
 		ident = TRUE;
 		break;
 
