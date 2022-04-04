@@ -3595,6 +3595,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 #ifdef REGEX_SEARCH
 			search_regexp = FALSE;
 #endif
+			search_uppercase = FALSE;
+			chapter[0] = 0;
+
 			Term_erase(0, bottomline, 80);
 			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter mark string: ");
 #if 0
