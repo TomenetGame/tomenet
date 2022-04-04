@@ -4325,6 +4325,7 @@ R-lines:
 The 'R' stands for 'monster', meaning a specific base monster type. You can see
 all of these in the client's in-game monster lore (~7) or in the spoiler file
 lib/game/r_info.txt. The monster index is the number located right after 'N:'.
+You can also use Mikael's monster search website under ~R .
 
 These mapping lines will remap the specified feature or monster to the symbol
 with the number 'character' in your font, which may range from 0 to 255, and
@@ -12880,9 +12881,9 @@ hard challenges and new unique bosses.
 (5.11a) Monster flags
 ---------------------
 Most monster flags you find in the spoiler files (press ~7 in-game or open the
-actual file r_info.txt with a text editor or use Mikael's monster search) are
-self-explanatory. Here is an explanation of some flags that are important but
-might not be obvious:
+actual file r_info.txt with a text editor or use Mikael's monster search, you
+can invoke that one via ~R ) are self-explanatory. Here is an explanation of
+some flags that are important but might not be obvious:
 
 FORCE_MAXHP     The monster always gets rolled at maximum hit points.
                 For example if the monster has 3d6 hit points aka 3 dice with
@@ -14852,6 +14853,8 @@ stated.
                                 To find out details about a monster form,
                                 press  ~ 7  in game or consult a spoiler file.
                                 (See (7.4) for more info about spoiler files.)
+                                You can also use Mikael's monster search page,
+                                accessible via knowledge menu, just press  ~R .
 
                                 For each point that Mimicry is trained above
                                 30.000 the character's mana pool will expand
@@ -17370,6 +17373,7 @@ that usually cannot wear any head gear.
 
 To find out the special abilities of a monster form, press  ~ 7  in game or
 consult a spoiler file. (See (7.4) for more info about spoiler files.)
+You can also use Mikael's monster search website under ~R .
 It's abilities will transform to the mimic's body as follows.
 
 Very useful for searching for monster forms with specific abilities is
@@ -21898,6 +21902,7 @@ a_info.txt  contains all artifacts.
             (You can also access this information in-game by pressing ~6 .)
 r_info.txt  contains all monsters.
             (You can also access this information in-game by pressing ~7 .)
+            Alternatively, visit Mikael's monster search website via ~R .
 k_info.txt  contains all base item types.
 e_info.txt  contains all ego item types.
 All files contain a block of information, either at the beginning or at the
