@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 2. April 2022 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 4. April 2022 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.8.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -23856,5 +23856,12 @@ Solution:   A workaround is to run TomeNET as privileged user or as super user
 PROBLEM 66: Tokariew found out about a linking problem when cross-compiling
             TomeNET on Fedora 33 with mingw-gcc10.
 Solution:   Using the linker flag  -fstack-protector  resolved this.
+
+PROBLEM 67: I want to macro CTRL+Z but it automatically changes into "\W".
+Solution:   In the macro wizard, press 'a' to enter the action, and instead of
+            just   ^z   prefix it with a '\' like this:   \^z
+            The '\' will prevent auto-changing of the ^z to \W.
+            Next you can press 'h' to create a hybrid macro (or whatever you
+            see fit) and press the key you want to bind it to.
 
 ===============================================================================
