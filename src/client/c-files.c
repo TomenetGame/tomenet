@@ -20,8 +20,8 @@
 #define WINDOWS_USER_HOME
 
 
-static int MACRO_WAIT = 96; //hack: ASCII 96 ("`") is unused in the game's key layout
-static int MACRO_XWAIT = 26; //hack: ASCII 26 (SUB/Substitute) which is unused is now abused for new client-side wait function that is indepdendant of the server, allows for long waits, and can be cancelled by keypress.
+static int MACRO_WAIT = 96; //hack: see c-util.c and keep consistent
+static int MACRO_XWAIT = 30; //hack: see c-util.c and keep consistent
 
 /*
  * Extract the first few "tokens" from a buffer

@@ -86,7 +86,7 @@ int usleep(long microSeconds) {
 
 
 static int MACRO_WAIT = 96; //hack: ASCII 96 ("`") is unused in the game's key layout
-static int MACRO_XWAIT = 26; //hack: ASCII 26 (SUB/Substitute) which is unused is now abused for new client-side wait function that is indepdendant of the server, allows for long waits, and can be cancelled by keypress.
+static int MACRO_XWAIT = 30; //hack: ASCII 30 (RS/Record Separator) which is practically unused, as it represents CTRL+^ is now abused for new client-side wait function that is indepdendant of the server, allows for long waits, and can be cancelled by keypress.
 
 static void ascii_to_text(char *buf, cptr str);
 
@@ -712,6 +712,8 @@ static char inkey_aux(void) {
 			if (ch) buf_atoi[1] = ch;
 			(void)(Term_inkey(&ch, TRUE, TRUE));
 			if (ch) buf_atoi[2] = ch;
+			(void)(Term_inkey(&ch, TRUE, TRUE));
+			if (ch) buf_atoi[3] = ch;
 			w = atoi(buf_atoi);
 			sync_xsleep(w * 100L); /* w/10 seconds */
 			ch = 0;
@@ -789,6 +791,8 @@ static char inkey_aux(void) {
 				if (ch) buf_atoi[1] = ch;
 				(void)(Term_inkey(&ch, TRUE, TRUE));
 				if (ch) buf_atoi[2] = ch;
+				(void)(Term_inkey(&ch, TRUE, TRUE));
+				if (ch) buf_atoi[3] = ch;
 				w = atoi(buf_atoi);
 				sync_xsleep(w * 100L); /* w/10 seconds */
 				ch = 0;
