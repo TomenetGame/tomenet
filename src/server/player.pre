@@ -85,6 +85,7 @@ struct object_type
 
 	long timeout;			/* Timeout Counter */
 	long timeout_magic;		/* Timeout Counter */
+	long recharging;		/* Timeout Counter */
 
 	byte ident;			/* Special flags  */
 
