@@ -71,8 +71,8 @@ void loadservers() {
 	do {
 		line[0] = 0;
 		if (!fgets(line, 160, fp)) break;
-		if (!line[0] || line[0] == '#') continue; /* Skip empty lines and skip comments, ie lines starting on '#' character. */
-		sscanf(line, "%s%s%d%s\n", slist[i].name, slist[i].pass, &slist[i].static_index, flags);
+		if (!line[0] || line[0] == '\n' || line[0] == '#') continue; /* Skip empty lines and skip comments, ie lines starting on '#' character. */
+		sscanf(line, "'%[^']'%s%d%s\n", slist[i].name, slist[i].pass, &slist[i].static_index, flags);
 
 		/* Normalize server name lengths to 15 characters: */
 		while (strlen(slist[i].name) < 15) strcat(slist[i].name, " ");

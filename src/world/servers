@@ -1,4 +1,5 @@
 #Format in this file, one server per line (max line length is 159, do NOT exceed!):
-#servername (string)	serverpass (string)	index (int)	flags (string of flag characters)
-#eg:	myserver	mypassword	0	C
+#'servername' (string)	serverpass (string)	index (int)	flags (string of flag characters)
+#Note that the server name MUST be inside single quotes, which allows for use of spaces.
+#eg:	'my server'	mypassword	0	C
 
