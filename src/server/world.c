@@ -444,7 +444,7 @@ int world_remote_players(FILE *fff) {
 			}
 			slp = slp->next;
 		}
-		
+
 		//fprintf(fff, "\377%c  %s\377s on '%s'\n", c_pl->server ? 'w' : 'W', c_pl->name, servername);
 		fprintf(fff, "\377s %s\377%c %s\n", servername, c_pl->server ? 'w' : 'W', c_pl->name);
 		num++;
