@@ -25,6 +25,7 @@ int bpipe = 0;
 
 int main(int argc, char *argv[]) {
 	int ser;
+
 	initrand();
 	loadservers();
 	ser = createsocket(PORT, ADDR);
@@ -66,6 +67,7 @@ void loadservers() {
 	FILE *fp;
 	int i = 0, j, n;
 	char flags[20], line[160];
+
 	fp = fopen("servers", "r");
 	if (fp == (FILE*)NULL) return;
 	do {
@@ -87,54 +89,54 @@ void loadservers() {
 		/* Packet flags - mikaelh */
 		for (j = 0, n = strlen(flags); j < n; j++) {
 			switch (flags[j]) {
-				case 'C':
-					slist[i].rflags |= WPF_CHAT;
-					break;
-				case 'N':
-					slist[i].rflags |= WPF_NPLAYER;
-					break;
-				case 'Q':
-					slist[i].rflags |= WPF_QPLAYER;
-					break;
-				case 'D':
-					slist[i].rflags |= WPF_DEATH;
-					break;
-				case 'M':
-					slist[i].rflags |= WPF_MESSAGE;
-					break;
-				case 'P':
-					slist[i].rflags |= WPF_PMSG;
-					break;
-				case 'l':
-					slist[i].mflags |= WMF_LVLUP;
-					break;
-				case 'h':
-					slist[i].mflags |= WMF_HILVLUP;
-					break;
-				case 'u':
-					slist[i].mflags |= WMF_UNIDEATH;
-					break;
-				case 'w':
-					slist[i].mflags |= WMF_PWIN;
-					break;
-				case 'd':
-					slist[i].mflags |= WMF_PDEATH;
-					break;
-				case 'n':
-					slist[i].mflags |= WMF_PJOIN;
-					break;
-				case 'q':
-					slist[i].mflags |= WMF_PLEAVE;
-					break;
-				case 'S':
-					slist[i].rflags |= WPF_IRCCHAT;
-					break;
-				case 'e':
-					slist[i].mflags |= WMF_EVENTS;
-					break;
-				case 'p': /* SERVER_PORTALS */
-					slist[i].rflags |= WPF_PORTAL;
-					break;
+			case 'C':
+				slist[i].rflags |= WPF_CHAT;
+				break;
+			case 'N':
+				slist[i].rflags |= WPF_NPLAYER;
+				break;
+			case 'Q':
+				slist[i].rflags |= WPF_QPLAYER;
+				break;
+			case 'D':
+				slist[i].rflags |= WPF_DEATH;
+				break;
+			case 'M':
+				slist[i].rflags |= WPF_MESSAGE;
+				break;
+			case 'P':
+				slist[i].rflags |= WPF_PMSG;
+				break;
+			case 'l':
+				slist[i].mflags |= WMF_LVLUP;
+				break;
+			case 'h':
+				slist[i].mflags |= WMF_HILVLUP;
+				break;
+			case 'u':
+				slist[i].mflags |= WMF_UNIDEATH;
+				break;
+			case 'w':
+				slist[i].mflags |= WMF_PWIN;
+				break;
+			case 'd':
+				slist[i].mflags |= WMF_PDEATH;
+				break;
+			case 'n':
+				slist[i].mflags |= WMF_PJOIN;
+				break;
+			case 'q':
+				slist[i].mflags |= WMF_PLEAVE;
+				break;
+			case 'S':
+				slist[i].rflags |= WPF_IRCCHAT;
+				break;
+			case 'e':
+				slist[i].mflags |= WMF_EVENTS;
+				break;
+			case 'p': /* SERVER_PORTALS */
+				slist[i].rflags |= WPF_PORTAL;
+				break;
 			}
 		}
 

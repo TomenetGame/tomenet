@@ -17,14 +17,13 @@ struct list *remlist(struct list **head, struct list *dlp);
 /* Send server information to other servers */
 void send_sinfo(struct client *ccl, struct client *priv) {
 	struct wpacket spk;
+
 	spk.type = WP_SINFO;
 	spk.serverid = 0;
 	strncpy(spk.d.sinfo.name, slist[ccl->authed-1].name, 30);
 	spk.d.sinfo.sid = ccl->authed;
-	if (priv)
-		reply(&spk, priv);
-	else
-		relay(&spk, ccl);
+	if (priv) reply(&spk, priv);
+	else relay(&spk, ccl);
 }
 
 /*
@@ -74,8 +73,7 @@ void rem_players(int16_t id) {
 	lp = rpmlist;
 	while (lp) {
 		c_pl = (struct rplist*)lp->data;
-		if (c_pl->server == id)
-			lp = remlist(&rpmlist, lp);
+		if (c_pl->server == id) lp = remlist(&rpmlist, lp);
 		else lp = lp->next;
 	}
 }
@@ -89,7 +87,7 @@ void add_rplayer(struct wpacket *wpk) {
 	lp = rpmlist;
 	while (lp) {
 		c_pl = (struct rplist*)lp->data;
-//		if (/* c_pl->id == wpk->d.play.id && */ !(strcmp(c_pl->name, wpk->d.play.name))) {
+		//if (/* c_pl->id == wpk->d.play.id && */ !(strcmp(c_pl->name, wpk->d.play.name))) {
 		if (c_pl->server == wpk->d.play.server && !(strcmp(c_pl->name, wpk->d.play.name))) {
 			found = 1;
 			break;
@@ -106,6 +104,6 @@ void add_rplayer(struct wpacket *wpk) {
 			strncpy(n_pl->name, wpk->d.play.name, 30);
 		}
 	}
-	else if(wpk->type == WP_QPLAYER && found)
+	else if (wpk->type == WP_QPLAYER && found)
 		remlist(&rpmlist, lp);
 }
