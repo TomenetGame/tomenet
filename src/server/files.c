@@ -951,17 +951,17 @@ errr show_file(int Ind, cptr name, cptr what, s32b line, int color, int divl, ch
  * Process the player name.
  * Extract a clean "base name".
  * Build the savefile name if needed.
+ * -- Since Check_names() is stricter and the first/main check for allowed names,
+ *    this function here is only used to generate a save filename nowadays,
+ *    by replacing all non-alphanumeric characters by underscores. - C. Blue
  */
-bool process_player_name(int Ind, bool sf)
-{
+bool process_player_name(int Ind, bool sf) {
 	player_type *p_ptr = Players[Ind];
-
 	int i, k = 0;
-
+	char c;
 
 	/* Cannot be too long */
-	if (strlen(p_ptr->name) > 15) //was 20 once?
-	{
+	if (strlen(p_ptr->name) >= CNAME_LEN) { /* (null terminator char at the end) */
 		/* Name too long */
 		Destroy_connection(p_ptr->conn, "Your name is too long!");
 
@@ -970,11 +970,9 @@ bool process_player_name(int Ind, bool sf)
 	}
 
 	/* Cannot contain "icky" characters */
-	for (i = 0; p_ptr->name[i]; i++)
-	{
+	for (i = 0; p_ptr->name[i]; i++) {
 		/* No control characters */
-		if (iscntrl(p_ptr->name[i]))
-		{
+		if (iscntrl(p_ptr->name[i])) {
 			/* Illegal characters */
 			Destroy_connection(p_ptr->conn, "Your name contains control chars!");
 
@@ -985,11 +983,9 @@ bool process_player_name(int Ind, bool sf)
 
 
 #ifdef MACINTOSH
-
 	/* Extract "useful" letters */
-	for (i = 0; p_ptr->name[i]; i++)
-	{
-		char c = p_ptr->name[i];
+	for (i = 0; p_ptr->name[i]; i++) {
+		c = p_ptr->name[i];
 
 		/* Convert "dot" to "underscore" */
 		if (c == '.') c = '_';
@@ -997,48 +993,36 @@ bool process_player_name(int Ind, bool sf)
 		/* Accept all the letters */
 		p_ptr->basename[k++] = c;
 	}
-
 #else
-
 	/* Extract "useful" letters */
-	for (i = 0; p_ptr->name[i]; i++)
-	{
-		char c = p_ptr->name[i];
+	for (i = 0; p_ptr->name[i]; i++) {
+		c = p_ptr->name[i];
 
 		/* Accept some letters */
 		if (isalphanum(c)) p_ptr->basename[k++] = c;
-
 		/* Convert space, dot, and underscore to underscore */
 		else if (strchr(SF_BAD_CHARS, c)) p_ptr->basename[k++] = '_';
 	}
-
 #endif
 
 
-#if defined(WINDOWS) || defined(MSDOS)
-
+//#if defined(WINDOWS) || defined(MSDOS)
+#ifdef MSDOS
 	/* Hack -- max length */
 	if (k > 8) k = 8;
-
 #endif
-
 	/* Terminate */
 	p_ptr->basename[k] = '\0';
-
 	/* Require a "base" name */
 	if (!p_ptr->basename[0]) strcpy(p_ptr->basename, "PLAYER");
 
-
 #ifdef SAVEFILE_MUTABLE
-
 	/* Accept */
 	sf = TRUE;
-
 #endif
 
 	/* Change the savefile name */
-	if (sf)
-	{
+	if (sf) {
 		char temp[128];
 
 		/* Rename the savefile, using the player_base */
