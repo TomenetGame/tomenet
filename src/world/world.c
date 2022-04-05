@@ -1,5 +1,5 @@
 /* tomenet world main server - copyright 2002 evileye
- * Server name 'Relay_server' is special, use exactly for IRC relay server! - C. Blue
+ * Server name containing 'Relay' (case-insensitive) or 'IRC' (all caps)  is special: Use exactly for IRC relay server! - C. Blue
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -342,7 +342,8 @@ void wproto(struct client *ccl) {
 void relay(struct wpacket *wpk, struct client *talker){
 	struct list *lp;
 	struct client *ccl;
-	int morph = wpk->type;
+	int morph = wpk->type, c;
+	char snl[20], *snp;
 
 	wpk->serverid = talker->authed;
 
@@ -352,8 +353,19 @@ void relay(struct wpacket *wpk, struct client *talker){
 		if (ccl == talker) continue;
 
 		if (wpk->type == WP_MSG_TO_IRC) {
-			if (ccl->authed <= 0 || !strstr(slist[ccl->authed - 1].name, "Relay_server")) /* usually trailing spaces */
-				continue;
+			if (ccl->authed <= 0) continue;
+
+			/* Create lower-case working copy of the server name */
+			c = -1;
+			snp = slist[ccl->authed - 1].name;
+			do {
+				c++;
+				snl[c] = tolower(snp[c]);
+			} while (snl[c]);
+
+			/* Check for case-insensitive "relay" or all-caps "IRC" to determine the IRC-relay server */
+			if (!strstr(snl, "relay") && !strstr(snp, "IRC")) continue; /* usually trailing spaces */
+
 			/* hack: convert to normal message type, since we've now picked the IRC server as exclusive receipient */
 			wpk->type = WP_MESSAGE;
 		}
