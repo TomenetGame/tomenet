@@ -11,6 +11,7 @@
 #include <unistd.h>
 
 #include <string.h>
+#include <ctype.h> /* tolower() */
 
 #include "world.h"
 #include "externs.h"

@@ -10,8 +10,6 @@
 
 #include <errno.h>
 
-#include <ctype.h> /* tolower() */
-
 #include "world.h"
 #include "externs.h"
 
