@@ -1334,7 +1334,7 @@ char inkey(void) {
 			ch = 0;
 			break;
 
-		/* Hack -- strip "control-caret" special-keypad-indicator -- deprecated? otherwise it could collide with MACRO_XWAIT */
+		/* Hack -- strip "control-caret" special-keypad-indicator -- only used in deprecated main-xxx.c files now? otherwise it could collide with MACRO_XWAIT */
 		case 30:
 			/* Strip this key */
 			ch = 0;
