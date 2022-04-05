@@ -87,6 +87,7 @@ int usleep(long microSeconds) {
 
 static int MACRO_WAIT = 96; //hack: ASCII 96 ("`") is unused in the game's key layout
 static int MACRO_XWAIT = 30; //hack: ASCII 30 (RS/Record Separator) which is practically unused, as it represents CTRL+^ is now abused for new client-side wait function that is indepdendant of the server, allows for long waits, and can be cancelled by keypress.
+//Note that inkey() actually treats ASCII 30 special, as control-caret, but this usage seems deprecated so we don't have any collision here with MACRO_XWAIT.
 
 static void ascii_to_text(char *buf, cptr str);
 
@@ -1333,7 +1334,7 @@ char inkey(void) {
 			ch = 0;
 			break;
 
-		/* Hack -- strip "control-caret" special-keypad-indicator */
+		/* Hack -- strip "control-caret" special-keypad-indicator -- deprecated? otherwise it could collide with MACRO_XWAIT */
 		case 30:
 			/* Strip this key */
 			ch = 0;
