@@ -1913,9 +1913,19 @@ bool load_player(int Ind) {
 		   };
 		   */
 		if (err) what = "Cannot parse savefile error";
-		if (err == 35) what = edit ? "Server is closed for login now" :
-			"Incorrect password";
-		if (err == 1) what = "Name already in use";
+		switch (err) {
+		case 35:
+			what = edit ? "Server is closed for login now" : "Incorrect password";
+			break;
+		case 1:
+			what = "Name already in use";
+			break;
+#ifdef SERVER_PORTALS
+		case x:
+			what = "Character currently locked to another server via portal.";
+			break;
+#endif
+		}
 	}
 
 	/* Paranoia */

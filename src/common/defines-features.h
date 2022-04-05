@@ -414,6 +414,9 @@
 
  /* Just for debugging - unbind savegames from accounts */
  #define IGNORE_SAVEGAME_MISMATCH
+
+ /* Biggest can of worms evah: Inter-server portals */
+ #define SERVER_PORTALS
 #endif
 
 /* Specific settings for Arcade server only */
