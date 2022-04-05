@@ -65,11 +65,14 @@ int createsocket(int port, uint32_t ip) {
 void loadservers() {
 	FILE *fp;
 	int i = 0, j, n;
-	char flags[20];
+	char flags[20], line[160];
 	fp = fopen("servers", "r");
 	if (fp == (FILE*)NULL) return;
 	do {
-                fscanf(fp, "%s%s%s\n", slist[i].name, slist[i].pass, flags);
+		line[0] = 0;
+		if (!fgets(line, 160, fp)) break;
+		if (!line[0] || line[0] == '#') continue; /* Skip empty lines and skip comments, ie lines starting on '#' character. */
+		sscanf(line, "%s%s%d%s\n", slist[i].name, slist[i].pass, &slist[i].static_index, flags);
 
 		/* Normalize server name lengths to 15 characters: */
 		while (strlen(slist[i].name) < 15) strcat(slist[i].name, " ");
@@ -128,6 +131,9 @@ void loadservers() {
 					break;
 				case 'e':
 					slist[i].mflags |= WMF_EVENTS;
+					break;
+				case 'p': /* SERVER_PORTALS */
+					slist[i].rflags |= WPF_PORTAL;
 					break;
 			}
 		}

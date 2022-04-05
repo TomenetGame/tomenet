@@ -1,4 +1,5 @@
 /* tomenet world main server - copyright 2002 evileye
+ * Server name 'Relay_server' is special, use exactly for IRC relay server! - C. Blue
  */
 #include <stdio.h>
 #include <stdlib.h>

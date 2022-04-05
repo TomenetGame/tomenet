@@ -42,6 +42,7 @@
 #define WPF_PMSG	0x0800	/* private message - P */
 #define WPF_SINFO	0x1000
 #define WPF_IRCCHAT	0x2000	/* chat message from IRC relay - S */
+#define WPF_PORTAL	0x8000	/* SERVER_PORTALS */
 
 /* World message flags */
 #define WMF_LVLUP	0x01
@@ -62,6 +63,7 @@
 #define CL_QUIT		1
 
 struct serverinfo{
+	int static_index;	/* Just for SERVER_PORTALS: Server world index (defined in 'servers' file too, not the dynamic index servers get when getting added to the servers array). */
 	char name[20];		/* server world name */
 	char pass[20];		/* server plaintext password */
 	uint32_t rflags;	/* relay flags for packets sent to server */
