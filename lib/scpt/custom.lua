@@ -73,7 +73,7 @@ function playloop_startup(timestamp, h, m, s, dwd, dd, dm, dy)
 			end
 		end
 	else
-		-- seasons run at 3x real-time, and specifically aligning northern-hemisphere-style with christmas during winter
+		-- seasons run at 2x real-time, and specifically aligning northern-hemisphere-style with christmas during winter
 		-- additionally aligned it so that summer solstice / winter solstice are the final days of each cycle ^^
 
 		if (season ~= 0) then -- spring
@@ -199,7 +199,7 @@ function cron_24h(timestamp, h, m, s, dwd, dd, dm, dy)
 		if (dd == 23 and dm == 9) then lua_season_change(2, 0) end -- autumn
 		if (dd == 22 and dm == 12) then lua_season_change(3, 0) end -- winter
 	else
-		-- seasons run at 3x real-time, and specifically aligning northern-hemisphere-style with christmas during winter
+		-- seasons run at 2x real-time, and specifically aligning northern-hemisphere-style with christmas during winter
 		-- additionally aligned it so that summer solstice / winter solstice are the final days of each cycle ^^
 
 		if (dd == 25 and dm == 1) then lua_season_change(0, 0) end -- spring A
