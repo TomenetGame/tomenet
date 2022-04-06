@@ -820,7 +820,7 @@ extern void process_player_change_wpos(int Ind);
 extern void recall_player(int Ind, char *message);
 extern int find_player(s32b id);
 extern int find_player_name(char *name);
-extern void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool new_wilderness, bool new_flavours, bool new_houses);
+extern void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool TOC_near_Bree, bool new_wilderness, bool new_flavours, bool new_houses);
 extern __attribute__((noreturn)) void shutdown_server(void);
 extern void dungeon(void);
 extern void pack_overflow(int Ind);
@@ -958,7 +958,7 @@ extern void wild_add_new_dungeons(int Ind);
 
 extern void initwild(void);
 extern void genwild(bool all_terrains, bool dry_Bree);
-extern void wild_spawn_towns(void);
+extern void wild_spawn_towns(bool TOC_near_Bree);
 extern void init_wild_info_aux(int x, int y);
 
 extern void wild_flags(int Ind, u32b flags);

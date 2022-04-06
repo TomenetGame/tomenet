@@ -209,7 +209,7 @@ static void post_init_lua(void) {
  * "-dWHAT=PATH" syntax for simplicity.
  */
 int main(int argc, char *argv[]) {
-	bool new_game = FALSE, all_terrains = FALSE, dry_Bree = FALSE, new_wilderness = FALSE, new_flavours = FALSE, new_houses = FALSE;
+	bool new_game = FALSE, all_terrains = FALSE, dry_Bree = FALSE, TOC_near_Bree = FALSE, new_wilderness = FALSE, new_flavours = FALSE, new_houses = FALSE;
 	bool config_specified = FALSE;
 	char buf[1024];
 	int catch_signals = TRUE;
@@ -295,55 +295,61 @@ int main(int argc, char *argv[]) {
 
 		/* Analyze option */
 		switch (argv[0][1]) {
-			case 'c':
+#if 0 /* this folder isn't really used on server-side */
+		case 'u':
 			ANGBAND_DIR_USER = &argv[0][2];
 			break;
+#endif
 
 #ifndef VERIFY_SAVEFILE
-			case 'd':
+		case 's':
 			ANGBAND_DIR_SAVE = &argv[0][2];
 			break;
 #endif
 
-			case 'i':
+		case 't':
 			ANGBAND_DIR_TEXT = &argv[0][2];
 			break;
 
-			case 'r':
+		case 'r': //reset
 			new_game = TRUE;
 			break;
 
-			case 'b':
-			dry_Bree = TRUE;
-			break;
-
-			case 'a':
+		case 'a':
 			all_terrains = TRUE;
 			break;
 
-			case 'w':
+		case 'b':
+			dry_Bree = TRUE;
+			break;
+
+		case 'c': //the orc caves nearby (could be extended to manage more dungeon placements than just OC)
+			TOC_near_Bree = TRUE;
+			break;
+
+		case 'w':
 			new_wilderness = TRUE;
 			break;
 
-			case 'f':
+		case 'f':
 			new_flavours = TRUE;
 			break;
 
-			case 'h':
+		case 'h':
 			new_houses = TRUE;
 			break;
 
-			case 'z':
+		case 'z':
 			catch_signals = FALSE;
 			break;
 
-			case 'm':
+		case 'm':
 			MANGBAND_CFG = &argv[0][2];
 			config_specified = TRUE;
 			break;
 
 
-			default:
+		default:
 			usage:
 
 			/* Note -- the Term is NOT initialized */
@@ -354,11 +360,12 @@ int main(int argc, char *argv[]) {
 			puts("  -f        Reset the server partially: New flavours");
 			puts("  -a        (On server creation!) Ensure that all terrain types are created");
 			puts("  -b        (On server creation!) Don't allow watery wilderness around Bree");
+			puts("  -c        (On server creation!) Place The Orc Cave not too far from Bree");
 			puts("  -h        Reinitialize houses");
 			puts("  -z        Don't catch signals");
-			puts("  -c<path>  Look for pref files in the directory <path>");
-			puts("  -d<path>  Look for save files in the directory <path>");
-			puts("  -i<path>  Look for info files in the directory <path>");
+			//puts("  -u<path>  Look for user files in the directory <path>"); -- this folder isn't really used on server-side
+			puts("  -s<path>  Look for save files in the directory <path>");
+			puts("  -t<path>  Look for text files in the directory <path>");
 			puts("  -m<file>  Specify configuration <file>");
 
 			/* Actually abort the process */
@@ -417,7 +424,7 @@ int main(int argc, char *argv[]) {
 
 
 	/* Play the game */
-	play_game(new_game, all_terrains, dry_Bree, new_wilderness, new_flavours, new_houses);
+	play_game(new_game, all_terrains, dry_Bree, TOC_near_Bree, new_wilderness, new_flavours, new_houses);
 
 	/* Quit */
 	quit(NULL);

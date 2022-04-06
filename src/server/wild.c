@@ -287,8 +287,7 @@ void wild_bulldoze()
  * Makeshift towns/dungeons placer for v4
  * This should be totally rewritten for v5!		- Jir -
  */
-void wild_spawn_towns()
-{
+void wild_spawn_towns(bool TOC_near_Bree) {
 	int x, y, i, j, k;
 	bool retry, skip;
 
@@ -362,12 +361,22 @@ void wild_spawn_towns()
 				break;
 			}
 		}
+
 		if (!retry) {
 			if (wild_info[y][x].dungeon || wild_info[y][x].tower) retry = TRUE;
 
 			/* TODO: easy dungeons around Bree,
 			 * hard dungeons around Lorien */
 		}
+
+		/* Don't put The Orc Caves too far away from Bree. - Could be extended to cover more dungeons than just OC.. */
+		if (!retry && TOC_near_Bree) {
+			/* Assume (as in a few other places too) that Bree (town[usually 0].type is 1) is always at cfg.town_x/y */
+
+			/* Hack: x distance is longer than y distance, since sectors are about twice as wide as they are high! */
+			if (i == DI_THE_ORC_CAVE && distance(y, x * 2, cfg.town_y, cfg.town_x * 2) > 10) retry = TRUE;
+		}
+
 		if (retry) {
 			if (tries-- > 0) i--;
 			continue;
@@ -407,7 +416,7 @@ void init_wild_info() {
 
 	/* Jir tests new town allocator */
 	addtown(cfg.town_y, cfg.town_x, cfg.town_base, 0, 1);	/* base town */
-	//if (new) wild_spawn_towns();
+	//if (new) wild_spawn_towns(TOC_near_Bree);
 
 	//init_wild_info_aux(0,0);
 
@@ -4210,14 +4219,14 @@ void genwild(bool all_terrains, bool dry_Bree) {
 		if (got_everything) break;
 
 		/* Change wilderness generation seed */
-    		seed_town = rand_int(0x10000000);
+		seed_town = rand_int(0x10000000);
 		/* Kill Bree */
 		for (i = 0; i < numtowns; i++) dealloc_stores(i);
-	    	C_KILL(town, numtowns, struct town_type);
-    		numtowns = 0;
+		C_KILL(town, numtowns, struct town_type);
+		numtowns = 0;
 		/* Re-init the wild_info array and try again */
 		init_wild_info();
-        }
+	}
 
 
 	/* Restore random generator */
@@ -4225,13 +4234,8 @@ void genwild(bool all_terrains, bool dry_Bree) {
 	Rand_value = old_seed;
 }
 
-
-
-
-
 /* Show a small radius of wilderness around the player */
-bool reveal_wilderness_around_player(int Ind, int y, int x, int h, int w)
-{
+bool reveal_wilderness_around_player(int Ind, int y, int x, int h, int w) {
 	player_type *p_ptr = Players[Ind];
 	int i, j;
 	bool shown = FALSE;
