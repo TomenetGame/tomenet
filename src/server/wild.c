@@ -374,7 +374,7 @@ void wild_spawn_towns(bool TOC_near_Bree) {
 			/* Assume (as in a few other places too) that Bree (town[usually 0].type is 1) is always at cfg.town_x/y */
 
 			/* Hack: x distance is longer than y distance, since sectors are about twice as wide as they are high! */
-			if (i == DI_THE_ORC_CAVE && distance(y, x * 2, cfg.town_y, cfg.town_x * 2) > 10) retry = TRUE;
+			if (i == DI_THE_ORC_CAVE && distance(y, x * 2, cfg.town_y, cfg.town_x * 2) > 16) retry = TRUE;
 		}
 
 		if (retry) {
