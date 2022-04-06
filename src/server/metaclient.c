@@ -208,14 +208,18 @@ static int meta_write(int flag) {
    #ifdef FUN_SERVER
 		strcat(buf_meta, "<game>TomeNET Fun</game>");
    #else
-                strcat(buf_meta, "<game>TomeNET</game>");
+    #if 0
+		if (my_strcasestr(cfg.bind_name, "apac")) strcat(buf_meta, "<game>TomeNET APAC region</game>");
+		else
+    #endif
+		strcat(buf_meta, "<game>TomeNET</game>");
    #endif
   #endif
  #endif
 #endif
-                /* Append the version number */
-                snprintf(temp, sizeof(temp), "<version>%d.%d.%d%s</version></server>", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, SERVER_VERSION_TAG);
-                strcat(buf_meta, temp);
+		/* Append the version number */
+		snprintf(temp, sizeof(temp), "<version>%d.%d.%d%s</version></server>", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, SERVER_VERSION_TAG);
+		strcat(buf_meta, temp);
 	}
 	
 	/* Send data to metaserver */
