@@ -1242,7 +1242,7 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 	*login_port = 0;
 
 #if 0
-	if(!validstrings(nick, real, host))
+	if (!validstrings(nick, real, host))
 #else
 	/* Only check the account name for weird chars - mikaelh */
 	if (!validstring(nick))
@@ -4417,6 +4417,14 @@ static int Receive_login(int ind) {
 		if (!connp->pass[0]) {
 			Destroy_connection(ind, "You must enter a password too!");
 			return -1;
+		}
+
+		if (strlen(connp->pass) < PASSWORD_MIN_LEN) {
+			/* For now only restrict pw len for newly created accounts, so people can still log in with their old (too short) passwords */
+			if (!Admin_GetAccount(&acc, connp->nick)) {
+				Destroy_connection(ind, format("Password length must be at least %d!", PASSWORD_MIN_LEN));
+				return -1;
+			}
 		}
 
 		if ((res = Check_names(connp->nick, connp->real, connp->host, connp->addr, FALSE)) != SUCCESS) {

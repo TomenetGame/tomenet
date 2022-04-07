@@ -589,6 +589,12 @@ bool GetAccount(struct account *c_acc, cptr name, char *pass, bool leavepass) {
 		return(FALSE);
 	}
 
+	/* New account creation: Ensure password minimum length */
+	if (strlen(pass) < PASSWORD_MIN_LEN) {
+		s_printf("Password length must be at least %d.\n", PASSWORD_MIN_LEN);
+		return FALSE;
+	}
+
 	/* No account found. Create trial account */
 	WIPE(c_acc, struct account);
 	c_acc->id = new_accid();
@@ -5768,7 +5774,12 @@ void account_change_password(int Ind, char *old_pass, char *new_pass) {
 
 	/* Read from disk */
 	if (!GetAccount(&acc, p_ptr->accountname, old_pass, FALSE)) {
-		msg_print(Ind, "Wrong password!");
+		msg_print(Ind, "\377RWrong password!");
+		return;
+	}
+
+	if (strlen(new_pass) < PASSWORD_MIN_LEN) {
+		msg_format(Ind, "\377RPassword length must be at least %d.", PASSWORD_MIN_LEN);
 		return;
 	}
 
@@ -5783,13 +5794,13 @@ void account_change_password(int Ind, char *old_pass, char *new_pass) {
 
 	/* Check for failure */
 	if (!success) {
-		msg_print(Ind, "Failed to write to account file!");
+		msg_print(Ind, "\377RFailed to write to account file!");
 		return;
 	}
 
 	/* Success */
 	s_printf("Changed password for account %s.\n", acc.name);
-	msg_print(Ind, "Password changed.");
+	msg_print(Ind, "\377GPassword successfully changed.");
 }
 
 void backup_acclists(void) {

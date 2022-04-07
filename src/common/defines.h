@@ -208,6 +208,7 @@
 #define CNAME_LEN		16
 #define ACCNAME_LEN		16
 #define PASSWORD_LEN		16
+#define PASSWORD_MIN_LEN	6
 #define REALNAME_LEN		20 /* realname is replaced by "PLAYER" anyway */
 #define HOSTNAME_LEN		20
 
