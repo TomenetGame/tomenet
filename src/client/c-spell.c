@@ -1932,14 +1932,13 @@ static void print_breaths() {
 }
 
 static int get_breath(int *br) {
-	int		i = 0, num = 7; /* number of pre-defined breath elements here in this function */
-	bool		flag, redraw;
-	char		choice;
-	char		out_val[160];
-	int             corresp[5];
+	int	i = 0, num = 7; /* number of pre-defined breath elements here in this function */
+	bool	flag, redraw;
+	char	choice;
+	char	out_val[160];
+	int	corresp[7 + 6]; /* +6 hypothetically for power trait (not available though) */
 
-	if (p_ptr->ptrait == TRAIT_POWER) num = 13;
-
+	if (p_ptr->ptrait == TRAIT_POWER) num = 13; /* hypothetically.. */
 	for (i = 0; i < num; i++) corresp[i] = i;
 
 	/* Assume cancelled */
@@ -2003,13 +2002,20 @@ static int get_breath(int *br) {
 			buf[49] = 0;
 
 			/* Find the power it is related to */
-			if (my_strcasestr(buf, "Ch")) i = 0;
+			if (my_strcasestr(buf, "Ch") && !my_strcasestr(buf, "Cha")) i = 0;
 			else if (my_strcasestr(buf, "No")) i = 1;
 			else if (my_strcasestr(buf, "Li")) i = 2;
 			else if (my_strcasestr(buf, "Fr")) i = 3;
 			else if (my_strcasestr(buf, "Fi")) i = 4;
 			else if (my_strcasestr(buf, "Ac")) i = 5;
 			else if (my_strcasestr(buf, "Po")) i = 6;
+			/* ..and hypothetically for power lineage.. (not available though) */
+			else if (my_strcasestr(buf, "Co")) i = 7;
+			else if (my_strcasestr(buf, "In")) i = 8;
+			else if (my_strcasestr(buf, "So")) i = 9;
+			else if (my_strcasestr(buf, "Sh")) i = 10;
+			else if (my_strcasestr(buf, "Cha")) i = 11;
+			else if (my_strcasestr(buf, "Di")) i = 12;
 
 			if (i != -1) flag = TRUE;
 			else bell();
@@ -2064,6 +2070,7 @@ void do_pick_breath() {
 
 void do_breath() {
 	int dir = 0;
+
 	if (!get_dir(&dir)) return;
 	Send_activate_skill(MKEY_BREATH, 0, 0, dir, 0, 0);
 }
