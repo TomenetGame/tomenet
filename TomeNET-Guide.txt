@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 4. April 2022 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 10. April 2022 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.8.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -11561,7 +11561,9 @@ NO_MAGIC ('Anti-magic shell')
         magical status effects that depend on your character doing a saving
         throw check to resist, see 'Saving Throw' under (6.3) for a list.
         The anti-magic shell will not prevent monsters from casting spells or
-        reduce or negate any damage taken from magic spells though.
+        reduce or negate any damage (with the exception of monster curses, ie
+        "points at you and curses/screaming the word DIE!" because these ARE
+        indeed affected by your saving throw) taken from magic spells though.
         It also prevents you from using any magic device or casting spells.
         You can still use scrolls and potions though. For more information
         about Saving Throw see (6.3).
