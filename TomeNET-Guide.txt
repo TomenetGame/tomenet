@@ -9179,8 +9179,8 @@ Dungeon Keeper (everyone can win, 1+ participants)
     disabled in the event. Also, your speed cannot exceed +0 (Normal), and
     the lava that floods the dungeon will deal irresistible damage even if
     your character is immune to fire.
-    Except for a brass lantern which you can buy from town
-    store '1' (general store), no items are required for this event.
+    Except for a brass lantern which you can buy from town store '1' (general
+    store), no items are required for this event.
 
     All winners will receive a deed that can be 'r'ead, and turned in at Bree's
     Mayor Office for either an item or a temporary luck bonus.
