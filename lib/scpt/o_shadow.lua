@@ -303,6 +303,7 @@ POISONRES = add_spell {
 	["desc"] = 	{
 		"It temporarily bestows the touch of poison on your melee weapons.",
 		"At level 10 it grants temporary poison resistance.",
+		"***Automatically projecting***",
 	}
 }
 
