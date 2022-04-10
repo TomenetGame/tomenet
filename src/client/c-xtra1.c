@@ -1941,7 +1941,12 @@ void show_inven(void) {
 	if (j && (j < 23)) prt("", j + 1, col ? col - 2 : col);
 
 	/* Notify if inventory is actually empty */
-	if (!k) prt("(Your inventory is empty)", 1, SCREEN_PAD_LEFT);
+	if (!k) {
+		prt("(Your inventory is empty)", 1, SCREEN_PAD_LEFT);
+		/* ..and don't overwrite this notification by weather etc */
+		screen_line_icky = 2; /* 0 lines for empty inven, +1 +1 */
+		screen_column_icky = 12; /* left padding (just status bar, as we start left-aligned in the main window (unlike inventory which is right-aligend). */
+	}
 
 	/* Save the new column */
 	command_gap = col;
