@@ -11561,9 +11561,10 @@ NO_MAGIC ('Anti-magic shell')
         magical status effects that depend on your character doing a saving
         throw check to resist, see 'Saving Throw' under (6.3) for a list.
         The anti-magic shell will not prevent monsters from casting spells or
-        reduce or negate any damage (with the exception of monster curses, ie
-        "points at you and curses/screaming the word DIE!" because these ARE
-        indeed affected by your saving throw) taken from magic spells though.
+        reduce or negate any damage taken from most magic spells though -
+        exceptions being monster curses ("points at you and curses/screaming
+        the word DIE!"), dispelling attacks and psi-based attacks, because all
+        of these are indeed affected by your saving throw.
         It also prevents you from using any magic device or casting spells.
         You can still use scrolls and potions though. For more information
         about Saving Throw see (6.3).
