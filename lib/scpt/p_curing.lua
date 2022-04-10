@@ -139,8 +139,8 @@ HHEALING_I = add_spell {
 			return "heal "..get_healing_percents2(8).."% (max "..get_healing_cap2(8)..") = "..get_healing_power2(8)
 	end,
 	["desc"] = 	{
-		"Heals a percentage of your hitpoints up to a spell level-dependent cap.",
-		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount.", --requires +1024
+		"Heals a percentage of your max hitpoints up to a spell level-dependent cap.",
+		"Projecting heals nearby players for 3/4 of the amount.", --requires +1024
 		"***Automatically projecting***",
 	}
 }
@@ -163,8 +163,8 @@ HHEALING_II = add_spell {
 			return "heal "..get_healing_percents2(20).."% (max "..get_healing_cap2(20)..") = "..get_healing_power2(20)
 	end,
 	["desc"] = 	{
-		"Heals a percentage of your hitpoints up to a spell level-dependent cap.",
-		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount.", --requires +1024
+		"Heals a percentage of your max hitpoints up to a spell level-dependent cap.",
+		"Projecting heals nearby players for 3/4 of the amount.", --requires +1024
 		"***Automatically projecting***",
 	}
 }
@@ -186,7 +186,7 @@ HHEALING_III = add_spell {
 			return "heal "..get_healing_percents2(0).."% (max "..get_healing_cap2(0)..") = "..get_healing_power2(0)
 	end,
 	["desc"] = 	{
-		"Heals a percentage of your hitpoints up to a spell level-dependent cap.",
+		"Heals a percentage of your max hitpoints up to a spell level-dependent cap.",
 		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount.", --requires +1024
 		"***Automatically projecting***",
 	}
@@ -482,6 +482,7 @@ HRESURRECT = add_spell {
 			end,
 	["desc"] = 	{
 			"Resurrects another player's ghost back to life.",
+			"The ghost must be standing directly next to you.",
 			"The higher the skill, the less experience he will lose.",
 	}
 }

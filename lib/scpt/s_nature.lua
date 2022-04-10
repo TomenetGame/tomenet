@@ -68,8 +68,9 @@ HEALING_I = add_spell {
 			return "heal "..get_healing_percents(1).."% (max "..get_healing_cap(1)..") = "..get_healing_power(1)
 	end,
 	["desc"] = 	{
-			"Heals a percent of hitpoints up to a maximum of 400 points healed.",
-			"Projecting it will heal up to half that amount on nearby players.",
+			"Heals a percentage of your max hitpoints up to a spell level-dependent cap.",
+			"Projecting heals nearby players for 1/2 of the amount.",
+			"***Automatically projecting***",
 	}
 }
 HEALING_II = add_spell {
@@ -87,8 +88,9 @@ HEALING_II = add_spell {
 			return "heal "..get_healing_percents(15).."% (max "..get_healing_cap(15)..") = "..get_healing_power(15)
 	end,
 	["desc"] = 	{
-			"Heals a percent of hitpoints up to a maximum of 400 points healed.",
-			"Projecting it will heal up to half that amount on nearby players.",
+			"Heals a percentage of your max hitpoints up to a spell level-dependent cap.",
+			"Projecting heals nearby players for 1/2 of the amount.",
+			"***Automatically projecting***",
 	}
 }
 HEALING_III = add_spell {
@@ -106,8 +108,9 @@ HEALING_III = add_spell {
 			return "heal "..get_healing_percents(0).."% (max "..get_healing_cap(0)..") = "..get_healing_power(0)
 	end,
 	["desc"] = 	{
-			"Heals a percent of hitpoints up to a maximum of 400 points healed.",
-			"Projecting it will heal up to half that amount on nearby players.",
+			"Heals a percentage of your max hitpoints up to a spell level-dependent cap.",
+			"Final cap is 400. Projecting heals nearby players for 1/2 of the amount.",
+			"***Automatically projecting***",
 	}
 }
 

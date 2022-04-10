@@ -18544,7 +18544,10 @@ school.
 
 - Nature
 
-    Healing         Heals a percentage of your hit points.     (auto-project)
+    Healing         Heals a percentage of your max hit points. (auto-project)
+                    Caps at a certain maximum amount, depending on tier,
+                    spell level and ultimately at 400.
+                    Projecting heal on others will heal for 1/2 the amount.
                     Required skill level for first spell level: 1.
 
                     Tier II: Level 20.
@@ -18952,7 +18955,10 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
 
                     Tier II: Level 23.
 
-    Heal            Heals a percentage of hit points.          (auto-project)
+    Heal            Heals a percentage of your max hit points. (auto-project)
+                    Caps at a certain maximum amount, depending on tier,
+                    spell level and ultimately at 400.
+                    Projecting heal on others will heal for 3/4 the amount.
                     Required skill level for first spell level: 3.
 
                     Tier II: Level 23.
