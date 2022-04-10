@@ -5062,6 +5062,15 @@ void do_cmd_subinven_move(int Ind, int islot) {
 			if (i_ptr->tval != TV_TRAPKIT) continue;
 			break;
 		case SV_SI_MDEVP_WRAPPING:
+ #if 1
+			/* Extra hint for unidentified rods, instead of simply claiming that there is no bag space (as no chest is found and wrapping isn't eligible for unid'ed rods): */
+			if (i_ptr->tval == TV_ROD && !object_aware_p(Ind, i_ptr)) {
+				/* The reason is that rod_requires_direction() will always return TRUE for unknown rods anyway. */
+				msg_print(Ind, "The rod's type must be known in order to stow it in your antistatic wrapping!");
+				continue;
+			}
+ #endif
+			/* Note that unknown rods will automatically return TRUE for requiring direction, even if they really don't. */
 			if (i_ptr->tval != TV_STAFF && (i_ptr->tval != TV_ROD || rod_requires_direction(Ind, i_ptr))) continue;
 			break;
 		default:

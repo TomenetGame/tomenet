@@ -1354,6 +1354,27 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				for (i = 0; i < INVEN_TOTAL; i++) { /* allow to activate equipped items for recall (some art(s)!) */
 					o_ptr = &(p_ptr->inventory[i]);
 					if (!o_ptr->tval) continue;
+
+#ifdef ENABLE_SUBINVEN
+					/* Accept rods in device-specific subinventory */
+					if (o_ptr->tval == TV_SUBINVEN && o_ptr->sval == SV_SI_MDEVP_WRAPPING) {
+						object_type *o2_ptr;
+						int j;
+
+						for (j = 0; j < o_ptr->bpval; j++) {
+							o2_ptr = &p_ptr->subinventory[i][j];
+							if (!o2_ptr->k_idx) break;
+							if (!find_inscription(o2_ptr->note, "@R")) continue;
+
+							item = (i + 1) * 100 + j; /* Encode index for global inventory (inven+subinvens) */
+							o_ptr = o2_ptr;
+							break;
+						}
+						if (item == -1) continue;
+						/* We found our rod, leave outer loop too */
+						break;
+					} else
+#endif
 					if (!find_inscription(o_ptr->note, "@R")) continue;
 
 					/* For spell books: Test if we can actually use this item at all,
@@ -1431,29 +1452,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					break;
 				/* Cast Recall spell - mikaelh */
 				case TV_BOOK:
-#if 0
-					if (o_ptr->sval == SV_SPELLBOOK) {
-						/* Test for 'Recall' istar spell: */
-						if (o_ptr->pval != spell_rec) {
-							msg_print(Ind, "\377oThis is not a Spell Scroll of Recall.");
-							return;
-						}
-						/* Test for 'Relocation' astral spell: */
-					} else {
-						if (MY_VERSION < (4 << 12 | 4 << 8 | 1U << 4 | 8)) {
-						/* no longer supported! to make s_aux.lua slimmer */
-							if (exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell)) == FALSE) {
-								msg_print(Ind, "\377oRecall spell not found in this book.");
-								return;
-							}
-						} else {
-							if (exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", item, o_ptr->sval, spell)) == FALSE) {
-								msg_print(Ind, "\377oRecall spell not found in this book.");
-								return;
-							}
-						}
-					}
-#endif
 					cast_school_spell(Ind, item, spell, -1, -1, 0);
 					break;
 				default:
@@ -1483,7 +1481,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				//p_ptr->recall_pos.wz = 0 - p_ptr->max_dlv;
 				//p_ptr->recall_pos.wz = 0;
 			}
-
 			return;
 		}
 		/* TODO: remove &7 viewer commands */
