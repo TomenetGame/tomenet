@@ -731,6 +731,7 @@ static void cmd_subinven_move(void) {
 
 	Send_subinven_move(item);
 }
+/* Note: islot can be ignored, since it's actually using_subinven, which is checked in c_get_item() anyway. */
 static void cmd_subinven_remove(int islot) {
 	int item;
 
@@ -738,7 +739,7 @@ static void cmd_subinven_remove(int islot) {
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Unstow what? ", (USE_INVEN | USE_EXTRA))) return;
+	if (!c_get_item(&item, "Unstow what? ", (USE_SUBINVEN | USE_EXTRA))) return;
 
 	Send_subinven_remove(item);
 }

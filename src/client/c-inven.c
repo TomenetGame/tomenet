@@ -99,13 +99,17 @@ static bool get_item_okay(int i) {
 	return (TRUE);
 }
 
-
+/* For c_get_item(): Capital letter leads to asking whether we really want to try that item. */
 static bool verify(cptr prompt, int item) {
 	char	o_name[ONAME_LEN];
 	char	out_val[MSG_LEN];
 
-
 	/* Describe */
+#ifdef ENABLE_SUBINVEN
+	if (using_subinven != -1)
+		strcpy(o_name, subinventory_name[using_subinven][item]);
+	else
+#endif
 	strcpy(o_name, inventory_name[item]);
 
 	/* Prompt */
@@ -126,6 +130,11 @@ static s16b c_label_to_inven(int c) {
 	if ((i < 0) || (i > INVEN_PACK)) return (-1);
 
 	/* Empty slots can never be chosen */
+#ifdef ENABLE_SUBINVEN
+	if (using_subinven != -1) {
+		if (!subinventory[using_subinven][i].tval) return (-1);
+	} else
+#endif
 	if (!inventory[i].tval) return (-1);
 
 	/* Return the index */
@@ -837,9 +846,10 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	bool equip_first = FALSE;
 #ifdef ENABLE_SUBINVEN
 	bool subinven = FALSE, found_subinven = FALSE;
+	int sub_i = (using_subinven + 1) * 100;
 #endif
-
 	bool safe_input = FALSE;
+
 
 	/* The top line is icky */
 	topline_icky = TRUE;
@@ -872,7 +882,17 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	/* Too long description - shorten? */
 	if (special_req && newest) spammy = TRUE;
 
+#ifdef ENABLE_SUBINVEN
+	if (using_subinven != -1) {
+		inven = equip = FALSE; /* If we are inside a specific subinventory already, disallow normal inventory */
+		subinven = TRUE; /* ..and definitely allow subinven, of course. */
+	}
+#endif
+
 	/* Paranoia */
+#ifdef ENABLE_SUBINVEN
+	if (!subinven)
+#endif
 	if (!inven && !equip) {
 		/* Forget the item_tester_tval restriction */
 		item_tester_tval = 0;
@@ -892,18 +912,29 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 	/* Full inventory */
 	i1 = 0;
-	i2 = INVEN_PACK - 1;
-
 #ifdef ENABLE_SUBINVEN
-	if (using_subinven != -1) i2 = using_subinven_size;
-#endif
+	if (using_subinven != -1) {
+		i2 = using_subinven_size - 1;
 
+		/* Restrict subinventory indices (for unstow this basically reduces max capacity to actually used capacity) */
+		while ((i1 <= i2) && (!get_item_okay(i1))) i1++;
+		while ((i1 <= i2) && (!get_item_okay(i2))) i2--;
+	} else
+	    /* Don't restrict items inside subinventories, as we don't have a function for this yet
+	       (would need to pass subinven flag+index to get_item_okay() or something).
+	       Just leave it to server-side checks for now. */
+    {
+#endif
+	i2 = INVEN_PACK - 1;
 	/* Forbid inventory */
 	if (!inven) i2 = -1;
 
 	/* Restrict inventory indices */
 	while ((i1 <= i2) && (!get_item_okay(i1))) i1++;
 	while ((i1 <= i2) && (!get_item_okay(i2))) i2--;
+#ifdef ENABLE_SUBINVEN
+    }
+#endif
 
 #ifdef ENABLE_SUBINVEN
 	if (subinven) {
@@ -940,6 +971,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 	if ((i1 > i2) && (e1 > e2)
 #ifdef ENABLE_SUBINVEN
+	    /* Nothing to display, but at least allow selecting a subinven item via @name */
 	    && !found_subinven
 #endif
 	    ) {
@@ -991,6 +1023,8 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		else if (inven) command_wrk = FALSE;
 		/* Use equipment if allowed */
 		else if (equip) command_wrk = TRUE;
+		/* Use subinventory if allowed */
+		else if (subinven) command_wrk = FALSE;
 	}
 
 	/* Start with equipment? ('A'ctivate command) */
