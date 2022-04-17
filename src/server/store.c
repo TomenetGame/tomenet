@@ -4595,7 +4595,7 @@ void do_cmd_store(int Ind) {
 		if (p_ptr->chp < p_ptr->mhp / 2) hp_player_quiet(Ind, p_ptr->mhp / 3, TRUE);
 		if (p_ptr->cut) set_cut(Ind, 0, 0);
 
-		if (p_ptr->blind || p_ptr->confused || p_ptr->poisoned) {
+		if (p_ptr->blind || p_ptr->confused || p_ptr->poisoned || p_ptr->diseased) {
 			msg_print(Ind, "A temple priest speaks a prayer of curing.");
 #ifdef USE_SOUND_2010
 			sound(Ind, "store_prayer", NULL, SFX_TYPE_MISC, FALSE);
@@ -4604,6 +4604,7 @@ void do_cmd_store(int Ind) {
 		if (p_ptr->blind) set_blind(Ind, 0);
 		if (p_ptr->confused) set_confused(Ind, 0);
 		if (p_ptr->poisoned) set_poisoned(Ind, 0, 0);
+		if (p_ptr->diseased) set_diseased(Ind, 0, 0);
 
 		if (p_ptr->food < PY_FOOD_ALERT) {
 			if (p_ptr->prace == RACE_ENT) {
