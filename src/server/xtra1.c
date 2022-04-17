@@ -1970,6 +1970,8 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	char mname[MNAME_LEN];
 
+	bool seduce = FALSE;
+
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	/* If in the player body nothing have to be done */
@@ -2051,6 +2053,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		case RBE_SEDUCE: /* ah well ^^ */
 			p_ptr->sustain_chr = TRUE;
 			csheet_boni->cb[11] |= CB12_RSCHR;
+			seduce = TRUE;
 			break;
 		}
 
@@ -2441,18 +2444,24 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	}
 	if (r_ptr->flags7 & RF7_SPIDER) d = -1;
 
-	if (r_ptr->flags3 & RF3_ORC) d = -1;
-
 	if (r_ptr->flags3 & RF3_NONLIVING) d = -1;
 	if (r_ptr->flags3 & RF3_EVIL) d = -1;
+
+	if (r_ptr->flags3 & RF3_ORC) d = -1;
 
 	if (r_ptr->flags3 & RF3_TROLL) d = -2;
 	if (r_ptr->flags3 & RF3_GIANT) d = -2;
 
-	if (r_ptr->flags3 & RF3_UNDEAD) d = -3;
+	if (r_ptr->flags3 & RF3_UNDEAD) {
+		if (r_ptr->d_char == 'V') d = 3 - 1; /* consistent with player race boni table (reduced effectiveness maybe, hard to fake mind-based charm^^) */
+		else d = -3;
+	}
 	if (r_ptr->flags3 & RF3_DEMON) d = -3;
 
-	if (r_ptr->flags3 & RF3_GOOD) d += 2;
+	if (r_ptr->d_char == 'A') d = 3; /* overwhelming */
+	else if (r_ptr->flags3 & RF3_GOOD) d += 2;
+
+	if (seduce) d = 3;
 
 	p_ptr->stat_add[A_CHR] += d; csheet_boni->pchr += d;
 
