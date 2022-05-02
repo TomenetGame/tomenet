@@ -1407,9 +1407,6 @@
 #define RI_NETHER_GUARD		1068
 #define RI_DOR			1085
 #define RI_PUMPKIN		1088	/* new: max hp version is now _the_ (only) Pumpkin form - its HP get downscaled live on spawn according to floor level. */
-#define RI_PUMPKIN1		1086	/* deprecated (monster too) */
-#define RI_PUMPKIN2		1087	/* deprecated (monster too) */
-#define RI_PUMPKIN3		1088	/* deprecated, replace by RI_PUMPKIN */
 #define RI_ZU_AON		1097
 #define RI_OROME		1098
 #define RI_BRIGHTLANCE		1100

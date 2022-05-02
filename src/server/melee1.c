@@ -1154,7 +1154,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 			    ))))
 			{
 				/* The Great Pumpkin of Halloween event shouldn't give BB, lol. -C. Blue */
-				if (((m_ptr->r_idx != RI_PUMPKIN1) && (m_ptr->r_idx != RI_PUMPKIN2) && (m_ptr->r_idx != RI_PUMPKIN3))) {
+				if (m_ptr->r_idx != RI_PUMPKIN) {
 					s_printf("EFFECT: BLACK-BREATH - %s was infected by %s\n", p_ptr->name, m_name);
 					set_black_breath(Ind);
 				}

@@ -5885,8 +5885,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					} else {
 						if (!(r_info[m_ptr->r_idx].flags1 & RF1_UNIQUE)) continue;
 
-						if (season_halloween &&
-						    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)) {
+						if (season_halloween && m_ptr->r_idx == RI_PUMPKIN) {
 							great_pumpkin_duration = 0;
 							great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
 							//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");

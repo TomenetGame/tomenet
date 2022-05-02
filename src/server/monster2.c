@@ -690,8 +690,7 @@ void wipe_m_list(struct worldpos *wpos) {
 		monster_type *m_ptr = &m_list[i];
 
 		if (inarea(&m_ptr->wpos,wpos)) {
-			if (season_halloween &&
-			    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)) {
+			if (season_halloween && m_ptr->r_idx == RI_PUMPKIN) {
 				great_pumpkin_duration = 0;
 				great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */ 
 				//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
@@ -714,8 +713,7 @@ void wipe_m_list_admin(struct worldpos *wpos) {
 		if (m_ptr->pet || m_ptr->special || m_ptr->questor) continue;
 
 		if (inarea(&m_ptr->wpos,wpos)) {
-			if (season_halloween &&
-			    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)) {
+			if (season_halloween && m_ptr->r_idx == RI_PUMPKIN) {
 				great_pumpkin_duration = 0;
 				great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */ 
 				//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
@@ -740,8 +738,7 @@ void wipe_m_list_special(struct worldpos *wpos) {
 		monster_type *m_ptr = &m_list[i];
 
 		if (inarea(&m_ptr->wpos,wpos)) {
-			if (season_halloween &&
-			    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)) {
+			if (season_halloween && m_ptr->r_idx == RI_PUMPKIN) {
 				great_pumpkin_duration = 0;
 				great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */ 
 				//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
@@ -788,8 +785,7 @@ void thin_surface_spawns() {
 		}
 
 		/* if we erase the Great Pumpkin then reset its timer */
-		if (season_halloween &&
-		    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)) {
+		if (season_halloween && m_ptr->r_idx == RI_PUMPKIN) {
 			great_pumpkin_duration = 0;
 			great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
 			//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
@@ -816,8 +812,7 @@ void geno_towns() {
 
 		if (istown(&m_ptr->wpos) &&
 		    !(r_info[m_ptr->r_idx].flags8 & RF8_GENO_PERSIST)) {
-			if (season_halloween && /* hardcoded -_- */
-			    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)) {
+			if (season_halloween && /* hardcoded -_- */ m_ptr->r_idx == RI_PUMPKIN) {
 				great_pumpkin_duration = 0;
 				great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
 				//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
@@ -3328,7 +3323,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6b\n");
 			}
 		}
 
-		if (r_idx == RI_PUMPKIN1 || r_idx == RI_PUMPKIN2 || r_idx == RI_PUMPKIN3) {
+		if (r_idx == RI_PUMPKIN) {
 			/* Don't spawn the pumpkin _solely_ for the last 2 persons who killed him last time.
 			   Note: This means that a party of at least 3 can still permanently spawn him though
 			   if they take turns creating the next floor. Same applies for non-partied characters however, so seems fine. */
@@ -3721,13 +3716,14 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 		s_printf("Zu-Aon, The Cosmic Border Guard was created on %d\n", dlev);
 		if (l_ptr) l_ptr->flags1 |= (LF1_NO_GENO | LF1_NO_DESTROY);
 	}
-	if (r_idx == RI_PUMPKIN1 || r_idx == RI_PUMPKIN2 || r_idx == RI_PUMPKIN3)
-		s_printf("HALLOWEEN: The Great Pumpkin (%d) was created on %d,%d,%d (%d HP)\n", r_idx, wpos->wx, wpos->wy, wpos->wz, m_ptr->maxhp);
+	if (r_idx == RI_PUMPKIN) s_printf("HALLOWEEN: The Great Pumpkin (%d) was created on %d,%d,%d (%d HP)\n", r_idx, wpos->wx, wpos->wy, wpos->wz, m_ptr->maxhp);
 	if (r_idx == RI_MIRROR) s_printf("Mirror was created on %d\n", dlev);
 
 	/* Handle floor feelings */
 	/* Special events don't necessarily influence floor feelings */
-	if (l_ptr && (r_idx != RI_PUMPKIN1 && r_idx != RI_PUMPKIN2 && r_idx != RI_PUMPKIN3)
+	if (l_ptr
+	    /* don't disclose pumpkin presence */
+	    && r_idx != RI_PUMPKIN
 	    /* for now ignore live-spawns. maybe change that?: */
 	    && level_generation_time) {
 		if ((r_ptr->flags1 & RF1_UNIQUE)) l_ptr->flags2 |= LF2_UNIQUE;
@@ -5435,7 +5431,7 @@ int pick_ego_monster(int r_idx, int Level) {
 	if (!r_info[r_idx].level) return 0;
 
 	/* No Great Pumpkin ego (HALLOWEEN) */
-	if (r_idx == RI_PUMPKIN1 || r_idx == RI_PUMPKIN2 || r_idx == RI_PUMPKIN3) return 0;
+	if (r_idx == RI_PUMPKIN) return 0;
 
 	/* First are we allowed to find an ego */
 	if (!magik(MEGO_CHANCE)) return 0;

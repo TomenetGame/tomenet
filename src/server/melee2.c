@@ -1197,7 +1197,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u3
 if (season_halloween) {
 	/* Halloween event hack: The Great Pumpkin -C. Blue */
 	//if (!strcmp(r_ptr->name,"The Great Pumpkin"))
-	if ((m_ptr->r_idx == RI_PUMPKIN1) || (m_ptr->r_idx == RI_PUMPKIN2) || (m_ptr->r_idx == RI_PUMPKIN3)) {
+	if (m_ptr->r_idx == RI_PUMPKIN) {
 		/* more than 1/3 HP: Moan much, tele rarely */
 		if (m_ptr->hp > (m_ptr->maxhp / 3))
 		switch(rand_int(17)) {
@@ -12081,8 +12081,7 @@ void process_monsters(void) {
 							Send_music(pl, (p_ptr->music_monster = 40), -1);
 						}
 					}
-				} else if ((m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)
-				    && (p_ptr->music_monster != 43)) {
+				} else if (m_ptr->r_idx == RI_PUMPKIN && p_ptr->music_monster != 43) {
 					//The Great Pumpkin; overrides Nazgul, Dungeon Bosses and even Special Uniques ^^
 					Send_music(pl, (p_ptr->music_monster = 55), -1);
 				} else if ((m_ptr->r_idx == RI_SANTA1 || m_ptr->r_idx == RI_SANTA2)

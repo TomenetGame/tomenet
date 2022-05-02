@@ -7376,7 +7376,7 @@ static void process_various(void) {
 					}
 					/* Players of too high level cannot participate in killing attemps (anti-cheeze) */
 					/* search for Great Pumpkins */
-					if (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3) {
+					if (m_ptr->r_idx == RI_PUMPKIN) {
 						msg_print_near_monster(m_idx, "\377oThe Great Pumpkin wails and suddenly vanishes into thin air!");
 						s_printf("HALLOWEEN: The Great Pumpkin despawned from %d,%d,%d.\n", m_ptr->wpos.wx, m_ptr->wpos.wy, m_ptr->wpos.wz);
 						delete_monster_idx(m_idx, TRUE);
@@ -7403,7 +7403,7 @@ static void process_various(void) {
 					}
 					/* Players of too high level cannot participate in killing attemps (anti-cheeze) */
 					/* search for Great Pumpkins */
-					if (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3) {
+					if (m_ptr->r_idx == RI_PUMPKIN) {
 						msg_print_near_monster(m_idx, "\377oThe Great Pumpkin wails and seems to fade..");
 						break;
 					}

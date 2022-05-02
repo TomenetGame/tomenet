@@ -5603,7 +5603,7 @@ static bool r_killed_creditable(int Ind, int m_idx) {
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = race_inf(m_ptr);
 	bool is_Morgoth = (m_ptr->r_idx == RI_MORGOTH);
-	bool is_Pumpkin = (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3);
+	bool is_Pumpkin = (m_ptr->r_idx == RI_PUMPKIN);
 
 	bool henc_cheezed = FALSE;
 
@@ -5693,7 +5693,7 @@ bool monster_death(int Ind, int m_idx) {
 	bool is_Morgoth = (m_ptr->r_idx == RI_MORGOTH);
 	bool is_Sauron = (m_ptr->r_idx == RI_SAURON);
 	bool is_ZuAon = (m_ptr->r_idx == RI_ZU_AON);
-	bool is_Pumpkin = (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3);
+	bool is_Pumpkin = (m_ptr->r_idx == RI_PUMPKIN);
 	int credit_idx = r_ptr->dup_idx ? r_ptr->dup_idx : m_ptr->r_idx;
 	int r_idx = m_ptr->r_idx;
 	//bool visible = (p_ptr->mon_vis[m_idx] || (r_ptr->flags1 & RF1_UNIQUE));
@@ -5798,8 +5798,7 @@ bool monster_death(int Ind, int m_idx) {
 
 	if (season_halloween) {
 		/* let everyone know, so they are prepared.. >:) */
-		if ((r_idx == RI_PUMPKIN1 || r_idx == RI_PUMPKIN2 || r_idx == RI_PUMPKIN3)
-		    && !m_ptr->clone) {
+		if (r_idx == RI_PUMPKIN && !m_ptr->clone) {
 			msg_broadcast_format(0, "\374\377L**\377o%s has defeated a tasty halloween spirit!\377L**", p_ptr->name);
 			s_printf("HALLOWEEN: %s (%d/%d) has defeated %s on %d,%d,%d.\n", p_ptr->name, p_ptr->max_plv, p_ptr->max_lev, m_name, wpos->wx, wpos->wy, wpos->wz);
 			great_pumpkin_duration = 0;
