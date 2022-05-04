@@ -262,7 +262,7 @@ static bool do_eat_item(int Ind, int m_idx) {
 	char			o_name[ONAME_LEN];
 	int i, k;
 #ifdef ENABLE_SUBINVEN
-	int j, l;
+	int j = 0, l = 0; /* Init to kill (non-effective) compiler warning */
 	object_type *os_ptr;
 #endif
 
