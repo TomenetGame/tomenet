@@ -5148,7 +5148,7 @@ A few generic commands are always available in any subinventory:
   - Destroy (kill) an item (k or CTRL+D).
   - Inscribe or uninscribe an item ({ or }).
   - Pasting an item into chat via SHIFT+slot.
-  - Unstown item, ie put it back to inventory (t).
+  - Unstow item, ie put it back to inventory (t).
 
 
 (3.4a) Start-up equipment
