@@ -12142,8 +12142,8 @@ Word of Recall  Use it to quickly travel from the town or the wilderness into a
                 for more info about Word of Recall! ("Word of Recall", "WoR")
                 Word of Recall scrolls can be exchanged between an everlasting
                 and a non-everlasting player!
-Vermin Control  Stops breeders on the map from multiplying. Doesn't have effect
-                on certain non-natural breeders such as Unmakers.
+Vermin Control  Stops breeders on the whole floor from multiplying. Doesn't
+                have effect on certain non-natural breeders such as Unmakers.
 
 
 Wands/Rods/Staves
