@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 10. April 2022 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 5. May 2022 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.8.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -5130,6 +5130,7 @@ There are four categories of subinventories:
   (all staves and some rods) and allows you to use them straight from within.
   To do so, you must use the '@' feature (call by item name) in the prompt,
   or simply create a macro using the macro wizard, which does it this way too.
+  Just pay attention that you use % z J (and not % z k) to create the macro.
   Unknown rods are never eligible to be placed in this bag.
   Note that !C inscription (to alert when charged) on your magic devices works
   just fine when they are inside bags, just as usual.
