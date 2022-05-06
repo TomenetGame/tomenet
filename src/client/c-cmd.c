@@ -3357,10 +3357,21 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				if (chapter[0]) continue;
 
 				/* Additions */
-				if (my_strcasestr(buf, "Line")) { //draconian lineages
+				if (my_strcasestr(buf, "Line") && !(my_strcasestr(buf, "command") || my_strcasestr(buf, "cmd"))) { //draconian lineages
 					strcpy(chapter, "    Lineage");
 					continue;
 				}
+				if (my_strcasestr(buf, "Line") && (my_strcasestr(buf, "command") || my_strcasestr(buf, "cmd"))) {
+#ifdef WINDOWS
+					strcpy(buf, "POSIX COMMAND-LINE OPTIONS");
+#else
+					strcpy(buf, "POSIX COMMAND-LINE OPTIONS");
+#endif
+					fallback = TRUE;
+					fallback_uppercase = 4;
+					continue;
+				}
+				if (!strcasecmp(buf, "option") || !strcasecmp(buf, "options")) strcpy(buf, "Client options");
 				if (my_strcasestr(buf, "Depth")) { //min depth for exp in relation to char lv
 					strcpy(chapter, "    Character level");
 					continue;
