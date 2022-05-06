@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 5. May 2022 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 6. May 2022 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.8.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -11573,15 +11573,15 @@ ANTIMAGIC ('Anti-magic field')
         Prevents you from using any magic device or casting spells, also
         prevents nearby monsters and other players from casting spells (but
         not from using magic devices). You can still use scrolls and potions
-        though.
+        as usual, but their effect duration might get reduced.
         The field has no adverse effect on party members.
         The radius is approximately the field power / 9, and is cumulative
         to the 'Anti-magic' skill. The field power is the chance of
         suppressing a spell. It caps at 75% and is cumulative to the
         'Anti-magic' skill. Make sure to read up on anti-magic skill at (6.2).
-        The chance to interrupt spells is quartered for your party members,
-        so they are not affected much by your anti-magic field.
         The anti-magic field's radius caps at range 9.
+        Your party members are not affected by your anti-magic field.
+        Also see "Dark Sword" details in (5.9).
 BLESSED ('It has been blessed by the gods')
         These weapons resist cursing. Priests can use blessed weapons
         without penalties, even if they are not blunt. They will get their
@@ -11735,16 +11735,16 @@ Dark Sword      Dark Swords have a so-called 'anti-magic field', which
                 prevents the user from using magic devices or casting spells,
                 and also has a chance to interrupt nearby monsters and players
                 who try to cast spells but doesn't affect their magic devices.
-                You can still use scrolls and potions though.
+                You can still use scrolls and potions, but their effect
+                duration might get reduced.
                 The chance to interrupt spellcasters is 30% minus 3/5 of the
                 to-hit and to-dam values of the dark sword. Example:
                 A Dark Sword (+3,+7) has 30 - (3+7) * 3/5 = 24% chance of
-                interrupting spellcasters. The chance is further quartered for
-                party members, so they are hardly affected by your anti-magic
-                field. Usage of magic devices by party members is not hindered.
+                interrupting spellcasters.
                 The radius of the anti-magic field is several fields (chance
                 to interrupt spells, divided by 9), getting smaller if the
                 chance is smaller than 30%.
+                Your party members are not affected by your anti-magic field.
                 Dark Swords never give more than 30% AM, even if tohit and
                 todam boni added together result in a negative number.
                 They also never give 'negative anti-magic', 0% AM is the
