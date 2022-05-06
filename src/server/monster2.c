@@ -5899,12 +5899,250 @@ void py2mon_init_base(monster_type *m_ptr, player_type *p_ptr) {
 	   However, the way the auto-adjust code works is that it never regresses, only stacks improvements in stats,
 	   so that fact alone might work as a balancing factor for mimics' extra powers. >:) */
 }
+void p2mon_update_base_aux(monster_race *r_ptr, int *magicness, int tval, int sval) {
+	switch (tval) {
+	case TV_WAND:
+		switch (sval) {
+		//case SV_WAND_STONE_TO_MUD:
+		//case SV_WAND_WONDER:
+		//case SV_WAND_LITE:
+		//case SV_WAND_SLEEP_MONSTER:
+		//case SV_WAND_CONFUSE_MONSTER:
+		//case SV_WAND_FEAR_MONSTER:
+		//case SV_WAND_POLYMORPH:  //note: hard-coded immune to poly (and to cloning too)
+		//case SV_WAND_WALL_CREATION:
+		case SV_WAND_ACID_BOLT: r_ptr->flags5 |= RF5_BO_ACID; (*magicness)++; break;
+		case SV_WAND_FIRE_BOLT: r_ptr->flags5 |= RF5_BO_FIRE; (*magicness)++; break;
+		case SV_WAND_ELEC_BOLT: r_ptr->flags5 |= RF5_BO_ELEC; (*magicness)++; break;
+		case SV_WAND_COLD_BOLT: r_ptr->flags5 |= RF5_BO_COLD; (*magicness)++; break;
+		case SV_WAND_ACID_BALL: r_ptr->flags5 |= RF5_BA_ACID; (*magicness)++; break;
+		case SV_WAND_ELEC_BALL: r_ptr->flags5 |= RF5_BA_ELEC; (*magicness)++; break;
+		case SV_WAND_FIRE_BALL: r_ptr->flags5 |= RF5_BA_FIRE; (*magicness)++; break;
+		case SV_WAND_COLD_BALL: r_ptr->flags5 |= RF5_BA_COLD; (*magicness)++; break;
+		case SV_WAND_DRAGON_FIRE: r_ptr->flags5 |= RF5_BA_FIRE; (*magicness)++; break;
+		case SV_WAND_DRAGON_COLD: r_ptr->flags5 |= RF5_BA_COLD; (*magicness)++; break;
+		case SV_WAND_DRAGON_BREATH: r_ptr->flags5 |= RF5_BA_ELEC | RF5_BA_ACID | RF5_BA_COLD | RF5_BA_FIRE | RF5_BA_POIS; (*magicness)++; break;
+		case SV_WAND_ROCKETS: r_ptr->flags4 |= RF4_ROCKET; (*magicness)++; break;
+		case SV_WAND_STINKING_CLOUD: r_ptr->flags5 |= RF5_BA_POIS; (*magicness)++; break;
+		case SV_WAND_MAGIC_MISSILE: r_ptr->flags5 |= RF5_BO_MANA; (*magicness)++; break;
+		case SV_WAND_TELEPORT_AWAY: r_ptr->flags6 |= RF6_TELE_AWAY; (*magicness)++; break;
+		case SV_WAND_TELEPORT_TO: r_ptr->flags6 |= RF6_TELE_TO; (*magicness)++; break;
+ #if 0
+		case SV_WAND_SLOW_MONSTER: r_ptr->flags5 |= RF5_SLOW; (*magicness)++; break;
+ #else
+		case SV_WAND_SLOW_MONSTER: r_ptr->flags4 |= RF4_BR_INER; (*magicness)++; break; //too harsh?
+ #endif
+ #if 0 /* hrrm - I guess we have no choice but just to make the mirror image actually hard-coded immune to these then (BR_NUKE etc is no alternative) */
+		case SV_WAND_DRAIN_LIFE: r_ptr->flags |= RF_; (*magicness)++; break;
+		case SV_WAND_ANNIHILATION: r_ptr->flags |= RF_; (*magicness)++; break;
+ #endif
+		}
+		break;
+	case TV_STAFF:
+		switch (sval) {
+		//case SV_STAFF_DARKNESS:
+		//case SV_STAFF_SLOWNESS:
+		//case SV_STAFF_HASTE_MONSTERS:
+		//case SV_STAFF_SUMMONING:
+		//case SV_STAFF_REMOVE_CURSE:
+		//case SV_STAFF_STARLITE:
+		//case SV_STAFF_LITE:
+		//case SV_STAFF_PROBING:
+		//case SV_STAFF_THE_MAGI: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_STAFF_CURING: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_STAFF_SLEEP_MONSTERS: r_ptr->flags |= RF_; (*magicness)++; break;
+
+		//case SV_STAFF_DISPEL_EVIL: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_STAFF_HOLINESS: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_STAFF_GENOCIDE: r_ptr->flags |= RF_; (*magicness)++; break;
+ #if 0 /* forbid these two on the floor simply */
+		case SV_STAFF_EARTHQUAKES: r_ptr->flags |= RF_; (*magicness)++; break;
+		case SV_STAFF_DESTRUCTION: r_ptr->flags |= RF_; (*magicness)++; break;
+ #endif
+		case SV_STAFF_TELEPORTATION: r_ptr->flags6 |= RF6_TPORT; (*magicness)++; break;
+		case SV_STAFF_CURE_SERIOUS: r_ptr->flags6 |= RF6_HEAL; (*magicness)++; break;
+		case SV_STAFF_HEALING: r_ptr->flags6 |= RF6_HEAL; (*magicness)++; break;
+		//case SV_STAFF_SPEED: r_ptr->flags6 |= RF6_HASTE; (*magicness)++; break; -- we already copy the max speed flatly
+ #if 0
+		case SV_STAFF_SLOW_MONSTERS: r_ptr->flags5 |= RF5_SLOW; (*magicness)++; break;
+ #else
+		case SV_STAFF_SLOW_MONSTERS: r_ptr->flags4 |= RF4_BR_INER; (*magicness)++; break; //too harsh?
+ #endif
+		case SV_STAFF_POWER: r_ptr->flags4 |= RF4_BR_DISI; (*magicness)++; break; //just use something unresistable..
+		}
+		break;
+	case TV_ROD:
+		switch (sval) {
+		//case SV_ROD_DISARMING:
+		//case SV_ROD_LITE:
+		//case SV_ROD_SLEEP_MONSTER:
+		//case SV_ROD_POLYMORPH:
+		//case SV_ROD_CURING: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_ROD_RESTORATION: r_ptr->flags |= RF_; (*magicness)++; break; //just hard-code immunity against stat drain
+		case SV_ROD_HEALING: r_ptr->flags6 |= RF6_HEAL; (*magicness)++; break;
+		//case SV_ROD_SPEED: r_ptr->flags6 |= RF6_HASTE; (*magicness)++; break; -- we already copy the max speed flatly
+		case SV_ROD_TELEPORT_AWAY: r_ptr->flags6 |= RF6_TELE_AWAY; (*magicness)++; break;
+ #if 0
+		case SV_ROD_SLOW_MONSTER: r_ptr->flags5 |= RF5_SLOW; (*magicness)++; break;
+ #else
+		case SV_ROD_SLOW_MONSTER: r_ptr->flags4 |= RF4_BR_INER; (*magicness)++; break; //too harsh?
+ #endif
+ #if 0 /* hrrm - I guess we have no choice but just to make the mirror image actually hard-coded immune to these then (BR_NUKE etc is no alternative) */
+		case SV_ROD_DRAIN_LIFE: r_ptr->flags |= RF_; (*magicness)++; break;
+ #endif
+		case SV_ROD_ACID_BOLT: r_ptr->flags5 |= RF5_BO_ACID; (*magicness)++; break;
+		case SV_ROD_FIRE_BOLT: r_ptr->flags5 |= RF5_BO_FIRE; (*magicness)++; break;
+		case SV_ROD_ELEC_BOLT: r_ptr->flags5 |= RF5_BO_ELEC; (*magicness)++; break;
+		case SV_ROD_COLD_BOLT: r_ptr->flags5 |= RF5_BO_COLD; (*magicness)++; break;
+		case SV_ROD_ACID_BALL: r_ptr->flags5 |= RF5_BA_ACID; (*magicness)++; break;
+		case SV_ROD_ELEC_BALL: r_ptr->flags5 |= RF5_BA_ELEC; (*magicness)++; break;
+		case SV_ROD_FIRE_BALL: r_ptr->flags5 |= RF5_BA_FIRE; (*magicness)++; break;
+		case SV_ROD_COLD_BALL: r_ptr->flags5 |= RF5_BA_COLD; (*magicness)++; break;
+		case SV_ROD_HAVOC: r_ptr->flags5 |= RF5_BA_MANA; (*magicness)++; break; // >_> .... could also consider RF5_BA_CHAO
+		}
+		break;
+	case TV_POTION:
+		switch (sval) {
+		//case SV_POTION_INFRAVISION:
+		//case SV_POTION_DETECT_INVIS:
+		//case SV_POTION_SLOW_POISON:
+		//case SV_POTION_CURE_POISON:
+		//case SV_POTION_BOLDNESS:
+		//case SV_POTION_RESTORE_EXP:
+		//case SV_POTION_INVULNERABILITY:
+		//case SV_POTION_ENLIGHTENMENT:
+		//case SV_POTION_SELF_KNOWLEDGE:
+		//case SV_POTION_EXPERIENCE:
+		//case SV_POTION_CONFUSION:
+		//case SV_POTION_SLEEP:
+		//case SV_POTION_LOSE_MEMORIES:
+
+		//case SV_POTION_BLINDNESS: r_ptr->flags |= RF_; (*magicness)++; break;
+		//Note: Hard-coded immunity to stat-draining effects to keep it simple..
+		//case SV_POTION_RUINATION: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_DEC_STR: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_DEC_INT: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_DEC_WIS: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_DEC_DEX: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_DEC_CON: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_DEC_CHR: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_RES_STR: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_RES_INT: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_RES_WIS: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_RES_DEX: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_RES_CON: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_RES_CHR: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_INC_STR: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_INC_INT: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_INC_WIS: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_INC_DEX: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_INC_CON: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_INC_CHR: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_AUGMENTATION: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_STAR_ENLIGHTENMENT: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_CURING: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_CURE_LIGHT_SANITY: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_CURE_SERIOUS_SANITY: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_CURE_CRITICAL_SANITY: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_CURE_SANITY: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_INVIS: r_ptr->flags |= RF_; (*magicness)++; break; //covered already (tim_invis)
+		//case SV_POTION_STAR_RESTORE_MANA: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_POTION_RESTORE_MANA: r_ptr->flags |= RF_; (*magicness)++; break;
+ #if 0 /* could increase AC (for heroism as anti-hitchance). As for berserk, the damage already gets adjusted anyway */
+		case SV_POTION_HEROISM: r_ptr->flags |= RF_; (*magicness)++; break;
+		case SV_POTION_BERSERK_STRENGTH: r_ptr->flags |= RF_; (*magicness)++; break;
+ #endif
+		case SV_POTION_CURE_LIGHT: r_ptr->flags6 |= RF6_HEAL; (*magicness)++; break;
+		case SV_POTION_CURE_SERIOUS: r_ptr->flags6 |= RF6_HEAL; (*magicness)++; break;
+		case SV_POTION_CURE_CRITICAL: r_ptr->flags6 |= RF6_HEAL; (*magicness)++; break;
+		case SV_POTION_STAR_HEALING: r_ptr->flags6 |= RF6_HEAL; (*magicness)++; break;
+		case SV_POTION_HEALING: r_ptr->flags6 |= RF6_HEAL; (*magicness)++; break;
+		case SV_POTION_LIFE: r_ptr->flags6 |= RF6_HEAL; (*magicness)++; break;
+		case SV_POTION_DETONATIONS: r_ptr->flags4 |= RF4_ROCKET; (*magicness)++; break; //ugh.. but deto avg dmg is 563 actually!
+		case SV_POTION_DEATH: r_ptr->flags5 |= RF5_BA_NETH; (*magicness)++; break;
+		//case SV_POTION_SPEED: r_ptr->flags6 |= RF6_HASTE; (*magicness)++; break; -- we already copy the max speed flatly
+ #if 0
+		case SV_POTION_SLOWNESS: r_ptr->flags5 |= RF5_SLOW; (*magicness)++; break;
+ #else
+		case SV_POTION_SLOWNESS: r_ptr->flags4 |= RF4_BR_INER; (*magicness)++; break; //too harsh?
+ #endif
+ #if 0 //harsh? -- actually moved to just check p_ptr->oppose flags instead
+		case SV_POTION_RESIST_HEAT: r_ptr->flags3 |= RF3_IM_FIRE; break;
+		case SV_POTION_RESIST_COLD: r_ptr->flags3 |= RF3_IM_COLD; break;
+		case SV_POTION_RESISTANCE:
+		r_ptr->flags3 |= RF3_IM_FIRE | RF3_IM_COLD | RF3_IM_ELEC | RF3_IM_ACID | RF3_IM_POIS;
+		break;
+ #endif
+		}
+		break;
+	case TV_SCROLL:
+		switch (sval) {
+		//case SV_SCROLL_TELEPORT_LEVEL:
+		//case SV_SCROLL_WORD_OF_RECALL:
+		//case SV_SCROLL_IDENTIFY:
+		//case SV_SCROLL_STAR_IDENTIFY:
+		//case SV_SCROLL_REMOVE_CURSE:
+		//case SV_SCROLL_STAR_REMOVE_CURSE:
+		//case SV_SCROLL_ENCHANT_ARMOR:
+		//case SV_SCROLL_ENCHANT_WEAPON_TO_HIT
+		//case SV_SCROLL_ENCHANT_WEAPON_TO_DAM
+		//case SV_SCROLL_ENCHANT_WEAPON_PVAL:
+		//case SV_SCROLL_STAR_ENCHANT_ARMOR:
+		//case SV_SCROLL_STAR_ENCHANT_WEAPON:
+		//case SV_SCROLL_RECHARGING:
+		//case SV_SCROLL_RESET_RECALL:
+		//case SV_SCROLL_LIGHT:
+		//case SV_SCROLL_MAPPING:
+		//case SV_SCROLL_DETECT_GOLD:
+		//case SV_SCROLL_DETECT_ITEM:
+		//case SV_SCROLL_DETECT_DOOR:
+		//case SV_SCROLL_DIVINATION:
+		//case SV_SCROLL_SATISFY_HUNGER:
+		//case SV_SCROLL_MONSTER_CONFUSION:
+		//case SV_SCROLL_DEINCARNATION:
+		//case SV_SCROLL_MASS_RESURECTION:
+		//case SV_SCROLL_ACQUIREMENT:
+		//case SV_SCROLL_STAR_ACQUIREMENT:
+		//case SV_SCROLL_TRAP_DOOR_DESTRUCTION: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_SCROLL_DETECT_TRAP: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_SCROLL_DETECT_INVIS: r_ptr->flags |= RF_; (*magicness)++; break;
+		//case SV_SCROLL_STAR_DESTRUCTION: r_ptr->flags |= RF_; (*magicness)++; break; //level is indestructible
+ #if 0 /* no effect under simple rules as mirror image is neutral */
+		case SV_SCROLL_PROTECTION_FROM_EVIL: r_ptr->flags |= RF_; (*magicness)++; break;
+		case SV_SCROLL_DISPEL_UNDEAD: r_ptr->flags |= RF_; (*magicness)++; break;
+ #endif
+ #if 0 /* the AC gets adjusted automatically already */
+		case SV_SCROLL_BLESSING: r_ptr->flags |= RF_; (*magicness)++; break;
+		case SV_SCROLL_HOLY_CHANT: r_ptr->flags |= RF_; (*magicness)++; break;
+		case SV_SCROLL_HOLY_PRAYER: r_ptr->flags |= RF_; (*magicness)++; break;
+ #endif
+ #if 0 /* Sigh, will have to disable runes on this floor -_- */
+		case SV_SCROLL_RUNE_OF_PROTECTION: r_ptr->flags |= RF_; (*magicness)++; break;
+ #endif
+		case SV_SCROLL_PHASE_DOOR: r_ptr->flags6 |= RF6_BLINK; (*magicness)++; break;
+		case SV_SCROLL_TELEPORT: r_ptr->flags6 |= RF6_TPORT; (*magicness)++; break;
+ #if 0 /* these either have no effect or aren't feasible to use (as we won't gain anything from deleting the mirror image) */
+		case SV_SCROLL_GENOCIDE: r_ptr->flags |= RF_; (*magicness)++; break;
+		case SV_SCROLL_OBLITERATION: r_ptr->flags |= RF_; (*magicness)++; break;
+ #endif
+		/* These are kind of harsh, maybe tone down to bolts? */
+		case SV_SCROLL_FIRE: r_ptr->flags4 |= RF4_BR_FIRE; (*magicness)++; break;
+		case SV_SCROLL_ICE: r_ptr->flags0 |= RF0_BR_ICE; (*magicness)++; break;
+		case SV_SCROLL_CHAOS: r_ptr->flags4 |= RF4_BR_CHAO; (*magicness)++; break;
+		}
+		break;
+	}
+}
 void py2mon_update_base(monster_type *m_ptr, player_type *p_ptr) {
 	monster_race *r_ptr = &r_info[RI_MIRROR];
 	int i, k, m, n, magicness = 0;
 	int thresh_skill = (p_ptr->max_plv + 4) / 5; /* usual skill minimum threshold to become active */
 	int thresh_spell = (p_ptr->max_plv + 9) / 10; /* usual spell school skill minimum threshold to become active */
 	object_type *o_ptr, *o2_ptr;
+#ifdef ENABLE_SUBINVEN
+	int s;
+#endif
+	int tval, sval;
 
 	/* Who knows the silylness.. */
 	m_ptr->level = r_ptr->level = p_ptr->max_plv;
@@ -6063,238 +6301,24 @@ else s_printf("\n");
 	/* Scan for magic devices, potions, scrolls */
 	for (n = 0; n < INVEN_PACK; n++) {
 		if (!p_ptr->inventory[n].k_idx) break;
-		switch (p_ptr->inventory[n].tval) {
-		case TV_WAND:
-			switch (p_ptr->inventory[n].sval) {
-			//case SV_WAND_STONE_TO_MUD:
-			//case SV_WAND_WONDER:
-			//case SV_WAND_LITE:
-			//case SV_WAND_SLEEP_MONSTER:
-			//case SV_WAND_CONFUSE_MONSTER:
-			//case SV_WAND_FEAR_MONSTER:
-			//case SV_WAND_POLYMORPH:  //note: hard-coded immune to poly (and to cloning too)
-			//case SV_WAND_WALL_CREATION:
-			case SV_WAND_ACID_BOLT: r_ptr->flags5 |= RF5_BO_ACID; magicness++; break;
-			case SV_WAND_FIRE_BOLT: r_ptr->flags5 |= RF5_BO_FIRE; magicness++; break;
-			case SV_WAND_ELEC_BOLT: r_ptr->flags5 |= RF5_BO_ELEC; magicness++; break;
-			case SV_WAND_COLD_BOLT: r_ptr->flags5 |= RF5_BO_COLD; magicness++; break;
-			case SV_WAND_ACID_BALL: r_ptr->flags5 |= RF5_BA_ACID; magicness++; break;
-			case SV_WAND_ELEC_BALL: r_ptr->flags5 |= RF5_BA_ELEC; magicness++; break;
-			case SV_WAND_FIRE_BALL: r_ptr->flags5 |= RF5_BA_FIRE; magicness++; break;
-			case SV_WAND_COLD_BALL: r_ptr->flags5 |= RF5_BA_COLD; magicness++; break;
-			case SV_WAND_DRAGON_FIRE: r_ptr->flags5 |= RF5_BA_FIRE; magicness++; break;
-			case SV_WAND_DRAGON_COLD: r_ptr->flags5 |= RF5_BA_COLD; magicness++; break;
-			case SV_WAND_DRAGON_BREATH: r_ptr->flags5 |= RF5_BA_ELEC | RF5_BA_ACID | RF5_BA_COLD | RF5_BA_FIRE | RF5_BA_POIS; magicness++; break;
-			case SV_WAND_ROCKETS: r_ptr->flags4 |= RF4_ROCKET; magicness++; break;
-			case SV_WAND_STINKING_CLOUD: r_ptr->flags5 |= RF5_BA_POIS; magicness++; break;
-			case SV_WAND_MAGIC_MISSILE: r_ptr->flags5 |= RF5_BO_MANA; magicness++; break;
-			case SV_WAND_TELEPORT_AWAY: r_ptr->flags6 |= RF6_TELE_AWAY; magicness++; break;
-			case SV_WAND_TELEPORT_TO: r_ptr->flags6 |= RF6_TELE_TO; magicness++; break;
- #if 0
-			case SV_WAND_SLOW_MONSTER: r_ptr->flags5 |= RF5_SLOW; magicness++; break;
- #else
-			case SV_WAND_SLOW_MONSTER: r_ptr->flags4 |= RF4_BR_INER; magicness++; break; //too harsh?
- #endif
- #if 0 /* hrrm - I guess we have no choice but just to make the mirror image actually hard-coded immune to these then (BR_NUKE etc is no alternative) */
-			case SV_WAND_DRAIN_LIFE: r_ptr->flags |= RF_; magicness++; break;
-			case SV_WAND_ANNIHILATION: r_ptr->flags |= RF_; magicness++; break;
- #endif
+#ifndef ENABLE_SUBINVEN
+		tval = p_ptr->inventory[n].tval;
+		sval = p_ptr->inventory[n].sval;
+		p2mon_update_base_aux(r_ptr, &magicness, tval, sval);
+#else
+		if (p_ptr->inventory[n].tval == TV_SUBINVEN) {
+			for (s = 0; s <= p_ptr->inventory[n].bpval; s++) {
+				tval = p_ptr->subinventory[n][s].tval;
+				if (!tval) break;
+				sval = p_ptr->subinventory[n][s].sval;
+				p2mon_update_base_aux(r_ptr, &magicness, tval, sval);
 			}
-			break;
-		case TV_STAFF:
-			switch (p_ptr->inventory[n].sval) {
-			//case SV_STAFF_DARKNESS:
-			//case SV_STAFF_SLOWNESS:
-			//case SV_STAFF_HASTE_MONSTERS:
-			//case SV_STAFF_SUMMONING:
-			//case SV_STAFF_REMOVE_CURSE:
-			//case SV_STAFF_STARLITE:
-			//case SV_STAFF_LITE:
-			//case SV_STAFF_PROBING:
-			//case SV_STAFF_THE_MAGI: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_STAFF_CURING: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_STAFF_SLEEP_MONSTERS: r_ptr->flags |= RF_; magicness++; break;
-
-			//case SV_STAFF_DISPEL_EVIL: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_STAFF_HOLINESS: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_STAFF_GENOCIDE: r_ptr->flags |= RF_; magicness++; break;
- #if 0 /* forbid these two on the floor simply */
-			case SV_STAFF_EARTHQUAKES: r_ptr->flags |= RF_; magicness++; break;
-			case SV_STAFF_DESTRUCTION: r_ptr->flags |= RF_; magicness++; break;
- #endif
-			case SV_STAFF_TELEPORTATION: r_ptr->flags6 |= RF6_TPORT; magicness++; break;
-			case SV_STAFF_CURE_SERIOUS: r_ptr->flags6 |= RF6_HEAL; magicness++; break;
-			case SV_STAFF_HEALING: r_ptr->flags6 |= RF6_HEAL; magicness++; break;
-			//case SV_STAFF_SPEED: r_ptr->flags6 |= RF6_HASTE; magicness++; break; -- we already copy the max speed flatly
- #if 0
-			case SV_STAFF_SLOW_MONSTERS: r_ptr->flags5 |= RF5_SLOW; magicness++; break;
- #else
-			case SV_STAFF_SLOW_MONSTERS: r_ptr->flags4 |= RF4_BR_INER; magicness++; break; //too harsh?
- #endif
-			case SV_STAFF_POWER: r_ptr->flags4 |= RF4_BR_DISI; magicness++; break; //just use something unresistable..
-			}
-			break;
-		case TV_ROD:
-			switch (p_ptr->inventory[n].sval) {
-			//case SV_ROD_DISARMING:
-			//case SV_ROD_LITE:
-			//case SV_ROD_SLEEP_MONSTER:
-			//case SV_ROD_POLYMORPH:
-			//case SV_ROD_CURING: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_ROD_RESTORATION: r_ptr->flags |= RF_; magicness++; break; //just hard-code immunity against stat drain
-			case SV_ROD_HEALING: r_ptr->flags6 |= RF6_HEAL; magicness++; break;
-			//case SV_ROD_SPEED: r_ptr->flags6 |= RF6_HASTE; magicness++; break; -- we already copy the max speed flatly
-			case SV_ROD_TELEPORT_AWAY: r_ptr->flags6 |= RF6_TELE_AWAY; magicness++; break;
- #if 0
-			case SV_ROD_SLOW_MONSTER: r_ptr->flags5 |= RF5_SLOW; magicness++; break;
- #else
-			case SV_ROD_SLOW_MONSTER: r_ptr->flags4 |= RF4_BR_INER; magicness++; break; //too harsh?
- #endif
- #if 0 /* hrrm - I guess we have no choice but just to make the mirror image actually hard-coded immune to these then (BR_NUKE etc is no alternative) */
-			case SV_ROD_DRAIN_LIFE: r_ptr->flags |= RF_; magicness++; break;
- #endif
-			case SV_ROD_ACID_BOLT: r_ptr->flags5 |= RF5_BO_ACID; magicness++; break;
-			case SV_ROD_FIRE_BOLT: r_ptr->flags5 |= RF5_BO_FIRE; magicness++; break;
-			case SV_ROD_ELEC_BOLT: r_ptr->flags5 |= RF5_BO_ELEC; magicness++; break;
-			case SV_ROD_COLD_BOLT: r_ptr->flags5 |= RF5_BO_COLD; magicness++; break;
-			case SV_ROD_ACID_BALL: r_ptr->flags5 |= RF5_BA_ACID; magicness++; break;
-			case SV_ROD_ELEC_BALL: r_ptr->flags5 |= RF5_BA_ELEC; magicness++; break;
-			case SV_ROD_FIRE_BALL: r_ptr->flags5 |= RF5_BA_FIRE; magicness++; break;
-			case SV_ROD_COLD_BALL: r_ptr->flags5 |= RF5_BA_COLD; magicness++; break;
-			case SV_ROD_HAVOC: r_ptr->flags5 |= RF5_BA_MANA; magicness++; break; // >_> .... could also consider RF5_BA_CHAO
-			}
-			break;
-		case TV_POTION:
-			switch (p_ptr->inventory[n].sval) {
-			//case SV_POTION_INFRAVISION:
-			//case SV_POTION_DETECT_INVIS:
-			//case SV_POTION_SLOW_POISON:
-			//case SV_POTION_CURE_POISON:
-			//case SV_POTION_BOLDNESS:
-			//case SV_POTION_RESTORE_EXP:
-			//case SV_POTION_INVULNERABILITY:
-			//case SV_POTION_ENLIGHTENMENT:
-			//case SV_POTION_SELF_KNOWLEDGE:
-			//case SV_POTION_EXPERIENCE:
-			//case SV_POTION_CONFUSION:
-			//case SV_POTION_SLEEP:
-			//case SV_POTION_LOSE_MEMORIES:
-
-			//case SV_POTION_BLINDNESS: r_ptr->flags |= RF_; magicness++; break;
-			//Note: Hard-coded immunity to stat-draining effects to keep it simple..
-			//case SV_POTION_RUINATION: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_DEC_STR: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_DEC_INT: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_DEC_WIS: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_DEC_DEX: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_DEC_CON: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_DEC_CHR: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_RES_STR: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_RES_INT: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_RES_WIS: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_RES_DEX: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_RES_CON: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_RES_CHR: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_INC_STR: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_INC_INT: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_INC_WIS: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_INC_DEX: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_INC_CON: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_INC_CHR: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_AUGMENTATION: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_STAR_ENLIGHTENMENT: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_CURING: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_CURE_LIGHT_SANITY: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_CURE_SERIOUS_SANITY: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_CURE_CRITICAL_SANITY: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_CURE_SANITY: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_INVIS: r_ptr->flags |= RF_; magicness++; break; //covered already (tim_invis)
-			//case SV_POTION_STAR_RESTORE_MANA: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_POTION_RESTORE_MANA: r_ptr->flags |= RF_; magicness++; break;
- #if 0 /* could increase AC (for heroism as anti-hitchance). As for berserk, the damage already gets adjusted anyway */
-			case SV_POTION_HEROISM: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_BERSERK_STRENGTH: r_ptr->flags |= RF_; magicness++; break;
- #endif
-			case SV_POTION_CURE_LIGHT: r_ptr->flags6 |= RF6_HEAL; magicness++; break;
-			case SV_POTION_CURE_SERIOUS: r_ptr->flags6 |= RF6_HEAL; magicness++; break;
-			case SV_POTION_CURE_CRITICAL: r_ptr->flags6 |= RF6_HEAL; magicness++; break;
-			case SV_POTION_STAR_HEALING: r_ptr->flags6 |= RF6_HEAL; magicness++; break;
-			case SV_POTION_HEALING: r_ptr->flags6 |= RF6_HEAL; magicness++; break;
-			case SV_POTION_LIFE: r_ptr->flags6 |= RF6_HEAL; magicness++; break;
-			case SV_POTION_DETONATIONS: r_ptr->flags4 |= RF4_ROCKET; magicness++; break; //ugh.. but deto avg dmg is 563 actually!
-			case SV_POTION_DEATH: r_ptr->flags5 |= RF5_BA_NETH; magicness++; break;
-			//case SV_POTION_SPEED: r_ptr->flags6 |= RF6_HASTE; magicness++; break; -- we already copy the max speed flatly
- #if 0
-			case SV_POTION_SLOWNESS: r_ptr->flags5 |= RF5_SLOW; magicness++; break;
- #else
-			case SV_POTION_SLOWNESS: r_ptr->flags4 |= RF4_BR_INER; magicness++; break; //too harsh?
- #endif
- #if 0 //harsh? -- actually moved to just check p_ptr->oppose flags instead
-			case SV_POTION_RESIST_HEAT: r_ptr->flags3 |= RF3_IM_FIRE; break;
-			case SV_POTION_RESIST_COLD: r_ptr->flags3 |= RF3_IM_COLD; break;
-			case SV_POTION_RESISTANCE:
-				r_ptr->flags3 |= RF3_IM_FIRE | RF3_IM_COLD | RF3_IM_ELEC | RF3_IM_ACID | RF3_IM_POIS;
-				break;
- #endif
-			}
-			break;
-		case TV_SCROLL:
-			switch (p_ptr->inventory[n].sval) {
-			//case SV_SCROLL_TELEPORT_LEVEL:
-			//case SV_SCROLL_WORD_OF_RECALL:
-			//case SV_SCROLL_IDENTIFY:
-			//case SV_SCROLL_STAR_IDENTIFY:
-			//case SV_SCROLL_REMOVE_CURSE:
-			//case SV_SCROLL_STAR_REMOVE_CURSE:
-			//case SV_SCROLL_ENCHANT_ARMOR:
-			//case SV_SCROLL_ENCHANT_WEAPON_TO_HIT
-			//case SV_SCROLL_ENCHANT_WEAPON_TO_DAM
-			//case SV_SCROLL_ENCHANT_WEAPON_PVAL:
-			//case SV_SCROLL_STAR_ENCHANT_ARMOR:
-			//case SV_SCROLL_STAR_ENCHANT_WEAPON:
-			//case SV_SCROLL_RECHARGING:
-			//case SV_SCROLL_RESET_RECALL:
-			//case SV_SCROLL_LIGHT:
-			//case SV_SCROLL_MAPPING:
-			//case SV_SCROLL_DETECT_GOLD:
-			//case SV_SCROLL_DETECT_ITEM:
-			//case SV_SCROLL_DETECT_DOOR:
-			//case SV_SCROLL_DIVINATION:
-			//case SV_SCROLL_SATISFY_HUNGER:
-			//case SV_SCROLL_MONSTER_CONFUSION:
-			//case SV_SCROLL_DEINCARNATION:
-			//case SV_SCROLL_MASS_RESURECTION:
-			//case SV_SCROLL_ACQUIREMENT:
-			//case SV_SCROLL_STAR_ACQUIREMENT:
-			//case SV_SCROLL_TRAP_DOOR_DESTRUCTION: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_SCROLL_DETECT_TRAP: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_SCROLL_DETECT_INVIS: r_ptr->flags |= RF_; magicness++; break;
-			//case SV_SCROLL_STAR_DESTRUCTION: r_ptr->flags |= RF_; magicness++; break; //level is indestructible
- #if 0 /* no effect under simple rules as mirror image is neutral */
-			case SV_SCROLL_PROTECTION_FROM_EVIL: r_ptr->flags |= RF_; magicness++; break;
-			case SV_SCROLL_DISPEL_UNDEAD: r_ptr->flags |= RF_; magicness++; break;
- #endif
- #if 0 /* the AC gets adjusted automatically already */
-			case SV_SCROLL_BLESSING: r_ptr->flags |= RF_; magicness++; break;
-			case SV_SCROLL_HOLY_CHANT: r_ptr->flags |= RF_; magicness++; break;
-			case SV_SCROLL_HOLY_PRAYER: r_ptr->flags |= RF_; magicness++; break;
- #endif
- #if 0 /* Sigh, will have to disable runes on this floor -_- */
-			case SV_SCROLL_RUNE_OF_PROTECTION: r_ptr->flags |= RF_; magicness++; break;
- #endif
-			case SV_SCROLL_PHASE_DOOR: r_ptr->flags6 |= RF6_BLINK; magicness++; break;
-			case SV_SCROLL_TELEPORT: r_ptr->flags6 |= RF6_TPORT; magicness++; break;
- #if 0 /* these either have no effect or aren't feasible to use (as we won't gain anything from deleting the mirror image) */
-			case SV_SCROLL_GENOCIDE: r_ptr->flags |= RF_; magicness++; break;
-			case SV_SCROLL_OBLITERATION: r_ptr->flags |= RF_; magicness++; break;
- #endif
-			/* These are kind of harsh, maybe tone down to bolts? */
-			case SV_SCROLL_FIRE: r_ptr->flags4 |= RF4_BR_FIRE; magicness++; break;
-			case SV_SCROLL_ICE: r_ptr->flags0 |= RF0_BR_ICE; magicness++; break;
-			case SV_SCROLL_CHAOS: r_ptr->flags4 |= RF4_BR_CHAO; magicness++; break;
-			}
-			break;
+		} else {
+			tval = p_ptr->inventory[n].tval;
+			sval = p_ptr->inventory[n].sval;
+			p2mon_update_base_aux(r_ptr, &magicness, tval, sval);
 		}
+#endif
 	}
 
 	/* Scan for skill-"spells" and school-spells */
