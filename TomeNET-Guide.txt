@@ -3282,7 +3282,7 @@ font size (look into lib/xtra/font directory to see available fonts).
 Further you can specify an account name and password to be filled in
 automatically, and various other things.
 
-Last but not least, you may use the following command-line options:
+Windows command-line options:
 -h                      Displays this list of command-line parameters
 -C                      Compatibility mode for ancient servers (deprecated)
 -F <fps>                Set client internal engine fps (default is 100)
@@ -3411,7 +3411,8 @@ you're on Gnome or Xfce or anything else. 'gdevilspie' may also be available,
 which is a graphical version of devilspie.
 
 Alternatively to using the .tomenetrc file for window configuration, you can
-also set environment variables. These settings will override .tomenetrc:
+also set environment variables. These settings will override .tomenetrc.
+Environment Variables:
 TOMENET_X11_FONT_SCREEN (height and width of main window cannot be changed)
 TOMENET_X11_WID_MIRROR, TOMENET_X11_HGT_MIRROR, TOMENET_X11_FONT_MIRROR
 TOMENET_X11_WID_CHOICE, TOMENET_X11_HGT_CHOICE, TOMENET_X11_FONT_CHOICE
@@ -3429,7 +3430,7 @@ the window-specific font variables listed above though.
 Depending on your system, some possible fonts are usually:
 4x6, 5x7, 5x8, 6x9, 6x10, 6x12, 7x13, 7x14, 8x13, 9x15, 10x20, 12x24.
 
-Last but not least, you may use the following command-line options:
+POSIX command-line options:
 -h                      displays this list of command-line parameters
 -c                      force command-line interface instead of X11 etc.
                         Use it if you want to run the client within a terminal.
@@ -3563,7 +3564,8 @@ Configure TomeNET on Mac OS X:
 Most things can be configured by in-game menus or by dragging/positioning the
 game windows with the mouse, and do not require manual editing.
 
-See 'Configure TomeNET on Linux' above, it's basically the same.
+See 'Configure TomeNET on Linux' above, it's basically the same, including all
+the available POSIX command-line options.
 Mac OS X also uses the ".tomenetrc" configuration file which should be in your
 home folder, same as Linux.
 
