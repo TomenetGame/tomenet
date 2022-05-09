@@ -2109,6 +2109,12 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				}
 			}
 		}
+		/* Undo/reset -> /undoskills */
+		else if (((my_strcasestr(buf, "undo") || my_strcasestr(buf, "reset")) && my_strcasestr(buf, "skil")) ||
+		    (!strcasecmp("undo", buf) || !strcasecmp("reset", buf))) {
+			init_search_type = 2;
+			strcpy(init_search_string, "/UNDOSKILLS");
+		}
 
 		/* clean up */
 		buf[0] = 0;
