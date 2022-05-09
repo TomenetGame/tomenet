@@ -5899,7 +5899,7 @@ void py2mon_init_base(monster_type *m_ptr, player_type *p_ptr) {
 	   However, the way the auto-adjust code works is that it never regresses, only stacks improvements in stats,
 	   so that fact alone might work as a balancing factor for mimics' extra powers. >:) */
 }
-void p2mon_update_base_aux(monster_race *r_ptr, int *magicness, int tval, int sval) {
+void p2mon_update_base_aux(monster_race *r_ptr, int *magicness, int tval, int sval, bool *manaheal) {
 	switch (tval) {
 	case TV_WAND:
 		switch (sval) {
@@ -6046,8 +6046,6 @@ void p2mon_update_base_aux(monster_race *r_ptr, int *magicness, int tval, int sv
 		//case SV_POTION_CURE_CRITICAL_SANITY: r_ptr->flags |= RF_; (*magicness)++; break;
 		//case SV_POTION_CURE_SANITY: r_ptr->flags |= RF_; (*magicness)++; break;
 		//case SV_POTION_INVIS: r_ptr->flags |= RF_; (*magicness)++; break; //covered already (tim_invis)
-		//case SV_POTION_STAR_RESTORE_MANA: r_ptr->flags |= RF_; (*magicness)++; break;
-		//case SV_POTION_RESTORE_MANA: r_ptr->flags |= RF_; (*magicness)++; break;
  #if 0 /* could increase AC (for heroism as anti-hitchance). As for berserk, the damage already gets adjusted anyway */
 		case SV_POTION_HEROISM: r_ptr->flags |= RF_; (*magicness)++; break;
 		case SV_POTION_BERSERK_STRENGTH: r_ptr->flags |= RF_; (*magicness)++; break;
@@ -6058,6 +6056,11 @@ void p2mon_update_base_aux(monster_race *r_ptr, int *magicness, int tval, int sv
 		case SV_POTION_STAR_HEALING: r_ptr->flags6 |= RF6_HEAL; (*magicness)++; break;
 		case SV_POTION_HEALING: r_ptr->flags6 |= RF6_HEAL; (*magicness)++; break;
 		case SV_POTION_LIFE: r_ptr->flags6 |= RF6_HEAL; (*magicness)++; break;
+		/* Hack: Disruption shield */
+ #if 0 /* 0 -> Leave a l**ph*le: We assume noone is crazy enough to collect many *mana*, and if she is, she deserves the win! :D */
+		case SV_POTION_STAR_RESTORE_MANA:
+ #endif
+		case SV_POTION_RESTORE_MANA: *manaheal = TRUE; break;
 		case SV_POTION_DETONATIONS: r_ptr->flags4 |= RF4_ROCKET; (*magicness)++; break; //ugh.. but deto avg dmg is 563 actually!
 		case SV_POTION_DEATH: r_ptr->flags5 |= RF5_BA_NETH; (*magicness)++; break;
 		//case SV_POTION_SPEED: r_ptr->flags6 |= RF6_HASTE; (*magicness)++; break; -- we already copy the max speed flatly
@@ -6143,6 +6146,7 @@ void py2mon_update_base(monster_type *m_ptr, player_type *p_ptr) {
 	int s;
 #endif
 	int tval, sval;
+	bool manaheal = FALSE;
 
 	/* Who knows the silylness.. */
 	m_ptr->level = r_ptr->level = p_ptr->max_plv;
@@ -6304,19 +6308,19 @@ else s_printf("\n");
 #ifndef ENABLE_SUBINVEN
 		tval = p_ptr->inventory[n].tval;
 		sval = p_ptr->inventory[n].sval;
-		p2mon_update_base_aux(r_ptr, &magicness, tval, sval);
+		p2mon_update_base_aux(r_ptr, &magicness, tval, sval, &manaheal);
 #else
 		if (p_ptr->inventory[n].tval == TV_SUBINVEN) {
 			for (s = 0; s <= p_ptr->inventory[n].bpval; s++) {
 				tval = p_ptr->subinventory[n][s].tval;
 				if (!tval) break;
 				sval = p_ptr->subinventory[n][s].sval;
-				p2mon_update_base_aux(r_ptr, &magicness, tval, sval);
+				p2mon_update_base_aux(r_ptr, &magicness, tval, sval, &manaheal);
 			}
 		} else {
 			tval = p_ptr->inventory[n].tval;
 			sval = p_ptr->inventory[n].sval;
-			p2mon_update_base_aux(r_ptr, &magicness, tval, sval);
+			p2mon_update_base_aux(r_ptr, &magicness, tval, sval, &manaheal);
 		}
 #endif
 	}
@@ -6389,7 +6393,11 @@ else s_printf("\n");
 
 	//if (get_skill(p_ptr, SKILL_TEMPORAL) >= thresh_spell) { r_ptr->flags6 |= RF6_HASTE; magicness++; } -- we already copy the max speed flatly
 
-	if (get_skill(p_ptr, SKILL_MANA) >= thresh_spell) { r_ptr->flags5 |= RF5_BO_MANA; magicness++; }
+	if (get_skill(p_ptr, SKILL_MANA) >= thresh_spell) {
+		r_ptr->flags5 |= RF5_BO_MANA; magicness++;
+		/* Heal via pseudo disruption shield by 'quaffing' pseudo mana potions? */
+		if (manaheal) { r_ptr->flags6 |= RF6_HEAL; magicness++; }
+	}
 	if (get_skill(p_ptr, SKILL_FIRE) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_FIRE; magicness++; } //weakness: not holy fire unlike Fireflash!
 	if (get_skill(p_ptr, SKILL_AIR) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_POIS | RF5_BO_ELEC; magicness++; }
 	if (get_skill(p_ptr, SKILL_WATER) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_COLD | RF5_BO_WATE; magicness++; }
