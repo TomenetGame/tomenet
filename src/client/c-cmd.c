@@ -2115,6 +2115,12 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			init_search_type = 2;
 			strcpy(init_search_string, "/UNDOSKILLS");
 		}
+		/* 'form[s]' becomes "Druid Forms" chapter if we're a druid */
+		else if (((!strcasecmp(buf, "form") || !strcasecmp(buf, "forms")) && p_ptr->pclass == CLASS_DRUID)||
+		    (my_strcasestr(buf, "form") && my_strcasestr(buf, "druid"))) {
+			init_search_type = 3;
+			strcpy(init_search_string, "Druid Forms");
+		}
 
 		/* clean up */
 		buf[0] = 0;
