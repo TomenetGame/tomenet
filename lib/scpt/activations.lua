@@ -203,7 +203,7 @@ music_info[10].desc},
 --case ART_PALANTIR_ITHIL:--208
 {208, "clairvoyance every 200..1000+d150 turns"},
 --case ART_BILBO:--214
-{214, "destroying doors and traps every 5..30+d10 turns"},
+{214, "destroying locks and traps every 5..30+d10 turns"},
 --case ART_SOULGRIP:--232
 {232, "holy prayer (+20 AC) every 50..150+d100 turns"},
 --case ART_AMUGROM:--233

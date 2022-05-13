@@ -3463,7 +3463,7 @@ cptr item_activation(object_type *o_ptr) {
 	case ART_NATUREBANE:
 		return "dispelling monsters (300) every 100..200+d200 turns";
 	case ART_BILBO:
-		return "destroying doors and traps every 5..30+d10 turns";
+		return "destroying locks and traps every 5..30+d10 turns";
 	case ART_SOULGRIP:
 		return "holy prayer (+20 AC) every 50..150+d100 turns";
 	case ART_GOGGLES_DM:

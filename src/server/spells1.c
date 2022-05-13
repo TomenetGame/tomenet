@@ -4550,7 +4550,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #endif
 		break;
 
-	/* Destroy Traps (and Locks) */
+	/* Destroy locks and traps */
 	case GF_KILL_TRAP:
 		{
 			struct c_special *cs_ptr;
