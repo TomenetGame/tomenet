@@ -2829,6 +2829,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					continue;
 				}
 
+				/* Note: Class/race shortcuts such as hk, rm, mc, cp / ho, ht, he/he, de
+				   aren't feasible because they are already partially in use for other things or colliding. */
+
 				/* Melee weapon classes */
 				if (my_strcasestr(buf, "weap") && my_strcasestr(buf, "clas")) strcpy(buf, "weapon types");
 				else if (my_strcasestr(buf, "weap") && my_strcasestr(buf, "typ")) strcpy(buf, "weapon types");
