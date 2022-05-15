@@ -913,7 +913,9 @@
    1 = level 0 (unusable by others), can be sold by anyone, not throwable/droppable till charlevel cfg.newbies_cannot_drop
    2 = level 0 (unusable by others), can be sold by yourself only, dropped items turn {+,0} before charlevel cfg.newbies_cannot_drop
    3 = level 0 (unusable by others), can't be sold at all, dropped items turn {+,0} before charlevel cfg.newbies_cannot_drop
-   Note: 2 and 3 imply that all level 0 items in the game can only be sold by their owners. */
+   Note: 2 and 3 imply that all level 0 items in the game can only be sold by their owners.
+         All settings now also set xtra9 = 1 to indicate starter items. (Does not collide with Charges, Custom Books, Deeds (admin tval hack).)
+         xtra9==1 sets object_value_real()/object_value() to zero and prevents loss of this item on death. Actually gets cleared on randart creation :D. */
 #define STARTEQ_TREATMENT 3
 
 /* Do artifacts time out after a while to prevent hoarding?
