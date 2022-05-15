@@ -1075,9 +1075,9 @@ static void get_money(int Ind) {
   #if STARTEQ_TREATMENT < 3
 	switch(p_ptr->pclass){
 	case CLASS_MAGE:        p_ptr->au += 850; break;
- #ifdef ENABLE_CPRIEST
+   #ifdef ENABLE_CPRIEST
 	case CLASS_CPRIEST:
- #endif
+   #endif
 	case CLASS_PRIEST:      p_ptr->au += 600; break;
 	case CLASS_SHAMAN:	p_ptr->au += 550; break;
 	case CLASS_RUNEMASTER:  p_ptr->au += 500; break;
@@ -1103,9 +1103,9 @@ static void get_money(int Ind) {
 	case CLASS_MAGE:        p_ptr->au += 1000; break;
 	case CLASS_SHAMAN:	p_ptr->au += 1000; break;
 	case CLASS_MINDCRAFTER:	p_ptr->au += 900; break;
- #ifdef ENABLE_CPRIEST
+   #ifdef ENABLE_CPRIEST
 	case CLASS_CPRIEST:
- #endif
+   #endif
 	case CLASS_PRIEST:      p_ptr->au += 800; break;
 	case CLASS_RUNEMASTER:  p_ptr->au += 800; break;
 	case CLASS_ADVENTURER:	p_ptr->au += 700; break;
