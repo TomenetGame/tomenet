@@ -571,6 +571,11 @@ I       I       inspects an item, showing its special abilities in case it
                 "Greater Identify", some shops offer *ID* service, or you can
                 use a scroll of *identify*. If the item hasn't been
                 *identified* yet, you will only see basic information.
+                If the item could in theory have powers that will only be clear
+                after *identification* then inspecting the item will tell you:
+                "It may have hidden powers.". In this case you should always go
+                and *identify* it because its selling value will also increase
+                greatly in case it turns out to indeed have hidden powers.
                 See (5.7) for more information about ID, *ID* and shops!
                 If you examine weapons, it always tells you the weapon class
                 (sword/blunt/axe/polearm) as well as if it's 1-, 2- or
@@ -5368,6 +5373,23 @@ While you can (via Shift+w) equip a digging tool in your weapon slot and then
 use it as both, a weapon and a digging tool, you won't get mastery-specific
 boni applied as digging tools count as neither of any of the weapon classes.
 
+Asides from basic items with simple enchantments as shown above, you will also
+find items with "ego powers" (such as the aforementioned Pick of Digging).
+These have "named" powers added as prefix and/or suffix to their name. Each
+item can have up to two ego-powers that way, one prefix and one suffix. Items
+with two ego-powers are dubbed "double-egos" in TomeNET slang.
+
+Finally, at the top of the item pyramid you will find "artifacts". These can
+have way more powers than most ego items, even more than double-egos.
+There are two types of artifacts, true (or 'static') artifacts and random ones.
+While true artifacts are predefined in a list (you can invoke it with ~ 6), are
+unique (only one instance of each true artifact can exist in the world at a
+time) and expire after a certain time after having been found, random artifacts
+never expire and are completely randomly generated so you cannot predict its
+powers when you find one, you will have to use *identify* on it to find out.
+
+For more information on item types see (5.7).
+
 
 (3.4c) Item trading rules and exceptions
 ----------------------------------------
@@ -6868,6 +6890,9 @@ level 18. You can't wield it anymore! So the right choice would've been to
 ask Mugash if he can buy a 'Scroll of Life' and revive you in the dungeon
 after he killed off all mobs, to avoid him touching your items and becoming
 the owner.
+
+For more information on item basics see (3.4b) and for more advanced item
+details see (5.7).
 
 
 
@@ -11058,9 +11083,15 @@ Items are classified by
  ego powers. For example an 'Acidic Long Sword of Gondolin' has been
  blessed with two ego powers: 'Acidic' and 'Gondolin'. For more information
  about ego powers see (7.4) Spoiler Files).
+ In general, an item may have up to two ego powers: A prefix and a suffix.
+ In the above example, "Acidic" is the prefix ego power and "of Gondolin" is
+ the suffix ego power. Items with two ego powers are dubbed "double-egos".
 -sometimes you may find an artifact which can have quite a bunch of
  different powers combined! Artifacts can be recognized by them carrying
  a name. Example: The War Maul 'Turmil' or The Whip of Gothmog.
+ There are two types of artifact, true (also called "static") artifacts which
+ are unique-existant and time out after a while, and random artifacts which do
+ not have such limitations. All true artifacts are predefined and listed in ~6.
  (See (5.9b) for more information about artifacts.)
 
 If you find an item, it's 'unidentified'. That means you see only the
@@ -11098,6 +11129,15 @@ key instead. To get a full list of an items magical abilities outside of stores
 requires that you already *identified* the item or bought it from a shop.
 Items that are bought from a shop are always automatically *identified*.
 Some shops offer an *identify* service but they are quite expensive.
+
+Ego items (sometimes) and random artifacts (always) have powers that you cannot
+be certain about unless you *identify* the item.
+If you inspect (shift+i) the item when it might still have unknown powers, you
+will get a message at the bottom of the inspection screen, telling you so:
+"It may have hidden powers."
+In this case you should always go and *identify* it, not just to find out
+whether or not it turns out to indeed have further powers, but also because its
+selling value will also increase greatly in case it does!
 
 If you want to look up what certain special items can/cannot do, see the
 spoiler files section (7.4) or further explanations in (5.8) and (5.9).
