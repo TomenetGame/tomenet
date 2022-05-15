@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 6. May 2022 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 15. May 2022 - written by C. Blue (c_blue@gmx.net)        |
 | for TomeNET version v4.8.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -14458,6 +14458,11 @@ stated.
                                 Lets you attack with special combat styles.
                                 You get +1 extra attack at 1,10,20,30,40,45,50
                                 each, so up to +7 blows per round in total.
+                                These MA techniques are used automatically and
+                                semi-randomly (algorithmically chosen) by your
+                                character during combat, they are not player-
+                                controllable so you don't have to worry about
+                                them. For a list and effects see (5.3a).
 
                                 At 10 you gain Feather Falling (see (5.8)).
                                 At 15 you gain fear resistance.
@@ -14483,7 +14488,7 @@ stated.
                                 Under certain conditions (encumberment) MA
                                 abilities cannot be used and lose their effect.
                                 About this and for more information about
-                                Martial Arts in general, see (5.3a)!
+                                Martial Arts in general, see (5.3a).
 
     .Interception               Ability to interfere with adjacent enemies.
      (0.500)                    Can prevent them from teleporting, casting,
