@@ -8026,16 +8026,22 @@ with some effort can be cleared without much hassle, especially if you have
 wraithform at your disposal.
 
 Vaults are (sometimes extremely large) fixed structures of rooms and passages,
-mostly surrounded by permanent walls that cannot be damaged except for a few
-entrance spots made of normal granite wall. However, some vaults are open and
-do not require special effort to get into, or are not even surrounded by
-permanent walls.
-They are usually filled to the brim with traps and nasty monsters. Using means
-of trap detection and monster sensing allows you to spot vaults easily, if its
-wall structure or permanent walls (not all vaults have those) doesn't already
-give it away.
+often surrounded by permanent walls that cannot be damaged except for a few
+entrance spots made of normal granite wall. However, some vaults are open or
+just barred by (hidden) doors and do not require special tunneling effort to
+get into, or are not even surrounded by stone walls at all.
+
+Depending on your font if you have trouble discerning permanent walls from
+granite walls, consider enabling the option  = 1 permawalls_shade  which will
+display permanent walls in a different colour.
+
+Vaults are usually filled to the brim with traps and nasty monsters. Using
+means of trap detection and monster sensing allows you to spot vaults easily,
+if its wall structure or permanent walls (not all vaults have those) doesn't
+already give it away.
 Another very early indication for a vault on your dungeon level are the floor
 feelings displayed in yellow colour, see (4.8).
+
 Among the most dangerous vaults are "no-teleport" (or for short "no-tele")
 vaults. These prohibit all teleportation effects including 'word of recall'.
 That means when you get into a bad situation you cannot easily escape!
@@ -8043,16 +8049,24 @@ No-tele areas will give you certain warning indicators when you enter them,
 see "Vault feelings" in (4.8), the first one listed ("still air").
 Note that on a floor where Morgoth currently resides, all vaults will turn into
 no-tele vaults, even if they normally aren't!
+Creatures who teleport you towards them are unable to teleport you onto a grid
+that is 'no-tele', so you needn't worry about that when facing a no-tele vault.
+(This is actually true for any kind of teleportation in the game.)
 
 A vault can be a real adventure of its own! If your character isn't very
-powerful compared to the dungeon level, you better stay out of vaults if their
-structure doesn't allow easy monster killing.
+powerful compared to the dungeon level or you aren't sure what you're facing,
+you better stay out of vaults. It heavily depends on the vault structure itself
+too of course, some are hard to control while others allow you to take out foes
+one by one without much effort to prevent them from ganging up on you.
+
 Note that some monsters can destroy walls and thereby dig their way out of a
 vault, if they are awake. So in case of dangerous vaults you better stay at a
-distance or even leave the level.
+distance or even leave the level. This is especially true if you get the level
+feeling "What a terrifying place.." (also see (4.8)).
 
-Besides pits and vaults, there are also special rooms with features inside,
-see 'Pit', 'Vault' or 'Room' in (0.4).
+Besides pits and vaults, there are also special rooms with features inside that
+look interesting but are just normal rooms nevertheless.
+Also see 'Pit', 'Vault' or 'Room' in (0.4).
 
 
 
