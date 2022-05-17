@@ -928,8 +928,10 @@
 #define FLUENT_ARTIFACT_WEEKS 5
 
 #ifdef FLUENT_ARTIFACT_RESETS
-/* The One Ring/Bladeturner don't get their timeout duration halved when their wearer wins */
+ /* The One Ring/Bladeturner don't get their timeout duration halved when their wearer wins */
  #define L100_ARTS_LAST
+ /* Does the shop value of a trueart decline continuously while its timeout progresses? */
+ #define TRUE_ART_VALUE_DECLINE
 #endif
 
 /* Sort the artifact list by tval/sval before displaying it? */

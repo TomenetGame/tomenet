@@ -1809,6 +1809,11 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 			a_ptr = &a_info[o_ptr->name1];
 			value = a_ptr->cost;
 
+#ifdef TRUE_ART_VALUE_DECLINE
+			/* As true artifacts near their reset deadline, their value continuously declines */
+			value = (value * a_ptr->timeout) / get_artifact_timeout(o_ptr->name1);
+#endif
+
 			/* Let true arts' prices be totally determined in a_info.txt */
 			return(value);
 		}
@@ -12281,22 +12286,18 @@ void inven_confirm_revision(int Ind, int revision)
 	}
 }
 
-/* Set timeout for a newly found artifact, for fluent artifact reset system
-   to counter long-time hoarding of artifacts. - C. Blue */
-void determine_artifact_timeout(int a_idx, struct worldpos *wpos) {
+/* Helper function to just return the proper a_info[].timeout for a newly created art but not do any modifications yet. */
+int get_artifact_timeout(int a_idx) {
 #ifndef FLUENT_ARTIFACT_RESETS
-	a_info[a_idx].timeout = -2; /* marker for when it gets reactivated */
+	return timeout = -2; /* marker for when it gets reactivated */
 #else
 	object_type forge;
-	int i;
-
-//debug
-s_printf("A_TIMEOUT: Called (%d)!\n", a_idx);
+	int i, timeout = a_info[a_idx].timeout;
 
 	i = lookup_kind(a_info[a_idx].tval, a_info[a_idx].sval);
 	if (i) invcopy(&forge, i);
 	else { /* paranoia */
-		s_printf("DETERMINE_ARTIFACT_TIMEOUT: Cannot find item %d,%d (aidx %d)!\n", a_info[a_idx].tval, a_info[a_idx].sval, a_idx);
+		s_printf("GET_ARTIFACT_TIMEOUT: Cannot find item %d,%d (aidx %d)!\n", a_info[a_idx].tval, a_info[a_idx].sval, a_idx);
 		/* try to hack it manually, really paranoid */
 		forge.k_idx = 0;
 		a_idx = 0; //artifact #0 has tval,sval = 0,0 - for the paranoid code below.. (side note: true_artifact_p() doesn't return true for aidx 0 ^^ but who cares..)
@@ -12309,28 +12310,38 @@ s_printf("A_TIMEOUT: Called (%d)!\n", a_idx);
  #ifdef RING_OF_PHASING_NO_TIMEOUT
 	if (a_idx == ART_PHASING) {
 		/* special treatment: it's pseudo-permanent, but gets erased when someone else kills Zu-Aon */
-		a_info[a_idx].timeout = -1;
+		timeout = -1;
 	} else
  #endif
 	if (multiple_artifact_p(&forge)) {
-		a_info[a_idx].timeout = -1; /* grond/crown don't expire */
-		return;
-	} else if (winner_artifact_p(&forge)) a_info[a_idx].timeout = FLUENT_ARTIFACT_WEEKS * 10080 * 2; /* mirror of glory */
-	else if (a_idx != ART_RANDART) a_info[a_idx].timeout = FLUENT_ARTIFACT_WEEKS * 10080;
+		return -1; /* grond/crown don't expire */
+	} else if (winner_artifact_p(&forge)) timeout = FLUENT_ARTIFACT_WEEKS * 10080 * 2; /* mirror of glory */
+	else if (a_idx != ART_RANDART) timeout = FLUENT_ARTIFACT_WEEKS * 10080;
 	else {
 		/* paranoia */
-		s_printf("DETERMINE_ARTIFACT_TIMEOUT: For some reason a randart was specified!\n");
-		return;
+		s_printf("GET_ARTIFACT_TIMEOUT: For some reason a randart was specified!\n");
+		return 0;
 	}
 
  #ifdef RPG_SERVER
-	if (a_info[a_idx].timeout > 0) a_info[a_idx].timeout *= 2;
+	if (timeout > 0) timeout *= 2;
  #endif
+
+	return timeout;
 #endif
+}
+/* Set timeout for a newly found artifact, for fluent artifact reset system
+   to counter long-time hoarding of artifacts. - C. Blue */
+void determine_artifact_timeout(int a_idx, struct worldpos *wpos) {
+	a_info[a_idx].timeout = get_artifact_timeout(a_idx);
+
+//debug
+s_printf("A_TIMEOUT: Called (%d)!\n", a_idx);
+
 	//for IDDC_ARTIFACT_FAST_TIMEOUT
 	if (wpos) a_info[a_idx].iddc = in_irondeepdive(wpos);
 
-	/* assume winner-artifact or non-winner, for WINNER_ARTIFACT_FAST_TIMEOUT */
+	/* assume winner-artifact or non-winner carrier, for WINNER_ARTIFACT_FAST_TIMEOUT */
 	a_info[a_idx].winner = FALSE;
 }
 
