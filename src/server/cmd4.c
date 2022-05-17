@@ -296,7 +296,7 @@ void do_cmd_check_artifacts(int Ind, int line, char *srcstr) {
 					sprintf(fmt, "%%%ds\377U", (int)(45 - strlen(base_name)));
 					fprintf(fff, fmt, "");
   #ifdef RING_OF_PHASING_NO_TIMEOUT
-					if (forge.name1 == ART_PHASING) fprintf(fff, " (Resets with Zu-Aon)");
+					if (forge.name1 == ART_PHASING) fprintf(fff, " (Resets on Zu-Aon's defeat)");
 					else
   #endif
 					if (timeout <= 0 || cfg.persistent_artifacts) ;
@@ -307,7 +307,7 @@ void do_cmd_check_artifacts(int Ind, int line, char *srcstr) {
 					sprintf(fmt, "%%%ds", (int)(45 - strlen(base_name)));
 					fprintf(fff, fmt, "");
   #ifdef RING_OF_PHASING_NO_TIMEOUT
-					if (forge.name1 == ART_PHASING) fprintf(fff, " (Resets with Zu-Aon)");
+					if (forge.name1 == ART_PHASING) fprintf(fff, " (Resets on Zu-Aon's defeat)");
 					else
   #endif
 					if (timeout <= 0 || cfg.persistent_artifacts) ;
