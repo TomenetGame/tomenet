@@ -3754,8 +3754,9 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 			i = get_skill(p_ptr, SKILL_AURA_FEAR); // O_+ "Fear Brand" - Kurzel
 			if (p_ptr->ghost || ((i >= 20) && magik(i))) {
 				fear_chance = 50 + (p_ptr->lev - q_ptr->lev) * 5;
-
-				if (rand_int(100) < fear_chance) {
+				if (q_ptr->resist_fear) {
+					msg_format(Ind, "%^s is unaffected.", q_name);
+				} else if (rand_int(100) < fear_chance) {
 					msg_format(Ind, "%^s appears afraid.", q_name);
 					set_afraid(0 - c_ptr->m_idx, q_ptr->afraid + 4 + rand_int(get_skill_scale(p_ptr, SKILL_COMBAT, 10)));
 				} else {
