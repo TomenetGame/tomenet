@@ -1806,12 +1806,16 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 			/* use dedicated artifact pricing function - C. Blue */
 			return(artifact_value_real(Ind, o_ptr));
 		} else {
+#ifdef TRUE_ART_VALUE_DECLINE
+			int a_timeout_org = get_artifact_timeout(o_ptr->name1);
+#endif
+
 			a_ptr = &a_info[o_ptr->name1];
 			value = a_ptr->cost;
 
 #ifdef TRUE_ART_VALUE_DECLINE
 			/* As true artifacts near their reset deadline, their value continuously declines */
-			value = (value * a_ptr->timeout) / get_artifact_timeout(o_ptr->name1);
+			if (a_timeout_org > 0) value = (value * a_ptr->timeout) / a_timeout_org;
 #endif
 
 			/* Let true arts' prices be totally determined in a_info.txt */
