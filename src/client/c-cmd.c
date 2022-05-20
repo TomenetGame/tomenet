@@ -2828,6 +2828,8 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					fallback_uppercase = 4;
 					continue;
 				}
+				/* Expand 'Update' to 'Updating' */
+				if (!strcasecmp(buf, "update")) strcpy(buf, "updating");
 
 				/* Note: Class/race shortcuts such as hk, rm, mc, cp / ho, ht, he/he, de
 				   aren't feasible because they are already partially in use for other things or colliding. */
