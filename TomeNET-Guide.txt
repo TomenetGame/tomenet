@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 15. May 2022 - written by C. Blue (c_blue@gmx.net)        |
+| Latest update: 20. May 2022 - written by C. Blue (c_blue@gmx.net)        |
 | for TomeNET version v4.8.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -3184,8 +3184,43 @@ bonus characters gain in the Nether Realm.
 (2.1) Installing/updating TomeNET
 ---------------------------------
 
-Updating:
----------
+Basic installation:
+-------------------
+Go to https://www.tomenet.eu/ (or one of our personal pages) to download the
+latest client. It is recommended to use the installer package if available for
+your OS (especially Windows).
+If you choose an archive file instead, extract it to a new directory and make
+sure the pathnames are preserved.
+Then just run..
+Windows:        'TomeNET.exe' (or double-click the desktop TomeNET icon,
+                               provided you used the installer download.)
+Linux:          the 'tomenet' binary.
+OS X:           'TomeNET.command' (which prepares and runs 'tomenet'.)
+
+Updating via reinstallation:
+----------------------------
+If you want to update your existing TomeNET and cannot/don't want to use the
+TomeNET-Updater, you can also just download the latest TomeNET version again
+and install it over your existing TomeNET installation.
+This process will not delete any of your macros, screenshots, or configuration
+files - EXCEPT for your 'lib/xtra/sound' and 'lib/xtra/music' folders if you
+install a TomeNET package that comes with a sound pack or music pack
+respectively. Those will then be replaced.
+
+So if you have done custom changes to your sound and/or music pack that you
+want to keep, you should rename those folders prior to reinstallation.
+This is not a hack but actually the official way TomeNET handles multiple
+audio packs and allows you to switch between them in the = X menu! The only
+convention you must follow is that music pack folders must start with 'music'
+and sound pack folders must start with 'sound'.
+For example rename your customized 'music' folder to 'music.myown' and it will
+be safe to install a new version of TomeNET over it, the custom music folder
+will be left untouched and automatically be recognized by TomeNET afterwards,
+allowing you to switch between your music.myown pack and the official pack that
+was just installed by pressing '=' key (options menu) followed by Shift+X.
+
+Updating via the TomeNET-Updater:
+---------------------------------
 Starting with version 4.5.7a, TomeNET comes with an updater tool that should
 work on most platforms. If it doesn't on yours, please contact us and provide
 details about which operating system you are using.
@@ -3226,17 +3261,21 @@ packages you can install on Linux:
 - 7-zip: 7zG on X11, 7z on GCU. For installing or updating audio packs.
 
 
-Installation from scratch:
---------------------------
-(Covered are Windows, Linux, OS X, FreeBSD.)
+Installation details / custom installation:
+-------------------------------------------
+If you want to read up about installation specifics, command-line options,
+compiling your own client, using an archive file for extraction instead of a
+self-running installer etc., read on here.
 
-Go to https://www.tomenet.eu/ (or one of our personal pages) to download the
-latest client. Extract it to a new directory, preserving the pathnames.
+If you choose an archive file, extract it to a new directory and make sure the
+pathnames are preserved.
 
-(Note: If you decide to download the 'test client' instead of the client of the
+Note: If you decide to download the 'test client' instead of the client of the
 latest stable version number, be aware that it might stop working correctly
 unexpectedly because it's undergoing development, possibly forcing you to
-redownload it.)
+redownload it.
+
+Covered in the following are Windows, Linux, OS X, FreeBSD:
 
 
 Windows:
