@@ -8176,7 +8176,7 @@ While many traps have obvious effects, here are some less obvious ones:
   Bowel Cramps              If you don't have FA you get paralyzed instantly.
   Calling Out               Calls the highest level monster on the floor.
   Ale Vendor                It doesn't hand out free ale, you're paying for it.
-  Seasoned Traveler         Does not touch items of value 150 Au or more.
+  Seasoned Traveller        Does not touch items of value 150 Au or more.
   Lost Labor                All non-uniques on the floor turn into 100% clones.
   Despair                   Your stats are reduced and you gain two potions,
                             Augmentation and Death. Quaff the correct one!

@@ -920,7 +920,7 @@ I:4:100:0:0:3:0d0:w:0
 D:A pit opens up under you!
 F:FLOOR | EASY_ID
 
-N:185:Seasoned Traveler Trap
+N:185:Seasoned Traveller Trap
 I:6:30:50:3:16:0d0:y:10
 D:Your backpack feels lighter, now it's the time to depart!
 F:FLOOR | DOOR | CHEST

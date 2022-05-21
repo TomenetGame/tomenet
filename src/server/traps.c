@@ -1964,7 +1964,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 		}
 
 		/* Steal Item Trap */
-		case TRAP_OF_SEASONED_TRAVELER:
+		case TRAP_OF_SEASONED_TRAVELLER:
 		/* lose all your cash, invested in items worth 60k Au or so?
 		all *healings* / fireproof WoR that took ages to collect just gone? great idea.
 		PLAY the game before madly thinking out stuff.
