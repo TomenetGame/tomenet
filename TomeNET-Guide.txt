@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 20. May 2022 - written by C. Blue (c_blue@gmx.net)        |
+| Latest update: 21. May 2022 - written by C. Blue (c_blue@gmx.net)        |
 | for TomeNET version v4.8.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -3219,6 +3219,11 @@ will be left untouched and automatically be recognized by TomeNET afterwards,
 allowing you to switch between your music.myown pack and the official pack that
 was just installed by pressing '=' key (options menu) followed by Shift+X.
 
+If you install a TomeNET version that comes with sound or music pack over an
+existing installation that doesn't have one of these, you will end up with
+an audio-wise "upgraded" installation that now features sound and/or music
+as it should (depending on what you installed).
+
 Updating via the TomeNET-Updater:
 ---------------------------------
 Starting with version 4.5.7a, TomeNET comes with an updater tool that should
@@ -3237,6 +3242,9 @@ user interface of 7-zip), so you do not need to compile it yourself if your
 repository packages don't provide it. If you want to compile it anyway then see
 (2.1a) and there "a) Automatic audio pack installation - LINUX". That paragraph
 has short instructions on how to compile 7-zip from source in Linux.
+
+If you didn't have a sound or music pack installed yet, by "updating" it from
+the TomeNET-Updater these will actually be installed.
 
 
 Optional dependencies on Windows:
