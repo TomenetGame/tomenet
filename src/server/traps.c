@@ -1978,19 +1978,20 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 
 			for (i = 0; i < INVEN_PACK; i++) {
 				if (!p_ptr->inventory[i].k_idx) continue;
-				if (rand_int(999) < p_ptr->skill_sav) continue;
+				if (rand_int(300) < p_ptr->skill_sav) continue;
 
 				o_ptr = &p_ptr->inventory[i];
 
-				if ((j = o_ptr->number) < 2) continue;
+				if ((j = o_ptr->number) < 3) continue;
 				if (o_ptr->name1 == ART_POWER) continue;
 
 				ok_ptr = &k_info[o_ptr->k_idx];
-				if (ok_ptr->cost > 150) continue;
+				if (ok_ptr->cost > 150) continue; /* Note: WoR are 150 */
 				//cure crits cost 100, WoR 150, so it still poses a decent threat.
 				if (is_ammo(o_ptr->tval)) continue; /* ammo is too important for archers, and hard to collect! */
 
-				if (j > 8) j = iddc ? j >> 2 : j - (j >> 3);
+				//if (j > 8) j = iddc ? j >> 2 : j - (j >> 3);
+				j = iddc ? j >> 2 : j >> 1;
 
 				/* Hack -- If a wand, allocate total
 				 * maximum timeouts or charges between those
