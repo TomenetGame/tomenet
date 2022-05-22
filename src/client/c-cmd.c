@@ -2903,19 +2903,22 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				/* Race/class boni/mali table */
 				if ((my_strcasestr(buf, "race") || my_strcasestr(buf, "racial"))
 				    && (my_strcasestr(buf, "bonus") || my_strcasestr(buf, "boni") || my_strcasestr(buf, "malus") || my_strcasestr(buf, "mali") || my_strcasestr(buf, "tab"))) {//(table)
-					strcpy(buf, "boni/mali of the different races");
+					//strcpy(buf, "boni/mali of the different races");
+					strcpy(buf, "Race        STR");
 					fallback = TRUE;
 					continue;
 				}
 				/* Since there is nothing significant starting on 'table', actually accept this shortcut too */
 				if (my_strcasestr("table", buf) && strlen(buf) >= 3) {
-					strcpy(buf, "boni/mali of the different races");
+					//strcpy(buf, "boni/mali of the different races");
+					strcpy(buf, "Race        STR");
 					fallback = TRUE;
 					continue;
 				}
 				if (my_strcasestr(buf, "class")
 				    && (my_strcasestr(buf, "bonus") || my_strcasestr(buf, "boni") || my_strcasestr(buf, "malus") || my_strcasestr(buf, "mali") || my_strcasestr(buf, "tab"))) {//(table)
-					strcpy(buf, "boni/mali of the different classes");
+					//strcpy(buf, "boni/mali of the different classes");
+					strcpy(buf, "Class         STR");
 					fallback = TRUE;
 					continue;
 				}
