@@ -9722,8 +9722,8 @@ days, so you will have about 2.5 h to carry them out.
 
 Wanderers in the wilderness in turn would rather prefer day light in order to
 locate the entrance to that dungeon they are looking for.
-Vampires burn if they move around in day light without either a protective
-wrapping or an item that provides resistance to light.
+Vampires burn if they move around in day light without either a mummy wrapping
+that protects them or an item that provides resistance to light.
 Even store orders and the Merchants Guild mail system work in in-game time and
 tell your character how long their deliveries will take, not you as the player,
 so when they speak of "hours" or "days", fear not, it'll be much faster in
