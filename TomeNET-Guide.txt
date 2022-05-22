@@ -4492,7 +4492,7 @@ for beginners.
 Here is a short table that explains each class in a basic way,
 for more detailed information about classes and their pros and cons see (6.5).
 
-Class          How it basically plays
+Class           How it basically plays
 -------------------------------------------------------------------------------
 Warrior         Straightforward melee fighter, may access ranged skills too,
                 even magic device usage, or specialize in 'anti-magic' instead.
@@ -16290,7 +16290,7 @@ Here is a table showing boni/mali of the different races:
 (Di:Disarming,      MD:Magic Device,        ST:Saving Throw,    St:Stealth,
 Pe:Perception (sight range), Sr:Searching,  Fi:Fighting,        BT:Bows/Throw)
 
-            STR INT WIS DEX CON CHR     HP die  Exp%  Infra-Vision
+Race        STR INT WIS DEX CON CHR     HP die  Exp%  Infra-Vision
             Di  MD  ST  St  Pe  Sr  Fi  BT            (caps at 200 ft)
 ------------------------------------------------------------------------------
 Human        0   0   0   0   0   0      10      100%     0ft

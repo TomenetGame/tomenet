@@ -2121,6 +2121,15 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			init_search_type = 3;
 			strcpy(init_search_string, "Druid Forms");
 		}
+		/* race / class stats tables */
+		else if (my_strcasestr(buf, "race") && my_strcasestr(buf, "tab")) {
+			init_search_type = 2;
+			strcpy(init_search_string, "Race        STR");
+		}
+		else if (my_strcasestr(buf, "clas") && my_strcasestr(buf, "tab")) {
+			init_search_type = 2;
+			strcpy(init_search_string, "Class         STR");
+		}
 
 		/* clean up */
 		buf[0] = 0;
