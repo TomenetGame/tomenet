@@ -5978,7 +5978,14 @@ int Send_stat(int Ind, int stat) {
 }
 
 int Send_history(int Ind, int line, cptr hist) {
-	connection_t *connp = Conn[Players[Ind]->conn];
+	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL;
+
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) {
+		connp2 = Conn[p_ptr2->conn];
+		Packet_printf(&connp2->c, "%c%hu%s", PKT_HISTORY, line, hist);
+	}
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -7971,7 +7978,12 @@ int Send_boni_col(int Ind, boni_col c) {
 		return 0;
 	}
 
-	/* If we're the target, we won't hear our own sfx */
+	/* Dummy column? Use the stored last known column of this player then instead. */
+	if (c.i > 255 - 16) c = Players[Ind]->csheet_boni[255 - c.i];
+	/* Normal, newly calculated column? Store it for later too. */
+	else Players[Ind]->csheet_boni[c.i] = c;
+
+	/* If we're the target, we won't see our own boni */
 	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	/* Get target player */
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) connp2 = Conn[p_ptr2->conn];

@@ -2336,6 +2336,19 @@ struct inventory_change_type {
 	inventory_change_type *next;
 };
 
+typedef struct boni_col boni_col;
+
+struct boni_col {
+	/* Index */
+	byte i;
+	/* Hack signed char/byte values */
+	char spd, slth, srch, infr, lite, dig, blow, crit, shot, migh, mxhp, mxmp, luck, pstr, pint, pwis, pdex, pcon, pchr, amfi, sigl;
+	/* Flags in char/byte chunks for PKT transfer */
+	byte cb[16]; //16 so far, hardcode and check compatibility, ew - Kurzel
+	/* Attr + Char */
+	byte color; char symbol;
+};
+
 /*
  * Most of the "player" information goes here.
  *
@@ -3557,19 +3570,7 @@ struct player_type {
 	bool destroyed_floor_item;
 
 	char multi_chat_line[MSG_LEN]; //ENABLE_MULTILINE_CENSOR
-};
-
-typedef struct boni_col boni_col;
-
-struct boni_col {
-	/* Index */
-	byte i;
-	/* Hack signed char/byte values */
-	char spd, slth, srch, infr, lite, dig, blow, crit, shot, migh, mxhp, mxmp, luck, pstr, pint, pwis, pdex, pcon, pchr, amfi, sigl;
-	/* Flags in char/byte chunks for PKT transfer */
-	byte cb[16]; //16 so far, hardcode and check compatibility, ew - Kurzel
-	/* Attr + Char */
-	byte color; char symbol;
+	boni_col csheet_boni[16];
 };
 
 /* For Monk martial arts */

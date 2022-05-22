@@ -709,6 +709,29 @@ static void prt_extra_status(int Ind) {
 	Send_extra_status(Ind, status);
 }
 
+/* 'Redraw' for boni sheet. (Update all Chh columns in the client to our current server-side ones) */
+static void prt_boni_columns(int Ind) {
+	int i;
+	boni_col c;
+
+	if (!is_newer_than(&Players[Ind]->version, 4, 5, 3, 2, 0, 0) || !get_conn_state_ok(Ind)) return;
+	for (i = 0; i < 15; i++) {
+		c.i = 255 - i;
+		Send_boni_col(Ind, c);
+	}
+}
+
+static void prt_csheet_forward(int Ind) {
+	/* Character sheet, page 1: Abilities */
+	prt_various(Ind);
+	prt_plusses(Ind);
+	prt_skills(Ind);
+	/* Character sheet, page 2: History */
+	prt_history(Ind);
+	/* Character sheet, page 3: Boni/mali overview sheet */
+	prt_boni_columns(Ind);
+}
+
 static void prt_indicators(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	u32b indicators =  0x0;
@@ -7542,6 +7565,11 @@ void redraw2_stuff(int Ind) {
 	if (p_ptr->redraw2 & PR2_MAP_SCR) {
 		p_ptr->redraw2 &= ~(PR2_MAP_SCR);
 		prt_map(Ind, TRUE);
+	}
+
+	if (p_ptr->redraw2 & PR2_CSHEET_FWD) {
+		p_ptr->redraw2 &= ~(PR2_CSHEET_FWD);
+		prt_csheet_forward(Ind);
 	}
 
 	if (p_ptr->redraw2 & PR2_INDICATORS) {
