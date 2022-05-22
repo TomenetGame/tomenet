@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 21. May 2022 - written by C. Blue (c_blue@gmx.net)        |
+| Latest update: 22. May 2022 - written by C. Blue (c_blue@gmx.net)        |
 | for TomeNET version v4.8.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -16287,8 +16287,6 @@ create a character!):
 
 
 Here is a table showing boni/mali of the different races:
-(Di:Disarming,      MD:Magic Device,        ST:Saving Throw,    St:Stealth,
-Pe:Perception (sight range), Sr:Searching,  Fi:Fighting,        BT:Bows/Throw)
 
 Race        STR INT WIS DEX CON CHR     HP die  Exp%  Infra-Vision
             Di  MD  ST  St  Pe  Sr  Fi  BT            (caps at 200 ft)
@@ -16329,6 +16327,9 @@ Vampire     +2  +2  -1  +2   0  +3      11      240%   150ft
             -2   3  20   2  13  -4  10 -10
 Maia        +2  +3  +3  +1  +1  +2      11      400%   100ft
              3  20   3   0   5   1   5   5
+
+(Di:Disarming,      MD:Magic Device,        ST:Saving Throw,    St:Stealth,
+Pe:Perception (sight range), Sr:Searching,  Fi:Fighting,        BT:Bows/Throw)
 
 
 
@@ -16892,9 +16893,6 @@ You can further increase your BpR later via mastery skills, items or magic.
 BpR limits count only for weapons, not for martial arts usage, see (5.3a).
 "Parrying" is done with weapons, "blocking" is done with a shield, see (6.11).
 
-(Di:Disarming,      MD:Magic Device,        ST:Saving Throw,    St:Stealth,
-Pe:Perception (sight range), Sr:Searching,  Fi:Fighting,        BT:Bows/Throw)
-
 Class         STR INT WIS DEX CON CHR     HP die   Exp%   Max. base blows/round
  @-colour     Di  MD  ST  St  Pe  Sr  Fi  BT              Parrying/Blocking
 -------------------------------------------------------------------------------
@@ -16928,6 +16926,9 @@ Death Knight  +3  -3  +1   0  +2  +2       +8      +30%       5
  dark grey    10  28  54   1  16  13  60  40              good     superb
 Hell Knight   +3  -3  +1   0  +2  +2       +8      +30%       5
  dark grey    10  25  54   1  16  13  60  40              good     superb
+
+(Di:Disarming,      MD:Magic Device,        ST:Saving Throw,    St:Stealth,
+Pe:Perception (sight range), Sr:Searching,  Fi:Fighting,        BT:Bows/Throw)
 
 
 For melee characters, it's especially vital to know how many blows per round

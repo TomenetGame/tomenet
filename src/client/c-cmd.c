@@ -2130,6 +2130,22 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			init_search_type = 2;
 			strcpy(init_search_string, "Class         STR");
 		}
+		/* Cloned from chapter search shortcuts */
+		else if ((my_strcasestr(buf, "race") || my_strcasestr(buf, "racial"))
+		    && (my_strcasestr(buf, "bonus") || my_strcasestr(buf, "boni") || my_strcasestr(buf, "malus") || my_strcasestr(buf, "mali") || my_strcasestr(buf, "tab"))) {//(table)
+			init_search_type = 2;
+			strcpy(init_search_string, "Race        STR");
+		}
+		/* Since there is nothing significant starting on 'table', actually accept this shortcut too */
+		else if (init_search_type == 3 && my_strcasestr("table", buf) && strlen(buf) >= 3) {
+			init_search_type = 2;
+			strcpy(init_search_string, "Race        STR");
+		}
+		else if (my_strcasestr(buf, "class")
+		    && (my_strcasestr(buf, "bonus") || my_strcasestr(buf, "boni") || my_strcasestr(buf, "malus") || my_strcasestr(buf, "mali") || my_strcasestr(buf, "tab"))) {//(table)
+			init_search_type = 2;
+			strcpy(init_search_string, "Class         STR");
+		}
 
 		/* clean up */
 		buf[0] = 0;
