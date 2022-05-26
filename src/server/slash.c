@@ -8271,12 +8271,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			else if (prefix(messagelc, "/lqm")) { //load quest map
 				int xstart = p_ptr->px, ystart = p_ptr->py;
+
 				if (tk < 1) {
 					msg_print(Ind, "Usage: /lqm tq_<mapname>.txt");
 					return;
 				}
 				msg_print(Ind, "Trying to load map..");
-//				process_dungeon_file(format("tq_%s.txt", message3), &p_ptr->wpos, &ystart, &xstart, 20+1, 32+34, TRUE);
+				//process_dungeon_file(format("tq_%s.txt", message3), &p_ptr->wpos, &ystart, &xstart, 20+1, 32+34, TRUE);
 				process_dungeon_file(format("tq_%s.txt", message3), &p_ptr->wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
 				wpos_apply_season_daytime(&p_ptr->wpos, getcave(&p_ptr->wpos));
 				msg_print(Ind, "done.");
@@ -8287,6 +8288,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				monster_type *m_ptr;
 				object_type *o_ptr;
 				int this_o_idx, next_o_idx;
+
 				msg_print(Ind, "Checking monster inventories...");
 				for (i = 1; i < m_max; i++) {
 					m_ptr = &m_list[i];
@@ -8331,7 +8333,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 #ifdef BACKTRACE_NOTHINGS
 			else if (prefix(messagelc, "/backtrace")) { /* backtrace test */
-
 				int size, i;
 				void *buf[1000];
 				char **fnames;
@@ -8370,6 +8371,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* list of players about to expire - mikaelh */
 			else if (prefix(messagelc, "/checkexpir")) {
 				int days;
+
 				if (tk < 1) {
 					msg_print(Ind, "Usage: /checkexpiry <number of days>");
 					return;
@@ -8382,6 +8384,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			   see process_events() in xtra1.c for details - C. Blue */
 			else if (prefix(messagelc, "/gestart")) {
 				int err, msgpos = 0;
+
 				if (tk < 1) {
 					msg_print(Ind, "Usage: /gestart <predefined type> [parameters...]");
 					return;
@@ -8426,6 +8429,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/geretime")) { /* skip the announcements, start NOW */
 				/* (or optionally specfiy new remaining announce time in seconds) */
 				int t = 10;
+
 				if (tk < 1 || k < 1 || k > MAX_GLOBAL_EVENTS) {
 					msg_format(Ind, "Usage: /geretime 1..%d [<new T-x>]", MAX_GLOBAL_EVENTS);
 					return;
@@ -8443,8 +8447,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/gefforward")) { /* skip some running time - C. Blue */
-			/* (use negative parameter to go back in time) (in seconds) */
+				/* (use negative parameter to go back in time) (in seconds) */
 				int t = 60;
+
 				if (tk < 1 || k < 1 || k > MAX_GLOBAL_EVENTS) {
 					msg_format(Ind, "Usage: /gefforward 1..%d [<new T-x>]", MAX_GLOBAL_EVENTS);
 					return;
@@ -8469,6 +8474,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			else if (prefix(messagelc, "/gesign")) { /* admin debug command - sign up for a global event and start it right the next turn */
 				global_event_type *ge;
+
 				for (i = 0; i < MAX_GLOBAL_EVENTS; i++) {
 					ge = &global_event[i];
 					if (ge->getype == GE_NONE) continue;
@@ -8501,6 +8507,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			else if (prefix(messagelc, "/partydebug")) {
 				FILE *fp;
+
 				fp = fopen("tomenet_parties", "wb");
 				if (!fp) {
 					msg_print(Ind, "\377rError! Couldn't open tomenet_parties");
@@ -8521,6 +8528,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			else if (prefix(messagelc, "/partymodefix")) {
 				s32b p_id;
+
 				s_printf("Fixing party modes..\n");
 				for (i = 1; i < MAX_PARTIES; i++) {
 					if (!parties[i].members) continue;
@@ -8540,6 +8548,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/partymemberfix")) { //no idea atm why some parties show way higher member # in shift+p than actual members
 				int slot, members, scanned = 0, fixed = 0;
 				hash_entry *ptr;
+
 				s_printf("PARTYMEMBERFIX:\n");
 				for (i = 1; i < MAX_PARTIES; i++) {
 					if (!parties[i].members) continue;
@@ -8562,6 +8571,17 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				s_printf("Done.\n");
 				msg_format(Ind, "Scanned %d parties, fixed %d.", scanned, fixed);
+				return;
+			}
+			else if (prefix(messagelc, "/partydelete")) { //remove all online members of the party and erase the party completely
+				if (tk < 1) {
+					msg_print(Ind, "Usage: /partydelete <party-id>");
+					return;
+				}
+
+				s_printf("PARTYDELETE: %d\n", k);
+				msg_format(Ind, "Deleting party %d ('%s')!", k, parties[k].name);
+				del_party(k);
 				return;
 			}
 			else if (prefix(messagelc, "/guildmodefix")) {
