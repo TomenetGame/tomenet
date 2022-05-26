@@ -3400,7 +3400,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			int gain = p_ptr->skill_points_old - p_ptr->skill_points;
 			int skill = get_skill(p_ptr, SKILL_HEALTH), guis = 0;
 
-			if (gain && p_ptr->reskill_possible) {
+			if (gain && (p_ptr->reskill_possible & RESKILL_F_UNDO)) {
 				/* Take care of mimicry form in conjunction with anti-magic skill,
 				   as Mimicry will be zero'ed from that! 'AM-Hack' */
 				int form;
@@ -3465,7 +3465,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				p_ptr->redraw |= (PR_SKILLS | PR_PLUSSES);
 
 				/* No more reskills */
-				p_ptr->reskill_possible = FALSE;
+				p_ptr->reskill_possible &= ~RESKILL_F_UNDO;
 			} else msg_print(Ind, "\377yNo skills could be undone.");
 			return;
 		}

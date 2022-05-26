@@ -5259,7 +5259,7 @@ void check_experience(int Ind) {
 	p_ptr->skill_points_old = p_ptr->skill_points;
 
 	/* Reskilling is now possible */
-	p_ptr->reskill_possible = TRUE;
+	p_ptr->reskill_possible |= RESKILL_F_UNDO;
 
 	/* Re-check house permissions, to display doors in correct colour (level-based door access!) */
 	if (!p_ptr->wpos.wz) p_ptr->redraw |= PR_MAP;

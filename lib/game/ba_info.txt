@@ -373,3 +373,11 @@ I:72:0:r:2
 N:79:The strongest known
 C:0:0:0
 I:73:0:s:0
+
+#RESET_SKILL
+N:80:Lose memories I
+C:0:0:0
+I:74:0:l:0
+N:81:Lose memories II
+C:0:0:0
+I:75:0:L:0

@@ -243,6 +243,13 @@
    so twice this has to be 'paid' in total. */
 #define SOLO_REKING 5000000
 
+/* Allow a one-time reset of one skill at level 35? */
+#define RESET_SKILL
+#ifdef RESET_SKILL
+ #define RESET_SKILL_LEVELS	5
+ #define RESET_SKILL_FEE	3000000
+#endif
+
 /* Do vampires not suffer Black Breath at all? */
 #define VAMPIRES_BB_IMMUNE
 /* Will negative boni on cursed items become (scaled) positive ones when wielded by vampires?

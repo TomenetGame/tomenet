@@ -2430,7 +2430,7 @@ struct player_type {
 	/* Copies for /undoskills - mikaelh */
 	skill_player s_info_old[MAX_SKILLS]; /* Player skills */
 	s16b skill_points_old;		/* number of skills assignable */
-	bool reskill_possible;
+	byte reskill_possible;
 
 	s16b class_extra;		/* Class extra info */
 

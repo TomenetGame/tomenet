@@ -8585,6 +8585,10 @@ extern int PlayerUID;
 #define BACT_REPAIR_WEAPON		71
 #define BACT_REPAIR_ARMOR		72
 #define BACT_HIGHEST_LEVELS		73
+#ifdef RESET_SKILL
+ #define BACT_LOSE_MEMORIES_I		74
+ #define BACT_LOSE_MEMORIES_II		75
+#endif
 /* If one adds new BACT_ do NOT forget to increase max_bact in variables.c */
 /* MAX_BA_IDX for TomeNET	- Jir - */
 
@@ -8595,6 +8599,12 @@ extern int PlayerUID;
 #define BACT_F_GOLD		0x04
 #define BACT_F_STAR_ID	 	0x08
 #define BACT_F_HARDCODE		0x80
+
+/* Reskill flags */
+#define RESKILL_F_UNDO		0x1
+#ifdef RESET_SKILL
+ #define RESKILL_F_RESET	0x2
+#endif
 
 /* Town types, not to be confused with town default indices */
 #define TOWN_VANILLA	0
@@ -8986,6 +8996,12 @@ extern int PlayerUID;
 #define RID_SEND_FEE_PAY	15
 #define RID_REPAIR_ARMOUR	16
 #define RID_REPAIR_WEAPON	17
+#ifdef RESET_SKILL
+ #define RID_LOSE_MEMORIES_I	18
+ #define RID_LOSE_MEMORIES_II	19
+ #define RID_LOSE_MEMORIES_I_SKILL	20
+ #define RID_LOSE_MEMORIES_II_SKILL	21
+#endif
 #define RID_QUEST		100	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
 #define RID_QUEST_ACQUIRE	(RID_QUEST + MAX_Q_IDX)	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
 

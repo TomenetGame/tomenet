@@ -1106,7 +1106,7 @@ void respec_skill(int Ind, int i, bool update_skill, bool polymorph) {
 	/* Discard old "save point" for /undoskills command */
 	memcpy(p_ptr->s_info_old, p_ptr->s_info, MAX_SKILLS * sizeof(skill_player));
 	p_ptr->skill_points_old = p_ptr->skill_points;
-	p_ptr->reskill_possible = TRUE;
+	p_ptr->reskill_possible |= RESKILL_F_UNDO;
 }
 
 /* Complete skill-chart reset (full respec) - C. Blue
@@ -1161,7 +1161,7 @@ void respec_skills(int Ind, bool update_skills) {
 	/* Discard old "save point" for /undoskills command */
 	memcpy(p_ptr->s_info_old, p_ptr->s_info, MAX_SKILLS * sizeof(skill_player));
 	p_ptr->skill_points_old = p_ptr->skill_points;
-	p_ptr->reskill_possible = TRUE;
+	p_ptr->reskill_possible |= RESKILL_F_UNDO;
 }
 
 /* return amount of points that were invested into a skill */

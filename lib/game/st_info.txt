@@ -552,7 +552,7 @@ W:2
 N:23:The Mirror
 #A:0:0:44:15:16:43
 #SOLO_REKING-> (switched some to Seat of Ruling)
-A:0:0:44:43:71:0
+A:44:43:71:0:80:81
 O:51:51:51:51:51:51
 G:+:U
 W:0

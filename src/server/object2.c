@@ -8448,7 +8448,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 
 	/* Anti-cheeze, added specifically for 'antimagic' actually:
 	   Don't allow undoing skill points after receiving a reward. */
-	p_ptr->reskill_possible = FALSE;
+	p_ptr->reskill_possible &= ~RESKILL_F_UNDO;
 
 	invwipe(o_ptr);
 

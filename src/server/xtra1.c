@@ -10061,33 +10061,33 @@ void handle_request_return_str(int Ind, int id, char *str) {
 				return;
 			}
 
-#ifdef IRON_IRON_TEAM
+ #ifdef IRON_IRON_TEAM
 			if ((i = lookup_player_party(pid)) && (parties[i].mode & PA_IRONTEAM) && o_ptr->owner != pid
 			    //&& o_ptr->iron_trade != lookup_player_iron_trade(pid) {  --currently no lookup_player_iron_trade() function :-p just use this for now:
 			    && p_ptr->party != i) {
 				msg_print(Ind, "\377yUnfortunately we cannot ship to that person.");
 				return;
 			}
-#endif
-#ifdef IDDC_RESTRICTED_TRADING
+ #endif
+ #ifdef IDDC_RESTRICTED_TRADING
 			if (in_irondeepdive(&wpos)) {
 				msg_print(Ind, "\377yUnfortunately the Ironman Deep Dive Challenge is out of our reach.");
 				return;
 			}
-#endif
+ #endif
 
 			/* Cannot remove cursed items */
 			if (cursed_p(o_ptr) && !(
-#if 1 /* allow Bloodthirster to take off/drop heavily cursed items? */
- #ifdef ENABLE_HELLKNIGHT
+ #if 1 /* allow Bloodthirster to take off/drop heavily cursed items? */
+  #ifdef ENABLE_HELLKNIGHT
 			    /* note: only for corrupted priests/paladins: */
 			    (p_ptr->pclass == CLASS_HELLKNIGHT
-  #ifdef ENABLE_CPRIEST
+   #ifdef ENABLE_CPRIEST
 			    || p_ptr->pclass == CLASS_CPRIEST
-  #endif
+   #endif
 			    ) && p_ptr->body_monster == RI_BLOODTHIRSTER && !(f3 & TR3_PERMA_CURSE)
+  #endif
  #endif
-#endif
 			    )) {
 				if ((p_ptr->mail_item >= INVEN_WIELD) ) {
 					/* Oops */
@@ -10146,11 +10146,11 @@ void handle_request_return_str(int Ind, int id, char *str) {
 
 		/* WINNERS_ONLY item restrictions - even for admins ;) */
 		if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) &&
-#ifdef FALLEN_WINNERSONLY
+ #ifdef FALLEN_WINNERSONLY
 		    !once_winner
-#else
+ #else
 		    !total_winner
-#endif
+ #endif
 		    ) {
 			msg_print(Ind, "That item may only be sent to royalties!");
 			return;
@@ -10184,10 +10184,10 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		mail_COD[i] = p_ptr->mail_COD;
 		mail_xfee[i] = p_ptr->mail_xfee;
 
-#ifdef ENABLE_SUBINVEN
+ #ifdef ENABLE_SUBINVEN
 		/* If we send a subinventory, remove all items and place them into the player's inventory */
 		if (o_ptr->tval == TV_SUBINVEN) empty_subinven(Ind, p_ptr->mail_item);
-#endif
+ #endif
 
 		inven_item_increase(Ind, p_ptr->mail_item, -o_ptr->number);
 		inven_item_describe(Ind, p_ptr->mail_item);
@@ -10255,18 +10255,18 @@ void handle_request_return_str(int Ind, int id, char *str) {
 				return;
 			}
 
-#ifdef IRON_IRON_TEAM
+ #ifdef IRON_IRON_TEAM
 			if ((i = lookup_player_party(pid)) && (parties[i].mode & PA_IRONTEAM) && p_ptr->party != i) {
 				msg_print(Ind, "\377yUnfortunately we cannot transfer to that person.");
 				return;
 			}
-#endif
-#ifdef IDDC_RESTRICTED_TRADING
+ #endif
+ #ifdef IDDC_RESTRICTED_TRADING
 			if (in_irondeepdive(&wpos)) {
 				msg_print(Ind, "\377yUnfortunately the Ironman Deep Dive Challenge is out of our reach.");
 				return;
 			}
-#endif
+ #endif
 		}
 
 		/* le paranoid double-check */
@@ -10297,6 +10297,38 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		s_printf("MERCHANT_MAIL:(SENT) <%s> to <%s> sent: %d Au.\n", p_ptr->name, mail_target[i], mail_forge[i].pval);
 		return; }
 #endif
+
+#ifdef RESET_SKILL
+	case RID_LOSE_MEMORIES_I_SKILL:
+	case RID_LOSE_MEMORIES_II_SKILL:
+	{
+		int i;
+
+		for (i = 0; i < MAX_SKILLS; i++)
+			if (!strcasecmp(s_name + s_info[i].name, str)) break;
+		if (i >= MAX_SKILLS) {
+			msg_print(Ind, "\377ySorry, we do not know a skill of that name.");
+			return;
+		}
+
+		s_printf("RESET_SKILL: %s (%s): %s (%d).\n", p_ptr->name, id == RID_LOSE_MEMORIES_I_SKILL ? "I" : "II", s_name + s_info[i].name, i);
+		if (id == RID_LOSE_MEMORIES_I_SKILL) {
+			Send_request_cfr(Ind, RID_LOSE_MEMORIES_I, format("Are you sure you want to lose %d character levels? ", RESET_SKILL_LEVELS), 0);
+			p_ptr->request_extra = i;
+			return;
+		} else {
+			if (p_ptr->au < RESET_SKILL_FEE) {
+				msg_format(Ind, "\377yYou need to carry %d Au to donate them for this advanced spell!", RESET_SKILL_FEE);
+				return;
+			}
+			Send_request_cfr(Ind, RID_LOSE_MEMORIES_II, format("Are you sure you want to pay %d Au? ", RESET_SKILL_FEE), 0);
+			p_ptr->request_extra = i;
+			return;
+		}
+		break;
+	}
+#endif
+
 	default:;
 	}
 }
@@ -10402,6 +10434,7 @@ void handle_request_return_key(int Ind, int id, char c) {
 /* Handle confirmation request replies */
 void handle_request_return_cfr(int Ind, int id, bool cfr) {
 	player_type *p_ptr = Players[Ind];
+	int i;
 
 	/* verify that the ID is actually valid (maybe clear p_ptr->request_id here too) */
 	if (id != p_ptr->request_id) return;
@@ -10509,9 +10542,8 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		Send_request_str(Ind, RID_SEND_GOLD, "Who is the addressee, please? ", "");
 		return;
 	case RID_SEND_FEE:
-	case RID_SEND_FEE_PAY: {
-		int i = p_ptr->mail_item;
-
+	case RID_SEND_FEE_PAY:
+		i = p_ptr->mail_item;
 		/* silyl case: the package expired while we were looking at the "do you accept the fee?" prompt */
 		if (mail_duration[i]) {
 			msg_print(Ind, "\377ySorry, the package has already been returned.");
@@ -10581,7 +10613,7 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 			msg_format(Ind, "Alright, %s. We're sending it back.", p_ptr->male ? "sir" : "ma'am");
 			mail_timeout[i] = -2;
 		}
-		return; }
+		return;
 	case RID_SEND_ITEM_PAY:
 		if (cfr) Send_request_cfr(Ind, RID_SEND_ITEM_PAY2, "Will you be paying the fee? Otherwise we'll charge the addressee.", 2);
 		return;
@@ -10596,6 +10628,77 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 	case RID_REPAIR_WEAPON:
 		if (cfr) repair_item_aux(Ind, p_ptr->request_extra, FALSE);
 		return;
+#ifdef RESET_SKILL
+	case RID_LOSE_MEMORIES_I:
+	case RID_LOSE_MEMORIES_II:
+		if (!cfr) return;
+
+		i = p_ptr->request_extra;
+		if (i < 0 || i >= MAX_SKILLS) return;
+		//SKF1_HIDDEN		/* Starts hidden */
+		//SKF1_AUTO_HIDE	/* Starts hidden */
+		//SKF1_DUMMY		/* Just for visual ordering */
+		if (!p_ptr->s_info[i].mod) {
+			msg_print(Ind, "\377yThis is not a valid skill to reset.");
+			return;
+		}
+
+		/* Double-check restrictions */
+		if (p_ptr->mode & MODE_PVP) {
+			msg_print(Ind, "\377yThis spell does not work on PVP-mode characters.");
+			break;
+		}
+		if (p_ptr->reskill_possible & RESKILL_F_RESET) {
+			msg_print(Ind, "\377yThis spell will never work twice on the same brain.");
+			break;
+		}
+		if (p_ptr->max_plv != 35) {
+			msg_print(Ind, "\377yThis spell only works on minds that have freshly attained level 35.");
+			break;
+		}
+		if (id == RID_LOSE_MEMORIES_II) {
+			if (p_ptr->au < RESET_SKILL_FEE) {
+				msg_format(Ind, "\377yYou need to carry %d Au to donate them for this advanced spell!", RESET_SKILL_FEE);
+				return;
+			}
+			/* Success */
+			p_ptr->au -= RESET_SKILL_FEE;
+			p_ptr->redraw |= PR_GOLD;
+ #ifdef USE_SOUND_2010
+			sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
+ #endif
+
+			msg_print(Ind, "The spell chirurgically wipes your memories while keeping your brain flexible..");
+		} else {
+			/* Success */
+			p_ptr->max_lev -= 5;
+			p_ptr->lev -= 5;
+			p_ptr->exp = lua_player_exp(p_ptr->lev, p_ptr->expfact);
+			p_ptr->max_exp = p_ptr->exp;
+
+			clockin(Ind, 1); /* Set player level */
+
+			p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SANITY);
+
+			/* Redraw some stuff */
+			p_ptr->redraw |= (PR_LEV | PR_TITLE | PR_DEPTH | PR_STATE);
+			/* PR_STATE is only needed if player can unlearn
+			    techniques by dropping in levels */
+
+			/* Window stuff */
+			p_ptr->window |= (PW_PLAYER);
+
+			/* Window stuff - Items might be come (un)usable depending on level! */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+			msg_print(Ind, "The spell roughly wipes your memories while keeping your brain flexible..");
+		}
+		s_printf("RESET_SKILL(done): %s (%s): %s (%d).\n", p_ptr->name, id == RID_LOSE_MEMORIES_I ? "I" : "II", s_name + s_info[i].name, i);
+		respec_skill(Ind, i, FALSE, FALSE);
+		msg_format(Ind, " You have lost all your knowledge of your '%s' skill!", s_name + s_info[i].name);
+		p_ptr->reskill_possible |= RESKILL_F_RESET; /* Permanent flag: Only once per character */
+		return;
+#endif
 	default: ;
 	}
 }

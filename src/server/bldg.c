@@ -2566,8 +2566,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			break;
 #if 1
 		case BACT_STATIC:
-if (is_admin(p_ptr))
-			{
+			if (is_admin(p_ptr)) {
 				int x, y, i, j, k;
 				struct dungeon_type *d_ptr;
 				worldpos tpos;
@@ -2714,9 +2713,7 @@ if (is_admin(p_ptr))
 		case BACT_SEND_ITEM:
 		case BACT_SEND_ITEM_PAY: {
 			int i;
-			object_type *o_ptr;
-			/* Get the item (in the pack) */
-			o_ptr = &p_ptr->inventory[item];
+			object_type *o_ptr = &p_ptr->inventory[item]; /* Get the item (in the pack) */
 			u32b fee;
 
 			if (!o_ptr->k_idx) {
@@ -2799,6 +2796,36 @@ if (is_admin(p_ptr))
 		case BACT_HIGHEST_LEVELS:
 			view_highest_levels(Ind);
 			break;
+#ifdef RESET_SKILL
+		case BACT_LOSE_MEMORIES_I:
+		case BACT_LOSE_MEMORIES_II:
+			if (is_older_than(&p_ptr->version, 4, 4, 6, 2, 0, 0)) {
+				msg_print(Ind, "\377yYou need an up-to-date client to do this.");
+				break;
+			}
+			if (p_ptr->mode & MODE_PVP) {
+				msg_print(Ind, "\377yThis spell does not work on PVP-mode characters.");
+				break;
+			}
+			if (p_ptr->reskill_possible & RESKILL_F_RESET) {
+				msg_print(Ind, "\377yThis spell will never work twice on the same brain.");
+				break;
+			}
+			if (p_ptr->max_plv != 35) {
+				msg_print(Ind, "\377yThis spell only works on minds that have freshly attained level 35.");
+				break;
+			}
+			if (bact == BACT_LOSE_MEMORIES_I)
+				Send_request_str(Ind, RID_LOSE_MEMORIES_I_SKILL, "Which skill do you wish to reset? ", "");
+			else {
+				if (p_ptr->au < RESET_SKILL_FEE) {
+					msg_format(Ind, "\377yYou need to carry %d Au to donate it for this advanced spell!", RESET_SKILL_FEE);
+					break;
+				}
+				Send_request_str(Ind, RID_LOSE_MEMORIES_II_SKILL, "Which skill do you wish to reset? ", "");
+			}
+			break;
+#endif
 		default:
 #if 0
 			if (process_hooks_ret(HOOK_BUILDING_ACTION, "d", "(d)", bact)) {

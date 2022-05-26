@@ -197,7 +197,7 @@ struct player_type
 	/* Copies for /undoskills - mikaelh */
 	skill_player s_info_old[MAX_SKILLS]; /* Player skills */
 	s16b skill_points_old;  /* number of skills assignable */
-	bool reskill_possible;
+	byte			reskill_possible;
 
 	byte hitdie;		/* Hit dice (sides) */
 	s16b expfact;		/* Experience factor */
