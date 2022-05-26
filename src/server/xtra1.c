@@ -10642,6 +10642,22 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 			msg_print(Ind, "\377yThis is not a valid skill to reset.");
 			return;
 		}
+		/* Exceptions: Some core skills. */
+		switch (i) {
+		case SKILL_MARTIAL_ARTS:
+		case SKILL_SWORD:
+		case SKILL_BLUNT:
+		case SKILL_AXE:
+		case SKILL_POLEARM:
+		case SKILL_SLING:
+		case SKILL_BOW:
+		case SKILL_XBOW:
+		case SKILL_BOOMERANG:
+		case SKILL_ANTIMAGIC:
+		case SKILL_DEVICE:
+			msg_print(Ind, "\377yThis is not a valid skill to reset.");
+			return;
+		}
 
 		/* Double-check restrictions */
 		if (p_ptr->mode & MODE_PVP) {

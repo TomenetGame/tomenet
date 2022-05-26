@@ -7567,6 +7567,13 @@ The Mirror              Donate gold and pray to the gods.
                         The Mirror also houses magicians that have another
                         extraordinary ability: To reset one of your skills!
 
+                        WARNING: This will NOT work on the following skills,
+                        which are considered essential core skills that would
+                        allow for cheezing a character's progression path:
+                        - Martial Arts, Sword/Blunt/Axe/Polearm mastery,
+                        - Sling/Blow/Crossbow/Boomerang mastery,
+                        - Anti-magic or Magic Device.
+
                         However, this will ONLY work when you have freshly
                         attained level 35, not earlier and not later, and it
                         will only work once per character!
