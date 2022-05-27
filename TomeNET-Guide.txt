@@ -7571,7 +7571,7 @@ The Mirror              Donate gold and pray to the gods.
                         which are considered essential core skills that would
                         allow for cheezing a character's progression path:
                         - Martial Arts, Sword/Blunt/Axe/Polearm mastery,
-                        - Sling/Blow/Crossbow/Boomerang mastery,
+                        - Sling/Bow/Crossbow/Boomerang mastery,
                         - Anti-magic or Magic Device.
 
                         However, this will ONLY work when you have freshly
