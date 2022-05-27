@@ -2109,9 +2109,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				}
 			}
 		}
-		/* Undo/reset -> /undoskills */
-		else if (((my_strcasestr(buf, "undo") || my_strcasestr(buf, "reset")) && my_strcasestr(buf, "skil")) ||
-		    (!strcasecmp("undo", buf) || !strcasecmp("reset", buf))) {
+		/* Undo/reset -> /undoskills (which also mentions the new experimental way in The Mirror) */
+		else if (((my_strcasestr(buf, "undo") || my_strcasestr(buf, "reset")) && (my_strcasestr(buf, "skil") || my_strcasestr(buf, "spec"))) ||
+		    !strcasecmp("undo", buf) || !strcasecmp("reset", buf) || !strcasecmp(buf, "respec") || !strcasecmp(buf, "respecc") || !strcasecmp(buf, "reskill") || !strcasecmp(buf, "reskil")) {
 			init_search_type = 2;
 			strcpy(init_search_string, "/UNDOSKILLS");
 		}
