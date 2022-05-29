@@ -11530,7 +11530,7 @@ item that you will find on the floor:
    in the ~7 monster lore. The lore displays the first four classes, while the
    5th is 'hidden' and is the rest chance not covered by the first four:
 
-    -Treasure (named 'Valuables' in ~7 monster spoilers):
+    -Treasure (dubbed 'Valuables' instead in some ~7 monster spoiler versions):
      Rings, amulets, dragon scale mails, crowns and chests.
 
     -Combat:

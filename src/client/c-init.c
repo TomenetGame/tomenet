@@ -1194,8 +1194,8 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN], bool 
 			    /* treasure */
 				p2 = strchr(p1, ':') + 1;
 				if (atoi(p1)) {
-					strcat(info_tmp, format("\377%c%d%% valuables\377%c", a_val, atoi(p1), a_key));
-					strcat(info, format("\377%c%d%% valuables\377%c", a_val, atoi(p1), a_key));
+					strcat(info_tmp, format("\377%c%d%% treasure\377%c", a_val, atoi(p1), a_key));
+					strcat(info, format("\377%c%d%% treasure\377%c", a_val, atoi(p1), a_key));
 					info_val = 1;
 					drops += atoi(p1);
 				}
