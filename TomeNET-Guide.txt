@@ -24048,4 +24048,13 @@ Solution:   In the macro wizard, press 'a' to enter the action, and instead of
             Next you can press 'h' to create a hybrid macro (or whatever you
             see fit) and press the key you want to bind it to.
 
+PROBLEM 68: I'm using the '/?' command to search for something in the guide
+            that should definitely be there, but instead I get the message
+            "Search term '<what I searched for>' not found."
+Solution:   If you really specified a supposedly valid search topic, check your
+            spelling and make sure you have updated your Guide to the latest
+            release. You can do that with the TomeNET-Updater or just download
+            it manually and overwrite the existing 'TomeNET-Guide.txt' file in
+            your TomeNET folder with it.
+
 ===============================================================================
