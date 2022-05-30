@@ -5221,6 +5221,14 @@ void check_experience(int Ind) {
 	}
 #endif
 
+#ifdef RESET_SKILL
+	if (old_lev < RESET_SKILL && p_ptr->lev == RESET_SKILL) {
+		msg_print(Ind, "\374\377GYou may utilize the grand 'Lose Memories' spells of 'The Mirror' in Lothlorien");
+		msg_print(Ind, "\374\377G to reset one skill of your choice -with a few exceptions- once, if you wish!");
+		msg_format(Ind, "\374\377G This is only possible now while you are exactly level %d! (See '/? lose mem'.)", RESET_SKILL);
+	}
+#endif
+
 #ifdef KINGCAP_LEV
 	/* Added a check that (s)he's not already a king - mikaelh */
 	//if (p_ptr->lev == 50 && !p_ptr->total_winner) msg_print(Ind, "\374\377GYou can't gain more levels until you defeat Morgoth, Lord of Darkness!");

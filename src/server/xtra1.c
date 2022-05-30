@@ -10668,8 +10668,8 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 			msg_print(Ind, "\377yThis spell will never work twice on the same brain.");
 			break;
 		}
-		if (p_ptr->max_plv != 35) {
-			msg_print(Ind, "\377yThis spell only works on minds that have freshly attained level 35.");
+		if (p_ptr->max_plv != RESET_SKILL) {
+			msg_format(Ind, "\377yThis spell only works on minds that have freshly attained level %d.", RESET_SKILL);
 			break;
 		}
 		if (id == RID_LOSE_MEMORIES_II) {
