@@ -437,8 +437,8 @@ s16b poly_r_idx(int r_idx) {
 	get_mon_num_prep(0, reject_uniques);
 
 	/* Allowable range of "levels" for resulting monster */
-	lev1 = r_ptr->level - ((randint(20)/randint(9))+1);
-	lev2 = r_ptr->level + ((randint(20)/randint(9))+1);
+	lev1 = r_ptr->level - ((randint(20) / randint(9)) + 1);
+	lev2 = r_ptr->level + ((randint(20) / randint(9)) + 1);
 
 	/* Pick a (possibly new) non-unique race */
 	for (i = 0; i < 1000; i++) {
@@ -12767,7 +12767,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			num_can_see = 0;
 
 			/* Dump everything with this radius */
-			for (i = gm[t]; i < gm[t+1]; i++) {
+			for (i = gm[t]; i < gm[t + 1]; i++) {
 				/* Extract the location */
 				y = gy[i];
 				x = gx[i];
@@ -12951,7 +12951,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		/* Now hurt the cave grids (and objects) from the inside out */
 		for (i = 0; i < grids; i++) {
 			/* Hack -- Notice new "dist" values */
-			if (gm[dist+1] == i) dist++;
+			if (gm[dist + 1] == i) dist++;
 
 			/* Get the grid location */
 			y = gy[i];
@@ -12984,7 +12984,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		/* Now hurt the monsters, from inside out */
 		for (i = 0; i < grids; i++) {
 			/* Hack -- Notice new "dist" values */
-			if (gm[dist+1] == i) dist++;
+			if (gm[dist + 1] == i) dist++;
 
 			/* Get the grid location */
 			y = gy[i];
@@ -13066,7 +13066,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			int player_idx;
 
 			/* Hack -- Notice new "dist" values */
-			if (gm[dist+1] == i) dist++;
+			if (gm[dist + 1] == i) dist++;
 
 			/* Get the grid location */
 			y = gy[i];
@@ -13099,7 +13099,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			num_can_see = 0;
 
 			/* Dump everything with this radius */
-			for (i = gm[t]; i < gm[t+1]; i++) {
+			for (i = gm[t]; i < gm[t + 1]; i++) {
 				/* Extract the location */
 				y = gy[i];
 				x = gx[i];

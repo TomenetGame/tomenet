@@ -1371,8 +1371,8 @@ static bool choose_stat_order(void) {
 					}
 				}
 			}
-			if (c == '2' || c == 'j') j = (j+1) % 6;
-			if (c == '8' || c == 'k') j = (j+5) % 6;
+			if (c == '2' || c == 'j') j = (j + 1) % 6;
+			if (c == '8' || c == 'k') j = (j + 5) % 6;
 			if (c == '2' || c == '8' || c == 'j' || c == 'k') {
 				switch (j) {
 				case 0:	c_put_str(TERM_L_UMBER,"   - Strength -    ", DIZ_ROW, 30);

@@ -1026,20 +1026,20 @@ int main(int argc, char **argv) {
 			break;
 
 		case 'P':
-			strcpy(path, argv[i]+2);
+			strcpy(path, argv[i] + 2);
 			break;
 
 		case 'R':
 			auto_reincarnation = TRUE;
 			/* Fall through */
 		case 'N':
-			strcpy(cname, argv[i]+2);
+			strcpy(cname, argv[i] + 2);
 			break;
 
 		/* Pull login id */
 		case 'l':
 			if (argv[i][2]) { /* Hack -- allow space after '-l' */
-				strcpy(nick, argv[i]+2);
+				strcpy(nick, argv[i] + 2);
 				modus = 2;
 			}
 			else modus = 1;
@@ -1049,7 +1049,7 @@ int main(int argc, char **argv) {
 		case 'n':
 			if (argv[i][2])	/* Hack -- allow space after '-l' */
 			{
-				strcpy(real_name, argv[i]+2);
+				strcpy(real_name, argv[i] + 2);
 				break;
 			}
 			/* Fall through */

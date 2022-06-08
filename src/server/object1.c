@@ -851,7 +851,7 @@ void flavor_init(void) {
 			}
 
 			/* Save the title */
-			strcpy(scroll_adj[i], buf+1);
+			strcpy(scroll_adj[i], buf + 1);
 
 			/* Assume okay */
 			okay = TRUE;

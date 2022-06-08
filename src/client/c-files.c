@@ -243,7 +243,7 @@ static errr path_parse(char *buf, cptr file) {
 #ifndef AMIGA
 
 	/* Point at the user */
-	u = file+1;
+	u = file + 1;
 
 	/* Look for non-user portion of the file */
 	s = strstr(u, PATH_SEP);
@@ -824,7 +824,7 @@ errr process_pref_file_aux(char *buf) {
 
 	/* Process "R:<num>:<a>/<c>" -- attr/char for monster races */
 	if (buf[0] == 'R') {
-		if (tokenize(buf+2, 3, zz) == 3) {
+		if (tokenize(buf + 2, 3, zz) == 3) {
 			i = (huge)strtol(zz[0], NULL, 0);
 			i += 12;	/* gfx-fix by Tanix */
 			n1 = strtol(zz[1], NULL, 0);
@@ -845,7 +845,7 @@ errr process_pref_file_aux(char *buf) {
 
 	/* Process "K:<num>:<a>/<c>"  -- attr/char for object kinds */
 	else if (buf[0] == 'K') {
-		if (tokenize(buf+2, 3, zz) == 3) {
+		if (tokenize(buf + 2, 3, zz) == 3) {
 			i = (huge)strtol(zz[0], NULL, 0);
 			n1 = strtol(zz[1], NULL, 0);
 			n2 = strtol(zz[2], NULL, 0);
@@ -859,7 +859,7 @@ errr process_pref_file_aux(char *buf) {
 
 	/* Process "F:<num>:<a>/<c>" -- attr/char for terrain features */
 	else if (buf[0] == 'F') {
-		if (tokenize(buf+2, 3, zz) == 3) {
+		if (tokenize(buf + 2, 3, zz) == 3) {
 			i = (huge)strtol(zz[0], NULL, 0);
 			n1 = strtol(zz[1], NULL, 0);
 			n2 = strtol(zz[2], NULL, 0);
@@ -879,7 +879,7 @@ errr process_pref_file_aux(char *buf) {
 
 	/* Process "U:<tv>:<a>/<c>" -- attr/char for unaware items */
 	else if (buf[0] == 'U') {
-		if (tokenize(buf+2, 3, zz) == 3) {
+		if (tokenize(buf + 2, 3, zz) == 3) {
 			j = (huge)strtol(zz[0], NULL, 0);
 			n1 = strtol(zz[1], NULL, 0);
 			n2 = strtol(zz[2], NULL, 0);
@@ -897,7 +897,7 @@ errr process_pref_file_aux(char *buf) {
 		return (0);
 
 #if 0
-		if (tokenize(buf+2, 3, zz) == 3) {
+		if (tokenize(buf + 2, 3, zz) == 3) {
 			j = (byte)strtol(zz[0], NULL, 0) % 128;
 			n1 = strtol(zz[1], NULL, 0);
 			n2 = strtol(zz[2], NULL, 0);
@@ -916,14 +916,14 @@ errr process_pref_file_aux(char *buf) {
 		/* Allocate enough space for the ascii string - mikaelh */
 		macro__buf = mem_alloc(strlen(buf));
 
-		text_to_ascii(macro__buf, buf+2);
+		text_to_ascii(macro__buf, buf + 2);
 		return (0);
 	}
 
 	/* Process "P:<str>" -- create normal macro */
 	else if (buf[0] == 'P') {
 		char tmp[1024];
-		text_to_ascii(tmp, buf+2);
+		text_to_ascii(tmp, buf + 2);
 
 		//hack
 		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return 0;
@@ -935,7 +935,7 @@ errr process_pref_file_aux(char *buf) {
 	/* Process "H:<str>" -- create hybrid macro */
 	else if (buf[0] == 'H') {
 		char tmp[1024];
-		text_to_ascii(tmp, buf+2);
+		text_to_ascii(tmp, buf + 2);
 
 		//hack
 		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return 0;
@@ -947,7 +947,7 @@ errr process_pref_file_aux(char *buf) {
 	/* Process "C:<str>" -- create command macro */
 	else if (buf[0] == 'C') {
 		char tmp[1024];
-		text_to_ascii(tmp, buf+2);
+		text_to_ascii(tmp, buf + 2);
 
 		//hack
 		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return 0;
@@ -959,7 +959,7 @@ errr process_pref_file_aux(char *buf) {
 	/* Process "D:<str>" -- delete a macro */
 	else if (buf[0] == 'D') {
 		char tmp[1024];
-		text_to_ascii(tmp, buf+2);
+		text_to_ascii(tmp, buf + 2);
 
 		//hack
 		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return 0;
@@ -971,7 +971,7 @@ errr process_pref_file_aux(char *buf) {
 
 	/* Process "S:<key>:<key>:<dir>" -- keymap */
 	else if (buf[0] == 'S') {
-		if (tokenize(buf+2, 3, zz) == 3) {
+		if (tokenize(buf + 2, 3, zz) == 3) {
 			i = strtol(zz[0], NULL, 0) & 0x7F;
 			j = strtol(zz[0], NULL, 0) & 0x7F;
 			k = strtol(zz[0], NULL, 0) & 0x7F;
@@ -988,7 +988,7 @@ errr process_pref_file_aux(char *buf) {
 		/* Do nothing */
 		return (0);
 
-		if (tokenize(buf+2, 5, zz) == 5) {
+		if (tokenize(buf + 2, 5, zz) == 5) {
 			i = (byte)strtol(zz[0], NULL, 0);
 			color_table[i][0] = (byte)strtol(zz[1], NULL, 0);
 			color_table[i][1] = (byte)strtol(zz[2], NULL, 0);
@@ -1029,7 +1029,7 @@ errr process_pref_file_aux(char *buf) {
 
 	/* Process "W:<num>:<use>" -- specify window action */
 	else if (buf[0] == 'W') {
-		if (tokenize(buf+2, 2, zz) == 2) {
+		if (tokenize(buf + 2, 2, zz) == 2) {
 			i = (byte)strtol(zz[0], NULL, 0);
 			window_flag[i] = 1L << ((byte)strtol(zz[1], NULL, 0));
 			return (0);

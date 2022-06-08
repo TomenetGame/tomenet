@@ -5901,7 +5901,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 					if (!cave_empty_bold(zcave, y, x)) continue;
 
 					/* Important -- Skip "quake" grids */
-					if (map[16+y-cy][16+x-cx]) continue;
+					if (map[16 + y - cy][16 + x - cx]) continue;
 
 					/* Count "safe" grids */
 					sn++;
@@ -6164,7 +6164,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 			xx = cx + dx;
 
 			/* Skip unaffected grids */
-			if (!map[16+yy-cy][16+xx-cx]) continue;
+			if (!map[16 + yy - cy][16 + xx - cx]) continue;
 
 			/* Access the cave grid */
 			c_ptr = &zcave[yy][xx];
@@ -8332,7 +8332,7 @@ char pet_creation(int Ind)
 
 	if (!Players[Ind]->has_pet) {
 		place_pet(Ind,
-		   &(Players[Ind]->wpos), Players[Ind]->py, Players[Ind]->px+1,  /* E of player */
+		   &(Players[Ind]->wpos), Players[Ind]->py, Players[Ind]->px + 1,  /* E of player */
 		   id);
 		Players[Ind]->has_pet = 1;
 		return 1;

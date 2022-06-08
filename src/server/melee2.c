@@ -2374,7 +2374,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	switch (thrown_spell) {
 
 	/* RF4_SHRIEK */
-	case RF4_OFFSET+0:
+	case RF4_OFFSET + 0:
 		//if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		/* the_sandman: changed it so that other ppl nearby will know too */
@@ -2391,7 +2391,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_UNMAGIC */
-	case RF4_OFFSET+1:
+	case RF4_OFFSET + 1:
 		disturb(Ind, 1, 0);
 #if 0	// oops, this cannot be 'magic' ;)
 		if (monst_check_antimagic(Ind, m_idx)) break;
@@ -2406,12 +2406,12 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 #if 0
 	/* RF4_XXX3X4 */
-	case RF4_OFFSET+2:
+	case RF4_OFFSET + 2:
 		break;
 #endif
 
 	/* RF4_S_ANIMAL */
-	case RF4_OFFSET+2:
+	case RF4_OFFSET + 2:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_ANIMAL, 1, clone_summoning);
@@ -2419,7 +2419,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_ROCKET */
-	case RF4_OFFSET+3:
+	case RF4_OFFSET + 3:
 		if (!local) disturb(Ind, 1, 0);
 		//if (blind) msg_format(Ind, "%^s shoots something.", m_name);
 		if (blind) msg_print(Ind, "You hear a dull, heavy sound.");
@@ -2433,7 +2433,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_ARROW_1 (arrow, light) */
-	case RF4_OFFSET+4: {
+	case RF4_OFFSET + 4: {
 		//int power = rlev / 2 + randint(rlev / 2),
 		int	dice = 1 + rlev / 8,
 		fois = 1 + rlev / 20;
@@ -2454,7 +2454,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		}
 
 	/* RF4_ARROW_2 (shot, heavy) */
-	case RF4_OFFSET+5: {
+	case RF4_OFFSET + 5: {
 		//int power = rlev / 2 + randint(rlev / 2),
 		//fois = 1 + rlev / 20;
 		int	dice = 3 + rlev / 5;
@@ -2473,7 +2473,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		}
 
 	/* former RF4_ARROW_3 (bolt, heavy) */
-	case RF4_OFFSET+6: {
+	case RF4_OFFSET + 6: {
 		int	dice = 3 + rlev / 5;
 #if 0
 		if (power > 8) dice += 2;
@@ -2490,7 +2490,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		}
 
 	/* former RF4_ARROW_4 (generic missile, heavy) */
-	case RF4_OFFSET+7: {
+	case RF4_OFFSET + 7: {
 		int	dice = 3 + rlev / 5;
 #if 0
 		if (power > 8) dice += 2;
@@ -2506,7 +2506,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		}
 
 	/* RF4_BR_ACID */
-	case RF4_OFFSET+8:
+	case RF4_OFFSET + 8:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes acid for", m_name);
@@ -2515,7 +2515,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_ELEC */
-	case RF4_OFFSET+9:
+	case RF4_OFFSET + 9:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes lightning for", m_name);
@@ -2524,7 +2524,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_FIRE */
-	case RF4_OFFSET+10:
+	case RF4_OFFSET + 10:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes fire for", m_name);
@@ -2533,7 +2533,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_COLD */
-	case RF4_OFFSET+11:
+	case RF4_OFFSET + 11:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes frost for", m_name);
@@ -2542,7 +2542,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_POIS */
-	case RF4_OFFSET+12:
+	case RF4_OFFSET + 12:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes gas for", m_name);
@@ -2551,7 +2551,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_NETH */
-	case RF4_OFFSET+13:
+	case RF4_OFFSET + 13:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes nether for", m_name);
@@ -2560,7 +2560,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_LITE */
-	case RF4_OFFSET+14:
+	case RF4_OFFSET + 14:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes light for", m_name);
@@ -2569,7 +2569,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_DARK */
-	case RF4_OFFSET+15:
+	case RF4_OFFSET + 15:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes darkness for", m_name);
@@ -2578,7 +2578,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_CONF */
-	case RF4_OFFSET+16:
+	case RF4_OFFSET + 16:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes confusion for", m_name);
@@ -2587,7 +2587,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_SOUN */
-	case RF4_OFFSET+17:
+	case RF4_OFFSET + 17:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes sound for", m_name);
@@ -2596,7 +2596,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_CHAO */
-	case RF4_OFFSET+18:
+	case RF4_OFFSET + 18:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes chaos for", m_name);
@@ -2605,7 +2605,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_DISE */
-	case RF4_OFFSET+19:
+	case RF4_OFFSET + 19:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes disenchantment for", m_name);
@@ -2614,7 +2614,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_NEXU */
-	case RF4_OFFSET+20:
+	case RF4_OFFSET + 20:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes nexus for", m_name);
@@ -2623,7 +2623,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_TIME */
-	case RF4_OFFSET+21:
+	case RF4_OFFSET + 21:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes time for", m_name);
@@ -2632,7 +2632,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_INER */
-	case RF4_OFFSET+22:
+	case RF4_OFFSET + 22:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes inertia for", m_name);
@@ -2640,7 +2640,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_GRAV */
-	case RF4_OFFSET+23:
+	case RF4_OFFSET + 23:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes gravity for", m_name);
@@ -2648,7 +2648,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_SHAR */
-	case RF4_OFFSET+24:
+	case RF4_OFFSET + 24:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes shards for", m_name);
@@ -2657,7 +2657,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_PLAS */
-	case RF4_OFFSET+25:
+	case RF4_OFFSET + 25:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes plasma for", m_name);
@@ -2667,7 +2667,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_WALL */
-	case RF4_OFFSET+26:
+	case RF4_OFFSET + 26:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes force for", m_name);
@@ -2675,7 +2675,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_MANA */
-	case RF4_OFFSET+27:
+	case RF4_OFFSET + 27:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes magical energy for", m_name);
@@ -2685,7 +2685,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 	/* RF4_XXX5X4 */
 	/* RF4_BR_DISI */
-	case RF4_OFFSET+28:
+	case RF4_OFFSET + 28:
 		if (!local) disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes disintegration for", m_name);
@@ -2694,7 +2694,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 	/* RF4_XXX6X4 */
 	/* RF4_BR_NUKE */
-	case RF4_OFFSET+29:
+	case RF4_OFFSET + 29:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes toxic waste for", m_name);
@@ -2703,7 +2703,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_MOAN */
-	case RF4_OFFSET+30:
+	case RF4_OFFSET + 30:
 		if (season_halloween) {
 			/* Halloween event code for ranged MOAN -C. Blue */
 			disturb(Ind, 1, 0);
@@ -2713,7 +2713,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BOULDER */
-	case RF4_OFFSET+31:
+	case RF4_OFFSET + 31:
 		//note: not intercepted atm
 		disturb(Ind, 1, 0);
 		if (blind) msg_print(Ind, "You hear something grunt with exertion.");
@@ -2722,7 +2722,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BA_ACID */
-	case RF5_OFFSET+0:
+	case RF5_OFFSET + 0:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -2732,7 +2732,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BA_ELEC */
-	case RF5_OFFSET+1:
+	case RF5_OFFSET + 1:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -2742,7 +2742,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BA_FIRE */
-	case RF5_OFFSET+2:
+	case RF5_OFFSET + 2:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -2752,7 +2752,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BA_COLD */
-	case RF5_OFFSET+3:
+	case RF5_OFFSET + 3:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -2762,7 +2762,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BA_POIS */
-	case RF5_OFFSET+4:
+	case RF5_OFFSET + 4:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -2772,7 +2772,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BA_NETH */
-	case RF5_OFFSET+5:
+	case RF5_OFFSET + 5:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -2782,7 +2782,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BA_WATE */
-	case RF5_OFFSET+6:
+	case RF5_OFFSET + 6:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -2793,7 +2793,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BA_MANA */
-	case RF5_OFFSET+7:
+	case RF5_OFFSET + 7:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles powerfully.", m_name);
@@ -2803,7 +2803,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BA_DARK */
-	case RF5_OFFSET+8:
+	case RF5_OFFSET + 8:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles powerfully.", m_name);
@@ -2813,7 +2813,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_DRAIN_MANA */
-	case RF5_OFFSET+9:
+	case RF5_OFFSET + 9:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		if (p_ptr->csp) {
 			int r1;
@@ -2867,7 +2867,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_MIND_BLAST */
-	case RF5_OFFSET+10:
+	case RF5_OFFSET + 10:
 		disturb(Ind, 1, 0);
 		if (!seen)
 			msg_print(Ind, "You feel something focussing on your mind.");
@@ -2889,7 +2889,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BRAIN_SMASH */
-	case RF5_OFFSET+11:
+	case RF5_OFFSET + 11:
 		disturb(Ind, 1, 0);
 		if (!seen)
 			msg_print(Ind, "You feel something focussing on your mind.");
@@ -2913,7 +2913,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_CURSE (former CAUSE1~4) */
-	case RF5_OFFSET+12: {
+	case RF5_OFFSET + 12: {
 		/* No antimagic check -- is 'curse' magic? */
 		/* rebalance might be needed? */
 		int power = rlev / 2 + randint(rlev);
@@ -3007,7 +3007,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		}
 
 	/* RF5_XXX4X4? */
-	case RF5_OFFSET+13:
+	case RF5_OFFSET + 13:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3016,7 +3016,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BA_NUKE */
-	case RF5_OFFSET+14:
+	case RF5_OFFSET + 14:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3026,7 +3026,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BA_CHAO */
-	case RF5_OFFSET+15:
+	case RF5_OFFSET + 15:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles frighteningly.", m_name);
@@ -3036,7 +3036,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BO_ACID */
-	case RF5_OFFSET+16:
+	case RF5_OFFSET + 16:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3046,7 +3046,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BO_ELEC */
-	case RF5_OFFSET+17:
+	case RF5_OFFSET + 17:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3056,7 +3056,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BO_FIRE */
-	case RF5_OFFSET+18:
+	case RF5_OFFSET + 18:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3066,7 +3066,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BO_COLD */
-	case RF5_OFFSET+19:
+	case RF5_OFFSET + 19:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3076,7 +3076,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BO_POIS */
-	case RF5_OFFSET+20:
+	case RF5_OFFSET + 20:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3086,7 +3086,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BO_NETH */
-	case RF5_OFFSET+21:
+	case RF5_OFFSET + 21:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3096,7 +3096,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BO_WATE */
-	case RF5_OFFSET+22:
+	case RF5_OFFSET + 22:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3106,7 +3106,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BO_MANA */
-	case RF5_OFFSET+23:
+	case RF5_OFFSET + 23:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3116,7 +3116,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BO_PLAS */
-	case RF5_OFFSET+24:
+	case RF5_OFFSET + 24:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3127,7 +3127,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BO_ICEE */
-	case RF5_OFFSET+25:
+	case RF5_OFFSET + 25:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3138,7 +3138,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_MISSILE -- note: 'Magic Missile', but it's actually not GF_MANA but physical damage. */
-	case RF5_OFFSET+26:
+	case RF5_OFFSET + 26:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3150,7 +3150,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_SCARE */
-	case RF5_OFFSET+27:
+	case RF5_OFFSET + 27:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_print(Ind, "You hear scary noises.");
@@ -3165,7 +3165,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BLIND */
-	case RF5_OFFSET+28:
+	case RF5_OFFSET + 28:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3180,7 +3180,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_CONF */
-	case RF5_OFFSET+29:
+	case RF5_OFFSET + 29:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles, and you hear puzzling noises.", m_name);
@@ -3196,7 +3196,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_SLOW */
-	case RF5_OFFSET+30:
+	case RF5_OFFSET + 30:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		msg_format(Ind, "%^s drains power from your muscles!", m_name);
@@ -3211,7 +3211,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF5_HOLD */
-	case RF5_OFFSET+31:
+	case RF5_OFFSET + 31:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3227,7 +3227,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF6_HASTE */
-	case RF6_OFFSET+0:
+	case RF6_OFFSET + 0:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		if (visible) {
 			//disturb(Ind, 1, 0);
@@ -3254,7 +3254,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	/* RF6_XXX1X6 */
 	/* RF6_HAND_DOOM */
 	/* this should be amplified by some means! */
-	case RF6_OFFSET+1:
+	case RF6_OFFSET + 1:
 		// if (!direct) break;	/* allow it over wall, or not..? */
 		disturb(Ind, 1, 0);
 		msg_format(Ind, "%^s invokes the Hand of Doom!", m_name);
@@ -3273,7 +3273,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF6_HEAL */
-	case RF6_OFFSET+2:
+	case RF6_OFFSET + 2:
 		if (m_ptr->r_idx != RI_MIRROR) { /* uses potions! */
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (visible) {
@@ -3365,7 +3365,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 	/* RF6_XXX2X6 */
 	/* RF6_S_ANIMALS */
-	case RF6_OFFSET+3:
+	case RF6_OFFSET + 3:
 		disturb(Ind, 1, 0);
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		for (k = 0; k < 4; k++)
@@ -3374,7 +3374,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF6_BLINK */
-	case RF6_OFFSET+4:
+	case RF6_OFFSET + 4:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 
 		/* No teleporting within no-tele vaults and such */
@@ -3404,7 +3404,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF6_TPORT */
-	case RF6_OFFSET+5:
+	case RF6_OFFSET + 5:
 		if (m_ptr->r_idx != RI_MIRROR) { /* uses scrolls! */
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			//if (monst_check_grab(Ind, m_idx)) break;
@@ -3434,12 +3434,12 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 	/* RF6_XXX3X6 */
 	/* RF6_RAISE_DEAD */
-	case RF6_OFFSET+6:
+	case RF6_OFFSET + 6:
 		break;
 
 	/* RF6_XXX4X6 */
 	/* RF6_S_BUG */
-	case RF6_OFFSET+7:
+	case RF6_OFFSET + 7:
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 6; k++)
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_BUG, 1, clone_summoning);
@@ -3448,7 +3448,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF6_TELE_TO */
-	case RF6_OFFSET+8: {
+	case RF6_OFFSET + 8: {
 		int chance = (195 - p_ptr->skill_sav) / 2;
 
 		if (p_ptr->martyr) break;
@@ -3484,7 +3484,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		}
 
 	/* RF6_TELE_AWAY */
-	case RF6_OFFSET+9: {
+	case RF6_OFFSET + 9: {
 		int chance = (195 - p_ptr->skill_sav) / 2;
 
 		if (p_ptr->martyr) break;
@@ -3518,7 +3518,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		}
 
 	/* RF6_TELE_LEVEL */
-	case RF6_OFFSET+10:
+	case RF6_OFFSET + 10:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		if (p_ptr->martyr) break;
 
@@ -3552,7 +3552,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 	/* RF6_XXX5 */
 	/* RF6_S_RNG */
-	case RF6_OFFSET+11:
+	case RF6_OFFSET + 11:
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 6; k++)
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_RNG, 1, clone_summoning);
@@ -3561,7 +3561,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF6_DARKNESS */
-	case RF6_OFFSET+12:
+	case RF6_OFFSET + 12:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3570,7 +3570,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF6_TRAPS */
-	case RF6_OFFSET+13:
+	case RF6_OFFSET + 13:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles and cackles evilly.", m_name);
@@ -3579,7 +3579,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF6_FORGET */
-	case RF6_OFFSET+14:
+	case RF6_OFFSET + 14:
 		disturb(Ind, 1, 0);
 		msg_format(Ind, "%^s tries to blank your mind.", m_name);
 #ifdef USE_SOUND_2010
@@ -3596,7 +3596,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 	/* RF6_XXX6X6 */
 	/* RF6_S_DRAGONRIDER */
-	case RF6_OFFSET+15:
+	case RF6_OFFSET + 15:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DRAGONRIDER, 1, clone_summoning);
@@ -3605,7 +3605,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 	/* RF6_XXX7X6 */
 	/* RF6_SUMMON_KIN */
-	case RF6_OFFSET+16: {
+	case RF6_OFFSET + 16: {
 		char tmp[MAX_CHARS];
 
 		if (monst_check_antimagic(Ind, m_idx)) break;
@@ -3621,7 +3621,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 	/* RF6_XXX8X6 */
 	/* RF6_S_HI_DEMONS */
-	case RF6_OFFSET+17:
+	case RF6_OFFSET + 17:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 
@@ -3642,7 +3642,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_MONSTER */
-	case RF6_OFFSET+18:
+	case RF6_OFFSET + 18:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_MONSTER, 1, clone_summoning);
@@ -3650,7 +3650,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_MONSTERS */
-	case RF6_OFFSET+19:
+	case RF6_OFFSET + 19:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 8; k++)
@@ -3659,7 +3659,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_ANTS */
-	case RF6_OFFSET+20:
+	case RF6_OFFSET + 20:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 6; k++)
@@ -3668,7 +3668,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_SPIDERS */
-	case RF6_OFFSET+21:
+	case RF6_OFFSET + 21:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 6; k++)
@@ -3677,7 +3677,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_HOUNDS */
-	case RF6_OFFSET+22:
+	case RF6_OFFSET + 22:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 6; k++)
@@ -3686,7 +3686,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_HYDRAS */
-	case RF6_OFFSET+23:
+	case RF6_OFFSET + 23:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 6; k++)
@@ -3695,7 +3695,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_ANGEL */
-	case RF6_OFFSET+24:
+	case RF6_OFFSET + 24:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_ANGEL, 1, clone_summoning);
@@ -3703,7 +3703,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_DEMON */
-	case RF6_OFFSET+25:
+	case RF6_OFFSET + 25:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DEMON, 1, clone_summoning);
@@ -3711,7 +3711,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_UNDEAD */
-	case RF6_OFFSET+26:
+	case RF6_OFFSET + 26:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_UNDEAD, 1, clone_summoning);
@@ -3719,7 +3719,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_DRAGON */
-	case RF6_OFFSET+27:
+	case RF6_OFFSET + 27:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DRAGON, 1, clone_summoning);
@@ -3727,7 +3727,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_HI_UNDEAD */
-	case RF6_OFFSET+28:
+	case RF6_OFFSET + 28:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 8; k++)
@@ -3736,7 +3736,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_HI_DRAGONS */
-	case RF6_OFFSET+29:
+	case RF6_OFFSET + 29:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 8; k++)
@@ -3745,7 +3745,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_NAZGUL */
-	case RF6_OFFSET+30:
+	case RF6_OFFSET + 30:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 8; k++)
@@ -3756,7 +3756,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_UNIQUE */
-	case RF6_OFFSET+31:
+	case RF6_OFFSET + 31:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 8; k++)
@@ -3767,7 +3767,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF0_S_HI_MONSTER */
-	case RF0_OFFSET+0:
+	case RF0_OFFSET + 0:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_MONSTER, 1, clone_summoning);
@@ -3775,7 +3775,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF0_S_HI_MONSTERS */
-	case RF0_OFFSET+1:
+	case RF0_OFFSET + 1:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 8; k++)
@@ -3784,7 +3784,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF0_S_HI_UNIQUE */
-	case RF0_OFFSET+2:
+	case RF0_OFFSET + 2:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 8; k++)
@@ -3795,7 +3795,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF0_BO_DISE */
-	case RF0_OFFSET+7:
+	case RF0_OFFSET + 7:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3805,7 +3805,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF0_BA_DISE */
-	case RF0_OFFSET+8:
+	case RF0_OFFSET + 8:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3815,7 +3815,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF0_S_DEMONS */
-	case RF0_OFFSET+14:
+	case RF0_OFFSET + 14:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 6; k++)
@@ -3824,7 +3824,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF0_S_DRAGONS */
-	case RF0_OFFSET+15:
+	case RF0_OFFSET + 15:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 6; k++)
@@ -3833,7 +3833,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF0_S_HI_DEMON */
-	case RF0_OFFSET+16:
+	case RF0_OFFSET + 16:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_DEMON, 1, clone_summoning);
@@ -3841,7 +3841,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF0_S_HI_DRAGON */
-	case RF0_OFFSET+17:
+	case RF0_OFFSET + 17:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_DRAGON, 1, clone_summoning);
@@ -3849,7 +3849,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF0_BR_ICE */
-	case RF0_OFFSET+18:
+	case RF0_OFFSET + 18:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes ice for", m_name);
@@ -3859,7 +3859,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF0_BR_WATER */
-	case RF0_OFFSET+19:
+	case RF0_OFFSET + 19:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes water for", m_name);
@@ -4318,7 +4318,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	switch (thrown_spell) {
 
 	/* RF4_SHRIEK */
-	case RF4_OFFSET+0:
+	case RF4_OFFSET + 0:
 		//if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		/* the_sandman: changed it so that other ppl nearby will know too */
@@ -4335,7 +4335,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_UNMAGIC */
-	case RF4_OFFSET+1:
+	case RF4_OFFSET + 1:
 		disturb(Ind, 1, 0);
 #if 0	// oops, this cannot be 'magic' ;)
 		if (monst_check_antimagic(Ind, m_idx)) break;
@@ -4350,12 +4350,12 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 
 #if 0
 	/* RF4_XXX3X4 */
-	case RF4_OFFSET+2:
+	case RF4_OFFSET + 2:
 		break;
 #endif
 
 	/* RF4_S_ANIMAL */
-	case RF4_OFFSET+2:
+	case RF4_OFFSET + 2:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_ANIMAL, 1, clone_summoning);
@@ -4363,7 +4363,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_ROCKET */
-	case RF4_OFFSET+3:
+	case RF4_OFFSET + 3:
 		if (!local) disturb(Ind, 1, 0);
 		//if (blind) msg_format(Ind, "%^s shoots something.", m_name);
 		if (blind) msg_print(Ind, "You hear a dull, heavy sound.");
@@ -4377,7 +4377,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_ARROW_1 (arrow, light) */
-	case RF4_OFFSET+4: {
+	case RF4_OFFSET + 4: {
 		//int power = rlev / 2 + randint(rlev / 2),
 		int	dice = 1 + rlev / 8,
 		fois = 1 + rlev / 20;
@@ -4398,7 +4398,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		}
 
 	/* RF4_ARROW_2 (shot, heavy) */
-	case RF4_OFFSET+5: {
+	case RF4_OFFSET + 5: {
 		//int power = rlev / 2 + randint(rlev / 2),
 		//fois = 1 + rlev / 20;
 		int	dice = 3 + rlev / 5;
@@ -4417,7 +4417,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		}
 
 	/* former RF4_ARROW_3 (bolt, heavy) */
-	case RF4_OFFSET+6: {
+	case RF4_OFFSET + 6: {
 		int	dice = 3 + rlev / 5;
 #if 0
 		if (power > 8) dice += 2;
@@ -4434,7 +4434,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		}
 
 	/* former RF4_ARROW_4 (generic missile, heavy) */
-	case RF4_OFFSET+7: {
+	case RF4_OFFSET + 7: {
 		int	dice = 3 + rlev / 5;
 #if 0
 		if (power > 8) dice += 2;
@@ -4450,7 +4450,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		}
 
 	/* RF4_BR_ACID */
-	case RF4_OFFSET+8:
+	case RF4_OFFSET + 8:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes acid for", m_name);
@@ -4459,7 +4459,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_ELEC */
-	case RF4_OFFSET+9:
+	case RF4_OFFSET + 9:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes lightning for", m_name);
@@ -4468,7 +4468,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_FIRE */
-	case RF4_OFFSET+10:
+	case RF4_OFFSET + 10:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes fire for", m_name);
@@ -4477,7 +4477,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_COLD */
-	case RF4_OFFSET+11:
+	case RF4_OFFSET + 11:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes frost for", m_name);
@@ -4486,7 +4486,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_POIS */
-	case RF4_OFFSET+12:
+	case RF4_OFFSET + 12:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes gas for", m_name);
@@ -4495,7 +4495,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_NETH */
-	case RF4_OFFSET+13:
+	case RF4_OFFSET + 13:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes nether for", m_name);
@@ -4504,7 +4504,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_LITE */
-	case RF4_OFFSET+14:
+	case RF4_OFFSET + 14:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes light for", m_name);
@@ -4513,7 +4513,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_DARK */
-	case RF4_OFFSET+15:
+	case RF4_OFFSET + 15:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes darkness for", m_name);
@@ -4522,7 +4522,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_CONF */
-	case RF4_OFFSET+16:
+	case RF4_OFFSET + 16:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes confusion for", m_name);
@@ -4531,7 +4531,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_SOUN */
-	case RF4_OFFSET+17:
+	case RF4_OFFSET + 17:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes sound for", m_name);
@@ -4540,7 +4540,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_CHAO */
-	case RF4_OFFSET+18:
+	case RF4_OFFSET + 18:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes chaos for", m_name);
@@ -4549,7 +4549,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_DISE */
-	case RF4_OFFSET+19:
+	case RF4_OFFSET + 19:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes disenchantment for", m_name);
@@ -4558,7 +4558,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_NEXU */
-	case RF4_OFFSET+20:
+	case RF4_OFFSET + 20:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes nexus for", m_name);
@@ -4567,7 +4567,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_TIME */
-	case RF4_OFFSET+21:
+	case RF4_OFFSET + 21:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes time for", m_name);
@@ -4576,7 +4576,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_INER */
-	case RF4_OFFSET+22:
+	case RF4_OFFSET + 22:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes inertia for", m_name);
@@ -4584,7 +4584,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_GRAV */
-	case RF4_OFFSET+23:
+	case RF4_OFFSET + 23:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes gravity for", m_name);
@@ -4592,7 +4592,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_SHAR */
-	case RF4_OFFSET+24:
+	case RF4_OFFSET + 24:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes shards for", m_name);
@@ -4601,7 +4601,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_PLAS */
-	case RF4_OFFSET+25:
+	case RF4_OFFSET + 25:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes plasma for", m_name);
@@ -4611,7 +4611,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_WALL */
-	case RF4_OFFSET+26:
+	case RF4_OFFSET + 26:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes force for", m_name);
@@ -4619,7 +4619,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BR_MANA */
-	case RF4_OFFSET+27:
+	case RF4_OFFSET + 27:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes magical energy for", m_name);
@@ -4629,7 +4629,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 
 	/* RF4_XXX5X4 */
 	/* RF4_BR_DISI */
-	case RF4_OFFSET+28:
+	case RF4_OFFSET + 28:
 		if (!local) disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes disintegration for", m_name);
@@ -4638,7 +4638,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 
 	/* RF4_XXX6X4 */
 	/* RF4_BR_NUKE */
-	case RF4_OFFSET+29:
+	case RF4_OFFSET + 29:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes toxic waste for", m_name);
@@ -4647,7 +4647,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_MOAN */
-	case RF4_OFFSET+30:
+	case RF4_OFFSET + 30:
 		if (season_halloween) {
 			/* Halloween event code for ranged MOAN -C. Blue */
 			disturb(Ind, 1, 0);
@@ -4657,7 +4657,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF4_BOULDER */
-	case RF4_OFFSET+31:
+	case RF4_OFFSET + 31:
 		//note: not intercepted atm
 		disturb(Ind, 1, 0);
 		if (blind) msg_print(Ind, "You hear something grunt with exertion.");
@@ -4666,7 +4666,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BA_ACID */
-	case RF5_OFFSET+0:
+	case RF5_OFFSET + 0:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -4676,7 +4676,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BA_ELEC */
-	case RF5_OFFSET+1:
+	case RF5_OFFSET + 1:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -4686,7 +4686,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BA_FIRE */
-	case RF5_OFFSET+2:
+	case RF5_OFFSET + 2:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -4696,7 +4696,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BA_COLD */
-	case RF5_OFFSET+3:
+	case RF5_OFFSET + 3:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -4706,7 +4706,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BA_POIS */
-	case RF5_OFFSET+4:
+	case RF5_OFFSET + 4:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -4716,7 +4716,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BA_NETH */
-	case RF5_OFFSET+5:
+	case RF5_OFFSET + 5:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -4726,7 +4726,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BA_WATE */
-	case RF5_OFFSET+6:
+	case RF5_OFFSET + 6:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -4737,7 +4737,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BA_MANA */
-	case RF5_OFFSET+7:
+	case RF5_OFFSET + 7:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles powerfully.", m_name);
@@ -4747,7 +4747,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BA_DARK */
-	case RF5_OFFSET+8:
+	case RF5_OFFSET + 8:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles powerfully.", m_name);
@@ -4757,7 +4757,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_DRAIN_MANA */
-	case RF5_OFFSET+9:
+	case RF5_OFFSET + 9:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		if (p_ptr->csp) {
 			int r1;
@@ -4811,7 +4811,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_MIND_BLAST */
-	case RF5_OFFSET+10:
+	case RF5_OFFSET + 10:
 		disturb(Ind, 1, 0);
 		if (!seen)
 			msg_print(Ind, "You feel something focussing on your mind.");
@@ -4833,7 +4833,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BRAIN_SMASH */
-	case RF5_OFFSET+11:
+	case RF5_OFFSET + 11:
 		disturb(Ind, 1, 0);
 		if (!seen)
 			msg_print(Ind, "You feel something focussing on your mind.");
@@ -4857,7 +4857,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_CURSE (former CAUSE1~4) */
-	case RF5_OFFSET+12: {
+	case RF5_OFFSET + 12: {
 		/* No antimagic check -- is 'curse' magic? */
 		/* rebalance might be needed? */
 		int power = rlev / 2 + randint(rlev);
@@ -4951,11 +4951,11 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		}
 
 	/* RF5_XXX4X4? */
-	case RF5_OFFSET+13:
+	case RF5_OFFSET + 13:
 		break;
 
 	/* RF5_BA_NUKE */
-	case RF5_OFFSET+14:
+	case RF5_OFFSET + 14:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -4965,7 +4965,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BA_CHAO */
-	case RF5_OFFSET+15:
+	case RF5_OFFSET + 15:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles frighteningly.", m_name);
@@ -4975,7 +4975,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BO_ACID */
-	case RF5_OFFSET+16:
+	case RF5_OFFSET + 16:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -4985,7 +4985,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BO_ELEC */
-	case RF5_OFFSET+17:
+	case RF5_OFFSET + 17:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -4995,7 +4995,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BO_FIRE */
-	case RF5_OFFSET+18:
+	case RF5_OFFSET + 18:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -5005,7 +5005,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BO_COLD */
-	case RF5_OFFSET+19:
+	case RF5_OFFSET + 19:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -5015,7 +5015,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BO_POIS */
-	case RF5_OFFSET+20:
+	case RF5_OFFSET + 20:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -5025,7 +5025,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BO_NETH */
-	case RF5_OFFSET+21:
+	case RF5_OFFSET + 21:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -5035,7 +5035,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BO_WATE */
-	case RF5_OFFSET+22:
+	case RF5_OFFSET + 22:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -5045,7 +5045,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BO_MANA */
-	case RF5_OFFSET+23:
+	case RF5_OFFSET + 23:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -5055,7 +5055,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BO_PLAS */
-	case RF5_OFFSET+24:
+	case RF5_OFFSET + 24:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -5066,7 +5066,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BO_ICEE */
-	case RF5_OFFSET+25:
+	case RF5_OFFSET + 25:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -5077,7 +5077,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_MISSILE -- note: 'Magic Missile', but it's actually not GF_MANA but physical damage. */
-	case RF5_OFFSET+26:
+	case RF5_OFFSET + 26:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -5089,7 +5089,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_SCARE */
-	case RF5_OFFSET+27:
+	case RF5_OFFSET + 27:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_print(Ind, "You hear scary noises.");
@@ -5104,7 +5104,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_BLIND */
-	case RF5_OFFSET+28:
+	case RF5_OFFSET + 28:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -5119,7 +5119,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_CONF */
-	case RF5_OFFSET+29:
+	case RF5_OFFSET + 29:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles, and you hear puzzling noises.", m_name);
@@ -5135,7 +5135,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_SLOW */
-	case RF5_OFFSET+30:
+	case RF5_OFFSET + 30:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		msg_format(Ind, "%^s drains power from your muscles!", m_name);
@@ -5150,7 +5150,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF5_HOLD */
-	case RF5_OFFSET+31:
+	case RF5_OFFSET + 31:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -5166,7 +5166,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF6_HASTE */
-	case RF6_OFFSET+0:
+	case RF6_OFFSET + 0:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		if (visible) {
 			//disturb(Ind, 1, 0);
@@ -5193,7 +5193,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	/* RF6_XXX1X6 */
 	/* RF6_HAND_DOOM */
 	/* this should be amplified by some means! */
-	case RF6_OFFSET+1:
+	case RF6_OFFSET + 1:
 		// if (!direct) break;	/* allow it over wall, or not..? */
 		disturb(Ind, 1, 0);
 		msg_format(Ind, "%^s invokes the Hand of Doom!", m_name);
@@ -5212,7 +5212,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF6_HEAL */
-	case RF6_OFFSET+2:
+	case RF6_OFFSET + 2:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		if (visible) {
 			//disturb(Ind, 1, 0);
@@ -5302,7 +5302,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 
 	/* RF6_XXX2X6 */
 	/* RF6_S_ANIMALS */
-	case RF6_OFFSET+3:
+	case RF6_OFFSET + 3:
 		disturb(Ind, 1, 0);
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		for (k = 0; k < 4; k++)
@@ -5311,7 +5311,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF6_BLINK */
-	case RF6_OFFSET+4:
+	case RF6_OFFSET + 4:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 
 		/* No teleporting within no-tele vaults and such */
@@ -5341,7 +5341,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF6_TPORT */
-	case RF6_OFFSET+5:
+	case RF6_OFFSET + 5:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 
 		/* No teleporting within no-tele vaults and such */
@@ -5369,12 +5369,12 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 
 	/* RF6_XXX3X6 */
 	/* RF6_RAISE_DEAD */
-	case RF6_OFFSET+6:
+	case RF6_OFFSET + 6:
 		break;
 
 	/* RF6_XXX4X6 */
 	/* RF6_S_BUG */
-	case RF6_OFFSET+7:
+	case RF6_OFFSET + 7:
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 6; k++)
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_BUG, 1, clone_summoning);
@@ -5383,7 +5383,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF6_TELE_TO */
-	case RF6_OFFSET+8: {
+	case RF6_OFFSET + 8: {
 		int chance = (195 - p_ptr->skill_sav) / 2;
 
 		if (p_ptr->martyr) break;
@@ -5419,7 +5419,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		}
 
 	/* RF6_TELE_AWAY */
-	case RF6_OFFSET+9: {
+	case RF6_OFFSET + 9: {
 		int chance = (195 - p_ptr->skill_sav) / 2;
 
 		if (p_ptr->martyr) break;
@@ -5453,7 +5453,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		}
 
 	/* RF6_TELE_LEVEL */
-	case RF6_OFFSET+10:
+	case RF6_OFFSET + 10:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		if (p_ptr->martyr) break;
 
@@ -5487,7 +5487,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 
 	/* RF6_XXX5 */
 	/* RF6_S_RNG */
-	case RF6_OFFSET+11:
+	case RF6_OFFSET + 11:
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 6; k++)
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_RNG, 1, clone_summoning);
@@ -5496,7 +5496,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF6_DARKNESS */
-	case RF6_OFFSET+12:
+	case RF6_OFFSET + 12:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -5505,7 +5505,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF6_TRAPS */
-	case RF6_OFFSET+13:
+	case RF6_OFFSET + 13:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles and cackles evilly.", m_name);
@@ -5514,7 +5514,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF6_FORGET */
-	case RF6_OFFSET+14:
+	case RF6_OFFSET + 14:
 		disturb(Ind, 1, 0);
 		msg_format(Ind, "%^s tries to blank your mind.", m_name);
 #ifdef USE_SOUND_2010
@@ -5531,7 +5531,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 
 	/* RF6_XXX6X6 */
 	/* RF6_S_DRAGONRIDER */
-	case RF6_OFFSET+15:
+	case RF6_OFFSET + 15:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DRAGONRIDER, 1, clone_summoning);
@@ -5540,7 +5540,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 
 	/* RF6_XXX7X6 */
 	/* RF6_SUMMON_KIN */
-	case RF6_OFFSET+16: {
+	case RF6_OFFSET + 16: {
 		char tmp[MAX_CHARS];
 
 		if (monst_check_antimagic(Ind, m_idx)) break;
@@ -5556,7 +5556,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 
 	/* RF6_XXX8X6 */
 	/* RF6_S_HI_DEMONS */
-	case RF6_OFFSET+17:
+	case RF6_OFFSET + 17:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 
@@ -5577,7 +5577,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_MONSTER */
-	case RF6_OFFSET+18:
+	case RF6_OFFSET + 18:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_MONSTER, 1, clone_summoning);
@@ -5585,7 +5585,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_MONSTERS */
-	case RF6_OFFSET+19:
+	case RF6_OFFSET + 19:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 8; k++)
@@ -5594,7 +5594,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_ANTS */
-	case RF6_OFFSET+20:
+	case RF6_OFFSET + 20:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 6; k++)
@@ -5603,7 +5603,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_SPIDERS */
-	case RF6_OFFSET+21:
+	case RF6_OFFSET + 21:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 6; k++)
@@ -5612,7 +5612,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_HOUNDS */
-	case RF6_OFFSET+22:
+	case RF6_OFFSET + 22:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 6; k++)
@@ -5621,7 +5621,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_HYDRAS */
-	case RF6_OFFSET+23:
+	case RF6_OFFSET + 23:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 6; k++)
@@ -5630,7 +5630,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_ANGEL */
-	case RF6_OFFSET+24:
+	case RF6_OFFSET + 24:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_ANGEL, 1, clone_summoning);
@@ -5638,7 +5638,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_DEMON */
-	case RF6_OFFSET+25:
+	case RF6_OFFSET + 25:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DEMON, 1, clone_summoning);
@@ -5646,7 +5646,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_UNDEAD */
-	case RF6_OFFSET+26:
+	case RF6_OFFSET + 26:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_UNDEAD, 1, clone_summoning);
@@ -5654,7 +5654,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_DRAGON */
-	case RF6_OFFSET+27:
+	case RF6_OFFSET + 27:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DRAGON, 1, clone_summoning);
@@ -5662,7 +5662,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_HI_UNDEAD */
-	case RF6_OFFSET+28:
+	case RF6_OFFSET + 28:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 8; k++)
@@ -5671,7 +5671,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_HI_DRAGONS */
-	case RF6_OFFSET+29:
+	case RF6_OFFSET + 29:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 8; k++)
@@ -5680,7 +5680,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_NAZGUL */
-	case RF6_OFFSET+30:
+	case RF6_OFFSET + 30:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 8; k++)
@@ -5691,7 +5691,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF6_S_UNIQUE */
-	case RF6_OFFSET+31:
+	case RF6_OFFSET + 31:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 8; k++)
@@ -5702,7 +5702,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF0_S_HI_MONSTER */
-	case RF0_OFFSET+0:
+	case RF0_OFFSET + 0:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_MONSTER, 1, clone_summoning);
@@ -5710,7 +5710,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF0_S_HI_MONSTERS */
-	case RF0_OFFSET+1:
+	case RF0_OFFSET + 1:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 8; k++)
@@ -5719,7 +5719,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF0_S_HI_UNIQUE */
-	case RF0_OFFSET+2:
+	case RF0_OFFSET + 2:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 8; k++)
@@ -5730,7 +5730,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF0_BO_DISE */
-	case RF0_OFFSET+7:
+	case RF0_OFFSET + 7:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -5740,7 +5740,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF0_BA_DISE */
-	case RF0_OFFSET+8:
+	case RF0_OFFSET + 8:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -5750,7 +5750,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF0_S_DEMONS */
-	case RF0_OFFSET+14:
+	case RF0_OFFSET + 14:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 6; k++)
@@ -5759,7 +5759,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF0_S_DRAGONS */
-	case RF0_OFFSET+15:
+	case RF0_OFFSET + 15:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		for (k = 0; k < 6; k++)
@@ -5768,7 +5768,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF0_S_HI_DEMON */
-	case RF0_OFFSET+16:
+	case RF0_OFFSET + 16:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_DEMON, 1, clone_summoning);
@@ -5776,7 +5776,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF0_S_HI_DRAGON */
-	case RF0_OFFSET+17:
+	case RF0_OFFSET + 17:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_DRAGON, 1, clone_summoning);
@@ -5784,7 +5784,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF0_BR_ICE */
-	case RF0_OFFSET+18:
+	case RF0_OFFSET + 18:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes ice for", m_name);
@@ -5794,7 +5794,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF0_BR_WATER */
-	case RF0_OFFSET+19:
+	case RF0_OFFSET + 19:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes water for", m_name);

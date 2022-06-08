@@ -709,11 +709,11 @@ static int Infoclr_Opcode(cptr str) {
 	register int i;
 
 	/* Scan through all legal operation names */
-	for (i = 0; opcode_pairs[i*2]; ++i) {
+	for (i = 0; opcode_pairs[i * 2]; ++i) {
 		/* Is this the right oprname? */
-		if (streq(opcode_pairs[i*2], str)) {
+		if (streq(opcode_pairs[i * 2], str)) {
 			/* Convert the second element in the pair into a Code */
-			return (atoi(opcode_pairs[i*2+1]));
+			return (atoi(opcode_pairs[i * 2 + 1]));
 		}
 	}
 
@@ -1647,8 +1647,8 @@ static errr CheckEvent(bool wait) {
 				/* Get the area that should be updated */
 				int x1 = xev->xexpose.x / td->fnt->wid;
 				int y1 = xev->xexpose.y / td->fnt->hgt;
-				int x2 = ((xev->xexpose.x+xev->xexpose.width) / td->fnt->wid);
-				int y2 = ((xev->xexpose.y+xev->xexpose.height) / td->fnt->hgt);
+				int x2 = ((xev->xexpose.x + xev->xexpose.width) / td->fnt->wid);
+				int y2 = ((xev->xexpose.y + xev->xexpose.height) / td->fnt->hgt);
 
 				/* Redraw section*/
 				Term_redraw_section(x1, y1, x2, y2);
@@ -2282,7 +2282,7 @@ static XImage *ReadBMP(Display *disp, char Name[]) {
 			                   infoheader.biWidth, infoheader.biHeight, 8, 0);
 
 			if (Res != NULL) {
-			   for (y = 0 ; y < infoheader.biHeight; ++y) {
+			   for (y = 0; y < infoheader.biHeight; ++y) {
 			       for (x = 0; x < infoheader.biWidth; ++x) {
 				    XPutPixel(Res, x, infoheader.biHeight - y - 1, clr_Pixells[getc(f)]);
 			       }

@@ -865,7 +865,7 @@ void prt_sane(byte attr, cptr buf) {
 
 	put_str("SN:         ", ROW_SANITY, COL_SANITY);
 
-	c_put_str(attr, buf, ROW_SANITY, COL_SANITY+3);
+	c_put_str(attr, buf, ROW_SANITY, COL_SANITY + 3);
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);

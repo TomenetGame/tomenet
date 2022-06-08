@@ -653,7 +653,7 @@ static cptr extract_file_name(cptr s) {
 	while ((p >= s) && (*p != ':') && (*p != '\\')) p--;
 
 	/* Return file name */
-	return (p+1);
+	return (p + 1);
 }
 
 
@@ -1453,7 +1453,7 @@ static errr term_force_font(term_data *td, cptr name) {
 		base[i] = FORCEUPPER(s[i]);
 
 		/* Extract "hgt" when found */
-		if (base[i] == 'X') hgt = atoi(s+i+1);
+		if (base[i] == 'X') hgt = atoi(s + i + 1);
 	}
 
 	/* Terminate */
@@ -1597,7 +1597,7 @@ static errr term_force_graf(term_data *td, cptr name) {
 		base[i] = FORCEUPPER(s[i]);
 
 		/* Extract "hgt" when found */
-		if (base[i] == 'X') hgt = atoi(s+i+1);
+		if (base[i] == 'X') hgt = atoi(s + i + 1);
 	}
 
 	/* Terminate */
