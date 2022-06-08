@@ -675,7 +675,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 							/* destroy all items with specific inscription? */
 							if (inscr) {
-								if (!o_ptr->note || strcmp(quark_str(o_ptr->note), inscr_str)) {
+								if (!o_ptr->note || strcmp(quark_str(o_ptr->note), inscr_str)) { /* silyl compiler warning */
 									if (!noidx) {
 										/* Take total of one turn */
 										p_ptr->energy -= level_speed(&p_ptr->wpos);
