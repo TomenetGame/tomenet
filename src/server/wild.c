@@ -457,7 +457,7 @@ static bool wild_monst_aux_town(int r_idx) {
 
 #if 0
 	/* Maggot is allowed :) */
-	if (!strcmp(&r_name[r_ptr->name],"Farmer Maggot")) return TRUE;
+	if (!strcmp(&r_name[r_ptr->name], "Farmer Maggot")) return TRUE;
 #endif
 
 	if (r_ptr->flags8 & RF8_WILD_TOWN) return TRUE;
@@ -826,13 +826,13 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y) {
 	while (attempts < 100) {
 #endif
 
-		reserve_building_plot(wpos, &x1,&y1, &x2,&y2, xlen, ylen, -1, -1);
+		reserve_building_plot(wpos, &x1, &y1, &x2, &y2, xlen, ylen, -1, -1);
 #ifdef DEVEL_TOWN_COMPATIBILITY
 		/* we have obtained a valid plot */
 		if (x1 > 0) {
 			 /* maximum distance to field of 40 */
-			if ( ((x1-x)*(x1-x) + (y1-y)*(y1-y) <= 40*40) ||
-			     ((x2-x)*(x2-x) + (y2-y)*(y2-y) <= 40*40) ) break;
+			if ( ((x1 - x) * (x1 - x) + (y1 - y) * (y1 - y) <= 40 * 40) ||
+			     ((x2 - x) * (x2 - x) + (y2 - y) * (y2 - y) <= 40 * 40) ) break;
 		}
 		attempts++;
 	}
@@ -937,9 +937,9 @@ static bool wild_monst_aux_invaders(int r_idx) {
 
 	/* invader species */
 	if (strchr("oTpOKbrm", r_ptr->d_char)) return TRUE;
-	if (!strcmp(&r_name[r_ptr->name],"Dark elven mage")) return TRUE;
-	if (!strcmp(&r_name[r_ptr->name],"Dark elven priest")) return TRUE;
-	if (!strcmp(&r_name[r_ptr->name],"Dark elven warrior")) return TRUE;
+	if (!strcmp(&r_name[r_ptr->name], "Dark elven mage")) return TRUE;
+	if (!strcmp(&r_name[r_ptr->name], "Dark elven priest")) return TRUE;
+	if (!strcmp(&r_name[r_ptr->name], "Dark elven warrior")) return TRUE;
 
 	return FALSE;
 }

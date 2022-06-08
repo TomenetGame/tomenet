@@ -4421,7 +4421,7 @@ static void do_recall(int Ind, bool bypass) {
 		if (d_ptr){
 			if ((d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev) ||
 			    (!d_ptr->type && d_ptr->baselevel <= (p_ptr->lev * 3) / 2 + 7)) {
-				msg_print(Ind,"\377rAs you attempt to recall, you are gripped by an uncontrollable fear.");
+				msg_print(Ind, "\377rAs you attempt to recall, you are gripped by an uncontrollable fear.");
 				msg_print(Ind, "\377oA tension leaves the air around you...");
 				p_ptr->redraw |= (PR_DEPTH);
 				if (!is_admin(p_ptr)) {
@@ -4433,7 +4433,7 @@ static void do_recall(int Ind, bool bypass) {
 #endif
 		/* Nether Realm only for Kings/Queens (currently paranoia, since NR is NO_RECALL_INTO) */
 		if (d_ptr && (d_ptr->type == DI_NETHER_REALM) && !p_ptr->total_winner) {
-			msg_print(Ind,"\377rAs you attempt to recall, you are gripped by an uncontrollable fear.");
+			msg_print(Ind, "\377rAs you attempt to recall, you are gripped by an uncontrollable fear.");
 			if (!is_admin(p_ptr)) {
 				set_afraid(Ind, 10);//+(d_ptr->baselevel-p_ptr->max_dlv));
 				return;
@@ -4805,7 +4805,7 @@ static bool process_player_end_aux(int Ind) {
 
 						if (magik(swim)) hit = 0;
 
-						if (hit) msg_print(Ind,"\377rYou're drowning!");
+						if (hit) msg_print(Ind, "\377rYou're drowning!");
 
 						/* harm equipments (even hit == 0) */
 						if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
@@ -4819,7 +4819,7 @@ static bool process_player_end_aux(int Ind) {
 						}
 
 						if (randint(1000 - factor) < 10 && !p_ptr->sustain_str) {
-							msg_print(Ind,"\377oYou are weakened by the exertion of swimming!");
+							msg_print(Ind, "\377oYou are weakened by the exertion of swimming!");
 							dec_stat(Ind, A_STR, 10, STAT_DEC_TEMPORARY);
 						}
 						 /* Inventory can be immune, but cold immunity cannot avert drowning */
@@ -4847,13 +4847,13 @@ static bool process_player_end_aux(int Ind) {
 
 			if (hit) {
 				if (c_ptr->feat != FEAT_SHAL_WATER)
-					msg_print(Ind,"\377rYou cannot breathe air!");
+					msg_print(Ind, "\377rYou cannot breathe air!");
 				else
-					msg_print(Ind,"\377rThere's not enough water to breathe!");
+					msg_print(Ind, "\377rThere's not enough water to breathe!");
 			}
 
 			if (randint(1000) < 10) {
-				msg_print(Ind,"\377rYou find it hard to stir!");
+				msg_print(Ind, "\377rYou find it hard to stir!");
 //				do_dec_stat(Ind, A_DEX, STAT_DEC_TEMPORARY);
 				dec_stat(Ind, A_DEX, 10, STAT_DEC_TEMPORARY);
 			}
@@ -7447,7 +7447,7 @@ static void process_various(void) {
 					//handle_music(i); //superfluous? */
   #endif
  #else /* Kill players who didn't leave on their own? */
-					strcpy(p_ptr->died_from,"collapsing nether plane");
+					strcpy(p_ptr->died_from, "collapsing nether plane");
 					p_ptr->died_from_ridx = 0;
 					p_ptr->deathblow = 0;
 					player_death(i);
@@ -7565,7 +7565,7 @@ static void process_various(void) {
 
 			/* Tell the player */
 			/* the_sandman: added colour */
-			msg_format(j,"\374\377v%s rises from the dead!",(r_name + r_ptr->name));
+			msg_format(j, "\374\377v%s rises from the dead!",(r_name + r_ptr->name));
 		}
 
 		/* discard reserved character names that exceed their timeout */

@@ -669,11 +669,11 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
  if (compaction != 2) { /* #ifndef COMPACT_ALT */
 	/* Print a message */
-	fprintf(fff," ");
+	fprintf(fff, " ");
 	if (q_ptr->admin_dm) {
-		if (q_ptr->male) fprintf(fff,"\377bDungeon Master ");
-		else fprintf(fff,"\377bDungeon Mistress ");
-	} else if (q_ptr->admin_wiz) fprintf(fff,"\377bDungeon Wizard ");
+		if (q_ptr->male) fprintf(fff, "\377bDungeon Master ");
+		else fprintf(fff, "\377bDungeon Mistress ");
+	} else if (q_ptr->admin_wiz) fprintf(fff, "\377bDungeon Wizard ");
 	else if (q_ptr->mode & MODE_PVP) fprintf(fff, "\377%cGladiator ", COLOUR_MODE_PVP);
 	else if (q_ptr->ghost) fprintf(fff, "\377rGhost ");
 	else if (q_ptr->total_winner) {
@@ -806,11 +806,11 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
   #endif
  } else { /* COMPACT_ALT */
 	/* Print a message */
-	fprintf(fff," ");
+	fprintf(fff, " ");
 	if (q_ptr->admin_dm) {
-		if (q_ptr->male) fprintf(fff,"\377bDungeon Master ");
-		else fprintf(fff,"\377bDungeon Mistress ");
-	} else if (q_ptr->admin_wiz) fprintf(fff,"\377bDungeon Wizard ");
+		if (q_ptr->male) fprintf(fff, "\377bDungeon Master ");
+		else fprintf(fff, "\377bDungeon Mistress ");
+	} else if (q_ptr->admin_wiz) fprintf(fff, "\377bDungeon Wizard ");
 	else if (q_ptr->mode & MODE_PVP) fprintf(fff, "\377%cGladiator ", COLOUR_MODE_PVP);
 	else if (q_ptr->ghost) fprintf(fff, "\377rGhost ");
 	else if (q_ptr->total_winner) {
@@ -949,8 +949,8 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	char flag_str[12];
 
 	/* Print a message */
-	fprintf(fff," ");
-	if (is_admin(q_ptr)) fprintf(fff,"\377b");
+	fprintf(fff, " ");
+	if (is_admin(q_ptr)) fprintf(fff, "\377b");
 	else if (q_ptr->mode & MODE_PVP) fprintf(fff, "\377%c", COLOUR_MODE_PVP);
 	else if (q_ptr->ghost) fprintf(fff, "\377r");
 	else if (q_ptr->total_winner) fprintf(fff, "\377v");
@@ -1349,11 +1349,11 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 
 	switch (modify_number) {
 	case 3: fprintf(fff, "\377rJudge\377U "); break; //Judge for Highlander games
-	case 4: if (q_ptr->male) fprintf(fff,"\377bDungeon Master\377U ");
-		else fprintf(fff,"\377bDungeon Mistress\377U ");
+	case 4: if (q_ptr->male) fprintf(fff, "\377bDungeon Master\377U ");
+		else fprintf(fff, "\377bDungeon Mistress\377U ");
 		break; //Server Admin
-	case 5: if (q_ptr->male) fprintf(fff,"\377bDungeon Wizard\377U ");
-		else fprintf(fff,"\377bDungeon Wizard\377U ");
+	case 5: if (q_ptr->male) fprintf(fff, "\377bDungeon Wizard\377U ");
+		else fprintf(fff, "\377bDungeon Wizard\377U ");
 		break; //Server Admin
 	default: fprintf(fff, "%s",
 		q_ptr->ghost ? "\377rGhost\377U " :
@@ -1939,8 +1939,8 @@ void write_player_info(int Ind, char *pinfo) {
 	char flag_str[12];
 
 	/* Print a message */
-	fprintf(fff," ");
-	if (is_admin(q_ptr)) fprintf(fff,"\377b");
+	fprintf(fff, " ");
+	if (is_admin(q_ptr)) fprintf(fff, "\377b");
 	else if (q_ptr->mode & MODE_PVP) fprintf(fff, "\377%c", COLOUR_MODE_PVP);
 	else if (q_ptr->ghost) fprintf(fff, "\377r");
 	else if (q_ptr->total_winner) fprintf(fff, "\377v");
@@ -2370,7 +2370,7 @@ void do_cmd_knowledge_dungeons(int Ind) {
  #endif
 #endif
 
-	fprintf(fff,"\n");
+	fprintf(fff, "\n");
 
 	for (y = 0; y < MAX_WILD_Y; y++) {
 		for (x = 0; x < MAX_WILD_X; x++) {
@@ -2495,7 +2495,7 @@ void do_cmd_knowledge_dungeons(int Ind) {
  #endif
 				}
 #endif
-				fprintf(fff,"\n");
+				fprintf(fff, "\n");
 			}
 
 			d_ptr = wild_info[y][x].dungeon;
@@ -2616,17 +2616,17 @@ void do_cmd_knowledge_dungeons(int Ind) {
  #endif
 				}
 #endif
-				fprintf(fff,"\n");
+				fprintf(fff, "\n");
 			}
 		}
 	}
-	fprintf(fff,"\n");
+	fprintf(fff, "\n");
 #ifdef INDICATE_DUNGEONBOSSES_SLAIN
  #ifdef SHOW_DLVL_TO_NONADMIN
-	fprintf(fff,"\377s  ('\377U*\377s' = conquered - dungeon boss has been slain. 'nc' = not conquered yet.)\n");
+	fprintf(fff, "\377s  ('\377U*\377s' = conquered - dungeon boss has been slain. 'nc' = not conquered yet.)\n");
  #else
 	//commented out because it's not an 'immersive' text, should just go to the guide, if at all.
-	//fprintf(fff,"\377s('Conquered' means that you have slain the dungeon's final boss.)\n");
+	//fprintf(fff, "\377s('Conquered' means that you have slain the dungeon's final boss.)\n");
  #endif
 #endif
 
@@ -2654,7 +2654,7 @@ void do_cmd_knowledge_dungeons(int Ind) {
 			if (p_ptr->town_x == x && p_ptr->town_y == y)
 				fprintf(fff, "  \377U(default recall point)");
 
-			fprintf(fff,"\n");
+			fprintf(fff, "\n");
 		}
 	}
 
@@ -2727,7 +2727,7 @@ void do_cmd_check_server_settings(int Ind) {
 		fprintf(fff, "Accounts without characters will be deleted after %d days.\n", ACCOUNT_EXPIRY_DAYS);
 	}
 	fprintf(fff, "Game speed(FPS): %d (%+d%%)\n", cfg.fps, (cfg.fps-60)*100/60);
-	fprintf(fff,"\n");
+	fprintf(fff, "\n");
 
 	/* level preservation */
 	if (cfg.lifes)
@@ -2754,7 +2754,7 @@ void do_cmd_check_server_settings(int Ind) {
 	if (!cfg.maximize) fprintf(fff, "This server is *NOT* maximized!\n");
 #endif
 
-	fprintf(fff,"\n");
+	fprintf(fff, "\n");
 
 	fprintf(fff, "Characters' running speed is boosted (x%d, ie. %+d%%).\n", cfg.running_speed, (cfg.running_speed - 5) * 100 / 5);
 	fprintf(fff, "While 'resting', HP/MP recovers %d times quicker (%+d%%)\n", cfg.resting_rate, (cfg.resting_rate-3)*100/3);
@@ -2810,7 +2810,7 @@ void do_cmd_check_server_settings(int Ind) {
 			break;
 	}
 
-	fprintf(fff,"\n");
+	fprintf(fff, "\n");
 
 	if (cfg.houses_per_player) {
 		//fprintf(fff, "Characters may own up to level/%d houses (caps at level 50) at once", cfg.houses_per_player);
@@ -2846,7 +2846,7 @@ void do_cmd_check_server_settings(int Ind) {
 	if (cfg.acc_house_limit) //ACC_HOUSE_LIMIT
 		fprintf(fff, "Players may own up to %d total houses across all characters of their account.\n This account-wide limit takes priority over the house limit per character.\n", cfg.acc_house_limit);
 
-	fprintf(fff,"\n");
+	fprintf(fff, "\n");
 
 	if (cfg.henc_strictness) fprintf(fff, "Monster exp for non-kings is affected in the following way:\n");
 	switch (cfg.henc_strictness) {
@@ -2864,7 +2864,7 @@ void do_cmd_check_server_settings(int Ind) {
 		break;
 	}
 
-	fprintf(fff,"\n");
+	fprintf(fff, "\n");
 
 	//fprintf(fff, "A dungeon level will be erased about %d~%d seconds after you left.\n", cfg.anti_scum, cfg.anti_scum + 10);
 	fprintf(fff, "An empty, non-static level will be erased after %d seconds minimum lifetime.\n", cfg.anti_scum); //distributed purge_old() isn't called every 10s anymore; use creationtime instead of lastused
@@ -2878,7 +2878,7 @@ void do_cmd_check_server_settings(int Ind) {
 #endif
 	}
 
-	fprintf(fff,"\n");
+	fprintf(fff, "\n");
 
 	/* Items */
 	if (cfg.anti_cheeze_pickup)
@@ -2898,7 +2898,7 @@ void do_cmd_check_server_settings(int Ind) {
 	if (cfg.long_wild_item_removal)
 		fprintf(fff, "Dead player's items in wilderness will be removed after %d minutes.\n", cfg.long_wild_item_removal);
 
-	fprintf(fff,"\n");
+	fprintf(fff, "\n");
 
 	/* arts & winners */
 #ifdef FLUENT_ARTIFACT_RESETS
@@ -3025,7 +3025,7 @@ void do_cmd_check_server_settings(int Ind) {
 		else fprintf(fff, "Noone.\n");
 	}
 
-	fprintf(fff,"\n");
+	fprintf(fff, "\n");
 
 	/* monster-sets */
 	fprintf(fff, "Monsters:\n");
@@ -3059,7 +3059,7 @@ void do_cmd_check_server_settings(int Ind) {
 			fprintf(fff, "  Joke-monsters\n");
 	}
 
-	fprintf(fff,"\n");
+	fprintf(fff, "\n");
 
 	/* trivial */
 	if (cfg.public_rfe)
@@ -3086,8 +3086,7 @@ void do_cmd_check_server_settings(int Ind) {
 		/* Output color byte */
 		//fprintf(fff, "%c\n", 'o');
 
-		fprintf(fff,"\n");
-
+		fprintf(fff, "\n");
 
 		fprintf(fff, "==== Administrative or hidden settings ====\n");
 

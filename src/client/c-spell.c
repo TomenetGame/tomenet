@@ -267,7 +267,7 @@ int get_spell(s32b *sn, cptr prompt, int book) {
 		/* Look for "okay" spells */
 		if (spell_info[realm][sval][i][0] &&
 			/* Hack -- This presumes the spells are sorted by level */
-			!strstr(spell_info[realm][sval][i],"unknown"))
+			!strstr(spell_info[realm][sval][i], "unknown"))
 		{
 			okay = TRUE;
 			num++;

@@ -3387,9 +3387,9 @@ static bool vault_aux_chapel(int r_idx) {
 
 	/* Require "priest" or Angel */
 	if (!((r_ptr->d_char == 'A') ||
-	    strstr((r_name + r_ptr->name),"riest") ||
-	    strstr((r_name + r_ptr->name),"aladin") ||
-	    strstr((r_name + r_ptr->name),"emplar")))
+	    strstr((r_name + r_ptr->name), "riest") ||
+	    strstr((r_name + r_ptr->name), "aladin") ||
+	    strstr((r_name + r_ptr->name), "emplar")))
 		return (FALSE);
 
 	/* Okay */
@@ -3407,9 +3407,9 @@ static bool vault_aux_lesser_chapel(int r_idx) {
 	/* Require "priest" or Angel */
 //	if (!((r_ptr->d_char == 'A' && (r_ptr->level <= 70)) ||
 	if (!((r_ptr->d_char == 'A') ||
-	    strstr((r_name + r_ptr->name),"riest") ||
-	    strstr((r_name + r_ptr->name),"aladin") ||
-	    strstr((r_name + r_ptr->name),"emplar")))
+	    strstr((r_name + r_ptr->name), "riest") ||
+	    strstr((r_name + r_ptr->name), "aladin") ||
+	    strstr((r_name + r_ptr->name), "emplar")))
 		return (FALSE);
 
 	/* Okay */

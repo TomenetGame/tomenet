@@ -196,7 +196,7 @@ void do_cmd_go_up(int Ind) {
 	}
 
 	if (cfg.runlevel < 5 && surface) {
-		msg_print(Ind,"The tower is closed");
+		msg_print(Ind, "The tower is closed");
 		return;
 	}
 
@@ -253,7 +253,7 @@ void do_cmd_go_up(int Ind) {
 	if (surface) {
 		if (!(wild_info[wpos->wy][wpos->wx].flags & WILD_F_UP)) {
 			if (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)
-				msg_print(Ind,"\377sOnly ivy-clad ruins of a former tower remain at this place..");
+				msg_print(Ind, "\377sOnly ivy-clad ruins of a former tower remain at this place..");
 			else msg_print(Ind, "There is nothing above you.");
 			return;
 		} else if ((c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS) &&
@@ -264,7 +264,7 @@ void do_cmd_go_up(int Ind) {
 		}
 	}
 	if (tower && wild_info[wpos->wy][wpos->wx].tower->maxdepth == wpos->wz) {
-		msg_print(Ind,"You are at the top of the tower!");
+		msg_print(Ind, "You are at the top of the tower!");
 		return;
 	}
 
@@ -272,7 +272,7 @@ void do_cmd_go_up(int Ind) {
 	if ((surface) && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_DEATH)) {
 		/* needed for 'Arena Monster Challenge' again, NO_DEATH are now simply empty (no items/monsters) */
 		if (!(in_bree(wpos)) && !is_admin(p_ptr)) {
-			msg_print(Ind,"\377sOnly ivy-clad ruins of a former tower remain at this place..");
+			msg_print(Ind, "\377sOnly ivy-clad ruins of a former tower remain at this place..");
 			return;
 		}
 	}
@@ -283,7 +283,7 @@ void do_cmd_go_up(int Ind) {
 	if (dungeon && (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON ||
 	     wild_info[wpos->wy][wpos->wx].dungeon->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)) &&
 	     (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)) {
-		msg_print(Ind,"\377rThe stairways leading upwards are magically sealed in this dungeon.");
+		msg_print(Ind, "\377rThe stairways leading upwards are magically sealed in this dungeon.");
 		if (!is_admin(p_ptr)) return;
 	}
 #endif
@@ -300,21 +300,21 @@ void do_cmd_go_up(int Ind) {
 #if 0 /* done via NO_MAGIC */
 #ifdef NETHERREALM_BOTTOM_RESTRICT
 			if (!p_ptr->ghost && netherrealm_bottom(wpos)) {
-				msg_print(Ind,"\377rA magical force prevents you from travelling upwards.");
+				msg_print(Ind, "\377rA magical force prevents you from travelling upwards.");
 				if (!is_admin(p_ptr)) return;
 			}
 #endif
 #endif
 			if (!p_ptr->ghost && (wild_info[wpos->wy][wpos->wx].dungeon->flags1 & (DF1_NO_RECALL | DF1_NO_UP | DF1_FORCE_DOWN))) {
-				msg_print(Ind,"\377rA magical force prevents you from travelling upwards.");
+				msg_print(Ind, "\377rA magical force prevents you from travelling upwards.");
 				if (!is_admin(p_ptr)) return;
 			}
 			if (wpos->wz == -1 && p_ptr->ghost && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_EXIT_FLOAT) {
-				msg_print(Ind,"\377rA magical force prevents you from floating upwards.");
+				msg_print(Ind, "\377rA magical force prevents you from floating upwards.");
 				if (!is_admin(p_ptr)) return;
 			}
 			if (wpos->wz == -1 && p_ptr->prob_travel && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_EXIT_PROB) {
-				msg_print(Ind,"\377rA magical force prevents you from travelling upwards.");
+				msg_print(Ind, "\377rA magical force prevents you from travelling upwards.");
 				if (!is_admin(p_ptr)) return;
 			}
 		}
@@ -327,14 +327,14 @@ void do_cmd_go_up(int Ind) {
 #endif
 			/* for Nether Realm: No ghost diving! */
 			if ((wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_RECALL_INTO)) {
-				msg_print(Ind,"\377rA magical force prevents you from floating upwards.");
+				msg_print(Ind, "\377rA magical force prevents you from floating upwards.");
 				if (!is_admin(p_ptr)) return;
 			}
 			if (!p_ptr->ghost &&
 			    ((wild_info[wpos->wy][wpos->wx].tower->flags1 & DF1_NO_RECALL) ||
 			    //(wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_RECALL_INTO) ||  //redundant, see above
 			    (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON))) {
-				msg_print(Ind,"\377rA magical force prevents you from floating upwards.");
+				msg_print(Ind, "\377rA magical force prevents you from floating upwards.");
 				if (!is_admin(p_ptr)) return;
 			}
 		}
@@ -349,7 +349,7 @@ void do_cmd_go_up(int Ind) {
 		if ((!d_ptr->type && d_ptr->baselevel <= (p_ptr->lev * 3) / 2 + 7) ||
 		    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev))
 		{
-			msg_print(Ind,"\377rAs you attempt to ascend, you are gripped by an uncontrollable fear.");
+			msg_print(Ind, "\377rAs you attempt to ascend, you are gripped by an uncontrollable fear.");
 			if (!is_admin(p_ptr)) {
 				set_afraid(Ind, 10);//+(d_ptr->baselevel-p_ptr->max_dlv));
 				return;
@@ -358,7 +358,7 @@ void do_cmd_go_up(int Ind) {
  #endif
 		/* Nether Realm only for Kings/Queens*/
 		if ((d_ptr->type == DI_NETHER_REALM || d_ptr->type == DI_CLOUD_PLANES) && !p_ptr->total_winner) {
-			msg_print(Ind,"\377rAs you attempt to ascend, you are gripped by an uncontrollable fear.");
+			msg_print(Ind, "\377rAs you attempt to ascend, you are gripped by an uncontrollable fear.");
 			if (!is_admin(p_ptr)) {
 				set_afraid(Ind, 10);//+(d_ptr->baselevel-p_ptr->max_dlv));
 				return;
@@ -1075,7 +1075,7 @@ void do_cmd_go_down(int Ind) {
 	}
 
 	if (cfg.runlevel < 5 && surface) {
-		msg_print(Ind,"The dungeon is closed");
+		msg_print(Ind, "The dungeon is closed");
 		return;
 	}
 
@@ -1109,7 +1109,7 @@ void do_cmd_go_down(int Ind) {
 	if (surface) {
 		if (!(wild_info[wpos->wy][wpos->wx].flags & WILD_F_DOWN)) {
 			if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE)
-				msg_print(Ind,"\377sOnly mud-filled ruins of former catacombs remain at this place..");
+				msg_print(Ind, "\377sOnly mud-filled ruins of former catacombs remain at this place..");
 			else msg_print(Ind, "There is nothing below you.");
 			return;
 		} else if ((c_ptr->feat != FEAT_MORE && c_ptr->feat != FEAT_WAY_MORE) &&
@@ -1128,13 +1128,13 @@ void do_cmd_go_down(int Ind) {
 
 #ifdef RPG_SERVER /* Exclude NO_DEATH dungeons from the gameplay */
 	if ((surface) && (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_DEATH)) {
-		msg_print(Ind,"\377sOnly mud-filled ruins of former catacombs remain at this place..");
+		msg_print(Ind, "\377sOnly mud-filled ruins of former catacombs remain at this place..");
 		if (!is_admin(p_ptr)) return;
 	}
 #endif
 
 	if ((p_ptr->global_event_temp & PEVF_SEPDUN_00) && (p_ptr->wpos.wz == 1)) {
-		msg_print(Ind,"\377sThe way is blocked by huge chunks of rocks!");
+		msg_print(Ind, "\377sThe way is blocked by huge chunks of rocks!");
 		if (!is_admin(p_ptr)) return;
 	}
 
@@ -1143,7 +1143,7 @@ void do_cmd_go_down(int Ind) {
 	if (tower && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON ||
 	     wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)) &&
 	    (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE)) {
-		msg_print(Ind,"\377rThe stairways leading downwards are magically sealed in this tower.");
+		msg_print(Ind, "\377rThe stairways leading downwards are magically sealed in this tower.");
 		if (!is_admin(p_ptr)) return;
 	}
 #endif
@@ -1160,21 +1160,21 @@ void do_cmd_go_down(int Ind) {
 #if 0 /* done via NO_MAGIC */
 #ifdef NETHERREALM_BOTTOM_RESTRICT
 			if (!p_ptr->ghost && netherrealm_bottom(wpos)) {
-				msg_print(Ind,"\377rA magical force prevents you from travelling downwards.");
+				msg_print(Ind, "\377rA magical force prevents you from travelling downwards.");
 				if (!is_admin(p_ptr)) return;
 			}
 #endif
 #endif
 			if ((!p_ptr->ghost) && (wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_NO_RECALL | DF1_NO_UP | DF1_FORCE_DOWN))) {
-				msg_print(Ind,"\377rA magical force prevents you from travelling downwards.");
+				msg_print(Ind, "\377rA magical force prevents you from travelling downwards.");
 				if (!is_admin(p_ptr)) return;
 			}
 			if (wpos->wz == 1 && p_ptr->ghost && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_EXIT_FLOAT) {
-				msg_print(Ind,"\377rA magical force prevents you from floating downwards.");
+				msg_print(Ind, "\377rA magical force prevents you from floating downwards.");
 				if (!is_admin(p_ptr)) return;
 			}
 			if (wpos->wz == 1 && p_ptr->prob_travel && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_EXIT_PROB) {
-				msg_print(Ind,"\377rA magical force prevents you from travelling downwards.");
+				msg_print(Ind, "\377rA magical force prevents you from travelling downwards.");
 				if (!is_admin(p_ptr)) return;
 			}
 		}
@@ -1187,14 +1187,14 @@ void do_cmd_go_down(int Ind) {
 #endif
 			/* for Nether Realm: No ghost diving! */
 			if ((wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_RECALL_INTO)) {
-				msg_print(Ind,"\377rA magical force prevents you from floating downwards.");
+				msg_print(Ind, "\377rA magical force prevents you from floating downwards.");
 				if (!is_admin(p_ptr)) return;
 			}
 			if (!p_ptr->ghost &&
 			    ((wild_info[wpos->wy][wpos->wx].dungeon->flags1 & DF1_NO_RECALL) ||
 			    //(wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_RECALL_INTO) ||  //redundant, see above
 			    (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON))) {
-				msg_print(Ind,"\377rA magical force prevents you from floating downwards.");
+				msg_print(Ind, "\377rA magical force prevents you from floating downwards.");
 				if (!is_admin(p_ptr)) return;
 			}
 		}
@@ -1211,7 +1211,7 @@ void do_cmd_go_down(int Ind) {
 		//if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 10) ||
 		if ((!d_ptr->type && d_ptr->baselevel <= (p_ptr->lev * 3) / 2 + 7) ||
 		    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev)) {
-			msg_print(Ind,"\377rAs you attempt to descend, you are gripped by an uncontrollable fear.");
+			msg_print(Ind, "\377rAs you attempt to descend, you are gripped by an uncontrollable fear.");
 			if (!is_admin(p_ptr)) {
 				set_afraid(Ind, 10);//+(d_ptr->baselevel-p_ptr->max_dlv));
 				return;
@@ -1220,7 +1220,7 @@ void do_cmd_go_down(int Ind) {
  #endif
 		/* Nether Realm only for Kings/Queens*/
 		if ((d_ptr->type == DI_NETHER_REALM || d_ptr->type == DI_CLOUD_PLANES) && !p_ptr->total_winner) {
-			msg_print(Ind,"\377rAs you attempt to descend, you are gripped by an uncontrollable fear.");
+			msg_print(Ind, "\377rAs you attempt to descend, you are gripped by an uncontrollable fear.");
 			if (!is_admin(p_ptr)) {
 				set_afraid(Ind, 10);//+(d_ptr->baselevel-p_ptr->max_dlv));
 				return;
@@ -2200,7 +2200,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 		}
 		break; */
 	default:
-		msg_print(Ind,"\377ySorry, this feature is not available");
+		msg_print(Ind, "\377ySorry, this feature is not available");
 		if (!is_admin(p_ptr)) return FALSE;
 	}
 
@@ -2531,7 +2531,7 @@ int access_door_colour(int Ind, struct dna_type *dna) {
 cptr get_house_owner(struct c_special *cs_ptr) {
 	static char string[80];
 	struct dna_type *dna = cs_ptr->sc.ptr;
-	strcpy(string,"nobody.");
+	strcpy(string, "nobody.");
 	if (dna->owner) {
 //		char *name;
 		cptr name;
@@ -2905,7 +2905,7 @@ void do_cmd_open(int Ind, int dir) {
 						disturb(Ind, 1, 0);
 						if (!do_cmd_player_store(Ind, x, y)) {
 #endif
-							msg_format(Ind,"\377sThat house is owned by %s.",get_house_owner(cs_ptr));
+							msg_format(Ind, "\377sThat house is owned by %s.",get_house_owner(cs_ptr));
 #ifdef USE_SOUND_2010
 							sound(Ind, "open_door_stuck", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
@@ -2955,7 +2955,7 @@ void do_cmd_open(int Ind, int dir) {
 						return;
 					}
 				}
-				msg_print(Ind,"\377rYou need a key to open this door.");
+				msg_print(Ind, "\377rYou need a key to open this door.");
 #ifdef USE_SOUND_2010
 				sound(Ind, "open_door_stuck", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
@@ -8707,13 +8707,13 @@ void house_admin(int Ind, int dir, char *args) {
 					}
 
 					if (success) {
-						msg_print(Ind,"\377gChange successful.");
+						msg_print(Ind, "\377gChange successful.");
 						/* take note of door colour change */
 						everyone_lite_spot(wpos, y, x);
-					} else msg_print(Ind,"\377oChange failed.");
-				} else msg_print(Ind,"\377oAccess not permitted.");
-			} else msg_print(Ind,"\377yNot a door of a private house.");
-		} else msg_print(Ind,"\377sThere is no home door there.");
+					} else msg_print(Ind, "\377oChange failed.");
+				} else msg_print(Ind, "\377oAccess not permitted.");
+			} else msg_print(Ind, "\377yNot a door of a private house.");
+		} else msg_print(Ind, "\377sThere is no home door there.");
 	}
 	return;
 }
@@ -8811,9 +8811,9 @@ void do_cmd_purchase_house(int Ind, int dir) {
 						teleport_player_force(Ind, 1);
 				} else {
 					if (!is_admin(p_ptr)) {
-						msg_print(Ind,"Only the rightful owner can sell a house");
+						msg_print(Ind, "Only the rightful owner can sell a house");
 						return;
-					} else msg_print(Ind,"The house is reset");
+					} else msg_print(Ind, "The house is reset");
 				}
 				if (dna->owner_type == OT_GUILD) {
 					guilds[dna->owner].h_idx = 0;
@@ -8836,14 +8836,14 @@ void do_cmd_purchase_house(int Ind, int dir) {
 				everyone_lite_spot(wpos, y, x);
 				return;
 			}
-			msg_print(Ind,"That house does not belong to you!");
+			msg_print(Ind, "That house does not belong to you!");
 			return;
 		}
 
 		/* we are buying */
 		price = house_price_player(dna->price, p_ptr->stat_ind[A_CHR]);
 		if (price > p_ptr->au) {
-			msg_print(Ind,"You do not have enough gold!");
+			msg_print(Ind, "You do not have enough gold!");
 			return;
 		}
 

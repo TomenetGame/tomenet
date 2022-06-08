@@ -34,8 +34,7 @@ static int building_loc = 0;
 /*
  * A helper function for is_state
  */
-static bool is_state_aux(int Ind, store_type *s_ptr, int state)
-{
+static bool is_state_aux(int Ind, store_type *s_ptr, int state) {
 	player_type *p_ptr = Players[Ind];
 	owner_type *ot_ptr = &ow_info[s_ptr->owner];
 
@@ -71,8 +70,7 @@ static void race_legends(int Ind) {
 /*
  * Test if the state accords with the player
  */
-bool is_state(int Ind, store_type *s_ptr, int state)
-{
+bool is_state(int Ind, store_type *s_ptr, int state) {
 	if (state == STORE_NORMAL) {
 		if (is_state_aux(Ind, s_ptr, STORE_LIKED)) return (FALSE);
 		if (is_state_aux(Ind, s_ptr, STORE_HATED)) return (FALSE);
@@ -217,38 +215,38 @@ void show_building(int Ind, store_type *s_ptr) {
 #if 0
 
 static void reset_tim_flags() {
-	p_ptr->fast = 0;            /* Timed -- Fast */
-	p_ptr->slow = 0;            /* Timed -- Slow */
-	p_ptr->blind = 0;           /* Timed -- Blindness */
-	p_ptr->paralyzed = 0;       /* Timed -- Paralysis */
-	p_ptr->confused = 0;        /* Timed -- Confusion */
-	p_ptr->afraid = 0;          /* Timed -- Fear */
-	p_ptr->image = 0;           /* Timed -- Hallucination */
-	p_ptr->poisoned = 0;        /* Timed -- Poisoned */
-	p_ptr->diseased = 0;        /* Timed -- Poisoned */
-	p_ptr->cut = 0;             /* Timed -- Cut */
-	p_ptr->stun = 0;            /* Timed -- Stun */
+	p_ptr->fast = 0;	/* Timed -- Fast */
+	p_ptr->slow = 0;	/* Timed -- Slow */
+	p_ptr->blind = 0;	/* Timed -- Blindness */
+	p_ptr->paralyzed = 0;	/* Timed -- Paralysis */
+	p_ptr->confused = 0;	/* Timed -- Confusion */
+	p_ptr->afraid = 0;	/* Timed -- Fear */
+	p_ptr->image = 0;	/* Timed -- Hallucination */
+	p_ptr->poisoned = 0;	/* Timed -- Poisoned */
+	p_ptr->diseased = 0;	/* Timed -- Poisoned */
+	p_ptr->cut = 0;		/* Timed -- Cut */
+	p_ptr->stun = 0;	/* Timed -- Stun */
 
-	p_ptr->protevil = 0;        /* Timed -- Protection */
-	p_ptr->protgood = 0;        /* Timed -- Protection */
-	p_ptr->invuln = 0;          /* Timed -- Invulnerable */
-	p_ptr->hero = 0;            /* Timed -- Heroism */
-	p_ptr->shero = 0;           /* Timed -- Berserk */
-	p_ptr->fury = 0;            /* Timed -- Fury */
-	p_ptr->shield = 0;          /* Timed -- Shield Spell */
-	p_ptr->blessed = 0;         /* Timed -- Blessed */
-	p_ptr->tim_invis = 0;       /* Timed -- Invisibility */
-	p_ptr->tim_infra = 0;       /* Timed -- Infra Vision */
+	p_ptr->protevil = 0;	/* Timed -- Protection */
+	p_ptr->protgood = 0;	/* Timed -- Protection */
+	p_ptr->invuln = 0;	/* Timed -- Invulnerable */
+	p_ptr->hero = 0;	/* Timed -- Heroism */
+	p_ptr->shero = 0;	/* Timed -- Berserk */
+	p_ptr->fury = 0;	/* Timed -- Fury */
+	p_ptr->shield = 0;	/* Timed -- Shield Spell */
+	p_ptr->blessed = 0;	/* Timed -- Blessed */
+	p_ptr->tim_invis = 0;	/* Timed -- Invisibility */
+	p_ptr->tim_infra = 0;	/* Timed -- Infra Vision */
 
-	p_ptr->oppose_acid = 0;     /* Timed -- oppose acid */
-	p_ptr->oppose_elec = 0;     /* Timed -- oppose lightning */
-	p_ptr->oppose_fire = 0;     /* Timed -- oppose heat */
-	p_ptr->oppose_cold = 0;     /* Timed -- oppose cold */
-	p_ptr->oppose_pois = 0;     /* Timed -- oppose poison */
+	p_ptr->oppose_acid = 0;	/* Timed -- oppose acid */
+	p_ptr->oppose_elec = 0;	/* Timed -- oppose lightning */
+	p_ptr->oppose_fire = 0;	/* Timed -- oppose heat */
+	p_ptr->oppose_cold = 0;	/* Timed -- oppose cold */
+	p_ptr->oppose_pois = 0;	/* Timed -- oppose poison */
 
-	p_ptr->confusing = 0;       /* Touch of Confusion */
-	p_ptr->zeal = 0;	    /* Holy +EA */
-	p_ptr->martyr = 0;	    /* Holy martyr / invulnerability */
+	p_ptr->confusing = 0;	/* Touch of Confusion */
+	p_ptr->zeal = 0;	/* Holy +EA */
+	p_ptr->martyr = 0;	/* Holy martyr / invulnerability */
 	p_ptr->martyr_timeout = 0;
 
 	p_ptr->sh_fire_tim = 0;
@@ -267,7 +265,6 @@ static void arena_comm(int cmd) {
 
 	switch(cmd) {
 	case BACT_ARENA:
-	{
 		if (p_ptr->arena_number == MAX_ARENA_MONS) {
 			clear_bldg(5,19);
 			prt("               Arena Victor!", 5, 0);
@@ -293,12 +290,9 @@ static void arena_comm(int cmd) {
 			p_ptr->oldpy = py;
 			leave_bldg = TRUE;
 		}
-
 		break;
-	}
 
 	case BACT_POSTER:
-	{
 		if (p_ptr->arena_number == MAX_ARENA_MONS)
 			msg_print("You are victorious. Enter the arena for the ceremony.");
 		else if (p_ptr->arena_number > MAX_ARENA_MONS)
@@ -310,12 +304,9 @@ static void arena_comm(int cmd) {
 			msg_print(tmp_str);
 			msg_print(NULL);
 		}
-
 		break;
-	}
 
 	case BACT_ARENA_RULES:
-	{
 		/* Save screen */
 		screen_save();
 
@@ -324,9 +315,7 @@ static void arena_comm(int cmd) {
 
 		/* Load screen */
 		screen_load();
-
 		break;
-	}
 	}
 }
 
@@ -335,96 +324,78 @@ static void arena_comm(int cmd) {
  * display fruit for dice slots
  */
 static void display_fruit(int row, int col, int fruit) {
-	switch(fruit) {
-		case 0: /* lemon */
-		{
-			c_put_str(TERM_YELLOW,"   ####.",row,col);
-			c_put_str(TERM_YELLOW,"  #    #",row+1,col);
-			c_put_str(TERM_YELLOW," #     #",row+2,col);
-			c_put_str(TERM_YELLOW,"#      #",row+3,col);
-			c_put_str(TERM_YELLOW,"#      #",row+4,col);
-			c_put_str(TERM_YELLOW,"#     # ",row+5,col);
-			c_put_str(TERM_YELLOW,"#    #  ",row+6,col);
-			c_put_str(TERM_YELLOW,".####   ",row+7,col);
-			prt(" Lemon  ",row+8,col);
+	switch (fruit) {
+	case 0: /* lemon */
+		c_put_str(TERM_YELLOW, "   ####.", row, col);
+		c_put_str(TERM_YELLOW, "  #    #", row + 1, col);
+		c_put_str(TERM_YELLOW, " #     #", row + 2, col);
+		c_put_str(TERM_YELLOW, "#      #", row + 3, col);
+		c_put_str(TERM_YELLOW, "#      #", row + 4, col);
+		c_put_str(TERM_YELLOW, "#     # ", row + 5, col);
+		c_put_str(TERM_YELLOW, "#    #  ", row + 6, col);
+		c_put_str(TERM_YELLOW, ".####   ", row + 7, col);
+		prt(" Lemon  ", row + 8, col);
+		break;
 
-			break;
-		}
+	case 1: /* orange */
+		c_put_str(TERM_ORANGE, "   ##   ", row, col);
+		c_put_str(TERM_ORANGE, "  #..#  ", row + 1, col);
+		c_put_str(TERM_ORANGE, " #....# ", row + 2, col);
+		c_put_str(TERM_ORANGE, "#......#", row + 3, col);
+		c_put_str(TERM_ORANGE, "#......#", row + 4, col);
+		c_put_str(TERM_ORANGE, " #....# ", row + 5, col);
+		c_put_str(TERM_ORANGE, "  #..#  ", row + 6, col);
+		c_put_str(TERM_ORANGE, "   ##   ", row + 7, col);
+		prt(" Orange ", row + 8, col);
+		break;
 
-		case 1: /* orange */
-		{
-			c_put_str(TERM_ORANGE,"   ##   ",row,col);
-			c_put_str(TERM_ORANGE,"  #..#  ",row+1,col);
-			c_put_str(TERM_ORANGE," #....# ",row+2,col);
-			c_put_str(TERM_ORANGE,"#......#",row+3,col);
-			c_put_str(TERM_ORANGE,"#......#",row+4,col);
-			c_put_str(TERM_ORANGE," #....# ",row+5,col);
-			c_put_str(TERM_ORANGE,"  #..#  ",row+6,col);
-			c_put_str(TERM_ORANGE,"   ##   ",row+7,col);
-			prt(" Orange ",row+8,col);
+	case 2: /* sword */
+		c_put_str(TERM_SLATE, "   /\\   ", row, col);
+		c_put_str(TERM_SLATE, "   ##   ", row + 1, col);
+		c_put_str(TERM_SLATE, "   ##   ", row + 2, col);
+		c_put_str(TERM_SLATE, "   ##   ", row + 3, col);
+		c_put_str(TERM_SLATE, "   ##   ", row + 4, col);
+		c_put_str(TERM_SLATE, "   ##   ", row + 5, col);
+		c_put_str(TERM_UMBER, " ###### ", row + 6, col);
+		c_put_str(TERM_UMBER, "   ##   ", row + 7, col);
+		prt(" Sword  ", row + 8, col);
+		break;
 
-			break;
-		}
+	case 3: /* shield */
+		c_put_str(TERM_SLATE, " ###### ", row, col);
+		c_put_str(TERM_SLATE, "#      #", row + 1, col);
+		c_put_str(TERM_SLATE, "# ++++ #", row + 2, col);
+		c_put_str(TERM_SLATE, "# +==+ #", row + 3, col);
+		c_put_str(TERM_SLATE, "#  ++  #", row + 4, col);
+		c_put_str(TERM_SLATE, " #    # ", row + 5, col);
+		c_put_str(TERM_SLATE, "  #  #  ", row + 6, col);
+		c_put_str(TERM_SLATE, "   ##   ", row + 7, col);
+		prt(" Shield ", row + 8, col);
+		break;
 
-		case 2: /* sword */
-		{
-			c_put_str(TERM_SLATE,"   /\\   ",row,col);
-			c_put_str(TERM_SLATE,"   ##   ",row+1,col);
-			c_put_str(TERM_SLATE,"   ##   ",row+2,col);
-			c_put_str(TERM_SLATE,"   ##   ",row+3,col);
-			c_put_str(TERM_SLATE,"   ##   ",row+4,col);
-			c_put_str(TERM_SLATE,"   ##   ",row+5,col);
-			c_put_str(TERM_UMBER," ###### ",row+6,col);
-			c_put_str(TERM_UMBER,"   ##   ",row+7,col);
-			prt(" Sword  ",row+8,col);
+	case 4: /* plum */
+		c_put_str(TERM_VIOLET, "   ##   ", row, col);
+		c_put_str(TERM_VIOLET, " ###### ", row + 1, col);
+		c_put_str(TERM_VIOLET, "########", row + 2, col);
+		c_put_str(TERM_VIOLET, "########", row + 3, col);
+		c_put_str(TERM_VIOLET, "########", row + 4, col);
+		c_put_str(TERM_VIOLET, " ###### ", row + 5, col);
+		c_put_str(TERM_VIOLET, "  ####  ", row + 6, col);
+		c_put_str(TERM_VIOLET, "   ##   ", row + 7, col);
+		prt("  Plum  ", row + 8, col);
+		break;
 
-			break;
-		}
-
-		case 3: /* shield */
-		{
-			c_put_str(TERM_SLATE," ###### ",row,col);
-			c_put_str(TERM_SLATE,"#      #",row+1,col);
-			c_put_str(TERM_SLATE,"# ++++ #",row+2,col);
-			c_put_str(TERM_SLATE,"# +==+ #",row+3,col);
-			c_put_str(TERM_SLATE,"#  ++  #",row+4,col);
-			c_put_str(TERM_SLATE," #    # ",row+5,col);
-			c_put_str(TERM_SLATE,"  #  #  ",row+6,col);
-			c_put_str(TERM_SLATE,"   ##   ",row+7,col);
-			prt(" Shield ",row+8,col);
-
-			break;
-		}
-
-		case 4: /* plum */
-		{
-			c_put_str(TERM_VIOLET,"   ##   ",row,col);
-			c_put_str(TERM_VIOLET," ###### ",row+1,col);
-			c_put_str(TERM_VIOLET,"########",row+2,col);
-			c_put_str(TERM_VIOLET,"########",row+3,col);
-			c_put_str(TERM_VIOLET,"########",row+4,col);
-			c_put_str(TERM_VIOLET," ###### ",row+5,col);
-			c_put_str(TERM_VIOLET,"  ####  ",row+6,col);
-			c_put_str(TERM_VIOLET,"   ##   ",row+7,col);
-			prt("  Plum  ",row+8,col);
-
-			break;
-		}
-
-		case 5: /* cherry */
-		{
-			c_put_str(TERM_RED,"      ##",row,col);
-			c_put_str(TERM_RED,"   ###  ",row+1,col);
-			c_put_str(TERM_RED,"  #..#  ",row+2,col);
-			c_put_str(TERM_RED,"  #..#  ",row+3,col);
-			c_put_str(TERM_RED," ###### ",row+4,col);
-			c_put_str(TERM_RED,"#..##..#",row+5,col);
-			c_put_str(TERM_RED,"#..##..#",row+6,col);
-			c_put_str(TERM_RED," ##  ## ",row+7,col);
-			prt(" Cherry ",row+8,col);
-
-			break;
-		}
+	case 5: /* cherry */
+		c_put_str(TERM_RED, "      ##", row, col);
+		c_put_str(TERM_RED, "   ###  ", row + 1, col);
+		c_put_str(TERM_RED, "  #..#  ", row + 2, col);
+		c_put_str(TERM_RED, "  #..#  ", row + 3, col);
+		c_put_str(TERM_RED, " ###### ", row + 4, col);
+		c_put_str(TERM_RED, "#..##..#", row + 5, col);
+		c_put_str(TERM_RED, "#..##..#", row + 6, col);
+		c_put_str(TERM_RED, " ##  ## ", row + 7, col);
+		prt(" Cherry ", row + 8, col);
+		break;
 	}
 }
 
@@ -564,16 +535,14 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 						msg_print(Ind, "Rerolling..");
 						roll1 = randint(6);
 						roll2 = randint(6);
-						roll3 = roll1 +  roll2;
+						roll3 = roll1 + roll2;
 
 						msg_format(Ind, "Roll result:  \377s%d %d\377w   Total: \377s%d",
 						    roll1, roll2, roll3);
 
-						if (roll3 == choice) {
-							win = TRUE;
-						} else if (roll3 == 7) {
-							win = FALSE;
-						} else {
+						if (roll3 == choice) win = TRUE;
+						else if (roll3 == 7) win = FALSE;
+						else {
 							/* reroll */
 						}
 					} while ((win != TRUE) && (win != FALSE));
@@ -587,7 +556,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 			case BACT_SPIN_WHEEL:  /* Spin the Wheel Game */
 				win = FALSE;
 				odds = 10;
-				c_put_str(TERM_GREEN,"Wheel", 5, 2);
+				c_put_str(TERM_GREEN, "Wheel", 5, 2);
 				prt("0  1  2  3  4  5  6  7  8  9", 7, 5);
 				prt("--------------------------------", 8, 3);
 				strcpy(out_val, "");
@@ -608,7 +577,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 				roll1 = randint(10) - 1;
 				strnfmt(tmp_str, 80, "The wheel spins to a stop and the winner is %d",
 				    roll1);
-				prt(tmp_str,13,3);
+				prt(tmp_str, 13, 3);
 				prt("", 9, 0);
 				prt("*", 9, (3 * roll1 + 5));
 				if (roll1 == choice)
@@ -619,7 +588,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 				break;
 
 			case BACT_DICE_SLOTS: /* The Dice Slots */
-				c_put_str(TERM_GREEN,"Dice Slots",5,2);
+				c_put_str(TERM_GREEN, "Dice Slots",5,2);
 #ifdef USE_SOUND_2010
 				sound(Ind, "store_slots", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
 #endif
@@ -628,14 +597,14 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 				roll2 = randint(6);
 				choice = randint(6);
 				strnfmt(tmp_str, 80, "%s %s %s",
-					    fruit[roll1-1], fruit[roll2-1],
-					    fruit[choice-1]);
+					    fruit[roll1 - 1], fruit[roll2 - 1],
+					    fruit[choice - 1]);
 				prt(tmp_str,15,37);
-				prt("/--------------------------\\",7,2);
-				prt("\\--------------------------/",17,2);
-				display_fruit(8,  3, roll1-1);
-				display_fruit(8, 12, roll2-1);
-				display_fruit(8, 21, choice-1);
+				prt("/--------------------------\\", 7, 2);
+				prt("\\--------------------------/", 17, 2);
+				display_fruit(8,  3, roll1 - 1);
+				display_fruit(8, 12, roll2 - 1);
+				display_fruit(8, 21, choice - 1);
 				if ((roll1 == roll2) && (roll2 == choice)) {
 					win = TRUE;
 					if (roll1 == 1)
@@ -985,7 +954,7 @@ static void town_history(void) {
 static void compare_weapon_aux2(object_type *o_ptr, int numblows, int r, int c, int mult, int bonus, char attr[80], u32b f1, u32b f2, u32b f3, byte color) {
 	char tmp_str[80];
 
-	c_put_str(color,attr,r,c);
+	c_put_str(color, attr, r, c);
 
 	if (o_ptr->tval == TV_BOW || is_ammo(o_ptr->tval))
 		strnfmt(tmp_str, 80, "Attack: %d-%d damage",
@@ -996,7 +965,7 @@ static void compare_weapon_aux2(object_type *o_ptr, int numblows, int r, int c, 
 		    numblows * (((o_ptr->dd * mult) / FACTOR_MULT) + o_ptr->to_d + bonus),
 		    numblows * (((o_ptr->ds * o_ptr->dd * mult) / FACTOR_MULT) + o_ptr->to_d + bonus));
 
-	put_str(tmp_str,r,c+8);
+	put_str(tmp_str, r, c + 8);
 	r++;
 }
 
@@ -1063,28 +1032,25 @@ static void compare_weapon_aux1(object_type *o_ptr, int col, int r) {
 /*
  * list_weapon -KMW-
  */
-static void list_weapon(object_type *o_ptr, int row, int col)
-{
+static void list_weapon(object_type *o_ptr, int row, int col) {
 	char o_name[ONAME_LEN];
-
 	char tmp_str[80];
 
-
 	object_desc(o_name, o_ptr, TRUE, 0);
-	c_put_str(TERM_YELLOW,o_name,row,col);
-	strnfmt(tmp_str, 80, "To Hit: %d   To Damage: %d",o_ptr->to_h, o_ptr->to_d);
-	put_str(tmp_str,row+1,col);
-	strnfmt(tmp_str, 80, "Dice: %d   Sides: %d",o_ptr->dd, o_ptr->ds);
-	put_str(tmp_str,row+2,col);
+	c_put_str(TERM_YELLOW, o_name, row, col);
+	strnfmt(tmp_str, 80, "To Hit: %d   To Damage: %d", o_ptr->to_h, o_ptr->to_d);
+	put_str(tmp_str, row + 1, col);
+	strnfmt(tmp_str, 80, "Dice: %d   Sides: %d", o_ptr->dd, o_ptr->ds);
+	put_str(tmp_str, row + 2, col);
 	strnfmt(tmp_str, 80, "Number of Blows: %d", p_ptr->num_blow);
-	put_str(tmp_str,row+3,col);
-	c_put_str(TERM_YELLOW, "Possible Damage:",row+5,col);
-	strnfmt(tmp_str, 80, "One Strike: %d-%d damage",o_ptr->dd + o_ptr->to_d,
-	        (o_ptr->ds*o_ptr->dd) + o_ptr->to_d);
-	put_str(tmp_str,row+6,col+1);
-	strnfmt(tmp_str, 80, "One Attack: %d-%d damage",p_ptr->num_blow*(o_ptr->dd + o_ptr->to_d),
-	        p_ptr->num_blow*(o_ptr->ds*o_ptr->dd + o_ptr->to_d));
-	put_str(tmp_str,row+7,col+1);
+	put_str(tmp_str, row + 3, col);
+	c_put_str(TERM_YELLOW, "Possible Damage:", row + 5, col);
+	strnfmt(tmp_str, 80, "One Strike: %d-%d damage", o_ptr->dd + o_ptr->to_d,
+	        (o_ptr->ds * o_ptr->dd) + o_ptr->to_d);
+	put_str(tmp_str, row + 6, col + 1);
+	strnfmt(tmp_str, 80, "One Attack: %d-%d damage", p_ptr->num_blow * (o_ptr->dd + o_ptr->to_d),
+	        p_ptr->num_blow * (o_ptr->ds * o_ptr->dd + o_ptr->to_d));
+	put_str(tmp_str, row + 7, col + 1);
 }
 
 

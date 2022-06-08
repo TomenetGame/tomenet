@@ -3849,7 +3849,7 @@ bool curse_spell_aux(int Ind, int item) {
 
 
 	if (artifact_p(o_ptr) && (randint(10) < 8)) {
-		msg_print(Ind,"The artifact resists your attempts.");
+		msg_print(Ind, "The artifact resists your attempts.");
 		return(FALSE);
 	}
 
@@ -3862,12 +3862,12 @@ bool curse_spell_aux(int Ind, int item) {
 		switch (o_ptr->tval) {
 			case TV_RING:
 			default:
-				msg_print(Ind,"You cannot curse that item!");
+				msg_print(Ind, "You cannot curse that item!");
 				return(FALSE);
 		}
 	}
 
-	msg_format(Ind,"\376\377yA terrible black aura surrounds your %s",
+	msg_format(Ind, "\376\377yA terrible black aura surrounds your %s",
 	    o_name, o_ptr->number > 1 ? "" : "s");
 	/* except it doesnt actually get cursed properly yet. */
 	o_ptr->name1 = 0;
@@ -3965,7 +3965,7 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 	if (enchant(Ind, o_ptr, num_ac, ENCH_TOAC | flags)) okay = TRUE;
 
 	/* Artifacts cannot be enchanted. */
-	//if (artifact_p(o_ptr)) msg_format(Ind,"Your %s %s unaffected.",o_name,((o_ptr->number != 1) ? "are" : "is"));
+	//if (artifact_p(o_ptr)) msg_format(Ind, "Your %s %s unaffected.",o_name,((o_ptr->number != 1) ? "are" : "is"));
 
 	/* Failure */
 	if (!okay) {
@@ -7610,19 +7610,19 @@ bool cure_light_wounds_proj(int Ind, int dir) {
 
 bool cure_serious_wounds_proj(int Ind, int dir) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
-	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker),"%s heals you for", Players[Ind]->name);
+	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker), "%s heals you for", Players[Ind]->name);
 	return (project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(4, 10), flg, Players[Ind]->attacker));
 }
 
 bool cure_critical_wounds_proj(int Ind, int dir) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
-	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker),"%s heals you for", Players[Ind]->name);
+	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker), "%s heals you for", Players[Ind]->name);
 	return (project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(6, 10), flg, Players[Ind]->attacker));
 }
 
 bool heal_other_proj(int Ind, int dir) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
-	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker),"%s heals you for", Players[Ind]->name);
+	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker), "%s heals you for", Players[Ind]->name);
 	return (project_hook(Ind, GF_HEAL_PLAYER, dir, 100, flg, Players[Ind]->attacker));
 }
 
@@ -7820,7 +7820,7 @@ static bool poly_build(int Ind, char *args) {
 	if (!curr) {			/* new builder */
 #ifdef MAX_BUILDERS
 		if (num_build == MAX_BUILDERS){
-			msg_print(Ind,"The builders are on strike!");
+			msg_print(Ind, "The builders are on strike!");
 			return FALSE;
 		}
 #endif
@@ -7947,10 +7947,10 @@ static bool poly_build(int Ind, char *args) {
 			houses[num_houses].flags |= HF_SELFBUILT;
 			curr->dna->price = area * area * 400; //initial_house_price(&houses[num_houses])
 			wild_add_uhouse(&houses[num_houses]);
-			msg_print(Ind,"You have completed your house");
+			msg_print(Ind, "You have completed your house");
 			num_houses++;
 		} else {
-			msg_print(Ind,"Your house was built unsoundly");
+			msg_print(Ind, "Your house was built unsoundly");
 			if(curr->vert) C_KILL(curr->vert, MAXCOORD, char);
 			KILL(curr->dna, struct dna_type);
 		}
@@ -7966,7 +7966,7 @@ static bool poly_build(int Ind, char *args) {
 		if (curr->cvert < MAXCOORD && (--curr->moves) > 0) return TRUE;
 		p_ptr->update |= PU_VIEW;
 	}
-	msg_print(Ind,"Your house building attempt has failed");
+	msg_print(Ind, "Your house building attempt has failed");
 	cs_erase(&zcave[curr->sy][curr->sx], curr->cs);
 	KILL(curr->dna, struct dna_type);
 	C_KILL(curr->vert, MAXCOORD, char);

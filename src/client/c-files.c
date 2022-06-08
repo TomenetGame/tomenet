@@ -1561,13 +1561,13 @@ errr file_character(cptr name, bool quiet) {
 	/* 1st pass - determine category existence: kill vs assist */
 	x = 0; /* count killing blows */
 	for (i = 0; i < MAX_UNIQUES; i++) if (r_unique[i] == 1) x++;
-	if (!x) fprintf(fff,"You have not slain any unique monsters yourself.\n");
+	if (!x) fprintf(fff, "You have not slain any unique monsters yourself.\n");
 	/* 2nd pass - list killed and assisted with monsters */
 	for (i = 0; i < MAX_UNIQUES; i++) {
 		if (r_unique[i] == 1)
-			fprintf(fff,"You have slain %s.\n", r_unique_name[i]);
+			fprintf(fff, "You have slain %s.\n", r_unique_name[i]);
 		else if (r_unique[i] == 2)
-			fprintf(fff,"You have assisted in slaying %s.\n", r_unique_name[i]);
+			fprintf(fff, "You have assisted in slaying %s.\n", r_unique_name[i]);
 	}
 	fprintf(fff, "\n\n");
 

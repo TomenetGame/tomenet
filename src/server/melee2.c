@@ -1196,7 +1196,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u3
 
 if (season_halloween) {
 	/* Halloween event hack: The Great Pumpkin -C. Blue */
-	//if (!strcmp(r_ptr->name,"The Great Pumpkin"))
+	//if (!strcmp(r_ptr->name, "The Great Pumpkin"))
 	if (m_ptr->r_idx == RI_PUMPKIN) {
 		/* more than 1/3 HP: Moan much, tele rarely */
 		if (m_ptr->hp > (m_ptr->maxhp / 3))

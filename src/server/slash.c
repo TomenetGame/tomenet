@@ -1048,7 +1048,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			int book, whichplayer, whichspell;
 			bool ami = FALSE;
   #if 0
-			token[1] = strtok(message," ");
+			token[1] = strtok(message, " ");
 			if (token[1] == NULL) {
 				msg_print(Ind, "\377oUsage: /cast (Book) (Spell) [Playername]");
 				return;
@@ -1099,7 +1099,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (*token[1] >= 'A' && *token[1] <= 'W')
 					book = (int)(*token[1] - 'A');
 				else {
-					msg_print(Ind,"\377oBook variable was out of range (a-i) or (1-9)");
+					msg_print(Ind, "\377oBook variable was out of range (a-i) or (1-9)");
 					return;
 				}
 			}
@@ -1116,7 +1116,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				//whichspell = *token[2]-1;
 				ami = TRUE;
 			} else {
-				msg_print(Ind,"\377oSpell out of range [A-I].");
+				msg_print(Ind, "\377oSpell out of range [A-I].");
 				return;
 			}
 
@@ -1125,13 +1125,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 
 				if (whichplayer == Ind) {
-					msg_print(Ind,"You feel lonely.");
+					msg_print(Ind, "You feel lonely.");
 				/* Ignore "unreasonable" players */
 				} else if (!target_able(Ind, 0 - whichplayer)) {
-					msg_print(Ind,"\377oThat player is out of your sight.");
+					msg_print(Ind, "\377oThat player is out of your sight.");
 					return;
 				} else {
-//					msg_format(Ind,"Book = %d, Spell = %d, PlayerName = %s, PlayerID = %d",book,whichspell,token[3],whichplayer);
+//					msg_format(Ind, "Book = %d, Spell = %d, PlayerName = %s, PlayerID = %d",book,whichspell,token[3],whichplayer);
 					target_set_friendly(Ind,5,whichplayer);
 					whichspell += 64;
 				}
@@ -1143,7 +1143,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			switch (p_ptr->pclass) {
 			}
 
-//			msg_format(Ind,"Book = %d, Spell = %d, PlayerName = %s, PlayerID = %d",book,whichspell,token[3],whichplayer);
+//			msg_format(Ind, "Book = %d, Spell = %d, PlayerName = %s, PlayerID = %d",book,whichspell,token[3],whichplayer);
  #endif
 			return;
 		}
@@ -9962,7 +9962,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 #endif
 			/* Update 'noteworthy occurances' aka legends.log display, for debugging purposes */
-			else if (prefix(messagelc,"/update-leg")) {
+			else if (prefix(messagelc, "/update-leg")) {
 				char path[MAX_PATH_LENGTH];
 				char path_rev[MAX_PATH_LENGTH];
 				path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends.log");

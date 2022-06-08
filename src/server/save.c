@@ -1909,7 +1909,7 @@ bool load_player(int Ind) {
 		/*
 		   if (err) {
 		   what = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
-		   (void)sprintf (what,"Cannot parse savefile error %d",err);
+		   (void)sprintf (what, "Cannot parse savefile error %d",err);
 		   };
 		   */
 		if (err) what = "Cannot parse savefile error";
@@ -2530,7 +2530,7 @@ static bool load_server_info_classic(void) {
 		/*
 		   if (err) {
 		   what = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx";
-		   (void)sprintf (what,"Cannot parse savefile error %d",err);
+		   (void)sprintf (what, "Cannot parse savefile error %d",err);
 		   };
 		   */
 		if (err) what ="Cannot parse server savefile error %d";

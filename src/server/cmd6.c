@@ -1059,16 +1059,16 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 				if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
 				msg_print(Ind, "You have been turned into a fruit bat!");
 				if (!msg) {
-					strcpy(p_ptr->died_from,"a potion of Chauve-Souris");
-					strcpy(p_ptr->really_died_from,"a potion of Chauve-Souris");
+					strcpy(p_ptr->died_from, "a potion of Chauve-Souris");
+					strcpy(p_ptr->really_died_from, "a potion of Chauve-Souris");
 					p_ptr->died_from_ridx = 0;
 				} else if (msg == 1) {
-					strcpy(p_ptr->died_from,"a fountain of Chauve-Souris");
-					strcpy(p_ptr->really_died_from,"a fountain of Chauve-Souris");
+					strcpy(p_ptr->died_from, "a fountain of Chauve-Souris");
+					strcpy(p_ptr->really_died_from, "a fountain of Chauve-Souris");
 					p_ptr->died_from_ridx = 0;
 				} else {
-					strcpy(p_ptr->died_from,"Chauve-Souris");
-					strcpy(p_ptr->really_died_from,"Chauve-Souris");
+					strcpy(p_ptr->died_from, "Chauve-Souris");
+					strcpy(p_ptr->really_died_from, "Chauve-Souris");
 					p_ptr->died_from_ridx = 0;
 				}
 				p_ptr->fruit_bat = -1;
@@ -1125,16 +1125,16 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 				if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
 				msg_print(Ind, "You have been turned into a fruit bat!");
 				if (!msg) {
-					strcpy(p_ptr->died_from,"a potion of Chauve-Souris");
-					strcpy(p_ptr->really_died_from,"a potion of Chauve-Souris");
+					strcpy(p_ptr->died_from, "a potion of Chauve-Souris");
+					strcpy(p_ptr->really_died_from, "a potion of Chauve-Souris");
 					p_ptr->died_from_ridx = 0;
 				} else if (msg == 1) {
-					strcpy(p_ptr->died_from,"a fountain of Chauve-Souris");
-					strcpy(p_ptr->really_died_from,"a fountain of Chauve-Souris");
+					strcpy(p_ptr->died_from, "a fountain of Chauve-Souris");
+					strcpy(p_ptr->really_died_from, "a fountain of Chauve-Souris");
 					p_ptr->died_from_ridx = 0;
 				} else {
-					strcpy(p_ptr->died_from,"Chauve-Souris");
-					strcpy(p_ptr->really_died_from,"Chauve-Souris");
+					strcpy(p_ptr->died_from, "Chauve-Souris");
+					strcpy(p_ptr->really_died_from, "Chauve-Souris");
 					p_ptr->died_from_ridx = 0;
 				}
 				p_ptr->fruit_bat = -1;
@@ -6411,7 +6411,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			/* Check for CAVE_STCK */
 
 			msg_print(Ind, "You open a between gate. Choose a destination.");
-			if (!tgt_pt(&ii,&ij)) return;
+			if (!tgt_pt(&ii, &ij)) return;
 			p_ptr->energy -= 60 - plev;
 			if (!cave_empty_bold(ij,ii) || (cave[ij][ii].info & CAVE_ICKY) ||
 					(distance(ij,ii,py,px) > plev + 2) ||

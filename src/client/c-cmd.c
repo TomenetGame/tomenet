@@ -6712,11 +6712,11 @@ static char * cmd_master_aux_summon_orcs(void) {
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????");
 			break;
-		case '1': strcpy(buf,"Snaga"); break;
-		case '2': strcpy(buf,"Cave orc"); break;
-		case '3': strcpy(buf,"Hill orc"); break;
-		case '4': strcpy(buf,"Black orc"); break;
-		case '5': strcpy(buf,"Half-orc"); break;
+		case '1': strcpy(buf, "Snaga"); break;
+		case '2': strcpy(buf, "Cave orc"); break;
+		case '3': strcpy(buf, "Hill orc"); break;
+		case '4': strcpy(buf, "Black orc"); break;
+		case '5': strcpy(buf, "Half-orc"); break;
 		case '6': strcpy(buf, "Uruk"); break;
 		case '7': strcpy(buf, "random"); break;
 		default : bell(); break;
@@ -6778,11 +6778,11 @@ static char * cmd_master_aux_summon_undead_low(void) {
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????");
 			break;
-		case '1': strcpy(buf,"Poltergeist"); break;
-		case '2': strcpy(buf,"Green glutton ghost"); break;
-		case '3': strcpy(buf,"Loust soul"); break;
-		case '4': strcpy(buf,"Skeleton kobold"); break;
-		case '5': strcpy(buf,"Skeleton orc"); break;
+		case '1': strcpy(buf, "Poltergeist"); break;
+		case '2': strcpy(buf, "Green glutton ghost"); break;
+		case '3': strcpy(buf, "Loust soul"); break;
+		case '4': strcpy(buf, "Skeleton kobold"); break;
+		case '5': strcpy(buf, "Skeleton orc"); break;
 		case '6': strcpy(buf, "Skeleton human"); break;
 		case '7': strcpy(buf, "Zombified orc"); break;
 		case '8': strcpy(buf, "Zombified human"); break;
@@ -6853,11 +6853,11 @@ static char * cmd_master_aux_summon_undead_high(void) {
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????");
 			break;
-		case '1': strcpy(buf,"Vampire"); break;
-		case '2': strcpy(buf,"Giant skeleton troll"); break;
-		case '3': strcpy(buf,"Lich"); break;
-		case '4': strcpy(buf,"Master vampire"); break;
-		case '5': strcpy(buf,"Dread"); break;
+		case '1': strcpy(buf, "Vampire"); break;
+		case '2': strcpy(buf, "Giant skeleton troll"); break;
+		case '3': strcpy(buf, "Lich"); break;
+		case '4': strcpy(buf, "Master vampire"); break;
+		case '5': strcpy(buf, "Dread"); break;
 		case '6': strcpy(buf, "Nether wraith"); break;
 		case '7': strcpy(buf, "Night mare"); break;
 		case '8': strcpy(buf, "Vampire lord"); break;

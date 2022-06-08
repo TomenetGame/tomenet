@@ -42,7 +42,7 @@ void SGWHit(int read_fd, int arg){
 			size += sprintf(&sdb[size], "year=%d\n", bst(YEAR, turn)); /* starting year const */
 			/* let the script count or we'll give away
 			   the dungeon masters. */
-			/* size+=sprintf(&sdb[size],"num=%d\n", NumPlayers);*/
+			/* size+=sprintf(&sdb[size], "num=%d\n", NumPlayers);*/
 			for (i = 1; i <= NumPlayers; i++) {
 				if (Players[i]->admin_dm && cfg.secret_dungeon_master) continue;
 				size += sprintf(&sdb[size], "player=%s\n", Players[i]->name);

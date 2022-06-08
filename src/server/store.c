@@ -3129,7 +3129,7 @@ void store_stole(int Ind, int item) {
 	}
 
 	if (p_ptr->store_num == -1) {
-		msg_print(Ind,"You left the shop!");
+		msg_print(Ind, "You left the shop!");
 		return;
 	}
 
@@ -3433,7 +3433,7 @@ void store_purchase(int Ind, int item, int amt) {
         if (i == -1) i = gettown_dun(Ind);
 
 	if (p_ptr->store_num == -1) {
-		msg_print(Ind,"You left the shop!");
+		msg_print(Ind, "You left the shop!");
 		return;
 	}
 
@@ -3903,7 +3903,7 @@ void store_sell(int Ind, int item, int amt) {
 
 	/* sanity check - Yakina - */
 	if (p_ptr->store_num == -1) {
-		msg_print(Ind,"You left the shop!");
+		msg_print(Ind, "You left the shop!");
 		return;
 	}
 
@@ -4074,7 +4074,7 @@ void store_confirm(int Ind) {
 		return;
 
 	if (p_ptr->store_num == -1) {
-		msg_print(Ind,"You left the building!");
+		msg_print(Ind, "You left the building!");
 		return;
 	}
 
@@ -5241,7 +5241,7 @@ void store_exec_command(int Ind, int action, int item, int item2, int amt, int g
 
 	/* sanity check - Yakina - */
 	if (p_ptr->store_num == -1) {
-		msg_print(Ind,"You left the building!");
+		msg_print(Ind, "You left the building!");
 		return;
 	}
 
@@ -5895,7 +5895,7 @@ void home_sell(int Ind, int item, int amt) {
 
 	/* This should never happen */
 	if (p_ptr->store_num != STORE_HOME && p_ptr->store_num != STORE_HOME_DUN) {
-		msg_print(Ind,"You left the house!");
+		msg_print(Ind, "You left the house!");
 		return;
 	}
 
@@ -6095,7 +6095,7 @@ void home_purchase(int Ind, int item, int amt) {
 	}
 
 	if (p_ptr->store_num == -1) {
-		msg_print(Ind,"You left the shop!");
+		msg_print(Ind, "You left the shop!");
 		return;
 	}
 
@@ -6689,10 +6689,10 @@ void view_exploration_records(int Ind) {
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 	fff = my_fopen(file_name, "wb");
 
-	fprintf(fff,"\377U  Dungeons that are not on this list will give a large experience point bonus\n"
-		    "\377Ufor killing monsters there: An exploration bonus for venturing into the unknown.\n"
-		    "\377UDungeons that have seen several explorations will still give a smaller bonus.\n"
-		    "\377U Dungeons that have seen many explorations will not give an exploration bonus.\n\n");
+	fprintf(fff, "\377U  Dungeons that are not on this list will give a large experience point bonus\n"
+		     "\377Ufor killing monsters there: An exploration bonus for venturing into the unknown.\n"
+		     "\377UDungeons that have seen several explorations will still give a smaller bonus.\n"
+		     "\377U Dungeons that have seen many explorations will not give an exploration bonus.\n\n");
 
 	/* output the actual list */
 	for (i = 1; i <= dungeon_id_max; i++) {
@@ -6757,7 +6757,7 @@ void view_exploration_history(int Ind) {
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 	fff = my_fopen(file_name, "wb");
 
-	fprintf(fff,"\377U  ~ List of all known dungeons which adventurers have discovered in the past ~\n\n");
+	fprintf(fff, "\377U  ~ List of all known dungeons which adventurers have discovered in the past ~\n\n");
 
 	/* output the actual list */
 	for (i = 1; i <= dungeon_id_max; i++) {
@@ -8389,7 +8389,7 @@ void view_highest_levels(int Ind) {
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 	fff = my_fopen(file_name, "wb");
 
-	fprintf(fff,"\377s The following *exceptionally* powerful individuals alive have been witnessed:\n");
+	fprintf(fff, "\377s The following *exceptionally* powerful individuals alive have been witnessed:\n");
 
 	/* Search in each array slot */
 	for (i = 0; i < NUM_HASH_ENTRIES; i++) {

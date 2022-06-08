@@ -3201,140 +3201,140 @@ static bool str_to_boolean(char * str) {
  */
 static void set_server_option(char * option, char * value) {
 	/* Due to the lame way that C handles strings, we can't use a switch statement */
-	if (!strcmp(option,"REPORT_TO_METASERVER"))
+	if (!strcmp(option, "REPORT_TO_METASERVER"))
 		cfg.report_to_meta = str_to_boolean(value);
-	else if (!strcmp(option,"META_ADDRESS"))
+	else if (!strcmp(option, "META_ADDRESS"))
 		cfg.meta_address = strdup(value);
-	else if (!strcmp(option,"META_PORT"))
+	else if (!strcmp(option, "META_PORT"))
                 cfg.meta_port = atoi(value);
-	else if (!strcmp(option,"WORLDSERVER"))
+	else if (!strcmp(option, "WORLDSERVER"))
 		cfg.wserver = strdup(value);
-	else if (!strcmp(option,"WORLDPASS"))
+	else if (!strcmp(option, "WORLDPASS"))
 		cfg.pass = strdup(value);
-	else if (!strcmp(option,"BIND_NAME"))
+	else if (!strcmp(option, "BIND_NAME"))
 		cfg.bind_name = strdup(value);
-	else if (!strcmp(option,"CONSOLE_PASSWORD"))
+	else if (!strcmp(option, "CONSOLE_PASSWORD"))
 		cfg.console_password = strdup(value);
-	else if (!strcmp(option,"ADMIN_WIZARD_NAME"))
+	else if (!strcmp(option, "ADMIN_WIZARD_NAME"))
 		cfg.admin_wizard = strdup(value);
-	else if (!strcmp(option,"DUNGEON_MASTER_NAME"))
+	else if (!strcmp(option, "DUNGEON_MASTER_NAME"))
 		cfg.dungeon_master = strdup(value);
-	else if (!strcmp(option,"SECRET_DUNGEON_MASTER"))
+	else if (!strcmp(option, "SECRET_DUNGEON_MASTER"))
 		cfg.secret_dungeon_master = str_to_boolean(value);
-	else if (!strcmp(option,"FPS")) {
+	else if (!strcmp(option, "FPS")) {
 		cfg.fps = atoi(value);
 		/* Hack -- reinstall the timer handler to match the new FPS */
 		if (server_generated) install_timer_tick(dungeon, cfg.fps);
 	}
-	else if (!strcmp(option,"PLAYERS_NEVER_EXPIRE"))
+	else if (!strcmp(option, "PLAYERS_NEVER_EXPIRE"))
 		cfg.players_never_expire = str_to_boolean(value);
-	else if (!strcmp(option,"ADMINS_NEVER_EXPIRE"))
+	else if (!strcmp(option, "ADMINS_NEVER_EXPIRE"))
 		cfg.admins_never_expire = str_to_boolean(value);
-	else if (!strcmp(option,"MAGE_HITPOINT_BONUS"))
+	else if (!strcmp(option, "MAGE_HITPOINT_BONUS"))
 		cfg.mage_hp_bonus = str_to_boolean(value);
-	else if (!strcmp(option,"NEWBIES_CANNOT_DROP"))
+	else if (!strcmp(option, "NEWBIES_CANNOT_DROP"))
 		cfg.newbies_cannot_drop = atoi(value);
-	else if (!strcmp(option,"PRESERVE_DEATH_LEVEL")) {
+	else if (!strcmp(option, "PRESERVE_DEATH_LEVEL")) {
 		cfg.preserve_death_level = atoi(value);
 		if (cfg.min_unstatic_level > cfg.preserve_death_level)
 			cfg.preserve_death_level = cfg.min_unstatic_level;
 	}
-	else if (!strcmp(option,"NO_GHOST"))
+	else if (!strcmp(option, "NO_GHOST"))
 		cfg.no_ghost = str_to_boolean(value);
-	else if (!strcmp(option,"MAX_LIFES"))
+	else if (!strcmp(option, "MAX_LIFES"))
 		cfg.lifes = atoi(value);
-	else if (!strcmp(option,"HOUSES_PER_PLAYER"))
+	else if (!strcmp(option, "HOUSES_PER_PLAYER"))
 		cfg.houses_per_player = atoi(value);
-	else if (!strcmp(option,"CASTLES_PER_PLAYER"))
+	else if (!strcmp(option, "CASTLES_PER_PLAYER"))
 		cfg.castles_per_player = atoi(value);
-	else if (!strcmp(option,"CASTLES_FOR_KINGS"))
+	else if (!strcmp(option, "CASTLES_FOR_KINGS"))
 		cfg.castles_for_kings = str_to_boolean(value);
-	else if (!strcmp(option,"ACC_HOUSE_LIMIT"))
+	else if (!strcmp(option, "ACC_HOUSE_LIMIT"))
 		cfg.acc_house_limit = atoi(value);
-	else if (!strcmp(option,"DOOR_BUMP_OPEN"))
+	else if (!strcmp(option, "DOOR_BUMP_OPEN"))
 		cfg.door_bump_open = atoi(value);
-	else if (!strcmp(option,"BASE_UNIQUE_RESPAWN_TIME"))
+	else if (!strcmp(option, "BASE_UNIQUE_RESPAWN_TIME"))
 		cfg.unique_respawn_time = atoi(value);
-	else if (!strcmp(option,"MAX_UNIQUE_RESPAWN_TIME"))
+	else if (!strcmp(option, "MAX_UNIQUE_RESPAWN_TIME"))
 		cfg.unique_max_respawn_time = atoi(value);
-	else if (!strcmp(option,"LEVEL_UNSTATIC_CHANCE"))
+	else if (!strcmp(option, "LEVEL_UNSTATIC_CHANCE"))
 		cfg.level_unstatic_chance = atoi(value);
-	else if (!strcmp(option,"RETIRE_TIMER"))
+	else if (!strcmp(option, "RETIRE_TIMER"))
 		cfg.retire_timer = atoi(value);
-	else if (!strcmp(option,"MAXIMIZE"))
+	else if (!strcmp(option, "MAXIMIZE"))
 		cfg.maximize = str_to_boolean(value);
-	else if (!strcmp(option,"GAME_PORT"))
+	else if (!strcmp(option, "GAME_PORT"))
 		cfg.game_port = atoi(value);
-	else if (!strcmp(option,"GW_PORT"))
+	else if (!strcmp(option, "GW_PORT"))
 		cfg.gw_port = atoi(value);
-	else if (!strcmp(option,"MIN_UNSTATIC_LEVEL")) {
+	else if (!strcmp(option, "MIN_UNSTATIC_LEVEL")) {
 		cfg.min_unstatic_level = atoi(value);
 		if (cfg.min_unstatic_level > cfg.preserve_death_level)
 			cfg.preserve_death_level = cfg.min_unstatic_level;
 	}
-	else if (!strcmp(option,"SPELL_INTERFERE"))
+	else if (!strcmp(option, "SPELL_INTERFERE"))
 		cfg.spell_interfere = atoi(value);
-	else if (!strcmp(option,"CONSOLE_PORT"))
+	else if (!strcmp(option, "CONSOLE_PORT"))
 		cfg.console_port = atoi(value);
-	else if (!strcmp(option,"ANTI_ARTS_HOARD"))
+	else if (!strcmp(option, "ANTI_ARTS_HOARD"))
 		cfg.anti_arts_hoard = str_to_boolean(value);
-	else if (!strcmp(option,"ANTI_ARTS_HOUSE"))
+	else if (!strcmp(option, "ANTI_ARTS_HOUSE"))
 		cfg.anti_arts_house = str_to_boolean(value);
-	else if (!strcmp(option,"ANTI_ARTS_WILD"))
+	else if (!strcmp(option, "ANTI_ARTS_WILD"))
 		cfg.anti_arts_wild = str_to_boolean(value);
-	else if (!strcmp(option,"ANTI_ARTS_SHOP"))
+	else if (!strcmp(option, "ANTI_ARTS_SHOP"))
 		cfg.anti_arts_shop = str_to_boolean(value);
-	else if (!strcmp(option,"ANTI_ARTS_PICKUP"))
+	else if (!strcmp(option, "ANTI_ARTS_PICKUP"))
 		cfg.anti_arts_pickup = str_to_boolean(value);
-	else if (!strcmp(option,"ANTI_ARTS_SEND"))
+	else if (!strcmp(option, "ANTI_ARTS_SEND"))
 		cfg.anti_arts_send = str_to_boolean(value);
-	else if (!strcmp(option,"PERSISTENT_ARTIFACTS"))
+	else if (!strcmp(option, "PERSISTENT_ARTIFACTS"))
 		cfg.persistent_artifacts = str_to_boolean(value);
-	else if (!strcmp(option,"ANTI_CHEEZE_PICKUP"))
+	else if (!strcmp(option, "ANTI_CHEEZE_PICKUP"))
 		cfg.anti_cheeze_pickup = str_to_boolean(value);
-	else if (!strcmp(option,"ANTI_CHEEZE_TELEKINESIS"))
+	else if (!strcmp(option, "ANTI_CHEEZE_TELEKINESIS"))
 		cfg.anti_cheeze_telekinesis = str_to_boolean(value);
-	else if (!strcmp(option,"SURFACE_ITEM_REMOVAL"))
+	else if (!strcmp(option, "SURFACE_ITEM_REMOVAL"))
 		cfg.surface_item_removal = atoi(value);
-	else if (!strcmp(option,"DUNGEON_ITEM_REMOVAL"))
+	else if (!strcmp(option, "DUNGEON_ITEM_REMOVAL"))
 		cfg.dungeon_item_removal = atoi(value);
-	else if (!strcmp(option,"DEATH_WILD_ITEM_REMOVAL"))
+	else if (!strcmp(option, "DEATH_WILD_ITEM_REMOVAL"))
 		cfg.death_wild_item_removal = atoi(value);
-	else if (!strcmp(option,"LONG_WILD_ITEM_REMOVAL"))
+	else if (!strcmp(option, "LONG_WILD_ITEM_REMOVAL"))
 		cfg.long_wild_item_removal = atoi(value);
-	else if (!strcmp(option,"DUNGEON_SHOP_CHANCE"))
+	else if (!strcmp(option, "DUNGEON_SHOP_CHANCE"))
 		cfg.dungeon_shop_chance = atoi(value);
-	else if (!strcmp(option,"DUNGEON_SHOP_TYPE"))
+	else if (!strcmp(option, "DUNGEON_SHOP_TYPE"))
 		cfg.dungeon_shop_type = atoi(value);
-	else if (!strcmp(option,"DUNGEON_SHOP_TIMEOUT"))
+	else if (!strcmp(option, "DUNGEON_SHOP_TIMEOUT"))
 		cfg.dungeon_shop_timeout = atoi(value);
-	else if (!strcmp(option,"SPELL_STACK_LIMIT"))
+	else if (!strcmp(option, "SPELL_STACK_LIMIT"))
 		cfg.spell_stack_limit = atoi(value);
-	else if (!strcmp(option,"KINGS_ETIQUETTE"))
+	else if (!strcmp(option, "KINGS_ETIQUETTE"))
 		cfg.kings_etiquette = str_to_boolean(value);
-	else if (!strcmp(option,"FALLENKINGS_ETIQUETTE"))
+	else if (!strcmp(option, "FALLENKINGS_ETIQUETTE"))
 		cfg.fallenkings_etiquette = str_to_boolean(value);
-	else if (!strcmp(option,"STRICT_ETIQUETTE"))
+	else if (!strcmp(option, "STRICT_ETIQUETTE"))
 		cfg.strict_etiquette = str_to_boolean(value);
-	else if (!strcmp(option,"ZANG_MONSTERS"))
+	else if (!strcmp(option, "ZANG_MONSTERS"))
 		cfg.zang_monsters = atoi(value);
-	else if (!strcmp(option,"PERN_MONSTERS"))
+	else if (!strcmp(option, "PERN_MONSTERS"))
 		cfg.pern_monsters = atoi(value);
-	else if (!strcmp(option,"CTH_MONSTERS"))
+	else if (!strcmp(option, "CTH_MONSTERS"))
 		cfg.cth_monsters = atoi(value);
-	else if (!strcmp(option,"JOKE_MONSTERS"))
+	else if (!strcmp(option, "JOKE_MONSTERS"))
 		cfg.joke_monsters = atoi(value);
-	else if (!strcmp(option,"CBLUE_MONSTERS"))
+	else if (!strcmp(option, "CBLUE_MONSTERS"))
 		cfg.cblue_monsters = atoi(value);
-	else if (!strcmp(option,"VANILLA_MONSTERS"))
+	else if (!strcmp(option, "VANILLA_MONSTERS"))
 		cfg.vanilla_monsters = atoi(value);
-	else if (!strcmp(option,"PET_MONSTERS"))
+	else if (!strcmp(option, "PET_MONSTERS"))
 		cfg.pet_monsters = atoi(value);
-	else if (!strcmp(option,"RUNNING_SPEED"))
+	else if (!strcmp(option, "RUNNING_SPEED"))
 		cfg.running_speed = atoi(value);
-	else if (!strcmp(option,"ANTI_SCUM"))
+	else if (!strcmp(option, "ANTI_SCUM"))
 		cfg.anti_scum = atoi(value);
-	else if (!strcmp(option,"DUN_UNUSUAL"))
+	else if (!strcmp(option, "DUN_UNUSUAL"))
 		cfg.dun_unusual = atoi(value);
 	else if (!strcmp(option, "TOWN_X"))
 		cfg.town_x = atoi(value);
@@ -3346,9 +3346,9 @@ static void set_server_option(char * option, char * value) {
 		cfg.store_turns = atoi(value);
 	else if (!strcmp(option, "DUN_STORE_TURNS"))
 		cfg.dun_store_turns = atoi(value);
-	else if (!strcmp(option,"PUBLIC_RFE"))
+	else if (!strcmp(option, "PUBLIC_RFE"))
 		cfg.public_rfe = str_to_boolean(value);
-	else if (!strcmp(option,"AUTO_PURGE"))
+	else if (!strcmp(option, "AUTO_PURGE"))
 		cfg.auto_purge = str_to_boolean(value);
 	else if (!strcmp(option, "RESTING_RATE"))
 		cfg.resting_rate = atoi(value);
@@ -3358,59 +3358,59 @@ static void set_server_option(char * option, char * value) {
 		cfg.use_pk_rules = atoi(value);
 	else if (!strcmp(option, "QUIT_BAN_MODE"))
 		cfg.quit_ban_mode = atoi(value);
-	else if (!strcmp(option,"LOG_U"))
+	else if (!strcmp(option, "LOG_U"))
 		cfg.log_u = str_to_boolean(value);
-	else if (!strcmp(option,"REPLACE_HISCORE"))
+	else if (!strcmp(option, "REPLACE_HISCORE"))
 		cfg.replace_hiscore = atoi(value);
-	else if (!strcmp(option,"UNIKILL_FORMAT"))
+	else if (!strcmp(option, "UNIKILL_FORMAT"))
 		cfg.unikill_format = atoi(value);
-	else if (!strcmp(option,"SERVER_NOTES"))
+	else if (!strcmp(option, "SERVER_NOTES"))
 		cfg.server_notes = strdup(value);
-	else if (!strcmp(option,"ARTS_DISABLED"))
+	else if (!strcmp(option, "ARTS_DISABLED"))
 		cfg.arts_disabled = str_to_boolean(value);
-	else if (!strcmp(option,"WINNERS_FIND_RANDARTS"))
+	else if (!strcmp(option, "WINNERS_FIND_RANDARTS"))
 		cfg.winners_find_randarts = str_to_boolean(value);
-	else if (!strcmp(option,"ARTS_LEVEL_REQ"))
+	else if (!strcmp(option, "ARTS_LEVEL_REQ"))
 		cfg.arts_level_req = atoi(value);
-	else if (!strcmp(option,"SURFACE_SUMMONING"))
+	else if (!strcmp(option, "SURFACE_SUMMONING"))
 		cfg.surface_summoning = str_to_boolean(value);
-	else if (!strcmp(option,"CLONE_SUMMONING"))
+	else if (!strcmp(option, "CLONE_SUMMONING"))
 		cfg.clone_summoning = atoi(value);
-	else if (!strcmp(option,"HENC_STRICTNESS"))
+	else if (!strcmp(option, "HENC_STRICTNESS"))
 		cfg.henc_strictness = atoi(value);
-	else if (!strcmp(option,"BONUS_CALC_TYPE"))
+	else if (!strcmp(option, "BONUS_CALC_TYPE"))
 		cfg.bonus_calc_type = atoi(value);
-	else if (!strcmp(option,"CHARMODE_TRADING_RESTRICTIONS"))
+	else if (!strcmp(option, "CHARMODE_TRADING_RESTRICTIONS"))
 		cfg.charmode_trading_restrictions = atoi(value);
-	else if (!strcmp(option,"ITEM_AWARENESS"))
+	else if (!strcmp(option, "ITEM_AWARENESS"))
 		cfg.item_awareness = atoi(value);
-	else if (!strcmp(option,"WORLDD_PUBCHAT"))
+	else if (!strcmp(option, "WORLDD_PUBCHAT"))
 		cfg.worldd_pubchat = str_to_boolean(value);
-	else if (!strcmp(option,"WORLDD_PRIVCHAT"))
+	else if (!strcmp(option, "WORLDD_PRIVCHAT"))
 		cfg.worldd_privchat = str_to_boolean(value);
-	else if (!strcmp(option,"WORLDD_BROADCAST"))
+	else if (!strcmp(option, "WORLDD_BROADCAST"))
 		cfg.worldd_broadcast = str_to_boolean(value);
-	else if (!strcmp(option,"WORLDD_LVLUP"))
+	else if (!strcmp(option, "WORLDD_LVLUP"))
 		cfg.worldd_lvlup = str_to_boolean(value);
-	else if (!strcmp(option,"WORLDD_UNIDEATH"))
+	else if (!strcmp(option, "WORLDD_UNIDEATH"))
 		cfg.worldd_unideath = str_to_boolean(value);
-	else if (!strcmp(option,"WORLDD_PWIN"))
+	else if (!strcmp(option, "WORLDD_PWIN"))
 		cfg.worldd_pwin = str_to_boolean(value);
-	else if (!strcmp(option,"WORLDD_PDEATH"))
+	else if (!strcmp(option, "WORLDD_PDEATH"))
 		cfg.worldd_pdeath = str_to_boolean(value);
-	else if (!strcmp(option,"WORLDD_PJOIN"))
+	else if (!strcmp(option, "WORLDD_PJOIN"))
 		cfg.worldd_pjoin = str_to_boolean(value);
-	else if (!strcmp(option,"WORLDD_PLEAVE"))
+	else if (!strcmp(option, "WORLDD_PLEAVE"))
 		cfg.worldd_pleave = str_to_boolean(value);
-	else if (!strcmp(option,"WORLDD_PLIST"))
+	else if (!strcmp(option, "WORLDD_PLIST"))
 		cfg.worldd_plist = str_to_boolean(value);
 #if 0 /* disabled since it's a receive-flag. that's done by 'servers' flags */
-	else if (!strcmp(option,"WORLDD_IRCCHAT"))
+	else if (!strcmp(option, "WORLDD_IRCCHAT"))
 		cfg.worldd_ircchat = str_to_boolean(value);
 #endif
-	else if (!strcmp(option,"WORLDD_EVENTS"))
+	else if (!strcmp(option, "WORLDD_EVENTS"))
 		cfg.worldd_events = str_to_boolean(value);
-	else if (!strcmp(option,"LEAK_INFO"))
+	else if (!strcmp(option, "LEAK_INFO"))
 		cfg.leak_info = atoi(value);
 
 	else printf("Error : unrecognized tomenet.cfg option %s\n", option);

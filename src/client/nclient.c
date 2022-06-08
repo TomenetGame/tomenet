@@ -5977,9 +5977,9 @@ void do_mail() {
 	struct passwd *pw;
 
   #ifdef NETBSD
-	strcpy(mpath,"/var/mail/");
+	strcpy(mpath, "/var/mail/");
   #else
-	strcpy(mpath,"/var/spool/mail/");
+	strcpy(mpath, "/var/spool/mail/");
   #endif
 
 	uid = getuid();
@@ -5990,13 +5990,13 @@ void do_mail() {
 
 	if(ticks-mailticks >= 300){	/* testing - too fast */
 		struct stat inf;
-		if(!stat(mpath,&inf)){
+		if (!stat(mpath, &inf)){
   #ifndef _POSIX_C_SOURCE
 			if (inf.st_size != 0) {
 				if (inf.st_mtimespec.tv_sec > lm.tv_sec || (inf.st_mtimespec.tv_sec == lm.tv_sec && inf.st_mtimespec.tv_nsec > lm.tv_nsec)) {
 					lm.tv_sec = inf.st_mtimespec.tv_sec;
 					lm.tv_nsec = inf.st_mtimespec.tv_nsec;
-					sprintf(buffer,"\377yYou have new mail in %s.", mpath);
+					sprintf(buffer, "\377yYou have new mail in %s.", mpath);
 					c_msg_print(buffer);
 				}
 			}
@@ -6005,7 +6005,7 @@ void do_mail() {
 				if (inf.st_mtime > lm.tv_sec || (inf.st_mtime == lm.tv_sec && inf.st_mtimensec > lm.tv_nsec)) {
 					lm.tv_sec = inf.st_mtime;
 					lm.tv_nsec = inf.st_mtimensec;
-					sprintf(buffer,"\377yYou have new mail in %s.", mpath);
+					sprintf(buffer, "\377yYou have new mail in %s.", mpath);
 					c_msg_print(buffer);
 				}
 			}

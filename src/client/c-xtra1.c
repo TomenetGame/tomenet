@@ -1035,7 +1035,7 @@ void prt_state(bool paralyzed, bool searching, bool resting) {
 			strcpy(text, "Searching   ");
 		else {
 			attr = TERM_L_DARK;
-			strcpy(text,"Stlth Mode  ");
+			strcpy(text, "Stlth Mode  ");
 		}
 #else
 		strcpy(text, "Searching   ");

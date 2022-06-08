@@ -328,7 +328,7 @@ int go_engine_init(void) {
 #endif
 
 		/* We were unable to execute the engine? Game over! */
-		fprintf(stderr,"GO_ERROR: exec().\n");
+		fprintf(stderr, "GO_ERROR: exec().\n");
 		//return 4;
 
 		/* Cause SIGPIPE to parent so they know what's up */
@@ -537,7 +537,7 @@ int go_engine_init(void) {
  #endif
 
 		/* We were unable to execute the engine? Game over! */
-		fprintf(stderr,"GO_ERROR: exec().\n");
+		fprintf(stderr, "GO_ERROR: exec().\n");
 		//return 4;
 
 		/* Cause SIGPIPE to parent so they know what's up */

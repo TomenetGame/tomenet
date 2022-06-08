@@ -2762,7 +2762,7 @@ void del_guild(int id) {
 
 	/* Clear the basic info */
 	guilds[id].members = 0; /* it should be zero anyway */
-	strcpy(guilds[id].name,"");
+	strcpy(guilds[id].name, "");
 	for (i = 0; i < 5; i++) guilds[id].adder[i][0] = '\0'; /* they should be cleared anyway */
 	guilds[id].flags = GFLG_NONE;
 	guilds[id].minlev = 0;

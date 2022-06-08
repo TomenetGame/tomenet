@@ -9198,7 +9198,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	blind = (p_ptr->blind ? TRUE : FALSE);
 
 	/* Player is not here */
-	if ((x != p_ptr->px) || (y != p_ptr->py) || (!inarea(wpos,&p_ptr->wpos))) return (FALSE);
+	if ((x != p_ptr->px) || (y != p_ptr->py) || (!inarea(wpos, &p_ptr->wpos))) return (FALSE);
 
 	/* Player cannot hurt himself */
 	if (0 - who == Ind) {
@@ -9532,7 +9532,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if ((p_ptr->mode & MODE_SOLO) && friendly_player && !self) return FALSE;
 
 	/* PvP often gives same message output as fuzzy */
-	if (!strcmp(attacker,"") || !strcmp(m_name,"")) fuzzy = TRUE;
+	if (!strcmp(attacker, "") || !strcmp(m_name, "")) fuzzy = TRUE;
 
 	/* Ghost-check (also checks for admin status) */
 	/* GHOST CHECK */

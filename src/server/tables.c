@@ -4762,7 +4762,7 @@ cptr player_title[MAX_CLASS][11][4] = {
 		{"Path Finder", "Path Finder", "Path Finder", "Path Finder", },
 		{"Deputy", "Deputy", "Deputy", "Deputy", },
 		{"Guard", "Guard", "Guard", "Guard", },
-		{"Scout","Scout", "Scout","Scout", },
+		{"Scout", "Scout", "Scout", "Scout", },
 		{"Sentry", "Sentry", "Sentry", "Sentry", },
 		{"Overseer", "Overseer", "Overseer", "Overseer", },
 		{"Guard Captain", "Guard Captain", "Guard Captain", "Guard Captain", },
@@ -4796,7 +4796,7 @@ cptr player_title[MAX_CLASS][11][4] = {
 		{"Tree Hugger", "Tree Hugger", "Tree Hugger", "Tree Hugger", },
 		{"Flower Boy", "Flower Girl", "Flower Boy", "Flower Girl", },
 		{"Herbalist", "Herbalist", "Herbalist", "Herbalist", },
-		{"Spiritualist","Spiritualist", "Spiritualist","Spiritualist", },
+		{"Spiritualist", "Spiritualist", "Spiritualist", "Spiritualist", },
 		{"Elder", "Elder", "Elder", "Elder", },
 		{"Druid", "Druid", "Druid", "Druid", },
 		{"High Druid", "High Druid", "High Druid", "High Druid", },
@@ -4829,7 +4829,7 @@ cptr player_title[MAX_CLASS][11][4] = {
 		//{"Rock Painter", "Rock Painter", "Rock Painter", "Rock Painter", },
 		{"Fire Starter", "Fire Starter", "Fire Starter", "Fire Starter", },
 		{"Treasure Hunter", "Treasure Hunter", "Tr.Hunter", "Tr.Hunter", },
-		//{"Archaeologist", "Archaeologist", "Professor", "Professor," }, //too cool for 12 letters? ^^
+		//{"Archaeologist", "Archaeologist", "Professor", "Professor", }, //too cool for 12 letters? ^^
 		{"Archaeologist", "Archaeologist", "Archaelgst.", "Archaelgst.", },
 		{"Earth Guard", "Earth Guard", "Earth Guard", "Earth Guard", },
 		{"Rune Knight", "Rune Knight", "Rune Knight", "Rune Knight", },

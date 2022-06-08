@@ -228,7 +228,7 @@ cptr wand_adj[MAX_METALS] = {
 	"Zirconium", "Zinc", "Aluminium-Plated", "Copper-Plated", "Gold-Plated",
 	"Nickel-Plated", "Silver-Plated", "Steel-Plated", "Tin-Plated", "Zinc-Plated",
 	"Mithril-Plated", "Mithril", "Runed", "Bronze", "Brass",
-	"Platinum", "Lead","Lead-Plated", "Ivory" , "Adamantite",
+	"Platinum", "Lead", "Lead-Plated", "Ivory" , "Adamantite",
 	"Uridium", "Long", "Short", "Hexagonal"
 };
 static byte wand_col[MAX_METALS] = {
@@ -5105,7 +5105,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (o_ptr->tval == TV_BOOK) {
 		if (is_custom_tome(o_ptr->sval)) {
 			if (!o_ptr->xtra1) fprintf(fff, "It contains no spells yet.\n");
-			else fprintf(fff,"It contains spells:\n");
+			else fprintf(fff, "It contains spells:\n");
 			if (o_ptr->xtra1) fprintf(fff, "- %s\n", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra1 - 1)));
 			if (o_ptr->xtra2) fprintf(fff, "- %s\n", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra2 - 1)));
 			if (o_ptr->xtra3) fprintf(fff, "- %s\n", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra3 - 1)));

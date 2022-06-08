@@ -462,7 +462,7 @@ bool set_adrenaline(int Ind, int v) {
 			if (p_ptr->biofeedback) {
 				msg_print(Ind, "You lose control of your blood flow!");
 				i = randint(randint(v));
-				take_hit(Ind, damroll(2, i),"adrenaline poisoning", 0);
+				take_hit(Ind, damroll(2, i), "adrenaline poisoning", 0);
 				v = v - i + 1;
 				p_ptr->biofeedback = 0;
 			}
@@ -479,7 +479,7 @@ bool set_adrenaline(int Ind, int v) {
 		while (v > 30 + randint(p_ptr->lev * 5)) {
 			msg_print(Ind, "Your body can't handle that much adrenaline!");
 			i = randint(randint(v));
-			take_hit(Ind, damroll(3, i * 2),"adrenaline poisoning", 0);
+			take_hit(Ind, damroll(3, i * 2), "adrenaline poisoning", 0);
 			v = v - i + 1;
 		}
 	}
@@ -5842,7 +5842,7 @@ bool monster_death(int Ind, int m_idx) {
 	 * Mega^3-hack: killing a 'Warrior of the Dawn' is likely to
 	 * spawn another in the fallen one's place!
 	 */
-	if (strstr((r_name + r_ptr->name),"the Dawn")) {
+	if (strstr((r_name + r_ptr->name), "the Dawn")) {
 		if (!(randint(20) == 13)) {
 			int wy = p_ptr->py, wx = p_ptr->px;
 			int attempts = 100;
@@ -5878,13 +5878,13 @@ bool monster_death(int Ind, int m_idx) {
 	}
 
 	/* One more ultra-hack: An Unmaker goes out with a big bang! */
-	else if (strstr((r_name + r_ptr->name),"Unmaker")) {
+	else if (strstr((r_name + r_ptr->name), "Unmaker")) {
 		int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO;
 		(void)project(m_idx, 6, wpos, y, x, 150, GF_CHAOS, flg, "The Unmaker explodes for");
 	}
 
 	/* Pink horrors are replaced with 2 Blue horrors */
-	else if (strstr((r_name + r_ptr->name),"Pink horror")) {
+	else if (strstr((r_name + r_ptr->name), "Pink horror")) {
 		for (i = 0; i < 2; i++) {
 			int wy = p_ptr->py, wx = p_ptr->px;
 			int attempts = 100;
@@ -6953,7 +6953,7 @@ if (cfg.unikill_format) {
 				 * winners.
 				 */
 				if ((((p_ptr->party) && (q_ptr->party == p_ptr->party)) ||
-				    (q_ptr == p_ptr) ) && q_ptr->lev >= 40 && inarea(&p_ptr->wpos,&q_ptr->wpos))
+				    (q_ptr == p_ptr) ) && q_ptr->lev >= 40 && inarea(&p_ptr->wpos, &q_ptr->wpos))
 				{
 
 					/* Total winner */
@@ -7128,7 +7128,7 @@ if (cfg.unikill_format) {
 			FREE(m_ptr->r_ptr, monster_race);
 			return TRUE;
 
-		} else if (strstr((r_name + r_ptr->name),"Smeagol")) {
+		} else if (strstr((r_name + r_ptr->name), "Smeagol")) {
 			/* Get local object */
 			qq_ptr = &forge;
 
@@ -7149,7 +7149,7 @@ if (cfg.unikill_format) {
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 		/* finally made Robin Hood drop a Bow ;) */
-		} else if (strstr((r_name + r_ptr->name),"Robin Hood, the Outlaw") && magik(50)) {
+		} else if (strstr((r_name + r_ptr->name), "Robin Hood, the Outlaw") && magik(50)) {
 			qq_ptr = &forge;
 			object_wipe(qq_ptr);
 			invcopy(qq_ptr, lookup_kind(TV_BOW, SV_LONG_BOW));
@@ -7210,7 +7210,7 @@ if (cfg.unikill_format) {
 
 		/* PernAngband additions */
 		/* Mega^2-hack -- destroying the Stormbringer gives it us! */
-		} else if (strstr((r_name + r_ptr->name),"Stormbringer")) {
+		} else if (strstr((r_name + r_ptr->name), "Stormbringer")) {
 			/* Get local object */
 			qq_ptr = &forge;
 
@@ -7247,7 +7247,7 @@ if (cfg.unikill_format) {
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 		/* Raal's Tomes of Destruction drop a Raal's Tome of Destruction -- EXPERIMENTAL */
-		} else if ((strstr((r_name + r_ptr->name),"Raal's Tome of Destruction")) && !rand_int(20)) {
+		} else if ((strstr((r_name + r_ptr->name), "Raal's Tome of Destruction")) && !rand_int(20)) {
 			/* Get local object */
 			qq_ptr = &forge;
 
@@ -7267,7 +7267,7 @@ if (cfg.unikill_format) {
 
 #if 0 /* Disabled - Idea doesn't work, because AP in general for cursed randarts is very low. There is no use in the items generated, except maybe lucky ID hat.. */
 		/* For DK/HK: Let these guys drop some heavily cursed, powerful randart for itemization fun.. */
-		} else if (strstr((r_name + r_ptr->name),"Vlad Dracula") || strstr((r_name + r_ptr->name),"Mephistopheles")) {
+		} else if (strstr((r_name + r_ptr->name), "Vlad Dracula") || strstr((r_name + r_ptr->name), "Mephistopheles")) {
 			int tv = 0, k_idx, tries = 1000;
 			artifact_type *a_ptr;
 			char o_name[ONAME_LEN];
@@ -7336,7 +7336,7 @@ if (cfg.unikill_format) {
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 #else
 		/* For DK/HK: Let these guys drop some heavily cursed trueart for itemization fun.. */
-		} else if ((strstr((r_name + r_ptr->name),"Vlad Dracula") || strstr((r_name + r_ptr->name),"Mephistopheles"))
+		} else if ((strstr((r_name + r_ptr->name), "Vlad Dracula") || strstr((r_name + r_ptr->name), "Mephistopheles"))
  #ifndef TEST_SERVER
 		    && !(resf_chosen & RESF_NOTRUEART)
  #endif
@@ -7656,7 +7656,7 @@ if (cfg.unikill_format) {
 			chance = 0;
 			I_kind = 0;
 
-			if (strstr((r_name + r_ptr->name)," Mardra, rider of the Gold Loranth")) {
+			if (strstr((r_name + r_ptr->name), " Mardra, rider of the Gold Loranth")) {
 				a_idx = ART_MARDRA;
 				chance = 55;
 			} else if (strstr((r_name + r_ptr->name), "Saruman of Many Colours")) {
@@ -9657,11 +9657,11 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d de
 			if (!strcmp(p_ptr->died_from, "Morgoth, Lord of Darkness")) {
 				char funky_msg[20];
 				switch (randint(5)) {
-				case 1:strcpy(funky_msg,"wasted");break;
-				case 2:strcpy(funky_msg,"crushed");break;
-				case 3:strcpy(funky_msg,"shredded");break;
-				case 4:strcpy(funky_msg,"torn up");break;
-				case 5:strcpy(funky_msg,"crushed");break; /* again :) */
+				case 1:strcpy(funky_msg, "wasted");break;
+				case 2:strcpy(funky_msg, "crushed");break;
+				case 3:strcpy(funky_msg, "shredded");break;
+				case 4:strcpy(funky_msg, "torn up");break;
+				case 5:strcpy(funky_msg, "crushed");break; /* again :) */
 				}
 				msg_format(Ind, "\374\377%c**\377rYou have been %s by %s.\377%c**", msg_layout, funky_msg, p_ptr->died_from, msg_layout);
 				if (cfg.unikill_format) {
@@ -13943,7 +13943,7 @@ bool master_level(int Ind, char * parms) {
 	case 'u':
 	{
 		struct worldpos twpos;
-		wpcopy(&twpos,&p_ptr->wpos);
+		wpcopy(&twpos, &p_ptr->wpos);
 		unstatic_level(&twpos);
 		/* additionally unstale it, simply by poofing it completely. - C. Blue */
 		if (getcave(&twpos)) dealloc_dungeon_level(&twpos);
@@ -13967,7 +13967,7 @@ bool master_level(int Ind, char * parms) {
 
 		if (!parms[1] || !parms[2] || p_ptr->wpos.wz) return FALSE;
 		if (istown(&p_ptr->wpos)){
-			msg_print(Ind,"Even you may not create dungeons in the town!");
+			msg_print(Ind, "Even you may not create dungeons in the town!");
 			return FALSE;
 		}
 
@@ -14086,7 +14086,7 @@ bool master_level(int Ind, char * parms) {
 			msg_print(Ind, "There is already a town here!");
 			return FALSE;
 		}
-		wpcopy(&twpos,&p_ptr->wpos);
+		wpcopy(&twpos, &p_ptr->wpos);
 
 		/* clean level first! */
 		wipe_m_list(&p_ptr->wpos);
@@ -14214,9 +14214,9 @@ bool master_build(int Ind, char * parms) {
 		object_type newkey;
 		int id;
 		MAKE(key, struct key_type);
-		sscanf(&parms[2],"%d",&id);
+		sscanf(&parms[2], "%d", &id);
 		key->id = id;
-		invcopy(&newkey, lookup_kind(TV_KEY, SV_HOUSE_KEY ));
+		invcopy(&newkey, lookup_kind(TV_KEY, SV_HOUSE_KEY));
 		newkey.pval = key->id;
 		newkey.marked2 = ITEM_REMOVAL_NEVER;
 		drop_near(0, &newkey, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
@@ -14667,7 +14667,7 @@ bool master_player(int Ind, char *parms){
 	char buf[MSG_LEN];
 
 	if (!is_admin(p_ptr)) {
-		msg_print(Ind,"You need to be the dungeon master to use this command.");
+		msg_print(Ind, "You need to be the dungeon master to use this command.");
 		return FALSE;
 	}
 
@@ -14675,7 +14675,7 @@ bool master_player(int Ind, char *parms){
 	case 'E':	/* offline editor */
 		for (i = 1; i <= NumPlayers; i++){
 			if (!strcmp(Players[i]->name, &parms[1])){
-				msg_format(Ind,"%s is currently playing",&parms[1]);
+				msg_format(Ind, "%s is currently playing", &parms[1]);
 				return(FALSE);
 			}
 		}
@@ -14701,7 +14701,7 @@ bool master_player(int Ind, char *parms){
 		if (Ind2) {
 			q_ptr = Players[Ind2];
 			msg_print(Ind2, "\377rYou are hit by a bolt from the blue!");
-			strcpy(q_ptr->died_from,"divine wrath");
+			strcpy(q_ptr->died_from, "divine wrath");
 			q_ptr->died_from_ridx = 0;
 			if (i == 2) q_ptr->global_event_temp |= PEVF_NOGHOST_00; //hack: no-ghost death
 			q_ptr->deathblow = 0;

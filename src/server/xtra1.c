@@ -8704,7 +8704,7 @@ static void process_global_event(int ge_id) {
 					/* in case some player waited in a NO_TELE vault..!: */
 					if (p_ptr->wpos.wz && !p_ptr->admin_dm) {
 						msg_print(i, "\377rThe whole dungeon suddenly COLLAPSES!");
-						strcpy(p_ptr->died_from,"a mysterious accident");
+						strcpy(p_ptr->died_from, "a mysterious accident");
 						p_ptr->died_from_ridx = 0;
 						p_ptr->global_event_temp = PEVF_NONE; /* clear no-WoR/perma-death/no-death flags */
 						p_ptr->deathblow = 0;
@@ -8723,7 +8723,7 @@ static void process_global_event(int ge_id) {
 				if (!Players[i]->wpos.wx && !Players[i]->wpos.wy && Players[i]->wpos.wz
 				    && Players[i]->global_event_type[ge_id] == GE_HIGHLANDER) {
 					msg_print(i, "\377rThe whole dungeon suddenly COLLAPSES!");
-					strcpy(Players[i]->died_from,"a mysterious accident");
+					strcpy(Players[i]->died_from, "a mysterious accident");
 					Players[i]->died_from_ridx = 0;
 					Players[i]->global_event_temp = PEVF_NONE; /* clear no-WoR/perma-death/no-death flags */
 					Players[i]->deathblow = 0;
