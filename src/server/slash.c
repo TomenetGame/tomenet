@@ -3956,14 +3956,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			msg_format(Ind, "\377yYou tip %s for %d Au!", q_ptr->name, tip);
 			msg_format(j, "\377y%s tips you for %d Au!", Players[j]->play_vis[Ind] ? p_ptr->name : "It", tip);
-//			msg_format_near(j, "\377y%s tips %s!", p_ptr->name, Players[j]->name);
+			//msg_format_near(j, "\377y%s tips %s!", p_ptr->name, Players[j]->name);
 
 			/* consume a partial turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 
 			return;
 		}
-		else if (prefix(messagelc, "/guild_adder")) {
+		else if (prefix(messagelc, "/guild_adder") && !prefix(messagelc, "/guild_adders")) {
 			u32b *flags;
 			guild_type *guild;
 			player_type *q_ptr;
@@ -4087,14 +4087,15 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				for (i = 0; i < 5; i++) if (guild->adder[i][0] != '\0') {
 					sprintf(buf, "\377s    Adders are: ");
 					strcat(buf, guild->adder[i]);
-					for (i++; i < 5; i++) {
-						if (guild->adder[i][0] == '\0') continue;
+					for (j = i + 1; j < 5; j++) {
+						if (guild->adder[j][0] == '\0') continue;
 						strcat(buf, ", ");
-						strcat(buf, guild->adder[i]);
+						strcat(buf, guild->adder[j]);
 					}
 					msg_print(Ind, buf);
 					break;
 				}
+				//if (i == 5) msg_format(Ind, "\377%cCurrently there are no guild adders set.", COLOUR_CHAT_GUILD);
 #endif
 				return;
 			}
@@ -4124,6 +4125,36 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				guild->minlev = atoi(token[2]);
 				msg_format(Ind, "..and has now been set to %d.", guild->minlev);
 			} else msg_print(Ind, "Unknown guild flag specified.");
+			return;
+		}
+		else if (prefix(messagelc, "/xguild_adders") || prefix(messagelc, "/guild_adders")) { //careful not to collide with /guild_adder; also, we're called by client's party menu only
+#ifdef GUILD_ADDERS_LIST
+			//u32b *flags;
+			guild_type *guild;
+			char buf[(NAME_LEN + 1) * 5 + 1];
+
+			if (!p_ptr->guild) {
+				msg_print(Ind, "You are not in a guild.");
+				return;
+			}
+			guild = &guilds[p_ptr->guild];
+			//flags = &guild->flags;
+
+			for (i = 0; i < 5; i++) if (guild->adder[i][0] != '\0') {
+				sprintf(buf, "\377s    Adders are: ");
+				strcat(buf, guild->adder[i]);
+				for (j = i + 1; j < 5; j++) {
+					if (guild->adder[j][0] == '\0') continue;
+					strcat(buf, ", ");
+					strcat(buf, guild->adder[j]);
+				}
+				msg_print(Ind, buf);
+				break;
+			}
+			if (i == 5) msg_format(Ind, "\377%cCurrently there are no guild adders set.", COLOUR_CHAT_GUILD);
+#else
+			msg_print(Ind, "Sorry, this command is currently not available.");
+#endif
 			return;
 		}
 		else if (prefix(messagelc, "/testyourmight")  ||

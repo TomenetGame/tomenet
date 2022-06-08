@@ -2109,6 +2109,11 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				}
 			}
 		}
+		/* Guild setting[s]/config/cfg/opt[s]/options -> /guild_cfg */
+		else if ((my_strcasestr(buf, "setting") || my_strcasestr(buf, "config") || my_strcasestr(buf, "cfg") || my_strcasestr(buf, "opt")) && my_strcasestr(buf, "guild")) {
+			init_search_type = 2;
+			strcpy(init_search_string, "/GUILD_CFG");
+		}
 		/* Undo/reset -> /undoskills (which also mentions the new experimental way in The Mirror) */
 		else if (((my_strcasestr(buf, "undo") || my_strcasestr(buf, "reset")) && (my_strcasestr(buf, "skil") || my_strcasestr(buf, "spec"))) ||
 		    !strcasecmp("undo", buf) || !strcasecmp("reset", buf) || !strcasecmp(buf, "respec") || !strcasecmp(buf, "respecc") || !strcasecmp(buf, "reskill") || !strcasecmp(buf, "reskil")) {
@@ -5705,10 +5710,11 @@ static void cmd_guild_options() {
 
 			/* Display commands for changing options */
 			if (guild_master) {
-				Term_putstr(5, 16, -1, TERM_WHITE, "(\377U1\377w) Toggle 'enable-adders' flag");
-				Term_putstr(5, 17, -1, TERM_WHITE, "(\377U2\377w) Toggle 'auto-re-add' flag");
-				Term_putstr(5, 18, -1, TERM_WHITE, "(\377U3\377w) Set minimum level required to join the guild");
-				Term_putstr(5, 19, -1, TERM_WHITE, "(\377U4\377w) Add/remove 'adders' who may add players in your stead");
+				Term_putstr(5, 15, -1, TERM_WHITE, "(\377U1\377w) Toggle 'enable-adders' flag");
+				Term_putstr(5, 16, -1, TERM_WHITE, "(\377U2\377w) Toggle 'auto-re-add' flag");
+				Term_putstr(5, 17, -1, TERM_WHITE, "(\377U3\377w) Set minimum level required to join the guild");
+				Term_putstr(5, 18, -1, TERM_WHITE, "(\377Ua\377w) View list of 'adders' who may add players in your stead");
+				Term_putstr(5, 19, -1, TERM_WHITE, "(\377Ub\377w) Add/remove 'adders' who may add players in your stead");
 			}
 		}
 
@@ -5724,6 +5730,9 @@ static void cmd_guild_options() {
 		/* Take a screenshot */
 		else if (i == KTRL('T'))
 			xhtml_screenshot("screenshot????");
+
+		else if (i == ':')
+			cmd_message();
 
 		else if (guild_master && i == '1') {
 			if (guild.flags & GFLG_ALLOW_ADDERS) {
@@ -5742,7 +5751,10 @@ static void cmd_guild_options() {
 			if (!get_string("Specify new minimum level: ", buf0, 4)) continue;
 			i = atoi(buf0);
 			Send_guild_config(1, i, "");
-		} else if (guild_master && i == '4') {
+		} else if (guild_master && i == 'a') {
+			Send_msg("/xguild_adders");
+		} else if (guild_master && i == 'b') {
+			strcpy(buf0, "");
 			if (!get_string("Specify player name: ", buf0, NAME_LEN)) continue;
 			Send_guild_config(2, -1, buf0);
 		}
@@ -5816,7 +5828,7 @@ void cmd_party(void) {
 		Term_putstr(5, 10, -1, TERM_WHITE, "(\377UC\377w) Remove player from guild");
 		Term_putstr(5, 11, -1, TERM_WHITE, "(\377UD\377w) Leave guild");
 		if (is_newer_than(&server_version, 4, 5, 2, 0, 0, 0))
-			Term_putstr(5, 12, -1, TERM_WHITE, "(\377Ue\377w) Set/view guild options");
+			Term_putstr(5, 12, -1, TERM_WHITE, "(\377Ue\377w) Set/view guild options and adders");
 
 		if (!s_NO_PK) {
 			Term_putstr(5, 14, -1, TERM_WHITE, "(\377RA\377w) Declare war on player/party (not recommended!)");
@@ -5847,6 +5859,9 @@ void cmd_party(void) {
 		/* Take a screenshot */
 		else if (i == KTRL('T'))
 			xhtml_screenshot("screenshot????");
+
+		else if (i == ':')
+			cmd_message();
 
 		/* Create party */
 		else if (i == '1') {
