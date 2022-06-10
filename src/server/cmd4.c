@@ -652,6 +652,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 	if (attr == 'w') {
 		/* display level in light blue for partyable players */
 		if (!wont_get_exp &&
+		    !((p_ptr->mode & MODE_SOLO) || (q_ptr->mode & MODE_SOLO)) &&
 		    !compat_pmode(Ind, q_ptr->Ind, FALSE) &&
 		    !((iddc && cant_iddc0) || (iddc0 && cant_iddc))) /* if one of them is in iddc and the other cant go there, we cant party */
 			strcpy(attr_p, "\377B");
@@ -1869,9 +1870,9 @@ void write_player_info(int Ind, char *pinfo) {
 		else if (p_ptr->party && p_ptr->party == q_ptr->party) attr = 'B';
 		/* Print hostile players in red */
 		else if (check_hostile(Ind, k)) attr = 'r';
-#ifdef IDDC_CHAR_COLOUR_INDICATOR
+ #ifdef IDDC_CHAR_COLOUR_INDICATOR
 		if (attr == 'w' && iddc) attr = 's';
-#endif
+ #endif
 
 
 
@@ -1890,15 +1891,15 @@ void write_player_info(int Ind, char *pinfo) {
 	char attr_p[3];
 
 	bool wont_get_exp;
-#ifdef ANTI_MAXPLV_EXPLOIT
- #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
+ #ifdef ANTI_MAXPLV_EXPLOIT
+  #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
 	int diff = (q_ptr->max_lev + q_ptr->max_plv - p_ptr->max_lev - p_ptr->max_plv) / 2 - ((MAX_PARTY_LEVEL_DIFF + 1) * 3) / 2;
- #else
-  #ifndef ANTI_MAXPLV_EXPLOIT_SOFTEXP
+  #else
+   #ifndef ANTI_MAXPLV_EXPLOIT_SOFTEXP
 	int diff = (q_ptr->max_lev + q_ptr->max_plv - p_ptr->max_lev - p_ptr->max_plv) / 2 - (MAX_PARTY_LEVEL_DIFF + 1);
+   #endif
   #endif
  #endif
-#endif
 
 	/* NOTE: This won't work well with ANTI_MAXPLV_EXPLOIT_SOFTEXP code.
 	   NOTE2: Some of these rules might produce asymmetrical colouring,
@@ -1906,28 +1907,29 @@ void write_player_info(int Ind, char *pinfo) {
 	wont_get_exp =
 	    ((p_ptr->total_winner && !(q_ptr->total_winner || q_ptr->once_winner)) ||
 	    (q_ptr->total_winner && !(p_ptr->total_winner || p_ptr->once_winner)) ||
-#ifdef ANTI_MAXPLV_EXPLOIT
- #if defined(ANTI_MAXPLV_EXPLOIT_SOFTLEV) || !defined(ANTI_MAXPLV_EXPLOIT_SOFTEXP)
+ #ifdef ANTI_MAXPLV_EXPLOIT
+  #if defined(ANTI_MAXPLV_EXPLOIT_SOFTLEV) || !defined(ANTI_MAXPLV_EXPLOIT_SOFTEXP)
 	    (!p_ptr->total_winner && diff > 0) ||
+  #endif
  #endif
-#endif
 	    (p_ptr->total_winner && ABS(p_ptr->max_lev - q_ptr->max_lev) > MAX_KING_PARTY_LEVEL_DIFF) ||
 	    (!p_ptr->total_winner && ABS(p_ptr->max_lev - q_ptr->max_lev) > MAX_PARTY_LEVEL_DIFF));
 
-#ifdef KING_PARTY_FREE_THRESHOLD
+ #ifdef KING_PARTY_FREE_THRESHOLD
 	if (KING_PARTY_FREE_THRESHOLD && p_ptr->total_winner && q_ptr->total_winner && p_ptr->max_lev >= KING_PARTY_FREE_THRESHOLD && q_ptr->max_lev >= KING_PARTY_FREE_THRESHOLD) wont_get_exp = FALSE;
-#endif
+ #endif
 
 	attr_p[0] = 0;
 	if (attr == 'w') {
 		/* display level in light blue for partyable players */
 		if (!wont_get_exp &&
+		    !((p_ptr->mode & MODE_SOLO) || (q_ptr->mode & MODE_SOLO))
 		    !compat_pmode(Ind, q_ptr->Ind, FALSE) &&
 		    !((iddc && cant_iddc0) || (iddc0 && cant_iddc))) /* if one of them is in iddc and the other cant go there, we cant party */
 			strcpy(attr_p, "\377B");
-#ifdef IDDC_CHAR_COLOUR_INDICATOR
+ #ifdef IDDC_CHAR_COLOUR_INDICATOR
 		if (iddc) attr = 's';
-#endif
+ #endif
 	} else if (attr == 'B') {
 		/* display level in grey for party members out of our exp-sharing range. */
 		if (wont_get_exp) strcpy(attr_p, "\377s");
@@ -1946,29 +1948,29 @@ void write_player_info(int Ind, char *pinfo) {
 	else if (q_ptr->total_winner) fprintf(fff, "\377v");
 	else fprintf(fff, "\377%c", attr);
 
-  #ifdef COMPACT_GENDER
+ #ifdef COMPACT_GENDER
 	fprintf(fff, "%s,\377%c %c.%sL%d\377%c ", q_ptr->name, attr, q_ptr->male ? 'm' : 'f', attr_p, q_ptr->lev, attr);
-  #else
+ #else
 	fprintf(fff, "%s, %sL%d\377%c ", q_ptr->name, attr_p, q_ptr->lev, attr);
-  #endif
+ #endif
 
 	fprintf(fff, "%s", get_prace2(q_ptr));
 	fprintf(fff, "%s", class_info[q_ptr->pclass].title);
 
 	/* location */
 	if (attr == 'G' || attr == 'B' || admin
-#ifdef IDDC_CHAR_POSITION_INDICATOR
+ #ifdef IDDC_CHAR_POSITION_INDICATOR
 	    || iddc
-#endif
+ #endif
 	    ) {
 		// BAD HACK: just replacing 'Ind' by number constants..
-  #if 0 /* 'The Sacred Land of Mountains' <- too long for this ultra compact scheme! */
+ #if 0 /* 'The Sacred Land of Mountains' <- too long for this ultra compact scheme! */
 		if (admin) fprintf(fff, ", %s", wpos_format(1, &q_ptr->wpos));
 		else fprintf(fff, ", %s", wpos_format(-1, &q_ptr->wpos));
-  #else /* ..so give everyone exact wpos, like otherwise only admins get */
-#if 0 /* normal */
+ #else /* ..so give everyone exact wpos, like otherwise only admins get */
+  #if 0 /* normal */
 		fprintf(fff, ", %s", wpos_format_compact(Ind, &q_ptr->wpos));
-#else /* hack: admins see coloured depth, colour indicating how close to game bosses [Sauron/Morgoth/Tik and beyond] they are */
+  #else /* hack: admins see coloured depth, colour indicating how close to game bosses [Sauron/Morgoth/Tik and beyond] they are */
 		char col = '\0';
 
 		if (admin && attr != 'G' && q_ptr->wpos.wz && !isdungeontown(&q_ptr->wpos)) {
@@ -1981,8 +1983,8 @@ void write_player_info(int Ind, char *pinfo) {
 		}
 		if (col) fprintf(fff, ", %s%c%s%s", "\377", col, wpos_format_compact(Ind, &q_ptr->wpos), "\377-");
 		else fprintf(fff, ", %s", wpos_format_compact(Ind, &q_ptr->wpos));
-#endif
   #endif
+ #endif
 
 		fprintf(fff, " [%d,%d]", q_ptr->panel_row, q_ptr->panel_col);
 
@@ -1993,10 +1995,10 @@ void write_player_info(int Ind, char *pinfo) {
 	/* PK */
 	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
 		text_pk = TRUE;
-#ifdef KURZEL_PK
+ #ifdef KURZEL_PK
 		if (q_ptr->pkill & PKILL_SET) fprintf(fff, "\377R (PK");
 		else text_pk = FALSE;
-#else
+ #else
 		if(q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
 			fprintf(fff, " (PK");
 		else if(!(q_ptr->pkill & PKILL_KILLABLE))
@@ -2005,7 +2007,7 @@ void write_player_info(int Ind, char *pinfo) {
 			fprintf(fff, q_ptr->lev < 5 ? " (New" : " (Kill");
 		else
 			text_pk = FALSE;
-#endif
+ #endif
 	}
 	if (q_ptr->limit_chat) {
 		text_silent = TRUE;
@@ -2097,9 +2099,9 @@ void write_player_info(int Ind, char *pinfo) {
 	//fprintf(fff, " (%s@%s)", q_ptr->accountname, q_ptr->hostname);
 	fprintf(fff, " (%s@%s)", q_ptr->accountname, q_ptr->hostname);
 
-  #ifndef COMPACT_GENDER
+ #ifndef COMPACT_GENDER
 	fprintf(fff, ", %s", q_ptr->male ? "Male" : "Female");
-  #endif
+ #endif
 
 	/* overlapping AFK msg with guild/party names */
 	if ((!q_ptr->afk) || !strlen(q_ptr->afk_msg)) {
@@ -2132,9 +2134,9 @@ void write_player_info(int Ind, char *pinfo) {
 				}
 			}
 		} else fprintf(fff, "  \377U(%s\377U)", q_ptr->info_msg);
-  #ifdef SHOW_SOLOIST_TAG
+ #ifdef SHOW_SOLOIST_TAG
 		if (q_ptr->mode & MODE_SOLO) fprintf(fff, " \377D(Soloist)\377U");
-  #endif
+ #endif
 	} else fprintf(fff, "  \377u(%s\377u)", q_ptr->afk_msg);
 
 
@@ -2143,30 +2145,29 @@ void write_player_info(int Ind, char *pinfo) {
 
 
 
-#ifdef ADMIN_EXTRA_STATISTICS
- #ifdef USE_SOUND_2010
+ #ifdef ADMIN_EXTRA_STATISTICS
+  #ifdef USE_SOUND_2010
 		if (admin) fprintf(fff, "%s%s%s",
 		    !q_ptr->exp_bar ?
-  #if 0
+   #if 0
 		    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+\377-" : "")) :
 		    (q_ptr->audio_mus >= __audio_mus_max ? "\377G*\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y*\377-" : "\377B-\377-"))
-  #else
+   #else
 		    (q_ptr->audio_mus > 0 ? "\377G+\377-" : (q_ptr->audio_sfx > 4 ? "\377y+\377-" : "")) :
 		    (q_ptr->audio_mus > 0 ? "\377G*\377-" : (q_ptr->audio_sfx > 4 ? "\377y*\377-" : "\377B-\377-"))
-  #endif
- #else
+   #endif
+  #else
 		if (admin) fprintf(fff, "%s%s"
- #endif
- #if 0
+  #endif
+  #if 0
 		    , q_ptr->custom_font ? "\377wf\377-" : "", ""
- #else /* combine custom font and OS type O_o */
+  #else /* combine custom font and OS type O_o */
 				    , q_ptr->custom_font ? "\377w" : "\377D"
 				    , q_ptr->version.os == OS_WIN32 ? "W\377-" : (q_ptr->version.os == OS_GCU ? "G\377-" : (q_ptr->version.os == OS_X11 ? "X\377-" : (q_ptr->version.os == OS_GCU_X11 ? "L\377-" : (q_ptr->version.os == OS_OS
- #endif
+  #endif
 		    );
-#endif
-
-#endif /* wip */
+ #endif
+#endif /* 0 -- wip */
 }
 
  /*
@@ -2297,7 +2298,7 @@ void do_cmd_check_player_equip(int Ind, int line) {
 #ifndef WRAPPING_NEW
 		/* Covered by a mummy wrapping? */
 		if (hidden && !hidden_diz) {
-#if 0 /* changed position of INVEN_ARM to occur before INVEN_LEFT, so following hack isn't needed anymore */
+ #if 0 /* changed position of INVEN_ARM to occur before INVEN_LEFT, so following hack isn't needed anymore */
 			/* for dual-wield, but also in general, INVEN_ARM should be visible too */
 			object_type *o_ptr = &q_ptr->inventory[INVEN_ARM];
 			char o_name[ONAME_LEN];
@@ -2305,7 +2306,7 @@ void do_cmd_check_player_equip(int Ind, int line) {
 				object_desc(Ind, o_name, o_ptr, TRUE, 3 + 0x10);
 				fprintf(fff, "\377w %s\n", o_name);
 			}
-#endif
+ #endif
 			fprintf(fff, "\377%c (Covered by a grubby wrapping)\n", 'D');
 		}
 #endif
