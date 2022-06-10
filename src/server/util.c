@@ -6922,7 +6922,8 @@ void my_memfrob(void *s, int n) {
 
 /* compare player mode compatibility - C. Blue
    Note: returns NULL if compatible.
-   strict: Ignore IRONDEEPDIVE_ALLOW_INCOMPAT. */
+   strict: Ignore IRONDEEPDIVE_ALLOW_INCOMPAT.
+   Note: We don't handle MODE_SOLO, so it has to be checked explicitely whenever important. */
 cptr compat_pmode(int Ind1, int Ind2, bool strict) {
 	player_type *p1_ptr = Players[Ind1], *p2_ptr = Players[Ind2];
 
@@ -6951,7 +6952,8 @@ cptr compat_pmode(int Ind1, int Ind2, bool strict) {
 }
 
 /* compare object and player mode compatibility - C. Blue
-   Note: returns NULL if compatible. */
+   Note: returns NULL if compatible.
+   Note: We don't handle MODE_SOLO, so it has to be checked explicitely whenever important. */
 cptr compat_pomode(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 
@@ -7026,6 +7028,9 @@ cptr compat_omode(object_type *o1_ptr, object_type *o2_ptr) {
 	return NULL; /* means "is compatible" */
 }
 
+/* compare mode compatibility (eg player/player for merchants guild post, player/party, player/guild member) - C. Blue
+   Note: returns NULL if compatible.
+   Note: We don't handle MODE_SOLO, so it has to be checked explicitely whenever important. */
 cptr compat_mode(byte mode1, byte mode2) {
 	if (mode1 & MODE_PVP) {
 		if (!(mode2 & MODE_PVP)) {
