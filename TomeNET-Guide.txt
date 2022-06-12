@@ -17943,6 +17943,7 @@ Yeek:
     Pass trees.
 Ent:
     Speed malus (will be reduced), swimming, pass trees.
+    (Note that Ents KEEP their racial water resistance and fire susceptibilitiy.)
 Draconian:
     Feather falling, levitation.
     Intrinsic breath weapon - you can only use it if you're actually in dragon
