@@ -3475,76 +3475,83 @@ void calc_boni(int Ind) {
 	/* Choosing a race just for its HP or low exp% shouldn't be what we want -C. Blue- */
 	}
 
+	switch (p_ptr->prace) {
+	/* Human */
+		/* nothing special */
 
 	/* Half-Elf */
-	if (p_ptr->prace == RACE_HALF_ELF) {
+	case RACE_HALF_ELF:
 		p_ptr->resist_lite = TRUE; csheet_boni[14].cb[2] |= CB3_RLITE;
-	}
+		break;
 
 	/* Elf */
-	else if (p_ptr->prace == RACE_ELF) {
+	case RACE_ELF:
 		p_ptr->see_inv = TRUE; csheet_boni[14].cb[4] |= CB5_RSINV;
 		p_ptr->resist_lite = TRUE; csheet_boni[14].cb[2] |= CB3_RLITE;
-	}
+		break;
 
 	/* Hobbit */
-	else if (p_ptr->prace == RACE_HOBBIT) {
+	case RACE_HOBBIT:
 		p_ptr->sustain_dex = TRUE; csheet_boni[14].cb[11] |= CB12_RSDEX;
-
-		/* DEX bonus for NOT wearing shoes */
-		/* not while in mimicried form */
+		/* DEX bonus for NOT wearing shoes - not while in mimicried form */
 		if (!p_ptr->body_monster && !p_ptr->inventory[INVEN_FEET].k_idx)
-			{ p_ptr->stat_add[A_DEX] += 2;  csheet_boni[14].pdex += 2; }
-	}
+			{ p_ptr->stat_add[A_DEX] += 2; csheet_boni[14].pdex += 2; }
+		break;
 
 	/* Gnome */
-	else if (p_ptr->prace == RACE_GNOME) { p_ptr->free_act = TRUE; csheet_boni[14].cb[4] |= CB5_RPARA; }
+	case RACE_GNOME:
+		p_ptr->free_act = TRUE; csheet_boni[14].cb[4] |= CB5_RPARA;
+		break;
 
 	/* Dwarf */
-	else if (p_ptr->prace == RACE_DWARF) {
+	case RACE_DWARF:
 		p_ptr->resist_blind = TRUE; csheet_boni[14].cb[1] |= CB2_RBLND;
 		/* not while in mimicried form */
 		if (!p_ptr->body_monster && p_ptr->lev >= 30) { p_ptr->climb = TRUE; csheet_boni[14].cb[5] |= CB6_RCLMB; }
-	}
+		break;
 
 	/* Half-Orc */
-	else if (p_ptr->prace == RACE_HALF_ORC) { p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK; }
+	case RACE_HALF_ORC:
+		p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK;
+		break;
 
 	/* Half-Troll */
-	else if (p_ptr->prace == RACE_HALF_TROLL) {
+	case RACE_HALF_TROLL:
 		p_ptr->sustain_str = TRUE; csheet_boni[14].cb[11] |= CB12_RSSTR;
 		p_ptr->regenerate = TRUE; csheet_boni[14].cb[5] |= CB6_RRGHP;
 		/* especially tough skin */
 		p_ptr->to_a += 2;
 		p_ptr->dis_to_a += 2;
-	}
+		break;
 
 	/* Dunadan */
-	else if (p_ptr->prace == RACE_DUNADAN) { p_ptr->sustain_con = TRUE;  csheet_boni[14].cb[11] |= CB12_RSCON; }
+	case RACE_DUNADAN:
+		p_ptr->sustain_con = TRUE;  csheet_boni[14].cb[11] |= CB12_RSCON;
+		break;
 
 	/* High Elf */
-	else if (p_ptr->prace == RACE_HIGH_ELF) {
+	case RACE_HIGH_ELF:
 		p_ptr->resist_lite = TRUE; csheet_boni[14].cb[2] |= CB3_RLITE;
 		p_ptr->see_inv = TRUE; csheet_boni[14].cb[4] |= CB5_RSINV;
 		p_ptr->resist_time = TRUE; csheet_boni[14].cb[3] |= CB4_RTIME;
-	}
+		break;
 
 	/* Yeek */
-	else if (p_ptr->prace == RACE_YEEK) {
+	case RACE_YEEK:
 		p_ptr->feather_fall = TRUE; csheet_boni[14].cb[5] |= CB6_RFFAL;
 		/* not while in mimicried form */
 		if (!p_ptr->body_monster) { p_ptr->pass_trees = TRUE; csheet_boni[14].cb[12] |= CB13_XTREE; }
-	}
+		break;
 
 	/* Goblin */
-	else if (p_ptr->prace == RACE_GOBLIN) {
+	case RACE_GOBLIN:
 		p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK;
 		/* not while in mimicried form */
 		/*if (!p_ptr->body_monster) p_ptr->feather_fall = TRUE;*/
-	}
+		break;
 
 	/* Ent */
-	else if (p_ptr->prace == RACE_ENT) {
+	case RACE_ENT:
 		/* always a bit slowish */
 		p_ptr->slow_digest = TRUE; csheet_boni[14].cb[6] |= CB7_RFOOD;
 		/* even while in different form? */
@@ -3570,10 +3577,10 @@ void calc_boni(int Ind) {
 		if (p_ptr->lev >= 30) { p_ptr->telepathy |= ESP_DRAGON; csheet_boni[14].cb[8] |= CB9_EDRGN; }
 		if (p_ptr->lev >= 40) { p_ptr->telepathy |= ESP_DEMON; csheet_boni[14].cb[8] |= CB9_EDEMN; }
 		if (p_ptr->lev >= 50) { p_ptr->telepathy |= ESP_EVIL; csheet_boni[14].cb[9] |= CB10_EEVIL; }
-	}
+		break;
 
 	/* Draconian (former Dragonrider, Thunderlord) */
-	else if (p_ptr->prace == RACE_DRACONIAN) {
+	case RACE_DRACONIAN:
 		/* not while in mimicried form */
 		if (!p_ptr->body_monster) { p_ptr->feather_fall = TRUE; csheet_boni[14].cb[5] |= CB6_RFFAL; }
 
@@ -3591,18 +3598,18 @@ void calc_boni(int Ind) {
 			p_ptr->to_a += 4;
 			p_ptr->dis_to_a += 4;
 		}
-	}
+		break;
 
 	/* Dark-Elves */
-	else if (p_ptr->prace == RACE_DARK_ELF) {
+	case RACE_DARK_ELF:
 		p_ptr->suscep_lite = TRUE; csheet_boni[14].cb[2] |= CB3_SLITE;
 		//p_ptr->suscep_good = TRUE;//maybe too harsh
 		p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK;
 		if (p_ptr->lev >= 20) { p_ptr->see_inv = TRUE; csheet_boni[14].cb[4] |= CB5_RSINV; }
-	}
+		break;
 
 	/* Vampires */
-	else if (p_ptr->prace == RACE_VAMPIRE) {
+	case RACE_VAMPIRE:
 		p_ptr->suscep_lite = TRUE; csheet_boni[14].cb[2] |= CB3_SLITE;
 		p_ptr->suscep_good = TRUE;
 		p_ptr->suscep_life = TRUE;
@@ -3638,14 +3645,16 @@ void calc_boni(int Ind) {
 #ifdef ENABLE_DEATHKNIGHT
 		if (p_ptr->pclass == CLASS_DEATHKNIGHT) { p_ptr->resist_fear = TRUE; csheet_boni[14].cb[4] |= CB5_RFEAR; }
 #endif
-	}
+		break;
+
 #ifdef ENABLE_MAIA
-	else if (p_ptr->prace == RACE_MAIA) {
+	case RACE_MAIA:
 		//Help em out a little.. (to locate candlebearer/darkling)
 		p_ptr->telepathy |= ESP_DEMON; csheet_boni[14].cb[8] |= CB9_EDEMN;
 		p_ptr->telepathy |= ESP_GOOD; csheet_boni[14].cb[9] |= CB10_EGOOD;
 
-		if (p_ptr->ptrait == TRAIT_ENLIGHTENED) {
+		switch (p_ptr->ptrait) {
+		case TRAIT_ENLIGHTENED:
 			if (p_ptr->lev >= 20) csheet_boni[14].cb[6] |= CB7_IFOOD;
 			if (p_ptr->lev >= 50) { p_ptr->slay |= TR1_SLAY_EVIL; csheet_boni[14].cb[9] |= CB10_SEVIL; }
 			p_ptr->suscep_evil = TRUE;
@@ -3679,12 +3688,13 @@ void calc_boni(int Ind) {
 
 			/* Both initiated sides get time resistance now */
 			p_ptr->resist_time = TRUE; csheet_boni[14].cb[3] |= CB4_RTIME;
-		} else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
+			break;
+		case TRAIT_CORRUPTED:
 			if (p_ptr->lev >= 20) csheet_boni[14].cb[6] |= CB7_IFOOD;
 			p_ptr->suscep_good = TRUE;
-#ifdef ENABLE_HELLKNIGHT
+ #ifdef ENABLE_HELLKNIGHT
 			if (p_ptr->pclass == CLASS_HELLKNIGHT) p_ptr->demon = TRUE;
-#endif
+ #endif
 
 			p_ptr->resist_fire = TRUE; csheet_boni[14].cb[0] |= CB1_RFIRE;
 			p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK;
@@ -3701,14 +3711,21 @@ void calc_boni(int Ind) {
 
 			/* Both initiated sides get time resistance now */
 			p_ptr->resist_time = TRUE; csheet_boni[14].cb[3] |= CB4_RTIME;
-		} else { p_ptr->slow_digest = TRUE; csheet_boni[14].cb[6] |= CB7_RFOOD; }
-	}
+			break;
+		default:
+			/* Uninitiated yet */
+			p_ptr->slow_digest = TRUE; csheet_boni[14].cb[6] |= CB7_RFOOD;
+		}
+		break;
 #endif
+
 #ifdef ENABLE_KOBOLD
 	/* Kobolds */
-	else if (p_ptr->prace == RACE_KOBOLD)
-		{ p_ptr->resist_pois = TRUE; csheet_boni[14].cb[1] |= CB2_RPOIS; }
+	case RACE_KOBOLD:
+		p_ptr->resist_pois = TRUE; csheet_boni[14].cb[1] |= CB2_RPOIS;
+		break;
 #endif
+	}
 
 	/* Apply boni from racial special traits */
 	switch (p_ptr->ptrait) {
