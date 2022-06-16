@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 8. June 2022 - written by C. Blue (c_blue@gmx.net)        |
+| Latest update: 16. June 2022 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.8.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -12174,6 +12174,14 @@ Cancellation    Don't use it! It will heavily disenchant and blast all sorts of
                 including magic devices.
                 Artifacts (and Stormbringer) are unaffected.
                 Your equipment is unaffected.
+Curse Weapon    Will remove all special powers and enchantments of your primary
+                or (in case you don't wield a primary weapon) your secondary
+                weapon and turn it into a 'shattered' weapon without any useful
+                abilities. Artifacts have a chance to resist the effect.
+Curse Armour    Will remove all special powers and enchantments of your body
+                armour (if you wear any) and turn it into a 'blasted' armour
+                without any useful abilities. Artifacts have a chance to resist
+                the effect.
 Cheques         These are automatically generated in player stores when someone
                 buys an item. They can be 'I'nspected to check their value or
                 'r'ead to cash in the money.
@@ -12632,6 +12640,15 @@ Artifacts of any type cannot be enchanted by any means, nor harmed by elemental
 attacks of any type. Also they have a high chance to resist disenchantment
 effects. (If the player actually resists disenchantment already then they are
 completely safe.)
+
+Artifacts can be destroyed only by very few means:
+By a monster that has KILL_ITEM or TAKE_ITEM (and won't drop it again on death)
+flag, by Nazgul if it's a weapon, or by reading a scroll of curse armour or
+of curse weapon. Artifacts generally have a decent (or in case of Nazgul-touch
+even a very high) chance to resist destruction.
+Three artifacts are even indestructible: Morgoth's crown, hammer and the ring
+of phasing.
+
 
 Artifact types in general
 -------------------------
@@ -17943,7 +17960,7 @@ Yeek:
     Pass trees.
 Ent:
     Speed malus (will be reduced), swimming, pass trees.
-    (Note that Ents KEEP their racial water resistance and fire susceptibilitiy.)
+    (Note that Ents KEEP racial water resistance and fire susceptibilitiy.)
 Draconian:
     Feather falling, levitation.
     Intrinsic breath weapon - you can only use it if you're actually in dragon
