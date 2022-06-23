@@ -1369,8 +1369,8 @@ void prt_stun(int stun) {
 void prt_basic(void) {
 	cptr r = NULL, c = NULL;
 
-        r = p_ptr->rp_ptr->title;
-        c = p_ptr->cp_ptr->title;
+	r = p_ptr->rp_ptr->title;
+	c = p_ptr->cp_ptr->title;
 
 	prt_field((char *)r, ROW_RACE, COL_RACE);
 	prt_field((char *)c, ROW_CLASS, COL_CLASS);
@@ -2372,67 +2372,67 @@ static void fix_player(void) {
  * XXX XXX XXX Adjust for width and split messages
  */
 static void fix_message(void) {
-        int j, i;
-        int w, h;
-        int x, y;
+	int j, i;
+	int w, h;
+	int x, y;
 
 	cptr msg;
 	byte a;
 
 	/* Display messages in different colors -Zz */
 
-        /* Scan windows */
-        for (j = 0; j < ANGBAND_TERM_MAX; j++) {
-                term *old = Term;
+	/* Scan windows */
+	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
+		term *old = Term;
 
-                /* No window */
-                if (!ang_term[j]) continue;
+		/* No window */
+		if (!ang_term[j]) continue;
 
-                /* No relevant flags */
-                if (!(window_flag[j] &
+		/* No relevant flags */
+		if (!(window_flag[j] &
 		    (PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT))) continue;
 
-                /* Activate */
-                Term_activate(ang_term[j]);
+		/* Activate */
+		Term_activate(ang_term[j]);
 
-                /* Get size */
-                Term_get_size(&w, &h);
+		/* Get size */
+		Term_get_size(&w, &h);
 
 		/* Does this terminal show the normal message_str buffer? or chat/msgnochat only?*/
 		if (window_flag[j] & PW_CHAT) {
-	                /* Dump messages */
-	                for (i = 0; i < h; i++) {
+			/* Dump messages */
+			for (i = 0; i < h; i++) {
 				a = TERM_WHITE;
 				msg = message_str_chat(i);
 
-	                        /* Dump the message on the appropriate line */
-	                        Term_putstr(0, (h - 1) - i, -1, a, (char*)msg);
+				/* Dump the message on the appropriate line */
+				Term_putstr(0, (h - 1) - i, -1, a, (char*)msg);
 
-	                        /* Cursor */
-	                        Term_locate(&x, &y);
+				/* Cursor */
+				Term_locate(&x, &y);
 
-	                        /* Clear to end of line */
-	                        Term_erase(x, y, 255);
-	                }
+				/* Clear to end of line */
+				Term_erase(x, y, 255);
+			}
 		} else if (window_flag[j] & PW_MSGNOCHAT) {
-	                /* Dump messages */
-	                for (i = 0; i < h; i++) {
+			/* Dump messages */
+			for (i = 0; i < h; i++) {
 				a = TERM_WHITE;
 				msg = message_str_msgnochat(i);
 
-	                        /* Dump the message on the appropriate line */
-	                        Term_putstr(0, (h - 1) - i, -1, a, (char*)msg);
+				/* Dump the message on the appropriate line */
+				Term_putstr(0, (h - 1) - i, -1, a, (char*)msg);
 
-	                        /* Cursor */
-	                        Term_locate(&x, &y);
+				/* Cursor */
+				Term_locate(&x, &y);
 
-	                        /* Clear to end of line */
-	                        Term_erase(x, y, 255);
-	                }
+				/* Clear to end of line */
+				Term_erase(x, y, 255);
+			}
 		} else {
-	                /* Dump messages */
-	                for (i = 0; i < h; i++)
-	                {
+			/* Dump messages */
+			for (i = 0; i < h; i++)
+			{
 				a = TERM_WHITE;
 				msg = message_str(i);
 
@@ -2441,23 +2441,23 @@ static void fix_message(void) {
 				   control, before actually displaying the message. */
 				if (msg[0] == '\376') msg++;
 
-	                        /* Dump the message on the appropriate line */
-	                        Term_putstr(0, (h - 1) - i, -1, a, (char*)msg);
+				/* Dump the message on the appropriate line */
+				Term_putstr(0, (h - 1) - i, -1, a, (char*)msg);
 
-	                        /* Cursor */
-	                        Term_locate(&x, &y);
+				/* Cursor */
+				Term_locate(&x, &y);
 
-	                        /* Clear to end of line */
-	                        Term_erase(x, y, 255);
-	                }
+				/* Clear to end of line */
+				Term_erase(x, y, 255);
+			}
 		}
 
-                /* Fresh */
-                Term_fresh();
+		/* Fresh */
+		Term_fresh();
 
-                /* Restore */
-                Term_activate(old);
-        }
+		/* Restore */
+		Term_activate(old);
+	}
 }
 
 static void fix_lagometer(void) {
@@ -2537,10 +2537,10 @@ static cptr likert(int x, int y, int max) {
 	}
 
 	/* Highest possible value reached */
-        if ((x >= max) && max) {
-                likert_color = TERM_L_UMBER;
-                return ("Legendary");
-        }
+	if ((x >= max) && max) {
+		likert_color = TERM_L_UMBER;
+		return ("Legendary");
+	}
 
 	/* Analyze the value */
 	switch (((x * 10) / y)) {
