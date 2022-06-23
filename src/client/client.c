@@ -936,8 +936,8 @@ static void default_set(void) {
 #endif
 
 #ifdef AMIGA
-        if ((GetVar("tomenet_name", real_name, 80, 0L)) != -1) {
-          strcpy(nick, real_name);
+	if ((GetVar("tomenet_name", real_name, 80, 0L)) != -1) {
+	  strcpy(nick, real_name);
 	}
 #endif
 #ifdef SET_UID

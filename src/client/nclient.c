@@ -998,7 +998,7 @@ int Net_setup(void) {
 
 		if (len > 0) {
 			if (done == 0) {
-                                if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0))
+				if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0))
 					n = Packet_scanf(&cbuf, "%d%hd%c%c%c%d",
 					    &Setup.motd_len, &Setup.frames_per_second, &Setup.max_race, &Setup.max_class, &Setup.max_trait, &Setup.setup_size);
 				else {
@@ -1364,7 +1364,7 @@ int Net_start(int sex, int race, int class) {
 	//n = 
 	Packet_printf(&wbuf, "%c", PKT_PLAY);
 
-        if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0))
+	if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0))
 		Packet_printf(&wbuf, "%hd%hd%hd%hd%hd%hd", sex, race, class, trait, audio_sfx, audio_music);
 	else Packet_printf(&wbuf, "%hd%hd%hd", sex, race, class);
 
@@ -1894,8 +1894,8 @@ int Receive_inven(void) {
 	/* Check that the inventory slot is valid - mikaelh */
 	if (pos < 'a' || pos > 'x') return 0;
 
-        /* Hack -- The color is stored in the sval, since we don't use it for anything else */
-        /* Hack -- gotta ahck to work around the previous hackl .. damn I hate that */
+	/* Hack -- The color is stored in the sval, since we don't use it for anything else */
+	/* Hack -- gotta ahck to work around the previous hackl .. damn I hate that */
 		/* I'm one of those who really hate it .. Jir */
 		/* I hated it too much I swapped them	- Jir - */
 	inventory[pos - 'a'].sval = sval;
@@ -1959,8 +1959,8 @@ int Receive_subinven(void) {
 	if (ipos < 0 || ipos > INVEN_PACK) return 0;
 	if (pos < 'a' || pos > 'x') return 0;
 
-        /* Hack -- The color is stored in the sval, since we don't use it for anything else */
-        /* Hack -- gotta ahck to work around the previous hackl .. damn I hate that */
+	/* Hack -- The color is stored in the sval, since we don't use it for anything else */
+	/* Hack -- gotta ahck to work around the previous hackl .. damn I hate that */
 		/* I'm one of those who really hate it .. Jir */
 		/* I hated it too much I swapped them	- Jir - */
 	subinventory[ipos][pos - 'a'].sval = sval;
@@ -2055,8 +2055,8 @@ int Receive_inven_wide(void) {
 	/* Check that the inventory slot is valid - mikaelh */
 	if (pos < 'a' || pos > 'x') return 0;
 
-        /* Hack -- The color is stored in the sval, since we don't use it for anything else */
-        /* Hack -- gotta ahck to work around the previous hackl .. damn I hate that */
+	/* Hack -- The color is stored in the sval, since we don't use it for anything else */
+	/* Hack -- gotta ahck to work around the previous hackl .. damn I hate that */
 		/* I'm one of those who really hate it .. Jir */
 		/* I hated it too much I swapped them	- Jir - */
 	inventory[pos - 'a'].sval = sval;
@@ -2400,7 +2400,7 @@ int Receive_skill_init(void) {
 
 int Receive_skill_points(void) {
 	int	n;
-        char	ch;
+	char	ch;
 	int	pt;
 
 	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &pt)) <= 0) return n;
@@ -2415,8 +2415,8 @@ int Receive_skill_points(void) {
 
 int Receive_skill_info(void) {
 	int	n;
-        char	ch;
-        s32b    val;
+	char	ch;
+	s32b    val;
 	int	i, mod, dev, mkey;
 	char	flags1;
 
@@ -3185,7 +3185,7 @@ int Receive_spell_info(void) { /* deprecated - doesn't transmit RF0_ powers eith
 	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%hu%hu%hu%s", &ch, &spells[0], &spells[1], &spells[2], &realm, &book, &line, buf)) <= 0) return n;
 
 	/* Save the info */
-        strcpy(spell_info[realm][book][line], buf);
+	strcpy(spell_info[realm][book][line], buf);
 	p_ptr->innate_spells[0] = spells[0];
 	p_ptr->innate_spells[1] = spells[1];
 	p_ptr->innate_spells[2] = spells[2];
@@ -4262,8 +4262,8 @@ int Receive_guild(void) {
 		if (strlen(gname)) Term_putstr(0, 22, -1, TERM_WHITE, format("%s (%s, %s)", gname, gmembers, gowner));
 		else Term_putstr(0, 22, -1, TERM_SLATE, "(You are not in a guild.)");
 
-                if (guild_info_name[0]) Term_putstr(5, 9, -1, TERM_WHITE, "(\377Ub\377w) Add a player to guild");
-        	else Term_putstr(5, 9, -1, TERM_WHITE, "(\377Ub\377w) Add yourself to guild");
+		if (guild_info_name[0]) Term_putstr(5, 9, -1, TERM_WHITE, "(\377Ub\377w) Add a player to guild");
+		else Term_putstr(5, 9, -1, TERM_WHITE, "(\377Ub\377w) Add yourself to guild");
 	}
 
 	return 1;
@@ -4309,35 +4309,35 @@ int Receive_guild_config(void) {
 		if (guildhall_wx == -1) Term_putstr(5, 2, -1, TERM_SLATE, "The guild does not own a guild hall.");
 		else if (guildhall_wx >= 0) Term_putstr(5, 2, -1, TERM_L_UMBER, format("The guild hall is located in the %s area of (%d,%d).",
 		    guildhall_pos, guildhall_wx, guildhall_wy));
-                Term_putstr(5, 4, -1, TERM_WHITE,  format("adders     : %s", guild.flags & GFLG_ALLOW_ADDERS ? "\377GYES" : "\377rno "));
-                Term_putstr(5, 5, -1, TERM_L_WHITE,       "    Allows players designated via /guild_adder command to add others.");
-                Term_putstr(5, 6, -1, TERM_WHITE,  format("autoreadd  : %s", guild.flags & GFLG_AUTO_READD ? "\377GYES" : "\377rno "));
-                Term_putstr(5, 7, -1, TERM_L_WHITE,      "    If a guild mate ghost-dies then the next character he logs on with");
-                Term_putstr(5, 8, -1, TERM_L_WHITE,      "    - if it is newly created - is automatically added to the guild again.");
-                Term_putstr(5, 9, -1, TERM_WHITE, format("minlev     : \377%c%d   ", guild.minlev <= 1 ? 'w' : (guild.minlev <= 10 ? 'G' : (guild.minlev < 20 ? 'g' :
-                    (guild.minlev < 30 ? 'y' : (guild.minlev < 40 ? 'o' : (guild.minlev <= 50 ? 'r' : 'v'))))), guild.minlev));
-                Term_putstr(5, 10, -1, TERM_L_WHITE,      "    Minimum character level required to get added to the guild.");
+		Term_putstr(5, 4, -1, TERM_WHITE,  format("adders     : %s", guild.flags & GFLG_ALLOW_ADDERS ? "\377GYES" : "\377rno "));
+		Term_putstr(5, 5, -1, TERM_L_WHITE,       "    Allows players designated via /guild_adder command to add others.");
+		Term_putstr(5, 6, -1, TERM_WHITE,  format("autoreadd  : %s", guild.flags & GFLG_AUTO_READD ? "\377GYES" : "\377rno "));
+		Term_putstr(5, 7, -1, TERM_L_WHITE,      "    If a guild mate ghost-dies then the next character he logs on with");
+		Term_putstr(5, 8, -1, TERM_L_WHITE,      "    - if it is newly created - is automatically added to the guild again.");
+		Term_putstr(5, 9, -1, TERM_WHITE, format("minlev     : \377%c%d   ", guild.minlev <= 1 ? 'w' : (guild.minlev <= 10 ? 'G' : (guild.minlev < 20 ? 'g' :
+		    (guild.minlev < 30 ? 'y' : (guild.minlev < 40 ? 'o' : (guild.minlev <= 50 ? 'r' : 'v'))))), guild.minlev));
+		Term_putstr(5, 10, -1, TERM_L_WHITE,      "    Minimum character level required to get added to the guild.");
 
-                Term_erase(5, 11, 69);
-                Term_erase(5, 12, 69);
+		Term_erase(5, 11, 69);
+		Term_erase(5, 12, 69);
 
-                buf[0] = 0;
-                for (i = 0; i < 5; i++) if (guild.adder[i][0] != '\0') {
-                        sprintf(buf, "Adders are: ");
-                        strcat(buf, guild.adder[i]);
-                        acnt++;
-                        for (i++; i < 5; i++) {
-                                if (guild.adder[i][0] == '\0') continue;
-                                if (acnt != 3) strcat(buf, ", ");
-                                strcat(buf, guild.adder[i]);
-                                acnt++;
-                                if (acnt == 3) {
-                            		Term_putstr(5, 11, -1, TERM_SLATE, buf);
-                            		buf[0] = 0;
-                            	}
-                        }
-                }
-                Term_putstr(5 + (acnt <= 3 ? 0 : 12), acnt <= 3 ? 11 : 12, -1, TERM_SLATE, buf);
+		buf[0] = 0;
+		for (i = 0; i < 5; i++) if (guild.adder[i][0] != '\0') {
+			sprintf(buf, "Adders are: ");
+			strcat(buf, guild.adder[i]);
+			acnt++;
+			for (i++; i < 5; i++) {
+				if (guild.adder[i][0] == '\0') continue;
+				if (acnt != 3) strcat(buf, ", ");
+				strcat(buf, guild.adder[i]);
+				acnt++;
+				if (acnt == 3) {
+					Term_putstr(5, 11, -1, TERM_SLATE, buf);
+					buf[0] = 0;
+				}
+			}
+		}
+		Term_putstr(5 + (acnt <= 3 ? 0 : 12), acnt <= 3 ? 11 : 12, -1, TERM_SLATE, buf);
 	}
 
 	Term_gotoxy(x, y);
@@ -4459,7 +4459,7 @@ int Receive_chardump(void) {
 	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
 
 	/* Access the main view */
-        if (screen_icky) Term_switch(0);
+	if (screen_icky) Term_switch(0);
 
 	/* additionally do a screenshot of the scene */
 	silent_dump = TRUE;
@@ -4518,19 +4518,19 @@ int Receive_AFK(void) {
 int Receive_encumberment(void) {
 	int	n;
 	char	ch;
-        byte cumber_armor;      /* Encumbering armor (tohit/sneakiness) */
-        byte awkward_armor;     /* Mana draining armor */
-        byte cumber_glove;      /* Mana draining gloves */
-        byte heavy_wield;       /* Heavy weapon */
-        byte heavy_shield;      /* Heavy shield */
-        byte heavy_shoot;       /* Heavy shooter */
-        byte icky_wield;        /* Icky weapon */
-        byte awkward_wield;     /* shield and COULD_2H weapon */
-        byte easy_wield;        /* Using a 1-h weapon which is MAY2H with both hands */
-        byte cumber_weight;     /* Full weight. FA from MA will be lost if overloaded */
-        byte monk_heavyarmor;   /* Reduced MA power? */
-        byte rogue_heavyarmor;  /* Missing roguish-abilities' effects? */
-        byte awkward_shoot;     /* using ranged weapon while having a shield on the arm */
+	byte cumber_armor;      /* Encumbering armor (tohit/sneakiness) */
+	byte awkward_armor;     /* Mana draining armor */
+	byte cumber_glove;      /* Mana draining gloves */
+	byte heavy_wield;       /* Heavy weapon */
+	byte heavy_shield;      /* Heavy shield */
+	byte heavy_shoot;       /* Heavy shooter */
+	byte icky_wield;        /* Icky weapon */
+	byte awkward_wield;     /* shield and COULD_2H weapon */
+	byte easy_wield;        /* Using a 1-h weapon which is MAY2H with both hands */
+	byte cumber_weight;     /* Full weight. FA from MA will be lost if overloaded */
+	byte monk_heavyarmor;   /* Reduced MA power? */
+	byte rogue_heavyarmor;  /* Missing roguish-abilities' effects? */
+	byte awkward_shoot;     /* using ranged weapon while having a shield on the arm */
 
 	if (is_newer_than(&server_version, 4, 4, 2, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c", &ch, &cumber_armor, &awkward_armor, &cumber_glove, &heavy_wield, &heavy_shield, &heavy_shoot,

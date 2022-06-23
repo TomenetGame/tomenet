@@ -842,14 +842,14 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color) {
 
 		q = 0;
 		for (t = 0; t < (int)strlen(msg); t++) {
-                        if (msg[t] == '\377') {
-                                if (!ignore_color)
-                                        buf[q++] = '{';
-                                else {
-                                        t++;
-                                        if (msg[t] == '\0')
-                                                break;
-                                }
+			if (msg[t] == '\377') {
+				if (!ignore_color)
+					buf[q++] = '{';
+				else {
+					t++;
+					if (msg[t] == '\0')
+						break;
+				}
 				continue;
 			}
 			if (msg[t] == '\n') {
@@ -857,7 +857,7 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color) {
 				continue;
 			}
 			if (msg[t] == '\r') {
-                                buf[q++] = '\n';
+				buf[q++] = '\n';
 				continue;
 			}
 			buf[q++] = msg[t];

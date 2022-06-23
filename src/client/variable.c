@@ -271,7 +271,7 @@ int weather_wind = 0; /* current gust of wind if any (1 west, 2 east, 3 strong w
 int weather_intensity = 1; /* density of raindrops/snowflakes/sandgrains */
 int weather_speed_rain = 999; /* [3] */
 int weather_speed_snow = 999; /* speed at which snowflakes move aka a second wind
-        		  parameter (doesnt make sense for raindrops) [9] */
+				 parameter (doesnt make sense for raindrops) [9] */
 int weather_speed_sand = 999;
 int weather_elements = 0; /* current amount of raindrops/snowflakes/sandgrains on the move */
 int weather_element_x[1024], weather_element_y[1024], weather_element_ydest[1024], weather_element_type[1024];
