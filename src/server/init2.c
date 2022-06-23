@@ -1144,7 +1144,7 @@ static errr init_re_info(void) {
 	/*** Make the header ***/
 
 	/* Allocate the "header" */
-        MAKE(re_head, header);
+	MAKE(re_head, header);
 
 	/* Save the "version" */
 	re_head->v_major = VERSION_MAJOR;
@@ -1200,12 +1200,12 @@ static errr init_re_info(void) {
 		oops = (((err > 0) && (err < 8)) ? err_str[err] : "unknown");
 
 		/* Oops */
-                s_printf("Error %d at line %d of 're_info.txt'.\n", err, error_line);
+		s_printf("Error %d at line %d of 're_info.txt'.\n", err, error_line);
 		s_printf("Record %d contains a '%s' error.\n", error_idx, oops);
 		s_printf("Parsing '%s'.\n", buf);
 
 		/* Quit */
-                quit("Error in 're_info.txt' file.");
+		quit("Error in 're_info.txt' file.");
 	}
 
 #endif	/* ALLOW_TEMPLATES */
@@ -1691,7 +1691,7 @@ static errr init_st_info(void) {
 		err = check_modification_date(fd, "st_info.txt");
 #endif /* CHECK_MODIFICATION_TIME */
 #ifdef CHECK_MODIFICATION_ALWAYS
-	        err = 0;
+		err = 0;
 #endif
 
 		/* Attempt to parse the "raw" file */
@@ -1912,7 +1912,7 @@ static errr init_ow_info(void) {
 		err = check_modification_date(fd, "ow_info.txt");
 #endif /* CHECK_MODIFICATION_TIME */
 #ifdef CHECK_MODIFICATION_ALWAYS
-	        err = 0;
+		err = 0;
 #endif
 
 		/* Attempt to parse the "raw" file */
@@ -2137,7 +2137,7 @@ static errr init_ba_info(void) {
 		err = check_modification_date(fd, "ba_info.txt");
 #endif /* CHECK_MODIFICATION_TIME */
 #ifdef CHECK_MODIFICATION_ALWAYS
-	        err = 0;
+		err = 0;
 #endif
 
 		/* Attempt to parse the "raw" file */
@@ -2346,7 +2346,7 @@ static errr init_q_info(void) {
 		err = check_modification_date(fd, "q_info.txt");
   #endif /* CHECK_MODIFICATION_TIME */
   #ifdef CHECK_MODIFICATION_ALWAYS
-	        err = 0;
+		err = 0;
   #endif
 
 		/* Attempt to parse the "raw" file */
@@ -3206,7 +3206,7 @@ static void set_server_option(char * option, char * value) {
 	else if (!strcmp(option, "META_ADDRESS"))
 		cfg.meta_address = strdup(value);
 	else if (!strcmp(option, "META_PORT"))
-                cfg.meta_port = atoi(value);
+		cfg.meta_port = atoi(value);
 	else if (!strcmp(option, "WORLDSERVER"))
 		cfg.wserver = strdup(value);
 	else if (!strcmp(option, "WORLDPASS"))

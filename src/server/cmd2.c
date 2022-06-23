@@ -8288,7 +8288,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 			c_ptr = &zcave[y][x];
 
 			monster_type *m_ptr = &m_list[c_ptr->m_idx];
-                        monster_race *r_ptr = race_inf(m_ptr);
+			monster_race *r_ptr = race_inf(m_ptr);
 
 			p_ptr->test_attacks++;
 			/* Check the visibility */
@@ -9053,7 +9053,7 @@ return;
 	/* Don't allow cloaking while inside a store */
 	if (p_ptr->store_num != -1) return;
 
-        if (p_ptr->pclass != CLASS_ROGUE) return;
+	if (p_ptr->pclass != CLASS_ROGUE) return;
 
     if (!p_ptr->cloaked) {
 	if (p_ptr->lev < LEARN_CLOAKING_LEVEL) {

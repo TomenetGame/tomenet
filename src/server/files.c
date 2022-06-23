@@ -3333,41 +3333,41 @@ off_t vseek(int fd, off_t offset, int whence) {
 
 /* Erase the current highscore completely - C. Blue */
 bool highscore_reset(int Ind) {
-        char buf[1024];
+	char buf[1024];
 
-        /* Build the filename */
-        path_build(buf, 1024, ANGBAND_DIR_DATA, "scores.raw");
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "scores.raw");
 
 	/* bam (delete file, simply) */
-        highscore_fd = fd_open(buf, O_TRUNC);
-        (void)fd_close(highscore_fd);
+	highscore_fd = fd_open(buf, O_TRUNC);
+	(void)fd_close(highscore_fd);
 
-        /* Forget the high score fd */
+	/* Forget the high score fd */
 	highscore_fd = -1;
-        return(TRUE);
+	return(TRUE);
 }
 
 /* remove one specific entry from the highscore - C. Blue */
 bool highscore_remove(int Ind, int slot) {
 	int	i;
 	high_score	tmpscore;
-        char buf[1024];
+	char buf[1024];
 
-        /* Build the filename */
-        path_build(buf, 1024, ANGBAND_DIR_DATA, "scores.raw");
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "scores.raw");
 
-        /* Open the binary high score file, for reading */
-        highscore_fd = fd_open(buf, O_RDWR);
-        /* Paranoia -- No score file */
-        if (highscore_fd < 0) {
-                if (Ind) msg_print(Ind, "Score file unavailable!");
-                return(FALSE);
-        }
-        /* Lock (for writing) the highscore file, or fail */
-        if (fd_lock(highscore_fd, F_WRLCK)) {
-                if (Ind) msg_print(Ind, "Couldn't lock highscore file for writing!");
-                return(FALSE);
-        }
+	/* Open the binary high score file, for reading */
+	highscore_fd = fd_open(buf, O_RDWR);
+	/* Paranoia -- No score file */
+	if (highscore_fd < 0) {
+		if (Ind) msg_print(Ind, "Score file unavailable!");
+		return(FALSE);
+	}
+	/* Lock (for writing) the highscore file, or fail */
+	if (fd_lock(highscore_fd, F_WRLCK)) {
+		if (Ind) msg_print(Ind, "Couldn't lock highscore file for writing!");
+		return(FALSE);
+	}
 
 	for (i = slot; i < MAX_HISCORES; i++) {
 		/* Read the following entry, if any */
@@ -3384,15 +3384,15 @@ bool highscore_remove(int Ind, int slot) {
 	if (highscore_seek(i)) return(FALSE);
 	if (highscore_write(&tmpscore)) return(FALSE);
 
-        /* Unlock the highscore file, or fail */
-        if (fd_lock(highscore_fd, F_UNLCK)) {
-                if (Ind) msg_print(Ind, "Couldn't unlock highscore file from writing!");
-                return(FALSE);
-        }
-        /* Shut the high score file */
-        (void)fd_close(highscore_fd);
+	/* Unlock the highscore file, or fail */
+	if (fd_lock(highscore_fd, F_UNLCK)) {
+		if (Ind) msg_print(Ind, "Couldn't unlock highscore file from writing!");
+		return(FALSE);
+	}
+	/* Shut the high score file */
+	(void)fd_close(highscore_fd);
 
-        /* Forget the high score fd */
+	/* Forget the high score fd */
 	highscore_fd = -1;
 
 	return(TRUE);
@@ -3403,18 +3403,18 @@ bool highscore_file_convert(int Ind) {
 	int	i, entries;
 	high_score_old	oldscore[MAX_HISCORES];
 	high_score	newscore[MAX_HISCORES];
-        char buf[1024];
+	char buf[1024];
 
-        /* Build the filename */
-        path_build(buf, 1024, ANGBAND_DIR_DATA, "scores.raw");
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "scores.raw");
 
-        /* Open the binary high score file, for reading */
-        highscore_fd = fd_open(buf, O_RDWR);
-        /* Paranoia -- No score file */
-        if (highscore_fd < 0) {
-                if (Ind) msg_print(Ind, "Score file unavailable!");
-                return(FALSE);
-        }
+	/* Open the binary high score file, for reading */
+	highscore_fd = fd_open(buf, O_RDWR);
+	/* Paranoia -- No score file */
+	if (highscore_fd < 0) {
+		if (Ind) msg_print(Ind, "Score file unavailable!");
+		return(FALSE);
+	}
 
 	for (i = 0; i < MAX_HISCORES; i++) {
 		/* Read old entries */
@@ -3423,8 +3423,8 @@ bool highscore_file_convert(int Ind) {
 	}
 	entries = i;
 
-        /* Shut the high score file */
-        (void)fd_close(highscore_fd);
+	/* Shut the high score file */
+	(void)fd_close(highscore_fd);
 
 #if 0 /* old conversion done once, for example */
 	/* convert entries */
@@ -3499,22 +3499,22 @@ bool highscore_file_convert(int Ind) {
 	}
 #endif
 	/* bam (delete file, simply) */
-        highscore_fd = fd_open(buf, O_TRUNC);
-        (void)fd_close(highscore_fd);
+	highscore_fd = fd_open(buf, O_TRUNC);
+	(void)fd_close(highscore_fd);
 
-        /* Open the binary high score file, for writing */
-        highscore_fd = fd_open(buf, O_RDWR);
-        /* Paranoia -- No score file */
-        if (highscore_fd < 0) {
-                if (Ind) msg_print(Ind, "Score file unavailable!");
-                return(FALSE);
-        }
+	/* Open the binary high score file, for writing */
+	highscore_fd = fd_open(buf, O_RDWR);
+	/* Paranoia -- No score file */
+	if (highscore_fd < 0) {
+		if (Ind) msg_print(Ind, "Score file unavailable!");
+		return(FALSE);
+	}
 
-        /* Lock (for writing) the highscore file, or fail */
-        if (fd_lock(highscore_fd, F_WRLCK)) {
-                if (Ind) msg_print(Ind, "Couldn't lock highscore file for writing!");
-                return(FALSE);
-        }
+	/* Lock (for writing) the highscore file, or fail */
+	if (fd_lock(highscore_fd, F_WRLCK)) {
+		if (Ind) msg_print(Ind, "Couldn't lock highscore file for writing!");
+		return(FALSE);
+	}
 
 	for (i = 0; i < entries; i++) {
 		/* Skip to end */
@@ -3523,15 +3523,15 @@ bool highscore_file_convert(int Ind) {
 		if (highscore_write(&newscore[i])) return (-1);
 	}
 
-        /* Unlock the highscore file, or fail */
-        if (fd_lock(highscore_fd, F_UNLCK)) {
-                if (Ind) msg_print(Ind, "Couldn't unlock highscore file from writing!");
-                return(FALSE);
-        }
-        /* Shut the high score file */
-        (void)fd_close(highscore_fd);
+	/* Unlock the highscore file, or fail */
+	if (fd_lock(highscore_fd, F_UNLCK)) {
+		if (Ind) msg_print(Ind, "Couldn't unlock highscore file from writing!");
+		return(FALSE);
+	}
+	/* Shut the high score file */
+	(void)fd_close(highscore_fd);
 
-        /* Forget the high score fd */
+	/* Forget the high score fd */
 	highscore_fd = -1;
 
 	return(TRUE);

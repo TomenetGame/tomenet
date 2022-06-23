@@ -1859,7 +1859,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 //					o_ptr->owner = p_ptr->id;
 					o_ptr->mode = p_ptr->mode;
 				}
-                        } else {
+			} else {
 				msg_print(Ind, "\377oYou cannot take items of other players without a valid account.");
 				return;
 			}
@@ -2778,7 +2778,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 
 
 #if 0
-        /* May not assault AFK players, sportsmanship ;)
+	/* May not assault AFK players, sportsmanship ;)
 	   Also required for ranged attacks though, hence currently if0'ed - C. Blue */
 	if (q_ptr->afk) {
 		if (!p_ptr->afk) {
@@ -3403,7 +3403,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 
 			/* Vorpal bonus - multi-dice!
 			   (currently +31.25% more branded dice damage on total average, just for the records) */
-                        if (vorpal_cut) {
+			if (vorpal_cut) {
 #ifdef CRIT_VS_VORPAL
 				k2 += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
 				/* either critical hit or vorpal, not both */
@@ -4617,7 +4617,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 
 			/* Vorpal bonus - multi-dice!
 			   (currently +31.25% more branded dice damage on total average, just for the records) */
-                        if (vorpal_cut) {
+			if (vorpal_cut) {
 #ifdef CRIT_VS_VORPAL
 				k2 += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
 				/* either critical hit or vorpal, not both */
@@ -6502,7 +6502,7 @@ bool player_can_enter(int Ind, byte feature, bool comfortably) {
 	}
 
 	/* Player can not walk through "walls" unless in Shadow Form */
-//        if (p_ptr->wraith_form || (PRACE_FLAG(PR1_SEMI_WRAITH)))
+//	if (p_ptr->wraith_form || (PRACE_FLAG(PR1_SEMI_WRAITH)))
 	if (/*p_ptr->wraith_form ||*/ p_ptr->ghost || p_ptr->tim_wraith) pass_wall = TRUE;
 	else pass_wall = FALSE;
 
@@ -6760,9 +6760,9 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	//bool do_move = FALSE;
 	bool rnd = FALSE;
 
-	cave_type               *c_ptr;
+	cave_type	       *c_ptr;
 	struct c_special	*cs_ptr;
-	byte                    *w_ptr;
+	byte		    *w_ptr;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	cave_type **zcave;
 	int csmove = TRUE;
@@ -7885,8 +7885,8 @@ static bool find_breakleft;*/
 static void run_init(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 
-	int             row, col, deepleft, deepright;
-	int             i, shortleft, shortright;
+	int	     row, col, deepleft, deepright;
+	int	     i, shortleft, shortright;
 
 	cave_type **zcave;
 	if(!(zcave = getcave(&p_ptr->wpos))) return;
@@ -8454,9 +8454,9 @@ int apply_dodge_chance(int Ind, int attack_level) {
 	if (plev == 1) dodge /= 3;
 	if (plev == 2) dodge = (dodge * 2) / 3;
 
-        /* reduce player's effective dodge level if (s)he neglected to train dodging skill alongside character level. */
+	/* reduce player's effective dodge level if (s)he neglected to train dodging skill alongside character level. */
 	/* note: training dodge skill +2 ahead (like other skills usually) won't help for dodging, sorry. */
-        dodge = (dodge * (skill > plev ? plev : skill)) / (plev >= 50 ? 50 : plev);
+	dodge = (dodge * (skill > plev ? plev : skill)) / (plev >= 50 ? 50 : plev);
 
 	/* calculate real dodge chance from our dodge level, and relation of our level vs enemy level. */
 #if 0
@@ -8470,7 +8470,7 @@ int apply_dodge_chance(int Ind, int attack_level) {
 #if 1 /* instead of capping... */
 	if (chance > DODGE_CAP) chance = DODGE_CAP;
 #else /* ...let it scale? >:) */
-        chance = (chance * DODGE_CAP) / 100;
+	chance = (chance * DODGE_CAP) / 100;
 #endif
 
 	/* New- some malicious effects */
@@ -8545,7 +8545,7 @@ bool remember_sense(int Ind, int slot, object_type *o_ptr) {
 			return TRUE;
 		}
 		/* We have "felt" this kind of object already before */
-	        o_ptr->ident |= (ID_SENSE);
+		o_ptr->ident |= (ID_SENSE);
 	}
 	return FALSE;
 }

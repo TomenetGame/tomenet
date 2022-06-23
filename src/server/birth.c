@@ -656,7 +656,7 @@ static bool get_stats(int Ind, int stat_order[6]) {
 
 				/* Save the resulting stat maximum */
 				p_ptr->stat_cur[i] = p_ptr->stat_max[i] = stat_use[i];
-        		}
+			}
 		}
 	}
 
@@ -802,7 +802,7 @@ static void get_extra(int Ind) {
  */
 void get_history(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	int             i, n, chart, roll, social_class;
+	int	     i, n, chart, roll, social_class;
 	int tries = 500;
 	char    *s, *t;
 	char    buf[240];
@@ -1043,7 +1043,7 @@ static void get_ahw(int Ind) {
  */
 static void get_money(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	int        i, gold;
+	int	i, gold;
 
 	/* Social Class determines starting gold */
 /*	gold = (p_ptr->sc * 6) + randint(100) + 300; - the suicide spam to get more gold was annoying.. */
@@ -1074,7 +1074,7 @@ static void get_money(int Ind) {
  #else
   #if STARTEQ_TREATMENT < 3
 	switch(p_ptr->pclass){
-	case CLASS_MAGE:        p_ptr->au += 850; break;
+	case CLASS_MAGE:	p_ptr->au += 850; break;
    #ifdef ENABLE_CPRIEST
 	case CLASS_CPRIEST:
    #endif
@@ -1096,11 +1096,11 @@ static void get_money(int Ind) {
 	case CLASS_DRUID:	p_ptr->au += 200; break;
 	case CLASS_MIMIC:	p_ptr->au += 100; break;
 	case CLASS_WARRIOR:	p_ptr->au += 0; break;// they can sell their eq.
-	default:                ;
+	default:		;
 	}
   #else
 	switch(p_ptr->pclass){
-	case CLASS_MAGE:        p_ptr->au += 1000; break;
+	case CLASS_MAGE:	p_ptr->au += 1000; break;
 	case CLASS_SHAMAN:	p_ptr->au += 1000; break;
 	case CLASS_MINDCRAFTER:	p_ptr->au += 900; break;
    #ifdef ENABLE_CPRIEST
@@ -1122,7 +1122,7 @@ static void get_money(int Ind) {
 	case CLASS_MIMIC:	p_ptr->au += 600; break;
 	case CLASS_WARRIOR:	p_ptr->au += 600; break;
 	case CLASS_ARCHER:	p_ptr->au += 400; break; /* gets ammo, bow, lantern, extra phases! */
-	default:                ;
+	default:		;
 	}
   #endif
  #endif
@@ -1610,7 +1610,7 @@ static byte bard_init[BARD_INIT_NUM][2] = {
 /* XXX 'realm' is not used */
 void admin_outfit(int Ind, int realm) {
 	player_type *p_ptr = Players[Ind];
-	int             i;
+	int	     i;
 
 	object_type     forge;
 	object_type     *o_ptr = &forge;
@@ -1814,7 +1814,7 @@ static void player_outfit(int Ind) {
 		apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 		o_ptr->discount = 72;
 		o_ptr->owner = p_ptr->id;
-                o_ptr->mode = p_ptr->mode;
+		o_ptr->mode = p_ptr->mode;
 		o_ptr->level = 1;
 		object_known(o_ptr);
 		object_aware(Ind, o_ptr);
@@ -1826,7 +1826,7 @@ static void player_outfit(int Ind) {
 	invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_DEATH));
 	o_ptr->discount = 100;
 	o_ptr->owner = p_ptr->id;
-        o_ptr->mode = p_ptr->mode;
+	o_ptr->mode = p_ptr->mode;
 	o_ptr->level = 0;
 	object_known(o_ptr);
 	object_aware(Ind, o_ptr);
@@ -2104,10 +2104,10 @@ static void player_outfit(int Ind) {
 		case 7: pv = 370; break;//p (jade monk)
 		}
 		o_ptr->pval = pv;
-                if (r_info[pv].level > 0) {
+		if (r_info[pv].level > 0) {
 			o_ptr->level = 10 + (1000 / ((2000 / r_info[pv].level) + 10));
 		} else {
-                        o_ptr->level = 10;
+			o_ptr->level = 10;
 		}
 		/* Make the ring last only a certain period of time >:) - C. Blue */ 
 		o_ptr->timeout_magic = 3000 + rand_int(3001);
@@ -2177,12 +2177,12 @@ static void player_setup(int Ind, bool new) {
 	/* Catch bad player coordinates,
 	   either corrupted ones (insane values)
 	   or invalid ones if dungeon locations were changed meanwhile - C. Blue */
-        /* Ultra-hack bugfix for recall-crash, thanks to Chris for the idea :) */
+	/* Ultra-hack bugfix for recall-crash, thanks to Chris for the idea :) */
 	if ((wpos->wx >= MAX_WILD_X) || (wpos->wy >= MAX_WILD_Y) || (wpos->wz > MAX_DEPTH) ||
 	    (wpos->wx < 0) || (wpos->wy < 0) || (wpos->wz < -MAX_DEPTH)) {
 		s_printf("Ultra-hack executed for %s. wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
 		wpos->wx = cfg.town_x;
-                wpos->wy = cfg.town_y;
+		wpos->wy = cfg.town_y;
 		wpos->wz = 0;
 	}
 	/* If dungeon existences changed, restore players who saved
@@ -2191,7 +2191,7 @@ static void player_setup(int Ind, bool new) {
 	    ((wpos->wz < 0) && (wild_info[wpos->wy][wpos->wx].dungeon == NULL))) {
 		s_printf("Ultra-hack #2 executed for %s. wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
 		wpos->wx = cfg.town_x;
-                wpos->wy = cfg.town_y;
+		wpos->wy = cfg.town_y;
 		wpos->wz = 0;
 
 #ifdef ALLOW_NR_CROSS_ITEMS
@@ -2232,7 +2232,7 @@ static void player_setup(int Ind, bool new) {
 		}
 #else
 		wpos->wx = cfg.town_x;
-                wpos->wy = cfg.town_y;
+		wpos->wy = cfg.town_y;
 #endif
 		wpos->wz = 0;
 

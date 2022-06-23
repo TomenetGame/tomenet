@@ -262,7 +262,7 @@ int monster_check_experience(int m_idx, bool silent) {
 
 	/* Insanity caps */
 	for (i = 0; i < 4; i++) {
-        	if ((m_ptr->blow[i].effect == RBE_SANITY) && m_ptr->blow[i].d_dice && m_ptr->blow[i].d_side) {
+		if ((m_ptr->blow[i].effect == RBE_SANITY) && m_ptr->blow[i].d_dice && m_ptr->blow[i].d_side) {
 			while (((m_ptr->blow[i].d_dice + 1) * m_ptr->blow[i].d_side) / 2 > 55) {
 				if (m_ptr->blow[i].d_dice >= m_ptr->blow[i].d_side)
 					m_ptr->blow[i].d_dice--;
@@ -294,13 +294,13 @@ int monster_check_experience(int m_idx, bool silent) {
 			if (((m_ptr->blow[i].d_dice + 1) * m_ptr->blow[i].d_side) / 2 <= 125) continue;
 			tmp++;
 			if (tmp == try) {
-                                /* Don't reduce by too great steps */
-                                if (m_ptr->blow[i].d_dice <= 10) m_ptr->blow[i].d_side--;
-                                else if (m_ptr->blow[i].d_side <= 10) m_ptr->blow[i].d_dice--;
+				/* Don't reduce by too great steps */
+				if (m_ptr->blow[i].d_dice <= 10) m_ptr->blow[i].d_side--;
+				else if (m_ptr->blow[i].d_side <= 10) m_ptr->blow[i].d_dice--;
 				/* Otherwise reduce randomly */
 				else if (rand_int(2)) m_ptr->blow[i].d_side--;
 				else m_ptr->blow[i].d_dice--;
-                        }
+			}
 		}
 	}
 
@@ -475,8 +475,8 @@ void delete_monster(struct worldpos *wpos, int y, int x, bool unfound_arts) {
  * if 'purge', non-allocated wilderness monsters will be purged.
  */
 void compact_monsters(int size, bool purge) {
-	int             i, num, cnt, Ind;
-	int             cur_lev, cur_dis, chance;
+	int	     i, num, cnt, Ind;
+	int	     cur_lev, cur_dis, chance;
 	cave_type **zcave;
 	struct worldpos *wpos;
 	quest_info *q_ptr;
@@ -562,7 +562,7 @@ void compact_monsters(int size, bool purge) {
 		if (m_ptr->r_idx) {
 			/* Skip golems/pets/questors always
 			   NOTE: This will even keep them alive in the dungeon although
-			         the dungeon floor might've gotten deallocated already. */
+				 the dungeon floor might've gotten deallocated already. */
 			if (m_ptr->pet || m_ptr->owner || m_ptr->questor) continue;
 
 			if ((!m_ptr->wpos.wz && !purge) || getcave(&m_ptr->wpos) || sustained_wpos(&m_ptr->wpos)) continue;
@@ -1477,13 +1477,13 @@ static cptr r_name_garbled_get(int *r_idx) {
 /* FIXME: 'The The Borshin' when hallucinating */
 void monster_desc(int Ind, char *desc, int m_idx, int mode) {
 	player_type *p_ptr;
-	cptr            res;
+	cptr	    res;
 
 	monster_type    *m_ptr = &m_list[m_idx];
 	monster_race    *r_ptr = race_inf(m_ptr);
 
-	cptr            name = r_name_get(m_ptr);
-	bool            seen, pron;
+	cptr	    name = r_name_get(m_ptr);
+	bool	    seen, pron;
 
 	/* Check for bad player number */
 	if (Ind > 0) {
@@ -1610,10 +1610,10 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode) {
 
 /* added for quests: takes m_ptr instead of m_idx (and no player) */
 void monster_desc2(char *desc, monster_type *m_ptr, int mode) {
-	cptr            res;
+	cptr	    res;
 	monster_race    *r_ptr = race_inf(m_ptr);
-	cptr            name = r_name_get(m_ptr);
-	bool            seen, pron;
+	cptr	    name = r_name_get(m_ptr);
+	bool	    seen, pron;
 
 	seen = (m_ptr && ((mode & 0x80) || (!(mode & 0x40))));
 
@@ -1726,10 +1726,10 @@ void monster_desc2(char *desc, monster_type *m_ptr, int mode) {
 
 void monster_race_desc(int Ind, char *desc, int r_idx, int mode) {
 	player_type *p_ptr;
-	cptr            res;
+	cptr	    res;
 	monster_race    *r_ptr = &r_info[r_idx];
-	cptr            name = r_name + r_ptr->name;
-	bool            seen = FALSE, pron = FALSE;
+	cptr	    name = r_name + r_ptr->name;
+	bool	    seen = FALSE, pron = FALSE;
 
 	/* Check for bad player number */
 	if (Ind > 0) {
@@ -1849,9 +1849,9 @@ void monster_race_desc(int Ind, char *desc, int r_idx, int mode) {
 /* Similar to monster_desc, but it handles the players instead. - Jir - */
 void player_desc(int Ind, char *desc, int Ind2, int mode) {
 	player_type *p_ptr, *q_ptr = Players[Ind2];
-	cptr            res;
-	cptr            name = q_ptr->name;
-	bool            seen, pron;
+	cptr	    res;
+	cptr	    name = q_ptr->name;
+	bool	    seen, pron;
 
 	/* Check for bad player number */
 	if (Ind > 0) {
@@ -2576,7 +2576,7 @@ void update_mon_flicker(int m_idx) {
  * This function simply updates all the (non-dead) monsters (see above).
  */
 void update_monsters(bool dist) {
-	int          i;
+	int	  i;
 
 	/* Efficiency -- Clear multihued flag */
 	scan_monsters = FALSE;
@@ -2997,8 +2997,8 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 1\n");
 		return 6;
 
 	/* new: no Darkling/Candlebearer live spawns (not needed because of granted spawn on level generation;
-	        and no dungeon boss live spawn either (experimental)?
-	        and no unmakers, hm! */
+		and no dungeon boss live spawn either (experimental)?
+		and no unmakers, hm! */
 	if (!level_generation_time && !(summon_override_checks & SO_BOSS_MONSTERS) &&
 	    (r_idx == RI_DARKLING || r_idx == RI_CANDLEBEARER
 	    || (r_ptr->flags0 & RF0_FINAL_GUARDIAN)
@@ -3224,7 +3224,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 			s_printf("Checking for old Nether Guards\n");
 #endif
 			for (i = m_top - 1; i >= 0; i--) {
-		        	m_idx = m_fast[i];
+				m_idx = m_fast[i];
 				m_ptr = &m_list[m_idx];
 				if (!m_ptr->r_idx) {
 					m_fast[i] = m_fast[--m_top];
@@ -3244,7 +3244,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 			if (!level_generation_time) {
 				/* No, it's a live spawn! (!level_generation_time) */
  #if DEBUG_LEVEL > 2
-			        s_printf("Morgoth live spawn prevented (MORGOTH_NO_TELE_VAULTS)\n");
+				s_printf("Morgoth live spawn prevented (MORGOTH_NO_TELE_VAULTS)\n");
  #endif
 				/* Prevent that. */
 				return 34;
@@ -3255,19 +3255,19 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 					if (is_admin(p_ptr)) continue;
 					if (inarea(&p_ptr->wpos, wpos) &&
 					    (p_ptr->total_winner || (p_ptr->r_killed[RI_SAURON] != 1))) {
-					        /* log */
+						/* log */
  #if DEBUG_LEVEL > 2
 						if (level_generation_time) {
 							if (p_ptr->total_winner) {
-							        s_printf("Morgoth generation prevented due to winner %s\n", p_ptr->name);
+								s_printf("Morgoth generation prevented due to winner %s\n", p_ptr->name);
 							} else {
-							        s_printf("Morgoth generation prevented due to Sauron-misser %s\n", p_ptr->name);
+								s_printf("Morgoth generation prevented due to Sauron-misser %s\n", p_ptr->name);
 							}
 						} else {
 							if (p_ptr->total_winner) {
-							        s_printf("Morgoth live spawn prevented due to winner %s\n", p_ptr->name);
+								s_printf("Morgoth live spawn prevented due to winner %s\n", p_ptr->name);
 							} else {
-							        s_printf("Morgoth live spawn prevented due to Sauron-misser %s\n", p_ptr->name);
+								s_printf("Morgoth live spawn prevented due to Sauron-misser %s\n", p_ptr->name);
 							}
 						}
  #endif
@@ -4202,8 +4202,8 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
  * Use "monster_level" for the monster level
  */
 bool alloc_monster(struct worldpos *wpos, int dis, int slp) {
-	int                     y, x, i, d, min_dis = 999;
-	int                     tries = 0;
+	int		     y, x, i, d, min_dis = 999;
+	int		     tries = 0;
 	player_type *p_ptr;
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return(FALSE);
@@ -4469,7 +4469,7 @@ static bool summon_specific_okay(int r_idx) {
 		    r_ptr->d_char == '$' || r_ptr->d_char == '|' || (r_ptr->flags9 & RF9_MIMIC)) &&
 		    !(r_ptr->flags1 & RF1_UNIQUE));
 		break;
-                case SUMMON_HI_DEMON:
+		case SUMMON_HI_DEMON:
 		okay = ((r_ptr->flags3 & RF3_DEMON) &&
 		    r_ptr->d_char == 'U' &&
 		    r_ptr->level >= 49 &&
@@ -4749,8 +4749,8 @@ bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, int 
 
 /* summon a specific race at a random location */
 bool summon_specific_race_somewhere(struct worldpos *wpos, int r_idx, int s_clone, unsigned char size) {
-	int                     y, x;
-	int                     tries = 0;
+	int		     y, x;
+	int		     tries = 0;
 
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return(FALSE);
@@ -4787,8 +4787,8 @@ bool summon_specific_race_somewhere(struct worldpos *wpos, int r_idx, int s_clon
 
 /* summon a single monster in every detail in a random location */
 int summon_detailed_one_somewhere(struct worldpos *wpos, int r_idx, int ego, bool slp, int s_clone) {
-	int                     y, x;
-	int                     tries = 0;
+	int		     y, x;
+	int		     tries = 0;
 
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return(FALSE);
@@ -4897,13 +4897,13 @@ bool multiply_monster(int m_idx) {
  * Technically should attempt to treat "Beholder"'s as jelly's
  */
 void message_pain(int Ind, int m_idx, int dam) {
-	long                    oldhp, newhp, tmp;
-	int                             percentage;
+	long		    oldhp, newhp, tmp;
+	int			     percentage;
 
 	monster_type		*m_ptr = &m_list[m_idx];
-	monster_race            *r_ptr = race_inf(m_ptr);
+	monster_race	    *r_ptr = race_inf(m_ptr);
 
-	char                    m_name[MNAME_LEN];
+	char		    m_name[MNAME_LEN];
 
 	char uniq = 'w';
 	if ((r_ptr->flags1 & RF1_UNIQUE) &&
@@ -5341,31 +5341,31 @@ cptr r_name_get(monster_type *m_ptr) {
 		return (buf);
 	}
 #endif
-        else return (r_name + r_info[m_ptr->r_idx].name);
+	else return (r_name + r_info[m_ptr->r_idx].name);
 }
 
 #ifdef RANDUNIS
 /* Will add, sub, .. */
 static s32b modify_aux(s32b a, s32b b, char mod)
 {
-        switch (mod)
-        {
-                case MEGO_ADD:
-                        return (a + b);
-                        break;
-                case MEGO_SUB:
-                        return (a - b);
-                        break;
-                case MEGO_FIX:
-                        return (b);
-                        break;
-                case MEGO_PRC:
-                        return (a * b / 100);
-                        break;
-                default:
-                        s_printf("WARNING, unmatching MEGO(%d).\n", mod);
-                        return (0);
-        }
+	switch (mod)
+	{
+		case MEGO_ADD:
+			return (a + b);
+			break;
+		case MEGO_SUB:
+			return (a - b);
+			break;
+		case MEGO_FIX:
+			return (b);
+			break;
+		case MEGO_PRC:
+			return (a * b / 100);
+			break;
+		default:
+			s_printf("WARNING, unmatching MEGO(%d).\n", mod);
+			return (0);
+	}
 }
 
 #define MODIFY_AUX(o, n) ((o) = modify_aux((o), (n) >> 2, (n) & 3))

@@ -83,7 +83,7 @@ hooks_chain* add_hook(int h_idx, cptr script, cptr name)
 	{
 		MAKE(new, hooks_chain);
 		sprintf(new->name, "%s", name);
-                sprintf(new->script, "%s", script);
+		sprintf(new->script, "%s", script);
 		new->next = hooks_heads[h_idx];
 		hooks_heads[h_idx] = new;
 		return (new);
@@ -167,18 +167,18 @@ static bool vprocess_hooks_return(int h_idx, char *ret, char *fmt, va_list *ap)
 			nbr += strlen(ret);
 
 			/* Call the function */
-                        lua_call(L, nb, nbr);
+			lua_call(L, nb, nbr);
 
-                        /* Should be the same as nbr, but lets be carefull */
-                        size = lua_gettop(L) - oldtop;
+			/* Should be the same as nbr, but lets be carefull */
+			size = lua_gettop(L) - oldtop;
 
 			/* get the extra returns if needed */
 			for (i = 0; i < nbr - 1; i++)
 			{
 				if ((ret[i] == 'd') || (ret[i] == 'l'))
 				{
-                                        if (lua_isnumber(L, (-size) + 1 + i)) process_hooks_return[i].num = tolua_getnumber(L, (-size) + 1 + i, 0);
-                                        else process_hooks_return[i].num = 0;
+					if (lua_isnumber(L, (-size) + 1 + i)) process_hooks_return[i].num = tolua_getnumber(L, (-size) + 1 + i, 0);
+					else process_hooks_return[i].num = 0;
 				}
 				else if (ret[i] == 's')
 				{

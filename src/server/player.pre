@@ -33,8 +33,8 @@ struct worldpos{
 struct object_type
 {
 	byte mode;			/* Player that found it */
-        s32b owner;			/* Player that found it */
-        s16b level;			/* Level req */
+	s32b owner;			/* Player that found it */
+	s16b level;			/* Level req */
 
 	s16b k_idx;			/* Kind index (zero if "dead") */
 
@@ -81,7 +81,7 @@ struct object_type
 	s16b ac;			/* Normal AC */
 
 	byte dd;
-        byte ds;			/* Damage dice/sides */
+	byte ds;			/* Damage dice/sides */
 
 	long timeout;			/* Timeout Counter */
 	long timeout_magic;		/* Timeout Counter */
@@ -108,10 +108,10 @@ struct object_type
  */
 struct skill_player
 {
-	s32b base_value;                             /* Actual value */
-	s32b value;                             /* Actual value */
-	u16b mod;                               /* Modifier(1 skill point = modifier skill) */
-	bool dev;                               /* Is the branch developped ? */
+	s32b base_value;			     /* Actual value */
+	s32b value;			     /* Actual value */
+	u16b mod;			       /* Modifier(1 skill point = modifier skill) */
+	bool dev;			       /* Is the branch developped ? */
 	char flags1;
 };
 
@@ -156,7 +156,7 @@ struct player_type
 	bool v_unknown;
 
 	s32b id;		/* Unique ID to each player */
-	u32b account;           /* account group id */
+	u32b account;	   /* account group id */
 	u32b dna;		/* DNA - psuedo unique to each player life */
 
 	s32b turn;
@@ -168,10 +168,10 @@ struct player_type
 
 	const char *savefile;	/* Name of the savefile */
 
-	byte restricted;        /* account is restricted (ie after cheating) */
-	byte privileged;        /* account is privileged (ie for quest running) */
+	byte restricted;	/* account is restricted (ie after cheating) */
+	byte privileged;	/* account is privileged (ie for quest running) */
 	byte pvpexception;      /* account uses different pvp rules than server settings */
-	byte mutedchat;         /* account has chat restrictions */
+	byte mutedchat;	 /* account has chat restrictions */
 	bool inval;		/* dont make them logout to validate */
 
 	bool suicided;		/* Have we suicided */
@@ -222,9 +222,9 @@ struct player_type
 	s16b csp;		/* Cur mana pts */
 	u16b csp_frac;		/* Cur mana frac (times 2^16) */
 
-	s16b mst;                       /* Max stamina pts */
-	s16b cst;                       /* Cur stamina pts */
-	s16b cst_frac;                  /* 1/10000 */
+	s16b mst;		       /* Max stamina pts */
+	s16b cst;		       /* Cur stamina pts */
+	s16b cst_frac;		  /* 1/10000 */
 
 	object_type inventory[INVEN_TOTAL];	/* Player's inventory */
 	inventory_change_type *inventory_changes; /* List of recent inventory changes */
@@ -476,8 +476,8 @@ struct player_type
 	byte ammo_brand_t; 	/* Timed -- Bow Branding */
 	s16b ammo_brand_d; 	/* Timed -- Bow Branding */
 	s16b prob_travel;       /* Timed -- Probability travel */
-	s16b st_anchor;         /* Timed -- Space/Time Anchor */
-	s16b tim_esp;           /* Timed -- ESP */
+	s16b st_anchor;	 /* Timed -- Space/Time Anchor */
+	s16b tim_esp;	   /* Timed -- ESP */
 	s16b adrenaline;
 	s16b biofeedback;
 	s16b mindboost;
@@ -518,10 +518,10 @@ struct player_type
 	bool heavy_shoot;	/* Heavy shooter */
 	bool icky_wield;	/* Icky weapon */
 	bool awkward_wield;	/* Icky weapon */
-	bool easy_wield;        /* Using a 1-h weapon which is MAY2H with both hands */
+	bool easy_wield;	/* Using a 1-h weapon which is MAY2H with both hands */
 	bool cumber_weight;	/* FA from MA is lost if overburdened */
-        bool monk_heavyarmor;   /* Reduced MA power? */
-        bool awkward_shoot;     /* using ranged weapon while having a shield on the arm */
+	bool monk_heavyarmor;   /* Reduced MA power? */
+	bool awkward_shoot;     /* using ranged weapon while having a shield on the arm */
 	bool rogue_heavyarmor;  /* No AoE-searching? Encumbered dual-wield? */
 	bool heavy_swim;	/* Too heavy to swim without drowning chance? */
 
@@ -549,10 +549,10 @@ struct player_type
 	bool immune_fire;	/* Immunity to fire */
 	bool immune_cold;	/* Immunity to cold */
 
-	s16b reduc_fire;        /* Fire damage reduction */
-	s16b reduc_elec;        /* elec damage reduction */
-	s16b reduc_acid;        /* acid damage reduction */
-	s16b reduc_cold;        /* cold damage reduction */
+	s16b reduc_fire;	/* Fire damage reduction */
+	s16b reduc_elec;	/* elec damage reduction */
+	s16b reduc_acid;	/* acid damage reduction */
+	s16b reduc_cold;	/* cold damage reduction */
 
 	bool resist_acid;	/* Resist acid */
 	bool resist_elec;	/* Resist lightning */
@@ -586,7 +586,7 @@ struct player_type
 	bool reflect;       /* Reflect 'bolt' attacks */
 	byte shield_deflect;       /* Deflect various attacks (ranged), needs USE_BLOCKING */
 	byte weapon_parry;       /* Parry various attacks (melee), needs USE_PARRYING */
-	bool res_tele;          /* Prevents being teleported from someone else */
+	bool res_tele;	  /* Prevents being teleported from someone else */
 
 	bool ty_curse;		/* bad curses from artifacts */
 	bool dg_curse;
@@ -639,8 +639,8 @@ struct player_type
 	bool reduce_insanity;	/* for mimic forms with weird/empty mind */
 
 	s16b invis;		/* Invisibility */
-	bool admin_wiz;         /* Is this char Wizard? */
-	bool admin_dm;          /* or Dungeon Master? */
+	bool admin_wiz;	 /* Is this char Wizard? */
+	bool admin_dm;	  /* or Dungeon Master? */
 
 	s16b extra_blows;
 	s16b xtra_crit;
@@ -716,11 +716,11 @@ struct player_type
 	/* additions */
 	bool black_breath;      /* The Tolkien's Black Breath */
 
-	s16b msane;                   /* Max sanity */
-	s16b csane;                   /* Cur sanity */
-	u16b csane_frac;              /* Cur sanity frac */
+	s16b msane;		   /* Max sanity */
+	s16b csane;		   /* Cur sanity */
+	u16b csane_frac;	      /* Cur sanity frac */
 
-	byte spell_project;             /* Do the spells(some) affect nearby party members ? */
+	byte spell_project;	     /* Do the spells(some) affect nearby party members ? */
 	s16b dodge_level;
 	s32b tim_blacklist;
 	s32b tim_watchlist;

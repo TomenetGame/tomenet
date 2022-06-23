@@ -29,26 +29,26 @@
  */
 static int find_realm_skill(int realm)
 {
-        switch (realm)
-        {
-        case REALM_MAGERY:
-                return SKILL_MAGERY;
-        case REALM_PRAYER:
-                return SKILL_PRAY;
-        case REALM_SORCERY:
-                return SKILL_SORCERY;
-        case REALM_SHADOW:
-                return SKILL_SHADOW;
-        case REALM_HUNT:
-//                return SKILL_ARCHERY;
-                return SKILL_HUNTING;
-        case REALM_FIGHTING:
-//                return SKILL_MASTERY;
-                return SKILL_TECHNIQUE;
-//        case REALM_PSI:
-//                return SKILL_;
-        };
-        return 0;
+	switch (realm)
+	{
+	case REALM_MAGERY:
+		return SKILL_MAGERY;
+	case REALM_PRAYER:
+		return SKILL_PRAY;
+	case REALM_SORCERY:
+		return SKILL_SORCERY;
+	case REALM_SHADOW:
+		return SKILL_SHADOW;
+	case REALM_HUNT:
+//		return SKILL_ARCHERY;
+		return SKILL_HUNTING;
+	case REALM_FIGHTING:
+//		return SKILL_MASTERY;
+		return SKILL_TECHNIQUE;
+//	case REALM_PSI:
+//		return SKILL_;
+	};
+	return 0;
 }
 
 /*
@@ -537,17 +537,17 @@ static void do_mimic_power(int Ind, int power, int dir) {
 
 /* RF_4 ------------------------------------------------------------------------------------------------- */
 
-//#define RF4_SHRIEK                      0x00000001      /* Shriek for help */
+//#define RF4_SHRIEK		      0x00000001      /* Shriek for help */
     case 0:
 	shriek(Ind);
 	break;
-//#define RF4_UNMAGIC                     0x00000002      /* Cancel player's timed spell */
+//#define RF4_UNMAGIC		     0x00000002      /* Cancel player's timed spell */
     case 1:
       break;
-//#define RF4_S_ANIMAL                    0x00000004  /* Summon animals */
+//#define RF4_S_ANIMAL		    0x00000004  /* Summon animals */
     case 2:
 	break;
-//#define RF4_ROCKET                      0x00000008  /* TY: Rocket */
+//#define RF4_ROCKET		      0x00000008  /* TY: Rocket */
     case 3:
 //#define RF4_ARROW_1			0x00000010	/* Fire an arrow (light) */
     case 4:
@@ -597,14 +597,14 @@ static void do_mimic_power(int Ind, int power, int dir) {
     case 26:
 //#define RF4_BR_MANA			0x08000000	/* Breathe Mana */
     case 27:
-//#define RF4_BR_DISI                     0x10000000  /* Breathe Disintegration */
+//#define RF4_BR_DISI		     0x10000000  /* Breathe Disintegration */
     case 28:
-//#define RF4_BR_NUKE                     0x20000000  /* TY: Toxic Breath */
+//#define RF4_BR_NUKE		     0x20000000  /* TY: Toxic Breath */
     case 29:
 	p_ptr->current_spell = j;
 	get_aim_dir(Ind);
 	return;
-//#define RF4_MOAN                        0x40000000      /* For Halloween event :) -C. Blue */
+//#define RF4_MOAN			0x40000000      /* For Halloween event :) -C. Blue */
     case 30:
 	break;
 // #define RF4_BOULDER			0x80000000
@@ -641,7 +641,7 @@ static void do_mimic_power(int Ind, int power, int dir) {
     case 42:
 // RF5_BRAIN_SMASH		0x00000800	/* Smash Brain */
     case 43:
-//#define RF5_CURSE                       0x00001000      /* Cause Wound */
+//#define RF5_CURSE		       0x00001000      /* Cause Wound */
     case 44:
 	p_ptr->current_spell = j;
 	get_aim_dir(Ind);
@@ -649,9 +649,9 @@ static void do_mimic_power(int Ind, int power, int dir) {
 //UNUSED
     case 45:
 	break;
-//#define RF5_BA_NUKE                     0x00004000  /* TY: Nuke Ball */
+//#define RF5_BA_NUKE		     0x00004000  /* TY: Nuke Ball */
     case 46:
-//#define RF5_BA_CHAO                     0x00008000  /* Chaos Ball */
+//#define RF5_BA_CHAO		     0x00008000  /* Chaos Ball */
     case 47:
 // RF5_BO_ACID			0x00010000	/* Acid Bolt */
     case 48:
@@ -708,7 +708,7 @@ static void do_mimic_power(int Ind, int power, int dir) {
 	else hp_player(Ind, ((rlev + 5) * (rlev + 30)) / 14);
 	//hp_player(Ind, rlev * 2);
 	break;
-//#define RF6_S_ANIMALS                   0x00000008      /* Summon animals */
+//#define RF6_S_ANIMALS		   0x00000008      /* Summon animals */
     case 67:
 	break;
 // RF6_BLINK			0x00000010	/* Teleport Short */
@@ -719,13 +719,13 @@ static void do_mimic_power(int Ind, int power, int dir) {
     case 69:
 	teleport_player(Ind, 200, FALSE);
 	break;
-//#define RF6_RAISE_DEAD                  0x00000040      /* Raise Dead */
+//#define RF6_RAISE_DEAD		  0x00000040      /* Raise Dead */
     case 70:
 	break;
-//#define RF6_S_BUG                       0x00000080      /* Summon Software bug */
+//#define RF6_S_BUG		       0x00000080      /* Summon Software bug */
     case 71:
 	break;
-//#define RF6_TELE_TO                     0x00000100      /* Move player to monster */
+//#define RF6_TELE_TO		     0x00000100      /* Move player to monster */
     case 72:
 // RF6_TELE_AWAY		0x00000200	/* Move player far away */
     case 73:
@@ -736,7 +736,7 @@ static void do_mimic_power(int Ind, int power, int dir) {
     case 74:
     //Disabled to sync with scrolls.      teleport_player_level(Ind, FALSE);	/* wrong way, but useful */
 	break;
-//#define RF6_S_RNG                       0x00000800      /* Summon RNG */
+//#define RF6_S_RNG		       0x00000800      /* Summon RNG */
     case 75:
 	break;
 // RF6_DARKNESS		0x00001000	/* Create Darkness */

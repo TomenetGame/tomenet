@@ -439,7 +439,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 {
 	MSG      msg;
 
-//        main(0, NULL);
+//	main(0, NULL);
 
 	/* Process messages forever */
 	while (GetMessage(&msg, NULL, 0, 0))
@@ -448,7 +448,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 		DispatchMessage(&msg);
 	}
 
-        main(0, NULL);
+	main(0, NULL);
 
 	return (0);
 }

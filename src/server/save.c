@@ -165,11 +165,11 @@ static void wr_item(object_type *o_ptr) {
 
 /* DEBUGGING PURPOSES - the_sandman */
 #if 0
-        if (o_ptr->tval == 46)
-         {
-          s_printf("TRAP_DEBUG: Trap with s_val:%d,to_h:%d,to_d:%d,to_a:%d written\n",
-                                o_ptr->sval, o_ptr->to_h, o_ptr->to_d, o_ptr->to_a);
-         }
+	if (o_ptr->tval == 46)
+	 {
+	  s_printf("TRAP_DEBUG: Trap with s_val:%d,to_h:%d,to_d:%d,to_a:%d written\n",
+				o_ptr->sval, o_ptr->to_h, o_ptr->to_d, o_ptr->to_a);
+	 }
 #endif
 	wr_s16b(o_ptr->ac);
 	wr_byte(o_ptr->dd);

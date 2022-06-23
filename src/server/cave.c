@@ -435,7 +435,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 		}
 	}
 
-        /* Page all dungeon masters to notify them of a Nether Realm breach >:) - C. Blue */
+	/* Page all dungeon masters to notify them of a Nether Realm breach >:) - C. Blue */
 	if (value > 0) {
 		if (watch_nr && in_netherrealm(wpos)) {
 			for (i = 1; i <= NumPlayers; i++) {
@@ -1703,7 +1703,7 @@ static byte breath_to_attr[32][2] = {
 	{  TERM_L_DARK,  TERM_SLATE },		/* RF4_BRTH_DARK */
 	{  TERM_L_UMBER,  TERM_UMBER },		/* RF4_BRTH_CONFU */
 	{  TERM_YELLOW,  TERM_L_UMBER },	/* RF4_BRTH_SOUND */
-        {  255,  255 },   /* (any color) */	/* RF4_BRTH_CHAOS */
+	{  255,  255 },   /* (any color) */	/* RF4_BRTH_CHAOS */
 	{  TERM_VIOLET,  TERM_VIOLET },		/* RF4_BRTH_DISEN */
 	{  TERM_L_RED,  TERM_VIOLET },		/* RF4_BRTH_NEXUS */
 	{  TERM_L_BLUE,  TERM_L_BLUE },		/* RF4_BRTH_TIME */
@@ -1907,13 +1907,13 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 	/* a = r_ptr->x_attr; */
 	if (m_ptr && !m_ptr->special && !m_ptr->questor && p_ptr->use_r_gfx) a = p_ptr->r_attr[m_ptr->r_idx];
 	else a = r_ptr->d_attr;
-	/*                        else a = m_ptr->r_ptr->d_attr; */
+	/*			else a = m_ptr->r_ptr->d_attr; */
 
 	/* Desired char */
 	/* c = r_ptr->x_char; */
 	if (m_ptr && !m_ptr->special && !m_ptr->questor && p_ptr->use_r_gfx) c = p_ptr->r_char[m_ptr->r_idx];
 	else c = r_ptr->d_char;
-	/*                        else c = m_ptr->r_ptr->d_char; */
+	/*			else c = m_ptr->r_ptr->d_char; */
 
 	/* Hack -- mimics */
 	if (r_ptr->flags9 & RF9_MIMIC) {
@@ -2168,7 +2168,7 @@ static byte player_color(int Ind) {
 
 	/* Mana Shield and GOI also flicker */
 	/* NOTE: For the player looking at himself, this is done in lite_spot(),
-	         which is called from set_tim_manashield().  */
+		 which is called from set_tim_manashield().  */
 #ifdef EXTENDED_TERM_COLOURS
 	if (is_atleast(&p_ptr->version, 4, 5, 1, 2, 0, 0)) {
 		if (p_ptr->tim_manashield > 15) return TERM_SHIELDM;
@@ -3728,11 +3728,11 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 	}
 
 /* #ifdef ARCADE_SERVER
-        if ((effects[c_ptr->effect].flags & EFF_CROSSHAIR_A) || (effects[c_ptr->effect].flags & EFF_CROSSHAIR_B) || (effects[c_ptr->effect].flags & EFF_CROSSHAIR_C))
-        {
-	        (*ap) = TERM_L_UMBER;
-	        (*cp) = '+';
-        }
+	if ((effects[c_ptr->effect].flags & EFF_CROSSHAIR_A) || (effects[c_ptr->effect].flags & EFF_CROSSHAIR_B) || (effects[c_ptr->effect].flags & EFF_CROSSHAIR_C))
+	{
+		(*ap) = TERM_L_UMBER;
+		(*cp) = '+';
+	}
 #endif */
 }
 
@@ -6440,7 +6440,7 @@ static void vinfo_init_aux(vinfo_hack *hack, int y, int x, long m)
 			if (hack->num_slopes >= VINFO_MAX_SLOPES)
 			{
 				quit_fmt("Too many slopes (%d)!",
-			         	VINFO_MAX_SLOPES);
+				 	VINFO_MAX_SLOPES);
 			}
 
 			/* Save the slope, and advance */
@@ -6504,7 +6504,7 @@ errr vinfo_init(void)
 			if (num_grids >= VINFO_MAX_GRIDS)
 			{
 				quit_fmt("Too many grids (%d >= %d)!",
-				         num_grids, VINFO_MAX_GRIDS);
+					 num_grids, VINFO_MAX_GRIDS);
 			}
 
 			/* Count grids */
@@ -6541,14 +6541,14 @@ errr vinfo_init(void)
 	if (num_grids < VINFO_MAX_GRIDS)
 	{
 		quit_fmt("Too few grids (%d < %d)!",
-		         num_grids, VINFO_MAX_GRIDS);
+			 num_grids, VINFO_MAX_GRIDS);
 	}
 
 	/* Enforce maximal efficiency */
 	if (hack->num_slopes < VINFO_MAX_SLOPES)
 	{
 		quit_fmt("Too few slopes (%d < %d)!",
-		         hack->num_slopes, VINFO_MAX_SLOPES);
+			 hack->num_slopes, VINFO_MAX_SLOPES);
 	}
 
 
@@ -7276,10 +7276,10 @@ void update_flow(void)
  */
 void map_area(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	int             i, x, y, y1, y2, x1, x2;
+	int	     i, x, y, y1, y2, x1, x2;
 
 	cave_type       *c_ptr;
-	byte            *w_ptr;
+	byte	    *w_ptr;
 
 /*	dungeon_type	*d_ptr = getdungeon(&p_ptr->wpos); */
 	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
@@ -7500,8 +7500,8 @@ void mind_map_level(int Ind, int pow) {
 		}
 
 #if 0 /* this will be overheady, since it requires prt_map() here as a bad \
-         hack, and PR_MAP/PU_MONSTERS commented out in for-loop below. \
-         See same for-loop for clean solution as good alternative! */
+	 hack, and PR_MAP/PU_MONSTERS commented out in for-loop below. \
+	 See same for-loop for clean solution as good alternative! */
 		prt_map(plist[i], FALSE); /* bad hack */
 		/* like detect_creatures(), not excluding invisible monsters though */
 		for (i = 0; i < plist_size; i++) {
@@ -7568,10 +7568,10 @@ void mind_map_level(int Ind, int pow) {
  */
 void wiz_lite(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	int             y, x, i;
+	int	     y, x, i;
 
 	cave_type       *c_ptr;
-	byte            *w_ptr;
+	byte	    *w_ptr;
 
 /*	dungeon_type	*d_ptr = getdungeon(&p_ptr->wpos); */
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
@@ -7782,14 +7782,14 @@ void wiz_dark(int Ind) {
 #ifdef ARCADE_SERVER
 extern int check_feat(worldpos *wpos, int y, int x)
 {
-        cave_type **zcave;
-        cave_type *c_ptr;
+	cave_type **zcave;
+	cave_type *c_ptr;
 
-        if (!(zcave = getcave(wpos))) return(0);
+	if (!(zcave = getcave(wpos))) return(0);
 
-        if (!in_bounds(y, x)) return(0);
+	if (!in_bounds(y, x)) return(0);
 
-        c_ptr = &zcave[y][x];
+	c_ptr = &zcave[y][x];
 	return(c_ptr->feat);
 }
 #endif
@@ -8324,7 +8324,7 @@ bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2, int rang
 		if (dist && !cave_los(zcave, y, x)) break;
 
 		/* Stopped by protected grids (Inn doors, also stopping monsters' ranged attacks!) */
-                if (f_info[zcave[y][x].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
+		if (f_info[zcave[y][x].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
 
 		/* Check for arrival at "final target" */
 		if ((x == x2) && (y == y2)) {
@@ -8448,13 +8448,13 @@ static bool projectable_real_DLS(int Ind, int y1, int x1, int y2, int x2, int ra
 		if ((x == x2) && (y == y2)) return (TRUE);
 
 		/* Never pass through SLEEPING monsters */
-                if (dist && (zcave[y][x].m_idx > 0)
+		if (dist && (zcave[y][x].m_idx > 0)
 		    && target_able(Ind, zcave[y][x].m_idx)
 		    && m_list[zcave[y][x].m_idx].csleep) break;
 
 #if 0
 		/* Never pass through hostile player */
-                if (dist && zcave[y][x].m_idx < 0) {
+		if (dist && zcave[y][x].m_idx < 0) {
 			if (check_hostile(Ind, -zcave[y][x].m_idx)) break;
 		}
 #endif
@@ -8477,19 +8477,19 @@ bool projectable_real(int Ind, int y1, int x1, int y2, int x2, int range) {
 		if (dist && !cave_los(zcave, y, x)) break;
 
 		/* Stopped by protected grids (Inn doors, also stopping monsters' ranged attacks!) */
-                if (f_info[zcave[y][x].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
+		if (f_info[zcave[y][x].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
 
 		/* Check for arrival at "final target" */
 		if ((x == x2) && (y == y2)) return (TRUE);
 
 		/* Never pass through SLEEPING monsters */
-                if (dist && (zcave[y][x].m_idx > 0)
+		if (dist && (zcave[y][x].m_idx > 0)
 		    && target_able(Ind, zcave[y][x].m_idx)
 		    && m_list[zcave[y][x].m_idx].csleep) break;
 
 #if 0
 		/* Never pass through hostile player */
-                if (dist && zcave[y][x].m_idx < 0) {
+		if (dist && zcave[y][x].m_idx < 0) {
 			if (check_hostile(Ind, -zcave[y][x].m_idx)) break;
 		}
 #endif
@@ -8525,13 +8525,13 @@ static bool projectable_wall_real_DLS(int Ind, int y1, int x1, int y2, int x2, i
 		if ((x == x2) && (y == y2)) return (TRUE);
 
 		/* Never pass through SLEEPING monsters */
-                if (dist && (zcave[y][x].m_idx > 0)
+		if (dist && (zcave[y][x].m_idx > 0)
 		    && target_able(Ind, zcave[y][x].m_idx)
 		    && m_list[zcave[y][x].m_idx].csleep) break;
 
 #if 0
 		/* Never pass through hostile player */
-                if (dist && zcave[y][x].m_idx < 0) {
+		if (dist && zcave[y][x].m_idx < 0) {
 			if (check_hostile(Ind, -zcave[y][x].m_idx)) break;
 		}
 #endif
@@ -8556,7 +8556,7 @@ bool projectable_wall_real(int Ind, int y1, int x1, int y2, int x2, int range)
 	/* See "project()" */
 	for (dist = 0; dist <= range; dist++) {
 		/* Stopped by protected grids (Inn doors, also stopping monsters' ranged attacks!) */
-                if (f_info[zcave[y][x].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
+		if (f_info[zcave[y][x].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
 
 		/* Check for arrival at "final target" */
 		if ((x == x2) && (y == y2)) return (TRUE);
@@ -8565,13 +8565,13 @@ bool projectable_wall_real(int Ind, int y1, int x1, int y2, int x2, int range)
 		if (dist && !cave_los(zcave, y, x)) break;
 
 		/* Never pass through SLEEPING monsters */
-                if (dist && (zcave[y][x].m_idx > 0)
+		if (dist && (zcave[y][x].m_idx > 0)
 		    && target_able(Ind, zcave[y][x].m_idx)
 		    && m_list[zcave[y][x].m_idx].csleep) break;
 
 #if 0
 		/* Never pass through hostile player */
-                if (dist && zcave[y][x].m_idx < 0) {
+		if (dist && zcave[y][x].m_idx < 0) {
 			if (check_hostile(Ind, -zcave[y][x].m_idx)) break;
 		}
 #endif
@@ -8869,15 +8869,15 @@ msg_broadcast(0, "some flags");
 else
 msg_broadcast(0, "no flags");
 }
-/*        if ((flags & EFF_CROSSHAIR_A) || (flags & EFF_CROSSHAIR_B) || (flags & EFF_CROSSHAIR_C))
-        {
-        msg_broadcast(0, "making an effect");
-        player_type *pfft_ptr = Players[interval];
-        pfft_ptr->e = i;
-        } */
+/*	if ((flags & EFF_CROSSHAIR_A) || (flags & EFF_CROSSHAIR_B) || (flags & EFF_CROSSHAIR_C))
+	{
+	msg_broadcast(0, "making an effect");
+	player_type *pfft_ptr = Players[interval];
+	pfft_ptr->e = i;
+	} */
 #endif
 
-        return i;
+	return i;
 }
 
 bool allow_terraforming(struct worldpos *wpos, byte feat) {
@@ -8907,7 +8907,7 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	/* allow only harmless as well as non-obstructing changes: */
 	case FEAT_IVY:
 	case FEAT_DEAD_TREE:
-        case FEAT_ICE:
+	case FEAT_ICE:
 		if (town || sector00 || valinor || nr_bottom) return(FALSE);
 		break;
 

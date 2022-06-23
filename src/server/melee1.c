@@ -266,7 +266,7 @@ static bool do_eat_item(int Ind, int m_idx) {
 	object_type *os_ptr;
 #endif
 
-        /* Amulet of Immortality */
+	/* Amulet of Immortality */
 	//if (p_ptr->admin_invuln) return FALSE;
 	if (p_ptr->admin_invinc) return FALSE;
 
@@ -392,7 +392,7 @@ static bool do_seduce(int Ind, int m_idx) {
 	monster_type    *m_ptr = &m_list[m_idx];
 	monster_race    *r_ptr = race_inf(m_ptr);
 	object_type		*o_ptr;
-	char            m_name[MNAME_LEN];
+	char	    m_name[MNAME_LEN];
 	char		o_name[ONAME_LEN];
 	int d, i, j, ty, tx, chance, crowd = 0, piece = 0;
 	bool done = FALSE;
@@ -549,26 +549,26 @@ bool make_attack_melee(int Ind, int m_idx) {
 	player_type *p_ptr = Players[Ind];
 
 	monster_type    *m_ptr = &m_list[m_idx];
-        monster_race    *r_ptr = race_inf(m_ptr);
+	monster_race    *r_ptr = race_inf(m_ptr);
 
 	int      	ap_cnt;
 	int		mon_acid = 0, mon_fire = 0, blows_total = 0;
 
-	int             i, j, k, tmp, ac, rlev;
+	int	     i, j, k, tmp, ac, rlev;
 #ifndef NEW_DODGING /* actually 'chance' is used a lot in this function -> FIXME */
 	int chance;
 #endif
-	int             do_cut, do_stun, factor = 100;// blockchance, parrychance, malus;
+	int	     do_cut, do_stun, factor = 100;// blockchance, parrychance, malus;
 	int 		player_aura_dam;
 
 	object_type     *o_ptr;
 
-	char            o_name[ONAME_LEN];
-	char            m_name[MNAME_LEN], m_name_gen[MNAME_LEN];
-	char            ddesc[MNAME_LEN];
+	char	    o_name[ONAME_LEN];
+	char	    m_name[MNAME_LEN], m_name_gen[MNAME_LEN];
+	char	    ddesc[MNAME_LEN];
 	char		dam_msg[MAX_CHARS_WIDE] = { '\0' };
 
-	bool            blinked, prot = FALSE;
+	bool	    blinked, prot = FALSE;
 
 	bool touched = FALSE, fear = FALSE, alive = TRUE;
 	bool explode = FALSE, gone = FALSE;
@@ -600,7 +600,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 	/* determine how much parrying or blocking would endanger our weapon/shield */
 	for (i = 0; i < 4; i++) { 
 		if (r_ptr->blow[i].effect == RBE_ACID) mon_acid += 12;
-        	if (r_ptr->blow[i].effect == RBE_FIRE) mon_fire += 12;
+		if (r_ptr->blow[i].effect == RBE_FIRE) mon_fire += 12;
 		blows_total++;
 	}
 	if (blows_total) {
@@ -2499,7 +2499,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 #endif
 
 					/* Take some damage */
-					//                                        carried_monster_hit = TRUE;
+					//					carried_monster_hit = TRUE;
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, -m_idx);
 

@@ -5176,7 +5176,7 @@ static bool process_player_end_aux(int Ind) {
 			p_ptr->csp -= 10;
 			hp_player_quiet(Ind, -p_ptr->tim_regen_pow, TRUE);
 			p_ptr->redraw |= PR_MANA;
-                }
+		}
 	}
 
 	/* Poisoned or cut yields no healing */

@@ -20,20 +20,20 @@
 /* Initialze the s_info array at server start */
 bool init_s_info()
 {
-        int i;
-        int order = 1;
+	int i;
+	int order = 1;
 
-        for (i = 0; i < MAX_SKILLS; i++)
-        {
-                /* Is there a skill to process here ? */
-                if (skill_tree_init[i][1] > 0)
-                {
-                        /* Set it's father and order in the tree */
-                        s_info[skill_tree_init[i][1]].father = skill_tree_init[i][0];
-                        s_info[skill_tree_init[i][1]].order = order++;
-                }
-        }
-        return FALSE;
+	for (i = 0; i < MAX_SKILLS; i++)
+	{
+		/* Is there a skill to process here ? */
+		if (skill_tree_init[i][1] > 0)
+		{
+			/* Set it's father and order in the tree */
+			s_info[skill_tree_init[i][1]].father = skill_tree_init[i][0];
+			s_info[skill_tree_init[i][1]].order = order++;
+		}
+	}
+	return FALSE;
 }
 #endif	// 0
 
@@ -41,18 +41,18 @@ bool init_s_info()
  * Initialize a skill with given values
  */
 void init_skill(player_type *p_ptr, u32b value, s16b mod, int i) {
-        p_ptr->s_info[i].base_value = value;
-        p_ptr->s_info[i].value = value;
-        p_ptr->s_info[i].mod = mod;
+	p_ptr->s_info[i].base_value = value;
+	p_ptr->s_info[i].value = value;
+	p_ptr->s_info[i].mod = mod;
 	p_ptr->s_info[i].touched = TRUE;
 #if 0 //SMOOTHSKILLS
-        if (s_info[i].flags1 & SKF1_HIDDEN)
+	if (s_info[i].flags1 & SKF1_HIDDEN)
 		p_ptr->s_info[i].hidden = TRUE;
-        else
+	else
 		p_ptr->s_info[i].hidden = FALSE;
-        if (s_info[i].flags1 & SKF1_DUMMY)
+	if (s_info[i].flags1 & SKF1_DUMMY)
 		p_ptr->s_info[i].dummy = TRUE;
-        else
+	else
 		p_ptr->s_info[i].dummy = FALSE;
 #else
 	p_ptr->s_info[i].flags1 = (char)(s_info[i].flags1 & 0xFF);
@@ -106,8 +106,8 @@ s16b get_skill_scale(player_type *p_ptr, int skill, u32b scale)
 #else
 	/* XXX XXX XXX */
 	/* return (((p_ptr->s_info[skill].value / 10) * (scale * (SKILL_STEP / 10)) /
-	         (SKILL_MAX / 10)) /
-	        (SKILL_STEP / 10)); */
+		 (SKILL_MAX / 10)) /
+		(SKILL_STEP / 10)); */
 	/* Simpler formula suggested by Potter - mikaelh */
 	return ((p_ptr->s_info[skill].value * scale) / SKILL_MAX);
 
@@ -572,7 +572,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			msg_print(Ind, "\374\377GYour soul escapes less quickly on death.");
 		}
 		/* + continuous effect */
-                break;
+		break;
 	case SKILL_HSUPPORT:
 		if (old_value < 400 && new_value >= 400)
 			msg_print(Ind, "\374\377GYou feel superior to ancient curses.");

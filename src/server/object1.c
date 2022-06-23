@@ -3136,7 +3136,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		char *u = tmp_val;
 
 		strcpy(tmp_val, quark_str(o_ptr->note));
-                for (; *u && (*u != '#'); u++);
+		for (; *u && (*u != '#'); u++);
 		*u = '\0';
 	}
 
@@ -4769,7 +4769,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		   be fully identified even though we aren't aware of them yet */
 		p_ptr->obj_aware[o_ptr->k_idx] = TRUE;
 
-	        /* Describe the result */
+		/* Describe the result */
 		/* in case we just *ID* it because an admin inspected it */
 		if (!(o_ptr->ident & ID_MENTAL)) object_desc(0, o_name, o_ptr, TRUE, 3);
 		/* normal players: */
@@ -5009,7 +5009,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		}
 	//Note: ammo_brand_t is unused atm (possibly not fully implemented even)
 	/* Note: Static brands (p_ptr->brand_..) aren't displayed here, since they come completely independant of the weapon usage,
-	         while temporary brands at least (usually) stop when you take off the weapon. */
+		 while temporary brands at least (usually) stop when you take off the weapon. */
 #endif
 
 	/* in case we just *ID* it because an admin inspected it */
@@ -6123,7 +6123,7 @@ cptr mention_use(int Ind, int i) {
 	case INVEN_HEAD:  p = "On head"; break;
 	case INVEN_HANDS: p = "On hands"; break;
 	case INVEN_FEET:  p = "On feet"; break;
-	default:          p = "In pack"; break;
+	default:	  p = "In pack"; break;
 	}
 
 	/* Hack -- Heavy weapon */
@@ -6168,7 +6168,7 @@ cptr describe_use(int Ind, int i) {
 	case INVEN_HEAD:  p = "wearing on your head"; break;
 	case INVEN_HANDS: p = "wearing on your hands"; break;
 	case INVEN_FEET:  p = "wearing on your feet"; break;
-	default:          p = "carrying in your pack"; break;
+	default:	  p = "carrying in your pack"; break;
 	}
 
 	/* Hack -- Heavy weapon */

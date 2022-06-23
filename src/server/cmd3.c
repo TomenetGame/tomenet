@@ -4208,7 +4208,7 @@ void do_cmd_look(int Ind, int dir) {
 			else p_ptr->target_idx[i] = 0;
 		}
 
-        } else if (dir >= 128) {
+	} else if (dir >= 128) {
 		/* Initialize if needed */
 		if (dir == 128) {
 			x = p_ptr->target_col = p_ptr->px;
@@ -4332,7 +4332,7 @@ void do_cmd_look(int Ind, int dir) {
 			    m_ptr->level, look_mon_desc(c_ptr->m_idx));
 		else
 #if 0 /* attach 'slain' for uniques we already killed */
-//                snprintf(out_val, sizeof(out_val), "%s (%s)", r_name_get(&m_list[c_ptr->m_idx]), look_mon_desc(c_ptr->m_idx));
+//		snprintf(out_val, sizeof(out_val), "%s (%s)", r_name_get(&m_list[c_ptr->m_idx]), look_mon_desc(c_ptr->m_idx));
 		snprintf(out_val, sizeof(out_val), "%s (Lv %d, %s%s)", r_name_get(&m_list[c_ptr->m_idx]),
 		    m_ptr->level, look_mon_desc(c_ptr->m_idx),
 		    m_ptr->clone ? ", clone" : (done_unique ? ", slain" : ""));

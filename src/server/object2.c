@@ -1246,7 +1246,7 @@ s16b get_obj_num(int max_level, u32b resf) {
 		/* Occasional "boost" */
 		if (rand_int(GREAT_OBJ) == 0) {
 			/* What a bizarre calculation - maybe TODO: Make this saner, but still keep DSM drop in orc cave possibility etc */
-                        max_level = 1 + ((max_level * MAX_DEPTH_OBJ) / randint(MAX_DEPTH_OBJ));
+			max_level = 1 + ((max_level * MAX_DEPTH_OBJ) / randint(MAX_DEPTH_OBJ));
 		}
 	}
 
@@ -1909,7 +1909,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 		    ((o_ptr->to_d) > 0) ||
 		    (value > k_ptr->cost) || /* <- hack: check for ego power value - this is the exception required for shields now */
 		    (o_ptr->pval > 0) || (o_ptr->bpval > 0))) return (0L);
-	        break;
+		break;
 #endif
 	case TV_BOOTS:
 	case TV_GLOVES:
@@ -1930,7 +1930,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 		    (value > k_ptr->cost) || /* <- hack: check for ego power value - can prevent a negatively enchanted item from conning as 'worthless' */
 #endif
 		    (o_ptr->pval > 0) || (o_ptr->bpval > 0))) return (0L);
-	        break;
+		break;
 
 	case TV_DIGGING:
 	case TV_BLUNT:
@@ -1965,7 +1965,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 		    (value > k_ptr->cost) || /* <- hack: check for ego power value - can prevent a negatively enchanted item from conning as 'worthless' */
 #endif
 		    (o_ptr->pval > 0) || (o_ptr->bpval > 0))) return (0L);
-	        break;
+		break;
 	}
 
 	/* Analyze pval bonus */
@@ -2100,7 +2100,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 
 
 				/* Flags moved here exclusively from flag_cost */
-			        if (f1 & TR1_MANA) value += (200 * pval * (pval + 5));
+				if (f1 & TR1_MANA) value += (200 * pval * (pval + 5));
 
 				/* End of flags, moved here from flag_cost */
 
@@ -2598,7 +2598,7 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	if (f4 & TR4_BLACK_BREATH) total -= 40000;
 	if (f4 & TR4_DG_CURSE) total -= 25000;
 	if (f4 & TR4_CLONE) total -= 20000;
-	//        if (f5 & TR5_LEVELS) total += o_ptr->elevel * 2000;
+	//	if (f5 & TR5_LEVELS) total += o_ptr->elevel * 2000;
 
 	am = ((f4 & (TR4_ANTIMAGIC_50)) ? 50 : 0)
 		+ ((f4 & (TR4_ANTIMAGIC_30)) ? 30 : 0)
@@ -4131,17 +4131,17 @@ s16b m_bonus(int max, int level) {
 
 
 	/* Paranoia -- enforce maximal "level" */
-        if (level > MAX_DEPTH_OBJ - 1) level = MAX_DEPTH_OBJ - 1;
+	if (level > MAX_DEPTH_OBJ - 1) level = MAX_DEPTH_OBJ - 1;
 
 
 	/* The "bonus" moves towards the max */
-        bonus = ((max * level) / MAX_DEPTH_OBJ);
+	bonus = ((max * level) / MAX_DEPTH_OBJ);
 
 	/* Hack -- determine fraction of error */
-        extra = ((max * level) % MAX_DEPTH_OBJ);
+	extra = ((max * level) % MAX_DEPTH_OBJ);
 
 	/* Hack -- simulate floating point computations */
-        if (rand_int(MAX_DEPTH_OBJ) < extra) bonus++;
+	if (rand_int(MAX_DEPTH_OBJ) < extra) bonus++;
 
 
 	/* The "stand" is equal to one quarter of the max */
@@ -4322,7 +4322,7 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 		k_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
 
 #if 0 /* although this makes level in k_info pointless, it just doesn't make sense to check an insta-art's level twice. \
-         NOTE: This also fixes the problem of the k-level differring from the a-level, which is true for a lot of top-levle insta-art jewelry! (ew) */
+	 NOTE: This also fixes the problem of the k-level differring from the a-level, which is true for a lot of top-levle insta-art jewelry! (ew) */
 		/* XXX XXX Enforce minimum "object" level (loosely) */
 		if (k_info[k_idx].level > object_level) {
 			/* Acquire the "out-of-depth factor" */
@@ -4379,7 +4379,7 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf) 
 	for (i = 0; i < MAX_A_IDX; i++) a_map[i] = i;
 	intshuffle(a_map, MAX_A_IDX);
 
-        /* Check if true artifact generation is currently disabled -
+	/* Check if true artifact generation is currently disabled -
 	   added this for maintenance reasons -C. Blue */
 	if (!cfg.arts_disabled &&
 	    !((resf & RESF_NOTRUEART) && !(resf & RESF_WINNER))) {
@@ -5206,7 +5206,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf) {
 
 	/* CAP_ITEM_BONI */
 #ifdef USE_NEW_SHIELDS  /* should actually be USE_BLOCKING, but could be too */
-                        /* dramatic a change if it gets enabled temporarily - C. Blue */
+			/* dramatic a change if it gets enabled temporarily - C. Blue */
 	if (o_ptr->tval == TV_SHIELD) {
  #ifndef NEW_SHIELDS_NO_AC
 		if (o_ptr->to_a > 15) o_ptr->to_a = 15;
@@ -5890,14 +5890,14 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	s32b ego_value1, ego_value2, ovr, fc;
 	long depth = ABS(getlevel(wpos)), depth_value;
 	int i, rolls, chance1, chance2, power; //, j;
-        char o_name[ONAME_LEN];
+	char o_name[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, f6, esp; /* for RESF checks */
 
 	/* Fix for reasonable level reqs on DROP_CHOSEN/SPECIAL_GENE items -C. Blue */
 	if (lev == -2) lev = getlevel(wpos);
 
 	/* Maximum "level" for various things */
-        if (lev > MAX_DEPTH_OBJ - 1) lev = MAX_DEPTH_OBJ - 1;
+	if (lev > MAX_DEPTH_OBJ - 1) lev = MAX_DEPTH_OBJ - 1;
 
 
 	/* Base chance of being "good" */
@@ -6194,7 +6194,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 			}
 
 			/* Hack -- acquire "cursed" flag */
-			//                if (f3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);	// this should be done here!
+			//		if (f3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);	// this should be done here!
 			if (a_ptr->flags3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);
 		}
 #endif	// 1

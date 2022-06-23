@@ -361,9 +361,9 @@ static void Init_receive(void) {
 	playing_receive[PKT_GUILD]		= Receive_guild;
 	playing_receive[PKT_GUILD_CFG]		= Receive_guild_config;
 
-        playing_receive[PKT_SKILL_MOD]		= Receive_skill_mod;
+	playing_receive[PKT_SKILL_MOD]		= Receive_skill_mod;
 	playing_receive[PKT_SKILL_DEV]		= Receive_skill_dev;
-        playing_receive[PKT_ACTIVATE_SKILL]	= Receive_activate_skill;
+	playing_receive[PKT_ACTIVATE_SKILL]	= Receive_activate_skill;
 	playing_receive[PKT_RAW_KEY]		= Receive_raw_key;
 	playing_receive[PKT_STORE_EXAMINE]	= Receive_store_examine;
 	playing_receive[PKT_STORE_CMD]		= Receive_store_command;
@@ -571,7 +571,7 @@ static bool update_acc_file_version(void) {
 bool purge_acc_file(void) {
 	FILE *fp_old, *fp;
 	struct account acc;
-        size_t retval;
+	size_t retval;
 	char buf[1024], buf2[1024];
 	int amt = 0, total = 0;
 
@@ -1223,14 +1223,14 @@ static void Contact(int fd, int arg) {
 		Packet_printf(&ibuf, "%c%c%d%d", reply_to, status, login_port, CHAR_CREATION_FLAGS | 0x02);
 		Packet_printf(&ibuf, "%d%d%d%d%d%d", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, VERSION_BUILD);
 	} else {
-	        Packet_printf(&ibuf, "%c%c%d%d", reply_to, status, login_port, CHAR_CREATION_FLAGS);
+		Packet_printf(&ibuf, "%c%c%d%d", reply_to, status, login_port, CHAR_CREATION_FLAGS);
 	}
 
 /* -- DGDGDGDG it would be NEAT to have classes sent to the cleint at conenciton, sadly Im too clumpsy at network code ..
-        for (i = 0; i < MAX_CLASS; i++)
-        {
-                 Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
-        }
+	for (i = 0; i < MAX_CLASS; i++)
+	{
+		 Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
+	}
 */
 	Reply(host_addr, fd);
 }
@@ -4859,7 +4859,7 @@ static int Receive_play(int ind) {
 	unsigned char ch;
 	int i, n, limit;
 	s16b sex, race, class, trait = 0;
-        short int sfx = -1, mus = -1;
+	short int sfx = -1, mus = -1;
 
 	/* XXX */
 	n = Sockbuf_read(&connp->r);
@@ -5682,7 +5682,7 @@ int Send_skill_points(int Ind) {
 			Ind, connp->state, connp->id));
 		return 0;
 	}
-        return Packet_printf(&connp->c, "%c%d", PKT_SKILL_PTS, p_ptr->skill_points);
+	return Packet_printf(&connp->c, "%c%d", PKT_SKILL_PTS, p_ptr->skill_points);
 }
 
 /* i is skill index, keep means if we want the client to keep his 'deflated?' state */
@@ -5709,15 +5709,15 @@ int Send_skill_info(int Ind, int i, bool keep) {
 #endif
 
 	if (!is_newer_than(&connp->version, 4, 4, 1, 2, 0, 0))
-	        return Packet_printf(&connp->c, "%c%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1 & SKF1_HIDDEN);
+		return Packet_printf(&connp->c, "%c%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1 & SKF1_HIDDEN);
 	else if (!is_newer_than(&connp->version, 4, 4, 1, 7, 0, 0)) {
-	        return Packet_printf(&connp->c, "%c%d%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1 & SKF1_HIDDEN, mkey);
+		return Packet_printf(&connp->c, "%c%d%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1 & SKF1_HIDDEN, mkey);
 	} else if (!is_newer_than(&connp->version, 4, 4, 4, 1, 0, 0)) {
-	        return Packet_printf(&connp->c, "%c%d%d%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1 & SKF1_HIDDEN, mkey, p_ptr->s_info[i].flags1 & SKF1_DUMMY);
+		return Packet_printf(&connp->c, "%c%d%d%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1 & SKF1_HIDDEN, mkey, p_ptr->s_info[i].flags1 & SKF1_DUMMY);
 	} else if (!is_newer_than(&connp->version, 4, 4, 6, 2, 0, 0)) {
-	        return Packet_printf(&connp->c, "%c%d%d%d%d%c%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1, mkey);
+		return Packet_printf(&connp->c, "%c%d%d%d%d%c%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1, mkey);
 	} else {
-	        return Packet_printf(&connp->c, "%c%d%d%d%d%c%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, keep ? -1 : (p_ptr->s_info[i].dev ? 1 : 0), p_ptr->s_info[i].flags1, mkey);
+		return Packet_printf(&connp->c, "%c%d%d%d%d%c%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, keep ? -1 : (p_ptr->s_info[i].dev ? 1 : 0), p_ptr->s_info[i].flags1, mkey);
 	}
 }
 
@@ -9203,7 +9203,7 @@ static int Receive_walk(int ind) {
 	if (p_ptr->running || p_ptr->resting) {
 		disturb(player, 0, 0);
 #if 0 /* disabled, because this would prevent 'walking/running out of fire-till-kill/auto-ret' which is a bit annoying: \
-         it'd actually first just do disturb() here, so the player would have to attempt a second time to run/walk, after that. - C. Blue */
+	 it'd actually first just do disturb() here, so the player would have to attempt a second time to run/walk, after that. - C. Blue */
 		return 1;
 #endif
 	}
@@ -11463,8 +11463,8 @@ static int Receive_store_leave(int ind) {
 		p_ptr = Players[player];
 #ifdef MINDLINK_STORE
 		if (get_esp_link(GetInd[connp->id], LINKF_OBJ, &p_ptr)) {
-		        connp2 = Conn[p_ptr->conn];
-		        Packet_printf(&connp2->c, "%c", PKT_STORE_LEAVE); /* not working */
+			connp2 = Conn[p_ptr->conn];
+			Packet_printf(&connp2->c, "%c", PKT_STORE_LEAVE); /* not working */
 		}
 #endif
 	} else player = 0;
@@ -12554,7 +12554,7 @@ void Handle_item(int Ind, int item) {
 	int i;
 
 	if ((p_ptr->current_enchant_h > 0) || (p_ptr->current_enchant_d > 0) ||
-             (p_ptr->current_enchant_a > 0)) {
+	     (p_ptr->current_enchant_a > 0)) {
 		enchant_spell_aux(Ind, item, p_ptr->current_enchant_h,
 			p_ptr->current_enchant_d, p_ptr->current_enchant_a,
 			p_ptr->current_enchant_flag);

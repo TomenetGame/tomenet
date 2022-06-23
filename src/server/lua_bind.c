@@ -63,7 +63,7 @@ bool lua_spell_success(magic_power *spell, int stat, char *oups_fct) {
 	}
 
 	/* Extract the minimum failure rate */
-        minfail = adj_mag_fail[p_ptr->stat_ind[stat]];
+	minfail = adj_mag_fail[p_ptr->stat_ind[stat]];
 
 	/* Minimum failure rate */
 	if (chance < minfail) chance = minfail;
@@ -327,7 +327,7 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus) {
 /* NOTE: KEEP CONSISTENT WITH CLIENT-SIDE lua_bind.c:lua_spell_chance()! */
 s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, int cur_mana, int stat) {
 	player_type *p_ptr = Players[i];
-	int             minfail;
+	int	     minfail;
 
 //s_printf("i %d - chance %d - level %d - skill_level %d - mana %d - cur_mana %d - stat %d\n", i, chance, level, skill_level, mana, cur_mana, stat);
 
@@ -638,7 +638,7 @@ void lua_recalc_char(int Ind) {
 	/* keep in sync with birth.c! */
 #if 0
 	/* Minimum hitpoints at highest level */
-        min_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 3) / 8;
+	min_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 3) / 8;
 	min_value += PY_MAX_LEVEL;
 
 	/* Maximum hitpoints at highest level */
@@ -647,14 +647,14 @@ void lua_recalc_char(int Ind) {
 #endif
 #if 0 /* 300 tries */
 	/* Minimum hitpoints at kinging level */
-        min_value_king = (50 * (p_ptr->hitdie - 1) * 15) / 32;
+	min_value_king = (50 * (p_ptr->hitdie - 1) * 15) / 32;
 	min_value_king += 50;
 	/* Maximum hitpoints at kinging level */
 	max_value_king = (50 * (p_ptr->hitdie - 1) * 17) / 32;
 	max_value_king += 50;
 
 	/* Minimum hitpoints at highest level */
-        min_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 15) / 32;
+	min_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 15) / 32;
 	min_value += PY_MAX_LEVEL;
 	/* Maximum hitpoints at highest level */
 	max_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 17) / 32;
@@ -792,7 +792,7 @@ void lua_strip_true_arts_from_floors(void) {
 			cnt++;
 			if (resettable_artifact_p(o_ptr)) {
 				delete_object_idx(i, TRUE);
-                                dcnt++;
+				dcnt++;
 			}
 		}
 	}
@@ -1082,7 +1082,7 @@ void lua_apply_item_changes(int Ind, int changes) {
 			h_ptr = &houses[j];
 			for (i = 0; i < h_ptr->stock_num; i++){
 				o_ptr = &h_ptr->stock[i];
-		                if(!o_ptr->k_idx) continue;
+				if (!o_ptr->k_idx) continue;
 				lua_apply_item_changes_aux(o_ptr, changes);
 			}
 		}

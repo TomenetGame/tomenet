@@ -1685,7 +1685,7 @@ static void store_create(store_type *st_ptr) {
 	object_type tmp_obj;
 	object_type *o_ptr = &tmp_obj;
 	int force_num = 0;
-        object_kind *k_ptr;
+	object_kind *k_ptr;
 	ego_item_type *e_ptr, *e2_ptr;
 	bool good, great;
 	u32b resf = RESF_STORE;
@@ -3159,7 +3159,7 @@ void store_stole(int Ind, int item) {
 	/*
 	 * Hack -- Mark the item temporarily as stolen so that the
 	 * inven_carry_okay check works properly - mikaelh
-         */
+	 */
 	old_discount = sell_obj.discount;
 	old_note = sell_obj.note;
 	sell_obj.discount = 100;
@@ -3286,7 +3286,7 @@ void store_stole(int Ind, int item) {
 #endif
 		s_printf("Stealing: %s (%d) succ. %s (chance %ld%%0 (%ld) %d,%d,%d).\n", p_ptr->name, p_ptr->lev, o_name, 10000 / (chance < 10 ? 10 : chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
-		        s_printf("ARTSCROLL stolen by %s.\n", p_ptr->name);
+			s_printf("ARTSCROLL stolen by %s.\n", p_ptr->name);
 
 		/* Message */
 		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item_new));
@@ -3430,7 +3430,7 @@ void store_purchase(int Ind, int item, int amt) {
 
 	i = gettown(Ind);
 	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
-        if (i == -1) i = gettown_dun(Ind);
+	if (i == -1) i = gettown_dun(Ind);
 
 	if (p_ptr->store_num == -1) {
 		msg_print(Ind, "You left the shop!");
@@ -3536,7 +3536,7 @@ void store_purchase(int Ind, int item, int amt) {
 			s_printf("PLAYER_STORE_ERROR: BAD STOCK number! (%d vs %d)\n", ho_ptr->number, o_ptr->number);
 			msg_print(Ind, "The shopkeeper just modified the store, please re-enter!");
 			return; /* oops, the owner took away or added some of that item type.
-			           Actually this could be handled, but we're strict for now. */
+				   Actually this could be handled, but we're strict for now. */
 		}
 
 		if (strstr(quark_str(ho_ptr->note), "@S-")) {
@@ -4362,7 +4362,7 @@ void store_examine(int Ind, int item) {
 
 	i = gettown(Ind);
 	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
-        if (i == -1) i = gettown_dun(Ind);
+	if (i == -1) i = gettown_dun(Ind);
 
 #ifdef PLAYER_STORES
 	if (p_ptr->store_num <= -2) { /* it's a player's private store! */
@@ -4919,9 +4919,9 @@ void store_shuffle(store_type *st_ptr) {
 
 		/* Some stores offer less or no discount */
 		if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT)
-		        o_ptr->discount = 0;
+			o_ptr->discount = 0;
 		else if ((st_info[st_ptr->st_idx].flags1 & (SF1_NO_DISCOUNT1 | SF1_NO_DISCOUNT2)) == (SF1_NO_DISCOUNT1 | SF1_NO_DISCOUNT2))
-		        o_ptr->discount = 30;
+			o_ptr->discount = 30;
 		else if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT2)
 			o_ptr->discount = 15; /* 'on sale' */
 		else if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT1)
@@ -4940,7 +4940,7 @@ void store_shuffle(store_type *st_ptr) {
  * Maintain the inventory at the stores.
  */
 void store_maint(store_type *st_ptr) {
-//	int         i, j;
+//	int	 i, j;
 	int j;
 	//owner_type *ot_ptr;
 	int tries = 200;
@@ -5112,7 +5112,7 @@ void store_maint(store_type *st_ptr) {
  * Initialize the stores
  */
 void store_init(store_type *st_ptr) {
-	int         k;
+	int	 k;
 	//owner_type *ot_ptr;
 
 
@@ -5184,8 +5184,8 @@ void store_kick(int Ind, bool say) {
 
 #ifdef PLAYER_STORES
 	i = Players[Ind]->store_num; /* (handle_store_leave() erases p_ptr->store_num) */
-        /* Player stores aren't entered such as normal stores,
-           instead, the customer just stays in front of it. */
+	/* Player stores aren't entered such as normal stores,
+	   instead, the customer just stays in front of it. */
 	if (i > -2)
 #endif
 	teleport_player_force(Ind, 1);
@@ -5811,7 +5811,7 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr) {
  * in a certain store.  This can result in zero items.
  */
 void home_item_increase(house_type *h_ptr, int item, int num) {
-	int         cnt;
+	int	 cnt;
 	object_type *o_ptr;
 
 	/* Get the item */
@@ -5832,7 +5832,7 @@ void home_item_increase(house_type *h_ptr, int item, int num) {
  * Remove a slot if it is empty
  */
 void home_item_optimize(house_type *h_ptr, int item) {
-	int         j;
+	int	 j;
 	object_type *o_ptr;
 
 	/* Get the item */
@@ -5862,7 +5862,7 @@ void home_item_optimize(house_type *h_ptr, int item) {
  */
 //static bool store_check_num_house(store_type *st_ptr, object_type *o_ptr)
 static bool home_check_num(int Ind, house_type *h_ptr, object_type *o_ptr) {
-	int        i;
+	int	i;
 	object_type *j_ptr;
 
 	/* Free space is always usable */
@@ -6928,7 +6928,7 @@ void reward_deed_item(int Ind, int item) {
 	/* give him the reward item after taking the deed(!) */
 	if (o_ptr->k_idx) inven_carry(Ind, o_ptr);
 
-        /* Handle stuff */
+	/* Handle stuff */
 	handle_stuff(Ind);
 }
 

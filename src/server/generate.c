@@ -774,8 +774,8 @@ void place_fountain_of_blood(struct worldpos *wpos, int y, int x) {
  */
 static void place_altar(int y, int x)
 {
-        if (magik(10))
-                cave_set_feat(y, x, 164);
+	if (magik(10))
+		cave_set_feat(y, x, 164);
 }
 #endif	/* 0 */
 
@@ -2199,7 +2199,7 @@ bool room_alloc(worldpos *wpos, int x, int y, bool crowded, int by0, int bx0, in
 	 * to conect the caves.
 	 */
 	check_room_boundary(wpos, *xx - x / 2 - 1, *yy - y / 2 - 1,
-	                    *xx + x / 2 + 1, *yy + y / 2 + 1);
+			    *xx + x / 2 + 1, *yy + y / 2 + 1);
 
 	/* Success */
 	return (TRUE);
@@ -2293,16 +2293,16 @@ static void recursive_river(worldpos *wpos, int x1,int y1, int x2, int y2,
 
 		/* construct river out of two smaller ones */
 		recursive_river(wpos, x1, y1, x1 + dx + changex, y1 + dy + changey,
-		                feat1, feat2, width);
+				feat1, feat2, width);
 		recursive_river(wpos, x1 + dx + changex, y1 + dy + changey, x2, y2,
-		                feat1, feat2, width);
+				feat1, feat2, width);
 
 		/* Split the river some of the time -junctions look cool */
 		if ((width > 0) && (rand_int(DUN_WAT_CHG) == 0))
 		{
 			recursive_river(wpos, x1 + dx + changex, y1 + dy + changey,
-			                x1 + 8 * (dx + changex), y1 + 8 * (dy + changey),
-			                feat1, feat2, width - 1);
+					x1 + 8 * (dx + changex), y1 + 8 * (dy + changey),
+					feat1, feat2, width - 1);
 		}
 	}
 
@@ -4147,8 +4147,8 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		default:
 			/* Restrict dragon breath type */
 			vault_aux_dragon_mask4 = (RF4_BR_ACID | RF4_BR_ELEC |
-			                          RF4_BR_FIRE | RF4_BR_COLD |
-			                          RF4_BR_POIS);
+						  RF4_BR_FIRE | RF4_BR_COLD |
+						  RF4_BR_POIS);
 			break;
 		}
 
@@ -5170,7 +5170,7 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 						  (randint(xstep/256) - xhstep/256) * roug / 16;
 
 					store_height(wpos, i/256, j/256, x0, y0, val,
-					             xhsize, yhsize, cutoff);
+						     xhsize, yhsize, cutoff);
 				}
 			}
 		}
@@ -5196,7 +5196,7 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 						  (randint(ystep/256) - yhstep/256) * roug / 16;
 
 					store_height(wpos, i/256, j/256, x0, y0, val,
-					             xhsize, yhsize, cutoff);
+						     xhsize, yhsize, cutoff);
 				}
 			}
 		}
@@ -5233,7 +5233,7 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 						  (diagsize / 16) / 256 * roug;
 
 					store_height(wpos, i/256, j/256, x0, y0, val,
-					             xhsize, yhsize ,cutoff);
+						     xhsize, yhsize ,cutoff);
 				}
 			}
 		}
@@ -5551,7 +5551,7 @@ static void build_type10(worldpos *wpos, int by0, int bx0, player_type *p_ptr) {
 
 		/* About size/2 */
 		cutoff = randint(xsize / 4) + randint(ysize / 4) +
-		         randint(xsize / 4) + randint(ysize / 4);
+			 randint(xsize / 4) + randint(ysize / 4);
 
 		/* Make it */
 		generate_hmap(wpos, y0, x0, xsize, ysize, grd, roug, cutoff);
@@ -5684,7 +5684,7 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 			 * Difficulty is 1-easy to 10-hard
 			 */
 			value = (((s32b)distance(cy, cx, y, x) * 100) / size) +
-			        randint(10) - difficulty;
+				randint(10) - difficulty;
 
 			/* Hack -- Empty square part of the time */
 			if ((randint(100) - difficulty * 3) > 50) value = 20;
@@ -5845,8 +5845,8 @@ static void build_bubble_vault(worldpos *wpos, int x0, int y0, int xsize, int ys
 	}
 
 	build_rectangle(wpos, y0 - yhsize, x0 - xhsize,
-	                y0 - yhsize + ysize - 1, x0 - xhsize + xsize - 1,
-	                feat_wall_outer, CAVE_ROOM | CAVE_ICKY);
+			y0 - yhsize + ysize - 1, x0 - xhsize + xsize - 1,
+			feat_wall_outer, CAVE_ROOM | CAVE_ICKY);
 
 	/* Fill in middle with bubbles */
 	for (x = 1; x < xsize - 1; x++) {
@@ -5909,7 +5909,7 @@ static void build_bubble_vault(worldpos *wpos, int x0, int y0, int xsize, int ys
 
 	/* Fill with monsters and treasure, low difficulty */
 	fill_treasure(wpos, x0 - xhsize + 1, x0 - xhsize + xsize - 2,
-	              y0 - yhsize + 1, y0 - yhsize + ysize - 2, randint(5), p_ptr);
+		      y0 - yhsize + 1, y0 - yhsize + ysize - 2, randint(5), p_ptr);
 
 	l_ptr->flags2 |= LF2_VAULT;
 }
@@ -6038,7 +6038,7 @@ static void build_room_vault(worldpos *wpos, int x0, int y0, int xsize, int ysiz
 
 	/* Fill with monsters and treasure, high difficulty */
 	fill_treasure(wpos, x0 - xhsize + 1, x0 - xhsize + xsize - 1,
-	              y0 - yhsize + 1, y0 - yhsize + ysize - 1, randint(5) + 5, p_ptr);
+		      y0 - yhsize + 1, y0 - yhsize + ysize - 1, randint(5) + 5, p_ptr);
 
 	l_ptr->flags2 |= LF2_VAULT_HI;
 #ifdef TEST_SERVER
@@ -6091,7 +6091,7 @@ static void build_cave_vault(worldpos *wpos, int x0, int y0, int xsiz, int ysiz,
 
 	/* Fill with monsters and treasure, low difficulty */
 	fill_treasure(wpos, x0 - xhsize + 1, x0 - xhsize + xsize - 1,
-	              y0 - yhsize + 1, y0 - yhsize + ysize - 1, randint(5), p_ptr);
+		      y0 - yhsize + 1, y0 - yhsize + ysize - 1, randint(5), p_ptr);
 
 	l_ptr->flags2 |= LF2_VAULT;
 }
@@ -6103,7 +6103,7 @@ static void build_cave_vault(worldpos *wpos, int x0, int y0, int xsiz, int ysiz,
  * maze vault uses two routines:
  *    r_visit - a recursive routine that builds the labyrinth
  *    build_maze_vault - a driver routine that calls r_visit and adds
- *                   monsters, traps and treasure
+ *		   monsters, traps and treasure
  *
  * The labyrinth is built by creating a spanning tree of a graph.
  * The graph vertices are at
@@ -6662,7 +6662,7 @@ static void build_target_vault(worldpos *wpos, int x0, int y0, int xsize, int ys
 
 	/* Find visible outer walls and set to be FEAT_OUTER */
 	add_outer_wall(wpos, x0, y0, FALSE, x0 - rad - 1, y0 - rad - 1,
-                   x0 + rad + 1, y0 + rad + 1);
+		   x0 + rad + 1, y0 + rad + 1);
 
 	/* Add inner wall */
 	for (x = x0 - rad / 2; x <= x0 + rad / 2; x++)
@@ -7237,8 +7237,8 @@ static void duplicate_door(worldpos *wpos, int y, int x, int y2, int x2) {
 static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, int col2) {
 	int			i, y, x, tmp;
 	int			tmp_row, tmp_col;
-	int                 row_dir, col_dir;
-	int                 start_row, start_col;
+	int		 row_dir, col_dir;
+	int		 start_row, start_col;
 	int			main_loop_count = 0;
 
 	bool		door_flag = FALSE;
@@ -7401,16 +7401,16 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 
 		/* Tunnel through all other walls */
 		else if ((c_ptr->feat == d_info[dun_type].fill_type[0]) ||
-		         (c_ptr->feat == d_info[dun_type].fill_type[1]) ||
-		         (c_ptr->feat == d_info[dun_type].fill_type[2]) ||
+			 (c_ptr->feat == d_info[dun_type].fill_type[1]) ||
+			 (c_ptr->feat == d_info[dun_type].fill_type[2]) ||
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 			 (c_ptr->feat == d_info[((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].step > 0) ? iddc[ABS(wpos->wz)].next : dun_type)].fill_type[3]) ||
-		         (c_ptr->feat == d_info[((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].step > 1) ? iddc[ABS(wpos->wz)].next : dun_type)].fill_type[4])
+			 (c_ptr->feat == d_info[((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].step > 1) ? iddc[ABS(wpos->wz)].next : dun_type)].fill_type[4])
 #else
-		         (c_ptr->feat == d_info[dun_type].fill_type[3]) ||
-		         (c_ptr->feat == d_info[dun_type].fill_type[4])
+			 (c_ptr->feat == d_info[dun_type].fill_type[3]) ||
+			 (c_ptr->feat == d_info[dun_type].fill_type[4])
 #endif
-		         ) {
+			 ) {
 			/* Accept this location */
 			row1 = tmp_row;
 			col1 = tmp_col;
@@ -7658,29 +7658,29 @@ static int next_to_corr(struct worldpos *wpos, int y1, int x1) {
 #if 0
 static bool possible_doorway(struct worldpos *wpos, int y, int x)
 {
-        cave_type **zcave;
-        if (!(zcave = getcave(wpos))) return(FALSE);
+	cave_type **zcave;
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
-        /* Count the adjacent corridors */
-        if (next_to_corr(wpos, y, x) >= 2)
-        {
-                /* Check Vertical */
-                if ((zcave[y-1][x].feat >= FEAT_MAGMA) &&
-                    (zcave[y+1][x].feat >= FEAT_MAGMA))
-                {
-                        return (TRUE);
-                }
+	/* Count the adjacent corridors */
+	if (next_to_corr(wpos, y, x) >= 2)
+	{
+		/* Check Vertical */
+		if ((zcave[y-1][x].feat >= FEAT_MAGMA) &&
+		    (zcave[y+1][x].feat >= FEAT_MAGMA))
+		{
+			return (TRUE);
+		}
 
-                /* Check Horizontal */
-                if ((zcave[y][x-1].feat >= FEAT_MAGMA) &&
-                    (zcave[y][x+1].feat >= FEAT_MAGMA))
-                {
-                        return (TRUE);
-                }
-        }
+		/* Check Horizontal */
+		if ((zcave[y][x-1].feat >= FEAT_MAGMA) &&
+		    (zcave[y][x+1].feat >= FEAT_MAGMA))
+		{
+			return (TRUE);
+		}
+	}
 
-        /* No doorway */
-        return (FALSE);
+	/* No doorway */
+	return (FALSE);
 }
 #else	/* 0 */
 static int possible_doorway(struct worldpos *wpos, int y, int x)
@@ -9917,7 +9917,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			cr_ptr = &zcave[y][x];
 			if (cr_ptr->m_idx) {
 				/* Check if Morgoth was just generated along with this dungeon level */
-			        m_ptr = &m_list[cr_ptr->m_idx];
+				m_ptr = &m_list[cr_ptr->m_idx];
 				if (m_ptr->r_idx == RI_MORGOTH) morgoth_inside = TRUE;
 			}
 			if (morgoth_inside) break;

@@ -2135,7 +2135,7 @@ if (p_ptr->updated_savegame == 0) {
     p_ptr->max_exp = (s32b)i;
     p_ptr->max_lev = 1;
     while ((p_ptr->max_lev < (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL)) &&
-        (p_ptr->max_exp >= (s64b)player_exp[p_ptr->max_lev-1]))
+	(p_ptr->max_exp >= (s64b)player_exp[p_ptr->max_lev-1]))
     {
 	/* Gain a level */
 	p_ptr->max_lev++;

@@ -573,7 +573,7 @@ static void prt_plusses(int Ind) {
 	object_type *o_ptr4 = &p_ptr->inventory[INVEN_ARM];
 
 	/* Hack -- add in weapon info if known */
-        if (object_known_p(Ind, o_ptr)) {
+	if (object_known_p(Ind, o_ptr)) {
 		bmh += o_ptr->to_h;
 		bmd += o_ptr->to_d;
 	}
@@ -1773,7 +1773,7 @@ void calc_hitpoints(int Ind) {
 			if (levD < 0) levD = 0;
 			if (levD > 20) levD = 20;
 			hpD = mhp - mHPLim;
-		        mHPLim = mhp - (hpD * levD) / 20; /* When your form is 20 or more levels below your charlevel,
+			mHPLim = mhp - (hpD * levD) / 20; /* When your form is 20 or more levels below your charlevel,
 							   you receive the full HP difference in the formula below. */
 #endif
 		}
@@ -8093,7 +8093,7 @@ void global_event_signup(int Ind, int n, cptr parm) {
 				/* IMPOSSIBLE-- no ego power specified, it was just spaces? */
 				//if (!strlen(parm2e)) 
 
-			        for (p = 1; p < MAX_RE_IDX; p++) {
+				for (p = 1; p < MAX_RE_IDX; p++) {
 					/* get monster ego name */
 					strcpy(ce, re_info[p].name + re_name);
 

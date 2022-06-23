@@ -4742,26 +4742,26 @@ s32b house_price_player(s32b house_price, int charisma) {
    NOTE: This function assumes that towns have a minimum distance of 6,
    even diagonally! */
 int wild_gettown(int x, int y) {
-        int i;
+	int i;
 
-    	if (wild_info[y][x].type == WILD_TOWN) {
-	        for (i = 0; i < numtowns; i++)
-    	        	if (town[i].x == x && town[i].y == y) return i;
+	if (wild_info[y][x].type == WILD_TOWN) {
+		for (i = 0; i < numtowns; i++)
+			if (town[i].x == x && town[i].y == y) return i;
 
-	    	/* paranoia - shouldn't be possible */
-	    	return -1;
+		/* paranoia - shouldn't be possible */
+		return -1;
 	}
 
-        if (wild_info[y][x].radius > MAX_TOWNAREA) return -1;
+	if (wild_info[y][x].radius > MAX_TOWNAREA) return -1;
 
-        for (i = 0; i < numtowns; i++) {
-                if (town[i].x >= x - 3 &&
-            	    town[i].x <= x + 3 &&
-            	    town[i].y >= y - 3 &&
-            	    town[i].y <= y + 3)
-            		return i;
-        }
+	for (i = 0; i < numtowns; i++) {
+		if (town[i].x >= x - 3 &&
+		    town[i].x <= x + 3 &&
+		    town[i].y >= y - 3 &&
+		    town[i].y <= y + 3)
+			return i;
+	}
 
 	/* paranoia - shouldn't be possible */
-        return -1;
+	return -1;
 }

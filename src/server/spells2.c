@@ -292,7 +292,7 @@ void grow_trees(int Ind, int rad) {
 	if (!allow_terraforming(&p_ptr->wpos, FEAT_TREE)) return;
 
 #ifdef USE_SOUND_2010
-        sound(Ind, "grow_trees", NULL, SFX_TYPE_COMMAND, FALSE);
+	sound(Ind, "grow_trees", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
 	for (a = 0; a < rad * rad + 11; a++) {
@@ -993,7 +993,7 @@ bool do_dec_stat(int Ind, int stat, int mode) {
 	if (sust || safe_area(Ind)) {
 		/* Message */
 		msg_format(Ind, "You feel %s for a moment, but the feeling passes.",
-		           desc_stat_neg[stat]);
+			   desc_stat_neg[stat]);
 
 		/* Notice effect */
 		return (TRUE);
@@ -1038,7 +1038,7 @@ bool do_dec_stat_time(int Ind, int stat, int mode, int sust_chance, int reductio
 	if ((sust && magik(sust_chance)) || safe_area(Ind)) {
 		/* Message */
 		msg_format(Ind, "You don't feel as %s as you used to be, but the feeling passes",
-		           desc_stat_neg2[stat]);
+			   desc_stat_neg2[stat]);
 
 		/* Notice effect */
 		return (TRUE);
@@ -1178,8 +1178,8 @@ void XID_paranoia(player_type *p_ptr) {
 void identify_pack(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
-	int                 i;
-	object_type        *o_ptr;
+	int		 i;
+	object_type	*o_ptr;
 	bool inven_unchanged[INVEN_TOTAL];
 
 	XID_paranoia(p_ptr);
@@ -4191,13 +4191,13 @@ bool identify_fully_item(int Ind, int item) {
 	/* Describe */
 	if (item >= INVEN_WIELD)
 		msg_format(Ind, "%^s: %s (%c).",
-		           describe_use(Ind, item), o_name, index_to_label(item));
+			   describe_use(Ind, item), o_name, index_to_label(item));
 	else if (item >= 0)
 		msg_format(Ind, "In your pack: %s (%c).",
-		           o_name, index_to_label(item));
+			   o_name, index_to_label(item));
 	else
 		msg_format(Ind, "On the ground: %s.",
-		           o_name);
+			   o_name);
 
 	/* Describe it fully */
 	(void)identify_fully_aux(Ind, o_ptr, FALSE, item, 0);
@@ -4822,9 +4822,9 @@ void aggravate_monsters(int Ind, int who) {
 		/* Speed up monsters in line of sight */
 		if (player_has_los_bold(Ind, m_ptr->fy, m_ptr->fx)) {
 			/* Speed up (instantly) to racial base + 10 */
-                        if (m_ptr->mspeed < m_ptr->speed + 10) {
+			if (m_ptr->mspeed < m_ptr->speed + 10) {
 				/* Speed up */
-                                m_ptr->mspeed = m_ptr->speed + 10;
+				m_ptr->mspeed = m_ptr->speed + 10;
 				speed = TRUE;
 			}
 		}
@@ -5202,9 +5202,9 @@ void wake_minions(int Ind, int who) {
 		/* Speed up monsters in line of sight */
 		if (player_has_los_bold(Ind, m_ptr->fy, m_ptr->fx)) {
 			/* Speed up (instantly) to racial base + 10 */
-                        if (m_ptr->mspeed < m_ptr->speed + 10) {
+			if (m_ptr->mspeed < m_ptr->speed + 10) {
 				/* Speed up */
-                                m_ptr->mspeed = m_ptr->speed + 10;
+				m_ptr->mspeed = m_ptr->speed + 10;
 				speed = TRUE;
 			}
 		}
@@ -5412,7 +5412,7 @@ bool obliteration(int who) {
 	/* Delete the (nearby) monsters */
 	for (i = 1; i < m_max; i++) {
 		monster_type *m_ptr = &m_list[i];
-                monster_race *r_ptr = race_inf(m_ptr);
+		monster_race *r_ptr = race_inf(m_ptr);
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
@@ -5501,7 +5501,7 @@ bool obliteration(int who) {
 bool probing(int Ind) {
 	monster_type *m_ptr;
 	monster_race *r_ptr;
-	int            i;
+	int	    i;
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 	bool	probe = FALSE;
@@ -6063,7 +6063,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 			/* Process monsters */
 			if (c_ptr->m_idx > 0) {
 				monster_type *m_ptr = &m_list[c_ptr->m_idx];
-                                monster_race *r_ptr = race_inf(m_ptr);
+				monster_race *r_ptr = race_inf(m_ptr);
 
 				/* Most monsters cannot co-exist with rock */
 				if (!(r_ptr->flags2 & RF2_KILL_WALL) &&
@@ -8183,8 +8183,8 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 }
 #ifdef RPG_SERVER
 bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx) {
-	int                     Ind, j;
-	cave_type               *c_ptr;
+	int		     Ind, j;
+	cave_type	       *c_ptr;
 
 	monster_type    *m_ptr;
 	monster_race    *r_ptr = &r_info[r_idx];
@@ -9021,8 +9021,8 @@ static int mixmix_to_ingredient(int Ind, object_type *o_ptr, object_type *o2_ptr
 	if ((xtra1 & (CF_SU | CF_SP | CF_WA | CF_LO)) == (CF_SU | CF_SP | CF_WA | CF_LO)
  #else
 	/* Note: This result can never be true, as 3 single-ingredients cannot come as two mixtures.
-	         Instead this is handled properly in mix-ingred function.
-	         Leaving this if-clause here just for visual completeness sake ;). - C. Blue */
+		 Instead this is handled properly in mix-ingred function.
+		 Leaving this if-clause here just for visual completeness sake ;). - C. Blue */
 	if ((xtra1 & (CF_SU | CF_SP | CF_WA)) == (CF_SU | CF_SP | CF_WA)
  #endif
 	    && !xtra2 && !xtra3) {

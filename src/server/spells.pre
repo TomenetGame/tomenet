@@ -315,19 +315,19 @@ extern bool set_nimbus(int Ind, int v, byte t, byte d);
  */
 struct spell_type
 {
-        cptr name;                      /* Name */
-        byte skill_level;               /* Required level (to learn) */
+	cptr name;		      /* Name */
+	byte skill_level;	       /* Required level (to learn) */
 	byte mana;			/* Required mana at lvl 1 */
 	byte mana_max;			/* Required mana at max lvl */
 	byte fail;			/* Minimum chance of failure */
-        s16b level;                     /* Spell level(0 = not learnt) */
-        byte spell_power;		/* affected by spell-power skill? */
+	s16b level;		     /* Spell level(0 = not learnt) */
+	byte spell_power;		/* affected by spell-power skill? */
 };
 
 struct school_type
 {
-        cptr name;                      /* Name */
-        s16b skill;                     /* Skill used for that school */
+	cptr name;		      /* Name */
+	s16b skill;		     /* Skill used for that school */
 };
 
 //duplicate declarations (see above):

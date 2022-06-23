@@ -1476,16 +1476,16 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 /* -------------------------------------- pval-dividing limits -------------------------------------- */
 
 	/* Never more than +3 EA, +2 on gloves (also done below in pval-fixing limits */
-        if (a_ptr->flags1 & TR1_BLOWS) {
+	if (a_ptr->flags1 & TR1_BLOWS) {
 		if (a_ptr->tval == TV_GLOVES) {
 			//if (a_ptr->pval > 2) a_ptr->pval /= 3;
-	                if (a_ptr->pval > 2) a_ptr->pval = 2;
+			if (a_ptr->pval > 2) a_ptr->pval = 2;
 		} else {
 			//if (a_ptr->pval > 3) a_ptr->pval /= 2;
-	                if (a_ptr->pval > 3) a_ptr->pval = 3;
+			if (a_ptr->pval > 3) a_ptr->pval = 3;
 		}
 		if (a_ptr->pval == 0) a_ptr->pval = 1;
-        }
+	}
 
 /* -------------------------------------- pval-fixing limits -------------------------------------- */
 
@@ -1503,15 +1503,15 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 	}
 
 	/* Limits for +MANA */
-        if (a_ptr->flags1 & TR1_MANA) {
+	if (a_ptr->flags1 & TR1_MANA) {
 		/* Randart mage staves may give up to +10 +1 bonus MANA */
 		if ((a_ptr->tval == TV_MSTAFF) && (a_ptr->pval >= 11)) a_ptr->pval = 11;
 		/* Helms and crowns may not give more than +3 MANA */
 		else if ((a_ptr->tval == TV_HELM || a_ptr->tval == TV_CROWN) &&
 		    (a_ptr->pval > 3)) a_ptr->pval = 3;
 		/* Usually +10 MANA is max */
-                else if (a_ptr->pval > 10) a_ptr->pval = 10;
-        }
+		else if (a_ptr->pval > 10) a_ptr->pval = 10;
+	}
 
 	/* Limit speed on 1-hand weapons and shields (balances both, dual-wiel and 2-handed weapons) */
 	/* Limit +LIFE to +1 under same circumstances */
@@ -1875,7 +1875,7 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 			else if (magik(85)) a_ptr->flags4 |= TR4_ANTIMAGIC_10;
 		} else if ((a_ptr->to_h + a_ptr->to_d) >= 10) {
 			if (magik(50))
-			        while (a_ptr->to_h + a_ptr->to_d > 10) {
+				while (a_ptr->to_h + a_ptr->to_d > 10) {
 					a_ptr->to_h--;
 					if (a_ptr->to_h + a_ptr->to_d > 10) a_ptr->to_d--;
 				}
@@ -2324,7 +2324,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 		}
 		/* also hack their value */
 		if (a_ptr->cost) a_ptr->cost = (cost * 4) / 5;
-        }
+	}
 
 	if (a_ptr->cost < 0) a_ptr->cost = 0;
 
@@ -2541,7 +2541,7 @@ try_an_other_ego:
 			else if (rr < 16) a_ptr->esp |= (ESP_DRAGONRIDER);
 			else if (rr < 19) a_ptr->esp |= (ESP_GOOD);
 			else if (rr < 21) a_ptr->esp |= (ESP_NONLIVING);
-		        else if (rr < 24) a_ptr->esp |= (ESP_UNIQUE);
+			else if (rr < 24) a_ptr->esp |= (ESP_UNIQUE);
 			else a_ptr->esp |= (ESP_SPIDER);
 			a_ptr->esp &= (~R_ESP_ANY);
 		}
@@ -2783,7 +2783,7 @@ void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *lim
 		/* Choose an ability */
 		switch (randint(10)) {
 		case 1: a_ptr->flags3 |= (TR3_FEATHER);     break;
-		case 2: a_ptr->flags3 |= (TR3_LITE1);        break;
+		case 2: a_ptr->flags3 |= (TR3_LITE1);	break;
 		case 3: a_ptr->flags3 |= (TR3_SEE_INVIS);   break;
 		//case 4: a_ptr->esp |= (ESP_ALL);   break;
 		case 4: add_random_esp(a_ptr, 5); break;
@@ -2800,7 +2800,7 @@ void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *lim
 		/* Choose an ability */
 		switch (randint(10)) {
 		case 1: a_ptr->flags3 |= (TR3_FEATHER);     break;
-		case 2: a_ptr->flags3 |= (TR3_LITE1);        break;
+		case 2: a_ptr->flags3 |= (TR3_LITE1);	break;
 		case 3: a_ptr->flags3 |= (TR3_SEE_INVIS);   break;
 		//case 4: a_ptr->esp |= (ESP_ALL);   break;
 		case 4: add_random_esp(a_ptr, -4); break;

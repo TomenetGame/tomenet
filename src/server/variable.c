@@ -154,8 +154,8 @@ server_opts cfg = {
 	6, 0, 0,	// runlevel, runtime, closetime (NOT config options)
 
 	/* char * */
-        "meta.tomenet.eu",// meta_address
-        8800,           // meta port
+	"meta.tomenet.eu",// meta_address
+	8800,	   // meta port
 
 	"",		// bind_name
 	"changeme",	// console_password
@@ -237,14 +237,14 @@ u32b sflags_TEMP = 0x0;
 
 /* Option Set 1 -- User Interface */
 
-bool use_color;                         /* Use color if possible (slow) */
+bool use_color;			 /* Use color if possible (slow) */
 
 /* Option Set 2 -- Disturbance */
 
 /* Option Set 3 -- Game-Play */
 
-bool auto_scum;                         /* Auto-scum for good levels */
-bool dungeon_align;                     /* Generate dungeons with aligned rooms */
+bool auto_scum;			 /* Auto-scum for good levels */
+bool dungeon_align;		     /* Generate dungeons with aligned rooms */
 
 /* Option Set 4 -- Efficiency */
 
@@ -252,7 +252,7 @@ bool avoid_other = FALSE;	/* Avoid processing special colors */
 
 /* Special options */
 
-s16b hitpoint_warn;             /* Hitpoint warning (0 to 9) */
+s16b hitpoint_warn;	     /* Hitpoint warning (0 to 9) */
 
 struct npc_type *Npcs[MAX_NPCS];
 /* The array of players */
