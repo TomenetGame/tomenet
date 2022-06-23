@@ -2037,6 +2037,7 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	Infowin_set_mask(StructureNotifyMask | KeyPressMask);
 	if (!strcmp(name, ang_term_name[0])) {
 		char version[MAX_CHARS];
+
 		sprintf(version, "TomeNET %d.%d.%d%s",
 		    VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG);
 		Infowin_set_name(version);
