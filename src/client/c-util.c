@@ -6136,8 +6136,8 @@ Chain_Macro:
 
 					case mw_poly:
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact monster name OR its code. (You can find");
-						Term_putstr(10, 11, -1, TERM_GREEN, "codes you have already learned by pressing  \377s~ 2  \377gin the game");
-						Term_putstr(10, 12, -1, TERM_GREEN, "or by pressing  \377s:  \377gto chat and then typing the command:  \377s/mon");
+						Term_putstr(10, 11, -1, TERM_GREEN, "codes you have already learned by pressing  \377s~ 2 @  \377gin the game");
+						Term_putstr(10, 12, -1, TERM_GREEN, "or by pressing  \377s:  \377gto chat and then typing the command:  \377s/mon @");
 						Term_putstr(10, 13, -1, TERM_GREEN, "The first number on the left, in parentheses, is what you need.)");
 						Term_putstr(10, 14, -1, TERM_GREEN, "For example, enter  \377GFruit bat\377g  or just  \377G37  \377gto transform into one.");
 						Term_putstr(10, 15, -1, TERM_GREEN, "To return to the form you used before your current form, enter:  \377G-1\377g .");
@@ -8801,7 +8801,7 @@ errr options_dump(cptr fname) {
 	/* Dump window flags */
 	for (i = 1; i < ANGBAND_TERM_MAX; i++) {
 		/* Require a real window */
-		if (!ang_term_name[i]) continue;
+		if (!ang_term[i]) continue;
 
 		/* Check each flag */
 		for (j = 0; j < NR_OPTIONS_SHOWN; j++) {
