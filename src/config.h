@@ -670,11 +670,11 @@
  */
 #define RANDUNIS
 /* % chances of getting ego monsters(server/monster2.c) [18]*/
-#define MEGO_CHANCE             18
+#define MEGO_CHANCE	18
 
 
 /* Randart rarity (server/object2.c) [80] */
-#define RANDART_RARITY  80
+#define RANDART_RARITY	80
 
 
 /*

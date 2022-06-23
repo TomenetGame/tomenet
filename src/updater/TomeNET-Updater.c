@@ -1036,7 +1036,7 @@ int main(int argc, char *argv[]) {
 	system("7z a tmp.7z tmp.file");
 	remove("tmp.file");
  #endif
-        if (!(fp = fopen("tmp.7z", "r"))) { /* paranoia? */
+	if (!(fp = fopen("tmp.7z", "r"))) { /* paranoia? */
 		//MessageBox(NULL, "You must first install 7-zip from www.7-zip.org !", "Error", MB_OK);
 		show_error(top_window);//, "7-zip not found ('7z'). Install it first. (Package name is 'p7zip'.)");
 		return -1;

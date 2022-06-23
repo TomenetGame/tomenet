@@ -140,7 +140,7 @@ void loadservers() {
 			}
 		}
 
-                printf("%d. server: %s (static index %d): [%s]\n", i, slist[i].name, slist[i].static_index, slist[i].pass);
+		printf("%d. server: %s (static index %d): [%s]\n", i, slist[i].name, slist[i].static_index, slist[i].pass);
 		i++;
 	} while (!feof(fp) && i < MAX_SERVERS);
 	snum = i;

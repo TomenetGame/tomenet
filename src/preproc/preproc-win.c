@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
 	int cpp_opts;
 
 	char *cptr, *in_comment = NULL, *out_comment = NULL, *prev_in_comment;
-        int in_comment_block = 0;
+	int in_comment_block = 0;
 
 
 	/* check command-line arguments */
@@ -318,33 +318,33 @@ int main(int argc, char *argv[]) {
 
 	/* read a line */
 	while (fgets(line_mod, 320 + 2, f_in)) {
-                /* preprocessor directives that were hidden _inside_ comments
-                   because silly tolua will choke on them */
-                prev_in_comment = line_mod;
-                do {
-                        if (out_comment) in_comment = out_comment = NULL;
+		/* preprocessor directives that were hidden _inside_ comments
+		   because silly tolua will choke on them */
+		prev_in_comment = line_mod;
+		do {
+			if (out_comment) in_comment = out_comment = NULL;
 
-                        if (!in_comment) {
-                                if (in_comment_block) in_comment = line_mod;
-                                else {
-                                        in_comment = strstr(prev_in_comment, "/*");
-                                        if (in_comment) prev_in_comment = in_comment + 2;
-                                }
-                        }
-                        if (in_comment) {
-                                if (in_comment_block) out_comment = strstr(line_mod, "*/");
-                                else out_comment = strstr(in_comment, "*/");
+			if (!in_comment) {
+				if (in_comment_block) in_comment = line_mod;
+				else {
+					in_comment = strstr(prev_in_comment, "/*");
+					if (in_comment) prev_in_comment = in_comment + 2;
+				}
+			}
+			if (in_comment) {
+				if (in_comment_block) out_comment = strstr(line_mod, "*/");
+				else out_comment = strstr(in_comment, "*/");
 
-                                while ((cptr = strstr(in_comment, "#"))) {
+				while ((cptr = strstr(in_comment, "#"))) {
 					if (!out_comment || cptr < out_comment) {
 						*cptr = ' ';
-			                } else break;
+					} else break;
 				}
 
-			        if (out_comment) in_comment_block = 0;
-		        }
+				if (out_comment) in_comment_block = 0;
+			}
 		} while (in_comment && out_comment);
-                if (in_comment) in_comment_block = 1;
+		if (in_comment) in_comment_block = 1;
 
 		/* aaand also strip comments that are adjacent, silyl tolua */
 		if ((cptr = strstr(line_mod, "*//*"))) {
@@ -352,7 +352,7 @@ int main(int argc, char *argv[]) {
 			cptr[1] = ' ';
 			cptr[2] = ' ';
 			cptr[3] = ' ';
-                }
+		}
 
 		/* gcc 4.8.0 now puts an URL in the top comment, on which tolua
 		   chokes, sigh. */
@@ -388,8 +388,8 @@ int main(int argc, char *argv[]) {
 
 #ifdef DUMB_WIN
 int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
-                       LPSTR lpCmdLine, int nCmdShow) {
-	MSG      msg;
+			LPSTR lpCmdLine, int nCmdShow) {
+	MSG	msg;
 
 	/* Process messages forever */
 	while (GetMessage(&msg, NULL, 0, 0)) {

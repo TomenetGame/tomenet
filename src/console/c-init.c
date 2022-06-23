@@ -241,9 +241,9 @@ void console_init(void)
 	char host_name[1024];
 
 #ifdef BIND_NAME
-                strncpy( host_name, BIND_NAME, 1024);
+	strncpy( host_name, BIND_NAME, 1024);
 #else
-                GetLocalHostName(host_name, 1024);
+	GetLocalHostName(host_name, 1024);
 #endif
 
 	/* Attempt to initialize a visual module */

@@ -92,20 +92,20 @@
 
 /* Allocate a wiped array of N things of type T, let P point at them */
 #define C_MAKE(P, N, T) \
-        (P) = C_ZNEW(N,T)
+	(P) = C_ZNEW(N,T)
 
 /* Allocate a wiped thing of type T, let P point at it */
 #define MAKE(P, T) \
-        (P) = ZNEW(T)
+	(P) = ZNEW(T)
 
 
 /* Free an array of N things of type T at P, and reset P to NULL */
 #define C_KILL(P, N, T) \
-        (C_FREE(P,N,T), (P) = (T*) NULL)
+	(C_FREE(P,N,T), (P) = (T*) NULL)
 
 /* Free a single thing of type T at P, and reset P to NULL */
 #define KILL(P, T) \
-        (FREE(P,T), (P) = (T*) NULL)
+	(FREE(P,T), (P) = (T*) NULL)
 
 
 /* Cleanly "grow" 'P' from N1 T's to N2 T's, wipe the newly allocated memory */
