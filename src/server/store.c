@@ -3410,6 +3410,7 @@ void store_purchase(int Ind, int item, int amt) {
 
 	char		o_name[ONAME_LEN];
 
+
 	if (amt < 1) {
 		s_printf("$INTRUSION$ Bad amount %d! Bought by %s.\n", amt, p_ptr->name);
 		//msg_print(Ind, "\377RInvalid amount. Your attempt has been logged.");
@@ -3755,6 +3756,11 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 
 				/* Try to put into a specialized bag automatically */
 				switch (o_ptr->tval) {
+				/* ..And actually give an outdated-client warning for the bag purchase itself.. */
+				case TV_SUBINVEN:
+					if (is_older_than(&p_ptr->version, 4, 8, 0, 0, 0, 0))
+						msg_print(Ind, "\377oYou need to use at least client version \377R4.8.0\377o to use this bag!");
+					break;
 				case TV_CHEMICAL: /* DEMOLITIONIST stuff */
 					(void)auto_stow(Ind, SV_SI_SATCHEL, o_ptr, -1, FALSE);
 					break;
