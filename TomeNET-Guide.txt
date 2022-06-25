@@ -2206,8 +2206,9 @@ Item power inscription (added in 4.7.1):
      SDRAgUni          spider/dragonrider/good('A')/nonliving('g')/unique
     ESP               telepathy (full ESP)
     Tele/NT           induces random teleportation/allows no teleportation
-                      Note: No-Tele always overrides teleportaion, so if you
-                      have both these flags, No-Tele will "win".
+                      Note: No-Tele always overrides teleportation (except for
+                      Zu-Aon), so if you have both these flags, No-Tele will
+                      "win" and you will not teleport.
     Dr/Drm/Drx/Aggr   drains hp/mana/experience / aggravates
     Exploding ammunition will have its explosion type added in parentheses.
 
