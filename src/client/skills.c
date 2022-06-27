@@ -277,6 +277,7 @@ void do_redraw_skills() {
 /*
  * Interact with skills.
  */
+#define SKILL_SCREEN_PAD_TOP 4		/* The top n lines of the skill screen that don't contain skill lines but some other stuff/text/diz */
 void do_cmd_skill() {
 	char c;
 	int i;
@@ -350,13 +351,14 @@ void do_cmd_skill() {
 			start = sel = 0;
 		else if (c == 'G') {
 			sel = max - 1;
-			start = sel - (hgt - 4);
+			start = sel - (hgt - SKILL_SCREEN_PAD_TOP);
 			if (start < 0) start = 0;
-			if (sel >= start + (hgt - 4)) start = sel - (hgt - 4) + 1;
+			if (sel >= start + (hgt - SKILL_SCREEN_PAD_TOP)) start = sel - (hgt - SKILL_SCREEN_PAD_TOP) + 1;
 		}
 		/* Hack -- go to a specific line */
 		else if (c == '#') {
 			char tmp[80];
+
 			prt(format("Goto Line(max %d): ", max), 23 + HGT_PLUS, 0);
 			strcpy(tmp, "1");
 			if (askfor_aux(tmp, 10, 0)) {
@@ -368,18 +370,37 @@ void do_cmd_skill() {
 
 		/* Next page */
 		else if (c == 'n' || c == ' ') {
-			sel += (hgt - 4);
-			start += (hgt - 4);
+			sel += (hgt - SKILL_SCREEN_PAD_TOP);
+			start += (hgt - SKILL_SCREEN_PAD_TOP);
 			if (sel >= max) sel = max - 1;
 			if (start >= max) start = max - 1;
 		}
 
 		/* Previous page */
 		else if (c == 'p' || c == 'b') {
-			sel -= (hgt - 4);
-			start -= (hgt - 4);
+			sel -= (hgt - SKILL_SCREEN_PAD_TOP);
+			start -= (hgt - SKILL_SCREEN_PAD_TOP);
 			if (sel < 0) sel = 0;
 			if (start < 0) start = 0;
+		}
+
+		/* Search for skill name */
+		else if (c == 's' || c == '/') {
+			char tmp[MAX_CHARS];
+
+			prt("Search for skill: ", 23 + HGT_PLUS, 0);
+			tmp[0] = 0;
+			if (askfor_aux(tmp, MAX_CHARS, 0)) {
+				for (i = 0; i < max; i++) {
+					if (!my_strcasestr((char*)s_info[table[i][0]].name, tmp)) continue;
+
+					sel = i;
+					start = i - (hgt - SKILL_SCREEN_PAD_TOP) / 2 - 1;
+					if (start + hgt >= max) start = max - (hgt - SKILL_SCREEN_PAD_TOP);
+					if (start < 0) start = 0;
+					break;
+				}
+			}
 		}
 
 		/* Select / increase a skill */
@@ -404,7 +425,7 @@ void do_cmd_skill() {
 			if (sel < 0) sel = max - 1;
 			if (sel >= max) sel = 0;
 			if (sel < start) start = sel;
-			if (sel >= start + (hgt - 4)) start = sel - (hgt - 4) + 1;
+			if (sel >= start + (hgt - SKILL_SCREEN_PAD_TOP)) start = sel - (hgt - SKILL_SCREEN_PAD_TOP) + 1;
 		}
 	}
 
