@@ -2429,7 +2429,7 @@ errr init_x11(void) {
 
 		/* Build the name of the "graf" file */
 		plog(ANGBAND_DIR_XTRA);
-		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8X13_MERGED.BMP");
+		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8X13_MERGED.BMP"); //note: the 8X13.BMP causes "Incorrect file format" -> "Bad BMP format" error
 
 		printf("Trying for graphics file: %s\n", filename);
 		/* Use graphics if bitmap file exists */
