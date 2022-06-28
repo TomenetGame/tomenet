@@ -461,14 +461,14 @@
  * OPTION: Allow the use of "sound" in various places.
  */
 
-/* --new sound system 'USE_SOUND_2010' in place utilizing SDL, state is experimental- C. Blue */
+/* New sound system 'USE_SOUND_2010' in place, utilizing SDL and allowing for topkek dynamic audio ;) - C. Blue */
 #define USE_SOUND
 #define USE_SOUND_2010
 
 /*
  * OPTION: Allow the use of "graphics" in various places
  */
-/* #define USE_GRAPHICS */
+//#define USE_GRAPHICS
 
 
 /*
