@@ -190,15 +190,10 @@ struct term
 	void (*nuke_hook)(term *t);
 
 	errr (*user_hook)(int n);
-
 	errr (*xtra_hook)(int n, int v);
-
 	errr (*curs_hook)(int x, int y);
-
 	errr (*wipe_hook)(int x, int y, int n);
-
 	errr (*pict_hook)(int x, int y, byte a, char c);
-
 	errr (*text_hook)(int x, int y, int n, byte a, cptr s);
 };
 
