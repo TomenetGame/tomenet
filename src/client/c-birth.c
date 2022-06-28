@@ -304,7 +304,7 @@ static bool choose_sex(void) {
 
 static void clear_diz(void) {
 	int i;
-	//c_put_str(TERM_UMBER, "                              ", DIZ_ROW, DIZ_COL);
+
 	for (i = 0; i < 12; i++)
 		c_put_str(TERM_L_UMBER, "                                                  ", DIZ_ROW + i, DIZ_COL);
 }
@@ -313,9 +313,8 @@ static void display_race_diz(int r) {
 	int i = 0;
 
 	clear_diz();
-	if (!race_diz[r][i]) return; /* server !newer_than 4.5.1.2 */
+	if (!race_diz[r][i][0]) return; /* server !newer_than 4.5.1.2 */
 
-//	c_put_str(TERM_UMBER, format("--- %s ---", race_info[r].title), DIZ_ROW, DIZ_COL);
 	while (i < 12 && race_diz[r][i][0]) {
 		c_put_str(TERM_L_UMBER, race_diz[r][i], DIZ_ROW + i, DIZ_COL);
 		i++;
@@ -535,9 +534,8 @@ static void display_trait_diz(int r) {
 
 	i = 0;
 	clear_diz();
-	if (!trait_diz[r][i]) return; /* server !newer_than 4.5.1.2 */
+	if (!trait_diz[r][i][0]) return; /* server !newer_than 4.5.1.2 */
 
-//	c_put_str(TERM_UMBER, format("--- %s ---", trait_info[r].title), DIZ_ROW, DIZ_COL);
 	while (i < 12 && trait_diz[r][i][0]) {
 		c_put_str(TERM_L_UMBER, trait_diz[r][i], DIZ_ROW + i, DIZ_COL);
 		i++;
@@ -777,9 +775,8 @@ static void display_class_diz(int r) {
 	int i = 0;
 
 	clear_diz();
-	if (!class_diz[r][i]) return; /* server !newer_than 4.5.1.2 */
+	if (!class_diz[r][i][0]) return; /* server !newer_than 4.5.1.2 */
 
-	//c_put_str(TERM_UMBER, format("--- %s ---", class_info[r].title), DIZ_ROW, DIZ_COL);
 	while (i < 12 && class_diz[r][i][0]) {
 		c_put_str(TERM_L_UMBER, class_diz[r][i], DIZ_ROW + i, DIZ_COL);
 		i++;
