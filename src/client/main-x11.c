@@ -2414,19 +2414,22 @@ errr init_x11(void) {
 
 #ifdef USE_GRAPHICS
 	char filename[1024];
-	char path[1024];
 	bool graphics_failed = FALSE;
 #endif
 
 #ifdef USE_GRAPHICS
-	init_file_paths(path);
+	/* Hack: We are called shortly _before_ client_init() -> init_stuff() -> init_file_paths(), so ANGBAND_DIR.. aren't set yet,
+	   so we have to init them in advance 'manually': */
+	init_stuff();
+
 	/* Try graphics */
 	use_graphics = use_graphics || getenv("TOMENET_GRAPHICS");
 	if (use_graphics) {
 		int gfd;
 
 		/* Build the name of the "graf" file */
-		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8x8.bmp");
+		plog(ANGBAND_DIR_XTRA);
+		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8X13.BMP");
 
 		printf("Trying for graphics file: %s\n", filename);
 		/* Use graphics if bitmap file exists */

@@ -99,7 +99,7 @@ static void validate_dir(cptr s) {
 }
 
 /*
- * Initialize and verify the file paths, and the score file.
+ * Initialize and verify the file paths.
  *
  * Use the ANGBAND_PATH environment var if possible, else use
  * DEFAULT_PATH, and in either case, branch off appropriately.
@@ -116,30 +116,24 @@ static void validate_dir(cptr s) {
  * Note that the "path" must be "Angband:" for the Amiga, and it
  * is ignored for "VM/ESA", so I just combined the two.
  */
-static void init_stuff(void) {
+void init_stuff(void) {
 #if defined(AMIGA) || defined(VM)
-
 	/* Hack -- prepare "path" */
 	strcpy(path, "TomeNET:");
-
-#else /* AMIGA / VM */
-
+#else /* All systems except Amiga / VM: */
+	/* Change current directory to the location of the binary - mikaelh */
 	if (argv0) {
 		char *app_path = strdup(argv0);
 		char *app_dir;
 
 		app_dir = dirname(app_path);
 
-		/* Change current directory to the location of the binary - mikaelh */
-		if (chdir(app_dir) == -1) {
-			plog_fmt("chdir(\"%s\") failed", app_dir);
-		}
+		if (chdir(app_dir) == -1) plog_fmt("chdir(\"%s\") failed", app_dir);
 
 		free(app_path);
 	}
-
-	if (!strlen(path))
-	{
+	/* Obtain our path */
+	if (!strlen(path)) {
 		cptr tail;
 
 		/* Get the environment variable */
@@ -154,8 +148,7 @@ static void init_stuff(void) {
 
 	/* Validate the path */
 	validate_dir(path);
-
-#endif /* AMIGA / VM */
+#endif
 
 	/* Initialize */
 	init_file_paths(path);
