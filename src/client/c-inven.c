@@ -1253,7 +1253,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			/* Use that item */
 			(*cp) = k;
 #ifdef ENABLE_SUBINVEN
-			if (using_subinven != -1) (*cp) += (using_subinven + 1) * 100;
+			if (using_subinven != -1) (*cp) += sub_i;
 #endif
 			item = TRUE;
 			done = TRUE;
@@ -1284,7 +1284,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			/* Accept that choice */
 			(*cp) = k;
 #ifdef ENABLE_SUBINVEN
-			if (using_subinven != -1) (*cp) += (using_subinven + 1) * 100;
+			if (using_subinven != -1) (*cp) += sub_i;
 #endif
 			item = TRUE;
 			done = TRUE;
@@ -1297,7 +1297,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			if (extra && get_item_extra_hook(&i, mode)) {
 				(*cp) = i;
 #ifdef ENABLE_SUBINVEN
-				if (using_subinven != -1) (*cp) += (using_subinven + 1) * 100;
+				if (using_subinven != -1) (*cp) += sub_i;
 #endif
 				item = TRUE;
 				done = TRUE;
@@ -1374,7 +1374,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			/* Accept that choice */
 			(*cp) = k;
 #ifdef ENABLE_SUBINVEN
-			if (using_subinven != -1) (*cp) += (using_subinven + 1) * 100;
+			if (using_subinven != -1) (*cp) += sub_i;
 #endif
 			item = TRUE;
 			done = TRUE;
@@ -1426,7 +1426,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 	/* Return TRUE if something was picked */
 #ifdef ENABLE_SUBINVEN
-	//if (using_subinven != -1) cp += (using_subinven + 1) * 100;
+	//if (using_subinven != -1) cp += sub_i;
 #endif
 	return (item);
 }
