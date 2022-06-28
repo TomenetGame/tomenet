@@ -459,7 +459,7 @@ static errr Term_wipe_hack(int x, int y, int n)
  * Hack -- fake hook for "Term_pict()"
  * Draw a "special" attr/char pair at "(x,y)".
  */
-static errr Term_pict_hack(int x, int y, byte a, char c)
+static errr Term_pict_hack(int x, int y, byte a, unsigned char c)
 {
 	/* XXX XXX XXX */
 	if (x || y || a || c) return (-2);
