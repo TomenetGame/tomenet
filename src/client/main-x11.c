@@ -1921,8 +1921,6 @@ static errr Term_text_x11(int x, int y, int n, byte a, cptr s) {
  * Draw some graphical characters.
  */
 static errr Term_pict_x11(int x, int y, byte a, byte c) {
-	int i;
-
 	term_data *td = (term_data*)(Term->data);
 
 	y *= Infofnt->hgt;
@@ -2417,25 +2415,29 @@ errr init_x11(void) {
 #ifdef USE_GRAPHICS
 	char filename[1024];
 	char path[1024];
+	bool graphics_failed = FALSE;
 #endif
 
 #ifdef USE_GRAPHICS
 	init_file_paths(path);
 	/* Try graphics */
-	if (getenv("TOMENET_GRAPHICS")) {
+	use_graphics = use_graphics || getenv("TOMENET_GRAPHICS");
+	if (use_graphics) {
 		int gfd;
+
 		/* Build the name of the "graf" file */
 		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8x8.bmp");
-//???		strcpy(filename, "/usr/local/tomenet/lib/xtra/graf/16x16.bmp");
 
 		printf("Trying for graphics file: %s\n", filename);
 		/* Use graphics if bitmap file exists */
 		if ((gfd = open(filename, 0, O_RDONLY)) != -1) {
 			printf("Got graphics file\n");
 			close(gfd);
-			/* Use graphics */
-			use_graphics = TRUE;
-		}
+		} else graphics_failed = TRUE;
+	} else graphics_failed = TRUE;
+	if (use_graphics && graphics_failed) {
+		printf("Graphics initialisation failed, falling back to non-graphics, aka text fonts).");
+		use_graphics = FALSE;
 	}
 #endif /* USE_GRAPHICS */
 
