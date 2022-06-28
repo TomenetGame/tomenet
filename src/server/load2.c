@@ -566,7 +566,6 @@ static void rd_item(object_type *o_ptr) {
 		else if (o_ptr->sval >= 32) o_ptr->sval += 170; //food
 		else if (o_ptr->sval >= 20) o_ptr->sval += 80; //raw food
 		//rest are shrooms
-		updated_server = 3;
 	}
 #endif
 
