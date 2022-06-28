@@ -398,7 +398,9 @@ LDFLAGS += -Wl,-z,relro -Wl,-z,now
 # Normal (non-test) client uses optimizations
 tomenet: CFLAGS += -g -O2
 # Compile a client with 'test client' version/tag
-tomenet.test: CFLAGS += -DTEST_CLIENT -g3 -O0
+#tomenet.test: CFLAGS += -DTEST_CLIENT -g3 -O0
+#disable 3 warning spams: 'accessing n bytes in a region of size m', '_FORTIFY_SOURCE requires compiling with optimization', 'directive writing up to 159 bytes into a region of size'
+tomenet.test: CFLAGS += -DTEST_CLIENT -g3 -O0 -Wno-stringop-overflow -Wno-cpp -Wno-format-overflow
 tomenet.test: PPFLAGS = -DTEST_CLIENT
 # Server is compiled with optimizations
 tomenet.server: CFLAGS += -g -O2
