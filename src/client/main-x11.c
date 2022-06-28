@@ -2429,7 +2429,7 @@ errr init_x11(void) {
 
 		/* Build the name of the "graf" file */
 		plog(ANGBAND_DIR_XTRA);
-		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8X13.BMP");
+		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8X13_MERGED.BMP");
 
 		printf("Trying for graphics file: %s\n", filename);
 		/* Use graphics if bitmap file exists */
@@ -2439,7 +2439,7 @@ errr init_x11(void) {
 		} else graphics_failed = TRUE;
 	} else graphics_failed = TRUE;
 	if (use_graphics && graphics_failed) {
-		printf("Graphics initialisation failed, falling back to non-graphics, aka text fonts).");
+		printf("Graphics initialisation failed, falling back to non-graphics, aka text fonts).\n");
 		use_graphics = FALSE;
 	}
 #endif /* USE_GRAPHICS */
