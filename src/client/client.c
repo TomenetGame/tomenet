@@ -249,6 +249,7 @@ static bool read_mangrc(cptr filename) {
 			/* graphics */
 			if (!strncmp(buf, "graphics", 8)) {
 				char *p;
+
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) use_graphics = (atoi(p) != 0);
@@ -258,6 +259,7 @@ static bool read_mangrc(cptr filename) {
 			/* sound */
 			if (!strncmp(buf, "sound", 5) && strncmp(buf, "soundpackFolder", 15)) {
 				char *p;
+
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) {
@@ -272,6 +274,7 @@ static bool read_mangrc(cptr filename) {
 			/* don't cache audio (41.5 MB of ogg samples deflated in memory!) */
 			if (!strncmp(buf, "cacheAudio", 10)) {
 				char *p;
+
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) no_cache_audio = !(atoi(p) != 0);
@@ -279,6 +282,7 @@ static bool read_mangrc(cptr filename) {
 			/* audio sample rate */
 			if (!strncmp(buf, "audioSampleRate", 15)) {
 				char *p;
+
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) cfg_audio_rate = atoi(p);
@@ -286,6 +290,7 @@ static bool read_mangrc(cptr filename) {
 			/* maximum number of allocated mixer channels */
 			if (!strncmp(buf, "audioChannels", 13)) {
 				char *p;
+
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) cfg_max_channels = atoi(p);
@@ -293,6 +298,7 @@ static bool read_mangrc(cptr filename) {
 			/* Mixed sample size (larger = more lagging sound, smaller = skipping on slow machines) */
 			if (!strncmp(buf, "audioBuffer", 11)) {
 				char *p;
+
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) cfg_audio_buffer = atoi(p);
@@ -300,6 +306,7 @@ static bool read_mangrc(cptr filename) {
 			/* Folder of the currently selected sound pack */
 			if (!strncmp(buf, "soundpackFolder", 15)) {
 				char *p;
+
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) strcpy(cfg_soundpackfolder, p);
@@ -307,6 +314,7 @@ static bool read_mangrc(cptr filename) {
 			/* Folder of the currently selected music pack */
 			if (!strncmp(buf, "musicpackFolder", 15)) {
 				char *p;
+
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) strcpy(cfg_musicpackfolder, p);
@@ -314,48 +322,56 @@ static bool read_mangrc(cptr filename) {
 			/* audio mixer settings */
 			if (!strncmp(buf, "audioMaster", 11)) {
 				char *p;
+
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) cfg_audio_master = (atoi(p) != 0);
 			}
 			if (!strncmp(buf, "audioMusic", 10)) {
 				char *p;
+
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) cfg_audio_music = (atoi(p) != 0);
 			}
 			if (!strncmp(buf, "audioSound", 10)) {
 				char *p;
+
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) cfg_audio_sound = (atoi(p) != 0);
 			}
 			if (!strncmp(buf, "audioWeather", 12)) {
 				char *p;
+
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) cfg_audio_weather = (atoi(p) != 0);
 			}
 			if (!strncmp(buf, "audioVolumeMaster", 17)) {
 				char *p;
+
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) cfg_audio_master_volume = atoi(p);
 			}
 			if (!strncmp(buf, "audioVolumeMusic", 16)) {
 				char *p;
+
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) cfg_audio_music_volume = atoi(p);
 			}
 			if (!strncmp(buf, "audioVolumeSound", 16)) {
 				char *p;
+
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) cfg_audio_sound_volume = atoi(p);
 			}
 			if (!strncmp(buf, "audioVolumeWeather", 18)) {
 				char *p;
+
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) cfg_audio_weather_volume = atoi(p);
