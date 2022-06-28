@@ -3130,9 +3130,9 @@ void set_palette(byte c, byte r, byte g, byte b) {
 #else
 	/* Testing // For extended-bg colours, for now just animate the background part */
 	if (c >= BASE_PALETTE_SIZE) { /* TERMX_.. */
-		if (strcmp(color_ext_name[c - BASE_PALETTE_SIZE], cn))
+		if (strcmp(color_ext_name[c - BASE_PALETTE_SIZE][1], cn))
 			/* Apply the desired color */
-			strcpy(color_name[c - BASE_PALETTE_SIZE], cn);
+			strcpy(color_ext_name[c - BASE_PALETTE_SIZE][1], cn);
 	} else {
 		/* Normal colour: Just set the foreground part */
 		if (strcmp(color_name[c], cn))
