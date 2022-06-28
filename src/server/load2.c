@@ -558,6 +558,18 @@ static void rd_item(object_type *o_ptr) {
 #endif
 #endif
 
+#if 1 /* run once, then comment out/delete */
+	/* After 4.8.0: Expand mushroom space - custom.lua must increase updated_server from 2 to 3 then. */
+	if (o_ptr->tval == TV_FOOD && updated_server < 3) {
+		if (o_ptr->sval == 50) o_ptr->sval = 0; //unmagic shroom
+		else if (o_ptr->sval < 30) o_ptr->sval++; //non-static shrooms (all shrooms except unmagic)
+		else if (o_ptr->sval >= 32) o_ptr->sval += 170; //food
+		else if (o_ptr->sval >= 20) o_ptr->sval += 80; //raw food
+		//rest are shrooms
+		updated_server = 3;
+	}
+#endif
+
 	/* Obtain k_idx from tval/sval instead :) */
 	if (o_ptr->k_idx)	/* zero is cipher :) */
 		o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
@@ -4338,6 +4350,16 @@ static void unseal_object(object_type *o_ptr) {
 /* Seal or unseal an object as required,
    or return FALSE if object no longer exists - C. Blue */
 bool seal_or_unseal_object(object_type *o_ptr) {
+ #if 0
+	/* Bad hack for mushroom/food expansion */
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_SEAL &&
+	    o_ptr->tval2 == TV_FOOD) {
+		o_ptr->tval = o_ptr->tval2;
+		o_ptr->sval = o_ptr->sval2;
+		return TRUE;
+	} else if (o_ptr->tval == TV_FOOD) return TRUE;
+	else
+ #endif
 	/* Object does no longer exist? (for example now commented out, in k_info)
 	   - turn it into a 'seal' instead of deleting it! */
 	if (!o_ptr->k_idx) {

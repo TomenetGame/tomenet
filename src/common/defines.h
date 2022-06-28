@@ -3329,7 +3329,8 @@
  #define MAX_COLORS	66	/* Used with potions (min 62) */
 #endif
 #define STATIC_COLORS	6	/* The first n colour flavours, which aren't randomised */
-#define MAX_SHROOM	20	/* Used with mushrooms (min 20) */
+#define MAX_SHROOM	22	/* Used with mushrooms (min 20) */
+#define STATIC_SHROOMS	1	/* The first n colour flavours, which aren't randomised */
 #define MAX_TITLES	73	/* Used with scrolls (min 55) */
 #define MAX_SYLLABLES	164	/* Used with scrolls (see below) */
 
@@ -3384,14 +3385,6 @@
 #define SV_BLACK_KNIGHT			14
 #define SV_BLACK_BISHOP			15
 #define SV_SNOWBALL			16
-
-
-
-/*
- * Special "sval" limit -- first "normal" food (aka, unflavoured item, the irony..)
- */
-#define SV_FOOD_MIN_FOOD	20
-#define SV_FOOD_MAX_FOOD	49
 
 /*
  * Special "sval" limit -- first "aimed" rod
@@ -4168,7 +4161,7 @@
 #endif
 
 /* The "sval" codes for TV_FOOD */
-#define SV_FOOD_POISON			0
+#define SV_FOOD_UNMAGIC			0
 #define SV_FOOD_BLINDNESS		1
 #define SV_FOOD_PARANOIA		2
 #define SV_FOOD_CONFUSION		3
@@ -4188,29 +4181,30 @@
 #define SV_FOOD_RESTORE_STR		17
 #define SV_FOOD_RESTORE_CON		18
 #define SV_FOOD_RESTORING		19
-#define SV_FOOD_MUSHROOMS_MAX		19 /* marker where mushroom svals end */
+#define SV_FOOD_POISON			20
+#define SV_FOOD_REGEN			21
+#define SV_FOOD_MUSHROOMS_MAX		99 /* marker where mushroom svals end */
 /* many missing mushrooms */
 /* mangband-oriented wilderness crops */
-#define	SV_FOOD_POTATO			20
-#define SV_FOOD_HEAD_OF_CABBAGE		21
-#define SV_FOOD_CARROT			22
-#define SV_FOOD_BEET			23
-#define	SV_FOOD_SQUASH			24
-#define	SV_FOOD_EAR_OF_CORN		25
+#define	SV_FOOD_POTATO			100
+#define SV_FOOD_HEAD_OF_CABBAGE		101
+#define SV_FOOD_CARROT			102
+#define SV_FOOD_BEET			103
+#define	SV_FOOD_SQUASH			104
+#define	SV_FOOD_EAR_OF_CORN		105
+#define SV_FOOD_RAW_MAX			199 /* unused - marker where raw ingredient svals end, that could be cooked ^^- */
 /* normal foods again */
-#define SV_FOOD_BISCUIT			32
-#define SV_FOOD_JERKY			33
-#define SV_FOOD_RATION			35
-#define SV_FOOD_SLIME_MOLD		36
-#define SV_FOOD_WAYBREAD		37
-#define SV_FOOD_PINT_OF_ALE		38
-#define SV_FOOD_PINT_OF_WINE		39
-#define SV_FOOD_ATHELAS			40
-#define SV_FOOD_GREAT_HEALTH		41	/* annuled for now */
-#define SV_FOOD_FORTUNE_COOKIE		42
-#define SV_FOOD_KHAZAD			43
-/* Another block for mushrooms */
-#define SV_FOOD_UNMAGIC			50
+#define SV_FOOD_BISCUIT			202
+#define SV_FOOD_JERKY			203
+#define SV_FOOD_RATION			205
+#define SV_FOOD_SLIME_MOLD		206
+#define SV_FOOD_WAYBREAD		207
+#define SV_FOOD_PINT_OF_ALE		208
+#define SV_FOOD_PINT_OF_WINE		209
+#define SV_FOOD_ATHELAS			210
+#define SV_FOOD_GREAT_HEALTH		211	/* annuled for now */
+#define SV_FOOD_FORTUNE_COOKIE		212
+#define SV_FOOD_KHAZAD			213
 
 /* The "sval" codes for TV_BATERIE */
 #define SV_BATERIE_POISON		1

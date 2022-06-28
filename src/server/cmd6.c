@@ -250,6 +250,14 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 		if (restore_level(Ind)) ident = TRUE; /* <- new (for RPG_SERVER) */
 		break;
 
+	case SV_FOOD_UNMAGIC:
+		ident = unmagic(Ind);
+		break;
+
+	case SV_FOOD_REGEN:
+		if (set_tim_regen(Ind, 10 + rand_int(20), 2 + rand_int(2))) ident = TRUE;
+		break;
+
 	case SV_FOOD_FORTUNE_COOKIE:
 		if (!p_ptr->suscep_life)
 			msg_print(Ind, "That tastes good.");
@@ -421,10 +429,6 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 
 		if (o_ptr && o_ptr->name1 == ART_DWARVEN_ALE) *keep = TRUE;
 		ident = TRUE;
-		break;
-
-	case SV_FOOD_UNMAGIC:
-		ident = unmagic(Ind);
 		break;
 	}
 

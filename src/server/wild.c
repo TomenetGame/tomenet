@@ -1070,11 +1070,13 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 			y = rand_range(y1,y2);
 
 			if (cave_clean_bold(zcave,y,x)) {
-				food_sval = SV_FOOD_MIN_FOOD + rand_int(12);
-				/* hack -- currently no food svals between 25 and 32 */
-				if (food_sval > 25) food_sval += 6;
-				/* hack -- currently no sval 34 */
-				if (food_sval > 33) food_sval++;
+				food_sval = SV_FOOD_MUSHROOMS_MAX + 1 + rand_int(15); //no SV_FOOD_KHAZAD
+				/* hack -- currently no food svals between 105 and 202 */
+				if (food_sval > 105) food_sval += 96;
+				/* hack -- currently no sval 204 */
+				if (food_sval >= 204) food_sval++;
+				/* hack -- currently no sval 211 */
+				if (food_sval >= 211) food_sval++;
 
 				k_idx = lookup_kind(TV_FOOD,food_sval);
 				invcopy(&forge, k_idx);

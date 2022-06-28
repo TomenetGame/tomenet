@@ -282,7 +282,9 @@ bool set_tim_regen(int Ind, int v, int p) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->tim_regen) {
-			msg_print(Ind, "Your body regeneration abilities greatly increase!");
+			if (p <= 4) msg_print(Ind, "Your body regeneration speeds up somewhat!");
+			else if (p <= 8) msg_print(Ind, "Your body regeneration speeds up!");
+			else msg_print(Ind, "Your body regeneration speeds up greatly!");
 			notice = TRUE;
 		}
 	}
@@ -291,7 +293,7 @@ bool set_tim_regen(int Ind, int v, int p) {
 	else {
 		if (p_ptr->tim_regen) {
 			p = 0;
-			msg_print(Ind, "Your body regeneration abilities becomes normal again.");
+			msg_print(Ind, "Your body regeneration speed normalizes again.");
 			notice = TRUE;
 		}
 	}
@@ -323,7 +325,9 @@ bool set_tim_mp2hp(int Ind, int v, int p) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->tim_regen) {
-			msg_print(Ind, "Your body regeneration abilities greatly increase!");
+			if (p <= 4) msg_print(Ind, "Your body regeneration speeds up somewhat!");
+			else if (p <= 8) msg_print(Ind, "Your body regeneration speeds up!");
+			else msg_print(Ind, "Your body regeneration speeds up greatly!");
 			notice = TRUE;
 		}
 	}
@@ -332,7 +336,7 @@ bool set_tim_mp2hp(int Ind, int v, int p) {
 	else {
 		if (p_ptr->tim_regen) {
 			p = 0;
-			msg_print(Ind, "Your body regeneration abilities becomes normal again.");
+			msg_print(Ind, "Your body regeneration speed normalizes again.");
 			notice = TRUE;
 		}
 	}

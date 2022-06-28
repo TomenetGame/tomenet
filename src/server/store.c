@@ -1050,15 +1050,17 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 	case STORE_HERBALIST:
 		switch (o_ptr->tval) {
 		case TV_BOOK:
+			/* The owner is actually a druid? >_> */
 			if (get_book_name_color(o_ptr) != TERM_L_GREEN) return FALSE;
 			break;
 		case TV_FOOD:
-			if ((o_ptr->sval <= SV_FOOD_MUSHROOMS_MAX) || (o_ptr->sval == SV_FOOD_UNMAGIC) ||
-			    (o_ptr->sval == SV_FOOD_WAYBREAD) || (o_ptr->sval == SV_FOOD_ATHELAS) || /* wowie */
-			    (o_ptr->sval == SV_FOOD_PINT_OF_ALE) || (o_ptr->sval == SV_FOOD_PINT_OF_WINE))
+			if ((o_ptr->sval <= SV_FOOD_MUSHROOMS_MAX) || /* all mushrooms are of a herbalist's interest! */
+			    (o_ptr->sval == SV_FOOD_WAYBREAD) || (o_ptr->sval == SV_FOOD_ATHELAS) || /* 'normal' food, but counts as herbalist stuff due to their special nature */
+			    (o_ptr->sval == SV_FOOD_PINT_OF_ALE) || (o_ptr->sval == SV_FOOD_PINT_OF_WINE)) /* owner likes booze for a change =_= */
 				 break;
 			return (FALSE);
 		case TV_POTION:
+			/* Juice is nice */
 			if ((o_ptr->sval != SV_POTION_APPLE_JUICE) &&
 			    (o_ptr->sval != SV_POTION_SLIME_MOLD)) return(FALSE);
 			break;

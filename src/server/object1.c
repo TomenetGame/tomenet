@@ -258,16 +258,18 @@ static byte rod_col[MAX_METALS];
  */
 
 static cptr food_adj[MAX_SHROOM] = {
-	"Blue", "Black", "Black Spotted", "Brown", "Dark Blue",
-	"Dark Green", "Dark Red", "Yellow", "Furry", "Green",
-	"Grey", "Light Blue", "Light Green", "Violet", "Red",
-	"Slimy", "Tan", "White", "White Spotted", "Wrinkled",
+	"Shimmering", "Blue", "Black", "Black Spotted", "Brown",
+	"Dark Blue", "Dark Green", "Dark Red", "Yellow", "Furry",
+	"Green", "Grey", "Light Blue", "Light Green", "Violet",
+	"Red", "Slimy", "Tan", "White", "White Spotted",
+	"Wrinkled", "Red Spotted"
 };
 static byte food_col[MAX_SHROOM] = {
-	TERM_BLUE, TERM_L_DARK, TERM_L_DARK, TERM_UMBER, TERM_BLUE,
-	TERM_GREEN, TERM_RED, TERM_YELLOW, TERM_L_WHITE, TERM_GREEN,
-	TERM_SLATE, TERM_L_BLUE, TERM_L_GREEN, TERM_VIOLET, TERM_RED,
-	TERM_SLATE, TERM_L_UMBER, TERM_WHITE, TERM_WHITE, TERM_UMBER
+	TERM_MULTI, TERM_BLUE, TERM_L_DARK, TERM_L_DARK, TERM_UMBER,
+	TERM_BLUE, TERM_GREEN, TERM_RED, TERM_YELLOW, TERM_L_WHITE,
+	TERM_GREEN, TERM_SLATE, TERM_L_BLUE, TERM_L_GREEN, TERM_VIOLET,
+	TERM_RED, TERM_SLATE, TERM_L_UMBER, TERM_WHITE, TERM_WHITE,
+	TERM_UMBER, TERM_L_RED
 };
 
 
@@ -288,7 +290,7 @@ static cptr potion_mod[MAX_MOD_COLORS] = {
 
 /* 34 */
 static cptr potion_base[MAX_BASE_COLORS] = {
-	"Clear", "Light Brown", "Icky Green", "Phosphorescent",
+	"Clear", "Light Brown", "Icky Green", "Scarlet",
 	"Azure", "Blue", "Black", "Brown",
 	"Chartreuse", "Crimson", "Cyan", "Dark Blue",
 	"Dark Green", "Dark Red", "Green", "Grey",
@@ -297,7 +299,7 @@ static cptr potion_base[MAX_BASE_COLORS] = {
 	"Purple", "Red", "Tangerine", "Violet",
 	"Vermilion", "White", "Yellow", "Gloopy Green",
 	"Gold", "Ichor", "Ivory White", "Sky Blue",
-	"Beige",
+	"Beige",// "Phosphorescent",
 };
 
  #ifdef HOUSE_PAINTING
@@ -306,7 +308,7 @@ static cptr potion_base[MAX_BASE_COLORS] = {
     static byte potion_col[MAX_COLORS] =
  #endif
     {
-	TERM_WHITE, TERM_L_UMBER, TERM_GREEN, TERM_MULTI,
+	TERM_WHITE, TERM_L_UMBER, TERM_GREEN, TERM_RED,
 	TERM_L_BLUE, TERM_BLUE, TERM_L_DARK, TERM_UMBER,
 	TERM_L_GREEN, TERM_RED, TERM_L_BLUE, TERM_BLUE,
 	TERM_GREEN, TERM_RED, TERM_GREEN, TERM_SLATE,
@@ -315,7 +317,7 @@ static cptr potion_base[MAX_BASE_COLORS] = {
 	TERM_VIOLET, TERM_RED, TERM_ORANGE, TERM_VIOLET,
 	TERM_RED, TERM_WHITE, TERM_YELLOW, TERM_GREEN,
 	TERM_YELLOW, TERM_RED, TERM_WHITE, TERM_L_BLUE,
-	TERM_L_UMBER,
+	TERM_L_UMBER, //TERM_MULTI,
 };
 
 static char potion_adj[MAX_COLORS][24];
@@ -483,7 +485,7 @@ static bool object_has_flavor(int i) {
 
 	/* Hack -- food SOMETIMES has a flavor */
 	case TV_FOOD:
-		if ((k_ptr->sval < SV_FOOD_MIN_FOOD) || (k_ptr->sval > SV_FOOD_MAX_FOOD)) return (TRUE);
+		if (k_ptr->sval <= SV_FOOD_MUSHROOMS_MAX) return (TRUE);
 		return (FALSE);
 	}
 
@@ -792,8 +794,8 @@ void flavor_init(void) {
 	}
 
 	/* Foods (Mushrooms) */
-	for (i = 0; i < MAX_SHROOM; i++) {
-		j = rand_int(MAX_SHROOM);
+	for (i = STATIC_SHROOMS; i < MAX_SHROOM; i++) {
+		j = rand_int(MAX_SHROOM - STATIC_SHROOMS) + STATIC_SHROOMS;
 		temp_adj = food_adj[i];
 		food_adj[i] = food_adj[j];
 		food_adj[j] = temp_adj;
@@ -2263,15 +2265,11 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 	case TV_FOOD:
 		/* Ordinary food is "boring" */
-		if ((o_ptr->sval >= SV_FOOD_MIN_FOOD) && (o_ptr->sval <= SV_FOOD_MAX_FOOD)) break;
+		if (o_ptr->sval > SV_FOOD_MUSHROOMS_MAX) break;
 
-		if (indexx == SV_FOOD_UNMAGIC) {
-			/* Hack for Mushroom of Unmagic */
-			modstr = "Shimmering";
-		} else {
-			/* Color the object */
-			modstr = food_adj[indexx];
-		}
+		/* Color the object */
+		modstr = food_adj[indexx];
+
 		if (aware) append_name = TRUE;
 		if (short_item_names) basenm = aware ? "& Mushroom~" : "& # Mushroom~";
 		else basenm = "& # Mushroom~";

@@ -5027,7 +5027,7 @@ static bool process_player_end_aux(int Ind) {
 				if (p_ptr->regenerate || p_ptr->xtrastat_tim) i += 30;
 
 				/* Regeneration takes more food */
-				if (p_ptr->tim_regen && p_ptr->tim_regen_pow > 0) i += p_ptr->tim_regen_pow / 10;
+				if (p_ptr->tim_regen && p_ptr->tim_regen_pow > 0) i += (p_ptr->tim_regen_pow + 9) / 10;
 
 				j = 0;
 
@@ -5174,7 +5174,7 @@ static bool process_player_end_aux(int Ind) {
 		if (p_ptr->tim_regen_pow > 0) regen_amount += p_ptr->tim_regen_pow; /* Regeneration spell (Nature) */
 		if (p_ptr->tim_regen_pow < 0 && p_ptr->csp >= 10) { /* Nether Sap spell (Unlife) */
 			p_ptr->csp -= 10;
-			hp_player_quiet(Ind, -p_ptr->tim_regen_pow, TRUE);
+			hp_player_quiet(Ind, -p_ptr->tim_regen_pow, TRUE); /* Cannot be using Martyr as true vampire, so no need to check for regen inhibition */
 			p_ptr->redraw |= PR_MANA;
 		}
 	}

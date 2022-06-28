@@ -159,7 +159,7 @@ A:15/1
 
 N:15:Poison
 G:,:d
-I:80:0:500
+I:80:20:500
 W:5:0:1:0
 A:5/1:5/1
 P:0:4d4:0:0:0
@@ -208,30 +208,30 @@ D:Heals 6d8 hit points and cures blindness, confusion and heals cuts somewhat.
 
 N:21:& Ration~ of Food
 G:,:U
-I:80:35:5000
+I:80:205:5000
 W:0:0:10:3
 A:0/1:5/1:10/1
 
 N:22:& Hard Biscuit~
 G:,:U
-I:80:32:1500
+I:80:202:1500
 W:0:0:2:1
 
 N:23:& Strip~ of Venison
 G:,:u
-I:80:33:2000
+I:80:203:2000
 W:0:0:3:2
 
 N:24:& Slime Mold~
 G:,:g
-I:80:36:3000
+I:80:206:3000
 W:1:0:5:2
 A:1/1
 
 # New - now Elvish Waybread works as a scroll of Satisfy Hunger
 N:25:& Lembas~
 G:,:B
-I:80:37:0
+I:80:207:0
 W:5:0:3:50
 A:5/1:10/1:20/1
 D:This blessed food perfectly satisfies your hunger,
@@ -239,12 +239,12 @@ D:cures poison, disease and removes hallucinations.
 
 N:26:& Pint~ of Fine Ale
 G:,:y
-I:80:38:500
+I:80:208:500
 W:0:0:5:1
 
 N:27:& Pint~ of Fine Wine
 G:,:r
-I:80:39:1000
+I:80:209:1000
 W:0:0:10:2
 
 
@@ -3196,7 +3196,7 @@ D:The weapon of choice in snowball fights.
 
 N:382:& Pint~ of Fine Ale
 G:,:y
-I:80:43:500
+I:80:213:500
 W:15:1:3:5000
 P:0:2d3:0:0:0
 F:INSTA_ART
@@ -3252,7 +3252,7 @@ F:SHOW_MODS | MUST2H
 
 #N:388:& Candy Corn~   --todo: adjust '> 25' checks in the code, damn hard-coding
 #G:`:o
-#I:80:26:3000
+#I:80:106:3000
 #W:0:0:2:2
 #D:..overeating isn't healthy..
 
@@ -4415,7 +4415,16 @@ $ENABLE_SUBINVEN$F:EASY_KNOW
 $ENABLE_SUBINVEN$D:A magical cloth for storing devices that don't need to be aimed actively.
 
 
-# HOLE 514-520
+# Extra mushroom(s)
+N:514:Fast Metabolism
+G:,:r
+I:80:21:500
+W:8:0:1:50
+A:8/5
+D:Adds a small, flat amount to your natural health regeneration temporarily.
+
+
+# HOLE 515-520
 ### Room for new objects added after 511 (Zangband 2.1.0): 512-575
 
 
@@ -5744,7 +5753,7 @@ F:ACTIVATE
 
 N:701:& Sprig~ of Athelas
 G:,:g
-I:80:40:0
+I:80:210:0
 W:25:5:2:450
 A:25/20:55/10:85/10
 D:Food that also cures poison, disease, stun, cuts and even Black Breath.
@@ -6398,7 +6407,7 @@ A:0/10
 # Greater Ration of Health - artifact food item (!)
 #N:801:& Greater Ration~ of Health
 #G:,:g
-#I:80:41:0
+#I:80:211:0
 #W:90:5:2:60000
 #A:90/50
 #T:80:40
@@ -6451,7 +6460,7 @@ F:SLAY_ANIMAL | SHOW_MODS | MUST2H
 
 N:807:& Fortune cookie~
 G:,:U
-I:80:42:500
+I:80:212:500
 W:0:0:2:10
 A:0/1:5/1:10/1
 D:It usually contains a small paper strip with a random message.
@@ -6565,7 +6574,7 @@ D:Allows for friendly duels. Inscribe it @P<playername> and read it.
 
 N:815:Unmagic
 G:,:d
-I:80:50:50
+I:80:0:50
 W:15:0:2:75
 A:15/1
 D:Removes all kinds of temporary magical effects.
@@ -6588,32 +6597,32 @@ W:0:0:1:10000
 ##### Extra food #####
 N:841:& Potato~
 G:,:u
-I:80:20:1250
+I:80:100:1250
 W:1:0:2:1
 
 N:842:& Head~ of Cabbage
 G:,:G
-I:80:21:1650
+I:80:101:1650
 W:1:0:3:1
 
 N:843:& Carrot~
 G:,:o
-I:80:22:750
+I:80:102:750
 W:1:0:1:2
 
 N:844:& Beet~
 G:,:r
-I:80:23:1000
+I:80:103:1000
 W:1:0:1:2
 
 N:845:& Squash
 G:,:y
-I:80:24:1000
+I:80:104:1000
 W:1:0:3:1
 
 N:846:& Ear~ of Corn
 G:`:y
-I:80:25:2000
+I:80:105:2000
 W:1:0:2:2
 
 # HOLE 847-848
