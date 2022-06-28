@@ -2252,7 +2252,7 @@ static XImage *ReadBMP(Display *disp, char Name[]) {
 	f = fopen(Name, "r");
 
 	if (f != NULL) {
-		fread((vptr)(&fileheader + 2), sizeof(fileheader) - 2, 1, f);
+		fread((vptr)((char*)&fileheader + 2), sizeof(fileheader) - 2, 1, f);
 		fread(&infoheader,sizeof(infoheader), 1, f);
 		if ((fileheader.bfType != 19778) || (infoheader.biSize != 40)) {
 				plog_fmt("Incorrect file format %s",Name);
