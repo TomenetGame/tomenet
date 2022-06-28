@@ -1920,7 +1920,7 @@ static errr Term_text_x11(int x, int y, int n, byte a, cptr s) {
 /*
  * Draw some graphical characters.
  */
-static errr Term_pict_x11(int x, int y, byte a, byte c) {
+static errr Term_pict_x11(int x, int y, byte a, char c) {
 	term_data *td = (term_data*)(Term->data);
 
 	y *= Infofnt->hgt;
