@@ -9435,8 +9435,8 @@ void player_death(int Ind) {
 
 		/* If we committed suicide.. */
 		if (p_ptr->suicided) {
-			/* only drop artifacts */
-			 if (!artifact_p(o_ptr)) {
+			/* only drop artifacts -- new 2022: don't drop level 0 (ie untradable) artifacts (Nazgul rings littering Bree) */
+			 if (!artifact_p(o_ptr) || !o_ptr->level) {
 				questitem_d(o_ptr, o_ptr->number);
 				continue;
 			}
