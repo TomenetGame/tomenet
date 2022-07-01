@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 26. June 2022 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 1. July 2022 - written by C. Blue (c_blue@gmx.net)        |
 | for TomeNET version v4.8.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -251,6 +251,9 @@ compile the game under '(2.1) Installing/updating TomeNET'.
  connect to official main server's IP address (37.187.75.24).
 
  NOTE: The official main server's hostname is "europe.tomenet.eu".
+ In 2022, an official server located in the APAC (Asia-Pacific) region was
+ added, to provide playable ping times for players from that region, its
+ hostname is "apac.tomenet.eu".
 
 -You should now see a list of available TomeNET servers (except if you used
  TomeNET-direct.bat, which will always connect you directly to the first main
@@ -3928,7 +3931,8 @@ server's IP address.
 On OSX you run the 'TomeNET.command' file, on Linux the 'tomenet' binary.
 
 (Side note: The official main server's hostname is "europe.tomenet.eu" and its
-IP address is 37.187.75.24.)
+IP address is 37.187.75.24. The official asia-pacific server's hostname is
+"apac.tomenet.eu" and its IP address is 92.38.178.77.)
 
 You should now see a list of available TomeNET servers (except if you used
 TomeNET-direct.bat, which will always connect you directly to the first main
