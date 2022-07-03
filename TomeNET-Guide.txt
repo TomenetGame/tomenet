@@ -1121,6 +1121,11 @@ CTRL+D      Delete character under the cursor.
 
 CTRL+C      Search history of chat messages you typed. Press CTRL+C again for
             next match. Press ENTER to choose or ESC to cancel.
+            Entering an asterisk '*' will be interpreted as wild card.
+            Eg entering the search string "h*w*4" will search for all messages
+            that contained an 'h' which was followed at some point by an 'w'
+            which in turn was followed at some point by a '4', such as:
+            "oh wow, found 4 arts!".
 
 CTRL+K      Copies currently typed chat line to clipboard.
             Note that CTRL+K can also be used inside message recall screen,
