@@ -2064,7 +2064,34 @@ bool paste_from_clipboard(char *buf, bool global) {
 	return FALSE;
 }
 
+#define SEARCH_NOCASE /* CTRL+C chat history search: Case-insensitive? */
+/* Helper function for message-history search done inside askfor_aux(),
+   supporting wildcards '*'. - C. Blue */
+static bool search_history_aux(char *msg, char *buf) {
+	static char tmpbuf[MSG_LEN], *tmpc, *tmpc2;
 
+	/* Handle wildcard segments (or final term) */
+	tmpc = buf;
+	while (*tmpc) {
+		strcpy(tmpbuf, tmpc);
+		if ((tmpc2 = strchr(tmpc, '*'))) {
+			*tmpc2 = 0;
+			tmpc = tmpc2 + 1;
+		} else tmpc = buf + strlen(buf);
+#ifdef SEARCH_NOCASE
+		if (!my_strcasestr(msg, buf)) {
+			tmpc = NULL;
+			break;
+		}
+#else
+		if (!strstr(msg, buf)) {
+			tmpc = NULL;
+			break;
+		}
+#endif
+	}
+	return (tmpc != NULL);
+}
 /*
  * Get some input at the cursor location.
  * Assume the buffer is initialized to a default string.
@@ -2082,7 +2109,6 @@ bool paste_from_clipboard(char *buf, bool global) {
  * Jir -- added history.
  * TODO: cursor editing (fix past terminal width extending text)
  */
-#define SEARCH_NOCASE /* CTRL+C chat history search: Case-insensitive? */
 typedef char msg_hist_var[MSG_HISTORY_MAX][MSG_LEN];
 bool askfor_aux(char *buf, int len, char mode) {
 	int y, x;
@@ -2519,11 +2545,9 @@ bool askfor_aux(char *buf, int len, char mode) {
 			/* Look for another match.. */
 			for (j = sp_iter + 1; j < sp_size; j++) {
 				j2 = (sp_end - j + MSG_HISTORY_MAX * 2) % MSG_HISTORY_MAX; /* Reverse direction */
-#ifdef SEARCH_NOCASE
-				if (!my_strcasestr((*sp_msg)[j2], buf)) continue;
-#else
-				if (!strstr((*sp_msg)[j2], buf)) continue;
-#endif
+
+				if (!search_history_aux((*sp_msg)[j2], buf)) continue;
+
 				/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
 				c_prt(TERM_YELLOW, format("%s: %s", buf, (*sp_msg)[j2]), y, x);
 				sp_iter = j;
@@ -2534,11 +2558,9 @@ bool askfor_aux(char *buf, int len, char mode) {
 				/* Cycle through search results: Start from the beginning again and search up to the final match again */
 				for (j = 0; j <= sp_iter; j++) {
 					j2 = (sp_end - j + MSG_HISTORY_MAX * 2) % MSG_HISTORY_MAX; /* Reverse direction */
-#ifdef SEARCH_NOCASE
-					if (!my_strcasestr((*sp_msg)[j2], buf)) continue;
-#else
-					if (!strstr((*sp_msg)[j2], buf)) continue;
-#endif
+
+					if (!search_history_aux((*sp_msg)[j2], buf)) continue;
+
 					/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
 					c_prt(TERM_YELLOW, format("%s: %s", buf, (*sp_msg)[j2]), y, x);
 					sp_iter = j;
@@ -2636,18 +2658,19 @@ bool askfor_aux(char *buf, int len, char mode) {
 			sp_iter = -1;
 			for (j = 0; j < sp_size; j++) {
 				j2 = (sp_end - j + MSG_HISTORY_MAX * 2) % MSG_HISTORY_MAX; /* Reverse direction */
-#ifdef SEARCH_NOCASE
-				if (!my_strcasestr((*sp_msg)[j2], buf)) continue;
-#else
-				if (!strstr((*sp_msg)[j2], buf)) continue;
-#endif
+
+				if (!search_history_aux((*sp_msg)[j2], buf)) continue;
+
 				/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
 				c_prt(TERM_YELLOW, format("%s: %s", buf, (*sp_msg)[j2]), y, x);
 				sp_iter = j;
 				break;
 			}
 			/* No match found at all */
-			if (sp_iter == sp_size) c_prt(TERM_ORANGE, buf, y, x);
+			if (j == sp_size) {
+				c_prt(TERM_ORANGE, buf, y, x);
+				sp_iter = sp_size;
+			}
 			continue;
 		}
 
