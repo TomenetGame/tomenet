@@ -2067,27 +2067,32 @@ bool paste_from_clipboard(char *buf, bool global) {
 #define SEARCH_NOCASE /* CTRL+C chat history search: Case-insensitive? */
 /* Helper function for message-history search done inside askfor_aux(),
    supporting wildcards '*'. - C. Blue */
-static bool search_history_aux(char *msg, char *buf) {
+static bool search_history_aux(const char *msg, const char *buf) {
 	static char tmpbuf[MSG_LEN], *tmpc, *tmpc2;
+	static const char *msgc, *msgc_tmp;
 
-	/* Handle wildcard segments (or final term) */
-	tmpc = buf;
+	/* Handle wildcard segments (or final term) on a working copy */
+	strcpy(tmpbuf, buf);
+	tmpc = tmpbuf;
+	msgc = msg;
 	while (*tmpc) {
 		strcpy(tmpbuf, tmpc);
-		if ((tmpc2 = strchr(tmpc, '*'))) {
+		if ((tmpc2 = strchr(tmpbuf, '*'))) {
 			*tmpc2 = 0;
 			tmpc = tmpc2 + 1;
-		} else tmpc = buf + strlen(buf);
+		} else tmpc = tmpbuf + strlen(tmpbuf);
 #ifdef SEARCH_NOCASE
-		if (!my_strcasestr(msg, buf)) {
+		if (!(msgc_tmp = my_strcasestr(msgc, tmpbuf))) {
 			tmpc = NULL;
 			break;
 		}
+		msgc = msgc_tmp + strlen(tmpbuf);
 #else
-		if (!strstr(msg, buf)) {
+		if (!(msgc_tmp = strstr(msgc, tmpbuf))) {
 			tmpc = NULL;
 			break;
 		}
+		msgc = msgc_tmp + strlen(tmpbuf);
 #endif
 	}
 	return (tmpc != NULL);
