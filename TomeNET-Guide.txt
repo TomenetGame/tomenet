@@ -12080,6 +12080,7 @@ Berserk Strength
                 Temporary effects: Heals you for 30, increases CHP and MHP by
                 20, become fearless, -10 malus to ac and +10 to strength.
                 Does not stack with 'Berserk' technique.
+                ("You feel like a killing machine!")
 Boldness        Removes fear and keeps your heart boldened for a while.
 Chauve-Souris   Turns you into a fruit bat. Quaff another one to be restored
                 to your original form. A wand/rod of polymorph might help too.
@@ -12096,6 +12097,9 @@ Cure Critical Wounds
 Curing          Heals some HP, removes blindness/confusion/stun, cures
                 poison/disease/cuts/hallucinations, heals some insanity,
                 cures being gorged, restores all your stats (except exp).
+Detect Invisible
+                Temporarily grants you the ability to see invisible.
+                ("Your eyes feel very sensitive!")
 Detonations / Death
                 Better not drink it (or you deserve it).
                 Also, handle with caution! Make sure those won't shatter in
@@ -12117,10 +12121,17 @@ Experience      Gives you additionally half your current experience plus 10,
                 especially hard for them to reach the next level for some
                 reason, maybe harder than if they were at 200,000 exp already.
 Heroism         Temporary effects: Increases CHP and MHP by 10. Removes fear.
-                +12 bonus to-hit.
+                +12 bonus to-hit. ("You feel like a hero!")
+Infra-vision    Temporarily grants you 100..200 ft of infra-vision randomly,
+                ie the ability to see warm-blooded creatures from afar, even
+                in complete darkness or if they are invisible to normal sight.
+                If you already have fixed infra-vision, this potion will add
+                to your fixed infra-vision radius, further increasing it.
+                ("Your eyes begin to tingle!")
 Invulnerability Will turn you partially invulnerable (40% chance to fully
                 deflect any attack, 50% damage reduction if it still hits) and
                 increases armour class by 100 temporarily.
+                ("A powerful iridescent shield forms around your body!")
 Learning        Gives you 1..3 (random) additional skill points to spend.
 Life            Heals 700 HP, removes blindness/confusion/stun, cures
                 poison/disease/cuts/hallucinations, cures Black Breath,
@@ -12166,8 +12177,8 @@ Aggravate Monsters
                 Hastes all monsters in your line of sight (same as SHRIEK
                 spell or traps of aggravation or the "/scream" command).
 Blessing/Holy Chant/Holy Prayer
-                Increases your AC by 8/14/20 and also increases your to-hit
-                bonus by half that amount. (Temporarily)
+                Temporarily increases your AC by 8/14/20 and also increases
+                your to-hit bonus by half that amount ("You feel righteous!").
 Blood Bond      Inscribe this @P<playername>, for example @PGandalf, then read
                 it to form a blood bond between you and that player. (Only one
                 of you has to read a BB scroll, it's working bidirectional).
@@ -12301,6 +12312,7 @@ Parchments      These contain informations about the game, they won't
 Protection from evil
                 Repels evil creatures that try to attack you in melee.
                 See the prayer 'Protection from evil' in (6.8)!
+                ("You feel safe from evil!")
 Recharging      Recharges a magical device (rod, wand or staff, see (5.21)).
 Remove Curse    Breaks lesser curses on items, allowing you to unwear or
                 destroy them. Note that many items can be sold for good cash
@@ -12319,7 +12331,6 @@ Rune of Protection
                 summon on. Monsters have a chance to break it on each turn.
                 Weak monsters will rarely succeed while powerful monsters may
                 break it quickly. Monsters of level 98+ can instantly break it.
-
 Rumour          Makes a random rumour come to your character's (and everyone
                 else's characters') mind. Has no further effect and is not
                 necessarily true even.
@@ -15996,7 +16007,8 @@ Shots/Round
     Mimics may get additional shots per round if the monster form they use has
     the ability to shoot with ranged weapons (see (6.7) for details).
 Infra-Vision
-    How far you can see warm-blooded monsters in the dark.
+    How far you can see warm-blooded monsters in the dark, even those that are
+    invisible to normal sight.
     10 ft equal a distance of 1 field.
     IV can be very helpful for spotting monsters outside of your light radius
     that don't carry a light source themselves.
