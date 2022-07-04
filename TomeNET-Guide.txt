@@ -3093,7 +3093,7 @@ If you rely on melee weapons you must try to get your hands on an artifact
 since these resist Nazgul greatly! The Stormbringer also resists like an
 artifact. (It doesn't matter if the artifact is a random or a static one.)
 If your weapon gets destroyed you'll receive a warning message:
-"Your weapon *DISINTEGRATES*!" or "Your weapon is destroyed !"
+"Your weapon *DISINTEGRATES*!" or "Your weapon is destroyed!"
 (The permanently cursed weapon 'Mighty Hammer "Grond"' cannot be destroyed.
 See (5.9b) for more information about artifacts.)
 

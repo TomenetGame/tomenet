@@ -595,7 +595,7 @@ bool set_tim_esp(int Ind, int v) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->tim_esp) {
-			msg_print(Ind, "Your mind expands !");
+			msg_print(Ind, "Your mind expands!");
 			notice = TRUE;
 		}
 	}
@@ -643,7 +643,7 @@ bool set_st_anchor(int Ind, int v) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->st_anchor) {
-			//msg_print(Ind, "The Space/Time Continuum seems to solidify !");
+			//msg_print(Ind, "The Space/Time Continuum seems to solidify!");
 			msg_print(Ind, "\377sThe air feels very still.");
 			notice = TRUE;
 		}
@@ -690,7 +690,7 @@ bool set_prob_travel(int Ind, int v) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->prob_travel) {
-			msg_print(Ind, "You feel instable !");
+			msg_print(Ind, "You feel instable!");
 			notice = TRUE;
 		}
 	}
@@ -1152,7 +1152,7 @@ bool set_tim_traps(int Ind, int v) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->tim_traps) {
-			msg_print(Ind, "You can avoid all the traps !");
+			msg_print(Ind, "You can avoid all the traps!");
 			notice = TRUE;
 		}
 	}
@@ -2623,7 +2623,7 @@ bool set_invuln(int Ind, int v) {
 	if (v) {
 		if (!p_ptr->invuln) {
 			p_ptr->invuln_dur = v;
-			msg_print(Ind, "\377A powerful iridescent shield forms around your body!");
+			msg_print(Ind, "\377vA powerful iridescent shield forms around your body!");
 			notice = TRUE;
 		} else if (p_ptr->invuln > 5 && v <= 5) {
 			msg_print(Ind, "\376\377vThe invulnerability shield starts to fade...");

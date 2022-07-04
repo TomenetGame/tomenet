@@ -2250,7 +2250,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 				bcost = amt * 2000;
 				if(p_ptr->au >= bcost) {
 					paid = TRUE;
-					msg_print(Ind, "You have bought some firestones !");
+					msg_print(Ind, "You have bought some firestones!");
 
 					/* Hack -- Give the player Firestone! */
 					q_ptr = &forge;
@@ -2275,7 +2275,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 				if (p_ptr->chp <= 0) p_ptr->chp = 1;
 			} else {
 				msg_print(Ind, "Hum .. you are NOT a DragonRider, "
-						"you need a dragon to go between !");
+						"you need a dragon to go between!");
 			}
 			break;
 #endif	// 0
