@@ -156,7 +156,8 @@ Contents
     (5.20b) Digging - common example values
     (5.20c) Digging - further information
     (5.21)  Recharging
-    (5.22)  Wraithform
+    (5.22)  Enchanting
+    (5.23)  Wraithform
 (6) Character details
     (6.1)   Attributes
     (6.2)   Skills, opposed skills
@@ -571,8 +572,8 @@ e       e       display your equipment. You can then press SHIFT + equipment
 I       I       inspects an item, showing its special abilities in case it
                 has some. To examine an item you must either have bought it
                 from a shop or *identified* it. Mages can learn *ID* spell
-                "Greater Identify", some shops offer *ID* service, or you can
-                use a scroll of *identify*. If the item hasn't been
+                "Greater Identify", some shops offer *ID* service (see (4.5a)),
+                or you can use a scroll of *identify*. If the item hasn't been
                 *identified* yet, you will only see basic information.
                 If the item could in theory have powers that will only be clear
                 after *identification* then inspecting the item will tell you:
@@ -11267,7 +11268,7 @@ to 'Examine an item'. For items in your inventory or equipment it is the 'I'
 key instead. To get a full list of an items magical abilities outside of stores
 requires that you already *identified* the item or bought it from a shop.
 Items that are bought from a shop are always automatically *identified*.
-Some shops offer an *identify* service but they are quite expensive.
+Some shops offer an *identify* service (see (4.5a)), for a fee, of course.
 
 Ego items (sometimes) and random artifacts (always) have powers that you cannot
 be certain about unless you *identify* the item.
@@ -11391,9 +11392,9 @@ the spoiler files section (7.4) or further explanations in (5.8) and (5.9).
 There are different stages and types of identification:
 a) pseudo-indentification.
    This gives you one of the basic feelings like {good}, described above.
-b) identification via ID (eg by scroll, staff or shop service - or from trying
-   to use the item, if your character is able to observe any result, in which
-   case it might yield some experience even):
+b) identification via ID (eg by scroll, staff or shop service (see (4.5a)) -
+   or from trying to use the item, if your character is able to observe any
+   result, in which case it might yield some experience even):
    This actually does two types of identification!
    1) It identifies the magical properties of an item, such as
       +hit, +damage, +ac, names of ego powers or artifact power.
@@ -11410,7 +11411,7 @@ b) identification via ID (eg by scroll, staff or shop service - or from trying
       'clear potion of water'. However, this flavour is now only know to you.
       Other characters who have not yet identified a clear potion on their own
       will still not know that it's a 'clear potion of water'.
-c) identification via *ID* (eg by scroll, staff or shop service):
+c) identification via *ID* (eg by scroll, staff or shop service (see (4.5a))):
    This is the same as ID but additionally reveals all details of all ego- or
    artifact powers the item has.
    This can lead to an increase in price if some of those powers were not
@@ -12634,7 +12635,7 @@ Weapons of the Thunderlords: Teleportation.
 Weapons of Spinning: Spin attack.
 Fury weapons: Fury.
 Noldor caps: Treasure detection.
-Spectral weapons: Wraithform (see (5.22)).
+Spectral weapons: Wraithform (see (5.23)).
 
 Serpent amulets: Poison breath.
 Moon amulets: Sleep monsters.
@@ -14060,8 +14061,8 @@ depleted, while rods (and other, not manually rechargeable items) will
 automatically recharge themselves over time, displaying 'charging' label or
 just '#' if the item name is very long and there's not enough space.
 
-Recharging can be done via shop service, a scroll, another magic device or a
-magic spell.
+Recharging can be done via shop service (see (4.5a)), a scroll, another magic
+device or a magic spell.
 For wands and staves recharging will replenish their charges, while for rods
 recharging will reduce their 'charging' delay, aka refill their energy.
 
@@ -14085,7 +14086,7 @@ risk.
 Means of recharging:
 -Scrolls            (60 power)
 -Thingol artifact   (60..100 power, depending on magic device skill)
--Shop service       (80 power)
+-Shop service       (80 power, see (4.5a))
 -Magic spell        (10..140 power)
 
 The power determines both, the chance of succeeding in recharging the item and
@@ -14105,7 +14106,78 @@ recharging, just don't go too crazy with the stacks size.
 
 
 
-(5.22) Wraithform
+(5.22) Enchanting
+-----------------
+Weapons and armour can be enchanted. There are three types of enchantments:
+ - to armour class (in short "to-a" or "to-ac")
+ - to hit chance (in short "to-h" or "to-hit")
+ - to damage (in short "to-d" or "to-dam")
+
+Armour can only be enchanted to-a, even if it's for example a pair of slaying
+gloves that come with a (+hit,+dam) modifier on them.
+Weapons can only be enchanted to-h and to-d.
+Some items cannot be enchanted at all:
+ - All artifacts.
+ - Ego items that have the NO_ENCHANT flag, for example "(*Defender*)" weapons.
+ - Normal items that have the NO_ENCHANT flag, which are Dark Swords and all
+   three types of "Magic" ammo.
+
+To enchant an item, you can either use scrolls (available at the Alchemist or
+the Black Market) or enchantment shop services (see (4.5a)).
+There are big differences between the effects:
+ - Shop services always enchant one of your equipped items (which is eligible
+   for enchanting) to 5 + (yourlevel / 5), capping at 20. So you reach that
+   cap at character level 75 (75/5 + 5 = 20). For ammunition the service caps
+   at +15,+15, as ammunition can - in general - never be enchanted higher.
+   These services are pretty expensive but can deliver the best result if your
+   level is high enough. Their enchantment attempt always has a 100% chance to
+   succeed.
+ - Basic enchanting scrolls:
+    - Scroll of Enchant Armour
+    - Scroll of Enchant Weapon To-Hit
+    - Scroll of Enchant Weapon To-Dam
+   These enchant +1 point at a time, but have a chance to fail the higher the
+   item is already enchanted. It is hard to get above +10, but the theoretical
+   maximum reachable with these is +15.
+ - High-power enchanting scrolls:
+    - Scroll of *Enchant Armour*
+    - Scroll of *Enchant Weapon*
+   These scrolls will never fail and can reach a maximum of up to +15.
+   The weapon-enchanting scroll can enchant either hit or damage, randomly, or
+   even both of them.
+   If an item enchantment is below 10, then these scrolls can sometimes enchant
+   it by multiple points at once.
+
+Details about enchanting via scrolls:
+- Items whose enchantment is below 0 will have a 100% enchantment success rate,
+  however it might be much cheaper to just use the 'Repair' shop service in
+  town, of either the weaponsmith or the armoury.
+- If you try to enchant piles of items, the success chance drops to 1/pilesize.
+- If you try to enchant ammunition, the success chance increases twentyfold.
+- Enchanting an item to at least +0 or better also has a chance to break a
+  curse, even a heavy curse (see (5.14) about curses), every time you enchant
+  it. If it doesn't break at +0 immediately, just keep enchanting it more.
+  This method might be cheaper than buying a scroll of *Remove Curse* in many
+  cases. For cursed weapons that have both to-h and to-d enchantments in the
+  negative you should therefore pick the (arithmetically) higher value of these
+  two to enchant, in order to reach +0 faster and therefore save cash.
+  Permanent curses can never be broken, obviously.
+
+To-dam enchantments on ranged weapons, ie slings, bows or crossbows, will get
+their effect multiplied by the weapon's multiplier (given in parentheses),
+making to-dam enchantments especially effective on ranged weapons.
+Eg a Long Bow (x3) (+2,+5) will add +15 damage to each shot, resulting as
+product from its +5 to-dam enchantment multiplied by its x3 launcher multiplier
+for a 5*3 = 15 total damage bonus.
+
+Items that are enchanted will have their item level set to at least the value
+of their currently highest enchantment. Eg if you enchant a level 1 dagger
+from whatever it was before to now (+3,+11), its level will be set to 11.
+(The item level will of course not be adjusted downwards by enchanting.)
+
+
+
+(5.23) Wraithform
 -----------------
 Wraithform, or "pass wall" form is a character state obtained by spell or item:
 -Spectral weapons ('A' to activate one for temporary wraithform).
@@ -14257,8 +14329,8 @@ Charisma (CHR)
      Shop prices have certain limits though that you might hit when your race
      is already liked by the shop keeper, where even more CHR won't further
      improve your bargains.
-     Certain shops also provide services for a fee. Unlike item prices, these
-     fees are not affected by charisma.
+     Certain shops also provide services for a fee (see (4.5a)). Unlike item
+     prices, these fees are not affected by charisma.
     -Also affects house prices, buying and selling.
     -Allows you to resist getting seduced.
     -Affects mindcrafters' mana pool somewhat.
