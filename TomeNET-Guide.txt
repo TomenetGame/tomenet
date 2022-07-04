@@ -5066,7 +5066,8 @@ between the three chat modes:
 
 Note: While TAB cycles forward, you can also press CTRL+U to cycle backwards,
 CTRL+A to switch to 'normal' mode, CTRL+T to switch to 'party' (team) mode,
-CTRL+G for 'guild' mode and CTRL+L for 'level' (floor) mode.
+CTRL+G for 'guild' mode and CTRL+F for floor mode (current dungeon level, or
+gets converted to a "/say" action if not in a dungeon).
 
 Also you can use the following prefixes in the beginning of a chat line,
 to get similar behaviour as in one of the chat modes just for one line:
