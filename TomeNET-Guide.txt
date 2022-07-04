@@ -8281,7 +8281,7 @@ The ability to set up a trap can be accessed by pressing the 'm' key
 or by utilizing the macro wizard (press % and z to start it).
 
 A monster trap consists of
--a trap kit
+-a trap kit (get a trap kit bag from the general store to save inventory slots)
 -an item (or a stack of items) to load the trap kit.
 
 Each kind of trap kit requires different items serving as ammunition:
