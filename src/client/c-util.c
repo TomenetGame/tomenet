@@ -2122,7 +2122,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 	int l = 0; /* Is the cursor location on line */
 	int j, j2; /* Loop iterator */
 
-	bool search = FALSE;
+	bool search = FALSE, search_changed;
 	int sp_iter = 0, sp_size = 0, sp_end = 0;
 	msg_hist_var *sp_msg = NULL;
 
@@ -2188,6 +2188,8 @@ bool askfor_aux(char *buf, int len, char mode) {
 
 	/* Process input */
 	while (!done) {
+		search_changed = FALSE;
+
 		/* Place cursor */
 		if (strlen(buf) > vis_len) {
 			if (l > strlen(buf) - vis_len)
@@ -2395,6 +2397,27 @@ bool askfor_aux(char *buf, int len, char mode) {
 			break;
 
 		case KTRL('F'): /* Floor/Depth/Level */
+			/* Alternative behaviour while in 'searching' mode:
+			   Searching for text in a previously entered chat message: Get previous match. */
+			if (search && !nohist) { /* We are in 'message history searching' mode (and a message history does actually exist - paranoia) */
+				if (!buf[0]) continue; /* Nothing typed in yet */
+				if (sp_iter == sp_size) continue; /* No match exists at all */
+
+				/* Go reverse: Look for previous match.. */
+				for (j = sp_iter - 1; j > -sp_end; j--) {
+					j2 = (sp_end - j + MSG_HISTORY_MAX * 2) % MSG_HISTORY_MAX; /* Reverse direction */
+
+					if (!search_history_aux((*sp_msg)[j2], buf)) continue;
+
+					/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
+					c_prt(TERM_YELLOW, format("%s: %s", buf, (*sp_msg)[j2]), y, x);
+					sp_iter = j;
+					break;
+				}
+				break;
+			}
+
+			/* Normal behaviour outside of search-mode: Switch to 'floor' chat mode. */
 			if (mode & ASKFOR_CHATTING) {
 				chat_mode = CHAT_MODE_LEVEL;
 				c_prt(C_COLOUR_CHAT_LEVEL, "Floor: ", 0, 0);
@@ -2617,6 +2640,10 @@ bool askfor_aux(char *buf, int len, char mode) {
 			break;
 
 		default:
+			/* We entered a normal character */
+
+			if (search) search_changed = TRUE; /* Search term was changed */
+
 			/* inkey_letter_all hack for c_get_quantity() */
 			//if (inkey_letter_all && !k && ((i >= 'a' && i <= 'z') || (i >= 'A' && i <= 'Z'))) { i = 'a';
 			if (inkey_letter_all && !k && (i == 'a' || i == 'A' || i == ' ')) { /* allow spacebar too */
@@ -2652,6 +2679,9 @@ bool askfor_aux(char *buf, int len, char mode) {
 
 		/* Are we in message-history-searching mode? */
 		if (search) {
+			/* We didn't enter a normal character that changes our search string? Nothing to do then. */
+			if (!search_changed) continue;
+
 			/* empty search string initially */
 			if (!buf[0]) {
 				/* just skip.. */

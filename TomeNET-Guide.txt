@@ -1127,6 +1127,7 @@ CTRL+C      Search history of chat messages you typed. Press CTRL+C again for
             that contained an 'h' which was followed at some point by an 'w'
             which in turn was followed at some point by a '4', such as:
             "oh wow, found 4 arts!".
+            To jump back to the previous search result, press CTRL+F.
 
 CTRL+K      Copies currently typed chat line to clipboard.
             Note that CTRL+K can also be used inside message recall screen,
