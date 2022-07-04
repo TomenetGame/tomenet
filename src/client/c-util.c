@@ -2234,6 +2234,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 				/* Move the rest of the line one back */
 				for (j = l + 1; j < k; j++) buf[j - 1] = buf[j];
 				k--;
+				if (search) search_changed = TRUE; /* Search term was changed */
 			}
 			break;
 
@@ -2242,6 +2243,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			if (k == l && k > 0) {
 				k--;
 				l--;
+				if (search) search_changed = TRUE; /* Search term was changed */
 			}
 			if (k > l && l > 0) {
 			  /* Move the rest of the line one back, including
@@ -2249,6 +2251,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 				for (j = l; j < k; j++) buf[j - 1] = buf[j];
 				l--;
 				k--;
+				if (search) search_changed = TRUE; /* Search term was changed */
 			}
 			break;
 
@@ -2503,6 +2506,8 @@ bool askfor_aux(char *buf, int len, char mode) {
 			for (j = 0; j < strlen(buf) - l_old; j++) buf[l + j] = buf[l_old + j];
 			k -= l_old - l;
 			if (k < 0) k = l = 0;
+
+			if (search) search_changed = TRUE; /* Search term was changed */
 			break;
 			}
 
@@ -2625,6 +2630,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 					strcat(buf, tmpbuf);
 					k += tmpl;
 					l += tmpl;
+					if (search) search_changed = TRUE; /* Search term was changed */
 				}
 			}
 			/* Paste at current cursor position after moving
@@ -2635,6 +2641,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 					strncpy(&buf[l], tmpbuf, tmpl); //exclude terminating 0
 					l += tmpl; //maybe keep cursor position instead of moving forward? but this seems better for now
 					k += tmpl;
+					if (search) search_changed = TRUE; /* Search term was changed */
 				}
 			}
 			break;
