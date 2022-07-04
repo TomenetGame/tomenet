@@ -2814,7 +2814,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			/* abuse chapter searching for extra functionality: search for chapter about a specific main term? */
 			if (isalpha(buf[0])) {
 				int find;
-				char tmpbuf[MAX_CHARS];
+				char tmpbuf[MAX_CHARS], temp_priority[MAX_CHARS] = { 0 };
 
 				chapter[0] = 0;
 
@@ -3343,8 +3343,22 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					break;
 				}
 
+#if 1 /* prefix partial match moved up to here, was just the last thing further down before */
+				/* First try to match beginning of title */
+				for (i = 0; i < guide_chapters; i++) {
+					if (my_strcasestr(guide_chapter[i], buf) == guide_chapter[i]) {
+						/* Keep for now, as we want to give this priority over any partial matches EXCEPT for some special shortcuts, see below.. */
+						strcpy(temp_priority, "(");
+						strcat(temp_priority, guide_chapter_no[i]);
+						strcat(temp_priority, ")");
+						break;
+					}
+				}
+#endif
+
 				/* Partial matches - Any */
 
+			    if (!temp_priority[0]) {
 				//race/class any match
 				for (i = 0; i < guide_races; i++) {
 					if (!my_strcasestr(guide_race[i], buf)) continue;
@@ -3405,8 +3419,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					break;
 				}
 				if (chapter[0]) continue;
+			    } /* <temp_priority[] overrode these.> */
 
-				/* Additions */
+				/* Additions -- can override temp_priority[] (guide chapter prefix match) again. */
 				if (my_strcasestr(buf, "Line") && !(my_strcasestr(buf, "command") || my_strcasestr(buf, "cmd"))) { //draconian lineages
 					strcpy(chapter, "    Lineage");
 					continue;
@@ -3448,8 +3463,15 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					continue;
 				}
 
+			    /* Handle temp_priority[] at this point: */
+			    if (temp_priority[0]) {
+				strcpy(chapter, temp_priority);
+				continue;
+			    }
+
 				/* If not matched, lastly try to (partially) match chapter titles */
 
+#if 0 /* prefix partial match moved up */
 				/* First try to match beginning of title */
 				for (i = 0; i < guide_chapters; i++) {
 					if (my_strcasestr(guide_chapter[i], buf) == guide_chapter[i]) {
@@ -3460,6 +3482,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					}
 				}
 				if (chapter[0]) continue;
+#endif
 				/* If no match, try to match anywhere in title */
 				for (i = 0; i < guide_chapters; i++) {
 					if (!my_strcasestr(guide_chapter[i], buf)) continue;
