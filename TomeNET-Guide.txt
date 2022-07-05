@@ -8371,9 +8371,9 @@ If monsters notice a trap they can try to disarm it:
 - Shooter traps (catapult, arrow, bolt) are somewhat easier to disarm than the
   other, more elaborate types.
 
-- If your trap is placed on a grid that is dark instead of lit, the monster
+- If your trap is located on a grid that is dark instead of lit, the monster
   will have a significantly lower chance to disarm it. In general, you always
-  want to place your traps on non-lit grids for this reason.
+  want to have your traps on non-lit grids for this reason, if possible.
 
 Trap kits and ammo that were disarmed by a monster cannot be recovered.
 
