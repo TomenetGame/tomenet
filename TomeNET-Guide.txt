@@ -1931,6 +1931,9 @@ incorporated into any text you type in chat:
             If the item in question has any random magic powers, those will be
             displayed as additional item inscription. (Fixed powers won't be
             shown, in order to keep the whole message as short as possible.)
+\\_         Will paste the item that is 'under your feet', which is the item on
+            the floor where you are standing right now. (You can press '_' key
+            to enforce checking what's under your feet.)
 
 
 Elevated commands / privileged accounts

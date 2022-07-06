@@ -696,3 +696,4 @@ unsigned char lamp_fainting = 0;
 bool insanity_death = FALSE;
 
 char screenshot_filename[1024] = { 0 };
+char whats_under_your_feet[ONAME_LEN];

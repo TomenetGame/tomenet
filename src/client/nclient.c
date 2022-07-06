@@ -5323,6 +5323,7 @@ int Receive_whats_under_you_feet(void) {
 	}
 
 	prt_whats_under_your_feet(o_name, crossmod_item, cant_see, on_pile);
+	strcpy(whats_under_your_feet, o_name);
 
 	if (c_cfg.auto_pickup || c_cfg.auto_destroy) apply_auto_pickup(o_name);
 

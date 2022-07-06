@@ -5405,24 +5405,26 @@ void cmd_message(void) {
 			if ((i == 0 || buf[i - 1] != '\\') && /* don't confuse with '\\\' store pasting */
 			    buf[i] == '\\' &&
 			    buf[i + 1] == '\\' &&
-			    ((buf[i + 2] >= 'a' && buf[i + 2] < 'a' + INVEN_PACK) ||
-			    (buf[i + 2] >= 'A' && buf[i + 2] < 'A' + (INVEN_TOTAL - INVEN_WIELD)))) {
-				if (buf[i + 2] >= 'a') j = buf[i + 2] - 'a';
-				else j = (buf[i + 2] - 'A') + INVEN_WIELD;
+			    ((buf[i + 2] >= 'a' && buf[i + 2] < 'a' + INVEN_PACK) || /* paste inventory item */
+			    (buf[i + 2] >= 'A' && buf[i + 2] < 'A' + (INVEN_TOTAL - INVEN_WIELD)) || /* paste equipment item */
+			    buf[i + 2] == '_')) { /* paste floor item, or rather: what's under your feet */
+				if (buf[i + 2] == '_') strcpy(item, whats_under_your_feet);
+				else if (buf[i + 2] >= 'a') strcpy(item, inventory_name[buf[i + 2] - 'a']);
+				else strcpy(item, inventory_name[(buf[i + 2] - 'A') + INVEN_WIELD]);
 
 				/* prevent buffer overflow */
-				if (strlen(buf) - 3 + strlen(inventory_name[j]) + 2 + 1 + 1 < MSG_LEN) {
+				if (strlen(buf) - 3 + strlen(item) + 2 + 1 + 1 < MSG_LEN) {
 					strcpy(tmp, &buf[i + 3]);
 					strcpy(&buf[i], "\377s");
 
 					/* if item inscriptions contains a colon we might need
 					   another colon to prevent confusing it with a private message */
-					strcat(buf, inventory_name[j]);
-					if (strchr(inventory_name[j], ':')) {
-						buf[strchr(inventory_name[j], ':') - inventory_name[j] + strlen(buf) - strlen(inventory_name[j]) + 1] = '\0';
+					strcat(buf, item);
+					if (strchr(item, ':')) {
+						buf[strchr(item, ':') - item + strlen(buf) - strlen(item) + 1] = '\0';
 						if (strchr(buf, ':') == &buf[strlen(buf) - 1])
 							strcat(buf, ":");
-						strcat(buf, strchr(inventory_name[j], ':') + 1);
+						strcat(buf, strchr(item, ':') + 1);
 					}
 
 					if (tmp[0]) {
