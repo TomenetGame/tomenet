@@ -1333,6 +1333,9 @@ s16b get_mon_num(int level, int dlevel) {
 		if ((r_ptr->flags7 & RF7_OOD_20) && (entry->level > level + 20))
 			continue;
 
+		/* 2022 - For low dungeon levels, make OoD less harsh: [10..40] levels OoD from depth (20..50), narrowly prohibiting Nazgul in the Orc Caves. */
+		if (level < 50 && entry->level > level - 10 + (level > 20 ? level : 20)) continue;
+
 		/* Accept */
 		entry->prob3 = p;
 
@@ -3378,6 +3381,9 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 8\n");
 			return 44;
 		if ((r_ptr->flags7 & RF7_OOD_20) && (dlev + 20 < r_ptr->level))
 			return 45;
+
+		/* 2022 - For low dungeon levels, make OoD less harsh: [10..40] levels OoD from depth (20..50), narrowly prohibiting Nazgul in the Orc Caves. */
+		if (dlev < 50 && r_ptr->level > dlev - 10 + (dlev > 20 ? dlev : 20)) return 45;
 	}
 #ifdef PMO_DEBUG
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 9\n");
