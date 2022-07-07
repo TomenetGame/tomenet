@@ -35,6 +35,6 @@ s  Search      S  Search mode   }  Uninscribe        \{B(auto-save window layout
 \{Bt  Take off\{w       (toggle)      '  Inspect party member or nearby/lowbie player
 u  Use staff   T  Tunnel (dig)  _  Sip from fountain or show item on the floor
 v  Throw       V  Cloak         ?  Help/Guide      SPACE   Stop auto-repeating
-\{Bw  Wear/Wield\{w  W  Wear/Wield 2  ;  \{sGuide search    \{w[\{s  Repeat chat command
-x  Swap        z  Zap rod       X\{s  Swap equipable items inscribed @x0
-\{w,\{s  Reply to a private message\{w   F1\{s Fire your ranged weapon at closest monster
+\{Bw  Wear/Wield\{w  W  Wear/Wield 2  \{s;  Guide search    [  Repeat chat command
+x  Swap        z  Zap rod       \{sX  Swap equipable items inscribed @x0
+\{s,  Reply to a private message   F1 Fire your ranged weapon at closest monster
