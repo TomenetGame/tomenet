@@ -5142,17 +5142,42 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if (n) C_KILL(id_list, n, int);
 			WIPE(&acc, struct account);
 			return;
+		} else if (prefix(messagelc, "/ing") || prefix(messagelc, "/ingredients")) { /* toggle item-finding part of the Demolitionist perk */
+			bool pois = (p_ptr->melee_techniques & MT_POISON);
+
+			/* Eligible for this command? */
 #ifdef ENABLE_DEMOLITIONIST
-		} else if (prefix(messagelc, "/demo") || prefix(messagelc, "/demolitionist")) { /* toggle item-finding part of the Demolitionist perk */
-			if (get_skill(p_ptr, SKILL_DIG) < ENABLE_DEMOLITIONIST) {
-				msg_print(Ind, "\377yThis command can only be used by demolitionists.");
+			if (get_skill(p_ptr, SKILL_DIG) < ENABLE_DEMOLITIONIST && !pois) {
+				msg_print(Ind, "\377yThis command can only be used by demolitionists or those proficient in the 'Apply Poison' technique.");
 				return;
 			}
-			p_ptr->suppress_ingredients = !p_ptr->suppress_ingredients;
-			if (p_ptr->suppress_ingredients) msg_print(Ind, "You won't find ingredients for your demolitionist perk.");
-			else msg_print(Ind, "You will find ingredients for your demolitionist perk.");
-			return;
+#else
+			if (!pois) {
+				msg_print(Ind, "\377yThis command can only be used if proficient in the 'Apply Poison' technique.");
+				return;
+			}
 #endif
+
+			/* Toggle all ingredients-finding */
+			p_ptr->suppress_ingredients = !p_ptr->suppress_ingredients;
+
+			/* Notify us about current toggle status */
+			if (p_ptr->suppress_ingredients) {
+#ifdef ENABLE_DEMOLITIONIST
+				if (pois) msg_print(Ind, "You won't find ingredients for demolition or your 'Apply Poison' technique.");
+				else msg_print(Ind, "You won't find ingredients for your demolitionist perk.");
+#else
+				msg_print(Ind, "You won't find ingredients for your 'Apply Poison' technique.");
+#endif
+			} else {
+#ifdef ENABLE_DEMOLITIONIST
+				if (pois) msg_print(Ind, "You will find ingredients for demolition or your 'Apply Poison' technique.");
+				else msg_print(Ind, "You will find ingredients for your demolitionist perk.");
+#else
+				msg_print(Ind, "You will find ingredients for your 'Apply Poison' technique.");
+#endif
+			}
+			return;
 		}
 
 

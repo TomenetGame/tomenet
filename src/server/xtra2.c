@@ -6421,6 +6421,27 @@ bool monster_death(int Ind, int m_idx) {
     }
 #endif
 
+	/* Rogues can harvest poison for their Apply Poison technique */
+	if ((p_ptr->melee_techniques & MT_POISON) && (r_ptr->flags4 & RF4_BR_POIS) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
+		if (!p_ptr->suppress_ingredients && rand_int(7) < r_ptr->weight / 1000) {
+			object_type forge;
+
+			invcopy(&forge, lookup_kind(TV_POTION, SV_POTION_POISON));
+			s_printf("MT_POISON: %s found poison (kill).\n", p_ptr->name);
+			forge.owner = p_ptr->id;
+			forge.ident |= ID_NO_HIDDEN;
+			forge.mode = p_ptr->mode;
+			forge.iron_trade = p_ptr->iron_trade;
+			forge.iron_turn = turn;
+			forge.level = 0;
+			forge.number = 1 + rand_int(r_ptr->weight / 30000);
+			forge.weight = k_info[forge.k_idx].weight;
+			forge.marked2 = ITEM_REMOVAL_NORMAL;
+			drop_near(0, &forge, -1, wpos, y, x);
+			//found_chemical = TRUE;
+		}
+	}
+
 	/* Forget it */
 	unique_quark = 0;
 

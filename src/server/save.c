@@ -761,23 +761,14 @@ static void wr_extra(int Ind) {
 	wr_s32b(p_ptr->turns_idle);
 	wr_s32b(p_ptr->turns_active);
 
-#if 0
-	/* Ignore the transient stats */
-	for (i = 0; i < 10; ++i) wr_s16b(0);
-#else
 	for (i = 0; i < 7; ++i) wr_byte(0); //unused
 
- #ifdef ENABLE_DEMOLITIONIST
 	wr_byte(p_ptr->suppress_ingredients);
- #else
-	wr_byte(0);
- #endif
 
 	wr_u16b(p_ptr->house_num);
 	wr_s16b(p_ptr->mutedtemp);
 	wr_s32b(p_ptr->iron_trade);
 	wr_s32b(p_ptr->iron_turn);
-#endif
 
 	wr_u32b(p_ptr->au);
 

@@ -2609,7 +2609,18 @@ static void sync_options(int Ind, bool *options) {
 	}
 
 	if (p_ptr->limit_chat) msg_print(Ind, "\377yYou have enabled '\377olimit_chat\377y' in \377o=2\377y. Your chat is not globally visible!");
-	if (p_ptr->suppress_ingredients) msg_print(Ind, "Ingredient drops for your demolitionist perk are currently suppressed.");
+	if (p_ptr->suppress_ingredients) {
+#ifdef ENABLE_DEMOLITIONIST
+		if (get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST) {
+			if ((p_ptr->melee_techniques & MT_POISON))
+				msg_print(Ind, "Ingredient drops for your demolitionist perk and for your 'Apply Poison' technique are currently suppressed.");
+			else
+				msg_print(Ind, "Ingredient drops for your demolitionist perk are currently suppressed.");
+		} else
+#endif
+		if ((p_ptr->melee_techniques & MT_POISON))
+			msg_print(Ind, "Ingredient drops for your 'Apply Poison' technique are currently suppressed.");
+	}
 }
 
 /* Set font/graf visuals mapping according to the player's wishes,

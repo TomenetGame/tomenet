@@ -2773,8 +2773,8 @@ struct player_type {
 	s16b current_tome_creation;	/* adding a spell scroll to a custom tome - C. Blue */
 #ifdef ENABLE_DEMOLITIONIST
 	s16b current_chemical;
-	bool suppress_ingredients;	/* don't find ingredients */
 #endif
+	bool suppress_ingredients;	/* don't find ingredients */
 	s16b current_rune;
 	s16b current_force_stack;	/* which level 0 item we're planning to stack */
 	s16b current_wand;

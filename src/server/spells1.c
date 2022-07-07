@@ -3045,7 +3045,7 @@ int inven_damage(int Ind, inven_func typ, int perc) {
 						break;
 					}
 
-				/* Fireworks and blast charges blow up -- todo: implement */
+				/* Fireworks and blast charges blow up */
 				if (typ == set_fire_destroy)
 					switch (o_ptr->tval) {
 					case TV_SCROLL:
@@ -3058,10 +3058,10 @@ int inven_damage(int Ind, inven_func typ, int perc) {
 #ifdef ENABLE_DEMOLITIONIST
 					case TV_CHARGE:
 						bypass_invuln = TRUE;
-						/* TODO? Blow up. Note that detonate_charge() won't work cause it requires a cs_ptr, ie armed charge in the ground.
+						/* Blow up? Note that detonate_charge() won't work cause it requires a cs_ptr, ie armed charge in the ground.
 						   However, this seems like overkill. We can just assume that blast charges have a protective outer shell and don't
 						   just blow up randomly, except when explicitely lit by a fuse.
-						   So for now: -- Blast charges are safe! --
+						   So for now: -- Blast charges are safe! Nothing to see here! --
 						*/
 						bypass_invuln = FALSE;
 						break;
