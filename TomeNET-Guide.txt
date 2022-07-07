@@ -8322,6 +8322,10 @@ neverending, except for 'Extra Shots' trap kits - because they fire multiple
 simultaneous shots, they will require the appropriate amount of ammo.
 If you load a trap kit with less than optimal ammo, it will still work though.
 
+Physical-missile trap kits, those are catapult, arrow and bolt trap kits, can
+also be enchanted to hit and to damage with enchant weapon scrolls, same as any
+other weapon.
+
 Trap kits can have special (ego) powers:
 (prefixes:)
 Automatic       - Can set off up to 99 times, with a 20% chance each time of
@@ -14124,7 +14128,9 @@ recharging, just don't go too crazy with the stacks size.
 
 (5.22) Enchanting
 -----------------
-Weapons and armour can be enchanted. There are three types of enchantments:
+Weapons (including physical-missile trap kits, that is: Catapult, Arrow
+and Bolt trap kits) and armour can be enchanted. There are three types of
+enchantments:
  - to armour class (in short "to-a" or "to-ac")
  - to hit chance (in short "to-h" or "to-hit")
  - to damage (in short "to-d" or "to-dam")
