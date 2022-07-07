@@ -138,7 +138,7 @@ void do_cmd_go_up(int Ind) {
 #endif
 	int i;
 #ifdef PROBTRAVEL_AVOIDS_OTHERS
-	int z;
+	int z = 0; /* Just to suppress compiler warning */
 #endif
 #ifdef NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
 	struct dun_level *l_ptr;
@@ -887,7 +887,7 @@ void do_cmd_go_down(int Ind) {
 #endif
 	int i;
 #ifdef PROBTRAVEL_AVOIDS_OTHERS
-	int z;
+	int z = 0; /* Just to suppress compiler warning */
 #endif
 #ifdef NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
 	struct dun_level *l_ptr;
