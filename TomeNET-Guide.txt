@@ -3666,12 +3666,23 @@ found, preventing TomeNET from starting. A fix according to "N der Fuenfte":
 Starting with version 4.4.5, TomeNET features a new SDL-based audio system,
 which provides sound effects and background music.
 
-To make use of it, all you have to do is download a sound and/or music pack and
-then install it. For downloading, go to www.tomenet.eu and then click on
-'Downloads'.
-Read on for instructions how to install those once you downloaded them. There
-are two ways, automatically (client does it for you) and manually (you unzip
-them to the correct location yourself):
+If you don't aim at installing specific 3rd-party packs but just want to add
+sound or music capabilities to your installation, because your current version
+does not have these, the easiest way is to go to the TomeNET website and just
+download the full installer that comes with music and sound and install it over
+your existing TomeNET installation. This will preserve your configuration while
+updating everything to the latest version and also adding sound and music.
+For details on this see (2.1) and then 'Updating via reinstallation'.
+
+For a more chirurgical way to specifically just install an audio pack (music
+pack or sound pack), read on:
+
+All you have to do is download a sound and/or music pack and then install it.
+For downloading the official packs, go to www.tomenet.eu and then click on
+'Downloads'. Other players might offer their own audio packs on the forums.
+Read on for instructions how to install those packs once you downloaded them.
+There are two ways, automatically (client does it for you) and manually (you
+unzip them to the correct location yourself):
 
 
 a) Automatic audio pack installation
