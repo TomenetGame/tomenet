@@ -4419,8 +4419,8 @@ $ENABLE_SUBINVEN$D:A magical cloth for storing devices that don't need to be aim
 N:514:Fast Metabolism
 G:,:r
 I:80:21:500
-W:8:0:1:50
-A:8/1
+W:3:0:1:50
+A:3/1
 D:Adds a small, flat amount to your natural health regeneration temporarily.
 
 
