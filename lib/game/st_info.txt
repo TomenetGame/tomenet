@@ -991,6 +991,7 @@ T:95:80:4
 #unhealth/disease had their price zero'ed for pseudo-id :/
 #T:95:80:10
 #T:95:80:11
+#T:95:80:20 --poison: 0 Au too
 T:95:80:12
 T:95:80:13
 T:95:80:14
@@ -1000,10 +1001,11 @@ T:95:80:17
 T:95:80:18
 T:5:80:19
 T:95:80:20
-T:95:80:21
+T:95:80:0
+T:95:80:206
+T:5:80:207
 T:95:71:1
 T:95:71:2
-T:5:80:37
 I:15:& Pint~ of Fine Wine
 I:20:& Pint~ of Fine Ale
 A:2:1:3:4:0:0
@@ -1461,7 +1463,7 @@ N:76:Black Market
 #,Restoring
 T:20:80:19
 #,Athelas
-T:20:80:40
+T:20:80:210
 #!Curing
 T:10:71:61
 #!Speed
