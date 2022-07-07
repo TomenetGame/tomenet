@@ -4341,16 +4341,6 @@ static void unseal_object(object_type *o_ptr) {
 /* Seal or unseal an object as required,
    or return FALSE if object no longer exists - C. Blue */
 bool seal_or_unseal_object(object_type *o_ptr) {
- #if 0
-	/* Bad hack for mushroom/food expansion */
-	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_SEAL &&
-	    o_ptr->tval2 == TV_FOOD) {
-		o_ptr->tval = o_ptr->tval2;
-		o_ptr->sval = o_ptr->sval2;
-		return TRUE;
-	} else if (o_ptr->tval == TV_FOOD) return TRUE;
-	else
- #endif
 	/* Object does no longer exist? (for example now commented out, in k_info)
 	   - turn it into a 'seal' instead of deleting it! */
 	if (!o_ptr->k_idx) {
@@ -4369,6 +4359,22 @@ bool seal_or_unseal_object(object_type *o_ptr) {
 			o_ptr->tval = o_ptr->tval2;
 			o_ptr->sval = o_ptr->sval2;
 			o_ptr->sval2 = SV_DRAGON_DEATH;
+			o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
+			o_ptr->note = 0;
+			o_ptr->note_utag = 0;
+			return TRUE;
+		}
+ #endif
+ #if 1 /* Bad hack for mushroom/food expansion, just fix the important ones */
+		if (o_ptr->tval2 == TV_FOOD) {
+			o_ptr->tval = o_ptr->tval2;
+			switch (o_ptr->sval2) {
+			case 35: o_ptr->sval = 205; break; //Ration
+			case 32: o_ptr->sval = 202; break; //Biscuit
+			case 33: o_ptr->sval = 203; break; //Venison
+			case 37: o_ptr->sval = 207; break; //Lembas
+			case 40: o_ptr->sval = 210; break; //Athelas
+			}
 			o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 			o_ptr->note = 0;
 			o_ptr->note_utag = 0;
