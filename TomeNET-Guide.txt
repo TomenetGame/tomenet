@@ -14128,8 +14128,8 @@ recharging, just don't go too crazy with the stacks size.
 
 (5.22) Enchanting
 -----------------
-Weapons (including physical-missile trap kits, that is: Catapult, Arrow
-and Bolt trap kits) and armour can be enchanted. There are three types of
+Weapons (including ammunition and physical-missile trap kits, meaning Catapult,
+Arrow and Bolt trap kits) and armour can be enchanted. There are three types of
 enchantments:
  - to armour class (in short "to-a" or "to-ac")
  - to hit chance (in short "to-h" or "to-hit")
@@ -14138,7 +14138,7 @@ enchantments:
 Armour can only be enchanted to-a, even if it's for example a pair of slaying
 gloves that come with a (+hit,+dam) modifier on them.
 Weapons can only be enchanted to-h and to-d.
-Some items cannot be enchanted at all:
+Some weapons and armour though cannot be enchanted at all:
  - All artifacts.
  - Ego items that have the NO_ENCHANT flag, for example "(*Defender*)" weapons.
  - Normal items that have the NO_ENCHANT flag, which are Dark Swords and all
