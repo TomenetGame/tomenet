@@ -562,10 +562,15 @@ static void rd_item(object_type *o_ptr) {
 	/* After 4.8.0: Expand mushroom space - custom.lua must increase updated_server from 2 to 3 then. */
 	if (o_ptr->tval == TV_FOOD && updated_server < 3) {
 		if (o_ptr->sval == 50) o_ptr->sval = 0; //unmagic shroom
-		else if (o_ptr->sval == 0) o_ptr->sval = 20; //poison shroom
+		//else if (o_ptr->sval == 0) o_ptr->sval = 20; //poison shroom
 		else if (o_ptr->sval >= 32 && o_ptr->sval < 100) o_ptr->sval += 170; //food
-		else if (o_ptr->sval >= 20 && o_ptr->sval < 100) o_ptr->sval += 80; //raw food
+		//else if (o_ptr->sval >= 20 && o_ptr->sval < 100) o_ptr->sval += 80; //raw food
 		//rest are shrooms
+	}
+#else /* this softer version can be persistent until the sval space is filled with new additions, no harm until then */
+	if (o_ptr->tval == TV_FOOD) {
+		if (o_ptr->sval == 50) o_ptr->sval = 0; //unmagic shroom
+		else if (o_ptr->sval >= 32 && o_ptr->sval < 100) o_ptr->sval += 170; //food
 	}
 #endif
 
