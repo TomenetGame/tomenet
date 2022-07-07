@@ -14135,14 +14135,16 @@ enchantments:
  - to hit chance (in short "to-h" or "to-hit")
  - to damage (in short "to-d" or "to-dam")
 
-Armour can only be enchanted to-a, even if it's for example a pair of slaying
-gloves that come with a (+hit,+dam) modifier on them.
-Weapons can only be enchanted to-h and to-d.
-Some weapons and armour though cannot be enchanted at all:
- - All artifacts.
- - Ego items that have the NO_ENCHANT flag, for example "(*Defender*)" weapons.
- - Normal items that have the NO_ENCHANT flag, which are Dark Swords and all
-   three types of "Magic" ammo.
+Enchanting restrictions:
+ - Armour can only ever be enchanted to-a, even if it comes with (+hit,+dam)
+   mods on it like for example a pair of gauntlets of slaying.
+ - Weapons can only ever be enchanted to-h and to-d, even if it's a weapon that
+   also comes with an armour class mod, eg a quarterstaff or defender weapon.
+ - Some weapons and armour cannot be enchanted at all:
+    - All artifacts.
+    - Ego items that have the NO_ENCHANT flag, eg "(*Defender*)" weapons.
+    - Normal items that have the NO_ENCHANT flag, which are Dark Swords and all
+      three types of "Magic" ammo.
 
 To enchant an item, you can either use scrolls (available at the Alchemist or
 the Black Market) or enchantment shop services (see (4.5a)).
