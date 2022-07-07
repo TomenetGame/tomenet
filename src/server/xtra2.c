@@ -270,7 +270,9 @@ bool set_tim_thunder(int Ind, int v, int p1, int p2) {
 }
 
 /*
- * Set "p_ptr->tim_regen", notice observable changes
+ * Set "p_ptr->tim_regen", notice observable changes.
+ * 2022 - C. Blue: Changed to provide a flat +HP heal add per tick, which is (fine-grainedly via rand_int())
+ * 1/10 of the 'p' value specified, ie p=10 -> +1 HP per tick healed, p=1 -> 10% chance to heal +1 HP per tick.
  */
 bool set_tim_regen(int Ind, int v, int p) {
 	player_type *p_ptr = Players[Ind];

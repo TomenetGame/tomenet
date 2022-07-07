@@ -181,10 +181,13 @@ REGENERATION = add_spell {
 	["mana_max"] = 	40,
 	["fail"] = 	0,
 	["spell"] = 	function()
-			set_tim_regen(Ind, randint(10) + 5 + get_level(Ind, REGENERATION, 50), 1 + get_level(Ind, REGENERATION, 20))
+			set_tim_regen(Ind, randint(10) + 5 + get_level(Ind, REGENERATION, 50), 10 + get_level(Ind, REGENERATION, 200))
 	end,
 	["info"] = 	function()
-			return "dur "..(5 + get_level(Ind, REGENERATION, 50)).."+d10 power +"..(1 + get_level(Ind, REGENERATION, 20)).."%"
+			local p = 10 + get_level(Ind, REGENERATION, 200)
+			local p10 = p / 10
+			p = p - p10 * 10
+			return "dur "..(5 + get_level(Ind, REGENERATION, 50)).."+d10 heal "..p10.."."..p
 	end,
 	["desc"] = 	{ "Increases your body's regeneration rate.", }
 }

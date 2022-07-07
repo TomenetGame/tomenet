@@ -5027,7 +5027,7 @@ static bool process_player_end_aux(int Ind) {
 				if (p_ptr->regenerate || p_ptr->xtrastat_tim) i += 30;
 
 				/* Regeneration (but not Nether Sap) takes more food */
-				if (p_ptr->tim_regen && p_ptr->tim_regen_pow > 0) i += p_ptr->tim_regen_pow;
+				if (p_ptr->tim_regen && p_ptr->tim_regen_pow > 0) i += p_ptr->tim_regen_pow / 10;
 
 				j = 0;
 
@@ -5172,12 +5172,13 @@ static bool process_player_end_aux(int Ind) {
 	/* Increase regeneration by flat amount from timed regeneration powers */
 	if (p_ptr->tim_regen) {
 		/* Regeneration spell (Nature) and mushroom of fast metabolism */
-		if (p_ptr->tim_regen_pow > 0) hp_player_quiet(Ind, p_ptr->tim_regen_pow, TRUE);
+		if (p_ptr->tim_regen_pow > 0) hp_player_quiet(Ind, p_ptr->tim_regen_pow / 10 + (magik((p_ptr->tim_regen_pow % 10) * 10) ? 1 : 0), TRUE);
 		/* Nether Sap spell (Unlife) */
 		else if (p_ptr->tim_regen_pow < 0 && p_ptr->csp >= 10) {
 			p_ptr->csp -= 10;
-			hp_player_quiet(Ind, -p_ptr->tim_regen_pow, TRUE); /* Cannot be using Martyr as true vampire, so no need to check for regen inhibition */
 			p_ptr->redraw |= PR_MANA;
+			/* (Cannot be using Martyr as true vampire, so no need to check for regen inhibition, but hp_player_quiet() does check for it anyway.) */
+			hp_player_quiet(Ind, (-p_ptr->tim_regen_pow) / 10 + (magik(((-p_ptr->tim_regen_pow) % 10) * 10) ? 1 : 0), TRUE);
 		}
 	}
 

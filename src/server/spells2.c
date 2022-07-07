@@ -824,11 +824,11 @@ bool hp_player_quiet(int Ind, int num, bool autoeffect) {
 
 	p_ptr->test_heal += num;
 
-	old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10);
-	if (old_num >= 7) old_num = 10;
-
 	/* player can't be healed while burning in the holy fire of martyrium */
 	if (p_ptr->martyr && !bypass_invuln) return(FALSE);
+
+	old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10);
+	if (old_num >= 7) old_num = 10;
 
 	/* Hell mode is .. hard */
 	if ((p_ptr->mode & MODE_HARD) && (num > 3)) num = num * 3 / 4;
