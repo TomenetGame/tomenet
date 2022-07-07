@@ -156,7 +156,7 @@ struct player_type
 	bool v_unknown;
 
 	s32b id;		/* Unique ID to each player */
-	u32b account;	   /* account group id */
+	u32b account;		/* account group id */
 	u32b dna;		/* DNA - psuedo unique to each player life */
 
 	s32b turn;
@@ -170,8 +170,8 @@ struct player_type
 
 	byte restricted;	/* account is restricted (ie after cheating) */
 	byte privileged;	/* account is privileged (ie for quest running) */
-	byte pvpexception;      /* account uses different pvp rules than server settings */
-	byte mutedchat;	 /* account has chat restrictions */
+	byte pvpexception;	/* account uses different pvp rules than server settings */
+	byte mutedchat;		/* account has chat restrictions */
 	bool inval;		/* dont make them logout to validate */
 
 	bool suicided;		/* Have we suicided */
@@ -192,7 +192,7 @@ struct player_type
 	byte oops;		/* Unused */
 
 	skill_player s_info[MAX_SKILLS]; /* Player skills */
-	s16b skill_points;      /* number of skills assignable */
+	s16b skill_points;	/* number of skills assignable */
 
 	/* Copies for /undoskills - mikaelh */
 	skill_player s_info_old[MAX_SKILLS]; /* Player skills */
@@ -222,9 +222,9 @@ struct player_type
 	s16b csp;		/* Cur mana pts */
 	u16b csp_frac;		/* Cur mana frac (times 2^16) */
 
-	s16b mst;		       /* Max stamina pts */
-	s16b cst;		       /* Cur stamina pts */
-	s16b cst_frac;		  /* 1/10000 */
+	s16b mst;		/* Max stamina pts */
+	s16b cst;		/* Cur stamina pts */
+	s16b cst_frac;		/* 1/10000 */
 
 	object_type inventory[INVEN_TOTAL];	/* Player's inventory */
 	inventory_change_type *inventory_changes; /* List of recent inventory changes */
@@ -289,12 +289,12 @@ struct player_type
 	u32b dlev_id;
 
 /*	cptr info[128];		Temp storage of *ID* and Self Knowledge info */
-	const char *infofile;		/* Temp storage of *ID* and Self Knowledge info */
+	const char *infofile;	/* Temp storage of *ID* and Self Knowledge info */
 	byte special_file_type;	/* Is he using *ID* or Self Knowledge? */
 
-	bool obj_aware[MAX_K_IDX]; /* Is the player aware of this obj type? */
-	bool obj_tried[MAX_K_IDX]; /* Has the player tried this obj type? */
-	bool trap_ident[MAX_T_IDX];       /* do we know the name */
+	bool obj_aware[MAX_K_IDX];	/* Is the player aware of this obj type? */
+	bool obj_tried[MAX_K_IDX];	/* Has the player tried this obj type? */
+	bool trap_ident[MAX_T_IDX];	/* do we know the name */
 
 	byte d_attr[MAX_K_IDX];
 	char d_char[MAX_K_IDX];
@@ -366,10 +366,10 @@ struct player_type
 	s16b screen_wid;
 	s16b screen_hgt;
 
-	const char *died_from;	/* What off-ed him */
+	const char *died_from;		/* What off-ed him */
 	const char *really_died_from;	/* What off-ed him */
-	const char *died_from_list; /* what goes on the high score list */
-	s16b died_from_depth;	/* what depth we died on */
+	const char *died_from_list;	/* what goes on the high score list */
+	s16b died_from_depth;		/* what depth we died on */
 
 	u16b total_winner;	/* Is this guy the winner */
 	u16b once_winner;	/* Has this guy ever been a winner */
@@ -400,14 +400,14 @@ struct player_type
 	int look_index;		/* Used for looking or targeting */
 
 	s32b current_char;
-	s16b current_spell;	/* Spell being cast */
-	s16b current_mind;	/* Power being use */
-	s16b current_rod;	/* Rod being zapped */
-	s16b current_activation;/* Artifact (or dragon mail) being activated */
-	s16b current_enchant_h; /* Current enchantments */
+	s16b current_spell;		/* Spell being cast */
+	s16b current_mind;		/* Power being use */
+	s16b current_rod;		/* Rod being zapped */
+	s16b current_activation;	/* Artifact (or dragon mail) being activated */
+	s16b current_enchant_h;		/* Current enchantments */
 	s16b current_enchant_d;
 	s16b current_enchant_a;
-	s16b current_identify;	/* Are we identifying something? */
+	s16b current_identify;		/* Are we identifying something? */
 	s16b current_star_identify;
 	s16b current_recharge;
 	s16b current_artifact;
@@ -422,20 +422,20 @@ struct player_type
 	s16b current_sell_amt;
 	int current_sell_price;
 
-	int store_num;		/* What store this guy is in */
+	int store_num;			/* What store this guy is in */
 
 	s16b fast;			/* Timed -- Fast */
 	s16b fast_mod;			/* Timed -- Fast */
 	s16b slow;			/* Timed -- Slow */
 	s16b blind;			/* Timed -- Blindness */
-	s16b paralyzed;		/* Timed -- Paralysis */
-	s16b confused;		/* Timed -- Confusion */
-	s16b afraid;		/* Timed -- Fear */
+	s16b paralyzed;			/* Timed -- Paralysis */
+	s16b confused;			/* Timed -- Confusion */
+	s16b afraid;			/* Timed -- Fear */
 	s16b image;			/* Timed -- Hallucination */
-	s16b poisoned;		/* Timed -- Poisoned */
+	s16b poisoned;			/* Timed -- Poisoned */
 	s16b slow_poison;
-	s16b diseased;		/* Timed -- Diseased */
-	int poisoned_attacker;	/* Who poisoned the player - used for blood bond */
+	s16b diseased;			/* Timed -- Diseased */
+	int poisoned_attacker;		/* Who poisoned the player - used for blood bond */
 	s16b cut;			/* Timed -- Cut */
 	int cut_attacker;		/* Who cut the player - used for blood bond */
 	s16b stun;			/* Timed -- Stun */
@@ -443,41 +443,43 @@ struct player_type
 	s16b xtrastat_tim;		/* Timed temp +stats */
 	s16b focus_time;		/* Timed temp +spr */
 
-	s16b protevil;		/* Timed -- Protection */
+	s16b protevil;			/* Timed -- Protection */
 	s16b zeal;
 	s16b zeal_power;
 	s16b martyr;
 	s16b martyr_timeout;
 	s16b res_fear_temp;
-	s16b invuln;		/* Timed -- Invulnerable */
+	s16b invuln;			/* Timed -- Invulnerable */
 	s16b hero;			/* Timed -- Heroism */
 	s16b shero;			/* Timed -- Super Heroism */
 	s16b fury;			/* Timed -- Furry */
-	s16b shield;		/* Timed -- Shield Spell */
-	s16b blessed;		/* Timed -- Blessed */
+	s16b shield;			/* Timed -- Shield Spell */
+	s16b tim_regen;			/* Timed extra regen */
+	s16b tim_regen_pow;		/* Timed extra regen power */
+	s16b blessed;			/* Timed -- Blessed */
 	s16b blessed_power;
-	s16b tim_invis;		/* Timed -- See Invisible */
-	s16b tim_infra;		/* Timed -- Infra Vision */
-	s16b tim_wraith;	/* Timed -- Wraithform */
+	s16b tim_invis;			/* Timed -- See Invisible */
+	s16b tim_infra;			/* Timed -- Infra Vision */
+	s16b tim_wraith;		/* Timed -- Wraithform */
 	bool wraith_in_wall;
 	u16b tim_jail;
 	u16b tim_susp;
 	u16b tim_pkill;
 	u16b pkill;
-	s16b tim_meditation;	/* Timed -- Meditation */
+	s16b tim_meditation;		/* Timed -- Meditation */
 	s16b tim_invisibility;		/* Timed -- Invisibility */
-	s16b tim_invis_power;	/* Timed -- Invisibility Power (perm) */
-	s16b tim_invis_power2;	/* Timed -- Invisibility Power (temp) */
-	s16b tim_traps; 	/* Timed -- Avoid traps */
-	s16b tim_manashield;    /* Timed -- Mana Shield */
-	s16b tim_mimic; 	/* Timed -- Mimicry */
-	s16b tim_mimic_what; 	/* Timed -- Mimicry */
-	s16b ammo_brand; 	/* Timed -- Bow Branding */
-	byte ammo_brand_t; 	/* Timed -- Bow Branding */
-	s16b ammo_brand_d; 	/* Timed -- Bow Branding */
-	s16b prob_travel;       /* Timed -- Probability travel */
-	s16b st_anchor;	 /* Timed -- Space/Time Anchor */
-	s16b tim_esp;	   /* Timed -- ESP */
+	s16b tim_invis_power;		/* Timed -- Invisibility Power (perm) */
+	s16b tim_invis_power2;		/* Timed -- Invisibility Power (temp) */
+	s16b tim_traps;			/* Timed -- Avoid traps */
+	s16b tim_manashield;		/* Timed -- Mana Shield */
+	s16b tim_mimic;			/* Timed -- Mimicry */
+	s16b tim_mimic_what;		/* Timed -- Mimicry */
+	s16b ammo_brand;		/* Timed -- Bow Branding */
+	byte ammo_brand_t;		/* Timed -- Bow Branding */
+	s16b ammo_brand_d;		/* Timed -- Bow Branding */
+	s16b prob_travel;		/* Timed -- Probability travel */
+	s16b st_anchor;			/* Timed -- Space/Time Anchor */
+	s16b tim_esp;			/* Timed -- ESP */
 	s16b adrenaline;
 	s16b biofeedback;
 	s16b mindboost;
@@ -496,7 +498,7 @@ struct player_type
 
 	s16b energy;		/* Current energy */
 
-	s16b food;			/* Current nutrition */
+	s16b food;		/* Current nutrition */
 
 	byte confusing;		/* Glowing hands */
 	byte stunning;		/* Heavy hands */
@@ -520,9 +522,9 @@ struct player_type
 	bool awkward_wield;	/* Icky weapon */
 	bool easy_wield;	/* Using a 1-h weapon which is MAY2H with both hands */
 	bool cumber_weight;	/* FA from MA is lost if overburdened */
-	bool monk_heavyarmor;   /* Reduced MA power? */
-	bool awkward_shoot;     /* using ranged weapon while having a shield on the arm */
-	bool rogue_heavyarmor;  /* No AoE-searching? Encumbered dual-wield? */
+	bool monk_heavyarmor;	/* Reduced MA power? */
+	bool awkward_shoot;	/* using ranged weapon while having a shield on the arm */
+	bool rogue_heavyarmor;	/* No AoE-searching? Encumbered dual-wield? */
 	bool heavy_swim;	/* Too heavy to swim without drowning chance? */
 
 	s16b cur_lite;		/* Radius of lite (if any) */
@@ -572,21 +574,21 @@ struct player_type
 	bool resist_neth;	/* Resist nether */
 	bool resist_fear;	/* Resist fear */
 
-	bool immune_neth;       /* Immunity to nether */
+	bool immune_neth;	/* Immunity to nether */
 
-	bool suscep_fire;     /* Fire does more damage on the player */
-	bool suscep_cold;     /* Cold does more damage on the player */
-	bool suscep_acid;     /* Acid does more damage on the player */
-	bool suscep_elec;     /* Electricity does more damage on the player */
-	bool suscep_pois;     /* Poison does more damage on the player */
+	bool suscep_fire;	/* Fire does more damage on the player */
+	bool suscep_cold;	/* Cold does more damage on the player */
+	bool suscep_acid;	/* Acid does more damage on the player */
+	bool suscep_elec;	/* Electricity does more damage on the player */
+	bool suscep_pois;	/* Poison does more damage on the player */
 	bool suscep_lite;
 	bool suscep_good;
 	bool suscep_life;
 
-	bool reflect;       /* Reflect 'bolt' attacks */
-	byte shield_deflect;       /* Deflect various attacks (ranged), needs USE_BLOCKING */
-	byte weapon_parry;       /* Parry various attacks (melee), needs USE_PARRYING */
-	bool res_tele;	  /* Prevents being teleported from someone else */
+	bool reflect;		/* Reflect 'bolt' attacks */
+	byte shield_deflect;	/* Deflect various attacks (ranged), needs USE_BLOCKING */
+	byte weapon_parry;	/* Parry various attacks (melee), needs USE_PARRYING */
+	bool res_tele;		/* Prevents being teleported from someone else */
 
 	bool ty_curse;		/* bad curses from artifacts */
 	bool dg_curse;
@@ -630,7 +632,7 @@ struct player_type
 	bool bless_blade;	/* Blessed blade */
 	bool xtra_might;	/* Extra might bow */
 	bool impact;		/* Earthquake blows */
-	bool auto_id; /* Pickup = Id */
+	bool auto_id;		/* Pickup = Id */
 	bool no_cut;		/* for mimic forms */
 	bool levitate;
 	bool can_swim;		/* for mimic forms mainly */
@@ -639,8 +641,8 @@ struct player_type
 	bool reduce_insanity;	/* for mimic forms with weird/empty mind */
 
 	s16b invis;		/* Invisibility */
-	bool admin_wiz;	 /* Is this char Wizard? */
-	bool admin_dm;	  /* or Dungeon Master? */
+	bool admin_wiz;		/* Is this char Wizard? */
+	bool admin_dm;		/* or Dungeon Master? */
 
 	s16b extra_blows;
 	s16b xtra_crit;
@@ -695,9 +697,9 @@ struct player_type
 	s16b r_killed[MAX_R_IDX];	/* Monsters killed */
 	s16b r_mimicry[MAX_R_IDX];	/* Monster kill count for mimicry */
 
-	s32b melee_techniques; /* for weaponmastery */
-	s32b ranged_techniques; /* for archery */
-	s32b innate_spells[4]; /* Monster spells */
+	s32b melee_techniques;	/* for weaponmastery */
+	s32b ranged_techniques;	/* for archery */
+	s32b innate_spells[4];	/* Monster spells */
 	bool body_changed;
 
 	bool anti_magic;	/* Can the player resist magic */
@@ -714,13 +716,13 @@ struct player_type
 	u16b esp_link_end; /* Time before actual end */
 
 	/* additions */
-	bool black_breath;      /* The Tolkien's Black Breath */
+	bool black_breath;	/* The Tolkien's Black Breath */
 
-	s16b msane;		   /* Max sanity */
-	s16b csane;		   /* Cur sanity */
-	u16b csane_frac;	      /* Cur sanity frac */
+	s16b msane;		/* Max sanity */
+	s16b csane;		/* Cur sanity */
+	u16b csane_frac;	/* Cur sanity frac */
 
-	byte spell_project;	     /* Do the spells(some) affect nearby party members ? */
+	byte spell_project;	/* Do the spells(some) affect nearby party members ? */
 	s16b dodge_level;
 	s32b tim_blacklist;
 	s32b tim_watchlist;
