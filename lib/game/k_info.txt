@@ -4420,7 +4420,7 @@ N:514:Fast Metabolism
 G:,:r
 I:80:21:500
 W:8:0:1:50
-A:8/5
+A:8/1
 D:Adds a small, flat amount to your natural health regeneration temporarily.
 
 
