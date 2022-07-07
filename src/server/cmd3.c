@@ -2632,12 +2632,22 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 }
 
 bool check_power_inscribe(int Ind, object_type *o_ptr, char *o_name_old, cptr inscription) {
-	char *pi_pos;
+	char *pi_pos = NULL;
+	const char *pi_pos_src = inscription;
 
 	bool redux = FALSE;
 	char o_name[ONAME_LEN], powins[1024], *pir_pos; //even more than just MAX_CHARS_WIDE, let's play it safe..
 	player_type *p_ptr;
 
+
+	/* Exception: "@@" is not a power inscription if it belongs to a preceeding '\' */
+	while ((pi_pos = strstr(pi_pos_src, "@@"))) {
+		pi_pos_src += 2;
+		if (pi_pos == inscription) break; /* at beginning of string is always genuine */
+		if (*(pi_pos - 1) == '\\') continue; /* belongs to a '\@@' tag, revoke */
+		break; /* genuine '@@' or '@@@', accept */
+	}
+	if (!pi_pos) return FALSE;
 
 	/* Special hack: Inscribing '@@' applies an automatic item-powers inscription.
 	   Side note: If @@@ is present, an additional @@ will simply be ignored. */
