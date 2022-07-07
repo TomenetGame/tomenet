@@ -8340,6 +8340,7 @@ void process_player_change_wpos(int Ind) {
 	   Discard the possibility to undoskills when we venture into a dungeon again. */
 	if (!p_ptr->wpos_old.wz && p_ptr->wpos.wz) p_ptr->reskill_possible &= ~RESKILL_F_UNDO;
 
+	/* Actually cancel both: Preparations (-1) as well as any ongoing Steamblast countdown (>0)! */
 	if (p_ptr->steamblast_timer != 0) {
 		if (p_ptr->steamblast_timer == -1) msg_print(Ind, "You cancel your preparations for a steam blast charge.");
 		/* ..else fail silently */
