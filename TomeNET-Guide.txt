@@ -2178,7 +2178,8 @@ resistances or abilities. A shortcut is the...
 Item power inscription (added in 4.7.1):
     @@         Will automatically inscribe an item with codes representing its
                special powers. Only works with *identified* items.
-               Can also be used on custom spell books.
+               Can also be used on custom spell books. If used on handbooks or
+               tomes however, it works like @@@, shortening the spell names.
     @@@        Redux version. Avoids stats, extra might since it's obvious,
                infra-vision, searching, and mods that are obvious because they
                can only come from base item type (disarm, digging, luck),
