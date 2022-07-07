@@ -5148,7 +5148,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* Eligible for this command? */
 #ifdef ENABLE_DEMOLITIONIST
 			if (get_skill(p_ptr, SKILL_DIG) < ENABLE_DEMOLITIONIST && !pois) {
-				msg_print(Ind, "\377yThis command can only be used by demolitionists or those proficient in the 'Apply Poison' technique.");
+				msg_print(Ind, "\377yThis command can only be used by demolitionists or those proficient");
+				msg_print(Ind, "\377y in the 'Apply Poison' technique.");
 				return;
 			}
 #else
