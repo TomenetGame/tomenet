@@ -558,7 +558,7 @@ static void rd_item(object_type *o_ptr) {
 #endif
 #endif
 
-#if 1 /* run once, then comment out/delete */
+#if 0 /* run once, then comment out/delete */
 	/* After 4.8.0: Expand mushroom space - custom.lua must increase updated_server from 2 to 3 then. */
 	if (o_ptr->tval == TV_FOOD && updated_server < 3) {
 		if (o_ptr->sval == 50) o_ptr->sval = 0; //unmagic shroom
