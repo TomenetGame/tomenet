@@ -779,9 +779,9 @@ int pseudo_id_result(object_type *o_ptr) {
 static void regenhp(int Ind, int percent) {
 	player_type *p_ptr = Players[Ind];
 
-	s32b        new_chp, new_chp_frac;
-	int                   old_chp;
-	int freeze_test_heal = p_ptr->test_heal;
+	s32b	new_chp, new_chp_frac;
+	int	old_chp;
+	int	freeze_test_heal = p_ptr->test_heal;
 
 	//if (p_ptr->no_hp_regen) return;
 
@@ -4685,17 +4685,17 @@ int has_ball (player_type *p_ptr) {
  * Called every 5/6 of a player's dungeon turn
  */
 static bool process_player_end_aux(int Ind) {
-	player_type *p_ptr = Players[Ind];
-	cave_type		*c_ptr;
-	object_type		*o_ptr;
+	player_type	*p_ptr = Players[Ind];
+	cave_type	*c_ptr;
+	object_type	*o_ptr;
 	int		i, j, k;
 	int		regen_amount; //, NumPlayers_old = NumPlayers;
-	dun_level *l_ptr = getfloor(&p_ptr->wpos);
-	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
-	char o_name[ONAME_LEN];
-	bool warm_place = TRUE;
+	dun_level	*l_ptr = getfloor(&p_ptr->wpos);
+	dungeon_type	*d_ptr = getdungeon(&p_ptr->wpos);
+	char		o_name[ONAME_LEN];
+	bool		warm_place = TRUE;
 #if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
-	bool intrinsic_regen = FALSE;
+	bool		intrinsic_regen = FALSE;
 #endif
 
 	int minus = 1;
@@ -5026,8 +5026,8 @@ static bool process_player_end_aux(int Ind) {
 				/* Regeneration and extra-growth takes more food */
 				if (p_ptr->regenerate || p_ptr->xtrastat_tim) i += 30;
 
-				/* Regeneration takes more food */
-				if (p_ptr->tim_regen && p_ptr->tim_regen_pow > 0) i += (p_ptr->tim_regen_pow + 9) / 10;
+				/* Regeneration (but not Nether Sap) takes more food */
+				if (p_ptr->tim_regen && p_ptr->tim_regen_pow > 0) i += p_ptr->tim_regen_pow;
 
 				j = 0;
 
@@ -5171,8 +5171,10 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Increase regeneration by flat amount from timed regeneration powers */
 	if (p_ptr->tim_regen) {
-		if (p_ptr->tim_regen_pow > 0) regen_amount += p_ptr->tim_regen_pow; /* Regeneration spell (Nature) */
-		if (p_ptr->tim_regen_pow < 0 && p_ptr->csp >= 10) { /* Nether Sap spell (Unlife) */
+		/* Regeneration spell (Nature) and mushroom of fast metabolism */
+		if (p_ptr->tim_regen_pow > 0) hp_player_quiet(Ind, p_ptr->tim_regen_pow, TRUE);
+		/* Nether Sap spell (Unlife) */
+		else if (p_ptr->tim_regen_pow < 0 && p_ptr->csp >= 10) {
 			p_ptr->csp -= 10;
 			hp_player_quiet(Ind, -p_ptr->tim_regen_pow, TRUE); /* Cannot be using Martyr as true vampire, so no need to check for regen inhibition */
 			p_ptr->redraw |= PR_MANA;
