@@ -3124,7 +3124,7 @@ void do_cmd_options_mus_sdl(void) {
 	while (go) {
 #ifdef ENABLE_JUKEBOX
  #ifdef USER_VOLUME_MUS
-		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377y#\377w navigate, \377yt\377w toggle, \377yy\377w/\377yn\377w enable/disable, \377yv\377w volume, \377yESC\377w leave, \377BRETURN\377w play");
+		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377y#\377w/\377ys\377w select, \377yt\377w toggle, \377yy\377w/\377yn\377w enable/disable, \377yv\377w volume, \377yESC\377w leave, \377BRETURN\377w play");
  #else
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yESC\377w (leave), \377BRETURN\377w (play))");
  #endif
