@@ -15160,6 +15160,11 @@ stated.
                                 skill must be at least half as high as the
                                 monster level for you to get credit.
 
+                                To see which monsters you have killed or which
+                                forms you have already learned, press ~ 2 or
+                                conveniently use the "/forms" command if you
+                                just want to see a list of all learnt forms.
+
                                 Example: To learn Uruk form, you need to kill
                                 16 Uruks because Uruk is a level 16 monster
                                 (see ~7 for monster lore to check level) and
