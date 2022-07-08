@@ -4789,6 +4789,8 @@ int handle_ml_censor(int Ind, char *line) {
 	/* Construct relevant line to check, from the beginnning and ending parts of chat input lines.
 	   Note: We abuse 'NAME_LEN' also as limiter for swear word length. */
 
+//todo: if a line gets cut off in the middle of a word, new swearwords might get created that way, eg brass -> br -snip- ass
+
 	/* Make room by discarding a bit of the beginning of the line, that has already long been checked */
 	if (strlen(p_ptr->multi_chat_line) >= MSG_LEN - NAME_LEN * 2 - 2) {
 		strcpy(tmpbuf, p_ptr->multi_chat_line + NAME_LEN * 2 + 2);
