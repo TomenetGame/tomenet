@@ -3650,7 +3650,7 @@ W:40:0:4:2000
 A:40/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
-D:This potion tells you all about yourself.
+D:This potion tells you all about yourself and identifies all your items.
 
 N:422:*Enlightenment*
 G:!:d
