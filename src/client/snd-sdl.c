@@ -3154,7 +3154,7 @@ void do_cmd_options_mus_sdl(void) {
 				i2++;
 				if (i2 == i) break;
 			}
-			if (j != MUSIC_MAX) { //paranoia, should always be false
+			if (j != MUSIC_MAX) { //paranoia, should always be non-equal aka true
 				/* get event name */
 				sprintf(out_val, "return get_music_name(%d)", j);
 				lua_name = string_exec_lua(0, out_val);
@@ -3453,10 +3453,34 @@ void do_cmd_options_mus_sdl(void) {
 			break;
 #endif
 		case '#':
-			y = c_get_quantity("Enter index number: ", audio_music) - 1;
-			if (y < 0) y = 0;
+			i = c_get_quantity("  Enter music event index number: ", audio_music) - 1;
+			if (i < 0) break;
+			y = i;
 			if (y >= audio_music) y = audio_music - 1;
 			break;
+		case 's': /* Search for event name */
+			{
+			char searchstr[MAX_CHARS] = { 0 };
+
+			Term_putstr(0, 0, -1, TERM_L_BLUE, "  Enter (partial) music event name: ");
+			askfor_aux(searchstr, MAX_CHARS - 1, 0);
+			if (!searchstr[0]) break;
+
+			/* Map events we've listed in our local config file onto audio.lua indices */
+			//i2 = -1;
+			for (j = 0; j < MUSIC_MAX; j++) {
+				if (!songs[j].config) continue;
+				//i2++;
+				/* get event name */
+				sprintf(out_val, "return get_music_name(%d)", j);
+				lua_name = string_exec_lua(0, out_val);
+				if (!my_strcasestr(lua_name, searchstr)) continue;
+				/* match */
+				y = j;
+				break;
+			}
+			break;
+			}
 		case '9':
 		case 'p':
 			y = (y - 10 + audio_music) % audio_music;
