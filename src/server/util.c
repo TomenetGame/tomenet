@@ -4417,7 +4417,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			//lcopy[pos + j] = '*';
  #endif
  #if 1 //for debugging only
-			if (!no_logging) s_printf("SWEARING: Matched '%s' (%d)\n", swear[i].word, swear[i].level);
+			if (!no_logging) s_printf("SWEARING: Matched '%s' (%d) <%s>\n", swear[i].word, swear[i].level, line);
  #endif
 			level = MAX(level, swear[i].level);
 		}
