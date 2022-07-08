@@ -236,6 +236,10 @@ CPPFLAGS = -C -P -nostdinc
 X11BASE = /usr/X11R6
 
 
+# Account editor
+ACCEDIT_LIBS = -lcurses -lcrypt
+
+
 ##
 ## Standard version -- supports X11 (main-x11.c)
 ## Standard client for X11 usage.
@@ -268,10 +272,8 @@ X11BASE = /usr/X11R6
 ## With SDL
 #CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -D_DEFAULT_SOURCE -DACC32 -fPIE
 #CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
-CFLAGS = -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
+#CFLAGS = -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl-config --libs` -lSDL_mixer
-LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl-config --libs` -lSDL_mixer
-ACCEDIT_LIBS = -lcurses -lcrypt
 ##
 ## Without SDL
 #CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99
@@ -280,6 +282,16 @@ ACCEDIT_LIBS = -lcurses -lcrypt
 ## Without USE_SOUND_2010 (aka compile without sound support) - make sure to remove #define USE_SOUND_2010 (and possibly #define USE_SOUND) in src/config.h too.
 #CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
+
+# With SDL2
+#  With sdl2-config
+CFLAGS = -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl2-config --cflags` -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
+#  With manually set prefix
+#CFLAGS = -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL -I/usr/local/include/SDL2 -I/usr/include/SDL2 -D_REENTRANT -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
+#  With sdl2-config
+LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl2-config --libs` -lSDL2_mixer
+#  With manually set prefix
+#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm -L/usr/local/lib -L/usr/lib -pthread -lSDL2 -lSDL2_mixer
 
 # Some Linux distributions have a separate libtinfo, attempt to detect it
 HAVE_TINFO = $(shell ldconfig -p | grep -c libtinfo)

@@ -1029,6 +1029,9 @@ extern int re_init_sound();
  extern void close_audio_sdl(void);
  extern void do_cmd_options_sfx_sdl(void);
  extern void do_cmd_options_mus_sdl(void);
+  //#ifdef ENABLE_JUKEBOX
+ extern void update_jukebox_timepos(void);
+  //#endif
  #endif
 
 extern bool skip_received_music;
@@ -1145,5 +1148,5 @@ extern bool insanity_death;
 extern char screenshot_filename[1024];
 
 //#ifdef ENABLE_JUKEBOX
-extern int curmus_timepos, oldticks;
+extern int curmus_timepos, oldticks, curmus_x, curmus_y, curmus_attr;
 //#endif

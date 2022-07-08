@@ -84,6 +84,7 @@ char ANGBAND_DIR_XTRA_MUSIC[1024];
 
 /* for threaded caching of audio files */
 SDL_Thread *load_audio_thread;
+//bool kill_load_audio_thread = FALSE; -- not needed, since the thread_load_audio() never takes really long to complete
 SDL_mutex *load_sample_mutex_entrance, *load_song_mutex_entrance;
 SDL_mutex *load_sample_mutex, *load_song_mutex;
 
@@ -196,7 +197,10 @@ static void close_audio(void) {
 	int j;
 
 	/* Kill the loading thread if it's still running */
-	if (load_audio_thread) SDL_KillThread(load_audio_thread);
+	if (load_audio_thread) {
+		//kill_load_audio_thread = TRUE; -- not needed (see far above)
+		SDL_WaitThread(load_audio_thread, NULL);
+	}
 
 	Mix_HaltMusic();
 
@@ -2201,7 +2205,8 @@ static bool play_music_instantly(int event) {
 		return FALSE;
 	}
 
-	/* Actually play the thing. We loop this specific sub-song infinitely and ignore c_cfg.shuffle_music (or 'initial' song status) here. */
+	/* Actually play the thing. We loop this specific sub-song infinitely and ignore c_cfg.shuffle_music (or 'initial' song status) here.
+	   To get to hear other sub-songs, the user can press ENTER again to restart this music event with a different sub-song. */
 	Mix_PlayMusic(wave, -1);
 	return TRUE;
 }
@@ -2360,7 +2365,7 @@ errr init_sound_sdl(int argc, char **argv) {
 #ifdef DEBUG_SOUND
 		puts("Audio cache: Creating thread..");
 #endif
-		load_audio_thread = SDL_CreateThread(thread_load_audio, NULL);
+		load_audio_thread = SDL_CreateThread(thread_load_audio, NULL, NULL);
 		if (load_audio_thread == NULL) {
 #ifdef DEBUG_SOUND
 			puts("Audio cache: Thread creation failed.");
@@ -2503,7 +2508,7 @@ errr re_init_sound_sdl(void) {
 #ifdef DEBUG_SOUND
 		puts("Audio cache: Creating thread..");
 #endif
-		load_audio_thread = SDL_CreateThread(thread_load_audio, NULL);
+		load_audio_thread = SDL_CreateThread(thread_load_audio, NULL, NULL);
 		if (load_audio_thread == NULL) {
 #ifdef DEBUG_SOUND
 			puts("Audio cache: Thread creation failed.");
@@ -3068,7 +3073,9 @@ void do_cmd_options_sfx_sdl(void) {
 }
 
 /* Display options page UI that allows to comment out music easily */
-#define MUSIC_SKIP 10
+#ifdef ENABLE_JUKEBOX
+ #define MUSIC_SKIP 10 /* Jukebox backward/forward skip interval in seconds */
+#endif
 void do_cmd_options_mus_sdl(void) {
 	int i, i2, j, d, vertikal_offset = 3, horiz_offset = 5;
 	static int y = 0, j_sel = 0;//, max_events = 0;
@@ -3120,6 +3127,7 @@ void do_cmd_options_mus_sdl(void) {
  #endif
 		//Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this page)");
 		Term_putstr(0, 1, -1, TERM_WHITE, format("  (\377wChanges auto-save on leaving this page.    \377y4\377w Backward %ds, \377y6\377w Forward %ds)", MUSIC_SKIP, MUSIC_SKIP));
+		curmus_y = -1; //assume not visible (outside of visible song list)
 #else
  #ifdef USER_VOLUME_MUS
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yv\377w volume, \377yESC\377w)");
@@ -3165,7 +3173,14 @@ void do_cmd_options_mus_sdl(void) {
 			if (j == music_cur) {
 				if (a != TERM_L_DARK) a = TERM_L_GREEN;
 				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a, "*");
-				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, format("%-40s  (playing)", (char*)lua_name));
+				if (curmus_timepos == -1) /* Currently playing song is actual game music, not from the jukebox */
+					Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, format("%-40s  (playing)", (char*)lua_name));
+				else { /* Currently playing song is from the jukebox, then we can track its duration and display it for convenience */
+					curmus_x = horiz_offset + 12;
+					curmus_y = vertikal_offset + i + 10 - y;
+					curmus_attr = a;
+					Term_putstr(curmus_x, curmus_y, -1, curmus_attr, format("%-34s  (playing %02d:%02d)", (char*)lua_name, curmus_timepos / 60, curmus_timepos % 60));
+				}
 			} else
 				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
 
@@ -3483,18 +3498,36 @@ void do_cmd_options_mus_sdl(void) {
 			curmus_timepos -= MUSIC_SKIP; //skip backward n seconds
 			if (curmus_timepos < 0) curmus_timepos = 0;
 			else Mix_SetMusicPosition(curmus_timepos);
+			curmus_timepos = (int)Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]); //paranoia
 			break;
 		case '6':
 			if (curmus_timepos == -1) break; //no song is playing
 			Mix_RewindMusic();
 			curmus_timepos += MUSIC_SKIP; //skip forward n seconds
 			Mix_SetMusicPosition(curmus_timepos);
+			/* Overflow beyond actual song length? SDL2_mixer will then restart from 0, so adjust tracking accordingly */
+			curmus_timepos = (int)Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]);
 			break;
 
 		default:
 			bell();
 		}
 	}
+}
+
+/* Assume curmus_timepos is not -1, aka a song is actually playing */
+void update_jukebox_timepos(void) {
+#if 0
+	curmus_timepos++; -- doesn't catch when we reach the end of the song and have to reset to 0s again
+#else
+	/* NOTE: Mix_GetMusicPosition() requires SDL2_mixer v2.6.0, which was released on 2022-07-08 and the first src package actually lacks build info for sdl2-config.
+	   That means in case you install SDL2_mixer manually into /usr/local instead of /usr, you'll have to edit the makefile and replace sdl2-config calls with the
+	   correctl7 prefixed paths to /usr/local/lib and /usr/loca/include instead of /usr/lib and /usr/include. -_-
+	   Or you overwrite your repo version at /usr prefix instead. I guess best is to just wait till the SDL2_mixer package is in the official repository.. */
+	curmus_timepos = (int)Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]); //catches when we reach end of song and restart playing at 0s
+#endif
+	/* Update jukebox song time stamp */
+	if (curmus_y != -1) Term_putstr(curmus_x + 34 + 11, curmus_y, -1, curmus_attr, format("%02d:%02d", curmus_timepos / 60, curmus_timepos % 60));
 }
 
 #endif /* SOUND_SDL */
