@@ -3462,7 +3462,7 @@ void do_cmd_options_mus_sdl(void) {
 			{
 			char searchstr[MAX_CHARS] = { 0 };
 
-			Term_putstr(0, 0, -1, TERM_L_BLUE, "  Enter (partial) music event name: ");
+			Term_putstr(0, 0, -1, TERM_WHITE, "  Enter (partial) music event name: ");
 			askfor_aux(searchstr, MAX_CHARS - 1, 0);
 			if (!searchstr[0]) break;
 
