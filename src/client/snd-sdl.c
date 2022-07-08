@@ -3173,14 +3173,12 @@ void do_cmd_options_mus_sdl(void) {
 			if (j == music_cur) {
 				if (a != TERM_L_DARK) a = TERM_L_GREEN;
 				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a, "*");
-				if (curmus_timepos == -1) /* Currently playing song is actual game music, not from the jukebox */
-					Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, format("%-40s  (playing)", (char*)lua_name));
-				else { /* Currently playing song is from the jukebox, then we can track its duration and display it for convenience */
-					curmus_x = horiz_offset + 12;
-					curmus_y = vertikal_offset + i + 10 - y;
-					curmus_attr = a;
-					Term_putstr(curmus_x, curmus_y, -1, curmus_attr, format("%-34s  (playing %02d:%02d)", (char*)lua_name, curmus_timepos / 60, curmus_timepos % 60));
-				}
+				/* New via SDL2_mixer: Add the timestamp */
+				curmus_x = horiz_offset + 12;
+				curmus_y = vertikal_offset + i + 10 - y;
+				curmus_attr = a;
+				Term_putstr(curmus_x, curmus_y, -1, curmus_attr, format("%-34s  (playing      )", (char*)lua_name));
+				update_jukebox_timepos();
 			} else
 				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
 
@@ -3493,17 +3491,23 @@ void do_cmd_options_mus_sdl(void) {
 		   ..and worst, the is no way to retrieve the current music position, so we have to track it manually: curmus_timepos.
 		*/
 		case '4':
-			if (curmus_timepos == -1) break; //no song is playing
+			if (curmus_timepos == -1) { /* No song is playing. */
+				c_message_add("You must first press ENTER to play a song explicitely, in order to use seek.");
+				break;
+			}
 			Mix_RewindMusic();
-			curmus_timepos -= MUSIC_SKIP; //skip backward n seconds
+			curmus_timepos -= MUSIC_SKIP; /* Skip backward n seconds. */
 			if (curmus_timepos < 0) curmus_timepos = 0;
 			else Mix_SetMusicPosition(curmus_timepos);
-			curmus_timepos = (int)Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]); //paranoia
+			curmus_timepos = (int)Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]); //paranoia, sync
 			break;
 		case '6':
-			if (curmus_timepos == -1) break; //no song is playing
+			if (curmus_timepos == -1) { /* No song is playing. */
+				c_message_add("You must first press ENTER to play a song explicitely, in order to use seek.");
+				break;
+			}
 			Mix_RewindMusic();
-			curmus_timepos += MUSIC_SKIP; //skip forward n seconds
+			curmus_timepos += MUSIC_SKIP; /* Skip forward n seconds. */
 			Mix_SetMusicPosition(curmus_timepos);
 			/* Overflow beyond actual song length? SDL2_mixer will then restart from 0, so adjust tracking accordingly */
 			curmus_timepos = (int)Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]);
@@ -3519,15 +3523,20 @@ void do_cmd_options_mus_sdl(void) {
 void update_jukebox_timepos(void) {
 #if 0
 	curmus_timepos++; //doesn't catch when we reach the end of the song and have to reset to 0s again, so this should be if0'ed
+	/* Update jukebox song time stamp */
+	if (curmus_y != -1) Term_putstr(curmus_x + 34 + 11, curmus_y, -1, curmus_attr, format("%02d:%02d", curmus_timepos / 60, curmus_timepos % 60));
 #else
+	int i;
+
 	/* NOTE: Mix_GetMusicPosition() requires SDL2_mixer v2.6.0, which was released on 2022-07-08 and the first src package actually lacks build info for sdl2-config.
 	   That means in case you install SDL2_mixer manually into /usr/local instead of /usr, you'll have to edit the makefile and replace sdl2-config calls with the
 	   correctl7 prefixed paths to /usr/local/lib and /usr/loca/include instead of /usr/lib and /usr/include. -_-
 	   Or you overwrite your repo version at /usr prefix instead. I guess best is to just wait till the SDL2_mixer package is in the official repository.. */
-	curmus_timepos = (int)Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]); //catches when we reach end of song and restart playing at 0s
-#endif
+	i = (int)Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]); //catches when we reach end of song and restart playing at 0s
+	if (curmus_timepos != -1) curmus_timepos = i;
 	/* Update jukebox song time stamp */
-	if (curmus_y != -1) Term_putstr(curmus_x + 34 + 11, curmus_y, -1, curmus_attr, format("%02d:%02d", curmus_timepos / 60, curmus_timepos % 60));
+	if (curmus_y != -1) Term_putstr(curmus_x + 34 + 11, curmus_y, -1, curmus_attr, format("%02d:%02d", i / 60, i % 60));
+#endif
 }
 
 #endif /* SOUND_SDL */
