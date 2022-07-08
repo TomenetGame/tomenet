@@ -5179,6 +5179,15 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #endif
 			}
 			return;
+		} else if (prefix(messagelc, "/forms")) { /* shortcut for mimics for ~ 2 @ ESC */
+			char learnt = '@';
+
+			if (!get_skill(p_ptr, SKILL_MIMIC)) {
+				msg_print(Ind, "\377yYou cannot use mimicry.");
+				return;
+			}
+			do_cmd_show_monster_killed_letter(Ind, &learnt, 0, FALSE);
+			return;
 		}
 
 

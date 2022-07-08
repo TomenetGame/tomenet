@@ -1289,14 +1289,6 @@ They all start with a slash '/' hence they're called slash commands:
             player already shuffled a deck of his own, that one will be erased
             aka overwritten by the one he receives from you.
 
-/ing
-/ingredients
-            Disable (and reenable) any ingredient drops for demolitionist perk
-            and for Rogues' "Apply Poison" fighting technique (poison potions).
-            This setting is saved between logins. When you login on a character
-            that has drops disabled you will see a message reminding you of it:
-            "Ingredient drops [...] are currently suppressed."
-
 /dice       Roll some dice, you must at least specify a number of dice or a
             number of sides, each from 1 to 100.
             The result is random and can be seen by other players who stand
@@ -1479,6 +1471,9 @@ They all start with a slash '/' hence they're called slash commands:
 
 /flip       Same as /coin.
 
+/forms      Mimicry-users only: Shows all monster forms you have learned.
+            (This is a convenient shortcut for pressing  ~ 2 @ ESC  .)
+
 /ftkon      Enables, and respectively..
 /ftkoff     Disables fire-till-kill mode (see (5.2a)).
             Alternatively, you can toggle it in 'm' menu.
@@ -1562,6 +1557,14 @@ They all start with a slash '/' hence they're called slash commands:
             displayed when you're not afk.
             For example do:  /info Want to team up for Mordor!
             If you type /info without a message, it clears your info message.
+
+/ing
+/ingredients
+            Disable (and reenable) any ingredient drops for demolitionist perk
+            and for Rogues' "Apply Poison" fighting technique (poison potions).
+            This setting is saved between logins. When you login on a character
+            that has drops disabled you will see a message reminding you of it:
+            "Ingredient drops [...] are currently suppressed."
 
 /kifu <email>
             Use this command after you played Go in the casino in Minas Anor.
