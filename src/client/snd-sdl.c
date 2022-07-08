@@ -3518,7 +3518,7 @@ void do_cmd_options_mus_sdl(void) {
 /* Assume curmus_timepos is not -1, aka a song is actually playing */
 void update_jukebox_timepos(void) {
 #if 0
-	curmus_timepos++; -- doesn't catch when we reach the end of the song and have to reset to 0s again
+	curmus_timepos++; //doesn't catch when we reach the end of the song and have to reset to 0s again, so this should be if0'ed
 #else
 	/* NOTE: Mix_GetMusicPosition() requires SDL2_mixer v2.6.0, which was released on 2022-07-08 and the first src package actually lacks build info for sdl2-config.
 	   That means in case you install SDL2_mixer manually into /usr/local instead of /usr, you'll have to edit the makefile and replace sdl2-config calls with the
