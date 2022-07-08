@@ -3149,12 +3149,13 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_rest = WARNING_REST_TIMES;
 		p_ptr->warning_hungry = 1;
 		p_ptr->warning_macros = 1;
-		p_ptr->warning_boomerang = 1;
-		p_ptr->warning_inspect = 1;
-		p_ptr->warning_tunnel = p_ptr->warning_tunnel2 = p_ptr->warning_tunnel3 = p_ptr->warning_tunnel4 = p_ptr->warning_tunnel_hidden = 1;
 		p_ptr->warning_edmt = 1;
 	}
 	if (p_ptr->max_plv > 20) {
+		p_ptr->warning_boomerang = 1;
+		p_ptr->warning_inspect = 1;
+		p_ptr->warning_tunnel = p_ptr->warning_tunnel2 = p_ptr->warning_tunnel3 = p_ptr->warning_tunnel4 = p_ptr->warning_tunnel_hidden = 1;
+
 		p_ptr->warning_ghost = 1;
 		p_ptr->warning_dual_mode = 1;
 		p_ptr->warning_hungry = 2;
@@ -3164,6 +3165,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		//p_ptr->warning_blastcharge = 1; //instead, we save/load it!
 	}
 	if (p_ptr->max_plv >= 25) {
+
 		p_ptr->warning_ai_annoy = 1; /* mimics, as the latest learners, learn sprint at 15 and taunt at 20 */
 	}
 	if (p_ptr->max_plv > 30) {
