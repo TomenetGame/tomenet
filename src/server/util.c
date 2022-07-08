@@ -4789,18 +4789,31 @@ int handle_ml_censor(int Ind, char *line) {
 	/* Construct relevant line to check, from the beginnning and ending parts of chat input lines.
 	   Note: We abuse 'NAME_LEN' also as limiter for swear word length. */
 
-//todo: if a line gets cut off in the middle of a word, new swearwords might get created that way, eg brass -> br -snip- ass
+	/* Note: Uf a line gets cut off in the middle of a word, new swearwords might get created that way, eg brass -> br -snip- ass.
+	   For that reason we always try to not cut words into two pieces here. */
 
 	/* Make room by discarding a bit of the beginning of the line, that has already long been checked */
-	if (strlen(p_ptr->multi_chat_line) >= MSG_LEN - NAME_LEN * 2 - 2) {
-		strcpy(tmpbuf, p_ptr->multi_chat_line + NAME_LEN * 2 + 2);
+	if (strlen(p_ptr->multi_chat_line) >= MAX_CHARS - NAME_LEN * 2 - 2) {
+		char *c = p_ptr->multi_chat_line + strlen(p_ptr->multi_chat_line) - NAME_LEN - 2;
+
+		/* Don't cut words in parts, this could result in swear words that didn't exist previously */
+		while (c - p_ptr->multi_chat_line <= NAME_LEN * 2 + 2 && *c != ' ' && *c != '.' && *c != ',') c--;
+		strcpy(tmpbuf, c);
 		strcpy(p_ptr->multi_chat_line, tmpbuf);
 	}
 
 	/* Line is long -> add beginning and end of new line? */
 	if (strlen(line) > NAME_LEN * 2) {
+		char *c = line + strlen(line) - NAME_LEN;
+
+		/* Add spacer (maybe superfluous) */
+		strcat(p_ptr->multi_chat_line, " ");
+
+		/* Don't cut words in parts, this could result in swear words that didn't exist previously */
+		while (line + strlen(line) - c <= NAME_LEN * 2 && *c != ' ' && *c != '.' && *c != ',') c--;
 		/* Add the beginning */
-		strncat(p_ptr->multi_chat_line, line, NAME_LEN);
+		strncat(p_ptr->multi_chat_line, line, c - line);
+
 		/* Check if we pass just fine */
 //s_printf("ML_CENSOR(1): %s\n", p_ptr->multi_chat_line);
 		cl = handle_censor(p_ptr->multi_chat_line);
@@ -4808,14 +4821,22 @@ int handle_ml_censor(int Ind, char *line) {
 			/* We have to clear the buffer after a successful detection */
 			p_ptr->multi_chat_line[0] = 0;
 		}
+
 		/* Add spacer (maybe superfluous) */
 		strcat(p_ptr->multi_chat_line, " ");
+
 		/* Add the ending, for next time */
-		strcat(p_ptr->multi_chat_line, line + strlen(line) - 1 -  NAME_LEN);
+		c = line + strlen(line) - 1 - NAME_LEN;
+		/* Don't cut words in parts, this could result in swear words that didn't exist previously */
+		while (line + strlen(line) - c <= NAME_LEN * 2 + 1 && *c != ' ' && *c != '.' && *c != ',') c--;
+		strcpy(tmpbuf, c);
+		strcpy(p_ptr->multi_chat_line, tmpbuf);
 	} else { /* Line is short -> add the whole line */
-		strcat(p_ptr->multi_chat_line, line);
 		/* Add spacer. This is done because otherwise eg "hi" + "a" + "s" + "s" would just pass as it is "one word" */
 		strcat(p_ptr->multi_chat_line, " ");
+
+		strcat(p_ptr->multi_chat_line, line);
+
 		/* Check if we pass just fine */
 //s_printf("ML_CENSOR(2): %s\n", p_ptr->multi_chat_line);
 		cl = handle_censor(p_ptr->multi_chat_line);
