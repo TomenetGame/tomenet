@@ -3068,6 +3068,7 @@ void do_cmd_options_sfx_sdl(void) {
 }
 
 /* Display options page UI that allows to comment out music easily */
+#define MUSIC_SKIP 10
 void do_cmd_options_mus_sdl(void) {
 	int i, i2, j, d, vertikal_offset = 3, horiz_offset = 5;
 	static int y = 0, j_sel = 0;//, max_events = 0;
@@ -3118,7 +3119,7 @@ void do_cmd_options_mus_sdl(void) {
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yRETURN\377w (play), \377yESC\377w)");
  #endif
 		//Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this page)");
-		Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wChanges auto-save on leaving this page.    \377y4\377w Backward 30s, \377y6\377w Forward 30s)");
+		Term_putstr(0, 1, -1, TERM_WHITE, format("  (\377wChanges auto-save on leaving this page.    \377y4\377w Backward %ds, \377y6\377w Forward %ds)", MUSIC_SKIP, MUSIC_SKIP));
 #else
  #ifdef USER_VOLUME_MUS
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yv\377w volume, \377yESC\377w)");
@@ -3479,14 +3480,14 @@ void do_cmd_options_mus_sdl(void) {
 		case '4':
 			if (curmus_timepos == -1) break; //no song is playing
 			Mix_RewindMusic();
-			curmus_timepos -= 30; //skip backward n seconds
+			curmus_timepos -= MUSIC_SKIP; //skip backward n seconds
 			if (curmus_timepos < 0) curmus_timepos = 0;
 			else Mix_SetMusicPosition(curmus_timepos);
 			break;
 		case '6':
 			if (curmus_timepos == -1) break; //no song is playing
 			Mix_RewindMusic();
-			curmus_timepos += 30; //skip forward n seconds
+			curmus_timepos += MUSIC_SKIP; //skip forward n seconds
 			Mix_SetMusicPosition(curmus_timepos);
 			break;
 
