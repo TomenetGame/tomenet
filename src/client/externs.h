@@ -1149,4 +1149,5 @@ extern char screenshot_filename[1024];
 
 //#ifdef ENABLE_JUKEBOX
 extern int curmus_timepos, oldticks, curmus_x, curmus_y, curmus_attr;
+extern bool jukebox_screen;
 //#endif

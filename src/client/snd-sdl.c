@@ -3089,8 +3089,6 @@ void do_cmd_options_mus_sdl(void) {
  #ifdef JUKEBOX_INSTANT_PLAY
 	bool dis;
  #endif
-
-	jukebox_org = music_cur;
 #endif
 
 	//ANGBAND_DIR_XTRA_SOUND/MUSIC are NULL in quiet_mode!
@@ -3114,6 +3112,11 @@ void do_cmd_options_mus_sdl(void) {
 	}
 	fclose(fff);
 
+#ifdef ENABLE_JUKEBOX
+	jukebox_org = music_cur;
+	jukebox_screen = TRUE;
+#endif
+
 	/* Clear screen */
 	Term_clear();
 
@@ -3121,20 +3124,20 @@ void do_cmd_options_mus_sdl(void) {
 	while (go) {
 #ifdef ENABLE_JUKEBOX
  #ifdef USER_VOLUME_MUS
-		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yv\377w volume, \377yRETURN\377w (play), \377yESC\377w)");
+		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377y#\377w navigate, \377yt\377w toggle, \377yy\377w/\377yn\377w enable/disable, \377yv\377w volume, \377yESC\377w leave, \377BRETURN\377w play");
  #else
-		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yRETURN\377w (play), \377yESC\377w)");
+		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yESC\377w (leave), \377BRETURN\377w (play))");
  #endif
 		//Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this page)");
-		Term_putstr(0, 1, -1, TERM_WHITE, format("  (\377wChanges auto-save on leaving this page.    \377y4\377w Backward %ds, \377y6\377w Forward %ds)", MUSIC_SKIP, MUSIC_SKIP));
+		Term_putstr(0, 1, -1, TERM_WHITE, format(" \377wChanges auto-save on leaving this UI.   \377BLEFT\377w Backward %d s, \377BRIGHT\377w Forward %d s", MUSIC_SKIP, MUSIC_SKIP));
 		curmus_y = -1; //assume not visible (outside of visible song list)
 #else
  #ifdef USER_VOLUME_MUS
-		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yv\377w volume, \377yESC\377w)");
+		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yv\377w (volume), \377yESC\377w (leave))");
  #else
-		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yESC\377w)");
+		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yESC\377w (leave))");
  #endif
-		Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this page)");
+		Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this screen)");
 #endif
 
 		/* Display the events */
@@ -3171,7 +3174,7 @@ void do_cmd_options_mus_sdl(void) {
 			Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a2, format("  %3d", i + 1));
 			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, "                                                   ");
 			if (j == music_cur) {
-				if (a != TERM_L_DARK) a = TERM_L_GREEN;
+				if (a != TERM_L_DARK) a = (jukebox_playing != -1 ? TERM_L_BLUE : TERM_L_GREEN); /* blue = user-selected jukebox song, l-green = current game music */
 				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a, "*");
 				/* New via SDL2_mixer: Add the timestamp */
 				curmus_x = horiz_offset + 12;
@@ -3219,6 +3222,7 @@ void do_cmd_options_mus_sdl(void) {
  #endif
 			jukebox_org = -1;
 			curmus_timepos = -1; //no more song is playing in the jukebox now
+			jukebox_screen = FALSE;
 #endif
 
 			/* auto-save */
@@ -3492,7 +3496,7 @@ void do_cmd_options_mus_sdl(void) {
 		*/
 		case '4':
 			if (curmus_timepos == -1) { /* No song is playing. */
-				c_message_add("You must first press ENTER to play a song explicitely, in order to use seek.");
+				c_message_add("\377yYou must first press ENTER to play a song explicitely, in order to use seek.");
 				break;
 			}
 			Mix_RewindMusic();
@@ -3503,7 +3507,7 @@ void do_cmd_options_mus_sdl(void) {
 			break;
 		case '6':
 			if (curmus_timepos == -1) { /* No song is playing. */
-				c_message_add("You must first press ENTER to play a song explicitely, in order to use seek.");
+				c_message_add("\377yYou must first press ENTER to play a song explicitely, in order to use seek.");
 				break;
 			}
 			Mix_RewindMusic();
@@ -3519,7 +3523,8 @@ void do_cmd_options_mus_sdl(void) {
 	}
 }
 
-/* Assume curmus_timepos is not -1, aka a song is actually playing */
+/* Deprecated #if0-branch only: Assume curmus_timepos is not -1, aka a song is actually playing.
+   Otherwise: Assume jukebox_screen is TRUE aka we're currently in the jukebox UI. */
 void update_jukebox_timepos(void) {
 #if 0
 	curmus_timepos++; //doesn't catch when we reach the end of the song and have to reset to 0s again, so this should be if0'ed

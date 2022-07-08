@@ -5937,7 +5937,7 @@ void update_ticks() {
 	/* Track jukebox music position in seconds */
 	if (newticks != oldticks) {
 		oldticks = newticks;
-		if (curmus_timepos != -1) update_jukebox_timepos();
+		if (jukebox_screen) update_jukebox_timepos();
 	}
 //#endif
 
