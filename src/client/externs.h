@@ -1143,3 +1143,7 @@ extern unsigned char lamp_fainting;
 extern bool insanity_death;
 
 extern char screenshot_filename[1024];
+
+//#ifdef ENABLE_JUKEBOX
+extern int curmus_timepos, oldticks;
+//#endif

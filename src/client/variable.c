@@ -697,3 +697,7 @@ bool insanity_death = FALSE;
 
 char screenshot_filename[1024] = { 0 };
 char whats_under_your_feet[ONAME_LEN];
+
+//#ifdef ENABLE_JUKEBOX
+int curmus_timepos = -1, oldticks = -1;
+//#endif

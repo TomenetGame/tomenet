@@ -31,7 +31,9 @@
    Note that enabling this will also allow to iteratively play through all sub-songs of a specific music event, by activating
    the same song over and over, while otherwise if this option is disabled you'd have to wait for it to end and randomly switch
    to other sub-songs.*/
-#define JUKEBOX_INSTANT_PLAY
+#ifdef ENABLE_JUKEBOX
+ #define JUKEBOX_INSTANT_PLAY
+#endif
 
 /* Smooth dynamic weather volume change depending on amount of particles,
    instead of just on/off depending on particle count window? */
@@ -180,8 +182,10 @@ static s32b channel_player_id[MAX_CHANNELS];
 /* Music Array */
 static song_list songs[MUSIC_MAX];
 
+#ifdef ENABLE_JUKEBOX
 /* Jukebox music */
 static int jukebox_org = -1, jukebox_playing = -1;
+#endif
 
 
 /*
@@ -1866,11 +1870,13 @@ static bool play_music(int event) {
 	   should not stop the current music if it fails to play. */
 	if (event == -1) return TRUE;
 
+#ifdef ENABLE_JUKEBOX
 	/* Jukebox hack: Don't interrupt current jukebox song, but remember event for later */
 	if (jukebox_playing != -1 && jukebox_playing != event) {
 		jukebox_org = event;
 		return TRUE;
 	}
+#endif
 
 	/* We previously failed to play both music and alternative music.
 	   Stop currently playing music before returning */
@@ -1972,11 +1978,13 @@ static bool play_music_vol(int event, char vol) {
 	   should not stop the current music if it fails to play. */
 	if (event == -1) return TRUE;
 
+#ifdef ENABLE_JUKEBOX
 	/* Jukebox hack: Don't interrupt current jukebox song, but remember event for later */
 	if (jukebox_playing != -1 && jukebox_playing != event) {
 		jukebox_org = event;
 		return TRUE;
 	}
+#endif
 
 	/* We previously failed to play both music and alternative music.
 	   Stop currently playing music before returning */
@@ -3109,14 +3117,16 @@ void do_cmd_options_mus_sdl(void) {
  #else
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yRETURN\377w (play), \377yESC\377w)");
  #endif
+		//Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this page)");
+		Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wChanges auto-save on leaving this page.    \377y4\377w Backward 30s, \377y6\377w Forward 30s)");
 #else
  #ifdef USER_VOLUME_MUS
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yv\377w volume, \377yESC\377w)");
  #else
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yESC\377w)");
  #endif
-#endif
 		Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this page)");
+#endif
 
 		/* Display the events */
 		for (i = y - 10 ; i <= y + 10 ; i++) {
@@ -3179,8 +3189,8 @@ void do_cmd_options_mus_sdl(void) {
 		/* Analyze */
 		switch (ch) {
 		case ESCAPE:
-			jukebox_playing = -1;
 #ifdef ENABLE_JUKEBOX
+			jukebox_playing = -1;
  #ifdef JUKEBOX_INSTANT_PLAY
 			/* Note that this will also insta-halt current music if it happens to be <disabled> and different from our jukebox piece,
 			   so no need for us to check here for songs[].disabled explicitely for that particular case.
@@ -3193,8 +3203,9 @@ void do_cmd_options_mus_sdl(void) {
 				else play_music(jukebox_org);
 			}
  #endif
-#endif
 			jukebox_org = -1;
+			curmus_timepos = -1; //no more song is playing in the jukebox now
+#endif
 
 			/* auto-save */
 
@@ -3420,6 +3431,7 @@ void do_cmd_options_mus_sdl(void) {
 			jukebox_playing = j_sel;
 			play_music(j_sel);
  #endif
+			curmus_timepos = 0; //song starts to play, at 0 seconds mark ie the beginning
 			break;
 #endif
 		case '#':
@@ -3449,6 +3461,35 @@ void do_cmd_options_mus_sdl(void) {
 		case '\010':
 			y = (y - 1 + audio_music) % audio_music;
 			break;
+
+		/* Skip forward/backward -- SDL_mixer (1.2.10) only supports ogg,mp3,mod apparently though, and it's a pita,
+		   according to https://www.libsdl.org/projects/SDL_mixer/docs/SDL_mixer_65.html :
+			MOD
+				The double is cast to Uint16 and used for a pattern number in the module.
+				Passing zero is similar to rewinding the song.
+			OGG
+				Jumps to position seconds from the beginning of the song.
+			MP3
+				Jumps to position seconds from the current position in the stream.
+				So you may want to call Mix_RewindMusic before this.
+				Does not go in reverse...negative values do nothing.
+			Returns: 0 on success, or -1 if the codec doesn't support this function.
+		   ..and worst, the is no way to retrieve the current music position, so we have to track it manually: curmus_timepos.
+		*/
+		case '4':
+			if (curmus_timepos == -1) break; //no song is playing
+			Mix_RewindMusic();
+			curmus_timepos -= 30; //skip backward n seconds
+			if (curmus_timepos < 0) curmus_timepos = 0;
+			else Mix_SetMusicPosition(curmus_timepos);
+			break;
+		case '6':
+			if (curmus_timepos == -1) break; //no song is playing
+			Mix_RewindMusic();
+			curmus_timepos += 30; //skip forward n seconds
+			Mix_SetMusicPosition(curmus_timepos);
+			break;
+
 		default:
 			bell();
 		}

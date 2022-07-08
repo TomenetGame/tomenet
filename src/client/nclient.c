@@ -5933,6 +5933,14 @@ void update_ticks() {
 	/* Set the new ticks to the old ticks rounded down to the number of seconds. */
 	newticks = ticks - (ticks % 10);
 
+//#ifdef ENABLE_JUKEBOX
+	/* Track jukebox music position in seconds */
+	if (newticks != oldticks) {
+		oldticks = newticks;
+		if (curmus_timepos != -1) curmus_timepos++;
+	}
+//#endif
+
 	/* Find the new least significant digit of the ticks */
 	newticks += cur_time.tv_usec / 100000;
 	ticks10 = (cur_time.tv_usec / 10000) % 10;
