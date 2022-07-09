@@ -18239,15 +18239,24 @@ Novice ranger    4  Can pass trees easily. Gives an extra shot with slings or
                     character has a decent 'Bows/Throw' ability or has a bow
                     that is well enchanted to-hit.
                     It occurs solo at depth 4, but in packs at depth 8!
-N. mindcrafter   4  Free action, resists confusion and slightly insanity too.
+Novice mindcrafter
+                 4  Free action, resists confusion and slightly insanity too.
                     Can cast blind/slow/confuse/fear spells.
                     It occurs solo at depth 4, but in packs at depth 8!
 Large kobold     5  As all kobolds it has poison resistance. It also has a lot
                     of hit points and very good AC for its level.
+Bullywug         7  This doesn't have particular advantages except for being
+                    smart (+INT bonus), but it is actually aquatic. That means
+                    you can use it to roam deep water areas without drowning.
+                    (Aquatic forms cannot be used outside of deep water or you
+                    would suffocate because your body cannot breathe air.)
 Rotting corpse   8  Free action, resists confusion/fear/cold, poison immunity,
                     brands melee attacks with poison, decent AC.
                     Despite its lack of physical thoughness this is a very
                     underrated form considering all the beneficial abilities.
+Shadow Creature of Fiona
+                 8  Somewhat rare, gives free action and resistance to poison,
+                    darkness and confusion.
 *Phantom warrior 8  Useful only for shamans because it has no limbs!
                     This form can pass solid walls!
                     Also gives fear/sound/insanity resistance, free action,
