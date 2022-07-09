@@ -92,6 +92,7 @@ bool check_dir2(cptr s) {
 	}
 }
 
+#ifndef WINDOWS
 static void validate_dir(cptr s) {
 	/* Verify or fail */
 	if (!check_dir2(s))
@@ -117,10 +118,10 @@ static void validate_dir(cptr s) {
  * is ignored for "VM/ESA", so I just combined the two.
  */
 void init_stuff(void) {
-#if defined(AMIGA) || defined(VM)
+ #if defined(AMIGA) || defined(VM)
 	/* Hack -- prepare "path" */
 	strcpy(path, "TomeNET:");
-#else /* All systems except Amiga / VM: */
+ #else /* All systems except Amiga / VM: */
 	/* Change current directory to the location of the binary - mikaelh */
 	if (argv0) {
 		char *app_path = strdup(argv0);
@@ -148,7 +149,7 @@ void init_stuff(void) {
 
 	/* Validate the path */
 	validate_dir(path);
-#endif
+ #endif
 
 	/* Initialize */
 	init_file_paths(path);
@@ -159,8 +160,7 @@ void init_stuff(void) {
 	validate_dir(ANGBAND_DIR_USER);
 	validate_dir(ANGBAND_DIR_GAME);
 }
-
-
+#endif //not WINDOWS
 
 /*
  * Open all relevant pref files.
