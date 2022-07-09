@@ -5420,7 +5420,7 @@ void interact_macros(void) {
 					continue;
 				}
 
-				/* service: mimic-transformation automatically adds the required '\r' at the end */
+				/* service (end of I-tag): mimic-transformation into monster index number automatically adds the required '\r' at the end */
 				if (mimic_transform && (*bptr) != '@' && (*bptr) != '-' && ((*bptr) < '0' || (*bptr) > '9')) { /* allow '-1' for 'previous form' */
 					*b2ptr++ = '\\'; *b2ptr++ = 'r';
 					mimic_transform = FALSE;
@@ -5466,9 +5466,7 @@ void interact_macros(void) {
 					*b2ptr++ = *bptr++;
 				}
 			}
-
-			/* service: mimic-transformation automatically adds the required '\r' at the end,
-			   but call-by-name '@' also adds one, so avoid duplicate. */
+			/* service (end of line): mimic-transformation into monster index number automatically adds the required '\r' at the end */
 			if (mimic_transform) {
 				*b2ptr++ = '\\'; *b2ptr++ = 'r';
 			}
