@@ -152,8 +152,9 @@ MINGW_TARGET = i686-w64-mingw32
 # You may need to replace /usr/mingw32 by whatever prefix your
 # cross-compiling tools use.
 #
-SDL_CONFIG = /usr/$(MINGW_TARGET)/bin/sdl-config
 #SDL_CONFIG = /usr/$(MINGW_TARGET)/usr/bin/sdl-config
+#SDL_CONFIG = /usr/$(MINGW_TARGET)/bin/sdl-config
+SDL_CONFIG = /usr/$(MINGW_TARGET)/bin/sdl2-config
 
 #
 # Alternatively, specify include and lib paths for SDL
@@ -188,7 +189,8 @@ LUALIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 CFLAGS += -DSOUND_SDL $(SDL_INCLUDE_PATH)
 #LIBS += -lSDL -lSDL_mixer $(SDL_LIB_PATH)
 #added regexp capability for guide searching via mingw-libgnurx -> link against regex
-LIBS += $(SDL_LIB_PATH) -lSDL_mixer -lregex
+#LIBS += $(SDL_LIB_PATH) -lSDL_mixer -lregex
+LIBS += $(SDL_LIB_PATH) -lSDL2_mixer -lregex
 
 # Security hardening
 # -pie seems to be broken
