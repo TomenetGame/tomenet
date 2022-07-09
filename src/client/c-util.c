@@ -5411,7 +5411,7 @@ void interact_macros(void) {
 			b2ptr = buf2 + 3;
 			while (*bptr) {
 				if (call_by_name) {
-					if (*bptr == '\\') {
+					if (*bptr == '\\') { /* '\' is terminator for '@' call-by-name tag */
 						call_by_name = FALSE;
 						*b2ptr++ = '\\'; *b2ptr++ = 'r';
 						bptr++;
@@ -5470,7 +5470,7 @@ void interact_macros(void) {
 #endif
 					case '@': /* start 'call-by-name' mode, reading the spell/item name next */
 						call_by_name = TRUE;
-						*b2ptr++ = '@';
+						if (!mimic_transform) *b2ptr++ = '@'; /* does work, but is actually not required when entering a mimic form */
 						bptr++;	break;
 					default:
 						*b2ptr++ = *bptr++;
