@@ -12132,6 +12132,8 @@ Detonations / Death
                 If thrown (press 'v' to throw an item) these potions show the
                 strongest effect by far of all potions - devastating!
                 Accordingly useful to be used in fumes traps.
+                Death potions can be consumed by undead without taking damage
+                and they will even restore their stamina.
 Enlightenment   Illuminates and maps the whole level and reveals all objects.
                 It also identifies all of the user's items.
 *Enlightenment* Raises your intelligence and wisdom, detect treasures,
@@ -12153,13 +12155,13 @@ Infra-vision    Temporarily grants you 100..200 ft of infra-vision randomly,
                 to your fixed infra-vision radius, further increasing it.
                 ("Your eyes begin to tingle!")
 Invulnerability Will turn you partially invulnerable (40% chance to fully
-                deflect any attack, 50% damage reduction if it still hits) and
-                increases armour class by 100 temporarily.
+                deflect any attack, 50% damage reduction if it still hits)
+                and increases armour class by 100 temporarily.
                 ("A powerful iridescent shield forms around your body!")
 Learning        Gives you 1..3 (random) additional skill points to spend.
 Life            Heals 700 HP, removes blindness/confusion/stun, cures
                 poison/disease/cuts/hallucinations, cures Black Breath,
-                restores all your stats and experience.
+                restores all your stats and experience and your stamina.
 Lose Memories   Lose 25% experience (if Hold Life is missing).
 Resistance      Gives you temporary resistance against heat, cold, acid,
                 electricity and poison. (Stacks with permanent resistance
