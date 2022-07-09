@@ -5430,7 +5430,7 @@ void interact_macros(void) {
 						}
 						break;
 					default:
-						if (mimic_transform && ((*bptr) < '0' || (*bptr) > '9')) {
+						if (mimic_transform && (*bptr) != '-' && ((*bptr) < '0' || (*bptr) > '9')) { /* allow '-1' for 'previous form' */
 							*b2ptr++ = '\\'; *b2ptr++ = 'r';
 							mimic_transform = FALSE;
 						}
