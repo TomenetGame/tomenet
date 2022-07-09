@@ -2327,7 +2327,6 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			}
 			if (!c_ptr) break;
 			if (!p_ptr->blind) msg_print(Ind, "A pool of water appears under you!");
-			//c_ptr->feat = FEAT_WATER;
 			cave_set_feat_live(wpos, y, x, FEAT_DEEP_WATER);
 			break;
 

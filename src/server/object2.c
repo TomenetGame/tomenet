@@ -10083,9 +10083,8 @@ int drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, in
 	switch (c_ptr->feat) {
 	case FEAT_SHAL_WATER:
 	case FEAT_DEEP_WATER:
-	case FEAT_GLIT_WATER:
-	//case FEAT_WATER:
-	//case FEAT_TAINTET_WATER:
+	case FEAT_GLIT_WATER: //this isn't real water, it's boundary wall actually
+	//case FEAT_TAINTED_WATER:
 		if (hates_water(o_ptr)) {
 			do_kill = TRUE;
 #ifdef DROP_KILL_NOTE

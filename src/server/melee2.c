@@ -9442,7 +9442,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 #if 0	// too bad hack!
 	/* Hack -- aquatic life outa water */
-	if (zcave[oy][ox].feat != FEAT_WATER) {
+	if (zcave[oy][ox].feat != FEAT_DEEP_WATER) {
 		if (r_ptr->flags7 & RF7_AQUATIC) {
 			m_ptr->monfear = 50;
 			m_ptr->monfear_gone = 0;

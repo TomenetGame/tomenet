@@ -7657,7 +7657,7 @@ int see_wall(int Ind, int dir, int y, int x)
 	if ((zcave[y][x].feat == FEAT_DEAD_TREE || zcave[y][x].feat == FEAT_TREE || zcave[y][x].feat == FEAT_BUSH)
 	     && p_ptr->pass_trees) return (FALSE);
 	/* hack - allow 'running' if player can swim - HARDCODED :( */
-	if ((zcave[y][x].feat == 84 || zcave[y][x].feat == 103 || zcave[y][x].feat == 174 || zcave[y][x].feat == 187)
+	if ((zcave[y][x].feat == FEAT_SHAL_WATER || zcave[y][x].feat == FEAT_TAINTED_WATER || zcave[y][x].feat == FEAT_DEEP_WATER)
 	     && p_ptr->can_swim) return (FALSE);
 #endif
 	/* Must be known to the player */

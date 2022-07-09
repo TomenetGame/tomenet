@@ -7069,7 +7069,7 @@
 202 == FEAT_IVY
 219 == FEAT_BUSH
 84  == FEAT_SHAL_WATER
-103 == FEAT_GLIT_WATER
+103 == FEAT_GLIT_WATER -- no, this is just wall/decoration
 174 == FEAT_TAINTED_WATER
 187 == FEAT_DEEP_WATER
 
@@ -7079,13 +7079,13 @@
 	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR) || \
 	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_CAN_LEVITATE) && p_ptr->levitate) || \
 	((ZCAVE[Y][X].feat == FEAT_DEAD_TREE || ZCAVE[Y][X].feat == FEAT_TREE || ZCAVE[Y][X].feat == FEAT_BUSH) && (p_ptr->pass_trees || p_ptr->levitate)) || /* fly is redundant, covered a line above */ \
-	((ZCAVE[Y][X].feat == FEAT_SHAL_WATER || ZCAVE[Y][X].feat == FEAT_GLIT_WATER || ZCAVE[Y][X].feat == FEAT_TAINTED_WATER || ZCAVE[Y][X].feat == FEAT_DEEP_WATER) && p_ptr->can_swim))
+	((ZCAVE[Y][X].feat == FEAT_SHAL_WATER || ZCAVE[Y][X].feat == FEAT_TAINTED_WATER || ZCAVE[Y][X].feat == FEAT_DEEP_WATER) && p_ptr->can_swim))
 /* adding this to prevent annoying stops when running in barrow-downs while tree-passing --
    note last line, added for Paths of the Dead, allowing to run over pits */
 #define cave_running_bold_notrees(p_ptr,ZCAVE,Y,X) \
 	( ((f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR) || \
 	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_CAN_LEVITATE) && p_ptr->levitate) || \
-	((ZCAVE[Y][X].feat == FEAT_SHAL_WATER || ZCAVE[Y][X].feat == FEAT_GLIT_WATER || ZCAVE[Y][X].feat == FEAT_TAINTED_WATER || ZCAVE[Y][X].feat == FEAT_DEEP_WATER) && p_ptr->can_swim)) \
+	((ZCAVE[Y][X].feat == FEAT_SHAL_WATER || ZCAVE[Y][X].feat == FEAT_TAINTED_WATER || ZCAVE[Y][X].feat == FEAT_DEEP_WATER) && p_ptr->can_swim)) \
 	&& !(ZCAVE[Y][X].feat == FEAT_DEAD_TREE || ZCAVE[Y][X].feat == FEAT_TREE || ZCAVE[Y][X].feat == FEAT_BUSH || \
 	    ZCAVE[Y][X].feat == FEAT_DARK_PIT) )
 /* adding this to prevent annoying stops when running in barrow-downs while tree-passing --

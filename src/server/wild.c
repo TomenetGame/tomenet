@@ -3421,7 +3421,6 @@ static void wilderness_gen_hack(struct worldpos *wpos) {
 					continue;
 				}
 				if (c2_ptr->feat == FEAT_SHAL_WATER ||
-//				    c2_ptr->feat == FEAT_WATER ||
 				    c2_ptr->feat == FEAT_TAINTED_WATER ||
 				    c2_ptr->feat == FEAT_DEEP_WATER) {
 					found_more_water++;
@@ -3443,7 +3442,6 @@ static void wilderness_gen_hack(struct worldpos *wpos) {
 					continue;
 				}
 				if (c2_ptr->feat == FEAT_SHAL_WATER ||
-//				    c2_ptr->feat == FEAT_WATER ||
 				    c2_ptr->feat == FEAT_TAINTED_WATER ||
 				    c2_ptr->feat == FEAT_DEEP_WATER) {
 					found_more_water++;
