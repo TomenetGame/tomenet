@@ -17977,7 +17977,7 @@ Yeeks           Feather falling. Pass trees (from their ANIMAL flag).
 (Ents           Slow digestion, speed - 2, sensitive to fire, see invisible at
                 level 4, can swim easily, pass trees.)
 All animals     Able to pass trees.
-All spiders     Able to pass mountains, able to pass spider webs.
+All spiders     Able to pass spider webs.
 All orcs        Resist darkness.
 All trolls      Sustain strength. Extraordinary HP regeneration (2x as fast as
                 from 'REGEN' flag, doesn't stack with items. 1.5x as fast for

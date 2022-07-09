@@ -2407,8 +2407,6 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	if ((r_ptr->flags8 & (RF8_WILD_MOUNTAIN | RF8_WILD_VOLCANO)) ||
 	    (r_ptr->flags0 & RF0_CAN_CLIMB))
 		{ p_ptr->climb = TRUE; csheet_boni->cb[5] |= CB6_RCLMB; }
-	/* Spiders can always climb */
-	if (r_ptr->flags7 & RF7_SPIDER) { p_ptr->climb = TRUE; csheet_boni->cb[5] |= CB6_RCLMB; }
 
 	/* Orcs get resist_dark */
 	if (r_ptr->flags3 & RF3_ORC) { p_ptr->resist_dark = TRUE; csheet_boni->cb[2] |= CB3_RDARK; }
