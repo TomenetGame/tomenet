@@ -3675,7 +3675,7 @@ static void hook_quit(cptr str) {
 /*
  * Init some stuff
  */
-static void init_stuff(void) {
+void init_stuff(void) {
 	int   i;
 	char path[1024];
 	FILE *fp0;
