@@ -11238,7 +11238,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "%d names reserved (of max %d).", k, MAX_RESERVED_NAMES);
 				return;
 			}
-			else if (prefix(messagelc, "/addreservedname")) { /* admin-hack: manually add a name to the reserved-names list for 60 minutes */
+			else if (prefix(messagelc, "/addreservedname")) { /* admin-hack: manually add a name to the reserved-names list */
 				char name[NAME_LEN], account[ACCNAME_LEN], *ca;
 
 				ca = strchr(message3, ':');
@@ -11254,7 +11254,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 					strcpy(reserved_name_character[i], name);
 					strcpy(reserved_name_account[i], account);
-					reserved_name_timeout[i] = 60; //minutes
+					reserved_name_timeout[i] = 60 * 24 * 7; //minutes, should be long as this is usually used for restored character savegames
 					s_printf("RESERVED_NAMES_ADD2: \"%s\" (%s) for %d at #%d.\n", reserved_name_character[i], reserved_name_account[i], reserved_name_timeout[i], i);
 					msg_format(Ind, "Reserved \"%s\" (%s) for %d at #%d.", reserved_name_character[i], reserved_name_account[i], reserved_name_timeout[i], i);
 					break;
