@@ -5144,7 +5144,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (o_ptr->tval == TV_SUBINVEN && slot != -1) {
 		object_type *o2_ptr = &pt_ptr->subinventory[slot][0];
 
-		if (!o2_ptr->k_idx) fprintf(fff, "\377WIt can hold up to %d items or stacks and is currently empty.\n.", o_ptr->bpval);
+		if (!o2_ptr->k_idx) fprintf(fff, "\377WIt can hold up to %d items or stacks and is currently empty.\n", o_ptr->bpval);
 		else {
 			char o2_name[ONAME_LEN];
 

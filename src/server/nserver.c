@@ -4401,7 +4401,7 @@ static int Receive_login(int ind) {
 			if (strcmp(reserved_name_character[i], connp->nick)) continue;
 
 			if (!strcmp(reserved_name_account[i], connp->nick)) {
-				s_printf("RESERVED_NAMES: Account '%s' cleared '%s' (#%d)\n", connp->nick, reserved_name_character[i], i);
+				s_printf("RESERVED_NAMES_MATCH: Account '%s' cleared '%s' (#%d).\n", connp->nick, reserved_name_character[i], i);
 				reserved_name_character[i][0] = '\0'; //clear reservation
 				break;
 			}

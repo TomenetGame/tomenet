@@ -8393,7 +8393,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* Redraw the old grid */
 				everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 
-				s_printf("Erased (nothing) via slash-command: %s\n.", p_ptr->name);
+				s_printf("Erased (nothing) via slash-command: %s.\n", p_ptr->name);
 				msg_print(Ind, "\377RErased (nothing).");
 				return;
 			}
@@ -9978,7 +9978,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						}
 					}
 				}
-				s_printf("done (chown %d, chcol %d)\n.", k, tk);
+				s_printf("done (chown %d, chcol %d).\n", k, tk);
 				msg_format(Ind, "Houses that had their ownership changed: %d. Colour-mode changed: %d", k, tk);
 				return;
 			}
@@ -11226,16 +11226,16 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "flags2 = %u", l_ptr->flags2);
 				return;
 			}
-			else if (prefix(messagelc, "/reservednames")) { /* any parm to not stop at 1st 'nulled' name found */
-				bool found = FALSE;
-
+			else if (prefix(messagelc, "/reservednames")) { /* specify any parm to not stop at 1st 'nulled' name found */
+				k = 0;
 				for (i = 0; i < MAX_RESERVED_NAMES; i++) {
-					if (reserved_name_character[i][0]) found = TRUE;
-					if (!tk && !reserved_name_character[i][0]) break;
-					msg_format(Ind, "%s by account %s for %d minutes",
-					    reserved_name_character[i], reserved_name_account[i], reserved_name_timeout[i]);
+					if (reserved_name_character[i][0]) {
+						k++;
+						msg_format(Ind, "%s by account %s for %d minutes",
+						    reserved_name_character[i], reserved_name_account[i], reserved_name_timeout[i]);
+					} else if (!tk) break;
 				}
-				if (!found) msg_print(Ind, "No names reserved.");
+				msg_format(Ind, "%d names reserved (of max %d).", k, MAX_RESERVED_NAMES);
 				return;
 			}
 			else if (prefix(messagelc, "/addreservedname")) { /* admin-hack: manually add a name to the reserved-names list for 60 minutes */
@@ -11255,12 +11255,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					strcpy(reserved_name_character[i], name);
 					strcpy(reserved_name_account[i], account);
 					reserved_name_timeout[i] = 60; //minutes
-					s_printf("RESERVED_NAMES: reserved \"%s\" (%s) for %d at #%d\n", reserved_name_character[i], reserved_name_account[i], reserved_name_timeout[i], i);
-					msg_format(Ind, "Reserved \"%s\" (%s) for %d at #%d\n", reserved_name_character[i], reserved_name_account[i], reserved_name_timeout[i], i);
+					s_printf("RESERVED_NAMES_ADD2: \"%s\" (%s) for %d at #%d.\n", reserved_name_character[i], reserved_name_account[i], reserved_name_timeout[i], i);
+					msg_format(Ind, "Reserved \"%s\" (%s) for %d at #%d.", reserved_name_character[i], reserved_name_account[i], reserved_name_timeout[i], i);
 					break;
 				}
-				if (i == MAX_RESERVED_NAMES)
-					s_printf("Warning: Couldn't reserve character name '%s' for account '%s'!\n", name, account);
+				if (i == MAX_RESERVED_NAMES) {
+					//s_printf("RESERVED_NAMES_ERROR2: No more space (%d) to reserve character name '%s' for account '%s'!\n", i, name, account);
+					msg_format(Ind, "Warning: No more space (%d) to reserve character name '%s' for account '%s'!", MAX_RESERVED_NAMES, name, account);
+				}
 				return;
 			}
 			else if (prefix(messagelc, "/delreservedname")) { /* admin-hack: manually add a name to the reserved-names list for 60 minutes */
@@ -11278,8 +11280,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					if (reserved_name_character[i][0]) continue;
 					if (strcmp(reserved_name_account[i], account)) continue;
 					if (strcmp(reserved_name_character[i], name)) continue;
-					s_printf("RESERVED_NAMES: removed \"%s\" (%s) for %d at #%d\n", reserved_name_character[i], reserved_name_account[i], reserved_name_timeout[i], i);
-					msg_format(Ind, "Removed \"%s\" (%s) for %d at #%d\n", reserved_name_character[i], reserved_name_account[i], reserved_name_timeout[i], i);
+					s_printf("RESERVED_NAMES_DEL: \"%s\" (%s) for %d at #%d.\n", reserved_name_character[i], reserved_name_account[i], reserved_name_timeout[i], i);
+					msg_format(Ind, "Removed \"%s\" (%s) for %d at #%d.", reserved_name_character[i], reserved_name_account[i], reserved_name_timeout[i], i);
 					reserved_name_character[i][0] = 0;
 					break;
 				}

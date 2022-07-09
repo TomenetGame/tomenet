@@ -8284,11 +8284,11 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 		strcpy(reserved_name_character[i], p_ptr->name);
 		strcpy(reserved_name_account[i], p_ptr->accountname);
 		reserved_name_timeout[i] = 60 * 24; //minutes
-		s_printf("RESERVED_NAMES: reserved \"%s\" (%s) for %d at #%d\n", reserved_name_character[i], reserved_name_account[i], reserved_name_timeout[i], i); //debug
+		s_printf("RESERVED_NAMES_ADD: \"%s\" (%s) for %d at #%d.\n", reserved_name_character[i], reserved_name_account[i], reserved_name_timeout[i], i); //debug
 		break;
 	}
 	if (i == MAX_RESERVED_NAMES)
-		s_printf("Warning: Couldn't reserve character name '%s' for account '%s'!\n", p_ptr->name, p_ptr->accountname);
+		s_printf("RESERVED_NAMES_ERROR: No more space (%d) to reserve character name '%s' for account '%s'!\n", i, p_ptr->name, p_ptr->accountname);
 
 	/* Slide all his characters of greater order if required, to not generate order 'holes'. */
 	ids = player_id_list(&id_list, p_ptr->account);
@@ -9046,7 +9046,7 @@ void player_death(int Ind) {
 		/* Check that the player has enough money */
 		if (instant_res_cost > p_ptr->au + p_ptr->balance) {
 			msg_print(Ind, "\376\377yYou do not have sufficient funds for instant-resurrection!");
-			s_printf("INSTARES: Not enough funds (%d of %d): %s\n.", instant_res_cost, p_ptr->au + p_ptr->balance, p_ptr->name);
+			s_printf("INSTARES: Not enough funds (%d of %d): %s.\n", instant_res_cost, p_ptr->au + p_ptr->balance, p_ptr->name);
 			instant_res_possible = FALSE;
 		}
 

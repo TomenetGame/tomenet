@@ -3345,7 +3345,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 
 	/* handle banned player 1/2 */
 	if (acc_banned) {
-		s_printf("\377RRefused ACC_BANNED account %s (character %s)\n.", accname, name); /* Coloured for /cheeze */
+		s_printf("\377RRefused ACC_BANNED account %s (character %s).\n", accname, name); /* Coloured for /cheeze */
 		Destroy_connection(conn, "*** Your account is temporarily suspended ***");
 		return FALSE;
 	}
@@ -3443,7 +3443,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	}
 	/* handle banned player 2/2 */
 	if (acc_banned) {
-		s_printf("Refused ACC_BANNED account %s (character %s)\n.", accname, name);
+		s_printf("Refused ACC_BANNED account %s (character %s).\n", accname, name);
 		Destroy_connection(conn, "*** Your account is temporarily suspended ***");
 		return FALSE;
 	}
