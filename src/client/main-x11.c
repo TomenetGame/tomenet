@@ -2180,7 +2180,7 @@ static void createMasksFromData(char* data, int width, int height, char **bgmask
  *
  * Added bg/fg masks resizing.
  * It's your responsibility to free returned XImage, bgmask_return and fgmask_return after usage.
- * Function will not free memory if allready allocated in bgmask_return or fgmask_return input variable.
+ * Function will not free memory if already allocated in bgmask_return or fgmask_return input variable.
  */
 static XImage *ResizeImage(Display *disp, XImage *Im,
                            int ix, int iy, int ox, int oy,
@@ -2649,7 +2649,7 @@ errr init_x11(void) {
 
 #ifdef USE_GRAPHICS
 	if (use_graphics) {
-		/* Load graphics file. Turn off "use_graphics", if file missing or load error. */
+		/* Load graphics file. Quit if file missing or load error. */
 
 		/* Check for tiles string & extract tiles width & height. */
 		if (2 != sscanf(graphic_tiles, "%dx%d", &graphics_tile_wid, &graphics_tile_hgt)) {
@@ -2658,12 +2658,13 @@ errr init_x11(void) {
 		}
 
 		if (graphics_tile_wid <= 0 || graphics_tile_hgt <= 0) {
-			printf("Invalid tiles dimesions: %dx%d\n", graphics_tile_wid, graphics_tile_hgt);
+			printf("Invalid tiles dimensions: %dx%d\n", graphics_tile_wid, graphics_tile_hgt);
 			quit("Graphics load error");
 		}
 
 		/* Initialize paths, to get access to lib directories. */
 		init_stuff();
+
 		/* Build & allocate the graphics path. */
 		char path[1024];
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "graphics");
