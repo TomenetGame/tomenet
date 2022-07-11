@@ -5742,7 +5742,8 @@ you should NOT use them for macros:
 pref.prf (global for all OS and users on the system)
 *.opt files (client options configuration files, ending on ".opt")
 pref-<operating system>.prf (loaded if under the specific operating system)
-graf-<operating system>.prf OR font-<operating system>.prf
+graphics-<operating system>.prf OR font-<operating system>.prf OR
+graphics-<dimensions>.prf OR font-<dimensions>.prf
                             (loaded if using graphics / ascii font on the
                              specified system)
 user-<operating system>.prf (loaded if under the specific operating system)
@@ -23981,7 +23982,7 @@ PROBLEM 31: Changes I do to my macros seem to not get saved or macros I deleted
             their respective .prf file.
 Solution:   Macros or client options can be saved to various .prf files which
             might _all_ get loaded automatically and partially override each
-            other. So check _all_ (except for font*.prf and graf*.prf usually)
+            other. So check _all_ (except for font*.prf and graphics*.prf usually)
             .prf files in your lib/user folder and/or move or delete them to
             make sure they don't get loaded if you don't intend them to.
             For example the file 'user.prf' usually carries your client options

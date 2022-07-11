@@ -17,7 +17,7 @@
  * special "ext-win.zip" archive, with instructions on where to place
  * the various files.  For example, we require that all font files,
  * bitmap files, and sound files, be placed into the "lib/xtra/font/",
- * "/lib/xtra/graf/", and "lib/xtra/sound/" directories, respectively.
+ * "/lib/xtra/graphics/", and "lib/xtra/sound/" directories, respectively.
  *
  * See "h-config.h" for the extraction of the "WINDOWS" flag based
  * on the "_Windows", "__WINDOWS__", "__WIN32__", "WIN32", "__WINNT__",
@@ -33,20 +33,10 @@
  * clear of the current window, and redraw the borders and other things.
  *
  * XXX XXX XXX
- * The "use_graphics" option should affect ALL of the windows, not just
- * the main "screen" window.  The "FULL_GRAPHICS" option is supposed to
- * enable this behavior, but it will load one bitmap file for each of
- * the windows, which may take a lot of memory, especially since with
- * a little clever code, we could load each bitmap only when needed,
- * and only free it once nobody is using it any more.
- *
- * XXX XXX XXX
- * The user should be able to select the "bitmap" for a window independant
- * from the "font", and should be allowed to select any bitmap file which
- * is strictly smaller than the font file.  Currently, bitmap selection
- * always imitates the font selection unless the "Font" and "Graf" lines
- * are used in the "ANGBAND.INI" file.  This may require the addition
- * of a menu item for each window to select the bitmaps.
+ * The user should be able to select the "bitmap" for windows independent
+ * from the "font", and should be allowed to select any bitmap file. When
+ * selecting a bitmap, that is used in all windows. The usage mappings are
+ * loaded from preferences file placed in user directory.
  *
  * XXX XXX XXX
  * The various "warning" messages assume the existence of the "screen.w"
@@ -127,7 +117,7 @@
 /*
  * Menu constants -- see "ANGBAND.RC"
  */
- 
+
 #define IDM_FILE_NEW			101
 #define IDM_FILE_OPEN			102
 #define IDM_FILE_SAVE			103
@@ -236,7 +226,7 @@
  * Include the support for loading bitmaps
  */
 #ifdef USE_GRAPHICS
-# include "readdib.h"
+#include <windowsx.h>
 #endif
 
 /*
@@ -308,11 +298,11 @@ unsigned _cdecl _dos_getfileattr(const char *, unsigned *);
 
 
 /* Swap colour indices used for palette animation with their originals.
-   For some reason this may be required on Windows:
-   The colours 0-15 can be animated just fine and flicker-free.
-   The colours 16-31 cause flickering on animation.
-   So on Win we just do it the opposite way round and animate 0-15 and
-   use 16-31 for static colours. - C. Blue */
+ * For some reason this may be required on Windows:
+ * The colours 0-15 can be animated just fine and flicker-free.
+ * The colours 16-31 cause flickering on animation.
+ * So on Win we just do it the opposite way round and animate 0-15 and
+ * use 16-31 for static colours. - C. Blue */
 //#define PALANIM_SWAP
 
 
@@ -327,14 +317,13 @@ typedef struct _term_data term_data;
 /*
  * Extra "term" data
  *
- * Note the use of "font_want" and "graf_want" for the names of the
- * font/graf files requested by the user, and the use of "font_file"
- * and "graf_file" for the currently active font/graf files.
+ * Note the use of "font_want" for the names of the font files
+ * requested by the user, and the use of "font_file" for the
+ * currently active font files.
  *
- * The "font_file" and "graf_file" are capitilized, and are of the
- * form "8X13.FON" and "8X13.BMP", while "font_want" and "graf_want"
- * can be in almost any form as long as it could be construed as
- * attempting to represent the name of a font or bitmap or file.
+ * The "font_file" is capitalized, and is of the form "8X13.FON",
+ * while "font_want" can be in almost any form as long as it could
+ * be construed as attempting to represent the name of a font or file.
  */
 struct _term_data
 {
@@ -345,7 +334,8 @@ struct _term_data
 	HWND     w;
 
 #ifdef USE_GRAPHICS
-	DIBINIT infGraph;
+	HDC hdcTiles,hdcBgMask, hdcFgMask;
+	HDC hdcTilePreparation;
 #endif
 
 	DWORD    dwStyle;
@@ -372,10 +362,8 @@ struct _term_data
 	byte     size_hack;
 
 	cptr     font_want;
-	cptr     graf_want;
 
 	cptr     font_file;
-	cptr     graf_file;
 
 	HFONT    font_id;
 
@@ -387,6 +375,252 @@ struct _term_data
 #endif
 };
 
+#ifdef USE_GRAPHICS
+HBITMAP g_hbmTiles = NULL;
+HBITMAP g_hbmBgMask = NULL;
+HBITMAP g_hbmFgMask = NULL;
+
+/* These variables are computed at image load (in 'init_windows'). */
+int graphics_tile_wid, graphics_tile_hgt;
+int graphics_image_tpr; /* Tiles per row. */
+
+/* Copied and repurposed from: http://winprog.org/tutorial/transparency.html */
+HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent) {
+	BITMAP bm;
+	GetObject(hbmColour, sizeof(BITMAP), &bm);
+
+	/* Create 32bpp mask bitmap. */
+	HBITMAP hbmMask = CreateBitmap(bm.bmWidth, bm.bmHeight, 1, 32, NULL);
+
+	/* Get some HDCs that are compatible with the display driver of main window. */
+	HDC hdcMem = CreateCompatibleDC(NULL);
+	HDC hdcMem2 = CreateCompatibleDC(NULL);
+
+	/* Select the image and mask bitmap handles to created memory DC and store default images. */
+	HBITMAP hbmOldMem = SelectBitmap(hdcMem, hbmColour);
+	HBITMAP hbmOldMem2 = SelectBitmap(hdcMem2, hbmMask);
+
+	/* Set the background colour of the colour image to the colour you want to be transparent. */
+	//COLORREF clrSaveBk = SetBkColor(hdcMem, crTransparent);
+
+	/* Copy the bits from the colour image to the B+W mask. Everything with the background colour ends up white while everythig else ends up black. */
+	//BitBlt(hdcMem2, 0, 0, bm.bmWidth, bm.bmHeight, hdcMem, 0, 0, SRCCOPY);
+
+	/* Take our new mask and use it to turn the transparent colour in our original colour image to black so the transparency effect will work right. */
+	//BitBlt(hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, hdcMem2, 0, 0, SRCINVERT);
+
+	/* Clean up. */
+	//SetBkColor(hdcMem, clrSaveBk);
+
+	/* The commented code above, which is in all tutorials on net doesn't work for mingw for unknown reasons. Let's use more classical and slower approach. */
+	for (int y = 0; y < bm.bmHeight; y++) {
+		for (int x = 0; x < bm.bmWidth; x++) {
+			COLORREF p = GetPixel(hdcMem, x, y);
+			if ( p == crTransparent ) {
+				/* Set mask pixel. */
+				SetPixel(hdcMem2, x, y, RGB(255, 255, 255));
+				/* Erase origin pixel */
+				SetPixel(hdcMem, x, y, RGB(0, 0, 0));
+			}
+		}
+	}
+
+	/* Clean up. */
+	SelectBitmap(hdcMem, hbmOldMem);
+	SelectBitmap(hdcMem2, hbmOldMem2);
+	DeleteDC(hdcMem);
+	DeleteDC(hdcMem2);
+
+	return hbmMask;
+}
+
+/* Resize an bitmap with it's bg/fg masks.
+ *
+ * It's your responsibility to free returned HBITMAP, hbmBgMask_return and hbmFgMask_return after usage.
+ * Function will not free resources if already allocated in hbmBgMask_return or hbmFgMask_return input variable.
+ */
+static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy, HBITMAP hbmBgMask, HBITMAP hbmFgMask, HBITMAP *hbmBgMask_return, HBITMAP *hbmFgMask_return) {
+	BITMAP bm;
+	GetObject(hbm, sizeof(BITMAP), &bm);
+
+	int width1, height1, width2, height2;
+	width1 = bm.bmWidth;
+	height1 = bm.bmHeight;
+
+	width2 = ox * width1 / ix;
+	height2 = oy * height1 / iy;
+
+	HBITMAP hbmResTiles = CreateBitmap(width2, height2, 1, 32, NULL);
+	HBITMAP hbmResBgMask = CreateBitmap(width2, height2, 1, 32, NULL);
+	HBITMAP hbmResFgMask = CreateBitmap(width2, height2, 1, 32, NULL);
+
+	HDC hdcMemTiles = CreateCompatibleDC(NULL);
+	HDC hdcMemBgMask = CreateCompatibleDC(NULL);
+	HDC hdcMemFgMask = CreateCompatibleDC(NULL);
+
+	HDC hdcMemResTiles = CreateCompatibleDC(NULL);
+	HDC hdcMemResBgMask = CreateCompatibleDC(NULL);
+	HDC hdcMemResFgMask = CreateCompatibleDC(NULL);
+
+	/* Select our tiles into the memory DC and store default bitmap to not leak GDI objects. */
+	HBITMAP hbmOldMemTiles = SelectObject(hdcMemTiles, g_hbmTiles);
+	HBITMAP hbmOldMemBgMask = SelectObject(hdcMemBgMask, g_hbmBgMask);
+	HBITMAP hbmOldMemFgMask = SelectObject(hdcMemFgMask, g_hbmFgMask);
+
+	HBITMAP hbmOldMemResTiles = SelectObject(hdcMemResTiles, hbmResTiles);
+	HBITMAP hbmOldMemResBgMask = SelectObject(hdcMemResBgMask, hbmResBgMask);
+	HBITMAP hbmOldMemResFgMask = SelectObject(hdcMemResFgMask, hbmResFgMask);
+
+	//StretchBlt(hdcMemResTiles, 0, 0, width2, height2, hdcMemTiles, 0, 0, width1, height1, SRCCOPY);
+	//StretchBlt(hdcMemResBgMask, 0, 0, width2, height2, hdcMemBgMask, 0, 0, width1, height1, SRCCOPY);
+	//StretchBlt(hdcMemResFgMask, 0, 0, width2, height2, hdcMemFgMask, 0, 0, width1, height1, SRCCOPY);
+
+	/* I like more this classical and slower approach, as the commented StretchBlt code above. In my opinion, it makes nicer resized pictures.*/
+	int x1, x2, y1, y2, Tx, Ty;
+	int *px1, *px2, *dx1, *dx2;
+	int *py1, *py2, *dy1, *dy2;
+	if (ix >= ox) {
+		px1 = &x1;
+		px2 = &x2;
+		dx1 = &ix;
+		dx2 = &ox;
+	} else {
+		px1 = &x2;
+		px2 = &x1;
+		dx1 = &ox;
+		dx2 = &ix;
+	}
+
+	if (iy >= oy) {
+		py1 = &y1;
+		py2 = &y2;
+		dy1 = &iy;
+		dy2 = &oy;
+	} else {
+		py1 = &y2;
+		py2 = &y1;
+		dy1 = &oy;
+		dy2 = &iy;
+	}
+
+	Ty = *dy1;
+
+	for (y1 = 0, y2 = 0; (y1 < height1) && (y2 < height2); ) {
+		Tx = *dx1;
+
+		for (x1 = 0, x2 = 0; (x1 < width1) && (x2 < width2); ) {
+
+			SetPixel(hdcMemResTiles, x2, y2, GetPixel(hdcMemTiles, x1, y1));
+			SetPixel(hdcMemResBgMask, x2, y2, GetPixel(hdcMemBgMask, x1, y1));
+			SetPixel(hdcMemResFgMask, x2, y2, GetPixel(hdcMemFgMask, x1, y1));
+
+			(*px1)++;
+
+			Tx -= *dx2;
+			if (Tx <= 0)
+			{
+				Tx += *dx1;
+				(*px2)++;
+			}
+		}
+
+		(*py1)++;
+
+		Ty -= *dy2;
+		if (Ty <= 0)
+		{
+			Ty += *dy1;
+			(*py2)++;
+		}
+	}
+
+	/* Restore the stored default bitmap into the memory DC. */
+	SelectObject(hdcMemTiles, hbmOldMemTiles);
+	SelectObject(hdcMemBgMask, hbmOldMemBgMask);
+	SelectObject(hdcMemFgMask, hbmOldMemFgMask);
+
+	SelectObject(hdcMemResTiles, hbmOldMemResTiles);
+	SelectObject(hdcMemResBgMask, hbmOldMemResBgMask);
+	SelectObject(hdcMemResFgMask, hbmOldMemResFgMask);
+
+	/* Release the created memory DC. */
+	DeleteDC(hdcMemTiles);
+	DeleteDC(hdcMemBgMask);
+	DeleteDC(hdcMemFgMask);
+
+	DeleteDC(hdcMemResTiles);
+	DeleteDC(hdcMemResBgMask);
+	DeleteDC(hdcMemResFgMask);
+
+	(*hbmBgMask_return) = hbmResBgMask;
+	(*hbmFgMask_return) = hbmResFgMask;
+	return hbmResTiles;
+}
+
+static void releaseCreatedGraphicsObjects(term_data *td) {
+	if ( td == NULL ) {
+		return;
+	}
+
+	if ( td->hdcTilePreparation != NULL ) {
+		DeleteDC(td->hdcTilePreparation);
+		td->hdcTilePreparation = NULL;
+	}
+	if ( td->hdcTiles != NULL ) {
+		DeleteDC(td->hdcTiles);
+		td->hdcTiles = NULL;
+	}
+	if ( td->hdcBgMask != NULL ) {
+		DeleteDC(td->hdcBgMask);
+		td->hdcBgMask = NULL;
+	}
+	if ( td->hdcFgMask != NULL ) {
+		DeleteDC(td->hdcFgMask);
+		td->hdcFgMask = NULL;
+	}
+}
+
+static void recreateGraphicsObjects(term_data *td) {
+	releaseCreatedGraphicsObjects(td);
+
+	HBITMAP hbmTilePreparation = CreateBitmap(2*td->font_wid, td->font_hgt, 1, 32, NULL);
+	HBITMAP hbmBgMask,hbmFgMask;
+	HBITMAP hbmTiles = ResizeTilesWithMasks(g_hbmTiles, graphics_tile_wid, graphics_tile_hgt, td->font_wid, td->font_hgt, g_hbmBgMask, g_hbmFgMask, &hbmBgMask, &hbmFgMask);
+
+	if ( hbmTiles == NULL || hbmBgMask == NULL || hbmFgMask == NULL || hbmTilePreparation == NULL) {
+		quit("Resizing tiles or masks failed.\n");
+	}
+
+	/* Get device content for current window. */
+	HDC hdc = GetDC(td->w);
+
+	/* Create a compatible device content in memory. */
+	td->hdcTilePreparation = CreateCompatibleDC(hdc);
+	td->hdcTiles = CreateCompatibleDC(hdc);
+	td->hdcBgMask = CreateCompatibleDC(hdc);
+	td->hdcFgMask = CreateCompatibleDC(hdc);
+
+	/* Select our tiles into the memory DC and store default bitmap to not leak GDI objects. */
+	HBITMAP hbmOldTilePreparation = SelectObject(td->hdcTilePreparation, hbmTilePreparation);
+	HBITMAP hbmOldTiles = SelectObject(td->hdcTiles, hbmTiles);
+	HBITMAP hbmOldBgMask = SelectObject(td->hdcBgMask, hbmBgMask);
+	HBITMAP hbmOldFgMask = SelectObject(td->hdcFgMask, hbmFgMask);
+
+	/* Delete the default HBITMAPs here, the above created tiles & masks should be deleted when the HDCs are released. */
+	DeleteBitmap(hbmOldTilePreparation);
+	DeleteBitmap(hbmOldTiles);
+	DeleteBitmap(hbmOldBgMask);
+	DeleteBitmap(hbmOldFgMask);
+
+	/* Release */
+	ReleaseDC(td->w, hdc);
+
+	if ( td->hdcTiles == NULL || td->hdcBgMask == NULL || td->hdcFgMask == NULL || td->hdcTilePreparation == NULL) {
+		quit("Creating device content handles for tiles, tile preparation or masks failed.\n");
+	}
+}
+
+#endif
 
 /*
  * Maximum number of windows XXX XXX XXX XXX
@@ -456,7 +690,7 @@ static cptr AngList  = "AngList";
  */
 static cptr ANGBAND_DIR_XTRA_FONT;
 #ifdef USE_GRAPHICS
-static cptr ANGBAND_DIR_XTRA_GRAF;
+static cptr ANGBAND_DIR_XTRA_GRAPHICS;
 #endif
 #ifdef USE_SOUND
 #ifndef USE_SOUND_2010
@@ -483,17 +717,17 @@ static cptr ANGBAND_DIR_XTRA_SOUND;
 /* These colors are overwritten with the generic, OS-independant client_color_map[] in enable_common_colormap_win()! */
 #ifdef PALANIM_OPTIMIZED2
  #ifndef EXTENDED_BG_COLOURS
-   static COLORREF win_clr_buf[BASE_PALETTE_SIZE];
+static COLORREF win_clr_buf[BASE_PALETTE_SIZE];
  #else
-   static COLORREF win_clr_buf_bg[BASE_PALETTE_SIZE + TERMX_AMT];
-   static COLORREF win_clr_buf[BASE_PALETTE_SIZE + TERMX_AMT];
+static COLORREF win_clr_buf_bg[BASE_PALETTE_SIZE + TERMX_AMT];
+static COLORREF win_clr_buf[BASE_PALETTE_SIZE + TERMX_AMT];
  #endif
 #endif
 #ifndef EXTENDED_BG_COLOURS
- static COLORREF win_clr[BASE_PALETTE_SIZE] = {
+static COLORREF win_clr[BASE_PALETTE_SIZE] = {
 #else
- static COLORREF win_clr_bg[BASE_PALETTE_SIZE + TERMX_AMT];
- static COLORREF win_clr[BASE_PALETTE_SIZE + TERMX_AMT] = {
+static COLORREF win_clr_bg[BASE_PALETTE_SIZE + TERMX_AMT];
+static COLORREF win_clr[BASE_PALETTE_SIZE + TERMX_AMT] = {
 #endif
 	PALETTERGB(0x00, 0x00, 0x00),  /* 0 0 0  Dark */
 	PALETTERGB(0xFF, 0xFF, 0xFF),  /* 4 4 4  White */
@@ -853,10 +1087,6 @@ static void save_prefs_aux(term_data *td, cptr sec_name) {
 		WritePrivateProfileString(sec_name, "Font", td->font_file, ini_file);
 #endif
 
-	/* Desired graf */
-	if (td->graf_file)
-		WritePrivateProfileString(sec_name, "Graf", td->graf_file, ini_file);
-
 	if (td != &data[0]) {
 		/* Current size (x) */
 		wsprintf(buf, "%d", td->cols);
@@ -912,6 +1142,7 @@ static void save_prefs(void) {
 #ifdef USE_GRAPHICS
 	strcpy(buf, use_graphics ? "1" : "0");
 	WritePrivateProfileString("Base", "Graphics", buf, ini_file);
+	WritePrivateProfileString("Base", "GraphicTiles", graphic_tiles, ini_file);
 #endif
 #ifdef USE_SOUND
 	strcpy(buf, use_sound_org ? "1" : "0");
@@ -972,12 +1203,6 @@ static void load_prefs_aux(term_data *td, cptr sec_name) {
 	td->lf.lfWeight = GetPrivateProfileInt(sec_name, "FontWgt", 0, ini_file);
 #else
 	td->font_want = string_make(extract_file_name(tmp));
-#endif
-
-	/* Desired graf, with default */
-#ifdef USE_GRAPHICS
-	GetPrivateProfileString(sec_name, "Graf", DEFAULT_TILENAME, tmp, 127, ini_file);
-	td->graf_want = string_make(extract_file_name(tmp));
 #endif
 
 	/* Window size */
@@ -1071,6 +1296,11 @@ static void load_prefs(void) {
 #ifdef USE_GRAPHICS
 	/* Extract the "use_graphics" flag */
 	use_graphics = (GetPrivateProfileInt("Base", "Graphics", 0, ini_file) != 0);
+	GetPrivateProfileString("Base", "GraphicTiles", DEFAULT_TILENAME, graphic_tiles, 255, ini_file);
+	/* Convert to lowercase. */
+	for (int i =0; i < 256; i++) {
+		graphic_tiles[i]=tolower(graphic_tiles[i]);
+	}
 #endif
 
 #ifdef USE_SOUND
@@ -1173,27 +1403,6 @@ static void new_palette(void) {
 	lppe = NULL;
 	nEntries = 0;
 
-#ifdef USE_GRAPHICS
-
-	/* Check windows */
-	for (i = MAX_TERM_DATA - 1; i >= 0; i--) {
-		if (data[i].graf_file) {
-			/* Check the bitmap palette */
-			hBmPal = data[i].infGraph.hPalette;
-		}
-	}
-
-	/* Use the bitmap */
-	if (hBmPal) {
-		lppeSize = 256*sizeof(PALETTEENTRY);
-		lppe = (LPPALETTEENTRY)mem_alloc(lppeSize);
-		nEntries = GetPaletteEntries(hBmPal, 0, 255, lppe);
-		if (nEntries == 0) quit("Corrupted bitmap palette");
-		if (nEntries > 220) quit("Bitmap must have no more than 220 colors");
-	}
-
-#endif
-
 	/* Size of palette */
 	pLogPalSize = sizeof(LOGPALETTE) + (BASE_PALETTE_SIZE + nEntries)*sizeof(PALETTEENTRY);
 
@@ -1280,27 +1489,6 @@ static void new_palette_ps(void) {
 	lppeSize = 0;
 	lppe = NULL;
 	nEntries = 0;
-
- #ifdef USE_GRAPHICS
-
-	/* Check windows */
-	for (i = MAX_TERM_DATA - 1; i >= 0; i--) {
-		if (data[i].graf_file) {
-			/* Check the bitmap palette */
-			hBmPal = data[i].infGraph.hPalette;
-		}
-	}
-
-	/* Use the bitmap */
-	if (hBmPal) {
-		lppeSize = 256 * sizeof(PALETTEENTRY);
-		lppe = (LPPALETTEENTRY)mem_alloc(lppeSize);
-		nEntries = GetPaletteEntries(hBmPal, 0, 255, lppe);
-		if (nEntries == 0) quit("Corrupted bitmap palette");
-		if (nEntries > 220) quit("Bitmap must have no more than 220 colors");
-	}
-
- #endif
 
 	/* Size of palette */
 	pLogPalSize = sizeof(LOGPALETTE) + (16 + nEntries)*sizeof(PALETTEENTRY);
@@ -1400,6 +1588,10 @@ static errr term_force_font(term_data *td, cptr name) {
 	char base_font[16];
 	char buf[1024];
 	bool used;
+#ifdef USE_GRAPHICS
+	int prev_font_wid = td->font_wid;
+	int prev_font_hgt = td->font_hgt;
+#endif
 
 
 #ifdef USE_LOGFONT
@@ -1537,110 +1729,18 @@ static errr term_force_font(term_data *td, cptr name) {
 	/* Reload custom font prefs on main screen font change */
 	if (td == &data[0]) handle_process_font_file();
 
-	/* Success */
-	return (0);
-}
-
-
 #ifdef USE_GRAPHICS
-
-/*
- * Force the use of a new "graf file" for a term_data
- *
- * This function is never called before the windows are ready
- *
- * This function returns zero only if everything succeeds.
- */
-static errr term_force_graf(term_data *td, cptr name) {
-	int i;
-	int wid, hgt;
-	cptr s;
-	char base[16];
-	char base_graf[16];
-	char buf[1024];
-
-	/* Forget old stuff */
-	if (td->graf_file) {
-		/* Free the old information */
-		if (td->infGraph.hDIB) GlobalFree(td->infGraph.hDIB);
-		if (td->infGraph.hPalette) DeleteObject(td->infGraph.hPalette);
-		if (td->infGraph.hBitmap) DeleteObject(td->infGraph.hBitmap);
-
-		/* Forget them */
-		td->infGraph.hDIB = 0;
-		td->infGraph.hPalette = 0;
-		td->infGraph.hBitmap = 0;
-
-		/* Forget old graf name */
-		string_free(td->graf_file);
-
-		/* Forget it */
-		td->graf_file = NULL;
+	if ( use_graphics && g_hbmTiles != NULL && ( prev_font_wid != td->font_wid || prev_font_hgt != td->font_hgt ) ) {
+		recreateGraphicsObjects(td);
 	}
-
-
-	/* No name */
-	if (!name) return (1);
-
-	/* Extract the base name (with suffix) */
-	s = extract_file_name(name);
-
-	/* Extract font width */
-	wid = atoi(s);
-
-	/* Default font height */
-	hgt = 0;
-
-	/* Copy, capitalize, remove suffix, extract width */
-	for (i = 0; (i < 16 - 1) && s[i] && (s[i] != '.'); i++) {
-		/* Capitalize */
-		base[i] = FORCEUPPER(s[i]);
-
-		/* Extract "hgt" when found */
-		if (base[i] == 'X') hgt = atoi(s + i + 1);
-	}
-
-	/* Terminate */
-	base[i] = '\0';
-
-	/* Require actual sizes */
-	if (!wid || !hgt) return (1);
-
-	/* Build base_graf */
-	strcpy(base_graf, base);
-	strcat(base_graf, ".BMP");
-
-
-	/* Access the graf file */
-	path_build(buf, 1024, ANGBAND_DIR_XTRA_GRAF, base_graf);
-
-	/* Verify file */
-	if (!check_file(buf)) return (1);
-
-
-	/* Save new graf name */
-	td->graf_file = string_make(base_graf);
-
-	/* Load the bitmap or quit */
-	if (!ReadDIB(td->w, buf, &td->infGraph))
-		quit_fmt("Bitmap corrupted:\n%s", buf);
-
-	/* Save the new sizes */
-	td->infGraph.CellWidth = wid;
-	td->infGraph.CellHeight = hgt;
-
-	/* Activate a palette */
-	new_palette();
-
-	/* Success */
-	return (0);
-}
-
 #endif
 
+	/* Success */
+	return (0);
+}
 
 /*
- * Allow the user to change the font (and graf) for this window.
+ * Allow the user to change the font for this window.
  *
  * XXX XXX XXX This is only called for non-graphic windows
  */
@@ -1694,54 +1794,6 @@ static void term_change_font(term_data *td) {
 #endif
 }
 
-
-#ifdef USE_GRAPHICS
-
-/*
- * Allow the user to change the graf (and font) for a window
- *
- * XXX XXX XXX This is only called for graphic windows, and
- * changes the font and the bitmap for the window, and is
- * only called if "use_graphics" is true.
- */
-static void term_change_bitmap(term_data *td) {
-	OPENFILENAME ofn;
-	char tmp[128] = "";
-
-	/* Extract a default if possible */
-	if (td->graf_file) strcpy(tmp, td->graf_file);
-
-	/* Ask for a choice */
-	memset(&ofn, 0, sizeof(ofn));
-	ofn.lStructSize = sizeof(ofn);
-	ofn.hwndOwner = data[0].w;
-	ofn.lpstrFilter = "Bitmap Files (*.bmp)\0*.bmp\0";
-	ofn.nFilterIndex = 1;
-	ofn.lpstrFile = tmp;
-	ofn.nMaxFile = 128;
-	ofn.lpstrInitialDir = ANGBAND_DIR_XTRA_GRAF;
-	ofn.Flags = OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
-	ofn.lpstrDefExt = "bmp";
-
-	/* Force choice if legal */
-	if (GetOpenFileName(&ofn)) {
-		/* XXX XXX XXX */
-
-		/* Force the requested font and bitmap */
-		if (term_force_font(td, tmp) ||
-		    term_force_graf(td, tmp)) {
-			/* Force the "standard" font */
-			(void)term_force_font(td, DEFAULT_FONTNAME);
-
-			/* Force the "standard" bitmap */
-			(void)term_force_graf(td, DEFAULT_TILENAME);
-		}
-	}
-}
-
-#endif
-
-
 /*
  * Hack -- redraw a term_data
  */
@@ -1761,14 +1813,14 @@ static void term_data_redraw(term_data *td) {
  * Hack -- redraw a term_data
  */
 static void term_data_redraw_section(term_data *td, int x1, int y1, int x2, int y2) {
-    /* Activate the term */
-    Term_activate(&td->t);
+	/* Activate the term */
+	Term_activate(&td->t);
 
-    /* Redraw the area */
-    Term_redraw_section(x1, y1, x2, y2);
+	/* Redraw the area */
+	Term_redraw_section(x1, y1, x2, y2);
 
-    /* Restore the term */
-    Term_activate(term_screen);
+	/* Restore the term */
+	Term_activate(term_screen);
 }
 
 
@@ -1816,68 +1868,6 @@ static errr Term_user_win(int n) {
  */
 static errr Term_xtra_win_react(void) {
 	int i;
-/*	I added this USE_GRAPHICS because we lost color support as well. -GP */
-#ifdef USE_GRAPHICS
-	static int old_use_graphics = FALSE;
-
-
-	/* XXX XXX XXX Check "color_table[]" */
-
-
-	/* Simple color */
-	if (colors16) {
-		/* Save the default colors */
-		for (i = 0; i < 16; i++) {
-			/* Simply accept the desired colors */
-			win_pal[i] = color_table[i][0];
-		}
-	}
-
-	/* Complex color */
-	else {
-		COLORREF code;
-		byte rv, gv, bv;
-		bool change = FALSE;
-
-		/* Save the default colors */
-		for (i = 0; i < BASE_PALETTE_SIZE; i++) {
-			/* Extract desired values */
-			rv = color_table[i][1];
-			gv = color_table[i][2];
-			bv = color_table[i][3];
-
-			/* Extract a full color code */
-			code = PALETTERGB(rv, gv, bv);
-
-			/* Activate changes */
-			if (win_clr[i] != code) {
-				/* Note the change */
-				change = TRUE;
-
-				/* Apply the desired color */
-				win_clr[i] = code;
-			}
-		}
-
-		/* Activate the palette if needed */
-		if (change) new_palette();
-	}
-#endif	/* no color support -gp */
-
-#ifdef USE_GRAPHICS
-
-	/* XXX XXX XXX Check "use_graphics" */
-	if (use_graphics && !old_use_graphics) {
-		/* Hack -- set the player picture */
-//		r_info[0].x_attr = 0x87;
-//		r_info[0].x_char = 0x80 | (10 * p_ptr->pclass + p_ptr->prace);
-	}
-
-	/* Remember */
-	old_use_graphics = use_graphics;
-
-#endif
-
 
 	/* Clean up windows */
 	for (i = 0; i < MAX_TERM_DATA; i++) {
@@ -2214,96 +2204,74 @@ static errr Term_curs_win(int x, int y) {
  * If we are called for anything but the "screen" window, or if the global
  * "use_graphics" flag is off, we simply "wipe" the given grid.
  */
-static errr Term_pict_win(int x, int y, byte a, char c) {
-
+static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 #ifdef USE_GRAPHICS
+	a = term2attr(a);
+
+	COLORREF bgColor, fgColor;
+	bgColor = RGB(0, 0, 0);
+	fgColor = RGB(0, 0, 0);
+
+ #ifdef PALANIM_SWAP
+	if (a < BASE_PALETTE_SIZE) a = (a + 16) % 32;
+ #endif
+
+	/* Background/Foreground color */
+ #ifndef EXTENDED_COLOURS_PALANIM
+	fgColor = win_clr[a & 0x0F];
+  #ifdef EXTENDED_BG_COLOURS
+	bgColor = PALETTEINDEX(win_clr_bg[a & 0x0F]);
+  #endif
+ #else
+	fgColor = win_clr[a & 0x1F];
+  #ifdef EXTENDED_BG_COLOURS
+	bgColor = PALETTEINDEX(win_clr_bg[a & 0x1F]);
+  #endif
+ #endif
 
 	term_data *td = (term_data*)(Term->data);
-	HDC  hdc;
-	HDC hdcSrc;
-	HBITMAP hbmSrcOld;
-	int row, col;
-	int x1, y1, w1, h1;
-	int x2, y2, w2, h2;
-
-	/* Paranoia -- handle weird requests */
-	if (!use_graphics) {
-		/* First, erase the grid */
-		return (Term_wipe_win(x, y, 1));
-	}
-
-#ifndef FULL_GRAPHICS
-	/* Paranoia -- handle weird requests */
-	if (td != &data[0]) {
-		/* First, erase the grid */
-		return (Term_wipe_win(x, y, 1));
-	}
-#endif
-
-	/* Extract picture info */
-	row = (a & 0x7F);
-	col = (c & 0x7F);
-
-	/* Size of bitmap cell */
-	w1 = td->infGraph.CellWidth;
-	h1 = td->infGraph.CellHeight;
-
-	/* Location of bitmap cell */
-	x1 = col * w1;
-	y1 = row * h1;
-
-	/* Size of window cell */
-	w2 = td->font_wid;
-	h2 = td->font_hgt;
 
 	/* Location of window cell */
-	x2 = x * w2 + td->size_ow1;
-	y2 = y * h2 + td->size_oh1;
+	x = x * td->font_wid + td->size_ow1;
+	y = y * td->font_hgt + td->size_oh1;
 
-	/* Info */
-	hdc = myGetDC(td->w);
+	int x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->font_wid;
+	int y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->font_hgt;
 
-	/* Handle small bitmaps */
-	if ((w1 < w2) || (h1 < h2)) {
-		RECT rc;
+	HDC hdc = myGetDC(td->w);
 
-		/* Erasure rectangle */
-		rc.left   = x2;
-		rc.right  = x2 + w2;
-		rc.top    = y2;
-		rc.bottom = y2 + h2;
+	/* Paint background rectangle .*/
+	RECT rectBg = { 0, 0, td->font_wid, td->font_hgt };
+	RECT rectFg = { td->font_wid, 0, 2*td->font_wid, td->font_hgt };
+	HBRUSH brushBg = CreateSolidBrush(bgColor);
+	HBRUSH brushFg = CreateSolidBrush(fgColor);
+	FillRect(td->hdcTilePreparation, &rectBg, brushBg);
+	FillRect(td->hdcTilePreparation, &rectFg, brushFg);
+	DeleteObject(brushBg);
+	DeleteObject(brushFg);
 
-		/* Erase the rectangle */
-#ifdef OPTIMIZE_DRAWING
-		ExtTextOut(hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL);
-#else
-		SetBkColor(hdc, RGB(0, 0, 0));
-		SelectObject(hdc, td->font_id);
-		ExtTextOut(hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL);
-#endif
 
-		/* Center bitmaps */
-		x2 += (w2 - w1) >> 1;
-		y2 += (h2 - h1) >> 1;
-	}
+	//BitBlt(hdc, 0, 0, 2*9, 15, hdcTilePreparation, 0, 0, SRCCOPY);
 
-	/* More info */
-	hdcSrc = CreateCompatibleDC(hdc);
-	hbmSrcOld = SelectObject(hdcSrc, td->infGraph.hBitmap);
+	BitBlt(td->hdcTilePreparation, td->font_wid, 0, td->font_wid, td->font_hgt, td->hdcFgMask, x1, y1, SRCAND);
+	BitBlt(td->hdcTilePreparation, td->font_wid, 0, td->font_wid, td->font_hgt, td->hdcTiles, x1, y1, SRCPAINT);
 
-	/* Copy the picture from the bitmap to the window */
-	BitBlt(hdc, x2, y2, w1, h1, hdcSrc, x1, y1, SRCCOPY);
+	//BitBlt(hdc, 0, 15, 2*9, 15, td->hdcTilePreparation, 0, 0, SRCCOPY);
 
-	/* Release */
-	SelectObject(hdcSrc, hbmSrcOld);
-	DeleteDC(hdcSrc);
+	BitBlt(td->hdcTilePreparation, 0, 0, td->font_wid, td->font_hgt, td->hdcBgMask, x1, y1, SRCAND);
+	BitBlt(td->hdcTilePreparation, 0, 0, td->font_wid, td->font_hgt, td->hdcTilePreparation, td->font_wid, 0, SRCPAINT);
 
-#ifndef OPTIMIZE_DRAWING
-	/* Release */
+	//BitBlt(hdc, 0, 15, 5*9, 15, td->hdcBgMask, 0, 0, SRCCOPY);
+	//BitBlt(hdc, 0, 2*15, 5*9, 15, td->hdcFgMask, 0, 0, SRCCOPY);
+	//
+	/* Copy the picture from the tile preparation memory to the window */
+	BitBlt(hdc, x, y, td->font_wid, td->font_hgt, td->hdcTilePreparation, 0, 0, SRCCOPY);
+
+ #ifndef OPTIMIZE_DRAWING
 	ReleaseDC(td->w, hdc);
-#endif
+ #endif
 
-#else
+#else /* #ifdef USE_GRAPHICS */
 
 	/* Just erase this grid */
 	return (Term_wipe_win(x, y, 1));
@@ -2329,6 +2297,7 @@ static errr Term_pict_win(int x, int y, byte a, char c) {
  */
 static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 	term_data *td = (term_data*)(Term->data);
+
 	RECT rc;
 	HDC  hdc;
 
@@ -2372,7 +2341,6 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 		}
 		old_attr = a;
 	}
-
 	/* Dump the text */
 	ExtTextOut(hdc, rc.left, rc.top, ETO_OPAQUE | ETO_CLIPPED, &rc,
 	           s, n, NULL);
@@ -2423,7 +2391,6 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 
 /*** Other routines ***/
 
-
 /*
  * Create and initialize a "term_data" given a title
  */
@@ -2435,11 +2402,6 @@ static void term_data_link(term_data *td) {
 
 	/* Use a "software" cursor */
 	t->soft_cursor = TRUE;
-
-#ifdef USE_GRAPHICS
-	/* Use "Term_pict" for "graphic" data */
-	t->higher_pict = TRUE;
-#endif
 
 	/* Total erases seem to make the screen flicker - mikaelh */
 	t->no_total_erase_on_wipe = TRUE;
@@ -2453,13 +2415,23 @@ static void term_data_link(term_data *td) {
 	t->xtra_hook = Term_xtra_win;
 	t->wipe_hook = Term_wipe_win;
 	t->curs_hook = Term_curs_win;
-	t->pict_hook = Term_pict_win;
 	t->text_hook = Term_text_win;
 
 	/* Remember where we came from */
 	t->data = (vptr)(td);
-}
 
+#ifdef USE_GRAPHICS
+	if (use_graphics) {
+		recreateGraphicsObjects(td);
+
+		/* Graphics hook */
+		t->pict_hook = Term_pict_win;
+
+		/* use "term_pict" for "graphic" data */
+		t->higher_pict = true;
+	}
+#endif
+}
 
 /*
  * Create the windows
@@ -2482,7 +2454,7 @@ static void init_windows(void) {
 	td = &data[0];
 	WIPE(td, term_data);
 
-	sprintf(version, "TomeNET %d.%d.%d%s", 
+	sprintf(version, "TomeNET %d.%d.%d%s",
 			VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG);
 	td->s = version;
 	td->keys = 1024;
@@ -2537,7 +2509,6 @@ static void init_windows(void) {
 		data[i].dwExStyle = (WS_EX_TOOLWINDOW);
 	}
 
-
 	/* Windows */
 	for (i = 0; i < MAX_TERM_DATA; i++) {
 #ifdef USE_LOGFONT
@@ -2554,6 +2525,58 @@ static void init_windows(void) {
 #endif
 	}
 
+#ifdef USE_GRAPHICS
+	/* Handle "graphics" mode */
+	if (use_graphics) {
+		HDC hdc = GetDC(NULL);
+		if (GetDeviceCaps(hdc, BITSPIXEL) < 24) {
+			quit("Using graphic tiles needs a device content with at least 24 bits per pixel.");
+		}
+		ReleaseDC(NULL, hdc);
+
+		/* Load graphics file. Quit if file missing or load error. */
+
+		/* Check for tiles string & extract tiles width & height. */
+		if (2 != sscanf(graphic_tiles, "%dx%d", &graphics_tile_wid, &graphics_tile_hgt)) {
+			printf("Couldn't extract tile dimensions from: %s\n", graphic_tiles);
+			quit("Graphics load error");
+		}
+
+		if (graphics_tile_wid <= 0 || graphics_tile_hgt <= 0) {
+			printf("Invalid tiles dimensions: %dx%d\n", graphics_tile_wid, graphics_tile_hgt);
+			quit("Graphics load error");
+		}
+
+		/* Validate the "graphics" directory */
+		validate_dir(ANGBAND_DIR_XTRA_GRAPHICS);
+
+		/* Build the name of the graphics file. */
+		char filename[1024];
+		path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, graphic_tiles);
+		strcat(filename, ".bmp");
+
+		/* Validate the bitmap filename */
+		validate_file(filename);
+
+		/* Load .bmp image into memory */
+		g_hbmTiles = LoadImageA(NULL, filename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+
+		/* Calculate tiles per row. */
+		BITMAP bm;
+		GetObject(g_hbmTiles, sizeof(BITMAP), &bm);
+		graphics_image_tpr = bm.bmWidth / graphics_tile_wid;
+		if (graphics_image_tpr <= 0) { /* Paranoia. */
+			printf("Invalid image tiles per row count: %d\n", graphics_image_tpr);
+			quit("Graphics load error");
+		}
+
+		/* Create masks. */
+		g_hbmBgMask = CreateBitmapMask(g_hbmTiles, RGB(0, 0, 0));
+		g_hbmFgMask = CreateBitmapMask(g_hbmTiles, RGB(255, 0, 255));
+
+	}
+
+#endif
 
 	/* Screen window */
 	td_ptr = &data[0];
@@ -2586,47 +2609,11 @@ static void init_windows(void) {
 		ang_term[i] = &data[i].t;
 	}
 
-
 	/* Activate the screen window */
 	SetActiveWindow(data[0].w);
 
 	/* Bring main screen back to top */
 	SetWindowPos(data[0].w, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-
-
-#ifdef USE_GRAPHICS
-
-	/* Handle "graphics" mode */
-	if (use_graphics) {
-		/* Force the "requested" bitmap XXX XXX XXX */
-		if (term_force_graf(&data[0], data[0].graf_want)) {
-			/* XXX XXX XXX Force the "standard" font */
-			(void)term_force_font(&data[0], DEFAULT_FONTNAME);
-
-			/* XXX XXX XXX Force the "standard" bitmap */
-			(void)term_force_graf(&data[0], DEFAULT_TILENAME);
-		}
-
-#ifdef FULL_GRAPHICS
-
-		/* Windows */
-		for (i = 1; i < MAX_TERM_DATA; i++) {
-			/* Force the "requested" bitmap XXX XXX XXX */
-			if (term_force_graf(&data[i], data[i].graf_want)) {
-				/* XXX XXX XXX Force the "standard" font */
-				(void)term_force_font(&data[i], DEFAULT_FONTNAME);
-
-				/* XXX XXX XXX Force the "standard" bitmap */
-				(void)term_force_graf(&data[i], DEFAULT_TILENAME);
-			}
-		}
-
-#endif /* FULL_GRAPHICS */
-
-	}
-
-#endif
-
 
 	/* New palette XXX XXX XXX */
 	new_palette();
@@ -2668,14 +2655,10 @@ static void setup_menus(void) {
 	HMENU hm = GetMenu(data[0].w);
 #ifdef MNU_SUPPORT
 	/* Save player */
-	EnableMenuItem(hm, IDM_FILE_SAVE,
-                       MF_BYCOMMAND | MF_ENABLED | MF_GRAYED);
- 
+	EnableMenuItem(hm, IDM_FILE_SAVE, MF_BYCOMMAND | MF_ENABLED | MF_GRAYED);
 
 	/* Exit with save */
-	EnableMenuItem(hm, IDM_FILE_EXIT,
-                       MF_BYCOMMAND | MF_ENABLED);
- 
+	EnableMenuItem(hm, IDM_FILE_EXIT, MF_BYCOMMAND | MF_ENABLED);
 
 	/* Window font options */
 	for (i = 1; i < MAX_TERM_DATA; i++) {
@@ -2702,7 +2685,7 @@ static void setup_menus(void) {
 	              MF_BYCOMMAND | (use_sound ? MF_CHECKED : MF_UNCHECKED));
 #endif
 
-#ifdef BEN_HACK 
+#ifdef BEN_HACK
 	/* Item "Colors 16" */
 	EnableMenuItem(hm, IDM_OPTIONS_UNUSED,
 	               MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
@@ -2847,7 +2830,7 @@ static void process_menus(WORD wCmd) {
  #ifdef USE_GRAPHICS
 			/* XXX XXX XXX */
 			if (use_graphics) {
-				term_change_bitmap(&data[0]);
+				//term_change_bitmap(&data[0]);
 				break;
 			}
  #endif
@@ -2915,38 +2898,6 @@ static void process_menus(WORD wCmd) {
 			handle_process_font_file();
 
 #endif		/* GP's USE_GRAPHICS */
-#ifdef USE_GRAPHICS
-
-			/* Use graphics */
-			if (use_graphics) {
-				/* Try to use the current font */
-				if (term_force_graf(&data[0], data[0].font_file)) {
-					/* XXX XXX XXX Force a "usable" font */
-					(void)term_force_font(&data[0], DEFAULT_FONTNAME);
-
-					/* XXX XXX XXX Force a "usable" graf */
-					(void)term_force_graf(&data[0], DEFAULT_TILENAME);
-				}
-
-#ifdef FULL_GRAPHICS
-
-				/* Windows */
-				for (i = 1; i < MAX_TERM_DATA; i++) {
-					/* Try to use the current font */
-					if (term_force_graf(&data[i], data[i].font_file)) {
-						/* XXX XXX XXX Force a "usable" font */
-						(void)term_force_font(&data[i], DEFAULT_FONTNAME);
-
-						/* XXX XXX XXX Force a "usable" graf */
-						(void)term_force_graf(&data[i], DEFAULT_TILENAME);
-					}
-				}
-
-#endif
-
-			}
-
-#endif
 
 #ifdef USE_GRAPHICS	/* no support -GP */
 			/* React to changes */
@@ -3627,18 +3578,21 @@ static void hook_quit(cptr str) {
 	/* Sub-Windows */
 	for (i = MAX_TERM_DATA - 1; i >= 1; i--) {
 		term_force_font(&data[i], NULL);
+#ifdef USE_GRAPHICS
+		/* Release the created graphics objects. */
+		releaseCreatedGraphicsObjects(&data[i]);
+#endif
 		if (data[i].font_want) string_free(data[i].font_want);
-		if (data[i].graf_want) string_free(data[i].graf_want);
 		if (data[i].w) DestroyWindow(data[i].w);
 		data[i].w = 0;
 	}
 	/* Main window */
-#ifdef USE_GRAPHICS
-	term_force_graf(&data[0], NULL);
-#endif
 	term_force_font(&data[0], NULL);
+#ifdef USE_GRAPHICS
+		/* Release the created graphics objects. */
+		releaseCreatedGraphicsObjects(&data[0]);
+#endif
 	if (data[0].font_want) string_free(data[0].font_want);
-	if (data[0].graf_want) string_free(data[0].graf_want);
 	if (data[0].w) DestroyWindow(data[0].w);
 	data[0].w = 0;
 
@@ -3652,6 +3606,11 @@ static void hook_quit(cptr str) {
 	}
 
 	/*** Free some other stuff ***/
+#ifdef USE_GRAPHICS
+	DeleteObject(g_hbmTiles);
+	DeleteObject(g_hbmBgMask);
+	DeleteObject(g_hbmFgMask);
+#endif
 
 	DeleteObject(hbrYellow);
 
@@ -3754,7 +3713,7 @@ void init_stuff(void) {
 	/* Init the file paths */
 
 	init_file_paths(path);
- 
+
 	/* Hack -- Validate the paths */
 	validate_dir(ANGBAND_DIR_SCPT);
 	validate_dir(ANGBAND_DIR_TEXT);
@@ -3774,7 +3733,7 @@ void init_stuff(void) {
 	// Validate the "font" directory
 	validate_dir(ANGBAND_DIR_XTRA_FONT);
 
-	// Build the filename 
+	// Build the filename
 	path_build(path, 1024, ANGBAND_DIR_XTRA_FONT, DEFAULT_FONTNAME);
 
 	// Hack -- Validate the basic font
@@ -3783,21 +3742,13 @@ void init_stuff(void) {
 
 
 #ifdef USE_GRAPHICS
+	/* Just build the paths, leave the validation when use_graphics is true */
 
-	/* Build the "graf" path */
-	path_build(path, 1024, ANGBAND_DIR_XTRA, "graf");
+	/* Build the "graphics" path */
+	path_build(path, 1024, ANGBAND_DIR_XTRA, "graphics");
 
 	/* Allocate the path */
-	ANGBAND_DIR_XTRA_GRAF = string_make(path);
-
-	/* Validate the "graf" directory */
-	validate_dir(ANGBAND_DIR_XTRA_GRAF);
-
-	/* Build the filename */
-	path_build(path, 1024, ANGBAND_DIR_XTRA_GRAF, DEFAULT_TILENAME);
-
-	/* Hack -- Validate the basic graf */
-	validate_file(path);
+	ANGBAND_DIR_XTRA_GRAPHICS = string_make(path);
 
 #endif
 
@@ -3999,18 +3950,6 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 	colors16 = (GetDeviceCaps(hdc, BITSPIXEL) == 4);
 	paletted = ((GetDeviceCaps(hdc, RASTERCAPS) & RC_PALETTE) ? TRUE : FALSE);
 	ReleaseDC(NULL, hdc);
-#ifdef USE_GRAPHICS
-	/* Initialize "color_table" */
-	for (i = 0; i < BASE_PALETTE_SIZE; i++) {
-		/* Save the "complex" codes */
-		color_table[i][1] = GetRValue(win_clr[i]);
-		color_table[i][2] = GetGValue(win_clr[i]);
-		color_table[i][3] = GetBValue(win_clr[i]);
-
-		/* Save the "simple" code */
-		color_table[i][0] = win_pal[i % 16];
-	}
-#endif
 
 	/* Prepare the windows */
 	init_windows();
@@ -4182,12 +4121,12 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 
 
 /* EXPERIMENTAL // allow user to change main window font live - C. Blue
-   So far only uses 1 parm ('s') to switch between hardcoded choices:
-   -1 - cycle
-    0 - normal
-    1 - big
-    2 - bigger
-    3 - huge */
+ * So far only uses 1 parm ('s') to switch between hardcoded choices:
+ * -1 - cycle
+ *  0 - normal
+ *  1 - big
+ *  2 - bigger
+ *  3 - huge */
 void change_font(int s) {
 	/* use main window font for measuring */
 	char tmp[128] = "";
