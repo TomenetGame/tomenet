@@ -59,8 +59,14 @@ DisableNumlock=1
 ; Sets blue to #0033ff instead of #0000ff
 LighterDarkBlue=1
 
-; - Enable graphics in general (0 = off)
+; - Enable graphics in general (0=off, 1 = on)
 Graphics=0
+; - Specify basename for loaded graphics file and possible custom graphics character redefinitions.
+;   If "Graphics" option is enabled, the tiles can be loaded from lib\xtra\graphics\{graphic_tiles}.bmp (Eg: lib\xtra\graphics\9x15.bmp).
+;   The character redefinitions are loaded from lib\user\graphics-{os}.prf (the "{os}" is replaced by "x11", "win", "mac", ...)
+;   or from a custom graphics redefinition file lib\user\graphics-custom-{graphic_tiles}.prf, if the file exists.
+;   Important: The value has to be in format "{int width}x{int height}[{string}]", because tile width and height is extracted from the string.
+GraphicTiles=9x15
 
 ; - Enable audio in general (0 = off, 1 = on)
 Sound=1

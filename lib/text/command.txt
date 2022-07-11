@@ -353,8 +353,8 @@ the aspects of the game, to allow Angband to adapt to your changes.
 or created a new character, some user pref files are loaded automatically.
 First, the "pref.prf" file is loaded.  This file contains some user pref
 commands which will work on all platforms.  Then one of "font-xxx.prf"
-(for normal usage) or "graf-xxx.prf" (for bitmap usage) is loaded.  These
-files contain attr/char changes to allow the monsters, objects, and/or
+(for normal usage) and/or "graphics-xxx.prf" (for bitmap usage) is loaded.
+These files contain attr/char changes to allow the monsters, objects, and/or
 terrain features to look "better" on your system.  Then the "pref-xxx.prf"
 file is loaded.  This file contains pre-defined system specific stuff
 (macros, color definitions, etc).  Then, the "user-xxx.prf" file is loaded.
