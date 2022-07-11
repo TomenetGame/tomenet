@@ -13960,6 +13960,11 @@ enchantments). Digging power further depends on your Digging skill and your STR
 If you lack a digging tool, an equipped sword or axe can substitute somewhat
 when you are just trying to hack down vegetation instead of rocks.
 
+Each digging attempt of your character has a constant chance to succeed, based
+on your digging power vs the material you're trying to tunnel through. If your
+digging power is too low, the chance might even be 0% so you would be trying
+forever.
+
 If you're not interested in the exact formula, skip down to (5.20b) which has a
 table with example values for certain scenarios.
 
