@@ -15826,7 +15826,9 @@ Note: After a skill's gain ratio has been boosted as stated above, it will be
 -------------------------
 At 5.000 Digging skill your character acquires the passive 'Demolitionist' perk
 that allows finding certain chemicals and crafting explosive charges from them.
-See 'Digging' skill in (6.2) for details about acquiring chemicals.
+See 'Digging' skill in (6.2) for details about acquiring chemicals, note that
+you can use the "/ing" command to turn off/on ingredients drop if you ever feel
+it's spammy.
 Use a grinding tool (available at the alchemist store) to grind items that you
 don't need anymore to easily obtain wood chips or reactive metal powder.
 
@@ -15887,6 +15889,9 @@ Crafting ingredients from raw materials:
 - Vitriol + water or salt water = flask of acid.
 - Reactive metal powder + salt water or ammonia salt = caustic metal ash.
 - Reactive metal powder + acid or vitriol = caustic salt.
+- To obtain water or salt water you can just fill up an empty bottle with
+  sea water or freshwater at the appropriate terrain. To obtain empty bottles
+  you can make use of the "/empty" command or the "keep_bottle" option in =7 .
 
 Crafting actual explosive charges:
 ----------------------------------
