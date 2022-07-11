@@ -6669,6 +6669,7 @@
 
 #define DF3_DARK		0x10000000L	/* All unlit levels */
 #define DF3_NO_DARK		0x20000000L	/* Don't build unlit levels */
+#define DF3_SALT_WATER		0x40000000L	/* Dungeon has salt water instead of freshwater */
 
 /* all flags that may modify a custom 'wilderness' (type 0) dungeon's appearance, 'theming' it,
    without changing its main flags (set by admin on dungeon creation) too much */

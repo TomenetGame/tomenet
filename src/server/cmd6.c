@@ -1638,21 +1638,30 @@ void do_cmd_fill_bottle(int Ind) {
 		msg_print(Ind, "Fresh blood perishes too quickly.");
 		return;
 	}
+#endif
 
 	/* don't fill from fountain but from liquid of the floor feature? */
 	if (c_ptr->feat != FEAT_FOUNTAIN) {
-#else
-	if (c_ptr->feat != FEAT_FOUNTAIN && c_ptr->feat != FEAT_FOUNTAIN_BLOOD) {
-#endif
-		if (c_ptr->feat == FEAT_SHAL_WATER || c_ptr->feat == FEAT_DEEP_WATER) {
-			if (p_ptr->tim_wraith) { /* not in WRAITHFORM */
-				msg_print(Ind, "The water seems to pass through the bottle!");
-				return;
-			}
+		if (c_ptr->feat != FEAT_SHAL_WATER && c_ptr->feat != FEAT_DEEP_WATER) {
+			msg_print(Ind, "You see nothing here to fill bottles with.");
+			return;
+		}
 
-			/* first assume normal water */
-			k_idx = lookup_kind(TV_POTION, SV_POTION_WATER);
+		if (!get_something_tval(Ind, TV_BOTTLE, &item)) {
+			msg_print(Ind, "You have no bottles to fill.");
+			return;
+		}
 
+		if (p_ptr->tim_wraith) { /* not in WRAITHFORM */
+			msg_print(Ind, "The water seems to pass through the bottle!");
+			return;
+		}
+
+		/* first assume normal water */
+		k_idx = lookup_kind(TV_POTION, SV_POTION_WATER);
+
+		/* World surface terrain? */
+		if (!p_ptr->wpos.wz) {
 #ifndef USE_SOUND_2010
 			/* problem: WILD_COAST is used for both oceans and lakes */
 			switch (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type) {
@@ -1672,45 +1681,41 @@ void do_cmd_fill_bottle(int Ind) {
 #ifndef USE_SOUND_2010
 			}
 #endif
+		}
+		/* Dungeon water grid */
+		else if (getdungeon(&p_ptr->wpos)->flags3 & DF3_SALT_WATER) k_idx = lookup_kind(TV_POTION, SV_POTION_SALT_WATER);
 
-			if (!get_something_tval(Ind, TV_BOTTLE, &item)) {
-				msg_print(Ind, "You have no bottles to fill.");
-				return;
-			}
+		un_afk_idle(Ind);
 
-			un_afk_idle(Ind);
-
-			/* Destroy a bottle in the pack */
-			if (item >= 0) {
-				inven_item_increase(Ind, item, -1);
-				inven_item_describe(Ind, item);
-				inven_item_optimize(Ind, item);
-			}
-			/* Destroy a potion on the floor */
-			else {
-				floor_item_increase(0 - item, -1);
-				floor_item_describe(0 - item);
-				floor_item_optimize(0 - item);
-			}
-
-			/* Create the potion */
-			q_ptr = &forge;
-			object_prep(q_ptr, k_idx);
-			q_ptr->number = 1;
-			//q_ptr->owner = p_ptr->id;
-			determine_level_req(getlevel(&p_ptr->wpos), q_ptr);
-
-			object_aware(Ind, q_ptr);
-			object_known(q_ptr);
-			q_ptr->iron_trade = p_ptr->iron_trade;
-			q_ptr->iron_turn = turn;
-			item = inven_carry(Ind, q_ptr);
-			if (item >= 0) inven_item_describe(Ind, item);
-			p_ptr->energy -= level_speed(&p_ptr->wpos);
-			return;
+		/* Destroy a bottle in the pack */
+		if (item >= 0) {
+			inven_item_increase(Ind, item, -1);
+			inven_item_describe(Ind, item);
+			inven_item_optimize(Ind, item);
+		}
+		/* Destroy a potion on the floor */
+		else {
+			floor_item_increase(0 - item, -1);
+			floor_item_describe(0 - item);
+			floor_item_optimize(0 - item);
 		}
 
-		msg_print(Ind, "You see nothing here to fill bottles with.");
+		/* Create the potion */
+		q_ptr = &forge;
+		object_prep(q_ptr, k_idx);
+		q_ptr->number = 1;
+		//q_ptr->owner = p_ptr->id;
+		determine_level_req(getlevel(&p_ptr->wpos), q_ptr);
+
+		object_aware(Ind, q_ptr);
+		object_known(q_ptr);
+		q_ptr->iron_trade = p_ptr->iron_trade;
+		q_ptr->iron_turn = turn;
+
+		item = inven_carry(Ind, q_ptr);
+		if (item >= 0) inven_item_describe(Ind, item);
+
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		return;
 	}
 
@@ -1723,7 +1728,8 @@ void do_cmd_fill_bottle(int Ind) {
 	}
 
 	if (p_ptr->tim_wraith) { /* not in WRAITHFORM */
-		msg_print(Ind, "The water seems to pass through the bottle!");
+		if (c_ptr->feat == FEAT_FOUNTAIN_BLOOD) msg_print(Ind, "The blood seems to pass through the bottle!");
+		else msg_print(Ind, "The water seems to pass through the bottle!");
 		return;
 	}
 

@@ -1183,7 +1183,7 @@ static cptr d_info_flags3[] = {
 	"LIMIT_ESP",
 	"DARK",
 	"NO_DARK",
-	"",
+	"SALT_WATER",
 	"",
 };
 
