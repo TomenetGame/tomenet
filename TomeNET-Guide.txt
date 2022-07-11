@@ -13952,6 +13952,14 @@ experience points permanently. Here are some details about that process:
 Your chance to successfully tunnel through an obstacle depends on the obstacle
 and your 'digging power'.
 
+In general, the digging power depends on your digging tool's (+digging) bonus
+and its (+hit,+dam) enchantment and also on its weight (that's why a pick is a
+better digging tool than a shovel for example, even if they have the same bonus
+enchantments). Digging power further depends on your Digging skill and your STR
+(strength).
+If you lack a digging tool, an equipped sword or axe can substitute somewhat
+when you are just trying to hack down vegetation instead of rocks.
+
 If you're not interested in the exact formula, skip down to (5.20b) which has a
 table with example values for certain scenarios.
 
