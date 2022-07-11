@@ -5934,11 +5934,13 @@ void update_ticks() {
 	newticks = ticks - (ticks % 10);
 
 //#ifdef ENABLE_JUKEBOX
+ #ifdef SOUND_SDL
 	/* Track jukebox music position in seconds */
 	if (newticks != oldticks) {
 		oldticks = newticks;
 		if (jukebox_screen) update_jukebox_timepos();
 	}
+ #endif
 //#endif
 
 	/* Find the new least significant digit of the ticks */
