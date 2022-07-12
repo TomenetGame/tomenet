@@ -2344,6 +2344,9 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 				/* Own it */
 				if (!o_ptr->owner) {
+					int dlev = getlevel(&p_ptr->wpos); /* Just for logging 'expensive' items in relation to dlev */
+					int vfact = (dlev >= 30 ? 1000 : dlev * 33 + 10);
+
 					o_ptr->owner = p_ptr->id;
 					o_ptr->mode = p_ptr->mode;
 
@@ -2356,15 +2359,16 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 						o_ptr->iron_turn = turn;
 
 #if CHEEZELOG_LEVEL > 2
-					if (k_info[o_ptr->k_idx].cost >= 150000)
-						s_printf("Expensive item: %s found by %s(lv %d) at %d,%d,%d%s%s\n",
-						    o_name_real, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "");
-					else if (o_ptr->tval == TV_AMULET && k_info[o_ptr->k_idx].cost >= 30000)
-						s_printf("Expensive item(amulet): %s found by %s(lv %d) at %d,%d,%d%s%s\n",
-						    o_name_real, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "");
-					else if (o_ptr->tval == TV_RING && (k_info[o_ptr->k_idx].cost >= 30000 || o_ptr->sval == SV_RING_SPEED || o_ptr->sval == SV_RING_CRIT || o_ptr->sval == SV_RING_ATTACKS))
-						s_printf("Expensive item(ring): %s found by %s(lv %d) at %d,%d,%d%s%s\n",
-						    o_name_real, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "");
+					/* Log when an item is found that is especially valuable (for its dungeon level, relative for dlevs < 30). */
+					if (k_info[o_ptr->k_idx].cost >= 150 * vfact)
+						s_printf("EXPENSIVE_ITEM: %s found by %s(lv %d) at %d,%d,%d%s%s (dlv %d)\n",
+						    o_name_real, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", dlev);
+					else if (o_ptr->tval == TV_AMULET && k_info[o_ptr->k_idx].cost >= 30 * vfact)
+						s_printf("EXPENSIVE_ITEM(amulet): %s found by %s(lv %d) at %d,%d,%d%s%s (dlv %d)\n",
+						    o_name_real, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", dlev);
+					else if (o_ptr->tval == TV_RING && (k_info[o_ptr->k_idx].cost >= 30 * vfact || o_ptr->sval == SV_RING_SPEED || o_ptr->sval == SV_RING_CRIT || o_ptr->sval == SV_RING_ATTACKS))
+						s_printf("EXPENSIVE_ITEM(ring): %s found by %s(lv %d) at %d,%d,%d%s%s (dlv %d)\n",
+						    o_name_real, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", dlev);
 #endif
 
 					if (true_artifact_p(o_ptr)) {
