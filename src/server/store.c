@@ -4229,16 +4229,16 @@ void store_confirm(int Ind) {
 
 		if (o_ptr->name1 == ART_RANDART) {
 			object_desc(0, o_name, o_ptr, TRUE, 3);
-			s_printf("SOLD_UNID_RANDART: '%s' (%d) sold '%s' for %ldAu, worth %ld\n", p_ptr->name, p_ptr->max_lev, o_name, price, value);
+			s_printf("SOLD_UNID_RANDART: <%s> (<%s>, %d) sold '%s' for %ldAu, worth %ld\n", p_ptr->name, p_ptr->accountname,  p_ptr->max_lev, o_name, price, value);
 		} else if (o_ptr->name1) {
 			object_desc(0, o_name, o_ptr, TRUE, 3);
-			s_printf("SOLD_UNID_TRUEART: '%s' (%d) sold '%s' for %ldAu, worth %ld\n", p_ptr->name, p_ptr->max_lev, o_name, price, value);
+			s_printf("SOLD_UNID_TRUEART: <%s> (<%s>, %d) sold '%s' for %ldAu, worth %ld\n", p_ptr->name, p_ptr->accountname,  p_ptr->max_lev, o_name, price, value);
 		} else if (o_ptr->name2 || o_ptr->name2b) {
 			object_desc(0, o_name, o_ptr, TRUE, 3);
-			s_printf("SOLD_UNID_EGO: '%s' (%d) sold '%s' for %ldAu, worth %ld\n", p_ptr->name, p_ptr->max_lev, o_name, price, value);
+			s_printf("SOLD_UNID_EGO: <%s> (<%s>, %d) sold '%s' for %ldAu, worth %ld\n", p_ptr->name, p_ptr->accountname,  p_ptr->max_lev, o_name, price, value);
 		} else if (price <= value * 10) {
 			object_desc(0, o_name, o_ptr, TRUE, 3);
-			s_printf("SOLD_UNID_VALUE: '%s' (%d) sold '%s' for %ldAu, worth %ld\n", p_ptr->name, p_ptr->max_lev, o_name, price, value);
+			s_printf("SOLD_UNID_VALUE: <%s> (<%s>, %d) sold '%s' for %ldAu, worth %ld\n", p_ptr->name, p_ptr->accountname,  p_ptr->max_lev, o_name, price, value);
 		}
 
 		/* Actually this warning is rather specifically a warning about selling unid'ed but already aware-of magic devices with charges! */
