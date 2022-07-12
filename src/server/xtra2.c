@@ -14250,6 +14250,7 @@ bool master_build(int Ind, char * parms) {
 		struct key_type *key;
 		object_type newkey;
 		int id;
+
 		MAKE(key, struct key_type);
 		sscanf(&parms[2], "%d", &id);
 		key->id = id;
@@ -14265,6 +14266,7 @@ bool master_build(int Ind, char * parms) {
 	if (c_ptr->feat == FEAT_SIGN) {
 		struct c_special *cs_ptr;
 		struct floor_insc *sign;
+
 		MAKE(sign, struct floor_insc);
 		strcpy(sign->text, &parms[2]);
 		cs_ptr = ReplaceCS(c_ptr, CS_INSCRIP);

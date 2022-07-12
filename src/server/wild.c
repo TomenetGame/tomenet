@@ -3477,8 +3477,60 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 	int zx, zy;
 	bool rig_corners = FALSE; /* corners are always floor, to make ambient feats look more circular? */
 
+#if 1 /* specialino visualino - maybe too much */
+	/* Hack for Death Fate */
+	if (d_ptr->type == DI_DEATH_FATE) {
+		struct c_special *cs_ptr;
+		struct floor_insc *sign;
+		cave_type *c_ptr;
+
+		/* External permanent shielding wall */
+		zcave[y - 2][x - 1].feat = FEAT_HIGH_MOUNTAIN;
+		zcave[y - 2][x].feat = FEAT_HIGH_MOUNTAIN;
+		zcave[y - 2][x + 1].feat = FEAT_HIGH_MOUNTAIN;
+		zcave[y + 2][x - 1].feat = FEAT_HIGH_MOUNTAIN;
+		zcave[y + 2][x].feat = FEAT_HIGH_MOUNTAIN;
+		zcave[y + 2][x + 1].feat = FEAT_HIGH_MOUNTAIN;
+
+		zcave[y - 1][x - 2].feat = FEAT_HIGH_MOUNTAIN;
+		zcave[y][x - 2].feat = FEAT_HIGH_MOUNTAIN;
+		zcave[y + 1][x - 2].feat = FEAT_HIGH_MOUNTAIN;
+		zcave[y - 1][x + 2].feat = FEAT_HIGH_MOUNTAIN;
+		zcave[y][x + 2].feat = FEAT_HIGH_MOUNTAIN;
+		zcave[y + 1][x + 2].feat = FEAT_HIGH_MOUNTAIN;
+
+		zcave[y - 1][x - 1].feat = FEAT_HIGH_MOUNTAIN;
+		zcave[y + 1][x - 1].feat = FEAT_HIGH_MOUNTAIN;
+		zcave[y - 1][x + 1].feat = FEAT_HIGH_MOUNTAIN;
+		zcave[y + 1][x + 1].feat = FEAT_HIGH_MOUNTAIN;
+
+		/* Internal floor */
+		zcave[y - 1][x].feat = FEAT_DIRT;
+		zcave[y + 1][x].feat = FEAT_DIRT;
+		zcave[y][x - 1].feat = FEAT_DIRT;
+		zcave[y][x + 1].feat = FEAT_DIRT;
+		zcave[y - 1][x].info |= CAVE_NO_PROB;
+		zcave[y + 1][x].info |= CAVE_NO_PROB;
+		zcave[y][x - 1].info |= CAVE_NO_PROB;
+		zcave[y][x + 1].info |= CAVE_NO_PROB;
+
+		zcave[y][x].info |= CAVE_NO_PROB;
+
+		/* Construction site sign(s) */
+		c_ptr = &zcave[y][x + 1];
+		c_ptr->feat = FEAT_SIGN;
+		MAKE(sign, struct floor_insc);
+		strcpy(sign->text, "Administrative construction site - don't touch the mirror!");
+		cs_ptr = ReplaceCS(c_ptr, CS_INSCRIP);
+		if (cs_ptr) cs_ptr->sc.ptr = sign;
+		else KILL(sign, struct floor_insc);
+
+		return;
+	}
+#endif
+
 	/* hack for Cloud Planes */
-	if (feat_ambient == FEAT_CLOUDYSKY) {
+	if (feat_ambient == FEAT_CLOUDYSKY) { /* Just check DI_CLOUD_PLANES? >.> */
 		feat_ambient = FEAT_HIGH_MOUNTAIN;
 		feat_floor = FEAT_SNOW;
 		solidity = 3;

@@ -4481,6 +4481,7 @@
 #define CAVE_NOYIELD	0x01000000	/* Will not yield any items or treasure when tunneled */
 #define CAVE_DECAL	0x02000000	/* Impossible to interact with anything on this grid or the grid itself except for looking at it (only implemented for monsters atm) */
 #define CAVE_MINED	0x04000000	/* Just for warning_tunnel_hidden, set when a treasure vein was mined on this grid */
+#define CAVE_NO_PROB	0x08000000	/* Cannot enter this grid via Probability Travel (but can exit) */
 
 /* Hack for p_ptr->cave_flag, which is only 1 byte in size: */
 #define CAVE_AOVL	CAVE_TEMP	/* Mark grid if it displays an overlay visual that could get auto-updated, ie monsters: A monster can move away automatically, rendering the overlay out of date. */
