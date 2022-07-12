@@ -15681,7 +15681,8 @@ stated.
                                 This just means that if you train Digging to at
                                 least 5.000 you will be able to find or acquire
                                 certain ingredients that you can use to create
-                                blast charges.
+                                blast charges. The effect of charges does not
+                                increase with skill, level, or anything else.
                                 All ingredients as well as the items you craft
                                 from them are level 0 and hence bound to your
                                 character (untradable).
@@ -15839,11 +15840,14 @@ Note: After a skill's gain ratio has been boosted as stated above, it will be
 -------------------------
 At 5.000 Digging skill your character acquires the passive 'Demolitionist' perk
 that allows finding certain chemicals and crafting explosive charges from them.
+(The effect of charges does not increase with skill, level, or anything else.)
+
 See 'Digging' skill in (6.2) for details about acquiring chemicals, note that
 you can use the "/ing" command to turn off/on ingredients drop if you ever feel
-it's spammy.
-Use a grinding tool (available at the alchemist store) to grind items that you
-don't need anymore to easily obtain wood chips or reactive metal powder.
+it's spammy. To store ingredients more efficiently, buy an Alchemy Satchel at
+any town's alchemist store.
+Use a grinding tool (also available at the alchemist store) to grind items that
+you don't need anymore to easily obtain wood chips or reactive metal powder.
 
 By pressing 'A' to activate ingredients or mixtures you can combine them to
 create new ingredients or to create new mixtures. The order in which mixing is
