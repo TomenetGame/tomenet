@@ -4223,27 +4223,36 @@ void store_confirm(int Ind) {
 	/* Update the display */
 	store_prt_gold(Ind);
 
+	/* fun stuff - log sold unidentified ego items :-p (could make nice statistics from this) */
+	if (!object_known_p(Ind, o_ptr)) {
+		s64b value = object_value_real(0, o_ptr);
+
+		if (o_ptr->name1 == ART_RANDART) {
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+			s_printf("SOLD_UNID_RANDART: '%s' (%d) sold '%s' for %ldAu, worth %ld\n", p_ptr->name, p_ptr->max_lev, o_name, price, value);
+		} else if (o_ptr->name1) {
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+			s_printf("SOLD_UNID_TRUEART: '%s' (%d) sold '%s' for %ldAu, worth %ld\n", p_ptr->name, p_ptr->max_lev, o_name, price, value);
+		} else if (o_ptr->name2 || o_ptr->name2b) {
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+			s_printf("SOLD_UNID_EGO: '%s' (%d) sold '%s' for %ldAu, worth %ld\n", p_ptr->name, p_ptr->max_lev, o_name, price, value);
+		} else if (price <= value * 10) {
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+			s_printf("SOLD_UNID_VALUE: '%s' (%d) sold '%s' for %ldAu, worth %ld\n", p_ptr->name, p_ptr->max_lev, o_name, price, value);
+		}
+
+		/* Actually this warning is rather specifically a warning about selling unid'ed but already aware-of magic devices with charges! */
+		if (!p_ptr->warning_sellunid && object_aware_p(Ind, o_ptr) && (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF)) {
+			msg_print(Ind, "\374\377yHint: Identify wands and staves before selling even if you already know what");
+			msg_print(Ind, "\377\377y      they do, because if their number of charges is known it will further");
+			msg_print(Ind, "\377\377y      increase their value!");
+			p_ptr->warning_sellunid = 1;
+		}
+	}
+
 	if (p_ptr->store_num > -2) { /* Never become aware of player store items */
 		/* Become "aware" of the item */
 		object_aware(Ind, o_ptr);
-	}
-
-	/* fun stuff - log sold unidentified ego items :-p (could make nice statistics from this) */
-	if (!object_known_p(Ind, o_ptr)) {
-		if (o_ptr->name1 == ART_RANDART) {
-			object_desc(0, o_name, o_ptr, TRUE, 3);
-			s_printf("SOLD_UNID_RANDART: '%s' (%d) sold '%s' for %ldAu\n", p_ptr->name, p_ptr->max_lev, o_name, price);
-		} else if (o_ptr->name1) {
-			object_desc(0, o_name, o_ptr, TRUE, 3);
-			s_printf("SOLD_UNID_TRUEART: '%s' (%d) sold '%s' for %ldAu\n", p_ptr->name, p_ptr->max_lev, o_name, price);
-		} else if (o_ptr->name2 || o_ptr->name2b) {
-			object_desc(0, o_name, o_ptr, TRUE, 3);
-			s_printf("SOLD_UNID_EGO: '%s' (%d) sold '%s' for %ldAu\n", p_ptr->name, p_ptr->max_lev, o_name, price);
-		}
-		if (!p_ptr->warning_sellunid && (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF)) {
-			msg_print(Ind, "\374\377yHint: Identify wands and staves before selling because their known number of charges increases their value!");
-			p_ptr->warning_sellunid = 1;
-		}
 	}
 
 	/* Know the item fully */
