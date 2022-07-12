@@ -7676,8 +7676,18 @@ if (cfg.unikill_format) {
 		} else if (r_idx == RI_MIRROR) {
 			qq_ptr = &forge;
 			invcopy(qq_ptr, lookup_kind(TV_JUNK, SV_GLASS_SHARD));
+
+			/* Forced PRE_OWN_DROP_CHOSEN for this special object */
+			qq_ptr->level = 0;
+			qq_ptr->owner = p_ptr->id;
+			qq_ptr->mode = p_ptr->mode;
+			//qq_ptr->iron_trade = p_ptr->iron_trade;  --needed?
+			//qq_ptr->iron_turn = -1;
+
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
+			/* Make sure we cannot enter IDDC afterwards to exploit-trade or sth */
+			gain_exp(Ind, 1);
 		} else if (!pvp) {
 			a_idx = 0;
 			chance = 0;
