@@ -2345,7 +2345,8 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				/* Own it */
 				if (!o_ptr->owner) {
 					int dlev = getlevel(&p_ptr->wpos); /* Just for logging 'expensive' items in relation to dlev */
-					int vfact = (dlev >= 30 ? 1000 : dlev * 33 + 10);
+					s64b value = object_value_real(0, o_ptr);
+					int min_value = (dlev <= 10 ? 10000 : (dlev < 30 ? dlev * 1000 : (dlev < 50 ? (dlev - 10) * 1500 : (dlev - 20) * 2000)));
 
 					o_ptr->owner = p_ptr->id;
 					o_ptr->mode = p_ptr->mode;
@@ -2360,15 +2361,10 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 #if CHEEZELOG_LEVEL > 2
 					/* Log when an item is found that is especially valuable (for its dungeon level, relative for dlevs < 30). */
-					if (k_info[o_ptr->k_idx].cost >= 150 * vfact)
-						s_printf("EXPENSIVE_ITEM: %s found by %s(lv %d) at %d,%d,%d%s%s (dlv %d)\n",
-						    o_name_real, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", dlev);
-					else if (o_ptr->tval == TV_AMULET && k_info[o_ptr->k_idx].cost >= 30 * vfact)
-						s_printf("EXPENSIVE_ITEM(amulet): %s found by %s(lv %d) at %d,%d,%d%s%s (dlv %d)\n",
-						    o_name_real, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", dlev);
-					else if (o_ptr->tval == TV_RING && (k_info[o_ptr->k_idx].cost >= 30 * vfact || o_ptr->sval == SV_RING_SPEED || o_ptr->sval == SV_RING_CRIT || o_ptr->sval == SV_RING_ATTACKS))
-						s_printf("EXPENSIVE_ITEM(ring): %s found by %s(lv %d) at %d,%d,%d%s%s (dlv %d)\n",
-						    o_name_real, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", dlev);
+					if (value >= min_value)
+						s_printf("EXPENSIVE_ITEM: %s (%ld Au) found by %s(lv %d) at %d,%d,%d%s%s (dlv %d)\n",
+						    o_name_real, value, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+						    (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", dlev);
 #endif
 
 					if (true_artifact_p(o_ptr)) {
