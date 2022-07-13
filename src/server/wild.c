@@ -3484,6 +3484,20 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 		struct floor_insc *sign;
 		cave_type *c_ptr;
 
+		/* Ring of dirt around the external wall, to set it apart a bit from trees and stuff */
+		for (zx = x - 3; zx <= x + 3; zx++) {
+			for (zy = y - 3; zy <= y + 3; zy++) {
+				/* Spare the 4 corner grids, we want to make it roundish, not a square */
+				if ((zx - x) * (zx - x) + (zy - y) * (zy - y) == 18) continue;
+
+				/* Only need the outermost ring really, rest gets overwritten anyway, further down */
+				if ((zx - x) * (zx - x) + (zy - y) * (zy - y) < 8) continue;
+
+				/* Make spacer-ring grids */
+				zcave[zy][zx].feat = FEAT_DIRT;
+			}
+		}
+
 		/* External permanent shielding wall */
 		zcave[y - 2][x - 1].feat = FEAT_HIGH_MOUNTAIN;
 		zcave[y - 2][x].feat = FEAT_HIGH_MOUNTAIN;
