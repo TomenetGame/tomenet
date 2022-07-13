@@ -3297,6 +3297,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6b\n");
 			   the monster, don't spawn it. (For Morgoth, especially) -C. Blue */
 			int on_level = 0, who_killed = 0;
 			int admin_on_level = 0, admin_who_killed = 0;
+
 			for (i = 1; i <= NumPlayers; i++) {
 				/* Count how many players are here */
 				if (inarea(&Players[i]->wpos, wpos)) {
@@ -3383,7 +3384,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 8\n");
 			return 45;
 
 		/* 2022 - For low dungeon levels, make OoD less harsh: [10..40] levels OoD from depth (20..50), narrowly prohibiting Nazgul in the Orc Caves. */
-		if (dlev < 50 && r_ptr->level > dlev - 10 + (dlev > 20 ? dlev : 20)) return 45;
+		if (wpos->wz && dlev < 50 && r_ptr->level > dlev - 10 + (dlev > 20 ? dlev : 20)) return 45;
 	}
 #ifdef PMO_DEBUG
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 9\n");

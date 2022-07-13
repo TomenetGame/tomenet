@@ -8631,8 +8631,10 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			zcave[2][65].feat = 29; zcave[2][65].info = 7;
 			zcave[11][33].feat = 235; zcave[11][33].info = 7;
 			x = 33; y = 11;
+			summon_override_checks = SO_ALL;
 			i = place_monster_one(wpos, y, x + 1, RI_BLUE, 0, 0, 0, 0, 0);
 			if (i) s_printf("place_monster_one() failed: %d.\n", i);
+			summon_override_checks = SO_NONE;
 			dun->l_ptr->flags2 |= LF2_BROKEN; //abuse this as indicator
 
 			new_level_down_x(wpos, startx);
