@@ -3479,7 +3479,14 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 
 #if 1 /* specialino visualino - maybe too much */
 	/* Hack for Death Fate */
+	i = 0;
 	if (d_ptr->type == DI_DEATH_FATE) {
+		if (!in_bounds_array(y + 3, x + 3) || !in_bounds_array(y - 3, x - 3))
+			s_printf("WARNING: wilderness_gen() out of bounds dungeon decoration (DEATH FATE %d,%d).\n", wpos->wx, wpos->wy);
+		else
+			i = 1;
+	}
+	if (i) {
 		struct c_special *cs_ptr;
 		struct floor_insc *sign;
 		cave_type *c_ptr;
@@ -3786,7 +3793,7 @@ void wilderness_gen(struct worldpos *wpos) {
 			d_ptr = w_ptr->tower;
 			x = w_ptr->dn_x;
 			y = w_ptr->dn_y;
-			if (d_ptr && in_bounds(y, x) && //paranoia
+			if (d_ptr && in_bounds_wide(y, x) && //paranoia
 			    /* don't overwrite house walls if house contains a staircase
 			       (also see second check for this, in decorate_dungeon_entrance()) */
 			    !(zcave[y][x].info & (CAVE_ROOM | CAVE_ICKY)))
@@ -3799,7 +3806,7 @@ void wilderness_gen(struct worldpos *wpos) {
 			d_ptr = w_ptr->dungeon;
 			x = w_ptr->up_x;
 			y = w_ptr->up_y;
-			if (d_ptr && in_bounds(y, x) && //paranoia
+			if (d_ptr && in_bounds_wide(y, x) && //paranoia
 			    /* don't overwrite house walls if house contains a staircase
 			       (also see second check for this, in decorate_dungeon_entrance()) */
 			    !(zcave[y][x].info & (CAVE_ROOM | CAVE_ICKY)))
