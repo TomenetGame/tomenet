@@ -12105,6 +12105,19 @@ Berserk Strength
                 20, become fearless, -10 malus to ac and +10 to strength.
                 Does not stack with 'Berserk' technique.
                 ("You feel like a killing machine!")
+Blood           Cannot be found or bought, but only gathered from fountains of
+                blood which are found in the Paths of the Dead. These feed true
+                vampires, but they expire after some time. This process can be
+                delayed by carrying snow in your backpack, obtaining an aura
+                of cold, avoiding an aura of fire, sticking to cold terrain, or
+                being proficient in Water wizardry school (at least 8.000).
+                If the carrier is of white draconian lineage that also helps,
+                while being of red draconian lineage will accelerate going bad.
+                Since vampires don't emanate much body heat, they are also good
+                carriers, provided they are also moving on cold terrain.
+                Not all of these effects actually stack, but carrying more snow
+                is always effective, especially if the ratio of snow to blood
+                potions is higher.
 Boldness        Removes fear and keeps your heart boldened for a while.
 Chauve-Souris   Turns you into a fruit bat. Quaff another one to be restored
                 to your original form. A wand/rod of polymorph might help too.
@@ -12607,6 +12620,14 @@ Rubble ':' on the floor
 Skeletons/Bones/Skulls
                     You can craft ammunition from these if your Archery skill
                     is sufficient (see (6.12)).
+Snowball            Can be thrown at other people or target dummies.
+                    Can also be used to cool potions of blood.
+                    The more snowballs you carry, the slower they tend to melt.
+                    Moving in cold terrain will preserve the snowballs in your
+                    inventory.
+                    Other than that, basically everything about cooling that is
+                    written further above about potions of blood does also
+                    apply to snowballs.
 Spell scroll        Although called "scrolls" they actually persist and can be
                     used infinite times. They may however get destroyed by
                     certain damage effects (most notably fire and acid)
