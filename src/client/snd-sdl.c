@@ -3566,6 +3566,9 @@ void update_jukebox_timepos(void) {
 	/* Update jukebox song time stamp */
 	if (curmus_y != -1) Term_putstr(curmus_x + 34 + 11, curmus_y, -1, curmus_attr, format("%02d:%02d", i / 60, i % 60));
 #endif
+	/* Hack: Hide the cursor */
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
 }
 
 #endif /* SOUND_SDL */
