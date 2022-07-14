@@ -16447,6 +16447,7 @@ create a character!):
     but sometimes a hassle for ranged/caster classes. On the plus side, a
     vampire won't get gorged by drinking too many potions. In fact, Vampires
     can never get gorged, their 'feeding' will stop just below that threshold.
+    Items that provide 'Slow Digestion' do work for vampires.
     At level 40 they will also start to need less and less food to sustain
     themselves. Vampire royalties will require the least amount of food,
     independant of their level, enabling them to survive a very long time
@@ -16512,8 +16513,8 @@ create a character!):
     of all races since they are either greatly respected or feared by all other
     creatures.
     They gain experience extremely slowly, and rarely need to feed before
-    initiation. Afterwards they have no more need for any worldly food at all
-    (and they cannot become gorged either).
+    initiation (intrinsic slow digestion). Afterwards they have no more need
+    for any worldly food at all (and they cannot become gorged either).
     Likewise, when initiatied they become immune to the lingering damage effect
     of any continuous disease.
 
@@ -17747,6 +17748,7 @@ W: depth : rarity : corpse weight : experience for kill
     The weight of the form has impact on its stealth. A huge form that weighs
     a lot will give a stealth penalty, while small and light forms may give a
     bonus.
+    Also, the mimic will burn food faster while mimicking a heavier monster.
 
 I: speed : hit points : vision : armor class : alertness
   speed:
