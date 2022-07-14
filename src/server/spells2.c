@@ -301,7 +301,7 @@ void grow_trees(int Ind, int rad) {
 		i = (rand_int((rad * 2) + 1) - rad + rand_int((rad * 2) + 1) - rad) / 2;
 		j = (rand_int((rad * 2) + 1) - rad + rand_int((rad * 2) + 1) - rad) / 2;
 
-		if (!in_bounds2(&p_ptr->wpos, p_ptr->py + j, p_ptr->px + i)) continue;
+		if (!in_bounds(p_ptr->py + j, p_ptr->px + i)) continue;
 		if (distance(p_ptr->py, p_ptr->px, p_ptr->py + j, p_ptr->px + i) > rad) continue;
 
 		if (cave_naked_bold(zcave, p_ptr->py + j, p_ptr->px + i) &&
@@ -1887,7 +1887,7 @@ bool detect_treasure(int Ind, int rad) {
 //		for (x = p_ptr->panel_col_min; x <= p_ptr->panel_col_max; x++)
 		for (x = px - rad; x <= px + rad; x++) {
 			/* Reject locations outside of dungeon */
-			if (!in_bounds4(l_ptr, y, x)) continue;
+			if (!in_bounds_floor(l_ptr, y, x)) continue;
 
 			/* Reject those out of radius */
 			if (distance(py, px, y, x) > rad) continue;
@@ -1974,7 +1974,7 @@ bool floor_detect_treasure(int Ind) {
 	for (y = 0; y < l_ptr->hgt; y++) {
 		for (x = 0; x < l_ptr->wid; x++) {
 			/* Reject locations outside of dungeon */
-			if (!in_bounds4(l_ptr, y, x)) continue;
+			if (!in_bounds_floor(l_ptr, y, x)) continue;
 
 			c_ptr = &zcave[y][x];
 			w_ptr = &p_ptr->cave_flag[y][x];
@@ -2065,7 +2065,7 @@ bool detect_magic(int Ind, int rad) {
 		//for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
 		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++) {
 			/* Reject locations outside of dungeon */
-			if (!in_bounds4(l_ptr, i, j)) continue;
+			if (!in_bounds_floor(l_ptr, i, j)) continue;
 
 			/* Reject those out of radius */
 			if (distance(p_ptr->py, p_ptr->px, i, j) > rad) continue;
@@ -2861,7 +2861,7 @@ bool detect_bounty(int Ind, int rad) {
 	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++) {
 		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++) {
 			/* Reject locations outside of dungeon */
-			if (!in_bounds4(l_ptr, i, j)) continue;
+			if (!in_bounds_floor(l_ptr, i, j)) continue;
 
 			/* Reject those out of radius */
 			if (distance(p_ptr->py, p_ptr->px, i, j) > rad) continue;
@@ -3045,7 +3045,7 @@ bool detect_object(int Ind, int rad) {
 //		for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
 		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++) {
 			/* Reject locations outside of dungeon */
-			if (!in_bounds4(l_ptr, i, j)) continue;
+			if (!in_bounds_floor(l_ptr, i, j)) continue;
 
 			/* Reject those out of radius */
 			if (distance(p_ptr->py, p_ptr->px, i, j) > rad) continue;
@@ -3106,7 +3106,7 @@ bool detect_treasure_object(int Ind, int rad) {
 		//for (x = p_ptr->panel_col_min; x <= p_ptr->panel_col_max; x++)
 		for (x = px - rad; x <= px + rad; x++) {
 			/* Reject locations outside of dungeon */
-			if (!in_bounds4(l_ptr, y, x)) continue;
+			if (!in_bounds_floor(l_ptr, y, x)) continue;
 
 			/* Reject those out of radius */
 			if (distance(py, px, y, x) > rad) continue;
@@ -3212,7 +3212,7 @@ bool detect_trap(int Ind, int rad) {
 //		for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
 		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++) {
 			/* Reject locations outside of dungeon */
-			if (!in_bounds4(l_ptr, i, j)) continue;
+			if (!in_bounds_floor(l_ptr, i, j)) continue;
 
 			/* Reject those out of radius */
 			if (distance(p_ptr->py, p_ptr->px, i, j) > rad) continue;
@@ -3339,7 +3339,7 @@ bool detect_sdoor(int Ind, int rad) {
 //		for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
 		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++) {
 			/* Reject locations outside of dungeon */
-			if (!in_bounds4(l_ptr, i, j)) continue;
+			if (!in_bounds_floor(l_ptr, i, j)) continue;
 
 			/* Reject those out of radius */
 			if (distance(p_ptr->py, p_ptr->px, i, j) > rad) continue;
@@ -7256,7 +7256,7 @@ bool fire_shot(int Ind, int typ, int dir, int dx, int dy, int rad, int num, char
 		td = 0;
 		while (TRUE) {
 			// wraith tracer
-			if (!in_bounds3(wpos, l_ptr, y, x)) break;
+			if (!in_bounds_floor(l_ptr, y, x)) break;
 			y9 = y;
 			x9 = x;
 			mmove2(&y9, &x9, y1, x1, y2, x2);
@@ -7273,7 +7273,7 @@ bool fire_shot(int Ind, int typ, int dir, int dx, int dy, int rad, int num, char
 					if (++dd > dr) break;
 				y9 = y + tdy[i];
 				x9 = x + tdx[i];
-				if (!in_bounds3(wpos, l_ptr, y9, x9)) continue;
+				if (!in_bounds_floor(l_ptr, y9, x9)) continue;
 				if (distance(y9, x9, y1, x1) != td) continue; // missing . (fine?)
 				if (!projectable_wall(wpos, y1, x1, y9, x9, MAX_RANGE)) continue;
 				c_ptr = &zcave[y9][x9];

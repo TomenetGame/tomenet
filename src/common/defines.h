@@ -6943,7 +6943,7 @@
  * Ego-Items use the "name2" field
  */
 #define ego_item_p(T) \
-        ((T)->name2 || (T)->name2b ? TRUE : FALSE)
+	((T)->name2 || (T)->name2b ? TRUE : FALSE)
 
 /*
  * Ego-Items use the "name2" field
@@ -6957,13 +6957,13 @@
  * Broken items.
  */
 #define broken_p(T) \
-        ((T)->ident & ID_BROKEN)
+	((T)->ident & ID_BROKEN)
 
 /*
  * Cursed items.
  */
 #define cursed_p(T) \
-        ((T)->ident & ID_CURSED)
+	((T)->ident & ID_CURSED)
 
 
 
@@ -6971,42 +6971,27 @@
  * Determines if a map location is fully inside the outer walls
  */
 #define in_bounds(Y,X) \
-   (((Y) > 0) && ((X) > 0) && ((Y) < MAX_HGT-1) && ((X) < MAX_WID-1))
+   (((Y) > 0) && ((X) > 0) && ((Y) < MAX_HGT - 1) && ((X) < MAX_WID - 1))
 
-/* loosest check for seg fault */
+/*
+ * Determines if a map location is on or inside the outer walls,
+ * loosest check for seg fault */
 #define in_bounds_array(Y,X) \
    (((Y) >= 0) && ((X) >= 0) && ((Y) < MAX_HGT) && ((X) < MAX_WID))
 
-
-/*
- * Determines if a map location is on or inside the outer walls
- */
-#define in_bounds2(WPOS,Y,X) \
-   ((istown(WPOS) ? (((Y) >= 0) && ((X) >= 0) && ((Y) < MAX_HGT) && ((X) < MAX_WID)) \
-           : (((Y) > 0) && ((X) > 0) && ((Y) < MAX_HGT) && ((X) < MAX_WID))))
-
-/*
- * replacement of in_bound2 -
- * Determines if a map location is on or inside the outer walls,
- * using current hgt/wid	- Jir -
- */
-#define in_bounds3(WPOS,l_ptr,Y,X) \
-	(istown(WPOS) ? in_bounds2(WPOS,Y,X) : in_bounds4(l_ptr,Y,X))
-#if 0
-   (istown(WPOS) ? (((Y) >= 0) && ((X) >= 0) && ((Y) < (l_ptr)->hgt) && ((X) < (l_ptr)->wid)) \
-           : (((Y) > 0) && ((X) > 0) && ((Y) < MAX_HGT) && ((X) < MAX_WID))))
-#endif	/* 0 */
-
 /* replacement of in_bounds. */
-#define in_bounds4(l_ptr,Y,X) \
+#define in_bounds_floor(l_ptr,Y,X) \
    (l_ptr ? \
 	(((Y) > 0) && ((X) > 0) && ((Y) < (l_ptr)->hgt - 1) && ((X) < (l_ptr)->wid - 1)) \
 	: in_bounds(Y,X))
 
 /*   (((Y) > 0) && ((X) > 0) && ((Y) < (l_ptr)->hgt) && ((X) < (l_ptr)->wid))  */
 
+/* For dungeon decoration */
+#define in_bounds_wide(Y,X) \
+   (((Y) >= 2) && ((X) >= 2) && ((Y) < MAX_HGT - 2) && ((X) < MAX_WID - 2))
 
-/* wilderness version of in_bounds */
+/* wilderness (world map sector) version of in_bounds */
 #define in_bounds_wild(Y,X) \
    (((Y) >= 0) && ((X) >= 0) && ((Y) < MAX_WILD_Y) && ((X) < MAX_WILD_X))
 

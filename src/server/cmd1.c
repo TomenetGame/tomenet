@@ -7599,7 +7599,7 @@ int see_wall(int Ind, int dir, int y, int x)
 	/* XXX this should be blocked by permawalls, hopefully. */
 	/* Had a crash occuring in cave_floor_bold check, y = 1, x = -1, 32,32,-500
 	   So I'm trying an ugly hack - C. Blue */
-//	if (!in_bounds2(wpos, y, x)) { /* RUNNING_FIX_DEBUG */
+//	if (!in_bounds(y, x)) { /* RUNNING_FIX_DEBUG */
 	if (!in_bounds_array(y, x)) {
 		/* Hack be sure the player is inbounds */
 		if (p_ptr->px < 0) p_ptr->px = 0;
@@ -7684,7 +7684,7 @@ static int see_nothing(int dir, int Ind, int y, int x)
 	x += ddx[dir];
 
 	/* Illegal grids are unknown */
-	if (!in_bounds2(wpos, y, x)) return (TRUE);
+	if (!in_bounds(y, x)) return (TRUE);
 
 	/* Memorized grids are known */
 	if (p_ptr->cave_flag[y][x] & CAVE_MARK) return (FALSE);

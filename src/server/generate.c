@@ -1442,7 +1442,7 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 		y = rand_spread(dun->l_ptr->hgt / 2, 10);
 		x = rand_spread(dun->l_ptr->wid / 2, 15);
 
-		if (in_bounds4(dun->l_ptr, y, x)) break;
+		if (in_bounds_floor(dun->l_ptr, y, x)) break;
 
 		if (tries-- == 0) return;
 	}
@@ -1462,7 +1462,7 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 			while (TRUE) {
 				ty = rand_spread(y, d);
 				tx = rand_spread(x, d);
-				if (in_bounds4(dun->l_ptr, ty, tx)) break;
+				if (in_bounds_floor(dun->l_ptr, ty, tx)) break;
 				if (tries-- == 0) return;
 			}
 
@@ -1521,7 +1521,7 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 
 
 		/* Quit before leaving the dungeon */
-		if (!in_bounds4(dun->l_ptr, y, x)) break;
+		if (!in_bounds_floor(dun->l_ptr, y, x)) break;
 	}
 }
 
@@ -1560,7 +1560,7 @@ static void build_streamer2(worldpos *wpos, int feat, int killwall) {
 		y = rand_spread(dun->l_ptr->hgt / 2, 10);
 		x = rand_spread(dun->l_ptr->wid / 2, 15);
 
-		if (in_bounds4(dun->l_ptr, y, x)) break;
+		if (in_bounds_floor(dun->l_ptr, y, x)) break;
 		if (!tries--) return;
 	}
 
@@ -1580,7 +1580,7 @@ static void build_streamer2(worldpos *wpos, int feat, int killwall) {
 				while (TRUE) {
 					ty = rand_spread(y, d);
 					tx = rand_spread(x, d);
-					if (in_bounds4(dun->l_ptr, ty, tx)) break;
+					if (in_bounds_floor(dun->l_ptr, ty, tx)) break;
 					if (!tries--) return;
 				}
 
@@ -1614,7 +1614,7 @@ static void build_streamer2(worldpos *wpos, int feat, int killwall) {
 			if (rand_int(20) == 0) dir = ddd[rand_int(8)];
 
 			/* Stop at dungeon edge */
-			if (!in_bounds4(dun->l_ptr, y, x)) break;
+			if (!in_bounds_floor(dun->l_ptr, y, x)) break;
 		}
 	}
 
@@ -1629,7 +1629,7 @@ static void build_streamer2(worldpos *wpos, int feat, int killwall) {
 				tx = x + j;
 				ty = y + i;
 
-				if (!in_bounds4(dun->l_ptr, ty, tx)) continue;
+				if (!in_bounds_floor(dun->l_ptr, ty, tx)) continue;
 
 				if (i < mid) {
 					if (j < mid) {
@@ -4504,7 +4504,7 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 	cy = yval - ((rotate?xmax:ymax) / 2) * (mirrorud?-1:1);
 
 	/* At least 1/4 should be genetated */
-	if (!in_bounds4(l_ptr, cy, cx))
+	if (!in_bounds_floor(l_ptr, cy, cx))
 		return FALSE;
 
 	/* Check for flags */
@@ -4540,7 +4540,7 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 
 			/* FIXME - find a better solution */
 			/* Is this any better? */
-			if (!in_bounds4(l_ptr,y,x)) continue;
+			if (!in_bounds_floor(l_ptr,y,x)) continue;
 
 			/* Hack -- skip "non-grids" */
 			if (*t == ' ') continue;
@@ -4723,7 +4723,7 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 
 			/* FIXME - find a better solution */
 			/* Is this any better? */
-			if(!in_bounds4(l_ptr,y,x)) continue;
+			if (!in_bounds_floor(l_ptr,y,x)) continue;
 
 			/* Hack -- skip "non-grids" */
 			if (*t == ' ') continue;
@@ -4822,7 +4822,7 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 
 				/* FIXME - find a better solution */
 				/* Is this any better? */
-				if(!in_bounds4(l_ptr,y,x)) continue;
+				if (!in_bounds_floor(l_ptr,y,x)) continue;
 
 				/* Hack -- skip "non-grids" */
 				if (*t == ' ') continue;

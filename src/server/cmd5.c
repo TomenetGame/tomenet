@@ -192,7 +192,7 @@ bool check_antimagic(int Ind, int percentage) {
 		x = x2 + tdx[i];
 
 		/* Ignore "illegal" locations */
-		if (!in_bounds2(wpos, y, x)) continue;
+		if (!in_bounds(y, x)) continue;
 
 		if ((m_idx = zcave[y][x].m_idx) <= 0) continue;
 

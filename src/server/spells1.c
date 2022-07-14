@@ -612,7 +612,7 @@ bool teleport_away(int m_idx, int dis) {
 			if (!tries) return FALSE;
 
 			/* Ignore illegal locations */
-			if (!in_bounds4(l_ptr, ny, nx)) continue;
+			if (!in_bounds_floor(l_ptr, ny, nx)) continue;
 
 			/* Require "empty" floor space */
 			if (!cave_empty_bold(zcave, ny, nx)) continue;
@@ -923,7 +923,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 			if (!tries) break;
 
 			/* Ignore illegal locations */
-			if (!in_bounds4(l_ptr, y, x)) continue;
+			if (!in_bounds_floor(l_ptr, y, x)) continue;
 
 			if (!left_shop && !town) {
 				/* Require floor space if not ghost */
@@ -1060,7 +1060,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 			xx = ox + ddx[d];
 			yy = oy + ddy[d];
 
-			if (!in_bounds4(l_ptr, yy, xx)) continue;
+			if (!in_bounds_floor(l_ptr, yy, xx)) continue;
 
 			if ((m_idx = zcave[yy][xx].m_idx) > 0) {
 				monster_race *r_ptr = race_inf(&m_list[m_idx]);
@@ -1195,7 +1195,7 @@ void teleport_player_to(int Ind, int ny, int nx, bool forced) {
 		while (--tries) {
 			y = rand_spread(ny, dis);
 			x = rand_spread(nx, dis);
-			if (in_bounds4(l_ptr, y, x)) break;
+			if (in_bounds_floor(l_ptr, y, x)) break;
 
 			/* Occasionally advance the distance */
 			if (++ctr > (4 * dis * dis + 4 * dis + 1)) {
@@ -9730,10 +9730,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				max_attempts--;
 			}
 #if 0
-			while (max_attempts && in_bounds2(wpos, t_y, t_x) &&
+			while (max_attempts && in_bounds(t_y, t_x) &&
 					!(player_has_los_bold(Ind, t_y, t_x)));
 #else	// 0
-			while (max_attempts && (!in_bounds2(wpos, t_y, t_x) ||
+			while (max_attempts && (!in_bounds(t_y, t_x) ||
 					!(player_has_los_bold(Ind, t_y, t_x))));
 #endif	// 0
 
@@ -12434,7 +12434,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		y = y9 = y1;
 		dist = 0;
 		while (TRUE) {
-			if (!in_bounds3(wpos, l_ptr, y, x)) break; // Paranoia - sector edge?
+			if (!in_bounds_floor(l_ptr, y, x)) break; // Paranoia - sector edge?
 			y9 = y;
 			x9 = x;
 			mmove2(&y9, &x9, y1, x1, y2, x2);
@@ -12458,7 +12458,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 					if (++dist > rad) break;
 				y = y2 + tdy[i];
 				x = x2 + tdx[i];
-				if (!in_bounds3(wpos, l_ptr, y, x)) continue;
+				if (!in_bounds_floor(l_ptr, y, x)) continue;
 				// if (distance(y, x, y1, x1) != true_dist) continue; // misses some .
 				if (distance(y, x, y1, x1) > true_dist) continue; // overkill
 				ty[t] = y;
@@ -12489,7 +12489,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 				y = y9 = y1;
 				dist = 0;
 				while (TRUE) {
-					if (!in_bounds3(wpos, l_ptr, y, x)) break; // Paranoia - sector edge?
+					if (!in_bounds_floor(l_ptr, y, x)) break; // Paranoia - sector edge?
 					duplicate = FALSE;
 					for (i = 0; i < grids; i++) {
 						if ((y == gy[i]) && (x == gx[i])) {
@@ -12581,7 +12581,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 				y = y + ddy_ddd[i];
 				x = x + ddx_ddd[i];
 				dist++;
-				if (!in_bounds3(wpos, l_ptr, y, x)) break;
+				if (!in_bounds_floor(l_ptr, y, x)) break;
 				if (distance(y1, x1, y, x) > MAX_RANGE) break;
 				if (dist > MAX_RANGE) break;
 				if (broke_on_terrain1) break; // allow the wall to be hit
@@ -12692,7 +12692,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			x = x2 + tdx[i];
 
 			/* Ignore "illegal" locations */
-			if (!in_bounds3(wpos, l_ptr, y, x)) continue;
+			if (!in_bounds_floor(l_ptr, y, x)) continue;
 
 #ifdef NO_EXPLOSION_OUT_OF_MAX_RANGE
 			/* Don't create explosions that exceed MAX_RANGE from the caster */
@@ -12991,7 +12991,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			x = gx[i];
 
 			/* paranoia */
-			if (!in_bounds2(wpos, y, x)) continue;
+			if (!in_bounds(y, x)) continue;
 
 #ifndef PROJ_MON_ON_WALL
 			/* Walls protect monsters */
@@ -13074,7 +13074,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 
 			/* Set the player index */
 			/* paranoia */
-			if (!in_bounds2(wpos, y, x)) continue;
+			if (!in_bounds(y, x)) continue;
 
 			player_idx = 0 - zcave[y][x].m_idx;
 

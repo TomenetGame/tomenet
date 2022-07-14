@@ -1666,7 +1666,7 @@ static bool monst_check_antimagic(int Ind, int m_idx) {
 	for (y = y2 - MONSTER_ANTIDIS; y <= y2 + MONSTER_ANTIDIS; y++) {
 		for (x = x2 - MONSTER_ANTIDIS; x <= x2 + MONSTER_ANTIDIS; x++) {
 			/* Ignore "illegal" locations */
-			if (!in_bounds2(wpos, y, x)) continue;
+			if (!in_bounds(y, x)) continue;
 			if ((m_idx = zcave[y][x].m_idx) <= 0) continue;
 
 			/* Enforce a "circular" explosion */

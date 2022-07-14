@@ -8006,7 +8006,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (!p) return;
 
 				q_ptr = Players[p];
-				if (!in_bounds4(getfloor(&q_ptr->wpos), y, x)) {
+				if (!in_bounds_floor(getfloor(&q_ptr->wpos), y, x)) {
 					msg_print(Ind, "Error: Location not in_bounds.");
 					return;
 				}

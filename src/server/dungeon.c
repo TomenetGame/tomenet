@@ -887,7 +887,7 @@ void erase_effects(int effect) {
 	for (l = 0; l < tdi[rad + 0]; l++) {
 		j = cy + tdy[l];
 		i = cx + tdx[l];
-		if (!in_bounds2(wpos, j, i)) continue;
+		if (!in_bounds(j, i)) continue;
 
 		c_ptr = &zcave[j][i];
 		if (c_ptr->effect == effect) {
@@ -1003,13 +1003,13 @@ static void process_effects(void) {
 				p_ptr = Players[e_ptr->interval];
 				if (k == p_ptr->e) {
 					if (e_ptr->cy != p_ptr->arc_b || e_ptr->cx != p_ptr->arc_a) {
-						if (!in_bounds2(wpos, e_ptr->cy, e_ptr->cx)) continue;
+						if (!in_bounds(e_ptr->cy, e_ptr->cx)) continue;
 						c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
 						c_ptr->effect = 0;
 						everyone_lite_spot(wpos, e_ptr->cy, e_ptr->cx);
 						e_ptr->cy = p_ptr->arc_b;
 						e_ptr->cx = p_ptr->arc_a;
-						if (!in_bounds2(wpos, e_ptr->cy, e_ptr->cx)) continue;
+						if (!in_bounds(e_ptr->cy, e_ptr->cx)) continue;
 						c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
 						c_ptr->effect = k;
 						everyone_lite_spot(wpos, e_ptr->cy, e_ptr->cx);
@@ -1035,7 +1035,7 @@ static void process_effects(void) {
 			for (l = 0; l < tdi[e_ptr->rad]; l++) {
 				j = e_ptr->cy + tdy[l];
 				i = e_ptr->cx + tdx[l];
-				if (!in_bounds2(wpos, j, i)) continue;
+				if (!in_bounds(j, i)) continue;
 				everyone_lite_spot(wpos, j, i);
 			}
   #endif
@@ -1099,7 +1099,7 @@ static void process_effects(void) {
 		for (l = 0; l < tdi[e_ptr->rad]; l++) {
 			i = e_ptr->cx + tdx[l];
 			j = e_ptr->cy + tdy[l];
-			if (!in_bounds2(wpos, j, i)) continue;
+			if (!in_bounds(j, i)) continue;
 
 			c_ptr = &zcave[j][i];
 
@@ -1624,7 +1624,7 @@ static void process_effects(void) {
 			for (l = 0; l < tdi[e_ptr->rad]; l++) {
 				j = e_ptr->cy + tdy[l];
 				i = e_ptr->cx + tdx[l];
-				if (!in_bounds2(wpos, j, i)) continue;
+				if (!in_bounds(j, i)) continue;
 
 				c_ptr = &zcave[j][i];
 				if (c_ptr->effect && c_ptr->effect != k) continue; /* 'skip' */
@@ -1680,7 +1680,7 @@ static void process_effects(void) {
 				for (l = 0; l < tdi[e_ptr->rad]; l++) {
 					j = e_ptr->cy + tdy[l];
 					i = e_ptr->cx + tdx[l];
-					if (!in_bounds2(wpos, j, i)) continue;
+					if (!in_bounds(j, i)) continue;
 					c_ptr = &zcave[j][i];
 					if (los(wpos, e_ptr->cy, e_ptr->cx, j, i) && (distance(e_ptr->cy, e_ptr->cx, j, i) <= e_ptr->rad)) {
 						c_ptr->effect = k;

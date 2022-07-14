@@ -8765,7 +8765,7 @@ void do_cmd_purchase_house(int Ind, int dir) {
 		x = p_ptr->px + ddx[dir];
 
 		/* Get requested grid */
-		if (in_bounds2(wpos, y, x)) c_ptr = &zcave[y][x];
+		if (in_bounds(y, x)) c_ptr = &zcave[y][x];
 
 		/* Check for a house */
 		if (!(c_ptr && (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN)
@@ -8983,7 +8983,7 @@ void do_cmd_fusion(int Ind) {
 	for (dir = 0; dir < 8; dir++) {
 		y = p_ptr->py + ddy_ddd[dir];
 		x = p_ptr->px + ddx_ddd[dir];
-		if (!in_bounds2(&p_ptr->wpos, y, x)) continue;
+		if (!in_bounds(y, x)) continue;
 
 		/* Get requested grid, check for friendly open minded player */
 		i = -zcave[y][x].m_idx;

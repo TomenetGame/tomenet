@@ -150,7 +150,7 @@ void excise_object_idx(int o_idx) {
 		if (!(zcave = getcave(&j_ptr->wpos))) return;
 
 		/* Somewhere out of this world */
-		if (!in_bounds2(&j_ptr->wpos, y, x)) return;
+		if (!in_bounds(y, x)) return;
 
 		c_ptr = &zcave[y][x];
 
@@ -579,7 +579,7 @@ void compact_objects(int size, bool purge) {
 		for (i = 1; i < o_max; i++) {
 			o_ptr = &o_list[i];
 
-			/* Skip monster inventory (not in_bounds2() anyway: 0,0) */
+			/* Skip monster inventory (not in_bounds() anyway: 0,0) */
 			if (o_ptr->held_m_idx) continue;
 
 			wpos = &o_ptr->wpos;
@@ -589,7 +589,7 @@ void compact_objects(int size, bool purge) {
 			if ((zcave = getcave(wpos))) {
 				c_ptr = &zcave[y][x];
 				if (o_ptr->embed == 1) { /* Monster trap kit/load */
-					if (in_bounds2(wpos, y, x)) {
+					if (in_bounds(y, x)) {
 						if (c_ptr->feat == FEAT_MON_TRAP) {
 							struct c_special *cs_ptr;
 
@@ -600,7 +600,7 @@ void compact_objects(int size, bool purge) {
 							}
 						}
 					}
-				} else if (in_bounds2(wpos, y, x)) {
+				} else if (in_bounds(y, x)) {
 					if (old_idx[c_ptr->o_idx] == i) {
 						c_ptr->o_idx = i;
 						nothing_test2(c_ptr, x, y, wpos, 7);//was 1
@@ -689,7 +689,6 @@ void wipe_o_list(struct worldpos *wpos) {
 		/* Dungeon */
 		else
 #endif	// MONSTER_INVENTORY
-//		if (flag && in_bounds2(wpos, o_ptr->iy, o_ptr->ix))
 		if (flag) {
 			if (in_bounds_array(o_ptr->iy, o_ptr->ix)) {
 				if (o_ptr->embed == 1) {
@@ -857,7 +856,6 @@ void wipe_o_list_special(struct worldpos *wpos) {
 		/* Dungeon */
 		else
 #endif	// MONSTER_INVENTORY
-//		if (flag && in_bounds2(wpos, o_ptr->iy, o_ptr->ix))
 		if (flag) {
 			if (in_bounds_array(o_ptr->iy, o_ptr->ix)) {
 				if (o_ptr->embed == 1) {
