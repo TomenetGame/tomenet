@@ -88,44 +88,44 @@ D:Chaos damage to your sanity, causing hallucinations. Restores a little mana.
 N:5:Cure Poison
 G:,:d
 I:80:12:500
-W:10:0:1:40
-A:10/1
+W:7:0:1:40
+A:7/1
 #D:Cures poison.
 
 N:6:Cure Blindness
 G:,:d
 I:80:13:500
-W:10:0:1:8
-A:10/1
+W:7:0:1:8
+A:7/1
 #D:Cures Blindness.
 
 N:7:Cure Paranoia
 G:,:d
 I:80:14:500
-W:10:0:1:40
-A:10/1
+W:8:0:1:40
+A:8/1
 D:Cures fear and hallucination.
 
 N:8:Cure Confusion
 G:,:d
 I:80:15:500
-W:10:0:1:10
-A:10/1
+W:7:0:1:10
+A:7/1
 #D:Cures confusion.
 
 N:9:Weakness
 G:,:d
 I:80:6:500
-W:10:0:1:0
-A:10/1
+W:7:0:1:0
+A:7/1
 P:0:5d5:0:0:0
 #D:Drains strength.
 
 N:10:Unhealth
 G:,:d
 I:80:10:500
-W:15:0:1:0
-A:15/1
+W:5:0:1:0
+A:5/1
 P:0:10d10:0:0:0
 D:Drains constitution and inflicts damage.
 
@@ -146,15 +146,15 @@ D:Restores all drained stats and experience.
 N:13:Stupidity
 G:,:d
 I:80:8:500
-W:15:0:1:0
-A:15/1
+W:10:0:1:0
+A:10/1
 #D:Drains intelligence.
 
 N:14:Naivety
 G:,:d
 I:80:9:500
-W:15:0:1:0
-A:15/1
+W:10:0:1:0
+A:10/1
 #D:Drains wisdom.
 
 N:15:Poison
@@ -168,16 +168,16 @@ P:0:4d4:0:0:0
 N:16:Sickness
 G:,:d
 I:80:7:500
-W:10:0:1:0
-A:10/1
+W:7:0:1:0
+A:7/1
 P:0:4d4:0:0:0
 D:Drains constitution and causes damage.
 
 N:17:Paralysis
 G:,:d
 I:80:5:500
-W:20:0:1:0
-A:20/1
+W:8:0:1:0
+A:8/1
 #D:Causes temporary paralysation.
 
 N:18:Restore Strength
@@ -190,16 +190,16 @@ A:10/1
 N:19:Disease
 G:,:d
 I:80:11:500
-W:20:0:1:0
-A:20/1
+W:10:0:1:0
+A:10/1
 P:0:10d10:0:0:0
 D:Drains strength and inflicts damage.
 
 N:20:Cure Serious Wounds
 G:,:d
 I:80:16:500
-W:15:0:1:30
-A:15/1
+W:8:0:1:30
+A:8/1
 #D:Cures serious wounds.
 D:Heals 6d8 hit points and cures blindness, confusion and heals cuts somewhat.
 
@@ -4419,8 +4419,8 @@ $ENABLE_SUBINVEN$D:A magical cloth for storing devices that don't need to be aim
 N:514:Fast Metabolism
 G:,:r
 I:80:21:500
-W:3:0:1:50
-A:3/1
+W:1:0:1:50
+A:1/1:5/1
 D:Adds a small, flat amount to your natural health regeneration temporarily.
 
 
@@ -6575,8 +6575,8 @@ D:Allows for friendly duels. Inscribe it @P<playername> and read it.
 N:815:Unmagic
 G:,:d
 I:80:0:50
-W:15:0:2:75
-A:15/1
+W:10:0:2:75
+A:10/1
 D:Removes all kinds of temporary magical effects.
 
 # HOLE 816-838
