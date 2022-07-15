@@ -60,8 +60,8 @@ G:&:w
 N:1:Blindness
 G:,:d
 I:80:1:500
-W:5:0:1:0
-A:5/1
+W:3:0:1:0
+A:3/1
 #D:Causes temporary blindness.
 
 N:2:Paranoia
@@ -74,8 +74,8 @@ D:Causes temporary fear and hallucination.
 N:3:Confusion
 G:,:d
 I:80:3:500
-W:5:0:1:0
-A:5/1
+W:3:0:1:0
+A:3/1
 #D:Causes temporary confusion.
 
 N:4:Hallucination
@@ -88,15 +88,15 @@ D:Chaos damage to your sanity, causing hallucinations. Restores a little mana.
 N:5:Cure Poison
 G:,:d
 I:80:12:500
-W:7:0:1:40
-A:7/1
+W:5:0:1:40
+A:5/1
 #D:Cures poison.
 
 N:6:Cure Blindness
 G:,:d
 I:80:13:500
-W:7:0:1:8
-A:7/1
+W:3:0:1:8
+A:3/1
 #D:Cures Blindness.
 
 N:7:Cure Paranoia
@@ -109,8 +109,8 @@ D:Cures fear and hallucination.
 N:8:Cure Confusion
 G:,:d
 I:80:15:500
-W:7:0:1:10
-A:7/1
+W:3:0:1:10
+A:3/1
 #D:Cures confusion.
 
 N:9:Weakness
@@ -198,8 +198,8 @@ D:Drains strength and inflicts damage.
 N:20:Cure Serious Wounds
 G:,:d
 I:80:16:500
-W:8:0:1:30
-A:8/1
+W:5:0:1:30
+A:5/1
 #D:Cures serious wounds.
 D:Heals 6d8 hit points and cures blindness, confusion and heals cuts somewhat.
 
