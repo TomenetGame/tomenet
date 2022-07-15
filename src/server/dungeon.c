@@ -4730,15 +4730,12 @@ static bool process_player_end_aux(int Ind) {
 		k += (rand_int(POISON_DIV) < p_ptr->mhp % POISON_DIV) ? 1 : 0;
 		if (!k) k = 1;
 
-		if (p_ptr->slow_poison == 1) {
-			p_ptr->slow_poison = 2;
-			/* Take damage */
-			p_ptr->died_from_ridx = 0;
-			take_hit(Ind, k, "poison", p_ptr->poisoned_attacker);
-		} else if (p_ptr->slow_poison == 2) {
-			p_ptr->slow_poison = 3;
-		} else if (p_ptr->slow_poison == 3) {
-			p_ptr->slow_poison = 1;
+		if (p_ptr->slow_poison) {
+			p_ptr->slow_poison = (p_ptr->slow_poison % 3) + 1; /* Take damage every n-th tick only [3] */
+			if (p_ptr->slow_poison == 1) {
+				p_ptr->died_from_ridx = 0;
+				take_hit(Ind, k, "poison", p_ptr->poisoned_attacker);
+			}
 		} else {
 			/* Take damage */
 			p_ptr->died_from_ridx = 0;
