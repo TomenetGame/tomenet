@@ -46,7 +46,7 @@ H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 
 N:4:Mirimbar(High-Elf)
-I:0:170:108:1:1
+I:20000:170:108:1:1
 C:120:100:80
 L:Maia | High-Elf | Half-Elf | Elf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
@@ -383,7 +383,7 @@ L:Maia | High-Elf | Half-Elf | Elf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:58:Pengolodh(High-Elf)
-I:0:120:105:6:16
+I:20000:120:105:6:16
 C:120:100:80
 L:Maia | High-Elf | Half-Elf | Elf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
