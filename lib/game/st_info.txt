@@ -194,6 +194,7 @@ I:100:Remove Curse
 I:100:Remove Curse
 I:2:*Remove Curse*
 #I:100:*Remove Curse*
+I:100:Slow Poison
 I:100:Neutralize Poison
 #Scroll of Life
 T:100:70:56
@@ -1304,6 +1305,7 @@ I:100:Remove Curse
 #I:100:Remove Curse
 I:2:*Remove Curse*
 #I:100:*Remove Curse*
+I:100:Slow Poison
 I:100:Neutralize Poison
 #Scroll of Life
 T:100:70:56
