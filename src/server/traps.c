@@ -55,37 +55,43 @@ static bool do_trap_of_silliness(int Ind, int power) {
 }
 #endif // 0
 
+/* Drop some items with chance% each. A complete slot will be dropped, so stacks are not split up. */
 bool do_player_drop_items(int Ind, int chance, bool trap) {
 	player_type *p_ptr = Players[Ind];
-	object_type *o_ptr;
+	object_type *o_ptr, tmp_obj;
+	char o_name[ONAME_LEN];
 	s16b i;
 	bool message = FALSE, ident = FALSE;
 
 	if (p_ptr->inval) return (FALSE);
 
 	for (i = 0; i < INVEN_PACK; i++) {
-		object_type tmp_obj = p_ptr->inventory[i];
-		o_ptr = &p_ptr->inventory[i];
+		tmp_obj = p_ptr->inventory[i];
+		o_ptr = &tmp_obj;
+
 		if (!tmp_obj.k_idx) continue;
 		if (randint(100) > chance) continue;
-		if (tmp_obj.name1 == ART_POWER) continue;
-		if (cfg.anti_arts_hoard && true_artifact_p(&tmp_obj) && (rand_int(100) > 9)) {
-			char	o_name[ONAME_LEN];
-			object_desc(Ind, o_name, &tmp_obj, TRUE, 0);
-
+		if (tmp_obj.name1 == ART_POWER) continue; /* The One Ring is safe */
+#ifdef ENABLE_SUBINVEN
+		/* Don't drop subinventories - too complicated implications */
+		if (tmp_obj.tval == TV_SUBINVEN) continue;
+#endif
+		if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && (rand_int(100) > 9)) {
+			object_desc(Ind, o_name, o_ptr, TRUE, 0);
 			msg_format(Ind, "%s resists the effect!", o_name);
 			continue;
 		}
-		//tmp_obj = p_ptr->inventory[i];
 
+#if 0 /* we drop the whole stack, so this is not needed */
 		/* Hack -- If a wand, allocate total
 		 * maximum timeouts or charges between those
 		 * stolen and those missed. -LM-
 		 */
 		if (is_magic_device(o_ptr->tval)) divide_charged_item(&tmp_obj, o_ptr, 1);
+#endif
 
 		/* drop carefully */
-		drop_near_severe(Ind, &tmp_obj, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+		drop_near_severe(Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 		inven_item_increase(Ind, i,-999);
 		inven_item_optimize(Ind, i);
 		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
