@@ -7520,7 +7520,7 @@ static bool player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 	cave_type **zcave, *c_ptr = NULL;
 	char o_name[ONAME_LEN], o0_name[ONAME_LEN];
 	u32b old_value;
-	char owner_name[CNAME_LEN];
+	char owner_name[NAME_LEN];
 
 	/* paranoia */
 	if (!o_ptr->number || !s_ptr->number) return FALSE;
