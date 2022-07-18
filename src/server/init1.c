@@ -5514,6 +5514,9 @@ errr init_t_info_txt(FILE *fp, char *buf) {
 			/* Advance the index */
 			t_head->name_size += strlen(s);
 
+			/* Init. Should be superfluous. */
+			t_ptr->flags = 0;
+
 			/* Next... */
 			continue;
 		}
@@ -5578,8 +5581,6 @@ errr init_t_info_txt(FILE *fp, char *buf) {
 
 		/* Hack -- Process 'F' for flags */
 		if (buf[0] == 'F') {
-			t_ptr->flags = 0;
-
 			/* Parse every entry textually */
 			for (s = buf + 2; *s; ) {
 				/* Find the end of this entry */
