@@ -894,7 +894,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				char o_name[ONAME_LEN];
 				s16b i;
 #ifdef ENABLE_SUBINVEN
-				s16b s;
+				s16b s = 0; //silyl compiler warning
 #endif
 
 				/* Find an item */
