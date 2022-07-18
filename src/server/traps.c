@@ -56,53 +56,57 @@ static bool do_trap_of_silliness(int Ind, int power) {
 #endif // 0
 
 /* Drop some items with chance% each. A complete slot will be dropped, so stacks are not split up. */
+static bool do_player_drop_items_aux(int Ind, int chance, int slot, object_type *o_ptr, bool trap, bool ident) {
+	player_type *p_ptr = Players[Ind];
+	char o_name[ONAME_LEN];
+
+	if (!o_ptr->k_idx) return FALSE;
+	if (randint(100) > chance) return FALSE;
+	if (o_ptr->name1 == ART_POWER) return FALSE; /* The One Ring is safe */
+	if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && (rand_int(100) > 9)) {
+		object_desc(Ind, o_name, o_ptr, TRUE, 0);
+		msg_format(Ind, "%s resists the effect!", o_name);
+		return FALSE;
+	}
+
+	/* drop carefully */
+	drop_near_severe(Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+	inven_item_increase(Ind, slot, -999);
+	inven_item_optimize(Ind, slot);
+	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+	if (trap && !ident) msg_print(Ind, "You are startled by a sudden sound.");
+	return TRUE;
+}
 bool do_player_drop_items(int Ind, int chance, bool trap) {
 	player_type *p_ptr = Players[Ind];
-	object_type *o_ptr, tmp_obj;
-	char o_name[ONAME_LEN];
+	object_type tmp_obj;
 	s16b i;
-	bool message = FALSE, ident = FALSE;
+#ifdef ENABLE_SUBINVEN
+	s16b j, k;
+#endif
+	bool ident = FALSE;
 
 	if (p_ptr->inval) return (FALSE);
 
 	for (i = 0; i < INVEN_PACK; i++) {
 		tmp_obj = p_ptr->inventory[i];
-		o_ptr = &tmp_obj;
-
-		if (!tmp_obj.k_idx) continue;
-		if (randint(100) > chance) continue;
-		if (tmp_obj.name1 == ART_POWER) continue; /* The One Ring is safe */
 #ifdef ENABLE_SUBINVEN
 		/* Don't drop subinventories - too complicated implications */
-		if (tmp_obj.tval == TV_SUBINVEN) continue;
-#endif
-		if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && (rand_int(100) > 9)) {
-			object_desc(Ind, o_name, o_ptr, TRUE, 0);
-			msg_format(Ind, "%s resists the effect!", o_name);
+		if (tmp_obj.tval == TV_SUBINVEN) {
+			/* Drop an item from within the subinventory -- kinda clumsy to duplicate the loop here ~_~ */
+			k = tmp_obj.bpval;
+			for (j = 0; j < k; j++) {
+				tmp_obj = p_ptr->subinventory[i][j];
+				if (!tmp_obj.tval) break;
+				ident |= do_player_drop_items_aux(Ind, chance, (i + 1) * 100 + j, &tmp_obj, trap, ident);
+			}
 			continue;
 		}
-
-#if 0 /* we drop the whole stack, so this is not needed */
-		/* Hack -- If a wand, allocate total
-		 * maximum timeouts or charges between those
-		 * stolen and those missed. -LM-
-		 */
-		if (is_magic_device(o_ptr->tval)) divide_charged_item(&tmp_obj, o_ptr, 1);
 #endif
-
-		/* drop carefully */
-		drop_near_severe(Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-		inven_item_increase(Ind, i,-999);
-		inven_item_optimize(Ind, i);
-		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-		if (trap && !message) {
-			msg_print(Ind, "You are startled by a sudden sound.");
-			message = TRUE;
-		}
-		ident = TRUE;
+		ident |= do_player_drop_items_aux(Ind, chance, i, &tmp_obj, trap, ident);
 	}
-	if (trap && !ident) msg_print(Ind, "You hear a sudden, strange sound.");
 
+	if (trap && !ident) msg_print(Ind, "You hear a sudden, strange sound.");
 	return (ident);
 }
 
@@ -886,8 +890,12 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				/* Saving throw message */
 				msg_print(Ind, "Your backpack seems to vibrate strangely!");
 			} else {
+				object_type *o_ptr, forge, *q_ptr = &forge, forge_bak;
 				char i_name[ONAME_LEN];
 				s16b i;
+#ifdef ENABLE_SUBINVEN
+				s16b s;
+#endif
 
 				/* Find an item */
 				for (k = 0; k < rand_int(10); k++) {
@@ -895,40 +903,65 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 					i = rand_int(INVEN_PACK);
 
 					/* Obtain the item */
-					object_type *j_ptr = &p_ptr->inventory[i], *q_ptr, forge;
+					o_ptr = &p_ptr->inventory[i];
 
 					/* Accept real items */
-					if (!j_ptr->k_idx) continue;
+					if (!o_ptr->k_idx) continue;
 
 					/* Don't steal artifacts  -CFT */
-					if (artifact_p(j_ptr)) continue;
+					if (artifact_p(o_ptr)) continue;
 
 #ifdef ENABLE_SUBINVEN
 					/* Don't steal subinventories - too complicated implications */
-					if (j_ptr->tval == TV_SUBINVEN) continue;
+					if (o_ptr->tval == TV_SUBINVEN) {
+						/* Steal an item from within the subinventory */
+
+						/* Pick an item */
+						s = rand_int(o_ptr->bpval);
+
+						/* Obtain the item */
+						o_ptr = &p_ptr->subinventory[i][s];
+
+						/* Accept real items */
+						if (!o_ptr->k_idx) continue;
+
+						/* Don't steal artifacts  -CFT */
+						if (artifact_p(o_ptr)) continue;
+
+						i = (i + 1) * 100 + s;
+					}
 #endif
 
 					/* Create the item */
-					q_ptr = &forge;
-					object_copy(q_ptr, j_ptr);
+					object_copy(&forge_bak, o_ptr);
+					object_copy(q_ptr, o_ptr);
 					q_ptr->number = 1;
-					//if (is_magic_device(j_ptr->tval)) divide_charged_item(q_ptr, j_ptr, 1);
-					if (is_magic_device(j_ptr->tval)) continue; /* lel */
+					if (is_magic_device(o_ptr->tval)) divide_charged_item(q_ptr, o_ptr, 1);
 
 					/* Drop it somewhere - only remove our items if it was dropped successfully! */
 					if (do_trap_teleport_away(Ind, q_ptr, y, x)) {
+
 						/* Get a description */
-						object_desc(Ind, i_name, j_ptr, FALSE, 3);
+						object_desc(Ind, i_name, o_ptr, FALSE, 3);
 
 						/* Message */
-						msg_format(Ind, "\376\377o%sour %s (%c) was stolen!",
-						    ((j_ptr->number > 1) ? "One of y" : "Y"),
-						    i_name, index_to_label(i));
+#ifdef ENABLE_SUBINVEN
+						if (i <= INVEN_PACK)
+#endif
+							msg_format(Ind, "\376\377o%sour %s (%c) was stolen!",
+							    ((o_ptr->number > 1) ? "One of y" : "Y"),
+							    i_name, index_to_label(i));
+#ifdef ENABLE_SUBINVEN
+						else
+							msg_format(Ind, "\376\377o%sour %s (%c)(%c) was stolen!",
+							    ((o_ptr->number > 1) ? "One of y" : "Y"),
+							    i_name, index_to_label(i / 100 - 1), index_to_label(s));
+#endif
 
 						inven_item_increase(Ind, i, -1);
 						inven_item_optimize(Ind, i);
 						ident = TRUE;
-					}
+					} else object_copy(o_ptr, &forge_bak); /* Restore correct magic device charges */
 				}
 			}
 			break;
