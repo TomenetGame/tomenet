@@ -891,7 +891,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				msg_print(Ind, "Your backpack seems to vibrate strangely!");
 			} else {
 				object_type *o_ptr, forge, *q_ptr = &forge, forge_bak;
-				char i_name[ONAME_LEN];
+				char o_name[ONAME_LEN];
 				s16b i;
 #ifdef ENABLE_SUBINVEN
 				s16b s;
@@ -942,7 +942,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 					if (do_trap_teleport_away(Ind, q_ptr, y, x)) {
 
 						/* Get a description */
-						object_desc(Ind, i_name, o_ptr, FALSE, 3);
+						object_desc(Ind, o_name, o_ptr, FALSE, 3);
 
 						/* Message */
 #ifdef ENABLE_SUBINVEN
@@ -950,12 +950,12 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 #endif
 							msg_format(Ind, "\376\377o%sour %s (%c) was stolen!",
 							    ((o_ptr->number > 1) ? "One of y" : "Y"),
-							    i_name, index_to_label(i));
+							    o_name, index_to_label(i));
 #ifdef ENABLE_SUBINVEN
 						else
 							msg_format(Ind, "\376\377o%sour %s (%c)(%c) was stolen!",
 							    ((o_ptr->number > 1) ? "One of y" : "Y"),
-							    i_name, index_to_label(i / 100 - 1), index_to_label(s));
+							    o_name, index_to_label(i / 100 - 1), index_to_label(s));
 #endif
 
 						inven_item_increase(Ind, i, -1);
