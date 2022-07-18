@@ -294,7 +294,7 @@ struct artifact_type {
 	byte rarity;		/* Artifact rarity */
 
 	byte cur_num;		/* Number created (0 or 1) */
-	byte max_num;		/* Unused (should be "1") */
+	byte max_num;		/* Unused (should be "1", but is not set at all atm except for randarts) */
 	u32b esp;		/* ESP flags */
 #if 0
 
