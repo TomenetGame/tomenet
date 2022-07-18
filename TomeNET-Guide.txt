@@ -22666,7 +22666,7 @@ However... read on:
 
 -On jewelry (+to-hit,+to-dam) and [+AC] will stay the same, for example a ring
 of slaying (+10,+15) will keep the (+10,+15) and an Amulet of Reflection [+13]
-will keep the [+13] to AC when turned into a randart.
+will keep the [+13] to AC when turned into a randart, even when it gets cursed.
 (Any dice (xdy) as well as _base_ AC [x,+0] on jewelry will always become 0,
 but there is currently no jewelry in the game that has damage dice or base AC.)
 

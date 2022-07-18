@@ -2029,7 +2029,9 @@ artifact_type *randart_make(object_type *o_ptr) {
 	}
 
 	/* Amulets and Rings keep their (+hit,+dam)[+AC] instead of having it
-	   reset to (+0,+0)[+0] (since those boni are hard-coded for jewelry) */
+	   reset to (+0,+0)[+0] (since those boni are hard-coded for jewelry).
+	   Note that setting them here is actually not needed because they will be set to o_ptr values again anyway after
+	   having gotten all their abilities (and curses), right before getting their AP is calculated (see further below). */
 	if ((a_ptr->tval == TV_AMULET) || (a_ptr->tval == TV_RING)) {
 		a_ptr->to_h = o_ptr->to_h;
 		a_ptr->to_d = o_ptr->to_d;
@@ -2173,6 +2175,12 @@ artifact_type *randart_make(object_type *o_ptr) {
 		do_curse(a_ptr);
 		remove_contradictory(a_ptr, (a_ptr->flags3 & TR3_AGGRAVATE) != 0);
 		remove_redundant_esp(a_ptr);
+		/* Amulets and Rings keep their (+hit,+dam)[+AC] - even when cursed, for now! */
+		if ((a_ptr->tval == TV_AMULET) || (a_ptr->tval == TV_RING)) {
+			a_ptr->to_h = o_ptr->to_h;
+			a_ptr->to_d = o_ptr->to_d;
+			a_ptr->to_a = o_ptr->to_a;
+		}
 		ap = artifact_power(a_ptr);
 	} else if (is_ammo(k_ptr->tval)) {
 		add_ability (a_ptr);
@@ -2190,12 +2198,22 @@ artifact_type *randart_make(object_type *o_ptr) {
 		for (tries = 0; tries < MAX_TRIES; tries++) {
 			/* Copy artifact info temporarily. */
 			a_old = *a_ptr;
+
+			/* Add an ability, each time.. */
 			add_ability(a_ptr);
 
 			remove_contradictory(a_ptr, aggravate_me);
 			remove_redundant_esp(a_ptr);
+
 			/* Moved limit-fixing here experimentally! */
 			artifact_fix_limits_inbetween(a_ptr, k_ptr);
+
+			/* Amulets and Rings keep their (+hit,+dam)[+AC] */
+			if ((a_ptr->tval == TV_AMULET) || (a_ptr->tval == TV_RING)) {
+				a_ptr->to_h = o_ptr->to_h;
+				a_ptr->to_d = o_ptr->to_d;
+				a_ptr->to_a = o_ptr->to_a;
+			}
 
 			ap = artifact_power(a_ptr);
 
