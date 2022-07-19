@@ -162,7 +162,7 @@ Contents
     (6.1)   Attributes
     (6.2)   Skills, opposed skills
     (6.2a)  Maiar initiation effects
-    (6.2b)  Demolition charges
+    (6.2b)  Demolition charges (Blast charges)
     (6.3)   Abilities
     (6.4)   Races
     (6.5)   Classes/professions
@@ -15859,8 +15859,8 @@ Note: After a skill's gain ratio has been boosted as stated above, it will be
       capped against a maximum value of 2.000, which can never be exceeded.
 
 
-(6.2b) Demolition charges
--------------------------
+(6.2b) Demolition charges (Blast charges)
+-----------------------------------------
 At 5.000 Digging skill your character acquires the passive 'Demolitionist' perk
 that allows finding certain chemicals and crafting explosive charges from them.
 (The effect of charges does not increase with skill, level, or anything else.)
