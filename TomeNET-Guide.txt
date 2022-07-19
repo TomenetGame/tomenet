@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 7. July 2022 - written by C. Blue (c_blue@gmx.net)        |
+| Latest update: 19. July 2022 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.8.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -12493,6 +12493,8 @@ Ring of Slow Digestion
                         will slow your food digestion so you have to eat less
                         often. Also prevents instant paralysation if your food
                         state hits red 'weak'.
+Ring of Polymorphing    Can be used by adept Mimicry-users to tansform
+                        themselves. See (6.7a) for details on these rings.
 
 
 Misc
