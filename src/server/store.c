@@ -8401,7 +8401,7 @@ timing_before_return:
 void view_highest_levels(int Ind) {
 	int i, c = 0;
 	FILE *fff;
-	char file_name[MAX_PATH_LENGTH], tmp[MAX_CHARS];
+	char file_name[MAX_PATH_LENGTH], tmp[MAX_CHARS], a;
 	bool none = TRUE;
 	hash_entry *ptr;
 	player_type Dummy;
@@ -8410,7 +8410,8 @@ void view_highest_levels(int Ind) {
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 	fff = my_fopen(file_name, "wb");
 
-	fprintf(fff, "\377s The following *exceptionally* powerful individuals alive have been witnessed:\n");
+	//fprintf(fff, "\377s -- The following exceptionally powerful individuals alive have been witnessed,\n\377s in no particular order --\n");
+	fprintf(fff, "\377s           -- The following exceptionally powerful individuals\n\377s              alive have been witnessed, in no particular order --\n\n");
 
 	/* Search in each array slot */
 	for (i = 0; i < NUM_HASH_ENTRIES; i++) {
@@ -8432,8 +8433,11 @@ void view_highest_levels(int Ind) {
 				    //special_prace_lookup[ptype & 0xff],
 				    get_prace2(&Dummy),
 				    class_info[Dummy.pclass].title);
-				if (c++ % 2) fprintf(fff, "\377u    %-62s  level %d\n", tmp, ptr->level);
-				else fprintf(fff, "\377U    %-62s  level %d\n", tmp, ptr->level);
+
+				a = (c++ % 2) ? 'u' : 'U';
+				fprintf(fff, "\377%c    %-62s  level \377%c%d\n", a, tmp,
+				    ptr->level < 80 ? a : (ptr->level < 90 ? 'y' : (ptr->level < 99 ? 'o' : 'L')),
+				    ptr->level);
 			}
 			/* Next entry in chain */
 			ptr = ptr->next;
