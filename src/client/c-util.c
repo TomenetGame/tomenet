@@ -2444,7 +2444,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			}
 			break;
 
-#if 0 /* was: erase line. Can just hit ESC though, so if 0'ed. */
+#if 0 /* was: erase line. Can just hit ESC though, so if 0'ed as it's now used to cycle chat modes instead */
 		case KTRL('U'):
 			k = 0;
 			break;
@@ -2468,6 +2468,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			}
 
 			k = l = strlen(buf);
+			if (search) search_changed = TRUE; /* Search term was changed */
 			break;
 		case KTRL('P'):
 			if (nohist) break;
@@ -2484,6 +2485,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			}
 
 			k = l = strlen(buf);
+			if (search) search_changed = TRUE; /* Search term was changed */
 			break;
 
 		/* word-size backspace */
