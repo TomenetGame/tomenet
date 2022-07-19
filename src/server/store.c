@@ -6797,8 +6797,10 @@ void view_exploration_history(int Ind) {
 		    dungeon_y[i] == valinor_wpos_y &&
 		    dungeon_tower[i] == (valinor_wpos_z > 0))
 			continue;
-		/* exclude event dungeons, those are at (0,0) */
+		/* exclude event dungeons, those are at (0,0), also covers the pvp-arena */
 		if (!dungeon_x[i] && !dungeon_y[i]) continue;
+		/* exclude DF-type stuff */
+		if (!d_ptr->type && d_ptr->theme == DI_DEATH_FATE) continue;
 
 		none = FALSE;
 
@@ -6828,18 +6830,20 @@ void view_exploration_history(int Ind) {
 			if (dungeon_x[i] == WPOS_IRONDEEPDIVE_X &&
 			    dungeon_y[i] == WPOS_IRONDEEPDIVE_Y &&
 			    dungeon_tower[i] == (WPOS_IRONDEEPDIVE_Z > 0))
-				strcpy(bn, " various guardians");
-			else if (dungeon_x[i] == WPOS_DF_X && dungeon_y[i] == WPOS_DF_Y)
-				strcpy(bn, " ???");
-			else strcpy(bn, " no guardian");
+				strcpy(bn, "- various guardians -");
+			else if (dungeon_x[i] == WPOS_DF_X && dungeon_y[i] == WPOS_DF_Y) {
+				strcpy(bn, "???");
+				/* Hack - it seems otherwise the DF is never fully known. (This is the flag  to display the 'boss' state.) */
+				known |= 0x8;
+			} else strcpy(bn, "- no guardian -");
 		}
 
 		fprintf(fff, " \377u%-31s  (%2d,%2d) %s%s  %s\n",
 		    get_dun_name(dungeon_x[i], dungeon_y[i], dungeon_tower[i],
 		    getdungeon(&((struct worldpos){dungeon_x[i], dungeon_y[i], dungeon_tower[i] ? 1 : -1})), 0, FALSE),
 		    dungeon_x[i], dungeon_y[i],
-		    (known & 0x2) ? format("%4dft", d_ptr->baselevel * 50) : "",
-		    (known & 0x4) ? format("-%4dft", (d_ptr->baselevel + d_ptr->maxdepth - 1) * 50) : "",
+		    (known & 0x2) ? format("%4dft", d_ptr->baselevel * 50) : "      ",
+		    (known & 0x4) ? format("-%4dft", (d_ptr->baselevel + d_ptr->maxdepth - 1) * 50) : "       ",
 		    (known & 0x8) ? bn : ""); /* We assume that the boss can only be known if the max depth is known, otherwise formatting might suck a bit */
 	}
 
