@@ -2052,12 +2052,12 @@ typedef struct RGBQUAD
 } RGBQUAD;
 
 /* ReadBMPData errors */
-static const errr ReadBMPNoFile = -1;
-static const errr ReadBMPInvalidFile = -2;
-static const errr ReadBMPNoImageData = -3;
-static const errr ReadBMPUnexpectedEOF = -4;
-static const errr ReadBMPReadErrorOrUnexpectedEOF = -5;
-static const errr ReadBMPIllegalBitCount = -6;
+#define ReadBMPNoFile				-1
+#define ReadBMPInvalidFile			-2
+#define ReadBMPNoImageData			-3
+#define ReadBMPUnexpectedEOF			-4
+#define ReadBMPReadErrorOrUnexpectedEOF		-5
+#define ReadBMPIllegalBitCount			-6
 
 /*
  * Read a Win32 BMP file into data_return variable and
