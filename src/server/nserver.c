@@ -6794,8 +6794,8 @@ int Send_message(int Ind, cptr msg) {
 }
 
 int Send_char(int Ind, int x, int y, byte a, char32_t c) {
-	connection_t *connp = Conn[Players[Ind]->conn];
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
+	connection_t *connp = Conn[p_ptr->conn], *connp2;
 
 	if (!BIT(Conn[Players[Ind]->conn]->state, CONN_PLAYING | CONN_READY))
 		return 0;
@@ -6803,7 +6803,8 @@ int Send_char(int Ind, int x, int y, byte a, char32_t c) {
 	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return 0;
 
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) {
-		if (BIT(Conn[p_ptr2->conn]->state, CONN_PLAYING | CONN_READY)) {
+		connp2 = Conn[p_ptr2->conn];
+		if (BIT(connp2->state, CONN_PLAYING | CONN_READY)) {
 			/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
 			   Maybe todo: also unmap attr? */
 			char32_t unm_c_idx = c;
@@ -6813,18 +6814,17 @@ int Send_char(int Ind, int x, int y, byte a, char32_t c) {
 			else if (p_ptr->f_char_mod[unm_c_idx]) c2 = p_ptr->f_char_mod[unm_c_idx];
 
 			/* 5.0.0 and newer clients use 32bit character size. */
-			if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0))
-				Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c%u", PKT_CHAR, x, y, a, c2);
+			if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0))
+				Packet_printf(&connp2->c, "%c%c%c%c%u", PKT_CHAR, x, y, a, c2);
 			else
-				Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, (char)c2);
+				Packet_printf(&connp2->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, (char)c2);
 		}
 	}
 
 	/* 5.0.0 and newer clients use 32bit character size. */
 	if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0))
-		return Packet_printf(&Conn[p_ptr->conn]->c, "%c%c%c%c%u", PKT_CHAR, x, y, a, c);
-
-	return Packet_printf(&Conn[p_ptr->conn]->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, (char)c);
+		return Packet_printf(&connp->c, "%c%c%c%c%u", PKT_CHAR, x, y, a, c);
+	return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, (char)c);
 }
 
 int Send_spell_info(int Ind, int realm, int book, int i, cptr out_val) {
@@ -6947,7 +6947,7 @@ int Send_flush(int Ind) {
 //#define SEPARATE_LINK_MAP /* Send map separately to mindlinker, for unmapping of custom fonts */
 int Send_line_info(int Ind, int y, bool scr_only) {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
-	connection_t *connp = Conn[p_ptr->conn];
+	connection_t *connp = Conn[p_ptr->conn], *connp2 = NULL;
 	int x, x1, n;
 	char32_t c, c2, cu;
 	byte a, a2;
@@ -6975,11 +6975,11 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return 0; /* bad hack for shortcut */
 	//if (p_ptr->esp_link && p_ptr->esp_link_type && (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED)) return 0;
 
-	Ind2 = get_esp_link(Ind, LINKF_VIEW, &p_ptr2);
+	if ((Ind2 = get_esp_link(Ind, LINKF_VIEW, &p_ptr2))) connp2 = Conn[p_ptr2->conn];
 
 	/* Put a header on the packet */
 	Packet_printf(&connp->c, "%c%hd", PKT_LINE_INFO, y);
-	if (Ind2) Packet_printf(&(Conn[p_ptr2->conn]->c), "%c%hd", PKT_LINE_INFO, y);
+	if (Ind2) Packet_printf(&connp2->c, "%c%hd", PKT_LINE_INFO, y);
 
 	/* Each column */
 	for (x = 0; x < MAX_WINDOW_WID; x++) {
@@ -7074,7 +7074,7 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 		if (n >= 2) {
 			/* 5.0.0 and newer clients use 32bit character size. */
 			if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
-					Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, n);
+				Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, n);
 			}
 			/* 4.4.3.1 clients support new RLE */
 			else if (is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
@@ -7094,16 +7094,16 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 				else cu = c;
 
 				/* 5.0.0 and newer clients use 32bit character size. */
-				if (is_atleast(&Conn[p_ptr2->conn]->version, 4, 8, 1, 0, 0, 0)) {
-						Packet_printf(&Conn[p_ptr2->conn]->c, "%u%c%c%c", cu, TERM_RESERVED_RLE, a, n);
+				if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
+						Packet_printf(&connp2->c, "%u%c%c%c", cu, TERM_RESERVED_RLE, a, n);
 				}
 				/* 4.4.3.1 clients support new RLE */
-				else if (is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5)) {
+				else if (is_newer_than(&connp2->version, 4, 4, 3, 0, 0, 5)) {
 					/* New RLE */
-					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", (char)cu, TERM_RESERVED_RLE, a, n);
+					Packet_printf(&connp2->c, "%c%c%c%c", (char)cu, TERM_RESERVED_RLE, a, n);
 				} else {
 					/* Old RLE */
-					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c", (char)cu, a | 0x40, n);
+					Packet_printf(&connp2->c, "%c%c%c", (char)cu, a | 0x40, n);
 				}
 			}
 
@@ -7142,25 +7142,25 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 				else if (p_ptr->f_char_mod[unm_c_idx]) cu = p_ptr->f_char_mod[unm_c_idx];
 				else cu = c;
 
-				if (!is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5)) {
+				if (!is_newer_than(&connp2->version, 4, 4, 3, 0, 0, 5)) {
 					/* Remove 0x40 (TERM_PVP) if the client is old */
-					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", (char)cu, a & ~0xC0);
+					Packet_printf(&connp2->c, "%c%c", (char)cu, a & ~0xC0);
 				} else {
 					if (a == TERM_RESERVED_RLE) {
 						/* Use RLE format as an escape sequence for 0xFF as attr */
 						/* 5.0.0 and newer clients use 32bit character size. */
-						if (is_atleast(&Conn[p_ptr2->conn]->version, 4, 8, 1, 0, 0, 0)) {
-							Packet_printf(&Conn[p_ptr2->conn]->c, "%u%c%c%c", cu, TERM_RESERVED_RLE, a, 1);
+						if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
+							Packet_printf(&connp2->c, "%u%c%c%c", cu, TERM_RESERVED_RLE, a, 1);
 						} else {
-							Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", (char)cu, TERM_RESERVED_RLE, a, 1);
+							Packet_printf(&connp2->c, "%c%c%c%c", (char)cu, TERM_RESERVED_RLE, a, 1);
 						}
 					} else {
 						/* Normal output */
 						/* 5.0.0 and newer clients use 32bit character size. */
-						if (is_atleast(&Conn[p_ptr2->conn]->version, 4, 8, 1, 0, 0, 0)) {
-							Packet_printf(&Conn[p_ptr2->conn]->c, "%u%c", cu, a);
+						if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
+							Packet_printf(&connp2->c, "%u%c", cu, a);
 						} else {
-							Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", (char)cu, a);
+							Packet_printf(&connp2->c, "%c%c", (char)cu, a);
 						}
 					}
 				}
@@ -7297,15 +7297,12 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 }
 
 int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
-	player_type *p_ptr = Players[Ind];
-	connection_t *connp = Conn[p_ptr->conn];
+	player_type *p_ptr = Players[Ind];//, *p_ptr2 = NULL;
+	connection_t *connp = Conn[p_ptr->conn], *connp2 = NULL;
 	int x, x1, n;
 	char32_t c;
 	byte a;
-
 	int Ind2 = 0;
-	player_type *p_ptr2 = NULL;
-	connection_t *connp2 = NULL;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -7318,8 +7315,7 @@ int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 
 	/* Sending this packet to a mind-linked person is bad - mikaelh */
 #if 0
-	if ((Ind2 = get_esp_link(Ind, LINKF_VIEW, &p_ptr2)))
-		connp2 = Conn[p_ptr2->conn];
+	if ((Ind2 = get_esp_link(Ind, LINKF_VIEW, &p_ptr2))) connp2 = Conn[p_ptr2->conn];
 #endif
 
 	/* Packet header */
@@ -7352,7 +7348,7 @@ int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 		if (n >= 2) {
 			/* 5.0.0 and newer clients use 32bit character size. */
 			if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
-					Packet_printf(&connp->c, "%u%c%c%c", c, 0xFF, a, n);
+				Packet_printf(&connp->c, "%u%c%c%c", c, 0xFF, a, n);
 			}
 			/* 4.4.3.1 clients support new RLE */
 			else if (is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
@@ -7365,16 +7361,16 @@ int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 
 			if (Ind2) {
 				/* 5.0.0 and newer clients use 32bit character size. */
-				if (is_atleast(&Conn[p_ptr2->conn]->version, 4, 8, 1, 0, 0, 0)) {
-					Packet_printf(&Conn[p_ptr2->conn]->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, n);
+				if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
+					Packet_printf(&connp2->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, n);
 				}
 				/* 4.4.3.1 clients support new RLE */
-				else if (is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5)) {
+				else if (is_newer_than(&connp2->version, 4, 4, 3, 0, 0, 5)) {
 					/* New RLE */
-					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, n);
+					Packet_printf(&connp2->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, n);
 				} else {
 					/* Old RLE */
-					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c", (char)c, a | 0x40, n);
+					Packet_printf(&connp2->c, "%c%c%c", (char)c, a | 0x40, n);
 				}
 			}
 
@@ -7406,25 +7402,25 @@ int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 			}
 
 			if (Ind2) {
-				if (!is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5)) {
+				if (!is_newer_than(&connp2->version, 4, 4, 3, 0, 0, 5)) {
 					/* Remove 0x40 (TERM_PVP) if the client is old */
-					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", (char)c, a & ~0xD0);
+					Packet_printf(&connp2->c, "%c%c", (char)c, a & ~0xD0);
 				} else {
 					if (a == TERM_RESERVED_RLE) {
 						/* Use RLE format as an escape sequence for 0xFF as attr */
 						/* 5.0.0 and newer clients use 32bit character size. */
-						if (is_atleast(&Conn[p_ptr2->conn]->version, 4, 8, 1, 0, 0, 0)) {
-							Packet_printf(&Conn[p_ptr2->conn]->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, 1);
+						if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
+							Packet_printf(&connp2->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, 1);
 						} else {
-							Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, 1);
+							Packet_printf(&connp2->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, 1);
 						}
 					} else {
 						/* Normal output */
 						/* 5.0.0 and newer clients use 32bit character size. */
-						if (is_atleast(&Conn[p_ptr2->conn]->version, 4, 8, 1, 0, 0, 0)) {
-							Packet_printf(&Conn[p_ptr2->conn]->c, "%u%c", c, a);
+						if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
+							Packet_printf(&connp2->c, "%u%c", c, a);
 						} else {
-							Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", (char)c, a);
+							Packet_printf(&connp2->c, "%c%c", (char)c, a);
 						}
 					}
 				}
@@ -8106,24 +8102,30 @@ int Send_boni_col(int Ind, boni_col c) {
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) connp2 = Conn[p_ptr2->conn];
 	/* Send same info to target player, if available */
 	if (connp2 && is_newer_than(&connp2->version, 4, 5, 3, 2, 0, 0)) {
-		if (is_newer_than(&connp2->version, 4, 6, 1, 2, 0, 0)) {
-			Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+22+13+2 bytes in total
+		if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
+			Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%u", PKT_BONI_COL, //1+22+13+2 bytes in total
 			    c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
 			    c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr, c.amfi, c.sigl,
 			    c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
 			    c.cb[10], c.cb[11], c.cb[12], c.cb[13], c.cb[14], c.cb[15], c.color, c.symbol);
+		} else if (is_newer_than(&connp2->version, 4, 6, 1, 2, 0, 0)) {
+			Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+22+13+2 bytes in total
+			    c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
+			    c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr, c.amfi, c.sigl,
+			    c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
+			    c.cb[10], c.cb[11], c.cb[12], c.cb[13], c.cb[14], c.cb[15], c.color, (char)c.symbol);
 		} else if (is_newer_than(&connp2->version, 4, 5, 9, 0, 0, 0)) {
 			Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+22+13+2 bytes in total
 			    c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
 			    c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr, c.amfi, c.sigl,
 			    c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
-			    c.cb[10], c.cb[11], c.cb[12], c.color, c.symbol);
+			    c.cb[10], c.cb[11], c.cb[12], c.color, (char)c.symbol);
 		} else {
 			Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+20+13+2 bytes in total
 			    c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
 			    c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr,
 			    c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
-			    c.cb[10], c.cb[11], c.cb[12], c.color, c.symbol);
+			    c.cb[10], c.cb[11], c.cb[12], c.color, (char)c.symbol);
 		}
 	}
 
@@ -8135,8 +8137,7 @@ int Send_boni_col(int Ind, boni_col c) {
 				c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr, c.amfi, c.sigl,
 				c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
 				c.cb[10], c.cb[11], c.cb[12], c.cb[13], c.cb[14], c.cb[15], c.color, c.symbol);
-	}
-	else if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) {
+	} else if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+22+13+2 bytes in total
 				c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
 				c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr, c.amfi, c.sigl,
