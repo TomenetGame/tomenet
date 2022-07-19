@@ -865,7 +865,7 @@ void check_Morgoth(int Ind) {
 }
 
 int players_on_depth(struct worldpos *wpos) {
-	if (wpos->wx>MAX_WILD_X || wpos->wx<0 || wpos->wy>MAX_WILD_Y || wpos->wy<0) return(0);
+	if (wpos->wx > MAX_WILD_X || wpos->wx < 0 || wpos->wy > MAX_WILD_Y || wpos->wy < 0) return(0);
 	if (wpos->wz == 0)
 		return(wild_info[wpos->wy][wpos->wx].ondepth);
 	else {

@@ -4213,7 +4213,7 @@ void genwild(bool all_terrains, bool dry_Bree) {
 			}
 		}
 		addislands();
-		for (j = 0; j <MAX_WILD_Y; j++) {
+		for (j = 0; j < MAX_WILD_Y; j++) {
 			for (i = 0; i < MAX_WILD_X; i++) {
 				if (wild_info[j][i].type == WILD_SHORE1 || wild_info[j][i].type == WILD_SHORE2) {
 					wild_info[j][i].type = WILD_OCEANBED1;

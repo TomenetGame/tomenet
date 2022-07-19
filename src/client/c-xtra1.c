@@ -3680,7 +3680,7 @@ void display_player(int hist) {
 			/* Footer */
 			color = csheet_boni[i].color;
 			symbol = (csheet_boni[i].symbol ? csheet_boni[i].symbol : ' ');
-			if (symbol>MAX_FONT_CHAR) fprintf(stderr, "Sorry graphical symbols for boni not supported yet\n");
+			if (symbol > MAX_FONT_CHAR) fprintf(stderr, "Sorry graphical symbols for boni not supported yet\n");
 			sprintf(tmp, "%c", (char)symbol);
 			for (j = 0; j < 5; j++)
 				c_put_str(color, tmp, 20, 5 + j * 20 + i);
