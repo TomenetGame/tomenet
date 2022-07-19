@@ -1390,7 +1390,7 @@ int Net_start(int sex, int race, int class) {
 
 #ifndef BREAK_GRAPHICS
 	/* 5.0.0 and newer servers can communicate using 32bit character size redefinitions. */
-	if (is_atleast(&server_version, 5, 0, 0, 0, 0, 0)) {
+	if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
 		/* Send the "unknown" redefinitions */
 		for (i = 0; i < TV_MAX; i++)
 			Packet_printf(&wbuf, "%c%u", Client_setup.u_attr[i], Client_setup.u_char[i]);
@@ -2556,7 +2556,7 @@ int Receive_char(void) {
 	bool is_us = FALSE;
 
 	/* 5.0.0 and newer servers communicate using 32bit character size. */
-	if (is_atleast(&server_version, 5, 0, 0, 0, 0, 0)) {
+	if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%u", &ch, &x, &y, &a, &c)) <= 0) return n;
 	} else {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &x, &y, &a, &c)) <= 0) return n;
@@ -3404,7 +3404,7 @@ int Receive_line_info(void) {
 		c = 0; /* Needs to be reset for proper packet read. */
 		/* Read the char/attr pair */
 		/* 5.0.0 and newer servers communicate using 32bit character size. */
-		if (is_atleast(&server_version, 5, 0, 0, 0, 0, 0)) {
+		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
 			if ((n = Packet_scanf(&rbuf, "%u%c", &c, &a)) <= 0) {
 				if (n == 0) goto rollback;
 				return n;
@@ -3553,7 +3553,7 @@ int Receive_mini_map_pos(void) {
 	byte	a;
 
 	/* 5.0.0 and newer servers communicate using 32bit character size. */
-	if (is_atleast(&server_version, 5, 0, 0, 0, 0, 0)) {
+	if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c%u", &ch, &x, &y, &a, &c)) <= 0) return n;
 	} else {
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c%c", &ch, &x, &y, &a, &c)) <= 0) return n;
@@ -4012,7 +4012,7 @@ int Receive_boni_col(void) {
 	char32_t symbol = 0; /* Needs to be reset for proper packet read. */
 
 	/* 5.0.0 and newer servers communicate using 32bit character size. */
-	if (is_atleast(&server_version, 5, 0, 0, 0, 0, 0)) {
+	if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%u", &ch, //1+22+16+5 bytes in total
 						&i, &spd, &slth, &srch, &infr, &lite, &dig, &blow, &crit, &shot,
 						&migh, &mxhp, &mxmp, &luck, &pstr, &pint, &pwis, &pdex, &pcon, &pchr, &amfi, &sigl,
@@ -6321,7 +6321,7 @@ int Send_client_setup(void) {
 	if ((n = Packet_printf(&wbuf, "%c", PKT_CLIENT_SETUP)) <= 0) return n;
 
 	/* 5.0.0 and newer servers communicate using 32bit character size. */
-	if (is_atleast(&server_version, 5, 0, 0, 0, 0, 0)) {
+	if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
 		/* Send the "unknown" redefinitions */
 		for (i = 0; i < TV_MAX; i++)
 			Packet_printf(&wbuf, "%c%u", Client_setup.u_attr[i], Client_setup.u_char[i]);
