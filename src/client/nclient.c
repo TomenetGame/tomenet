@@ -2943,6 +2943,9 @@ int Receive_depth(void) {
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
 
+	/* For minimap visual hacky fix.. -_- */
+	map_town = town;
+
 	return 1;
 }
 

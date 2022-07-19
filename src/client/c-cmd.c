@@ -425,7 +425,7 @@ void cmd_stay_one(void) {
 */
 void cmd_map(char mode) {
 	char ch, dir = 0x00;
-	bool sel = FALSE;
+	bool sel = FALSE, worldmap = ((mode == 1) || !map_town);
 
 	/* Hack -- if the screen is already icky, ignore this command */
 	if (screen_icky && !mode) return;
@@ -559,7 +559,7 @@ void cmd_map(char mode) {
 				break;
 			}
 			/* manual grid selection on the map */
-			else if (ch == 's') {
+			else if (ch == 's' && worldmap) {
 				if (sel) {
 					Term_draw(minimap_selx, minimap_sely, minimap_selattr, minimap_selchar);
 					sel = FALSE;

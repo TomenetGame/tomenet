@@ -707,3 +707,5 @@ char whats_under_your_feet[ONAME_LEN];
 int curmus_timepos = -1, oldticks = -1, curmus_x, curmus_y, curmus_attr;
 bool jukebox_screen = FALSE;
 //#endif
+
+bool map_town = FALSE;
