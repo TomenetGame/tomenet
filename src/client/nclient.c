@@ -6261,7 +6261,7 @@ void do_ping() {
    as its calling frequency is fixed and predictable (100ms). */
 static void do_meta_pings(void) {
 	static int i, r;
-	static char buf[1024], *c;
+	static char path[1024], buf[MAX_CHARS], *c;
 	static FILE *fff;
 	static bool alt = FALSE; /* <- Only truly needed static var, the rest is static just for execution time optimization */
 
@@ -6273,14 +6273,14 @@ static void do_meta_pings(void) {
 
 	for (i = 0; i < meta_pings_servers; i++) {
 		/* Build the temp filename for ping results -- would probably prefer to use OS' actual tempfs, but Windows, pft */
-		path_build(buf, 1024, ANGBAND_DIR_USER, format("__ping_%s.tmp", meta_pings_server_name[i]));
+		path_build(path, 1024, ANGBAND_DIR_USER, format("__ping_%s.tmp", meta_pings_server_name[i]));
 
 		/* Send a ping to each distinct server name, allowing for max 1000ms */
 		if (alt) {
 #ifdef WINDOWS
-			r = system(format("ping -n 1 -w 1000 %s > %s", meta_pings_server_name[i], buf));
+			r = system(format("ping -n 1 -w 1000 %s > %s", meta_pings_server_name[i], path));
 #else /* assume POSIX */
-			r = system(format("ping -c 1 -w 1 %s > %s", meta_pings_server_name[i], buf));
+			r = system(format("ping -c 1 -w 1 %s > %s", meta_pings_server_name[i], path));
 #endif
 			(void)r; //slay compiler warning;
 		}
@@ -6302,7 +6302,7 @@ static void do_meta_pings(void) {
 			/* Assume timeout/unresponsive */
 			meta_pings_result[i] = -1;
 
-			fff = my_fopen(buf, "r");
+			fff = my_fopen(path, "r");
 			if (!fff) continue; /* Sort of paranoia? */
 
 			/* Parse OS specific 'ping' command response; win: 'time=NNNms', posix: 'time=NNN.NN ms',
@@ -6327,6 +6327,7 @@ static void do_meta_pings(void) {
 				break;
 			}
 			my_fclose(fff);
+			remove(path);
 
 			/* Store ping result */
 			meta_pings_result[i] = r;
