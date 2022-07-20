@@ -58,12 +58,15 @@ int			ticks = 0; /* Keeps track of time in 100ms "ticks" */
 int			ticks10 = 0; /* 'deci-ticks', counting just 0..9 in 10ms intervals */
 int			existing_characters = 0;
 
+int			command_confirmed = -1;
+
+static void do_meta_pings(void);
+
 static sockbuf_t	rbuf, wbuf, qbuf;
 static int		(*receive_tbl[256])(void);
 static int		last_send_anything;
 static char		initialized = 0;
 
-int			command_confirmed = -1;
 
 /*
  * Initialize the function dispatch tables.
@@ -5954,6 +5957,10 @@ int Send_subinven_remove(int item) {
 
 
 
+/* ------------------------------------------------------------------------- */
+
+
+
 /*
  * Update the current time, which is stored in 100 ms "ticks".
  * I hope that Windows systems have gettimeofday on them by default.
@@ -5993,6 +6000,11 @@ void update_ticks() {
 	}
  #endif
 //#endif
+
+#ifdef META_PINGS
+	/* Ping meta-listed servers every 3 s, fetch results after half the time already (15 ds) */
+	if (meta_pings_servers && meta_pings_ticks != ticks && !(ticks % 15)) do_meta_pings();
+#endif
 
 	/* Find the new least significant digit of the ticks */
 	newticks += cur_time.tv_usec / 100000;
@@ -6242,6 +6254,96 @@ void do_ping() {
 		}
 	}
 }
+
+#ifdef META_PINGS
+/* Note: At this early stage of the game (viewing meta server list) do_keepalive() and do_ping() are not yet called,
+   so this function must be called in do_flicker() or update_ticks() instead, of which update_ticks() is preferable
+   as its calling frequency is fixed and predictable (100ms). */
+static void do_meta_pings(void) {
+	static int i, r;
+	static char buf[1024], *c;
+	static FILE *fff;
+	static bool alt = FALSE; /* <- Only truly needed static var, the rest is static just for execution time optimization */
+
+	/* Only call us once every intended interval time */
+	meta_pings_ticks = ticks;
+
+	/* Alternate function: 1) send out pings, 2) read results */
+	alt = !alt;
+
+	for (i = 0; i < meta_pings_servers; i++) {
+		/* Build the temp filename for ping results -- would probably prefer to use OS' actual tempfs, but Windows, pft */
+		path_build(buf, 1024, ANGBAND_DIR_USER, format("__ping_%s.tmp", meta_pings_server_name[i]));
+
+		/* Send a ping to each distinct server name, allowing for max 1000ms */
+		if (alt) {
+#ifdef WINDOWS
+			r = system(format("ping -n 1 -w 1000 %s > %s", meta_pings_server_name[i], buf));
+#else /* assume POSIX */
+			r = system(format("ping -c 1 -w 1 %s > %s", meta_pings_server_name[i], buf));
+#endif
+			(void)r; //slay compiler warning;
+		}
+
+		/* Retrieve ping results */
+		else {
+			/* Check for duplicate first. If we're just a duplicate server, re-use the original ping result we retrieved so far. */
+			if (meta_pings_server_duplicate[i] != -1) {
+				/* Store ping result */
+				meta_pings_result[i] = meta_pings_result[meta_pings_server_duplicate[i]];
+
+				/* Live-update the meta server list -- pfft, actually we don't even need meta_pings_results[] */
+				call_lua(0, "meta_add_ping", "(d,d)", "d", i, meta_pings_result[i], &r);
+				Term_fresh();
+
+				continue;
+			}
+
+			/* Assume timeout/unresponsive */
+			meta_pings_result[i] = -1;
+
+			fff = my_fopen(buf, "r");
+			if (!fff) continue; /* Sort of paranoia? */
+
+			/* Parse OS specific 'ping' command response; win: 'time=NNNms', posix: 'time=NNN.NN ms',
+			   BUT.. have to watch out that "time" label can be OS-language specific!
+			   For that reason we first look for 'ttl' (posix) and 'TTL' (windows) which are always the same. */
+			while (my_fgets(fff, buf, sizeof(buf)) == 0) {
+				if (!my_strcasestr(buf, "ttl")) continue;
+
+				/* We found a line containing a response time. Now we look for 'ms' and go backwards till '='. */
+				c = strstr(buf, "ms");
+				if (!c) continue; //should be paranoia at this point
+				while (*c != '=') {
+					c--;
+					if (c == buf) break; /* Paranoia - Supa safety 1/2 */
+				}
+				if (c == buf) break; /* Paranoia - Supa safety 1/2 */
+				c++; //yuck
+
+				/* Grab result */
+				r = atoi(c);
+				if (!r) r = -1; //more paranoia
+				break;
+			}
+			my_fclose(fff);
+
+			/* Store ping result */
+			meta_pings_result[i] = r;
+
+			/* Live-update the meta server list -- pfft, actually we don't even need meta_pings_results[] */
+			call_lua(0, "meta_add_ping", "(d,d)", "d", i, meta_pings_result[i], &r);
+			Term_fresh();
+		}
+	}
+}
+#endif
+
+
+
+/* ------------------------------------------------------------------------- */
+
+
 
 int Send_sip(void) {
 	int	n;

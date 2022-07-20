@@ -425,6 +425,10 @@ extern void get_char_name(void);
 extern void get_char_info(void);
 extern bool get_server_name(void);
 extern void create_random_name(int race, char *name);
+#ifdef META_PINGS
+extern int meta_pings_servers, meta_pings_ticks, meta_pings_server_duplicate[META_PINGS], meta_pings_result[META_PINGS];
+extern char meta_pings_server_name[META_PINGS][MAX_CHARS];
+#endif
 
 /* c-cmd.c */
 extern void process_command(void);

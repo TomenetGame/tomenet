@@ -53,6 +53,8 @@
  #define LOGIN_ROW 2
 #endif
 
+
+
 /*
  * Choose the character's name
  */
@@ -2293,6 +2295,9 @@ bool get_server_name(void) {
 #ifdef EXPERIMENTAL_META
 	int j, bytes = 0, socket = -1;
 	char buf[80192], c;
+ #ifdef META_PINGS
+	int k, v;
+ #endif
 #else
 	int j, k, l, bytes = 0, socket = -1, offsets[20], lines = 0;
 	char buf[80192], *ptr, c, out_val[260];
@@ -2421,6 +2426,29 @@ bool get_server_name(void) {
 	prt("-- Choose a server to connect to (Q for manual entry): ", lines + 2, 1);
 #endif
 
+#ifdef META_PINGS
+	/* Obtain all unique server names */
+	v = 0;
+	for (j = 0; j < i; j++) {
+		call_lua(0, "meta_get", "(s,d)", "sd", buf, j, &tmp, &server_port);
+		if (!tmp[0]) continue; //paranoia
+
+		/* Check for duplicate names */
+		for (k = 0; k < v; k++)
+			if (streq(meta_pings_server_name[k], tmp)) break;
+		/* Mark duplicate and remember its first equivalent */
+		if (k != v) meta_pings_server_duplicate[v] = k;
+		else meta_pings_server_duplicate[v] = -1; /* We're the first of our name!~ */
+
+		/* Add server to list */
+		strcpy(meta_pings_server_name[v], tmp);
+		v++;
+		/* Limit of how many servers we can list */
+		if (v == META_PINGS) break;
+	}
+	meta_pings_servers = v;
+#endif
+
 	/* Ask until happy */
 	while (1) {
 		/* Get a key */
@@ -2442,6 +2470,10 @@ bool get_server_name(void) {
 		if (j >= 0 && j < i)
 			break;
 	}
+#ifdef META_PINGS
+	/* Disable pinging for the rest of the game again. */
+	meta_pings_servers = 0;
+#endif
 
 #ifdef EXPERIMENTAL_META
 	call_lua(0, "meta_get", "(s,d)", "sd", buf, j, &tmp, &server_port);

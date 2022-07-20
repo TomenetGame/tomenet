@@ -832,3 +832,9 @@
  * Use the new meta scheme to do neater things
  */
 #define EXPERIMENTAL_META
+#ifdef EXPERIMENTAL_META
+/* Retrieve ping times for all servers listed on the meta server. - C. Blue
+   The number indicates the max number of server names we read (raw, ie duplicates included).
+   Currently only supported when EXPERIMENTAL_META is defined. */
+ #define META_PINGS 20
+#endif

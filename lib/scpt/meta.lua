@@ -68,6 +68,9 @@ function meta_display(xml_feed)
 	local meta_name = "Unknown metaserver"
 	local nb_servers = 0
 
+	-- META_PINGS
+	local tmp_line
+
 	for i = 1, getn(x) do
 		if type(x[i]) == 'table' then
 			if x[i].label == "server" then
@@ -120,12 +123,13 @@ function meta_display(xml_feed)
 
 		e = e.servers
 		for i = 1, getn(e) do
+			tmp_line = line
 			color_print(line, 2, "\255G" .. strchar(nb + strbyte('a')) .. ") \255w" .. e[i].name)
 			color_print(line, 50, e[i].extra); line = line + 1
 			color_print(line, 4, "\255b" .. e[i].players); line = line + 1
 
-			-- Store the info for retrieval
-			meta_list[nb] = { e[i].name, e[i].port, e[i].protocol }
+			-- Store the info for retrieval -- add <line position> and <'0'> for ping in ms (META_PINGS)
+			meta_list[nb] = { e[i].name, e[i].port, e[i].protocol, tmp_line, 0 }
 			nb = nb + 1
 		end
 	end
@@ -153,6 +157,35 @@ function meta_get(xml_feed, pos)
 	server_protocol = meta_list[pos][3]
 
 	return meta_list[pos][1], meta_list[pos][2]
+end
+
+-- META_PINGS - set/update ping and display it
+function meta_add_ping(pos, ping)
+	local attr
+
+	meta_list[pos][5] = ping
+
+	if ping >= 1000 then spacer = "" -- not possible actually as 1000 ms is used as timeout for the ping commands
+	elseif ping >= 100 then spacer = " "
+	elseif ping >= 10 then spacer = "  "
+	else spacer = "   "
+	end
+
+	-- Keep this colour-coding consistent with prt_lagometer()
+	if ping == -1 then
+		attr = "R"
+		ping = "---"
+		spacer = " "
+	elseif ping >= 400 then attr = "r"
+	elseif ping >= 300 then attr = "o"
+	elseif ping >= 200 then attr = "y"
+	elseif ping >= 100 then attr = "g"
+	else attr = "G"
+	end
+
+	color_print(meta_list[pos][4], 50 + 16, "\255" .. attr .. spacer .. ping .. " ms")
+
+	return 0
 end
 
 -- Restore a good neat handler
