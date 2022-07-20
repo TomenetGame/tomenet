@@ -162,8 +162,10 @@ end
 -- META_PINGS - set/update ping and display it
 function meta_add_ping(pos, ping)
 	local attr
+	local unit
 
 	meta_list[pos][5] = ping
+	unit = " ms"
 
 	if ping >= 1000 then spacer = "" -- not possible actually as 1000 ms is used as timeout for the ping commands
 	elseif ping >= 100 then spacer = " "
@@ -175,6 +177,7 @@ function meta_add_ping(pos, ping)
 	if ping == -1 then
 		attr = "R"
 		ping = "---"
+		unit = ""
 		spacer = " "
 	elseif ping >= 400 then attr = "r"
 	elseif ping >= 300 then attr = "o"
@@ -183,7 +186,7 @@ function meta_add_ping(pos, ping)
 	else attr = "G"
 	end
 
-	color_print(meta_list[pos][4], 50 + 16, "\255" .. attr .. spacer .. ping .. " ms")
+	color_print(meta_list[pos][4], 50 + 16, "\255" .. attr .. spacer .. ping .. unit)
 
 	return 0
 end
