@@ -17118,7 +17118,7 @@ create a character!):
     better than other classes.
     A lot of their spells can actually be cast while blinded (or even
     confused), and their targetted spells often do not require a clean line of
-    sight, since they manifest whereever their mind is focussed on
+    sight, since they manifest whereever their mind is focused on
     (e.g. Psionic Blast).
     Their spells also cannot be reflected by monsters for that same reason.
     Some of the mindcrafters' spells that interact with party members will
@@ -19902,8 +19902,12 @@ In general, mindcraft schools are less affected by anti-magic fields.)
 
 - Psycho-power
 
-    Psychic Hammer  Telekinetic power focussed to bash an enemy,
+    Psychic Hammer  Telekinetic power focused to bash an enemy,
                     damaging and stunning him.
+                    The damage is much lower than the Psionic Blast spell
+                    (from Mental Intrusion school), which is a trade-off
+                    for its unconditional stun effect (provided the target
+                    can be stunned at all).
                     Required skill level for first spell level: 1.
 
     Psychokinesis   Destroys traps and locks by psychokinetic manipulation,
@@ -21312,7 +21316,7 @@ The techniques are as follows:
         increased speed and you cannot be intercepted.
         You can even perform a backstab opening attack out of this state.
         Performing actions that require calm movements or anything that
-        distracts or disrupts your attention from focussing on keeping up your
+        distracts or disrupts your attention from focusing on keeping up your
         movement, or attacking someone/something will break shadow running -
         it will not wear off on its own but last indefinitely until broken.
         Taking damage doesn't break it, but taking sanity damage can break it.
