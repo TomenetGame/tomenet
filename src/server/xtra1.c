@@ -9756,7 +9756,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 				}
 			}
 			if (i == max_spells && extra == -1) {
-				msg_print(Ind, "Sorry, I have never heard of such a spell.");
+				msg_print(Ind, "Sorry, I have never heard of such a spell or prayer.");
 				return;
 			}
 		}
