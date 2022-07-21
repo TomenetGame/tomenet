@@ -2453,7 +2453,7 @@ bool get_server_name(void) {
 #endif
 
 #ifdef META_PINGS
-	if (meta_pings_servers != -1) {
+	if (!meta_pings_servers) {
 		/* Obtain all unique server names */
 		v = 0;
 		for (j = 0; j < i; j++) {
