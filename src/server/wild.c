@@ -3543,7 +3543,7 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 		c_ptr = &zcave[y][x + 1];
 		c_ptr->feat = FEAT_SIGN;
 		MAKE(sign, struct floor_insc);
-		strcpy(sign->text, "Administrative construction site - don't touch the mirror!");
+		strcpy(sign->text, "Administrative construction site - do not touch the mirror!");
 		cs_ptr = ReplaceCS(c_ptr, CS_INSCRIP);
 		if (cs_ptr) cs_ptr->sc.ptr = sign;
 		else KILL(sign, struct floor_insc);
