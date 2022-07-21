@@ -19580,7 +19580,8 @@ spell failure rate. All Unlife spells use WIS.)
 - Spirit
 
     Cause Wounds    Causes wounds to open on your target, dealing instant
-                    damage.
+                    damage. Does not work against creatures who cannot bleed
+                    and also not against angels.
                     Required skill level for first spell level: 1.
 
                     Tier II: Level 20.

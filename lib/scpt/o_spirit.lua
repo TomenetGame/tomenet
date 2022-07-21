@@ -14,21 +14,21 @@ OCURSE = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = function () if get_level(Ind, OCURSE, 50) >= 25 then return FALSE else return TRUE end end,
 	["spell"] = 	function(args)
-		if get_level(Ind, OCURSE, 50) >= 25 then
-			project_los(Ind, GF_CURSE, 10 + get_level(Ind, OCURSE, 150), "points and curses for")
-		elseif get_level(Ind, OCURSE, 50) >= 15 then
-			fire_beam(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, OCURSE, 150), "points and curses for")
-		else
-			fire_grid_bolt(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, OCURSE, 150), "points and curses for")
-		end
+			if get_level(Ind, OCURSE, 50) >= 25 then
+				project_los(Ind, GF_CURSE, 10 + get_level(Ind, OCURSE, 150), "points and curses for")
+			elseif get_level(Ind, OCURSE, 50) >= 15 then
+				fire_beam(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, OCURSE, 150), "points and curses for")
+			else
+				fire_grid_bolt(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, OCURSE, 150), "points and curses for")
+			end
 	end,
 	["info"] = 	function()
-		return "power "..(10 + get_level(Ind, OCURSE, 150))
+			return "power "..(10 + get_level(Ind, OCURSE, 150))
 	end,
 	["desc"] = {
-		"Randomly causes confusion damage, slowness or blindness.",
-		"At level 15 it passes through monsters, affecting those behind as well",
-		"At level 25 it affects all monsters in sight",
+			"Randomly causes confusion damage, slowness or blindness.",
+			"At level 15 it passes through monsters, affecting those behind as well",
+			"At level 25 it affects all monsters in sight",
 	}
 }
 ]]
@@ -47,13 +47,16 @@ OCURSEDD_I = add_spell {
 	["ftk"] = 1,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-		fire_grid_bolt(Ind, GF_CAUSE, args.dir, 10 + get_level(Ind, OCURSEDD_I, 100), "points and curses for")
+			fire_grid_bolt(Ind, GF_CAUSE, args.dir, 10 + get_level(Ind, OCURSEDD_I, 100), "points and curses for")
 	end,
 	["info"] = 	function()
-		return "power "..(10 + get_level(Ind, OCURSEDD_I, 100))
+			return "power "..(10 + get_level(Ind, OCURSEDD_I, 100))
 	end,
-	["desc"] = 	{ "Curse an enemy, causing wounds.",
-			  "Does not work against creatures who cannot bleed.", }
+	["desc"] = 	{
+			"Curse an enemy, causing wounds.",
+			"Does not work against creatures who cannot bleed.",
+			"Does not work against angels specifically.",
+	}
 }
 OCURSEDD_II = add_spell {
 	["name"] = 	"Cause Wounds II",
@@ -69,13 +72,16 @@ OCURSEDD_II = add_spell {
 	["ftk"] = 1,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-		fire_grid_bolt(Ind, GF_CAUSE, args.dir, 10 + get_level(Ind, OCURSEDD_I, 170), "points and curses for")
+			fire_grid_bolt(Ind, GF_CAUSE, args.dir, 10 + get_level(Ind, OCURSEDD_I, 170), "points and curses for")
 	end,
 	["info"] = 	function()
-		return "power "..(10 + get_level(Ind, OCURSEDD_I, 170))
+			return "power "..(10 + get_level(Ind, OCURSEDD_I, 170))
 	end,
-	["desc"] = 	{ "Curse an enemy, causing wounds.",
-			  "Does not work against creatures who cannot bleed.", }
+	["desc"] = 	{
+			"Curse an enemy, causing wounds.",
+			"Does not work against creatures who cannot bleed.",
+			"Does not work against angels specifically.",
+	}
 }
 OCURSEDD_III = add_spell {
 	["name"] = 	"Cause Wounds III",
@@ -91,13 +97,16 @@ OCURSEDD_III = add_spell {
 	["ftk"] = 1,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-		fire_grid_bolt(Ind, GF_CAUSE, args.dir, 10 + get_level(Ind, OCURSEDD_I, 290), "points and curses for")
+			fire_grid_bolt(Ind, GF_CAUSE, args.dir, 10 + get_level(Ind, OCURSEDD_I, 290), "points and curses for")
 	end,
 	["info"] = 	function()
-		return "power "..(10 + get_level(Ind, OCURSEDD_I, 290))
+			return "power "..(10 + get_level(Ind, OCURSEDD_I, 290))
 	end,
-	["desc"] = 	{ "Curse an enemy, causing wounds.",
-			  "Does not work against creatures who cannot bleed.", }
+	["desc"] = 	{
+			"Curse an enemy, causing wounds.",
+			"Does not work against creatures who cannot bleed.",
+			"Does not work against angels specifically.",
+	}
 }
 
 ODELFEAR = add_spell {
@@ -135,23 +144,23 @@ STARLIGHT_I = add_spell {
 	["mana_max"] = 	4,
 	["fail"] = 	10,
 	["spell"] = 	function()
-		if get_level(Ind, STARLIGHT_I, 50) >= 10 then
-			lite_area(Ind, 19 + get_level(Ind, STARLIGHT_I, 50), 4)
-		else
-			msg_print(Ind, "You are surrounded by a globe of light.")
-			lite_room(Ind, player.wpos, player.py, player.px)
-		end
+			if get_level(Ind, STARLIGHT_I, 50) >= 10 then
+				lite_area(Ind, 19 + get_level(Ind, STARLIGHT_I, 50), 4)
+			else
+				msg_print(Ind, "You are surrounded by a globe of light.")
+				lite_room(Ind, player.wpos, player.py, player.px)
+			end
 	end,
 	["info"] = 	function()
-		if get_level(Ind, STARLIGHT_I, 50) >= 10 then
-			return "dam "..((19 + get_level(Ind, HGLOBELIGHT_I, 50)) / 2).." rad 4"
-		else
-			return ""
-		end
+			if get_level(Ind, STARLIGHT_I, 50) >= 10 then
+				return "dam "..((19 + get_level(Ind, HGLOBELIGHT_I, 50)) / 2).." rad 4"
+			else
+				return ""
+			end
 	end,
 	["desc"] = 	{
-		"Creates a globe of starlight.",
-		"At level 10 it damages monsters that are susceptible to light.",
+			"Creates a globe of starlight.",
+			"At level 10 it damages monsters that are susceptible to light.",
 	}
 }
 STARLIGHT_II = add_spell {
@@ -164,12 +173,12 @@ STARLIGHT_II = add_spell {
 	["mana_max"] = 	15,
 	["fail"] = 	-20,
 	["spell"] = 	function()
-		msg_print(Ind, "You are surrounded by a globe of light.")
-		lite_room(Ind, player.wpos, player.py, player.px)
-		fire_ball(Ind, GF_LITE, 0, (10 + get_level(Ind, STARLIGHT_I, 75)) * 2, 5 + get_level(Ind, STARLIGHT_I, 6), " calls a globe of light for")
+			msg_print(Ind, "You are surrounded by a globe of light.")
+			lite_room(Ind, player.wpos, player.py, player.px)
+			fire_ball(Ind, GF_LITE, 0, (10 + get_level(Ind, STARLIGHT_I, 75)) * 2, 5 + get_level(Ind, STARLIGHT_I, 6), " calls a globe of light for")
 	end,
 	["info"] = 	function()
-		return "dam "..(10 + get_level(Ind, STARLIGHT_I, 75)).." rad "..(5 + get_level(Ind, STARLIGHT_I, 6))
+			return "dam "..(10 + get_level(Ind, STARLIGHT_I, 75)).." rad "..(5 + get_level(Ind, STARLIGHT_I, 6))
 	end,
 	["desc"] = 	{ "Creates a globe of starlight, powerful enough to hurt all foes.", }
 }
@@ -225,11 +234,11 @@ DETECTCREATURES = add_spell {
 	["fail"] = 	-10,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-		detect_creatures_xxx(Ind, 0) --detect ALL monsters? (even invis+emptymind)
+			detect_creatures_xxx(Ind, 0) --detect ALL monsters? (even invis+emptymind)
 	end,
 	["info"] = 	function()
---		return "rad "..(10 + get_level(Ind, DETECTCREATURES, 40))
-		return ""
+--			return "rad "..(10 + get_level(Ind, DETECTCREATURES, 40))
+			return ""
 	end,
 	["desc"] = 	{ "Detects all nearby creatures.", }
 }
@@ -332,13 +341,13 @@ OLIGHTNINGBOLT_I = add_spell {
 	["direction"] = TRUE,
 	["ftk"] = 1,
 	["spell"] = 	function(args)
-		fire_bolt(Ind, GF_ELEC, args.dir, damroll(get_olightningbolt_dam(Ind, 1)), " casts a lighting bolt for")
+			fire_bolt(Ind, GF_ELEC, args.dir, damroll(get_olightningbolt_dam(Ind, 1)), " casts a lighting bolt for")
 	end,
 	["info"] = 	function()
-		local x, y
+			local x, y
 
-		x, y = get_olightningbolt_dam(Ind, 1)
-		return "dam "..x.."d"..y
+			x, y = get_olightningbolt_dam(Ind, 1)
+			return "dam "..x.."d"..y
 	end,
 	["desc"] = 	{ "Conjures up spiritual power into a lightning bolt.", }
 }
@@ -354,13 +363,13 @@ OLIGHTNINGBOLT_II = add_spell {
 	["direction"] = TRUE,
 	["ftk"] = 1,
 	["spell"] = 	function(args)
-		fire_bolt(Ind, GF_ELEC, args.dir, damroll(get_olightningbolt_dam(Ind, 15)), " casts a lighting bolt for")
+			fire_bolt(Ind, GF_ELEC, args.dir, damroll(get_olightningbolt_dam(Ind, 15)), " casts a lighting bolt for")
 	end,
 	["info"] = 	function()
-		local x, y
+			local x, y
 
-		x, y = get_olightningbolt_dam(Ind, 15)
-		return "dam "..x.."d"..y
+			x, y = get_olightningbolt_dam(Ind, 15)
+			return "dam "..x.."d"..y
 	end,
 	["desc"] = 	{ "Conjures up spiritual power into a lightning bolt.", }
 }
@@ -376,13 +385,13 @@ OLIGHTNINGBOLT_III = add_spell {
 	["direction"] = TRUE,
 	["ftk"] = 1,
 	["spell"] = 	function(args)
-		fire_bolt(Ind, GF_ELEC, args.dir, damroll(get_olightningbolt_dam(Ind, 0)), " casts a lighting bolt for")
+			fire_bolt(Ind, GF_ELEC, args.dir, damroll(get_olightningbolt_dam(Ind, 0)), " casts a lighting bolt for")
 	end,
 	["info"] = 	function()
-		local x, y
+			local x, y
 
-		x, y = get_olightningbolt_dam(Ind, 0)
-		return "dam "..x.."d"..y
+			x, y = get_olightningbolt_dam(Ind, 0)
+			return "dam "..x.."d"..y
 	end,
 	["desc"] = 	{ "Conjures up spiritual power into a lightning bolt.", }
 }
@@ -441,14 +450,14 @@ TRANCE = add_spell {
 	["fail"] = 	10,
 	["direction"] = FALSE,
 	["spell"] = 	function(args)
-		project_los(Ind, GF_OLD_SLEEP, 1024 + 5 + get_level(Ind, TRANCE, 80), "mumbles softly")
+			project_los(Ind, GF_OLD_SLEEP, 1024 + 5 + get_level(Ind, TRANCE, 80), "mumbles softly")
 	end,
 	["info"] = 	function()
-		return "power "..(5 + get_level(Ind, TRANCE, 80))
+			return "power "..(5 + get_level(Ind, TRANCE, 80))
 	end,
 	["desc"] = {
-		"Causes all ghosts, spirits and elementals that see you",
-		"to fall into a deep, spiritual sleep instantly.",
+			"Causes all ghosts, spirits and elementals that see you",
+			"to fall into a deep, spiritual sleep instantly.",
 	}
 }
 
@@ -465,15 +474,15 @@ POSSESS = add_spell {
 	["fail"] = 	-30,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-		fire_grid_bolt(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, POSSESS, 150), "focusses")
+			fire_grid_bolt(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, POSSESS, 150), "focusses")
 	end,
 	["info"] = 	function()
-		--return "power "..(10 + get_level(Ind, POSSESS, 150))
-		return ""
+			--return "power "..(10 + get_level(Ind, POSSESS, 150))
+			return ""
 	end,
 	["desc"] =	{
-		"Tries to manipulate the mind of a monster",
-		" to make it ignore you at the cost of your mana.",
+			"Tries to manipulate the mind of a monster",
+			" to make it ignore you at the cost of your mana.",
 	}
 }
 POSSESS_II = add_spell {
@@ -489,15 +498,15 @@ POSSESS_II = add_spell {
 	["fail"] = 	-42,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-		fire_ball(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, POSSESS, 150), 3, "focusses")
+			fire_ball(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, POSSESS, 150), 3, "focusses")
 	end,
 	["info"] = 	function()
-		--return "power "..(10 + get_level(Ind, POSSESS, 150))
-		return ""
+			--return "power "..(10 + get_level(Ind, POSSESS, 150))
+			return ""
 	end,
 	["desc"] =	{
-		"Tries to manipulate the mind of your target and others around it",
-		" to make them ignore you at the cost of your mana.",
+			"Tries to manipulate the mind of your target and others around it",
+			" to make them ignore you at the cost of your mana.",
 	}
 }
 POSSESS_III = add_spell {
@@ -513,15 +522,15 @@ POSSESS_III = add_spell {
 	["fail"] = 	-66,
 	["direction"] = FALSE,
 	["spell"] = 	function(args)
-		project_los(Ind, GF_CHARMIGNORE, 10 + get_level(Ind, POSSESS, 150), "focusses")
+			project_los(Ind, GF_CHARMIGNORE, 10 + get_level(Ind, POSSESS, 150), "focusses")
 	end,
 	["info"] = 	function()
-		--return "power "..(10 + get_level(Ind, POSSESS, 150))
-		return ""
+			--return "power "..(10 + get_level(Ind, POSSESS, 150))
+			return ""
 	end,
 	["desc"] =	{
-		"Tries to manipulate the mind of all monsters in sight",
-		" to make them ignore you at the cost of your mana.",
+			"Tries to manipulate the mind of all monsters in sight",
+			" to make them ignore you at the cost of your mana.",
 	}
 }
 
@@ -538,10 +547,10 @@ STOPPOSSESS = add_spell {
 	["fail"] = 	-99,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-		do_mstopcharm(Ind)
+			do_mstopcharm(Ind)
 	end,
 	["info"] = 	function()
-		return ""
+			return ""
 	end,
 	["desc"] =	{ "Cancel charming of any monsters.", }
 }
@@ -559,16 +568,16 @@ GUARDIANSPIRIT_I = add_spell {
 	["fail"] = 	-30,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-		local dur = 20 + randint(10) + get_level(Ind, GUARDIANSPIRIT_I, 70)
-		set_protevil(Ind, dur)
-		set_savingthrow(Ind, dur)
+			local dur = 20 + randint(10) + get_level(Ind, GUARDIANSPIRIT_I, 70)
+			set_protevil(Ind, dur)
+			set_savingthrow(Ind, dur)
 	end,
 	["info"] = 	function()
-		return "dur d10+"..20 + get_level(Ind, GUARDIANSPIRIT_I, 70)
+			return "dur d10+"..20 + get_level(Ind, GUARDIANSPIRIT_I, 70)
 	end,
 	["desc"] =	{
-		"Invokes your guardian spirit, guiding and protecting you.",
-		"Your saving throw is maximised and you are protected from evil.",
+			"Invokes your guardian spirit, guiding and protecting you.",
+			"Your saving throw is maximised and you are protected from evil.",
 	}
 }
 GUARDIANSPIRIT_II = add_spell {
@@ -614,7 +623,7 @@ RITES_I = add_spell {
 			dispel_undead(Ind, 180 + get_level(Ind, RITES_I, 500))
 			end,
 	["info"] = 	function()
-		return "dam "..(180 + get_level(Ind, RITES_I, 500))
+			return "dam "..(180 + get_level(Ind, RITES_I, 500))
 	end,
 	["desc"] = 	{ "Banishes nearby undead.", }
 }
@@ -633,7 +642,7 @@ RITES_II = add_spell {
 			dispel_undead(Ind, get_level(Ind, RITES_I, 2300) - 35)
 			end,
 	["info"] = 	function()
-		return "dam "..(get_level(Ind, RITES_I, 2300) - 35)
+			return "dam "..(get_level(Ind, RITES_I, 2300) - 35)
 	end,
 	["desc"] = 	{ "Banishes nearby undead.", }
 }
