@@ -6547,6 +6547,193 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				return;
 			}
+			/* actually wish a spell scroll/crystal by item name - C. Blue */
+			else if (prefix(messagelc, "/swish")) {
+				object_type forge;
+				object_type *o_ptr = &forge;
+				char *s, *item;
+
+				int i, j, num;
+				int extra = -1, extra2 = -1; /* Spell scrolls/crystals */
+				char str2[40], *str2ptr = str2;
+
+				char *str;
+
+
+				WIPE(o_ptr, object_type);
+
+				if (!tk) {
+					msg_print(Ind, "\377oUsage:    /swish [<#skip>:][#amount ]<spell name>");
+					msg_print(Ind, "\377oExample:  /swish 1:3 manathrust");
+					return;
+				}
+
+				/* check for skips */
+				if ((s = strchr(message3, ':'))) {
+					k = atoi(message3);
+					item = s + 1;;
+				} else {
+					k = 0;
+					item = message3;
+				}
+				/* check for amount */
+				if ((tk = atoi(item))) {
+					item = strchr(item, ' ');
+					if (!item) return; //bad syntax
+					item += 1;
+				} else tk = 1;
+
+
+
+				/* Interface between /nwish code and RID_ITEM_ORDER code, which have both been copy-pasted here :-p */
+				str = item;
+
+
+				/* trim */
+				while (*str == ' ') str++;
+				while (str[strlen(str) - 1] == ' ') str[strlen(str) - 1] = 0;
+				if (!(*str)) return;
+				for (i = 0; i < strlen(str) - 1; i++) {
+					if (str[i] == ' ' && str[i + 1] == ' ') continue;
+					*str2ptr = str[i];
+					str2ptr++;
+				}
+				*str2ptr = str[i];
+				*(str2ptr + 1) = 0;
+
+				/* Empty order string? */
+				if (!str2[0]) return;
+
+				/* allow specifying a number */
+				str2ptr = str2;
+				if (str2[0] == 'a') {
+					if (str2[1] == ' ') {
+						num = 1;
+						str2ptr += 2;
+					} else if (str2[1] == 'n' && str2[2] == ' ') {
+							num = 1;
+							str2ptr += 3;
+					} else num = 1;
+				} else if ((str2[0] == 'n' && str2[1] == 'o' && str2[2] == ' ') ||
+				    (str2[0] == '0' && str2[1] == ' ') ||
+				    (str2[0] == '0' && !i)) return;
+				else if ((i = atoi(str2))) {
+					num = i;
+					while (*str2ptr >= '0' && *str2ptr <= '9') str2ptr++;
+					if (*str2ptr == ' ') str2ptr++;
+				} else num = 1;
+				if (num > 99) num = 99;
+
+				strcpy(str, str2ptr);
+
+				/* hack: allow ordering very specific spell scrolls */
+				strncpy(str2, str, 40);
+				for (i = 0; i < max_spells; i++) {
+					/* Check for full name */
+					if (!strcasecmp(school_spells[i].name, str2)) {
+						/* 'Skip' was specified? */
+						if (k) {
+							k--;
+							continue;
+						}
+
+						if (extra == -1) {
+							extra = i; //allow two spells of same name
+							continue;
+						}
+						extra2 = i; //2nd spell of same name
+						break;
+					}
+
+					/* Additionally check for '... I' tier 1 spell version, assuming the player omitted the 'I' */
+					j = strlen(school_spells[i].name) - 2;
+					//assume spell names are at least 3 characters long(!)
+					if (school_spells[i].name[j] == ' ' //assume the final character must be 'I'
+					    && j == strlen(str2)
+					    && !strncasecmp(school_spells[i].name, str2, j)) {
+						/* 'Skip' was specified? */
+						if (k) {
+							k--;
+							continue;
+						}
+
+						if (extra == -1) {
+							extra = i; //allow two spells of same name
+							continue;
+						}
+						extra2 = i; //2nd spell of same name
+						break;
+					}
+				}
+				if (i == max_spells && extra == -1) {
+					msg_print(Ind, "Spell or prayer not found.");
+					return;
+				}
+				/* success */
+				i = lookup_kind(TV_BOOK, SV_SPELLBOOK);
+				invcopy(&forge, i);
+
+#if 0 /* just one spell of the same name? (Use when there are no duplicate spell names in the system */
+				forge.pval = extra; //spellbooks
+#else /* allow duplicate spell names? We choose between up to two. */
+				if (extra2 == -1) forge.pval = extra; //only one spell of this name exists
+				else { //two (or more, which will atm be discarded though) spells of this name exist
+					int s, s2; // spell skill
+
+					/* Priority: 1) The spell which we have trained to highest level.. */
+					s = exec_lua(Ind, format("return get_level(%d, %d, 50, -50)", Ind, extra));
+					s2 = exec_lua(Ind, format("return get_level(%d, %d, 50, -50)", Ind, extra2));
+					if (s == s2) {
+						int r, r2;
+
+						/* Priority: 2) Discard schools that we cannot train up (mod=0). */
+						s = schools[spell_school[extra]].skill;
+						s2 = schools[spell_school[extra2]].skill;
+						r = p_ptr->s_info[s].mod;
+						r2 = p_ptr->s_info[s2].mod;
+						if (r && r2) {
+							int v, v2;
+
+							/* Priority: 3) The spell which school we have trained to highest level.. */
+							v = p_ptr->s_info[s].value;
+							v2 = p_ptr->s_info[s2].value;
+							if (v == v2) {
+								/* Priority: 3) Pick the school with the higher training ratio.. */
+								if (r == r2) {
+									/* Pick one randomly */
+									if (rand_int(2)) forge.pval = extra;
+									else forge.pval = extra2;
+								} else if (r > r2) forge.pval = extra;
+								else forge.pval = extra2;
+							} else if (v > v2) forge.pval = extra;
+							else forge.pval = extra2;
+						} else if (r) forge.pval = extra;
+						else forge.pval = extra2;
+					} else if (s > s2) forge.pval = extra;
+					else forge.pval = extra2;
+				}
+#endif
+
+
+				/* -- end of RID_ITEM_ORDER code -- */
+
+
+				o_ptr->discount = 0;
+				o_ptr->owner = 0;
+				o_ptr->ident &= ~ID_NO_HIDDEN;
+				object_known(o_ptr);
+				o_ptr->level = 1;
+				o_ptr->number = tk;
+
+				k = inven_carry(Ind, o_ptr);
+				if (k >= 0) {
+					char o_name[ONAME_LEN];
+
+					object_desc(Ind, o_name, o_ptr, TRUE, 3);
+					msg_format(Ind, "You have %s (%c).", o_name, index_to_label(k));
+				}
+				return;
+			}
 			else if (prefix(messagelc, "/trap")) { // ||	prefix(messagelc, "/tr")) conflicts with /trait maybe
 				if (k) wiz_place_trap(Ind, k);
 				else wiz_place_trap(Ind, TRAP_OF_FILLING);
