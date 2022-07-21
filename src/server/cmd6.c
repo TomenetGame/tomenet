@@ -1006,7 +1006,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			break;
 			/* additions from PernA */
 		case SV_POTION_CURING:
-			if (hp_player(Ind, 50)) ident = TRUE;
+			if (hp_player(Ind, damroll(9, 10))) ident = TRUE;
 			if (set_blind(Ind, 0)) ident = TRUE;
 			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
 			if (set_diseased(Ind, 0, 0)) ident = TRUE;
