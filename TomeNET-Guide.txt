@@ -12159,7 +12159,7 @@ Cure Serious Wounds
                 Cures blindness, some cuts, confusion; heals 6d8 HP.
 Cure Critical Wounds
                 Cures blindness, most cuts, confusion, stun; heals 14d8 HP.
-Curing          Heals some HP, removes blindness/confusion/stun, cures
+Curing          Heals 9d10 HP, removes blindness/confusion/stun, cures
                 poison/disease/cuts/hallucinations, heals some insanity,
                 cures being gorged, restores all your stats (except exp).
 Detect Invisible
