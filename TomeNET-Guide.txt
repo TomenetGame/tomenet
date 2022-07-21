@@ -260,7 +260,8 @@ compile the game under '(2.1) Installing/updating TomeNET'.
 -You should now see a list of available TomeNET servers (except if you used
  TomeNET-direct.bat, which will always connect you directly to the first main
  server).
- Pick the first official server by pressing 'a' key.
+ Pick the first official server by pressing the 'a' key (or instead choose the
+ APAC region server if your latency is better for that region).
  Now you are prompted to enter your account information: Name and password.
  Since you are a new player, you don't have these yet. There is no separate
  'registration' process, just type in a name and a password of your choice!
@@ -951,7 +952,7 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
         'Newbie'        Player cannot participate in player-killing.
         'Killable'      Player can get killed by other players.
         To modify the PK status of your character, use the '/pkill' command.
-        Note: These PK-rules are disabled by default on our official server.
+        Note: PK is disabled by default on our official main servers.
 
 %       edit your macros (see from (3.6) to (3.9b)).
 
@@ -1667,7 +1668,7 @@ They all start with a slash '/' hence they're called slash commands:
             aka player-killing. PK rules must be enabled on the server in order
             to use this command. The PK status of each player will be displayed
             in the players-online-screen that you invoke by pressing @ key.
-            Note: PK-rules are disabled by default on our official server.
+            Note: PK is disabled by default on our official main servers.
 
 /play       Join/leave a mini-game (such as rugby on the field in Bree).
             Will at some point in the future be absorbed by /evsign and
@@ -3993,7 +3994,8 @@ You should now see a list of available TomeNET servers (except if you used
 TomeNET-direct.bat, which will always connect you directly to the first main
 server) starting with the official main server under 'a)'.
 (This list of servers is called the 'meta-server'.)
-Pick the first server by pressing the 'a' key.
+Pick the first official server by pressing the 'a' key (or instead choose the
+APAC region server if your latency is better for that region).
 On some Windows configurations in the past the window would stay empty. If
 this happens or if other problems occur, see (8.8) for possible solutions.
 
@@ -4313,10 +4315,10 @@ While chatting in TomeNET is usually fine to communicate with other players and
 party members in particular, using a real voice chat via headset (headphones +
 microphone) can be much more effective, easier and more fun.
 
-To support voice chat, there is actually an official TomeNET 'Mumble' server
-running, Mumble being the name of the voice chat software. (The server part is
-actually called Murmur, Mumble is the name of the client part and the project
-name in general.)
+You can use the official TomeNET Discord server, but if you don't like Discord,
+there is actually an official TomeNET 'Mumble' server too, Mumble being the
+name of the voice chat software. (The server part is actually called Murmur,
+Mumble is the name of the client part and the project name in general.)
 
 Mumble provides excellent voice quality at low bandwith usage, and is a free
 open source program, hence it is free of charge (both server and client).
@@ -23748,6 +23750,9 @@ Solution:   The meta-server might be down or a DNS problem might be occuring
             for official main server:   europe.tomenet.eu
             If the hostname doesn't work you can also try entering its IP
             address 37.187.75.24.
+            If you get better latency to the APAC region, you can alternatively
+            pick the asia-pacific server:   apac.tomenet.eu
+            or via its IP address 92.38.178.77.
             Make sure your TomeNET.ini file contains the correct server port,
             usually 18348! This port isn't needed if you use the meta-list to
             choose a server to connect to, but it's important if you connect
@@ -23765,7 +23770,11 @@ Solution:   The meta-server might be down or a DNS problem might be occuring
             If the hostname doesn't work for whatever reason you may try the
             IP adress:
             TomeNET.exe 37.187.75.24
-
+            If you get better latency to the APAC region, you can alternatively
+            pick the asia-pacific server:
+            TomeNET.exe apac.tomenet.eu
+            or via its IP address:
+            TomeNET.exe 92.38.178.77
 PROBLEM 12: The main window doesn't display the floor dots in town and in
             certain dungeons, like the Training Tower and Angband. Further,
             fields are sometimes not redrawn correctly, resulting in fake
