@@ -78,7 +78,7 @@ OSENSELIFE = add_spell {
 			return ""
 			end,
 	["desc"] = 	{
-			"Detects the presence of living creatures.",
+			"Detects the presence of nearby living creatures.",
 	}
 }
 

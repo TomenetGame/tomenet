@@ -19439,7 +19439,7 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
                     Radius and damage will further increase.
                     Shared spell (see above): H.Offense, H.Support.
 
-    Detect Evil     Detects evil monsters.
+    Detect Evil     Detects nearby evil monsters.
                     Required skill level for first spell level: 3.
 
     Sanctuary       Puts nearby monsters asleep.
