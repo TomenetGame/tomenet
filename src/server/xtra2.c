@@ -5840,10 +5840,16 @@ bool monster_death(int Ind, int m_idx) {
 	}
 
 	if (r_idx == RI_MIRROR) {
-		if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master))
-			msg_broadcast_format(0, "\374\377c**\377s%s has defeated %s mirror image!\377c**", p_ptr->name, p_ptr->male ? "his" : "her");
+		char tmp[MSG_LEN];
+
+		if (cfg.unikill_format)
+			sprintf(tmp, "\374\377c**\377s%s %s has defeated %s mirror image.\377c**", get_ptitle(q_ptr, FALSE), p_ptr->name, p_ptr->male ? "his" : "her");
 		else
-			msg_format(Ind, "\374\377c**\377s%s has defeated %s mirror image!\377c**", p_ptr->name, p_ptr->male ? "his" : "her");
+			sprintf(tmp, "\374\377c**\377s%s has defeated %s mirror image.\377c**", p_ptr->name, p_ptr->male ? "his" : "her");
+
+		if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master)) msg_broadcast(0, tmp);
+		else msg_print(Ind, tmp);
+
 		s_printf("MIRROR: %s (%d/%d) won.\n", p_ptr->name, p_ptr->max_plv, p_ptr->max_lev);
 	}
 

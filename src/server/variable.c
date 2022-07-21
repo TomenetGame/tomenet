@@ -206,7 +206,7 @@ server_opts cfg = {
 	TRUE,TRUE,TRUE,TRUE,	// maximize, kings_etiquette, fallenkings_etiquette, strict_etiquette
 
 	FALSE,FALSE,	// public_rfe, auto_purge
-	FALSE,114,0,	// log_u, replace_hiscore, unikill_format
+	FALSE,114,1,	// log_u, replace_hiscore, unikill_format
 	"",		// server notes for meta list
 	FALSE,		// artifact creation disabled for maintenance reasons? (arts_disabled)
 	TRUE,		// total winners may not find true arts anymore? (winners_find_randarts)
