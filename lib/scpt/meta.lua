@@ -174,7 +174,12 @@ function meta_add_ping(pos, ping)
 	end
 
 	-- Keep this colour-coding consistent with prt_lagometer()
-	if ping == -1 then
+	if ping == -2 then
+		attr = "w"
+		ping = "pinging..."
+		unit = ""
+		spacer = ""
+	elseif ping == -1 then
 		attr = "R"
 		ping = "---"
 		unit = ""
@@ -186,7 +191,7 @@ function meta_add_ping(pos, ping)
 	else attr = "G"
 	end
 
-	color_print(meta_list[pos][4], 50 + 16, "\255" .. attr .. spacer .. ping .. unit)
+	color_print(meta_list[pos][4], 50 + 16, "\255" .. attr .. spacer .. ping .. unit.."       ")
 
 	return 0
 end

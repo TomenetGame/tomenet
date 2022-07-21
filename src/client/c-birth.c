@@ -2296,7 +2296,7 @@ bool get_server_name(void) {
 	int j, bytes = 0, socket = -1;
 	char buf[80192], c;
  #ifdef META_PINGS
-	int k, v;
+	int k, v, r;
  #endif
 #else
 	int j, k, l, bytes = 0, socket = -1, offsets[20], lines = 0;
@@ -2440,12 +2440,16 @@ bool get_server_name(void) {
 		if (k != v) meta_pings_server_duplicate[v] = k;
 		else meta_pings_server_duplicate[v] = -1; /* We're the first of our name!~ */
 
+		/* Display "pinging.." status */
+		call_lua(0, "meta_add_ping", "(d,d)", "d", j, -2, &r);
+
 		/* Add server to list */
 		strcpy(meta_pings_server_name[v], tmp);
 		v++;
 		/* Limit of how many servers we can list */
 		if (v == META_PINGS) break;
 	}
+	(void)r; //slay compiler warning;
 	meta_pings_servers = v;
 #endif
 
