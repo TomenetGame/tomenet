@@ -50,6 +50,7 @@ Contents
     (1.3)   Goal and progress of TomeNET players
     (1.3a)  Sauron, Morgoth and the Nazgul
     (1.3b)  How to encounter the final boss: Morgoth, Lord of Darkness
+    (1.4)   History of TomeNET development
 (2) Installation & setup
     (2.1)   Installing/updating TomeNET
     (2.1a)  Installing sound and music packs
@@ -2878,10 +2879,10 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
 
 (1.1) What is TomeNET? (Where can I get the latest sources?)
 ------------------------------------------------------------
-TomeNET is an extremely advanced online multiplayer rogue-like role-playing
-game, derived from MAngband (Multiplayer-Angband). It's based on the stories of
-J.R.R. Tolkien mainly, hence the name "the Troubles of Middle Earth" or
-alternatively "the Tales of Middle Earth".
+TomeNET is an online multiplayer rogue-like role-playing game, derived from
+MAngband (Multiplayer-Angband). It's based on the stories of J.R.R. Tolkien
+mainly, hence the name "the Troubles of Middle Earth" or alternatively also
+spelled out "the Tales of Middle Earth".
 The final goal in TomeNET is to destroy the fallen god Melkor who is known by
 the name of Morgoth, Lord of Darkness. The official websites are mentioned in
 the first couple of lines of this guide.
@@ -3209,6 +3210,32 @@ foes are said to dwell there which aren't seen in the mundane world.
 See (4.5c) for more information about the Cloud Planes and about the extra XP
 bonus characters gain in the Nether Realm.
 
+
+(1.4) History of TomeNET development
+------------------------------------
+TomeNET is a multiplayer rogue-like, based on and somewhat similar to MAngband
+and ToME, and also featuring some Zangband and Cthulu Angband monsters. It was
+created around 2001 (originally under the name of "PernMAngband" which had to
+be renamed due to a letter of Anne McCaffrey's attorney who prohibited the use
+of the name 'Pern') as a fork of MAngband which got some ToME design added to
+it, which was done by DarkGod, Evileye and Jir. Zz, Tanix and C. Blue also
+contributed code, and after the original development team dropped out one by
+one over the course of the following two years, C. Blue became the only active
+maintainer of the project. Two more years later, he formed a new development
+team which was joined by Mikael and Adam, and later on by infamous Moltor who
+created a fast-paced arcade shooter variant which has nothing in common with
+normal rogue-likes anymore, but features Tron light cycle race and Smash'em
+action. In 2009, Relsiet joined the developers when he (assisted by Kurzel)
+suggested a detailed plan for a rework of the existing Runemaster class (which
+was originally proposed by Mark and implemented by Adam). In 2011 Kurzel took
+over the Runemaster class development and did another rework. Later on TomeNET
+moved to GitHub and new contributors arrived on the scene, which you can check
+on our official GitHub site: https://github.com/TomenetGame/tomenet/
+
+The TomeNET servers were originally hosted kindly by the grace of Fizz, an
+employee of a French company which provides line capacity, a secure environment
+and a dedicated server just for the TomeNET project. Later we moved over to a
+server hosted by OVH in France, with the servers being provided by Mikael.
 
 
 (2) Installation & setup
