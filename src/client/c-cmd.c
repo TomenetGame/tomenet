@@ -2843,6 +2843,8 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					tmpbuf[0] = 0;
 				}
 
+				if (!strcasecmp(buf, "about")) strcpy(buf, "introduction");
+
 				/* Expand 'AC' to 'Armour Class' */
 				if (!strcasecmp(buf, "ac")) strcpy(buf, "armour class");
 				else if (my_strcasestr(buf, "armo") && my_strcasestr(buf, "clas")) strcpy(buf, "armour class"); //translate armor class to armour class
