@@ -2297,6 +2297,7 @@ bool get_server_name(void) {
 	char buf[80192], c;
  #ifdef META_PINGS
 	int k, v, r;
+	FILE *fff;
  #endif
 #else
 	int j, k, l, bytes = 0, socket = -1, offsets[20], lines = 0;
@@ -2341,6 +2342,31 @@ bool get_server_name(void) {
 		prt("Failed to connect to meta server.", 2, 1);
 		return enter_server_name();
 	}
+
+#ifdef META_PINGS
+	/* Test for 'ping' command availability (should always be there though).
+	   Temporarily abuse meta_pings_servers as marker (-1 = ping disabled). */
+	path_build(buf, 1024, ANGBAND_DIR_USER, "__ping.tmp");
+ #ifdef WINDOWS
+	r = system(format("ping /? > %s 2>&1", buf));
+ #else /* assume POSIX */
+	r = system(format("ping -h > %s 2>&1", buf)); // (returns 2 on success)
+ #endif
+	(void)r; //slay compiler warning;
+
+	fff = my_fopen(buf, "r");
+	if (!fff) meta_pings_servers = -1;
+	else {
+		meta_pings_servers = -1;
+		while (my_fgets(fff, buf, sizeof(buf)) == 0) {
+			if (!strstr(buf, "Usage")) continue; /* Same for all OS :) */
+			meta_pings_servers = 0;
+			break;
+		}
+		my_fclose(fff);
+		remove(buf);
+	}
+#endif
 
 	/* Wipe the buffer so valgrind doesn't complain - mikaelh */
 	C_WIPE(buf, 80192, char);
@@ -2427,30 +2453,32 @@ bool get_server_name(void) {
 #endif
 
 #ifdef META_PINGS
-	/* Obtain all unique server names */
-	v = 0;
-	for (j = 0; j < i; j++) {
-		call_lua(0, "meta_get", "(s,d)", "sd", buf, j, &tmp, &server_port);
-		if (!tmp[0]) continue; //paranoia
+	if (meta_pings_servers != -1) {
+		/* Obtain all unique server names */
+		v = 0;
+		for (j = 0; j < i; j++) {
+			call_lua(0, "meta_get", "(s,d)", "sd", buf, j, &tmp, &server_port);
+			if (!tmp[0]) continue; //paranoia
 
-		/* Check for duplicate names */
-		for (k = 0; k < v; k++)
-			if (streq(meta_pings_server_name[k], tmp)) break;
-		/* Mark duplicate and remember its first equivalent */
-		if (k != v) meta_pings_server_duplicate[v] = k;
-		else meta_pings_server_duplicate[v] = -1; /* We're the first of our name!~ */
+			/* Check for duplicate names */
+			for (k = 0; k < v; k++)
+				if (streq(meta_pings_server_name[k], tmp)) break;
+			/* Mark duplicate and remember its first equivalent */
+			if (k != v) meta_pings_server_duplicate[v] = k;
+			else meta_pings_server_duplicate[v] = -1; /* We're the first of our name!~ */
 
-		/* Display "pinging.." status */
-		call_lua(0, "meta_add_ping", "(d,d)", "d", j, -2, &r);
+			/* Display "pinging.." status */
+			call_lua(0, "meta_add_ping", "(d,d)", "d", j, -2, &r);
 
-		/* Add server to list */
-		strcpy(meta_pings_server_name[v], tmp);
-		v++;
-		/* Limit of how many servers we can list */
-		if (v == META_PINGS) break;
-	}
-	(void)r; //slay compiler warning;
-	meta_pings_servers = v;
+			/* Add server to list */
+			strcpy(meta_pings_server_name[v], tmp);
+			v++;
+			/* Limit of how many servers we can list */
+			if (v == META_PINGS) break;
+		}
+		(void)r; //slay compiler warning;
+		meta_pings_servers = v;
+	} else meta_pings_servers = 0;
 #endif
 
 	/* Ask until happy */
