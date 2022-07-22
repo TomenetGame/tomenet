@@ -3275,6 +3275,10 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev, bool u
 						r_name + r_ptr->name, num, p_ptr->tim_mimic);
 				/* normal */
 				else {
+					//maybe todo: display real kills to go instead of form credit counter -
+					// rpg-server: instant form learn chance 1 in level-killcount; pvp mode: +3;
+					// shaman E/X +2; iddc: +1 (no) or +IDDC_MIMICRY_BOOST [9] (yes); (normal is +0 bonus)
+
 					/* the 'usable' version (default) */
 					if (!r_ptr->dup_idx)
 						fprintf(fff, "\377w%-30s : %4d slain (%d more to go)\n",

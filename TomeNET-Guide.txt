@@ -23229,9 +23229,8 @@ The differences between Ironman ruleset and normal servers are as follows:
   -If a party owner dies, someone else from the party is automatically promoted
    to party owner, so parties won't get disbanded easily, making party-diving
    more effective.
-  -Mimicry users have a very slim chance of insta-learning a form!
-   (Note that this also works 'in advance', ie while you have not yet the
-   required mimicry skill to actually see the learn-message show up.)
+  -Mimicry users have a very slim chance of insta-learning a form,
+   of 1 in monster's level - kill count so far!
   -Item level restrictions are disabled and have no effect.
   -Extermination orders can be acquired as early as at level 3 instead of level
    5 and the amount of monsters that needs to be slain is even somewhat lower.
