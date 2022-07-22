@@ -2938,7 +2938,10 @@ void do_cmd_options_sfx_sdl(void) {
 				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
 
 #ifdef USER_VOLUME_SFX
-			if (samples[j].volume && samples[j].volume != 100) Term_putstr(horiz_offset + 1 + 12 + 36 + 1, vertikal_offset + i + 10 - y, -1, a, format("%2d%%", samples[j].volume));
+			if (samples[j].volume && samples[j].volume != 100) {
+				if (samples[j].volume < 100) a = TERM_UMBER; else a = TERM_L_UMBER;
+				Term_putstr(horiz_offset + 1 + 12 + 36 + 1, vertikal_offset + i + 10 - y, -1, a, format("%2d%%", samples[j].volume));
+			}
 #endif
 		}
 
