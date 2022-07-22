@@ -9978,7 +9978,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		if (!(d_ptr->flags3 & DF3_NO_SIMPLE_STORES)) {
 			/* Check for building low-level store (Herbalist) */
 			if ((!build_special_store) &&
-			    (!dungeon_store2_timer) && (dun_lev >= 10) && (dun_lev <= 30))
+			    (!dungeon_store2_timer) && (dun_lev >= 6) && (dun_lev <= 30))
 				build_special_store = 2;
 
 			/* Build one of several misc stores for basic items of certain type */
