@@ -3344,13 +3344,16 @@ void do_cmd_options_mus_sdl(void) {
 				curmus_x = horiz_offset + 12;
 				curmus_y = vertikal_offset + i + 10 - y;
 				curmus_attr = a;
-				Term_putstr(curmus_x, curmus_y, -1, curmus_attr, format("%-34s  (playing      )", (char*)lua_name));
+				Term_putstr(curmus_x, curmus_y, -1, curmus_attr, format("%-38s  ([>]      )", (char*)lua_name));
 				update_jukebox_timepos();
 			} else
 				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
 
 #ifdef USER_VOLUME_MUS
-			if (songs[j].volume && songs[j].volume != 100) Term_putstr(horiz_offset + 1 + 12 + 36 + 1 - 6, vertikal_offset + i + 10 - y, -1, a, format("%2d%%", songs[j].volume)); //-6 to coexist with the new playtime display
+			if (songs[j].volume && songs[j].volume != 100) {
+				if (songs[j].volume < 100) a = TERM_UMBER; else a = TERM_L_UMBER;
+				Term_putstr(horiz_offset + 1 + 12 + 36 + 1 - 3, vertikal_offset + i + 10 - y, -1, a, format("%2d%%", songs[j].volume)); //-6 to coexist with the new playtime display
+			}
 #endif
 		}
 
