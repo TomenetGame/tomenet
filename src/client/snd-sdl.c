@@ -112,6 +112,7 @@ static Mix_Music* load_song(int idx, int subidx);
  * evlt[i] = round(0.09921 * exp(2.31 * i / 100))
  */
 
+/* evtl must range from 0..MIX_MAX_VOLUME (an SDL definition, [128]) */
 static s16b evlt[101] = { 12,
   13,  13,  14,  14,  14,  15,  15,  15,  16,  16,
   16,  17,  17,  18,  18,  18,  19,  19,  20,  20,
@@ -126,7 +127,89 @@ static s16b evlt[101] = { 12,
 };
 
 #if 1 /* Exponential volume scale - mikaelh */
- #define CALC_MIX_VOLUME(T, V)	(cfg_audio_master * T * evlt[V] * evlt[cfg_audio_master_volume] / MIX_MAX_VOLUME)
+ #if 0 /* Use define */
+  #define CALC_MIX_VOLUME(T, V)	(cfg_audio_master * T * evlt[V] * evlt[cfg_audio_master_volume] / MIX_MAX_VOLUME)
+ #else /* Make it a function instead - needed for volume 200% boost in the new jukebox/options menu. */
+  /* T: 0 or 1 for on/off. V: Volume in range of 0..100 (specific slider, possibly adjusted already with extra volume info).
+     boost: 1..200 (percent): Despite it called 'boost' it is actually a volume value from 1 to 200, so could also lower audio (100 = keep normal volume). */
+  static int CALC_MIX_VOLUME(int T, int V, int boost) {
+	int perc_lower, b_m, b_v;
+	int Me, Ve, total, roothack;
+	int Mdiff, Vdiff, totaldiff;
+	int M = cfg_audio_master_volume;
+
+	/* Normal, unboosted audio -- note that anti-boost is applied before evlt[], while actual boost (further below) is applied to evlt[] value. */
+	if (boost <= 100) return ((cfg_audio_master * T * evlt[(V * boost) / 100] * evlt[cfg_audio_master_volume]) / MIX_MAX_VOLUME);
+	boost -= 100;
+
+	/* To be exact we'd have to balance roots, eg master slider has 3x as much room for boosting as specific slider ->
+	   it gets 4rt(boost)^3 while specific slider gets 4rt(boost)^1, but I don't wanna do these calcs here, so I will
+	   just hack it for now to use simple division and then subtract 4..11% from the result :-p
+	   However, even that hack is inaccurate, as we would like to apply it to evlt[] values, not raw values. However, that requires us to apply
+	   the perc_lower root factors to the evlt[] values too, again not to the raw values. BUT.. if we do that, we get anomalities such as a boost
+	   value of 110 resulting in slightly LOWER sound than unboosted 100% sound, since the root_hack value doesn't necessarily correspond with
+	   the jumps in the evlt[] table.
+	   So, for now, I just apply the roothack on evlt[] and we live with the small inaccuracy =P - C. Blue */
+
+	/* If we boost the volume, we have to distribute it on the two sliders <specific audio slider> vs <master audio slider> to be most effective. */
+	if (cfg_audio_master_volume == 100 && V == 100) {
+		/* Extreme case: Cannot boost at all, everything is at max already. */
+		Me = evlt[M];
+		Ve = evlt[V];
+		return ((cfg_audio_master * T * Ve * Me) / MIX_MAX_VOLUME);
+	} else if (!cfg_audio_master_volume) {
+		/* Extreme case (just treat it extra cause of rounding issue 99.9 vs 100) */
+		roothack = 100;
+		M = (M * (100 + boost)) / 100;
+	} else if (!V) {
+		/* Extreme case (just treat it extra cause of rounding issue 99.9 vs 100) */
+		roothack = 100;
+		V = (V * (100 + boost)) / 100;
+	} else if (cfg_audio_master_volume > V) {
+		/* Master slider is higher -> less capacity to boost it, instead load boosting on the specific slider more than on the master slider */
+		Mdiff = 100 - cfg_audio_master_volume;
+		Vdiff = 100 - V;
+		totaldiff = Mdiff + Vdiff;
+		perc_lower = (100 * Mdiff) / totaldiff;
+		roothack = 100 - (21 - 1045 / (50 + perc_lower));
+
+		b_m = (boost * perc_lower) / 100;
+		b_v = (boost * (100 - perc_lower)) / 100;
+		M = (M * (100 + b_m)) / 100;
+		V = (V * (100 + b_v)) / 100;
+	} else if (cfg_audio_master_volume < V) {
+		/* Master slider is lower -> more capacity to boost it, so load boosting on the master slider more than on the specific slider */
+		Mdiff = 100 - cfg_audio_master_volume;
+		Vdiff = 100 - V;
+		totaldiff = Mdiff + Vdiff;
+		perc_lower = (100 * Vdiff) / totaldiff;
+		roothack = 100 - (21 - 1045 / (50 + perc_lower));
+
+		b_m = (boost * (100 - perc_lower)) / 100;
+		b_v = (boost * perc_lower) / 100;
+		M = (M * (100 + b_m)) / 100;
+		V = (V * (100 + b_v)) / 100;
+	} else {
+		/* Both sliders are equal - distribute boost evenly (sqrt(boost)) */
+		perc_lower = 50;
+		roothack = 100 - (21 - 1045 / (50 + perc_lower));
+
+		b_m = b_v = (boost * perc_lower) / 100;
+		M = (M * (100 + b_m)) / 100;
+		V = (V * (100 + b_v)) / 100;
+	}
+
+	/* Limit against overboosting into invalid values */
+	if (M > 100) M = 100;
+	if (V > 100) V = 100;
+
+	Me = evlt[M];
+	Ve = evlt[V];
+	total = ((Me * Ve * roothack) / 100) / MIX_MAX_VOLUME;
+
+	return (cfg_audio_master * T * total);
+  }
+ #endif
 #endif
 #if 0 /* use linear volume scale -- poly+50 would be best, but already causes mixer outtages if total volume becomes too small (ie < 1).. =_= */
  #define CALC_MIX_VOLUME(T, V)  ((MIX_MAX_VOLUME * (cfg_audio_master ? ((T) ? (V) : 0) : 0) * cfg_audio_master_volume) / 10000)
@@ -156,7 +239,7 @@ typedef struct {
 	int started_timer_tick;		/* global timer tick on which this sample was started (for efficiency) */
 	bool disabled;			/* disabled by user? */
 	bool config;
-	bool volume;			/* volume reduced by user? */
+	unsigned char volume;		/* volume reduced by user? */
 } sample_list;
 
 /* background music */
@@ -167,7 +250,7 @@ typedef struct {
 	bool initial[MAX_SONGS];	/* Is it an 'initial' song? An initial song is played first and only once when a music event gets activated. */
 	bool disabled;			/* disabled by user? */
 	bool config;
-	bool volume;			/* volume reduced by user? */
+	unsigned char volume;		/* volume reduced by user? */
 } song_list;
 
 /* Just need an array of SampInfos */
@@ -534,8 +617,6 @@ static bool sound_sdl_init(bool no_cache) {
 			}
 			/* Initialize as 'not being played' */
 			samples[event].current_channel = -1;
-
-			//puts(format("loaded sample %s (ev %d, #%d).", samples[event].paths[num], event, num));//debug
 
 			/* Imcrement the sample count */
 			samples[event].num++;
@@ -999,7 +1080,7 @@ static bool sound_sdl_init(bool no_cache) {
  */
 static bool play_sound(int event, int type, int vol, s32b player_id) {
 	Mix_Chunk *wave = NULL;
-	int s;
+	int s, vols = 100;
 	bool test = FALSE;
 
 #ifdef DISABLE_MUTED_AUDIO
@@ -1008,7 +1089,7 @@ static bool play_sound(int event, int type, int vol, s32b player_id) {
 
 #ifdef USER_VOLUME_SFX
 	/* Apply user-defined custom volume modifier */
-	if (samples[event].volume) vol = (vol * samples[event].volume) / 100;
+	if (samples[event].volume) vols = samples[event].volume;
 #endif
 
 	/* hack: */
@@ -1115,15 +1196,13 @@ static bool play_sound(int event, int type, int vol, s32b player_id) {
 
 		/* HACK - use weather volume for thunder sfx */
 		if (type == SFX_TYPE_WEATHER)
-			Mix_Volume(s, (CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * vol) / 100) * grid_weather_volume) / 100);
+			Mix_Volume(s, (CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * vol) / 100, vols) * grid_weather_volume) / 100);
 		else
 		if (type == SFX_TYPE_AMBIENT)
-			Mix_Volume(s, (CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * vol) / 100) * grid_ambient_volume) / 100);
+			Mix_Volume(s, (CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * vol) / 100, vols) * grid_ambient_volume) / 100);
 		else
-		/* Note: Linear scaling is used here to allow more precise control at the server end */
-			Mix_Volume(s, CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * vol) / 100));
-
-//puts(format("playing sample %d at vol %d.\n", event, (cfg_audio_sound_volume * vol) / 100));
+			/* Note: Linear scaling is used here to allow more precise control at the server end */
+			Mix_Volume(s, CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * vol) / 100, vols));
 	}
 	samples[event].current_channel = s;
 	samples[event].started_timer_tick = ticks;
@@ -1134,7 +1213,7 @@ static bool play_sound(int event, int type, int vol, s32b player_id) {
 #define BELL_REDUCTION 3 /* reduce volume of bell() sounds by this factor */
 extern bool sound_bell(void) {
 	Mix_Chunk *wave = NULL;
-	int s;
+	int s, vols = 100;
 
 	if (bell_sound_idx == -1) return FALSE;
 	if (samples[bell_sound_idx].disabled) return TRUE; /* claim that it 'succeeded' */
@@ -1146,6 +1225,11 @@ extern bool sound_bell(void) {
 	/* Choose a random event */
 	s = rand_int(samples[bell_sound_idx].num);
 	wave = samples[bell_sound_idx].wavs[s];
+
+#ifdef USER_VOLUME_SFX
+	/* Apply user-defined custom volume modifier */
+	if (samples[bell_sound_idx].volume) vols = samples[bell_sound_idx].volume;
+#endif
 
 	/* Try loading it, if it's not cached */
 	if (!wave) {
@@ -1170,7 +1254,7 @@ extern bool sound_bell(void) {
 		if (c_cfg.paging_max_volume) {
 			Mix_Volume(s, MIX_MAX_VOLUME / BELL_REDUCTION);
 		} else if (c_cfg.paging_master_volume) {
-			Mix_Volume(s, CALC_MIX_VOLUME(1, 100 / BELL_REDUCTION));
+			Mix_Volume(s, CALC_MIX_VOLUME(1, MIX_MAX_VOLUME / BELL_REDUCTION, vols));
 		}
 	}
 	samples[bell_sound_idx].current_channel = s;
@@ -1180,7 +1264,7 @@ extern bool sound_bell(void) {
 /* play the 'page' sound */
 extern bool sound_page(void) {
 	Mix_Chunk *wave = NULL;
-	int s;
+	int s, vols = 100;
 
 	if (page_sound_idx == -1) return FALSE;
 	if (samples[page_sound_idx].disabled) return TRUE; /* claim that it 'succeeded' */
@@ -1192,6 +1276,11 @@ extern bool sound_page(void) {
 	/* Choose a random event */
 	s = rand_int(samples[page_sound_idx].num);
 	wave = samples[page_sound_idx].wavs[s];
+
+#ifdef USER_VOLUME_SFX
+	/* Apply user-defined custom volume modifier */
+	if (samples[page_sound_idx].volume) vols = samples[page_sound_idx].volume;
+#endif
 
 	/* Try loading it, if it's not cached */
 	if (!wave) {
@@ -1216,7 +1305,7 @@ extern bool sound_page(void) {
 		if (c_cfg.paging_max_volume) {
 			Mix_Volume(s, MIX_MAX_VOLUME);
 		} else if (c_cfg.paging_master_volume) {
-			Mix_Volume(s, CALC_MIX_VOLUME(1, 100));
+			Mix_Volume(s, CALC_MIX_VOLUME(1, MIX_MAX_VOLUME, vols));
 		}
 	}
 	samples[page_sound_idx].current_channel = s;
@@ -1226,7 +1315,7 @@ extern bool sound_page(void) {
 /* play the 'warning' sound */
 extern bool sound_warning(void) {
 	Mix_Chunk *wave = NULL;
-	int s;
+	int s, vols = 100;
 
 	if (warning_sound_idx == -1) return FALSE;
 	if (samples[warning_sound_idx].disabled) return TRUE; /* claim that it 'succeeded' */
@@ -1238,6 +1327,11 @@ extern bool sound_warning(void) {
 	/* Choose a random event */
 	s = rand_int(samples[warning_sound_idx].num);
 	wave = samples[warning_sound_idx].wavs[s];
+
+#ifdef USER_VOLUME_SFX
+	/* Apply user-defined custom volume modifier */
+	if (samples[warning_sound_idx].volume) vols = samples[warning_sound_idx].volume;
+#endif
 
 	/* Try loading it, if it's not cached */
 	if (!wave) {
@@ -1263,7 +1357,7 @@ extern bool sound_warning(void) {
 		if (c_cfg.paging_max_volume) {
 			Mix_Volume(s, MIX_MAX_VOLUME);
 		} else if (c_cfg.paging_master_volume) {
-			Mix_Volume(s, CALC_MIX_VOLUME(1, 100));
+			Mix_Volume(s, CALC_MIX_VOLUME(1, MIX_MAX_VOLUME, vols));
 		}
 	}
 	samples[warning_sound_idx].current_channel = s;
@@ -1288,11 +1382,11 @@ static void clear_channel(int c) {
 	/* a sample has finished playing, so allow this kind to be played again */
 	/* hack: if the sample was the 'paging' sound, reset the channel's volume to be on the safe side */
 	if (channel_sample[c] == page_sound_idx || channel_sample[c] == warning_sound_idx)
-		Mix_Volume(c, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
+		Mix_Volume(c, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume, 100));
 
 	/* HACK - if the sample was a weather sample, which would be thunder, reset the vol too, paranoia */
 	if (channel_type[c] == SFX_TYPE_WEATHER)
-		Mix_Volume(c, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
+		Mix_Volume(c, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume, 100));
 
 	samples[channel_sample[c]].current_channel = -1;
 	channel_sample[c] = -1;
@@ -1301,7 +1395,7 @@ static void clear_channel(int c) {
 /* Overlay a weather noise -- not WEATHER_VOL_PARTICLES or WEATHER_VOL_CLOUDS */
 static void play_sound_weather(int event) {
 	Mix_Chunk *wave = NULL;
-	int s, new_wc;
+	int s, new_wc, vols = 100;
 
 	/* allow halting a muted yet playing sound, before checking for DISABLE_MUTED_AUDIO */
 	if (event == -2 && weather_channel != -1) {
@@ -1373,6 +1467,11 @@ static void play_sound_weather(int event) {
 	s = rand_int(samples[event].num);
 	wave = samples[event].wavs[s];
 
+#ifdef USER_VOLUME_SFX
+	/* Apply user-defined custom volume modifier */
+	if (samples[event].volume) vols = samples[event].volume;
+#endif
+
 	/* Try loading it, if it's not cached */
 	if (!wave) {
 		if (on_demand_loading || no_cache_audio) {
@@ -1391,7 +1490,7 @@ static void play_sound_weather(int event) {
 #if 1 /* volume glitch paranoia (first fade-in seems to move volume to 100% instead of designated cfg_audio_... */
 	new_wc = Mix_PlayChannel(weather_channel, wave, -1);
 	if (new_wc != -1) {
-		Mix_Volume(new_wc, (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume) * grid_weather_volume) / 100);
+		Mix_Volume(new_wc, (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume, vols) * grid_weather_volume) / 100);
 
 		/* weird bug (see above) apparently STILL occurs for some people (Dj_wolf) - hack it moar: */
 		if (cfg_audio_weather)
@@ -1421,7 +1520,7 @@ static void play_sound_weather(int event) {
 		weather_channel = new_wc;
 		weather_current = event;
 		weather_current_vol = -1;
-		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume) * grid_weather_volume) / 100);
+		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume, vols) * grid_weather_volume) / 100);
 	} else {
 		//failed to start playing?
 		if (new_wc == -1) {
@@ -1439,7 +1538,7 @@ static void play_sound_weather(int event) {
 				weather_channel = new_wc;
 				weather_current = event;
 				weather_current_vol = -1;
-				Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume) * grid_weather_volume) / 100);
+				Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume, vols) * grid_weather_volume) / 100);
 			}
 		}
 	}
@@ -1454,7 +1553,7 @@ static void play_sound_weather(int event) {
 	if (weather_channel != -1) { //paranoia? should always be != -1 at this point
 		weather_current = event;
 		weather_current_vol = -1;
-		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume) * grid_weather_volume) / 100);
+		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume, vols) * grid_weather_volume) / 100);
 	}
 #endif
 
@@ -1467,7 +1566,7 @@ static void play_sound_weather(int event) {
 /* Overlay a weather noise, with a certain volume -- WEATHER_VOL_PARTICLES */
 static void play_sound_weather_vol(int event, int vol) {
 	Mix_Chunk *wave = NULL;
-	int s, new_wc;
+	int s, new_wc, vols = 100;
 
 	/* allow halting a muted yet playing sound, before checking for DISABLE_MUTED_AUDIO */
 	if (event == -2 && weather_channel != -1) {
@@ -1506,6 +1605,11 @@ static void play_sound_weather_vol(int event, int vol) {
 	if (!cfg_audio_master || !cfg_audio_weather) return;
 #endif
 
+#ifdef USER_VOLUME_SFX
+	/* Apply user-defined custom volume modifier */
+	if (samples[event].volume) vols = samples[event].volume;
+#endif
+
 	/* we're already in this weather? */
 	if (weather_channel != -1 && weather_current == event &&
 	    Mix_FadingChannel(weather_channel) != MIX_FADING_OUT) {
@@ -1539,7 +1643,7 @@ static void play_sound_weather_vol(int event, int vol) {
 				weather_vol_smooth--;
 
 //c_message_add(format("smooth %d", weather_vol_smooth));
-		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth) * grid_weather_volume) / 100);
+		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth, vols) * grid_weather_volume) / 100);
 
 		/* Done */
 		return;
@@ -1580,7 +1684,7 @@ static void play_sound_weather_vol(int event, int vol) {
 	new_wc = Mix_PlayChannel(weather_channel, wave, -1);
 	if (new_wc != -1) {
 		weather_vol_smooth = (cfg_audio_weather_volume * vol) / 100; /* set initially, instantly */
-		Mix_Volume(new_wc, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth) * grid_weather_volume) / 100);
+		Mix_Volume(new_wc, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth, vols) * grid_weather_volume) / 100);
 
 		/* weird bug (see above) apparently might STILL occur for some people - hack it moar: */
 		if (cfg_audio_weather)
@@ -1612,7 +1716,7 @@ static void play_sound_weather_vol(int event, int vol) {
 		weather_current_vol = vol;
 
 		weather_vol_smooth = (cfg_audio_weather_volume * vol) / 100; /* set initially, instantly */
-		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth) * grid_weather_volume) / 100);
+		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth, vols) * grid_weather_volume) / 100);
 	} else {
 		//failed to start playing?
 		if (new_wc == -1) {
@@ -1631,7 +1735,7 @@ static void play_sound_weather_vol(int event, int vol) {
 				weather_current = event;
 				weather_current_vol = vol;
 				weather_vol_smooth = (cfg_audio_weather_volume * vol) / 100; /* set initially, instantly */
-				Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth) * grid_weather_volume) / 100);
+				Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth, vols) * grid_weather_volume) / 100);
 			}
 		}
 	}
@@ -1646,7 +1750,7 @@ static void play_sound_weather_vol(int event, int vol) {
 	if (weather_channel != -1) { //paranoia? should always be != -1 at this point
 		weather_current = event;
 		weather_current_vol = vol;
-		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * vol) / 100) * grid_weather_volume) / 100);
+		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * vol) / 100, vols) * grid_weather_volume) / 100);
 	}
 #endif
 
@@ -1657,16 +1761,23 @@ static void play_sound_weather_vol(int event, int vol) {
 
 /* make sure volume is set correct after fading-in has been completed (might be just paranoia) */
 void weather_handle_fading(void) {
+	int vols = 100;
+
 	if (weather_channel == -1) { //paranoia
 		weather_fading = 0;
 		return;
 	}
 
+#ifdef USER_VOLUME_SFX
+	/* Apply user-defined custom volume modifier */
+	if (weather_current != -1 && samples[weather_current].volume) vols = samples[weather_current].volume;
+#endif
+
 	if (Mix_FadingChannel(weather_channel) == MIX_NO_FADING) {
 #ifndef WEATHER_VOL_PARTICLES
-		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume) * grid_weather_volume) / 100);
+		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume, vols) * grid_weather_volume) / 100);
 #else
-		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth) * grid_weather_volume) / 100);
+		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth, vols) * grid_weather_volume) / 100);
 #endif
 		weather_fading = 0;
 		return;
@@ -1676,7 +1787,7 @@ void weather_handle_fading(void) {
 /* Overlay an ambient sound effect */
 static void play_sound_ambient(int event) {
 	Mix_Chunk *wave = NULL;
-	int s, new_ac;
+	int s, new_ac, vols = 100;
 
 #ifdef DEBUG_SOUND
 	puts(format("psa: ch %d, ev %d", ambient_channel, event));
@@ -1751,6 +1862,11 @@ static void play_sound_ambient(int event) {
 	s = rand_int(samples[event].num);
 	wave = samples[event].wavs[s];
 
+#ifdef USER_VOLUME_SFX
+	/* Apply user-defined custom volume modifier */
+	if (samples[event].volume) vols = samples[event].volume;
+#endif
+
 	/* Try loading it, if it's not cached */
 	if (!wave) {
 #if 0 /* for ambient sounds. we don't drop them as we'd do for "normal " sfx, \
@@ -1777,7 +1893,7 @@ static void play_sound_ambient(int event) {
 #if 1 /* volume glitch paranoia (first fade-in seems to move volume to 100% instead of designated cfg_audio_... */
 	new_ac = Mix_PlayChannel(ambient_channel, wave, -1);
 	if (new_ac != -1) {
-		Mix_Volume(new_ac, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume) * grid_ambient_volume) / 100);
+		Mix_Volume(new_ac, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume, vols) * grid_ambient_volume) / 100);
 
 		/* weird bug (see above) apparently might STILL occur for some people - hack it moar: */
 		if (cfg_audio_sound)
@@ -1806,7 +1922,7 @@ static void play_sound_ambient(int event) {
 		//successfully started playing the first ambient
 		ambient_channel = new_ac;
 		ambient_current = event;
-		Mix_Volume(ambient_channel, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume) * grid_ambient_volume) / 100);
+		Mix_Volume(ambient_channel, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume, vols) * grid_ambient_volume) / 100);
 	} else {
 		//failed to start playing?
 		if (new_ac == -1) {
@@ -1822,7 +1938,7 @@ static void play_sound_ambient(int event) {
 				Mix_HaltChannel(ambient_channel);
 				ambient_channel = new_ac;
 				ambient_current = event;
-				Mix_Volume(ambient_channel, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume) * grid_ambient_volume) / 100);
+				Mix_Volume(ambient_channel, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume, vols) * grid_ambient_volume) / 100);
 			}
 		}
 		
@@ -1837,7 +1953,7 @@ static void play_sound_ambient(int event) {
 	}
 	if (ambient_channel != -1) { //paranoia? should always be != -1 at this point
 		ambient_current = event;
-		Mix_Volume(ambient_channel, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume) * grid_ambient_volume) / 100);
+		Mix_Volume(ambient_channel, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume, vols) * grid_ambient_volume) / 100);
 	}
 #endif
 
@@ -1848,13 +1964,20 @@ static void play_sound_ambient(int event) {
 
 /* make sure volume is set correct after fading-in has been completed (might be just paranoia) */
 void ambient_handle_fading(void) {
+	int vols = 100;
+
 	if (ambient_channel == -1) { //paranoia
 		ambient_fading = 0;
 		return;
 	}
 
+#ifdef USER_VOLUME_SFX
+	/* Apply user-defined custom volume modifier */
+	if (ambient_current != -1 && samples[ambient_current].volume) vols = samples[ambient_current].volume;
+#endif
+
 	if (Mix_FadingChannel(ambient_channel) == MIX_NO_FADING) {
-		Mix_Volume(ambient_channel, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume) * grid_ambient_volume) / 100);
+		Mix_Volume(ambient_channel, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume, vols) * grid_ambient_volume) / 100);
 		ambient_fading = 0;
 		return;
 	}
@@ -1864,7 +1987,7 @@ void ambient_handle_fading(void) {
  * Play a music of type "event".
  */
 static bool play_music(int event) {
-	int n, initials = 0;
+	int n, initials = 0, vols = 100;
 
 	/* Paranoia */
 	if (event < -4 || event >= MUSIC_MAX) return FALSE;
@@ -1920,18 +2043,25 @@ static bool play_music(int event) {
 	/* Special hack for ghost music (4.7.4b+), see handle_music() in util.c */
 	if (event == 89 && is_atleast(&server_version, 4, 7, 4, 2, 0, 0)) skip_received_music = TRUE;
 
+#ifdef USER_VOLUME_MUS
+	/* Apply user-defined custom volume modifier */
+	if (songs[event].volume) vols = songs[event].volume;
+#endif
+
 	/* if music event is the same as is already running, don't do anything */
 	if (music_cur == event && Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT) {
-		/* Just change volume if requested */
-		if (music_vol != 100) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume));
-		music_vol = 100;
+		/* Just change volume if requested, ie if play_music() is called after a play_music_vol() call: We revert back to 100% volume then. */
+		if (music_vol != 100) {
+			music_vol = 100;
+			Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, vols));
+		}
 		return TRUE; //pretend we played it
 	}
 
 	music_next = event;
 	if (music_vol != 100) {
 		music_vol = 100;
-		Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume));
+		Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, vols));
 	}
 	/* handle 'initial' songs with priority */
 	for (n = 0; n < songs[music_next].num; n++) if (songs[music_next].initial[n]) initials++;
@@ -1972,7 +2102,7 @@ static bool play_music(int event) {
 	return TRUE;
 }
 static bool play_music_vol(int event, char vol) {
-	int n, initials = 0;
+	int n, initials = 0, vols = 100;
 
 	/* Paranoia */
 	if (event < -4 || event >= MUSIC_MAX) return FALSE;
@@ -2028,17 +2158,22 @@ static bool play_music_vol(int event, char vol) {
 	/* Special hack for ghost music (4.7.4b+), see handle_music() in util.c */
 	if (event == 89 && is_atleast(&server_version, 4, 7, 4, 2, 0, 0)) skip_received_music = TRUE;
 
+#ifdef USER_VOLUME_MUS
+	/* Apply user-defined custom volume modifier */
+	if (songs[event].volume) vols = songs[event].volume;
+#endif
+
 	/* if music event is the same as is already running, don't do anything */
 	if (music_cur == event && Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT) {
 		/* Just change volume if requested */
-		if (music_vol != vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[(int)vol]) / MIX_MAX_VOLUME));
+		if (music_vol != vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[(int)vol]) / MIX_MAX_VOLUME, vols));
 		music_vol = vol;
 		return TRUE; //pretend we played it
 	}
 
 	music_next = event;
 	music_vol = vol;
-	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[(int)vol]) / MIX_MAX_VOLUME));
+	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[(int)vol]) / MIX_MAX_VOLUME, vols));
 	/* handle 'initial' songs with priority */
 	for (n = 0; n < songs[music_next].num; n++) if (songs[music_next].initial[n]) initials++;
 	/* no initial songs - just pick a song normally */
@@ -2162,6 +2297,11 @@ static void fadein_next_music(void) {
 		return;
 	}
 
+#ifdef USER_VOLUME_MUS
+	/* Apply user-defined custom volume modifier */
+	if (songs[music_next].volume) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, songs[music_next].volume));
+#endif
+
 	/* Actually play the thing */
 //#ifdef DISABLE_MUTED_AUDIO /* now these vars are also used for 'continous' music across music events */
 	music_cur = music_next;
@@ -2205,6 +2345,12 @@ static bool play_music_instantly(int event) {
 		return FALSE;
 	}
 
+#ifdef USER_VOLUME_MUS
+	/* Apply user-defined custom volume modifier */
+	if (songs[event].volume) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, songs[event].volume));
+	else Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 100));
+#endif
+
 	/* Actually play the thing. We loop this specific sub-song infinitely and ignore c_cfg.shuffle_music (or 'initial' song status) here.
 	   To get to hear other sub-songs, the user can press ENTER again to restart this music event with a different sub-song. */
 	Mix_PlayMusic(wave, -1);
@@ -2232,6 +2378,11 @@ static void reenable_music(void) {
 	/* If audio is still being loaded/cached, we might just have to exit here for now */
 	if (!wave) return;
 
+#ifdef USER_VOLUME_MUS
+	/* Apply user-defined custom volume modifier */
+	if (songs[music_cur].volume) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, songs[music_cur].volume));
+#endif
+
 	/* Take up playing again immediately, no fading in */
 	Mix_PlayMusic(wave, c_cfg.shuffle_music ? 0 : -1);
 }
@@ -2241,25 +2392,28 @@ static void reenable_music(void) {
  * Set mixing levels in the SDL module.
  */
 static void set_mixing_sdl(void) {
-//	puts(format("mixer set to %d, %d, %d.", cfg_audio_music_volume, cfg_audio_sound_volume, cfg_audio_weather_volume));
+	int vols = 100;
+
 #if 0 /* don't use relative sound-effect specific volumes, transmitted from the server? */
-	Mix_Volume(-1, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
+	Mix_Volume(-1, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume, 100));
 #else /* use relative volumes (4.4.5b+) */
 	int n;
+
+	/* SFX channels */
 	for (n = 0; n < cfg_max_channels; n++) {
 		if (n == weather_channel) continue;
 		if (n == ambient_channel) continue;
 
 		/* HACK - use weather volume for thunder sfx */
 		if (channel_sample[n] != -1 && channel_type[n] == SFX_TYPE_WEATHER)
-			Mix_Volume(n, (CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * channel_volume[n]) / 100) * grid_weather_volume) / 100);
+			Mix_Volume(n, (CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * channel_volume[n]) / 100, 100) * grid_weather_volume) / 100);
 		else
 		/* grid_ambient_volume influences non-looped ambient sfx clips */
 		if (channel_sample[n] != -1 && channel_type[n] == SFX_TYPE_AMBIENT)
-			Mix_Volume(n, (CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * channel_volume[n]) / 100) * grid_ambient_volume) / 100);
+			Mix_Volume(n, (CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * channel_volume[n]) / 100, 100) * grid_ambient_volume) / 100);
 		else
 		/* Note: Linear scaling is used here to allow more precise control at the server end */
-			Mix_Volume(n, CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * channel_volume[n]) / 100));
+			Mix_Volume(n, CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * channel_volume[n]) / 100, 100));
 
  #ifdef DISABLE_MUTED_AUDIO
 		if ((!cfg_audio_master || !cfg_audio_sound) && Mix_Playing(n))
@@ -2267,29 +2421,38 @@ static void set_mixing_sdl(void) {
  #endif
 	}
 #endif
+
+	/* Music channel */
+#ifdef USER_VOLUME_MUS
+	/* Apply user-defined custom volume modifier */
+	if (music_cur != -1 && songs[music_cur].volume) vols = songs[music_cur].volume;
+#endif
 	//Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume));
-	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[(int)music_vol]) / MIX_MAX_VOLUME));
+	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[(int)music_vol]) / MIX_MAX_VOLUME, vols));
 #ifdef DISABLE_MUTED_AUDIO
 	if (!cfg_audio_master || !cfg_audio_music) {
 		if (Mix_PlayingMusic()) Mix_HaltMusic();
 	} else if (!Mix_PlayingMusic()) reenable_music();
 #endif
 
+	/* SFX channel (weather) */
 	if (weather_channel != -1 && Mix_FadingChannel(weather_channel) != MIX_FADING_OUT) {
 #ifndef WEATHER_VOL_PARTICLES
-		weather_channel_volume = (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume) * grid_weather_volume) / 100;
+		weather_channel_volume = (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume, 100) * grid_weather_volume) / 100;
 		Mix_Volume(weather_channel, weather_channel_volume);
 #else
 		Mix_Volume(weather_channel, weather_channel_volume);
 #endif
 	}
 
+	/* SFX channel (ambient) */
 	if (ambient_channel != -1 && Mix_FadingChannel(ambient_channel) != MIX_FADING_OUT) {
-		ambient_channel_volume = (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume) * grid_ambient_volume) / 100;
+		ambient_channel_volume = (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume, 100) * grid_ambient_volume) / 100;
 		Mix_Volume(ambient_channel, ambient_channel_volume);
 	}
 
 #ifdef DISABLE_MUTED_AUDIO
+	/* Halt weather/ambient SFX channel immediately */
 	if (!cfg_audio_master || !cfg_audio_weather) {
 		weather_resume = TRUE;
 		if (weather_channel != -1 && Mix_Playing(weather_channel))
@@ -2770,7 +2933,7 @@ void do_cmd_options_sfx_sdl(void) {
 				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
 
 #ifdef USER_VOLUME_SFX
-			if (samples[j].volume) Term_putstr(horiz_offset + 1 + 12 + 36 + 1, vertikal_offset + i + 10 - y, -1, a, format("%2d%%", samples[j].volume));
+			if (samples[j].volume && samples[j].volume != 100) Term_putstr(horiz_offset + 1 + 12 + 36 + 1, vertikal_offset + i + 10 - y, -1, a, format("%2d%%", samples[j].volume));
 #endif
 		}
 
@@ -2955,8 +3118,8 @@ void do_cmd_options_sfx_sdl(void) {
 
 			inkey_msg = TRUE;
 			Term_putstr(0, 1, -1, TERM_L_BLUE, "                                                                      ");
-			Term_putstr(0, 1, -1, TERM_L_BLUE, "  Enter volume % (1..99, other values will reset to 100%): ");
-			strcpy(tmp, "50");
+			Term_putstr(0, 1, -1, TERM_L_BLUE, "  Enter volume % (1..200, other values will reset to 100%): ");
+			strcpy(tmp, "100");
 			if (!askfor_aux(tmp, 4, 0)) {
 				inkey_msg = inkey_msg_old;
 				samples[j_sel].volume = 0;
@@ -2964,8 +3127,9 @@ void do_cmd_options_sfx_sdl(void) {
 			}
 			inkey_msg = inkey_msg_old;
 			i = atoi(tmp);
-			if (i < 1 || i > 99) i = 0;
+			if (i < 1 || i > 200 || i == 100) i = 0;
 			samples[j_sel].volume = i;
+			/* Note: Unlike for music we don't adjust an already playing SFX' volume live here, instead the volume is applied the next time it is played. */
 			break;
 			}
 #endif
@@ -3186,7 +3350,7 @@ void do_cmd_options_mus_sdl(void) {
 				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
 
 #ifdef USER_VOLUME_MUS
-			if (songs[j].volume) Term_putstr(horiz_offset + 1 + 12 + 36 + 1, vertikal_offset + i + 10 - y, -1, a, format("%2d%%", songs[j].volume));
+			if (songs[j].volume && songs[j].volume != 100) Term_putstr(horiz_offset + 1 + 12 + 36 + 1 - 6, vertikal_offset + i + 10 - y, -1, a, format("%2d%%", songs[j].volume)); //-6 to coexist with the new playtime display
 #endif
 		}
 
@@ -3388,8 +3552,8 @@ void do_cmd_options_mus_sdl(void) {
 
 			inkey_msg = TRUE;
 			Term_putstr(0, 1, -1, TERM_L_BLUE, "                                                                      ");
-			Term_putstr(0, 1, -1, TERM_L_BLUE, "  Enter volume % (1..99, other values will reset to 100%): ");
-			strcpy(tmp, "50");
+			Term_putstr(0, 1, -1, TERM_L_BLUE, "  Enter volume % (1..200, other values will reset to 100%): ");
+			strcpy(tmp, "100");
 			if (!askfor_aux(tmp, 4, 0)) {
 				inkey_msg = inkey_msg_old;
 				songs[j_sel].volume = 0;
@@ -3397,8 +3561,14 @@ void do_cmd_options_mus_sdl(void) {
 			}
 			inkey_msg = inkey_msg_old;
 			i = atoi(tmp);
-			if (i < 1 || i > 99) i = 0;
+			if (i < 1 || i > 200 || i == 100) i = 0;
 			songs[j_sel].volume = i;
+
+			/* If song is currently playing, adjust volume live.
+			   (Note: If the selected song was already playing in-game via play_music_vol() this will ovewrite the volume
+			   and cause 'wrong' volume, but when it's actually re-played via play_music_vol() the volume will be correct.) */
+			if (!i) i = 100; /* Revert to default volume */
+			if (j_sel == music_cur) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, i));
 			break;
 			}
 #endif
