@@ -1605,11 +1605,6 @@ static void play_sound_weather_vol(int event, int vol) {
 	if (!cfg_audio_master || !cfg_audio_weather) return;
 #endif
 
-#ifdef USER_VOLUME_SFX
-	/* Apply user-defined custom volume modifier */
-	if (samples[event].volume) vols = samples[event].volume;
-#endif
-
 	/* we're already in this weather? */
 	if (weather_channel != -1 && weather_current == event &&
 	    Mix_FadingChannel(weather_channel) != MIX_FADING_OUT) {
@@ -1642,6 +1637,11 @@ static void play_sound_weather_vol(int event, int vol) {
 		else if (weather_vol_smooth > weather_vol_smooth_anti_oscill)
 				weather_vol_smooth--;
 
+#ifdef USER_VOLUME_SFX
+		/* Apply user-defined custom volume modifier */
+		if (samples[event].volume) vols = samples[event].volume;
+#endif
+
 //c_message_add(format("smooth %d", weather_vol_smooth));
 		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth, vols) * grid_weather_volume) / 100);
 
@@ -1660,6 +1660,11 @@ static void play_sound_weather_vol(int event, int vol) {
 
 	/* Check there are samples for this event */
 	if (!samples[event].num) return;
+
+#ifdef USER_VOLUME_SFX
+	/* Apply user-defined custom volume modifier */
+	if (samples[event].volume) vols = samples[event].volume;
+#endif
 
 	/* Choose a random event */
 	s = rand_int(samples[event].num);
