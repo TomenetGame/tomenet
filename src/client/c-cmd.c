@@ -2158,6 +2158,8 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 	/* Searching for a slash command? Always translate to uppercase 's'earch */
 	if (init_search_string && init_search_string[0] == '/') init_search_type = 2;
+	/* Searching for a predefined inscriptions? Always translate to uppercase 's'earch  */
+	if (init_search_string && init_search_string[0] == '!' && !init_search_string[2]) init_search_type = 2;
 
 	switch (init_search_type) {
 	case 1:
@@ -3599,8 +3601,12 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				break;
 			}
 			/* Exception: If first char is not alpha-num, don't do uppercase restriction (for "(STR)" etc);
-			   exception from exception: Allow upper-case search for slash commands! */
-			if (!isalphanum(searchstr[0]) && searchstr[0] != '/') search_uppercase_ok = FALSE;
+			   exception from exception: Allow upper-case search for slash commands!
+			   exception 2: Allow upper-case search for predefined inscriptions: */
+			if (!isalphanum(searchstr[0]) && searchstr[0] != '/' && !(searchstr[0] == '!' && !searchstr[2])) search_uppercase_ok = FALSE;
+			/* Hack: Inscriptions: Find both !<lowercase> and !<uppercase> */
+			if (searchstr[0] == '!' && !searchstr[2]) search_uppercase = 2; /* skip tier 4 and 3 (all-uppercase in actual text), start with 2 instead */
+
 			/* Check and go */
 			if (!search_uppercase_ok) search_uppercase = FALSE; /* must contain at least 1 (upper-case) letter */
 
