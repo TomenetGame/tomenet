@@ -2021,7 +2021,7 @@ The !* inscription, a "combo" shortcut inscription:
     !s          Prevent selling an item to shop (!s).
     !v          Prevent throwing an item away.
     !=          Automatically pick the item up from the floor.
-   (!h          Prevent selling a house key. Keys usually aren't used anymore
+    !h          (Prevent selling a house key. Keys usually aren't used anymore
                 though.)
 
     For example, if you found a great item and you want to avoid accidentally..
