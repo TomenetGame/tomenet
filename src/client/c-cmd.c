@@ -2863,6 +2863,8 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				/* Expand 'Update' to 'Updating' */
 				if (!strcasecmp(buf, "update")) strcpy(buf, "updating");
 
+				if (my_strcasestr(buf, "auto") && !my_strcasestr(buf, "/auto") && my_strcasestr(buf, "ret")) strcpy(buf, "auto-ret"); //auto-retaliation, but not slash command
+
 				/* Note: Class/race shortcuts such as hk, rm, mc, cp / ho, ht, he/he, de
 				   aren't feasible because they are already partially in use for other things or colliding. */
 
