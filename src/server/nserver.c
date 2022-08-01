@@ -5101,6 +5101,8 @@ static int Receive_play(int ind) {
 			connp->Client_setup.screen_hgt = SCREEN_HGT;
 		}
 
+		char32_t max_char = 0;
+
 		/* Read the "unknown" char/attrs */
 		for (i = 0; i < TV_MAX; i++) {
 			connp->Client_setup.u_char[i] = 0; /* Needs to be initialized for proper packet read. */
@@ -5118,14 +5120,16 @@ static int Receive_play(int ind) {
 				break;
 #endif
 			}
+
+			if ( max_char < connp->Client_setup.u_char[i] ) {
+				max_char = connp->Client_setup.u_char[i];
+			}
 		}
 
 		/* Read the "feature" char/attrs */
-#if 1 /*todo: fix*/
 		if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) limit = MAX_F_IDX;
-		else
-#endif
-		limit = MAX_F_IDX_COMPAT;
+		else limit = MAX_F_IDX_COMPAT;
+
 		for (i = 0; i < limit; i++) {
 			connp->Client_setup.f_char[i] = 0; /* Needs to be initialized for proper packet read. */
 			/* 5.0.0 and newer clients use 32bit character size. */
@@ -5141,6 +5145,10 @@ static int Receive_play(int ind) {
 #else
 				break;
 #endif
+			}
+
+			if ( max_char < connp->Client_setup.f_char[i] ) {
+				max_char = connp->Client_setup.f_char[i];
 			}
 		}
 
@@ -5166,6 +5174,10 @@ static int Receive_play(int ind) {
 				break;
 #endif
 			}
+
+			if ( max_char < connp->Client_setup.k_char[i] ) {
+				max_char = connp->Client_setup.k_char[i];
+			}
 		}
 
 		/* Read the "monster" char/attrs */
@@ -5190,8 +5202,18 @@ static int Receive_play(int ind) {
 				break;
 #endif
 			}
+
+			if ( max_char < connp->Client_setup.r_char[i] ) {
+				max_char = connp->Client_setup.r_char[i];
+			}
 		}
-#endif	// 0
+
+		/* Calculate and update minimum character transfer bytes */
+		connp->Client_setup.char_transfer_bytes = 0;
+		for ( ; max_char != 0; max_char >>= 8 ) {
+			connp->Client_setup.char_transfer_bytes += 1;
+		}
+#endif	// #if 1
 	}
 	if (connp->state != CONN_LOGIN) {
 		if (connp->state != CONN_PLAYING) {
@@ -6814,16 +6836,44 @@ int Send_char(int Ind, int x, int y, byte a, char32_t c) {
 			else if (p_ptr->f_char_mod[unm_c_idx]) c2 = p_ptr->f_char_mod[unm_c_idx];
 
 			/* 5.0.0 and newer clients use 32bit character size. */
-			if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0))
-				Packet_printf(&connp2->c, "%c%c%c%c%u", PKT_CHAR, x, y, a, c2);
-			else
+			if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
+				/* Transfer only the relevant bytes, according to client setup.*/
+				char * pc = (char *)&c2;
+				switch (connp->Client_setup.char_transfer_bytes) {
+					case 0:
+					case 1:
+						Packet_printf(&connp2->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, pc[0]);
+					case 2:
+						Packet_printf(&connp2->c, "%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[1], pc[0]);
+					case 3:
+						Packet_printf(&connp2->c, "%c%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[2], pc[1], pc[0]);
+					case 4:
+					default:
+						Packet_printf(&connp2->c, "%c%c%c%c%u", PKT_CHAR, x, y, a, c2);
+				}
+			} else {
 				Packet_printf(&connp2->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, (char)c2);
+			}
 		}
 	}
 
 	/* 5.0.0 and newer clients use 32bit character size. */
-	if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%c%u", PKT_CHAR, x, y, a, c);
+	if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
+		/* Transfer only the relevant bytes, according to client setup.*/
+		char * pc = (char *)&c;
+		switch (connp->Client_setup.char_transfer_bytes) {
+			case 0:
+			case 1:
+				return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, pc[0]);
+			case 2:
+				return Packet_printf(&connp->c, "%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[1], pc[0]);
+			case 3:
+				return Packet_printf(&connp->c, "%c%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[2], pc[1], pc[0]);
+			case 4:
+			default:
+				return Packet_printf(&connp->c, "%c%c%c%c%u", PKT_CHAR, x, y, a, c);
+		}
+	}
 	return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, (char)c);
 }
 
@@ -13559,6 +13609,8 @@ static int Receive_client_setup(int ind) {
 		return n;
 	}
 
+	char32_t max_char = 0;
+
 	/* Read the "unknown" char/attrs */
 	for (i = 0; i < TV_MAX; i++) {
 		connp->Client_setup.u_char[i] = 0; /* Needs to be initialized for proper packet read. */
@@ -13572,6 +13624,10 @@ static int Receive_client_setup(int ind) {
 		else if (n < 0) {
 			Destroy_connection(ind, "read error");
 			return n;
+		}
+
+		if ( max_char < connp->Client_setup.u_char[i] ) {
+			max_char = connp->Client_setup.u_char[i];
 		}
 	}
 
@@ -13589,6 +13645,10 @@ static int Receive_client_setup(int ind) {
 			Destroy_connection(ind, "read error");
 			return n;
 		}
+
+		if ( max_char < connp->Client_setup.f_char[i] ) {
+			max_char = connp->Client_setup.f_char[i];
+		}
 	}
 
 	/* Read the "object" char/attrs */
@@ -13604,6 +13664,10 @@ static int Receive_client_setup(int ind) {
 		else if (n < 0) {
 			Destroy_connection(ind, "read error");
 			return n;
+		}
+
+		if ( max_char < connp->Client_setup.k_char[i] ) {
+			max_char = connp->Client_setup.k_char[i];
 		}
 	}
 
@@ -13621,6 +13685,16 @@ static int Receive_client_setup(int ind) {
 			Destroy_connection(ind, "read error");
 			return n;
 		}
+
+		if ( max_char < connp->Client_setup.r_char[i] ) {
+			max_char = connp->Client_setup.r_char[i];
+		}
+	}
+
+	/* Calculate and update minimum character transfer bytes */
+	connp->Client_setup.char_transfer_bytes = 0;
+	for ( ; max_char != 0; max_char >>= 8 ) {
+		connp->Client_setup.char_transfer_bytes += 1;
 	}
 
 	set_player_font_definitions(ind, player);

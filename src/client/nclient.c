@@ -1392,53 +1392,78 @@ int Net_start(int sex, int race, int class) {
 		Packet_printf(&wbuf, "%d%d", screen_wid, screen_hgt);
 
 #ifndef BREAK_GRAPHICS
-	/* 5.0.0 and newer servers can communicate using 32bit character size redefinitions. */
-	if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
-		/* Send the "unknown" redefinitions */
-		for (i = 0; i < TV_MAX; i++)
+	char32_t max_char = 0;
+	int limit;
+
+	/* Send the "unknown" redefinitions */
+	for (i = 0; i < TV_MAX; i++) {
+		/* 5.0.0 and newer servers communicate using 32bit character size. */
+		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
 			Packet_printf(&wbuf, "%c%u", Client_setup.u_attr[i], Client_setup.u_char[i]);
-
-		/* Send the "feature" redefinitions */
-		for (i = 0; i < MAX_F_IDX; i++)
-			Packet_printf(&wbuf, "%c%u", Client_setup.f_attr[i], Client_setup.f_char[i]);
-
-		/* Send the "object" redefinitions */
-		for (i = 0; i < MAX_K_IDX; i++)
-			Packet_printf(&wbuf, "%c%u", Client_setup.k_attr[i], Client_setup.k_char[i]);
-
-		/* Send the "monster" redefinitions */
-		for (i = 0; i < MAX_R_IDX; i++)
-			Packet_printf(&wbuf, "%c%u", Client_setup.r_attr[i], Client_setup.r_char[i]);
-	} else {
-		/* Send the "unknown" redefinitions */
-		for (i = 0; i < TV_MAX; i++)
-			Packet_printf(&wbuf, "%c%c", Client_setup.u_attr[i], Client_setup.u_char[i]);
-	
-		if (!is_newer_than(&server_version, 4, 6, 1, 2, 0, 0)) {
-			/* Send the "feature" redefinitions */
-			for (i = 0; i < MAX_F_IDX_COMPAT; i++)
-				Packet_printf(&wbuf, "%c%c", Client_setup.f_attr[i], Client_setup.f_char[i]);
-
-			/* Send the "object" redefinitions */
-			for (i = 0; i < MAX_K_IDX_COMPAT; i++)
-				Packet_printf(&wbuf, "%c%c", Client_setup.k_attr[i], Client_setup.k_char[i]);
-
-			/* Send the "monster" redefinitions */
-			for (i = 0; i < MAX_R_IDX_COMPAT; i++)
-				Packet_printf(&wbuf, "%c%c", Client_setup.r_attr[i], Client_setup.r_char[i]);
 		} else {
-			/* Send the "feature" redefinitions */
-			for (i = 0; i < MAX_F_IDX; i++)
-				Packet_printf(&wbuf, "%c%c", Client_setup.f_attr[i], Client_setup.f_char[i]);
-
-			/* Send the "object" redefinitions */
-			for (i = 0; i < MAX_K_IDX; i++)
-				Packet_printf(&wbuf, "%c%c", Client_setup.k_attr[i], Client_setup.k_char[i]);
-
-			/* Send the "monster" redefinitions */
-			for (i = 0; i < MAX_R_IDX; i++)
-				Packet_printf(&wbuf, "%c%c", Client_setup.r_attr[i], Client_setup.r_char[i]);
+			Packet_printf(&wbuf, "%c%c", Client_setup.u_attr[i], Client_setup.u_char[i]);
 		}
+
+		if ( max_char < Client_setup.u_char[i] ) {
+			max_char = Client_setup.u_char[i];
+		}
+	}
+
+	/* Send the "feature" redefinitions */
+	if (is_newer_than(&server_version, 4, 6, 1, 2, 0, 0)) limit = MAX_F_IDX;
+	else limit = MAX_F_IDX_COMPAT;
+
+	for (i = 0; i < limit; i++) {
+		/* 5.0.0 and newer servers communicate using 32bit character size. */
+		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
+			Packet_printf(&wbuf, "%c%u", Client_setup.f_attr[i], Client_setup.f_char[i]);
+		} else {
+			Packet_printf(&wbuf, "%c%c", Client_setup.f_attr[i], Client_setup.f_char[i]);
+		}
+
+		if ( max_char < Client_setup.f_char[i] ) {
+			max_char = Client_setup.f_char[i];
+		}
+	}
+
+	/* Send the "object" redefinitions */
+	if (is_newer_than(&server_version, 4, 6, 1, 2, 0, 0)) limit = MAX_K_IDX;
+	else limit = MAX_K_IDX_COMPAT;
+
+	for (i = 0; i < limit; i++) {
+		/* 5.0.0 and newer servers communicate using 32bit character size. */
+		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
+			Packet_printf(&wbuf, "%c%u", Client_setup.k_attr[i], Client_setup.k_char[i]);
+		} else {
+			Packet_printf(&wbuf, "%c%c", Client_setup.k_attr[i], Client_setup.k_char[i]);
+		}
+
+		if ( max_char < Client_setup.k_char[i] ) {
+			max_char = Client_setup.k_char[i];
+		}
+	}
+
+	/* Send the "monster" redefinitions */
+	if (is_newer_than(&server_version, 4, 6, 1, 2, 0, 0)) limit = MAX_R_IDX;
+	else limit = MAX_R_IDX_COMPAT;
+
+	for (i = 0; i < limit; i++) {
+		/* 5.0.0 and newer servers communicate using 32bit character size. */
+		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
+			Packet_printf(&wbuf, "%c%u", Client_setup.r_attr[i], Client_setup.r_char[i]);
+		} else {
+			Packet_printf(&wbuf, "%c%c", Client_setup.r_attr[i], Client_setup.r_char[i]);
+		}
+
+		if ( max_char < Client_setup.r_char[i] ) {
+			max_char = Client_setup.r_char[i];
+		}
+	}
+
+	/* Calculate and update minimum character transfer bytes */
+	Client_setup.char_transfer_bytes = 0;
+	for ( ; max_char != 0; max_char >>= 8 ) {
+		Client_setup.char_transfer_bytes += 1;
 	}
 #endif
 
@@ -2560,7 +2585,23 @@ int Receive_char(void) {
 
 	/* 5.0.0 and newer servers communicate using 32bit character size. */
 	if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
-		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%u", &ch, &x, &y, &a, &c)) <= 0) return n;
+		/* Transfer only minimum number of bytes needed, according to client setup.*/
+		char *pc = (char *)&c;
+		switch (Client_setup.char_transfer_bytes) {
+			case 0:
+			case 1:
+				if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &x, &y, &a, &c)) <= 0) return n;
+				break;
+			case 2:
+				if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c", &ch, &x, &y, &a, &pc[1], &pc[0])) <= 0) return n;
+				break;
+			case 3:
+				if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c", &ch, &x, &y, &a, &pc[2], &pc[1], &pc[0])) <= 0) return n;
+				break;
+			case 4:
+			default:
+				if ((n = Packet_scanf(&rbuf, "%c%c%c%c%u", &ch, &x, &y, &a, &c)) <= 0) return n;
+		}
 	} else {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &x, &y, &a, &c)) <= 0) return n;
 	}
@@ -6426,39 +6467,68 @@ int Send_client_setup(void) {
 #if 1 /* send it all at once (too much for buffers on Windows) */
 	if ((n = Packet_printf(&wbuf, "%c", PKT_CLIENT_SETUP)) <= 0) return n;
 
-	/* 5.0.0 and newer servers communicate using 32bit character size. */
-	if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
-		/* Send the "unknown" redefinitions */
-		for (i = 0; i < TV_MAX; i++)
+	char32_t max_char = 0;
+
+	/* Send the "unknown" redefinitions */
+	for (i = 0; i < TV_MAX; i++) {
+		/* 5.0.0 and newer servers communicate using 32bit character size. */
+		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
 			Packet_printf(&wbuf, "%c%u", Client_setup.u_attr[i], Client_setup.u_char[i]);
-
-		/* Send the "feature" redefinitions */
-		for (i = 0; i < MAX_F_IDX; i++)
-			Packet_printf(&wbuf, "%c%u", Client_setup.f_attr[i], Client_setup.f_char[i]);
-
-		/* Send the "object" redefinitions */
-		for (i = 0; i < MAX_K_IDX; i++)
-			Packet_printf(&wbuf, "%c%u", Client_setup.k_attr[i], Client_setup.k_char[i]);
-
-		/* Send the "monster" redefinitions */
-		for (i = 0; i < MAX_R_IDX; i++)
-			Packet_printf(&wbuf, "%c%u", Client_setup.r_attr[i], Client_setup.r_char[i]);
-	} else {
-		/* Send the "unknown" redefinitions */
-		for (i = 0; i < TV_MAX; i++)
+		} else {
 			Packet_printf(&wbuf, "%c%c", Client_setup.u_attr[i], Client_setup.u_char[i]);
+		}
 
-		/* Send the "feature" redefinitions */
-		for (i = 0; i < MAX_F_IDX; i++)
+		if ( max_char < Client_setup.u_char[i] ) {
+			max_char = Client_setup.u_char[i];
+		}
+	}
+
+	/* Send the "feature" redefinitions */
+	for (i = 0; i < MAX_F_IDX; i++) {
+		/* 5.0.0 and newer servers communicate using 32bit character size. */
+		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
+			Packet_printf(&wbuf, "%c%u", Client_setup.f_attr[i], Client_setup.f_char[i]);
+		} else {
 			Packet_printf(&wbuf, "%c%c", Client_setup.f_attr[i], Client_setup.f_char[i]);
+		}
 
-		/* Send the "object" redefinitions */
-		for (i = 0; i < MAX_K_IDX; i++)
+		if ( max_char < Client_setup.f_char[i] ) {
+			max_char = Client_setup.f_char[i];
+		}
+	}
+
+	/* Send the "object" redefinitions */
+	for (i = 0; i < MAX_K_IDX; i++) {
+		/* 5.0.0 and newer servers communicate using 32bit character size. */
+		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
+			Packet_printf(&wbuf, "%c%u", Client_setup.k_attr[i], Client_setup.k_char[i]);
+		} else {
 			Packet_printf(&wbuf, "%c%c", Client_setup.k_attr[i], Client_setup.k_char[i]);
+		}
 
-		/* Send the "monster" redefinitions */
-		for (i = 0; i < MAX_R_IDX; i++)
+		if ( max_char < Client_setup.k_char[i] ) {
+			max_char = Client_setup.k_char[i];
+		}
+	}
+
+	/* Send the "monster" redefinitions */
+	for (i = 0; i < MAX_R_IDX; i++) {
+		/* 5.0.0 and newer servers communicate using 32bit character size. */
+		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
+			Packet_printf(&wbuf, "%c%u", Client_setup.r_attr[i], Client_setup.r_char[i]);
+		} else {
 			Packet_printf(&wbuf, "%c%c", Client_setup.r_attr[i], Client_setup.r_char[i]);
+		}
+
+		if ( max_char < Client_setup.r_char[i] ) {
+			max_char = Client_setup.r_char[i];
+		}
+	}
+
+	/* Calculate and update minimum character transfer bytes */
+	Client_setup.char_transfer_bytes = 0;
+	for ( ; max_char != 0; max_char >>= 8 ) {
+		Client_setup.char_transfer_bytes += 1;
 	}
 #else /* send the bigger ones in chunks */
 	/* Send the "unknown" redefinitions */

@@ -1602,6 +1602,13 @@ struct client_setup_t {
 
 	byte r_attr[MAX_R_IDX];
 	char32_t r_char[MAX_R_IDX];
+
+	/* Holds number of bytes used to transfer a character stored in the u/f/k/r_char arrays.
+	 * If the maximum character value is low, there is no need to transfer all 4 bytes for a character, just transfer the relevant bytes.
+	 * It is computed and filled (by client and server) when server receives and client sends the client setup.
+	 * It is used when server sends a character to client (and client receives).
+	 * The server and client have to have the same value or the communication fails. */
+	int char_transfer_bytes;
 };
 
 
