@@ -11687,7 +11687,7 @@ other such occurances..
 (5.8) Special abilities of items
 --------------------------------
 FEATHER ('It makes you fall down gently like a feather.')
-        'Feather Falling'.
+        Feather Falling...
         Prevents you from slipping on icy floor.
         Lets you float down gently if you accidentally stumble into trap doors,
         pits or chasms, preventing any fall damage, including inventory damage.
