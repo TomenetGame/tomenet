@@ -38,6 +38,10 @@ extern char *roman_suffix(char* cname);
 #ifdef ENABLE_SUBINVEN
 //extern int get_subinven_size(int sval);
 #endif
+extern struct u32b_char_dict_t *u32b_char_dict_set(struct u32b_char_dict_t *start, uint32_t key, char value);
+extern char *u32b_char_dict_get(struct u32b_char_dict_t *start, uint32_t key);
+extern struct u32b_char_dict_t *u32b_char_dict_unset(struct u32b_char_dict_t *start, uint32_t key);
+extern struct u32b_char_dict_t *u32b_char_dict_free(struct u32b_char_dict_t *start);
 
 /* common/files.c */
 extern int local_file_init(int ind, unsigned short fnum, char *fname);
