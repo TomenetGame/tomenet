@@ -4941,7 +4941,8 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	    && full
  #endif
 	    )
-		fprintf(fff, "%s", a_text + a_info[o_ptr->name1].text);
+		if (a_info[o_ptr->name1].text)
+			fprintf(fff, "%s", a_text + a_info[o_ptr->name1].text);
 #endif
 
 #ifdef KIND_DIZ
@@ -4949,11 +4950,12 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (aware)
  #endif
 	{
-		fprintf(fff, "%s", k_text + k_info[o_ptr->k_idx].text);
+		if (k_info[o_ptr->k_idx].text)
+			fprintf(fff, "%s", k_text + k_info[o_ptr->k_idx].text);
  #ifdef EGO_DIZ
-		if (o_ptr->name2 && e_text + e_info[o_ptr->name2].text)
+		if (o_ptr->name2 && e_info[o_ptr->name2].text)
 			fprintf(fff, "%s", e_text + e_info[o_ptr->name2].text);
-		if (o_ptr->name2b && e_text + e_info[o_ptr->name2b].text)
+		if (o_ptr->name2b && e_info[o_ptr->name2b].text)
 			fprintf(fff, "%s", e_text + e_info[o_ptr->name2b].text);
  #endif
 	}
