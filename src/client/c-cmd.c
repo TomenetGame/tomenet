@@ -1765,8 +1765,8 @@ void cmd_character(void) {
 		/* Display player info */
 		display_player(csheet_page);
 
-		if (csheet_page == 1 && sel >= 12) sel = 0;
-		if (csheet_page != 2) {
+		if (csheet_page == 1 && sel >= 12) sel = 0; /* History is displayed instead of misc abilities? */
+		if (csheet_page != 2) { /* Equipment flag screen must not be active */
 			switch (sel) {
 			case 0: c_put_str(TERM_ORANGE, ">", 2, 0); break;
 			case 1: c_put_str(TERM_ORANGE, ">", 3, 0); break;
@@ -1801,13 +1801,20 @@ void cmd_character(void) {
 		window_stuff();
 
 		/* Display message */
-		prt("[ESC: quit, f: chardump, h: history/abilities, 2/8: select -> ?: help]", 22, 1);
+		if (csheet_page != 2) prt("[ESC: quit, f: chardump, h: history/abilities, 2/8: select -> ?: help]", 22, 5);
+		//else prt("[ESC: quit, f: chardump, h: history/abilities]", 22, 17);
+		else prt("[ESC: quit, f: chardump, h: history/abilities, v: toggle vertical view]", 22, 5);
+
+		/* Hack: Hide cursor */
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
 
 		/* Wait for key */
 		ch = inkey();
 
 		switch (ch) {
 		case '2':
+			if (csheet_page == 2) break;
 			sel++;
 			if (sel > 22) sel = 0;
 			//if (sel == 0 && !p_ptr->fruit_bat) sel++;
@@ -1816,6 +1823,7 @@ void cmd_character(void) {
 			if (sel > 22) sel = 0;
 			break;
 		case '8':
+			if (csheet_page == 2) break;
 			sel--;
 			if (sel < 0) sel = 22;
 			//if (sel == 0 && !p_ptr->fruit_bat) sel--;
@@ -1861,8 +1869,8 @@ void cmd_character(void) {
 			break;
 		case 'h': case 'H':
 			/* Check for "display history" */
-			/* Toggle */
-			csheet_page++; if (csheet_page == 3) csheet_page = 0; //loop
+			/* Toggle/loop */
+			csheet_page = (csheet_page + 1) % 3;
 			break;
 		case 'f': case 'F':
 			/* Dump */
@@ -1879,6 +1887,10 @@ void cmd_character(void) {
 		case 'q': case 'Q': case ESCAPE: case 'C':
 			/* Quit */
 			done = 1;
+			break;
+		case 'v': /* Toggle 'vertical' view of the equipment stats screen */
+			if (csheet_page != 2) break;
+			csheet_vert = !csheet_vert;
 			break;
 		}
 	}
