@@ -24337,5 +24337,9 @@ Solution:   If you really specified a supposedly valid search topic, check your
             release. You can do that with the TomeNET-Updater or just download
             it manually and overwrite the existing 'TomeNET-Guide.txt' file in
             your TomeNET folder with it.
+            If it is not a real 'topic', instead invoke the guide (press ~g or
+            double-tap '?' key to do that) and then press 's' for a normal text
+            search instead of a topic/chapter search.
+            This will find any occurance of your search string in the guide.
 
 ===============================================================================
