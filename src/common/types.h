@@ -2356,6 +2356,14 @@ struct boni_col {
 	byte color; char32_t symbol;
 };
 
+/* Dictionary for storing character redefinitions mapping information. */
+typedef struct u32b_char_dict_t u32b_char_dict_t;
+struct u32b_char_dict_t {
+	struct u32b_char_dict_t *next;
+	uint32_t key;
+	char value;
+};
+
 /*
  * Most of the "player" information goes here.
  *
@@ -2590,12 +2598,12 @@ struct player_type {
 	byte f_attr_solid[MAX_F_IDX];
 	char32_t f_char[MAX_F_IDX];
 	char32_t f_char_solid[MAX_F_IDX];
-	char32_t f_char_mod[256];
+	u32b_char_dict_t *f_char_mod;
 	byte k_attr[MAX_K_IDX];
 	char32_t k_char[MAX_K_IDX];
 	byte r_attr[MAX_R_IDX];
 	char32_t r_char[MAX_R_IDX];
-	char32_t r_char_mod[256];
+	u32b_char_dict_t *r_char_mod;
 
 	bool carry_query_flag;
 	bool use_old_target;
@@ -4212,12 +4220,4 @@ struct hash_entry {
 	byte order;			/* custom order in account screen overview */
 
 	struct hash_entry *next;	/* Next entry in the chain */
-};
-
-/* Dictionary for storing character redefinitions mapping information. */
-typedef struct u32b_char_dict_t u32b_char_dict_t;
-struct u32b_char_dict_t {
-	struct u32b_char_dict_t *next;
-	uint32_t key;
-	char value;
 };

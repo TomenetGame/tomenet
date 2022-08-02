@@ -1632,6 +1632,8 @@ bool Destroy_connection(int ind, char *reason_orig) {
 			p_ptr->solo_reking_laston = now;
 		}
 #endif
+		if (p_ptr->f_char_mod != NULL) p_ptr->f_char_mod = u32b_char_dict_free(p_ptr->f_char_mod);
+		if (p_ptr->r_char_mod != NULL) p_ptr->r_char_mod = u32b_char_dict_free(p_ptr->r_char_mod);
 
 		s_printf("%s: Goodbye %s(%s)=%s@%s (\"%s\") (Ind=%d,ind=%d;wpos=%d,%d,%d;xy=%d,%d)\n",
 		    showtime(),
@@ -2667,9 +2669,9 @@ static void set_player_font_definitions(int ind, int player) {
 		if (p_ptr->f_char[i]) {
 			unm_c_idx = p_ptr->f_char[i];
 #ifdef FONTMAP_F_FIRST
-			if (!p_ptr->f_char_mod[unm_c_idx])
+			if (NULL == u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx))
 #endif
-				p_ptr->f_char_mod[unm_c_idx] = f_info[i].z_char;
+				p_ptr->f_char_mod = u32b_char_dict_set(p_ptr->f_char_mod, unm_c_idx, (char)f_info[i].z_char);
 		}
 
 #ifndef FLOORTILEBUG_WORKAROUND
@@ -2793,7 +2795,7 @@ static void set_player_font_definitions(int ind, int player) {
 	p_ptr->use_r_gfx = FALSE;
 
 #ifdef FONTMAP_R_FIRST
-	p_ptr->r_char_mod[64] = '@'; /* Hack for custom font unmapping: Protect the '@' symbol specifically. */
+	p_ptr->r_char_mod = u32b_char_dict_set(p_ptr->r_char_mod, 64, '@'); /* Hack for custom font unmapping: Protect the '@' symbol specifically. */
 #endif
 	for (i = 0; i < MAX_R_IDX; i++) {
 		p_ptr->r_char[i] = connp->Client_setup.r_char[i];
@@ -2802,9 +2804,9 @@ static void set_player_font_definitions(int ind, int player) {
 		if (p_ptr->r_char[i]) {
 			unm_c_idx = p_ptr->r_char[i];
 #ifdef FONTMAP_R_FIRST
-			if (!p_ptr->r_char_mod[unm_c_idx])
+			if (NULL == u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx))
 #endif
-				p_ptr->r_char_mod[unm_c_idx] = r_info[i].x_char;
+				p_ptr->r_char_mod = u32b_char_dict_set(p_ptr->r_char_mod, unm_c_idx, (char)r_info[i].x_char);
 		}
 
 		if (!p_ptr->r_char[i]) p_ptr->r_char[i] = r_info[i].x_char;
@@ -2821,7 +2823,7 @@ static void set_player_font_definitions(int ind, int player) {
 	}
 	if (p_ptr->use_r_gfx) custom_font = TRUE;
 #ifndef FONTMAP_R_FIRST
-	p_ptr->r_char_mod[64] = '@'; /* Hack for custom font unmapping: Protect the '@' symbol specifically. */
+	p_ptr->r_char_mod = u32b_char_dict_set(p_ptr->r_char_mod, 64, '@'); /* Hack for custom font unmapping: Protect the '@' symbol specifically. */
 #endif
 	/* Certain monsters (that don't already have CHAR_CLEAR) have fixed visuals
 	   that cannot be remapped by the player, because they're supposed to be
@@ -6831,9 +6833,10 @@ int Send_char(int Ind, int x, int y, byte a, char32_t c) {
 			   Maybe todo: also unmap attr? */
 			char32_t unm_c_idx = c;
 			char32_t c2 = c;
+			char *unm_c_ptr;
 
-			if (p_ptr->r_char_mod[unm_c_idx]) c2 = p_ptr->r_char_mod[unm_c_idx];
-			else if (p_ptr->f_char_mod[unm_c_idx]) c2 = p_ptr->f_char_mod[unm_c_idx];
+			if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx))) c2 = (char32_t)*unm_c_ptr;
+			else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx))) c2 = (char32_t)*unm_c_ptr;
 
 			/* 5.0.0 and newer clients use 32bit character size. */
 			if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
@@ -7014,6 +7017,7 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 	int a_c;
 #endif
 	char32_t unm_c_idx;
+	char *unm_c_ptr;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -7139,8 +7143,8 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 				/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
 				   Maybe todo: also unmap attr? */
 				unm_c_idx = c;
-				if (p_ptr->r_char_mod[unm_c_idx]) cu = p_ptr->r_char_mod[unm_c_idx];
-				else if (p_ptr->f_char_mod[unm_c_idx]) cu = p_ptr->f_char_mod[unm_c_idx];
+				if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx))) cu = (char32_t)*unm_c_ptr;
+				else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx))) cu = (char32_t)*unm_c_ptr;
 				else cu = c;
 
 				/* 5.0.0 and newer clients use 32bit character size. */
@@ -7188,8 +7192,8 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 				/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
 				   Maybe todo: also unmap attr? */
 				unm_c_idx = c;
-				if (p_ptr->r_char_mod[unm_c_idx]) cu = p_ptr->r_char_mod[unm_c_idx];
-				else if (p_ptr->f_char_mod[unm_c_idx]) cu = p_ptr->f_char_mod[unm_c_idx];
+				if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx))) cu = (char32_t)*unm_c_ptr;
+				else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx))) cu = (char32_t)*unm_c_ptr;
 				else cu = c;
 
 				if (!is_newer_than(&connp2->version, 4, 4, 3, 0, 0, 5)) {
@@ -7231,6 +7235,7 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 	char32_t c, c1;
 	byte a, a1;
 	char32_t unm_c_idx;
+	char * unm_c_ptr;
 #ifdef EXTENDED_TERM_COLOURS
 	bool old_colours = is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0);
 	int a_c;
@@ -7255,8 +7260,8 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 		/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
 		   Maybe todo: also unmap attr? */
 		unm_c_idx = c;
-		if (p_ptr2->r_char_mod[unm_c_idx]) c = p_ptr2->r_char_mod[unm_c_idx];
-		else if (p_ptr2->f_char_mod[unm_c_idx]) c = p_ptr2->f_char_mod[unm_c_idx];
+		if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx))) c = (char32_t)*unm_c_ptr;
+		else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx))) c = (char32_t)*unm_c_ptr;
 
 #ifdef EXTENDED_TERM_COLOURS
 		if (old_colours) {
@@ -7279,8 +7284,8 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 		/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
 		   Maybe todo: also unmap attr? */
 		unm_c_idx = c1;
-		if (p_ptr2->r_char_mod[unm_c_idx]) c1 = p_ptr2->r_char_mod[unm_c_idx];
-		else if (p_ptr2->f_char_mod[unm_c_idx]) c1 = p_ptr2->f_char_mod[unm_c_idx];
+		if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx))) c1 = (char32_t)*unm_c_ptr;
+		else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx))) c1 = (char32_t)*unm_c_ptr;
 
 		while (c1 == c && a1 == a && x1 < 80) { //TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old, but it doesn't matter.
 			/* Increment count and column */
@@ -7292,8 +7297,8 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 			/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
 			   Maybe todo: also unmap attr? */
 			unm_c_idx = c1;
-			if (p_ptr2->r_char_mod[unm_c_idx]) c1 = p_ptr2->r_char_mod[unm_c_idx];
-			else if (p_ptr2->f_char_mod[unm_c_idx]) c1 = p_ptr2->f_char_mod[unm_c_idx];
+			if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->r_char_mod, unm_c_idx))) c1 = (char32_t)*unm_c_ptr;
+			else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx))) c1 = (char32_t)*unm_c_ptr;
 		}
 
 		/* RLE if there at least 2 similar grids in a row */
