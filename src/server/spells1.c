@@ -7632,6 +7632,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			/* Obvious effect */
 			if (seen) obvious = TRUE;
 
+			/* Get blinded later */
+			do_blind = damroll(3, (dam / 20)) + 1;
+
 #ifdef OLD_MONSTER_LORE
 			/* Memorize the effects */
 			if (seen) r_ptr->r_flags3 |= RF3_HURT_LITE;
