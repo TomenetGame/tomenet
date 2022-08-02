@@ -3090,20 +3090,33 @@ void c_put_str(byte attr, cptr str, int row, int col) {
 	/* Position cursor, Dump the attr/text */
 	Term_putstr(col, row, -1, attr, (char*)str);
 }
-/* Version of c_put_str() specifically for Chh sheet in horizontal mode */
+/* Version of c_put_str() specifically for Chh sheet in horizontal mode. */
+//#define VERT_ALT_Y /* alternate y a bit for readability? */
+//#define VERT_ADD_COLON /* add a colon ':' at the end? */
 void c_put_str_vert(byte attr, cptr str, int row, int col) {
 #if 0 /* Print it normally, from left to right, and with vertical cascading */
 	Term_putstr(col, row, -1, attr, (char*)str);
 #else /* Print it vertically! */
 	row = 0;
 	while (str[row]) {
- #if 0 /* alternate y a bit for readability? */
+ #ifdef VERT_ALT_Y
+  #ifdef VERT_ADD_COLON
+		Term_putch(col, 0 + col % 2 + row, attr, str[row]);
+  #else
 		Term_putch(col, 1 + col % 2 + row, attr, str[row]);
+  #endif
  #else
+  #ifdef VERT_ADD_COLON
+		Term_putch(col, 1 + row, attr, str[row]);
+  #else
 		Term_putch(col, 2 + row, attr, str[row]);
+  #endif
  #endif
 		row++;
 	}
+ #ifdef VERT_ADD_COLON
+	Term_putch(col, 1 + row, attr, ':');
+ #endif
 #endif
 }
 
