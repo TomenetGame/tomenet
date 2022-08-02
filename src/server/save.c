@@ -1912,9 +1912,11 @@ bool load_player(int Ind) {
 			what = "Name already in use";
 			break;
 #ifdef SERVER_PORTALS
+ #if 0 //wip
 		case x:
 			what = "Character currently locked to another server via portal.";
 			break;
+ #endif
 #endif
 		}
 	}
