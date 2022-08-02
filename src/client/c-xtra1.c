@@ -3270,7 +3270,7 @@ void display_player(int hist) {
 		clear_from(0);
 
 		/* Normal view (vertical columns of different stats) */
-		if (!csheet_vert) {
+		if (!csheet_horiz) {
 			int header_color[4][19];
 
 			for (i = 0; i < 4; i++)
@@ -3825,7 +3825,7 @@ void display_player(int hist) {
 			c_put_str(header_color[3][17], "Pois:", 18, 60);
 			c_put_str(header_color[3][18], "Vorp:", 19, 60);
 		}
-		/* Vertical view (Horizontal rows of different stats) */
+		/* Horizontal view (Horizontal rows of different stats) */
 		else {
 			int header_color[1][76], row = -1, col = 0;
 

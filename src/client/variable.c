@@ -169,7 +169,7 @@ s16b command_dir;
 
 boni_col csheet_boni[15]; /* a-n inventory slots + @ column -- Hardcode - Kurzel */
 byte csheet_page = 0;
-bool csheet_vert = FALSE;
+bool csheet_horiz = FALSE;
 bool valid_dna = FALSE, dedicated = FALSE;
 s16b race, dna_race;
 s16b class, dna_class;

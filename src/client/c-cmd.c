@@ -1803,7 +1803,7 @@ void cmd_character(void) {
 		/* Display message */
 		if (csheet_page != 2) prt("[ESC: quit, f: chardump, h: history/abilities, 2/8: select -> ?: help]", 22, 5);
 		//else prt("[ESC: quit, f: chardump, h: history/abilities]", 22, 17);
-		else prt("[ESC: quit, f: chardump, h: history/abilities, v: toggle vertical view]", 22, 5);
+		else prt("[ESC: quit, f: chardump, h: history/abilities, v: toggle horizontal view]", 22, 3);
 
 		/* Hack: Hide cursor */
 		Term->scr->cx = Term->wid;
@@ -1890,7 +1890,7 @@ void cmd_character(void) {
 			break;
 		case 'v': /* Toggle 'vertical' view of the equipment stats screen */
 			if (csheet_page != 2) break;
-			csheet_vert = !csheet_vert;
+			csheet_horiz = !csheet_horiz;
 			break;
 		}
 	}

@@ -280,7 +280,7 @@ extern s16b command_dir;
 
 extern boni_col csheet_boni[15];
 extern byte csheet_page;
-extern bool csheet_vert;
+extern bool csheet_horiz;
 extern bool valid_dna, dedicated;
 extern s16b race, dna_race;
 extern s16b class, dna_class;
