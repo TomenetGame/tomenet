@@ -7580,6 +7580,9 @@ extern int PlayerUID;
 #define SOUND_MAX	8
 
 #ifdef USE_SOUND_2010
+ /* Volume sliders all go from 0 to 100, with [70] being default */
+ #define AUDIO_VOLUME_DEFAULT 70
+
  #define SOUND_MAX_2010	400 /*for experimenting purpose - C. Blue*/
  #define MUSIC_MAX	200 /*for experimenting purpose - C. Blue*/
 

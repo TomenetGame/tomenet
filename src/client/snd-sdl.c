@@ -2626,9 +2626,9 @@ errr re_init_sound_sdl(void) {
 #endif
 
 	//cfg_audio_master = TRUE, cfg_audio_music = TRUE, cfg_audio_sound = TRUE, cfg_audio_weather = TRUE, weather_resume = FALSE, ambient_resume = FALSE;
-	//cfg_audio_master_volume = 75, cfg_audio_music_volume = 100, cfg_audio_sound_volume = 100, cfg_audio_weather_volume = 100;
+	//cfg_audio_master_volume = cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = AUDIO_VOLUME_DEFAULT;
 
-	//grid_weather_volume = 100, grid_ambient_volume = 100, grid_weather_volume_goal = 100, grid_ambient_volume_goal = 100, grid_weather_volume_step, grid_ambient_volume_step;
+	//grid_weather_volume = grid_ambient_volume = grid_weather_volume_goal = grid_ambient_volume_goal = 100, grid_weather_volume_step, grid_ambient_volume_step;
 	bell_sound_idx = -1, page_sound_idx = -1, warning_sound_idx = -1, rain1_sound_idx = -1, rain2_sound_idx = -1, snow1_sound_idx = -1, snow2_sound_idx = -1, browse_sound_idx = -1, browsebook_sound_idx = -1, thunder_sound_idx = -1, browseinven_sound_idx = -1;
 
 	/* --- init --- */

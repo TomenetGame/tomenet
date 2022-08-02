@@ -10390,8 +10390,8 @@ void interact_audio(void) {
 		case 'W':
 			cur_item = 3 + 4;
 			break;
-		case 'r': /* undocumented atm :/ -- reset all settings to default */
-			cfg_audio_master_volume = cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = 50;
+		case 'r': /* reset all settings to default */
+			cfg_audio_master_volume = cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = AUDIO_VOLUME_DEFAULT;
 			cfg_audio_master = cfg_audio_music = cfg_audio_sound = cfg_audio_weather = TRUE;
 			set_mixing();
 			break;

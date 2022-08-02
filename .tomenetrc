@@ -116,10 +116,10 @@ audioSound		1
 audioWeather		1
 
 ## - Mixer values for various things (0..100)
-audioVolumeMaster	75
-audioVolumeMusic	100
-audioVolumeSound	100
-audioVolumeWeather	100
+audioVolumeMaster	70
+audioVolumeMusic	70
+audioVolumeSound	70
+audioVolumeWeather	70
 
 
 

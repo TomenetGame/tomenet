@@ -1091,10 +1091,10 @@ static void load_prefs(void) {
 	cfg_audio_music = (GetPrivateProfileInt("Base", "AudioMusic", 1, ini_file) != 0);
 	cfg_audio_sound = (GetPrivateProfileInt("Base", "AudioSound", 1, ini_file) != 0);
 	cfg_audio_weather = (GetPrivateProfileInt("Base", "AudioWeather", 1, ini_file) != 0);
-	cfg_audio_master_volume = GetPrivateProfileInt("Base", "AudioVolumeMaster", 100, ini_file);
-	cfg_audio_music_volume = GetPrivateProfileInt("Base", "AudioVolumeMusic", 100, ini_file);
-	cfg_audio_sound_volume = GetPrivateProfileInt("Base", "AudioVolumeSound", 100, ini_file);
-	cfg_audio_weather_volume = GetPrivateProfileInt("Base", "AudioVolumeWeather", 100, ini_file);
+	cfg_audio_master_volume = GetPrivateProfileInt("Base", "AudioVolumeMaster", AUDIO_VOLUME_DEFAULT, ini_file);
+	cfg_audio_music_volume = GetPrivateProfileInt("Base", "AudioVolumeMusic", AUDIO_VOLUME_DEFAULT, ini_file);
+	cfg_audio_sound_volume = GetPrivateProfileInt("Base", "AudioVolumeSound", AUDIO_VOLUME_DEFAULT, ini_file);
+	cfg_audio_weather_volume = GetPrivateProfileInt("Base", "AudioVolumeWeather", AUDIO_VOLUME_DEFAULT, ini_file);
  #endif
 #endif
 

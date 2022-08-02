@@ -1025,8 +1025,7 @@ int main(int argc, char **argv) {
 			cfg_max_channels = 32;
 			cfg_audio_buffer = 1024;
 			cfg_audio_master = cfg_audio_music = cfg_audio_sound = cfg_audio_weather = TRUE;
-			cfg_audio_master_volume = 75;
-			cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = 100;
+			cfg_audio_master_volume = cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = AUDIO_VOLUME_DEFAULT;
 #endif
 
 #if 0 /* This skips command-line arguments, not rc file */
