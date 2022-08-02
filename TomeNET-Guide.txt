@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 19. July 2022 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 2. August 2022 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.8.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -18733,9 +18733,9 @@ school.
 
     Disperse Magic  Removes magical influences.
                     Required skill level for first spell level: 15.
-                    Lv1: Blindness/Confusion.
-                    Lv10: Hallucination.
-                    Lv15: Speed/Slowness/Stun.
+                    Lv  1: Blindness/Confusion.
+                    Lv 10: Hallucination.
+                    Lv 15: Speed/Slowness/Stun.
                     This spell can be used even while confused or blind.
 
     Remove Curses   Removes non-heavy curses from carried/worn objects.
@@ -18763,12 +18763,14 @@ school.
 
     Globe of Light  Creates a globe of magical light.
                     Required skill level for first spell level: 2.
-                    Lv10: Hurts monsters that are susceptible to light.
+                    Lv 10: Hurts monsters that are susceptible to light and may
+                           cause blindness too in that case.
                     Radius and damage will further increase.
 
                     Tier II: Level 22.
                     Calls a more powerful kind of light. This light hurts all
-                    types of monsters.
+                    types of monsters (except immune ones) and may cause
+                    blindness too.
 
     Fire Bolt       Fires a fire bolt at a target.
                     Required skill level for first spell level: 10.
@@ -18823,8 +18825,8 @@ school.
                     Tier III: Level 40.
 
     Ent's Potion    Fills your stomach.
-                    Lv5: Removes fear.
-                    Lv12: Makes you heroic.
+                    Lv  5: Removes fear.
+                    Lv 12: Makes you heroic.
                     Required skill level for first spell level: 6.
 
     Frost Bolt      Fires a frost bolt at a target.
@@ -18858,7 +18860,7 @@ school.
     Frost Barrier   Engulfs you in a storm of roaring cold that damages
                     all monsters standing next to you.
                     (It does not reduce damage you take from attacks.)
-                    Lv16: Turns into a storm of shards of ice.
+                    Lv 16: Turns into a storm of shards of ice.
                     Required skill level for first spell level: 22.
 
                     Tier II: Level 37.
@@ -18909,7 +18911,7 @@ school.
                     Shared spell (see above): Air, Nature.
 
     Wings of Winds  Grants feather falling.
-                    Lv16: Lets you levitate.
+                    Lv 16: Lets you levitate.
                     Required skill level for first spell level: 16.
                     Shared spell (see above): Air, Conveyance.
 
@@ -19016,7 +19018,7 @@ school.
                     Required skill level for first spell level: 10.
 
     Wings of Wind   Grants feather falling.
-                    Lv16: Lets you levitate.
+                    Lv 16: Lets you levitate.
                     Required skill level for first spell level: 16.
                     Shared spell (see above): Air, Conveyance.
 
@@ -19216,16 +19218,19 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
 
     Call Light      Creates a globe of pure light.
                     Required skill level for first spell level: 2.
-                    Lv3:  Hurts monsters that are susceptible to light.
+                    Lv 3: Hurts monsters that are susceptible to light and may
+                          cause blindness too in that case.
                     Shared spell (see above): H.Offense, H.Support.
 
                     Tier II: Level 20.
                     Calls a more powerful kind of light. This light hurts all
-                    types of monsters.
+                    types of monsters (except immune ones) and may cause
+                    blindness too.
                     Radius and damage will further increase.
                     Shared spell (see above): H.Offense, H.Support.
 
-    Ray of Light    Casts a ray of powerful light.
+    Ray of Light    Casts a ray of powerful light that damages all monsters
+                    that aren't immune to light and may cause blindness too.
                     Required skill level for first spell level: 18.
 
     Redemption      *Dispels undead* in your field of view.
@@ -19286,9 +19291,9 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
                     Required skill level for first spell level: 12.
 
     Dispel Magic    Removes magical influences.
-                    Lv1: Blindness/Confusion.
-                    Lv7: Confusion/Hallucination.
-                    Lv13: Speed/Slowness/Stun.
+                    Lv  1: Blindness/Confusion.
+                    Lv  7: Confusion/Hallucination.
+                    Lv 13: Speed/Slowness/Stun.
                     Required skill level for first spell level: 10.
                     This spell can be used even while confused or blind.
 
@@ -19432,12 +19437,14 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
 
     Call Light      Creates a globe of pure light.
                     Required skill level for first spell level: 2.
-                    Lv3:  Hurts monsters that are susceptible to light.
+                    Lv 3: Hurts monsters that are susceptible to light and may
+                          cause blindness too in that case.
                     Shared spell (see above): H.Offense, H.Support.
 
                     Tier II: Level 20.
                     Calls a more powerful kind of light. This light hurts all
-                    types of monsters.
+                    types of monsters (except if immune) and may cause
+                    blindness too.
                     Radius and damage will further increase.
                     Shared spell (see above): H.Offense, H.Support.
 
@@ -19519,7 +19526,7 @@ spell failure rate. All Unlife spells use WIS.)
     Aspect of Peril                                            (auto-project)
                     Temporarily brands your or adjacent friendly players'
                     melee weapons with poison.
-                    Lv10: Additionally grants temporary poison resistance.
+                    Lv 10: Additionally grants temporary poison resistance.
                     Required skill level for first spell level: 10.
 
     Darkness        Causes a burst of darkness around you, possibly blinding
@@ -19594,13 +19601,14 @@ spell failure rate. All Unlife spells use WIS.)
                     Required skill level for first spell level: 1.
 
     Starlight       Creates a globe of starlight around you.
-                    Lv10: Damages monsters that are susceptible to light.
+                    Lv 10: Damages monsters that are susceptible to light and
+                           may cause blindness too in that case.
                     (This spell uses INTELLIGENCE to determine fail-rates!)
                     Required skill level for first spell level: 2.
 
                     Tier II: Level 22.
                     Calls a more powerful kind of light. This light damages all
-                    types of monsters.
+                    types of monsters and may cause blindness too.
                     Radius and damage will further increase.
 
     Meditation      Cures confusion and blindness.
@@ -19620,7 +19628,8 @@ spell failure rate. All Unlife spells use WIS.)
 
                     Tier III: Level 40.
 
-    Spear of Light  Conjures up spiritual light into a powerful beam.
+    Spear of Light  Conjures up spiritual light into a powerful beam that
+                    damages all monsters and may cause blindness too.
                     Required skill level for first spell level: 10.
 
                     Tier II: Level 25.
@@ -19703,8 +19712,8 @@ spell failure rate. All Unlife spells use WIS.)
                     Tier III: Level 40.
 
     Wrathflame      It temporarily brands your melee weapons with fire.
-                    Lv7: Grants temporary fire resistance.
-                    Lv17: The brand is now hellfire instead of normal fire.
+                    Lv  7: Grants temporary fire resistance.
+                    Lv 17: The brand is now hellfire instead of normal fire.
                     Required skill level for first spell level: 12.
 
     Flame Wave      Eradicates critters beneath your notice that dare trifle
@@ -19897,9 +19906,9 @@ spell failure rate. All Unlife spells use WIS.)
                     Required skill level for first spell level: 1.
 
     Herbal Tea      Satisfies your hunger.                     (auto-project)
-                    Lv20: Restores your experience.            (auto-project)
-                    Lv25: Restores your attributes.            (auto-project)
-                    Lv35: Cures black breath!                  (auto-project)
+                    Lv 20: Restores your experience.           (auto-project)
+                    Lv 25: Restores your attributes.           (auto-project)
+                    Lv 35: Cures black breath!                 (auto-project)
                     Required skill level for first spell level: 3.
 
     Quickfeet       Temporarily boosts your speed.             (auto-project)
@@ -19917,13 +19926,13 @@ spell failure rate. All Unlife spells use WIS.)
     Extra Growth    Increases your attributes temporarily and also grants HP
                     regeneration (same as for example an amulet of regeneration
                     so the effect doesn't stack).
-                    Lv1: Increases strength.
-                    Lv5: Also increases dexterity.
+                    Lv 1: Increases strength.
+                    Lv 5: Also increases dexterity.
                     Required skill level for first spell level: 15.
 
                     Tier II: Level 25.
                     Also increases constitution.
-                    Lv11: Also increases intelligence.
+                    Lv 11: Also increases intelligence.
 
 
 - Mindcraft -
@@ -19956,7 +19965,7 @@ In general, mindcraft schools are less affected by anti-magic fields.)
 
     Feedback        Uses telekinetic effects to slow your fall, granting
                     feather falling.
-                    Lv15: It becomes sufficient for levitation.
+                    Lv 15: It becomes sufficient for levitation.
                     Required skill level for first spell level: 18.
 
     Pyrokinesis     Causes a severe inflammation to burn your opponent.
@@ -20175,6 +20184,8 @@ though, as all other magic schools do, not the astral level.)
 
     Power Ray       Casts a beam of electricity/light/darkness depending on
                     your alignment (see Power Bolt spell above).
+                    In addition to damaging monsters, light and darkness beams
+                    may cause blindness too.
                     Required skill level for first spell level: 5.
 
                     Tier II: Level 20.
