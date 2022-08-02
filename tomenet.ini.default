@@ -98,10 +98,10 @@ AudioSound=1
 AudioWeather=1
 
 ; - Mixer values for various things (0..100)
-AudioVolumeMaster=75
-AudioVolumeMusic=100
-AudioVolumeSound=100
-AudioVolumeWeather=100
+AudioVolumeMaster=70
+AudioVolumeMusic=70
+AudioVolumeSound=70
+AudioVolumeWeather=70
 
 
 [Main window]
