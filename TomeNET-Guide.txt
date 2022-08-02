@@ -1502,6 +1502,9 @@ They all start with a slash '/' hence they're called slash commands:
             too. Use the command a second time to revoke his rights again.
             Instead of using this command, you can also go to the party menu
             (SHIFT+P) and there choose 'e', for a comfortable GUI.
+/guild_adders
+            Displays all currently set guild-adder characters of your guild.
+            (See /guild_adder above for more details about guild-adding.)
 
 /guild_cfg [<flag> [<value]]
             Shows you your current guild configuration and allows you to change
@@ -20988,6 +20991,8 @@ Guilds:
         Use the command a second time to revoke his rights again.
         Note that this only works if you have enabled the guild flag 'adder',
         see the '/guild_cfg' command below.
+    /guild_adders
+        Lists all current guild adder characters.
 
     /guild_cfg [<flag> [<value]]
         Shows you your current guild configuration if used without any parms
@@ -21038,7 +21043,8 @@ While a guild is leaderless, three restrictions apply:
 Guild keys are indestructible, they can be lost though..
 
 The following guild-related slash commands exist, see (0.2b) for details:
-    /gbbs /gleave /gnote /gpage /gquit /guild_adder /guild_cfg /guildmembers
+    /gbbs /gleave /gnote /gpage /gquit /guild_adder /guild_adders /guild_cfg
+    /guildmembers
 
 
 PvP outside of the dedicated 'PvP' character mode:
