@@ -90,6 +90,7 @@ void do_cmd_check_artifacts(int Ind, int line, char *srcstr) {
 	object_type forge, *o_ptr;
 	artifact_type *a_ptr;
 	char fmt[16];
+	char buf[MAX_CHARS];
 #ifdef COLOURED_ARTS
 	char cattr;
 #endif
@@ -275,8 +276,13 @@ void do_cmd_check_artifacts(int Ind, int line, char *srcstr) {
 				}
 				sprintf(fmt, "%%%ds%s%2d %s%%s\n", (int)(43 - strlen(base_name)), cslv, lev, cs);
 
-				if (!a_ptr->known) fprintf(fff, fmt, "", "(unknown)");
-				else if (multiple_artifact_p(&forge)) fprintf(fff, "\n");
+				if (!a_ptr->known) {
+					if (!pname) fprintf(fff, fmt, "", "(unknown)");
+					else {
+						sprintf(buf, "(%s)", pname);
+						fprintf(fff, fmt, "", buf);
+					}
+				} else if (multiple_artifact_p(&forge)) fprintf(fff, "\n");
 				else if (a_ptr->carrier) fprintf(fff, fmt, "", pname ? pname : "(dead player)");
 				else fprintf(fff, fmt, "", "???");
 			} else {
