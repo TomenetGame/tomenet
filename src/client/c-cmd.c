@@ -1801,7 +1801,7 @@ void cmd_character(void) {
 		window_stuff();
 
 		/* Display message */
-		if (csheet_page != 2) prt("[ESC: quit, f: chardump, h: history/abilities, 2/8: select -> ?: help]", 22, 5);
+		if (csheet_page != 2) prt("[ESC: quit, f: chardump, h: history/abilities, up/down: select -> ?: help]", 22, 3);
 		//else prt("[ESC: quit, f: chardump, h: history/abilities]", 22, 17);
 		else prt("[ESC: quit, f: chardump, h: history/abilities, v: toggle horizontal view]", 22, 3);
 
