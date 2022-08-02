@@ -2004,7 +2004,7 @@ static bool play_music(int event) {
 
 #ifdef ENABLE_JUKEBOX
 	/* Jukebox hack: Don't interrupt current jukebox song, but remember event for later */
-	if (jukebox_playing != -1 && jukebox_playing != event) {
+	if (jukebox_playing != -1) {
 		jukebox_org = event;
 		return TRUE;
 	}
@@ -2119,7 +2119,7 @@ static bool play_music_vol(int event, char vol) {
 
 #ifdef ENABLE_JUKEBOX
 	/* Jukebox hack: Don't interrupt current jukebox song, but remember event for later */
-	if (jukebox_playing != -1 && jukebox_playing != event) {
+	if (jukebox_playing != -1) {
 		jukebox_org = event;
 		return TRUE;
 	}
