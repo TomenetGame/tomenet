@@ -16331,7 +16331,7 @@ create a character!):
     to feed as often. Because they consist of wood, they are quite
     susceptible to fire and they don't drown in water. As the Shepherds
     of the Trees, they can learn to sense the presence of others, such
-    as animals  at level 10, orcs at 15, trolls at 20, giants at 25,
+    as animals at level 10, orcs at 15, trolls at 20, giants at 25,
     dragons at 30, demons at 40 and all evil-minded creatures at level 50.
     At level 4 Ents learn to see invisible things. In general, they accumulate
     experience very slowly and they do not eat normal food but they are able to
