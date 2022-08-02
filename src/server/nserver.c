@@ -1535,6 +1535,10 @@ static void Delete_player(int Ind) {
 			C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
 		if (p_ptr->inventory_copy)
 			C_FREE(p_ptr->inventory_copy, INVEN_TOTAL, object_type);
+		if (p_ptr->f_char_mod != NULL)
+			p_ptr->f_char_mod = u32b_char_dict_free(p_ptr->f_char_mod);
+		if (p_ptr->r_char_mod != NULL)
+			p_ptr->r_char_mod = u32b_char_dict_free(p_ptr->r_char_mod);
 
 		KILL(Players[NumPlayers], player_type);
 	}
@@ -1632,8 +1636,6 @@ bool Destroy_connection(int ind, char *reason_orig) {
 			p_ptr->solo_reking_laston = now;
 		}
 #endif
-		if (p_ptr->f_char_mod != NULL) p_ptr->f_char_mod = u32b_char_dict_free(p_ptr->f_char_mod);
-		if (p_ptr->r_char_mod != NULL) p_ptr->r_char_mod = u32b_char_dict_free(p_ptr->r_char_mod);
 
 		s_printf("%s: Goodbye %s(%s)=%s@%s (\"%s\") (Ind=%d,ind=%d;wpos=%d,%d,%d;xy=%d,%d)\n",
 		    showtime(),
