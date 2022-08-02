@@ -1239,6 +1239,7 @@ bool mon_allowed_view(monster_race *r_ptr) {
  *          if 'monster_level' is already specifying an OoD request
  *          and therefore must not be boosted further by get_mon_num()'s
  *          own built-in OoD code.
+ *          Now also using 'dlevel' for additional OoD check for low/mid floors.
  */
 
 //s16b get_mon_num(int level)
@@ -1268,13 +1269,19 @@ s16b get_mon_num(int level, int dlevel) {
 	   second in here by boosting the level even further in the code above.) */
 	if (level > dlevel + 40) level = dlevel + 40;
 
+	/* 2022: Extra, smooth OoD cap for low/mid dungeon levels - C. Blue */
+	if (dlevel < 50) {
+		i = dlevel - 10 + (dlevel > 20 ? dlevel : 20);
+		if (level > i) level = i;
+	}
+
 	/* Reset total */
 	total = 0L;
 
 	if (monster_level_min == -1) {
 		/* Automatic minimum level */
 		if (level >= 98) {
-			monster_level_min_int = 69;	/* 64..69 somewhere is a good start for nasty stuff - C. Blue */
+			monster_level_min_int = 69; /* 64..69 somewhere is a good start for nasty stuff - C. Blue */
 		} else {
 			monster_level_min_int = (level * 2) / 3;
 		}
@@ -1294,6 +1301,9 @@ s16b get_mon_num(int level, int dlevel) {
 	begin = alloc_race_index_level[monster_level_min_int];
 	n = alloc_race_index_level[level + 1];
 
+#ifdef TEST_SERVER
+//s_printf("depth %d:", dlevel);
+#endif
 	/* Process probabilities */
 	for (i = begin; i < n; i++) {
 		/* Get the entry */
@@ -1315,33 +1325,32 @@ s16b get_mon_num(int level, int dlevel) {
 		r_ptr = &r_info[r_idx];
 
 		/* Depth Monsters never appear out of depth */
-		/* FIXME: This might cause FORCE_DEPTH monsters to appear out of depth */
-		if ((r_ptr->flags1 & RF1_FORCE_DEPTH) && (entry->level > level))
-			continue;
+		/* This is currently only effectively used by Tik (other than dungeon bosses, which are already floor-locked anyway). */
+		if ((r_ptr->flags1 & RF1_FORCE_DEPTH) && (entry->level > dlevel)) continue;
 
 		/* Depth Monsters never appear out of their depth */
 		/* level = base_depth + depth, be careful(esp.wilderness)
 		 * Appearently only used for Moldoux atm. */
-		if ((r_ptr->flags9 & (RF9_ONLY_DEPTH)) && (entry->level != level))
-			continue;
+		if ((r_ptr->flags9 & (RF9_ONLY_DEPTH)) && (entry->level != dlevel)) continue;
 
 		/* Prevent certain monsters from being generated too much OoD */
-		if ((r_ptr->flags7 & RF7_OOD_10) && (entry->level > level + 10))
-			continue;
-		if ((r_ptr->flags7 & RF7_OOD_15) && (entry->level > level + 15))
-			continue;
-		if ((r_ptr->flags7 & RF7_OOD_20) && (entry->level > level + 20))
-			continue;
-
-		/* 2022 - For low dungeon levels, make OoD less harsh: [10..40] levels OoD from depth (20..50), narrowly prohibiting Nazgul in the Orc Caves. */
-		if (level < 50 && entry->level > level - 10 + (level > 20 ? level : 20)) continue;
+		if ((r_ptr->flags7 & RF7_OOD_10) && (entry->level > dlevel + 10)) continue;
+		if ((r_ptr->flags7 & RF7_OOD_15) && (entry->level > dlevel + 15)) continue;
+		if ((r_ptr->flags7 & RF7_OOD_20) && (entry->level > dlevel + 20)) continue;
 
 		/* Accept */
 		entry->prob3 = p;
 
 		/* Total */
 		total += p;
+
+#ifdef TEST_SERVER
+//s_printf(" %d(%d)", entry->level, r_idx);
+#endif
 	}
+#ifdef TEST_SERVER
+//s_printf("\n");
+#endif
 
 	/* No legal monsters */
 	if (total <= 0) return (0);
@@ -3767,7 +3776,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool little, int s_clone, int clone_summoning) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	int n, i;
+	int n, i, dlev;
 	int total = 0, extra = 0;
 
 	int hack_n = 0;
@@ -3777,20 +3786,19 @@ static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, 
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
+	dlev = getlevel(wpos);
+
 	/* Pick a group size */
 	total = randint(13);
 
 	/* Hard monsters, small groups */
-	if (r_ptr->level > getlevel(wpos))
-	{
-		extra = r_ptr->level - getlevel(wpos);
+	if (r_ptr->level > dlev) {
+		extra = r_ptr->level - dlev;
 		extra = 0 - randint(extra);
 	}
-
 	/* Easy monsters, large groups */
-	else if (r_ptr->level < getlevel(wpos))
-	{
-		extra = getlevel(wpos) - r_ptr->level;
+	else if (r_ptr->level < dlev) {
+		extra = dlev - r_ptr->level;
 		extra = randint(extra);
 	}
 
@@ -3833,7 +3841,7 @@ static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, 
 			if (!cave_empty_bold(zcave, my, mx)) continue;
 #endif
 			/* Attempt to place another monster */
-			if (place_monster_one(wpos, my, mx, r_idx, pick_ego_monster(r_idx, getlevel(wpos)), 0, slp, s_clone, clone_summoning) == 0) {
+			if (place_monster_one(wpos, my, mx, r_idx, pick_ego_monster(r_idx, dlev), 0, slp, s_clone, clone_summoning) == 0) {
 				/* Add it to the "hack" set */
 				hack_y[hack_n] = my;
 				hack_x[hack_n] = mx;
@@ -3901,7 +3909,7 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 	int i;
 	monster_race *r_ptr = &r_info[r_idx];
 	cave_type **zcave;
-	int level = getlevel(wpos), res;
+	int dlevel = getlevel(wpos), res;
 	if (!(zcave = getcave(wpos))) return -1;
 
 #ifdef ARCADE_SERVER
@@ -3914,7 +3922,7 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 	}
 
 	/* Place one monster, or fail */
-	if ((res = place_monster_one(wpos, y, x, r_idx, pick_ego_monster(r_idx, level), 0, slp, clo, clone_summoning)) != 0) {
+	if ((res = place_monster_one(wpos, y, x, r_idx, pick_ego_monster(r_idx, dlevel), 0, slp, clo, clone_summoning)) != 0) {
 		// DEBUG
 		/* s_printf("place_monster_one failed at (%d, %d, %d), y = %d, x = %d, r_idx = %d, feat = %d\n",
 			wpos->wx, wpos->wy, wpos->wz, y, x, r_idx, zcave[y][x].feat); */
@@ -3974,7 +3982,7 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 			get_mon_num_prep(dun_type, NULL);
 
 			/* Pick a random race */
-			z = get_mon_num(r_ptr->level, r_ptr->level - 20); //not too high level escort for lower level boss
+			z = get_mon_num((r_ptr->level * 4) / 5, dlevel); //not too high level escort for lower level boss
 
 
 			/* Remove restriction */
@@ -3984,7 +3992,7 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 			if (!z) break;
 
 			/* Place a single escort */
-			(void)place_monster_one(wpos, ny, nx, z, pick_ego_monster(z, level), 0, slp, clo, clone_summoning);
+			(void)place_monster_one(wpos, ny, nx, z, pick_ego_monster(z, dlevel), 0, slp, clo, clone_summoning);
 
 #ifdef TEST_SERVER
 			if (r_ptr->flags1 & RF1_ESCORTS)
@@ -4019,7 +4027,7 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 	int r_idx = 0, i;
 	player_type *p_ptr;
-	int lev = getlevel(wpos); /* HALLOWEEN; and new: anti-double-OOD */
+	int dlev = getlevel(wpos); /* HALLOWEEN; and new: anti-double-OOD */
 //#ifdef RPG_SERVER
 	struct dungeon_type *d_ptr = getdungeon(wpos);
 //#endif
@@ -4028,7 +4036,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 
 	if (season_halloween && great_pumpkin_timer == 0 && wpos->wz != 0
 	    && level_generation_time /* spawn it only on level generation time? yes, because of high-lev camping TT while lowbies frequent it, spawning it for him */
-	    && (lev <= HALLOWEEN_MAX_DLEV)
+	    && (dlev <= HALLOWEEN_MAX_DLEV)
 #if 1 /* not in Training Tower? */
 	    && !(d_ptr->flags2 & DF2_NO_DEATH)
 #endif
@@ -4085,7 +4093,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 	if (d_ptr && (d_ptr->r_char[0] || d_ptr->nr_char[0])) {
 		int i, j = 0;
 		monster_race *r_ptr;
-		while ((r_idx = get_mon_num(monster_level, lev))) {
+		while ((r_idx = get_mon_num(monster_level, dlev))) {
 			if (j++ > 250) break;
 			r_ptr = &r_info[r_idx];
 			if (d_ptr->r_char[0]) {
@@ -4129,7 +4137,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 		get_mon_num_prep(dun_type, l_ptr ? l_ptr->uniques_killed : NULL);
 
 		/* Pick a monster */
-		r_idx = get_mon_num(monster_level, lev);
+		r_idx = get_mon_num(monster_level, dlev);
 
 		/* Reset restriction */
 		get_mon_num2_hook = NULL;
@@ -4643,10 +4651,13 @@ static bool summon_specific_okay(int r_idx) {
  * Note that this function may not succeed, though this is very rare.
  */
 bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone, int type, int allow_sidekicks, int clone_summoning) {
-	int i, x, y, r_idx;
-	dun_level *l_ptr = getfloor(wpos);
+	int i, x, y, r_idx, dlev;
+	dun_level *l_ptr;
 	cave_type **zcave;
 	if(!(zcave = getcave(wpos))) return(FALSE);
+
+	l_ptr = getfloor(wpos);
+	dlev = getlevel(wpos);
 
 	/* Look for a location */
 	for (i = 0; i < 20; ++i) {
@@ -4688,7 +4699,7 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone
 
 	for (i = 0; i < 10; i++) { /* try a couple of times */
 		/* Ok, now let them summon what they can */
-		r_idx = get_mon_num((getlevel(wpos) + lev) / 2 + 5, (getlevel(wpos) + lev) / 2);
+		r_idx = get_mon_num((dlev + lev) / 2 + 5, dlev);
 		break;
 	}
 
