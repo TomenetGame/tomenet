@@ -3828,6 +3828,7 @@ void display_player(int hist) {
 		/* Horizontal view (Horizontal rows of different stats) */
 		else {
 			int header_color[1][76], row = -1, col = 0;
+			int x_offset = 1; /* x_offset must be 0 if c_put_str_vert() operates in normal mode and 1 if in vertical mode! */
 
 			for (i = 0; i < 1; i++)
 				for (j = 0; j < 76; j++)
@@ -3844,21 +3845,21 @@ void display_player(int hist) {
 				if (i == 14) color = (p_ptr->ghost) ? TERM_L_DARK : (p_ptr->fruit_bat == 1) ? TERM_ORANGE : TERM_WHITE;
 				for (j = 0; j < 1; j++) {
 					switch (i) {
-					case 0: { c_put_str(color, "a", 6 + j * 20 + i, 0); break; }
-					case 1: { c_put_str(color, "b", 6 + j * 20 + i, 0); break; }
-					case 2: { c_put_str(color, "c", 6 + j * 20 + i, 0); break; }
-					case 3: { c_put_str(color, "d", 6 + j * 20 + i, 0); break; }
-					case 4: { c_put_str(color, "e", 6 + j * 20 + i, 0); break; }
-					case 5: { c_put_str(color, "f", 6 + j * 20 + i, 0); break; }
-					case 6: { c_put_str(color, "g", 6 + j * 20 + i, 0); break; }
-					case 7: { c_put_str(color, "h", 6 + j * 20 + i, 0); break; }
-					case 8: { c_put_str(color, "i", 6 + j * 20 + i, 0); break; }
-					case 9: { c_put_str(color, "j", 6 + j * 20 + i, 0); break; }
-					case 10: { c_put_str(color, "k", 6 + j * 20 + i, 0); break; }
-					case 11: { c_put_str(color, "l", 6 + j * 20 + i, 0); break; }
-					case 12: { c_put_str(color, "m", 6 + j * 20 + i, 0); break; }
-					case 13: { c_put_str(color, "n", 6 + j * 20 + i, 0); break; }
-					case 14: { c_put_str(color, (p_ptr->fruit_bat == 1) ? "b" : "@", 6 + j * 20 + i, 0); break; }
+					case 0: { c_put_str(color, "a", 6 + j * 20 + i, x_offset); break; }
+					case 1: { c_put_str(color, "b", 6 + j * 20 + i, x_offset); break; }
+					case 2: { c_put_str(color, "c", 6 + j * 20 + i, x_offset); break; }
+					case 3: { c_put_str(color, "d", 6 + j * 20 + i, x_offset); break; }
+					case 4: { c_put_str(color, "e", 6 + j * 20 + i, x_offset); break; }
+					case 5: { c_put_str(color, "f", 6 + j * 20 + i, x_offset); break; }
+					case 6: { c_put_str(color, "g", 6 + j * 20 + i, x_offset); break; }
+					case 7: { c_put_str(color, "h", 6 + j * 20 + i, x_offset); break; }
+					case 8: { c_put_str(color, "i", 6 + j * 20 + i, x_offset); break; }
+					case 9: { c_put_str(color, "j", 6 + j * 20 + i, x_offset); break; }
+					case 10: { c_put_str(color, "k", 6 + j * 20 + i, x_offset); break; }
+					case 11: { c_put_str(color, "l", 6 + j * 20 + i, x_offset); break; }
+					case 12: { c_put_str(color, "m", 6 + j * 20 + i, x_offset); break; }
+					case 13: { c_put_str(color, "n", 6 + j * 20 + i, x_offset); break; }
+					case 14: { c_put_str(color, (p_ptr->fruit_bat == 1) ? "b" : "@", 6 + j * 20 + i, x_offset); break; }
 					}
 				}
 
@@ -3868,94 +3869,94 @@ void display_player(int hist) {
 				if (csheet_boni[i].cb[11] & CB12_XHIDD) color = TERM_YELLOW;
 				for (j = 0; j < 1; j++) {
 					for (k = 1; k <= 76; k++)
-						c_put_str(color, ".", 6 + j + i, k);
+						c_put_str(color, ".", 6 + j + i, k + x_offset);
 				}
 				if (csheet_boni[i].cb[12] & CB13_XNOEQ) continue;
 
 				/* Fill with boni values and track header colour. Gross hardcode! - Kurzel */
-				if (csheet_boni[i].cb[0] & CB1_SFIRE) { c_put_str(TERM_RED, "-", 6 + i, 1); if (header_color[0][0] == TERM_L_DARK) header_color[0][0] = TERM_RED; }
-				if (csheet_boni[i].cb[0] & CB1_RFIRE) { c_put_str(TERM_WHITE, "+", 6 + i, 1); if (header_color[0][0] == TERM_L_DARK || header_color[0][0] == TERM_RED) header_color[0][0] = TERM_WHITE; }
-				if (csheet_boni[i].cb[0] & CB1_IFIRE) { c_put_str(TERM_L_UMBER, "*", 6 + i, 1); header_color[0][0] = TERM_L_UMBER; }
-				if (csheet_boni[i].cb[0] & CB1_SCOLD) { c_put_str(TERM_RED, "-", 6 + i, 2); if (header_color[0][1] == TERM_L_DARK) header_color[0][1] = TERM_RED; }
-				if (csheet_boni[i].cb[0] & CB1_RCOLD) { c_put_str(TERM_WHITE, "+", 6 + i, 2); if (header_color[0][1] == TERM_L_DARK || header_color[0][1] == TERM_RED) header_color[0][1] = TERM_WHITE; }
-				if (csheet_boni[i].cb[0] & CB1_ICOLD) { c_put_str(TERM_L_UMBER, "*", 6 + i, 2); header_color[0][1] = TERM_L_UMBER; }
-				if (csheet_boni[i].cb[0] & CB1_SELEC) { c_put_str(TERM_RED, "-", 6 + i, 3); if (header_color[0][2] == TERM_L_DARK) header_color[0][2] = TERM_RED; }
-				if (csheet_boni[i].cb[0] & CB1_RELEC) { c_put_str(TERM_WHITE, "+", 6 + i, 3); if (header_color[0][2] == TERM_L_DARK || header_color[0][2] == TERM_RED) header_color[0][2] = TERM_WHITE; }
-				if (csheet_boni[i].cb[1] & CB2_IELEC) { c_put_str(TERM_L_UMBER, "*", 6 + i, 3); header_color[0][2] = TERM_L_UMBER; }
-				if (csheet_boni[i].cb[1] & CB2_SACID) { c_put_str(TERM_RED, "-", 6 + i, 4); if (header_color[0][3] == TERM_L_DARK) header_color[0][3] = TERM_RED; }
-				if (csheet_boni[i].cb[1] & CB2_RACID) { c_put_str(TERM_WHITE, "+", 6 + i, 4); if (header_color[0][3] == TERM_L_DARK || header_color[0][3] == TERM_RED) header_color[0][3] = TERM_WHITE; }
-				if (csheet_boni[i].cb[1] & CB2_IACID) { c_put_str(TERM_L_UMBER, "*", 6 + i, 4); header_color[0][3] = TERM_L_UMBER; }
-				if (csheet_boni[i].cb[1] & CB2_SPOIS) { c_put_str(TERM_RED, "-", 6 + i, 5); if (header_color[0][4] == TERM_L_DARK) header_color[0][4] = TERM_RED; }
-				if (csheet_boni[i].cb[1] & CB2_RPOIS) { c_put_str(TERM_WHITE, "+", 6 + i, 5); if (header_color[0][4] == TERM_L_DARK || header_color[0][4] == TERM_RED) header_color[0][4] = TERM_WHITE; }
-				if (csheet_boni[i].cb[1] & CB2_IPOIS) { c_put_str(TERM_L_UMBER, "*", 6 + i, 5); header_color[0][4] = TERM_L_UMBER; }
-				if (csheet_boni[i].cb[1] & CB2_RBLND) { c_put_str(TERM_WHITE, "+", 6 + i, 6); header_color[0][5] = TERM_WHITE; }
-				if (csheet_boni[i].cb[2] & CB3_SLITE) { c_put_str(TERM_RED, "-", 6 + i, 7); if (header_color[0][6] == TERM_L_DARK) header_color[0][6] = TERM_RED; }
-				if (csheet_boni[i].cb[2] & CB3_RLITE) { c_put_str(TERM_WHITE, "+", 6 + i, 7); if (header_color[0][6] == TERM_L_DARK || header_color[0][6] == TERM_RED) header_color[0][6] = TERM_WHITE; }
-				if (csheet_boni[i].cb[2] & CB3_RDARK) { c_put_str(TERM_WHITE, "+", 6 + i, 8); if (header_color[0][7] == TERM_L_DARK) header_color[0][7] = TERM_WHITE; }
-				if (csheet_boni[i].cb[2] & CB3_RSOUN) { c_put_str(TERM_WHITE, "+", 6 + i, 9); header_color[0][8] = TERM_WHITE; }
-				if (csheet_boni[i].cb[12] & CB13_XNCUT) c_put_str(TERM_WHITE, "s", 6 + i, 10);
-				if (csheet_boni[i].cb[2] & CB3_RSHRD) { c_put_str(TERM_WHITE, "+", 6 + i, 10); header_color[0][9] = TERM_WHITE; }
-				if ((csheet_boni[i].cb[2] & CB3_RSHRD) && (csheet_boni[i].cb[12] & CB13_XNCUT)) c_put_str(TERM_WHITE, "*", 6 + i, 10);
-				if (csheet_boni[i].cb[2] & CB3_RNEXU) { c_put_str(TERM_WHITE, "+", 6 + i, 11); header_color[0][10] = TERM_WHITE; }
-				if (csheet_boni[i].cb[2] & CB3_RNETH) { c_put_str(TERM_WHITE, "+", 6 + i, 12); if (header_color[0][11] == TERM_L_DARK) header_color[0][11] = TERM_WHITE; }
-				if (csheet_boni[i].cb[2] & CB3_INETH) { c_put_str(TERM_L_UMBER, "*", 6 + i, 12); header_color[0][11] = TERM_L_UMBER; }
-				if (csheet_boni[i].cb[3] & CB4_RCONF) { c_put_str(TERM_WHITE, "+", 6 + i, 13); if (header_color[0][12] == TERM_L_DARK || header_color[0][12] == TERM_YELLOW) header_color[0][12] = TERM_WHITE; }
+				if (csheet_boni[i].cb[0] & CB1_SFIRE) { c_put_str(TERM_RED, "-", 6 + i, 1 + x_offset); if (header_color[0][0] == TERM_L_DARK) header_color[0][0] = TERM_RED; }
+				if (csheet_boni[i].cb[0] & CB1_RFIRE) { c_put_str(TERM_WHITE, "+", 6 + i, 1 + x_offset); if (header_color[0][0] == TERM_L_DARK || header_color[0][0] == TERM_RED) header_color[0][0] = TERM_WHITE; }
+				if (csheet_boni[i].cb[0] & CB1_IFIRE) { c_put_str(TERM_L_UMBER, "*", 6 + i, 1 + x_offset); header_color[0][0] = TERM_L_UMBER; }
+				if (csheet_boni[i].cb[0] & CB1_SCOLD) { c_put_str(TERM_RED, "-", 6 + i, 2 + x_offset); if (header_color[0][1] == TERM_L_DARK) header_color[0][1] = TERM_RED; }
+				if (csheet_boni[i].cb[0] & CB1_RCOLD) { c_put_str(TERM_WHITE, "+", 6 + i, 2 + x_offset); if (header_color[0][1] == TERM_L_DARK || header_color[0][1] == TERM_RED) header_color[0][1] = TERM_WHITE; }
+				if (csheet_boni[i].cb[0] & CB1_ICOLD) { c_put_str(TERM_L_UMBER, "*", 6 + i, 2 + x_offset); header_color[0][1] = TERM_L_UMBER; }
+				if (csheet_boni[i].cb[0] & CB1_SELEC) { c_put_str(TERM_RED, "-", 6 + i, 3 + x_offset); if (header_color[0][2] == TERM_L_DARK) header_color[0][2] = TERM_RED; }
+				if (csheet_boni[i].cb[0] & CB1_RELEC) { c_put_str(TERM_WHITE, "+", 6 + i, 3 + x_offset); if (header_color[0][2] == TERM_L_DARK || header_color[0][2] == TERM_RED) header_color[0][2] = TERM_WHITE; }
+				if (csheet_boni[i].cb[1] & CB2_IELEC) { c_put_str(TERM_L_UMBER, "*", 6 + i, 3 + x_offset); header_color[0][2] = TERM_L_UMBER; }
+				if (csheet_boni[i].cb[1] & CB2_SACID) { c_put_str(TERM_RED, "-", 6 + i, 4 + x_offset); if (header_color[0][3] == TERM_L_DARK) header_color[0][3] = TERM_RED; }
+				if (csheet_boni[i].cb[1] & CB2_RACID) { c_put_str(TERM_WHITE, "+", 6 + i, 4 + x_offset); if (header_color[0][3] == TERM_L_DARK || header_color[0][3] == TERM_RED) header_color[0][3] = TERM_WHITE; }
+				if (csheet_boni[i].cb[1] & CB2_IACID) { c_put_str(TERM_L_UMBER, "*", 6 + i, 4 + x_offset); header_color[0][3] = TERM_L_UMBER; }
+				if (csheet_boni[i].cb[1] & CB2_SPOIS) { c_put_str(TERM_RED, "-", 6 + i, 5 + x_offset); if (header_color[0][4] == TERM_L_DARK) header_color[0][4] = TERM_RED; }
+				if (csheet_boni[i].cb[1] & CB2_RPOIS) { c_put_str(TERM_WHITE, "+", 6 + i, 5 + x_offset); if (header_color[0][4] == TERM_L_DARK || header_color[0][4] == TERM_RED) header_color[0][4] = TERM_WHITE; }
+				if (csheet_boni[i].cb[1] & CB2_IPOIS) { c_put_str(TERM_L_UMBER, "*", 6 + i, 5 + x_offset); header_color[0][4] = TERM_L_UMBER; }
+				if (csheet_boni[i].cb[1] & CB2_RBLND) { c_put_str(TERM_WHITE, "+", 6 + i, 6 + x_offset); header_color[0][5] = TERM_WHITE; }
+				if (csheet_boni[i].cb[2] & CB3_SLITE) { c_put_str(TERM_RED, "-", 6 + i, 7 + x_offset); if (header_color[0][6] == TERM_L_DARK) header_color[0][6] = TERM_RED; }
+				if (csheet_boni[i].cb[2] & CB3_RLITE) { c_put_str(TERM_WHITE, "+", 6 + i, 7 + x_offset); if (header_color[0][6] == TERM_L_DARK || header_color[0][6] == TERM_RED) header_color[0][6] = TERM_WHITE; }
+				if (csheet_boni[i].cb[2] & CB3_RDARK) { c_put_str(TERM_WHITE, "+", 6 + i, 8 + x_offset); if (header_color[0][7] == TERM_L_DARK) header_color[0][7] = TERM_WHITE; }
+				if (csheet_boni[i].cb[2] & CB3_RSOUN) { c_put_str(TERM_WHITE, "+", 6 + i, 9 + x_offset); header_color[0][8] = TERM_WHITE; }
+				if (csheet_boni[i].cb[12] & CB13_XNCUT) c_put_str(TERM_WHITE, "s", 6 + i, 10 + x_offset);
+				if (csheet_boni[i].cb[2] & CB3_RSHRD) { c_put_str(TERM_WHITE, "+", 6 + i, 10 + x_offset); header_color[0][9] = TERM_WHITE; }
+				if ((csheet_boni[i].cb[2] & CB3_RSHRD) && (csheet_boni[i].cb[12] & CB13_XNCUT)) c_put_str(TERM_WHITE, "*", 6 + i, 10 + x_offset);
+				if (csheet_boni[i].cb[2] & CB3_RNEXU) { c_put_str(TERM_WHITE, "+", 6 + i, 11 + x_offset); header_color[0][10] = TERM_WHITE; }
+				if (csheet_boni[i].cb[2] & CB3_RNETH) { c_put_str(TERM_WHITE, "+", 6 + i, 12 + x_offset); if (header_color[0][11] == TERM_L_DARK) header_color[0][11] = TERM_WHITE; }
+				if (csheet_boni[i].cb[2] & CB3_INETH) { c_put_str(TERM_L_UMBER, "*", 6 + i, 12 + x_offset); header_color[0][11] = TERM_L_UMBER; }
+				if (csheet_boni[i].cb[3] & CB4_RCONF) { c_put_str(TERM_WHITE, "+", 6 + i, 13 + x_offset); if (header_color[0][12] == TERM_L_DARK || header_color[0][12] == TERM_YELLOW) header_color[0][12] = TERM_WHITE; }
 				if (csheet_boni[i].cb[3] & CB4_RCHAO) {
-					c_put_str(TERM_WHITE, "+", 6 + i, 14); header_color[0][13] = TERM_WHITE;
+					c_put_str(TERM_WHITE, "+", 6 + i, 14 + x_offset); header_color[0][13] = TERM_WHITE;
 					//Chaos covers confusion for whatever reason, maybe confusion breathers should breathe psi damage instead, and confusion should become non-damaging? - Kurzel
 					//Could replace br_conf with a psi attack for the affected mobs, breathing psi doesn't make any sense either, some mobs could be removed even. - Kurzel
 					//Bronze D / draconians could get gravity/lightning to be consistent with other metallic dragon abilities/lore? Same colour as gravity Z now anyway. - Kurzel
-					if (!(csheet_boni[i].cb[3] & CB4_RCONF)) { c_put_str(TERM_YELLOW, "+", 6 + i, 13); if (header_color[0][12] == TERM_L_DARK) header_color[0][12] = TERM_YELLOW; }
+					if (!(csheet_boni[i].cb[3] & CB4_RCONF)) { c_put_str(TERM_YELLOW, "+", 6 + i, 13 + x_offset); if (header_color[0][12] == TERM_L_DARK) header_color[0][12] = TERM_YELLOW; }
 				}
-				if (csheet_boni[i].cb[3] & CB4_RDISE) { c_put_str(TERM_WHITE, "+", 6 + i, 15); header_color[0][14] = TERM_WHITE; }
-				if (csheet_boni[i].cb[3] & CB4_RWATR) { c_put_str(TERM_WHITE, "+", 6 + i, 16); if (header_color[0][15] == TERM_L_DARK) header_color[0][15] = TERM_WHITE; }
-				if (csheet_boni[i].cb[3] & CB4_IWATR) { c_put_str(TERM_L_UMBER, "*", 6 + i, 16); header_color[0][15] = TERM_L_UMBER; }
-				if (csheet_boni[i].cb[3] & CB4_RTIME) { c_put_str(TERM_WHITE, "+", 6 + i, 17); header_color[0][16] = TERM_WHITE; }
-				if (csheet_boni[i].cb[3] & CB4_RMANA) { c_put_str(TERM_WHITE, "+", 6 + i, 18); header_color[0][17] = TERM_WHITE; }
-				if (csheet_boni[i].cb[13] & CB14_UMIND) { c_put_str(TERM_WHITE, "*", 6 + i, 19); header_color[0][18] = TERM_WHITE; } //I added a 'level 3' - C. Blue
-				else if (csheet_boni[i].cb[4] & CB5_XMIND) { c_put_str(TERM_WHITE, "+", 6 + i, 19); header_color[0][18] = TERM_WHITE; } //Similar to no_cut, for now? Level 2~ - Kurzel
-				else if (csheet_boni[i].cb[3] & CB4_RMIND) { c_put_str(TERM_WHITE, "~", 6 + i, 19); header_color[0][18] = TERM_WHITE; }
+				if (csheet_boni[i].cb[3] & CB4_RDISE) { c_put_str(TERM_WHITE, "+", 6 + i, 15 + x_offset); header_color[0][14] = TERM_WHITE; }
+				if (csheet_boni[i].cb[3] & CB4_RWATR) { c_put_str(TERM_WHITE, "+", 6 + i, 16 + x_offset); if (header_color[0][15] == TERM_L_DARK) header_color[0][15] = TERM_WHITE; }
+				if (csheet_boni[i].cb[3] & CB4_IWATR) { c_put_str(TERM_L_UMBER, "*", 6 + i, 16 + x_offset); header_color[0][15] = TERM_L_UMBER; }
+				if (csheet_boni[i].cb[3] & CB4_RTIME) { c_put_str(TERM_WHITE, "+", 6 + i, 17 + x_offset); header_color[0][16] = TERM_WHITE; }
+				if (csheet_boni[i].cb[3] & CB4_RMANA) { c_put_str(TERM_WHITE, "+", 6 + i, 18 + x_offset); header_color[0][17] = TERM_WHITE; }
+				if (csheet_boni[i].cb[13] & CB14_UMIND) { c_put_str(TERM_WHITE, "*", 6 + i, 19 + x_offset); header_color[0][18] = TERM_WHITE; } //I added a 'level 3' - C. Blue
+				else if (csheet_boni[i].cb[4] & CB5_XMIND) { c_put_str(TERM_WHITE, "+", 6 + i, 19 + x_offset); header_color[0][18] = TERM_WHITE; } //Similar to no_cut, for now? Level 2~ - Kurzel
+				else if (csheet_boni[i].cb[3] & CB4_RMIND) { c_put_str(TERM_WHITE, "~", 6 + i, 19 + x_offset); header_color[0][18] = TERM_WHITE; }
 
-				if (csheet_boni[i].cb[4] & CB5_RFEAR) { c_put_str(TERM_WHITE, "+", 6 + i, 1 + 19); header_color[0][19 + 0] = TERM_WHITE; }
-				if (csheet_boni[i].cb[4] & CB5_RPARA) { c_put_str(TERM_WHITE, "+", 6 + i, 2 + 19); header_color[0][19 + 1] = TERM_WHITE; }
-				if (csheet_boni[i].cb[4] & CB5_STELE) { c_put_str(TERM_RED, "-", 6 + i, 3 + 19); if (header_color[0][19 + 2] == TERM_L_DARK || header_color[0][19 + 2] == TERM_WHITE) header_color[0][19 + 2] = TERM_RED; } //overrides the resist, no items with both
-				if (csheet_boni[i].cb[4] & CB5_RTELE) { c_put_str(TERM_WHITE, "+", 6 + i, 3 + 19); if (header_color[0][19 + 2] == TERM_L_DARK) header_color[0][19 + 2] = TERM_WHITE; }
-				if (csheet_boni[i].cb[4] & CB5_ITELE) { c_put_str(TERM_YELLOW, "*", 6 + i, 3 + 19); if (header_color[0][19 + 2] != TERM_YELLOW) header_color[0][19 + 2] = TERM_YELLOW; }
-				if (csheet_boni[i].cb[4] & CB5_RSINV) { c_put_str(TERM_WHITE, "+", 6 + i, 4 + 19); if (header_color[0][19 + 3] == TERM_L_DARK) header_color[0][19 + 3] = TERM_WHITE; }
-				if (csheet_boni[i].cb[4] & CB5_RINVS) { c_put_str(TERM_WHITE, "+", 6 + i, 5 + 19); header_color[0][19 + 4] = TERM_WHITE; }
-				if (csheet_boni[i].cb[5] & CB6_RLIFE) { c_put_str(TERM_WHITE, "+", 6 + i, 6 + 19); header_color[0][19 + 5] = TERM_WHITE; }
-				if (csheet_boni[i].cb[13] & CB14_ILIFE) { c_put_str(TERM_L_UMBER, "*", 6 + i, 6 + 19); header_color[0][19 + 5] = TERM_L_UMBER; }
-				if (csheet_boni[i].cb[5] & CB6_RWRTH) { c_put_str(TERM_WHITE, "+", 6 + i, 7 + 19); header_color[0][19 + 6] = TERM_WHITE; }
-				if (csheet_boni[i].cb[5] & CB6_RFFAL) { c_put_str(TERM_WHITE, "+", 6 + i, 8 + 19); header_color[0][19 + 7] = TERM_WHITE; }
-				if (csheet_boni[i].cb[12] & CB13_XSWIM) { c_put_str(TERM_L_BLUE, "~", 6 + i, 9 + 19); if (header_color[0][19 + 8] == TERM_L_DARK) header_color[0][19 + 8] = TERM_YELLOW; }
-				if (csheet_boni[i].cb[12] & CB13_XTREE) { c_put_str(TERM_GREEN, "#", 6 + i, 9 + 19); if (header_color[0][19 + 8] == TERM_L_DARK) header_color[0][19 + 8] = TERM_YELLOW; }
-				if ((csheet_boni[i].cb[12] & CB13_XTREE) && (csheet_boni[i].cb[12] & CB13_XSWIM)) c_put_str(TERM_YELLOW, "+", 6 + i, 9 + 19); //Almost flying~
+				if (csheet_boni[i].cb[4] & CB5_RFEAR) { c_put_str(TERM_WHITE, "+", 6 + i, 1 + 19 + x_offset); header_color[0][19 + 0] = TERM_WHITE; }
+				if (csheet_boni[i].cb[4] & CB5_RPARA) { c_put_str(TERM_WHITE, "+", 6 + i, 2 + 19 + x_offset); header_color[0][19 + 1] = TERM_WHITE; }
+				if (csheet_boni[i].cb[4] & CB5_STELE) { c_put_str(TERM_RED, "-", 6 + i, 3 + 19 + x_offset); if (header_color[0][19 + 2] == TERM_L_DARK || header_color[0][19 + 2] == TERM_WHITE) header_color[0][19 + 2] = TERM_RED; } //overrides the resist, no items with both
+				if (csheet_boni[i].cb[4] & CB5_RTELE) { c_put_str(TERM_WHITE, "+", 6 + i, 3 + 19 + x_offset); if (header_color[0][19 + 2] == TERM_L_DARK) header_color[0][19 + 2] = TERM_WHITE; }
+				if (csheet_boni[i].cb[4] & CB5_ITELE) { c_put_str(TERM_YELLOW, "*", 6 + i, 3 + 19 + x_offset); if (header_color[0][19 + 2] != TERM_YELLOW) header_color[0][19 + 2] = TERM_YELLOW; }
+				if (csheet_boni[i].cb[4] & CB5_RSINV) { c_put_str(TERM_WHITE, "+", 6 + i, 4 + 19 + x_offset); if (header_color[0][19 + 3] == TERM_L_DARK) header_color[0][19 + 3] = TERM_WHITE; }
+				if (csheet_boni[i].cb[4] & CB5_RINVS) { c_put_str(TERM_WHITE, "+", 6 + i, 5 + 19 + x_offset); header_color[0][19 + 4] = TERM_WHITE; }
+				if (csheet_boni[i].cb[5] & CB6_RLIFE) { c_put_str(TERM_WHITE, "+", 6 + i, 6 + 19 + x_offset); header_color[0][19 + 5] = TERM_WHITE; }
+				if (csheet_boni[i].cb[13] & CB14_ILIFE) { c_put_str(TERM_L_UMBER, "*", 6 + i, 6 + 19 + x_offset); header_color[0][19 + 5] = TERM_L_UMBER; }
+				if (csheet_boni[i].cb[5] & CB6_RWRTH) { c_put_str(TERM_WHITE, "+", 6 + i, 7 + 19 + x_offset); header_color[0][19 + 6] = TERM_WHITE; }
+				if (csheet_boni[i].cb[5] & CB6_RFFAL) { c_put_str(TERM_WHITE, "+", 6 + i, 8 + 19 + x_offset); header_color[0][19 + 7] = TERM_WHITE; }
+				if (csheet_boni[i].cb[12] & CB13_XSWIM) { c_put_str(TERM_L_BLUE, "~", 6 + i, 9 + 19 + x_offset); if (header_color[0][19 + 8] == TERM_L_DARK) header_color[0][19 + 8] = TERM_YELLOW; }
+				if (csheet_boni[i].cb[12] & CB13_XTREE) { c_put_str(TERM_GREEN, "#", 6 + i, 9 + 19 + x_offset); if (header_color[0][19 + 8] == TERM_L_DARK) header_color[0][19 + 8] = TERM_YELLOW; }
+				if ((csheet_boni[i].cb[12] & CB13_XTREE) && (csheet_boni[i].cb[12] & CB13_XSWIM)) c_put_str(TERM_YELLOW, "+", 6 + i, 9 + 19 + x_offset); //Almost flying~
 				if (csheet_boni[i].cb[5] & CB6_RLVTN) {
-					c_put_str(TERM_WHITE, "+", 6 + i, 9 + 19); header_color[0][19 + 8] = TERM_WHITE;
+					c_put_str(TERM_WHITE, "+", 6 + i, 9 + 19 + x_offset); header_color[0][19 + 8] = TERM_WHITE;
 					//Levitation covers feather falling, similar to chaos/confusion but plausible? - Kurzel
-					if (!(csheet_boni[i].cb[5] & CB6_RFFAL)) { c_put_str(TERM_YELLOW, "+", 6 + i, 8 + 19); if (header_color[0][19 + 7] == TERM_L_DARK) header_color[0][19 + 7] = TERM_YELLOW; }
+					if (!(csheet_boni[i].cb[5] & CB6_RFFAL)) { c_put_str(TERM_YELLOW, "+", 6 + i, 8 + 19 + x_offset); if (header_color[0][19 + 7] == TERM_L_DARK) header_color[0][19 + 7] = TERM_YELLOW; }
 				}
-				if (csheet_boni[i].cb[5] & CB6_RCLMB) { c_put_str(TERM_WHITE, "+", 6 + i, 10 + 19); header_color[0][19 + 9] = TERM_WHITE; }
-				if (csheet_boni[i].cb[5] & CB6_SRGHP) { c_put_str(TERM_RED, "-", 6 + i, 11 + 19); if (header_color[0][19 + 10] == TERM_L_DARK) header_color[0][19 + 10] = TERM_RED; }
-				if (csheet_boni[i].cb[5] & CB6_RRGHP) { c_put_str(TERM_WHITE, "+", 6 + i, 11 + 19); if (header_color[0][19 + 10] == TERM_L_DARK) header_color[0][19 + 10] = TERM_WHITE; if (header_color[0][19 + 10] == TERM_RED || header_color[0][19 + 10] == TERM_YELLOW) header_color[0][19 + 10] = TERM_YELLOW; } //yellow if both...
-				if (csheet_boni[i].cb[5] & CB6_SRGMP) { c_put_str(TERM_RED, "-", 6 + i, 12 + 19); if (header_color[0][19 + 11] == TERM_L_DARK) header_color[0][19 + 11] = TERM_RED; }
-				if (csheet_boni[i].cb[6] & CB7_RRGMP) { c_put_str(TERM_WHITE, "+", 6 + i, 12 + 19); if (header_color[0][19 + 11] == TERM_L_DARK) header_color[0][19 + 11] = TERM_WHITE; if (header_color[0][19 + 11] == TERM_RED || header_color[0][19 + 11] == TERM_YELLOW) header_color[0][19 + 11] = TERM_YELLOW; } //yellow if both...
-				if (csheet_boni[i].cb[6] & CB7_RFOOD) { c_put_str(TERM_WHITE, "+", 6 + i, 13 + 19); if (header_color[0][19 + 12] == TERM_L_DARK) header_color[0][19 + 12] = TERM_WHITE; }
-				if (p_ptr->prace == RACE_ENT || p_ptr->prace == RACE_VAMPIRE) { c_put_str(TERM_WHITE, "*", 6 + 14, 13 + 19); if (header_color[0][19 + 12] == TERM_L_DARK) header_color[0][19 + 12] = TERM_WHITE; } //Hack: Ents/Vamps require food but do not gorge! - Kurzel
-				if (csheet_boni[i].cb[6] & CB7_IFOOD) { c_put_str(TERM_L_UMBER, "*", 6 + i, 13 + 19); header_color[0][19 + 12] = TERM_L_UMBER; }
+				if (csheet_boni[i].cb[5] & CB6_RCLMB) { c_put_str(TERM_WHITE, "+", 6 + i, 10 + 19 + x_offset); header_color[0][19 + 9] = TERM_WHITE; }
+				if (csheet_boni[i].cb[5] & CB6_SRGHP) { c_put_str(TERM_RED, "-", 6 + i, 11 + 19 + x_offset); if (header_color[0][19 + 10] == TERM_L_DARK) header_color[0][19 + 10] = TERM_RED; }
+				if (csheet_boni[i].cb[5] & CB6_RRGHP) { c_put_str(TERM_WHITE, "+", 6 + i, 11 + 19 + x_offset); if (header_color[0][19 + 10] == TERM_L_DARK) header_color[0][19 + 10] = TERM_WHITE; if (header_color[0][19 + 10] == TERM_RED || header_color[0][19 + 10] == TERM_YELLOW) header_color[0][19 + 10] = TERM_YELLOW; } //yellow if both...
+				if (csheet_boni[i].cb[5] & CB6_SRGMP) { c_put_str(TERM_RED, "-", 6 + i, 12 + 19 + x_offset); if (header_color[0][19 + 11] == TERM_L_DARK) header_color[0][19 + 11] = TERM_RED; }
+				if (csheet_boni[i].cb[6] & CB7_RRGMP) { c_put_str(TERM_WHITE, "+", 6 + i, 12 + 19 + x_offset); if (header_color[0][19 + 11] == TERM_L_DARK) header_color[0][19 + 11] = TERM_WHITE; if (header_color[0][19 + 11] == TERM_RED || header_color[0][19 + 11] == TERM_YELLOW) header_color[0][19 + 11] = TERM_YELLOW; } //yellow if both...
+				if (csheet_boni[i].cb[6] & CB7_RFOOD) { c_put_str(TERM_WHITE, "+", 6 + i, 13 + 19 + x_offset); if (header_color[0][19 + 12] == TERM_L_DARK) header_color[0][19 + 12] = TERM_WHITE; }
+				if (p_ptr->prace == RACE_ENT || p_ptr->prace == RACE_VAMPIRE) { c_put_str(TERM_WHITE, "*", 6 + 14, 13 + 19 + x_offset); if (header_color[0][19 + 12] == TERM_L_DARK) header_color[0][19 + 12] = TERM_WHITE; } //Hack: Ents/Vamps require food but do not gorge! - Kurzel
+				if (csheet_boni[i].cb[6] & CB7_IFOOD) { c_put_str(TERM_L_UMBER, "*", 6 + i, 13 + 19 + x_offset); header_color[0][19 + 12] = TERM_L_UMBER; }
 				if (csheet_boni[i].cb[6] & CB7_RVAMP) {
 					if ((i == 0) || (i == 1) || (i == 2) || (i == 12)
 					    || ((i == 14) && (!strcasecmp(c_p_ptr->body_name, "Vampiric mist") || !strcasecmp(c_p_ptr->body_name, "Vampire bat"))) //Hack: use * for 100% weapon/ammo or v-bat/mist forms
 					    || (i == 14 && race == RACE_VAMPIRE && get_skill(SKILL_NECROMANCY) == 50 && get_skill(SKILL_TRAUMATURGY) == 50)) { //Nasty hack: Assume that having full trauma+necro gives 100% vamp actually
-						c_put_str(TERM_WHITE, "*", 6 + i, 14 + 19); header_color[0][19 + 13] = TERM_WHITE;
-					} else { c_put_str(TERM_WHITE, "+", 6 + i, 14 + 19); header_color[0][19 + 13] = TERM_WHITE; }
+						c_put_str(TERM_WHITE, "*", 6 + i, 14 + 19 + x_offset); header_color[0][19 + 13] = TERM_WHITE;
+					} else { c_put_str(TERM_WHITE, "+", 6 + i, 14 + 19 + x_offset); header_color[0][19 + 13] = TERM_WHITE; }
 				}
-				if (p_ptr->fruit_bat == 1 && !strcasecmp(c_p_ptr->body_name, "Player")) { c_put_str(TERM_WHITE, "+", 6 + 14, 14 + 19); header_color[0][19 + 13] = TERM_WHITE; } //Mega Hack: Hardcode 50% vamp as a fruit bat! Maybe incorrect for mimics? - Kurzel
-				if (csheet_boni[i].cb[6] & CB7_RAUID) { c_put_str(TERM_WHITE, "+", 6 + i, 15 + 19); header_color[0][19 + 14] = TERM_WHITE; }
-				if (csheet_boni[i].cb[6] & CB7_RREFL) { c_put_str(TERM_WHITE, "+", 6 + i, 16 + 19); header_color[0][19 + 15] = TERM_WHITE; }
-				if (csheet_boni[i].cb[6] & CB7_RAMSH) { c_put_str(TERM_YELLOW, "+", 6 + i, 17 + 19); header_color[0][19 + 16] = TERM_YELLOW; }
+				if (p_ptr->fruit_bat == 1 && !strcasecmp(c_p_ptr->body_name, "Player")) { c_put_str(TERM_WHITE, "+", 6 + 14, 14 + 19 + x_offset); header_color[0][19 + 13] = TERM_WHITE; } //Mega Hack: Hardcode 50% vamp as a fruit bat! Maybe incorrect for mimics? - Kurzel
+				if (csheet_boni[i].cb[6] & CB7_RAUID) { c_put_str(TERM_WHITE, "+", 6 + i, 15 + 19 + x_offset); header_color[0][19 + 14] = TERM_WHITE; }
+				if (csheet_boni[i].cb[6] & CB7_RREFL) { c_put_str(TERM_WHITE, "+", 6 + i, 16 + 19 + x_offset); header_color[0][19 + 15] = TERM_WHITE; }
+				if (csheet_boni[i].cb[6] & CB7_RAMSH) { c_put_str(TERM_YELLOW, "+", 6 + i, 17 + 19 + x_offset); header_color[0][19 + 16] = TERM_YELLOW; }
 				// AMFI (Numerical) goes here at [1][17] - Kurzel
-				if (csheet_boni[i].cb[6] & CB7_RAGGR) { c_put_str(TERM_RED, "+", 6 + i, 19 + 19); header_color[0][19 + 18] = TERM_RED; }
+				if (csheet_boni[i].cb[6] & CB7_RAGGR) { c_put_str(TERM_RED, "+", 6 + i, 19 + 19 + x_offset); header_color[0][19 + 18] = TERM_RED; }
 
 				/* Numerical Boni (WHITE if affected at, GOLD if sustained or maxxed (important), at a glance - Kurzel */
 				if (csheet_boni[i].spd != 0) {
@@ -3967,7 +3968,7 @@ void display_player(int hist) {
 					if (csheet_boni[i].spd < -9) color = TERM_RED;
 					sprintf(tmp, "%d", abs(csheet_boni[i].spd) % 10);
 					if (csheet_boni[i].spd > 29) sprintf(tmp, "*");
-					c_put_str(color, tmp, 6 + i, 1 + 19 * 2);
+					c_put_str(color, tmp, 6 + i, 1 + 19 * 2 + x_offset);
 				}
 				if (csheet_boni[i].slth != 0) {
 					header_color[0][19 * 2 + 1] = TERM_WHITE;
@@ -3979,7 +3980,7 @@ void display_player(int hist) {
 					if (csheet_boni[i].slth < -9) color = TERM_RED;
 					sprintf(tmp, "%d", abs(csheet_boni[i].slth) % 10);
 					if (csheet_boni[i].slth > 29) sprintf(tmp, "*");
-					c_put_str(color, tmp, 6 + i, 2 + 19 * 2);
+					c_put_str(color, tmp, 6 + i, 2 + 19 * 2 + x_offset);
 				}
 				if (csheet_boni[i].srch != 0) {
 					header_color[0][19 * 2 + 2] = TERM_WHITE;
@@ -3990,7 +3991,7 @@ void display_player(int hist) {
 					if (csheet_boni[i].srch < -9) color = TERM_RED;
 					sprintf(tmp, "%d", abs(csheet_boni[i].srch) % 10);
 					if (csheet_boni[i].srch > 29) sprintf(tmp, "*");
-					c_put_str(color, tmp, 6 + i, 3 + 19 * 2);
+					c_put_str(color, tmp, 6 + i, 3 + 19 * 2 + x_offset);
 				}
 				if (csheet_boni[i].infr != 0) {
 					header_color[0][19 * 2 + 3] = TERM_WHITE;
@@ -4001,7 +4002,7 @@ void display_player(int hist) {
 					if (csheet_boni[i].infr < -9) color = TERM_RED;
 					sprintf(tmp, "%d", abs(csheet_boni[i].infr) % 10);
 					if (csheet_boni[i].infr > 29) sprintf(tmp, "*");
-					c_put_str(color, tmp, 6 + i, 4 + 19 * 2);
+					c_put_str(color, tmp, 6 + i, 4 + 19 * 2 + x_offset);
 				}
 				if (csheet_boni[i].lite != 0) {
 					header_color[0][19 * 2 + 4] = TERM_WHITE;
@@ -4009,7 +4010,7 @@ void display_player(int hist) {
 					if (csheet_boni[i].cb[12] & CB13_XLITE) { color = TERM_L_UMBER; header_color[0][19 * 2 + 4] = TERM_L_UMBER; }
 					sprintf(tmp, "%d", abs(csheet_boni[i].lite) % 10);
 					if (csheet_boni[i].lite > 9) sprintf(tmp, "*");
-					c_put_str(color, tmp, 6 + i, 5 + 19 * 2);
+					c_put_str(color, tmp, 6 + i, 5 + 19 * 2 + x_offset);
 				}
 				if (csheet_boni[i].dig != 0) {
 					header_color[0][19 * 2 + 5] = TERM_WHITE;
@@ -4021,7 +4022,7 @@ void display_player(int hist) {
 					sprintf(tmp, "%d", abs(csheet_boni[i].dig) % 10);
 					if (csheet_boni[i].dig > 29 || (csheet_boni[i].cb[12] & CB13_XWALL)) sprintf(tmp, "*");
 					if (csheet_boni[i].cb[12] & CB13_XWALL) color = TERM_L_UMBER;
-					c_put_str(color, tmp, 6 + i, 6 + 19 * 2);
+					c_put_str(color, tmp, 6 + i, 6 + 19 * 2 + x_offset);
 				}
 				if (csheet_boni[i].blow != 0) {
 					header_color[0][19 * 2 + 6] = TERM_WHITE;
@@ -4031,7 +4032,7 @@ void display_player(int hist) {
 					if (csheet_boni[i].blow < -9) color = TERM_RED;
 					sprintf(tmp, "%d", abs(csheet_boni[i].blow) % 10);
 					if (csheet_boni[i].blow > 19) sprintf(tmp, "*");
-					c_put_str(color, tmp, 6 + i, 7 + 19 * 2);
+					c_put_str(color, tmp, 6 + i, 7 + 19 * 2 + x_offset);
 				}
 				if (csheet_boni[i].crit != 0) {
 					header_color[0][19 * 2 + 7] = TERM_WHITE;
@@ -4041,7 +4042,7 @@ void display_player(int hist) {
 					if (csheet_boni[i].crit < -9) color = TERM_RED;
 					sprintf(tmp, "%d", abs(csheet_boni[i].crit) % 10);
 					if (csheet_boni[i].crit > 19) sprintf(tmp, "*");
-					c_put_str(color, tmp, 6 + i, 8 + 19 * 2);
+					c_put_str(color, tmp, 6 + i, 8 + 19 * 2 + x_offset);
 				}
 				if (csheet_boni[i].shot != 0) {
 					header_color[0][19 * 2 + 8] = TERM_WHITE;
@@ -4051,7 +4052,7 @@ void display_player(int hist) {
 					if (csheet_boni[i].shot < -9) color = TERM_RED;
 					sprintf(tmp, "%d", abs(csheet_boni[i].shot) % 10);
 					if (csheet_boni[i].shot > 19) sprintf(tmp, "*");
-					c_put_str(color, tmp, 6 + i, 9 + 19 * 2);
+					c_put_str(color, tmp, 6 + i, 9 + 19 * 2 + x_offset);
 				}
 				if (csheet_boni[i].migh != 0) {
 					header_color[0][19 * 2 + 9] = TERM_WHITE;
@@ -4061,7 +4062,7 @@ void display_player(int hist) {
 					if (csheet_boni[i].migh < -9) color = TERM_RED;
 					sprintf(tmp, "%d", abs(csheet_boni[i].migh) % 10);
 					if (csheet_boni[i].migh > 19) sprintf(tmp, "*");
-					c_put_str(color, tmp, 6 + i, 10 + 19 * 2);
+					c_put_str(color, tmp, 6 + i, 10 + 19 * 2 + x_offset);
 				}
 				if (csheet_boni[i].mxhp != 0) {
 					header_color[0][19 * 2 + 10] = TERM_WHITE;
@@ -4072,7 +4073,7 @@ void display_player(int hist) {
 					else if (csheet_boni[i].mxhp < 0) color = TERM_RED;
 					sprintf(tmp, "%d", abs(csheet_boni[i].mxhp) % 10);
 					if (csheet_boni[i].mxhp > 19) sprintf(tmp, "*");
-					c_put_str(color, tmp, 6 + i, 11 + 19 * 2);
+					c_put_str(color, tmp, 6 + i, 11 + 19 * 2 + x_offset);
 				}
 				if (csheet_boni[i].mxmp != 0) {
 					header_color[0][19 * 2 + 11] = TERM_WHITE;
@@ -4082,7 +4083,7 @@ void display_player(int hist) {
 					if (csheet_boni[i].mxmp < -9) color = TERM_RED;
 					sprintf(tmp, "%d", abs(csheet_boni[i].mxmp) % 10);
 					if (csheet_boni[i].mxmp > 19) sprintf(tmp, "*");
-					c_put_str(color, tmp, 6 + i, 12 + 19 * 2);
+					c_put_str(color, tmp, 6 + i, 12 + 19 * 2 + x_offset);
 				}
 				if (csheet_boni[i].luck != 0) {
 					luck_sum += csheet_boni[i].luck;
@@ -4095,7 +4096,7 @@ void display_player(int hist) {
 					if (csheet_boni[i].luck < -9) color = TERM_RED;
 					sprintf(tmp, "%d", abs(csheet_boni[i].luck) % 10);
 					if (csheet_boni[i].mxmp > 29) sprintf(tmp, "*");
-					c_put_str(color, tmp, 6 + i, 13 + 19 * 2);
+					c_put_str(color, tmp, 6 + i, 13 + 19 * 2 + x_offset);
 				}
 				if (csheet_boni[i].pstr != 0) {
 					if (header_color[0][19 * 2 + 13] == TERM_L_DARK) header_color[0][19 * 2 + 13] = TERM_WHITE;
@@ -4106,8 +4107,8 @@ void display_player(int hist) {
 					if (csheet_boni[i].pstr < -9) { color = TERM_RED; if (csheet_boni[i].cb[11] & CB12_RSSTR) color = TERM_ORANGE; }
 					sprintf(tmp, "%d", abs(csheet_boni[i].pstr) % 10);
 					if (csheet_boni[i].pstr > 19) sprintf(tmp, "*");
-					c_put_str(color, tmp, 6 + i, 14 + 19 * 2);
-				} else if (csheet_boni[i].cb[11] & CB12_RSSTR) { c_put_str(TERM_L_UMBER, "s", 6 + i, 14 + 19 * 2); header_color[0][19 * 2 + 13] = TERM_L_UMBER; }
+					c_put_str(color, tmp, 6 + i, 14 + 19 * 2 + x_offset);
+				} else if (csheet_boni[i].cb[11] & CB12_RSSTR) { c_put_str(TERM_L_UMBER, "s", 6 + i, 14 + 19 * 2 + x_offset); header_color[0][19 * 2 + 13] = TERM_L_UMBER; }
 				if (csheet_boni[i].pint != 0) {
 					if (header_color[0][19 * 2 + 14] == TERM_L_DARK) header_color[0][19 * 2 + 14] = TERM_WHITE;
 					color = TERM_L_GREEN;
@@ -4117,8 +4118,8 @@ void display_player(int hist) {
 					if (csheet_boni[i].pint < -9) { color = TERM_RED; if (csheet_boni[i].cb[11] & CB12_RSINT) color = TERM_ORANGE; }
 					sprintf(tmp, "%d", abs(csheet_boni[i].pint) % 10);
 					if (csheet_boni[i].pint > 19) sprintf(tmp, "*");
-					c_put_str(color, tmp, 6 + i, 15 + 19 * 2);
-				} else if (csheet_boni[i].cb[11] & CB12_RSINT) { c_put_str(TERM_L_UMBER, "s", 6 + i, 15 + 19 * 2); header_color[0][19 * 2 + 14] = TERM_L_UMBER; }
+					c_put_str(color, tmp, 6 + i, 15 + 19 * 2 + x_offset);
+				} else if (csheet_boni[i].cb[11] & CB12_RSINT) { c_put_str(TERM_L_UMBER, "s", 6 + i, 15 + 19 * 2 + x_offset); header_color[0][19 * 2 + 14] = TERM_L_UMBER; }
 				if (csheet_boni[i].pwis != 0) {
 					if (header_color[0][19 * 2 + 15] == TERM_L_DARK) header_color[0][19 * 2 + 15] = TERM_WHITE;
 					color = TERM_L_GREEN;
@@ -4128,8 +4129,8 @@ void display_player(int hist) {
 					if (csheet_boni[i].pwis < -9) { color = TERM_RED; if (csheet_boni[i].cb[11] & CB12_RSWIS) color = TERM_ORANGE; }
 					sprintf(tmp, "%d", abs(csheet_boni[i].pwis) % 10);
 					if (csheet_boni[i].pwis > 19) sprintf(tmp, "*");
-					c_put_str(color, tmp, 6 + i, 16 + 19 * 2);
-				} else if (csheet_boni[i].cb[11] & CB12_RSWIS) { c_put_str(TERM_L_UMBER, "s", 6 + i, 16 + 19 * 2); header_color[0][19 * 2 + 15] = TERM_L_UMBER; }
+					c_put_str(color, tmp, 6 + i, 16 + 19 * 2 + x_offset);
+				} else if (csheet_boni[i].cb[11] & CB12_RSWIS) { c_put_str(TERM_L_UMBER, "s", 6 + i, 16 + 19 * 2 + x_offset); header_color[0][19 * 2 + 15] = TERM_L_UMBER; }
 				if (csheet_boni[i].pdex != 0) {
 					if (header_color[0][19 * 2 + 16] == TERM_L_DARK) header_color[0][19 * 2 + 16] = TERM_WHITE;
 					color = TERM_L_GREEN;
@@ -4139,8 +4140,8 @@ void display_player(int hist) {
 					if (csheet_boni[i].pdex < -9) { color = TERM_RED; if (csheet_boni[i].cb[11] & CB12_RSDEX) color = TERM_ORANGE; }
 					sprintf(tmp, "%d", abs(csheet_boni[i].pdex) % 10);
 					if (csheet_boni[i].pdex > 19) sprintf(tmp, "*");
-					c_put_str(color, tmp, 6 + i, 17 + 19 * 2);
-				} else if (csheet_boni[i].cb[11] & CB12_RSDEX) { c_put_str(TERM_L_UMBER, "s", 6 + i, 17 + 19 * 2); header_color[0][19 * 2 + 16] = TERM_L_UMBER; }
+					c_put_str(color, tmp, 6 + i, 17 + 19 * 2 + x_offset);
+				} else if (csheet_boni[i].cb[11] & CB12_RSDEX) { c_put_str(TERM_L_UMBER, "s", 6 + i, 17 + 19 * 2 + x_offset); header_color[0][19 * 2 + 16] = TERM_L_UMBER; }
 				if (csheet_boni[i].pcon != 0) {
 					if (header_color[0][19 * 2 + 17] == TERM_L_DARK) header_color[0][19 * 2 + 17] = TERM_WHITE;
 					color = TERM_L_GREEN;
@@ -4150,8 +4151,8 @@ void display_player(int hist) {
 					if (csheet_boni[i].pcon < -9) { color = TERM_RED; if (csheet_boni[i].cb[11] & CB12_RSCON) color = TERM_ORANGE; }
 					sprintf(tmp, "%d", abs(csheet_boni[i].pcon) % 10);
 					if (csheet_boni[i].pcon > 19) sprintf(tmp, "*");
-					c_put_str(color, tmp, 6 + i, 18 + 19 * 2);
-				} else if (csheet_boni[i].cb[11] & CB12_RSCON) { c_put_str(TERM_L_UMBER, "s", 6 + i, 18 + 19 * 2); header_color[0][19 * 2 + 17] = TERM_L_UMBER; }
+					c_put_str(color, tmp, 6 + i, 18 + 19 * 2 + x_offset);
+				} else if (csheet_boni[i].cb[11] & CB12_RSCON) { c_put_str(TERM_L_UMBER, "s", 6 + i, 18 + 19 * 2 + x_offset); header_color[0][19 * 2 + 17] = TERM_L_UMBER; }
 				if (csheet_boni[i].pchr != 0) {
 					if (header_color[0][19 * 2 + 18] == TERM_L_DARK) header_color[0][19 * 2 + 18] = TERM_WHITE;
 					color = TERM_L_GREEN;
@@ -4161,8 +4162,8 @@ void display_player(int hist) {
 					if (csheet_boni[i].pchr < -9) { color = TERM_RED; if (csheet_boni[i].cb[11] & CB12_RSCHR) color = TERM_ORANGE; }
 					sprintf(tmp, "%d", abs(csheet_boni[i].pchr) % 10);
 					if (csheet_boni[i].pchr > 19) sprintf(tmp, "*");
-					c_put_str(color, tmp, 6 + i, 19 + 19 * 2);
-				} else if (csheet_boni[i].cb[11] & CB12_RSCHR) { c_put_str(TERM_L_UMBER, "s", 6 + i, 19 + 19 * 2); header_color[0][19 * 2 + 18] = TERM_L_UMBER; }
+					c_put_str(color, tmp, 6 + i, 19 + 19 * 2 + x_offset);
+				} else if (csheet_boni[i].cb[11] & CB12_RSCHR) { c_put_str(TERM_L_UMBER, "s", 6 + i, 19 + 19 * 2 + x_offset); header_color[0][19 * 2 + 18] = TERM_L_UMBER; }
 
 				/* Track AM Field in a similar fashion */
 				if (csheet_boni[i].amfi != 0) {
@@ -4185,56 +4186,56 @@ void display_player(int hist) {
 				}
 
 				/* ESP and slay flags, white for anything */
-				if (csheet_boni[i].cb[7] & CB8_ESPID) { c_put_str(TERM_WHITE, "e", 6 + i, 1 + 19 * 3); header_color[0][19 * 3 + 0] = TERM_WHITE; }
-				if (csheet_boni[i].cb[7] & CB8_EANIM) { c_put_str(TERM_WHITE, "e", 6 + i, 2 + 19 * 3); header_color[0][19 * 3 + 1] = TERM_WHITE; }
-				if (csheet_boni[i].cb[7] & CB8_SANIM) { c_put_str(TERM_WHITE, "s", 6 + i, 2 + 19 * 3); header_color[0][19 * 3 + 1] = TERM_WHITE; }
-				if ((csheet_boni[i].cb[7] & CB8_EANIM) && (csheet_boni[i].cb[7] & CB8_SANIM)) c_put_str(TERM_WHITE, "+", 6 + i, 2 + 19 * 3);
-				if (csheet_boni[i].cb[7] & CB8_EORCS) { c_put_str(TERM_WHITE, "e", 6 + i, 3 + 19 * 3); header_color[0][19 * 3 + 2] = TERM_WHITE; }
-				if (csheet_boni[i].cb[7] & CB8_SORCS) { c_put_str(TERM_WHITE, "s", 6 + i, 3 + 19 * 3); header_color[0][19 * 3 + 2] = TERM_WHITE; }
-				if ((csheet_boni[i].cb[7] & CB8_EORCS) && (csheet_boni[i].cb[7] & CB8_SORCS)) c_put_str(TERM_WHITE, "+", 6 + i, 3 + 19 * 3);
-				if (csheet_boni[i].cb[7] & CB8_ETROL) { c_put_str(TERM_WHITE, "e", 6 + i, 4 + 19 * 3); header_color[0][19 * 3 + 3] = TERM_WHITE; }
-				if (csheet_boni[i].cb[7] & CB8_STROL) { c_put_str(TERM_WHITE, "s", 6 + i, 4 + 19 * 3); header_color[0][19 * 3 + 3] = TERM_WHITE; }
-				if ((csheet_boni[i].cb[7] & CB8_ETROL) && (csheet_boni[i].cb[7] & CB8_STROL)) c_put_str(TERM_WHITE, "+", 6 + i, 4 + 19 * 3);
-				if (csheet_boni[i].cb[7] & CB8_EGIAN) { c_put_str(TERM_WHITE, "e", 6 + i, 5 + 19 * 3); header_color[0][19 * 3 + 4] = TERM_WHITE; }
+				if (csheet_boni[i].cb[7] & CB8_ESPID) { c_put_str(TERM_WHITE, "e", 6 + i, 1 + 19 * 3 + x_offset); header_color[0][19 * 3 + 0] = TERM_WHITE; }
+				if (csheet_boni[i].cb[7] & CB8_EANIM) { c_put_str(TERM_WHITE, "e", 6 + i, 2 + 19 * 3 + x_offset); header_color[0][19 * 3 + 1] = TERM_WHITE; }
+				if (csheet_boni[i].cb[7] & CB8_SANIM) { c_put_str(TERM_WHITE, "s", 6 + i, 2 + 19 * 3 + x_offset); header_color[0][19 * 3 + 1] = TERM_WHITE; }
+				if ((csheet_boni[i].cb[7] & CB8_EANIM) && (csheet_boni[i].cb[7] & CB8_SANIM)) c_put_str(TERM_WHITE, "+", 6 + i, 2 + 19 * 3 + x_offset);
+				if (csheet_boni[i].cb[7] & CB8_EORCS) { c_put_str(TERM_WHITE, "e", 6 + i, 3 + 19 * 3 + x_offset); header_color[0][19 * 3 + 2] = TERM_WHITE; }
+				if (csheet_boni[i].cb[7] & CB8_SORCS) { c_put_str(TERM_WHITE, "s", 6 + i, 3 + 19 * 3 + x_offset); header_color[0][19 * 3 + 2] = TERM_WHITE; }
+				if ((csheet_boni[i].cb[7] & CB8_EORCS) && (csheet_boni[i].cb[7] & CB8_SORCS)) c_put_str(TERM_WHITE, "+", 6 + i, 3 + 19 * 3 + x_offset);
+				if (csheet_boni[i].cb[7] & CB8_ETROL) { c_put_str(TERM_WHITE, "e", 6 + i, 4 + 19 * 3 + x_offset); header_color[0][19 * 3 + 3] = TERM_WHITE; }
+				if (csheet_boni[i].cb[7] & CB8_STROL) { c_put_str(TERM_WHITE, "s", 6 + i, 4 + 19 * 3 + x_offset); header_color[0][19 * 3 + 3] = TERM_WHITE; }
+				if ((csheet_boni[i].cb[7] & CB8_ETROL) && (csheet_boni[i].cb[7] & CB8_STROL)) c_put_str(TERM_WHITE, "+", 6 + i, 4 + 19 * 3 + x_offset);
+				if (csheet_boni[i].cb[7] & CB8_EGIAN) { c_put_str(TERM_WHITE, "e", 6 + i, 5 + 19 * 3 + x_offset); header_color[0][19 * 3 + 4] = TERM_WHITE; }
 
-				if (csheet_boni[i].cb[8] & CB9_SGIAN) { c_put_str(TERM_WHITE, "s", 6 + i, 5 + 19 * 3); header_color[0][19 * 3 + 4] = TERM_WHITE; }
-				if ((csheet_boni[i].cb[7] & CB8_EGIAN) && (csheet_boni[i].cb[8] & CB9_SGIAN)) c_put_str(TERM_WHITE, "+", 6 + i, 5 + 19 * 3);
-				if (csheet_boni[i].cb[8] & CB9_EDRGN) { c_put_str(TERM_WHITE, "e", 6 + i, 6 + 19 * 3); header_color[0][19 * 3 + 5] = TERM_WHITE; }
-				if (csheet_boni[i].cb[8] & CB9_SDRGN) { c_put_str(TERM_WHITE, "s", 6 + i, 6 + 19 * 3); header_color[0][19 * 3 + 5] = TERM_WHITE; }
-				if (csheet_boni[i].cb[8] & CB9_KDRGN) { c_put_str(TERM_WHITE, "k", 6 + i, 6 + 19 * 3); header_color[0][19 * 3 + 5] = TERM_WHITE; }
-				if ((csheet_boni[i].cb[8] & CB9_EDRGN) && (csheet_boni[i].cb[8] & CB9_SDRGN)) c_put_str(TERM_WHITE, "+", 6 + i, 6 + 19 * 3);
-				if ((csheet_boni[i].cb[8] & CB9_EDRGN) && (csheet_boni[i].cb[8] & CB9_KDRGN)) c_put_str(TERM_WHITE, "*", 6 + i, 6 + 19 * 3);
-				if (csheet_boni[i].cb[8] & CB9_EDEMN) { c_put_str(TERM_WHITE, "e", 6 + i, 7 + 19 * 3); header_color[0][19 * 3 + 6] = TERM_WHITE; }
-				if (csheet_boni[i].cb[8] & CB9_SDEMN) { c_put_str(TERM_WHITE, "s", 6 + i, 7 + 19 * 3); header_color[0][19 * 3 + 6] = TERM_WHITE; }
-				if (csheet_boni[i].cb[8] & CB9_KDEMN) { c_put_str(TERM_WHITE, "k", 6 + i, 7 + 19 * 3); header_color[0][19 * 3 + 6] = TERM_WHITE; }
-				if ((csheet_boni[i].cb[8] & CB9_EDEMN) && (csheet_boni[i].cb[8] & CB9_SDEMN)) c_put_str(TERM_WHITE, "+", 6 + i, 7 + 19 * 3);
-				if ((csheet_boni[i].cb[8] & CB9_EDEMN) && (csheet_boni[i].cb[8] & CB9_KDEMN)) c_put_str(TERM_WHITE, "*", 6 + i, 7 + 19 * 3);
-				if (csheet_boni[i].cb[8] & CB9_EUNDD) { c_put_str(TERM_WHITE, "e", 6 + i, 8 + 19 * 3); header_color[0][19 * 3 + 7] = TERM_WHITE; }
+				if (csheet_boni[i].cb[8] & CB9_SGIAN) { c_put_str(TERM_WHITE, "s", 6 + i, 5 + 19 * 3 + x_offset); header_color[0][19 * 3 + 4] = TERM_WHITE; }
+				if ((csheet_boni[i].cb[7] & CB8_EGIAN) && (csheet_boni[i].cb[8] & CB9_SGIAN)) c_put_str(TERM_WHITE, "+", 6 + i, 5 + 19 * 3 + x_offset);
+				if (csheet_boni[i].cb[8] & CB9_EDRGN) { c_put_str(TERM_WHITE, "e", 6 + i, 6 + 19 * 3 + x_offset); header_color[0][19 * 3 + 5] = TERM_WHITE; }
+				if (csheet_boni[i].cb[8] & CB9_SDRGN) { c_put_str(TERM_WHITE, "s", 6 + i, 6 + 19 * 3 + x_offset); header_color[0][19 * 3 + 5] = TERM_WHITE; }
+				if (csheet_boni[i].cb[8] & CB9_KDRGN) { c_put_str(TERM_WHITE, "k", 6 + i, 6 + 19 * 3 + x_offset); header_color[0][19 * 3 + 5] = TERM_WHITE; }
+				if ((csheet_boni[i].cb[8] & CB9_EDRGN) && (csheet_boni[i].cb[8] & CB9_SDRGN)) c_put_str(TERM_WHITE, "+", 6 + i, 6 + 19 * 3 + x_offset);
+				if ((csheet_boni[i].cb[8] & CB9_EDRGN) && (csheet_boni[i].cb[8] & CB9_KDRGN)) c_put_str(TERM_WHITE, "*", 6 + i, 6 + 19 * 3 + x_offset);
+				if (csheet_boni[i].cb[8] & CB9_EDEMN) { c_put_str(TERM_WHITE, "e", 6 + i, 7 + 19 * 3 + x_offset); header_color[0][19 * 3 + 6] = TERM_WHITE; }
+				if (csheet_boni[i].cb[8] & CB9_SDEMN) { c_put_str(TERM_WHITE, "s", 6 + i, 7 + 19 * 3 + x_offset); header_color[0][19 * 3 + 6] = TERM_WHITE; }
+				if (csheet_boni[i].cb[8] & CB9_KDEMN) { c_put_str(TERM_WHITE, "k", 6 + i, 7 + 19 * 3 + x_offset); header_color[0][19 * 3 + 6] = TERM_WHITE; }
+				if ((csheet_boni[i].cb[8] & CB9_EDEMN) && (csheet_boni[i].cb[8] & CB9_SDEMN)) c_put_str(TERM_WHITE, "+", 6 + i, 7 + 19 * 3 + x_offset);
+				if ((csheet_boni[i].cb[8] & CB9_EDEMN) && (csheet_boni[i].cb[8] & CB9_KDEMN)) c_put_str(TERM_WHITE, "*", 6 + i, 7 + 19 * 3 + x_offset);
+				if (csheet_boni[i].cb[8] & CB9_EUNDD) { c_put_str(TERM_WHITE, "e", 6 + i, 8 + 19 * 3 + x_offset); header_color[0][19 * 3 + 7] = TERM_WHITE; }
 
-				if (csheet_boni[i].cb[9] & CB10_SUNDD) { c_put_str(TERM_WHITE, "s", 6 + i, 8 + 19 * 3); header_color[0][19 * 3 + 7] = TERM_WHITE; }
-				if (csheet_boni[i].cb[9] & CB10_KUNDD) { c_put_str(TERM_WHITE, "k", 6 + i, 8 + 19 * 3); header_color[0][19 * 3 + 7] = TERM_WHITE; }
-				if ((csheet_boni[i].cb[8] & CB9_EUNDD) && (csheet_boni[i].cb[9] & CB10_SUNDD)) c_put_str(TERM_WHITE, "+", 6 + i, 8 + 19 * 3);
-				if ((csheet_boni[i].cb[8] & CB9_EUNDD) && (csheet_boni[i].cb[9] & CB10_KUNDD)) c_put_str(TERM_WHITE, "*", 6 + i, 8 + 19 * 3);
-				if (csheet_boni[i].cb[9] & CB10_EEVIL) { c_put_str(TERM_WHITE, "e", 6 + i, 9 + 19 * 3); header_color[0][19 * 3 + 8] = TERM_WHITE; }
-				if (csheet_boni[i].cb[9] & CB10_SEVIL) { c_put_str(TERM_WHITE, "s", 6 + i, 9 + 19 * 3); header_color[0][19 * 3 + 8] = TERM_WHITE; }
-				if ((csheet_boni[i].cb[9] & CB10_EEVIL) && (csheet_boni[i].cb[9] & CB10_SEVIL)) c_put_str(TERM_WHITE, "+", 6 + i, 9 + 19 * 3);
-				if (csheet_boni[i].cb[9] & CB10_EDGRI) { c_put_str(TERM_WHITE, "e", 6 + i, 10 + 19 * 3); header_color[0][19 * 3 + 9] = TERM_WHITE; }
-				if (csheet_boni[i].cb[9] & CB10_EGOOD) { c_put_str(TERM_WHITE, "e", 6 + i, 11 + 19 * 3); header_color[0][19 * 3 + 10] = TERM_WHITE; }
-				if (csheet_boni[i].cb[9] & CB10_ENONL) { c_put_str(TERM_WHITE, "e", 6 + i, 12 + 19 * 3); header_color[0][19 * 3 + 11] = TERM_WHITE; }
-				if (csheet_boni[i].cb[9] & CB10_EUNIQ) { c_put_str(TERM_WHITE, "e", 6 + i, 13 + 19 * 3); header_color[0][19 * 3 + 12] = TERM_WHITE; }
+				if (csheet_boni[i].cb[9] & CB10_SUNDD) { c_put_str(TERM_WHITE, "s", 6 + i, 8 + 19 * 3 + x_offset); header_color[0][19 * 3 + 7] = TERM_WHITE; }
+				if (csheet_boni[i].cb[9] & CB10_KUNDD) { c_put_str(TERM_WHITE, "k", 6 + i, 8 + 19 * 3 + x_offset); header_color[0][19 * 3 + 7] = TERM_WHITE; }
+				if ((csheet_boni[i].cb[8] & CB9_EUNDD) && (csheet_boni[i].cb[9] & CB10_SUNDD)) c_put_str(TERM_WHITE, "+", 6 + i, 8 + 19 * 3 + x_offset);
+				if ((csheet_boni[i].cb[8] & CB9_EUNDD) && (csheet_boni[i].cb[9] & CB10_KUNDD)) c_put_str(TERM_WHITE, "*", 6 + i, 8 + 19 * 3 + x_offset);
+				if (csheet_boni[i].cb[9] & CB10_EEVIL) { c_put_str(TERM_WHITE, "e", 6 + i, 9 + 19 * 3 + x_offset); header_color[0][19 * 3 + 8] = TERM_WHITE; }
+				if (csheet_boni[i].cb[9] & CB10_SEVIL) { c_put_str(TERM_WHITE, "s", 6 + i, 9 + 19 * 3 + x_offset); header_color[0][19 * 3 + 8] = TERM_WHITE; }
+				if ((csheet_boni[i].cb[9] & CB10_EEVIL) && (csheet_boni[i].cb[9] & CB10_SEVIL)) c_put_str(TERM_WHITE, "+", 6 + i, 9 + 19 * 3 + x_offset);
+				if (csheet_boni[i].cb[9] & CB10_EDGRI) { c_put_str(TERM_WHITE, "e", 6 + i, 10 + 19 * 3 + x_offset); header_color[0][19 * 3 + 9] = TERM_WHITE; }
+				if (csheet_boni[i].cb[9] & CB10_EGOOD) { c_put_str(TERM_WHITE, "e", 6 + i, 11 + 19 * 3 + x_offset); header_color[0][19 * 3 + 10] = TERM_WHITE; }
+				if (csheet_boni[i].cb[9] & CB10_ENONL) { c_put_str(TERM_WHITE, "e", 6 + i, 12 + 19 * 3 + x_offset); header_color[0][19 * 3 + 11] = TERM_WHITE; }
+				if (csheet_boni[i].cb[9] & CB10_EUNIQ) { c_put_str(TERM_WHITE, "e", 6 + i, 13 + 19 * 3 + x_offset); header_color[0][19 * 3 + 12] = TERM_WHITE; }
 
-				if (csheet_boni[i].cb[10] & CB11_BFIRE) { c_put_str(TERM_WHITE, "b", 6 + i, 14 + 19 * 3); header_color[0][19 * 3 + 13] = TERM_WHITE; }
-				if (csheet_boni[i].cb[10] & CB11_AFIRE) { c_put_str(TERM_WHITE, "a", 6 + i, 14 + 19 * 3); header_color[0][19 * 3 + 13] = TERM_WHITE; }
-				if ((csheet_boni[i].cb[10] & CB11_BFIRE) && (csheet_boni[i].cb[10] & CB11_AFIRE)) c_put_str(TERM_WHITE, "+", 6 + i, 14 + 19 * 3);
-				if (csheet_boni[i].cb[10] & CB11_BCOLD) { c_put_str(TERM_WHITE, "b", 6 + i, 15 + 19 * 3); header_color[0][19 * 3 + 14] = TERM_WHITE; }
-				if (csheet_boni[i].cb[10] & CB11_ACOLD) { c_put_str(TERM_WHITE, "a", 6 + i, 15 + 19 * 3); header_color[0][19 * 3 + 14] = TERM_WHITE; }
-				if ((csheet_boni[i].cb[10] & CB11_BCOLD) && (csheet_boni[i].cb[10] & CB11_ACOLD)) c_put_str(TERM_WHITE, "+", 6 + i, 15 + 19 * 3);
-				if (csheet_boni[i].cb[10] & CB11_BELEC) { c_put_str(TERM_WHITE, "b", 6 + i, 16 + 19 * 3); header_color[0][19 * 3 + 15] = TERM_WHITE; }
-				if (csheet_boni[i].cb[10] & CB11_AELEC) { c_put_str(TERM_WHITE, "a", 6 + i, 16 + 19 * 3); header_color[0][19 * 3 + 15] = TERM_WHITE; }
-				if ((csheet_boni[i].cb[10] & CB11_BELEC) && (csheet_boni[i].cb[10] & CB11_AELEC)) c_put_str(TERM_WHITE, "+", 6 + i, 16 + 19 * 3);
-				if (csheet_boni[i].cb[10] & CB11_BACID) { c_put_str(TERM_WHITE, "b", 6 + i, 17 + 19 * 3); header_color[0][19 * 3 + 16] = TERM_WHITE; }
-				if (csheet_boni[i].cb[10] & CB11_BPOIS) { c_put_str(TERM_WHITE, "b", 6 + i, 18 + 19 * 3); header_color[0][19 * 3 + 17] = TERM_WHITE; }
-				if (csheet_boni[i].cb[11] & CB12_BVORP) { c_put_str(TERM_WHITE, "+", 6 + i, 19 + 19 * 3); header_color[0][19 * 3 + 18] = TERM_WHITE; }
+				if (csheet_boni[i].cb[10] & CB11_BFIRE) { c_put_str(TERM_WHITE, "b", 6 + i, 14 + 19 * 3 + x_offset); header_color[0][19 * 3 + 13] = TERM_WHITE; }
+				if (csheet_boni[i].cb[10] & CB11_AFIRE) { c_put_str(TERM_WHITE, "a", 6 + i, 14 + 19 * 3 + x_offset); header_color[0][19 * 3 + 13] = TERM_WHITE; }
+				if ((csheet_boni[i].cb[10] & CB11_BFIRE) && (csheet_boni[i].cb[10] & CB11_AFIRE)) c_put_str(TERM_WHITE, "+", 6 + i, 14 + 19 * 3 + x_offset);
+				if (csheet_boni[i].cb[10] & CB11_BCOLD) { c_put_str(TERM_WHITE, "b", 6 + i, 15 + 19 * 3 + x_offset); header_color[0][19 * 3 + 14] = TERM_WHITE; }
+				if (csheet_boni[i].cb[10] & CB11_ACOLD) { c_put_str(TERM_WHITE, "a", 6 + i, 15 + 19 * 3 + x_offset); header_color[0][19 * 3 + 14] = TERM_WHITE; }
+				if ((csheet_boni[i].cb[10] & CB11_BCOLD) && (csheet_boni[i].cb[10] & CB11_ACOLD)) c_put_str(TERM_WHITE, "+", 6 + i, 15 + 19 * 3 + x_offset);
+				if (csheet_boni[i].cb[10] & CB11_BELEC) { c_put_str(TERM_WHITE, "b", 6 + i, 16 + 19 * 3 + x_offset); header_color[0][19 * 3 + 15] = TERM_WHITE; }
+				if (csheet_boni[i].cb[10] & CB11_AELEC) { c_put_str(TERM_WHITE, "a", 6 + i, 16 + 19 * 3 + x_offset); header_color[0][19 * 3 + 15] = TERM_WHITE; }
+				if ((csheet_boni[i].cb[10] & CB11_BELEC) && (csheet_boni[i].cb[10] & CB11_AELEC)) c_put_str(TERM_WHITE, "+", 6 + i, 16 + 19 * 3 + x_offset);
+				if (csheet_boni[i].cb[10] & CB11_BACID) { c_put_str(TERM_WHITE, "b", 6 + i, 17 + 19 * 3 + x_offset); header_color[0][19 * 3 + 16] = TERM_WHITE; }
+				if (csheet_boni[i].cb[10] & CB11_BPOIS) { c_put_str(TERM_WHITE, "b", 6 + i, 18 + 19 * 3 + x_offset); header_color[0][19 * 3 + 17] = TERM_WHITE; }
+				if (csheet_boni[i].cb[11] & CB12_BVORP) { c_put_str(TERM_WHITE, "+", 6 + i, 19 + 19 * 3 + x_offset); header_color[0][19 * 3 + 18] = TERM_WHITE; }
 
 				/* Footer */
 				color = csheet_boni[i].color;
@@ -4242,7 +4243,7 @@ void display_player(int hist) {
 				if (symbol > MAX_FONT_CHAR) fprintf(stderr, "Sorry graphical symbols for boni not supported yet\n");
 				sprintf(tmp, "%c", (char)symbol);
 				for (j = 0; j < 1; j++)
-					c_put_str(color, tmp, 6 + j * 20 + i, 77);
+					c_put_str(color, tmp, 6 + j * 20 + i, 77 + x_offset);
 			}
 
 			/* AM field - body? skill or monster form */
@@ -4301,85 +4302,85 @@ void display_player(int hist) {
 			if (p_ptr->nimbus && p_ptr->nimbus == GF_GRAVITY) { if (header_color[0][19 + 7] != TERM_L_UMBER) header_color[0][19 + 7] = TERM_WHITE; } // FFAL
 
 			/* Row Headers */
-			c_put_str(header_color[0][0], "Fire", (row = (row + 1) % 6), ++col); //row, col
-			c_put_str(header_color[0][1], "Cold", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][2], "Elec", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][3], "Acid", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][4], "Pois", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][5], "Blnd", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][6], "Lite", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][7], "Dark", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][8], "Soun", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][9], "Shrd", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][10], "Nexu", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][11], "Neth", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][12], "Conf", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][13], "Chao", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][14], "Dise", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][15], "Watr", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][16], "Time", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][17], "Mana", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][18], "Mind", (row = (row + 1) % 6), ++col);
+			c_put_str_vert(header_color[0][0], "Fire", (row = (row + 1) % 6), ++col + x_offset); //row, col
+			c_put_str_vert(header_color[0][1], "Cold", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][2], "Elec", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][3], "Acid", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][4], "Pois", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][5], "Blnd", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][6], "Lite", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][7], "Dark", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][8], "Soun", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][9], "Shrd", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][10], "Nexu", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][11], "Neth", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][12], "Conf", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][13], "Chao", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][14], "Dise", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][15], "Watr", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][16], "Time", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][17], "Mana", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][18], "Mind", (row = (row + 1) % 6), ++col + x_offset);
 
-			c_put_str(header_color[0][19 + 0], "Fear", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 + 1], "Para", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 + 2], "Tele", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 + 3], "SInv", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 + 4], "Invs", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 + 5], "HLif", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 + 6], "Wrth", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 + 7], "FFal", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 + 8], "Lvtn", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 + 9], "Clmb", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 + 10], "RgHP", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 + 11], "RgMP", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 + 12], "Food", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 + 13], "Vamp", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 + 14], "AuID", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 + 15], "Refl", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 + 16], "AMSh", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 + 17], "AMFi", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 + 18], "Aggr", (row = (row + 1) % 6), ++col);
+			c_put_str_vert(header_color[0][19 + 0], "Fear", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 1], "Para", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 2], "Tele", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 3], "SInv", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 4], "Invs", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 5], "HLif", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 6], "Wrth", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 7], "FFal", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 8], "Lvtn", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 9], "Clmb", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 10], "RgHP", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 11], "RgMP", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 12], "Food", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 13], "Vamp", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 14], "AuID", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 15], "Refl", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 16], "AMSh", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 17], "AMFi", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 + 18], "Aggr", (row = (row + 1) % 6), ++col + x_offset);
 
-			c_put_str(header_color[0][19 * 2 + 0], "Spd ", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 2 + 1], "Slth", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 2 + 2], "Srch", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 2 + 3], "Infr", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 2 + 4], "Lite", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 2 + 5], "Tunn", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 2 + 6], "Blow", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 2 + 7], "Crit", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 2 + 8], "Shot", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 2 + 9], "Mght", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 2 + 10], "MxHP", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 2 + 11], "MxMP", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 2 + 12], "Luck", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 2 + 13], "STR ", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 2 + 14], "INT ", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 2 + 15], "WIS ", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 2 + 16], "DEX ", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 2 + 17], "CON ", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 2 + 18], "CHR ", (row = (row + 1) % 6), ++col);
+			c_put_str_vert(header_color[0][19 * 2 + 0], "Spd ", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 2 + 1], "Slth", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 2 + 2], "Srch", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 2 + 3], "Infr", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 2 + 4], "Lite", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 2 + 5], "Tunn", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 2 + 6], "Blow", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 2 + 7], "Crit", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 2 + 8], "Shot", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 2 + 9], "Mght", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 2 + 10], "MxHP", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 2 + 11], "MxMP", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 2 + 12], "Luck", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 2 + 13], "STR ", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 2 + 14], "INT ", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 2 + 15], "WIS ", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 2 + 16], "DEX ", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 2 + 17], "CON ", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 2 + 18], "CHR ", (row = (row + 1) % 6), ++col + x_offset);
 
-			c_put_str(header_color[0][19 * 3 + 0], "Spid", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 3 + 1], "Anim", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 3 + 2], "Orcs", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 3 + 3], "Trol", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 3 + 4], "Gian", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 3 + 5], "Drgn", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 3 + 6], "Demn", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 3 + 7], "Undd", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 3 + 8], "Evil", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 3 + 9], "Dgri", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 3 + 10], "Good", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 3 + 11], "Nonl", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 3 + 12], "Uniq", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 3 + 13], "Fire", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 3 + 14], "Cold", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 3 + 15], "Elec", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 3 + 16], "Acid", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 3 + 17], "Pois", (row = (row + 1) % 6), ++col);
-			c_put_str(header_color[0][19 * 3 + 18], "Vorp", (row = (row + 1) % 6), ++col);
+			c_put_str_vert(header_color[0][19 * 3 + 0], "Spid", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 3 + 1], "Anim", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 3 + 2], "Orcs", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 3 + 3], "Trol", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 3 + 4], "Gian", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 3 + 5], "Drgn", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 3 + 6], "Demn", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 3 + 7], "Undd", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 3 + 8], "Evil", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 3 + 9], "Dgri", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 3 + 10], "Good", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 3 + 11], "Nonl", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 3 + 12], "Uniq", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 3 + 13], "Fire", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 3 + 14], "Cold", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 3 + 15], "Elec", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 3 + 16], "Acid", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 3 + 17], "Pois", (row = (row + 1) % 6), ++col + x_offset);
+			c_put_str_vert(header_color[0][19 * 3 + 18], "Vorp", (row = (row + 1) % 6), ++col + x_offset);
 		}
 	}
 }

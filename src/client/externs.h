@@ -579,6 +579,7 @@ extern bool get_com(cptr prompt, char *command);
 extern void request_command();
 extern bool get_dir(int *dp);
 extern void c_put_str(byte attr, cptr str, int row, int col);
+extern void c_put_str_vert(byte attr, cptr str, int row, int col);
 extern void put_str(cptr str, int row, int col);
 extern bool get_check2(cptr prompt, bool default_yes);
 extern bool get_check3(cptr prompt, char default_choice);
