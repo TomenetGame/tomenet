@@ -2673,7 +2673,10 @@ static void set_player_font_definitions(int ind, int player) {
 #ifdef FONTMAP_F_FIRST
 			if (NULL == u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx))
 #endif
+			{
 				p_ptr->f_char_mod = u32b_char_dict_set(p_ptr->f_char_mod, unm_c_idx, (char)f_info[i].z_char);
+				printf("jezek - seted %u:%hhu into f_char_mod\n", unm_c_idx, (char)f_info[i].z_char);
+			}
 		}
 
 #ifndef FLOORTILEBUG_WORKAROUND
@@ -2808,7 +2811,10 @@ static void set_player_font_definitions(int ind, int player) {
 #ifdef FONTMAP_R_FIRST
 			if (NULL == u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx))
 #endif
+			{
 				p_ptr->r_char_mod = u32b_char_dict_set(p_ptr->r_char_mod, unm_c_idx, (char)r_info[i].x_char);
+				printf("jezek - seted %u:%hhu into r_char_mod\n", unm_c_idx, (char)r_info[i].x_char);
+			}
 		}
 
 		if (!p_ptr->r_char[i]) p_ptr->r_char[i] = r_info[i].x_char;
@@ -6867,16 +6873,26 @@ int Send_char(int Ind, int x, int y, byte a, char32_t c) {
 
 	/* 4.8.1 and newer clients use 32bit character size. */
 	if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
+		//TODO jezek - This test revealed, that the full screen is transferred somewhere else too, add the char_transfer_bytes logic there too.
+			//char32_t unm_c_idx = c;
+			//char *unm_c_ptr;
+			//if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->r_char_mod, unm_c_idx))) c = (char32_t)*unm_c_ptr;
+			//else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr->f_char_mod, unm_c_idx))) c = (char32_t)*unm_c_ptr;
+			//printf("unm_c_idx: %u, c: %u, unm_c_ptr: %u\n", unm_c_idx, c, unm_c_ptr);
+
 		/* Transfer only the relevant bytes, according to client setup.*/
 		char * pc = (char *)&c;
 		switch (connp->Client_setup.char_transfer_bytes) {
 			case 0:
 			case 1:
 				return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, pc[0]);
+				break;
 			case 2:
 				return Packet_printf(&connp->c, "%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[1], pc[0]);
+				break;
 			case 3:
 				return Packet_printf(&connp->c, "%c%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[2], pc[1], pc[0]);
+				break;
 			case 4:
 			default:
 				return Packet_printf(&connp->c, "%c%c%c%c%u", PKT_CHAR, x, y, a, c);
@@ -7088,6 +7104,7 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 		/* Start with count of 1 */
 		n = 1;
 
+		printf("jezek - Send_line_info(Ind: %d, y: %d, scr_only: %d)\n", Ind, y, scr_only);
 		/* Count repetitions of this grid */
 		while (x1 < MAX_WINDOW_WID) {
 #ifdef LOCATE_KEEPS_OVL
@@ -7129,11 +7146,30 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 			x1++;
 		}
 
+		printf("jezek - x1: %d, n: %d, c: %u, a: %hhu\n", x1, n, c, a);
 		/* RLE if there at least 2 similar grids in a row */
 		if (n >= 2) {
 			/* 4.8.1 and newer clients use 32bit character size. */
 			if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
-				Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, n);
+				//TODO jezek - Use function Packet_printf_dynamic(n, conn, "%dc%c", params...) or something like.
+				printf("jezek - 1.connp->Client_setup.char_transfer_bytes: %d\n", connp->Client_setup.char_transfer_bytes);
+				/* Transfer only the relevant bytes, according to client setup.*/
+				char * pc = (char *)&c;
+				switch (connp->Client_setup.char_transfer_bytes) {
+					case 0:
+					case 1:
+						Packet_printf(&connp->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, n);
+						break;
+					case 2:
+						Packet_printf(&connp->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, n);
+						break;
+					case 3:
+						Packet_printf(&connp->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, n);
+						break;
+					case 4:
+					default:
+						Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, n);
+				}
 			}
 			/* 4.4.3.1 clients support new RLE */
 			else if (is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
@@ -7154,7 +7190,24 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 
 				/* 4.8.1 and newer clients use 32bit character size. */
 				if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
-						Packet_printf(&connp2->c, "%u%c%c%c", cu, TERM_RESERVED_RLE, a, n);
+					printf("jezek - 1.connp2->Client_setup.char_transfer_bytes: %d, cu: %u\n", connp2->Client_setup.char_transfer_bytes, cu);
+					/* Transfer only the relevant bytes, according to client setup.*/
+					char * pcu = (char *)&cu;
+					switch (connp2->Client_setup.char_transfer_bytes) {
+						case 0:
+						case 1:
+							Packet_printf(&connp2->c, "%c%c%c%c", pcu[0], TERM_RESERVED_RLE, a, n);
+							break;
+						case 2:
+							Packet_printf(&connp2->c, "%c%c%c%c%c", pcu[1], pcu[0], TERM_RESERVED_RLE, a, n);
+							break;
+						case 3:
+							Packet_printf(&connp2->c, "%c%c%c%c%c%c", pcu[2], pcu[1], pcu[0], TERM_RESERVED_RLE, a, n);
+							break;
+						case 4:
+						default:
+							Packet_printf(&connp2->c, "%u%c%c%c", cu, TERM_RESERVED_RLE, a, n);
+					}
 				}
 				/* 4.4.3.1 clients support new RLE */
 				else if (is_newer_than(&connp2->version, 4, 4, 3, 0, 0, 5)) {
@@ -7178,7 +7231,24 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 					/* Use RLE format as an escape sequence for 0xFF as attr */
 					/* 4.8.1 and newer clients use 32bit character size. */
 					if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
-						Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, 1);
+						printf("jezek - 2.1.connp->Client_setup.char_transfer_bytes: %d\n", connp->Client_setup.char_transfer_bytes);
+						/* Transfer only the relevant bytes, according to client setup.*/
+						char * pc = (char *)&c;
+						switch (connp->Client_setup.char_transfer_bytes) {
+							case 0:
+							case 1:
+								Packet_printf(&connp->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, 1);
+								break;
+							case 2:
+								Packet_printf(&connp->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
+								break;
+							case 3:
+								Packet_printf(&connp->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
+								break;
+							case 4:
+							default:
+								Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, 1);
+						}
 					} else {
 						Packet_printf(&connp->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, 1);
 					}
@@ -7186,7 +7256,24 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 					/* Normal output */
 					/* 4.8.1 and newer clients use 32bit character size. */
 					if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
-						Packet_printf(&connp->c, "%u%c", c, a);
+						printf("jezek - 2.2.connp->Client_setup.char_transfer_bytes: %d\n", connp->Client_setup.char_transfer_bytes);
+						/* Transfer only the relevant bytes, according to client setup.*/
+						char * pc = (char *)&c;
+						switch (connp->Client_setup.char_transfer_bytes) {
+							case 0:
+							case 1:
+								Packet_printf(&connp->c, "%c%c", pc[0], a);
+								break;
+							case 2:
+								Packet_printf(&connp->c, "%c%c%c", pc[1], pc[0], a);
+								break;
+							case 3:
+								Packet_printf(&connp->c, "%c%c%c%c", pc[2], pc[1], pc[0], a);
+								break;
+							case 4:
+							default:
+								Packet_printf(&connp->c, "%u%c", c, a);
+						}
 					} else {
 						Packet_printf(&connp->c, "%c%c", (char)c, a);
 					}
@@ -7209,7 +7296,24 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 						/* Use RLE format as an escape sequence for 0xFF as attr */
 						/* 4.8.1 and newer clients use 32bit character size. */
 						if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
-							Packet_printf(&connp2->c, "%u%c%c%c", cu, TERM_RESERVED_RLE, a, 1);
+							printf("jezek - 2.1.connp2->Client_setup.char_transfer_bytes: %d, cu: %u\n", connp2->Client_setup.char_transfer_bytes, cu);
+							/* Transfer only the relevant bytes, according to client setup.*/
+							char * pcu = (char *)&cu;
+							switch (connp2->Client_setup.char_transfer_bytes) {
+								case 0:
+								case 1:
+									Packet_printf(&connp2->c, "%c%c%c%c", pcu[0], TERM_RESERVED_RLE, a, 1);
+									break;
+								case 2:
+									Packet_printf(&connp2->c, "%c%c%c%c%c", pcu[1], pcu[0], TERM_RESERVED_RLE, a, 1);
+									break;
+								case 3:
+									Packet_printf(&connp2->c, "%c%c%c%c%c%c", pcu[2], pcu[1], pcu[0], TERM_RESERVED_RLE, a, 1);
+									break;
+								case 4:
+								default:
+									Packet_printf(&connp2->c, "%u%c%c%c", cu, TERM_RESERVED_RLE, a, 1);
+							}
 						} else {
 							Packet_printf(&connp2->c, "%c%c%c%c", (char)cu, TERM_RESERVED_RLE, a, 1);
 						}
@@ -7217,7 +7321,24 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 						/* Normal output */
 						/* 4.8.1 and newer clients use 32bit character size. */
 						if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
-							Packet_printf(&connp2->c, "%u%c", cu, a);
+							printf("jezek - 2.2.connp2->Client_setup.char_transfer_bytes: %d, cu: %u\n", connp2->Client_setup.char_transfer_bytes, cu);
+							/* Transfer only the relevant bytes, according to client setup.*/
+							char * pcu = (char *)&cu;
+							switch (connp2->Client_setup.char_transfer_bytes) {
+								case 0:
+								case 1:
+									Packet_printf(&connp2->c, "%c%c", pcu[0], a);
+									break;
+								case 2:
+									Packet_printf(&connp2->c, "%c%c%c", pcu[1], pcu[0], a);
+									break;
+								case 3:
+									Packet_printf(&connp2->c, "%c%c%c%c", pcu[2], pcu[1], pcu[0], a);
+									break;
+								case 4:
+								default:
+									Packet_printf(&connp2->c, "%u%c", cu, a);
+							}
 						} else {
 							Packet_printf(&connp2->c, "%c%c", (char)cu, a);
 						}
@@ -7256,6 +7377,7 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 	/* Put a header on the packet */
 	Packet_printf(&connp->c, "%c%hd", PKT_LINE_INFO, y);
 
+	printf("jezek - Send_line_info_forward(Ind: %d, Ind_src: %d, y: %d)\n", Ind, Ind_src, y);
 	/* Each column */
 	for (x = 0; x < 80; x++) {
 		/* Obtain the char/attr pair */
@@ -7306,11 +7428,29 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 			else if (NULL != (unm_c_ptr = u32b_char_dict_get(p_ptr2->f_char_mod, unm_c_idx))) c1 = (char32_t)*unm_c_ptr;
 		}
 
+		printf("jezek - x1: %d, n: %d, c: %u, a: %hhu\n", x1, n, c, a);
 		/* RLE if there at least 2 similar grids in a row */
 		if (n >= 2) {
 			/* 4.8.1 and newer clients use 32bit character size. */
 			if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
-				Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, n);
+				/* Transfer only the relevant bytes, according to client setup.*/
+				printf("jezek - 1.connp->Client_setup.char_transfer_bytes: %d\n", connp->Client_setup.char_transfer_bytes);
+				char * pc = (char *)&c;
+				switch (connp->Client_setup.char_transfer_bytes) {
+					case 0:
+					case 1:
+						Packet_printf(&connp->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, n);
+						break;
+					case 2:
+						Packet_printf(&connp->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, n);
+						break;
+					case 3:
+						Packet_printf(&connp->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, n);
+						break;
+					case 4:
+					default:
+						Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, n);
+				}
 			}
 			/* 4.4.3.1 clients support new RLE */
 			else if (is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
@@ -7333,7 +7473,24 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 					/* Use RLE format as an escape sequence for 0xFF as attr */
 					/* 4.8.1 and newer clients use 32bit character size. */
 					if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
-						Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, 1);
+						printf("jezek - 2.1.connp->Client_setup.char_transfer_bytes: %d\n", connp->Client_setup.char_transfer_bytes);
+						/* Transfer only the relevant bytes, according to client setup.*/
+						char * pc = (char *)&c;
+						switch (connp->Client_setup.char_transfer_bytes) {
+							case 0:
+							case 1:
+								Packet_printf(&connp->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, 1);
+								break;
+							case 2:
+								Packet_printf(&connp->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
+								break;
+							case 3:
+								Packet_printf(&connp->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
+								break;
+							case 4:
+							default:
+								Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, 1);
+						}
 					} else {
 						Packet_printf(&connp->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, 1);
 					}
@@ -7341,7 +7498,24 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 					/* Normal output */
 					/* 4.8.1 and newer clients use 32bit character size. */
 					if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
-						Packet_printf(&connp->c, "%u%c", c, a);
+						printf("jezek - 2.2.connp->Client_setup.char_transfer_bytes: %d\n", connp->Client_setup.char_transfer_bytes);
+						/* Transfer only the relevant bytes, according to client setup.*/
+						char * pc = (char *)&c;
+						switch (connp->Client_setup.char_transfer_bytes) {
+							case 0:
+							case 1:
+								Packet_printf(&connp->c, "%c%c", pc[0], a);
+								break;
+							case 2:
+								Packet_printf(&connp->c, "%c%c%c", pc[1], pc[0], a);
+								break;
+							case 3:
+								Packet_printf(&connp->c, "%c%c%c%c", pc[2], pc[1], pc[0], a);
+								break;
+							case 4:
+							default:
+								Packet_printf(&connp->c, "%u%c", c, a);
+						}
 					} else {
 						Packet_printf(&connp->c, "%c%c", (char)c, a);
 					}
@@ -7384,6 +7558,7 @@ int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 
 	/* Hack: Just a 'transmission finished' marker packet? */
 	if (y == -1) return 1;
+	printf("jezek - Send_mini_map(Ind: %d, y: %d)\n", Ind, y);
 
 	/* Each column */
 	for (x = 0; x < 80; x++) {
@@ -7404,11 +7579,29 @@ int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 			x1++;
 		}
 
+		printf("jezek - x1: %d, n: %d, c: %u, a: %hhu\n", x1, n, c, a);
 		/* RLE if there at least 2 similar grids in a row */
 		if (n >= 2) {
 			/* 4.8.1 and newer clients use 32bit character size. */
 			if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
-				Packet_printf(&connp->c, "%u%c%c%c", c, 0xFF, a, n);
+				printf("jezek - 1.connp->Client_setup.char_transfer_bytes: %d\n", connp->Client_setup.char_transfer_bytes);
+				/* Transfer only the relevant bytes, according to client setup.*/
+				char * pc = (char *)&c;
+				switch (connp->Client_setup.char_transfer_bytes) {
+					case 0:
+					case 1:
+						Packet_printf(&connp->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, n);
+						break;
+					case 2:
+						Packet_printf(&connp->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, n);
+						break;
+					case 3:
+						Packet_printf(&connp->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, n);
+						break;
+					case 4:
+					default:
+						Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, n);
+				}
 			}
 			/* 4.4.3.1 clients support new RLE */
 			else if (is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
@@ -7420,9 +7613,27 @@ int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 			}
 
 			if (Ind2) {
+				//TODO jezek - don't need unmap?
 				/* 4.8.1 and newer clients use 32bit character size. */
 				if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
-					Packet_printf(&connp2->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, n);
+					printf("jezek - 1.connp2->Client_setup.char_transfer_bytes: %d\n", connp2->Client_setup.char_transfer_bytes);
+					/* Transfer only the relevant bytes, according to client setup.*/
+					char * pc = (char *)&c;
+					switch (connp2->Client_setup.char_transfer_bytes) {
+						case 0:
+						case 1:
+							Packet_printf(&connp2->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, n);
+							break;
+						case 2:
+							Packet_printf(&connp2->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, n);
+							break;
+						case 3:
+							Packet_printf(&connp2->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, n);
+							break;
+						case 4:
+						default:
+							Packet_printf(&connp2->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, n);
+					}
 				}
 				/* 4.4.3.1 clients support new RLE */
 				else if (is_newer_than(&connp2->version, 4, 4, 3, 0, 0, 5)) {
@@ -7446,7 +7657,24 @@ int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 					/* Use RLE format as an escape sequence for 0xFF as attr */
 					/* 4.8.1 and newer clients use 32bit character size. */
 					if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
-						Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, 1);
+						printf("jezek - 2.1.connp->Client_setup.char_transfer_bytes: %d\n", connp->Client_setup.char_transfer_bytes);
+						/* Transfer only the relevant bytes, according to client setup.*/
+						char * pc = (char *)&c;
+						switch (connp->Client_setup.char_transfer_bytes) {
+							case 0:
+							case 1:
+								Packet_printf(&connp->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, 1);
+								break;
+							case 2:
+								Packet_printf(&connp->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
+								break;
+							case 3:
+								Packet_printf(&connp->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
+								break;
+							case 4:
+							default:
+								Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, 1);
+						}
 					} else {
 						Packet_printf(&connp->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, 1);
 					}
@@ -7454,7 +7682,24 @@ int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 					/* Normal output */
 					/* 4.8.1 and newer clients use 32bit character size. */
 					if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
-						Packet_printf(&connp->c, "%u%c", c, a);
+						printf("jezek - 2.2.connp->Client_setup.char_transfer_bytes: %d\n", connp->Client_setup.char_transfer_bytes);
+						/* Transfer only the relevant bytes, according to client setup.*/
+						char * pc = (char *)&c;
+						switch (connp->Client_setup.char_transfer_bytes) {
+							case 0:
+							case 1:
+								Packet_printf(&connp->c, "%c%c", pc[0], a);
+								break;
+							case 2:
+								Packet_printf(&connp->c, "%c%c%c", pc[1], pc[0], a);
+								break;
+							case 3:
+								Packet_printf(&connp->c, "%c%c%c%c", pc[2], pc[1], pc[0], a);
+								break;
+							case 4:
+							default:
+								Packet_printf(&connp->c, "%u%c", c, a);
+						}
 					} else {
 						Packet_printf(&connp->c, "%c%c", (char)c, a);
 					}
@@ -7470,7 +7715,24 @@ int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 						/* Use RLE format as an escape sequence for 0xFF as attr */
 						/* 4.8.1 and newer clients use 32bit character size. */
 						if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
-							Packet_printf(&connp2->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, 1);
+							printf("jezek - 2.1.connp2->Client_setup.char_transfer_bytes: %d\n", connp2->Client_setup.char_transfer_bytes);
+							/* Transfer only the relevant bytes, according to client setup.*/
+							char * pc = (char *)&c;
+							switch (connp2->Client_setup.char_transfer_bytes) {
+								case 0:
+								case 1:
+									Packet_printf(&connp2->c, "%c%c%c%c", pc[0], TERM_RESERVED_RLE, a, 1);
+									break;
+								case 2:
+									Packet_printf(&connp2->c, "%c%c%c%c%c", pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
+									break;
+								case 3:
+									Packet_printf(&connp2->c, "%c%c%c%c%c%c", pc[2], pc[1], pc[0], TERM_RESERVED_RLE, a, 1);
+									break;
+								case 4:
+								default:
+									Packet_printf(&connp2->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, 1);
+							}
 						} else {
 							Packet_printf(&connp2->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, 1);
 						}
@@ -7478,7 +7740,24 @@ int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 						/* Normal output */
 						/* 4.8.1 and newer clients use 32bit character size. */
 						if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
-							Packet_printf(&connp2->c, "%u%c", c, a);
+							printf("jezek - 2.2.connp2->Client_setup.char_transfer_bytes: %d\n", connp2->Client_setup.char_transfer_bytes);
+							/* Transfer only the relevant bytes, according to client setup.*/
+							char * pc = (char *)&c;
+							switch (connp2->Client_setup.char_transfer_bytes) {
+								case 0:
+								case 1:
+									Packet_printf(&connp2->c, "%c%c", pc[0], a);
+									break;
+								case 2:
+									Packet_printf(&connp2->c, "%c%c%c", pc[1], pc[0], a);
+									break;
+								case 3:
+									Packet_printf(&connp2->c, "%c%c%c%c", pc[2], pc[1], pc[0], a);
+									break;
+								case 4:
+								default:
+									Packet_printf(&connp2->c, "%u%c", c, a);
+							}
 						} else {
 							Packet_printf(&connp2->c, "%c%c", (char)c, a);
 						}
@@ -7518,6 +7797,7 @@ int Send_mini_map_pos(int Ind, int x, int y, byte a, char32_t c) {
 		connp2 = Conn[p_ptr2->conn];
 #endif
 
+	printf("jezek - Send_mini_map_pos(Ind: %d, x: %d, y: %d, a: %d, c: %u)\n", Ind, x, y, a, c);
 	/* Packet header */
 	/* 4.8.1 and newer clients use 32bit character size. */
 	if (is_atleast(&p_ptr->version, 4, 8, 1, 0, 0, 0)) Packet_printf(&connp->c, "%c%hd%hd%c%u", PKT_MINI_MAP_POS, xs, ys, a, c);
