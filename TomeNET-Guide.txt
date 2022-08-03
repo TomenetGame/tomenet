@@ -7974,11 +7974,11 @@ so its final floor will be -700 ft which is of the same difficulty level as
 NOTE: Minimum level requirements for entering are usually disabled in normal
       server settings, so you can enter any dungeon anytime, if you dare.
 
-Dungeon                        |   Depth(*) / Level    | Min. required player
-                               |  (*)relative to Lv.1  |  level to enter (**)
+Dungeon                        |   Depth / Level       | Min. required player
+                               |   relative to Lv.1    | level to enter (*)
 -------------------------------+-----------------------+---------------------
-Death Fate            (***)    |    50..  50/  1..1    |        1
-The Halls of Mandos   (******) |    50..5000/  1..100  |        1
+Death Fate            (**)     |    50..  50/  1..1    |        1
+The Halls of Mandos   (*****)  |    50..5000/  1..100  |        1
 The Orc Cave                   |   500..1150/ 10..23   |        3
 Mirkwood                       |   550..1700/ 11..34   |        5
 The Old Forest                 |   650..1300/ 13..26   |        5
@@ -7996,8 +7996,8 @@ The Sacred Land of Mountains   |  2000..2250/ 40..45   |       20
 Erebor                         |  2500..3050/ 50..61   |       35
 Dol Guldur                     |  2850..3550/ 57..71   |       28
 Mount Doom                     |  4250..4950/ 85..99   |       38
-The Cloud Planes               |  6500..7450/130..149  |       40  (****)
-Nether Realm                   |  8300..9800/166..196  |       40  (*****)
+The Cloud Planes               |  6500..7450/130..149  |       40  (***)
+Nether Realm                   |  8300..9800/166..196  |       40  (****)
 
 The official main server usually has one or several 'ironman' dungeons
 (see (4.8)), their entrances (stairs) waiting to be discovered by some bold
@@ -8015,51 +8015,52 @@ There may or may not be further special/exotic dungeons that are not part of
 the "normal" game or gameplay.
 See (4.3) under "Dungeon Types" -> "Experimental dungeons" for more details.
 
-(**) Minimum level requirements are usually disabled, so you can actually
-enter any dungeon you like at any character level.
+(*) Minimum level requirements are usually disabled, so you can actually
+ enter any dungeon you like at any character level.
 
-(***) Death Fate:
-Will this be the end of you as you cannot seem to spot a way to escape? Or is
-there some kind of ancient secret hidden in here?
-Notes: Death in here is like in the Training Tower, but with additional random
-inventory damage like form a 'normal' death; equipment is safe though.
-Death Fate unstatices immediately after you leave.
+(**) Death Fate:
+ Will this be the end of you as you cannot seem to spot a way to escape? Or is
+ there some kind of ancient secret hidden in here?
+ Notes: Death in here is like in the Training Tower, but with additional random
+ inventory damage like form a 'normal' death; equipment is safe though.
+ Death Fate unstatices immediately after you leave.
 
-(****) Cloud Planes details:
--To enter the Cloud Planes a player must carry the 'King'/'Queen' title,
+(***) Cloud Planes details:
+ To enter the Cloud Planes a player must carry the 'King'/'Queen' title,
  acquired by beating Morgoth, Lord of Darkness.
 
-(*****) Nether Realm details:
--To enter the Nether Realm a player must carry the 'King'/'Queen' title,
- acquired by beating Morgoth, Lord of Darkness.
--Each floor in the Nether Realm gives a +2% bonus to experience from monster
- kills. So hunting at -350ft in there will give a +14% exp bonus. (This bonus
- is actually multiplied by the usual floor boni, instead of added. So you will
- get even much more exp when hunting on a floor with a lot of 'bad' special
- flags.)
- To any floor experience boni that might occur, an additional 5% bonus is added
- because the whole dungeon is flagged NO_RECALL_INTO, meaning it cannot be
- entered via Word of Recall (you may recall out of it though).
--Note that the amount of experience is already very high even without this
- depth-bonus, since creatures in the Nether Realm are of a very high level.
--Instant resurrection does not work in the Nether Realm.
--It is possible for everlasting and non-everlasting characters who usually
- cannot form a party to actually team up in the Nether Realm! This is called a
- cross-mode party, for more information see (3.4c).
+(****) Nether Realm details:
+ -To enter the Nether Realm a player must carry the 'King'/'Queen' title,
+  acquired by beating Morgoth, Lord of Darkness.
+ -Each floor in the Nether Realm gives a +2% bonus to experience from monster
+  kills. So hunting at -350ft in there will give a +14% exp bonus. (This bonus
+  is actually multiplied by the usual floor boni, instead of added. So you will
+  get even much more exp when hunting on a floor with a lot of 'bad' special
+  flags.)
+  To any floor experience boni that might occur, an additional 5% bonus is
+  added because the whole dungeon is flagged NO_RECALL_INTO, meaning it cannot
+  be entered via Word of Recall (you may recall out of it though).
+ -Note that the amount of experience is already very high even without this
+  depth-bonus, since creatures in the Nether Realm are of a very high level.
+ -Instant resurrection does not work in the Nether Realm.
+ -It is possible for everlasting and non-everlasting characters who usually
+  cannot form a party to actually team up in the Nether Realm! This is called a
+  cross-mode party, for more information see (3.4c).
 
-(******) Halls of Mandos details:
--Getting out of the Halls of Mandos will be complemented with an entry
- into 'Noteworthy Occurances' list.
--Extermination orders in the Halls of Mandos will (same as for the IDDC) have
- its monster level depend on the floor level rather than on the player's level.
--Similar to IDDC, minimum floor depth vs character level regarding experience
- gain is not enforced: Normal experience is gained on any depth regardless of
- your character's level. But unlike in IDDC this is only true for characters
- up to level 49. Characters of level 50+ will receive depth-restricted XP.
--The Halls of Mandos are barred to any unique monsters!
--Various more or less basic stores, including a library, will spawn in addition
- to the usual dungeon stores. Also (like in the IDDC) a deep supply store can
- spawn on very deep floors.
+(*****) Halls of Mandos details:
+ -Getting out of the Halls of Mandos will be complemented with an entry
+  into 'Noteworthy Occurances' list.
+ -Extermination orders in the Halls of Mandos will (same as for the IDDC) have
+  its monster level depend on the floor level rather than on the player's
+  level.
+ -Similar to IDDC, minimum floor depth vs character level regarding experience
+  gain is not enforced: Normal experience is gained on any depth regardless of
+  your character's level. But unlike in IDDC this is only true for characters
+  up to level 49. Characters of level 50+ will receive depth-restricted XP.
+ -The Halls of Mandos are barred to any unique monsters!
+ -Various more or less basic stores, including a library, will spawn in
+  addition to the usual dungeon stores. Also (like in the IDDC) a deep supply
+  store can spawn on very deep floors.
 
 
 (4.5c2) Example dungeon depth relations
@@ -9020,10 +9021,10 @@ Switch places           Monsters that have MOVE_BODY flag may switch place with
                         weight is, the less likely he is going to get switched.
 
 (*) Details about melee-induced cuts and stuns:
-For a monster attack to cause cuts or stun it must deal at least 95% of its
-potential damage maximum (rounded down). This is also called a 'critical hit'
-of a monster (has nothing to do with the critical-hit mechanics for player
-attacks).
+ For a monster attack to cause cuts or stun it must deal at least 95% of its
+ potential damage maximum (rounded down). This is also called a 'critical hit'
+ of a monster (has nothing to do with the critical-hit mechanics for player
+ attacks).
 
 An attack type ('HIT') that can do both, cut and stun, will randomly do either
 one, but never both at once. The 95% damage criterium is measured for the final
@@ -12980,6 +12981,10 @@ There are two different cases, inventory items and equipped items:
 Some items have IGNORE_xxx flags which let them ignore certain elements,
 completely preventing them from being destroyed or damaged by that element.
 
+Items ignore certain elements if they have the according resistance (usually
+due to ego powers), for example a leather shield of resist fire will ignore
+fire damage.
+
 All artifacts, random and static ones, cannot be harmed by elemental attacks
 of any type.
 
@@ -13050,20 +13055,17 @@ Greater Crystals            x
 Custom Books        x               x
 
 (*) Impact-based attacks (includes force- and sound-based attacks):
-These do not hurt items in your inventory. For example impact hounds breathing
-at you will not destroy any potions in your backpack.
-However, there are some cases where impact-type destruction can happen to your
-inventory items:
-1) Falling through a trap door/chasm without having 'Feather Falling'.
-2) Rocket attacks, if you do not resist both, shards AND sound!
-3) Inferno/detonation damage, if you do not resist both, shards and sound.
-   However, inferno and detonation damage cannot be caused by monsters.
-
-Items ignore certain elements if they have the according resistance due to ego
-powers, for example a leather shield of resist fire will ignore fire.
+ These do not hurt items in your inventory. For example impact hounds breathing
+ at you will not destroy any potions in your backpack.
+ However, there are some cases where impact-type destruction can happen to your
+ inventory items:
+ 1) Falling through a trap door/chasm without having 'Feather Falling'.
+ 2) Rocket attacks, if you do not resist both, shards AND sound!
+ 3) Inferno/detonation damage, if you do not resist both, shards and sound.
+    However, inferno and detonation damage cannot be caused by monsters.
 
 (**) Some tomes or spellbooks will resist certain elements, for example a
-Tome of the Eternal Flame cannot be harmed by fire.
+ Tome of the Eternal Flame cannot be harmed by fire.
 
 
 (5.10a) Equipment damage from elemental attacks
