@@ -1478,6 +1478,17 @@ static void Delete_player(int Ind) {
 				/* missing TOMENET_WORLDS relay here :/ (currently no way to send to 'foreign' admins only) - C. Blue */
 			}
 		}
+
+		/* IDDC hack: Reset floor static timer. (In other dungeons, this only happens on ghost-death/destruction.)  */
+		if (in_irondeepdive(&p_ptr->wpos)) {
+			struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
+			if (l_ptr) {
+				time_t now = time(&now);
+
+				l_ptr->lastused = now;
+			}
+		}
 	}
 
 #ifdef AUCTION_SYSTEM
