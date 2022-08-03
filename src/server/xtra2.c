@@ -8284,8 +8284,9 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 	}
 
 	/* Ghosts dont static the lvl if under cfg_preserve_death_level ft. DEG */
-	if (static_floor && getlevel(&p_ptr->wpos) < cfg.preserve_death_level) {
+	if (!static_floor || getlevel(&p_ptr->wpos) < cfg.preserve_death_level) {
 		struct worldpos old_wpos;
+
 		/*
 		 * HACK - Change the wpos temporarily so that new_players_on_depth
 		 * won't think that the player is on the level - mikaelh
@@ -8294,6 +8295,16 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 		p_ptr->wpos.wz++;
 		new_players_on_depth(&old_wpos, -1, TRUE);
 		p_ptr->wpos.wz--;
+	}
+	/* Static death floor: Reset lastused for that, to obtain maximum static duration. */
+	else {
+		struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
+		if (l_ptr) {
+			time_t now = time(&now);
+
+			l_ptr->lastused = now;
+		}
 	}
 
 	buffer_account_for_event_deed(p_ptr, death_type);
