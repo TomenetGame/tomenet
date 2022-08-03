@@ -9620,6 +9620,7 @@ Ironman Deep Dive Challenge (IDDC)
     a bookstore with a red '9' as an entrance), allowing you to purchase
     magic spells you might be missing. It also offers a special service to
     identify all items you are carrying.
+    The Herbalist can also spawn in the IDDC (on lower/mid level floors).
     On very deep floors after Nargothrond, a seasoned alchemist store may
     appear, allowing you to resupply.
 

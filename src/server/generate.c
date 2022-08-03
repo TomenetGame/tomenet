@@ -9973,15 +9973,20 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		if ((!dungeon_store_timer) && (dun_lev >= 60) && (dun_lev != 100))
 			build_special_store = 1;
 
+		/* Build hidden library if desired (good for challenge dungeons actually) - very frequent store! */
+		if (//!store_failed &&
+		    (!build_special_store) && (d_ptr->flags3 & DF3_HIDDENLIB) && (dun_lev >= 8)) {
+			if (!rand_int(dun_lev / 2 + 1)) build_special_store = 4;
+			//else store_failed = TRUE; /* The rand_int() we used is way too harsh to fail all other stores after this */
+		}
+
 		/* Not for special dungeons (easy csw/resattr): */
 		//if ((!challenge_dungeon && !(d_ptr->flags3 & DF3_NO_SIMPLE_STORES)) ||
 		if (!(d_ptr->flags3 & DF3_NO_SIMPLE_STORES)) {
-			/* Check for building low-level store (Herbalist) */
-			if ((!build_special_store) &&
-			    (!dungeon_store2_timer) && (dun_lev >= 6) && (dun_lev <= 30))
-				build_special_store = 2;
+			/* Low-level store?
+			   Herbalist - is now allowed again, for IDDC, and hence not restricted in here anymore. */
 
-			/* Build one of several misc stores for basic items of certain type */
+			/* Build one of several misc iron dungeon helper stores for basic items of certain type */
 			//todo: maybe use the new d_ptr->store_timer for randomly generated stores
 #ifdef TEST_SERVER
 			if (!store_failed && (!build_special_store) && (dun_lev >= 13)) {
@@ -10005,26 +10010,25 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			else store_failed = TRUE;
 		}
 
-		/* Build hidden library if desired (good for challenge dungeons actually) */
-		if (//!store_failed &&
-		    (!build_special_store) && (d_ptr->flags3 & DF3_HIDDENLIB) && (dun_lev >= 8)) {
-			if (!rand_int(dun_lev / 2 + 1)) build_special_store = 4;
-			else store_failed = TRUE;
-		}
-
-		/* Build deep supplies store if desired (good for challenge dungeons actually) */
+		/* Build deep supplies store if desired (good for challenge dungeons actually) - frequent store! */
 		if (//!store_failed &&
 		    (!build_special_store) && (d_ptr->flags3 & DF3_DEEPSUPPLY) && (dun_lev >= 80)) {
 			if (!rand_int(5)) build_special_store = 5;
 			else {
-				s_printf("DUNGEON_STORE: DEEPSUPPLY roll failed.\n");
+				//s_printf("DUNGEON_STORE: DEEPSUPPLY roll failed.\n");
 				store_failed = TRUE;
 			}
 		}
 
+		/* Check for building low-level store (Herbalist) - frequent store if levels are explored slowly (like in IDDC)! */
+		if ((!build_special_store) &&
+		    (!dungeon_store2_timer) && (dun_lev >= 6) && (dun_lev <= 30))
+			build_special_store = 2;
+
 		/* if failed, we're done */
 		if (!build_special_store) return;
-		/* reset deep shop timeout */
+
+		/* reset deep (rare) shop timeout */
 		if (build_special_store == 1)
 			dungeon_store_timer = 2 + rand_int(cfg.dungeon_shop_timeout); /* reset timeout (in minutes) */
 		/* reset low-level shop timeout */

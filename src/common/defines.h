@@ -6634,9 +6634,9 @@
 
 /* moar flags */
 #define DF3_JAIL_DUNGEON	0x00000001L	/* purpose is just to display the name "Jail Dungeon" in dungeon list */
-#define DF3_HIDDENLIB		0x00000002L	/* allow generation of 'Hidden Library' dungeon store (for ironman deep dive challenge) (overrides DF3_NO_SIMPLE_STORES) */
-#define DF3_NO_SIMPLE_STORES	0x00000004L	/* disallow generation misc ironman helper stores and of low-level dungeon stores (herbalist) */
-#define DF3_NO_DUNGEON_BONUS	0x00000008L	/* This dungeon never yields bonus experience from dungeon_bonus[] (rare exploration) */
+#define DF3_HIDDENLIB		0x00000002L	/* allow generation of 'Hidden Library' dungeon store (added for IDDC) (overrides DF3_NO_SIMPLE_STORES) */
+#define DF3_NO_SIMPLE_STORES	0x00000004L	/* disallow generation misc ironman helper stores and of low-level dungeon stores (was herbalist, but excluded it for now, so it may actually spawn in IDDC) (should be set for IDDC) */
+#define DF3_NO_DUNGEON_BONUS	0x00000008L	/* This dungeon never yields bonus experience from dungeon_bonus[] (rare exploration) (should be set for IDDC) */
 
 #define DF3_EXP_5		0x00000010L	/* Add +5% bonus to experience gains while inside this dungeon */
 #define DF3_EXP_10		0x00000020L	/* Add +10% bonus to experience gains while inside this dungeon */
@@ -6651,7 +6651,7 @@
 #define DF3_DERARE_MONSTERS	0x00001000L	/* Treat rarity of all monsters as '1' aka most common */
 #define DF3_MANY_MONSTERS	0x00002000L	/* Spawn 1.5x as many monsters as usual */
 #define DF3_VMANY_MONSTERS	0x00004000L	/* Spawn twice as many monsters as usual */
-#define DF3_DEEPSUPPLY		0x00008000L	/* allow generation of dungeon stores offering supplies, on deep floors (for ironman deep dive challenge) (overrides DF3_NO_SIMPLE_STORES) */
+#define DF3_DEEPSUPPLY		0x00008000L	/* allow generation of dungeon stores offering supplies, on deep floors (added for IDDC) (overrides DF3_NO_SIMPLE_STORES) */
 
 #define DF3_NO_WALL_STREAMERS	0x00010000L	/* No streamers (any wall types) */
 #define DF3_NOT_EMPTY		0x00020000L	/* Disallow arena levels */
