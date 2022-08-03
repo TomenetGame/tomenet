@@ -1240,9 +1240,12 @@ They all start with a slash '/' hence they're called slash commands:
                      /convertexclusive <your-character-name>
                      for example:
                      /convertexclusive Gandalf
+
                      If you still have a free exclusive character slot
                      available then your character is moved to that slot,
                      freeing up a generic character slot again.
+
+                     This command can also be used on the Ironman server.
 
 /coin
 /flip       Flip a coin to get either heads or tails.
@@ -4553,6 +4556,9 @@ your previous character of that name.
 
 However, since this is your first character, just press 'N' to start the
 creation progress, enter a character name, and continue reading.
+
+(Note that on the Ironman server, you can convert your character to a
+dedicated IDDC character by using the /convertexclusive command.)
 
 
 First you may choose your gender. This will not have actual influence on your
@@ -9557,6 +9563,8 @@ Ironman Deep Dive Challenge (IDDC)
     will automatically be unable to pick up any more gold or items of other
     players outside of the IDDC, and it won't get experience from eating bad
     food either. (It cannot buy houses either, which are useless for IDDC.)
+    Note that the /convertexclusive command works on the Ironman server too,
+    to convert your character to a dedicated (slot-exclusive) IDDC character.
 
     As IDDC-exclusive character you will get no experience when you kill a
     monsters outside of the IDDC. As a little extra bonus, slot-exclusive IDDC
