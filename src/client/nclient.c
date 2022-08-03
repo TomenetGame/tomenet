@@ -3447,12 +3447,30 @@ int Receive_line_info(void) {
 	last_line_y = y;
 #endif
 
+	printf("jezek - Receive_line_info: ch: %d, y: %d\n", ch, y);
 	for (x = 0; x < 80; x++) {
 		c = 0; /* Needs to be reset for proper packet read. */
 		/* Read the char/attr pair */
 		/* 4.8.1 and newer servers communicate using 32bit character size. */
 		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
-			if ((n = Packet_scanf(&rbuf, "%u%c", &c, &a)) <= 0) {
+			/* Transfer only minimum number of bytes needed, according to client setup.*/
+			char *pc = (char *)&c;
+			switch (Client_setup.char_transfer_bytes) {
+				case 0:
+				case 1:
+					n = Packet_scanf(&rbuf, "%c%c", &c, &a);
+					break;
+				case 2:
+					n = Packet_scanf(&rbuf, "%c%c%c", &pc[1], &pc[0], &a);
+					break;
+				case 3:
+					n = Packet_scanf(&rbuf, "%c%c%c%c", &pc[2], &pc[1], &pc[0], &a);
+					break;
+				case 4:
+				default:
+					n = Packet_scanf(&rbuf, "%u%c", &c, &a);
+			}
+			if (n <= 0) {
 				if (n == 0) goto rollback;
 				return n;
 			}
