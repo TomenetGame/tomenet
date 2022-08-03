@@ -6855,14 +6855,17 @@ int Send_char(int Ind, int x, int y, byte a, char32_t c) {
 			if (is_atleast(&connp2->version, 4, 8, 1, 0, 0, 0)) {
 				/* Transfer only the relevant bytes, according to client setup.*/
 				char * pc = (char *)&c2;
-				switch (connp->Client_setup.char_transfer_bytes) {
+				switch (connp2->Client_setup.char_transfer_bytes) {
 					case 0:
 					case 1:
 						Packet_printf(&connp2->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, pc[0]);
+						break;
 					case 2:
 						Packet_printf(&connp2->c, "%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[1], pc[0]);
+						break;
 					case 3:
 						Packet_printf(&connp2->c, "%c%c%c%c%c%c%c", PKT_CHAR, x, y, a, pc[2], pc[1], pc[0]);
+						break;
 					case 4:
 					default:
 						Packet_printf(&connp2->c, "%c%c%c%c%u", PKT_CHAR, x, y, a, c2);
