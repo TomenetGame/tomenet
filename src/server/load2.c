@@ -2686,7 +2686,7 @@ static errr rd_floor(void) {
 	if (l_ptr) {
 		time_t now;
 		now = time(&now);
-		l_ptr->lastused = now;
+		l_ptr->lastused = now; /* Hm, this means resetting a death-static floor timeout, so it's static for the full original duration once more.. well, no harm done probably. */
 
 		if (!s_older_than(4, 5, 18)) rd_u32b(&l_ptr->id);
 
