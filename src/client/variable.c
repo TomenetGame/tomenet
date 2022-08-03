@@ -658,7 +658,7 @@ bool player_pref_files_loaded = FALSE;
 #endif
 
 /* For in-client guide search */
-int guide_lastline = -1;
+int guide_lastline = -1, guide_errno = 0;
 char guide_race[64][MAX_CHARS];
 char guide_class[64][MAX_CHARS];
 char guide_skill[128][MAX_CHARS];

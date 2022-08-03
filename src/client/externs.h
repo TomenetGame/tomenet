@@ -1119,7 +1119,7 @@ extern byte rl_connection_state;
 extern bool player_pref_files_loaded;
 #endif
 
-extern int guide_lastline;
+extern int guide_lastline, guide_errno;
 #ifdef BUFFER_GUIDE
 extern char guide_line[GUIDE_LINES_MAX][MAX_CHARS + 1];
 #endif

@@ -2054,13 +2054,29 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 #endif
 
 	/* empty file? */
-	if (guide_lastline == -1) return;
+	if (guide_lastline == -1) {
+		if (guide_errno <= 0) {
+			c_message_add("\377yThe file TomeNET-Guide.txt seems to be empty.");
+			c_message_add("\377y Try updating it with the TomeNET-Updater or download it manually.");
+		} else {
+			if (guide_errno == ENOENT) {
+				c_msg_format("\377yThe file TomeNET-Guide.txt wasn't found in your TomeNET folder.");
+				c_message_add("\377y Try updating it with the TomeNET-Updater or download it manually.");
+			} else c_msg_format("\377yThe file TomeNET-Guide.txt couldn't be opened from your TomeNET folder (%d).", guide_errno);
+		}
+		return;
+	}
 
 #ifndef BUFFER_GUIDE
 	path_build(path, 1024, "", "TomeNET-Guide.txt");
+	errno = 0;
 	fff = my_fopen(path, "r");
 	/* mysteriously can't open file anymore? */
-	if (!fff) return;
+	if (!fff) {
+		c_msg_format("\377yThe file TomeNET-Guide.txt was not found in your TomeNET folder anymore (%d).", errno);
+		if (errno == ENOENT) c_message_add("\377y Try updating it with the TomeNET-Updater or download it manually.");
+		return;
+	}
 #endif
 
 	/* init searches */

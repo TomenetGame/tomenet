@@ -254,6 +254,7 @@ static errr path_parse(char *buf, cptr file) {
 	/* Extract a user name */
 	if (s) {
 		int i;
+
 		for (i = 0; u < s; ++i) user[i] = *u++;
 		user[i] = '\0';
 		u = user;
@@ -267,7 +268,7 @@ static errr path_parse(char *buf, cptr file) {
 	else pw = getpwuid(getuid());
 
 	/* Nothing found? */
-	if (!pw) return (1);
+	if (!pw) return (2);
 
 	/* Make use of the info */
 	(void)strcpy(buf, pw->pw_dir);
@@ -288,9 +289,13 @@ static errr path_parse(char *buf, cptr file) {
  */
 FILE *my_fopen(cptr file, cptr mode) {
 	char		buf[1024];
+	int err;
 
 	/* Hack -- Try to parse the path */
-	if (path_parse(buf, file)) return (NULL);
+	if ((err = path_parse(buf, file))) {
+		errno = 900 + err;
+		return (NULL);
+	}
 
 	/* Attempt to fopen the file anyway */
 	return (fopen(buf, mode));
