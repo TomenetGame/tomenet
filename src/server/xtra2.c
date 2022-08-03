@@ -8218,6 +8218,8 @@ void merchant_mail_death(const char pname[CNAME_LEN]) {
 #endif
 
 /* Deletes a ghost-dead player, cleans up his business, and disconnects him.
+   static_floor: TRUE if player ghost-dies or his ghost is destroyed.
+                 FALSE for non-final death or suicide.
    NOTE:
    This function will be called when a player actually dies. */
 static void erase_player(int Ind, int death_type, bool static_floor) {
@@ -9781,6 +9783,7 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 #if (MAX_PING_RECVS_LOGGED > 0)
 		/* Print last ping reception times */
 		struct timeval now;
+
 		gettimeofday(&now, NULL);
 		s_printf("PINGS_RECEIVED:");
 		/* Starting from latest */
