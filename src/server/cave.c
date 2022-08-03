@@ -453,11 +453,9 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 	if (wpos->wz) {
 		struct dungeon_type *d_ptr;
 		struct dun_level *l_ptr;
-		if (wpos->wz > 0)
-			d_ptr = wild_info[wpos->wy][wpos->wx].tower;
-		else
-			d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
 
+		if (wpos->wz > 0) d_ptr = wild_info[wpos->wy][wpos->wx].tower;
+		else d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
 
 		l_ptr = &d_ptr->level[ABS(wpos->wz) - 1];
 

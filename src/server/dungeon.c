@@ -6733,6 +6733,7 @@ bool stale_level(struct worldpos *wpos, int grace) {
 	if (wpos->wz) {
 		struct dungeon_type *d_ptr;
 		struct dun_level *l_ptr;
+
 		d_ptr = getdungeon(wpos);
 		if (!d_ptr) return FALSE;
 		l_ptr = &d_ptr->level[ABS(wpos->wz) - 1];
