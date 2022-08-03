@@ -2489,8 +2489,17 @@ bool get_server_name(void) {
 		c = inkey();
 
 		/* Check for quit */
-		if (c == 'Q' || c == KTRL('Q')) return enter_server_name();
-		else if (c == ESCAPE) {
+		if (c == 'Q' || c == KTRL('Q')) {
+#ifdef META_PINGS
+			/* Disable pinging. */
+			meta_pings_servers = 0;
+#endif
+			return enter_server_name();
+		} else if (c == ESCAPE) {
+#ifdef META_PINGS
+			/* Disable pinging. */
+			meta_pings_servers = 0;
+#endif
 			quit(NULL);
 			return FALSE;
 		}
