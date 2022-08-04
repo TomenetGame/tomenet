@@ -12055,7 +12055,29 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "Looking up IP %s of player '%s'...", ip_addr, Players[j]->name);
 				system(format("curl https://ipinfo.io/%s > __ipinfo.tmp", ip_addr));
 
-				fake_waitpid = p_ptr->id; /* Poll result to admin */
+				fake_waitpid_geo = p_ptr->id; /* Poll result to admin */
+				return;
+			}
+			else if (prefix(messagelc, "/ping")) { /* ping player's IP -- atm only one request can be pending at a time (aka 1 temporary filename only) */
+				char ip_addr[MAX_CHARS];
+
+				if (!tk) {
+					msg_print(Ind, "\377oUsage: /ping <character name>");
+					return;
+				}
+
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
+				if (!j) {
+					msg_print(Ind, "\377yCharacter not online.");
+					return;
+				}
+
+				/* Note: Could also use LUA's execute() hehee */
+				strcpy(ip_addr, get_player_ip(j));
+				msg_format(Ind, "Pinging IP %s of player '%s'...", ip_addr, Players[j]->name);
+				system(format("ping -c 1 -w 1 %s > __ipping.tmp", ip_addr));
+
+				fake_waitpid_ping = p_ptr->id; /* Poll result to admin */
 				return;
 			}
 		}

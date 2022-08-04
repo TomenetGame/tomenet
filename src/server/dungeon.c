@@ -10572,14 +10572,14 @@ void process_timers() {
 		}
 	} else timer_falling_star--;
 
-	if (fake_waitpid) {
+	if (fake_waitpid_geo) {
 		FILE *fp;
 
 		/* Check if admin caller is still present */
 		for (i = 1; i <= NumPlayers; i++) {
 			p_ptr = Players[i];
 			if (p_ptr->conn == NOT_CONNECTED) continue;
-			if (p_ptr->id != fake_waitpid) continue;
+			if (p_ptr->id != fake_waitpid_geo) continue;
 			break;
 		}
 		/* Found him */
@@ -10615,7 +10615,40 @@ void process_timers() {
 				//remove("__ipinfo.tmp"); /* Keep maybe, if we want to review it manually afterwards. */
 			}
 		}
-		fake_waitpid = 0;
+		fake_waitpid_geo = 0;
+	}
+	if (fake_waitpid_ping) {
+		FILE *fp;
+
+		/* Check if admin caller is still present */
+		for (i = 1; i <= NumPlayers; i++) {
+			p_ptr = Players[i];
+			if (p_ptr->conn == NOT_CONNECTED) continue;
+			if (p_ptr->id != fake_waitpid_ping) continue;
+			break;
+		}
+		/* Found him */
+		if (i <= NumPlayers) {
+			char buf[MAX_CHARS], *s;
+
+			fp = fopen("__ipping.tmp", "r");
+			if (fp) {
+				i = p_ptr->Ind;
+				/* Read result and display the relevant parts */
+				x = 0;
+				while (!my_fgets(fp, buf, 80, FALSE)) {
+					if ((s = strstr(buf, " time="))) {
+						x = 1;
+						msg_print(i, s);
+						break;
+					}
+				}
+				fclose(fp);
+				if (!x) msg_print(i, "No ping information available.");
+				//remove("__ipping.tmp"); /* Keep maybe, if we want to review it manually afterwards. */
+			}
+		}
+		fake_waitpid_ping = 0;
 	}
 }
 
