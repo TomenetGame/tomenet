@@ -7631,7 +7631,7 @@ static void process_various(void) {
    call process_world_player() for each player.
    We are called once every 50 turns. */
 static void process_world(void) {
-	int i;
+	int i, j;
 	player_type *p_ptr;
 
 	if (cfg.runlevel < 6 && time(NULL) - cfg.closetime > 120)
@@ -7698,18 +7698,18 @@ static void process_world(void) {
 #else
 	else if (cfg.runlevel == 2048) {
 #endif
+		/* Operate only on characters that are actually logged in */
 		for (i = NumPlayers; i > 0 ;i--) {
 			p_ptr = Players[i];
-			if (p_ptr->conn == NOT_CONNECTED) continue;
-
+			if (p_ptr->conn == NOT_CONNECTED) break; /* Specialty: Not continue but break here! */
 			/* Ignore admins that are loged in */
 			if (admin_p(i)) continue;
 
 			/* Ignore chars in fixed irondeepdive towns */
 			if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
-#ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
+ #ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
 			if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
-#endif
+ #endif
 
 			/* extra, just for /shutempty: Ignore all iddc chars who are afk/idle */
 			if (SHUTDOWN_IGNORE_IDDC(p_ptr)) continue;
@@ -7724,7 +7724,33 @@ static void process_world(void) {
 			}
 			break;
 		}
-		if (!i) {
+		/* Operate on accounts that are logged in in the character screen or in the process of creating a character */
+		for (j = 0; j < max_connections; j++) {
+			connection_t *connp = Conn[j];
+
+			/* no connection at all? */
+			if (!connp) continue;
+
+			/* connection already has a character fully logged in? ignore! */
+			if (connp->state == 0x08) continue; // 0x08 = CONN_PLAYING
+
+#if 0 /* 0: don't restart even for those who just have logged in their account name and aren't creating a character yet */
+			if (!connp->c_name) continue; //has not chosen a character name to login yet? ignore then
+#endif
+
+			//ignore admins
+			if (GetInd[connp->id] && admin_p(GetInd[connp->id])) continue;
+			//ignore admin accounts that are about to login, too
+			if (connp->nick) {
+				struct account acc;
+
+				if (GetAccount(&acc, connp->nick, NULL, TRUE) && (acc.flags & ACC_ADMIN)) continue;
+			}
+
+			/* Don't trigger restart yet */
+			break;
+		}
+		if (!i && j == max_connections) {
 			msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
 			cfg.runlevel = 2049;
 		}

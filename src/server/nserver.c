@@ -148,7 +148,7 @@ static bool validstring(char *nick);
 void validatestring(char *string);
 
 connection_t	**Conn = NULL;
-static int	max_connections = 0;
+int		max_connections = 0;
 static setup_t	Setup;
 static int	(*playing_receive[256])(int ind),
 		(*login_receive[256])(int ind),

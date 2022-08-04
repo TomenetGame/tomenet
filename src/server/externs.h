@@ -74,12 +74,13 @@ extern void end_mind(int Ind, bool update);
 extern void add_banlist(char *account, char *ip_addy, char *hostname, int time, char *reason);
 extern void kick_ip(int Ind_kicker, char *ip_kickee, char *reason, bool msg);
 extern void kick_char(int Ind_kicker, int Ind_kickee, char *reason);
-//extern connection_t **Conn;
+extern connection_t **Conn;
 extern char* get_conn_userhost(int ind);
 extern char *get_player_ip(int Ind);
 extern bool get_conn_state_ok(int Ind);
 extern void do_quit(int ind, bool tellclient);
 extern int check_multi_exploit(char *acc, char *nick);
+extern int max_connections;
 
 /* randart.c */
 extern artifact_type *ego_make(object_type *o_ptr);

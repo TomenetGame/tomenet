@@ -5313,8 +5313,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				time(&cfg.closetime);
 				return;
 			}
+			/* Specialty: /shutempty als checks for logged in accounts, without character logged in yet. */
 			else if (prefix(messagelc, "/shutempty")) {
-				msg_admins(0, "\377y* Shutting down when dungeons are empty *");
+				msg_admins(0, "\377y* Shutting down when dungeons are empty and no accounts being logged in *");
 				cfg.runlevel = 2048;
 				return;
 			}
