@@ -3434,6 +3434,8 @@ int Receive_line_info(void) {
 			/* Hack: Hide cursor */
 			Term->scr->cx = Term->wid;
 			Term->scr->cu = 1;
+			Term_set_cursor(0);
+			//Term_xtra(TERM_XTRA_SHAPE, 1);
 		}
 		return 1;
 	}
@@ -6315,6 +6317,9 @@ void do_ping() {
 }
 
 #ifdef META_PINGS
+ #ifdef WINDOWS
+  #include <process.h>	/* use spawn() instead of normal system() (WINE bug/Win inconsistency even maybe) */
+ #endif
 /* Note: At this early stage of the game (viewing meta server list) do_keepalive() and do_ping() are not yet called,
    so this function must be called in do_flicker() or update_ticks() instead, of which update_ticks() is preferable
    as its calling frequency is fixed and predictable (100ms). */
@@ -6337,29 +6342,69 @@ static void do_meta_pings(void) {
 		/* Send a ping to each distinct server name, allowing for max 1000ms */
 		if (alt) {
 #ifdef WINDOWS
-			r = system(format("ping -n 1 -w 1000 %s > %s", meta_pings_server_name[i], path));
+			STARTUPINFO si;
+			PROCESS_INFORMATION pi;
+
+			/* All "simple" solutions don't work, because START /b and similar commands do not work together with redirecting the output,
+			   _spawnl() even with _P_NOWAIT will also not become asynchronous, neither will system(), beause quote:
+			    "The default behaviour of START is to instantiate a new process that runs in parallel with the main process.
+			     For arcane technical reasons, this does not work for some types of executable,
+			     in those cases the process will act as a blocker, pausing the main script until it's complete." */
+ #if 0
+			/* This (or _spawnl(_P_NOWAIT..)) would be nicest, but might only work via powershell (which has a fake-ampesand) */
+			r = system(format("ping -n 1 -w 1000 %s > %s &", meta_pings_server_name[i], path));
+ #else
+			fff = fopen(format("__ping_%s.bat", meta_pings_server_name[i]), "w");
+			if (!fff) continue; //paranoia
+			fprintf(fff, "ping -n 1 -w 1000 %s > %s\n", meta_pings_server_name[i], path);
+			fclose(fff);
+
+			ZeroMemory( &si, sizeof(si) );
+			si.cb = sizeof(si);
+			ZeroMemory( &pi, sizeof(pi) );
+
+			/* At least CreateProcess() will run within our context/working folder -_-.. */
+			CreateProcess( NULL,   // No module name (use command line)
+			        format("cmd.exe /c __ping_%s.bat", meta_pings_server_name[i]), //commandline
+			        NULL,           // Process handle not inheritable
+			        NULL,           // Thread handle not inheritable
+			        FALSE,          // Set handle inheritance to FALSE
+			        0,              // No creation flags
+			        NULL,           // Use parent's environment block
+			        NULL,           // Use parent's starting directory 
+			        &si,            // Pointer to STARTUPINFO structure
+			        &pi );           // Pointer to PROCESS_INFORMATION structure 
+ #endif
 #else /* assume POSIX */
-			r = system(format("ping -c 1 -w 1 %s > %s", meta_pings_server_name[i], path));
-#endif
+			r = system(format("ping -c 1 -w 1 %s > %s &", meta_pings_server_name[i], path));
 			(void)r; //slay compiler warning;
+#endif
 		}
 
 		/* Retrieve ping results */
 		else {
+			/* Assume our pinging result file is still being written to for some weird slowness OS reason -_- */
+			meta_pings_stuck[i] = TRUE;
+
 			/* Check for duplicate first. If we're just a duplicate server, re-use the original ping result we retrieved so far. */
 			if (meta_pings_server_duplicate[i] != -1) {
+				/* If original server is still stuck at "pinging..", don't change our status yet either.. */
+				if (meta_pings_stuck[meta_pings_server_duplicate[i]]) continue;
+
 				/* Store ping result */
 				meta_pings_result[i] = meta_pings_result[meta_pings_server_duplicate[i]];
 
 				/* Live-update the meta server list -- pfft, actually we don't even need meta_pings_results[] */
 				call_lua(0, "meta_add_ping", "(d,d)", "d", i, meta_pings_result[i], &r);
 				Term_fresh();
+				/* hack: hide cursor */
+				Term->scr->cx = Term->wid;
+				Term->scr->cu = 1;
+				Term_set_cursor(0);
+				//Term_xtra(TERM_XTRA_SHAPE, 1);
 
 				continue;
 			}
-
-			/* Assume timeout/unresponsive */
-			meta_pings_result[i] = -1;
 
 			fff = my_fopen(path, "r");
 			if (!fff) continue; /* Sort of paranoia? */
@@ -6368,6 +6413,8 @@ static void do_meta_pings(void) {
 			   BUT.. have to watch out that "time" label can be OS-language specific!
 			   For that reason we first look for 'ttl' (posix) and 'TTL' (windows) which are always the same. */
 			while (my_fgets(fff, buf, sizeof(buf)) == 0) {
+				meta_pings_stuck[i] = FALSE; /* Yay, we can read the results finally.. */
+
 				if (!my_strcasestr(buf, "ttl")) continue;
 
 				/* We found a line containing a response time. Now we look for 'ms' and go backwards till '='. */
@@ -6382,11 +6429,17 @@ static void do_meta_pings(void) {
 
 				/* Grab result */
 				r = atoi(c);
-				if (!r) r = -1; //more paranoia
 				break;
 			}
+
 			my_fclose(fff);
 			remove(path);
+
+			/* Assume timeout/unresponsive,
+			   except if file is being written to right now but not yet finished, ie 0 Bytes long for us? Wait more patiently aka retry next time.
+			   This may happen at least on Wine for the first two pings, until everything has been cached or sth, dunno really.. oO */
+			if (meta_pings_stuck[i]) continue; /* Don't assume anything, but just wait for now */
+			meta_pings_result[i] = -1; /* Assume timeout */
 
 			/* Store ping result */
 			meta_pings_result[i] = r;
@@ -6394,6 +6447,11 @@ static void do_meta_pings(void) {
 			/* Live-update the meta server list -- pfft, actually we don't even need meta_pings_results[] */
 			call_lua(0, "meta_add_ping", "(d,d)", "d", i, meta_pings_result[i], &r);
 			Term_fresh();
+			/* hack: hide cursor */
+			Term->scr->cx = Term->wid;
+			Term->scr->cu = 1;
+			Term_set_cursor(0);
+			//Term_xtra(TERM_XTRA_SHAPE, 1);
 		}
 	}
 }

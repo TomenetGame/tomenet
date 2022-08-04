@@ -713,4 +713,5 @@ bool map_town = FALSE;
 #ifdef META_PINGS
 int meta_pings_servers = 0, meta_pings_ticks = -1, meta_pings_server_duplicate[META_PINGS], meta_pings_result[META_PINGS];
 char meta_pings_server_name[META_PINGS][MAX_CHARS];
+bool  meta_pings_stuck[META_PINGS];
 #endif
