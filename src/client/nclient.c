@@ -3450,7 +3450,6 @@ int Receive_line_info(void) {
 	last_line_y = y;
 #endif
 
-	printf("jezek - Receive_line_info: ch: %d, y: %d\n", ch, y);
 	for (x = 0; x < 80; x++) {
 		c = 0; /* Needs to be reset for proper packet read. */
 		/* Read the char/attr pair */
