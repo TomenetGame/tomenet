@@ -8374,6 +8374,9 @@ static void inven_death_damage(int Ind, int verbose) {
 	int inventory_loss = 0, inventory_loss_max = p_ptr->max_plv >= 30 ? 4 : (p_ptr->max_plv >= 20 ? 3 : (p_ptr->max_plv >= 10 ? 2 : 1));
 	bool inventory_loss_starteritems = (p_ptr->max_plv >= 10);
 	int i, j, k;
+#ifdef ENABLE_SUBINVEN
+	int l;
+#endif
 
 	for (i = 0; i < INVEN_PACK; i++) shuffle[i] = i;
 	intshuffle(shuffle, INVEN_PACK);
@@ -8384,6 +8387,25 @@ static void inven_death_damage(int Ind, int verbose) {
 		o_ptr = &p_ptr->inventory[j];
 		if (!o_ptr->k_idx) continue;
 
+#ifdef ENABLE_SUBINVEN
+		/* Don't destroy subinventories with items in them - too annoying to drop everything from it */
+		if (o_ptr->tval == TV_SUBINVEN) {
+			/* Check if not empty */
+			k = o_ptr->bpval;
+			for (l = 0; l < k; l++) {
+				o_ptr = &p_ptr->subinventory[j][l];
+				if (!o_ptr->tval) break;
+			}
+			/* Not empty? Destroy an item from within the subinventory */
+			if (l) {
+				l = rand_int(l);
+				o_ptr = &p_ptr->subinventory[j][l];
+				j = (j + 1) * 100 + l;
+			}
+			/* It was empty ('else')? Destroy the bag itself then. */
+			else o_ptr = &p_ptr->inventory[j];
+		}
+#endif
 		/* hack: don't discard his remaining gold - a penalty was already deducted from it */
 		if (o_ptr->tval == TV_GOLD) continue;
 		/* guild keys are supposedly indestructible, so whatever.. */
@@ -8405,30 +8427,15 @@ static void inven_death_damage(int Ind, int verbose) {
 		if (!inventory_loss_starteritems && o_ptr->xtra9 == 1) continue;
 
 		if (magik(DEATH_PACK_ITEM_LOST)) {
-			object_desc(Ind, o_name, o_ptr, TRUE, 3);
-			s_printf("item_lost: %s (slot %d)\n", o_name, j);
-
-			if (verbose) {
-				/* Message */
-				msg_format(Ind, "\376\377oYour %s %s destroyed!", o_name,
-				    ((o_ptr->number > 1) ? "were" : "was"));
-			}
+			object_desc(Ind, o_name, o_ptr, FALSE, 3);
+			s_printf("item_lost: %d %s (slot %d)\n", o_ptr->number, o_name, j);
+			if (verbose) msg_format(Ind, "\376\377oYour %s %s destroyed!", o_name, ((o_ptr->number > 1) ? "were" : "was"));
 
 			if (true_artifact_p(o_ptr)) {
 				/* set the artifact as unfound */
 				handle_art_d(o_ptr->name1);
 			}
 			questitem_d(o_ptr, o_ptr->number);
-
-#ifdef ENABLE_SUBINVEN
- #if 0
-			/* If we lose a subinventory, remove all items and place them into the player's inventory */
-			if (o_ptr->tval == TV_SUBINVEN) empty_subinven(Ind, j);
- #else
-			/* If we lose a subinventory, destroy the contents with it */
-			if (o_ptr->tval == TV_SUBINVEN) erase_subinven(Ind, j);
- #endif
-#endif
 
 			inven_item_increase(Ind, j, -(o_ptr->number));
 			inven_item_optimize(Ind, j);
