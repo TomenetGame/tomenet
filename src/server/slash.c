@@ -12053,7 +12053,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* Note: Could also use LUA's execute() hehee */
 				strcpy(ip_addr, get_player_ip(j));
 				msg_format(Ind, "Looking up IP %s of player '%s'...", ip_addr, Players[j]->name);
-				i = system(format("curl https://ipinfo.io/%s > __ipinfo.tmp", ip_addr));
+				i = system(format("curl https://ipinfo.io/%s > __ipinfo.tmp &", ip_addr));
 
 				fake_waitpid_geo = p_ptr->id; /* Poll result to admin */
 				return;
@@ -12075,7 +12075,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* Note: Could also use LUA's execute() hehee */
 				strcpy(ip_addr, get_player_ip(j));
 				msg_format(Ind, "Pinging IP %s of player '%s'...", ip_addr, Players[j]->name);
-				i = system(format("ping -c 1 -w 1 %s > __ipping.tmp", ip_addr));
+				i = system(format("ping -c 1 -w 1 %s > __ipping.tmp &", ip_addr));
 
 				fake_waitpid_ping = p_ptr->id; /* Poll result to admin */
 				return;
