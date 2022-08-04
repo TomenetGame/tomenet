@@ -12021,6 +12021,43 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				return;
 			}
+			else if (prefix(messagelc, "/geo")) { /* lookup country of player's IP -- atm only one request can be pending at a time (aka 1 temporary filename only) */
+				/*
+				curl https://ipinfo.io/37.187.75.24
+				{
+				  "ip": "37.187.75.24",
+				  "hostname": "ovh.muuttuja.org",
+				  "city": "Gravelines",
+				  "region": "Hauts-de-France",
+				  "country": "FR",
+				  "loc": "50.9865,2.1281",
+				  "org": "AS16276 OVH SAS",
+				  "postal": "59820",
+				  "timezone": "Europe/Paris",
+				  "readme": "https://ipinfo.io/missingauth"
+				}
+				*/
+				char ip_addr[MAX_CHARS];
+
+				if (!tk) {
+					msg_print(Ind, "\377oUsage: /geo <character name>");
+					return;
+				}
+
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
+				if (!j) {
+					msg_print(Ind, "\377yCharacter not online.");
+					return;
+				}
+
+				/* Note: Could also use LUA's execute() hehee */
+				strcpy(ip_addr, get_player_ip(j));
+				msg_format(Ind, "Looking up IP %s of player '%s'...", ip_addr, Players[j]->name);
+				system(format("curl https://ipinfo.io/%s > __ipinfo.tmp", ip_addr));
+
+				fake_waitpid = p_ptr->id; /* Poll result to admin */
+				return;
+			}
 		}
 	}
 

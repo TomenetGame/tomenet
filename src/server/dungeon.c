@@ -10571,6 +10571,38 @@ void process_timers() {
 			cast_falling_star(&wpos, x, y, i);
 		}
 	} else timer_falling_star--;
+
+	if (fake_waitpid) {
+		FILE *fp;
+		char buf[MAX_CHARS];
+
+		/* Check if admin caller is still present */
+		for (i = 1; i <= NumPlayers; i++) {
+			p_ptr = Players[i];
+			if (p_ptr->conn == NOT_CONNECTED) continue;
+			if (p_ptr->id != fake_waitpid) continue;
+			break;
+		}
+		/* Found him */
+		if (i <= NumPlayers) {
+			fp = fopen("__ipinfo.tmp", "r");
+			if (fp) {
+				i = p_ptr->Ind;
+				/* Read result and display the relevant parts */
+				x = 0;
+				while (!my_fgets(fp, buf, 80, FALSE)) {
+					if (strstr(buf, "city:") || strstr(buf, "region:") || strstr(buf, "country:")) {
+						msg_print(i, buf);
+						x = 1;
+					}
+				}
+				fclose(fp);
+				if (!x) msg_print(i, "No geo information available.");
+				//remove("__ipinfo.tmp"); /* Keep maybe, if we want to review it manually afterwards. */
+			}
+		}
+		fake_waitpid = 0;
+	}
 }
 
 /* during new years eve, cast fireworks! - C. Blue
