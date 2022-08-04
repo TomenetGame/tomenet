@@ -1346,6 +1346,7 @@ unsigned char Net_login() {
 #endif
 
 	if (Packet_scanf(&rbuf, "%c", &tc) <= 0) {
+		plog("You were disconnected, probably because a server update happened meanwhile.\nPlease log in again.");
 		quit("Failed to read status code from server!");
 	}
 	return tc;
