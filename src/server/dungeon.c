@@ -10600,7 +10600,7 @@ void process_timers() {
 						msg_print(i, buf);
 #else
 						/* Forge one long line from all relevant lines */
-						strcat(buf2, strstr(buf, strstr(buf, ":")));
+						strcat(buf2, strstr(buf, strstr(buf, ":") + 1));
 #endif
 					}
 				}
