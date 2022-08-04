@@ -201,7 +201,7 @@ extern byte rl_connection_state;
 void quit(cptr str) {
 	char buf[1024];
 
-	if (str && streq(str, "Not a reply packet after play (3,0,0)")) plog("You were disconnected, probably because a server update happened meanwhile.\nPlease log in again.");
+	if (is_client_side && str && streq(str, "Not a reply packet after play (3,0,0)")) plog("You were disconnected, probably because a server update happened meanwhile.\nPlease log in again.");
 
 	/* Save exit string */
 	if (str) {
