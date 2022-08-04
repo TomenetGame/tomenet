@@ -10591,7 +10591,7 @@ void process_timers() {
 				/* Read result and display the relevant parts */
 				x = 0;
 				while (!my_fgets(fp, buf, 80, FALSE)) {
-					if (strstr(buf, "city:") || strstr(buf, "region:") || strstr(buf, "country:")) {
+					if (strstr(buf, "city\":") || strstr(buf, "region\":") || strstr(buf, "country\":")) {
 						msg_print(i, buf);
 						x = 1;
 					}
