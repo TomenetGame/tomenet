@@ -3471,6 +3471,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		p_ptr->mode &= ~MODE_PVP;
 #else
 		Destroy_connection(conn, "Sorry, your account must be validated before you can choose 'PvP' mode.");
+		return FALSE;
 #endif
 	}
 
