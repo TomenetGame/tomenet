@@ -6351,7 +6351,7 @@ static void do_meta_pings(void) {
 			     For arcane technical reasons, this does not work for some types of executable,
 			     in those cases the process will act as a blocker, pausing the main script until it's complete." */
  #if 0
-			/* This (or _spawnl(_P_NOWAIT..)) would be nicest, but might only work via powershell (which has a fake-ampesand) */
+			/* This (or _spawnl(_P_NOWAIT..)) would be nicest, but might only work via powershell (which has a fake-ampersand) */
 			r = system(format("ping -n 1 -w 1000 %s > %s &", meta_pings_server_name[i], path));
  #else
 			fff = fopen(format("__ping_%s.bat", meta_pings_server_name[i]), "w");
