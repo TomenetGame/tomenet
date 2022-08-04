@@ -7645,8 +7645,10 @@ static void process_world(void) {
 		if (!i) set_runlevel(0);
 	}
 
+	/* shutdown now */
 	if (cfg.runlevel == 2049) {
 		shutdown_server();
+	/* termination now */
 	} else if (cfg.runlevel == 2052) {
 		/* same as /shutdown 0, except server will return -2 instead of -1.
 		   can be used by scripts to initiate maintenance downtime etc. */
@@ -7655,6 +7657,7 @@ static void process_world(void) {
 		/* paranoia - set_runlevel() will call exit() */
 		time(&cfg.closetime);
 		return;
+	/* /shutxlow */
 	} else if (cfg.runlevel == 2051) {
 		int n = 0;
 		for (i = NumPlayers; i > 0 ;i--) {
@@ -7689,6 +7692,7 @@ static void process_world(void) {
 			cfg.runlevel = 2049;
 		}
 	}
+	/* /shutempty */
 #ifdef ENABLE_GO_GAME
 	else if (cfg.runlevel == 2048 && !go_game_up) {
 #else
@@ -7724,6 +7728,7 @@ static void process_world(void) {
 			msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
 			cfg.runlevel = 2049;
 		}
+	/* /shutlow */
 	} else if (cfg.runlevel == 2047) {
 		int n = 0;
 		for (i = NumPlayers; i > 0 ;i--) {
@@ -7757,6 +7762,7 @@ static void process_world(void) {
 			msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
 			cfg.runlevel = 2049;
 		}
+	/* /shutvlow */
 	} else if (cfg.runlevel == 2046) {
 		int n = 0;
 		for (i = NumPlayers; i > 0 ;i--) {
@@ -7790,6 +7796,7 @@ static void process_world(void) {
 			msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
 			cfg.runlevel = 2049;
 		}
+	/* /shutnone */
 	} else if (cfg.runlevel == 2045) {
 		int n = 0;
 		for (i = NumPlayers; i > 0 ;i--) {
@@ -7803,6 +7810,7 @@ static void process_world(void) {
 			msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
 			cfg.runlevel = 2049;
 		}
+	/* /shutactivevlow */
 	} else if (cfg.runlevel == 2044) {
 		int n = 0;
 		for (i = NumPlayers; i > 0 ;i--) {
@@ -7842,6 +7850,7 @@ static void process_world(void) {
 		}
 	}
 
+	/* /shutrec [terminate] */
 	if (cfg.runlevel == 2043 || cfg.runlevel == 2042) {
 		if (shutdown_recall_timer <= 60 && shutdown_recall_state < 3) {
 			if (cfg.runlevel == 2043)
