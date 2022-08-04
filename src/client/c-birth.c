@@ -2476,6 +2476,12 @@ bool get_server_name(void) {
 			/* Limit of how many servers we can list */
 			if (v == META_PINGS) break;
 		}
+		/* Redraw 'pinging..' (paranoia) */
+		Term_fresh();
+		/* hack: hide cursor */
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
+
 		(void)r; //slay compiler warning;
 		meta_pings_servers = v;
 	} else meta_pings_servers = 0;
