@@ -2201,7 +2201,6 @@ static XImage *ResizeImage(Display *disp, XImage *Im,
 
 	width2 = ox * width1 / ix;
 	height2 = oy * height1 / iy;
-	printf("Resize image with masks from %dx%d to %dx%d (tile %dx%d -> %dx%d)\n",width1, height1, width2, height2, ix, iy, ox, oy);
 
 	Data = (char *)malloc(width2 * height2 * Im->bits_per_pixel / 8);
 
@@ -2454,7 +2453,6 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 				td->fnt->wid, td->fnt->hgt, td->tiles->depth);
 
 		if (td->tiles != NULL && td->tilePreparation != None) {
-			printf("Using graphics for terminal %d\n", index);
 			/* Graphics hook */
 			t->pict_hook = Term_pict_x11;
 
