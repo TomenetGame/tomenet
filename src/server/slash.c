@@ -12021,7 +12021,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				return;
 			}
-			else if (prefix(messagelc, "/geo")) { /* lookup country of player's IP -- atm only one request can be pending at a time (aka 1 temporary filename only) */
+			else if (prefix(messagelc, "/geo")) { /* (POSIX only, requires curl) lookup country of player's IP -- atm only one request can be pending at a time (aka 1 temporary filename only) */
 				/*
 				curl https://ipinfo.io/37.187.75.24
 				{
@@ -12058,7 +12058,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				fake_waitpid_geo = p_ptr->id; /* Poll result to admin */
 				return;
 			}
-			else if (prefix(messagelc, "/ping")) { /* ping player's IP -- atm only one request can be pending at a time (aka 1 temporary filename only) */
+			else if (prefix(messagelc, "/ping")) { /* (POSIX only) ping player's IP -- atm only one request can be pending at a time (aka 1 temporary filename only) */
 				char ip_addr[MAX_CHARS];
 
 				if (!tk) {
