@@ -10574,7 +10574,6 @@ void process_timers() {
 
 	if (fake_waitpid) {
 		FILE *fp;
-		char buf[MAX_CHARS];
 
 		/* Check if admin caller is still present */
 		for (i = 1; i <= NumPlayers; i++) {
@@ -10585,19 +10584,34 @@ void process_timers() {
 		}
 		/* Found him */
 		if (i <= NumPlayers) {
+			char buf[MAX_CHARS], buf2[MSG_LEN];
+
 			fp = fopen("__ipinfo.tmp", "r");
 			if (fp) {
+				buf2[0] = 0;
 				i = p_ptr->Ind;
 				/* Read result and display the relevant parts */
 				x = 0;
 				while (!my_fgets(fp, buf, 80, FALSE)) {
 					if (strstr(buf, "city\":") || strstr(buf, "region\":") || strstr(buf, "country\":")) {
-						msg_print(i, buf);
 						x = 1;
+#if 0
+						/* Dump relevant lines */
+						msg_print(i, buf);
+#else
+						/* Forge one long line from all relevant lines */
+						strcat(buf2, strstr(buf, strstr(buf, ":")));
+#endif
 					}
 				}
 				fclose(fp);
 				if (!x) msg_print(i, "No geo information available.");
+#if 1 /* Dump one long line */
+				else {
+					if (buf2[strlen(buf2) - 1] == ',') buf2[strlen(buf2) - 1] = 0; /* Trim trailing comma */
+					msg_print(i, buf2);
+				}
+#endif
 				//remove("__ipinfo.tmp"); /* Keep maybe, if we want to review it manually afterwards. */
 			}
 		}
