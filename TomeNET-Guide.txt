@@ -566,7 +566,7 @@ i       i       display your inventory. You can then press SHIFT + inventory
                 slot letter to paste that item name into chat.
                 You can also type \\<slot letter> shortcut in chat to paste an
                 item right into some text you are writing, eg "\\a" for the
-                item in your inventory slot 'a)'.
+6                item in your inventory slot 'a)'.
 
 e       e       display your equipment. You can then press SHIFT + equipment
                 slot letter to paste that item name into chat.
@@ -744,7 +744,8 @@ V       V       enter/leave 'cloaking mode'. This can only be used by rogues.
 A       A       activate an item. Usually an artifact, a dragon scale mail or
                 a ring of polymorphing (shapechanging).
 
-T or +  +       tunnel (dig) through an obstacle or a wall.
+T
++       +       tunnel (dig) through an obstacle or a wall.
 
 R       R       rest. Your hit points, mana and stamina will regenerate faster
                 while resting. Note that you cannot rest while being afflicted
@@ -1071,10 +1072,12 @@ CTRL+Q  save your character & quit the game. (You should do this in town!)
         the game window's titlebar, these extra features will be skipped, and
         any changes in settings or window layout will be discarded.
 
-Q or CTRL+K
-        lets your character commit suicide (permanently deletes it!).
-        Characters who suicide won't drop items except for artifacts (if the
-        server has ANTI_ARTS_HOARD enabled then no item at all will be
+Q
+CTRL+K
+        lets your character commit suicide (use this to permanently delete a
+        character, but remember that it cannot be restored once suicided)!
+        Characters who suicide won't drop items except for (non-zero) artifacts
+        (if the server has ANTI_ARTS_HOARD enabled then no item at all will be
         dropped), nor will they keep the level static as it happens on a
         normal 'final death' (see (3.11) for details about static levels).
 
