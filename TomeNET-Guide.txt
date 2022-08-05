@@ -18158,6 +18158,8 @@ All angels      Resist light, blindness and poison (usually immunity, see ~7
                 invisible.
                 Note: 'Fallen Angel' doesn't get light resistances.
 Mist and fume   Feather falling.
+All cold-immunes
+                Do not slip, but walk steadily on icy floor.
 
 Keep in mind that by changing forms you can potentially lose abilities that
 you had in player form, because they were bound to your normal form.
