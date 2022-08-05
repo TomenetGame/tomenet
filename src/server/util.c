@@ -3072,6 +3072,7 @@ void msg_print(int Ind, cptr msg_raw) {
    NOTE: This particular function contains an 8ball-hack! */
 void msg_broadcast(int Ind, cptr msg) {
 	int i;
+	const char *c;
 
 	/* Tell every player */
 	for (i = 1; i <= NumPlayers; i++) {
@@ -3087,7 +3088,9 @@ void msg_broadcast(int Ind, cptr msg) {
 	 }
 
 	/* Hack to read 8ball responses on other servers too. 8ball is recognized by "<colourcode>[8ball]" message start. */
-	if (cfg.worldd_broadcast && strstr(msg, "[8ball]") == msg + 2 && msg[0] == '\377') world_chat(0, msg);
+	c = strstr(msg, "[8ball]"); /* Can be \252\255c[8ball] (It) or \255c[8ball] (Moltor) */
+	if (cfg.worldd_broadcast && (c == msg + 2 || c == msg + 3) && (msg[0] == '\377' || msg[1] == '\377'))
+		world_chat(0, msg);
 }
 /* Same as msg_broadcast() but takes both a censored and an uncensored message and chooses per recipient. */
 void msg_broadcast2(int Ind, cptr msg, cptr msg_u) {
