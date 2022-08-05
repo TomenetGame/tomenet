@@ -3360,7 +3360,7 @@ void do_cmd_options_mus_sdl(void) {
 			Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a2, format("  %3d", i + 1));
 			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, "                                                   ");
 			if (j == music_cur) {
-				if (a != TERM_L_DARK) a = (jukebox_playing != -1 ? TERM_L_BLUE : TERM_L_GREEN); /* blue = user-selected jukebox song, l-green = current game music */
+				a = (jukebox_playing != -1) ? TERM_L_BLUE : (a != TERM_L_DARK ? TERM_L_GREEN : TERM_L_DARK); /* blue = user-selected jukebox song, l-green = current game music */
 				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a, "*");
 				/* New via SDL2_mixer: Add the timestamp */
 				curmus_x = horiz_offset + 12;
