@@ -3068,6 +3068,8 @@ void msg_print(int Ind, cptr msg_raw) {
 	    msg));
 }
 
+/* Skip 'Ind', can be 0.
+   NOTE: This particular function contains an 8ball-hack! */
 void msg_broadcast(int Ind, cptr msg) {
 	int i;
 
@@ -3078,12 +3080,14 @@ void msg_broadcast(int Ind, cptr msg) {
 			continue;
 
 		/* Skip the specified player */
-		if (i == Ind)
-			continue;
+		if (i == Ind) continue;
 
 		/* Tell this one */
 		msg_print(i, msg);
 	 }
+
+	/* Hack to read 8ball responses on other servers too */
+	if (cfg.worldd_broadcast && strstr(msg, "\377y[8ball]") == msg + 2) world_chat(0, msg);
 }
 /* Same as msg_broadcast() but takes both a censored and an uncensored message and chooses per recipient. */
 void msg_broadcast2(int Ind, cptr msg, cptr msg_u) {
@@ -3092,34 +3096,30 @@ void msg_broadcast2(int Ind, cptr msg, cptr msg_u) {
 	/* Tell every player */
 	for (i = 1; i <= NumPlayers; i++) {
 		/* Skip disconnected players */
-		if (Players[i]->conn == NOT_CONNECTED) 
-			continue;
+		if (Players[i]->conn == NOT_CONNECTED) continue;
 
 		/* Skip the specified player */
-		if (i == Ind)
-			continue;
+		if (i == Ind) continue;
 
 		/* Tell this one */
 		msg_print(i, Players[i]->censor_swearing ? msg : msg_u);
 	 }
 }
 
+/* Skip 'Ind', can be 0. */
 void msg_admins(int Ind, cptr msg) {
 	int i;
 
 	/* Tell every player */
 	for (i = 1; i <= NumPlayers; i++) {
 		/* Skip disconnected players */
-		if (Players[i]->conn == NOT_CONNECTED) 
-			continue;
+		if (Players[i]->conn == NOT_CONNECTED)  continue;
 
 		/* Skip the specified player */
-		if (i == Ind)
-			continue;
+		if (i == Ind) continue;
 
 		/* Skip non-admins */
-		if (!is_admin(Players[i]))
-			continue;
+		if (!is_admin(Players[i])) continue;
 
 		/* Tell this one */
 		msg_print(i, msg);
@@ -3166,9 +3166,7 @@ void msg_admin(cptr fmt, ...)
 		p_ptr = Players[i];
 
 		/* Skip disconnected players */
-		if (p_ptr->conn == NOT_CONNECTED) 
-			continue;
-			
+		if (p_ptr->conn == NOT_CONNECTED) continue;
 
 		/* Tell Mama */
 		if (is_admin(p_ptr))

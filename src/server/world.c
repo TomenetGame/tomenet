@@ -536,7 +536,7 @@ void world_pmsg_send(uint32_t id, char *name, char *pname, char *text) {
 	send(WorldSocket, &spk, len, 0);
 }
 
-void world_chat(uint32_t id, char *text) {
+void world_chat(uint32_t id, const char *text) {
 	int len;
 
 #ifdef ARCADE_SERVER
