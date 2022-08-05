@@ -14057,7 +14057,8 @@ when you are just trying to hack down vegetation instead of rocks.
 Each digging attempt of your character has a constant chance to succeed, based
 on your digging power vs the material you're trying to tunnel through. If your
 digging power is too low, the chance might even be 0% so you would be trying
-forever.
+forever, giving you a message "You cannot seem to make a dent in the ..." as
+your character realizes the futility of the attempt.
 
 If you're not interested in the exact formula, skip down to (5.20b) which has a
 table with example values for certain scenarios.
