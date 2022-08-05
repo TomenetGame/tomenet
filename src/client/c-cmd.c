@@ -2148,11 +2148,17 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			init_search_type = 2;
 			strcpy(init_search_string, "/UNDOSKILLS");
 		}
+		/* Timeout/delet(e|ion)/eras(e|ure) -> character/account timeout */
+		else if (my_strcasestr(buf, "timeout") || my_strcasestr(buf, "time out") ||
+		    ((my_strcasestr(buf, "delet") || my_strcasestr(buf, "eras")) && (my_strcasestr(buf, "char") || my_strcasestr(buf, "acc")))) {
+			init_search_type = 3;
+			strcpy(init_search_string, "timeout");
+		}
 		/* 'form[s]' becomes "Druid Forms" chapter if we're a druid */
 		else if (((!strcasecmp(buf, "form") || !strcasecmp(buf, "forms")) && p_ptr->pclass == CLASS_DRUID)||
 		    (my_strcasestr(buf, "form") && my_strcasestr(buf, "druid"))) {
 			init_search_type = 3;
-			strcpy(init_search_string, "Druid Forms");
+			strcpy(init_search_string, "Druid forms");
 		}
 		/* race / class stats tables */
 		else if (my_strcasestr(buf, "race") && my_strcasestr(buf, "tab")) {
