@@ -110,7 +110,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_FEAR]		= Receive_fear;
 	receive_tbl[PKT_SPEED]		= Receive_speed;
 	receive_tbl[PKT_CUT]		= Receive_cut;
-	receive_tbl[PKT_BLIND]		= Receive_blind;
+	receive_tbl[PKT_BLIND]		= Receive_blind_hallu;
 	receive_tbl[PKT_STUN]		= Receive_stun;
 	receive_tbl[PKT_ITEM]		= Receive_item;
 	receive_tbl[PKT_SPELL]		= Receive_spell_request;
@@ -3102,19 +3102,20 @@ int Receive_cut(void) {
 	return 1;
 }
 
-int Receive_blind(void) {
+int Receive_blind_hallu(void) {
 	int	n;
 	char	ch;
-	bool	blind;
+	char	blind_hallu;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &blind)) <= 0) return n;
+	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &blind_hallu)) <= 0) return n;
 
 	if (screen_icky) Term_switch(0);
-	prt_blind(blind);
+	prt_blind_hallu(blind_hallu);
 	if (screen_icky) Term_switch(0);
 
 	/* We need this for client-side spell chance calc: */
-	p_ptr->blind = blind;
+	p_ptr->blind = (blind_hallu && blind_hallu != 2);
+	p_ptr->image = (blind_hallu & 0x2); //not needed, but just because we can
 
 	return 1;
 }

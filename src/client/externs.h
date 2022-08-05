@@ -670,7 +670,7 @@ extern void prt_party_stats(int member_num, byte color, char *member_name, int m
 extern void prt_sp(int max, int cur, bool bar);
 extern void prt_depth(int x, int y, int z, bool town, int colour, int colour_sector, cptr buf);
 extern void prt_hunger(int food);
-extern void prt_blind(bool blind);
+extern void prt_blind_hallu(char blind_hallu);
 extern void prt_confused(bool confused);
 extern void prt_afraid(bool fear);
 extern void prt_poisoned(char poisoned);

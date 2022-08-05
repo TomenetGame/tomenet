@@ -945,14 +945,16 @@ void prt_hunger(int food) {
 /*
  * Prints blindness status
  */
-void prt_blind(bool blind) {
+void prt_blind_hallu(char blind_hallu) {
 	int x, y;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
-	if (blind)
+	if (blind_hallu && (blind_hallu != 0x2))
 		c_put_str(TERM_ORANGE, "Blind", ROW_BLIND, COL_BLIND);
+	else if ((blind_hallu & 0x2))
+		c_put_str(TERM_YELLOW, "Hallu", ROW_BLIND, COL_BLIND);
 	else
 		put_str("     ", ROW_BLIND, COL_BLIND);
 

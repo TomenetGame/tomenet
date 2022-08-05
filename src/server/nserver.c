@@ -6573,9 +6573,11 @@ int Send_food(int Ind, int food) {
 	return Packet_printf(&connp->c, "%c%hu", PKT_FOOD, food);
 }
 
+/* Combine blindness and hallucinations - added in 4.8.1, abusing bool in a compatible manner */
 int Send_blind(int Ind, bool blind) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
+	int blind_hallu = (blind ? 0x1 : 0x0) + (Players[Ind]->image ? 0x2 : 0);
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -6585,9 +6587,9 @@ int Send_blind(int Ind, bool blind) {
 	}
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		Packet_printf(&connp2->c, "%c%c", PKT_BLIND, blind);
+		Packet_printf(&connp2->c, "%c%c", PKT_BLIND, is_newer_than(&connp2->version, 4, 8, 0, 0, 0, 0) ? blind_hallu : blind);
 	}
-	return Packet_printf(&connp->c, "%c%c", PKT_BLIND, blind);
+	return Packet_printf(&connp->c, "%c%c", PKT_BLIND, is_newer_than(&connp->version, 4, 8, 0, 0, 0, 0) ? blind_hallu : blind);
 }
 
 int Send_confused(int Ind, bool confused) {

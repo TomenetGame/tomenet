@@ -2003,6 +2003,9 @@ bool set_image(int Ind, int v) { /* bad status effect */
 	/* Window stuff */
 	p_ptr->window |= (PW_OVERHEAD);
 
+	/* Combo-status: Blindness and Hallucination */
+	p_ptr->redraw |= (PR_BLIND);
+
 	/* Handle stuff */
 	handle_stuff(Ind);
 

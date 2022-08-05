@@ -52,7 +52,7 @@ int Receive_food(void);
 int Receive_fear(void);
 int Receive_speed(void);
 int Receive_cut(void);
-int Receive_blind(void);
+int Receive_blind_hallu(void);
 int Receive_stun(void);
 int Receive_item(void);
 int Receive_spell_request(void);
