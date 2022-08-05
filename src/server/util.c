@@ -3086,8 +3086,8 @@ void msg_broadcast(int Ind, cptr msg) {
 		msg_print(i, msg);
 	 }
 
-	/* Hack to read 8ball responses on other servers too */
-	if (cfg.worldd_broadcast && strstr(msg, "\377y[8ball]") == msg + 2) world_chat(0, msg);
+	/* Hack to read 8ball responses on other servers too. 8ball is recognized by "<colourcode>[8ball]" message start. */
+	if (cfg.worldd_broadcast && strstr(msg, "[8ball]") == msg + 2 && msg[0] == '\377') world_chat(0, msg);
 }
 /* Same as msg_broadcast() but takes both a censored and an uncensored message and chooses per recipient. */
 void msg_broadcast2(int Ind, cptr msg, cptr msg_u) {
