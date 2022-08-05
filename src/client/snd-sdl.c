@@ -2326,6 +2326,12 @@ static bool play_music_instantly(int event) {
 
 	Mix_HaltMusic();
 
+	/* We just wanted to top currently playing music, do nothing more and just return. */
+	if (event == -2) {
+		music_cur = -1;
+		return TRUE; //whatever..
+	}
+
 	/* Catch disabled songs */
 	if (songs[event].disabled) {
 		music_cur = -1;
@@ -3258,6 +3264,7 @@ void do_cmd_options_mus_sdl(void) {
 	char buf[1024], buf2[1024], out_val[4096], out_val2[4096], *p, evname[4096];
 	FILE *fff, *fff2;
 #ifdef ENABLE_JUKEBOX
+	bool cfg_audio_master_org = cfg_audio_master, cfg_audio_music_org = cfg_audio_music;
  #ifdef JUKEBOX_INSTANT_PLAY
 	bool dis;
  #endif
@@ -3396,15 +3403,20 @@ void do_cmd_options_mus_sdl(void) {
 		switch (ch) {
 		case ESCAPE:
 #ifdef ENABLE_JUKEBOX
+			/* Restore real mixer settings */
+			cfg_audio_master = cfg_audio_master_org;
+			cfg_audio_music = cfg_audio_music_org;
+
 			jukebox_playing = -1;
  #ifdef JUKEBOX_INSTANT_PLAY
 			/* Note that this will also insta-halt current music if it happens to be <disabled> and different from our jukebox piece,
 			   so no need for us to check here for songs[].disabled explicitely for that particular case.
 			   However, if the currently jukeboxed song is the same one as the disabled one we do need to halt it. */
-			if (jukebox_org != music_cur) play_music(jukebox_org);
-			else if (songs[jukebox_org].disabled) play_music(-2);
+			if (jukebox_org == -1 || songs[jukebox_org].disabled) play_music_instantly(-2);//play_music(-2); -- halt song instantly instead of fading out
+			else if (jukebox_org != music_cur) play_music_instantly(jukebox_org);//play_music(jukebox_org); -- switch song instantly instead of fading out+in
  #else
-			if (jukebox_org != music_cur) {
+			if (jukebox_org == -1) play_music(-2);
+			else if (jukebox_org != music_cur) {
 				if (songs[jukebox_org].disabled) play_music(-2);
 				else play_music(jukebox_org);
 			}
@@ -3646,12 +3658,22 @@ void do_cmd_options_mus_sdl(void) {
 			dis = songs[j_sel].disabled;
 			songs[j_sel].disabled = FALSE;
 			jukebox_playing = j_sel;
+
+			/* Force-enable the mixer to play music */
+			cfg_audio_master = TRUE;
+			cfg_audio_music = TRUE;
+
 			play_music_instantly(j_sel);
 			songs[j_sel].disabled = dis;
  #else
 			if (j_sel == music_cur) break;
 			if (songs[j_sel].disabled) break;
 			jukebox_playing = j_sel;
+
+			/* Force-enable the mixer to play music */
+			cfg_audio_master = TRUE;
+			cfg_audio_music = TRUE;
+
 			play_music(j_sel);
  #endif
 			curmus_timepos = 0; //song starts to play, at 0 seconds mark ie the beginning
