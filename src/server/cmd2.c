@@ -4102,6 +4102,10 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		if (hard) {
 			/* quartz */
 			if (power <= 20) {
+ #ifdef USE_SOUND_2010
+				/* Play 'attempt' digging sound once at least */
+				if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+ #endif
 				msg_format(Ind, "%s quartz vein.", INDICATE_IMPOSSIBLE);
  #ifdef EQUIPPABLE_DIGGERS
 				if (swapped) {
@@ -4116,6 +4120,10 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		} else if (!soft) {
 			/* magma */
 			if (power <= 10) {
+ #ifdef USE_SOUND_2010
+				/* Play 'attempt' digging sound once at least */
+				if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+ #endif
 				msg_format(Ind, "%s magma intrusion.", INDICATE_IMPOSSIBLE);
  #ifdef EQUIPPABLE_DIGGERS
 				if (swapped) {
@@ -4417,6 +4425,10 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 #ifdef INDICATE_IMPOSSIBLE
 		/* Let us observe (and halt tunneling) if it's impossible for us to make a dent into this material */
 		if (power <= diff_plus) {
+ #ifdef USE_SOUND_2010
+			/* Play 'attempt' digging sound once at least */
+			if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+ #endif
 			msg_format(Ind, "%s %s.", INDICATE_IMPOSSIBLE, f_name + f_info[featm].name);
  #ifdef EQUIPPABLE_DIGGERS
 			if (swapped) {
@@ -4488,6 +4500,10 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 #ifdef INDICATE_IMPOSSIBLE
 		/* Let us observe (and halt tunneling) if it's impossible for us to make a dent into this material */
 		if (power <= 40) {
+ #ifdef USE_SOUND_2010
+			/* Play 'attempt' digging sound once at least */
+			if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+ #endif
 			msg_format(Ind, "%s %s.", INDICATE_IMPOSSIBLE, f_name + f_info[cfeat].name);
  #ifdef EQUIPPABLE_DIGGERS
 			if (swapped) {
@@ -4576,6 +4592,10 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 #ifdef INDICATE_IMPOSSIBLE
 		/* Let us observe (and halt tunneling) if it's impossible for us to make a dent into this material */
 		if (power <= 30) {
+ #ifdef USE_SOUND_2010
+			/* Play 'attempt' digging sound once at least */
+			if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+ #endif
 			msg_format(Ind, "%s %s.", INDICATE_IMPOSSIBLE, f_name + f_info[cfeat].name);
  #ifdef EQUIPPABLE_DIGGERS
 			if (swapped) {
