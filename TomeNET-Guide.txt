@@ -18598,8 +18598,9 @@ Lesser kraken           speedy, smart and very tough aquatic(*) creature;
 
 Level 45:
 ---------
-Maulotaur               like Minotaur, but tougher; stupid (INT malus);
-(Code 723)              immune to fire; resists teleportation attacks;
+Maulotaur               Like Minotaur very speedy and susceptible to 'good',
+(Code 723)              but even tougher; stupid (INT malus);
+                        immune to fire; resists teleportation attacks;
                         can cast plasma bolt and fire ball
 
 Winged Horror           speedy winged creature; can fly;
