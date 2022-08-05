@@ -3964,6 +3964,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 
 	/* We are now initialized */
 	initialized = TRUE;
+	fullscreen_weather = FALSE;
 
 #if 0 /* apparently this wasn't so good after all - mikaelh */
 	/* Check if we loaded some account name & password from the .ini file - mikaelh */

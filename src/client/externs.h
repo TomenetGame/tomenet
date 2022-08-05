@@ -722,14 +722,20 @@ extern int weather_type, weather_wind, weather_gen_speed, weather_intensity, wea
 extern int weather_elements, weather_element_x[1024], weather_element_y[1024], weather_element_ydest[1024], weather_element_type[1024];
 extern int weather_panel_x, weather_panel_y;
 extern bool weather_panel_changed;
+#if 1 //RAINY_TOMB
+extern byte panel_map_a[MAX_WINDOW_WID][MAX_WINDOW_HGT]; //bigger to allow fullscreen_weather for RAINY_TOMB
+extern char32_t panel_map_c[MAX_WINDOW_WID][MAX_WINDOW_HGT];
+#else
 extern byte panel_map_a[MAX_SCREEN_WID][MAX_SCREEN_HGT];
 extern char32_t panel_map_c[MAX_SCREEN_WID][MAX_SCREEN_HGT];
+#endif
 extern int cloud_x1[10], cloud_y1[10], cloud_x2[10], cloud_y2[10], cloud_dsum[10];
 extern int cloud_xm100[10], cloud_ym100[10], cloud_xfrac[10], cloud_yfrac[10];
 
 extern void fix_playerlist(void);
 extern void do_animate_lightning(bool reset);
 extern void do_animate_screenflash(bool reset);
+extern bool fullscreen_weather; //RAINY_TOMB
 
 /* c-xtra2.c */
 extern void do_cmd_messages(void);

@@ -1226,6 +1226,7 @@ int Net_init(int fd) {
 
 	/* Initialized */
 	initialized = 1;
+	fullscreen_weather = FALSE;
 
 	return 0;
 }

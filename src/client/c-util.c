@@ -33,6 +33,8 @@
    to avoid erasing %:bla lines coming from the macro, by overwriting them with useless prompts: */
 //#define DONT_CLEAR_TOPLINE_IF_AVOIDABLE -- turned into an option instead: c_cfg.keep_topline
 
+#define RAINY_TOMB /* Display rainy weather for the mood? +_+ - C. Blue */
+
 
 
 #ifdef SET_UID
@@ -729,6 +731,9 @@ static char inkey_aux(void) {
 			(void)(Term_inkey(&ch, FALSE, TRUE));
 			if (ch) break;
 			update_ticks();
+ #ifdef RAINY_TOMB
+			do_weather(FALSE);
+ #endif
 
 			/* Don't consume 100% cpu, wait according to client fps. */
  #if 0
@@ -824,7 +829,7 @@ static char inkey_aux(void) {
 			/* Update our timer and if neccecary send a keepalive packet
 			 */
 			update_ticks();
-			if(!c_quit) {
+			if (!c_quit) {
 				do_keepalive();
 				do_ping();
 			}
@@ -9989,6 +9994,11 @@ static void print_tomb(cptr reason) {
  */
 void c_close_game(cptr reason) {
 	int k;
+#ifdef RAINY_TOMB
+	int x, y;
+	byte *scr_aa;
+	char32_t *scr_cc;
+#endif
 	char tmp[MAX_CHARS];
 	bool c_cfg_tmp = c_cfg.topline_no_msg;
 
@@ -10000,6 +10010,7 @@ void c_close_game(cptr reason) {
 	c_cfg.topline_no_msg = c_cfg_tmp;
 
 	/* You are dead */
+	fullscreen_weather = TRUE;
 	print_tomb(reason);
 
 	/* Remember deceased char's name if we will just recreate the same.. */
@@ -10020,13 +10031,79 @@ void c_close_game(cptr reason) {
 	Term->scr->cx = Term->wid;
 	Term->scr->cu = 1;
 
+#ifdef RAINY_TOMB
+ #define WEATHER_GEN_TICKS 3
+ #define WEATHER_SNOW_MULT 3
+	/* Bad weather today? */
+	weather_elements = 0;
+	if (magik(50)) { //sometimes it rains or snows~ UwU
+		weather_panel_x = 0;
+		weather_panel_y = 0;
+		weather_type = 1 + rand_int(2) + 50;
+		weather_wind = rand_int(5);
+		if (weather_wind) wind_noticable = TRUE;
+		weather_gen_speed = WEATHER_GEN_TICKS;
+		weather_intensity = (weather_type % 10 == 2 && !(weather_wind || weather_wind >= 3) ? 5 : 8);
+		weather_speed_snow = weather_speed_rain = (weather_type % 10 == 2) ? WEATHER_SNOW_MULT * WEATHER_GEN_TICKS : (weather_wind ? 1 * WEATHER_GEN_TICKS : WEATHER_GEN_TICKS - 1);
+		/* Set currently visible screen as 'weather background'. */
+		for (y = 0; y < screen_hgt + SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM - 1; y++) {
+			scr_aa = Term->scr->a[y + 1]; //+1 : leave first line blank for message prompts
+			scr_cc = Term->scr->c[y + 1];
+			for (x = 0; x < screen_wid + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT; x++) {
+				panel_map_a[x][y] = scr_aa[x];
+				panel_map_c[x][y] = scr_cc[x];
+			}
+		}
+
+		if (use_sound) {
+			if (weather_type % 10 == 1) { //rain
+				if (weather_wind >= 1 && weather_wind <= 2) sound_weather(rain2_sound_idx);
+				else sound_weather(rain1_sound_idx);
+			} else if (weather_type % 10 == 2) { //snow
+				if (weather_wind >= 1 && weather_wind <= 2) sound_weather(snow2_sound_idx);
+				else sound_weather(snow1_sound_idx);
+			}
+		}
+	} else weather_type = 0;
+#endif
 	/* TODO: bandle them in one loop instead of 2 */
 	while (1) {
 		/* Get command */
 		k = inkey();
 
 		/* Exit */
-		if (k == ESCAPE || k == KTRL('Q') || k == 'q' || k == 'Q') return;
+		if (k == ESCAPE || k == KTRL('Q') || k == 'q' || k == 'Q') {
+#ifdef RAINY_TOMB
+			weather_elements = 0;
+			weather_type = 0;
+ #if 0 /* not working correctly */
+			/* restore display behind weather particles */
+			for (k = 0; k < weather_elements; k++) {
+				/* only for elements within visible panel screen area */
+				if (weather_element_x[k] >= weather_panel_x &&
+				    weather_element_x[k] < weather_panel_x + screen_wid &&
+				    weather_element_y[k] >= weather_panel_y &&
+				    weather_element_y[k] < weather_panel_y + screen_hgt) {
+					/* restore original grid content */
+					Term_draw(0 + weather_element_x[k] - weather_panel_x,
+					    1 + weather_element_y[k] - weather_panel_y,
+					    panel_map_a[weather_element_x[k] - weather_panel_x][weather_element_y[k] - weather_panel_y],
+					    panel_map_c[weather_element_x[k] - weather_panel_x][weather_element_y[k] - weather_panel_y]);
+				}
+			}
+			Term_fresh();
+ #endif
+			for (y = 1; y < screen_hgt + SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM; y++) {
+				for (x = 0; x < screen_wid + SCREEN_PAD_LEFT + SCREEN_PAD_RIGHT; x++) {
+					Term_draw(x, y,
+					    panel_map_a[x][y - 1],
+					    panel_map_c[x][y - 1]);
+				}
+			}
+			if (use_sound) sound_weather(-1); //fade out
+#endif
+			return;
+		}
 
 		else if (k == KTRL('T')) {
 			/* Take a screenshot */
@@ -10041,6 +10118,10 @@ void c_close_game(cptr reason) {
 					file_character(tmp, FALSE);
 					break;
 				}
+			} else {
+				/* hack: hide cursor */
+				Term->scr->cx = Term->wid;
+				Term->scr->cu = 1;
 			}
 			continue;
 		}
@@ -10049,6 +10130,11 @@ void c_close_game(cptr reason) {
 
 		else if (k) break;
 	}
+#ifdef RAINY_TOMB
+	weather_elements = 0;
+	weather_type = 0;
+	if (use_sound) sound_weather(-1); //fade out
+#endif
 
 	/* Interact */
 	while (1) {
@@ -10115,6 +10201,8 @@ void c_close_game(cptr reason) {
 			bell();
 		}
 	}
+
+	fullscreen_weather = FALSE;
 }
 
 

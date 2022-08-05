@@ -281,8 +281,13 @@ int weather_element_x[1024], weather_element_y[1024], weather_element_ydest[1024
 int weather_panel_x = -1, weather_panel_y = -1; /* part of the map we're viewing on screen, top left corner */
 bool weather_panel_changed = FALSE; /* view got updated anyway by switching panel? */
 /* a client-side map_info buffer of current view panel (for weather) */
+#if 1 /* RAINY_TOMB */
+byte panel_map_a[MAX_WINDOW_WID][MAX_WINDOW_HGT];
+char32_t panel_map_c[MAX_WINDOW_WID][MAX_WINDOW_HGT];
+#else
 byte panel_map_a[MAX_SCREEN_WID][MAX_SCREEN_HGT];
 char32_t panel_map_c[MAX_SCREEN_WID][MAX_SCREEN_HGT];
+#endif
 /* is weather on current worldmap sector part of an elliptical cloud?: */
 int cloud_x1[10], cloud_y1[10], cloud_x2[10], cloud_y2[10], cloud_dsum[10];
 int cloud_xm100[10], cloud_ym100[10]; /* cloud movement in 1/100 grid per s */
@@ -715,3 +720,5 @@ int meta_pings_servers = 0, meta_pings_ticks = -1, meta_pings_server_duplicate[M
 char meta_pings_server_name[META_PINGS][MAX_CHARS];
 bool  meta_pings_stuck[META_PINGS];
 #endif
+
+bool fullscreen_weather = FALSE; //RAINY_TOMB

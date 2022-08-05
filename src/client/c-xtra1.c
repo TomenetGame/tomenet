@@ -4622,6 +4622,11 @@ void do_animate_lightning(bool reset) {
 #define PANEL_X		(SCREEN_PAD_LEFT) /* physical top-left screen position of view panel */
 #define PANEL_Y		(SCREEN_PAD_TOP) /* physical top-left screen position of view panel */
 void do_weather(bool no_weather) {
+	/* For RAINY_TOMB: Two modes: Half-height fullscreen for tombstone (!initialized), Map panel for normal gameplay (initialized) */
+	int panel_x = fullscreen_weather ? 0 : PANEL_X, panel_y = fullscreen_weather ? 1 : PANEL_Y; //leave out first line for message prompts (file character..)
+	int temp_hgt = fullscreen_weather ? SCREEN_HGT + SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM - 5 : screen_hgt; //tomb stone only is half of bigmap'd window size; -5 to leave bottom lines below the actual ascii art empty
+	int temp_wid = fullscreen_weather ? MAX_WINDOW_WID : screen_wid; //tomb stone only is half of bigmap'd window size; -3 to leave bottom lines empty (looks better)
+
 	int i, j, intensity;
 	static int weather_gen_ticks = 0, weather_ticks10 = 0;
 	static int weather_wind_ticks = 0, weather_speed_sand_ticks = 0, weather_speed_snow_ticks = 0, weather_speed_rain_ticks = 0; /* sub-ticks when weather really is processed */
@@ -4650,7 +4655,6 @@ void do_weather(bool no_weather) {
 		if (animate_lightning) do_animate_lightning(FALSE);
 	}
 	if (no_weather) return;
-
 
 /* begin ------------------------------------------------------------------- */
 
@@ -4691,13 +4695,13 @@ void do_weather(bool no_weather) {
 #endif
 			/* only for elements within visible panel screen area */
 			if (weather_element_x[i] >= weather_panel_x &&
-			    weather_element_x[i] < weather_panel_x + screen_wid &&
+			    weather_element_x[i] < weather_panel_x + temp_wid &&
 			    weather_element_y[i] >= weather_panel_y &&
-			    weather_element_y[i] < weather_panel_y + screen_hgt) {
+			    weather_element_y[i] < weather_panel_y + temp_hgt) {
 				if (weather_element_type[i] == 1) {
 					/* display raindrop */
-					Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
-					    PANEL_Y + weather_element_y[i] - weather_panel_y,
+					Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
+					    panel_y + weather_element_y[i] - weather_panel_y,
 #if 0
 //#ifdef EXTENDED_BG_COLOURS /* use rain to test the extended background colour */
 					    rand_int(2) ? TERMX_BLUE : TERM_ORANGE, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
@@ -4706,13 +4710,13 @@ void do_weather(bool no_weather) {
 #endif
 				} else if (weather_element_type[i] == 2) {
 					/* display snowflake */
-					Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
-					    PANEL_Y + weather_element_y[i] - weather_panel_y,
+					Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
+					    panel_y + weather_element_y[i] - weather_panel_y,
 					    col_snowflake, '*');
 				} else if (weather_element_type[i] == 3) {
 					/* display sand grain */
-					Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
-					    PANEL_Y + weather_element_y[i] - weather_panel_y,
+					Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
+					    panel_y + weather_element_y[i] - weather_panel_y,
 					    col_sandgrain, c_sandgrain);
 				}
 			}
@@ -4785,9 +4789,9 @@ void do_weather(bool no_weather) {
 	/* weather creation: check whether elements are to be generated this time */
 	weather_gen_ticks++;
 	/* hack: exception for pre-generated elements (intensity > 1): insta-gen! */
-	if (weather_gen_ticks == weather_gen_speed || intensity > 1) {
+	if (weather_gen_ticks >= weather_gen_speed || intensity > 1) { //note: was bugged because == seemed to skip a tick sometimes, so >= is needed. Changed it for some other timers while at it, to be safe: (***)
 		/* this check might (partially) not be very important */
-		if (weather_gen_ticks == weather_gen_speed)
+		if (weather_gen_ticks >= weather_gen_speed) //note: (***)
 			weather_gen_ticks = 0;
 		else
 			intensity--;
@@ -4830,7 +4834,10 @@ void do_weather(bool no_weather) {
 					}
 				}
 				/* clouds apply but we're not within their areas? discard */
-				if (with_clouds && outside_clouds) continue;
+				if (with_clouds && outside_clouds)
+					/* RAINY_TOMB - hack: except if in tomb screen */
+					if (!fullscreen_weather)
+						continue;
 
 				/* (use pos) */
 				weather_element_x[weather_elements] = x;
@@ -4852,11 +4859,11 @@ void do_weather(bool no_weather) {
 	/* horizontal movement: check whether elements are to be shifted by wind this time */
 	if (weather_wind) {
 		weather_wind_ticks++;
-		if (weather_wind % 2 == 1 && weather_wind_ticks == ((weather_wind + 1) / 2)) {
+		if (weather_wind % 2 == 1 && weather_wind_ticks >= ((weather_wind + 1) / 2)) { //note: (***)
 			wind_west_effective = TRUE;
 			weather_wind_ticks = 0;
 		}
-		else if (weather_wind % 2 == 0 && weather_wind_ticks == (weather_wind / 2)) {
+		else if (weather_wind % 2 == 0 && weather_wind_ticks >= (weather_wind / 2)) { //note: (***)
 			wind_east_effective = TRUE;
 			weather_wind_ticks = 0;
 		}
@@ -4866,15 +4873,15 @@ void do_weather(bool no_weather) {
 	weather_speed_snow_ticks++;
 	weather_speed_sand_ticks++;
 
-	if (weather_speed_rain_ticks == weather_speed_rain) {
+	if (weather_speed_rain_ticks >= weather_speed_rain) { //note: (***)
 		gravity_effective_rain = TRUE;
 		weather_speed_rain_ticks = 0;
 	}
-	if (weather_speed_snow_ticks == weather_speed_snow) {
+	if (weather_speed_snow_ticks >= weather_speed_snow) { //note: (***)
 		gravity_effective_snow = TRUE;
 		weather_speed_snow_ticks = 0;
 	}
-	if (weather_speed_sand_ticks == weather_speed_sand) {
+	if (weather_speed_sand_ticks >= weather_speed_sand) { //note: (***)
 		gravity_effective_sand = TRUE;
 		weather_speed_sand_ticks = 0;
 	}
@@ -4882,7 +4889,6 @@ void do_weather(bool no_weather) {
 	/* nothing to do this time? - exit */
 	if (!gravity_effective_rain && !gravity_effective_snow && !gravity_effective_sand && !wind_west_effective && !wind_east_effective)
 		return;
-
 
 /* move weather elements --------------------------------------------------- */
 
@@ -4904,12 +4910,12 @@ void do_weather(bool no_weather) {
 #endif
 			/* only for elements within visible panel screen area */
 			if (weather_element_x[i] >= weather_panel_x &&
-			    weather_element_x[i] < weather_panel_x + screen_wid &&
+			    weather_element_x[i] < weather_panel_x + temp_wid &&
 			    weather_element_y[i] >= weather_panel_y &&
-			    weather_element_y[i] < weather_panel_y + screen_hgt) {
+			    weather_element_y[i] < weather_panel_y + temp_hgt) {
 				/* restore original grid content */
-				Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
-				    PANEL_Y + weather_element_y[i] - weather_panel_y,
+				Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
+				    panel_y + weather_element_y[i] - weather_panel_y,
 				    panel_map_a[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
 				    panel_map_c[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
 			}
@@ -4925,9 +4931,9 @@ void do_weather(bool no_weather) {
 		/* register weather element, if it is currently supposed to be visible on screen */
 		if (weather_element_type[i] != 0 &&
 		    (weather_element_x[i] >= weather_panel_x &&
-		    weather_element_x[i] < weather_panel_x + screen_wid &&
+		    weather_element_x[i] < weather_panel_x + temp_wid &&
 		    weather_element_y[i] >= weather_panel_y &&
-		    weather_element_y[i] < weather_panel_y + screen_hgt))
+		    weather_element_y[i] < weather_panel_y + temp_hgt))
 			weather_particles_seen++;
 
 		/* advance raindrops */
@@ -4962,12 +4968,12 @@ void do_weather(bool no_weather) {
 #endif
 			/* only for elements within visible panel screen area */
 			else if (weather_element_x[i] >= weather_panel_x &&
-			    weather_element_x[i] < weather_panel_x + screen_wid &&
+			    weather_element_x[i] < weather_panel_x + temp_wid &&
 			    weather_element_y[i] >= weather_panel_y &&
-			    weather_element_y[i] < weather_panel_y + screen_hgt) {
+			    weather_element_y[i] < weather_panel_y + temp_hgt) {
 				/* display raindrop */
-				Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
-				    PANEL_Y + weather_element_y[i] - weather_panel_y,
+				Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
+				    panel_y + weather_element_y[i] - weather_panel_y,
 #if 0
 //#ifdef EXTENDED_BG_COLOURS /* use rain to test the extended background colour */
 				    rand_int(2) ? TERMX_BLUE : TERM_ORANGE, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
@@ -5009,12 +5015,12 @@ void do_weather(bool no_weather) {
 #endif
 			/* only for elements within visible panel screen area */
 			else if (weather_element_x[i] >= weather_panel_x &&
-			    weather_element_x[i] < weather_panel_x + screen_wid &&
+			    weather_element_x[i] < weather_panel_x + temp_wid &&
 			    weather_element_y[i] >= weather_panel_y &&
-			    weather_element_y[i] < weather_panel_y + screen_hgt) {
+			    weather_element_y[i] < weather_panel_y + temp_hgt) {
 				/* display snowflake */
-				Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
-				    PANEL_Y + weather_element_y[i] - weather_panel_y,
+				Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
+				    panel_y + weather_element_y[i] - weather_panel_y,
 				    col_snowflake, '*');
 			}
 		}
@@ -5050,12 +5056,12 @@ void do_weather(bool no_weather) {
 #endif
 			/* only for elements within visible panel screen area */
 			else if (weather_element_x[i] >= weather_panel_x &&
-			    weather_element_x[i] < weather_panel_x + screen_wid &&
+			    weather_element_x[i] < weather_panel_x + temp_wid &&
 			    weather_element_y[i] >= weather_panel_y &&
-			    weather_element_y[i] < weather_panel_y + screen_hgt) {
+			    weather_element_y[i] < weather_panel_y + temp_hgt) {
 				/* display sand grain */
-				Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
-				    PANEL_Y + weather_element_y[i] - weather_panel_y,
+				Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
+				    panel_y + weather_element_y[i] - weather_panel_y,
 				    col_sandgrain, c_sandgrain);
 			}
 		}
