@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 2. August 2022 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 5. August 2022 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.8.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -224,6 +224,9 @@ automatically delete it along with its houses, to keep the database clean.
 So make sure you don't let your characters time out this way!
 (There will be an expiry warning about 60 days before this happens when you
 log on with any of your characters, to remind you.)
+Depending on the server settings, there might be a backup that allows
+restoration of deleted characters and their house contents to some extent.
+More information about character and account timeout at (3.12).
 
 If you are using Linux, you will find additional information about how to
 compile the game under '(2.1) Installing/updating TomeNET'.
@@ -6828,6 +6831,26 @@ automatically delete it along with its houses, to keep the database clean.
 So make sure you don't let your characters time out this way!
 (There will be an expiry warning about 60 days before this happens when you
 log on with any of your characters, to remind you.)
+Depending on the server settings, there might be a backup that allows
+restoration of deleted characters and their house contents to some extent.
+
+Character restoration:
+Usually, characters of level 35 and higher are backed up, including contents
+of their houses, while characters below 35 are just erased without trace.
+To get a character restored, you'll have to notify an admin to check if there
+is a backup available and restore it. When the admin notifies you of successful
+restoration, you'll have to create a new character of the same name as the one
+that got deleted and was now restored. Race, class, stats etc do not matter,
+only the name counts, it must be identical.
+When you log on, you'll then find you're on your restored character.
+Houses per se cannot be restored though, only their contents are. So you will
+have to actually buy new houses. The good news is that the value of your houses
+is also reimbursed, as part of the restorable house contents.
+So, to obtain the house contents, use the "/request" command. It will fill your
+inventory with the items that were in your houses when they got deleted.
+When your inventory is full, drop the items somewhere (like inside a newly
+bought house) and repeat the command, until it eventually says that there are
+no more items available.
 
 Account timeout:
 If your account holds no characters for 30 days the account itself will be
