@@ -10610,6 +10610,8 @@ void process_timers() {
 	if (fake_waitpid_geo) {
 		FILE *fp;
 
+		y = 0;
+
 		/* Check if admin caller is still present */
 		for (i = 1; i <= NumPlayers; i++) {
 			p_ptr = Players[i];
@@ -10628,6 +10630,7 @@ void process_timers() {
 				/* Read result and display the relevant parts */
 				x = 0;
 				while (!my_fgets(fp, buf, 80, FALSE)) {
+					y = 1;
 					if (strstr(buf, "city\":") || strstr(buf, "region\":") || strstr(buf, "country\":")) {
 						x = 1;
 #if 0
@@ -10640,7 +10643,8 @@ void process_timers() {
 					}
 				}
 				fclose(fp);
-				if (!x) msg_print(i, "No geo information available.");
+				if (!y) msg_print(i, "Geo response not yet ready, please wait...");
+				else if (!x) msg_print(i, "No geo information available.");
 #if 1 /* Dump one long line */
 				else {
 					if (buf2[strlen(buf2) - 1] == ',') buf2[strlen(buf2) - 1] = 0; /* Trim trailing comma */
@@ -10650,10 +10654,12 @@ void process_timers() {
 				//remove("__ipinfo.tmp"); /* Keep maybe, if we want to review it manually afterwards. */
 			}
 		}
-		fake_waitpid_geo = 0;
+		if (y) fake_waitpid_geo = 0;
 	}
 	if (fake_waitpid_ping) {
 		FILE *fp;
+
+		y = 0;
 
 		/* Check if admin caller is still present */
 		for (i = 1; i <= NumPlayers; i++) {
@@ -10672,6 +10678,7 @@ void process_timers() {
 				/* Read result and display the relevant parts */
 				x = 0;
 				while (!my_fgets(fp, buf, 80, FALSE)) {
+					y = 1;
 					if ((s = strstr(buf, " time="))) {
 						x = 1;
 						msg_print(i, s);
@@ -10679,11 +10686,12 @@ void process_timers() {
 					}
 				}
 				fclose(fp);
-				if (!x) msg_print(i, "No ping information available.");
+				if (!y) msg_print(i, "Ping response not yet ready, please wait...");
+				else if (!x) msg_print(i, "No ping information available.");
 				//remove("__ipping.tmp"); /* Keep maybe, if we want to review it manually afterwards. */
 			}
 		}
-		fake_waitpid_ping = 0;
+		if (y) fake_waitpid_ping = 0;
 	}
 }
 
