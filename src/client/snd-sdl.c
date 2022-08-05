@@ -3250,7 +3250,7 @@ void do_cmd_options_sfx_sdl(void) {
 #endif
 void do_cmd_options_mus_sdl(void) {
 	int i, i2, j, d, vertikal_offset = 3, horiz_offset = 5;
-	static int y = 0, j_sel = 0;//, max_events = 0;
+	static int y = 0, j_sel = 0; // j_sel = -1; for initially jumping to playing song, see further below
 	char ch;
 	byte a, a2;
 	cptr lua_name;
@@ -3292,11 +3292,25 @@ void do_cmd_options_mus_sdl(void) {
 	/* Clear screen */
 	Term_clear();
 
+#if 0 /* instead of this, rather add a 'j' key that jumps to the currently playing song */
+	/* Initially jump selection cursor to song that is currently being played */
+	if (j_sel == -1) {
+		for (j = 0; j < MUSIC_MAX; j++) {
+			//if (!songs[j].config) continue;
+			/* playing atm? */
+			if (j != music_cur) continue;
+			/* match */
+			j_sel = y = j;
+			break;
+		}
+	}
+#endif
+
 	/* Interact */
 	while (go) {
 #ifdef ENABLE_JUKEBOX
  #ifdef USER_VOLUME_MUS
-		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377y#\377w/\377ys\377w select, \377yt\377w toggle, \377yy\377w/\377yn\377w enable/disable, \377yv\377w volume, \377yESC\377w leave, \377BRETURN\377w play");
+		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377y#\377w/\377ys\377w select, \377yj\377w jump, \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yv\377w volume, \377yESC\377w leave, \377BRETURN\377w play");
  #else
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yESC\377w (leave), \377BRETURN\377w (play))");
  #endif
@@ -3583,6 +3597,16 @@ void do_cmd_options_mus_sdl(void) {
 			break;
 			}
 #endif
+
+		case 'j': /* Jump to currently playing song */
+			for (j = 0; j < MUSIC_MAX; j++) {
+				/* playing atm? */
+				if (j != music_cur) continue;
+				/* match */
+				j_sel = y = j;
+				break;
+			}
+			break;
 
 		case KTRL('T'):
 			/* Take a screenshot */
