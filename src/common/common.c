@@ -294,7 +294,13 @@ void version_build() {
 	shortVersion = string_make(temp);
 
 	/* Append the date of build */
-	strcat(temp, format(" (Compiled %s %s)", __DATE__, __TIME__));
+	strcat(temp, format(" (Compiled %s %s for %s)", __DATE__, __TIME__,
+#ifdef WINDOWS
+	    "WINDOWS"
+#else /* Assume POSIX */
+	    "POSIX"
+#endif
+	    ));
 
 	longVersion = string_make(temp);
 }
