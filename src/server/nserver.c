@@ -647,11 +647,12 @@ int Setup_net_server(void) {
 	Report_to_meta(META_START);
 
 #ifndef WINDOWS
-	(void)system("uname -a");
+	size = system("uname -a");
 #else
 	//(void)system("uname -a"); /* doesn't work on WINE */
-	(void)system("cmd /c ver"); /* safer to work everywhere? even works on WINE at least */
+	size = system("cmd /c ver"); /* safer to work everywhere? even works on WINE at least */
 #endif
+	(void) size;
 
 	s_printf("%s\n", longVersion);
 	s_printf("Server is running version %04x\n", MY_VERSION);
