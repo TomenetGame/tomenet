@@ -456,24 +456,10 @@ static void write_mangrc_aux(int t, cptr sec_name, FILE *cfg_file) {
 #endif
 		fputs(format("%s_Font\t%s\n", sec_name, font_name), cfg_file);
 	} else {
-		int hgt;
-		if (c_cfg.big_map || r > SCREEN_HGT + SCREEN_PAD_Y) {
-			/* only change height if we're currently running the default short height */
-			if (screen_hgt <= SCREEN_HGT)
-				hgt = SCREEN_PAD_Y + MAX_SCREEN_HGT;
-			/* also change it however if the main window was resized manually (ie by mouse dragging) */
-			else if (r != SCREEN_PAD_Y + screen_hgt)
-				hgt = r;
-			/* keep current, modified screen size */
-			else
-				hgt = SCREEN_PAD_Y + screen_hgt;
-		} else hgt = SCREEN_PAD_Y + SCREEN_HGT;
-		if (hgt > MAX_WINDOW_HGT) hgt = MAX_WINDOW_HGT;
-
 		/* one more tab, or formatting looks bad ;) */
 		fputs(format("%s_Font\t\t%s\n", sec_name, font_name), cfg_file);
-		/* only change to double-screen if we're not already in some kind of enlarged screen */
-		fputs(format("%s_Lines\t%d\n", sec_name, hgt), cfg_file);
+		/* If user has mouse-resized the main window, the dimensions get corrected back to valid dimensions, which are then reflected in screen_hgt variable. */
+		fputs(format("%s_Lines\t%d\n", sec_name, screen_hgt + SCREEN_PAD_Y), cfg_file);
 	}
 	fputs("\n", cfg_file);
 }
@@ -511,24 +497,8 @@ static void write_mangrc_aux_line(int t, cptr sec_name, char *buf_org) {
 	} else if (c && !strncmp(ter_name, "_Lines", 6)) {
 		if (t != 0)
 			sprintf(buf, "%s_Lines\t%d\n", sec_name, r);
-		else {
-			int hgt;
-			if (c_cfg.big_map || r > SCREEN_HGT + SCREEN_PAD_Y) {
-				/* only change height if we're currently running the default short height */
-				if (screen_hgt <= SCREEN_HGT)
-					hgt = SCREEN_PAD_Y + MAX_SCREEN_HGT;
-				/* also change it however if the main window was resized manually (ie by mouse dragging) */
-				else if (r != SCREEN_PAD_Y + screen_hgt)
-					hgt = r;
-				/* keep current, modified screen size */
-				else
-					hgt = SCREEN_PAD_Y + screen_hgt;
-			} else hgt = SCREEN_PAD_Y + SCREEN_HGT;
-			if (hgt > MAX_WINDOW_HGT) hgt = MAX_WINDOW_HGT;
-
-			/* only change to double-screen if we're not already in some kind of enlarged screen */
-			sprintf(buf, "%s_Lines\t%d\n", sec_name, hgt);
-		}
+		else
+			sprintf(buf, "%s_Lines\t%d\n", sec_name, screen_hgt + SCREEN_PAD_Y);
 	} else if (!strncmp(ter_name, "_Font", 5) && font_name[0] != '\0') {
 		if (t != 0)
 			sprintf(buf, "%s_Font\t%s\n", sec_name, font_name);
