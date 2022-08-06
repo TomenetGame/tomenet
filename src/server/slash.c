@@ -12051,6 +12051,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 
+				if (fake_waitpid_geo) {
+					msg_print(Ind, "\377yOnly one geo-request can be pending at a time, please try again.");
+					return;
+				}
+
 				/* Note: Could also use LUA's execute() hehee */
 				strcpy(ip_addr, get_player_ip(j));
 				msg_format(Ind, "Looking up IP %s of player '%s'...", ip_addr, Players[j]->name);
@@ -12070,6 +12075,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
 				if (!j) {
 					msg_print(Ind, "\377yCharacter not online.");
+					return;
+				}
+
+				if (fake_waitpid_ping) {
+					msg_print(Ind, "\377yOnly one ping-request can be pending at a time, please try again.");
 					return;
 				}
 
