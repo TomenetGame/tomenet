@@ -11020,6 +11020,7 @@ Confusion       While confused you cannot move, shoot or fight straight.
                 give confusion resistance.
                 (Monsters that have the NO_CONF flag will resist somewhat and
                 suffer less damage.)
+Free Action, aka...
 Paralysis       Paralysis can be caused by bashing doors, lack of food, by
                 traps and by monsters. Against the latter two effects you can
                 become immune by equipping a 'Free Action' item. You should
