@@ -825,3 +825,22 @@ struct u32b_char_dict_t *u32b_char_dict_free(struct u32b_char_dict_t *start) {
 	}
 	return NULL;
 }
+
+/* Validates provided screen dimensions. If the input dimensions are invalid, they will be changed to valid dimensions. */
+void validate_screen_dimensions(s16b *width, s16b *height) {
+	s16b wid = *width, hgt = *height;
+#ifdef BIG_MAP
+	if (wid > MAX_SCREEN_WID) wid = MAX_SCREEN_WID;
+	if (wid < MIN_SCREEN_WID) wid = MIN_SCREEN_WID;
+	if (hgt > MAX_SCREEN_HGT) hgt = MAX_SCREEN_HGT;
+	if (hgt < MIN_SCREEN_HGT) hgt = MIN_SCREEN_HGT;
+	/* for now until resolved: avoid dimensions whose half values aren't divisors of MAX_WID/HGT */
+	if (MAX_WID % (wid / 2)) wid = SCREEN_WID;
+	if (MAX_HGT % (hgt / 2)) hgt = SCREEN_HGT;
+#else
+	wid = SCREEN_WID;
+	hgt = SCREEN_HGT;
+#endif
+	(*width) = wid;
+	(*height) = hgt;
+}

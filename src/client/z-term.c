@@ -3352,4 +3352,11 @@ errr term_init(term *t, int w, int h, int k) {
 	return (0);
 }
 
-
+/* Validates the main window dimensions and changes them if they were not valid. */
+void validate_main_window_dimensions(void) {
+	s16b wid = term_prefs[0].columns - SCREEN_PAD_X;
+	s16b hgt = term_prefs[0].lines - SCREEN_PAD_Y;
+	validate_screen_dimensions(&wid, &hgt);
+	term_prefs[0].columns = wid + SCREEN_PAD_X;
+	term_prefs[0].lines = hgt + SCREEN_PAD_Y;
+}
