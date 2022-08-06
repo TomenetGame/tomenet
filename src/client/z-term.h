@@ -237,7 +237,8 @@ struct term
 #define TERM_XTRA_LEVEL 12	/* Change the "soft" level (optional) */
 #define TERM_XTRA_DELAY 13	/* Delay some milliseconds (optional) */
 
-
+#define DEFAULT_TERM_WID 80
+#define DEFAULT_TERM_HGT 24
 /**** Available Variables ****/
 
 extern term *Term;
@@ -292,4 +293,5 @@ extern errr term_init(term *t, int w, int h, int k);
 extern byte flick_colour(byte attr);
 extern void flicker(void);
 
+extern void validate_main_window_dimensions(void);
 #endif

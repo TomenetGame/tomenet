@@ -5119,18 +5119,7 @@ static int Receive_play(int ind) {
 			connp->Client_setup.screen_hgt = screen_hgt_32b;
 
 			/* fix limits */
-#ifdef BIG_MAP
-			if (connp->Client_setup.screen_wid > MAX_SCREEN_WID) connp->Client_setup.screen_wid = MAX_SCREEN_WID;
-			if (connp->Client_setup.screen_wid < MIN_SCREEN_WID) connp->Client_setup.screen_wid = MIN_SCREEN_WID;
-			if (connp->Client_setup.screen_hgt > MAX_SCREEN_HGT) connp->Client_setup.screen_hgt = MAX_SCREEN_HGT;
-			if (connp->Client_setup.screen_hgt < MIN_SCREEN_HGT) connp->Client_setup.screen_hgt = MIN_SCREEN_HGT;
-			/* for now until resolved: avoid dimensions whose half values aren't divisors of MAX_WID/HGT */
-			if (MAX_WID % (connp->Client_setup.screen_wid / 2)) connp->Client_setup.screen_wid = SCREEN_WID;
-			if (MAX_HGT % (connp->Client_setup.screen_hgt / 2)) connp->Client_setup.screen_hgt = SCREEN_HGT;
-#else
-			connp->Client_setup.screen_wid = SCREEN_WID;
-			connp->Client_setup.screen_hgt = SCREEN_HGT;
-#endif
+			validate_screen_dimensions(&connp->Client_setup.screen_wid, &connp->Client_setup.screen_hgt);
 		} else {
 			connp->Client_setup.screen_wid = SCREEN_WID;
 			connp->Client_setup.screen_hgt = SCREEN_HGT;
@@ -12653,18 +12642,7 @@ static int Receive_screen_dimensions(int ind) {
 
 
 		/* fix limits */
-#ifdef BIG_MAP
-		if (p_ptr->screen_wid > MAX_SCREEN_WID) p_ptr->screen_wid = MAX_SCREEN_WID;
-		if (p_ptr->screen_wid < MIN_SCREEN_WID) p_ptr->screen_wid = MIN_SCREEN_WID;
-		if (p_ptr->screen_hgt > MAX_SCREEN_HGT) p_ptr->screen_hgt = MAX_SCREEN_HGT;
-		if (p_ptr->screen_hgt < MIN_SCREEN_HGT) p_ptr->screen_hgt = MIN_SCREEN_HGT;
-		/* for now until resolved: avoid dimensions whose half values aren't divisors of MAX_WID/HGT */
-		if (MAX_WID % (p_ptr->screen_wid / 2)) p_ptr->screen_wid = SCREEN_WID;
-		if (MAX_HGT % (p_ptr->screen_hgt / 2)) p_ptr->screen_hgt = SCREEN_HGT;
-#else
-		p_ptr->screen_wid = SCREEN_WID;
-		p_ptr->screen_hgt = SCREEN_HGT;
-#endif
+		validate_screen_dimensions(&p_ptr->screen_wid, &p_ptr->screen_hgt);
 
 		connp->Client_setup.screen_wid = p_ptr->screen_wid;
 		connp->Client_setup.screen_hgt = p_ptr->screen_hgt;

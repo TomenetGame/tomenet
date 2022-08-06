@@ -49,16 +49,11 @@ static void read_mangrc_aux(int t, cptr sec_name) {
 
 	if ((val = strstr(sec_name, "_Columns"))) {
 		term_prefs[t].columns = atoi(val + 8);
-		if (!term_prefs[t].columns) term_prefs[t].columns = 80;
-		if (t == 0) {
-			if (term_prefs[t].columns != 80) term_prefs[t].columns = 80;
-			screen_wid = term_prefs[0].columns - SCREEN_PAD_X;
-		}
+		if (!term_prefs[t].columns) term_prefs[t].columns = DEFAULT_TERM_WID;
 	}
 	if ((val = strstr(sec_name, "_Lines"))) {
 		term_prefs[t].lines = atoi(val + 6);
-		if (!term_prefs[t].lines) term_prefs[t].lines = 24;
-		if (t == 0) screen_hgt = term_prefs[0].lines - SCREEN_PAD_Y;
+		if (!term_prefs[t].lines) term_prefs[t].lines = DEFAULT_TERM_HGT;
 	}
 
 	if ((val = strstr(sec_name, "_Font"))) {
@@ -417,6 +412,11 @@ static bool read_mangrc(cptr filename) {
 			/*** Everything else is ignored ***/
 		}
 		fclose(config);
+
+		validate_main_window_dimensions();
+		/* Calculate game screen dimensions from main window dimensions. */
+		screen_wid = term_prefs[0].columns - SCREEN_PAD_X;
+		screen_hgt = term_prefs[0].lines - SCREEN_PAD_Y;
 
 		if (lighterdarkblue && client_color_map[6] == 0x0000ff)
 #ifdef USE_X11
