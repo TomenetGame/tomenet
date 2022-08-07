@@ -3639,6 +3639,9 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 							msg_format(Ind, "%^s resists the disease.", q_name);
 						} else {
 							msg_format(Ind, "%^s suffers from disease.", q_name);
+							/* Note: We use set_poisoned() instead of set_diseased() because we say in general,
+							   that RBE_DISEASE yields _poison_ brand for mimicry users,
+							   as currently monster-diseasing doesn't exist... */
 							set_poisoned(0 - c_ptr->m_idx, q_ptr->poisoned + randint(p_ptr->lev) + 5, Ind);
 						}
 						break;
