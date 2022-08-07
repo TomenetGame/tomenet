@@ -1747,6 +1747,7 @@ void cmd_look(void) {
 }
 
 
+#define CS_SEL_COL TERM_SELECTOR
 void cmd_character(void) {
 	char ch = 0;
 	int done = 0;
@@ -1768,31 +1769,31 @@ void cmd_character(void) {
 		if (csheet_page == 1 && sel >= 12) sel = 0; /* History is displayed instead of misc abilities? */
 		if (csheet_page != 2) { /* Equipment flag screen must not be active */
 			switch (sel) {
-			case 0: c_put_str(TERM_ORANGE, ">", 2, 0); break;
-			case 1: c_put_str(TERM_ORANGE, ">", 3, 0); break;
-			case 2: c_put_str(TERM_ORANGE, ">", 4, 0); break;
-			case 3: c_put_str(TERM_ORANGE, ">", 5, 0); break;
-			case 4: c_put_str(TERM_ORANGE, ">", 6, 0); break;
-			case 5: c_put_str(TERM_ORANGE, ">", 7, 0); break;
+			case 0: c_put_str(CS_SEL_COL, ">", 2, 0); break;
+			case 1: c_put_str(CS_SEL_COL, ">", 3, 0); break;
+			case 2: c_put_str(CS_SEL_COL, ">", 4, 0); break;
+			case 3: c_put_str(CS_SEL_COL, ">", 5, 0); break;
+			case 4: c_put_str(CS_SEL_COL, ">", 6, 0); break;
+			case 5: c_put_str(CS_SEL_COL, ">", 7, 0); break;
 
-			case 6: c_put_str(TERM_ORANGE, ">", 1, 60); break;
-			case 7: c_put_str(TERM_ORANGE, ">", 2, 60); break;
-			case 8: c_put_str(TERM_ORANGE, ">", 3, 60); break;
-			case 9: c_put_str(TERM_ORANGE, ">", 4, 60); break;
-			case 10: c_put_str(TERM_ORANGE, ">", 5, 60); break;
-			case 11: c_put_str(TERM_ORANGE, ">", 6, 60); break;
+			case 6: c_put_str(CS_SEL_COL, ">", 1, 60); break;
+			case 7: c_put_str(CS_SEL_COL, ">", 2, 60); break;
+			case 8: c_put_str(CS_SEL_COL, ">", 3, 60); break;
+			case 9: c_put_str(CS_SEL_COL, ">", 4, 60); break;
+			case 10: c_put_str(CS_SEL_COL, ">", 5, 60); break;
+			case 11: c_put_str(CS_SEL_COL, ">", 6, 60); break;
 
-			case 12: c_put_str(TERM_ORANGE, ">", 15, 0); break;
-			case 13: c_put_str(TERM_ORANGE, ">", 16, 0); break;
-			case 14: c_put_str(TERM_ORANGE, ">", 17, 0); break;
-			case 15: c_put_str(TERM_ORANGE, ">", 18, 0); break;
-			case 16: c_put_str(TERM_ORANGE, ">", 15, 27); break;
-			case 17: c_put_str(TERM_ORANGE, ">", 16, 27); break;
-			case 18: c_put_str(TERM_ORANGE, ">", 17, 27); break;
-			case 19: c_put_str(TERM_ORANGE, ">", 18, 27); break;
-			case 20: c_put_str(TERM_ORANGE, ">", 15, 54); break;
-			case 21: c_put_str(TERM_ORANGE, ">", 16, 54); break;
-			case 22: c_put_str(TERM_ORANGE, ">", 18, 54); break;
+			case 12: c_put_str(CS_SEL_COL, ">", 15, 0); break;
+			case 13: c_put_str(CS_SEL_COL, ">", 16, 0); break;
+			case 14: c_put_str(CS_SEL_COL, ">", 17, 0); break;
+			case 15: c_put_str(CS_SEL_COL, ">", 18, 0); break;
+			case 16: c_put_str(CS_SEL_COL, ">", 15, 27); break;
+			case 17: c_put_str(CS_SEL_COL, ">", 16, 27); break;
+			case 18: c_put_str(CS_SEL_COL, ">", 17, 27); break;
+			case 19: c_put_str(CS_SEL_COL, ">", 18, 27); break;
+			case 20: c_put_str(CS_SEL_COL, ">", 15, 54); break;
+			case 21: c_put_str(CS_SEL_COL, ">", 16, 54); break;
+			case 22: c_put_str(CS_SEL_COL, ">", 18, 54); break;
 			}
 		}
 
