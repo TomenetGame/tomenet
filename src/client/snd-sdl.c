@@ -2868,6 +2868,7 @@ void do_cmd_options_sfx_sdl(void) {
 	bool go = TRUE, dis;
 	char buf[1024], buf2[1024], out_val[4096], out_val2[4096], *p, evname[4096];
 	FILE *fff, *fff2;
+	bool cfg_audio_master_org = cfg_audio_master, cfg_audio_sound_org = cfg_audio_sound;
 
 	//ANGBAND_DIR_XTRA_SOUND/MUSIC are NULL in quiet_mode!
 	if (quiet_mode) {
@@ -2967,6 +2968,10 @@ void do_cmd_options_sfx_sdl(void) {
 		/* Analyze */
 		switch (ch) {
 		case ESCAPE:
+			/* Restore real mixer settings */
+			cfg_audio_master = cfg_audio_master_org;
+			cfg_audio_sound = cfg_audio_sound_org;
+
 			sound(j_sel, SFX_TYPE_STOP, 100, 0);
 
 			/* auto-save */
@@ -3202,6 +3207,10 @@ void do_cmd_options_sfx_sdl(void) {
 			break;
 
 		case '\r':
+			/* Force-enable the mixer to play sound */
+			cfg_audio_master = TRUE;
+			cfg_audio_sound = TRUE;
+
 			dis = samples[j_sel].disabled;
 			samples[j_sel].disabled = FALSE;
 			sound(j_sel, SFX_TYPE_MISC, 100, 0);
