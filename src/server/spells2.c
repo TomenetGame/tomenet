@@ -7555,7 +7555,7 @@ bool disarm_trap_door(int Ind, int dir) {
 bool heal_monster(int Ind, int dir) {
 	int flg = PROJECT_STOP | PROJECT_KILL;
 	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker), "%s heals you for", Players[Ind]->name);
-	return (project_hook(Ind, GF_OLD_HEAL, dir, 9999, flg, Players[Ind]->attacker)); // dam_roll(4, 6) was the traditional way
+	return (project_hook(Ind, GF_OLD_HEAL, dir, 9999, flg, Players[Ind]->attacker)); // damroll(4, 6) was the traditional way
 }
 
 bool speed_monster(int Ind, int dir) {

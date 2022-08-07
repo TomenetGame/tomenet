@@ -9928,7 +9928,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (IS_PVP) {
 					if (p_ptr->poisoned < 10) (void)set_poisoned(Ind, p_ptr->poisoned + rand_int(4), -who);
 				} else {
-					(void)set_poisoned(Ind, p_ptr->poisoned + dam_roll(3, dam / 3) + 10, -who);
+					(void)set_poisoned(Ind, p_ptr->poisoned + damroll(3, dam / 3) + 10, -who);
 				}
 			}
 		}
@@ -10528,7 +10528,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					if (IS_PVP) {
 						if (p_ptr->poisoned < 8) (void)set_poisoned(Ind, p_ptr->poisoned + rand_int(3), -who);
 					} else {
-						(void)set_poisoned(Ind, p_ptr->poisoned + dam_roll(3, dam / 3) + 10, -who);
+						(void)set_poisoned(Ind, p_ptr->poisoned + damroll(3, dam / 3) + 10, -who);
 					}
 				}
 			}
@@ -10627,7 +10627,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					if (IS_PVP) {
 						if (p_ptr->poisoned < 8) (void)set_poisoned(Ind, p_ptr->poisoned + rand_int(3), -who);
 					} else {
-						(void)set_poisoned(Ind, p_ptr->poisoned + dam_roll(3, dam / 3) + 10, -who);
+						(void)set_poisoned(Ind, p_ptr->poisoned + damroll(3, dam / 3) + 10, -who);
 					}
 				}
 			}
@@ -11348,7 +11348,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (IS_PVP) {
 					if (p_ptr->poisoned < 8) (void)set_poisoned(Ind, p_ptr->poisoned + rand_int(3), -who);
 				} else {
-					(void)set_poisoned(Ind, p_ptr->poisoned + dam_roll(3, dam / 3) + 10, -who);
+					(void)set_poisoned(Ind, p_ptr->poisoned + damroll(3, dam / 3) + 10, -who);
 				}
 
 #if 0	// dang, later..
