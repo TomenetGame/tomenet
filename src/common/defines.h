@@ -4662,10 +4662,10 @@
 #define PR_HISTORY	0x00000400L	/* Display History */
 #define PR_HEALTH	0x00000800L	/* Display Health Bar */
 #define PR_CUT		0x00001000L	/* Display Extra (Cut) */
-#define PR_STUN		0x00002000L	/* Display Extra (Stun) */
+#define PR_STUN		0x00002000L	/* Display Extra (Stun/Paralysis) */
 #define PR_HUNGER	0x00004000L	/* Display Extra (Hunger) */
 #define PR_VARIOUS	0x00008000L	/* Display Various info (age, etc.) */
-#define PR_BLIND	0x00010000L	/* Display Extra (Blind) */
+#define PR_BLIND	0x00010000L	/* Display Extra (Blind/Hallu) */
 #define PR_CONFUSED	0x00020000L	/* Display Extra (Confused) */
 #define PR_AFRAID	0x00040000L	/* Display Extra (Afraid) */
 #define PR_POISONED	0x00080000L	/* Display Extra (Poisoned) */
