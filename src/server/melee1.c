@@ -1222,7 +1222,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Take "poison" effect */
 					if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison)) {
-						if (set_poisoned(Ind, p_ptr->poisoned + randint(rlev) + 5, -m_idx))
+						if (set_poisoned(Ind, p_ptr->poisoned + 3 + damroll(3, (rlev + 3) / 3), -m_idx))
 							obvious = TRUE;
 					}
 

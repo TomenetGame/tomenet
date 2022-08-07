@@ -9928,7 +9928,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (IS_PVP) {
 					if (p_ptr->poisoned < 10) (void)set_poisoned(Ind, p_ptr->poisoned + rand_int(4), -who);
 				} else {
-					(void)set_poisoned(Ind, p_ptr->poisoned + rand_int(dam) + 10, -who);
+					(void)set_poisoned(Ind, p_ptr->poisoned + dam_roll(3, dam / 3) + 10, -who);
 				}
 			}
 		}
@@ -10523,8 +10523,14 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (fuzzy) msg_format(Ind, "You are hit by poison for \377%c%d \377wdamage!", damcol, dam);
 				else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 				take_hit(Ind, dam, killer, -who);
-				if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
-					(void)set_poisoned(Ind, p_ptr->poisoned + rand_int(dam) + 10, -who);
+				if (!(p_ptr->resist_pois || p_ptr->oppose_pois)) {
+					/* don't poison for too long in pvp */
+					if (IS_PVP) {
+						if (p_ptr->poisoned < 8) (void)set_poisoned(Ind, p_ptr->poisoned + rand_int(3), -who);
+					} else {
+						(void)set_poisoned(Ind, p_ptr->poisoned + dam_roll(3, dam / 3) + 10, -who);
+					}
+				}
 			}
 			break;
 		default: // Water
@@ -10616,8 +10622,14 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (fuzzy) msg_format(Ind, "You are hit by poison for \377%c%d \377wdamage!", damcol, dam);
 				else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 				take_hit(Ind, dam, killer, -who);
-				if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
-					(void)set_poisoned(Ind, p_ptr->poisoned + rand_int(dam) + 10, -who);
+				if (!(p_ptr->resist_pois || p_ptr->oppose_pois)) {
+					/* don't poison for too long in pvp */
+					if (IS_PVP) {
+						if (p_ptr->poisoned < 8) (void)set_poisoned(Ind, p_ptr->poisoned + rand_int(3), -who);
+					} else {
+						(void)set_poisoned(Ind, p_ptr->poisoned + dam_roll(3, dam / 3) + 10, -who);
+					}
+				}
 			}
 		}
 		break;
@@ -11332,7 +11344,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			take_hit(Ind, dam, killer, -who);
 			if (!(p_ptr->resist_pois || p_ptr->oppose_pois)) {
-				set_poisoned(Ind, p_ptr->poisoned + rand_int(dam) + 10, -who);
+				/* don't poison for too long in pvp */
+				if (IS_PVP) {
+					if (p_ptr->poisoned < 8) (void)set_poisoned(Ind, p_ptr->poisoned + rand_int(3), -who);
+				} else {
+					(void)set_poisoned(Ind, p_ptr->poisoned + dam_roll(3, dam / 3) + 10, -who);
+				}
 
 #if 0	// dang, later..
 				if (randint(5) == 1) { /* 6 */
