@@ -1971,7 +1971,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
  #endif
 		else if (prefix(messagelc, "/pet")) {
-			if (strcmp(Players[Ind]->accountname, "The_sandman")) {
+			if (strcmp(Players[Ind]->accountname, "The_sandman") || !p_ptr->privileged) {
 				msg_print(Ind, "\377rPet system is disabled.");
 				return;
 			}
@@ -1988,8 +1988,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #endif
 		else if (prefix(messagelc, "/unpet")) {
 #ifdef RPG_SERVER
+			if (strcmp(Players[Ind]->accountname, "The_sandman") || !p_ptr->privileged) return;
 			msg_print(Ind, "\377RYou abandon your pet! You cannot have anymore pets!");
-			if (strcmp(Players[Ind]->accountname, "The_sandman")) return;
 //			if (Players[Ind]->wpos.wz != 0) {
 				for (i = m_top-1; i >= 0; i--) {
 					monster_type *m_ptr = &m_list[i];
@@ -5189,6 +5189,26 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			do_cmd_show_monster_killed_letter(Ind, &learnt, 0, FALSE);
 			return;
 		}
+		else if (!strcmp(messagelc, "/ta")) { /* non-lua equivalent to ta() that toggles admin state irreversibly (as non-admins cannot invoke lua) */
+			if (admin) msg_print(Ind, "Already an admin.");
+			else if (p_ptr->privileged < 3) { /* Check for temporarily remembered admin-status */
+				/* Pseudo-invalid slash command */
+				do_slash_brief_help(Ind);
+				return;
+			} else {
+				if (p_ptr->privileged == 4) {
+					msg_print(Ind, "Regained relinquished admin (DM) state.");
+					p_ptr->admin_dm = 1;
+					p_ptr->privileged = 0;
+				} else if (p_ptr->privileged == 3) {
+					msg_print(Ind, "Regained relinquished admin (Wizard) state.");
+					p_ptr->admin_wiz = 1;
+					p_ptr->privileged = 0;
+				} else msg_print(Ind, "No valid admin state remembered.");
+			}
+			return;
+		}
+
 
 
 		/*
@@ -5200,7 +5220,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/*
 			 * Privileged commands, level 2
 			 */
-			if (p_ptr->privileged == 2) {
+			if (p_ptr->privileged >= 2) {
 			}
 
 
@@ -5370,7 +5390,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 				/* added checking for account existence - mikaelh */
-				switch(validate(message3)) {
+				switch (validate(message3)) {
 				case -1: msg_format(Ind, "\377GValidating %s", message3);
 					break;
 				case 0: msg_format(Ind, "\377rAccount %s not found", message3);
@@ -5385,7 +5405,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 				/* added checking for account existence - mikaelh */
-				switch(invalidate(message3, TRUE)) {
+				switch (invalidate(message3, TRUE)) {
 				case -1: msg_format(Ind, "\377GInvalidating %s", message3);
 					break;
 				case 0: msg_format(Ind, "\377rAccount %s not found", message3);
@@ -5401,7 +5421,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/privilege")) {
 				if (!tk) return;
 				/* added checking for account existence - mikaelh */
-				switch(privilege(message3, 1)) {
+				switch (privilege(message3, 1)) {
 				case -1: msg_format(Ind, "\377GPrivileging %s", message3);
 					break;
 				case 0: msg_format(Ind, "\377rAccount %s not found", message3);
@@ -5413,7 +5433,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/vprivilege")) {
 				if (!tk) return;
 				/* added checking for account existence - mikaelh */
-				switch(privilege(message3, 2)) {
+				switch (privilege(message3, 2)) {
 				case -1: msg_format(Ind, "\377GVery-privileging %s", message3);
 					break;
 				case 0: msg_format(Ind, "\377rAccount %s not found", message3);
@@ -5425,7 +5445,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/unprivilege")) {
 				if (!tk) return;
 				/* added checking for account existence - mikaelh */
-				switch(privilege(message3, 0)) {
+				switch (privilege(message3, 0)) {
 				case -1: msg_format(Ind, "\377GUnprivileging %s", message3);
 					break;
 				case 0: msg_format(Ind, "\377rAccount %s not found", message3);

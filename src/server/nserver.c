@@ -3217,7 +3217,8 @@ static int Handle_login(int ind) {
 			acc_set_flags(p_ptr->accountname, ACC_GREETED, TRUE);
 		}
 	}
-	/* Notify all online admins about an invalid player having joined, so they may validate him */
+	/* Notify all online admins and also (privileged, or cannot use /val command) player accounts
+	   of the usual admins about an invalid player having joined, so they may validate him */
 	if (p_ptr->inval) for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		if (is_admin(Players[i])) {
@@ -3226,6 +3227,7 @@ static int Handle_login(int ind) {
 		} else if (Players[i]->privileged &&
 		    !(strcasecmp(p_ptr->accountname, "the_sandman")
 		    && strcasecmp(p_ptr->accountname, "mikaelh")
+		    && strcasecmp(p_ptr->accountname, "kurzel")
 		    && strcasecmp(p_ptr->accountname, "c. blue"))) {
 			msg_format(i, "\374\377y(System) Invalid account \"%s\", host: \"%s\"", p_ptr->accountname, p_ptr->hostname);
 			//if (!Players[i]->paging) Players[i]->paging = 1;
@@ -5974,7 +5976,7 @@ int Send_char_info(int Ind, int race, int class, int trait, int sex, int mode, i
 	   We skip 0x0100 and 0x0200 because of MODE_FRUIT_BAT hack.  */
 	if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 0)) {
 		mode |= (p_ptr->admin_wiz ? 0x0400 : 0x0) | (p_ptr->admin_dm ? 0x0800 : 0x0);
-		mode |= (p_ptr->privileged == 1 ? 0x1000 : 0x0) | (p_ptr->privileged == 2 ? 0x2000 : 0x0);
+		mode |= (p_ptr->privileged == 1 ? 0x1000 : 0x0) | (p_ptr->privileged >= 2 ? 0x2000 : 0x0);
 		mode |= (p_ptr->restricted == 1 ? 0x4000 : 0x0) | (p_ptr->restricted == 2 ? 0x8000 : 0x0);
 	}
 

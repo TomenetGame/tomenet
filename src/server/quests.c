@@ -3418,7 +3418,7 @@ static bool quest_acquire(int Ind, int q_idx, bool quiet) {
 	switch (q_ptr->privilege) {
 	case 1: if (!p_ptr->privileged && !is_admin(p_ptr)) return FALSE;
 		break;
-	case 2: if (p_ptr->privileged != 2 && !is_admin(p_ptr)) return FALSE;
+	case 2: if (p_ptr->privileged < 2 && !is_admin(p_ptr)) return FALSE;
 		break;
 	case 3: if (!is_admin(p_ptr)) return FALSE;
 	}
@@ -3607,7 +3607,7 @@ void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff) {
 	switch (q_ptr->privilege) {
 	case 1: if (!p_ptr->privileged && !is_admin(p_ptr)) return;
 		break;
-	case 2: if (p_ptr->privileged != 2 && !is_admin(p_ptr)) return;
+	case 2: if (p_ptr->privileged < 2 && !is_admin(p_ptr)) return;
 		break;
 	case 3: if (!is_admin(p_ptr)) return;
 	}
