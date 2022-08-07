@@ -536,7 +536,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 	s16b trap = 0, vanish;
 	//dungeon_info_type *d_ptr = &d_info[dungeon_type];
 
-	int k, l, glev = getlevel(wpos);
+	int k, l, dlev = getlevel(wpos);
 	cave_type *c_ptr;
 	trap_kind *t_ptr;
 
@@ -569,7 +569,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 		trap = TRAP_OF_ALE;
 		for (l = 0; l < 99 ; l++) {
 			k = rand_int(MAX_T_IDX);
-			if (!t_info[k].name || t_info[k].minlevel > glev ||
+			if (!t_info[k].name || t_info[k].minlevel > dlev ||
 			    k == TRAP_OF_ACQUIREMENT || k == TRAP_OF_RANDOM_EFFECT)
 				continue;
 
@@ -690,7 +690,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			if (no_summon) break;
 			summon_override_checks = SO_IDDC;
 			//for (k = 0; k < randint(3); k++) ident |= summon_specific(y, x, max_dlv[dungeon_type], 0, SUMMON_UNDEAD, 1);	// max?
-			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 100, SUMMON_ALL_U98, 1, 0);
+			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, dlev, 100, SUMMON_ALL_U98, 1, 0);
 			summon_override_checks = SO_NONE;
 #ifdef USE_SOUND_2010
 			if (ident) sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
@@ -702,7 +702,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			msg_print(Ind, "A mighty spell hangs in the air.");
 			if (no_summon) break;
 			summon_override_checks = SO_IDDC;
-			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 0, SUMMON_UNDEAD, 1, 0);
+			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, dlev, 0, SUMMON_UNDEAD, 1, 0);
 			summon_override_checks = SO_NONE;
 #ifdef USE_SOUND_2010
 			if (ident) sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
@@ -714,7 +714,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			msg_print(Ind, "An old and evil spell hangs in the air.");
 			if (no_summon) break;
 			summon_override_checks = SO_IDDC;
-			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 0, SUMMON_HI_UNDEAD, 1, 0);
+			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, dlev, 0, SUMMON_HI_UNDEAD, 1, 0);
 			summon_override_checks = SO_NONE;
 #ifdef USE_SOUND_2010
 			if (ident) sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
@@ -761,7 +761,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 		/* Teleport Away Trap */
 		case TRAP_OF_TELEPORT_AWAY:
 		{
-			int i, ty, tx, item, amt, rad = glev / 20 - 1;
+			int i, ty, tx, item, amt, rad = dlev / 20 - 1;
 			object_type *o_ptr;
 			cave_type *cc_ptr;
 
@@ -971,7 +971,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			if (no_summon) break;
 			summon_override_checks = SO_IDDC;
 			for (k = 0; k < randint(3); k++)
-				ident |= summon_specific(wpos, y, x, glev, 0, SUMMON_QUYLTHULG, 1, 0);
+				ident |= summon_specific(wpos, y, x, dlev, 0, SUMMON_QUYLTHULG, 1, 0);
 			summon_override_checks = SO_NONE;
 			if (ident) {
 				msg_print(Ind, "You suddenly have company.");
@@ -1142,7 +1142,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 		case TRAP_OF_WALLS:
 			//ident = player_handle_trap_of_walls();
 			/* let's do a quick job ;) */
-			ident = player_handle_breath_trap(Ind, 1 + glev / 40, GF_STONE_WALL, TRAP_OF_WALLS);
+			ident = player_handle_breath_trap(Ind, 1 + dlev / 40, GF_STONE_WALL, TRAP_OF_WALLS);
 			break;
 
 		/* Trap of Calling Out */
@@ -1508,29 +1508,29 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 		 */
 
 		case TRAP_OF_ARROWS_I:
-			ident = player_handle_missile_trap(Ind, 2 + (glev / 30), TV_ARROW, SV_AMMO_NORMAL, 4, 8, 0, "Arrow Trap"); break;
+			ident = player_handle_missile_trap(Ind, 2 + (dlev / 30), TV_ARROW, SV_AMMO_NORMAL, 4, 8, 0, "Arrow Trap"); break;
 		case TRAP_OF_ARROWS_II:
-			ident = player_handle_missile_trap(Ind, 2 + (glev / 30), TV_BOLT, SV_AMMO_NORMAL, 5, 8, 0, "Bolt Trap"); break;
+			ident = player_handle_missile_trap(Ind, 2 + (dlev / 30), TV_BOLT, SV_AMMO_NORMAL, 5, 8, 0, "Bolt Trap"); break;
 		case TRAP_OF_ARROWS_III:
-			ident = player_handle_missile_trap(Ind, 2 + (glev / 30), TV_ARROW, SV_AMMO_HEAVY, 6, 9, 0, "Seeker Arrow Trap"); break;
+			ident = player_handle_missile_trap(Ind, 2 + (dlev / 30), TV_ARROW, SV_AMMO_HEAVY, 6, 9, 0, "Seeker Arrow Trap"); break;
 		case TRAP_OF_ARROWS_IV:
-			ident = player_handle_missile_trap(Ind, 2 + (glev / 30), TV_BOLT, SV_AMMO_HEAVY, 8, 10, 0, "Seeker Bolt Trap"); break;
+			ident = player_handle_missile_trap(Ind, 2 + (dlev / 30), TV_BOLT, SV_AMMO_HEAVY, 8, 10, 0, "Seeker Bolt Trap"); break;
 		case TRAP_OF_POISON_ARROWS_I:
-			ident = player_handle_missile_trap(Ind, 2 + (glev / 30), TV_ARROW, SV_AMMO_NORMAL, 4, 8, 10 + randint(20), "Poison Arrow Trap"); break;
+			ident = player_handle_missile_trap(Ind, 2 + (dlev / 30), TV_ARROW, SV_AMMO_NORMAL, 4, 8, 10 + randint(20), "Poison Arrow Trap"); break;
 		case TRAP_OF_POISON_ARROWS_II:
-			ident = player_handle_missile_trap(Ind, 2 + (glev / 30), TV_BOLT, SV_AMMO_NORMAL, 5, 8, 15 + randint(30), "Poison Bolt Trap"); break;
+			ident = player_handle_missile_trap(Ind, 2 + (dlev / 30), TV_BOLT, SV_AMMO_NORMAL, 5, 8, 15 + randint(30), "Poison Bolt Trap"); break;
 		case TRAP_OF_POISON_ARROWS_III:
-			ident = player_handle_missile_trap(Ind, 2 + (glev / 30), TV_ARROW, SV_AMMO_HEAVY, 6, 8, 30 + randint(50), "Poison Seeker Arrow Trap"); break;
+			ident = player_handle_missile_trap(Ind, 2 + (dlev / 30), TV_ARROW, SV_AMMO_HEAVY, 6, 8, 30 + randint(50), "Poison Seeker Arrow Trap"); break;
 		case TRAP_OF_POISON_ARROWS_IV:
-			ident = player_handle_missile_trap(Ind, 2 + (glev / 30), TV_BOLT, SV_AMMO_HEAVY, 8, 10, 40 + randint(70), "Poison Seeker Bolt Trap"); break;
+			ident = player_handle_missile_trap(Ind, 2 + (dlev / 30), TV_BOLT, SV_AMMO_HEAVY, 8, 10, 40 + randint(70), "Poison Seeker Bolt Trap"); break;
 		case TRAP_OF_DAGGERS_I:
-			ident = player_handle_missile_trap(Ind, 2 + (glev / 30), TV_SWORD, SV_BROKEN_DAGGER, 2, 8, 0, "Dagger Trap"); break;
+			ident = player_handle_missile_trap(Ind, 2 + (dlev / 30), TV_SWORD, SV_BROKEN_DAGGER, 2, 8, 0, "Dagger Trap"); break;
 		case TRAP_OF_DAGGERS_II:
-			ident = player_handle_missile_trap(Ind, 2 + (glev / 30), TV_SWORD, SV_DAGGER, 3, 8, 0, "Dagger Trap"); break;
+			ident = player_handle_missile_trap(Ind, 2 + (dlev / 30), TV_SWORD, SV_DAGGER, 3, 8, 0, "Dagger Trap"); break;
 		case TRAP_OF_POISON_DAGGERS_I:
-			ident = player_handle_missile_trap(Ind, 2 + (glev / 30), TV_SWORD, SV_BROKEN_DAGGER, 2, 8, 15 + randint(20), "Poison Dagger Trap"); break;
+			ident = player_handle_missile_trap(Ind, 2 + (dlev / 30), TV_SWORD, SV_BROKEN_DAGGER, 2, 8, 15 + randint(20), "Poison Dagger Trap"); break;
 		case TRAP_OF_POISON_DAGGERS_II:
-			ident = player_handle_missile_trap(Ind, 2 + (glev / 30), TV_SWORD, SV_DAGGER, 3, 8, 20 + randint(30), "Poison Dagger Trap"); break;
+			ident = player_handle_missile_trap(Ind, 2 + (dlev / 30), TV_SWORD, SV_DAGGER, 3, 8, 20 + randint(30), "Poison Dagger Trap"); break;
 
 		/* it was '20,90,70'... */
 		case TRAP_OF_DROP_ITEMS:
@@ -1750,7 +1750,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 		/* Trap? of Ale vendor */
 		case TRAP_OF_ALE:
 		{
-			u32b price = glev, amt;
+			u32b price = dlev, amt;
 
 			price *= price;
 			if (price < 5) price = 5;
@@ -1780,7 +1780,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 		}
 		/* Trap of Garbage */
 		case TRAP_OF_GARBAGE:
-			ident = do_player_trap_garbage(Ind, 300 + glev * 3);
+			ident = do_player_trap_garbage(Ind, 300 + dlev * 3);
 			destroy_chest(i_ptr); 
 			break;
 
@@ -1799,7 +1799,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			msg_print(Ind, "You are treated to a marvellous elven cuisine!");
 			if (!p_ptr->suscep_life && p_ptr->prace != RACE_ENT) {
 				/* 1turn = 100 food value when satiated */
-				(void)set_food(Ind, PY_FOOD_MAX + glev * 50 + 1000 + rand_int(1000));
+				(void)set_food(Ind, PY_FOOD_MAX + dlev * 50 + 1000 + rand_int(1000));
 			}
 			ident = TRUE;
 			break;
@@ -1811,7 +1811,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 
 		/* Vermin Trap */
 		case TRAP_OF_VERMIN:
-			l = randint(20 + glev) + 30;/*let's give the player a decent chance to clean the mess
+			l = randint(20 + dlev) + 30;/*let's give the player a decent chance to clean the mess
 						    over a reasonable amount of time.*/
 			for (k = 0; k < l; k++) {
 				s16b cx = x + 20 - rand_int(41);
@@ -1829,7 +1829,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				}
 
 				summon_override_checks = SO_IDDC;
-				ident |= summon_specific(wpos, cy, cx, glev, 0, SUMMON_VERMIN, 1, 0);
+				ident |= summon_specific(wpos, cy, cx, dlev, 0, SUMMON_VERMIN, 1, 0);
 				summon_override_checks = SO_NONE;
 			}
 			if (ident) {
@@ -1856,7 +1856,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 #if 0
 			if (rand_int(100) < p_ptr->skill_sav)
 				msg_print(Ind, "You resist the effects!");
-			else if (do_trap_of_silliness(Ind, 50 + glev)) {
+			else if (do_trap_of_silliness(Ind, 50 + dlev)) {
 				msg_print(Ind, "You feel somewhat silly.");
 				//ident = FALSE;	// haha you forget this also :)
 			}
@@ -1866,7 +1866,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 		case TRAP_OF_GOODBYE_CHARLIE:
 		{
 			//s16b i,j;
-			int chance = 10 + glev / 2;
+			int chance = 10 + dlev / 2;
 			//bool message = FALSE;
 
 			if (p_ptr->ghost) break;
@@ -1879,7 +1879,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			p_ptr->recall_pos.wz = 0;
 
 			if (!p_ptr->word_recall) {
-				int delay = 120 - glev / 2;
+				int delay = 120 - dlev / 2;
 				if (delay < 1) delay = 1;
 
 				//p_ptr->word_recall = rand_int(20) + 15;
@@ -1895,14 +1895,14 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 
 		case TRAP_OF_PRESENT_EXCHANGE:
 			ident = do_player_drop_items(Ind, 50, TRUE);
-			ident |= do_player_trap_garbage(Ind, 300 + glev * 3);
+			ident |= do_player_trap_garbage(Ind, 300 + dlev * 3);
 			break;
 
 		case TRAP_OF_GARBAGE_FILLING:
 		{
 			s16b nx, ny;
 
-			ident |= do_player_trap_garbage(Ind, 300 + glev * 3);
+			ident |= do_player_trap_garbage(Ind, 300 + dlev * 3);
 			for (nx = x - 8; nx <= x + 8; nx++) {
 				for (ny = y - 8; ny <= y + 8; ny++) {
 					if (!in_bounds (ny, nx)) continue;
@@ -1935,7 +1935,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				break;
 			}
 
-			l = glev / 10;
+			l = dlev / 10;
 			l = l > 3 ? 3 : (l < 1 ? 1 : l);
 			k = maxfall > l ? randint(l) : randint(maxfall);
 
@@ -1988,13 +1988,13 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				//take_sanity_hit(Ind, 1, "a pit", 0);
 
 				/* Maybe better make them other types of traps? */
-				if (glev > 29) {
+				if (dlev > 29) {
 					msg_print(Ind, "You are pierced by the spikes!");
-					(void)set_cut(Ind, p_ptr->cut + randint(glev * 2) + 30, 0);
+					(void)set_cut(Ind, p_ptr->cut + randint(dlev * 2) + 30, 0);
 
-					if (glev > 49 && !p_ptr->resist_pois && !p_ptr->oppose_pois && !p_ptr->immune_poison) {
+					if (dlev > 49 && !p_ptr->resist_pois && !p_ptr->oppose_pois && !p_ptr->immune_poison) {
 						msg_print(Ind, "The spikes were poisoned!");
-						(void)set_poisoned(Ind, p_ptr->poisoned + randint(glev * 2) + 50, 0);
+						(void)set_poisoned(Ind, p_ptr->poisoned + 50 + damroll(2, dlev), 0);
 					}
 				}
 
@@ -2100,7 +2100,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 
 					if (!o_ptr->k_idx) continue;
 					if (o_ptr->name1 == ART_POWER) continue;
-					if ((j = rand_int(100)) > 20 + glev) continue;
+					if ((j = rand_int(100)) > 20 + dlev) continue;
 
 					ident = TRUE;
 
@@ -2144,7 +2144,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 		-10 to all stats permanently is pathetic. */
 		break;
 #if 0
-			k = glev / 5;
+			k = dlev / 5;
 			k = k < 1 ? 1 : k;
 			msg_print(Ind, "You feel as though you have hit a slump.");
 			//		ident |= dec_stat(Ind, A_DEX, 25, TRUE);	// TRUE..!?
@@ -2308,7 +2308,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				iy = o_ptr->iy;
 
 				/* Only within certain radius */
-				if (distance(y, x, iy, ix) > glev / 5 + 5) continue;
+				if (distance(y, x, iy, ix) > dlev / 5 + 5) continue;
 
 				/* Mega-Hack -- preserve artifacts */
 				if (true_artifact_p(o_ptr)) { /* && !object_known_p(o_ptr)*/
@@ -2353,7 +2353,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				/* Skip monster inventory/monster trap items */
 				if (o_ptr->held_m_idx || o_ptr->embed) continue;
 
-				if (magik(glev)) place_trap(wpos, o_ptr->iy, o_ptr->ix, 0);
+				if (magik(dlev)) place_trap(wpos, o_ptr->iy, o_ptr->ix, 0);
 			}
 			msg_print(Ind, "You feel uneasy.");
 			break;
@@ -2384,7 +2384,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			ident = player_handle_breath_trap(Ind, 5, GF_DISINTEGRATE, trap);
 			destroy_chest(i_ptr);
 			summon_override_checks = SO_IDDC;
-			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 0, SUMMON_ALL_U98, 1, 0);
+			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, dlev, 0, SUMMON_ALL_U98, 1, 0);
 			summon_override_checks = SO_NONE;
 			if (ident) {
 				msg_print(Ind, "You hear drums of battle!");
@@ -2493,7 +2493,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 
 				invcopy(q_ptr, lookup_kind(TV_BOTTLE, 1));
 				q_ptr->number = bottles;
-				q_ptr->level = glev / 10 + 1;
+				q_ptr->level = dlev / 10 + 1;
 				q_ptr->note = quark_add("Thank you");
 				q_ptr->owner = p_ptr->id;
 				o_ptr->ident |= ID_NO_HIDDEN;
@@ -2522,7 +2522,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 		case TRAP_OF_FINGER_CATCHING:
 			msg_print(Ind, "Ouch! You get your finger caught!");
 			trap_hit(Ind, trap);
-			(void)set_cut(Ind, p_ptr->cut + randint(glev) + 5, 0);
+			(void)set_cut(Ind, p_ptr->cut + randint(dlev) + 5, 0);
 			if (magik(50)) {
 				msg_print(Ind, "Your dominant hand gets hurt!");
 				do_dec_stat(Ind, A_DEX, STAT_DEC_TEMPORARY);
@@ -2533,7 +2533,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 		/* Animate Coins Trap */
 		case TRAP_OF_ANIMATE_COINS:
 		{
-			u32b price = glev, amt;
+			u32b price = dlev, amt;
 
 			price *= price;
 			if (price < 200) price = 200;
@@ -2541,11 +2541,11 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			amt = (p_ptr->au / price);
 
 			if (amt > 20) amt = 20;
-			if (amt > (u32b) glev / 3) amt = glev / 3;
+			if (amt > (u32b) dlev / 3) amt = dlev / 3;
 
 			summon_override_checks = SO_IDDC;
 			for (k = 0; k < (int) amt; k++) {
-				if (summon_specific(wpos, y, x, glev, 0, SUMMON_BIZARRE5, 1, 0)) {
+				if (summon_specific(wpos, y, x, dlev, 0, SUMMON_BIZARRE5, 1, 0)) {
 					ident = TRUE;
 					p_ptr->au -= price;
 				}
@@ -2617,7 +2617,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			s16b nx, ny;
 			cave_type *cc_ptr;
 			struct c_special *cs_ptr;
-			int rad = 8 + glev / 3;
+			int rad = 8 + dlev / 3;
 
 			for (nx = x - rad; nx <= x + rad; nx++) {
 				for (ny = y - rad; ny <= y + rad; ny++) {
@@ -2646,8 +2646,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 
 			if (!l_ptr || !(l_ptr->flags1 & LF1_NO_NEW_MONSTER)) {
 				/* Set the monster generation depth */
-				monster_level = glev;
-				for (k = 0; k < 5 + glev / 4; k++) {
+				monster_level = dlev;
+				for (k = 0; k < 5 + dlev / 4; k++) {
 					if (p_ptr->wpos.wz)
 						ident |= alloc_monster(&p_ptr->wpos, MAX_SIGHT + 5, FALSE);
 					else wild_add_monster(&p_ptr->wpos);
@@ -2662,7 +2662,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 		case TRAP_OF_JACK:
 			summon_override_checks = SO_IDDC;
 			//for (k = 0; k < randint(3); k++)
-				ident |= summon_specific(wpos, y, x, glev, 0, SUMMON_BIZARRE6, 1, 0);
+				ident |= summon_specific(wpos, y, x, dlev, 0, SUMMON_BIZARRE6, 1, 0);
 			summon_override_checks = SO_NONE;
 #if 0
 			if (ident) {
@@ -2700,7 +2700,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				}
 
 				summon_override_checks = SO_IDDC;
-				ident |= summon_specific(wpos, cy, cx, glev, 0, SUMMON_SPOOK, 1, 0);
+				ident |= summon_specific(wpos, cy, cx, dlev, 0, SUMMON_SPOOK, 1, 0);
 				summon_override_checks = SO_NONE;
 			}
 			if (ident) {
