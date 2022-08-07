@@ -1752,7 +1752,7 @@ void cmd_character(void) {
 	char ch = 0;
 	int done = 0;
 	char tmp[MAX_CHARS];
-	static int sel = 0;
+	static int sel = 1; //start at player race actually, cause it's probably the most interesting point (together with class)
 
 	/* Save screen */
 	Term_save();
