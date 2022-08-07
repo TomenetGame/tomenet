@@ -1506,6 +1506,9 @@ They all start with a slash '/' hence they're called slash commands:
 
 /gquit      Same as /gleave.
 
+/guide      Displays short instructions where to find the TomeNET Guide (this
+            document) and how to update it.
+
 /guild_adder <name of another player>
             Allows that player permanently to add other players to the guild
             too. Use the command a second time to revoke his rights again.
