@@ -11889,20 +11889,21 @@ DRAIN_EXP ('It drains your life force')
         Vampire race characters suffer half as much from this effect as others.
 LUCK ('It affects your luck.')
         If you are lucky, your chance to find better items increases.
-        Luck caps at 40 (and -10), having higher bonus won't help any more.
-        The higher your luck is, the more diminishing is the effect of
+        Luck caps at 40 (and -10 downwards), having higher bonus won't help any
+        more. The higher your luck is, the more diminishing is the effect of
         increasing it even more.
-        What does 'better items' mean exactly?
-        It simply means that you have a higher chance to get good or great
-        items when killing monsters or digging.
-        'Good' means that an item has enchantments to hitchance, damage or
-        armour class. How much exactly it has isn't affected by luck (well, it
-        is by your personal ooc luck I guess :-p).
+        Find 'better items' means that you have a higher chance to get good or
+        great items instead of normal (ie unenchanted) items when killing
+        monsters or find an item from digging.
+        'Good' means that an item has enchantments to hit-chance, damage or
+        armour class, ie (+to-hit, +to-dam) and [+to-ac]. How much exactly it
+        has isn't affected by luck (well, it is by your personal ooc luck in
+        real-life I guess :-p).
         'Great' means that an item has ego powers or is an artifact. Luck does
-        not affect how great its ego power or artifact abilities will be!
-        Note: Luck has NO effect on 'acquirement', 'artifact creation' or on
-        items you obtain from chests.
-        Note: Luck does NOT affect which base item type drops, ie whether it is
+        not affect how great its ego powers or artifact abilities are though.
+        Luck has NO effect on 'acquirement', 'artifact creation' or on items
+        you obtain from chests.
+        Also luck does NOT affect which base item type drops, ie whether it is
         a dragon scale mail or a cloth hat.
 NO_MAGIC ('Anti-magic shell')
         Raises your saving throw to 95%, making you nearly immune to malicious
