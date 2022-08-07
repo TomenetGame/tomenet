@@ -2418,7 +2418,8 @@ bool askfor_aux(char *buf, int len, char mode) {
 					if (!search_history_aux((*sp_msg)[j2], buf)) continue;
 
 					/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
-					c_prt(TERM_YELLOW, format("%s: %s", buf, (*sp_msg)[j2]), y, x);
+					c_prt(TERM_YELLOW, format("%s: ", buf), y, x);
+					c_prt(TERM_L_BLUE, format("%s", (*sp_msg)[j2]), y, x + 2 + strlen(buf));
 					sp_iter = j;
 					break;
 				}
@@ -2589,7 +2590,8 @@ bool askfor_aux(char *buf, int len, char mode) {
 				if (!search_history_aux((*sp_msg)[j2], buf)) continue;
 
 				/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
-				c_prt(TERM_YELLOW, format("%s: %s", buf, (*sp_msg)[j2]), y, x);
+				c_prt(TERM_YELLOW, format("%s: ", buf), y, x);
+				c_prt(TERM_L_BLUE, format("%s", (*sp_msg)[j2]), y, x + 2 + strlen(buf));
 				sp_iter = j;
 				break;
 			}
@@ -2602,7 +2604,8 @@ bool askfor_aux(char *buf, int len, char mode) {
 					if (!search_history_aux((*sp_msg)[j2], buf)) continue;
 
 					/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
-					c_prt(TERM_YELLOW, format("%s: %s", buf, (*sp_msg)[j2]), y, x);
+					c_prt(TERM_YELLOW, format("%s: ", buf), y, x);
+					c_prt(TERM_L_BLUE, format("%s", (*sp_msg)[j2]), y, x + 2 + strlen(buf));
 					sp_iter = j;
 					break;
 				}
@@ -2711,7 +2714,8 @@ bool askfor_aux(char *buf, int len, char mode) {
 				if (!search_history_aux((*sp_msg)[j2], buf)) continue;
 
 				/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
-				c_prt(TERM_YELLOW, format("%s: %s", buf, (*sp_msg)[j2]), y, x);
+				c_prt(TERM_YELLOW, format("%s: ", buf), y, x);
+				c_prt(TERM_L_BLUE, format("%s", (*sp_msg)[j2]), y, x + 2 + strlen(buf));
 				sp_iter = j;
 				break;
 			}
