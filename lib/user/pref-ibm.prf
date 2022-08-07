@@ -168,3 +168,26 @@ P:^_Cx93\r
 # Standard shooting macro to help out newbie archers/rangers
 A:\e)*tf-
 H:^_x3B\r
+
+
+# Added for 4.8.1: Standard quaff/read macros + an universal targetting-enabled macro
+A:\e)q1
+H:^_x3C\r
+
+A:\e)q2
+H:^_x3D\r
+
+A:\e)q3
+H:^_x3E\r
+
+A:\e)r1
+H:^_x3F\r
+
+A:\e)r2
+H:^_x40\r
+
+A:\e)r3
+H:^_x41\r
+
+A:\e)*t/1-
+H:^_x58\r

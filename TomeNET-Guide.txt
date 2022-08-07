@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 5. August 2022 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 7. August 2022 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.8.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -76,7 +76,7 @@ Contents
     (3.4b)  Item basics
     (3.4c)  Item trading rules and exceptions
     (3.5)   Preparing the first time for fighting enemies
-    (3.6)   Creating basic macros & inscribing items (IMPORTANT)
+    (3.6)   Creating basic macros & inscribing items, predefined macros (READ!)
     (3.7)   Creating macros for ranged attacks & abilities (spells)
     (3.7a)  Ability codes [contained within (3.7)]
     (3.7b)  Quick'n'dirty macros
@@ -5634,8 +5634,8 @@ could check out chapter (7) Tactics & Strategy.
 
 
 
-(3.6) Creating basic macros & inscribing items
-----------------------------------------------
+(3.6) Creating basic macros & inscribing items, predefined macros
+-----------------------------------------------------------------
 Macros are absolutely obligatory, you _will_ need them, so read this
 carefully and if something isn't explained well, ask your fellow players to
 clarify.
@@ -5656,15 +5656,76 @@ To comply with this need, a macro system has been implemented, allowing you to
 program freely choosable keys of your keyboard to perform a series of other
 keypresses or commands when pressed. These macros can also interact with
 certain items of your inventory by using "item inscriptions". You can inscribe
-items (usually with the '{' key) as often as you like to, the inscription is
-for example useful if an item has special abilities that you want to remember
-by looking at it. To remove an inscription, use the } key.
-You would for example inscribe an Elven Cord Armor that you know helps you to
-resist the effects of poison. Then it might look like this in your inventory:
-Before: d) an Elven Cord Armor [6,+20] (+1) {+,10}
-After:  d) an Elven Cord Armor [6,+20] (+1) {+,10} {resists poison!}
+items (with the '{' key) as often as you like to.
+To remove an inscription again, use the '}' key.
+
+Note that there is a fast method to create macros: The Macro Wizard.
+If you don't want to dive into macro creation too much, just use it instead to
+easily create macros for you. Press % to enter the macro menu and then z to
+start the wizard, which will guide you through macro creation in easy steps.
+Don't forget to 's' save your macros afterwards. The game will suggest a
+filename that is your character's name with an attached '.prf' suffix, you
+should just press ENTER key to accept that suggestion, as this will make the
+macro file automatically loaded whenever you log on with that character.
+See (3.7c) for more info on the macro wizard.
+
+
+Predefined macros:
+------------------
+There are also a few predefined macros on some keys, so you can use these
+right from the start without creating any additional macros of your own.
+Some require you to inscribe an item to use with it (press '{' to inscribe):
+
+Key         Purpose of the Macro                    The macro   Inscription
+                                                    itself      on the item(s)
+------------------------------------------------------------------------------
+F1  fire with ranged weapon at closest target       \e)*tf-
+    (you can inscribe your ammunition:  !=  to pick it up automatically)
+
+F2  quaff a potion inscribed @q1                    \e)q1           @q1
+F3  quaff a potion inscribed @q2                    \e)q2           @q2
+F4  quaff a potion inscribed @q3                    \e)q3           @q3
+F5  read scroll inscribed @r1                       \e)r1           @r1
+F6  read scroll inscribed @r1                       \e)r2           @r2
+F7  read scroll inscribed @r1                       \e)r3           @r3
+F12 use any kind of item.                           \e)*t/1-        @/1
+    If it's a ranged magic device then use it on the closest hostile target.
+    (Your magic device ability determines your chance of successfully using a
+    magic device, so it won't take you too many tries to activate, see (6.10))
+
+;   Guide search                                    :/?\s
+[   Repeat last chat input                          :^P\r
+X   Swap equipable items inscribed @x0              w0
+,   Reply to last private message                   :+:
+
+For example warriors will start with a potion of berserk strength. It is very
+typical for newbies to completely forget about using it. So first thing you
+can do is to press '{' key to inscribe the potion, when prompted type in this
+inscription for it:   @q2
+Now whenever you press the F3 key (compare the table above) your character will
+try to quaff a potion inscribed @q2, which will be your berserk strength potion
+or any other potion you inscribe @q2, for example a speed potion. Note that
+only the first item that matches the inscription is used, so you cannot drink
+multiple potions at once this way by inscribing them all in the same way.
+If your character finds (or buys) a scroll of phase door, just inscribe it @r1
+and voila, likewise you will be able to phase by pressing the F5 key then.
+And the most tricky one maybe, the one on the F12 key:
+It works with any kind of item. If you inscribe food @/1 then pressing F12
+will eat it. If you inscribe a potion or scroll, then it will quaff or read it.
+But to make the most use of it, you probably want to inscribe a magic device
+you find, like a wand or a staff. If used with wands (or other items that
+require a target), this macro will automatically target the closest monster.
+
+
+---
+Continuing about manual macro creation..
+
+A quick note about inscribing items:
+Inscriptions aren't just used for macros, but also just for yourself to help
+you remember properties of an item.
 Inscriptions don't just help you to remember the abilities of certain items,
 they can also interact with the macro system and other aspects of the game.
+Chapter (0.3) has a list of important inscriptions.
 
 Usually if you want to quaff your potion of Heroism or read a scroll of Phase
 Door, you would press keys 'q' 'c', q for quaff, then c for third inventory
