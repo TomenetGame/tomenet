@@ -4878,6 +4878,23 @@ int handle_censor(char *line) return 0;
 void handle_punish(int Ind, int level) return 0;
 #endif
 
+/* Helper function for player_talk_aux():
+   Allow privileged player accounts of administrators to address hidden dungeon masters via private chat */
+static bool may_address_dm(player_type *p_ptr) {
+	/* DMs aren't hidden on this server? */
+	if (!cfg.secret_dungeon_master) return TRUE;
+	/* Need to be privileged, simply to avoid someone creating such a name for the purpose of circumventing the rules. */
+	if (!p_ptr->privileged) return FALSE;
+	/* List of admins' player accounts */
+	if (strcasecmp(p_ptr->accountname, "moltor")
+	    && strcasecmp(p_ptr->accountname, "kurzel")
+	    && strcasecmp(p_ptr->accountname, "the_sandman")
+	    && strcasecmp(p_ptr->accountname, "faith")
+	    && strcasecmp(p_ptr->accountname, "mikaelh")
+	    && strcasecmp(p_ptr->accountname, "c. blue")) return FALSE;
+	/* Pass */
+	return TRUE;
+}
 
 /*
  * A message prefixed by a player name is sent only to that player.
@@ -6089,14 +6106,7 @@ int name_lookup_loose(int Ind, cptr name, u16b party, bool include_account_names
 			if (q_ptr->conn == NOT_CONNECTED) continue;
 
 			/* let admins chat */
-			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr)
-			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
-			    && strcasecmp(p_ptr->accountname, "kurzel")
-			    && strcasecmp(p_ptr->accountname, "moltor")
-			    && strcasecmp(p_ptr->accountname, "the_sandman")
-			    && strcasecmp(p_ptr->accountname, "faith")
-			    && strcasecmp(p_ptr->accountname, "mikaelh")
-			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
+			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr) && !may_address_dm(p_ptr)) continue;
 
 			/* Check name */
 			if (!strncasecmp(q_ptr->name, name, len)) {
@@ -6129,14 +6139,7 @@ int name_lookup_loose(int Ind, cptr name, u16b party, bool include_account_names
 			if (q_ptr->conn == NOT_CONNECTED) continue;
 
 			/* let admins chat */
-			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr)
-			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
-			    && strcasecmp(p_ptr->accountname, "kurzel")
-			    && strcasecmp(p_ptr->accountname, "moltor")
-			    && strcasecmp(p_ptr->accountname, "the_sandman")
-			    && strcasecmp(p_ptr->accountname, "faith")
-			    && strcasecmp(p_ptr->accountname, "mikaelh")
-			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
+			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr) && !may_address_dm(p_ptr)) continue;
 
 			/* Check name */
 			if (!strncasecmp(q_ptr->accountname, name, len)) {
@@ -6254,14 +6257,7 @@ int name_lookup(int Ind, cptr name, u16b party, bool include_account_names, bool
 			if (q_ptr->conn == NOT_CONNECTED) continue;
 
 			/* let admins chat */
-			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr)
-			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
-			    && strcasecmp(p_ptr->accountname, "kurzel")
-			    && strcasecmp(p_ptr->accountname, "moltor")
-			    && strcasecmp(p_ptr->accountname, "the_sandman")
-			    && strcasecmp(p_ptr->accountname, "faith")
-			    && strcasecmp(p_ptr->accountname, "mikaelh")
-			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
+			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr) && !may_address_dm(p_ptr)) continue;
 
 			/* Check name */
 			if (!strcasecmp(q_ptr->name, name)) {
@@ -6282,14 +6278,7 @@ int name_lookup(int Ind, cptr name, u16b party, bool include_account_names, bool
 			if (q_ptr->conn == NOT_CONNECTED) continue;
 
 			/* let admins chat */
-			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr)
-			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
-			    && strcasecmp(p_ptr->accountname, "kurzel")
-			    && strcasecmp(p_ptr->accountname, "moltor")
-			    && strcasecmp(p_ptr->accountname, "the_sandman")
-			    && strcasecmp(p_ptr->accountname, "faith")
-			    && strcasecmp(p_ptr->accountname, "mikaelh")
-			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
+			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr) && !may_address_dm(p_ptr)) continue;
 
 			/* Check name */
 			if (!strcasecmp(q_ptr->accountname, name)) {
