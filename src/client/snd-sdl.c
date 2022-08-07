@@ -2619,11 +2619,11 @@ errr re_init_sound_sdl(void) {
 	weather_channel = -1;
 	weather_current = -1;
 	weather_current_vol = -1;
-	weather_channel_volume = 0;
+	weather_channel_volume = 100;
 
 	ambient_channel = -1;
 	ambient_current = -1;
-	ambient_channel_volume = 0;
+	ambient_channel_volume = 100;
 
 	//weather_particles_seen, weather_sound_change, weather_fading, ambient_fading;
 	//wind_noticable = FALSE;
