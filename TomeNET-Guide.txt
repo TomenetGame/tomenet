@@ -5688,6 +5688,7 @@ F4  quaff a potion inscribed @q3                    \e)q3           @q3
 F5  read scroll inscribed @r1                       \e)r1           @r1
 F6  read scroll inscribed @r1                       \e)r2           @r2
 F7  read scroll inscribed @r1                       \e)r3           @r3
+F11 throw item inscribed {bad} at closest monster   \e)*tv@bad\r-   {bad}
 F12 use any kind of item.                           \e)*t/1-        @/1
     If it's a ranged magic device then use it on the closest hostile target.
     (Your magic device ability determines your chance of successfully using a
@@ -5709,6 +5710,9 @@ only the first item that matches the inscription is used, so you cannot drink
 multiple potions at once this way by inscribing them all in the same way.
 If your character finds (or buys) a scroll of phase door, just inscribe it @r1
 and voila, likewise you will be able to phase by pressing the F5 key then.
+Now the F11 key macro actually throws an item that is inscribed "{bad}" at the
+closest monster. This can be used to throw bad potions that you don't want to
+drink and that can't be sold at monsters, to possibly affect them negatively.
 And the most tricky one maybe, the one on the F12 key:
 It works with any kind of item. If you inscribe food @/1 then pressing F12
 will eat it. If you inscribe a potion or scroll, then it will quaff or read it.
