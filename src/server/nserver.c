@@ -400,6 +400,7 @@ static void Init_receive(void) {
 	playing_receive[PKT_SI_MOVE]		= Receive_si_move;
 	playing_receive[PKT_SI_REMOVE]		= Receive_si_remove;
 #endif
+	playing_receive[PKT_VERSION]		= Receive_version;
 }
 
 static int Init_setup(void) {
@@ -9573,6 +9574,21 @@ int Send_screenflash(int Ind) {
 	return 1;
 }
 
+int Send_version(int Ind) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for version (%d.%d.%d)",
+			Ind, connp->state, connp->id));
+		return 0;
+	}
+
+	if (is_newer_than(&connp->version, 4, 8, 0, 0, 0, 0))
+		return Packet_printf(&connp->c, "%c", PKT_VERSION);
+	return 1;
+}
+
 
 /* --------------------------------------------------------------------------*/
 
@@ -11131,7 +11147,6 @@ static int Receive_target_friendly(int ind) {
 
 	return 1;
 }
-
 
 static int Receive_inscribe(int ind) {
 	connection_t *connp = Conn[ind];
@@ -14286,6 +14301,27 @@ static int Receive_si_remove(int ind) {
 	return 1;
 }
 #endif
+
+static int Receive_version(int ind) {
+	connection_t *connp = Conn[ind];
+	player_type *p_ptr = NULL;
+	char ch;
+	int n;
+	char version[MAX_CHARS], os_version[MAX_CHARS];
+
+	if (connp->id != -1) p_ptr = Players[GetInd[connp->id]];
+
+	if ((n = Packet_scanf(&connp->r, "%c%s%s", &ch, version, os_version)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return n;
+	}
+	/* paranoia? */
+	version[MAX_CHARS - 1] = '\0';
+
+	if (p_ptr) s_printf("PKT_VERSION <%s> (%s): %s // %s\n", p_ptr->name, p_ptr->accountname, version, os_version);
+
+	return 1;
+}
 
 
 

@@ -774,7 +774,7 @@ extern int stricmp(cptr a, cptr b);
 /* extern int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, ...); */
 #endif
 
-extern cptr longVersion;
+extern cptr longVersion, os_version;
 extern cptr shortVersion;
 
 /* Defined as TRUE in src/client/variable.c and FALSE in src/server/variable.c */

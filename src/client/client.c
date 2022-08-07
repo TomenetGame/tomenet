@@ -982,6 +982,9 @@ int main(int argc, char **argv) {
 	/* Set default values */
 	default_set();
 
+	/* Get file paths as early as possible */
+	init_stuff();
+
 	/* Acquire the version strings */
 	version_build();
 
@@ -1133,6 +1136,7 @@ int main(int argc, char **argv) {
 	if (modus == 1 || modus < 0) {
 		/* Dump usage information */
 		puts(longVersion);
+		puts(format("Running on %s.", os_version));
 		puts("Usage  : tomenet [options] [servername]");
 		puts("Example: tomenet -lMorgoth MorgyPass -p18348 europe.tomenet.eu");
 		puts("       : tomenet -f.myrc -lOlorin_archer");

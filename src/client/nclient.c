@@ -196,6 +196,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_SI_MOVE]	= Receive_subinven;
 #endif
 	receive_tbl[PKT_SPECIAL_LINE_POS]	= Receive_special_line_pos;
+	receive_tbl[PKT_VERSION]		= Receive_version;
 }
 
 
@@ -5447,6 +5448,16 @@ int Receive_whats_under_you_feet(void) {
 	return 1;
 }
 
+int Receive_version(void) {
+	int n;
+	char ch;
+
+	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
+	Send_version();
+	return 1;
+}
+
+
 
 int Send_search(void) {
 	int	n;
@@ -5996,6 +6007,7 @@ int Send_account_info(void) {
 
 int Send_change_password(char *old_pass, char *new_pass) {
 	int n;
+
 	if (!is_newer_than(&server_version, 4, 4, 2, 2, 0, 0)) return 1;
 	if ((n = Packet_printf(&wbuf, "%c%s%s", PKT_CHANGE_PASSWORD, old_pass, new_pass)) <= 0) return n;
 	return 1;
@@ -6017,6 +6029,14 @@ int Send_subinven_remove(int item) {
 	return 1;
 }
 #endif
+
+int Send_version(void) {
+	int n;
+
+	if (!is_newer_than(&server_version, 4, 8, 0, 0, 0, 0)) return 1;
+	if ((n = Packet_printf(&wbuf, "%c%s%s", PKT_VERSION, longVersion, os_version)) <= 0) return n;
+	return 1;
+}
 
 
 

@@ -3892,6 +3892,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 	u32b seed;
 
 
+	/* Get file paths as early as possible */
+	init_stuff();
+
 	/* make version strings. */
 	version_build();
 
@@ -3989,6 +3992,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 					/* Attempt to print out some usage information */
 #if 0 /* we don't have the console attached anymore */
 					puts(longVersion);
+					puts(format("Running on %s.", os_version));
 					puts("Usage  : tomenet [options] [servername]");
 					puts("Example: tomenet -lMorgoth MorgyPass -p18348 europe.tomenet.eu");
 					puts("  -h                 Display this help");
@@ -4006,8 +4010,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 					puts("  -m                 skip motd (message of the day) on login");
 					puts("  -v                 save chat log on exit instead of asking");
 #else
-					plog(format("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
+					plog(format("%s\nRunning on %s.\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
 					    longVersion,
+					    os_version,
 					    "Usage  : tomenet [options] [servername]",
 					    "Example: tomenet -lMorgoth MorgyPass",
 					    "                 -p18348 europe.tomenet.eu",

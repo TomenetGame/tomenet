@@ -5864,7 +5864,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			/* erase items and monsters */
-			else if (prefix(messagelc, "/clear-level") || prefix(messagelc, "/clv")) {
+			else if ((prefix(messagelc, "/clear-level") || prefix(messagelc, "/clv")) && !prefix(messagelc, "/clver")) {
 				bool full = (tk);
 
 				/* Wipe even if town/wilderness */
@@ -12109,6 +12109,22 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				i = system(format("ping -c 1 -w 1 %s > __ipping.tmp &", ip_addr));
 
 				fake_waitpid_ping = p_ptr->id; /* Poll result to admin */
+				return;
+			}
+			else if (prefix(messagelc, "/clver")) { /* Request version details (long version) from a client */
+				if (!tk) {
+					msg_print(Ind, "\377oUsage: /clver <character name>");
+					return;
+				}
+
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
+				if (!j) {
+					msg_print(Ind, "\377yCharacter not online.");
+					return;
+				}
+
+				Send_version(Ind);
+
 				return;
 			}
 		}

@@ -268,6 +268,7 @@
  #define PKT_SI_REMOVE		205
 //#endif
 #define PKT_SPECIAL_LINE_POS	206
+#define PKT_VERSION		207
 
 
 /*

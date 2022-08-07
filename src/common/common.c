@@ -270,11 +270,14 @@ errr path_build(char *buf, int max, cptr path, cptr file) {
 /*
  * version strings
  */
-cptr longVersion;
+cptr longVersion, os_version;
 cptr shortVersion;
 
 void version_build() {
-	char temp[256];
+	char temp[256], buf[1024];
+
+	int size;
+	FILE *fff;
 
 	/* Append the version number */
 	sprintf(temp, "%s %d.%d.%d.%d%s", TOMENET_VERSION_SHORT, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, SERVER_VERSION_TAG);
@@ -303,6 +306,26 @@ void version_build() {
 	    ));
 
 	longVersion = string_make(temp);
+
+	/* Get OS version too */
+	path_build(buf, 1024, ANGBAND_DIR_USER, "__temp");
+#ifndef WINDOWS
+	size = system(format("uname -a > %s", buf));
+#else
+	//(void)system("uname -a"); /* doesn't work on WINE */
+	size = system(format("cmd /c ver > %s", buf)); /* safer to work everywhere? even works on WINE at least */
+#endif
+	(void)size;
+	fff = my_fopen(buf, "r");
+	if (fff) {
+		if (!fgets(temp, 256, fff)) os_version = "<empty>";
+		else {
+			temp[strlen(temp) - 1] = 0; //trim newline
+			os_version = string_make(temp);
+		}
+		fclose(fff);
+	} else os_version = "<unavailable>";
+	remove(buf);
 }
 
 

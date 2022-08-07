@@ -182,6 +182,8 @@ static int Receive_si_move(int ind);
 static int Receive_si_remove(int ind);
 #endif
 
+static int Receive_version(int ind);
+
 
 int Setup_net_server(void);
 bool Destroy_connection(int ind, char *reason);

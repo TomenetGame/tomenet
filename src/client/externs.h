@@ -883,6 +883,7 @@ extern int Send_audio(void);
 extern int Send_subinven_move(int item);
 extern int Send_subinven_remove(int item);
 #endif
+extern int Send_version(void);
 
 /* skills.c */
 extern s16b get_skill(int skill);
@@ -923,7 +924,7 @@ extern int get_inven_pval(int Ind, int inven_slot);
 
 /* common/common.c */
 extern errr path_build(char *buf, int max, cptr path, cptr file);
-extern cptr longVersion;
+extern cptr longVersion, os_version;
 extern cptr shortVersion;
 extern void version_build(void);
 extern int find_realm(int book);
