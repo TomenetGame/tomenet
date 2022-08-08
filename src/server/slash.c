@@ -12123,7 +12123,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 
-				Send_version(Ind);
+				Send_version(j);
 
 				return;
 			}
