@@ -6197,6 +6197,9 @@ Chain_Macro:
 							case '\010': /* backspace */
 								i = -2; /* leave */
 								break;
+							case ':': /* Allow chatting */
+								cmd_message();
+								continue;
 							case KTRL('T'):
 								/* Take a screenshot */
 								xhtml_screenshot("screenshot????");
@@ -6253,6 +6256,9 @@ Chain_Macro:
 							case '\010': /* backspace */
 								i = -2; /* leave */
 								break;
+							case ':': /* Allow chatting */
+								cmd_message();
+								continue;
 							case KTRL('T'):
 								/* Take a screenshot */
 								xhtml_screenshot("screenshot????");
@@ -6299,24 +6305,27 @@ Chain_Macro:
 							/* Hack: Hide the cursor */
 							Term->scr->cx = Term->wid;
 							Term->scr->cu = 1;
-							switch(choice = inkey()) {
-								case ESCAPE:
-								case '\010': /* backspace */
+							switch (choice = inkey()) {
+							case ESCAPE:
+							case '\010': /* backspace */
+								i = -2; /* flag exit */
+								break; /* exit switch */
+							case ':': /* Allow chatting */
+								cmd_message();
+								break;
+							case KTRL('T'):
+								/* Take a screenshot */
+								xhtml_screenshot("screenshot????");
+								break;
+							default:
+								i = (islower(choice) ? A2I(choice) : -1);
+								if (i < 0 || i > exec_lua(0, format("return rcraft_max(%d)", u))) {
 									i = -2; /* flag exit */
 									break; /* exit switch */
-								case KTRL('T'):
-									/* Take a screenshot */
-									xhtml_screenshot("screenshot????");
-									break;
-								default:
-									i = (islower(choice) ? A2I(choice) : -1);
-									if (i < 0 || i > exec_lua(0, format("return rcraft_max(%d)", u))) {
-										i = -2; /* flag exit */
-										break; /* exit switch */
-									}
-									u |= exec_lua(0, format("return rcraft_bit(%d,%d)", u, i));
-									strcat(buf, format("%c", choice)); /* build macro */
-									break;
+								}
+								u |= exec_lua(0, format("return rcraft_bit(%d,%d)", u, i));
+								strcat(buf, format("%c", choice)); /* build macro */
+								break;
 							}
 							if (i == -2) break; /* exit while */
 						}
@@ -6392,6 +6401,9 @@ Chain_Macro:
 							case '\010': /* backspace */
 								i = -2; /* leave */
 								break;
+							case ':': /* Allow chatting */
+								cmd_message();
+								continue;
 							case KTRL('T'):
 								/* Take a screenshot */
 								xhtml_screenshot("screenshot????");
@@ -6522,6 +6534,9 @@ Chain_Macro:
 							case '\010': /* backspace */
 								i = -2; /* leave */
 								break;
+							case ':': /* Allow chatting */
+								cmd_message();
+								continue;
 							case KTRL('T'):
 								/* Take a screenshot */
 								xhtml_screenshot("screenshot????");
@@ -6570,6 +6585,9 @@ Chain_Macro:
 								case '\010': /* backspace */
 									i = -2; /* leave */
 									break;
+								case ':': /* Allow chatting */
+									cmd_message();
+									continue;
 								case KTRL('T'):
 									/* Take a screenshot */
 									xhtml_screenshot("screenshot????");
@@ -6589,6 +6607,9 @@ Chain_Macro:
 								switch (choice = inkey()) {
 								case ESCAPE:
 								case 'p':
+								case ':': /* Allow chatting */
+									cmd_message();
+									continue;
 								case '\010': /* backspace */
 									i = -2; /* leave */
 									break;
@@ -6621,7 +6642,7 @@ Chain_Macro:
 
 					case mw_common:
 						l = 8;
-						Term_putstr(10, l++, -1, TERM_GREEN, "Please choose one of these common commands and functions:");
+						//Term_putstr(10, l++, -1, TERM_GREEN, "Please choose one of these common commands and functions:"); --make room for one more entry instead
 						Term_putstr(13, l++, -1, TERM_L_GREEN, "a) reply to last incoming whisper                 :+:");
 						Term_putstr(13, l++, -1, TERM_L_GREEN, "b) repeat previous chat command or message        :^P\\r");
 						Term_putstr(13, l++, -1, TERM_L_GREEN, "c) toggle AFK state                               :/afk\\r");
@@ -6641,8 +6662,9 @@ Chain_Macro:
 							Term_putstr(13, l++, -1, TERM_L_GREEN, "l) swap-item #2 (inscribe two items '@x1')        \\e)x1");
 							Term_putstr(13, l++, -1, TERM_L_GREEN, "m) swap-item #3 (inscribe two items '@x2')        \\e)x2");
 						}
-						Term_putstr(13, l++, -1, TERM_L_GREEN, "n) Enter/leave the PvP arena (PvP mode only)      :/pvp\\r");
+						Term_putstr(13, l++, -1, TERM_L_GREEN, "n) enter/leave the PvP arena (PvP mode only)      :/pvp\\r");
 						Term_putstr(13, l++, -1, TERM_L_GREEN, "o) throw an item tagged {bad} at closest monster  \\e)*tv@{bad}\\r-");
+						Term_putstr(13, l++, -1, TERM_L_GREEN, "p) use an item inscribed '@/1' (w/ or /wo target) \\e)*t/1-");
 						/* Hack: Hide the cursor */
 						Term->scr->cx = Term->wid;
 						Term->scr->cu = 1;
@@ -6650,17 +6672,20 @@ Chain_Macro:
 						while (TRUE) {
 							switch (choice = inkey()) {
 							case ESCAPE:
-							case 'p':
+							//case 'p': -- we have a) to p) available..
 							case '\010': /* backspace */
 								i = -2; /* leave */
 								break;
+							case ':': /* Allow chatting */
+								cmd_message();
+								continue;
 							case KTRL('T'):
 								/* Take a screenshot */
 								xhtml_screenshot("screenshot????");
 								continue;
 							default:
 								/* invalid action -> exit wizard */
-								if (choice < 'a' || choice > 'o') {
+								if (choice < 'a' || choice > 'p') {
 									//i = -1;
 									continue;
 								}
@@ -6695,6 +6720,9 @@ Chain_Macro:
 									case '\010': /* backspace */
 										i = -2; /* leave */
 										break;
+									case ':': /* Allow chatting */
+										cmd_message();
+										continue;
 									case KTRL('T'):
 										/* Take a screenshot */
 										xhtml_screenshot("screenshot????");
@@ -6761,6 +6789,7 @@ Chain_Macro:
 							break;
 						case 'n': strcpy(buf2, ":/pvp\\r"); break;
 						case 'o': strcpy(buf2, "\e)*tv@{bad}\r-"); break;
+						case 'p': strcpy(buf2, "\e)*t/1-"); break;
 						}
 
 						/* hack before we exit: remember menu choice 'common' */
@@ -6783,6 +6812,9 @@ Chain_Macro:
 							case '\010': /* backspace */
 								i = -2; /* leave */
 								break;
+							case ':': /* Allow chatting */
+								cmd_message();
+								continue;
 							case KTRL('T'):
 								/* Take a screenshot */
 								xhtml_screenshot("screenshot????");
@@ -6841,6 +6873,9 @@ Chain_Macro:
 							case '\010': /* backspace */
 								i = -2; /* leave */
 								break;
+							case ':': /* Allow chatting */
+								cmd_message();
+								continue;
 							case KTRL('T'):
 								/* Take a screenshot */
 								xhtml_screenshot("screenshot????");
@@ -7217,7 +7252,7 @@ Chain_Macro:
 					/* ask about replacing '*t' vs '-' (4.4.6) vs '+' (4.4.6b) */
 					if (strstr(buf2, "*t")
 					    && choice != mw_mimicidx
-					    && choice != mw_common
+					    && choice != mw_common /* *t- is used there, we'll assume it always should be method a) */
 					    && choice != mw_load /* (paranoia) */
 					    && choice != mw_custom
 					    ) {
@@ -7248,6 +7283,9 @@ Chain_Macro:
 								case '\010': /* backspace */
 									i = -2; /* leave */
 									break;
+								case ':': /* Allow chatting */
+									cmd_message();
+									continue;
 								case KTRL('T'):
 									/* Take a screenshot */
 									xhtml_screenshot("screenshot????");
@@ -7293,6 +7331,9 @@ Chain_Macro:
 									case '\010': /* backspace */
 										i = -3; /* leave */
 										break;
+									case ':': /* Allow chatting */
+										cmd_message();
+										continue;
 									case KTRL('T'):
 										/* Take a screenshot */
 										xhtml_screenshot("screenshot????");
