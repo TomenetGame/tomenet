@@ -318,7 +318,14 @@ void version_build() {
 	(void)size;
 	fff = my_fopen(buf, "r");
 	if (fff) {
+#ifndef WINDOWS
 		if (fgets(temp, 256, fff) != temp) os_version = "<empty>";
+#else /* ver returns 1 blank line first -_- */
+		if (fgets(temp, 256, fff) != temp) os_version = "<empty>";
+		else temp[strlen(temp) - 1] = 0; //trim newline
+		/* If 1st line is empty, grab 2nd line instead */
+		if (!temp[0] && fgets(temp, 256, fff) != temp) os_version = "<empty>";
+#endif
 		else {
 			temp[strlen(temp) - 1] = 0; //trim newline
 			os_version = string_make(temp);
