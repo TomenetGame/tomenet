@@ -318,7 +318,7 @@ void version_build() {
 	(void)size;
 	fff = my_fopen(buf, "r");
 	if (fff) {
-		if (!fgets(temp, 256, fff)) os_version = "<empty>";
+		if (fgets(temp, 256, fff)) os_version = "<empty>";
 		else {
 			temp[strlen(temp) - 1] = 0; //trim newline
 			os_version = string_make(temp);
