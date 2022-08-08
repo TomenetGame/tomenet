@@ -9586,6 +9586,7 @@ int Send_version(int Ind) {
 
 	if (is_newer_than(&connp->version, 4, 8, 0, 0, 0, 0))
 		return Packet_printf(&connp->c, "%c", PKT_VERSION);
+	else s_printf("PKT_VERSION: Client version <= 4.8.0.0.0.0 not eligible.\n");
 	return 1;
 }
 
