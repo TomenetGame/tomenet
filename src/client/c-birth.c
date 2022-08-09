@@ -2364,7 +2364,7 @@ bool get_server_name(void) {
 			break;
 		}
 		my_fclose(fff);
-		remove(buf);
+		remove(buf); //apparently doesn't work on windows, wild guess: because ping /? is suddenly async and __ping.tmp is still opened? wtf.. We remedy this by another remove() after leaving the meta screen.
 	}
 #endif
 
@@ -2497,13 +2497,33 @@ bool get_server_name(void) {
 		/* Check for quit */
 		if (c == 'Q' || c == KTRL('Q')) {
 #ifdef META_PINGS
+			char path[1024];
+
 			/* Disable pinging. */
+			for (i = 0; i < meta_pings_servers; i++) {
+				/* Clean up temp files */
+				path_build(path, 1024, ANGBAND_DIR_USER, format("__ping_%s.tmp", meta_pings_server_name[i]));
+				remove(path);
+				remove(format("__ping_%s.bat", meta_pings_server_name[i]));
+			}
+			path_build(path, 1024, ANGBAND_DIR_USER, "__ping.tmp");
+			remove(path);
 			meta_pings_servers = 0;
 #endif
 			return enter_server_name();
 		} else if (c == ESCAPE) {
 #ifdef META_PINGS
+			char path[1024];
+
 			/* Disable pinging. */
+			for (i = 0; i < meta_pings_servers; i++) {
+				/* Clean up temp files */
+				path_build(path, 1024, ANGBAND_DIR_USER, format("__ping_%s.tmp", meta_pings_server_name[i]));
+				remove(path);
+				remove(format("__ping_%s.bat", meta_pings_server_name[i]));
+			}
+			path_build(path, 1024, ANGBAND_DIR_USER, "__ping.tmp");
+			remove(path);
 			meta_pings_servers = 0;
 #endif
 			quit(NULL);
@@ -2519,6 +2539,14 @@ bool get_server_name(void) {
 	}
 #ifdef META_PINGS
 	/* Disable pinging for the rest of the game again. */
+	for (i = 0; i < meta_pings_servers; i++) {
+		/* Clean up temp files */
+		path_build(path, 1024, ANGBAND_DIR_USER, format("__ping_%s.tmp", meta_pings_server_name[i]));
+		remove(path);
+		remove(format("__ping_%s.bat", meta_pings_server_name[i]));
+	}
+	path_build(path, 1024, ANGBAND_DIR_USER, "__ping.tmp");
+	remove(path);
 	meta_pings_servers = 0;
 #endif
 
