@@ -13046,7 +13046,7 @@ someone else kills Zu-Aon. Until then its owner can keep it indefinitely.
 ------------------------------------------------
 Items in your inventory can be destroyed if you are hit by an elemental
 attack. Those attacks can even have a very slim chance of damaging an item
-that you have equipped!
+that you have equipped (see (5.10a) subsequently)!
 
 There are two different cases, inventory items and equipped items:
 
@@ -13056,9 +13056,10 @@ There are two different cases, inventory items and equipped items:
 
  Having resistance will reduce the chance of inventory items getting destroyed
  somewhat. To protect your inventory effectively though you will need to have
- double resistance*.
- Being immune to an element will also protect all your inventory from any
- damage from that element.
+ double resistance (*), ie static + temporary resistance. This will protect
+ inventory items completely from getting destroyed by that particular element.
+ Being immune to an element will also protect all your inventory (and euqipment
+ too) from any damage from that element.
 
 -Equipped items can get damaged by certain elemental attacks (armour) or they
  can get damaged when used to attack an elementally affine monster (weapons) or
@@ -13069,7 +13070,7 @@ There are two different cases, inventory items and equipped items:
  Being immune to an element will also protect all your equipment from any
  damage from that element.
 
-(*"Double resistance": Static resistance gained from an equipped item or an
+(*) "Double resistance": Static resistance gained from an equipped item or an
  intrinsic character class/race resistance or a resistance acquired by training
  a skill, plus temporary resistance gained from either consumables (usually
  potions) or castable spells or activatable items that grant you temporary
@@ -13084,6 +13085,9 @@ fire damage.
 
 All artifacts, random and static ones, cannot be harmed by elemental attacks
 of any type.
+
+As a specialty, all items that resist or ignore disenchantment (eg Dark Swords)
+can also not be damaged by any elemental attacks!
 
 Here is a table of items and which elements they are susceptible against:
 "Impact" happens if you fall into a pit, smashing some potions on hitting the
@@ -13172,9 +13176,9 @@ hit by elemental magic. Blocking an attack with a shield may damage it in the
 same manner. Weapons may take damage if you hit an elemental monster with them.
 Armour might also rust from moving through water without a tarpaulin equipped.
 
-Armour/shields getting damage means a reduction of their +AC bonus by 1 point
-each time, while weapons getting damaged means a reduction of their +damage
-bonus by 1 point each time.
+Armour (and shields in archaic server version) getting damage means a reduction
+of their +AC bonus by 1 point each time, while weapons getting damaged means a
+reduction of their +damage bonus by 1 point each time.
 AC bonus won't drop lower than half the negative amount of the base AC.
 Damage bonus won't drop lower than -10.
 
