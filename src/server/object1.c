@@ -6793,6 +6793,9 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 	int index;
 	bool ID_spell1_found = FALSE, ID_spell1a_found = FALSE, ID_spell1b_found = FALSE, ID_spell2_found = FALSE, ID_spell3_found = FALSE, ID_spell4_found = FALSE;
 	byte failure = 0x0;
+#ifdef ENABLE_SUBINVEN
+	int k = -1, j;
+#endif
 
 	/* Look for ID / *ID* (the decadence) scrolls 1st */
 	for (index = 0; index < INVEN_PACK; index++) {
@@ -6867,8 +6870,47 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 #ifdef ENABLE_XID_MDEV
 	/* Check for ID rods/staves */
 	for (index = 0; index < INVEN_PACK; index++) {
-		i_ptr = &(p_ptr->inventory[index]);
-		if (!i_ptr->k_idx) continue;
+ #ifdef ENABLE_SUBINVEN
+		/* Currently operating on subinven instead of backpack? */
+		if (k != -1) {
+			/* Test first/subsequent item from the bag */
+			j++;
+
+			/* Reached end of bag? */
+			if (j == k) {
+				/* Proceed with actual backpack */
+				k = -1;
+				continue;
+			}
+
+			i_ptr = &p_ptr->subinventory[index][j];
+
+			/* Reached last available item in the bag? */
+			if (!i_ptr->tval) {
+				/* Proceed with actual backpack */
+				k = -1;
+				continue;
+			}
+
+			/* Don't advance backpack - ensure loop works once more */
+			index--;
+		} else {
+ #endif
+			i_ptr = &(p_ptr->inventory[index]);
+			if (!i_ptr->k_idx) continue;
+
+ #ifdef ENABLE_SUBINVEN
+			/* Antistatic Wrapping: Check for staves of perception/*perception*, rods of perception */
+			if (i_ptr->tval == TV_SUBINVEN) {
+				j = -1;
+				/* Do loop over the subinven now */
+				k = i_ptr->bpval;
+				/* Don't advance backpack - ensure loop works once more */
+				index--;
+				continue;
+			}
+		}
+ #endif
 
 		/* ID rod && ID staff (no *perc*) */
 		if (!(i_ptr->tval == TV_ROD && i_ptr->sval == SV_ROD_IDENTIFY &&
@@ -6893,6 +6935,10 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 		}
 
 		/* activate it later, at a point where we can use p_ptr->command_rep */
+ #ifdef ENABLE_SUBINVEN
+		if (k != -1) p_ptr->delayed_index = (index + 2) * 100 + j;
+		else
+ #endif
 		p_ptr->delayed_index = index;
 		p_ptr->delayed_spell = (i_ptr->tval == TV_ROD) ? -3 : -2;
 		p_ptr->current_item = slot;
