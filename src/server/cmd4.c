@@ -3963,22 +3963,22 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 	char buf[MAX_CHARS_WIDE];
 	int alim = cfg.acc_house_limit;
 	int ahou = acc_get_houses(p_ptr->accountname);
-	int lev = p_ptr->lev;
+	int lev = p_ptr->lev, dlev = getlevel(&p_ptr->wpos), instant_res_cost = dlev * dlev * 10 + 10;
 
 	msg_print(Ind, " ");
 	do_cmd_time(Ind);
 
 	if (!(p_ptr->mode & (MODE_EVERLASTING | MODE_PVP | MODE_NO_GHOST)))
 		msg_format(Ind, "You have %d %s left.", p_ptr->lives-1-1, p_ptr->lives-1-1 > 1 ? "resurrections" : "resurrection");
+
 #ifdef ENABLE_INSTANT_RES
- #ifdef INSTANT_RES_EXCEPTION
 	if (p_ptr->insta_res) {
+ #ifdef INSTANT_RES_EXCEPTION
 		if (in_netherrealm(&p_ptr->wpos)) msg_print(Ind, "Instant Resurrection does not work in the Nether Realm!");
-		else msg_print(Ind, "Instant Resurrection is active.");
-	}
- #else
-	if (p_ptr->insta_res) msg_print(Ind, "Instant Resurrection is active.");
+		else
  #endif
+		msg_format(Ind, "Instant Resurrection is active. (Would cost \377%c%d Au\377w at your current depth.)", (instant_res_cost > p_ptr->au + p_ptr->balance) ? 'R' : 'w', instant_res_cost);
+	}
 #endif
 
 	if (!(p_ptr->mode & MODE_DED_IDDC)) { //IDDC-exclusive characters may not own houses
