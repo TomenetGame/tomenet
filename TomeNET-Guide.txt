@@ -1446,7 +1446,8 @@ They all start with a slash '/' hence they're called slash commands:
             as mentioned above, when you're poisoned, suffering from a cut,
             waiting for your blacklist to run out, or any other matters.)
 
-            Additionally, /ex will also display the following information:
+            Additionally to your actions per turn, /ex will also display the
+            following information:
             - how many resurrections you have left, if you are a normal-mode
               character;
             - which of your auras are currently active (if you have points in
@@ -1461,6 +1462,12 @@ They all start with a slash '/' hence they're called slash commands:
             - pvp kills;
             - the in-game time and date, and whether it is day or night.
               (Note: If you want to know the server real-life time, use /time.)
+            - An indicator if instant resurrection is enabled, and also tell
+              you your fee for the current dungeon level (red if you don't have
+              sufficient funds) or, if not in a dungeon, display the maximum
+              dungeon level your funds would suffice for.
+            - How many houses you own and how many more you may own.
+            - Your chance of parrying and blocking.
             - how much more gold you may pick up before your character will
               automatically receive 1 experience point (to limit the amount
               of cash you can pick up before participating in certain events,
@@ -7546,6 +7553,13 @@ Temple          4       Player ghosts will be revived here, and receive some
                         Instant resurrection does not work in no-ghost dungeons
                         (ie ironman or hellish) and dungeon levels (ie floors
                         where Morgoth is) or in the Nether Realm.
+                        You can use the /ex command to check whether instant
+                        resurrection is enabled, it will tell you if so. Then
+                        it will additionally display the fee needed for your
+                        current dungeon level, displayed in red if you don't
+                        have enough funds. Or if you aren't in a dungeon it
+                        will instead display the maximum dungeon level your
+                        current funds would suffice for.
 
 Alchemist       5       Sells various scrolls and potions.
 

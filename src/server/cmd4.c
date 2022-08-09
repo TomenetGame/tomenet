@@ -3963,7 +3963,7 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 	char buf[MAX_CHARS_WIDE];
 	int alim = cfg.acc_house_limit;
 	int ahou = acc_get_houses(p_ptr->accountname);
-	int lev = p_ptr->lev, dlev = getlevel(&p_ptr->wpos), instant_res_cost = dlev * dlev * 10 + 10;
+	int lev = p_ptr->lev, dlev = getlevel(&p_ptr->wpos), instant_res_cost;
 
 	msg_print(Ind, " ");
 	do_cmd_time(Ind);
@@ -3977,7 +3977,42 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 		if (in_netherrealm(&p_ptr->wpos)) msg_print(Ind, "Instant Resurrection does not work in the Nether Realm!");
 		else
  #endif
-		msg_format(Ind, "Instant Resurrection is active. (Would cost \377%c%d Au\377w at your current depth.)", (instant_res_cost > p_ptr->au + p_ptr->balance) ? 'R' : 'w', instant_res_cost);
+		if (p_ptr->wpos.wz) {
+			instant_res_cost = dlev * dlev * 10 + 10;
+			msg_format(Ind, "Instant Resurrection is active. (Would cost \377%c%d Au\377w at your current depth.)", (instant_res_cost > p_ptr->au + p_ptr->balance) ? 'R' : 'w', instant_res_cost);
+		} else {
+			/* Start sqrt() approx with first estimate */
+			int l = 13 + p_ptr->lev / 5, k = 0, m = 200, lp = l;
+
+			instant_res_cost = (p_ptr->au + p_ptr->balance - 10) / 10;
+			/* Special case */
+ #if 0
+			if (instant_res_cost < 0) msg_print(Ind, "Instant Resurrection is active. (But you haven't got sufficient funds.)");
+ #else //optimize (luls): no need to calc dlev 0 insta-res, since it gives the same msg atm.
+			if (instant_res_cost < 1) msg_print(Ind, "Instant Resurrection is active. (But you haven't got sufficient funds.)");
+ #endif
+			else {
+				/* Cap at dlev 200 */
+				if (instant_res_cost > 200 * 200) instant_res_cost = 200 * 200;
+				while (TRUE) {
+					if (l * l < instant_res_cost) {
+						if (lp == l + 1) break; //don't oscillate but get best fit: smaller is ok, but must not exceed
+						lp = k = l;
+						l = (l + (m + 1)) / 2;
+					} else if (l * l > instant_res_cost) {
+						lp = m = l;
+						l = (l + k) / 2;
+					} else break;
+				}
+				if (l == 200) msg_print(Ind, "Instant Resurrection is active. (Your funds suffice for any dungeon level.)");
+ #if 0 //true, but silyl and not very exact..
+				else if (!l) msg_print(Ind, "Instant Resurrection is active. (Your funds suffice only for the Bree area.)");
+ #else //better maybe
+				else if (!l) msg_print(Ind, "Instant Resurrection is active. (But you haven't got sufficient funds.)");
+ #endif
+				else msg_format(Ind, "Instant Resurrection is active. (Your funds suffice for dungeon level %d.)", l);
+			}
+		}
 	}
 #endif
 
