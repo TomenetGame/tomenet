@@ -1706,7 +1706,7 @@ They all start with a slash '/' hence they're called slash commands:
             Attempts to enter a player store next to you, even if it's your own
             house. So this command is good for 'testing' your own store.
             Usually you simply enter another player's store by trying to enter
-            his house, which will preset you with the store screen.
+            his house, which will display the player's store screen.
             (See (4.10a) for more information about player stores.)
 
 /pvp        Carries you into/out of the PvP arena. Only usable by PvP mode
