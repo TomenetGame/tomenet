@@ -1786,7 +1786,7 @@ static void player_outfit(int Ind) {
 	/* Dwarves like to collect treasures */
 	else if (p_ptr->prace == RACE_DWARF) {
 		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_DETECT_GOLD));
-		o_ptr->number = 1;
+		o_ptr->number = rand_range(2, 3);
 		do_player_outfit();
 	}
 
