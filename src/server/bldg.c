@@ -2505,8 +2505,11 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 					p_ptr->insta_res = FALSE;
 					msg_print(Ind, "\377rYou decide that you do not require the Instant Resurrection service!");
 				} else {
+					//int instant_res_cost = p_ptr->lev * p_ptr->lev * 10 + 10;
+
 					p_ptr->insta_res = TRUE;
 					msg_print(Ind, "\377GYou engage the Instant Resurrection service.");
+					//msg_format(Ind, "(At depth %d it would cost \377%c%d\377- Au.)", p_ptr->lev, (instant_res_cost > p_ptr->au + p_ptr->balance) ? 'R' : 'w', instant_res_cost);
 				}
 			} else {
 				msg_print(Ind, "\377oInstant Resurrection is only available to everlasting characters.");
