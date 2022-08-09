@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 7. August 2022 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 9. August 2022 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.8.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -4558,10 +4558,14 @@ Also, exclusive IDDC characters will automatically be no-ghost mode and will
 receive an extra +25% score bonus (stacking with the no-ghost score bonus and a
 potential hard-mode bonus should the player choose hard-mode aka 'hellish').
 
-If you have already created a character of the same name before, you will be
-given the 'reincarnate' option in every stage of character creation, which
-allows you to just press the '#' key to make the same choices that you did on
-your previous character of that name.
+If you have already created a character of the same name before, you can choose
+reincarnation. This just means that the new character you are creating will be
+created exactly like the deceased incarnation of it, regarding class, race etc.
+There are two keys for reincarnation displayed on each step of the character
+creation process: '%' for auto-reincarnation and '#' for reincarnation just for
+the current step of the character creation process.
+Auto-reincarnation, ie pressing '%', is like pressing '#' in every step of the
+character creation process.
 
 However, since this is your first character, just press 'N' to start the
 creation progress, enter a character name, and continue reading.
