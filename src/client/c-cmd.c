@@ -2186,6 +2186,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			init_search_type = 2;
 			strcpy(init_search_string, "Class         STR");
 		}
+		else if (my_strcasestr(buf, "auto") && my_strcasestr(buf, "reincar")) strcpy(init_search_string, "reincarnation");
 
 		/* clean up */
 		buf[0] = 0;
@@ -2899,6 +2900,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				}
 				/* Expand 'Update' to 'Updating' */
 				if (!strcasecmp(buf, "update")) strcpy(buf, "updating");
+
 
 				if (my_strcasestr(buf, "auto") && !my_strcasestr(buf, "/auto") && my_strcasestr(buf, "ret")) strcpy(buf, "auto-ret"); //auto-retaliation, but not slash command
 
