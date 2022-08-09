@@ -6374,10 +6374,8 @@ static void do_meta_pings(void) {
 			    "The default behaviour of START is to instantiate a new process that runs in parallel with the main process.
 			     For arcane technical reasons, this does not work for some types of executable,
 			     in those cases the process will act as a blocker, pausing the main script until it's complete." */
-  #if 0
-			/* This (or _spawnl(_P_NOWAIT..)) would be nicest, but might only work via powershell (which has a fake-ampersand) */
-			r = system(format("ping -n 1 -w 1000 %s > %s &", meta_pings_server_name[i], path));
-  #elif 1 /* works, but on Win 7 it opens foreground terminal windows.. on Wine set to Win 7 it's fine in the background however, ffff..... */
+  #if 0 /* works, but on Win 7 it opens foreground terminal windows.. on Wine set to Win 7 it's fine in the background however, ffff..... */
+	/* This is the best solution with CREATE_NO_WINDOW: it will still shortly create two terms, but then never again, this is acceptable */
 			fff = fopen(format("__ping_%s.bat", meta_pings_server_name[i]), "w");
 			if (!fff) continue; //paranoia
 			fprintf(fff, "ping -n 1 -w 1000 %s > %s\n", meta_pings_server_name[i], path);
@@ -6389,6 +6387,7 @@ static void do_meta_pings(void) {
 
 			/* At least CreateProcess() will run within our context/working folder -_-.. */
 			CreateProcess( NULL,   // No module name (use command line)
+			    /* note: replacing cmd.exe /c with START /B is not working, it'll rather create foreground terminal spam! wtfff.. */
 			        format("cmd.exe /c __ping_%s.bat", meta_pings_server_name[i]), //commandline
 			        NULL,           // Process handle not inheritable
 			        NULL,           // Thread handle not inheritable
@@ -6398,37 +6397,15 @@ static void do_meta_pings(void) {
 			        NULL,           // Use parent's starting directory
 			        &si,            // Pointer to STARTUPINFO structure
 			        &pi );           // Pointer to PROCESS_INFORMATION structure
-  #elif 1 /* still spawns terminals and flashes, on real Win 7, apparently O_O (Sav is testing it) */
+  #elif 0 /* works, no bat files needed! */
 			ZeroMemory( &si, sizeof(si) );
 			si.cb = sizeof(si);
 			ZeroMemory( &pi, sizeof(pi) );
 
 			/* At least CreateProcess() will run within our context/working folder -_-.. */
-//			CreateProcess( "C:\\windows\\system32\\ping.exe",
-			CreateProcess( NULL,
-//			        format("-n 1 -w 1000 %s", meta_pings_server_name[i], path), //commandline
-//			        format("cmd /c \"ping -n 1 -w 1000 %s > %s\"", meta_pings_server_name[i], path), //commandline -- WORKS!
-//			        format("\"ping -n 1 -w 1000 %s > %s\"", meta_pings_server_name[i], path), //commandline
-			        format("\"ping -n 1 -w 1000 %s > %s\"", meta_pings_server_name[i], path), //commandline
-//			        "1.1.1.1", //commandline
-//			CreateProcess( NULL,
-//			        format("C:\\windows\\system32\\ping.exe -n 1 -w 1000 %s > %s", meta_pings_server_name[i], path), //commandline
-			        NULL,           // Process handle not inheritable
-			        NULL,           // Thread handle not inheritable
-			        FALSE,          // Set handle inheritance to FALSE
-			        0,              // No creation flags
-			        NULL,           // Use parent's environment block
-			        NULL,           // Use parent's starting directory
-			        &si,            // Pointer to STARTUPINFO structure
-			        &pi );           // Pointer to PROCESS_INFORMATION structure
-  #elif 1
-			ZeroMemory( &si, sizeof(si) );
-			si.cb = sizeof(si);
-			ZeroMemory( &pi, sizeof(pi) );
-
-			/* At least CreateProcess() will run within our context/working folder -_-.. */
-			CreateProcess( NULL,
-			        format("\"ping -n 1 -w 1000 %s > %s\"", meta_pings_server_name[i], path), //commandline
+			CreateProcess( NULL,   // No module name (use command line)
+			        //format("START /B __ping_%s.bat", meta_pings_server_name[i]), //commandline --nope, creates terminal spam!
+			        format("cmd.exe /c \"ping -n 1 -w 1000 %s > %s\"", meta_pings_server_name[i], path),
 			        NULL,           // Process handle not inheritable
 			        NULL,           // Thread handle not inheritable
 			        FALSE,          // Set handle inheritance to FALSE
@@ -6437,6 +6414,60 @@ static void do_meta_pings(void) {
 			        NULL,           // Use parent's starting directory
 			        &si,            // Pointer to STARTUPINFO structure
 			        &pi );           // Pointer to PROCESS_INFORMATION structure
+  #else /* replace the pipe '>' by manually setting a file handle for stdout/stderr of createprocess() */
+    /* problem: the _ping_..server..tmp files are 0 B on a real Win 7 (works on Wine-Win7)...wtfff */
+			SECURITY_ATTRIBUTES sa;
+			sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+			sa.lpSecurityDescriptor = NULL;
+			sa.bInheritHandle = TRUE;
+
+			HANDLE h = CreateFile(path,
+			    FILE_WRITE_DATA, //FILE_APPEND_DATA,
+#if 1
+			    0, //or:
+#else
+			    FILE_SHARE_WRITE | FILE_SHARE_READ, // should be 0 tho
+#endif
+			    &sa,
+			    OPEN_ALWAYS,
+			    FILE_ATTRIBUTE_NORMAL,
+			    NULL);
+
+			ZeroMemory(&si, sizeof(STARTUPINFO));
+			si.cb = sizeof(STARTUPINFO);
+
+			si.dwFlags |= STARTF_USESTDHANDLES;
+			si.hStdInput = NULL;
+			si.hStdError = NULL; // = h
+			si.hStdOutput = h;
+
+			ZeroMemory(&pi, sizeof(PROCESS_INFORMATION));
+
+			/* At least CreateProcess() will run within our context/working folder -_-.. */
+#if 1
+			r = CreateProcess( NULL,
+#else
+			CreateProcess( NULL,
+#endif
+			    format("ping -n 1 -w 1000 %s", meta_pings_server_name[i]), //commandline -- WORKS!
+			    //format("ping -n 1 -w 1000 %s > %s", meta_pings_server_name[i], path), //commandline --doesnt work, cause of piping it seems
+			    NULL,           // Process handle not inheritable
+			    NULL,           // Thread handle not inheritable
+			    FALSE,          // Set handle inheritance to FALSE
+			    CREATE_NO_WINDOW,              // No creation flags
+			    NULL,           // Use parent's environment block
+			    NULL,           // Use parent's starting directory
+			    &si,            // Pointer to STARTUPINFO structure
+			    &pi);           // Pointer to PROCESS_INFORMATION structure
+
+#if 1
+			if (r) {
+				CloseHandle(pi.hProcess);
+				CloseHandle(pi.hThread);
+			}
+			/* Close file or we won't be able to delete it */
+			CloseHandle(h);
+#endif
   #endif
  #else /* assume POSIX */
 			r = system(format("ping -c 1 -w 1 %s > %s &", meta_pings_server_name[i], path));
@@ -6496,8 +6527,7 @@ static void do_meta_pings(void) {
 			}
 
 			my_fclose(fff);
-			remove(path);
-			remove(format("__ping_%s.bat", meta_pings_server_name[i]));
+			//remove(path);
 
 			/* Assume timeout/unresponsive,
 			   except if file is being written to right now but not yet finished, ie 0 Bytes long for us? Wait more patiently aka retry next time.
