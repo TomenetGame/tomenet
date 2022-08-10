@@ -6391,12 +6391,11 @@ static void do_meta_pings(void) {
 			ZeroMemory(&pi, sizeof(pi));
 
 			/* Check for ping-wrap.exe's existance */
-			if (method == 1) {
+			if (method == 1)
 				CreateProcess( NULL, format("ping-wrap.exe %s %s", meta_pings_server_name[i], path),
 				    NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
-			}
 			/* Fall back to cmd usage instead (causes terms to pop up once on start) */
-			else {
+			else
 				CreateProcess( NULL, format("cmd.exe /c \"ping -n 1 -w 1000 %s > %s\"", meta_pings_server_name[i], path),
 				    NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
   #else /* replace the pipe '>' by manually setting a file handle for stdout/stderr of createprocess() */
