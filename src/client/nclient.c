@@ -6347,7 +6347,12 @@ void do_ping() {
    as its calling frequency is fixed and predictable (100ms). */
 static void do_meta_pings(void) {
 	static int i, r;
-	static char path[1024], buf[MAX_CHARS], *c;
+	static char path[1024], *c;
+#ifdef WINDOWS
+	char buf[1024]; /* if we use windows-specific ReadFile() we might read the whole file at once */
+#else
+	char buf[MAX_CHARS]; /* read line by line */
+#endif
 	static FILE *fff;
 	static bool alt = FALSE; /* <- Only truly needed static var, the rest is static just for execution time optimization */
 
@@ -6365,9 +6370,6 @@ static void do_meta_pings(void) {
 		if (alt) {
  #ifdef WINDOWS
 			remove(path);//in case game was ctrl+c'ed while pinging on previous startup
-
-			STARTUPINFO si;
-			PROCESS_INFORMATION pi;
 
 			/* All "simple" solutions don't work, because START /b and similar commands do not work together with redirecting the output,
 			   _spawnl() even with _P_NOWAIT will also not become asynchronous, neither will system(), beause quote:
@@ -6416,58 +6418,41 @@ static void do_meta_pings(void) {
 			        &pi );           // Pointer to PROCESS_INFORMATION structure
   #else /* replace the pipe '>' by manually setting a file handle for stdout/stderr of createprocess() */
     /* problem: the _ping_..server..tmp files are 0 B on a real Win 7 (works on Wine-Win7)...wtfff */
-			SECURITY_ATTRIBUTES sa;
-			sa.nLength = sizeof(SECURITY_ATTRIBUTES);
-			sa.lpSecurityDescriptor = NULL;
-			sa.bInheritHandle = TRUE;
-
-			HANDLE h = CreateFile(path,
+   #if 1 /* do we reset the handle on reading the result? then reopen it here again */
+			fhan[i] = CreateFile(path,
 			    FILE_WRITE_DATA, //FILE_APPEND_DATA,
-#if 1
+#if 0
 			    0, //or:
 #else
 			    FILE_SHARE_WRITE | FILE_SHARE_READ, // should be 0 tho
 #endif
-			    &sa,
+			    &sa[i],
 			    OPEN_ALWAYS,
 			    FILE_ATTRIBUTE_NORMAL,
 			    NULL);
 
-			ZeroMemory(&si, sizeof(STARTUPINFO));
-			si.cb = sizeof(STARTUPINFO);
+			si[i].hStdInput = NULL;
+			si[i].hStdError = fhan[i];
+			si[i].hStdOutput = fhan[i];
+   #endif
 
-			si.dwFlags |= STARTF_USESTDHANDLES;
-			si.hStdInput = NULL;
-			si.hStdError = NULL; // = h
-			si.hStdOutput = h;
-
-			ZeroMemory(&pi, sizeof(PROCESS_INFORMATION));
-
+			ZeroMemory(&pi[i], sizeof(PROCESS_INFORMATION));
 			/* At least CreateProcess() will run within our context/working folder -_-.. */
-#if 1
+   #if 0
 			r = CreateProcess( NULL,
-#else
+   #else
 			CreateProcess( NULL,
-#endif
+   #endif
 			    format("ping -n 1 -w 1000 %s", meta_pings_server_name[i]), //commandline -- WORKS!
 			    //format("ping -n 1 -w 1000 %s > %s", meta_pings_server_name[i], path), //commandline --doesnt work, cause of piping it seems
-			    NULL,           // Process handle not inheritable
-			    NULL,           // Thread handle not inheritable
-			    FALSE,          // Set handle inheritance to FALSE
-			    CREATE_NO_WINDOW,              // No creation flags
-			    NULL,           // Use parent's environment block
-			    NULL,           // Use parent's starting directory
-			    &si,            // Pointer to STARTUPINFO structure
-			    &pi);           // Pointer to PROCESS_INFORMATION structure
-
-#if 1
-			if (r) {
-				CloseHandle(pi.hProcess);
-				CloseHandle(pi.hThread);
-			}
-			/* Close file or we won't be able to delete it */
-			CloseHandle(h);
-#endif
+			    NULL,	// Process handle not inheritable
+			    NULL,	// Thread handle not inheritable
+			    FALSE,	// Set handle inheritance to FALSE
+			    CREATE_NO_WINDOW,
+			    NULL,	// Use parent's environment block
+			    NULL,	// Use parent's starting directory
+			    &si[i],	// Pointer to STARTUPINFO structure
+			    &pi[i]);	// Pointer to PROCESS_INFORMATION structure
   #endif
  #else /* assume POSIX */
 			r = system(format("ping -c 1 -w 1 %s > %s &", meta_pings_server_name[i], path));
@@ -6500,13 +6485,35 @@ static void do_meta_pings(void) {
 				continue;
 			}
 
+   #ifdef WINDOWS
+DWORD exit_code;
+GetExitCodeProcess(pi[i].hProcess, &exit_code);
+if (exit_code != STILL_ACTIVE) {
+    #if 1 /* CreateProcess() stuff */
+			/* Clear up spawned ping process */
+			CloseHandle(pi[i].hProcess);
+			CloseHandle(pi[i].hThread);
+    #endif
+    #if 1 /* CreateFile() stuff */
+			/* Clear up file (write) access from spawned ping process */
+			if (fhan[i]) {
+				CloseHandle(fhan[i]);
+				fhan[i] = NULL;
+			}
+    #endif
+} else continue; /* ping process hasn't finished yet! skip. */
+   #endif
+
+   //#ifndef WINDOWS /* use C functions */
+   #if 1
+			/* Access ping response file */
 			fff = my_fopen(path, "r");
 			if (!fff) continue; /* Sort of paranoia? */
 
 			/* Parse OS specific 'ping' command response; win: 'time=NNNms', posix: 'time=NNN.NN ms',
 			   BUT.. have to watch out that "time" label can be OS-language specific!
 			   For that reason we first look for 'ttl' (posix) and 'TTL' (windows) which are always the same. */
-			while (my_fgets(fff, buf, sizeof(buf)) == 0) {
+			while (my_fgets(fff, buf, MAX_CHARS) == 0) {
 				meta_pings_stuck[i] = FALSE; /* Yay, we can read the results finally.. */
 
 				if (!my_strcasestr(buf, "ttl")) continue;
@@ -6528,6 +6535,39 @@ static void do_meta_pings(void) {
 
 			my_fclose(fff);
 			//remove(path);
+   #else /* use Windows specific functions */
+			long unsigned int read;
+			/* Access ping response file */
+			/* Parse OS specific 'ping' command response; win: 'time=NNNms', posix: 'time=NNN.NN ms',
+			   BUT.. have to watch out that "time" label can be OS-language specific!
+			   For that reason we first look for 'ttl' (posix) and 'TTL' (windows) which are always the same. */
+			//while (TRUE) {
+			ReadFile(fhan[i], buf, 1024, &read, NULL);
+printf("<<%s>>\n", buf);
+			if (strlen(buf)) {
+				meta_pings_stuck[i] = FALSE; /* Yay, we can read the results finally.. */
+
+				if (!my_strcasestr(buf, "ttl")) continue;
+
+				/* We found a line containing a response time. Now we look for 'ms' and go backwards till '='. */
+				c = strstr(buf, "ms");
+printf("<%s>\n", c);
+				if (!c) continue; //should be paranoia at this point
+				while (*c != '=') {
+					c--;
+					if (c == buf) break; /* Paranoia - Supa safety 1/2 */
+				}
+				if (c == buf) break; /* Paranoia - Supa safety 1/2 */
+				c++; //yuck
+
+				/* Grab result */
+				r = atoi(c);
+printf("<%d>\n", r);
+			}
+
+			my_fclose(fff);
+			//remove(path);
+   #endif
 
 			/* Assume timeout/unresponsive,
 			   except if file is being written to right now but not yet finished, ie 0 Bytes long for us? Wait more patiently aka retry next time.

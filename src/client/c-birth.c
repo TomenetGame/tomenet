@@ -2298,6 +2298,9 @@ bool get_server_name(void) {
  #ifdef META_PINGS
 	int k, v, r;
 	FILE *fff;
+  #if 0
+	char path[1024];
+  #endif
  #endif
 #else
 	int j, k, l, bytes = 0, socket = -1, offsets[20], lines = 0;
@@ -2484,6 +2487,39 @@ bool get_server_name(void) {
 
 		(void)r; //slay compiler warning;
 		meta_pings_servers = v;
+
+ #ifdef WINDOWS
+		/* Init global stuff for CreateFile()/CreateProcess() */
+		for (j = 0; j < meta_pings_servers; j++) {
+			ZeroMemory(&sa[j], sizeof(SECURITY_ATTRIBUTES));
+			sa[j].nLength = sizeof(SECURITY_ATTRIBUTES);
+			sa[j].lpSecurityDescriptor = NULL;
+			sa[j].bInheritHandle = TRUE;
+
+			ZeroMemory(&si[j], sizeof(STARTUPINFO));
+			si[j].cb = sizeof(STARTUPINFO);
+			si[j].dwFlags |= STARTF_USESTDHANDLES;
+
+  #if 0 /* done in nclient.c atm? */
+			path_build(path, 1024, ANGBAND_DIR_USER, format("__ping_%s.tmp", meta_pings_server_name[j]));
+			fhan[j] = CreateFile(path,
+			    FILE_WRITE_DATA, //FILE_APPEND_DATA,
+   #if 0
+			    0, //or:
+   #else
+			    FILE_SHARE_WRITE | FILE_SHARE_READ, // should be 0 tho
+   #endif
+			    &sa[j],
+			    OPEN_ALWAYS,
+			    FILE_ATTRIBUTE_NORMAL,
+			    NULL);
+
+			si[j].hStdInput = NULL;
+			si[j].hStdError = fhan[j];
+			si[j].hStdOutput = fhan[j];
+  #endif
+		}
+ #endif
 	} else meta_pings_servers = 0;
 #endif
 
