@@ -84,7 +84,7 @@
 
 #define WARNING_REST_TIMES	6	/* Warn this often about 'R'esting */
 
-#ifndef WIN32
+#ifndef WIN32 /* no fork() */
  #define ENABLE_GO_GAME		/* Allows players to play vs CPU games of Go/Weiqi/Baduk. - C. Blue */
 #endif
 #define ENABLE_MAIA		/* enable RACE_MAIA (formerly 'DIVINE' race) */
