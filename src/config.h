@@ -837,4 +837,8 @@
    The number indicates the max number of server names we read (raw, ie duplicates included).
    Currently only supported when EXPERIMENTAL_META is defined. */
  #define META_PINGS 20
+ #if defined(META_PINGS) && defined(WINDOWS)
+  /* On Windows, use CreateProcess() with its own CreateFile() handle instead of piping the output? */
+  //#define META_PINGS_CREATEFILE /* Doesn't work on Windows 7 despite working on Wine-Windows-7 */
+ #endif
 #endif

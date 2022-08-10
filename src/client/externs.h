@@ -430,7 +430,7 @@ extern void create_random_name(int race, char *name);
 extern int meta_pings_servers, meta_pings_ticks, meta_pings_server_duplicate[META_PINGS], meta_pings_result[META_PINGS];
 extern char meta_pings_server_name[META_PINGS][MAX_CHARS];
 extern bool meta_pings_stuck[META_PINGS];
- #ifdef WINDOWS
+ #ifdef META_PINGS_CREATEFILE
 extern HANDLE fhan[META_PINGS];
 extern SECURITY_ATTRIBUTES sa[META_PINGS];
 extern STARTUPINFO si[META_PINGS];

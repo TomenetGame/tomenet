@@ -2488,7 +2488,7 @@ bool get_server_name(void) {
 		(void)r; //slay compiler warning;
 		meta_pings_servers = v;
 
- #ifdef WINDOWS
+ #ifdef META_PINGS_CREATEFILE
 		/* Init global stuff for CreateFile()/CreateProcess() */
 		for (j = 0; j < meta_pings_servers; j++) {
 			ZeroMemory(&sa[j], sizeof(SECURITY_ATTRIBUTES));
@@ -2576,7 +2576,7 @@ bool get_server_name(void) {
 	for (i = 0; i < meta_pings_servers; i++) {
 		/* Clean up temp files */
 		path_build(path, 1024, ANGBAND_DIR_USER, format("__ping_%s.tmp", meta_pings_server_name[i]));
-		//remove(path);
+		remove(path);
 	}
 	path_build(path, 1024, ANGBAND_DIR_USER, "__ping.tmp");
 	remove(path);

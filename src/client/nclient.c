@@ -6377,7 +6377,7 @@ static void do_meta_pings(void) {
 			     For arcane technical reasons, this does not work for some types of executable,
 			     in those cases the process will act as a blocker, pausing the main script until it's complete." */
   #if 0 /* works, but on Win 7 it opens foreground terminal windows.. on Wine set to Win 7 it's fine in the background however, ffff..... */
-	/* This is the best solution with CREATE_NO_WINDOW: it will still shortly create two terms, but then never again, this is acceptable */
+	/* This will still shortly create two terms, but then never again, this is acceptable */
 			fff = fopen(format("__ping_%s.bat", meta_pings_server_name[i]), "w");
 			if (!fff) continue; //paranoia
 			fprintf(fff, "ping -n 1 -w 1000 %s > %s\n", meta_pings_server_name[i], path);
@@ -6399,10 +6399,33 @@ static void do_meta_pings(void) {
 			        NULL,           // Use parent's starting directory
 			        &si,            // Pointer to STARTUPINFO structure
 			        &pi );           // Pointer to PROCESS_INFORMATION structure
-  #elif 0 /* works, no bat files needed! */
-			ZeroMemory( &si, sizeof(si) );
+  #elif 1 /* use ping-wrap.exe -- best solution. According to Sav, two terms quickly appear before main window opens, but that's it. */
+			STARTUPINFO si;
+			PROCESS_INFORMATION pi;
+
+			ZeroMemory(&si, sizeof(si));
 			si.cb = sizeof(si);
-			ZeroMemory( &pi, sizeof(pi) );
+			ZeroMemory(&pi, sizeof(pi));
+
+			/* At least CreateProcess() will run within our context/working folder -_-.. */
+			CreateProcess( NULL,   // No module name (use command line)
+			        //format("START /B __ping_%s.bat", meta_pings_server_name[i]), //commandline --nope, creates terminal spam!
+			        format("ping-wrap.exe %s %s", meta_pings_server_name[i], path),
+			        NULL,           // Process handle not inheritable
+			        NULL,           // Thread handle not inheritable
+			        FALSE,          // Set handle inheritance to FALSE
+			        CREATE_NO_WINDOW,              // No creation flags
+			        NULL,           // Use parent's environment block
+			        NULL,           // Use parent's starting directory
+			        &si,            // Pointer to STARTUPINFO structure
+			        &pi );           // Pointer to PROCESS_INFORMATION structure
+  #elif !defined(META_PINGS_CREATEFILE) /* works, no bat files needed! */
+			STARTUPINFO si;
+			PROCESS_INFORMATION pi;
+
+			ZeroMemory(&si, sizeof(si));
+			si.cb = sizeof(si);
+			ZeroMemory(&pi, sizeof(pi));
 
 			/* At least CreateProcess() will run within our context/working folder -_-.. */
 			CreateProcess( NULL,   // No module name (use command line)
@@ -6485,7 +6508,7 @@ static void do_meta_pings(void) {
 				continue;
 			}
 
-   #ifdef WINDOWS
+   #ifdef META_PINGS_CREATEFILE
 DWORD exit_code;
 GetExitCodeProcess(pi[i].hProcess, &exit_code);
 if (exit_code != STILL_ACTIVE) {
