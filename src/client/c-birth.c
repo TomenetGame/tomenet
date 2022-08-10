@@ -2539,7 +2539,7 @@ bool get_server_name(void) {
 			for (i = 0; i < meta_pings_servers; i++) {
 				/* Clean up temp files */
 				path_build(path, 1024, ANGBAND_DIR_USER, format("__ping_%s.tmp", meta_pings_server_name[i]));
-				//remove(path);
+				remove(path);
 			}
 			path_build(path, 1024, ANGBAND_DIR_USER, "__ping.tmp");
 			remove(path);
@@ -2554,7 +2554,7 @@ bool get_server_name(void) {
 			for (i = 0; i < meta_pings_servers; i++) {
 				/* Clean up temp files */
 				path_build(path, 1024, ANGBAND_DIR_USER, format("__ping_%s.tmp", meta_pings_server_name[i]));
-				//remove(path);
+				remove(path);
 			}
 			path_build(path, 1024, ANGBAND_DIR_USER, "__ping.tmp");
 			remove(path);
