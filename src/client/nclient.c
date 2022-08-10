@@ -6382,6 +6382,7 @@ static void do_meta_pings(void) {
 			    "The default behaviour of START is to instantiate a new process that runs in parallel with the main process.
 			     For arcane technical reasons, this does not work for some types of executable,
 			     in those cases the process will act as a blocker, pausing the main script until it's complete." */
+		/* Note: Another way might be to create a named pipe (CallNamedPipeA()) */
   #if !defined(META_PINGS_CREATEFILE) /* use ping-wrap.exe -- best solution. According to Sav, two terms quickly appear before main window opens, but that's it. */
 			STARTUPINFO si;
 			PROCESS_INFORMATION pi;
