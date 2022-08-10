@@ -6355,6 +6355,12 @@ static void do_meta_pings(void) {
 #endif
 	static FILE *fff;
 	static bool alt = FALSE; /* <- Only truly needed static var, the rest is static just for execution time optimization */
+	static int method = 0;
+
+	if (!method) {
+		if (access("ping-wrap.exe", F_OK) == 0) method = 1;
+		else method = 2;
+	}
 
 	/* Only call us once every intended interval time */
 	meta_pings_ticks = ticks;
@@ -6376,30 +6382,7 @@ static void do_meta_pings(void) {
 			    "The default behaviour of START is to instantiate a new process that runs in parallel with the main process.
 			     For arcane technical reasons, this does not work for some types of executable,
 			     in those cases the process will act as a blocker, pausing the main script until it's complete." */
-  #if 0 /* works, but on Win 7 it opens foreground terminal windows.. on Wine set to Win 7 it's fine in the background however, ffff..... */
-	/* This will still shortly create two terms, but then never again, this is acceptable */
-			fff = fopen(format("__ping_%s.bat", meta_pings_server_name[i]), "w");
-			if (!fff) continue; //paranoia
-			fprintf(fff, "ping -n 1 -w 1000 %s > %s\n", meta_pings_server_name[i], path);
-			fclose(fff);
-
-			ZeroMemory( &si, sizeof(si) );
-			si.cb = sizeof(si);
-			ZeroMemory( &pi, sizeof(pi) );
-
-			/* At least CreateProcess() will run within our context/working folder -_-.. */
-			CreateProcess( NULL,   // No module name (use command line)
-			    /* note: replacing cmd.exe /c with START /B is not working, it'll rather create foreground terminal spam! wtfff.. */
-			        format("cmd.exe /c __ping_%s.bat", meta_pings_server_name[i]), //commandline
-			        NULL,           // Process handle not inheritable
-			        NULL,           // Thread handle not inheritable
-			        FALSE,          // Set handle inheritance to FALSE
-			        CREATE_NO_WINDOW,              // No creation flags
-			        NULL,           // Use parent's environment block
-			        NULL,           // Use parent's starting directory
-			        &si,            // Pointer to STARTUPINFO structure
-			        &pi );           // Pointer to PROCESS_INFORMATION structure
-  #elif 1 /* use ping-wrap.exe -- best solution. According to Sav, two terms quickly appear before main window opens, but that's it. */
+  #if !defined(META_PINGS_CREATEFILE) /* use ping-wrap.exe -- best solution. According to Sav, two terms quickly appear before main window opens, but that's it. */
 			STARTUPINFO si;
 			PROCESS_INFORMATION pi;
 
@@ -6407,38 +6390,15 @@ static void do_meta_pings(void) {
 			si.cb = sizeof(si);
 			ZeroMemory(&pi, sizeof(pi));
 
-			/* At least CreateProcess() will run within our context/working folder -_-.. */
-			CreateProcess( NULL,   // No module name (use command line)
-			        //format("START /B __ping_%s.bat", meta_pings_server_name[i]), //commandline --nope, creates terminal spam!
-			        format("ping-wrap.exe %s %s", meta_pings_server_name[i], path),
-			        NULL,           // Process handle not inheritable
-			        NULL,           // Thread handle not inheritable
-			        FALSE,          // Set handle inheritance to FALSE
-			        CREATE_NO_WINDOW,              // No creation flags
-			        NULL,           // Use parent's environment block
-			        NULL,           // Use parent's starting directory
-			        &si,            // Pointer to STARTUPINFO structure
-			        &pi );           // Pointer to PROCESS_INFORMATION structure
-  #elif !defined(META_PINGS_CREATEFILE) /* works, no bat files needed! */
-			STARTUPINFO si;
-			PROCESS_INFORMATION pi;
-
-			ZeroMemory(&si, sizeof(si));
-			si.cb = sizeof(si);
-			ZeroMemory(&pi, sizeof(pi));
-
-			/* At least CreateProcess() will run within our context/working folder -_-.. */
-			CreateProcess( NULL,   // No module name (use command line)
-			        //format("START /B __ping_%s.bat", meta_pings_server_name[i]), //commandline --nope, creates terminal spam!
-			        format("cmd.exe /c \"ping -n 1 -w 1000 %s > %s\"", meta_pings_server_name[i], path),
-			        NULL,           // Process handle not inheritable
-			        NULL,           // Thread handle not inheritable
-			        FALSE,          // Set handle inheritance to FALSE
-			        CREATE_NO_WINDOW,              // No creation flags
-			        NULL,           // Use parent's environment block
-			        NULL,           // Use parent's starting directory
-			        &si,            // Pointer to STARTUPINFO structure
-			        &pi );           // Pointer to PROCESS_INFORMATION structure
+			/* Check for ping-wrap.exe's existance */
+			if (method == 1) {
+				CreateProcess( NULL, format("ping-wrap.exe %s %s", meta_pings_server_name[i], path),
+				    NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+			}
+			/* Fall back to cmd usage instead (causes terms to pop up once on start) */
+			else {
+				CreateProcess( NULL, format("cmd.exe /c \"ping -n 1 -w 1000 %s > %s\"", meta_pings_server_name[i], path),
+				    NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
   #else /* replace the pipe '>' by manually setting a file handle for stdout/stderr of createprocess() */
     /* problem: the _ping_..server..tmp files are 0 B on a real Win 7 (works on Wine-Win7)...wtfff */
    #if 1 /* do we reset the handle on reading the result? then reopen it here again */
