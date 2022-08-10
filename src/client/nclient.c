@@ -6086,7 +6086,7 @@ void update_ticks() {
 
 #ifdef META_PINGS
 	/* Ping meta-listed servers every 3 s, fetch results after half the time already (15 ds) */
-	if (meta_pings_servers && meta_pings_ticks != ticks && !(ticks % 15)) do_meta_pings();
+	if (meta_pings_servers && meta_pings_ticks != ticks && !(ticks % 10)) do_meta_pings();
 #endif
 
 	/* Find the new least significant digit of the ticks */
@@ -6354,7 +6354,7 @@ static void do_meta_pings(void) {
 	char buf[MAX_CHARS]; /* read line by line */
 #endif
 	static FILE *fff;
-	static bool alt = FALSE; /* <- Only truly needed static var, the rest is static just for execution time optimization */
+	static char alt = -1; /* <- Only truly needed static var, the rest is static just for execution time optimization */
 	static int method = 0;
 
 	if (!method) {
@@ -6366,14 +6366,15 @@ static void do_meta_pings(void) {
 	meta_pings_ticks = ticks;
 
 	/* Alternate function: 1) send out pings, 2) read results */
-	alt = !alt;
+	alt = (alt + 1) % 3;
+	if (alt == 1) return; //skipped a beat!
 
 	for (i = 0; i < meta_pings_servers; i++) {
 		/* Build the temp filename for ping results -- would probably prefer to use OS' actual tempfs, but Windows, pft */
 		path_build(path, 1024, ANGBAND_DIR_USER, format("__ping_%s.tmp", meta_pings_server_name[i]));
 
 		/* Send a ping to each distinct server name, allowing for max 1000ms */
-		if (alt) {
+		if (!alt) {
  #ifdef WINDOWS
 			remove(path);//in case game was ctrl+c'ed while pinging on previous startup
 
