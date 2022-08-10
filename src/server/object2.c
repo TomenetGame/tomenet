@@ -11066,7 +11066,12 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 
 	int	 i, j, k;
-	int		n = -1;
+	int	n = -1;
+#ifdef ENABLE_SUBINVEN
+#ifdef SUBINVEN_LIMIT_GROUP
+	bool	excess = FALSE;
+#endif
+#endif
 
 	object_type	*j_ptr;
 	u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5, f6 = 0, esp = 0;
@@ -11077,6 +11082,16 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 
 		/* Skip empty items */
 		if (!j_ptr->k_idx) continue;
+
+#ifdef ENABLE_SUBINVEN
+#ifdef SUBINVEN_LIMIT_GROUP
+		if (!p_ptr->warning_subinven && !excess &&
+		    j_ptr->tval == TV_SUBINVEN && o_ptr->tval == TV_SUBINVEN &&
+		    j_ptr->tval == TV_SUBINVEN && o_ptr->tval == TV_SUBINVEN &&
+		    get_subinven_group(j_ptr->tval) == get_subinven_group(o_ptr->tval))
+			excess = TRUE;
+#endif
+#endif
 
 		/* Hack -- track last item */
 		n = j;
@@ -11259,7 +11274,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 	}
 
 	/* Auto-inscriber */
-#ifdef	AUTO_INSCRIBER
+#ifdef AUTO_INSCRIBER
 	if (p_ptr->auto_inscribe) auto_inscribe(Ind, o_ptr, 0);
 #endif
 
@@ -11310,6 +11325,16 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 	sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
 #endif
 	Send_item_newest(Ind, i);
+
+#ifdef ENABLE_SUBINVEN
+#ifdef SUBINVEN_LIMIT_GROUP
+	if (excess) {
+		msg_print(Ind, "\377yYou can only use one of each subinventory type at a time.");
+		p_ptr->warning_subinven = 1;
+	}
+#endif
+#endif
+
 	return (i);
 }
 
