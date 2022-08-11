@@ -2187,6 +2187,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			strcpy(init_search_string, "Class         STR");
 		}
 		else if (my_strcasestr(buf, "auto") && my_strcasestr(buf, "reincar")) strcpy(init_search_string, "reincarnation");
+		else if (!strcasecmp(buf, "go")) strcpy(init_search_string, "Go challenge");
 
 		/* clean up */
 		buf[0] = 0;

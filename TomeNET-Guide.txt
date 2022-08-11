@@ -1544,6 +1544,8 @@ They all start with a slash '/' hence they're called slash commands:
             will be conducted on that topic. For example enter:   /? ac
             To quickly access your guide bookmarks, just specify the bookmark's
             index character as topic, eg "/? a" for the first bookmark a).
+            To access not a chapter, but a "header" of some subparagraph, try
+            searching for all uppercase, eg "CONFUSION" instead of "confusion".
 /?c         Shortcut to your character's class description in the guide.
 /?r         Shortcut to your character's race description in the guide.
 /?t         Shortcut to your character's race trait in the guide.
@@ -7883,7 +7885,7 @@ entering the casino and pressing 'r' there:
 
 Welcome to the TomeNET Casino!
 
-Currently, two games 'In Between' and 'Craps' are available for playing.
+Currently, the games 'In-Between', 'Craps' and 'Go' are available for playing.
 ('Spin the Wheel' and 'Dice Slots' are under construction.)
 Some games playable among players are planned for the future (I hope).
 
@@ -7894,7 +7896,9 @@ The game of Go has fixed bets for each stage that you cannot change.
 
 
 ==============================================================================
-1. 'In Between'
+
+In-Between
+----------
 
 Three 10-faced dice are used for this game. Two black, one red.
 
@@ -7909,7 +7913,9 @@ if two black dice are 2 and 9, and you rolled 2, you lose.
 
 
 ==============================================================================
-2. 'Craps'
+
+Craps
+-----
 
 Two 6-faced (cube) dice are used for this game.
 
@@ -7932,7 +7938,9 @@ eg.
 
 
 ==============================================================================
-3. 'Go challenge'
+
+Go challenge
+------------
 
 Two different short video tutorials on YouTube:
 https://youtu.be/qhBQasS5IRI
@@ -8001,7 +8009,7 @@ xxxx.  The white group has 8 liberties on its outside so it's quite safe yet.
 .....
 
 .o..o  Due to having at least 'two eyes' (two _separated_ enclosed liberties)
-..ooo  neiter group can be captured since it would require two moves at once.
+..ooo  neither group can be captured since it would require two moves at once.
 oooxx  A group that has at least two eyes is therefore said to be 'alive'.
 xxxx.  Since there is nothing left to do, both players will pass and the game
 x.x..  ends. The score is: black 13 - white 12. Black wins by 1 point.

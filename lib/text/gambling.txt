@@ -4,7 +4,7 @@
 
 Welcome to the TomeNET Casino!
 
-Currently, two games 'In Between' and 'Craps' are available for playing.
+Currently, the games 'In-Between', 'Craps' and 'Go' are available for playing.
 ('Spin the Wheel' and 'Dice Slots' are under construction.)
 Some games playable among players are planned for the future (I hope).
 
@@ -15,7 +15,7 @@ The game of Go has fixed bets for each stage that you cannot change.
 
 
 \{D==============================================================================
-\{U1. 'In Between'
+\{U1. 'In-Between'
 
 Three 10-faced dice are used for this game. Two black, one red.
 
