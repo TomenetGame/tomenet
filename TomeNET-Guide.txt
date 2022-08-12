@@ -13137,9 +13137,10 @@ There are two different cases, inventory items and equipped items:
 Some items have IGNORE_xxx flags which let them ignore certain elements,
 completely preventing them from being destroyed or damaged by that element.
 
-Items ignore certain elements if they have the according resistance (usually
+Items usually ignore an element if they have the according resistance (usually
 due to ego powers), for example a leather shield of resist fire will ignore
-fire damage.
+fire damage. This is not a given though, so maybe double-check the presence of
+the IGNORE_ flag.
 
 All artifacts, random and static ones, cannot be harmed by elemental attacks
 of any type.
@@ -13244,7 +13245,8 @@ If the player has resistance to the element, this will cut down the probability
 of any equipment damage. Having double resistance (permanent + temporary) will
 cut it down even further.
 To completely prevent any equipment damage, you need to become immune to the
-element, or the equipped item needs to ignore or resist the element.
+element, or the equipped item needs to ignore the element. In most cases, items
+that grant resistance to an element also ignore it.
 
 The following table lists the elemental damage taken by various item types.
 
@@ -13282,12 +13284,12 @@ item has the IGNORE_DISEN flag (ignore disenchantment) then the item is safe.
 Ethereal ammunition is especially susceptible to disenchantment.
 
 Last but not least, electricity damage can also discharge items in your
-inventory or even your equipment, if the item doesn't ignore electricity. This
-mainly concerns magic devices, but also amulets.
+inventory or even your equipment, if the item doesn't ignore or resist
+electricity.
+This mainly concerns magic devices, but also amulets!
 Ethereal ammunition is also susceptible, similar like to disenchantment.
-Items that ignore electricity are safe, and if you have double electricity
-resistance (or immunity of course) then all items are safe.
-
+Items that ignore electricity are safe, and if you have double
+electricity resistance (or immunity of course) then all items are safe.
 
 
 (5.10b) Item damage on the floor
