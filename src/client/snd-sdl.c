@@ -114,12 +114,21 @@ static Mix_Music* load_song(int idx, int subidx);
 
 /* evtl must range from 0..MIX_MAX_VOLUME (an SDL definition, [128]) */
 
-/* Normal mixing */
+
+/* --------------------------- Mixing algorithms, pick one --------------------------- */
+/* Normal mixing: */
 //#define MIXING_NORMAL
-/* Like normal mixing, but trying to use the edge cases better for broader volume spectrum - not finely implemented yet */
+
+/* Like normal mixing, but trying to use the edge cases better for broader volume spectrum - not finely implemented yet, DON'T USE!: */
 //#define MIXING_EXTREME
-/* Actually add up volume sliders (Master + Specific) and average them, instead of multiplying them */
-#define MIXING_ADDITIVE
+
+/* Like normal mixing, but trying to use maximum range of slider multiplication: 0..10 = 11 steps, so 121 steps in total [RECOMMENDED]: */
+#define MIXING_ULTRA
+
+/* Actually add up volume sliders (Master + Specific) and average them, instead of multiplying them. (Drawback: Individual sliders cannot vary volume far away from master slider): */
+//#define MIXING_ADDITIVE
+/* ----------------------------------------------------------------------------------- */
+
 
 #ifdef MIXING_NORMAL /* good, 12 is the lowest value at which the mixer is never completely muted */
 static s16b evlt[101] = { 12,
@@ -135,7 +144,7 @@ static s16b evlt[101] = { 12,
  104, 106, 109, 111, 114, 117, 119, 122, 125, 128
 };
 #endif
-#ifdef MIXING_EXTREME /* barely working, if we take care to always mix volume with all multiplications first, before dividing. */
+#ifdef MIXING_EXTREME /* barely working: 9 is lowest possible, if we -for rounding errors- take care to always mix volume with all multiplications first, before dividing (otherwise 13 in MIXING_NORMAL is lowest). */
 static s16b evlt[101] = { 9,
    9,  9,  9, 10, 10,	 10, 10, 11, 11, 11,
   12, 12, 12, 13, 13,	 13, 14, 14, 14, 15,
@@ -147,6 +156,26 @@ static s16b evlt[101] = { 9,
   59, 61, 62, 64, 66,	 67, 69, 71, 73, 75,
   77, 79, 81, 84, 86,	 88, 90, 93, 95, 98,
  101,103,106,109,112,	115,118,121,125,128
+};
+#endif
+#ifdef MIXING_ULTRA /* make full use of the complete slider multiplication spectrum: 0..10 ^ 2 -> 121 values */
+/* Purely exponentially we'd get 1 .. 1.04127^120 -> 1..128 (rounded).
+   However, it'd again result in lacking diferences for low volume values, so let's try a superlinear mixed approach instead:
+   i/3 + 1.038^i	- C. Blue
+*/
+static s16b evlt[121] = { 1 , //0
+1 ,2 ,2 ,2 ,3 ,		3 ,4 ,4 ,4 ,5 ,		//10
+5 ,6 ,6 ,6 ,7 ,		7 ,8 ,8 ,8 ,9 ,
+9 ,10 ,10 ,10 ,11 ,	11 ,12 ,12 ,13 ,13 ,
+14 ,14 ,14 ,15 ,15 ,	16 ,16 ,17 ,17 ,18 ,
+18 ,19 ,19 ,20 ,20 ,	21 ,21 ,22 ,23 ,23 ,	//50
+24 ,24 ,25 ,25 ,26 ,	27 ,27 ,28 ,29 ,29 ,
+30 ,31 ,31 ,32 ,33 ,	34 ,35 ,35 ,36 ,37 ,
+38 ,39 ,40 ,40 ,41 ,	42 ,43 ,44 ,45 ,46 ,
+48 ,49 ,50 ,51 ,52 ,	53 ,55 ,56 ,57 ,59 ,
+60 ,62 ,63 ,65 ,66 ,	68 ,70 ,71 ,73 ,75 ,	//100
+77 ,79 ,81 ,83 ,85 ,	87 ,90 ,92 ,95 ,97 ,
+100 ,103 ,105 ,108 ,111 ,	114 ,118 ,121 ,124 ,128
 };
 #endif
 #ifdef MIXING_ADDITIVE /* special: for ADDITIVE (and averaging) slider mixing instead of the usual multiplicative! */
@@ -187,13 +216,21 @@ static s16b evlt[101] = { 1, //could start on 0 here
 //c_msg_format("V:%d,boost:%d,cfgM:%d,cfgU:%d,*:%d,+:%d", V, boost, cfg_audio_master_volume, cfg_audio_music_volume, V * boost * cfg_audio_master_volume, (V + cfg_audio_master_volume) / 2);
 	/* Normal, unboosted audio -- note that anti-boost is applied before evlt[], while actual boost (further below) is applied to evlt[] value. */
   #ifdef MIXING_NORMAL
-	if (boost <= 100) return ((cfg_audio_master * T * evlt[(V * boost) / 100] * evlt[cfg_audio_master_volume]) / MIX_MAX_VOLUME);
+	if (boost <= 100) return ((cfg_audio_master * T * evlt[(V * boost) / 100] * evlt[M]) / MIX_MAX_VOLUME);
   #endif
   #ifdef MIXING_EXTREME
-	if (boost <= 100) return (cfg_audio_master * T * evlt[(V * boost * cfg_audio_master_volume) / 10000]);
+	if (boost <= 100) return (cfg_audio_master * T * evlt[(V * boost * M) / 10000]);
+  #endif
+  #ifdef MIXING_ULTRA
+	if (boost <= 100) {
+		total = ((V + 10) * (M + 10) * boost) / 10000 - 1; //0..120 (with boost < 100%, -1 may result)
+		if (total < 0) total = 0; //prevent '-1' underflow when boost and volume is all low
+//c_msg_format("v_=%d (%d*%d*(%d)=%d - %d)", evlt[total], M+10, V+10, boost, total, M);
+		return (cfg_audio_master * T * evlt[total]);
+	}
   #endif
   #ifdef MIXING_ADDITIVE
-	if (boost <= 100) return (cfg_audio_master * T * evlt[((V + cfg_audio_master_volume) * boost) / 200]);
+	if (boost <= 100) return (cfg_audio_master * T * evlt[((V + M) * boost) / 200]);
   #endif
 
   #if defined(MIXING_NORMAL) || defined(MIXING_EXTREME)
@@ -209,12 +246,12 @@ static s16b evlt[101] = { 1, //could start on 0 here
 	   So, for now, I just apply the roothack on evlt[] and we live with the small inaccuracy =P - C. Blue */
 
 	/* If we boost the volume, we have to distribute it on the two sliders <specific audio slider> vs <master audio slider> to be most effective. */
-	if (cfg_audio_master_volume == 100 && V == 100) {
+	if (M == 100 && V == 100) {
 		/* Extreme case: Cannot boost at all, everything is at max already. */
 		Me = evlt[M];
 		Ve = evlt[V];
 		return ((cfg_audio_master * T * Ve * Me) / MIX_MAX_VOLUME);
-	} else if (!cfg_audio_master_volume) {
+	} else if (!M) {
 		/* Extreme case (just treat it extra cause of rounding issue 99.9 vs 100) */
 		roothack = 100;
 		//M = (M * (100 + boost)) / 100; //--wrong (always 0)
@@ -224,9 +261,9 @@ static s16b evlt[101] = { 1, //could start on 0 here
 		roothack = 100;
 		//V = (V * (100 + boost)) / 100; //--wrong (always 0)
 		V = boost / 10;
-	} else if (cfg_audio_master_volume > V) {
+	} else if (M > V) {
 		/* Master slider is higher -> less capacity to boost it, instead load boosting on the specific slider more than on the master slider */
-		Mdiff = 100 - cfg_audio_master_volume;
+		Mdiff = 100 - M;
 		Vdiff = 100 - V;
 		totaldiff = Mdiff + Vdiff;
 		perc_lower = (100 * Mdiff) / totaldiff;
@@ -236,9 +273,9 @@ static s16b evlt[101] = { 1, //could start on 0 here
 		b_v = (boost * (100 - perc_lower)) / 100;
 		M = (M * (100 + b_m)) / 100;
 		V = (V * (100 + b_v)) / 100;
-	} else if (cfg_audio_master_volume < V) {
+	} else if (M < V) {
 		/* Master slider is lower -> more capacity to boost it, so load boosting on the master slider more than on the specific slider */
-		Mdiff = 100 - cfg_audio_master_volume;
+		Mdiff = 100 - M;
 		Vdiff = 100 - V;
 		totaldiff = Mdiff + Vdiff;
 		perc_lower = (100 * Vdiff) / totaldiff;
@@ -265,10 +302,11 @@ static s16b evlt[101] = { 1, //could start on 0 here
 	Me = evlt[M];
 	Ve = evlt[V];
 	total = ((Me * Ve * roothack) / 100) / MIX_MAX_VOLUME;
-  #else /* MIXING_ADDITIVE */
+
+  #elif defined(MIXING_ADDITIVE)
 	/* A felt duplication of +100% corresponds roughly to 4 slider steps, aka +40 volume */
 	boost = (boost - 100) * 4; //0..400
-	boost = boost / 10; //+0..+40
+	boost /= 10; //+0..+40
 
 	/* Compensate for less effective boost around low-mids (see evlt[] comment) for added-up slider pos range 4..7 */
 	if (M + V >= 40 && M + V <= 70) {
@@ -282,8 +320,32 @@ static s16b evlt[101] = { 1, //could start on 0 here
 	/* Limit against overboosting into invalid values */
 	if (total > 200) total = 200;
 
+	/* Map to exponential volume */
 	total = evlt[total / 2];
+//c_msg_format("vB=%d (%d+%d+%d=%d)", total, M+10, V+10, boost, M + V + boost);
+
+  #else /* MIXING_ULTRA */
+	boost = (boost - 100); //+0..+100%
+   #if 0 /* multiplicative boosting - doesn't do much at very low volume slider levels */
+	boost /= 3;//+0..+33%
+	/* Boost total volume */
+	//total = ((M + 10) * (V + 10) * (100 + boost)) / 10000 - 1; //strictly rounded down boost, will not boost lowest volume since index is only 1.3 vs 1 -> still rounded down
+	total = ((M + 10) * (V + 10) * (100 + boost) + 8400) / 10000 - 1; //will reach at least +1 volume index if at least 150% boosting (50%/3 = 16 ->> 1.16 + .84 = 2)
+   #else /* additive boosting */
+	/* A felt duplication of +100% corresponds roughly to 4 slider steps */
+	boost = (boost * 4) / 10; //+0..+40
+	total = ((M + 10 + boost / 2) * (V + 10 + boost / 2)) / 100 - 1; //will reach at least +1 volume index if at least 150% boosting (50%/3 = 16 ->> 1.16 + .84 = 2)
+   #endif
+
+	/* Limit against overboosting into invalid values */
+	if (total > 120) total = 120;
+
+	/* Map to superlinear volume */
+	total = evlt[total];
+//c_msg_format("vB=%d (%d+%d+%d)", total, M+10, V+10, 100+boost);
   #endif
+
+	/* Return boosted >100% result */
 	return (cfg_audio_master * T * total);
   }
  #endif
@@ -2248,6 +2310,7 @@ static bool play_music_vol(int event, char vol) {
 	/* if music event is the same as is already running, don't do anything */
 	if (music_cur == event && Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT) {
 		/* Just change volume if requested */
+c_msg_format("WTF %d", vol);
 		if (music_vol != vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[(int)vol]) / MIX_MAX_VOLUME, vols));
 		music_vol = vol;
 		return TRUE; //pretend we played it
@@ -2255,6 +2318,7 @@ static bool play_music_vol(int event, char vol) {
 
 	music_next = event;
 	music_vol = vol;
+c_msg_format("WTF %d", vol);
 	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[(int)vol]) / MIX_MAX_VOLUME, vols));
 	/* handle 'initial' songs with priority */
 	for (n = 0; n < songs[music_next].num; n++) if (songs[music_next].initial[n]) initials++;
@@ -2516,7 +2580,7 @@ static void set_mixing_sdl(void) {
 	if (music_cur != -1 && songs[music_cur].volume) vols = songs[music_cur].volume;
 #endif
 	//Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume));
-	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[(int)music_vol]) / MIX_MAX_VOLUME, vols));
+	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * music_vol) / 100, vols));
 #ifdef DISABLE_MUTED_AUDIO
 	if (!cfg_audio_master || !cfg_audio_music) {
 		if (Mix_PlayingMusic()) Mix_HaltMusic();
