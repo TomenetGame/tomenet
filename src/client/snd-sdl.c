@@ -3686,7 +3686,7 @@ void do_cmd_options_mus_sdl(void) {
 			inkey_msg = inkey_msg_old;
 			i = atoi(tmp);
 			if (i < 1 || i == 100) i = 0;
-			else (i > 200) i = 200;
+			else if (i > 200) i = 200;
 			songs[j_sel].volume = i;
 
 			/* If song is currently playing, adjust volume live.
