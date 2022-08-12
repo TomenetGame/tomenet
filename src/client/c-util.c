@@ -10439,6 +10439,11 @@ void interact_audio(void) {
 		/* Wait for keypress */
 		k = inkey();
 		switch (k) {
+		/* allow chatting from within here */
+		case ':':
+			cmd_message();
+			//redraw = FALSE; -- header 'mixer' gets overwritten -_-
+			break;
 		case KTRL('T'):
 			/* Take a screenshot */
 			xhtml_screenshot("screenshot????");
