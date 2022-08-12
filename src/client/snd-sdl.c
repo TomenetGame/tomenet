@@ -153,7 +153,8 @@ static s16b evlt[101] = { 9,
 static s16b evlt[101] = { 1, //could start on 0 here
 /* The values in the beginning up to around 13 are adjusted upwards and more linearly, to ensure that each mixer step (+5 array index) actually causes an audible change.
    The drawback is, that the low-mid range is not really exponential anymore and this will be especially noticable for boosted (>100%) audio, which sounds less boosted
-   when the volume sliders' average is around the middle volume range :/ - can't have everything. To perfectly remedy this we'd need finer volume values in SDL. - C. Blue */
+   when the volume sliders' average is around the middle volume range :/ - can't have everything. To perfectly remedy this we'd need finer volume values in SDL. - C. Blue
+   Said middle range from hear-testing, subjectively (in added slider step values from 0..10, master+music): 4..7 */
 1 ,1 ,1 ,1 ,2 ,		2 ,2 ,2 ,2 ,3 ,
 3 ,3 ,3 ,3 ,4 ,		4 ,4 ,4 ,4 ,5 ,
 5 ,5 ,5 ,5 ,6 ,		6 ,6 ,6 ,6 ,7 ,
@@ -268,6 +269,12 @@ static s16b evlt[101] = { 1, //could start on 0 here
 	/* A felt duplication of +100% corresponds roughly to 4 slider steps, aka +40 volume */
 	boost = (boost - 100) * 4; //0..400
 	boost = boost / 10; //+0..+40
+
+	/* Compensate for less effective boost around low-mids (see evlt[] comment) for added-up slider pos range 4..7 */
+	if (M + V >= 40 && M + V <= 70) {
+		if (M + V == 40 || M + V == 70) boost += 10; //including 60 too may be disputable~
+		else boost += 20;
+	}
 
 	/* Boost total volume */
 	total = M + V + boost;
