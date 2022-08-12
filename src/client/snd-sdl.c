@@ -3223,7 +3223,8 @@ void do_cmd_options_sfx_sdl(void) {
 			}
 			inkey_msg = inkey_msg_old;
 			i = atoi(tmp);
-			if (i < 1 || i > 200 || i == 100) i = 0;
+			if (i < 1 || i == 100) i = 0;
+			else if (i > 200) i = 200;
 			samples[j_sel].volume = i;
 			/* Note: Unlike for music we don't adjust an already playing SFX' volume live here, instead the volume is applied the next time it is played. */
 			break;
@@ -3684,7 +3685,8 @@ void do_cmd_options_mus_sdl(void) {
 			}
 			inkey_msg = inkey_msg_old;
 			i = atoi(tmp);
-			if (i < 1 || i > 200 || i == 100) i = 0;
+			if (i < 1 || i == 100) i = 0;
+			else (i > 200) i = 200;
 			songs[j_sel].volume = i;
 
 			/* If song is currently playing, adjust volume live.
