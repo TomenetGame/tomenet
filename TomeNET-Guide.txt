@@ -33,6 +33,7 @@ Contents
     (0.1)   Start & play, character validation, character timeout
     (0.1a)  Colours and colour blindness
     (0.1b)  Photosensitivity / Epilepsy issues
+    (0.1c)  Readability improvements
     (0.2)   Command reference & key sets
     (0.2a)  Text editing keys
     (0.2b)  Slash command reference
@@ -461,8 +462,8 @@ cannot defeat a certain monster or you cannot advance your character the way
 you'd like to, check out (7.3a)!
 
 
-(0.1a)  Colours and colour blindness
-------------------------------------
+(0.1a) Colours and colour blindness
+-----------------------------------
 The easiest way to modify colours and to switch between predefined palette sets
 for certain colour blindness types (deuteranopia, protanopia, tritanopia) is to
 go to the  = C  options screen where you can set all of this.
@@ -513,6 +514,20 @@ pressing the following keys in game to access the various options pages (1-7):
 = 3 flash_player (your '@' flickers brightly whenever you change location
     rapidly to make it easier spotting yourself on the screen)
 = 3 recall_flicker (show animated colours in the various game windows)
+
+
+(0.1c) Readability improvements
+-------------------------------
+If the dark blue colour is not well readable on your screen, you can edit it
+like all other colours in  = c  or alternatively by editing your config file
+(TomeNET.ini on Windows, .tomenetrc on Linux and OS X) and find the line
+'lighterDarkBlue'.
+In TomeNET.ini set it to 1 instead of 0, in .tomenetrc uncomment the line by
+removing the leading '#' symbol. Restart your game client.
+
+If you have trouble deciphering long price numbers, press  = 3  and try the
+option 'colourize_prices' at the bottom of that options page. It will colour
+prices alternatingly between white and light umber in 3-digit columns.
 
 
 
