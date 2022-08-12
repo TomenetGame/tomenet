@@ -2350,7 +2350,7 @@ extern bool py_hit_trap(int Ind);
 extern void wiz_place_trap(int Ind, int trap);
 
 
-extern char	*longVersion;
+extern char	*longVersion, *os_version;
 extern char	*shortVersion;
 
 

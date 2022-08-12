@@ -538,14 +538,16 @@ bool GetAccount(struct account *c_acc, cptr name, char *pass, bool leavepass) {
 	fp = fopen(buf, "rb+");
 	if (!fp) {
 		if (errno == ENOENT) {	/* ONLY if non-existent */
+			s_printf("WARNING (GetAccount): tomenet.acc file does not exist.\n (path=<%s>)\n", buf);
 			fp = fopen(buf, "wb+");
 			if (!fp) {
+				s_printf("CRITICAL ERROR (GetAccount): Couldn't create a new tomenet.acc file!\n");
 				KILL(c_acc, struct account);
 				return(FALSE);
 			}
-			s_printf("Generated new account file\n");
-		}
-		else {
+			s_printf("Generated new account file!\n");
+		} else {
+			s_printf("CRITICAL ERROR (GetAccount): tomenet.acc file exists but is inaccessible!\n (path=<%s>)\n", buf);
 			KILL(c_acc, struct account);
 			return(FALSE);	/* failed */
 		}
@@ -642,14 +644,16 @@ bool GetcaseAccount(struct account *c_acc, cptr name, char *correct_name, bool l
 	fp = fopen(buf, "rb+");
 	if (!fp) {
 		if (errno == ENOENT) {	/* ONLY if non-existent */
+			s_printf("WARNING (GetcaseAccount): tomenet.acc file does not exist.\n (path=<%s>)\n", buf);
 			fp = fopen(buf, "wb+");
 			if (!fp) {
+				s_printf("CRITICAL ERROR (GetcaseAccount): Couldn't create a new tomenet.acc file!\n");
 				KILL(c_acc, struct account);
 				return(FALSE);
 			}
-			s_printf("Generated new account file\n");
-		}
-		else {
+			s_printf("Generated new account file!\n");
+		} else {
+			s_printf("CRITICAL ERROR (GetcaseAccount): tomenet.acc file exists but is inaccessible!\n (path=<%s>)\n", buf);
 			KILL(c_acc, struct account);
 			return(FALSE);	/* failed */
 		}

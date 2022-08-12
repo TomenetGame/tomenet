@@ -655,7 +655,7 @@ int Setup_net_server(void) {
 #endif
 	(void) size;
 
-	s_printf("%s\n", longVersion);
+	//s_printf("%s\n", longVersion);
 	s_printf("Server is running version %04x\n", MY_VERSION);
 	strcpy(serverStartupTime, showtime());
 	s_printf("Current time is %s\n", serverStartupTime);
@@ -4265,6 +4265,7 @@ static int Receive_login(int ind) {
 	char choice[MAX_CHARS], loc[MAX_CHARS];
 	struct account acc;
 	struct worldpos wpos;
+	bool accfail;
 
 	n = Sockbuf_read(&connp->r);
 	if (n == 0 && !(errno == EAGAIN || errno == EWOULDBLOCK)) {
@@ -4292,9 +4293,10 @@ static int Receive_login(int ind) {
 		byte *id_order, *id_index;
 		struct account acc;
 
+		accfail = FALSE;
 		choice[0] = 0;
 		if (choice[3] && choice[4]
-		    && GetAccount(&acc, connp->nick, NULL, FALSE)) {
+		    && (accfail = GetAccount(&acc, connp->nick, NULL, FALSE))) {
 			swapA = choice[3] - 'a';
 			swapB = choice[4] - 'a';
 
@@ -4373,6 +4375,7 @@ static int Receive_login(int ind) {
 				C_KILL(id_list, ids, int);
 			}
 		}
+		if (!accfail) s_printf("Receive_login(): GetAccount() failed (#1)!\n");
 		/* 'fall through' with strlen==0 to display the character screen again.. */
 	}
 
@@ -4529,8 +4532,9 @@ static int Receive_login(int ind) {
 		}
 	    }
 
+		accfail = FALSE;
 		if ((connp->password_verified || /* <- for "***" reorder hack! Original connp->pass has long been free'd again. */
-		    connp->pass) && GetAccount(&acc, connp->nick, connp->pass, FALSE)) { /* Note: Calling GetAccount() with pass = NULL is fine! */
+		    connp->pass) && (accfail = GetAccount(&acc, connp->nick, connp->pass, FALSE))) { /* Note: Calling GetAccount() with pass = NULL is fine! */
 			int *id_list;
 			byte tmpm;
 			char colour_sequence[3];
@@ -4654,6 +4658,7 @@ static int Receive_login(int ind) {
 			C_FREE(id_order, n, byte);
 			C_FREE(id_index, n, byte);
 		} else {
+			if (!accfail) s_printf("Receive_login(): GetAccount() failed (#2)!\n");
 			/* fail login here */
 			//Destroy_connection(ind, "Wrong password or name already in use.");
 			Destroy_connection(ind, "Name already in use or wrong password.");
