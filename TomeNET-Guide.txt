@@ -87,7 +87,7 @@ Contents
     (3.9a)  Creating a chat macro for your party
     (3.9b)  Alternative macros: Calling objects by their name
     (3.10)  Experience, level-ups and skill points
-    (3.10a) Experience point table
+    (3.10a) Experience points table
     (3.11)  Death, ghosts and looting
     (3.12)  Character timeout and account timeout
 (4) The world
@@ -6712,8 +6712,8 @@ These depth restrictions regarding experience gain are applied to all dungeons
 except in Ironman Deep Dive Challenge and Halls of Mandos (which is Ironman).
 
 
-(3.10a) Experience point table
-------------------------------
+(3.10a) Experience points table
+-------------------------------
 This table shows how many experience points a character needs to attain each
 character level. Keep in mind that depending on choice of race and class
 characters main earn experience at a faster or slower rate than others.
