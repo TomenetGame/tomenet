@@ -151,6 +151,9 @@ static s16b evlt[101] = { 9,
 #endif
 #ifdef MIXING_ADDITIVE /* special: for ADDITIVE (and averaging) slider mixing instead of the usual multiplicative! */
 static s16b evlt[101] = { 1, //could start on 0 here
+/* The values in the beginning up to around 13 are adjusted upwards and more linearly, to ensure that each mixer step (+5 array index) actually causes an audible change.
+   The drawback is, that the low-mid range is not really exponential anymore and this will be especially noticable for boosted (>100%) audio, which sounds less boosted
+   when the volume sliders' average is around the middle volume range :/ - can't have everything. To perfectly remedy this we'd need finer volume values in SDL. - C. Blue */
 1 ,1 ,1 ,1 ,2 ,		2 ,2 ,2 ,2 ,3 ,
 3 ,3 ,3 ,3 ,4 ,		4 ,4 ,4 ,4 ,5 ,
 5 ,5 ,5 ,5 ,6 ,		6 ,6 ,6 ,6 ,7 ,
@@ -171,12 +174,13 @@ static s16b evlt[101] = { 1, //could start on 0 here
   /* T: 0 or 1 for on/off. V: Volume in range of 0..100 (specific slider, possibly adjusted already with extra volume info).
      boost: 1..200 (percent): Despite it called 'boost' it is actually a volume value from 1 to 200, so could also lower audio (100 = keep normal volume). */
   static int CALC_MIX_VOLUME(int T, int V, int boost) {
-	int perc_lower, b_m, b_v;
   #if defined(MIXING_NORMAL) || defined(MIXING_EXTREME)
+	int perc_lower, b_m, b_v;
 	int Me, Ve;
-  #endif
-	int total, roothack;
+	int roothack;
 	int Mdiff, Vdiff, totaldiff;
+  #endif
+	int total;
 	int M = cfg_audio_master_volume;
 
 //c_msg_format("V:%d,boost:%d,cfgM:%d,cfgU:%d,*:%d,+:%d", V, boost, cfg_audio_master_volume, cfg_audio_music_volume, V * boost * cfg_audio_master_volume, (V + cfg_audio_master_volume) / 2);
@@ -191,9 +195,9 @@ static s16b evlt[101] = { 1, //could start on 0 here
 	if (boost <= 100) return (cfg_audio_master * T * evlt[((V + cfg_audio_master_volume) * boost) / 200]);
   #endif
 
+  #if defined(MIXING_NORMAL) || defined(MIXING_EXTREME)
 	boost -= 100;
 
-  #if defined(MIXING_NORMAL) || defined(MIXING_EXTREME)
 	/* To be exact we'd have to balance roots, eg master slider has 3x as much room for boosting as specific slider ->
 	   it gets 4rt(boost)^3 while specific slider gets 4rt(boost)^1, but I don't wanna do these calcs here, so I will
 	   just hack it for now to use simple division and then subtract 4..11% from the result :-p
@@ -261,58 +265,18 @@ static s16b evlt[101] = { 1, //could start on 0 here
 	Ve = evlt[V];
 	total = ((Me * Ve * roothack) / 100) / MIX_MAX_VOLUME;
   #else /* MIXING_ADDITIVE */
-	if (cfg_audio_master_volume == 100 && V == 100) {
-		/* Extreme case: Cannot boost at all, everything is at max already. */
-		return (cfg_audio_master * T * evlt[100]);
-	} else if (!cfg_audio_master_volume) {
-		/* Extreme case (just treat it extra cause of rounding issue 99.9 vs 100) */
-		roothack = 100;
-		M = boost / 5;
-	} else if (!V) {
-		/* Extreme case (just treat it extra cause of rounding issue 99.9 vs 100) */
-		roothack = 100;
-		V = boost / 5;
-	} else if (cfg_audio_master_volume > V) {
-		/* Master slider is higher -> less capacity to boost it, instead load boosting on the specific slider more than on the master slider */
-		Mdiff = 100 - cfg_audio_master_volume;
-		Vdiff = 100 - V;
-		totaldiff = Mdiff + Vdiff;
-		perc_lower = (100 * Mdiff) / totaldiff;
-		roothack = 100 - (21 - 1045 / (50 + perc_lower));
+	/* A felt duplication of +100% corresponds roughly to 4 slider steps, aka +40 volume */
+	boost = (boost - 100) * 4; //0..400
+	boost = boost / 10; //+0..+40
 
-		b_m = (boost * perc_lower) / 100;
-		b_v = (boost * (100 - perc_lower)) / 100;
-		M = (M * (100 + b_m)) / 100;
-		V = (V * (100 + b_v)) / 100;
-	} else if (cfg_audio_master_volume < V) {
-		/* Master slider is lower -> more capacity to boost it, so load boosting on the master slider more than on the specific slider */
-		Mdiff = 100 - cfg_audio_master_volume;
-		Vdiff = 100 - V;
-		totaldiff = Mdiff + Vdiff;
-		perc_lower = (100 * Vdiff) / totaldiff;
-		roothack = 100 - (21 - 1045 / (50 + perc_lower));
-
-		b_m = (boost * (100 - perc_lower)) / 100;
-		b_v = (boost * perc_lower) / 100;
-		M = (M * (100 + b_m)) / 100;
-		V = (V * (100 + b_v)) / 100;
-	} else {
-		/* Both sliders are equal - distribute boost evenly (sqrt(boost)) */
-		perc_lower = 50;
-		roothack = 100 - (21 - 1045 / (50 + perc_lower));
-
-		b_m = b_v = (boost * perc_lower) / 100;
-		M = (M * (100 + b_m)) / 100;
-		V = (V * (100 + b_v)) / 100;
-	}
+	/* Boost total volume */
+	total = M + V + boost;
 
 	/* Limit against overboosting into invalid values */
-	if (M > 100) M = 100;
-	if (V > 100) V = 100;
+	if (total > 200) total = 200;
 
-	total = evlt[((M + V) * roothack) / 200];
+	total = evlt[total / 2];
   #endif
-
 	return (cfg_audio_master * T * total);
   }
  #endif
