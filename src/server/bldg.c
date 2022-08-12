@@ -1475,9 +1475,10 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 
 			s_printf("BACT_REPAIR: %s reforged Narsil into Anduril\n", p_ptr->name);
 
-			handle_art_d(o_ptr->name1);
+			handle_art_d(ART_NARSIL);
 			invcopy(o_ptr, lookup_kind(TV_SWORD, SV_CLAYMORE));
 			o_ptr->name1 = ART_ANDURIL;
+			handle_art_inum(ART_ANDURIL);
 			apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 			o_ptr->level = 30; //a little bonus - Anduril/Claymore have base level 40 actually
 			if (id) {
@@ -1486,6 +1487,8 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 				if (!maybe_hidden_powers(Ind, o_ptr, FALSE)) o_ptr->ident |= ID_NO_HIDDEN;
 			}
 			can_use(Ind, o_ptr);
+			determine_artifact_timeout(ART_ANDURIL, &o_ptr->wpos); //reset duration, effectively, hm
+			a_info[ART_ANDURIL].winner = p_ptr->total_winner || (cfg.fallenkings_etiquette && p_ptr->once_winner); //double timeout speed for winners
 
 			/* We might be wearing/wielding the item */
 			p_ptr->update |= PU_BONUS;
