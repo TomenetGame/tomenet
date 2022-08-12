@@ -1540,12 +1540,19 @@ They all start with a slash '/' hence they're called slash commands:
             (same as pressing '?' key) and additionally lists a few most
             commonly used slash commands.
             Without 'topic' parameter, /? invokes the guide.
+
             Optionally, a topic can be specified - in this case a guide search
             will be conducted on that topic. For example enter:   /? ac
+            Press 'd' to jump to subsequent results (if any). If that still
+            won't find what you're looking for, press 's' to switch from topic
+            search mode to basic text search, and press ENTER to initiate it.
+
             To quickly access your guide bookmarks, just specify the bookmark's
             index character as topic, eg "/? a" for the first bookmark a).
+
             To access not a chapter, but a "header" of some subparagraph, try
             searching for all uppercase, eg "CONFUSION" instead of "confusion".
+
 /?c         Shortcut to your character's class description in the guide.
 /?r         Shortcut to your character's race description in the guide.
 /?t         Shortcut to your character's race trait in the guide.
