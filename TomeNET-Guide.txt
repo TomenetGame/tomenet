@@ -7783,17 +7783,19 @@ The Mirror              Donate gold and pray to the gods.
 
                         The magicians there have two spells available for this
                         procedure..
-                        A) an advanced spell that wipes some of your memories,
+                        A) Lose Memories I:
+                           An advanced spell that wipes some of your memories,
                            while still keeping your brain flexible enough to
                            retain the skill points.
                            As an unfortunate side effect, you will also lose 5
                            levels worth of your character's experience, leaving
-                           you at level 30. ('Lose Memories I')
-                        B) a highly complex spell that chirurgically wipes only
+                           you at level 30.
+                        B) Lose Memories II:
+                           A highly complex spell that chirurgically wipes only
                            the desired memories, so you keep level 35.
                            This spell is quite costly though and the magicians
                            will ask for a fair compensation of three million Au
-                           for their service. ('Lose Memories II')
+                           for their service.
 
 The Soothsayer          Presage fate. Will tell you a random rumour.
                         Also tends to sell potions of restore mana, albeit not
