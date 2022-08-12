@@ -297,11 +297,7 @@ void version_build() {
 	shortVersion = string_make(temp);
 
 	/* Append the date of build */
-#ifdef CLIENT_SIDE
-	strcat(temp, format(" client (Compiled %s %s for %s)", __DATE__, __TIME__,
-#else
-	strcat(temp, format(" server (Compiled %s %s for %s)", __DATE__, __TIME__,
-#endif
+	strcat(temp, format(" %s (Compiled %s %s for %s)", is_client_side ? "client" : "server", __DATE__, __TIME__,
 #ifdef WINDOWS
 	    "WINDOWS"
 #else /* Assume POSIX */
