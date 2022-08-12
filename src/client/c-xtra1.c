@@ -354,10 +354,10 @@ void prt_gold(int gold) {
 	} else {
 		/* Doesn't look thaaat nice colour-wise maybe, despite being easier to interpret :/ */
 		char tmp[(2 + 3) * 4 + 1];
- #define COLPRICE_AU1 TERM_L_UMBER
- #define COLPRICE_AU2 TERM_WHITE
- #define COLPRICE_AU1S "\377U"
- #define COLPRICE_AU2S "\377w"
+ #define COLPRICE_AU1 TERM_SLATE
+ #define COLPRICE_AU2 TERM_L_GREEN
+ #define COLPRICE_AU1S "\377s"
+ #define COLPRICE_AU2S "\377G"
  #define COLPRICE_MAU1 TERM_UMBER
  #define COLPRICE_MAU2 TERM_L_UMBER
  #define COLPRICE_MAU1S "\377u"
