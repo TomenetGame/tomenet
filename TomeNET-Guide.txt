@@ -141,6 +141,7 @@ Contents
     (5.9b)  Artifacts and artifact resets
     (5.10)  Destruction of items by elemental attacks
     (5.10a) Equipment damage from elemental attacks
+    (5.10b) Item damage on the floor
     (5.11)  Monsters
     (5.11a) Monster flags
     (5.12)  Monster attack mechanism, armour class, damage caps
@@ -13105,9 +13106,11 @@ that you have equipped (see (5.10a) subsequently)!
 
 There are two different cases, inventory items and equipped items:
 
--Inventory items can get destroyed or in some cases damaged (disenchanted) or
- discharged (magic devices) by various elemental attacks, depending on the item
- type and element type.
+-Inventory items can get destroyed or in some cases damaged by various
+ elemental attacks, or disenchanted (equipment only) or discharged
+ (by lightning: Magic devices, amulets, ethereal ammo), depending on the
+ item type and element type.
+ See (5.10a) below for details on disenchantment and discharge.
 
  Having resistance will reduce the chance of inventory items getting destroyed
  somewhat. To protect your inventory effectively though you will need to have
@@ -13271,6 +13274,39 @@ Soft Armour         x       x
 Metal/steel Armour  x               x
 Mithril/adamantite
 DSM Armour
+
+Also, disenchantment can disenchant your equipment if not resisted, lowering
+either (+hit, +dam) or [+armour class] boni on your equipped items, down to +0.
+Even artifacts are not safe! Only if you have disenchantment resistance or the
+item has the IGNORE_DISEN flag (ignore disenchantment) then the item is safe.
+Ethereal ammunition is especially susceptible to disenchantment.
+
+Last but not least, electricity damage can also discharge items in your
+inventory or even your equipment, if the item doesn't ignore electricity. This
+mainly concerns magic devices, but also amulets.
+Ethereal ammunition is also susceptible, similar like to disenchantment.
+Items that ignore electricity are safe, and if you have double electricity
+resistance (or immunity of course) then all items are safe.
+
+
+
+(5.10b) Item damage on the floor
+--------------------------------
+Items lying on the floor can also get damaged by elemental attacks and whatnot.
+In general, the same rules as for inventory damage apply here, although the
+effects might take a more drastic turn: Items often get destroyed right away
+instead of merely damaged.
+Also, some higher-tier elements can have drastical destructive effect, wiping
+the floor almost clean except for artifacts, because artifacts cannot be
+destroyed by any kind of spell damage:
+- Raw magical energy (ie mana storm, mana ball, etc.)
+  Some items resist or ignore mana, those are safe!
+- Meteor impact.
+- Annihilation.
+- Disintegration.
+- Havoc/inferno/detonation/rocket.
+Last but not least be informed that Holy Orbs and Holy Fire destroy all cursed
+items, except again for artifacts.
 
 
 
