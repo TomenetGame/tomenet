@@ -6850,6 +6850,7 @@ if (cfg.unikill_format) {
 				qq_ptr->to_h = a_ptr->to_h;
 				qq_ptr->to_d = a_ptr->to_d;
 				qq_ptr->weight = a_ptr->weight;
+				qq_ptr->number = 1;
 
 				object_desc(Ind, o_name, qq_ptr, TRUE, 3);
 				s_printf(" '%s'", o_name);
@@ -6903,6 +6904,7 @@ if (cfg.unikill_format) {
 			case 5: i = SV_POTION_INC_CHR; break;
 			}
 			invcopy(qq_ptr, lookup_kind(TV_POTION, i));
+			qq_ptr->number = 1;
 			object_desc(0, o_name, qq_ptr, TRUE, 3);
 			s_printf("replacement for FINAL_ARTIFACT: %s\n", o_name);
 			apply_magic(wpos, qq_ptr, -2, FALSE, TRUE, FALSE, FALSE, RESF_NONE);
@@ -6926,6 +6928,7 @@ if (cfg.unikill_format) {
 #endif
 			/* Create the object */
 			invcopy(qq_ptr, I_kind); /* this can be totally off of k_info idx values, so it's unusable practically */
+			qq_ptr->number = 1;
 			/* Complete generation, especially level requirements check */
 			apply_magic(wpos, qq_ptr, -2, FALSE, TRUE, FALSE, FALSE, resf_chosen);
 
