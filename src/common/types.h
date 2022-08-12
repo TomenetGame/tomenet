@@ -4011,6 +4011,7 @@ struct client_opts {
 	bool destroy_all_unmatched;
 
 	bool equip_text_colour;
+	bool colourize_prices;
 };
 
 /*

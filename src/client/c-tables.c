@@ -551,6 +551,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 
 	{ &c_cfg.equip_text_colour,	FALSE,	6, 0,	142, TRUE,
 	    "equip_text_colour",	"Display equipment indices/weight in yellow" },
+	{ &c_cfg.colourize_prices,	FALSE,	6, 0,	143, TRUE,
+	    "colourize_prices",		"Colourize store prices in 3-digit columns." },
 };
 
 

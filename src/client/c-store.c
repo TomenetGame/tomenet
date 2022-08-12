@@ -28,7 +28,8 @@ void display_store_action() {
 
 static void display_entry(int pos, int entries) {
 	object_type *o_ptr;
-	int i, x;
+	int i;
+	u32b x;
 	char o_name[ONAME_LEN];
 	char out_val[MSG_LEN];
 
@@ -100,7 +101,20 @@ static void display_entry(int pos, int entries) {
 			x = store_prices[pos];
 			if (x >= 0) { /* <0: player store hack */
 				/* Actually draw the price (not fixed) */
-				(void)sprintf(out_val, "%9d  ", x);
+				if (!c_cfg.colourize_prices) {
+					/* Normal display of the price */
+					(void)sprintf(out_val, "%9d  ", x);
+				} else {
+					/* Colourize 3-digit clusters a bit to make reading big numbers more comfortable */
+					out_val[0] = 0;
+					/* No billion prices in npc stores but could be in pstores */
+					if (p_ptr->au >= x && x >= 0) {
+						if (x >= 1000000000) (void)sprintf(out_val, "\377U%d\377w%03d\377U%03d\377w%03d ", x / 1000000000, (x % 1000000000) / 1000000, (x % 1000000) / 1000, x % 1000);
+						else if (x >= 1000000) (void)sprintf(out_val, "\377w%3d\377U%03d\377w%03d  ", x / 1000000, (x % 1000000) / 1000, x % 1000);
+						else if (x >= 1000) (void)sprintf(out_val, "\377U%6d\377w%03d ", x / 1000, x % 1000);
+						else (void)sprintf(out_val, "\377w%9d  ", x);
+					} else (void)sprintf(out_val, "%9d  ", x); //will be coloured dark aka unaffordable
+				}
 				c_put_str(p_ptr->au < x ? TERM_L_DARK : TERM_WHITE, out_val, i + 6, 68);
 			}
 		}
