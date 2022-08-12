@@ -13296,6 +13296,10 @@ Items lying on the floor can also get damaged by elemental attacks and whatnot.
 In general, the same rules as for inventory damage apply here, although the
 effects might take a more drastic turn: Items often get destroyed right away
 instead of merely damaged.
+
+Disenchantment and discharging (electricity damage) also works on items on the
+floor, even more effective than on items in your inventory or equipment.
+
 Also, some higher-tier elements can have drastical destructive effect, wiping
 the floor almost clean except for artifacts, because artifacts cannot be
 destroyed by any kind of spell damage:
@@ -13305,6 +13309,7 @@ destroyed by any kind of spell damage:
 - Annihilation.
 - Disintegration.
 - Havoc/inferno/detonation/rocket.
+
 Last but not least be informed that Holy Orbs and Holy Fire destroy all cursed
 items, except again for artifacts.
 
