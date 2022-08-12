@@ -5355,6 +5355,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Fire + Impact */
 		case GF_METEOR:
 			do_smash_effect = TRUE;
+#if 0
 			ignore = TRUE;
 			if (hates_fire(o_ptr)) {
 				do_kill = TRUE;
@@ -5373,11 +5374,15 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (!(f3 & TR3_IGNORE_COLD)) {
 					ignore = FALSE;
 					note_kill = (plural ? " shatter!" : " shatters!");
-#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
 					if (!quiet) sound(Ind, "shatter_potion", NULL, SFX_TYPE_MISC, FALSE);
-#endif
+ #endif
 				}
 			}
+#else
+			do_kill = TRUE;
+			note_kill = (plural ? " are pulverized!" : " is pulverized!");
+#endif
 			break;
 
 		/* Hack -- break potions and such */
