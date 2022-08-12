@@ -9630,7 +9630,7 @@ Reward deeds:
     -----------
     Players who didn't win will also (depending on the event) receive a deed
     on the next character they log in with, which can be turned in for a very
-    small temporary luck bonus that lasts about 20 minutes (30 on the Ironman
+    small temporary luck bonus that lasts about 30 minutes (45 on the Ironman
     server); multiple deed buffs do stack in duration up to ~ 1 hour, provided
     it's the same buff power (ie same tier of deed). Contender deeds are not
     tradable so they can only be redeemer by the character that received them.
@@ -12450,9 +12450,13 @@ Deeds           Some of the parchments are deeds, which are used as rewards
                 mayor's office in Bree (one of the '+' doors in town).
                 Some deeds can be traded to other characters, but usually they
                 will get a lesser reward (eg a luck buff instead of an item)
-                than the original owner could have gotten.
-                Luck buffs usually last about 20 minutes each or 30 minutes on
-                the Ironman server.
+                than the original owner could have gotten. Also, the luck buff
+                from a traded master deed won't be as strong as the luck buff
+                form your own master deed.
+                Luck buffs of lesser deeds (contender) usually last about
+                30 minutes each or 45 minutes on the Ironman server, while luck
+                buffs of master deeds (winner) usually last about 60 minutes or
+                90 on Iornman server (duration is relative to world surface.)
                 Note that temporary luck buffs from deeds stack in duration up
                 to ~ 1 hour as long as their buff power is the same, and also
                 will end prematurely when you log out before the buff ran out.
