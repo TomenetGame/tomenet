@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 9. August 2022 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 12. August 2022 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.8.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -17478,307 +17478,307 @@ level 1, not zero).
 For levels above 50 the title will change every 10 levels, with the final title
 being awarded at level 99, the maximum level reachable.
 
-Class           Male                    Female
-----------------------------------------------------------------
-Warrior
-                            Rookie
-                            Mercenary
-                            Soldier
-                            Veteran
-                            Captain
-                            Champion
-                Hero                    Heroine
-                            General
-                Baron                   Baroness
-                Duke                    Duchess
-                Lord                    Lady
+  Class           Level    Male                    Female
+  ----------------------------------------------------------------
+  Warrior
+                   1                   Rookie
+                   5                   Mercenary
+                  10                   Soldier
+                  15                   Veteran
+                  20                   Captain
+                  25                   Champion
+                  30       Hero                    Heroine
+                  35                   General
+                  40       Baron                   Baroness
+                  45       Duke                    Duchess
+                  50       Lord                    Lady
 
-                            Highlord
-                            Overlord
-                            Destroyer
-                            Annihilator
-                            Titan
+                  60                   Highlord
+                  70                   Overlord
+                  80                   Destroyer
+                  90                   Annihilator
+                  99                   Titan
 
-Istar
-                            Novice
-                            Apprentice
-                            Trickster
-                            Illusionist
-                            Spellbinder
-                            Spellweaver
-                            Evoker
-                            Conjurer
-                Sorcerer                Sorceress
-                            Warlock
-                            Archmage
+  Istar
+                   1                   Novice
+                   5                   Apprentice
+                  10                   Trickster
+                  15                   Illusionist
+                  20                   Spellbinder
+                  25                   Spellweaver
+                  30                   Evoker
+                  35                   Conjurer
+                  40       Sorcerer                Sorceress
+                  45                   Warlock
+                  50                   Archmage
 
-                            Savant
-                            Grand Wizard
-                Dragon Lord             Dragon Lady
-                            Dimensionalist
-                            Omniscient
+                  60                   Savant
+                  70                   Grand Wizard
+                  80       Dragon Lord             Dragon Lady
+                  90                   Dimensionalist
+                  99                   Omniscient
 
-Priest
-                            Acolyte
-                            Adept
-                            Curate
-                            Canon
-                Priest                  Priestess
-                            Exorcist
-                            Bishop
-                            Arch-Bishop
-                            Cardinal
-                High Priest             High Priestess
-                Patriarch               Matriarch
+  Priest
+                   1                   Acolyte
+                   5                   Adept
+                  10                   Curate
+                  15                   Canon
+                  20       Priest                  Priestess
+                  25                   Exorcist
+                  30                   Bishop
+                  35                   Arch-Bishop
+                  40                   Cardinal
+                  45       High Priest             High Priestess
+                  50       Patriarch               Matriarch
 
-                            Protonotary
-                            Saint
-                            Ascended
-                            Demi
-                            Divine
+                  60                   Protonotary
+                  70                   Saint
+                  80                   Ascended
+                  90                   Demi
+                  99                   Divine
 
-Rogue
-                            Vagabond
-                            Cutpurse
-                            Robber
-                            Burglar
-                            Filcher
-                            Sharper
-                            Thief
-                            Master Thief
-                            Infiltrator
-                            Grandmaster Thief
-                            Assassin
+  Rogue
+                   1                   Vagabond
+                   5                   Cutpurse
+                  10                   Robber
+                  15                   Burglar
+                  20                   Filcher
+                  25                   Sharper
+                  30                   Thief
+                  35                   Master Thief
+                  40                   Infiltrator
+                  45                   Grandmaster Thief
+                  50                   Assassin
 
-                            Phantom
-                            Myth
-                            Nightmare
-                            Terror
-                            Death Fate
+                  60                   Phantom
+                  70                   Myth
+                  80                   Nightmare
+                  90                   Terror
+                  99                   Death Fate
 
-Mimic
-                            Pretender
-                            Modifier
-                            Elastic
-                            Copier
-                            Multiple (1st)
-                            Multiple (2nd)
-                            Metamorph
-                            Many-Faced
-                            Changer
-                            Master Changer
-                            Grandmaster Changer
+  Mimic
+                   1                   Pretender
+                   5                   Modifier
+                  10                   Elastic
+                  15                   Copier
+                  20                   Multiple (1st)
+                  25                   Multiple (2nd)
+                  30                   Metamorph
+                  35                   Many-Faced
+                  40                   Changer
+                  45                   Master Changer
+                  50                   Grandmaster Changer
 
-                            Faker
-                            Doppelganger
-                            Transformer
-                            Replicator
-                            Limitless
+                  60                   Faker
+                  70                   Doppelganger
+                  80                   Transformer
+                  90                   Replicator
+                  99                   Limitless
 
-Archer
-                            Rock Thrower
-                            Slinger
-                            Great Slinger
-                Bowman                  Bowmaiden
-                            Marksman
-                            Archer
-                            Sharpshooter
-                            Veteran Archer
-                            Master Archer
-                            Grandmaster Archer
-                            Deadeye
+  Archer
+                   1                   Rock Thrower
+                   5                   Slinger
+                  10                   Great Slinger
+                  15       Bowman                  Bowmaiden
+                  20                   Marksman
+                  25                   Archer
+                  30                   Sharpshooter
+                  35                   Veteran Archer
+                  40                   Master Archer
+                  45                   Grandmaster Archer
+                  50                   Deadeye
 
-                            Elite Archer
-                            Grand Elite Archer
-                            Legendary Archer
-                            Sirring Death
-                            Golden Eye
+                  60                   Elite Archer
+                  70                   Grand Elite Archer
+                  80                   Legendary Archer
+                  90                   Sirring Death
+                  99                   Golden Eye
 
-Paladin
-                            Page
-                            Squire
-                            Faithful
-                            Zealot
-                            Chaplain
-                            Defender
-                            Crusader
-                            Knight
-                            Banneret
-                            Paladin
-                            Knight Commander
+  Paladin
+                   1                   Page
+                   5                   Squire
+                  10                   Faithful
+                  15                   Zealot
+                  20                   Chaplain
+                  25                   Defender
+                  30                   Crusader
+                  35                   Knight
+                  40                   Banneret
+                  45                   Paladin
+                  50                   Knight Commander
 
-                            Sacred Defender
-                            Venerable Templar
-                            Holy Avenger
-                Holy King               Holy Queen
-                            God's Hand
+                  60                   Sacred Defender
+                  70                   Venerable Templar
+                  80                   Holy Avenger
+                  90       Holy King               Holy Queen
+                  99                   God's Hand
 
-Ranger
-                            Rookie
-                            Path Finder
-                            Deputy
-                            Guard
-                            Scout
-                            Sentry
-                            Overseer
-                            Guard Captain
-                            Supervisor
-                            High Ranger
-                            Ranger Chieftain
+  Ranger
+                   1                   Rookie
+                   5                   Path Finder
+                  10                   Deputy
+                  15                   Guard
+                  20                   Scout
+                  25                   Sentry
+                  30                   Overseer
+                  35                   Guard Captain
+                  40                   Supervisor
+                  45                   High Ranger
+                  50                   Ranger Chieftain
 
-                            Elite Ranger
-                            Champion of Law
-                Lord of Law             Lady of Law
-                            Legend
-                            Justice
+                  60                   Elite Ranger
+                  70                   Champion of Law
+                  80       Lord of Law             Lady of Law
+                  90                   Legend
+                  99                   Justice
 
-Adventurer
-                            Rambler
-                            Walker
-                            Tripper
-                            Tourist
-                            Strider
-                            Traveller
-                            Discoverer
-                            Spelunker
-                            Voyager
-                            Navigator
-                            Explorer
+  Adventurer
+                   1                   Rambler
+                   5                   Walker
+                  10                   Tripper
+                  15                   Tourist
+                  20                   Strider
+                  25                   Traveller
+                  30                   Discoverer
+                  35                   Spelunker
+                  40                   Voyager
+                  45                   Navigator
+                  50                   Explorer
 
-                            Seasoned Adventurer
-                            Famous Adventurer
-                            Grand Adventurer
-                            Legendary Adventurer
-                            Mythical Adventurer
+                  60                   Seasoned Adventurer
+                  70                   Famous Adventurer
+                  80                   Grand Adventurer
+                  90                   Legendary Adventurer
+                  99                   Mythical Adventurer
 
-Druid
-                            Green
-                            Tree Hugger
-                Flower Boy              Flower Girl
-                            Herbalist
-                            Spiritualist
-                            Elder
-                            Druid
-                            High Druid
-                            Master Druid
-                            Wildlife Preserver
-                            Arch-Druid
+  Druid
+                   1                   Green
+                   5                   Tree Hugger
+                  10       Flower Boy              Flower Girl
+                  15                   Herbalist
+                  20                   Spiritualist
+                  25                   Elder
+                  30                   Druid
+                  35                   High Druid
+                  40                   Master Druid
+                  45                   Wildlife Preserver
+                  50                   Arch-Druid
 
-                            Forest Guardian
-                            Wind Evoker
-                            Forest Keeper
-                            Autumn
-                            Evergreen
+                  60                   Forest Guardian
+                  70                   Wind Evoker
+                  80                   Forest Keeper
+                  90                   Autumn
+                  99                   Evergreen
 
-Shaman
-                            Smoker
-                            Novice Walker
-                            Walker
-                            Spiritwalker
-                            Bonecaster
-                            Bonefletcher
-                            Cursed
-                Chanter                 Chantress
-                Elder Chanter           Elder Chantress
-                            Shaman
-                            Elder Shaman
+  Shaman
+                   1                   Smoker
+                   5                   Novice Walker
+                  10                   Walker
+                  15                   Spiritwalker
+                  20                   Bonecaster
+                  25                   Bonefletcher
+                  30                   Cursed
+                  35       Chanter                 Chantress
+                  40       Elder Chanter           Elder Chantress
+                  45                   Shaman
+                  50                   Elder Shaman
 
-                            Spirit Keeper
-                            Spirit Master
-                            Grand Sage
-                            Realm Keeper
-                            Presence
+                  60                   Spirit Keeper
+                  70                   Spirit Master
+                  80                   Grand Sage
+                  90                   Realm Keeper
+                  99                   Presence
 
-Runemaster
-                            Digger
-                            Rune Tracer
-                            Rock Collector
-                            Fire Starter
-                            Treasure Hunter
-                            Archaeologist
-                            Earth Guard
-                            Rune Knight
-                            Rune Keeper
-                            Runemaster
-                            Grand Runemaster
+  Runemaster
+                   1                   Digger
+                   5                   Rune Tracer
+                  10                   Rock Collector
+                  15                   Fire Starter
+                  20                   Treasure Hunter
+                  25                   Archaeologist
+                  30                   Earth Guard
+                  35                   Rune Knight
+                  40                   Rune Keeper
+                  45                   Runemaster
+                  50                   Grand Runemaster
 
-                            Runescribe
-                            Elemental Master
-                            Force Master
-                            Grand Channelist
-                            Vortex
+                  60                   Runescribe
+                  70                   Elemental Master
+                  80                   Force Master
+                  90                   Grand Channelist
+                  99                   Vortex
 
-Mindcrafter
-                            Wary
-                            Fathomer
-                            Thinker
-                            Biaser
-                            Convincer
-                            Warper
-                            Psychic
-                            Telepath
-                            Manipulator
-                            Controller
-                            Master Mindcrafter
+  Mindcrafter
+                   1                   Wary
+                   5                   Fathomer
+                  10                   Thinker
+                  15                   Biaser
+                  20                   Convincer
+                  25                   Warper
+                  30                   Psychic
+                  35                   Telepath
+                  40                   Manipulator
+                  45                   Controller
+                  50                   Master Mindcrafter
 
-                            Master Manipulator
-                            Master Controller
-                            Reality Shifter
-                            Alterator
-                            Truth
+                  60                   Master Manipulator
+                  70                   Master Controller
+                  80                   Reality Shifter
+                  90                   Alterator
+                  99                   Truth
 
-Death Knight (aka Vampire Paladin)
-                            Faithless
-                            Forfeit
-                            Unresting
-                            Hungering
-                            Tainted
-                            Unhallowed
-                            Dark Adept
-                            Crypt Keeper
-                            Fallen Champion
-                            Antipaladin
-                            Death Knight
+  Death Knight (aka Vampire Paladin)
+                   1                   Faithless
+                   5                   Forfeit
+                  10                   Unresting
+                  15                   Hungering
+                  20                   Tainted
+                  25                   Unhallowed
+                  30                   Dark Adept
+                  35                   Crypt Keeper
+                  40                   Fallen Champion
+                  45                   Antipaladin
+                  50                   Death Knight
 
-                Crypt Lord              Crypt Lady
-                            Herald of Ruin
-                            Dark Legate
-                Unholy King             Unholy Queen
-                            Death's Hand
+                  60       Crypt Lord              Crypt Lady
+                  70                   Herald of Ruin
+                  80                   Dark Legate
+                  90       Unholy King             Unholy Queen
+                  99                   Death's Hand
 
-Hell Knight (aka Corrupted Maia Paladin)
-        -The first four titles do not exist as this class cannot be acquired
-         before reaching level 20, up to which the Paladin titles are used.-
-                            Traitor
-                            Fanatic
-                            Cultist
-                            Heretic
-                            Chosen
-                            Unholy Zealot
-                            Hell Knight
+  Hell Knight (aka Corrupted Maia Paladin)
+      -The first four titles do not exist as this class cannot be acquired
+       before reaching level 20, up to which the Paladin titles are used.-
+                  20                   Traitor
+                  25                   Fanatic
+                  30                   Cultist
+                  35                   Heretic
+                  40                   Chosen
+                  45                   Unholy Zealot
+                  50                   Hell Knight
 
-                            Plaguebringer
-                            Grand Tormentor
-                            Vizier of Chaos
-                Demon Prince            Demon Princess
-                Demon King              Demon Queen
+                  60                   Plaguebringer
+                  70                   Grand Tormentor
+                  80                   Vizier of Chaos
+                  90       Demon Prince            Demon Princess
+                  99       Demon King              Demon Queen
 
-Corrupted Priest (aka Corrupted Maia Priest)
-        -The first four titles do not exist as this class cannot be acquired
-         before reaching level 20, up to which the Priest titles are used.-
-                Priest                  Priestess
-                            Execrator
-                            Bishop
-                            Arch-Bishop
-                            Cardinal
-                High Priest             High Priestess
-                Patriarch               Matriarch
+  Corrupted Priest (aka Corrupted Maia Priest)
+      -The first four titles do not exist as this class cannot be acquired
+       before reaching level 20, up to which the Priest titles are used.-
+                  20       Priest                  Priestess
+                  25                   Execrator
+                  30                   Bishop
+                  35                   Arch-Bishop
+                  40                   Cardinal
+                  45       High Priest             High Priestess
+                  50       Patriarch               Matriarch
 
-                            Protonotary
-                            Great Deceiver
-                            Ascended
-                            Demi
-                            Chaos God
+                  60                   Protonotary
+                  70                   Great Deceiver
+                  80                   Ascended
+                  90                   Demi
+                  99                   Chaos God
 
 
 (6.5c) Power levels
@@ -20596,7 +20596,7 @@ As runecraft does not rely on books or spell scrolls to guide its magic,
 runespells may be cast while blinded, although at increased rate of failure.
 Spell failure likewise increases while stunned, or simply when attempting a
 powerful spell. While an istar is always prevented from casting outside of his
-or her ability, a runemaster may continue to attempt spells until a failure 
+or her ability, a runemaster may continue to attempt spells until a failure
 would prove fatal. Runemasters are able to cast many kinds of spells, but it is
 important to note that some spells are more difficult to manage than others.
 
