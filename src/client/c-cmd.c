@@ -3196,7 +3196,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					strcpy(chapter, "The Land of Rhun   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Mori") || my_strcasestr(buf, "Mines") || !strcasecmp(buf, "mom")) {
+				if (my_strcasestr(buf, "Moria") || my_strcasestr(buf, "Mines") || !strcasecmp(buf, "mom")) { //was Mori, but collides with "memories"
 					strcpy(chapter, "The Mines of Moria   ");
 					continue;
 				}
