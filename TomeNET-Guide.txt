@@ -18881,7 +18881,7 @@ school.
 
 - Wizardry -
 ------------
-(Spells use mainly INT for determining the failure rate.)
+(Most spells are INT-based, aka use INT for determining spell failure rates.)
 
 - Mana
 
@@ -19660,8 +19660,10 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
 
 - Occultism -
 -------------
-(Some Shadow and most Spirit and Hereticism spells use WIS for determining
-spell failure rate. All Unlife spells use WIS.)
+(Regarding spell failure rates: Shadow school is INT-based, but some Shadow
+spells are wisdom-based instead. In turn, Spirit and Hereticism are WIS-based,
+but have some spells that are intelligence-based instead.
+All Unlife spells are Wisdom-based.)
 
 - Shadow
 
@@ -20332,7 +20334,8 @@ In general, mindcraft schools are less affected by anti-magic fields.)
 - Astral Knowledge -
 --------------------
 The exclusive astral school for Maiar.
-Most spells use INT and some use WIS for determining the failure rate.
+Most spells use INT and some use WIS for determining the failure rate. If no
+stat is mentioned, INT is therefore the norm.
 Instead of normal spell level, the spells of this school use an 'astral level'
 to determine damage or effect. This astral level consists to equal parts of
 your character level and your Astral Knowledge school level. This means that
