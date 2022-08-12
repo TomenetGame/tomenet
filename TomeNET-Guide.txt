@@ -18883,7 +18883,7 @@ school.
 ------------
 (Most spells are INT-based, aka use INT for determining spell failure rates.)
 
-- Mana
+- Mana              [Spells are INT-based.]
 
     Manathrust      Casts a powerful mana bolt.
                     Required skill level for first spell level: 1.
@@ -18929,7 +18929,7 @@ school.
     BONI:           Mana resistance at 40.
 
 
-- Fire
+- Fire              [Spells are INT-based.]
 
     Globe of Light  Creates a globe of magical light.
                     Required skill level for first spell level: 2.
@@ -18984,7 +18984,7 @@ school.
                     Fire immunity at 50.
 
 
-- Water
+- Water             [Spells are INT-based.]
 
     Vapor           Fills the air around you with toxic moisture
                     (which does pure water damage, not poison).
@@ -19048,7 +19048,7 @@ school.
                     has been trained, with the effect beginning at 8.000.
 
 
-- Air
+- Air               [Spells are INT-based.]
 
     Noxious Cloud   Fires a poison cloud at a designated target.
                     Required skill level for first spell level: 3.
@@ -19093,7 +19093,7 @@ school.
                     levitation at 50.
 
 
-- Earth
+- Earth             [Spells are INT-based.]
 
     Dig             Turns walls into mud.
                     Required skill level for first spell level: 12.
@@ -19130,7 +19130,7 @@ school.
                     Great damage reduction against earthquakes at 50.
 
 
-- Nature
+- Nature            [Spells are INT-based.]
 
     Healing         Heals a percentage of your max hit points. (auto-project)
                     Caps at a certain maximum amount, depending on tier,
@@ -19176,7 +19176,7 @@ school.
                     poison resistance at 40.
 
 
-- Conveyance
+- Conveyance        [Spells are INT-based.]
 
     Phase Door      Teleports you randomly on a small scale range.
                     Required skill level for first spell level: 2.
@@ -19236,7 +19236,7 @@ school.
     BONI:           Resistance to teleportation attacks at 40.
 
 
-- Divination
+- Divination        [Spells are INT-based.]
 
     Detect Monsters Detects all non-invisible monsters nearby. (auto-project)
                     Required skill level for first spell level: 3.
@@ -19273,7 +19273,7 @@ school.
     BONI:           Automatic identification (auto-ID) at 50.
 
 
-- Temporal
+- Temporal          [Spells are INT-based.]
 
     Magelock        Magically locks a door.
                     Required skill level for first spell level: 1.
@@ -19305,7 +19305,7 @@ school.
                     Time resistance at 50.
 
 
-- Udun
+- Udun              [Spells are INT-based unless noted otherwise.]
 
     Hellfire        Conjures a ball of hellfire which is especially deadly to
                     GOOD opponents.
@@ -19338,7 +19338,7 @@ school.
     BONI:           Hold life at 40.
 
 
-- Mind
+- Mind              [Spells are INT-based.]
 
     Confusion       Confuses a monsters.
                     Required skill level for first spell level: 5.
@@ -19374,7 +19374,7 @@ school.
 (All spells use WIS for determining the failure rate.
 In general, holy schools are somewhat less affected by anti-magic fields.)
 
-- Holy Offense
+- Holy Offense      [Spells are WIS-based unless noted otherwise.]
 
     Curse           Randomly causes confusion damage or slowness or blindness.
                     Required skill level for first spell level: 1.
@@ -19441,7 +19441,7 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
                     to all (physical) melee and ranged attacks.
 
 
-- Holy Defense
+- Holy Defense      [Spells are WIS-based unless noted otherwise.]
 
     Blessing        Same effect as scroll of Blessing.         (auto-project)
                     Required skill level for first spell level: 1.
@@ -19521,7 +19521,7 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
                     anymore once you acquire this bonus.)
 
 
-- Holy Curing
+- Holy Curing       [Spells are WIS-based unless noted otherwise.]
 
     Curing          Slows down the effect of poison            (auto-project)
                     and cures being gorged.
@@ -19600,7 +19600,7 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
                     but never goes below 30% total exp loss) at 50.
 
 
-- Holy Support
+- Holy Support      [Spells are WIS-based unless noted otherwise.]
 
     Remove Fear     Keeps your heart boldened for a while.     (auto-project)
                     Required skill level for first spell level: 1.
@@ -19665,7 +19665,7 @@ spells are wisdom-based instead. In turn, Spirit and Hereticism are WIS-based,
 but have some spells that are intelligence-based instead.
 All Unlife spells are Wisdom-based.)
 
-- Shadow
+- Shadow            [Spells are INT-based unless noted otherwise.]
 
     Cause Fear      Scares your target.
                     (This spell uses WISDOM to determine fail-rates!)
@@ -19758,7 +19758,7 @@ All Unlife spells are Wisdom-based.)
                     increases by +1 every five skill points, up to +4 at 50.
 
 
-- Spirit
+- Spirit            [Spells are WIS-based unless noted otherwise.]
 
     Cause Wounds    Causes wounds to open on your target, dealing instant
                     damage. Does not work against creatures who cannot bleed
@@ -19864,7 +19864,7 @@ All Unlife spells are Wisdom-based.)
                     but never goes below 30% total exp loss) at 50.
 
 
-- Hereticism
+- Hereticism       [Spells are WIS-based unless noted otherwise.]
 
     Terror          Casts fear and confusion into the hearts of others.
                     Required skill level for first spell level: 3.
@@ -19965,7 +19965,7 @@ All Unlife spells are Wisdom-based.)
                     If both Hereticism and Traumaturgy are at least 45.000,
                     insanity-inducing effects become less effective.
 
-- Unlife
+- Unlife            [Spells are WIS-based.]
 
     Fatigue         Slows your target down, draining power from its muscles.
                     Required skill level for first spell level: 5.
@@ -20039,7 +20039,7 @@ All Unlife spells are Wisdom-based.)
 ------------
 (All spells use WIS for determining the failure rate.)
 
-- Arcane Lore
+- Arcane Lore       [Spells are WIS-based.]
 
     Toxic Moisture  Creates a cloud of toxic moisture at a designated target,
                     consisting of poisonous gas.
@@ -20071,7 +20071,7 @@ All Unlife spells are Wisdom-based.)
                     Required skill level for first spell level: 40.
 
 
-- Physical Lore
+- Physical Lore     [Spells are WIS-based.]
 
     Focus           Increases your accuracy, adding a bonus to your
                     melee-to-hit and ranged-to-hit.
@@ -20112,7 +20112,7 @@ All Unlife spells are Wisdom-based.)
 (All spells except for 'Charm' use INT for determining the failure rate.
 In general, mindcraft schools are less affected by anti-magic fields.)
 
-- Psycho-power
+- Psycho-power      [Spells are INT-based.]
 
     Psychic Hammer  Telekinetic power focused to bash an enemy,
                     damaging and stunning him.
@@ -20171,7 +20171,7 @@ In general, mindcraft schools are less affected by anti-magic fields.)
                     Required skill level for first spell level: 40.
 
 
-- Attunement
+- Attunement       [Spells are INT-based.]
 
     Clear Mind      Removes fear, confusion and hallucination. (auto-project)
                     Required skill level for first spell level: 3.
@@ -20222,7 +20222,7 @@ In general, mindcraft schools are less affected by anti-magic fields.)
                     Shared spell (see above): Psycho-power / Attunement.
 
 
-- Mental Intrusion
+- Mental Intrusion  [Spells are INT-based unless noted otherwise.]
  (Note that psi attacks don't have any effect on angels, nonliving creatures,
  or empty-minded creatures, and that undead, stupid creatures and common
  animals as well as weird-minded creatures may resist it. At the same time,
@@ -20423,8 +20423,9 @@ though, as all other magic schools do, not the astral level.)
 
 - Runecraft -
 -------------
-Runespells use INT and DEX for determining the failure rate, and spell failure
-triggers damaging backlash instead of failing outright, see (6.8b) for details.
+Runespells all use both INT and DEX for determining the failure rate.
+In Runecraft, spell failure triggers damaging backlash instead of failing
+outright, see (6.8b) for details.
 Spell level is the lesser of one or two skills applied during the casting.
 All spell types are described here in detail, but also tabulated in (6.8c).
 Enhanced spell types have fixed parameters; other spell types may be modified.
