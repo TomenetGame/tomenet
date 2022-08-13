@@ -4097,7 +4097,9 @@ void summon_player(int victim, struct worldpos *wpos, char *message){
 }
 #endif
 
-/* actually recall a player with no questions asked */
+/* Actually recall a player with no questions asked.
+   For player-initiated recall, this function is only called from do_recall(),
+   but for special purpose (admin/events..) it can be called directly. */
 void recall_player(int Ind, char *message) {
 	struct player_type *p_ptr;
 	cave_type **zcave;
@@ -4106,8 +4108,11 @@ void recall_player(int Ind, char *message) {
 
 	p_ptr = Players[Ind];
 
-	if(!p_ptr) return;
-	if(!(zcave = getcave(&p_ptr->wpos))) return;	// eww
+	if (!p_ptr) return;
+	if (!(zcave = getcave(&p_ptr->wpos))) return;	// eww
+
+	/* Always clear exception-flag */
+	p_ptr->global_event_temp &= ~PEVF_PASS_00;
 
 	break_cloaking(Ind, 0);
 	break_shadow_running(Ind);
@@ -4388,6 +4393,10 @@ void recall_player(int Ind, char *message) {
 static void do_recall(int Ind, bool bypass) {
 	player_type *p_ptr = Players[Ind];
 	char *message = NULL;
+	bool pass = (p_ptr->global_event_temp & PEVF_PASS_00);
+
+	/* Always clear exception-flag */
+	p_ptr->global_event_temp &= ~PEVF_PASS_00;
 
 	/* sorta circumlocution? */
 	worldpos new_pos;
@@ -4400,9 +4409,7 @@ static void do_recall(int Ind, bool bypass) {
 	if (sector00separation && !is_admin(p_ptr) && (
 	    (!p_ptr->recall_pos.wx && !p_ptr->recall_pos.wy) ||
 	    (!p_ptr->wpos.wx && !p_ptr->wpos.wy))) {
-		if (p_ptr->global_event_temp & PEVF_PASS_00) {
-			p_ptr->global_event_temp &= ~PEVF_PASS_00;
-		} else {
+		if (!pass) {
 			msg_print(Ind, "\377oA tension leaves the air around you...");
 			p_ptr->redraw |= (PR_DEPTH);
 			return;
