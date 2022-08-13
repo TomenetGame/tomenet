@@ -1126,6 +1126,7 @@ extern void py2mon_update_abilities(monster_type *m_ptr, player_type *p_ptr);
  * consider removing one of them */
 /*extern void Contact(int fd, void *arg);*/
 extern void world_connect(int Ind);
+extern void world_disconnect(int Ind);
 extern int Net_input(void);
 extern int Net_output(void);
 extern int Net_output1(int i);
@@ -2072,6 +2073,11 @@ extern void erase_subinven(int Ind, int item);
 extern void verify_subinven_size(int Ind, int slot, bool check);
 extern int get_subinven_group(int sval);
 #endif
+
+
+/* world.c */
+extern struct list *rpmlist;
+extern struct list *remlist(struct list **head, struct list *dlp);
 
 
 /* xtra1.c */

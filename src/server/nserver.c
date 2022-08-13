@@ -763,17 +763,39 @@ void world_connect(int Ind) {
 
 	block_timer();
 	if ((WorldSocket = CreateClientSocket(cfg.wserver, 18360)) == -1) {
-#ifdef WIN32
+ #ifdef WIN32
 		s_printf("Unable to connect to world server %d\n", errno);
-#else
+ #else
 		s_printf("Unable to connect to world server %d %d\n", errno, sl_errno);
-#endif
+ #endif
 		if (Ind != -1) msg_print(Ind, "\377rFailed to connect to the world server");
 	} else {
 		install_input(world_comm, WorldSocket, 0);
 		if (Ind != -1) msg_print(Ind, "\377gSuccessfully connected to the world server");
 	}
 	allow_timer();
+}
+void world_disconnect(int Ind) {
+	if (WorldSocket == -1) {
+		if (Ind != -1) msg_print(Ind, "\377oNot connected to the world server");
+		return;
+	}
+
+	s_printf("World server disconnected\n");
+	remove_input(WorldSocket);
+	close(WorldSocket);
+	/* Clear all the world players quietly */
+	while(remlist(&rpmlist, rpmlist));
+#if 0
+	c_pl = rpmlist;
+	while (c_pl) {
+		n_pl = c_pl->next;
+		free(c_pl);
+		c_pl = n_pl;
+	}
+	rpmlist = NULL;
+#endif
+	WorldSocket = -1;
 }
 #endif
 

@@ -5304,6 +5304,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				world_connect(Ind);
 				return;
 			}
+			else if (prefix(messagelc, "/unworld")){
+				world_disconnect(Ind);
+				return;
+			}
 #endif
 
 			else if (prefix(messagelc, "/shutdown")) { // || prefix(messagelc, "/quit"))
