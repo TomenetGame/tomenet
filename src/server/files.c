@@ -1042,19 +1042,6 @@ bool process_player_name(int Ind, bool sf) {
 }
 
 
-/*
- * Gets a name for the character, reacting to name changes.
- *
- * Assumes that "display_player()" has just been called
- * XXX Perhaps we should NOT ask for a name (at "birth()") on Unix?
- *
- * The name should be sent to us from the client, so this is unnecessary --KLJ--
- */
-void get_name(int Ind)
-{
-}
-
-
 
 /*
  * Hack -- commit suicide
@@ -1064,7 +1051,7 @@ void do_cmd_suicide(int Ind) {
 
 	/* Don't allow PvP characters this way to deny their opponent the kill credit */
 	if (in_pvparena(&p_ptr->wpos)) {
-		msg_print(Ind, "\377yGladiators never suicide in the arena!");
+		msg_print(Ind, "\377yGladiators never suicide in the arena! (Use /pvp to leave.)");
 		return;
 	}
 
@@ -1074,6 +1061,7 @@ void do_cmd_suicide(int Ind) {
 	/* Hack -- set the cause of death */
 	if (!p_ptr->ghost) {
 		//strcpy(p_ptr->died_from, "");
+		strcpy(p_ptr->died_from_list, "self-inflicted wounds");
 		strcpy(p_ptr->died_from_list, "self-inflicted wounds");
 		p_ptr->died_from_ridx = 0;
 		p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
