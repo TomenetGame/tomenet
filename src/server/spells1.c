@@ -4192,7 +4192,7 @@ static void apply_nexus(int Ind, monster_type *m_ptr, int Ind_attacker) {
 /* note: apply_morph() is only called by polymorph-rod/wand usage.
    disable body-scrambling, to make it more usable for un-bat'ing someone? */
 #define DISABLE_MORPH_SCRAMBLE
-static void apply_morph(int Ind, int power, char * killer, int Ind_attacker) {
+static void apply_morph(int Ind, int power, char *killer, int Ind_attacker) {
 	player_type *p_ptr = Players[Ind];
 #ifndef DISABLE_MORPH_SCRAMBLE
 	int max1, cur1, max2, cur2, ii, jj;
