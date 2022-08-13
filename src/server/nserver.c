@@ -1460,10 +1460,11 @@ static void Delete_player(int Ind) {
 	save_player(Ind);
 
 	/* If he was actively playing, tell everyone that he's left */
-	/* handle the cfg_secret_dungeon_master option */
 	if (!p_ptr->suicided && !p_ptr->death) {
+		/* handle the cfg_secret_dungeon_master option */
 		if (!p_ptr->admin_dm || !cfg.secret_dungeon_master) {
 			cptr title = "";
+
 			if (p_ptr->admin_dm) title = p_ptr->male ? "Dungeon Master " : "Dungeon Mistress ";
 			else if (p_ptr->admin_wiz) title = "Dungeon Wizard ";
 			else if (p_ptr->mode & MODE_PVP) title = "Gladiator ";
@@ -1490,7 +1491,8 @@ static void Delete_player(int Ind) {
 #endif
 		} else {
 			cptr title = "";
-			if (p_ptr->admin_dm) title = (p_ptr->male)?"Dungeon Master ":"Dungeon Mistress ";
+
+			if (p_ptr->admin_dm) title = (p_ptr->male) ? "Dungeon Master " : "Dungeon Mistress ";
 			if (p_ptr->admin_wiz) title = "Dungeon Wizard ";
 #if 0 /* Don't show admins in the list!! Reenable this when 'quiet' flag got reworked into 'dm' flag or sth. */
 #ifdef TOMENET_WORLDS
