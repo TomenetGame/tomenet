@@ -1062,7 +1062,7 @@ void do_cmd_suicide(int Ind) {
 	if (!p_ptr->ghost) {
 		//strcpy(p_ptr->died_from, "");
 		strcpy(p_ptr->died_from_list, "self-inflicted wounds");
-		strcpy(p_ptr->died_from_list, "self-inflicted wounds");
+		strcpy(p_ptr->really_died_from, "self-inflicted wounds");
 		p_ptr->died_from_ridx = 0;
 		p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
 	}
