@@ -895,7 +895,6 @@ extern void show_news(void);
 extern errr show_file(int Ind, cptr name, cptr what, int line, int color, int divl, char *srcstr);
 extern void do_cmd_help(int Ind, int line);
 extern bool process_player_name(int Ind, bool sf);
-extern void get_name(int Ind);
 extern void do_cmd_suicide(int Ind);
 extern void do_cmd_save_game(int Ind);
 extern unsigned int total_points(int Ind);
