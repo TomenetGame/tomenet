@@ -129,7 +129,7 @@ Contents
     (5.3)   Slaying vs brands
     (5.3a)  Martial Arts, brands
     (5.4)   Application of attack-affecting item mods
-    (5.5)   Weight of weapons and armour
+    (5.5)   Weight of weapons and armour, weight limits
     (5.6)   Resistances & caps, immunities, susceptibilities
     (5.7)   Qualitative classification of items, identifying & selling items
     (5.7a)  Types of identification
@@ -10811,8 +10811,8 @@ Exceptions:
 
 
 
-(5.5) Weight of weapons and armour
-----------------------------------
+(5.5) Weight of weapons and armour, weight limits
+-------------------------------------------------
 Weight of items in your inventory or equipment can have great effect on
 martial artists. If you use martial arts, also see (5.3a) for more information.
 
