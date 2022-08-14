@@ -3266,6 +3266,7 @@ void do_cmd_steal(int Ind, int dir) {
 			if (!is_admin(p_ptr)) return;
 		}
  #endif
+		//todo: DED_IDDC_MANDOS
 		if (p_ptr->IDDC_logscum) {
 			msg_print(Ind, "\377yYou cannot steal items on stale floors.");
 			if (!is_admin(p_ptr)) return;

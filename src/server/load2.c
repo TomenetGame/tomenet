@@ -2803,6 +2803,7 @@ static errr rd_floor(void) {
 		if (is_fixed_irondeepdive_town(&wpos, ABS(wpos.wz)) ||
 		    is_extra_fixed_irondeepdive_town(&wpos, ABS(wpos.wz))) {
 			struct dun_level *l_ptr = getfloor(&wpos);
+
 			l_ptr->flags1 |= LF1_DUNGEON_TOWN;
 		}
 	}

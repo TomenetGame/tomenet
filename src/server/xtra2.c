@@ -13515,6 +13515,7 @@ void telekinesis_aux(int Ind, int item) {
 			if (!is_admin(p_ptr)) return;
 		}
  #endif
+		//todo: DED_IDDC_MANDOS
 		if (p2_ptr->IDDC_logscum) {
 			msg_print(Ind, "\377yYou cannot send items to players who are on stale floors in the IDDC.");
 			if (!is_admin(p_ptr)) return;

@@ -1800,7 +1800,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			if (exceptionally_shareable_item(o_ptr)) o_ptr->discount = 100;
 			else
  #endif
-			if (p_ptr->IDDC_logscum) {
+			if (p_ptr->IDDC_logscum) {//todo: DED_IDDC_MANDOS
 				msg_print(Ind, "\377yYou cannot take items on stale floors.");
 				if (!is_admin(p_ptr)) return;
 			}

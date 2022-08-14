@@ -2460,11 +2460,11 @@ static void player_setup(int Ind, bool new) {
 		if (in_irondeepdive(&p_ptr->wpos) && !panic
 		    //&& !is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos)))
 		    && (!l_ptr || !(l_ptr->flags1 & LF1_DUNGEON_TOWN))) /* !l_ptr check just to silence the compiler.. */
-			p_ptr->IDDC_logscum = TRUE;
+			p_ptr->IDDC_logscum = TRUE;//todo: DED_IDDC_MANDOS
 
 #if 1
 		/* fix ancient chars that had logscum flag set in their savegame, before the town was added */
-		if (l_ptr && (l_ptr->flags1 & LF1_DUNGEON_TOWN)) p_ptr->IDDC_logscum = FALSE;
+		if (l_ptr && (l_ptr->flags1 & LF1_DUNGEON_TOWN)) p_ptr->IDDC_logscum = FALSE;//todo: DED_IDDC_MANDOS
 #endif
 	} else if (p_ptr->wpos.wz) {
 		bool unknown = FALSE;
@@ -2488,11 +2488,11 @@ static void player_setup(int Ind, bool new) {
 			if (in_irondeepdive(&p_ptr->wpos) && !panic
 			    //&& !is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos)))
 			    && !(l_ptr->flags1 & LF1_DUNGEON_TOWN))
-				p_ptr->IDDC_logscum = TRUE;
+				p_ptr->IDDC_logscum = TRUE;//todo: DED_IDDC_MANDOS
 
 #if 1
 			/* fix ancient chars that had logscum flag set in their savegame, before the town was added */
-			if (l_ptr && (l_ptr->flags1 & LF1_DUNGEON_TOWN)) p_ptr->IDDC_logscum = FALSE;
+			if (l_ptr && (l_ptr->flags1 & LF1_DUNGEON_TOWN)) p_ptr->IDDC_logscum = FALSE;//todo: DED_IDDC_MANDOS
 #endif
 		}
 		/* <else> It's still the same level we left [a moment ago], np.
