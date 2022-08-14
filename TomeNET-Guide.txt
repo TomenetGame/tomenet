@@ -1258,8 +1258,9 @@ They all start with a slash '/' hence they're called slash commands:
 
 /convertexclusive    Attempts to convert your current character into a
                      slot-exclusive character (either PvP mode or IDDC aka
-                     Ironman Deep Dive Challenge). Warning: This process is NOT
-                     REVERSIBLE! To attempt to convert your character, type:
+                     Ironman Deep Dive Challenge / Halls of Mandos).
+                     Warning: This process is NOT REVERSIBLE!
+                     To attempt to convert your character, type:
                      /convertexclusive <your-character-name>
                      for example:
                      /convertexclusive Gandalf
@@ -4578,14 +4579,15 @@ overview screen. 'N' is the normal way for creating a new character.
 There are two character slots in your account that can be used for creating a
 character dedicated to each of these special ways of playing:
  a) Ironman Deep Dive Challenge (IDDC, see (4.13) for details)
+    Depending on server, this usually also allows entering the Halls of Mandos!
  b) Player versus Player (see 'PvP' further below in this section)
 If you create such an exclusive character, you will be unable to use it for
 anything else. The point of having exclusive character slots is to ensure that
 even if your account is full of characters, you still have one slot available
-to participate in IDDC and in PvP gameplay.
-Note: A dedicated IDDC character will be killed and erased if it fails to enter
-the IDDC dungeon (that is if it acquires any experience outside of it) or if it
-recalls out of it at one of the static towns. The kill message will be:
+to participate in IDDC (or Halls of Mandos) and in PvP gameplay.
+Note: A dedicated IDDC character will be killed and erased if it acquires any
+experience points outside of the IDDC (or Halls of Mandos) or if it recalls out
+of it at one of the static dungeon towns. The kill message will be:
 "XXXX was killed by indetermination".
 Also, exclusive IDDC characters will automatically be no-ghost mode and will
 receive an extra +25% score bonus (stacking with the no-ghost score bonus and a
@@ -4605,7 +4607,8 @@ However, since this is your first character, just press 'N' to start the
 creation progress, enter a character name, and continue reading.
 
 (Note that on the Ironman server, you can convert your character to a
-dedicated IDDC character by using the /convertexclusive command.)
+dedicated IDDC character by using the /convertexclusive command. As on the main
+server an IDDC-exclusive character can usually also enter the Halls of Mandos.)
 
 
 First you may choose your gender. This will not have actual influence on your
@@ -8208,6 +8211,8 @@ See (4.3) under "Dungeon Types" -> "Experimental dungeons" for more details.
  -Various more or less basic stores, including a library, will spawn in
   addition to the usual dungeon stores. Also (like in the IDDC) a deep supply
   store can spawn on very deep floors.
+ -An IDDC-exclusive character is (under the usual server settings) also able to
+  enter the Halls of Mandos instead of the IDDC!
 
 
 (4.5c2) Example dungeon depth relations
@@ -9737,6 +9742,9 @@ Ironman Deep Dive Challenge (IDDC)
     IDDC-only-character slot and freeing up the generic character slot again.
     This of course only works if you still have a free IDDC-exclusive character
     slot available.
+
+    Usually (depending on the server, but it's the default setting), IDDC-
+    exclusive characters may alternatively enter the Halls of Mandos instead!
 
   Experience, items, shops:
     Players in the IDDC receive a 20% experience gain bonus in addition to the
