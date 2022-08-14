@@ -1448,7 +1448,7 @@ void do_mimic_change(int Ind, int r_idx, bool force) {
 	stop_shooting_till_kill(Ind);
 
 	note_spot(Ind, p_ptr->py, p_ptr->px);
-	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+	everyone_lite_spot_move(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 
 	/* Piece together a 32-bit random seed */
 	p_ptr->mimic_seed = (u32b)rand_int(0xFFFF) << 16;

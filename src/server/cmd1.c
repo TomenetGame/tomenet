@@ -6416,10 +6416,10 @@ bool do_prob_travel(int Ind, int dir) {
 		grid_affects_player(Ind, ox, oy);
 
 		/* Redraw new spot */
-		everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
+		everyone_lite_spot_move(Ind, wpos, p_ptr->py, p_ptr->px);
 
 		/* Redraw old spot */
-		everyone_lite_spot(wpos, oy, ox);
+		everyone_lite_spot_move(Ind, wpos, oy, ox);
 
 		/* Check for new panel (redraw map) */
 		verify_panel(Ind);
@@ -6604,9 +6604,9 @@ static void moved_player(int Ind, player_type *p_ptr, cave_type **zcave, int ox,
 	cave_midx_debug(wpos, y, x, -Ind);
 
 	/* Redraw new spot */
-	everyone_lite_spot(wpos, y, x);
+	everyone_lite_spot_move(Ind, wpos, y, x);
 	/* Redraw old spot */
-	everyone_lite_spot(wpos, oy, ox);
+	everyone_lite_spot_move(Ind, wpos, oy, ox);
 
 	/* Check for new panel (redraw map) */
 	verify_panel(Ind);
@@ -6865,7 +6865,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	if ((c_ptr->feat == FEAT_ICE) && (!p_ptr->feather_fall && !p_ptr->levitate && !p_ptr->tim_wraith &&
 	    /* Except for /animals/monsters/ that are used to cold, especially Yeti and co */
 	    !(p_ptr->body_monster && //(r_info[p_ptr->body_monster].flags3 & (RF3_ANIMAL | RF3_IM_COLD)) == (RF3_ANIMAL | RF3_IM_COLD)))) {
-				    (r_info[p_ptr->body_monster].flags3 & RF3_IM_COLD)))) {
+	    (r_info[p_ptr->body_monster].flags3 & RF3_IM_COLD)))) {
 		if (magik(70 - p_ptr->lev)) {
 			iterations = 10;//not strictly needed here, but anyway
 			do {
@@ -6943,7 +6943,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 			zcave[oldy][oldx].m_idx = 0;
 
 			/* Show everyone that's he left */
-			everyone_lite_spot(&p_ptr->wpos, oldy, oldx);
+			everyone_lite_spot_move(Ind, &p_ptr->wpos, oldy, oldx);
 
 			/* forget his light and viewing area */
 			forget_lite(Ind);
@@ -6959,7 +6959,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 			new_players_on_depth(&old_wpos, -1, TRUE);
 
 			/* update the wilderness map */
-			if(!p_ptr->ghost)
+			if (!p_ptr->ghost)
 				p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) / 8] |=
 				    (1U << ((p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) % 8));
 
@@ -7239,8 +7239,8 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	if (!(cs_ptr = GetCS(c_ptr, CS_RUNE))) { //fix for walking-over-rune panic save, maybe cleanup this code? - Kurzel
 		cs_ptr = c_ptr->special;
 		while (cs_ptr) {
-			int tcv;
-			tcv = csfunc[cs_ptr->type].activate(cs_ptr, y, x, Ind);
+			int tcv = csfunc[cs_ptr->type].activate(cs_ptr, y, x, Ind);
+
 			cs_ptr = cs_ptr->next;
 			if (!tcv) {
 				csmove = FALSE;

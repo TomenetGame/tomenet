@@ -3838,6 +3838,29 @@ void everyone_lite_spot(struct worldpos *wpos, int y, int x) {
 		lite_spot(i, y, x);
 	}
 }
+/* Like everyone_lite_spot() but specifically for invisible admin_dm, specifically for hallucinating players when DM moves over objects on the floor */
+void everyone_lite_spot_move(int Ind, struct worldpos *wpos, int y, int x) {
+	int i;
+
+	/* Check everyone */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* If he's not playing, skip him */
+		if (Players[i]->conn == NOT_CONNECTED)
+			continue;
+
+		/* If he's not here, skip him */
+		if (!inarea(wpos, &Players[i]->wpos))
+			continue;
+
+		/* Don't redraw grids over which a hidden DM moves */
+		if (Players[Ind]->admin_dm && Ind != i && !player_sees_dm(i) && cfg.secret_dungeon_master) {
+			continue;
+		}
+
+		/* Actually lite that spot for that player */
+		lite_spot(i, y, x);
+	}
+}
 
 void everyone_clear_ovl_spot(struct worldpos *wpos, int y, int x) {
 	int i;

@@ -9696,7 +9696,7 @@ void dungeon(void) {
 		/* Check for hilite */
 		if (p_ptr->flash_self > 0 && !(turn % (cfg.fps / 15))) {
 			p_ptr->flash_self--;
-			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+			everyone_lite_spot_move(i, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 		} else
 #endif
 		if (!(turn % (cfg.fps / 6))) {
@@ -9710,7 +9710,7 @@ void dungeon(void) {
 			}
 			/* Otherwise only take care of colour animation */
 			//else { /* && p_ptr->body_monster */
-				everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+				everyone_lite_spot_move(i, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 			//}
 		}
 

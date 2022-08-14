@@ -560,6 +560,7 @@ extern bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2);
 extern bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2);
 extern void note_spot_depth(struct worldpos *wpos, int y, int x);
 extern void everyone_lite_spot(struct worldpos *wpos, int y, int x);
+extern void everyone_lite_spot_move(int Ind, struct worldpos *wpos, int y, int x);
 extern void everyone_clear_ovl_spot(struct worldpos *wpos, int y, int x);
 extern void everyone_forget_spot(struct worldpos *wpos, int y, int x);
 extern cave_type **getcave(struct worldpos *wpos);

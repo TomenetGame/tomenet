@@ -683,7 +683,7 @@ void do_cmd_go_up(int Ind) {
 	c_ptr->m_idx = 0;
 
 	/* Show everyone that's he left */
-	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
+	everyone_lite_spot_move(Ind, wpos, p_ptr->py, p_ptr->px);
 
 	/* Forget his lite and viewing area */
 	forget_lite(Ind);
@@ -971,7 +971,7 @@ void do_cmd_go_down(int Ind) {
 			un_afk_idle(Ind);
 
 			c_ptr->m_idx = 0;
-			everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
+			everyone_lite_spot_move(Ind, wpos, p_ptr->py, p_ptr->px);
 			forget_lite(Ind);
 			forget_view(Ind);
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1545,7 +1545,7 @@ void do_cmd_go_down(int Ind) {
 	c_ptr->m_idx = 0;
 
 	/* Show everyone that's he left */
-	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
+	everyone_lite_spot_move(Ind, wpos, p_ptr->py, p_ptr->px);
 
 	/* Forget his lite and viewing area */
 	forget_lite(Ind);
@@ -9236,7 +9236,7 @@ void shadow_run(int Ind) {
 		p_ptr->update |= (PU_BONUS | PU_VIEW);
 		p_ptr->redraw |= (PR_STATE | PR_SPEED);
 		/* update so everyone sees the colour animation */
-		everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+		everyone_lite_spot_move(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 		return;
 	}
 
@@ -9303,7 +9303,7 @@ void shadow_run(int Ind) {
 	p_ptr->update |= (PU_BONUS | PU_VIEW);
 	p_ptr->redraw |= (PR_STATE | PR_SPEED);
 	/* update so everyone sees the colour animation */
-	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+	everyone_lite_spot_move(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 }
 
 /* break shadow running */
@@ -9315,6 +9315,6 @@ void break_shadow_running(int Ind) {
 		Players[Ind]->update |= (PU_BONUS | PU_VIEW);
 		Players[Ind]->redraw |= (PR_STATE | PR_SPEED);
 		/* update so everyone sees the colour animation */
-		everyone_lite_spot(&Players[Ind]->wpos, Players[Ind]->py, Players[Ind]->px);
+		everyone_lite_spot_move(Ind, &Players[Ind]->wpos, Players[Ind]->py, Players[Ind]->px);
 	}
 }
