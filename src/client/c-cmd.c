@@ -2018,7 +2018,7 @@ static char *fgets_inverse(char *buf, int max, FILE *f) {
 }
 #endif
 /* Local Guide invocation -
-   search_type: 1 = search, 2 = strict search (all upper-case),  3 = chapter search, 4 = line number,
+   search_type: 1 = search, 2 = strict search (all upper-case), 3 = chapter search, 4 = line number,
                 0 = no pre-defined search, we're browsing it normally. */
 /* '/?' command switches between search types on failure and retries? */
 #define TOPICSEARCH_ALT
@@ -2188,6 +2188,8 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		}
 		else if (my_strcasestr(buf, "auto") && my_strcasestr(buf, "reincar")) strcpy(init_search_string, "reincarnation");
 		else if (!strcasecmp(buf, "go")) strcpy(init_search_string, "Go challenge");
+		/* Pft, inconsistency - basically, data uses 'color' while text uses 'colour'.. */
+		else if (init_search_type == 3 && !strcasecmp("color", init_search_string)) strcpy(init_search_string, "colour");
 
 		/* clean up */
 		buf[0] = 0;
