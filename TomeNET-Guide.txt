@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 12. August 2022 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 14. August 2022 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.8.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -30,10 +30,11 @@
 Contents
 --------
 (0) Quickstart (If you don't like to read much :)
-    (0.1)   Start & play, character validation, character timeout
-    (0.1a)  Colours and colour blindness
-    (0.1b)  Photosensitivity / Epilepsy issues
-    (0.1c)  Readability improvements
+    (0.1)   Start & play (the basics)
+    (0.1a)  Character validation
+    (0.1b)  Colours and colour blindness
+    (0.1c)  Photosensitivity / Epilepsy issues
+    (0.1d)  Readability improvements
     (0.2)   Command reference & key sets
     (0.2a)  Text editing keys
     (0.2b)  Slash command reference
@@ -218,8 +219,8 @@ This chapter is basically the heavily compressed version of chapters (2) which
 are about installing and chapters (3) which are about logging on and creating a
 character. If you like to read in more detail, maybe switch to (2) now instead.
 
-(0.1) Start & play, character validation, character timeout
------------------------------------------------------------
+(0.1) Start & play (the basics)
+-------------------------------
 A warning first, about character timeout:
 If you do not log in a character at least once every 365 days the system will
 automatically delete it along with its houses, to keep the database clean.
@@ -437,8 +438,8 @@ compile the game under '(2.1) Installing/updating TomeNET'.
  'Slow -3') at the bottom line instead.
 
 
-Character validation
---------------------
+(0.1a) Character validation
+---------------------------
 When you create a new account, it will always start out as "invalid". This just
 means that it is in a trial phase and needs to be approved by an admin or
 another player who has validation privileges. This is done to prevent spam.
@@ -463,7 +464,7 @@ cannot defeat a certain monster or you cannot advance your character the way
 you'd like to, check out (7.3a)!
 
 
-(0.1a) Colours and colour blindness
+(0.1b) Colours and colour blindness
 -----------------------------------
 The easiest way to modify colours and to switch between predefined palette sets
 for certain colour blindness types (deuteranopia, protanopia, tritanopia) is to
@@ -502,7 +503,7 @@ Note that the colourmap entry #0 is fixed and cannot be changed, it is always
 #000000 aka black (no red + no green + no blue).
 
 
-(0.1b) Photosensitivity / Epilepsy issues
+(0.1c) Photosensitivity / Epilepsy issues
 -----------------------------------------
 If you are especially photosensitive, the screen-lighting effect used for
 thunderstorm weather might impact you. There are also a few minor especially
@@ -517,7 +518,7 @@ pressing the following keys in game to access the various options pages (1-7):
 = 3 recall_flicker (show animated colours in the various game windows)
 
 
-(0.1c) Readability improvements
+(0.1d) Readability improvements
 -------------------------------
 If the dark blue colour is not well readable on your screen, you can edit it
 like all other colours in  = c  or alternatively by editing your config file
