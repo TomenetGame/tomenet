@@ -86,21 +86,21 @@ CS_SAVE(s32bsave);
 CS_LOAD(runeload);
 CS_SAVE(runesave);
 
-void defload(c_special *cs_ptr){
+void defload(c_special *cs_ptr) {
 }
-void defsave(c_special *cs_ptr){
+void defsave(c_special *cs_ptr) {
 }
-void defsee(c_special *cs_ptr, char32_t *c, byte *a, int Ind){
+void defsee(c_special *cs_ptr, char32_t *c, byte *a, int Ind) {
 	/* really do nothing */
 }
-int defhit(c_special *cs_ptr, int y, int x, int Ind){
+int defhit(c_special *cs_ptr, int y, int x, int Ind) {
 	/* return implied permission */
 	return(TRUE);
 }
 
-void dnaload(c_special *cs_ptr){
+void dnaload(c_special *cs_ptr) {
 }
-void dnasave(c_special *cs_ptr){
+void dnasave(c_special *cs_ptr) {
 }
 int dnahit(c_special *cs_ptr, int y, int x, int Ind) {
 	/* we have to know from where we are called! */
@@ -120,21 +120,23 @@ int dnahit(c_special *cs_ptr, int y, int x, int Ind) {
 	return(FALSE);
 }
 
-void dnasee(c_special *cs_ptr, char32_t *c, byte *a, int Ind){
+void dnasee(c_special *cs_ptr, char32_t *c, byte *a, int Ind) {
 }
 
-void keyload(c_special *cs_ptr){
+void keyload(c_special *cs_ptr) {
 	struct key_type *key;
+
 	MAKE(key, struct key_type);
 	rd_u16b(&key->id);
 	cs_ptr->sc.ptr = key;
 }
-void keysave(c_special *cs_ptr){
+void keysave(c_special *cs_ptr) {
 	struct key_type *key;
+
 	key = cs_ptr->sc.ptr;
 	wr_u16b(key->id);
 }
-int keyhit(c_special *cs_ptr, int y, int x, int Ind){
+int keyhit(c_special *cs_ptr, int y, int x, int Ind) {
 	struct player_type *p_ptr;
 	int j;
 	struct cave_type **zcave, *c_ptr;
@@ -149,6 +151,7 @@ int keyhit(c_special *cs_ptr, int y, int x, int Ind){
 	if (p_ptr == (struct player_type*)NULL) return(FALSE);
 	for (j = 0; j < INVEN_PACK; j++) {
 		object_type *o_ptr = &p_ptr->inventory[j];
+
 		if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_HOUSE_KEY && o_ptr->pval == key->id) {
 			c_ptr->feat = FEAT_HOME_OPEN;
 			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
@@ -164,18 +167,19 @@ int keyhit(c_special *cs_ptr, int y, int x, int Ind){
 
 /* EXPERIMENTAL SEE CODE - I AM NOT INSISTING THAT WE SEE
    KEY DOORS ANY DIFFERENTLY - DO NOT DELETE !!! */
-void keysee(c_special *cs_ptr, char32_t *c, byte *a, int Ind){
+void keysee(c_special *cs_ptr, char32_t *c, byte *a, int Ind) {
 	struct player_type *p_ptr;
 	int j;
 	struct key_type *key = cs_ptr->sc.ptr;
 
 	p_ptr = Players[Ind];
 
-	if(*c == FEAT_HOME_OPEN) return;	/* dont bother */
-	if(p_ptr == (struct player_type*)NULL) return;
-	for(j = 0; j < INVEN_PACK; j++){
+	if (*c == FEAT_HOME_OPEN) return;	/* dont bother */
+	if (p_ptr == (struct player_type*)NULL) return;
+	for (j = 0; j < INVEN_PACK; j++) {
 		object_type *o_ptr = &p_ptr->inventory[j];
-		if(o_ptr->tval == TV_KEY && o_ptr->sval == SV_HOUSE_KEY && o_ptr->pval == key->id){
+
+		if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_HOUSE_KEY && o_ptr->pval == key->id) {
 			/* colours are only test colours! */
 			*c = '*';
 			*a = TERM_L_DARK;
@@ -196,12 +200,11 @@ void tload(c_special *cs_ptr) {
 	cs_ptr->sc.trap.found = tmp8u;
 }
 
-void tsave(c_special *cs_ptr)
-{
+void tsave(c_special *cs_ptr) {
 	wr_byte(cs_ptr->sc.trap.t_idx);
 	wr_byte(cs_ptr->sc.trap.found);
 }
-void tsee(c_special *cs_ptr, char32_t *c, byte *a, int Ind){
+void tsee(c_special *cs_ptr, char32_t *c, byte *a, int Ind) {
 //	printf("tsee %d\n", Ind);
 }
 
@@ -237,7 +240,7 @@ int thit(c_special *cs_ptr, int y, int x, int Ind){
 	return(TRUE);	/* temp... */
 }
 
-void insc_load(c_special *cs_ptr){
+void insc_load(c_special *cs_ptr) {
 	struct floor_insc *insc;
 	MAKE(insc, struct floor_insc);
 	cs_ptr->sc.ptr = insc;
@@ -284,10 +287,10 @@ void betweensave(c_special *cs_ptr) {
 	wr_byte(cs_ptr->sc.between.fy);
 	wr_byte(cs_ptr->sc.between.fx);
 }
-void betweensee(c_special *cs_ptr, char32_t *c, byte *a, int Ind){
+void betweensee(c_special *cs_ptr, char32_t *c, byte *a, int Ind) {
 //	printf("tsee %d\n", Ind);
 }
-int betweenhit(c_special *cs_ptr, int y, int x, int Ind){
+int betweenhit(c_special *cs_ptr, int y, int x, int Ind) {
 //	printf("bhit: %d\n", Ind);
 	return(TRUE);
 }
