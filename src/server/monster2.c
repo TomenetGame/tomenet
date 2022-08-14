@@ -1274,6 +1274,10 @@ s16b get_mon_num(int level, int dlevel) {
 		i = dlevel - 10 + (dlevel > 20 ? dlevel : 20);
 		if (level > i) level = i;
 	}
+#if 0
+	/* Halls of Mandos: No towns there, prevent super-ood to make life easier? */
+	//if (d_ptr->type == DI_MANDOS && dlev + 20 < level) level = dlev + 20;
+#endif
 
 	/* Reset total */
 	total = 0L;
@@ -3394,6 +3398,10 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 8\n");
 
 		/* 2022 - For low dungeon levels, make OoD less harsh: [10..40] levels OoD from depth (20..50), narrowly prohibiting Nazgul in the Orc Caves. */
 		if (wpos->wz && dlev < 50 && r_ptr->level > dlev - 10 + (dlev > 20 ? dlev : 20)) return 45;
+#if 0
+		/* Halls of Mandos: No towns there, prevent super-ood to make life easier? */
+		if (d_ptr->type == DI_MANDOS && dlev + 20 < r_ptr->level) return 45;
+#endif
 	}
 #ifdef PMO_DEBUG
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 9\n");
