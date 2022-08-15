@@ -6979,7 +6979,7 @@ void do_cmd_fire(int Ind, int dir) {
 								/* Vorpal bonus - multi-dice!
 								   (currently +31.25% more branded dice damage on total average, just for the records) */
 								if (vorpal_cut) {
-									msg_format(Ind, "Your weapon cuts deep into %s!", q_ptr->name);
+									msg_format(Ind, "Your weapon pierces deep into %s!", q_ptr->name);
 #ifdef R_CRIT_VS_VORPAL
     xxx disabled xxx
 									k2 += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
