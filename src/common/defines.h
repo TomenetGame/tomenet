@@ -7667,18 +7667,21 @@ extern int PlayerUID;
 #define TBRAND_ACID		0x0008
 #define TBRAND_POIS		0x0010
 //unused/not fully implemented:
-#define TBRAND_BASE		0x0020
-#define TBRAND_CHAO		0x0040
-#define TBRAND_VORP		0x0080
-#define TBRAND_BALL_FIRE	0x0100
-#define TBRAND_BALL_COLD	0x0200
-#define TBRAND_BALL_ELEC	0x0400
-#define TBRAND_BALL_ACID	0x0800
-#define TBRAND_BALL_SOUN	0x1000
+#define TBRAND_BASE		(TBRAND_ELEC | TBRAND_COLD | TBRAND_FIRE | TBRAND_ACID)
+#define TBRAND_CHAO		0x0020
+#define TBRAND_VORP		0x0040
+#define TBRAND_BALL_FIRE	0x0080
+#define TBRAND_BALL_COLD	0x0100
+#define TBRAND_BALL_ELEC	0x0200
+#define TBRAND_BALL_ACID	0x0400
+#define TBRAND_BALL_SOUN	0x0800
 //hereticism:
-#define TBRAND_HELLFIRE		0x2000
+#define TBRAND_HELLFIRE		0x1000
 //unlife:
-#define TBRAND_VAMPIRIC		0x4000
+#define TBRAND_VAMPIRIC		0x2000
+//aura of death: -- (these are not applied via set_..._brand() functions, and not implemented for arrow_brand, only melee.)
+#define TBRAND_ICE		0x4000	/* note: no cut effect! */
+#define TBRAND_PLASMA		0x8000	/* note: no stun effect! */
 
 /* Client modes (e) */
 #define CLIENT_NORMAL		0x0000

@@ -360,6 +360,9 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 			case TBRAND_POIS:
 				f1 |= TR1_BRAND_POIS;
 				break;
+			case TBRAND_BASE:
+				f1 |= (TR1_BRAND_FIRE | TR1_BRAND_COLD | TR1_BRAND_ELEC | TR1_BRAND_ACID);
+				break;
 			/* flags that exist in temporary form only */
 			case TBRAND_HELLFIRE:
 				fx = TBRAND_HELLFIRE;
@@ -498,23 +501,47 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 				break;
 			/* flags that exist in temporary form only */
 			case TBRAND_HELLFIRE:
-				fx = TBRAND_HELLFIRE;
+				fx |= TBRAND_HELLFIRE;
 				break;
 			case TBRAND_VAMPIRIC:
-				fx = TBRAND_VAMPIRIC;
+				fx |= TBRAND_VAMPIRIC;
 				break;
 			}
 		}
 	}
 
+	/* Check static aura melee brands */
+	if (melee) {
+		/* not "temporary", and not coming "from" or being "on" the actual weapon. Available and "directly transmitted" via aura of death */
+		if (p_ptr->aura[AURA_SHIVER] && get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) f1 |= TR1_BRAND_COLD;
+		if (p_ptr->aura[AURA_DEATH] && get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) fx |= (TBRAND_PLASMA | TBRAND_ICE);
+	}
+
+
 	/* Avoid contradictionary brands,
 	   let one of them randomly 'flicker up' on striking, suppressing the other */
-	if ((f1 & TR1_BRAND_FIRE) && (f1 & TR1_BRAND_COLD)) {
-		if (magik(50)) f1 &= ~TR1_BRAND_FIRE;
-		else f1 &= ~TR1_BRAND_COLD;
-	}
 	if ((f1 & TR1_BRAND_COLD) && (fx & TBRAND_HELLFIRE))
-		f1 &= ~TR1_BRAND_COLD; //hellfire gets priority
+		f1 &= ~TR1_BRAND_COLD; //hellfire gets priority over basic cold
+
+	i = 0;
+	if (f1 & TR1_BRAND_FIRE) i++;
+	if (f1 & TR1_BRAND_COLD) i--;
+	if (fx & TBRAND_HELLFIRE) i++;
+	if (fx & TBRAND_PLASMA) i++;
+	if (fx & TBRAND_ICE) i--;
+
+	/* Note: Having fire+hellfire+plasma will actually cancel out a lone cold or ice brand completely. */
+	if (((f1 & TR1_BRAND_FIRE) || (fx & (TBRAND_PLASMA | TBRAND_HELLFIRE)))
+	    && ((fx & TBRAND_ICE) || (f1 & TR1_BRAND_COLD))) {
+		if (magik(50 - i * 25)) {
+			f1 &= ~TR1_BRAND_FIRE;
+			fx &= ~TBRAND_HELLFIRE;
+			fx &= ~TBRAND_PLASMA;
+		} else {
+			f1 &= ~TR1_BRAND_COLD;
+			fx &= ~TBRAND_ICE;
+		}
+	}
 
 
 	/* Apply all slays and brands */
@@ -755,6 +782,88 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 			}
 		}
 	}
+	if (fx & TBRAND_PLASMA) { /* 50% fire + 25% elec + 25% force */
+		i = 12;
+		if (r_ptr->flags3 & RF3_IM_FIRE) {
+			i -= 6;
+			/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_IM_FIRE;*/
+		}
+		/* Notice susceptibility */
+		else if (r_ptr->flags3 & (RF3_SUSCEP_FIRE)) {
+#if 0
+			if (m_ptr->ml) r_ptr->r_flags3 |= (RF3_SUSCEP_FIRE);
+#endif
+		} else if (r_ptr->flags9 & RF9_RES_FIRE) i -= 4;
+		else i -= 2;
+
+		/* Notice immunity */
+		if (r_ptr->flags3 & RF3_IM_ELEC) {
+			i -= 3;
+			/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_IM_ELEC;*/
+		}
+		/* Notice susceptibility */
+		else if (r_ptr->flags9 & (RF9_SUSCEP_ELEC)) {
+#if 0
+			if (m_ptr->ml) r_ptr->r_flags9 |= (RF9_SUSCEP_ELEC);
+#endif
+		} else if (r_ptr->flags9 & RF9_RES_ELEC) i -= 2;
+		else i--;
+
+		if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) i -= 2;
+		//else if (!(r_ptr->flags3 & RF3_NO_STUN)) do_stun = randint(15) / div;
+		else if (r_ptr->flags3 & RF3_NO_STUN) i--;
+
+		if (i >= 10) {
+			if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		} else if (i >= 8) {
+			if (mult < FACTOR_BRAND_STRONG) mult = FACTOR_BRAND_STRONG;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		} else if (i >= 6) {
+			if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		} else if (i >= 4) {
+			if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+			if (bonus < FLAT_HURT_BONUS) bonus = FLAT_HALF_BONUS;
+		} else if (i) {
+			if (bonus < FLAT_HALF_BONUS) bonus = FLAT_MIN_BONUS;
+		}
+		//else: impossible to reach as there is no sound-immunity
+	}
+	if (fx & TBRAND_ICE) { //40% cold + 60% shards, but should just do 1:1 for simplification
+		i = 15;
+
+		/* Notice immunity */
+		if (r_ptr->flags3 & RF3_IM_COLD) {
+			i -= 6;
+			/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_IM_COLD;*/
+		}
+		/* Notice susceptibility */
+		else if (r_ptr->flags3 & (RF3_SUSCEP_COLD)) {
+#if 0
+			if (m_ptr->ml) r_ptr->r_flags3 |= (RF3_SUSCEP_COLD);
+#endif
+		}
+		else if (r_ptr->flags9 & RF9_RES_COLD) i -= 4;
+		else i -= 2;
+
+		if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS)) i -= 6;
+		else if (r_ptr->flags8 & RF8_NO_CUT) i -= 4;
+
+		if (i >= 11) {
+			if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		} else if (i >= 9) {
+			if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		} else if (i >= 5) {
+			if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_HALF_BONUS;
+		} else if (i >= 3) {
+			if (bonus < FLAT_HALF_BONUS) bonus = FLAT_MIN_BONUS;
+		}
+		//else: impossible to reach as there is no shard-immunity
+	}
 
 #ifdef TEST_SERVER
 	msg_format(Ind, "bonus %d, tdam %d, mult %d, FAC-MUL %d, thr: %d, ammo: %d, MA: %d, weap: %d", bonus, tdam, mult, FACTOR_MULT,
@@ -952,23 +1061,48 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 				break;
 			/* flags that exist in temporary form only */
 			case TBRAND_HELLFIRE:
-				fx = TBRAND_HELLFIRE;
+				fx |= TBRAND_HELLFIRE;
 				break;
 			case TBRAND_VAMPIRIC:
-				fx = TBRAND_VAMPIRIC;
+				fx |= TBRAND_VAMPIRIC;
 				break;
 			}
 		}
 	}
 
+	/* Check static aura melee brands */
+	if (melee) {
+		/* not "temporary", and not coming "from" or being "on" the actual weapon. Available and "directly transmitted" via aura of death */
+		if (p_ptr->aura[AURA_SHIVER] && get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) f1 |= TR1_BRAND_COLD;
+		if (p_ptr->aura[AURA_DEATH] && get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) fx |= (TBRAND_PLASMA | TBRAND_ICE);
+	}
+
+
 	/* Avoid contradictionary brands,
 	   let one of them randomly 'flicker up' on striking, suppressing the other */
-	if ((f1 & TR1_BRAND_FIRE) && (f1 & TR1_BRAND_COLD)) {
-		if (magik(50)) f1 &= ~TR1_BRAND_FIRE;
-		else f1 &= ~TR1_BRAND_COLD;
-	}
 	if ((f1 & TR1_BRAND_COLD) && (fx & TBRAND_HELLFIRE))
-		f1 &= ~TR1_BRAND_COLD; //hellfire gets priority
+		f1 &= ~TR1_BRAND_COLD; //hellfire gets priority over basic cold
+
+	i = 0;
+	if (f1 & TR1_BRAND_FIRE) i++;
+	if (f1 & TR1_BRAND_COLD) i--;
+	if (fx & TBRAND_HELLFIRE) i++;
+	if (fx & TBRAND_PLASMA) i++;
+	if (fx & TBRAND_ICE) i--;
+
+	/* Note: Having fire+hellfire+plasma will actually cancel out a lone cold or ice brand completely. */
+	if (((f1 & TR1_BRAND_FIRE) || (fx & (TBRAND_PLASMA | TBRAND_HELLFIRE)))
+	    && ((fx & TBRAND_ICE) || (f1 & TR1_BRAND_COLD))) {
+		if (magik(50 - i * 25)) {
+			f1 &= ~TR1_BRAND_FIRE;
+			fx &= ~TBRAND_HELLFIRE;
+			fx &= ~TBRAND_PLASMA;
+		} else {
+			f1 &= ~TR1_BRAND_COLD;
+			fx &= ~TBRAND_ICE;
+		}
+	}
+
 
 	/* emulate slay-susceptibilities */
 	if (q_ptr->body_monster) q_flags3 |= r_info[q_ptr->body_monster].flags3;
@@ -1178,6 +1312,64 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 				if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 			}
 		}
+	}
+
+	if (fx & TBRAND_PLASMA) { /* 50% fire + 25% elec + 25% force */
+		i = 12;
+		if (q_ptr->immune_fire) i -= 6;
+		else if (q_ptr->suscep_fire) ;
+		else if (q_ptr->resist_fire) i -= 4;
+		else i -= 2;
+
+		if (q_ptr->immune_elec) i -= 3;
+		else if (q_ptr->suscep_elec) ;
+		else if (q_ptr->resist_elec) i -= 2;
+		else i--;
+
+		if (q_ptr->resist_sound) i -= 2;
+		//else do_stun = randint(15) / div;
+
+		if (i >= 10) {
+			if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		} else if (i >= 8) {
+			if (mult < FACTOR_BRAND_STRONG) mult = FACTOR_BRAND_STRONG;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		} else if (i >= 6) {
+			if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		} else if (i >= 4) {
+			if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+			if (bonus < FLAT_HURT_BONUS) bonus = FLAT_HALF_BONUS;
+		} else if (i) {
+			if (bonus < FLAT_HALF_BONUS) bonus = FLAT_MIN_BONUS;
+		}
+		//else: impossible to reach as there is no sound-immunity
+	}
+	if (fx & TBRAND_ICE) { //40% cold + 60% shards, but should just do 1:1 for simplification
+		i = 15;
+
+		if (q_ptr->immune_cold) i -= 6;
+		else if (q_ptr->suscep_cold) ;
+		else if (q_ptr->resist_cold) i -= 4;
+		else i -= 2;
+
+		if (q_ptr->resist_shard || q_ptr->biofeedback) i -= 6;
+		else if (q_ptr->no_cut) i -= 4;
+
+		if (i >= 11) {
+			if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		} else if (i >= 9) {
+			if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		} else if (i >= 5) {
+			if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_HALF_BONUS;
+		} else if (i >= 3) {
+			if (bonus < FLAT_HALF_BONUS) bonus = FLAT_MIN_BONUS;
+		}
+		//else: impossible to reach as there is no shard-immunity
 	}
 
 	/* If the object was thrown, reduce brand effect by 75%

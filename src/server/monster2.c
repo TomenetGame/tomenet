@@ -6271,7 +6271,7 @@ else s_printf("\n");
 	/* Adjustable abilities */
 	//if (p_ptr->aura[AURA_FEAR]) ; //todo: cause fear-melee
 	if (p_ptr->aura[AURA_SHIVER]) r_ptr->flags3 |= RF3_AURA_COLD;
-	if (p_ptr->aura[AURA_DEATH]) { /* Well, it's plasma/ice .. perfect fit actually: */
+	if (p_ptr->aura[AURA_DEATH]) { /* Well, it's plasma/ice .. perfect fit actually: (although this is cancelled out by immunity completely, pft) */
 		r_ptr->flags2 |= RF2_AURA_ELEC | RF2_AURA_FIRE;
 		r_ptr->flags3 |= RF3_AURA_COLD;
 	}

@@ -3849,10 +3849,6 @@ void calc_boni(int Ind) {
 #endif
 	}
 
-	/* Apply brands from (powerful) auras! */
-	if (p_ptr->aura[AURA_SHIVER] && get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) p_ptr->slay_melee |= TR1_BRAND_COLD;
-	if (p_ptr->aura[AURA_DEATH] && get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) p_ptr->slay_melee |= (TR1_BRAND_COLD | TR1_BRAND_FIRE);
-
 	/* Ghost */
 	if (p_ptr->ghost) {
 		p_ptr->see_inv = TRUE; csheet_boni[14].cb[4] |= CB5_RSINV;

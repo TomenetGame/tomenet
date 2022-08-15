@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 14. August 2022 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 16. August 2022 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.8.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -10607,11 +10607,20 @@ Brands don't stack. The best one is taken. So if you wear a ring of fire and
 your weapon does acid damage the dice will be multiplied by 2 if the target
 doesn't resist both heat and acid. If the target is susceptible to one of
 those the dice are multiplied by 4. Same goes for SLAY flags.
-There is a specialty regarding fire/hellfire and cold brand: If your hits are
-branded by both, fire and cold, it will be a coin flip on each hit which of the
-two brands gets applied and which gets discarded. If you have hellfire and cold
-brand, the hellfire brand will override the cold brand, so your hits will all
-be hellfire branded and not deal any cold damage.
+
+Contradictory brands (fire-based vs cold-based):
+------------------------------------------------
+If your hits are branded by both, fire and cold, it will be a coin flip on each
+hit which of the two brands gets applied and which gets discarded.
+However, if you have hellfire and cold brand, the hellfire brand will override
+the cold brand, so your hits will all be hellfire branded and never deal any
+cold damage.
+If you have fire+hellfire+plasma brands and just either cold or ice brand, the
+cold/ice brand will be suppressed completely. If you have both, cold and ice,
+then it's a coin toss with 75% chance for the combined fire brands vs 25% for
+the cold or ice brand.
+If you have two of the fire brands and both cold and ice brand, it's a 50%-50%
+coin toss on each hit which brands (fiery vs frosty) are applied.
 
 Combat Type | Dice multiplier for brands (fire/cold/acid/lightning/poison)
             | Monster..
@@ -15434,8 +15443,8 @@ stated.
                                 your skill alone.
                                 At a skill of 40 the aura is so strong that
                                 your melee attacks (weapon as well as martial
-                                arts) will be branded by it (alternating fire
-                                or cold brand).
+                                arts) will be branded by it (alternating plasma
+                                or ice brand). (See (5.3) for brand details.)
                                 It is automatically enabled when you train the
                                 skill; you can disable the aura in 'm' menu.
                                 Typing '/ex' command into chat will display the

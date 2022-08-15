@@ -810,6 +810,7 @@ bool set_melee_brand(int Ind, int v, u16b t, int p) {
 				else msg_format(Ind, "%s is branded with vampiric hunger!", weapons);
 				break;
 			}
+
 			notice = TRUE;
 		}
 	}
@@ -818,43 +819,44 @@ bool set_melee_brand(int Ind, int v, u16b t, int p) {
 	else {
 		if (p_ptr->melee_brand) {
 			switch (t) {
-				case TBRAND_BALL_ACID: //not used
-				case TBRAND_ACID:
-					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377sacid\377W.");
-					else msg_format(Ind, "\377WYour weapon is no longer branded with \377sacid\377W.");
-				break;
-				case TBRAND_BALL_ELEC: //not used
-				case TBRAND_ELEC:
-					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377blightning\377W.");
-					else msg_format(Ind, "\377WYour weapon is no longer branded with \377blightning\377W.");
-				break;
-				case TBRAND_BALL_FIRE: //not used
-				case TBRAND_FIRE:
-					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377rfire\377W.");
-					else msg_format(Ind, "\377WYour weapon is no longer branded with \377rfire\377W.");
-				break;
-				case TBRAND_BALL_COLD: //not used
-				case TBRAND_COLD:
-					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377wfrost\377W.");
-					else msg_format(Ind, "\377WYour weapon is no longer branded with \377wfrost\377W.");
-				break;
-				case TBRAND_POIS:
-					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377gpoison\377W.");
-					else msg_format(Ind, "\377WYour weapon is no longer branded with \377gpoison\377W.");
-				break;
-				case TBRAND_HELLFIRE:
-					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377rhellfire\377W.");
-					else msg_format(Ind, "\377WYour weapon is no longer branded with \377rhellfire\377W.");
-				break;
-				case TBRAND_VAMPIRIC:
-					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377Dvampirism\377W.");
-					else msg_format(Ind, "\377WYour weapon is no longer branded with \377Dvampirism\377W.");
-				break;
-				default:
-					if (plural) msg_print(Ind, "\377WYour weapons are no longer branded.");
-					else msg_print(Ind, "\377WYour weapon is no longer branded.");
-				break;
+			case TBRAND_BALL_ACID: //not used
+			case TBRAND_ACID:
+				if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377sacid\377W.");
+				else msg_format(Ind, "\377WYour weapon is no longer branded with \377sacid\377W.");
+			break;
+			case TBRAND_BALL_ELEC: //not used
+			case TBRAND_ELEC:
+				if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377blightning\377W.");
+				else msg_format(Ind, "\377WYour weapon is no longer branded with \377blightning\377W.");
+			break;
+			case TBRAND_BALL_FIRE: //not used
+			case TBRAND_FIRE:
+				if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377rfire\377W.");
+				else msg_format(Ind, "\377WYour weapon is no longer branded with \377rfire\377W.");
+			break;
+			case TBRAND_BALL_COLD: //not used
+			case TBRAND_COLD:
+				if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377wfrost\377W.");
+				else msg_format(Ind, "\377WYour weapon is no longer branded with \377wfrost\377W.");
+			break;
+			case TBRAND_POIS:
+				if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377gpoison\377W.");
+				else msg_format(Ind, "\377WYour weapon is no longer branded with \377gpoison\377W.");
+			break;
+			case TBRAND_HELLFIRE:
+				if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377rhellfire\377W.");
+				else msg_format(Ind, "\377WYour weapon is no longer branded with \377rhellfire\377W.");
+			break;
+			case TBRAND_VAMPIRIC:
+				if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377Dvampirism\377W.");
+				else msg_format(Ind, "\377WYour weapon is no longer branded with \377Dvampirism\377W.");
+			break;
+			default:
+				if (plural) msg_print(Ind, "\377WYour weapons are no longer branded.");
+				else msg_print(Ind, "\377WYour weapon is no longer branded.");
+			break;
 			}
+
 			notice = TRUE;
 			t = 0;
 			p = 0;
