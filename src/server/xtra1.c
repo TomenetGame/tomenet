@@ -3850,8 +3850,8 @@ void calc_boni(int Ind) {
 	}
 
 	/* Apply brands from (powerful) auras! */
-	if (get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) p_ptr->slay_melee |= TR1_BRAND_COLD;
-	if (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) p_ptr->slay_melee |= (TR1_BRAND_COLD | TR1_BRAND_FIRE);
+	if (p_ptr->aura[AURA_SHIVER] && get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) p_ptr->slay_melee |= TR1_BRAND_COLD;
+	if (p_ptr->aura[AURA_DEATH] && get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) p_ptr->slay_melee |= (TR1_BRAND_COLD | TR1_BRAND_FIRE);
 
 	/* Ghost */
 	if (p_ptr->ghost) {
@@ -4461,9 +4461,9 @@ void calc_boni(int Ind) {
 		if (f3 & (TR3_NO_MAGIC)) {
 			p_ptr->anti_magic = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RAMSH;
 			/* turn off all magic auras */
-			if (p_ptr->aura[0]) toggle_aura(Ind, 0);
-			if (p_ptr->aura[1]) toggle_aura(Ind, 1);
-			if (p_ptr->aura[2]) toggle_aura(Ind, 2);
+			if (p_ptr->aura[AURA_FEAR]) toggle_aura(Ind, AURA_FEAR);
+			if (p_ptr->aura[AURA_SHIVER]) toggle_aura(Ind, AURA_SHIVER);
+			if (p_ptr->aura[AURA_DEATH]) toggle_aura(Ind, AURA_DEATH);
 		}
 		if (f3 & (TR3_NO_TELE)) { p_ptr->anti_tele = TRUE; csheet_boni[i-INVEN_WIELD].cb[4] |= CB5_ITELE; }
 
@@ -6355,7 +6355,7 @@ void calc_boni(int Ind) {
 		{ p_ptr->keep_life = TRUE; csheet_boni[14].cb[13] |= CB14_ILIFE; }
 #if 1 /* Grant SKILL_AURA_FEAR a "Fear Brand" instead! - Kurzel */
 	/* Fear Resistance from aura */
-	if (get_skill(p_ptr, SKILL_AURA_FEAR) >= 20 && p_ptr->aura[0])
+	if (get_skill(p_ptr, SKILL_AURA_FEAR) >= 20 && p_ptr->aura[AURA_FEAR])
 		{ p_ptr->resist_fear = TRUE; csheet_boni[14].cb[4] |= CB5_RFEAR; }
 #endif
 	/* Hack -- Res Chaos -> Res Conf */

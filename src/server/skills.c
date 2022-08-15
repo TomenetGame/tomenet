@@ -672,14 +672,14 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		break;
 	case SKILL_AURA_FEAR:
 		if (old_value == 0 && new_value > 0 && !(p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC)))
-			p_ptr->aura[0] = TRUE;
+			p_ptr->aura[AURA_FEAR] = TRUE;
 		if (old_value < 200 && new_value >= 200) {
 			msg_print(Ind, "\374\377GYour aura of fear makes yourself fearless!");
 			msg_print(Ind, "\374\377GEnemies hit by you in melee may be stricken with fear!");
 		}
 		break;
-	case SKILL_AURA_SHIVER: if (old_value == 0 && new_value > 0 && !(p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC))) p_ptr->aura[1] = TRUE; break;
-	case SKILL_AURA_DEATH: if (old_value == 0 && new_value > 0 && !(p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC))) p_ptr->aura[2] = TRUE; break;
+	case SKILL_AURA_SHIVER: if (old_value == 0 && new_value > 0 && !(p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC))) p_ptr->aura[AURA_SHIVER] = TRUE; break;
+	case SKILL_AURA_DEATH: if (old_value == 0 && new_value > 0 && !(p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC))) p_ptr->aura[AURA_DEATH] = TRUE; break;
 	case SKILL_DIG:
 #if 0 /* obsolete */
 		if (old_value < 300 && new_value >= 300)
@@ -720,9 +720,9 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 	case SKILL_ANTIMAGIC:
 		if (!new_value) break; //paranoia..
 		/* turn off all magic auras */
-		if (p_ptr->aura[0]) toggle_aura(Ind, 0);
-		if (p_ptr->aura[1]) toggle_aura(Ind, 1);
-		if (p_ptr->aura[2]) toggle_aura(Ind, 2);
+		if (p_ptr->aura[AURA_FEAR]) toggle_aura(Ind, AURA_FEAR);
+		if (p_ptr->aura[AURA_SHIVER]) toggle_aura(Ind, AURA_SHIVER);
+		if (p_ptr->aura[AURA_DEATH]) toggle_aura(Ind, AURA_DEATH);
 		break;
 	case SKILL_TRAPPING:
 #ifdef ENABLE_DEMOLITIONIST

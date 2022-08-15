@@ -14984,19 +14984,19 @@ void toggle_aura(int Ind, int aura) {
 	player_type *p_ptr = Players[Ind];
 
 	switch (aura) {
-	case 0:
+	case AURA_FEAR:
 		if (!get_skill(p_ptr, SKILL_AURA_FEAR)) {
 			msg_print(Ind, "You don't know how to unleash an aura of fear.");
 			return;
 		}
 		break;
-	case 1:
+	case AURA_SHIVER:
 		if (!get_skill(p_ptr, SKILL_AURA_SHIVER)) {
 			msg_print(Ind, "You don't know how to unleash a shivering aura.");
 			return;
 		}
 		break;
-	case 2:
+	case AURA_DEATH:
 		if (!get_skill(p_ptr, SKILL_AURA_DEATH)) {
 			msg_print(Ind, "You don't know how to unleash an aura of death.");
 			return;
@@ -15025,9 +15025,9 @@ void toggle_aura(int Ind, int aura) {
 
 	strcpy(buf, "\377sYour ");
 	switch (aura) { /* up to MAX_AURAS */
-	case 0: strcat(buf, "aura of fear"); break;
-	case 1: strcat(buf, "shivering aura"); break;
-	case 2: strcat(buf, "aura of death"); break;
+	case AURA_FEAR: strcat(buf, "aura of fear"); break;
+	case AURA_SHIVER: strcat(buf, "shivering aura"); break;
+	case AURA_DEATH: strcat(buf, "aura of death"); break;
 	}
 	strcat(buf, " is now ");
 	if (p_ptr->aura[aura]) strcat(buf, "unleashed"); else strcat(buf, "suppressed");
@@ -15049,9 +15049,9 @@ void check_aura(int Ind, int aura) {
 
 	strcpy(buf, "\377sYour ");
 	switch (aura) { /* up to MAX_AURAS */
-	case 0: strcat(buf, "aura of fear"); break;
-	case 1: strcat(buf, "shivering aura"); break;
-	case 2: strcat(buf, "aura of death"); break;
+	case AURA_FEAR: strcat(buf, "aura of fear"); break;
+	case AURA_SHIVER: strcat(buf, "shivering aura"); break;
+	case AURA_DEATH: strcat(buf, "aura of death"); break;
 	}
 	strcat(buf, " is currently ");
 	if (p_ptr->aura[aura]) strcat(buf, "unleashed"); else strcat(buf, "suppressed");

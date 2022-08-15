@@ -5007,7 +5007,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 
 			/* Ghosts get fear attacks */
 			i = get_skill(p_ptr, SKILL_AURA_FEAR); // O_+ "Fear Brand" - Kurzel
-			if (p_ptr->ghost || (p_ptr->aura[0] && i >= 20 && magik(i))) {
+			if (p_ptr->ghost || (p_ptr->aura[AURA_FEAR] && i >= 20 && magik(i))) {
 				fear_chance = 50 + (p_ptr->lev - r_ptr->level) * 5;
 				if (!(r_ptr->flags3 & RF3_NO_FEAR) && rand_int(100) < fear_chance) {
 					msg_format(Ind, "%^s appears afraid.", m_name);
@@ -6163,7 +6163,7 @@ void py_touch_zap_player(int Ind, int Ind2) {
 	 * Apply the blood magic auras
 	 */
 	/* Aura of fear is now affected by the monster level too */
-	if (!p_ptr->death && get_skill(q_ptr, SKILL_AURA_FEAR) && q_ptr->aura[0]
+	if (!p_ptr->death && get_skill(q_ptr, SKILL_AURA_FEAR) && q_ptr->aura[AURA_FEAR]
 	    && !p_ptr->resist_fear) {
 		if (magik(get_skill_scale(q_ptr, SKILL_AURA_FEAR, 30) + 5) &&
 		    p_ptr->lev < get_skill_scale(q_ptr, SKILL_AURA_FEAR, 100)) {
@@ -6174,7 +6174,7 @@ void py_touch_zap_player(int Ind, int Ind2) {
 	}
 	/* Shivering Aura is affected by the target level */
 	if (!p_ptr->death && get_skill(q_ptr, SKILL_AURA_SHIVER)
-	    && (q_ptr->aura[1] || (q_ptr->prace == RACE_VAMPIRE && q_ptr->body_monster == RI_VAMPIRIC_MIST))
+	    && (q_ptr->aura[AURA_SHIVER] || (q_ptr->prace == RACE_VAMPIRE && q_ptr->body_monster == RI_VAMPIRIC_MIST))
 	    && !(p_ptr->resist_sound
 	    || (p_ptr->nimbus && (p_ptr->nimbus_t == GF_SOUND || p_ptr->nimbus_t == GF_FORCE)))
 	    && !p_ptr->immune_cold) {
@@ -6195,7 +6195,7 @@ void py_touch_zap_player(int Ind, int Ind2) {
 		}
 	}
 	/* Aura of death is NOT affected by target level*/
-	if (!p_ptr->death && get_skill(q_ptr, SKILL_AURA_DEATH) && q_ptr->aura[2]) {
+	if (!p_ptr->death && get_skill(q_ptr, SKILL_AURA_DEATH) && q_ptr->aura[AURA_DEATH]) {
 		int chance = get_skill_scale(q_ptr, SKILL_AURA_DEATH, 50);
 
 		if (magik(chance)) {

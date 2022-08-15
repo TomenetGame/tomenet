@@ -2309,9 +2309,9 @@ if (p_ptr->updated_savegame == 0) {
 
 	if (!older_than(4, 4, 1)) {
 		rd_byte(&tmp8u); /* aura states (on/off) */
-		if ((tmp8u & 0x1) && get_skill(p_ptr, SKILL_AURA_FEAR)) p_ptr->aura[0] = TRUE;
-		if ((tmp8u & 0x2) && get_skill(p_ptr, SKILL_AURA_SHIVER)) p_ptr->aura[1] = TRUE;
-		if ((tmp8u & 0x4) && get_skill(p_ptr, SKILL_AURA_DEATH)) p_ptr->aura[2] = TRUE;
+		if ((tmp8u & 0x1) && get_skill(p_ptr, SKILL_AURA_FEAR)) p_ptr->aura[AURA_FEAR] = TRUE;
+		if ((tmp8u & 0x2) && get_skill(p_ptr, SKILL_AURA_SHIVER)) p_ptr->aura[AURA_SHIVER] = TRUE;
+		if ((tmp8u & 0x4) && get_skill(p_ptr, SKILL_AURA_DEATH)) p_ptr->aura[AURA_DEATH] = TRUE;
 
 		rd_u16b(&p_ptr->deaths);
 		rd_u16b(&p_ptr->soft_deaths);
@@ -2324,9 +2324,9 @@ if (p_ptr->updated_savegame == 0) {
 		if (tmp16u & 0x08) p_ptr->warning_blastcharge = 1;
 	} else {
 		/* auto-enable for now (MAX_AURAS) */
-		if (get_skill(p_ptr, SKILL_AURA_FEAR)) p_ptr->aura[0] = TRUE;
-		if (get_skill(p_ptr, SKILL_AURA_SHIVER)) p_ptr->aura[1] = TRUE;
-		if (get_skill(p_ptr, SKILL_AURA_DEATH)) p_ptr->aura[2] = TRUE;
+		if (get_skill(p_ptr, SKILL_AURA_FEAR)) p_ptr->aura[AURA_FEAR] = TRUE;
+		if (get_skill(p_ptr, SKILL_AURA_SHIVER)) p_ptr->aura[AURA_SHIVER] = TRUE;
+		if (get_skill(p_ptr, SKILL_AURA_DEATH)) p_ptr->aura[AURA_DEATH] = TRUE;
 	}
 
 	if (!older_than(4, 4, 2)) rd_string(p_ptr->info_msg, 80);

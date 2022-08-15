@@ -1032,9 +1032,9 @@ static void wr_extra(int Ind) {
 	wr_s16b(p_ptr->kills_equal);
 	wr_s16b(p_ptr->free_mimic);
 
-	if (p_ptr->aura[0]) tmp8u |= 0x1;
-	if (p_ptr->aura[1]) tmp8u |= 0x2;
-	if (p_ptr->aura[2]) tmp8u |= 0x4;
+	if (p_ptr->aura[AURA_FEAR]) tmp8u |= 0x1;
+	if (p_ptr->aura[AURA_SHIVER]) tmp8u |= 0x2;
+	if (p_ptr->aura[AURA_DEATH]) tmp8u |= 0x4;
 	wr_byte(tmp8u); /* aura states (on/off) */
 
 	wr_u16b(p_ptr->deaths);

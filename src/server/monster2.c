@@ -6269,9 +6269,9 @@ else s_printf("\n");
 	if (p_ptr->reflect) r_ptr->flags2 |= RF2_REFLECTING;
 	if (p_ptr->invis || p_ptr->tim_invisibility) r_ptr->flags2 |= RF2_INVISIBLE;
 	/* Adjustable abilities */
-	//if (p_ptr->aura[0]) ; //todo: cause fear-melee
-	if (p_ptr->aura[1]) r_ptr->flags3 |= RF3_AURA_COLD;
-	if (p_ptr->aura[2]) { /* Well, it's plasma/ice .. perfect fit actually: */
+	//if (p_ptr->aura[AURA_FEAR]) ; //todo: cause fear-melee
+	if (p_ptr->aura[AURA_SHIVER]) r_ptr->flags3 |= RF3_AURA_COLD;
+	if (p_ptr->aura[AURA_DEATH]) { /* Well, it's plasma/ice .. perfect fit actually: */
 		r_ptr->flags2 |= RF2_AURA_ELEC | RF2_AURA_FIRE;
 		r_ptr->flags3 |= RF3_AURA_COLD;
 	}

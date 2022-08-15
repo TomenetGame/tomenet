@@ -8282,8 +8282,6 @@ extern int PlayerUID;
 #define MKEY_BREATH		18
 #define MKEY_PICK_BREATH	19
 
-#define MAX_AURAS 		3
-
 
 /*
  * Skills
@@ -8478,6 +8476,15 @@ extern int PlayerUID;
 #define SKF1_MKEY_TVAL		0x20000000	/* mkey uses specific tval(not used) */
 #define SKF1_MKEY_ITEM		0x40000000	/* mkey requires an item */
 #define SKF1_MKEY_DIRECTION	0x80000000	/* mkey requires direction */
+
+
+
+#define MAX_AURAS 		3
+
+#define AURA_FEAR		0
+#define AURA_SHIVER		1
+#define AURA_DEATH		2
+
 
 
 /* Skill points per level (xtra2.c) */

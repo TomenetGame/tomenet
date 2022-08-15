@@ -3334,7 +3334,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 				 * Apply the blood magic auras
 				 */
 				/* Aura of fear is now affected by the monster level too */
-				if (get_skill(p_ptr, SKILL_AURA_FEAR) && p_ptr->aura[0] &&
+				if (get_skill(p_ptr, SKILL_AURA_FEAR) && p_ptr->aura[AURA_FEAR] &&
 				    (!(r_ptr->flags3 & RF3_UNDEAD)) && (!(r_ptr->flags3 & RF3_NONLIVING))
 				    && (!(r_ptr->flags3 & RF3_NO_FEAR))
 				    ) {
@@ -3351,7 +3351,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					}
 				}
 				/* Shivering Aura is affected by the monster level */
-				if (get_skill(p_ptr, SKILL_AURA_SHIVER) && (p_ptr->aura[1] || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST))
+				if (get_skill(p_ptr, SKILL_AURA_SHIVER) && (p_ptr->aura[AURA_SHIVER] || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST))
 				    && (!(r_ptr->flags3 & RF3_NO_STUN)) && (!(r_ptr->flags3 & RF3_IM_COLD))
 				    ) {
 					int mod = ((r_ptr->flags1 & RF1_UNIQUE) ? 10 : 0);
@@ -3377,7 +3377,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					}
 				}
 				/* Aura of death is NOT affected by monster level*/
-				if (get_skill(p_ptr, SKILL_AURA_DEATH) && p_ptr->aura[2]) {
+				if (get_skill(p_ptr, SKILL_AURA_DEATH) && p_ptr->aura[AURA_DEATH]) {
 					int chance = get_skill_scale(p_ptr, SKILL_AURA_DEATH, 50);
 
 					if (magik(chance)) {

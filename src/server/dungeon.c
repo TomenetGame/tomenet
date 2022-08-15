@@ -5171,7 +5171,7 @@ static bool process_player_end_aux(int Ind) {
 	if (get_skill(p_ptr, SKILL_HCURING) >= 30) regen_amount = (regen_amount * (get_skill(p_ptr, SKILL_HCURING) - 10)) / 20;
 
 	/* Blood Magic, aka Auras, draw from your blood and thereby slow your regeneration down to 1/4 if all 3 auras are enabled */
-	regen_amount = regen_amount / (1 + (p_ptr->aura[0] ? 1 : 0) + (p_ptr->aura[1] ? 1 : 0) + (p_ptr->aura[2] ? 1 : 0));
+	regen_amount = regen_amount / (1 + (p_ptr->aura[AURA_FEAR] ? 1 : 0) + (p_ptr->aura[AURA_SHIVER] ? 1 : 0) + (p_ptr->aura[AURA_DEATH] ? 1 : 0));
 
 	/* Increase regeneration by flat amount from timed regeneration powers */
 	if (p_ptr->tim_regen) {
@@ -6061,7 +6061,7 @@ static bool process_player_end_aux(int Ind) {
 	//if (get_skill(p_ptr, SKIll_PPOWER) >= 24 && get_skill(p_ptr, SKIll_PPOWER) - 16 > k) k = get_skill(p_ptr, SKILL_PPOWER) - 16;
 	if (p_ptr->sh_cold && !p_ptr->sh_fire && k < 20) k = 20;
 	if (p_ptr->ptrait == TRAIT_WHITE && k < 29) k = 29;
-	if (p_ptr->aura[1] && get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30 && k < 29) k = 29;
+	if (p_ptr->aura[AURA_SHIVER] && get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30 && k < 29) k = 29;
 	if (cold_place(&p_ptr->wpos)) {
 		warm_place = FALSE;
 		if (p_ptr->prace == RACE_VAMPIRE) {

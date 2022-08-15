@@ -3427,17 +3427,17 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 
 				/* auras.. */
-				if (!get_skill(p_ptr, SKILL_AURA_FEAR) && p_ptr->aura[0]) {
+				if (!get_skill(p_ptr, SKILL_AURA_FEAR) && p_ptr->aura[AURA_FEAR]) {
 					msg_print(Ind, "Your aura of fear ceases.");
-					p_ptr->aura[0] = FALSE;
+					p_ptr->aura[AURA_FEAR] = FALSE;
 				}
-				if (!get_skill(p_ptr, SKILL_AURA_SHIVER) && p_ptr->aura[1]) {
+				if (!get_skill(p_ptr, SKILL_AURA_SHIVER) && p_ptr->aura[AURA_SHIVER]) {
 					msg_print(Ind, "Your aura of shivering ceases.");
-					p_ptr->aura[1] = FALSE;
+					p_ptr->aura[AURA_SHIVER] = FALSE;
 				}
-				if (!get_skill(p_ptr, SKILL_AURA_DEATH) && p_ptr->aura[2]) {
+				if (!get_skill(p_ptr, SKILL_AURA_DEATH) && p_ptr->aura[AURA_DEATH]) {
 					msg_print(Ind, "Your aura of death ceases.");
-					p_ptr->aura[2] = FALSE;
+					p_ptr->aura[AURA_DEATH] = FALSE;
 				}
 
 				/* health (sanity display) */
