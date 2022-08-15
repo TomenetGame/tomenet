@@ -16671,7 +16671,7 @@ create a character!):
     on items such as scrolls, on magic devices, or on equipment such as weapons
     and light sources (which may drain their hit points if equipped, even if
     the vampire acquired resistance to light).
-    Vampires fear the sun light and any kind of items giving off powerful light
+    Vampires fear the sunlight and any kind of items giving off powerful light
     (radius of 3 or more, artifact lights, or light sources that are blessed,
     evil-slaying or undead-slaying). Asides from light sources aside they fear
     all items that are blessed or *slay undead*. Any such item will burn them,
