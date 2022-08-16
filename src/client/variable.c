@@ -4,7 +4,8 @@
 
 bool c_quit = FALSE;
 
-char meta_address[MAX_CHARS] = "";
+char meta_address[MAX_CHARS] = "", meta_buf[80192];
+int meta_socket = -1, meta_i = 0;
 char nick[MAX_CHARS] = "";
 char pass[MAX_CHARS] = "";
 char svname[MAX_CHARS] = "";

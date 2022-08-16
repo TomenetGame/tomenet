@@ -111,7 +111,8 @@ extern magic_type innate_powers[128];
 
 /* variable.c */
 extern bool c_quit;
-extern char meta_address[MAX_CHARS];
+extern char meta_address[MAX_CHARS], meta_buf[80192];
+extern int meta_socket, meta_i;
 extern char nick[MAX_CHARS];
 extern char pass[MAX_CHARS];
 extern char svname[MAX_CHARS];
@@ -436,6 +437,11 @@ extern SECURITY_ATTRIBUTES sa[META_PINGS];
 extern STARTUPINFO si[META_PINGS];
 extern PROCESS_INFORMATION pi[META_PINGS];
  #endif
+#endif
+#ifdef EXPERIMENTAL_META
+bool meta_connect(void);
+bool meta_read_and_close(void);
+void display_experimental_meta(void);
 #endif
 
 /* c-cmd.c */

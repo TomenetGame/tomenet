@@ -6344,7 +6344,8 @@ void do_ping() {
  #endif
 /* Note: At this early stage of the game (viewing meta server list) do_keepalive() and do_ping() are not yet called,
    so this function must be called in do_flicker() or update_ticks() instead, of which update_ticks() is preferable
-   as its calling frequency is fixed and predictable (100ms). */
+   as its calling frequency is fixed and predictable (100ms).
+   We are called every 500ms. */
 static void do_meta_pings(void) {
 	static int i, r;
 	static char path[1024], *c;
@@ -6354,7 +6355,7 @@ static void do_meta_pings(void) {
 	char buf[MAX_CHARS]; /* read line by line */
 #endif
 	static FILE *fff;
-	static char alt = 0; /* <- Only truly needed static var, the rest is static just for execution time optimization */
+	static char alt = 0, reload_metalist = 0; /* <- Only truly needed static var, the rest is static just for execution time optimization */
 	static int method = 0;
 
 	if (!method) {
@@ -6364,6 +6365,15 @@ static void do_meta_pings(void) {
 
 	/* Only call us once every intended interval time */
 	meta_pings_ticks = ticks;
+
+#ifdef EXPERIMENTAL_META
+	/* Refresh metaserver list every n*500 ms.
+	   Note that for now we don't re-read the actual servers for the cause of pinging.
+	   Rather, we assume the servers don't change and we'll just continue to ping those.
+	   We only re-read the metaserver list to update the amount/names of players on the servers. */
+	reload_metalist = (reload_metalist + 1) % 18; //18: 9s, ie the time needed for 3 ping refreshs
+	if (!reload_metalist && meta_connect() && meta_read_and_close()) display_experimental_meta();
+#endif
 
 	/* Alternate function: 1) send out pings, 2) read results */
 	alt = (alt + 1) % 6;

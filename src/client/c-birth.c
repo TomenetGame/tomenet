@@ -2278,6 +2278,81 @@ static bool enter_server_name(void) {
 	return askfor_aux(server_name, 79, 0);
 }
 
+#ifdef EXPERIMENTAL_META
+void display_experimental_meta(void) {
+	Term_clear();
+	call_lua(0, "meta_display", "(s)", "d", meta_buf, &meta_i);
+}
+#endif
+bool meta_read_and_close(void) {
+	int retries, bytes = 0;
+
+	/* Wipe the buffer so valgrind doesn't complain - mikaelh */
+	C_WIPE(meta_buf, 80192, char);
+
+	/* Listen for reply (try ten times in ten seconds) */
+	for (retries = 0; retries < 10; retries++) {
+		/* Set timeout */
+		SetTimeout(1, 0);
+
+		/* Wait for info */
+		if (!SocketReadable(meta_socket)) continue;
+
+		/* Read */
+		bytes = SocketRead(meta_socket, meta_buf, 80192);
+		break;
+	}
+
+	/* Close the socket */
+	SocketClose(meta_socket);
+	meta_socket = -1;
+	meta_i = 0;
+
+	/* Check for error while reading */
+	if (bytes <= 0) return FALSE;
+
+	return TRUE;
+}
+bool meta_connect(void) {
+	if (strlen(meta_address) > 0) {
+		/* Metaserver in config file */
+		meta_socket = CreateClientSocket(meta_address, 8801);
+	}
+
+	/* Failed to connect to metaserver in config file, connect to hard-coded address */
+	if (meta_socket == -1) {
+		Term_erase(0, 0, 80);
+		Term_erase(1, 0, 80);
+		prt("Failed to connect to user-specified meta server.", 0, 0);
+		prt("Trying to connect to default metaserver instead....", 1, 0);
+
+		/* Connect to metaserver */
+		meta_socket = CreateClientSocket(META_ADDRESS, 8801);
+	}
+
+#ifdef META_ADDRESS_2
+	/* Check for failure */
+	if (meta_socket == -1) {
+		Term_erase(0, 0, 80);
+		Term_erase(1, 0, 80);
+		prt("Failed to connect to meta server.", 0, 0);
+		prt("Trying to connect to default alternate metaserver instead....", 1, 0);
+		/* Hack -- Connect to metaserver #2 */
+		meta_socket = CreateClientSocket(META_ADDRESS_2, 8801);
+	}
+#endif
+
+	/* Check for failure */
+	if (meta_socket == -1) {
+		Term_erase(0, 0, 80);
+		Term_erase(1, 0, 80);
+		prt("Failed to connect to meta server.", 0, 0);
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
 /*
  * Have the player choose a server from the list given by the
  * metaserver.
@@ -2286,15 +2361,13 @@ static bool enter_server_name(void) {
  * - wrap the words using strtok
  * - allow to scroll the screen in case
  * */
-
 bool get_server_name(void) {
 	s32b i;
 	cptr tmp;
-	int retries;
 
 #ifdef EXPERIMENTAL_META
-	int j, bytes = 0, socket = -1;
-	char buf[80192], c;
+	int j;
+	char buf[1024], c;
  #ifdef META_PINGS
 	int k, v, r;
 	FILE *fff;
@@ -2302,9 +2375,11 @@ bool get_server_name(void) {
 	char path[1024];
   #endif
  #endif
+
+	meta_socket = -1;
 #else
 	int j, k, l, bytes = 0, socket = -1, offsets[20], lines = 0;
-	char buf[80192], *ptr, c, out_val[260];
+	char buf[1024], *ptr, c, out_val[260];
 #endif
 
 	/* We NEED lua here, so if it aint initialized yet, do it */
@@ -2316,35 +2391,9 @@ bool get_server_name(void) {
 	/* Make sure message is shown */
 	Term_fresh();
 
-	if (strlen(meta_address) > 0) {
-		/* Metaserver in config file */
-		socket = CreateClientSocket(meta_address, 8801);
-	}
-
-	/* Failed to connect to metaserver in config file, connect to hard-coded address */
-	if (socket == -1) {
-		prt("Failed to connect to used-specified meta server.", 2, 1);
-		prt("Trying to connect to default metaserver instead....", 3, 1);
-
-		/* Connect to metaserver */
-		socket = CreateClientSocket(META_ADDRESS, 8801);
-	}
-
-#ifdef META_ADDRESS_2
-	/* Check for failure */
-	if (socket == -1) {
-		prt("Failed to connect to meta server.", 2, 1);
-		prt("Trying to connect to default alternate metaserver instead....", 3, 1);
-		/* Hack -- Connect to metaserver #2 */
-		socket = CreateClientSocket(META_ADDRESS_2, 8801);
-	}
-#endif
-
-	/* Check for failure */
-	if (socket == -1) {
-		prt("Failed to connect to meta server.", 2, 1);
-		return enter_server_name();
-	}
+	/* Connect to meta, and then read server list and then close the connection again!
+	   If anything fails, call manual server name input request instead. */
+	if (!meta_connect() || !meta_read_and_close()) return enter_server_name();
 
 #ifdef META_PINGS
 	/* Test for 'ping' command availability (should always be there though).
@@ -2371,40 +2420,18 @@ bool get_server_name(void) {
 	}
 #endif
 
-	/* Wipe the buffer so valgrind doesn't complain - mikaelh */
-	C_WIPE(buf, 80192, char);
-
-	/* Listen for reply (try ten times in ten seconds) */
-	for (retries = 0; retries < 10; retries++) {
-		/* Set timeout */
-		SetTimeout(1, 0);
-
-		/* Wait for info */
-		if (!SocketReadable(socket)) continue;
-
-		/* Read */
-		bytes = SocketRead(socket, buf, 80192);
-		break;
-	}
-
-	/* Close the socket */
-	SocketClose(socket);
-
-	/* Check for error while reading */
-	if (bytes <= 0) return enter_server_name();
+	/* Finally display the meta server list which we read earlier into the global variable meta_buf. */
+#ifdef EXPERIMENTAL_META
+	display_experimental_meta();
+#else
+	/* Start at the beginning */
+	ptr = meta_buf;
+	i = 0;
 
 	Term_clear();
 
-#ifdef EXPERIMENTAL_META
-	call_lua(0, "meta_display", "(s)", "d", buf, &i);
-#else
-
-	/* Start at the beginning */
-	ptr = buf;
-	i = 0;
-
 	/* Print each server */
-	while (ptr - buf < bytes) {
+	while (ptr - meta_buf < bytes) {
 		/* Check for no entry */
 		if (strlen(ptr) <= 1) {
 			/* Increment */
@@ -2414,7 +2441,7 @@ bool get_server_name(void) {
 		}
 
 		/* Save offset */
-		offsets[i] = ptr - buf;
+		offsets[i] = ptr - meta_buf;
 
 		/* Format entry */
 		sprintf(out_val, "%c) %s", I2A(i), ptr);
@@ -2456,11 +2483,12 @@ bool get_server_name(void) {
 #endif
 
 #ifdef META_PINGS
+	/* From the read metaserver list, initiate pinging all the game servers. */
 	if (!meta_pings_servers) {
 		/* Obtain all unique server names */
 		v = 0;
-		for (j = 0; j < i; j++) {
-			call_lua(0, "meta_get", "(s,d)", "sd", buf, j, &tmp, &server_port);
+		for (j = 0; j < meta_i; j++) {
+			call_lua(0, "meta_get", "(s,d)", "sd", meta_buf, j, &tmp, &server_port);
 			if (!tmp[0]) continue; //paranoia
 
 			/* Check for duplicate names */
@@ -2523,7 +2551,7 @@ bool get_server_name(void) {
 	} else meta_pings_servers = 0;
 #endif
 
-	/* Ask until happy */
+	/* Ask to choose a server until happy */
 	while (1) {
 		/* Get a key */
 		Term->scr->cx = Term->wid;
@@ -2568,8 +2596,7 @@ bool get_server_name(void) {
 		j = (islower(c) ? A2I(c) : -1);
 
 		/* Check for legality */
-		if (j >= 0 && j < i)
-			break;
+		if (j >= 0 && j < meta_i) break;
 	}
 #ifdef META_PINGS
 	/* Disable pinging for the rest of the game again. */
@@ -2584,11 +2611,11 @@ bool get_server_name(void) {
 #endif
 
 #ifdef EXPERIMENTAL_META
-	call_lua(0, "meta_get", "(s,d)", "sd", buf, j, &tmp, &server_port);
+	call_lua(0, "meta_get", "(s,d)", "sd", meta_buf, j, &tmp, &server_port);
 	strcpy(server_name, tmp);
 #else
 	/* Extract server name */
-	sscanf(buf + offsets[j], "%s", server_name);
+	sscanf(meta_buf + offsets[j], "%s", server_name);
 #endif
 
 	/* Success */
