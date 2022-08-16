@@ -19687,7 +19687,7 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
                     Required skill level for first spell level: 3.
 
     Sanctuary       Puts nearby monsters asleep.
-                    Required skill level for first spell level: 3.
+                    Required skill level for first spell level: 6
 
                     Tier II: Level 23.
                     Lets all monsters in line of sight fall asleep.
@@ -20040,12 +20040,12 @@ All Unlife spells are Wisdom-based.)
 
     Detect Lifeforce
                     Detect all living creatures nearby.
-                    Required skill level for first spell level: 12.
+                    Required skill level for first spell level: 11.
 
     Tainted Grounds Prevents any vermin from multiplying any further,
                     effective on the whole dungeon level.
                     Doesn't work on unnatural creatures.
-                    Required skill level for first spell level: 17.
+                    Required skill level for first spell level: 13.
 
     Nether Sap      Draws from nether undercurrents to continuously replenish
                     your health at the cost of draining your mana.
