@@ -2126,7 +2126,7 @@ A:10/2
 P:0:1d1:0:0:0
 F:FOUNTAIN
 D:Maps and enlightens the whole map, detects all objects
-D:and identifies all your items.
+D:and identifies all your items. Disperses hallucinations.
 
 N:257:Heroism
 G:!:d
@@ -3662,7 +3662,7 @@ F:FOUNTAIN
 D:Permanently increases intelligence and wisdom. Maps and enlightens the whole
 #D:map and detects treasure, objects, secret doors, stairs and traps nearby.
 D:map and detects treasure, secret doors, stairs and traps nearby.
-D:Identifies all your items and tells you about yourself.
+D:Identifies all your items, tells you about yourself, disperses hallucinations.
 
 #N:423:[Necromantic Incantations]
 #G:?:G

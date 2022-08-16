@@ -957,12 +957,14 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			if (do_inc_stat(Ind, A_CHR)) ident = TRUE;
 			break;
 		case SV_POTION_ENLIGHTENMENT:
+			(void)set_image(Ind, 0);
 			identify_pack(Ind);
 			msg_print(Ind, "An image of your surroundings forms in your mind...");
 			wiz_lite(Ind);
 			ident = TRUE;
 			break;
 		case SV_POTION_STAR_ENLIGHTENMENT:
+			(void)set_image(Ind, 0);
 #if 0 /* would need to increase price from 25k back to 80k ;) */
 			for (i = 0; i < INVEN_TOTAL; i++)
 				identify_fully_item_quiet(Ind, i);
