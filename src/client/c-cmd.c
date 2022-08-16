@@ -3115,7 +3115,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				}
 
 				/* Misc chapters, hardcoded: */
-				if (my_strcasestr(buf, "instan")) { /* mustn't overlap with 'install' */
+				if ((my_strcasestr(buf, "inst") && !my_strcasestr(buf, "install"))
+				    || (my_strcasestr(buf, "auto") && my_strcasestr(buf, "res"))
+				    ) { /* mustn't overlap with 'install'; "res" is already taken by "resurrection" spell but we can accept 'auto-res' */
 					strcpy(buf, "Temple  ");
 					fallback = TRUE;
 					continue;
@@ -3644,7 +3646,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			/* Exception: If first char is not alpha-num, don't do uppercase restriction (for "(STR)" etc);
 			   exception from exception: Allow upper-case search for slash commands!
 			   exception 2: Allow upper-case search for predefined inscriptions: */
-			if (!isalphanum(searchstr[0]) && searchstr[0] != '/' && searchstr[0] != '*' && !(searchstr[0] == '!' && !searchstr[2])) search_uppercase_ok = FALSE; /* slash cmd, *destruction*, !x inscription *?
+			if (!isalphanum(searchstr[0]) && searchstr[0] != '/' && searchstr[0] != '*' && !(searchstr[0] == '!' && !searchstr[2])) search_uppercase_ok = FALSE; /* slash cmd, *destruction*, !x inscription */
 			/* Hack: Inscriptions: Find both !<lowercase> and !<uppercase> */
 			if (searchstr[0] == '!' && !searchstr[2]) search_uppercase = 2; /* skip tier 4 and 3 (all-uppercase in actual text), start with 2 instead */
 
