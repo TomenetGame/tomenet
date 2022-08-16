@@ -2549,7 +2549,13 @@ static char color_name[16 * 2][8] = {
 	//{"#0000ff", "#444444", },
 	//{"#ffffff", "#0000ff", },
 	//{"#666666", "#0000ff", },
-	{"#aaaaaa", "#000044", },
+	{"#aaaaaa", "#112288", },
+	{"#aaaaaa", "#007700", },
+	{"#aaaaaa", "#770000", },
+	{"#aaaaaa", "#777700", },
+	{"#aaaaaa", "#555555", },
+	{"#aaaaaa", "#BBBBBB", },
+	{"#aaaaaa", "#333388", },
 };
 #endif
 static void enable_common_colormap_x11() {

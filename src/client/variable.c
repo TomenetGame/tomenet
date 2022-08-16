@@ -506,7 +506,13 @@ u32b client_color_map[16 * 2] = {
 };
 #ifdef EXTENDED_BG_COLOURS
 u32b client_ext_color_map[TERMX_AMT][2] = {
-	{ 0xffffff, 0x000077 },	/* experimental TERMX_BLUE */
+	{ 0xffffff, 0x112288 },	/* experimental TERMX_BLUE */
+	{ 0xffffff, 0x007700 },
+	{ 0xffffff, 0x770000 },
+	{ 0xffffff, 0x777700 },
+	{ 0xffffff, 0x555555 },
+	{ 0xffffff, 0xBBBBBB },
+	{ 0xffffff, 0x333388 },
 };
 #endif
 u32b client_color_map_org[BASE_PALETTE_SIZE];

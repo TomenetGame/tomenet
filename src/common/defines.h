@@ -7546,8 +7546,14 @@ extern int PlayerUID;
 #endif
 #ifdef EXTENDED_BG_COLOURS
  #define TERMX_START	80
- #define TERMX_AMT	1
+ #define TERMX_AMT	7
  #define TERMX_BLUE	80
+ #define TERMX_GREEN	81
+ #define TERMX_RED	82
+ #define TERMX_YELLOW	83
+ #define TERMX_GREY	84
+ #define TERMX_WHITE	85
+ #define TERMX_PURPLE	86
 #endif
 #ifdef EXTENDED_COLOURS_PALANIM
  #define BASE_PALETTE_SIZE 32

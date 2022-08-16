@@ -863,11 +863,13 @@ byte flick_colour(byte attr) {
 #endif
 		/* Fall through should not happen, just silence the compiler */
 		__attribute__ ((fallthrough));
-	case TERM_SEL_BLUE:
+	case TERM_SEL_BLUE: //atm for testing purpose only, see comments below...
 		/* Dual-animation! Use palette animation if available, colour-rotation otherwise */
 		if (TRUE
 #ifdef EXTENDED_BG_COLOURS
-		    && !c_cfg.palette_animation
+ #ifdef TEST_CLIENT
+		    && c_cfg.palette_animation
+ #endif
 #endif
 		    ) {
 			switch ((unsigned)ticks % 14) {
@@ -894,8 +896,9 @@ byte flick_colour(byte attr) {
 #endif
 			}
 		} else {
+#ifdef EXTENDED_BG_COLOURS
 			/* Use a special colour for this */
-#if 0 /* slowish, flickers, not smooth */
+ #if 0 /* slowish, flickers, not smooth */
 			if (ticks % 4 == 0) {
 				switch ((ticks % 32) / 4) {
 				case 0: set_palette(term2attr(TERMX_BLUE), 0, 0, 0 * 8); break;
@@ -908,9 +911,8 @@ byte flick_colour(byte attr) {
 				case 7: set_palette(term2attr(TERMX_BLUE), 0, 0, 4 * 8); break;
 				}
 			}
-#endif
-#ifdef EXTENDED_BG_COLOURS
-			return term2attr(TERMX_BLUE);
+ #endif
+			return term2attr(TERMX_BLUE); //great for skill screen for example (maybe in green though instead of blue)
 #else /* dummy */
 			return TERM_L_BLUE;
 #endif
