@@ -5979,7 +5979,7 @@ void toggle_afk(int Ind, char *msg)
 		}
 	}
 
-	/* Replaced msg_broadcast by this, to allow /ignore and /ic */
+	/* Replaced msg_broadcast by this, to allow /ignore and /ic of people's afk-status changes */
 	/* Tell every player */
 	for (i = 1; i <= NumPlayers; i++) {
 		/* Skip disconnected players */
