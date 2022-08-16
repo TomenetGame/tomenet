@@ -824,9 +824,9 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 		} else if (i >= 4) {
 			if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
-			if (bonus < FLAT_HURT_BONUS) bonus = FLAT_HALF_BONUS;
+			if (bonus < FLAT_HALF_BONUS) bonus = FLAT_HALF_BONUS;
 		} else if (i) {
-			if (bonus < FLAT_HALF_BONUS) bonus = FLAT_MIN_BONUS;
+			if (bonus < FLAT_MIN_BONUS) bonus = FLAT_MIN_BONUS;
 		}
 		//else: impossible to reach as there is no sound-immunity
 	}
@@ -858,9 +858,9 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 		} else if (i >= 5) {
 			if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
-			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_HALF_BONUS;
+			if (bonus < FLAT_HALF_BONUS) bonus = FLAT_HALF_BONUS;
 		} else if (i >= 3) {
-			if (bonus < FLAT_HALF_BONUS) bonus = FLAT_MIN_BONUS;
+			if (bonus < FLAT_MIN_BONUS) bonus = FLAT_MIN_BONUS;
 		}
 		//else: impossible to reach as there is no shard-immunity
 	}
