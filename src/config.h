@@ -87,7 +87,7 @@
  * For server: can use crypt() for doing passwords
  */
 #ifndef WIN32
-#define HAVE_CRYPT
+ #define HAVE_CRYPT
 #endif
 
 /*
@@ -238,12 +238,12 @@
  */
 /* Would you make it a tomenet.cfg option? */
 #ifndef WIN32
-#define TOMENET_WORLDS
+ #define TOMENET_WORLDS
 #endif
 
 #if 0 /* moved to tomenet.cfg.. */
-#define BIND_NAME "tomenet.eu"
-#define	BIND_IP "64.53.71.115"
+ #define BIND_NAME "tomenet.eu"
+ #define	BIND_IP "64.53.71.115"
 #endif
 
 
@@ -410,7 +410,7 @@
 /*
  * OPTION: Maximum flow depth when using "MONSTER_FLOW"
  */
-#define MONSTER_FLOW_DEPTH 32
+ #define MONSTER_FLOW_DEPTH 32
 #endif
 
 
@@ -826,7 +826,7 @@
 #define EVIL_METACLIENT
 
 #define CLIENT_SHIMMER
-#endif
+#endif /* TOMENET_CONFIG_H */
 
 /*
  * Use the new meta scheme to do neater things

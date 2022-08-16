@@ -3072,7 +3072,9 @@ void msg_print(int Ind, cptr msg_raw) {
    NOTE: This particular function contains an 8ball-hack! */
 void msg_broadcast(int Ind, cptr msg) {
 	int i;
+#ifdef TOMENET_WORLDS
 	const char *c;
+#endif
 
 	/* Tell every player */
 	for (i = 1; i <= NumPlayers; i++) {
@@ -3087,10 +3089,12 @@ void msg_broadcast(int Ind, cptr msg) {
 		msg_print(i, msg);
 	 }
 
+#ifdef TOMENET_WORLDS
 	/* Hack to read 8ball responses on other servers too. 8ball is recognized by "<colourcode>[8ball]" message start. */
 	c = strstr(msg, "[8ball]"); /* Can be \252\255c[8ball] (It) or \255c[8ball] (Moltor) */
 	if (cfg.worldd_broadcast && (c == msg + 2 || c == msg + 3) && (msg[0] == '\377' || msg[1] == '\377'))
 		world_chat(0, msg);
+#endif
 }
 /* Same as msg_broadcast() but takes both a censored and an uncensored message and chooses per recipient. */
 void msg_broadcast2(int Ind, cptr msg, cptr msg_u) {
@@ -5811,8 +5815,6 @@ static void console_talk_aux(char *message) {
 
 #ifdef TOMENET_WORLDS
 	char tmessage[MSG_LEN];		/* TEMPORARY! We will not send the name soon */
-#else
-	player_type *q_ptr;
 #endif
 
 	/* tBot's stuff */
@@ -5840,33 +5842,31 @@ static void console_talk_aux(char *message) {
 	if (broadcast) {
 		snprintf(tmessage, sizeof(tmessage), "\375\377r[\377%c%s\377r]\377%c %s", c_n, sender, COLOUR_CHAT, message + 11);
 	} else if (!rp_me) {
-#ifndef KURZEL_PK
+ #ifndef KURZEL_PK
 		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s]\377%c %s", c_n, sender, COLOUR_CHAT, message);
-#else
+ #else
 		snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s\377%c]\377%c %s", c_b, c_n, sender, c_b, COLOUR_CHAT, message);
-#endif
+ #endif
 	} else {
-#ifndef KURZEL_PK
+ #ifndef KURZEL_PK
 		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s %s]", c_n, sender, message + 4);
-#else
+ #else
 		snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s %s\377%c]", c_b, c_n, sender, message + 4, c_b);
-#endif
+ #endif
 	}
 
 #else
 	/* Send to everyone */
 	for (int i = 1; i <= NumPlayers; i++) {
-		q_ptr = Players[i];
-
 		/* Send message */
 		if (broadcast) {
 			msg_format(i, "\375\377r[\377%c%s\377r]\377%c %s", c_n, sender, COLOUR_CHAT, message + 11);
 		} else if (!rp_me) {
-#ifndef KURZEL_PK
+ #ifndef KURZEL_PK
 			msg_format(i, "\375\377%c[%s]\377%c %s", c_n, sender, COLOUR_CHAT, message);
-#else
+ #else
 			msg_format(i, "\375\377%c[\377%c%s\377%c]\377%c %s", c_b, c_n, sender, c_b, COLOUR_CHAT, message);
-#endif
+ #endif
 		} else msg_format(i, "%s %s", sender, message + 4);
 	}
 #endif

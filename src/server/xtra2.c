@@ -8649,7 +8649,10 @@ void player_death(int Ind) {
 	bool hell = TRUE, secure = FALSE, ge_secure = FALSE, pvp = ((p_ptr->mode & MODE_PVP) != 0), erase = FALSE, insanity = streq(p_ptr->died_from, "insanity"), penalty = FALSE;
 	cptr titlebuf;
 	int death_type = -1; /* keep track of the way (s)he died, for buffer_account_for_event_deed() */
-	bool world_broadcast = TRUE, just_fruitbat_transformation = (p_ptr->fruit_bat == -1);
+#ifdef TOMENET_WORLDS
+	bool world_broadcast = TRUE;
+#endif
+	bool just_fruitbat_transformation = (p_ptr->fruit_bat == -1);
 	bool was_total_winner = p_ptr->total_winner, retire = FALSE;
 	bool in_iddc = in_irondeepdive(&p_ptr->wpos);
 	bool finally_killed; /* non-suicide no-rez-death */
@@ -10032,8 +10035,10 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 	}
 	else if (!p_ptr->total_winner) {
 		/* assume newb_suicide option for world broadcasts */
+#ifdef TOMENET_WORLDS
 		if (p_ptr->max_plv == 1) world_broadcast = FALSE;
 		if ((p_ptr->mode & MODE_PVP) && p_ptr->max_plv == MIN_PVP_LEVEL) world_broadcast = FALSE;
+#endif
 
 		snprintf(buf, sizeof(buf), "\374\377D%s committed suicide.", p_ptr->name);
 		/* Avoid death log spam with pvp min lev suicides */
