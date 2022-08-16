@@ -132,7 +132,26 @@ function quest_towneltalk(Ind, msg, topic)
 		y = 0
 		z = 0
 		if player.lev < 10 then
-			--nothing yet
+			for i = 0, INVEN_PACK do
+				--check for anti-poison
+				if player.inventory[i + 1].tval == 71 then --TV_POTION
+					--SV_POTION_SLOW_POISON
+					if player.inventory[i + 1].sval == 26 then
+						x = 1
+					end
+				end
+			end
+
+			hintsub = 0
+			if x == 0 then
+				if hinted == 1 then
+					msg_print(Ind, "\252\255UIf you don't have counters to poison, buy a potion of slow poison from the temple (the green '4') in town.")
+				else
+					msg_print(Ind, "\252\255UWell "..msg..", maybe just grab a potion of slow poison from the temple (the green '4') in town.")
+				end
+				hinted = 1
+				hintsub = 1
+			end
 		elseif player.lev < 20 then
 			for i = 0, INVEN_PACK do
 				--check for escapes
@@ -168,6 +187,32 @@ function quest_towneltalk(Ind, msg, topic)
 						y = 1
 					end
 				end
+
+				--check for anti-poison
+				if player.inventory[i + 1].tval == 71 then --TV_POTION
+					--SV_POTION_SLOW_POISON
+					if player.inventory[i + 1].sval == 26 then
+						z = 1
+					end
+				end
+				if player.inventory[i + 1].tval == 71 then --TV_POTION
+					--SV_POTION_NEUTRALIZE_POISON
+					if player.inventory[i + 1].sval == 27 then
+						z = 1
+					end
+				end
+				if player.inventory[i + 1].tval == 80 then --TV_FOOD
+					--SV_FOOD_CURE_POISON
+					if player.inventory[i + 1].sval == 12 then
+						z = 1
+					end
+				end
+				if player.inventory[i + 1].tval == 55 then --TV_STAFF
+					--SV_STAFF_CURING
+					if player.inventory[i + 1].sval == 17 then
+						z = 1
+					end
+				end
 			end
 
 			hintsub = 0
@@ -189,6 +234,19 @@ function quest_towneltalk(Ind, msg, topic)
 					end
 				else
 					msg_print(Ind, "\252\255UOh "..msg..", if you don't have healing spells available, you should buy potions to cure at least serious wounds from the temple (the green '4') in town.")
+				end
+				hinted = 1
+				hintsub = 1
+			end
+			if z == 0 then
+				if hinted == 1 then
+					if hintsub == 1 then
+						msg_print(Ind, "\252\255UAlso, get some means of countering poison from the temple (the green '4') in town if you haven't yet.")
+					else
+						msg_print(Ind, "\252\255UIf you don't have curing spells, get means of countering poison from the temple (the green '4') in town.")
+					end
+				else
+					msg_print(Ind, "\252\255UOh "..msg..", if you don't possess curing magic, get something to counter poison from the temple (the green '4') in town.")
 				end
 				hinted = 1
 				hintsub = 1
