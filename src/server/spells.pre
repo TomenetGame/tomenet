@@ -397,6 +397,7 @@ extern void wild_flags(int Ind, u32b flags);
 /* lua-dependant 'constants' */
 extern int __lua_HHEALING;
 extern int __lua_HBLESSING;
+extern int __lua_HDELFEAR;
 extern int __lua_MSCARE;
 extern int __lua_M_FIRST;
 extern int __lua_M_LAST;
