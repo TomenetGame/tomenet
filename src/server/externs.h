@@ -2533,6 +2533,7 @@ extern bool watch_cp, watch_nr, watch_df;
 /* lua-dependant 'constants' */
 extern int __lua_HHEALING;
 extern int __lua_HBLESSING;
+extern int __lua_HDELFEAR;
 extern int __lua_MSCARE;
 extern int __lua_M_FIRST;
 extern int __lua_M_LAST;

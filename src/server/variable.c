@@ -857,13 +857,10 @@ bool watch_cp = 0, watch_nr = 0, watch_df = 0;
 bool first_player_joined = TRUE;
 
 /* lua-dependant 'constants' */
-int __lua_HHEALING;
-int __lua_HBLESSING;
+int __lua_HHEALING, __lua_HBLESSING, __lua_HDELFEAR;
 int __lua_MSCARE;
-int __lua_M_FIRST;
-int __lua_M_LAST;
-int __lua_P_FIRST;
-int __lua_P_LAST;
+int __lua_M_FIRST, __lua_M_LAST;
+int __lua_P_FIRST, __lua_P_LAST;
 #ifndef ENABLE_OCCULT
 int __lua_OFEAR = 0;
 #else

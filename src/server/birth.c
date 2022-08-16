@@ -1294,7 +1294,7 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		{ TV_BLUNT, SV_WAR_HAMMER, 0 },
 		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0 },
 		{ TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL, 0 },
-		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HBLESSING */
+		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HBLESSING -> __lua_HDELFEAR */
 		{ 255, 255, 0 },
 	},
 
@@ -1450,7 +1450,7 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		{ TV_HELM, SV_METAL_CAP, 0 },
 		{ TV_CLOAK, SV_CLOAK, 0 },
 		{ TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL, 0 },
-		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HBLESSING */
+		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HBLESSING -> __lua_HDELFEAR */
 		{ 255, 255, 0 },
 	},
 
@@ -1547,7 +1547,8 @@ void init_player_outfits(void) {
 	   just do it here. - C. Blue */
 
 	   //player_init[0][CLASS_PRIEST][2][2] = __lua_HHEALING;
-	   player_init[0][CLASS_PALADIN][3][2] = __lua_HBLESSING;
+	   //player_init[0][CLASS_PALADIN][3][2] = __lua_HBLESSING;
+	   player_init[0][CLASS_PALADIN][3][2] = __lua_HDELFEAR;
 #ifdef ENABLE_DEATHKNIGHT
 	   player_init[0][CLASS_DEATHKNIGHT][3][2] = __lua_OFEAR;
 #endif
@@ -1560,7 +1561,8 @@ void init_player_outfits(void) {
 	   player_init[0][CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
 
 	   //player_init[1][CLASS_PRIEST][2][2] = __lua_HHEALING;
-	   player_init[1][CLASS_PALADIN][3][2] = __lua_HBLESSING;
+	   //player_init[1][CLASS_PALADIN][3][2] = __lua_HBLESSING;
+	   player_init[1][CLASS_PALADIN][3][2] = __lua_HDELFEAR;
 #ifdef ENABLE_DEATHKNIGHT
 	   player_init[1][CLASS_DEATHKNIGHT][3][2] = __lua_OFEAR;
 #endif
@@ -2007,7 +2009,8 @@ static void player_outfit(int Ind) {
 
 #if 0
 		if (tv == TV_BOOK && sv == SV_SPELLBOOK) { /* hack - correct book orders */
-			if (pv == 60) pv = __lua_HBLESSING;
+			//if (pv == 60) pv = __lua_HBLESSING;
+			if (pv == 60) pv = __lua_HDELFEAR;
 //			if (pv != 255) pv = 60;
 		}
 #endif

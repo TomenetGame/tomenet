@@ -3121,13 +3121,13 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			'+', 700, },
 		{ SKILL_HDEFENSE,
-			'+', 1000, /* be able to use the startup eq spellbook of blessing */
+			'+', 0, /* be able to use the startup eq spellbook of blessing */
 			'+', 800, },
 		{ SKILL_HCURING,
 			'+', 0,
 			'+', 700, },
 		{ SKILL_HSUPPORT,
-			'+', 0,
+			'+', 1000,
 			'+', 800, },
 		{ SKILL_DEVICE,
 			'+', 1000,
