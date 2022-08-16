@@ -19304,7 +19304,7 @@ school.
 - Divination        [Spells are INT-based.]
 
     Detect Monsters Detects all non-invisible monsters nearby. (auto-project)
-                    Required skill level for first spell level: 3.
+                    Required skill level for first spell level: 4.
 
     Sense Hidden    Detects traps.                             (auto-project)
                     Required skill level for first spell level: 5.
@@ -19509,7 +19509,7 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
 - Holy Defense      [Spells are WIS-based unless noted otherwise.]
 
     Blessing        Same effect as scroll of Blessing.         (auto-project)
-                    Required skill level for first spell level: 1.
+                    Required skill level for first spell level: 3.
 
                     Tier II: Level 15.
                     Same effect as scroll of Holy Chant.       (auto-project)
@@ -19684,7 +19684,7 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
                     Shared spell (see above): H.Offense, H.Support.
 
     Detect Evil     Detects nearby evil monsters.
-                    Required skill level for first spell level: 3.
+                    Required skill level for first spell level: 4.
 
     Sanctuary       Puts nearby monsters asleep.
                     Required skill level for first spell level: 6

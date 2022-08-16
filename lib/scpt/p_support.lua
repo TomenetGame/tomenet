@@ -24,6 +24,7 @@ HDELFEAR = add_spell {
 			"***Automatically projecting***",
 	}
 }
+__lua_HDELFEAR = HDELFEAR
 
 HSANCTUARY_I = add_spell {
 	["name"] = 	"Sanctuary I",
@@ -133,7 +134,7 @@ HDETECTEVIL = add_spell {
 	["school"] = 	SCHOOL_HSUPPORT,
 	["spell_power"] = 0,
 	["am"] = 	75,
-	["level"] = 	3,
+	["level"] = 	4,
 	["mana"] = 	3,
 	["mana_max"] = 	3,
 	["fail"] = 	15,
