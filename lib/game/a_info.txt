@@ -1740,7 +1740,7 @@ D:known for never having lost in combat.
 
 N:124:'Belthronding'
 I:19:13:5
-W:40:30:40:100000
+W:40:30:80:100000
 P:0:0d0:20:25:0
 F:DEX | STEALTH | HIDE_TYPE |
 F:RES_DISEN | XTRA_SHOTS | SHOW_MODS | XTRA_MIGHT
@@ -1753,7 +1753,7 @@ D:faintly shines a pale clear gold.
 
 N:125:of Bard
 I:19:13:2
-W:60:35:40:100000
+W:60:35:90:100000
 P:0:0d0:27:24:0
 F:DEX | HIDE_TYPE | ESP_DRAGON | LUCK | KILL_DRAGON |
 F:FREE_ACT | XTRA_MIGHT | SHOW_MODS | XTRA_SHOTS
@@ -1766,7 +1766,7 @@ D:songs record.
 
 N:126:'Cubragol'
 I:19:23:6
-W:44:35:110:100000
+W:44:35:100:100000
 P:0:0d0:10:14:0
 F:SPEED | RES_FIRE | BRAND_FIRE | ACTIVATE | SHOW_MODS
 D:A crossbow that grants fiery speed to he who finds it, and from which
@@ -2062,7 +2062,7 @@ D:against those foes who are already dead.
 
 N:152:of the Elves
 I:19:24:5
-W:127:255:130:8000000
+W:127:255:200:8000000
 P:0:0d0:36:28:0
 F:SEE_INVIS | SLOW_DIGEST | FREE_ACT | SPEED | DEX | CON | LEVITATE | LUCK
 F:XTRA_MIGHT | XTRA_SHOTS | IM_ELEC | REFLECT | INVIS | STEALTH |
@@ -2662,7 +2662,7 @@ D:Its creator didn't believe in much, but he knew all about pain.
 
 N:213:'Doublezee'
 I:19:13:3
-W:40:25:40:50000
+W:40:25:80:50000
 P:0:0d0:25:15:0
 F:CHR | SEARCH | HIDE_TYPE |
 F:XTRA_SHOTS | SHOW_MODS
@@ -2893,7 +2893,7 @@ D:A black crossbow that shimmers white here and then.
 
 N:231:of Domination
 I:19:13:0
-W:90:75:60:200000
+W:90:75:120:200000
 P:0:0d0:30:30:0
 F:HIDE_TYPE | KILL_DRAGON | KILL_DEMON | SLAY_EVIL | KILL_UNDEAD |
 F:FREE_ACT | XTRA_MIGHT | SHOW_MODS | XTRA_SHOTS | RES_DISEN | RES_FEAR
@@ -3336,7 +3336,7 @@ D:A bolt that eats through any armour and bites sharply into the flesh.
 
 N:269:of Uruk-Hai
 I:19:24:3
-W:50:10:200:65000
+W:50:10:240:65000
 P:0:4d1:20:24:0
 F:STR | XTRA_MIGHT | XTRA_SHOTS | ESP_GOOD | REGEN
 F:HIDE_TYPE | SHOW_MODS
