@@ -20143,6 +20143,7 @@ All Unlife spells are Wisdom-based.)
                     Required skill level for first spell level: 1.
 
     Herbal Tea      Satisfies your hunger.                     (auto-project)
+                    Lv  8: Cures poisons.                      (auto-project)
                     Lv 20: Restores your experience.           (auto-project)
                     Lv 25: Restores your attributes.           (auto-project)
                     Lv 35: Cures black breath!                 (auto-project)

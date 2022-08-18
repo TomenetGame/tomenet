@@ -139,6 +139,9 @@ HERBALTEA = add_spell {
 			elseif lvl >= 20 then
 				restore_level(Ind)
 				fire_ball(Ind, GF_RESTORE_PLAYER, 0, 1 + 2, 1, " gives you something bitter to drink.")
+			elseif lvl >= 8 then
+				set_poisoned(Ind, 0, 0)
+				fire_ball(Ind, GF_CUREPOISON_PLAYER, 0, 1 + 2, 1, " gives you something bitter to drink.")
 			else
 				fire_ball(Ind, GF_SATHUNGER_PLAYER, 0, 1, 1, " gives you something bitter to drink.");
 			end
@@ -147,6 +150,7 @@ HERBALTEA = add_spell {
 			return ""
 			end,
 	["desc"] = 	{ "It sustains you and those around you. (Auto-projecting)",
+			  "At level 8 the tea will also cure poisons circulating your body.",
 			  "At level 20 it brews a drink that restores your life level.",
 			  "At level 25 it brews tea that restores your body's attributes.",
 			  "At level 35 it brews the strongest tea to cure even the Black Breath.", }
