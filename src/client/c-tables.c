@@ -559,8 +559,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 cptr melee_techniques[16] = {
   "Sprint",
   "Taunt",
+  "Throw Dirt",
   "Bash",
-  "Distract",
 
 #if 0
   "Stab", //swords
@@ -569,20 +569,20 @@ cptr melee_techniques[16] = {
   "Sweep", //polearms
 #endif
 
-  "Apply Poison",
-  "Knockback",
+  "Distract",
+  "Apply Poison", //"Knockback",
   "Track Animals",
   "Perceive Noise",
 
   "Flash Bomb",
   "Steam Blast",
   "Spin",
-  "Assassinate", /*"Charge",*/
+  "Assassinate", /*"Charge",*/ //ENABLE_ASSASSINATE (TEST_SERVER only)
 
   "Berserk",
-  "Jump",
+  "Jump", //UNUSED
+  "Shadow Jump", //UNUSED
   "Shadow Run",
-  "Shadow Jump",
 };
 
 cptr ranged_techniques[16] =

@@ -9439,16 +9439,16 @@ void calc_techniques(int Ind) {
 		p_ptr->melee_techniques |= MT_TAUNT;
 	if (mtech_lev[p_ptr->pclass][2] &&
 	    p_ptr->lev >= mtech_lev[p_ptr->pclass][2])
-		p_ptr->melee_techniques |= MT_BASH;
+		p_ptr->melee_techniques |= MT_DIRT;
 	if (mtech_lev[p_ptr->pclass][3] &&
 	    p_ptr->lev >= mtech_lev[p_ptr->pclass][3])
-		p_ptr->melee_techniques |= MT_DISTRACT;
+		p_ptr->melee_techniques |= MT_BASH;
 	if (mtech_lev[p_ptr->pclass][4] &&
 	    p_ptr->lev >= mtech_lev[p_ptr->pclass][4])
-		p_ptr->melee_techniques |= MT_POISON;
+		p_ptr->melee_techniques |= MT_DISTRACT;
 	if (mtech_lev[p_ptr->pclass][5] &&
 	    p_ptr->lev >= mtech_lev[p_ptr->pclass][5])
-		p_ptr->melee_techniques |= MT_KNOCK;
+		p_ptr->melee_techniques |= MT_POISON;
 	if (mtech_lev[p_ptr->pclass][6] &&
 	    p_ptr->lev >= mtech_lev[p_ptr->pclass][6])
 		p_ptr->melee_techniques |= MT_TRACKANIM;
@@ -9475,10 +9475,10 @@ void calc_techniques(int Ind) {
 		p_ptr->melee_techniques |= MT_JUMP;
 	if (mtech_lev[p_ptr->pclass][14] &&
 	    p_ptr->lev >= mtech_lev[p_ptr->pclass][14])
-		p_ptr->melee_techniques |= MT_SRUN;
+		p_ptr->melee_techniques |= MT_SJUMP;
 	if (mtech_lev[p_ptr->pclass][15] &&
 	    p_ptr->lev >= mtech_lev[p_ptr->pclass][15])
-		p_ptr->melee_techniques |= MT_SJUMP;
+		p_ptr->melee_techniques |= MT_SRUN;
 
 	if (get_skill(p_ptr, SKILL_ARCHERY) >= 4) p_ptr->ranged_techniques |= RT_FLARE; /* Flare missile */
 	if (get_skill(p_ptr, SKILL_ARCHERY) >= 8) p_ptr->ranged_techniques |= RT_PRECS; /* Precision shot */

@@ -8477,7 +8477,21 @@ s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
 
-	case 2:	if (!(p_ptr->melee_techniques & MT_BASH)) return; /* Bash */
+	case 2:	if (!(p_ptr->melee_techniques & MT_DIRT)) return; /* Throw Dirt */
+		if (p_ptr->cst < 3) { msg_print(Ind, "Not enough stamina!"); return; }
+		p_ptr->cst -= 3;
+		p_ptr->energy -= level_speed(&p_ptr->wpos);// / 2
+		un_afk_idle(Ind);
+		break_cloaking(Ind, 0);
+		break_shadow_running(Ind);
+		stop_precision(Ind);
+
+		throw_dirt(Ind);
+s_printf("TECHNIQUE_MELEE: %s - throw dirt\n", p_ptr->name);
+		p_ptr->warning_technique_melee = 1;
+		break;
+
+	case 3:	if (!(p_ptr->melee_techniques & MT_BASH)) return; /* Bash */
 		//msg_print(Ind, "To use Bash, instead press '%s' (or create a macro for that key).", p_ptr->rogue_like_commands ? "f", "B");  -- not any more
 //s_printf("TECHNIQUE_MELEE: %s - bash\n", p_ptr->name);  -- logged in cmd1.c in py_bash..() instead
 		//if (!target_okay(Ind)) { msg_print(Ind, "You don't have a target."); return; }  -- wrong, as target_okay() acquires a new target, overwriting our designated one
@@ -8492,7 +8506,7 @@ s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
 
-	case 3:	if (!(p_ptr->melee_techniques & MT_DISTRACT)) return; /* Distract */
+	case 4:	if (!(p_ptr->melee_techniques & MT_DISTRACT)) return; /* Distract */
 		if (p_ptr->cst < 1) { msg_print(Ind, "Not enough stamina!"); return; }
 		p_ptr->cst -= 1;
 		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2; /* just a quick grimace and mimicking ;) */
@@ -8505,7 +8519,8 @@ s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
 s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
-	case 4:	if (!(p_ptr->melee_techniques & MT_POISON)) return; /* Apply Poison */
+
+	case 5:	if (!(p_ptr->melee_techniques & MT_POISON)) return; /* Apply Poison */
 		//if (p_ptr->cst < 2) { msg_print(Ind, "Not enough stamina!"); return; }
 		if (!p_ptr->inventory[INVEN_WIELD].k_idx && (!p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) {
 			msg_print(Ind, "You must wield a melee weapon to apply poison.");
@@ -8536,6 +8551,7 @@ s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 s_printf("TECHNIQUE_MELEE: %s - apply poison\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
+
 	case 6:	if (!(p_ptr->melee_techniques & MT_TRACKANIM)) return; /* Track Animals */
 		if (p_ptr->cst < 3) { msg_print(Ind, "Not enough stamina!"); return; }
 		p_ptr->cst -= 3;
@@ -8544,6 +8560,7 @@ s_printf("TECHNIQUE_MELEE: %s - apply poison\n", p_ptr->name);
 s_printf("TECHNIQUE_MELEE: %s - track animals\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
+
 	case 7:	if (!(p_ptr->melee_techniques & MT_DETNOISE)) return; /* Perceive Noise */
 		if (p_ptr->cst < 2) { msg_print(Ind, "Not enough stamina!"); return; }
 		p_ptr->cst -= 2;
@@ -8552,6 +8569,7 @@ s_printf("TECHNIQUE_MELEE: %s - track animals\n", p_ptr->name);
 s_printf("TECHNIQUE_MELEE: %s - perceive noise\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
+
 	case 8:	if (!(p_ptr->melee_techniques & MT_FLASH)) return; /* Flash bomb */
 		if (p_ptr->cst < 4) { msg_print(Ind, "Not enough stamina!"); return; }
 		//if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
@@ -8568,6 +8586,7 @@ s_printf("TECHNIQUE_MELEE: %s - perceive noise\n", p_ptr->name);
 s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
+
 	case 9:	{
 		int t = -1, p = -1;
 		object_type *o_ptr;
@@ -8605,6 +8624,7 @@ s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
 		p_ptr->steamblast_timer = -1;
 		break;
 		}
+
 	case 10: if (!(p_ptr->melee_techniques & MT_SPIN)) return; /* Spin */
 		if (p_ptr->cst < 5) { msg_print(Ind, "Not enough stamina!"); return; }
 		if (p_ptr->afraid) {
@@ -8624,6 +8644,7 @@ s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
 s_printf("TECHNIQUE_MELEE: %s - spin\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
+
 #ifdef ENABLE_ASSASSINATE
 	case 11: if (!(p_ptr->melee_techniques & MT_ASSA)) return; /* Assassinate */
 		if (p_ptr->piercing_charged) {
@@ -8647,6 +8668,7 @@ s_printf("TECHNIQUE_MELEE: %s - assassinate\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
 #endif
+
 	case 12 :if (!(p_ptr->melee_techniques & MT_BERSERK)) return; /* Berserk */
 		if (p_ptr->cst < 10) { msg_print(Ind, "Not enough stamina!"); return; }
 		break_cloaking(Ind, 0);
@@ -8660,11 +8682,13 @@ s_printf("TECHNIQUE_MELEE: %s - assassinate\n", p_ptr->name);
 s_printf("TECHNIQUE_MELEE: %s - berserk\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
-	case 14 :if (!(p_ptr->melee_techniques & MT_SRUN)) return; /* Shadow Run */
+
+	case 15 :if (!(p_ptr->melee_techniques & MT_SRUN)) return; /* Shadow Run */
 		shadow_run(Ind);
 s_printf("TECHNIQUE_MELEE: %s - shadow run\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
+
 	default:
 		msg_print(Ind, "Invalid technique.");
 		s_printf("TECHNIQUE_MELEE: %s used invalid code %d.\n", p_ptr->name, technique);

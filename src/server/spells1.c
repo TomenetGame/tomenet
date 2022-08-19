@@ -8826,16 +8826,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	}
 
 	/* Blindness (confusion): Not for uniques or powerful monsters */
-	if (do_blind &&
-	    !strchr("AEXN|,.mj$?*vx", r_ptr->d_char) &&
-	    !(r_ptr->flags2 & RF2_POWERFUL) &&
-	    !(r_ptr->flags2 & RF2_PASS_WALL) && /* Ethereal monsters */
-	    !(r_ptr->flags4 & RF4_BR_LITE) && !(r_ptr->flags9 & RF9_RES_LITE) && !(r_ptr->flags2 & RF2_REFLECTING) &&
-	    !(r_ptr->flags3 & RF3_UNDEAD) &&
-	    !(r_ptr->flags3 & RF3_NONLIVING) &&
-	    magik(100 - (((r_ptr->flags1 & RF1_UNIQUE) | (r_ptr->flags3 & RF3_DRAGONRIDER)) ? 30 : 0) - r_ptr->level))
-	    //RES_OLD(r_ptr->level, dam))  <- this line would require a " resists." note btw. */
-	{
+	if (do_blind && blindable_monster(r_ptr)) {
 		/* Obvious */
 		if (seen) obvious = TRUE;
 
@@ -9105,7 +9096,18 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	return (obvious);
 }
 
-
+bool blindable_monster(monster_race *r_ptr) {
+	if (!strchr("AEXN|,.mj$?*vx", r_ptr->d_char) &&
+	    !(r_ptr->flags2 & RF2_POWERFUL) &&
+	    !(r_ptr->flags2 & RF2_PASS_WALL) && /* Ethereal monsters */
+	    !(r_ptr->flags4 & RF4_BR_LITE) && !(r_ptr->flags9 & RF9_RES_LITE) && !(r_ptr->flags2 & RF2_REFLECTING) &&
+	    !(r_ptr->flags3 & RF3_UNDEAD) &&
+	    !(r_ptr->flags3 & RF3_NONLIVING) &&
+	    magik(100 - (((r_ptr->flags1 & RF1_UNIQUE) | (r_ptr->flags3 & RF3_DRAGONRIDER)) ? 30 : 0) - r_ptr->level))
+	    //RES_OLD(r_ptr->level, dam))  <- this line would require a " resists." note btw. */
+		return TRUE;
+	return FALSE;
+}
 
 
 
@@ -11385,7 +11387,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* GF_BLIND - C. Blue */
 	case GF_BLIND:
 		if (p_ptr->resist_blind) msg_print(Ind, "You are unaffected!");
-		else if (rand_int(100 + dam*6) < p_ptr->skill_sav) msg_print(Ind, "You resist the effects!");
+		else if (rand_int(100 + dam * 6) < p_ptr->skill_sav) msg_print(Ind, "You resist the effects!");
 		else if (!p_ptr->blind) (void)set_blind(Ind, dam);
 		/* No "real" damage */
 		dam = 0;

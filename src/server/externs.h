@@ -1653,6 +1653,7 @@ extern int approx_damage(int m_idx, int dam, int typ);
 extern bool contains_significant_reactive_metal(object_type *o_ptr);
 extern bool contains_significant_wood(object_type *o_ptr);
 #endif
+extern bool blindable_monster(monster_race *r_ptr);
 
 /* spells2.c */
 extern void summon_pet(int Ind, int max);
@@ -1721,6 +1722,7 @@ extern void aggravate_monsters_floorpos(worldpos *wpos, int x, int y);
 extern void wake_minions(int Ind, int who);
 extern void taunt_monsters(int Ind);
 extern void distract_monsters(int Ind);
+extern void throw_dirt(int Ind);
 extern bool genocide_aux(int Ind, worldpos *wpos, char typ);
 extern bool genocide(int Ind);
 extern bool obliteration(int who);

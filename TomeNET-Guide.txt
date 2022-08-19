@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 16. August 2022 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 19. August 2022 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.8.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -21535,6 +21535,12 @@ The techniques are as follows:
         and -if you and an ally both stand next to the same monster- to draw
         its attention from your ally and make it attack you instead.
         (Taunting costs a quarter of a turn of energy.)
+    Throw Dirt          3 stamina
+        Throws dirt at the face of your current target or (if you don't have a
+        target yet) at the face of a monster next to you. Only works on
+        monsters standing next to you.
+        If the monster is blindable, it will be temporarily blinded (which is
+        effectively the same as being confused).
     Bash                6 stamina
         This shield-bash technique can also be used directly by pressing 'B'
         (normal keymap) or 'f' (rogue-like keymap) to perform a shield-bash

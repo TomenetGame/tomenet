@@ -4931,13 +4931,134 @@ void wakeup_monsters_somewhat(int Ind, int who) {
 #endif
 }
 
+static void throw_dirt_aux(int Ind, int m_idx) {
+	player_type *p_ptr = Players[Ind], *q_ptr;
+	monster_type *m_ptr = &m_list[m_idx];
+	monster_race *r_ptr = race_inf(m_ptr);
+	char m_name[MNAME_LEN];
+
+	/* Our target is another (hostile) player? */
+	if (m_idx < 0) {
+		q_ptr = Players[-m_idx];
+		if (q_ptr->resist_blind) msg_format(-m_idx, "%s throws dirt at your eyes but you are unaffected!", p_ptr->name);
+		else if (rand_int(125 + p_ptr->lev) < q_ptr->skill_sav) msg_format(-m_idx, "%s throws dirt at your eyes but you resist the effects!", p_ptr->name);
+		else if (!q_ptr->blind) {
+			msg_format(-m_idx, "%s throws dirt at your eyes!", p_ptr->name);
+			(void)set_blind(-m_idx, 4);
+		}
+		return;
+	}
+
+	/* Our target is a monster */
+	m_ptr = &m_list[m_idx];
+	r_ptr = race_inf(m_ptr);
+	monster_desc(Ind, m_name, m_idx, 0);
+
+	m_ptr->csleep = 0; //wake up from this
+
+	/* Monster is unaffected? */
+	if (!blindable_monster(r_ptr)) {
+		msg_format(Ind, "You throw dirt, but %s is unaffected.", m_name);
+		msg_format_near(Ind, "%s throws dirt, but %s is unaffected.", p_ptr->name, m_name);
+		return;
+	}
+
+	msg_format(Ind, "You throw dirt at the face of %s.", m_name);
+	msg_format_near(Ind, "%s throws dirt at the face of %s.", p_ptr->name, m_name);
+
+	/* Not too confused yet? */
+	if (m_ptr->confused < 6) {
+		/* Already confused */
+		if (m_ptr->confused) msg_print_near_monster(m_idx, "looks more confused");
+		/* Was not confused */
+		else msg_print_near_monster(m_idx, "gropes around blindly");
+	}
+	/* Apply blindness aka confusion */
+	m_ptr->confused = 6;
+}
+
+/* Throw dirt at adjacent target. TODO: Make it work for PvP. */
+void throw_dirt(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	monster_type *m_ptr;
+	int dir, i;
+	cave_type **zcave, *c_ptr;
+
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
+
+	if (CANNOT_OPERATE_SPECTRAL) {
+		msg_print(Ind, "You cannot throw sand without a material body!");
+		if (!is_admin(p_ptr)) return;
+	}
+
+	break_cloaking(Ind, 0);
+	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
+
+	/* First, check for our current target and reuse it if adjacent */
+
+	if (target_okay(Ind) && distance(p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col) <= 1) {
+		c_ptr = &zcave[p_ptr->target_row][p_ptr->target_col];
+		i = c_ptr->m_idx;
+		if (i && i >= -NumPlayers) { /* skip empty grids and grids without monster or player */
+			/* player - check for hostility */
+			if (i < 0) {
+				if (check_hostile(-i, Ind)) {
+					throw_dirt_aux(Ind, i);
+					return;
+				}
+			} else { /* monster */
+				/* Paranoia -- Skip dead monsters */
+				m_ptr = &m_list[i];
+				if (m_ptr->r_idx) { //&& inarea(&p_ptr->wpos, &m_ptr->wpos)
+					throw_dirt_aux(Ind, i);
+					return;
+				}
+			}
+			/* No hostile player and no monster? Fall through.. */
+		}
+		/* No player/monster targetted at all? Fall through.. */
+	}
+	/* No target set? Fall through.. */
+
+	/* So we failed and fell through.
+	   Now just look for the first adjacent target and use that instead. */
+	for (dir = 0; dir < 8; dir++) { /* All directions except own grid */
+		c_ptr = &zcave[p_ptr->py + ddy_ddd[dir]][p_ptr->px + ddx_ddd[dir]];
+		i = c_ptr->m_idx;
+		if (!i || i < -NumPlayers) continue; /* skip empty grids and grids without monster or player */
+
+		/* player - check for hostility */
+		if (i < 0) {
+			if (!check_hostile(-i, Ind)) continue;
+			throw_dirt_aux(Ind, i);
+			return;
+		}
+
+		/* monster */
+
+		/* Paranoia -- Skip dead monsters */
+		m_ptr = &m_list[i];
+		if (!m_ptr->r_idx) continue;
+		//if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
+
+		throw_dirt_aux(Ind, i);
+		return;
+	}
+}
+
+
+/* Distract - Unlike for taunting, monster must stand right next to the player. */
 void distract_monsters(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	monster_type	*m_ptr;
+	monster_type *m_ptr;
 	monster_race *r_ptr;
-
-	int i;
+	int dir, i;
 	bool tauntable;
+	cave_type **zcave, *c_ptr;
+
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	msg_print(Ind, "You make yourself look less threatening than your team mates.");
 	msg_format_near(Ind, "%s pretends you're more threatening than him.", p_ptr->name);
@@ -4946,13 +5067,18 @@ void distract_monsters(int Ind) {
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 
-	for (i = 1; i < m_max; i++) {
+	for (dir = 0; dir < 8; dir++) { /* All directions except own grid */
+		c_ptr = &zcave[p_ptr->py + ddy_ddd[dir]][p_ptr->px + ddx_ddd[dir]];
+
+		i = c_ptr->m_idx;
+		if (i <= 0) continue; /* skip players and empty grids */
+
 		m_ptr = &m_list[i];
 		r_ptr = race_inf(m_ptr);
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
-		if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
+		//if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
 
 		if ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_GIANT | RF3_DEMON)) ||
 		    (strchr("hHkptny", r_ptr->d_char))) tauntable = TRUE;
@@ -4985,22 +5111,19 @@ void distract_monsters(int Ind) {
 
 		if (!tauntable) continue;
 
-		/* monster stands right next to this player? */
-		if (ABS(m_ptr->fy - p_ptr->py) <= 1 && ABS(m_ptr->fx - p_ptr->px) <= 1 &&
-		    m_ptr->last_target_melee == Ind) {
-			/* set another (adjacent) player as target */
-			m_ptr->switch_target = Ind;
-		}
+		/* This monster doesn't actually target us anyway? */
+		if (m_ptr->last_target_melee != Ind) continue;
+
+		/* set another (adjacent) player as target */
+		m_ptr->switch_target = Ind;
 	}
 }
 
 /* attempts to make certain types of AI_ANNOY monsters approach the player for a while */
-void taunt_monsters(int Ind)
-{
+void taunt_monsters(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	monster_type	*m_ptr;
+	monster_type *m_ptr;
 	monster_race *r_ptr;
-
 	int i;
 	bool sleep = FALSE, tauntable;
 
@@ -5015,7 +5138,7 @@ void taunt_monsters(int Ind)
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
-		if(!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
+		if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
 
 		if ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_GIANT | RF3_DEMON)) ||
 		    (strchr("hHkptny", r_ptr->d_char))) tauntable = TRUE;
@@ -5044,7 +5167,7 @@ void taunt_monsters(int Ind)
 		/* RF2_CAN_SPEAK ?? */
 
 		/* some egos aren't tauntable possibly */
-		switch(m_ptr->ego) {
+		switch (m_ptr->ego) {
 		case 10: case 13: case 23: /* archers */
 		case 9: case 30: /* mages */
 			tauntable = FALSE;
@@ -5053,7 +5176,7 @@ void taunt_monsters(int Ind)
 		}
 
 		/* some monsters (hard-coded ;() aren't tauntable */
-		switch(m_ptr->r_idx) {
+		switch (m_ptr->r_idx) {
 		case 46: case 93: case 240: case 449: case 638: case 738: /* p mages */
 		case 178: case 281: case 375: case 657: /* h mages */
 		case 539: /* h archers */
