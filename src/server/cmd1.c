@@ -3622,7 +3622,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 			k = (k + PVP_MELEE_DAM_REDUCTION - 1) / PVP_MELEE_DAM_REDUCTION;
 
 			/* Messages */
-			if (backstab) {
+			if (backstab) {  //todo maybe: sleep_stab
 				backstab_feed = TRUE;
 				backstab = FALSE;
 				if (martial) {
@@ -4835,7 +4835,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 			if (k > m_ptr->hp) did_stun = did_knee = did_slow = FALSE;
 
 			/* DEG Updated hit message to include damage */
-			if (backstab) {
+			if (backstab) { //handle sleep_stab correctly, don't display sleeping if it isn't..
 				backstab_feed = TRUE;
 				backstab = FALSE;
 				if (martial) {
