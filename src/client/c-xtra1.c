@@ -3086,13 +3086,20 @@ void display_player(int hist) {
 
 		/* Dump the bonuses to hit/dam */
 		tmp = (p_ptr->to_h_melee > 5000 ? p_ptr->to_h_melee - 10000 : p_ptr->to_h_melee); tmpc = (p_ptr->to_h_melee > 5000) ? TERM_L_BLUE : TERM_L_GREEN;
-		prt_num("+To MHit    ", p_ptr->dis_to_h + tmp, y_row2, 1, tmpc);
+		put_str("+To Melee Hit    ", y_row2, 1);
+		c_put_str(tmpc, format("%3d", p_ptr->dis_to_h + tmp), y_row2, 19);
+
 		tmp = (p_ptr->to_d_melee > 5000 ? p_ptr->to_d_melee - 10000 : p_ptr->to_d_melee); tmpc = (p_ptr->to_d_melee > 5000) ? TERM_L_BLUE : TERM_L_GREEN;
-		prt_num("+To MDamage ", p_ptr->dis_to_d + tmp, y_row2 + 1, 1, tmpc);
+		put_str("+To Melee Damage ", y_row2 + 1, 1);
+		c_put_str(tmpc, format("%3d", p_ptr->dis_to_d + tmp), y_row2 + 1, 19);
+
 		tmp = (p_ptr->to_h_ranged > 5000 ? p_ptr->to_h_ranged - 10000 : p_ptr->to_h_ranged); tmpc = (p_ptr->to_h_ranged > 5000) ? TERM_L_BLUE : TERM_L_GREEN;
-		prt_num("+To RHit    ", p_ptr->dis_to_h + tmp, y_row2 + 2, 1, tmpc);
+		put_str("+To Ranged Hit   ", y_row2 + 2, 1);
+		c_put_str(tmpc, format("%3d", p_ptr->dis_to_h + tmp), y_row2 + 2, 19);
+
 		tmp = (p_ptr->to_d_ranged > 5000 ? p_ptr->to_d_ranged - 10000 : p_ptr->to_d_ranged); tmpc = (p_ptr->to_d_ranged > 5000) ? TERM_L_BLUE : TERM_L_GREEN;
-		prt_num("+To RDamage ", tmp, y_row2 + 3, 1, tmpc); //generic +dam never affects ranged
+		put_str("+To Ranged Damage", y_row2 + 3, 1);
+		c_put_str(tmpc, format("%3d", tmp), y_row2 + 3, 19); //generic +dam never affects ranged, so no +dis_to_d
 
 		/* Armour Class */
 		if (is_atleast(&server_version, 4, 7, 3, 1, 0, 0)) {
