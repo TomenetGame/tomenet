@@ -2139,12 +2139,12 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		    !in_irondeepdive(&p_ptr->wpos)) {
 			if (cfg.anti_cheeze_pickup) {
 				if (o_ptr->level) {
-					msg_print(Ind, "You aren't powerful enough yet to pick up that item!");
+					msg_format(Ind, "You must be level %d or higher to pick up that item!", o_ptr->level);
 					if (!is_admin(p_ptr)) return;
 				}
  #if 1 /* doesn't matter probably? Food exchange was already done above. */
 				else {
-					msg_print(Ind, "You cannot pick up a zero-level item.");
+					msg_print(Ind, "You cannot pick up a zero-level item that doesn't belong to you.");
 					if (!is_admin(p_ptr)) return;
 				}
  #endif
@@ -2165,8 +2165,8 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			else if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup)
 			//else if (artifact_p(o_ptr) && cfg.anti_arts_pickup)
 			{
-				if (o_ptr->level == 0) msg_print(Ind, "You cannot pick up a zero-level artifact.");
-				else msg_print(Ind, "You aren't powerful enough yet to pick up that artifact!");
+				if (o_ptr->level == 0) msg_print(Ind, "You cannot pick up a zero-level artifact that you don't own.");
+				else msg_format(Ind, "You must be level %d or higher to pick up that artifact!", o_ptr->level);
 				if (!is_admin(p_ptr)) return;
 			}
 
