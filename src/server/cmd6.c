@@ -272,9 +272,9 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 
 	case SV_FOOD_ATHELAS:
 		msg_print(Ind, "A fresh, clean essence rises, driving away wounds and poison.");
-		ident = set_poisoned(Ind, 0, 0) ||
-			set_diseased(Ind, 0, 0) ||
-			set_stun(Ind, 0) ||
+		ident = set_poisoned(Ind, 0, 0) |
+			set_diseased(Ind, 0, 0) |
+			set_stun(Ind, 0) |
 			set_cut(Ind, 0, 0);
 		if (p_ptr->black_breath) {
 			msg_print(Ind, "The hold of the Black Breath on you is broken!");
@@ -1031,10 +1031,10 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			break;
 		case SV_POTION_RESISTANCE:
 			ident =
-				set_oppose_acid(Ind, randint(20) + 20) ||
-				set_oppose_elec(Ind, randint(20) + 20) ||
-				set_oppose_fire(Ind, randint(20) + 20) ||
-				set_oppose_cold(Ind, randint(20) + 20) ||
+				set_oppose_acid(Ind, randint(20) + 20) |
+				set_oppose_elec(Ind, randint(20) + 20) |
+				set_oppose_fire(Ind, randint(20) + 20) |
+				set_oppose_cold(Ind, randint(20) + 20) |
 				set_oppose_pois(Ind, randint(20) + 20); /* removed stacking */
 			break;
 #ifdef EXPAND_TV_POTION
@@ -6581,7 +6581,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 #if 0	// needing pet code
 			if (randint(3) == 1) {
 				if (summon_specific(py, px, ((plev * 3) / 2), SUMMON_DRAGONRIDER, 0, 1)) {
-					msg_print(Ind, "A DragonRider comes from the BETWEEN!");
+					msg_print(Ind, "A DragonRider comes from the BETWEEN !");
 					msg_print(Ind, "'I will burn you!'");
  #ifdef USE_SOUND_2010
 					sound_near_site(py, px, wpos, 0, "summon", NULL, SFX_TYPE_COMMAND, FALSE);
@@ -6590,7 +6590,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			} else {
 				if (summon_specific_friendly(py, px, ((plev * 3) / 2),
 				    SUMMON_DRAGONRIDER, (bool)(plev == 50 ? TRUE : FALSE))) {
-					msg_print(Ind, "A DragonRider comes from the BETWEEN!");
+					msg_print(Ind, "A DragonRider comes from the BETWEEN !");
 					msg_print(Ind, "'I will help you in your difficult task.'");
  #ifdef USE_SOUND_2010
 					sound_near_site(py, px, wpos, 0, "summon", NULL, SFX_TYPE_COMMAND, FALSE);
@@ -7659,51 +7659,51 @@ bool unmagic(int Ind) {
 	if (p_ptr->invuln || p_ptr->martyr) return FALSE;
 
 	if (
-		set_adrenaline(Ind, 0) ||
-		set_biofeedback(Ind, 0) ||
-		set_tim_esp(Ind, 0) ||
-		set_st_anchor(Ind, 0) ||
-		set_prob_travel(Ind, 0) ||
-		set_ammo_brand(Ind, 0, p_ptr->ammo_brand_t, 0) ||
-		set_nimbus(Ind, 0, 0, 0) ||
+		set_adrenaline(Ind, 0) |
+		set_biofeedback(Ind, 0) |
+		set_tim_esp(Ind, 0) |
+		set_st_anchor(Ind, 0) |
+		set_prob_travel(Ind, 0) |
+		set_ammo_brand(Ind, 0, p_ptr->ammo_brand_t, 0) |
+		set_nimbus(Ind, 0, 0, 0) |
 #if 0
-		set_mimic(Ind, 0, 0) ||
+		set_mimic(Ind, 0, 0) |
 #endif
 #if 0
-		(p_ptr->body_monster) ||
+		(p_ptr->body_monster) |
 	if (p_ptr->tim_mimic) do_mimic_change(Ind, 0, TRUE)
 #endif
-		set_tim_manashield(Ind, 0) ||
-		set_tim_traps(Ind, 0) ||
-		set_invis(Ind, 0, 0) ||
-		set_tim_meditation(Ind, 0) ||
-		set_tim_wraith(Ind, 0) ||
-		set_fast(Ind, 0, 0) ||
-		set_shield(Ind, 0, 0, SHIELD_NONE, 0, 0) ||
-		set_blessed(Ind, 0) ||
-		set_hero(Ind, 0) ||
-		set_shero(Ind, 0) ||
-		set_fury(Ind, 0) ||
-		set_protevil(Ind, 0) ||
-		set_invuln(Ind, 0) ||
-		set_tim_invis(Ind, 0) ||
-		set_tim_infra(Ind, 0) ||
-		set_oppose_acid(Ind, 0) ||
-		set_oppose_elec(Ind, 0) ||
-		set_oppose_fire(Ind, 0) ||
-		set_oppose_cold(Ind, 0) ||
-		set_oppose_pois(Ind, 0) ||
-		set_zeal(Ind, 0, 0) ||
-		set_mindboost(Ind, 0, 0) ||
-		//set_martyr(Ind, 0) ||
-		set_sh_fire_tim(Ind, 0) ||
-		set_sh_cold_tim(Ind, 0) ||
-		set_sh_elec_tim(Ind, 0) ||
-		set_kinetic_shield(Ind, 0) ||
-		do_mstopcharm(Ind) ||
+		set_tim_manashield(Ind, 0) |
+		set_tim_traps(Ind, 0) |
+		set_invis(Ind, 0, 0) |
+		set_tim_meditation(Ind, 0) |
+		set_tim_wraith(Ind, 0) |
+		set_fast(Ind, 0, 0) |
+		set_shield(Ind, 0, 0, SHIELD_NONE, 0, 0) |
+		set_blessed(Ind, 0) |
+		set_hero(Ind, 0) |
+		set_shero(Ind, 0) |
+		set_fury(Ind, 0) |
+		set_protevil(Ind, 0) |
+		set_invuln(Ind, 0) |
+		set_tim_invis(Ind, 0) |
+		set_tim_infra(Ind, 0) |
+		set_oppose_acid(Ind, 0) |
+		set_oppose_elec(Ind, 0) |
+		set_oppose_fire(Ind, 0) |
+		set_oppose_cold(Ind, 0) |
+		set_oppose_pois(Ind, 0) |
+		set_zeal(Ind, 0, 0) |
+		set_mindboost(Ind, 0, 0) |
+		//set_martyr(Ind, 0) |
+		set_sh_fire_tim(Ind, 0) |
+		set_sh_cold_tim(Ind, 0) |
+		set_sh_elec_tim(Ind, 0) |
+		set_kinetic_shield(Ind, 0) |
+		do_mstopcharm(Ind) |
 #ifdef ENABLE_OCCULT
-		set_savingthrow(Ind, 0) ||
-		set_spirit_shield(Ind, 0, 0) ||
+		set_savingthrow(Ind, 0) |
+		set_spirit_shield(Ind, 0, 0) |
 #endif
 		set_tim_deflect(Ind, 0)
 	) ident = TRUE;
