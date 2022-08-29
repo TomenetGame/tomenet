@@ -826,7 +826,8 @@ struct u32b_char_dict_t *u32b_char_dict_free(struct u32b_char_dict_t *start) {
 	return NULL;
 }
 
-/* Validates provided screen dimensions. If the input dimensions are invalid, they will be changed to valid dimensions. */
+/* Validates provided screen dimensions. If the input dimensions are invalid, they will be changed to valid dimensions.
+ * In this case the 'width' and 'height' is set to nearest lower valid value and if there is no such one, than to nearest higher valid value. */
 void validate_screen_dimensions(s16b *width, s16b *height) {
 	s16b wid = *width, hgt = *height;
 #ifdef BIG_MAP

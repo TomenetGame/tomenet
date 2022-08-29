@@ -413,7 +413,7 @@ static bool read_mangrc(cptr filename) {
 		}
 		fclose(config);
 
-		validate_main_window_dimensions();
+		validate_term_screen_dimensions(&(term_prefs[0].columns), &(term_prefs[0].lines));
 		/* Calculate game screen dimensions from main window dimensions. */
 		screen_wid = term_prefs[0].columns - SCREEN_PAD_X;
 		screen_hgt = term_prefs[0].lines - SCREEN_PAD_Y;
