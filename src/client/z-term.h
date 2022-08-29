@@ -293,5 +293,6 @@ extern errr term_init(term *t, int w, int h, int k);
 extern byte flick_colour(byte attr);
 extern void flicker(void);
 
-extern void validate_main_window_dimensions(void);
+extern void validate_term_screen_dimensions(int *cols, int *rows);
+extern void validate_term_dimensions(int term_idx, int *cols, int *rows);
 #endif
