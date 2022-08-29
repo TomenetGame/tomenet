@@ -28,6 +28,7 @@
 
 #include <sys/types.h>
 #include <regex.h>
+#include <time.h>
 
 /*
  * OPTION: Allow the use of a "Mirror Window", if supported
@@ -68,9 +69,6 @@
  *   the pixel with all bits set is "zg = (1<<metadpy->depth)-1", which
  *   is not necessarily either black or white.
  */
-
-
-void resize_main_window_x11(int cols, int rows);
 
 
 /**** Available Types ****/
@@ -308,7 +306,7 @@ struct infofnt {
 
 /* Request a new standard window by giving Dad infowin and X,Y,W,H */
 #define Infowin_init_std(D,X,Y,W,H,B) \
-	Infowin_init_dad(D,X,Y,W,H,B,Metadpy->fg,Metadpy->bg)
+	Infowin_init_dad(D,X,Y,W,H,B,Metadpy->bg,Metadpy->bg)
 
 
 /* Set the current Infowin */
@@ -568,58 +566,20 @@ static errr Infowin_set_name(cptr name) {
 }
 
 /*
- * Prepare a new 'infowin'.
- */
-static errr Infowin_prepare(Window xid) {
-	infowin *iwin = Infowin;
-
-	Window tmp_win;
-	XWindowAttributes xwa;
-	int x, y;
-	unsigned int w, h, b, d;
-
-	/* Assign stuff */
-	iwin->win = xid;
-
-	/* Check For Error XXX Extract some ACTUAL data from 'xid' */
-	XGetGeometry(Metadpy->dpy, xid, &tmp_win, &x, &y, &w, &h, &b, &d);
-
-	/* Apply the above info */
-	iwin->x = x;
-	iwin->y = y;
-	iwin->w = w;
-	iwin->h = h;
-	iwin->b = b;
-
-	/* Check Error XXX Extract some more ACTUAL data */
-	XGetWindowAttributes(Metadpy->dpy, xid, &xwa);
-
-	/* Apply the above info */
-	iwin->mask = xwa.your_event_mask;
-	iwin->mapped = ((xwa.map_state == IsUnmapped) ? 0 : 1);
-
-	/* And assume that we are exposed */
-	iwin->redraw = 1;
-
-	/* Success */
-	return (0);
-}
-
-/*
  * Init an infowin by giving some data.
  *
  * Inputs:
  *	dad: The Window that should own this Window (if any)
  *	x,y: The position of this Window
  *	w,h: The size of this Window
- *	b,d: The border width and pixel depth
+ *	b:   The border width
+ *	b_color, bg_color: Border and background colors
  *
  * Notes:
  *	If 'dad == None' assume 'dad == root'
  */
-static errr Infowin_init_data(Window dad, int x, int y, int w, int h, int b, Pixell fg, Pixell bg) {
+static errr Infowin_init_data(Window dad, int x, int y, int w, int h, unsigned int b, Pixell b_color, Pixell bg_color) {
 	Window xid;
-
 
 	/* Wipe it clean */
 	WIPE(Infowin, infowin);
@@ -632,20 +592,38 @@ static errr Infowin_init_data(Window dad, int x, int y, int w, int h, int b, Pix
 	/* If no parent given, depend on root */
 	if (dad == None) dad = Metadpy->root;
 
-	/* Create the Window XXX Error Check */
-	xid = XCreateSimpleWindow(Metadpy->dpy, dad, x, y, w, h, b, fg, bg);
+	/* Create the Window. */
+	xid = XCreateSimpleWindow(Metadpy->dpy, dad, x, y, w, h, b, b_color, bg_color);
+	if (xid == 0) {
+		printf("Error creating window on display: %s\n", Metadpy->name);
+		return (1);
+	}
 
 	/* Start out selecting No events */
 	XSelectInput(Metadpy->dpy, xid, 0L);
 
 
-	/*** Prepare the new infowin ***/
+	/* Assign stuff */
+	Infowin->win = xid;
+
+	/* Apply the above info */
+	Infowin->x = x;
+	Infowin->y = y;
+	Infowin->w = w;
+	Infowin->h = h;
+	Infowin->b = b;
+
+	/* Apply the above info */
+	Infowin->mask = 0L;
+	Infowin->mapped = 0;
+
+	/* And assume that we are exposed */
+	Infowin->redraw = 1;
 
 	/* Mark it as nukable */
 	Infowin->nuke = 1;
 
-	/* Attempt to Initialize the infowin */
-	return (Infowin_prepare (xid));
+	return (0);
 }
 
 
@@ -986,10 +964,36 @@ static errr Infowin_raise(void) {
 }
 
 /*
+ * Request to focus Infowin.
+ */
+static errr Infowin_set_focus(void) {
+	/* Set input focus for window. */
+	XSetInputFocus(Metadpy->dpy, Infowin->win, RevertToNone, CurrentTime);
+
+	/* Success */
+	return (0);
+}
+
+/*
+ * Move an infowin.
+ */
+static errr Infowin_move(int x, int y) {
+	/* Execute the request */
+	Infowin->x = x;
+	Infowin->y = y;
+	XMoveWindow(Metadpy->dpy, Infowin->win, x, y);
+
+	/* Success */
+	return (0);
+}
+
+/*
  * Resize an infowin
  */
 static errr Infowin_resize(int w, int h) {
 	/* Execute the request */
+	Infowin->w = w;
+	Infowin->h = h;
 	XResizeWindow(Metadpy->dpy, Infowin->win, w, h);
 
 	/* Success */
@@ -1171,6 +1175,10 @@ static infoclr *xor;
  * Forward declare
  */
 typedef struct term_data term_data;
+void terminal_window_real_coords_x11(int term_idx, int *ret_x, int *ret_y);
+void resize_main_window_x11(int cols, int rows);
+void resize_window_x11(int term_idx, int cols, int rows);
+static term_data* term_idx_to_term_data(int term_idx);
 
 /*
  * A structure for each "term"
@@ -1182,6 +1190,7 @@ struct term_data {
 
 	infowin *outer;
 	infowin *inner;
+	struct timespec resize_timer;
 
 #ifdef USE_GRAPHICS
 
@@ -1193,11 +1202,22 @@ struct term_data {
 #endif
 };
 
+#define DEFAULT_X11_OUTER_BORDER_WIDTH 1
+#define DEFAULT_X11_INNER_BORDER_WIDTH 1
 
 /*
  * The main screen
  */
 static term_data screen;
+
+#define NANOSECONDS_IN_SECOND 1000000000
+static void timespec_add_ns(struct timespec *t, unsigned int ns) {
+	t->tv_nsec = t->tv_nsec + ns;
+	while (t->tv_nsec > NANOSECONDS_IN_SECOND) {
+		t->tv_sec++;
+		t->tv_nsec -= NANOSECONDS_IN_SECOND;
+	}
+}
 
 #ifdef GRAPHIC_MIRROR
 
@@ -1243,7 +1263,7 @@ static term_data term_7;
 /*
  * Set the size hints of Infowin
  */
-static errr Infowin_set_size(int w, int h, int r_w, int r_h, bool fixed) {
+static errr Infowin_set_size_hints(int x, int y, int w, int h, int b, int r_w, int r_h, bool fixed) {
 	XSizeHints *sh;
 
 	/* Make Size Hints */
@@ -1262,8 +1282,8 @@ static errr Infowin_set_size(int w, int h, int r_w, int r_h, bool fixed) {
 	/* Variable window size */
 	else {
 		sh->flags = PMinSize;
-		sh->min_width = r_w + 2;
-		sh->min_height = r_h + 2;
+		sh->min_width = r_w + (2 * b);
+		sh->min_height = r_h + (2 * b);
 	}
 
 	/* Standard fields */
@@ -1271,11 +1291,11 @@ static errr Infowin_set_size(int w, int h, int r_w, int r_h, bool fixed) {
 	sh->height = h;
 	sh->width_inc = r_w;
 	sh->height_inc = r_h;
-	sh->base_width = 2;
-	sh->base_height = 2;
+  sh->base_width = 2 * b;
+	sh->base_height = 2 * b;
 
 	/* Useful settings */
-	sh->flags |= PSize | PResizeInc | PBaseSize;
+	sh->flags |= PPosition | PSize | PResizeInc | PBaseSize;
 
 	/* Use the size hints */
 	XSetWMNormalHints(Metadpy->dpy, Infowin->win, sh);
@@ -1411,6 +1431,31 @@ static void react_keypress(XEvent *xev) {
 }
 
 
+/*
+ * Handles all terminal windows resize timers.
+ */
+static void resize_window_x11_timers_handle(void) {
+	struct timespec now = {0, 0};
+	for (int t_idx = 0; t_idx < ANGBAND_TERM_MAX; t_idx++) {
+		term_data *td = term_idx_to_term_data(t_idx);
+		if (td->resize_timer.tv_nsec != 0 || td->resize_timer.tv_sec != 0) {
+			if (now.tv_nsec == 0 && now.tv_sec == 0) {
+				clock_gettime(CLOCK_REALTIME, &now);
+			}
+			if (now.tv_sec > td->resize_timer.tv_sec || (now.tv_sec == td->resize_timer.tv_sec && now.tv_nsec > td->resize_timer.tv_nsec)) {
+				td->resize_timer.tv_sec=0;
+				td->resize_timer.tv_nsec=0;
+
+				resize_window_x11(t_idx, (td->outer->w - (2 * td->inner->b)) / td->fnt->wid, (td->outer->h - (2 * td->inner->b)) / td->fnt->hgt);
+
+				/* In case we resized Chat/Msg/Msg+Chat window,
+				   refresh contents so they are displayed properly,
+				   without having to wait for another incoming message to do it for us. */
+				p_ptr->window |= PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT;
+			}
+		}
+	}
+}
 
 
 /*
@@ -1429,6 +1474,8 @@ static errr CheckEvent(bool wait) {
 
 	int t_idx = -1;
 
+	/* Handle all window resize timers. */
+	resize_window_x11_timers_handle();
 
 	/* Do not wait unless requested */
 	if (!wait && !XPending(Metadpy->dpy)) return (1);
@@ -1664,6 +1711,17 @@ static errr CheckEvent(bool wait) {
 		/* A Mapping Event */
 		case MapNotify:
 			Infowin->mapped = 1;
+
+			/* Hints were sent to X with window position from term_prefs at window creation, so it should have right position at mapping.
+			 * But in case the desktop manager didn't enforce the position, try to force it again. */
+
+			if (Infowin->x != term_prefs[t_idx].x || Infowin->y != term_prefs[t_idx].y) {
+				Infowin_move(term_prefs[t_idx].x, term_prefs[t_idx].y);
+			}
+
+			if (td == &screen) {
+				Infowin_set_focus();
+			}
 			break;
 
 		/* An UnMap Event */
@@ -1675,16 +1733,12 @@ static errr CheckEvent(bool wait) {
 		/* A Move AND/OR Resize Event */
 		case ConfigureNotify:
 		{
-			int cols, rows, wid, hgt;
-			//int old_w, old_h;
-			/* For OSX: Prevent loop bug of outer-infowin-resizing forever, freezing/slowing down */
-			int old_cols, old_rows;
+			/* The windows x and y coordinates are relative to parent window, which doesn't have to be the root window for which it was created.
+			 * Window manager (WM) can re-parent/encapsulate the window to/into another internal window for decorations, etc.
+			 * Get translated coordinates and take decorations into acount. */
+			terminal_window_real_coords_x11(t_idx, &xev->xconfigure.x, &xev->xconfigure.y);
 
-			Infowin_set(td->outer);
-
-			/* Save the Old information */
-			//old_w = Infowin->w;
-			//old_h = Infowin->h;
+			bool resize = Infowin->w != xev->xconfigure.width || Infowin->h != xev->xconfigure.height;
 
 			/* Save the new Window Parms */
 			Infowin->x = xev->xconfigure.x;
@@ -1692,81 +1746,13 @@ static errr CheckEvent(bool wait) {
 			Infowin->w = xev->xconfigure.width;
 			Infowin->h = xev->xconfigure.height;
 
-			/* Detemine "proper" number of rows/cols */
-			cols = ((Infowin->w - 2) / td->fnt->wid);
-			rows = ((Infowin->h - 2) / td->fnt->hgt);
-
-			old_cols = cols;
-			old_rows = rows;
-
-			/* Hack -- do not allow bad resizing of main screen */
-			if (td == &screen) cols = 80;
-			if (td == &screen) {
-				/* respect big_map option */
-				if (rows <= 24 || (in_game && !(sflags1 & SFLG1_BIG_MAP))) rows = 24;
-				else rows = 46;
+			/* The window dimensions in Infowin should be set at the time XResizeWindow is called in this client. */
+			/* Therefore if resize is true, then it has to come from other source (eg. user or WM resized the window). */
+			if (resize && Infowin->mapped) {
+				/* Window resize timer start. */
+				clock_gettime(CLOCK_REALTIME, &td->resize_timer);
+				timespec_add_ns(&td->resize_timer, 500000000); // Add 1/2 second.
 			}
-
-			/* Hack -- minimal size */
-			if (cols < 1) cols = 1;
-			if (rows < 1) rows = 1;
-
-			/* Desired size of "outer" window */
-			wid = cols * td->fnt->wid;
-			hgt = rows * td->fnt->hgt;
-
-			/* Resize the windows if any "change" is needed -- This should work now.
-			   Added hack for OSX, where Infowin_resize() wouldn't resize except for
-			   the very first time it was called, but not while mouse-resizing. :( - C. Blue */
-			if (old_rows != rows || old_cols != cols /* for main window */
-			    || td != &screen) { /* for sub windows */
-				Infowin_set(td->inner);
-				Infowin_resize(wid, hgt);
-
-				/* Make the changes go live (triggers on next c_message_add() call) */
-				Term_activate(&td->t);
-				Term_resize(cols, rows);
-
-				/* only change rows/cols of outer infowin if we really have to,
-				   or it'll cause freeze/slowing loop on OSX. For some reason,
-				   doing it in this exceptional case seems to work though. */
-				if (td == &screen) { /* for main window only */
-					Infowin_set(td->outer);
-					Infowin_resize(wid + 2, hgt + 2);
-				}
-
-				/* basically obsolete, since these values are unused once they were
-				   read and used in the very begining of client initialisation, but w/e */
-				term_prefs[t_idx].columns = cols;
-				term_prefs[t_idx].lines = rows;
-
-				/* In case we resized Chat/Msg/Msg+Chat window,
-				   refresh contents so they are displayed properly,
-				   without having to wait for another incoming message to do it for us. */
-				p_ptr->window |= PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT;
-			}
-
-			/* hack: Switch big_map mode (and clear screen)  */
-			if (td == &screen && in_game &&
-			    ((rows == 24 && Client_setup.options[CO_BIGMAP]) ||
-			    (rows == 46 && !Client_setup.options[CO_BIGMAP]))) {
-				/* and for big_map.. */
-				if (rows == 24) {
-					/* turn off big_map */
-					c_cfg.big_map = FALSE;
-					Client_setup.options[CO_BIGMAP] = FALSE;
-					screen_hgt = SCREEN_HGT;
-				} else {
-					/* turn on big_map */
-					c_cfg.big_map = TRUE;
-					Client_setup.options[CO_BIGMAP] = TRUE;
-					screen_hgt = MAX_SCREEN_HGT;
-				}
-				Term_clear();
-				Send_screen_dimensions();
-				cmd_redraw();
-			}
-
 			break;
 		}
 	}
@@ -1786,8 +1772,7 @@ static errr CheckEvent(bool wait) {
 	return (0);
 }
 
-
-/*
+/* 
  * Handle "activation" of a term
  */
 static errr Term_xtra_x11_level(int v) {
@@ -1947,7 +1932,12 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	Infoclr_set(clr[a & 0x1F]);
 #endif
 
-	/* TODO maybe it would be necessary to draw only filled rectangle (with bg color) if bg == fg. - jEzEk*/
+	if (Infoclr->fg == Infoclr->bg) {
+		/* Foreground color is the same as background color. If this was text, the tile would be rendered as solid block of color.
+		 * But an image tile could contain some other color pixels and could result in no solid color tile.
+		 * That's why paint a solid block as intended. */
+		return (Infofnt_text_std(x, y, " ", 1));
+	}
 
 	term_data *td = (term_data*)(Term->data);
 
@@ -2311,7 +2301,7 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	term *t = &td->t;
 
 	int wid, hgt, num;
-	int win_cols = 80, win_lines = 24; /* 80, 24 default */
+	int win_cols, win_lines;
 	cptr n;
 	int topx, topy; /* 0, 0 default */
 
@@ -2331,17 +2321,11 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	/* Hack -- extract key buffer size */
 	num = (fixed ? 1024 : 16);
 
-//	if (!strcmp(name, "Screen")) {
 	if (!strcmp(name, ang_term_name[0])) {
-#if 1
 		n = getenv("TOMENET_X11_WID_SCREEN");
 		if (n) win_cols = atoi(n);
 		n = getenv("TOMENET_X11_HGT_SCREEN");
 		if (n) win_lines = atoi(n);
-#else /* must remain 80x24! (also, it's always visible) */
-		win_cols = 80;
-		win_lines = 24;
-#endif
 	}
 	if (!strcmp(name, ang_term_name[1])) {
 		n = getenv("TOMENET_X11_WID_MIRROR");
@@ -2386,14 +2370,20 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 		if (n) win_lines = atoi(n);
 	}
 
+	/* Reset timers just to be sure. */
+	td->resize_timer.tv_sec=0;
+	td->resize_timer.tv_nsec=0;
+
 	/* Hack -- Assume full size windows */
 	wid = win_cols * td->fnt->wid;
 	hgt = win_lines * td->fnt->hgt;
+	int wid_outer = wid + (2 * DEFAULT_X11_INNER_BORDER_WIDTH);
+	int hgt_outer = hgt + (2 * DEFAULT_X11_INNER_BORDER_WIDTH);
 
-	/* Create a top-window (border 5) */
+	/* Create a top-window. */
 	MAKE(td->outer, infowin);
 	Infowin_set(td->outer);
-	Infowin_init_top(topx, topy, wid + 2, hgt + 2, 1, Metadpy->fg, Metadpy->bg);
+	Infowin_init_top(topx, topy, wid_outer, hgt_outer, DEFAULT_X11_OUTER_BORDER_WIDTH, Metadpy->fg, Metadpy->bg);
 	Infowin_set_mask(StructureNotifyMask | KeyPressMask);
 	if (!strcmp(name, ang_term_name[0])) {
 		char version[MAX_CHARS];
@@ -2403,13 +2393,13 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 		Infowin_set_name(version);
 	} else Infowin_set_name(name);
 	Infowin_set_class_hint(name);
-	Infowin_set_size(wid + 2, hgt + 2, td->fnt->wid, td->fnt->hgt, fixed);
+	Infowin_set_size_hints(topx, topy, wid_outer, hgt_outer, DEFAULT_X11_INNER_BORDER_WIDTH, td->fnt->wid, td->fnt->hgt, fixed);
 	Infowin_map();
 
 	/* Create a sub-window for playing field */
 	MAKE(td->inner, infowin);
 	Infowin_set(td->inner);
-	Infowin_init_std(td->outer, 1, 1, wid, hgt, 0);
+	Infowin_init_std(td->outer, 0, 0, wid, hgt, DEFAULT_X11_INNER_BORDER_WIDTH);
 	Infowin_set_mask(ExposureMask);
 	Infowin_map();
 
@@ -2602,7 +2592,6 @@ static term_data* term_idx_to_term_data(int term_idx) {
 
 	return (td);
 }
-
 
 /*
  * Initialization function for an "X11" module to Angband
@@ -2885,22 +2874,6 @@ if (term_prefs[7].visible) {
 	Infowin_set(screen.outer);
 	Infowin_raise();
 
-	/* For position restoration: It randomly fails when we use devilspie to undecorate. This small delay
-	   might give the window manager et al enough time to handle everything correctly, hopefully. - C. Blue */
-	usleep(200000);
-
-	/* restore window coordinates from .tomenetrc */
-	for (i = 0; i <= 7; i++) { /* MAX_TERM_DATA should be defined for X11 too.. */
-		if (!term_prefs[i].visible) continue;
-		if (term_prefs[i].x != -32000 && term_prefs[i].y != -32000) {
-			XMoveWindow(Metadpy->dpy,
-			    term_idx_to_term_data(i)->outer->win,
-			    term_prefs[i].x,
-			    term_prefs[i].y);
-		}
-	}
-
-
 	/* Success */
 	return (0);
 }
@@ -2930,7 +2903,7 @@ void turn_off_numlock_X11(void) {
     3 - huge */
 /* only offer 2 cycling stages? */
 #define REDUCED_FONT_CHOICE
-static void term_force_font(int term_idx, char fnt_name[256]);
+static void term_force_font(int term_idx, cptr fnt_name);
 void change_font(int s) {
 	/* use main window font for measuring */
 	char tmp[128] = "";
@@ -3010,8 +2983,7 @@ void change_font(int s) {
 		break;
 	}
 }
-static void term_force_font(int term_idx, char fnt_name[256]) {
-	int rows, cols, wid, hgt;
+static void term_force_font(int term_idx, cptr fnt_name) {
 	term_data *td = term_idx_to_term_data(term_idx);
 
 	/* non-visible window has no fnt-> .. */
@@ -3022,20 +2994,9 @@ static void term_force_font(int term_idx, char fnt_name[256]) {
 	   it to become visible on next client start. - C. Blue */
 	if (!td->fnt) return;
 
-
-	/* Detemine "proper" number of rows/cols */
-	cols = ((Infowin->w - 2) / td->fnt->wid);
-	rows = ((Infowin->h - 2) / td->fnt->hgt);
-
-#if 0
-	/* Hack -- do not allow resize of main screen */
-	if (td == &screen) cols = 80;
-	if (td == &screen) rows = 24;
-#endif
-
-	/* Hack -- minimal size */
-	if (cols < 1) cols = 1;
-	if (rows < 1) rows = 1;
+	/* Determine "proper" number of rows/cols */
+	int cols = ((td->outer->w - (2 * td->inner->b)) / td->fnt->wid);
+	int rows = ((td->outer->h - (2 * td->inner->b)) / td->fnt->hgt);
 
 	/* font change */
 	Infofnt_set(td->fnt);
@@ -3044,17 +3005,21 @@ static void term_force_font(int term_idx, char fnt_name[256]) {
 	Infofnt_init_data(fnt_name);
 
 	/* Desired size of "outer" window */
-	wid = cols * td->fnt->wid;
-	hgt = rows * td->fnt->hgt;
-	Infowin_set(td->outer);
+	int wid_outer = (cols * td->fnt->wid) + (2 * td->inner->b);
+	int hgt_outer = (rows * td->fnt->hgt) + (2 * td->inner->b);
+
 	/* Resize the windows if any "change" is needed */
-	if ((Infowin->w != wid + 2) || (Infowin->h != hgt + 2)) {
+	if ((td->outer->w != wid_outer) || (td->outer->h != hgt_outer)) {
+		/* First set size hints again. */
+		infowin *iwin = Infowin;
 		Infowin_set(td->outer);
-		Infowin_resize(wid + 2, hgt + 2);
-		Infowin_set(td->inner);
-		Infowin_resize(wid, hgt);
+		Infowin_set_size_hints(Infowin->x, Infowin->y, wid_outer, hgt_outer, td->inner->b, td->fnt->wid, td->fnt->hgt, FALSE);
+		Infowin_set(iwin);
+
+		resize_window_x11(term_idx, cols, rows);
 
 #ifdef USE_GRAPHICS
+		/* Resize graphic tiles if needed too. */
 		if (use_graphics) {
 			/* Free old tiles & masks */
 			XFreePixmap(Metadpy->dpy, td->bgmask);
@@ -3084,6 +3049,72 @@ static void term_force_font(int term_idx, char fnt_name[256]) {
 	if (td == &screen) handle_process_font_file();
 }
 #endif
+
+/* Used for checking window position on mapping and saving window positions on quitting.
+   Returns ret_x, ret_y containing window coordinates relative to root display window, corrected for decorations. */
+void terminal_window_real_coords_x11(int term_idx, int *ret_x, int *ret_y) {
+	term_data *td = term_idx_to_term_data(term_idx);
+	infowin *iwin;
+	Window xid, tmp_win;
+	unsigned int wu, hu, bu, du;
+	Atom property;
+	Atom type_return;
+	int format_return;
+	unsigned long nitems_return;
+	unsigned long bytes_after_return;
+	unsigned char *data;
+	int x_rel, y_rel;
+	char got_frame_extents = FALSE;
+
+	/* non-visible window has no window info .. */
+	if (!term_prefs[term_idx].visible) {
+		*ret_x = *ret_y = 0;
+		return;
+	}
+
+
+	/* special hack: this window was invisible, but we just toggled
+	   it to become visible on next client start. - C. Blue */
+	if (!td->fnt) {
+		*ret_x = *ret_y = 0;
+	}
+
+	iwin = td->outer;
+	Infowin_set(iwin);
+	xid = iwin->win;
+
+	property = XInternAtom(Metadpy->dpy, "_NET_FRAME_EXTENTS", True);
+
+	/* Try to use _NET_FRAME_EXTENTS to get the window borders */
+	if (property != None && XGetWindowProperty(Metadpy->dpy, xid, property,
+	    0, LONG_MAX, False, XA_CARDINAL, &type_return, &format_return,
+	    &nitems_return, &bytes_after_return, &data) == Success) {
+		if ((type_return == XA_CARDINAL) && (format_return == 32) && (nitems_return == 4) && (data)) {
+			unsigned long *ldata = (unsigned long *)data;
+			got_frame_extents = TRUE;
+			/* _NET_FRAME_EXTENTS format is left, right, top, bottom */
+			x_rel = ldata[0];
+			y_rel = ldata[2];
+		}
+
+		if (data) XFree(data);
+	}
+
+	if (!got_frame_extents) {
+		/* Check For Error XXX Extract some ACTUAL data from 'xid' */
+		if (XGetGeometry(Metadpy->dpy, xid, &tmp_win, &x_rel, &y_rel, &wu, &hu, &bu, &du)) {
+		} else {
+			x_rel = 0;
+			y_rel = 0;
+		}
+	}
+
+	XTranslateCoordinates(Metadpy->dpy, xid, Metadpy->root, 0, 0, ret_x, ret_y, &tmp_win);
+
+	/* correct window position to account for X11 border/title bar sizes */
+	*ret_x -= x_rel;
+	*ret_y -= y_rel;
+}
 
 /* For saving window positions and sizes on quitting:
    Returns x,y,cols,rows,font name. */
@@ -3175,28 +3206,102 @@ void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name
 	*y -= y_rel;
 }
 
-void resize_main_window_x11(int cols, int rows) {
-	int wid, hgt;
-	term_data *td = term_idx_to_term_data(0);
-	term *t = ang_term[0]; //&screen
+/* Resizes the graphics terminal window described by 'td' to dimensions given in 'cols', 'rows' inputs.
+ * Stops the resize timer and validates input.
+ * Resizes the outer and inner X11 window if current dimensions don't match the validated dimensions.
+ * The terminal stored in 'td->t' is resized to desired size if needed.
+ * When the window is the main window, update the screen globals, handle bigmap and notify server if in game.
+ */
+void resize_window_x11(int term_idx, int cols, int rows) {
 
-	term_prefs[0].columns = cols; //screen_wid + (SCREEN_PAD_X);
-	term_prefs[0].lines = rows; //screen_hgt + (SCREEN_PAD_Y);
+	/* The 'term_idx_to_term_data()' returns '&screen' if 'term_idx' is out of bounds and it is not desired to resize screen terminal window in that case, so validate before. */
+	if (term_idx < 0 || term_idx >= ANGBAND_TERM_MAX) return;
+	term_data *td = term_idx_to_term_data(term_idx);
 
-	wid = cols * td->fnt->wid;
-	hgt = rows * td->fnt->hgt;
-
-	/* Resize the windows if any "change" is needed */
-	Infowin_set(td->outer);
-	if ((Infowin->w != wid + 2) || (Infowin->h != hgt + 2)) {
-		Infowin_set(td->outer);
-		Infowin_resize(wid + 2, hgt + 2);
-		Infowin_set(td->inner);
-		Infowin_resize(wid, hgt);
-
-		Term_activate(t);
-		Term_resize(cols, rows);
+	/* Clear timer. */
+	if (td->resize_timer.tv_sec > 0 || td->resize_timer.tv_nsec > 0) {
+		printf("Clear timer\n");
+		td->resize_timer.tv_sec=0;
+		td->resize_timer.tv_nsec=0;
 	}
+	
+	/* Validate input dimensions. */
+	/* Our 'term_data' indexes in 'term_idx' are the same as 'ang_term' indexes so it's safe to use 'validate_term_dimensions()'. */
+	validate_term_dimensions(term_idx, &cols, &rows);
+
+
+	/* Calculate dimensions in pixels. */
+	int wid_inner = cols * td->fnt->wid;
+	int hgt_inner = rows * td->fnt->hgt;
+	int wid_outer = wid_inner + (2 * td->inner->b);
+	int hgt_outer = hgt_inner + (2 * td->inner->b);
+
+	/* Save current Infowin. */
+	infowin *iwin = Infowin;
+	
+	/* Resize the outer window if dimensions differ. */
+	Infowin_set(td->outer);
+	if ((Infowin->w != wid_outer) || (Infowin->h != hgt_outer)) {
+		Infowin_resize(wid_outer, hgt_outer);
+	}
+
+	/* Resize the inner window if dimensions differ. */
+	Infowin_set(td->inner);
+	if (Infowin->w != wid_inner || Infowin->h != hgt_inner) {
+		Infowin_resize(wid_inner, hgt_inner);
+	}
+
+	/* Restore saved Infowin. */
+	Infowin_set(iwin);
+
+	/* Save current activated Term. */
+	term *t = Term;
+
+	/* Make the changes go live (triggers on next c_message_add() call) */
+	/* No need to check if dimensions differ, Term_resize handles it. */
+	Term_activate(&td->t);
+	Term_resize(cols, rows);
+
+	/* Restore saved term. */
+	Term_activate(t);
+
+	if (td == &screen) {
+		/* Main screen is special. Update the screen_wid/hgt globals if needed and notify server about it if in game. */
+
+		int new_screen_cols = cols - SCREEN_PAD_X;
+		int new_screen_rows = rows - SCREEN_PAD_Y;
+
+		if (screen_wid != new_screen_cols || screen_hgt != new_screen_rows) {
+			screen_wid=new_screen_cols;
+			screen_hgt=new_screen_rows;
+
+			if (in_game) {
+				/* Switch big_map mode . */
+				if (Client_setup.options[CO_BIGMAP] && rows == DEFAULT_TERM_HGT) {
+					/* Turn off big_map. */
+					c_cfg.big_map = FALSE;
+					Client_setup.options[CO_BIGMAP] = FALSE;
+				} else if (!Client_setup.options[CO_BIGMAP] && rows != DEFAULT_TERM_HGT) {
+					/* Turn on big_map. */
+					c_cfg.big_map = TRUE;
+					Client_setup.options[CO_BIGMAP] = TRUE;
+				}
+				/* Notify server and ask for a redraw. */
+				Send_screen_dimensions();
+			}
+		}
+	} 
+
+	if (in_game) {
+		/* Ask for a redraw. */
+		cmd_redraw();
+	}
+}
+
+/* Resizes main terminal window to dimensions in input. */
+/* Used for OS-specific resize_main_window() hook. */
+void resize_main_window_x11(int cols, int rows) {
+	resize_window_x11(0, cols, rows);
 }
 
 bool ask_for_bigmap(void) {
@@ -3214,7 +3319,7 @@ void set_font_name(int term_idx, char* fnt) {
 void term_toggle_visibility(int term_idx) {
 	term_prefs[term_idx].visible = !term_prefs[term_idx].visible;
 	/* NOTE: toggling visible flag of a window during runtime is dangerous:
-	   Two "special hack"s were added in term_force_font() and x11win_getinfo()
+	   Three "special hack"s were added in term_force_font(), terminal_window_real_coords_x11() and x11win_getinfo()
 	   to accomodate for this and to continue to treat the window as invisible. */
 }
 bool term_get_visibility(int term_idx) {
@@ -3333,9 +3438,9 @@ void animate_palette(void) {
 		Infoclr_init_ccn (cname, "bg", "cpy", 0);
 	}
 
+	term_data *old_td = (term_data*)(Term->data);
 	/* Refresh aka redraw windows with new colour */
-	for (i = 0; i <= 7; i++) { /* MAX_TERM_DATA should be defined for X11 too.. */
-		term_data *old_td = (term_data*)(Term->data);
+	for (i = 0; i < ANGBAND_TERM_MAX; i++) {
 
 		if (!term_prefs[i].visible) continue;
 		if (term_prefs[i].x == -32000 || term_prefs[i].y == -32000) continue;
@@ -3343,8 +3448,8 @@ void animate_palette(void) {
 		Term_activate(&term_idx_to_term_data(i)->t);
 		//Term_redraw(); --stripped down to just:
 		Term_xtra(TERM_XTRA_FRESH, 0);
-		Term_activate(&old_td->t);
 	}
+	Term_activate(&old_td->t);
 }
 #define PALANIM_OPTIMIZED /* KEEP SAME AS SERVER! */
 /* Accept a palette entry index (NOT a TERM_ colour) and sets its R/G/B values from 0..255. - C. Blue */
@@ -3444,11 +3549,7 @@ void refresh_palette(void) {
 	set_palette(128, 0, 0, 0);
 
 	/* Refresh aka redraw windows with new colour (term 0 is already done in set_palette(128) line above) */
-#ifdef MAX_TERM_DATA
-	for (i = 1; i < MAX_TERM_DATA; i++) {
-#else
-	for (i = 1; i < 8; i++) { /* MAX_TERM_DATA should be defined for X11 too.. */
-#endif
+	for (i = 1; i < ANGBAND_TERM_MAX; i++) {
 		if (!term_prefs[i].visible) continue;
 		if (term_prefs[i].x == -32000 || term_prefs[i].y == -32000) continue;
 
