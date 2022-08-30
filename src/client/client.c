@@ -431,45 +431,30 @@ static bool read_mangrc(cptr filename) {
 #ifdef USE_X11
 /* linux clients: save subwindow prefs to .tomenetrc - C. Blue */
 static void write_mangrc_aux(int t, cptr sec_name, FILE *cfg_file) {
-	int x, y, c, r;
-	char font_name[1024];
-
-	x11win_getinfo(t, &x, &y, &c, &r, font_name);
 
 	if (t != 0) {
 		fputs(format("%s_Title\t%s\n", sec_name, ang_term_name[t]), cfg_file);
 		fputs(format("%s_Visible\t%c\n", sec_name, term_prefs[t].visible ? '1' : '0'), cfg_file);
 	}
-	if (x != -32000) /* don't save windows in minimized state */
-		fputs(format("%s_X\t\t%d\n", sec_name, x), cfg_file);
-//		fputs(format("%s_X\t\t%d\n", sec_name, term_prefs[t].x), cfg_file);
-	if (y != -32000) /* don't save windows in minimized state */
-		fputs(format("%s_Y\t\t%d\n", sec_name, y), cfg_file);
-//		fputs(format("%s_Y\t\t%d\n", sec_name, term_prefs[t].y), cfg_file);
+	if (term_prefs[t].x != -32000) /* don't save windows in minimized state */
+		fputs(format("%s_X\t\t%d\n", sec_name, term_prefs[t].x), cfg_file);
+	if (term_prefs[t].y != -32000) /* don't save windows in minimized state */
+		fputs(format("%s_Y\t\t%d\n", sec_name, term_prefs[t].y), cfg_file);
 	if (t != 0) {
-#if 0
 		fputs(format("%s_Columns\t%d\n", sec_name, term_prefs[t].columns), cfg_file);
 		fputs(format("%s_Lines\t%d\n", sec_name, term_prefs[t].lines), cfg_file);
-#else /* if user has mouse-resized a window, save the new dimensions */
-		fputs(format("%s_Columns\t%d\n", sec_name, c), cfg_file);
-		fputs(format("%s_Lines\t%d\n", sec_name, r), cfg_file);
-#endif
-		fputs(format("%s_Font\t%s\n", sec_name, font_name), cfg_file);
+		fputs(format("%s_Font\t%s\n", sec_name, term_prefs[t].font), cfg_file);
 	} else {
 		/* one more tab, or formatting looks bad ;) */
-		fputs(format("%s_Font\t\t%s\n", sec_name, font_name), cfg_file);
-		/* If user has mouse-resized the main window, the dimensions get corrected back to valid dimensions, which are then reflected in screen_hgt variable. */
-		fputs(format("%s_Lines\t%d\n", sec_name, screen_hgt + SCREEN_PAD_Y), cfg_file);
+		fputs(format("%s_Font\t\t%s\n", sec_name, term_prefs[t].font), cfg_file);
+		fputs(format("%s_Lines\t%d\n", sec_name, term_prefs[t].lines), cfg_file);
 	}
 	fputs("\n", cfg_file);
 }
 
 /* linux clients: save one line of subwindow prefs to .tomenetrc - C. Blue */
 static void write_mangrc_aux_line(int t, cptr sec_name, char *buf_org) {
-	char buf[1024], *ter_name = buf_org + strlen(sec_name), font_name[1024] = { '\0' };
-	int x = -32000, y = -32000, c = 0, r = 24;
-
-	x11win_getinfo(t, &x, &y, &c, &r, font_name);
+	char buf[1024], *ter_name = buf_org + strlen(sec_name);
 #if 0 /* we still want to save at least the new visibility state, if it was toggled via in-game menu */
 	if (!c) return; /* invisible window? */
 #endif
@@ -483,28 +468,23 @@ static void write_mangrc_aux_line(int t, cptr sec_name, char *buf_org) {
 	} else if (!strncmp(ter_name, "_Visible", 8)) {
 		if (t != 0)
 			sprintf(buf, "%s_Visible\t%c\n", sec_name, term_prefs[t].visible ? '1' : '0');
-	} else if (c && !strncmp(ter_name, "_X", 2)) {
-		if (x != -32000) /* don't save windows in minimized state */
-			sprintf(buf, "%s_X\t\t%d\n", sec_name, x);
-//			sprintf(buf, "%s_X\t\t%d\n", sec_name, term_prefs[t].x);
-	} else if (c && !strncmp(ter_name, "_Y", 2)) {
-		if (y != -32000) /* don't save windows in minimized state */
-			sprintf(buf, "%s_Y\t\t%d\n", sec_name, y);
-//			sprintf(buf, "%s_Y\t\t%d\n", sec_name, term_prefs[t].y);
-	} else if (c && !strncmp(ter_name, "_Columns", 8)) {
+	} else if (term_prefs[t].visible && !strncmp(ter_name, "_X", 2)) {
+		if (term_prefs[t].x != -32000) /* don't save windows in minimized state */
+			sprintf(buf, "%s_X\t\t%d\n", sec_name, term_prefs[t].x);
+	} else if (term_prefs[t].visible && !strncmp(ter_name, "_Y", 2)) {
+		if (term_prefs[t].y != -32000) /* don't save windows in minimized state */
+			sprintf(buf, "%s_Y\t\t%d\n", sec_name, term_prefs[t].y);
+	} else if (term_prefs[t].visible && !strncmp(ter_name, "_Columns", 8)) {
 		if (t != 0)
-			sprintf(buf, "%s_Columns\t%d\n", sec_name, c);
-	} else if (c && !strncmp(ter_name, "_Lines", 6)) {
+			sprintf(buf, "%s_Columns\t%d\n", sec_name, term_prefs[t].columns);
+	} else if (term_prefs[t].visible && !strncmp(ter_name, "_Lines", 6)) {
+			sprintf(buf, "%s_Lines\t%d\n", sec_name, term_prefs[t].lines);
+	} else if (!strncmp(ter_name, "_Font", 5) && term_prefs[t].font[0] != '\0') {
 		if (t != 0)
-			sprintf(buf, "%s_Lines\t%d\n", sec_name, r);
-		else
-			sprintf(buf, "%s_Lines\t%d\n", sec_name, screen_hgt + SCREEN_PAD_Y);
-	} else if (!strncmp(ter_name, "_Font", 5) && font_name[0] != '\0') {
-		if (t != 0)
-			sprintf(buf, "%s_Font\t%s\n", sec_name, font_name);
+			snprintf(buf, 1024, "%s_Font\t%s\n", sec_name, term_prefs[t].font);
 		else
 			/* one more tab, or formatting looks bad ;) */
-			sprintf(buf, "%s_Font\t\t%s\n", sec_name, font_name);
+			snprintf(buf, 1024, "%s_Font\t\t%s\n", sec_name, term_prefs[t].font);
 	}
 
 	strcpy(buf_org, buf);

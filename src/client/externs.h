@@ -26,7 +26,6 @@ extern errr init_x11(void);
     extern bool term_get_visibility(int term_idx);
  #endif
 
-extern void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name);
 extern void resize_main_window_x11(int cols, int rows);
 extern bool ask_for_bigmap(void);
 extern void get_screen_font_name(char *buf);
