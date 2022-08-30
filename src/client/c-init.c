@@ -3422,10 +3422,6 @@ static void quit_hook(cptr s) {
 	if (rl_connection_state >= 2) return;
 #endif
 
-#ifndef WINDOWS
-	write_mangrc(FALSE, FALSE, FALSE);
-#endif
-
 #ifdef UNIX_SOCKETS
 	SocketCloseAll();
 #endif
@@ -3446,6 +3442,10 @@ static void quit_hook(cptr s) {
 
 	/* plog_hook must not be called anymore because the terminal is gone */
 	plog_aux = NULL;
+
+#ifndef WINDOWS
+	write_mangrc(FALSE, FALSE, FALSE);
+#endif
 }
 
 

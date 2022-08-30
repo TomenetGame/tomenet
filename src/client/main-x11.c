@@ -1175,6 +1175,7 @@ static infoclr *xor;
  * Forward declare
  */
 typedef struct term_data term_data;
+static int term_data_to_term_idx(term_data *td);
 void terminal_window_real_coords_x11(int term_idx, int *ret_x, int *ret_y);
 void resize_main_window_x11(int cols, int rows);
 void resize_window_x11(int term_idx, int cols, int rows);
@@ -1773,6 +1774,37 @@ static errr CheckEvent(bool wait) {
 }
 
 /* 
+ * Handle destruction of a term.
+ * Here we should properly destroy all windows and resources for terminal.
+ * But after this the whole client ends (should not recover), so just use it for filling terminal preferences, which will be saved after all terminals are nuked.
+ */
+static void Term_nuke_x11(term *t) {
+	term_data *td = (term_data*)(t->data);
+
+	/* special hack: this window was invisible, but we just toggled it to become visible on next client start. */
+	if (!td->fnt) {
+		return;
+	}
+
+	int term_idx = term_data_to_term_idx(td);
+	if (term_idx < 0) {
+		printf("Error getting terminal index from term_data\n");
+		return;
+	}
+	int cols = td->inner->w / td->fnt->wid;
+	int rows = td->inner->h / td->fnt->hgt;
+
+	term_prefs[term_idx].x = td->outer->x;
+	term_prefs[term_idx].y = td->outer->y;
+	term_prefs[term_idx].columns = cols;
+	term_prefs[term_idx].lines = rows;
+	if (strcmp(term_prefs[term_idx].font, td->fnt->name) != 0) {
+		strncpy(term_prefs[term_idx].font, td->fnt->name, sizeof(term_prefs[term_idx].font));
+		term_prefs[term_idx].font[sizeof(term_prefs[term_idx].font) - 1] = '\0';
+	}
+}
+
+/*
  * Handle "activation" of a term
  */
 static errr Term_xtra_x11_level(int v) {
@@ -2426,6 +2458,7 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	t->curs_hook = Term_curs_x11;
 	t->wipe_hook = Term_wipe_x11;
 	t->text_hook = Term_text_x11;
+	t->nuke_hook = Term_nuke_x11;
 
 #ifdef USE_GRAPHICS
 
@@ -2591,6 +2624,18 @@ static term_data* term_idx_to_term_data(int term_idx) {
 	}
 
 	return (td);
+}
+
+static int term_data_to_term_idx(term_data *td) {
+	if (td == &screen) return 0;
+	if (td == &mirror) return 1;
+	if (td == &recall) return 2;
+	if (td == &choice) return 3;
+	if (td == &term_4) return 4;
+	if (td == &term_5) return 5;
+	if (td == &term_6) return 6;
+	if (td == &term_7) return 7;
+	return -1;
 }
 
 /*
@@ -3116,96 +3161,6 @@ void terminal_window_real_coords_x11(int term_idx, int *ret_x, int *ret_y) {
 	*ret_y -= y_rel;
 }
 
-/* For saving window positions and sizes on quitting:
-   Returns x,y,cols,rows,font name. */
-void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name) {
-	term_data *td = term_idx_to_term_data(term_idx);
-	infowin *iwin;
-	Window xid, tmp_win;
-	unsigned int wu, hu, bu, du;
-#if 0
-	XWindowAttributes xwa;
-#endif
-	Atom property;
-	Atom type_return;
-	int format_return;
-	unsigned long nitems_return;
-	unsigned long bytes_after_return;
-	unsigned char *data;
-	int x_rel, y_rel;
-	char got_frame_extents = FALSE;
-
-	/* non-visible window has no window info .. */
-	if (!term_prefs[term_idx].visible) {
-		*x = *y = *c = *r = 0;
-		return;
-	}
-
-
-	/* special hack: this window was invisible, but we just toggled
-	   it to become visible on next client start. - C. Blue */
-	if (!td->fnt) {
-		*x = *y = *c = *r = 0;
-		return;
-	}
-
-
-	strcpy(fnt_name, td->fnt->name);
-
-	iwin = td->outer;
-	Infowin_set(iwin);
-	xid = iwin->win;
-
-	/* Detemine number of rows/cols */
-	*c = ((iwin->w - 2) / td->fnt->wid);
-	*r = ((iwin->h - 2) / td->fnt->hgt);
-
-	property = XInternAtom(Metadpy->dpy, "_NET_FRAME_EXTENTS", True);
-
-	/* Try to use _NET_FRAME_EXTENTS to get the window borders */
-	if (property != None && XGetWindowProperty(Metadpy->dpy, xid, property,
-	    0, LONG_MAX, False, XA_CARDINAL, &type_return, &format_return,
-	    &nitems_return, &bytes_after_return, &data) == Success) {
-		if ((type_return == XA_CARDINAL) && (format_return == 32) && (nitems_return == 4) && (data)) {
-			unsigned long *ldata = (unsigned long *)data;
-			got_frame_extents = TRUE;
-			/* _NET_FRAME_EXTENTS format is left, right, top, bottom */
-			x_rel = ldata[0];
-			y_rel = ldata[2];
-//			printf("FRAME_EXTENTS: x_rel = %d, y_rel = %d\n", x_rel, y_rel);
-		}
-
-		if (data) XFree(data);
-	}
-
-#if 0
-	/* Check Error XXX Extract some more ACTUAL data */
-	XGetWindowAttributes(Metadpy->dpy, xid, &xwa);
-//	x_rel = xwa.x;
-//	y_rel = xwa.y;
-//	printf("XGetWindowAttributes: x = %d, y = %d, width = %d, height = %d\n", (int)xwa.x, (int)xwa.y, (int)xwa.width, (int)xwa.height);
-#endif
-
-	if (!got_frame_extents) {
-		/* Check For Error XXX Extract some ACTUAL data from 'xid' */
-		if (XGetGeometry(Metadpy->dpy, xid, &tmp_win, &x_rel, &y_rel, &wu, &hu, &bu, &du)) {
-//			*w = (int)wu;
-//			*h = (int)hu;
-//			printf("XGetGeometry: x = %d, y = %d\n", x_rel, y_rel);
-		} else {
-			x_rel = 0;
-			y_rel = 0;
-		}
-	}
-
-	XTranslateCoordinates(Metadpy->dpy, xid, Metadpy->root, 0, 0, x, y, &tmp_win);
-//	printf("XTranslateCoordinates: x = %d, y = %d\n", *x, *y);
-
-	/* correct window position to account for X11 border/title bar sizes */
-	*x -= x_rel;
-	*y -= y_rel;
-}
-
 /* Resizes the graphics terminal window described by 'td' to dimensions given in 'cols', 'rows' inputs.
  * Stops the resize timer and validates input.
  * Resizes the outer and inner X11 window if current dimensions don't match the validated dimensions.
@@ -3319,7 +3274,7 @@ void set_font_name(int term_idx, char* fnt) {
 void term_toggle_visibility(int term_idx) {
 	term_prefs[term_idx].visible = !term_prefs[term_idx].visible;
 	/* NOTE: toggling visible flag of a window during runtime is dangerous:
-	   Three "special hack"s were added in term_force_font(), terminal_window_real_coords_x11() and x11win_getinfo()
+	   Three "special hack"s were added in term_force_font(), terminal_window_real_coords_x11() and Term_nuke_x11()
 	   to accomodate for this and to continue to treat the window as invisible. */
 }
 bool term_get_visibility(int term_idx) {
