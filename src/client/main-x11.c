@@ -31,28 +31,6 @@
 #include <time.h>
 
 /*
- * OPTION: Allow the use of a "Mirror Window", if supported
- */
-#define GRAPHIC_MIRROR
-
-/*
- * OPTION: Allow the use of a "Recall Window", if supported
- */
-#define GRAPHIC_RECALL
-
-/*
- * OPTION: Allow the use of a "Choice Window", if supported
- */
-#define GRAPHIC_CHOICE
-
-/* More options: Enable windows 5..8 (term-4..term-7) - C. Blue */
-#define GRAPHIC_TERM_4
-#define GRAPHIC_TERM_5
-#define GRAPHIC_TERM_6
-#define GRAPHIC_TERM_7
-
-
-/*
  * Notes on Colors:
  *
  *   1) On a monochrome (or "fake-monochrome") display, all colors
@@ -1220,45 +1198,28 @@ static void timespec_add_ns(struct timespec *t, unsigned int ns) {
 	}
 }
 
-#ifdef GRAPHIC_MIRROR
-
 /*
  * The (optional) "mirror" window
  */
 static term_data mirror;
-
-#endif
-
-#ifdef GRAPHIC_RECALL
 
 /*
  * The (optional) "recall" window
  */
 static term_data recall;
 
-#endif
-
-#ifdef GRAPHIC_CHOICE
-
 /*
  * The (optional) "choice" window
  */
 static term_data choice;
 
-#endif
-
-#ifdef GRAPHIC_TERM_4
+/*
+ * Other (optional) windows.
+ */
 static term_data term_4;
-#endif
-#ifdef GRAPHIC_TERM_5
 static term_data term_5;
-#endif
-#ifdef GRAPHIC_TERM_6
 static term_data term_6;
-#endif
-#ifdef GRAPHIC_TERM_7
 static term_data term_7;
-#endif
 
 
 /*
@@ -1505,7 +1466,6 @@ static errr CheckEvent(bool wait) {
 		t_idx = 0;
 	}
 
-//#ifdef GRAPHIC_MIRROR
 	/* Mirror window, inner window */
 	else if (term_mirror && xev->xany.window == mirror.inner->win) {
 		td = &mirror;
@@ -1519,97 +1479,84 @@ static errr CheckEvent(bool wait) {
 		iwin = td->outer;
 		t_idx = 1;
 	}
-//#endif
 
-//#ifdef GRAPHIC_RECALL
 	/* Recall window, inner window */
 	else if (term_recall && xev->xany.window == recall.inner->win) {
 		td = &recall;
 		iwin = td->inner;
 		t_idx = 2;
 	}
-	/* Recall Window, outer window */
+	/* Recall window, outer window */
 	else if (term_recall && xev->xany.window == recall.outer->win) {
 		td = &recall;
 		iwin = td->outer;
 		t_idx = 2;
 	}
-//#endif
 
-//#ifdef GRAPHIC_CHOICE
 	/* Choice window, inner window */
 	else if (term_choice && xev->xany.window == choice.inner->win) {
 		td = &choice;
 		iwin = td->inner;
 		t_idx = 3;
 	}
-	/* Choice Window, outer window */
+	/* Choice window, outer window */
 	else if (term_choice && xev->xany.window == choice.outer->win) {
 		td = &choice;
 		iwin = td->outer;
 		t_idx = 3;
 	}
-//#endif
 
-//#ifdef GRAPHIC_TERM_4
-	/* Choice window, inner window */
+	/* Other window, inner window */
 	else if (term_term_4 && xev->xany.window == term_4.inner->win) {
 		td = &term_4;
 		iwin = td->inner;
 		t_idx = 4;
 	}
-	/* Choice Window, outer window */
+	/* Other window, outer window */
 	else if (term_term_4 && xev->xany.window == term_4.outer->win) {
 		td = &term_4;
 		iwin = td->outer;
 		t_idx = 4;
 	}
-//#endif
 
-//#ifdef GRAPHIC_TERM_5
-	/* Choice window, inner window */
+	/* Other window, inner window */
 	else if (term_term_5 && xev->xany.window == term_5.inner->win) {
 		td = &term_5;
 		iwin = td->inner;
 		t_idx = 5;
 	}
-	/* Choice Window, outer window */
+	/* Other window, outer window */
 	else if (term_term_5 && xev->xany.window == term_5.outer->win) {
 		td = &term_5;
 		iwin = td->outer;
 		t_idx = 5;
 	}
-//#endif
 
-//#ifdef GRAPHIC_TERM_6
-	/* Choice window, inner window */
+	/* Other window, inner window */
 	else if (term_term_6 && xev->xany.window == term_6.inner->win) {
 		td = &term_6;
 		iwin = td->inner;
 		t_idx = 6;
 	}
-	/* Choice Window, outer window */
+	/* Other window, outer window */
 	else if (term_term_6 && xev->xany.window == term_6.outer->win) {
 		td = &term_6;
 		iwin = td->outer;
 		t_idx = 6;
 	}
-//#endif
 
-//#ifdef GRAPHIC_TERM_7
-	/* Choice window, inner window */
+	/* Other window, inner window */
 	else if (term_term_7 && xev->xany.window == term_7.inner->win) {
 		td = &term_7;
 		iwin = td->inner;
 		t_idx = 7;
 	}
-	/* Choice Window, outer window */
+	/* Other window, outer window */
 	else if (term_term_7 && xev->xany.window == term_7.outer->win) {
 		td = &term_7;
 		iwin = td->outer;
 		t_idx = 7;
 	}
-//#endif
 
 
 	/* Unknown window */
@@ -1621,7 +1568,6 @@ static errr CheckEvent(bool wait) {
 
 	/* Hack -- activate the window */
 	Infowin_set(iwin);
-
 
 	/* Switch on the Type */
 	switch (xev->type) {
@@ -2761,155 +2707,141 @@ errr init_x11(void) {
 	}
 #endif /* USE_GRAPHICS */
 
-{ /* Main window is always visible */
-	/* Check environment for "screen" font */
-	fnt_name = getenv("TOMENET_X11_FONT_SCREEN");
-	/* Check environment for "base" font */
-	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-	/* Use loaded (from config file) or predefined default font */
-	if (!fnt_name) fnt_name = term_prefs[0].font;
-	/* paranoia; use the default */
-	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_SCREEN;
-	/* Initialize the screen */
-//	term_data_init(0, &screen, TRUE, "TomeNET", fnt_name);
-//	term_data_init(0, &screen, TRUE, ang_term_name[0], fnt_name);
-	/* allow resizing, for font changes */
-	term_data_init(0, &screen, FALSE, ang_term_name[0], fnt_name);
-	term_screen = Term;
-	ang_term[0] = Term;
-}
+	{ /* Main window is always visible */
+		/* Check environment for "screen" font */
+		fnt_name = getenv("TOMENET_X11_FONT_SCREEN");
+		/* Check environment for "base" font */
+		if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
+		/* Use loaded (from config file) or predefined default font */
+		if (!fnt_name) fnt_name = term_prefs[0].font;
+		/* paranoia; use the default */
+		if (!fnt_name) fnt_name = DEFAULT_X11_FONT_SCREEN;
+		/* Initialize the screen */
+		//	term_data_init(0, &screen, TRUE, "TomeNET", fnt_name);
+		//	term_data_init(0, &screen, TRUE, ang_term_name[0], fnt_name);
+		/* allow resizing, for font changes */
+		term_data_init(0, &screen, FALSE, ang_term_name[0], fnt_name);
+		term_screen = Term;
+		ang_term[0] = Term;
+	}
 
-#ifdef GRAPHIC_MIRROR
-if (term_prefs[1].visible) {
-	/* Check environment for "mirror" font */
-	fnt_name = getenv("TOMENET_X11_FONT_MIRROR");
-	/* Check environment for "base" font */
-	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-	/* Use loaded (from config file) or predefined default font */
-	if (!fnt_name) fnt_name = term_prefs[1].font;
-	/* paranoia; use the default */
-	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_MIRROR;
+	if (term_prefs[1].visible) {
+		/* Check environment for "mirror" font */
+		fnt_name = getenv("TOMENET_X11_FONT_MIRROR");
+		/* Check environment for "base" font */
+		if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
+		/* Use loaded (from config file) or predefined default font */
+		if (!fnt_name) fnt_name = term_prefs[1].font;
+		/* paranoia; use the default */
+		if (!fnt_name) fnt_name = DEFAULT_X11_FONT_MIRROR;
 
-	/* Initialize the mirror window */
-	term_data_init(1, &mirror, FALSE, ang_term_name[1], fnt_name);
-	term_mirror = Term;
-	ang_term[1] = Term;
+		/* Initialize the mirror window */
+		term_data_init(1, &mirror, FALSE, ang_term_name[1], fnt_name);
+		term_mirror = Term;
+		ang_term[1] = Term;
 
-}
-#endif
+	}
 
-#ifdef GRAPHIC_RECALL
-if (term_prefs[2].visible) {
-	/* Check environment for "recall" font */
-	fnt_name = getenv("TOMENET_X11_FONT_RECALL");
-	/* Check environment for "base" font */
-	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-	/* Use loaded (from config file) or predefined default font */
-	if (!fnt_name) fnt_name = term_prefs[2].font;
-	/* paranoia; use the default */
-	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_RECALL;
+	if (term_prefs[2].visible) {
+		/* Check environment for "recall" font */
+		fnt_name = getenv("TOMENET_X11_FONT_RECALL");
+		/* Check environment for "base" font */
+		if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
+		/* Use loaded (from config file) or predefined default font */
+		if (!fnt_name) fnt_name = term_prefs[2].font;
+		/* paranoia; use the default */
+		if (!fnt_name) fnt_name = DEFAULT_X11_FONT_RECALL;
 
-	/* Initialize the recall window */
-	term_data_init(2, &recall, FALSE, ang_term_name[2], fnt_name);
-	term_recall = Term;
-	ang_term[2] = Term;
+		/* Initialize the recall window */
+		term_data_init(2, &recall, FALSE, ang_term_name[2], fnt_name);
+		term_recall = Term;
+		ang_term[2] = Term;
 
-}
-#endif
+	}
 
-#ifdef GRAPHIC_CHOICE
-if (term_prefs[3].visible) {
-	/* Check environment for "choice" font */
-	fnt_name = getenv("TOMENET_X11_FONT_CHOICE");
-	/* Check environment for "base" font */
-	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-	/* Use loaded (from config file) or predefined default font */
-	if (!fnt_name) fnt_name = term_prefs[3].font;
-	/* paranoia; use the default */
-	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_CHOICE;
+	if (term_prefs[3].visible) {
+		/* Check environment for "choice" font */
+		fnt_name = getenv("TOMENET_X11_FONT_CHOICE");
+		/* Check environment for "base" font */
+		if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
+		/* Use loaded (from config file) or predefined default font */
+		if (!fnt_name) fnt_name = term_prefs[3].font;
+		/* paranoia; use the default */
+		if (!fnt_name) fnt_name = DEFAULT_X11_FONT_CHOICE;
 
-	/* Initialize the choice window */
-	term_data_init(3, &choice, FALSE, ang_term_name[3], fnt_name);
-	term_choice = Term;
-	ang_term[3] = Term;
-}
-#endif
+		/* Initialize the choice window */
+		term_data_init(3, &choice, FALSE, ang_term_name[3], fnt_name);
+		term_choice = Term;
+		ang_term[3] = Term;
+	}
 
-#ifdef GRAPHIC_TERM_4
-if (term_prefs[4].visible) {
-	/* Check environment for "term4" font */
-	fnt_name = getenv("TOMENET_X11_FONT_TERM_4");
-	/* Check environment for "base" font */
-	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-	/* Use loaded (from config file) or predefined default font */
-	if (!fnt_name) fnt_name = term_prefs[4].font;
-	/* paranoia; use the default */
-	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_4;
+	if (term_prefs[4].visible) {
+		/* Check environment for "term4" font */
+		fnt_name = getenv("TOMENET_X11_FONT_TERM_4");
+		/* Check environment for "base" font */
+		if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
+		/* Use loaded (from config file) or predefined default font */
+		if (!fnt_name) fnt_name = term_prefs[4].font;
+		/* paranoia; use the default */
+		if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_4;
 
-	/* Initialize the term_4 window */
-	term_data_init(4, &term_4, FALSE, ang_term_name[4], fnt_name);
-	term_term_4 = Term;
-	ang_term[4] = Term;
+		/* Initialize the term_4 window */
+		term_data_init(4, &term_4, FALSE, ang_term_name[4], fnt_name);
+		term_term_4 = Term;
+		ang_term[4] = Term;
 
-}
-#endif
+	}
 
-#ifdef GRAPHIC_TERM_5
-if (term_prefs[5].visible) {
-	/* Check environment for "term5" font */
-	fnt_name = getenv("TOMENET_X11_FONT_TERM_5");
-	/* Check environment for "base" font */
-	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-	/* Use loaded (from config file) or predefined default font */
-	if (!fnt_name) fnt_name = term_prefs[5].font;
-	/* paranoia; use the default */
-	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_5;
+	if (term_prefs[5].visible) {
+		/* Check environment for "term5" font */
+		fnt_name = getenv("TOMENET_X11_FONT_TERM_5");
+		/* Check environment for "base" font */
+		if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
+		/* Use loaded (from config file) or predefined default font */
+		if (!fnt_name) fnt_name = term_prefs[5].font;
+		/* paranoia; use the default */
+		if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_5;
 
-	/* Initialize the term_5 window */
-	term_data_init(5, &term_5, FALSE, ang_term_name[5], fnt_name);
-	term_term_5 = Term;
-	ang_term[5] = Term;
+		/* Initialize the term_5 window */
+		term_data_init(5, &term_5, FALSE, ang_term_name[5], fnt_name);
+		term_term_5 = Term;
+		ang_term[5] = Term;
 
-}
-#endif
+	}
 
-#ifdef GRAPHIC_TERM_6
-if (term_prefs[6].visible) {
-	/* Check environment for "term6" font */
-	fnt_name = getenv("TOMENET_X11_FONT_TERM_6");
-	/* Check environment for "base" font */
-	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-	/* Use loaded (from config file) or predefined default font */
-	if (!fnt_name) fnt_name = term_prefs[6].font;
-	/* paranoia; use the default */
-	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_6;
+	if (term_prefs[6].visible) {
+		/* Check environment for "term6" font */
+		fnt_name = getenv("TOMENET_X11_FONT_TERM_6");
+		/* Check environment for "base" font */
+		if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
+		/* Use loaded (from config file) or predefined default font */
+		if (!fnt_name) fnt_name = term_prefs[6].font;
+		/* paranoia; use the default */
+		if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_6;
 
-	/* Initialize the term_6 window */
-	term_data_init(6, &term_6, FALSE, ang_term_name[6], fnt_name);
-	term_term_6 = Term;
-	ang_term[6] = Term;
+		/* Initialize the term_6 window */
+		term_data_init(6, &term_6, FALSE, ang_term_name[6], fnt_name);
+		term_term_6 = Term;
+		ang_term[6] = Term;
 
-}
-#endif
+	}
 
-#ifdef GRAPHIC_TERM_7
-if (term_prefs[7].visible) {
-	/* Check environment for "term7" font */
-	fnt_name = getenv("TOMENET_X11_FONT_TERM_7");
-	/* Check environment for "base" font */
-	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-	/* Use loaded (from config file) or predefined default font */
-	if (!fnt_name) fnt_name = term_prefs[7].font;
-	/* paranoia; use the default */
-	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_7;
+	if (term_prefs[7].visible) {
+		/* Check environment for "term7" font */
+		fnt_name = getenv("TOMENET_X11_FONT_TERM_7");
+		/* Check environment for "base" font */
+		if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
+		/* Use loaded (from config file) or predefined default font */
+		if (!fnt_name) fnt_name = term_prefs[7].font;
+		/* paranoia; use the default */
+		if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_7;
 
-	/* Initialize the term_7 window */
-	term_data_init(7, &term_7, FALSE, ang_term_name[7], fnt_name);
-	term_term_7 = Term;
-	ang_term[7] = Term;
+		/* Initialize the term_7 window */
+		term_data_init(7, &term_7, FALSE, ang_term_name[7], fnt_name);
+		term_term_7 = Term;
+		ang_term[7] = Term;
 
-}
-#endif
+	}
 
 
 	/* Activate the "Angband" window screen */
