@@ -1097,12 +1097,13 @@ static void Term_fresh_row_text_wipe(int y) {
 	char32_t nc;
 #endif
 
-	/* Max width is 255 */
-	char text[256];
+	/* Max width is number of columns marked as "modified", plus terminating character '\0' */
+	int mod_num = x2 - x1 + 1;
+	char text[mod_num + 1];
 
 #ifdef DRAW_LARGER_CHUNKS
-	memcpy(old_aa + x1, scr_aa + x1, x2 - x1);
-	memcpy(old_cc + x1, scr_cc + x1, (x2 - x1)*sizeof(scr_cc[0]));
+	memcpy(old_aa + x1, scr_aa + x1, mod_num);
+	memcpy(old_cc + x1, scr_cc + x1, mod_num*sizeof(scr_cc[0]));
 #endif
 
 	/* Scan the columns marked as "modified" */
@@ -1248,12 +1249,13 @@ static void Term_fresh_row_text_text(int y) {
 	int nc;
 #endif
 
-	/* Max width is 255 */
-	char text[256];
+	/* Max width is number of columns marked as "modified", plus terminating character '\0' */
+	int mod_num = x2 - x1 + 1;
+	char text[mod_num + 1];
 
 #ifdef DRAW_LARGER_CHUNKS
-	memcpy(old_aa + x1, scr_aa + x1, x2 - x1);
-	memcpy(old_cc + x1, scr_cc + x1, (x2 - x1)*sizeof(scr_cc[0]));
+	memcpy(old_aa + x1, scr_aa + x1, mod_num);
+	memcpy(old_cc + x1, scr_cc + x1, mod_num*sizeof(scr_cc[0]));
 #endif
 
 	/* Scan the columns marked as "modified" */
@@ -1389,8 +1391,8 @@ static void Term_fresh_row_both_wipe(int y) {
 	int na;
 	char32_t nc;
 
-	/* Max width is 255 */
-	char text[256];
+	/* Max width is number of columns marked as "modified", plus terminating character '\0' */
+	char text[x2 - x1 + 2];
 
 
 	/* Scan the columns marked as "modified" */
@@ -1519,8 +1521,8 @@ static void Term_fresh_row_both_text(int y) {
 	int na;
 	char32_t nc;
 
-	/* Max width is 255 */
-	char text[256];
+	/* Max width is number of columns marked as "modified", plus terminating character '\0' */
+	char text[x2 - x1 + 2];
 
 
 	/* Scan the columns marked as "modified" */
@@ -1784,8 +1786,10 @@ errr Term_fresh(void) {
 		for (int i = 0; i < w * h; i++) old->vc[i]=c;
 
 		/* Redraw every column */
-		memset(Term->x1, 0, h);
-		memset(Term->x2, w - 1, h);
+		for (int i = 0; i < h; i++) {
+			Term->x1[i] = 0;
+			Term->x2[i] = w - 1;
+		}
 
 		/* Redraw every row */
 		Term->y1 = 0;
@@ -2376,8 +2380,10 @@ errr Term_clear(void) {
 	for (int i = 0; i < w * h; i++) Term->scr->vc[i]=c;
 
 	/* Every column has changed */
-	memset(Term->x1, 0, h);
-	memset(Term->x2, w - 1, h);
+	for (int i = 0; i < h; i++) {
+		Term->x1[i] = 0;
+		Term->x2[i] = w - 1;
+	}
 
 	/* Every row has changed */
 	Term->y1 = 0;
@@ -2425,11 +2431,11 @@ errr Term_redraw_section(int x1, int y1, int x2, int y2) {
 	Term->y1 = y1;
 	Term->y2 = y2;
 
-	/* Set the x limits */
-	memset(&Term->x1[y1], x1, y2 - y1 + 1);
-	memset(&Term->x2[y1], x2, y2 - y1 + 1);
-
 	for (i = y1; i <= y2; i++) {
+		/* Set the x limits */
+		Term->x1[i] = x1;
+		Term->x2[i] = x2;
+
 		/* Put null characters in the old screen to force a redraw of the section */
 		for (int j = x1; j < x2 + 1; j++) Term->old->c[i][j]=0;
 	}
@@ -2830,8 +2836,10 @@ errr refresh_minimap() {
 			c_put_str(TERM_WHITE, "                              ", ROW_DEPTH, 60);
 
 			//Redraw it
-			memset(Term->x1, 0, h);
-			memset(Term->x2, w - 1, h);
+			for (int i = 0; i < h; i++) {
+				Term->x1[i] = 0;
+				Term->x2[i] = w - 1;
+			}
 			Term_fresh();
 
 			//Get out of the loop. We don't support more than one extra map screen.
@@ -2970,8 +2978,10 @@ errr Term_load(void) {
  	term_win_copy(Term->scr, Term->mem[--screen_icky], w, h);
 
 	/* Assume change */
-	memset(Term->x1, 0, h);
-	memset(Term->x2, w - 1, h);
+	for (int i = 0; i < h; i++) {
+		Term->x1[i] = 0;
+		Term->x2[i] = w - 1;
+	}
 
 	/* Assume change */
 	Term->y1 = 0;
@@ -2997,8 +3007,10 @@ errr Term_restore(void) {
  	term_win_copy(Term->scr, Term->mem[screen_icky - 1], w, h);
 
 	/* Assume change */
-	memset(Term->x1, 0, h);
-	memset(Term->x2, w - 1, h);
+	for (int i = 0; i < h; i++) {
+		Term->x1[i] = 0;
+		Term->x2[i] = w - 1;
+	}
 
 	/* Assume change */
 	Term->y1 = 0;
@@ -3039,8 +3051,8 @@ errr Term_resize(int w, int h) {
 
 	int wid, hgt;
 
-	byte *hold_x1;
-	byte *hold_x2;
+	int *hold_x1;
+	int *hold_x2;
 
 	term_win *hold_old;
 	term_win *hold_scr;
@@ -3077,8 +3089,8 @@ errr Term_resize(int w, int h) {
 	/*** Make new ***/
 
 	/* Create new scanners */
-	C_MAKE(Term->x1, h, byte);
-	C_MAKE(Term->x2, h, byte);
+	C_MAKE(Term->x1, h, int);
+	C_MAKE(Term->x2, h, int);
 
 
 	/* Create new window */
@@ -3114,8 +3126,8 @@ errr Term_resize(int w, int h) {
 	/*** Kill old ***/
 
 	/* Free some arrays */
-	C_KILL(hold_x1, Term->hgt, byte);
-	C_KILL(hold_x2, Term->hgt, byte);
+	C_KILL(hold_x1, Term->hgt, int);
+	C_KILL(hold_x2, Term->hgt, int);
 
 
 	/* Nuke */
@@ -3262,8 +3274,8 @@ errr term_nuke(term *t) {
 	}
 
 	/* Free some arrays */
-	C_KILL(t->x1, h, byte);
-	C_KILL(t->x2, h, byte);
+	C_KILL(t->x1, h, int);
+	C_KILL(t->x2, h, int);
 
 	/* Free the input queue */
 	C_FREE(t->keys->queue, t->keys->size, char);
@@ -3304,8 +3316,8 @@ errr term_init(term *t, int w, int h, int k) {
 	t->hgt = h;
 
 	/* Allocate change arrays */
-	C_MAKE(t->x1, h, byte);
-	C_MAKE(t->x2, h, byte);
+	C_MAKE(t->x1, h, int);
+	C_MAKE(t->x2, h, int);
 
 
 	/* Allocate "displayed" */

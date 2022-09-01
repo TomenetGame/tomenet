@@ -28,7 +28,7 @@ typedef struct term_win term_win;
 struct term_win
 {
 	bool cu, cv;
-	byte cx, cy;
+	int cx, cy;
 
 	byte **a;
 	char32_t **c;
@@ -171,14 +171,14 @@ struct term
 	key_queue *keys_old;
 	s32b key_size_orig;
 
-	byte wid;
-	byte hgt;
+	int wid;
+	int hgt;
 
-	byte y1;
-	byte y2;
+	int y1;
+	int y2;
 
-	byte *x1;
-	byte *x2;
+	int *x1;
+	int *x2;
 
 	term_win *old;
 	term_win *scr;
@@ -239,6 +239,7 @@ struct term
 
 #define DEFAULT_TERM_WID 80
 #define DEFAULT_TERM_HGT 24
+
 /**** Available Variables ****/
 
 extern term *Term;
