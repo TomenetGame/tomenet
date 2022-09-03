@@ -15683,6 +15683,7 @@ stated.
                                 the blacklist time will be much shorter too.
                                 Some potion/scroll break points regarding this:
                                 ?Identify: 50 Au.
+                                !Neutralize Poison: 55 Au.
                                 !Cure Critical Wounds: 100 Au.
                                 ?Enchant Weapon/Armour: 125 Au.
                                 !Speed: 200 Au.
