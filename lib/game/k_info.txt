@@ -3625,7 +3625,7 @@ D:Permanently increases all stats.
 
 N:419:*Healing*
 G:!:d
-I:71:37:500
+I:71:37:400
 W:40:0:4:3000
 A:40/4:60/2:80/1
 P:0:1d1:0:0:0
