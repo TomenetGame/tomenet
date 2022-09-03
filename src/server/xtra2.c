@@ -9502,7 +9502,7 @@ void player_death(int Ind) {
 			continue;
 		}
 
-		/* Set all his artifacts back to normal-speed timeout */
+		/* Set all his true artifacts back to normal-speed timeout */
 		if (was_total_winner && !cfg.fallenkings_etiquette &&
 		    p_ptr->inventory[i].name1 &&
 		    p_ptr->inventory[i].name1 != ART_RANDART)
@@ -9520,20 +9520,27 @@ void player_death(int Ind) {
 			if (true_artifact_p(o_ptr) &&
 			    ((cfg.anti_arts_hoard && undepositable_artifact_p(o_ptr)) ||
 			    (p_ptr->total_winner && !winner_artifact_p(o_ptr) && cfg.kings_etiquette))) {
-				questitem_d(o_ptr, o_ptr->number);
 				/* set the artifact as unfound */
 				handle_art_d(o_ptr->name1);
 				/* Don't drop the artifact */
 				continue;
 			}
-		} else if (finally_killed) {
-			/* If we were a total winner, don't drop any true artifacts */
+		} else if (finally_killed) { /* Character erased? */
+			/* If we were a total winner, don't drop any true artifacts and never drop level 0 true artifacts */
 			if (true_artifact_p(o_ptr) &&
 			    ((cfg.anti_arts_hoard && undepositable_artifact_p(o_ptr)) ||
-			    (p_ptr->total_winner && !winner_artifact_p(o_ptr) && cfg.kings_etiquette))) {
-				questitem_d(o_ptr, o_ptr->number);
+			    (p_ptr->total_winner && !winner_artifact_p(o_ptr) && cfg.kings_etiquette) ||
+			    !o_ptr->level)) {
 				/* set the artifact as unfound */
 				handle_art_d(o_ptr->name1);
+				/* Don't drop the artifact */
+				continue;
+			}
+			/* Don't drop Nazgul rings or final-artifacts as they are level 0 and hence unsuable to anyone */
+			if (artifact_p(o_ptr) && !o_ptr->level) {
+				/* set the artifact as unfound */
+				if (o_ptr->name1 != ART_RANDART) handle_art_d(o_ptr->name1);
+				else questitem_d(o_ptr, o_ptr->number);
 				/* Don't drop the artifact */
 				continue;
 			}
