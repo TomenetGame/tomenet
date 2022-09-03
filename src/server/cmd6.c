@@ -6581,7 +6581,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 #if 0	// needing pet code
 			if (randint(3) == 1) {
 				if (summon_specific(py, px, ((plev * 3) / 2), SUMMON_DRAGONRIDER, 0, 1)) {
-					msg_print(Ind, "A DragonRider comes from the BETWEEN !");
+					msg_print(Ind, "A DragonRider comes from the BETWEEN!");
 					msg_print(Ind, "'I will burn you!'");
  #ifdef USE_SOUND_2010
 					sound_near_site(py, px, wpos, 0, "summon", NULL, SFX_TYPE_COMMAND, FALSE);
@@ -6590,7 +6590,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			} else {
 				if (summon_specific_friendly(py, px, ((plev * 3) / 2),
 				    SUMMON_DRAGONRIDER, (bool)(plev == 50 ? TRUE : FALSE))) {
-					msg_print(Ind, "A DragonRider comes from the BETWEEN !");
+					msg_print(Ind, "A DragonRider comes from the BETWEEN!");
 					msg_print(Ind, "'I will help you in your difficult task.'");
  #ifdef USE_SOUND_2010
 					sound_near_site(py, px, wpos, 0, "summon", NULL, SFX_TYPE_COMMAND, FALSE);
