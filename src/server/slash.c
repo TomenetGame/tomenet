@@ -5188,8 +5188,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			do_cmd_show_monster_killed_letter(Ind, &learnt, 0, FALSE);
 			return;
-		}
-		else if (!strcmp(messagelc, "/ta")) { /* non-lua equivalent to ta() that toggles admin state irreversibly (as non-admins cannot invoke lua) */
+		} else if (!strcmp(messagelc, "/ta")) { /* non-lua equivalent to ta() that toggles admin state irreversibly (as non-admins cannot invoke lua) */
 			if (admin) msg_print(Ind, "Already an admin.");
 			else if (p_ptr->privileged < 3) { /* Check for temporarily remembered admin-status */
 				/* Pseudo-invalid slash command */
@@ -5206,6 +5205,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					p_ptr->privileged = 0;
 				} else msg_print(Ind, "No valid admin state remembered.");
 			}
+			return;
+		} else if (prefix(messagelc, "/uptime")) { /* same as LUA uptime (It/Moltor) */
+			long elapsed = (turn - session_turn) / cfg.fps;
+			int days = elapsed / 86400, hours = (elapsed % 86400) / 3600, minutes = (elapsed % 3600) / 60, seconds = (elapsed % 60);
+
+			msg_format(Ind, "\377sUptime: %d days %d hours %d minutes %d seconds", days, hours, minutes, seconds);
 			return;
 		}
 
@@ -11985,13 +11990,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_format(Ind, "Pumpkin (%d min, %d/%d HP) on (%d,%d,%d).", great_pumpkin_duration, m_ptr->hp, m_ptr->maxhp, m_ptr->wpos.wx, m_ptr->wpos.wy, m_ptr->wpos.wz);
 				}
 				msg_format(Ind, "Timer = %d.", great_pumpkin_timer);
-				return;
-			}
-			else if (prefix(messagelc, "/uptime")) { /* same as LUA uptime (It/Moltor) */
-				long elapsed = (turn - session_turn) / cfg.fps;
-				int days = elapsed / 86400, hours = (elapsed % 86400) / 3600, minutes = (elapsed % 3600) / 60, seconds = (elapsed % 60);
-
-				msg_format(Ind, "\377sUptime: %d days %d hours %d minutes %d seconds", days, hours, minutes, seconds);
 				return;
 			}
 			else if (prefix(messagelc, "/pversion") || prefix(messagelc, "/pver")) {
