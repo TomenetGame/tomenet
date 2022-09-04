@@ -2770,7 +2770,7 @@ Scumming    Repeatedly using staircases up/downwards to make a level become
             recreated. Usually in hope of finding a specific monster on that
             depth. ('I scum 450..500 ft for Wormy'.)
 
-SI          See invisible.
+SI          See invisible. (See (5.16) for details about invisibility.)
 
 Specials    Items that pseudo-identify as 'special'. These are true arts or
             randarts.
@@ -12076,10 +12076,10 @@ CURSED, HEAVY_CURSE, PERMA_CURSE, AUTO_CURSE,
 CURSE_NO_DROP, TY_CURSE, DG_CURSE
         See (5.14) Curses.
 INVIS   ('It makes you invisible.')
-        Turns you invisible. Items 'of y' often have a +mod,
+        Turns you invisible. Items 'of invisibility' often have a +mod,
         which gives you additional stealth. Note that this +mod does not
         qualify or affect your y in any way, but is purely for an
-        extra stealth bonus. See '(5.16) y' for details.
+        extra stealth bonus. See '(5.16) Invisibility' for details.
 BLOWS   ('It affects your attack speed.')
         This item adds EA (extra attacks) to your number of blows per round.
 SH_ELEC ('It produces an electric aura.')
@@ -12355,6 +12355,7 @@ Curing          Heals 9d10 HP, removes blindness/confusion/stun, cures
 Detect Invisible
                 Temporarily grants you the ability to see invisible.
                 ("Your eyes feel very sensitive!")
+                (See (5.16) for details about invisibility.)
 Detonations / Death
                 Better not drink it (or you deserve it).
                 Also, handle with caution! Make sure those won't shatter in
@@ -19320,6 +19321,7 @@ school.
 
                     Tier II: Level 20.
                     Lets you see invisible for a while.        (auto-project)
+                    (See (5.16) for details about invisibility.)
 
     Reveal Ways     Detects doors/stairs/ways within a radius. (auto-project)
                     Required skill level for first spell level: 6.
@@ -19753,6 +19755,7 @@ All Unlife spells are Wisdom-based.)
 
     Detect Invisible
                     Detects all invisible creatures nearby.
+                    (See (5.16) for details about invisibility.)
                     Required skill level for first spell level: 3.
 
     Veil of Night   Causes your target to fall asleep instantly.
