@@ -6439,7 +6439,7 @@ bool monster_death(int Ind, int m_idx) {
 
 	/* Rogues can harvest poison for their Apply Poison technique */
 	if ((p_ptr->melee_techniques & MT_POISON) && (r_ptr->flags4 & RF4_BR_POIS) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
-		if (!p_ptr->suppress_ingredients && rand_int(7) < r_ptr->weight / 1000) {
+		if (!p_ptr->suppress_ingredients && rand_int(7) < 3 * r_ptr->weight / 1000) {
 			object_type forge;
 
 			invcopy(&forge, lookup_kind(TV_POTION, SV_POTION_POISON));
