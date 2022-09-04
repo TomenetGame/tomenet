@@ -35,7 +35,7 @@ int inventory_inscription_len[INVEN_TOTAL];	/* Length of a special inscription *
 int item_newest = -1;
 
 #ifdef ENABLE_SUBINVEN
-int item_newest_subinven = -1, using_subinven = -1, using_subinven_size = SUBINVEN_PACK, using_subinven_item = -1;
+int using_subinven = -1, using_subinven_size = SUBINVEN_PACK, using_subinven_item = -1;
 object_type subinventory[INVEN_PACK + 1][SUBINVEN_PACK + 1];
 char subinventory_name[INVEN_PACK + 1][SUBINVEN_PACK + 1][ONAME_LEN];
 int subinventory_inscription[INVEN_PACK + 1][SUBINVEN_PACK + 1];

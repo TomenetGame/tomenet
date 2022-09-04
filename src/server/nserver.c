@@ -9442,7 +9442,9 @@ int Send_item_newest(int Ind, int item) {
 
 	Players[Ind]->item_newest = item;
 
-	return Packet_printf(&connp->c, "%c%c", PKT_ITEM_NEWEST, (char)item);
+	if (is_older_than(&connp->version, 4, 8, 1, 1, 0, 0))
+		return Packet_printf(&connp->c, "%c%c", PKT_ITEM_NEWEST, (char)item);
+	return Packet_printf(&connp->c, "%c%d", PKT_ITEM_NEWEST, item); //ENABLE_SUBINVEN
 }
 
 int Send_palette(int Ind, byte c, byte r, byte g, byte b) {

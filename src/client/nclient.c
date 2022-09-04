@@ -5350,10 +5350,16 @@ int Receive_martyr(void) {
 /* Receive inventory index of the last item we picked up */
 int Receive_item_newest(void) {
 	int	n;
-	char	ch, item;
+	char	ch;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &item)) <= 0) return n;
-	item_newest = (int)item;
+	if (is_older_than(&server_version, 4, 8, 1, 1, 0, 0)) {
+		char item;
+
+		if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &item)) <= 0) return n;
+		item_newest = (int)item;
+	} else {
+		if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &item_newest)) <= 0) return n; //ENABLE_SUBINVEN
+	}
 
 	return 1;
 }
