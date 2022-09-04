@@ -5864,7 +5864,7 @@ bool monster_death(int Ind, int m_idx) {
 	 * Mega^3-hack: killing a 'Warrior of the Dawn' is likely to
 	 * spawn another in the fallen one's place!
 	 */
-	if (strstr((r_name + r_ptr->name), "the Dawn")) {
+	if (r_idx == RI_WARRIOR_DAWN) {
 		if (!(randint(20) == 13)) {
 			int wy = p_ptr->py, wx = p_ptr->px;
 			int attempts = 100;
@@ -5900,13 +5900,13 @@ bool monster_death(int Ind, int m_idx) {
 	}
 
 	/* One more ultra-hack: An Unmaker goes out with a big bang! */
-	else if (strstr((r_name + r_ptr->name), "Unmaker")) {
+	else if (r_idx == RI_UNMAKER) {
 		int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO;
 		(void)project(m_idx, 6, wpos, y, x, 150, GF_CHAOS, flg, "The Unmaker explodes for");
 	}
 
 	/* Pink horrors are replaced with 2 Blue horrors */
-	else if (strstr((r_name + r_ptr->name), "Pink horror")) {
+	else if (r_idx == RI_PINK_HORROR) {
 		for (i = 0; i < 2; i++) {
 			int wy = p_ptr->py, wx = p_ptr->px;
 			int attempts = 100;
@@ -6983,7 +6983,10 @@ if (cfg.unikill_format) {
 	}
 #endif
 
+	/* ----- Drop some special item(s) or specific artifacts (not FINAL_OBJECTs/FINAL_ARTIFACTs, just unique-specific drops) ----- */
 	if (r_ptr->flags1 & (RF1_DROP_CHOSEN)) {
+		/* --- Drop some special item(s) -- not *specific* true arts, those are handled further down. --- */
+
 		/* Mega-Hack -- drop "winner" treasures */
 		if (is_Morgoth && !pvp) {
 			/* Hack -- an "object holder" */
@@ -7174,7 +7177,7 @@ if (cfg.unikill_format) {
 			FREE(m_ptr->r_ptr, monster_race);
 			return TRUE;
 
-		} else if (strstr((r_name + r_ptr->name), "Smeagol")) {
+		} else if (r_idx == RI_SMEAGOL) {
 			/* Get local object */
 			qq_ptr = &forge;
 
@@ -7195,7 +7198,7 @@ if (cfg.unikill_format) {
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 		/* finally made Robin Hood drop a Bow ;) */
-		} else if (strstr((r_name + r_ptr->name), "Robin Hood, the Outlaw") && magik(50)) {
+		} else if (r_idx == RI_ROBIN_HOOD && magik(50)) {
 			qq_ptr = &forge;
 			object_wipe(qq_ptr);
 			invcopy(qq_ptr, lookup_kind(TV_BOW, SV_LONG_BOW));
@@ -7256,7 +7259,7 @@ if (cfg.unikill_format) {
 
 		/* PernAngband additions */
 		/* Mega^2-hack -- destroying the Stormbringer gives it us! */
-		} else if (strstr((r_name + r_ptr->name), "Stormbringer")) {
+		} else if (r_idx == RI_STORMBRINGER) {
 			/* Get local object */
 			qq_ptr = &forge;
 
@@ -7293,7 +7296,7 @@ if (cfg.unikill_format) {
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 		/* Raal's Tomes of Destruction drop a Raal's Tome of Destruction -- EXPERIMENTAL */
-		} else if ((strstr((r_name + r_ptr->name), "Raal's Tome of Destruction")) && !rand_int(20)) {
+		} else if (r_idx == RI_RAALS_TOME && !rand_int(20)) {
 			/* Get local object */
 			qq_ptr = &forge;
 
@@ -7313,7 +7316,7 @@ if (cfg.unikill_format) {
 
 #if 0 /* Disabled - Idea doesn't work, because AP in general for cursed randarts is very low. There is no use in the items generated, except maybe lucky ID hat.. */
 		/* For DK/HK: Let these guys drop some heavily cursed, powerful randart for itemization fun.. */
-		} else if (strstr((r_name + r_ptr->name), "Vlad Dracula") || strstr((r_name + r_ptr->name), "Mephistopheles")) {
+		} else if (r_idx == RI_VLAD_DRACULA || r_idx == RI_MEPHISTOPHELES) {
 			int tv = 0, k_idx, tries = 1000;
 			artifact_type *a_ptr;
 			char o_name[ONAME_LEN];
@@ -7382,7 +7385,7 @@ if (cfg.unikill_format) {
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 #else
 		/* For DK/HK: Let these guys drop some heavily cursed trueart for itemization fun.. */
-		} else if ((strstr((r_name + r_ptr->name), "Vlad Dracula") || strstr((r_name + r_ptr->name), "Mephistopheles"))
+		} else if ((r_idx == RI_VLAD_DRACULA || r_idx == RI_MEPHISTOPHELES)
  #ifndef TEST_SERVER
 		    && !(resf_chosen & RESF_NOTRUEART)
  #endif
@@ -7707,15 +7710,19 @@ if (cfg.unikill_format) {
 
 			/* Make sure we cannot enter IDDC afterwards to exploit-trade or sth */
 			gain_exp(Ind, 1);
+
+
+		/* --- Drop a *specific* true art. --- */
+
 		} else if (!pvp) {
 			a_idx = 0;
 			chance = 0;
 			I_kind = 0;
 
-			if (strstr((r_name + r_ptr->name), " Mardra, rider of the Gold Loranth")) {
+			if (r_idx == RI_MARDRA) {
 				a_idx = ART_MARDRA;
 				chance = 55;
-			} else if (strstr((r_name + r_ptr->name), "Saruman of Many Colours")) {
+			} else if (r_idx == RI_SARUMAN) {
 				/* Idea here: The alternative +10 mstaff is not for getting farmed by winners */
 				if (!(resf_chosen & RESF_NOTRUEART)) {
 					a_idx = ART_ELENDIL;
@@ -7743,23 +7750,25 @@ if (cfg.unikill_format) {
 						drop_near(0, qq_ptr, -1, wpos, y, x);
 					}
 				}
-			} else if (strstr((r_name + r_ptr->name), "Gorlim, Betrayer of Barahir")) {
+			} else if (r_idx == RI_GORLIM) {
 				a_idx = ART_GORLIM;
 				chance = 50;
+#if 0
 			} else if (strstr((r_name + r_ptr->name), "Hagen, son of Alberich")) { /* not in the game */
 				a_idx = ART_NIMLOTH;
 				chance = 66;
-			} else if (strstr((r_name + r_ptr->name), "Gothmog, the High Captain of Balrogs")) {
+#endif
+			} else if (r_idx == RI_GOTHMOG) {
 				a_idx = ART_GOTHMOG;
 				chance = 80;
-			} else if (strstr((r_name + r_ptr->name), "Eol, the Dark Elf")) {
+			} else if (r_idx == RI_EOL) {
 				if (magik(25)) a_idx = ART_ANGUIREL;
 				else a_idx = ART_EOL;
 				chance = 65;
-			} else if (strstr((r_name + r_ptr->name), "Kronos, Lord of the Titans")) {
+			} else if (r_idx == RI_KRONOS) {
 				a_idx = ART_KRONOS;
 				chance = 80;
-			} else if (strstr((r_name + r_ptr->name), "Artsi, the Champion of Chaos")) {
+			} else if (r_idx == RI_ARTSI) {
 				a_idx = ART_FIST;
 				chance = 33;
 			/* Wyrms have a chance of dropping The Amulet of Grom, the Wyrm Hunter: -C. Blue */

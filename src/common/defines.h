@@ -1373,8 +1373,11 @@
    (mimic_shaman_E, mimic_druid, mimic_vampire, check_experience(), do_cmd_check_extra_info()).) */
 #define RI_LEPER		13
 #define RI_NOVICE_MAGE		46
+#define RI_SMEAGOL		63	/* DROP_CHOSEN */
 #define RI_NOVICE_MAGE_F	93
+#define RI_ROBIN_HOOD		138	/* DROP_CHOSEN */
 #define RI_NURGLING		139
+#define RI_PINK_HORROR		242	/* DROP_CHOSEN */
 #define RI_UFTHAK		260
 #define RI_BEARER_NURGLE	268
 #define RI_DOOR_MIMIC		311
@@ -1383,14 +1386,24 @@
 #define RI_BEAST_NURGLE		422
 #define RI_HALF_TROLL		491	/* TROLL_REGENERATION */
 #define RI_BLOODLETTER		523
+#define RI_RAALS_TOME		557	/* DROP_CHOSEN */
+#define RI_EOL			660	/* DROP_CHOSEN */
+#define RI_WARRIOR_DAWN		693	/* DROP_CHOSEN */
+#define RI_STORMBRINGER		698	/* DROP_CHOSEN */
 #define RI_SANTA1		733	/* terror santa from hell */
 #define RI_GUO			736
+#define RI_ARTSI		770	/* DROP_CHOSEN */
+#define RI_SARUMAN		771	/* DROP_CHOSEN */
+#define RI_VLAD_DRACULA		780	/* DROP_CHOSEN */
+#define RI_MARDRA		791	/* DROP_CHOSEN */
 #ifdef ENABLE_OHERETICISM
  #define RI_BLOODTHIRSTER	758
 #endif
 #define RI_UNMAKER		815	/* prevent live spawn */
 #define RI_DOL_GULDUR		819	/* 'easy' version of sauron */
+#define RI_MEPHISTOPHELES	831	/* DROP_CHOSEN */
 #define RI_OREMORJ		843	/* note: jokeangband */
+#define RI_GOTHMOG		856	/* DROP_CHOSEN */
 #define RI_SAURON		860
 #define RI_MORGOTH		862
 
@@ -1405,7 +1418,9 @@
 #define RI_KHAMUL		953
 #define RI_WITCHKING		954
 
+#define RI_GORLIM		961	/* DROP_CHOSEN */
 #define RI_TIK_SRVZLLAT		1032
+#define RI_KRONOS		1037	/* DROP_CHOSEN */
 #define RI_LIVING_LIGHTNING	1147
 #define RI_HELLRAISER		1067
 #define RI_NETHER_GUARD		1068
