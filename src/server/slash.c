@@ -5179,14 +5179,18 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #endif
 			}
 			return;
-		} else if (prefix(messagelc, "/forms")) { /* shortcut for mimics for ~ 2 @ ESC */
+		} else if (prefix(messagelc, "/forms")) { /* [minlev] -- shortcut for mimics for ~ 2 @ ESC */
 			char learnt = '@';
 
 			if (!get_skill(p_ptr, SKILL_MIMIC)) {
 				msg_print(Ind, "\377yYou cannot use mimicry.");
 				return;
 			}
-			do_cmd_show_monster_killed_letter(Ind, &learnt, 0, FALSE);
+			if (tk && (k < 0 || k > 100)) {
+				msg_print(Ind, "\377yUsage: /forms [min level]  -- where level must be 0..100 or omitted.");
+				return;
+			}
+			do_cmd_show_monster_killed_letter(Ind, &learnt, tk ? k : 0, FALSE);
 			return;
 		} else if (!strcmp(messagelc, "/ta")) { /* non-lua equivalent to ta() that toggles admin state irreversibly (as non-admins cannot invoke lua) */
 			if (admin) msg_print(Ind, "Already an admin.");

@@ -1507,7 +1507,9 @@ They all start with a slash '/' hence they're called slash commands:
 
 /flip       Same as /coin.
 
-/forms      Mimicry-users only: Shows all monster forms you have learned.
+/forms [min level]
+            Mimicry-users only: Shows all monster forms you have learned.
+            A minimum monster level can be specified optionally.
             (This is a convenient shortcut for pressing  ~ 2 @ ESC  .)
 
 /ftkon      Enables, and respectively..
