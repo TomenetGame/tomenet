@@ -457,7 +457,7 @@ static bool wild_monst_aux_town(int r_idx) {
 
 #if 0
 	/* Maggot is allowed :) */
-	if (!strcmp(&r_name[r_ptr->name], "Farmer Maggot")) return TRUE;
+	if (r_idx == RI_FARMER_MAGGOT) return TRUE;
 #endif
 
 	if (r_ptr->flags8 & RF8_WILD_TOWN) return TRUE;
@@ -937,9 +937,7 @@ static bool wild_monst_aux_invaders(int r_idx) {
 
 	/* invader species */
 	if (strchr("oTpOKbrm", r_ptr->d_char)) return TRUE;
-	if (!strcmp(&r_name[r_ptr->name], "Dark elven mage")) return TRUE;
-	if (!strcmp(&r_name[r_ptr->name], "Dark elven priest")) return TRUE;
-	if (!strcmp(&r_name[r_ptr->name], "Dark elven warrior")) return TRUE;
+	if (my_strcasestr(r_name + r_ptr->name, "Dark-el") && r_ptr->level <= 12) return TRUE;
 
 	return FALSE;
 }

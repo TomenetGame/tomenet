@@ -1371,6 +1371,7 @@
    (Note -- the following code parts still use hard-coded numbers:
    taunt_monsters(), calc_body_bonus(), fountain_guard(), and mimic form handling:
    (mimic_shaman_E, mimic_druid, mimic_vampire, check_experience(), do_cmd_check_extra_info()).) */
+#define RI_FARMER_MAGGOT	8
 #define RI_LEPER		13
 #define RI_NOVICE_MAGE		46
 #define RI_SMEAGOL		63	/* DROP_CHOSEN */
