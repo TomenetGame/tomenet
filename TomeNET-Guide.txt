@@ -8245,13 +8245,17 @@ level of the dungeon floor. With a few random exceptions sometimes.)
 
 (4.5d) Dungeon bosses
 ---------------------
-Most dungeons have a dungeon boss at the final floor, which in most cases has a
-chance to drop a specific artifact. Morgoth and Zu-Aon always drop certain
-fixed artifacts. All other dungeon bosses can only drop their specific artifact
-if it has not already been found, and even then they only have a static 1/3
-(1 in 3) chance to drop it (this flat 1-in-3 chance overrides any 'rarity' that
-may be specified in the artifact spoiler files - that rarity value only counts
-for artifacts not dropped by dungeon bosses).
+Most dungeons have a dungeon boss (FINAL_GUARDIAN) at the final floor, which
+in most cases has a chance to drop a specific artifact (FINAL_ARTIFACT) or
+(in rare cases) a specific (non-artifact) item (FINAL_OBJECT).
+If a boss cannot or will not drop a final artifact, a random stat potion is
+dropped instead (in addition to the usual loot).
+Morgoth and Zu-Aon always drop certain fixed artifacts.
+All other dungeon bosses can only drop their specific artifact if it has not
+already been found, and even then they only have a static 1/3 (1 in 3) chance
+to drop it (this flat 1-in-3 chance overrides any 'rarity' that may be
+specified in the artifact spoiler files - that rarity value only counts for
+artifacts not dropped by dungeon bosses).
 The bosses have different probabilities to appear, but none of them is overly
 rare (Azog being one of the rarer ones), so just reset the level a couple of
 times until you find the boss (by leaving the level, waiting for a little bit,
@@ -8267,8 +8271,8 @@ flag, which means you will usually get especially good loot from them.
 
 Dungeon bosses will bump the floor feeling up to at least 'special', same as
 any other unique monsters do (see (4.8) for more info about floor feelings).
-Unlike "normal" unique monsters, a dungeon boss will never respawn for you once
-you got kill credit for it.
+Unlike "normal" unique monsters, a dungeon boss will never respawn for you
+once you got kill credit for it.
 
 Here is a list of all dungeon bosses and the artifacts they are guarding:
 (Some names have been shortened to fit.)
