@@ -6143,9 +6143,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		s_printf("GF_SILENCE: chance i=%d, duration k=%d\n", i, k);
 #endif
 		/* test resistance */
-		if (!((r_ptr->flags4 & RF4_SPELLCASTER_MASK) |
-		    (r_ptr->flags5 & RF5_SPELLCASTER_MASK) |
-		    (r_ptr->flags6 & RF6_SPELLCASTER_MASK) |
+		if (!((r_ptr->flags4 & RF4_SPELLCASTER_MASK) ||
+		    (r_ptr->flags5 & RF5_SPELLCASTER_MASK) ||
+		    (r_ptr->flags6 & RF6_SPELLCASTER_MASK) ||
 		    (r_ptr->flags0 & RF0_SPELLCASTER_MASK)) ||
 		    (r_ptr->level >= 98 && (r_ptr->flags1 & RF1_UNIQUE)) ||
 		     m_ptr->silenced != 0) { /* successful attempt also leads to cooldown! */
@@ -13251,9 +13251,9 @@ int approx_damage(int m_idx, int dam, int typ) {
 
 	switch (typ) {
 	case GF_SILENCE:
-		if (!((r_ptr->flags4 & RF4_SPELLCASTER_MASK) |
-		    (r_ptr->flags5 & RF5_SPELLCASTER_MASK) |
-		    (r_ptr->flags6 & RF6_SPELLCASTER_MASK) |
+		if (!((r_ptr->flags4 & RF4_SPELLCASTER_MASK) ||
+		    (r_ptr->flags5 & RF5_SPELLCASTER_MASK) ||
+		    (r_ptr->flags6 & RF6_SPELLCASTER_MASK) ||
 		    (r_ptr->flags0 & RF0_SPELLCASTER_MASK)) ||
 		    (r_ptr->level >= 98 && (r_ptr->flags1 & RF1_UNIQUE)))
 			dam = 0;

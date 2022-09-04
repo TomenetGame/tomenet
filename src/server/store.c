@@ -406,7 +406,7 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 
 static int player_store_factor(object_type *o_ptr, bool modified) {
 	if ((o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED) ||
-	    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION) |
+	    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION) ||
 	    (o_ptr->name1 == ART_RANDART)) {
 		if (modified) return PSTORE_MIN_FACTOR_SPECIAL;
 		else return PSTORE_FACTOR_SPECIAL;
