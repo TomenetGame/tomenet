@@ -22366,7 +22366,8 @@ Some monsters that people often get killed by are:
 
 -The Stormbringer, an animated blade that bears mad wrath within. It swings
  so powerful that it can knockout its enemies with ease. Defeating it,
- however, will make it usable to its defeater!
+ however, will make it usable to its vanquisher (unless you are royalty, in
+ which case it will not drop)!
  If you dare wielding this weapon be prepared that it will defy you and even
  attack your own allies, possibly killing them! Only towns are safe zones.
 
