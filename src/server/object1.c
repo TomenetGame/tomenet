@@ -6900,7 +6900,7 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 			if (!i_ptr->k_idx) continue;
 
  #ifdef ENABLE_SUBINVEN
-			/* Antistatic Wrapping: Check for staves of perception/*perception*, rods of perception */
+			/* Antistatic Wrapping: Check for staves of perception / *perception*, rods of perception */
 			if (i_ptr->tval == TV_SUBINVEN) {
 				j = -1;
 				/* Do loop over the subinven now */
