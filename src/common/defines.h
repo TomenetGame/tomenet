@@ -1377,7 +1377,9 @@
 #define RI_NOVICE_MAGE_F	93
 #define RI_ROBIN_HOOD		138	/* DROP_CHOSEN */
 #define RI_NURGLING		139
+#define RI_BLUE_HORROR		189
 #define RI_PINK_HORROR		242	/* DROP_CHOSEN */
+#define RI_SOFTWARE_BUG		246
 #define RI_UFTHAK		260
 #define RI_BEARER_NURGLE	268
 #define RI_DOOR_MIMIC		311
@@ -1388,7 +1390,7 @@
 #define RI_BLOODLETTER		523
 #define RI_RAALS_TOME		557	/* DROP_CHOSEN */
 #define RI_EOL			660	/* DROP_CHOSEN */
-#define RI_WARRIOR_DAWN		693	/* DROP_CHOSEN */
+#define RI_WARRIOR_DAWN		693
 #define RI_STORMBRINGER		698	/* DROP_CHOSEN */
 #define RI_SANTA1		733	/* terror santa from hell */
 #define RI_GUO			736
@@ -1406,6 +1408,7 @@
 #define RI_GOTHMOG		856	/* DROP_CHOSEN */
 #define RI_SAURON		860
 #define RI_MORGOTH		862
+#define RI_RNG			869
 
 /* The Nazgul */
 #define RI_UVATHA		946

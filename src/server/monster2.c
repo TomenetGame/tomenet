@@ -4506,7 +4506,7 @@ static bool summon_specific_okay(int r_idx) {
 		break;
 #endif	// 0
 	case SUMMON_DAWN:
-		okay = (strstr(r_name + r_ptr->name, "the Dawn") &&
+		okay = (r_idx == RI_WARRIOR_DAWN &&
 		    !(r_ptr->flags1 & RF1_UNIQUE));
 		break;
 	case SUMMON_ANIMAL:
@@ -4552,15 +4552,15 @@ static bool summon_specific_okay(int r_idx) {
 		    );
 		break;
 	case SUMMON_BLUE_HORROR:
-		okay = (strstr(r_name + r_ptr->name, "lue horror") &&
+		okay = (r_idx == RI_BLUE_HORROR &&
 		    !(r_ptr->flags1 & RF1_UNIQUE));
 		break;
 	case SUMMON_BUG:
-		okay = (strstr(r_name + r_ptr->name, "Software bug") &&
+		okay = (r_idx == RI_SOFTWARE_BUG &&
 		    !(r_ptr->flags1 & RF1_UNIQUE));
 		break;
 	case SUMMON_RNG:
-		okay = (strstr(r_name + r_ptr->name, "Random Number Generator") &&
+		okay = (r_idx == RI_RNG &&
 		    !(r_ptr->flags1 & RF1_UNIQUE));
 		break;
 	case SUMMON_IMMOBILE:
