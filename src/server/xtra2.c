@@ -7258,8 +7258,16 @@ if (cfg.unikill_format) {
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 		/* PernAngband additions */
-		/* Mega^2-hack -- destroying the Stormbringer gives it us! */
-		} else if (r_idx == RI_STORMBRINGER) {
+		/* Mega^2-hack -- destroying the Stormbringer gives it us! But we cannot farm it for others as winner >_>. */
+#ifdef PRE_OWN_DROP_CHOSEN
+ /* Stormbringer maybe not pre-owned? hm. */
+ //#define STORMBRINGER_PRE_OWN
+#endif
+		} else if (r_idx == RI_STORMBRINGER
+#ifndef STORMBRINGER_PRE_OWN
+		    && !p_ptr->total_winner
+#endif
+		    ) {
 			/* Get local object */
 			qq_ptr = &forge;
 
@@ -7276,14 +7284,13 @@ if (cfg.unikill_format) {
 			apply_magic(wpos, qq_ptr, -1, FALSE, FALSE, FALSE, FALSE, RESF_NONE);
 
 			qq_ptr->level = 0;
-#if 0 /* Stormbringer not pre-owned? hm. */
-#ifdef PRE_OWN_DROP_CHOSEN
+
+#ifdef STORMBRINGER_PRE_OWN
 			qq_ptr->level = 0;
 			qq_ptr->owner = p_ptr->id;
 			qq_ptr->mode = p_ptr->mode;
 			qq_ptr->iron_trade = p_ptr->iron_trade;
 			qq_ptr->iron_turn = -1;
-#endif
 #endif
 
 			qq_ptr->ident |= ID_CURSED;
