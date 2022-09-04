@@ -2154,14 +2154,14 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				msg_format(Ind, "You must at least be level %d to pick up items above your level.", cfg.newbies_cannot_drop);
 				if (!is_admin(p_ptr)) return;
 			}
-#if 1
+ #if 1
 			/* this is for a similar purpose: in the inn, don't allow picking up items that we can't immediately use */
 			else if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) && p_ptr->lev < o_ptr->level
 			    && !in_irondeepdive(&p_ptr->wpos)) {
 				msg_print(Ind, "Inside an inn you cannot pick up items that are higher level than you.");
 				if (!is_admin(p_ptr)) return;
 			}
-#endif
+ #endif
 			else if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup)
 			//else if (artifact_p(o_ptr) && cfg.anti_arts_pickup)
 			{
