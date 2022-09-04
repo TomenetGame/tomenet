@@ -1726,7 +1726,7 @@ void admin_outfit(int Ind, int realm) {
 	o_ptr->mode = p_ptr->mode; \
 	o_ptr->level = 0; \
 	o_ptr->discount = 100; /* <- replaced this by making level-0-items unsellable in general */ \
-	/* if (!o_ptr->note) o_ptr->note = quark_add(""); /* hack to hide 'unsalable' (or formerly '100% off') tag? */ \
+	/* if (!o_ptr->note) o_ptr->note = quark_add(""); -- hack to hide 'unsalable' (or formerly '100% off') tag? */ \
 	(void)inven_carry_equip(Ind, o_ptr);
   #else
     #define do_player_outfit()	\
