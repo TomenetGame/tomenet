@@ -3468,12 +3468,14 @@ void do_cmd_options_mus_sdl(void) {
 	while (go) {
 #ifdef ENABLE_JUKEBOX
  #ifdef USER_VOLUME_MUS
-		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377y#\377w/\377ys\377w select, \377yc\377w cur., \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yv\377w volume, \377yESC\377w leave, \377BRETURN\377w play");
+		//Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377y#\377w/\377ys\377w select, \377yc\377w cur., \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yv\377w volume, \377yESC\377w leave, \377BRETURN\377w play");
+		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377y#\377w/\377ys\377w select, \377yc\377w cur., \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yv\377w/\377y+\377w/\377y-\377w volume, \377BRETURN\377w play");
  #else
 		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377y#\377w/\377ys\377w select/search, \377yc\377w current, \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yESC\377w leave, \377BRETURN\377w play");
  #endif
 		//Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this page)");
-		Term_putstr(0, 1, -1, TERM_WHITE, format(" \377wChanges auto-save on leaving this UI.   \377BLEFT\377w Backward %d s, \377BRIGHT\377w Forward %d s", MUSIC_SKIP, MUSIC_SKIP));
+		//Term_putstr(0, 1, -1, TERM_WHITE, format(" \377wChanges auto-save on leaving this UI.   \377BLEFT\377w Backward %d s, \377BRIGHT\377w Forward %d s", MUSIC_SKIP, MUSIC_SKIP));
+		Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yESC \377wLeave and auto-save all changes.   \377BLEFT\377w Backward %d s, \377BRIGHT\377w Forward %d s", MUSIC_SKIP, MUSIC_SKIP));
 		curmus_y = -1; //assume not visible (outside of visible song list)
 #else
  #ifdef USER_VOLUME_MUS
@@ -3760,6 +3762,35 @@ void do_cmd_options_mus_sdl(void) {
 			if (j_sel == music_cur) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, i));
 			break;
 			}
+		case '+':
+			i = songs[j_sel].volume;
+			if (!i) i = 100;
+			i += 10;
+			if (i == 11) i = 10; //min is 1, not 0, compensate in this opposite direction
+			if (i == 100) i = 0;
+			else if (i > 200) i = 200;
+			songs[j_sel].volume = i;
+
+			/* If song is currently playing, adjust volume live.
+			   (Note: If the selected song was already playing in-game via play_music_vol() this will ovewrite the volume
+			   and cause 'wrong' volume, but when it's actually re-played via play_music_vol() the volume will be correct.) */
+			if (!i) i = 100; /* Revert to default volume */
+			if (j_sel == music_cur) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, i));
+			break;
+		case '-':
+			i = songs[j_sel].volume;
+			if (!i) i = 100;
+			i -= 10;
+			if (i == 100) i = 0;
+			else if (i < 1) i = 1;
+			songs[j_sel].volume = i;
+
+			/* If song is currently playing, adjust volume live.
+			   (Note: If the selected song was already playing in-game via play_music_vol() this will ovewrite the volume
+			   and cause 'wrong' volume, but when it's actually re-played via play_music_vol() the volume will be correct.) */
+			if (!i) i = 100; /* Revert to default volume */
+			if (j_sel == music_cur) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, i));
+			break;
 #endif
 
 		case 'c': /* Jump to currently playing song */
