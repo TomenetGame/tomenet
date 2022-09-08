@@ -4846,10 +4846,10 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 					else msg_format(Ind, "You twist the neck of the %s%s for \377p%d \377wdamage.", sleep_stab ? "the sleeping " : "", m_name_raw, k);
 				} else {
 					if (r_ptr->flags1 & RF1_UNIQUE) {
-						msg_format(Ind, "\377%cYou stab %s%s for \377e%d \377%cdamage.", uniq, sleep_stab ? "the sleeping" : "", m_name_raw, k, uniq);
+						msg_format(Ind, "\377%cYou stab %s%s for \377e%d \377%cdamage.", uniq, sleep_stab ? "the sleeping " : "", m_name_raw, k, uniq);
 						if (uniq_bell) Send_beep(Ind);
 					}
-					else msg_format(Ind, "You stab %s%s for \377p%d \377wdamage.", sleep_stab ? "the sleeping" : "", m_name_raw, k);
+					else msg_format(Ind, "You stab %s%s for \377p%d \377wdamage.", sleep_stab ? "the sleeping " : "", m_name_raw, k);
 				}
 			}
 			else if (stab_fleeing) {
