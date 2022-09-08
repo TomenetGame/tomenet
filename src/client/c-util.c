@@ -9439,8 +9439,9 @@ static void do_cmd_options_colourblindness(void) {
 			Term_putstr(0, l++, -1, TERM_WHITE, "(\377yr\377w) Reset palette to values from current rc-file");
 #endif
 		} else {
-			Term_putstr(0, l++, -1, TERM_L_RED, "Sorry, palette-related colour options are not");
-			Term_putstr(0, l++, -1, TERM_L_RED, "modifiable in command-line client mode (GCU).");
+			Term_putstr(0, l++, -1, TERM_L_RED, "Sorry, palette-colours and related options are not");
+			Term_putstr(0, l++, -1, TERM_L_RED, "modifiable in command-line client mode (GCU) or if");
+			Term_putstr(0, l++, -1, TERM_L_RED, "the 'palette_animation' option (=1) is disabled.");
 			l += 5;
 		}
 
@@ -9530,6 +9531,7 @@ static void do_cmd_options_colourblindness(void) {
 
 			client_color_map[i] = (r << 16) | (g << 8) | b;
 			set_palette(i, r, g, b);
+			refresh_palette();
 			break;
 
 		case 'n':
@@ -9538,6 +9540,7 @@ static void do_cmd_options_colourblindness(void) {
 				client_color_map[i] = client_color_map_org[i];
 				set_palette(i, (client_color_map[i] & 0xFF0000) >> 16, (client_color_map[i] & 0x00FF00) >> 8, (client_color_map[i] & 0x0000FF));
 			}
+			refresh_palette();
 			break;
 
 		case 'd':
@@ -9546,6 +9549,7 @@ static void do_cmd_options_colourblindness(void) {
 				client_color_map[i] = client_color_map_deu[i];
 				set_palette(i, (client_color_map[i] & 0xFF0000) >> 16, (client_color_map[i] & 0x00FF00) >> 8, client_color_map[i] & 0x0000FF);
 			}
+			refresh_palette();
 			break;
 
 		case 'p':
@@ -9554,6 +9558,7 @@ static void do_cmd_options_colourblindness(void) {
 				client_color_map[i] = client_color_map_pro[i];
 				set_palette(i, (client_color_map[i] & 0xFF0000) >> 16, (client_color_map[i] & 0x00FF00) >> 8, client_color_map[i] & 0x0000FF);
 			}
+			refresh_palette();
 			break;
 
 		case 't':
@@ -9562,6 +9567,7 @@ static void do_cmd_options_colourblindness(void) {
 				client_color_map[i] = client_color_map_tri[i];
 				set_palette(i, (client_color_map[i] & 0xFF0000) >> 16, (client_color_map[i] & 0x00FF00) >> 8, client_color_map[i] & 0x0000FF);
 			}
+			refresh_palette();
 			break;
 
 		case 's':
@@ -9600,6 +9606,7 @@ static void do_cmd_options_colourblindness(void) {
 			l = OCB_CMD_Y;
 			Term_putstr(0, l, -1, TERM_L_WHITE, "Colours reset from Configuration file.");
 			c_message_add("Colours reset from configuration file.");
+			refresh_palette();
 			break;
 
 		default:
@@ -9611,7 +9618,7 @@ static void do_cmd_options_colourblindness(void) {
 		if (!go) break;
 
 		/* Redraw ALL windows with new palette colours */
-		if (!c_cfg.palette_animation) refresh_palette();
+		//if (!c_cfg.palette_animation) refresh_palette();
 	}
 }
 
