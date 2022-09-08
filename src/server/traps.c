@@ -2720,6 +2720,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 	if (magik(vanish)) {
 		struct c_special *cs_ptr = GetCS(c_ptr, CS_TRAPS);
 
+		/* Trap on the floor (-1) */
 		if (item < 0) {
 			cs_erase(c_ptr, cs_ptr);
 
@@ -2729,10 +2730,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			/* since player is no longer moved onto the trap on triggering it,
 			   we have to redraw the grid (noticed this on door traps) */
 			everyone_lite_spot(wpos, y, x);
-		} else {
-			i_ptr->pval = 0;
-			if (i_ptr->tval == TV_CHEST) destroy_chest(i_ptr);
 		}
+		/* Trap on a chest lying around (c_ptr->o_idx) */
+		else if (i_ptr->tval == TV_CHEST) destroy_chest(i_ptr);
 
 		ident = FALSE;
 	} else if (!p_ptr->warning_trap) {

@@ -1672,9 +1672,9 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 
-	//int		i, d, ny, nx;
-	int		number, little;
-	long		cash;
+	//int i, d, ny, nx;
+	int number, little;
+	long cash;
 
 	if (!(zcave = getcave(wpos))) return;
 
@@ -1750,7 +1750,7 @@ static void chest_trap(int Ind, int y, int x, int o_idx) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &o_list[o_idx];
 
-	int  trap;
+	int trap;
 	bool ident = FALSE;
 
 	/* Only analyze chests */
@@ -1773,10 +1773,8 @@ static void chest_trap(int Ind, int y, int x, int o_idx) {
 	/* Set off trap */
 	ident = player_activate_trap_type(Ind, y, x, o_ptr, o_idx);
 
-	/* Some traps may destroy the chest */
-	if (o_ptr && ident && !p_ptr->trap_ident[o_ptr->pval])
-	{
-		p_ptr->trap_ident[o_ptr->pval] = TRUE;
+	if (ident && !p_ptr->trap_ident[trap]) {
+		p_ptr->trap_ident[trap] = TRUE;
 		msg_format(Ind, "You identified the trap as %s.", t_name + t_info[trap].name);
 	}
 }
@@ -2756,7 +2754,7 @@ void do_cmd_open(int Ind, int dir) {
 				stop_shooting_till_kill(Ind);
 
 				/* Some traps might destroy the chest on setting off */
-				if (o_ptr)
+				if (o_ptr->sval != SV_CHEST_RUINED)
 					/* Let the Chest drop items */
 					chest_death(Ind, y, x, o_ptr);
 			}

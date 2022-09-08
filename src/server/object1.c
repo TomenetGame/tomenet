@@ -2748,7 +2748,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			t = object_desc_str(t, " (shut tight)"); /* To visually distinguish this lootable chest from subinven-chests in our inventory */
 #endif
 		}
-		/* May be "empty" - cannot happen with SUBINVEN_CHESTS as chests will be immediately converted to TV_SUBINVEN on emptying. */
+		/* May be "empty" - cannot happen with SUBINVEN_CHESTS as chests will be immediately converted to TV_SUBINVEN on emptying, except for Ruined Chests. */
 		else if (!o_ptr->pval)
 			t = object_desc_str(t, " (empty)");
 		/* May be "disarmed" */
