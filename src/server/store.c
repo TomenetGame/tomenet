@@ -425,6 +425,7 @@ s64b price_item_player_store(int Ind, object_type *o_ptr) {
 	if (!o_ptr->name1 && o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && o_ptr->bpval >= 0) {
 		/* hack: grab ego power cost */
 		int tmp_bpval = o_ptr->bpval;
+
 		o_ptr->bpval = 0;
 		price = object_value_real(0, o_ptr);
 		o_ptr->bpval = tmp_bpval;
