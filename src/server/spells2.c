@@ -7796,7 +7796,7 @@ bool destroy_traps_touch(int Ind, int rad) {
 		msg_print(Ind, "Click!");
 		seen = TRUE;
 	}
-	return seen ||
+	return seen +
 #else
 	return
 #endif
