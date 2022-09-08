@@ -13551,6 +13551,8 @@ If a monster tries to hit you, the following happens:
    you don't take any damage, ie the monster misses you. If this doesn't
    succeed..
 5) your character takes damage, but your armour class will at least reduce it.
+   If disruption shield is active, the damage will instead hit your mana pool
+   instead of your hit points (unless you don't have enough mana).
 
 Note that some attacks can bypass some of those defenses.
 More info further below.
@@ -13567,6 +13569,8 @@ If a monster tries to shoot you, the following happens:
 4) your character may try to block the shot with a shield.
    If this doesn't succeed..
 5) your character takes damage. Armour class has no effect.
+   If disruption shield is active, the damage will instead hit your mana pool
+   instead of your hit points (unless you don't have enough mana).
 
 Monster is casting a spell that wounds you:
 -------------------------------------------
@@ -13581,6 +13585,8 @@ If a monster casts a spell at you, the following happens:
    If it isn't then your character may still try to cover behind a shield.
    If this doesn't succeed..
 5) your character takes damage. Armour class has no effect.
+   If disruption shield is active, the damage will instead hit your mana pool
+   instead of your hit points (unless you don't have enough mana).
 
 For details about parrying and blocking see (6.11).
 
