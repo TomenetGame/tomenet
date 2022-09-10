@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 8. September 2022 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 10. September 2022 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.8.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -18310,7 +18310,7 @@ All trolls      Sustain strength. Extraordinary HP regeneration (2x as fast as
                 from 'REGEN' flag, doesn't stack with items. 1.5x as fast for
                 Half-Troll form).
                 They even continue regenerating while suffering open cuts.
-All giants      Sustain strength.
+All giants      Sustain strength. (Note that all Ogres also count as giants.)
 All hydras      Extraordinary HP regeneration (2x as fast as from 'REGEN' flag,
                 doesn't stack with items), as they regrow their heads!
                 They even continue regenerating while suffering open cuts.
@@ -18385,7 +18385,7 @@ STR     Melee damage: -1..+4 (-1 won't apply if creature is very heavy though)
         Bears: +2
         Yetis and cousins: +1
         Trolls: +2
-        Giants: +2
+        Giants (Ogres are giants too): +2
         Dragons (mature and higher): +1
 INT     Cast speed (1_IN_1 to 1_IN_3): +1..+5
         (will also give up to +50% base mana)
@@ -18399,7 +18399,7 @@ DEX     Halfling forms when no boots are worn: +2
 CHR     Dragonriders: +1
         Small, non-nasty animals: +1
         Spiders, orcs: -1
-        Trolls, giants: -2
+        Trolls, giants (Ogres are giants too): -2
         Nonliving/evil creatures: -1
         Undead/demons: -2
         GOOD creatures: +2
