@@ -2099,7 +2099,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	if (strstr(mname, "bear") && (r_ptr->flags3 & RF3_ANIMAL)) i += FORM_STAT_BONUS_MEDIUM; /* Bears get +STR */
 	if (r_ptr->d_char == 'Y' && (r_ptr->flags3 & RF3_ANIMAL)) i += FORM_STAT_BONUS_SMALL; /* Yeti/Sasquatch get +STR */
 	if (r_ptr->flags3 & RF3_TROLL) i += FORM_STAT_BONUS_MEDIUM;
-	if (r_ptr->flags3 & RF3_GIANT) i += FORM_STAT_BONUS_MEDIUM;
+	if (r_ptr->flags3 & RF3_GIANT) i += FORM_STAT_BONUS_MEDIUM; //note that Ogres are also GIANT
 	if ((r_ptr->flags3 & RF3_DRAGON) && (strstr(mname, "mature ") ||
 	    (r_ptr->d_char == 'D')))
 		i += FORM_STAT_BONUS_SMALL; /* only +1 since more bonus is coming from its damage already */
