@@ -177,8 +177,8 @@ D:Ability to move without waking up monsters.
 I:1000:0
 
 N:24:Stealing
-D:Ability to steal objects from stores, or objects and money from
-D:other people. This knowledge also protects you from robbery.
+D:Ability to steal items from stores, or items and money from other people.
+D:This knowledge also makes it harder for others to steal from you.
 I:1000:0
 
 N:25:Necromancy
