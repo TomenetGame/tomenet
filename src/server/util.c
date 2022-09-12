@@ -1315,19 +1315,12 @@ void sound_near(int Ind, cptr name, cptr alternative, int type) {
 		d = distance(Players[Ind]->py, Players[Ind]->px, Players[i]->py, Players[i]->px);
 		if (d > MAX_SIGHT) continue;
 
-#ifndef SFX_SHRIEK_VOLUME
-		if (strcmp(name, "shriek") || !Players[i]->quiet_sfx_shriek)
-			sound(i, name, alternative, type, FALSE);
-		else
-			sound_vol(i, name, alternative, type, FALSE, 33);
-#else
-		if (strcmp(name, "shriek"))
-			sound(i, name, alternative, type, FALSE);
-		else if (Players[i]->quiet_sfx_shriek)
-			sound_vol(i, name, alternative, type, FALSE, SFX_SHRIEK_VOLUME / 3);
-		else
+#ifdef SFX_SHRIEK_VOLUME
+		if (!strcmp(name, "shriek"))
 			sound_vol(i, name, alternative, type, FALSE, SFX_SHRIEK_VOLUME);
+		else
 #endif
+		sound(i, name, alternative, type, FALSE);
 	}
 }
 /* send sound to all players nearby a certain location, and allow to specify

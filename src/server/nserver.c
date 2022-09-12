@@ -2316,7 +2316,6 @@ static void sync_options(int Ind, bool *options) {
 			p_ptr->sfx_magicattack = TRUE;
 			p_ptr->sfx_defense = TRUE;
 			p_ptr->sfx_monsterattack = TRUE;
-			p_ptr->quiet_sfx_shriek = FALSE;
 			p_ptr->sfx_store = FALSE;
 			p_ptr->sfx_house_quiet = TRUE;
 			p_ptr->sfx_house = TRUE;
@@ -2336,7 +2335,6 @@ static void sync_options(int Ind, bool *options) {
 			p_ptr->sfx_magicattack = !options[48];
 			p_ptr->sfx_defense = !options[49];
 			p_ptr->sfx_monsterattack = !options[93];
-			p_ptr->quiet_sfx_shriek = options[94];
 			p_ptr->sfx_store = TRUE; //!options[96];
 			p_ptr->sfx_house_quiet = options[97];
 			p_ptr->sfx_house = !options[98];
@@ -2546,7 +2544,9 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->half_sfx_attack = options[96];
 		p_ptr->cut_sfx_attack = options[97];
 		p_ptr->sfx_monsterattack = !options[103];
-		p_ptr->quiet_sfx_shriek = options[104];
+		if (is_atleast(&p_ptr->version, 4, 8, 1, 1, 0, 0)) //was p_ptr->quiet_sfx_shriek
+			p_ptr->positional_audio = options[104];
+		else p_ptr->positional_audio = FALSE;
 		p_ptr->sfx_store = TRUE;//!options[105];
 		p_ptr->sfx_house_quiet = options[106];
 		p_ptr->sfx_house = !options[107];
