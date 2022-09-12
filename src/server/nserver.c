@@ -8129,9 +8129,11 @@ int Send_target_info(int Ind, int x, int y, cptr str) {
 	}
 	return Packet_printf(&connp->c, "%c%c%c%s", PKT_TARGET_INFO, x, y, buf);
 }
-/* type is for client-side, regarding efficiency options;
-   vol is the relative volume, if it stems from a source nearby instead of concerning the player directly;
-   player_id is the player it actually concerns; - C. Blue */
+/* This function was used even without USE_SOUND_2010, in the old sound system. At the same time it is
+   now also used as base sfx transmit function for the new USE_SOUND_2010. - C. Blue
+    type is for client-side, regarding efficiency options;
+    vol is the relative volume, if it stems from a source nearby instead of concerning the player directly;
+    player_id is the player it actually concerns. */
 int Send_sound(int Ind, int sound, int alternative, int type, int vol, s32b player_id) {
 	player_type *p_ptr = Players[Ind];
 	connection_t *connp = Conn[p_ptr->conn];
@@ -8142,15 +8144,17 @@ int Send_sound(int Ind, int sound, int alternative, int type, int vol, s32b play
 	/* Catch extremely rare crash: Player gets item on birth, sound attempts to play, but connection is already gone again */
 	if (!connp) return 0;
 
+#ifdef USE_SOUND_2010
 	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) {
 		/* actually allow some critical sfx to pass */
 		if (sound != __sfx_bell && sound != __sfx_page && sound != __sfx_warning) return 0;
 	}
 
 	if (sound == __sfx_am && !p_ptr->sfx_am) return 0;
+#endif
 
 	/* If we're the target, we still hear our own sounds! */
-//	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) ;//nothing
+	//if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) ;//nothing
 	/* Get target player */
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) connp2 = Conn[p_ptr2->conn];
 	/* Send same info to target player, if available */

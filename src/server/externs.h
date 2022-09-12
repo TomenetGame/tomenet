@@ -2671,8 +2671,10 @@ extern unsigned char nether_realm_collapsing;
 extern int nrc_x, nrc_y, netherrealm_end_wz;
 
 extern bool sauron_weakened, sauron_weakened_iddc;
+#ifdef USE_SOUND_2010
 extern int __audio_sfx_max, __audio_mus_max;
 extern int __sfx_am, __sfx_bell, __sfx_page, __sfx_warning;
+#endif
 extern int WPOS_DF_X, WPOS_DF_Y, WPOS_DF_Z;
 
 /* character names temporarily reserved for specific accounts */
