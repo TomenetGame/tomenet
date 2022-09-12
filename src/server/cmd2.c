@@ -581,7 +581,7 @@ void do_cmd_go_up(int Ind) {
 #endif
 	} else {
 		if (p_ptr->safe_float_turns) {
-			msg_print(Ind, "Floating attempt blocked by client option.");
+			msg_print(Ind, "Floating attempt blocked by client option 'safe_float' (in '=6').");
 			return;
 		}
 
@@ -1444,7 +1444,7 @@ void do_cmd_go_down(int Ind) {
 #endif
 	} else {
 		if (p_ptr->safe_float_turns) {
-			msg_print(Ind, "Floating attempt blocked by client option.");
+			msg_print(Ind, "Floating attempt blocked by client option 'safe_float' (in '=6').");
 			return;
 		}
 
@@ -4948,7 +4948,7 @@ void do_cmd_disarm(int Ind, int dir) {
 				if (!is_newer_than(&p_ptr->version, 4, 7, 3, 0, 0, 0))
 					msg_print(Ind, "\374\377yHINT: Look into command \377o/edmt\377y for easier mass-disarming of monster traps.");
 				else
-					msg_print(Ind, "\374\377yHINT: Look into command \377o/edmt\377y and option \377oeasy_disarm_montraps\377y for easier mass-disarming of monster traps.");
+					msg_print(Ind, "\374\377yHINT: Look into command \377o/edmt\377y and option \377oeasy_disarm_montraps\377y (in '=7') for easier mass-disarming of monster traps.");
 				p_ptr->warning_edmt = 1;
 			}
 		}
