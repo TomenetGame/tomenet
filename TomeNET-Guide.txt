@@ -19756,7 +19756,7 @@ All Unlife spells are Wisdom-based.)
                     (This spell uses WISDOM to determine fail-rates!)
                     Required skill level for first spell level: 1.
 
-                    Tier II: Level 18.
+                    Tier II: Level 14.
                     Scares all nearby creatures.
 
     Blindness       Blinds your target.
@@ -19792,7 +19792,7 @@ All Unlife spells are Wisdom-based.)
                     If you are a trapper, you are probably aware that monster
                     traps on non-lit grids have a significantly reduced chance
                     to get disarmed by monsters (compare (4.7)).
-                    Required skill level for first spell level: 20.
+                    Required skill level for first spell level: 17.
 
     Shadow Gate     Teleports you to the nearest opponent in line of sight.
                     Required skill level for first spell level: 26.
@@ -20334,19 +20334,19 @@ In general, mindcraft schools are less affected by anti-magic fields.)
     Scare           Infuses your target's mind with fear.
                     Required skill level for first spell level: 1.
 
-                    Tier II: Level 15.
+                    Tier II: Level 10.
                     Affects all monsters in LoS (line of sight).
 
     Confuse         Infuses your target's mind with confusion.
                     Required skill level for first spell level: 3.
 
-                    Tier II: Level 18.
+                    Tier II: Level 14.
                     Affects all monsters in LoS.
 
     Hypnosis        Puts your target's mind to sleep.
                     Required skill level for first spell level: 5.
 
-                    Tier II: Level 20.
+                    Tier II: Level 18.
                     Affects all monsters in LoS.
 
     Apathy          Slows your target down, draining power from its muscles.
