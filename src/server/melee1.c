@@ -1469,9 +1469,9 @@ bool make_attack_melee(int Ind, int m_idx) {
 					    (rand_int(100 + UNAWARENESS(p_ptr)) <
 						 (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
 						  get_skill(p_ptr, SKILL_STEALING)
-#ifdef ENABLE_STANCES
+ #ifdef ENABLE_STANCES
 						  + (p_ptr->combat_stance == 1 ? 15 + p_ptr->combat_stance_power * 3 : 0)
-#endif
+ #endif
 						  )))
 #endif	// 0
 					{
@@ -1537,9 +1537,9 @@ bool make_attack_melee(int Ind, int m_idx) {
 					    (rand_int(100 + UNAWARENESS(p_ptr)) <
 						 (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
 						  get_skill(p_ptr, SKILL_STEALING)
-#ifdef ENABLE_STANCES
+ #ifdef ENABLE_STANCES
 						  + (p_ptr->combat_stance == 1 ? 15 + p_ptr->combat_stance_power * 3 : 0)
-#endif
+ #endif
 						  )))
 #endif	// 0
 					{
