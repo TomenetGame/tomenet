@@ -3357,14 +3357,12 @@ void do_cmd_steal(int Ind, int dir) {
 	/* Similar Hack -- Robber is hard to be robbed */
 	if (get_skill(q_ptr, SKILL_STEALING)) {
 		/* Increase chance by level */
-		success -= get_skill_scale(p_ptr, SKILL_STEALING, 100);
-		notice += get_skill_scale(p_ptr, SKILL_STEALING, 100);
+		success -= get_skill_scale(q_ptr, SKILL_STEALING, 120);
+		notice += get_skill_scale(q_ptr, SKILL_STEALING, 120);
 	}
 
 	/* Always small chance to fail */
 	if (success > 95) success = 95;
-	//if (notice < 5) notice = 5;
-
 	/* Hack -- Always small chance to succeed */
 	if (success < 2) success = 2;
 #else
@@ -3409,6 +3407,9 @@ void do_cmd_steal(int Ind, int dir) {
 
 			/* Always small chance to be noticed */
 			if (notice < 5) notice = 5;
+
+			/* Always very small chance to not be noticed */
+			if (notice > 99) notice = 99;
 
 			/* Check for target noticing */
 			if (rand_int(100) < notice) {
@@ -3521,11 +3522,13 @@ void do_cmd_steal(int Ind, int dir) {
 			}
 
 			/* Easier to notice heavier objects */
-			notice += forge.weight;
-			//	/ (get_skill_scale(SKILL_STEALING, 19) + 1);
+			notice += (forge.weight * (10 + get_skill_scale(q_ptr, SKILL_STEALING, 10))) / (10 + get_skill_scale(p_ptr, SKILL_STEALING, 10));
 
 			/* Always small chance to be noticed */
 			if (notice < 5) notice = 5;
+
+			/* Always very small chance to not be noticed */
+			if (notice > 99) notice = 99;
 
 			/* Check for target noticing */
 			if (rand_int(100) < notice) {
@@ -3542,7 +3545,7 @@ void do_cmd_steal(int Ind, int dir) {
 		if (notice < 5) notice = 5;
 
 		/* Easier to notice a failed attempt */
-		if (rand_int(100) < notice + 50) {
+		if (rand_int(100) < notice + 30) {
 			msg_format(0 - c_ptr->m_idx, "\377rYou notice %s trying to steal from you!", p_ptr->name);
 			caught = TRUE;
 		}
