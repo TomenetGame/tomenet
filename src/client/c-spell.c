@@ -1252,8 +1252,8 @@ void browse_school_spell(int item, int book, int pval) {
 	int sval = book;
 
 #ifdef USE_SOUND_2010
-	if (sval == SV_SPELLBOOK) sound(browse_sound_idx, SFX_TYPE_COMMAND, 100, 0);
-	else sound(browsebook_sound_idx, SFX_TYPE_COMMAND, 100, 0);
+	if (sval == SV_SPELLBOOK) sound(browse_sound_idx, SFX_TYPE_COMMAND, 100, 0, 0, 0);
+	else sound(browsebook_sound_idx, SFX_TYPE_COMMAND, 100, 0, 0, 0);
 #endif
 
 	sprintf(out_val, "return book_spells_num2(%d, %d)", item, sval);

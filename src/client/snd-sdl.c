@@ -1217,7 +1217,7 @@ static bool sound_sdl_init(bool no_cache) {
 /*
  * Play a sound of type "event". Returns FALSE if sound couldn't be played.
  */
-static bool play_sound(int event, int type, int vol, s32b player_id) {
+static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x, int dist_y) {
 	Mix_Chunk *wave = NULL;
 	int s, vols = 100;
 	bool test = FALSE;
@@ -1342,6 +1342,24 @@ static bool play_sound(int event, int type, int vol, s32b player_id) {
 		else
 			/* Note: Linear scaling is used here to allow more precise control at the server end */
 			Mix_Volume(s, CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * vol) / 100, vols));
+
+		/* Simple stereo-positioned audio, only along the x-coords */
+		/* compare distance-handling in util.c, keep consistent */
+#if 0
+		if (d > 20) d = 20;
+		d += 3;
+		d /= 3;
+		if (dist_x < 0) Mix_SetPanning(s, 255, -255 / dist_x);
+		else if (dist_x > 0) Mix_SetPanning(s, 255 / dist_x, 255);
+#else //wip
+ #if 0
+		dist = distance(0, 0, dist_y, dist_x);
+		if (dist_x) angle = 
+ #endif
+		/* it's "100 - (d * 50) / 11" scaled from 100 to 255.. */
+		if (dist_x < 0) Mix_SetPanning(s, 255, 255 + (dist_x * 127) / 28);
+		else if (dist_x > 0) Mix_SetPanning(s, 255 - (dist_x * 127) / 28, 255);
+#endif
 	}
 	samples[event].current_channel = s;
 	samples[event].started_timer_tick = ticks;
@@ -2310,7 +2328,6 @@ static bool play_music_vol(int event, char vol) {
 	/* if music event is the same as is already running, don't do anything */
 	if (music_cur == event && Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT) {
 		/* Just change volume if requested */
-c_msg_format("WTF %d", vol);
 		if (music_vol != vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[(int)vol]) / MIX_MAX_VOLUME, vols));
 		music_vol = vol;
 		return TRUE; //pretend we played it
@@ -2318,7 +2335,6 @@ c_msg_format("WTF %d", vol);
 
 	music_next = event;
 	music_vol = vol;
-c_msg_format("WTF %d", vol);
 	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[(int)vol]) / MIX_MAX_VOLUME, vols));
 	/* handle 'initial' songs with priority */
 	for (n = 0; n < songs[music_next].num; n++) if (songs[music_next].initial[n]) initials++;
@@ -2744,7 +2760,7 @@ errr re_init_sound_sdl(void) {
 	audio_music = 0;
 
 	/*void (*mixing_hook)(void);
-	bool (*sound_hook)(int sound, int type, int vol, s32b player_id);
+	bool (*sound_hook)(int sound, int type, int vol, s32b player_id, int dist_x, int dist_y);
 	void (*sound_ambient_hook)(int sound_ambient);
 	void (*sound_weather_hook)(int sound);
 	void (*sound_weather_hook_vol)(int sound, int vol);
@@ -3113,7 +3129,7 @@ void do_cmd_options_sfx_sdl(void) {
 			cfg_audio_master = cfg_audio_master_org;
 			cfg_audio_sound = cfg_audio_sound_org;
 
-			sound(j_sel, SFX_TYPE_STOP, 100, 0);
+			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
 
 			/* auto-save */
 
@@ -3321,7 +3337,7 @@ void do_cmd_options_sfx_sdl(void) {
 				}
 			}
 			/* actually advance down the list too */
-			sound(j_sel, SFX_TYPE_STOP, 100, 0);
+			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
 			y = (y + 1 + audio_sfx) % audio_sfx;
 			break;
 		case 'y':
@@ -3336,7 +3352,7 @@ void do_cmd_options_sfx_sdl(void) {
 				play_sound_ambient(j_sel);
 			}
 			/* actually advance down the list too */
-			sound(j_sel, SFX_TYPE_STOP, 100, 0);
+			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
 			y = (y + 1 + audio_sfx) % audio_sfx;
 			break;
 		case 'n':
@@ -3344,7 +3360,7 @@ void do_cmd_options_sfx_sdl(void) {
 			if (j_sel == weather_current && weather_channel != -1 && Mix_Playing(weather_channel)) Mix_HaltChannel(weather_channel);
 			if (j_sel == ambient_current && ambient_channel != -1 && Mix_Playing(ambient_channel)) Mix_HaltChannel(ambient_channel);
 			/* actually advance down the list too */
-			sound(j_sel, SFX_TYPE_STOP, 100, 0);
+			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
 			y = (y + 1 + audio_sfx) % audio_sfx;
 			break;
 
@@ -3355,44 +3371,44 @@ void do_cmd_options_sfx_sdl(void) {
 
 			dis = samples[j_sel].disabled;
 			samples[j_sel].disabled = FALSE;
-			sound(j_sel, SFX_TYPE_MISC, 100, 0);
+			sound(j_sel, SFX_TYPE_MISC, 100, 0, 0, 0);
 			samples[j_sel].disabled = dis;
 			break;
 
 		case '#':
 			tmp = c_get_quantity("Enter index number: ", audio_sfx) - 1;
 			if (!tmp) break;
-			sound(j_sel, SFX_TYPE_STOP, 100, 0);
+			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
 			y = tmp;
 			if (y < 0) y = 0;
 			if (y >= audio_sfx) y = audio_sfx - 1;
 			break;
 		case '9':
 		case 'p':
-			sound(j_sel, SFX_TYPE_STOP, 100, 0);
+			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
 			y = (y - 10 + audio_sfx) % audio_sfx;
 			break;
 		case '3':
 		case ' ':
-			sound(j_sel, SFX_TYPE_STOP, 100, 0);
+			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
 			y = (y + 10 + audio_sfx) % audio_sfx;
 			break;
 		case '1':
-			sound(j_sel, SFX_TYPE_STOP, 100, 0);
+			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
 			y = audio_sfx - 1;
 			break;
 		case '7':
-			sound(j_sel, SFX_TYPE_STOP, 100, 0);
+			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
 			y = 0;
 			break;
 		case '8':
 		case '2':
-			sound(j_sel, SFX_TYPE_STOP, 100, 0);
+			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
 			d = keymap_dirs[ch & 0x7F];
 			y = (y + ddy[d] + audio_sfx) % audio_sfx;
 			break;
 		case '\010':
-			sound(j_sel, SFX_TYPE_STOP, 100, 0);
+			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
 			y = (y - 1 + audio_sfx) % audio_sfx;
 			break;
 		default:

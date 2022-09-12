@@ -10286,11 +10286,11 @@ void msg_format(int Ind, cptr fmt, ...) {
 }
 
 #ifdef USE_SOUND_2010
-bool sound(int val, int type, int vol, s32b player_id) {
+bool sound(int val, int type, int vol, s32b player_id, int dist_x, int dist_y) {
 	if (!use_sound) return TRUE;
 
 	/* play a sound */
-	if (sound_hook) return sound_hook(val, type, vol, player_id);
+	if (sound_hook) return sound_hook(val, type, vol, player_id, dist_x, dist_y);
 	else return FALSE;
 }
 

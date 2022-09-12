@@ -3984,7 +3984,7 @@ int Receive_sound(void) {
 		Term_xtra(TERM_XTRA_SOUND, s1);
 #else
 		if (t == SFX_TYPE_WEATHER && (noweather_mode || c_cfg.no_weather)) return 1;
-		if (!sound(s1, t, v, id)) sound(s2, t, v, id);
+		if (!sound(s1, t, v, id, dx, dy)) sound(s2, t, v, id, dx, dy);
 #endif
 	}
 

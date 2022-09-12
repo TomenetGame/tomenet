@@ -348,7 +348,7 @@ int audio_sfx = 0, audio_music = 0;
 
 #ifdef USE_SOUND_2010
 void (*mixing_hook)(void);
-bool (*sound_hook)(int sound, int type, int vol, s32b player_id);
+bool (*sound_hook)(int sound, int type, int vol, s32b player_id, int dist_x, int dist_y);
 void (*sound_ambient_hook)(int sound_ambient);
 void (*sound_weather_hook)(int sound);
 void (*sound_weather_hook_vol)(int sound, int vol);

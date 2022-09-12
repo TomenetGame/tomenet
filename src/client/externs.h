@@ -1024,12 +1024,12 @@ extern cptr ini_file;
 #ifdef USE_SOUND_2010
 //externs.h:
 extern void (*mixing_hook)(void);
-extern bool (*sound_hook)(int, int, int, s32b);
+extern bool (*sound_hook)(int, int, int, s32b, int, int);
 extern void (*sound_ambient_hook)(int);
 extern void (*sound_weather_hook)(int);
 extern void (*sound_weather_hook_vol)(int, int);
 extern bool (*music_hook)(int), (*music_hook_vol)(int, char);
-extern bool sound(int val, int type, int vol, s32b player_id);
+extern bool sound(int val, int type, int vol, s32b player_id, int dist_x, int dist_y);
 extern bool music(int val);
 extern bool music_volume(int val, char vol);
 extern void sound_ambient(int val);
