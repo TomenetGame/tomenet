@@ -1209,7 +1209,7 @@ extern int Send_store_action(int ind, char pos, u16b bact, u16b action, cptr nam
 extern int Send_store_sell(int Ind, int price);
 extern int Send_store_kick(int Ind);
 extern int Send_target_info(int ind, int x, int y, cptr buf);
-extern int Send_sound(int ind, int sound, int alternative, int type, int vol, s32b player_id);
+extern int Send_sound(int ind, int sound, int alternative, int type, int vol, s32b player_id, int dist_x, int dist_y);
 #ifdef USE_SOUND_2010
 extern int Send_music(int ind, int music, int musicalt);
 extern int Send_music_vol(int ind, int music, int musicalt, char vol);

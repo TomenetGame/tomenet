@@ -8133,8 +8133,9 @@ int Send_target_info(int Ind, int x, int y, cptr str) {
    now also used as base sfx transmit function for the new USE_SOUND_2010. - C. Blue
     type is for client-side, regarding efficiency options;
     vol is the relative volume, if it stems from a source nearby instead of concerning the player directly;
-    player_id is the player it actually concerns. */
-int Send_sound(int Ind, int sound, int alternative, int type, int vol, s32b player_id) {
+    player_id is the player it actually concerns.
+    (Note that strictly 3d-geometrically speaking, dist_y is actually the z-axis, since an y-axis represents height.) */
+int Send_sound(int Ind, int sound, int alternative, int type, int vol, s32b player_id, int dist_x, int dist_y) {
 	player_type *p_ptr = Players[Ind];
 	connection_t *connp = Conn[p_ptr->conn];
 	/* Mind-linked to someone? Send him our sound too! */
@@ -8159,7 +8160,9 @@ int Send_sound(int Ind, int sound, int alternative, int type, int vol, s32b play
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) connp2 = Conn[p_ptr2->conn];
 	/* Send same info to target player, if available */
 	if (connp2) {
-		if (is_newer_than(&connp2->version, 4, 4, 5, 3, 0, 0))
+		if (is_atleast(&connp2->version, 4, 8, 1, 1, 0, 0))
+			Packet_printf(&connp2->c, "%c%d%d%d%d%d%d%d", PKT_SOUND, sound, alternative, type, vol, player_id, dist_x, dist_y);
+		else if (is_newer_than(&connp2->version, 4, 4, 5, 3, 0, 0))
 			Packet_printf(&connp2->c, "%c%d%d%d%d%d", PKT_SOUND, sound, alternative, type, vol, player_id);
 		else if (is_newer_than(&connp2->version, 4, 4, 5, 1, 0, 0))
 			Packet_printf(&connp2->c, "%c%d%d%d", PKT_SOUND, sound, alternative, type);
@@ -8178,7 +8181,9 @@ int Send_sound(int Ind, int sound, int alternative, int type, int vol, s32b play
 
 //	if (is_admin(p_ptr)) s_printf("USE_SOUND_2010: sound %d (alt %d) sent to player %s (%d).\n", sound, alternative, p_ptr->name, Ind);//debug
 
-	if (is_newer_than(&connp->version, 4, 4, 5, 3, 0, 0)) {
+	if (is_atleast(&connp->version, 4, 8, 1, 1, 0, 0)) {
+		return Packet_printf(&connp->c, "%c%d%d%d%d%d%d%d", PKT_SOUND, sound, alternative, type, vol, player_id, dist_x, dist_y);
+	} else 	if (is_newer_than(&connp->version, 4, 4, 5, 3, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%d%d%d%d%d", PKT_SOUND, sound, alternative, type, vol, player_id);
 	} else if (is_newer_than(&connp->version, 4, 4, 5, 1, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%d%d%d", PKT_SOUND, sound, alternative, type);

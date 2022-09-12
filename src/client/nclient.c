@@ -3933,10 +3933,13 @@ int Receive_screenflash(void) {
 int Receive_sound(void) {
 	int	n;
 	char	ch, s;
-	int	s1, s2, t = -1, v = 100;
+	int	s1, s2, t = -1, v = 100, dx = 0, dy = 0; //note: dy represents the z-axis, strictly 3d-geometrically speaking
 	s32b	id;
 
-	if (is_newer_than(&server_version, 4, 4, 5, 3, 0, 0)) {
+	if (is_atleast(&server_version, 4, 8, 1, 1, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d%d%d", &ch, &s1, &s2, &t, &v, &id, &dx, &dy)) <= 0)
+			return n;
+	} else if (is_newer_than(&server_version, 4, 4, 5, 3, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d", &ch, &s1, &s2, &t, &v, &id)) <= 0)
 			return n;
 	} else if (is_newer_than(&server_version, 4, 4, 5, 1, 0, 0)) {

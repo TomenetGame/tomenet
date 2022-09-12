@@ -1070,7 +1070,7 @@ void bell(void)
 #ifndef USE_SOUND_2010
 void sound(int Ind, int val) {
 	//Send_sound(Ind, val);
-	Send_sound(Ind, val, 0, 0, 100, 0);
+	Send_sound(Ind, val, 0, 0, 100, 0, 0, 0);
 }
 #else
 /* 'type' is used client-side, for efficiency options concerning near-simultaneous sounds
@@ -1148,19 +1148,19 @@ void sound(int Ind, cptr name, cptr alternative, int type, bool nearby) {
 			if (d > 10) continue;
 			if (d == 0) d = 1; //paranoia oO
 
-			Send_sound(i, val, val2, type, 100 / d, p_ptr->id);
+			Send_sound(i, val, val2, type, 100 / d, p_ptr->id, 0, 0);
 			//Send_sound(i, val, val2, type, (6 - d) * 20, p_ptr->id);  hm or this?
 #else
 			if (d > MAX_SIGHT) continue;
 			d += 3;
 			d /= 2;
 
-			Send_sound(i, val, val2, type, 100 / d, p_ptr->id);
+			Send_sound(i, val, val2, type, 100 / d, p_ptr->id, 0, 0);
 #endif
 		}
 	}
 
-	Send_sound(Ind, val, val2, type, 100, p_ptr->id);
+	Send_sound(Ind, val, val2, type, 100, p_ptr->id, 0, 0);
 }
 void sound_vol(int Ind, cptr name, cptr alternative, int type, bool nearby, int vol) {
 	int val = -1, val2 = -1, i, d;
@@ -1206,18 +1206,18 @@ void sound_vol(int Ind, cptr name, cptr alternative, int type, bool nearby, int 
 			if (d > 10) continue;
 			if (d == 0) d = 1; //paranoia oO
 
-			Send_sound(i, val, val2, type, vol / d, Players[Ind]->id);
+			Send_sound(i, val, val2, type, vol / d, Players[Ind]->id, 0, 0);
 			//Send_sound(i, val, val2, type, vol... (6 - d) * 20, Players[Ind]->id);  hm or this?
 #else
 			if (d > MAX_SIGHT) continue;
 			d += 3;
 			d /= 2;
 
-			Send_sound(i, val, val2, type, vol / d, Players[Ind]->id);
+			Send_sound(i, val, val2, type, vol / d, Players[Ind]->id, 0, 0);
 #endif
 		}
 	}
-	Send_sound(Ind, val, val2, type, vol, Players[Ind]->id);
+	Send_sound(Ind, val, val2, type, vol, Players[Ind]->id, 0, 0);
 }
 /* Send sound to origin player and destination player,
    with destination player getting reduced volume depending on distance */
@@ -1257,11 +1257,11 @@ void sound_pair(int Ind_org, int Ind_dest, cptr name, cptr alternative, int type
 		if (d <= MAX_SIGHT) {
 			d += 3;
 			d /= 2;
-			Send_sound(Ind_dest, val, val2, type, 100 / d, Players[Ind_org]->id);
+			Send_sound(Ind_dest, val, val2, type, 100 / d, Players[Ind_org]->id, 0, 0);
 		}
 	}
 
-	Send_sound(Ind_org, val, val2, type, 100, Players[Ind_org]->id);
+	Send_sound(Ind_org, val, val2, type, 100, Players[Ind_org]->id, 0, 0);
 }
 /* Send sound to everyone on a particular wpos sector/dungeon floor */
 void sound_floor_vol(struct worldpos *wpos, cptr name, cptr alternative, int type, int vol) {
@@ -1296,7 +1296,7 @@ void sound_floor_vol(struct worldpos *wpos, cptr name, cptr alternative, int typ
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		if (!inarea(&Players[i]->wpos, wpos)) continue;
-		Send_sound(i, val, val2, type, vol, Players[i]->id);
+		Send_sound(i, val, val2, type, vol, Players[i]->id, 0, 0);
 	}
 }
 /* send sound to player and everyone nearby at full volume, similar to
@@ -1390,10 +1390,10 @@ void sound_near_site(int y, int x, worldpos *wpos, int Ind, cptr name, cptr alte
 		if (d > 20) d = 20;
 		d += 3;
 		d /= 3;
-		Send_sound(i, val, val2, type, 100 / d, 0);
+		Send_sound(i, val, val2, type, 100 / d, 0, 0, 0);
 #else
 		/* limit for volume calc */
-		Send_sound(i, val, val2, type, 100 - (d * 50) / 11, 0);
+		Send_sound(i, val, val2, type, 100 - (d * 50) / 11, 0, 0, 0);
 #endif
 	}
 }
@@ -1457,10 +1457,10 @@ void sound_near_site_vol(int y, int x, worldpos *wpos, int Ind, cptr name, cptr 
 		if (d > 20) d = 20;
 		d += 3;
 		d /= 3;
-		Send_sound(i, val, val2, type, ((100 / d) * vol) / 100, 0);
+		Send_sound(i, val, val2, type, ((100 / d) * vol) / 100, 0, 0, 0);
 #else
 		/* limit for volume calc */
-		Send_sound(i, val, val2, type, ((100 - (d * 50) / 11) * vol) / 100, 0);
+		Send_sound(i, val, val2, type, ((100 - (d * 50) / 11) * vol) / 100, 0, 0, 0);
 #endif
 	}
 }
@@ -1523,10 +1523,10 @@ void sound_near_area(int y, int x, int rad, worldpos *wpos, cptr name, cptr alte
 		if (d > 20) d = 20;
 		d += 3;
 		d /= 3;
-		Send_sound(i, val, val2, type, 100 / d, 0);
+		Send_sound(i, val, val2, type, 100 / d, 0, 0, 0);
 #else
 		/* limit for volume calc */
-		Send_sound(i, val, val2, type, 100 - (d * 50) / 11, 0);
+		Send_sound(i, val, val2, type, 100 - (d * 50) / 11, 0, 0, 0);
 #endif
 	}
 }
@@ -1604,10 +1604,10 @@ void sound_house_knock(int h_idx, int dx, int dy) {
 		if (d > 20) d = 20;
 		d += 3;
 		d /= 3;
-		Send_sound(i, val, val2, SFX_TYPE_COMMAND, 100 / d, 0);
+		Send_sound(i, val, val2, SFX_TYPE_COMMAND, 100 / d, 0, 0, 0);
 #else
 		/* limit for volume calc */
-		Send_sound(i, val, val2, SFX_TYPE_COMMAND, 100 - (d * 50) / 11, 0);
+		Send_sound(i, val, val2, SFX_TYPE_COMMAND, 100 - (d * 50) / 11, 0, 0, 0);
 #endif
 	}
 
@@ -1679,10 +1679,10 @@ void sound_near_monster(int m_idx, cptr name, cptr alternative, int type) {
 		if (d > 20) d = 20;
 		d += 3;
 		d /= 3;
-		Send_sound(i, val, val2, type, 100 / d, 0);
+		Send_sound(i, val, val2, type, 100 / d, 0, 0, 0);
 #else
 		/* limit for volume calc */
-		Send_sound(i, val, val2, type, 100 - (d * 50) / 11, 0);
+		Send_sound(i, val, val2, type, 100 - (d * 50) / 11, 0, 0, 0);
 #endif
 	}
 }
@@ -1761,10 +1761,10 @@ void sound_near_monster_atk(int m_idx, int Ind, cptr name, cptr alternative, int
 		if (d > 20) d = 20;
 		d += 3;
 		d /= 3;
-		Send_sound(i, val, val2, type, 100 / d, 0);
+		Send_sound(i, val, val2, type, 100 / d, 0, 0, 0);
 #else
 		/* limit for volume calc */
-		Send_sound(i, val, val2, type, 100 - (d * 50) / 11, 0);
+		Send_sound(i, val, val2, type, 100 - (d * 50) / 11, 0, 0, 0);
 #endif
 	}
 }
