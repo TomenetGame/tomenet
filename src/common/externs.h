@@ -744,6 +744,7 @@ extern bool is_same_as(version_type *version, int major, int minor, int patch, i
 #ifdef ENABLE_SUBINVEN
 //extern int get_subinven_size(int sval);
 #endif
+extern int distance(int y1, int x1, int y2, int x2);
 
 /*
  * Hack -- conditional (or "bizarre") externs

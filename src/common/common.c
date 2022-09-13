@@ -845,3 +845,31 @@ void validate_screen_dimensions(s16b *width, s16b *height) {
 	(*width) = wid;
 	(*height) = hgt;
 }
+
+/*
+ * Approximate Distance between two points.
+ *
+ * When either the X or Y component dwarfs the other component,
+ * this function is almost perfect, and otherwise, it tends to
+ * over-estimate about one grid per fifteen grids of distance.
+ *
+ * Algorithm: hypot(dy,dx) = max(dy,dx) + min(dy,dx) / 2
+ */
+/*
+ * For radius-affecting things, consider using tdx[], tdy[], tdi[] instead,
+ * which contain pre-calculated results of this function.		- Jir -
+ * (Please see prepare_distance() )
+ */
+int distance(int y1, int x1, int y2, int x2) {
+	int dy, dx, d;
+
+	/* Find the absolute y/x distance components */
+	dy = (y1 > y2) ? (y1 - y2) : (y2 - y1);
+	dx = (x1 > x2) ? (x1 - x2) : (x2 - x1);
+
+	/* Hack -- approximate the distance */
+	d = (dy > dx) ? (dy + (dx>>1)) : (dx + (dy>>1));
+
+	/* Return the distance */
+	return (d);
+}

@@ -367,6 +367,20 @@ static s16b evlt[101] = { 1, //could start on 0 here
  #define CALC_MIX_VOLUME(T, V)	((MIX_MAX_VOLUME * (cfg_audio_master ? ((T) ? vol[(V) / 10] : 0) : 0) * vol[cfg_audio_master_volume / 10]) / 10000)
 #endif
 
+
+/* Positional audio - C. Blue
+   Keeping it retro-style with this neat sqrt table.. >_>
+   Note that it must cover (for pythagoras) the maximum sum of dx^2+dy^2 where distance(0,0,dy,dx) can be up to MAX_RANGE [20]!
+   So that would be at dx,dy=14,13 or dx,dy=13,14. So 14*14 + 13*13 = 196+169 = 365. */
+static int fast_sqrt[366] = { /* 0..365, for panning */
+    0,1,1,1,2,2,2,2,2,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+    8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,
+    12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,
+    14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
+    16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,
+    18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,19,19,19,19
+};
+
 /* Struct representing all data about an event sample */
 typedef struct {
 	int num;                        /* Number of samples for this event */
@@ -1343,23 +1357,53 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 			/* Note: Linear scaling is used here to allow more precise control at the server end */
 			Mix_Volume(s, CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * vol) / 100, vols));
 
-		/* Simple stereo-positioned audio, only along the x-coords */
-		/* compare distance-handling in util.c, keep consistent */
+		/* Simple stereo-positioned audio, only along the x-coords. TODO: HRTF via OpenAL ^^ - C. Blue */
 		if (c_cfg.positional_audio) {
-#if 0
+			/* compare distance-handling in util.c, keep consistent! */
+			int d = distance(0, 0, dist_y, dist_x);
+
+#if 0 /* deprecated method in util.c */
+			/* it's "100 / dMod" scaled from 100 to 255 */
 			if (d > 20) d = 20;
 			d += 3;
 			d /= 3;
-			if (dist_x < 0) Mix_SetPanning(s, 255, -255 / dist_x);
-			else if (dist_x > 0) Mix_SetPanning(s, 255 / dist_x, 255);
-#else //wip
- #if 0
-			dist = distance(0, 0, dist_y, dist_x);
-			if (dist_x) angle = 
- #endif
-			/* it's "100 - (d * 50) / 11" scaled from 100 to 255.. */
-			if (dist_x < 0) Mix_SetPanning(s, 255, 255 + (dist_x * 127) / 28);
-			else if (dist_x > 0) Mix_SetPanning(s, 255 - (dist_x * 127) / 28, 255);
+			d = 255 / d;
+#else /* currently used method in util.c */
+			/* it's "100 - (d * 50) / 11" scaled from 100 to 255 */
+			d = 255 - (d * 127) / 28;
+#endif
+
+#if 0
+			/* Just for the heck of it: Trivial (bad) panning, ignoring any y-plane angle and just use basic left/right distance. */
+			if (dist_x < 0) Mix_SetPanning(s, d, (-d * 4) / (dist_x - 3));
+			else if (dist_x > 0) Mix_SetPanning(s, (d * 4) / (dist_x + 3), d);
+			else Mix_SetPanning(s, d, d);
+#else
+			/* Best we can do with simple stereo for now without HRTF etc.:
+			   We don't have a y-audio-plane (aka z-plane really),
+			   but at least we pan according to the correct angle. - C. Blue */
+			if (!dist_x) Mix_SetPanning(s, d, d); //shortcut for both, 90 deg and undefined angle aka 'on us'. */
+			else if (!dist_y) { //shortcut for 0 deg and 180 deg (ie sin = 0)
+				if (dist_x < 0) Mix_SetPanning(s, d, 0);
+				else Mix_SetPanning(s, 0, d);
+			} else { //all other cases (ie sin != 0)
+				int dy = ABS(dist_y); //we don't differentiate between in front of us / behind us, need HRTF for that.
+				int pan_l, pan_r;
+				int d_real = fast_sqrt[dist_x * dist_x + dist_y * dist_y]; //wow, for once not just an approximated distance (beyond that integer thingy) ^^
+				int s = (10 * dy) / d_real; //sinus (scaled by *10 for accuracy)
+
+				/* Calculate left/right panning weight from angle:
+				   The ear with 'los' toward the event gets 100% of the distance-reduced volume (d),
+				   while the other ear gets ABS(sin(a)) * d. */
+				if (dist_x < 0) { /* somewhere to our left */
+					pan_l = d;
+					pan_r = (d * s) / 10;
+				} else { /* somewhere to our right */
+					pan_l = (d * s) / 10;
+					pan_r = d;
+				}
+				Mix_SetPanning(s, pan_l, pan_r);
+			}
 #endif
 		}
 	}
