@@ -102,7 +102,7 @@ s16b get_skill_scale(player_type *p_ptr, int skill, u32b scale)
 	s = p_ptr->s_info[skill].value;
 	if (s > (p_ptr->lev + 2) * SKILL_STEP) s = (p_ptr->lev + 2) * SKILL_STEP;
 	return ((s * scale) / SKILL_MAX);
-	
+
 #else
 	/* XXX XXX XXX */
 	/* return (((p_ptr->s_info[skill].value / 10) * (scale * (SKILL_STEP / 10)) /
@@ -923,7 +923,7 @@ void increase_skill(int Ind, int i, bool quiet) {
 
 	/* XXX updating is delayed till player leaves the skill screen */
 	p_ptr->update |= (PU_SKILL_MOD);
-	
+
 	/* also update 'C' character screen live! */
 	p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA);
 	p_ptr->redraw |= (PR_SKILLS | PR_PLUSSES | PR_SANITY);
@@ -955,7 +955,7 @@ s16b find_skill(cptr name) {
 static s32b modified_by_related(player_type *p_ptr, int i) {
 	int j, points;
 	s32b val = 0, jv, jm;
-	
+
 	for (j = 0; j < MAX_SKILLS; j++) {
 		/* Ignore self */
 		if (j == i) continue;

@@ -492,7 +492,7 @@ static bool open_audio(void) {
 	int audio_rate;
 	Uint16 audio_format;
 	int audio_channels;
-	
+
 	/* Initialize variables */
 	if (cfg_audio_rate < 4000) cfg_audio_rate = 4000;
 	if (cfg_audio_rate > 48000) cfg_audio_rate = 48000;
@@ -2135,7 +2135,7 @@ static void play_sound_ambient(int event) {
 				Mix_Volume(ambient_channel, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume, vols) * grid_ambient_volume) / 100);
 			}
 		}
-		
+
 	}
 #endif
 #if 0

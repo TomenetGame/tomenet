@@ -2589,7 +2589,7 @@ errr read_lines_to_memory(cptr file_name, char ***lines_out, int *num_lines_out)
 			return (-1);
 		}
 	}
-	
+
 	/* Allocate array of pointers */
 	C_MAKE(lines, numentries, char *);
 
@@ -2633,7 +2633,7 @@ errr get_rnd_line_from_memory(char **lines, int numentries, char *output, int ma
 
 		/* Copy the line */
 		strncpy(output, lines[line], max_len);
-		
+
 		/* Make sure the string is terminated */
 		output[max_len - 1] = '\0';
 	} else {
@@ -2817,7 +2817,7 @@ void exit_game_panic(void) {
 # endif
 	abort();
 #endif
-	
+
 	/* Successful panic save of server info */
 	quit("server panic info save succeeded!");
 }
@@ -3216,7 +3216,7 @@ void vfile_receive_input(int fd, int arg) {
 	if (vf->alloc - vf->len < 4096) {
 		vf->alloc += 4096;
 		vf->data = realloc(vf->data, vf->alloc);
-	}	
+	}
 
 	read_len = read(fd, vf->data + vf->len, vf->alloc - vf->len);
 	if (read_len > 0) {

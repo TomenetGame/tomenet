@@ -4137,7 +4137,7 @@ int Net_output(void) {
 		//else
 		//{
 	//		  Tell the client that this is the end
-	//		
+	//
 	//		If we have any data to send to the client, terminate it
 	//		and send it to the client.
 			if (connp->c.len > 0) {

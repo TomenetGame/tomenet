@@ -138,7 +138,7 @@ void init_file_paths(char *path) {
 	/* Build a path name */
 	strcpy(tail, "save");
 	ANGBAND_DIR_SAVE = string_make(path);
-	
+
 	/* Build a path name */
 	strcpy(tail, "text");
 	ANGBAND_DIR_TEXT = string_make(path);
@@ -2513,7 +2513,7 @@ static void prepare_distance()
 	}
 	/* Hack -- terminate */
 	tdi[PREPARE_RADIUS] = count + 1;
-	
+
 #if DEBUG_LEVEL > 2
 	s_printf("prepare_distance(): last count = %d\n", count);
 #endif
@@ -2776,7 +2776,7 @@ static errr init_iddc() {
 				}
 			}
 			if (step) break;
-			
+
 			if (i > 3 && ((!indepthrange(i, type)
 			    || (n >= (short_theme ? 3 : 6)
 			    && randint(short_theme ? 3 : 15) < n)))) {
@@ -3451,7 +3451,7 @@ static void load_server_cfg_aux(FILE * cfg) {
 		// Reset option and value
 		option = NULL;
 		value = NULL;
-		
+
 		// Split the line up into words
 		// strsep is a really cool function... its neat, we don't have
 		// to dynamically allocate any memory because we apply our null
@@ -3622,9 +3622,9 @@ void init_some_arrays(void) {
 	s_printf("[Initializing arrays... (iddc)]\n");
 	if (init_iddc()) quit("Cannot initialize iddc stuff");
 #endif
-	
+
 	init_swearing();
-	
+
 	/* Initialize randart names */
 	s_printf("[Initializing arrays... (randart)]\n");
 	if (init_randart()) quit("Cannot initialize randart stuff");

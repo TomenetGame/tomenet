@@ -3495,7 +3495,7 @@ void do_cmd_disarm_mon_trap_aux(int Ind, worldpos *wpos, int y, int x) {
 		if (Ind && q_ptr->owner == p_ptr->id && inven_carry_okay(Ind, q_ptr, 0x0)) {
 			int slot, num;
 			char o_name[ONAME_LEN];
-			
+
 			/* Try to add to the quiver first */
 			if (object_similar(Ind, q_ptr, &p_ptr->inventory[INVEN_AMMO], 0x0)) {
 				//note: 'pick_one' is not implemented here!
@@ -4505,7 +4505,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			dam = 1; /*dummmy*/
 			fixed = TRUE;
 			break;
-		case SV_POTION_DEC_INT:	
+		case SV_POTION_DEC_INT:
 			//m_ptr->aaf--;
 		case SV_POTION_DEC_WIS:
 			return (FALSE);

@@ -450,11 +450,11 @@ race_redraw:
 			goto race_redraw;
 		}
 		if (c == '\r' || c == '\n') c = 'a' + sel;
-		
+
 		if (c == '*') hazard = TRUE;
 		if (hazard) j = rand_int(Setup.max_race);
 		else j = (islower(c) ? A2I(c) : -1);
-		
+
 		if (c == '#') {
 			if (valid_dna && (dna_race >= 0 && dna_race < Setup.max_race)) j = dna_race;
 			else {
@@ -967,7 +967,7 @@ class_redraw:
 		if (c == '*') hazard = TRUE;
 		if (hazard) j = rand_int(Setup.max_class);
 		else j = (islower(c) ? A2I(c) : -1);
-		
+
 		if (c == '#') {
 			if (valid_dna && (dna_class >= 0 && dna_class < Setup.max_class + hidden)) {
 #if 0

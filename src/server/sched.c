@@ -135,7 +135,7 @@ static fd_set		output_mask;
  */
 static void clear_mask(void) {
 	FD_ZERO(&input_mask);
-	
+
 	/* HACK - Clear the output mask - mikaelh */
 	FD_ZERO(&output_mask);
 }
@@ -300,7 +300,7 @@ void sched(void) {
 					}
 				}
 			}
-			
+
 			for (i = max_fd; i >= 0; i--) {
 				if (FD_ISSET(i, &writemask)) {
 					if (output_handlers[i].func) {

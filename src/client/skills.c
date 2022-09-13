@@ -241,7 +241,7 @@ static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start) 
 			c_prt(color, format("%c+%c%s", deb, end, s_info[i].name),
 			      j + 4 - start, table[j][1] * 4);
 		}
-		
+
 		if (!(p_ptr->s_info[i].flags1 & SKF1_DUMMY)) {
 			if (p_ptr->s_info[i].mod)
 				c_prt(color,

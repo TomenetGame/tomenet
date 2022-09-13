@@ -1749,7 +1749,7 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 		return;
 	}
 
-	/* Handle the newbies_cannot_drop option */	
+	/* Handle the newbies_cannot_drop option */
 #if (STARTEQ_TREATMENT == 1)
 	if (p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
 	    o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && o_ptr->tval != TV_SPECIAL) {

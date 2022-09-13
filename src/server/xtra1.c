@@ -1154,7 +1154,7 @@ static void calc_sanity(int Ind) {
 				p_ptr->csane = 0;
 			}
 		}
-		
+
 		p_ptr->msane = msane;
 
 		if (p_ptr->csane >= msane) {
@@ -1886,7 +1886,7 @@ void calc_hitpoints(int Ind) {
 
 		/* Save the new max-hitpoints */
 		p_ptr->mhp = mhp;
-		
+
 		/* Little fix (chp = mhp+1 sometimes) */
 		if (p_ptr->chp > p_ptr->mhp) p_ptr->chp = p_ptr->mhp;
 
@@ -1909,7 +1909,7 @@ void calc_hitpoints(int Ind) {
  */
 static void calc_torch(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	
+
 #if 0
 	object_type *o_ptr = &p_ptr->inventory[INVEN_LITE];
 
@@ -2399,7 +2399,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	     ((!r_ptr->body_parts[BODY_TORSO]) || (r_ptr->flags4 & RF4_BR_LITE)))
 		{ p_ptr->cur_lite += 1; csheet_boni->lite += 1; }
 
-	/* Forms that occur in the woods are able to pass them, so are animals */	
+	/* Forms that occur in the woods are able to pass them, so are animals */
 	if ((r_ptr->flags8 & RF8_WILD_WOOD) || (r_ptr->flags3 & RF3_ANIMAL))
 		{ p_ptr->pass_trees = TRUE; csheet_boni->cb[12] |= CB13_XTREE; }
 
@@ -3063,7 +3063,7 @@ void calc_boni(int Ind) {
 		p_ptr->update |= PU_BONUS;
 		return;
 	}
-	
+
 	int kk, jj;
 	boni_col csheet_boni[15];
 	/* Wipe the boni column data */
@@ -3468,7 +3468,7 @@ void calc_boni(int Ind) {
 			p_ptr->levitate = TRUE; csheet_boni[14].cb[5] |= CB6_RLVTN;
 			p_ptr->feather_fall = TRUE; csheet_boni[14].cb[5] |= CB6_RFFAL;
 		}
-		
+
 		csheet_boni[14].spd = p_ptr->pspeed - 110;
 	/* Choosing a race just for its HP or low exp% shouldn't be what we want -C. Blue- */
 	}
@@ -4029,7 +4029,7 @@ void calc_boni(int Ind) {
 		/* Note cursed/hidden status... */
 		if ((f3 & TR3_CURSED) || (f3 & TR3_HEAVY_CURSE) || (f3 & TR3_PERMA_CURSE)) csheet_boni[i-INVEN_WIELD].cb[12] |= CB13_XCRSE;
 		if (!object_fully_known_p(Ind, o_ptr) && !(o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD)) csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_XHIDD;
-		
+
 		/* Not-burning light source does nothing, good or bad */
 		if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout < 1)) continue;
 
@@ -4358,7 +4358,7 @@ void calc_boni(int Ind) {
 			if (f5 & TR5_WHITE_LIGHT) lite_inc_white += j;
 			else lite_inc_norm += j;
 			if (j && !(f4 & TR4_FUEL_LITE)) p_ptr->lite = TRUE;
-			
+
 			/* Permanent lite gets the 'sustain' colour */
 			csheet_boni[i-INVEN_WIELD].lite += j;
 			if (!(f4 & TR4_FUEL_LITE)) csheet_boni[i-INVEN_WIELD].cb[12] |= CB13_XLITE;
@@ -4606,7 +4606,7 @@ void calc_boni(int Ind) {
 			}
 			if (p_ptr->vampiric_ranged < NON_WEAPON_VAMPIRIC_CHANCE_RANGED) p_ptr->vampiric_ranged = NON_WEAPON_VAMPIRIC_CHANCE_RANGED;
 		}
-		
+
 		/* Hack MHDSM: */
 		if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED) {
 			if (o_ptr->xtra2 & 0x01) { p_ptr->immune_fire = TRUE; csheet_boni[i-INVEN_WIELD].cb[0] |= CB1_IFIRE; }
@@ -5133,7 +5133,7 @@ void calc_boni(int Ind) {
 		    !p_ptr->cumber_weight) {
 			int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 60);
 			int martsbonus, martsweight, martscapacity;
-			
+
 			martsbonus = (marts * 3) / 2 * MARTIAL_ARTS_AC_ADJUST / 100;
 			if (!(p_ptr->inventory[INVEN_BODY].k_idx)) martsweight = 0;
 			else martsweight = p_ptr->inventory[INVEN_BODY].weight;
@@ -6790,7 +6790,7 @@ void calc_boni(int Ind) {
 				//Actually, keep the item representation :)
 				//csheet_boni[i].color = TERM_DARK;
 				//csheet_boni[i].symbol = ' '; //Empty item / form slot.
-				
+
 				 //Actually give the basic item data instead of hiding it all. See object1.cf
 				bool can_have_hidden_powers = TRUE;
 #ifdef NEW_ID_SCREEN
@@ -6915,7 +6915,7 @@ void calc_boni(int Ind) {
 						if (f2 & TR2_IM_WATER) csheet_boni[i].cb[3] |= CB4_IWATR; //ocean soul
 						if (f5 & TR5_RES_TIME) csheet_boni[i].cb[3] |= CB4_RTIME;
 						if (f5 & TR5_RES_MANA) csheet_boni[i].cb[3] |= CB4_RMANA;
-						
+
 						/* Table B */
 						if (f2 & TR2_RES_FEAR) csheet_boni[i].cb[4] |= CB5_RFEAR;
 						if (f2 & TR2_FREE_ACT) csheet_boni[i].cb[4] |= CB5_RPARA;
@@ -6961,7 +6961,7 @@ void calc_boni(int Ind) {
 						if (f5 & TR5_REFLECT) csheet_boni[i].cb[6] |= CB7_RREFL;
 						if (f3 & TR3_NO_MAGIC) csheet_boni[i].cb[6] |= CB7_RAMSH;
 						if (f3 & TR3_AGGRAVATE) csheet_boni[i].cb[6] |= CB7_RAGGR;
-						
+
 						/* Table C */
 						if (object_known_p(Ind, o_ptr)) { //must be identified to see PVAL
 							pval = o_ptr->pval;
@@ -7014,7 +7014,7 @@ void calc_boni(int Ind) {
 							if (f2 & TR2_SUST_DEX) csheet_boni[i].cb[11] |= CB12_RSDEX;
 							if (f2 & TR2_SUST_CON) csheet_boni[i].cb[11] |= CB12_RSCON;
 							if (f2 & TR2_SUST_CHR) csheet_boni[i].cb[11] |= CB12_RSCHR;
-							
+
 							/* And now the base PVAL of the item... */
 							if (k_ptr->flags1 & TR1_PVAL_MASK) {
 								if (k_ptr->flags1 & TR1_STR) csheet_boni[i].pstr += o_ptr->bpval;
@@ -7036,7 +7036,7 @@ void calc_boni(int Ind) {
 								if (k_ptr->flags5 & TR5_CRIT) csheet_boni[i].crit += o_ptr->bpval;
 							}
 						}
-						
+
 						/* Table D */
 						if (f1 & TR1_SLAY_ANIMAL) csheet_boni[i].cb[7] |= CB8_SANIM;
 						if (f1 & TR1_SLAY_EVIL) csheet_boni[i].cb[9] |= CB10_SEVIL;
@@ -9361,7 +9361,7 @@ static void process_global_event(int ge_id) {
 			break;
 		}
 	}
-	
+
 	/* Check for end of event */
 	if (ge->getype == GE_NONE) {
 		msg_broadcast_format(0, "\374\377W[%s has ended]", ge->title);

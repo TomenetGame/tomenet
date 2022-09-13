@@ -1414,7 +1414,7 @@ void search(int Ind) {
 	if (p_ptr->confused || p_ptr->image) chance = chance / 10;
 
 	/* Search the nearby grids, which are always in bounds */
-	
+
 	for (y = (p_ptr->py - 1); y <= (p_ptr->py + 1); y++) {
 		for (x = (p_ptr->px - 1); x <= (p_ptr->px + 1); x++) {
 			/* Sometimes, notice things */
@@ -5094,7 +5094,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 					}
 				}
 			}
-			
+
 			/* Confusion attack */
 			if ((p_ptr->confusing) || (chaos_effect == 3)) {
 				/* Cancel glowing hands */
@@ -6981,7 +6981,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		disturb(Ind, 0, 0); /* Stop us in case we were running */
 		return;
 	}
-	
+
 	stop_precision(Ind); /* aimed precision shot gets interrupted by moving around */
 	stop_shooting_till_kill(Ind);
 	if (p_ptr->steamblast_timer == -1) {
@@ -7264,7 +7264,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 						msg_format(Ind, "You switch places with %s.", q_ptr->name);
 					else
 						msg_print(Ind, "You switch places with it.");
-				
+
 					/* Hack if invisible */
 					if (q_ptr->play_vis[Ind])
 						msg_format(Ind2, "You switch places with %s.", p_ptr->name);
@@ -8617,7 +8617,7 @@ void run_step(int Ind, int dir, char *consume_full_energy) {
 int apply_dodge_chance(int Ind, int attack_level) {
 	int plev = Players[Ind]->lev;
 	int skill = get_skill(Players[Ind], SKILL_DODGE);
-	
+
 	int dodge = Players[Ind]->dodge_level;
 	int chance;
 

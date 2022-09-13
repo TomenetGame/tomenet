@@ -1779,7 +1779,7 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 		/* Not more than +3 speed on helms/crowns */
 		if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 3)) a_ptr->pval = 3;
 	}
-	
+
 	/* Limits for +MANA */
 	if (a_ptr->flags1 & TR1_MANA) {
 		/* Randart mage staves may give up to +10 +1 bonus MANA */

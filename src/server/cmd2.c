@@ -6013,7 +6013,7 @@ void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x,
 	//case SV_AMMO_MAGIC <- magic arrows only, don't explode
 	case SV_AMMO_SILVER: rad = 2; break;
 	}
-	
+
 	if ((rad > 2) && (
 	    (o_ptr->pval == GF_KILL_WALL) ||
 	    (o_ptr->pval == GF_DISINTEGRATE) ||
@@ -6993,7 +6993,7 @@ void do_cmd_fire(int Ind, int dir) {
 
 								/* XXX Reduce damage by 1/3 */
 								tdam = (tdam + PVP_SHOOT_DAM_REDUCTION - 1) / PVP_SHOOT_DAM_REDUCTION;
-								
+
 								if (ranged_double_real) tdam = (tdam * 35) / 100;
 
 								/* Precision shot skips most AC reduction (since that was applied above) */
@@ -7337,7 +7337,7 @@ void do_cmd_fire(int Ind, int dir) {
 								}
 							}
 						}
-						
+
 						if (p_ptr->ranged_barrage) {
 							if (!(r_ptr->flags3 & RF3_NO_STUN)) {
 								if (!m_ptr->stunned) msg_format(Ind, "\377y%^s is stunned.", m_name);
@@ -8940,7 +8940,7 @@ void do_cmd_purchase_house(int Ind, int dir) {
 void do_cmd_own(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	char buf[100];
-	
+
 	if (!p_ptr->total_winner) {
 		msg_format(Ind, "You must be a %s to own a land!", (p_ptr->male)?"king":"queen");
 		return;
@@ -8950,7 +8950,7 @@ void do_cmd_own(int Ind) {
 		msg_print(Ind, "You can't own more than 2 terrains.");
 		return;
 	}
-	
+
 	if (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].own) {
 		msg_print(Ind, "Sorry this land is owned by someone else.");
 		return;
@@ -8959,19 +8959,19 @@ void do_cmd_own(int Ind) {
 		msg_print(Ind, "Sorry you can't own the dungeon");
 		return;
 	}
-	
+
 	if (istownarea(&p_ptr->wpos, MAX_TOWNAREA)) {
 		msg_print(Ind, "Sorry this land is owned by the town.");
 		return;
 	}
-	
+
 	/* Ok all check did lets appropriate */
 	if (p_ptr->own1.wx || p_ptr->own1.wy || p_ptr->own1.wz)
 		wpcopy(&p_ptr->own2, &p_ptr->wpos);
 	else
 		wpcopy(&p_ptr->own1, &p_ptr->wpos);
 	wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].own = p_ptr->id;
-	
+
 	if (p_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) {
 		snprintf(buf, sizeof(buf), "%s %s now owns (%d,%d).", (p_ptr->male) ? "Emperor" : "Empress", p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy);
 	} else {

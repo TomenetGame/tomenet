@@ -32,7 +32,7 @@ void transform_level(int Ind, byte feat, int chance) {
 		if (!in_bounds(y, x)) continue;
 
 		c_ptr = &zcave[y][x];
-		
+
 		if (c_ptr->info & CAVE_ICKY) continue;
 		if ((cs_ptr = GetCS(c_ptr, CS_KEYDOOR))) continue;
 		if (cave_valid_bold(zcave, y, x))
@@ -217,7 +217,7 @@ void cast_rune_spell (int Ind, int dir) {
 #endif
 			elem = GF_METEOR;
 			elem_n = "meteor";
-			
+
 			break;
 		default:
 			msg_print(Ind, "\377rTrying to use a non runic item.");

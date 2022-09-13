@@ -61,7 +61,7 @@ void callmeta() {
 	sigaddset(&sigset, SIGTERM);
 	sigaddset(&sigset, SIGUSR1);
 
-	sigprocmask(SIG_BLOCK, &sigset, NULL);	
+	sigprocmask(SIG_BLOCK, &sigset, NULL);
 	while ((ser = connsocket(PORT, host)) == -2);
 	if (ser != -1) {
 		fp = fopen("metadata", "rb");

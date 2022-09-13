@@ -94,7 +94,7 @@ void process_auctions()
 								auc_ptr->winning_bid = j;
 								break;
 							}
-							
+
 						}
 						if (auc_ptr->winning_bid == -1)
 						{
@@ -482,7 +482,7 @@ void auction_add_bid(int auction_id, s32b bid, s32b bidder)
 		auc_ptr->bids_cnt++;
 
 		placed = FALSE;
-		
+
 		/* Keep the bids sorted, lowest bid is first */
 		for (i = 0; i < auc_ptr->bids_cnt - 1; i++)
 		{
@@ -531,7 +531,7 @@ void auction_remove_bid(int auction_id, int bid_id)
 	{
 		SHRINK(auc_ptr->bids, auc_ptr->bids_cnt, auc_ptr->bids_cnt - 1, bid_type);
 	}
-	auc_ptr->bids_cnt--;	
+	auc_ptr->bids_cnt--;
 }
 
 bool auction_mode_check(int Ind, int auction_id)
@@ -909,7 +909,7 @@ int auction_set(int Ind, int slot, cptr starting_price_string, cptr buyout_price
 		auction_clear(auction_id);
 
 		/* Too cheap */
-		return AUCTION_ERROR_EITHER_BID_OR_BUYOUT;		
+		return AUCTION_ERROR_EITHER_BID_OR_BUYOUT;
 	}
 
 	if (!auction_parse_time(duration_string, &duration))
@@ -1047,7 +1047,7 @@ int auction_cancel(int Ind, int auction_id)
 			break;
 		case AUCTION_STATUS_BIDDING:
 #ifdef AUCTION_ALLOW_CANCEL_OWN_ITEM
-/* Not allowed by default */	
+/* Not allowed by default */
 			if (auc_ptr->owner == p_ptr->id)
 			{
 				auc_ptr->status = AUCTION_STATUS_CANCELLED;

@@ -9680,7 +9680,7 @@ void place_gold(int Ind, struct worldpos *wpos, int y, int x, int mult, int bonu
 
 	/* Paranoia -- check bounds */
 	if (!in_bounds(y, x)) return;
-	
+
 	/* not in Valinor */
 	if (in_valinor(wpos)) return;
 

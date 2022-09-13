@@ -2660,7 +2660,7 @@ int Receive_char(void) {
 		Term_curs_x11() ->
 		Infofnt_text_non() : draw cursor XRectangle
 		*/
-		
+
 	}
 	Term_draw(x, y, a, c);
 	if (screen_icky) Term_switch(0);

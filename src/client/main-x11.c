@@ -3111,7 +3111,7 @@ void resize_window_x11(int term_idx, int cols, int rows) {
 		td->resize_timer.tv_sec=0;
 		td->resize_timer.tv_nsec=0;
 	}
-	
+
 	/* Validate input dimensions. */
 	/* Our 'term_data' indexes in 'term_idx' are the same as 'ang_term' indexes so it's safe to use 'validate_term_dimensions()'. */
 	validate_term_dimensions(term_idx, &cols, &rows);
@@ -3125,7 +3125,7 @@ void resize_window_x11(int term_idx, int cols, int rows) {
 
 	/* Save current Infowin. */
 	infowin *iwin = Infowin;
-	
+
 	/* Resize the outer window if dimensions differ. */
 	Infowin_set(td->outer);
 	if ((Infowin->w != wid_outer) || (Infowin->h != hgt_outer)) {

@@ -3162,7 +3162,7 @@ void msg_admin(cptr fmt, ...)
 
 	/* Begin the Varargs Stuff */
 	va_start(vp, fmt);
-	
+
 	/* Format the args, save the length */
 	(void)vstrnfmt(buf, 1024, fmt, vp);
 
@@ -5660,7 +5660,7 @@ static void player_talk_aux(int Ind, char *message) {
 		else if (p_ptr->mode & MODE_NO_GHOST) c_n = 'D';
 		else if (p_ptr->mode & MODE_HARD) c_n = 's';//deprecated
 		else c_n = 'W'; /* normal mode */
-		
+
 		/* Color the brackets of some players... (Enabled for PK) */
 #ifdef KURZEL_PK
 		if ((p_ptr->mode & MODE_HARD) && (p_ptr->mode & MODE_NO_GHOST))
@@ -7324,14 +7324,14 @@ char *html_escape(const char *str) {
 	int i, new_len = 0;
 	const char *tmp;
 	char *result;
-	
+
 	if (!str) {
 		/* Return an empty string */
 		result = malloc(1);
 		*result = '\0';
 		return result;
 	}
-	
+
 	/* Calculate the resulting length */
 	tmp = str;
 	while (*tmp) {
@@ -7349,11 +7349,11 @@ char *html_escape(const char *str) {
 		new_len++;
 		tmp++;
 	}
-	
+
 	result = malloc(new_len + 1);
 	i = 0;
 	tmp = str;
-	
+
 	while (*tmp) {
 		switch (*tmp) {
 			case '<':
@@ -7388,10 +7388,10 @@ char *html_escape(const char *str) {
 		}
 		tmp++;
 	}
-	
+
 	/* Terminate */
 	result[new_len] = '\0';
-	
+
 	return result;
 }
 

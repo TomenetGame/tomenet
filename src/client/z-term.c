@@ -2571,7 +2571,7 @@ errr Term_flush(void) {
 static void Term_copy_queue_buf(char *dest, key_queue *keys) {
 	/* Nothing needs to be done if empty */
 	if (keys->length == 0) return;
-	
+
 	/* Check if the queue has wrapped */
 	if (keys->head > keys->tail) {
 		/* Copy the queue */

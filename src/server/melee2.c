@@ -844,7 +844,7 @@ static bool summon_possible(worldpos *wpos, int y1, int x1) {
 
 			/* Only check a circular area */
 			if (distance(y1,x1,y,x)>2) continue;
-			
+
 			/* Hack: no summon on glyph of warding */
 			if (zcave[y][x].feat == FEAT_GLYPH) continue;
 			if (zcave[y][x].feat == FEAT_RUNE) continue;
@@ -856,7 +856,7 @@ static bool summon_possible(worldpos *wpos, int y1, int x1) {
 			if ((cave[y][x].feat >= FEAT_PATTERN_START)
 				&& (cave[y][x].feat <= FEAT_PATTERN_XTRA2)) continue;
 #endif	// 0
-			
+
 			/* Require empty floor grid in line of sight */
 			/* Changed for summoning on mountains */
 			if (cave_empty_bold(zcave,y,x) && los(wpos, y1,x1,y,x)) return (TRUE);
@@ -7423,7 +7423,7 @@ s_printf("ASTAR_INCOMPLETE\n");
 			}
 		}
 	}
-	
+
 #ifdef C_BLUE_AI
 	/* Anti-cheeze vs Hit&Run-tactics if player has slightly superiour speed:
 	   Monster tries to make player approach so it gets attack turns! -C. Blue */
@@ -8970,7 +8970,7 @@ static player_type *get_melee_target(monster_race *r_ptr, monster_type *m_ptr, c
 			if (keeping_previous_target) p_idx_chosen = m_ptr->last_target_melee;
 			/* note: storing id would be cleaner than idx, but it doesn't really make a practical difference */
 			else m_ptr->last_target_melee = p_idx_chosen;
-			
+
 			/* connect to outside world */
 			p_idx_target = p_idx_chosen;
 		}
@@ -10081,10 +10081,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 					/* Describe observable breakage */
 					/* Prolly FIXME */
 					msg_print_near_site(ny, nx, wpos, 0, TRUE, "The rune of protection is broken!");
-					
+
 					/* Break the rune */
 					cave_set_feat_live(wpos, ny, nx, FEAT_FLOOR);
-					
+
 					/* Allow movement */
 					do_move = TRUE;
 				}
@@ -10772,7 +10772,7 @@ static void process_monster_pet(int Ind, int m_idx) {
 	/* get the origin */
 	oy = m_ptr->fy;
 	ox = m_ptr->fx;
-	
+
 	/* hack -- assume no movement */
 	mm[0] = mm[1] = mm[2] = mm[3] = 0;
 	mm[4] = mm[5] = mm[6] = mm[7] = 0;
@@ -10817,8 +10817,8 @@ static void process_monster_pet(int Ind, int m_idx) {
 
 		/* get the destination */
 		ny = oy + ddy[d];
-		nx = ox + ddx[d];			
-		
+		nx = ox + ddx[d];
+
 		/* access that cave grid */
 		c_ptr = &zcave[ny][nx];
 
@@ -11211,7 +11211,7 @@ static void process_monster_golem(int Ind, int m_idx) {
 	/* Get the origin */
 	oy = m_ptr->fy;
 	ox = m_ptr->fx;
-	
+
 #if 0 /* No golem spells -- yet */
 	/* Attempt to cast a spell */
 	if (make_attack_spell(Ind, m_idx)) {

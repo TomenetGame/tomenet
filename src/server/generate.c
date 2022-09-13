@@ -488,7 +488,7 @@ static void new_player_spot(struct worldpos *wpos)
 		/* Pick a legal spot */
 		y = rand_range(1, dun->l_ptr->hgt - 2);
 		x = rand_range(1, dun->l_ptr->wid - 2);
-		
+
 		/* prevent infinite loop (not sure about exact circumstances yet) */
 		if (!--tries) break;
 
@@ -501,7 +501,7 @@ static void new_player_spot(struct worldpos *wpos)
 		/* Done */
 		break;
 	}
-	
+
 	/* emergency procedure: avoid no-tele vaults */
 	if ((!tries) && (zcave[y][x].info & CAVE_STCK)) {
 		for (x = 1; x < dun->l_ptr->wid - 2; x++)
@@ -1179,7 +1179,7 @@ sptr++;
 
 				/* Require "naked" floor grid */
 				if (!cave_naked_bold(zcave, y, x)) continue;
-				
+
 				/* No stairs that lead into nests/pits */
 				if (zcave[y][x].info & CAVE_NEST_PIT) continue;
 
@@ -4236,11 +4236,11 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 			what[i] = what[i * 3];	/* exclude the top quarter */
 		else	/* orc, ogre, troll */
 			what[i] = what[i * 3 + 10];	/* full size & nice diversity */
-/*		else	
+/*		else
 			what[i] = what[BUILD_6_MONSTER_TABLE - 15 + i * 2];  <- too powerful =) - C. Blue */
 	}
 
-#if 0	
+#if 0
 	/* Restrict ultra P pits */
 	if (chosen_type == vault_aux_giant) {
 		/* Find the first 'Hru' */
@@ -4727,7 +4727,7 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 
 			/* Hack -- skip "non-grids" */
 			if (*t == ' ') continue;
-			
+
 			/* Access the grid */
 			c_ptr = &zcave[y][x];
 
@@ -7480,7 +7480,7 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 						dun->door[dun->door_n].x = col1 + row_dir;
 						dun->door_n++;
 					}
-					
+
 					/* Hack -- Duplicate the previous door */
 					else {
 						dun->door[dun->door_n].y = row1;
@@ -10312,7 +10312,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx) {
 
 		return;
 	}
-			
+
 	/* Pond */
 	if (n == STORE_POND) {
 		for (y = y1; y <= y2; y++) {
@@ -10642,7 +10642,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx) {
 	else if (n == STORE_AUCTION) /* auctionhouse */
 	{
 		c_ptr->feat = FEAT_PERM_EXTRA; /* wants to work */
-	
+
 	} else {
 		/* Clear previous contents, add a store door */
 		c_ptr->feat = FEAT_SHOP;	/* TODO: put CS_SHOP */
@@ -11159,7 +11159,7 @@ static void town_gen(struct worldpos *wpos) {
 		/* Illuminate and memorize the walls
 		c_ptr->info |= (CAVE_GLOW);*/
 	}
-	
+
 	/* XXX this will be changed very soon	- Jir -
 	 * It's no good hardcoding things like this.. */
 #if 1

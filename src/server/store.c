@@ -214,7 +214,7 @@ void alloc_stores(int townval) {
 
 		/* sett store type */
 		st_ptr->st_idx = i;
-		
+
 		/* remember town assignment */
 		st_ptr->town = townval;
 
@@ -2247,7 +2247,7 @@ static void store_create(store_type *st_ptr) {
 				if (o_ptr->sval == SV_TOOL_WRAPPING) force_num = 1;
 				break;
 			}
-			
+
 
 			/* Only single items of very expensive stuff */
 			if (object_value(0, o_ptr) >= 200000) {
@@ -2671,7 +2671,7 @@ static void display_inventory(int Ind) {
 	store_type *st_ptr;
 	int k;
 	int i;
-	
+
 	i = gettown(Ind);
 	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
 	if (i == -1) i = gettown_dun(Ind);
@@ -5988,7 +5988,7 @@ void home_sell(int Ind, int item, int amt) {
 		sold_obj.sigil = 0;
 		sold_obj.sseed = 0;
 	}
-	
+
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
@@ -6523,7 +6523,7 @@ void display_house_entry(int Ind, int pos, house_type *h_ptr) {
 
 	/* Get the proper book colour */
 	if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
-	
+
 	/* Let's fade out the items we CAN'T use too inside our own houses */
 	if (!can_use_admin(Ind, o_ptr)) attr = TERM_L_DARK;
 
@@ -7075,7 +7075,7 @@ void store_debug_stock() {
 			for (what = 0; what < st_ptr->stock_num; what++) {
 				o_ptr = &st_ptr->stock[what];
 
-				/* hack: mention items only once, after they were generated for this store */			
+				/* hack: mention items only once, after they were generated for this store */
 				if (o_ptr->xtra1 != 222) continue;
 				o_ptr->xtra1 = 0;
 			}
