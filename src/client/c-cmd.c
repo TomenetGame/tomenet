@@ -2042,7 +2042,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 #endif
 	int i, j;
 	char *res;
-	byte search_uppercase = 0, search_uppercase_ok, fallback = FALSE, fallback_uppercase = 0;
+	byte search_uppercase = 0, search_uppercase_ok, fallback = FALSE, fallback_uppercase = 0, force_uppercase = FALSE;
 
 	int c_override = 0, c_temp;
 	char buf_override[MAX_CHARS];
@@ -2203,7 +2203,10 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 	/* Searching for a slash command? Always translate to uppercase 's'earch */
 	if (init_search_string && init_search_string[0] == '/') init_search_type = 2;
 	/* Searching for a predefined inscriptions? Always translate to uppercase 's'earch  */
-	if (init_search_string && init_search_string[0] == '!' && !init_search_string[2]) init_search_type = 2;
+	if (init_search_string && init_search_string[0] == '!' && !init_search_string[2]) {
+		init_search_type = 2;
+		force_uppercase = TRUE; //insc might not be alphanum, so force anyway, eg !*
+	}
 
 	switch (init_search_type) {
 	case 1:
@@ -3657,6 +3660,10 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 			/* Check and go */
 			if (!search_uppercase_ok) search_uppercase = FALSE; /* must contain at least 1 (upper-case) letter */
+			if (force_uppercase) { //override? for non-alphanum inscriptions
+				force_uppercase = FALSE;
+				search_uppercase = 2;
+			}
 
 			/* Hack: Skip 'Going..' etc */
 			if (!strcmp(searchstr, "GOI")) strcpy(searchstr, "GOI ");
