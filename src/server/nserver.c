@@ -686,7 +686,7 @@ void setup_contact_socket(void) {
 		sleep(1);
 #endif
 	}
-	plog("Set Non-Blocking..."); 
+	plog("Set Non-Blocking...");
 	if (SetSocketNonBlocking(Socket, 1) == -1)
 		plog("Can't make contact socket non-blocking");
 #ifdef FD_CLOEXEC
@@ -973,8 +973,8 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 					 * authorize the "hijacking" of an existing connection,
 					 * we check to see if the username and hostname are
 					 * identical.  Note that it may be possobile to spoof this,
-					 * kicking someone off.  This is a quick hack that should 
-					 * be replaced with proper password checking. 
+					 * kicking someone off.  This is a quick hack that should
+					 * be replaced with proper password checking.
 					 */
 					/* XXX another Hack -- don't allow to resume connection if
 					 * in 'character edit' mode		- Jir -
@@ -992,7 +992,7 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 					else return E_IN_USE;
 				}
 
-				/* All restrictions on the number of allowed players from one IP have 
+				/* All restrictions on the number of allowed players from one IP have
 				 * been removed at this time. -APD
 				 *
 				 * Restored after the advent of Tcp/IP, becuase there is
@@ -1116,7 +1116,7 @@ static void Contact(int fd, int arg) {
 
 	/* Create a TCP socket for communication with whoever contacted us */
 	/* Hack -- check if this data has arrived on the contact socket or not.
-	 * If it has, then we have not created a connection with the client yet, 
+	 * If it has, then we have not created a connection with the client yet,
 	 * and so we must do so.
 	 */
 
@@ -2002,7 +2002,7 @@ static int Handle_setup(int ind) {
 }
 
 /*
- * No spaces/strange characters in the account name, 
+ * No spaces/strange characters in the account name,
  * real name or hostname.
  */
 #if 0
@@ -2088,8 +2088,8 @@ static int Handle_listening(int ind) {
 			connp->w.sock = -1;
 			Destroy_connection(ind, "TCP connection closed");
 		}
-		/* It's already Dead, Jim. 
-		else 
+		/* It's already Dead, Jim.
+		else
 			Destroy_connection(ind, "read first packet error");
 		*/
 		return -1;
@@ -3774,11 +3774,11 @@ void process_pending_commands(int ind) {
 
 	// Attempt to execute every pending command. Any command that fails due
 	// to lack of energy will be put into the queue for next turn by the
-	// respective receive function. 
+	// respective receive function.
 
-	//while ( (p_ptr->energy >= level_speed(p_ptr->dun_depth)) && 
-	//while ( (connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) && 
-	//while ( (connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) && 
+	//while ( (p_ptr->energy >= level_speed(p_ptr->dun_depth)) &&
+	//while ( (connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) &&
+	//while ( (connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) &&
 	while ((connp->r.ptr < connp->r.buf + connp->r.len)) {
 		char *foo = connp->r.ptr;
 		type = (connp->r.ptr[0] & 0xFF);
@@ -4147,7 +4147,7 @@ int Net_output(void) {
 				}
 				Send_reliable(p_ptr->conn);
 			}
-			// Flush the output buffers 
+			// Flush the output buffers
 		//	if (Sockbuf_flush(&connp->w) == -1)
 		//		return -1;
 		//}
@@ -8743,7 +8743,7 @@ int Send_pickup_check(int Ind, cptr buf) {
 }
 
 /* adding ultimate quick and dirty hack here so geraldo can play his 19th lvl char
-   with the 80 character party name...... 
+   with the 80 character party name......
    -APD-
 */
 
@@ -10013,7 +10013,7 @@ static int Receive_drop(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	char ch;
-	int n, player = -1; 
+	int n, player = -1;
 	s16b item, amt;
 
 	if (connp->id != -1) {

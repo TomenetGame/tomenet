@@ -1719,7 +1719,7 @@ static errr CheckEvent(bool wait) {
 	return (0);
 }
 
-/* 
+/*
  * Handle destruction of a term.
  * Here we should properly destroy all windows and resources for terminal.
  * But after this the whole client ends (should not recover), so just use it for filling terminal preferences, which will be saved after all terminals are nuked.
@@ -2103,7 +2103,7 @@ static errr ReadBMPData(char *Name, char **data_return,  int *width_return, int 
 	return(0);
 }
 
-/* 
+/*
  * Creates 1bit per pixel background and foreground masks.
  * Foreground mask (fgmask_return) determines which pixels in image will be drawn with character color.
  * Background mask (bgmask_return) determines pixels, which will be and not be drawn at all.
@@ -3177,7 +3177,7 @@ void resize_window_x11(int term_idx, int cols, int rows) {
 				Send_screen_dimensions();
 			}
 		}
-	} 
+	}
 
 	if (in_game) {
 		/* Ask for a redraw. */

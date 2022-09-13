@@ -177,7 +177,7 @@ struct lock {
 struct smsg {
 	char stxt[MSG_LEN];		/* may need more info than this sometime */
 };
-  
+
 struct wpacket {
 	uint16_t type;	/* TYPE */
 	uint16_t serverid;

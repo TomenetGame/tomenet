@@ -228,7 +228,7 @@ int main(int argc, char *argv[]) {
 	/* Initialize WinSock */
 	WSAStartup(MAKEWORD(1, 1), &wsadata);
 #endif
-  
+
 
 	/* Save the "program name" */
 	argv0 = argv[0];

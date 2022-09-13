@@ -1391,7 +1391,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 /*
  * Searches for hidden things.                  -RAK-
  */
- 
+
 void search(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int           y, x, chance;
@@ -2802,7 +2802,7 @@ s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr
 	if (c_ptr->feat == FEAT_DEEP_WATER &&
 	    TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
 //			magik(WATER_ITEM_DAMAGE_CHANCE))
-	    magik(3) && !p_ptr->levitate && !p_ptr->immune_water && !(p_ptr->resist_water && magik(50))) 
+	    magik(3) && !p_ptr->levitate && !p_ptr->immune_water && !(p_ptr->resist_water && magik(50)))
 	{
 		if (!magik(get_skill_scale(p_ptr, SKILL_SWIM, 4900)))
 			inven_damage(Ind, set_water_destroy, 1);
@@ -2911,7 +2911,7 @@ void hit_trap(int Ind) {
  *
  * Note: old == TRUE if not auto-retaliating actually
  *       (important for dual-backstab treatment) - C. Blue
- */ 
+ */
 /* TODO: q_ptr/p_ptr->name should be replaced by strings made by player_desc */
 //note: we assume that p_ptr->num_blow isn't 0 (div/0)
 static void py_attack_player(int Ind, int y, int x, byte old) {
@@ -8104,7 +8104,7 @@ static void run_init(int Ind, int dir) {
 	/* Assume running straight */
 	p_ptr->find_prevdir = dir;
 
-	/* Assume looking for open area */      
+	/* Assume looking for open area */
 	p_ptr->find_openarea = TRUE;
 
 	/* Assume not looking for breaks */
@@ -8148,7 +8148,7 @@ static void run_init(int Ind, int dir) {
 		}
 	}
 
-	/* Check for walls */   
+	/* Check for walls */
 	if (see_wall(Ind, cycle[i-1], p_ptr->py, p_ptr->px))
 	{
 		/* if in the dungeon */
@@ -8173,7 +8173,7 @@ static void run_init(int Ind, int dir) {
 		/* Not looking for open area */
 		/* In the town/wilderness, always in an open area */
 //		if (p_ptr->wpos.wz)
-			p_ptr->find_openarea = FALSE;   
+			p_ptr->find_openarea = FALSE;
 
 		/* Hack -- allow angled corridor entry */
 		if (dir & 0x01)
@@ -8280,7 +8280,7 @@ static bool run_test(int Ind) {
 		    ) {
 			/* Visible monster */
 			if (p_ptr->mon_vis[c_ptr->m_idx] &&
-			   (!(m_list[c_ptr->m_idx].special) && 
+			   (!(m_list[c_ptr->m_idx].special) &&
 			   r_info[m_list[c_ptr->m_idx].r_idx].level != 0))
 					return (TRUE);
 
@@ -8371,7 +8371,7 @@ static bool run_test(int Ind) {
 
 		/* Analyze unknown grids and floors */
 		/* wilderness hack to run from one level to the next */
-		if (inv || ((!in_bounds(row, col)) && (wpos->wz == 0))  || 
+		if (inv || ((!in_bounds(row, col)) && (wpos->wz == 0))  ||
 		    (cave_running_bold(p_ptr, zcave, row, col)
 		    /* If player is running on floor grids right now, don't treat tree grids as "passable" even if he could pass them: */
 		    && !(cave_running_bold_notrees(p_ptr, zcave, p_ptr->py, p_ptr->px)
@@ -8609,7 +8609,7 @@ void run_step(int Ind, int dir, char *consume_full_energy) {
 	move_player(Ind, p_ptr->find_current, p_ptr->always_pickup, consume_full_energy);
 }
 
-/* 
+/*
  * Get a real chance of dodging, based on the player's dodge_level (1..100)
  * and the difficulty ie relation between attack level and player level - C. Blue
  * (This will only be used if NEW_DODGING is defined.)

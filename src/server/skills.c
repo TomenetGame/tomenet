@@ -411,7 +411,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 
 		/* learn royal stances at 45+ if winner */
 		if (old_value < 450 && new_value >= 450 && p_ptr->total_winner) {
-			msg_print(Ind, "\374\377GYou learn how to enter Royal Rank combat stances."); 
+			msg_print(Ind, "\374\377GYou learn how to enter Royal Rank combat stances.");
 			if (p_ptr->combat_stance) p_ptr->combat_stance_power = 3;
 		}
 		break;
@@ -964,7 +964,7 @@ static s32b modified_by_related(player_type *p_ptr, int i) {
 		if ((s_info[j].action[i] != SKILL_EXCLUSIVE) &&
 		    s_info[j].action[i] &&
 		    /* hack against oscillation: only take care of increase atm '> 0': */
-		    (s_info[j].action[i] > 0)) { 
+		    (s_info[j].action[i] > 0)) {
 			/* calc 'manual increase' of the increasing skill by excluding base value 'jv' */
 			jv = 0; jm = 0;
 			compute_skills(p_ptr, &jv, &jm, j);

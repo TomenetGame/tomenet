@@ -694,7 +694,7 @@ static void store_object_absorb(object_type *o_ptr, object_type *j_ptr) {
 
 	if (!j_ptr->owner) o_ptr->owner = 0;
 	if (j_ptr->level < o_ptr->level) o_ptr->level = j_ptr->level;
-	/* I don't know why this is needed, it's bad for Nether Realm store though 
+	/* I don't know why this is needed, it's bad for Nether Realm store though
 	if (o_ptr->level < 1) o_ptr->level = 1; -C. Blue */
 
 	/* Combine quantity, lose excess items */
@@ -979,7 +979,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 	case STORE_RUNE_DUN:
 		/* Analyze the type */
 		switch (o_ptr->tval) {
-		case TV_RUNE: 
+		case TV_RUNE:
 			break;
 		default:
 			return (FALSE);
@@ -1600,9 +1600,9 @@ static void store_delete(store_type *st_ptr) {
 	}
 
 	/*
-	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
-	 * charges need to be allocated between the two stacks.  If all the items 
-	 * are being dropped, it makes for a neater message to leave the original 
+	 * Hack -- If rods or wands are dropped, the total maximum timeout or
+	 * charges need to be allocated between the two stacks.  If all the items
+	 * are being dropped, it makes for a neater message to leave the original
 	 * stack's pval alone. -LM-
 	 */
 	if (is_magic_device(o_ptr->tval)) //wait what? adding TODO marker here
@@ -3152,9 +3152,9 @@ void store_stole(int Ind, int item) {
 	sell_obj.number = amt;
 
 	/*
-	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
-	 * charges need to be allocated between the two stacks.  If all the items 
-	 * are being dropped, it makes for a neater message to leave the original 
+	 * Hack -- If rods or wands are dropped, the total maximum timeout or
+	 * charges need to be allocated between the two stacks.  If all the items
+	 * are being dropped, it makes for a neater message to leave the original
 	 * stack's pval alone. -LM-
 	 */
 	if (is_magic_device(o_ptr->tval)) divide_charged_item(&sell_obj, o_ptr, amt);
@@ -3641,9 +3641,9 @@ void store_purchase(int Ind, int item, int amt) {
 	sell_obj.number = amt;
 
 	/*
-	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
-	 * charges need to be allocated between the two stacks.  If all the items 
-	 * are being dropped, it makes for a neater message to leave the original 
+	 * Hack -- If rods or wands are dropped, the total maximum timeout or
+	 * charges need to be allocated between the two stacks.  If all the items
+	 * are being dropped, it makes for a neater message to leave the original
 	 * stack's pval alone. -LM-
 	 */
 	if (is_magic_device(o_ptr->tval)) divide_charged_item(&sell_obj, o_ptr, amt);
@@ -4277,9 +4277,9 @@ void store_confirm(int Ind) {
 	sold_obj.quest_stage = 0;
 
 	/*
-	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
-	 * charges need to be allocated between the two stacks.  If all the items 
-	 * are being dropped, it makes for a neater message to leave the original 
+	 * Hack -- If rods or wands are dropped, the total maximum timeout or
+	 * charges need to be allocated between the two stacks.  If all the items
+	 * are being dropped, it makes for a neater message to leave the original
 	 * stack's pval alone. -LM-
 	 */
 	if (is_magic_device(o_ptr->tval)) divide_charged_item(&sold_obj, o_ptr, amt);
@@ -5996,9 +5996,9 @@ void home_sell(int Ind, int item, int amt) {
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 	/*
-	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
-	 * charges need to be allocated between the two stacks.  If all the items 
-	 * are being dropped, it makes for a neater message to leave the original 
+	 * Hack -- If rods or wands are dropped, the total maximum timeout or
+	 * charges need to be allocated between the two stacks.  If all the items
+	 * are being dropped, it makes for a neater message to leave the original
 	 * stack's pval alone. -LM-
 	 */
 	if (is_magic_device(o_ptr->tval)) divide_charged_item(&sold_obj, o_ptr, amt);
@@ -6237,9 +6237,9 @@ void home_purchase(int Ind, int item, int amt) {
 	sell_obj.number = amt;
 
 	/*
-	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
-	 * charges need to be allocated between the two stacks.  If all the items 
-	 * are being dropped, it makes for a neater message to leave the original 
+	 * Hack -- If rods or wands are dropped, the total maximum timeout or
+	 * charges need to be allocated between the two stacks.  If all the items
+	 * are being dropped, it makes for a neater message to leave the original
 	 * stack's pval alone. -LM-
 	 */
 	if (is_magic_device(o_ptr->tval)) divide_charged_item(&sell_obj, o_ptr, amt);

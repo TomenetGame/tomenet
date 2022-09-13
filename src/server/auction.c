@@ -13,7 +13,7 @@
 
 #ifdef AUCTION_SYSTEM
 
-/* 
+/*
  * TODO:
  * - Debugging
  */

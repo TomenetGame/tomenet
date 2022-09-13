@@ -9766,7 +9766,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if (!friendly_player &&  /* cannot take cover from clouds or LOS projections (latter might be subject to change?) - C. Blue */
 	     /* jump for LOS projecting, stay for clouds; !norf was already checked above -- not sure if fire_beam was covered (PROJECT_BEAM)! */
 	    !rad && (flg & PROJECT_KILL) &&
-	    !(flg & (PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF)) // PROJECT_NORF | 
+	    !(flg & (PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF)) // PROJECT_NORF |
 	    ) /* requires stances to * 2 etc.. post-king -> best stance */
 	{
 		if (p_ptr->shield_deflect && magik(apply_block_chance(p_ptr, p_ptr->shield_deflect) / ((flg & PROJECT_LODF) ? 2 : 1))) {
@@ -11221,7 +11221,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	case GF_STOP: //pvp only
 		if (fuzzy || self) msg_print(Ind, "Something binds you to the spot!");
 		else msg_format(Ind, "%^s binds you to the spot!", killer);
-#if 0 
+#if 0
 		if (p_ptr->free_act) msg_print(Ind, "You are unaffected!");
 		else if (rand_int(100 + dam * 6) < p_ptr->skill_sav ||
 		    (p_ptr->mindboost && magik(p_ptr->mindboost_power)))

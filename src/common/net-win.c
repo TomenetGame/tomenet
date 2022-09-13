@@ -508,7 +508,7 @@ SocketReadable(int fd)
     if (select(fd, &readfds, NULL, NULL, &timeout) == SOCKET_ERROR)
 	return ((errno == EINTR) ? 0 : -1);
 /* I am not getting a readable socket. */
-    if (FD_ISSET(fd, &readfds))  
+    if (FD_ISSET(fd, &readfds))
 	return (1);
     return (0);
 } /* SocketReadable */
@@ -1291,7 +1291,7 @@ DgramInthandler(int signum)
  *	sl_default_retries
  *
  * External Calls
- 
+
  *	signal
  *	DgramSend
  *	DgramReceive
@@ -1975,7 +1975,7 @@ SetSocketNoDelay(int fd, int flag)
  *
  * External Calls
  *	setjmp
- 
+
  *	signal
  *	read
  *

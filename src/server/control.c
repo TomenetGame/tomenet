@@ -755,7 +755,7 @@ void NewConsole(int read_fd, int arg)
 
 	/* Make a TCP connection */
 	/* Hack -- check if this data has arrived on the contact socket or not.
-	 * If it has, then we have not created a connection with the client yet, 
+	 * If it has, then we have not created a connection with the client yet,
 	 * and so we must do so.
 	 */
 	if (read_fd == ConsoleSocket)

@@ -347,7 +347,7 @@ void runeload(c_special *cs_ptr) {
 	cs_ptr->sc.rune.found = (tmp8u != 0);
 }
 
-void runesave(c_special *cs_ptr) { 
+void runesave(c_special *cs_ptr) {
 	wr_s32b(cs_ptr->sc.rune.id);
 	wr_s16b(cs_ptr->sc.rune.dam);
 	wr_byte(cs_ptr->sc.rune.rad);

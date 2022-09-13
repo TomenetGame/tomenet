@@ -2048,7 +2048,7 @@ static void quest_set_flags(int pInd, int q_idx, u16b set_mask, u16b clear_mask)
 
 	if (q_ptr->individual) {
 		p_ptr->quest_flags[i] |= set_mask; /* individual quest */
-		p_ptr->quest_flags[i] &= ~clear_mask; 
+		p_ptr->quest_flags[i] &= ~clear_mask;
 		return;
 	}
 

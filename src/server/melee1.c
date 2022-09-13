@@ -21,7 +21,7 @@
  */
 //#define SUPPRESS_MONSTER_STUN // HERESY !
 
-/* 
+/*
  * This one is more moderate; kick, punch, crush etc. still stuns, but
  * normal 'hit' doesn't.
  */
@@ -598,7 +598,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 	else monster_desc(Ind, ddesc, m_idx, 0x0188);
 
 	/* determine how much parrying or blocking would endanger our weapon/shield */
-	for (i = 0; i < 4; i++) { 
+	for (i = 0; i < 4; i++) {
 		if (r_ptr->blow[i].effect == RBE_ACID) mon_acid += 12;
 		if (r_ptr->blow[i].effect == RBE_FIRE) mon_fire += 12;
 		blows_total++;
@@ -1021,7 +1021,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 			/* choose whether to attempt to block or to parry (can't do both at once),
 			   50% chance each, except for if weapon is missing (anti-retaliate-inscription
 			   has been left out, since if you want max block, you'll have to take off your weapon!) */
-			if (p_ptr->shield_deflect && !bypass_shield && 
+			if (p_ptr->shield_deflect && !bypass_shield &&
 			    (!p_ptr->inventory[INVEN_WIELD].k_idx || magik(p_ptr->combat_stance == 1 ? 75 : 50))) {
 				if (magik(apply_block_chance(p_ptr, p_ptr->shield_deflect))) {
 					msg_format(Ind, "\377%cYou block %s attack.", COLOUR_BLOCK_GOOD, m_name_gen);

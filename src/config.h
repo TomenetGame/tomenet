@@ -285,7 +285,7 @@
  * don't want to enable this unless you have been running a development version of
  * the code that has a 'store 9' in it.
  */
- /* #define	DEVEL_TOWN_COMPATIBILITY */ 
+ /* #define	DEVEL_TOWN_COMPATIBILITY */
 #endif	/* 0 */
 
 /*
@@ -665,7 +665,7 @@
  * OPTION: Random Uniques and Ego Monsters.
  * not fully implemented yet.	-Jir-
  * (3.2.2)
- * 
+ *
  * Don't remove this; sure it won't compile! :-/
  * To disable this, pls set MEGO_CHANCE to 0 instead.
  * TODO: make this option valid
@@ -748,7 +748,7 @@
 #define PROJECTION_FLUSH_LIMIT 9
 #define PROJECTION_FLUSH_LIMIT_TURNS 3
 
-/* 
+/*
  * OPTION: the interval of monster turns.	[6]
  * If the value is 6 and FPS is 60, monsters are processed 10 times/second.
  * This should be of *great* help for slow servers :)
@@ -777,7 +777,7 @@
 /* OPTION: allow monsters to carry objects. */
 #define MONSTER_INVENTORY
 
-/* 
+/*
  * OPTION: default radii used for some kinds of magic (like detection).
  * artifacts uses (DEFAULT_RADIUS * 2) instead.
  *
@@ -818,7 +818,7 @@
  * Probably we'd better separate them to another file?	- Jir -
  */
 
-/* 
+/*
  * OPTION: max # of history for chat, slash-cmd etc.
  */
 #define MSG_HISTORY_MAX		2000

@@ -261,7 +261,7 @@ int	port;
     int			retval;
     int			option = 1;
 
-#ifdef UNIX_SOCKETS     
+#ifdef UNIX_SOCKETS
     struct sockaddr_un  addr_in;
 
     fd = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -272,7 +272,7 @@ int	port;
     }
 
     memset((char *)&addr_in, 0, sizeof(addr_in));
-    addr_in.sun_family          = AF_UNIX; 
+    addr_in.sun_family          = AF_UNIX;
     if (port) {
        sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
        retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
@@ -298,10 +298,10 @@ int	port;
     addr_in.sin6_port		= htons(port);
     fd = socket(AF_INET6, SOCK_STREAM, 0);
     /* Set this so we don't wait forever on startups */
-    setsockopt(fd, SOL_SOCKET, SO_REUSEADDR , (void*)&option, sizeof(int)); 
+    setsockopt(fd, SOL_SOCKET, SO_REUSEADDR , (void*)&option, sizeof(int));
     /* Allow binding on IPv4 port if not in use */
     option = 0;
-    setsockopt(fd, IPPROTO_IPV6, IPV6_BINDV6ONLY, (void*)&option, sizeof(int)); 
+    setsockopt(fd, IPPROTO_IPV6, IPV6_BINDV6ONLY, (void*)&option, sizeof(int));
     if (fd < 0)
     {
 	sl_errno = SL_ESOCKET;
@@ -309,7 +309,7 @@ int	port;
     }
 
     retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
-#endif      
+#endif
 
     if (retval < 0)
     {
@@ -504,7 +504,7 @@ int	namelen;
 
     hp = gethostbyaddr((char *)&addr.sin6_addr.s_addr, 4, AF_INET6);
     if (hp != NULL)
-    { 
+    {
 	strncpy(name, hp->h_name, namelen);
     }
     else
@@ -566,10 +566,10 @@ int	port;
 {
     int			fd;
 
-#ifdef UNIX_SOCKETS     
+#ifdef UNIX_SOCKETS
     struct sockaddr_un  peer;
     memset((char *)&peer, 0, sizeof(peer));
-    peer.sun_family          = AF_UNIX; 
+    peer.sun_family          = AF_UNIX;
     sprintf(peer.sun_path, "/tmp/tomenet%d", (port)? port : getpid());
     fd = socket(AF_UNIX, SOCK_STREAM, 0);
 #else
@@ -601,7 +601,7 @@ int	port;
 	    peer.sin6_addr = *((struct in6_addr*)(hp->h_addr));
     }
     fd = socket(AF_INET6, SOCK_STREAM, 0);
-#endif      
+#endif
 
     if (fd < 0)
     {
@@ -1520,10 +1520,10 @@ int	port;
     int			fd;
     int			retval;
 
-#ifdef UNIX_SOCKETS     
+#ifdef UNIX_SOCKETS
     struct sockaddr_un  addr_in;
     memset((char *)&addr_in, 0, sizeof(addr_in));
-    addr_in.sun_family          = AF_UNIX; 
+    addr_in.sun_family          = AF_UNIX;
     fd = socket(AF_UNIX, SOCK_DGRAM, 0);
 
     if (fd < 0)
@@ -1552,7 +1552,7 @@ int	port;
     inet_pton(AF_INET6, BIND_IP, &addr_in.sin6_addr);
     /* fprintf( stderr, "DgramAddr Binding By Request to %s\n",inet_ntoa(addr_in.sin6_addr)); -RLS*/
 #else
-    addr_in.sin6_addr.s_addr	= inet_addr(dotaddr);  
+    addr_in.sin6_addr.s_addr	= inet_addr(dotaddr);
 #endif
     addr_in.sin6_port		= htons(port);
     fd = socket(AF_INET6, SOCK_DGRAM, 0);
@@ -1564,7 +1564,7 @@ int	port;
     }
 
     retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
-#endif      
+#endif
 
     if (retval < 0)
     {
@@ -1625,10 +1625,10 @@ int	port;
 {
     int			retval;
 
-#ifdef UNIX_SOCKETS     
+#ifdef UNIX_SOCKETS
     struct sockaddr_un  addr_in;
     memset((char *)&addr_in, 0, sizeof(addr_in));
-    addr_in.sun_family          = AF_UNIX; 
+    addr_in.sun_family          = AF_UNIX;
 
     if (port) {
        sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
@@ -1656,7 +1656,7 @@ int	port;
     addr_in.sin6_port		= htons(port);
 
     retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
-#endif      
+#endif
 
     if (retval < 0)
     {
@@ -1725,7 +1725,7 @@ int	port;
     addr_in.sin6_port            = htons(port);
     if((inet_pton(AF_INET6, host, &addr_in.sin6_addr)<1))
     {
-#ifdef SERVER 
+#ifdef SERVER
 	printf("DgramConnect called with hostname %s.\n", host);
 #endif
 	hp = gethostbyname2(host, AF_INET6);
@@ -1748,7 +1748,7 @@ int	port;
 	    addr_in.sin6_addr =
 		*((struct in6_addr*)(hp->h_addr));
     } /**/
-#endif  
+#endif
 #if 0
     hp = gethostbyname2(host, AF_INET6);
     if(hp == NULL)
@@ -1818,10 +1818,10 @@ char	*host, *sbuf;
 {
     int			retval;
 
-#ifdef UNIX_SOCKETS     
+#ifdef UNIX_SOCKETS
     struct sockaddr_un  the_addr;
     memset((char *)&the_addr, 0, sizeof(the_addr));
-    the_addr.sun_family          = AF_UNIX; 
+    the_addr.sun_family          = AF_UNIX;
     sprintf(the_addr.sun_path, "/tmp/tomenet%d", (port)? port : getpid());
     sl_errno = 0;
 #else
@@ -1848,7 +1848,7 @@ char	*host, *sbuf;
 	    printf("%s not a valid IPv6 address\n", host);
 	    hp = gethostbyname2(host, AF_INET6);
 	    if (hp == NULL)
-	    { 
+	    {
 	        printf("3 No IP6 address for %s\n", host);
 	        hp = gethostbyname2(host, AF_INET);
 	        if (hp == NULL) {
@@ -1868,7 +1868,7 @@ char	*host, *sbuf;
 	    }
 	}
     }
-#endif      
+#endif
 
     inet_ntop(AF_INET6, &the_addr.sin6_addr, &temp, INET6_ADDRSTRLEN);
     cmw_priv_assert_netaccess();

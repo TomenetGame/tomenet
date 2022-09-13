@@ -2,7 +2,7 @@
 /* Console initialization module */
 
 /*
- * This file should contain non-system-specific code.  If a 
+ * This file should contain non-system-specific code.  If a
  * specific system needs its own "main" function (such as
  * Windows), then it should be placed in the "main-???.c" file.
  */
@@ -65,10 +65,10 @@ static void enter_password(void)
 		break;
 	}
 
-	/* Pad the name (to clear junk) 
+	/* Pad the name (to clear junk)
 	sprintf(tmp, "%-15.15s", pass);
 
-	 Re-Draw the name (in light blue) 
+	 Re-Draw the name (in light blue)
 	c_put_str(TERM_L_BLUE, tmp, 3, 15);
 	*/
 

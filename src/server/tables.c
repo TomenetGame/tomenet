@@ -2516,7 +2516,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 1000, },
 		{ SKILL_ANTIMAGIC,
 			'+', 0,
-			'+', 500, },//700 
+			'+', 500, },//700
 			/* Health tree */
 		{ SKILL_HEALTH,
 			'+', 2000,
@@ -3759,7 +3759,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 400, },
 		{ SKILL_COMBAT,
 			'+', 0,
-			'+', 300,},//priests=750,istari=300 
+			'+', 300,},//priests=750,istari=300
 		{ SKILL_MASTERY,
 			'+', 0,
 			'+', 150, },

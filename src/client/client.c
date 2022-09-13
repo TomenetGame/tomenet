@@ -915,9 +915,9 @@ static void default_set(void) {
 #endif
 #ifdef SET_UID
 	temp = getenv("TOMENET_PLAYER");
-	if (temp) strcpy(nick, temp); 
+	if (temp) strcpy(nick, temp);
 	temp = getenv("TOMENET_USER");
-	if (temp) strcpy(real_name, temp); 
+	if (temp) strcpy(real_name, temp);
 #endif
 }
 

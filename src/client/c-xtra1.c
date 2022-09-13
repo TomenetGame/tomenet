@@ -1433,7 +1433,7 @@ void prt_extra_status(cptr status) {
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
-	if (ROW_EXSTA != -1) { /* paranoia: just in case we're a client 
+	if (ROW_EXSTA != -1) { /* paranoia: just in case we're a client
 				  without CONDENSED_HP_SP for some odd reason */
 		if (!recording_macro)
 			c_put_str(TERM_SLATE, status, ROW_EXSTA, COL_EXSTA);

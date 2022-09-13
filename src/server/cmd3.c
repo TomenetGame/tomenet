@@ -105,7 +105,7 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield, bool forc
 	/* Polymorph back */
 	/* XXX this can cause strange things for players with mimicry skill.. */
 	if ((item == INVEN_LEFT || item == INVEN_RIGHT) && (o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) {
-		if ((p_ptr->body_monster == o_ptr->pval) && 
+		if ((p_ptr->body_monster == o_ptr->pval) &&
 		    ((p_ptr->r_mimicry[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
 		    (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level))) {
 			/* If player hasn't got high enough kill count anymore now, poly back to player form! */
@@ -255,7 +255,7 @@ void equip_thrown(int Ind, int slot, object_type *o_ptr, int original_number) {
 	/* Polymorph back */
 	/* XXX this can cause strange things for players with mimicry skill.. */
 	if ((slot == INVEN_LEFT || slot == INVEN_RIGHT) && (o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) {
-		if ((p_ptr->body_monster == o_ptr->pval) && 
+		if ((p_ptr->body_monster == o_ptr->pval) &&
 		    ((p_ptr->r_mimicry[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
 		    (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level))) {
 			/* If player hasn't got high enough kill count anymore now, poly back to player form! */
@@ -383,9 +383,9 @@ int inven_drop(int Ind, int item, int amt, bool force) {
 	tmp_obj.number = amt;
 
 	/*
-	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
-	 * charges need to be allocated between the two stacks.  If all the items 
-	 * are being dropped, it makes for a neater message to leave the original 
+	 * Hack -- If rods or wands are dropped, the total maximum timeout or
+	 * charges need to be allocated between the two stacks.  If all the items
+	 * are being dropped, it makes for a neater message to leave the original
 	 * stack's pval alone. -LM-
 	 */
 	if (is_magic_device(o_ptr->tval)) divide_charged_item(&tmp_obj, o_ptr, amt);
@@ -432,7 +432,7 @@ int inven_drop(int Ind, int item, int amt, bool force) {
 	/* XXX this can cause strange things for players with mimicry skill.. */
 	if ((item == INVEN_LEFT || item == INVEN_RIGHT) &&
 	    (o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) {
-		if ((p_ptr->body_monster == o_ptr->pval) && 
+		if ((p_ptr->body_monster == o_ptr->pval) &&
 		    ((p_ptr->r_mimicry[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
 		    (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level)))
 		{

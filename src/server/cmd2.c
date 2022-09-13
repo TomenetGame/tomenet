@@ -4723,7 +4723,7 @@ static void do_id_trap(int Ind, int t_idx) {
  */
 
 /* A nice idea:
- * Disarming a trap will have a disarm_skill% chance of dropping a 
+ * Disarming a trap will have a disarm_skill% chance of dropping a
  * random trap kit? =) - the_sandman
  */
 void do_cmd_disarm(int Ind, int dir) {
@@ -5009,9 +5009,9 @@ void do_cmd_disarm(int Ind, int dir) {
 					object_type* yay = &forge;
 					invcopy(yay, lookup_kind(TV_TRAPKIT, randint(6)));
 
-					/* Let's make it so that there is always a chance for an awesome trap-- 
-					   more so the better you are at trapping (from 1% ... 6%). 
-					   Since the trap appears ~50% of the time at max trapping, 
+					/* Let's make it so that there is always a chance for an awesome trap--
+					   more so the better you are at trapping (from 1% ... 6%).
+					   Since the trap appears ~50% of the time at max trapping,
 					   the total chance for this is about 3% */
 					if (magik((sdis / 10) + 1)) {
 						apply_magic(&p_ptr->wpos, yay, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
@@ -5761,7 +5761,7 @@ int do_cmd_run(int Ind, int dir) {
 				/* Get requested grid */
 				c_ptr = &zcave[p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];
 
-				if (((c_ptr->feat >= FEAT_DOOR_HEAD) && 
+				if (((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 				      (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
 				    ((c_ptr->feat == FEAT_HOME)))
 				{
@@ -7237,7 +7237,7 @@ void do_cmd_fire(int Ind, int dir) {
 
 					/* can't attack while in WRAITHFORM (explosion still works) */
 					/* wraithed players can attack wraithed monsters - mikaelh */
-					if (p_ptr->tim_wraith && 
+					if (p_ptr->tim_wraith &&
 					    ((r_ptr->flags2 & RF2_KILL_WALL) || !(r_ptr->flags2 & RF2_PASS_WALL))) tdam = 0;
 
 					/* No negative damage */
@@ -7968,9 +7968,9 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 
 	/*
-	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
-	 * charges need to be allocated between the two stacks.  If all the items 
-	 * are being dropped, it makes for a neater message to leave the original 
+	 * Hack -- If rods or wands are dropped, the total maximum timeout or
+	 * charges need to be allocated between the two stacks.  If all the items
+	 * are being dropped, it makes for a neater message to leave the original
 	 * stack's pval alone. -LM-
 	 */
 	if (is_magic_device(o_ptr->tval)) divide_charged_item(&throw_obj, o_ptr, 1);
@@ -8739,7 +8739,7 @@ void house_admin(int Ind, int dir, char *args) {
 /*
  * Buy a house.  It is assumed that the player already knows the
  * price.
- 
+
  Hacked to sell houses for half price. -APD-
  Doesn't use a turn / disable AFK at this time. - C. Blue
  */
@@ -9052,7 +9052,7 @@ void do_cmd_cloak(int Ind) {
 
 #ifdef ENABLE_MCRAFT
  #if 0 /* instead via spell schools atm */
-	/* hack: also use the key for fusion, 
+	/* hack: also use the key for fusion,
 	   a new mindcrafter special ability - C. Blue */
 	if (p_ptr->pclass == CLASS_MINDCRAFTER) {
 		do_cmd_fusion(Ind);

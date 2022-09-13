@@ -1666,7 +1666,7 @@ static void build_streamer2(worldpos *wpos, int feat, int killwall) {
 #if 0
 int dist2(int x1, int y1, int x2, int y2, int h1, int h2, int h3, int h4)
 /*
- * Build an underground lake 
+ * Build an underground lake
  */
 static void lake_level(struct worldpos *wpos)
 {
@@ -2241,7 +2241,7 @@ static void build_rectangle(worldpos *wpos, int y1, int x1, int y2, int x2, int 
 /*
  * Place water through the dungeon using recursive fractal algorithm
  *
- * Why do those good at math and/or algorithms tend *not* to 
+ * Why do those good at math and/or algorithms tend *not* to
  * place any spaces around binary operators? I've been always
  * wondering. This seems almost a unversal phenomenon...
  * Tried to make those conform to the rule, but there may still
@@ -9879,7 +9879,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		}
 	}
 	if (wpos->wz == 7) {
-		for (mx = 1; mx<21; mx++) 
+		for (mx = 1; mx<21; mx++)
 			cave_set_feat(wpos, 11, mx, 61);
 		for (mx = 1; mx < 12; mx++)
 			cave_set_feat(wpos, mx, 21, 61);
@@ -11090,8 +11090,8 @@ static void town_gen_hack(struct worldpos *wpos) {
  */
 
  /*
- Hack -- since boundary walls are a 'good thing' for many of the algorithms 
- used, the feature FEAT_PERM_CLEAR was created.  It is used to create an 
+ Hack -- since boundary walls are a 'good thing' for many of the algorithms
+ used, the feature FEAT_PERM_CLEAR was created.  It is used to create an
  invisible boundary wall for town and wilderness levels, keeping the
  algorithms happy, and the players fooled.
 
@@ -11126,7 +11126,7 @@ static void town_gen(struct worldpos *wpos) {
 		/* Clear previous contents, add "clear" perma-wall */
 		c_ptr->feat = FEAT_PERM_CLEAR;
 
-		/* Illuminate and memorize the walls 
+		/* Illuminate and memorize the walls
 		c_ptr->info |= (CAVE_GLOW | CAVE_MARK);*/
 
 		/* South wall */
@@ -11135,7 +11135,7 @@ static void town_gen(struct worldpos *wpos) {
 		/* Clear previous contents, add "clear" perma-wall */
 		c_ptr->feat = FEAT_PERM_CLEAR;
 
-		/* Illuminate and memorize the walls 
+		/* Illuminate and memorize the walls
 		c_ptr->info |= (CAVE_GLOW);*/
 	}
 
@@ -11156,7 +11156,7 @@ static void town_gen(struct worldpos *wpos) {
 		/* Clear previous contents, add "clear" perma-wall */
 		c_ptr->feat = FEAT_PERM_CLEAR;
 
-		/* Illuminate and memorize the walls 
+		/* Illuminate and memorize the walls
 		c_ptr->info |= (CAVE_GLOW);*/
 	}
 	
@@ -11198,7 +11198,7 @@ static void town_gen(struct worldpos *wpos) {
 			/* Clear previous contents, add "clear" perma-wall */
 			c_ptr->feat = FEAT_GRASS;
 
-			/* Illuminate and memorize the walls 
+			/* Illuminate and memorize the walls
 			   c_ptr->info |= (CAVE_GLOW | CAVE_MARK);*/
 
 			/* South wall */
@@ -11207,7 +11207,7 @@ static void town_gen(struct worldpos *wpos) {
 			/* Clear previous contents, add "clear" perma-wall */
 			c_ptr->feat = FEAT_GRASS;
 
-			/* Illuminate and memorize the walls 
+			/* Illuminate and memorize the walls
 			   c_ptr->info |= (CAVE_GLOW);*/
 		}
 
@@ -11228,7 +11228,7 @@ static void town_gen(struct worldpos *wpos) {
 			/* Clear previous contents, add "clear" perma-wall */
 			c_ptr->feat = FEAT_GRASS;
 
-			/* Illuminate and memorize the walls 
+			/* Illuminate and memorize the walls
 			   c_ptr->info |= (CAVE_GLOW);*/
 		}
 		/* Hack -- use the "complex" RNG */
@@ -11606,7 +11606,7 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, 
 	if (type) {
 		/* XXX: flags1, flags2 can be affected if specified so? */
 		d_ptr->baselevel = d_info[type].mindepth;
-		d_ptr->maxdepth = d_info[type].maxdepth - d_ptr->baselevel + 1; 
+		d_ptr->maxdepth = d_info[type].maxdepth - d_ptr->baselevel + 1;
 		d_ptr->flags1 = d_info[type].flags1 | flags1;
 		d_ptr->flags2 = d_info[type].flags2 | flags2 | DF2_RANDOM;
 		d_ptr->flags3 = d_info[type].flags3 | flags3;

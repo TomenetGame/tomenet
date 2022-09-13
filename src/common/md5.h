@@ -11,7 +11,7 @@
     the byteReverse function in md5.c must be invoked. However,
     byteReverse is coded in such a way that it is an identity
     function when run on a little-endian machine, so calling it
-    on such a platform causes no harm apart from wasting time. 
+    on such a platform causes no harm apart from wasting time.
     If the platform is known to be little-endian, we speed
     things up by undefining HIGHFIRST, which defines
     byteReverse as a null macro.  Doing things in this manner

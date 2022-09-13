@@ -105,7 +105,7 @@ static bool lua_magik @ magik(s32b P);
 /**** Available Variables ****/
 extern bool Rand_quick;
 extern u32b Rand_value;
-	       
+
 /**** Available Functions ****/
 extern s32b damroll(int num, int sides);
 extern s32b maxroll(int num, int sides);

@@ -2111,7 +2111,7 @@ typedef struct house_type house_type;
 
 /*
 In order to delete the contents of a house after its key is lost,
-added x_1, y_1, x_2, y_2, which are the locations of the opposite 
+added x_1, y_1, x_2, y_2, which are the locations of the opposite
 corners of the house.
 -APD-
 */

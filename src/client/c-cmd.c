@@ -1124,7 +1124,7 @@ void cmd_wield(void) {
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Wear/Wield which item? ", (USE_INVEN | USE_EXTRA))) 
+	if (!c_get_item(&item, "Wear/Wield which item? ", (USE_INVEN | USE_EXTRA)))
 		return;
 
 	/* Send it */

@@ -785,7 +785,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 					floor_item_optimize(item);
 				}
 			}
-			destroy_chest(i_ptr); 
+			destroy_chest(i_ptr);
 			break;
 		}
 
@@ -1201,7 +1201,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			else
 				msg_print(Ind, "You hear a wail of great disappointment.");
 
-			destroy_chest(i_ptr); 
+			destroy_chest(i_ptr);
 			break;
 		}
 		/* Trap of Stair Movement */
@@ -1781,7 +1781,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 		/* Trap of Garbage */
 		case TRAP_OF_GARBAGE:
 			ident = do_player_trap_garbage(Ind, 300 + dlev * 3);
-			destroy_chest(i_ptr); 
+			destroy_chest(i_ptr);
 			break;
 
       /* Trap of discordance */
@@ -2300,7 +2300,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				/* Skip objects not on this depth */
 				if (!inarea(&o_ptr->wpos, wpos)) continue;
 
-				/* Skip 'owned' items, so that this won't be too harsh 
+				/* Skip 'owned' items, so that this won't be too harsh
 				 * in the rescue scene */
 				if (o_ptr->owner) continue;
 
@@ -2334,7 +2334,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			}
 			/* Compact the object list */
 			compact_objects(0, FALSE);
-			destroy_chest(i_ptr); 
+			destroy_chest(i_ptr);
 			break;
 		}
 		/* Preparation Trap */
@@ -2867,7 +2867,7 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod) {
 
 	/* set flags */
 	/*
-	if (((c_ptr->feat >= FEAT_DOOR_HEAD) && 
+	if (((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 	   (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
 	*/
 #if 0
@@ -2947,7 +2947,7 @@ void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found
 	/* Hack - '+1' for secret doors */
 #if 0
 	if (cave_floor_grid(c_ptr) || c_ptr->feat == FEAT_DEEP_WATER) flags = FTRAP_FLOOR;
-	else if ((c_ptr->feat >= FEAT_DOOR_HEAD) && 
+	else if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 			(c_ptr->feat <= FEAT_DOOR_TAIL + 1))
 		flags = FTRAP_DOOR;
 	else return;
@@ -2974,7 +2974,7 @@ void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found
 
 	/* set flags */
 	/*
-	if (((c_ptr->feat >= FEAT_DOOR_HEAD) && 
+	if (((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 	    (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
 	*/
 #if 0
@@ -3094,7 +3094,7 @@ void wiz_place_trap(int Ind, int trap) {
 
 	/* set flags */
 	/*
-	if (((c_ptr->feat >= FEAT_DOOR_HEAD) && 
+	if (((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 	   (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
 	*/
 #if 0
@@ -3122,7 +3122,7 @@ void wiz_place_trap(int Ind, int trap) {
 		//return;
 	}
 
-	if (((c_ptr->feat >= FEAT_DOOR_HEAD) && 
+	if (((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 			(c_ptr->feat <= FEAT_DOOR_TAIL)) ||
 			c_ptr->feat == FEAT_OPEN)
 		flags = FTRAP_DOOR;
@@ -3230,7 +3230,7 @@ static int pop_montrap(int Ind, object_type *j_ptr, int next_o_idx) {
 }
 
 /*
- * The trap setting code for rogues -MWK- 
+ * The trap setting code for rogues -MWK-
  *
  * Also, it will fail or give weird results if the tvals are resorted!
  */
@@ -3386,9 +3386,9 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 	if (!(cs_ptr = AddCS(c_ptr, CS_MON_TRAP))) return;
 
 	/*
-	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
-	 * charges need to be allocated between the two stacks.  If all the items 
-	 * are being dropped, it makes for a neater message to leave the original 
+	 * Hack -- If rods or wands are dropped, the total maximum timeout or
+	 * charges need to be allocated between the two stacks.  If all the items
+	 * are being dropped, it makes for a neater message to leave the original
 	 * stack's pval alone. -LM-
 	 */
 	if (is_magic_device(j_ptr->tval)) divide_charged_item(i_ptr, j_ptr, 1);
@@ -3445,7 +3445,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 /*
  * Disamrs the monster traps(no failure)
  */
-/* Hrm it's complicated.. 
+/* Hrm it's complicated..
  * We'd better not touch FEAT and use only CS	- Jir -
  * If Ind isn't 0, the items go directly to the player's inventory.
  */
@@ -4001,7 +4001,7 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
-/* 
+/*
  * Monster hitting a scroll trap -MWK-
  *
  * Return TRUE if the monster died

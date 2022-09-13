@@ -1,4 +1,4 @@
-/** 
+/**
  * @file  SFMT.c
  * @brief SIMD oriented Fast Mersenne Twister(SFMT)
  *
@@ -72,7 +72,7 @@ typedef struct W128_T w128_t;
 
 /*--------------------------------------
   FILE GLOBAL VARIABLES
-  internal state, index counter and flag 
+  internal state, index counter and flag
   --------------------------------------*/
 /** the 128-bit internal state array */
 static w128_t sfmt[N];
@@ -114,7 +114,7 @@ inline static void swap(w128_t *array, int size);
 #endif
 
 /**
- * This function simulate a 64-bit index of LITTLE ENDIAN 
+ * This function simulate a 64-bit index of LITTLE ENDIAN
  * in BIG ENDIAN machine.
  */
 #ifdef ONLY64
@@ -224,13 +224,13 @@ inline static void do_recursion(w128_t *r, w128_t *a, w128_t *b, w128_t *c,
 
     lshift128(&x, a, SL2);
     rshift128(&y, c, SR2);
-    r->u[0] = a->u[0] ^ x.u[0] ^ ((b->u[0] >> SR1) & MSK2) ^ y.u[0] 
+    r->u[0] = a->u[0] ^ x.u[0] ^ ((b->u[0] >> SR1) & MSK2) ^ y.u[0]
 	^ (d->u[0] << SL1);
-    r->u[1] = a->u[1] ^ x.u[1] ^ ((b->u[1] >> SR1) & MSK1) ^ y.u[1] 
+    r->u[1] = a->u[1] ^ x.u[1] ^ ((b->u[1] >> SR1) & MSK1) ^ y.u[1]
 	^ (d->u[1] << SL1);
-    r->u[2] = a->u[2] ^ x.u[2] ^ ((b->u[2] >> SR1) & MSK4) ^ y.u[2] 
+    r->u[2] = a->u[2] ^ x.u[2] ^ ((b->u[2] >> SR1) & MSK4) ^ y.u[2]
 	^ (d->u[2] << SL1);
-    r->u[3] = a->u[3] ^ x.u[3] ^ ((b->u[3] >> SR1) & MSK3) ^ y.u[3] 
+    r->u[3] = a->u[3] ^ x.u[3] ^ ((b->u[3] >> SR1) & MSK3) ^ y.u[3]
 	^ (d->u[3] << SL1);
 }
 #else
@@ -241,13 +241,13 @@ inline static void do_recursion(w128_t *r, w128_t *a, w128_t *b, w128_t *c,
 
     lshift128(&x, a, SL2);
     rshift128(&y, c, SR2);
-    r->u[0] = a->u[0] ^ x.u[0] ^ ((b->u[0] >> SR1) & MSK1) ^ y.u[0] 
+    r->u[0] = a->u[0] ^ x.u[0] ^ ((b->u[0] >> SR1) & MSK1) ^ y.u[0]
 	^ (d->u[0] << SL1);
-    r->u[1] = a->u[1] ^ x.u[1] ^ ((b->u[1] >> SR1) & MSK2) ^ y.u[1] 
+    r->u[1] = a->u[1] ^ x.u[1] ^ ((b->u[1] >> SR1) & MSK2) ^ y.u[1]
 	^ (d->u[1] << SL1);
-    r->u[2] = a->u[2] ^ x.u[2] ^ ((b->u[2] >> SR1) & MSK3) ^ y.u[2] 
+    r->u[2] = a->u[2] ^ x.u[2] ^ ((b->u[2] >> SR1) & MSK3) ^ y.u[2]
 	^ (d->u[2] << SL1);
-    r->u[3] = a->u[3] ^ x.u[3] ^ ((b->u[3] >> SR1) & MSK4) ^ y.u[3] 
+    r->u[3] = a->u[3] ^ x.u[3] ^ ((b->u[3] >> SR1) & MSK4) ^ y.u[3]
 	^ (d->u[3] << SL1);
 }
 #endif
@@ -280,7 +280,7 @@ inline static void gen_rand_all(void) {
  * This function fills the user-specified array with pseudorandom
  * integers.
  *
- * @param array an 128-bit array to be filled by pseudorandom numbers.  
+ * @param array an 128-bit array to be filled by pseudorandom numbers.
  * @param size number of 128-bit pseudorandom numbers to be generated.
  */
 inline static void gen_rand_array(w128_t *array, int size) {
@@ -433,7 +433,7 @@ uint32_t gen_rand32(void) {
  * This function generates and returns 64-bit pseudorandom number.
  * init_gen_rand or init_by_array must be called before this function.
  * The function gen_rand64 should not be called after gen_rand32,
- * unless an initialization is again executed. 
+ * unless an initialization is again executed.
  * @return 64-bit pseudorandom number
  */
 uint64_t gen_rand64(void) {
@@ -549,7 +549,7 @@ void init_gen_rand(uint32_t seed) {
 
     psfmt32[idxof(0)] = seed;
     for (i = 1; i < N32; i++) {
-	psfmt32[idxof(i)] = 1812433253UL * (psfmt32[idxof(i - 1)] 
+	psfmt32[idxof(i)] = 1812433253UL * (psfmt32[idxof(i - 1)]
 					    ^ (psfmt32[idxof(i - 1)] >> 30))
 	    + i;
     }
@@ -588,7 +588,7 @@ void init_by_array(uint32_t *init_key, int key_length) {
     } else {
 	count = N32;
     }
-    r = func1(psfmt32[idxof(0)] ^ psfmt32[idxof(mid)] 
+    r = func1(psfmt32[idxof(0)] ^ psfmt32[idxof(mid)]
 	      ^ psfmt32[idxof(N32 - 1)]);
     psfmt32[idxof(mid)] += r;
     r += key_length;
@@ -597,7 +597,7 @@ void init_by_array(uint32_t *init_key, int key_length) {
 
     count--;
     for (i = 1, j = 0; (j < count) && (j < key_length); j++) {
-	r = func1(psfmt32[idxof(i)] ^ psfmt32[idxof((i + mid) % N32)] 
+	r = func1(psfmt32[idxof(i)] ^ psfmt32[idxof((i + mid) % N32)]
 		  ^ psfmt32[idxof((i + N32 - 1) % N32)]);
 	psfmt32[idxof((i + mid) % N32)] += r;
 	r += init_key[j] + i;
@@ -606,7 +606,7 @@ void init_by_array(uint32_t *init_key, int key_length) {
 	i = (i + 1) % N32;
     }
     for (; j < count; j++) {
-	r = func1(psfmt32[idxof(i)] ^ psfmt32[idxof((i + mid) % N32)] 
+	r = func1(psfmt32[idxof(i)] ^ psfmt32[idxof((i + mid) % N32)]
 		  ^ psfmt32[idxof((i + N32 - 1) % N32)]);
 	psfmt32[idxof((i + mid) % N32)] += r;
 	r += i;
@@ -615,7 +615,7 @@ void init_by_array(uint32_t *init_key, int key_length) {
 	i = (i + 1) % N32;
     }
     for (j = 0; j < N32; j++) {
-	r = func2(psfmt32[idxof(i)] + psfmt32[idxof((i + mid) % N32)] 
+	r = func2(psfmt32[idxof(i)] + psfmt32[idxof((i + mid) % N32)]
 		  + psfmt32[idxof((i + N32 - 1) % N32)]);
 	psfmt32[idxof((i + mid) % N32)] ^= r;
 	r -= i;

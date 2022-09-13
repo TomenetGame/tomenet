@@ -503,7 +503,7 @@ int local_file_close(int ind, unsigned short fnum) {
 	return success;
 }
 
-/* 
+/*
  * This is a broken version of Adler-32.
  */
 static void do_sum(const unsigned char *buffer, size_t bytes_read, u32b *total_ptr) {

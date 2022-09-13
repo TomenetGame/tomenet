@@ -422,7 +422,7 @@ errr check_load_init(void)
  * same as in the prt_lnum code... -CFT
  *
  * This will send the info to the client now --KLJ--
- * 
+ *
  * Except that this (and display_player) are never called. --KLJ--
  */
 static void display_player_middle(int Ind) {
@@ -1962,7 +1962,7 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 
 		/* Dump some info */
 		snprintf(out_val, sizeof(out_val), "%2s%3d.%10s %s%s the %s%s %s, Lv.%d",
-			attrc, place, the_score.pts, modecol, the_score.who, modestr, 
+			attrc, place, the_score.pts, modecol, the_score.who, modestr,
 			race_info[pr].title, class_info[pc].title,
 			clev);
 
@@ -2528,7 +2528,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output, int max_len) {
 
 /*
  * Read lines from a file to memory.
- * 
+ *
  * Adapted from get_rnd_line(). This function assumes similar format for files.
  */
 errr read_lines_to_memory(cptr file_name, char ***lines_out, int *num_lines_out) {
@@ -2621,7 +2621,7 @@ errr read_lines_to_memory(cptr file_name, char ***lines_out, int *num_lines_out)
 
 /*
  * Get a random line from an array stored in memory.
- * 
+ *
  * Adapted from get_rnd_line().
  */
 errr get_rnd_line_from_memory(char **lines, int numentries, char *output, int max_len) {
@@ -2889,7 +2889,7 @@ void save_game_panic(void) {
 
 LPTOP_LEVEL_EXCEPTION_FILTER old_handler;
 
-/* Callback to be called by Windows when our term closes, the user 
+/* Callback to be called by Windows when our term closes, the user
  * logs off, the system is shutdown, etc.
  */
 BOOL ctrl_handler( DWORD fdwCtrlType ) {
@@ -2904,7 +2904,7 @@ BOOL ctrl_handler( DWORD fdwCtrlType ) {
 LONG WINAPI myUnhandledExceptionFilter(
   struct _EXCEPTION_POINTERS* ExceptionInfo) {
 	/* We don't report to the meta server in this case, the meta
-	 * server will detect that we've gone anyway 
+	 * server will detect that we've gone anyway
 	 */
 
 	/* Call the previous exception handler, which we are assuming
@@ -2920,14 +2920,13 @@ LONG WINAPI myUnhandledExceptionFilter(
 	exit_game_panic();
 
 	/* We don't expect to ever get here... but for what it's worth... */
-	return(EXCEPTION_EXECUTE_HANDLER); 
-		
+	return(EXCEPTION_EXECUTE_HANDLER);
 }
 
 
 void setup_exit_handler(void) {
 	/* Trap CTRL+C, Logoff, Shutdown, etc */
-	if( SetConsoleCtrlHandler( (PHANDLER_ROUTINE) ctrl_handler, TRUE ) ) 
+	if( SetConsoleCtrlHandler( (PHANDLER_ROUTINE) ctrl_handler, TRUE ) )
 	{
 		plog("Initialised exit save handler.");
 	}else{

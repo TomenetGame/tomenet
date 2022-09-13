@@ -3150,7 +3150,7 @@ static errr init_alloc(void) {
 }
 
 #if 0
-/* 
+/*
  * Mark guardians and their artifacts with SPECIAL_GENE flag
  */
 static void init_guardians(void) {
@@ -3196,7 +3196,7 @@ static bool str_to_boolean(char * str) {
 
 /* Try to set a server option.  This is handled very sloppily right now,
  * since server options are manually mapped to global variables.  Maybe
- * the handeling of this will be unified in the future with some sort of 
+ * the handeling of this will be unified in the future with some sort of
  * options structure.
  */
 static void set_server_option(char * option, char * value) {
@@ -3422,7 +3422,7 @@ static void set_server_option(char * option, char * value) {
  *
  * Note that this function uses strsep. I don't think this is an ANSI C function.
  * If you have any problems compiling this, please let me know and I will change this.
- * -Alex 
+ * -Alex
  *
  * Seemingly it caused trouble in win32;
  * Yakina reverted this to strtok.
@@ -3468,7 +3468,7 @@ static void load_server_cfg_aux(FILE * cfg) {
 
 			/* Set the option or value */
 			if (!option) option = newword;
-			else if ((!value) && (newword[0] != '=')) 
+			else if ((!value) && (newword[0] != '='))
 			{
 				value = newword;
 				/* Hack -- ignore "" around values */

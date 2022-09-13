@@ -2353,7 +2353,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		case RF5_OFFSET + 16: rlev *= 8; break; //basic elements
 		case RF5_OFFSET + 17: rlev *= 8; break;
 		case RF5_OFFSET + 18: rlev *= 8; break;
-		case RF5_OFFSET + 19: rlev *= 8; break; 
+		case RF5_OFFSET + 19: rlev *= 8; break;
 		case RF5_OFFSET + 20: rlev *= 3; break; //poison
 		case RF5_OFFSET + 21: rlev *= 2; break; //nether
 		case RF5_OFFSET + 22: rlev *= 3; break; //water

@@ -33,7 +33,7 @@ static int inits = FALSE;
 static FILE *fpe = NULL;	/* the 'erasure.log' file */
 static int inite = FALSE;
 
-/* s_print_only_to_file 
+/* s_print_only_to_file
  * Controls if we should only print to file
  * FALSE = screen and file
  * TRUE = only to a file

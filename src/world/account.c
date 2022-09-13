@@ -71,7 +71,7 @@ static int GetAccount(struct account *c_acc, unsigned char *name, char *pass) {
 			return 1;
 		}
 	}
-	/* No account found. Create trial account */ 
+	/* No account found. Create trial account */
 	c_acc->id = new_accid();
 	if (c_acc->id != 0L) {
 		if (delpos) fseek(fp, delpos, SEEK_SET);

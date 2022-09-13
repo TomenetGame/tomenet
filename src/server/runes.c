@@ -12,7 +12,7 @@ int do_use_mp(int, int, float);
 void cast_rune_spell(int, int);
 void transform_level(int, byte, int);
 
-void transform_level(int Ind, byte feat, int chance) { 
+void transform_level(int Ind, byte feat, int chance) {
 	player_type *p_ptr = Players[Ind];
 	int x, y;
 	struct c_special *cs_ptr;
@@ -21,11 +21,11 @@ void transform_level(int Ind, byte feat, int chance) {
 	cave_type **zcave;
 
 	wpos  = &(p_ptr->wpos);
-	if (!(zcave = getcave(wpos))) return; 
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Don't hurt the main town or surrounding areas */
 	if (!allow_terraforming(wpos, feat) || istownarea(wpos, MAX_TOWNAREA)) {
-		msg_print(Ind, "\377rYou can't do that here!"); 
+		msg_print(Ind, "\377rYou can't do that here!");
 		return;
 	}
 	for (y = 0; y < MAX_HGT; y++) { for (x = 0; x < MAX_WID; x++) {
@@ -33,8 +33,8 @@ void transform_level(int Ind, byte feat, int chance) {
 
 		c_ptr = &zcave[y][x];
 		
-		if (c_ptr->info & CAVE_ICKY) continue; 
-		if ((cs_ptr = GetCS(c_ptr, CS_KEYDOOR))) continue; 
+		if (c_ptr->info & CAVE_ICKY) continue;
+		if ((cs_ptr = GetCS(c_ptr, CS_KEYDOOR))) continue;
 		if (cave_valid_bold(zcave, y, x))
 		{
 			if (magik(chance)) {
@@ -54,7 +54,7 @@ int do_use_mp(int Ind, int mod, float mul) {
 
 #ifdef ALTERNATE_DMG
 	if (get_skill(p_ptr, SKILL_RUNEMASTERY) < RBARRIER) {
-		cost = cost*get_skill(p_ptr, SKILL_RUNEMASTERY)/RBARRIER + 1; 
+		cost = cost*get_skill(p_ptr, SKILL_RUNEMASTERY)/RBARRIER + 1;
 		if (cost > RBARRIER) cost = RBARRIER;
 	}
 #endif
@@ -85,7 +85,7 @@ int do_use_mp(int Ind, int mod, float mul) {
 		default:
 			cost = 0;
 			break;
-	} 
+	}
 
 	if (p_ptr->rune_num_of_buffs)
 		cost += (1<<(p_ptr->rune_num_of_buffs + 3));
@@ -98,9 +98,9 @@ int do_use_mp(int Ind, int mod, float mul) {
 		p_ptr->csp -= cost;
 	}
 
-	p_ptr->redraw |= PR_MANA; 
-	return 0; 
-} 
+	p_ptr->redraw |= PR_MANA;
+	return 0;
+}
 
 void cast_rune_spell_header (int Ind, int a, int b) {
 	player_type *p_ptr = Players[Ind];
@@ -108,13 +108,13 @@ void cast_rune_spell_header (int Ind, int a, int b) {
 	p_ptr->current_rune1 = a;
 	object_type *base = &p_ptr->inventory[p_ptr->current_rune1]; //TV_RUNE1
 
-	p_ptr->current_rune2 = b; 
+	p_ptr->current_rune2 = b;
 
 	if (base->sval == SV_RUNE1_SELF) cast_rune_spell(Ind, 0);
 	else get_aim_dir(Ind);
 }
 
-void cast_rune_spell (int Ind, int dir) { 
+void cast_rune_spell (int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	int basic_rune = p_ptr->current_rune1;
 	int mod_rune = p_ptr->current_rune2;
@@ -140,7 +140,7 @@ void cast_rune_spell (int Ind, int dir) {
 	{
 		msg_print(Ind, "\377rYou are too confused!");
 		return;
-	} 
+	}
 
 	base = &p_ptr->inventory[basic_rune]; //TV_RUNE1
 	mod  = &p_ptr->inventory[mod_rune];   //TV_RUNE2
@@ -162,22 +162,22 @@ void cast_rune_spell (int Ind, int dir) {
 	 */
 	int elem 	= 0; 	//What kind?
 	char *elem_n	= NULL;
-	int rad 	= 3;  	//Radius, if applicable. 
+	int rad 	= 3;  	//Radius, if applicable.
 	int notice	= 1;	//Did we cast it?
 	char *what = NULL; //What DID we cast? :-o
 
 	//Spam! It's so good it's gone!
 //	msg_print(Ind, "\377gYou draw your runes out...");
 
-	switch (mod->sval) { 
-		case SV_RUNE2_FIRE: 
+	switch (mod->sval) {
+		case SV_RUNE2_FIRE:
 			elem = GF_FIRE;
 			elem_n = "fire";
 			break;
 		case SV_RUNE2_COLD:
 			elem = GF_COLD;
 			elem_n = "cold";
-			break; 
+			break;
 		case SV_RUNE2_ACID:
 			elem = GF_ACID;
 			elem_n = "acid";
@@ -189,8 +189,8 @@ void cast_rune_spell (int Ind, int dir) {
 		case SV_RUNE2_POIS:
 			elem = GF_POIS;
 			elem_n = "poison";
-			break; 
-		case SV_RUNE2_WATER: 
+			break;
+		case SV_RUNE2_WATER:
 			elem = GF_VAPOUR;
 			elem_n = "water";
 			break;
@@ -204,7 +204,7 @@ void cast_rune_spell (int Ind, int dir) {
 			break;
 		case SV_RUNE2_LITE:
 			elem = GF_LITE;
-			elem_n = "light"; 
+			elem_n = "light";
 			break;
 		case SV_RUNE2_STONE:
 			elem = GF_KILL_WALL;
@@ -230,48 +230,48 @@ void cast_rune_spell (int Ind, int dir) {
 
 #ifdef ALTERNATE_DMG
 	if (get_skill(p_ptr, SKILL_RUNEMASTERY) < RBARRIER) {
-		rune_dmg = rune_dmg*get_skill(p_ptr, SKILL_RUNEMASTERY)/RBARRIER + 1; 
+		rune_dmg = rune_dmg*get_skill(p_ptr, SKILL_RUNEMASTERY)/RBARRIER + 1;
 		if (rune_dmg > RBARRIER) rune_dmg = RBARRIER;
 	}
 #endif
 
 	switch(base->sval) {
-		case SV_RUNE1_BOLT: 
+		case SV_RUNE1_BOLT:
 			notice = do_use_mp(Ind, mod->sval, RBOLT_BASE);
-			if (ability_lvl < RSAFE_BOLT) 
-				chance_to_break = RSAFE_BOLT - ability_lvl; 
-			if (!notice) { 
+			if (ability_lvl < RSAFE_BOLT)
+				chance_to_break = RSAFE_BOLT - ability_lvl;
+			if (!notice) {
 				switch(mod->sval) {
 					case SV_RUNE2_STONE:
-						wall_to_mud(Ind, dir); 
-						break; 
+						wall_to_mud(Ind, dir);
+						break;
 					default:
-						sprintf(p_ptr->attacker, " fires %s %s bolt for", 
+						sprintf(p_ptr->attacker, " fires %s %s bolt for",
 						  (elem_n[0] == 'a' || elem_n[0] == 'e' || elem_n[0] == 'i' || elem_n[0] == 'o' || elem_n[0] == 'u') ? "an" : "a",
 						  elem_n
 						);
 						fire_bolt(Ind, elem, dir, rbolt_dmg(rune_dmg), p_ptr->attacker);
 						break;
 				}
-			} 
+			}
 			what = "bolt spell";
 			break;
 		case SV_RUNE1_BEAM:
-			if (ability_lvl < RSAFE_BEAM) 
-				chance_to_break = RSAFE_BEAM - ability_lvl; 
+			if (ability_lvl < RSAFE_BEAM)
+				chance_to_break = RSAFE_BEAM - ability_lvl;
 			notice = do_use_mp(Ind, mod->sval, RBEAM_BASE);
 			if (!notice) {
 				switch(mod->sval) {
 					case SV_RUNE2_STONE:
-						wall_to_mud(Ind, dir); 
-						wall_to_mud(Ind, dir); 
-						wall_to_mud(Ind, dir); 
-						wall_to_mud(Ind, dir); 
-						wall_to_mud(Ind, dir); 
-						wall_to_mud(Ind, dir); 
-						break; 
-					default: 
-						sprintf(p_ptr->attacker, " fires %s %s beam for", 
+						wall_to_mud(Ind, dir);
+						wall_to_mud(Ind, dir);
+						wall_to_mud(Ind, dir);
+						wall_to_mud(Ind, dir);
+						wall_to_mud(Ind, dir);
+						wall_to_mud(Ind, dir);
+						break;
+					default:
+						sprintf(p_ptr->attacker, " fires %s %s beam for",
 						  (elem_n[0] == 'a' || elem_n[0] == 'e' || elem_n[0] == 'i' || elem_n[0] == 'o' || elem_n[0] == 'u') ? "an" : "a",
 						  elem_n
 						);
@@ -282,24 +282,24 @@ void cast_rune_spell (int Ind, int dir) {
 			what = "beam spell";
 			break;
 		case SV_RUNE1_BALL:
-			if (ability_lvl < RSAFE_BALL) 
-				chance_to_break = RSAFE_BALL - ability_lvl; 
+			if (ability_lvl < RSAFE_BALL)
+				chance_to_break = RSAFE_BALL - ability_lvl;
 			notice = do_use_mp(Ind, mod->sval, RBALL_BASE);
 			if (!notice) {
-				sprintf(p_ptr->attacker, " fires %s %s ball for", 
+				sprintf(p_ptr->attacker, " fires %s %s ball for",
 				  (elem_n[0] == 'a' || elem_n[0] == 'e' || elem_n[0] == 'i' || elem_n[0] == 'o' || elem_n[0] == 'u') ? "an" : "a",
 				  elem_n
-				); 
+				);
 				fire_ball(Ind, elem, dir, rball_dmg(rune_dmg), rad, p_ptr->attacker);
 			}
 			what = "ball spell";
 			break;
 		case SV_RUNE1_CLOUD:
-			if (ability_lvl < RSAFE_CLOUD) 
+			if (ability_lvl < RSAFE_CLOUD)
 				chance_to_break = (RSAFE_CLOUD - ability_lvl) * 2;
 			notice = do_use_mp(Ind, mod->sval, RCLOUD_BASE);
 			if (!notice) {
-				sprintf(p_ptr->attacker, " invokes %s %s cloud for", 
+				sprintf(p_ptr->attacker, " invokes %s %s cloud for",
 				  (elem_n[0] == 'a' || elem_n[0] == 'e' || elem_n[0] == 'i' || elem_n[0] == 'o' || elem_n[0] == 'u') ? "an" : "a",
 				  elem_n
 				);
@@ -327,19 +327,19 @@ void cast_rune_spell (int Ind, int dir) {
 						set_oppose_elec(Ind, randint(rune_dmg) + 10);
 						break;
 					case SV_RUNE2_POIS:
-						set_oppose_pois(Ind, randint(rune_dmg) + 10); 
+						set_oppose_pois(Ind, randint(rune_dmg) + 10);
 						break;
 					case SV_RUNE2_WATER:
 						if (!p_ptr->suscep_life)
 							set_food(Ind, PY_FOOD_MAX - 1);
-						break; 
+						break;
 					/* Speed BUff */
 					case SV_RUNE2_GRAV:
 						/* Unset */
 						if (p_ptr->rune_speed) {
 							p_ptr->rune_speed = 0;
-							p_ptr->rune_num_of_buffs--; 
-							what = "Anti Speed"; 
+							p_ptr->rune_num_of_buffs--;
+							what = "Anti Speed";
 						/* Set */
 						} else {
 							p_ptr->rune_speed = 7;
@@ -347,12 +347,12 @@ void cast_rune_spell (int Ind, int dir) {
 							what = "Speed Spell";
 						}
 						p_ptr->redraw |= PR_SPEED;
-						break; 
+						break;
 					/* Stealth Buff */
 					case SV_RUNE2_DARK:
 						/* Unset */
 						if (p_ptr->rune_stealth) {
-							p_ptr->rune_num_of_buffs--; 
+							p_ptr->rune_num_of_buffs--;
 							what = "Anti Stealth";
 						/* Set */
 						} else {
@@ -361,13 +361,13 @@ void cast_rune_spell (int Ind, int dir) {
 							what = "Stealth Spell";
 						}
 						p_ptr->redraw |= PR_EXTRA;
-						break; 
+						break;
 					/* IV Buff */
 					case SV_RUNE2_LITE:
 						/* Unset */
 						if (p_ptr->rune_IV) {
 							p_ptr->rune_IV = 0;
-							p_ptr->rune_num_of_buffs--; 
+							p_ptr->rune_num_of_buffs--;
 							what = "Half Infravision spell";
 						/* Set */
 						} else {
@@ -376,33 +376,33 @@ void cast_rune_spell (int Ind, int dir) {
 							what = "Boost Infravision spell";
 						}
 						p_ptr->redraw |= PR_EXTRA;
-						break; 
-					case SV_RUNE2_STONE: 
-						what = "Mad Earthquake"; 
+						break;
+					case SV_RUNE2_STONE:
+						what = "Mad Earthquake";
 						transform_level(Ind, FEAT_FLOOR, rune_dmg);
 						p_ptr->redraw |= PR_MAP;
 						break;
-					case SV_RUNE2_ARMAGEDDON: 
+					case SV_RUNE2_ARMAGEDDON:
 						what = "Highway to Hell";
 						if (magik(50)) transform_level(Ind, FEAT_QUARTZ, rune_dmg);
 						else transform_level(Ind, FEAT_MAGMA, rune_dmg);
 						p_ptr->redraw |= PR_MAP;
 						break;
-					default: 
-						break; 
-				} //switch(mod->pval) 
-			} 
+					default:
+						break;
+				} //switch(mod->pval)
+			}
 			break;
 		}//CASE SV_RUNE1_SELF:
 		default:
 			msg_print(Ind, "\377rTrying to use a non runic item.");
 			return;
 			break;
-	} 
+	}
 
 	//Failed to cast-- out of SP!
 	if (notice) {
-		msg_format(Ind, "\377rYou don't have the energy: %d/%d. Needed: %d", 
+		msg_format(Ind, "\377rYou don't have the energy: %d/%d. Needed: %d",
 				p_ptr->csp, p_ptr->msp, notice);
 		return;
 #ifdef ALLOW_PERFECT_RUNE_CASTING
@@ -411,15 +411,15 @@ void cast_rune_spell (int Ind, int dir) {
 	} else if (magik(1) && magik(10)) {
 #endif
 		msg_print(Ind, "\377rThe rune cracks and becomes unusable.");
-		/* Break me! */ 
-		inven_item_increase(Ind, mod_rune, -1); //Only the mod... 
+		/* Break me! */
+		inven_item_increase(Ind, mod_rune, -1); //Only the mod...
 		inven_item_describe(Ind, mod_rune);
 		inven_item_optimize(Ind, mod_rune);
 		return;
 	} else {
 		if (what) msg_format(Ind, "\377gYou cast \377U%s\377g gracefully.", what);
 		return;
-	} 
+	}
 	return;
 }
 

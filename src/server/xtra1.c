@@ -46,7 +46,7 @@
 /* Experimental and also silly ;) - reward players for wearing arts of similar name - C. Blue */
 #define EQUIPMENT_SET_BONUS
 
-/* Do not lower HP of mimics if the monster form has lower HP than their @ form. - C. Blue 
+/* Do not lower HP of mimics if the monster form has lower HP than their @ form. - C. Blue
    Currently also works for to-dam, could be extended to even Speed maybe. Shouldn't be extended onto AC. */
 #define MIMICRY_BOOST_WEAK_FORM
 
@@ -1278,7 +1278,7 @@ void calc_mana(int Ind) {
 			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 100 * levels) :
 			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 100 * levels)) / 4000;
 #endif
-		break; 
+		break;
 	case CLASS_RUNEMASTER:
 		//Spells are now much closer in cost to mage spells. Returning to a similar mode
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
@@ -1393,7 +1393,7 @@ void calc_mana(int Ind) {
 		/* Normal gloves hurt mage-type spells */
 		if (o_ptr->k_idx &&
 		    !(f2 & TR2_FREE_ACT) && !(f1 & TR1_MANA) &&
-		    !((f1 & TR1_DEX) && (o_ptr->pval > 0)) && 
+		    !((f1 & TR1_DEX) && (o_ptr->pval > 0)) &&
 		    !(o_ptr->tval == TV_GLOVES && o_ptr->sval == SV_SET_OF_ELVEN_GLOVES)) //Elven Gloves -> no penalty
 		{
 			/* Encumbered */
@@ -1607,9 +1607,9 @@ void calc_mana(int Ind) {
  * Calculate the players (maximal) hit points
  * Adjust current hitpoints if necessary
  */
- 
+
 /* An option of giving mages an extra hit point per level has been added,
- * to hopefully facilitate them making it down to 1600ish and finding  
+ * to hopefully facilitate them making it down to 1600ish and finding
  * Constitution potions.  This should probably be changed to stop after level
  * 30.
  */
@@ -1673,7 +1673,7 @@ void calc_hitpoints(int Ind) {
 		   hitdice ratio is extraordinarily bad it would nearly become
 		   cancelled out by the added boost, so the boost is slightly reduced
 		   for them (except for the ultra-weak Yeek Istari) to fit their
-		   low exp% better. 
+		   low exp% better.
 		   This can logically be done well by making IF-exceptions since the
 		   help-kinging-boost is added and not multiplied by a character's
 		   exp-ratio, and the race-hitpoint dice have no influence on it.
@@ -1682,7 +1682,7 @@ void calc_hitpoints(int Ind) {
 		   the relation to all stronger classes as well. - C. Blue */
 		mhp = (player_hp_eff * 2 * (20 + bonus)) / 45;
 
-		/* I think it might be better to dimish the boost for yeeks after level 50 slowly towards level 100 
+		/* I think it might be better to dimish the boost for yeeks after level 50 slowly towards level 100
 		   while granting the full boost at the critical level 50 instead of just a minor boost. Reason is:
 		   They don't have Morgoth's crown yet so they are unlikely to reach *** CON, but after winning
 		   they will be way stronger! On the other hand yeeks are already so weak that ultra-high Yeek
@@ -1835,7 +1835,7 @@ void calc_hitpoints(int Ind) {
 		    rlev) + 30)) / 100) * 5 : 0;
  #else /* for 31..33/64 hp birth calc */
 		    rlev) + 30)) / 25) : 0;
- #endif 
+ #endif
 	}
 #endif
 
@@ -2161,7 +2161,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		/* let speed bonus not be that high that players won't try any slower form */
 		//p_ptr->pspeed = (((r_ptr->speed - 110) * 30) / 100) + 110;//was 50%, 30% for RPG_SERVER originally
 		//Pfft, include the -speed into the calculation, too. Seems lame how -speed is counted for 100% but not + bonus.
-		//But really, if physical-race-intrinsic bonuses/maluses are counted in mimicry, then dwarves 
+		//But really, if physical-race-intrinsic bonuses/maluses are counted in mimicry, then dwarves
 		//should be able to keep their climbing ability past 30 when mimicked, TLs could fly, etc etc =/
 		p_ptr->pspeed = (((r_ptr->speed + MIMIC_LOWSPEED_BONUS - 110 - (p_ptr->prace == RACE_ENT ? 2 : 0) ) * 30) / 100) + 110;//was 50%, 30% for RPG_SERVER originally
 	}
@@ -4575,7 +4575,7 @@ void calc_boni(int Ind) {
 		if (f5 & TR5_VORPAL) csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_BVORP;
 
 		/* Hack -- do not apply "weapon", "bow", "ammo", or "tool"  boni */
-		if ((i == INVEN_WIELD) || (i == INVEN_ARM && o_ptr->tval != TV_SHIELD)) { 
+		if ((i == INVEN_WIELD) || (i == INVEN_ARM && o_ptr->tval != TV_SHIELD)) {
 			if (f1 & TR1_BLOWS) csheet_boni[i-INVEN_WIELD].blow += pval;
 			if (f5 & TR5_CRIT) csheet_boni[i-INVEN_WIELD].crit += pval;
 			if (f1 & TR1_VAMPIRIC) csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RVAMP;
@@ -5451,7 +5451,7 @@ void calc_boni(int Ind) {
    rendering the power-scale of training the mastery skill
    very non-liner with this pull-up. */
 #if 1
-//Put less emphasis on ARCHERY (which only archers can get and more into the individual skill. 
+//Put less emphasis on ARCHERY (which only archers can get and more into the individual skill.
 //Make other archers more viable.
 				p_ptr->xtra_might += get_skill_scale(p_ptr, archery, 1);
 				csheet_boni[14].migh += get_skill_scale(p_ptr, archery, 1);
@@ -8085,7 +8085,7 @@ void global_event_signup(int Ind, int n, cptr parm) {
 				while (p2ep[strlen(p2ep) - 1] == ' ') p2ep[strlen(p2ep) - 1] = 0;
 
 				/* IMPOSSIBLE-- no ego power specified, it was just spaces? */
-				//if (!strlen(parm2e)) 
+				//if (!strlen(parm2e))
 
 				for (p = 1; p < MAX_RE_IDX; p++) {
 					/* get monster ego name */

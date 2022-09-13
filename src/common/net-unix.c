@@ -260,7 +260,7 @@ int	port;
     int			retval;
     int			option = 1;
 
-#ifdef UNIX_SOCKETS     
+#ifdef UNIX_SOCKETS
     struct sockaddr_un  addr_in;
 
     fd = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -271,7 +271,7 @@ int	port;
     }
 
     memset((char *)&addr_in, 0, sizeof(addr_in));
-    addr_in.sun_family          = AF_UNIX; 
+    addr_in.sun_family          = AF_UNIX;
     if (port) {
        sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
        retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
@@ -297,7 +297,7 @@ int	port;
     addr_in.sin_port		= htons(port);
     fd = socket(AF_INET, SOCK_STREAM, 0);
     /* Set this so we don't wait forever on startups */
-    setsockopt(fd, SOL_SOCKET, SO_REUSEADDR , (void*)&option, sizeof(int)); 
+    setsockopt(fd, SOL_SOCKET, SO_REUSEADDR , (void*)&option, sizeof(int));
     if (fd < 0)
     {
 	sl_errno = SL_ESOCKET;
@@ -305,7 +305,7 @@ int	port;
     }
 
     retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
-#endif      
+#endif
 
     if (retval < 0)
     {
@@ -499,7 +499,7 @@ int	namelen;
 
     hp = gethostbyaddr((char *)&addr.sin_addr.s_addr, 4, AF_INET);
     if (hp != NULL)
-    { 
+    {
 	strncpy(name, hp->h_name, namelen);
     }
     else
@@ -561,10 +561,10 @@ int	port;
 {
     int			fd;
 
-#ifdef UNIX_SOCKETS     
+#ifdef UNIX_SOCKETS
     struct sockaddr_un  peer;
     memset((char *)&peer, 0, sizeof(peer));
-    peer.sun_family          = AF_UNIX; 
+    peer.sun_family          = AF_UNIX;
     sprintf(peer.sun_path, "/tmp/tomenet%d", (port)? port : getpid());
     fd = socket(AF_UNIX, SOCK_STREAM, 0);
 #else
@@ -586,7 +586,7 @@ int	port;
 	    peer.sin_addr.s_addr = ((struct in_addr*)(hp->h_addr))->s_addr;
     }
     fd = socket(AF_INET, SOCK_STREAM, 0);
-#endif      
+#endif
 
     if (fd < 0)
     {
@@ -1513,10 +1513,10 @@ int	port;
     int			fd;
     int			retval;
 
-#ifdef UNIX_SOCKETS     
+#ifdef UNIX_SOCKETS
     struct sockaddr_un  addr_in;
     memset((char *)&addr_in, 0, sizeof(addr_in));
-    addr_in.sun_family          = AF_UNIX; 
+    addr_in.sun_family          = AF_UNIX;
     fd = socket(AF_UNIX, SOCK_DGRAM, 0);
 
     if (fd < 0)
@@ -1545,7 +1545,7 @@ int	port;
     addr_in.sin_addr.s_addr	= inet_addr( BIND_IP); /* RLS */
     /* fprintf( stderr, "DgramAddr Binding By Request to %s\n",inet_ntoa(addr_in.sin_addr)); -RLS*/
 #else
-    addr_in.sin_addr.s_addr	= inet_addr(dotaddr);  
+    addr_in.sin_addr.s_addr	= inet_addr(dotaddr);
 #endif
     addr_in.sin_port		= htons(port);
     fd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -1557,7 +1557,7 @@ int	port;
     }
 
     retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
-#endif      
+#endif
 
     if (retval < 0)
     {
@@ -1618,10 +1618,10 @@ int	port;
 {
     int			retval;
 
-#ifdef UNIX_SOCKETS     
+#ifdef UNIX_SOCKETS
     struct sockaddr_un  addr_in;
     memset((char *)&addr_in, 0, sizeof(addr_in));
-    addr_in.sun_family          = AF_UNIX; 
+    addr_in.sun_family          = AF_UNIX;
 
     if (port) {
        sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
@@ -1642,14 +1642,14 @@ int	port;
     addr_in.sin_addr.s_addr	= inet_addr( BIND_IP); /* RLS */
     /* fprintf( stderr, "DgramAddr Binding By Request to %s\n",inet_ntoa(addr_in.sin_addr)); -RLS*/
 #else
-    addr_in.sin_addr.s_addr	= inet_addr(dotaddr);  
+    addr_in.sin_addr.s_addr	= inet_addr(dotaddr);
 #endif
     addr_in.sin_family		= AF_INET;
     addr_in.sin_addr.s_addr	= inet_addr(dotaddr);
     addr_in.sin_port		= htons(port);
 
     retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
-#endif      
+#endif
 
     if (retval < 0)
     {
@@ -1719,7 +1719,7 @@ int	port;
     /**/addr_in.sin_addr.s_addr 	= inet_addr(host);
     if (addr_in.sin_addr.s_addr == (unsigned int)-1)
     {
-#ifdef SERVER 
+#ifdef SERVER
 	printf("DgramConnect called with hostname %s.\n", host);
 #endif
 	hp = gethostbyname(host);
@@ -1732,7 +1732,7 @@ int	port;
 	    addr_in.sin_addr.s_addr =
 		((struct in_addr*)(hp->h_addr))->s_addr;
     } /**/
-#endif  
+#endif
     hp = gethostbyname(host);
     if(hp == NULL)
     {
@@ -1800,10 +1800,10 @@ char	*host, *sbuf;
 {
     int			retval;
 
-#ifdef UNIX_SOCKETS     
+#ifdef UNIX_SOCKETS
     struct sockaddr_un  the_addr;
     memset((char *)&the_addr, 0, sizeof(the_addr));
-    the_addr.sun_family          = AF_UNIX; 
+    the_addr.sun_family          = AF_UNIX;
     sprintf(the_addr.sun_path, "/tmp/tomenet%d", (port)? port : getpid());
     sl_errno = 0;
 #else
@@ -1835,7 +1835,7 @@ char	*host, *sbuf;
 		    ((struct in_addr*)(hp->h_addr))->s_addr;
 	}
     }
-#endif      
+#endif
 
     cmw_priv_assert_netaccess();
     retval = sendto(fd, sbuf, size, 0, (struct sockaddr *)&the_addr,

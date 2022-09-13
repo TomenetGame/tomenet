@@ -1,5 +1,5 @@
 /* TomeNET account editor - evileye */
-/* Quick account editor for server admin 
+/* Quick account editor for server admin
    It can be made more visually attractive later maybe.
    I just didn't want to leave accounts unchangeable
    while testing. */

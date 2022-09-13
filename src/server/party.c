@@ -700,7 +700,7 @@ bool GetcaseAccount(struct account *c_acc, cptr name, char *correct_name, bool l
 		return(FALSE);
 	}
 
-	/* No account found. Create trial account */ 
+	/* No account found. Create trial account */
 	WIPE(c_acc, struct account);
 	c_acc->id = new_accid();
 	if (c_acc->id != 0L) {
@@ -1681,8 +1681,8 @@ int guild_create(int Ind, cptr name) {
 	return(TRUE);
 }
 
-/* 
- * New party check function - to be timed 
+/*
+ * New party check function - to be timed
  *
  */
 void party_check(int Ind) {

@@ -287,7 +287,7 @@ void wproto(struct client *ccl) {
 
 				for (lp = clist; lp; lp = lp->next) {
 					dcl = (struct client*)lp->data;
-					if (dcl->authed == wpk->d.pmsg.sid) send(dcl->fd, wpk, sizeof(struct wpacket), 0); 
+					if (dcl->authed == wpk->d.pmsg.sid) send(dcl->fd, wpk, sizeof(struct wpacket), 0);
 				}
 			}
 			break;

@@ -328,14 +328,14 @@ s16b m_fast[MAX_M_IDX];
 /* For wilderness, I am hacking this to extend in the negative direction.
    I currently have a huge number (4096?) of wilderness levels allocated.
    -APD-
-*/ 
+*/
 
 /* I have moved the cave_type stuff to the wilderness and dungeon
    level structures now. So, to reference the cave_type array for
    the level (x,y,z) you would first check z for being zero. If it
    is, return the wilderness cave_type array pointer. Otherwise
    select the correct dungeon pointer and lookup the dungeon level
-   you want. Then return its cave_type array pointer. Of course, 
+   you want. Then return its cave_type array pointer. Of course,
    use (cave_type**)zcave = getcave(struct worldpos *).
     Evileye
  */
@@ -651,7 +651,7 @@ bool xorder_aux_extra;
 int (*get_obj_num_hook)(int k_idx, u32b resf);
 
 /* the dungeon master movement hook, is called whenever he moves
- * (to make building large buildings / summoning hoards of mosnters 
+ * (to make building large buildings / summoning hoards of mosnters
  * easier)
  */
 //bool (*master_move_hook)(int Ind, char * args) = master_acquire;

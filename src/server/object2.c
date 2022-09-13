@@ -12438,7 +12438,7 @@ bool erase_or_locate_artifact(int a_idx, bool erase) {
 		/* Log removal of player store items - this code only applies if server rules allow dropping true artifacts in houses.
 		   In case the cave wasn't allocated, the delete_object_idx() call below won't remove it from pstore lists, so we have to do it now.
 		   Note: This can be a false alarm in case the item is inscribed '@S' but is not actually inside a player house. */
-		if (!getcave(&o_ptr->wpos) && !o_ptr->held_m_idx && !o_ptr->embed && 
+		if (!getcave(&o_ptr->wpos) && !o_ptr->held_m_idx && !o_ptr->embed &&
 		    o_ptr->note && strstr(quark_str(o_ptr->note), "@S")) {
 			if (erase) {
 				//char o_name[ONAME_LEN];//, p_name[NAME_LEN];

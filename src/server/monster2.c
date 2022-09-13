@@ -692,7 +692,7 @@ void wipe_m_list(struct worldpos *wpos) {
 		if (inarea(&m_ptr->wpos,wpos)) {
 			if (season_halloween && m_ptr->r_idx == RI_PUMPKIN) {
 				great_pumpkin_duration = 0;
-				great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */ 
+				great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
 				//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
 			}
 			delete_monster_idx(i, TRUE);
@@ -715,7 +715,7 @@ void wipe_m_list_admin(struct worldpos *wpos) {
 		if (inarea(&m_ptr->wpos,wpos)) {
 			if (season_halloween && m_ptr->r_idx == RI_PUMPKIN) {
 				great_pumpkin_duration = 0;
-				great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */ 
+				great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
 				//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
 			}
 			delete_monster_idx(i, TRUE);
@@ -740,7 +740,7 @@ void wipe_m_list_special(struct worldpos *wpos) {
 		if (inarea(&m_ptr->wpos,wpos)) {
 			if (season_halloween && m_ptr->r_idx == RI_PUMPKIN) {
 				great_pumpkin_duration = 0;
-				great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */ 
+				great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
 				//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
 			}
 			delete_monster_idx(i, TRUE);
@@ -5267,7 +5267,7 @@ void setup_monsters(void) {
 
 	for (i = 1; i < m_max; i++) {
 		r_ptr = &m_list[i];
-		/* setup the cave m_idx if the level has been 
+		/* setup the cave m_idx if the level has been
 		 * allocated.
 		 */
 		if ((zcave = getcave(&r_ptr->wpos)))
@@ -6382,7 +6382,7 @@ else s_printf("\n");
 
 	//if (get_skill(p_ptr, SKILL_NECROMANCY)) { r_ptr->flags |= RF__; magicness++; } -- no point. level is no_summon so cannot summon things to leech from.
 
-	//if (get_skill(p_ptr, SKILL_MIMIC)) { r_ptr->flags |= RF__; magicness++; } -- we already clone the player in all relevant aspects 
+	//if (get_skill(p_ptr, SKILL_MIMIC)) { r_ptr->flags |= RF__; magicness++; } -- we already clone the player in all relevant aspects
 	//if (get_skill(p_ptr, SKILL_SNEAKINESS)) { r_ptr->flags |= RF__; magicness++; }
 
 	//if (get_skill(p_ptr, SKILL_DEVICE)) { r_ptr->flags |= RF__; magicness++; } -- we already assume high damage for all spells

@@ -199,7 +199,7 @@ void install_client(GtkButton *button, gpointer label) {
 
 	remove("TomeNET-latest-install.exe");
  #if 0 /* winbash is dysfunctional, no alternatives available ----------------------------------------- */
-  #if 0 /* problem: 7z doesn't support stripping a path level */ 
+  #if 0 /* problem: 7z doesn't support stripping a path level */
 	/* Download */
 	_spawnl(_P_WAIT, "updater/dl_win32/winbash/wget.exe", "wget.exe", _latest_client, NULL); /* supposed to work on WINE, yet crashes if not exit(0)ing next oO */
 	/* Extract */
@@ -357,7 +357,7 @@ exit(0);
 		out_val[0] = out_val[1000];//k
 		out_val[1] = out_val[1001];//N
 		out_val[2] = out_val[1002];//O
-		out_val[3] = out_val[1003];// 
+		out_val[3] = out_val[1003];//Space
 		out_val[4] = out_val[1004];// =
 	}
 	fclose(fp);
@@ -473,7 +473,7 @@ exit(0);
 		out_val[0] = out_val[1000];//k
 		out_val[1] = out_val[1001];//N
 		out_val[2] = out_val[1002];//O
-		out_val[3] = out_val[1003];// 
+		out_val[3] = out_val[1003];//Space
 		out_val[4] = out_val[1004];// =
 	}
 	fclose(fp);
@@ -604,7 +604,7 @@ void install_music(GtkButton *button, gpointer label) {
 		out_val[0] = out_val[1000];//k
 		out_val[1] = out_val[1001];//N
 		out_val[2] = out_val[1002];//O
-		out_val[3] = out_val[1003];// 
+		out_val[3] = out_val[1003];//Space
 		out_val[4] = out_val[1004];// =
 	}
 	fclose(fp);
@@ -720,7 +720,7 @@ void install_music(GtkButton *button, gpointer label) {
 		out_val[0] = out_val[1000];//k
 		out_val[1] = out_val[1001];//N
 		out_val[2] = out_val[1002];//O
-		out_val[3] = out_val[1003];// 
+		out_val[3] = out_val[1003];//Space
 		out_val[4] = out_val[1004];// =
 	}
 	fclose(fp);

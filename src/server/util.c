@@ -340,7 +340,7 @@ errr path_temp(char *buf, int max)
 	rand_ext[3] = '\0';
 	strnfmt(buf, max, "%s/server_%ud.%s", ANGBAND_DIR_DATA, tmp_counter, rand_ext);
 	tmp_counter++;
-#else 
+#else
 	cptr s;
 
 	/* Temp file */
@@ -2338,7 +2338,7 @@ void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos, bool s
 	} else if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE &&
 	    p_ptr->sound_ambient != SFX_AMBIENT_SHORE && wpos->wz == 0 && (wild_info[wpos->wy][wpos->wx].type == WILD_OCEAN || wild_info[wpos->wy][wpos->wx].bled == WILD_OCEAN)) {
 		Send_sfx_ambient(Ind, SFX_AMBIENT_SHORE, smooth);
-	} else if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE && p_ptr->sound_ambient != SFX_AMBIENT_SHORE && 
+	} else if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE && p_ptr->sound_ambient != SFX_AMBIENT_SHORE &&
 	    p_ptr->sound_ambient != SFX_AMBIENT_LAKE && wpos->wz == 0 &&
 	    (wild_info[wpos->wy][wpos->wx].type == WILD_LAKE || wild_info[wpos->wy][wpos->wx].bled == WILD_LAKE ||
 	    wild_info[wpos->wy][wpos->wx].type == WILD_RIVER || wild_info[wpos->wy][wpos->wx].bled == WILD_RIVER ||
@@ -3080,7 +3080,7 @@ void msg_broadcast(int Ind, cptr msg) {
 	/* Tell every player */
 	for (i = 1; i <= NumPlayers; i++) {
 		/* Skip disconnected players */
-		if (Players[i]->conn == NOT_CONNECTED) 
+		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
 
 		/* Skip the specified player */
@@ -3629,7 +3629,7 @@ void msg_party_format(int Ind, cptr fmt, ...) {
 	/* Tell every player */
 	for (i = 1; i <= NumPlayers; i++) {
 		/* Skip disconnected players */
-		if (Players[i]->conn == NOT_CONNECTED) 
+		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
 
 #if 0
@@ -3653,7 +3653,7 @@ void msg_party_print(int Ind, cptr msg, cptr msg_u) {
 	/* Tell every player */
 	for (i = 1; i <= NumPlayers; i++) {
 		/* Skip disconnected players */
-		if (Players[i]->conn == NOT_CONNECTED) 
+		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
 
 #if 0
@@ -3687,7 +3687,7 @@ void msg_guild_format(int Ind, cptr fmt, ...) {
 	/* Tell every player */
 	for (i = 1; i <= NumPlayers; i++) {
 		/* Skip disconnected players */
-		if (Players[i]->conn == NOT_CONNECTED) 
+		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
 
 #if 0
@@ -3711,7 +3711,7 @@ void msg_guild_print(int Ind, cptr msg, cptr msg_u) {
 	/* Tell every player */
 	for (i = 1; i <= NumPlayers; i++) {
 		/* Skip disconnected players */
-		if (Players[i]->conn == NOT_CONNECTED) 
+		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
 
 #if 0
@@ -3805,9 +3805,9 @@ void check_parryblock(int Ind) {
 	int apc = apply_parry_chance(p_ptr, p_ptr->weapon_parry), abc = apply_block_chance(p_ptr, p_ptr->shield_deflect);
 
 	if (is_admin(p_ptr)) {
-		msg_format(Ind, "You have exactly %d%%/%d%% base chance of parrying/blocking.", 
+		msg_format(Ind, "You have exactly %d%%/%d%% base chance of parrying/blocking.",
 			p_ptr->weapon_parry, p_ptr->shield_deflect);
-		msg_format(Ind, "You have exactly %d%%/%d%% real chance of parrying/blocking.", 
+		msg_format(Ind, "You have exactly %d%%/%d%% real chance of parrying/blocking.",
 			apc, abc);
 	} else {
 		if (!apc)
@@ -6605,7 +6605,7 @@ bool show_floor_feeling(int Ind, bool dungeon_feeling) {
 
 /*
  * Given item name as string, return the index in k_info array. Name
- * must exactly match (look out for commas and the like!), or else 0 is 
+ * must exactly match (look out for commas and the like!), or else 0 is
  * returned. Case doesn't matter. -DG-
  */
 

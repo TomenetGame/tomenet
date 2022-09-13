@@ -3585,7 +3585,7 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 			/* don't overwrite any perma walls (usually house walls) */
 			if ((f_info[zcave[zy][zx].feat].flags1 & FF1_PERMANENT) &&
 			    /* exception for mountains though, since they're not house-related and can just be overwritten */
-			    zcave[zy][zx].feat != FEAT_MOUNTAIN) 
+			    zcave[zy][zx].feat != FEAT_MOUNTAIN)
 				continue;
 
 			zcave[zy][zx].feat = feat_floor;
