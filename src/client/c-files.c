@@ -1501,6 +1501,30 @@ errr file_character(cptr name, bool quiet) {
 		fprintf(fff, "%s\n", buf);
 	}
 
+	/* Display mods/flags ('Chh' screen) */
+	display_player(2);
+
+	/* Dump part of the screen */
+	for (y = 1; y < 22; y++) {
+		/* Dump each row */
+#if 0 /* this is actually correct */
+		for (x = 0; x < Term->wid; x++) {
+#else /* bad hack actually, just to avoid spacer lines on oook.cz */
+		for (x = 0; x < 79; x++) {
+#endif
+			/* Get the attr/char */
+			(void)(Term_what(x, y, &a, &c));
+			/* Characters above MAX_FONT_CHAR are graphical and will reported as MAX_FONT_CHAR. */
+			if (c > MAX_FONT_CHAR) c = MAX_FONT_CHAR;
+			/* Dump it */
+			buf[x] = (char)c;
+		}
+		/* Terminate */
+		buf[x] = '\0';
+		/* End the row */
+		fprintf(fff, "%s\n", buf);
+	}
+
 	/* Dump skills */
 	fprintf(fff, "\n  [Skill Chart]\n"); /* one less \n, dump_skills() adds one */
 	dump_skills(fff);
