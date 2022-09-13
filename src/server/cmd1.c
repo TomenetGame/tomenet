@@ -1552,6 +1552,9 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 	player_type *p_ptr = Players[Ind];
 	bool delete_it;
 
+	/* Don't auto-stow unidentified items */
+	if (!object_known_p(Ind, o_ptr) || !object_aware_p(Ind, o_ptr)) return FALSE;
+
 	/* Hack number */
 	if (pick_one) {
 		num = o_ptr->number;
