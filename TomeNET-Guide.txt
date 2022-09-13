@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 10. September 2022 - written by C. Blue (c_blue@gmx.net)  |
+| Latest update: 13. September 2022 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.8.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2050,7 +2050,7 @@ To inscribe an item, press the { key. To uninscribe, press }.
 You can also mass-inscribe/uninscribe items by using the commands /tag or /t
 and /untag or /ut respectively (see (0.2b) for command details).
 
-The ! inscription:
+The ! inscriptions:
     Inscribing an item with an '!' followed by a key will - for most keys -
     cause that key to cease working on the item anymore. There are also some
     special !-combinations that do different things (eg !B on magic devices)
@@ -2065,25 +2065,25 @@ The ! inscription:
     part is not parsed as it is separated by a space from the "!.." sequence.
     You can inscribe an item by pressing '{' and uninscribe it with '}'.
 
-The !* inscription, a "combo" shortcut inscription:
-    '*' is a 'wild card' which stands for multiple inscriptions at once,
-        inscribing an item '!*' will do ALL of these checks:
-    !d          Prevent dropping an item.
-    !k          Prevent killing (destroying) an item. (Note that '!k' on a
+    !* inscription, this is a "combo" shortcut inscription.
+        '*'     is a 'wild card' which stands for multiple inscriptions at,
+                once inscribing an item '!*' will do ALL of these checks:
+        !d      Prevent dropping an item.
+        !k      Prevent killing (destroying) an item. (Note that '!k' on a
                 torch also prevents using that torch to refuel another one.)
-    !s          Prevent selling an item to shop (!s).
-    !v          Prevent throwing an item away.
-    !=          Automatically pick the item up from the floor.
-    !h          (Prevent selling a house key. Keys usually aren't used anymore
+        !s      Prevent selling an item to shop (!s).
+        !v      Prevent throwing an item away.
+        !=      Automatically pick the item up from the floor.
+        !h      (Prevent selling a house key. Keys usually aren't used anymore
                 though.)
 
     For example, if you found a great item and you want to avoid accidentally..
     (d)ropping it, (s)elling it, (v) throwing it or (k)illing it, you could
     either inscribe it   !dsvk   or just   !*   (implies != too, but whatever).
 
-The !+ inscription:
-    Does the same as !* except that it does not prevent dropping an item,
-    so it does not imply !d but just !ksv=h (with 'h' being obsolete).
+    !+ inscription:
+        Does the same as !* except that it does not prevent dropping an item,
+        so it does not imply !d but just !ksv=h (with 'h' being obsolete).
 
 A very useful inscription for (heavily) cursed items:
     !w          Prevent wielding/wearing an item. This is very useful if you
@@ -2105,7 +2105,7 @@ For magic devices:
                 For all other cases of activation failure this inscription has
                 no effect.
 
-Other !-inscriptions:
+Other ! inscriptions:
     !T          Prevent taking off a secondary item.
     !F          Prevent using up this light source or fuel item to fuel your
                 currently equipped light source. (Note that !k inscription
