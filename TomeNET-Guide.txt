@@ -14345,7 +14345,8 @@ With a digging tool..
 You can tunnel through all tunneable materials, no matter your strength, with..
 -a (+1) shovel that has +hit and +dam enchanted to a total of at least +15.
 -a (+1) pick that has +hit and +dam enchanted to a total of at least +6.
--any (+2) digging tool or better (except if it has negative +hit/+dam values).
+-any (+2) digging tool or better (except if it was cursed and therefore has too
+ negative (+hit,+dam) enchantments).
 
 
 (5.20c) Digging - further information
