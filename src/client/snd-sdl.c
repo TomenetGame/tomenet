@@ -1359,33 +1359,19 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 
 		/* Simple stereo-positioned audio, only along the x-coords. TODO: HRTF via OpenAL ^^ - C. Blue */
 		if (c_cfg.positional_audio) {
-			/* compare distance-handling in util.c, keep consistent! */
-			int d = distance(0, 0, dist_y, dist_x);
-
-#if 0 /* deprecated method in util.c */
-			/* it's "100 / dMod" scaled from 100 to 255 */
-			if (d > 20) d = 20;
-			d += 3;
-			d /= 3;
-			d = 255 / d;
-#else /* currently used method in util.c */
-			/* it's "100 - (d * 50) / 11" scaled from 100 to 255 */
-			d = 255 - (d * 127) / 28;
-#endif
-
 #if 0
 			/* Just for the heck of it: Trivial (bad) panning, ignoring any y-plane angle and just use basic left/right distance. */
-			if (dist_x < 0) Mix_SetPanning(s, d, (-d * 4) / (dist_x - 3));
-			else if (dist_x > 0) Mix_SetPanning(s, (d * 4) / (dist_x + 3), d);
-			else Mix_SetPanning(s, d, d);
+			if (dist_x < 0) Mix_SetPanning(s, 255, (-255 * 4) / (dist_x - 3));
+			else if (dist_x > 0) Mix_SetPanning(s, (255 * 4) / (dist_x + 3), 255);
+			else Mix_SetPanning(s, 255, 255);
 #else
 			/* Best we can do with simple stereo for now without HRTF etc.:
 			   We don't have a y-audio-plane (aka z-plane really),
 			   but at least we pan according to the correct angle. - C. Blue */
-			if (!dist_x) Mix_SetPanning(s, d, d); //shortcut for both, 90 deg and undefined angle aka 'on us'. */
+			if (!dist_x) Mix_SetPanning(s, 255, 255); //shortcut for both, 90 deg and undefined angle aka 'on us'. */
 			else if (!dist_y) { //shortcut for 0 deg and 180 deg (ie sin = 0)
-				if (dist_x < 0) Mix_SetPanning(s, d, 0);
-				else Mix_SetPanning(s, 0, d);
+				if (dist_x < 0) Mix_SetPanning(s, 255, 0);
+				else Mix_SetPanning(s, 0, 255);
 			} else { //all other cases (ie sin != 0)
 				int dy = ABS(dist_y); //we don't differentiate between in front of us / behind us, need HRTF for that.
 				int pan_l, pan_r;
@@ -1396,11 +1382,11 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 				   The ear with 'los' toward the event gets 100% of the distance-reduced volume (d),
 				   while the other ear gets ABS(sin(a)) * d. */
 				if (dist_x < 0) { /* somewhere to our left */
-					pan_l = d;
-					pan_r = (d * s) / 10;
+					pan_l = 255;
+					pan_r = (255 * s) / 10;
 				} else { /* somewhere to our right */
-					pan_l = (d * s) / 10;
-					pan_r = d;
+					pan_l = (255 * s) / 10;
+					pan_r = 255;
 				}
 				Mix_SetPanning(s, pan_l, pan_r);
 			}
