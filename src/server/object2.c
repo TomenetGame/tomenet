@@ -10866,7 +10866,7 @@ void floor_item_optimize(int item) {
 	if (o_ptr->number) return;
 
 	/* Delete it */
-	delete_object_idx(item, TRUE);
+	delete_object_idx(item, FALSE); //must be FALSE (eg for cmd_throw()). Instead, manually call handle_art_d() wherever really needed
 }
 
 
