@@ -10884,11 +10884,12 @@ Armour weight (concerning magic)
 --------------------------------
 Wearing armour which is too bulky gives you this message:
 "The weight of your armour strains your spellcasting."
-That means your mana will be (severely) reduced from the bulkiness of your
-armour. To counter this effect, train your 'Combat' skill.
-To cast freely, you may wear 15.0 to 30.0 lb of armour (depending on your
-class and hence the type of magic you utilize) plus your combat skill (in
-0.3 lb). Here is a table illustrating the values:
+That means your mana will be (from lightly to severely) reduced from the
+bulkiness of your armour. Training your 'Combat' skill can counter this effect.
+
+To cast freely ie to have an unreduced MP pool, you may wear 15.0 to 30.0 lb of
+armour (depending on your class and hence the type of magic you utilize) plus
+your combat skill * 0.3 lb (per 1.000 skill). Here is a table of the classes:
 
 Adventurer    21.0 lb
 Warrior       -
@@ -10904,10 +10905,10 @@ Shaman        17.0 lb
 Runemaster    23.0 lb
 Mindcrafter   26.0 lb (and will get penalty for head gear heavier than 4.0 lb)
 
-So 50 points in 'Combat' would allow a paladin to wear 30.0 + 15.0 =
+So 50 points in 'Combat' would allow a paladin to wear 30.0 + (50 * 0.3) =
 45.0 lb of armour parts without receiving mana penalty from being encumbered.
 In general, praying is the easiest-to-use form of magic, and weaving spells
-the most difficult one.
+the most difficult one regarding encumberment.
 Your total armour weight is the sum of the weight of any armour pieces worn
 on head (helmet), body, hands, feet, and your cloak. Note that the weight of
 a possibly equipped shield does not matter here (experimental).
