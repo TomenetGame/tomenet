@@ -506,8 +506,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "diz_death_any",		"Displays lore on monster that kills anyone" },
 	{ &c_cfg.diz_first,		TRUE,	6,	0, 122, TRUE,
 	    "diz_first",		"Displays lore on first-time monster kill" },
-	{ &c_cfg.clone_to_stdout,	FALSE,	7,	0, 123, TRUE,
-	    "clone_to_stdout",		"Clone all client chat and messages to stdout" },
+	{ &c_cfg.xxx,	FALSE,	7,	0, 123, FALSE,
+	    "xxx",		"Clone all client chat and messages to stdout" },
 	{ &c_cfg.palette_animation,	TRUE,	1,	0, 124, TRUE,
 	    "palette_animation",	"Shade world surface colours depending on daytime" },
 	{ &c_cfg.mute_when_idle,	FALSE,	5,	0, 125, TRUE,
@@ -553,6 +553,11 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "equip_text_colour",	"Display equipment indices/weight in yellow" },
 	{ &c_cfg.colourize_prices,	FALSE,	6, 0,	143, TRUE,
 	    "colourize_prices",		"Colourize store prices in 3-digit columns." },
+
+	{ &c_cfg.clone_to_stdout,	FALSE,	7,	0, 144, TRUE,
+	    "clone_to_stdout",		"Clone client chat and messages to stdout" },
+	{ &c_cfg.clone_to_file,		FALSE,	7,	0, 145, TRUE,
+	    "clone_to_file",		"Clone client chat and messages to 'stdout.txt'" },
 };
 
 

@@ -3936,7 +3936,7 @@ struct client_opts {
 	bool screenshot_format;
 	bool quiet_house_sfx;
 	bool no_house_sfx;
-	bool clone_to_stdout;
+	bool alert_starvation;
 
     //unmutable, pfft
 	bool use_color;
@@ -3989,7 +3989,7 @@ struct client_opts {
 	bool diz_death;
 	bool diz_death_any;
 	bool diz_first; //122
-	bool alert_starvation;
+	bool xxx;
 	bool palette_animation;
 	bool mute_when_idle;
 	bool id_selection;
@@ -4008,11 +4008,13 @@ struct client_opts {
 	bool no_house_magic;
 	bool no_lite_fainting;
 	bool auto_pickup;
-	bool auto_destroy;
+	bool auto_destroy; //140
 	bool destroy_all_unmatched;
 
 	bool equip_text_colour;
 	bool colourize_prices;
+	bool clone_to_stdout;
+	bool clone_to_file;
 };
 
 /*
