@@ -147,7 +147,7 @@ Alert user to various failures    [alert_failure]
     "failures" occur, as described above.
 
 
-=== Option Set 3 -- Game-play ===
+=== Option Set 3 -- Gameplay ===
 
 Auto-haggle in stores    [auto_haggle]
     Disable "haggling" in stores, resulting in a ten percent sales tax

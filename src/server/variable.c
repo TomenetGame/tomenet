@@ -241,7 +241,7 @@ bool use_color;			 /* Use color if possible (slow) */
 
 /* Option Set 2 -- Disturbance */
 
-/* Option Set 3 -- Game-Play */
+/* Option Set 3 -- Gameplay */
 
 bool auto_scum;			 /* Auto-scum for good levels */
 bool dungeon_align;		     /* Generate dungeons with aligned rooms */

@@ -340,7 +340,7 @@ struct NewMenu opt_item[] =
    { NM_ITEM, "User Interface", 0, 0, 0, 0 },
    { NM_ITEM, "Disturbance", 0, 0, 0, 0 },
    { NM_ITEM, "Inventory", 0, 0, 0, 0 },
-   { NM_ITEM, "Game-Play", 0, 0, 0, 0 },
+   { NM_ITEM, "Gameplay", 0, 0, 0, 0 },
    { NM_ITEM, "Efficiency", 0, 0, 0, 0 },
    { NM_ITEM, "Special", 0, 0, 0, 0 },
    { NM_ITEM, "Cheating", 0, 0, 0, 0 },

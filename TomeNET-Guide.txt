@@ -993,7 +993,7 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
             command won't produce a native beep sound, you can enable sound
             system paging instead here! (Of course you can also enable it on
             all other systems too, which might be nicer than the system beep).
-        Game-Play Options:
+        Gameplay Options:
             "Set 'AFK' mode automatically" will set you afk after some
                 minutes of inactivity.
             "Automatically open doors" makes your character try to open a door
@@ -4114,7 +4114,7 @@ self-explaining or that are especially important are listed in detail here:
 
     Double height of the map shown in the main window (big_map)
         Definitely enable this to see if you prefer it: It doubles the size of
-        the game-play area displayed in the main window.
+        the gameplay area displayed in the main window.
 
     Alert on taking damage while you are AFK (alert_afk_dam) and
     alert on taking damage while looking around the map via 'locate' command
@@ -4204,7 +4204,7 @@ self-explaining or that are especially important are listed in detail here:
 
     no_shriek_sfx and no_house_sfx might be especially interesting too.
 
- (6, 7, 8) Game-Play Options
+ (6, 7, 8) Gameplay Options
     Use old target by default (use_old_target)
         If this is on, a ranged attack via *t5 or *t- will not pick a new
         (ie closer) target if the previously acquired target is still okay.
@@ -4807,7 +4807,7 @@ More information about 'PvP' mode is given in (6.13).
 PvP mode character cannot enter the high-score and cannot become kings/queens.
 
 The highscore numbers are just for bragging and have no actual influence on
-game-play or anything.
+gameplay or anything.
 
 Last you can choose a body modification. It's strongly recommended for
 beginners to choose 'normal body' and NOT 'fruit bat'. ;)

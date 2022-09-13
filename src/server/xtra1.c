@@ -612,7 +612,7 @@ static void prt_plusses(int Ind) {
 //	Send_plusses(Ind, show_tohit_m, show_todam_m, show_tohit_r, show_todam_r, p_ptr->to_h_melee, p_ptr->to_d_melee);
 	Send_plusses(Ind, 0, 0, show_tohit_r, show_todam_r, show_tohit_m, show_todam_m);
 
-	/* (not game-play relevant, just for easier handling in LUA scripts:) */
+	/* (not gameplay relevant, just for easier handling in LUA scripts:) */
 	p_ptr->overall_tohit_r = show_tohit_r;
 	p_ptr->overall_todam_r = show_todam_r;
 	p_ptr->overall_tohit_m = show_tohit_m;
