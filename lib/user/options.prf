@@ -81,6 +81,7 @@ X:alert_mana
 X:alert_afk_dam
 Y:alert_offpanel_dam
 Y:alert_starvation
+X:clone_to_stdout
 
 
 # Audio options:

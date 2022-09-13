@@ -4223,6 +4223,32 @@ void c_msg_print(cptr msg) {
 
 	/* Remember the message */
 	msg_flag = TRUE;
+
+	/* Dump messages to stdout? */
+	if (c_cfg.clone_to_stdout) {
+		char buf2[MSG_LEN], *c = t, *c2 = buf2;
+
+		while (*c) {
+			switch (*c) {
+			/* strip colour codes */
+			case '\377':
+				switch (*(c + 1)) {
+				case 0: /* broken colour code (paranoia) */
+					c++;
+					continue;
+				default: /* assume colour code and discard */
+					c += 2;
+					continue;
+				}
+				break;
+			}
+			*c2 = *c;
+			c++;
+			c2++;
+		}
+		*c2 = 0;
+		printf("%s\n", buf2);
+	}
 }
 
 /*

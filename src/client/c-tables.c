@@ -441,8 +441,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "quiet_house_sfx",		"Play quieter ambient/weather sound in buildings" },
 	{ &c_cfg.no_house_sfx,		FALSE,	5,	0, 107, TRUE,
 	    "no_house_sfx",		"Don't play ambient/weather sound in buildings" },
-	{ &c_cfg.no_am_sfx,		FALSE,	5,	0, 108, FALSE, /* superseded by just =n and toggle the actual 'am_field' sfx instead */		//HOLE
-	    "no_am_sfx",		"Don't play anti-magic disruption sound effect" },
+	{ &c_cfg.alert_starvation,	TRUE,	7,	0, 108, TRUE, //moved exp_bar to page 2 to make room for this
+	    "alert_starvation",		"Beep when taking damage from starvation" },
 
     /* unmutable options, pfft -- these are never shown in any options menu (-> FALSE) */
 	{ &c_cfg.use_color,		TRUE,	1,	0, 109, FALSE,//works, but pretty useless - disabled to make room (we always use colours nowadays)		//HOLE
@@ -506,8 +506,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "diz_death_any",		"Displays lore on monster that kills anyone" },
 	{ &c_cfg.diz_first,		TRUE,	6,	0, 122, TRUE,
 	    "diz_first",		"Displays lore on first-time monster kill" },
-	{ &c_cfg.alert_starvation,	TRUE,	7,	0, 123, TRUE, //moved exp_bar to page 2 to make room for this
-	    "alert_starvation",		"Beep when taking damage from starvation" },
+	{ &c_cfg.clone_to_stdout,	FALSE,	7,	0, 123, TRUE,
+	    "clone_to_stdout",		"Clone all client chat and messages to stdout" },
 	{ &c_cfg.palette_animation,	TRUE,	1,	0, 124, TRUE,
 	    "palette_animation",	"Shade world surface colours depending on daytime" },
 	{ &c_cfg.mute_when_idle,	FALSE,	5,	0, 125, TRUE,

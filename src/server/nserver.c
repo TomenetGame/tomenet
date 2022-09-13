@@ -2550,7 +2550,6 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->sfx_store = TRUE;//!options[105];
 		p_ptr->sfx_house_quiet = options[106];
 		p_ptr->sfx_house = !options[107];
-		p_ptr->sfx_am = TRUE;//!options[108];
 
 #ifdef USE_SOUND_2010
 		/* Glitch: Even if the character has set sfx_house 0, it will still be received as 1 here for some reason on 1st option-sync after char login. */
@@ -2631,7 +2630,10 @@ static void sync_options(int Ind, bool *options) {
 			p_ptr->diz_death = options[120];
 			p_ptr->diz_death_any = options[121];
 			p_ptr->diz_first = options[122];
-			p_ptr->alert_starvation = options[123];
+			if (is_older_than(&p_ptr->version, 4, 8, 1, 1, 0, 0)) //>4.8.0
+				p_ptr->alert_starvation = options[123];
+			else
+				p_ptr->alert_starvation = options[108];
 			tmp = p_ptr->palette_animation;
 			if ((p_ptr->palette_animation = options[124]) != tmp) p_ptr->redraw |= PR_MAP;
 			p_ptr->mute_when_idle = options[125];

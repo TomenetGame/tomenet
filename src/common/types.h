@@ -3936,7 +3936,7 @@ struct client_opts {
 	bool screenshot_format;
 	bool quiet_house_sfx;
 	bool no_house_sfx;
-	bool no_am_sfx;//disabled, use =n
+	bool clone_to_stdout;
 
     //unmutable, pfft
 	bool use_color;
