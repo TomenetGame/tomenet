@@ -358,6 +358,8 @@ void init_lua() {
 		if (!strcmp(audio_sfx[i], "bell")) __sfx_bell = i;
 		if (!strcmp(audio_sfx[i], "page")) __sfx_page = i;
 		if (!strcmp(audio_sfx[i], "warning")) __sfx_warning = i;
+
+		if (!strcmp(audio_sfx[i], "shriek")) __sfx_shriek = i;
 	}
 #endif
 

@@ -2384,7 +2384,8 @@ bool make_attack_spell(int Ind, int m_idx) {
 		    format("\377R%^s makes a high-pitched shriek.", m_name),
 		    format("\377RIt makes a high-pitched shriek."));
 #ifdef USE_SOUND_2010
-		sound_near(Ind, "shriek", NULL, SFX_TYPE_MON_SPELL);
+		//sound_near(Ind, "shriek", NULL, SFX_TYPE_MON_SPELL);
+		sound_near_monster(m_idx, "shriek", NULL, SFX_TYPE_MON_SPELL);
 #endif
 		//can be spammy!	s_printf("SHRIEK: %s -> %s.\n", m_name, p_ptr->name);
 		aggravate_monsters(Ind, m_idx);
@@ -4328,7 +4329,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		    format("\377R%^s makes a high-pitched shriek.", m_name),
 		    format("\377RIt makes a high-pitched shriek."));
 #ifdef USE_SOUND_2010
-		sound_near(Ind, "shriek", NULL, SFX_TYPE_MON_SPELL);
+		sound_near_monster(m_idx, "shriek", NULL, SFX_TYPE_MON_SPELL);
 #endif
 		//can be spammy!	s_printf("SHRIEK: %s -> %s.\n", m_name, p_ptr->name);
 		aggravate_monsters(Ind, m_idx);

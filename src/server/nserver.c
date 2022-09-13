@@ -8154,6 +8154,10 @@ int Send_sound(int Ind, int sound, int alternative, int type, int vol, s32b play
 	if (sound == __sfx_am && !p_ptr->sfx_am) return 0;
 #endif
 
+#ifdef SFX_SHRIEK_VOLUME
+	if (sound == __sfx_shriek) vol = (vol * SFX_SHRIEK_VOLUME) / 100;
+#endif
+
 	/* If we're the target, we still hear our own sounds! */
 	//if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) ;//nothing
 	/* Get target player */

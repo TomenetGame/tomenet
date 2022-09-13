@@ -1034,7 +1034,7 @@ int nrc_x, nrc_y, netherrealm_end_wz;
 bool sauron_weakened = FALSE, sauron_weakened_iddc = FALSE;
 #ifdef USE_SOUND_2010
 int __audio_sfx_max, __audio_mus_max;
-int __sfx_am = -1, __sfx_bell = -1, __sfx_page = -1, __sfx_warning = -1;
+int __sfx_am = -1, __sfx_bell = -1, __sfx_page = -1, __sfx_warning = -1, __sfx_shriek = -1;
 #endif
 int WPOS_DF_X, WPOS_DF_Y, WPOS_DF_Z;
 

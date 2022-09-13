@@ -1970,7 +1970,8 @@ void shriek(int Ind) {
 	msg_format_near(Ind, "%s emits a high-pitched humming noise.", p_ptr->name);
 #ifdef USE_SOUND_2010
 	/* allow us to annoy others ;) */
-	sound_near(Ind, "shriek", NULL, SFX_TYPE_MON_SPELL);
+	//sound_near(Ind, "shriek", NULL, SFX_TYPE_MON_SPELL);
+	sound(Ind, "shriek", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 	aggravate_monsters(Ind, -1);
 }
