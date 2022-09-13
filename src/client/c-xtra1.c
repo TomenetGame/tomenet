@@ -4610,7 +4610,7 @@ void do_animate_lightning(bool reset) {
 #ifndef USE_SOUND_2010
 			//Term_xtra(TERM_XTRA_SOUND, ..some-sound..);
 #else
-			sound(thunder_sound_idx, animate_lightning_type, animate_lightning_vol, 0);
+			sound(thunder_sound_idx, animate_lightning_type, animate_lightning_vol, 0, 0, 0);
 #endif
 		}
 	}
