@@ -760,7 +760,7 @@ void cmd_inven(void) {
 
 #ifdef USE_SOUND_2010
 	/* Note: We don't play the sound in show_inven() itself because that will be too spammy. */
-	sound(browseinven_sound_idx, SFX_TYPE_COMMAND, 100, 0);
+	sound(browseinven_sound_idx, SFX_TYPE_COMMAND, 100, 0, 0, 0);
 #endif
 
 	show_inven();
@@ -872,7 +872,7 @@ void cmd_subinven(int islot) {
 
  #ifdef USE_SOUND_2010
 	/* Note: We don't play the sound in show_inven() itself because that will be too spammy. */
-	sound(browseinven_sound_idx, SFX_TYPE_COMMAND, 100, 0);
+	sound(browseinven_sound_idx, SFX_TYPE_COMMAND, 100, 0, 0, 0);
  #endif
 
 	//show_subinven(islot); --moved into the loop
@@ -2194,6 +2194,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		else if (!strcasecmp(buf, "team") || !strcasecmp(buf, "iron team") || !strcasecmp(buf, "ironteam")) strcpy(init_search_string, "teams");
 		else if (!strcasecmp(buf, "guild")) strcpy(init_search_string, "guilds");
 		else if (!strcasecmp(buf, "party")) strcpy(init_search_string, "parties");
+		else if (my_strcasestr(buf, "magical") && my_strcasestr(buf, "dev")) strcpy(init_search_string, "magic devices"); //NOT -> magic device (skill name)
 
 		/* clean up */
 		buf[0] = 0;
