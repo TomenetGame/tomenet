@@ -860,7 +860,7 @@ void validate_screen_dimensions(s16b *width, s16b *height) {
  * which contain pre-calculated results of this function.		- Jir -
  * (Please see prepare_distance() )
  */
-int distance(int y1, int x1, int y2, int x2) {
+int distance(int y1, int x1, int y2, int x2) { /* Note: This is currently only used server-side and did reside in cave.c. Could be moved back. - C. Blue */
 	int dy, dx, d;
 
 	/* Find the absolute y/x distance components */
