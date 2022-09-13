@@ -4248,6 +4248,11 @@ void c_msg_print(cptr msg) {
 		}
 		*c2 = 0;
 		printf("%s\n", buf2);
+		fflush(stdout);
+		/* Instead of flushing everytime we could also set stdout to unbuffered with either of these:
+		setbuf(stdout, NULL);
+		setvbuf(stdout, (char*)NULL, _IONBF, 0); //more flexible than setbuf()
+		*/
 	}
 	if (c_cfg.clone_to_file) {
 		char buf2[MSG_LEN], *c = t, *c2 = buf2;
