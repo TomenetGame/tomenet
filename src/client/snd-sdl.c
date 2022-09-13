@@ -1345,21 +1345,23 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 
 		/* Simple stereo-positioned audio, only along the x-coords */
 		/* compare distance-handling in util.c, keep consistent */
+		if (c_cfg.positional_audio) {
 #if 0
-		if (d > 20) d = 20;
-		d += 3;
-		d /= 3;
-		if (dist_x < 0) Mix_SetPanning(s, 255, -255 / dist_x);
-		else if (dist_x > 0) Mix_SetPanning(s, 255 / dist_x, 255);
+			if (d > 20) d = 20;
+			d += 3;
+			d /= 3;
+			if (dist_x < 0) Mix_SetPanning(s, 255, -255 / dist_x);
+			else if (dist_x > 0) Mix_SetPanning(s, 255 / dist_x, 255);
 #else //wip
  #if 0
-		dist = distance(0, 0, dist_y, dist_x);
-		if (dist_x) angle = 
+			dist = distance(0, 0, dist_y, dist_x);
+			if (dist_x) angle = 
  #endif
-		/* it's "100 - (d * 50) / 11" scaled from 100 to 255.. */
-		if (dist_x < 0) Mix_SetPanning(s, 255, 255 + (dist_x * 127) / 28);
-		else if (dist_x > 0) Mix_SetPanning(s, 255 - (dist_x * 127) / 28, 255);
+			/* it's "100 - (d * 50) / 11" scaled from 100 to 255.. */
+			if (dist_x < 0) Mix_SetPanning(s, 255, 255 + (dist_x * 127) / 28);
+			else if (dist_x > 0) Mix_SetPanning(s, 255 - (dist_x * 127) / 28, 255);
 #endif
+		}
 	}
 	samples[event].current_channel = s;
 	samples[event].started_timer_tick = ticks;
