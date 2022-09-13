@@ -141,6 +141,9 @@ function quest_towneltalk(Ind, msg, topic)
 					end
 				end
 			end
+			if player.resist_pois or player.immune_poison then
+				x = 1
+			end
 
 			hintsub = 0
 			if x == 0 then
@@ -213,6 +216,9 @@ function quest_towneltalk(Ind, msg, topic)
 						z = 1
 					end
 				end
+			end
+			if player.resist_pois or player.immune_poison then
+				z = 1
 			end
 
 			hintsub = 0
