@@ -498,7 +498,7 @@ static bool open_audio(void) {
 	if (cfg_audio_rate > 48000) cfg_audio_rate = 48000;
 	audio_rate = cfg_audio_rate;
 	audio_format = AUDIO_S16SYS;
-	audio_channels = 2;
+	audio_channels = MIX_DEFAULT_CHANNELS; // this is == 2
 
 	/* Initialize the SDL library */
 	if (SDL_Init(SDL_INIT_AUDIO) < 0) {
@@ -1388,6 +1388,7 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 					pan_l = (255 * s) / 10;
 					pan_r = 255;
 				}
+//c_msg_format("d(dr)=%d(%d), sin=%d, l=%d, r=%d", dy, d_real, s, pan_l, pan_r);
 				Mix_SetPanning(s, pan_l, pan_r);
 			}
 #endif
