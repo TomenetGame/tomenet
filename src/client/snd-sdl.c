@@ -3086,9 +3086,9 @@ void do_cmd_options_sfx_sdl(void) {
 	/* Interact */
 	while (go) {
 #ifdef USER_VOLUME_SFX
-		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yv\377w volume, \377yRETURN\377w (play), \377yESC\377w)");
+		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w/\377ys\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yv\377w volume, \377yRETURN\377w (play), \377yESC\377w)");
 #else
-		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yRETURN\377w (play), \377yESC\377w)");
+		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w/\377ys\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yRETURN\377w (play), \377yESC\377w)");
 #endif
 		Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this page)");
 
@@ -3415,6 +3415,29 @@ void do_cmd_options_sfx_sdl(void) {
 			if (y < 0) y = 0;
 			if (y >= audio_sfx) y = audio_sfx - 1;
 			break;
+		case 's': /* Search for event name */
+			{
+			char searchstr[MAX_CHARS] = { 0 };
+
+			Term_putstr(0, 0, -1, TERM_WHITE, "  Enter (partial) sound event name: ");
+			askfor_aux(searchstr, MAX_CHARS - 1, 0);
+			if (!searchstr[0]) break;
+
+			/* Map events we've listed in our local config file onto audio.lua indices */
+			i2 = -1;
+			for (j = 0; j < SOUND_MAX_2010; j++) {
+				if (!samples[j].config) continue;
+				i2++;
+				/* get event name */
+				sprintf(out_val, "return get_sound_name(%d)", j);
+				lua_name = string_exec_lua(0, out_val);
+				if (!my_strcasestr(lua_name, searchstr)) continue;
+				/* match */
+				y = i2;
+				break;
+			}
+			break;
+			}
 		case '9':
 		case 'p':
 			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
@@ -3925,16 +3948,16 @@ void do_cmd_options_mus_sdl(void) {
 			if (!searchstr[0]) break;
 
 			/* Map events we've listed in our local config file onto audio.lua indices */
-			//i2 = -1;
+			i2 = -1;
 			for (j = 0; j < MUSIC_MAX; j++) {
 				if (!songs[j].config) continue;
-				//i2++;
+				i2++;
 				/* get event name */
 				sprintf(out_val, "return get_music_name(%d)", j);
 				lua_name = string_exec_lua(0, out_val);
 				if (!my_strcasestr(lua_name, searchstr)) continue;
 				/* match */
-				y = j;
+				y = i2;
 				break;
 			}
 			break;
