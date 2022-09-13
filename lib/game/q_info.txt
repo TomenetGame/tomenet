@@ -318,7 +318,7 @@ W:0:0:0:-:Stay awhile and listen, $$T!
 W:0:0:0:-:In the game you can press '?' key for a list of command keys.
 W:0:0:0:-:Would you like to visit the training [[tower]] first or venture into this
 W:0:0:0:-:town's [[dungeon]], named Barrow-Downs, right away?
-W:0:0:0:-:Or do you just seek generic [[advice]]?
+W:0:0:0:-:Or do you seek [[advice]], perhaps to [[prepare]] or [[equip]] properly?
 W:0:0:0:-:The training tower is a safe place where you won't die for real,
 W:0:0:0:-:Experience gain is pretty limited however, and it only has two floors.
 W:0:0:0:-:If you go to the dungeon, don't forget to bring a light source!
