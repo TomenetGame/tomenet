@@ -2634,7 +2634,7 @@ struct player_type {
 	bool auto_afk;
 	bool newb_suicide;
 	bool stack_allow_items;
-	bool stack_allow_wands;
+	bool stack_allow_devices;
 	bool view_perma_grids;
 	bool view_torch_grids;
 
@@ -3884,7 +3884,7 @@ struct client_opts {
 	bool stack_force_notes;
 	bool stack_force_costs;
 	bool stack_allow_items;
-	bool stack_allow_wands; //60
+	bool stack_allow_devices; //60
 	bool whole_ammo_stack;
 	bool always_repeat;
 	bool always_pickup;

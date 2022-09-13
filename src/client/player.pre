@@ -244,7 +244,7 @@ struct player_type {
 	bool disturb_minor;
 	bool disturb_other;
 	bool stack_allow_items;
-	bool stack_allow_wands;
+	bool stack_allow_devices;
 	bool view_perma_grids;
 	bool view_torch_grids;
 	bool view_reduce_lite;

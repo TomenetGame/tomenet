@@ -5447,7 +5447,7 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 
 		/* Beware artifatcs should not combine with "lesser" thing */
 		if (o_ptr->name1 != j_ptr->name1) return (FALSE);
-		if (!Ind || !p_ptr->stack_allow_wands) return (FALSE);
+		if (!Ind || !p_ptr->stack_allow_devices) return (FALSE);
 
 		/* Do not combine recharged ones with non recharged ones. */
 		//if ((f4 & TR4_RECHARGED) != (f14 & TR4_RECHARGED)) return (FALSE);
@@ -5470,7 +5470,7 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 		    (!(j_ptr->ident & (ID_EMPTY)) &&
 		    !object_known_p(Ind, j_ptr))) return(FALSE);
 
-		if (!Ind || !p_ptr->stack_allow_wands) return (FALSE);
+		if (!Ind || !p_ptr->stack_allow_devices) return (FALSE);
 		if (o_ptr->name1 != j_ptr->name1) return (FALSE);
 
 		/* Require identical charges */
@@ -5493,7 +5493,7 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 		if (o_ptr->sval == SV_ROD_HAVOC) return (FALSE);
 
 		/* Require permission */
-		if (!Ind || !p_ptr->stack_allow_wands) return (FALSE);
+		if (!Ind || !p_ptr->stack_allow_devices) return (FALSE);
 
 		/* this is only for rods... the_sandman */
 		if (o_ptr->pval == 0 && j_ptr->pval != 0) return (FALSE); //lol :)

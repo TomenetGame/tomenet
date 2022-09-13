@@ -3578,7 +3578,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 
 			/* Beware artifacts should not combine with "lesser" thing */
 			if (o_ptr->name1 != j_ptr->name1) return (FALSE);
-			if (!Ind || !p_ptr->stack_allow_wands) return (FALSE);
+			if (!Ind || !p_ptr->stack_allow_devices) return (FALSE);
 
 			/* Do not combine recharged ones with non recharged ones. */
 //			if ((f4 & TR4_RECHARGED) != (f14 & TR4_RECHARGED)) return (FALSE);
@@ -3601,7 +3601,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 			    (!Ind || !object_known_p(Ind, j_ptr)))) return(FALSE);
 
 			if (o_ptr->name1 != j_ptr->name1) return (FALSE);
-			if (!Ind || !p_ptr->stack_allow_wands) return (FALSE);
+			if (!Ind || !p_ptr->stack_allow_devices) return (FALSE);
 
 #ifndef NEW_MDEV_STACKING
 			/* Require identical charges */
@@ -3627,7 +3627,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 #endif
 
 			/* Require permission */
-			if (!Ind || !p_ptr->stack_allow_wands) return (FALSE);
+			if (!Ind || !p_ptr->stack_allow_devices) return (FALSE);
 			if (o_ptr->name1 != j_ptr->name1) return (FALSE);
 
 #ifndef NEW_MDEV_STACKING

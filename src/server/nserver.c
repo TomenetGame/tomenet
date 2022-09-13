@@ -2213,7 +2213,7 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->auto_afk = options[28];
 		p_ptr->newb_suicide = options[29];
 		p_ptr->stack_allow_items = options[30];
-		p_ptr->stack_allow_wands = options[31];
+		p_ptr->stack_allow_devices = options[31];
 
 		tmp = p_ptr->view_perma_grids;
 		if ((p_ptr->view_perma_grids = options[34]) != tmp) p_ptr->redraw |= PR_MAP;
@@ -2499,7 +2499,7 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->stack_force_notes = options[57];
 		p_ptr->stack_force_costs = options[58];
 		p_ptr->stack_allow_items = options[59];
-		p_ptr->stack_allow_wands = options[60];
+		p_ptr->stack_allow_devices = options[60];
 
 		p_ptr->always_repeat = options[62];
 		p_ptr->always_pickup = options[63];
