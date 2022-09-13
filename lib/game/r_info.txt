@@ -20563,6 +20563,18 @@ S:1_IN_1
 S:ARROW_4
 D:For testing
 
+N:1162:Shrieking Test Blob
+G:j:R
+I:130:1d1:200:0:0
+W:127:0:0:0
+E:0:0:0:0:0:0
+O:0:0:0:0
+B:TOUCH:*
+F:ALLOW_RUNNING | BLUEBAND | NO_CREDIT | NEVER_MOVE
+S:1_IN_1
+S:SHRIEK
+D:For testing
+
 
 # N: serial number : monster name
 # G: symbol : color
