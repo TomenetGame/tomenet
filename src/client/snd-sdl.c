@@ -378,7 +378,7 @@ static int fast_sqrt[366] = { /* 0..365, for panning */
     12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,
     14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
     16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,
-    18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,19,19,19,19
+    18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,19,19,19,19,19
 };
 
 /* Struct representing all data about an event sample */
@@ -1372,7 +1372,7 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 			else if (!dist_y) { //shortcut for 0 deg and 180 deg (ie sin = 0)
 				if (dist_x < 0) Mix_SetPanning(s, 255, 0);
 				else Mix_SetPanning(s, 0, 255);
-			} else { //all other cases (ie sin != 0)
+			} else { //all other cases (ie sin != 0) -- and d_real cannot be 0 (for division!)
 				int dy = ABS(dist_y); //we don't differentiate between in front of us / behind us, need HRTF for that.
 				int pan_l, pan_r;
 				int d_real = fast_sqrt[dist_x * dist_x + dist_y * dist_y]; //wow, for once not just an approximated distance (beyond that integer thingy) ^^
