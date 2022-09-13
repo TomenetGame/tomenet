@@ -1376,19 +1376,18 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 				int dy = ABS(dist_y); //we don't differentiate between in front of us / behind us, need HRTF for that.
 				int pan_l, pan_r;
 				int d_real = fast_sqrt[dist_x * dist_x + dist_y * dist_y]; //wow, for once not just an approximated distance (beyond that integer thingy) ^^
-				int s = (10 * dy) / d_real; //sinus (scaled by *10 for accuracy)
+				int sin = (10 * dy) / d_real; //sinus (scaled by *10 for accuracy)
 
 				/* Calculate left/right panning weight from angle:
 				   The ear with 'los' toward the event gets 100% of the distance-reduced volume (d),
 				   while the other ear gets ABS(sin(a)) * d. */
 				if (dist_x < 0) { /* somewhere to our left */
 					pan_l = 255;
-					pan_r = (255 * s) / 10;
+					pan_r = (255 * sin) / 10;
 				} else { /* somewhere to our right */
-					pan_l = (255 * s) / 10;
+					pan_l = (255 * sin) / 10;
 					pan_r = 255;
 				}
-//c_msg_format("d(dr)=%d(%d), sin=%d, l=%d, r=%d", dy, d_real, s, pan_l, pan_r);
 				Mix_SetPanning(s, pan_l, pan_r);
 			}
 #endif
