@@ -7823,6 +7823,7 @@ bool destroy_traps_doors_touch(int Ind, int rad) {
 		/* Notify and observe */
 		msg_print(Ind, "Click!");
 		seen = TRUE;
+		p_ptr->window |= PW_INVEN;
 	}
 	return seen ||
 #else
