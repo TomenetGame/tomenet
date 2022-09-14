@@ -370,15 +370,16 @@ static s16b evlt[101] = { 1, //could start on 0 here
 
 /* Positional audio - C. Blue
    Keeping it retro-style with this neat sqrt table.. >_>
-   Note that it must cover (for pythagoras) the maximum sum of dx^2+dy^2 where distance(0,0,dy,dx) can be up to MAX_RANGE [20]!
-   So that would be at dx,dy=14,13 / 13,14 and at dx,dy=19,2 / 2,19. So 14*14 + 13*13 = 196+169 = 365 and 19*19 + 2*2 = 361+4 = 365 too. */
-static int fast_sqrt[366] = { /* 0..365, for panning */
+   Note that it must cover (for pythagoras) the maximum sum of dx^2+dy^2 where distance(0,0,dy,dx) can be up to MAX_SIGHT [20]!
+   This is unfortunately full of rounding/approximation issues, so we will just go with dx,dy=14,13 (365) and dx,dy=19,3 (370, max!)
+   actually (19,2 but rounding!) as limits and reduce coords beyond this slightly. */
+static int fast_sqrt[371] = { /* 0..370, for panning */
     0,1,1,1,2,2,2,2,2,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
     8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,
     12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,
     14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
     16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,
-    18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,19,19,19,19,19
+    18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,19,19,19,19,19,19,19,19,19,19
 };
 
 /* Struct representing all data about an event sample */
@@ -1368,12 +1369,22 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 			/* Best we can do with simple stereo for now without HRTF etc.:
 			   We don't have a y-audio-plane (aka z-plane really),
 			   but at least we pan according to the correct angle. - C. Blue */
+
+			int dy = ABS(dist_y); //we don't differentiate between in front of us / behind us, need HRTF for that.
+
+			/* Hack: Catch edge case: At dist 20 (MAX_SIGHT) there is a +/- 1 leeway orthogonally
+			   due to the way distance() works. This is fine, but we only define roots up to 370 for practical reasons.
+			   For this tiny angle we can just assume that we receive the same panning as if we stood slightly closer. */
+			if (dist_y * dist_y + dist_x * dist_x > 370) {
+				if (dy == MAX_SIGHT) dist_x = 0;
+				else dist_y = 0;
+			}
+
 			if (!dist_x) Mix_SetPanning(s, 255, 255); //shortcut for both, 90 deg and undefined angle aka 'on us'. */
 			else if (!dist_y) { //shortcut for 0 deg and 180 deg (ie sin = 0)
 				if (dist_x < 0) Mix_SetPanning(s, 255, 0);
 				else Mix_SetPanning(s, 0, 255);
 			} else { //all other cases (ie sin != 0) -- and d_real cannot be 0 (for division!)
-				int dy = ABS(dist_y); //we don't differentiate between in front of us / behind us, need HRTF for that.
 				int pan_l, pan_r;
 				int d_real = fast_sqrt[dist_x * dist_x + dist_y * dist_y]; //wow, for once not just an approximated distance (beyond that integer thingy) ^^
 				int sin = (10 * dy) / d_real; //sinus (scaled by *10 for accuracy)
