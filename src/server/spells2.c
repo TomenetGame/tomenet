@@ -4972,9 +4972,10 @@ static void throw_dirt_aux(int Ind, int m_idx) {
 		if (m_ptr->confused) msg_print_near_monster(m_idx, "looks more confused");
 		/* Was not confused */
 		else msg_print_near_monster(m_idx, "gropes around blindly");
+
+		/* Apply blindness aka confusion */
+		m_ptr->confused = 6;
 	}
-	/* Apply blindness aka confusion */
-	m_ptr->confused = 6;
 }
 
 /* Throw dirt at adjacent target. TODO: Make it work for PvP. */
