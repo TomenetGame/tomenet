@@ -7553,11 +7553,11 @@ General Store   1       Sells food, lanterns, ammunition, cloaks and shrooms.
 
 Armoury         2       Offers various basic armour. Rarely excellent pieces.
                         Also offers to repair damaged armour (which is cheaper
-                        than enchanting it).
+                        than enchanting it, except for rather expensive items).
 
 Weapon Shop     3       Offers various basic weapons. Rarely excellent pieces.
                         Also offers to repair damaged weapons (which is cheaper
-                        than enchanting it).
+                        than enchanting it, except for rather expensive items).
 
 Temple          4       Player ghosts will be revived here, and receive some
                         money. The temple also sells a selection of blunt
