@@ -21718,25 +21718,25 @@ Stamina regenerates slowly over time, faster while resting. Your CONstitution
 stat and 'Health' skill will further improve regeneration speed.
 
 Different classes learn fighting techniques at the following levels, if at all:
-            | Sprint Taunt Bash Dist. Poison Percv.N. Flash. Spin Berserk S.Run
+            | Spri Taunt Dirt Bash Dist Pois Percv.N. Flash Spin Bers S.Run
             |                                Track A.
 ------------+------------------------------------------------------------------
-Warrior     |    2     4     5                                 6     20
+Warrior     |   2    4          5                             6   20
 Istar       |
 Priest      |
 Corr.Priest |
-Rogue       |    2     3            4    5    8 (PN)    11                  50
-Mimic       |    4     7    13                                20
+Rogue       |   2    3     3         4    5   8 (PN)    11              50
+Mimic       |   4    7         13                            20
 Archer      |
-Paladin     |    5     7     9                                20
-Death Knight|    5     9    10                                20
-Helll Knight|    5     9    11                                20     35
-Ranger      |    3     8    13                7 (TA)          17
-Adventurer  |    3     5    13
-Druid       |    5
+Paladin     |   5    7          9                            20
+Death Knight|   5    9         10                            20
+Helll Knight|   5    9         11                            20   35
+Ranger      |   3    8         13             7 (TA)         17
+Adventurer  |   3    5     9   13
+Druid       |   5
 Shaman      |
-Runemaster  |    4     6
-Mindcrafter |          8    13     12
+Runemaster  |   4    6     8
+Mindcrafter |        8         13   12
 
 
 
