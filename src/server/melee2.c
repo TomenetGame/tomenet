@@ -2043,6 +2043,22 @@ bool make_attack_spell(int Ind, int m_idx) {
 	/* Only do spells occasionally */
 	if (rand_int(100) >= chance) return (FALSE);
 
+	/* Hack: Shrieking Test Blob always keeps shrieking (non-aggravating/disturbing! Just for sound test :D) */
+	if (m_ptr->r_idx == RI_BLOB_SHRIEK) {
+		monster_desc(Ind, m_name, m_idx, 0x00);
+		monster_desc(Ind, m_name_real, m_idx, 0x100);
+
+		msg_format(Ind, "\377R%^s makes a high-pitched shriek.", m_name);
+		msg_print_near_monvar(Ind, m_idx,
+		    format("\377R%^s makes a high-pitched shriek.", m_name_real),
+		    format("\377R%^s makes a high-pitched shriek.", m_name),
+		    format("\377RIt makes a high-pitched shriek."));
+#ifdef USE_SOUND_2010
+		sound_near_monster(m_idx, "shriek", NULL, SFX_TYPE_MON_SPELL);
+#endif
+		return TRUE;
+	}
+
 
 	/* XXX XXX XXX Handle "track_target" option (?) */
 
@@ -12094,7 +12110,7 @@ void process_monsters(void) {
 
 			/* Morgoth: Battleshout when spotting a player for the first time */
 			//if (m_ptr->r_idx == RI_MORGOTH && !m_ptr->extra && new_los && p_ptr->mon_vis[i])  {
-			if (m_ptr->r_idx == RI_MORGOTH  && !m_ptr->extra && j <= 20) {
+			if (m_ptr->r_idx == RI_MORGOTH && !m_ptr->extra && j <= 20) {
 				m_ptr->extra = 1;
 				sound_floor_vol(&m_ptr->wpos, "monster_roar", NULL, SFX_TYPE_MISC, 100);
 			}

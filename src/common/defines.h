@@ -1447,6 +1447,7 @@
 #define RI_BLUE			1152
 #define RI_MIRROR		1153
 #define RI_HORNED_REAPER_GE	1154	/* low-power Horned Reaper for 'Dungeon Keeper' event */
+#define RI_BLOB_SHRIEK		1162
 
 #define RI_ARCADE_START		1115	/* first arcade-specific monster; TODO: add ARCADE flag instead */
 #define RI_ARCADE_END		1124	/* last arcade-specific monster; TODO: add ARCADE flag instead */
