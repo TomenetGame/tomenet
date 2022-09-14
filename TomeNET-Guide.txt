@@ -4202,7 +4202,7 @@ self-explaining or that are especially important are listed in detail here:
     frequency. Some people don't like to have those be played on each single
     attack, so you can tweak them here.
 
-    no_shriek_sfx and no_house_sfx might be especially interesting too.
+    positional_audio is an especially interesting option, enabled by default.
 
  (6, 7, 8) Gameplay Options
     Use old target by default (use_old_target)
@@ -12438,6 +12438,8 @@ Aggravate Monsters
                 range (a constant defaulting to 20, so aggrav. radius is ~40).
                 Hastes all monsters in your line of sight (same as SHRIEK
                 spell or traps of aggravation or the "/scream" command).
+                The haste effect is permanent, but most non-unique monsters can
+                be slowed down again by using any slowing magic.
 Blessing/Holy Chant/Holy Prayer
                 Temporarily increases your AC by 8/14/20 and also increases
                 your to-hit bonus by half that amount ("You feel righteous!").
@@ -13780,6 +13782,8 @@ SHRIEK          Not a real spell but a physical action, some monsters can emit
                 it, which can help further to react quickly: On shallow levels
                 shrieking might not be that bad, but on deep levels it might
                 well be reason enough to teleport out instantly.
+                The haste effect is permanent, but most non-unique monsters can
+                be slowed down again by using any slowing magic.
 TRAPS           Again not a spell but nasty nevertheless. The monster casts a
                 3x3 'circle' of traps around you, watch where you step.
 UNMAGIC         This can be extremely nasty for istari. Unmagic cancels nearly
