@@ -9069,8 +9069,8 @@ you already removed might linger there for a bit more.
 
 
 
-(4.11)  Malicious effects players can suffer
---------------------------------------------
+(4.11) Malicious effects players can suffer
+-------------------------------------------
 The player can suffer from various effects caused by monsters, traps or
 himself. Against several of these effects the 'Saving Throw' ability helps
 to decide whether it will be resisted or not (especially true for effects
@@ -9375,8 +9375,8 @@ Sanity drain
 
 
 
-(4.12)  Malicious effects monsters can suffer
----------------------------------------------
+(4.12) Malicious effects monsters can suffer
+--------------------------------------------
 Monsters can be affected by similar effects as players.
 Those are:
 
@@ -10526,13 +10526,16 @@ Also see 'Armour weight (concerning ranged weapons)' further below in (5.5)
 for details about how wearing armour affects your ranged weapon accuracy.
 
 
-(5.2a)  Fire-till-kill mode
-----------------------------
+(5.2a) Fire-till-kill mode
+--------------------------
+Your character will fire till kill, ie keep using your current (if eligible)
+ranged attacks until the target dies or is no longer targettable.
+
 Accessible via 'm' key, you can switch 'fire-till-kill' mode on or off.
 While enabled, your character will keep firing a ranged weapon (ie a weapon in
-your 'shooter' equipment slot) once you initiated the first shot until the
-target either dies or direct firing at it becomes impossible/obstructed for any
-reason.
+your 'shooter' equipment slot) or spell (see below) once you initiated the
+first shot until the target either dies or direct firing at it becomes
+impossible/obstructed for any reason.
 The main use besides making ranged weapon usage more relaxed is that you are
 able to single out enemies you want to kill of big monster packs such as
 escorts.
