@@ -220,10 +220,14 @@ static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start) 
 		if (p_ptr->s_info[i].flags1 & SKF1_DUMMY) color = TERM_SLATE;
 
 		if (j == sel) {
-#ifndef TEST_CLIENT
+#ifdef USE_X11 /* currently on Win this just causes blackness (not even text?) */
+ #ifndef TEST_CLIENT
 			color = TERM_L_GREEN;
-#else
+ #else
 			color = TERMX_BLUE;
+ #endif
+#else
+			color = TERM_L_GREEN;
 #endif
 			deb = '[';
 			end = ']';
