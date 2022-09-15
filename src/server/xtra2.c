@@ -5040,9 +5040,9 @@ void check_experience(int Ind) {
 			/* Killed none? nothing happens except if we reached the threshold level */
 			if (p_ptr->r_killed[RI_CANDLEBEARER] == 0 && p_ptr->r_killed[RI_DARKLING] == 0) {
 				/* Warning messages to not forget killing one of the two harbinger types */
-				if (old_lev < 13 && p_ptr->lev >= 13) msg_print(Ind, "\374\377GWe all have to pick our own path some time...");
+				if (old_lev < 13 && p_ptr->lev >= 13) msg_print(Ind, "\374\377yWe all have to pick our own path some time...");
 				//if (old_lev < 14 && p_ptr->lev >= 14) msg_print(Ind, "\374\377GYou are thirsty for blood: be it good or evil");
-				if (old_lev < 19 && p_ptr->lev >= 19) msg_print(Ind, "\374\377GYour soul thirsts for shaping, either enlightenment or corruption!");
+				if (old_lev < 19 && p_ptr->lev >= 19) msg_print(Ind, "\374\377oYour soul thirsts for shaping, either enlightenment or corruption!");
 				/* You had one job to do.. */
 				if (old_lev <= 19 && p_ptr->lev >= 20) {
 					//msg_print(Ind, "\377RYou don't deserve to live.");
@@ -6485,13 +6485,13 @@ bool monster_death(int Ind, int m_idx) {
 		switch (r_idx) {
 		case RI_CANDLEBEARER:
 			if (p_ptr->r_killed[RI_DARKLING] != 0)
-				msg_print(Ind, "\377rYour presence in the realm is forfeit.");
+				msg_print(Ind, "\377rYour presence in the realm is forfeit!");
 			else if (p_ptr->r_killed[RI_CANDLEBEARER] == 0)
 				msg_print(Ind, "\377yYou have stepped on the path to corruption..");
 			break;
 		case RI_DARKLING:
 			if (p_ptr->r_killed[RI_CANDLEBEARER] != 0)
-				msg_print(Ind, "\377rYour presence in the realm is forfeit.");
+				msg_print(Ind, "\377rYour presence in the realm is forfeit!");
 			else if (p_ptr->r_killed[RI_DARKLING] == 0)
 				msg_print(Ind, "\377yYou have stepped on the path to enlightenment..");
 			break;

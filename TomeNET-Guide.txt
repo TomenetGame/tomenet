@@ -16790,7 +16790,7 @@ create a character!):
     physical form will be destroyed by indecisiveness:
     "Your indecision proves you aren't ready yet to stay in this realm!"
     Maiar who kill both, a darkling and a candlebearer, before initiation at
-    level 20, will see the message "Your presence in the realm is forfeit."
+    level 20, will see the message "Your presence in the realm is forfeit!"
     and also meet their fate and be destroyed by indecisiveness at level 20.
 
     After they underwent initiation at level 20, they may just kill all of them
