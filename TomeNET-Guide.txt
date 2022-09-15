@@ -16099,14 +16099,15 @@ initiation, depending on their alignment. All the changes are listed here:
 
 Enlightened:
     Gain time resistance and they no longer have any need for worldly food.
+    Able to almost instantly sense curses on items.
     Able to see invisible and resisting light, while being susceptible to
     evil-based attacks.
-    Intrinsic light aura that adds to any light source's radius.
+    Intrinsic light aura that adds to any light source's radius, starting at +1
+    and growing by +1 every 6 levels above 20.
     +1 bonus AC for every 2 levels above 20 (caps at 50).
     At level 50 they will be able to levitate, become resistant to poison,
     electricity, cold and be enveloped in an aura of frost and lightning;
     also, their melee attacks will slay evil opponents intrinsically.
-    Able to almost instantly sense curses on items.
 
     Necromancy, Traumaturgy, Aura of Death, Shadow, Unlife and Hereticism
     become disabled but you will keep them at their currently trained level.
@@ -16117,11 +16118,12 @@ Enlightened:
 
 Corrupted:
     Gain time resistance and they no longer have any need for worldly food.
+    Able to take off lightly cursed items.
     Resist fire and darkness while being susceptible to good-based attacks.
-    +2 bonus HP for each level above 20.
+    +2 bonus HP for each level above 20, up to level 50, then +1 bonus HP
+    for each level above 50.
     At level 50 they will become resistant to poison, immune to fire, and
     be enveloped in a fiery aura.
-    Able to take off lightly cursed items.
 
     The four holy schools and Spirit become disabled (cannot be trained
     further, but you keep their current status),

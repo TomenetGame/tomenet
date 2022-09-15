@@ -1716,13 +1716,6 @@ void calc_hitpoints(int Ind) {
 	   So in total it might be even more. A scale to 100 is hopefully ok. *experimental* */
 	mhp += get_skill_scale(p_ptr, SKILL_HEALTH, 100);
 
-#ifdef ENABLE_MAIA
-	/* Extra bonus hp (2 per level) for the evil path */
-	if (p_ptr->prace == RACE_MAIA && (p_ptr->ptrait == TRAIT_CORRUPTED) && p_ptr->lev >= 20) {
-		mhp += (p_ptr->lev - 20) * 2;
-	}
-#endif
-
 	/* Now we calculated the base player form mhp. Save it for use with
 	   +LIFE bonus. This will prevent mimics from total uber HP,
 	   and giving them an excellent chance to compensate a form that
@@ -1825,6 +1818,12 @@ void calc_hitpoints(int Ind) {
 			mhp += (mhp * to_life) / 10;
 		}
 	}
+
+#ifdef ENABLE_MAIA
+	/* Extra bonus hp (2 per level) for the evil path */
+	if (p_ptr->prace == RACE_MAIA && (p_ptr->ptrait == TRAIT_CORRUPTED) && p_ptr->lev >= 20)
+		mhp += (p_ptr->lev <= 50 ? (p_ptr->lev - 20) * 2 : 60 + p_ptr->lev - 50);
+#endif
 
 #if 1
 	if (p_ptr->body_monster) {
@@ -3660,13 +3659,16 @@ void calc_boni(int Ind) {
 			p_ptr->see_inv = TRUE; csheet_boni[14].cb[4] |= CB5_RSINV;
 			p_ptr->resist_lite = TRUE; csheet_boni[14].cb[2] |= CB3_RLITE;
 			if (p_ptr->lev >= 20) {
-				int l = ((p_ptr->lev > 50 ? 50 : p_ptr->lev) - 20) / 2;
+				int l;
 
-				p_ptr->cur_lite += 1 + (p_ptr->lev - 20) / 6; csheet_boni[14].lite = 1 + p_ptr->lev / 10; //REAL light!
-				csheet_boni[14].cb[12] |= CB13_XLITE;
-				lite_inc_white += 1 + (p_ptr->lev - 20) / 6;
+				l = ((p_ptr->lev > 50 ? 50 : p_ptr->lev) - 20) / 2;
 				p_ptr->to_a += l;
 				p_ptr->dis_to_a += l;
+
+				l = 1 + (p_ptr->lev - 20) / 6;
+				p_ptr->cur_lite += l; csheet_boni[14].lite += l; //REAL light!
+				csheet_boni[14].cb[12] |= CB13_XLITE;
+				lite_inc_white += l;
 			}
 
 			if (p_ptr->lev >= 50) {
