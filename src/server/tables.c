@@ -3217,7 +3217,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 450, },//350
 		{ SKILL_BOOMERANG,
 			'+', 0,
-			'+', 600, },
+			'+', 650, },
 		{ SKILL_MARTIAL_ARTS, /* let's keep it low for now - offbalancing */
 			'+', 0,
 			'+', 500, },
@@ -3554,10 +3554,10 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_XBOW,
 			'+', 0,
 			'+', 250, },
+#endif
 		{ SKILL_BOOMERANG,
 			'+', 0,
-			'+', 350, },
-#endif
+			'+', 500, },
 		{ SKILL_MARTIAL_ARTS,
 			'+', 1000, /* make newbies' lives easier */
 			'+', 650, },
@@ -3582,7 +3582,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			'+', 1100, }, //900,
 		{ SKILL_DRUID_ARCANE,
-			'+', 1000,
+			'+', 0,
 			'+', 1200, }, //1500,
 		{ SKILL_DRUID_PHYSICAL,
 			'+', 1000,
@@ -3591,10 +3591,10 @@ player_class class_info[MAX_CLASS] = {
 			'+', 1000,
 			'+', 0, },
 		{ SKILL_DEVICE,
-			'+', 1000,
+			'+', 0,
 			'+', 1000, },
 		{ SKILL_SNEAKINESS,
-			'+', 1000,
+			'+', 0,
 			'+', 600, },//750,
 		{ SKILL_DISARM,
 			'+', 0,/*1000*/
