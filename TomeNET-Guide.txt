@@ -23420,7 +23420,7 @@ always vary and not necessarily be exactly what you wished for.
 Since the resulting item will be affected by your character and skill chart,
 what you must actively do BEFORE turning in a deed for a reward item is:
 
-- spend skill points! Never get a reward item without having spent any skill
+- Spend skill points! Never get a reward item without having spent any skill
   points. Make sure that you have at least 3.000 in your vital skill(s) so the
   reward-creating algorithm notices it.
   If you have increased your 'Magic' skill even just a little bit (note that
@@ -23432,10 +23432,12 @@ what you must actively do BEFORE turning in a deed for a reward item is:
   chance to get a crown instead of helmet/cap.
   Note: Critical-strike skill will aim at sword-type weapons, same as if you
   skilled Sword-mastery skill.
+  If you train multiple melee-weapon or ranged-weapon skills, one will get
+  picked randomly. (You usually shouldn'd do this as it wastes skill points.)
   If you have Sword-mastery and Anti-magic skill, you will get a Dark Sword in
-  case you receive a weapon as reward.
-- wear roughly the appropriate type of armour (ie light vs heavy) and..
-- wield the type of weapon (dual, 1-handed or 2-handed) that you prefer.
+  case you receive a (sword-type) weapon as reward.
+- Wear roughly the appropriate type of armour (ie light vs heavy) and..
+- Wield the type of weapon (dual, 1-handed or 2-handed) that you prefer.
   This might affect three factors randomly: An actual weapon reward, whether or
   not you might gain a shield for reward, whether you might get light or heavy
   armour for reward. Keep in mind that there is still a random factor in what
@@ -23451,17 +23453,16 @@ what you must actively do BEFORE turning in a deed for a reward item is:
   Regarding weapon weight, note that a weapon reward will usually not give you
   less attacks per round than the weapon you are already wielding (if any). If
   you don't wield one, it aims for 3 attacks per round as default.
-  An exception are dark swords, which are always rewarded when you have any
-  points in Anti-magic skill, even if it lowers your BpR.
-- runemasters who receive a piece of armour will usually (as long as it's
+  An exception are dark swords, which will always replace a rolled sword-type
+  reward if you have any points in Anti-magic skill even if it lowers your BpR.
+- Runemasters who receive a piece of armour will usually (as long as it's
   reasonably possible regarding ego-power type and value) get one that provides
   resistance to one of the elements they can conjure up with their runecraft
   skills. For this special feature any skill greater than zero in a particular
   rune element is sufficient, instead of the usual 3.000 threshold.
-  Resistances your character already possesses do not become prerequisites for
-  the item, so it will not end up redundant with Draconian resistances for
-  example.
-- druids will never receive a mage staff even if they haven't trained their
+- Resistances your character already possesses are potentially avoided on the
+  item, so it won't end up too redundant with Draconian lineage etc.
+- Druids will never receive a mage staff even if they haven't trained their
   Martial Arts skill above the starting value yet.
 
 It does not matter if a skill is trained further above 3.000 or what your
