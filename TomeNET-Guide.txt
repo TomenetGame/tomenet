@@ -16787,16 +16787,19 @@ create a character!):
     either a candlebearer, a servant of good (to become corrupted), or a
     darkling, a harbinger of demonkind (to become enlightened) before reaching
     level 20 or they will lose the ability to stay in the realm and their
-    physical form will be destroyed.
+    physical form will be destroyed by indecisiveness:
+    "Your indecision proves you aren't ready yet to stay in this realm!"
     Maiar who kill both, a darkling and a candlebearer, before initiation at
-    level 20, will also meet their fate and be destroyed by indecisiveness:
-    "Your presence in the realm is forfeit."
+    level 20, will see the message "Your presence in the realm is forfeit."
+    and also meet their fate and be destroyed by indecisiveness at level 20.
+
+    After they underwent initiation at level 20, they may just kill all of them
+    indiscriminately, same as any other monster, without consequences.
     At level 13, maiar will get a reminder if they haven't killed any darkling
     or candlebearer yet: "We all have to pick our own path some time..."
     At level 19, there will be another reminder, as it's now their last chance:
     "Your soul thirsts for shaping, either enlightenment or corruption!"
-    After they underwent initiation at level 20, they may just kill all of them
-    indiscriminately, same as any other monster.
+
     Maiar start with a low profile skill chart which gets boosted on initiation
     depending on their alignment. Their skills will be adjusted on initiation
     so that they remain as close to their previous values as possible while the
