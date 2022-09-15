@@ -15821,16 +15821,16 @@ stated.
                                 "Martial Arts" skill (see above in this skill
                                 table).
 
-                                Dodging improves in a linear manner, for
-                                example your chance to dodge any monster (of
-                                similar or higher level than yourself) is
-                                pretty much half as high at 25.000 dodging as
-                                at 50.000 dodging.
-
                                 As a rule of thumb, your dodge chance (at maxed
-                                dodging skill) will usually cap at 67% for
-                                monsters of equal level and at 50% chance for
-                                monsters of twice your level.
+                                dodging skill in relation to your character's
+                                level) will usually cap at 67% for monsters of
+                                equal level and at 50% chance for monsters of
+                                twice your level.
+                                If your dodging skill isn't maxed out to your
+                                current character level, your dodging chance
+                                will drop in a linear manner, eg if skill is
+                                half your level, you'll have half the chance
+                                to dodge.
 
     .Calmness                   Ability to not get hindered by enemies.
      (0.625)                    Monsters can try to intercept some of your
