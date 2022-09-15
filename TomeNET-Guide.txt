@@ -19212,7 +19212,7 @@ school.
     Strike          Creates a force bolt that may stun enemies.
                     Required skill level for first spell level: 25.
 
-                    Tier III: Level 37.
+                    Tier II: Level 37.
                     It's a small ball instead of a bolt.
 
     Stone Prison    Creates a prison of granite walls around you.
