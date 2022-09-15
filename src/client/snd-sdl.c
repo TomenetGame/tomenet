@@ -1,9 +1,11 @@
 /*
  * File: snd-sdl.c
- * Purpose: SDL sound support
+ * Purpose: SDL sound support for TomeNET
  *
- * Copyright (c) 2004-2007 Brendon Oliver, Andrew Sidwell.
- * A large chunk of this file was taken and modified from main-ros.
+ * Written in 2010 by C. Blue, inspired by old angband sdl code.
+ * New custom sound structure, ambient sound, background music and weather.
+ * New in 2022, I added positional audio. Might migrate to OpenAL in the
+ * future to support HRTF for z-plane spatial audio. - C. Blue
  *
  * This work is free software; you can redistribute it and/or modify it
  * under the terms of either:
@@ -17,8 +19,6 @@
  *    are included in all such copies.  Other copyrights may also apply.
  */
 
-/* modified for TomeNET to support our custom sound structure and also
-   background music and weather - C. Blue */
 
 #include "angband.h"
 
