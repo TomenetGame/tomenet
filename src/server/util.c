@@ -8954,17 +8954,18 @@ void kick_ip(int Ind_kicker, char *ip_kickee, char *reason, bool msg) {
 static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 	u32b dummy, f4;
 	player_type *p_ptr = Players[Ind];
-
 	/* Extract the item level */
 	int lev = k_info[o_ptr->k_idx].level;
+	/* Base chance of success */
+	int chance = p_ptr->skill_dev;
+
+	if (o_ptr->tval == TV_RUNE)
+		return exec_lua(0, format("return rcraft_rune(%d,%d)", Ind, o_ptr->sval));
 
 #if 0 /* not needed anymore since x_dev and skill-ratios have been adjusted in tables.c */
 	/* Reduce very high levels */
 	lev = (400 - ((200 - lev) * (200 - lev)) / 100) / 4;//1..75
 #endif
-
-	/* Base chance of success */
-	int chance = p_ptr->skill_dev;
 
 	/* Hack -- use artifact level instead */
 	if (true_artifact_p(o_ptr)) lev = a_info[o_ptr->name1].level;
@@ -8988,9 +8989,6 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 	if (chance < 0) chance = 0;
 
 	/* Hacks: Certain items are easier/harder to use in general: */
-
-	if (o_ptr->tval == TV_RUNE)
-		return exec_lua(0, format("return rcraft_rune(%d,%d)", Ind, o_ptr->sval));
 
 #if 1
 	/* equippable magic devices are especially easy to use? (ie no wands/staves/rods)
