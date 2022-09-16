@@ -3373,9 +3373,9 @@ void display_player(int hist) {
 
 				if (csheet_boni[i].cb[4] & CB5_RFEAR) { c_put_str(TERM_WHITE, "+", 1, 25 + i); header_color[1][0] = TERM_WHITE; }
 				if (csheet_boni[i].cb[4] & CB5_RPARA) { c_put_str(TERM_WHITE, "+", 2, 25 + i); header_color[1][1] = TERM_WHITE; }
-				if (csheet_boni[i].cb[4] & CB5_STELE) { c_put_str(TERM_RED, "-", 3, 25 + i); if (header_color[1][2] == TERM_L_DARK || header_color[1][2] == TERM_WHITE) header_color[1][2] = TERM_RED; } //overrides the resist, no items with both
+				if (csheet_boni[i].cb[4] & CB5_STELE) { c_put_str(TERM_RED, "t", 3, 25 + i); if (header_color[1][2] == TERM_L_DARK || header_color[1][2] == TERM_WHITE) header_color[1][2] = TERM_RED; } //auto-tele; overrides the resist, no items with both
 				if (csheet_boni[i].cb[4] & CB5_RTELE) { c_put_str(TERM_WHITE, "+", 3, 25 + i); if (header_color[1][2] == TERM_L_DARK) header_color[1][2] = TERM_WHITE; }
-				if (csheet_boni[i].cb[4] & CB5_ITELE) { c_put_str(TERM_YELLOW, "*", 3, 25 + i); if (header_color[1][2] != TERM_YELLOW) header_color[1][2] = TERM_YELLOW; }
+				if (csheet_boni[i].cb[4] & CB5_ITELE) { c_put_str(TERM_L_RED, "N", 3, 25 + i); if (header_color[1][2] != TERM_L_RED) header_color[1][2] = TERM_L_RED; } //NO_TELE
 				if (csheet_boni[i].cb[4] & CB5_RSINV) { c_put_str(TERM_WHITE, "+", 4, 25 + i); if (header_color[1][3] == TERM_L_DARK) header_color[1][3] = TERM_WHITE; }
 				if (csheet_boni[i].cb[4] & CB5_RINVS) { c_put_str(TERM_WHITE, "+", 5, 25 + i); header_color[1][4] = TERM_WHITE; }
 				if (csheet_boni[i].cb[5] & CB6_RLIFE) { c_put_str(TERM_WHITE, "+", 6, 25 + i); header_color[1][5] = TERM_WHITE; }
@@ -3930,9 +3930,9 @@ void display_player(int hist) {
 
 				if (csheet_boni[i].cb[4] & CB5_RFEAR) { c_put_str(TERM_WHITE, "+", 6 + i, 1 + 19 + x_offset); header_color[0][19 + 0] = TERM_WHITE; }
 				if (csheet_boni[i].cb[4] & CB5_RPARA) { c_put_str(TERM_WHITE, "+", 6 + i, 2 + 19 + x_offset); header_color[0][19 + 1] = TERM_WHITE; }
-				if (csheet_boni[i].cb[4] & CB5_STELE) { c_put_str(TERM_RED, "-", 6 + i, 3 + 19 + x_offset); if (header_color[0][19 + 2] == TERM_L_DARK || header_color[0][19 + 2] == TERM_WHITE) header_color[0][19 + 2] = TERM_RED; } //overrides the resist, no items with both
+				if (csheet_boni[i].cb[4] & CB5_STELE) { c_put_str(TERM_RED, "t", 6 + i, 3 + 19 + x_offset); if (header_color[0][19 + 2] == TERM_L_DARK || header_color[0][19 + 2] == TERM_WHITE) header_color[0][19 + 2] = TERM_RED; } //auto-tele; overrides the resist, no items with both
 				if (csheet_boni[i].cb[4] & CB5_RTELE) { c_put_str(TERM_WHITE, "+", 6 + i, 3 + 19 + x_offset); if (header_color[0][19 + 2] == TERM_L_DARK) header_color[0][19 + 2] = TERM_WHITE; }
-				if (csheet_boni[i].cb[4] & CB5_ITELE) { c_put_str(TERM_YELLOW, "*", 6 + i, 3 + 19 + x_offset); if (header_color[0][19 + 2] != TERM_YELLOW) header_color[0][19 + 2] = TERM_YELLOW; }
+				if (csheet_boni[i].cb[4] & CB5_ITELE) { c_put_str(TERM_L_RED, "N", 6 + i, 3 + 19 + x_offset); if (header_color[0][19 + 2] != TERM_L_RED) header_color[0][19 + 2] = TERM_L_RED; } //NO_TELE
 				if (csheet_boni[i].cb[4] & CB5_RSINV) { c_put_str(TERM_WHITE, "+", 6 + i, 4 + 19 + x_offset); if (header_color[0][19 + 3] == TERM_L_DARK) header_color[0][19 + 3] = TERM_WHITE; }
 				if (csheet_boni[i].cb[4] & CB5_RINVS) { c_put_str(TERM_WHITE, "+", 6 + i, 5 + 19 + x_offset); header_color[0][19 + 4] = TERM_WHITE; }
 				if (csheet_boni[i].cb[5] & CB6_RLIFE) { c_put_str(TERM_WHITE, "+", 6 + i, 6 + 19 + x_offset); header_color[0][19 + 5] = TERM_WHITE; }
