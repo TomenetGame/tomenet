@@ -8959,8 +8959,14 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 	/* Base chance of success */
 	int chance = p_ptr->skill_dev;
 
-	if (o_ptr->tval == TV_RUNE)
-		return exec_lua(0, format("return rcraft_rune(%d,%d)", Ind, o_ptr->sval));
+	if (o_ptr->tval == TV_RUNE) {
+		chance = exec_lua(0, format("return rcraft_rune(%d,%d)", Ind, o_ptr->sval));
+
+		/* Confusion makes it much harder (maybe TODO: blind/stun?) */
+		if (p_ptr->confused) chance = chance / 2;
+
+		return(chance);
+	}
 
 #if 0 /* not needed anymore since x_dev and skill-ratios have been adjusted in tables.c */
 	/* Reduce very high levels */
@@ -9020,6 +9026,7 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 /* just for display purpose, return an actual average percentage value */
 int activate_magic_device_chance(int Ind, object_type *o_ptr, byte *permille) {
 	int chance = magic_device_base_chance(Ind, o_ptr);
+
 	if (o_ptr->tval == TV_RUNE) return chance; // Hack: Rune Boni - Kurzel
 
 	/* 100% not possible to reach:
@@ -9046,8 +9053,8 @@ int activate_magic_device_chance(int Ind, object_type *o_ptr, byte *permille) {
 bool activate_magic_device(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 	byte permille;
-
 	int chance = activate_magic_device_chance(Ind, o_ptr, &permille);
+
 	if (o_ptr->tval == TV_RUNE) return magik(chance);
 
 	/* Certain items are heavily restricted (todo: use WINNERS_ONLY flag instead for cleanliness) */
