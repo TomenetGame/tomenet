@@ -2917,7 +2917,7 @@ void hit_trap(int Ind) {
 static void py_attack_player(int Ind, int y, int x, byte old) {
 	player_type *p_ptr = Players[Ind];
 	int num = 0, bonus, chance, slot;
-	int k, k2, k3, bs_multiplier;
+	int k, k2, k3;
 	long int kl;
 	player_type *q_ptr;
 	object_type *o_ptr = NULL;
@@ -2929,7 +2929,8 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 	int fear_chance;
 	bool pierced;
 
-	bool		stab_skill = (get_skill(p_ptr, SKILL_BACKSTAB) != 0 && !p_ptr->rogue_heavyarmor);
+	int 		bs_skill = get_skill_scale(p_ptr, SKILL_BACKSTAB, 50); //for pvp it's 1/2 of pve (100 there)
+	bool		stab_skill = (bs_skill != 0 && !p_ptr->rogue_heavyarmor);
 	bool		sleep_stab = TRUE, cloaked_stab = (p_ptr->cloaked == 1), shadow_stab = (p_ptr->shadow_running); /* can player backstab the monster? */
 	bool		backstab = FALSE, stab_fleeing = FALSE; /* does player backstab the player? */
 	bool		primary_wield = (p_ptr->inventory[INVEN_WIELD].k_idx != 0);
@@ -3577,10 +3578,15 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 			/* New backstab formula: it works like criticals now and takes a bit of monster hp into account */
 			/* Note that the multiplier is after all the damage calc is done! So may need tweaking! */
 			if (backstab || stab_fleeing) {
-				bs_multiplier = get_skill_scale(p_ptr, SKILL_BACKSTAB, 350 + rand_int(101));
-				kl = k * (100 + bs_multiplier);
+				int bs_flat = q_ptr->chp / (dual_stab ? 30 : 20);
+				int bs_multiplier = 100 + get_skill_scale(p_ptr, SKILL_BACKSTAB, 350 + rand_int(101));
+
+				/* similar to dodging, the effect is weaker if the skill level doesn't match the monster level */
+				bs_flat = (bs_flat * bs_skill) / (q_ptr->lev >= bs_skill ? q_ptr->lev : bs_skill);
+
+				kl = k * bs_multiplier;
 				kl /= (dual_stab ? 150 : 100);
-				kl += q_ptr->chp / (dual_stab ? 30 : 20);
+				kl += bs_flat;
 #ifdef CRIT_VS_BACKSTAB
 				if (k3 > kl) {
 					backstab = stab_fleeing = FALSE;
@@ -3589,9 +3595,9 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 #endif
 				k = kl;
 #ifdef CRIT_VS_VORPAL
-				kl = k2 * (100 + bs_multiplier);
+				kl = k2 * bs_multiplier;
 				kl /= (dual_stab ? 150 : 100);
-				kl += q_ptr->chp / (dual_stab ? 30 : 20);
+				kl += bs_flat;
 				k2 = kl;
 #endif
 			}
@@ -4050,7 +4056,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 #ifdef USE_SOUND_2010
 	int		sfx = 0;
 #endif
-	int		k, k3, bs_multiplier;
+	int		k, k3;
 #if defined(CRIT_VS_VORPAL) || defined(CRIT_UNBRANDED)
 	int		k2;
 #endif
@@ -4063,9 +4069,10 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	monster_race	*r_ptr;
 
 	bool		fear = FALSE;
-	int 		fear_chance;
+	int		fear_chance;
 
-	bool		stab_skill = (get_skill(p_ptr, SKILL_BACKSTAB) != 0 && !p_ptr->rogue_heavyarmor);
+	int		bs_skill = get_skill_scale(p_ptr, SKILL_BACKSTAB, 100);
+	bool		stab_skill = (bs_skill != 0 && !p_ptr->rogue_heavyarmor);
 	bool		sleep_stab = TRUE, cloaked_stab = (p_ptr->cloaked == 1), shadow_stab = (p_ptr->shadow_running); /* can player backstab the monster? */
 	bool		backstab = FALSE, stab_fleeing = FALSE; /* does player backstab the monster? */
 	bool		primary_wield = (p_ptr->inventory[INVEN_WIELD].k_idx != 0);
@@ -4765,11 +4772,15 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 			/* New backstab formula: it works like criticals now and takes a bit of monster hp into account */
 			/* Note that the multiplier is after all the damage calc is done! So may need tweaking! */
 			if (backstab || stab_fleeing) {
-				bs_multiplier = get_skill_scale(p_ptr, SKILL_BACKSTAB, 350 + rand_int(101));
+				int bs_flat = m_ptr->hp / (dual_stab ? 30 : 20);
+				int bs_multiplier = 100 + get_skill_scale(p_ptr, SKILL_BACKSTAB, 350 + rand_int(101));
 
-				kl = k * (100 + bs_multiplier);
+				/* similar to dodging, the effect is weaker if the skill level doesn't match the monster level */
+				bs_flat = (bs_flat * bs_skill) / (r_ptr->level >= bs_skill ? r_ptr->level : bs_skill);
+
+				kl = k * bs_multiplier;
 				kl /= (dual_stab ? 150 : 100);
-				kl += m_ptr->hp / (dual_stab ? 30 : 20);
+				kl += bs_flat;
 #ifdef CRIT_VS_BACKSTAB
 				if (k3 > kl) {
 					backstab = stab_fleeing = FALSE;
@@ -4779,9 +4790,9 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				k = kl;
 
 #ifdef CRIT_VS_VORPAL
-				kl = k2 * (100 + bs_multiplier);
+				kl = k2 * bs_multiplier;
 				kl /= (dual_stab ? 150 : 100);
-				kl += m_ptr->hp / (dual_stab ? 30 : 20);
+				kl += bs_flat;
 				k2 = kl;
 #endif
 
