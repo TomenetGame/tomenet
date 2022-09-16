@@ -8566,7 +8566,7 @@ int Send_AFK(int Ind, byte afk) {
 
 int Send_encumberment(int Ind, byte cumber_armor, byte awkward_armor, byte cumber_glove, byte heavy_wield, byte heavy_shield, byte heavy_shoot,
     byte icky_wield, byte awkward_wield, byte easy_wield, byte cumber_weight, byte monk_heavyarmor, byte rogue_heavyarmor, byte awkward_shoot,
-    byte heavy_swim) {
+    byte heavy_swim, byte heavy_tool) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 
@@ -8581,17 +8581,23 @@ int Send_encumberment(int Ind, byte cumber_armor, byte awkward_armor, byte cumbe
 		if (!is_newer_than(&connp2->version, 4, 4, 2, 0, 0, 0)) {
 			Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
 				icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot);
-		} else {
+		} else if (is_older_than(&connp2->version, 4, 8, 1, 0, 0, 0)) {
 			Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
 				icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, rogue_heavyarmor, awkward_shoot);
+		} else {
+			Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
+				icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, rogue_heavyarmor, awkward_shoot, heavy_swim, heavy_tool);
 		}
 	}
 	if (!is_newer_than(&connp->version, 4, 4, 2, 0, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
 			icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot);
-	} else {
+	} else if (is_older_than(&connp->version, 4, 8, 1, 0, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
 			icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, rogue_heavyarmor, awkward_shoot);
+	} else {
+		return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
+			icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, rogue_heavyarmor, awkward_shoot, heavy_swim, heavy_tool);
 	}
 }
 

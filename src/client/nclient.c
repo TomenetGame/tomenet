@@ -4648,12 +4648,18 @@ int Receive_encumberment(void) {
 	byte icky_wield;        /* Icky weapon */
 	byte awkward_wield;     /* shield and COULD_2H weapon */
 	byte easy_wield;        /* Using a 1-h weapon which is MAY2H with both hands */
+	byte heavy_tool;        /* Heavy digging tool */
 	byte cumber_weight;     /* Full weight. FA from MA will be lost if overloaded */
 	byte monk_heavyarmor;   /* Reduced MA power? */
 	byte rogue_heavyarmor;  /* Missing roguish-abilities' effects? */
 	byte awkward_shoot;     /* using ranged weapon while having a shield on the arm */
+	byte heavy_swim;        /* Overburdened for swimming */
 
-	if (is_newer_than(&server_version, 4, 4, 2, 0, 0, 0)) {
+	if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", &ch, &cumber_armor, &awkward_armor, &cumber_glove, &heavy_wield, &heavy_shield, &heavy_shoot,
+		    &icky_wield, &awkward_wield, &easy_wield, &cumber_weight, &monk_heavyarmor, &rogue_heavyarmor, &awkward_shoot, &heavy_swim, &heavy_tool)) <= 0)
+			return n;
+	} else if (is_newer_than(&server_version, 4, 4, 2, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c", &ch, &cumber_armor, &awkward_armor, &cumber_glove, &heavy_wield, &heavy_shield, &heavy_shoot,
 		    &icky_wield, &awkward_wield, &easy_wield, &cumber_weight, &monk_heavyarmor, &rogue_heavyarmor, &awkward_shoot)) <= 0)
 			return n;
@@ -4667,7 +4673,8 @@ int Receive_encumberment(void) {
 	if (screen_icky) Term_switch(0);
 
 	prt_encumberment(cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
-	    icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, rogue_heavyarmor, awkward_shoot);
+	    icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, rogue_heavyarmor, awkward_shoot,
+	    heavy_swim, heavy_tool);
 
 	if (screen_icky) Term_switch(0);
 

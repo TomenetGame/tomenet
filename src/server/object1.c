@@ -4516,6 +4516,67 @@ static void display_shooter_handling(int Ind, object_type *o_ptr, FILE *fff, int
 	p_ptr->tim_wraith = tim_wraith;
 }
 
+/* display tool encumberment changes, so we won't have to guess in shops - C. Blue */
+static void display_tool_handling(int Ind, object_type *o_ptr, FILE *fff, int Ind_target) {
+	player_type *p_ptr = Ind_target ? Players[Ind_target] : Players[Ind], p_backup;
+	object_type forge, *old_ptr = &forge;
+
+	bool old_heavy_tool = p_ptr->heavy_tool;
+
+	/* save timed effects that might be changed on weapon switching */
+	long tim_wraith = p_ptr->tim_wraith;
+
+	if (!Ind_target) Ind_target = Ind;
+
+	/* since his mana or HP might get changed or even nulled, backup player too! */
+	COPY(&p_backup, p_ptr, player_type);
+
+	/* Ok now the hackish stuff, we replace the current weapon/shield with this one */
+	object_copy(old_ptr, &p_ptr->inventory[INVEN_TOOL]);
+	object_copy(&p_ptr->inventory[INVEN_TOOL], o_ptr);
+	p_ptr->inventory[INVEN_TOOL].number = 1; /* fix weight */
+
+#if 0 /* shouldn't be required just for measuring encumberment */
+	/* If we don't really know the item, rely on k_info flags only! */
+	if (!star_identify) {
+		p_ptr->inventory[INVEN_TOOL].name1 = p_ptr->inventory[INVEN_TOOL].name2 = p_ptr->inventory[INVEN_TOOL].name2b = 0;
+		p_ptr->inventory[INVEN_TOOL].pval = 0;
+	}
+#endif
+
+	/* Hack -- hush the messages up */
+	suppress_message = TRUE;
+	suppress_boni = TRUE;
+	calc_boni(Ind_target);
+	calc_mana(Ind_target);
+
+	/* Gained encumberment? */
+	if (p_ptr->heavy_tool && !old_heavy_tool) {
+		if (fff) fprintf(fff, "\377r    Your strength is insufficient to hold it properly.\n");
+		else msg_print(Ind, "\377s  It seems to be too heavy for you to hold it properly.");
+	}
+
+	/* Lost encumberment? */
+	if (!p_ptr->heavy_tool && old_heavy_tool) {
+		if (fff) fprintf(fff, "\377gThis tool seems light enough for you to use properly.\n");
+		else msg_print(Ind, "\377s  It looks like you could use it just fine.");
+	}
+
+	/* get our weapon back */
+	object_copy(&p_ptr->inventory[INVEN_TOOL], old_ptr);
+
+	calc_boni(Ind_target);
+	calc_mana(Ind_target);
+	suppress_message = FALSE;
+	suppress_boni = FALSE;
+
+	/* and get our mana (in most cases the problem) back, yay */
+	COPY(p_ptr, &p_backup, player_type);
+
+	/* restore timed effects that might have been changed from the weapon switching */
+	p_ptr->tim_wraith = tim_wraith;
+}
+
 /* New helper function for @@/@@@ inscriptions: Check if item might have hidden powers (in which case the inscription is declined).
   ignore_id: If TRUE, the function ignores the item's ID_MENTAL state (aka *identified*) and hence can still return TRUE in that case. Added for shop-pasting.
   Ind is allowed to be 0 for the edge case of power-reinscribing when curse-flipping. And now also for use in object_known() to check for ID_NO_HIDDEN application.
@@ -4658,6 +4719,7 @@ void observe_aux(int Ind, object_type *o_ptr) {
 	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, &forge, NULL, Ind_target);
 	else if (is_melee_weapon(o_ptr->tval)) display_weapon_handling(Ind, &forge, NULL, Ind_target);
 	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, &forge, NULL, Ind_target);
+	else if (o_ptr->tval == TV_DIGGING) display_tool_handling(Ind, &forge, NULL, Ind_target);
 
 	if (wield_slot(Ind, o_ptr) == INVEN_WIELD
 	    //|| is_armour(o_ptr->tval)
@@ -5100,6 +5162,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, &forge, fff, Ind_target);
 	else if (is_melee_weapon(o_ptr->tval)) display_weapon_handling(Ind, &forge, fff, Ind_target);
 	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, &forge, fff, Ind_target);
+	else if (o_ptr->tval == TV_DIGGING) display_tool_handling(Ind, &forge, fff, Ind_target);
 
 	/* specialty: recognize custom spell books and display their contents! - C. Blue */
 	if (o_ptr->tval == TV_BOOK) {

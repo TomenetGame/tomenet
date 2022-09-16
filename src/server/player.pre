@@ -522,6 +522,7 @@ struct player_type
 	bool icky_wield;	/* Icky weapon */
 	bool awkward_wield;	/* Icky weapon */
 	bool easy_wield;	/* Using a 1-h weapon which is MAY2H with both hands */
+	bool heavy_tool;	/* Heavy digger in tool slot */
 	bool cumber_weight;	/* FA from MA is lost if overburdened */
 	bool monk_heavyarmor;	/* Reduced MA power? */
 	bool awkward_shoot;	/* using ranged weapon while having a shield on the arm */

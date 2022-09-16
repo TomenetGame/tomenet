@@ -2949,6 +2949,7 @@ struct player_type {
 	bool old_icky_wield;
 	bool old_awkward_wield;
 	bool old_easy_wield;
+	bool old_heavy_tool;
 	bool old_cumber_weight;
 	bool old_monk_heavyarmor;
 	bool old_awkward_shoot;
@@ -2971,6 +2972,7 @@ struct player_type {
 	bool icky_wield;		/* Icky weapon */
 	bool awkward_wield;		/* shield and COULD_2H weapon */
 	bool easy_wield;		/* Using a 1-h weapon which is MAY2H with both hands */
+	bool heavy_tool;		/* Heavy digging tool */
 	bool cumber_weight;		/* Full weight. FA from MA will be lost if overloaded */
 	bool monk_heavyarmor;		/* Reduced MA power? */
 	bool awkward_shoot;		/* using ranged weapon while having a shield on the arm */

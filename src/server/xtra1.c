@@ -657,6 +657,7 @@ static void prt_encumberment(int Ind) {
 		monk_heavyarmor = p_ptr->monk_heavyarmor ? 1 : 0;
 		rogue_heavyarmor = p_ptr->rogue_heavyarmor ? 1 : 0;
 	}
+	byte heavy_tool = p_ptr->heavy_tool ? 1 : 0;
 
 	if (p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_ARCHER) {
 		awkward_armor = 0; /* they don't use magic or SP */
@@ -665,7 +666,8 @@ static void prt_encumberment(int Ind) {
 	}
 
 	Send_encumberment(Ind, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
-	    icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, rogue_heavyarmor, awkward_shoot, heavy_swim);
+	    icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, rogue_heavyarmor, awkward_shoot,
+	    heavy_swim, heavy_tool);
 }
 
 static void prt_extra_status(int Ind) {
@@ -5485,9 +5487,21 @@ void calc_boni(int Ind) {
 	p_ptr->num_spell += extra_spells;
 
 
+	/* Assume not heavy -- Note that we do not discern between INVEN_WIELD and INVEN_TOOL slot regarding heavy_tool for now. */
+	p_ptr->heavy_tool = FALSE;
 	/* Examine the "tool" */
 	o_ptr = &p_ptr->inventory[INVEN_TOOL];
+	/* It is hard to hold a heavy tool, same as weapon */
+	if (o_ptr->k_idx && hold < o_ptr->weight / 10) p_ptr->heavy_tool = TRUE;
+#ifdef EQUIPPABLE_DIGGERS
+	/* Examine the "weapon" tool */
+	o_ptr = &p_ptr->inventory[INVEN_WIELD];
+	/* It is hard to hold a heavy tool, same as weapon */
+	if (o_ptr->k_idx && o_ptr->tval == TV_DIGGING && hold < o_ptr->weight / 10) p_ptr->heavy_tool = TRUE;
+#endif
 
+	/* Examine the "tool" */
+	o_ptr = &p_ptr->inventory[INVEN_TOOL];
 	/* Boost digging skill by tool weight */
 	if (o_ptr->k_idx && o_ptr->tval == TV_DIGGING) {
 		p_ptr->skill_dig += (o_ptr->weight / 10);
@@ -5497,12 +5511,14 @@ void calc_boni(int Ind) {
 		p_ptr->skill_dig += o_ptr->to_d;
 
 		p_ptr->skill_dig += p_ptr->skill_dig * get_skill_scale(p_ptr, SKILL_DIG, 200) / 100;
+
+		/* Hard to wield a heavy digger */
+		if (p_ptr->heavy_tool) p_ptr->skill_dig /= 3;
 	}
 
 #ifdef EQUIPPABLE_DIGGERS
 	/* Examine the "weapon" tool */
 	o_ptr = &p_ptr->inventory[INVEN_WIELD];
-
 	/* Boost digging skill by tool weight */
 	if (o_ptr->k_idx && o_ptr->tval == TV_DIGGING) {
 		p_ptr->skill_dig2 += (o_ptr->weight / 10);
@@ -5512,6 +5528,9 @@ void calc_boni(int Ind) {
 		p_ptr->skill_dig2 += o_ptr->to_d;
 
 		p_ptr->skill_dig2 += p_ptr->skill_dig2 * get_skill_scale(p_ptr, SKILL_DIG, 200) / 100;
+
+		/* Hard to wield a heavy digger */
+		if (p_ptr->heavy_tool) p_ptr->skill_dig2 /= 3;
 	}
 #endif
 
@@ -5612,10 +5631,10 @@ void calc_boni(int Ind) {
 		}
 		/* for dual-wielders, get a parry bonus for second weapon: */
 		if (p_ptr->dual_wield && p_ptr->dual_mode && !p_ptr->rogue_heavyarmor
-#if 0
+ #if 0
 		    /* don't give parry bonus if one of our weapons is NEVER_BLOW? */
 		    && never_blow == 0x0
-#endif
+ #endif
 		    )
 			//p_ptr->weapon_parry += 5 + get_skill_scale(p_ptr, SKILL_MASTERY, 5);//was +0(+10)
 			p_ptr->weapon_parry += 10;//pretty high, because independent of mastery skill^^
@@ -5760,7 +5779,6 @@ void calc_boni(int Ind) {
 			}
 		}
 	}
-
 
 	/* Different calculation for monks with empty hands */
 	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !melee_weapon &&
@@ -6360,21 +6378,6 @@ void calc_boni(int Ind) {
 	if (p_ptr->resist_chaos) p_ptr->resist_conf = TRUE;
 
 
-
-	/* Take note when "heavy bow" changes */
-	if (p_ptr->old_heavy_shoot != p_ptr->heavy_shoot) {
-		/* Message */
-		if (p_ptr->heavy_shoot)
-			msg_print(Ind, "\377oYou have trouble wielding such a heavy bow.");
-		else if (p_ptr->inventory[INVEN_BOW].k_idx)
-			msg_print(Ind, "\377gYou have no trouble wielding your bow.");
-		else
-			msg_print(Ind, "\377gYou feel relieved to put down your heavy bow.");
-
-		/* Save it */
-		p_ptr->old_heavy_shoot = p_ptr->heavy_shoot;
-	}
-
 	/* Take note when "heavy weapon" changes */
 	if (p_ptr->old_heavy_wield != p_ptr->heavy_wield) {
 		/* Message */
@@ -6388,20 +6391,6 @@ void calc_boni(int Ind) {
 
 		/* Save it */
 		p_ptr->old_heavy_wield = p_ptr->heavy_wield;
-	}
-
-	/* Take note when "heavy shield" changes */
-	if (p_ptr->old_heavy_shield != p_ptr->heavy_shield) {
-		/* Message */
-		if (p_ptr->heavy_shield)
-			msg_print(Ind, "\377oYou have trouble wielding such a heavy shield.");
-		else if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) /* dual-wielders */
-			msg_print(Ind, "\377gYou have no trouble wielding your shield.");
-		else
-			msg_print(Ind, "\377gYou feel relieved to put down your heavy shield.");
-
-		/* Save it */
-		p_ptr->old_heavy_shield = p_ptr->heavy_shield;
 	}
 
 	/* Take note when "illegal weapon" changes */
@@ -6453,6 +6442,34 @@ void calc_boni(int Ind) {
 		p_ptr->old_easy_wield = p_ptr->easy_wield;
 	}
 
+	/* Take note when "heavy shield" changes */
+	if (p_ptr->old_heavy_shield != p_ptr->heavy_shield) {
+		/* Message */
+		if (p_ptr->heavy_shield)
+			msg_print(Ind, "\377oYou have trouble wielding such a heavy shield.");
+		else if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) /* dual-wielders */
+			msg_print(Ind, "\377gYou have no trouble wielding your shield.");
+		else
+			msg_print(Ind, "\377gYou feel relieved to put down your heavy shield.");
+
+		/* Save it */
+		p_ptr->old_heavy_shield = p_ptr->heavy_shield;
+	}
+
+	/* Take note when "heavy bow" changes */
+	if (p_ptr->old_heavy_shoot != p_ptr->heavy_shoot) {
+		/* Message */
+		if (p_ptr->heavy_shoot)
+			msg_print(Ind, "\377oYou have trouble wielding such a heavy bow.");
+		else if (p_ptr->inventory[INVEN_BOW].k_idx)
+			msg_print(Ind, "\377gYou have no trouble wielding your bow.");
+		else
+			msg_print(Ind, "\377gYou feel relieved to put down your heavy bow.");
+
+		/* Save it */
+		p_ptr->old_heavy_shoot = p_ptr->heavy_shoot;
+	}
+
 	/* Take note when "illegal weapon" changes */
 	if (p_ptr->old_awkward_shoot != p_ptr->awkward_shoot) {
 		/* Message */
@@ -6466,6 +6483,24 @@ void calc_boni(int Ind) {
 
 		/* Save it */
 		p_ptr->old_awkward_shoot = p_ptr->awkward_shoot;
+	}
+
+	/* Take note when "heavy weapon" changes */
+	if (p_ptr->old_heavy_tool != p_ptr->heavy_tool) {
+		/* Message */
+		if (p_ptr->heavy_tool)
+			msg_print(Ind, "\377oYou have trouble wielding such a heavy tool.");
+		else if ((!p_ptr->inventory[INVEN_TOOL].k_idx || p_ptr->inventory[INVEN_TOOL].tval != TV_DIGGING)
+#ifdef EQUIPPABLE_DIGGERS
+		    && (!p_ptr->inventory[INVEN_WIELD].k_idx || p_ptr->inventory[INVEN_WIELD].tval != TV_DIGGING)
+#endif
+		    )
+			msg_print(Ind, "\377gYou feel relieved to put down your heavy tool.");
+		else
+			msg_print(Ind, "\377gYou have no trouble wielding your tool.");
+
+		/* Save it */
+		p_ptr->old_heavy_tool = p_ptr->heavy_tool;
 	}
 
 #if 0 /* doesn't work well because it's mostly a continuous increase from hardly-noticing to massive-drowning */

@@ -9639,7 +9639,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				Send_cut(Ind, 1001);
 				Send_stun(Ind, 101);
 				Send_AFK(Ind, 1);
-				Send_encumberment(Ind, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+				Send_encumberment(Ind, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 				Send_monster_health(Ind, 10, TERM_VIOLET);
 				return;
 			}
