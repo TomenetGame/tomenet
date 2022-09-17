@@ -3069,6 +3069,7 @@ void do_cmd_options_sfx_sdl(void) {
 	char buf[1024], buf2[1024], out_val[4096], out_val2[4096], *p, evname[4096];
 	FILE *fff, *fff2;
 	bool cfg_audio_master_org = cfg_audio_master, cfg_audio_sound_org = cfg_audio_sound;
+	bool cfg_audio_music_org = cfg_audio_music, cfg_audio_weather_org = cfg_audio_weather;
 
 	//ANGBAND_DIR_XTRA_SOUND/MUSIC are NULL in quiet_mode!
 	if (quiet_mode) {
@@ -3171,6 +3172,8 @@ void do_cmd_options_sfx_sdl(void) {
 			/* Restore real mixer settings */
 			cfg_audio_master = cfg_audio_master_org;
 			cfg_audio_sound = cfg_audio_sound_org;
+			cfg_audio_music = cfg_audio_music_org;
+			cfg_audio_weather = cfg_audio_weather_org;
 
 			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
 
@@ -3408,14 +3411,20 @@ void do_cmd_options_sfx_sdl(void) {
 			break;
 
 		case '\r':
-			/* Force-enable the mixer to play sound */
-			cfg_audio_master = TRUE;
+			/* Force-enable the mixer to play music */
+			if (!cfg_audio_master) {
+				cfg_audio_master = TRUE;
+				cfg_audio_music = FALSE;
+				cfg_audio_weather = FALSE;
+			}
 			cfg_audio_sound = TRUE;
 
 			dis = samples[j_sel].disabled;
 			samples[j_sel].disabled = FALSE;
 			sound(j_sel, SFX_TYPE_MISC, 100, 0, 0, 0);
 			samples[j_sel].disabled = dis;
+
+			//cfg_audio_sound = cfg_audio_sound_org;
 			break;
 
 		case '#':
@@ -3497,7 +3506,8 @@ void do_cmd_options_mus_sdl(void) {
 	char buf[1024], buf2[1024], out_val[4096], out_val2[4096], *p, evname[4096];
 	FILE *fff, *fff2;
 #ifdef ENABLE_JUKEBOX
-	bool cfg_audio_master_org = cfg_audio_master, cfg_audio_music_org = cfg_audio_music;
+	bool cfg_audio_master_org = cfg_audio_master, cfg_audio_sound_org = cfg_audio_sound;
+	bool cfg_audio_music_org = cfg_audio_music, cfg_audio_weather_org = cfg_audio_weather;
  #ifdef JUKEBOX_INSTANT_PLAY
 	bool dis;
  #endif
@@ -3640,7 +3650,9 @@ void do_cmd_options_mus_sdl(void) {
 #ifdef ENABLE_JUKEBOX
 			/* Restore real mixer settings */
 			cfg_audio_master = cfg_audio_master_org;
+			cfg_audio_sound = cfg_audio_sound_org;
 			cfg_audio_music = cfg_audio_music_org;
+			cfg_audio_weather = cfg_audio_weather_org;
 
 			jukebox_playing = -1;
  #ifdef JUKEBOX_INSTANT_PLAY
@@ -3925,7 +3937,11 @@ void do_cmd_options_mus_sdl(void) {
 			jukebox_playing = j_sel;
 
 			/* Force-enable the mixer to play music */
-			cfg_audio_master = TRUE;
+			if (!cfg_audio_master) {
+				cfg_audio_master = TRUE;
+				cfg_audio_sound = FALSE;
+				cfg_audio_weather = FALSE;
+			}
 			cfg_audio_music = TRUE;
 
 			play_music_instantly(j_sel);
@@ -3936,7 +3952,11 @@ void do_cmd_options_mus_sdl(void) {
 			jukebox_playing = j_sel;
 
 			/* Force-enable the mixer to play music */
-			cfg_audio_master = TRUE;
+			if (!cfg_audio_master) {
+				cfg_audio_master = TRUE;
+				cfg_audio_sound = FALSE;
+				cfg_audio_weather = FALSE;
+			}
 			cfg_audio_music = TRUE;
 
 			play_music(j_sel);
