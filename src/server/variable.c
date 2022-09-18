@@ -858,14 +858,14 @@ bool first_player_joined = TRUE;
 
 /* lua-dependant 'constants' */
 int __lua_HHEALING, __lua_HBLESSING, __lua_HDELFEAR;
-int __lua_MSCARE;
-int __lua_M_FIRST, __lua_M_LAST;
+int __lua_MSCARE, __lua_M_FIRST, __lua_M_LAST;
 int __lua_P_FIRST, __lua_P_LAST;
 #ifndef ENABLE_OCCULT
 int __lua_OFEAR = 0;
 #else
 int __lua_OFEAR;
 #endif
+int __lua_FOCUS;
 
 /* for cron_1h (using turns % 3600 isn't precise enough, might happen that
    one hour gets skipped, eg if transition is 1:59 -> 3:00; so now we're

@@ -802,15 +802,13 @@ static void get_extra(int Ind) {
  */
 void get_history(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	int	     i, n, chart, roll, social_class;
+	int i, n, chart, roll, social_class;
 	int tries = 500;
-	char    *s, *t;
-	char    buf[240];
-
+	char *s, *t;
+	char buf[240];
 
 	/* Clear the previous history strings */
 	for (i = 0; i < 4; i++) p_ptr->history[i][0] = '\0';
-
 
 	/* Clear the history text */
 	buf[0] = '\0';
@@ -1145,13 +1143,11 @@ static void get_money(int Ind) {
 /*
  * Clear all the global "character" data
  */
-static void player_wipe(int Ind)
-{
+static void player_wipe(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	object_type *old_inven;
 	object_type *old_inven_copy;
 	int i;
-
 
 	/* Hack -- save the inventory pointer */
 	old_inven = p_ptr->inventory;
@@ -1321,7 +1317,8 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		{ TV_POTION, SV_POTION_CURE_POISON, 0 },
 		{ TV_POTION, SV_POTION_CURE_CRITICAL, 0 },
 		{ TV_POTION, SV_POTION_INVIS, 0 },
-		{ TV_AMULET, SV_AMULET_SLOW_DIGEST, 0 },
+		//{ TV_AMULET, SV_AMULET_SLOW_DIGEST, 0 },
+		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_FOCUS */
 		{ TV_SOFT_ARMOR, SV_GOWN, 0 },
 	},
 
@@ -1477,7 +1474,8 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		{ TV_POTION, SV_POTION_CURE_POISON, 0 },
 		{ TV_POTION, SV_POTION_CURE_CRITICAL, 0 },
 		{ TV_POTION, SV_POTION_INVIS, 0 },
-		{ TV_AMULET, SV_AMULET_SLOW_DIGEST, 0 },
+		//{ TV_AMULET, SV_AMULET_SLOW_DIGEST, 0 },
+		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_FOCUS */
 		{ 255, 255, 0 },
 	},
 
@@ -1546,33 +1544,35 @@ void init_player_outfits(void) {
 	   but since the array player_init is static, we
 	   just do it here. - C. Blue */
 
-	   //player_init[0][CLASS_PRIEST][2][2] = __lua_HHEALING;
-	   //player_init[0][CLASS_PALADIN][3][2] = __lua_HBLESSING;
-	   player_init[0][CLASS_PALADIN][3][2] = __lua_HDELFEAR;
+	//player_init[0][CLASS_PRIEST][2][2] = __lua_HHEALING;
+	//player_init[0][CLASS_PALADIN][3][2] = __lua_HBLESSING;
+	player_init[0][CLASS_PALADIN][3][2] = __lua_HDELFEAR;
 #ifdef ENABLE_DEATHKNIGHT
-	   player_init[0][CLASS_DEATHKNIGHT][3][2] = __lua_OFEAR;
+	player_init[0][CLASS_DEATHKNIGHT][3][2] = __lua_OFEAR;
 #endif
 #ifdef ENABLE_HELLKNIGHT
-	   player_init[0][CLASS_HELLKNIGHT][3][2] = __lua_OFEAR; //just placeholder, since class can't be "created"
+	player_init[0][CLASS_HELLKNIGHT][3][2] = __lua_OFEAR; //just placeholder, since class can't be "created"
 #endif
 #ifdef ENABLE_CPRIEST
-	   player_init[0][CLASS_CPRIEST][2][2] = __lua_OFEAR; //just placeholder, since class can't be "created"
+	player_init[0][CLASS_CPRIEST][2][2] = __lua_OFEAR; //just placeholder, since class can't be "created"
 #endif
-	   player_init[0][CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
+	player_init[0][CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
+	player_init[0][CLASS_DRUID][3][2] = __lua_FOCUS;
 
-	   //player_init[1][CLASS_PRIEST][2][2] = __lua_HHEALING;
-	   //player_init[1][CLASS_PALADIN][3][2] = __lua_HBLESSING;
-	   player_init[1][CLASS_PALADIN][3][2] = __lua_HDELFEAR;
+	//player_init[1][CLASS_PRIEST][2][2] = __lua_HHEALING;
+	//player_init[1][CLASS_PALADIN][3][2] = __lua_HBLESSING;
+	player_init[1][CLASS_PALADIN][3][2] = __lua_HDELFEAR;
 #ifdef ENABLE_DEATHKNIGHT
-	   player_init[1][CLASS_DEATHKNIGHT][3][2] = __lua_OFEAR;
+	player_init[1][CLASS_DEATHKNIGHT][3][2] = __lua_OFEAR;
 #endif
 #ifdef ENABLE_HELLKNIGHT
-	   player_init[1][CLASS_HELLKNIGHT][3][2] = __lua_OFEAR; //just placeholder, since class can't be "created"
+	player_init[1][CLASS_HELLKNIGHT][3][2] = __lua_OFEAR; //just placeholder, since class can't be "created"
 #endif
 #ifdef ENABLE_CPRIEST
-	   player_init[1][CLASS_CPRIEST][2][2] = __lua_OFEAR; //just placeholder, since class can't be "created"
+	player_init[1][CLASS_CPRIEST][2][2] = __lua_OFEAR; //just placeholder, since class can't be "created"
 #endif
-	   player_init[1][CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
+	player_init[1][CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
+	player_init[1][CLASS_DRUID][3][2] = __lua_FOCUS;
 }
 
 #define BARD_INIT_NUM	15
@@ -1612,10 +1612,10 @@ static byte bard_init[BARD_INIT_NUM][2] = {
 /* XXX 'realm' is not used */
 void admin_outfit(int Ind, int realm) {
 	player_type *p_ptr = Players[Ind];
-	int	     i;
+	int		i;
 
-	object_type     forge;
-	object_type     *o_ptr = &forge;
+	object_type	forge;
+	object_type	*o_ptr = &forge;
 
 	//int note = quark_add("!k");
 
@@ -1761,8 +1761,8 @@ static void player_outfit(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i, j, tv, sv, pv, k_idx, body;
 
-	object_type     forge;
-	object_type     *o_ptr = &forge;
+	object_type forge;
+	object_type *o_ptr = &forge;
 
 	body = (p_ptr->fruit_bat == 1) ? 1 : 0;
 

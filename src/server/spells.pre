@@ -404,6 +404,7 @@ extern int __lua_M_LAST;
 extern int __lua_P_FIRST;
 extern int __lua_P_LAST;
 extern int __lua_OFEAR;
+extern int __lua_FOCUS;
 
 extern bool sauron_weakened;
 extern bool sauron_weakened_iddc;
