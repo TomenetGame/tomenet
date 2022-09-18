@@ -8758,7 +8758,7 @@ extern int PlayerUID;
 	(r_info[ridx].d_char == 'G') || mimic_shaman_E(ridx) || (r_info[ridx].d_char == 'X') || \
 	(r_info[ridx].d_char == 'g') || (r_info[ridx].d_char == 'A'))
 #define mimic_shaman_E(ridx)	\
-	((r_info[ridx].d_char == 'E') && !((ridx) == 514 || (ridx) == 815 || (ridx) == 975))
+	((r_info[ridx].d_char == 'E') && !((ridx) == 514 || (ridx) == 815 || (ridx) == 975)) //invisible stalker, unmaker, death orb
 #define mimic_shaman_fulleq(c)	(strchr("EGX", c))
 /*	Druid: Selected Animals and animal-similar creatures. */
 #define mimic_druid(ridx, plv)	\

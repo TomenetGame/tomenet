@@ -17334,10 +17334,12 @@ create a character!):
     whose shape they appear usually moves erratically - these two are feats
     that mimics cannot achieve.
     Shamans learn elemental ('E') and semi-elemental ('X') forms especially
-    quickly (one kill counts as three).
-    Note that shamans cannot use non-living or undead forms except for ghosts,
-    spirits, elementals and golems.
-    While they are excellent at magic they have weaker combat abilities than
+    quickly (one kill of any of these counts as three kills towards learning
+    the form).
+    They cannot use non-living or undead forms except for ghosts, spirits,
+    elementals and golems. Shamans also cannot learn the three non-elemental
+    aberrations of the 'E' forms: Invisible Stalker, Unmaker and Death Orb.
+    While shamans are excellent at magic they have weaker combat abilities than
     rangers or paladins but still don't need to hide from a melee if trained
     properly.
     Their spiritual abilities allow them to easily train various aspects of
