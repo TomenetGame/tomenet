@@ -20176,8 +20176,11 @@ All Unlife spells are Wisdom-based.)
 - Physical Lore     [Spells are WIS-based.]
 
     Focus           Increases your accuracy, adding a bonus to your
-                    melee-to-hit and ranged-to-hit.
+                    melee-to-hit and ranged-to-hit, caps at +10.
                     Required skill level for first spell level: 1.
+
+                    Tier II: Level 25.
+                    Further increases your accuracy, caps at +25.
 
     Herbal Tea      Satisfies your hunger.                     (auto-project)
                     Lv  8: Cures poisons.                      (auto-project)

@@ -213,21 +213,54 @@ EXTRASTATS_II = add_spell {
 -- A shot that increases a players SPR (if wearing a shooter)
 -- but also decreases his/her speed!
 FOCUS = add_spell {
-	["name"] = 	"Focus",
-	["name2"] = 	"Focus",
+	["name"] = 	"Focus I",
+	["name2"] = 	"Focus I",
 	["school"] = 	{SCHOOL_DRUID_PHYSICAL},
 	["spell_power"] = 0,
 	["level"] = 	1,
-	["mana"] = 	35,
-	["mana_max"] = 	35,
-	["fail"] = 	30,
+	["mana"] = 	3,
+	["mana_max"] = 	3,
+	["fail"] = 	0,
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			do_focus(Ind, 5 + get_level(Ind, FOCUS, 20), rand_int(5) + 15 + get_level(Ind, FOCUS, 10))
+			local lev = get_level(Ind, FOCUS, 35)
+			if lev < 1 then lev = 1 end
+			if lev > 10 then lev = 10 end
+			do_focus(Ind, lev, rand_int(5) + 15 + get_level(Ind, FOCUS, 10))
 			end,
 	["info"] = 	function()
-			return "+" .. (5 + get_level(Ind, FOCUS, 20)) .. " dur d5+" .. (15 + get_level(Ind, FOCUS, 10))
+			local lev = get_level(Ind, FOCUS, 35)
+			if lev < 1 then lev = 1 end
+			if lev > 10 then lev = 10 end
+			return "+" .. lev .. " dur d5+" .. (15 + get_level(Ind, FOCUS, 10))
 			end,
-	["desc"] = 	{ "Increases your accuracy.", }
+	["desc"] = 	{ "Increases your accuracy, caps at +7.", }
+}
+__lua_FOCUS = FOCUS
+
+FOCUS_II = add_spell {
+	["name"] = 	"Focus II",
+	["name2"] = 	"Focus II",
+	["school"] = 	{SCHOOL_DRUID_PHYSICAL},
+	["spell_power"] = 0,
+	["level"] = 	25,
+	["mana"] = 	20,
+	["mana_max"] = 	20,
+	["fail"] = 	-20,
+	["stat"] = 	A_WIS,
+	["direction"] = FALSE,
+	["spell"] = 	function()
+			local lev = get_level(Ind, FOCUS, 30)
+			if lev < 15 then lev = 15 end
+			if lev > 25 then lev = 25 end
+			do_focus(Ind, lev, rand_int(5) + 15 + get_level(Ind, FOCUS, 10))
+			end,
+	["info"] = 	function()
+			local lev = get_level(Ind, FOCUS, 30)
+			if lev < 15 then lev = 15 end
+			if lev > 25 then lev = 25 end
+			return "+" .. lev .. " dur d5+" .. (15 + get_level(Ind, FOCUS, 10))
+			end,
+	["desc"] = 	{ "Increases your accuracy, caps at +20.", }
 }

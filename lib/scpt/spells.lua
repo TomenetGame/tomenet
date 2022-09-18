@@ -234,7 +234,7 @@ school_book[15] = { HDELFEAR, HDETECTEVIL, HSATISFYHUNGER, HGLOBELIGHT_II, HSANC
 -- Create the book of druidism: Arcane Lore (80-84)
 school_book[16] = { NATURESCALL, BAGIDENTIFY, WATERPOISON_III, REPLACEWALL, BANISHANIMALS, }
 -- Create the book of druidism: Physical Lore (85-89)
-school_book[17] = { FOCUS, HERBALTEA, QUICKFEET, HEALINGCLOUD_III, EXTRASTATS_II, }
+school_book[17] = { FOCUS_II, HERBALTEA, QUICKFEET, HEALINGCLOUD_III, EXTRASTATS_II, }
 
 -- Maiar:
 
