@@ -6405,6 +6405,7 @@ void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool g
 void determine_level_req(int level, object_type *o_ptr) {
 	int i, j, klev = k_info[o_ptr->k_idx].level, base = klev / 2;
 	artifact_type *a_ptr = NULL;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 
 	/* -------------------- Dungeon level hacks -------------------- */
@@ -6761,6 +6762,13 @@ void determine_level_req(int level, object_type *o_ptr) {
 	    && o_ptr->level && o_ptr->bpval > 0
 	    && o_ptr->level < o_ptr->bpval * 5)
 		o_ptr->level = o_ptr->bpval * 5;
+	//not just EGO_SPEED and EGO_ELVENKIND2, but all boots
+	if (o_ptr->tval == TV_BOOTS && o_ptr->level && o_ptr->pval > 0) {
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+		if ((f1 & TR1_SPEED) && o_ptr->level < SPEED_RING_BASE_LEVEL + o_ptr->pval)
+			o_ptr->level = SPEED_RING_BASE_LEVEL + o_ptr->pval;
+	}
+
 	if ((o_ptr->tval == TV_DRAG_ARMOR) && (o_ptr->sval == SV_DRAGON_POWER) && (o_ptr->level < 45)) o_ptr->level = 44 + randint(5);
 
 	if (o_ptr->tval == TV_LITE) {
@@ -8272,6 +8280,7 @@ void acquirement_direct(int Ind, object_type *o_ptr, struct worldpos *wpos, bool
 static int reward_melee_check(player_type *p_ptr, long int treshold) {
 	long int rnd_result = 0, selection = 0;
 	long int choice1 = 0, choice2 = 0, choice3 = 0, choice4 = 0, choice5 = 0;
+
 	if (p_ptr->s_info[SKILL_SWORD].value >= treshold
 	    /* hack: critical-hits skill only affects swords! */
 	    || p_ptr->s_info[SKILL_CRITS].value >= treshold)
@@ -8323,6 +8332,7 @@ static int reward_melee_check(player_type *p_ptr, long int treshold) {
 static int reward_ranged_check(player_type *p_ptr, long int treshold) {
 	long int rnd_result = 0, selection = 0;
 	long int choice1 = 0, choice2 = 0, choice3 = 0, choice4 = 0;
+
 	if (p_ptr->s_info[SKILL_BOW].value >= treshold) choice1 = p_ptr->s_info[SKILL_BOW].value;
 	if (p_ptr->s_info[SKILL_XBOW].value >= treshold) choice2 = p_ptr->s_info[SKILL_XBOW].value;
 	if (p_ptr->s_info[SKILL_SLING].value >= treshold) choice3 = p_ptr->s_info[SKILL_SLING].value;
@@ -8347,6 +8357,7 @@ static int reward_armor_check(player_type *p_ptr, bool mha, bool rha) {
 	int maxweight = adj_str_armor[p_ptr->stat_ind[A_STR]] * 10;
 	long int rnd_result = 0, selection = 0;
 	int choice1 = 0, choice2 = 0, choice3 = 0, choice4 = 0, choice5 = 0, choice6 = 0, choice7 = 0, choice8 = 0;
+
 /*  TV_SOFT_ARMOR
     TV_HARD_ARMOR
     TV_DRAG_ARMOR
@@ -9644,6 +9655,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 /* shorten the process of creating a standard-parm reward */
 void give_reward(int Ind, u32b resf, cptr quark, int level, int discount) {
 	object_type forge, *o_ptr = &forge;
+
 	create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, resf, 3000);
 	object_aware(Ind, o_ptr);
 	object_known(o_ptr);
