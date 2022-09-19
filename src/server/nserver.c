@@ -2743,84 +2743,84 @@ static void set_player_font_definitions(int ind, int player) {
 	}
 	/* modify solid walls of local copy for font_map_solid_walls */
 	if (p_ptr->version.os == OS_WIN32) {
-		p_ptr->f_char_solid[50] = 127; //magma, 8
-		p_ptr->f_char_solid[52] = 127;
-		p_ptr->f_char_solid[51] = 127; //quartz, 9
+		p_ptr->f_char_solid[50] = FONT_MAP_SOLID_WIN; //magma, 8
+		p_ptr->f_char_solid[52] = FONT_MAP_SOLID_WIN;
+		p_ptr->f_char_solid[51] = FONT_MAP_SOLID_WIN; //quartz, 9
 		p_ptr->f_attr_solid[51] = 9;
-		p_ptr->f_char_solid[53] = 127;
+		p_ptr->f_char_solid[53] = FONT_MAP_SOLID_WIN;
 		p_ptr->f_attr_solid[53] = 9;
 
-		p_ptr->f_char_solid[54] = 1; //specialty: magma with treasure (diamond ascii)
-		p_ptr->f_char_solid[55] = 1; //specialty: quartz with treasure (diamond ascii)
+		p_ptr->f_char_solid[54] = FONT_MAP_VEIN_WIN; //specialty: magma with treasure (diamond ascii)
+		p_ptr->f_char_solid[55] = FONT_MAP_VEIN_WIN; //specialty: quartz with treasure (diamond ascii)
 
-		p_ptr->f_char_solid[56] = 127; //granite, 2
-		p_ptr->f_char_solid[57] = 127;
-		p_ptr->f_char_solid[58] = 127;
-		p_ptr->f_char_solid[59] = 127; //perma vaults, 1
-		p_ptr->f_char_solid[60] = 127;
-		p_ptr->f_char_solid[61] = 127;
-		p_ptr->f_char_solid[62] = 127;
-		p_ptr->f_char_solid[63] = 127;
-		p_ptr->f_char_solid[26] = 127; //perma houses, 1
-		p_ptr->f_char_solid[28] = 127;
-		p_ptr->f_char_solid[75] = 127;
-		p_ptr->f_char_solid[76] = 127;
-		p_ptr->f_char_solid[77] = 127;
-		p_ptr->f_char_solid[78] = 127;
-		p_ptr->f_char_solid[95] = 127; //ice wall
-		p_ptr->f_char_solid[98] = 127; //sand wall
-		p_ptr->f_char_solid[99] = 127;
+		p_ptr->f_char_solid[56] = FONT_MAP_SOLID_WIN; //granite, 2
+		p_ptr->f_char_solid[57] = FONT_MAP_SOLID_WIN;
+		p_ptr->f_char_solid[58] = FONT_MAP_SOLID_WIN;
+		p_ptr->f_char_solid[59] = FONT_MAP_SOLID_WIN; //perma vaults, 1
+		p_ptr->f_char_solid[60] = FONT_MAP_SOLID_WIN;
+		p_ptr->f_char_solid[61] = FONT_MAP_SOLID_WIN;
+		p_ptr->f_char_solid[62] = FONT_MAP_SOLID_WIN;
+		p_ptr->f_char_solid[63] = FONT_MAP_SOLID_WIN;
+		p_ptr->f_char_solid[26] = FONT_MAP_SOLID_WIN; //perma houses, 1
+		p_ptr->f_char_solid[28] = FONT_MAP_SOLID_WIN;
+		p_ptr->f_char_solid[75] = FONT_MAP_SOLID_WIN;
+		p_ptr->f_char_solid[76] = FONT_MAP_SOLID_WIN;
+		p_ptr->f_char_solid[77] = FONT_MAP_SOLID_WIN;
+		p_ptr->f_char_solid[78] = FONT_MAP_SOLID_WIN;
+		p_ptr->f_char_solid[95] = FONT_MAP_SOLID_WIN; //ice wall
+		p_ptr->f_char_solid[98] = FONT_MAP_SOLID_WIN; //sand wall
+		p_ptr->f_char_solid[99] = FONT_MAP_SOLID_WIN;
 
-		p_ptr->f_char_solid[100] = 1; //specialty: sand wall with treasure (diamond ascii)
+		p_ptr->f_char_solid[100] = FONT_MAP_VEIN_WIN; //specialty: sand wall with treasure (diamond ascii)
 
-		p_ptr->f_char_solid[177] = 127;
-		p_ptr->f_char_solid[183] = 127;
-		p_ptr->f_char_solid[188] = 127;
-		p_ptr->f_char_solid[189] = 127;
-		p_ptr->f_char_solid[190] = 127; //house roofs, 11
-		p_ptr->f_char_solid[191] = 127;
-		p_ptr->f_char_solid[193] = 127; //house roofs, 4
-		p_ptr->f_char_solid[194] = 127;
+		p_ptr->f_char_solid[177] = FONT_MAP_SOLID_WIN;
+		p_ptr->f_char_solid[183] = FONT_MAP_SOLID_WIN;
+		p_ptr->f_char_solid[188] = FONT_MAP_SOLID_WIN;
+		p_ptr->f_char_solid[189] = FONT_MAP_SOLID_WIN;
+		p_ptr->f_char_solid[190] = FONT_MAP_SOLID_WIN; //house roofs, 11
+		p_ptr->f_char_solid[191] = FONT_MAP_SOLID_WIN;
+		p_ptr->f_char_solid[193] = FONT_MAP_SOLID_WIN; //house roofs, 4
+		p_ptr->f_char_solid[194] = FONT_MAP_SOLID_WIN;
 	} else {
 		/* assume OS_X11 -- does this work on OSX/GCU too? */
-		p_ptr->f_char_solid[50] = 2; //magma, 8
-		p_ptr->f_char_solid[52] = 2;
-		p_ptr->f_char_solid[51] = 2; //quartz, 9
+		p_ptr->f_char_solid[50] = FONT_MAP_SOLID_X11; //magma, 8
+		p_ptr->f_char_solid[52] = FONT_MAP_SOLID_X11;
+		p_ptr->f_char_solid[51] = FONT_MAP_SOLID_X11; //quartz, 9
 		p_ptr->f_attr_solid[51] = 9;
-		p_ptr->f_char_solid[53] = 2;
+		p_ptr->f_char_solid[53] = FONT_MAP_SOLID_X11;
 		p_ptr->f_attr_solid[53] = 9;
 
-		p_ptr->f_char_solid[54] = 1; //specialty: magma with treasure (diamond ascii)
-		p_ptr->f_char_solid[55] = 1; //specialty: quartz with treasure (diamond ascii)
+		p_ptr->f_char_solid[54] = FONT_MAP_VEIN_X11; //specialty: magma with treasure (diamond ascii)
+		p_ptr->f_char_solid[55] = FONT_MAP_VEIN_X11; //specialty: quartz with treasure (diamond ascii)
 
-		p_ptr->f_char_solid[56] = 2; //granite, 2
-		p_ptr->f_char_solid[57] = 2;
-		p_ptr->f_char_solid[58] = 2;
-		p_ptr->f_char_solid[59] = 2; //perma vaults, 1
-		p_ptr->f_char_solid[60] = 2;
-		p_ptr->f_char_solid[61] = 2;
-		p_ptr->f_char_solid[62] = 2;
-		p_ptr->f_char_solid[63] = 2;
-		p_ptr->f_char_solid[26] = 2; //perma houses, 1
-		p_ptr->f_char_solid[28] = 2;
-		p_ptr->f_char_solid[75] = 2;
-		p_ptr->f_char_solid[76] = 2;
-		p_ptr->f_char_solid[77] = 2;
-		p_ptr->f_char_solid[78] = 2;
-		p_ptr->f_char_solid[95] = 2; //ice walls
-		p_ptr->f_char_solid[98] = 2; //sand wall
-		p_ptr->f_char_solid[99] = 2;
+		p_ptr->f_char_solid[56] = FONT_MAP_SOLID_X11; //granite, 2
+		p_ptr->f_char_solid[57] = FONT_MAP_SOLID_X11;
+		p_ptr->f_char_solid[58] = FONT_MAP_SOLID_X11;
+		p_ptr->f_char_solid[59] = FONT_MAP_SOLID_X11; //perma vaults, 1
+		p_ptr->f_char_solid[60] = FONT_MAP_SOLID_X11;
+		p_ptr->f_char_solid[61] = FONT_MAP_SOLID_X11;
+		p_ptr->f_char_solid[62] = FONT_MAP_SOLID_X11;
+		p_ptr->f_char_solid[63] = FONT_MAP_SOLID_X11;
+		p_ptr->f_char_solid[26] = FONT_MAP_SOLID_X11; //perma houses, 1
+		p_ptr->f_char_solid[28] = FONT_MAP_SOLID_X11;
+		p_ptr->f_char_solid[75] = FONT_MAP_SOLID_X11;
+		p_ptr->f_char_solid[76] = FONT_MAP_SOLID_X11;
+		p_ptr->f_char_solid[77] = FONT_MAP_SOLID_X11;
+		p_ptr->f_char_solid[78] = FONT_MAP_SOLID_X11;
+		p_ptr->f_char_solid[95] = FONT_MAP_SOLID_X11; //ice walls
+		p_ptr->f_char_solid[98] = FONT_MAP_SOLID_X11; //sand wall
+		p_ptr->f_char_solid[99] = FONT_MAP_SOLID_X11;
 
-		p_ptr->f_char_solid[100] = 1; //specialty: sand wall with treasure (diamond ascii)
+		p_ptr->f_char_solid[100] = FONT_MAP_VEIN_X11; //specialty: sand wall with treasure (diamond ascii)
 
-		p_ptr->f_char_solid[177] = 2;
-		p_ptr->f_char_solid[183] = 2;
-		p_ptr->f_char_solid[188] = 2;
-		p_ptr->f_char_solid[189] = 2;
-		p_ptr->f_char_solid[190] = 2; //house roofs, 11
-		p_ptr->f_char_solid[191] = 2;
-		p_ptr->f_char_solid[193] = 2; //house roofs, 4
-		p_ptr->f_char_solid[194] = 2;
+		p_ptr->f_char_solid[177] = FONT_MAP_SOLID_X11;
+		p_ptr->f_char_solid[183] = FONT_MAP_SOLID_X11;
+		p_ptr->f_char_solid[188] = FONT_MAP_SOLID_X11;
+		p_ptr->f_char_solid[189] = FONT_MAP_SOLID_X11;
+		p_ptr->f_char_solid[190] = FONT_MAP_SOLID_X11; //house roofs, 11
+		p_ptr->f_char_solid[191] = FONT_MAP_SOLID_X11;
+		p_ptr->f_char_solid[193] = FONT_MAP_SOLID_X11; //house roofs, 4
+		p_ptr->f_char_solid[194] = FONT_MAP_SOLID_X11;
 	}
 
 	for (i = 0; i < MAX_K_IDX; i++) {

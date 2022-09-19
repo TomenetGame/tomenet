@@ -7586,6 +7586,13 @@ extern int PlayerUID;
 /* If you want to change to higher value, additional changes to code will be needed (z-term/text_hook, ...). */
 #define MAX_FONT_CHAR 255
 
+/* Font hacks - note that the X11 hacks do not work on terminal/command-line
+   clients (GCU) and neither on OSX clients that don't support X11! - C. Blue */
+#define FONT_MAP_SOLID_WIN	127	/* Drawn as a solid block, for walls/bars */
+#define FONT_MAP_SOLID_X11	2	/* Drawn as a solid block, for walls/bars */
+#define FONT_MAP_VEIN_WIN	1	/* Drawn as a diamond, for walls/bars */
+#define FONT_MAP_VEIN_X11	1	/* Drawn as a diamond, for walls/bars */
+
 /*** Sound constants ***/
 /*
  * Mega-Hack -- some primitive sound support (see "main-win.c")

@@ -1588,10 +1588,10 @@ errr file_character(cptr name, bool quiet) {
 				c = '.';
 				break;
 			/* revert special characters from font_map_solid_walls */
-			case 127: case 2:
+			case FONT_MAP_SOLID_WIN: case FONT_MAP_SOLID_X11:
 				c = '#';
 				break;
-			case 1:
+			case FONT_MAP_VEIN_WIN: //case FONT_MAP_VEIN_X11: --duplicate case atm (both are 1)
 				c = '$';
 				break;
 			default:
@@ -1849,10 +1849,10 @@ void xhtml_screenshot(cptr name) {
 
 			switch (unm_cc) {
 			/* revert special characters from font_map_solid_walls */
-			case 127: case 2:
+			case FONT_MAP_SOLID_WIN: case FONT_MAP_SOLID_X11:
 				buf[bytes++] = '#';
 				break;
-			case 1:
+			case FONT_MAP_VEIN_WIN: //case FONT_MAP_VEIN_X11: --duplicate case atm (both are 1)
 				buf[bytes++] = '$';
 				break;
 			/* Windows client uses ASCII char 31 for paths */

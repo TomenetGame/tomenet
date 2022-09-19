@@ -2630,9 +2630,11 @@ int Receive_char(void) {
 	/* special hack for mind-link Windows->Linux w/ font_map_solid_walls */
 	/* NOTE: We need a better solution than this for custom fonts... */
  #ifndef WINDOWS
-	if (c == 127) c = 2;
- #else
-	if (c == 2) c = 127;
+	if (c == FONT_MAP_SOLID_WIN) c = FONT_MAP_SOLID_X11;
+ #elif USE_X11
+	if (c == FONT_MAP_SOLID_X11) c = FONT_MAP_SOLID_WIN;
+ #else /* command-line client ("-c") doesn't draw either! */
+	if (c == FONT_MAP_SOLID_X11 || c == FONT_MAP_SOLID_WIN) c = '#';
  #endif
 #endif
 
@@ -3521,9 +3523,11 @@ int Receive_line_info(void) {
 #ifdef TEST_CLIENT
 			/* special hack for mind-link Windows->Linux w/ font_map_solid_walls */
  #ifndef WINDOWS
-			if (c == 127) c = 2;
- #else
-			if (c == 2) c = 127;
+			if (c == FONT_MAP_SOLID_WIN) c = FONT_MAP_SOLID_X11;
+ #elif USE_X11
+			if (c == FONT_MAP_SOLID_X11) c = FONT_MAP_SOLID_WIN;
+ #else /* command-line client ("-c") doesn't draw either! */
+			if (c == FONT_MAP_SOLID_X11 || c == FONT_MAP_SOLID_WIN) c = '#';
  #endif
 #endif
 			/* Draw a character 'rep' times */

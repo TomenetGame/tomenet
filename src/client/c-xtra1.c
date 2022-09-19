@@ -227,11 +227,14 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 		int got_org = 0;
 #endif
 #ifdef WINDOWS
-		if (c_cfg.font_map_solid_walls) exp_bar_char = 127; /* :-p hack */
-#else
-		if (c_cfg.font_map_solid_walls) exp_bar_char = 2; /* :-p hack */
+		if (c_cfg.font_map_solid_walls) exp_bar_char = FONT_MAP_SOLID_WIN; /* :-p hack */
+		else
+#elif USE_X11
+		if (c_cfg.font_map_solid_walls) exp_bar_char = FONT_MAP_SOLID_X11; /* :-p hack */
+		else
+///#else /* command-line client ("-c") doesn't draw either! */
 #endif
-		else exp_bar_char = '#';
+			exp_bar_char = '#';
 
 		if (level >= PY_MAX_PLAYER_LEVEL || !adv || !scale) {
 			if (cur < PY_MAX_EXP) {
@@ -504,13 +507,16 @@ void prt_hp(int max, int cur, bool bar, bool boosted) {
 				int half = ((2 * 9 * cur) / max);
  #endif
 				char bar_char;
+
  #if 0 /* looks too strange with all 3 bars above each other */
   #ifdef WINDOWS
-				if (c_cfg.font_map_solid_walls) bar_char = 127; /* :-p hack */
-  #else
-				if (c_cfg.font_map_solid_walls) bar_char = 2; /* :-p hack */
-  #endif
+				if (c_cfg.font_map_solid_walls) bar_char = FONT_MAP_SOLID_WIN; /* :-p hack */
 				else
+  #elif USE_X11
+				if (c_cfg.font_map_solid_walls) bar_char = FONT_MAP_SOLID_X11; /* :-p hack */
+				else
+  //#else /* command-line client ("-c") doesn't draw either! */
+  #endif
  #endif
 					bar_char = '#';
 
@@ -587,11 +593,13 @@ void prt_stamina(int max, int cur, bool bar) {
 		char bar_char;
 #if 0 /* looks too strange with all 3 bars above each other */
  #ifdef WINDOWS
-		if (c_cfg.font_map_solid_walls) bar_char = 127; /* :-p hack */
- #else
-		if (c_cfg.font_map_solid_walls) bar_char = 2; /* :-p hack */
- #endif
+		if (c_cfg.font_map_solid_walls) bar_char = FONT_MAP_SOLID_WIN; /* :-p hack */
 		else
+ #elif USE_X11
+		if (c_cfg.font_map_solid_walls) bar_char = FONT_MAP_SOLID_X11; /* :-p hack */
+		else
+  //#else /* command-line client ("-c") doesn't draw either! */
+ #endif
 #endif
 			bar_char = '#';
 
@@ -768,11 +776,13 @@ void prt_sp(int max, int cur, bool bar) {
 			char bar_char;
 #if 0 /* looks too strange with all 3 bars above each other */
  #ifdef WINDOWS
-			if (c_cfg.font_map_solid_walls) bar_char = 127; /* :-p hack */
- #else
-			if (c_cfg.font_map_solid_walls) bar_char = 2; /* :-p hack */
- #endif
+			if (c_cfg.font_map_solid_walls) bar_char = FONT_MAP_SOLID_WIN; /* :-p hack */
 			else
+ #elif USE_X11
+			if (c_cfg.font_map_solid_walls) bar_char = FONT_MAP_SOLID_X11; /* :-p hack */
+			else
+  //#else /* command-line client ("-c") doesn't draw either! */
+ #endif
 #endif
 				bar_char = '#';
  #if 0 /* use same colours as for HP/SN bars? */
