@@ -4287,6 +4287,7 @@ static int radius_damage(int dam, int div, int typ) {
 	case GF_CURING:
 	case GF_RESURRECT_PLAYER:
 	case GF_EXTRA_STATS:
+	case GF_EXTRA_TOHIT:
 	//case GF_ZEAL_PLAYER:
 	case GF_TBRAND_POIS:
 
@@ -9407,7 +9408,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		    (typ == GF_EXTRA_STATS) || (typ == GF_TBRAND_POIS) ||
 		    (typ == GF_MINDBOOST_PLAYER) || (typ == GF_IDENTIFY) ||
 		    (typ == GF_SLOWPOISON_PLAYER) || (typ == GF_CURING) ||
-		    (typ == GF_OLD_POLY)) /* may (un)polymorph himself */
+		    (typ == GF_OLD_POLY) || (typ == GF_EXTRA_TOHIT)) /* may (un)polymorph himself */
 			friendly_player = TRUE;
 	}
 	else if (IS_PVP) {
@@ -9452,7 +9453,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
 		    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
 		    (typ != GF_EXTRA_STATS) && (typ != GF_TBRAND_POIS) &&
-		    (typ != GF_OLD_POLY)) /* Non-hostile players may (un)polymorph each other */
+		    (typ != GF_OLD_POLY) && (typ != GF_EXTRA_TOHIT)) /* Non-hostile players may (un)polymorph each other */
 		{ /* If this was intentional, make target hostile */
 			if (check_hostile(0 - who, Ind)) {
 				/* Make target hostile if not already */
@@ -9568,7 +9569,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    (typ == GF_HEALINGCLOUD) || /* shoo ghost, shoo */
 	    (typ == GF_EXTRA_STATS) || (typ == GF_TBRAND_POIS) ||
 	    (typ == GF_IDENTIFY) || (typ == GF_SLOWPOISON_PLAYER) ||
-	    (typ == GF_OLD_POLY) || (typ == GF_MINDBOOST_PLAYER)))
+	    (typ == GF_OLD_POLY) || (typ == GF_MINDBOOST_PLAYER) ||
+	    (typ == GF_EXTRA_TOHIT)))
 	    ||
 	    /* ADMIN CHECK */
 	    (is_admin(p_ptr) && ((typ == GF_HEAL_PLAYER) || (typ == GF_AWAY_ALL) ||
@@ -9593,7 +9595,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    (typ == GF_HEALINGCLOUD) || (typ == GF_MINDBOOST_PLAYER) ||
 	    (typ == GF_SLOWPOISON_PLAYER) || (typ == GF_CURING) ||
 	    (typ == GF_EXTRA_STATS) || (typ == GF_TBRAND_POIS) ||
-	    (typ == GF_OLD_POLY) || (typ == GF_IDENTIFY))))
+	    (typ == GF_OLD_POLY) || (typ == GF_IDENTIFY) ||
+	    (typ == GF_EXTRA_TOHIT))))
 	{ /* No effect on ghosts / admins */
 #if 0 //redundant?
 		/* Skip non-connected players */
@@ -10930,13 +10933,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		dam = 0;
 		break;
 
-	case GF_EXTRA_SPR: //unused
-		dam = dam - 30;
-		if (dam < 0) {
-			dam = 0;
-			break;
-		}
-		do_focus(Ind, dam / 6, 30 + dam);
+	case GF_EXTRA_TOHIT: //unused
+		k = dam / 100; //extract spell duration
+		dam = dam % 100; //extract to-hit bonus
+		do_focus(Ind, dam, k);
 		dam = 0;
 		break;
 

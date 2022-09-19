@@ -225,9 +225,11 @@ FOCUS = add_spell {
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			local lev = get_level(Ind, FOCUS, 35)
+			local dur = rand_int(5) + 15 + get_level(Ind, FOCUS, 10)
 			if lev < 1 then lev = 1 end
 			if lev > 10 then lev = 10 end
-			do_focus(Ind, lev, rand_int(5) + 15 + get_level(Ind, FOCUS, 10))
+			fire_ball(Ind, GF_EXTRA_TOHIT, 0, lev + (dur * 100), 1, " calls on your inner focus.")
+			do_focus(Ind, lev, dur)
 			end,
 	["info"] = 	function()
 			local lev = get_level(Ind, FOCUS, 35)
@@ -235,7 +237,7 @@ FOCUS = add_spell {
 			if lev > 10 then lev = 10 end
 			return "+" .. lev .. " dur d5+" .. (15 + get_level(Ind, FOCUS, 10))
 			end,
-	["desc"] = 	{ "Increases your accuracy, caps at +7.", }
+	["desc"] = 	{ "Increases your accuracy, caps at +10. (Auto-projecting)", }
 }
 __lua_FOCUS = FOCUS
 
@@ -252,9 +254,11 @@ FOCUS_II = add_spell {
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			local lev = get_level(Ind, FOCUS, 30)
+			local dur = rand_int(5) + 15 + get_level(Ind, FOCUS, 10)
 			if lev < 15 then lev = 15 end
 			if lev > 25 then lev = 25 end
-			do_focus(Ind, lev, rand_int(5) + 15 + get_level(Ind, FOCUS, 10))
+			fire_ball(Ind, GF_EXTRA_TOHIT, 0, lev + (dur * 100), 1, " calls on your inner focus.")
+			do_focus(Ind, lev, dur)
 			end,
 	["info"] = 	function()
 			local lev = get_level(Ind, FOCUS, 30)
@@ -262,5 +266,5 @@ FOCUS_II = add_spell {
 			if lev > 25 then lev = 25 end
 			return "+" .. lev .. " dur d5+" .. (15 + get_level(Ind, FOCUS, 10))
 			end,
-	["desc"] = 	{ "Increases your accuracy, caps at +20.", }
+	["desc"] = 	{ "Increases your accuracy, caps at +25. (Auto-projecting)", }
 }

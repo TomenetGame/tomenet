@@ -205,7 +205,7 @@
 #define GF_WATERPOISON		155
 #define GF_ICEPOISON		156
 #define GF_EXTRA_STATS		157
-#define GF_EXTRA_SPR		158
+#define GF_EXTRA_TOHIT		158
 
 #define GF_PUSH			159 /* Moltor */
 #define GF_SILENCE		160 /* for new mindcrafters */

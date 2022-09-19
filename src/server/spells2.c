@@ -62,6 +62,7 @@ static void proj_dam_wraith(int typ, int *dam) {
 	case GF_CURE_PLAYER:
 	case GF_CURING:
 	case GF_EXTRA_STATS:
+	case GF_EXTRA_TOHIT:
 		return;
 	case GF_HEAL_PLAYER:
 		*dam = (*dam & 0x3C00) + (*dam & 0x03FF) / 2;
@@ -6745,7 +6746,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 		    (typ != GF_EXTRA_STATS) && (typ != GF_TBRAND_POIS) &&
 		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
 		    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
-		    (typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
+		    (typ != GF_OLD_POLY) && (typ != GF_EXTRA_TOHIT)) /* Non-hostile players may polymorph each other */
 			if (p_ptr->sfx_magicattack) sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, TRUE);
 	}
 #endif
@@ -6815,7 +6816,7 @@ bool fire_burst(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 		    (typ != GF_EXTRA_STATS) && (typ != GF_TBRAND_POIS) &&
 		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
 		    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
-		    (typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
+		    (typ != GF_OLD_POLY) && (typ != GF_EXTRA_TOHIT)) /* Non-hostile players may polymorph each other */
 			if (p_ptr->sfx_magicattack) sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, TRUE);
 	}
 #endif
@@ -6902,7 +6903,7 @@ bool fire_swarm(int Ind, int typ, int dir, int dam, int num, char *attacker) {
 			    (typ != GF_EXTRA_STATS) && (typ != GF_TBRAND_POIS) &&
 			    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
 			    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
-			    (typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
+			    (typ != GF_OLD_POLY) && (typ != GF_EXTRA_TOHIT)) /* Non-hostile players may polymorph each other */
 				if (p_ptr->sfx_magicattack) sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, TRUE);
 		}
 	#endif
