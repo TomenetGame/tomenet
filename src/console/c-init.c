@@ -12,8 +12,7 @@
 static int Socket;
 
 
-static bool enter_server_name(void)
-{
+static bool enter_server_name(void) {
 	/* Clear screen */
 	Term_clear();
 	Term_fresh();
@@ -37,8 +36,7 @@ static bool enter_server_name(void)
 /*
  * Choose the character's name
  */
-static void enter_password(void)
-{
+static void enter_password(void) {
 	char tmp[40];
 
 	/* Clear screen */
@@ -53,8 +51,7 @@ static void enter_password(void)
 	strcpy(tmp, "default");
 
 	/* Ask until happy */
-	while (1)
-	{
+	while (1) {
 		/* Go to the "name" area */
 		move_cursor(5, 1);
 
@@ -80,8 +77,7 @@ static void enter_password(void)
 /*
  * Show a nice menu
  */
-static void show_menu(void)
-{
+static void show_menu(void) {
 	/* Title */
 	prt("TomeNET server console", 1, 1);
 
@@ -105,8 +101,7 @@ static void show_menu(void)
 /*
  * Cleanup after ourselves
  */
-static void Net_cleanup(void)
-{
+static void Net_cleanup(void) {
 	/* Destroy the buffer */
 	Sockbuf_cleanup(&ibuf);
 
@@ -117,15 +112,12 @@ static void Net_cleanup(void)
 /*
  * Loop, looking for net input and responding to keypresses.
  */
-static void Input_loop(void)
-{
+static void Input_loop(void) {
 	int bytes;
 
-	for (;;)
-	{
+	for (;;) {
 		/* Hack -- shutdown at once */
-		if (server_shutdown)
-		{
+		if (server_shutdown) {
 			/* Clear the buffer */
 			Sockbuf_clear(&ibuf);
 
@@ -134,9 +126,7 @@ static void Input_loop(void)
 
 			/* Send the command */
 			Packet_printf(&ibuf, "%c", CONSOLE_SHUTDOWN);
-		}
-		else
-		{
+		} else {
 			/* Clear screen */
 			Term_clear();
 
@@ -159,17 +149,11 @@ static void Input_loop(void)
 			Packet_printf(&ibuf, "%s", pass);
 
 			/* Process any commands we got */
-			if (command_cmd)
-			{
+			if (command_cmd) {
 				/* Process it */
-				if (!process_command())
-					continue;
-			}
-			else
-			{
-				/* No command */
+				if (!process_command()) continue;
+			} else /* No command */
 				continue;
-			}
 		}
 
 		/* Send the command */
@@ -179,8 +163,7 @@ static void Input_loop(void)
 		SetTimeout(10, 0);
 
 		/* Check for reply */
-		if (!SocketReadable(Socket))
-		{
+		if (!SocketReadable(Socket)) {
 			/* Hmm, maybe the server died */
 			quit("Server didn't reply");
 		}
@@ -211,8 +194,7 @@ static void Input_loop(void)
  *
  * Close down, then fall back into "quit()".
  */
-static void quit_hook(cptr s)
-{
+static void quit_hook(cptr s) {
 	int j;
 
 	Net_cleanup();
@@ -222,8 +204,7 @@ static void quit_hook(cptr s)
 #endif
 
 	/* Nuke each term */
-	for (j = 8 - 1; j >= 0; j--)
-	{
+	for (j = 8 - 1; j >= 0; j--) {
 		/* Unused */
 		if (!ang_term[j]) continue;
 
@@ -235,8 +216,7 @@ static void quit_hook(cptr s)
 /*
  * Initialize everything, contact the server, and start the loop.
  */
-void console_init(void)
-{
+void console_init(void) {
 	bool done = FALSE;
 	char host_name[1024];
 
@@ -247,33 +227,29 @@ void console_init(void)
 #endif
 
 	/* Attempt to initialize a visual module */
-	if (!force_cui)
-	{
+	if (!force_cui) {
 #ifdef USE_XAW
-	/* Attempt to use the "main-xaw.c" support */
-	if (!done)
-	{
-		extern errr init_xaw(void);
-		if (0 == init_xaw()) done = TRUE;
-		if (done) ANGBAND_SYS = "xaw";
-	}
+		/* Attempt to use the "main-xaw.c" support */
+		if (!done) {
+			extern errr init_xaw(void);
+			if (0 == init_xaw()) done = TRUE;
+			if (done) ANGBAND_SYS = "xaw";
+		}
 #endif
 
 #ifdef USE_X11
-	/* Attempt to use the "main-x11.c" support */
-	if (!done)
-	{
-		extern errr init_x11(void);
-		if (0 == init_x11()) done = TRUE;
-		if (done) ANGBAND_SYS = "x11";
-	}
+		/* Attempt to use the "main-x11.c" support */
+		if (!done) {
+			extern errr init_x11(void);
+			if (0 == init_x11()) done = TRUE;
+			if (done) ANGBAND_SYS = "x11";
+		}
 #endif
 	}
 
 #ifdef USE_GCU
 	/* Attempt to use the "main-gcu.c" support */
-	if (!done)
-	{
+	if (!done) {
 		extern errr init_gcu(void);
 		if (0 == init_gcu()) done = TRUE;
 		if (done) ANGBAND_SYS = "gcu";
@@ -282,8 +258,7 @@ void console_init(void)
 
 #ifdef USE_IBM
 	/* Attempt to use the "main_ibm.c" support */
-	if (!done)
-	{
+	if (!done) {
 		extern errr init_ibm(void);
 		if (0 == init_ibm()) done = TRUE;
 		if (done) ANGBAND_SYS = "ibm";
@@ -292,8 +267,7 @@ void console_init(void)
 
 #ifdef USE_EMX
 	/* Attempt to use the "main-emx.c" support */
-	if (!done)
-	{
+	if (!done) {
 		extern errr init_emx(void);
 		if (0 == init_emx()) done = TRUE;
 		if (done) ANGBAND_SYS = "emx";
@@ -301,8 +275,7 @@ void console_init(void)
 #endif
 
 	/* No visual module worked */
-	if (!done)
-	{
+	if (!done) {
 		Net_cleanup();
 		printf("Unable to initialize a display module!\n");
 		exit(1);
@@ -320,22 +293,16 @@ void console_init(void)
 
 	/* Create net socket */
 	if ((Socket = CreateClientSocket(server_name, cfg_console_port)) == -1)
-	{
 		quit("Could not connect to console port\n");
-	}
 
 	/* Make it non-blocking */
 	if (SetSocketNonBlocking(Socket, 1) == -1)
-	{	
 		quit("Can't make socket non-blocking\n");
-	}
 
 	/* Create a socket buffer */
 	if (Sockbuf_init(&ibuf, Socket, CLIENT_SEND_SIZE,
-		SOCKBUF_READ | SOCKBUF_WRITE) == -1)
-	{
+	    SOCKBUF_READ | SOCKBUF_WRITE) == -1)
 		quit("No memory for socket buffer\n");
-	}
 
 	/* Clear it */
 	Sockbuf_clear(&ibuf);
