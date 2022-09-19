@@ -2782,7 +2782,7 @@ static void set_player_font_definitions(int ind, int player) {
 		p_ptr->f_char_solid[193] = FONT_MAP_SOLID_WIN; //house roofs, 4
 		p_ptr->f_char_solid[194] = FONT_MAP_SOLID_WIN;
 	} else {
-		/* assume OS_X11 -- does this work on OSX/GCU too? */
+		/* assume OS_X11 -- does this work on OSX/GCU too? -- no, it only works on OSX with XQuartz as X11 replacement actually */
 		p_ptr->f_char_solid[50] = FONT_MAP_SOLID_X11; //magma, 8
 		p_ptr->f_char_solid[52] = FONT_MAP_SOLID_X11;
 		p_ptr->f_char_solid[51] = FONT_MAP_SOLID_X11; //quartz, 9
