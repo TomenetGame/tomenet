@@ -29,7 +29,7 @@ void display_store_action() {
 static void display_entry(int pos, int entries) {
 	object_type *o_ptr;
 	int i;
-	u32b x;
+	s32b x;
 	char o_name[ONAME_LEN];
 	char out_val[MSG_LEN];
 
@@ -99,7 +99,7 @@ static void display_entry(int pos, int entries) {
 			}
 
 			x = store_prices[pos];
-			if (x >= 0) { /* <0: player store hack */
+			if (x >= 0) { /* <0: player store hack and mathom-house hack */
 				/* Actually draw the price (not fixed) */
 				if (!c_cfg.colourize_prices) {
 					/* Normal display of the price */
