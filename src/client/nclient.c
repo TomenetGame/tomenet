@@ -3715,14 +3715,14 @@ int Receive_store(void) {
 	store.stock[(int)pos].sval = sval;
 	store.stock[(int)pos].weight = wgt;
 	store.stock[(int)pos].number = num;
-	store_prices[(int) pos] = price;
-	strncpy(store_names[(int) pos], name, ONAME_LEN - 1);
-	store_names[(int) pos][ONAME_LEN - 1] = 0;
+	store_prices[(int)pos] = price;
+	strncpy(store_names[(int)pos], name, ONAME_LEN - 1);
+	store_names[(int)pos][ONAME_LEN - 1] = 0;
 	store.stock[(int)pos].tval = tval;
 	store.stock[(int)pos].attr = attr;
 	store.stock[(int)pos].pval = pval;
 	strncpy(store_powers[(int) pos], powers, MAX_CHARS_WIDE - 1);
-	store_powers[(int) pos][MAX_CHARS_WIDE - 1] = 0;
+	store_powers[(int)pos][MAX_CHARS_WIDE - 1] = 0;
 
 	/* Request a redraw of the store inventory */
 	redraw_store = TRUE;

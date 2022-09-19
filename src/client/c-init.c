@@ -235,6 +235,7 @@ void initialize_main_pref_files(void) {
 	if (i == -1) {
 		for (i = 0; i < ANGBAND_TERM_MAX; i++) {
 			u32b new_flags = 0x0;
+
 			/* translate old->new */
 			if (window_flag[i] & 0x00001) new_flags |= PW_INVEN;
 			if (window_flag[i] & 0x00002) new_flags |= PW_EQUIP;

@@ -231,12 +231,13 @@ static bool read_mangrc(cptr filename) {
 			if (!strncmp(buf, "colormap_", 9)) {
 				int colornum = atoi(buf + 9);
 				char *p;
+				u32b c;
 
 				/* Extract path */
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 
-				u32b c = parse_color_code(p);
+				c = parse_color_code(p);
 				if (colornum >= 0 && colornum < 16 && c < 0x01000000) client_color_map[colornum] = c;
 			}
 
@@ -251,6 +252,7 @@ static bool read_mangrc(cptr filename) {
 			}
 			if (!strncmp(buf, "graphic_tiles", 5)) {
 				char *p;
+
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) strcpy(graphic_tiles, p);

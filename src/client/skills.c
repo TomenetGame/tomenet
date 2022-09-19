@@ -47,6 +47,7 @@ s16b get_skill(int skill) {
  */
 s16b get_skill_scale(player_type *pfft, int skill, u32b scale) {
 	(void) pfft; /* first parameter ignored in client code */
+
 	/* XXX XXX XXX */
 	return (((p_ptr->s_info[skill].value / 10) * (scale * (SKILL_STEP / 10)) /
 	    (SKILL_MAX / 10)) /
