@@ -1188,3 +1188,4 @@ extern bool jukebox_screen;
 //#endif
 
 extern bool map_town;
+extern bool force_cui;

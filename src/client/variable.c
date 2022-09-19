@@ -735,3 +735,4 @@ PROCESS_INFORMATION pi[META_PINGS];
 #endif
 
 bool fullscreen_weather = FALSE; //RAINY_TOMB
+bool force_cui = FALSE;

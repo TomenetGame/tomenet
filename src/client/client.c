@@ -923,7 +923,7 @@ static void default_set(void) {
 
 int main(int argc, char **argv) {
 	int i, modus = 0;
-	bool done = FALSE, skip = FALSE, force_cui = FALSE;
+	bool done = FALSE, skip = FALSE;
 
 	/* Save the program name */
 	argv0 = argv[0];

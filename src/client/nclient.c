@@ -2629,12 +2629,19 @@ int Receive_char(void) {
 #ifdef TEST_CLIENT
 	/* special hack for mind-link Windows->Linux w/ font_map_solid_walls */
 	/* NOTE: We need a better solution than this for custom fonts... */
- #ifndef WINDOWS
+	if (force_cui) {
+		if (c == FONT_MAP_SOLID_X11 || c == FONT_MAP_SOLID_WIN) c = '#';
+		if (c == FONT_MAP_VEIN_X11 || c == FONT_MAP_VEIN_WIN) c = '*';
+	}
+ #ifdef USE_X11
 	if (c == FONT_MAP_SOLID_WIN) c = FONT_MAP_SOLID_X11;
- #elif USE_X11
+	if (c == FONT_MAP_VEIN_WIN) c = FONT_MAP_VEIN_X11;
+ #elif defined(WINDOWS)
 	if (c == FONT_MAP_SOLID_X11) c = FONT_MAP_SOLID_WIN;
- #else /* command-line client ("-c") doesn't draw either! */
+	if (c == FONT_MAP_VEIN_X11) c = FONT_MAP_VEIN_WIN;
+ #else /* command-line client doesn't draw either! */
 	if (c == FONT_MAP_SOLID_X11 || c == FONT_MAP_SOLID_WIN) c = '#';
+	if (c == FONT_MAP_VEIN_X11 || c == FONT_MAP_VEIN_WIN) c = '*';
  #endif
 #endif
 
@@ -3522,12 +3529,19 @@ int Receive_line_info(void) {
 		if (c && draw) {
 #ifdef TEST_CLIENT
 			/* special hack for mind-link Windows->Linux w/ font_map_solid_walls */
- #ifndef WINDOWS
+			if (force_cui) {
+				if (c == FONT_MAP_SOLID_X11 || c == FONT_MAP_SOLID_WIN) c = '#';
+				if (c == FONT_MAP_VEIN_X11 || c == FONT_MAP_VEIN_WIN) c = '*';
+			}
+ #ifdef USE_X11
 			if (c == FONT_MAP_SOLID_WIN) c = FONT_MAP_SOLID_X11;
- #elif USE_X11
+			if (c == FONT_MAP_VEIN_WIN) c = FONT_MAP_VEIN_X11;
+ #elif defined(WINDOWS)
 			if (c == FONT_MAP_SOLID_X11) c = FONT_MAP_SOLID_WIN;
- #else /* command-line client ("-c") doesn't draw either! */
+			if (c == FONT_MAP_VEIN_X11) c = FONT_MAP_VEIN_WIN;
+ #else /* command-line client doesn't draw either! */
 			if (c == FONT_MAP_SOLID_X11 || c == FONT_MAP_SOLID_WIN) c = '#';
+			if (c == FONT_MAP_VEIN_X11 || c == FONT_MAP_VEIN_WIN) c = '*';
  #endif
 #endif
 			/* Draw a character 'rep' times */
