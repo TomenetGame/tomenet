@@ -5600,35 +5600,57 @@ static bool process_player_end_aux(int Ind) {
 			    (c_ptr->m_idx <= PROJECTOR_UNUSUAL || !check_hostile(Ind, -c_ptr->m_idx)))
 				continue;
 
-			/* Access the monster */
-			m_ptr = &m_list[c_ptr->m_idx];
+			/* Hit a monster */
+			if (c_ptr->m_idx > 0) {
+				/* Access the monster */
+				m_ptr = &m_list[c_ptr->m_idx];
 
-			/* Ignore "dead" monsters */
-			if (!m_ptr->r_idx) continue;
+				/* Ignore "dead" monsters */
+				if (!m_ptr->r_idx) continue;
 
-			/* Spells cast by a player never hurt a friendly golem */
-			if (m_ptr->owner) {
-				int i;
+				/* Don't wake up sleeping monsters */
+				if (m_ptr->csleep) continue;
+				/* Don't break charm/trance */
+				if (m_ptr->charmedignore) continue;
 
-				//look for its owner to see if he's hostile or not
-				for (i = 1; i < NumPlayers; i++)
-					if (Players[i]->id == m_ptr->owner) {
-						if (!check_hostile(Ind, i)) continue;
-						break;
-					}
-				//if his owner is not online, assume friendly(!)
-				if (i == NumPlayers) continue;
+				/* Spells cast by a player never hurt a friendly golem */
+				if (m_ptr->owner) {
+					int i;
+
+					//look for its owner to see if he's hostile or not
+					for (i = 1; i < NumPlayers; i++)
+						if (Players[i]->id == m_ptr->owner) {
+							if (!check_hostile(Ind, i)) continue;
+							break;
+						}
+					//if his owner is not online, assume friendly(!)
+					if (i == NumPlayers) continue;
+				}
 			}
+			/* else: Hit a hostile player */
 
 			/* We found a target */
 			break;
 		}
 
 		if (tries) {
-			char m_name[MNAME_LEN];
+			/* Hit a monster */
+			if (c_ptr->m_idx < 0) {
+				char m_name[MNAME_LEN];
 
-			monster_desc(Ind, m_name, c_ptr->m_idx, 0);
-			msg_format(Ind, "Lightning strikes %s.", m_name);
+				monster_desc(Ind, m_name, c_ptr->m_idx, 0);
+				msg_format(Ind, "Lightning strikes %s.", m_name);
+			}
+			/* Hit a hostile player */
+			else {
+				char q_name[NAME_LEN];
+
+				/* Track player health */
+				//if (p_ptr->play_vis[0 - c_ptr->m_idx]) health_track(Ind, c_ptr->m_idx);
+
+				player_desc(Ind, q_name, -c_ptr->m_idx, 0);
+				msg_format(Ind, "Lightning strikes %s.", q_name);
+			}
 #ifdef USE_SOUND_2010
 			sound_near_site_vol(y, x, &p_ptr->wpos, 0, "lightning", "thunder", SFX_TYPE_NO_OVERLAP, FALSE, 50); //don't overlap, too silyl? also: no screen flashing
 #endif
