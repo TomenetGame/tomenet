@@ -1995,7 +1995,7 @@ static bool my_strregexp_skipcol(char *buf2, regex_t re_src, char *searchstr_re,
 }
 #endif
 
-#ifndef BUFFER_GUIDE
+//#ifndef BUFFER_GUIDE
 static char *fgets_inverse(char *buf, int max, FILE *f) {
 	int c, res, pos;
 	char *ress;
@@ -2016,7 +2016,8 @@ static char *fgets_inverse(char *buf, int max, FILE *f) {
 
 	return ress;
 }
-#endif
+//#endif
+
 /* Local Guide invocation -
    search_type: 1 = search, 2 = strict search (all upper-case), 3 = chapter search, 4 = line number,
                 0 = no pre-defined search, we're browsing it normally. */
@@ -3958,6 +3959,561 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 	Term_load();
 }
 
+void browse_local_file(char* fname) {
+	int line = 0, line_before_search = 0, jumped_to_line = 0, file_lastline = -1;
+	static char lastsearch[MAX_CHARS] = { 0 };
+
+	bool inkey_msg_old, within, within_col, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE, restore_pos = FALSE, marking = FALSE;
+	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
+	int searchline = -1, within_cnt = 0, c = 0, n, line_presearch = line;
+	char searchstr[MAX_CHARS], withinsearch[MAX_CHARS];
+	char buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2;
+	char path[1024], bufdummy[MAX_CHARS + 1];
+	FILE *fff;
+
+	int i;
+	char *res;
+
+#ifdef REGEX_SEARCH
+	bool search_regexp = FALSE;
+	int ires = -999;
+	regex_t re_src;
+	char searchstr_re[MAX_CHARS];
+#endif
+
+	path_build(path, 1024, ANGBAND_DIR_GAME, fname);
+
+	/* init the file */
+	errno = 0;
+	fff = my_fopen(path, "r");
+	if (!fff) {
+		if (errno == ENOENT) {
+			c_msg_format("\377yThe file %s wasn't found in your lib/game folder.", fname);
+			c_message_add("\377y Try updating with the TomeNET-Updater or download it manually.");
+		} else c_msg_format("\377yThe file %s couldn't be opened from your lib/game folder (%d).", fname, guide_errno);
+		return;
+	}
+
+	/* count lines */
+	while (fgets(buf, 81 , fff)) file_lastline++;
+	my_fclose(fff);
+
+	/* empty file? */
+	if (file_lastline == -1) {
+		if (errno <= 0) {
+			c_msg_format("\377yThe file %s seems to be empty.", fname);
+			c_message_add("\377y Try updating with the TomeNET-Updater or download it manually.");
+		} else c_msg_format("\377yThe file %s couldn't be opened from your lib/game folder (%d).", fname, guide_errno);
+		return;
+	}
+
+	fff = my_fopen(path, "r");
+
+	/* init searches */
+	searchstr[0] = 0;
+	//lastsearch[0] = 0;
+
+	Term_save();
+
+	while (TRUE) {
+		if (!skip_redraw) Term_clear();
+		if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[%s - line %5d of %5d]", fname, (file_lastline - line) + 1, file_lastline + 1));
+		else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[%s - line %5d of %5d]", fname, line + 1, file_lastline + 1));
+#ifdef REGEX_SEARCH
+		Term_putstr(26, bottomline, -1, TERM_L_BLUE, " s/r/R,d,D/f,a/A,S,#:src,nx,pv,mark,rs,chpt,line");
+#else
+		Term_putstr(26, bottomline, -1, TERM_L_BLUE, " s,d,D/f,S,#:srch,nxt,prv,reset,chapter,line");
+#endif
+		Term_putstr( 7, bottomline, -1, TERM_SLATE,  "SPC/n,p,ENT,BCK,ESC");
+		Term_putstr( 0, bottomline, -1, TERM_YELLOW, "?:Help");
+		if (skip_redraw) goto skipped_redraw;
+		restore_pos = FALSE;
+
+		/* Always begin at zero */
+		if (backwards) fseek(fff, -1, SEEK_END);
+		else fseek(fff, 0, SEEK_SET);
+
+		/* If we're not searching for something specific, just seek forwards until reaching our current starting line */
+		if (backwards) {
+			if (!searchwrap) for (n = 0; n < line; n++) res = fgets_inverse(buf, 81, fff); //res just slays non-existant compiler warning..what
+		} else {
+			if (!searchwrap) for (n = 0; n < line; n++) res = fgets(buf, 81, fff); //res just slays compiler warning
+		}
+
+		/* Display as many lines as fit on the screen, starting at the desired position */
+		withinsearch[0] = 0;
+		for (n = 0; n < maxlines; n++) {
+			if (backwards) res = fgets_inverse(buf, 81, fff);
+			else res = fgets(buf, 81, fff);
+			/* Reached end of file? -> No need to try and display further lines */
+			if (!res) break;
+
+			buf[strlen(buf) - 1] = 0; //strip trailing newlines
+
+			/* Automatically add colours to "(x.yza)" formatted chapter markers */
+			cp = buf;
+			cp2 = buf2;
+			within = FALSE;
+			while (*cp) {
+				/* just copy each single character over */
+				*cp2++ = *cp++;
+			}
+			*cp2 = 0;
+
+			/* Just mark last search's results within currently visible guide piece */
+			if (marking) {
+				marking = FALSE;
+				strcpy(withinsearch, searchstr);
+				searchstr[0] = 0;
+			}
+
+			/* Search for specific string? */
+			else if (searchstr[0]) {
+				searchline++;
+
+				/* Search wrapped around once and still no result? Finish. */
+				if (searchwrap && searchline == line) {
+					/* We're done (unsuccessfully), clean up.. */
+					searchstr[0] = 0;
+					searchwrap = FALSE;
+					withinsearch[0] = 0;
+
+					/* we cannot search for further results if there was none (would result in glitchy visuals) */
+					lastsearch[0] = 0;
+
+					/* correct our line number again */
+					line = line_presearch;
+					backwards = FALSE;
+					/* return to that position again */
+					restore_pos = TRUE;
+					break;
+				}
+
+#ifdef REGEX_SEARCH
+				/* We found a regexp result */
+				else if (search_regexp) {
+					if (my_strregexp_skipcol(buf2, re_src, searchstr_re, withinsearch, &i)) {
+						/* Reverse again to normal direction/location */
+						if (backwards) {
+							backwards = FALSE;
+							searchline = file_lastline - searchline;
+							/* Skip end of line, advancing to next line */
+							fseek(fff, 1, SEEK_CUR);
+							/* This line has already been read too, by fgets_inverse(), so skip too */
+							res = fgets(bufdummy, 81, fff); //res just slays compiler warning
+						}
+
+						searchstr[0] = 0;
+						searchwrap = FALSE;
+						line = searchline;
+						/* Redraw line number display */
+						Term_putstr(23,  0, -1, TERM_L_BLUE, format("[%s - line %5d of %5d]", fname, line + 1, file_lastline + 1));
+					}
+					/* Still searching */
+					else {
+						/* Skip all lines until we find the desired string */
+						n--;
+						continue;
+					}
+				}
+#endif
+
+				/* We found a result (non-regexp) */
+				else if (my_strcasestr_skipcol(buf2, searchstr, FALSE)) {
+					/* Reverse again to normal direction/location */
+					if (backwards) {
+						backwards = FALSE;
+						searchline = file_lastline - searchline;
+						/* Skip end of line, advancing to next line */
+						fseek(fff, 1, SEEK_CUR);
+						/* This line has already been read too, by fgets_inverse(), so skip too */
+						res = fgets(bufdummy, 81, fff); //res just slays compiler warning
+					}
+
+					strcpy(withinsearch, searchstr);
+					searchstr[0] = 0;
+					searchwrap = FALSE;
+					line = searchline;
+					/* Redraw line number display */
+					Term_putstr(23,  0, -1, TERM_L_BLUE, format("[%s - line %5d of %5d]", fname, line + 1, file_lastline + 1));
+
+				/* Still searching */
+				} else {
+					/* Skip all lines until we find the desired string */
+					n--;
+					continue;
+				}
+			}
+
+			/* Colour all search finds */
+#ifdef REGEX_SEARCH
+			if (search_regexp) {
+				if (withinsearch[0] && my_strregexp_skipcol(buf2, re_src, searchstr_re, withinsearch, &i)) {
+					/* Hack for '^' regexp. Problem is that we call my_.. below 'at the beginning' every time, as we just advance cp!
+					   So a regexp starting on '^' will match any results regardless of their real position: */
+					bool hax = searchstr_re[0] == '^', hax_done = FALSE;
+
+					strcpy(buf, buf2);
+
+					cp = buf;
+					cp2 = buf2;
+					within = within_col = FALSE;
+					while (*cp) {
+						/* A bit hacky: Only accept matches at the beginning of our cp string,
+						   to do this we check whether match length (strlen) is same as the end-of-match pointer (i) */
+						if (!hax_done && my_strregexp_skipcol(cp, re_src, searchstr_re, withinsearch, &i) && i == strlen(withinsearch)) {
+							if (hax) hax_done = TRUE;
+
+							/* begin of colourizing */
+							*cp2++ = '\377';
+							*cp2++ = 'R';
+							within = TRUE;
+							within_cnt = 0;
+						}
+
+						/* just copy each single character over */
+						*cp2++ = *cp++;
+
+						/* end of colourizing? */
+						if (within) {
+							within_cnt++;
+							if (within_cnt == strlen(withinsearch)) {
+								within = FALSE;
+								*cp2++ = '\377';
+								/* normal text */
+								*cp2++ = 'w';
+							}
+						}
+
+					}
+					*cp2 = 0;
+				}
+			} else
+#endif
+			if (withinsearch[0] && my_strcasestr_skipcol(buf2, withinsearch, FALSE)) {
+				strcpy(buf, buf2);
+
+				cp = buf;
+				cp2 = buf2;
+				within = within_col = FALSE;
+				while (*cp) {
+					if (my_strcasestr_skipcol(cp, withinsearch, FALSE) == cp) {
+						/* begin of colourizing */
+						*cp2++ = '\377';
+						*cp2++ = 'R';
+						within = TRUE;
+						within_cnt = 0;
+					}
+
+					/* just copy each single character over */
+					*cp2++ = *cp++;
+
+					/* end of colourizing? */
+					if (within) {
+						within_cnt++;
+						if (within_cnt == strlen(withinsearch)) {
+							within = FALSE;
+							*cp2++ = '\377';
+							/* normal text */
+							*cp2++ = 'w';
+						}
+					}
+
+				}
+				*cp2 = 0;
+			}
+
+			/* Display processed line, colourized by chapters and search results */
+			Term_putstr(0, 2 + n, -1, TERM_WHITE, buf2);
+		}
+
+		/* failed to find search string? wrap around and search once more,
+		   this time from the beginning up to our actual posititon. */
+		if (searchstr[0]) {
+			if (!searchwrap) {
+				searchline = -1; //start from the beginning of the file again
+				searchwrap = TRUE;
+				continue;
+			} else { //never reached now, since searchwrap = FALSE is set in search code above already
+				/* finally end search, without any results */
+				searchstr[0] = 0;
+				searchwrap = FALSE;
+
+				/* correct our line number again */
+				line = line_presearch = line;
+				if (backwards) backwards = FALSE;
+				continue;
+			}
+		}
+		if (restore_pos) continue;
+		/* Reverse again to normal direction/location */
+		if (backwards) {
+			backwards = FALSE;
+			line = file_lastline - line;
+			line++;
+		}
+
+		skipped_redraw:
+		skip_redraw = FALSE;
+
+		/* hide cursor */
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
+
+		//inkey_interact_macros = TRUE; /* Advantage: Macros in Backspace etc won't interfere; Drawback: Cannot use up/down while numlock is off. */
+		c = inkey();
+		//inkey_interact_macros = FALSE;
+
+		switch (c) {
+		/* specialty: allow chatting from within here */
+		case ':':
+			cmd_message();
+			skip_redraw = TRUE;
+			continue;
+		/* allow inscribing items (hm) */
+		case '{':
+			cmd_inscribe(USE_INVEN | USE_EQUIP);
+			skip_redraw = TRUE;
+			continue;
+		case '}':
+			cmd_uninscribe(USE_INVEN | USE_EQUIP);
+			skip_redraw = TRUE;
+			continue;
+		case KTRL('T'):
+			xhtml_screenshot("screenshot????");
+			skip_redraw = TRUE;
+			continue;
+
+		/* navigate (up/down) */
+		case '8': case '\010': case 0x7F: //rl:'k'
+			line--;
+			if (line < 0) line = file_lastline - maxlines + 1;
+			if (line < 0) line = 0;
+			continue;
+		case '2': case '\r': case '\n': //rl:'j'
+			line++;
+			if (line > file_lastline - maxlines) line = 0;
+			continue;
+		/* page up/down */
+		case '9': case 'p': //rl:?
+			if (line == 0) line = file_lastline - maxlines + 1;
+			else line -= maxlines;
+			if (line < 0) line = 0;
+			continue;
+		case '3': case 'n': case ' ': //rl:?
+			if (line < file_lastline - maxlines) {
+				line += maxlines;
+				if (line > file_lastline - maxlines) line = file_lastline - maxlines;
+				if (line < 0) line = 0;
+			} else line = 0;
+			continue;
+		/* home key to reset */
+		case '7': //rl:?
+			line = 0;
+			continue;
+		/* support end key too.. */
+		case '1': //rl:?
+			line = file_lastline - maxlines + 1;
+			if (line < 0) line = 0;
+			continue;
+
+		/* search for keyword */
+		case 's':
+#ifdef REGEX_SEARCH
+			search_regexp = FALSE;
+#endif
+			Term_erase(0, bottomline, 80);
+			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter search string: ");
+			searchstr[0] = 0;
+			inkey_msg_old = inkey_msg;
+			inkey_msg = TRUE;
+			askfor_aux(searchstr, MAX_CHARS - 1, 0);
+			inkey_msg = inkey_msg_old;
+			if (!searchstr[0]) continue;
+
+			line_before_search = line;
+			line_presearch = line;
+			/* Skip the line we're currently in, start with the next line actually */
+			line++;
+			if (line > file_lastline - maxlines) line = file_lastline - maxlines;
+			if (line < 0) line = 0;
+
+			strcpy(lastsearch, searchstr);
+			searchline = line - 1; //init searchline for string-search
+			continue;
+#ifdef REGEX_SEARCH
+		/* search for regexp ^^ why not! */
+		case 'r': /* <- case-insensitive */
+			__attribute__ ((fallthrough));
+		case 'R':
+			if (c == 'r') i = REG_EXTENDED | REG_ICASE;// | REG_NEWLINE;
+			else i = REG_EXTENDED;// | REG_NEWLINE;
+
+			Term_erase(0, bottomline, 80);
+			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter search regexp: ");
+
+			searchstr[0] = 0;
+
+			inkey_msg_old = inkey_msg;
+			inkey_msg = TRUE;
+			askfor_aux(searchstr, MAX_CHARS - 1, 0);
+			inkey_msg = inkey_msg_old;
+			if (!searchstr[0]) continue;
+
+			if (!ires) regfree(&re_src); /* release any previously compiled regexp first! */
+			ires = regcomp(&re_src, searchstr, i);
+			if (ires != 0) {
+				c_message_add(format("\377yInvalid regular expression (%d).", ires));
+				searchstr[0] = 0;
+				continue;
+			}
+
+			line_before_search = line;
+			line_presearch = line;
+			/* Skip the line we're currently in, start with the next line actually */
+			line++;
+			if (line > file_lastline - maxlines) line = file_lastline - maxlines;
+			if (line < 0) line = 0;
+
+			strcpy(lastsearch, searchstr);
+			searchline = line - 1; //init searchline for string-search
+
+			search_regexp = TRUE;
+			strcpy(searchstr_re, searchstr); //clone just for ^/& evaluation later..
+			continue;
+#endif
+
+		/* special function now: Reset search. Means: Go to where I was before searching. */
+		case 'S':
+			line = line_before_search;
+			continue;
+		/* search for next occurance of the previously used search keyword */
+		case 'd':
+			if (!lastsearch[0]) continue;
+
+			line_presearch = line;
+			/* Skip the line we're currently in, start with the next line actually */
+			line++;
+#if 0
+			if (line > file_lastline - maxlines) line = file_lastline - maxlines;
+			if (line < 0) line = 0;
+#endif
+
+			strcpy(searchstr, lastsearch);
+			searchline = line - 1; //init searchline for string-search
+			continue;
+		/* Mark current search results on currently visible guide part */
+		case 'a':
+			if (!lastsearch[0]) continue;
+
+			strcpy(searchstr, lastsearch);
+			marking = TRUE;
+			continue;
+		/* Enter a new (non-regexp) mark string and mark it on currently visible guide part */
+		case 'A':
+#ifdef REGEX_SEARCH
+			search_regexp = FALSE;
+#endif
+
+			Term_erase(0, bottomline, 80);
+			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter mark string: ");
+			searchstr[0] = 0;
+			inkey_msg_old = inkey_msg;
+			inkey_msg = TRUE;
+			askfor_aux(searchstr, MAX_CHARS - 1, 0);
+			inkey_msg = inkey_msg_old;
+			if (!searchstr[0]) continue;
+
+			strcpy(lastsearch, searchstr);
+			marking = TRUE;
+			continue;
+		/* search for previous occurance of the previously used search keyword */
+		case 'D':
+		case 'f':
+			if (!lastsearch[0]) continue;
+
+			line_presearch = line;
+			/* Inverse location/direction */
+			backwards = TRUE;
+			line = file_lastline - line;
+			/* Skip the line we're currently in, start with the next line actually */
+			line++;
+
+#if 0
+			if (line > file_lastline - maxlines) line = file_lastline - maxlines;
+			if (line < 0) line = 0;
+#endif
+			strcpy(searchstr, lastsearch);
+			searchline = line - 1; //init searchline for string-search
+			continue;
+		/* jump to a specific line number */
+		case '#':
+			Term_erase(0, bottomline, 80);
+			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter line number to jump to: ");
+			sprintf(buf, "%d", jumped_to_line);
+			inkey_msg_old = inkey_msg;
+			inkey_msg = TRUE;
+			if (!askfor_aux(buf, 7, 0)) {
+				inkey_msg = inkey_msg_old;
+				continue;
+			}
+			inkey_msg = inkey_msg_old;
+			jumped_to_line = atoi(buf); //Remember, just as a small QoL thingy
+			line = jumped_to_line - 1;
+			if (line > file_lastline - maxlines) line = file_lastline - maxlines;
+			if (line < 0) line = 0;
+			continue;
+
+		case '?': //help
+			Term_clear();
+			Term_putstr(23,  0, -1, TERM_L_BLUE, "[File browsing - Navigation Keys]");
+			i = 1;
+			Term_putstr( 0, i++, -1, TERM_WHITE, "At the bottom of the guide screen you will see the following line:");
+#ifdef REGEX_SEARCH
+			Term_putstr(26,   i, -1, TERM_L_BLUE, " s/r/R,d,D/f,a/A,S,#:src,nx,pv,mark,rs,chpt,line");
+#else
+			Term_putstr(26,   i, -1, TERM_L_BLUE, " s,d,D/f,S,#:srch,nxt,prv,reset,chapter,line");
+#endif
+			Term_putstr( 7,   i, -1, TERM_SLATE,  "SPC/n,p,ENT,BCK,ESC");
+			Term_putstr( 0, i++, -1, TERM_YELLOW, "?:Help");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "Those keys can be used to navigate the guide. Here's a detailed explanation:");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " Space,'n' / 'p': Move down / up by one page (ENTER/BACKSPACE move by one line).");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 's'            : Search for a text string (use all uppercase for strict mode).");
+#ifdef REGEX_SEARCH
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 'r' / 'R'      : Search for a regular expression ('R' = case-sensitive).");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 'd'            : ..after 's/r/R', this jumps to the next match.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 'D' or 'f'     : ..after 's/r/R', this jumps to the previous match.");
+#else
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 'd'            : ..after 's', this jumps to the next match.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 'D' or 'f'     : ..after 's', this jumps to the previous match.");
+#endif
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 'a' / 'A'      : Mark old/new search results on currently visible guide part.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 'S'            : ..resets screen to where you were before you did a search.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " '#'            : Jump to a specific line number.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " ESC            : The Escape key will exit the guide screen.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "In addition, the arrow keys and the number pad keys can be used, and the keys");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "PgUp/PgDn/Home/End should work both on the main keyboard and the number pad.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "This might depend on your specific OS flavour and desktop environment though.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "Searching for all-caps only gives 'emphasized' results first in a line (flags).");
+			Term_putstr(25, 23, -1, TERM_L_BLUE, "(Press any key to go back)");
+			inkey();
+			continue;
+
+		/* exit */
+		case ESCAPE: //case 'q': case KTRL('Q'):
+			my_fclose(fff);
+			Term_load();
+#ifdef REGEX_SEARCH
+			if (!ires) regfree(&re_src);
+#endif
+			return;
+		}
+	}
+
+	my_fclose(fff);
+	Term_load();
+}
+
 void cmd_help(void) {
 	/* Set the hook */
 	special_line_type = SPECIAL_FILE_HELP;
@@ -4891,18 +5447,23 @@ static void monster_lore(void) {
 //#define SCREENSHOT_TARGET "tomenet-screenshot.png"
 #define SCREENSHOT_TARGET (format("%s.png", screenshot_filename))
 bool png_screenshot(void) {
-	char buf[1024], file_name[1024], command[1024];
-	int k;
-	FILE *fp;
-
 #ifdef WINDOWS
 	char path[1024], *c = path, *c2, tmp[1024], executable[1024];
 #endif
+#if !defined(WINDOWS) && !defined(USE_X11)
+	/* Neither WINDOWS nor USE_X11 */
+	c_msg_print("\377ySorry, creating a PNG file from a screenshot requires an X11 or Windows system.");
+	return FALSE;
+#else
+	char buf[1024], file_name[1024], command[1024];
+	int k;
+	FILE *fp;
 
 	if (!screenshot_filename[0]) {
 		c_msg_print("\377yYou have not made a screenshot yet this session (CTRL+T).");
 		return FALSE;
 	}
+#endif
 
 #ifdef WINDOWS
 	// When NULL is passed to GetModuleHandle, the handle of the exe itself is returned
@@ -5151,6 +5712,80 @@ bool png_screenshot(void) {
 #endif
 }
 
+/* Browse spoiler files, ie *_info.txt in TomeNET's lib/game/ folder. - C. Blue */
+static void cmd_spoilers(void) {
+	char i = 0;
+	int row = 2, col = 10;
+
+	Term_clear();
+	topline_icky = TRUE;
+
+	Term_putstr(col, row + 0, -1, TERM_WHITE, "(\377yk\377w) k_info.txt  - Items (aka objects)");
+	Term_putstr(col, row + 1, -1, TERM_WHITE, "(\377ye\377w) e_info.txt  - Ego item powers");
+	Term_putstr(col, row + 2, -1, TERM_WHITE, "(\377yr\377w) r_info.txt  - Monsters (races)");
+	Term_putstr(col, row + 3, -1, TERM_WHITE, "(\377yE\377w) re_info.txt - Ego monster types (ego races)");
+	Term_putstr(col, row + 4, -1, TERM_WHITE, "(\377ya\377w) a_info.txt  - Artifacts (predefined aka true ones)");
+	Term_putstr(col, row + 5, -1, TERM_WHITE, "(\377yv\377w) v_info.txt  - Vaults");
+	Term_putstr(col, row + 6, -1, TERM_WHITE, "(\377yd\377w) d_info.txt  - Dungeons (predefined ones)");
+	Term_putstr(col, row + 7, -1, TERM_WHITE, "(\377yf\377w) f_info.txt  - Floor tile types");
+	Term_putstr(col, row + 8, -1, TERM_WHITE, "(\377yt\377w) tr_info.txt - Traps");
+
+	while (i != ESCAPE) {
+		Term_putstr(0,  0, -1, TERM_BLUE, "Browse spoiler files (in TomeNET's lib/game folder)");
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
+
+		/* Hack to disable macros: Macros on SHIFT+X for example prohibits 'X' menu choice here.. */
+		inkey_interact_macros = TRUE;
+		i = inkey();
+		/* ..and reenable macros right away again, so navigation via arrow keys works. */
+		inkey_interact_macros = FALSE;
+
+		switch (i) {
+		case 'k':
+			browse_local_file("k_info.txt");
+			break;
+		case 'e':
+			browse_local_file("e_info.txt");
+			break;
+		case 'r':
+			browse_local_file("r_info.txt");
+			break;
+		case 'E':
+			browse_local_file("re_info.txt");
+			break;
+		case 'a':
+			browse_local_file("a_info.txt");
+			break;
+		case 'v':
+			browse_local_file("v_info.txt");
+			break;
+		case 'd':
+			browse_local_file("d_info.txt");
+			break;
+		case 'f':
+			browse_local_file("f_info.txt");
+			break;
+		case 't':
+			browse_local_file("tr_info.txt");
+			break;
+		case KTRL('Q'):
+			i = ESCAPE;
+			/* fall through */
+		case ESCAPE:
+			break;
+		case KTRL('T'):
+			xhtml_screenshot("screenshot????");
+			break;
+		case ':':
+			cmd_message();
+			break;
+		default:
+			bell();
+		}
+	}
+}
+
 /*
  * NOTE: the usage of Send_special_line is quite a hack;
  * it sends a letter in place of cur_line...		- Jir -
@@ -5174,72 +5809,73 @@ bool png_screenshot(void) {
 #endif
 void cmd_check_misc(void) {
 	char i = 0, choice;
-	int row = 2, res;
+	int row, res;
 	/* suppress hybrid macros in some submenus */
-	bool inkey_msg_old, uniques;
+	bool inkey_msg_old, uniques, redraw = TRUE;
 #if defined(USE_X11) || defined(WINDOWS)
 	char path[1024];
 #endif
 
 	Term_save();
-	Term_clear();
 	topline_icky = TRUE;
-	//Term_putstr(0,  0, -1, TERM_BLUE, "Display current knowledge");
-
-	Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377y1\377w) Artifacts found");
-	Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377y2\377w) Monsters killed/learnt");
-	Term_putstr( 5, row + 2, -1, TERM_WHITE, "(\377y3\377w) Unique monsters");
-	Term_putstr( 5, row + 3, -1, TERM_WHITE, "(\377y4\377w) Objects");
-	Term_putstr( 5, row + 4, -1, TERM_WHITE, "(\377y5\377w) Traps");
-	Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377y6\377w) Artifact lore");
-	Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377y7\377w) Monster lore");
-	Term_putstr(40, row + 2, -1, TERM_WHITE, "(\377y8\377w) Recall depths and towns");
-	Term_putstr(40, row + 3, -1, TERM_WHITE, "(\377y9\377w) Houses");
-	Term_putstr(40, row + 4, -1, TERM_WHITE, "(\377y0\377w) Wilderness map");
-	row += 6;
-
-	Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377ya\377w) Players online");
-	Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377yb\377w) Other players' equipments");
-	Term_putstr( 5, row + 2, -1, TERM_WHITE, "(\377yc\377w) High Scores");
-	Term_putstr( 5, row + 3, -1, TERM_WHITE, "(\377yd\377w) Recent Deaths");
-	Term_putstr( 5, row + 4, -1, TERM_WHITE, "(\377ye\377w) Lag-o-meter");
-	Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377yf\377w) News (Message of the day)");
-	Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377yh\377w) Intro screen");
-	Term_putstr(40, row + 2, -1, TERM_WHITE, "(\377yi\377w) Server settings");
-	Term_putstr(40, row + 3, -1, TERM_WHITE, "(\377yj\377w) Message history");
-	Term_putstr(40, row + 4, -1, TERM_WHITE, "(\377yk\377w) Chat history");
-	row += 6;
-
-	Term_putstr( 5, row, -1, TERM_WHITE, "(\377y?\377w) Help");
-	Term_putstr(40, row, -1, TERM_WHITE, "(\377yg\377w) The Guide");
-	row += 2;
-
-	/* Folders */
-	Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377UT\377w) Open program folder");
-	Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377UU\377w) Open user folder");
-	Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377US\377w) Open sound folder");
-	Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377UM\377w) Open music folder");
-	Term_putstr( 5, row + 2, -1, TERM_WHITE, "(\377UX\377w) Open xtra folder (fonts/audio)");
-	Term_putstr(40, row + 2, -1, TERM_WHITE, "(\377UP\377w) Open Player Stores page");
-	/* URLs */
-	row += 3;
-	Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377UW\377w) Open TomeNET website");
-	Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377UR\377w) Open Mikael's monster search");
-	Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377UG\377w) Open git repository site");
-	Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377UL\377w) Open oook.cz ladder site");
-	row += 3;
-
-	Term_putstr(40, row, -1, TERM_WHITE, "\377s(Type \377y/ex\377s in chat for extra info)");
-
-#ifndef TEST_CLIENT
-	Term_putstr(0, 22, -1, TERM_BLUE, "Command: ");
-#else
-	Term_putstr( 5, row++, -1, TERM_WHITE, "(\377o~\377w) Convert last screenshot to");
-	Term_putstr( 5, row,   -1, TERM_WHITE, "    a PNG and leave this menu");
-#endif
 
 	while (i != ESCAPE) {
+		if (redraw) {
+			Term_clear();
+			row = 1;
+			redraw = FALSE;
+
+			Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377y1\377w) Artifacts found");
+			Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377y2\377w) Monsters killed/learnt");
+			Term_putstr( 5, row + 2, -1, TERM_WHITE, "(\377y3\377w) Unique monsters");
+			Term_putstr( 5, row + 3, -1, TERM_WHITE, "(\377y4\377w) Objects");
+			Term_putstr( 5, row + 4, -1, TERM_WHITE, "(\377y5\377w) Traps");
+			Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377y6\377w) Artifact lore");
+			Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377y7\377w) Monster lore");
+			Term_putstr(40, row + 2, -1, TERM_WHITE, "(\377y8\377w) Recall depths and towns");
+			Term_putstr(40, row + 3, -1, TERM_WHITE, "(\377y9\377w) Houses");
+			Term_putstr(40, row + 4, -1, TERM_WHITE, "(\377y0\377w) Wilderness map");
+			row += 6;
+
+			Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377ya\377w) Players online");
+			Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377yb\377w) Other players' equipments");
+			Term_putstr( 5, row + 2, -1, TERM_WHITE, "(\377yc\377w) High Scores");
+			Term_putstr( 5, row + 3, -1, TERM_WHITE, "(\377yd\377w) Recent Deaths");
+			Term_putstr( 5, row + 4, -1, TERM_WHITE, "(\377ye\377w) Lag-o-meter");
+			Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377yf\377w) News (Message of the day)");
+			Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377yh\377w) Intro screen");
+			Term_putstr(40, row + 2, -1, TERM_WHITE, "(\377yi\377w) Server settings");
+			Term_putstr(40, row + 3, -1, TERM_WHITE, "(\377yj\377w) Message history");
+			Term_putstr(40, row + 4, -1, TERM_WHITE, "(\377yk\377w) Chat history");
+			row += 6;
+
+			Term_putstr( 5, row, -1, TERM_WHITE, "(\377y?\377w) Help");
+			Term_putstr(40, row, -1, TERM_WHITE, "(\377yg\377w) The Guide");
+			Term_putstr( 5, row + 1, -1, TERM_WHITE, "\377s(Type \377y/ex\377s in chat for extra info)");
+			Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377yl\377w) Spoiler files (in lib/game)");
+			row += 3;
+
+			/* Folders */
+			Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377UT\377w) Open program folder");
+			Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377UU\377w) Open user folder");
+			Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377US\377w) Open sound folder");
+			Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377UM\377w) Open music folder");
+			Term_putstr( 5, row + 2, -1, TERM_WHITE, "(\377UX\377w) Open xtra folder (fonts/audio)");
+			Term_putstr(40, row + 2, -1, TERM_WHITE, "(\377UP\377w) Open Player Stores page");
+			/* URLs */
+			row += 3;
+			Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377UW\377w) Open TomeNET website");
+			Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377UR\377w) Open Mikael's monster search");
+			Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377UG\377w) Open git repository site");
+			Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377UL\377w) Open oook.cz ladder site");
+			row += 3;
+			Term_putstr( 5, row, -1, TERM_WHITE, "(\377o~\377w) Convert last screenshot to");
+			Term_putstr( 5, row + 1,   -1, TERM_WHITE, "    a PNG and leave this menu");
+			Term_putstr(40, row, -1, TERM_WHITE, "(\377oE\377w) Edit the current config file");
+		}
+
 		Term_putstr(0,  0, -1, TERM_BLUE, "Display current knowledge");
+
 		Term->scr->cx = Term->wid;
 		Term->scr->cu = 1;
 
@@ -5340,6 +5976,10 @@ void cmd_check_misc(void) {
 			break;
 		case 'g':
 			cmd_the_guide(0, 0, NULL);
+			break;
+		case 'l':
+			cmd_spoilers();
+			redraw = TRUE;
 			break;
 		case KTRL('Q'):
 			i = ESCAPE;
