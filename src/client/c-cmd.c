@@ -6082,11 +6082,23 @@ void cmd_check_misc(void) {
 				} else {
 					// odd case
 					RegCloseKey(hTestKey);
-					Term_putstr(0, 1, -1, TERM_RED, "7-zip not properly installed. Please reinstall it. (www.7-zip.org)");
+					Term_putstr(0, 1, -1, TERM_YELLOW, "Registry key for default text editor not found.");
 				}
 				/* Cut off "%1" parameter at the end, if any */
 				if ((c = strchr(regentry, '%'))) *c = 0;
+ #if 0 /* pops up a terminal window */
 				system(format("start %s %s", regentry, ini_file));
+ #else /* ..hopefully doesn't */
+				STARTUPINFO si;
+				PROCESS_INFORMATION pi;
+
+				ZeroMemory(&si, sizeof(si));
+				si.cb = sizeof(si);
+				ZeroMemory(&pi, sizeof(pi));
+
+				CreateProcess( NULL, format("%s %s", regentry, ini_file),
+				    NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+ #endif
 			} else {
 				c_message_add("\377w(Couldn't find default app for opening text files, falling back to notepad.)");
 				system(format("start notepad %s", ini_file));
