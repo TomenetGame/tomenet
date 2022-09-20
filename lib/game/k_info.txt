@@ -8127,7 +8127,7 @@ P:0:1d1:0:0:0
 D:A potion of fresh blood, it will go bad quickly.
 
 # The Smokin' Boots of Moltor, the Dwarven Archer
-N:1030:& Smokin' Boots~
+N:1030:Smokin' Boots~
 G:]:r
 I:30:9:0
 W:24:30:30:50000
