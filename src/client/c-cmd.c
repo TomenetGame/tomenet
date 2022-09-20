@@ -5877,7 +5877,7 @@ void cmd_check_misc(void) {
 			Term_putstr( 5, row + 1,   -1, TERM_WHITE, "    a PNG and leave this menu");
 #ifdef USE_X11
 			Term_putstr(40, row, -1, TERM_WHITE, "(\377oE\377w) Edit the current config file");
-			Term_putstr(40, row + 1, -1, TERM_WHITE, "    (Requires 'head' and 'grep'.)");
+			Term_putstr(40, row + 1, -1, TERM_WHITE, "    (Requires 'grep' to be installed.)");
 #else
 			Term_putstr(40, row, -1, TERM_WHITE, "(\377oE\377w) Edit the current config file");
 #endif
@@ -6066,7 +6066,8 @@ void cmd_check_misc(void) {
 #ifdef USE_X11
 			//system(format("xdg-open %s &", mangrc_filename));
 			//FILEMAN(mangrc_filename);
-			system("cat /usr/share/applications/`xdg-mime query default text/plain` | grep -o 'Exec.*' | head -n 1 | grep -o '=.*' | grep -o '[0-9a-z]*' > __tmp__");
+			//system("cat /usr/share/applications/`xdg-mime query default text/plain` | grep -o 'Exec.*' | head -n 1 | grep -o '=.*' | grep -o '[0-9a-z]*' > __tmp__");
+			system("cat /usr/share/applications/`xdg-mime query default text/plain` | grep -o 'Exec.*' | grep -o '=.*' | grep -o '[0-9a-z]*' > __tmp__");
 			fp = fopen("__tmp__", "r");
 			if (fp) {
 				fgets(buf, MAX_CHARS, fp);
