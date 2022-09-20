@@ -5819,6 +5819,12 @@ void cmd_check_misc(void) {
 	FILE *fp;
 	char buf[MAX_CHARS];
 #endif
+#ifdef WINDOWS
+ #include <winreg.h>	/* remote control of installed 7-zip via registry approach */
+ #include <process.h>	/* use spawn() instead of normal system() (WINE bug/Win inconsistency even maybe) */
+ #define MAX_KEY_LENGTH 255
+ #define MAX_VALUE_NAME 16383
+#endif
 
 	Term_save();
 	topline_icky = TRUE;
@@ -6060,8 +6066,32 @@ void cmd_check_misc(void) {
 			break;
 		case 'E':
 #ifdef WINDOWS
-			system(format("start notepad %s", ini_file));
 			//FILEMAN(ini_file);
+		    {
+			/* check registry for default text editor: HKEY_CLASSES_ROOT\txtfile\shell\open\command */
+			HKEY hTestKey;
+			char regentry[1024], *c;
+			LPBYTE regentry_p = (LPBYTE)regentry;
+			int regentry_size = 1023;
+			LPDWORD regentry_size_p = (LPDWORD)&regentry_size;
+			unsigned long regentry_type = REG_SZ;
+
+			if (RegOpenKeyEx(HKEY_CLASSES_ROOT, TEXT("txtfile\\shell\\open\\command\\"), 0, KEY_READ, &hTestKey) == ERROR_SUCCESS) {
+				if (RegQueryValueEx(hTestKey, "", NULL, &regentry_type, regentry_p, regentry_size_p) == ERROR_SUCCESS) {
+					regentry[regentry_size] = '\0';
+				} else {
+					// odd case
+					RegCloseKey(hTestKey);
+					Term_putstr(0, 1, -1, TERM_RED, "7-zip not properly installed. Please reinstall it. (www.7-zip.org)");
+				}
+				/* Cut off "%1" parameter at the end, if any */
+				if ((c = strchr(regentry, '%'))) *c = 0;
+				system(format("start %s %s", regentry, ini_file));
+			} else {
+				c_message_add("\377w(Couldn't find default app for opening text files, falling back to notepad.)");
+				system(format("start notepad %s", ini_file));
+			}
+		    }
 #endif
 #ifdef USE_X11
 			//system(format("xdg-open %s &", mangrc_filename));
