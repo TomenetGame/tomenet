@@ -4453,12 +4453,14 @@ void prt_num(cptr header, int num, int row, int col, byte color) {
 	c_put_str(color, out_val, row, col + len + 3);
 }
 
+/* print large numbers, used in C screen for Xp values and Au */
 void prt_lnum(cptr header, s32b num, int row, int col, byte color) {
-	int len = strlen(header);
+	int len = strlen(header) + 1;
 	char out_val[32];
 
 	put_str(header, row, col);
-	(void)sprintf(out_val, "%11d", (int)num); /* Increased form 9 to 11 just for gold (~2 billion limit) */
+	if (c_cfg.colourize_bignum && color != TERM_L_UMBER) colour_bignum(num, -1, out_val, 1);
+	else (void)sprintf(out_val, "%10d", (int)num); /* Increased form 9 to 10 just for gold (~2 billion limit) */
 	c_put_str(color, out_val, row, col + len);
 }
 

@@ -871,15 +871,17 @@ void c_store_prt_gold(void) {
 
 	prt("Gold Remaining: ", 19 + spacer, 53);
 
-	sprintf(out_val, "%10d", p_ptr->au);
-	prt(out_val, 19 + spacer, 69);
+	if (c_cfg.colourize_bignum) colour_bignum(p_ptr->au, -1, out_val, 0);
+	else sprintf(out_val, "%10d", p_ptr->au);
+	put_str(out_val, 19 + spacer, 69);
 
 	/* Hack -- show balance (if not 0) */
 	if (store_num == STORE_MERCHANTS_GUILD && p_ptr->balance) {
 		prt("Your balance  : ", 20 + spacer, 53);
 
-		sprintf(out_val, "%10d", p_ptr->balance);
-		prt(out_val, 20 + spacer, 69);
+		if (c_cfg.colourize_bignum) colour_bignum(p_ptr->balance, -1, out_val, 0);
+		else sprintf(out_val, "%10d", p_ptr->balance);
+		put_str(out_val, 20 + spacer, 69);
 	} else {
 		/* Erase part of the screen */
 		Term_erase(0, 20 + spacer, 255);
