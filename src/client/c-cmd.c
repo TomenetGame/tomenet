@@ -5876,7 +5876,7 @@ void cmd_check_misc(void) {
 			Term_putstr(40, row + 2, -1, TERM_WHITE, "(\377y8\377w) Recall depths and towns");
 			Term_putstr(40, row + 3, -1, TERM_WHITE, "(\377y9\377w) Houses");
 			Term_putstr(40, row + 4, -1, TERM_WHITE, "(\377y0\377w) Wilderness map");
-			row += 6;
+			row += 5;
 
 			Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377ya\377w) Players online");
 			Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377yb\377w) Other players' equipments");
@@ -5911,12 +5911,33 @@ void cmd_check_misc(void) {
 			Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377UL\377w) Open oook.cz ladder site");
 			row += 3;
 			Term_putstr( 5, row, -1, TERM_WHITE, "(\377o~\377w) Convert last screenshot to");
-			Term_putstr( 5, row + 1,   -1, TERM_WHITE, "    a PNG and leave this menu");
+			Term_putstr( 5, row + 1,   -1, TERM_WHITE, "    a PNG and leave this menu:");
+			Term_putstr( 5, row + 2,   -1, TERM_WHITE, format("    %s", screenshot_filename[0] ? screenshot_filename : "- no screenshot taken -"));
+			Term_putstr(40, row, -1, TERM_WHITE, "(\377oC\377w) Edit the current config file:");
 #ifdef USE_X11
-			Term_putstr(40, row, -1, TERM_WHITE, "(\377oC\377w) Edit the current config file");
-			Term_putstr(40, row + 1, -1, TERM_WHITE, "    (Requires 'grep' to be installed.)");
-#else
-			Term_putstr(40, row, -1, TERM_WHITE, "(\377oC\377w) Edit the current config file");
+			Term_putstr(40, row + 1,   -1, TERM_WHITE, format("    %s", mangrc_filename));
+			Term_putstr(40, row + 2, -1, TERM_WHITE, "    (Requires 'grep' to be installed.)");
+#endif
+#ifdef WINDOWS
+			/* The ini file contains a long path (unlike mangrc_filename), so use two lines for it.. */
+			if (strlen(ini_file) <= 35)
+				Term_putstr(40, row + 1,   -1, TERM_WHITE, format("    %s", ini_file));
+			else {
+				/* Try to cut line at backslash */
+				i = 35;
+				while (i && ini_file[(int)i] != '\\') i--;
+				if (i != 35) i++;
+				/* ..but don't accept unreasonable lenght */
+				if (i < 20) {
+					/* Cut without regard, ouch */
+					Term_putstr(40, row + 1,   -1, TERM_WHITE, format("    %-.35s", ini_file));
+					Term_putstr(40, row + 2,   -1, TERM_WHITE, format("    %-.35s", ini_file + 35));
+				} else {
+					/* Cut nicely & cleanly at backslash */
+					Term_putstr(40, row + 1,   -1, TERM_WHITE, format("    %-.*s", i, ini_file));
+					Term_putstr(40, row + 2,   -1, TERM_WHITE, format("    %-.35s", ini_file + i));
+				}
+			}
 #endif
 		}
 
@@ -6034,6 +6055,9 @@ void cmd_check_misc(void) {
 			break;
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????");
+			/* Redraw new screenshot filename: */
+			//Term_putstr( 5, row + 2,   -1, TERM_WHITE, format("    %s", screenshot_filename[0] ? screenshot_filename : "- no screenshot taken -"));
+			redraw = TRUE;
 			break;
 		case ':':
 			cmd_message();
