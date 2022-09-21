@@ -3961,13 +3961,15 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 	Term_load();
 }
 
-void browse_local_file(char* fname) {
-	int line = 0, line_before_search = 0, jumped_to_line = 0, file_lastline = -1;
-	static char lastsearch[MAX_CHARS] = { 0 };
+/* Remember things such as last line visited, last search term.. for up to this - 1 different fixed files (0 is reserved for 'not saved'). */
+#define MAX_REMEMBERANCE_INDICES 10
+void browse_local_file(char* fname, int rememberance_index) {
+	static int line_cur[MAX_REMEMBERANCE_INDICES] = { 0 }, line_before_search[MAX_REMEMBERANCE_INDICES] = { 0 }, jumped_to_line[MAX_REMEMBERANCE_INDICES] = { 0 }, file_lastline[MAX_REMEMBERANCE_INDICES] = { -1 };
+	static char lastsearch[MAX_REMEMBERANCE_INDICES][MAX_CHARS] = { 0 };
 
 	bool inkey_msg_old, within, within_col, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE, restore_pos = FALSE, marking = FALSE;
 	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
-	int searchline = -1, within_cnt = 0, c = 0, n, line_presearch = line;
+	int searchline = -1, within_cnt = 0, c = 0, n, line_presearch = line_cur[rememberance_index];
 	char searchstr[MAX_CHARS], withinsearch[MAX_CHARS];
 	char buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2;
 	char path[1024], bufdummy[MAX_CHARS + 1];
@@ -3983,6 +3985,16 @@ void browse_local_file(char* fname) {
 	char searchstr_re[MAX_CHARS];
 #endif
 
+	if (!rememberance_index || rememberance_index >= MAX_REMEMBERANCE_INDICES) {
+		rememberance_index = 0;
+
+		line_cur[rememberance_index] = 0;
+		line_before_search[rememberance_index] = 0;
+		jumped_to_line[rememberance_index] = 0;
+		file_lastline[rememberance_index] = -1;
+		//lastsearch[rememberance_index][0] = 0; //maybe just keep this, doesn't hurt
+	}
+
 	path_build(path, 1024, ANGBAND_DIR_GAME, fname);
 
 	/* init the file */
@@ -3997,11 +4009,11 @@ void browse_local_file(char* fname) {
 	}
 
 	/* count lines */
-	while (fgets(buf, 81 , fff)) file_lastline++;
+	while (fgets(buf, 81 , fff)) file_lastline[rememberance_index]++;
 	my_fclose(fff);
 
 	/* empty file? */
-	if (file_lastline == -1) {
+	if (file_lastline[rememberance_index] == -1) {
 		if (errno <= 0) {
 			c_msg_format("\377yThe file %s seems to be empty.", fname);
 			c_message_add("\377y Try updating with the TomeNET-Updater or download it manually.");
@@ -4013,14 +4025,14 @@ void browse_local_file(char* fname) {
 
 	/* init searches */
 	searchstr[0] = 0;
-	//lastsearch[0] = 0;
+	//lastsearch[rememberance_index][0] = 0;
 
 	Term_save();
 
 	while (TRUE) {
 		if (!skip_redraw) Term_clear();
-		if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[%s - line %5d of %5d]", fname, (file_lastline - line) + 1, file_lastline + 1));
-		else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[%s - line %5d of %5d]", fname, line + 1, file_lastline + 1));
+		if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[%s - line %5d of %5d]", fname, (file_lastline[rememberance_index] - line_cur[rememberance_index]) + 1, file_lastline[rememberance_index] + 1));
+		else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[%s - line %5d of %5d]", fname, line_cur[rememberance_index] + 1, file_lastline[rememberance_index] + 1));
 #ifdef REGEX_SEARCH
 		Term_putstr(26, bottomline, -1, TERM_L_BLUE, " s/r/R,d,D/f,a/A,S,#:src,nx,pv,mark,rs,chpt,line");
 #else
@@ -4037,9 +4049,9 @@ void browse_local_file(char* fname) {
 
 		/* If we're not searching for something specific, just seek forwards until reaching our current starting line */
 		if (backwards) {
-			if (!searchwrap) for (n = 0; n < line; n++) res = fgets_inverse(buf, 81, fff); //res just slays non-existant compiler warning..what
+			if (!searchwrap) for (n = 0; n < line_cur[rememberance_index]; n++) res = fgets_inverse(buf, 81, fff); //res just slays non-existant compiler warning..what
 		} else {
-			if (!searchwrap) for (n = 0; n < line; n++) res = fgets(buf, 81, fff); //res just slays compiler warning
+			if (!searchwrap) for (n = 0; n < line_cur[rememberance_index]; n++) res = fgets(buf, 81, fff); //res just slays compiler warning
 		}
 
 		/* Display as many lines as fit on the screen, starting at the desired position */
@@ -4074,17 +4086,17 @@ void browse_local_file(char* fname) {
 				searchline++;
 
 				/* Search wrapped around once and still no result? Finish. */
-				if (searchwrap && searchline == line) {
+				if (searchwrap && searchline == line_cur[rememberance_index]) {
 					/* We're done (unsuccessfully), clean up.. */
 					searchstr[0] = 0;
 					searchwrap = FALSE;
 					withinsearch[0] = 0;
 
 					/* we cannot search for further results if there was none (would result in glitchy visuals) */
-					lastsearch[0] = 0;
+					lastsearch[rememberance_index][0] = 0;
 
 					/* correct our line number again */
-					line = line_presearch;
+					line_cur[rememberance_index] = line_presearch;
 					backwards = FALSE;
 					/* return to that position again */
 					restore_pos = TRUE;
@@ -4098,7 +4110,7 @@ void browse_local_file(char* fname) {
 						/* Reverse again to normal direction/location */
 						if (backwards) {
 							backwards = FALSE;
-							searchline = file_lastline - searchline;
+							searchline = file_lastline[rememberance_index] - searchline;
 							/* Skip end of line, advancing to next line */
 							fseek(fff, 1, SEEK_CUR);
 							/* This line has already been read too, by fgets_inverse(), so skip too */
@@ -4107,9 +4119,9 @@ void browse_local_file(char* fname) {
 
 						searchstr[0] = 0;
 						searchwrap = FALSE;
-						line = searchline;
+						line_cur[rememberance_index] = searchline;
 						/* Redraw line number display */
-						Term_putstr(23,  0, -1, TERM_L_BLUE, format("[%s - line %5d of %5d]", fname, line + 1, file_lastline + 1));
+						Term_putstr(23,  0, -1, TERM_L_BLUE, format("[%s - line %5d of %5d]", fname, line_cur[rememberance_index] + 1, file_lastline[rememberance_index] + 1));
 					}
 					/* Still searching */
 					else {
@@ -4125,7 +4137,7 @@ void browse_local_file(char* fname) {
 					/* Reverse again to normal direction/location */
 					if (backwards) {
 						backwards = FALSE;
-						searchline = file_lastline - searchline;
+						searchline = file_lastline[rememberance_index] - searchline;
 						/* Skip end of line, advancing to next line */
 						fseek(fff, 1, SEEK_CUR);
 						/* This line has already been read too, by fgets_inverse(), so skip too */
@@ -4135,9 +4147,9 @@ void browse_local_file(char* fname) {
 					strcpy(withinsearch, searchstr);
 					searchstr[0] = 0;
 					searchwrap = FALSE;
-					line = searchline;
+					line_cur[rememberance_index] = searchline;
 					/* Redraw line number display */
-					Term_putstr(23,  0, -1, TERM_L_BLUE, format("[%s - line %5d of %5d]", fname, line + 1, file_lastline + 1));
+					Term_putstr(23,  0, -1, TERM_L_BLUE, format("[%s - line %5d of %5d]", fname, line_cur[rememberance_index] + 1, file_lastline[rememberance_index] + 1));
 
 				/* Still searching */
 				} else {
@@ -4242,7 +4254,7 @@ void browse_local_file(char* fname) {
 				searchwrap = FALSE;
 
 				/* correct our line number again */
-				line = line_presearch = line;
+				line_cur[rememberance_index] = line_presearch = line_cur[rememberance_index];
 				if (backwards) backwards = FALSE;
 				continue;
 			}
@@ -4251,8 +4263,8 @@ void browse_local_file(char* fname) {
 		/* Reverse again to normal direction/location */
 		if (backwards) {
 			backwards = FALSE;
-			line = file_lastline - line;
-			line++;
+			line_cur[rememberance_index] = file_lastline[rememberance_index] - line_cur[rememberance_index];
+			line_cur[rememberance_index]++;
 		}
 
 		skipped_redraw:
@@ -4288,35 +4300,35 @@ void browse_local_file(char* fname) {
 
 		/* navigate (up/down) */
 		case '8': case '\010': case 0x7F: //rl:'k'
-			line--;
-			if (line < 0) line = file_lastline - maxlines + 1;
-			if (line < 0) line = 0;
+			line_cur[rememberance_index]--;
+			if (line_cur[rememberance_index] < 0) line_cur[rememberance_index] = file_lastline[rememberance_index] - maxlines + 1;
+			if (line_cur[rememberance_index] < 0) line_cur[rememberance_index] = 0;
 			continue;
 		case '2': case '\r': case '\n': //rl:'j'
-			line++;
-			if (line > file_lastline - maxlines) line = 0;
+			line_cur[rememberance_index]++;
+			if (line_cur[rememberance_index] > file_lastline[rememberance_index] - maxlines) line_cur[rememberance_index] = 0;
 			continue;
 		/* page up/down */
 		case '9': case 'p': //rl:?
-			if (line == 0) line = file_lastline - maxlines + 1;
-			else line -= maxlines;
-			if (line < 0) line = 0;
+			if (line_cur[rememberance_index] == 0) line_cur[rememberance_index] = file_lastline[rememberance_index] - maxlines + 1;
+			else line_cur[rememberance_index] -= maxlines;
+			if (line_cur[rememberance_index] < 0) line_cur[rememberance_index] = 0;
 			continue;
 		case '3': case 'n': case ' ': //rl:?
-			if (line < file_lastline - maxlines) {
-				line += maxlines;
-				if (line > file_lastline - maxlines) line = file_lastline - maxlines;
-				if (line < 0) line = 0;
-			} else line = 0;
+			if (line_cur[rememberance_index] < file_lastline[rememberance_index] - maxlines) {
+				line_cur[rememberance_index] += maxlines;
+				if (line_cur[rememberance_index] > file_lastline[rememberance_index] - maxlines) line_cur[rememberance_index] = file_lastline[rememberance_index] - maxlines;
+				if (line_cur[rememberance_index] < 0) line_cur[rememberance_index] = 0;
+			} else line_cur[rememberance_index] = 0;
 			continue;
 		/* home key to reset */
 		case '7': //rl:?
-			line = 0;
+			line_cur[rememberance_index] = 0;
 			continue;
 		/* support end key too.. */
 		case '1': //rl:?
-			line = file_lastline - maxlines + 1;
-			if (line < 0) line = 0;
+			line_cur[rememberance_index] = file_lastline[rememberance_index] - maxlines + 1;
+			if (line_cur[rememberance_index] < 0) line_cur[rememberance_index] = 0;
 			continue;
 
 		/* search for keyword */
@@ -4333,15 +4345,15 @@ void browse_local_file(char* fname) {
 			inkey_msg = inkey_msg_old;
 			if (!searchstr[0]) continue;
 
-			line_before_search = line;
-			line_presearch = line;
+			line_before_search[rememberance_index] = line_cur[rememberance_index];
+			line_presearch = line_cur[rememberance_index];
 			/* Skip the line we're currently in, start with the next line actually */
-			line++;
-			if (line > file_lastline - maxlines) line = file_lastline - maxlines;
-			if (line < 0) line = 0;
+			line_cur[rememberance_index]++;
+			if (line_cur[rememberance_index] > file_lastline[rememberance_index] - maxlines) line_cur[rememberance_index] = file_lastline[rememberance_index] - maxlines;
+			if (line_cur[rememberance_index] < 0) line_cur[rememberance_index] = 0;
 
-			strcpy(lastsearch, searchstr);
-			searchline = line - 1; //init searchline for string-search
+			strcpy(lastsearch[rememberance_index], searchstr);
+			searchline = line_cur[rememberance_index] - 1; //init searchline for string-search
 			continue;
 #ifdef REGEX_SEARCH
 		/* search for regexp ^^ why not! */
@@ -4370,15 +4382,15 @@ void browse_local_file(char* fname) {
 				continue;
 			}
 
-			line_before_search = line;
-			line_presearch = line;
+			line_before_search[rememberance_index] = line_cur[rememberance_index];
+			line_presearch = line_cur[rememberance_index];
 			/* Skip the line we're currently in, start with the next line actually */
-			line++;
-			if (line > file_lastline - maxlines) line = file_lastline - maxlines;
-			if (line < 0) line = 0;
+			line_cur[rememberance_index]++;
+			if (line_cur[rememberance_index] > file_lastline[rememberance_index] - maxlines) line_cur[rememberance_index] = file_lastline[rememberance_index] - maxlines;
+			if (line_cur[rememberance_index] < 0) line_cur[rememberance_index] = 0;
 
-			strcpy(lastsearch, searchstr);
-			searchline = line - 1; //init searchline for string-search
+			strcpy(lastsearch[rememberance_index], searchstr);
+			searchline = line_cur[rememberance_index] - 1; //init searchline for string-search
 
 			search_regexp = TRUE;
 			strcpy(searchstr_re, searchstr); //clone just for ^/& evaluation later..
@@ -4387,28 +4399,28 @@ void browse_local_file(char* fname) {
 
 		/* special function now: Reset search. Means: Go to where I was before searching. */
 		case 'S':
-			line = line_before_search;
+			line_cur[rememberance_index] = line_before_search[rememberance_index];
 			continue;
 		/* search for next occurance of the previously used search keyword */
 		case 'd':
-			if (!lastsearch[0]) continue;
+			if (!lastsearch[rememberance_index][0]) continue;
 
-			line_presearch = line;
+			line_presearch = line_cur[rememberance_index];
 			/* Skip the line we're currently in, start with the next line actually */
-			line++;
+			line_cur[rememberance_index]++;
 #if 0
-			if (line > file_lastline - maxlines) line = file_lastline - maxlines;
-			if (line < 0) line = 0;
+			if (line_cur[rememberance_index] > file_lastline[rememberance_index] - maxlines) line_cur[rememberance_index] = file_lastline[rememberance_index] - maxlines;
+			if (line_cur[rememberance_index] < 0) line_cur[rememberance_index] = 0;
 #endif
 
-			strcpy(searchstr, lastsearch);
-			searchline = line - 1; //init searchline for string-search
+			strcpy(searchstr, lastsearch[rememberance_index]);
+			searchline = line_cur[rememberance_index] - 1; //init searchline for string-search
 			continue;
 		/* Mark current search results on currently visible guide part */
 		case 'a':
-			if (!lastsearch[0]) continue;
+			if (!lastsearch[rememberance_index][0]) continue;
 
-			strcpy(searchstr, lastsearch);
+			strcpy(searchstr, lastsearch[rememberance_index]);
 			marking = TRUE;
 			continue;
 		/* Enter a new (non-regexp) mark string and mark it on currently visible guide part */
@@ -4426,33 +4438,33 @@ void browse_local_file(char* fname) {
 			inkey_msg = inkey_msg_old;
 			if (!searchstr[0]) continue;
 
-			strcpy(lastsearch, searchstr);
+			strcpy(lastsearch[rememberance_index], searchstr);
 			marking = TRUE;
 			continue;
 		/* search for previous occurance of the previously used search keyword */
 		case 'D':
 		case 'f':
-			if (!lastsearch[0]) continue;
+			if (!lastsearch[rememberance_index][0]) continue;
 
-			line_presearch = line;
+			line_presearch = line_cur[rememberance_index];
 			/* Inverse location/direction */
 			backwards = TRUE;
-			line = file_lastline - line;
+			line_cur[rememberance_index] = file_lastline[rememberance_index] - line_cur[rememberance_index];
 			/* Skip the line we're currently in, start with the next line actually */
-			line++;
+			line_cur[rememberance_index]++;
 
 #if 0
-			if (line > file_lastline - maxlines) line = file_lastline - maxlines;
-			if (line < 0) line = 0;
+			if (line_cur[rememberance_index] > file_lastline[rememberance_index] - maxlines) line_cur[rememberance_index] = file_lastline[rememberance_index] - maxlines;
+			if (line_cur[rememberance_index] < 0) line_cur[rememberance_index] = 0;
 #endif
-			strcpy(searchstr, lastsearch);
-			searchline = line - 1; //init searchline for string-search
+			strcpy(searchstr, lastsearch[rememberance_index]);
+			searchline = line_cur[rememberance_index] - 1; //init searchline for string-search
 			continue;
 		/* jump to a specific line number */
 		case '#':
 			Term_erase(0, bottomline, 80);
 			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter line number to jump to: ");
-			sprintf(buf, "%d", jumped_to_line);
+			sprintf(buf, "%d", jumped_to_line[rememberance_index]);
 			inkey_msg_old = inkey_msg;
 			inkey_msg = TRUE;
 			if (!askfor_aux(buf, 7, 0)) {
@@ -4460,10 +4472,10 @@ void browse_local_file(char* fname) {
 				continue;
 			}
 			inkey_msg = inkey_msg_old;
-			jumped_to_line = atoi(buf); //Remember, just as a small QoL thingy
-			line = jumped_to_line - 1;
-			if (line > file_lastline - maxlines) line = file_lastline - maxlines;
-			if (line < 0) line = 0;
+			jumped_to_line[rememberance_index] = atoi(buf); //Remember, just as a small QoL thingy
+			line_cur[rememberance_index] = jumped_to_line[rememberance_index] - 1;
+			if (line_cur[rememberance_index] > file_lastline[rememberance_index] - maxlines) line_cur[rememberance_index] = file_lastline[rememberance_index] - maxlines;
+			if (line_cur[rememberance_index] < 0) line_cur[rememberance_index] = 0;
 			continue;
 
 		case '?': //help
@@ -5745,31 +5757,31 @@ static void cmd_spoilers(void) {
 
 		switch (i) {
 		case 'k':
-			browse_local_file("k_info.txt");
+			browse_local_file("k_info.txt", 1);
 			break;
 		case 'e':
-			browse_local_file("e_info.txt");
+			browse_local_file("e_info.txt", 2);
 			break;
 		case 'r':
-			browse_local_file("r_info.txt");
+			browse_local_file("r_info.txt", 3);
 			break;
 		case 'E':
-			browse_local_file("re_info.txt");
+			browse_local_file("re_info.txt", 4);
 			break;
 		case 'a':
-			browse_local_file("a_info.txt");
+			browse_local_file("a_info.txt", 5);
 			break;
 		case 'v':
-			browse_local_file("v_info.txt");
+			browse_local_file("v_info.txt", 6);
 			break;
 		case 'd':
-			browse_local_file("d_info.txt");
+			browse_local_file("d_info.txt", 7);
 			break;
 		case 'f':
-			browse_local_file("f_info.txt");
+			browse_local_file("f_info.txt", 8);
 			break;
 		case 't':
-			browse_local_file("tr_info.txt");
+			browse_local_file("tr_info.txt", 9);
 			break;
 		case KTRL('Q'):
 			i = ESCAPE;
