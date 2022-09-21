@@ -4004,7 +4004,7 @@ void browse_local_file(char* fname, int rememberance_index) {
 		if (errno == ENOENT) {
 			c_msg_format("\377yThe file %s wasn't found in your lib/game folder.", fname);
 			c_message_add("\377y Try updating with the TomeNET-Updater or download it manually.");
-		} else c_msg_format("\377yThe file %s couldn't be opened from your lib/game folder (%d).", fname, guide_errno);
+		} else c_msg_format("\377yThe file %s couldn't be opened from your lib/game folder (%d).", fname, errno);
 		return;
 	}
 
@@ -4017,7 +4017,7 @@ void browse_local_file(char* fname, int rememberance_index) {
 		if (errno <= 0) {
 			c_msg_format("\377yThe file %s seems to be empty.", fname);
 			c_message_add("\377y Try updating with the TomeNET-Updater or download it manually.");
-		} else c_msg_format("\377yThe file %s couldn't be opened from your lib/game folder (%d).", fname, guide_errno);
+		} else c_msg_format("\377yThe file %s couldn't be opened from your lib/game folder (%d).", fname, errno);
 		return;
 	}
 
@@ -4074,7 +4074,7 @@ void browse_local_file(char* fname, int rememberance_index) {
 			}
 			*cp2 = 0;
 
-			/* Just mark last search's results within currently visible guide piece */
+			/* Just mark last search's results within currently visible file piece */
 			if (marking) {
 				marking = FALSE;
 				strcpy(withinsearch, searchstr);
@@ -4432,14 +4432,14 @@ void browse_local_file(char* fname, int rememberance_index) {
 			strcpy(searchstr, lastsearch[rememberance_index]);
 			searchline = line_cur[rememberance_index] - 1; //init searchline for string-search
 			continue;
-		/* Mark current search results on currently visible guide part */
+		/* Mark current search results on currently visible file part */
 		case 'a':
 			if (!lastsearch[rememberance_index][0]) continue;
 
 			strcpy(searchstr, lastsearch[rememberance_index]);
 			marking = TRUE;
 			continue;
-		/* Enter a new (non-regexp) mark string and mark it on currently visible guide part */
+		/* Enter a new (non-regexp) mark string and mark it on currently visible file part */
 		case 'A':
 #ifdef REGEX_SEARCH
 			search_regexp = FALSE;
@@ -4499,7 +4499,7 @@ void browse_local_file(char* fname, int rememberance_index) {
 			Term_clear();
 			Term_putstr(23,  0, -1, TERM_L_BLUE, "[File browsing - Navigation Keys]");
 			i = 1;
-			Term_putstr( 0, i++, -1, TERM_WHITE, "At the bottom of the guide screen you will see the following line:");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "At the bottom of the file screen you will see the following line:");
 #ifdef REGEX_SEARCH
 			Term_putstr(26,   i, -1, TERM_L_BLUE, " s/r/R,d,D/f,a/A,S,#:src,nx,pv,mark,rs,chpt,line");
 #else
@@ -4507,7 +4507,7 @@ void browse_local_file(char* fname, int rememberance_index) {
 #endif
 			Term_putstr( 7,   i, -1, TERM_SLATE,  "SPC/n,p,ENT,BCK,ESC");
 			Term_putstr( 0, i++, -1, TERM_YELLOW, "?:Help");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "Those keys can be used to navigate the guide. Here's a detailed explanation:");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "Those keys can be used to navigate the file. Here's a detailed explanation:");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " Space,'n' / 'p': Move down / up by one page (ENTER/BACKSPACE move by one line).");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " 's'            : Search for a text string (use all uppercase for strict mode).");
 #ifdef REGEX_SEARCH
@@ -4518,10 +4518,10 @@ void browse_local_file(char* fname, int rememberance_index) {
 			Term_putstr( 0, i++, -1, TERM_WHITE, " 'd'            : ..after 's', this jumps to the next match.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " 'D' or 'f'     : ..after 's', this jumps to the previous match.");
 #endif
-			Term_putstr( 0, i++, -1, TERM_WHITE, " 'a' / 'A'      : Mark old/new search results on currently visible guide part.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 'a' / 'A'      : Mark old/new search results on currently visible file part.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " 'S'            : ..resets screen to where you were before you did a search.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " '#'            : Jump to a specific line number.");
-			Term_putstr( 0, i++, -1, TERM_WHITE, " ESC            : The Escape key will exit the guide screen.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " ESC            : The Escape key will exit the file screen.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "In addition, the arrow keys and the number pad keys can be used, and the keys");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "PgUp/PgDn/Home/End should work both on the main keyboard and the number pad.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "This might depend on your specific OS flavour and desktop environment though.");
