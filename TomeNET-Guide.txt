@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 19. September 2022 - written by C. Blue (c_blue@gmx.net)  |
+| Latest update: 21. September 2022 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.8.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -6893,14 +6893,20 @@ There are 3 ways to be revived:
  give him some money. The temple priest will turn the ghost away without
  resurrecting it, if the town isn't the last one visited by the player when
  he was still alive. ('The temple priest turns you away')
--another living player reads a 'Scroll of Life' when standing directly next to
- a ghost.
--another living player speaks a prayer of 'resurrection' when standing
- directly next to a ghost. The higher the resurrection spell level was,
- the less experience will be lost.
-The ghost will return to the world of living under the cost of a lot of
-experience but at least the player can resume playing. If the ghost dies,
-the character will finally be erased permanently, watch out!
+ If you want to do this but don't want to lose your items that dropped in the
+ dungeon where you died, either have someone wait down there for your return or
+ ask someone to pick up your items before your ghost leaves the dungeon level.
+-wait down there for another player to come to your ghost and (doesn't work
+ inside vaults!) read a 'Scroll of Life' when standing directly next to you.
+-wait down there for another player to come to your ghost and (doesn't work
+ inside vaults!) speak a prayer of 'Resurrection' when standing directly next
+ to you. This method costs you the least amount of experience penalty, which
+ gets reduced depending on the level of the resurrection spell.
+
+By any means of resurrection, the ghost will then return to the world of the
+living under the cost of a lot of experience but at least the player can resume
+playing. If the ghost dies, the character will finally be erased permanently,
+watch out!
 
 Ghosts slowly lose experience, if they go below 0 they will fade and the
 player will be erased completely.
@@ -6936,6 +6942,16 @@ Make sure your ghost is in a safe spot, preferably within walls, so most
 monsters will be unable to attack you. Avoid moving around until the player you
 called for a rescue confirms that he has cleared out the monsters and tells you
 where you should move next.
+
+Note that certain items can be traded cross-mode (ie between everlasting and
+non-everlasting players) to make rescues easier! These are:
+- Basic food and ale
+- Torches
+- Flasks of Oil
+- Scrolls of Satisfy Hunger
+- Scrolls of Word of Recall
+These items will be 100% discounted on cross-mode trade, so they become
+unsalable to stores, but at least you can use them!
 
 
 
