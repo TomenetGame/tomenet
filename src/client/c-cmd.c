@@ -3991,10 +3991,10 @@ void browse_local_file(char* fname, int rememberance_index) {
 		line_cur[rememberance_index] = 0;
 		line_before_search[rememberance_index] = 0;
 		jumped_to_line[rememberance_index] = 0;
-		file_lastline[rememberance_index] = -1;
 		//lastsearch[rememberance_index][0] = 0; //maybe just keep this, doesn't hurt
 	}
 
+	file_lastline[rememberance_index] = -1; //always try anew if the file is valid
 	path_build(path, 1024, ANGBAND_DIR_GAME, fname);
 
 	/* init the file */
