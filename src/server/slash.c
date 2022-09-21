@@ -12129,8 +12129,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 
-				Send_version(j);
+				if (fake_waitpid_clver) {
+					msg_print(Ind, "\377yOnly one clver-request can be pending at a time, please try again.");
+					return;
+				}
 
+				Send_version(j);
+				fake_waitpid_clver = p_ptr->id; /* Poll result to admin */
 				return;
 			}
 		}

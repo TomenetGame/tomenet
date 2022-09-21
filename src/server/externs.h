@@ -2615,7 +2615,7 @@ extern void do_slash_cmd(int Ind, char *message, char *message_u);
 extern void tym_evaluate(int Ind);
 extern void wish(int Ind, struct worldpos *wpos, int tval, int sval, int number, int bpval, int pval, int name1, int name2, int name2b, int level, object_type *ox_ptr);
 extern void lua_wish(int Ind, int tval, int sval, int number, int bpval, int pval, int name1, int name2, int name2b, int level);
-extern s32b fake_waitpid_geo, fake_waitpid_ping;
+extern s32b fake_waitpid_geo, fake_waitpid_ping, fake_waitpid_clver;
 
 
 

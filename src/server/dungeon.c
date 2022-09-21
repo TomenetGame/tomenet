@@ -10703,7 +10703,7 @@ void process_timers() {
 #endif
 				//remove("__ipinfo.tmp"); /* Keep maybe, if we want to review it manually afterwards. */
 			}
-		}
+		} else y = 1;
 		if (y) fake_waitpid_geo = 0;
 	}
 	if (fake_waitpid_ping) {
@@ -10740,7 +10740,7 @@ void process_timers() {
 				else if (!x) msg_print(i, "No ping information available.");
 				//remove("__ipping.tmp"); /* Keep maybe, if we want to review it manually afterwards. */
 			}
-		}
+		} else y = 1;
 		if (y) fake_waitpid_ping = 0;
 	}
 }

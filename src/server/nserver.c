@@ -14349,7 +14349,26 @@ static int Receive_version(int ind) {
 	/* paranoia? */
 	version[MAX_CHARS - 1] = '\0';
 
-	if (p_ptr) s_printf("PKT_VERSION <%s> (%s): %s // %s\n", p_ptr->name, p_ptr->accountname, version, os_version);
+	if (p_ptr) {
+		s_printf("PKT_VERSION <%s> (%s): %s // %s\n", p_ptr->name, p_ptr->accountname, version, os_version);
+		if (fake_waitpid_clver) {
+			/* Check if admin caller is still present */
+			for (n = 1; n <= NumPlayers; n++) {
+				p_ptr = Players[n];
+				if (p_ptr->conn == NOT_CONNECTED) continue;
+				if (p_ptr->id != fake_waitpid_clver) continue;
+				break;
+			}
+			/* Found him */
+			if (n <= NumPlayers) {
+				msg_format(GetInd[connp->id], "Client version <%s> (%s):", p_ptr->name, p_ptr->accountname);
+				msg_format(GetInd[connp->id], " %s", version);
+				msg_format(GetInd[connp->id], " %s", os_version);
+			}
+
+			fake_waitpid_clver = 0;
+		}
+	}
 
 	return 1;
 }
