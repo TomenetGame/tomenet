@@ -2196,6 +2196,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		else if (!strcasecmp(buf, "guild")) strcpy(init_search_string, "guilds");
 		else if (!strcasecmp(buf, "party")) strcpy(init_search_string, "parties");
 		else if (my_strcasestr(buf, "magical") && my_strcasestr(buf, "dev")) strcpy(init_search_string, "magic devices"); //NOT -> magic device (skill name)
+		else if ((my_strcasestr(buf, "die") || my_strcasestr(buf, "dice")) && my_strcasestr(buf, "hp")) strcpy(init_search_string, "hp die");
 
 		/* clean up */
 		buf[0] = 0;
