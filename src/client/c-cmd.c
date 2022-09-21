@@ -4237,6 +4237,20 @@ void browse_local_file(char* fname, int rememberance_index) {
 				*cp2 = 0;
 			}
 
+			/* Automatically add colour to "#" comments */
+			if ((cp = strchr(buf2, '#')) && (cp == buf2 || *(cp -1) != ':')) {
+				/* If the comment contains (part of) a search result, we must replace the \377w marker accordingly */
+				while ((cp2 = strstr(cp, "\377w")))
+					*(cp2 + 1) = 'D'; /* Comments are dark grey instead of white */
+
+				strncpy(buf, buf2, (int)(cp - buf2));
+				buf[(int)(cp - buf2)] = 0;
+				strcat(buf, "\377D"); /* Comments are dark grey instead of white */
+				strcat(buf, cp);
+
+				strcpy(buf2, buf);
+			}
+
 			/* Display processed line, colourized by chapters and search results */
 			Term_putstr(0, 2 + n, -1, TERM_WHITE, buf2);
 		}
