@@ -4246,7 +4246,7 @@ void do_quit(int ind, bool tellclient) {
 		Destroy_connection(ind, "client quit");
 	}
 	// Otherwise wait for the timeout
-	else exec_lua(NumPlayers, format("player_leaves_timeout(%d, %d, \"%/s\", \"%s\")", NumPlayers, p_ptr->id, p_ptr->name, showtime()));
+	else exec_lua(0, format("player_leaves_timeout(%d, %d, \"%/s\", \"%s\")", player, p_ptr->id, p_ptr->name, showtime()));
 }
 
 
