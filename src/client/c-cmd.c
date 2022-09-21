@@ -4093,7 +4093,7 @@ void browse_local_file(char* fname, int rememberance_index) {
 					withinsearch[0] = 0;
 
 					/* we cannot search for further results if there was none (would result in glitchy visuals) */
-					lastsearch[rememberance_index][0] = 0;
+					//lastsearch[rememberance_index][0] = 0;
 
 					/* correct our line number again */
 					line_cur[rememberance_index] = line_presearch;
@@ -4338,7 +4338,8 @@ void browse_local_file(char* fname, int rememberance_index) {
 #endif
 			Term_erase(0, bottomline, 80);
 			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter search string: ");
-			searchstr[0] = 0;
+			if (lastsearch[rememberance_index][0]) strcpy(searchstr, lastsearch[rememberance_index]);
+			else searchstr[0] = 0;
 			inkey_msg_old = inkey_msg;
 			inkey_msg = TRUE;
 			askfor_aux(searchstr, MAX_CHARS - 1, 0);
@@ -4366,7 +4367,8 @@ void browse_local_file(char* fname, int rememberance_index) {
 			Term_erase(0, bottomline, 80);
 			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter search regexp: ");
 
-			searchstr[0] = 0;
+			if (lastsearch[rememberance_index][0]) strcpy(searchstr, lastsearch[rememberance_index]);
+			else searchstr[0] = 0;
 
 			inkey_msg_old = inkey_msg;
 			inkey_msg = TRUE;
@@ -4431,7 +4433,8 @@ void browse_local_file(char* fname, int rememberance_index) {
 
 			Term_erase(0, bottomline, 80);
 			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter mark string: ");
-			searchstr[0] = 0;
+			if (lastsearch[rememberance_index][0]) strcpy(searchstr, lastsearch[rememberance_index]);
+			else searchstr[0] = 0;
 			inkey_msg_old = inkey_msg;
 			inkey_msg = TRUE;
 			askfor_aux(searchstr, MAX_CHARS - 1, 0);
