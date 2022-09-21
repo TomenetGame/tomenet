@@ -74,7 +74,7 @@ X:hp_bar
 X:mp_bar
 X:st_bar
 X:equip_text_colour
-X:colourize_prices
+X:colourize_bignum
 
 X:alert_hitpoint
 X:alert_mana

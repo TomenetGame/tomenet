@@ -8043,7 +8043,7 @@ void options_immediate(bool init) {
 		changed1 = c_cfg.exp_need; changed2 = c_cfg.exp_bar; changed3 = c_cfg.font_map_solid_walls;
 		changed4a = c_cfg.hp_bar; changed4b = c_cfg.mp_bar; changed4c = c_cfg.st_bar;
 		changed5 = c_cfg.equip_text_colour;
-		changed6 = c_cfg.colourize_prices;
+		changed6 = c_cfg.colourize_bignum;
 		return;
 	}
 
@@ -8062,7 +8062,10 @@ void options_immediate(bool init) {
 		prt_stamina(st_max, st_cur, st_bar);
 	}
 	if (changed5 != c_cfg.equip_text_colour) p_ptr->window |= PW_EQUIP;
-	if (changed6 != c_cfg.colourize_prices) prt_gold(p_ptr->au);
+	if (changed6 != c_cfg.colourize_bignum) {
+		prt_gold(p_ptr->au);
+		prt_level(p_ptr->lev, p_ptr->max_lev, p_ptr->max_plv, p_ptr->max_exp, p_ptr->exp, exp_adv, exp_adv_prev);
+	}
 }
 
 /*
@@ -11316,3 +11319,66 @@ void clear_macros(void) {
 	for (i = 0; i < 256; i++) macro__use[i] = 0;
 }
 #endif
+
+/* Colourize 3-digit clusters a bit to make reading big numbers more comfortable. - C. Blue
+   method:
+   0 - price tags inside stores (white/l-umber)
+   1 - AU/XP line in main window (l-green/slate), also Au/Xp in C screen
+   2 - like 1 but make it a length 9 number instead of length 10
+ */
+#define COLPRICE_AU1 TERM_SLATE
+#define COLPRICE_AU2 TERM_L_GREEN
+#define COLPRICE_AU1S "\377s"
+#define COLPRICE_AU2S "\377G"
+#define COLPRICE_MAU1 TERM_UMBER
+#define COLPRICE_MAU2 TERM_L_UMBER
+#define COLPRICE_MAU1S "\377u"
+#define COLPRICE_MAU2S "\377U"
+#define FIXED_PY_MAX_GOLD
+void colour_bignum(s32b bn, s32b bn_max, char *out_val, byte method) {
+	out_val[0] = 0;
+
+	switch (method) {
+	case 0:
+		/* No billion prices in npc stores but could be in pstores */
+		if (bn >= 1000000000) (void)sprintf(out_val, "\377U%d\377w%03d\377U%03d\377w%03d ", bn / 1000000000, (bn % 1000000000) / 1000000, (bn % 1000000) / 1000, bn % 1000);
+		else if (bn >= 1000000) (void)sprintf(out_val, "\377w%3d\377U%03d\377w%03d  ", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
+		else if (bn >= 1000) (void)sprintf(out_val, "\377U%6d\377w%03d ", bn / 1000, bn % 1000);
+		else (void)sprintf(out_val, "\377w%9d  ", bn);
+		break;
+	case 1:
+		/* Doesn't look thaaat nice colour-wise maybe, despite being easier to interpret :/ */
+		if (bn != bn_max) {
+			/* Assume max of 4 triplets aka 12-digit number */
+			if (bn >= 1000000000) sprintf(out_val, COLPRICE_AU1S "%1d" COLPRICE_AU2S "%03d" COLPRICE_AU1S "%03d" COLPRICE_AU2S "%03d", bn / 1000000000, (bn % 1000000000) / 1000000, (bn % 1000000) / 1000, bn % 1000);
+			else if (bn >= 1000000) sprintf(out_val, COLPRICE_AU2S "%4d" COLPRICE_AU1S "%03d" COLPRICE_AU2S "%03d", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
+			else if (bn >= 1000) sprintf(out_val, COLPRICE_AU1S "%7d" COLPRICE_AU2S "%03d", bn / 1000, bn % 1000);
+			else sprintf(out_val, COLPRICE_AU2S "%10d", bn);
+		} else {
+#ifndef FIXED_PY_MAX_GOLD
+			/* Alternating umber tones for PY_MAX_GOLD */
+			sprintf(out_val, COLPRICE_MAU2S "%1d" COLPRICE_MAU1S "%03d" COLPRICE_MAU2S "%03d" COLPRICE_MAU1S "%03d", bn / 1000000000, (bn % 1000000000) / 1000000, (bn % 1000000) / 1000, bn % 1000);
+#else
+			/* Since PY_MAX_GOLD is a fixed number, just display it all in one colour, cannot be misinterpreted */
+			sprintf(out_val, COLPRICE_MAU2S "%10d", bn);
+#endif
+		}
+		break;
+	case 2:
+		if (bn != bn_max) {
+			/* Assume max of 4 triplets aka 12-digit number */
+			if (bn >= 1000000) sprintf(out_val, COLPRICE_AU2S "%3d" COLPRICE_AU1S "%03d" COLPRICE_AU2S "%03d", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
+			else if (bn >= 1000) sprintf(out_val, COLPRICE_AU1S "%6d" COLPRICE_AU2S "%03d", bn / 1000, bn % 1000);
+			else sprintf(out_val, COLPRICE_AU2S "%9d", bn);
+		} else {
+#ifndef FIXED_PY_MAX_GOLD
+			/* Alternating umber tones for PY_MAX_GOLD */
+			sprintf(out_val, COLPRICE_MAU1S "%3d" COLPRICE_MAU2S "%03d" COLPRICE_MAU1S "%03d", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
+#else
+			/* Since PY_MAX_GOLD is a fixed number, just display it all in one colour, cannot be misinterpreted */
+			sprintf(out_val, COLPRICE_MAU2S "%9d", bn);
+#endif
+		}
+		break;
+	}
+}

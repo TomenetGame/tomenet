@@ -4014,7 +4014,7 @@ struct client_opts {
 	bool destroy_all_unmatched;
 
 	bool equip_text_colour;
-	bool colourize_prices;
+	bool colourize_bignum;
 	bool clone_to_stdout;
 	bool clone_to_file;
 };

@@ -551,8 +551,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 
 	{ &c_cfg.equip_text_colour,	FALSE,	6, 0,	142, TRUE,
 	    "equip_text_colour",	"Display equipment indices/weight in yellow" },
-	{ &c_cfg.colourize_prices,	FALSE,	6, 0,	143, TRUE,
-	    "colourize_prices",		"Colourize store prices in 3-digit columns." },
+	{ &c_cfg.colourize_bignum,	FALSE,	6, 0,	143, TRUE,
+	    "colourize_bignum",		"Colourize prices, AU and XP in 3-digit columns." },
 
 	{ &c_cfg.clone_to_stdout,	FALSE,	7,	0, 144, TRUE,
 	    "clone_to_stdout",		"Clone client chat and messages to stdout" },

@@ -203,14 +203,16 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 
 	colour = (p_ptr->exp < p_ptr->max_exp) ? TERM_YELLOW : (p_ptr->exp < PY_MAX_EXP ? TERM_L_GREEN : TERM_L_UMBER);
 	if (!c_cfg.exp_bar) {
-		if (!c_cfg.exp_need)
-			sprintf(tmp, "%9d", (int)cur);
-		else {
+		if (!c_cfg.exp_need) {
+			if (c_cfg.colourize_bignum) colour_bignum(cur, PY_MAX_EXP, tmp, 2);
+			else sprintf(tmp, "%9d", (int)cur);
+		} else {
 			if (level >= PY_MAX_PLAYER_LEVEL || !adv)
 				(void)sprintf(tmp, "      ***");
 			else {
 				/* Hack -- display in minus (to avoid confusion chez player) */
-				(void)sprintf(tmp, "%9d", (int)(cur - adv));
+				if (c_cfg.colourize_bignum) colour_bignum((int)(cur - adv), PY_MAX_EXP, tmp, 1);
+				else sprintf(tmp, "%9d", (int)(cur - adv));
 			}
 		}
 		strcat(tmp, " "); //hack to correctly clear line after player disabled 'exp_bar' option (it's 1 char 'too long')
@@ -343,7 +345,7 @@ void prt_gold(int gold) {
 	int x, y;
 
 	/* Apply to AU display too */
-	if (!c_cfg.colourize_prices) {
+	if (!c_cfg.colourize_bignum) {
 		char tmp[10 + 1];
 
 		/* remember cursor position */
@@ -357,46 +359,17 @@ void prt_gold(int gold) {
 	} else {
 		/* Doesn't look thaaat nice colour-wise maybe, despite being easier to interpret :/ */
 		char tmp[(2 + 3) * 4 + 1];
- #define COLPRICE_AU1 TERM_SLATE
- #define COLPRICE_AU2 TERM_L_GREEN
- #define COLPRICE_AU1S "\377s"
- #define COLPRICE_AU2S "\377G"
- #define COLPRICE_MAU1 TERM_UMBER
- #define COLPRICE_MAU2 TERM_L_UMBER
- #define COLPRICE_MAU1S "\377u"
- #define COLPRICE_MAU2S "\377U"
 
- #define FIXED_PY_MAX_GOLD
+		colour_bignum(gold, PY_MAX_GOLD, tmp, 1);
 
 		/* remember cursor position */
 		Term_locate(&x, &y);
 
-		if (gold != PY_MAX_GOLD) {
-			/* Assume max of 4 triplets aka 12-digit number */
-			if (gold >= 1000000000) sprintf(tmp, "%5d" COLPRICE_AU2S "%03d" COLPRICE_AU1S "%03d" COLPRICE_AU2S "%03d", gold / 1000000000, (gold % 1000000000) / 1000000, (gold % 1000000) / 1000, gold % 1000);
-			else if (gold >= 1000000) sprintf(tmp, COLPRICE_AU2S "%6d" COLPRICE_AU1S "%03d" COLPRICE_AU2S "%03d", gold / 1000000, (gold % 1000000) / 1000, gold % 1000);
-			else if (gold >= 1000) sprintf(tmp, COLPRICE_AU1S "%9d" COLPRICE_AU2S "%03d", gold / 1000, gold % 1000);
-			else sprintf(tmp, COLPRICE_AU2S "%12d", gold);
-		}
-		/* total %d length +2 (14 instead of 12) for non-existant colour code at the beginning */
-		else
-#ifndef FIXED_PY_MAX_GOLD
-		/* Alternating umber tones for PY_MAX_GOLD */
-		sprintf(tmp, "%5d" COLPRICE_MAU2S "%03d" COLPRICE_MAU1S "%03d" COLPRICE_MAU2S "%03d", gold / 1000000000, (gold % 1000000000) / 1000000, (gold % 1000000) / 1000, gold % 1000);
-#else
-		/* Since PY_MAX_GOLD is a fixed number, just display it all in one colour, cannot be misinterpreted */
-		sprintf(tmp, "%14d", gold);
-#endif
-
 		/* Very large gold amount? Reduce AU to just $ to make room for 1 more digit */
-		if (tmp[4] != ' ') put_str("$ ", ROW_GOLD, COL_GOLD);
+		if (tmp[2] != ' ') put_str("$ ", ROW_GOLD, COL_GOLD);
 		else put_str("AU ", ROW_GOLD, COL_GOLD);
 
-#ifndef FIXED_PY_MAX_GOLD /* For 'Umber tones' above */
-		c_put_str(gold == PY_MAX_GOLD ? COLPRICE_MAU1 : ((gold >= 1000000000 || (gold < 1000000 && gold >= 1000)) ? COLPRICE_AU1 : COLPRICE_AU2), tmp + 4, ROW_GOLD, COL_GOLD + 2); /* Make up for 10 -> 12 (and +1 for colour code, we skip the first one!) number size expansion for triplet-processing */
-#else /* For "fixed one colour" above */
-		c_put_str(gold == PY_MAX_GOLD ? COLPRICE_MAU2 : ((gold >= 1000000000 || (gold < 1000000 && gold >= 1000)) ? COLPRICE_AU1 : COLPRICE_AU2), tmp + 4, ROW_GOLD, COL_GOLD + 2); /* Make up for 10 -> 12 (and +1 for colour code, we skip the first one!) number size expansion for triplet-processing */
-#endif
+		c_put_str(TERM_YELLOW, tmp, ROW_GOLD, COL_GOLD + 2); /* Make up for 10 -> 12 (and +1 for colour code, we skip the first one!) number size expansion for triplet-processing */
 	}
 
 	/* restore cursor position */

@@ -101,19 +101,12 @@ static void display_entry(int pos, int entries) {
 			x = store_prices[pos];
 			if (x >= 0) { /* <0: player store hack and mathom-house hack */
 				/* Actually draw the price (not fixed) */
-				if (!c_cfg.colourize_prices) {
+				if (!c_cfg.colourize_bignum) {
 					/* Normal display of the price */
 					(void)sprintf(out_val, "%9d  ", x);
 				} else {
-					/* Colourize 3-digit clusters a bit to make reading big numbers more comfortable */
-					out_val[0] = 0;
-					/* No billion prices in npc stores but could be in pstores */
-					if (p_ptr->au >= x && x >= 0) {
-						if (x >= 1000000000) (void)sprintf(out_val, "\377U%d\377w%03d\377U%03d\377w%03d ", x / 1000000000, (x % 1000000000) / 1000000, (x % 1000000) / 1000, x % 1000);
-						else if (x >= 1000000) (void)sprintf(out_val, "\377w%3d\377U%03d\377w%03d  ", x / 1000000, (x % 1000000) / 1000, x % 1000);
-						else if (x >= 1000) (void)sprintf(out_val, "\377U%6d\377w%03d ", x / 1000, x % 1000);
-						else (void)sprintf(out_val, "\377w%9d  ", x);
-					} else (void)sprintf(out_val, "%9d  ", x); //will be coloured dark aka unaffordable
+					if (p_ptr->au >= x && x >= 0) colour_bignum(x, -1, out_val, 0);
+					else (void)sprintf(out_val, "%9d  ", x); //will be coloured dark aka unaffordable
 				}
 				c_put_str(p_ptr->au < x ? TERM_L_DARK : TERM_WHITE, out_val, i + 6, 68);
 			}
@@ -878,17 +871,15 @@ void c_store_prt_gold(void) {
 
 	prt("Gold Remaining: ", 19 + spacer, 53);
 
-	sprintf(out_val, "%9d", p_ptr->au);
-	if (p_ptr->au < 1000000000) strcat(out_val, " "); //hack to correctly clear line for players moving huge amounts
-	prt(out_val, 19 + spacer, 68);
+	sprintf(out_val, "%10d", p_ptr->au);
+	prt(out_val, 19 + spacer, 69);
 
 	/* Hack -- show balance (if not 0) */
 	if (store_num == STORE_MERCHANTS_GUILD && p_ptr->balance) {
 		prt("Your balance  : ", 20 + spacer, 53);
 
-		sprintf(out_val, "%9d", p_ptr->balance);
-		if (p_ptr->au < 1000000000) strcat(out_val, " ");
-		prt(out_val, 20 + spacer, 68);
+		sprintf(out_val, "%10d", p_ptr->balance);
+		prt(out_val, 20 + spacer, 69);
 	} else {
 		/* Erase part of the screen */
 		Term_erase(0, 20 + spacer, 255);
