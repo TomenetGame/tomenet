@@ -11898,7 +11898,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 #endif
-#ifdef TEST_SERVER
+//#ifdef TEST_SERVER
+#if 1
 			else if (prefix(messagelc, "/settime")) {
 				int h, m, hc, mc;
 
