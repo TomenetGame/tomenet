@@ -2577,7 +2577,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 				/* Begin searching mode */
 				sp_iter = -1;
 				search = TRUE;
-				break;
+				//break; - don't break, start searching right away, as we might already have entered something into this chat prompt
 			}
 			if (!buf[0]) continue; /* Nothing typed in yet */
 
