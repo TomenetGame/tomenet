@@ -185,7 +185,7 @@ pern_dofile(Ind, "o_unlife.lua")
 -- Tomes / Greater crystals
 
 -- Create the crystal of mana (1-4)
-school_book[0] = { DISPERSEMAGIC, MANASHIELD, MANATHRUST_III, RECHARGE_III, DELCURSES_II, }
+school_book[0] = { DISPERSEMAGIC, MANASHIELD, MANATHRUST_III, RECHARGE_III, }
 -- The book of the eternal flame (5-8)
 school_book[1] = { RESISTS_II, GLOBELIGHT_II, FIERYAURA_II, FIREBOLT_III, FIREWALL_II, FIREBALL_II, FIREFLASH_II, }
 -- The book of the blowing winds (9-13)
@@ -199,12 +199,12 @@ school_book[3] = {
 -- The book of the everrunning wave (18-21)
 school_book[4] = { ENTPOTION, RESISTS_II, TIDALWAVE_II, ICESTORM_II, VAPOR_III, FROSTBOLT_III, WATERBOLT_III, FROSTBALL_II, }
 -- Create the book of translocation (22-27)
-school_book[5] = { BLINK, DISARM, TELEPORT, RECALL, PROBABILITY_TRAVEL, TELEAWAY_II, }
+school_book[5] = { BLINK, DISARM, TELEPORT, RECALL, PROBABILITY_TRAVEL, TELEKINESIS, TELEAWAY_II, }
 -- Create the book of the tree * SUMMONANIMAL requires pets first (28-32)
 --school_book[6] = { VERMINCONTROL, REGENERATION, GROWTREE, RECOVERY_II, HEALING_III, }
-school_book[6] = { VERMINCONTROL, REGENERATION, GROWTREE, POISONBLOOD, RECOVERY_II, HEALING_III, }
+school_book[6] = { VERMINCONTROL, REGENERATION, GROWTREE, POISONBLOOD, RECOVERY_II, HEALING_III, DELCURSES_II, }
 -- Create the book of Knowledge (33-38)
-school_book[7] = { DETECTMONSTERS, REVEALWAYS, SENSEHIDDEN_II, IDENTIFY_III,  STARIDENTIFY, VISION_II, }
+school_book[7] = { DETECTMONSTERS, REVEALWAYS, SENSEHIDDEN_II, IDENTIFY_III,  STARIDENTIFY, SENSEMONSTERS, VISION_II, }
 -- Create the book of the Time (39-42)
 school_book[8] = { ESSENSESPEED, SLOWMONSTER_II, MAGELOCK_II, MASSWARP, }
 -- Create the book of meta spells (43-45)
@@ -212,7 +212,7 @@ school_book[8] = { ESSENSESPEED, SLOWMONSTER_II, MAGELOCK_II, MASSWARP, }
 -- Create the book of the mind * CHARM requires pets first (46-48)
 --school_book[10] = { CONFUSE_II, TELEKINESIS, SENSEMONSTERS, STUN_II, }
 -- Create the book of hellflame * DRAIN, FLAMEOFUDUN missing (49-53)
-school_book[11] = { GENOCIDE_I, GENOCIDE_II, DISEBOLT, HELLFIRE_II, WRAITHFORM, STOPWRAITH, }
+school_book[11] = { CONFUSE_II, STUN_II, GENOCIDE_I, GENOCIDE_II, DISEBOLT, HELLFIRE_II, WRAITHFORM, STOPWRAITH, }
 
 -- Priests / Paladins:
 
