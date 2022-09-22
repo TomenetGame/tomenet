@@ -12139,6 +12139,27 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				fake_waitpid_clver = p_ptr->id; /* Poll result to admin */
 				return;
 			}
+#ifdef EQUIPMENT_SET_BONUS
+			else if (prefix(messagelc, "/chkset")) { /* check artifact-name-based set bonus to LUCK */
+				player_type *p_ptr;
+
+				if (!tk) {
+					msg_print(Ind, "\377oUsage: /chkset <character name>");
+					return;
+				}
+
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
+				if (!j) {
+					msg_print(Ind, "\377yCharacter not online.");
+					return;
+				}
+
+				p_ptr = Players[j];
+				for (j = 0; j < INVEN_TOTAL - INVEN_WIELD; j++)
+					msg_format(Ind, "%c) %d", 'a' + j, p_ptr->equip_set[j]);
+				return;
+			}
+#endif
 		}
 	}
 

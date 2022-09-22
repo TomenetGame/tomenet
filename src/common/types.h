@@ -2505,6 +2505,9 @@ struct player_type {
 #ifdef ENABLE_SUBINVEN
 	object_type subinventory[INVEN_PACK + 1][SUBINVEN_PACK + 1];	/* Player's subinventories */
 #endif
+#ifdef EQUIPMENT_SET_BONUS
+	char equip_set[INVEN_TOTAL - INVEN_WIELD];
+#endif
 
 	s32b total_weight;		/* Total weight being carried */
 

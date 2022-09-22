@@ -134,6 +134,9 @@
 /* Allow a larger main window with a map bigger than 66x22 (usually 66x44) - C. Blue */
 #define BIG_MAP
 
+/* Experimental and also silly ;) - reward players for wearing arts of similar name - C. Blue */
+#define EQUIPMENT_SET_BONUS
+
 /* Use an info screen for normal ID too, not just for *ID*, and display all
    guaranteed abilities (k_info and 100%-e_info flags/esp) in it. - C. Blue */
 #define NEW_ID_SCREEN

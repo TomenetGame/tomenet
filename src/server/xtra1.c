@@ -43,9 +43,6 @@
 /* Allow ego monsters in Arena Challenge global event? */
 #define GE_ARENA_ALLOW_EGO
 
-/* Experimental and also silly ;) - reward players for wearing arts of similar name - C. Blue */
-#define EQUIPMENT_SET_BONUS
-
 /* Do not lower HP of mimics if the monster form has lower HP than their @ form. - C. Blue
    Currently also works for to-dam, could be extended to even Speed maybe. Shouldn't be extended onto AC. */
 #define MIMICRY_BOOST_WEAK_FORM
@@ -4657,6 +4654,8 @@ void calc_boni(int Ind) {
 		if (!equipment_set[i]) continue;
 		if (equipment_set_amount[i] > equipment_set_bonus)
 			equipment_set_bonus = equipment_set_amount[i];
+		/* remember for things like admin command checking or visual indicator in client's equipment window */
+		p_ptr->equip_set[i] = equipment_set_amount[i];
 	}
 	if (equipment_set_bonus >= 2) {
 		/* Display the luck boni on each involved item */
