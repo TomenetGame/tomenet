@@ -14361,9 +14361,9 @@ static int Receive_version(int ind) {
 			}
 			/* Found him */
 			if (n <= NumPlayers) {
-				msg_format(GetInd[connp->id], "Client version <%s> (%s):", p_ptr->name, p_ptr->accountname);
-				msg_format(GetInd[connp->id], " %s", version);
-				msg_format(GetInd[connp->id], " %s", os_version);
+				msg_format(n, "Client version <%s> (%s):", p_ptr->name, p_ptr->accountname);
+				msg_format(n, " %s", version);
+				msg_format(n, " %s", os_version);
 			}
 
 			fake_waitpid_clver = 0;
