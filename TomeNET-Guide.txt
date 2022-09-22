@@ -19385,7 +19385,8 @@ school.
     Sense Minds     Gives you temporary ESP.
                     Required skill level for first spell level: 40.
 
-    BONI:           At 50, know some intrinsics just by looking at an entity.
+    BONI:           At 50, know some intrinsics just by looking at an entity
+                    such as monsters, players, traps or fountains.
 
 
 - Temporal          [Spells are INT-based.]
