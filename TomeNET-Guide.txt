@@ -19264,6 +19264,8 @@ school.
 
     Thunderstorm    Throws thunder bolts at random monsters nearby.
                     (33% lightning, 33% sound, 33% light)
+                    It will omit sleeping and charmed monsters as to not break
+                    the effects.
                     Required skill level for first spell level: 15.
                     Shared spell (see above): Air, Nature.
 
