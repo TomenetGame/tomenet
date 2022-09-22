@@ -12427,11 +12427,10 @@ F:HURT_LITE | NO_CONF | NO_SLEEP | RES_TELE | NO_CUT | RES_NETH
 S:1_IN_2 |
 S:S_DEMON | S_UNDEAD | S_KIN | SCARE | CURSE | RAISE_DEAD
 S:TELE_AWAY | TPORT | BRAIN_SMASH | CONF
-D:The King in Yellow is an Avatar of Hastur: "He has no
-D:face, and is twice as tall as a man. He wears pointed shoes under
-D:his tattered, fantastically colored robes, and a streamer of silk
-D:appears to fall from the pointed tip of his hood. At times he appears
-D:to be winged; at others, haloed."
+D:The King in Yellow is an Avatar of Hastur: "He has no face, and is twice
+D:as tall as a man. He wears pointed shoes under his tattered, fantastically
+D:colored robes, and a streamer of silk appears to fall from the pointed tip
+D:of his hood. At times he appears to be winged; at others, haloed."
 
 N:736:Great unclean one
 G:U:g
