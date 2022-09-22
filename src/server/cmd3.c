@@ -4433,8 +4433,9 @@ void do_cmd_look(int Ind, int dir) {
 		/* Hack -- add trap description */
 		if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
 			int t_idx = cs_ptr->sc.trap.t_idx;
-			if (cs_ptr->sc.trap.found || get_skill(p_ptr, SKILL_DIVINATION) == 50) {
-				if (p_ptr->trap_ident[t_idx])
+
+			if (cs_ptr->sc.trap.found) {
+				if (p_ptr->trap_ident[t_idx] || get_skill(p_ptr, SKILL_DIVINATION) == 50)
 					p1 = t_name + t_info[t_idx].name;
 				else
 					p1 = "A trap";
