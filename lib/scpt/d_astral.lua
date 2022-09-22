@@ -6,14 +6,14 @@ end
 
 function get_astral_dam(Ind, limit_lev)
 	local lev
-	lev = get_astral_lev(Ind)
+	lev = get_astral_lev(Ind) / 2 + (players(Ind).s_info[SKILL_ASTRAL + 1].value + 1) / 2000
 	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 2 end
 	return (3 + ((lev * 3) / 5)), (1 + lev / 2)
 end
 
 function get_astral_ball_dam(Ind, limit_lev)
 	local lev
-	lev = get_astral_lev(Ind)
+	lev = get_astral_lev(Ind) / 2 + (players(Ind).s_info[SKILL_ASTRAL + 1].value + 1) / 2000
 	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 2 end
 	return lev * 9
 end
@@ -74,8 +74,8 @@ POWERBOLT_II = add_spell {
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	20,
-	["mana"] = 	7,
-	["mana_max"] = 	7,
+	["mana"] = 	8,
+	["mana_max"] = 	8,
 	["fail"] = 	-35,
 	["stat"] = 	A_INT,
 	["direction"] = TRUE,
@@ -106,8 +106,8 @@ POWERBOLT_III = add_spell {
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	40,
-	["mana"] = 	15,
-	["mana_max"] = 	15,
+	["mana"] = 	25,
+	["mana_max"] = 	25,
 	["fail"] = 	-100,
 	["stat"] = 	A_INT,
 	["direction"] = TRUE,
@@ -168,8 +168,8 @@ POWERBEAM_II = add_spell {
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	20,
-	["mana"] = 	10,
-	["mana_max"] = 	10,
+	["mana"] = 	12,
+	["mana_max"] = 	12,
 	["fail"] = 	-30,
 	["stat"] = 	A_INT,
 	["direction"] = TRUE,
@@ -200,8 +200,8 @@ POWERBEAM_III = add_spell {
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	40,
-	["mana"] = 	20,
-	["mana_max"] = 	20,
+	["mana"] = 	30,
+	["mana_max"] = 	30,
 	["fail"] = 	-100,
 	["stat"] = 	A_INT,
 	["direction"] = TRUE,
@@ -262,8 +262,8 @@ POWERBALL_II = add_spell {
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	25,
-	["mana"] = 	15,
-	["mana_max"] = 	15,
+	["mana"] = 	17,
+	["mana_max"] = 	17,
 	["fail"] = 	-50,
 	["stat"] = 	A_INT,
 	["direction"] = TRUE,
@@ -291,8 +291,8 @@ POWERBALL_III = add_spell {
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	45,
-	["mana"] = 	30,
-	["mana_max"] = 	30,
+	["mana"] = 	35,
+	["mana_max"] = 	35,
 	["fail"] = 	-115,
 	["stat"] = 	A_INT,
 	["direction"] = TRUE,
