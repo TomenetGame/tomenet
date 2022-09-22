@@ -222,7 +222,7 @@ static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start) 
 
 		if (j == sel) {
 #ifdef USE_X11 /* currently on Win this just causes blackness (not even text?) */
- #ifndef TEST_CLIENT
+ #if !defined(TEST_CLIENT) || !defined(EXTENDED_BG_COLOURS)
 			color = TERM_L_GREEN;
  #else
 			color = TERMX_BLUE;
