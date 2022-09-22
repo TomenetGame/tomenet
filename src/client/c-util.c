@@ -9608,9 +9608,15 @@ static void do_cmd_options_colourblindness(void) {
 			if (!c_cfg.palette_animation) continue;
 			for (i = 0; i < BASE_PALETTE_SIZE; i++) {
 				client_color_map[i] = client_color_map_org[i];
-				if (i == 6 && lighterdarkblue && client_color_map[i] == 0x0000ff) client_color_map[i] = 0x0033ff;
-#ifdef EXTENDED_COLOURS_PALANIM
-				if (i == 16 && lighterdarkblue && client_color_map[i] == 0x0000ff) client_color_map[i] = 0x0033ff;
+				if (i == 6 && lighterdarkblue && client_color_map[i] == 0x0000ff)
+#ifdef WINDOWS
+					enable_readability_blue_win();
+#else
+ #ifdef USE_X11
+					enable_readability_blue_x11();
+ #else
+					enable_readability_blue_gcu();
+ #endif
 #endif
 				set_palette(i, (client_color_map[i] & 0xFF0000) >> 16, (client_color_map[i] & 0x00FF00) >> 8, (client_color_map[i] & 0x0000FF));
 			}
