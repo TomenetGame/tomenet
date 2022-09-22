@@ -19021,12 +19021,6 @@ school.
                     Lv 15: Speed/Slowness/Stun.
                     This spell can be used even while confused or blind.
 
-    Remove Curses   Removes non-heavy curses from carried/worn objects.
-                    Required skill level for first spell level: 20.
-
-                    Tier II: Level 40.
-                    Removes all normal and heavy curses. Also see (5.14).
-
     Disruption Shield
                     Conjures a shield that protects you from taking damage.
                     Instead, the shield will consume your mana to absorb it.
@@ -19272,6 +19266,12 @@ school.
     Regeneration    Increases your hit point regeneration rate.
                     (Stacks with other regeneration effects and item flag.)
                     Required skill level for first spell level: 20.
+
+    Remove Curses   Removes non-heavy curses from carried/worn objects.
+                    Required skill level for first spell level: 20.
+
+                    Tier II: Level 40.
+                    Removes all normal and heavy curses. Also see (5.14).
 
     Grow Trees      Grows trees quickly around you.
                     Required skill level for first spell level: 30.
