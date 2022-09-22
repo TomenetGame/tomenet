@@ -12402,10 +12402,9 @@ F:EVIL | IM_ACID | RES_FIRE | RES_COLD | IM_POIS |
 F:HURT_LITE | NO_CONF | NO_SLEEP | RES_TELE | CTHANGBAND | NO_CUT
 S:1_IN_4 |
 S:S_UNDEAD | S_DEMON | S_MONSTER | BLINK | BA_ACID | FORGET
-D:"Then came pale movement in the well, and something clambered
-D:up from the dark, a bloated blanched oval supported on myriad
-D:fleshless legs. Eyes formed in the gelatinous oval and stared
-D:at him."
+D:"Then came pale movement in the well, and something clambered up from the
+D:dark, a bloated blanched oval supported on myriad fleshless legs. Eyes
+D:formed in the gelatinous oval and stared at him."
 
 N:735:The King in Yellow
 #FINAL_GUARDIAN
@@ -12451,10 +12450,9 @@ F:KILL_ITEM | ZANGBAND | NO_NEST
 S:1_IN_3
 S:BR_ACID | BR_POIS | BR_NUKE | SCARE | RAISE_DEAD
 S:CURSE | S_DEMON | S_UNDEAD
-D:This disgusting demon resembles a shambling pile of rotting
-D:green flesh, with dozens of mouths drooling and leaving a
-D:trail of foul-smelling goo behind. Nurgle must be
-D:proud of himself to have created this atrocity!
+D:This disgusting demon resembles a shambling pile of rotting green flesh,
+D:with dozens of mouths drooling and leaving a trail of foul-smelling goo
+D:behind. Nurgle must be proud of himself to have created this atrocity!
 
 N:737:Lord of Chaos
 G:p:v
@@ -12475,8 +12473,7 @@ S:1_IN_2 |
 S:HEAL | MIND_BLAST | BA_CHAO |
 S:S_SPIDERS | S_HOUNDS | S_DEMON
 D:He is one of the few true masters of the art, being extremely skillful in
-D:all forms of unarmed combat and controlling the Chaos
-D:with disdainful ease.
+D:all forms of unarmed combat and controlling the Chaos with disdainful ease.
 
 N:738:Old Sorcerer
 G:p:r
