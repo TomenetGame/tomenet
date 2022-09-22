@@ -9111,6 +9111,9 @@ Hunger  -Gorged         Your speed gets reduced by 10.
         You will regenerate hit points slower if you are weak, and not at
         all if you are starving (red 'Weak').
 
+        Note that you don't consume food in towns, in town areas, while AFK and
+        not already hungry (or worse), and in the Arena Monster Challenge.
+
 Slowdown        Monsters can cast spells or breathe (inertia, gravity) to slow
                 the player down. This effect is temporary. 'Free Action' helps
                 a bit to reduce the effect from inertia breath.
@@ -9571,8 +9574,9 @@ Arena Monster Challenge (no losses or gains, for testing your abilities)
     It's also possible to challenge ego monsters (such as veteran archers or
     holy animals). The arena corners are safe zones and allow for spectating.
     Note that you cannot die or suffer various hazardous effects in the arena,
-    and monsters cannot summon. Hint: If you want to spice a monster up, try
-    the /scream command while it's in your line of sight.
+    you won't consume food and monsters cannot summon.
+    Hint: If you want to spice a monster up, try the /scream command while
+    it's in your line of sight.
     Inventory and equipment cannot be damaged/destroyed or disenchanted in this
     event, and you cannot get disarmed either.
     NOTE: PvP mode characters are exempt from safety and can die for real!
