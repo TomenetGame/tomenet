@@ -388,6 +388,8 @@ D:Ability to learn and use spells from the Mind school.
 D:Spells use the intelligence stat.
 A:11:Cast a spell
 I:1000:111
+#Mind school was removed, so hide this skill for transgression phase: (or indefinitely, yeah.. :p)
+F:HIDDEN
 
 N:60:Udun
 D:Ability to learn and use spells from the Udun school.

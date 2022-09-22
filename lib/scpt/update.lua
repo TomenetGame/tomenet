@@ -12,8 +12,9 @@ __update_table = {
 	"scpt/s_convey.lua",
 	"scpt/s_divin.lua",
 	"scpt/s_tempo.lua",
+--	"scpt/s_meta.lua",
 	"scpt/s_nature.lua",
-	"scpt/s_mind.lua",
+--	"scpt/s_mind.lua",
 	"scpt/s_udun.lua",
 
 	"scpt/p_offense.lua",

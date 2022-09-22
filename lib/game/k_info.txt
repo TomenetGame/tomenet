@@ -6179,14 +6179,15 @@ D:Spell scrolls can be reused infinitely.
 #P:0:1d1:0:0:0
 #F:FULL_NAME | EASY_KNOW | IGNORE_WATER
 
-$NEW_TOMES!N:759:& Tome~ of the Mind
-$NEW_TOMES$N:759:& Tome~ of the Mind
-G:?:z
-I:111:10:0
-W:50:0:30:25000
-A:50/50:100/50
-P:0:1d1:0:0:0
-F:FULL_NAME | EASY_KNOW | IGNORE_WATER
+#removed Mind school (spells went to Udun and Divination)
+#$NEW_TOMES!N:759:& Tome~ of the Mind
+#$NEW_TOMES$N:759:& Tome~ of the Mind
+#G:?:z
+#I:111:10:0
+#W:50:0:30:25000
+#A:50/50:100/50
+#P:0:1d1:0:0:0
+#F:FULL_NAME | EASY_KNOW | IGNORE_WATER
 
 #N:760:& Holy Tome~ of Eru Iluvatar
 #G:?:G

@@ -4301,32 +4301,44 @@ void do_cmd_look(int Ind, int dir) {
 	/* Another player */
 	if (c_ptr->m_idx < 0 && p_ptr->play_vis[0-c_ptr->m_idx] &&
 	    (!Players[0-c_ptr->m_idx]->admin_dm || player_sees_dm(Ind))) {
+		char extrainfo[MAX_CHARS] = { 0 };
+
 		q_ptr = Players[0 - c_ptr->m_idx];
+
+		if (get_skill(p_ptr, SKILL_DIVINATION) == 50)
+			sprintf(extrainfo, ", %d HP, %d AC, %d Spd", q_ptr->chp, q_ptr->ac, p_ptr->pspeed - 110);
 
 		/* Track health */
 		health_track(Ind, c_ptr->m_idx);
 
 		/* Format string */
 		if ((q_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (q_ptr->inventory[INVEN_BODY].sval == SV_COSTUME)) {
-			snprintf(out_val, sizeof(out_val), "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->inventory[INVEN_BODY].bpval].name, get_ptitle(q_ptr, FALSE));
+			snprintf(out_val, sizeof(out_val), "%s the %s (%s)%s", q_ptr->name, r_name + r_info[q_ptr->inventory[INVEN_BODY].bpval].name, get_ptitle(q_ptr, FALSE), extrainfo);
 		} else if (q_ptr->body_monster) {
-			snprintf(out_val, sizeof(out_val), "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, get_ptitle(q_ptr, FALSE));
+			snprintf(out_val, sizeof(out_val), "%s the %s (%s)%s", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, get_ptitle(q_ptr, FALSE), extrainfo);
 		} else {
 #if 0 /* use normal race_info.title */
-			snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, race_info[q_ptr->prace].title, get_ptitle(q_ptr, FALSE));
+			snprintf(out_val, sizeof(out_val), "%s the %s %s%s", q_ptr->name, race_info[q_ptr->prace].title, get_ptitle(q_ptr, FALSE), extrainfo);
 			//, class_info[q_ptr->pclass].title
 #else /* use special_prace_lookup */
-			snprintf(out_val, sizeof(out_val), "%s the %s%s", q_ptr->name, get_prace2(q_ptr), get_ptitle(q_ptr, FALSE));
+			snprintf(out_val, sizeof(out_val), "%s the %s%s%s", q_ptr->name, get_prace2(q_ptr), get_ptitle(q_ptr, FALSE), extrainfo);
 #endif
 		}
 	/* A monster */
 	} else if (c_ptr->m_idx > 0 && p_ptr->mon_vis[c_ptr->m_idx]) {	/* TODO: handle monster mimics */
 		bool done_unique;
-		char m_name[MNAME_LEN];
+		char m_name[MNAME_LEN], extrainfo[MAX_CHARS] = { 0 };
 
 		m_ptr = &m_list[c_ptr->m_idx];
 		monster_desc(Ind, m_name, c_ptr->m_idx, 8);
 		m_name[0] = toupper(m_name[0]);
+
+		if (get_skill(p_ptr, SKILL_DIVINATION) == 50) {
+			if (r_info[m_ptr->r_idx].flags7 & RF7_NO_DEATH)
+				sprintf(extrainfo, ", \377Uimmortal\377-");
+			else
+				sprintf(extrainfo, ", %d HP, %d AC, %d Spd", m_ptr->hp, m_ptr->ac, m_ptr->mspeed - 110);
+		}
 
 		/* a unique which the looker already killed? */
 		if ((r_info[m_ptr->r_idx].flags1 & RF1_UNIQUE) &&
@@ -4339,24 +4351,30 @@ void do_cmd_look(int Ind, int dir) {
 
 		/* Format string */
 		if (m_ptr->questor)
-			snprintf(out_val, sizeof(out_val), "\377%c%s (Lv %d, %s)",
+			//snprintf(out_val, sizeof(out_val), "\377%c%s (Lv %d, %s%s)",
+			snprintf(out_val, sizeof(out_val), "\377%c%s (%s%s)",
 			    m_ptr->questor_invincible ? 'G' : ((m_ptr->questor_hostile & 0x1) ? 'R' : 'G'),
 			    //r_name_get(&m_list[c_ptr->m_idx]),
 			    m_name,
-			    m_ptr->level, look_mon_desc(c_ptr->m_idx));
+			    //m_ptr->level,
+			    look_mon_desc(c_ptr->m_idx), extrainfo);
 		else
 #if 0 /* attach 'slain' for uniques we already killed */
 //		snprintf(out_val, sizeof(out_val), "%s (%s)", r_name_get(&m_list[c_ptr->m_idx]), look_mon_desc(c_ptr->m_idx));
-		snprintf(out_val, sizeof(out_val), "%s (Lv %d, %s%s)", r_name_get(&m_list[c_ptr->m_idx]),
-		    m_ptr->level, look_mon_desc(c_ptr->m_idx),
-		    m_ptr->clone ? ", clone" : (done_unique ? ", slain" : ""));
+		//snprintf(out_val, sizeof(out_val), "%s (Lv %d, %s%s%s)", r_name_get(&m_list[c_ptr->m_idx]),
+		snprintf(out_val, sizeof(out_val), "%s (%s%s%s)", r_name_get(&m_list[c_ptr->m_idx]),
+		    //m_ptr->level,
+		    look_mon_desc(c_ptr->m_idx),
+		    m_ptr->clone ? ", clone" : (done_unique ? ", slain" : ""), extrainfo);
 #else /* use different colour for uniques we already killed */
-		snprintf(out_val, sizeof(out_val), "%s%s (Lv %d, %s%s)",
+		//snprintf(out_val, sizeof(out_val), "%s%s (Lv %d, %s%s%s)",
+		snprintf(out_val, sizeof(out_val), "%s%s (%s%s%s)",
 		    done_unique ? "\377D" : "",
 		    //r_name_get(&m_list[c_ptr->m_idx]),
 		    m_name,
-		    m_ptr->level, look_mon_desc(c_ptr->m_idx),
-		    m_ptr->clone ? ", clone" : "");
+		    //m_ptr->level,
+		    look_mon_desc(c_ptr->m_idx),
+		    m_ptr->clone ? ", clone" : "", extrainfo);
 #endif
 	/* An object */
 	} else if (c_ptr->o_idx) {
@@ -4415,7 +4433,7 @@ void do_cmd_look(int Ind, int dir) {
 		/* Hack -- add trap description */
 		if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
 			int t_idx = cs_ptr->sc.trap.t_idx;
-			if (cs_ptr->sc.trap.found) {
+			if (cs_ptr->sc.trap.found || get_skill(p_ptr, SKILL_DIVINATION) == 50) {
 				if (p_ptr->trap_ident[t_idx])
 					p1 = t_name + t_info[t_idx].name;
 				else
@@ -4439,7 +4457,7 @@ void do_cmd_look(int Ind, int dir) {
 
 		if ((feat == FEAT_FOUNTAIN) &&
 		    (cs_ptr = GetCS(c_ptr, CS_FOUNTAIN)) &&
-		    cs_ptr->sc.fountain.known) {
+		    (cs_ptr->sc.fountain.known || get_skill(p_ptr, SKILL_DIVINATION) == 50)) {
 			object_kind *k_ptr;
 			int tval, sval;
 

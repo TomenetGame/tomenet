@@ -134,7 +134,7 @@ guide_skill = {
 }
 
 --(note: Sorcery isn't a school)
-guide_schools = 30
+guide_schools = 29
 guide_school = {
     "Wizardry -",
     "Mana",
@@ -147,7 +147,6 @@ guide_school = {
     "Divination",
     "Temporal",
     "Udun",
-    "Mind",
     "Prayers -",
     "Holy Offense",
     "Holy Defense",
@@ -219,30 +218,29 @@ guide_spell = {
     "Recall",
     "Probability Travel",
     "Mass Warp",
+    "Telekinesis I",
 
     "Detect Monsters",
     "Identify",
     "Greater Identify",
     "Vision",
     "Sense Hidden",
-    "Reveal Ways", --49
+    "Reveal Ways",
+    "Sense Minds", --51
 
     "Magelock",
     "Slow Monster",
     "Essence of Speed",
     "Mass Warp",
 
+    "Confusion",
+    "Stun",
     "Genocide",
     "Obliteration",
     "Wraithform",
     "Stop Wraithform",
     "Disenchantment Beam",
-    "Hellfire", --59
-
-    "Confusion",
-    "Stun",
-    "Sense Minds",
-    "Telekinesis I",
+    "Hellfire", --63
 
     "Curse",
     "Call Light",

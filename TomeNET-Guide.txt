@@ -1,8 +1,8 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 21. September 2022 - written by C. Blue (c_blue@gmx.net)  |
-| for TomeNET version v4.8.0 - official websites are:                      :
+| Latest update: 22. September 2022 - written by C. Blue (c_blue@gmx.net)  |
+| for TomeNET version v4.9.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
 | Runes & Runemastery sections by Kurzel (kurzel.tomenet@gmail.com)
@@ -19093,8 +19093,7 @@ school.
 
                     Tier II: Level 42.
 
-    BONI:           Fire resistance at 30,
-                    Fire immunity at 50.
+    BONI:           Fire resistance at 30.
 
 
 - Water             [Spells are INT-based.]
@@ -19154,8 +19153,7 @@ school.
                     Tier II: Level 40.
 
     BONI:           Passing water at 30,
-                    water resistance at 40,
-                    water immunity at 50.
+                    water resistance at 40.
                     Items that go bad over time due to warmth while being
                     carried will last longer depending on how high this skill
                     has been trained, with the effect beginning at 8.000.
@@ -19204,8 +19202,7 @@ school.
                     Required skill level for first spell level: 30.
 
     BONI:           Feather falling at 30,
-                    poison resistance at 40,
-                    levitation at 50.
+                    levitation at 45.
 
 
 - Earth             [Spells are INT-based.]
@@ -19241,8 +19238,7 @@ school.
     Shake           Creates a local earthquake.
                     Required skill level for first spell level: 37.
 
-    BONI:           Shard resistance at 40,
-                    Great damage reduction against earthquakes at 50.
+    BONI:           Great damage reduction against earthquakes at 45.
 
 
 - Nature            [Spells are INT-based.]
@@ -19320,16 +19316,6 @@ school.
                     See "(0.3) Important inscriptions, Word of Recall" for more
                     info about Word of Recall!
 
-    Telekinesis I   Inscribe your book @P<Playername>, cast it, select an
-                    item that you wish to teleport to the player's inventory.
-                    The target player needs to concentrate by opening her/his
-                    mind, see (0.2). It's dangerous to have the mind opened,
-                    since everyone can send you any items, so better close it
-                    again as soon as the desired telekinesis transaction is
-                    done. Example inscription: @PGandalf
-                    Required skill level for first spell level: 35.
-                    Shared spell (see above): Mind, Conveyance.
-
     Probability Travel
                     Renders you instable, allowing to pass walls and to
                     float upwards/downwards. Floating up/down will skip floors
@@ -19344,11 +19330,21 @@ school.
                     from landing inside a vault.
                     Required skill level for first spell level: 35.
 
+    Telekinesis I   Inscribe your book @P<Playername>, cast it, select an
+                    item that you wish to teleport to the player's inventory.
+                    The target player needs to concentrate by opening her/his
+                    mind, see (0.2). It's dangerous to have the mind opened,
+                    since everyone can send you any items, so better close it
+                    again as soon as the desired telekinesis transaction is
+                    done. Example inscription: @PGandalf
+                    Required skill level for first spell level: 40.
+                    (Telekinesis II is a Mindcraft spell, not in Wizardry.)
+
     Mass Warp       Locks monsters in stasis for a while.
                     Required skill level for first spell level: 45.
                     Shared spell (see above): Temporal, Conveyance.
 
-    BONI:           Resistance to teleportation attacks at 40.
+    BONI:           Resistance to teleportation attacks at 50.
 
 
 - Divination        [Spells are INT-based.]
@@ -19386,7 +19382,10 @@ school.
                     *Identifies* an item.
                     Required skill level for first spell level: 35.
 
-    BONI:           Automatic identification (auto-ID) at 50.
+    Sense Minds     Gives you temporary ESP.
+                    Required skill level for first spell level: 40.
+
+    BONI:           Know some monster stats just by looking at it.
 
 
 - Temporal          [Spells are INT-based.]
@@ -19423,6 +19422,18 @@ school.
 
 - Udun              [Spells are INT-based unless noted otherwise.]
 
+    Confusion       Confuses a monsters.
+                    Required skill level for first spell level: 5.
+
+                    Tier II: Level 20.
+                    Turns into a ball.
+
+    Stun            Stuns a monster.
+                    Required skill level for first spell level: 15.
+
+                    Tier II: Level 40.
+                    Turns into a ball.
+
     Hellfire        Conjures a ball of hellfire which is especially deadly to
                     GOOD opponents.
                     Required skill level for first spell level: 20.
@@ -19452,37 +19463,6 @@ school.
     Stop Wraithform Turns you back to material form immediately.
 
     BONI:           Hold life at 40.
-
-
-- Mind              [Spells are INT-based.]
-
-    Confusion       Confuses a monsters.
-                    Required skill level for first spell level: 5.
-
-                    Tier II: Level 20.
-                    Turns into a ball.
-
-    Stun            Stuns a monster.
-                    Required skill level for first spell level: 15.
-
-                    Tier II: Level 40.
-                    Turns into a ball.
-
-    Sense Minds     Gives you temporary ESP.
-                    Required skill level for first spell level: 30.
-
-    Telekinesis I   Inscribe your book @P<Playername>, cast it, select an
-                    item that you wish to teleport to the player's inventory.
-                    The target player needs to concentrate by opening her/his
-                    mind, see (0.2). It's dangerous to have the mind opened,
-                    since everyone can send you any items, so better close it
-                    again as soon as the desired telekinesis transaction is
-                    done. Example inscription: @PGandalf
-                    Required skill level for first spell level: 35.
-                    Shared spell (see above): Mind, Conveyance.
-
-    BONI:           Reduces confusion and hallucination at 30,
-                    Reduce insanity influence at 40 and especially at 50.
 
 
 - Prayers -
@@ -20286,6 +20266,7 @@ In general, mindcraft schools are less affected by anti-magic fields.)
                     done. Example inscription: @PGandalf
                     Required skill level for first spell level: 35.
                     Shared spell (see above): Psycho-power / Attunement.
+                    (Telekinesis II is a Wizardry spell, not in Mindcraft.)
 
     Kinetic Shield  Uses telekinetic force to set up a shield around you that
                     has a good chance to repel physical attacks or projectiles,

@@ -130,3 +130,24 @@ PROBABILITY_TRAVEL = add_spell {
 			"appear on the other side of it. You can also float up and down at will."
 	}
 }
+
+TELEKINESIS = add_spell {
+	["name"] = 	"Telekinesis I",
+	["name2"] = 	"TK I",
+	["school"] = 	{SCHOOL_CONVEYANCE},
+	["level"] = 	40,
+	["mana"] = 	25,
+	["mana_max"] = 	25,
+	["fail"] = 	10,
+	["am"] = 	75,
+	["spell"] = 	function(args)
+		telekinesis(Ind, player.inventory[1 + args.book], 4 + get_level(Ind, TELEKINESIS, 330, 0))
+	end,
+	["info"] = 	function()
+		return "max wgt "..((4 + get_level(Ind, TELEKINESIS, 330, 0)) / 10).."."..(imod(4 + get_level(Ind, TELEKINESIS, 330, 0), 10))
+	end,
+	["desc"] = 	{
+		"Inscribe your book with @Pplayername, cast it, select an item and the item",
+		"will be teleported to that player whereever he/she might be in the Universe.",
+	}
+}

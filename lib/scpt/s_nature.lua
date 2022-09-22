@@ -260,3 +260,40 @@ RESISTS_II = add_spell {
 			"***Automatically projecting***",
 		}
 }
+
+DELCURSES_I = add_spell {
+	["name"] = 	"Remove Curses I",
+	["name2"] = 	"RCurs I",
+	["school"] = 	SCHOOL_NATURE,
+	["level"] = 	20,
+	["mana"] = 	20,
+	["mana_max"] =	20,
+	["fail"] = 	20,
+	["spell"] = 	function()
+			local done
+			done = remove_curse(Ind)
+			if done == TRUE then msg_print(Ind, "The curse is broken!") end
+	end,
+	["info"] = 	function()
+			return ""
+	end,
+	["desc"] = 	{ "Attempts to remove curses from your items.", }
+}
+DELCURSES_II = add_spell {
+	["name"] = 	"Remove Curses II",
+	["name2"] = 	"RCurs II",
+	["school"] = 	SCHOOL_NATURE,
+	["level"] = 	40,
+	["mana"] = 	50,
+	["mana_max"] =	50,
+	["fail"] = 	-20,
+	["spell"] = 	function()
+			local done
+			done = remove_all_curse(Ind)
+			if done == TRUE then msg_print(Ind, "The curse is broken!") end
+	end,
+	["info"] = 	function()
+			return ""
+	end,
+	["desc"] = 	{ "Removes all normal and heavy curses from your items.", }
+}

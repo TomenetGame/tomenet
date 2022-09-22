@@ -6288,20 +6288,16 @@ void calc_boni(int Ind) {
 
 	/* Knowledge in magic schools can give permanent extra boni */
 	/* - SKILL_EARTH gives resistance in earthquake() */
-	if (get_skill(p_ptr, SKILL_EARTH) >= 40) { p_ptr->resist_shard = TRUE; csheet_boni[14].cb[2] |= CB3_RSHRD; }
 	if (get_skill(p_ptr, SKILL_AIR) >= 30) { p_ptr->feather_fall = TRUE; csheet_boni[14].cb[5] |= CB6_RFFAL; }
-	if (get_skill(p_ptr, SKILL_AIR) >= 40) { p_ptr->resist_pois = TRUE; csheet_boni[14].cb[1] |= CB2_RPOIS; }
-	if (get_skill(p_ptr, SKILL_AIR) >= 50) {
+	if (get_skill(p_ptr, SKILL_AIR) >= 45) {
 		p_ptr->levitate = TRUE; csheet_boni[14].cb[5] |= CB6_RLVTN;
 		p_ptr->feather_fall = TRUE; csheet_boni[14].cb[5] |= CB6_RFFAL;
 	}
 	if (get_skill(p_ptr, SKILL_WATER) >= 30) { p_ptr->can_swim = TRUE; csheet_boni[14].cb[12] |= CB13_XSWIM; }
 	if (get_skill(p_ptr, SKILL_WATER) >= 40) { p_ptr->resist_water = TRUE; csheet_boni[14].cb[3] |= CB4_RWATR; }
-	if (get_skill(p_ptr, SKILL_WATER) >= 50) { p_ptr->immune_water = TRUE; csheet_boni[14].cb[3] |= CB4_IWATR; }
 	if (get_skill(p_ptr, SKILL_FIRE) >= 30) { p_ptr->resist_fire = TRUE; csheet_boni[14].cb[0] |= CB1_RFIRE; }
-	if (get_skill(p_ptr, SKILL_FIRE) >= 50) { p_ptr->immune_fire = TRUE; csheet_boni[14].cb[0] |= CB1_IFIRE; }
 	if (get_skill(p_ptr, SKILL_MANA) >= 40) { p_ptr->resist_mana = TRUE; csheet_boni[14].cb[3] |= CB4_RMANA; }
-	if (get_skill(p_ptr, SKILL_CONVEYANCE) >= 40) { p_ptr->res_tele = TRUE; csheet_boni[14].cb[4] |= CB5_RTELE; }
+	if (get_skill(p_ptr, SKILL_CONVEYANCE) >= 50) { p_ptr->res_tele = TRUE; csheet_boni[14].cb[4] |= CB5_RTELE; }
 	if (get_skill(p_ptr, SKILL_DIVINATION) >= 50) { p_ptr->auto_id = TRUE; csheet_boni[14].cb[6] |= CB7_RAUID; }
 	if (get_skill(p_ptr, SKILL_NATURE) >= 30) { p_ptr->regenerate = TRUE; csheet_boni[14].cb[5] |= CB6_RRGHP; }
 	if (get_skill(p_ptr, SKILL_NATURE) >= 30) { p_ptr->pass_trees = TRUE; csheet_boni[14].cb[12] |= CB13_XTREE; }

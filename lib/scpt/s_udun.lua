@@ -192,3 +192,76 @@ STOPWRAITH = add_spell {
 			"***Automatically projecting***",
 	}
 }
+
+CONFUSE_I = add_spell {
+	["name"] = 	"Confusion I",
+	["name2"] = 	"Conf I",
+	["school"] = 	{SCHOOL_UDUN},
+	["level"] = 	5,
+	["mana"] = 	5,
+	["mana_max"] = 	5,
+	["fail"] = 	10,
+	["am"] = 	75,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		fire_bolt(Ind, GF_OLD_CONF, args.dir, 5 + get_level(Ind, CONFUSE_I, 100), "focusses on your mind")
+	end,
+	["info"] = 	function()
+		return "power "..(5 + get_level(Ind, CONFUSE_I, 100))
+	end,
+	["desc"] = 	{ "Tries to manipulate the mind of a monster to confuse it.", }
+}
+CONFUSE_II = add_spell {
+	["name"] = 	"Confusion II",
+	["name2"] = 	"Conf II",
+	["school"] = 	{SCHOOL_UDUN},
+	["level"] = 	20,
+	["mana"] = 	15,
+	["mana_max"] = 	15,
+	["fail"] = 	-15,
+	["am"] = 	75,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		fire_ball(Ind, GF_OLD_CONF, args.dir, 5 + get_level(Ind, CONFUSE_I, 100), 2, "focusses on your mind")
+	end,
+	["info"] = 	function()
+		return "power "..(5 + get_level(Ind, CONFUSE_I, 100)).." rad 2"
+	end,
+	["desc"] = 	{ "Tries to manipulate the mind of all monsters in a small area to confuse them.", }
+}
+STUN_I = add_spell {
+	["name"] = 	"Stun I",
+	["name2"] = 	"Stun I",
+	["school"] = 	{SCHOOL_UDUN},
+	["level"] = 	15,
+	["mana"] = 	20,
+	["mana_max"] = 	20,
+	["fail"] = 	0,
+	["am"] = 	75,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		fire_bolt(Ind, GF_STUN, args.dir, 10 + get_level(Ind, STUN_I, 50), "")
+	end,
+	["info"] = 	function()
+		return ""
+	end,
+	["desc"] = 	{ "Tries to manipulate the mind of a monster to stun it.", }
+}
+STUN_II = add_spell {
+	["name"] = 	"Stun II",
+	["name2"] = 	"Stun II",
+	["school"] = 	{SCHOOL_UDUN},
+	["level"] = 	40,
+	["mana"] = 	60,
+	["mana_max"] = 	60,
+	["fail"] = 	-65,
+	["am"] = 	75,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		fire_ball(Ind, GF_STUN, args.dir, 10 + get_level(Ind, STUN_I, 50), 2, "")
+	end,
+	["info"] = 	function()
+		return ""
+	end,
+	["desc"] = 	{ "Tries to manipulate the minds of all monsters in a small area to stun them.", }
+}

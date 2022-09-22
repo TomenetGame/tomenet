@@ -57,8 +57,8 @@ MANATHRUST_III = add_spell {
 	["name2"] = 	"MThrust III",
 	["school"] = 	SCHOOL_MANA,
 	["level"] = 	40,
-	["mana"] = 	30,
-	["mana_max"] = 	30,
+	["mana"] = 	25,
+	["mana_max"] = 	25,
 	["fail"] = 	-75,
 	["direction"] = TRUE,
 	["ftk"] = 1,
@@ -74,6 +74,7 @@ MANATHRUST_III = add_spell {
 	["desc"] = 	{ "Conjures up mana into a nearly irresistible bolt.", }
 }
 
+--[[
 DELCURSES_I = add_spell {
 	["name"] = 	"Remove Curses I",
 	["name2"] = 	"RCurs I",
@@ -110,6 +111,7 @@ DELCURSES_II = add_spell {
 	end,
 	["desc"] = 	{ "Removes all normal and heavy curses from your items.", }
 }
+]]
 
 function get_recharge_pow(Ind, limit_lev)
 	local lev

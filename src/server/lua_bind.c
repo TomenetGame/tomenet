@@ -852,7 +852,8 @@ long lua_player_exp(int level, int expfact) {
 	return adv;
 }
 
-/* Fix all spellbooks not in players inventories (houses...)
+/* Fix all spellbooks not in players inventories, but in houses or on the floor.
+   Currently does not handle carried (monster inventory) or embedded (special floor) objects.
  * Adds mod to spellbook pval if it's greater than or equal to spell
  * spell in most cases is the number of the new spell and mod is 1
  * - mikaelh */
@@ -861,7 +862,6 @@ void lua_fix_spellbooks(int spell, int mod) {
 	object_type *o_ptr;
 	house_type *h_ptr;
 
-#ifndef USE_MANG_HOUSE_ONLY
 	/* scan world (includes MAngband-style houses) */
 	for (i = 0; i < o_max; i++) {
 		o_ptr = &o_list[i];
@@ -881,8 +881,8 @@ void lua_fix_spellbooks(int spell, int mod) {
 			}
 		}
 	}
-#endif
 
+#ifndef USE_MANG_HOUSE_ONLY
 	/* scan traditional (vanilla) houses */
 	for (j = 0; j < num_houses; j++) {
 		h_ptr = &houses[j];
@@ -906,6 +906,7 @@ void lua_fix_spellbooks(int spell, int mod) {
 			}
 		}
 	}
+#endif
 }
 
 /* hacked crap if above function wasn't executed properly -.- regarding custom tomes */

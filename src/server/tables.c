@@ -2132,9 +2132,11 @@ player_race race_info[MAX_RACE] = {
 		{ SKILL_NATURE,
 			'+', 0,
 			'%', 0, },
+#if 0
 		{ SKILL_MIND,
 			'+', 0,
 			'%', 110, },
+#endif
 		{ SKILL_HOFFENSE,
 			'+', 0,
 			'%', 0, },
@@ -2609,10 +2611,10 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_META,
 			'+', 0,
 			'+', 1600, },
-#endif
 		{ SKILL_MIND,
 			'+', 0,
 			'+', 1600, },
+#endif
 		{ SKILL_TEMPORAL,
 			'+', 0,
 			'+', 1600, },
@@ -3255,10 +3257,10 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_META,
 			'+', 0,
 			'+', 800, },
-#endif
 		{ SKILL_MIND,
 			'+', 0,
 			'+', 800, },
+#endif
 #if 1
 		{ SKILL_TEMPORAL,
 			'+', 0,
@@ -3387,10 +3389,10 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_META,
 			'+', 0,
 			'+', 300, },
-#endif
 		{ SKILL_MIND,
 			'+', 0,
 			'+', 500, },//600, //500
+#endif
 #if 1
 		{ SKILL_TEMPORAL,
 			'+', 0,
@@ -3681,10 +3683,10 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_META,
 			'+', 0,
 			'+', 500, },
- #endif
 		{ SKILL_MIND,
 			'+', 0,
 			'+', 1000, },
+ #endif
 		{ SKILL_HOFFENSE,
  #ifdef ENABLE_OCCULT /* Occult */
 			'+', 0,
@@ -3809,10 +3811,10 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_META,
 			'+', 0,
 			'+', 500, },
- #endif
 		{ SKILL_MIND,
 			'+', 0,
 			'+', 1000, },
+ #endif
 		{ SKILL_HOFFENSE,
  #ifdef ENABLE_OCCULT /* Occult */
 			'+', 0,

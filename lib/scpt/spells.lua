@@ -50,12 +50,12 @@ SCHOOL_NATURE = add_school {
 	["name"] = "Meta",
 	["skill"] = SKILL_META,
 	["sorcery"] = TRUE,
-}]]--
 SCHOOL_MIND = add_school {
 	["name"] = "Mind",
 	["skill"] = SKILL_MIND,
 	["sorcery"] = TRUE,
 }
+}]]--
 SCHOOL_DIVINATION = add_school {
 	["name"] = "Divination",
 	["skill"] = SKILL_DIVINATION,
@@ -155,7 +155,7 @@ pern_dofile(Ind, "s_divin.lua")
 pern_dofile(Ind, "s_tempo.lua")
 --pern_dofile(Ind, "s_meta.lua")
 pern_dofile(Ind, "s_nature.lua")
-pern_dofile(Ind, "s_mind.lua")
+--pern_dofile(Ind, "s_mind.lua")
 pern_dofile(Ind, "s_udun.lua")
 
 __lua_P_FIRST = __tmp_spells_num
@@ -210,7 +210,7 @@ school_book[8] = { ESSENSESPEED, SLOWMONSTER_II, MAGELOCK_II, MASSWARP, }
 -- Create the book of meta spells (43-45)
 --school_book[9] = { PROJECT_SPELLS, DISPERSEMAGIC, RECHARGE_III, }
 -- Create the book of the mind * CHARM requires pets first (46-48)
-school_book[10] = { CONFUSE_II, TELEKINESIS, SENSEMONSTERS, STUN_II, }
+--school_book[10] = { CONFUSE_II, TELEKINESIS, SENSEMONSTERS, STUN_II, }
 -- Create the book of hellflame * DRAIN, FLAMEOFUDUN missing (49-53)
 school_book[11] = { GENOCIDE_I, GENOCIDE_II, DISEBOLT, HELLFIRE_II, WRAITHFORM, STOPWRAITH, }
 

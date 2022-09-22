@@ -207,3 +207,23 @@ DETECTMONSTERS = add_spell {
 			"***Automatically projecting***",
 	}
 }
+
+SENSEMONSTERS = add_spell {
+	["name"] = 	"Sense Minds",
+	["name2"] = 	"Sense",
+	["school"] = 	{SCHOOL_DIVINATION},
+	["level"] = 	40,
+	["mana"] = 	25,
+	["mana_max"] = 	25,
+	["fail"] = 	-15,
+	["am"] = 	75,
+	["spell"] = function()
+		set_tim_esp(Ind, 22 + randint(10) + get_level(Ind, SENSEMONSTERS, 28))
+		end,
+	["info"] = function()
+		return "dur "..(22 + get_level(Ind, SENSEMONSTERS, 28)).."+d10"
+		end,
+	["desc"] = {
+		"Sense all monsters' minds for a while.",
+	}
+}
