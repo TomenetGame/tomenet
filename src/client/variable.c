@@ -42,6 +42,8 @@ int subinventory_inscription[INVEN_PACK + 1][SUBINVEN_PACK + 1];
 int subinventory_inscription_len[INVEN_PACK + 1][SUBINVEN_PACK + 1];
 #endif
 
+byte equip_set[INVEN_TOTAL - INVEN_WIELD];
+
 store_type store;			/* The general info about the current store */
 c_store_extra c_store;	/* Extra info about the current store */
 unsigned char store_price_mul;

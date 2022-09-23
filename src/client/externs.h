@@ -145,6 +145,8 @@ extern int subinventory_inscription[INVEN_PACK + 1][SUBINVEN_PACK + 1];
 extern int subinventory_inscription_len[INVEN_PACK + 1][SUBINVEN_PACK + 1];
 #endif
 
+extern byte equip_set[INVEN_TOTAL - INVEN_WIELD];
+
 extern store_type store;
 extern c_store_extra c_store;
 extern unsigned char store_price_mul;

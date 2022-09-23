@@ -1642,6 +1642,7 @@ static void display_inven(void) {
 #define EQUIP_TEXT_COLOUR TERM_WHITE
 #define EQUIP_TEXT_COLOUR2 TERM_YELLOW
 static void display_equip(void) {
+	byte	a;
 	int	i, n;
 	long int	wgt;
 	object_type *o_ptr;
@@ -1664,8 +1665,19 @@ static void display_equip(void) {
 			tmp_val[1] = ')';
 		}
 
+		a = c_cfg.equip_text_colour ? EQUIP_TEXT_COLOUR2 : EQUIP_TEXT_COLOUR;
+		/* Colour artifact-name luck bonus affected slots */
+		switch (equip_set[i - INVEN_WIELD]) {
+		case 0: case 1: break; //keep standard colour
+		case 2: a = TERM_GREEN; break;
+		case 3: a = TERM_BLUE; break;
+		case 4: a = TERM_VIOLET; break;
+		case 5: a = TERM_RED; break;
+		default: a = TERM_ORANGE; //oO (actual cap is at 9 or more items -> +40 luck)
+		}
+
 		/* Display the index (or blank space) */
-		Term_putstr(0, i - INVEN_WIELD, 3, c_cfg.equip_text_colour ? EQUIP_TEXT_COLOUR2 : EQUIP_TEXT_COLOUR, tmp_val);
+		Term_putstr(0, i - INVEN_WIELD, 3, a, tmp_val);
 
 		/* Describe the object */
 		strcpy(o_name, inventory_name[i]);
@@ -2127,7 +2139,7 @@ void show_equip(void) {
 	char	tmp_val[80];
 
 	int	out_index[23];
-	byte	out_color[23];
+	byte	out_color[23], a;
 	char	out_desc[23][ONAME_LEN];
 
 
@@ -2196,8 +2208,19 @@ void show_equip(void) {
 		/* Prepare and index --(-- */
 		sprintf(tmp_val, "%c)", index_to_label(i));
 
+		a = c_cfg.equip_text_colour ? EQUIP_TEXT_COLOUR2 : EQUIP_TEXT_COLOUR;
+		/* Colour artifact-name luck bonus affected slots */
+		switch (equip_set[i - INVEN_WIELD]) {
+		case 0: case 1: break; //keep standard colour
+		case 2: a = TERM_GREEN; break;
+		case 3: a = TERM_BLUE; break;
+		case 4: a = TERM_VIOLET; break;
+		case 5: a = TERM_RED; break;
+		default: a = TERM_ORANGE; //oO (actual cap is at 9 or more items -> +40 luck)
+		}
+
 		/* Clear the line with the (possibly indented) index */
-		put_str(tmp_val, j + 1, col);
+		c_put_str(a, tmp_val, j + 1, col);
 
 		/* Display the entry itself */
 		c_put_str(out_color[j], out_desc[j], j + 1, col + 3);

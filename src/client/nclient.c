@@ -2193,8 +2193,8 @@ char *equipment_slot_names[] = {
 };
 
 int Receive_equip(void) {
-	int	n;
-	char 	ch;
+	int n;
+	char ch;
 	char pos, attr, tval, sval, uses_dir;
 	s16b wgt, amt, pval, name1 = 0;
 	char name[ONAME_LEN];
@@ -2228,6 +2228,7 @@ int Receive_equip(void) {
 	inventory[pos - 'a' + INVEN_WIELD].number = amt;
 	inventory[pos - 'a' + INVEN_WIELD].uses_dir = uses_dir & 0x1;
 	inventory[pos - 'a' + INVEN_WIELD].ident = uses_dir & 0x6; //new hack in 4.7.1.2+ for ITH_ID/ITH_STARID
+	equip_set[pos - 'a'] = (uses_dir & 0xF0) >> 4;
 
 #if defined(POWINS_DYNAMIC) && defined(POWINS_DYNAMIC_CLIENTSIDE)
 	/* Strip "@&" markers, as these are a purely server-side thing */
