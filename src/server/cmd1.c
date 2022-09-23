@@ -2048,10 +2048,10 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 		if (p_ptr->inval && o_ptr->owner && p_ptr->id != o_ptr->owner) {
 			if (exceptionally_shareable_item(o_ptr)) {
-//				o_ptr->number = 1;
+				//o_ptr->number = 1;
 				o_ptr->discount = 100;
 				if (o_ptr->level <= p_ptr->lev) {
-//					o_ptr->owner = p_ptr->id;
+					if (!o_ptr->level) o_ptr->owner = p_ptr->id;
 					o_ptr->mode = p_ptr->mode;
 				}
 			} else {
@@ -2066,13 +2066,13 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				//o_ptr->number = 1;
 				o_ptr->discount = 100;
 				if (o_ptr->level <= p_ptr->lev) {
-					//o_ptr->owner = p_ptr->id;
+					if (!o_ptr->level) o_ptr->owner = p_ptr->id;
 					o_ptr->mode = p_ptr->mode;
 				}
 			/* Game pieces are free to be used */
 			} else if (o_ptr->tval == TV_GAME) {
 				if (o_ptr->level <= p_ptr->lev) {
-					//o_ptr->owner = p_ptr->id;
+					if (!o_ptr->level) o_ptr->owner = p_ptr->id;
 					o_ptr->mode = p_ptr->mode;
 				}
 			/* exception for amulet of the highlands for tournaments */
