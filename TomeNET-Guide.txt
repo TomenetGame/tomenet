@@ -13083,18 +13083,21 @@ and also
     The Hard Leather Armor 'Gothmog'    (which is actually a random artifact)
 You'd get a small luck bonus, or 'set bonus'. The more artifacts of similar
 name you equip the greater the luck bonus will be.
+If your client is newer than 4.8.0, it will display the indices of equipment
+slots providing set luck bonus in colours (see table below). This behaviour
+can be toggled with the 'equip_set_colour' option in =3.
 The exact luck boni for those 'artifact sets' starting at two items are:
 
-  Number of artifacts equipped  |  Luck bonus
-  ------------------------------+-------------
-                    2           |    + 3
-                    3           |    + 6
-                    4           |    +10
-                    5           |    +15
-                    6           |    +21
-                    7           |    +28
-                    8           |    +36
-                    9 or more   |    +40 (cap)
+  Number of artifacts equipped  |  Luck bonus  | Equip slot index colour
+  ------------------------------+--------------|------------------------
+                    2           |    + 3       |       green
+                    3           |    + 6       |       light blue
+                    4           |    +10       |       violet
+                    5           |    +15       |       red
+                    6           |    +21       |       orange
+                    7           |    +28       |       light umber
+                    8           |    +36       |       light umber
+                    9 or more   |    +40 (cap) |       light umber
 
 ..which is actually the sum of all numbers from 1 up to the number of artifacts
 you have equipped. Eg 2 artifacts -> 1+2 = 3. 4 artifacts -> 1+2+3+4 = 10.
