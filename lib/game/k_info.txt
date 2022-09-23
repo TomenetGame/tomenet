@@ -8209,7 +8209,7 @@ I:8:66:0
 W:127:0:5:0
 A:127/0
 F:EASY_KNOW
-D:This deed can be turned in at the mayor's office in Bree.
+D:This deed can be turned in for a reward at the mayor's office in Bree.
 
 N:1039:Horned Reaper's Autograph
 G:?:b
@@ -8217,7 +8217,7 @@ I:8:67:0
 W:127:0:5:0
 A:127/0
 F:EASY_KNOW
-D:This deed can be turned in at the mayor's office in Bree.
+D:This deed can be turned in for a luck buff at the mayor's office in Bree.
 
 # For new quest_info: A special, custom quest item. - C. Blue
 N:1040:& quest item~
