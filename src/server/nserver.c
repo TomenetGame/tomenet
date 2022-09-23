@@ -14355,11 +14355,13 @@ static int Receive_version(int ind) {
 	if (p_ptr) {
 		s_printf("PKT_VERSION <%s> (%s): %s // %s\n", p_ptr->name, p_ptr->accountname, version, os_version);
 		if (fake_waitpid_clver) {
+			player_type *pa_ptr;
+
 			/* Check if admin caller is still present */
 			for (n = 1; n <= NumPlayers; n++) {
-				p_ptr = Players[n];
-				if (p_ptr->conn == NOT_CONNECTED) continue;
-				if (p_ptr->id != fake_waitpid_clver) continue;
+				pa_ptr = Players[n];
+				if (pa_ptr->conn == NOT_CONNECTED) continue;
+				if (pa_ptr->id != fake_waitpid_clver) continue;
 				break;
 			}
 			/* Found him */
