@@ -1857,13 +1857,13 @@ static errr Term_text_x11(int x, int y, int n, byte a, cptr s) {
  #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x0F]);
  #else
-	Infoclr_set(clr[a & 0x1F]);
+	Infoclr_set(clr[a & 0x1F]); //undefined case actually, we don't want to have a hole in the colour array (0..15 and then 32..32+x) -_-
  #endif
 #else
  #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x1F]);
  #else
-	Infoclr_set(clr[a & 0x2F]);
+	Infoclr_set(clr[a & 0x3F]);
  #endif
 #endif
 
@@ -1903,13 +1903,13 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
  #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x0F]);
  #else
-	Infoclr_set(clr[a & 0x1F]);
+	Infoclr_set(clr[a & 0x1F]); //undefined case actually, we don't want to have a hole in the colour array (0..15 and then 32..32+x) -_-
  #endif
 #else
  #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x1F]);
  #else
-	Infoclr_set(clr[a & 0x2F]);
+	Infoclr_set(clr[a & 0x3F]);
  #endif
 #endif
 

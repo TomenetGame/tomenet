@@ -2216,14 +2216,20 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 
 	/* Background/Foreground color */
  #ifndef EXTENDED_COLOURS_PALANIM
+  #ifndef EXTENDED_BG_COLOURS
 	fgColor = win_clr[a & 0x0F];
-  #ifdef EXTENDED_BG_COLOURS
-	bgColor = PALETTEINDEX(win_clr_bg[a & 0x0F]); //wrong / undefined state, as we don't want to have palette indices 0..16 + 32..32+TERMX_AMT ?
+  #else
+	fgColor = win_clr[a & 0x1F];
+	//bgColor = PALETTEINDEX(win_clr_bg[a & 0x0F]); //wrong / undefined state, as we don't want to have palette indices 0..15 + 32..32+TERMX_AMT with a hole in between?
+	bgColor = win_clr_bg[a & 0x1F]; //wrong / undefined state, as we don't want to have palette indices 0..15 + 32..32+TERMX_AMT with a hole in between?
   #endif
  #else
+  #ifndef EXTENDED_BG_COLOURS
 	fgColor = win_clr[a & 0x1F];
-  #ifdef EXTENDED_BG_COLOURS
-	bgColor = PALETTEINDEX(win_clr_bg[a & 0x1F]); //verify correctness
+  #else
+	fgColor = win_clr[a & 0x3F];
+	//bgColor = PALETTEINDEX(win_clr_bg[a & 0x1F]); //verify correctness
+	bgColor = win_clr_bg[a & 0x3F]; //verify correctness
   #endif
  #endif
 
@@ -2326,14 +2332,18 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
  #endif
 		} else {
  #ifndef EXTENDED_COLOURS_PALANIM
+  #ifndef EXTENDED_BG_COLOURS
 			SetTextColor(hdc, win_clr[a & 0x0F]);
-  #ifdef EXTENDED_BG_COLOURS
-			SetBkColor(hdc, win_clr_bg[a & 0x0F]);
+  #else
+			SetTextColor(hdc, win_clr[a & 0x1F]);
+			SetBkColor(hdc, win_clr_bg[a & 0x1F]); //undefined case actually, we don't want to have a hole in the colour array (0..15 and then 32..32+x) -_-
   #endif
  #else
+  #ifndef EXTENDED_BG_COLOURS
 			SetTextColor(hdc, win_clr[a & 0x1F]);
-  #ifdef EXTENDED_BG_COLOURS
-			SetBkColor(hdc, win_clr_bg[a & 0x1F]);
+  #else
+			SetTextColor(hdc, win_clr[a & 0x3F]);
+			SetBkColor(hdc, win_clr_bg[a & 0x3F]);
   #endif
  #endif
 		}
@@ -2358,14 +2368,20 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
  #endif
 	} else {
  #ifndef EXTENDED_COLOURS_PALANIM
+  #ifndef EXTENDED_BG_COLOURS
 		SetTextColor(hdc, win_clr[a & 0x0F]);
-  #ifdef EXTENDED_BG_COLOURS
-		SetBkColor(hdc, PALETTEINDEX(win_clr_bg[a & 0x0F])); //verify correctness
+  #else
+		SetTextColor(hdc, win_clr[a & 0x1F]); //undefined case actually, we don't want to have a hole in the colour array (0..15 and then 32..32+x) -_-
+		//SetBkColor(hdc, PALETTEINDEX(win_clr_bg[a & 0x0F])); //verify correctness
+		SetBkColor(hdc, win_clr_bg[a & 0x1F]);
   #endif
  #else
+  #ifndef EXTENDED_BG_COLOURS
 		SetTextColor(hdc, win_clr[a & 0x1F]);
-  #ifdef EXTENDED_BG_COLOURS
-		SetBkColor(hdc, PALETTEINDEX(win_clr_bg[a & 0x1F])); //verify correctness
+  #else
+		SetTextColor(hdc, win_clr[a & 0x3F]);
+		//SetBkColor(hdc, PALETTEINDEX(win_clr_bg[a & 0x1F])); //verify correctness
+		SetBkColor(hdc, win_clr_bg[a & 0x3F]);
   #endif
  #endif
 	}
