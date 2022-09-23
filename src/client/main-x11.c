@@ -2457,11 +2457,7 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
  *
  * These colors are overwritten with the generic, OS-independant client_color_map[] in enable_common_colormap_x11()!
  */
-#ifndef EXTENDED_COLOURS_PALANIM
-static char color_name[16][8] = {
-#else
-static char color_name[16 * 2][8] = {
-#endif
+static char color_name[CLIENT_PALETTE_SIZE][8] = {
 	"#000000",      /* BLACK */
 	"#ffffff",      /* WHITE */
 	"#9d9d9d",      /* GRAY */
