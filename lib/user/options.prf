@@ -59,7 +59,6 @@ X:consistent_players
 Y:recall_flicker
 X:no_verify_sell
 X:no_verify_destroy
-Y:screenshot_format
 X:topline_no_msg
 X:targetinfo_msg
 Y:live_timeouts
@@ -74,6 +73,7 @@ X:hp_bar
 X:mp_bar
 X:st_bar
 X:equip_text_colour
+Y:equip_set_colour
 X:colourize_bignum
 
 X:alert_hitpoint
@@ -81,7 +81,9 @@ X:alert_mana
 X:alert_afk_dam
 Y:alert_offpanel_dam
 Y:alert_starvation
+Y:screenshot_format
 X:clone_to_stdout
+X:clone_to_file
 
 
 # Audio options:

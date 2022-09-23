@@ -3148,9 +3148,13 @@ void calc_boni(int Ind) {
 	int equipment_set_bonus = 0;
 	char tmp_name[ONAME_LEN], *tmp_name_ptr;
 
+	int equip_set_old[INVEN_TOTAL - INVEN_WIELD];
+
 	for (i = 0; i < INVEN_TOTAL - INVEN_WIELD; i++) {
 		equipment_set[i] = 0;
+		equipment_set_amount[i] = 0;
 		equipment_set_name[i][0] = 0;
+		equip_set_old[i] = p_ptr->equip_set[i];
 	}
 #endif
 
@@ -3972,27 +3976,33 @@ void calc_boni(int Ind) {
 		}
 
 #ifdef EQUIPMENT_SET_BONUS
+		/* We're a randart (except for nazgul rings of power)? */
 		if (o_ptr->name1 == ART_RANDART && !(o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPECIAL)) {
 			/* paranoia maybe? Make sure name4 field has been set: */
 			randart_name(o_ptr, NULL, tmp_name);
-			/* compare */
+			/* compare to all previous items (lower index) */
 			for (j = 0; j < i - INVEN_WIELD; j++)
 				if (equipment_set[j] == o_ptr->name4 + 1) {
 					equipment_set_amount[j]++;
-					break;
+					/* remember in all slots, not just one, this is useful for things like admin command checking or visual indicator in client's equipment window */
+					equipment_set_amount[i - INVEN_WIELD]++;
 				} else if (!strcmp(equipment_set_name[j], tmp_name)) {
 					equipment_set_amount[j]++;
 					/* for faster randart handling in future loop passes (pft) */
 					equipment_set[j] = o_ptr->name4 + 1;
-					break;
+					/* remember in all slots, not just one, this is useful for things like admin command checking or visual indicator in client's equipment window */
+					equipment_set_amount[i - INVEN_WIELD]++;
 				}
+			/* no previous item of same name found - start with us as the first one of this name! */
 			if (j == i - INVEN_WIELD) {
 				equipment_set[j] = o_ptr->name4 + 1;
-				equipment_set_amount[j] = 1;
+				equipment_set_amount[j]++;
 				/* and for true arts: */
 				strcpy(equipment_set_name[j], tmp_name);
 			}
-		} else if (o_ptr->name1 && o_ptr->name1 != ART_RANDART) {
+		}
+		/* We're a true art? */
+		else if (o_ptr->name1 && o_ptr->name1 != ART_RANDART) {
 			strcpy(tmp_name, a_name + a_info[o_ptr->name1].name);
 			tmp_name_ptr = tmp_name;
 			/* trim leading and terminating ' characters */
@@ -4011,11 +4021,13 @@ void calc_boni(int Ind) {
 			for (j = 0; j < i - INVEN_WIELD; j++)
 				if (!strcmp(equipment_set_name[j], tmp_name_ptr)) {
 					equipment_set_amount[j]++;
-					break;
+					/* remember in all slots, not just one, this is useful for things like admin command checking or visual indicator in client's equipment window */
+					equipment_set_amount[i - INVEN_WIELD]++;
 				}
+			/* no previous item of same name found - start with us as the first one of this name! */
 			if (j == i - INVEN_WIELD) {
 				strcpy(equipment_set_name[j], tmp_name_ptr);
-				equipment_set_amount[j] = 1;
+				equipment_set_amount[j]++;
 				/* enable (use -1 since true arts don't use randart codes) */
 				equipment_set[j] = -1;
 			}
@@ -4651,11 +4663,13 @@ void calc_boni(int Ind) {
 #ifdef EQUIPMENT_SET_BONUS
 	/* Don't stack boni, instead, the highest counts */
 	for (i = 0; i < INVEN_TOTAL - INVEN_WIELD; i++) {
+		/* remember for things like admin command checking or visual indicator in client's equipment window */
+		p_ptr->equip_set[i] = equipment_set_amount[i];
+		if (equip_set_old[i] != p_ptr->equip_set[i]) p_ptr->inventory[INVEN_WIELD + i].temp = 1; //force-update this equipment slot
+
 		if (!equipment_set[i]) continue;
 		if (equipment_set_amount[i] > equipment_set_bonus)
 			equipment_set_bonus = equipment_set_amount[i];
-		/* remember for things like admin command checking or visual indicator in client's equipment window */
-		p_ptr->equip_set[i] = equipment_set_amount[i];
 	}
 	if (equipment_set_bonus >= 2) {
 		/* Display the luck boni on each involved item */

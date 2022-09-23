@@ -6463,6 +6463,9 @@ void display_equip(int Ind) {
 			continue;
 		}
 
+		/* Unhack hack to show equip_set[] boni, aka force-update slot */
+		o_ptr->temp = 0;
+
 		/* Update the copy */
 		memcpy(&p_ptr->inventory_copy[i], o_ptr, sizeof(object_type));
 

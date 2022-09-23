@@ -6279,7 +6279,7 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 		uses_dir |= ((object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x2 : 0x0) | ((object_fully_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x4 : 0x0);
 	/* Also encode equipment-set indicator to visually confirm set luck boni */
 	//-- currently not working; timing issues with setting equip_set[] in calc_boni() vs calling Send_equip, and not every slot has correct equip_set[] value..
-	//if (is_atleast(&p_ptr->version, 4, 8, 1, 0, 0, 0)) uses_dir |= p_ptr->equip_set[pos - 'a'] << 4;
+	if (is_atleast(&p_ptr->version, 4, 8, 1, 0, 0, 0)) uses_dir |= p_ptr->equip_set[pos - 'a'] << 4;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;

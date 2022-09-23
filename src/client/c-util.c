@@ -8039,12 +8039,13 @@ void auto_inscriptions(void) {
 void options_immediate(bool init) {
 	static bool changed1, changed2, changed3;
 	static bool changed4a, changed4b, changed4c;
-	static bool changed5, changed6;
+	static bool changed5, changed5a, changed6;
 
 	if (init) {
 		changed1 = c_cfg.exp_need; changed2 = c_cfg.exp_bar; changed3 = c_cfg.font_map_solid_walls;
 		changed4a = c_cfg.hp_bar; changed4b = c_cfg.mp_bar; changed4c = c_cfg.st_bar;
 		changed5 = c_cfg.equip_text_colour;
+		changed5a = c_cfg.equip_set_colour;
 		changed6 = c_cfg.colourize_bignum;
 		return;
 	}
@@ -8064,6 +8065,7 @@ void options_immediate(bool init) {
 		prt_stamina(st_max, st_cur, st_bar);
 	}
 	if (changed5 != c_cfg.equip_text_colour) p_ptr->window |= PW_EQUIP;
+	if (changed5a != c_cfg.equip_set_colour) p_ptr->window |= PW_EQUIP;
 	if (changed6 != c_cfg.colourize_bignum) {
 		prt_gold(p_ptr->au);
 		prt_level(p_ptr->lev, p_ptr->max_lev, p_ptr->max_plv, p_ptr->max_exp, p_ptr->exp, exp_adv, exp_adv_prev);

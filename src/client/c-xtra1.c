@@ -1667,13 +1667,14 @@ static void display_equip(void) {
 
 		a = c_cfg.equip_text_colour ? EQUIP_TEXT_COLOUR2 : EQUIP_TEXT_COLOUR;
 		/* Colour artifact-name luck bonus affected slots */
-		switch (equip_set[i - INVEN_WIELD]) {
+		if (c_cfg.equip_set_colour) switch (equip_set[i - INVEN_WIELD]) {
 		case 0: case 1: break; //keep standard colour
 		case 2: a = TERM_GREEN; break;
-		case 3: a = TERM_BLUE; break;
+		case 3: a = TERM_L_BLUE; break;
 		case 4: a = TERM_VIOLET; break;
 		case 5: a = TERM_RED; break;
-		default: a = TERM_ORANGE; //oO (actual cap is at 9 or more items -> +40 luck)
+		case 6: a = TERM_ORANGE; break;
+		default: a = TERM_L_UMBER; //oO (actual cap is at 9 or more items -> +40 luck)
 		}
 
 		/* Display the index (or blank space) */
@@ -2210,13 +2211,14 @@ void show_equip(void) {
 
 		a = c_cfg.equip_text_colour ? EQUIP_TEXT_COLOUR2 : EQUIP_TEXT_COLOUR;
 		/* Colour artifact-name luck bonus affected slots */
-		switch (equip_set[i - INVEN_WIELD]) {
+		if (c_cfg.equip_set_colour) switch (equip_set[i - INVEN_WIELD]) {
 		case 0: case 1: break; //keep standard colour
 		case 2: a = TERM_GREEN; break;
-		case 3: a = TERM_BLUE; break;
+		case 3: a = TERM_L_BLUE; break;
 		case 4: a = TERM_VIOLET; break;
-		case 5: a = TERM_RED; break;
-		default: a = TERM_ORANGE; //oO (actual cap is at 9 or more items -> +40 luck)
+		case 5: a = TERM_L_RED; break;
+		case 6: a = TERM_ORANGE; break;
+		default: a = TERM_L_UMBER; //oO (actual cap is at 9 or more items -> +40 luck)
 		}
 
 		/* Clear the line with the (possibly indented) index */
