@@ -8313,12 +8313,12 @@ The Sandworm lair            |  Sandworm Queen       | Armour of the Sandworm
 The Heart of the Earth       |  Golgarach            | Space-time Anchor  (D)
 The Maze                     |  Minotaur             | Helm of Hammerhand
 Cirith Ungol                 |  Shelob               | Smallsword 'Sting'
-The Land Of Rhun             |  Ulfang the Black     | Sabre 'Careth Asdriag'
+The Land of Rhun             |  Ulfang the Black     | Sabre 'Careth Asdriag'
 Moria                        |  Balrog of Moria      | Quarterstaff 'Ruyi Bang'
 The Small Water Cave         |  Watcher in the Water | Trident of Wrath
 Submerged Ruins              |  Ar-Pharazon          | Amulet 'Toris Mejistos'
 The Illusory Castle          |  King in Yellow       | Helm of Knowledge
-The Sacred Land Of Mountains |  T'ron  (level 72!)   | Coat of T'ron
+The Sacred Land of Mountains |  T'ron  (level 72!)   | Coat of T'ron
 Erebor                       |  Smaug                | Arkenstone of Thrain
 Dol Guldur            (E)    |  Shadow of Dol Guldur | Ring of Durin
 Mount Doom            (E)    |  Sauron, the Sorceror | -
