@@ -463,11 +463,7 @@ char32_t char_map_offset = 0;
 /* Default color map */
 /* These can be overriden using TomeNET.ini or .tomenetrc */
 /* The colors are stored as 32-bit integers, .e.g. #112233 -> 0x112233 */
-#ifndef EXTENDED_COLOURS_PALANIM
-u32b client_color_map[16] = {
-#else
-u32b client_color_map[16 * 2] = {
-#endif
+u32b client_color_map[CLIENT_PALETTE_SIZE] = {
 	0x000000,	/* BLACK */
 	0xffffff,	/* WHITE */
 	0x9d9d9d,	/* GRAY */
@@ -515,14 +511,10 @@ u32b client_ext_color_map[TERMX_AMT][2] = {
 	{ 0xffffff, 0x333388 },
 };
 #endif
-u32b client_color_map_org[BASE_PALETTE_SIZE];
+u32b client_color_map_org[CLIENT_PALETTE_SIZE];
 
 /* For Deuteranopia */
-#ifndef EXTENDED_COLOURS_PALANIM
-u32b client_color_map_deu[16] = {
-#else
-u32b client_color_map_deu[16 * 2] = {
-#endif
+u32b client_color_map_deu[CLIENT_PALETTE_SIZE] = {
 	0x000000,	/* BLACK */
 	0xffffff,	/* WHITE */
 	0x9d9d9d,	/* GRAY */
@@ -561,11 +553,7 @@ u32b client_color_map_deu[16 * 2] = {
 };
 
 /* For Protanopia (same as Deuteranopia atm) */
-#ifndef EXTENDED_COLOURS_PALANIM
-u32b client_color_map_pro[16] = {
-#else
-u32b client_color_map_pro[16 * 2] = {
-#endif
+u32b client_color_map_pro[CLIENT_PALETTE_SIZE] = {
 	0x000000,	/* BLACK */
 	0xffffff,	/* WHITE */
 	0x9d9d9d,	/* GRAY */
@@ -604,11 +592,7 @@ u32b client_color_map_pro[16 * 2] = {
 };
 
 /* For Tritanopia */
-#ifndef EXTENDED_COLOURS_PALANIM
-u32b client_color_map_tri[16] = {
-#else
-u32b client_color_map_tri[16 * 2] = {
-#endif
+u32b client_color_map_tri[CLIENT_PALETTE_SIZE] = {
 	0x000000,	/* BLACK */
 	0xffffff,	/* WHITE */
 	0x9d9d9d,	/* GRAY */

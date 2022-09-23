@@ -1116,11 +1116,11 @@ extern char32_t char_map_offset;
 
 extern int max_chars_per_account;
 
-extern u32b client_color_map[BASE_PALETTE_SIZE];
-extern u32b client_color_map_org[BASE_PALETTE_SIZE];
-extern u32b client_color_map_deu[BASE_PALETTE_SIZE];
-extern u32b client_color_map_pro[BASE_PALETTE_SIZE];
-extern u32b client_color_map_tri[BASE_PALETTE_SIZE];
+extern u32b client_color_map[CLIENT_PALETTE_SIZE];
+extern u32b client_color_map_org[CLIENT_PALETTE_SIZE];
+extern u32b client_color_map_deu[CLIENT_PALETTE_SIZE];
+extern u32b client_color_map_pro[CLIENT_PALETTE_SIZE];
+extern u32b client_color_map_tri[CLIENT_PALETTE_SIZE];
 #ifdef EXTENDED_BG_COLOURS
 extern u32b client_ext_color_map[TERMX_AMT][2];
 #endif

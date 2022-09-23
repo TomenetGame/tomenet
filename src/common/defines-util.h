@@ -14,6 +14,13 @@
 #endif
 
 
+#define BASE_PALETTE_SIZE 16
+#ifdef EXTENDED_COLOURS_PALANIM
+ #define CLIENT_PALETTE_SIZE (BASE_PALETTE_SIZE * 2)
+#else
+ #define CLIENT_PALETTE_SIZE BASE_PALETTE_SIZE
+#endif
+
 #define TERM_DARK	0	/* 'd' */	/* 0,0,0 */
 #define TERM_WHITE	1	/* 'w' */	/* 4,4,4 */
 #define TERM_SLATE	2	/* 's' */	/* 2,2,2 */
@@ -153,7 +160,7 @@
 #endif
 #ifdef EXTENDED_BG_COLOURS
  #define TERMX_START	80
- #define TERMX_AMT	6
+ #define TERMX_AMT	7
  #define TERMX_BLUE	80
  #define TERMX_GREEN	81
  #define TERMX_RED	82
@@ -161,11 +168,6 @@
  #define TERMX_GREY	84
  #define TERMX_WHITE	85
  #define TERMX_PURPLE	86
-#endif
-#ifdef EXTENDED_COLOURS_PALANIM
- #define BASE_PALETTE_SIZE 32
-#else
- #define BASE_PALETTE_SIZE 16
 #endif
 
 

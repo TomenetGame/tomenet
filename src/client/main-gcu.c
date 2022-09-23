@@ -243,7 +243,7 @@ static int can_use_256_color = TRUE;
  * Simple Angband to Curses color conversion table
  */
 
- static int colortable[BASE_PALETTE_SIZE];
+ static int colortable[CLIENT_PALETTE_SIZE];
 
 //todo: EXTENDED_BG_COLOURS
 
@@ -928,13 +928,13 @@ errr init_gcu(void) {
 	/* Attempt to use customized colors */
 	if (can_fix_color) {
 		/* Prepare the color pairs */
-		for (i = 0; i < BASE_PALETTE_SIZE; i++)
+		for (i = 0; i < CLIENT_PALETTE_SIZE; i++)
 			init_pair(i, i, COLOR_BLACK);	/*black */
 
 		/* XXX XXX XXX Take account of "gamma correction" */
 
 		/* Store original terminal colours to remember them and restore them on exit: */
-		for (i = 0; i < BASE_PALETTE_SIZE; i++)
+		for (i = 0; i < CLIENT_PALETTE_SIZE; i++)
 			color_content(i, &cor[i], &cog[i], &cob[i]);
 
 		/* Using the real colours if terminal supports redefining -  thanks Pepe for the patch */
@@ -944,7 +944,7 @@ errr init_gcu(void) {
 		#define GREEN(i) (((client_color_map[i] >> 8 & 0xff) * 1000 + 127) / 255)
 		#define BLUE(i)  (((client_color_map[i] & 0xff) * 1000 + 127) / 255)
 
-		for (i = 0; i < BASE_PALETTE_SIZE; i++) {
+		for (i = 0; i < CLIENT_PALETTE_SIZE; i++) {
 			init_color(i, RED(i), GREEN(i), BLUE(i));
 
 			/* Prepare the "Angband Colors" */
@@ -954,14 +954,14 @@ errr init_gcu(void) {
 
 	else if (can_use_256_color) {
 		int j;
-		int color_palette[BASE_PALETTE_SIZE] = { 0 };
+		int color_palette[CLIENT_PALETTE_SIZE] = { 0 };
 
 		/* Read the fixed color palette from the colours given to us by our terminal we're running in */
 		for (i = 0; i < 256; i++)
 			color_content(i, &cor[i], &cog[i], &cob[i]);
 
 		/* Find the closest match in the palette for each desired color */
-		for (i = 0; i < 16; i++) {
+		for (i = 0; i < BASE_PALETTE_SIZE; i++) {
 			int want_red = RED(i);
 			int want_green = GREEN(i);
 			int want_blue = BLUE(i);
@@ -979,16 +979,16 @@ errr init_gcu(void) {
 			color_palette[i] = best_idx;
  #ifdef EXTENDED_COLOURS_PALANIM
 			/* Clonerino */
-			color_palette[i + 16] = color_palette[i];
+			color_palette[i + BASE_PALETTE_SIZE] = color_palette[i];
  #endif
 		}
 
 		/* Prepare the color pairs */
-		for (i = 0; i < BASE_PALETTE_SIZE; i++)
+		for (i = 0; i < CLIENT_PALETTE_SIZE; i++)
 			init_pair(i, color_palette[i], COLOR_BLACK);
 
 		/* Prepare the "Angband Colors" */
-		for (i = 0; i < BASE_PALETTE_SIZE; i++)
+		for (i = 0; i < CLIENT_PALETTE_SIZE; i++)
 			colortable[i] = (COLOR_PAIR(i) | A_NORMAL);
 	}
 
@@ -1022,9 +1022,8 @@ errr init_gcu(void) {
 		colortable[14] = (COLOR_PAIR(4) | A_BRIGHT);	/* Light Blue */
 		colortable[15] = (COLOR_PAIR(3) | A_NORMAL);	/* Light Umber XXX */
  #ifdef EXTENDED_COLOURS_PALANIM
-		//for (i = 0; i < 16 + 16; i++)
-		for (i = 0; i < 16; i++)
-			colortable[i + 16] = colortable[i]; //just clone
+		for (i = 0; i < BASE_PALETTE_SIZE; i++)
+			colortable[i + BASE_PALETTE_SIZE] = colortable[i]; //just clone
  #endif
 	}
 #endif
@@ -1101,14 +1100,14 @@ void enable_readability_blue_gcu(void) {
 	/* New colour code */
 	client_color_map[6] = 0x0033ff;
 #ifdef EXTENDED_COLOURS_PALANIM
-	client_color_map[16 + 6] = 0x0033ff;
+	client_color_map[BASE_PALETTE_SIZE + 6] = 0x0033ff;
 #endif
 }
 
 void gcu_restore_colours(void) {
 	int i;
 
-	for (i = 0; i < 16; i++) init_color(i, cor[i], cog[i], cob[i]);
+	for (i = 0; i < BASE_PALETTE_SIZE; i++) init_color(i, cor[i], cog[i], cob[i]);
 }
 
 /* for big_map mode */

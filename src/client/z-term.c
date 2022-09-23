@@ -259,7 +259,7 @@ static bool term_nanim(byte ta) {
 	if (ta >= TERMX_START && ta < TERMX_START + TERMX_AMT) return TRUE;
 #endif
 #ifdef EXTENDED_COLOURS_PALANIM
-	if (ta >= TERMA_DARK && ta <= TERMA_L_UMBER) return TRUE;
+	if (ta >= TERMA_OFFSET && ta < TERMA_OFFSET + BASE_PALETTE_SIZE) return TRUE;
 #endif
 	if (ta < TERM_MULTI) return TRUE;
 
@@ -270,13 +270,13 @@ static bool term_nanim(byte ta) {
 byte term2attr(byte ta) {
 #ifdef EXTENDED_BG_COLOURS
 	/* Experimental extra colours beyond normal 16/32 term colours. */
-	if (ta >= TERMX_START && ta < TERMX_START + TERMX_AMT) return BASE_PALETTE_SIZE + ta - TERMX_START;
+	if (ta >= TERMX_START && ta < TERMX_START + TERMX_AMT) return (ta - TERMX_START) + CLIENT_PALETTE_SIZE;
 #endif
 
 #ifdef EXTENDED_COLOURS_PALANIM
 	/* Extended base colour. Pass its location within the extended array range.
-	   The base colours + these extended clones of them for palette animation together define BASE_PALETTE_SIZE (16 (no animation) or 32 (duplicated palette for animation)). */
-	if (ta >= TERMA_DARK && ta <= TERMA_L_UMBER) return 16 + ta - TERMA_OFFSET; /* Use 'real' extended terminal colours ie 16..31. */
+	   The base colours + these extended clones of them for palette animation together define CLIENT_PALETTE_SIZE (16 (no animation) or 32 (duplicated palette for animation)). */
+	if (ta >= TERMA_OFFSET && ta < TERMA_OFFSET + BASE_PALETTE_SIZE) return (ta - TERMA_OFFSET) + BASE_PALETTE_SIZE; /* Use 'real' extended terminal colours ie 16..31. */
 #endif
 
 	/* Animated colour, pick one animation stage. */

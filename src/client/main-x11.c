@@ -1144,9 +1144,9 @@ static infoclr *xor;
  * Color table
  */
 #ifndef EXTENDED_BG_COLOURS
- static infoclr *clr[BASE_PALETTE_SIZE];
+ static infoclr *clr[CLIENT_PALETTE_SIZE];
 #else
- static infoclr *clr[BASE_PALETTE_SIZE + TERMX_AMT];
+ static infoclr *clr[CLIENT_PALETTE_SIZE + TERMX_AMT];
 #endif
 
 /*
@@ -1903,11 +1903,14 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
  #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x0F]);
  #else
-	if (a == TERM2_BLUE) a = 0xF + 1;
 	Infoclr_set(clr[a & 0x1F]);
  #endif
 #else
+ #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x1F]);
+ #else
+	Infoclr_set(clr[a & 0x2F]);
+ #endif
 #endif
 
 	if (Infoclr->fg == Infoclr->bg) {
@@ -2514,6 +2517,7 @@ static char color_name[16 * 2][8] = {
 #endif
 };
 #ifdef EXTENDED_BG_COLOURS
+ /* Format: (fg, bg) */
  static char color_ext_name[TERMX_AMT][2][8] = {	/* TERMX_BLUE */
 	//{"#0000ff", "#444444", },
 	//{"#ffffff", "#0000ff", },
@@ -2530,7 +2534,7 @@ static char color_name[16 * 2][8] = {
 static void enable_common_colormap_x11() {
 	int i;
 
-	for (i = 0; i < BASE_PALETTE_SIZE; i++) {
+	for (i = 0; i < CLIENT_PALETTE_SIZE; i++) {
 		unsigned long c = client_color_map[i];
 
 		sprintf(color_name[i], "#%06lx", c & 0xffffffL);
@@ -2550,7 +2554,7 @@ void enable_readability_blue_x11(void) {
 	/* New colour code */
 	client_color_map[6] = 0x0033ff;
 #ifdef EXTENDED_COLOURS_PALANIM
-	client_color_map[16 + 6] = 0x0033ff;
+	client_color_map[BASE_PALETTE_SIZE + 6] = 0x0033ff;
 #endif
 }
 
@@ -2607,11 +2611,11 @@ errr init_x11(void) {
 	Infoclr_init_ccn ("fg", "bg", "xor", 0);
 
 	/* Prepare the colors (including "black") */
-	for (i = 0; i < BASE_PALETTE_SIZE; ++i) {
+	for (i = 0; i < CLIENT_PALETTE_SIZE; ++i) {
 		cptr cname = color_name[0];
 
 		MAKE(clr[i], infoclr);
-		Infoclr_set (clr[i]);
+		Infoclr_set(clr[i]);
 		if (Metadpy->color) cname = color_name[i];
 		else if (i) cname = color_name[1];
 		Infoclr_init_ccn (cname, "bg", "cpy", 0);
@@ -2621,8 +2625,8 @@ errr init_x11(void) {
 	for (i = 0; i < TERMX_AMT; ++i) {
 		cptr cname = color_name[0], cname2 = color_name[0];
 
-		MAKE(clr[BASE_PALETTE_SIZE + i], infoclr);
-		Infoclr_set (clr[BASE_PALETTE_SIZE + i]);
+		MAKE(clr[CLIENT_PALETTE_SIZE + i], infoclr);
+		Infoclr_set(clr[CLIENT_PALETTE_SIZE + i]);
 		if (Metadpy->color) {
 			cname = color_ext_name[i][0];
 			cname2 = color_ext_name[i][1];
@@ -3241,7 +3245,7 @@ void animate_palette(void) {
 	/* Initialise the palette once. For some reason colour_table[] is all zero'ed again at the beginning. */
 	tmp[2] = 0;
 	if (!init) {
-		for (i = 0; i < 16; i++) {
+		for (i = 0; i < BASE_PALETTE_SIZE; i++) {
 			/* Extract desired values */
 			rv = color_table[i][1];
 			gv = color_table[i][2];
@@ -3290,7 +3294,7 @@ void animate_palette(void) {
 
 
 	/* Save the default colors */
-	for (i = 0; i < 16; i++) {
+	for (i = 0; i < BASE_PALETTE_SIZE; i++) {
 		/* Extract desired values */
 		rv = color_table[i][1];
 		gv = color_table[i][2];
@@ -3310,7 +3314,7 @@ void animate_palette(void) {
 	}
 
 	/* Activate the palette */
-	for (i = 0; i < 16; ++i) {
+	for (i = 0; i < BASE_PALETTE_SIZE; ++i) {
 		cptr cname = color_name[0];
 
 		XFreeGC(Metadpy->dpy, clr[i]->gc);
@@ -3343,7 +3347,7 @@ void animate_palette(void) {
 void set_palette(byte c, byte r, byte g, byte b) {
 	unsigned long code;
 	char cn[8];
-	cptr cname = color_name[0];
+	cptr cname = color_name[0];//, bcname = "bg"; <- todo, for cleaner code
 	term_data *old_td = (term_data*)(Term->data);
 
 #ifdef PALANIM_OPTIMIZED
@@ -3376,10 +3380,10 @@ void set_palette(byte c, byte r, byte g, byte b) {
 		strcpy(color_name[c], cn);
 #else
 	/* Testing // For extended-bg colours, for now just animate the background part */
-	if (c >= BASE_PALETTE_SIZE) { /* TERMX_.. */
-		if (strcmp(color_ext_name[c - BASE_PALETTE_SIZE][1], cn))
+	if (c >= CLIENT_PALETTE_SIZE) { /* TERMX_.. */
+		if (strcmp(color_ext_name[c - CLIENT_PALETTE_SIZE][1], cn))
 			/* Apply the desired color */
-			strcpy(color_ext_name[c - BASE_PALETTE_SIZE][1], cn);
+			strcpy(color_ext_name[c - CLIENT_PALETTE_SIZE][1], cn);
 	} else {
 		/* Normal colour: Just set the foreground part */
 		if (strcmp(color_name[c], cn))
@@ -3397,18 +3401,25 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	if (Metadpy->color) cname = color_name[c];
 	else if (c) cname = color_name[1];
 #else
+ #ifndef EXTENDED_BG_COLOURS
+	/* Foreground colour */
 	cname = color_name[c];
+ #else
+	/* For extended colours actually use background colour instead, as this interests us most atm */
+	if (c >= CLIENT_PALETTE_SIZE) /* TERMX_.. */
+		cname = color_ext_name[c - CLIENT_PALETTE_SIZE][1];
+	/* Foreground colour */
+	else cname = color_name[c];
+ #endif
 #endif
 
 #ifdef EXTENDED_BG_COLOURS
 	/* Just for testing for now.. */
-	if (c >= BASE_PALETTE_SIZE) { /* TERMX_.. */
+	if (c >= CLIENT_PALETTE_SIZE) { /* TERMX_.. */
 		/* Actually animate the 'bg' colour instead of the 'fg' colour (testing purpose) */
-		Infoclr_init_ccn(color_ext_name[0][0], cname, "cpy", 0);
-	}
-	else
+		Infoclr_init_ccn(color_ext_name[c - CLIENT_PALETTE_SIZE][0], cname, "cpy", 0);
+	} else
 #endif
-
 	Infoclr_init_ccn(cname, "bg", "cpy", 0);
 
 #ifndef PALANIM_OPTIMIZED

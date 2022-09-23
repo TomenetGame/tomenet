@@ -238,7 +238,7 @@ static bool read_mangrc(cptr filename) {
 				p = strtok(NULL, "\t\n");
 
 				c = parse_color_code(p);
-				if (colornum >= 0 && colornum < 16 && c < 0x01000000) client_color_map[colornum] = c;
+				if (colornum >= 0 && colornum < BASE_PALETTE_SIZE && c < 0x01000000) client_color_map[colornum] = c;
 			}
 
 #ifdef USE_GRAPHICS
@@ -841,7 +841,7 @@ bool write_mangrc_colourmap(void) {
 				/* Insert colourmap info here */
 				if ((!buf[0] || buf[0] == '\n') && found_start && !found) {
 					found = TRUE;
-					for (i = 1; i < 16; i++) {
+					for (i = 1; i < BASE_PALETTE_SIZE; i++) {
 						c = client_color_map[i];
 						sprintf(buf, "colormap_%d\t\t#%06lx\n", i, c);
 						fputs(buf, config2);
@@ -857,7 +857,7 @@ bool write_mangrc_colourmap(void) {
 			/* Just append new colourmap? */
 			if (!found) {
 				fputs("\n", config2);
-				for (i = 1; i < 16; i++) {
+				for (i = 1; i < BASE_PALETTE_SIZE; i++) {
 					c = client_color_map[i];
 					sprintf(buf, "colormap_%d\t\t#%06lx\n", i, c);
 					fputs(buf, config2);
@@ -942,7 +942,7 @@ int main(int argc, char **argv) {
 
 	/* Make a copy to use in colour blindness menu when we want to reset palette to default values.
 	   This must happen before we read the config file, as it contains colour-(re)definitions. */
-	for (i = 0; i < BASE_PALETTE_SIZE; i++) client_color_map_org[i] = client_color_map[i];
+	for (i = 0; i < CLIENT_PALETTE_SIZE; i++) client_color_map_org[i] = client_color_map[i];
 
 	/* assume defaults */
 	strcpy(cfg_soundpackfolder, "sound");

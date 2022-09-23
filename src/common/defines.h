@@ -7418,7 +7418,6 @@ extern int PlayerUID;
 #endif
 
 
-
 /*** Color constants ***/
 
 /*
@@ -7427,6 +7426,13 @@ extern int PlayerUID;
  * The "(R,G,B)" codes are given in "fourths" of the "maximal" value,
  * and should "gamma corrected" on most (non-Macintosh) machines.
  */
+#define BASE_PALETTE_SIZE 16
+#ifdef EXTENDED_COLOURS_PALANIM
+ #define CLIENT_PALETTE_SIZE (BASE_PALETTE_SIZE * 2)
+#else
+ #define CLIENT_PALETTE_SIZE BASE_PALETTE_SIZE
+#endif
+
 #define TERM_DARK	0	/* 'd' */	/* 0,0,0 */
 #define TERM_WHITE	1	/* 'w' */	/* 4,4,4 */
 #define TERM_SLATE	2	/* 's' */	/* 2,2,2 */
@@ -7575,11 +7581,7 @@ extern int PlayerUID;
  #define TERMX_WHITE	85
  #define TERMX_PURPLE	86
 #endif
-#ifdef EXTENDED_COLOURS_PALANIM
- #define BASE_PALETTE_SIZE 32
-#else
- #define BASE_PALETTE_SIZE 16
-#endif
+
 
 /*** Graphics constants ***/
 /* All terminal characters above this value will be drawn as pictures if term has 'higher_pict' attribute set. */

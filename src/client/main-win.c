@@ -717,17 +717,17 @@ static cptr ANGBAND_DIR_XTRA_SOUND;
 /* These colors are overwritten with the generic, OS-independant client_color_map[] in enable_common_colormap_win()! */
 #ifdef PALANIM_OPTIMIZED2
  #ifndef EXTENDED_BG_COLOURS
-static COLORREF win_clr_buf[BASE_PALETTE_SIZE];
+static COLORREF win_clr_buf[CLIENT_PALETTE_SIZE];
  #else
-static COLORREF win_clr_buf_bg[BASE_PALETTE_SIZE + TERMX_AMT];
-static COLORREF win_clr_buf[BASE_PALETTE_SIZE + TERMX_AMT];
+static COLORREF win_clr_buf_bg[CLIENT_PALETTE_SIZE + TERMX_AMT];
+static COLORREF win_clr_buf[CLIENT_PALETTE_SIZE + TERMX_AMT];
  #endif
 #endif
 #ifndef EXTENDED_BG_COLOURS
-static COLORREF win_clr[BASE_PALETTE_SIZE] = {
+static COLORREF win_clr[CLIENT_PALETTE_SIZE] = {
 #else
-static COLORREF win_clr_bg[BASE_PALETTE_SIZE + TERMX_AMT];
-static COLORREF win_clr[BASE_PALETTE_SIZE + TERMX_AMT] = {
+static COLORREF win_clr_bg[CLIENT_PALETTE_SIZE + TERMX_AMT];
+static COLORREF win_clr[CLIENT_PALETTE_SIZE + TERMX_AMT] = {
 #endif
 	PALETTERGB(0x00, 0x00, 0x00),  /* 0 0 0  Dark */
 	PALETTERGB(0xFF, 0xFF, 0xFF),  /* 4 4 4  White */
@@ -787,7 +787,7 @@ static COLORREF win_clr[BASE_PALETTE_SIZE + TERMX_AMT] = {
 void enable_readability_blue_win(void) {
 	client_color_map[6] = 0x0033ff;
 #ifdef EXTENDED_COLOURS_PALANIM
-	client_color_map[16 + 6] = 0x0033ff;
+	client_color_map[BASE_PALETTE_SIZE + 6] = 0x0033ff;
 #endif
 }
 static void enable_common_colormap_win(void) {
@@ -807,7 +807,7 @@ static void enable_common_colormap_win(void) {
 	#define GREEN(i) (client_color_map[i] >> 8 & 0xFF)
 	#define BLUE(i)  (client_color_map[i] & 0xFF)
 
-	for (i = 0; i < BASE_PALETTE_SIZE; i++) {
+	for (i = 0; i < CLIENT_PALETTE_SIZE; i++) {
 		win_clr[i] = PALETTERGB(RED(i), GREEN(i), BLUE(i));
 #ifdef PALANIM_OPTIMIZED2
 		win_clr_buf[i] = win_clr[i];
@@ -1270,21 +1270,19 @@ static void load_prefs(void) {
 	disable_numlock = (GetPrivateProfileInt("Base", "DisableNumlock", 1, ini_file) != 0);
 
 	/* Read the colormap */
-	for (i = 0; i < 16; i++) {
+	for (i = 0; i < BASE_PALETTE_SIZE; i++) {
 		char key_name[12] = { '\0' };
-		snprintf(key_name, sizeof(key_name), "Colormap_%d", i);
-
 		char default_color[8] = { '\0' };
 		unsigned long c = client_color_map[i];
-		snprintf(default_color, sizeof(default_color), "#%06lx", c);
-
 		char want_color[8] = { '\0' };
-		GetPrivateProfileString("Base", key_name, default_color, want_color, sizeof(want_color), ini_file);
 
+		snprintf(key_name, sizeof(key_name), "Colormap_%d", i);
+		snprintf(default_color, sizeof(default_color), "#%06lx", c);
+		GetPrivateProfileString("Base", key_name, default_color, want_color, sizeof(want_color), ini_file);
 		client_color_map[i] = parse_color_code(want_color);
 #ifdef EXTENDED_COLOURS_PALANIM
 		/* Clone it */
-		client_color_map[i + 16] = client_color_map[i];
+		client_color_map[i + BASE_PALETTE_SIZE] = client_color_map[i];
 #endif
 	}
 	/* Extract the readability_blue flag */
@@ -1404,7 +1402,7 @@ static void new_palette(void) {
 	nEntries = 0;
 
 	/* Size of palette */
-	pLogPalSize = sizeof(LOGPALETTE) + (BASE_PALETTE_SIZE + nEntries)*sizeof(PALETTEENTRY);
+	pLogPalSize = sizeof(LOGPALETTE) + (CLIENT_PALETTE_SIZE + nEntries)*sizeof(PALETTEENTRY);
 
 	/* Allocate palette */
 	pLogPal = (LPLOGPALETTE)mem_alloc(pLogPalSize);
@@ -1413,14 +1411,14 @@ static void new_palette(void) {
 	pLogPal->palVersion = 0x300;
 
 	/* Make room for bitmap and normal data */
-	pLogPal->palNumEntries = nEntries + BASE_PALETTE_SIZE;
+	pLogPal->palNumEntries = nEntries + CLIENT_PALETTE_SIZE;
 
 	/* Save the bitmap data */
 	for (i = 0; i < nEntries; i++)
 		pLogPal->palPalEntry[i] = lppe[i];
 
 	/* Save the normal data */
-	for (i = 0; i < BASE_PALETTE_SIZE; i++) {
+	for (i = 0; i < CLIENT_PALETTE_SIZE; i++) {
 		LPPALETTEENTRY p;
 
 		/* Access the entry */
@@ -1491,7 +1489,7 @@ static void new_palette_ps(void) {
 	nEntries = 0;
 
 	/* Size of palette */
-	pLogPalSize = sizeof(LOGPALETTE) + (16 + nEntries)*sizeof(PALETTEENTRY);
+	pLogPalSize = sizeof(LOGPALETTE) + (BASE_PALETTE_SIZE + nEntries)*sizeof(PALETTEENTRY);
 
 	/* Allocate palette */
 	pLogPal = (LPLOGPALETTE)mem_alloc(pLogPalSize);
@@ -1500,14 +1498,14 @@ static void new_palette_ps(void) {
 	pLogPal->palVersion = 0x300;
 
 	/* Make room for bitmap and normal data */
-	pLogPal->palNumEntries = nEntries + 16;
+	pLogPal->palNumEntries = nEntries + BASE_PALETTE_SIZE;
 
 	/* Save the bitmap data */
 	for (i = 0; i < nEntries; i++)
 		pLogPal->palPalEntry[i] = lppe[i];
 
 	/* Save the normal data */
-	for (i = 0; i < 16; i++) {
+	for (i = 0; i < BASE_PALETTE_SIZE; i++) {
 		LPPALETTEENTRY p;
 
 		/* Access the entry */
@@ -2213,19 +2211,19 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 	fgColor = RGB(0, 0, 0);
 
  #ifdef PALANIM_SWAP
-	if (a < BASE_PALETTE_SIZE) a = (a + 16) % 32;
+	if (a < CLIENT_PALETTE_SIZE) a = (a + BASE_PALETTE_SIZE) % CLIENT_PALETTE_SIZE;
  #endif
 
 	/* Background/Foreground color */
  #ifndef EXTENDED_COLOURS_PALANIM
 	fgColor = win_clr[a & 0x0F];
   #ifdef EXTENDED_BG_COLOURS
-	bgColor = PALETTEINDEX(win_clr_bg[a & 0x0F]);
+	bgColor = PALETTEINDEX(win_clr_bg[a & 0x0F]); //wrong / undefined state, as we don't want to have palette indices 0..16 + 32..32+TERMX_AMT ?
   #endif
  #else
 	fgColor = win_clr[a & 0x1F];
   #ifdef EXTENDED_BG_COLOURS
-	bgColor = PALETTEINDEX(win_clr_bg[a & 0x1F]);
+	bgColor = PALETTEINDEX(win_clr_bg[a & 0x1F]); //verify correctness
   #endif
  #endif
 
@@ -2314,7 +2312,7 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 	a = term2attr(a);
 
 #ifdef PALANIM_SWAP
-	if (a < BASE_PALETTE_SIZE) a = (a + 16) % 32;
+	if (a < CLIENT_PALETTE_SIZE) a = (a + BASE_PALETTE_SIZE) % CLIENT_PALETTE_SIZE;
 #endif
 
 #ifdef OPTIMIZE_DRAWING
@@ -2362,12 +2360,12 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
  #ifndef EXTENDED_COLOURS_PALANIM
 		SetTextColor(hdc, win_clr[a & 0x0F]);
   #ifdef EXTENDED_BG_COLOURS
-		SetBkColor(hdc, PALETTEINDEX(win_clr_bg[a & 0x0F]));
+		SetBkColor(hdc, PALETTEINDEX(win_clr_bg[a & 0x0F])); //verify correctness
   #endif
  #else
 		SetTextColor(hdc, win_clr[a & 0x1F]);
   #ifdef EXTENDED_BG_COLOURS
-		SetBkColor(hdc, PALETTEINDEX(win_clr_bg[a & 0x1F]));
+		SetBkColor(hdc, PALETTEINDEX(win_clr_bg[a & 0x1F])); //verify correctness
   #endif
  #endif
 	}
@@ -3900,7 +3898,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 
 	/* Make a copy to use in colour blindness menu when we want to reset palette to default values.
 	   This must happen before we read the config file, as it contains colour-(re)definitions. */
-	for (i = 0; i < BASE_PALETTE_SIZE; i++) client_color_map_org[i] = client_color_map[i];
+	for (i = 0; i < CLIENT_PALETTE_SIZE; i++) client_color_map_org[i] = client_color_map[i];
 
 	/* assume defaults */
 	strcpy(cfg_soundpackfolder, "sound");
@@ -4282,12 +4280,12 @@ void animate_palette(void) {
 	/* Initialise the palette once. For some reason colour_table[] is all zero'ed again at the beginning. */
 	if (!init) {
 #ifndef EXTENDED_COLOURS_PALANIM
-		for (i = 0; i < 16; i++) {
+		for (i = 0; i < BASE_PALETTE_SIZE; i++) {
 #else
  #ifdef PALANIM_SWAP
-		for (i = 0; i < 16; i++) {
+		for (i = 0; i < BASE_PALETTE_SIZE; i++) {
  #else
-		for (i = 0; i < 16 + 16; i++) {
+		for (i = 0; i < CLIENT_PALETTE_SIZE; i++) {
  #endif
 #endif
 			/* Extract desired values */
@@ -4306,7 +4304,7 @@ void animate_palette(void) {
 			color_table[i][3] = GetBValue(win_clr[i]);
 
 			/* Save the "simple" code */
-			color_table[i][0] = win_pal[i % 16];
+			color_table[i][0] = win_pal[i % BASE_PALETTE_SIZE];
 		}
 		init = TRUE;
 		return;
@@ -4343,12 +4341,12 @@ void animate_palette(void) {
 
 		/* Save the default colors */
 #ifndef EXTENDED_COLOURS_PALANIM
-		for (i = 0; i < 16; i++) {
+		for (i = 0; i < BASE_PALETTE_SIZE; i++) {
 #else
  #ifdef PALANIM_SWAP
-		for (i = 0; i < 16; i++) {
+		for (i = 0; i < BASE_PALETTE_SIZE; i++) {
  #else
-		for (i = 0; i < 16 + 16; i++) {
+		for (i = 0; i < CLIENT_PALETTE_SIZE; i++) {
  #endif
 #endif
 			/* Extract desired values */
@@ -4397,18 +4395,18 @@ void set_palette(byte c, byte r, byte g, byte b) {
 		int i;
 		/* Batch-apply all colour changes */
   #ifndef EXTENDED_COLOURS_PALANIM
-		for (i = 0; i < 16; i++)
+		for (i = 0; i < BASE_PALETTE_SIZE; i++)
   #else
    #ifdef PALANIM_SWAP
-		for (i = 0; i < 16; i++)
+		for (i = 0; i < BASE_PALETTE_SIZE; i++)
    #else
-		for (i = 0; i < 16 + 16; i++)
+		for (i = 0; i < CLIENT_PALETTE_SIZE; i++)
    #endif
   #endif
 			win_clr[i] = win_clr_buf[i];
  #endif
  #ifdef EXTENDED_BG_COLOURS
-			//todo:implement   win_clr[16 + 16] = win_clr_buf[16 + 16];
+			//todo:implement   win_clr[CLIENT_PALETTE_SIZE] = win_clr_buf[CLIENT_PALETTE_SIZE];
  #endif
 
 		/* Activate the palette */
@@ -4437,13 +4435,13 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	if (c == 127 || c == 128) return; //just discard refresh marker
 #endif
 
-#ifdef ENABLE_BG_COLOURS
+#ifdef EXTENDED_BG_COLOURS
 	/* For now don't allow palette animation of extended-bg colours */
-	if (c >= BASE_PALETTE_SIZE) return;
+	if (c >= CLIENT_PALETTE_SIZE) return;
 #endif
 
 #ifdef PALANIM_SWAP
-	if (c < BASE_PALETTE_SIZE) c = (c + 16) % 32;
+	if (c < CLIENT_PALETTE_SIZE) c = (c + BASE_PALETTE_SIZE) % CLIENT_PALETTE_SIZE;
 #endif
 
 	/* Need complex color mode for palette animation */

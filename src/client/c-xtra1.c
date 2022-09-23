@@ -4432,18 +4432,18 @@ void window_stuff(void) {
 void do_animate_screenflash(bool reset) {
 	int i;
 	static bool active = FALSE; /* Don't overwrite palette backup from overlapping lightning strikes */
-	static byte or[16], og[16], ob[16];
+	static byte or[BASE_PALETTE_SIZE], og[BASE_PALETTE_SIZE], ob[BASE_PALETTE_SIZE];
 #ifdef ANIM_FULL_PALETTE
-	static byte or0[16], og0[16], ob0[16];
+	static byte or0[BASE_PALETTE_SIZE], og0[BASE_PALETTE_SIZE], ob0[BASE_PALETTE_SIZE];
 #endif
 
 	/* Prematurely end flash animation? */
 	if (reset) {
 		if (active) {
 			if (c_cfg.palette_animation) {
-				for (i = 1; i < 16; i++) set_palette(i + ANIM_OFFSET, or[i], og[i], ob[i]);
+				for (i = 1; i < BASE_PALETTE_SIZE; i++) set_palette(i + ANIM_OFFSET, or[i], og[i], ob[i]);
 #ifdef ANIM_FULL_PALETTE
-				for (i = 1; i < 16; i++) set_palette(i + ANIM_BASE, or0[i], og0[i], ob0[i]);
+				for (i = 1; i < BASE_PALETTE_SIZE; i++) set_palette(i + ANIM_BASE, or0[i], og0[i], ob0[i]);
 #endif
 				set_palette(128, 0, 0, 0); //refresh
 			}
@@ -4457,28 +4457,28 @@ void do_animate_screenflash(bool reset) {
 	case 1:
 		/* First thing: Backup all colours before temporarily manipulating them */
 		if (!active) {
-			for (i = 1; i < 16; i++) get_palette(i + ANIM_OFFSET, &or[i], &og[i], &ob[i]);
+			for (i = 1; i < BASE_PALETTE_SIZE; i++) get_palette(i + ANIM_OFFSET, &or[i], &og[i], &ob[i]);
 #ifdef ANIM_FULL_PALETTE
-			for (i = 1; i < 16; i++) get_palette(i + ANIM_BASE, &or0[i], &og0[i], &ob0[i]);
+			for (i = 1; i < BASE_PALETTE_SIZE; i++) get_palette(i + ANIM_BASE, &or0[i], &og0[i], &ob0[i]);
 #endif
 			active = TRUE;
 		}
 
-		for (i = 1; i < 16; i++) set_palette(i + ANIM_OFFSET, 0xFF, 0xFF, 0xFF);
+		for (i = 1; i < BASE_PALETTE_SIZE; i++) set_palette(i + ANIM_OFFSET, 0xFF, 0xFF, 0xFF);
 #ifdef ANIM_FULL_PALETTE
-		for (i = 1; i < 16; i++) set_palette(i + ANIM_BASE, 0xFF, 0xFF, 0xFF);
+		for (i = 1; i < BASE_PALETTE_SIZE; i++) set_palette(i + ANIM_BASE, 0xFF, 0xFF, 0xFF);
 #endif
 
 		set_palette(128, 0, 0, 0); //refresh
 		break;
 	default:
-		for (i = 1; i < 16; i++)
+		for (i = 1; i < BASE_PALETTE_SIZE; i++)
 			set_palette(i + ANIM_OFFSET,
 			    or[i] + ((0xFF - or[i]) * (LF_END - animate_screenflash)) / (LF_END - 1),
 			    og[i] + ((0xFF - og[i]) * (LF_END - animate_screenflash)) / (LF_END - 1),
 			    ob[i] + ((0xFF - ob[i]) * (LF_END - animate_screenflash)) / (LF_END - 1));
 #ifdef ANIM_FULL_PALETTE
-		for (i = 1; i < 16; i++)
+		for (i = 1; i < BASE_PALETTE_SIZE; i++)
 			set_palette(i + ANIM_BASE,
 			    or0[i] + ((0xFF - or0[i]) * (LF_END - animate_screenflash)) / (LF_END - 1),
 			    og0[i] + ((0xFF - og0[i]) * (LF_END - animate_screenflash)) / (LF_END - 1),
@@ -4490,9 +4490,9 @@ void do_animate_screenflash(bool reset) {
 	case LF_END:
 		/* Restore all colours to what they were before */
 		if (active) {
-			for (i = 1; i < 16; i++) set_palette(i + ANIM_OFFSET, or[i], og[i], ob[i]);
+			for (i = 1; i < BASE_PALETTE_SIZE; i++) set_palette(i + ANIM_OFFSET, or[i], og[i], ob[i]);
 #ifdef ANIM_FULL_PALETTE
-			for (i = 1; i < 16; i++) set_palette(i + ANIM_BASE, or0[i], og0[i], ob0[i]);
+			for (i = 1; i < BASE_PALETTE_SIZE; i++) set_palette(i + ANIM_BASE, or0[i], og0[i], ob0[i]);
 #endif
 			set_palette(128, 0, 0, 0); //refresh
 			active = FALSE;
@@ -4510,9 +4510,9 @@ void do_animate_screenflash(bool reset) {
 void do_animate_lightning(bool reset) {
 	int i;
 	static bool active = FALSE; /* Don't overwrite palette backup from overlapping lightning strikes */
-	static byte or[16], og[16], ob[16];
+	static byte or[BASE_PALETTE_SIZE], og[BASE_PALETTE_SIZE], ob[BASE_PALETTE_SIZE];
 #ifdef ANIM_FULL_PALETTE
-	static byte or0[16], og0[16], ob0[16];
+	static byte or0[BASE_PALETTE_SIZE], og0[BASE_PALETTE_SIZE], ob0[BASE_PALETTE_SIZE];
 #endif
 #ifdef AL_DECOUPLED
 	int d;
@@ -4522,9 +4522,9 @@ void do_animate_lightning(bool reset) {
 	if (reset) {
 		if (active) {
 			if (c_cfg.palette_animation) {
-				for (i = 1; i < 16; i++) set_palette(i + ANIM_OFFSET, or[i], og[i], ob[i]);
+				for (i = 1; i < BASE_PALETTE_SIZE; i++) set_palette(i + ANIM_OFFSET, or[i], og[i], ob[i]);
 #ifdef ANIM_FULL_PALETTE
-				for (i = 1; i < 16; i++) set_palette(i + ANIM_BASE, or0[i], og0[i], ob0[i]);
+				for (i = 1; i < BASE_PALETTE_SIZE; i++) set_palette(i + ANIM_BASE, or0[i], og0[i], ob0[i]);
 #endif
 				set_palette(128, 0, 0, 0); //refresh
 			}
@@ -4538,9 +4538,9 @@ void do_animate_lightning(bool reset) {
 	case 1:
 		/* First thing: Backup all colours before temporarily manipulating them */
 		if (!active) {
-			for (i = 1; i < 16; i++) get_palette(i + ANIM_OFFSET, &or[i], &og[i], &ob[i]);
+			for (i = 1; i < BASE_PALETTE_SIZE; i++) get_palette(i + ANIM_OFFSET, &or[i], &og[i], &ob[i]);
 #ifdef ANIM_FULL_PALETTE
-			for (i = 1; i < 16; i++) get_palette(i + ANIM_BASE, &or0[i], &og0[i], &ob0[i]);
+			for (i = 1; i < BASE_PALETTE_SIZE; i++) get_palette(i + ANIM_BASE, &or0[i], &og0[i], &ob0[i]);
 #endif
 			active = TRUE;
 		}
@@ -4574,9 +4574,9 @@ void do_animate_lightning(bool reset) {
 	case AL_END:
 		/* Restore all colours to what they were before */
 		if (active) {
-			for (i = 1; i < 16; i++) set_palette(i + ANIM_OFFSET, or[i], og[i], ob[i]);
+			for (i = 1; i < BASE_PALETTE_SIZE; i++) set_palette(i + ANIM_OFFSET, or[i], og[i], ob[i]);
 #ifdef ANIM_FULL_PALETTE
-			for (i = 1; i < 16; i++) set_palette(i + ANIM_BASE, or0[i], og0[i], ob0[i]);
+			for (i = 1; i < BASE_PALETTE_SIZE; i++) set_palette(i + ANIM_BASE, or0[i], og0[i], ob0[i]);
 #endif
 			set_palette(128, 0, 0, 0); //refresh
 			active = FALSE;

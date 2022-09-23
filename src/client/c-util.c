@@ -9486,7 +9486,7 @@ static void do_cmd_options_colourblindness(void) {
 
 		Term_putstr(60, 1, -1, TERM_L_WHITE, " Current palette:");
 		/* Note: colour 0 is always fixed, unchangeable 0x000000, so we just skip it */
-		for (i = 1; i < 16; i++) {
+		for (i = 1; i < BASE_PALETTE_SIZE; i++) {
 			Term_putstr(55, 2 + i, -1, i, format("%2d %s", i, colour_name[i]));
 			Term_putstr(66, 2 + i, -1, TERM_WHITE, format("%3d, %3d, %3d",
 			    (client_color_map[i] & 0xFF0000) >> 16,
@@ -9606,9 +9606,9 @@ static void do_cmd_options_colourblindness(void) {
 
 		case 'n':
 			if (!c_cfg.palette_animation) continue;
-			for (i = 0; i < BASE_PALETTE_SIZE; i++) {
+			for (i = 0; i < CLIENT_PALETTE_SIZE; i++) {
 				client_color_map[i] = client_color_map_org[i];
-				if (i == 6 && lighterdarkblue && client_color_map[i] == 0x0000ff)
+				if ((i == 6 || i == BASE_PALETTE_SIZE + 6) && lighterdarkblue && client_color_map[i] == 0x0000ff)
 #ifdef WINDOWS
 					enable_readability_blue_win();
 #else
@@ -9625,7 +9625,7 @@ static void do_cmd_options_colourblindness(void) {
 
 		case 'd':
 			if (!c_cfg.palette_animation) continue;
-			for (i = 0; i < BASE_PALETTE_SIZE; i++) {
+			for (i = 0; i < CLIENT_PALETTE_SIZE; i++) {
 				client_color_map[i] = client_color_map_deu[i];
 				set_palette(i, (client_color_map[i] & 0xFF0000) >> 16, (client_color_map[i] & 0x00FF00) >> 8, client_color_map[i] & 0x0000FF);
 			}
@@ -9634,7 +9634,7 @@ static void do_cmd_options_colourblindness(void) {
 
 		case 'p':
 			if (!c_cfg.palette_animation) continue;
-			for (i = 0; i < BASE_PALETTE_SIZE; i++) {
+			for (i = 0; i < CLIENT_PALETTE_SIZE; i++) {
 				client_color_map[i] = client_color_map_pro[i];
 				set_palette(i, (client_color_map[i] & 0xFF0000) >> 16, (client_color_map[i] & 0x00FF00) >> 8, client_color_map[i] & 0x0000FF);
 			}
@@ -9643,7 +9643,7 @@ static void do_cmd_options_colourblindness(void) {
 
 		case 't':
 			if (!c_cfg.palette_animation) continue;
-			for (i = 0; i < BASE_PALETTE_SIZE; i++) {
+			for (i = 0; i < CLIENT_PALETTE_SIZE; i++) {
 				client_color_map[i] = client_color_map_tri[i];
 				set_palette(i, (client_color_map[i] & 0xFF0000) >> 16, (client_color_map[i] & 0x00FF00) >> 8, client_color_map[i] & 0x0000FF);
 			}
@@ -9653,7 +9653,7 @@ static void do_cmd_options_colourblindness(void) {
 		case 's':
 			if (!c_cfg.palette_animation) continue;
 #ifdef WINDOWS
-			for (i = 1; i < 16; i++) {
+			for (i = 1; i < BASE_PALETTE_SIZE; i++) {
 				sprintf(buf, "Colormap_%d", i);
 				c = client_color_map[i];
 				sprintf(bufc,  "#%06lx", c);
@@ -9669,9 +9669,9 @@ static void do_cmd_options_colourblindness(void) {
 
 		case 'r':
 			if (!c_cfg.palette_animation) continue;
-			for (i = 0; i < BASE_PALETTE_SIZE; i++) {
+			for (i = 0; i < CLIENT_PALETTE_SIZE; i++) {
 				client_color_map[i] = client_color_map_org[i];
-				if ((i == 6 || i == 16 + 6) && lighterdarkblue && client_color_map[i] == 0x0000ff)
+				if ((i == 6 || i == BASE_PALETTE_SIZE + 6) && lighterdarkblue && client_color_map[i] == 0x0000ff)
 #ifdef WINDOWS
 					enable_readability_blue_win();
 #else
