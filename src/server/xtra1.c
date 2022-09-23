@@ -6297,7 +6297,6 @@ void calc_boni(int Ind) {
 	if (get_skill(p_ptr, SKILL_FIRE) >= 30) { p_ptr->resist_fire = TRUE; csheet_boni[14].cb[0] |= CB1_RFIRE; }
 	if (get_skill(p_ptr, SKILL_MANA) >= 40) { p_ptr->resist_mana = TRUE; csheet_boni[14].cb[3] |= CB4_RMANA; }
 	if (get_skill(p_ptr, SKILL_CONVEYANCE) >= 50) { p_ptr->res_tele = TRUE; csheet_boni[14].cb[4] |= CB5_RTELE; }
-	if (get_skill(p_ptr, SKILL_DIVINATION) >= 50) { p_ptr->auto_id = TRUE; csheet_boni[14].cb[6] |= CB7_RAUID; }
 	if (get_skill(p_ptr, SKILL_NATURE) >= 30) { p_ptr->regenerate = TRUE; csheet_boni[14].cb[5] |= CB6_RRGHP; }
 	if (get_skill(p_ptr, SKILL_NATURE) >= 30) { p_ptr->pass_trees = TRUE; csheet_boni[14].cb[12] |= CB13_XTREE; }
 	if (get_skill(p_ptr, SKILL_NATURE) >= 30) { p_ptr->can_swim = TRUE; csheet_boni[14].cb[12] |= CB13_XSWIM; }
