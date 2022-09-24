@@ -11340,57 +11340,61 @@ void clear_macros(void) {
    1 - AU/XP line in main window (l-green/slate), also Au/Xp in C screen
    2 - like 1 but make it a length 9 number instead of length 10
  */
-#define COLPRICE_AU1 TERM_SLATE
-#define COLPRICE_AU2 TERM_L_GREEN
-#define COLPRICE_AU1S "\377s"
-#define COLPRICE_AU2S "\377G"
-#define COLPRICE_MAU1 TERM_UMBER
-#define COLPRICE_MAU2 TERM_L_UMBER
-#define COLPRICE_MAU1S "\377u"
-#define COLPRICE_MAU2S "\377U"
-#define FIXED_PY_MAX_GOLD
+#define COLBIGNUM_A1 TERM_SLATE
+#define COLBIGNUM_A2 TERM_L_GREEN
+#define COLBIGNUM_A1S "\377y"
+#define COLBIGNUM_A2S "\377w"
+#define COLBIGNUM_B1 TERM_SLATE
+#define COLBIGNUM_B2 TERM_L_GREEN
+#define COLBIGNUM_B1S "\377W"
+#define COLBIGNUM_B2S "\377G"
+#define COLBIGNUM_M1 TERM_UMBER
+#define COLBIGNUM_M2 TERM_L_UMBER
+#define COLBIGNUM_M1S "\377u"
+#define COLBIGNUM_M2S "\377U"
+#define FIXED_PY_MAX_XXX
 void colour_bignum(s32b bn, s32b bn_max, char *out_val, byte method) {
 	out_val[0] = 0;
 
 	switch (method) {
 	case 0:
 		/* No billion prices in npc stores but could be in pstores */
-		if (bn >= 1000000000) (void)sprintf(out_val, "\377U%d\377w%03d\377U%03d\377w%03d ", bn / 1000000000, (bn % 1000000000) / 1000000, (bn % 1000000) / 1000, bn % 1000);
-		else if (bn >= 1000000) (void)sprintf(out_val, "\377w%3d\377U%03d\377w%03d  ", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
-		else if (bn >= 1000) (void)sprintf(out_val, "\377U%6d\377w%03d ", bn / 1000, bn % 1000);
-		else (void)sprintf(out_val, "\377w%9d  ", bn);
+		if (bn >= 1000000000) (void)sprintf(out_val, COLBIGNUM_A1S "%d" COLBIGNUM_A2S "%03d" COLBIGNUM_A1S "%03d" COLBIGNUM_A2S "%03d", bn / 1000000000, (bn % 1000000000) / 1000000, (bn % 1000000) / 1000, bn % 1000);
+		else if (bn >= 1000000) (void)sprintf(out_val, COLBIGNUM_A2S "%3d" COLBIGNUM_A1S "%03d" COLBIGNUM_A2S "%03d", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
+		else if (bn >= 1000) (void)sprintf(out_val, COLBIGNUM_A1S "%6d" COLBIGNUM_A2S "%03d", bn / 1000, bn % 1000);
+		else (void)sprintf(out_val, COLBIGNUM_A2S "%9d", bn);
 		break;
 	case 1:
 		/* Doesn't look thaaat nice colour-wise maybe, despite being easier to interpret :/ */
 		if (bn != bn_max) {
 			/* Assume max of 4 triplets aka 12-digit number */
-			if (bn >= 1000000000) sprintf(out_val, COLPRICE_AU1S "%1d" COLPRICE_AU2S "%03d" COLPRICE_AU1S "%03d" COLPRICE_AU2S "%03d", bn / 1000000000, (bn % 1000000000) / 1000000, (bn % 1000000) / 1000, bn % 1000);
-			else if (bn >= 1000000) sprintf(out_val, COLPRICE_AU2S "%4d" COLPRICE_AU1S "%03d" COLPRICE_AU2S "%03d", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
-			else if (bn >= 1000) sprintf(out_val, COLPRICE_AU1S "%7d" COLPRICE_AU2S "%03d", bn / 1000, bn % 1000);
-			else sprintf(out_val, COLPRICE_AU2S "%10d", bn);
+			if (bn >= 1000000000) sprintf(out_val, COLBIGNUM_B1S "%1d" COLBIGNUM_B2S "%03d" COLBIGNUM_B1S "%03d" COLBIGNUM_B2S "%03d", bn / 1000000000, (bn % 1000000000) / 1000000, (bn % 1000000) / 1000, bn % 1000);
+			else if (bn >= 1000000) sprintf(out_val, COLBIGNUM_B2S "%4d" COLBIGNUM_B1S "%03d" COLBIGNUM_B2S "%03d", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
+			else if (bn >= 1000) sprintf(out_val, COLBIGNUM_B1S "%7d" COLBIGNUM_B2S "%03d", bn / 1000, bn % 1000);
+			else sprintf(out_val, COLBIGNUM_B2S "%10d", bn);
 		} else {
-#ifndef FIXED_PY_MAX_GOLD
-			/* Alternating umber tones for PY_MAX_GOLD */
-			sprintf(out_val, COLPRICE_MAU2S "%1d" COLPRICE_MAU1S "%03d" COLPRICE_MAU2S "%03d" COLPRICE_MAU1S "%03d", bn / 1000000000, (bn % 1000000000) / 1000000, (bn % 1000000) / 1000, bn % 1000);
+#ifndef FIXED_PY_MAX_XXX
+			/* Alternating umber tones for PY_MAX_GOLD/PY_MAX_EXP */
+			sprintf(out_val, COLBIGNUM_M2S "%1d" COLBIGNUM_M1S "%03d" COLBIGNUM_M2S "%03d" COLBIGNUM_M1S "%03d", bn / 1000000000, (bn % 1000000000) / 1000000, (bn % 1000000) / 1000, bn % 1000);
 #else
-			/* Since PY_MAX_GOLD is a fixed number, just display it all in one colour, cannot be misinterpreted */
-			sprintf(out_val, COLPRICE_MAU2S "%10d", bn);
+			/* Since they are constants, just display it all in one colour, cannot be misinterpreted */
+			sprintf(out_val, COLBIGNUM_M2S "%10d", bn);
 #endif
 		}
 		break;
 	case 2:
 		if (bn != bn_max) {
 			/* Assume max of 4 triplets aka 12-digit number */
-			if (bn >= 1000000) sprintf(out_val, COLPRICE_AU2S "%3d" COLPRICE_AU1S "%03d" COLPRICE_AU2S "%03d", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
-			else if (bn >= 1000) sprintf(out_val, COLPRICE_AU1S "%6d" COLPRICE_AU2S "%03d", bn / 1000, bn % 1000);
-			else sprintf(out_val, COLPRICE_AU2S "%9d", bn);
+			if (bn >= 1000000) sprintf(out_val, COLBIGNUM_B2S "%3d" COLBIGNUM_B1S "%03d" COLBIGNUM_B2S "%03d", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
+			else if (bn >= 1000) sprintf(out_val, COLBIGNUM_B1S "%6d" COLBIGNUM_B2S "%03d", bn / 1000, bn % 1000);
+			else sprintf(out_val, COLBIGNUM_B2S "%9d", bn);
 		} else {
-#ifndef FIXED_PY_MAX_GOLD
-			/* Alternating umber tones for PY_MAX_GOLD */
-			sprintf(out_val, COLPRICE_MAU1S "%3d" COLPRICE_MAU2S "%03d" COLPRICE_MAU1S "%03d", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
+#ifndef FIXED_PY_MAX_XXX
+			/* Alternating umber tones for PY_MAX_GOLD/PY_MAX_EXP */
+			sprintf(out_val, COLBIGNUM_M1S "%3d" COLBIGNUM_M2S "%03d" COLBIGNUM_M1S "%03d", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
 #else
-			/* Since PY_MAX_GOLD is a fixed number, just display it all in one colour, cannot be misinterpreted */
-			sprintf(out_val, COLPRICE_MAU2S "%9d", bn);
+			/* Since they are constants, just display it all in one colour, cannot be misinterpreted */
+			sprintf(out_val, COLBIGNUM_M2S "%9d", bn);
 #endif
 		}
 		break;
