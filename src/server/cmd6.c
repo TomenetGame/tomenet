@@ -331,7 +331,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 
 				if (magik(TRUE? 60 : 30)) set_confused(Ind, p_ptr->confused + 20 + randint(20));
 				if (magik(TRUE? 50 : 20)) set_stun_raw(Ind, p_ptr->stun + 10 + randint(10));
-				if (magik(TRUE? 50 : 10)){
+				if (magik(TRUE? 50 : 10)) {
 					set_image(Ind, p_ptr->image + 10 + randint(10));
 					take_sanity_hit(Ind, 1, "ale", 0);
 				}
@@ -2371,7 +2371,7 @@ static void do_lottery(int Ind, object_type *o_ptr) {
  * since those have level requirements (C. Blue)
  *
  */
-static int check_self_summon(player_type *p_ptr){
+static int check_self_summon(player_type *p_ptr) {
 	cave_type **zcave, *c_ptr;
 	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
@@ -2390,7 +2390,7 @@ static int check_self_summon(player_type *p_ptr){
 		/* not on wilderness edge */
 		if (p_ptr->wpos.wz || in_bounds(p_ptr->py, p_ptr->px)) {
 			/* and not sitting on the stairs */
-			if(c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_MORE &&
+			if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_MORE &&
 			    c_ptr->feat != FEAT_WAY_LESS && c_ptr->feat != FEAT_WAY_MORE &&
 			    c_ptr->feat != FEAT_BETWEEN)
 				return(TRUE);
@@ -2425,7 +2425,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			bool jail = FALSE;
 			msg_print(Ind, "This is a house creation scroll.");
 			ident = TRUE;
-			if(ins){
+			if (ins) {
 				while ((*ins != '\0')) {
 					if (*ins == '@') {
 						ins++;
@@ -2560,8 +2560,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 		   */
 		case SV_SCROLL_LIFE:
 			/* only restore life levels if no resurrect */
-			if(!do_scroll_life(Ind))
-				restore_level(Ind);
+			if (!do_scroll_life(Ind)) restore_level(Ind);
 			break;
 
 
@@ -3935,7 +3934,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 	/* Restrict choices to wands */
 	item_tester_tval = TV_WAND;
 
-	if( check_guard_inscription( o_ptr->note, 'a' )) {
+	if (check_guard_inscription(o_ptr->note, 'a')) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
 	};
@@ -6660,7 +6659,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			break;
 		case ART_BOROMIR:
 			msg_print(Ind, "Your horn calls for help.");
-			for(i = 0; i < 15; i++)
+			for (i = 0; i < 15; i++)
 				summon_specific_friendly(py, px, ((plev * 3) / 2), SUMMON_HUMAN, TRUE);
  #ifdef USE_SOUND_2010
 			sound_near_site(py, px, wpos, 0, "summon", NULL, SFX_TYPE_COMMAND, FALSE);
@@ -6957,7 +6956,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				inven_item_optimize(Ind, item);
 				break;
 			case SV_RING_POLYMORPH:
-				if (!(item == INVEN_LEFT || item == INVEN_RIGHT)){
+				if (!(item == INVEN_LEFT || item == INVEN_RIGHT)) {
 					msg_print(Ind, "You must be wearing the ring!");
 					return;
 				}
@@ -7381,7 +7380,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			fire_ball(Ind, GF_POIS, dir, 600 + get_skill_scale(p_ptr, SKILL_DEVICE, 600), 4, p_ptr->attacker);
 			break;
 		case SV_DRAGON_MULTIHUED:
-			switch(rand_int(5)){
+			switch (rand_int(5)) {
 			case 0:	msg_print(Ind, "You breathe acid.");
 				sprintf(p_ptr->attacker, " breathes acid for");
 				fire_ball(Ind, GF_ACID, dir, 600 + get_skill_scale(p_ptr, SKILL_DEVICE, 600), 4, p_ptr->attacker);
@@ -7427,7 +7426,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			}
 			break;
 		case SV_DRAGON_LAW:
-			switch(rand_int(2)){
+			switch (rand_int(2)) {
 			case 0:	msg_print(Ind, "You breathe shards.");
 				sprintf(p_ptr->attacker, " breathes shards for");
 				fire_ball(Ind, GF_SHARDS, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 4, p_ptr->attacker);
@@ -7545,7 +7544,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			fire_ball(Ind, GF_SHARDS, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 4, p_ptr->attacker);
 			break;
 		case SV_DRAGON_DRACOLICH:
-			switch(rand_int(2)){
+			switch (rand_int(2)) {
 			case 0:	msg_print(Ind, "You breathe nether.");
 				sprintf(p_ptr->attacker, " breathes nether for");
 				fire_ball(Ind, GF_NETHER, dir, 550 + get_skill_scale(p_ptr, SKILL_DEVICE, 550), 4, p_ptr->attacker);
@@ -7557,7 +7556,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			}
 			break;
 		case SV_DRAGON_DRACOLISK:
-			switch(rand_int(2)){
+			switch (rand_int(2)) {
 			case 0:	msg_print(Ind, "You breathe fire.");
 				sprintf(p_ptr->attacker, " breathes fire for");
 				fire_ball(Ind, GF_FIRE, dir, 600 + get_skill_scale(p_ptr, SKILL_DEVICE, 600), 4, p_ptr->attacker);
@@ -7569,7 +7568,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			}
 			break;
 		case SV_DRAGON_SKY:
-			switch(rand_int(3)){
+			switch (rand_int(3)) {
 			case 0:	msg_print(Ind, "You breathe lightning.");
 				sprintf(p_ptr->attacker, " breathes lightning for");
 				fire_ball(Ind, GF_ELEC, dir, 600 + get_skill_scale(p_ptr, SKILL_DEVICE, 600), 4, p_ptr->attacker);
@@ -8149,7 +8148,7 @@ void do_cmd_stance(int Ind, int stance) {
 
 	if (!get_skill(p_ptr, SKILL_STANCE)) return;
 
-	switch(stance) {
+	switch (stance) {
 	case 0: /* always known, no different power levels here */
 		if (!p_ptr->combat_stance) {
 			msg_print(Ind, "\377sYou already are in balanced stance!");
@@ -8159,7 +8158,7 @@ void do_cmd_stance(int Ind, int stance) {
 s_printf("SWITCH_STANCE: %s - balance\n", p_ptr->name);
 	break;
 	case 1:
-		switch(p_ptr->pclass) {
+		switch (p_ptr->pclass) {
 		case CLASS_WARRIOR:
 			if (p_ptr->max_lev < 5) {
 				msg_print(Ind, "\377sYou haven't learned a defensive stance yet.");
@@ -8210,7 +8209,7 @@ s_printf("SWITCH_STANCE: %s - balance\n", p_ptr->name);
 		}
 #endif
 
-		switch(p_ptr->pclass) {
+		switch (p_ptr->pclass) {
 		case CLASS_WARRIOR:
 			if (p_ptr->max_lev < 15) {
 				power = 0;
@@ -8283,7 +8282,7 @@ s_printf("SWITCH_STANCE: %s - defensive\n", p_ptr->name);
 		break;
 
 	case 2:
-		switch(p_ptr->pclass) {
+		switch (p_ptr->pclass) {
 		case CLASS_WARRIOR:
 			if (p_ptr->max_lev < 10) {
 				msg_print(Ind, "\377sYou haven't learned an offensive stance yet.");
@@ -8330,7 +8329,7 @@ s_printf("SWITCH_STANCE: %s - defensive\n", p_ptr->name);
 			return;
 		}
 
-		switch(p_ptr->pclass) {
+		switch (p_ptr->pclass) {
 		case CLASS_WARRIOR:
 			if (p_ptr->max_lev < 20) {
 				power = 0;

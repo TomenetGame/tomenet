@@ -1816,7 +1816,7 @@ static byte multi_hued_attr(monster_race *r_ptr) {
 		/* only 1 breath, and one of these? -> discard its r_info
 		   base colour completely if ATTR_BASE isn't set: */
 		if (!(r_ptr->flags7 & RF7_ATTR_BASE)) {
-			switch(r_ptr->flags4 & 0x3fffff00) {
+			switch (r_ptr->flags4 & 0x3fffff00) {
 			case RF4_BR_ACID:
 				return(TERM_ACID);
 			case RF4_BR_COLD:
@@ -2207,22 +2207,22 @@ static byte player_color(int Ind) {
 	/* Team colours have highest priority */
 	if (p_ptr->team) {
 		/* may have multiteam */
-		switch(p_ptr->team) {
-			case 1:
-				pcolor = TERM_L_RED; //the_sandman: changed it to light red
-						     //since red == istari.
-				break;
-			case 2:
-				pcolor = TERM_L_BLUE;
-				break;
-			case 3:
-				pcolor = TERM_YELLOW;
-				break;
-			case 4:
-				pcolor = TERM_UMBER;
-				break;
-			default:
-				break;
+		switch (p_ptr->team) {
+		case 1:
+			pcolor = TERM_L_RED; //the_sandman: changed it to light red
+					     //since red == istari.
+			break;
+		case 2:
+			pcolor = TERM_L_BLUE;
+			break;
+		case 3:
+			pcolor = TERM_YELLOW;
+			break;
+		case 4:
+			pcolor = TERM_UMBER;
+			break;
+		default:
+			break;
 		}
 		if ((has_ball(p_ptr) != -1) && magik(50)) pcolor = TERM_ORANGE; /* game ball carrier has orange flickering - mikaelh */
 	}
@@ -3298,7 +3298,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 
 		/* Special terrain effect */
 		if (c_ptr->effect
-		    && !((effects[c_ptr->effect].flags & EFF_METEOR) && (c_ptr->m_idx || !(f_info[c_ptr->feat].flags1 & FF1_FLOOR)))){
+		    && !((effects[c_ptr->effect].flags & EFF_METEOR) && (c_ptr->m_idx || !(f_info[c_ptr->feat].flags1 & FF1_FLOOR)))) {
 #if 0
 			(*ap) = spell_color(effects[c_ptr->effect].type);
 #else /* allow 'transparent' spells */
@@ -4016,7 +4016,7 @@ void lite_spot(int Ind, int y, int x) {
 
 			if (p_ptr->team) {
 				if (magik(25)) { /* chance for showing him/her which team (s)he's in - mikaelh */
-					switch(p_ptr->team) {
+					switch (p_ptr->team) {
 						case 1:
 							a = TERM_L_RED;
 							break;

@@ -675,7 +675,7 @@ static void prt_extra_status(int Ind) {
 
 	/* add combat stance indicator */
 	if (get_skill(p_ptr, SKILL_STANCE)) {
-		switch(p_ptr->combat_stance) {
+		switch (p_ptr->combat_stance) {
 		case 0: strcpy(status, "\377sBl ");
 			break;
 		case 1: strcpy(status, "\377uDf ");
@@ -787,7 +787,7 @@ static void health_redraw(int Ind) {
 		}
 
 		if (0 - p_ptr->health_who <= NumPlayers) {
-			if(Players[0-p_ptr->health_who]->conn == NOT_CONNECTED ) {
+			if (Players[0-p_ptr->health_who]->conn == NOT_CONNECTED ) {
 				Send_monster_health(Ind, 0, 0);
 				return;
 			};
@@ -1175,7 +1175,7 @@ void calc_mana(int Ind) {
 	if (levels < 0) levels = 0;
 
 	/* Extract total mana */
-	switch(p_ptr->pclass) {
+	switch (p_ptr->pclass) {
 	case CLASS_MAGE:
 		/* much Int, few Wis */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
@@ -1290,7 +1290,7 @@ void calc_mana(int Ind) {
 	/* 2018 - C. Blue:
 	   Paladins/Death Knights/Hell Knights benefit more than before, but still overall the least, together with Rogues and Adventurers.
 	   All other hybrids/holy classes benefit less than Mages/Runemasters (who benefit fully). */
-	switch(p_ptr->pclass) {
+	switch (p_ptr->pclass) {
 
 	/* Mostly pure casters */
 	case CLASS_MAGE:
@@ -7784,7 +7784,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 	ge->noghost = FALSE;
 
 	/* IMPORTANT: state[0] == 255 is used as indicator that cleaning-up must be done, event has ended. */
-	switch(getype) {
+	switch (getype) {
 	case GE_HIGHLANDER:	/* 'Highlander Tournament' */
 		/* parameters:
 		[<int != 0>]	set announcement time to this (seconds)
@@ -7805,12 +7805,12 @@ int start_global_event(int Ind, int getype, char *parm) {
 		ge->end_turn = ge->start_turn + cfg.fps * 60 * 90 ; /* 90 minutes max. duration,
 								most of the time is just for announcing it
 								so players will sign on via /evsign <n> */
-		switch(rand_int(2)) { /* Determine terrain type! */
+		switch (rand_int(2)) { /* Determine terrain type! */
 		case 0: ge->extra[2] = WILD_WASTELAND; break;
 		//case 1: ge->extra[2] = WILD_SWAMP; break; swamp maybe too annoying
 		case 1: ge->extra[2] = WILD_GRASSLAND; break;
 		}
-		switch(rand_int(3)) { /* Load premade layout? (Arenas) */
+		switch (rand_int(3)) { /* Load premade layout? (Arenas) */
 		case 1: ge->extra[4] = 1; break; //mountain region
 		//case 2: ge->extra[4] = 2; break; //city ruins
 		default: ge->extra[4] = 0; break; //no premade layout, just plain wilderness
@@ -7838,12 +7838,12 @@ int start_global_event(int Ind, int getype, char *parm) {
 		strcpy(ge->description[9], "");
 		ge->end_turn = ge->start_turn + cfg.fps * 60 * 30 ; /* 30 minutes max. duration, insta-start */
 #if 0
-		switch(rand_int(2)) { /* Determine terrain type! */
+		switch (rand_int(2)) { /* Determine terrain type! */
 		case 0: ge->extra[2] = WILD_WASTELAND; break;
 		//case 1: ge->extra[2] = WILD_SWAMP; break; swamp maybe too annoying
 		case 1: ge->extra[2] = WILD_GRASSLAND; break;
 		}
-		switch(rand_int(3)) { /* Load premade layout? (Arenas) */
+		switch (rand_int(3)) { /* Load premade layout? (Arenas) */
 		case 0: ge->extra[4] = 1; break;
 		}
 #endif
@@ -8908,7 +8908,7 @@ static void process_global_event(int ge_id) {
 		}
 		wpos.wz = d_ptr->maxdepth;
 
-		switch(ge->state[0]){
+		switch (ge->state[0]) {
 		case 0: /* prepare */
 #if 0 /* disabled unstaticing for now since it might unstatice the whole 32,32 sector on all depths? dunno */
 			unstatic_level(&wpos);/* get rid of any other person, by unstaticing ;) */
@@ -10166,7 +10166,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 					msg_print(Ind, "\377yThe receipient must match the level of the item.");
 					return;
 				}
-				else if (!olev){
+				else if (!olev) {
 					msg_print(Ind, "\377yA recipient may not receive a your zero-level item.");
 					return;
 				}

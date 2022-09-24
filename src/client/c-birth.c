@@ -223,7 +223,7 @@ static bool enter_password(void) {
  * Choose the character's sex				-JWT-
  */
 static bool choose_sex(void) {
-	char c = '\0';		/* pfft redesign while(1) */
+	char c = '\0';		/* pfft redesign while (1) */
 	bool hazard = FALSE;
 	bool parity = magik(50);
 

@@ -1397,7 +1397,7 @@ static void rd_guilds() {
 	int i;
 	u16b tmp16u;
 	rd_u16b(&tmp16u);
-	if(tmp16u > MAX_GUILDS){
+	if (tmp16u > MAX_GUILDS) {
 		s_printf("Too many guilds (%d)\n", tmp16u);
 		return;
 	}
@@ -1555,7 +1555,7 @@ static void rd_house(int n) {
 				cs_ptr->sc.ptr = house_ptr->dna;
 		}
 	}
-	if (house_ptr->flags&HF_RECT){
+	if (house_ptr->flags&HF_RECT) {
 		rd_byte(&house_ptr->coords.rect.width);
 		rd_byte(&house_ptr->coords.rect.height);
 	}
@@ -2777,6 +2777,7 @@ static errr rd_floor(void) {
 	{
 		struct c_special *cs_ptr;
 		byte n;
+
 		while (TRUE) {
 			rd_byte(&x);
 			rd_byte(&y);
@@ -2786,7 +2787,7 @@ static errr rd_floor(void) {
 			if (x == 255 && y == 255 && n == 255) break;
 
 			c_ptr = &zcave[y][x];
-			while(n--){
+			while (n--) {
 				rd_byte(&k);
 				cs_ptr = ReplaceCS(c_ptr, k);
 				csfunc[k].load(cs_ptr);
@@ -3575,7 +3576,7 @@ errr rd_server_savefile() {
 	/* Read the available records */
 	for (i = 0; i < (unsigned int) num_houses; i++) {
 		rd_house(i);
-		if(!(houses[i].flags&HF_STOCK))
+		if (!(houses[i].flags&HF_STOCK))
 			wild_add_uhouse(&houses[i]);
 	}
 
@@ -4061,7 +4062,7 @@ void rd_towns() {
 	}
 }
 
-void load_guildhalls(struct worldpos *wpos){
+void load_guildhalls(struct worldpos *wpos) {
 	int i;
 	FILE *gfp;
 	struct guildsave data;
@@ -4086,7 +4087,7 @@ void load_guildhalls(struct worldpos *wpos){
 	}
 }
 
-void save_guildhalls(struct worldpos *wpos){
+void save_guildhalls(struct worldpos *wpos) {
 	int i;
 	FILE *gfp;
 	struct guildsave data;

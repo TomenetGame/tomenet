@@ -1928,7 +1928,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			if (wpos->wz == 0 && wild->dungeon == NULL) break; /* Nothing below us as pointed out by miikkajo - mikaelh */
 
 			if (wpos->wz > 0) maxfall = wpos->wz;
-			else if(ABS(wpos->wz) < wild->dungeon->maxdepth)
+			else if (ABS(wpos->wz) < wild->dungeon->maxdepth)
 				maxfall = wild->dungeon->maxdepth - ABS(wpos->wz);
 			else {
 				//msg_print(Ind, "\377GYou feel quite certain something really awful just happened..");
@@ -2988,7 +2988,7 @@ void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found
 	if (!(cs_ptr = AddCS(c_ptr, CS_TRAPS))) return;
 	cs_ptr->sc.trap.t_idx = trap;
 	cs_ptr->sc.trap.found = FALSE;
-	if(found) cs_ptr->sc.trap.found = TRUE;
+	if (found) cs_ptr->sc.trap.found = TRUE;
 	everyone_lite_spot(wpos, y, x);
 
 	return;
@@ -4388,7 +4388,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 		flg &= ~(PROJECT_NODF);
 		break;
 	case SV_WAND_DRAGON_BREATH:
-		switch(randint(5)) {
+		switch (randint(5)) {
 		case 1: typ = GF_FIRE; break;
 		case 2: typ = GF_ELEC; break;
 		case 3: typ = GF_ACID; break;
@@ -5212,7 +5212,7 @@ bool mon_hit_trap(int m_idx) {
 			}
 			while (shots-- && !dead) {
 				/* Get the effect effect */
-				switch(load_o_ptr->tval) {
+				switch (load_o_ptr->tval) {
 				case TV_ROD:
 					dead = mon_hit_trap_aux_rod(who, m_idx, load_o_ptr);
 					break;

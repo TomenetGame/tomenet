@@ -66,7 +66,7 @@ void callmeta() {
 	if (ser != -1) {
 		fp = fopen("metadata", "rb");
 		if (fp != (FILE*)NULL) {
-			while(fgets(metadata, 16384, fp))
+			while (fgets(metadata, 16384, fp))
 				write(ser, metadata, strlen(metadata));
 			fclose(fp);
 		}

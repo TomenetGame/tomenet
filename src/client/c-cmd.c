@@ -1025,7 +1025,7 @@ void cmd_equip(void) {
 			}
 			break;
 		}
-		else switch(ch) {
+		else switch (ch) {
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????");
 			break;
@@ -7250,7 +7250,7 @@ static void cmd_master_aux_level(void) {
 		else if (i == '1') Send_master(MASTER_LEVEL, "s");
 		/* unstatic the current level */
 		else if (i == '2') Send_master(MASTER_LEVEL, "u");
-		else if (i == '3'){	/* create dungeon stair here */
+		else if (i == '3') {	/* create dungeon stair here */
 			buf[0] = 'D';
 			buf[4] = 0x01;//hack: avoid 0 byte
 			buf[5] = 0x01;//hack: avoid 0 byte
@@ -7315,12 +7315,12 @@ static void cmd_master_aux_level(void) {
 			buf[8] = '\0';
 			Send_master(MASTER_LEVEL, buf);
 		}
-		else if (i == '4'){
+		else if (i == '4') {
 			buf[0] = 'R';
 			buf[1] = '\0';
 			Send_master(MASTER_LEVEL, buf);
 		}
-		else if (i == '5'){
+		else if (i == '5') {
 			buf[0] = 'T';
 			buf[1] = c_get_quantity("Base level: ", 127);
 			Send_master(MASTER_LEVEL, buf);
@@ -7374,7 +7374,7 @@ static void cmd_master_aux_generate_vault(void) {
 		else if (i == '1') {
 			buf[1] = '#';
 			buf[2] = c_get_quantity("Vault number? ", 255) - 127;
-			if(!buf[2]) redo_hack = 1;
+			if (!buf[2]) redo_hack = 1;
 			buf[3] = 0;
 		}
 
@@ -7382,7 +7382,7 @@ static void cmd_master_aux_generate_vault(void) {
 		else if (i == '2') {
 			buf[1] = 'n';
 			get_string("Enter vault name: ", &buf[2], 77);
-			if(!buf[2]) redo_hack = 1;
+			if (!buf[2]) redo_hack = 1;
 		}
 
 		/* Oops */
@@ -7393,7 +7393,7 @@ static void cmd_master_aux_generate_vault(void) {
 		}
 
 		/* hack -- don't do this if we hit an invalid key previously */
-		if(redo_hack) continue;
+		if (redo_hack) continue;
 
 		Send_master(MASTER_GENERATE, buf);
 
@@ -8138,7 +8138,7 @@ static void cmd_master(void) {
 		/* Get a key */
 		i = inkey();
 
-		switch(i) {
+		switch (i) {
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????");
 			break;

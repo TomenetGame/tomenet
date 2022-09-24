@@ -663,7 +663,7 @@ byte flick_colour(byte attr) {
 #endif
 
 	if (attr == TERM_SHIELDM) {
-/*	if ((attr >= TERM_SHIELDM) && (attr < TERM_SHIELDI)){
+/*	if ((attr >= TERM_SHIELDM) && (attr < TERM_SHIELDI)) {
 		if (randint(2) == 1) return (attr - TERM_SHIELDM);
 		if ((attr - TERM_SHIELDM) != TERM_VIOLET)
 		return((randint(2) == 1) ? TERM_VIOLET : TERM_ORANGE);
@@ -676,7 +676,7 @@ byte flick_colour(byte attr) {
 		}
 	}
 	if (attr == TERM_SHIELDI) {
-/*	if ((attr >= TERM_SHIELDI) && (attr <= 0xFF)){
+/*	if ((attr >= TERM_SHIELDI) && (attr <= 0xFF)) {
 		if (randint(4) == 1) return (attr - TERM_SHIELDI);
 */		switch (randint(5)) {
 		case 1: return (TERM_L_RED);

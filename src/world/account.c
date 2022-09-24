@@ -15,7 +15,7 @@ static uint32_t new_accid(void);
 static char *t_crypt(char *inbuf, unsigned char *salt);
 static int GetAccount(struct account *c_acc, unsigned char *name, char *pass);
 
-void l_account(struct wpacket *wpk, struct client *ccl){
+void l_account(struct wpacket *wpk, struct client *ccl) {
 	struct pl_auth *login;
 	struct account acc;
 

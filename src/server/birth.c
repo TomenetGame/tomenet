@@ -1071,7 +1071,7 @@ static void get_money(int Ind) {
 	p_ptr->au = 1000;
  #else
   #if STARTEQ_TREATMENT < 3
-	switch(p_ptr->pclass){
+	switch (p_ptr->pclass) {
 	case CLASS_MAGE:	p_ptr->au += 850; break;
    #ifdef ENABLE_CPRIEST
 	case CLASS_CPRIEST:
@@ -1097,7 +1097,7 @@ static void get_money(int Ind) {
 	default:		;
 	}
   #else
-	switch(p_ptr->pclass){
+	switch (p_ptr->pclass) {
 	case CLASS_MAGE:	p_ptr->au += 1000; break;
 	case CLASS_SHAMAN:	p_ptr->au += 1000; break;
 	case CLASS_MINDCRAFTER:	p_ptr->au += 900; break;
@@ -2228,7 +2228,7 @@ static void player_setup(int Ind, bool new) {
 	if (wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y) {
 		/* Teleport him out of the event area */
 #if 0
-		switch rand_int(3){
+		switch rand_int(3) {
 		case 0:	wpos->wx = WPOS_SECTOR00_ADJAC_X;
 		case 1:	wpos->wy = WPOS_SECTOR00_ADJAC_Y; break;
 		case 2: wpos->wx = WPOS_SECTOR00_ADJAC_X;
@@ -2416,7 +2416,7 @@ static void player_setup(int Ind, bool new) {
 			/* Player now starts mapping this dungeon (as far as its flags allow) */
 			p_ptr->dlev_id = l_ptr->id;
 
-			if ((l_ptr->wid < p_ptr->px) || (l_ptr->hgt < p_ptr->py)){
+			if ((l_ptr->wid < p_ptr->px) || (l_ptr->hgt < p_ptr->py)) {
 				p_ptr->px = l_ptr->wid / 2;
 				p_ptr->py = l_ptr->hgt / 2;
 				NumPlayers++; // hack for cave_midx_debug - mikaelh
@@ -2796,7 +2796,7 @@ static void player_setup(int Ind, bool new) {
 #if 1 /* fix problem that player logging on on regenerated level cant see himself at the beginning */
  #if 0
 	/* allow to instantly determine the terrain type we start _in_ (could be walls/trees) */
-  #if 0 /* panic saves at this stage, if this code happens in if(alloc).. stuff above already -- DOESNT WORK? */
+  #if 0 /* panic saves at this stage, if this code happens in if (alloc).. stuff above already -- DOESNT WORK? */
 	note_spot(Ind, p_ptr->py, p_ptr->px);
   #else /* so we'd have to do it manually if this code is up there instead (sigh) */
 	p_ptr->cave_flag[p_ptr->py][p_ptr->px] |= CAVE_MARK;

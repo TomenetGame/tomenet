@@ -55,7 +55,7 @@ struct list *addlist(struct list **head, int dsize) {
 }
 
 /* Generic list handling function */
-struct list *remlist(struct list **head, struct list *dlp){
+struct list *remlist(struct list **head, struct list *dlp) {
 	struct list *lp;
 
 	lp = *head;
@@ -78,7 +78,7 @@ struct list *remlist(struct list **head, struct list *dlp){
 	return(dlp->next);
 }
 
-void world_update_players(){
+void world_update_players() {
 	int i;
 
 	for (i = 1; i <= NumPlayers; i++) {
@@ -118,7 +118,7 @@ void world_comm(int fd, int arg) {
 		remove_input(WorldSocket);
 		close(WorldSocket);	/* ;) this'll fix it... */
 		/* Clear all the world players quietly */
-		while(remlist(&rpmlist, rpmlist));
+		while (remlist(&rpmlist, rpmlist));
 #if 0
 		c_pl = rpmlist;
 		while (c_pl) {

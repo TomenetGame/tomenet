@@ -580,21 +580,18 @@ int	port;
     peer.sin6_len = sizeof(peer);
     peer.sin6_family = AF_INET6;
     peer.sin6_port   = htons(port);
-    if((inet_pton(AF_INET6, host, &peer.sin6_addr))<1){
+    if ((inet_pton(AF_INET6, host, &peer.sin6_addr)) < 1) {
 	hp = gethostbyname2(host, AF_INET6);
-	if (hp == NULL)
-	{
+	if (hp == NULL) {
 	    printf("1 No IP6 address for %s\n", host);
 	    hp = gethostbyname2(host, AF_INET);
 	    if (hp == NULL) {
-	   	sl_errno = SL_EHOSTNAME;
-	    	return (-1);
-	    }
-	    else{
+		sl_errno = SL_EHOSTNAME;
+		return (-1);
+	    } else{
 		/* I dont like this really */
 		*((u_int32_t*)&peer.sin6_addr.s6_addr[8]) = ntohl(0x0000ffff);
-	    	*((struct in_addr*)(&peer.sin6_addr.s6_addr[12])) = *((struct in_addr*)(hp->h_addr));
-
+		*((struct in_addr*)(&peer.sin6_addr.s6_addr[12])) = *((struct in_addr*)(hp->h_addr));
 	    }
 	}
 	else
@@ -1723,7 +1720,7 @@ int	port;
     memset((char *)&addr_in, 0, sizeof(addr_in));
     addr_in.sin6_family          = AF_INET6;
     addr_in.sin6_port            = htons(port);
-    if((inet_pton(AF_INET6, host, &addr_in.sin6_addr)<1))
+    if ((inet_pton(AF_INET6, host, &addr_in.sin6_addr)<1))
     {
 #ifdef SERVER
 	printf("DgramConnect called with hostname %s.\n", host);
@@ -1751,7 +1748,7 @@ int	port;
 #endif
 #if 0
     hp = gethostbyname2(host, AF_INET6);
-    if(hp == NULL)
+    if (hp == NULL)
     {
         sl_errno = SL_EHOSTNAME;
         return(-1);
@@ -1840,7 +1837,7 @@ char	*host, *sbuf;
 #endif
     {
 	printf("Getting info for %s\n", host);
-	if((inet_pton(AF_INET6, host, &the_addr.sin6_addr)<1))
+	if ((inet_pton(AF_INET6, host, &the_addr.sin6_addr)<1))
 	{
 #ifdef SERVER
 	    printf("DgramSend called with host %s\n", host);
@@ -1985,7 +1982,7 @@ char	*rbuf;
     struct hostent	*hp;
     struct sockaddr_in6	tmp_addr;
 
-    if((inet_pton(AF_INET6, from, &tmp_addr.sin6_addr)<1))
+    if ((inet_pton(AF_INET6, from, &tmp_addr.sin6_addr) < 1))
     {
 #ifdef SERVER
 	printf("DgramReceive called with host %s.\n", from);

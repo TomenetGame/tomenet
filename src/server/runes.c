@@ -235,13 +235,13 @@ void cast_rune_spell (int Ind, int dir) {
 	}
 #endif
 
-	switch(base->sval) {
+	switch (base->sval) {
 		case SV_RUNE1_BOLT:
 			notice = do_use_mp(Ind, mod->sval, RBOLT_BASE);
 			if (ability_lvl < RSAFE_BOLT)
 				chance_to_break = RSAFE_BOLT - ability_lvl;
 			if (!notice) {
-				switch(mod->sval) {
+				switch (mod->sval) {
 					case SV_RUNE2_STONE:
 						wall_to_mud(Ind, dir);
 						break;
@@ -261,7 +261,7 @@ void cast_rune_spell (int Ind, int dir) {
 				chance_to_break = RSAFE_BEAM - ability_lvl;
 			notice = do_use_mp(Ind, mod->sval, RBEAM_BASE);
 			if (!notice) {
-				switch(mod->sval) {
+				switch (mod->sval) {
 					case SV_RUNE2_STONE:
 						wall_to_mud(Ind, dir);
 						wall_to_mud(Ind, dir);
@@ -390,7 +390,7 @@ void cast_rune_spell (int Ind, int dir) {
 						break;
 					default:
 						break;
-				} //switch(mod->pval)
+				} //switch (mod->pval)
 			}
 			break;
 		}//CASE SV_RUNE1_SELF:

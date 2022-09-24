@@ -186,7 +186,7 @@ void install_client(GtkButton *button, gpointer label) {
 	long res = 0;
 
 	gtk_button_set_label(button, "..please wait..");
-	while(gtk_events_pending())
+	while (gtk_events_pending())
 	    gtk_main_iteration();
 
 #ifdef WINDOWS
@@ -295,7 +295,7 @@ void install_client(GtkButton *button, gpointer label) {
 	if (!res) show_done(top_window);
 
 	gtk_button_set_label(button, "Install/update game client");
-	while(gtk_events_pending())
+	while (gtk_events_pending())
 	    gtk_main_iteration();
 }
 
@@ -303,7 +303,7 @@ void install_sound(GtkButton *button, gpointer label) {
 	long res = 0;
 
 	gtk_button_set_label(button, "..please wait..");
-	while(gtk_events_pending())
+	while (gtk_events_pending())
 	    gtk_main_iteration();
 
 	//path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
@@ -375,7 +375,7 @@ exit(0);
 		gtk_widget_destroy (dialog);
 
 		gtk_button_set_label(button, "Install/update sound pack");
-		while(gtk_events_pending())
+		while (gtk_events_pending())
 		    gtk_main_iteration();
 		remove("temp.html");
 		return;
@@ -491,7 +491,7 @@ exit(0);
 		gtk_widget_destroy (dialog);
 
 		gtk_button_set_label(button, "Install/update sound pack");
-		while(gtk_events_pending())
+		while (gtk_events_pending())
 		    gtk_main_iteration();
 		remove("temp.html");
 		return;
@@ -552,7 +552,7 @@ exit(0);
 	if (!res) show_done(top_window);
 
 	gtk_button_set_label(button, "Install/update sound pack");
-	while(gtk_events_pending())
+	while (gtk_events_pending())
 	    gtk_main_iteration();
 }
 
@@ -560,7 +560,7 @@ void install_music(GtkButton *button, gpointer label) {
 	long res = 0;
 
 	gtk_button_set_label(button, "..please wait..");
-	while(gtk_events_pending())
+	while (gtk_events_pending())
 	    gtk_main_iteration();
 
 	//path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
@@ -622,7 +622,7 @@ void install_music(GtkButton *button, gpointer label) {
 		gtk_widget_destroy (dialog);
 
 		gtk_button_set_label(button, "Install/update music pack");
-		while(gtk_events_pending())
+		while (gtk_events_pending())
 		    gtk_main_iteration();
 		remove("temp.html");
 		return;
@@ -738,7 +738,7 @@ void install_music(GtkButton *button, gpointer label) {
 		gtk_widget_destroy (dialog);
 
 		gtk_button_set_label(button, "Install/update music pack");
-		while(gtk_events_pending())
+		while (gtk_events_pending())
 		    gtk_main_iteration();
 		remove("temp.html");
 		return;
@@ -799,7 +799,7 @@ void install_music(GtkButton *button, gpointer label) {
 	if (!res) show_done(top_window);
 
 	gtk_button_set_label(button, "Install/update music pack");
-	while(gtk_events_pending())
+	while (gtk_events_pending())
 	    gtk_main_iteration();
 }
 
@@ -808,7 +808,7 @@ void install_guide(GtkButton *button, gpointer label) {
 	long res = 0;
 
 	gtk_button_set_label(button, "..please wait..");
-	while(gtk_events_pending())
+	while (gtk_events_pending())
 	    gtk_main_iteration();
 
 #ifdef WINDOWS
@@ -855,7 +855,7 @@ void install_guide(GtkButton *button, gpointer label) {
 	if (!res) show_done(top_window);
 
 	gtk_button_set_label(button, "Install/update guide");
-	while(gtk_events_pending())
+	while (gtk_events_pending())
 	    gtk_main_iteration();
 }
 #endif

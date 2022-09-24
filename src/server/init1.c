@@ -4297,7 +4297,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 #if 1
 			r_ptr->extra = 0;
 			/* MEGA HACK */
-			if(!pad) pad = 100;
+			if (!pad) pad = 100;
 			r_ptr->weight = pad;
 #endif
 			r_ptr->mexp = exp;
@@ -5175,7 +5175,7 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 				/* XXX XXX XXX Hack -- Read monster symbols */
 				if (1 == sscanf(s, "R_CHAR_%c", &r_char)) {
 					/* Limited to 5+5 races */
-					if(r_char_number >= 10) continue;
+					if (r_char_number >= 10) continue;
 
 					/* Extract a "frequency" */
 					re_ptr->r_char[r_char_number++] = r_char;
@@ -5216,7 +5216,7 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 				/* XXX XXX XXX Hack -- Read monster symbols */
 				if (1 == sscanf(s, "R_CHAR_%c", &r_char)) {
 					/* Limited to 5 races */
-					if(nr_char_number >= 10) continue;
+					if (nr_char_number >= 10) continue;
 
 					/* Extract a "frequency" */
 					re_ptr->nr_char[nr_char_number++] = r_char;
@@ -9347,7 +9347,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			char *s = buf+4;
 			int y = *yval;
 
-			for(x = 0; x < max_wild_x; x++) {
+			for (x = 0; x < max_wild_x; x++) {
 				if (1 != sscanf(s + x, "%c", &i)) return (1);
 				wild_map[y][x].feat = wildc2i[(int)i];
 			}

@@ -831,7 +831,7 @@ void lua_towns_treset(void) {
 		wpos.wy = y;
 		if (istown(&wpos)) {
 			unstatic_level(&wpos);
-			if(getcave(&wpos)) dealloc_dungeon_level(&wpos);
+			if (getcave(&wpos)) dealloc_dungeon_level(&wpos);
 		}
 	}
 }
@@ -1079,9 +1079,9 @@ void lua_apply_item_changes(int Ind, int changes) {
 	/* scan world/houses */
 #ifndef USE_MANG_HOUSE_ONLY
 		/* scan traditional (vanilla) houses */
-		for(j = 0; j < num_houses; j++){
+		for (j = 0; j < num_houses; j++) {
 			h_ptr = &houses[j];
-			for (i = 0; i < h_ptr->stock_num; i++){
+			for (i = 0; i < h_ptr->stock_num; i++) {
 				o_ptr = &h_ptr->stock[i];
 				if (!o_ptr->k_idx) continue;
 				lua_apply_item_changes_aux(o_ptr, changes);
@@ -1089,14 +1089,14 @@ void lua_apply_item_changes(int Ind, int changes) {
 		}
 #endif
 		/* scan world (includes MAngband-style houses) */
-		for(i = 0; i < o_max; i++) {
+		for (i = 0; i < o_max; i++) {
 			o_ptr = &o_list[i];
-			if(!o_ptr->k_idx) continue;
+			if (!o_ptr->k_idx) continue;
 			lua_apply_item_changes_aux(o_ptr, changes);
 		}
 	} else {
 		/* scan a player's inventory/equipment */
-		for (i = 0; i < INVEN_TOTAL; i++){
+		for (i = 0; i < INVEN_TOTAL; i++) {
 			o_ptr = &Players[Ind]->inventory[i];
 			if (!o_ptr->k_idx) continue;
 			lua_apply_item_changes_aux(o_ptr, changes);

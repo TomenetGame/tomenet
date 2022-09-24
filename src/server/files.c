@@ -638,7 +638,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 #if 0 /* will overwrite legends-rev.log's title if the file doesn't exist yet */
 		/* Caption */
 		snprintf(caption, sizeof(caption), "Help file '%s'", name);
-		while(strlen(caption) < 79) strcat(caption, " ");
+		while (strlen(caption) < 79) strcat(caption, " ");
 #endif
 		/* Build the filename */
 		path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, name);
@@ -1831,7 +1831,7 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 
 
 	/* Seek to the beginning */
-	if (highscore_seek(0)){
+	if (highscore_seek(0)) {
 		my_fclose(fff);
 		return;
 	}
@@ -2655,18 +2655,18 @@ void wipeout_needless_objects() {
 			wild = &wild_info[j][i];
 
 			wpos.wz = 0;
-			if(getcave(&wpos) && !players_on_depth(&wpos)) wipe_o_list(&wpos);
+			if (getcave(&wpos) && !players_on_depth(&wpos)) wipe_o_list(&wpos);
 
 			if (wild->flags&WILD_F_UP)
 				for (k = 0;k < wild->tower->maxdepth; k++) {
 					wpos.wz = k;
-					if((getcave(&wpos)) && (!players_on_depth(&wpos))) wipe_o_list(&wpos);
+					if ((getcave(&wpos)) && (!players_on_depth(&wpos))) wipe_o_list(&wpos);
 				}
 
 			if (wild->flags&WILD_F_DOWN)
 				for (k = 0;k < wild->dungeon->maxdepth; k++) {
 					wpos.wz = -k;
-					if((getcave(&wpos)) && (!players_on_depth(&wpos))) wipe_o_list(&wpos);
+					if ((getcave(&wpos)) && (!players_on_depth(&wpos))) wipe_o_list(&wpos);
 				}
 		}
 	}
@@ -2682,20 +2682,20 @@ void wipeout_needless_objects() {
 			cwpos.wx = x;
 			cwpos.wz = 0;
 			w_ptr = &wild_info[y][x];
-//			if(getcave(&cwpos) && !players_on_depth(&cwpos)) wipe_o_list(&cwpos);
-			if(w_ptr->flags & WILD_F_DOWN){
+			//if (getcave(&cwpos) && !players_on_depth(&cwpos)) wipe_o_list(&cwpos);
+			if (w_ptr->flags & WILD_F_DOWN) {
 				d_ptr = w_ptr->dungeon;
 				for (z = 1; z <= d_ptr->maxdepth; z++) {
 					cwpos.wz = -z;
-					if(d_ptr->level[z-1].ondepth && d_ptr->level[z-1].cave)
+					if (d_ptr->level[z-1].ondepth && d_ptr->level[z-1].cave)
 						wipe_o_list(&cwpos);
 				}
 			}
-			if(w_ptr->flags & WILD_F_UP){
+			if (w_ptr->flags & WILD_F_UP) {
 				d_ptr = w_ptr->tower;
 				for (z = 1; z <= d_ptr->maxdepth; z++) {
 					cwpos.wz = z;
-					if(d_ptr->level[z-1].ondepth && d_ptr->level[z-1].cave)
+					if (d_ptr->level[z-1].ondepth && d_ptr->level[z-1].cave)
 						wipe_o_list(&cwpos);
 				}
 			}
@@ -2898,10 +2898,7 @@ LONG WINAPI myUnhandledExceptionFilter(
 	 * is the MinGW exception handler which should have been implicitly
 	 * setup when we loaded the exchndl.dll library.
 	 */
-	if(old_handler != NULL)
-	{
-	  old_handler(ExceptionInfo);
-	}
+	if (old_handler != NULL) old_handler(ExceptionInfo);
 
 	/* Save everything and quit the game */
 	exit_game_panic();
@@ -2913,14 +2910,11 @@ LONG WINAPI myUnhandledExceptionFilter(
 
 void setup_exit_handler(void) {
 	/* Trap CTRL+C, Logoff, Shutdown, etc */
-	if( SetConsoleCtrlHandler( (PHANDLER_ROUTINE) ctrl_handler, TRUE ) )
-	{
-		plog("Initialised exit save handler.");
-	}else{
-		plog("ERROR: Could not set panic save handler!");
-	}
+	if (SetConsoleCtrlHandler((PHANDLER_ROUTINE) ctrl_handler, TRUE)) plog("Initialised exit save handler.");
+	else plog("ERROR: Could not set panic save handler!");
+
 	/* Trap unhandled exceptions, i.e. server crashes */
-	old_handler = SetUnhandledExceptionFilter( myUnhandledExceptionFilter );
+	old_handler = SetUnhandledExceptionFilter(myUnhandledExceptionFilter);
 }
 #endif
 #endif
@@ -3010,7 +3004,7 @@ static void handle_signal_simple(int sig) {
 }
 
 #ifdef SIGPIPE
-static void handle_signal_bpipe(int sig){
+static void handle_signal_bpipe(int sig) {
 	(void)signal(sig, SIG_IGN);	/* This should not happen, but for the sake of convention... */
 	s_printf("SIGPIPE received\n");
 	(void)signal(sig, handle_signal_bpipe);

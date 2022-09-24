@@ -517,7 +517,7 @@ void acc_set_runtime(const char *name, unsigned char runtime) {
 /*
  return player account information (by name)
  */
-//void accinfo(char *name){
+//void accinfo(char *name) {
 //}
 
 /* most account type stuff was already in here.
@@ -1218,7 +1218,7 @@ bool GetAccountID(struct account *c_acc, u32b id, bool leavepass) {
 	fp = fopen(buf, "rb");
 	if (!fp) return(FALSE);	/* failed */
 	while (fread(c_acc, sizeof(struct account), 1, fp)) {
-		if(id == c_acc->id && !(c_acc->flags & ACC_DELD)){
+		if (id == c_acc->id && !(c_acc->flags & ACC_DELD)) {
 			if (!leavepass) memset(c_acc->pass, 0, sizeof(c_acc->pass));
 			fclose(fp);
 			return(TRUE);
@@ -1264,8 +1264,8 @@ static u32b new_accid() {
 	t_map[0] |= (1U << 0);
 
 	/* Find the next free account ID */
-	for (id = account_id; id < MAX_ACCOUNTS; id++){
-		if(!(t_map[id / 8] & (1U << (id % 8)))) break;
+	for (id = account_id; id < MAX_ACCOUNTS; id++) {
+		if (!(t_map[id / 8] & (1U << (id % 8)))) break;
 	}
 
 	if (id == MAX_ACCOUNTS) {
@@ -1296,7 +1296,7 @@ int guild_lookup(cptr name) {
 	/* Check each guild */
 	for (i = 0; i < MAX_GUILDS; i++) { /* start from 0 or from 1? */
 		/* Check name */
-		if (streq(guilds[i].name, name)){
+		if (streq(guilds[i].name, name)) {
 			return i;
 		}
 	}
@@ -1689,7 +1689,7 @@ void party_check(int Ind) {
 	int i, id;
 
 	for (i = 1; i < MAX_PARTIES; i++) {
-		if (parties[i].members != 0){
+		if (parties[i].members != 0) {
 			if (!(id = lookup_player_id(parties[i].owner))) {
 				msg_format(Ind, "Lost party %s (%s)", parties[i].name, parties[i].owner);
 				del_party(i);
@@ -3725,7 +3725,7 @@ s_printf("ADD_HOSTILITY: not found.\n");
 
 #ifndef KURZEL_PK
 	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
-		if(!(p_ptr->pkill & PKILL_KILLER) && (p_ptr->pvpexception != 1)){
+		if (!(p_ptr->pkill & PKILL_KILLER) && (p_ptr->pvpexception != 1)) {
 			msg_print(Ind, "\377yYou may not be hostile to other players.");
 			return FALSE;
 		}
@@ -4000,7 +4000,7 @@ bool add_ignore(int Ind, cptr name) {
 	}
 
 #ifdef TOMENET_WORLDS
-	if ((pname = strchr(name, '@'))){
+	if ((pname = strchr(name, '@'))) {
 		struct remote_ignore *curr, *prev = NULL;
 		struct rplist *w_player;
 		strncpy(search, name, pname - name);
@@ -4709,7 +4709,7 @@ int newid() {
 			if (ptr->id == id) break;
 			ptr = ptr->next;
 		}
-		if(ptr) continue;	/* its on a valid one */
+		if (ptr) continue;	/* its on a valid one */
 		player_id = id + 1;	/* new cycle counter */
 		return(id);
 	}
@@ -5055,7 +5055,7 @@ void scan_accounts() {
 
 /* Rename a player's char savegame as well as the name inside.
    Not sure if this function is 100% ok to use, regarding treatment of hash table. */
-void rename_character(char *pnames){
+void rename_character(char *pnames) {
 	int slot, pos, i, Ind;
 	hash_entry *ptr;
 	char pname[40], nname[40];
@@ -5742,7 +5742,7 @@ bool pilot_set(int Ind, cptr name)
 }
 #endif	// 0
 
-void strip_true_arts_from_hashed_players(){
+void strip_true_arts_from_hashed_players() {
 	int slot, i, j = 0;
 	hash_entry *ptr;
 	object_type *o_ptr;

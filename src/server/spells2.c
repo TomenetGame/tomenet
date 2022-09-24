@@ -339,7 +339,7 @@ bool create_garden(int Ind, int chance) {
 	struct worldpos *wpos = &(p_ptr->wpos);
 
 	cave_type **zcave;
-	if(!(zcave = getcave(wpos))) return (FALSE);
+	if (!(zcave = getcave(wpos))) return (FALSE);
 
 	if (!allow_terraforming(wpos, FEAT_TREE)) return(FALSE);
 
@@ -355,7 +355,7 @@ bool create_garden(int Ind, int chance) {
 			 */
 			if (c_ptr->info & CAVE_ICKY) continue;
 
-			if((cs_ptr = GetCS(c_ptr, CS_KEYDOOR))) continue;
+			if ((cs_ptr = GetCS(c_ptr, CS_KEYDOOR))) continue;
 
 			if (cave_valid_bold(zcave, y, x) && ( /* <- destroyable, no art on grid, not FF1_PERMANENT */
 //				(c_ptr->feat == FEAT_QUARTZ) ||
@@ -1242,7 +1242,7 @@ static int enchant_table[16] = {
  * Lock a door. Currently range of one only.. Maybe a beam
  * would be better?
  */
-void wizard_lock(int Ind, int dir){
+void wizard_lock(int Ind, int dir) {
 	player_type *p_ptr;
 	cave_type **zcave, *c_ptr;
 	int dy, dx;
@@ -3435,7 +3435,7 @@ void stair_creation(int Ind) {
 		/* special..? */
 	} else if (can_go_down(wpos, 0x1) && !can_go_up(wpos, 0x1)) {
 		c_ptr->feat = FEAT_MORE;
-	} else if(can_go_up(wpos, 0x1) && !can_go_down(wpos, 0x1)) {
+	} else if (can_go_up(wpos, 0x1) && !can_go_down(wpos, 0x1)) {
 		c_ptr->feat = FEAT_LESS;
 	} else if (rand_int(100) < 50) {
 		c_ptr->feat = FEAT_MORE;
@@ -4561,7 +4561,7 @@ bool project_los_wall(int Ind, int typ, int dam, int time, int interval, char *a
 		if (!m_ptr->r_idx) continue;
 
 		/* Skip monsters not on this depth */
-		if(!inarea(wpos, &m_ptr->wpos)) continue;
+		if (!inarea(wpos, &m_ptr->wpos)) continue;
 
 		/* Location */
 		y = m_ptr->fy;
@@ -4661,7 +4661,7 @@ bool project_los(int Ind, int typ, int dam, char *attacker) {
 		if (!m_ptr->r_idx) continue;
 
 		/* Skip monsters not on this depth */
-		if(!inarea(wpos, &m_ptr->wpos)) continue;
+		if (!inarea(wpos, &m_ptr->wpos)) continue;
 
 		/* Location */
 		y = m_ptr->fy;
@@ -5384,7 +5384,7 @@ bool genocide_aux(int Ind, worldpos *wpos, char typ) {
 		if (r_ptr->d_char != typ) continue;
 
 		/* Skip monsters not on this depth */
-		if(!inarea(wpos, &m_ptr->wpos)) continue;
+		if (!inarea(wpos, &m_ptr->wpos)) continue;
 
 		/* Skip those immune */
 		if (r_ptr->flags9 & RF9_IM_TELE) continue;
@@ -5464,7 +5464,7 @@ bool genocide(int Ind) {
 	cave_type **zcave;
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
-	if(l_ptr && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);	// double check..
+	if (l_ptr && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);	// double check..
 
 	/* Search all monsters and find the closest */
 	for (i = 1; i < m_max; i++) {
@@ -5478,7 +5478,7 @@ bool genocide(int Ind) {
 		if (r_ptr->flags1 & RF1_UNIQUE) continue;
 
 		/* Skip monsters not on this depth */
-		if(!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
+		if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
 
 		/* Check distance */
 		if ((tmp = distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)) < d) {
@@ -5675,7 +5675,7 @@ bool probing(int Ind) {
 
 #if 0
 			if (admin_p(Ind)) {
-				switch(m_ptr->r_idx) {
+				switch (m_ptr->r_idx) {
 				case RI_TARGET_DUMMY1:
 				case RI_TARGET_DUMMY2:
 				case RI_TARGET_DUMMYA1:
@@ -5718,7 +5718,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 	cave_type **zcave;
 
 	if (!(zcave = getcave(wpos))) return;
-	if(l_ptr && l_ptr->flags1 & LF1_NO_DESTROY) return;
+	if (l_ptr && l_ptr->flags1 & LF1_NO_DESTROY) return;
 
 	/* among others, make sure town areas aren't affected.. */
 	if (!allow_terraforming(wpos, FEAT_WALL_EXTRA)) return;
@@ -5923,7 +5923,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 	cave_type **zcave;
 
 	if (!(zcave = getcave(wpos))) return;
-	if(l_ptr && (l_ptr->flags1 & LF1_NO_DESTROY) && !override_LF1_NO_DESTROY) return;
+	if (l_ptr && (l_ptr->flags1 & LF1_NO_DESTROY) && !override_LF1_NO_DESTROY) return;
 	override_LF1_NO_DESTROY = FALSE;
 
 	/* among others, make sure town areas aren't affected.. */
@@ -6338,9 +6338,9 @@ void wipe_spell(struct worldpos *wpos, int cy, int cx, int r) {
 	cave_type	*c_ptr;
 
 	cave_type **zcave;
-	if(!(zcave = getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 	/* Don't hurt town or surrounding areas */
-	if(istownarea(wpos, MAX_TOWNAREA)) return;
+	if (istownarea(wpos, MAX_TOWNAREA)) return;
 
 	/* Paranoia -- Dnforce maximum range */
 	if (r > 12) r = 12;
@@ -7133,7 +7133,7 @@ bool thunderstorm_visual(worldpos *wpos, int x, int y) {
  * unfair deaths and weirdness.
  * (evileye)
  */
-bool swap_position(int Ind, int lty, int ltx){
+bool swap_position(int Ind, int lty, int ltx) {
 	player_type *p_ptr;
 	worldpos *wpos;
 	int tx, ty;
@@ -7861,7 +7861,7 @@ static void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr) {
 	if (f2 & TR2_RES_DISEN) r_ptr->flags3 |= RF3_RES_DISE;
 
 	/* Allow use of runes - #if 0 any redundant flags */
-	if (o_ptr->tval == TV_RUNE) switch(o_ptr->sval) {
+	if (o_ptr->tval == TV_RUNE) switch (o_ptr->sval) {
 #if 0
 	case SV_R_LITE: r_ptr->flags9 |= RF9_RES_LITE; break;
 	case SV_R_DARK: r_ptr->flags9 |= RF9_RES_DARK; break;
@@ -7945,7 +7945,7 @@ static bool poly_build(int Ind, char *args) {
 
 	if (!curr) {			/* new builder */
 #ifdef MAX_BUILDERS
-		if (num_build == MAX_BUILDERS){
+		if (num_build == MAX_BUILDERS) {
 			msg_print(Ind, "The builders are on strike!");
 			return FALSE;
 		}
@@ -7973,8 +7973,8 @@ static bool poly_build(int Ind, char *args) {
 		curr->dy = curr->ly = curr->sy;
 		curr->moves = 25;	/* always new */
 		wpcopy(&curr->wpos, &p_ptr->wpos);
-//		if (zcave[curr->sy][curr->sx].feat == FEAT_PERM_EXTRA){
-		if (zcave[curr->sy][curr->sx].feat == FEAT_WALL_HOUSE){
+//		if (zcave[curr->sy][curr->sx].feat == FEAT_PERM_EXTRA) {
+		if (zcave[curr->sy][curr->sx].feat == FEAT_WALL_HOUSE) {
 #if 0	/* not necessary? - evileye */
 			zcave[curr->sy][curr->sx].special.sc.ptr = NULL;
 #endif
@@ -8017,7 +8017,7 @@ static bool poly_build(int Ind, char *args) {
 			curr->moves = 0;
 			/* diagonal! house building failed */
 		}
-		if(y > curr->dy) dir |= 4;
+		if (y > curr->dy) dir |= 4;
 		else dir |= 8;
 	}
 	if (curr->odir != dir) {
@@ -8068,7 +8068,7 @@ static bool poly_build(int Ind, char *args) {
 /* Do not commit! */
 		wpcopy(&houses[num_houses].wpos, &p_ptr->wpos);
 		houses[num_houses].dna = curr->dna;
-		if (curr->cvert >= 8 && fill_house(&houses[num_houses], FILL_MAKEHOUSE, NULL)){
+		if (curr->cvert >= 8 && fill_house(&houses[num_houses], FILL_MAKEHOUSE, NULL)) {
 			int area = (curr->maxx-curr->minx) * (curr->maxy-curr->miny);
 			houses[num_houses].flags |= HF_SELFBUILT;
 			curr->dna->price = area * area * 400; //initial_house_price(&houses[num_houses])
@@ -8077,7 +8077,7 @@ static bool poly_build(int Ind, char *args) {
 			num_houses++;
 		} else {
 			msg_print(Ind, "Your house was built unsoundly");
-			if(curr->vert) C_KILL(curr->vert, MAXCOORD, char);
+			if (curr->vert) C_KILL(curr->vert, MAXCOORD, char);
 			KILL(curr->dna, struct dna_type);
 		}
 		curr->player = 0;		/* send the builders home */

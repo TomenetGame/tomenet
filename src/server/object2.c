@@ -313,7 +313,7 @@ void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art) { /* m
 	/* Refuse "illegal" locations */
 	if (!in_bounds(Depth, y, x)) return;
 
-	if (cave[Depth]){	/* This is fast indexing method first */
+	if (cave[Depth]) {	/* This is fast indexing method first */
 		/* Find where it was */
 		c_ptr = &cave[Depth][y][x];
 #endif	// 0
@@ -6508,7 +6508,7 @@ void determine_level_req(int level, object_type *o_ptr) {
 
 	/* stat/heal potions harder to cheeze-transfer */
 	if (o_ptr->tval == TV_POTION) {
-		switch(o_ptr->sval) {
+		switch (o_ptr->sval) {
 		case SV_POTION_HEALING:
 			base += 15 + 10;
 			break;
@@ -6533,7 +6533,7 @@ void determine_level_req(int level, object_type *o_ptr) {
 	}
 	/* Certain items harder to cheeze-transfer */
 	if ((o_ptr->tval == TV_RING) && (o_ptr->bpval > 0)) {
-		switch(o_ptr->sval) {
+		switch (o_ptr->sval) {
 		case SV_RING_CRIT:
 		case SV_RING_SPEED:
 			base += o_ptr->bpval * 2;
@@ -6574,7 +6574,7 @@ void determine_level_req(int level, object_type *o_ptr) {
 	}
 
 	if (o_ptr->tval == TV_DRAG_ARMOR) {
-		switch(o_ptr->sval) {
+		switch (o_ptr->sval) {
 		case SV_DRAGON_MULTIHUED:
 		case SV_DRAGON_SHINING:
 		case SV_DRAGON_DEATH:
@@ -8189,7 +8189,7 @@ void generate_object(int Ind, object_type *o_ptr, struct worldpos *wpos, bool go
 
 			/* Allow all other items here - mikaelh */
 			break;
-		} while(tries < 1000);
+		} while (tries < 1000);
 
 		/* Note that if we run out of 'tries', the last tested object WILL be used,
 		   except if we clear k_idx now. */
@@ -8197,7 +8197,7 @@ void generate_object(int Ind, object_type *o_ptr, struct worldpos *wpos, bool go
 
 		/* Handle failure */
 		if (!k_idx) { /* always generate a reward. in case of failure, make a lamp for now.. */
-			switch (rand_int(3)){
+			switch (rand_int(3)) {
 			case 0:	k_idx = 527; break; /* everburning torch */
 			case 1:	k_idx = 525; break; /* dwarven lantern */
 			case 2:	k_idx = 530; break; /* feanorian lamp */

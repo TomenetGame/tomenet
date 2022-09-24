@@ -1368,7 +1368,7 @@ bool set_tim_wraith(int Ind, int v) {
 #if 0	// I can't remember what was it for..
 		// but for sure it's wrong
 //it was probably for the old hack to prevent wraithing in/around town and breaking into houses that way - C. Blue
-		else if(!p_ptr->wpos.wz && cave_floor_bold(zcave, p_ptr->py, p_ptr->px))
+		else if (!p_ptr->wpos.wz && cave_floor_bold(zcave, p_ptr->py, p_ptr->px))
 			return(FALSE);
 #endif	// 0
 	}
@@ -8122,7 +8122,7 @@ void kill_houses(int id, byte type) {
 /* XXX maybe this function can delete the objects
  * to prevent 'house-owner char cheeze'	- Jir -
  */
-void kill_objs(int id){
+void kill_objs(int id) {
 	int i;
 	object_type *o_ptr;
 	for (i = 0; i < o_max; i++) {
@@ -8147,7 +8147,7 @@ static void check_roller(int Ind) {
 	time_t now = time(&now);
 
 	/* This was necessary ;) */
-	if(is_admin(p_ptr)) return;
+	if (is_admin(p_ptr)) return;
 
 	if (!cfg.quit_ban_mode) return;
 
@@ -8998,7 +8998,7 @@ void player_death(int Ind) {
 	}
 
 	if ((!(p_ptr->mode & MODE_NO_GHOST)) && !cfg.no_ghost && !pvp) {
-		if(!p_ptr->wpos.wz || !(d_ptr->flags2 & (DF2_HELL | DF2_IRON)))
+		if (!p_ptr->wpos.wz || !(d_ptr->flags2 & (DF2_HELL | DF2_IRON)))
 			hell = FALSE;
 	}
 
@@ -10475,7 +10475,7 @@ void resurrect_player(int Ind, int loss_factor) {
 		imprison(Ind, JAIL_OLD_CRIMES, "old crimes");
 }
 
-void check_xorders(){
+void check_xorders() {
 	int i, j;
 	struct player_type *q_ptr;
 	for (i = 0; i < MAX_XORDERS; i++) {
@@ -10497,7 +10497,7 @@ void check_xorders(){
 	}
 }
 
-void del_xorder(int id){
+void del_xorder(int id) {
 	int i;
 	for (i = 0; i < MAX_XORDERS; i++) {
 		if (xorders[i].id == id) {
@@ -10510,7 +10510,7 @@ void del_xorder(int id){
 }
 
 /* One player leave a quest (death, deletion) */
-void rem_xorder(u16b id){
+void rem_xorder(u16b id) {
 	int i;
 
 	s_printf("Player death. Extermination order id: %d\n", id);
@@ -10721,7 +10721,7 @@ bool add_xorder(int Ind, int target, u16b type, u16b num, u16b flags) {
 }
 
 /* prepare some quest parameters for a standard kill quest */
-bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *num){
+bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *num) {
 	int r = *type, i = *num, lev = *level, k = 0;
 	player_type *p_ptr = Players[j];
 	bool iddc = in_irondeepdive(&p_ptr->wpos), mandos = in_hallsofmandos(&p_ptr->wpos);
@@ -11094,7 +11094,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			head = arm = leg = part = 0;
 			for (i = 1; i < 5; i++) {
 				ok = 0;
-				while(ok == 0) {
+				while (ok == 0) {
 					ok = 1;
 					part = randint(4);
 					if (part == 1 && head == 1)
@@ -11753,7 +11753,7 @@ bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note) {
 			new_exp = ((long)r_ptr->mexp * m_ptr->level) / am_ptr->level;
 
 			/* Gain experience */
-			if((new_exp*(100-m_ptr->clone))/100)
+			if ((new_exp * (100 - m_ptr->clone)) / 100)
 				/* disabled for golems for now, till attack-bug (9k damage) has been solved */
 				if (!m_ptr->special && !m_ptr->owner)
 					monster_gain_exp(am_idx, (new_exp*(100-m_ptr->clone))/100, TRUE);
@@ -12599,7 +12599,7 @@ bool target_able(int Ind, int m_idx) {
 		if ((0 - m_idx) > NumPlayers) q_ptr = NULL;
 
 		/* Paranoia check -- require a valid player */
-		if (!q_ptr || q_ptr->conn == NOT_CONNECTED){
+		if (!q_ptr || q_ptr->conn == NOT_CONNECTED) {
 			p_ptr->target_who = 0;
 			return (FALSE);
 		}
@@ -14013,7 +14013,7 @@ bool do_restoreXP_other(int Ind) {
  * times five to keep the same movement rate.
  */
 
-void unstatic_level(struct worldpos *wpos){
+void unstatic_level(struct worldpos *wpos) {
 	int i;
 
 	for (i = 1; i <= NumPlayers; i++) {
@@ -14023,7 +14023,7 @@ void unstatic_level(struct worldpos *wpos){
 			msg_print(GetInd[Players[i]->id], "Your space/time anchor breaks");
 		}
 	}
-	for (i = 1; i <= NumPlayers; i++){
+	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		if (inarea(&Players[i]->wpos, wpos)) {
 			teleport_player_level(i, TRUE);
@@ -14072,7 +14072,7 @@ bool master_level(int Ind, char * parms) {
 		u32b f1 = 0x0, f2 = 0x0, f3 = 0x0;
 
 		if (!parms[1] || !parms[2] || p_ptr->wpos.wz) return FALSE;
-		if (istown(&p_ptr->wpos)){
+		if (istown(&p_ptr->wpos)) {
 			msg_print(Ind, "Even you may not create dungeons in the town!");
 			return FALSE;
 		}
@@ -14254,8 +14254,8 @@ bool master_level_specific(int Ind, struct worldpos *wpos, char * parms) {
  * Must be owner inside guild hall
  *
  */
-//static bool guild_build(int Ind){
-bool guild_build(int Ind){
+//static bool guild_build(int Ind) {
+bool guild_build(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 
@@ -14398,7 +14398,7 @@ static u16b master_summon_aux_monster_type(int Ind, char monster_type, char * mo
 		/* if not random, assume specific orc specified */
 		if (strcmp(monster_parms, "random")) return race_index(monster_parms);
 		/* random orc */
-		else switch(rand_int(6)) {
+		else switch (rand_int(6)) {
 			case 0: return race_index("Snaga");
 			case 1: return race_index("Cave orc");
 			case 2: return race_index("Hill orc");
@@ -14413,8 +14413,7 @@ static u16b master_summon_aux_monster_type(int Ind, char monster_type, char * mo
 		/* if not random, assume specific high undead specified */
 		if (strcmp(monster_parms, "random")) return race_index(monster_parms);
 		/* random low undead */
-		else switch(rand_int(11))
-		{
+		else switch (rand_int(11)) {
 			case 0: return race_index("Poltergeist");
 			case 1: return race_index("Green glutton ghost");
 			case 2: return race_index("Lost soul");
@@ -14434,8 +14433,7 @@ static u16b master_summon_aux_monster_type(int Ind, char monster_type, char * mo
 		/* if not random, assume specific high undead specified */
 		if (strcmp(monster_parms, "random")) return race_index(monster_parms);
 		/* random low undead */
-		else switch(rand_int(13))
-		{
+		else switch (rand_int(13)) {
 			case 0: return race_index("Vampire");
 			case 1: return race_index("Giant skeleton troll");
 			case 2: return race_index("Lich");
@@ -14765,7 +14763,7 @@ static void player_edit(char *name) {
 //TODO?
 }
 
-bool master_player(int Ind, char *parms){
+bool master_player(int Ind, char *parms) {
 	player_type *p_ptr = Players[Ind];
 	player_type *q_ptr;
 	int Ind2 = 0;
@@ -14781,8 +14779,8 @@ bool master_player(int Ind, char *parms){
 
 	switch (parms[0]) {
 	case 'E':	/* offline editor */
-		for (i = 1; i <= NumPlayers; i++){
-			if (!strcmp(Players[i]->name, &parms[1])){
+		for (i = 1; i <= NumPlayers; i++) {
+			if (!strcmp(Players[i]->name, &parms[1])) {
 				msg_format(Ind, "%s is currently playing", &parms[1]);
 				return(FALSE);
 			}
@@ -14848,7 +14846,7 @@ bool master_player(int Ind, char *parms){
 		if (GetAccount(&acc, &parms[1], NULL, FALSE)) {
 			char name[80];
 			n = player_id_list(&id_list, acc.id);
-			for(i = 0; i < n; i++) {
+			for (i = 0; i < n; i++) {
 				strcpy(name, lookup_player_name(id_list[i]));
 				msg_format(Ind, "\377oDeleting %s", name);
 				delete_player_id(id_list[i]);
@@ -14897,7 +14895,7 @@ bool master_generate(int Ind, char * parms) {
 				v_ptr = get_vault(&parms[2]);
 			}
 
-			if(!v_ptr || !v_ptr->wid) return FALSE;
+			if (!v_ptr || !v_ptr->wid) return FALSE;
 
 			//build_vault(&p_ptr->wpos, p_ptr->py, p_ptr->px, v_ptr->hgt, v_ptr->wid, v_text + v_ptr->text);
 			build_vault(&p_ptr->wpos, p_ptr->py, p_ptr->px, v_ptr, p_ptr);

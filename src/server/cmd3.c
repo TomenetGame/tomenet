@@ -567,7 +567,7 @@ bool item_tester_hook_wear(int Ind, int slot) {
 	}
 
 	if (p_ptr->fruit_bat) {
-		switch(slot) {
+		switch (slot) {
 		case INVEN_RIGHT:
 		case INVEN_LEFT:
 		case INVEN_NECK:
@@ -590,7 +590,7 @@ bool item_tester_hook_wear(int Ind, int slot) {
 	    ((p_ptr->pclass != CLASS_SHAMAN) || !mimic_shaman_fulleq(r_ptr->d_char)) &&
 	    (p_ptr->prace != RACE_VAMPIRE)
 	    ) {
-		switch(slot) {
+		switch (slot) {
 		case INVEN_WIELD:
 		case INVEN_BOW:
 			if (r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
@@ -691,7 +691,7 @@ bool item_tester_hook_wear(int Ind, int slot) {
 	    )
 #endif
 	{
-		switch(slot) {
+		switch (slot) {
 		case INVEN_WIELD:
 		case INVEN_BOW:
 			if (r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
@@ -760,7 +760,7 @@ bool item_tester_hook_wear(int Ind, int slot) {
 	    ))
 #endif
 	{
-		switch(slot) {
+		switch (slot) {
 		case INVEN_RIGHT:
 		case INVEN_LEFT:
 		case INVEN_NECK:
@@ -777,7 +777,7 @@ bool item_tester_hook_wear(int Ind, int slot) {
 	}
 #if 0
 	else if (r_info[p_ptr->body_monster].flags3 & RF3_DRAGON) {
-		switch(slot) {
+		switch (slot) {
 		case INVEN_WIELD:
 		case INVEN_RIGHT:
 		case INVEN_LEFT:
@@ -2986,7 +2986,7 @@ void do_cmd_steal_from_monster(int Ind, int dir) {
 	bool done = FALSE;
 	int monst_list[23];
 
-	if(!(zcave = getcave(&p_ptr->wpos))) return;
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	/* Ghosts cannot steal ; not in WRAITHFORM */
 	if (CANNOT_OPERATE_SPECTRAL) {
@@ -3321,8 +3321,8 @@ void do_cmd_steal(int Ind, int dir) {
 
 	/* affect alignment on attempt (after hostile check) */
 	/* evil thief! stealing from newbies */
-	if (q_ptr->lev + 5 < p_ptr->lev){
-		if((p_ptr->align_good) < (0xffff - dal))
+	if (q_ptr->lev + 5 < p_ptr->lev) {
+		if ((p_ptr->align_good) < (0xffff - dal))
 			p_ptr->align_good += dal;
 		else p_ptr->align_good = 0xffff;	/* very evil */
 	}
@@ -3606,7 +3606,7 @@ void do_cmd_steal(int Ind, int dir) {
 
 		/* Thief drops some items from the shock of blow */
 		if (cfg.newbies_cannot_drop <= p_ptr->lev && !p_ptr->inval) {
-			for(i = rand_int(5); i < 5 ; i++ ) {
+			for (i = rand_int(5); i < 5 ; i++ ) {
 				j = rand_int(INVEN_TOTAL);
 				o_ptr = &(p_ptr->inventory[j]);
 
@@ -3964,7 +3964,7 @@ bool do_auto_refill(int Ind)
 	/* Get the light */
 	o_ptr = &(p_ptr->inventory[INVEN_LITE]);
 
-	if( check_guard_inscription( o_ptr->note, 'F' )) {
+	if (check_guard_inscription(o_ptr->note, 'F')) {
 		//msg_print(Ind, "The item's incription prevents it.");
 		return (FALSE);
 	}
@@ -3976,7 +3976,7 @@ bool do_auto_refill(int Ind)
 		/* Restrict the choices */
 		item_tester_hook = item_tester_refill_lantern;
 
-		for(i = 0; i < INVEN_PACK; i++) {
+		for (i = 0; i < INVEN_PACK; i++) {
 			j_ptr = &(p_ptr->inventory[i]);
 			if (!item_tester_hook(j_ptr)) continue;
 			if (artifact_p(j_ptr) || ego_item_p(j_ptr)) continue;
@@ -3992,7 +3992,7 @@ bool do_auto_refill(int Ind)
 		/* Restrict the choices */
 		item_tester_hook = item_tester_refill_torch;
 
-		for(i = 0; i < INVEN_PACK; i++) {
+		for (i = 0; i < INVEN_PACK; i++) {
 			j_ptr = &(p_ptr->inventory[i]);
 			if (!item_tester_hook(j_ptr)) continue;
 			if (artifact_p(j_ptr) || ego_item_p(j_ptr)) continue;
@@ -4160,7 +4160,7 @@ void do_cmd_look(int Ind, int dir) {
 
 	char out_val[MSG_LEN], tmp_val[MSG_LEN];
 
-	if(!(zcave = getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Blind */
 	if (p_ptr->blind) {

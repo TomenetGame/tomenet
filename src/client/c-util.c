@@ -1507,7 +1507,7 @@ char roguelike_commands(char command) {
  */
 char original_commands(char command) {
 	/* Process the command */
-	switch(command) {
+	switch (command) {
 
 	/* Hack -- White space */
 	case KTRL('J'): return ('\r');
@@ -4376,7 +4376,7 @@ s32b c_get_quantity(cptr prompt, s32b max) {
 	if (mul > 1) {
 		n++;
 		i = 0;
-		while(buf[n] >= '0' && buf[n] <= '9' && i < 6) bi2[i++] = buf[n++];
+		while (buf[n] >= '0' && buf[n] <= '9' && i < 6) bi2[i++] = buf[n++];
 		bi2[i] = '\0';
 //Send_msg(format("%s-%s", bi1, bi2));
 
@@ -8654,7 +8654,7 @@ static void do_cmd_options_fonts(void) {
 	while ((ent = readdir(dir))) {
 		strcpy(tmp_name, ent->d_name);
 		j = -1;
-		while(tmp_name[++j]) tmp_name[j] = tolower(tmp_name[j]);
+		while (tmp_name[++j]) tmp_name[j] = tolower(tmp_name[j]);
 		if (strstr(tmp_name, ".fon")) {
 			if (tmp_name[0] == 'g') {
 				strcpy(graphic_font_name[graphic_fonts], ent->d_name);
@@ -8774,7 +8774,7 @@ static void do_cmd_options_fonts(void) {
 			if (c_cfg.use_color && !term_get_visibility(j)) a = TERM_L_DARK;
 			strcpy(buf, get_font_name(j));
 			buf[59] = 0;
-			while(strlen(buf) < 59) strcat(buf, " ");
+			while (strlen(buf) < 59) strcat(buf, " ");
 			Term_putstr(20, vertikal_offset + j, -1, a, buf);
 		}
 

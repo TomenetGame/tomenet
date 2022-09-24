@@ -69,8 +69,7 @@ extern int s_printf(const char *str, ...) {
 	vfprintf(fp,str,va);
 	va_end(va);
 	va_start(va, str);
-	if(!print_to_file)
-		vprintf(str,va);
+	if (!print_to_file) vprintf(str,va);
 	va_end(va);
 
 	/* KLJ -- Flush the log so that people can look at it while the server is running */
@@ -111,8 +110,7 @@ extern bool rfe_printf(char *str, ...) {
 	/*
 	va_end(va);
 	va_start(va, str);
-	if(!print_to_file)
-		vprintf(str,va);
+	if (!print_to_file) vprintf(str,va);
 	*/
 	va_end(va);
 

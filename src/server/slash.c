@@ -186,7 +186,7 @@ void sc_shutdown(int Ind, void *value) {
 	time(&cfg.closetime);
 }
 
-void sc_wish(int Ind, void *argp){
+void sc_wish(int Ind, void *argp) {
 	char **args = (args);
  #if 0
 	object_type	forge;
@@ -232,7 +232,7 @@ void sc_wish(int Ind, void *argp){
 }
 
 
-void sc_report(int Ind, void *string){
+void sc_report(int Ind, void *string) {
 	player_type *p_ptr = Players[Ind];
 
 	rfe_printf("[%s]%s\n", p_ptr->name, (char*)string);
@@ -546,7 +546,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		else if (prefix(messagelc, "/page")) {
 			int p;
 //spam?			s_printf("(%s) SLASH_PAGE: %s:%s.\n", showtime(), p_ptr->name, message3);
-			if(!tk) {
+			if (!tk) {
 				msg_print(Ind, "\377oUsage: /page <playername>");
 				msg_print(Ind, "\377oAllows you to send a 'beep' sound to someone who is currently afk.");
 				return;
@@ -1078,7 +1078,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				c[2] = *token[1];
 				c[3] = '\0';
 
-				for(i = 0; i < INVEN_PACK; i++) {
+				for (i = 0; i < INVEN_PACK; i++) {
 					o_ptr = &(p_ptr->inventory[i]);
 					if (!o_ptr->tval) break;
 
@@ -1211,7 +1211,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				o_ptr = &(p_ptr->inventory[i]);
 				if (o_ptr->tval) continue;
 
-				for(j = 0; j < INVEN_PACK; j++) {
+				for (j = 0; j < INVEN_PACK; j++) {
 					o_ptr = &(p_ptr->inventory[j]);
 					if (!o_ptr->k_idx) break;
 
@@ -1649,7 +1649,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				if (tk == 2) {
 					if ((j = name_lookup_loose(Ind, token[2], FALSE, FALSE, FALSE))) {
-						if(Players[j]->xorder_id){
+						if (Players[j]->xorder_id) {
 							msg_format(Ind, "\377y%s already received an extermination order.", Players[j]->name);
 							return;
 						}
@@ -1959,7 +1959,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #ifdef RPG_SERVER /* too dangerous on the pm server right now - mikaelh */
 /* Oops, meant to be on RPG only for now. forgot to add it. thanks - the_sandman */
  #if 0 //moved the old code here.
-		else if (prefix(messagelc, "/pet")){
+		else if (prefix(messagelc, "/pet")) {
 			if (tk && prefix(token[1], "force")) {
 				summon_pet(Ind, 1);
 				msg_print(Ind, "You summon a pet");
@@ -5252,7 +5252,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				return;
 			}
-			if (prefix(messagelc, "/inval")){
+			if (prefix(messagelc, "/inval")) {
 				if (!tk) {
 					msg_print(Ind, "Usage: /inval <player name>");
 					return;
@@ -5309,11 +5309,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 
 #ifdef TOMENET_WORLDS
-			else if (prefix(messagelc, "/world")){
+			else if (prefix(messagelc, "/world")) {
 				world_connect(Ind);
 				return;
 			}
-			else if (prefix(messagelc, "/unworld")){
+			else if (prefix(messagelc, "/unworld")) {
 				world_disconnect(Ind);
 				return;
 			}
@@ -5467,8 +5467,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				return;
 			}
-			else if (prefix(messagelc, "/makeadmin")){
-				if(!tk) return;
+			else if (prefix(messagelc, "/makeadmin")) {
+				if (!tk) return;
 				/* added checking for account existence - mikaelh */
 				if (makeadmin(message3)) {
 					msg_format(Ind, "\377GMaking %s an admin", message3);
@@ -6940,11 +6940,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			else if (prefix(messagelc, "/noarts")) {
 				if (tk) {
-					if(!strcmp(token[1], "on")) {
+					if (!strcmp(token[1], "on")) {
 						msg_print(Ind, "artifact generation is now supressed");
 						cfg.arts_disabled = TRUE;
 						return;
-					} else if(!strcmp(token[1], "off")) {
+					} else if (!strcmp(token[1], "off")) {
 						msg_print(Ind, "artifact generation is now back to normal");
 						cfg.arts_disabled = FALSE;
 						return;
@@ -7016,7 +7016,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 #endif
-			else if (prefix(messagelc, "/debug-towns")){
+			else if (prefix(messagelc, "/debug-towns")) {
 				msg_format(Ind, "numtowns = %d", numtowns);
 				for (i = 0; i < numtowns; i++) {
 					msg_format(Ind, "%d: type = %d, x = %d, y = %d",
@@ -7025,7 +7025,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			/* manually reposition dungeon/tower stairs within the current worldmap surface sector - C. Blue */
-			else if (prefix(messagelc, "/move-stair")){
+			else if (prefix(messagelc, "/move-stair")) {
 				int scx, scy;
 				worldpos *tpos = &p_ptr->wpos;
 				cave_type **zcave = getcave(tpos);
@@ -7152,8 +7152,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				wilderness_type *wild = &wild_info[tpos.wy][tpos.wx];
 
 				/* more mad code to change RPG_SERVER dungeon flags.. */
-				for(x = 0; x < (tk ? 64 : 1); x++)
-				for(y = 0; y < (tk ? 64 : 1); y++) {
+				for (x = 0; x < (tk ? 64 : 1); x++)
+				for (y = 0; y < (tk ? 64 : 1); y++) {
 					if (!tk) {tpos = p_ptr->wpos;}
 					else {tpos.wx = x; tpos.wy = y; tpos.wz = 0;}
 					wild = &wild_info[tpos.wy][tpos.wx];
@@ -7242,7 +7242,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 							}
 						}
 #endif
-						if(tk) msg_print(Ind, "Tower flags updated.");
+						if (tk) msg_print(Ind, "Tower flags updated.");
 					}
 
 					if ((d_ptr = wild->dungeon)) {
@@ -7326,7 +7326,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						if (tk) msg_print(Ind, "Dungeon flags updated.");
 					}
 				}
-				if(!tk) msg_print(Ind, "Dungeon/tower flags updated.");
+				if (!tk) msg_print(Ind, "Dungeon/tower flags updated.");
 				return;
 			}
 			else if (prefix(messagelc, "/swap-dun")) {
@@ -7354,8 +7354,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				wild_new = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
 
-				for(x = 0; x < MAX_WILD_X; x++) {
-				for(y = 0; y < MAX_WILD_Y; y++) {
+				for (x = 0; x < MAX_WILD_X; x++) {
+				for (y = 0; y < MAX_WILD_Y; y++) {
 					wild = &wild_info[y][x];
 
 					if ((d_ptr = wild->tower)) {
@@ -8366,7 +8366,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				object_type *o_ptr;
 				char o_name[ONAME_LEN];
 
-				for (i = 0; i < o_max; i++){
+				for (i = 0; i < o_max; i++) {
 					o_ptr = &o_list[i];
 					if (o_ptr->k_idx) {
 						if (true_artifact_p(o_ptr)) {
@@ -8676,7 +8676,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "Usage: /gestart <predefined type> [parameters...]");
 					return;
 				}
-				while(message3[msgpos] && message3[msgpos] != 32) msgpos++;
+				while (message3[msgpos] && message3[msgpos] != 32) msgpos++;
 				if (message3[msgpos] && message3[++msgpos]) strcpy(message4, message3 + msgpos);
 				else strcpy(message4, "");
 				err = start_global_event(Ind, atoi(token[1]), message4);
@@ -9581,7 +9581,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				j = 0;
 				/* go through all items (well except for player inventories
 				   or tradehouses, but that's not needed anyway) */
-				for(i = 0; i < o_max; i++){
+				for (i = 0; i < o_max; i++) {
 					o_ptr = &o_list[i];
 					/* check ITEM_REMOVAL_NEVER items on the world's surface that aren't inside houses */
 					if (o_ptr->k_idx && o_ptr->marked2 == ITEM_REMOVAL_NEVER && !o_ptr->wpos.wz && !o_ptr->held_m_idx && !o_ptr->embed) {
@@ -10126,7 +10126,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			/* Display all information about the grid an admin-char is currently standing on - C. Blue */
-			else if (prefix(messagelc, "/debug-grid")){
+			else if (prefix(messagelc, "/debug-grid")) {
 				worldpos *tpos = &p_ptr->wpos;
 				cave_type **zcave, *c_ptr;
 				struct c_special *cs_ptr;
@@ -10450,7 +10450,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					    dungeon_bonus[i],
 					    (i % 2) == 0 ? 'W' : 'U',
 					    get_dun_name(dungeon_x[i], dungeon_y[i], dungeon_tower[i],
-						getdungeon(&((struct worldpos){dungeon_x[i], dungeon_y[i], dungeon_tower[i] ? 1 : -1})), 0, FALSE)
+						getdungeon(&((struct worldpos) {dungeon_x[i], dungeon_y[i], dungeon_tower[i] ? 1 : -1} )), 0, FALSE)
 //					    d_name + d_info[dungeon_tower[i] ? wild_info[dungeon_y[i]][dungeon_x[i]].tower->type : wild_info[dungeon_y[i]][dungeon_x[i]].dungeon->type].name
 					    );
 				}
@@ -10641,7 +10641,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				struct dungeon_type *d_ptr;
 				cave_type **zcave = getcave(&p_ptr->wpos);
 
-				switch(zcave[p_ptr->py][p_ptr->px].feat){
+				switch (zcave[p_ptr->py][p_ptr->px].feat) {
 				case FEAT_MORE:
 					d_ptr = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon;
 					break;
@@ -12168,7 +12168,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 }
 #endif /* NOTYET */
 
-static void do_slash_brief_help(int Ind){
+static void do_slash_brief_help(int Ind) {
 #if 0 /* pretty outdated */
 	player_type *p_ptr = Players[Ind];
 

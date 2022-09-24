@@ -85,7 +85,7 @@ unsigned short recwrite(struct account *rec, long filepos) {
 	if (write(wfd, rec, sizeof(struct account)) == -1)
 		fprintf(stderr, "write error occurred.");
 #ifndef NETBSD
-	while((flock(wfd, LOCK_UN)) != 0);
+	while ((flock(wfd, LOCK_UN)) != 0);
 #endif
 	close(wfd);
 #ifdef NETBSD
@@ -289,7 +289,7 @@ int ListAccounts(int fpos) {
 				break;
 			case 'q':
 			case 'Q':
-				if(ask("Are you sure you want to quit?")) {
+				if (ask("Are you sure you want to quit?")) {
 					quit = 1;
 					fpos = -1;
 				}
@@ -661,7 +661,7 @@ int findacc(bool next) {
 		while ((x = fread(&c_acc, sizeof(struct account), 1, fp))) {
 			i++;
 			if (!strncmp(c_acc.name, sname, 30)) return (i - 1);
-		} while(x);
+		} while (x);
 
 		/* prepare for partial match search */
 		i = 0;
@@ -676,7 +676,7 @@ int findacc(bool next) {
 #ifdef PARTIAL_ANYWHERE
 		if (strstr(c_acc.name, sname2)) return (i - 1);
 #endif
-	} while(x);
+	} while (x);
 
 	status("Could not find that account");
 	return (-1);
@@ -741,7 +741,7 @@ void getstring(const char *prompt, char *string, int max) {
 				return;
 			}
 		}
-	} while(1);
+	} while (1);
 }
 
 /* our password encryptor */
@@ -819,7 +819,7 @@ unsigned short ask(char *prompt) {
 		ch = getch();
 		if (ch == 'Y' || ch == 'y') break;
 		if (ch == 'N' || ch == 'n') break;
-	} while(1);
+	} while (1);
 	move(LINES - 1, 0);
 	clrtoeol();
 	return ((ch == 'Y' || ch == 'y'));

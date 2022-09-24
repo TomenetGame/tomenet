@@ -3589,7 +3589,7 @@ cptr item_activation(object_type *o_ptr) {
 	}
 
 	if (o_ptr->tval == TV_RING) {
-		switch(o_ptr->sval) {
+		switch (o_ptr->sval) {
 		case SV_RING_ELEC:
 			return "a ball of lightning (50..200) and resist lightning every 25..50+d25 turns";
 		case SV_RING_FLAMES:
@@ -3617,7 +3617,7 @@ cptr item_activation(object_type *o_ptr) {
 	}
 
 	if (o_ptr->tval == TV_AMULET) {
-		switch(o_ptr->sval) {
+		switch (o_ptr->sval) {
 			/* The amulet of the moon can be activated for sleep */
 		case SV_AMULET_THE_MOON:
 			return "sleeping monsters (lev +20..100) every 100+d100 turns";

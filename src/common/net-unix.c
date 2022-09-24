@@ -1723,26 +1723,21 @@ int	port;
 	printf("DgramConnect called with hostname %s.\n", host);
 #endif
 	hp = gethostbyname(host);
-	if (hp == NULL)
-	{
-	    sl_errno = SL_EHOSTNAME;
-	    return (-1);
-	}
-	else
-	    addr_in.sin_addr.s_addr =
-		((struct in_addr*)(hp->h_addr))->s_addr;
+	if (hp == NULL) {
+		sl_errno = SL_EHOSTNAME;
+		return (-1);
+	} else
+		addr_in.sin_addr.s_addr = ((struct in_addr*)(hp->h_addr))->s_addr;
     } /**/
 #endif
     hp = gethostbyname(host);
-    if(hp == NULL)
-    {
-        sl_errno = SL_EHOSTNAME;
-        return(-1);
+    if (hp == NULL) {
+	sl_errno = SL_EHOSTNAME;
+	return(-1);
     }
     memcpy(&addr_in.sin_addr, hp->h_addr, hp->h_length);
     retval = connect(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
-    if (retval < 0)
-    {
+    if (retval < 0) {
 	sl_errno = SL_ECONNECT;
 	return (-1);
     }

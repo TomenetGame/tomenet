@@ -344,7 +344,7 @@ void do_cmd_go_up(int Ind) {
 	if (surface) {
 		dungeon_type *d_ptr = wild_info[wpos->wy][wpos->wx].tower;
  #ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
-		//if(d_ptr->baselevel-p_ptr->max_dlv>2) {
+		//if (d_ptr->baselevel-p_ptr->max_dlv>2) {
 		//if ((!d_ptr->type && d_ptr->baselevel - p_ptr->max_dlv > 10) ||
 		if ((!d_ptr->type && d_ptr->baselevel <= (p_ptr->lev * 3) / 2 + 7) ||
 		    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev))
@@ -1205,10 +1205,10 @@ void do_cmd_go_down(int Ind) {
 	if (surface) {
 		dungeon_type *d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
  #ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
-		//if(d_ptr->baselevel-p_ptr->max_dlv>2) {
-		//if(d_ptr->baselevel-p_ptr->max_dlv>2 ||
+		//if (d_ptr->baselevel-p_ptr->max_dlv>2) {
+		//if (d_ptr->baselevel-p_ptr->max_dlv>2 ||
 		//    d_info[d_ptr->type].min_plev > p_ptr->lev)
-		//if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 10) ||
+		//if ((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 10) ||
 		if ((!d_ptr->type && d_ptr->baselevel <= (p_ptr->lev * 3) / 2 + 7) ||
 		    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev)) {
 			msg_print(Ind, "\377rAs you attempt to descend, you are gripped by an uncontrollable fear.");
@@ -1899,7 +1899,7 @@ bool inside_inn(player_type *p_ptr, cave_type *c_ptr) {
 static bool chmod_door(int Ind, struct dna_type *dna, char *args) {
 	player_type *p_ptr = Players[Ind];
 	if (!is_admin(p_ptr)) {
-		if(dna->creator != p_ptr->dna) {
+		if (dna->creator != p_ptr->dna) {
 			/* note: the house 'master' is not necessarily the house owner! */
 			msg_print(Ind, "Only the house master may change permissions.");
 			return(FALSE);
@@ -2535,11 +2535,11 @@ cptr get_house_owner(struct c_special *cs_ptr) {
 		cptr name;
 		switch (dna->owner_type) {
 		case OT_PLAYER:
-			if((name = lookup_player_name(dna->owner)))
+			if ((name = lookup_player_name(dna->owner)))
 			strcpy(string, name);
 			break;
 		case OT_PARTY:
-			if(strlen(parties[dna->owner].name))
+			if (strlen(parties[dna->owner].name))
 			strcpy(string, parties[dna->owner].name);
 			break;
 		case OT_CLASS:
@@ -3218,7 +3218,7 @@ bool twall(int Ind, int y, int x, byte feat) {
 	byte *w_ptr = &p_ptr->cave_flag[y][x];
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
-	if(!(zcave = getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Paranoia -- Require a wall or door or some such */
 	if (cave_floor_bold(zcave, y, x)) return (FALSE);
@@ -3536,7 +3536,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				object_desc(0, o_name, o23_ptr, TRUE, 256);
 				msg_format(Ind, "You strike the ground with your %s.", o_name);
 #ifdef USE_SOUND_2010
-				switch(o23_ptr->tval) {
+				switch (o23_ptr->tval) {
 				case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
 				case TV_BLUNT:	if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE);
 						else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE);
@@ -3560,7 +3560,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					object_desc(0, o_name, o2_ptr, TRUE, 256);
 					msg_format(Ind, "You strike the ground with your %s.", o_name);
 #ifdef USE_SOUND_2010
-					switch(o2_ptr->tval) {
+					switch (o2_ptr->tval) {
 					case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
 					case TV_BLUNT:	if (o2_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE);
 							else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE);
@@ -3574,7 +3574,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					object_desc(0, o_name, o3_ptr, TRUE, 256);
 					msg_format(Ind, "You strike the ground with your %s.", o_name);
 #ifdef USE_SOUND_2010
-					switch(o3_ptr->tval) {
+					switch (o3_ptr->tval) {
 					case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
 					case TV_BLUNT:	if (o3_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE);
 							else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE);
@@ -5334,7 +5334,7 @@ void do_cmd_bash(int Ind, int dir) {
 				do_cmd_throw(Ind, dir, 0 - c_ptr->o_idx, bash_type);
 
 				/* Set off trap (Hack -- handle like door trap) */
-				if(GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
+				if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
 				return;
 			}
@@ -5719,7 +5719,7 @@ int do_cmd_run(int Ind, int dir) {
 
 	/* slower 'running' movement over certain terrain */
 	int real_speed = cfg.running_speed;
-	if(!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
+	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	if (!p_ptr->warning_numpadmove &&
@@ -6006,7 +6006,7 @@ void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x,
 	int dam = (damroll(o_ptr->dd, o_ptr->ds) + 10) * 2 + o_ptr->to_d;
 	int flag = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP | PROJECT_NODO;
 
-	switch(o_ptr->sval) {
+	switch (o_ptr->sval) {
 	case SV_AMMO_LIGHT: rad = 1; break;
 	case SV_AMMO_NORMAL: rad = 2; break;
 	case SV_AMMO_HEAVY: rad = 3; break;
@@ -7644,9 +7644,9 @@ void do_cmd_fire(int Ind, int dir) {
 			object_type forge;
 			(void)project(0 - Ind, 2, wpos, y, x, damroll(2, 6), GF_LITE_WEAK, PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_NODO, "");
 #ifndef PY_FIRE_ON_WALL
-			lite_room(Ind, wpos, y, x);
+			lite_room(Ind, wpos, y, x); //lite_area()?
 #else
-			lite_room(Ind, wpos, prev_y, prev_x);
+			lite_room(Ind, wpos, prev_y, prev_x); //lite_area()?
 #endif
 			breakage = 0;
 			invcopy(&forge, lookup_kind(o_ptr->tval, SV_AMMO_CHARRED));
@@ -7753,12 +7753,12 @@ bool interfere(int Ind, int chance) {
 			    (r_info[q_ptr->body_monster].flags7 & RF7_NEVER_ACT))
 				continue;
 #ifdef ENABLE_STANCES
-			if (q_ptr->combat_stance == 1) switch(q_ptr->combat_stance_power) {
+			if (q_ptr->combat_stance == 1) switch (q_ptr->combat_stance_power) {
 				case 0: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 23); break;
 				case 1: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 26); break;
 				case 2: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 29); break;
 				case 3: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 35); break;
-			} else if (q_ptr->combat_stance == 2) switch(q_ptr->combat_stance_power) {
+			} else if (q_ptr->combat_stance == 2) switch (q_ptr->combat_stance_power) {
 				case 0: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 53); break;
 				case 1: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 56); break;
 				case 2: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 59); break;
@@ -8491,7 +8491,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				continue;
 
 			/* If he's not here, skip him */
-			if(!inarea(&p_ptr->wpos, wpos))
+			if (!inarea(&p_ptr->wpos, wpos))
 				continue;
 
 			/* The player can see the (on screen) missile */

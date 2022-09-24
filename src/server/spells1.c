@@ -492,7 +492,7 @@ bool check_st_anchor(struct worldpos *wpos, int y, int x) {
 		/* Compute distance */
 		if (distance(y, x, q_ptr->py, q_ptr->px) > ST_ANCHOR_DIS) continue;
 
-		//if(istown(wpos) && randint(100)>q_ptr->lev) continue;
+		//if (istown(wpos) && randint(100) > q_ptr->lev) continue;
 
 		return TRUE;
 	  }
@@ -522,7 +522,7 @@ bool check_st_anchor2(struct worldpos *wpos, int y, int x, int y2, int x2) {
 		    distance(y2, x2, q_ptr->py, q_ptr->px) > ST_ANCHOR_DIS)
 			continue;
 
-		//if(istown(wpos) && randint(100)>q_ptr->lev) continue;
+		//if (istown(wpos) && randint(100) > q_ptr->lev) continue;
 
 		return TRUE;
 	  }
@@ -3798,8 +3798,8 @@ bool apply_disenchant(int Ind, int mode) {
 	/* Unused */
 	//mode = mode;
 
-	if(!mode) mode = randint(9);
-	else if(mode < 1 || mode > 9) return (FALSE);
+	if (!mode) mode = randint(9);
+	else if (mode < 1 || mode > 9) return (FALSE);
 
 	/* Pick a random slot */
 	switch (mode) {
@@ -5623,7 +5623,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Attempt to destroy the object */
 		//if (is_basic_potion && do_smash_effect) potion_smash_effect(who, wpos, y, x, o_sval);
 
-		//if(do_kill && (wpos->wz))
+		//if (do_kill && (wpos->wz))
 		if (do_kill) {
 			/* Effect "observed" */
 			//if (!quiet && p_ptr->obj_vis[c_ptr->o_idx])
@@ -10663,7 +10663,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				dam = 0;
 			} else if (curse == 2) { //Conf
 				dam = damroll(3, (dam / 2)) + 1;
-				if (p_ptr->resist_conf || p_ptr->resist_chaos){
+				if (p_ptr->resist_conf || p_ptr->resist_chaos) {
 					if (fuzzy) msg_format(Ind, "Your mind is hit by confusion for \377%c%d \377wdamage!", damcol, dam);
 					else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 					dam *= 5; dam /= (randint(6) + 6);
@@ -12176,20 +12176,11 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 				int dispx, dispy;
 				byte attr;
 
-				if (p_ptr->conn == NOT_CONNECTED)
-					continue;
-
-				if(!inarea(&p_ptr->wpos, wpos))
-					continue;
-
-				if (p_ptr->blind)
-					continue;
-
-				if (!panel_contains(y, x))
-					continue;
-
-				if (!player_has_los_bold(j, y, x))
-					continue;
+				if (p_ptr->conn == NOT_CONNECTED) continue;
+				if (!inarea(&p_ptr->wpos, wpos)) continue;
+				if (p_ptr->blind) continue;
+				if (!panel_contains(y, x)) continue;
+				if (!player_has_los_bold(j, y, x)) continue;
 
 				dispx = x - p_ptr->panel_col_prt;
 				dispy = y - p_ptr->panel_row_prt;
@@ -12774,7 +12765,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			gy[grids] = y;
 			gx[grids] = x;
 			grids++;
-			if(grids > 500) printf("grids %d\n", grids);
+			if (grids > 500) printf("grids %d\n", grids);
 		}
 	}
 

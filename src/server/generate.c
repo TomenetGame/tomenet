@@ -596,7 +596,7 @@ static void place_rubble(struct worldpos *wpos, int y, int x)
 	cave_type **zcave;
 	cave_type *c_ptr;
 	int dir;
-	if(!(zcave = getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
 	/* Create rubble */
@@ -633,7 +633,7 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 	c_special *cs_ptr;
 	int svals[SV_POTION_LAST + SV_POTION2_LAST + 1], maxsval = 0, k;
 
-	if(!(zcave = getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 	dun_lev = getlevel(wpos);
 	c_ptr = &zcave[y][x];
 
@@ -754,7 +754,7 @@ void place_fountain_of_blood(struct worldpos *wpos, int y, int x) {
 	cave_type *c_ptr;
 	c_special *cs_ptr;
 
-	if(!(zcave = getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
 	/* No fountains over traps/house doors etc */
@@ -928,11 +928,11 @@ static void place_random_stairs(struct worldpos *wpos, int y, int x) {
 
 	if (!cave_clean_bold(zcave, y, x)) return;
 
-	if (!can_go_down(wpos, 0x1) && !can_go_up(wpos, 0x1)){
+	if (!can_go_down(wpos, 0x1) && !can_go_up(wpos, 0x1)) {
 		/* special or what? */
-	} else if(!can_go_down(wpos, 0x1) && can_go_up(wpos, 0x1)){
+	} else if (!can_go_down(wpos, 0x1) && can_go_up(wpos, 0x1)) {
 		place_up_stairs(wpos, y, x);
-	} else if(!can_go_up(wpos, 0x1) && can_go_down(wpos, 0x1)){
+	} else if (!can_go_up(wpos, 0x1) && can_go_down(wpos, 0x1)) {
 		place_down_stairs(wpos, y, x);
 	} else if (rand_int(100) < 50) {
 		place_down_stairs(wpos, y, x);
@@ -1284,7 +1284,7 @@ static void alloc_object(struct worldpos *wpos, int set, int typ, int num, playe
 	int y, x, k;
 	int try = 1000;
 	cave_type **zcave;
-	if(!(zcave = getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 #ifdef RPG_SERVER /* no objects are generated in Training Tower */
 	if (in_trainingtower(wpos) && level_generation_time) return;
@@ -2372,7 +2372,7 @@ static void add_river(worldpos *wpos, int feat1, int feat2)
 	int cur_wid = dun->l_ptr->wid;
 
 	cave_type **zcave;
-	if(!(zcave = getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* hacks - don't build rivers that are shallower than the actual dungeon floor.. - C. Blue */
 	if ((l_ptr->flags1 & (LF1_WATER | LF1_DEEP_WATER))) {
@@ -2400,36 +2400,27 @@ s_printf("adding river (%d) %d,%d\n", (l_ptr->flags1 & LF1_DEEP_LAVA) ? 1 : 0, f
 	x2 = randint(cur_wid / 2 - 2) + cur_wid / 2;
 
 	/* Hack -- Choose ending point somewhere on boundary */
-	switch(randint(4))
-	{
-		case 1:
-		{
-			/* top boundary */
-			x1 = randint(cur_wid - 2) + 1;
-			y1 = 1;
-			break;
-		}
-		case 2:
-		{
-			/* left boundary */
-			x1 = 1;
-			y1 = randint(cur_hgt - 2) + 1;
-			break;
-		}
-		case 3:
-		{
-			/* right boundary */
-			x1 = cur_wid - 1;
-			y1 = randint(cur_hgt - 2) + 1;
-			break;
-		}
-		case 4:
-		{
-			/* bottom boundary */
-			x1 = randint(cur_wid - 2) + 1;
-			y1 = cur_hgt - 1;
-			break;
-		}
+	switch (randint(4)) {
+	case 1:
+		/* top boundary */
+		x1 = randint(cur_wid - 2) + 1;
+		y1 = 1;
+		break;
+	case 2:
+		/* left boundary */
+		x1 = 1;
+		y1 = randint(cur_hgt - 2) + 1;
+		break;
+	case 3:
+		/* right boundary */
+		x1 = cur_wid - 1;
+		y1 = randint(cur_hgt - 2) + 1;
+		break;
+	case 4:
+		/* bottom boundary */
+		x1 = randint(cur_wid - 2) + 1;
+		y1 = cur_hgt - 1;
+		break;
 	}
 	wid = randint(DUN_WAT_RNG);
 	recursive_river(wpos, x1, y1, x2, y2, feat1, feat2, wid);
@@ -4381,7 +4372,7 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 
 	/* Debugging code for "holes" in pits :( */
-	for (i = 0; i < 8; i++){
+	for (i = 0; i < 8; i++) {
 		if (!what[i]) s_printf("HOLE(%d)\n", i);
 
 		/* abuse the debugging code for setting extra level feelings =p */
@@ -4522,7 +4513,7 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 		l_ptr->flags1 |= LF1_NO_MAGIC;
 
 	/* Clean the between gates arrays */
-	for(i = 0; i < 8; i++)
+	for (i = 0; i < 8; i++)
 		bwy[i] = bwx[i] = 9999;
 
 	/* Place dungeon features and objects */
@@ -4556,7 +4547,7 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 
 			/* Part of a vault */
 			c_ptr->info |= (CAVE_ROOM | CAVE_ICKY);
-			if(v_ptr->flags1 & VF1_NO_TELEPORT)
+			if (v_ptr->flags1 & VF1_NO_TELEPORT)
 				c_ptr->info |= CAVE_STCK;
 
 			/* Analyze the grid */
@@ -4671,7 +4662,7 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 				/* XXX not sure what will happen if the cave already has
 				 * another between gate */
 				/* Not found before */
-				if(bwy[*t - '0'] == 9999) {
+				if (bwy[*t - '0'] == 9999) {
 					if (!(cs_ptr = AddCS(c_ptr, CS_BETWEEN))) {
 #if DEBUG_LEVEL > 0
 						s_printf("oops, vault between gates generation failed(1st: %s)!!\n", wpos_format(0, wpos));
@@ -5424,7 +5415,7 @@ static bool generate_fracave(worldpos *wpos, int y0, int x0, int xsize, int ysiz
 	 * (I don't do this for standard Angband.)
 	 */
 	for (x = 1; x < xsize; ++x) {
-		for(y = 1;y < ysize; ++y) {
+		for (y = 1;y < ysize; ++y) {
 			/* Access the grid */
 			c_ptr = &zcave[y + y0 - yhsize][x + x0 - xhsize];
 
@@ -8872,9 +8863,9 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 #ifdef ARCADE_SERVER
 	dun->l_ptr->hgt = SCREEN_HGT*2;
 	dun->l_ptr->wid = SCREEN_WID*2;
-	if(tron_dark && wpos->wz == 11)
+	if (tron_dark && wpos->wz == 11)
 		dun->l_ptr->flags1 |= DF1_FORGET;
-	if(tron_forget && wpos->wz == 11)
+	if (tron_forget && wpos->wz == 11)
 		dun->l_ptr->flags1 |= LF1_NO_MAP;
 #else
 	if (dun_lev < 100 && magik(NO_MAGIC_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_MAGIC;
@@ -10103,7 +10094,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 							csbm_ptr->info |= CAVE_ROOM | CAVE_GLOW;
 							if (!netherrealm_level) {
 								if (build_special_store == 1) {
-									if (cfg.dungeon_shop_type == 999){
+									if (cfg.dungeon_shop_type == 999) {
 										switch (rand_int(3)) {
 										case 1: cs_ptr->sc.omni = STORE_JEWELX;break; /*Rare Jewelry Shop */
 										case 2: cs_ptr->sc.omni = STORE_SHOESX;break; /*Rare Footwear Shop */
@@ -10538,7 +10529,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx) {
 				} else {
 					KILL(houses[num_houses].dna, struct dna_type);
 					c_ptr->feat = FEAT_HOME;
-					if((cs_ptr = AddCS(c_ptr, CS_DNADOOR))){
+					if ((cs_ptr = AddCS(c_ptr, CS_DNADOOR))) {
 						cs_ptr->sc.ptr = houses[tmp].dna;
 					}
 				}
@@ -10598,7 +10589,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx) {
 		if ((i = pick_house(wpos, y, x)) == -1) {
 			/* Store door location information */
 			c_ptr->feat = FEAT_HOME;
-			if ((cs_ptr = AddCS(c_ptr, CS_DNADOOR))){
+			if ((cs_ptr = AddCS(c_ptr, CS_DNADOOR))) {
 				cs_ptr->sc.ptr = houses[num_houses].dna;
 			}
 			houses[num_houses].dx = x;
@@ -10634,7 +10625,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx) {
 		else {
 			KILL(houses[num_houses].dna, struct dna_type);
 			c_ptr->feat = FEAT_HOME;
-			if((cs_ptr = AddCS(c_ptr, CS_DNADOOR))){
+			if ((cs_ptr = AddCS(c_ptr, CS_DNADOOR))) {
 				cs_ptr->sc.ptr = houses[i].dna;
 			}
 		}
@@ -11237,7 +11228,7 @@ static void town_gen(struct worldpos *wpos) {
  #if 0
 		process_dungeon_file("t_info.txt", wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
  #endif	// 0
-		switch(type) {
+		switch (type) {
 		case TOWN_BREE:
  #ifndef ARCADE_SERVER
 			process_dungeon_file("t_bree.txt", wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
@@ -11387,7 +11378,7 @@ void dealloc_dungeon_level(struct worldpos *wpos) {
 
 		/* remove 'deposited' true artefacts from wilderness */
 		if (cfg.anti_arts_wild) {
-			for(i = 0; i < o_max; i++){
+			for (i = 0; i < o_max; i++) {
 				o_ptr = &o_list[i];
 				if (o_ptr->k_idx && inarea(&o_ptr->wpos, wpos) &&
 				    undepositable_artifact_p(o_ptr)) {
@@ -11752,8 +11743,8 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr) {
 
 			{
 				int retval = -1, type;
-				for(i = 0; i < numtowns; i++) {
-					if(town[i].x == wpos->wx && town[i].y == wpos->wy) {
+				for (i = 0; i < numtowns; i++) {
+					if (town[i].x == wpos->wx && town[i].y == wpos->wy) {
 						retval = i;
 						break;
 					}

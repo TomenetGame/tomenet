@@ -20,7 +20,7 @@
 #ifdef SERVER_GWPORT
 #if 0
 /* Server gateway stuff */
-void SGWHit(int read_fd, int arg){
+void SGWHit(int read_fd, int arg) {
 	int newsock = 0;
 	char *sdb;
 	int size = 0;
@@ -815,8 +815,7 @@ void NewConsole(int read_fd, int arg)
 	}
 
 	/* Determine what the command is */
-	switch(ch)
-	{
+	switch (ch) {
 		/* Wants to see the player list */
 		case CONSOLE_STATUS:
 			console_status();

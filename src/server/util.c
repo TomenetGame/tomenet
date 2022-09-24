@@ -2495,7 +2495,7 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 	action = "item_";
 
 	/* choose sound */
-	if (is_melee_weapon(tval)) switch(tval) {
+	if (is_melee_weapon(tval)) switch (tval) {
 		case TV_SWORD: item = "sword"; break;
 		case TV_BLUNT:
 			if (sval == SV_WHIP) item = "whip"; else item = "blunt";
@@ -2507,7 +2507,7 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 			item = "armour_light";
 		else
 			item = "armour_heavy";
-	} else switch(tval) {
+	} else switch (tval) {
 		/* equippable stuff */
 		case TV_LITE: item = "lightsource"; break;
 		case TV_RING: item = "ring"; break;
@@ -3208,7 +3208,7 @@ void msg_format(int Ind, cptr fmt, ...) {
 static void floor_msg(struct worldpos *wpos, cptr msg) {
 	int i;
 
-//system-msg, currently unused anyway-	if(cfg.log_u) s_printf("[%s] %s\n", Players[sender]->name, msg);
+//system-msg, currently unused anyway-	if (cfg.log_u) s_printf("[%s] %s\n", Players[sender]->name, msg);
 	/* Check for this guy */
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
@@ -3239,7 +3239,7 @@ void floor_msg_format(struct worldpos *wpos, cptr fmt, ...) {
 static void floor_msg_ignoring(int sender, struct worldpos *wpos, cptr msg) {
 	int i;
 
-	if(cfg.log_u) s_printf("(%d,%d,%d)%s\n", wpos->wx, wpos->wy, wpos->wz, msg + 2);// Players[sender]->name, msg);
+	if (cfg.log_u) s_printf("(%d,%d,%d)%s\n", wpos->wx, wpos->wy, wpos->wz, msg + 2);// Players[sender]->name, msg);
 	/* Check for this guy */
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
@@ -3252,7 +3252,7 @@ static void floor_msg_ignoring(int sender, struct worldpos *wpos, cptr msg) {
 static void floor_msg_ignoring2(int sender, struct worldpos *wpos, cptr msg, cptr msg_u) {
 	int i;
 
-	if(cfg.log_u) s_printf("(%d,%d,%d)%s\n", wpos->wx, wpos->wy, wpos->wz, msg + 2);// Players[sender]->name, msg);
+	if (cfg.log_u) s_printf("(%d,%d,%d)%s\n", wpos->wx, wpos->wy, wpos->wz, msg + 2);// Players[sender]->name, msg);
 	/* Check for this guy */
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
@@ -3285,7 +3285,7 @@ static void floor_msg_format_ignoring(int sender, struct worldpos *wpos, cptr fm
 void world_surface_msg(cptr msg) {
 	int i;
 
-//system-msg, currently unused anyway-	if(cfg.log_u) s_printf("[%s] %s\n", Players[sender]->name, msg);
+//system-msg, currently unused anyway-	if (cfg.log_u) s_printf("[%s] %s\n", Players[sender]->name, msg);
 	/* Check for this guy */
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
@@ -3374,7 +3374,7 @@ void msg_print_verynear(int Ind, cptr msg) {
 	struct worldpos *wpos;
 	wpos = &p_ptr->wpos;
 
-	//if(p_ptr->admin_dm) return;
+	//if (p_ptr->admin_dm) return;
 
 	y = p_ptr->py;
 	x = p_ptr->px;
@@ -3406,7 +3406,7 @@ void msg_print_verynear2(int Ind, cptr msg, cptr msg_u) {
 	struct worldpos *wpos;
 	wpos = &p_ptr->wpos;
 
-	//if(p_ptr->admin_dm) return;
+	//if (p_ptr->admin_dm) return;
 
 	y = p_ptr->py;
 	x = p_ptr->px;
@@ -5160,7 +5160,7 @@ static void player_talk_aux(int Ind, char *message) {
 		log = FALSE;
 
 	/* no big brother */
-	//if(cfg.log_u && (!colon || message[0] != '#' || message[0] != '/')){ /* message[0] != '#' || message[0] != '/' is always true -> big brother mode - mikaelh */
+	//if (cfg.log_u && (!colon || message[0] != '#' || message[0] != '/')) { /* message[0] != '#' || message[0] != '/' is always true -> big brother mode - mikaelh */
 	if (cfg.log_u && log &&
 	    (!colon || nocolon || (message[0] == '/' && strncmp(message, "/note", 5)))) {
 		/* Shorten multiple identical messages to prevent log file spam,
@@ -6429,9 +6429,9 @@ int get_playerind(char *name) {
 	int i;
 
 	if (name == (char*)NULL) return(-1);
-	for(i = 1; i <= NumPlayers; i++) {
-		if(Players[i]->conn == NOT_CONNECTED) continue;
-		if(!stricmp(Players[i]->name, name)) return(i);
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (!stricmp(Players[i]->name, name)) return(i);
 	}
 	return(-1);
 }
@@ -6774,7 +6774,7 @@ void bbs_add_line(cptr textline, cptr textline_u) {
 	int i, j;
 	/* either find an empty bbs entry (store its position in j) */
 	for (i = 0; i < BBS_LINES; i++)
-		if(!strcmp(bbs_line[i], "")) break;
+		if (!strcmp(bbs_line[i], "")) break;
 	j = i;
 	/* or scroll up by one line, discarding the first line */
 	if (i == BBS_LINES)
@@ -6807,7 +6807,7 @@ void pbbs_add_line(u16b party, cptr textline, cptr textline_u) {
 	int i, j;
 	/* either find an empty bbs entry (store its position in j) */
 	for (i = 0; i < BBS_LINES; i++)
-		if(!strcmp(pbbs_line[party][i], "")) break;
+		if (!strcmp(pbbs_line[party][i], "")) break;
 	j = i;
 	/* or scroll up by one line, discarding the first line */
 	if (i == BBS_LINES)
@@ -6824,7 +6824,7 @@ void gbbs_add_line(byte guild, cptr textline, cptr textline_u) {
 	int i, j;
 	/* either find an empty bbs entry (store its position in j) */
 	for (i = 0; i < BBS_LINES; i++)
-		if(!strcmp(gbbs_line[guild][i], "")) break;
+		if (!strcmp(gbbs_line[guild][i], "")) break;
 	j = i;
 	/* or scroll up by one line, discarding the first line */
 	if (i == BBS_LINES)
@@ -7434,6 +7434,7 @@ char *json_escape_str(char *dest, const char *src, size_t n) {
 	const char *outstr = NULL;
 	int outlen = 0;
 	int c = 0;
+
 	while ((c = *src++)) {
 		// Special characters need to be escaped
 		if (c >= 0 && c < JSON_ESCAPE_ARRAY_SIZE) {
@@ -7525,7 +7526,8 @@ cptr timediff(struct timeval *begin, struct timeval *end) {
 void strip_control_codes(char *ss, char *s) {
 	char *sp = s, *ssp = ss;
 	bool skip = FALSE;
-	while(TRUE) {
+
+	while (TRUE) {
 		if (*sp == '\0') { /* end of string has top priority */
 			*ssp = '\0';
 			break;

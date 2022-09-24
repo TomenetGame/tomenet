@@ -4006,7 +4006,7 @@ void init_firework_dungeon(void) {
 
 	while (TRUE) {
 		for (j = 1; j <= dungeon_id_max; j++) {
-			i = getdungeon(&((struct worldpos){dungeon_x[j], dungeon_y[j], dungeon_tower[j] ? 1 : -1}))->type;
+			i = getdungeon(&((struct worldpos) {dungeon_x[j], dungeon_y[j], dungeon_tower[j] ? 1 : -1} ))->type;
 			/* dungeon must be among the most rarely frequented ones to be eligible */
 			if (dungeon_bonus[j] != dvb) continue;
  #else

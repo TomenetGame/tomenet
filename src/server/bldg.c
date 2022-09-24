@@ -263,7 +263,7 @@ static void arena_comm(int cmd) {
 	monster_race *r_ptr;
 	cptr name;
 
-	switch(cmd) {
+	switch (cmd) {
 	case BACT_ARENA:
 		if (p_ptr->arena_number == MAX_ARENA_MONS) {
 			clear_bldg(5,19);
@@ -488,7 +488,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 #endif	// 0
 
 		do {
-			switch(cmd) {
+			switch (cmd) {
 			case BACT_IN_BETWEEN: /* Game of In-Between */
 				//c_put_str(TERM_GREEN, "In Between",5,2);
 				msg_print(Ind, "\377GIn Between");
@@ -695,7 +695,7 @@ static bool inn_comm(int Ind, int cmd) {
 #endif	// 0
 	vampire = p_ptr->prace == RACE_VAMPIRE;
 
-	switch(cmd) {
+	switch (cmd) {
 		case BACT_FOOD: /* Buy food & drink */
 		{
 			if (!vampire) {
@@ -2251,7 +2251,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			amt = get_quantity("How many firestones (2000 gold each)? ", 10);
 			if (amt > 0) {
 				bcost = amt * 2000;
-				if(p_ptr->au >= bcost) {
+				if (p_ptr->au >= bcost) {
 					paid = TRUE;
 					msg_print(Ind, "You have bought some firestones!");
 
@@ -2332,11 +2332,11 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			int i, count = 0;
 			bool something = FALSE;
 
-			while(count < 1000) {
+			while (count < 1000) {
 				count++;
 				i = rand_int(MAX_FATES);
-				if(!fates[i].fate) continue;
-				if(fates[i].know) continue;
+				if (!fates[i].fate) continue;
+				if (fates[i].know) continue;
 				msg_print(Ind, "You know a little more of your fate.");
 
 				fates[i].know = TRUE;
@@ -2374,7 +2374,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 		case BACT_GET_LOAN:
 			s64b i, price, req;
 
-			if(p_ptr->loan) {
+			if (p_ptr->loan) {
 				msg_print(Ind, "You already have a loan!");
 				break;
 			}

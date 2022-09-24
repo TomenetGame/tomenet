@@ -251,7 +251,7 @@ void initialize_main_pref_files(void) {
 	}
 }
 
-void initialize_player_pref_files(void){
+void initialize_player_pref_files(void) {
 	char buf[1024];
 
 
@@ -999,7 +999,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN], bool 
 			info[0] = '\0'; /* prepare empty info line */
 			info_tmp[0] = '\0';
 
-			switch(buf[0]) {
+			switch (buf[0]) {
 			case 'I': /* speed, hp, vision range, ac, alertness/sleep */
 			    /* speed */
 				p2 = strchr(p1, ':') + 1;
@@ -2411,7 +2411,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 			info[0] = '\0'; /* prepare empty info line */
 			info_tmp[0] = '\0';
 
-			switch(buf[0]) {
+			switch (buf[0]) {
 			case 'I': /* tval, sval, pval */
 			    /* tval */
 				p2 = strchr(p1, ':') + 1;

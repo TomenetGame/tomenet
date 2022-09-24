@@ -578,7 +578,7 @@ static void sense_inventory(int Ind) {
 		   remember-items-seen-in-shops and normal ID-remembrance can be created:
 		   Remember static items seen in shops just by feeling before having IDed one. :)
 		    - C. Blue */
-		switch(o_ptr->tval) {
+		switch (o_ptr->tval) {
 		case TV_WAND:
 		case TV_STAFF:
 		case TV_ROD:
@@ -4087,7 +4087,7 @@ static void apply_terrain_effect(int Ind) {
 
 #if 0
 /* admin can summon a player anywhere he/she wants */
-void summon_player(int victim, struct worldpos *wpos, char *message){
+void summon_player(int victim, struct worldpos *wpos, char *message) {
 	struct player_type *p_ptr;
 	p_ptr = Players[victim];
 	p_ptr->recall_pos.wx = wpos->wx;
@@ -4425,7 +4425,7 @@ static void do_recall(int Ind, bool bypass) {
 			d_ptr = w_ptr->tower;
 
 #ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
-		if (d_ptr){
+		if (d_ptr) {
 			if ((d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev) ||
 			    (!d_ptr->type && d_ptr->baselevel <= (p_ptr->lev * 3) / 2 + 7)) {
 				msg_print(Ind, "\377rAs you attempt to recall, you are gripped by an uncontrollable fear.");
@@ -4557,7 +4557,7 @@ static void do_recall(int Ind, bool bypass) {
 #else
 			if (p_ptr->max_dlv < w_ptr->dungeon->baselevel - p_ptr->recall_pos.wz)
 				p_ptr->recall_pos.wz = w_ptr->dungeon->baselevel - p_ptr->max_dlv - 1;
-			//if(d_ptr->baselevel-p_ptr->max_dlv>2){
+			//if (d_ptr->baselevel - p_ptr->max_dlv > 2) {
 			if ((!d_ptr->type && d_ptr->baselevel - p_ptr->max_dlv > 2) || /* ??? */
 #endif
 #ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
@@ -4607,7 +4607,7 @@ static void do_recall(int Ind, bool bypass) {
 #else
 			if (p_ptr->max_dlv < w_ptr->tower->baselevel + p_ptr->recall_pos.wz + 1)
 				p_ptr->recall_pos.wz = 0 - w_ptr->tower->baselevel + p_ptr->max_dlv + 1;
-			//if(d_ptr->baselevel-p_ptr->max_dlv>2){
+			//if (d_ptr->baselevel - p_ptr->max_dlv > 2) {
 			if ((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) || /* ??? */
 #endif
 #ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
@@ -4893,7 +4893,7 @@ static bool process_player_end_aux(int Ind) {
 				/* Do nothing */
 				//take damage like if from hp-drain? (old way)
 			}
-			else if (c_ptr->feat == FEAT_HOME){/* rien */}
+			else if (c_ptr->feat == FEAT_HOME) {/* rien */}
 			//else if (PRACE_FLAG(PR1_SEMI_WRAITH) && (!p_ptr->wraith_form) && (f_info[cave[py][px].feat].flags1 & FF1_CAN_PASS))
 			else if (!p_ptr->tim_wraith &&
 			    !p_ptr->master_move_hook) { /* Hack -- builder is safe */
@@ -4991,7 +4991,7 @@ static bool process_player_end_aux(int Ind) {
 		if (i > 0 && set_food(Ind, p_ptr->food + i)) {
 			msg_print(Ind, "You gain some nourishment from around you.");
 #if 0 /* spammy in town */
-			switch(i) {
+			switch (i) {
 				case 70:
 					msg_format_near(Ind, "\374\377wYou hear strange sounds coming from the direction of %s.", p_ptr->name);
 					break;
@@ -6442,12 +6442,14 @@ static void process_games(int Ind) {
 	cave_type *c_ptr;
 	char sstr[80];
 	int score = 0;
+
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	if (c_ptr->feat == FEAT_AGOAL || c_ptr->feat == FEAT_BGOAL) {
 		int ball;
-		switch(gametype){
+
+		switch (gametype) {
 			/* rugby type game */
 			case EEGAME_RUGBY:
 				if ((ball = has_ball(p_ptr)) == -1) break;
@@ -6849,23 +6851,23 @@ static void scan_houses() {
 	int i;
 	//int lval;
 	s_printf("Doing house maintenance\n");
-	for(i = 0; i < num_houses; i++) {
-		if(!houses[i].dna->owner) continue;
-		switch(houses[i].dna->owner_type) {
+	for (i = 0; i < num_houses; i++) {
+		if (!houses[i].dna->owner) continue;
+		switch (houses[i].dna->owner_type) {
 			case OT_PLAYER:
-				if(!lookup_player_name(houses[i].dna->owner)) {
+				if (!lookup_player_name(houses[i].dna->owner)) {
 					s_printf("Found old player houses. ID: %d\n", houses[i].dna->owner);
 					kill_houses(houses[i].dna->owner, OT_PLAYER);
 				}
 				break;
 			case OT_PARTY:
-				if(!strlen(parties[houses[i].dna->owner].name)) {
+				if (!strlen(parties[houses[i].dna->owner].name)) {
 					s_printf("Found old party houses. ID: %d\n", houses[i].dna->owner);
 					kill_houses(houses[i].dna->owner, OT_PARTY);
 				}
 				break;
 			case OT_GUILD:
-				if(!strlen(guilds[houses[i].dna->owner].name)) {
+				if (!strlen(guilds[houses[i].dna->owner].name)) {
 					s_printf("Found old guild houses. ID: %d\n", houses[i].dna->owner);
 					kill_houses(houses[i].dna->owner, OT_GUILD);
 				}
@@ -7743,7 +7745,7 @@ static void process_world(void) {
 			if (SHUTDOWN_IGNORE_IDDC(p_ptr)) continue;
 
 			/* Ignore characters that are afk and not in a dungeon/tower */
-			//if((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
+			//if ((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
 
 			/* Ignore characters that are not in a dungeon/tower */
 			if (p_ptr->wpos.wz == 0) {
@@ -8923,8 +8925,8 @@ void process_player_change_wpos(int Ind) {
 
 		/* Not allowed to go onto a icky location (house) if Depth <= 0 */
 		if (wpos->wz == 0 && !(p_ptr->global_event_temp & PEVF_ICKY_OK)) {
-			if((zcave[y][x].info & CAVE_ICKY) && (p_ptr->new_level_method != LEVEL_HOUSE)) continue;
-			if(!(zcave[y][x].info & CAVE_ICKY) && (p_ptr->new_level_method == LEVEL_HOUSE)) continue;
+			if ((zcave[y][x].info & CAVE_ICKY) && (p_ptr->new_level_method != LEVEL_HOUSE)) continue;
+			if (!(zcave[y][x].info & CAVE_ICKY) && (p_ptr->new_level_method == LEVEL_HOUSE)) continue;
 		}
 
 		/* Prevent recalling or prob-travelling into no-tele vaults and monster nests! - C. Blue */
@@ -9910,7 +9912,7 @@ void dungeon(void) {
 void set_runlevel(int val) {
 	//static bool meta = TRUE;
 
-	switch(val) {
+	switch (val) {
 		case -1:
 			/* terminate: return a value that lets a script know that
 			   it must not restart us. */
@@ -10752,7 +10754,7 @@ static void process_firework_creation() {
 
 	if (!fireworks_delay) { /* fire! */
 		worldpos wpos;
-		switch(rand_int(4)) {
+		switch (rand_int(4)) {
 		case 0:	fireworks_delay = 0; break;
 		case 1:	fireworks_delay = 1; break;
 		case 2:	fireworks_delay = 4; break;

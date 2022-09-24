@@ -1134,7 +1134,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 			 * a sucessful blow. Uniques have a better chance. -LM-
 			 * Nazgul have a 25% chance
 			 */
-/* if (!p_ptr->protundead){}		// more efficient way :)	*/
+/* if (!p_ptr->protundead) {}		// more efficient way :)	*/
 		/* I believe the previous version was wrong - evileye */
 
 			/* If the player uses neither a weapon nor a shield

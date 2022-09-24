@@ -2678,10 +2678,10 @@ try_an_other_ego:
 		if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 3)) a_ptr->pval = 3;
 	}
 	/* Luck/Disarm caps */
-	if(a_ptr->flags5 & TR5_LUCK) {
+	if (a_ptr->flags5 & TR5_LUCK) {
 		if (a_ptr->pval > 5) a_ptr->pval = 5;
 	}
-	if(a_ptr->flags5 & TR5_DISARM) {
+	if (a_ptr->flags5 & TR5_DISARM) {
 		if (a_ptr->pval > 3) a_ptr->pval = 3;
 	}
 	/* +Attribute caps */

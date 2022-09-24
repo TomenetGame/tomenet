@@ -756,7 +756,7 @@ bool wearable_p(object_type *o_ptr) {
 
 /* Inserts key, value pair into dictionary or overwrites previous key if found. */
 struct u32b_char_dict_t *u32b_char_dict_set(struct u32b_char_dict_t *start, uint32_t key, char value) {
-	if(start==NULL) {
+	if (start == NULL) {
 		start=(struct u32b_char_dict_t *)malloc(sizeof(struct u32b_char_dict_t));
 		start->key=key;
 		start->value=value;
@@ -764,12 +764,12 @@ struct u32b_char_dict_t *u32b_char_dict_set(struct u32b_char_dict_t *start, uint
 		return start;
 	}
 
-	for(struct u32b_char_dict_t *cur = start;; cur=cur->next) {
-		if(key == cur->key) {
+	for (struct u32b_char_dict_t *cur = start;; cur=cur->next) {
+		if (key == cur->key) {
 			cur->value = value;
 			return start;
 		}
-		if(cur->next==NULL) {
+		if (cur->next == NULL) {
 			cur->next=(struct u32b_char_dict_t *)malloc(sizeof(struct u32b_char_dict_t));
 			cur->next->key=key;
 			cur->next->value=value;
@@ -783,8 +783,8 @@ struct u32b_char_dict_t *u32b_char_dict_set(struct u32b_char_dict_t *start, uint
 char *u32b_char_dict_get(struct u32b_char_dict_t *start, uint32_t key) {
 	if (start == NULL) return NULL;
 
-	for(struct u32b_char_dict_t *cur=start;cur!=NULL;cur=cur->next) {
-		if(key == cur->key) {
+	for (struct u32b_char_dict_t *cur=start;cur!=NULL;cur=cur->next) {
+		if (key == cur->key) {
 			return &cur->value;
 		}
 	}
@@ -793,27 +793,27 @@ char *u32b_char_dict_get(struct u32b_char_dict_t *start, uint32_t key) {
 
 /* Removes key, value pair from dictionary found under key. */
 struct u32b_char_dict_t *u32b_char_dict_unset(struct u32b_char_dict_t *start, uint32_t key) {
-       if (start == NULL) return start;
+	if (start == NULL) return start;
 
-       struct u32b_char_dict_t *prev = NULL;
-       struct u32b_char_dict_t *curr = start;
-       for (; curr != NULL; curr = curr->next) {
-               if(key == curr->key) break;
-               prev = curr;
-       }
+	struct u32b_char_dict_t *prev = NULL;
+	struct u32b_char_dict_t *curr = start;
+	for (; curr != NULL; curr = curr->next) {
+		if (key == curr->key) break;
+		prev = curr;
+	}
 
-       if (curr == NULL) return start;
+	if (curr == NULL) return start;
 
-       /* Found key */
-       struct u32b_char_dict_t *next = curr->next;
-       free(curr);
+	/* Found key */
+	struct u32b_char_dict_t *next = curr->next;
+	free(curr);
 
-       /* If the key was at start, return next. */
-       if (prev == NULL) return next;
+	/* If the key was at start, return next. */
+	if (prev == NULL) return next;
 
-       /* The key was is between prev & next, chain them. */
-       prev->next = next;
-       return start;
+	/* The key was is between prev & next, chain them. */
+	prev->next = next;
+	return start;
 }
 
 /* Remove all entries at once. */

@@ -1401,7 +1401,7 @@ void search(int Ind) {
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 	struct c_special *cs_ptr;
-	if(!(zcave = getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Admin doesn't */
 	if (p_ptr->admin_dm) return;
@@ -3321,7 +3321,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 #ifdef USE_SOUND_2010
 			if (sfx == 0 && p_ptr->sfx_combat) {
 				if (o_ptr->k_idx && (is_melee_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
-					switch(o_ptr->tval) {
+					switch (o_ptr->tval) {
 					case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 					case TV_BLUNT:	if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
 							else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
@@ -3701,7 +3701,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				   so if we didn't play it already (we did so if sfx==0) then play it now instead. */
 				if (sfx && p_ptr->sfx_combat) {
 					if (o_ptr->k_idx && (is_melee_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
-						switch(o_ptr->tval) {
+						switch (o_ptr->tval) {
 						case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 						case TV_BLUNT:	if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
 								else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
@@ -4396,7 +4396,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 #ifdef USE_SOUND_2010
 			if (sfx == 0 && p_ptr->sfx_combat) {
 				if (o_ptr->k_idx && (is_melee_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
-					switch(o_ptr->tval) {
+					switch (o_ptr->tval) {
 					case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 					case TV_BLUNT:	if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
 							else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
@@ -4636,7 +4636,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 					if (r_ptr->flags3 & RF3_NO_SLEEP) resist_stun += 5;
 					if (r_ptr->flags3 & RF3_UNDEAD)	resist_stun += 10;
 
-					switch(p_ptr->combat_stance_power) {
+					switch (p_ptr->combat_stance_power) {
 					case 0: resist_stun = (resist_stun * 5) / 4; break;
 					case 1: resist_stun = (resist_stun * 4) / 4; break;
 					case 2: resist_stun = (resist_stun * 3) / 4; break;
@@ -4945,7 +4945,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				   so if we didn't play it already (we did so if sfx==0) then play it now instead. */
 				if (sfx && p_ptr->sfx_combat) {
 					if (o_ptr->k_idx && (is_melee_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
-						switch(o_ptr->tval) {
+						switch (o_ptr->tval) {
 						case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 						case TV_BLUNT:	if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
 								else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
@@ -8102,7 +8102,7 @@ static void run_init(int Ind, int dir) {
 	int	     i, shortleft, shortright;
 
 	cave_type **zcave;
-	if(!(zcave = getcave(&p_ptr->wpos))) return;
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	/* Manual direction changes reset the corner counter
 	   (for safety reasons only, might be serious running
@@ -8571,7 +8571,7 @@ void run_step(int Ind, int dir, char *consume_full_energy) {
 	/* slower 'running' movement over certain terrain */
 	int real_speed = cfg.running_speed;
 	cave_type *c_ptr, **zcave;
-	if(!(zcave = getcave(&p_ptr->wpos))) return;
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	eff_running_speed(&real_speed, p_ptr, c_ptr);

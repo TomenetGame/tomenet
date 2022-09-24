@@ -448,7 +448,7 @@ void delete_monster(struct worldpos *wpos, int y, int x, bool unfound_arts) {
 		if (c_ptr->m_idx > 0) delete_monster_idx(c_ptr->m_idx, unfound_arts);
 	} else { /* still delete the monster, just slower method */
 		int i;
-		for (i = 1; i < m_max; i++){
+		for (i = 1; i < m_max; i++) {
 			monster_type *m_ptr = &m_list[i];
 			if (m_ptr->r_idx && inarea(wpos, &m_ptr->wpos)) {
 				if (y == m_ptr->fy && x == m_ptr->fx)
@@ -505,7 +505,7 @@ void compact_monsters(int size, bool purge) {
 #if 0
 			/* Skip monsters that are 'trapped' in houses */
 			//& CAVE_ICKY
-			//if((zcave = getcave(wpos))) zcave[ny][nx].m_idx = i;
+			//if ((zcave = getcave(wpos))) zcave[ny][nx].m_idx = i;
 #else
 			/* Skip golems/pets */
 			if (m_ptr->pet || m_ptr->owner) continue;
@@ -1151,19 +1151,19 @@ bool mon_allowed_chance(monster_race *r_ptr) {
 	if (r_ptr->flags8 & RF8_ANGBAND) return(cfg.vanilla_monsters);
 
 	/* Zangbandish monsters allowed ? or not ? */
-	if(r_ptr->flags8 & RF8_ZANGBAND) return(cfg.zang_monsters);
+	if (r_ptr->flags8 & RF8_ZANGBAND) return(cfg.zang_monsters);
 
 	/* Joke monsters allowed ? or not ? */
 	if (r_ptr->flags8 & RF8_JOKEANGBAND) return(cfg.joke_monsters);
 
 	/* Lovercraftian monsters allowed ? or not ? */
-	if(r_ptr->flags8 & RF8_CTHANGBAND) return(cfg.cth_monsters);
+	if (r_ptr->flags8 & RF8_CTHANGBAND) return(cfg.cth_monsters);
 
 	/* C. Blue's monsters allowed ? or not ? */
-	if(r_ptr->flags8 & RF8_BLUEBAND) return(cfg.cblue_monsters);
+	if (r_ptr->flags8 & RF8_BLUEBAND) return(cfg.cblue_monsters);
 
 	/* Pernian monsters allowed ? or not ? */
-	if(r_ptr->flags8 & RF8_PERNANGBAND) return(cfg.pern_monsters);
+	if (r_ptr->flags8 & RF8_PERNANGBAND) return(cfg.pern_monsters);
 
 	return(100); /* or 0? =p */
 }
@@ -2153,7 +2153,7 @@ static void sanity_blast(int Ind, int m_idx, bool necro) {
 	}
 
 	while (!happened) {
-		switch(randint(4)) {
+		switch (randint(4)) {
 			case 1:
 				if (!(p_ptr->muta3 & MUT3_MORONIC)) {
 					msg_print("You turn into an utter moron!");
@@ -3413,7 +3413,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 9\n");
 		if (ego || randuni) return 46;
 
 		/* prevent duplicate uniques on a floor */
-		for(i = 1; i < m_max; i++) {
+		for (i = 1; i < m_max; i++) {
 			m_ptr = &m_list[i];
 			if (m_ptr->r_idx == r_idx) {
 				if (inarea(wpos, &m_ptr->wpos)) {
@@ -3639,7 +3639,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 		m_ptr->csleep = ((val * 2) + randint(val * 10));
 	}
 
-	/*if(m_ptr->hold_o_idx){
+	/*if (m_ptr->hold_o_idx) {
 		s_printf("AHA! monster created with an object in hand!\n");
 		m_ptr->hold_o_idx = 0;
 	}*/
@@ -4108,7 +4108,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 				for (i = 0; i < 10; i++) {
 					if (r_ptr->d_char == d_ptr->r_char[i]) break;
 				}
-				if(i < 10) break;
+				if (i < 10) break;
 				continue;
 			}
 			if (d_ptr->nr_char[0]) {
@@ -4253,7 +4253,7 @@ bool alloc_monster(struct worldpos *wpos, int dis, int slp) {
 				continue;
 
 			/* Skip him if he's not on this depth */
-			if(!inarea(wpos, &p_ptr->wpos))
+			if (!inarea(wpos, &p_ptr->wpos))
 				continue;
 
 			if ((d = distance(y, x, p_ptr->py, p_ptr->px)) < min_dis)
@@ -4347,7 +4347,7 @@ int alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp) {
 				continue;
 
 			/* Skip him if he's not on this depth */
-			if(!inarea(wpos, &p_ptr->wpos))
+			if (!inarea(wpos, &p_ptr->wpos))
 				continue;
 
 			if ((d = distance(y, x, p_ptr->py, p_ptr->px)) < min_dis)
@@ -4662,7 +4662,7 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone
 	int i, x, y, r_idx, dlev;
 	dun_level *l_ptr;
 	cave_type **zcave;
-	if(!(zcave = getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	l_ptr = getfloor(wpos);
 	dlev = getlevel(wpos);
@@ -5520,7 +5520,7 @@ int pick_randuni(int r_idx, int Level) {
 
 
 	/* Lets look for one */
-	while(tries--) {
+	while (tries--) {
 		/* Pick one */
 		ego = rand_range(1, max_re_idx - 1);
 		re_ptr = &re_info[ego];

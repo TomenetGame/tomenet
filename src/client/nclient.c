@@ -202,7 +202,7 @@ static void Receive_init(void) {
 
 /* Head of file transfer system receive */
 /* DO NOT TOUCH - work in progress */
-int Receive_file(void){
+int Receive_file(void) {
 	char command, ch;
 	char fname[MAX_CHARS];	/* possible filename */
 	int x;	/* return value/ack */
@@ -222,7 +222,7 @@ int Receive_file(void){
 	if (n == 3) {
 		bytes_read = 4;
 
-		switch(command){
+		switch (command) {
 			case PKT_FILE_INIT:
 				if ((n = Packet_scanf(&rbuf, "%s", fname)) <= 0) {
 					/* Rollback the socket buffer */
@@ -5815,7 +5815,7 @@ int Send_ghost(int ability) {
 	return 1;
 }
 
-int Send_map(char mode){
+int Send_map(char mode) {
 	int	n;
 	if ((n = Packet_printf(&wbuf, "%c%c", PKT_MAP, mode)) <= 0) return n;
 	return 1;
@@ -5971,7 +5971,7 @@ int Send_screen_dimensions(void) {
 	return 1;
 }
 
-int Send_admin_house(int dir, cptr buf){
+int Send_admin_house(int dir, cptr buf) {
 	int	n;
 	if ((n = Packet_printf(&wbuf, "%c%hd%s", PKT_HOUSE, dir, buf)) <= 0) return n;
 	return 1;
@@ -5989,7 +5989,7 @@ int Send_King(byte type) {
 	return 1;
 }
 
-int Send_spike(int dir){
+int Send_spike(int dir) {
 	int	n;
 	if ((n = Packet_printf(&wbuf, "%c%c", PKT_SPIKE, dir)) <= 0) return n;
 	return 1;
@@ -6176,13 +6176,13 @@ void do_mail() {
 
 	uid = getuid();
 	pw = getpwuid(uid);
-	if(pw == (struct passwd*)NULL)
+	if (pw == (struct passwd*)NULL)
 		return;
 	strcat(mpath, pw->pw_name);
 
-	if(ticks-mailticks >= 300){	/* testing - too fast */
+	if (ticks-mailticks >= 300) {	/* testing - too fast */
 		struct stat inf;
-		if (!stat(mpath, &inf)){
+		if (!stat(mpath, &inf)) {
   #ifndef _POSIX_C_SOURCE
 			if (inf.st_size != 0) {
 				if (inf.st_mtimespec.tv_sec > lm.tv_sec || (inf.st_mtimespec.tv_sec == lm.tv_sec && inf.st_mtimespec.tv_nsec > lm.tv_nsec)) {

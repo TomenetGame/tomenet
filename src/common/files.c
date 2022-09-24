@@ -62,7 +62,7 @@ struct ft_data {
 
 struct ft_data *fdata = NULL;	/* our pointer to the transfer data */
 
-static struct ft_data *getfile(int ind, unsigned short fnum){
+static struct ft_data *getfile(int ind, unsigned short fnum) {
 	struct ft_data *trav, *new_ft;
 	if (fnum == 0) {
 		new_ft = (struct ft_data*)malloc(sizeof(struct ft_data));
@@ -316,7 +316,7 @@ int check_return_new(int ind, unsigned short fnum, const unsigned char digest[16
 	return(1);
 }
 
-void kill_xfers(int ind){
+void kill_xfers(int ind) {
 	struct ft_data *trav, *next;
 	trav = fdata;
 	for (; trav; trav = next) {
@@ -331,7 +331,7 @@ void kill_xfers(int ind){
 
 /* handle all current SEND type file transfers */
 /* laid out long like this for testing. DO NOT CHANGE */
-void do_xfers(){
+void do_xfers() {
 	int x;
 	struct ft_data *trav;
 	trav = fdata;
@@ -472,7 +472,7 @@ int local_file_close(int ind, unsigned short fnum) {
 	int success = 1;
 	FILE *wp;
 	c_fd = getfile(ind, fnum);
-	if(c_fd == (struct ft_data *) NULL) return 0;
+	if (c_fd == (struct ft_data *) NULL) return 0;
 
 	if (!client_user_path(buf, c_fd->fname))
 		path_build(buf, 4096, ANGBAND_DIR, c_fd->fname);

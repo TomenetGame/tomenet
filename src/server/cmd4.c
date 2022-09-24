@@ -710,11 +710,11 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 		if (q_ptr->pkill & PKILL_SET) fprintf(fff, "\377R  (PK");
 		else text_pk = FALSE;
 #else
-		if(q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
+		if (q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
 			fprintf(fff, "  (PK");
-		else if(!(q_ptr->pkill & PKILL_KILLABLE))
+		else if (!(q_ptr->pkill & PKILL_KILLABLE))
 			fprintf(fff, "  (SAFE");
-		else if(!(q_ptr->tim_pkill))
+		else if (!(q_ptr->tim_pkill))
 			fprintf(fff, q_ptr->lev < 5 ? "  (Newbie" : "  (Killable");
 		else
 			text_pk = FALSE;
@@ -851,11 +851,11 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 		if (q_ptr->pkill & PKILL_SET) fprintf(fff, "\377R  (PK");
 		else text_pk = FALSE;
 #else
-		if(q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
+		if (q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
 			fprintf(fff, "  (PK");
-		else if(!(q_ptr->pkill & PKILL_KILLABLE))
+		else if (!(q_ptr->pkill & PKILL_KILLABLE))
 			fprintf(fff, "  (SAFE");
-		else if(!(q_ptr->tim_pkill))
+		else if (!(q_ptr->tim_pkill))
 			fprintf(fff, q_ptr->lev < 5 ? "  (Newbie" : "  (Killable");
 		else
 			text_pk = FALSE;
@@ -1019,11 +1019,11 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 		if (q_ptr->pkill & PKILL_SET) fprintf(fff, "\377R (PK");
 		else text_pk = FALSE;
 #else
-		if(q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
+		if (q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
 			fprintf(fff, " (PK");
-		else if(!(q_ptr->pkill & PKILL_KILLABLE))
+		else if (!(q_ptr->pkill & PKILL_KILLABLE))
 			fprintf(fff, " (SAFE");
-		else if(!(q_ptr->tim_pkill))
+		else if (!(q_ptr->tim_pkill))
 			fprintf(fff, q_ptr->lev < 5 ? " (New" : " (Kill");
 		else
 			text_pk = FALSE;
@@ -1188,7 +1188,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
   #else	// 0
    #ifndef ABUNDANT_TITLES
 	fprintf(fff, "  %s the ", q_ptr->name);
-	switch(modify_number){
+	switch (modify_number) {
 	case 1:	fprintf(fff, "wussy "); break;
 	case 2: fprintf(fff, "silyl "); break;
 	default:
@@ -1271,11 +1271,11 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 		if (q_ptr->pkill & PKILL_SET) fprintf(fff, "\377R   (PK");
 		else text_pk = FALSE;
 #else
-		if(q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
+		if (q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
 			fprintf(fff, "   (PK");
-		else if(!(q_ptr->pkill & PKILL_KILLABLE))
+		else if (!(q_ptr->pkill & PKILL_KILLABLE))
 			fprintf(fff, "   (SAFE");
-		else if(!(q_ptr->tim_pkill))
+		else if (!(q_ptr->tim_pkill))
 			fprintf(fff, q_ptr->lev < 5 ? "   (Newbie" : "   (Killable");
 		else
 			text_pk = FALSE;
@@ -1425,7 +1425,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 
 	/* Open a new file */
 	fff = my_fopen(file_name, "wb");
-	if(fff == (FILE*)NULL) return;
+	if (fff == (FILE*)NULL) return;
 
 	/* Scan the player races */
 	for (k = 1; k <= NumPlayers; k++) {
@@ -2011,11 +2011,11 @@ void write_player_info(int Ind, char *pinfo) {
 		if (q_ptr->pkill & PKILL_SET) fprintf(fff, "\377R (PK");
 		else text_pk = FALSE;
  #else
-		if(q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
+		if (q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
 			fprintf(fff, " (PK");
-		else if(!(q_ptr->pkill & PKILL_KILLABLE))
+		else if (!(q_ptr->pkill & PKILL_KILLABLE))
 			fprintf(fff, " (SAFE");
-		else if(!(q_ptr->tim_pkill))
+		else if (!(q_ptr->tim_pkill))
 			fprintf(fff, q_ptr->lev < 5 ? " (New" : " (Kill");
 		else
 			text_pk = FALSE;
@@ -2237,7 +2237,7 @@ void do_cmd_check_player_equip(int Ind, int line) {
 		//if ((attr != 'B') && (p_ptr->dun_depth != q_ptr->dun_depth)) continue;
 		if ((attr != 'B') && (attr != 'w') && !admin) {
 			/* Make sure this player is at this depth */
-			if(!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
+			if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 
 			/* Can he see this player? */
 			if (!(p_ptr->cave_flag[q_ptr->py][q_ptr->px] & CAVE_VIEW)) continue;
@@ -3368,8 +3368,8 @@ void do_cmd_show_houses(int Ind, bool local, bool own, s32b id) {
 	if (local) fprintf(fff, "<Showing only houses that are at your local wpos>\n");
 
 	for (i = 0; i < num_houses; i++) {
-		//if(!houses[i].dna->owner) continue;
-		//if(!admin && houses[i].dna->owner != p_ptr->id) continue;
+		//if (!houses[i].dna->owner) continue;
+		//if (!admin && houses[i].dna->owner != p_ptr->id) continue;
 		h_ptr = &houses[i];
 		dna = h_ptr->dna;
 
@@ -3452,7 +3452,7 @@ void do_cmd_show_houses(int Ind, bool local, bool own, s32b id) {
 
 		/* Houses of special owner types asides from OT_PLAYER or OT_GUILD (currently not used) */
 #if 1
-		switch(dna->owner_type) {
+		switch (dna->owner_type) {
 		case OT_PLAYER:
  #if 0
 			if (dna->owner == dna->creator) break;
@@ -3479,15 +3479,15 @@ void do_cmd_show_houses(int Ind, bool local, bool own, s32b id) {
 			break;
 		case OT_CLASS:
 			name = class_info[dna->owner].title;
-			if(strlen(name)) fprintf(fff, " of class %s", name);
+			if (strlen(name)) fprintf(fff, " of class %s", name);
 			break;
 		case OT_RACE:
 			name = race_info[dna->owner].title;
-			if(strlen(name)) fprintf(fff, " of race %s", name);
+			if (strlen(name)) fprintf(fff, " of race %s", name);
 			break;
 		case OT_GUILD:
 			name = guilds[dna->owner].name;
-			if(strlen(name)) fprintf(fff, " of guild '%s'", name);
+			if (strlen(name)) fprintf(fff, " of guild '%s'", name);
 			break;
 		}
 #endif	// 0
@@ -3696,7 +3696,7 @@ void do_cmd_knowledge_traps(int Ind) {
 		if (!t_ptr->name) continue;
 
 		/* Skip unidentified traps */
-		if(!p_ptr->trap_ident[k]) continue;
+		if (!p_ptr->trap_ident[k]) continue;
 
 		if (admin) fprintf(fff, "(%3d)", k);
 

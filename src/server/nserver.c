@@ -785,7 +785,7 @@ void world_disconnect(int Ind) {
 	remove_input(WorldSocket);
 	close(WorldSocket);
 	/* Clear all the world players quietly */
-	while(remlist(&rpmlist, rpmlist));
+	while (remlist(&rpmlist, rpmlist));
 #if 0
 	c_pl = rpmlist;
 	while (c_pl) {
@@ -3337,7 +3337,7 @@ static int Handle_login(int ind) {
 		}
 	}
 
-	if(!(p_ptr->mode & MODE_NO_GHOST) &&
+	if (!(p_ptr->mode & MODE_NO_GHOST) &&
 	    !(p_ptr->mode & MODE_EVERLASTING) &&
 	    !(p_ptr->mode & MODE_PVP) &&
 	    !cfg.no_ghost && cfg.lifes)
@@ -12176,7 +12176,7 @@ static int Receive_King(int ind) {
 	}
 
 	if (p_ptr) {
-		switch(type) {
+		switch (type) {
 #if 0 /* DGDGDGDG -- Cause fucking up of levels */
 			case KING_OWN:
 				do_cmd_own(player);

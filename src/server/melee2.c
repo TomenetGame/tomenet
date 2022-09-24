@@ -1200,59 +1200,59 @@ if (season_halloween) {
 	if (m_ptr->r_idx == RI_PUMPKIN) {
 		/* more than 1/3 HP: Moan much, tele rarely */
 		if (m_ptr->hp > (m_ptr->maxhp / 3))
-		switch(rand_int(17)) {
+		switch (rand_int(17)) {
 		case 0:	case 1:
-			if(f5 & (1U << 30)) return(RF5_OFFSET + 30);	//RF5_SLOW
+			if (f5 & (1U << 30)) return(RF5_OFFSET + 30);	//RF5_SLOW
 			break;
 		case 2:	case 3: case 4: case 5:
-			if(f5 & (1U << 27)) return(RF5_OFFSET + 27);	//RF5_SCARE
+			if (f5 & (1U << 27)) return(RF5_OFFSET + 27);	//RF5_SCARE
 			break;
 		case 6:	case 7:	case 8:
-			if(f5 & (1U << 31)) return(RF5_OFFSET + 31);	//RF5_HOLD
+			if (f5 & (1U << 31)) return(RF5_OFFSET + 31);	//RF5_HOLD
 			break;
 		case 9: case 10:
-			if(f6 & (1U << 5)) return(RF6_OFFSET + 5);	//RF6_TPORT
+			if (f6 & (1U << 5)) return(RF6_OFFSET + 5);	//RF6_TPORT
 			break;
 		default:
-			if(f4 & (1U << 30)) return(RF4_OFFSET + 30);	//RF4_MOAN
+			if (f4 & (1U << 30)) return(RF4_OFFSET + 30);	//RF4_MOAN
 			break;
 		}
 		/* Just more than 1/6 HP: Moan less, tele more often */
 		else if (m_ptr->hp > (m_ptr->maxhp / 6))
-		switch(rand_int(17)) {
+		switch (rand_int(17)) {
 		case 0:	case 1:
-			if(f5 & (1U << 30)) return(RF5_OFFSET + 30);	//RF5_SLOW
+			if (f5 & (1U << 30)) return(RF5_OFFSET + 30);	//RF5_SLOW
 			break;
 		case 2:	case 3: case 4: case 5:
-			if(f5 & (1U << 27)) return(RF5_OFFSET + 27);	//RF5_SCARE
+			if (f5 & (1U << 27)) return(RF5_OFFSET + 27);	//RF5_SCARE
 			break;
 		case 6:	case 7:	case 8:
-			if(f5 & (1U << 31)) return(RF5_OFFSET + 31);	//RF5_HOLD
+			if (f5 & (1U << 31)) return(RF5_OFFSET + 31);	//RF5_HOLD
 			break;
 		case 9: case 10: case 11:// case 12:
-			if(f6 & (1U << 5)) return(RF6_OFFSET + 5);	//RF6_TPORT
+			if (f6 & (1U << 5)) return(RF6_OFFSET + 5);	//RF6_TPORT
 			break;
 		default:
-			if(f4 & (1U << 30)) return(RF4_OFFSET + 30);	//RF4_MOAN
+			if (f4 & (1U << 30)) return(RF4_OFFSET + 30);	//RF4_MOAN
 			break;
 		}
 		/* Nearly dead: Moan rarely, tele often */
 		else
-		switch(rand_int(17)) {
+		switch (rand_int(17)) {
 		case 0:	case 1:
-			if(f5 & (1U << 30)) return(RF5_OFFSET + 30);	//RF5_SLOW
+			if (f5 & (1U << 30)) return(RF5_OFFSET + 30);	//RF5_SLOW
 			break;
 		case 2:	case 3: case 4: case 5:
-			if(f5 & (1U << 27)) return(RF5_OFFSET + 27);	//RF5_SCARE
+			if (f5 & (1U << 27)) return(RF5_OFFSET + 27);	//RF5_SCARE
 			break;
 		case 6:	case 7:	case 8:
-			if(f5 & (1U << 31)) return(RF5_OFFSET + 31);	//RF5_HOLD
+			if (f5 & (1U << 31)) return(RF5_OFFSET + 31);	//RF5_HOLD
 			break;
 		case 9: case 10: case 11: case 12:// case 13: case 14:
-			if(f6 & (1U << 5)) return(RF6_OFFSET + 5);	//RF6_TPORT
+			if (f6 & (1U << 5)) return(RF6_OFFSET + 5);	//RF6_TPORT
 			break;
 		default:
-			if(f4 & (1U << 30)) return(RF4_OFFSET + 30);	//RF4_MOAN
+			if (f4 & (1U << 30)) return(RF4_OFFSET + 30);	//RF4_MOAN
 			break;
 		}
 	}
@@ -1395,12 +1395,12 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 		grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 100);
 
 #ifdef ENABLE_STANCES
-		if (q_ptr->combat_stance == 1) switch(q_ptr->combat_stance_power) {
+		if (q_ptr->combat_stance == 1) switch (q_ptr->combat_stance_power) {
 			case 0: fac = 50; break;
 			case 1: fac = 55; break;
 			case 2: fac = 60; break;
 			case 3: fac = 65; break;
-		} else if (q_ptr->combat_stance == 2) switch(q_ptr->combat_stance_power) {
+		} else if (q_ptr->combat_stance == 2) switch (q_ptr->combat_stance_power) {
 			case 0: fac = 104; break;
 			case 1: fac = 107; break;
 			case 2: fac = 110; break;
@@ -1675,7 +1675,7 @@ static bool monst_check_antimagic(int Ind, int m_idx) {
 			m_ptr = &m_list[m_idx];	// pfft, bad design
 
 			/* dont use removed monsters */
-			if(!m_ptr->r_idx) continue;
+			if (!m_ptr->r_idx) continue;
 
 			r_ptr = race_inf(m_ptr);
 
@@ -2102,7 +2102,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	if (f7 & RF7_S_NOEXP) s_clone = 100;
 
 	/* Only innate spells */
-//(restricted it a bit, see guide)	if(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC) f5 = f6 = 0;
+//(restricted it a bit, see guide)	if (l_ptr && l_ptr->flags1 & LF1_NO_MAGIC) f5 = f6 = 0;
 
 	/* radius of ball spells and breathes.
 	 * XXX this doesn't reflect some exceptions(eg. radius=4 spells). */
@@ -4085,7 +4085,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	if (f7 & RF7_S_NOEXP) s_clone = 100;
 
 	/* Only innate spells */
-//(restricted it a bit, see guide)	if(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC) f5 = f6 = 0;
+//(restricted it a bit, see guide)	if (l_ptr && l_ptr->flags1 & LF1_NO_MAGIC) f5 = f6 = 0;
 
 	/* radius of ball spells and breathes.
 	 * XXX this doesn't reflect some exceptions(eg. radius=4 spells). */
@@ -6569,7 +6569,7 @@ static bool find_noeffect(int m_idx, int *yp, int *xp)
 
 	cave_type **zcave;
 	/* paranoia */
-	if(!(zcave = getcave(&m_ptr->wpos))) return(FALSE);
+	if (!(zcave = getcave(&m_ptr->wpos))) return(FALSE);
 
 	/* Start with adjacent locations, spread further */
 	for (i = 1; i <= tdi[SAFETY_RADIUS]; i++) {
@@ -8085,7 +8085,7 @@ static bool get_moves_pet(int Ind, int m_idx, int *mm) {
 
 	if (!tm_idx) return FALSE;
 
-	if(!(inarea(&m_ptr->wpos, (tm_idx>0)? &m_list[tm_idx].wpos:&Players[-tm_idx]->wpos))) return FALSE;
+	if (!(inarea(&m_ptr->wpos, (tm_idx > 0) ? &m_list[tm_idx].wpos : &Players[-tm_idx]->wpos))) return FALSE;
 
 	y2 = (tm_idx > 0)?m_list[tm_idx].fy:Players[-tm_idx]->py;
 	x2 = (tm_idx > 0)?m_list[tm_idx].fx:Players[-tm_idx]->px;
@@ -8274,7 +8274,7 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm) {
 			if (!(zcave = getcave(&m_ptr->wpos))) return FALSE;
 			c_ptr = &zcave[sy][sx];
 
-			if(!c_ptr->m_idx) continue;
+			if (!c_ptr->m_idx) continue;
 
 			if (c_ptr->m_idx > 0) {
 				if (max_hp < m_list[c_ptr->m_idx].maxhp) {
@@ -8295,7 +8295,7 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm) {
 
 	if (!tm_idx) return FALSE;
 
-	if(!(inarea(&m_ptr->wpos, (tm_idx>0)? &m_list[tm_idx].wpos:&Players[-tm_idx]->wpos))) return FALSE;
+	if (!(inarea(&m_ptr->wpos, (tm_idx > 0) ? &m_list[tm_idx].wpos : &Players[-tm_idx]->wpos))) return FALSE;
 
 	y2 = (tm_idx > 0)?m_list[tm_idx].fy:Players[-tm_idx]->py;
 	x2 = (tm_idx > 0)?m_list[tm_idx].fx:Players[-tm_idx]->px;
@@ -9640,9 +9640,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		/* Logical moves */
 #ifdef ARCADE_SERVER
 		if ((m_ptr->r_idx >= RI_ARCADE_START) && (m_ptr->r_idx <= RI_ARCADE_END)) {
-			for(n = 1; n <= NumPlayers; n++) {
+			for (n = 1; n <= NumPlayers; n++) {
 				player_type *p_ptr = Players[n];
-				if(p_ptr->game == 4 && p_ptr->team == 5) {
+				if (p_ptr->game == 4 && p_ptr->team == 5) {
 					get_moves_arc(p_ptr->arc_b, p_ptr->arc_a, m_idx, mm);
 					n = NumPlayers + 1;
 				}
@@ -9750,7 +9750,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		   where FF1_PROTECTED grids occur. well, doesn't cost much anyway:
 		   instead of overwriting mm[] directly, we used mm2[] and now check if we
 		   have at least 1 direction, otherwise cancel the anti-exploit! */
-		if (mm2[0]) for(i = 0; i < 8; i++) mm[i] = mm2[i];
+		if (mm2[0]) for (i = 0; i < 8; i++) mm[i] = mm2[i];
 		else m_ptr->previous_direction = 0;
 	}
 #endif

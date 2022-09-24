@@ -567,7 +567,7 @@ static void wr_guilds() {
 	wr_u16b(tmp16u);
 
 	/* Dump the guilds */
-	for (i = 0; i < tmp16u; i++){
+	for (i = 0; i < tmp16u; i++) {
 		wr_u32b(guilds[i].dna);
 		wr_string(guilds[i].name);
 		wr_s32b(guilds[i].master);
@@ -645,7 +645,7 @@ static void wr_house(house_type *house) {
 	wr_s16b(house->wpos.wy);
 	wr_s16b(house->wpos.wz);
 
-	if (house->flags & HF_RECT){
+	if (house->flags & HF_RECT) {
 		wr_byte(house->coords.rect.width);
 		wr_byte(house->coords.rect.height);
 	} else {
@@ -1267,7 +1267,7 @@ static void wr_floor(struct worldpos *wpos) {
 				i = cs_ptr->type;
 
 				/* nothing special */
-				if (i != CS_NONE){
+				if (i != CS_NONE) {
 
 					/* TODO: implement CS_DNADOOR and CS_KEYDOOR saving
 			 		* currently, their x,y,i is saved in vain.	- Jir -
@@ -2218,14 +2218,14 @@ static bool wr_server_savefile() {
 	for (i = 0; i < tmp16u; i++) wr_item(&o_list[i]);
 
 	tmp32u = 0L;
-	for(i = 0; i < num_houses; i++)
+	for (i = 0; i < num_houses; i++)
 		if (!(houses[i].flags&HF_DELETED)) tmp32u++;
 
 	/* Note the number of houses */
 	wr_s32b(tmp32u);
 
 	/* Dump the houses */
-	for (i = 0; i < num_houses; i++){
+	for (i = 0; i < num_houses; i++) {
 		if (!(houses[i].flags&HF_DELETED))
 			wr_house(&houses[i]);
 	}
@@ -2300,7 +2300,7 @@ static void new_wr_wild() {
 				wr_u32b(w_ptr->dungeon->flags2);
 				wr_u32b(w_ptr->dungeon->flags3);
 				wr_byte(w_ptr->dungeon->maxdepth);
-				for(i = 0; i < 10; i++) {
+				for (i = 0; i < 10; i++) {
 #if 0	/* unused - mikaelh */
 					wr_byte(w_ptr->dungeon->r_char[i]);
 					wr_byte(w_ptr->dungeon->nr_char[i]);
@@ -2334,7 +2334,7 @@ static void new_wr_wild() {
 				wr_u32b(w_ptr->tower->flags2);
 				wr_u32b(w_ptr->tower->flags3);
 				wr_byte(w_ptr->tower->maxdepth);
-				for (i = 0; i < 10; i++){
+				for (i = 0; i < 10; i++) {
 #if 0	/* unused - mikaelh */
 					wr_byte(w_ptr->tower->r_char[i]);
 					wr_byte(w_ptr->tower->nr_char[i]);
@@ -2366,10 +2366,11 @@ static void new_wr_floors() {
 	struct worldpos cwpos;
 	wilderness_type *w_ptr;
 	int x, y, z;
+
 	cwpos.wz = 0;
-	for(y = 0; y < MAX_WILD_Y; y++) {
+	for (y = 0; y < MAX_WILD_Y; y++) {
 		cwpos.wy = y;
-		for(x = 0; x < MAX_WILD_X; x++) {
+		for (x = 0; x < MAX_WILD_X; x++) {
 			cwpos.wx = x;
 			w_ptr = &wild_info[y][x];
 			save_guildhalls(&cwpos);
@@ -2632,7 +2633,7 @@ bool save_server_info() {
 void wr_towns() {
 	int i, j;
 	wr_u16b(numtowns);
-	for (i = 0; i < numtowns; i++){
+	for (i = 0; i < numtowns; i++) {
 		wr_u16b(town[i].x);
 		wr_u16b(town[i].y);
 		wr_u16b(town[i].baselevel);
@@ -2641,7 +2642,7 @@ void wr_towns() {
 		wr_u16b(town[i].type);
 
 		/* Dump the stores */
-		for (j = 0; j < town[i].num_stores; j++){
+		for (j = 0; j < town[i].num_stores; j++) {
 			wr_store(&town[i].townstore[j]);
 		}
 	}

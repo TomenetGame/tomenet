@@ -1117,16 +1117,13 @@ DgramReceive(int fd, char *from, char *rbuf, int size)
  *
  * Originally coded by Bert Gijsbers
  */
-int
-DgramReply(int fd, char *sbuf, int size)
-{
-    int			retval;
+int DgramReply(int fd, char *sbuf, int size) {
+	int retval;
 
-
-    retval = sendto(fd, sbuf, size, 0, (struct sockaddr *)&sl_dgram_lastaddr,
+	retval = sendto(fd, sbuf, size, 0, (struct sockaddr *)&sl_dgram_lastaddr,
 		   sizeof(struct sockaddr_in));
 
-    return retval;
+	return retval;
 } /* DgramReply */
 
 /*
@@ -1159,15 +1156,13 @@ DgramReply(int fd, char *sbuf, int size)
  *
  * Originally coded by Bert Gijsbers
  */
-int
-DgramRead(int fd, char *rbuf, int size)
-{
-    int		retval;
+int DgramRead(int fd, char *rbuf, int size) {
+	int retval;
 
+	retval = recv(fd, rbuf, size, 0);
 
-    retval = recv(fd, rbuf, size, 0);
 	/* if necessary, setup errno for calling function to check */
-	if (retval == SOCKET_ERROR){
+	if (retval == SOCKET_ERROR) {
 		errno = WSAGetLastError();
 		return -1;
 	}
@@ -1206,15 +1201,13 @@ DgramRead(int fd, char *rbuf, int size)
  *
  * Originally coded by Bert Gijsbers
  */
-int
-DgramWrite(int fd, char *wbuf, int size)
-{
-    int		retval;
+int DgramWrite(int fd, char *wbuf, int size) {
+	int retval;
 
-    retval = send(fd, wbuf, size, 0);
+	retval = send(fd, wbuf, size, 0);
 
 	/* if necessary, set errno */
-	if (retval == SOCKET_ERROR){
+	if (retval == SOCKET_ERROR) {
 		errno = WSAGetLastError();
 		return -1;
 	}

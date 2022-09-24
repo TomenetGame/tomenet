@@ -131,7 +131,7 @@ static int towndist(int wx, int wy, s16b *townlev) {
 	int dist, mindist = 100;
 
 	*townlev = 0;
-	for (i = 0; i < numtowns; i++){
+	for (i = 0; i < numtowns; i++) {
 		dist = abs(wx - town[i].x) + abs(wy - town[i].y);
 		if (dist < mindist) {
 			mindist = dist;
@@ -265,8 +265,8 @@ void wild_bulldoze()
 	int x,y;
 
 	/* inefficient? thats an understatement */
-	for(y = 0; y < MAX_WILD_Y; y++){
-		for(x = 0; x < MAX_WILD_X; x++){
+	for (y = 0; y < MAX_WILD_Y; y++) {
+		for (x = 0; x < MAX_WILD_X; x++) {
 			struct wilderness_type *w_ptr = &wild_info[y][x];
 			if (w_ptr->radius <= MAX_TOWNAREA &&
 			    (w_ptr->type == WILD_WASTELAND ||
@@ -933,7 +933,7 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y) {
 static bool wild_monst_aux_invaders(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if(r_ptr->flags7 & RF7_AQUATIC) return FALSE;
+	if (r_ptr->flags7 & RF7_AQUATIC) return FALSE;
 
 	/* invader species */
 	if (strchr("oTpOKbrm", r_ptr->d_char)) return TRUE;
@@ -1791,7 +1791,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 #endif	// USE_MANG_HOUSE_ONLY
 
 			num_houses++;
-			if ((house_alloc-num_houses)<32){
+			if ((house_alloc-num_houses)<32) {
 				GROW(houses, house_alloc, house_alloc+512, house_type);
 				GROW(houses_bak, house_alloc, house_alloc+512, house_type);
 				house_alloc += 512;
@@ -2935,8 +2935,8 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 						fputc(c_ptr->feat, ((struct guildsave*)data)->fp);
 					} else {
 						c_ptr->feat = fgetc(((struct guildsave*)data)->fp);
-//						if(c_ptr->feat>FEAT_INVIS)
-						if(!cave_plain_floor_grid(c_ptr))
+						//if (c_ptr->feat>FEAT_INVIS)
+						if (!cave_plain_floor_grid(c_ptr))
 							c_ptr->info &= ~(CAVE_ROOM);
 					}
 					everyone_lite_spot(&h_ptr->wpos, h_ptr->y + y, h_ptr->x + x);
@@ -2957,7 +2957,7 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 				}
 				else if (func == FILL_MAKEHOUSE) {
 					if (x && y && x < h_ptr->coords.rect.width - 1 && y < h_ptr->coords.rect.height - 1) {
-						if((pick_house(wpos, h_ptr->y, h_ptr->x)) != -1)
+						if ((pick_house(wpos, h_ptr->y, h_ptr->x)) != -1)
 							success = FALSE;
 						c_ptr->info &= ~(CAVE_ICKY | CAVE_ROOM | CAVE_STCK | CAVE_JAIL);
 					} else {
@@ -3108,7 +3108,7 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 //							if (c_ptr->feat > FEAT_INVIS)
 							if (!cave_plain_floor_grid(c_ptr))
 								c_ptr->info &= ~(CAVE_ROOM);
-							if (c_ptr->feat == FEAT_HOME){
+							if (c_ptr->feat == FEAT_HOME) {
 								id = (fgetc(gfp) << 8);
 								id |= fgetc(gfp);
 								/* XXX it's double check */
@@ -3279,7 +3279,7 @@ void wild_add_uhouse(house_type *h_ptr) {
 	if (h_ptr->flags & HF_MOAT) {
 		/* Draw a moat around our house */
 		/* It is already valid at this point */
-		if(h_ptr->flags & HF_RECT) {
+		if (h_ptr->flags & HF_RECT) {
 		}
 	}
 
@@ -3303,8 +3303,8 @@ void wild_add_uhouse(house_type *h_ptr) {
 
 void wild_add_uhouses(struct worldpos *wpos) {
 	int i;
-	for(i = 0; i < num_houses; i++){
-		if(inarea(&houses[i].wpos, wpos) && !(houses[i].flags & HF_STOCK)){
+	for (i = 0; i < num_houses; i++) {
+		if (inarea(&houses[i].wpos, wpos) && !(houses[i].flags & HF_STOCK)) {
 			wild_add_uhouse(&houses[i]);
 		}
 	}
@@ -3321,7 +3321,7 @@ static void wilderness_gen_hack(struct worldpos *wpos) {
 
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
-	if(!(zcave = getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Hack -- Use the "simple" RNG */
 	Rand_quick = TRUE;
@@ -3734,7 +3734,7 @@ void wilderness_gen(struct worldpos *wpos) {
 #endif
 	cave_type **zcave;
 	struct dungeon_type *d_ptr = NULL;
-	if(!(zcave = getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 
 	process_hooks(HOOK_WILD_GEN, "d", wpos);
@@ -3919,7 +3919,7 @@ static bool island_aux(int y, int x, unsigned char type, unsigned char fill, int
 		if (ranval&8) added_decently = island_aux(y + 1, x, type, fill, size - 1, size_org) || added_decently;
 	}
 	if ((rand_int(7) == 0)) {
-		switch(type){
+		switch (type) {
 			case WILD_MOUNTAIN:
 				type = WILD_VOLCANO;
 				break;
@@ -3946,29 +3946,30 @@ static void makeland() {
 	int p, i;
 	int x, y;
 	int density = MAXISLAND;
+
 	p = (MAX_WILD_Y * MAX_WILD_X) / SEADENSITY;
-	for(i = 0; i < p; i++){
+	for (i = 0; i < p; i++) {
 		do{
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
-		}while(wild_info[y][x].type != WILD_UNDEFINED);
+		}while (wild_info[y][x].type != WILD_UNDEFINED);
 		island(y, x, WILD_GRASSLAND, WILD_UNDEFINED, rand_int(1<<density));
 	}
 }
 
 static unsigned short makecoast(unsigned char edge, unsigned char new, unsigned char type, unsigned char fill, int y, int x) {
 	unsigned short r = 0;
-	if(y < 0 || x < 0 || y >= MAX_WILD_Y || x >= MAX_WILD_X) return(0);
-	if(wild_info[y][x].type != fill){
+
+	if (y < 0 || x < 0 || y >= MAX_WILD_Y || x >= MAX_WILD_X) return(0);
+	if (wild_info[y][x].type != fill) {
 		return((wild_info[y][x].type == type));
 	}
 	wild_info[y][x].type = new;
-	if(makecoast(edge, new, type, fill, y, x - 1)) r = 1;
-	if(makecoast(edge, new, type, fill, y, x + 1)) r = 1;
-	if(makecoast(edge, new, type, fill, y - 1, x)) r = 1;
-	if(makecoast(edge, new, type, fill, y + 1, x)) r = 1;
-	if(r)
-		wild_info[y][x].type = edge;
+	if (makecoast(edge, new, type, fill, y, x - 1)) r = 1;
+	if (makecoast(edge, new, type, fill, y, x + 1)) r = 1;
+	if (makecoast(edge, new, type, fill, y - 1, x)) r = 1;
+	if (makecoast(edge, new, type, fill, y + 1, x)) r = 1;
+	if (r) wild_info[y][x].type = edge;
 	return(0);
 }
 
@@ -3976,12 +3977,13 @@ static bool addhills() {
 	bool added = FALSE;
 	int i, p;
 	int x, y;
+
 	p = (MAX_WILD_Y * MAX_WILD_X) / ROCKY;
-	for(i = 0; i < p; i++){
+	for (i = 0; i < p; i++) {
 		do{
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
-		}while(wild_info[y][x].type != WILD_GRASSLAND);
+		}while (wild_info[y][x].type != WILD_GRASSLAND);
 		if (island(y, x, WILD_MOUNTAIN, WILD_GRASSLAND, rand_int((1<<MAXMOUNT) - 1))) added = TRUE;
 	}
 	return added;
@@ -3991,12 +3993,13 @@ static bool addlakes() {
 	bool added = FALSE;
 	int i, p;
 	int x, y;
+
 	p = (MAX_WILD_Y * MAX_WILD_X) / LAKES;
-	for(i = 0; i < p; i++){
+	for (i = 0; i < p; i++) {
 		do{
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
-		}while(wild_info[y][x].type != WILD_GRASSLAND);
+		}while (wild_info[y][x].type != WILD_GRASSLAND);
 		if (island(y, x, WILD_LAKE, WILD_GRASSLAND, rand_int((1<<MAXLAKE) - 1))) added = TRUE;
 	}
 	return added;
@@ -4006,12 +4009,13 @@ static bool addwaste() {
 	bool added = FALSE;
 	int i, p;
 	int x, y;
+
 	p = (MAX_WILD_Y * MAX_WILD_X) / WASTE;
-	for(i = 0; i < p; i++){
+	for (i = 0; i < p; i++) {
 		do{
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
-		}while(wild_info[y][x].type != WILD_GRASSLAND);
+		}while (wild_info[y][x].type != WILD_GRASSLAND);
 		if (island(y, x, WILD_WASTELAND, WILD_GRASSLAND, rand_int((1<<MAXWASTE) - 1))) added = TRUE;
 	}
 	return added;
@@ -4021,12 +4025,13 @@ static bool adddesert() {
 	bool added = FALSE;
 	int i, p;
 	int x, y;
+
 	p = (MAX_WILD_Y * MAX_WILD_X) / DESERT;
-	for(i = 0; i < p; i++){
+	for (i = 0; i < p; i++) {
 		do{
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
-		}while(wild_info[y][x].type != WILD_GRASSLAND);
+		}while (wild_info[y][x].type != WILD_GRASSLAND);
 		if (island(y, x, WILD_DESERT, WILD_GRASSLAND, (1<<(MAXDESERT-1)) + rand_int((1<<(MAXDESERT-1))) - 1)) added = TRUE;
 //		if (island(y, x, WILD_DESERT, WILD_GRASSLAND, rand_int((1<<MAXDESERT) - 1))) added = TRUE;
 	}
@@ -4038,11 +4043,11 @@ static bool addice() {
 	int i, p;
 	int x, y;
 	p = (MAX_WILD_Y * MAX_WILD_X) / ICE;
-	for(i = 0; i < p; i++){
+	for (i = 0; i < p; i++) {
 		do{
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
-		}while(wild_info[y][x].type != WILD_GRASSLAND);
+		}while (wild_info[y][x].type != WILD_GRASSLAND);
 		if (island(y, x, WILD_ICE, WILD_GRASSLAND, (1<<(MAXICE-1)) + rand_int((1<<(MAXICE-1))) - 1)) added = TRUE;
 //		if (island(y, x, WILD_ICE, WILD_GRASSLAND, rand_int((1<<MAXICE) - 1))) added = TRUE;
 	}
@@ -4053,6 +4058,7 @@ static bool addislands() {
 	bool added = FALSE;
 	int i, p;
 	int x, y;
+
 	p = (MAX_WILD_Y * MAX_WILD_X) / ISLANDS;
 	for (i = 0; i < p; i++) {
 		do {
@@ -4069,6 +4075,7 @@ static bool addforest() {
 	int i, p;
 	int x, y;
 	int size;
+
 	p = (MAX_WILD_Y * MAX_WILD_X) / WOODY;
 	for (i = 0; i < p; i++) {
 		do {
@@ -4091,7 +4098,7 @@ static void river(int y, int x) {
 	int dir, cdir, t;
 
 	dir = rand_int(7);
-	while (wild_info[y][x].type != WILD_OCEAN){
+	while (wild_info[y][x].type != WILD_OCEAN) {
 		cdir = dir;
 		if (y < 0 || x < 0 || y >= MAX_WILD_Y || x >= MAX_WILD_X) break;
 		wild_info[y][x].type = WILD_RIVER;
@@ -4150,8 +4157,8 @@ static void fix_coasts() {
 	int x, y, d;
 	bool sea;
 
-	for(x = 0; x < MAX_WILD_X; x++)
-	for(y = 0; y < MAX_WILD_Y; y++) {
+	for (x = 0; x < MAX_WILD_X; x++)
+	for (y = 0; y < MAX_WILD_Y; y++) {
 		if (wild_info[y][x].type != WILD_COAST) continue;
 
 		sea = FALSE;

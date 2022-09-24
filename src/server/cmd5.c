@@ -319,7 +319,7 @@ void do_cmd_ghost_power(int Ind, int ability) {
 	un_afk_idle(Ind);
 
 	/* Spell effects */
-	switch(i) {
+	switch (i) {
 	case 0:
 		teleport_player(Ind, 10, TRUE);
 		break;
@@ -532,7 +532,7 @@ static void do_mimic_power(int Ind, int power, int dir) {
 		p_ptr->current_realm = REALM_MIMIC;
 
   /* 0-31 = RF4, 32-63 = RF5, 64-95 = RF6 */
-  switch(j) {
+  switch (j) {
 
 
 /* RF_4 ------------------------------------------------------------------------------------------------- */
@@ -861,7 +861,7 @@ void do_mimic_power_aux(int Ind, int dir) {
 //s_printf("dmpa dir,current_spell=%d,%d\n", dir, p_ptr->current_spell);
 
 	/* We assume that the spell can be cast, and so forth */
-	switch(p_ptr->current_spell) {
+	switch (p_ptr->current_spell) {
 //#define RF4_ARROW_1			0x00000010	/* Fire arrow(s) (light) */
 		/* XXX: ARROW_1 gives extra-shot to the player; we'd better
 		 * remove this 'innate' power? (see calc_body_bonus) */

@@ -356,7 +356,7 @@ void wproto(struct client *ccl) {
 }
 
 /* Send duplicate packet to all servers except originating one */
-void relay(struct wpacket *wpk, struct client *talker){
+void relay(struct wpacket *wpk, struct client *talker) {
 	struct list *lp;
 	struct client *ccl;
 	int morph = wpk->type, c;
@@ -364,7 +364,7 @@ void relay(struct wpacket *wpk, struct client *talker){
 
 	wpk->serverid = talker->authed;
 
-	for (lp = clist; lp; lp = lp->next){
+	for (lp = clist; lp; lp = lp->next) {
 		ccl = (struct client*)lp->data;
 		if (ccl == talker) continue;
 
@@ -419,7 +419,7 @@ void reply(struct wpacket *wpk, struct client *ccl) {
 }
 
 /* Generic list handling function */
-struct list *addlist(struct list **head, int dsize){
+struct list *addlist(struct list **head, int dsize) {
 	struct list *newlp;
 
 	newlp = malloc(sizeof(struct list));
@@ -451,7 +451,7 @@ void addclient(int fd) {
 }
 
 /* Generic list handling function */
-struct list *remlist(struct list **head, struct list *dlp){
+struct list *remlist(struct list **head, struct list *dlp) {
 	struct list *lp;
 
 	lp = *head;
@@ -473,7 +473,7 @@ struct list *remlist(struct list **head, struct list *dlp){
 	return(dlp->next);
 }
 
-void remclient(struct list *dlp){
+void remclient(struct list *dlp) {
 	struct client *ccl;
 
 	ccl = (struct client *)dlp->data;

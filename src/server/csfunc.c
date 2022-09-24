@@ -208,7 +208,7 @@ void tsee(c_special *cs_ptr, char32_t *c, byte *a, int Ind) {
 //	printf("tsee %d\n", Ind);
 }
 
-int thit(c_special *cs_ptr, int y, int x, int Ind){
+int thit(c_special *cs_ptr, int y, int x, int Ind) {
 #if 0	/* temporary while csfunc->activate() is changed */
 	if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && !p_ptr->ghost) {
 		bool hit = TRUE;
@@ -248,13 +248,13 @@ void insc_load(c_special *cs_ptr) {
 	rd_u16b(&insc->found);
 }
 
-void insc_save(c_special *cs_ptr){
+void insc_save(c_special *cs_ptr) {
 	struct floor_insc *insc = cs_ptr->sc.ptr;
 	wr_string(insc->text);
 	wr_u16b(insc->found);
 }
 
-int insc_hit(c_special *cs_ptr, int y, int x, int Ind){
+int insc_hit(c_special *cs_ptr, int y, int x, int Ind) {
 	struct floor_insc *sptr = cs_ptr->sc.ptr;
 	char sign_text[MAX_CHARS], *s = sign_text, *p = NULL;
 	strcpy(s, sptr->text);
@@ -308,7 +308,7 @@ void fountsave(c_special *cs_ptr) {
 	wr_byte(cs_ptr->sc.fountain.rest);
 	wr_byte(cs_ptr->sc.fountain.known);
 }
-void fountsee(c_special *cs_ptr, char32_t *c, byte *a, int Ind){
+void fountsee(c_special *cs_ptr, char32_t *c, byte *a, int Ind) {
 	/* TODO: tell what kind if 'known' */
 //	printf("fountsee %d\n", Ind);
 }

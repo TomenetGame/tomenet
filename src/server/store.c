@@ -319,7 +319,7 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 
 		/* To prevent cheezing; keep consistent with object2.c: object_value_real():
 		   This store-buys price must be way lower than the store-sells price there. */
-		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)){
+		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) {
 			price = k_info[o_ptr->k_idx].cost;
 			if (o_ptr->pval != 0) {
 				price += r_info[o_ptr->pval].level * 100;
@@ -2314,7 +2314,7 @@ int gettown(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i, retval =- 1;
 	if (p_ptr->wpos.wz) return(-1);
-	for (i = 0; i < numtowns; i++){
+	for (i = 0; i < numtowns; i++) {
 		if (town[i].x == p_ptr->wpos.wx && town[i].y == p_ptr->wpos.wy) {
 			retval = i;
 			break;
@@ -3191,7 +3191,7 @@ void store_stole(int Ind, int item) {
 
 	if (tbest > 10000000) tbest = 10000000;
 	tccompare = 10;
-	while((tccompare / 10) < tbest) { /* calculate square root - C. Blue */
+	while ((tccompare / 10) < tbest) { /* calculate square root - C. Blue */
 		tcadd = (tcadd * 114) / 100;
 		tccompare = (tccompare * 13) / 10;
 	}
@@ -6743,7 +6743,7 @@ void view_exploration_records(int Ind) {
 		none = FALSE;
 		fprintf(fff, "             \377u%-30s %s\n",
 		    get_dun_name(dungeon_x[i], dungeon_y[i], dungeon_tower[i],
-		    getdungeon(&((struct worldpos){dungeon_x[i], dungeon_y[i], dungeon_tower[i] ? 1 : -1})), 0, TRUE),
+		    getdungeon(&((struct worldpos) {dungeon_x[i], dungeon_y[i], dungeon_tower[i] ? 1 : -1})), 0, TRUE),
 		    dungeon_bonus[i] == 0 ? "(many explorations)" : "(several explorations)");
 		    //could use 'few/some explorations' for 2
 	}
@@ -6843,7 +6843,7 @@ void view_exploration_history(int Ind) {
 
 		fprintf(fff, " \377u%-31s  (%2d,%2d) %s%s  %s\n",
 		    get_dun_name(dungeon_x[i], dungeon_y[i], dungeon_tower[i],
-		    getdungeon(&((struct worldpos){dungeon_x[i], dungeon_y[i], dungeon_tower[i] ? 1 : -1})), 0, FALSE),
+		    getdungeon(&((struct worldpos) {dungeon_x[i], dungeon_y[i], dungeon_tower[i] ? 1 : -1})), 0, FALSE),
 		    dungeon_x[i], dungeon_y[i],
 		    (known & 0x2) ? format("%4dft", d_ptr->baselevel * 50) : "      ",
 		    (known & 0x4) ? format("-%4dft", (d_ptr->baselevel + d_ptr->maxdepth - 1) * 50) : "       ",
