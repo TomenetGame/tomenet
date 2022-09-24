@@ -10481,9 +10481,9 @@ In-game you can press 'I' (or 'x' if inside a store) to inspect an item.
 Even if you haven't *identified* it, it will still tell you the weapon class
 the item belongs to, if it is a weapon.
 
-(Swords can be damaged when your character gets hit by an acid-based attack or
-if you stick them into acidic monsters, all other weapon types can be damaged
-by both fire and acid effects.)
+(Weapons can be damaged when your character gets hit by an elemental attack or
+if you stick them into elementally imbued monsters. Sword type weapons are only
+affected by acid, while all other types are affected by both fire and acid.)
 
 
 
