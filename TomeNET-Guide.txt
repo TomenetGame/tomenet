@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 22. September 2022 - written by C. Blue (c_blue@gmx.net)  |
+| Latest update: 24. September 2022 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.9.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -16684,7 +16684,8 @@ create a character!):
 
     (*) Multi-hued lineage can use specific breaths in the 'm' menu.
 
-    Hint: Make sure to set your breath attack to a hotkey when you learn it.
+    Hint:
+    Make sure to set your breath attack to a hotkey when you learn it.
 
 - Kobold
     These somewhat smallish dog-faced humanoids who tend to live in lairs
@@ -16796,8 +16797,9 @@ create a character!):
     As undead, Vampires gain a moderate skill bonus for 'Nether' runes but in
     turn find it extremely hard to improve in 'Light' runes.
 
-    Hint: In case you lose your mummy wrapping and the general store doesn't
-    have one in stock, you can order one there (press 'o' key in the store).
+    Hint:
+    In case you lose your mummy wrapping and the general store doesn't have
+    one in stock, you can order one there (press 'o' key in the store).
 
 - Maia
     The Maiar are lesser spirits who are associated with one or more Valar, the
@@ -16858,9 +16860,10 @@ create a character!):
 
     Maia get a bonus on 'Sneakiness' and 'Stealth' no matter the alignment.
 
-    Hint: Since all Maiar start with a point in 'Astral Knowledge' skill, you
-    should buy a spell scroll of Power Bolt I right away from the bookstore,
-    because you will already be able to use it.
+    Hint:
+    Since all Maiar start with a point in 'Astral Knowledge' skill, you should
+    buy a spell scroll of Power Bolt I right away from the bookstore, because
+    you will already be able to use it.
 
 
 Here is a table showing boni/mali of the different races:
@@ -16982,11 +16985,15 @@ create a character!):
     wounds and maybe also a macro for phase door scrolls until you reach a
     somewhat higher level.
 
-    Hint: On character creation increase your strength to 18/30 at the very
+    Hints:
+    On character creation increase your strength to 18/30 at the very
     least to get a decent attack speed (3 blows per round with very light
-    weapons). Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm),
+    weapons).
+
+    Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm),
     or Martial Arts if you don't want to use weapons, and always keep it
     maximized!
+
     Make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, which you do pretty early on. They are great
     for catching annoying monsters that try to keep their distance to you.
@@ -17019,7 +17026,8 @@ create a character!):
     A high-level istar can be very powerful, but getting there can be a
     difficult journey.
 
-    Hint: An istar has very few hit points compared to other classes, making
+    Hint:
+    An istar has very few hit points compared to other classes, making
     survival difficult in the beginning. That's why this class is not
     recommended for beginners.
 
@@ -17048,11 +17056,14 @@ create a character!):
     at which they are able to notice curses almost instantly.
     Wisdom is the priest's primary stat and they get a bonus on 'Holy Curing'.
 
-    Hint: Note that their spell Call Light can be used to deal decent damage
+    Hints:
+    Note that their spell Call Light can be used to deal decent damage
     after it's been brought up a few levels. Orcs are said to fear it a lot.
+
     Priests aren't easy to play in the beginning, since they don't deal much
     damage and also can't take a lot of punishment, so they aren't recommended
     for beginners.
+
     If you're a team player and want to support your team right from the
     beginning, get the spell 'Cure Wounds' as soon as possible and macro it.
 
@@ -17100,10 +17111,12 @@ create a character!):
     similar cloaking or shadowing techniques employed by their opponents
     (monsters only).
 
-    Hint: Make sure to create a macro for your fighting techniques 'Sprint' and
+    Hints:
+    Make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, which you do pretty early on. They are great
     for catching annoying monsters that try to keep their distance to you.
     (See (6.12) for details about fighting techniques.)
+
     Always keep your Sword-mastery skill at maximum (if you don't go for an
     unusual build that uses Martial Arts instead).
 
@@ -17148,12 +17161,16 @@ create a character!):
     their advantage in hit points, ie the extra hit points they gain from such
     forms will diminish as they continue to rise to very high character levels.
 
-    Hints: Maybe there's a friendly mimicry-user around who can forge some
+    Hints:
+    Maybe there's a friendly mimicry-user around who can forge some
     'Rings of Polymorphing' for you from forms he or she no longer uses.
+
     As for all shape-shifters going with fruit bat body modification is not
     recommended, since it will restrict your equipment even if you polymorph.
+
     Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm), or Martial
     Arts if you don't want to use weapons, and always keep it maximized.
+
     Forms giving a strength bonus are relatively common, eg Forest Troll, so if
     your BpR is close to a break point and just requires +1 or +2 more STR, try
     using troll form to see if its STR bonus gives you that juicy +1 BpR.
@@ -17179,16 +17196,21 @@ create a character!):
     type of ammo to go with it right from the start - press 'w' key to load it
     into your quiver.
 
-    Hint: Enchanting your ranged weapon to-damage is especially effective,
-    because the enchantment will be multiplied by the weapons multiplier, so
-    buy enchant to-dam scrolls from the alchemy store as soon as you can afford
-    them.
-    Also make sure to have an ample supply of 'Scrolls of Phase Door'.
+    Hints:
+    Enchanting your ranged weapon to-damage is especially effective because
+    the damage bonus will be multiplied by the weapons multiplier, eg (x3) for
+    a long bow. So buy enchant to-dam scrolls from the alchemy store as soon as
+    you can afford them.
+
+    Also make sure to have an ample supply of 'Scrolls of Phase Door' to stay
+    out of melee range and keep shooting things from afar instead.
+
     Pick one of the three ranged masteries (Bow/Crossbow/Sling) and always
     keep it maximized.
-    Note you can determine the order in which ammunition is listed in your
-    backpack by simply dropping it and picking it up again in your preferred
-    order.
+
+    You can determine the order in which ammunition is listed in your backpack
+    by simply dropping it and picking it up again in your preferred order.
+
     An amulet of infra-vision can help to greatly extend your view in dark
     hallways, to allow you shooting enemies before they can come close.
 
@@ -17210,11 +17232,14 @@ create a character!):
     While they may train in all sorts of holy schools, they are slightly less
     adept at 'Holy Curing'.
 
-    Hint: Note that the spell Call Light can be used to deal decent damage
-    after it's been brought up a few levels. Orcs are said to fear it a lot.
-    Also make sure to create a macro for your fighting techniques 'Sprint' and
+    Hints:
+    Note that the spell Call Light can be used to deal decent damage after it's
+    been brought up a few levels. Orcs are said to fear it a lot.
+
+    Make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, they are great for catching annoying monsters
     that try to keep their distance to you. (See (6.12) for details.)
+
     Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm), and always
     keep it maximized. Unlike priests, paladins cannot train Martial Arts.
 
@@ -17276,18 +17301,20 @@ create a character!):
     town and put them in your quiver (w key). If you instead get a crossbow you
     will need bolts instead of arrows, and slings would need shots or pebbles.
 
-    Hint: Make sure to create a macro for your fighting techniques 'Sprint' and
+    Hint:
+    Make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, which you do pretty early on. They are great
     for catching annoying monsters that try to keep their distance to you.
     (See (6.12) for details about fighting techniques.)
+
     Since rangers can dual-wield and you start with light armour which is
     required for dual-wielding you might want to buy a secondary weapon right
     away, for example a cheap dagger, or even dispose of your starter weapon
     completely and go with two cheap, light weapons instead. (See (6.2) for
     details on dual-wielding.) This will increase your BpR by 1 or even 2!
-    Note you can determine the order in which ammunition is listed in your
-    backpack by simply dropping it and picking it up again in your preferred
-    order.
+
+    You can determine the order in which ammunition is listed in your backpack
+    by simply dropping it and picking it up again in your preferred order.
 
 - Adventurer
     Adventurers are hardy and versatile, they have no preferred way of fighting
@@ -17300,9 +17327,10 @@ create a character!):
     and more distinct classes in one character, creating unusual mixtures of
     abilities.
 
-    Hint: Adventurers are difficult to play for beginners because to fully
-    utilize them you need to know exactly what you are trying to achieve and
-    how you want to distribute their skill points to make them effective.
+    Hint:
+    Adventurers are difficult to play for beginners because to fully utilize
+    them you need to know exactly what you are trying to achieve and how you
+    want to distribute their skill points to make them effective.
 
 - Druid
     Druids are able to call upon the mystical powers of nature. Their wisdom
@@ -17334,14 +17362,22 @@ create a character!):
     To review which forms you can transform into, use the /ex command.
     To see an overview of the forms and their abilities, see (6.7c).
 
-    Hint: Druids have a powerful ranged area attack spell they can use very
-    early on, Toxic Moisture. Look for it in the bookstore right away.
-    Also make sure to create a macro for your fighting technique 'Sprint' when
+    Hints:
+    Druids have a powerful ranged area attack spell they can use very early
+    on: Toxic Moisture, from Arcane Lore skill. Look for it in the bookstore!
+
+    Make sure to create a macro for your fighting technique 'Sprint' when
     you learn it, which you do pretty early on. It is great for catching
     annoying monsters that try to keep their distance to you. (See (6.12).)
+
     As martial artists, druids do not require any armour early on in the game,
     it could even lower their AC instead of improving it.
     Always keep your Martial Arts skill maximized.
+
+    If you find a weapon that grants you ESP (eg 'of Aman' or 'of Gondolin')
+    inscribe it @x0 to be able to swap it in and out for quick monster ESP by
+    pressing SHIFT+X (once to swap it in, again to swap it out again to resume
+    using martial arts, since as a martial artist you cannot use weapons).
 
 - Shaman
     Shamans are able to call upon both spiritual and magical powers, whatever
@@ -17369,14 +17405,19 @@ create a character!):
     necromancy as they see fit. Accordingly at level 20 shamans learn to
     perceive the invisible.
 
-    Hint: Maybe there's a friendly mimicry-user around who can forge some
+    Hints:
+    Maybe there's a friendly mimicry-user around who can forge some
     'Rings of Polymorphing' for you from forms he or she no longer uses.
+
     In the beginning shamans have few hit points and skill point distribution
     isn't easy either, that's why this class is not recommended for beginners.
+
     As for all shape-shifters going with fruit bat body modification is not
     recommended, since it will restrict your equipment even if you polymorph.
+
     Note that all 'O' Ogre type monsters count as 'giants' too, so their forms
     are usable in shaman mimicry.
+
     A tip for weapon-using shamans who are short on STR for gaining more BpR:
     Forms giving a strength bonus are relatively common, eg Forest Troll, so if
     your BpR is close to a break point and just requires +1 or +2 more STR, try
@@ -17402,7 +17443,8 @@ create a character!):
     instead used only to apply sigils to worn equipment, granting some boni
     depending synergistically on both the rune element and recipient item.
 
-    Hint: Runespells cause backlash of the active element on spell failure.
+    Hint:
+    Runespells cause backlash of the active element on spell failure.
     For that reason you might use basic elemental spells in the beginning,
     against which you can easily acquire the required resistance, for example
     by buying a ring or amulet from the magic store or maybe even by choosing
@@ -17453,9 +17495,12 @@ create a character!):
     (same as other characters get when they actually train 'Health' skill to
     10, 20 or 40).
 
-    Hint: Mindcrafters have a powerful ranged attack spell they can use very
-    early on, Psionic Blast. Look for it in the bookstore right away.
-    Also get the spell 'Autokinesis I' early on, which is a form of phase door.
+    Hints:
+    Mindcrafters have a powerful ranged attack spell they can use very early
+    on, Psionic Blast. Look for it in the bookstore right away.
+
+    Get the spell 'Autokinesis I' early on, which is a form of phase door.
+
     Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm), or Martial
     Arts if you don't want to use weapons, and always keep it maximized.
 
