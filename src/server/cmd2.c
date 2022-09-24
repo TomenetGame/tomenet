@@ -6254,7 +6254,7 @@ void do_cmd_fire(int Ind, int dir) {
 		ethereal = TRUE;
 	}
 
-	if (check_guard_inscription( o_ptr->note, 'f' )) {
+	if (check_guard_inscription(o_ptr->note, 'f')) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
 	}
@@ -7906,7 +7906,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 #endif
 	}
 
-	if (!bashing && check_guard_inscription( o_ptr->note, 'v' )) {
+	if (!bashing && check_guard_inscription(o_ptr->note, 'v')) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
 	};

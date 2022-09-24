@@ -5183,7 +5183,7 @@ static void player_talk_aux(int Ind, char *message) {
 	/* -- Finished pre-processing of the message far enough that it can be checked for swear words now,
 	      as the only thing left to pre-process is whether it's a slash command or direct chat. -- */
 
-	if (message[0] == '/' ) {
+	if (message[0] == '/') {
 		if (!strncmp(messagelc, "/me ", 4)) rp_me = TRUE;
 		else if (!strncmp(messagelc, "/me'", 3)) rp_me = rp_me_gen = TRUE;
 		else if (!strncmp(messagelc, "/broadcast ", 11)) broadcast = TRUE;
@@ -5831,7 +5831,7 @@ static void console_talk_aux(char *message) {
 		return;
 	}
 
-	if (message[0] == '/' ) {
+	if (message[0] == '/') {
 		if (!strncmp(message, "/me ", 4)) rp_me = TRUE;
 		else if (!strncmp(message, "/broadcast ", 11)) broadcast = TRUE;
 		else return;

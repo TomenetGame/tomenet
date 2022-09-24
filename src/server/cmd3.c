@@ -42,7 +42,7 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield, bool forc
 	/* Paranoia */
 	if (amt <= 0) return;
 
-	if (!force && check_guard_inscription( o_ptr->note, 't' )) {
+	if (!force && check_guard_inscription(o_ptr->note, 't')) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
 	}
@@ -1163,7 +1163,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 		Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 		return;
 #else /* b) take off the left-hand item too */
-		if (check_guard_inscription(p_ptr->inventory[INVEN_ARM].note, 't' )) {
+		if (check_guard_inscription(p_ptr->inventory[INVEN_ARM].note, 't')) {
 			msg_print(Ind, "Your secondary item's inscription prevents taking it off.");
 			Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 			return;
@@ -1198,7 +1198,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 		Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 		return;
 #else /* b) take off the secondary weapon */
-		if (check_guard_inscription(p_ptr->inventory[INVEN_ARM].note, 't' )) {
+		if (check_guard_inscription(p_ptr->inventory[INVEN_ARM].note, 't')) {
 			msg_print(Ind, "Your secondary weapon's inscription prevents taking it off.");
 			Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 			return;
@@ -1236,7 +1236,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 			Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 			return;
 #else /* Take off 2h weapon when equipping a shield */
-			if (check_guard_inscription(p_ptr->inventory[INVEN_WIELD].note, 't' )) {
+			if (check_guard_inscription(p_ptr->inventory[INVEN_WIELD].note, 't')) {
 				msg_print(Ind, "Your weapon's inscription prevents taking it off.");
 				Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 				return;
@@ -1650,7 +1650,7 @@ void do_cmd_takeoff(int Ind, int item, int amt) {
 		o_ptr = &o_list[0 - item];
 	}
 
-	if (check_guard_inscription( o_ptr->note, 'T' )) {
+	if (check_guard_inscription(o_ptr->note, 'T')) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		Send_confirm(Ind, PKT_TAKE_OFF); //+PKT_TAKE_OFF_AMT
 		return;
@@ -2033,7 +2033,7 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 	o_ptr->number = old_number;
 
-	if (check_guard_inscription( o_ptr->note, 'k')) {
+	if (check_guard_inscription(o_ptr->note, 'k')) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return FALSE;
 	};

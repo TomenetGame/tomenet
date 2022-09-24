@@ -459,7 +459,7 @@ void do_cmd_eat_food(int Ind, int item) {
 		o_ptr = &o_list[0 - item];
 	}
 
-	if (check_guard_inscription( o_ptr->note, 'E' )) {
+	if (check_guard_inscription(o_ptr->note, 'E')) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
 	}
@@ -3136,7 +3136,7 @@ void do_cmd_read_scroll(int Ind, int item) {
 		return;
 	}
 
-	if (check_guard_inscription( o_ptr->note, 'r')) {
+	if (check_guard_inscription(o_ptr->note, 'r')) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		s_printf("%s EFFECT: Inscription prevented scroll for %s.\n", showtime(), p_ptr->name);
 		return;
@@ -4834,7 +4834,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 		return;
 	}
 
-	if (check_guard_inscription( o_ptr->note, 'z')) {
+	if (check_guard_inscription(o_ptr->note, 'z')) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
 	};
@@ -5628,7 +5628,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		return;
 	}
 
-	if (check_guard_inscription( o_ptr->note, 'A')) {
+	if (check_guard_inscription(o_ptr->note, 'A')) {
 		msg_print(Ind, "The item's inscription prevents it..");
 #ifdef ENABLE_XID_MDEV
  #ifndef XID_REPEAT
