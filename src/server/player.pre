@@ -532,7 +532,7 @@ struct player_type
 	s16b cur_lite;		/* Radius of lite (if any) */
 	byte lite_type;
 
-
+	/* bool handle_on_hold; */
 	u32b notice;		/* Special Updates (bit flags) */
 	u32b update;		/* Pending Updates (bit flags) */
 	u32b redraw;		/* Normal Redraws (bit flags) */

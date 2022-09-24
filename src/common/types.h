@@ -2986,7 +2986,7 @@ struct player_type {
 	s16b cur_vlite;			/* radius of virtual light (not visible to others) */
 	byte lite_type;
 
-
+	//bool handle_on_hold;		/* For stacking of various character-modifying commands to avoid network spawm with 'write error' d/c in LUA scripting */
 	u32b notice;			/* Special Updates (bit flags) */
 	u32b update;			/* Pending Updates (bit flags) */
 	u32b redraw;			/* Normal Redraws (bit flags) */

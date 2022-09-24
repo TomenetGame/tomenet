@@ -7712,7 +7712,9 @@ void handle_stuff(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Hack -- delay updating */
-	if (p_ptr->new_level_flag || p_ptr->handle_on_hold) return;
+	if (p_ptr->new_level_flag
+	    // || p_ptr->handle_on_hold
+	    ) return;
 
 	/* Update stuff */
 	if (p_ptr->update) update_stuff(Ind);
