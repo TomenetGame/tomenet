@@ -733,39 +733,16 @@ static void prt_csheet_forward(int Ind) {
 
 static void prt_indicators(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	u32b indicators =  0x0;
+	u32b indicators = 0x0;
 
-	if (p_ptr->oppose_fire) {
-	   indicators |= IND_RES_FIRE;
-	}
-
-	if (p_ptr->oppose_cold) {
-		indicators |= IND_RES_COLD;
-	}
-
-	if (p_ptr->oppose_elec) {
-		indicators |= IND_RES_ELEC;
-	}
-
-	if (p_ptr->oppose_acid) {
-		indicators |= IND_RES_ACID;
-	}
-
-	if (p_ptr->oppose_pois) {
-		indicators |= IND_RES_POIS;
-	}
-
-	if (p_ptr->divine_xtra_res) {
-		indicators |= IND_RES_DIVINE;
-	}
-
-	if (p_ptr->tim_esp) {
-		indicators |= IND_ESP;
-	}
-
-	if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 0)) {
-		Send_indicators(Ind, indicators);
-	}
+	if (p_ptr->oppose_fire) indicators |= IND_RES_FIRE;
+	if (p_ptr->oppose_cold) indicators |= IND_RES_COLD;
+	if (p_ptr->oppose_elec) indicators |= IND_RES_ELEC;
+	if (p_ptr->oppose_acid) indicators |= IND_RES_ACID;
+	if (p_ptr->oppose_pois) indicators |= IND_RES_POIS;
+	if (p_ptr->divine_xtra_res) indicators |= IND_RES_DIVINE;
+	if (p_ptr->tim_esp) indicators |= IND_ESP;
+	if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 0)) Send_indicators(Ind, indicators);
 }
 
 /*
@@ -7735,7 +7712,7 @@ void handle_stuff(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Hack -- delay updating */
-	if (p_ptr->new_level_flag) return;
+	if (p_ptr->new_level_flag || p_ptr->handle_on_hold) return;
 
 	/* Update stuff */
 	if (p_ptr->update) update_stuff(Ind);
