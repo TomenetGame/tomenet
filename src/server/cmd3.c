@@ -4334,17 +4334,17 @@ void do_cmd_look(int Ind, int dir) {
 		m_name[0] = toupper(m_name[0]);
 
 		if (get_skill(p_ptr, SKILL_DIVINATION) == 50) {
-			if (r_info[m_ptr->r_idx].flags7 & RF7_NO_DEATH)
+			monster_race *r_ptr = race_inf(m_ptr);
+
+			if (r_ptr->flags7 & RF7_NO_DEATH)
 				//sprintf(extrainfo, ", \377Uimmortal\377-");
-				sprintf(extrainfo, ", \377Uimmortal\377-, %d AC, %d Spd", m_ptr->ac, m_ptr->mspeed - 110);
+				sprintf(extrainfo, ", \377U%s\377-, %d AC, %d Spd", (r_ptr->flags3 & (RF3_UNDEAD | RF3_NONLIVING)) ? "indestructible" : "immortal", m_ptr->ac, m_ptr->mspeed - 110);
 			else
 				sprintf(extrainfo, ", %d HP, %d AC, %d Spd", m_ptr->hp, m_ptr->ac, m_ptr->mspeed - 110);
 		}
 
 		/* a unique which the looker already killed? */
-		if ((r_info[m_ptr->r_idx].flags1 & RF1_UNIQUE) &&
-		    p_ptr->r_killed[m_ptr->r_idx] == 1)
-			done_unique = TRUE;
+		if ((r_info[m_ptr->r_idx].flags1 & RF1_UNIQUE) && p_ptr->r_killed[m_ptr->r_idx] == 1) done_unique = TRUE;
 		else done_unique = FALSE;
 
 		/* Track health */
