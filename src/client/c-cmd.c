@@ -4969,10 +4969,11 @@ static void monster_lore(void) {
 #else
 					if (Client_setup.r_char[monster_list_code[i]]) {
 						Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%c\377%c/\377%c%c\377%c)  %s",
-							monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]));
+						    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u',
+						    monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]));
 					} else {
 						Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%-3c\377%c)  %s",
-							monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], selected_line == 0 ? 'y' : 'u', monster_list_name[i]));
+						    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], selected_line == 0 ? 'y' : 'u', monster_list_name[i]));
 					}
 #endif
 					list_idx[0] = i;
@@ -5006,10 +5007,11 @@ static void monster_lore(void) {
 #else
 					if (Client_setup.r_char[monster_list_code[i]]) {
 						Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%c\377%c/\377%c%c\377%c)  %s",
-							monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]));
+						    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u',
+						    monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]));
 					} else {
 						Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%-3c\377%c)  %s",
-							monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_name[i]));
+						    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_name[i]));
 					}
 #endif
 					list_idx[n] = i;
@@ -5040,10 +5042,11 @@ static void monster_lore(void) {
 #else
 					if (Client_setup.r_char[monster_list_code[i]]) {
 						Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%c\377%c/\377%c%c\377%c)  %s",
-							monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]));
+						    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u',
+						    monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]));
 					} else {
 						Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%-3c\377%c)  %s",
-							monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], selected_line == 0 ? 'y' : 'u', monster_list_name[i]));
+						    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], selected_line == 0 ? 'y' : 'u', monster_list_name[i]));
 					}
 #endif
 					list_idx[0] = i;
@@ -5087,10 +5090,11 @@ static void monster_lore(void) {
 #else
 					if (Client_setup.r_char[monster_list_code[i]]) {
 						Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%c\377%c/\377%c%c\377%c)  %s",
-							monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]));
+						    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u',
+						    monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]));
 					} else {
 						Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%-3c\377%c)  %s",
-							monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_name[i]));
+						    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_name[i]));
 					}
 #endif
 					list_idx[n] = i;
@@ -5125,10 +5129,11 @@ static void monster_lore(void) {
 					if (n) Term_erase(5, 5, 80); //erase old beginning-of-line match that was shown here first
 					if (Client_setup.r_char[monster_list_code[i]]) {
 						Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%c\377%c/\377%c%c\377%c)  %s",
-																										monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]));
+						    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u',
+						    monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]));
 					} else {
 						Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%-3c\377%c)  %s",
-							monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], selected_line == 0 ? 'y' : 'u', monster_list_name[i]));
+						    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], selected_line == 0 ? 'y' : 'u', monster_list_name[i]));
 					}
 #endif
 
@@ -5143,11 +5148,11 @@ static void monster_lore(void) {
 						/* redisplay the moved choice */
 						if (Client_setup.r_char[monster_list_code[i]]) {
 							Term_putstr(5, 5 + n, -1, selected_line == n ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%c\377%c/\377%c%c\377%c)  %s",
-								monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]));
+								monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u',
+								monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]));
 						} else {
 							Term_putstr(5, 5 + n, -1, selected_line == n ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%-3c\377%c)  %s",
-								monster_list_code[list_idx[1]], monster_list_level[list_idx[1]], monster_list_symbol[list_idx[1]][0],
-								monster_list_symbol[list_idx[1]][1], selected_line == n ? 'y' : 'u', monster_list_name[list_idx[1]]));
+								monster_list_code[list_idx[1]], monster_list_level[list_idx[1]], monster_list_symbol[list_idx[1]][0], monster_list_symbol[list_idx[1]][1], selected_line == n ? 'y' : 'u', monster_list_name[list_idx[1]]));
 						}
 					}
 					n++;
@@ -5163,10 +5168,11 @@ static void monster_lore(void) {
 #else
 					if (Client_setup.r_char[monster_list_code[i]]) {
 						Term_putstr(5, 5 + n, -1, selected_line == n ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%c\377%c/\377%c%c\377%c)  %s",
-							monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]));
+						    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u',
+						    monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]));
 					} else {
 						Term_putstr(5, 5 + n, -1, selected_line == n ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%-3c\377%c)  %s",
-							monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], selected_line == n ? 'y' : 'u', monster_list_name[i]));
+						    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], selected_line == n ? 'y' : 'u', monster_list_name[i]));
 					}
 #endif
 					list_idx[n] = i;
@@ -5211,10 +5217,11 @@ static void monster_lore(void) {
 #else
 					if (Client_setup.r_char[monster_list_code[i]]) {
 						Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%c\377%c/\377%c%c\377%c)  %s",
-							monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]));
+						    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u',
+						    monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]));
 					} else {
 						Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%-3c\377%c)  %s",
-							monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_name[i]));
+						    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_name[i]));
 					}
 #endif
 					list_idx[n] = i;
@@ -5235,11 +5242,11 @@ static void monster_lore(void) {
 #else
 			if (Client_setup.r_char[monster_list_code[i]]) {
 				Term_putstr(5, 5 + selected_line, -1, TERM_YELLOW, format("(%4d, L%-3d, \377%c%c\377%c/\377%c%c\377%c)  %s",
-					monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]));
+				    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_symbol[i][0], Client_setup.r_char[monster_list_code[i]], n == selected_line ? 'y' : 'u', monster_list_name[i]));
 			} else {
-				Term_putstr(5, 5 + selected_line, -1, TERM_YELLOW, format("(%4d, L%-3d, \377%c%c\377y)  %s",
-					monster_list_code[list_idx[selected_line]], monster_list_level[list_idx[selected_line]], monster_list_symbol[list_idx[selected_line]][0],
-					monster_list_symbol[list_idx[selected_line]][1], monster_list_name[list_idx[selected_line]]));
+				Term_putstr(5, 5 + selected_line, -1, TERM_YELLOW, format("(%4d, L%-3d, \377%c%-3c\377y)  %s",
+				    monster_list_code[list_idx[selected_line]], monster_list_level[list_idx[selected_line]], monster_list_symbol[list_idx[selected_line]][0],
+				    monster_list_symbol[list_idx[selected_line]][1], monster_list_name[list_idx[selected_line]]));
 			}
 #endif
 		}
