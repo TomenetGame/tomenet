@@ -8275,8 +8275,8 @@ static void do_cmd_options_acc(void) {
 	char ch;
 	bool change_pass = FALSE;
 	bool go = TRUE;
-	char old_pass[16], new_pass[16], con_pass[16];
-	char tmp[16];
+	char old_pass[PASSWORD_LEN], new_pass[PASSWORD_LEN], con_pass[PASSWORD_LEN];
+	char tmp[PASSWORD_LEN];
 
 	acc_opt_screen = TRUE;
 	acc_got_info = FALSE;
@@ -8297,7 +8297,7 @@ static void do_cmd_options_acc(void) {
 
 		if (change_pass) {
 			prt("Change password", 1, 0);
-			prt("Maximum length is 15 characters", 3, 2);
+			prt(format("Length must be from %d to %d characters", PASSWORD_MIN_LEN, PASSWORD_LEN - 1), 3, 2);
 			c_prt(TERM_L_WHITE, "Old password:", 6, 2);
 			c_prt(TERM_L_WHITE, "New password:", 8, 2);
 			c_prt(TERM_L_WHITE, "Confirm:", 10, 2);
@@ -8306,7 +8306,7 @@ static void do_cmd_options_acc(void) {
 			/* Ask for old password */
 			move_cursor(6, 16);
 			tmp[0] = '\0';
-			if (!askfor_aux(tmp, 15, ASKFOR_PRIVATE)) {
+			if (!askfor_aux(tmp, PASSWORD_LEN - 1, ASKFOR_PRIVATE)) {
 				change_pass = FALSE;
 				continue;
 			}
@@ -8323,7 +8323,7 @@ static void do_cmd_options_acc(void) {
 				/* Ask for new password */
 				move_cursor(8, 16);
 				tmp[0] = '\0';
-				if (!askfor_aux(tmp, 15, ASKFOR_PRIVATE)) {
+				if (!askfor_aux(tmp, PASSWORD_LEN - 1, ASKFOR_PRIVATE)) {
 					change_pass = FALSE;
 					break;
 				}
@@ -8334,7 +8334,7 @@ static void do_cmd_options_acc(void) {
 				/* Ask for the confirmation */
 				move_cursor(10, 16);
 				tmp[0] = '\0';
-				if (!askfor_aux(tmp, 15, ASKFOR_PRIVATE)) {
+				if (!askfor_aux(tmp, PASSWORD_LEN - 1, ASKFOR_PRIVATE)) {
 					change_pass = FALSE;
 					break;
 				}

@@ -843,8 +843,7 @@ static void enable_common_colormap_win(void) {
  *
  * Note that many of the choices below suck, but so do crappy monitors.
  */
-static BYTE win_pal[16] =
-{
+static BYTE win_pal[BASE_PALETTE_SIZE] = {
 	VID_BLACK,			/* Dark */
 //	VID_WHITE,			/* White */
 VID_WHITE | VID_BRIGHT,

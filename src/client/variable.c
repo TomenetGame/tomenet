@@ -636,7 +636,7 @@ u32b client_color_map_tri[CLIENT_PALETTE_SIZE] = {
 #endif
 };
 
-const char colour_name[16][9] = {
+const char colour_name[BASE_PALETTE_SIZE][9] = {
 	"Black", "White", "Slate", "Orange",
 	"Red", "Green", "Blue", "Umber",
 	"D.Grey", "L.Grey", "Violet", "Yellow",

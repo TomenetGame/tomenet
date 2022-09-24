@@ -1126,7 +1126,7 @@ extern u32b client_color_map_tri[CLIENT_PALETTE_SIZE];
 #ifdef EXTENDED_BG_COLOURS
 extern u32b client_ext_color_map[TERMX_AMT][2];
 #endif
-extern const char colour_name[16][9];
+extern const char colour_name[BASE_PALETTE_SIZE][9];
 extern bool lighterdarkblue;
 #ifdef WINDOWS
 void enable_readability_blue_win(void);

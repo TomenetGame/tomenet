@@ -2171,7 +2171,7 @@ static void night_falls() {
 }
 
 #ifdef EXTENDED_COLOURS_PALANIM
-static unsigned int colour_std[16] = {
+static unsigned int colour_std[BASE_PALETTE_SIZE] = {
 	0x000000,      /* BLACK */
 	0xffffff,      /* WHITE */
 	0x9d9d9d,      /* SLATE */

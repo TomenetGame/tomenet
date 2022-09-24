@@ -1228,63 +1228,50 @@ s_printf("points=%u\n", points);
  */
 
 typedef struct high_score high_score;
-struct high_score
-{
-	char what[8];           /* Version info (string) */
+struct high_score {
+	char what[8];		/* Version info (string) */
+	char pts[11];		/* Total Score (number) */
+	char gold[11];		/* Total Gold (number) */
+	char turns[11];		/* Turns Taken (number) */
+	char day[11];		/* Time stamp (string) */
 
-	char pts[11];           /* Total Score (number) */
+	char who[CNAME_LEN];		/* Player Name (string) */
+	char whose[ACCNAME_LEN];	/* Account Name (string) */
 
-	char gold[11];          /* Total Gold (number) */
+	char sex[2];		/* Player Sex (string) */
+	char p_r[3];		/* Player Race (number) */
+	char p_c[3];		/* Player Class (number) */
 
-	char turns[11];         /* Turns Taken (number) */
+	char cur_lev[4];	/* Current Player Level (number) */
+	char cur_dun[4];	/* Current Dungeon Level (number) */
+	char max_lev[4];	/* Max Player Level (number) */
+	char max_dun[4];	/* Max Dungeon Level (number) */
 
-	char day[11];           /* Time stamp (string) */
-
-	char who[16];           /* Player Name (string) */
-	char whose[16];		/* Account Name (string) */
-
-	char sex[2];            /* Player Sex (string) */
-	char p_r[3];            /* Player Race (number) */
-	char p_c[3];            /* Player Class (number) */
-
-	char cur_lev[4];                /* Current Player Level (number) */
-	char cur_dun[4];                /* Current Dungeon Level (number) */
-	char max_lev[4];                /* Max Player Level (number) */
-	char max_dun[4];                /* Max Dungeon Level (number) */
-
-	char how[50];           /* Method of death (string) */
-
+	char how[50];		/* Method of death (string) */
 	char mode[1];		/* Difficulty/character mode */
 };
 
 #if 0 /* different format? */
 typedef struct high_score_old high_score_old;
-struct high_score_old
-{
-	char what[8];           /* Version info (string) */
+struct high_score_old {
+	char what[8];		/* Version info (string) */
+	char pts[11];		/* Total Score (number) */
+	char gold[11];		/* Total Gold (number) */
+	char turns[11];		/* Turns Taken (number) */
+	char day[10];		/* Time stamp (string) */
+	char who[CNAME_LEN];		/* Player Name (string) */
+	char whose[ACCNAME_LEN];	/* Account Name (string) */
 
-	char pts[11];           /* Total Score (number) */
+	char sex[2];		/* Player Sex (string) */
+	char p_r[3];		/* Player Race (number) */
+	char p_c[3];		/* Player Class (number) */
 
-	char gold[11];          /* Total Gold (number) */
+	char cur_lev[4];	/* Current Player Level (number) */
+	char cur_dun[4];	/* Current Dungeon Level (number) */
+	char max_lev[4];	/* Max Player Level (number) */
+	char max_dun[4];	/* Max Dungeon Level (number) */
 
-	char turns[11];         /* Turns Taken (number) */
-
-	char day[10];           /* Time stamp (string) */
-
-	char who[16];           /* Player Name (string) */
-	char whose[16];		/* Account Name (string) */
-
-	char sex[2];            /* Player Sex (string) */
-	char p_r[3];            /* Player Race (number) */
-	char p_c[3];            /* Player Class (number) */
-
-	char cur_lev[4];                /* Current Player Level (number) */
-	char cur_dun[4];                /* Current Dungeon Level (number) */
-	char max_lev[4];                /* Max Player Level (number) */
-	char max_dun[4];                /* Max Dungeon Level (number) */
-
-	char how[50];           /* Method of death (string) */
-
+	char how[50];		/* Method of death (string) */
 	char mode[1];		/* Difficulty/character mode */
 };
 #else /* same format actually */
