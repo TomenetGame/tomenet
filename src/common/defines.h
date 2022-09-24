@@ -6169,7 +6169,8 @@
    This is to sort them out a bit.
    Note that breaths are spells too, as in handled in 'S:' lines (in r_info, re_info, and d_info). */
 #define RF0_SPELL_MASK (RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_BO_DISE | RF0_BA_DISE | \
-			RF0_S_DEMONS | RF0_S_DRAGONS | RF0_S_HI_DEMON | RF0_S_HI_DRAGON | RF0_BR_ICE | RF0_BR_WATER)
+			RF0_S_DEMONS | RF0_S_DRAGONS | RF0_S_HI_DEMON | RF0_S_HI_DRAGON | RF0_BR_ICE | RF0_BR_WATER | \
+			RF0_ADMINISTRATIVE_PUSH | RF0_METEOR_SWARM | RF0_ADMINISTRATIVE_HOLD)
 /* All flags that are defined and that are not 'spell' type -> are automatically 'basic' type. */
 #define RF0_BASIC_MASK (0x007FFFFF & (~RF0_SPELL_MASK))
 

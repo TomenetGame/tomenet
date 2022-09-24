@@ -4007,7 +4007,7 @@ static errr grab_one_spell_flag(monster_race *r_ptr, cptr what) {
 
 	/* Scan flags0 -- contains both, spell and basic type */
 	for (i = 0; i < 32; i++)
-		if (((1U << i) & RF0_BASIC_MASK) && streq(what, r_info_flags0[i])) {
+		if (((1U << i) & RF0_SPELL_MASK) && streq(what, r_info_flags0[i])) {
 			r_ptr->flags0 |= (1U << i);
 			return (0);
 		}
