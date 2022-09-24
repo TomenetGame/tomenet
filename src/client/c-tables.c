@@ -14,7 +14,6 @@
 #include "angband.h"
 
 
-
 /*
  * Global array for looping through the "keypad directions"
  */
@@ -39,25 +38,21 @@ s16b ddx_ddd[9] =
 s16b ddy_ddd[9] =
 { 1, -1, 0, 0, 1, 1, -1, -1, 0 };
 
-
 /*
  * Global array for converting numbers to uppercase hecidecimal digit
  * This array can also be used to convert a number to an octal digit
  */
-char hexsym[16] =
-{
+char hexsym[16] = {
 	'0', '1', '2', '3', '4', '5', '6', '7',
 	'8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
 };
-
 
 /*
  * Hack -- the "basic" sound names (see "SOUND_xxx")
  */
 //#ifdef USE_SOUND
 //#ifndef USE_SOUND_2010
-cptr sound_names[SOUND_MAX] =
-{
+cptr sound_names[SOUND_MAX] = {
 	"",
 	"hit",
 	"miss",
@@ -70,29 +65,20 @@ cptr sound_names[SOUND_MAX] =
 //#endif
 //#endif
 
-
 /*
  * Abbreviations of healthy stats
  */
-cptr stat_names[6] =
-{
-	"STR: ", "INT: ", "WIS: ", "DEX: ", "CON: ", "CHR: "
-};
+cptr stat_names[6] = { "STR: ", "INT: ", "WIS: ", "DEX: ", "CON: ", "CHR: " };
 
 /*
  * Abbreviations of damaged stats
  */
-cptr stat_names_reduced[6] =
-{
-	"Str: ", "Int: ", "Wis: ", "Dex: ", "Con: ", "Chr: "
-};
-
+cptr stat_names_reduced[6] = { "Str: ", "Int: ", "Wis: ", "Dex: ", "Con: ", "Chr: " };
 
 /*
  * Standard window names
  */
-char ang_term_name[ANGBAND_TERM_MAX][40] =
-{
+char ang_term_name[ANGBAND_TERM_MAX][40] = {
 	"TomeNET",
 	"Msg/Chat",
 	"Inventory",
@@ -102,7 +88,6 @@ char ang_term_name[ANGBAND_TERM_MAX][40] =
 	"Term-6",
 	"Term-7"
 };
-
 
 /*
  * Certain "screens" always use the main screen, including News, Birth,
@@ -119,8 +104,7 @@ char ang_term_name[ANGBAND_TERM_MAX][40] =
  * of the main screen into any interested windows.
  */
 #if 0
-cptr window_flag_desc[32] =
-{
+cptr window_flag_desc[32] = {
 	"Display inven/equip",
 	"Display equip/inven",
 	NULL,
@@ -561,7 +545,6 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "clone_to_file",		"Clone client chat and messages to 'stdout.txt'" },
 };
 
-
 cptr melee_techniques[16] = {
   "Sprint",
   "Taunt",
@@ -591,9 +574,7 @@ cptr melee_techniques[16] = {
   "Shadow Run",
 };
 
-cptr ranged_techniques[16] =
-{
-
+cptr ranged_techniques[16] = {
   "Flare Missile",
   "Precision Shot",
   "Craft Ammunition",
@@ -614,4 +595,3 @@ cptr ranged_techniques[16] =
   "XXX",
   "XXX",
 };
-

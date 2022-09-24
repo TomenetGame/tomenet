@@ -165,13 +165,11 @@ extern struct passwd *getpwnam();
 /*
  * Find a default user name from the system.
  */
-void user_name(char *buf, int id)
-{
+void user_name(char *buf, int id) {
 	struct passwd *pw;
 
 	/* Look up the user name */
-	if ((pw = getpwuid(id)))
-	{
+	if ((pw = getpwuid(id))) {
 		(void)strcpy(buf, pw->pw_name);
 		buf[16] = '\0';
 

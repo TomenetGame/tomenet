@@ -458,9 +458,7 @@ static cptr syllables[MAX_SYLLABLES] = {
  */
 
 static char scroll_adj[MAX_TITLES][16];
-
 static byte scroll_col[MAX_TITLES];
-
 
 
 /*
