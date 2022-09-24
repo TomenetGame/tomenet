@@ -4351,28 +4351,28 @@ void do_cmd_look(int Ind, int dir) {
 
 		/* Format string */
 		if (m_ptr->questor)
-			//snprintf(out_val, sizeof(out_val), "\377%c%s (Lv %d, %s%s)",
-			snprintf(out_val, sizeof(out_val), "\377%c%s (%s%s)",
+			snprintf(out_val, sizeof(out_val), "\377%c%s (Lv %d, %s%s)",
+			//snprintf(out_val, sizeof(out_val), "\377%c%s (%s%s)",
 			    m_ptr->questor_invincible ? 'G' : ((m_ptr->questor_hostile & 0x1) ? 'R' : 'G'),
 			    //r_name_get(&m_list[c_ptr->m_idx]),
 			    m_name,
-			    //m_ptr->level,
+			    m_ptr->level,
 			    look_mon_desc(c_ptr->m_idx), extrainfo);
 		else
 #if 0 /* attach 'slain' for uniques we already killed */
 //		snprintf(out_val, sizeof(out_val), "%s (%s)", r_name_get(&m_list[c_ptr->m_idx]), look_mon_desc(c_ptr->m_idx));
-		//snprintf(out_val, sizeof(out_val), "%s (Lv %d, %s%s%s)", r_name_get(&m_list[c_ptr->m_idx]),
-		snprintf(out_val, sizeof(out_val), "%s (%s%s%s)", r_name_get(&m_list[c_ptr->m_idx]),
-		    //m_ptr->level,
+		snprintf(out_val, sizeof(out_val), "%s (Lv %d, %s%s%s)", r_name_get(&m_list[c_ptr->m_idx]),
+		//snprintf(out_val, sizeof(out_val), "%s (%s%s%s)", r_name_get(&m_list[c_ptr->m_idx]),
+		    m_ptr->level,
 		    look_mon_desc(c_ptr->m_idx),
 		    m_ptr->clone ? ", clone" : (done_unique ? ", slain" : ""), extrainfo);
 #else /* use different colour for uniques we already killed */
-		//snprintf(out_val, sizeof(out_val), "%s%s (Lv %d, %s%s%s)",
-		snprintf(out_val, sizeof(out_val), "%s%s (%s%s%s)",
+		snprintf(out_val, sizeof(out_val), "%s%s (Lv %d, %s%s%s)",
+		//snprintf(out_val, sizeof(out_val), "%s%s (%s%s%s)",
 		    done_unique ? "\377D" : "",
 		    //r_name_get(&m_list[c_ptr->m_idx]),
 		    m_name,
-		    //m_ptr->level,
+		    m_ptr->level,
 		    look_mon_desc(c_ptr->m_idx),
 		    m_ptr->clone ? ", clone" : "", extrainfo);
 #endif
