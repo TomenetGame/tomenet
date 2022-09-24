@@ -4335,7 +4335,8 @@ void do_cmd_look(int Ind, int dir) {
 
 		if (get_skill(p_ptr, SKILL_DIVINATION) == 50) {
 			if (r_info[m_ptr->r_idx].flags7 & RF7_NO_DEATH)
-				sprintf(extrainfo, ", \377Uimmortal\377-");
+				//sprintf(extrainfo, ", \377Uimmortal\377-");
+				sprintf(extrainfo, ", \377Uimmortal\377-, %d AC, %d Spd", m_ptr->ac, m_ptr->mspeed - 110);
 			else
 				sprintf(extrainfo, ", %d HP, %d AC, %d Spd", m_ptr->hp, m_ptr->ac, m_ptr->mspeed - 110);
 		}
