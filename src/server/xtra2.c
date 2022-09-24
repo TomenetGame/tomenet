@@ -12104,8 +12104,9 @@ bool local_tradpanel(int Ind) {
 
 /*
  * Monster health description
+ * check_immortal: TRUE = don't print hurt status (alwats 'unhurt') if the monster is immortal anyway.
  */
-cptr look_mon_desc(int m_idx) {
+cptr look_mon_desc(int m_idx, bool check_immortal) {
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = race_inf(m_ptr);
 
@@ -12128,7 +12129,8 @@ cptr look_mon_desc(int m_idx) {
 		if (m_ptr->stunned > 50) return("heavily dazed");
 		if (m_ptr->stunned) return("dazed");
 		/* No damage (and no other effect either) */
-		return (living ? "unhurt" : "undamaged");
+		if (check_immortal && (r_ptr->flags7 & RF7_NO_DEATH)) return("");
+		return(living ? "unhurt" : "undamaged");
 	}
 
 
@@ -12142,10 +12144,10 @@ cptr look_mon_desc(int m_idx) {
 	/* Calculate a health "percentage" */
 	perc = 100L * m_ptr->hp / m_ptr->maxhp;
 
-	if (perc >= 60) return (living ? "somewhat wounded" : "somewhat damaged");
-	if (perc >= 25) return (living ? "wounded" : "damaged");
-	if (perc >= 10) return (living ? "badly wounded" : "badly damaged");
-	return (living ? "almost dead" : "almost destroyed");
+	if (perc >= 60) return(living ? "somewhat wounded" : "somewhat damaged");
+	if (perc >= 25) return(living ? "wounded" : "damaged");
+	if (perc >= 10) return(living ? "badly wounded" : "badly damaged");
+	return(living ? "almost dead" : "almost destroyed");
 }
 
 
@@ -12905,7 +12907,7 @@ bool target_set(int Ind, int dir) {
 				snprintf(out_val, sizeof(out_val), "%s%s (Lv %d, %s%s)",
 				    ((r_info[m_ptr->r_idx].flags1 & RF1_UNIQUE) && p_ptr->r_killed[m_ptr->r_idx] == 1) ? "\377D" : "",
 				    r_name_get(&m_list[p_ptr->target_idx[m]]),
-				    m_ptr->level, look_mon_desc(p_ptr->target_idx[m]),
+				    m_ptr->level, look_mon_desc(p_ptr->target_idx[m], FALSE),
 				    m_ptr->clone ? ", clone" : "");
 			} else if (p_ptr->target_idx[i] < 0) {
 				q_ptr = Players[0 - p_ptr->target_idx[i]];
@@ -12943,7 +12945,7 @@ bool target_set(int Ind, int dir) {
 		    "%s{%d} (%s) [<dir>, q, t] ",
 		    r_name_get(m_ptr),
 		    m_ptr->level,
-		    look_mon_desc(idx));
+		    look_mon_desc(idx, FALSE));
 
 		/* Tell the client about it */
 		Send_target_info(Ind, x - p_ptr->panel_col_prt, y - p_ptr->panel_row_prt, out_val);

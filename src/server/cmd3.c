@@ -4328,19 +4328,22 @@ void do_cmd_look(int Ind, int dir) {
 	} else if (c_ptr->m_idx > 0 && p_ptr->mon_vis[c_ptr->m_idx]) {	/* TODO: handle monster mimics */
 		bool done_unique;
 		char m_name[MNAME_LEN], extrainfo[MAX_CHARS] = { 0 };
+		monster_race *r_ptr;
+		bool divi = (get_skill(p_ptr, SKILL_DIVINATION) == 50);
+		bool divi_nd;
 
 		m_ptr = &m_list[c_ptr->m_idx];
+		r_ptr = race_inf(m_ptr);
+		divi_nd = (divi && (r_ptr->flags7 & RF7_NO_DEATH));
 		monster_desc(Ind, m_name, c_ptr->m_idx, 8);
 		m_name[0] = toupper(m_name[0]);
 
-		if (get_skill(p_ptr, SKILL_DIVINATION) == 50) {
-			monster_race *r_ptr = race_inf(m_ptr);
-
-			if (r_ptr->flags7 & RF7_NO_DEATH)
+		if (divi) {
+			if (divi_nd)
 				//sprintf(extrainfo, ", \377Uimmortal\377-");
-				sprintf(extrainfo, ", \377U%s\377-, %d AC, %d Spd", (r_ptr->flags3 & (RF3_UNDEAD | RF3_NONLIVING)) ? "indestructible" : "immortal", m_ptr->ac, m_ptr->mspeed - 110);
+				sprintf(extrainfo, "\377U%s\377-, %d AC, %d Spd", (r_ptr->flags3 & (RF3_UNDEAD | RF3_NONLIVING)) ? "indestructible" : "immortal", m_ptr->ac, m_ptr->mspeed - 110);
 			else
-				sprintf(extrainfo, ", %d HP, %d AC, %d Spd", m_ptr->hp, m_ptr->ac, m_ptr->mspeed - 110);
+				sprintf(extrainfo, "%d HP, %d AC, %d Spd", m_ptr->hp, m_ptr->ac, m_ptr->mspeed - 110);
 		}
 
 		/* a unique which the looker already killed? */
@@ -4352,30 +4355,33 @@ void do_cmd_look(int Ind, int dir) {
 
 		/* Format string */
 		if (m_ptr->questor)
-			snprintf(out_val, sizeof(out_val), "\377%c%s (Lv %d, %s%s)",
+			snprintf(out_val, sizeof(out_val), "\377%c%s (Lv %d, %s)",
+			//snprintf(out_val, sizeof(out_val), "\377%c%s (Lv %d, %s%s)",
 			//snprintf(out_val, sizeof(out_val), "\377%c%s (%s%s)",
 			    m_ptr->questor_invincible ? 'G' : ((m_ptr->questor_hostile & 0x1) ? 'R' : 'G'),
 			    //r_name_get(&m_list[c_ptr->m_idx]),
 			    m_name,
 			    m_ptr->level,
-			    look_mon_desc(c_ptr->m_idx), extrainfo);
+			    look_mon_desc(c_ptr->m_idx, FALSE)
+			    //, extrainfo
+			    );
 		else
 #if 0 /* attach 'slain' for uniques we already killed */
 //		snprintf(out_val, sizeof(out_val), "%s (%s)", r_name_get(&m_list[c_ptr->m_idx]), look_mon_desc(c_ptr->m_idx));
 		snprintf(out_val, sizeof(out_val), "%s (Lv %d, %s%s%s)", r_name_get(&m_list[c_ptr->m_idx]),
 		//snprintf(out_val, sizeof(out_val), "%s (%s%s%s)", r_name_get(&m_list[c_ptr->m_idx]),
 		    m_ptr->level,
-		    look_mon_desc(c_ptr->m_idx),
-		    m_ptr->clone ? ", clone" : (done_unique ? ", slain" : ""), extrainfo);
+		    look_mon_desc(c_ptr->m_idx, divi),
+		    divi_nd ? (m_ptr->clone ? "clone" : (done_unique ? "slain" : "")) : (m_ptr->clone ? ", clone" : (done_unique ? ", slain" : "")), (!divi_nd || m_ptr->clone || done_unique) ? ", " : "", extrainfo);
 #else /* use different colour for uniques we already killed */
-		snprintf(out_val, sizeof(out_val), "%s%s (Lv %d, %s%s%s)",
+		snprintf(out_val, sizeof(out_val), "%s%s (Lv %d, %s%s%s%s)",
 		//snprintf(out_val, sizeof(out_val), "%s%s (%s%s%s)",
 		    done_unique ? "\377D" : "",
 		    //r_name_get(&m_list[c_ptr->m_idx]),
 		    m_name,
 		    m_ptr->level,
-		    look_mon_desc(c_ptr->m_idx),
-		    m_ptr->clone ? ", clone" : "", extrainfo);
+		    look_mon_desc(c_ptr->m_idx, divi),
+		    divi_nd ? (m_ptr->clone ? "clone" : "") : (m_ptr->clone ? ", clone" : ""), (!divi_nd || m_ptr->clone) ? ", " : "", extrainfo);
 #endif
 	/* An object */
 	} else if (c_ptr->o_idx) {
