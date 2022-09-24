@@ -6131,7 +6131,11 @@
 #define RF9_RES_PSI			0x80000000	/* Resist psi */
 
 
-/* New monster attack spells and stuff - C. Blue */
+/* New monster attack spells and stuff - C. Blue
+   Note: RF0_ is an exception in that it holds both 'basic' and 'spell' flags.
+   This is important for parsing F:/S: lines in r_info, H:/M:/O:/S: lines in re_info and
+   M:/S: lines in d_info (which should only accept 'basic' or 'spell' flags respectively).
+   For cleanliness I added masks flags to separate these two use cases. */
 #define RF0_S_HI_MONSTER	0x00000001
 #define RF0_S_HI_MONSTERS	0x00000002
 #define RF0_S_HI_UNIQUE		0x00000004
@@ -6155,17 +6159,19 @@
 #define RF0_ADMINISTRATIVE_PUSH		0x00100000	/* Push back */
 #define RF0_METEOR_SWARM		0x00200000
 #define RF0_ADMINISTRATIVE_HOLD		0x00400000	/* Irresistible paralysis */
+/* !!! NOTE: if you add more flags, adjust RF0_SPELL_MASK accordingly !!! */
 
 #define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT)		/* | RF0_NO_NEST */
-
 #define RF0_PLAYER_SPELLS (RF0_BO_DISE | RF0_BA_DISE | RF0_BR_ICE | RF0_BR_WATER)
-
 #define RF0_RADIUS_SPELLS (RF0_BA_DISE | RF0_BR_ICE | RF0_BR_WATER)
 
 /* Special addition, since RF0_ mixes quite different types of flags.
-   This is to sort them out a bit. */
-#define RF0_ACTIVE_MASK (RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_BO_DISE | RF0_BA_DISE | \
+   This is to sort them out a bit.
+   Note that breaths are spells too, as in handled in 'S:' lines (in r_info, re_info, and d_info). */
+#define RF0_SPELL_MASK (RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_BO_DISE | RF0_BA_DISE | \
 			RF0_S_DEMONS | RF0_S_DRAGONS | RF0_S_HI_DEMON | RF0_S_HI_DRAGON | RF0_BR_ICE | RF0_BR_WATER)
+/* All flags that are defined and that are not 'spell' type -> are automatically 'basic' type. */
+#define RF0_BASIC_MASK (0x007FFFFF & (~RF0_SPELL_MASK))
 
 /* currently disabled r_info.txt flags (not implemented or some other reason) */
 #define RF1_DISABLE_MASK	(0x0)

@@ -3963,15 +3963,15 @@ static errr grab_one_basic_flag(monster_race *r_ptr, cptr what) {
 			return (0);
 		}
 
-	/* Scan flags0 */
+	/* Scan flags0 -- contains both, spell and basic type */
 	for (i = 0; i < 32; i++)
-		if (streq(what, r_info_flags0[i])) {
+		if (((1U << i) & RF0_BASIC_MASK) && streq(what, r_info_flags0[i])) {
 			r_ptr->flags0 |= (1U << i);
 			return (0);
 		}
 
 	/* Oops */
-	s_printf("Unknown monster flag '%s'.\n", what);
+	s_printf("Unknown 'basic' type monster flag '%s'.\n", what);
 
 	/* Failure */
 	return (1);
@@ -4005,31 +4005,19 @@ static errr grab_one_spell_flag(monster_race *r_ptr, cptr what) {
 			return (0);
 		}
 
-	/* Scan flags0 */
+	/* Scan flags0 -- contains both, spell and basic type */
 	for (i = 0; i < 32; i++)
-		if (streq(what, r_info_flags0[i])) {
+		if (((1U << i) & RF0_BASIC_MASK) && streq(what, r_info_flags0[i])) {
 			r_ptr->flags0 |= (1U << i);
 			return (0);
 		}
 
-	/* For Halloween Event we need new MOAN in RF8 -C. Blue */
-	/* Scan flags8 */
-if (season_halloween) {
-	for (i = 0; i < 32; i++)
-		if (streq(what, r_info_flags8[i])) {
-			r_ptr->flags8 |= (1U << i);
-			return (0);
-		}
-}
-
 	/* Oops */
-	s_printf("Unknown monster flag '%s'.\n", what);
+	s_printf("Unknown 'spell' type monster flag '%s'.\n", what);
 
 	/* Failure */
 	return (1);
 }
-
-
 
 
 /*
@@ -4751,8 +4739,18 @@ static errr grab_one_basic_ego_flag(monster_ego *re_ptr, cptr what, bool add) {
 			return (0);
 		}
 
+	/* Scan flags0 -- contains both, spell and basic type */
+	for (i = 0; i < 32; i++)
+		if (((1U << i) & RF0_BASIC_MASK) && streq(what, r_info_flags0[i])) {
+			if (add)
+				re_ptr->mflags0 |= (1U << i);
+			else
+				re_ptr->nflags0 |= (1U << i);
+			return (0);
+		}
+
 	/* Oops */
-	s_printf("Unknown monster flag '%s'.\n", what);
+	s_printf("Unknown 'basic' type monster flag '%s'.\n", what);
 
 	/* Failure */
 	return (1);
@@ -4795,9 +4793,9 @@ static errr grab_one_spell_ego_flag(monster_ego *re_ptr, cptr what, bool add) {
 			return (0);
 		}
 
-	/* Scan flags0 */
+	/* Scan flags0 -- contains both, spell and basic type */
 	for (i = 0; i < 32; i++)
-		if (streq(what, r_info_flags0[i])) {
+		if (((1U << i) & RF0_SPELL_MASK) && streq(what, r_info_flags0[i])) {
 			if (add)
 				re_ptr->mflags0 |= (1U << i);
 			else
@@ -4806,7 +4804,7 @@ static errr grab_one_spell_ego_flag(monster_ego *re_ptr, cptr what, bool add) {
 		}
 
 	/* Oops */
-	s_printf("Unknown monster flag '%s'.\n", what);
+	s_printf("Unknown 'spell' type monster flag '%s'.\n", what);
 
 	/* Failure */
 	return (1);
@@ -4855,6 +4853,7 @@ static errr grab_one_ego_flag(monster_ego *re_ptr, cptr what, bool must) {
 			else re_ptr->hflags3 |= (1U << i);
 			return (0);
 		}
+
 	/* Scan flags7 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags7[i])) {
@@ -4879,8 +4878,16 @@ static errr grab_one_ego_flag(monster_ego *re_ptr, cptr what, bool must) {
 			return (0);
 		}
 
+	/* Scan flags0 -- contains both, spell and basic type */
+	for (i = 0; i < 32; i++)
+		if (((1U << i) & RF0_BASIC_MASK) && streq(what, r_info_flags0[i])) {
+			if (must) re_ptr->flags0 |= (1U << i);
+			else re_ptr->hflags0 |= (1U << i);
+			return (0);
+		}
+
 	/* Oops */
-	s_printf("Unknown monster flag '%s'.\n", what);
+	s_printf("Unknown 'basic' type monster flag '%s'.\n", what);
 
 	/* Failure */
 	return (1);
@@ -5659,7 +5666,7 @@ static errr grab_one_dungeon_flag(dungeon_info_type *d_ptr, cptr what) {
 }
 
 /*
- * Grab one (basic) flag in a monster_race from a textual string
+ * Only used for d_info.txt: Grab one (basic) flag in a monster_race from a textual string
  */
 static errr grab_one_basic_monster_flag(dungeon_info_type *d_ptr, cptr what, byte rule) {
 	int i;
@@ -5685,6 +5692,8 @@ static errr grab_one_basic_monster_flag(dungeon_info_type *d_ptr, cptr what, byt
 			return (0);
 		}
 
+	/* -- 4, 5, 6 are 'spell' type flags, not 'basic' */
+
 	/* Scan flags7 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags7[i])) {
@@ -5706,8 +5715,15 @@ static errr grab_one_basic_monster_flag(dungeon_info_type *d_ptr, cptr what, byt
 			return (0);
 		}
 
+	/* Scan flags0 -- contains both, spell and basic type */
+	for (i = 0; i < 32; i++)
+		if (((1U << i) & RF0_BASIC_MASK) && streq(what, r_info_flags0[i])) {
+			d_ptr->rules[rule].mflags0 |= (1U << i);
+			return (0);
+		}
+
 	/* Oops */
-	s_printf("Unknown monster flag '%s'.\n", what);
+	s_printf("Unknown 'basic' type monster flag '%s'.\n", what);
 
 	/* Failure */
 	return (1);
@@ -5719,6 +5735,8 @@ static errr grab_one_basic_monster_flag(dungeon_info_type *d_ptr, cptr what, byt
  */
 static errr grab_one_spell_monster_flag(dungeon_info_type *d_ptr, cptr what, byte rule) {
 	int i;
+
+	/* -- 1, 2, 3, 7, 8, 9 'basic' type flags, not 'spell' */
 
 	/* Scan flags4 */
 	for (i = 0; i < 32; i++)
@@ -5743,13 +5761,13 @@ static errr grab_one_spell_monster_flag(dungeon_info_type *d_ptr, cptr what, byt
 
 	/* Scan flags0 */
 	for (i = 0; i < 32; i++)
-		if (streq(what, r_info_flags0[i])) {
+		if (((1U << i) & RF0_SPELL_MASK) && streq(what, r_info_flags0[i])) {
 			d_ptr->rules[rule].mflags0 |= (1U << i);
 			return (0);
 		}
 
 	/* Oops */
-	s_printf("Unknown monster flag '%s'.\n", what);
+	s_printf("Unknown 'spell' type monster flag '%s'.\n", what);
 
 	/* Failure */
 	return (1);

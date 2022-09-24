@@ -4591,7 +4591,7 @@ static bool summon_specific_okay(int r_idx) {
 		break;
 	case SUMMON_PATIENT:
 		okay = ((r_ptr->flags1 & RF1_NEVER_MOVE) &&
-		    !(r_ptr->flags4 || r_ptr->flags5 || r_ptr->flags6 || (r_ptr->flags0 & RF0_ACTIVE_MASK))
+		    !(r_ptr->flags4 || r_ptr->flags5 || r_ptr->flags6 || (r_ptr->flags0 & RF0_SPELL_MASK))
 #ifdef EXPLICITE_UNIQUE_SUMMONING
 		    && !(r_ptr->flags1 & RF1_UNIQUE)
 #endif
