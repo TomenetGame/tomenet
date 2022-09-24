@@ -7137,7 +7137,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				return;
 			}
-			else if (prefix(messagelc, "/update-dun")) {
+			else if (prefix(messagelc, "/update-dun")) { /* NOTE: Crashes when the dungeon/tower turns into a tower/dungeon. TODO: Fix! */
 				/* Reloads dungeon flags from d_info.txt, updating existing
 				   dungeons. Note that you have to call this after you made changes
 				   to d_info.txt, since dungeons will NOT update automatically.
