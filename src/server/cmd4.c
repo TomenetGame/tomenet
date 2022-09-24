@@ -71,7 +71,7 @@
  * Why does Ben save the list to a file and then display it?  Seems like a
  * strange way of doing things to me.  --KLJ--
  */
-/* colour art list depending on item type? (non-admins only) */
+/* Colour art list depending on item type? */
 #define COLOURED_ARTS
 void do_cmd_check_artifacts(int Ind, int line, char *srcstr) {
 	int i, j, k, z;
@@ -240,7 +240,13 @@ void do_cmd_check_artifacts(int Ind, int line, char *srcstr) {
 					c = 'D';
 #endif
 				fprintf(fff, "\377%c", c);
-				fprintf(fff, "%3d/%d%s%s\377%c", i, a_ptr->cur_num, carrier_online[i] ? "\377G*" : " ", timeleft, c);
+				fprintf(fff, "%3d/%d%s%s\377%c", i, a_ptr->cur_num, carrier_online[i] ? "\377G*" : " ", timeleft,
+#if 0 /* Admins: Display artifact name in art-uniqueness-colourizing too? */
+				    c
+#else /* Admins: Display artifact name in item-type-colourizing same as for players? */
+				    cattr
+#endif
+				    );
 			}
 #ifndef COLOURED_ARTS
 			else fprintf(fff, "\377%c", (!multiple_artifact_p(&forge) && a_ptr->carrier == p_ptr->id) ? 'U' : 'w');
