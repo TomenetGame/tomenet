@@ -725,7 +725,8 @@ void init_file_paths(char *path) {
 
 /* Convert a macro trigger key between Windows and Posix */
 static void key_autoconvert(char *tmp, byte fmt) {
-	if (fmt == VERSION_OS || fmt == OS_UNKNOWN || VERSION_OS == OS_UNKNOWN) return;
+	//if (fmt == VERSION_OS || fmt == OS_UNKNOWN || VERSION_OS == OS_UNKNOWN) return;
+	if (fmt == VERSION_OS || (fmt == OS_UNKNOWN && VERSION_OS != OS_WIN32)) return;
 
 	/* DOS -> Unix */
 	else if (fmt == OS_WIN32) {
