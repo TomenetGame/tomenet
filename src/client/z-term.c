@@ -2425,7 +2425,7 @@ errr Term_redraw_section(int x1, int y1, int x2, int y2) {
 	if (x1 < 0) x1 = 0;
 
 	/* Sanity checks */
-	if ((y2 < y1) || (x2 < x1)) return 1;
+	if ((y2 < y1) || (x2 < x1)) return(1);
 
 	/* Set y limits */
 	Term->y1 = y1;
@@ -2682,7 +2682,7 @@ errr Term_keypress(int k) {
 	/* Hack: Win client (at least) initializes AngbandWndProc() before the
 	         actual Term stuff, client may crash if a key is pressed *very*
 	         early (which can happen easily on very slow PCs). - C. Blue */
-	if (!Term) return 0;
+	if (!Term) return(0);
 
 	/* Add it to the queue */
 	return Term_keypress_aux(Term->keys, k);
@@ -3031,14 +3031,14 @@ errr Term_switch(int screen) {
 	term_win *tmp;
 
 	/* Not in memory */
-	if (screen > screen_icky) return 1;
+	if (screen > screen_icky) return(1);
 
 	tmp = Term->scr;
 	Term->scr = Term->mem[screen];
 	Term->mem[screen] = tmp;
 
 	/* Success */
-	return 0;
+	return(0);
 }
 
 

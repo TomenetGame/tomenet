@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
 	if (argc < 4) {
 		printf("Usage: preproc <input file> <output file> <name of C preprocessor> [<C preprocessor options>..]\n");
 		printf("       C preprocessor options should usually (cpp) be: -C -P\n");
-		return -1;
+		return(-1);
 	}
 	if (strlen(argv[1]) == 0) { /* paranoia */
 		printf("Error: No input filename specified.\n");
@@ -384,5 +384,5 @@ int main(int argc, char *argv[]) {
 
 	/* all done */
 
-	return 0;
+	return(0);
 }

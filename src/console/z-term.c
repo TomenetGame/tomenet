@@ -2303,14 +2303,14 @@ errr Term_switch(int screen) {
 	term_win *tmp;
 
 	/* Not in memory */
-	if (screen > screen_icky) return 1;
+	if (screen > screen_icky) return(1);
 
 	tmp = Term->scr;
 	Term->scr = Term->mem[screen];
 	Term->mem[screen] = tmp;
 
 	/* Success */
-	return 0;
+	return(0);
 }
 
 

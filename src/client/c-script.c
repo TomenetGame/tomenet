@@ -130,7 +130,7 @@ static int errorfb (lua_State *L) {
     lua_pushvalue(L, -2);  /* error message */
     lua_rawcall(L, 1, 0);
   }
-  return 0;
+  return(0);
 }
 
 #endif
@@ -177,7 +177,7 @@ MONADIC(intBitNot,  ~ )
  */
 static int int_not(lua_State* L) {
 	lua_pushnumber(L, ~luaL_check_bit(L, 1));
-	return 1;
+	return(1);
 }
 
 
@@ -187,7 +187,7 @@ static int int_not(lua_State* L) {
  */
 static int int_mod(lua_State* L) {
 	lua_pushnumber(L, luaL_check_bit(L, 1) % luaL_check_bit(L, 2));
-	return 1;
+	return(1);
 }
 
 
@@ -202,7 +202,7 @@ static int int_and(lua_State *L) {
 	for (i = 2; i <= n; i++) w &= luaL_check_bit(L, i);
 	lua_pushnumber(L, w);
 
-	return 1;
+	return(1);
 }
 
 
@@ -217,7 +217,7 @@ static int int_or(lua_State *L) {
 	for (i = 2; i <= n; i++) w |= luaL_check_bit(L, i);
 	lua_pushnumber(L, w);
 
-	return 1;
+	return(1);
 }
 
 
@@ -232,7 +232,7 @@ static int int_xor(lua_State *L) {
 	for (i = 2; i <= n; i++) w ^= luaL_check_bit(L, i);
 	lua_pushnumber(L, w);
 
-	return 1;
+	return(1);
 }
 
 
@@ -242,7 +242,7 @@ static int int_xor(lua_State *L) {
  */
 static int int_lshift(lua_State* L) {
 	lua_pushnumber(L, luaL_check_bit(L, 1) << luaL_check_ubit(L, 2));
-	return 1;
+	return(1);
 }
 
 /*
@@ -251,7 +251,7 @@ static int int_lshift(lua_State* L) {
  */
 static int int_rshift(lua_State* L) {
 	lua_pushnumber(L, luaL_check_ubit(L, 1) >> luaL_check_ubit(L, 2));
-	return 1;
+	return(1);
 }
 
 /*
@@ -260,7 +260,7 @@ static int int_rshift(lua_State* L) {
  */
 static int int_arshift(lua_State* L) {
 	lua_pushnumber(L, luaL_check_bit(L, 1) >> luaL_check_ubit(L, 2));
-	return 1;
+	return(1);
 }
 
 

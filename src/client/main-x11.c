@@ -1264,7 +1264,7 @@ static errr Infowin_set_size_hints(int x, int y, int w, int h, int b, int r_w, i
 
 	/* Success */
 	XFree(sh);
-	return 0;
+	return(0);
 }
 
 
@@ -1449,7 +1449,7 @@ static errr CheckEvent(bool wait) {
 	/* Notice new keymaps */
 	if (xev->type == MappingNotify) {
 		XRefreshKeyboardMapping(&xev->xmapping);
-		return 0;
+		return(0);
 	}
 
 
@@ -2573,15 +2573,15 @@ static term_data* term_idx_to_term_data(int term_idx) {
 }
 
 static int term_data_to_term_idx(term_data *td) {
-	if (td == &screen) return 0;
-	if (td == &mirror) return 1;
+	if (td == &screen) return(0);
+	if (td == &mirror) return(1);
 	if (td == &recall) return 2;
 	if (td == &choice) return 3;
 	if (td == &term_4) return 4;
 	if (td == &term_5) return 5;
 	if (td == &term_6) return 6;
 	if (td == &term_7) return 7;
-	return -1;
+	return(-1);
 }
 
 /*
@@ -3482,14 +3482,14 @@ int get_misc_fonts(char *output_list, int max_fonts, int max_font_name_length) {
 
 	if (status != 0) {
 		fprintf(stderr, "regcomp returned %d\n", status);
-		return 0;
+		return(0);
 	}
 
 	/* Get list of all fonts with 'x' in the name */
 	list = XListFonts(Metadpy->dpy, "*x*", 16 * 1024, &fonts_found);
 	if (!list) {
 		regfree(&re);
-		return 0;
+		return(0);
 	}
 	for (i = 0; i < fonts_found && fonts_match < max_fonts; i++) {
 		status = regexec(&re, list[i], 0, NULL, 0);

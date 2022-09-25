@@ -239,7 +239,7 @@ int check_return(int ind, unsigned short fnum, u32b sum, int Ind) {
 				msg_format(Ind, "\377oLUA file %s is outdated.", c_fd->fname);
 			}
 
-			return 0;
+			return(0);
 		}
 
 		if (!client_user_path(buf, c_fd->fname))
@@ -295,7 +295,7 @@ int check_return_new(int ind, unsigned short fnum, const unsigned char digest[16
 				msg_format(Ind, "\377oLUA file %s is outdated.", c_fd->fname);
 			}
 
-			return 0;
+			return(0);
 		}
 
 		if (!client_user_path(buf, c_fd->fname))
@@ -449,7 +449,7 @@ int local_file_write(int ind, unsigned short fnum, unsigned long len) {
 	if (c_fd == (struct ft_data*) NULL) return(0);
 	if (Receive_file_data(ind, len, c_fd->buffer) == 0) {
 		/* Not enough data available */
-		return -1;
+		return(-1);
 	}
 	if (fwrite(&c_fd->buffer, 1, len, c_fd->fp) < len) {
 		fprintf(stderr, "Error: fwrite failed in local_file_write\n");
@@ -472,7 +472,7 @@ int local_file_close(int ind, unsigned short fnum) {
 	int success = 1;
 	FILE *wp;
 	c_fd = getfile(ind, fnum);
-	if (c_fd == (struct ft_data *) NULL) return 0;
+	if (c_fd == (struct ft_data *) NULL) return(0);
 
 	if (!client_user_path(buf, c_fd->fname))
 		path_build(buf, 4096, ANGBAND_DIR, c_fd->fname);
@@ -549,7 +549,7 @@ int local_file_check(char *fname, u32b *sum) {
 	fp = fopen(pathbuf, "rb");	/* b for windows.. */
 	if (!fp) {
 		*sum = 0;
-		return 1;
+		return(1);
 	}
 
 	while ((bytes_read = fread(buffer, 1, sizeof(buffer), fp)) > 0) {
@@ -583,7 +583,7 @@ int local_file_check_new(char *fname, unsigned char digest_out[16]) {
 	fp = fopen(pathbuf, "rb");	/* b for windows.. */
 	if (!fp) {
 		memset(digest_out, 0, 16);
-		return 1;
+		return(1);
 	}
 
 	MD5Init(&ctx);

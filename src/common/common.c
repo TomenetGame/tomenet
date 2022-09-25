@@ -355,7 +355,7 @@ int find_realm(int book) {
 	case TV_HUNT_BOOK:
 		return REALM_HUNT;
 	};
-	return -1;
+	return(-1);
 }
 
 /* strcasestr() is only defined in _GNU_SOURCE, so we need our own implementation to be safe */

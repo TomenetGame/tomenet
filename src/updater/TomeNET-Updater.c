@@ -970,7 +970,7 @@ int main(int argc, char *argv[]) {
 			RegCloseKey(hTestKey);
 			//MessageBox(NULL, "You must first install 7-zip from www.7-zip.org !", "Error", MB_OK);
 			show_error(top_window);
-			return -1;
+			return(-1);
 		}
 	} else {
 		if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("SOFTWARE\\7-Zip\\"), 0, KEY_READ | 0x0200, &hTestKey) == ERROR_SUCCESS) {//KEY_WOW64_32KEY (0x0200)
@@ -981,7 +981,7 @@ int main(int argc, char *argv[]) {
 				RegCloseKey(hTestKey);
 				//MessageBox(NULL, "You must first install 7-zip from www.7-zip.org !", "Error", MB_OK);
 				show_error(top_window);
-				return -1;
+				return(-1);
 			}
 		} else {
 			/* This case should work on 64-bit Windows (w/ 32-bit client) */
@@ -993,12 +993,12 @@ int main(int argc, char *argv[]) {
 					RegCloseKey(hTestKey);
 					//MessageBox(NULL, "You must first install 7-zip from www.7-zip.org !", "Error", MB_OK);
 					show_error(top_window);
-					return -1;
+					return(-1);
 				}
 			} else {
 				//MessageBox(NULL, "You must first install 7-zip from www.7-zip.org !", "Error", MB_OK);
 				show_error(top_window);
-				return -1;
+				return(-1);
 			}
 		}
 	}
@@ -1020,12 +1020,12 @@ int main(int argc, char *argv[]) {
 	if (!(fp = fopen("tmp.7z", "r"))) { /* paranoia? */
 		//MessageBox(NULL, "You must first install 7-zip from www.7-zip.org !", "Error", MB_OK);
 		show_error(top_window);
-		return -1;
+		return(-1);
 	} else if (fgetc(fp) == EOF) { /* normal */
 		fclose(fp);
 		//MessageBox(NULL, "You must first install 7-zip from www.7-zip.org !", "Error", MB_OK);
 		show_error(top_window);
-		return -1;
+		return(-1);
 	}
 #else /* assume posix */
  #if 0	/* command-line 7z */
@@ -1039,12 +1039,12 @@ int main(int argc, char *argv[]) {
 	if (!(fp = fopen("tmp.7z", "r"))) { /* paranoia? */
 		//MessageBox(NULL, "You must first install 7-zip from www.7-zip.org !", "Error", MB_OK);
 		show_error(top_window);//, "7-zip not found ('7z'). Install it first. (Package name is 'p7zip'.)");
-		return -1;
+		return(-1);
 	} else if (fgetc(fp) == EOF) { /* normal */
 		fclose(fp);
 		//MessageBox(NULL, "You must first install 7-zip from www.7-zip.org !", "Error", MB_OK);
 		show_error(top_window);//, "7-zip not found ('7z'). Install it first. (Package name is 'p7zip'.)");
-		return -1;
+		return(-1);
 	}
 #endif
 	fclose(fp);
@@ -1088,12 +1088,12 @@ int main(int argc, char *argv[]) {
 		remove("__wget.tmp");
 		if (buf[0] < 32) {
 			show_error_wget(top_window);
-			return 0;
+			return(0);
 		}
 	} else {
 		remove("__wget.tmp");
 		show_error_wget(top_window);
-		return 0;
+		return(0);
 	}
  #endif
 #endif
@@ -1109,5 +1109,5 @@ int main(int argc, char *argv[]) {
 
 	gtk_main();
 
-	return 0;
+	return(0);
 }

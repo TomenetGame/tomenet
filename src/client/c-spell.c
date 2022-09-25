@@ -1079,12 +1079,12 @@ s32b get_school_spell(cptr do_what, int *item_book) {
 		if (sflags1 & SFLG1_LIMIT_SPELLS) {
 			if (!c_get_item(&item, out_val, (USE_INVEN | USE_EXTRA | USE_LIMIT | NO_FAIL_MSG) )) {
 				if (item == -2) c_msg_format("%s", buf2);
-				return -1;
+				return(-1);
 			}
 		} else {
 			if (!c_get_item(&item, out_val, (USE_INVEN | USE_EXTRA | NO_FAIL_MSG) )) {
 				if (item == -2) c_msg_format("%s", buf2);
-				return -1;
+				return(-1);
 			}
 		}
 	} else {
@@ -1111,7 +1111,7 @@ s32b get_school_spell(cptr do_what, int *item_book) {
 		pval = o_ptr->pval;
 	} else {
 		/* Only books allowed */
-		return -1;
+		return(-1);
 	}
 
 	if (hack_force_spell == -1) {
@@ -1235,7 +1235,7 @@ s32b get_school_spell(cptr do_what, int *item_book) {
 	if (redraw) Term_load();
 
 	/* Abort if needed */
-	if (!flag) return -1;
+	if (!flag) return(-1);
 
 	//tmp = spell;
 	*item_book = item;

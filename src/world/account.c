@@ -46,9 +46,9 @@ static int GetAccount(struct account *c_acc, unsigned char *name, char *pass) {
 	if (fp == (FILE*)NULL) {
 		if (errno == ENOENT) {	/* ONLY if non-existent */
 			fp = fopen("tomenet.acc", "wb+");
-			if (fp == (FILE*)NULL) return 0;
+			if (fp == (FILE*)NULL) return(0);
 			fprintf(stderr, "Generated new account file\n");
-		} else return 0;	/* failed */
+		} else return(0);	/* failed */
 	}
 	while (!feof(fp)) {
 		fread(c_acc, sizeof(struct account), 1, fp);
@@ -65,10 +65,10 @@ static int GetAccount(struct account *c_acc, unsigned char *name, char *pass) {
 			memset((char *)c_acc->pass, 0, 20);
 			if (val) {
 				fclose(fp);
-				return 0;
+				return(0);
 			}
 			fclose(fp);
-			return 1;
+			return(1);
 		}
 	}
 	/* No account found. Create trial account */
@@ -82,8 +82,8 @@ static int GetAccount(struct account *c_acc, unsigned char *name, char *pass) {
 	}
 	memset((char *)c_acc->pass, 0, 20);
 	fclose(fp);
-	if (c_acc->id) return 1;
-	return 0;
+	if (c_acc->id) return(1);
+	return(0);
 }
 
 /* our password encryptor */
@@ -113,12 +113,12 @@ int GetAccountID(struct account *c_acc, uint32_t id) {
 			if (id == c_acc->id && !(c_acc->flags & ACC_DELD)) {
 				memset((char *)c_acc->pass, 0, 20);
 				fclose(fp);
-				return 1;
+				return(1);
 			}
 		}
 		fclose(fp);
 	}
-	return 0;
+	return(0);
 }
 
 static uint32_t new_accid() {

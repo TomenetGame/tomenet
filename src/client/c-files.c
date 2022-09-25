@@ -488,7 +488,7 @@ errr my_fgets2(FILE *fff, char **line, int *n) {
 				*n = 0;
 
 				/* Return 1 */
-				return 1;
+				return(1);
 			}
 
 			/* Done */
@@ -579,7 +579,7 @@ errr my_fgets2(FILE *fff, char **line, int *n) {
 	*n = len + 1;
 
 	/* Success */
-	return 0;
+	return(0);
 }
 
 
@@ -831,7 +831,7 @@ errr process_pref_file_aux(char *buf) {
 		case 'H':
 		case 'C':
 		case 'D': break;
-		default: return 0;
+		default: return(0);
 		}
 
 	/* Process "R:<num>:<a>/<c>" -- attr/char for monster races */
@@ -901,7 +901,7 @@ errr process_pref_file_aux(char *buf) {
 			j = (huge)strtol(zz[0], NULL, 0);
 			n1 = strtol(zz[1], NULL, 0);
 			n2 = strtol(zz[2], NULL, 0) + char_map_offset;
-			if (j > 100) return 0;
+			if (j > 100) return(0);
 #ifdef USE_GRAPHICS
 			if (!use_graphics)
 #endif
@@ -948,7 +948,7 @@ errr process_pref_file_aux(char *buf) {
 		text_to_ascii(tmp, buf + 2);
 
 		//hack
-		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return 0;
+		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return(0);
 
 		macro_add(tmp, macro__buf, FALSE, FALSE);
 		return(0);
@@ -960,7 +960,7 @@ errr process_pref_file_aux(char *buf) {
 		text_to_ascii(tmp, buf + 2);
 
 		//hack
-		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return 0;
+		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return(0);
 
 		macro_add(tmp, macro__buf, FALSE, TRUE);
 		return(0);
@@ -972,7 +972,7 @@ errr process_pref_file_aux(char *buf) {
 		text_to_ascii(tmp, buf + 2);
 
 		//hack
-		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return 0;
+		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return(0);
 
 		macro_add(tmp, macro__buf, TRUE, FALSE);
 		return(0);
@@ -984,10 +984,10 @@ errr process_pref_file_aux(char *buf) {
 		text_to_ascii(tmp, buf + 2);
 
 		//hack
-		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return 0;
+		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return(0);
 
 		macro_del(tmp);
-		return 0;
+		return(0);
 	}
 
 

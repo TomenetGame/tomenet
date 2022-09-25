@@ -72,32 +72,28 @@ int main(int argc, char **argv)
 	/* Call the initialization function */
 	console_init();
 
-	return 0;
+	return(0);
 }
 
-static bool get_player_list(void)
-{
+static bool get_player_list(void) {
 	Packet_printf(&ibuf, "%c", CONSOLE_STATUS);
 
 	return TRUE;
 }
 
-static bool get_artifact_list(void)
-{
+static bool get_artifact_list(void) {
 	Packet_printf(&ibuf, "%c", CONSOLE_ARTIFACT_LIST);
 
 	return TRUE;
 }
 
-static bool get_unique_list(void)
-{
+static bool get_unique_list(void) {
 	Packet_printf(&ibuf, "%c", CONSOLE_UNIQUE_LIST);
 
 	return TRUE;
 }
 
-static bool modify_artifact(void)
-{
+static bool modify_artifact(void) {
 	int artifact;
 	char ch;
 
@@ -121,8 +117,7 @@ static bool modify_artifact(void)
 	prt("Enter choice: ", 7, 1);
 
 	/* Try until done */
-	while (1)
-	{
+	while (1) {
 		/* Get key */
 		ch = inkey();
 
@@ -130,22 +125,20 @@ static bool modify_artifact(void)
 		if (!ch) return FALSE;
 
 		/* Check for command */
-		switch (ch)
-		{
-			case '1':
-				Packet_printf(&ibuf, "%c%d%d", CONSOLE_CHANGE_ARTIFACT, artifact, 0);
-				return TRUE;
-			case '2':
-				Packet_printf(&ibuf, "%c%d%d", CONSOLE_CHANGE_ARTIFACT, artifact, 1);
-				return TRUE;
-			case '3':
-				return FALSE;
+		switch (ch) {
+		case '1':
+			Packet_printf(&ibuf, "%c%d%d", CONSOLE_CHANGE_ARTIFACT, artifact, 0);
+			return TRUE;
+		case '2':
+			Packet_printf(&ibuf, "%c%d%d", CONSOLE_CHANGE_ARTIFACT, artifact, 1);
+			return TRUE;
+		case '3':
+			return FALSE;
 		}
 	}
 }
 
-static bool modify_unique(void)
-{
+static bool modify_unique(void) {
 	int unique;
 	char killer[80], ch;
 
@@ -557,16 +550,14 @@ static void show_generic_reply(void)
 	inkey();
 }
 
-void process_reply(void)
-{
+void process_reply(void) {
 	char ch;
 
 	/* Extract reply type */
 	Packet_scanf(&ibuf, "%c", &ch);
 
 	/* Determine what to do */
-	switch (ch)
-	{
+	switch (ch) {
 		case CONSOLE_STATUS:
 			show_status();
 			break;

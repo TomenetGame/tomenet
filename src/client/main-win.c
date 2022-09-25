@@ -1931,7 +1931,7 @@ static errr Term_xtra_win_event(int v) {
 	}
 
 	/* Success */
-	return 0;
+	return(0);
 }
 
 
@@ -1982,7 +1982,7 @@ static errr Term_xtra_win_clear(void)
 #endif
 
 	/* Success */
-	return 0;
+	return(0);
 }
 
 
@@ -2123,7 +2123,7 @@ static errr Term_xtra_win(int n, int v) {
 	}
 
 	/* Oops */
-	return 1;
+	return(1);
 }
 
 
@@ -2156,7 +2156,7 @@ static errr Term_wipe_win(int x, int y, int n) {
 #endif
 
 	/* Success */
-	return 0;
+	return(0);
 }
 
 
@@ -2184,7 +2184,7 @@ static errr Term_curs_win(int x, int y) {
 #endif
 
 	/* Success */
-	return 0;
+	return(0);
 }
 
 
@@ -2282,7 +2282,7 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 #endif
 
 	/* Success */
-	return 0;
+	return(0);
 }
 
 
@@ -2398,7 +2398,7 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 #endif
 
 	/* Success */
-	return 0;
+	return(0);
 }
 
 
@@ -2988,12 +2988,12 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
 		/* XXX XXX XXX */
 		case WM_CREATE:
-			return 0;
+			return(0);
 
 		case WM_GETMINMAXINFO:
 			lpmmi = (MINMAXINFO FAR *)lParam;
 
-			if (!td) return 1;  /* this message was sent before WM_NCCREATE */
+			if (!td) return(1);  /* this message was sent before WM_NCCREATE */
 
 			/* Minimum window size is 8x2 */
 			rc.left = rc.top = 0;
@@ -3035,11 +3035,11 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 			lpmmi->ptMaxTrackSize.x = rc.right - rc.left;
 			lpmmi->ptMaxTrackSize.y = rc.bottom - rc.top;
 
-			return 0;
+			return(0);
 
 		case WM_PAINT:
 			handle_wm_paint(hWnd, td);
-			return 0;
+			return(0);
 
 		case WM_SYSKEYDOWN:
 		case WM_KEYDOWN:
@@ -3082,7 +3082,7 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 				/* End the macro trigger */
 				Term_keypress(13);
 
-				return 0;
+				return(0);
 			}
 
 			break;
@@ -3090,32 +3090,32 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
 		case WM_CHAR:
 			Term_keypress(wParam);
-			return 0;
+			return(0);
 
 		case WM_INITMENU:
 			setup_menus();
-			return 0;
+			return(0);
 
 		case WM_CLOSE:
 		case WM_QUIT:
 			quit(NULL);
-			return 0;
+			return(0);
 
 		case WM_COMMAND:
 			process_menus(LOWORD(wParam));
-			return 0;
+			return(0);
 
 		case WM_SIZE:
-			if (!td) return 1;    /* this message was sent before WM_NCCREATE */
-			if (!td->w) return 1; /* it was sent from inside CreateWindowEx */
-			if (td->size_hack) return 1; /* was sent from WM_SIZE */
+			if (!td) return(1);    /* this message was sent before WM_NCCREATE */
+			if (!td->w) return(1); /* it was sent from inside CreateWindowEx */
+			if (td->size_hack) return(1); /* was sent from WM_SIZE */
 
 			switch (wParam) {
 				case SIZE_MINIMIZED:
 					for (i = 1; i < MAX_TERM_DATA; i++)
 						if (data[i].visible) ShowWindow(data[i].w, SW_HIDE);
 
-					return 0;
+					return(0);
 
 				case SIZE_MAXIMIZED:
 					/* fall through XXX XXX XXX */
@@ -3148,7 +3148,7 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
 					td->size_hack = FALSE;
 
-					return 0;
+					return(0);
 				}
 			}
 			break;
@@ -3189,7 +3189,7 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 			Term_activate(old);
 
 			MoveWindow(hWnd, td->pos_x, td->pos_y, td->size_wid, td->size_hgt, TRUE);
-			return 0;
+			return(0);
 		}
 
 		case WM_PALETTECHANGED:
@@ -3213,7 +3213,7 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 					SetWindowPos(data[i].w, hWnd, 0, 0, 0, 0,
 					    SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
 				SetFocus(hWnd);
-				return 0;
+				return(0);
 			}
 			break;
 	}
@@ -3249,10 +3249,10 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 		/* XXX XXX XXX */
 		case WM_CREATE:
-			return 0;
+			return(0);
 
 		case WM_GETMINMAXINFO:
-			if (!td) return 1;  /* this message was sent before WM_NCCREATE */
+			if (!td) return(1);  /* this message was sent before WM_NCCREATE */
 
 			lpmmi = (MINMAXINFO FAR *)lParam;
 
@@ -3296,12 +3296,12 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 			lpmmi->ptMaxTrackSize.x = rc.right - rc.left;
 			lpmmi->ptMaxTrackSize.y = rc.bottom - rc.top;
 
-			return 0;
+			return(0);
 
 		case WM_SIZE:
-			if (!td) return 1;    /* this message was sent before WM_NCCREATE */
-			if (!td->w) return 1; /* it was sent from inside CreateWindowEx */
-			if (td->size_hack) return 1; /* was sent from inside WM_SIZE */
+			if (!td) return(1);    /* this message was sent before WM_NCCREATE */
+			if (!td->w) return(1); /* it was sent from inside CreateWindowEx */
+			if (td->size_hack) return(1); /* was sent from inside WM_SIZE */
 
 			if (wParam == SIZE_RESTORED) {
 				term *old;
@@ -3324,14 +3324,14 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 				td->size_hack = FALSE;
 
-				return 0;
+				return(0);
 			}
 			break;
 
 		case WM_PAINT:
 			handle_wm_paint(hWnd, td);
 
-			return 0;
+			return(0);
 
 		case WM_SYSKEYDOWN:
 		case WM_KEYDOWN:
@@ -3374,7 +3374,7 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 				/* End the macro trigger */
 				Term_keypress(13);
 
-				return 0;
+				return(0);
 			}
 
 			break;
@@ -3382,7 +3382,7 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 		case WM_CHAR:
 			Term_keypress(wParam);
-			return 0;
+			return(0);
 
 		case WM_PALETTECHANGED:
 			/* ignore if palette change caused by itself */
@@ -3390,14 +3390,14 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 			/* otherwise, fall through!!! */
 
 		case WM_QUERYNEWPALETTE:
-			if (!paletted) return 0;
+			if (!paletted) return(0);
 			hdc = GetDC(hWnd);
 			SelectPalette(hdc, hPal, FALSE);
 			i = RealizePalette(hdc);
 			/* if any palette entries changed, repaint the window. */
 			if (i) InvalidateRect(hWnd, NULL, TRUE);
 			ReleaseDC(hWnd, hdc);
-			return 0;
+			return(0);
 
 		case WM_NCLBUTTONDOWN:
 			if (wParam == HTSYSMENU) {
@@ -3408,7 +3408,7 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 						ShowWindow(td->w, SW_HIDE);
 					}
 				}
-				return 0;
+				return(0);
 			}
 			break;
 	}

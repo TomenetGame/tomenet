@@ -3514,7 +3514,7 @@ int re_init_sound() {
 		/* Try to re-init it */
 		if (!sound_modules[i].init) {
 			puts("ERROR: SDL audio has no init function.");
-			return -1;
+			return(-1);
 		}
 		if ((err = re_init_sound_sdl()) == 0) {
  #ifdef DEBUG_SOUND

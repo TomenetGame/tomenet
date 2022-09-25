@@ -485,11 +485,11 @@ int usleep(huge microSeconds)
 	if (select(nfds, no_fds, no_fds, no_fds, &Timer) < 0)
 	{
 		/* Hack -- ignore interrupts */
-		if (errno != EINTR) return -1;
+		if (errno != EINTR) return(-1);
 	}
 
 	/* Success */
-	return 0;
+	return(0);
 }
 
 # endif /* HAS_USLEEP */

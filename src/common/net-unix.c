@@ -693,7 +693,7 @@ int	fd;
     /*
      * As of 0.99.12 Linux doesn't have LINGER stuff.
      */
-    return 0;
+    return(0);
 #else
 #ifdef	__hp9000s300
     long			linger = 1;
@@ -934,28 +934,28 @@ int	flag;
 
 #ifdef USE_FCNTL_FNDELAY
     if (fcntl(fd, F_SETFL, (flag != 0) ? FNDELAY : 0) != -1)
-	return 0;
+	return(0);
     sprintf(buf, "fcntl FNDELAY failed in socklib.c line %d", __LINE__);
     perror(buf);
 #endif
 
 #ifdef USE_IOCTL_FIONBIO
     if (ioctl(fd, FIONBIO, &flag) != -1)
-	return 0;
+	return(0);
     sprintf(buf, "ioctl FIONBIO failed in socklib.c line %d", __LINE__);
     perror(buf);
 #endif
 
 #ifdef USE_FCNTL_O_NONBLOCK
     if (fcntl(fd, F_SETFL, (flag != 0) ? O_NONBLOCK : 0) != -1)
-	return 0;
+	return(0);
     sprintf(buf, "fcntl O_NONBLOCK failed in socklib.c line %d", __LINE__);
     perror(buf);
 #endif
 
 #ifdef USE_FCNTL_O_NDELAY
     if (fcntl(fd, F_SETFL, (flag != 0) ? O_NDELAY : 0) != -1)
-	return 0;
+	return(0);
     sprintf(buf, "fcntl O_NDELAY failed in socklib.c line %d", __LINE__);
     perror(buf);
 #endif
@@ -1052,10 +1052,10 @@ int	fd;
     size = sizeof(error);
     if (getsockopt(fd, SOL_SOCKET, SO_ERROR,
 	(char *)&error, &size) == -1) {
-	return -1;
+	return(-1);
     }
     errno = error;
-    return 0;
+    return(0);
 } /* GetSocketError */
 
 

@@ -77,7 +77,7 @@ char net_version[] = VERSION;
 int Sockbuf_init(sockbuf_t *sbuf, int sock, int size, int state)
 {
     if ((sbuf->buf = sbuf->ptr = (char *) malloc(size)) == NULL) {
-	return -1;
+	return(-1);
     }
     sbuf->sock = sock;
     sbuf->state = state;
@@ -85,7 +85,7 @@ int Sockbuf_init(sockbuf_t *sbuf, int sock, int size, int state)
     sbuf->size = size;
     sbuf->ptr = sbuf->buf;
     sbuf->state = state;
-    return 0;
+    return(0);
 }
 
 int Sockbuf_cleanup(sockbuf_t *sbuf)
@@ -96,14 +96,14 @@ int Sockbuf_cleanup(sockbuf_t *sbuf)
     sbuf->buf = sbuf->ptr = NULL;
     sbuf->size = sbuf->len = 0;
     sbuf->state = 0;
-    return 0;
+    return(0);
 }
 
 int Sockbuf_clear(sockbuf_t *sbuf)
 {
     sbuf->len = 0;
     sbuf->ptr = sbuf->buf;
-    return 0;
+    return(0);
 }
 
 int Sockbuf_advance(sockbuf_t *sbuf, int len)
@@ -157,7 +157,7 @@ int Sockbuf_advance(sockbuf_t *sbuf, int len)
 	    sbuf->ptr -= len;
 	}
     }
-    return 0;
+    return(0);
 }
 
 int Sockbuf_rollback(sockbuf_t *sbuf, int len)
@@ -181,7 +181,7 @@ int Sockbuf_rollback(sockbuf_t *sbuf, int len)
     else {
 	sbuf->ptr -= len;
     }
-    return 0;
+    return(0);
 }
 
 int Sockbuf_flush(sockbuf_t *sbuf)
@@ -195,12 +195,12 @@ int Sockbuf_flush(sockbuf_t *sbuf)
 	plog(format("(state=%02x,buf=%08x,ptr=%08x,size=%d,len=%d,sock=%d)",
 	    sbuf->state, sbuf->buf, sbuf->ptr, sbuf->size, sbuf->len,
 	    sbuf->sock));
-	return -1;
+	return(-1);
     }
     if (BIT(sbuf->state, SOCKBUF_LOCK) != 0) {
 	errno = 0;
 	plog(format("No flush on locked socket buffer (0x%02x)", sbuf->state));
-	return -1;
+	return(-1);
     }
     if (sbuf->len <= 0) {
 	if (sbuf->len < 0) {
@@ -209,7 +209,7 @@ int Sockbuf_flush(sockbuf_t *sbuf)
 	    sbuf->len = 0;
 	    sbuf->ptr = sbuf->buf;
 	}
-	return 0;
+	return(0);
     }
 
 #if 0
@@ -242,7 +242,7 @@ int Sockbuf_flush(sockbuf_t *sbuf)
 		|| errno == EWOULDBLOCK
 		|| errno == EAGAIN) {
 		Sockbuf_clear(sbuf);
-		return 0;
+		return(0);
 	    }
 	    if (errno == EINTR) {
 		errno = 0;
@@ -252,13 +252,13 @@ int Sockbuf_flush(sockbuf_t *sbuf)
 	    if (errno == ECONNREFUSED) {
 		plog("Send refused");
 		Sockbuf_clear(sbuf);
-		return -1;
+		return(-1);
 	    }
 #endif
 	    if (++i > MAX_SOCKBUF_RETRIES) {
 		plog(format("Can't send on socket (%d,%d)", sbuf->sock, sbuf->len));
 		Sockbuf_clear(sbuf);
-		return -1;
+		return(-1);
 	    }
 	    { static int send_err;
 		if ((send_err++ & 0x3F) == 0) {
@@ -267,7 +267,7 @@ int Sockbuf_flush(sockbuf_t *sbuf)
 	    }
 	    if (GetSocketError(sbuf->sock) == -1) {
 		plog("GetSocketError send");
-		return -1;
+		return(-1);
 	    }
 	    errno = 0;
 	}
@@ -286,9 +286,9 @@ int Sockbuf_flush(sockbuf_t *sbuf)
 	    if (errno != EWOULDBLOCK
 		&& errno != EAGAIN) {
 		plog("Can't write on socket");
-		return -1;
+		return(-1);
 	    }
-	    return 0;
+	    return(0);
 	}
 	Sockbuf_advance(sbuf, len);
     }
@@ -300,20 +300,20 @@ int Sockbuf_write(sockbuf_t *sbuf, char *buf, int len)
     if (BIT(sbuf->state, SOCKBUF_WRITE) == 0) {
 	errno = 0;
 	plog("No write to non-writable socket buffer");
-	return -1;
+	return(-1);
     }
     if (sbuf->size - sbuf->len < len) {
 	if (BIT(sbuf->state, SOCKBUF_LOCK | SOCKBUF_DGRAM) != 0) {
 	    errno = 0;
 	    plog(format("No write to locked socket buffer (%d,%d,%d,%d)",
 		sbuf->state, sbuf->size, sbuf->len, len));
-	    return -1;
+	    return(-1);
 	}
 	if (Sockbuf_flush(sbuf) == -1) {
-	    return -1;
+	    return(-1);
 	}
 	if (sbuf->size - sbuf->len < len) {
-	    return 0;
+	    return(0);
 	}
     }
     memcpy(sbuf->buf + sbuf->len, buf, len);
@@ -332,13 +332,13 @@ int Sockbuf_read(sockbuf_t *sbuf)
 	errno = 0;
 	/* for client-side only (RETRY_LOGIN) */
 	/* catch an already destroyed connection - don't call quit() *again*, just go back peacefully; part 1/2 */
-	if (is_client_side && rl_connection_destroyed) return -1;
+	if (is_client_side && rl_connection_destroyed) return(-1);
 
 	plog(format("No read from non-readable socket buffer (%d)", sbuf->state));
-	return -1;
+	return(-1);
     }
     if (BIT(sbuf->state, SOCKBUF_LOCK) != 0) {
-	return 0;
+	return(0);
     }
     if (sbuf->ptr > sbuf->buf) {
 	Sockbuf_advance(sbuf, sbuf->ptr - sbuf->buf);
@@ -350,7 +350,7 @@ int Sockbuf_read(sockbuf_t *sbuf)
 	    plog(format("Read socket buffer not big enough (%d,%d)",
 		  sbuf->size, sbuf->len));
 	}
-	return -1;
+	return(-1);
     }
     if (BIT(sbuf->state, SOCKBUF_DGRAM) != 0) {
 	errno = 0;
@@ -362,7 +362,7 @@ int Sockbuf_read(sockbuf_t *sbuf)
 #endif
 	while ((len = DgramRead(sbuf->sock, sbuf->buf + sbuf->len, max)) <= 0) {
 	    if (len == 0) {
-		return 0;
+		return(0);
 	    }
 	    if (errno == EINTR) {
 		errno = 0;
@@ -370,17 +370,17 @@ int Sockbuf_read(sockbuf_t *sbuf)
 	    }
 	    if (errno == EWOULDBLOCK
 		|| errno == EAGAIN) {
-		return 0;
+		return(0);
 	    }
 #if 0
 	    if (errno == ECONNREFUSED) {
 		plog("Receive refused");
-		return -1;
+		return(-1);
 	    }
 #endif
 	    if (++i > MAX_SOCKBUF_RETRIES) {
 		plog("Can't recv on socket");
-		return -1;
+		return(-1);
 	    }
 	    { static int recv_err;
 		if ((recv_err++ & 0x3F) == 0) {
@@ -389,7 +389,7 @@ int Sockbuf_read(sockbuf_t *sbuf)
 	    }
 	    if (GetSocketError(sbuf->sock) == -1) {
 		plog("GetSocketError recv");
-		return -1;
+		return(-1);
 	    }
 	    errno = 0;
 	}
@@ -398,7 +398,7 @@ int Sockbuf_read(sockbuf_t *sbuf)
 	errno = 0;
 	while ((len = DgramRead(sbuf->sock, sbuf->buf + sbuf->len, max)) <= 0) {
 	    if (len == 0) {
-		return 0;
+		return(0);
 	    }
 	    if (errno == EINTR) {
 		errno = 0;
@@ -407,9 +407,9 @@ int Sockbuf_read(sockbuf_t *sbuf)
 	    if (errno != EWOULDBLOCK
 		&& errno != EAGAIN) {
 		plog("Can't read on socket");
-		return -1;
+		return(-1);
 	    }
-	    return 0;
+	    return(0);
 	}
 	sbuf->len += len;
     }
@@ -422,12 +422,12 @@ int Sockbuf_copy(sockbuf_t *dest, sockbuf_t *src, int len)
     if (len < dest->size - dest->len) {
 	errno = 0;
 	plog("Not enough room in destination copy socket buffer");
-	return -1;
+	return(-1);
     }
     if (len < src->len) {
 	errno = 0;
 	plog("Not enough data in source copy socket buffer");
-	return -1;
+	return(-1);
     }
     memcpy(dest->buf + dest->len, src->buf, len);
     dest->len += len;

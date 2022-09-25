@@ -69,11 +69,11 @@ int usleep(huge microSeconds) {
 	/* Wait for it */
 	if (select(nfds, no_fds, no_fds, no_fds, &Timer) < 0) {
 		/* Hack -- ignore interrupts */
-		if (errno != EINTR) return -1;
+		if (errno != EINTR) return(-1);
 	}
 
 	/* Success */
-	return 0;
+	return(0);
 }
 # endif /* HAS_USLEEP */
 #endif /* SET_UID */
@@ -1638,7 +1638,7 @@ int page(void) {
 #ifdef USE_SOUND_2010
 #ifdef SOUND_SDL
 	/* Try to beep via page sfx of the SDL audio system first */
-	if (c_cfg.audio_paging && sound_page()) return 1;
+	if (c_cfg.audio_paging && sound_page()) return(1);
 #endif
 #endif
 
@@ -1647,15 +1647,15 @@ int page(void) {
 	if (!c_cfg.quiet_os) Term_xtra(TERM_XTRA_NOISE, 0);
 	//flush();
 
-	return 1;
+	return(1);
 }
 /* Generate a warning sfx (beep) or if it's missing then a page sfx */
 int warning_page(void) {
 #ifdef USE_SOUND_2010
 #ifdef SOUND_SDL
 	/* Try to beep via warning sfx of the SDL audio system first */
-	if (sound_warning()) return 1;
-	//if (c_cfg.audio_paging && sound_page()) return 1;
+	if (sound_warning()) return(1);
+	//if (c_cfg.audio_paging && sound_page()) return(1);
 #endif
 #endif
 
@@ -1664,7 +1664,7 @@ int warning_page(void) {
 	if (!c_cfg.quiet_os) Term_xtra(TERM_XTRA_NOISE, 0);
 	//flush();
 
-	return 1;
+	return(1);
 }
 
 
@@ -3373,7 +3373,7 @@ s32b message_num(void) {
 #ifdef RETRY_LOGIN
 	/* Don't prompt to 'save chat messages?' when quitting the game from within the character screen,
 	   if we have previousl been in-game and therefore messages have had been added. */
-	if (!in_game) return 0;
+	if (!in_game) return(0);
 #endif
 
 	/* Extract the indexes */
@@ -8603,17 +8603,17 @@ static int font_name_cmp(const void *a, const void *b) {
 
 	fwid1 = atoi(a);
 	fmatch = my_strcasestr(a, "x");
-	if (!fmatch) return -1;  //paranoia - anyway, push 'broken' fonts towards the end of the list, just in case..
+	if (!fmatch) return(-1);  //paranoia - anyway, push 'broken' fonts towards the end of the list, just in case..
 	fhgt1 = atoi(fmatch + 1);
 
 	fwid2 = atoi(b);
 	fmatch = my_strcasestr(b, "x");
-	if (!fmatch) return -1;  //paranoia - anyway, push 'broken' fonts towards the end of the list, just in case..
+	if (!fmatch) return(-1);  //paranoia - anyway, push 'broken' fonts towards the end of the list, just in case..
 	fhgt2 = atoi(fmatch + 1);
 
 	if (fwid1 != fwid2) return(fwid1 > fwid2) ? 1 : -1;
 	else if (fhgt1 != fhgt2) return(fhgt1 > fhgt2) ? 1 : -1;
-	else return 0;
+	else return(0);
    #endif
 }
 //  #endif
