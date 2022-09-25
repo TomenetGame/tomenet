@@ -1413,7 +1413,7 @@ cptr my_strcasestr(cptr haystack, cptr needle)
 		i++;
 	}
 
-	return NULL;
+	return(NULL);
 }
 #endif
 

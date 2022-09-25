@@ -338,7 +338,7 @@ static cave_type **quest_prepare_zcave(struct worldpos *wpos, bool stat, cptr tp
 			   - except if we're planning exactly this */
 			if (wpos->wz && !dungeon) {
 				s_printf("QUEST_PREPARE_ZCAVE: Already allocated for mapfile.\n");
-				return NULL;
+				return(NULL);
 			}
 
 			/* clear the floor and recreate it */
@@ -5590,7 +5590,7 @@ qi_stage *init_quest_stage(int q_idx, int num) {
 #if QDEBUG > 1
 		s_printf("QUESTS: referred to stage -1.\n");
 #endif
-		return NULL;
+		return(NULL);
 	}
 
 	/* we already have this existing one */

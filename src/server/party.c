@@ -4231,7 +4231,7 @@ hash_entry *lookup_player(int id) {
 	}
 
 	/* Not found */
-	return NULL;
+	return(NULL);
 }
 
 
@@ -4351,7 +4351,7 @@ cptr lookup_player_name(int id) {
 		return ptr->name;
 
 	/* Not found */
-	return NULL;
+	return(NULL);
 }
 
 /*

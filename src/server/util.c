@@ -3906,8 +3906,8 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 	char bufl[MSG_LEN], bufs[NAME_LEN], *best = NULL;
 	int i, j, add;
 
-	if (line[0] == '\0') return(char*)NULL;
-	if (word[0] == '\0') return(char*)NULL;//or line, I guess.
+	if (line[0] == '\0') return((char*)NULL);
+	if (word[0] == '\0') return((char*)NULL);//or line, I guess.
 
 	strcpy(bufl, line);
 	strcpy(bufs, word);
@@ -3966,7 +3966,7 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
  #ifndef GET_MOST_DELAYED_MATCH
 				return(char*)NULL; /* NOT FOUND */
  #else
-				return best;
+				return(best);
  #endif
 
 			/* reduce duplicate chars */
@@ -3979,9 +3979,9 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 		i++;
 	}
  #ifndef GET_MOST_DELAYED_MATCH
-	return(char*)NULL; /* NOT FOUND */
+	return((char*)NULL); /* NOT FOUND */
  #else
-	return best;
+	return(best);
  #endif
 }
 
@@ -6944,7 +6944,7 @@ cptr compat_pmode(int Ind1, int Ind2, bool strict) {
 	if (!strict &&
 	    in_irondeepdive(&p1_ptr->wpos) &&
 	    in_irondeepdive(&p2_ptr->wpos))
-		return NULL;
+		return(NULL);
 #endif
 
 	if (p1_ptr->mode & MODE_PVP) {
@@ -6960,7 +6960,7 @@ cptr compat_pmode(int Ind1, int Ind2, bool strict) {
 	} else if (p2_ptr->mode & MODE_EVERLASTING) {
 		return "everlasting";
 	}
-	return NULL; /* means "is compatible" */
+	return(NULL); /* means "is compatible" */
 }
 
 /* compare object and player mode compatibility - C. Blue
@@ -6973,16 +6973,16 @@ cptr compat_pomode(int Ind, object_type *o_ptr) {
 	/* EXPERIMENTAL */
 	if (in_irondeepdive(&p_ptr->wpos) &&
 	    in_irondeepdive(&o_ptr->wpos))
-		return NULL;
+		return(NULL);
 #endif
 
 #ifdef ALLOW_NR_CROSS_ITEMS
 	if (o_ptr->NR_tradable &&
 	    in_netherrealm(&p_ptr->wpos))
-		return NULL;
+		return(NULL);
 #endif
 
-	if (!o_ptr->owner || is_admin(p_ptr)) return NULL; /* always compatible */
+	if (!o_ptr->owner || is_admin(p_ptr)) return(NULL); /* always compatible */
 	if (p_ptr->mode & MODE_PVP) {
 		if (!(o_ptr->mode & MODE_PVP)) {
 			if (o_ptr->mode & MODE_EVERLASTING) {
@@ -7004,7 +7004,7 @@ cptr compat_pomode(int Ind, object_type *o_ptr) {
 	} else if (o_ptr->mode & MODE_EVERLASTING) {
 		return "everlasting";
 	}
-	return NULL; /* means "is compatible" */
+	return(NULL); /* means "is compatible" */
 }
 
 /* compare two objects' mode compatibility for stacking/absorbing - C. Blue
@@ -7014,12 +7014,12 @@ cptr compat_omode(object_type *o1_ptr, object_type *o2_ptr) {
 	/* EXPERIMENTAL */
 	if ((in_irondeepdive(&o1_ptr->wpos)) &&
 	    in_irondeepdive(&o2_ptr->wpos))
-		return NULL;
+		return(NULL);
 #endif
 
 	/* ownership given for both items? */
 	if (!o1_ptr->owner) {
-		if (!o2_ptr->owner) return NULL; /* always compatible */
+		if (!o2_ptr->owner) return(NULL); /* always compatible */
 		else return "owned";
 	} else if (!o2_ptr->owner) return "owned";
 
@@ -7037,7 +7037,7 @@ cptr compat_omode(object_type *o1_ptr, object_type *o2_ptr) {
 	} else if (o2_ptr->mode & MODE_EVERLASTING) {
 		return "everlasting";
 	}
-	return NULL; /* means "is compatible" */
+	return(NULL); /* means "is compatible" */
 }
 
 /* compare mode compatibility (eg player/player for merchants guild post, player/party, player/guild member) - C. Blue
@@ -7057,7 +7057,7 @@ cptr compat_mode(byte mode1, byte mode2) {
 	} else if (mode2 & MODE_EVERLASTING) {
 		return "everlasting";
 	}
-	return NULL; /* means "is compatible" */
+	return(NULL); /* means "is compatible" */
 }
 
 /* cut out pseudo-id inscriptions from a string (a note ie inscription usually),

@@ -4883,7 +4883,7 @@ bool multiply_monster(int m_idx) {
 	if (istown(wpos)) return(FALSE);
 
 	/* Don't keep cloning forever */
-	if (m_ptr->clone > 90) return(FALSE) ;
+	if (m_ptr->clone > 90) return(FALSE);
 
 	/* No uniques or special event monsters */
 	if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags8 & RF8_PSEUDO_UNIQUE)

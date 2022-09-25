@@ -14873,7 +14873,7 @@ static vault_type *get_vault(char *name) {
 			return &v_info[i];
 	}
 
-	return NULL;
+	return(NULL);
 }
 
 /* Generate something */
@@ -14992,14 +14992,14 @@ esp_link_type *check_esp_link(ind Ind, int Ind2) {
 
 	p_ptr = Players[Ind];
 	p2_ptr = Players[Ind2];
-	if (!p2_ptr) return NULL;
+	if (!p2_ptr) return(NULL);
 
 	esp_ptr = p_ptr->esp_link;
 	while (esp_ptr) {
 		if (esp_ptr->id == p2_ptr->id) return esp_ptr;
 		esp_ptr = esp_ptr->next;
 	}
-	return NULL;
+	return(NULL);
 }
 
 bool check_esp_link_type(int Ind, int Ind2, u16b flags) {

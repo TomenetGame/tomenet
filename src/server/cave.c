@@ -55,10 +55,10 @@ struct dungeon_type *getdungeon(struct worldpos *wpos) {
 	struct wilderness_type *wild;
 
 	wild = &wild_info[wpos->wy][wpos->wx];
-	if (wpos->wz == 0) return NULL;
+	if (wpos->wz == 0) return(NULL);
 	else {
-		if ((wpos->wz > 0) && !wild->tower) return NULL;
-		if ((wpos->wz < 0) && !wild->dungeon) return NULL;
+		if ((wpos->wz > 0) && !wild->tower) return(NULL);
+		if ((wpos->wz < 0) && !wild->dungeon) return(NULL);
 		return(wpos->wz > 0 ? wild->tower : wild->dungeon);
 	}
 }
@@ -73,10 +73,10 @@ struct dun_level *getfloor(struct worldpos *wpos) {
 		return(NULL);
 	} else {
 		if (wpos->wz > 0) {
-			if (!wild->tower) return NULL; /* <- for wpos_old check in process_player_change_wpos() after highlander dungeon removal! */
+			if (!wild->tower) return(NULL); /* <- for wpos_old check in process_player_change_wpos() after highlander dungeon removal! */
 			return(&wild->tower->level[wpos->wz - 1]);
 		} else {
-			if (!wild->dungeon) return NULL; /* <- for wpos_old check in process_player_change_wpos() after highlander dungeon removal! */
+			if (!wild->dungeon) return(NULL); /* <- for wpos_old check in process_player_change_wpos() after highlander dungeon removal! */
 			return(&wild->dungeon->level[ABS(wpos->wz) - 1]);
 		}
 	}

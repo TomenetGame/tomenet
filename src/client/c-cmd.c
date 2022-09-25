@@ -2005,7 +2005,7 @@ static char *fgets_inverse(char *buf, int max, FILE *f) {
 	while ((c = fgetc(f)) != '\n') {
 		res = fseek(f, -2, SEEK_CUR);
 		/* Did we hit the beginning of the file? Emulate 'EOF' aka return 'NULL' */
-		if (res == -1) return NULL;
+		if (res == -1) return(NULL);
 	}
 	/* We're now on the beginning of the line we want to read */
 	pos = ftell(f);
@@ -7593,7 +7593,7 @@ static char * cmd_master_aux_summon_orcs(void) {
 	}
 
 	/* escape was pressed, no valid orcs types specified */
-	return NULL;
+	return(NULL);
 }
 
 static char * cmd_master_aux_summon_undead_low(void) {
@@ -7665,7 +7665,7 @@ static char * cmd_master_aux_summon_undead_low(void) {
 	}
 
 	/* escape was pressed, no valid types specified */
-	return NULL;
+	return(NULL);
 }
 
 
@@ -7742,7 +7742,7 @@ static char * cmd_master_aux_summon_undead_high(void) {
 	}
 
 	/* escape was pressed, no valid orcs types specified */
-	return NULL;
+	return(NULL);
 }
 
 

@@ -365,10 +365,10 @@ char *my_strcasestr(const char *big, const char *little) {
 	int L = strlen(little), l;
 
 	/* para stuff that is necessary */
-	if (big == NULL) return NULL; //cannot find anything in a place that doesn't exist
-	if (little == NULL) return NULL; //something that doesn't exist, cannot be found.. (was 'return big')
-	if (*little == 0) return (char*)big;
-	if (*big == 0) return NULL; //at least this one is required, was glitching in-game guide search! oops..
+	if (big == NULL) return(NULL); //cannot find anything in a place that doesn't exist
+	if (little == NULL) return(NULL); //something that doesn't exist, cannot be found.. (was 'return big')
+	if (*little == 0) return((char*)big);
+	if (*big == 0) return(NULL); //at least this one is required, was glitching in-game guide search! oops..
 
 	do {
 		cnt2 = 0;
@@ -382,10 +382,10 @@ char *my_strcasestr(const char *big, const char *little) {
 			cnt2++;
 		}
 
-		if (L == l) return (char*)ret;
+		if (L == l) return((char*)ret);
 		cnt++;
 	} while (big[cnt] != '\0');
-	return NULL;
+	return(NULL);
 }
 /* Same as my_strcasestr() but skips colour codes (added for guide search).
    strict:
@@ -403,10 +403,10 @@ char *my_strcasestr_skipcol(const char *big, const char *littlex, byte strict) {
 	char little[MSG_LEN];
 
 	/* para stuff that is necessary */
-	if (big == NULL) return NULL; //cannot find anything in a place that doesn't exist
-	if (littlex == NULL) return NULL; //something that doesn't exist, cannot be found.. (was 'return big')
-	if (*littlex == 0) return (char*)big;
-	if (*big == 0) return NULL; //at least this one is required, was glitching in-game guide search! oops..
+	if (big == NULL) return(NULL); //cannot find anything in a place that doesn't exist
+	if (littlex == NULL) return(NULL); //something that doesn't exist, cannot be found.. (was 'return big')
+	if (*littlex == 0) return((char*)big);
+	if (*big == 0) return(NULL); //at least this one is required, was glitching in-game guide search! oops..
 
 	strcpy(little, littlex);
 	/* Check for '$$' end-of-line marker */
@@ -422,11 +422,11 @@ char *my_strcasestr_skipcol(const char *big, const char *littlex, byte strict) {
 				cnt++;
 				if (big[cnt] != 0) cnt++; //paranoia: broken colour code
 			}
-			if (!big[cnt]) return NULL;
+			if (!big[cnt]) return(NULL);
 			if (big[cnt] != ' ') just_spaces = FALSE;
 
 			/* Should not start on a lower-case letter, so we know we're not just in the middle of some random text.. */
-			if (strict >= 2 && isalpha(big[cnt]) && big[cnt] == tolower(big[cnt])) return NULL;
+			if (strict >= 2 && isalpha(big[cnt]) && big[cnt] == tolower(big[cnt])) return(NULL);
 
 			cnt2 = cnt_offset = 0;
 			l = 0;
@@ -436,7 +436,7 @@ char *my_strcasestr_skipcol(const char *big, const char *littlex, byte strict) {
 					cnt_offset++;
 					if (big[cnt + cnt2 + cnt_offset] != 0) cnt_offset++; //paranoia: broken colour code
 				}
-				if (!big[cnt + cnt2 + cnt_offset]) return NULL;
+				if (!big[cnt + cnt2 + cnt_offset]) return(NULL);
 
 				if (strict >= 3) { /* Case-sensitive: Caps only (the needle is actually all-caps) */
 					if (big[cnt + cnt2 + cnt_offset] == little[cnt2]) l++;
@@ -454,16 +454,16 @@ char *my_strcasestr_skipcol(const char *big, const char *littlex, byte strict) {
 #if 1 /* Enable '$' force-end-of-line marker */
 				if (end_of_line && big[cnt + cnt2 + cnt_offset]) {
 					cnt++;
-					if (!big[cnt]) return NULL;
+					if (!big[cnt]) return(NULL);
 					continue;
 				}
 #endif
-				return (char*)ret;
+				return((char*)ret);
 			}
-			if (!just_spaces) return NULL; /* failure: not at the beginning of the line (tolerating colour codes) */
+			if (!just_spaces) return(NULL); /* failure: not at the beginning of the line (tolerating colour codes) */
 			cnt++;
 		} while (big[cnt] != '\0');
-		return NULL;
+		return(NULL);
 	} else {
 		do {
 			/* Skip colour codes */
@@ -491,7 +491,7 @@ char *my_strcasestr_skipcol(const char *big, const char *littlex, byte strict) {
 			if (L == l) return (char*)ret;
 			cnt++;
 		} while (big[cnt] != '\0');
-		return NULL;
+		return(NULL);
 	}
 }
 
@@ -506,9 +506,9 @@ char *roman_suffix(char* cname) {
 	bool maybe_prefix = FALSE;
 
 	/* Not long enough to contain roman number? */
-	if (strlen(cname) < 3) return NULL;
+	if (strlen(cname) < 3) return(NULL);
 	/* No separator between name and number? */
-	if (!strchr(cname, ' ')) return NULL;
+	if (!strchr(cname, ' ')) return(NULL);
 
 	/* Locate begin of the roman number */
 	p = cname + strlen(cname) - 1;
@@ -519,7 +519,7 @@ char *roman_suffix(char* cname) {
 	while (*(++p)) {
 		switch (*p) {
 		case 'I':
-			if (arabic % 5 >= 3) return NULL; //this digit may never occur more than 3 times in a row
+			if (arabic % 5 >= 3) return(NULL); //this digit may never occur more than 3 times in a row
 
 			if (maybe_prefix) arabic += rome_prev; //prefix was not a prefix but a normal digit ('I' cannot get a prefix)
 			if (arabic % 5 == 0) maybe_prefix = TRUE;
@@ -531,8 +531,8 @@ char *roman_suffix(char* cname) {
 			break;
 		case 'V':
 			if (rome_prev) {
-				if (rome_prev == 5) return NULL; //this specific digit is never allowed to repeat
-				if (rome_prev < 5 && !maybe_prefix) return NULL; //smaller digits before us are only allowed if they can be a subtractive prefix to us
+				if (rome_prev == 5) return(NULL); //this specific digit is never allowed to repeat
+				if (rome_prev < 5 && !maybe_prefix) return(NULL); //smaller digits before us are only allowed if they can be a subtractive prefix to us
 			}
 
 			if (maybe_prefix) { //was prefix a prefix or a normal digit?
@@ -544,9 +544,9 @@ char *roman_suffix(char* cname) {
 			rome_prev = 5;
 			break;
 		case 'X':
-			if (arabic % 50 >= 30) return NULL; //this digit may never occur more than 3 times in a row
+			if (arabic % 50 >= 30) return(NULL); //this digit may never occur more than 3 times in a row
 			if (rome_prev) {
-				if (rome_prev < 10 && !maybe_prefix) return NULL; //smaller digits before us are only allowed if they can be a subtractive prefix to us
+				if (rome_prev < 10 && !maybe_prefix) return(NULL); //smaller digits before us are only allowed if they can be a subtractive prefix to us
 			}
 
 			if (maybe_prefix) { //was prefix a prefix or a normal digit?
@@ -562,9 +562,9 @@ char *roman_suffix(char* cname) {
 			break;
 		case 'L':
 			if (rome_prev) {
-				if (rome_prev == 50) return NULL; //this specific digit is never allowed to repeat
-				if (rome_prev < 50 && !maybe_prefix) return NULL; //smaller digits before us are only allowed if they can be a subtractive prefix to us
-				if (rome_prev < 10) return NULL; //catch previous digits that can be prefix but are too small to work as prefix for the current digit
+				if (rome_prev == 50) return(NULL); //this specific digit is never allowed to repeat
+				if (rome_prev < 50 && !maybe_prefix) return(NULL); //smaller digits before us are only allowed if they can be a subtractive prefix to us
+				if (rome_prev < 10) return(NULL); //catch previous digits that can be prefix but are too small to work as prefix for the current digit
 			}
 
 			if (maybe_prefix) { //was prefix a prefix or a normal digit?
@@ -576,10 +576,10 @@ char *roman_suffix(char* cname) {
 			rome_prev = 50;
 			break;
 		case 'C':
-			if (arabic % 500 >= 300) return NULL; //this digit may never occur more than 3 times in a row
+			if (arabic % 500 >= 300) return(NULL); //this digit may never occur more than 3 times in a row
 			if (rome_prev) {
-				if (rome_prev < 100 && !maybe_prefix) return NULL; //smaller digits before us are only allowed if they can be a subtractive prefix to us
-				if (rome_prev < 10) return NULL; //catch previous digits that can be prefix but are too small to work as prefix for the current digit
+				if (rome_prev < 100 && !maybe_prefix) return(NULL); //smaller digits before us are only allowed if they can be a subtractive prefix to us
+				if (rome_prev < 10) return(NULL); //catch previous digits that can be prefix but are too small to work as prefix for the current digit
 			}
 
 			if (maybe_prefix) { //was prefix a prefix or a normal digit?
@@ -595,9 +595,9 @@ char *roman_suffix(char* cname) {
 			break;
 		case 'D':
 			if (rome_prev) {
-				if (rome_prev == 500) return NULL; //this specific digit is never allowed to repeat
-				if (rome_prev < 500 && !maybe_prefix) return NULL; //smaller digits before us are only allowed if they can be a subtractive prefix to us
-				if (rome_prev < 100) return NULL; //catch previous digits that can be prefix but are too small to work as prefix for the current digit
+				if (rome_prev == 500) return(NULL); //this specific digit is never allowed to repeat
+				if (rome_prev < 500 && !maybe_prefix) return(NULL); //smaller digits before us are only allowed if they can be a subtractive prefix to us
+				if (rome_prev < 100) return(NULL); //catch previous digits that can be prefix but are too small to work as prefix for the current digit
 			}
 
 			if (maybe_prefix) { //was prefix a prefix or a normal digit?
@@ -611,8 +611,8 @@ char *roman_suffix(char* cname) {
 		case 'M':
 			// (no limit for amount of Ms occurring in a row..)
 			if (rome_prev) {
-				if (rome_prev < 1000 && !maybe_prefix) return NULL; //smaller digits before us are only allowed if they can be a subtractive prefix to us
-				if (rome_prev < 100) return NULL; //catch previous digits that can be prefix but are too small to work as prefix for the current digit
+				if (rome_prev < 1000 && !maybe_prefix) return(NULL); //smaller digits before us are only allowed if they can be a subtractive prefix to us
+				if (rome_prev < 100) return(NULL); //catch previous digits that can be prefix but are too small to work as prefix for the current digit
 			}
 
 			if (maybe_prefix) { //was prefix a prefix or a normal digit?
@@ -625,7 +625,7 @@ char *roman_suffix(char* cname) {
 			break;
 		default:
 			/* Other letters do not belong into roman numbers */
-			return NULL;
+			return(NULL);
 		}
 	}
 
@@ -781,14 +781,14 @@ struct u32b_char_dict_t *u32b_char_dict_set(struct u32b_char_dict_t *start, uint
 
 /* Returns not NULL pointer to char that is found uder key, NULL if not found. */
 char *u32b_char_dict_get(struct u32b_char_dict_t *start, uint32_t key) {
-	if (start == NULL) return NULL;
+	if (start == NULL) return(NULL);
 
 	for (struct u32b_char_dict_t *cur=start;cur!=NULL;cur=cur->next) {
 		if (key == cur->key) {
 			return &cur->value;
 		}
 	}
-	return NULL;
+	return(NULL);
 }
 
 /* Removes key, value pair from dictionary found under key. */
@@ -823,7 +823,7 @@ struct u32b_char_dict_t *u32b_char_dict_free(struct u32b_char_dict_t *start) {
 		free(start);
 		start=next;
 	}
-	return NULL;
+	return(NULL);
 }
 
 /* Validates provided screen dimensions. If the input dimensions are invalid, they will be changed to valid dimensions.

@@ -3679,7 +3679,7 @@ cptr item_activation(object_type *o_ptr) {
 #endif
 
 	/* Oops */
-	return NULL;
+	return(NULL);
 }
 
 

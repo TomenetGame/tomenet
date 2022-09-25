@@ -8714,7 +8714,7 @@ static player_type *get_melee_target(monster_race *r_ptr, monster_type *m_ptr, c
 	player_type *pd_ptr = p_idx_target ? Players[p_idx_target] : NULL;
 	cave_type **zcave = getcave(&m_ptr->wpos);
 
-	if ((!p_idx_target && c_ptr) || !zcave) return NULL; //paranoia x 2
+	if ((!p_idx_target && c_ptr) || !zcave) return(NULL); //paranoia x 2
 
 #ifdef C_BLUE_AI_MELEE /* if multiple targets adjacent, choose between them */
 	if (!m_ptr->confused) {
@@ -9000,7 +9000,7 @@ static player_type *get_melee_target(monster_race *r_ptr, monster_type *m_ptr, c
 	    || TELEPORT_SURPRISED(pd_ptr, r_ptr)
  #endif
 	    )
-		return NULL;
+		return(NULL);
 
 	return(p_idx_target ? Players[p_idx_target] : NULL);
 }

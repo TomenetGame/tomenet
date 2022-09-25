@@ -2756,7 +2756,7 @@ bool monk_heavy_armor(int Ind) {
 	monk_arm_wgt += p_ptr->inventory[INVEN_FEET].weight;
   #endif	// 0
 
-//	return(monk_arm_wgt > ( 100 + (p_ptr->lev * 4))) ;
+//	return(monk_arm_wgt > ( 100 + (p_ptr->lev * 4)));
 	return(monk_arm_wgt > 50 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 200));
  #endif
 }
