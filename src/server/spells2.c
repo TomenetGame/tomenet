@@ -7416,21 +7416,27 @@ bool fire_shot(int Ind, int typ, int dir, int dx, int dy, int rad, int num, char
 		}
 
 		/* Fire the bolts, skip dead targets */
-		d = 0;
-		for (i = 0; i < num+d; i++) {
-			j = (i % g);
-			p_ptr->target_col = x = gx[j];
-			p_ptr->target_row = y = gy[j];
-			c_ptr = &zcave[y][x];
-			if (c_ptr->m_idx == 0) {
-				if (++d > g) break;
-				else continue;
+		if (g) { //fix div/0, ask Kurzel about details regarding target_who/col/row settings, for now just adding this 'else' branch here to mitigate.
+			d = 0;
+			for (i = 0; i < num+d; i++) {
+				j = (i % g);
+				p_ptr->target_col = x = gx[j];
+				p_ptr->target_row = y = gy[j];
+				c_ptr = &zcave[y][x];
+				if (c_ptr->m_idx == 0) {
+					if (++d > g) break;
+					else continue;
+				}
+				if (fire_bolt(Ind, typ, dir, damroll(dx,dy), attacker)) obvious = TRUE;
 			}
-			if (fire_bolt(Ind, typ, dir, damroll(dx,dy), attacker)) obvious = TRUE;
+			p_ptr->target_who = tw;
+			p_ptr->target_col = gx[0];
+			p_ptr->target_row = gy[0];
+		} else {
+			p_ptr->target_who = tw;
+			p_ptr->target_col = x2;
+			p_ptr->target_row = y2;
 		}
-		p_ptr->target_who = tw;
-		p_ptr->target_col = gx[0];
-		p_ptr->target_row = gy[0];
 	} else {
 		for (i = 0; i < num; i++) {
 			if (fire_bolt(Ind, typ, dir, damroll(dx,dy), attacker)) obvious = TRUE;
