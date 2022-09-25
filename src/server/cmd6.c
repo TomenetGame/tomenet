@@ -1318,8 +1318,15 @@ void do_cmd_quaff_potion(int Ind, int item) {
 		o_ptr->iron_trade = p_ptr->iron_trade;
 		o_ptr->iron_turn = turn;
 		/* If we have no space, drop it to the ground instead of overflowing inventory */
-		if (inven_carry_okay(Ind, o_ptr, 0x0)) item = inven_carry(Ind, o_ptr);
-		else drop_near(0, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+		if (inven_carry_okay(Ind, o_ptr, 0x0)) {
+			item = inven_carry(Ind, o_ptr);
+			if (!p_ptr->warning_limitbottles && p_ptr->inventory[item].number > 25) {
+				msg_print(Ind, "\374\377yHINT: You can inscribe your stack of empty bottles \377o!Mn\377y to limit their amount");
+				msg_print(Ind, "\374\377y      to at most n, eg \"!M20\". Useful if the bottles start weighing you down.");
+				s_printf("warning_limitbottles: %s\n", p_ptr->name);
+				p_ptr->warning_limitbottles = 1;
+			}
+		} else drop_near(0, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 		//if (item >= 0) inven_item_describe(Ind, item);
 	}
 }
