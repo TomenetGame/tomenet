@@ -5311,26 +5311,27 @@ static bool item_tester_hook_activate(int Ind, object_type *o_ptr) {
 /*
  * Hack -- activate the ring of power
  */
-#define ROP_DEC 20
+#define ROP_DEC 10
 static void ring_of_power(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Pick a random effect */
+	//switch (randint(10) + (magick(50) ? 0 : get_skill_scale_fine(p_ptr, SKILL_DEVICE, 1))) { --hmm nah, forces magic device skill to use the ring, no good for a specialty such as this one
 	switch (randint(10)) {
 	case 1:
 		/* Message */
 		msg_print(Ind, "You are surrounded by a *malignant* aura.");
 
 		/* Decrease all stats (permanently) */
-		(void)dec_stat(Ind, A_STR, ROP_DEC, STAT_DEC_NORMAL);
-		(void)dec_stat(Ind, A_INT, ROP_DEC, STAT_DEC_NORMAL);
-		(void)dec_stat(Ind, A_WIS, ROP_DEC, STAT_DEC_NORMAL);
-		(void)dec_stat(Ind, A_DEX, ROP_DEC, STAT_DEC_NORMAL);
-		(void)dec_stat(Ind, A_CON, ROP_DEC, STAT_DEC_NORMAL);
-		(void)dec_stat(Ind, A_CHR, ROP_DEC, STAT_DEC_NORMAL);
+		if (p_ptr->sustain_str && rand_int(190) > p_ptr->skill_sav) (void)dec_stat(Ind, A_STR, ROP_DEC, STAT_DEC_NORMAL);
+		if (p_ptr->sustain_int && rand_int(190) > p_ptr->skill_sav) (void)dec_stat(Ind, A_INT, ROP_DEC, STAT_DEC_NORMAL);
+		if (p_ptr->sustain_wis && rand_int(190) > p_ptr->skill_sav) (void)dec_stat(Ind, A_WIS, ROP_DEC, STAT_DEC_NORMAL);
+		if (p_ptr->sustain_dex && rand_int(190) > p_ptr->skill_sav) (void)dec_stat(Ind, A_DEX, ROP_DEC, STAT_DEC_NORMAL);
+		if (p_ptr->sustain_con && rand_int(190) > p_ptr->skill_sav) (void)dec_stat(Ind, A_CON, ROP_DEC, STAT_DEC_NORMAL);
+		if (p_ptr->sustain_chr && rand_int(190) > p_ptr->skill_sav) (void)dec_stat(Ind, A_CHR, ROP_DEC, STAT_DEC_NORMAL);
 
 		/* Lose some experience (permanently) */
-		take_xp_hit(Ind, p_ptr->exp / 50, "Ring of Power", TRUE, FALSE, TRUE, 0);
+		take_xp_hit(Ind, p_ptr->exp / 100, "Ring of Power", TRUE, FALSE, TRUE, 0);
 		break;
 
 	case 2:
@@ -5345,15 +5346,13 @@ static void ring_of_power(int Ind, int dir) {
 	case 4:
 		/* Mana Ball */
 		sprintf(p_ptr->attacker, " invokes a mana storm for");
-		fire_ball(Ind, GF_MANA, dir, 2000, 3, p_ptr->attacker);
+		fire_ball(Ind, GF_MANA, dir, 3000, 3, p_ptr->attacker);
 		break;
 
-	case 5:
-	case 6:
-	case 7:
+	default:
 		/* Mana Bolt */
 		sprintf(p_ptr->attacker, " fires a mana bolt for");
-		fire_bolt(Ind, GF_MANA, dir, 1500, p_ptr->attacker);
+		fire_bolt(Ind, GF_MANA, dir, 2000, p_ptr->attacker);
 		break;
 	}
 }
@@ -7265,7 +7264,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			break;
 		case ART_POWER:
 			ring_of_power(Ind, dir);
-			o_ptr->recharging = rand_int(450) + 450;
+			o_ptr->recharging = rand_int(450) + 450;// - get_skill_scale(p_ptr, SKILL_DEVICE, 225);
 			break;
 		case ART_MEDIATOR:
 			msg_print(Ind, "You breathe the elements.");

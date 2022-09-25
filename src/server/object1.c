@@ -3406,6 +3406,7 @@ cptr item_activation(object_type *o_ptr) {
 		return "greater healing (900) every 200+d200 turns";
 #endif
 	case ART_POWER:
+		//return "powerful things every 225..450+d450 turns";
 		return "powerful things every 450+d450 turns";
 	case ART_STONE_LORE:
 		return "perilous identify every 4..10 turns (drains 20 mp)";
