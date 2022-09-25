@@ -3799,13 +3799,13 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 
 	/* Actually hit the monster */
 	if (typ) {
-		(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, flg, "");
+		(void)project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, flg, "");
 		/* Hack for Havoc: It consists of ball+cloud */
 		if (typ == GF_HAVOC) {
 			project_time = 4;
 			project_interval = 10;
 			flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO;
-			(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam / 8, typ, flg, "");
+			(void)project(0 - who, rad, &m_ptr->wpos, y, x, dam / 8, typ, flg, "");
 		}
 	}
 
@@ -3997,7 +3997,7 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 #endif
 
 	/* Actually hit the monster */
-	(void) project(0 - who, rad, &wpos, y, x, dam, typ, flg, "");
+	(void)project(0 - who, rad, &wpos, y, x, dam, typ, flg, "");
 	return(zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
@@ -4221,7 +4221,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 	}
 
 	/* Actually hit the monster */
-	(void) project(0 - who, rad, &wpos, y, x, dam, typ, flg, "");
+	(void)project(0 - who, rad, &wpos, y, x, dam, typ, flg, "");
 	return(zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
@@ -4449,7 +4449,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 #endif
 
 	/* Actually hit the monster */
-	(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, flg, "");
+	(void)project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, flg, "");
 	return(zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
@@ -4735,8 +4735,8 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 #endif
 
 	/* Actually hit the monster */
-	//(void) project_m(who, y, x, 0, y, x, dam, typ);
-	(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, flg, "");
+	//(void)project_m(who, y, x, 0, y, x, dam, typ);
+	(void)project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, flg, "");
 	return(zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
@@ -4771,7 +4771,7 @@ static bool mon_hit_trap_aux_rune(int who, int m_idx, object_type *o_ptr) {
 #endif
 
 	/* Actually hit the monster */
-	(void) project(0 - who, rad, &wpos, y, x, dam, typ, flg, "");
+	(void)project(0 - who, rad, &wpos, y, x, dam, typ, flg, "");
 	return(zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 

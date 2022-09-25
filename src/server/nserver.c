@@ -653,7 +653,7 @@ int Setup_net_server(void) {
 	//(void)system("uname -a"); /* doesn't work on WINE */
 	size = system("cmd /c ver"); /* safer to work everywhere? even works on WINE at least */
 #endif
-	(void) size;
+	(void)size;
 
 	//s_printf("%s\n", longVersion);
 	s_printf("Server is running version %04x\n", MY_VERSION);

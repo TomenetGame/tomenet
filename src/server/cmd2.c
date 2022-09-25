@@ -8577,7 +8577,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 #endif	// 0
 				}
 			}
-			else if (k_info[o_ptr->k_idx].tval == TV_FLASK) (void) potion_smash_effect(0 - Ind, wpos, y, x, o_ptr->sval + 200);
+			else if (k_info[o_ptr->k_idx].tval == TV_FLASK) (void)potion_smash_effect(0 - Ind, wpos, y, x, o_ptr->sval + 200);
 
 			return;
 		} else j = 0;

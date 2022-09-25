@@ -702,7 +702,7 @@ static bool inn_comm(int Ind, int cmd) {
 				if (p_ptr->prace == RACE_ENT) msg_print(Ind, "The barkeep gives you a bowl of water.");
 				else msg_print(Ind, "The barkeep gives you some gruel and a beer.");
 				// msg_print(Ind, NULL);
-				(void) set_food(Ind, PY_FOOD_MAX - 1);
+				(void)set_food(Ind, PY_FOOD_MAX - 1);
 #ifdef USE_SOUND_2010
 				sound(Ind, "store_food_and_drink", NULL, SFX_TYPE_MISC, FALSE);
 #endif

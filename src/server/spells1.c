@@ -392,7 +392,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 	/* doh! project halves the dam ?! */
 	if (dt != GF_CURING) dam *= 2;
 
-	(void) project(who, radius, wpos, y, x, dam, dt,
+	(void)project(who, radius, wpos, y, x, dam, dt,
 	    flg, "");
 
 	if (ident && who < 0 && who > PROJECTOR_UNUSUAL) {
@@ -3357,7 +3357,7 @@ int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	if (safe_area(Ind)) breakable = FALSE;
 
 	if ((!(p_ptr->oppose_acid || p_ptr->resist_acid)) && randint(HURT_CHANCE) == 1 && breakable)
-		(void) do_dec_stat(Ind, A_CHR, DAM_STAT_TYPE(inv));
+		(void)do_dec_stat(Ind, A_CHR, DAM_STAT_TYPE(inv));
 
 	/* If any armor gets hit, defend the player */
 	/* let's tone it down a bit; since immunity completely protects all eq,
@@ -3405,7 +3405,7 @@ int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	if (safe_area(Ind)) breakable = FALSE;
 
 	if ((!(p_ptr->oppose_elec || p_ptr->resist_elec)) && randint(HURT_CHANCE) == 1 && breakable)
-		(void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE(inv));
+		(void)do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE(inv));
 
 	/* Take damage */
 	//take_hit(Ind, dam, kb_str, Ind_attacker);
@@ -3449,7 +3449,7 @@ int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	if (safe_area(Ind)) breakable = FALSE;
 
 	if ((!(p_ptr->oppose_fire || p_ptr->resist_fire)) && randint(HURT_CHANCE) == 1 && breakable)
-		(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE(inv));
+		(void)do_dec_stat(Ind, A_STR, DAM_STAT_TYPE(inv));
 
 	if (magik(hurt_eq) && breakable) {
 		/* This check is currently only needed for fire damage (lava) as there are no other terrain tiles to inflict item damage (just nether) */
@@ -3518,7 +3518,7 @@ int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	if (safe_area(Ind)) breakable = FALSE;
 
 	if ((!(p_ptr->oppose_cold || p_ptr->resist_cold)) && randint(HURT_CHANCE) == 1 && breakable)
-		(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE(inv));
+		(void)do_dec_stat(Ind, A_STR, DAM_STAT_TYPE(inv));
 
 	/* Take damage */
 //	take_hit(Ind, dam, kb_str, Ind_attacker);
@@ -10064,15 +10064,15 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Reduce stats */
 			if (!ignore_fire && !ignore_elec) {
 				if (randint(HURT_CHANCE) == 1) {
-					if (rand_int(3)) (void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-					else (void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+					if (rand_int(3)) (void)do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+					else (void)do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
 				}
 			} else if (ignore_elec) {
 				if (randint(HURT_CHANCE) == 1)
-					(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+					(void)do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
 			} else if (ignore_fire) {
 				if (randint(HURT_CHANCE) == 1)
-					(void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+					(void)do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
 			}
 
 			/* Don't kill inventory in bloodbond... */

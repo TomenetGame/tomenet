@@ -4177,7 +4177,7 @@ void store_confirm(int Ind) {
 		sold_obj.pval = o_ptr->pval * amt / o_ptr->number;
 	}
 
-	(void) sell_haggle(Ind, &sold_obj, &price_redundance, TRUE);
+	(void)sell_haggle(Ind, &sold_obj, &price_redundance, TRUE);
 	if (price != price_redundance && !museum) {
 		s_printf("$INTRUSION$ Tried to sell %d for %d! Sold by %s.\n", (int)price_redundance, (int)price, p_ptr->name);
 #if 0

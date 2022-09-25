@@ -2104,7 +2104,7 @@ static void sanity_blast(int Ind, int m_idx, bool necro) {
 		if (!p_ptr->resist_conf)
 			(void)set_confused(Ind, p_ptr->confused + rand_int(4) + 4);
 		if ((!p_ptr->resist_chaos) && (randint(3) == 1))
-			(void) set_image(Ind, p_ptr->image + rand_int(250) + 150);
+			(void)set_image(Ind, p_ptr->image + rand_int(250) + 150);
 		return;
 	}
 
@@ -2125,7 +2125,7 @@ static void sanity_blast(int Ind, int m_idx, bool necro) {
 		while (rand_int(100) > p_ptr->skill_sav && p_ptr->stat_cur[A_WIS] > 3)
 			(void)do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL);
 		if (!p_ptr->resist_chaos)
-			(void) set_image(Ind, p_ptr->image + rand_int(250) + 150);
+			(void)set_image(Ind, p_ptr->image + rand_int(250) + 150);
 		return;
 	}
 
@@ -5869,8 +5869,6 @@ void set_mon_num_hook(struct worldpos *wpos) {
 
 void py2mon_init(void) {
 	monster_race *r_ptr = &r_info[RI_MIRROR];
-
-
 
 	/* Hack: Reset stats to maintenance parameters hard-coded in r_info, in case this is not the first time spawn */
 	r_ptr->flags1 = RF1_FORCE_MAXHP | RF1_DROP_CHOSEN; //no effect actually as we set HP manually
