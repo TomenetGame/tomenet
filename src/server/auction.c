@@ -283,13 +283,13 @@ bool auction_parse_money(cptr s, s32b *amount)
 		else
 		{
 			/* Error */
-			return FALSE;
+			return(FALSE);
 		}
 		i++;
 	}
 
 	*amount = price;
-	return TRUE;
+	return(TRUE);
 }
 
 bool auction_parse_time(cptr s, time_t *amount)
@@ -336,7 +336,7 @@ bool auction_parse_time(cptr s, time_t *amount)
 		else
 		{
 			/* Error */
-			return FALSE;
+			return(FALSE);
 		}
 		i++;
 	}
@@ -345,7 +345,7 @@ bool auction_parse_time(cptr s, time_t *amount)
 	len += value;
 
 	*amount = len;
-	return TRUE;
+	return(TRUE);
 }
 
 /* Return the amount of time in a human readable form */
@@ -541,12 +541,12 @@ bool auction_mode_check(int Ind, int auction_id)
 	player_type *p_ptr = Players[Ind];
 
 	if ((auc_ptr->mode == MODE_EVERLASTING) && (p_ptr->mode != MODE_EVERLASTING))
-		return FALSE; /* covers charmode_trading_restrictions 0 and 1 */
+		return(FALSE); /* covers charmode_trading_restrictions 0 and 1 */
 	if ((cfg.charmode_trading_restrictions == 2) &&
 	    ((auc_ptr->mode & MODE_EVERLASTING) != (p_ptr->mode & MODE_EVERLASTING)))
-		return FALSE; /* added check for charmode_trading_restrictions level 2 */
+		return(FALSE); /* added check for charmode_trading_restrictions level 2 */
 
-	return TRUE;
+	return(TRUE);
 
 #else
 
@@ -555,7 +555,7 @@ bool auction_mode_check(int Ind, int auction_id)
 	forge_dummy.owner = auc_ptr->owner; /* assuming auction_type.owner is same kind of 'id' value
 					    as o_ptr->owner here; correct me if wrong please - C. Blue */
 	forge_dummy.mode = auc_ptr->mode;
-	return (compat_pomode(Ind, &forge_dummy) == NULL);
+	return(compat_pomode(Ind, &forge_dummy) == NULL);
 #endif
 }
 
@@ -974,7 +974,7 @@ int auction_set(int Ind, int slot, cptr starting_price_string, cptr buyout_price
 	msg_print(Ind, "\377B[@] \377wIf you want to start this auction, type \377G/auction start");
 	msg_print(Ind, "\377B[@] \377wIf not, type \377G/auction cancel");
 
-	return 0;
+	return(0);
 }
 
 /* Player confirms that (s)he wants to start the auction */
@@ -1010,7 +1010,7 @@ int auction_start(int Ind)
 		return AUCTION_ERROR_INVALID_ID;
 	}
 
-	return 0;
+	return(0);
 }
 
 /* Multi-purpose cancel function */
@@ -1127,7 +1127,7 @@ int auction_cancel(int Ind, int auction_id)
 						/* Remove bid */
 						auction_remove_bid(auction_id, i);
 
-						return 0;
+						return(0);
 					}
 				}
 
@@ -1140,7 +1140,7 @@ int auction_cancel(int Ind, int auction_id)
 			return AUCTION_ERROR_NOT_SUPPORTED;
 	}
 
-	return 0;
+	return(0);
 }
 
 int auction_place_bid(int Ind, int auction_id, cptr bid_string)
@@ -1241,7 +1241,7 @@ int auction_place_bid(int Ind, int auction_id, cptr bid_string)
 	msg_format(Ind, "\377B[@] \377GYour bid of %d on item #%d has been placed.", bid, auction_id);
 	msg_format(Ind, "\377B[@]  \377w%s", auc_ptr->desc);
 
-	return 0;
+	return(0);
 }
 
 int auction_buyout(int Ind, int auction_id)
@@ -1355,7 +1355,7 @@ int auction_buyout(int Ind, int auction_id)
 	msg_format(Ind, "\377B[@] \377GYou have bought auction item #%d for %d:", auction_id, auc_ptr->buyout_price);
 	msg_format(Ind, "\377B[@]   \377w%s", auc_ptr->desc);
 
-	return 0;
+	return(0);
 }
 
 void auction_list_print_item(int Ind, int auction_id)
@@ -1553,7 +1553,7 @@ int auction_show(int Ind, int auction_id)
 	msg_format(Ind, "\377B[@] \377wTime left: %s", time_string);
 	C_FREE(time_string, 160, char);
 
-	return 0;
+	return(0);
 }
 
 /* Examine the item */
@@ -1585,7 +1585,7 @@ int auction_examine(int Ind, int auction_id)
 	if (!identify_fully_aux(Ind, o_ptr, FALSE, -1, 0))
 		msg_print(Ind, "You see nothing special.");
 
-	return 0;
+	return(0);
 }
 
 #endif

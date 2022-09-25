@@ -37,20 +37,14 @@ void dump_lua_stack(int min, int max);
 lua_State* L = NULL;
 
 /* PernAngband Lua error message handler */
-static int pern_errormessage(lua_State *L)
-{
+static int pern_errormessage(lua_State *L) {
 	char buf[200];
 	cptr str = luaL_check_string(L, 1);
 	int i = 0, j = 0;
 
-	while (str[i])
-	{
-		if (str[i] != '\n')
-		{
-			buf[j++] = str[i];
-		}
-		else
-		{
+	while (str[i]) {
+		if (str[i] != '\n') buf[j++] = str[i];
+		else {
 			buf[j] = '\0';
 			c_msg_format("\377vLUA: %s", buf);
 			j = 0;
@@ -59,7 +53,7 @@ static int pern_errormessage(lua_State *L)
 	}
 	buf[j] = '\0';
 	c_msg_format("\377vLUA: %s", buf);
-	return (0);
+	return(0);
 }
 
 #ifdef NO_CLIENT_IOLIB
@@ -141,8 +135,7 @@ static int errorfb (lua_State *L) {
 
 #endif
 
-static struct luaL_reg pern_iolib[] =
-{
+static struct luaL_reg pern_iolib[] = {
 	{LUA_ALERT, pern_errormessage},
 #ifdef NO_CLIENT_IOLIB
 	{LUA_ERRORMESSAGE, errorfb},
@@ -159,13 +152,13 @@ static struct luaL_reg pern_iolib[] =
 #define DYADIC(name, op) \
 	s32b name(s32b a, s32b b); \
 	s32b name(s32b a, s32b b) { \
-		return (a op b); \
+		return(a op b); \
 	}
 
 #define MONADIC(name, op) \
 	s32b name(s32b b); \
 	s32b name(s32b b) { \
-		return (op b); \
+		return(op b); \
 	}
 
 
@@ -182,8 +175,7 @@ MONADIC(intBitNot,  ~ )
  * Monadic bit nagation operation
  * MONADIC(not,     ~)
  */
-static int int_not(lua_State* L)
-{
+static int int_not(lua_State* L) {
 	lua_pushnumber(L, ~luaL_check_bit(L, 1));
 	return 1;
 }
@@ -193,8 +185,7 @@ static int int_not(lua_State* L)
  * Dyadic integer modulus operation
  * DYADIC(mod,      %)
  */
-static int int_mod(lua_State* L)
-{
+static int int_mod(lua_State* L) {
 	lua_pushnumber(L, luaL_check_bit(L, 1) % luaL_check_bit(L, 2));
 	return 1;
 }
@@ -204,8 +195,7 @@ static int int_mod(lua_State* L)
  * Variable length bitwise AND operation
  * VARIADIC(and,    &)
  */
-static int int_and(lua_State *L)
-{
+static int int_and(lua_State *L) {
 	int n = lua_gettop(L), i;
 	long w = luaL_check_bit(L, 1);
 
@@ -220,8 +210,7 @@ static int int_and(lua_State *L)
  * Variable length bitwise OR operation
  * VARIADIC(or,     |)
  */
-static int int_or(lua_State *L)
-{
+static int int_or(lua_State *L) {
 	int n = lua_gettop(L), i;
 	long w = luaL_check_bit(L, 1);
 
@@ -236,8 +225,7 @@ static int int_or(lua_State *L)
  * Variable length bitwise XOR operation
  * VARIADIC(xor,    ^)
  */
-static int int_xor(lua_State *L)
-{
+static int int_xor(lua_State *L) {
 	int n = lua_gettop(L), i;
 	long w = luaL_check_bit(L, 1);
 
@@ -252,8 +240,7 @@ static int int_xor(lua_State *L)
  * Binary left shift operation
  * TDYADIC(lshift,  <<, , u)
  */
-static int int_lshift(lua_State* L)
-{
+static int int_lshift(lua_State* L) {
 	lua_pushnumber(L, luaL_check_bit(L, 1) << luaL_check_ubit(L, 2));
 	return 1;
 }
@@ -262,8 +249,7 @@ static int int_lshift(lua_State* L)
  * Binary logical right shift operation
  * TDYADIC(rshift,  >>, u, u)
  */
-static int int_rshift(lua_State* L)
-{
+static int int_rshift(lua_State* L) {
 	lua_pushnumber(L, luaL_check_ubit(L, 1) >> luaL_check_ubit(L, 2));
 	return 1;
 }
@@ -272,15 +258,13 @@ static int int_rshift(lua_State* L)
  * Binary arithmetic right shift operation
  * TDYADIC(arshift, >>, , u)
  */
-static int int_arshift(lua_State* L)
-{
+static int int_arshift(lua_State* L) {
 	lua_pushnumber(L, luaL_check_bit(L, 1) >> luaL_check_ubit(L, 2));
 	return 1;
 }
 
 
-static const struct luaL_reg bitlib[] =
-{
+static const struct luaL_reg bitlib[] = {
 	{"bnot",    int_not},
 	{"imod",    int_mod},  /* "mod" already in Lua math library */
 	{"band",    int_and},
@@ -361,8 +345,7 @@ static void set_server_features() {
 
 
 /* Initialize lua scripting */
-void init_lua()
-{
+void init_lua() {
 	char ind[80];
 	int oldtop;
 
@@ -419,8 +402,7 @@ in time, nor xml.lua/meta.lua which are needed earlier too, so we need to hard-c
 }
 
 /* Reinitialize Lua */
-void reinit_lua()
-{
+void reinit_lua() {
 	if (init_lua_done) {
 		/* Close the old Lua state */
 		lua_close(L);
@@ -431,8 +413,7 @@ void reinit_lua()
 	init_lua();
 }
 
-void open_lua()
-{
+void open_lua() {
 	int i, max;
 	char out_val[160];
 
@@ -465,8 +446,7 @@ void open_lua()
 	open_lua_done = TRUE;
 }
 
-void reopen_lua()
-{
+void reopen_lua() {
 	int i;
 
 	/* Free up school names */
@@ -490,34 +470,29 @@ void reopen_lua()
 	open_lua();
 }
 
-void dump_lua_stack(int min, int max)
-{
+void dump_lua_stack(int min, int max) {
 	int i;
 
 	c_msg_print("\377ylua_stack:");
-	for (i = min; i <= max; i++)
-	{
+	for (i = min; i <= max; i++) {
 		if (lua_isnumber(L, i)) c_msg_format("\377y%d [n] = %ld", i, tolua_getnumber(L, i, 0));
 		else if (lua_isstring(L, i)) c_msg_format("\377y%d [s] = '%s'", i, tolua_getstring(L, i, 0));
 	}
 	c_msg_print("\377yEND lua_stack");
 }
 
-void dump_lua_stack_stdout(int min, int max)
-{
+void dump_lua_stack_stdout(int min, int max) {
 	int i;
 
 	printf("ylua_stack:\n");
-	for (i = min; i <= max; i++)
-	{
+	for (i = min; i <= max; i++) {
 		if (lua_isnumber(L, i)) printf("%d [n] = %ld\n", i, tolua_getnumber(L, i, 0));
 		else if (lua_isstring(L, i)) printf("%d [s] = '%s'\n", i, tolua_getstring(L, i, 0));
 	}
 	printf("END lua_stack\n");
 }
 
-bool pern_dofile(int Ind, char *file)
-{
+bool pern_dofile(int Ind, char *file) {
 	(void) Ind; /* suppress compiler warning */
 	char buf[MAX_PATH_LENGTH];
 	int error;
@@ -529,17 +504,15 @@ bool pern_dofile(int Ind, char *file)
 	error = lua_dofile(L, buf);
 	lua_settop(L, oldtop);
 
-	return (error?TRUE:FALSE);
+	return(error?TRUE:FALSE);
 }
 
-int exec_lua(int Ind, char *file)
-{
+int exec_lua(int Ind, char *file) {
 	(void) Ind; /* suppress compiler warning */
 	int oldtop = lua_gettop(L);
 	int res;
 
-	if (!lua_dostring(L, file))
-	{
+	if (!lua_dostring(L, file)) {
 		int size = lua_gettop(L) - oldtop;
 		if (size != 0)
 			res = tolua_getnumber(L, -size, 0);
@@ -550,17 +523,15 @@ int exec_lua(int Ind, char *file)
 		res = 0;
 
 	lua_settop(L, oldtop);
-	return (res);
+	return(res);
 }
 
-cptr string_exec_lua(int Ind, char *file)
-{
+cptr string_exec_lua(int Ind, char *file) {
 	(void) Ind; /* suppress compiler warning */
 	int oldtop = lua_gettop(L);
 	cptr res;
 
-	if (!lua_dostring(L, file))
-	{
+	if (!lua_dostring(L, file)) {
 		int size = lua_gettop(L) - oldtop;
 		if (size != 0)
 			res = tolua_getstring(L, -size, "");
@@ -570,19 +541,17 @@ cptr string_exec_lua(int Ind, char *file)
 	else
 		res = "";
 	lua_settop(L, oldtop);
-	return (res);
+	return(res);
 }
 
 static FILE *lua_file;
-void master_script_begin(char *name, char mode)
-{
+void master_script_begin(char *name, char mode) {
 	char buf[MAX_PATH_LENGTH];
 
 	/* Build the filename */
 	path_build(buf, MAX_PATH_LENGTH, ANGBAND_DIR_SCPT, name);
 
-	switch (mode)
-	{
+	switch (mode) {
 	case MASTER_SCRIPTB_W:
 		lua_file = my_fopen(buf, "w");
 		break;
@@ -597,23 +566,19 @@ void master_script_begin(char *name, char mode)
 
 }
 
-void master_script_end()
-{
+void master_script_end() {
 	my_fclose(lua_file);
 }
 
-void master_script_line(char *buf)
-{
+void master_script_line(char *buf) {
 	fprintf(lua_file, "%s\n", buf);
 }
 
-void master_script_exec(int Ind, char *buf)
-{
+void master_script_exec(int Ind, char *buf) {
 	exec_lua(Ind, buf);
 }
 
-void cat_script(char *name)
-{
+void cat_script(char *name) {
 	char buf[1025];
 	FILE *fff;
 
@@ -624,13 +589,10 @@ void cat_script(char *name)
 
 	/* Process the file */
 	while (0 == my_fgets(fff, buf, 1024))
-	{
 		c_msg_print(buf);
-	}
 }
 
-bool call_lua(int Ind, cptr function, cptr args, cptr ret, ...)
-{
+bool call_lua(int Ind, cptr function, cptr args, cptr ret, ...) {
 	(void) Ind; /* suppress compiler warning */
 	int i = 0, nb = 0, nbr = 0;
 	int oldtop = lua_gettop(L), size;
@@ -642,10 +604,8 @@ bool call_lua(int Ind, cptr function, cptr args, cptr ret, ...)
 	lua_getglobal(L, function);
 
 	/* Push and count the arguments */
-	while (args[i])
-	{
-		switch (args[i++])
-		{
+	while (args[i]) {
+		switch (args[i++]) {
 		case 'd':
 		case 'l':
 			tolua_pushnumber(L, va_arg(ap, s32b));
@@ -670,8 +630,7 @@ bool call_lua(int Ind, cptr function, cptr args, cptr ret, ...)
 	nbr = strlen(ret);
 
 	/* Call the function */
-	if (lua_call(L, nb, nbr))
-	{
+	if (lua_call(L, nb, nbr)) {
 		plog_fmt("ERROR in lua_call while calling '%s' from call_lua.\nThings should start breaking up from now on!", function);
 		return FALSE;
 	}
@@ -680,10 +639,8 @@ bool call_lua(int Ind, cptr function, cptr args, cptr ret, ...)
 	size = lua_gettop(L) - oldtop;
 
 	/* Get the returns */
-	for (i = 0; ret[i]; i++)
-	{
-		switch (ret[i])
-		{
+	for (i = 0; ret[i]; i++) {
+		switch (ret[i]) {
 		case 'd':
 		case 'l':
 			{

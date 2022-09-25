@@ -216,21 +216,21 @@ static s16b evlt[101] = { 1, //could start on 0 here
 //c_msg_format("V:%d,boost:%d,cfgM:%d,cfgU:%d,*:%d,+:%d", V, boost, cfg_audio_master_volume, cfg_audio_music_volume, V * boost * cfg_audio_master_volume, (V + cfg_audio_master_volume) / 2);
 	/* Normal, unboosted audio -- note that anti-boost is applied before evlt[], while actual boost (further below) is applied to evlt[] value. */
   #ifdef MIXING_NORMAL
-	if (boost <= 100) return ((cfg_audio_master * T * evlt[(V * boost) / 100] * evlt[M]) / MIX_MAX_VOLUME);
+	if (boost <= 100) return((cfg_audio_master * T * evlt[(V * boost) / 100] * evlt[M]) / MIX_MAX_VOLUME);
   #endif
   #ifdef MIXING_EXTREME
-	if (boost <= 100) return (cfg_audio_master * T * evlt[(V * boost * M) / 10000]);
+	if (boost <= 100) return(cfg_audio_master * T * evlt[(V * boost * M) / 10000]);
   #endif
   #ifdef MIXING_ULTRA
 	if (boost <= 100) {
 		total = ((V + 10) * (M + 10) * boost) / 10000 - 1; //0..120 (with boost < 100%, -1 may result)
 		if (total < 0) total = 0; //prevent '-1' underflow when boost and volume is all low
 //c_msg_format("v_=%d (%d*%d*(%d)=%d - %d)", evlt[total], M+10, V+10, boost, total, M);
-		return (cfg_audio_master * T * evlt[total]);
+		return(cfg_audio_master * T * evlt[total]);
 	}
   #endif
   #ifdef MIXING_ADDITIVE
-	if (boost <= 100) return (cfg_audio_master * T * evlt[((V + M) * boost) / 200]);
+	if (boost <= 100) return(cfg_audio_master * T * evlt[((V + M) * boost) / 200]);
   #endif
 
   #if defined(MIXING_NORMAL) || defined(MIXING_EXTREME)
@@ -250,7 +250,7 @@ static s16b evlt[101] = { 1, //could start on 0 here
 		/* Extreme case: Cannot boost at all, everything is at max already. */
 		Me = evlt[M];
 		Ve = evlt[V];
-		return ((cfg_audio_master * T * Ve * Me) / MIX_MAX_VOLUME);
+		return((cfg_audio_master * T * Ve * Me) / MIX_MAX_VOLUME);
 	} else if (!M) {
 		/* Extreme case (just treat it extra cause of rounding issue 99.9 vs 100) */
 		roothack = 100;
@@ -346,7 +346,7 @@ static s16b evlt[101] = { 1, //could start on 0 here
   #endif
 
 	/* Return boosted >100% result */
-	return (cfg_audio_master * T * total);
+	return(cfg_audio_master * T * total);
   }
  #endif
 #endif
@@ -2711,7 +2711,7 @@ errr init_sound_sdl(int argc, char **argv) {
 		plog("Failed to initialise audio.");
 
 		/* Failure */
-		return (1);
+		return(1);
 	}
 
 	/* Set the mixing hook */
@@ -2759,7 +2759,7 @@ errr init_sound_sdl(int argc, char **argv) {
 #endif
 
 	/* Success */
-	return (0);
+	return(0);
 }
 /* Try to allow re-initializing audio.
    Purpose: Switching between audio packs live, without need for client restart. */
@@ -2854,7 +2854,7 @@ errr re_init_sound_sdl(void) {
 		plog("Failed to re-initialise audio.");
 
 		/* Failure */
-		return (1);
+		return(1);
 	}
 
 	/* Set the mixing hook */
@@ -2906,7 +2906,7 @@ errr re_init_sound_sdl(void) {
 	Send_redraw(2);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /* on game termination */
@@ -2972,7 +2972,7 @@ static Mix_Chunk* load_sample(int idx, int subidx) {
 		puts(format("sample already loaded %d, %d: %s.", idx, subidx, filename));
 #endif
 		SDL_UnlockMutex(load_sample_mutex);
-		return (samples[idx].wavs[subidx]);
+		return(samples[idx].wavs[subidx]);
 	}
 
 	/* Try loading it, if it's not yet cached */
@@ -2983,7 +2983,7 @@ static Mix_Chunk* load_sample(int idx, int subidx) {
 		puts(format("file doesn't exist %d, %d: %s.", idx, subidx, filename));
 #endif
 		SDL_UnlockMutex(load_sample_mutex);
-		return (NULL);
+		return(NULL);
 	}
 
 	/* Load */
@@ -3000,11 +3000,11 @@ static Mix_Chunk* load_sample(int idx, int subidx) {
 		puts(format("failed to load sample %d, %d: %s.", idx, subidx, filename));
 #endif
 		SDL_UnlockMutex(load_sample_mutex);
-		return (NULL);
+		return(NULL);
 	}
 
 	SDL_UnlockMutex(load_sample_mutex);
-	return (wave);
+	return(wave);
 }
 static Mix_Music* load_song(int idx, int subidx) {
 	const char *filename = songs[idx].paths[subidx];
@@ -3022,7 +3022,7 @@ static Mix_Music* load_song(int idx, int subidx) {
 		puts(format("song already loaded %d, %d: %s.", idx, subidx, filename));
 #endif
 		SDL_UnlockMutex(load_song_mutex);
-		return (songs[idx].wavs[subidx]);
+		return(songs[idx].wavs[subidx]);
 	}
 
 	/* Try loading it, if it's not yet cached */
@@ -3033,7 +3033,7 @@ static Mix_Music* load_song(int idx, int subidx) {
 		puts(format("file doesn't exist %d, %d: %s.", idx, subidx, filename));
 #endif
 		SDL_UnlockMutex(load_song_mutex);
-		return (NULL);
+		return(NULL);
 	}
 
 	/* Load */
@@ -3050,11 +3050,11 @@ static Mix_Music* load_song(int idx, int subidx) {
 		puts(format("failed to load song %d, %d: %s.", idx, subidx, filename));
 #endif
 		SDL_UnlockMutex(load_song_mutex);
-		return (NULL);
+		return(NULL);
 	}
 
 	SDL_UnlockMutex(load_song_mutex);
-	return (waveMUS);
+	return(waveMUS);
 }
 
 /* Display options page UI that allows to comment out sounds easily */

@@ -123,7 +123,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 	case SV_POTION_SLIME_MOLD:
 	case SV_POTION_WATER:   /* perhaps a 'water' attack? */
 	case SV_POTION_APPLE_JUICE:
-		return TRUE;
+		return(TRUE);
 
 	case SV_POTION_INFRAVISION:
 	case SV_POTION_DETECT_INVIS:
@@ -139,7 +139,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 	case SV_POTION_INVULNERABILITY:
 	//case SV_POTION_NEW_LIFE:
 		/* All of the above potions have no effect when shattered */
-		return FALSE;
+		return(FALSE);
 
 	case SV_POTION_EXPERIENCE:
 		dt = GF_EXP;
@@ -157,7 +157,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 		{
 			cave_type **zcave;
 
-			if (!(zcave = getcave(wpos))) return TRUE; //paranoia
+			if (!(zcave = getcave(wpos))) return(TRUE); //paranoia
 			if (zcave[y][x].feat == FEAT_ICE_WALL) { //100% chance for now, beats fire magic o_O
 				if (who < 0 && who > PROJECTOR_UNUSUAL) msg_print(-who, "The ice wall melts.");
 				cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
@@ -386,7 +386,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 #endif
 	default:
 		/* Do nothing */  ;
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* doh! project halves the dam ?! */
@@ -431,7 +431,7 @@ s16b poly_r_idx(int r_idx) {
 	int i, r, lev1, lev2;
 
 	/* Hack -- Uniques never polymorph */
-	if (r_ptr->flags1 & RF1_UNIQUE) return (r_idx);
+	if (r_ptr->flags1 & RF1_UNIQUE) return(r_idx);
 
 	get_mon_num_hook = dungeon_aux;
 	get_mon_num_prep(0, reject_uniques);
@@ -467,7 +467,7 @@ s16b poly_r_idx(int r_idx) {
 	}
 
 	/* Result */
-	return (r_idx);
+	return(r_idx);
 }
 
 /*
@@ -494,11 +494,11 @@ bool check_st_anchor(struct worldpos *wpos, int y, int x) {
 
 		//if (istown(wpos) && randint(100) > q_ptr->lev) continue;
 
-		return TRUE;
+		return(TRUE);
 	  }
 
 	/* Assume no st_anchor */
-	return FALSE;
+	return(FALSE);
 }
 /* Like check_st_anchor() but also checks for destination grid to be anchored. */
 bool check_st_anchor2(struct worldpos *wpos, int y, int x, int y2, int x2) {
@@ -524,11 +524,11 @@ bool check_st_anchor2(struct worldpos *wpos, int y, int x, int y2, int x2) {
 
 		//if (istown(wpos) && randint(100) > q_ptr->lev) continue;
 
-		return TRUE;
+		return(TRUE);
 	  }
 
 	/* Assume no st_anchor */
-	return FALSE;
+	return(FALSE);
 }
 
 /*
@@ -554,36 +554,36 @@ bool teleport_away(int m_idx, int dis) {
 	cave_type **zcave;
 
 	/* Paranoia */
-	if (!m_ptr->r_idx) return FALSE;
+	if (!m_ptr->r_idx) return(FALSE);
 
-	if (r_ptr->flags9 & RF9_IM_TELE) return FALSE;
+	if (r_ptr->flags9 & RF9_IM_TELE) return(FALSE);
 
 	/* Save the old location */
 	oy = m_ptr->fy;
 	ox = m_ptr->fx;
 
 	/* Space/Time Anchor */
-	if (check_st_anchor(&m_ptr->wpos, oy, ox)) return FALSE;
+	if (check_st_anchor(&m_ptr->wpos, oy, ox)) return(FALSE);
 
 	wpos = &m_ptr->wpos;
-	if (!(zcave = getcave(wpos))) return FALSE;
+	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
 #ifndef HURT_MONSTER_ICKY_TELEPORT
 	/* No teleporting/blinking out of any vaults (!) */
-	if (zcave[oy][ox].info & CAVE_ICKY) return FALSE;
+	if (zcave[oy][ox].info & CAVE_ICKY) return(FALSE);
 #else
 	/* actually allow teleporting out of a vault, if monster took damage; but still prevent for no-tele vaults */
 	if ((zcave[oy][ox].info & CAVE_ICKY) &&
 	    /* teleport out when hurt - except for Qs, who stay to summon for most of the fight, since it's their way of fighting! */
 	    (m_ptr->hp == m_ptr->maxhp || (r_ptr->d_char == 'Q' && m_ptr->hp >= m_ptr->maxhp / 5)))
-		return FALSE;
-	if (zcave[oy][ox].info & CAVE_STCK) return FALSE;
+		return(FALSE);
+	if (zcave[oy][ox].info & CAVE_STCK) return(FALSE);
 #endif
 
 	/* anti-teleport floors apply to monsters too? */
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return FALSE;
-	if (in_sector00(wpos) && (sector00flags2 & LF2_NO_TELE)) return FALSE;
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return(FALSE);
+	if (in_sector00(wpos) && (sector00flags2 & LF2_NO_TELE)) return(FALSE);
 
 	/* set distance according to map size, to avoid 'No empty field' failures for very small maps! */
 	if (l_ptr && distance(1, 1, l_ptr->wid, l_ptr->hgt) < max_dis)
@@ -609,7 +609,7 @@ bool teleport_away(int m_idx, int dis) {
 				d = distance(oy, ox, ny, nx);
 				if ((d >= min) && (d <= dis)) break;
 			}
-			if (!tries) return FALSE;
+			if (!tries) return(FALSE);
 
 			/* Ignore illegal locations */
 			if (!in_bounds_floor(l_ptr, ny, nx)) continue;
@@ -631,7 +631,7 @@ bool teleport_away(int m_idx, int dis) {
 			if (zcave[ny][nx].feat == FEAT_SHOP) continue;
 
 			/* Space/Time Anchor */
-			if (check_st_anchor(&m_ptr->wpos, ny, nx)) return FALSE;
+			if (check_st_anchor(&m_ptr->wpos, ny, nx)) return(FALSE);
 
 			/* This grid looks good */
 			look = FALSE;
@@ -673,7 +673,7 @@ bool teleport_away(int m_idx, int dis) {
 #endif
 
 	/* Succeeded. */
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -834,12 +834,12 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 
 	/* Space/Time Anchor */
 	cave_type **zcave;
-	if (!(zcave = getcave(wpos))) return FALSE;
+	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
-	if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) return FALSE;
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return FALSE;
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_TELE)) return FALSE;
+	if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) return(FALSE);
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return(FALSE);
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_TELE)) return(FALSE);
 
 	/* Hack -- Teleportation when died is always allowed */
 	if (!p_ptr->death && !left_shop) {
@@ -857,25 +857,25 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 			if (!ignore_pvp && p_ptr->pvp_prevent_tele) {
 				msg_print(Ind, "\377yThere's no easy way out of this fight!");
 				s_printf("%s TELEPORT_FAIL: pvp_prevent_tele for %s.\n", showtime(), p_ptr->name);
-				return FALSE;
+				return(FALSE);
 			}
 		}
 		if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px)) {
 			msg_print(Ind, "\377oYou are surrounded by an anti-teleportation field!");
 			s_printf("%s TELEPORT_FAIL: Anti-Tele for %s.\n", showtime(), p_ptr->name);
-			return FALSE;
+			return(FALSE);
 		}
 		if (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) {
 			msg_print(Ind, "\377RThis location suppresses teleportation!");
 			s_printf("%s TELEPORT_FAIL: Cave-Stck for %s.\n", showtime(), p_ptr->name);
-			return FALSE;
+			return(FALSE);
 		}
 
 #ifdef AUTO_RET_NEW
 		/* Don't allow phase/teleport for auto-retaliation methods */
 		if (p_ptr->auto_retaliaty) {
 			msg_print(Ind, "\377yYou cannot use means of self-translocation for auto-retaliation.");
-			return FALSE;
+			return(FALSE);
 		}
 #endif
 
@@ -982,7 +982,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 			}
 
 			/* Never break into st-anchor */
-			if (check_st_anchor(wpos, y, x)) return FALSE;
+			if (check_st_anchor(wpos, y, x)) return(FALSE);
 
 			/* This grid looks good */
 			look = FALSE;
@@ -1002,7 +1002,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 	if (!tries) {
 		s_printf("%s TELEPORT_FAIL: No empty field found for %s.\n", showtime(), p_ptr->name);
 		msg_print(Ind, "\377oThe teleportation spell strangely fizzles!");
-		return FALSE;
+		return(FALSE);
 	}
 
 	break_cloaking(Ind, 7);
@@ -1107,7 +1107,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 	/* Handle stuff XXX XXX XXX */
 	if (!p_ptr->death) handle_stuff(Ind);
 
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -1617,142 +1617,142 @@ void teleport_players_level(struct worldpos *wpos) {
  */
 byte spell_color(int type) {
 	/* Hack -- fake monochrome */
-	if (!use_color) return (TERM_WHITE);
+	if (!use_color) return(TERM_WHITE);
 
 	/* Analyze */
 	switch (type) { /* colourful ToME ones :) */
-	case GF_MISSILE:	return (TERM_SLATE);
-	case GF_ACID:		return (TERM_ACID);
-	case GF_ACID_BLIND:	return (TERM_ACID);
-	case GF_ELEC:		return (TERM_ELEC);
-	case GF_FIRE:		return (TERM_FIRE);
-	case GF_COLD:		return (TERM_COLD);
-	case GF_POIS:		return (TERM_POIS);
-	case GF_UNBREATH:	return (randint(7) < 3 ? TERM_L_GREEN : TERM_GREEN);
-	//case GF_HOLY_ORB:	return (TERM_L_DARK);
-	case GF_HOLY_ORB:	return (randint(6) == 1 ? TERM_ORANGE : TERM_L_DARK);
-	case GF_HOLY_FIRE:	return (randint(3) != 1 ? TERM_ORANGE : (randint(2) == 1 ? TERM_YELLOW : TERM_WHITE));
-	case GF_HELLFIRE:	return (randint(5) == 1 ? TERM_RED : TERM_L_DARK);
-	case GF_MANA:		return (randint(5) != 1 ? TERM_VIOLET : TERM_L_BLUE);
-	case GF_SHOT:		return (TERM_SLATE);
-	case GF_ARROW:		return (TERM_L_UMBER);
-	case GF_BOLT:		return (TERM_SLATE);
-	case GF_BOULDER:	return (TERM_UMBER);
-	case GF_WATER:		return (randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE);
-	case GF_WAVE:		return (randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE);
-	case GF_VAPOUR:		return (randint(10) == 1 ? TERM_BLUE : TERM_L_BLUE);
+	case GF_MISSILE:	return(TERM_SLATE);
+	case GF_ACID:		return(TERM_ACID);
+	case GF_ACID_BLIND:	return(TERM_ACID);
+	case GF_ELEC:		return(TERM_ELEC);
+	case GF_FIRE:		return(TERM_FIRE);
+	case GF_COLD:		return(TERM_COLD);
+	case GF_POIS:		return(TERM_POIS);
+	case GF_UNBREATH:	return(randint(7) < 3 ? TERM_L_GREEN : TERM_GREEN);
+	//case GF_HOLY_ORB:	return(TERM_L_DARK);
+	case GF_HOLY_ORB:	return(randint(6) == 1 ? TERM_ORANGE : TERM_L_DARK);
+	case GF_HOLY_FIRE:	return(randint(3) != 1 ? TERM_ORANGE : (randint(2) == 1 ? TERM_YELLOW : TERM_WHITE));
+	case GF_HELLFIRE:	return(randint(5) == 1 ? TERM_RED : TERM_L_DARK);
+	case GF_MANA:		return(randint(5) != 1 ? TERM_VIOLET : TERM_L_BLUE);
+	case GF_SHOT:		return(TERM_SLATE);
+	case GF_ARROW:		return(TERM_L_UMBER);
+	case GF_BOLT:		return(TERM_SLATE);
+	case GF_BOULDER:	return(TERM_UMBER);
+	case GF_WATER:		return(randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE);
+	case GF_WAVE:		return(randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE);
+	case GF_VAPOUR:		return(randint(10) == 1 ? TERM_BLUE : TERM_L_BLUE);
 	case GF_NETHER_WEAK:
-	case GF_NETHER:		return (randint(4) == 1 ? TERM_L_GREEN : TERM_L_DARK);
-	case GF_CHAOS:		return (TERM_MULTI);
-	case GF_DISENCHANT:	return (randint(4) != 1 ? TERM_ORANGE : TERM_BLUE);
-	case GF_NEXUS:		return (randint(5) < 3 ? TERM_L_RED : TERM_VIOLET);
-	case GF_CONFUSION:	return (TERM_CONF);
-	case GF_SOUND:		return (TERM_SOUN);
-	case GF_SHARDS:		return (TERM_SHAR);
-	case GF_FORCE:		return (randint(5) < 3 ? TERM_L_WHITE : TERM_ORANGE);
-	case GF_INERTIA:	return (randint(5) < 3 ? TERM_SLATE : TERM_L_WHITE);
-	case GF_GRAVITY:	return (randint(3) == 1? TERM_L_UMBER : TERM_UMBER);
-	case GF_TIME:		return (randint(3) == 1? TERM_GREEN : TERM_L_BLUE);
-	case GF_LITE_WEAK:	return (TERM_LITE);
-	case GF_LITE:		return (TERM_LITE);
-	case GF_DARK_WEAK:	return (TERM_DARKNESS);
-	case GF_DARK:		return (TERM_DARKNESS);
-	case GF_PLASMA:		return (randint(5) == 1? TERM_RED : TERM_L_RED);
-	case GF_METEOR:		return (randint(3) == 1? TERM_RED : TERM_UMBER);
-	case GF_ICE:		return (randint(4) == 1? TERM_L_BLUE : TERM_WHITE);
+	case GF_NETHER:		return(randint(4) == 1 ? TERM_L_GREEN : TERM_L_DARK);
+	case GF_CHAOS:		return(TERM_MULTI);
+	case GF_DISENCHANT:	return(randint(4) != 1 ? TERM_ORANGE : TERM_BLUE);
+	case GF_NEXUS:		return(randint(5) < 3 ? TERM_L_RED : TERM_VIOLET);
+	case GF_CONFUSION:	return(TERM_CONF);
+	case GF_SOUND:		return(TERM_SOUN);
+	case GF_SHARDS:		return(TERM_SHAR);
+	case GF_FORCE:		return(randint(5) < 3 ? TERM_L_WHITE : TERM_ORANGE);
+	case GF_INERTIA:	return(randint(5) < 3 ? TERM_SLATE : TERM_L_WHITE);
+	case GF_GRAVITY:	return(randint(3) == 1? TERM_L_UMBER : TERM_UMBER);
+	case GF_TIME:		return(randint(3) == 1? TERM_GREEN : TERM_L_BLUE);
+	case GF_LITE_WEAK:	return(TERM_LITE);
+	case GF_LITE:		return(TERM_LITE);
+	case GF_DARK_WEAK:	return(TERM_DARKNESS);
+	case GF_DARK:		return(TERM_DARKNESS);
+	case GF_PLASMA:		return(randint(5) == 1? TERM_RED : TERM_L_RED);
+	case GF_METEOR:		return(randint(3) == 1? TERM_RED : TERM_UMBER);
+	case GF_ICE:		return(randint(4) == 1? TERM_L_BLUE : TERM_WHITE);
 	case GF_HAVOC: //too much hassle to simulate the correct colours, this is just replacement code anyway
 	case GF_INFERNO:
 	case GF_DETONATION:
-	case GF_ROCKET:		return (randint(6) < 4 ? TERM_L_RED : (randint(4) == 1 ? TERM_RED : TERM_L_UMBER));
-	case GF_NUKE:		return (mh_attr(2));
-	case GF_DISINTEGRATE:   return (randint(3) != 1 ? TERM_L_DARK : (randint(2) == 1 ? TERM_ORANGE : TERM_VIOLET));
-	case GF_PSI:		return (randint(5) != 1 ? (rand_int(2) ? (rand_int(2) ? TERM_YELLOW : TERM_L_BLUE) : 127) : TERM_WHITE);
+	case GF_ROCKET:		return(randint(6) < 4 ? TERM_L_RED : (randint(4) == 1 ? TERM_RED : TERM_L_UMBER));
+	case GF_NUKE:		return(mh_attr(2));
+	case GF_DISINTEGRATE:   return(randint(3) != 1 ? TERM_L_DARK : (randint(2) == 1 ? TERM_ORANGE : TERM_VIOLET));
+	case GF_PSI:		return(randint(5) != 1 ? (rand_int(2) ? (rand_int(2) ? TERM_YELLOW : TERM_L_BLUE) : 127) : TERM_WHITE);
 	/* new spell - the_sandman */
-	case GF_CURSE:		return (randint(2) == 1 ? TERM_DARKNESS : TERM_L_DARK);
-	case GF_OLD_DRAIN:	return (TERM_DARKNESS);
+	case GF_CURSE:		return(randint(2) == 1 ? TERM_DARKNESS : TERM_L_DARK);
+	case GF_OLD_DRAIN:	return(TERM_DARKNESS);
 	/* Druids stuff */
-	case GF_HEALINGCLOUD:	return (TERM_LITE);//return (randint(5) > 1 ? TERM_WHITE : TERM_L_BLUE);
-	case GF_WATERPOISON:	return (TERM_COLD);//return (randint(2) == 1 ? TERM_L_BLUE : (randint(2) == 1 ? TERM_BLUE : (randint(2) == 1 ? TERM_GREEN : TERM_L_GREEN)));
-	case GF_ICEPOISON:	return (TERM_SHAR);//return (randint(3) > 1 ? TERM_UMBER : (randint(2) == 1 ? TERM_GREEN : TERM_SLATE));
+	case GF_HEALINGCLOUD:	return(TERM_LITE);//return(randint(5) > 1 ? TERM_WHITE : TERM_L_BLUE);
+	case GF_WATERPOISON:	return(TERM_COLD);//return(randint(2) == 1 ? TERM_L_BLUE : (randint(2) == 1 ? TERM_BLUE : (randint(2) == 1 ? TERM_GREEN : TERM_L_GREEN)));
+	case GF_ICEPOISON:	return(TERM_SHAR);//return(randint(3) > 1 ? TERM_UMBER : (randint(2) == 1 ? TERM_GREEN : TERM_SLATE));
 	/* To remove some hacks? */
-	case GF_THUNDER:	return (randint(3) != 1 ? TERM_ELEC : (randint(2) == 1 ? TERM_YELLOW : TERM_LITE));
-	case GF_ANNIHILATION:	return (randint(2) == 1 ? TERM_DARKNESS : TERM_L_DARK);
-	case GF_OLD_SLEEP:	return TERM_L_DARK; /* Occult: for Veil of Night as wave */
+	case GF_THUNDER:	return(randint(3) != 1 ? TERM_ELEC : (randint(2) == 1 ? TERM_YELLOW : TERM_LITE));
+	case GF_ANNIHILATION:	return(randint(2) == 1 ? TERM_DARKNESS : TERM_L_DARK);
+	case GF_OLD_SLEEP:	return(TERM_L_DARK); /* Occult: for Veil of Night as wave */
 	}
 
 	/* Standard "color" */
-	return (TERM_WHITE);
+	return(TERM_WHITE);
 }
 
 /* returns whether a spell type's colours require server-side animation or not.
    (for efficient animations in process_effects()) - C. Blue */
 bool spell_color_animation(int type) {
 	/* Hack -- fake monochrome */
-	if (!use_color) return FALSE;
+	if (!use_color) return(FALSE);
 
 	/* Analyze */
 	switch (type) { /* colourful ToME ones :) */
-	case GF_MISSILE:	return FALSE;
-	case GF_ACID:		return FALSE;
-	case GF_ACID_BLIND:	return FALSE;
-	case GF_ELEC:		return FALSE;
-	case GF_FIRE:		return FALSE;
-	case GF_COLD:		return FALSE;
-	case GF_POIS:		return FALSE;
-	case GF_UNBREATH:	return TRUE;//(randint(7)<3?TERM_L_GREEN:TERM_GREEN);
-	//case GF_HOLY_ORB:	return FALSE;
-	case GF_HOLY_ORB:	return TRUE;//(randint(6)==1?TERM_ORANGE:TERM_L_DARK);
-	case GF_HOLY_FIRE:	return TRUE;//(randint(3)!=1?TERM_ORANGE:(randint(2)==1?TERM_YELLOW:TERM_WHITE));
-	case GF_HELLFIRE:	return TRUE;//(randint(5)==1?TERM_RED:TERM_L_DARK);
-	case GF_MANA:		return TRUE;//(randint(5)!=1?TERM_VIOLET:TERM_L_BLUE);
-	case GF_SHOT:		return FALSE;
-	case GF_ARROW:		return FALSE;
-	case GF_BOLT:		return FALSE;
-	case GF_BOULDER:	return FALSE;
-	case GF_WATER:		return TRUE;//(randint(4)==1?TERM_L_BLUE:TERM_BLUE);
-	case GF_WAVE:		return TRUE;//(randint(4)==1?TERM_L_BLUE:TERM_BLUE);
-	case GF_VAPOUR:		return TRUE;
+	case GF_MISSILE:	return(FALSE);
+	case GF_ACID:		return(FALSE);
+	case GF_ACID_BLIND:	return(FALSE);
+	case GF_ELEC:		return(FALSE);
+	case GF_FIRE:		return(FALSE);
+	case GF_COLD:		return(FALSE);
+	case GF_POIS:		return(FALSE);
+	case GF_UNBREATH:	return(TRUE);//(randint(7)<3?TERM_L_GREEN:TERM_GREEN);
+	//case GF_HOLY_ORB:	return(FALSE);
+	case GF_HOLY_ORB:	return(TRUE);//(randint(6)==1?TERM_ORANGE:TERM_L_DARK);
+	case GF_HOLY_FIRE:	return(TRUE);//(randint(3)!=1?TERM_ORANGE:(randint(2)==1?TERM_YELLOW:TERM_WHITE));
+	case GF_HELLFIRE:	return(TRUE);//(randint(5)==1?TERM_RED:TERM_L_DARK);
+	case GF_MANA:		return(TRUE);//(randint(5)!=1?TERM_VIOLET:TERM_L_BLUE);
+	case GF_SHOT:		return(FALSE);
+	case GF_ARROW:		return(FALSE);
+	case GF_BOLT:		return(FALSE);
+	case GF_BOULDER:	return(FALSE);
+	case GF_WATER:		return(TRUE);//(randint(4)==1?TERM_L_BLUE:TERM_BLUE);
+	case GF_WAVE:		return(TRUE);//(randint(4)==1?TERM_L_BLUE:TERM_BLUE);
+	case GF_VAPOUR:		return(TRUE);
 	case GF_NETHER_WEAK:
-	case GF_NETHER:		return TRUE;//(randint(4)==1?TERM_SLATE:TERM_L_DARK);
-	case GF_CHAOS:		return FALSE;
-	case GF_DISENCHANT:	return TRUE;//(randint(4)==1?TERM_ORANGE:TERM_BLUE;//TERM_L_BLUE:TERM_VIOLET);
-	case GF_NEXUS:		return TRUE;//(randint(5)<3?TERM_L_RED:TERM_VIOLET);
-	case GF_CONFUSION:	return FALSE;
-	case GF_SOUND:		return FALSE;//(randint(4)==1?TERM_VIOLET:TERM_WHITE);
-	case GF_SHARDS:		return FALSE;//(randint(5)<3?TERM_UMBER:TERM_SLATE);
-	case GF_FORCE:		return TRUE;//(randint(5)<3?TERM_L_WHITE:TERM_ORANGE);
-	case GF_INERTIA:	return TRUE;//(randint(5)<3?TERM_SLATE:TERM_L_WHITE);
-	case GF_GRAVITY:	return TRUE;//(randint(3)==1?TERM_L_UMBER:TERM_UMBER);
-	case GF_TIME:		return TRUE;//(randint(3)==1?TERM_GREEN:TERM_L_BLUE);
-	case GF_LITE_WEAK:	return FALSE;
-	case GF_LITE:		return FALSE;
-	case GF_DARK_WEAK:	return FALSE;
-	case GF_DARK:		return FALSE;
-	case GF_PLASMA:		return TRUE;//(randint(5)==1?TERM_RED:TERM_L_RED);
-	case GF_METEOR:		return TRUE;//(randint(3)==1?TERM_RED:TERM_UMBER);
-	case GF_ICE:		return TRUE;//(randint(4)==1?TERM_L_BLUE:TERM_WHITE);
-	case GF_HAVOC:		return TRUE;//--complex shits
+	case GF_NETHER:		return(TRUE);//(randint(4)==1?TERM_SLATE:TERM_L_DARK);
+	case GF_CHAOS:		return(FALSE);
+	case GF_DISENCHANT:	return(TRUE);//(randint(4)==1?TERM_ORANGE:TERM_BLUE;//TERM_L_BLUE:TERM_VIOLET);
+	case GF_NEXUS:		return(TRUE);//(randint(5)<3?TERM_L_RED:TERM_VIOLET);
+	case GF_CONFUSION:	return(FALSE);
+	case GF_SOUND:		return(FALSE);//(randint(4)==1?TERM_VIOLET:TERM_WHITE);
+	case GF_SHARDS:		return(FALSE);//(randint(5)<3?TERM_UMBER:TERM_SLATE);
+	case GF_FORCE:		return(TRUE);//(randint(5)<3?TERM_L_WHITE:TERM_ORANGE);
+	case GF_INERTIA:	return(TRUE);//(randint(5)<3?TERM_SLATE:TERM_L_WHITE);
+	case GF_GRAVITY:	return(TRUE);//(randint(3)==1?TERM_L_UMBER:TERM_UMBER);
+	case GF_TIME:		return(TRUE);//(randint(3)==1?TERM_GREEN:TERM_L_BLUE);
+	case GF_LITE_WEAK:	return(FALSE);
+	case GF_LITE:		return(FALSE);
+	case GF_DARK_WEAK:	return(FALSE);
+	case GF_DARK:		return(FALSE);
+	case GF_PLASMA:		return(TRUE);//(randint(5)==1?TERM_RED:TERM_L_RED);
+	case GF_METEOR:		return(TRUE);//(randint(3)==1?TERM_RED:TERM_UMBER);
+	case GF_ICE:		return(TRUE);//(randint(4)==1?TERM_L_BLUE:TERM_WHITE);
+	case GF_HAVOC:		return(TRUE);//--complex shits
 	case GF_INFERNO:
 	case GF_DETONATION:
-	case GF_ROCKET:		return TRUE;//(randint(6)<4?TERM_L_RED:(randint(4)==1?TERM_RED:TERM_L_UMBER));
-	case GF_NUKE:		return TRUE;//(mh_attr(2));
-	case GF_DISINTEGRATE:   return TRUE;//(randint(3)!=1?TERM_L_DARK:(randint(2)==1?TERM_VIOLET:TERM_L_ORANGE));//TERM_ORANGE:TERM_L_UMBER));
-	case GF_PSI:		return TRUE;//(randint(5)!=1?(rand_int(2)?(rand_int(2)?TERM_YELLOW:TERM_L_BLUE):127):TERM_WHITE);
+	case GF_ROCKET:		return(TRUE);//(randint(6)<4?TERM_L_RED:(randint(4)==1?TERM_RED:TERM_L_UMBER));
+	case GF_NUKE:		return(TRUE);//(mh_attr(2));
+	case GF_DISINTEGRATE:   return(TRUE);//(randint(3)!=1?TERM_L_DARK:(randint(2)==1?TERM_VIOLET:TERM_L_ORANGE));//TERM_ORANGE:TERM_L_UMBER));
+	case GF_PSI:		return(TRUE);//(randint(5)!=1?(rand_int(2)?(rand_int(2)?TERM_YELLOW:TERM_L_BLUE):127):TERM_WHITE);
 	/* new spell - the_sandman */
-	case GF_CURSE:		return TRUE;//(randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
-	case GF_OLD_DRAIN:	return FALSE;
+	case GF_CURSE:		return(TRUE);//(randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
+	case GF_OLD_DRAIN:	return(FALSE);
 	/* Druids stuff */
-	case GF_HEALINGCLOUD:	return FALSE;//return (randint(5)>1?TERM_WHITE:TERM_L_BLUE);
-	case GF_WATERPOISON:	return FALSE;//return (randint(2)==1?TERM_L_BLUE:(randint(2)==1?TERM_BLUE:(randint(2)==1?TERM_GREEN:TERM_L_GREEN)));
-	case GF_ICEPOISON:	return FALSE;//return (randint(3)>1?TERM_UMBER:(randint(2)==1?TERM_GREEN:TERM_SLATE));
+	case GF_HEALINGCLOUD:	return(FALSE);//return(randint(5)>1?TERM_WHITE:TERM_L_BLUE);
+	case GF_WATERPOISON:	return(FALSE);//return(randint(2)==1?TERM_L_BLUE:(randint(2)==1?TERM_BLUE:(randint(2)==1?TERM_GREEN:TERM_L_GREEN)));
+	case GF_ICEPOISON:	return(FALSE);//return(randint(3)>1?TERM_UMBER:(randint(2)==1?TERM_GREEN:TERM_SLATE));
 	/* To remove some hacks? */
-	case GF_THUNDER:	return TRUE;//(randint(3)!=1?TERM_ELEC:(randint(2)==1?TERM_YELLOW:TERM_LITE));
-	case GF_ANNIHILATION:	return TRUE;//(randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
-	case GF_OLD_SLEEP:	return FALSE;/* Occult: For Veil of Night as wave */
+	case GF_THUNDER:	return(TRUE);//(randint(3)!=1?TERM_ELEC:(randint(2)==1?TERM_YELLOW:TERM_LITE));
+	case GF_ANNIHILATION:	return(TRUE);//(randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
+	case GF_OLD_SLEEP:	return(FALSE);/* Occult: For Veil of Night as wave */
 	}
 
 	/* Standard "color" */
-	return FALSE;
+	return(FALSE);
 }
 #else
 /*
@@ -1760,79 +1760,79 @@ bool spell_color_animation(int type) {
  */
 byte spell_color(int type) {
 	/* Hack -- fake monochrome */
-	if (!use_color) return (TERM_WHITE);
+	if (!use_color) return(TERM_WHITE);
 
 	/* Analyze */
 	switch (type) { /* colourful ToME ones :) */
-	case GF_MISSILE:	return (TERM_SLATE);
-	case GF_ACID:		return (TERM_ACID);
-	case GF_ACID_BLIND:	return (TERM_ACID);
-	case GF_ELEC:		return (TERM_ELEC);
-	case GF_FIRE:		return (TERM_FIRE);
-	case GF_COLD:		return (TERM_COLD);
-	case GF_POIS:		return (TERM_POIS);
-	case GF_UNBREATH:	return (TERM_UNBREATH);
-	//case GF_HOLY_ORB:	return (TERM_L_DARK);
-	case GF_HOLY_ORB:	return (TERM_HOLYORB);
-	case GF_HOLY_FIRE:	return (TERM_HOLYFIRE);
-	case GF_HELLFIRE:	return (TERM_HELLFIRE);
-	case GF_CODE:		return (TERM_SHIELDI);
-	case GF_MANA:		return (TERM_MANA);
-	case GF_SHOT:		return (TERM_SLATE);
-	case GF_ARROW:		return (TERM_L_UMBER);
-	case GF_BOLT:		return (TERM_SLATE);
-	case GF_BOULDER:	return (TERM_UMBER);
-	case GF_VAPOUR:		return (TERM_L_BLUE);//animate with some dark blue maybe?
-	case GF_WATER:		return (TERM_WATE);
-	case GF_WAVE:		return (TERM_WATE);
+	case GF_MISSILE:	return(TERM_SLATE);
+	case GF_ACID:		return(TERM_ACID);
+	case GF_ACID_BLIND:	return(TERM_ACID);
+	case GF_ELEC:		return(TERM_ELEC);
+	case GF_FIRE:		return(TERM_FIRE);
+	case GF_COLD:		return(TERM_COLD);
+	case GF_POIS:		return(TERM_POIS);
+	case GF_UNBREATH:	return(TERM_UNBREATH);
+	//case GF_HOLY_ORB:	return(TERM_L_DARK);
+	case GF_HOLY_ORB:	return(TERM_HOLYORB);
+	case GF_HOLY_FIRE:	return(TERM_HOLYFIRE);
+	case GF_HELLFIRE:	return(TERM_HELLFIRE);
+	case GF_CODE:		return(TERM_SHIELDI);
+	case GF_MANA:		return(TERM_MANA);
+	case GF_SHOT:		return(TERM_SLATE);
+	case GF_ARROW:		return(TERM_L_UMBER);
+	case GF_BOLT:		return(TERM_SLATE);
+	case GF_BOULDER:	return(TERM_UMBER);
+	case GF_VAPOUR:		return(TERM_L_BLUE);//animate with some dark blue maybe?
+	case GF_WATER:		return(TERM_WATE);
+	case GF_WAVE:		return(TERM_WATE);
 	case GF_NETHER_WEAK:
-	case GF_NETHER:		return (TERM_NETH);
-	case GF_CHAOS:		return (TERM_MULTI);
-	case GF_DISENCHANT:	return (TERM_DISE);
-	case GF_NEXUS:		return (TERM_NEXU);
-	case GF_CONFUSION:	return (TERM_CONF);
-	case GF_SOUND:		return (TERM_SOUN);
-	case GF_SHARDS:		return (TERM_SHAR);
-	case GF_FORCE:		return (TERM_FORC);
-	case GF_INERTIA:	return (TERM_INER);
-	case GF_GRAVITY:	return (TERM_GRAV);
-	case GF_TIME:		return (TERM_TIME);
-	case GF_STARLITE:	return (TERM_STARLITE);
-	case GF_LITE_WEAK:	return (TERM_LITE);
-	case GF_LITE:		return (TERM_LITE);
-	case GF_DARK_WEAK:	return (TERM_DARKNESS);
-	case GF_DARK:		return (TERM_DARKNESS);
-	case GF_PLASMA:		return (TERM_PLAS);
-	case GF_METEOR:		return (TERM_METEOR);
-	case GF_ICE:		return (TERM_ICE);
+	case GF_NETHER:		return(TERM_NETH);
+	case GF_CHAOS:		return(TERM_MULTI);
+	case GF_DISENCHANT:	return(TERM_DISE);
+	case GF_NEXUS:		return(TERM_NEXU);
+	case GF_CONFUSION:	return(TERM_CONF);
+	case GF_SOUND:		return(TERM_SOUN);
+	case GF_SHARDS:		return(TERM_SHAR);
+	case GF_FORCE:		return(TERM_FORC);
+	case GF_INERTIA:	return(TERM_INER);
+	case GF_GRAVITY:	return(TERM_GRAV);
+	case GF_TIME:		return(TERM_TIME);
+	case GF_STARLITE:	return(TERM_STARLITE);
+	case GF_LITE_WEAK:	return(TERM_LITE);
+	case GF_LITE:		return(TERM_LITE);
+	case GF_DARK_WEAK:	return(TERM_DARKNESS);
+	case GF_DARK:		return(TERM_DARKNESS);
+	case GF_PLASMA:		return(TERM_PLAS);
+	case GF_METEOR:		return(TERM_METEOR);
+	case GF_ICE:		return(TERM_ICE);
 	case GF_HAVOC:
  /* just until next server update keep some compat code for exactly the current version */
  #if VERSION_MAJOR == 4 && VERSION_MINOR == 7 && VERSION_PATCH == 0 && VERSION_EXTRA == 2
-				return TERM_DETO;
+				return(TERM_DETO);
  #else
-				return TERM_HAVOC;
+				return(TERM_HAVOC);
  #endif
 	case GF_INFERNO:
 	case GF_DETONATION:
-	case GF_ROCKET:		return (TERM_DETO);
-	case GF_NUKE:		return (TERM_NUKE);
-	case GF_DISINTEGRATE:   return (TERM_DISI);
-	case GF_PSI:		return (TERM_PSI);
+	case GF_ROCKET:		return(TERM_DETO);
+	case GF_NUKE:		return(TERM_NUKE);
+	case GF_DISINTEGRATE:   return(TERM_DISI);
+	case GF_PSI:		return(TERM_PSI);
 	/* new spell - the_sandman */
-	case GF_CURSE:		return (TERM_CURSE);
-	case GF_OLD_DRAIN:	return (TERM_DARKNESS);
+	case GF_CURSE:		return(TERM_CURSE);
+	case GF_OLD_DRAIN:	return(TERM_DARKNESS);
 	/* Druids stuff */
-	case GF_HEALINGCLOUD:	return (TERM_LITE);//return (randint(5)>1?TERM_WHITE:TERM_L_BLUE);
-	case GF_WATERPOISON:	return (TERM_COLD);//return (randint(2)==1?TERM_L_BLUE:(randint(2)==1?TERM_BLUE:(randint(2)==1?TERM_GREEN:TERM_L_GREEN)));
-	case GF_ICEPOISON:	return (TERM_SHAR);//return (randint(3)>1?TERM_UMBER:(randint(2)==1?TERM_GREEN:TERM_SLATE));
+	case GF_HEALINGCLOUD:	return(TERM_LITE);//return(randint(5)>1?TERM_WHITE:TERM_L_BLUE);
+	case GF_WATERPOISON:	return(TERM_COLD);//return(randint(2)==1?TERM_L_BLUE:(randint(2)==1?TERM_BLUE:(randint(2)==1?TERM_GREEN:TERM_L_GREEN)));
+	case GF_ICEPOISON:	return(TERM_SHAR);//return(randint(3)>1?TERM_UMBER:(randint(2)==1?TERM_GREEN:TERM_SLATE));
 	/* To remove some hacks? */
-	case GF_THUNDER:	return (TERM_THUNDER);
-	case GF_ANNIHILATION:	return (TERM_ANNI);
-	case GF_OLD_SLEEP:	return TERM_L_DARK; /* Occult: for Veil of Night as wave */
+	case GF_THUNDER:	return(TERM_THUNDER);
+	case GF_ANNIHILATION:	return(TERM_ANNI);
+	case GF_OLD_SLEEP:	return(TERM_L_DARK); /* Occult: for Veil of Night as wave */
 	}
 
 	/* Standard "color" */
-	return (TERM_WHITE);
+	return(TERM_WHITE);
 }
 #endif
 
@@ -2480,44 +2480,44 @@ static bool hates_acid(object_type *o_ptr) {
 	case TV_HARD_ARMOR:
 
 	case TV_LITE:
-		return (TRUE);
+		return(TRUE);
 
 	/* Staffs/Scrolls are wood/paper */
 	case TV_STAFF:
 	case TV_SCROLL:
 	case TV_PARCHMENT:
 	case TV_BOOK:
-		return (TRUE);
+		return(TRUE);
 
 	/* Ouch */
 	case TV_CHEST:
-		return (TRUE);
+		return(TRUE);
 #ifdef ENABLE_SUBINVEN
 	case TV_SUBINVEN:
 		/* Mimic normal chests */
-		if (o_ptr->sval >= SV_SI_CHEST_SMALL_WOODEN && o_ptr->sval <= SV_SI_CHEST_LARGE_STEEL) return TRUE;
-		return FALSE; //for now..
+		if (o_ptr->sval >= SV_SI_CHEST_SMALL_WOODEN && o_ptr->sval <= SV_SI_CHEST_LARGE_STEEL) return(TRUE);
+		return(FALSE); //for now..
 #endif
 
 	/* Junk is useless */
 	case TV_SKELETON:
 	case TV_JUNK:
-		return (TRUE);
+		return(TRUE);
 
 	case TV_GAME:
-		if (o_ptr->sval == SV_SNOWBALL) return TRUE;
+		if (o_ptr->sval == SV_SNOWBALL) return(TRUE);
 		break;
 
 #ifdef ENABLE_DEMOLITIONIST
 	case TV_CHARGE:
-		return TRUE;
+		return(TRUE);
 	case TV_CHEMICAL:
 		if (o_ptr->sval == SV_RUST || o_ptr->sval == SV_MIXTURE) break; /* Mixture is safely contained in a bottle */
-		return TRUE;
+		return(TRUE);
 #endif
 	}
 
-	return (FALSE);
+	return(FALSE);
 }
 
 /*
@@ -2527,14 +2527,14 @@ static bool hates_elec(object_type *o_ptr) {
 	switch (o_ptr->tval) {
 	case TV_RING:
 	case TV_WAND:
-		return (TRUE);
+		return(TRUE);
 	/* New: MC crystals - compare get_book_name_color() */
 	case TV_BOOK:
-		if (o_ptr->sval >= 19 && o_ptr->sval <= 21) return (TRUE);
-		return FALSE;
+		if (o_ptr->sval >= 19 && o_ptr->sval <= 21) return(TRUE);
+		return(FALSE);
 	}
 
-	return (FALSE);
+	return(FALSE);
 }
 
 /*
@@ -2547,7 +2547,7 @@ bool hates_fire(object_type *o_ptr) {
 	switch (o_ptr->tval) {
 	/* Wearable */
 	case TV_GLOVES:
-		if (o_ptr->sval == SV_SET_OF_GAUNTLETS) return FALSE;
+		if (o_ptr->sval == SV_SET_OF_GAUNTLETS) return(FALSE);
 		/* Fall through */
 	case TV_ARROW:
 	case TV_BOW:
@@ -2557,25 +2557,25 @@ bool hates_fire(object_type *o_ptr) {
 	case TV_BOOTS:
 	case TV_CLOAK:
 	case TV_SOFT_ARMOR:
-		return (TRUE);
+		return(TRUE);
 	case TV_HELM:
-		if (o_ptr->sval == SV_HARD_LEATHER_CAP || o_ptr->sval == SV_CLOTH_CAP) return TRUE;
-		return FALSE;
+		if (o_ptr->sval == SV_HARD_LEATHER_CAP || o_ptr->sval == SV_CLOTH_CAP) return(TRUE);
+		return(FALSE);
 	case TV_BOOMERANG:
 		if (o_ptr->sval == SV_BOOM_S_METAL || o_ptr->sval == SV_BOOM_METAL) return(FALSE);
 		if (o_ptr->sval == SV_BOOM_S_RAZOR || o_ptr->sval == SV_BOOM_RAZOR) return(FALSE);
-		return (TRUE);
+		return(TRUE);
 
 	/* Chests */
 	case TV_CHEST:
 		if (o_ptr->sval == SV_CHEST_RUINED ||
 		    o_ptr->sval == SV_CHEST_SMALL_WOODEN || o_ptr->sval == SV_CHEST_LARGE_WOODEN) return(TRUE);
-		return (FALSE);
+		return(FALSE);
 #ifdef ENABLE_SUBINVEN
 	case TV_SUBINVEN:
 		/* Mimic normal chests */
-		if (o_ptr->sval == SV_SI_CHEST_SMALL_WOODEN || o_ptr->sval == SV_SI_CHEST_LARGE_WOODEN) return TRUE;
-		return FALSE; //for now..
+		if (o_ptr->sval == SV_SI_CHEST_SMALL_WOODEN || o_ptr->sval == SV_SI_CHEST_LARGE_WOODEN) return(TRUE);
+		return(FALSE); //for now..
 #endif
 
 	/* Staffs/Scrolls burn */
@@ -2583,36 +2583,36 @@ bool hates_fire(object_type *o_ptr) {
 	case TV_SCROLL:
 	case TV_PARCHMENT:
 	case TV_BOOK:
-		return (TRUE);
+		return(TRUE);
 
 	/* Potions evaporate */
 	case TV_POTION:
 	case TV_POTION2:
 	case TV_FLASK:
 	case TV_BOTTLE: //just melts
-		return (TRUE);
+		return(TRUE);
 
 	/* Junk, partially */
 	case TV_SKELETON:
-		return TRUE;
+		return(TRUE);
 	case TV_JUNK:
-		if (o_ptr->sval == SV_WOODEN_STICK || o_ptr->sval == SV_WOOD_PIECE) return TRUE;
+		if (o_ptr->sval == SV_WOODEN_STICK || o_ptr->sval == SV_WOOD_PIECE) return(TRUE);
 		break;
 
 	case TV_GAME:
-		if (o_ptr->sval == SV_SNOWBALL) return TRUE;
+		if (o_ptr->sval == SV_SNOWBALL) return(TRUE);
 		break;
 
 #ifdef ENABLE_DEMOLITIONIST
 	case TV_CHARGE:
-		return TRUE;
+		return(TRUE);
 	case TV_CHEMICAL:
-		if (o_ptr->sval == SV_CHARCOAL || o_ptr->sval == SV_RUST) return TRUE; /* note: metal powder burns up too */
+		if (o_ptr->sval == SV_CHARCOAL || o_ptr->sval == SV_RUST) return(TRUE); /* note: metal powder burns up too */
 		break;
 #endif
 	}
 
-	return (FALSE);
+	return(FALSE);
 }
 
 /*
@@ -2624,10 +2624,10 @@ static bool hates_cold(object_type *o_ptr) {
 	case TV_POTION2:
 	case TV_FLASK:
 	//case TV_BOTTLE:  <- empty! unlike potions..
-		return (TRUE);
+		return(TRUE);
 	}
 
-	return (FALSE);
+	return(FALSE);
 }
 
 /*
@@ -2640,10 +2640,10 @@ static bool hates_impact(object_type *o_ptr) {
 	case TV_FLASK:
 	case TV_BOTTLE:
 	case TV_EGG:
-		return (TRUE);
+		return(TRUE);
 	}
 
-	return (FALSE);
+	return(FALSE);
 }
 
 /*
@@ -2656,18 +2656,18 @@ bool hates_water(object_type *o_ptr) {
 	case TV_SCROLL:		/* fades */
 	case TV_PARCHMENT:	/* fades */
 	case TV_BOOK:
-		return (TRUE);
+		return(TRUE);
 	case TV_GAME:
-		if (o_ptr->sval == SV_SNOWBALL) return TRUE;
+		if (o_ptr->sval == SV_SNOWBALL) return(TRUE);
 		break;
 #ifdef ENABLE_DEMOLITIONIST
 	case TV_CHEMICAL:
 		if (o_ptr->sval == SV_CHARCOAL || o_ptr->sval == SV_RUST || o_ptr->sval == SV_WOOD_CHIPS || o_ptr->sval == SV_MIXTURE) break;
-		return TRUE;
+		return(TRUE);
 #endif
 	}
 
-	return (FALSE);
+	return(FALSE);
 }
 
 /*
@@ -2675,10 +2675,10 @@ bool hates_water(object_type *o_ptr) {
  */
 static bool can_rust(object_type *o_ptr) {
 	/* Soft armour */
-	if (is_textile_armour(o_ptr->tval, o_ptr->sval)) return FALSE;
+	if (is_textile_armour(o_ptr->tval, o_ptr->sval)) return(FALSE);
 
 	/* Non-metallic weapons */
-	if (is_nonmetallic_weapon(o_ptr->tval, o_ptr->sval)) return FALSE;
+	if (is_nonmetallic_weapon(o_ptr->tval, o_ptr->sval)) return(FALSE);
 
 	switch (o_ptr->tval) {
 	case TV_GLOVES:
@@ -2692,11 +2692,11 @@ static bool can_rust(object_type *o_ptr) {
 	case TV_POLEARM:
 	case TV_AXE:
 	case TV_BOW: /* nonmetallic check filtered out slings and bows already */
-		return (TRUE);
+		return(TRUE);
 
 	}
 
-	return (FALSE);
+	return(FALSE);
 }
 
 #ifdef ENABLE_DEMOLITIONIST
@@ -2707,36 +2707,36 @@ bool contains_significant_reactive_metal(object_type *o_ptr) {
 		switch (o_ptr->sval) {
 		case SV_BOOM_WOOD:
 		case SV_BOOM_S_WOOD:
-			return FALSE;
+			return(FALSE);
 		}
-		return TRUE;
+		return(TRUE);
 	case TV_ROD: /* Note: Omit "-plated" varieties */
 		if (streq(rod_adj[o_ptr->sval], "Aluminium") ||
 		    streq(rod_adj[o_ptr->sval], "Cast Iron") ||
 		    streq(rod_adj[o_ptr->sval], "Iron") ||
 		    streq(rod_adj[o_ptr->sval], "Magnesium") ||
 		    streq(rod_adj[o_ptr->sval], "Zinc"))
-			return TRUE;
-		return FALSE;
+			return(TRUE);
+		return(FALSE);
 	case TV_WAND: /* Note: Omit "-plated" varieties */
 		if (streq(wand_adj[o_ptr->sval], "Aluminium") ||
 		    streq(wand_adj[o_ptr->sval], "Cast Iron") ||
 		    streq(wand_adj[o_ptr->sval], "Iron") ||
 		    streq(wand_adj[o_ptr->sval], "Magnesium") ||
 		    streq(wand_adj[o_ptr->sval], "Zinc"))
-			return TRUE;
-		return FALSE;
+			return(TRUE);
+		return(FALSE);
 	case TV_SHOT:
 	case TV_BOLT:
-		if (o_ptr->sval == SV_AMMO_NORMAL) return TRUE; //iron shots, normal bolts (assume iron)
-		return FALSE;
+		if (o_ptr->sval == SV_AMMO_NORMAL) return(TRUE); //iron shots, normal bolts (assume iron)
+		return(FALSE);
 	case TV_GOLEM:
-		if (o_ptr->sval == SV_GOLEM_IRON) return TRUE;
-		if (o_ptr->sval == SV_GOLEM_ALUM) return TRUE;
-		return FALSE;
+		if (o_ptr->sval == SV_GOLEM_IRON) return(TRUE);
+		if (o_ptr->sval == SV_GOLEM_ALUM) return(TRUE);
+		return(FALSE);
 	case TV_DIGGING:
 	case TV_SPIKE:
-		return TRUE;
+		return(TRUE);
 #ifdef ENABLE_SUBINVEN
 	/* converted chests */
 	case TV_SUBINVEN:
@@ -2745,26 +2745,26 @@ bool contains_significant_reactive_metal(object_type *o_ptr) {
 		case SV_SI_CHEST_LARGE_IRON:
 		case SV_SI_CHEST_SMALL_STEEL:
 		case SV_SI_CHEST_LARGE_STEEL:
-			return TRUE;
+			return(TRUE);
 		}
-		return FALSE;
+		return(FALSE);
 #endif
 	case TV_CHEST:
 		switch (o_ptr->sval) {
 		case SV_CHEST_RUINED:
 		case SV_CHEST_SMALL_WOODEN:
 		case SV_CHEST_LARGE_WOODEN:
-			return FALSE;
+			return(FALSE);
 		}
-		return TRUE;
+		return(TRUE);
 	case TV_TRAPKIT:
 		switch (o_ptr->sval) {
 		case SV_TRAPKIT_SLING:
 		case SV_TRAPKIT_BOW:
 		case SV_TRAPKIT_XBOW:
-			return TRUE;
+			return(TRUE);
 		}
-		return FALSE;
+		return(FALSE);
 	}
 
 	return can_rust(o_ptr);
@@ -2775,71 +2775,71 @@ bool contains_significant_wood(object_type *o_ptr) {
 		switch (o_ptr->sval) {
 		case SV_BOOM_WOOD:
 		case SV_BOOM_S_WOOD:
-			return TRUE;
+			return(TRUE);
 		}
-		return FALSE;
+		return(FALSE);
 	case TV_ARROW:
-		if (o_ptr->sval != SV_AMMO_NORMAL) return FALSE;
+		if (o_ptr->sval != SV_AMMO_NORMAL) return(FALSE);
 		//fall through
 	case TV_STAFF:
 	case TV_INSTRUMENT:
-		return TRUE;
+		return(TRUE);
 	case TV_GOLEM:
-		if (o_ptr->sval == SV_GOLEM_WOOD) return TRUE;
-		return FALSE;
+		if (o_ptr->sval == SV_GOLEM_WOOD) return(TRUE);
+		return(FALSE);
 	case TV_BLUNT:
-		if (o_ptr->sval == SV_WHIP) return FALSE;
+		if (o_ptr->sval == SV_WHIP) return(FALSE);
 		//fall through
 	case TV_AXE:
 	case TV_POLEARM:
 	case TV_BOW:
 	case TV_DIGGING:
 	case TV_MSTAFF:
-		return TRUE;
+		return(TRUE);
 	case TV_JUNK:
 		switch (o_ptr->sval) {
 		case SV_WOODEN_STICK:
 		case SV_WOOD_PIECE:
-			return TRUE;
+			return(TRUE);
 		}
-		return FALSE;
+		return(FALSE);
 #ifdef ENABLE_SUBINVEN
 	/* converted chests */
 	case TV_SUBINVEN:
 		switch (o_ptr->sval) {
 		case SV_SI_CHEST_SMALL_WOODEN:
 		case SV_SI_CHEST_LARGE_WOODEN:
-			return TRUE;
+			return(TRUE);
 		}
-		return FALSE;
+		return(FALSE);
 #endif
 	case TV_CHEST:
 		switch (o_ptr->sval) {
 		case SV_CHEST_SMALL_WOODEN:
 		case SV_CHEST_LARGE_WOODEN:
-			return TRUE;
+			return(TRUE);
 		}
-		return FALSE;
+		return(FALSE);
 	case TV_TRAPKIT:
 		switch (o_ptr->sval) {
 		case SV_TRAPKIT_SLING:
 		case SV_TRAPKIT_BOW:
 		case SV_TRAPKIT_XBOW:
-			return FALSE;
+			return(FALSE);
 		}
-		return TRUE;
+		return(TRUE);
 	case TV_LITE:
 		switch (o_ptr->sval) {
 		case SV_LITE_TORCH:
 		case SV_LITE_TORCH_EVER:
-			return TRUE;
+			return(TRUE);
 		}
-		return FALSE;
+		return(FALSE);
 	case TV_GAME:
-		return FALSE; //lul, don't even think of it!
+		return(FALSE); //lul, don't even think of it!
 	}
 
-	return FALSE;
+	return(FALSE);
 }
 #endif
 
@@ -2850,11 +2850,11 @@ bool contains_significant_wood(object_type *o_ptr) {
 static int set_acid_destroy(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
-	if (!hates_acid(o_ptr)) return (FALSE);
+	if (!hates_acid(o_ptr)) return(FALSE);
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-	if (f3 & TR3_IGNORE_ACID) return (FALSE);
-	return (TRUE);
+	if (f3 & TR3_IGNORE_ACID) return(FALSE);
+	return(TRUE);
 }
 
 /*
@@ -2863,11 +2863,11 @@ static int set_acid_destroy(object_type *o_ptr) {
 static int set_elec_destroy(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
-	if (!hates_elec(o_ptr)) return (FALSE);
+	if (!hates_elec(o_ptr)) return(FALSE);
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-	if (f3 & TR3_IGNORE_ELEC) return (FALSE);
-	return (TRUE);
+	if (f3 & TR3_IGNORE_ELEC) return(FALSE);
+	return(TRUE);
 }
 
 /*
@@ -2876,11 +2876,11 @@ static int set_elec_destroy(object_type *o_ptr) {
 static int set_fire_destroy(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
-	if (!hates_fire(o_ptr)) return (FALSE);
+	if (!hates_fire(o_ptr)) return(FALSE);
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-	if (f3 & TR3_IGNORE_FIRE) return (FALSE);
-	return (TRUE);
+	if (f3 & TR3_IGNORE_FIRE) return(FALSE);
+	return(TRUE);
 }
 
 /*
@@ -2889,11 +2889,11 @@ static int set_fire_destroy(object_type *o_ptr) {
 int set_cold_destroy(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
-	if (!hates_cold(o_ptr)) return (FALSE);
+	if (!hates_cold(o_ptr)) return(FALSE);
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-	if (f3 & TR3_IGNORE_COLD) return (FALSE);
-	return (TRUE);
+	if (f3 & TR3_IGNORE_COLD) return(FALSE);
+	return(TRUE);
 }
 
 /*
@@ -2902,12 +2902,12 @@ int set_cold_destroy(object_type *o_ptr) {
 int set_impact_destroy(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
-	if (!hates_impact(o_ptr)) return (FALSE);
+	if (!hates_impact(o_ptr)) return(FALSE);
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 	/* Hack -- borrow flag */
-//	if (f3 & TR3_IGNORE_COLD) return (FALSE);
-	return (TRUE);
+//	if (f3 & TR3_IGNORE_COLD) return(FALSE);
+	return(TRUE);
 }
 
 /*
@@ -2916,11 +2916,11 @@ int set_impact_destroy(object_type *o_ptr) {
 int set_water_destroy(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
-	if (!hates_water(o_ptr)) return (FALSE);
+	if (!hates_water(o_ptr)) return(FALSE);
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-	if ((f5 & TR5_IGNORE_WATER) || (f3 & TR3_IGNORE_ACID)) return (FALSE);
-	return (TRUE);
+	if ((f5 & TR5_IGNORE_WATER) || (f3 & TR3_IGNORE_ACID)) return(FALSE);
+	return(TRUE);
 }
 
 /*
@@ -2929,11 +2929,11 @@ int set_water_destroy(object_type *o_ptr) {
 int set_rust_destroy(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
-	if (!can_rust(o_ptr)) return (FALSE);
+	if (!can_rust(o_ptr)) return(FALSE);
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-	if ((f3 & TR3_IGNORE_ACID) || (f5 & TR5_IGNORE_WATER)) return (FALSE);
-	return (TRUE);
+	if ((f3 & TR3_IGNORE_ACID) || (f5 & TR5_IGNORE_WATER)) return(FALSE);
+	return(TRUE);
 }
 
 /*
@@ -2948,27 +2948,27 @@ int set_rocket_destroy(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	if (!hates_impact(o_ptr)) {
-		if (!hates_fire(o_ptr)) return (FALSE);
+		if (!hates_fire(o_ptr)) return(FALSE);
 		/* Extract the flags */
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-		if (f3 & TR3_IGNORE_FIRE) return (FALSE);
+		if (f3 & TR3_IGNORE_FIRE) return(FALSE);
 	}
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
  * Every things
  */
 int set_all_destroy(object_type *o_ptr) {
-	if (artifact_p(o_ptr)) return (FALSE);
-//	if (is_realm_book(o_ptr) && o_ptr->sval >= SV_BOOK_MIN_GOOD) return (FALSE);
+	if (artifact_p(o_ptr)) return(FALSE);
+//	if (is_realm_book(o_ptr) && o_ptr->sval >= SV_BOOK_MIN_GOOD) return(FALSE);
 	if (is_realm_book(o_ptr)) {
 		u32b f1, f2, f3, f4, f5, f6, esp;
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 		/* Hack^2 -- use this as a sign of being 'high books' */
-		if (f3 & TR3_IGNORE_ELEC) return (FALSE);
+		if (f3 & TR3_IGNORE_ELEC) return(FALSE);
 	}
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -3090,7 +3090,7 @@ int inven_damage(int Ind, inven_func typ, int perc) {
 	}
 
 	/* Return the casualty count */
-	return (k);
+	return(k);
 }
 
 
@@ -3131,7 +3131,7 @@ int equip_damage(int Ind, int typ) {
 	}
 
 	/* Nothing to damage */
-	if (!o_ptr->k_idx) return (FALSE);
+	if (!o_ptr->k_idx) return(FALSE);
 
 	switch (typ) {
 	case GF_WATER:
@@ -3146,10 +3146,10 @@ int equip_damage(int Ind, int typ) {
 
 	/* hack: not disenchantable -> cannot be damaged either */
 	object_flags(o_ptr, &dummy, &f2, &dummy, &dummy, &f5, &dummy, &dummy);
-	if ((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) return FALSE;
+	if ((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) return(FALSE);
 
 	/* No damage left to be done */
-	if (o_ptr->ac + o_ptr->to_a + shield_bonus <= 0) return (FALSE);
+	if (o_ptr->ac + o_ptr->to_a + shield_bonus <= 0) return(FALSE);
 
 	/* Describe */
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
@@ -3174,7 +3174,7 @@ int equip_damage(int Ind, int typ) {
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 	/* Item was damaged */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -3192,7 +3192,7 @@ int shield_takes_damage(int Ind, int typ) {
 	if (p_ptr->admin_dm) return(FALSE);
 
 	/* Nothing to damage */
-	if (!o_ptr->k_idx) return (FALSE);
+	if (!o_ptr->k_idx) return(FALSE);
 
 	switch (typ) {
 	case GF_WATER:
@@ -3213,13 +3213,13 @@ int shield_takes_damage(int Ind, int typ) {
 
 	/* hack: not disenchantable -> cannot be damaged either */
 	object_flags(o_ptr, &dummy, &f2, &dummy, &dummy, &f5, &dummy, &dummy);
-	if ((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) return FALSE;
+	if ((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) return(FALSE);
 
 	/* No damage left to be done */
  #ifdef USE_NEW_SHIELDS
-	if (o_ptr->ac + o_ptr->to_a * 2 <= 0) return (FALSE);
+	if (o_ptr->ac + o_ptr->to_a * 2 <= 0) return(FALSE);
  #else
-	if (o_ptr->ac + o_ptr->to_a <= 0) return (FALSE);
+	if (o_ptr->ac + o_ptr->to_a <= 0) return(FALSE);
  #endif
 
 	/* Describe */
@@ -3245,7 +3245,7 @@ int shield_takes_damage(int Ind, int typ) {
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 	/* Item was damaged */
-	return (TRUE);
+	return(TRUE);
 }
 #endif
 
@@ -3259,10 +3259,10 @@ int weapon_takes_damage(int Ind, int typ, int slot) {
 	if (p_ptr->admin_dm) return(FALSE);
 
 	/* Nothing to damage */
-	if (!o_ptr->k_idx) return (FALSE);
+	if (!o_ptr->k_idx) return(FALSE);
 
 	/* Ok, ego items finally don't take equipment damage anymore */
-	if (o_ptr->name1 || o_ptr->name2) return FALSE;
+	if (o_ptr->name1 || o_ptr->name2) return(FALSE);
 
 	switch (typ) {
 	case GF_WATER:
@@ -3292,10 +3292,10 @@ int weapon_takes_damage(int Ind, int typ, int slot) {
 
 	/* hack: not disenchantable -> cannot be damaged either */
 	object_flags(o_ptr, &dummy, &f2, &dummy, &dummy, &f5, &dummy, &dummy);
-	if ((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) return FALSE;
+	if ((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) return(FALSE);
 
 	/* No damage left to be done */
-	if (o_ptr->to_d <= -10) return (FALSE);
+	if (o_ptr->to_d <= -10) return(FALSE);
 
 	/* Describe */
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
@@ -3320,7 +3320,7 @@ int weapon_takes_damage(int Ind, int typ, int slot) {
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 	/* Item was damaged */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -3601,11 +3601,11 @@ bool inc_stat(int Ind, int stat) {
 		p_ptr->update |= (PU_BONUS);
 
 		/* Success */
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Nothing to gain */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -3741,7 +3741,7 @@ bool dec_stat(int Ind, int stat, int amount, int mode) {
 	}
 
 	/* Done */
-	return (res);
+	return(res);
 }
 
 
@@ -3765,11 +3765,11 @@ bool res_stat(int Ind, int stat) {
 		p_ptr->update |= (PU_BONUS | PU_MANA | PU_HP | PU_SANITY);
 
 		/* Success */
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Nothing to restore */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -3799,7 +3799,7 @@ bool apply_disenchant(int Ind, int mode) {
 	//mode = mode;
 
 	if (!mode) mode = randint(9);
-	else if (mode < 1 || mode > 9) return (FALSE);
+	else if (mode < 1 || mode > 9) return(FALSE);
 
 	/* Pick a random slot */
 	switch (mode) {
@@ -3818,7 +3818,7 @@ bool apply_disenchant(int Ind, int mode) {
 	o_ptr = &p_ptr->inventory[t];
 
 	/* No item, nothing happens */
-	if (!o_ptr->k_idx) return (FALSE);
+	if (!o_ptr->k_idx) return(FALSE);
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
@@ -3840,13 +3840,13 @@ bool apply_disenchant(int Ind, int mode) {
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 		/* Notice */
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Nothing to disenchant */
 	if ((o_ptr->to_h <= 0) && (o_ptr->to_d <= 0) && (o_ptr->to_a <= 0)) {
 		/* Nothing to notice */
-		return (FALSE);
+		return(FALSE);
 	}
 
 	if ((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) {
@@ -3854,7 +3854,7 @@ bool apply_disenchant(int Ind, int mode) {
 				   o_name, index_to_label(t),
 				   ((o_ptr->number != 1) ? "are" : "is"));
 		/* Notice */
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Artifacts have 70%(randart) or 80%(trueart) chance to resist */
@@ -3866,7 +3866,7 @@ bool apply_disenchant(int Ind, int mode) {
 				   ((o_ptr->number != 1) ? "" : "s"));
 
 		/* Notice */
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Disenchant tohit */
@@ -3919,7 +3919,7 @@ bool apply_disenchant(int Ind, int mode) {
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
 	/* Notice */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -3957,7 +3957,7 @@ bool apply_discharge(int Ind, int dam) {
 		/* Get the item */
 		o_ptr = &p_ptr->inventory[i];
 		/* No item, nothing happens */
-		if (!o_ptr->k_idx) return (FALSE);
+		if (!o_ptr->k_idx) return(FALSE);
 
 		if (magik(chance)) continue;
 		//if (o_ptr->tval == TV_AMULET && magik(50)) continue; /* further reduce chance? */
@@ -4027,7 +4027,7 @@ bool apply_discharge(int Ind, int dam) {
 	/* ? */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-	return (damaged_any);
+	return(damaged_any);
 }
 bool apply_discharge_item(int o_idx, int dam) {
 	int	chance = 95;
@@ -4036,7 +4036,7 @@ bool apply_discharge_item(int o_idx, int dam) {
 	u32b fx, f2, f3;
 
 	/* No item, nothing happens */
-	if (!o_ptr->k_idx) return (FALSE);
+	if (!o_ptr->k_idx) return(FALSE);
 
 	/* note: used same values as in elec_dam */
 	if (dam >= 30) chance -= 10;
@@ -4086,7 +4086,7 @@ bool apply_discharge_item(int o_idx, int dam) {
 		damaged = TRUE;
 	}
 
-	return (damaged);
+	return(damaged);
 }
 
 
@@ -4291,15 +4291,15 @@ static int radius_damage(int dam, int div, int typ) {
 	//case GF_ZEAL_PLAYER:
 	case GF_TBRAND_POIS:
 
-		return (dam);
+		return(dam);
 
 	case GF_DARK_WEAK:
 		/* May carry special flag for occult shadow darkness spell */
-		return (dam & 0x2000) + (dam & 0x1FFF) / div;
+		return(dam & 0x2000) + (dam & 0x1FFF) / div;
 	}
 
 	/* default: half damage per grid of distance */
-	return (dam / div);
+	return(dam / div);
 }
 
 
@@ -5131,7 +5131,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	}
 
 	/* Return "Anything seen?" */
-	return (obvious);
+	return(obvious);
 }
 
 
@@ -5179,7 +5179,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	//o_ptr = &o_list[c_ptr->o_idx];
 
 	/* Nothing here */
-	if (!c_ptr->o_idx) return (FALSE);
+	if (!c_ptr->o_idx) return(FALSE);
 
 	/* Set the player pointer */
 	if (!quiet) p_ptr = Players[Ind];
@@ -5839,7 +5839,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	}
 
 	/* Return "Anything seen?" */
-	return (obvious);
+	return(obvious);
 }
 
 
@@ -5853,7 +5853,7 @@ static bool psi_backlash(int Ind, int m_idx, int dam) {
 	char m_name[MNAME_LEN];
 	player_type *p_ptr;
 
-	if (!Ind) return FALSE;
+	if (!Ind) return(FALSE);
 
 	p_ptr = Players[Ind];
 
@@ -5868,17 +5868,17 @@ static bool psi_backlash(int Ind, int m_idx, int dam) {
 			msg_format(Ind, "%^s's corrupted mind backlashes your attack!", m_name);
 		}
 		project(0 - Ind, m_idx, 0, p_ptr->py, p_ptr->px ,dam / 3, GF_PSI, 0, "");
-		return TRUE;
+		return(TRUE);
 	}
-	return FALSE;
+	return(FALSE);
 }
 #endif
 
 /* Percent damage calculation, preventing integer overflow! - Kurzel */
 static int percent_damage(int hp, int dam) {
-	if (hp > 9362) return (hp / 100) * dam;
-	else if (hp > 936) return ((hp / 10) * dam) / 10;
-	else return (hp * dam) / 100;
+	if (hp > 9362) return(hp / 100) * dam;
+	else if (hp > 936) return((hp / 10) * dam) / 10;
+	else return(hp * dam) / 100;
 }
 
 /*
@@ -6011,18 +6011,18 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	}
 
 	/* Nobody here */
-	if (c_ptr->m_idx <= 0) return (FALSE);
+	if (c_ptr->m_idx <= 0) return(FALSE);
 
 	/* Acquire monster pointer */
 	m_ptr = &m_list[c_ptr->m_idx];
 
-	if (m_ptr->r_idx == 900 + 200 + 48 + 4 && (flg & PROJECT_BOUN) && typ != 90 + 19) return FALSE;
+	if (m_ptr->r_idx == 900 + 200 + 48 + 4 && (flg & PROJECT_BOUN) && typ != 90 + 19) return(FALSE);
 
 	/* There are a couple specific checks for this below, but we just handle everything with this one check here, for now */
-	if (m_ptr->status == M_STATUS_FRIENDLY) return FALSE;
+	if (m_ptr->status == M_STATUS_FRIENDLY) return(FALSE);
 
 	/* A dead monster that drops a potion that smashes cannot get hit by that very effect */
-	if (m_ptr->dead) return FALSE;
+	if (m_ptr->dead) return(FALSE);
 
 	/* Prevent recursively afflicted potion_smash_effect() hits */
 	if (mon_hit_proj_id != mon_hit_proj_id2) {
@@ -6037,7 +6037,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	name = r_name_get(m_ptr);
 
 	/* Never affect projector */
-	if ((who > 0) && (c_ptr->m_idx == who)) return (FALSE);
+	if ((who > 0) && (c_ptr->m_idx == who)) return(FALSE);
 
 	/* Spells cast by a player never hurt a friendly golem */
 	//if (IS_PVP)
@@ -6045,11 +6045,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		//look for its owner to see if he's hostile or not
 		for (i = 1; i < NumPlayers; i++)
 			if (Players[i]->id == m_ptr->owner) {
-				if (!check_hostile(0 - who, i)) return FALSE;
+				if (!check_hostile(0 - who, i)) return(FALSE);
 				break;
 			}
 		//if his owner is not online, assume friendly(!)
-		if (i == NumPlayers) return FALSE;
+		if (i == NumPlayers) return(FALSE);
 	}
 
 	/* Set the "seen" flag */
@@ -6070,7 +6070,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP)) /* only for fire_bolt() */
 	    && magik(50)) {
 		if (seen) msg_print(Ind, "Your attack was deflected.");
-		return TRUE; /* notice */
+		return(TRUE); /* notice */
 	}
 
 #ifdef USE_BLOCKING
@@ -6086,7 +6086,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			hit_desc[2] = toupper(hit_desc[2]);
 			msg_print(Ind, hit_desc);
 		}
-		return TRUE; /* notice */
+		return(TRUE); /* notice */
 	}
 #endif
 
@@ -9078,7 +9078,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (!quiet) {
 				if (c_ptr->m_idx == 0) {
 					msg_format(Ind, "%^s disappears!", m_name);
-					return (FALSE);
+					return(FALSE);
 				} else msg_format(Ind, "%^s changes!", m_name);
 			}
 		}
@@ -9094,7 +9094,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	}
 
 	/* Return "Anything seen?" */
-	return (obvious);
+	return(obvious);
 }
 
 bool blindable_monster(monster_race *r_ptr) {
@@ -9106,8 +9106,8 @@ bool blindable_monster(monster_race *r_ptr) {
 	    !(r_ptr->flags3 & RF3_NONLIVING) &&
 	    magik(100 - (((r_ptr->flags1 & RF1_UNIQUE) | (r_ptr->flags3 & RF3_DRAGONRIDER)) ? 30 : 0) - r_ptr->level))
 	    //RES_OLD(r_ptr->level, dam))  <- this line would require a " resists." note btw. */
-		return TRUE;
-	return FALSE;
+		return(TRUE);
+	return(FALSE);
 }
 
 
@@ -9174,12 +9174,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 
 	/* Bad player number */
-	if (Ind <= 0) return (FALSE);
+	if (Ind <= 0) return(FALSE);
 
 	p_ptr = Players[Ind];
 
 	/* Player has already been hit, return - mikaelh */
-	if (p_ptr->got_hit) return (FALSE);
+	if (p_ptr->got_hit) return(FALSE);
 
 	r_ptr = &r_info[p_ptr->body_monster];
 
@@ -9189,7 +9189,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Don't allow phase/teleport for auto-retaliation methods */
 		if (p_ptr->auto_retaliaty) {
 			msg_print(Ind, "\377yYou cannot use means of healing for auto-retaliation.");
-			return FALSE;
+			return(FALSE);
 		}
 #endif
 		hack_dam = dam & 0x3C00;
@@ -9209,7 +9209,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	blind = (p_ptr->blind ? TRUE : FALSE);
 
 	/* Player is not here */
-	if ((x != p_ptr->px) || (y != p_ptr->py) || (!inarea(wpos, &p_ptr->wpos))) return (FALSE);
+	if ((x != p_ptr->px) || (y != p_ptr->py) || (!inarea(wpos, &p_ptr->wpos))) return(FALSE);
 
 	/* Player cannot hurt himself */
 	if (0 - who == Ind) {
@@ -9232,11 +9232,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			    typ == GF_BLESS_PLAYER || typ == GF_RESPOIS_PLAYER ||
 			    typ == GF_MINDBOOST_PLAYER || typ == GF_REMIMAGE_PLAYER ||
 			    typ == GF_REMCONF_PLAYER || typ == GF_TBRAND_POIS)
-				return FALSE;
+				return(FALSE);
 			/* ok */
 			self = TRUE;
 		}
-		else return (FALSE);
+		else return(FALSE);
 	}
 
 	/* Kinda bad in-between hack: Heat melts snow ^^ */
@@ -9277,7 +9277,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if (cfg.use_pk_rules == PK_RULES_NEVER && who <= 0 &&
 	    who > PROJECTOR_UNUSUAL
 	    && !(flg & PROJECT_PLAY)) /* except if it's an explicitely player-affecting spell! */
-		return (FALSE);
+		return(FALSE);
 
 	/* Store/house is safe -- NOT in dungeon! */
 	if (p_ptr->store_num != -1 && istown(wpos)) return(FALSE);
@@ -9360,7 +9360,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		   So we should just exit here. Only drawback might be,
 		   that in PvP a player cannot die from his opponent's
 		   remaining nox cloud after he killed him ;). - C. Blue */
-		return FALSE;
+		return(FALSE);
 	}
 	else if (who == PROJECTOR_TERRAIN) {
 		if ((l_ptr && (l_ptr->flags2 & LF2_FAIR_TERRAIN_DAM)) ||
@@ -9540,7 +9540,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	}
 
 	/* Soloists cannot be supported by other players! */
-	if ((p_ptr->mode & MODE_SOLO) && friendly_player && !self) return FALSE;
+	if ((p_ptr->mode & MODE_SOLO) && friendly_player && !self) return(FALSE);
 
 	/* PvP often gives same message output as fuzzy */
 	if (!strcmp(attacker, "") || !strcmp(m_name, "")) fuzzy = TRUE;
@@ -9606,7 +9606,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 #endif
 		/* Return "Anything seen?" */
-		return (obvious);
+		return(obvious);
 	}
 
 
@@ -9643,7 +9643,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if ((chance > 0) && magik(chance)) {
 				//msg_print(Ind, "You dodge a magical attack!");
 				msg_format(Ind, "\377%cYou dodge the projectile!", COLOUR_DODGE_GOOD);
-				return (TRUE);
+				return(TRUE);
 			}
 		}
 		/* MEGAHACK -- allow to dodge 'bolt' traps */
@@ -9653,7 +9653,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			if ((chance > 0) && magik(chance)) {
 				msg_format(Ind, "\377%cYou dodge a magical attack!", COLOUR_DODGE_GOOD);
-				return (TRUE);
+				return(TRUE);
 			}
 		}
 	}
@@ -9664,12 +9664,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    !p_ptr->blind && !(flg & (PROJECT_HIDE | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODO)) && magik(apply_dodge_chance(Ind, getlevel(wpos)))) {
 		if ((!rad) && (who >= PROJECTOR_TRAP)) {
 			msg_format(Ind, "\377%cYou dodge %s projectile!", COLOUR_DODGE_GOOD, m_name_gen);
-			return (TRUE);
+			return(TRUE);
 		}
 		/* MEGAHACK -- allow to dodge 'bolt' traps */
 		else if ((rad < 2) && (who == PROJECTOR_TRAP)) {
 			msg_format(Ind, "\377%cYou dodge %s magical attack!", COLOUR_DODGE_GOOD, m_name_gen);
-			return (TRUE);
+			return(TRUE);
 		}
 	}
 #endif
@@ -9760,7 +9760,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		disturb(Ind, 1, 0);
-		return TRUE;
+		return(TRUE);
 	}
 
 
@@ -9785,7 +9785,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
  #endif
 
 			disturb(Ind, 1, 0);
-			return TRUE;
+			return(TRUE);
 		}
 	}
 	/* Ball attacks: Took cover behind a shield? requires USE_BLOCKING */
@@ -9805,7 +9805,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			disturb(Ind, 1, 0);
  #if 1 /* Should shield-blocking a ball spell fully nullify it? */
-			return TRUE;
+			return(TRUE);
  #else /* ..or just halve the damage? Note that block chance for ball attacks is already halved above. */
 			if (dam) {
 				dam >>= 1;
@@ -11810,7 +11810,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #endif
 
 	/* Return "Anything seen?" */
-	return (obvious);
+	return(obvious);
 }
 
 
@@ -12770,7 +12770,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	}
 
 	/* Speed -- ignore "non-explosions" */
-	if (!grids) return (FALSE);
+	if (!grids) return(FALSE);
 
 #ifndef OPTIMIZED_ANIMATIONS
 	/* Display the "blast area" */
@@ -12906,7 +12906,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		project_time_effect = 0;
 
 		/* Out of effects? Oops! */
-		if (effect == -1) return FALSE;
+		if (effect == -1) return(FALSE);
 
 		/* Imprint it on all grids - this is important for unchanging effects (clouds) as they are not reimprinted in process_effects(): */
 
@@ -12932,7 +12932,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		   (since after it was changed to prevent monsters from wave-jumping / EFF_DAMAGE_AFTER_SETTING).
 		   This means that there is no initial damage application, but the project() happens at the end of each effect-tick,
 		   (with the effect vanishing exactly on its final tick and project(), without lingering visuals after that). */
-		if (no_initial_damage) return FALSE;
+		if (no_initial_damage) return(FALSE);
 	}
 
 	/* PROJECT_DUMY means we don't have to project on floor/items/monsters/players,
@@ -13189,7 +13189,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 #endif
 
 	/* Return "something was noticed" */
-	return (notice);
+	return(notice);
 }
 
 /* Check whether player is actually in an area that offers unusual safety from various
@@ -13199,10 +13199,10 @@ int safe_area(int Ind) {
 	//dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 
 	/* For 'Arena Monster Challenge' event: */
-	if (ge_special_sector && in_arena(&p_ptr->wpos)) return 1;
+	if (ge_special_sector && in_arena(&p_ptr->wpos)) return(1);
 
 	/* default: usual situation - not safe */
-	return 0;
+	return(0);
 }
 
 
@@ -13951,5 +13951,5 @@ int approx_damage(int m_idx, int dam, int typ) {
 //	int do_fear = 0;
 #endif
 
-	return (dam);
+	return(dam);
 }

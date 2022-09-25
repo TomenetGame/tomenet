@@ -95,19 +95,19 @@ static u32b	x_check = 0L;
  */
 static bool older_than(byte x, byte y, byte z) {
 	/* Much older, or much more recent */
-	if (sf_major < x) return (TRUE);
-	if (sf_major > x) return (FALSE);
+	if (sf_major < x) return(TRUE);
+	if (sf_major > x) return(FALSE);
 
 	/* Distinctly older, or distinctly more recent */
-	if (sf_minor < y) return (TRUE);
-	if (sf_minor > y) return (FALSE);
+	if (sf_minor < y) return(TRUE);
+	if (sf_minor > y) return(FALSE);
 
 	/* Barely older, or barely more recent */
-	if (sf_patch < z) return (TRUE);
-	if (sf_patch > z) return (FALSE);
+	if (sf_patch < z) return(TRUE);
+	if (sf_patch > z) return(FALSE);
 
 	/* Identical versions */
-	return (FALSE);
+	return(FALSE);
 }
 
 /*
@@ -116,19 +116,19 @@ static bool older_than(byte x, byte y, byte z) {
  */
 bool s_older_than(byte x, byte y, byte z) {
 	/* Much older, or much more recent */
-	if (ssf_major < x) return (TRUE);
-	if (ssf_major > x) return (FALSE);
+	if (ssf_major < x) return(TRUE);
+	if (ssf_major > x) return(FALSE);
 
 	/* Distinctly older, or distinctly more recent */
-	if (ssf_minor < y) return (TRUE);
-	if (ssf_minor > y) return (FALSE);
+	if (ssf_minor < y) return(TRUE);
+	if (ssf_minor > y) return(FALSE);
 
 	/* Barely older, or barely more recent */
-	if (ssf_patch < z) return (TRUE);
-	if (ssf_patch > z) return (FALSE);
+	if (ssf_patch < z) return(TRUE);
+	if (ssf_patch > z) return(FALSE);
 
 	/* Identical versions */
-	return (FALSE);
+	return(FALSE);
 }
 
 /*
@@ -137,19 +137,19 @@ bool s_older_than(byte x, byte y, byte z) {
  */
 static bool q_older_than(byte x, byte y, byte z) {
 	/* Much older, or much more recent */
-	if (qsf_major < x) return (TRUE);
-	if (qsf_major > x) return (FALSE);
+	if (qsf_major < x) return(TRUE);
+	if (qsf_major > x) return(FALSE);
 
 	/* Distinctly older, or distinctly more recent */
-	if (qsf_minor < y) return (TRUE);
-	if (qsf_minor > y) return (FALSE);
+	if (qsf_minor < y) return(TRUE);
+	if (qsf_minor > y) return(FALSE);
 
 	/* Barely older, or barely more recent */
-	if (qsf_patch < z) return (TRUE);
-	if (qsf_patch > z) return (FALSE);
+	if (qsf_patch < z) return(TRUE);
+	if (qsf_patch > z) return(FALSE);
 
 	/* Identical versions */
-	return FALSE;
+	return(FALSE);
 }
 
 /*
@@ -184,7 +184,7 @@ static byte sf_get(void) {
 	x_check += xor_byte;
 
 	/* Return the value */
-	return (v);
+	return(v);
 }
 
 void rd_byte(byte *ip) {
@@ -1122,7 +1122,7 @@ static errr rd_store(store_type *st_ptr) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 static void rd_bbs() {
@@ -1634,7 +1634,7 @@ static bool rd_extra(int Ind) {
 	if (strcmp(p_ptr->name, login_char_name)) {
 		s_printf("$INTRUSION$ - %s tried to use savegame %s\n", p_ptr->name, login_char_name);
 #ifdef IGNORE_SAVEGAME_MISMATCH
-		return (1);
+		return(1);
 #endif
 	}
 
@@ -1993,7 +1993,7 @@ static bool rd_extra(int Ind) {
 	/* Incompatible save files */
 	if (tmp16u > MAX_R_IDX) {
 		s_printf("Too many (%u) monster races!\n", tmp16u);
-		return (22);
+		return(22);
 	}
 	if (older_than(4, 7, 2))
 		for (i = 0; i < tmp16u; i++) {
@@ -2470,7 +2470,7 @@ if (p_ptr->updated_savegame == 0) {
 	}
 
 	/* Success */
-	return FALSE;
+	return(FALSE);
 }
 
 
@@ -2563,7 +2563,7 @@ if (p_ptr->updated_savegame == 3) { // <- another megahack, see lua_arts_fix()
 			s_printf("Too many items in the inventory!\n");
 
 			/* Fail */
-			return (54);
+			return(54);
 		}
 
 		/* Carry inventory */
@@ -2583,7 +2583,7 @@ if (p_ptr->updated_savegame == 3) { // <- another megahack, see lua_arts_fix()
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*
@@ -2622,7 +2622,7 @@ static errr rd_hostilities(int Ind) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2816,7 +2816,7 @@ static errr rd_floor(void) {
 #endif
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /* Reads in a players memory of the level he is currently on, in run-length encoded
@@ -2864,7 +2864,7 @@ static errr rd_cave_memory(int Ind) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /* Reads auction data. */
@@ -2976,7 +2976,7 @@ static errr rd_savefile_new_aux(int Ind) {
 	/* Incompatible save files */
 	if (tmp16u > MAX_K_IDX) {
 		s_printf("Too many (%u) object kinds!\n", tmp16u);
-		return (22);
+		return(22);
 	}
 
 	/* Read the object memory */
@@ -2997,7 +2997,7 @@ static errr rd_savefile_new_aux(int Ind) {
 	/* Incompatible save files */
 	if (tmp16u > MAX_T_IDX) {
 		s_printf("Too many (%u) trap kinds!\n", tmp16u);
-		return (22);
+		return(22);
 	}
 
 	/* Read the object memory */
@@ -3012,7 +3012,7 @@ static errr rd_savefile_new_aux(int Ind) {
 	/* Read the extra stuff */
 	err_code = rd_extra(Ind);
 	if (err_code == 1)
-		return 1;
+		return(1);
 	else if (err_code)
 		return 35;
 
@@ -3030,11 +3030,11 @@ static errr rd_savefile_new_aux(int Ind) {
 	/* Read the inventory */
 	if (rd_inventory(Ind)) {
 		s_printf("Unable to read inventory\n");
-		return (21);
+		return(21);
 	}
 
 	/* Read hostility information if new enough */
-	if (rd_hostilities(Ind)) return (22);
+	if (rd_hostilities(Ind)) return(22);
 
 	/* read the dungeon memory if new enough */
 	rd_cave_memory(Ind);
@@ -3185,7 +3185,7 @@ static errr rd_savefile_new_aux(int Ind) {
 	if (o_v_check != n_v_check)
 	{
 		s_printf("Invalid checksum\n");
-		return (11);
+		return(11);
 	}
 
 
@@ -3200,7 +3200,7 @@ static errr rd_savefile_new_aux(int Ind) {
 	if (o_x_check != n_x_check)
 	{
 		s_printf("Invalid encoded checksum\n");
-		return (11);
+		return(11);
 	}
 
 #endif
@@ -3215,7 +3215,7 @@ static errr rd_savefile_new_aux(int Ind) {
 	p_ptr->afk = FALSE;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -3234,7 +3234,7 @@ errr rd_savefile_new(int Ind) {
 	fff = my_fopen(p_ptr->savefile, "rb");
 
 	/* Paranoia */
-	if (!fff) return (-1);
+	if (!fff) return(-1);
 
 	/* Allocate a new buffer */
 	fff_buf = C_NEW(MAX_BUF_SIZE, char);
@@ -3253,7 +3253,7 @@ errr rd_savefile_new(int Ind) {
 	my_fclose(fff);
 
 	/* Result */
-	return (err);
+	return(err);
 }
 
 /* Added this to load2.c too, for load_quests() - C. Blue */
@@ -3263,9 +3263,9 @@ static bool file_exist(char *buf) {
 	fd = fd_open(buf, O_RDONLY);
 	if (fd >= 0) {
 		fd_close(fd);
-		return (TRUE);
+		return(TRUE);
 	}
-	else return (FALSE);
+	else return(FALSE);
 }
 
 /* Just discard exceeding data instead of terminating with incompatibility error?
@@ -3304,7 +3304,7 @@ errr rd_server_savefile() {
 	fff = my_fopen(savefile, "rb");
 
 	/* Paranoia */
-	if (!fff) return (-1);
+	if (!fff) return(-1);
 
 	/* Allocate a new buffer */
 	fff_buf = C_NEW(MAX_BUF_SIZE, char);
@@ -3369,7 +3369,7 @@ errr rd_server_savefile() {
 	if (tmp16u > MAX_R_IDX) {
 //todo: ALLOW_EXCESS_DATA
 		s_printf("Too many (%u) monster races!\n", tmp16u);
-		return (21);
+		return(21);
 	}
 
 	/* Read the available records */
@@ -3387,7 +3387,7 @@ errr rd_server_savefile() {
 	if (tmp16u > MAX_A_IDX) {
 //todo: ALLOW_EXCESS_DATA
 		s_printf("Too many (%u) artifacts!\n", tmp16u);
-		return (24);
+		return(24);
 	}
 	/* Read the artifact flags */
 	for (i = 0; i < tmp16u; i++) {
@@ -3449,7 +3449,7 @@ errr rd_server_savefile() {
 	if (tmp16u > MAX_PARTIES) {
 //todo: ALLOW_EXCESS_DATA
 		s_printf("Too many (%u) parties!\n", tmp16u);
-		return (25);
+		return(25);
 	}
 
 	/* Read the available records */
@@ -3478,7 +3478,7 @@ errr rd_server_savefile() {
 	if (tmp32u > MAX_M_IDX) {
 #ifndef ALLOW_EXCESS_DATA
 		s_printf("Too many (%u) monsters!\n", tmp16u);
-		return (29);
+		return(29);
 #else
 		s_printf("Too many (%u) monsters! Discarding %d beyond %d.\n", tmp16u, tmp16u - MAX_M_IDX, MAX_M_IDX);
 		overflow = tmp16u - MAX_M_IDX;
@@ -3530,7 +3530,7 @@ errr rd_server_savefile() {
 	if (tmp16u > MAX_O_IDX) {
 #ifndef ALLOW_EXCESS_DATA
 		s_printf("Too many (%u) objects!\n", tmp16u);
-		return (26);
+		return(26);
 #else
 		s_printf("Too many (%u) objects! Discarding %d beyond %d.\n", tmp16u, tmp16u - MAX_O_IDX, MAX_O_IDX);
 		overflow = tmp16u - MAX_O_IDX;
@@ -3570,7 +3570,7 @@ errr rd_server_savefile() {
 	if (num_houses > MAX_HOUSES) {
 //todo: ALLOW_EXCESS_DATA
 		s_printf("Too many (%u) houses!\n", num_houses);
-		return (27);
+		return(27);
 	}
 
 	/* Read the available records */
@@ -3819,7 +3819,7 @@ errr rd_server_savefile() {
 	}
 
 	/* Result */
-	return (err);
+	return(err);
 }
 
 void new_rd_wild() {
@@ -4351,18 +4351,18 @@ static void unseal_object(object_type *o_ptr) {
 	s_printf("UNSEALING: %d, %d\n", o_ptr->tval, o_ptr->sval);
 }
 /* Seal or unseal an object as required,
-   or return FALSE if object no longer exists - C. Blue */
+   or return(FALSE) if object no longer exists - C. Blue */
 bool seal_or_unseal_object(object_type *o_ptr) {
 	/* Object does no longer exist? (for example now commented out, in k_info)
 	   - turn it into a 'seal' instead of deleting it! */
 	if (!o_ptr->k_idx) {
 		/* Object does no longer exist? Delete it! */
-		if (!o_ptr->tval && !o_ptr->sval) return FALSE;
+		if (!o_ptr->tval && !o_ptr->sval) return(FALSE);
 
 		seal_object(o_ptr);
 
 		/* In case someone is silly and removes seals while leaving the definition enabled: */
-		if (!o_ptr->k_idx) return FALSE;
+		if (!o_ptr->k_idx) return(FALSE);
 //		s_printf("sealed to %d, %d\n", o_ptr->tval, o_ptr->sval);
 	} else if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_SEAL) {
  #if 1 /* convert DDSM to EDSM -- fix for already sealed ones */
@@ -4374,7 +4374,7 @@ bool seal_or_unseal_object(object_type *o_ptr) {
 			o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 			o_ptr->note = 0;
 			o_ptr->note_utag = 0;
-			return TRUE;
+			return(TRUE);
 		}
  #endif
  #if 1 /* Bad hack for mushroom/food expansion, just fix the important ones */
@@ -4390,14 +4390,14 @@ bool seal_or_unseal_object(object_type *o_ptr) {
 			o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 			o_ptr->note = 0;
 			o_ptr->note_utag = 0;
-			return TRUE;
+			return(TRUE);
 		}
  #endif
 
 		/* Object didn't exist to begin with? Delete it! */
 		if (!o_ptr->tval2 && !o_ptr->sval2) {
 			o_ptr->tval = o_ptr->sval = o_ptr->k_idx = 0;
-			return FALSE;
+			return(FALSE);
 		}
 
 		/* Try to restore the original item from the seal */
@@ -4420,7 +4420,7 @@ bool seal_or_unseal_object(object_type *o_ptr) {
  #endif
 
 	/* success, aka object still exists */
-	return TRUE;
+	return(TRUE);
 }
 #endif
 
@@ -4488,7 +4488,7 @@ static errr load_quests_file() {
 
 	path_build(savefile, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "quests");
 	fff = my_fopen(savefile, "rb");
-	if (!fff) return (-1);
+	if (!fff) return(-1);
 
 	/* Allocate a new buffer */
 	fff_buf = C_NEW(MAX_BUF_SIZE, char);
@@ -4684,7 +4684,7 @@ static errr load_quests_file() {
 	C_FREE(fff_buf, MAX_BUF_SIZE, char);
 	if (ferror(fff)) err = -1;
 	my_fclose(fff);
-	return (err);
+	return(err);
 }
 /* Must be called after 'init_some_arrays', so that we already know the quest info! */
 void load_quests(void) {

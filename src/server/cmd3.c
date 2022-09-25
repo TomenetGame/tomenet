@@ -346,12 +346,12 @@ int inven_drop(int Ind, int item, int amt, bool force) {
 	/* Not too many */
 	if (amt > o_ptr->number) amt = o_ptr->number;
 	/* Error check/Nothing done? */
-	if (amt <= 0) return -1;
+	if (amt <= 0) return(-1);
 
 	/* check for !d  or !* in inscriptions */
 	if (!force && check_guard_inscription(o_ptr->note, 'd')) {
 		msg_print(Ind, "The item's inscription prevents it.");
-		return -1;
+		return(-1);
 	}
 
 #ifdef USE_SOUND_2010
@@ -581,7 +581,7 @@ bool item_tester_hook_wear(int Ind, int slot) {
 		case INVEN_TOOL:	//allow them to wear, say, picks and shovels - the_sandman
 			break; //fine
 		default:
-			return FALSE; //not fine
+			return(FALSE); //not fine
 		}
 	}
 
@@ -593,25 +593,25 @@ bool item_tester_hook_wear(int Ind, int slot) {
 		switch (slot) {
 		case INVEN_WIELD:
 		case INVEN_BOW:
-			if (r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
+			if (r_ptr->body_parts[BODY_WEAPON]) return(TRUE);
 			break;
 		case INVEN_LEFT:
-			if (r_ptr->body_parts[BODY_FINGER] > 1) return (TRUE);
+			if (r_ptr->body_parts[BODY_FINGER] > 1) return(TRUE);
 			break;
 		case INVEN_RIGHT:
-			if (r_ptr->body_parts[BODY_FINGER]) return (TRUE);
+			if (r_ptr->body_parts[BODY_FINGER]) return(TRUE);
 			break;
 		case INVEN_NECK:
 		case INVEN_HEAD:
-			if (r_ptr->body_parts[BODY_HEAD]) return (TRUE);
+			if (r_ptr->body_parts[BODY_HEAD]) return(TRUE);
 			break;
 		case INVEN_LITE:
 			/* Always allow to carry light source? :/ */
-			/* return (TRUE); break; */
-			if (r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
-			if (r_ptr->body_parts[BODY_FINGER]) return (TRUE);
-			if (r_ptr->body_parts[BODY_HEAD]) return (TRUE);
-			if (r_ptr->body_parts[BODY_ARMS]) return (TRUE);
+			/* return(TRUE); break; */
+			if (r_ptr->body_parts[BODY_WEAPON]) return(TRUE);
+			if (r_ptr->body_parts[BODY_FINGER]) return(TRUE);
+			if (r_ptr->body_parts[BODY_HEAD]) return(TRUE);
+			if (r_ptr->body_parts[BODY_ARMS]) return(TRUE);
 			break;
 		case INVEN_BODY:
 #ifdef BATS_ALLOW_BODY
@@ -620,40 +620,40 @@ bool item_tester_hook_wear(int Ind, int slot) {
 			switch (p_ptr->body_monster) {
 			case 37: case 114: case 187: case 235: case 351:
 			case 377: case RI_VAMPIRE_BAT: case 406: case 484: case 968:
-				return TRUE;
+				return(TRUE);
 			}
 			__attribute__ ((fallthrough));
 #endif
 		case INVEN_OUTER:
 		case INVEN_AMMO:
-			if (r_ptr->body_parts[BODY_TORSO]) return (TRUE);
+			if (r_ptr->body_parts[BODY_TORSO]) return(TRUE);
 			break;
 		case INVEN_ARM:
-			if (r_ptr->body_parts[BODY_ARMS]) return (TRUE);
+			if (r_ptr->body_parts[BODY_ARMS]) return(TRUE);
 			break;
 		case INVEN_TOOL:
 			/* make a difference :) - C. Blue */
 			if (r_ptr->body_parts[BODY_ARMS] ||
 //			    r_ptr->body_parts[BODY_FINGER] ||
-			    r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
+			    r_ptr->body_parts[BODY_WEAPON]) return(TRUE);
 			break;
 		case INVEN_HANDS:
-			if (fishy) return FALSE;
-//			if (r_ptr->body_parts[BODY_FINGER]) return (TRUE); too silyl (and powerful)
-//			if (r_ptr->body_parts[BODY_ARMS]) return (TRUE); was standard, but now:
-			if (r_ptr->body_parts[BODY_FINGER] && r_ptr->body_parts[BODY_ARMS]) return (TRUE);
+			if (fishy) return(FALSE);
+//			if (r_ptr->body_parts[BODY_FINGER]) return(TRUE); too silyl (and powerful)
+//			if (r_ptr->body_parts[BODY_ARMS]) return(TRUE); was standard, but now:
+			if (r_ptr->body_parts[BODY_FINGER] && r_ptr->body_parts[BODY_ARMS]) return(TRUE);
 			break;
 		case INVEN_FEET:
-			if (r_ptr->body_parts[BODY_LEGS]) return (TRUE);
+			if (r_ptr->body_parts[BODY_LEGS]) return(TRUE);
 			break;
 		}
 	}
 
 	/* Check for a usable slot */
-	else if (slot >= INVEN_WIELD) return (TRUE);
+	else if (slot >= INVEN_WIELD) return(TRUE);
 
 	/* Assume not wearable */
-	return (FALSE);
+	return(FALSE);
 }
 
 #else // old way, deprecated
@@ -694,25 +694,25 @@ bool item_tester_hook_wear(int Ind, int slot) {
 		switch (slot) {
 		case INVEN_WIELD:
 		case INVEN_BOW:
-			if (r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
+			if (r_ptr->body_parts[BODY_WEAPON]) return(TRUE);
 			break;
 		case INVEN_LEFT:
-			if (r_ptr->body_parts[BODY_FINGER] > 1) return (TRUE);
+			if (r_ptr->body_parts[BODY_FINGER] > 1) return(TRUE);
 			break;
 		case INVEN_RIGHT:
-			if (r_ptr->body_parts[BODY_FINGER]) return (TRUE);
+			if (r_ptr->body_parts[BODY_FINGER]) return(TRUE);
 			break;
 		case INVEN_NECK:
 		case INVEN_HEAD:
-			if (r_ptr->body_parts[BODY_HEAD]) return (TRUE);
+			if (r_ptr->body_parts[BODY_HEAD]) return(TRUE);
 			break;
 		case INVEN_LITE:
 			/* Always allow to carry light source? :/ */
-			/* return (TRUE); break; */
-			if (r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
-			if (r_ptr->body_parts[BODY_FINGER]) return (TRUE);
-			if (r_ptr->body_parts[BODY_HEAD]) return (TRUE);
-			if (r_ptr->body_parts[BODY_ARMS]) return (TRUE);
+			/* return(TRUE); break; */
+			if (r_ptr->body_parts[BODY_WEAPON]) return(TRUE);
+			if (r_ptr->body_parts[BODY_FINGER]) return(TRUE);
+			if (r_ptr->body_parts[BODY_HEAD]) return(TRUE);
+			if (r_ptr->body_parts[BODY_ARMS]) return(TRUE);
 			break;
 		case INVEN_BODY:
 #ifdef BATS_ALLOW_BODY
@@ -721,30 +721,30 @@ bool item_tester_hook_wear(int Ind, int slot) {
 			switch (p_ptr->body_monster) {
 			case 37: case 114: case 187: case 235: case 351:
 			case 377: case RI_VAMPIRE_BAT: case 406: case 484: case 968:
-				return TRUE;
+				return(TRUE);
 			}
 #endif
 		case INVEN_OUTER:
 		case INVEN_AMMO:
-			if (r_ptr->body_parts[BODY_TORSO]) return (TRUE);
+			if (r_ptr->body_parts[BODY_TORSO]) return(TRUE);
 			break;
 		case INVEN_ARM:
-			if (r_ptr->body_parts[BODY_ARMS]) return (TRUE);
+			if (r_ptr->body_parts[BODY_ARMS]) return(TRUE);
 			break;
 		case INVEN_TOOL:
 			/* make a difference :) - C. Blue */
 			if (r_ptr->body_parts[BODY_ARMS] ||
 //			    r_ptr->body_parts[BODY_FINGER] ||
-			    r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
+			    r_ptr->body_parts[BODY_WEAPON]) return(TRUE);
 			break;
 		case INVEN_HANDS:
-			if (fishy) return FALSE;
-//			if (r_ptr->body_parts[BODY_FINGER]) return (TRUE); too silyl (and powerful)
-//			if (r_ptr->body_parts[BODY_ARMS]) return (TRUE); was standard, but now:
-			if (r_ptr->body_parts[BODY_FINGER] && r_ptr->body_parts[BODY_ARMS]) return (TRUE);
+			if (fishy) return(FALSE);
+//			if (r_ptr->body_parts[BODY_FINGER]) return(TRUE); too silyl (and powerful)
+//			if (r_ptr->body_parts[BODY_ARMS]) return(TRUE); was standard, but now:
+			if (r_ptr->body_parts[BODY_FINGER] && r_ptr->body_parts[BODY_ARMS]) return(TRUE);
 			break;
 		case INVEN_FEET:
-			if (r_ptr->body_parts[BODY_LEGS]) return (TRUE);
+			if (r_ptr->body_parts[BODY_LEGS]) return(TRUE);
 			break;
 		}
 	}
@@ -772,7 +772,7 @@ bool item_tester_hook_wear(int Ind, int slot) {
 		case INVEN_OUTER:
 		case INVEN_ARM:
 		case INVEN_TOOL:	//allow them to wear, say, picks and shovels - the_sandman
-			return TRUE;
+			return(TRUE);
 		}
 	}
 #if 0
@@ -785,7 +785,7 @@ bool item_tester_hook_wear(int Ind, int slot) {
 		case INVEN_BODY:
 		case INVEN_LITE:
 		case INVEN_FEET:
-			return TRUE;
+			return(TRUE);
 		}
 	}
 #endif
@@ -803,12 +803,12 @@ bool item_tester_hook_wear(int Ind, int slot) {
 				if (f4 & TR4_MUST2H) return(FALSE);
 			}
 #endif	// 0
-			return (TRUE);
+			return(TRUE);
 		}
 	}
 
 	/* Assume not wearable */
-	return (FALSE);
+	return(FALSE);
 }
 #endif
 
@@ -2035,14 +2035,14 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 
 	if (check_guard_inscription(o_ptr->note, 'k')) {
 		msg_print(Ind, "The item's inscription prevents it.");
-		return FALSE;
+		return(FALSE);
 	};
 #if 0
 	/* Verify if needed */
 	if (!force || other_query_flag) {
 		/* Make a verification */
 		snprintf(out_val, sizeof(out_val), "Really destroy %s? ", o_name);
-		if (!get_check(Ind, out_val)) return FALSE;
+		if (!get_check(Ind, out_val)) return(FALSE);
 	}
 #endif
 
@@ -2057,14 +2057,14 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 	/* Certain questor objects cannot be destroyed */
 	if (o_ptr->questor && o_ptr->questor_invincible) {
 		msg_print(Ind, "Hmmm, you seem to be unable to destroy it.");
-		return FALSE;
+		return(FALSE);
 	}
 	/* Keys cannot be destroyed */
 	if (o_ptr->tval == TV_KEY && !is_admin(p_ptr)) {
 		/* Message */
 		msg_format(Ind, "You cannot destroy %s.", o_name);
 		/* Done */
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Special curse-override? */
@@ -2101,7 +2101,7 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
 		/* Done */
-		return FALSE;
+		return(FALSE);
 	}
 #endif
 
@@ -2111,7 +2111,7 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 			/* Oops */
 			msg_print(Ind, "Hmmm, you seem to be unable to destroy it.");
 			/* Nope */
-			return FALSE;
+			return(FALSE);
 		}
 	}
 
@@ -2122,7 +2122,7 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 			/* Message */
 			msg_print(Ind, "Hmm, that seems to be cursed.");
 			/* Done */
-			return FALSE;
+			return(FALSE);
 		}
 	}
 
@@ -2219,7 +2219,7 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -2647,15 +2647,15 @@ bool check_power_inscribe(int Ind, object_type *o_ptr, char *o_name_old, cptr in
 		if (*(pi_pos - 1) == '\\') continue; /* belongs to a '\@@' tag, revoke */
 		break; /* genuine '@@' or '@@@', accept */
 	}
-	if (!pi_pos) return FALSE;
+	if (!pi_pos) return(FALSE);
 
 	/* Special hack: Inscribing '@@' applies an automatic item-powers inscription.
 	   Side note: If @@@ is present, an additional @@ will simply be ignored. */
-	if (!(pi_pos = strstr(inscription, "@@"))) return FALSE;
+	if (!(pi_pos = strstr(inscription, "@@"))) return(FALSE);
 
 	if (maybe_hidden_powers(Ind, o_ptr, FALSE)) {
 		if (Ind) msg_print(Ind, "\377yThis item may have hidden powers. You must *identify* it first.");
-		return TRUE; /* Still, we found the "@@" inscription, despite being unable to complete the request. */
+		return(TRUE); /* Still, we found the "@@" inscription, despite being unable to complete the request. */
 	}
 
 	/* Check for redux version of power inscription */
@@ -2713,7 +2713,7 @@ bool check_power_inscribe(int Ind, object_type *o_ptr, char *o_name_old, cptr in
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
 	}
 
-	return TRUE;
+	return(TRUE);
 }
 
 /*
@@ -3646,19 +3646,19 @@ void do_cmd_steal(int Ind, int dir) {
  */
 static bool item_tester_refill_lantern(object_type *o_ptr) {
 	/* (Rand)arts are not usable for refilling */
-	if (o_ptr->name1) return (FALSE);
+	if (o_ptr->name1) return(FALSE);
 
 	/* Flasks of oil are okay */
-	if (o_ptr->tval == TV_FLASK && o_ptr->sval == SV_FLASK_OIL) return (TRUE);
+	if (o_ptr->tval == TV_FLASK && o_ptr->sval == SV_FLASK_OIL) return(TRUE);
 
 	/* Other lanterns are okay */
 	if ((o_ptr->tval == TV_LITE) &&
 	    (o_ptr->sval == SV_LITE_LANTERN) &&
 	    o_ptr->timeout)
-		return (TRUE);
+		return(TRUE);
 
 	/* Assume not okay */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -3797,16 +3797,16 @@ static void do_cmd_refill_lamp(int Ind, int item)
 static bool item_tester_refill_torch(object_type *o_ptr)
 {
 	/* (Rand)arts are not usable for refilling */
-	if (o_ptr->name1) return (FALSE);
+	if (o_ptr->name1) return(FALSE);
 
 	/* Torches are okay */
 	if ((o_ptr->tval == TV_LITE) &&
 	    (o_ptr->sval == SV_LITE_TORCH) &&
 	    o_ptr->timeout)
-		return (TRUE);
+		return(TRUE);
 
 	/* Assume not okay */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -3966,7 +3966,7 @@ bool do_auto_refill(int Ind)
 
 	if (check_guard_inscription(o_ptr->note, 'F')) {
 		//msg_print(Ind, "The item's incription prevents it.");
-		return (FALSE);
+		return(FALSE);
 	}
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
@@ -3983,7 +3983,7 @@ bool do_auto_refill(int Ind)
 			if (check_guard_inscription(j_ptr->note, 'F')) continue;
 
 			do_cmd_refill_lamp(Ind, i);
-			return (TRUE);
+			return(TRUE);
 		}
 	}
 
@@ -3999,12 +3999,12 @@ bool do_auto_refill(int Ind)
 			if (check_guard_inscription(j_ptr->note, 'F')) continue;
 
 			do_cmd_refill_torch(Ind, i);
-			return (TRUE);
+			return(TRUE);
 		}
 	}
 
 	/* Assume false */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -4065,73 +4065,73 @@ static bool do_cmd_look_accept(int Ind, int y, int x) {
 		if ((!q_ptr->admin_dm || player_sees_dm(Ind)) &&
 		    (player_has_los_bold(Ind, y, x) || p_ptr->telepathy))
 #endif
-			return (TRUE);
+			return(TRUE);
 	}
 
 	/* Visible monsters */
 	if (c_ptr->m_idx > 0 && p_ptr->mon_vis[c_ptr->m_idx]) {
 		/* Visible monsters */
-		if (p_ptr->mon_vis[c_ptr->m_idx]) return (TRUE);
+		if (p_ptr->mon_vis[c_ptr->m_idx]) return(TRUE);
 	}
 
 	/* Objects */
 	if (c_ptr->o_idx) {
 		/* Memorized object */
-		if (p_ptr->obj_vis[c_ptr->o_idx] || p_ptr->admin_dm) return (TRUE); /* finally, poor dm - C. Blue */
+		if (p_ptr->obj_vis[c_ptr->o_idx] || p_ptr->admin_dm) return(TRUE); /* finally, poor dm - C. Blue */
 	}
 
 	/* Traps */
 	if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
 		/* Revealed trap */
-		if (cs_ptr->sc.trap.found) return (TRUE);
+		if (cs_ptr->sc.trap.found) return(TRUE);
 	}
 
 	/* Monster Traps */
 	if (GetCS(c_ptr, CS_MON_TRAP)) {
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Interesting memorized features */
 	if (*w_ptr & CAVE_MARK) {
 #if 0	// wow!
 		/* Notice glyphs */
-		if (c_ptr->feat == FEAT_GLYPH) return (TRUE);
-		if (c_ptr->feat == FEAT_RUNE) return (TRUE);
+		if (c_ptr->feat == FEAT_GLYPH) return(TRUE);
+		if (c_ptr->feat == FEAT_RUNE) return(TRUE);
 
 		/* Notice doors */
-		if (c_ptr->feat == FEAT_OPEN) return (TRUE);
-		if (c_ptr->feat == FEAT_BROKEN) return (TRUE);
+		if (c_ptr->feat == FEAT_OPEN) return(TRUE);
+		if (c_ptr->feat == FEAT_BROKEN) return(TRUE);
 
 		/* Notice stairs */
-		if (c_ptr->feat == FEAT_LESS) return (TRUE);
-		if (c_ptr->feat == FEAT_MORE) return (TRUE);
+		if (c_ptr->feat == FEAT_LESS) return(TRUE);
+		if (c_ptr->feat == FEAT_MORE) return(TRUE);
 
 		/* Notice shops */
-		if (c_ptr->feat == FEAT_SHOP) return (TRUE);
+		if (c_ptr->feat == FEAT_SHOP) return(TRUE);
 #if 0
 		if ((c_ptr->feat >= FEAT_SHOP_HEAD) &&
-		    (c_ptr->feat <= FEAT_SHOP_TAIL)) return (TRUE);
+		    (c_ptr->feat <= FEAT_SHOP_TAIL)) return(TRUE);
 #endif	// 0
 
 		/* Notice doors */
 		if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-		    (c_ptr->feat <= FEAT_DOOR_TAIL)) return (TRUE);
+		    (c_ptr->feat <= FEAT_DOOR_TAIL)) return(TRUE);
 
 		/* Notice rubble */
-		if (c_ptr->feat == FEAT_RUBBLE) return (TRUE);
+		if (c_ptr->feat == FEAT_RUBBLE) return(TRUE);
 
 		/* Notice veins with treasure */
-		if (c_ptr->feat == FEAT_MAGMA_K) return (TRUE);
-		if (c_ptr->feat == FEAT_QUARTZ_K) return (TRUE);
-		if (c_ptr->feat == FEAT_SANDWALL_K) return (TRUE);
+		if (c_ptr->feat == FEAT_MAGMA_K) return(TRUE);
+		if (c_ptr->feat == FEAT_QUARTZ_K) return(TRUE);
+		if (c_ptr->feat == FEAT_SANDWALL_K) return(TRUE);
 #endif	// 0
 
 		/* Accept 'naturally' interesting features */
-		if (f_info[c_ptr->feat].flags1 & FF1_NOTICE) return (TRUE);
+		if (f_info[c_ptr->feat].flags1 & FF1_NOTICE) return(TRUE);
 	}
 
 	/* Nope */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -4913,7 +4913,7 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 	}
 
 	/* No free space at all? */
-	if (inum == i_ptr->number) return FALSE;
+	if (inum == i_ptr->number) return(FALSE);
 
 	/* Assume object got added from outside to our inventory. */
 	p_ptr->total_weight += (inum - i_ptr->number) * i_ptr->weight;
@@ -4921,11 +4921,11 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 	/* Managed to merge fully? Erase source object then. */
 	if (!i_ptr->number) {
 		/* Fully moved */
-		return TRUE;
+		return(TRUE);
 	}
 
 	/* Still not fully moved */
-	return FALSE;
+	return(FALSE);
 }
 
 /* Attempt to move as much as possible of an inventory item stack into a subinventory container.
@@ -5017,14 +5017,14 @@ bool subinven_move_aux(int Ind, int islot, int sslot) {
 		p_ptr->total_weight = wgt;
 
 		/* Fully moved */
-		return TRUE;
+		return(TRUE);
 	}
 
 	/* Hack: Restore weight, since we didn't lose anything, but just moved it. */
 	p_ptr->total_weight = wgt;
 
 	/* Still not fully moved */
-	return FALSE;
+	return(FALSE);
 }
 /* Tries to move the item or item stack in one inventory slot completely into
    the first available and eligible subinventory. */
@@ -5105,12 +5105,12 @@ void do_cmd_subinven_move(int Ind, int islot) {
  #if 1
 			/* Extra hint for unidentified rods, instead of simply claiming that there is no bag space (as no chest is found and wrapping isn't eligible for unid'ed rods): */
 			if (i_ptr->tval == TV_ROD && !object_aware_p(Ind, i_ptr)) {
-				/* The reason is that rod_requires_direction() will always return TRUE for unknown rods anyway. */
+				/* The reason is that rod_requires_direction() will always return(TRUE) for unknown rods anyway. */
 				msg_print(Ind, "The rod's type must be known in order to stow it in your antistatic wrapping!");
 				continue;
 			}
  #endif
-			/* Note that unknown rods will automatically return TRUE for requiring direction, even if they really don't. */
+			/* Note that unknown rods will automatically return(TRUE) for requiring direction, even if they really don't. */
 			if (i_ptr->tval != TV_STAFF && (i_ptr->tval != TV_ROD || rod_requires_direction(Ind, i_ptr))) continue;
 			break;
 		default:
@@ -5236,9 +5236,9 @@ bool subinven_group_player(int Ind, int group, int slot) {
 	for (i = 0; i <= (slot == -1 ? INVEN_PACK : slot - 1); i++) {
 		o_ptr = &p_ptr->inventory[i];
 		if (o_ptr->tval != TV_SUBINVEN) continue;
-		if (group == get_subinven_group(o_ptr->sval)) return TRUE;
+		if (group == get_subinven_group(o_ptr->sval)) return(TRUE);
 	}
-	return FALSE;
+	return(FALSE);
 }
  #endif
 #endif

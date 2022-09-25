@@ -443,7 +443,7 @@ int main(int argc, char *argv[]) {
 	quit(NULL);
 
 	/* Exit */
-	return (0);
+	return(0);
 }
 
 #ifdef DUMB_WIN
@@ -452,17 +452,16 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 {
 	MSG      msg;
 
-//	main(0, NULL);
+	//main(0, NULL);
 
 	/* Process messages forever */
-	while (GetMessage(&msg, NULL, 0, 0))
-	{
+	while (GetMessage(&msg, NULL, 0, 0)) {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
 
 	main(0, NULL);
 
-	return (0);
+	return(0);
 }
 #endif

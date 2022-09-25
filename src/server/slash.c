@@ -248,8 +248,8 @@ void sc_report(int Ind, void *string) {
 static char *find_inscription(s16b quark, char *what) {
 	const char  *ax = quark_str(quark);
 
-	if (ax == NULL || !what) return FALSE;
-	return (strstr(ax, what));
+	if (ax == NULL || !what) return(FALSE);
+	return(strstr(ax, what));
 }
 
 static void do_cmd_refresh(int Ind) {
@@ -301,16 +301,16 @@ static void do_cmd_refresh(int Ind) {
    If Ind is =! 0 an error message will be sent to that player if the slot is out of range. */
 static int a2slot(int Ind, char slot, bool inven, bool equip) {
 	/* convert to valid inventory slot */
-	if (inven && slot >= 'a' && slot <= 'w') return (slot - 'a');
+	if (inven && slot >= 'a' && slot <= 'w') return(slot - 'a');
 	/* check for valid equipment slot */
-	if (equip && slot >= 'A' && slot <= 'N') return (slot - 'A' + INVEN_PACK);
+	if (equip && slot >= 'A' && slot <= 'N') return(slot - 'A' + INVEN_PACK);
 	/* invalid slot */
 	if (Ind) {
 		if (inven && equip) msg_print(Ind, "\377oValid inventory slots are a-w or A-N for equipment. Please try again.");
 		else if (inven) msg_print(Ind, "\377oValid inventory slots are a-w. Please try again.");
 		else /* assume equip */ msg_print(Ind, "\377oValid equipment slots are A-N. Please try again.");
 	}
-	return -1;
+	return(-1);
 }
 
 /*
@@ -6415,7 +6415,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* check for skips */
 				if ((s = strchr(message3, ':'))) {
 					k = atoi(message3);
-					item = s + 1;;
+					item = s + 1;
 				} else {
 					k = 0;
 					item = message3;
@@ -6511,7 +6511,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				if ((s = strchr(message3, ':'))) {
 					k = atoi(message3);
-					item = s + 1;;
+					item = s + 1;
 				} else {
 					k = 0;
 					item = message3;
@@ -6605,7 +6605,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* check for skips */
 				if ((s = strchr(message3, ':'))) {
 					k = atoi(message3);
-					item = s + 1;;
+					item = s + 1;
 				} else {
 					k = 0;
 					item = message3;

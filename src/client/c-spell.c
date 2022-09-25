@@ -275,7 +275,7 @@ int get_spell(s32b *sn, cptr prompt, int book) {
 	}
 
 	/* No "okay" spells */
-	if (!okay) return (FALSE);
+	if (!okay) return(FALSE);
 
 
 	/* Assume cancelled */
@@ -371,13 +371,13 @@ int get_spell(s32b *sn, cptr prompt, int book) {
 
 
 	/* Abort if needed */
-	if (!flag) return (FALSE);
+	if (!flag) return(FALSE);
 
 	/* Save the choice */
 	(*sn) = i;
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -601,7 +601,7 @@ static int get_mimic_spell(int *sn) {
 
 
 	/* Abort if needed */
-	if (!flag) return (FALSE);
+	if (!flag) return(FALSE);
 
 	if (c_cfg.other_query_flag && !i) {
 		sprintf(out_val, "Really change the form?");
@@ -612,7 +612,7 @@ static int get_mimic_spell(int *sn) {
 	(*sn) = corresp[i];
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -1239,7 +1239,7 @@ s32b get_school_spell(cptr do_what, int *item_book) {
 
 	//tmp = spell;
 	*item_book = item;
-	return (spell + 1000 * hack_force_spell_level);
+	return(spell + 1000 * hack_force_spell_level);
 }
 
 /* TODO: handle blindness */
@@ -1423,12 +1423,12 @@ static int get_combatstance(int *cs) {
 	}
 
 	/* Abort if needed */
-	if (!flag) return (FALSE);
+	if (!flag) return(FALSE);
 
 	/* Save the choice */
 	(*cs) = corresp[i];
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -1595,13 +1595,13 @@ static int get_melee_technique(int *sn) {
 
 
 	/* Abort if needed */
-	if (!flag) return (FALSE);
+	if (!flag) return(FALSE);
 
 	/* Save the choice */
 	(*sn) = corresp[i];
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 void do_melee_technique() {
@@ -1767,13 +1767,13 @@ static int get_ranged_technique(int *sn) {
 
 
 	/* Abort if needed */
-	if (!flag) return (FALSE);
+	if (!flag) return(FALSE);
 
 	/* Save the choice */
 	(*sn) = corresp[i];
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 void do_ranged_technique() {
@@ -2047,12 +2047,12 @@ static int get_breath(int *br) {
 	}
 
 	/* Abort if needed */
-	if (!flag) return (FALSE);
+	if (!flag) return(FALSE);
 
 	/* Save the choice */
 	(*br) = corresp[i];
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 void do_pick_breath() {

@@ -238,7 +238,7 @@ cptr value_check_aux1_magic(object_type *o_ptr) {
 
 	/* No feeling */
 //	return "";
-	return (NULL);
+	return(NULL);
 }
 
 
@@ -302,7 +302,7 @@ cptr value_check_aux2(object_type *o_ptr) {
 	}
 
 	/* No feeling */
-	return (NULL);
+	return(NULL);
 }
 
 cptr value_check_aux2_magic(object_type *o_ptr) {
@@ -362,7 +362,7 @@ cptr value_check_aux2_magic(object_type *o_ptr) {
 
 	/* No feeling */
 //	return "";
-	return (NULL);
+	return(NULL);
 }
 
 /*
@@ -647,14 +647,14 @@ static int quality_check_aux1(object_type *o_ptr) {
 
 	if (ego_item_p(o_ptr)) {
 		if (o_ptr->name2 == EGO_STORMBRINGER) return 3;
-		if (cursed_p(o_ptr) || broken_p(o_ptr)) return 2;
-		if (is_ammo(o_ptr->tval) && (o_ptr->pval || o_ptr->name2 || o_ptr->name2b)) return 2;
-		if (object_value(0, o_ptr) < 4000) return 1;
-		return 2;
+		if (cursed_p(o_ptr) || broken_p(o_ptr)) return(2);
+		if (is_ammo(o_ptr->tval) && (o_ptr->pval || o_ptr->name2 || o_ptr->name2b)) return(2);
+		if (object_value(0, o_ptr) < 4000) return(1);
+		return(2);
 	}
 
-	if (cursed_p(o_ptr)) return -1;
-	if (broken_p(o_ptr)) return -1;
+	if (cursed_p(o_ptr)) return(-1);
+	if (broken_p(o_ptr)) return(-1);
 
 	switch (o_ptr->tval) {
 	case TV_DIGGING:
@@ -676,13 +676,13 @@ static int quality_check_aux1(object_type *o_ptr) {
 	case TV_BOLT:
 	case TV_BOW:
 	case TV_BOOMERANG:
-		if ((o_ptr->ident & ID_SENSE_GOOD)) return 1;
+		if ((o_ptr->ident & ID_SENSE_GOOD)) return(1);
 		break;
 	default:
-		if ((o_ptr->ident & ID_SENSE_GOOD)) return 1;
+		if ((o_ptr->ident & ID_SENSE_GOOD)) return(1);
 	}
 
-	return 0;
+	return(0);
 }
 
 /*
@@ -691,12 +691,12 @@ static int quality_check_aux1(object_type *o_ptr) {
 static int quality_check_aux2(object_type *o_ptr) {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
-	if (cursed_p(o_ptr)) -1;
-	if (broken_p(o_ptr)) -1;
-	if (artifact_p(o_ptr)) return 1;
-	if (!k_ptr->cost) return -1;
+	if (cursed_p(o_ptr)) return(-1);
+	if (broken_p(o_ptr)) return(-1);
+	if (artifact_p(o_ptr)) return(1);
+	if (!k_ptr->cost) return(-1);
 	if (ego_item_p(o_ptr)) {
-		return 1;
+		return(1);
 	}
 
 	switch (o_ptr->tval) {
@@ -719,13 +719,13 @@ static int quality_check_aux2(object_type *o_ptr) {
 	case TV_BOLT:
 	case TV_BOW:
 	case TV_BOOMERANG:
-		if ((o_ptr->ident & ID_SENSE_GOOD)) return 1;
+		if ((o_ptr->ident & ID_SENSE_GOOD)) return(1);
 		break;
 	default:
-		if ((o_ptr->ident & ID_SENSE_GOOD)) return 1;
+		if ((o_ptr->ident & ID_SENSE_GOOD)) return(1);
 	}
 
-	return 0;
+	return(0);
 }
 
 int pseudo_id_result(object_type *o_ptr) {
@@ -766,7 +766,7 @@ int pseudo_id_result(object_type *o_ptr) {
 	case TV_STAFF:
 	case TV_ROD:
 	case TV_FOOD:
-		return 0;
+		return(0);
 	}
 
 	return quality;
@@ -1903,15 +1903,15 @@ bool player_day(int Ind) {
 
 	/* Shade map and darken/forget features */
 
-	if (!zcave) return FALSE; /* paranoia */
+	if (!zcave) return(FALSE); /* paranoia */
 
 	if (outdoor_affects(&p_ptr->wpos)) {
 		p_ptr->redraw |= (PR_MAP); /* For Cloud Planes shading */
 		ret = TRUE;
 	}
 	if (p_ptr->wpos.wz) return ret;
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS)) return FALSE;
-	if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) return FALSE;
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS)) return(FALSE);
+	if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) return(FALSE);
 
 	//if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
 	if (p_ptr->prace == RACE_VAMPIRE ||
@@ -1940,13 +1940,13 @@ bool player_day(int Ind) {
 	/* Lastly, handle music */
 
 #ifdef USE_SOUND_2010
-	if (p_ptr->is_day) return FALSE;
+	if (p_ptr->is_day) return(FALSE);
 	p_ptr->is_day = TRUE;
 	handle_music(Ind);
 	handle_ambient_sfx(Ind, &zcave[p_ptr->py][p_ptr->px], &p_ptr->wpos, TRUE);
 #endif
 
-	return TRUE;
+	return(TRUE);
 }
 /* update a particular player's view to night, assuming he's on world surface */
 bool player_night(int Ind) {
@@ -1963,15 +1963,15 @@ bool player_night(int Ind) {
 
 	/* Shade map and darken/forget features */
 
-	if (!zcave) return FALSE; /* paranoia */
+	if (!zcave) return(FALSE); /* paranoia */
 
 	if (outdoor_affects(&p_ptr->wpos)) {
 		p_ptr->redraw |= (PR_MAP); /* For Cloud Planes shading */
 		ret = TRUE;
 	}
 	if (p_ptr->wpos.wz) return ret;
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS)) return FALSE;
-	if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) return FALSE;
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS)) return(FALSE);
+	if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) return(FALSE);
 
 	//if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
 	if (p_ptr->prace == RACE_VAMPIRE ||
@@ -2005,13 +2005,13 @@ bool player_night(int Ind) {
 	/* Lastly, handle music */
 
 #ifdef USE_SOUND_2010
-	if (!p_ptr->is_day) return FALSE;
+	if (!p_ptr->is_day) return(FALSE);
 	p_ptr->is_day = FALSE;
 	handle_music(Ind);
 	handle_ambient_sfx(Ind, &zcave[p_ptr->py][p_ptr->px], &p_ptr->wpos, TRUE);
 #endif
 
-	return TRUE;
+	return(TRUE);
 }
 
 /* update a particular player's view as a town looks at night, just for dungeon towns */
@@ -2751,12 +2751,12 @@ bool palette_affects(int Ind) {
 	if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)
 	    || !p_ptr->palette_animation
 	    || (p_ptr->global_event_temp & PEVF_INDOORS_00))
-		return FALSE;
+		return(FALSE);
 
-	if (outdoor_affects(&p_ptr->wpos)) return TRUE;
+	if (outdoor_affects(&p_ptr->wpos)) return(TRUE);
 
 	/* Not affected */
-	return FALSE;
+	return(FALSE);
 }
 /* Re-colour the world palette depending on sky-state (time intervals of specific colour-transshading purpose)
    and the sky-state's substate (linearly interpolated 5 minute intervals within each sky-state interval) - C. Blue */
@@ -2936,13 +2936,13 @@ static int retaliate_mimic_power(int Ind, int choice) {
 		for (i = 0; i < 32; i++) {
 			/* Look for "okay" spells */
 			if (p_ptr->innate_spells[k] & (1U << i)) {
-				if (num == choice) return (k * 32 + i);
+				if (num == choice) return(k * 32 + i);
 				num++;
 			}
 		}
 	}
 
-	return (0);
+	return(0);
 }
 
 /*
@@ -2955,16 +2955,16 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 	object_type *o_ptr;
 	int cost, choice = 0, spell = 0;
 
-	if (item < 0) return FALSE;
+	if (item < 0) return(FALSE);
 	o_ptr = &p_ptr->inventory[item];
-	if (!o_ptr->k_idx) return FALSE;
+	if (!o_ptr->k_idx) return(FALSE);
 
 	/* 'Do nothing' inscription */
-	if (inscription != NULL && *inscription == 'x') return TRUE;
+	if (inscription != NULL && *inscription == 'x') return(TRUE);
 
 	/* Is it variant @Ot for town-only auto-retaliation? - C. Blue */
 	if (*inscription == 't') {
-		if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
+		if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return(FALSE);
 		inscription++;
 	}
 
@@ -2980,17 +2980,17 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 				/* shape-changing for retaliation is not so nice idea, eh? */
 				if (choice < 4) {	/* 3 polymorph powers + immunity preference */
 #if 1
-					return FALSE;
+					return(FALSE);
 #else
 					/* hack: prevent 'polymorph into...' power */
 					if (choice == 2) do_cmd_mimic(Ind, 1, 5);
 					else do_cmd_mimic(Ind, choice, 5);
-					return TRUE;
+					return(TRUE);
 #endif
 				} else {
 					int power = retaliate_mimic_power(Ind, choice - 1); /* immunity preference */
 					bool dir = FALSE;
-					if (innate_powers[power].smana > p_ptr->csp && fallback) return (p_ptr->fail_no_melee);
+					if (innate_powers[power].smana > p_ptr->csp && fallback) return(p_ptr->fail_no_melee);
 #if 0
 					if (power) {
 						/* undirected power? */
@@ -3000,11 +3000,11 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 						case 68: case 69:
 						case 76:
 							do_cmd_mimic(Ind, power + 3, 0);
-							return TRUE;
+							return(TRUE);
 						}
 						/* power requires direction? */
 						do_cmd_mimic(Ind, power + 3, 5);
-						return TRUE;
+						return(TRUE);
 					}
 #else
 					switch (power / 32) {
@@ -3018,12 +3018,12 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 						break;
 					}
 					do_cmd_mimic(Ind, power + 3, dir ? 5 : 0);
-					return TRUE;
+					return(TRUE);
 #endif
 				}
 			}
 		}
-		return FALSE;
+		return(FALSE);
 	}
 #endif
 
@@ -3032,26 +3032,26 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 	if (is_fighter(p_ptr)) {
 #if 0
 		/* item with {@O-} is used only when in danger */
-		if (*inscription == '-' && p_ptr->chp > p_ptr->mhp / 2) return FALSE;
+		if (*inscription == '-' && p_ptr->chp > p_ptr->mhp / 2) return(FALSE);
 #endif
 
 		switch (o_ptr->tval) {
 		/* non-directional ones */
 		case TV_SCROLL:
 			do_cmd_read_scroll(Ind, item);
-			return TRUE;
+			return(TRUE);
 		case TV_POTION:
 			do_cmd_quaff_potion(Ind, item);
-			return TRUE;
+			return(TRUE);
 		case TV_STAFF:
 			do_cmd_use_staff(Ind, item);
-			return TRUE;
+			return(TRUE);
 		case TV_ROD:
 			do_cmd_zap_rod(Ind, item, 5);
-			return TRUE;
+			return(TRUE);
 		case TV_WAND:
 			do_cmd_aim_wand(Ind, item, 5);
-			return TRUE;
+			return(TRUE);
 		}
 	}
 #else
@@ -3059,20 +3059,20 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 	case TV_STAFF:
 		if (((o_ptr->ident & ID_EMPTY) || ((o_ptr->ident & ID_KNOWN) && o_ptr->pval == 0))
 		    && fallback)
-			return (p_ptr->fail_no_melee);
+			return(p_ptr->fail_no_melee);
 		do_cmd_use_staff(Ind, item);
-		return TRUE;
+		return(TRUE);
 	case TV_ROD:
 		if (o_ptr->pval != 0 && fallback)
-			return (p_ptr->fail_no_melee);
+			return(p_ptr->fail_no_melee);
 		do_cmd_zap_rod(Ind, item, 5);
-		return TRUE;
+		return(TRUE);
 	case TV_WAND:
 		if (((o_ptr->ident & ID_EMPTY) || ((o_ptr->ident & ID_KNOWN) && o_ptr->pval == 0))
 		    && fallback)
-			return (p_ptr->fail_no_melee);
+			return(p_ptr->fail_no_melee);
 		do_cmd_aim_wand(Ind, item, 5);
-		return TRUE;
+		return(TRUE);
 	}
 #endif
 
@@ -3082,7 +3082,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 	 * NOTE: The above statement becomes obsolete nowadays if
 	 * PY_PROJ_ and similar are defined.
 	 */
-	if (!target_able(Ind, p_ptr->target_who)) return FALSE;
+	if (!target_able(Ind, p_ptr->target_who)) return(FALSE);
 
 	/* Spell to cast */
 	if (inscription != NULL) {
@@ -3097,8 +3097,8 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 	case TV_POLEARM:
 	case TV_SWORD:
 	case TV_AXE:
-		//redundant?->	if (item == INVEN_WIELD) return FALSE;
-		return FALSE;
+		//redundant?->	if (item == INVEN_WIELD) return(FALSE);
+		return(FALSE);
 		break;
 
 	/* directional ones */
@@ -3114,7 +3114,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 			retaliating_cmd = TRUE;
 			do_cmd_fire(Ind, 5);
 			if (p_ptr->ranged_double) do_cmd_fire(Ind, 5);
-			return TRUE;
+			return(TRUE);
 		}
 		break;
 
@@ -3123,7 +3123,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 		if (item == INVEN_BOW) {
 			retaliating_cmd = TRUE;
 			do_cmd_fire(Ind, 5);
-			return TRUE;
+			return(TRUE);
 		}
 		break;
 
@@ -3150,20 +3150,20 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 		if (spell == -1) break;
 
 		cost = exec_lua(Ind, format("return get_mana(%d, %d)", Ind, spell));
-		if (cost > p_ptr->csp && fallback) return (p_ptr->fail_no_melee);
+		if (cost > p_ptr->csp && fallback) return(p_ptr->fail_no_melee);
 
 		/* Check that it's ok... more checks needed here? */
 		/* Limit amount of mana used? */
 		if (!p_ptr->blind && !no_lite(Ind) && !p_ptr->confused && cost <= p_ptr->csp &&
 		    exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell))) {
 			cast_school_spell(Ind, item, spell, 5, -1, 0);
-			return TRUE;
+			return(TRUE);
 		}
 		break;
 	}
 
 	/* If all fails, then melee */
-	return (p_ptr->fail_no_melee);
+	return(p_ptr->fail_no_melee);
 }
 
 #ifdef AUTO_RET_CMD
@@ -3181,7 +3181,7 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 	u16b ar = p_ptr->autoret;
 
 	/* no autoret set? */
-	if (!ar) return FALSE;
+	if (!ar) return(FALSE);
 
 	/* Was a mimic power set for auto-ret? */
 	if (!(ar & 0x8000) && p_ptr->s_info[SKILL_MIMIC].value) {
@@ -3190,20 +3190,20 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		bool dir = FALSE;
 
 		/* Is it variant @Ot for town-only auto-retaliation? */
-		if ((ar & 0x4000) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
+		if ((ar & 0x4000) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return(FALSE);
 		ar &= ~0x4000;
 
 		/* Check for valid attempt */
-		if (choice < 4) return FALSE; /* 3 polymorph powers + immunity preference */
+		if (choice < 4) return(FALSE); /* 3 polymorph powers + immunity preference */
 		power = retaliate_mimic_power(Ind, choice - 1);
-		if (innate_powers[power].smana > p_ptr->csp && fallback) return (p_ptr->fail_no_melee); /* not enough mana to even attempt */
+		if (innate_powers[power].smana > p_ptr->csp && fallback) return(p_ptr->fail_no_melee); /* not enough mana to even attempt */
 		/* Accept reasonable targets:
 		 * This prevents a player from getting stuck when facing a
 		 * monster inside a wall.
 		 * NOTE: The above statement becomes obsolete nowadays if
 		 * PY_PROJ_ and similar are defined.
 		 */
-		if (!target_able(Ind, p_ptr->target_who)) return FALSE;
+		if (!target_able(Ind, p_ptr->target_who)) return(FALSE);
 
 		/* We have a valid attempt */
 		switch (power / 32) {
@@ -3217,15 +3217,15 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 			break;
 		}
 		do_cmd_mimic(Ind, power + 3, dir ? 5 : 0);
-		return TRUE;
+		return(TRUE);
 	}
 
 	/* Was a rune set for auto-ret? */
 	else if ((ar & 0x8000)) {
 		/* Is it variant @Ot for town-only auto-retaliation? */
-		if ((ar & 0x4000) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
+		if ((ar & 0x4000) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return(FALSE);
 		/* Wall safety? */
-		if (!target_able(Ind, p_ptr->target_who)) return FALSE;
+		if (!target_able(Ind, p_ptr->target_who)) return(FALSE);
 		/* Decompress runespell... - Kurzel */
 		u32b u = 0x0;
 		u |= (1 << (ar & 0x0007));                // Rune 1 (3-bit) to byte
@@ -3234,16 +3234,16 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		u |= ((1 << ((ar & 0x0E00) >> 9)) << 24); // Type   (3-bit) to byte
 		/* Is it allowed? */
 		if (!(exec_lua(Ind, format("return rcraft_arr_test(%d, %d)", Ind, u))))
-			return (p_ptr->fail_no_melee);
+			return(p_ptr->fail_no_melee);
 		/* Try to cast it */
-		if (cast_rune_spell(Ind, (u16b)u, (u16b)(u >> 16), 5)) return TRUE;
-		else return (p_ptr->fail_no_melee);
-		return TRUE; // Energy is used already, don't fallthrough after a failure.
+		if (cast_rune_spell(Ind, (u16b)u, (u16b)(u >> 16), 5)) return(TRUE);
+		else return(p_ptr->fail_no_melee);
+		return(TRUE); // Energy is used already, don't fallthrough after a failure.
 	}
-	else return FALSE;
+	else return(FALSE);
 
 	/* If all fails, then melee */
-	return (p_ptr->fail_no_melee);
+	return(p_ptr->fail_no_melee);
 }
 #endif
 
@@ -3297,16 +3297,16 @@ static bool auto_retaliate_test(int Ind) {
 
 	if (!(zcave = getcave(&p_ptr->wpos))) {
 		p_ptr->ar_test_fail = TRUE;
-		return FALSE;
+		return(FALSE);
 	}
 	if (p_ptr->new_level_flag) {
 		p_ptr->ar_test_fail = TRUE;
-		return FALSE;
+		return(FALSE);
 	}
 	/* disable auto-retaliation if we skip monsters/hostile players and blood-bonded players likewise */
 	if (skip_monsters && !p_ptr->blood_bond) {
 		p_ptr->ar_test_fail = TRUE;
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Just to kill compiler warnings */
@@ -3590,7 +3590,7 @@ static bool auto_retaliate_test(int Ind) {
 		if (p_ptr->piercing && !p_ptr->piercing_charged) p_ptr->piercing = 0;
 
 		p_ptr->ar_test_fail = TRUE;
-		return FALSE;
+		return(FALSE);
 	}
 
 #ifndef EXPENSIVE_NO_TARGET_TEST
@@ -3690,7 +3690,7 @@ static bool auto_retaliate_test(int Ind) {
 
 	p_ptr->ar_test_fail = FALSE;
 	/* employ forced (via @O or @Q inscription) auto-retaliation? */
-	return (at_O_inscription && *at_O_inscription != 'x');
+	return(at_O_inscription && *at_O_inscription != 'x');
 }
 static int auto_retaliate(int Ind) {
 	player_type *p_ptr = Players[Ind], *p_target_ptr, *prev_p_target_ptr;
@@ -3703,13 +3703,13 @@ static int auto_retaliate(int Ind) {
 	cave_type **zcave;
 
 	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
-	if (p_ptr->new_level_flag) return 0;
+	if (p_ptr->new_level_flag) return(0);
 	/* disable auto-retaliation if we skip monsters/hostile players and blood-bonded players likewise */
-	if (skip_monsters && !p_ptr->blood_bond) return 0;
+	if (skip_monsters && !p_ptr->blood_bond) return(0);
 
 
 	/* load data, from preceding auto_retaliate_test() call */
-	if (p_ptr->ar_test_fail) return FALSE;
+	if (p_ptr->ar_test_fail) return(FALSE);
 
 	m_target_ptr = p_ptr->ar_m_target_ptr;
 	prev_m_target_ptr = p_ptr->ar_prev_m_target_ptr;
@@ -3743,24 +3743,24 @@ static int auto_retaliate(int Ind) {
 		/* Check if he is still alive or another targets exists */
 		if ((!p_target_ptr->death) || (prev_p_target_ptr) || (m_target_ptr)) {
 			/* We attacked something */
-			return 1;
+			return(1);
 		} else {
 			/* Otherwise return 2 to indicate we are no longer
 			 * autoattacking anything.
 			 */
-			return 2;
+			return(2);
 		}
 	}
 
 	/* The dungeon master does not fight his or her offspring */
-	if (p_ptr->admin_dm) return 0;
+	if (p_ptr->admin_dm) return(0);
 
 	/* If we have a target to attack, attack it! */
 	if (m_target_ptr) {
 		/* set the target */
 		p_ptr->target_who = target;
 		if (m_target_ptr->pet) { //a pet?
-			return 0;
+			return(0);
 		}
 
 		/* Attack it */
@@ -3780,17 +3780,17 @@ static int auto_retaliate(int Ind) {
 		/* Check if it is still alive or another targets exists */
 		if ((m_target_ptr->r_idx) || (prev_m_target_ptr) || (p_target_ptr)) {
 			/* We attacked something */
-			return 1;
+			return(1);
 		} else {
 			/* Otherwise return 2 to indicate we are no longer
 			 * autoattacking anything.
 			 */
-			return 2;
+			return(2);
 		}
 	}
 
 	/* Nothing was attacked. */
-	return 0;
+	return(0);
 }
 
 /*
@@ -6432,7 +6432,7 @@ static bool process_player_end_aux(int Ind) {
 		}
 	}
 
-	return (TRUE);
+	return(TRUE);
 }
 
 /* process any team games */
@@ -6746,9 +6746,9 @@ bool stale_level(struct worldpos *wpos, int grace) {
 	time_t now;
 
 	/* Hack -- towns are static for good? too spammy */
-	//if (istown(wpos)) return FALSE;
+	//if (istown(wpos)) return(FALSE);
 	/* Hack -- make dungeon towns static though? too cheezy */
-	//if (isdungeontown(wpos)) return FALSE;
+	//if (isdungeontown(wpos)) return(FALSE);
 
 #if 0 /* instead done in calling function! */
 	/* Hack: In IDDC, all floors are stale for 2 minutes to allow logging back in if
@@ -6766,7 +6766,7 @@ bool stale_level(struct worldpos *wpos, int grace) {
 		struct dun_level *l_ptr;
 
 		d_ptr = getdungeon(wpos);
-		if (!d_ptr) return FALSE;
+		if (!d_ptr) return(FALSE);
 		l_ptr = &d_ptr->level[ABS(wpos->wz) - 1];
 #if DEBUG_LEVEL > 3
 		s_printf("%s  now:%ld last:%ld diff:%ld grace:%d players:%d\n", wpos_format(0, wpos), now, l_ptr->lastused, now-l_ptr->lastused,grace, players_on_depth(wpos));
@@ -6774,8 +6774,8 @@ bool stale_level(struct worldpos *wpos, int grace) {
 		/* Hacky: Combine checks for normal death/quit static time (lastused) and for anti-scum static time (creationtime):
 		   lastused is set by death/quit staticing, but it is 0 when stair-scumming. */
 		if (l_ptr->lastused) {
-			if (now - l_ptr->lastused > grace) return TRUE;
-		} else if (now - l_ptr->creationtime > grace) return TRUE;
+			if (now - l_ptr->lastused > grace) return(TRUE);
+		} else if (now - l_ptr->creationtime > grace) return(TRUE);
 	} else if (now - wild_info[wpos->wy][wpos->wx].lastused > grace) {
 #if 0
 		/* Never allow dealloc where there are houses */
@@ -6784,13 +6784,13 @@ bool stale_level(struct worldpos *wpos, int grace) {
 
 		for (i = 0; i < num_houses; i++) {
 			if (inarea(wpos, &houses[i].wpos)) {
-				if (!(houses[i].flags & HF_DELETED)) return FALSE;
+				if (!(houses[i].flags & HF_DELETED)) return(FALSE);
 			}
 		}
 #endif
-		return TRUE;
+		return(TRUE);
 	}
-	return FALSE;
+	return(FALSE);
 }
 
 static void do_unstat(struct worldpos *wpos, byte fast_unstat) {
@@ -8388,12 +8388,12 @@ int find_player(s32b id) {
 
 	for (i = 1; i <= NumPlayers; i++) {
 		player_type *p_ptr = Players[i];
-		if (Players[i]->conn == NOT_CONNECTED) return 0;
+		if (Players[i]->conn == NOT_CONNECTED) return(0);
 		if (p_ptr->id == id) return i;
 	}
 
 	/* assume none */
-	return 0;
+	return(0);
 }
 
 int find_player_name(char *name) {
@@ -8406,7 +8406,7 @@ int find_player_name(char *name) {
 	}
 
 	/* assume none */
-	return 0;
+	return(0);
 }
 
 void process_player_change_wpos(int Ind) {
@@ -11652,11 +11652,11 @@ int recall_depth_idx(struct worldpos *wpos, player_type *p_ptr) {
 	int j;
 
 	/* cannot recall in 0,0? */
-	if (!wpos->wx && !wpos->wy) return (-1);
+	if (!wpos->wx && !wpos->wy) return(-1);
 
 	/* no dungeon/tower here? */
-	if (wpos->wz > 0 && !wild_info[wpos->wy][wpos->wx].tower) return (-1);
-	if (wpos->wz <= 0 && !wild_info[wpos->wy][wpos->wx].dungeon) return (-1);/* assume basic recall prefers dungeon over tower */
+	if (wpos->wz > 0 && !wild_info[wpos->wy][wpos->wx].tower) return(-1);
+	if (wpos->wz <= 0 && !wild_info[wpos->wy][wpos->wx].dungeon) return(-1);/* assume basic recall prefers dungeon over tower */
 
 	for (j = 0; j < MAX_D_IDX * 2; j++) {
 		/* it's a dungeon that's new to us - add it! */
@@ -11673,11 +11673,11 @@ int recall_depth_idx(struct worldpos *wpos, player_type *p_ptr) {
 			return j;
 	}
 	s_printf("p_ptr->max_depth[]: TOO MANY DUNGEONS ('%s',%d,%d,%d)!\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
-	return (-1);
+	return(-1);
 }
 int get_recall_depth(struct worldpos *wpos, player_type *p_ptr) {
 	int i = recall_depth_idx(wpos, p_ptr);
-	if (i == -1) return 0;
+	if (i == -1) return(0);
 	return p_ptr->max_depth[i];
 }
 

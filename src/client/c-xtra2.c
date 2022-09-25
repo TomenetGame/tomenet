@@ -894,7 +894,7 @@ errr dump_messages(cptr name, int lines, int mode) {
 		clear_topline_forced();
 
 		/* Error */
-		return (-1);
+		return(-1);
 	}
 
 	/* Begin dump */
@@ -915,5 +915,5 @@ errr dump_messages(cptr name, int lines, int mode) {
 	clear_topline_forced();
 
 	/* Success */
-	return (0);
+	return(0);
 }

@@ -251,7 +251,7 @@ bool set_tim_thunder(int Ind, int v, int p1, int p2) {
 	p_ptr->tim_thunder_p2 = p2;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -266,7 +266,7 @@ bool set_tim_thunder(int Ind, int v, int p1, int p2) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -305,7 +305,7 @@ bool set_tim_regen(int Ind, int v, int p) {
 	p_ptr->tim_regen_pow = p;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -314,7 +314,7 @@ bool set_tim_regen(int Ind, int v, int p) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 /* Variant of set_tim_regen() that drains MP to replenish HP, for Unlife school: */
 bool set_tim_mp2hp(int Ind, int v, int p) {
@@ -348,7 +348,7 @@ bool set_tim_mp2hp(int Ind, int v, int p) {
 	p_ptr->tim_regen_pow = -p;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -357,7 +357,7 @@ bool set_tim_mp2hp(int Ind, int v, int p) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -391,7 +391,7 @@ bool set_tim_ffall(int Ind, int v) {
 
 	/* Nothing to notice */
 	if (!notice)
-		return (FALSE);
+		return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state)
@@ -401,7 +401,7 @@ bool set_tim_ffall(int Ind, int v) {
 	p_ptr->update |= (PU_BONUS);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -435,7 +435,7 @@ bool set_tim_lev(int Ind, int v) {
 
 	/* Nothing to notice */
 	if (!notice)
-		return (FALSE);
+		return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state)
@@ -445,7 +445,7 @@ bool set_tim_lev(int Ind, int v) {
 	p_ptr->update |= (PU_BONUS);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -507,7 +507,7 @@ bool set_adrenaline(int Ind, int v) {
 	p_ptr->adrenaline = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Notice */
 	p_ptr->update |= (PU_BONUS | PU_HP);
@@ -519,7 +519,7 @@ bool set_adrenaline(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 /*
  * Set "p_ptr->biofeedback", notice observable changes
@@ -567,7 +567,7 @@ bool set_biofeedback(int Ind, int v) {
 	p_ptr->biofeedback = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Notice */
 	p_ptr->update |= (PU_BONUS | PU_HP);
@@ -579,7 +579,7 @@ bool set_biofeedback(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 
 }
 
@@ -614,7 +614,7 @@ bool set_tim_esp(int Ind, int v) {
 	p_ptr->tim_esp = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -629,7 +629,7 @@ bool set_tim_esp(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -664,7 +664,7 @@ bool set_st_anchor(int Ind, int v) {
 	p_ptr->st_anchor = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -676,7 +676,7 @@ bool set_st_anchor(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -709,7 +709,7 @@ bool set_prob_travel(int Ind, int v) {
 	p_ptr->prob_travel = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -721,7 +721,7 @@ bool set_prob_travel(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -749,7 +749,7 @@ bool set_melee_brand(int Ind, int v, u16b t, int p) {
 			p_ptr->melee_brand_t = 0;
 			p_ptr->melee_brand_d = 0;
 		}
-		return FALSE; /* don't notice anything */
+		return(FALSE); /* don't notice anything */
 	}
 
 	/* Hack -- Force good values */
@@ -870,7 +870,7 @@ bool set_melee_brand(int Ind, int v, u16b t, int p) {
 
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -882,7 +882,7 @@ bool set_melee_brand(int Ind, int v, u16b t, int p) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -900,7 +900,7 @@ bool set_ammo_brand(int Ind, int v, u16b t, int p) {
 			p_ptr->ammo_brand_t = 0;
 			p_ptr->ammo_brand_d = 0;
 		}
-		return FALSE; /* don't notice anything */
+		return(FALSE); /* don't notice anything */
 	}
 
 	/* Hack -- Force good values */
@@ -969,7 +969,7 @@ bool set_ammo_brand(int Ind, int v, u16b t, int p) {
 
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -981,7 +981,7 @@ bool set_ammo_brand(int Ind, int v, u16b t, int p) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -1020,7 +1020,7 @@ bool set_nimbus(int Ind, int v, byte t, byte d) {
 	p_ptr->nimbus_d = d;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -1033,7 +1033,7 @@ bool set_nimbus(int Ind, int v, byte t, byte d) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -1078,7 +1078,7 @@ bool set_mimic(int Ind, int v, int p) {
 #endif
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -1090,7 +1090,7 @@ bool set_mimic(int Ind, int v, int p) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -1125,7 +1125,7 @@ bool set_tim_manashield(int Ind, int v) {
 	p_ptr->tim_manashield = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -1140,7 +1140,7 @@ bool set_tim_manashield(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -1173,7 +1173,7 @@ bool set_tim_traps(int Ind, int v) {
 	p_ptr->tim_traps = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -1185,7 +1185,7 @@ bool set_tim_traps(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -1222,7 +1222,7 @@ bool set_invis(int Ind, int v, int p) {
 	p_ptr->tim_invis_power2 = p;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -1234,7 +1234,7 @@ bool set_invis(int Ind, int v, int p) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -1253,7 +1253,7 @@ bool set_fury(int Ind, int v) {
 			set_afraid(Ind, 0);
 			if (p_ptr->shero) {
 				msg_print(Ind, "You cannot grow additional fury while in a berserk rage!");
-				return FALSE;
+				return(FALSE);
 			}
 			msg_print(Ind, "You grow a fury!");
 			notice = TRUE;
@@ -1272,7 +1272,7 @@ bool set_fury(int Ind, int v) {
 	p_ptr->fury = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -1284,7 +1284,7 @@ bool set_fury(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -1320,7 +1320,7 @@ bool set_tim_meditation(int Ind, int v) {
 	p_ptr->tim_meditation = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -1332,7 +1332,7 @@ bool set_tim_meditation(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -1343,7 +1343,7 @@ bool set_tim_wraith(int Ind, int v) {
 	bool notice = FALSE;
 	cave_type **zcave;
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
-	if (!(zcave = getcave(&p_ptr->wpos))) return FALSE;
+	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -1428,7 +1428,7 @@ bool set_tim_wraith(int Ind, int v) {
 	p_ptr->tim_wraith = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -1440,7 +1440,7 @@ bool set_tim_wraith(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 /* Unlife school's "Wraithstep" variant (only one can be active at a time): */
 bool set_tim_wraithstep(int Ind, int v) {
@@ -1448,7 +1448,7 @@ bool set_tim_wraithstep(int Ind, int v) {
 	bool notice = FALSE;
 	cave_type **zcave;
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
-	if (!(zcave = getcave(&p_ptr->wpos))) return FALSE;
+	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -1527,7 +1527,7 @@ bool set_tim_wraithstep(int Ind, int v) {
 	p_ptr->tim_wraith = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -1539,7 +1539,7 @@ bool set_tim_wraithstep(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -1554,10 +1554,10 @@ bool set_blind(int Ind, int v) { /* bad status effect */
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
-	if (p_ptr->martyr && v) return FALSE;
+	if (p_ptr->martyr && v) return(FALSE);
 
 	/* the admin wizard can not be blinded */
-	if (p_ptr->admin_wiz) return 1;
+	if (p_ptr->admin_wiz) return(1);
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -1592,7 +1592,7 @@ bool set_blind(int Ind, int v) { /* bad status effect */
 	p_ptr->blind = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -1619,7 +1619,7 @@ bool set_blind(int Ind, int v) { /* bad status effect */
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -1630,7 +1630,7 @@ bool set_confused(int Ind, int v) { /* bad status effect */
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
-	if (p_ptr->martyr && v) return FALSE;
+	if (p_ptr->martyr && v) return(FALSE);
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -1668,7 +1668,7 @@ bool set_confused(int Ind, int v) { /* bad status effect */
 	p_ptr->confused = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -1682,7 +1682,7 @@ bool set_confused(int Ind, int v) { /* bad status effect */
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 #ifdef ARCADE_SERVER
@@ -1703,7 +1703,7 @@ bool set_poisoned(int Ind, int v, int attacker) { /* bad status effect */
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
-	if (p_ptr->martyr && v) return FALSE;
+	if (p_ptr->martyr && v) return(FALSE);
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -1734,7 +1734,7 @@ bool set_poisoned(int Ind, int v, int attacker) { /* bad status effect */
 	p_ptr->poisoned = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -1746,16 +1746,16 @@ bool set_poisoned(int Ind, int v, int attacker) { /* bad status effect */
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 bool set_diseased(int Ind, int v, int attacker) { /* bad status effect */
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
 	if (v) {
-		if (p_ptr->martyr) return FALSE;
-		if (p_ptr->ghost) return FALSE;
-		if (p_ptr->prace == RACE_VAMPIRE || (p_ptr->prace == RACE_MAIA && p_ptr->ptrait != TRAIT_NONE)) return FALSE;
+		if (p_ptr->martyr) return(FALSE);
+		if (p_ptr->ghost) return(FALSE);
+		if (p_ptr->prace == RACE_VAMPIRE || (p_ptr->prace == RACE_MAIA && p_ptr->ptrait != TRAIT_NONE)) return(FALSE);
 	}
 
 	/* Hack -- Force good values */
@@ -1787,7 +1787,7 @@ bool set_diseased(int Ind, int v, int attacker) { /* bad status effect */
 	p_ptr->diseased = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -1799,7 +1799,7 @@ bool set_diseased(int Ind, int v, int attacker) { /* bad status effect */
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -1810,7 +1810,7 @@ bool set_afraid(int Ind, int v) { /* bad status effect */
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
-	if (p_ptr->martyr && v) return FALSE;
+	if (p_ptr->martyr && v) return(FALSE);
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -1837,7 +1837,7 @@ bool set_afraid(int Ind, int v) { /* bad status effect */
 	p_ptr->afraid = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -1849,7 +1849,7 @@ bool set_afraid(int Ind, int v) { /* bad status effect */
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -1860,8 +1860,8 @@ bool set_paralyzed(int Ind, int v) { /* bad status effect */
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
-	if (p_ptr->martyr && v) return FALSE;
-	if (p_ptr->paralyzed == 255) return FALSE; /* hack */
+	if (p_ptr->martyr && v) return(FALSE);
+	if (p_ptr->paralyzed == 255) return(FALSE); /* hack */
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -1889,7 +1889,7 @@ bool set_paralyzed(int Ind, int v) { /* bad status effect */
 	p_ptr->paralyzed = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -1903,7 +1903,7 @@ bool set_paralyzed(int Ind, int v) { /* bad status effect */
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /* Added for Rune-of-Protection traps in PvP - C. Blue */
@@ -1911,7 +1911,7 @@ bool set_stopped(int Ind, int v) { /* bad status effect */
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
-	if (p_ptr->martyr && v) return FALSE;
+	if (p_ptr->martyr && v) return(FALSE);
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -1939,7 +1939,7 @@ bool set_stopped(int Ind, int v) { /* bad status effect */
 	p_ptr->stopped = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -1953,7 +1953,7 @@ bool set_stopped(int Ind, int v) { /* bad status effect */
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -1991,7 +1991,7 @@ bool set_image(int Ind, int v) { /* bad status effect */
 	p_ptr->image = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -2012,7 +2012,7 @@ bool set_image(int Ind, int v) { /* bad status effect */
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -2061,7 +2061,7 @@ bool set_fast(int Ind, int v, int p) {
 	p_ptr->fast_mod = p;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -2073,7 +2073,7 @@ bool set_fast(int Ind, int v, int p) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -2084,7 +2084,7 @@ bool set_slow(int Ind, int v) { /* bad status effect */
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
-	if (p_ptr->martyr && v) return FALSE;
+	if (p_ptr->martyr && v) return(FALSE);
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -2112,7 +2112,7 @@ bool set_slow(int Ind, int v) { /* bad status effect */
 	p_ptr->slow = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -2124,7 +2124,7 @@ bool set_slow(int Ind, int v) { /* bad status effect */
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -2184,7 +2184,7 @@ bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2) {
 	p_ptr->shield_power_opt2 = d2;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -2196,7 +2196,7 @@ bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -2232,7 +2232,7 @@ bool set_blessed(int Ind, int v) {
 	p_ptr->blessed = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -2244,7 +2244,7 @@ bool set_blessed(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 bool set_res_fear(int Ind, int v) {
@@ -2272,7 +2272,7 @@ bool set_res_fear(int Ind, int v) {
 	p_ptr->res_fear_temp = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -2284,7 +2284,7 @@ bool set_res_fear(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -2321,7 +2321,7 @@ bool set_hero(int Ind, int v) {
 	p_ptr->hero = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -2333,7 +2333,7 @@ bool set_hero(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -2377,7 +2377,7 @@ bool set_shero(int Ind, int v) {
 	p_ptr->shero = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -2389,7 +2389,7 @@ bool set_shero(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -2422,7 +2422,7 @@ bool set_melee_sprint(int Ind, int v) {
 	p_ptr->melee_sprint = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -2437,7 +2437,7 @@ bool set_melee_sprint(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -2471,7 +2471,7 @@ bool set_protevil(int Ind, int v) {
 	p_ptr->protevil = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -2480,7 +2480,7 @@ bool set_protevil(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -2527,7 +2527,7 @@ bool set_zeal(int Ind, int p, int v) {
 	p_ptr->zeal = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Redraw the Blows/Round */
 	p_ptr->update |= PU_BONUS;
@@ -2539,7 +2539,7 @@ bool set_zeal(int Ind, int p, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 bool set_martyr(int Ind, int v) {
@@ -2600,7 +2600,7 @@ bool set_martyr(int Ind, int v) {
 	p_ptr->martyr = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -2613,7 +2613,7 @@ bool set_martyr(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -2650,7 +2650,7 @@ bool set_invuln(int Ind, int v) {
 	p_ptr->invuln = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -2665,7 +2665,7 @@ bool set_invuln(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -2678,7 +2678,7 @@ bool set_invuln_short(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
 
 	/* not cumulative */
-	if (p_ptr->invuln > v) return (FALSE);
+	if (p_ptr->invuln > v) return(FALSE);
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -2694,7 +2694,7 @@ bool set_invuln_short(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result (never noticeable) */
-	return (FALSE);
+	return(FALSE);
 }
 
 /*
@@ -2727,7 +2727,7 @@ bool set_tim_invis(int Ind, int v) {
 	p_ptr->tim_invis = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -2742,7 +2742,7 @@ bool set_tim_invis(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -2776,7 +2776,7 @@ bool set_tim_infra(int Ind, int v) {
 	p_ptr->tim_infra = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -2791,7 +2791,7 @@ bool set_tim_infra(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -2825,7 +2825,7 @@ bool set_oppose_acid(int Ind, int v) {
 	p_ptr->oppose_acid = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -2840,7 +2840,7 @@ bool set_oppose_acid(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -2874,7 +2874,7 @@ bool set_oppose_elec(int Ind, int v) {
 	p_ptr->oppose_elec = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -2889,7 +2889,7 @@ bool set_oppose_elec(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -2923,7 +2923,7 @@ bool set_oppose_fire(int Ind, int v) {
 	p_ptr->oppose_fire = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -2938,7 +2938,7 @@ bool set_oppose_fire(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -2972,7 +2972,7 @@ bool set_oppose_cold(int Ind, int v) {
 	p_ptr->oppose_cold = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -2987,7 +2987,7 @@ bool set_oppose_cold(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -3021,7 +3021,7 @@ bool set_oppose_pois(int Ind, int v) {
 	p_ptr->oppose_pois = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -3036,7 +3036,7 @@ bool set_oppose_pois(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -3046,7 +3046,7 @@ bool set_stun_raw(int Ind, int v) { /* bad status effect */
 	int old_aux, new_aux;
 	bool notice = FALSE;
 
-	if (p_ptr->martyr && v) return FALSE;
+	if (p_ptr->martyr && v) return(FALSE);
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -3125,7 +3125,7 @@ bool set_stun_raw(int Ind, int v) { /* bad status effect */
 	p_ptr->stun = v;
 
 	/* No change */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -3140,7 +3140,7 @@ bool set_stun_raw(int Ind, int v) { /* bad status effect */
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -3153,7 +3153,7 @@ bool set_stun(int Ind, int v) { /* bad status effect */
 	int old_aux, new_aux;
 	bool notice = FALSE;
 
-	if (p_ptr->martyr && v) return FALSE;
+	if (p_ptr->martyr && v) return(FALSE);
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -3241,7 +3241,7 @@ bool set_stun(int Ind, int v) { /* bad status effect */
 	p_ptr->stun = v;
 
 	/* No change */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -3256,7 +3256,7 @@ bool set_stun(int Ind, int v) { /* bad status effect */
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -3270,7 +3270,7 @@ bool set_cut(int Ind, int v, int attacker) { /* bad status effect */
 	int old_aux, new_aux;
 	bool notice = FALSE;
 
-	if (p_ptr->martyr && v) return FALSE;
+	if (p_ptr->martyr && v) return(FALSE);
 
 	/* Hack -- Force good values -- allow up to 1000 (Mortal Wound starts at 800..1000) */
 	//v = (v > cfg.spell_stack_limit * 5) ? cfg.spell_stack_limit * 5 : (v < 0) ? 0 : v;
@@ -3377,7 +3377,7 @@ bool set_cut(int Ind, int v, int attacker) { /* bad status effect */
 	p_ptr->cut_attacker = attacker;
 
 	/* No change */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -3392,7 +3392,7 @@ bool set_cut(int Ind, int v, int attacker) { /* bad status effect */
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 bool set_mindboost(int Ind, int p, int v) {
@@ -3431,7 +3431,7 @@ bool set_mindboost(int Ind, int p, int v) {
 	if (set_afraid(Ind, 0)) notice = TRUE;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Redraw the Blows/Round if any */
 	p_ptr->update |= PU_BONUS;
@@ -3443,7 +3443,7 @@ bool set_mindboost(int Ind, int p, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 bool set_kinetic_shield(int Ind, int v) {
@@ -3475,7 +3475,7 @@ bool set_kinetic_shield(int Ind, int v) {
 	p_ptr->kinetic_shield = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -3484,7 +3484,7 @@ bool set_kinetic_shield(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 #ifdef ENABLE_OCCULT
@@ -3514,7 +3514,7 @@ bool set_savingthrow(int Ind, int v) {
 	p_ptr->temp_savingthrow = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -3523,7 +3523,7 @@ bool set_savingthrow(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 bool set_spirit_shield(int Ind, int power, int v) {
@@ -3556,7 +3556,7 @@ bool set_spirit_shield(int Ind, int power, int v) {
 	p_ptr->spirit_shield = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -3565,7 +3565,7 @@ bool set_spirit_shield(int Ind, int power, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 #endif
 
@@ -3602,7 +3602,7 @@ bool do_divine_hp(int Ind, int p, int v) {
 	p_ptr->divine_hp = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -3613,7 +3613,7 @@ bool do_divine_hp(int Ind, int p, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /* timed crit bonus for RACE_MAIA. */
@@ -3648,7 +3648,7 @@ bool do_divine_crit(int Ind, int p, int v) {
 	p_ptr->divine_crit = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -3659,7 +3659,7 @@ bool do_divine_crit(int Ind, int p, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /* timed time and mana res bonus for RACE_MAIA. */
@@ -3691,7 +3691,7 @@ bool do_divine_xtra_res(int Ind, int v) {
 	p_ptr->divine_xtra_res = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -3706,17 +3706,17 @@ bool do_divine_xtra_res(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 #else
 bool do_divine_hp(int Ind, int p, int v) {
-	return FALSE;
+	return(FALSE);
 }
 bool do_divine_crit(int Ind, int p, int v) {
-	return FALSE;
+	return(FALSE);
 }
 bool do_divine_xtra_res(int Ind, int v) {
-	return FALSE;
+	return(FALSE);
 }
 #endif
 
@@ -3751,7 +3751,7 @@ bool set_tim_deflect(int Ind, int v) {
 	p_ptr->tim_deflect = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -3763,7 +3763,7 @@ bool set_tim_deflect(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -3796,7 +3796,7 @@ bool set_sh_fire_tim(int Ind, int v) {
 	/* Use the value */
 	p_ptr->sh_fire_tim = v;
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 	/* Recalculate boni */
@@ -3804,7 +3804,7 @@ bool set_sh_fire_tim(int Ind, int v) {
 	/* Handle stuff */
 	handle_stuff(Ind);
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 bool set_sh_cold_tim(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
@@ -3833,7 +3833,7 @@ bool set_sh_cold_tim(int Ind, int v) {
 	/* Use the value */
 	p_ptr->sh_cold_tim = v;
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 	/* Recalculate boni */
@@ -3841,7 +3841,7 @@ bool set_sh_cold_tim(int Ind, int v) {
 	/* Handle stuff */
 	handle_stuff(Ind);
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 bool set_sh_elec_tim(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
@@ -3870,7 +3870,7 @@ bool set_sh_elec_tim(int Ind, int v) {
 	/* Use the value */
 	p_ptr->sh_elec_tim = v;
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 	/* Recalculate boni */
@@ -3878,7 +3878,7 @@ bool set_sh_elec_tim(int Ind, int v) {
 	/* Handle stuff */
 	handle_stuff(Ind);
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 void set_shroud(int Ind, int v, int p) {
@@ -3943,7 +3943,7 @@ bool set_food(int Ind, int v) {
 	if ((p_ptr->ghost) || (get_skill(p_ptr, SKILL_HSUPPORT) == 50) ||
 	    (p_ptr->prace == RACE_MAIA && p_ptr->ptrait)) {
 		p_ptr->food = PY_FOOD_FULL - 1;
-		return (FALSE);
+		return(FALSE);
 	}
 	/* Ents and true vampires will never get gorged, but can still go hungry/thirsty */
 	if ((p_ptr->prace == RACE_ENT || p_ptr->prace == RACE_VAMPIRE) && v >= PY_FOOD_MAX) v = PY_FOOD_MAX - 1;
@@ -3951,7 +3951,7 @@ bool set_food(int Ind, int v) {
 #ifdef ARCADE_SERVER
 	/* Warrior does not need food badly */
 	p_ptr->food = PY_FOOD_FULL - 1;
-	return (FALSE);
+	return(FALSE);
 #endif
 
 	/* Hack -- Force good values */
@@ -4083,7 +4083,7 @@ bool set_food(int Ind, int v) {
 	p_ptr->food = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -4098,7 +4098,7 @@ bool set_food(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -4147,7 +4147,7 @@ bool bless_temp_luck(int Ind, int pow, int dur) {
 	else p_ptr->bless_temp_luck = dur;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -4159,7 +4159,7 @@ bool bless_temp_luck(int Ind, int pow, int dur) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /* 'Manually' set a skill ratio to a specific value. Used for manipulating Maia skills via lua. */
@@ -5597,22 +5597,22 @@ static int get_coin_type(monster_race *r_ptr) {
 	/* Analyze "coin" monsters */
 	if (r_ptr->d_char == '$') {
 		/* Look for textual clues */
-		if (strstr(name, " copper ")) return (1);
-		if (strstr(name, " silver ")) return (2);
-		if (strstr(name, " gold ")) return (10);
-		if (strstr(name, " mithril ")) return (16);
-		if (strstr(name, " adamantite ")) return (18);
+		if (strstr(name, " copper ")) return(1);
+		if (strstr(name, " silver ")) return(2);
+		if (strstr(name, " gold ")) return(10);
+		if (strstr(name, " mithril ")) return(16);
+		if (strstr(name, " adamantite ")) return(18);
 
 		/* Look for textual clues */
-		if (strstr(name, "Copper ")) return (1);
-		if (strstr(name, "Silver ")) return (2);
-		if (strstr(name, "Gold ")) return (10);
-		if (strstr(name, "Mithril ")) return (16);
-		if (strstr(name, "Adamantite ")) return (18);
+		if (strstr(name, "Copper ")) return(1);
+		if (strstr(name, "Silver ")) return(2);
+		if (strstr(name, "Gold ")) return(10);
+		if (strstr(name, "Mithril ")) return(16);
+		if (strstr(name, "Adamantite ")) return(18);
 	}
 
 	/* Assume nothing */
-	return (0);
+	return(0);
 }
 
 
@@ -5630,26 +5630,26 @@ static bool r_killed_creditable(int Ind, int m_idx) {
 
 
 #ifdef RPG_SERVER
-	if (m_ptr->pet) return FALSE;
+	if (m_ptr->pet) return(FALSE);
 #endif
 
 	/* Log-scumming in IDDC is like fighting clones */
-	if (p_ptr->IDDC_logscum) return FALSE;
+	if (p_ptr->IDDC_logscum) return(FALSE);
 	/* enforce dedicated Ironman Deep Dive Challenge character slot usage */
 	if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
 #ifdef DED_IDDC_MANDOS
 	    && !in_hallsofmandos(&p_ptr->wpos)
 #endif
 	    && r_ptr->mexp) /* Allow kills in Bree */
-		return FALSE;
+		return(FALSE);
 
 	/* clones don't drop treasure or complete quests.. */
-	if (m_ptr->clone) return FALSE;
+	if (m_ptr->clone) return(FALSE);
 	/* ..neither do cheezed kills */
 	if (henc_cheezed &&
 	    !is_Morgoth && /* make exception for Morgoth, so hi-lvl fallen kings can re-king */
 	    !is_Pumpkin) /* allow a mixed hunting group */
-		return FALSE;
+		return(FALSE);
 
 	if (cfg.henc_strictness && !p_ptr->total_winner &&
 	    /* p_ptr->lev more logical but harsh: */
@@ -5658,9 +5658,9 @@ static bool r_killed_creditable(int Ind, int m_idx) {
 #else /* players may seek higher-level party members to team up with if he's died before? Weird combination so not recommended! */
 	    m_ptr->henc - p_ptr->max_plv > MAX_PARTY_LEVEL_DIFF + 1)
 #endif
-		return FALSE;
+		return(FALSE);
 
-	return TRUE;
+	return(TRUE);
 }
 
 /*
@@ -5783,7 +5783,7 @@ bool monster_death(int Ind, int m_idx) {
 				}
 				Players[i]->has_pet = 0;
 				FREE(m_ptr->r_ptr, monster_race); //no drop, no exp.
-				return FALSE;
+				return(FALSE);
 			}
 		}
 	}
@@ -5803,7 +5803,7 @@ bool monster_death(int Ind, int m_idx) {
 	x = m_ptr->fx;
 	wpos = &m_ptr->wpos;
 	in_iddc = in_irondeepdive(wpos);
-	if (!(zcave = getcave(wpos))) return FALSE;
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	if (ge_special_sector && /* training tower event running? and we are there? */
 	    in_arena(wpos)) {
@@ -6000,14 +6000,14 @@ bool monster_death(int Ind, int m_idx) {
 	}
 
 	/* Log-scumming in IDDC is like fighting clones */
-	if (p_ptr->IDDC_logscum) return FALSE;
+	if (p_ptr->IDDC_logscum) return(FALSE);
 	/* enforce dedicated Ironman Deep Dive Challenge character slot usage */
 	if ((p_ptr->mode & MODE_DED_IDDC) && !in_iddc
 #ifdef DED_IDDC_MANDOS
 	    && !in_hallsofmandos(&p_ptr->wpos)
 #endif
 	    && r_ptr->mexp) /* Allow kills in Bree */
-		return FALSE;
+		return(FALSE);
 	/* clones don't drop treasure or complete quests.. */
 	if (m_ptr->clone) {
 		/* Specialty - even for non-creditable Sauron:
@@ -6021,7 +6021,7 @@ bool monster_death(int Ind, int m_idx) {
 		}
 
 		/* no credit/loot for clones */
-		return FALSE;
+		return(FALSE);
 	}
 	/* ..neither do cheezed kills */
 	if (henc_cheezed &&
@@ -6032,7 +6032,7 @@ bool monster_death(int Ind, int m_idx) {
 	    && (m_ptr->questor || (r_ptr->flags1 & RF1_UNIQUE))
 #endif
 	    )
-		return FALSE;
+		return(FALSE);
 
 	dlev = getlevel(wpos);
 	rlev = r_ptr->level;
@@ -6474,7 +6474,7 @@ bool monster_death(int Ind, int m_idx) {
 	if (henc_cheezed &&
 	    !is_Morgoth && /* make exception for Morgoth, so hi-lvl fallen kings can re-king */
 	    !is_Pumpkin) /* allow a mixed hunting group */
-		return FALSE;
+		return(FALSE);
 #endif
 
 	/* Check whether a quest requested this monster dead */
@@ -7175,7 +7175,7 @@ if (cfg.unikill_format) {
 			}
 
 			FREE(m_ptr->r_ptr, monster_race);
-			return TRUE;
+			return(TRUE);
 
 		} else if (r_idx == RI_SMEAGOL) {
 			/* Get local object */
@@ -7949,10 +7949,10 @@ if (cfg.unikill_format) {
 	//if ((!force_coin) && (randint(100) < 50)) place_corpse(m_ptr);
 
 #if 1
-	return TRUE; //removed RF1_QUESTOR
+	return(TRUE); //removed RF1_QUESTOR
 #else
 	/* Only process "Quest Monsters" */
-	if (!(r_ptr->flags1 & RF1_QUESTOR)) return TRUE;
+	if (!(r_ptr->flags1 & RF1_QUESTOR)) return(TRUE);
 
 	/* Hack -- Mark quests as complete */
 	for (i = 0; i < MAX_XO_IDX; i++) {
@@ -8001,7 +8001,7 @@ if (cfg.unikill_format) {
 
 	FREE(m_ptr->r_ptr, monster_race);
 
-	return TRUE;
+	return(TRUE);
 #endif
 }
 
@@ -10728,7 +10728,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 
 	if (p_ptr->mode & MODE_PVP) {
 		msg_print(Ind, "\377yPvP mode characters cannot receive extermination orders.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	if (p_ptr->xorder_id) {
@@ -10740,7 +10740,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 					    r_name + r_info[xorders[i].type].name, r_info[xorders[i].type].level);
 					msg_format(Ind, "\376\377oThe remaining time to carry it out is \377y%d\377o minutes.", (MAX_XORDER_TURNS - (turn - xorders[i].turn)) / (cfg.fps * 60));
 				}
-				return FALSE;
+				return(FALSE);
 			}
 		}
 	}
@@ -10753,7 +10753,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 			msg_print(Ind, "\377yYou can only acquire an extermination order when you are inside the IDDC!");
 #endif
 			msg_print(Ind, "\377yUse the /xo (short for /xorder) command after you entered it.");
-			return FALSE;
+			return(FALSE);
 		}
 
 		switch (p_ptr->store_num) {
@@ -10765,19 +10765,19 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 			break;
 		default:
 			msg_print(Ind, "\377yPlease visit your local town hall or seat of ruling to receive an order!");
-			return FALSE;
+			return(FALSE);
 		}
 	}
 
 	if (p_ptr->IDDC_logscum) {
 		msg_print(Ind, "\377yYou cannot acquire an extermination order on a stale floor.");
 		msg_print(Ind, "\377yTake a staircase to move on to the next dungeon level.");
-		return FALSE;
+		return(FALSE);
 	}
 	if (p_ptr->IDDC_flags & 0xC) {
 		msg_print(Ind, "\377yYou cannot acquire an extermination order on this floor.");
 		//msg_print(Ind, "\377yTake a staircase to move on to the next dungeon level.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* don't start too early -C. Blue */
@@ -10788,7 +10788,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 	if (p_ptr->lev < 3) {
 		msg_print(Ind, "\377oYou need to be level 3 or higher to receive an extermination order!");
 #endif
-		return FALSE;
+		return(FALSE);
 	}
 
 	if (iddc || mandos) {
@@ -10825,7 +10825,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 	/* Paranoia? No monster found */
 	if (!r) {
 		msg_print(Ind, "\377yNo feasible extermination order available. Please contact your administration!");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* easier in Ironman environments */
@@ -10852,7 +10852,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 	if (r_info[r].dup_idx) r = r_info[r].dup_idx;
 
 	*level = lev; *type = r; *num = i;
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -10860,7 +10860,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 /*
  * Decreases monsters hit points, handling monster death.
  *
- * We return TRUE if the monster has been killed (and deleted).
+ * We return(TRUE) if the monster has been killed (and deleted).
  *
  * We announce monster death (using an optional "death message"
  * if given, and a otherwise a generic killed/destroyed message).
@@ -10908,10 +10908,10 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	}
 #endif
 
-	if (m_ptr->status == M_STATUS_FRIENDLY) return FALSE;
+	if (m_ptr->status == M_STATUS_FRIENDLY) return(FALSE);
 
 	if (m_ptr->r_idx == RI_BLUE) {
-		if (m_ptr->extra > 1) return FALSE; //paranoia?
+		if (m_ptr->extra > 1) return(FALSE); //paranoia?
 		if (m_ptr->extra == 1) {
 			if (m_ptr->hp <= dam) {
 				int i;
@@ -10932,7 +10932,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 						erase_effects(i);
 
 				s_printf("MIRROR2: %s (%d/%d) won.\n", p_ptr->name, p_ptr->max_plv, p_ptr->max_lev);
-				return FALSE;
+				return(FALSE);
 			}
 			m_ptr->extra = 0;
 		} else {
@@ -11046,7 +11046,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	m_ptr->csleep = 0;
 
 	/* Some monsters are immune to death */
-	if (r_ptr->flags7 & RF7_NO_DEATH) return FALSE;
+	if (r_ptr->flags7 & RF7_NO_DEATH) return(FALSE);
 
 	/* for when a quest giver turned non-invincible */
 #if 0
@@ -11514,7 +11514,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		suppress_message = old_tacit;
 
 		/* Monster is dead */
-		return (TRUE);
+		return(TRUE);
 	}
 
 
@@ -11548,7 +11548,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		   apparently maxhp can extremely rarely be 0 - C. Blue */
 		if (m_ptr->maxhp == 0) {
 			s_printf("DBG_MAXHP_1 %d,%d\n", m_ptr->r_idx, m_ptr->ego);
-			return FALSE;
+			return(FALSE);
 		}
 
 		/* Percentage of fully healthy */
@@ -11574,7 +11574,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 #endif
 
 	/* Not dead yet */
-	return (FALSE);
+	return(FALSE);
 }
 
 /* NOTE: This function lacks all of the specialties of monster_death() still, such as conditioned drops. */
@@ -11725,7 +11725,7 @@ bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note) {
 	monster_race    *r_ptr = race_inf(m_ptr);
 	s64b		new_exp;
 
-	if (m_ptr->r_idx == RI_MIRROR || m_ptr->r_idx == RI_BLUE) return FALSE; /* Golem may not help here (maybe except as meat shield?) */
+	if (m_ptr->r_idx == RI_MIRROR || m_ptr->r_idx == RI_BLUE) return(FALSE); /* Golem may not help here (maybe except as meat shield?) */
 
 	/* Redraw (later) if needed */
 	update_health(m_idx);
@@ -11734,8 +11734,8 @@ bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note) {
 	m_ptr->csleep = 0;
 
 	/* Some monsters are immune to death */
-	if (r_ptr->flags7 & RF7_NO_DEATH) return FALSE;
-	if (m_ptr->status == M_STATUS_FRIENDLY) return FALSE;
+	if (r_ptr->flags7 & RF7_NO_DEATH) return(FALSE);
+	if (m_ptr->status == M_STATUS_FRIENDLY) return(FALSE);
 
 	/* Hurt it */
 	m_ptr->hp -= dam;
@@ -11780,7 +11780,7 @@ case SV_GOLEM_ADAM:
 		(*fear) = FALSE;
 
 		/* Monster is dead */
-		return (TRUE);
+		return(TRUE);
 	}
 
 
@@ -11813,7 +11813,7 @@ case SV_GOLEM_ADAM:
 		   apparently maxhp can extremely rarely be 0 - C. Blue */
 		if (m_ptr->maxhp == 0) {
 			s_printf("DBG_MAXHP_2 %d,%d\n", m_ptr->r_idx, m_ptr->ego);
-			return FALSE;
+			return(FALSE);
 		}
 
 		/* Percentage of fully healthy */
@@ -11839,7 +11839,7 @@ case SV_GOLEM_ADAM:
 #endif
 
 	/* Not dead yet */
-	return (FALSE);
+	return(FALSE);
 }
 
 /* Initialises the panel, when newly entering a level */
@@ -12049,7 +12049,7 @@ bool local_panel(int Ind) {
 
 #if 0
 	/* Also check (virtual) traditional panel */
-	if (!local_tradpanel(Ind)) return FALSE;
+	if (!local_tradpanel(Ind)) return(FALSE);
 #endif
 
 
@@ -12068,8 +12068,8 @@ bool local_panel(int Ind) {
 	}
 
 	/* Check for "no change" */
-	if ((prow == p_ptr->panel_row) && (pcol == p_ptr->panel_col)) return TRUE;
-	return FALSE;
+	if ((prow == p_ptr->panel_row) && (pcol == p_ptr->panel_col)) return(TRUE);
+	return(FALSE);
 }
 #if 0
 bool local_tradpanel(int Ind) {
@@ -12096,8 +12096,8 @@ bool local_tradpanel(int Ind) {
 	}
 
 	/* Check for "no change" */
-	if ((prow == p_ptr->tradpanel_row) && (pcol == p_ptr->tradpanel_col)) return TRUE;
-	return FALSE;
+	if ((prow == p_ptr->tradpanel_row) && (pcol == p_ptr->tradpanel_col)) return(TRUE);
+	return(FALSE);
 }
 #endif
 
@@ -12345,7 +12345,7 @@ bool ang_sort_comp_distance(int Ind, vptr u, vptr v, int a, int b) {
 	db = ((kx > ky) ? (kx + kx + ky) : (ky + ky + kx));
 
 	/* Compare the distances */
-	return (da <= db);
+	return(da <= db);
 }
 
 
@@ -12397,7 +12397,7 @@ bool ang_sort_extra_comp_distance(int Ind, vptr u, vptr v, vptr w, int a, int b)
 	db = ((kx > ky) ? (kx + kx + ky) : (ky + ky + kx));
 
 	/* Compare the distances -- if equal, prefer the target that is not asleep, default to 'a'. */
-	return ((da == db) ? (z[b] || !z[a]) : (da <= db));
+	return((da == db) ? (z[b] || !z[a]) : (da <= db));
 }
 
 void ang_sort_extra_swap_distance(int Ind, vptr u, vptr v, vptr w, int a, int b) {
@@ -12438,11 +12438,11 @@ bool ang_sort_comp_value(int Ind, vptr u, vptr v, int a, int b) {
 		va = object_value(Ind, &inven[a]);
 		vb = object_value(Ind, &inven[b]);
 
-		return (va >= vb);
+		return(va >= vb);
 	}
 
-	if (inven[a].tval) return FALSE;
-	return TRUE;
+	if (inven[a].tval) return(FALSE);
+	return(TRUE);
 }
 
 
@@ -12471,11 +12471,11 @@ bool ang_sort_comp_mon_lev(int Ind, vptr u, vptr v, int a, int b) {
 		va = ra_ptr->level * 3000 + r_idx[a];
 		vb = rb_ptr->level * 3000 + r_idx[b];
 
-		return (va >= vb);
+		return(va >= vb);
 	}
 
-	if (ra_ptr->name) return FALSE;
-	return TRUE;
+	if (ra_ptr->name) return(FALSE);
+	return(TRUE);
 }
 
 
@@ -12504,11 +12504,11 @@ bool ang_sort_comp_tval(int Ind, vptr u, vptr v, int a, int b) {
 		va = ka_ptr->tval * 256 + ka_ptr->sval;
 		vb = kb_ptr->tval * 256 + kb_ptr->sval;
 
-		return (va >= vb);
+		return(va >= vb);
 	}
 
-	if (ka_ptr->tval) return FALSE;
-	return TRUE;
+	if (ka_ptr->tval) return(FALSE);
+	return(TRUE);
 }
 
 
@@ -12537,14 +12537,14 @@ bool target_able(int Ind, int m_idx) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	monster_type *m_ptr;
 
-	if (!p_ptr) return FALSE;
+	if (!p_ptr) return(FALSE);
 
 	/* Hack -- no targeting hallucinations */
-	if (p_ptr->image) return (FALSE);
+	if (p_ptr->image) return(FALSE);
 
 	/* Safety check to prevent overflows below if any call of target_able() was executed with bad parameter here.
 	   Note: target_who is only really used as parm in retaliate_...() (and in target_okay() itself), so this should never really happen.. */
-	if (TARGET_STATIONARY(m_idx)) return FALSE; //paranoia
+	if (TARGET_STATIONARY(m_idx)) return(FALSE); //paranoia
 
 	/* Check for OK monster */
 	if (m_idx > 0) {
@@ -12555,39 +12555,39 @@ bool target_able(int Ind, int m_idx) {
 		r_ptr = race_inf(m_ptr);
 
 		/* Monster must be visible */
-		if (!p_ptr->mon_vis[m_idx]) return (FALSE);
+		if (!p_ptr->mon_vis[m_idx]) return(FALSE);
 
 		/* Monster must not be owned */
-		if (p_ptr->id == m_ptr->owner) return (FALSE);
+		if (p_ptr->id == m_ptr->owner) return(FALSE);
 
 		/* Distance to target too great?
 		   Use distance() to form a 'natural' circle shaped radius instead of a square shaped radius,
 		   monsters do this too */
-		if (distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) > MAX_RANGE) return (FALSE);
+		if (distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) > MAX_RANGE) return(FALSE);
 
 		/* Monster must be projectable */
 #ifdef PY_PROJ_WALL
-		if (!projectable_wall(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx, MAX_RANGE)) return (FALSE);
+		if (!projectable_wall(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx, MAX_RANGE)) return(FALSE);
 #else
-		if (!projectable(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx, MAX_RANGE)) return (FALSE);
+		if (!projectable(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx, MAX_RANGE)) return(FALSE);
 #endif
 
 		if (m_ptr->owner == p_ptr->id) return(FALSE);
 
 		/* XXX XXX XXX Hack -- Never target trappers */
-		/* if (CLEAR_ATTR && CLEAR_CHAR) return (FALSE); */
+		/* if (CLEAR_ATTR && CLEAR_CHAR) return(FALSE); */
 
 		/* Cannot be targeted */
 #ifdef CHEAP_NO_TARGET_TEST
 		/* Allow targetting if it's next to player? */
 		if (!(ABS(p_ptr->px - m_ptr->fx) <= 1 && ABS(p_ptr->py - m_ptr->fy) <= 1))
 #endif
-		if (r_ptr->flags7 & RF7_NO_TARGET) return (FALSE);
+		if (r_ptr->flags7 & RF7_NO_TARGET) return(FALSE);
 
-		if (m_ptr->status == M_STATUS_FRIENDLY) return FALSE;
+		if (m_ptr->status == M_STATUS_FRIENDLY) return(FALSE);
 
 		/* Assume okay */
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Check for OK player */
@@ -12603,36 +12603,36 @@ bool target_able(int Ind, int m_idx) {
 		/* Paranoia check -- require a valid player */
 		if (!q_ptr || q_ptr->conn == NOT_CONNECTED) {
 			p_ptr->target_who = 0;
-			return (FALSE);
+			return(FALSE);
 		}
 
 		/* Players must be on same depth */
-		if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) return (FALSE);
+		if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) return(FALSE);
 
 		/* Player must be visible */
-		if (!p_ptr->play_vis[-m_idx]) return (FALSE);
+		if (!p_ptr->play_vis[-m_idx]) return(FALSE);
 
 		/* Player must be in FoV */
-		if (!player_can_see_bold(Ind, q_ptr->py, q_ptr->px)) return (FALSE);
+		if (!player_can_see_bold(Ind, q_ptr->py, q_ptr->px)) return(FALSE);
 
 		/* Distance to target too great?
 		   Use distance() to form a 'natural' circle shaped radius instead of a square shaped radius,
 		   monsters do this too */
-		if (distance(p_ptr->py, p_ptr->px, q_ptr->py, q_ptr->px) > MAX_RANGE) return (FALSE);
+		if (distance(p_ptr->py, p_ptr->px, q_ptr->py, q_ptr->px) > MAX_RANGE) return(FALSE);
 
 		/* Player must be projectable */
 #ifdef PY_PROJ_WALL
-		if (!projectable_wall(&p_ptr->wpos, p_ptr->py, p_ptr->px, q_ptr->py, q_ptr->px, MAX_RANGE)) return (FALSE);
+		if (!projectable_wall(&p_ptr->wpos, p_ptr->py, p_ptr->px, q_ptr->py, q_ptr->px, MAX_RANGE)) return(FALSE);
 #else
-		if (!projectable(&p_ptr->wpos, p_ptr->py, p_ptr->px, q_ptr->py, q_ptr->px, MAX_RANGE)) return (FALSE);
+		if (!projectable(&p_ptr->wpos, p_ptr->py, p_ptr->px, q_ptr->py, q_ptr->px, MAX_RANGE)) return(FALSE);
 #endif
 
 		/* Assume okay */
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Assume no target */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -12641,13 +12641,13 @@ bool target_able(int Ind, int m_idx) {
 /*
  * Update (if necessary) and verify (if possible) the target.
  *
- * We return TRUE if the target is "okay" and FALSE otherwise.
+ * We return(TRUE) if the target is "okay" and FALSE otherwise.
  */
 bool target_okay(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Accept stationary targets */
-	if (TARGET_STATIONARY(p_ptr->target_who)) return (TRUE);
+	if (TARGET_STATIONARY(p_ptr->target_who)) return(TRUE);
 
 	/* Check moving monsters */
 	if (p_ptr->target_who > 0) {
@@ -12660,7 +12660,7 @@ bool target_okay(int Ind) {
 			p_ptr->target_col = m_ptr->fx;
 
 			/* Good target */
-			return (TRUE);
+			return(TRUE);
 		}
 	}
 
@@ -12675,12 +12675,12 @@ bool target_okay(int Ind) {
 			p_ptr->target_col = q_ptr->px;
 
 			/* Good target */
-			return (TRUE);
+			return(TRUE);
 		}
 	}
 
 	/* Assume no target */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -12729,7 +12729,7 @@ s16b target_pick(int Ind, int y1, int x1, int dy, int dx) {
 	}
 
 	/* Result */
-	return (b_i);
+	return(b_i);
 }
 
 
@@ -12849,7 +12849,7 @@ bool target_set(int Ind, int dir) {
 		} else {
 			y = p_ptr->target_row + ddy[dir - 128];
 			x = p_ptr->target_col + ddx[dir - 128];
-			if (!in_bounds(y, x)) return FALSE; /* paranoia (won't harm, but seems weird) */
+			if (!in_bounds(y, x)) return(FALSE); /* paranoia (won't harm, but seems weird) */
 			p_ptr->target_row = y;
 			p_ptr->target_col = x;
 		}
@@ -12867,11 +12867,11 @@ bool target_set(int Ind, int dir) {
 			p_ptr->target_who = MAX_M_IDX + 1; //TARGET_STATIONARY
 			//p_ptr->target_who = 0;
 //s_printf("target_info TRUE: %d,%d (%d,%d)\n", p_ptr->target_col - p_ptr->panel_col_prt, p_ptr->target_row - p_ptr->panel_row_prt, p_ptr->target_col, p_ptr->target_row);
-			return TRUE;
+			return(TRUE);
 		}
 
 		/* Done */
-		return FALSE;
+		return(FALSE);
 	} else {
 		/* Start where we last left off */
 		m = p_ptr->look_index;
@@ -12983,13 +12983,13 @@ bool target_set(int Ind, int dir) {
 	}
 
 	/* Failure */
-	if (!p_ptr->target_who) return (FALSE);
+	if (!p_ptr->target_who) return(FALSE);
 
 	/* Clear target info */
 	p_ptr->target_n = 0;
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -13066,10 +13066,10 @@ bool target_set_friendly(int Ind, int dir, ...) {
 		q_ptr = Players[castplayer];
 
 		/* Skip unconnected players */
-		if (q_ptr->conn == NOT_CONNECTED) return FALSE;
+		if (q_ptr->conn == NOT_CONNECTED) return(FALSE);
 
 		/* Ignore "unreasonable" players */
-		if (!target_able(Ind, 0 - castplayer)) return FALSE;
+		if (!target_able(Ind, 0 - castplayer)) return(FALSE);
 
 		/* Save the player index */
 		p_ptr->target_x[p_ptr->target_n] = q_ptr->px;
@@ -13122,13 +13122,13 @@ bool target_set_friendly(int Ind, int dir, ...) {
 	p_ptr->target_row = p_ptr->target_y[m];
 
 	/* Failure */
-	if (!p_ptr->target_who) return (FALSE);
+	if (!p_ptr->target_who) return(FALSE);
 
 	/* Clear target info */
 	p_ptr->target_n = 0;
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 #else
@@ -13224,13 +13224,13 @@ bool target_set_friendly(int Ind, int dir) {
 	p_ptr->target_row = p_ptr->target_y[m];
 
 	/* Failure */
-	if (!p_ptr->target_who) return (FALSE);
+	if (!p_ptr->target_who) return(FALSE);
 
 	/* Clear target info */
 	p_ptr->target_n = 0;
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 #endif
@@ -13266,19 +13266,19 @@ bool get_aim_dir(int Ind) {
 
 		/* XXX XXX Pretend we read this direction from the network */
 		Handle_direction(Ind, dir);
-		return (TRUE);
+		return(TRUE);
 	}
 
 	Send_direction(Ind);
 
-	return (TRUE);
+	return(TRUE);
 }
 
 
 bool get_item(int Ind, signed char tester_hook) { //paranoia @ 'signed' char =-p
 	Send_item_request(Ind, tester_hook);
 
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -13402,7 +13402,7 @@ bool set_recall_timer(int Ind, int v) {
 		if (p_ptr->word_recall) v = 0;
 		else {
 			msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");
-			return FALSE;
+			return(FALSE);
 		}
 	}
 
@@ -13428,7 +13428,7 @@ bool set_recall_timer(int Ind, int v) {
 	p_ptr->word_recall = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -13440,7 +13440,7 @@ bool set_recall_timer(int Ind, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 bool set_recall(int Ind, int v, object_type *o_ptr) {
@@ -13458,14 +13458,14 @@ bool set_recall(int Ind, int v, object_type *o_ptr) {
 #endif
 	    iddc_recall_fail(p_ptr, l_ptr))) {
 		msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	if (!p_ptr->word_recall) {
 		set_recall_depth(p_ptr, o_ptr);
-		return (set_recall_timer(Ind, v));
+		return(set_recall_timer(Ind, v));
 	} else {
-		return (set_recall_timer(Ind, 0));
+		return(set_recall_timer(Ind, 0));
 	}
 
 }
@@ -13721,7 +13721,7 @@ int get_player(int Ind, object_type *o_ptr) {
 	if (inscription == NULL) {
 		//msg_print(Ind, "Nobody to use the power with.");
 		msg_print(Ind, "\377yNo target player specified.");
-		return 0;
+		return(0);
 	}
 
 	/* scan the inscription for @P */
@@ -13749,12 +13749,12 @@ int get_player(int Ind, object_type *o_ptr) {
 
 	if (!ok) {
 		msg_print(Ind, "\377yCouldn't find the target.");
-		return 0;
+		return(0);
 	}
 
 	if (Ind == Ind2) {
 		msg_print(Ind, "\377yYou cannot do that on yourself.");
-		return 0;
+		return(0);
 	}
 
 	return Ind2;
@@ -13770,7 +13770,7 @@ int get_monster(int Ind, object_type *o_ptr) {
 	/* check for a valid inscription */
 	if (inscription == NULL) {
 		msg_print(Ind, "No monster specified.");
-		return 0;
+		return(0);
 	}
 
 	/* scan the inscription for @M */
@@ -13793,12 +13793,12 @@ int get_monster(int Ind, object_type *o_ptr) {
 
 	if (!ok1) {
 		msg_print(Ind, "That monster does not exist.");
-		return 0;
+		return(0);
 	}
 
 	if (!ok2) {
 		msg_print(Ind, "You haven't killed one of these monsters yet.");
-		return 0;
+		return(0);
 	}
 
 	return r_idx;
@@ -13895,14 +13895,14 @@ bool check_blood_bond(int Ind, int Ind2) {
 
 	p_ptr = Players[Ind];
 	p2_ptr = Players[Ind2];
-	if (!p2_ptr) return FALSE;
+	if (!p2_ptr) return(FALSE);
 
 	pl_ptr = p_ptr->blood_bond;
 	while (pl_ptr) {
-		if (pl_ptr->id == p2_ptr->id) return TRUE;
+		if (pl_ptr->id == p2_ptr->id) return(TRUE);
 		pl_ptr = pl_ptr->next;
 	}
-	return FALSE;
+	return(FALSE);
 }
 
 void remove_blood_bond(int Ind, int Ind2) {
@@ -13941,7 +13941,7 @@ bool telekinesis(int Ind, object_type *o_ptr, int max_weight) {
 	p_ptr->current_telekinesis = o_ptr;
 	p_ptr->current_telekinesis_mw = max_weight;
 
-	return TRUE;
+	return(TRUE);
 }
 #endif
 
@@ -13972,7 +13972,7 @@ bool do_scroll_life(int Ind) {
 							if (p_ptr->align_good > dal) p_ptr->align_good -= dal;
 							else p_ptr->align_good = 0;
 						}
-						return TRUE;
+						return(TRUE);
 					} else if (c_ptr->info & CAVE_ICKY) msg_format(Ind, "The scroll fails for %s because there is a vault!", q_ptr->name);
 					else msg_format(Ind, "The scroll fails for %s because there is no solid ground!", q_ptr->name);
 				}
@@ -13980,7 +13980,7 @@ bool do_scroll_life(int Ind) {
 		}
 	}
 	/* we did nore ressurect anyone */
-	return FALSE;
+	return(FALSE);
 }
 
 
@@ -14000,13 +14000,13 @@ bool do_restoreXP_other(int Ind) {
 			if (c_ptr->m_idx < 0) {
 				if (Players[0 - c_ptr->m_idx]->exp < Players[0 - c_ptr->m_idx]->max_exp) {
 					restore_level(0 - c_ptr->m_idx);
-					return TRUE;
+					return(TRUE);
 				}
 			}
 		}
 	}
 	/* we did nore ressurect anyone */
-	return FALSE;
+	return(FALSE);
 }
 
 
@@ -14044,7 +14044,7 @@ bool master_level(int Ind, char * parms) {
 	/* get the player pointer */
 	player_type *p_ptr = Players[Ind];
 
-	if (!is_admin(p_ptr)) return FALSE;
+	if (!is_admin(p_ptr)) return(FALSE);
 
 	switch (parms[0]) {
 	/* unstatic the level */
@@ -14073,10 +14073,10 @@ bool master_level(int Ind, char * parms) {
 		cave_type **zcave;
 		u32b f1 = 0x0, f2 = 0x0, f3 = 0x0;
 
-		if (!parms[1] || !parms[2] || p_ptr->wpos.wz) return FALSE;
+		if (!parms[1] || !parms[2] || p_ptr->wpos.wz) return(FALSE);
 		if (istown(&p_ptr->wpos)) {
 			msg_print(Ind, "Even you may not create dungeons in the town!");
-			return FALSE;
+			return(FALSE);
 		}
 
 		/* extract flags (note that 0x01 are reservd hacks to prevent zero byte) */
@@ -14189,10 +14189,10 @@ bool master_level(int Ind, char * parms) {
 	case 'T':
 	{
 		struct worldpos twpos;
-		if (!parms[1] || p_ptr->wpos.wz) return FALSE;
+		if (!parms[1] || p_ptr->wpos.wz) return(FALSE);
 		if (istown(&p_ptr->wpos)) {
 			msg_print(Ind, "There is already a town here!");
-			return FALSE;
+			return(FALSE);
 		}
 		wpcopy(&twpos, &p_ptr->wpos);
 
@@ -14216,7 +14216,7 @@ bool master_level(int Ind, char * parms) {
 	/* default -- do nothing. */
 	default: break;
 	}
-	return TRUE;
+	return(TRUE);
 }
 
 /* static or unstatic a level (from chat-line command) */
@@ -14224,8 +14224,8 @@ bool master_level_specific(int Ind, struct worldpos *wpos, char * parms) {
 	/* get the player pointer */
 	player_type *p_ptr = Players[Ind];
 
-	//if (strcmp(p_ptr->name, cfg_dungeon_master)) return FALSE;
-	if (!is_admin(p_ptr)) return FALSE;
+	//if (strcmp(p_ptr->name, cfg_dungeon_master)) return(FALSE);
+	if (!is_admin(p_ptr)) return(FALSE);
 
 	switch (parms[0]) {
 	/* unstatic the level */
@@ -14246,7 +14246,7 @@ bool master_level_specific(int Ind, struct worldpos *wpos, char * parms) {
 	/* default -- do nothing. */
 	default: break;
 	}
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -14294,7 +14294,7 @@ bool master_build(int Ind, char * parms) {
 
 	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 
-	if (!is_admin(p_ptr) && (!player_is_king(Ind)) && (!guild_build(Ind))) return FALSE;
+	if (!is_admin(p_ptr) && (!player_is_king(Ind)) && (!guild_build(Ind))) return(FALSE);
 
 	/* extract arguments, otherwise build a wall of type new_feat */
 	if (parms) {
@@ -14303,7 +14303,7 @@ bool master_build(int Ind, char * parms) {
 		/* Hack -- toggle auto-build on/off */
 		switch (parms[1]) {
 		case 'T': p_ptr->master_move_hook = master_build; break;
-		case 'F': p_ptr->master_move_hook = NULL; return FALSE;
+		case 'F': p_ptr->master_move_hook = NULL; return(FALSE);
 		default : break;
 		}
 	}
@@ -14346,7 +14346,7 @@ bool master_build(int Ind, char * parms) {
 		p_ptr->master_move_hook = NULL;	/*buggers up if not*/
 	}
 
-	return TRUE;
+	return(TRUE);
 }
 
 static char master_specific_race_char = 'a';
@@ -14355,11 +14355,11 @@ static bool master_summon_specific_aux(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* no uniques */
-	if (r_ptr->flags1 & RF1_UNIQUE) return FALSE;
+	if (r_ptr->flags1 & RF1_UNIQUE) return(FALSE);
 
 	/* if we look like what we are looking for */
-	if (r_ptr->d_char == master_specific_race_char) return TRUE;
-	return FALSE;
+	if (r_ptr->d_char == master_specific_race_char) return(TRUE);
+	return(FALSE);
 }
 
 /* Auxillary function to master_summon, determine the exact type of monster
@@ -14466,7 +14466,7 @@ static u16b master_summon_aux_monster_type(int Ind, char monster_type, char * mo
 	}
 
 	/* failure */
-	return 0;
+	return(0);
 
 }
 
@@ -14475,9 +14475,9 @@ static u16b master_summon_aux_monster_type(int Ind, char monster_type, char * mo
 bool master_acquire(int Ind, char * parms) {
 	player_type * p_ptr = Players[Ind];
 
-	if (!is_admin(p_ptr)) return FALSE;
+	if (!is_admin(p_ptr)) return(FALSE);
 	acquirement(0, &p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE, TRUE, make_resf(p_ptr));
-	return TRUE;
+	return(TRUE);
 }
 
 /* Monster summoning options. More documentation on this later. */
@@ -14492,7 +14492,7 @@ bool master_summon(int Ind, char * parms) {
 	static u16b r_idx = 0; /* which monser to actually summon, from previous variables */
 	unsigned char size = 0;  /* how many monsters to actually summon */
 
-	if (!is_admin(p_ptr) && (!player_is_king(Ind))) return FALSE;
+	if (!is_admin(p_ptr) && (!player_is_king(Ind))) return(FALSE);
 
 	summon_override_checks = SO_ALL; /* set admin summoning flag for overriding all validity checks */
 
@@ -14569,7 +14569,7 @@ bool master_summon(int Ind, char * parms) {
 	}
 
 	summon_override_checks = SO_NONE; /* clear all override flags */
-	return TRUE;
+	return(TRUE);
 }
 
 #define FIND_CLOSEST_JAIL
@@ -14592,36 +14592,36 @@ bool imprison(int Ind, u16b time, char *reason) {
 	if (p_ptr->ghost) {
 		p_ptr->tim_susp += time;
 		s_printf("TIM_SUSP_GHOST.\n");
-		return FALSE;
+		return(FALSE);
 	}
 
 	if (!jails_enabled) {
 		p_ptr->tim_susp = 0;
 		s_printf("DISABLED.\n");
-		return FALSE;
+		return(FALSE);
 	}
 
 	if (!(zcave = getcave(&p_ptr->wpos))) {
 		s_printf("NO CAVE.\n");
-		return (FALSE);
+		return(FALSE);
 	}
 
 	if (!p_ptr || !(id = lookup_player_id("Jailer"))) {
 		s_printf("NO_JAILER.\n");
-		return (FALSE);
+		return(FALSE);
 	}
 
 	if (p_ptr->wpos.wz) {
 		p_ptr->tim_susp += time;
 		s_printf("TIM_SUSP.\n");
-		return (TRUE);
+		return(TRUE);
 	}
 
 #ifdef JAIL_TOWN_AREA /* only imprison when within town area? */
 	if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA)) {
 		p_ptr->tim_susp += time;
 		s_printf("NO_TOWN.\n");
-		return (TRUE);
+		return(TRUE);
 	}
 #endif
 
@@ -14629,7 +14629,7 @@ bool imprison(int Ind, u16b time, char *reason) {
 		if (zcave[p_ptr->py][p_ptr->px].info & CAVE_JAIL) {
 			p_ptr->tim_jail += time;
 			s_printf("TIM_JAIL (inside, prolong).\n");
-			return (TRUE);
+			return(TRUE);
 		} else s_printf("TIM_JAIL (re-imprison fugitive).\n"); /* He escaped before through the jail dungeon! */
 	}
 
@@ -14654,13 +14654,13 @@ bool imprison(int Ind, u16b time, char *reason) {
 	if (i == num_houses) {
 		p_ptr->tim_susp = 0;
 		s_printf("NO_JAIL.\n");
-		return (FALSE);
+		return(FALSE);
 	}
 #else
 	if (picked == -1) {
 		p_ptr->tim_susp = 0;
 		s_printf("NO_JAIL.\n");
-		return (FALSE);
+		return(FALSE);
 	}
 	i = picked;
 #endif
@@ -14758,7 +14758,7 @@ bool imprison(int Ind, u16b time, char *reason) {
 #endif
 
 	s_printf("SUCCESS: %d.\n", p_ptr->tim_jail);
-	return (TRUE);
+	return(TRUE);
 }
 
 static void player_edit(char *name) {
@@ -14776,7 +14776,7 @@ bool master_player(int Ind, char *parms) {
 
 	if (!is_admin(p_ptr)) {
 		msg_print(Ind, "You need to be the dungeon master to use this command.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	switch (parms[0]) {
@@ -14881,7 +14881,7 @@ bool master_generate(int Ind, char * parms) {
 	/* get the player pointer */
 	player_type *p_ptr = Players[Ind];
 
-	if (!is_admin(p_ptr)) return FALSE;
+	if (!is_admin(p_ptr)) return(FALSE);
 
 	switch (parms[0]) {
 		/* generate a vault */
@@ -14897,7 +14897,7 @@ bool master_generate(int Ind, char * parms) {
 				v_ptr = get_vault(&parms[2]);
 			}
 
-			if (!v_ptr || !v_ptr->wid) return FALSE;
+			if (!v_ptr || !v_ptr->wid) return(FALSE);
 
 			//build_vault(&p_ptr->wpos, p_ptr->py, p_ptr->px, v_ptr->hgt, v_ptr->wid, v_text + v_ptr->text);
 			build_vault(&p_ptr->wpos, p_ptr->py, p_ptr->px, v_ptr, p_ptr);
@@ -14905,7 +14905,7 @@ bool master_generate(int Ind, char * parms) {
 			break;
 		}
 	}
-	return TRUE;
+	return(TRUE);
 }
 
 #if 0 /* some new esp link stuff - mikaelh */
@@ -14924,7 +14924,7 @@ bool establish_esp_link(int Ind, int Ind2, byte type, u16b flags, u16b end) {
 			esp_ptr->flags |= flags;
 			esp_ptr->end = end;
 		}
-		else return FALSE;
+		else return(FALSE);
 	}
 	else {
 		MAKE(esp_ptr, esp_link_type);
@@ -14950,7 +14950,7 @@ bool establish_esp_link(int Ind, int Ind2, byte type, u16b flags, u16b end) {
 	p2_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
 	p2_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
 
-	return TRUE;
+	return(TRUE);
 }
 
 void break_esp_link(int Ind, int Ind2) {
@@ -15006,8 +15006,8 @@ bool check_esp_link_type(int Ind, int Ind2, u16b flags) {
 	esp_link_type* esp_ptr;
 	esp_ptr = check_esp_link(Ind, Ind2);
 
-	if (esp_ptr && esp_ptr->flags & flags) return TRUE;
-	else return FALSE;
+	if (esp_ptr && esp_ptr->flags & flags) return(TRUE);
+	else return(FALSE);
 }
 #endif
 
@@ -15094,18 +15094,18 @@ void check_aura(int Ind, int aura) {
 /* determine minimum dungeon level required for a player of a particular
    character level to obtain optimum experience. */
 int det_req_level(int plev) {
-	if (plev < 20) return (0);
-	else if (plev < 30) return (375 / (45 - plev));
-	else if (plev < 50) return (650 / (56 - plev));
-	else if (plev < 65) return (plev * 2);
-	else if (plev < 75) return ((plev - 65) * 4 + 130);
-	else return ((plev - 75) + 170);
+	if (plev < 20) return(0);
+	else if (plev < 30) return(375 / (45 - plev));
+	else if (plev < 50) return(650 / (56 - plev));
+	else if (plev < 65) return(plev * 2);
+	else if (plev < 75) return((plev - 65) * 4 + 130);
+	else return((plev - 75) + 170);
 }
 /* calculate actual experience gain based on det_req_level */
 s64b det_exp_level(s64b exp, int plev, int dlev) {
 	int req_dlvl = det_req_level(plev);
 
-	if (dlev < req_dlvl - 5) return 0; /* actually give zero exp for 'grey' levels? */
-	if (dlev < req_dlvl) return ((exp * 2) / (2 + req_dlvl - dlev)); /* give reduced exp for 'yellow' levels */
-	return (exp); /* normal exp */
+	if (dlev < req_dlvl - 5) return(0); /* actually give zero exp for 'grey' levels? */
+	if (dlev < req_dlvl) return((exp * 2) / (2 + req_dlvl - dlev)); /* give reduced exp for 'yellow' levels */
+	return(exp); /* normal exp */
 }

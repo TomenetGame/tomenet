@@ -36,7 +36,7 @@ char *memset(char *s, int c, huge n)
 {
 	char *t;
 	for (t = s; n--; ) *t++ = c;
-	return (s);
+	return(s);
 }
 
 #endif
@@ -60,9 +60,9 @@ int stricmp(cptr a, cptr b)
 	{
 		z1 = FORCEUPPER(*s1);
 		z2 = FORCEUPPER(*s2);
-		if (z1 < z2) return (-1);
-		if (z1 > z2) return (1);
-		if (!z1) return (0);
+		if (z1 < z2) return(-1);
+		if (z1 > z2) return(1);
+		if (!z1) return(0);
 	}
 }
 
@@ -79,9 +79,9 @@ int in_banlist(char *acc, char *addr, int *time, char *reason) {
 		if (reason) strcpy(reason, ptr->reason);
 		if (time) *time = ptr->time;
 
-		return found;
+		return(found);
 	}
-	return 0x0;
+	return(0x0);
 }
 
 void check_banlist() {
@@ -146,11 +146,11 @@ static int usleep(huge microSeconds) {
 	/* Wait for it */
 	if (select(nfds, no_fds, no_fds, no_fds, &Timer) < 0) {
 		/* Hack -- ignore interrupts */
-		if (errno != EINTR) return -1;
+		if (errno != EINTR) return(-1);
 	}
 
 	/* Success */
-	return 0;
+	return(0);
 }
 
 # endif
@@ -250,12 +250,12 @@ errr path_parse(char *buf, int max, cptr file) {
 	buf[0] = '\0';
 
 	/* No file? */
-	if (!file) return (-1);
+	if (!file) return(-1);
 
 	/* File needs no parsing */
 	if (file[0] != '~') {
 		strcpy(buf, file);
-		return (0);
+		return(0);
 	}
 
 	/* Point at the user */
@@ -265,7 +265,7 @@ errr path_parse(char *buf, int max, cptr file) {
 	s = strstr(u, PATH_SEP);
 
 	/* Hack -- no long user names */
-	if (s && (s >= u + sizeof(user))) return (1);
+	if (s && (s >= u + sizeof(user))) return(1);
 
 	/* Extract a user name */
 	if (s)
@@ -284,7 +284,7 @@ errr path_parse(char *buf, int max, cptr file) {
 	else pw = getpwuid(getuid());
 
 	/* Nothing found? */
-	if (!pw) return (1);
+	if (!pw) return(1);
 
 	/* Make use of the info */
 	(void)strcpy(buf, pw->pw_dir);
@@ -293,7 +293,7 @@ errr path_parse(char *buf, int max, cptr file) {
 	if (s) (void)strcat(buf, s);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -312,7 +312,7 @@ errr path_parse(char *buf, int max, cptr file)
 	strnfmt(buf, max, "%s", file);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -345,13 +345,13 @@ errr path_temp(char *buf, int max)
 	s = tmpnam(NULL);
 
 	/* Oops */
-	if (!s) return (-1);
+	if (!s) return(-1);
 
 	/* Format to length */
 	strnfmt(buf, max, "%s", s);
 #endif
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*
@@ -361,10 +361,10 @@ FILE *my_fopen(cptr file, cptr mode) {
 	char buf[1024];
 
 	/* Hack -- Try to parse the path */
-	if (path_parse(buf, 1024, file)) return (NULL);
+	if (path_parse(buf, 1024, file)) return(NULL);
 
 	/* Attempt to fopen the file anyway */
-	return (fopen(buf, mode));
+	return(fopen(buf, mode));
 }
 
 
@@ -373,13 +373,13 @@ FILE *my_fopen(cptr file, cptr mode) {
  */
 errr my_fclose(FILE *fff) {
 	/* Require a file */
-	if (!fff) return (-1);
+	if (!fff) return(-1);
 
 	/* Close, check for error */
-	if (fclose(fff) == EOF) return (1);
+	if (fclose(fff) == EOF) return(1);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -414,7 +414,7 @@ errr my_fgets(FILE *fff, char *buf, huge n, bool conv)
 				buf[i] = '\0';
 
 				/* Success */
-				return (0);
+				return(0);
 			}
 
 			/* Handle tabs */
@@ -449,7 +449,7 @@ errr my_fgets(FILE *fff, char *buf, huge n, bool conv)
 	buf[0] = '\0';
 
 	/* Failure */
-	return (1);
+	return(1);
 }
 
 
@@ -469,7 +469,7 @@ errr my_fputs(FILE *fff, cptr buf, huge n)
 	(void)fprintf(fff, "%s\n", buf);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -523,13 +523,13 @@ errr fd_kill(cptr file) {
 	char buf[1024];
 
 	/* Hack -- Try to parse the path */
-	if (path_parse(buf, 1024, file)) return (-1);
+	if (path_parse(buf, 1024, file)) return(-1);
 
 	/* Remove */
 	(void)remove(buf);
 
 	/* XXX XXX XXX */
-	return (0);
+	return(0);
 }
 
 
@@ -541,16 +541,16 @@ errr fd_move(cptr file, cptr what) {
 	char aux[1024];
 
 	/* Hack -- Try to parse the path */
-	if (path_parse(buf, 1024, file)) return (-1);
+	if (path_parse(buf, 1024, file)) return(-1);
 
 	/* Hack -- Try to parse the path */
-	if (path_parse(aux, 1024, what)) return (-1);
+	if (path_parse(aux, 1024, what)) return(-1);
 
 	/* Rename */
 	(void)rename(buf, aux);
 
 	/* XXX XXX XXX */
-	return (0);
+	return(0);
 }
 
 
@@ -562,16 +562,16 @@ errr fd_copy(cptr file, cptr what) {
 	char aux[1024];
 
 	/* Hack -- Try to parse the path */
-	if (path_parse(buf, 1024, file)) return (-1);
+	if (path_parse(buf, 1024, file)) return(-1);
 
 	/* Hack -- Try to parse the path */
-	if (path_parse(aux, 1024, what)) return (-1);
+	if (path_parse(aux, 1024, what)) return(-1);
 
 	/* Copy XXX XXX XXX */
 	/* (void)rename(buf, aux); */
 
 	/* XXX XXX XXX */
-	return (1);
+	return(1);
 }
 
 
@@ -592,23 +592,23 @@ int fd_make(cptr file, int mode) {
 	char buf[1024];
 
 	/* Hack -- Try to parse the path */
-	if (path_parse(buf, 1024, file)) return (-1);
+	if (path_parse(buf, 1024, file)) return(-1);
 
 #ifdef BEN_HACK
 
 	/* Check for existence */
-	/* if (fd_close(fd_open(file, O_RDONLY | O_BINARY))) return (1); */
+	/* if (fd_close(fd_open(file, O_RDONLY | O_BINARY))) return(1); */
 
 	/* Mega-Hack -- Create the file */
 	(void)my_fclose(my_fopen(file, "wb"));
 
 	/* Re-open the file for writing */
-	return (open(buf, O_WRONLY | O_BINARY, mode));
+	return(open(buf, O_WRONLY | O_BINARY, mode));
 
 #else /* BEN_HACK */
 
 	/* Create the file, fail if exists, write-only, binary */
-	return (open(buf, O_CREAT | O_EXCL | O_WRONLY | O_BINARY, mode));
+	return(open(buf, O_CREAT | O_EXCL | O_WRONLY | O_BINARY, mode));
 
 #endif /* BEN_HACK */
 
@@ -624,10 +624,10 @@ int fd_open(cptr file, int flags) {
 	char buf[1024];
 
 	/* Hack -- Try to parse the path */
-	if (path_parse(buf, 1024, file)) return (-1);
+	if (path_parse(buf, 1024, file)) return(-1);
 
 	/* Attempt to open the file */
-	return (open(buf, flags | O_BINARY, 0));
+	return(open(buf, flags | O_BINARY, 0));
 }
 
 
@@ -641,7 +641,7 @@ errr fd_lock(int fd, int what) {
 	what = what ? what : 0;
 
 	/* Verify the fd */
-	if (fd < 0) return (-1);
+	if (fd < 0) return(-1);
 
 #ifdef SET_UID
 
@@ -658,7 +658,7 @@ errr fd_lock(int fd, int what) {
 	else
 	{
 		/* Lock the score file */
-		if (lockf(fd, F_LOCK, 0) != 0) return (1);
+		if (lockf(fd, F_LOCK, 0) != 0) return(1);
 	}
 
 #else
@@ -674,7 +674,7 @@ errr fd_lock(int fd, int what) {
 	else
 	{
 		/* Lock the score file */
-		if (flock(fd, LOCK_EX) != 0) return (1);
+		if (flock(fd, LOCK_EX) != 0) return(1);
 	}
 
 # endif
@@ -682,7 +682,7 @@ errr fd_lock(int fd, int what) {
 #endif
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -694,19 +694,19 @@ errr fd_seek(int fd, huge n)
 	huge p;
 
 	/* Verify fd */
-	if (fd < 0) return (-1);
+	if (fd < 0) return(-1);
 
 	/* Seek to the given position */
 	p = lseek(fd, n, SEEK_SET);
 
 	/* Failure */
-	if (p == (huge) -1) return (1);
+	if (p == (huge) -1) return(1);
 
 	/* Failure */
-	if (p != n) return (1);
+	if (p != n) return(1);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -716,7 +716,7 @@ errr fd_seek(int fd, huge n)
 errr fd_read(int fd, char *buf, huge n)
 {
 	/* Verify the fd */
-	if (fd < 0) return (-1);
+	if (fd < 0) return(-1);
 
 #ifndef SET_UID
 
@@ -724,7 +724,7 @@ errr fd_read(int fd, char *buf, huge n)
 	while (n >= 16384)
 	{
 		/* Read a piece */
-		if (read(fd, buf, 16384) != 16384) return (1);
+		if (read(fd, buf, 16384) != 16384) return(1);
 
 		/* Shorten the task */
 		buf += 16384;
@@ -736,10 +736,10 @@ errr fd_read(int fd, char *buf, huge n)
 #endif
 
 	/* Read the final piece */
-	if ((huge) read(fd, buf, n) != n) return (1);
+	if ((huge) read(fd, buf, n) != n) return(1);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -749,7 +749,7 @@ errr fd_read(int fd, char *buf, huge n)
 errr fd_write(int fd, cptr buf, huge n)
 {
 	/* Verify the fd */
-	if (fd < 0) return (-1);
+	if (fd < 0) return(-1);
 
 #ifndef SET_UID
 
@@ -757,7 +757,7 @@ errr fd_write(int fd, cptr buf, huge n)
 	while (n >= 16384)
 	{
 		/* Write a piece */
-		if (write(fd, buf, 16384) != 16384) return (1);
+		if (write(fd, buf, 16384) != 16384) return(1);
 
 		/* Shorten the task */
 		buf += 16384;
@@ -769,10 +769,10 @@ errr fd_write(int fd, cptr buf, huge n)
 #endif
 
 	/* Write the final piece */
-	if ((huge) write(fd, buf, n) != n) return (1);
+	if ((huge) write(fd, buf, n) != n) return(1);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -782,13 +782,13 @@ errr fd_write(int fd, cptr buf, huge n)
 errr fd_close(int fd)
 {
 	/* Verify the fd */
-	if (fd < 0) return (-1);
+	if (fd < 0) return(-1);
 
 	/* Close */
 	(void)close(fd);
 
 	/* XXX XXX XXX */
-	return (0);
+	return(0);
 }
 
 
@@ -799,7 +799,7 @@ errr fd_close(int fd)
  */
 static char octify(uint i)
 {
-	return (hexsym[i%8]);
+	return(hexsym[i%8]);
 }
 
 /*
@@ -807,7 +807,7 @@ static char octify(uint i)
  */
 static char hexify(uint i)
 {
-	return (hexsym[i%16]);
+	return(hexsym[i%16]);
 }
 
 
@@ -816,8 +816,8 @@ static char hexify(uint i)
  */
 static int deoct(char c)
 {
-	if (isdigit(c)) return (D2I(c));
-	return (0);
+	if (isdigit(c)) return(D2I(c));
+	return(0);
 }
 
 /*
@@ -825,10 +825,10 @@ static int deoct(char c)
  */
 static int dehex(char c)
 {
-	if (isdigit(c)) return (D2I(c));
-	if (islower(c)) return (A2I(c) + 10);
-	if (isupper(c)) return (A2I(tolower(c)) + 10);
-	return (0);
+	if (isdigit(c)) return(D2I(c));
+	if (islower(c)) return(A2I(c) + 10);
+	if (isupper(c)) return(A2I(tolower(c)) + 10);
+	return(0);
 }
 
 
@@ -2620,11 +2620,11 @@ s32b quark_add(cptr str) {
 	/* Look for an existing quark */
 	for (i = 1; i < quark__num; i++) {
 		/* Check for equality */
-		if (streq(quark__str[i], str)) return (i);
+		if (streq(quark__str[i], str)) return(i);
 	}
 
 	/* Paranoia -- Require room */
-	if (quark__num == QUARK_MAX) return (0);
+	if (quark__num == QUARK_MAX) return(0);
 
 	/* New maximal quark */
 	quark__num = i + 1;
@@ -2633,7 +2633,7 @@ s32b quark_add(cptr str) {
 	quark__str[i] = string_make(str);
 
 	/* Return the index */
-	return (i);
+	return(i);
 }
 
 
@@ -2650,7 +2650,7 @@ cptr quark_str(s32b i) {
 	q = quark__str[i];
 
 	/* Return the quark */
-	return (q);
+	return(q);
 }
 
 /*
@@ -2662,22 +2662,22 @@ cptr quark_str(s32b i) {
 bool check_guard_inscription( s16b quark, char what ) {
 	const char *ax = quark_str(quark);
 
-	if (ax == NULL) return FALSE;
+	if (ax == NULL) return(FALSE);
 
 	while ((ax = strchr(ax, '!')) != NULL) {
 		while (ax++ != NULL) {
 			if (*ax == 0)  {
-				return FALSE; /* end of quark, stop */
+				return(FALSE); /* end of quark, stop */
 			}
 			if (*ax == ' ' || *ax == '@' || *ax == '#' || *ax == '-') {
 				break; /* end of segment, stop */
 			}
 			if (*ax == what) {
-				return TRUE; /* exact match, stop */
+				return(TRUE); /* exact match, stop */
 			}
 			if (*ax == '*') {
 				/* why so much hassle? * = all, that's it */
-/*				return TRUE; -- well, !'B'ash if it's on the ground sucks ;) */
+/*				return(TRUE); -- well, !'B'ash if it's on the ground sucks ;) */
 
 				switch (what) { /* check for paranoid tags */
 				case 'd': /* no drop */
@@ -2690,13 +2690,13 @@ bool check_guard_inscription( s16b quark, char what ) {
 				case 'w': /* no wear/wield */
 				case 't': /* no take off */
 #endif
-					return TRUE;
+					return(TRUE);
 				}
-				//return FALSE;
+				//return(FALSE);
 			}
 			if (*ax == '+') {
 				/* why so much hassle? * = all, that's it */
-/*				return TRUE; -- well, !'B'ash if it's on the ground sucks ;) */
+/*				return(TRUE); -- well, !'B'ash if it's on the ground sucks ;) */
 
 				switch (what) { /* check for paranoid tags */
 				case 'h': /* (obsolete) no house ( sell a a key ) */
@@ -2708,13 +2708,13 @@ bool check_guard_inscription( s16b quark, char what ) {
 				case 'w': /* no wear/wield */
 				case 't': /* no take off */
 #endif
-					return TRUE;
+					return(TRUE);
 				}
-				//return FALSE;
+				//return(FALSE);
 			}
 		}
 	}
-	return FALSE;
+	return(FALSE);
 }
 
 
@@ -3906,8 +3906,8 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 	char bufl[MSG_LEN], bufs[NAME_LEN], *best = NULL;
 	int i, j, add;
 
-	if (line[0] == '\0') return (char*)NULL;
-	if (word[0] == '\0') return (char*)NULL;//or line, I guess.
+	if (line[0] == '\0') return(char*)NULL;
+	if (word[0] == '\0') return(char*)NULL;//or line, I guess.
 
 	strcpy(bufl, line);
 	strcpy(bufs, word);
@@ -3964,7 +3964,7 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 			/* end of line? */
 			if (bufl[i + j + add] == '\0')
  #ifndef GET_MOST_DELAYED_MATCH
-				return (char*)NULL; /* NOT FOUND */
+				return(char*)NULL; /* NOT FOUND */
  #else
 				return best;
  #endif
@@ -3979,7 +3979,7 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 		i++;
 	}
  #ifndef GET_MOST_DELAYED_MATCH
-	return (char*)NULL; /* NOT FOUND */
+	return(char*)NULL; /* NOT FOUND */
  #else
 	return best;
  #endif
@@ -4851,14 +4851,14 @@ int handle_ml_censor(int Ind, char *line) {
 	}
 
 	/* We're clear? */
-	if (!cl) return 0;
+	if (!cl) return(0);
 
 	/* Problem: the already written lines cannot be retracted/censored anymore.
 	   So as "alleviation" we simply increase the punishment :D.
 	   Plus, we can at least censor the final line */
 	strcpy(line, " ***"); //whatever, just start on a space in case this was a slash command, to ensure it still is processed as one, as intended.
 
-	return (cl + 1);
+	return(cl + 1);
 }
  #endif
 
@@ -4877,26 +4877,26 @@ void handle_punish(int Ind, int level) {
 	}
 }
 #else
-int handle_censor(char *line) return 0;
-void handle_punish(int Ind, int level) return 0;
+int handle_censor(char *line) return(0);
+void handle_punish(int Ind, int level) return(0);
 #endif
 
 /* Helper function for player_talk_aux():
    Allow privileged player accounts of administrators to address hidden dungeon masters via private chat */
 static bool may_address_dm(player_type *p_ptr) {
 	/* DMs aren't hidden on this server? */
-	if (!cfg.secret_dungeon_master) return TRUE;
+	if (!cfg.secret_dungeon_master) return(TRUE);
 	/* Need to be privileged, simply to avoid someone creating such a name for the purpose of circumventing the rules. */
-	if (!p_ptr->privileged) return FALSE;
+	if (!p_ptr->privileged) return(FALSE);
 	/* List of admins' player accounts */
 	if (strcasecmp(p_ptr->accountname, "moltor")
 	    && strcasecmp(p_ptr->accountname, "kurzel")
 	    && strcasecmp(p_ptr->accountname, "the_sandman")
 	    && strcasecmp(p_ptr->accountname, "faith")
 	    && strcasecmp(p_ptr->accountname, "mikaelh")
-	    && strcasecmp(p_ptr->accountname, "c. blue")) return FALSE;
+	    && strcasecmp(p_ptr->accountname, "c. blue")) return(FALSE);
 	/* Pass */
-	return TRUE;
+	return(TRUE);
 }
 
 /*
@@ -6061,10 +6061,10 @@ bool is_a_vowel(int ch) {
 	case 'I':
 	case 'O':
 	case 'U':
-	return (TRUE);
+	return(TRUE);
 	}
 
-	return (FALSE);
+	return(FALSE);
 }
 
 /*
@@ -6215,7 +6215,7 @@ int name_lookup_loose(int Ind, cptr name, u16b party, bool include_account_names
 		if (!quiet) msg_format(Ind, "Could not match name '%s'.", name);
 
 		/* Give up */
-		return 0;
+		return(0);
 	}
 
 	/* Check for multiple recipients found */
@@ -6224,7 +6224,7 @@ int name_lookup_loose(int Ind, cptr name, u16b party, bool include_account_names
 		if (!quiet) msg_format(Ind, "'%s' matches too many %s.", name, problem);
 
 		/* Give up */
-		return 0;
+		return(0);
 	}
 
 	/* Success */
@@ -6330,7 +6330,7 @@ int name_lookup(int Ind, cptr name, u16b party, bool include_account_names, bool
 		if (!quiet) msg_format(Ind, "Could not match name '%s'.", name);
 
 		/* Give up */
-		return 0;
+		return(0);
 	}
 
 	/* Success */
@@ -6373,20 +6373,20 @@ char *wpos_format(int Ind, worldpos *wpos) {
 
 	if (!i || Players[i]->depth_in_feet) {
 		if (Ind >= 0 || (!d && !ville)) {
-			return (format("%dft of (%d,%d)", wpos->wz * 50, wpos->wx, wpos->wy));
+			return(format("%dft of (%d,%d)", wpos->wz * 50, wpos->wx, wpos->wy));
 		} else
 			if (!ville)
-				return (format("%dft %s", wpos->wz * 50, get_dun_name(wpos->wx, wpos->wy, (wpos->wz > 0), d_ptr, 0, FALSE)));
+				return(format("%dft %s", wpos->wz * 50, get_dun_name(wpos->wx, wpos->wy, (wpos->wz > 0), d_ptr, 0, FALSE)));
 			else
-				return (format("%s", desc));
+				return(format("%s", desc));
 	} else {
 		if (Ind >= 0 || (!d && !ville)) {
-			return (format("Lv %d of (%d,%d)", wpos->wz, wpos->wx, wpos->wy));
+			return(format("Lv %d of (%d,%d)", wpos->wz, wpos->wx, wpos->wy));
 		} else
 			if (!ville)
-				return (format("Lv %d %s", wpos->wz, get_dun_name(wpos->wx, wpos->wy, (wpos->wz > 0), d_ptr, 0, FALSE)));
+				return(format("Lv %d %s", wpos->wz, get_dun_name(wpos->wx, wpos->wy, (wpos->wz > 0), d_ptr, 0, FALSE)));
 			else
-				return (format("%s", desc));
+				return(format("%s", desc));
 	}
 }
 char *wpos_format_compact(int Ind, worldpos *wpos) {
@@ -6402,12 +6402,12 @@ char *wpos_format_compact(int Ind, worldpos *wpos) {
 			}
 	if (!strcmp(desc, "")) ville = FALSE;
 
-	if (ville) return (format("%s", desc));
+	if (ville) return(format("%s", desc));
 	else {
 		if (Players[Ind]->depth_in_feet)
-			return (format("%dft (%d,%d)", wpos->wz * 50, wpos->wx, wpos->wy));
+			return(format("%dft (%d,%d)", wpos->wz * 50, wpos->wx, wpos->wy));
 		else
-			return (format("Lv %d (%d,%d)", wpos->wz, wpos->wx, wpos->wy));
+			return(format("Lv %d (%d,%d)", wpos->wz, wpos->wx, wpos->wy));
 	}
 }
 
@@ -6491,12 +6491,12 @@ bool show_floor_feeling(int Ind, bool dungeon_feeling) {
 	bool felt = FALSE;
 
 	/* No feelings! */
-	if (d_ptr && (d_ptr->type == DI_DEATH_FATE || (!d_ptr->type && d_ptr->theme == DI_DEATH_FATE))) return TRUE;
+	if (d_ptr && (d_ptr->type == DI_DEATH_FATE || (!d_ptr->type && d_ptr->theme == DI_DEATH_FATE))) return(TRUE);
 
 	/* Hack for Valinor - C. Blue */
 	if (in_valinor(wpos)) {
 		msg_print(Ind, "\374\377gYou have a wonderful feeling of peace...");
-		return TRUE;
+		return(TRUE);
 	}
 
 	/* XXX devise a better formula */
@@ -6616,9 +6616,9 @@ int test_item_name(cptr name) {
 		cptr obj_name = k_name + k_ptr->name;
 
 		/* If name matches, give us the number */
-		if (stricmp(name, obj_name) == 0) return (i);
+		if (stricmp(name, obj_name) == 0) return(i);
 	}
-	return (0);
+	return(0);
 }
 
 /*
@@ -6633,29 +6633,29 @@ s32b bst(s32b what, s32b t) {
 
 	switch (what) {
 		case MINUTE:
-			return ((turns / 10 / MINUTE) % 60);
+			return((turns / 10 / MINUTE) % 60);
 		case HOUR:
-			return ((turns / 10 / HOUR) % 24);
+			return((turns / 10 / HOUR) % 24);
 		case DAY:
-			return ((turns / 10 / DAY) % 365);
+			return((turns / 10 / DAY) % 365);
 		case YEAR:
-			return ((turns / 10 / YEAR));
+			return((turns / 10 / YEAR));
 		default:
-			return (0);
+			return(0);
 	}
 #else
 	s32b turns = t;
 
 	if (what == MINUTE)
-		return ((turns / MINUTE) % 60);
+		return((turns / MINUTE) % 60);
 	else if (what == HOUR)
-		return ((turns / HOUR) % 24);
+		return((turns / HOUR) % 24);
 	else if (what == DAY)
-		return ((((turns / DAY) + START_DAY) % 365));
+		return((((turns / DAY) + START_DAY) % 365));
 	else if (what == YEAR)
-		return ((turns / YEAR) + START_YEAR);
+		return((turns / YEAR) + START_YEAR);
 	else
-		return (0);
+		return(0);
 #endif
 }
 
@@ -6693,7 +6693,7 @@ cptr get_month_name(int day, bool full, bool compact) {
 		}
 	}
 
-	return (buf);
+	return(buf);
 }
 
 cptr get_day(int day) {
@@ -6706,7 +6706,7 @@ cptr get_day(int day) {
 	else if ((day % 10) == 3) p = "rd";
 
 	snprintf(buf, 20, "%d%s", day, p);
-	return (buf);
+	return(buf);
 }
 
 /* Fuzzy: Will allow one-off colour,
@@ -6746,7 +6746,7 @@ int gold_colour(s32b amt, bool fuzzy, bool compact) {
 	if (unit < 1) unit = 1;
 	if (unit > SV_GOLD_MAX) unit = SV_GOLD_MAX;
 
-	return (lookup_kind(TV_GOLD, unit));
+	return(lookup_kind(TV_GOLD, unit));
 }
 
 /* Catching bad players who hack their client.. nasty! */
@@ -6862,11 +6862,11 @@ bool player_list_find(player_list_type *list, s32b player) {
 	pl_ptr = list;
 
 	while (pl_ptr) {
-		if (pl_ptr->id == player) return TRUE;
+		if (pl_ptr->id == player) return(TRUE);
 		pl_ptr = pl_ptr->next;
 	}
 
-	return FALSE;
+	return(FALSE);
 }
 
 /*
@@ -6876,12 +6876,12 @@ bool player_list_find(player_list_type *list, s32b player) {
 bool player_list_del(player_list_type **list, s32b player) {
 	player_list_type *pl_ptr, *prev;
 
-	if (*list == NULL) return FALSE;
+	if (*list == NULL) return(FALSE);
 
 	/* Check the first node */
 	if ((*list)->id == player) {
 		*list = (*list)->next;
-		return TRUE;
+		return(TRUE);
 	}
 
 	pl_ptr = (*list)->next;
@@ -6892,14 +6892,14 @@ bool player_list_del(player_list_type **list, s32b player) {
 		if (pl_ptr->id == player) {
 			prev->next = pl_ptr->next;
 			FREE(pl_ptr, player_list_type);
-			return TRUE;
+			return(TRUE);
 		}
 
 		prev = pl_ptr;
 		pl_ptr = pl_ptr->next;
 	}
 
-	return FALSE;
+	return(FALSE);
 }
 
 /*
@@ -7558,9 +7558,9 @@ cptr flags_str(u32b flags) {
 	}
 	*fsp++ = '\0';
 
-	return (fsp - 40);
+	return(fsp - 40);
 #else
-	return (NULL);
+	return(NULL);
 #endif
 }
 
@@ -7716,7 +7716,7 @@ char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type, bool
 				return angband_lothlorien;
 			else return angband_khazaddum;
 		} else /* default */
-			return (d_name + d_info[type].name);
+			return(d_name + d_info[type].name);
 	}
 
 	/* special type 0 (yet) dungeons */
@@ -7748,7 +7748,7 @@ char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type, bool
 		return jail;
 
 	/* really just "Wilderness" */
-	return (d_name + d_info[type].name);
+	return(d_name + d_info[type].name);
 }
 
 /* Add gold to the player's gold, for easier handling. - C. Blue
@@ -7759,7 +7759,7 @@ bool gain_au(int Ind, u32b amt, bool quiet, bool exempt) {
 	/* hack: prevent s32b overflow */
 	if (PY_MAX_GOLD - amt < p_ptr->au) {
 		if (!quiet) msg_format(Ind, "\377yYou cannot carry more than %d gold!", PY_MAX_GOLD);
-		return FALSE;
+		return(FALSE);
 	} else {
 #ifdef EVENT_TOWNIE_GOLD_LIMIT
 		if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
@@ -7768,7 +7768,7 @@ bool gain_au(int Ind, u32b amt, bool quiet, bool exempt) {
  #endif
 		    && p_ptr->gold_picked_up == EVENT_TOWNIE_GOLD_LIMIT) {
 			msg_print(Ind, "\377yYou cannot collect any more cash or your life would be forfeit.");
-			return FALSE;
+			return(FALSE);
 		}
 #endif
 
@@ -7777,7 +7777,7 @@ bool gain_au(int Ind, u32b amt, bool quiet, bool exempt) {
 		p_ptr->redraw |= (PR_GOLD);
 	}
 
-	if (exempt) return TRUE;
+	if (exempt) return(TRUE);
 #ifdef EVENT_TOWNIE_GOLD_LIMIT
 	/* if EVENT_TOWNIE_GOLD_LIMIT is 0 then nothing happens */
 	if (p_ptr->gold_picked_up <= EVENT_TOWNIE_GOLD_LIMIT) {
@@ -7789,7 +7789,7 @@ bool gain_au(int Ind, u32b amt, bool quiet, bool exempt) {
 		}
 	}
 #endif
-	return TRUE;
+	return(TRUE);
 }
 
 /* backup all house prices and contents for all players to lib/save/estate/.
@@ -7863,7 +7863,7 @@ bool backup_estate(bool partial) {
 		if ((fp = fopen(buf, "ab")) == NULL) {
 			s_printf("  error: cannot open file '%s'.\n", buf);
 			if (partial) continue;
-			return FALSE;
+			return(FALSE);
 		} else if (newly_created) {
 			newly_created = FALSE;
 			/* begin with a version tag */
@@ -7909,7 +7909,7 @@ bool backup_estate(bool partial) {
 				if (!(zcave = getcave(wpos))) {
 					s_printf("  error: cannot getcave(%d,%d,%d).\nfailed.\n", wpos->wx, wpos->wy, wpos->wz);
 					fclose(fp);
-					return FALSE;
+					return(FALSE);
 				}
 				allocated = TRUE;
 			} else allocated = FALSE;
@@ -7949,7 +7949,7 @@ bool backup_estate(bool partial) {
 	}
 
 	s_printf("done.\n");
-	return TRUE;
+	return(TRUE);
 }
 /* Backup all houses that belong to a specific character and give content ownership to another character:
    h_id = character who owns the houses, id = character name to use for the estate savefile. */
@@ -7995,14 +7995,14 @@ bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, s32b id) {
 	i = pick_house(hwpos, hy, hx);
 	if (i == -1) {
 		s_printf(" error: No estate here.\n");
-		return FALSE;
+		return(FALSE);
 	}
 	h_ptr = &houses[i];
 	wpos = &h_ptr->wpos;
 	name = lookup_player_name(id);
 	if (!name) {
 		s_printf(" warning: couldn't fetch player name of id %d.\n", id);
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* create backup file if required, or append to it */
@@ -8026,7 +8026,7 @@ bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, s32b id) {
 	}
 	if ((fp = fopen(buf, "ab")) == NULL) {
 		s_printf(" error: cannot open file '%s'.\n", buf);
-		return FALSE;
+		return(FALSE);
 	} else if (newly_created) {
 		newly_created = FALSE;
 		/* begin with a version tag */
@@ -8068,7 +8068,7 @@ bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, s32b id) {
 			if (!(zcave = getcave(wpos))) {
 				s_printf(" error: cannot getcave(%d,%d,%d).\nfailed.\n", wpos->wx, wpos->wy, wpos->wz);
 				fclose(fp);
-				return FALSE;
+				return(FALSE);
 			}
 			allocated = TRUE;
 		} else allocated = FALSE;
@@ -8107,7 +8107,7 @@ bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, s32b id) {
 	fclose(fp);
 
 	s_printf(" done.\n");
-	return TRUE;
+	return(TRUE);
 }
 
 /* helper function for restore_estate():
@@ -8886,7 +8886,7 @@ void grid_affects_player(int Ind, int ox, int oy) {
 
 /* Items that can be shared even between incompatible character modes or if level 0! */
 bool exceptionally_shareable_item(object_type *o_ptr) {
-	if (o_ptr->name1 || ((o_ptr->name2 || o_ptr->name2b) && o_ptr->tval != TV_FOOD)) return FALSE;
+	if (o_ptr->name1 || ((o_ptr->name2 || o_ptr->name2b) && o_ptr->tval != TV_FOOD)) return(FALSE);
 
 	if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||
 	    (o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH) ||
@@ -8894,19 +8894,19 @@ bool exceptionally_shareable_item(object_type *o_ptr) {
 	    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER) ||
 	    // "Why not share ale? -Molt" <- good idea, here too!
 	    (o_ptr->tval == TV_FOOD && o_ptr->sval > SV_FOOD_MUSHROOMS_MAX && !o_ptr->name1))
-		return TRUE;
-	return FALSE;
+		return(TRUE);
+	return(FALSE);
 }
 /* Starter items that can be shared despite being level 0! */
 bool shareable_starter_item(object_type *o_ptr) {
-	if (o_ptr->name1 || ((o_ptr->name2 || o_ptr->name2b) && o_ptr->tval != TV_FOOD)) return FALSE;
+	if (o_ptr->name1 || ((o_ptr->name2 || o_ptr->name2b) && o_ptr->tval != TV_FOOD)) return(FALSE);
 
 	if ((o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH) ||
 	    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER) ||
 	    // "Why not share ale? -Molt" <- good idea, here too!
 	    (o_ptr->tval == TV_FOOD && o_ptr->sval > SV_FOOD_MUSHROOMS_MAX && !o_ptr->name1))
-		return TRUE;
-	return FALSE;
+		return(TRUE);
+	return(FALSE);
 }
 
 void kick_char(int Ind_kicker, int Ind_kickee, char *reason) {
@@ -9045,7 +9045,7 @@ int activate_magic_device_chance(int Ind, object_type *o_ptr, byte *permille) {
 	}
 
 	/* Give everyone a (slight) chance */
-	if (!chance) return 1;
+	if (!chance) return(1);
 
 	return chance;
 }
@@ -9060,12 +9060,12 @@ bool activate_magic_device(int Ind, object_type *o_ptr) {
 	/* Certain items are heavily restricted (todo: use WINNERS_ONLY flag instead for cleanliness) */
 	if (o_ptr->name1 == ART_PHASING && !p_ptr->total_winner) {
 		msg_print(Ind, "Only royalties may activate this Ring!");
-		if (!is_admin(p_ptr)) return FALSE;
+		if (!is_admin(p_ptr)) return(FALSE);
 	}
 
 	/* Roll for usage */
-	if (rand_int(1000) < chance * 10 + permille) return TRUE;
-	return FALSE;
+	if (rand_int(1000) < chance * 10 + permille) return(TRUE);
+	return(FALSE);
 }
 
 /* Condense an (account) name into a 'normalised' version, used to prevent
@@ -9145,7 +9145,7 @@ int similar_names(const char *name1_raw, const char *name2_raw) {
 plog(format("similar: n1='%s',n2='%s'", name1, name2));
 #endif
 
-	if (strlen(name1) < 5 || strlen(name2) < 5) return 0; //trivial length, it's ok to be similar
+	if (strlen(name1) < 5 || strlen(name2) < 5) return(0); //trivial length, it's ok to be similar
 
 	/* don't exaggerate */
 	if (strlen(name1) > strlen(name2)) min = strlen(name2);
@@ -9174,11 +9174,11 @@ plog(format("similar: n1='%s',n2='%s'", name1, name2));
 			//loosened up slightly
 			if (diff <= (min - 6) / 2 + 1) {
 				s_printf("similar_names (1a): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
-				return 1;
+				return(1);
 			}
 		} else { //normal case
 			s_printf("similar_names (1): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
-			return 1;
+			return(1);
 		}
 	}
 
@@ -9205,11 +9205,11 @@ plog(format("similar: n1='%s',n2='%s'", name1, name2));
 			//loosened up slightly
 			if (diff <= (min - 6) / 2 + 1) {
 				s_printf("similar_names (2a): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
-				return 2;
+				return(2);
 			}
 		} else { //normal case
 			s_printf("similar_names (2): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
-			return 2;
+			return(2);
 		}
 	}
 
@@ -9369,7 +9369,7 @@ plog(format("similar: n1='%s',n2='%s'", name1, name2));
 		return 6;
 	}
 
-	return 0; //ok!
+	return(0); //ok!
 }
 
 /* Update a character's expfact in case it has changed. Lua-accessible. - C. Blue */
@@ -9397,29 +9397,29 @@ bool verify_inven_item(int Ind, int item) {
 #ifdef ENABLE_SUBINVEN
 	if (item >= 100) {
 		/* Verify container location, must be inside inventory */
-		if (item / 100 - 1 < 0) return FALSE;
-		if (item / 100 - 1 >= INVEN_PACK) return FALSE;
-		if (Players[Ind]->inventory[item / 100 - 1].tval != TV_SUBINVEN) return FALSE;
+		if (item / 100 - 1 < 0) return(FALSE);
+		if (item / 100 - 1 >= INVEN_PACK) return(FALSE);
+		if (Players[Ind]->inventory[item / 100 - 1].tval != TV_SUBINVEN) return(FALSE);
 
 		/* Verify item location inside container */
-		if (item % 100 < 0) return FALSE; //is this even... compiler specs please
-		if ((item % 100) >= Players[Ind]->inventory[item / 100 - 1].bpval) return FALSE;
+		if (item % 100 < 0) return(FALSE); //is this even... compiler specs please
+		if ((item % 100) >= Players[Ind]->inventory[item / 100 - 1].bpval) return(FALSE);
 
-		return TRUE;
+		return(TRUE);
 	}
 #endif
 	/* Allow item on floor? -
 	   The player shouldn't be able to specify those by index atm, and since this function is only used to
 	   validate player input we can (have to?) skip items on the floor: */
 #if 0
-	if (-item >= o_max) return FALSE;
+	if (-item >= o_max) return(FALSE);
 #else
 	/* Disallow items on floor. */
-	if (item < 0) return FALSE;
+	if (item < 0) return(FALSE);
 #endif
 	/* Item in inventory */
-	if (item >= INVEN_TOTAL) return FALSE;
-	return TRUE;
+	if (item >= INVEN_TOTAL) return(FALSE);
+	return(TRUE);
 }
 
 /* Get an item in the player's inventory or (for /dis and /xdis) on the floor.
@@ -9578,7 +9578,7 @@ int get_subinven_group(int sval) {
 		//combine multiple choices to a single group, using the first element as its identifier
 		if (sval >= SV_SI_GROUP_CHEST_MIN && sval <= SV_SI_GROUP_CHEST_MAX) return SV_SI_GROUP_CHEST_MIN;
 	}
-	return -1;
+	return(-1);
 }
  #endif
 #endif

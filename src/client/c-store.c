@@ -193,10 +193,10 @@ static int get_stock(int *com_val, cptr pmt, int i, int j) {
 	clear_topline();
 
 	/* Cancel */
-	if (command == ESCAPE) return (FALSE);
+	if (command == ESCAPE) return(FALSE);
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 

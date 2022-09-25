@@ -450,7 +450,7 @@ int world_remote_players(FILE *fff) {
 		num++;
 		lp = lp->next;
 	}
-	return (num);
+	return(num);
 }
 
 /* When a server logs in, we get information about it */

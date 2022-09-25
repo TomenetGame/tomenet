@@ -47,7 +47,7 @@ cave_type **getcave(struct worldpos *wpos) {
 		else if (wild->dungeon && wpos->wz >= -wild->dungeon->maxdepth)
 			return(wild->dungeon->level[ABS(wpos->wz)-1].cave);
 	}
-	return ((cave_type **)NULL);
+	return((cave_type **)NULL);
 }
 
 /* an afterthought - it is often needed without up/down info */
@@ -147,62 +147,62 @@ byte level_up_x(struct worldpos *wpos) {
 	struct wilderness_type *wild;
 
 	wild = &wild_info[wpos->wy][wpos->wx];
-	if (wpos->wz == 0) return (wild->up_x);
-	return (wpos->wz > 0? wild->tower->level[wpos->wz - 1].up_x : wild->dungeon->level[ABS(wpos->wz) - 1].up_x);
+	if (wpos->wz == 0) return(wild->up_x);
+	return(wpos->wz > 0? wild->tower->level[wpos->wz - 1].up_x : wild->dungeon->level[ABS(wpos->wz) - 1].up_x);
 }
 byte level_up_y(struct worldpos *wpos) {
 	struct wilderness_type *wild;
 
 	wild = &wild_info[wpos->wy][wpos->wx];
-	if (wpos->wz == 0) return (wild->up_y);
-	return (wpos->wz > 0 ? wild->tower->level[wpos->wz - 1].up_y : wild->dungeon->level[ABS(wpos->wz) - 1].up_y);
+	if (wpos->wz == 0) return(wild->up_y);
+	return(wpos->wz > 0 ? wild->tower->level[wpos->wz - 1].up_y : wild->dungeon->level[ABS(wpos->wz) - 1].up_y);
 }
 byte level_down_x(struct worldpos *wpos) {
 	struct wilderness_type *wild;
 
 	wild = &wild_info[wpos->wy][wpos->wx];
-	if (wpos->wz == 0) return (wild->dn_x);
+	if (wpos->wz == 0) return(wild->dn_x);
 	return(wpos->wz > 0 ? wild->tower->level[wpos->wz - 1].dn_x : wild->dungeon->level[ABS(wpos->wz) - 1].dn_x);
 }
 byte level_down_y(struct worldpos *wpos) {
 	struct wilderness_type *wild;
 
 	wild = &wild_info[wpos->wy][wpos->wx];
-	if (wpos->wz == 0) return (wild->dn_y);
-	return (wpos->wz > 0 ? wild->tower->level[wpos->wz - 1].dn_y : wild->dungeon->level[ABS(wpos->wz) - 1].dn_y);
+	if (wpos->wz == 0) return(wild->dn_y);
+	return(wpos->wz > 0 ? wild->tower->level[wpos->wz - 1].dn_y : wild->dungeon->level[ABS(wpos->wz) - 1].dn_y);
 }
 byte level_rand_x(struct worldpos *wpos) {
 	struct wilderness_type *wild;
 
 	wild = &wild_info[wpos->wy][wpos->wx];
 	if (wpos->wz == 0) return(wild->rn_x);
-	return (wpos->wz > 0 ? wild->tower->level[wpos->wz - 1].rn_x : wild->dungeon->level[ABS(wpos->wz) - 1].rn_x);
+	return(wpos->wz > 0 ? wild->tower->level[wpos->wz - 1].rn_x : wild->dungeon->level[ABS(wpos->wz) - 1].rn_x);
 }
 byte level_rand_y(struct worldpos *wpos) {
 	struct wilderness_type *wild;
 
 	wild = &wild_info[wpos->wy][wpos->wx];
-	if (wpos->wz == 0) return (wild->rn_y);
-	return (wpos->wz > 0 ? wild->tower->level[wpos->wz - 1].rn_y : wild->dungeon->level[ABS(wpos->wz) - 1].rn_y);
+	if (wpos->wz == 0) return(wild->rn_y);
+	return(wpos->wz > 0 ? wild->tower->level[wpos->wz - 1].rn_y : wild->dungeon->level[ABS(wpos->wz) - 1].rn_y);
 }
 
 static int get_staircase_colour(dungeon_type *d_ptr, byte *c) {
 	if (!d_ptr->type && d_ptr->theme == DI_DEATH_FATE) {
 		*c = TERM_L_DARK;
-		return -2;
+		return(-2);
 	}
 
 	/* (experimental testing stuff) */
 	if (d_ptr->flags3 & (DF3_NO_TELE | DF3_NO_ESP | DF3_LIMIT_ESP | DF3_NO_SUMMON)) {
 		*c = TERM_L_UMBER;
-		return 0;
+		return(0);
 	}
 
 	/* override colour from easiest to worst */
 	/* joker overrides the king ;) */
 	if (d_ptr->flags2 & DF2_NO_DEATH) {
 		*c = TERM_GREEN;
-		return -1;
+		return(-1);
 	}
 
 	if (d_ptr->flags2 & DF2_NO_EXIT_WOR) {
@@ -237,16 +237,16 @@ static int get_staircase_colour(dungeon_type *d_ptr, byte *c) {
 	}
 	if (d_ptr->flags1 & DF1_NO_UP) {
 		*c = TERM_ORANGE;
-		return 2;
+		return(2);
 	}
 	if (d_ptr->flags2 & DF2_NO_RECALL_INTO) {
 		*c = TERM_YELLOW;
-		return 1;
+		return(1);
 	}
 
 	/* normal */
 	*c = TERM_WHITE;
-	return 0;
+	return(0);
 }
 
 /* For staircase-placement.
@@ -264,7 +264,7 @@ bool can_go_up(struct worldpos *wpos, byte mode) {
 	   Apparently, WILD_F_UP is set here, too. And even w_ptr->tower was also valid.
 	   todo: fix this. -C. Blue */
 	if (wpos->wz == 0 && wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y &&
-	    WPOS_PVPARENA_Z > 0) return (FALSE);
+	    WPOS_PVPARENA_Z > 0) return(FALSE);
 #endif
 
 	/* Check for empty staircase without any connected dungeon/tower! */
@@ -285,7 +285,7 @@ bool can_go_up(struct worldpos *wpos, byte mode) {
 
 	if (wpos->wz > 0) return(wpos->wz < wild->tower->maxdepth);
 
-	return ((wild->flags & WILD_F_UP) ? TRUE : FALSE);
+	return((wild->flags & WILD_F_UP) ? TRUE : FALSE);
 }
 /* For staircase-placement and sinking/pit traps.
    Mode: 1 stairs, (doesn't make sense? 2 wor,) (handled in cmd2.c, can't handle here actually: 4 probtravel, 8 ghostfloating) */
@@ -302,7 +302,7 @@ bool can_go_down(struct worldpos *wpos, byte mode) {
 	   Apparently, WILD_F_UP is set here, too. And even w_ptr->tower was also valid.
 	   todo: fix this. -C. Blue */
 	if (wpos->wz == 0 && wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y &&
-	    WPOS_PVPARENA_Z < 0) return (FALSE);
+	    WPOS_PVPARENA_Z < 0) return(FALSE);
 #endif
 
 	/* Check for empty staircase without any connected dungeon/tower! */
@@ -322,7 +322,7 @@ bool can_go_down(struct worldpos *wpos, byte mode) {
 
 	if (wpos->wz < 0) return(ABS(wpos->wz) < wild->dungeon->maxdepth);
 
-	return ((wild->flags & WILD_F_DOWN) ? TRUE : FALSE);
+	return((wild->flags & WILD_F_DOWN) ? TRUE : FALSE);
 }
 /* ignore all dungeon/floor flags */
 bool can_go_up_simple(struct worldpos *wpos) {
@@ -330,7 +330,7 @@ bool can_go_up_simple(struct worldpos *wpos) {
 
 	if (wpos->wz < 0) return(TRUE);
 	if (wpos->wz > 0) return(wpos->wz < wild->tower->maxdepth);
-	return ((wild->flags & WILD_F_UP) ? TRUE : FALSE);
+	return((wild->flags & WILD_F_UP) ? TRUE : FALSE);
 }
 /* ignore all dungeon/floor flags */
 bool can_go_down_simple(struct worldpos *wpos) {
@@ -338,7 +338,7 @@ bool can_go_down_simple(struct worldpos *wpos) {
 
 	if (wpos->wz > 0) return(TRUE);
 	if (wpos->wz < 0) return(ABS(wpos->wz) < wild->dungeon->maxdepth);
-	return ((wild->flags & WILD_F_DOWN) ? TRUE : FALSE);
+	return((wild->flags & WILD_F_DOWN) ? TRUE : FALSE);
 }
 
 void wpcopy(struct worldpos *dest, struct worldpos *src) {
@@ -887,9 +887,9 @@ int getlevel(struct worldpos *wpos) {
 	if (wpos->wz == 0) {
 		/* ground level */
 #ifdef WILD_LEVEL_DEPENDS_ON_TOWN
-		return (w_ptr->radius + w_ptr->town_lev / 3);
+		return(w_ptr->radius + w_ptr->town_lev / 3);
 #else
-		return (w_ptr->radius);
+		return(w_ptr->radius);
 #endif
 	} else {
 		struct dungeon_type *d_ptr;
@@ -898,7 +898,7 @@ int getlevel(struct worldpos *wpos) {
 		if (wpos->wz > 0) d_ptr = w_ptr->tower;
 		else d_ptr = w_ptr->dungeon;
 		base = d_ptr->baselevel + ABS(wpos->wz) - 1;
-		return (base);
+		return(base);
 	}
 }
 
@@ -991,22 +991,22 @@ static bool is_wall(cave_type *c_ptr) {
 	feat = c_ptr->feat;
 
 	/* Paranoia */
-	if (feat > MAX_F_IDX) return FALSE;
+	if (feat > MAX_F_IDX) return(FALSE);
 
 	/* Vanilla floors and doors aren't considered to be walls */
-	if (feat < FEAT_SECRET) return FALSE;
+	if (feat < FEAT_SECRET) return(FALSE);
 
 	/* Exception #1: a glass wall is a wall but doesn't prevent LOS */
-	if (feat == FEAT_GLASS_WALL) return FALSE;
+	if (feat == FEAT_GLASS_WALL) return(FALSE);
 
 	/* Exception #2: an illusion wall is not a wall but obstructs view */
-	if (feat == FEAT_ILLUS_WALL) return TRUE;
+	if (feat == FEAT_ILLUS_WALL) return(TRUE);
 
 	/* Exception #3: Ivy (formerly: a small tree) is a floor but obstructs view */
-	if (feat == FEAT_IVY) return TRUE;
+	if (feat == FEAT_IVY) return(TRUE);
 
 	/* Normal cases: use the WALL flag in f_info.txt */
-	return (f_info[feat].flags1 & FF1_WALL) ? TRUE : FALSE;
+	return(f_info[feat].flags1 & FF1_WALL) ? TRUE : FALSE;
 }
 
 
@@ -1017,7 +1017,7 @@ static bool is_wall(cave_type *c_ptr) {
  * Returns TRUE if a line of sight can be traced from (x1,y1) to (x2,y2).
  *
  * The LOS begins at the center of the tile (x1,y1) and ends at the center of
- * the tile (x2,y2).  If los() is to return TRUE, all of the tiles this line
+ * the tile (x2,y2).  If los() is to return(TRUE), all of the tiles this line
  * passes through must be floor tiles, except for (x1,y1) and (x2,y2).
  *
  * We assume that the "mathematical corner" of a non-floor tile does not
@@ -1048,7 +1048,7 @@ static bool is_wall(cave_type *c_ptr) {
 #ifdef DOUBLE_LOS_SAFETY
 static bool los_DLS(struct worldpos *wpos, int y1, int x1, int y2, int x2);
 bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
-	return (los_DLS(wpos, y1, x1, y2, x2) || los_DLS(wpos, y2, x2, y1, x1));
+	return(los_DLS(wpos, y1, x1, y2, x2) || los_DLS(wpos, y2, x2, y1, x1));
 }
 static bool los_DLS(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 #else
@@ -1070,7 +1070,7 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 	int m;
 
 	cave_type **zcave;
-	if (!(zcave = getcave(wpos))) return FALSE;
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Extract the offset */
 	dy = y2 - y1;
@@ -1082,11 +1082,11 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 
 
 	/* Handle adjacent (or identical) grids */
-	if ((ax < 2) && (ay < 2)) return (TRUE);
+	if ((ax < 2) && (ay < 2)) return(TRUE);
 
 
 	/* Paranoia -- require "safe" origin */
-	/* if (!in_bounds(y1, x1)) return (FALSE); */
+	/* if (!in_bounds(y1, x1)) return(FALSE); */
 
 
 	/* Directly South/North */
@@ -1094,14 +1094,14 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 		/* South -- check for walls */
 		if (dy > 0) {
 			for (ty = y1 + 1; ty < y2; ty++)
-				if (!cave_los(zcave, ty, x1)) return (FALSE);
+				if (!cave_los(zcave, ty, x1)) return(FALSE);
 		/* North -- check for walls */
 		} else {
 			for (ty = y1 - 1; ty > y2; ty--)
-				if (!cave_los(zcave, ty, x1)) return (FALSE);
+				if (!cave_los(zcave, ty, x1)) return(FALSE);
 		}
 		/* Assume los */
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Directly East/West */
@@ -1109,14 +1109,14 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 		/* East -- check for walls */
 		if (dx > 0) {
 			for (tx = x1 + 1; tx < x2; tx++)
-				if (!cave_los(zcave, y1, tx)) return (FALSE);
+				if (!cave_los(zcave, y1, tx)) return(FALSE);
 		/* West -- check for walls */
 		} else {
 			for (tx = x1 - 1; tx > x2; tx--)
-				if (!cave_los(zcave, y1, tx)) return (FALSE);
+				if (!cave_los(zcave, y1, tx)) return(FALSE);
 		}
 		/* Assume los */
-		return (TRUE);
+		return(TRUE);
 	}
 
 
@@ -1128,13 +1128,13 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 	/* Vertical "knights" */
 	if (ax == 1) {
 		if (ay == 2) {
-			if (cave_los(zcave, y1 + sy, x1)) return (TRUE);
+			if (cave_los(zcave, y1 + sy, x1)) return(TRUE);
 		}
 	}
 	/* Horizontal "knights" */
 	else if (ay == 1) {
 		if (ax == 2) {
-			if (cave_los(zcave, y1, x1 + sx)) return (TRUE);
+			if (cave_los(zcave, y1, x1 + sx)) return(TRUE);
 		}
 	}
 
@@ -1165,7 +1165,7 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 		/* Note (below) the case (qy == f2), where */
 		/* the LOS exactly meets the corner of a tile. */
 		while (x2 - tx) {
-			if (!cave_los(zcave, ty, tx)) return (FALSE);
+			if (!cave_los(zcave, ty, tx)) return(FALSE);
 
 			qy += m;
 
@@ -1173,7 +1173,7 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 				tx += sx;
 			} else if (qy > f2) {
 				ty += sy;
-				if (!cave_los(zcave, ty, tx)) return (FALSE);
+				if (!cave_los(zcave, ty, tx)) return(FALSE);
 				qy -= f1;
 				tx += sx;
 			} else {
@@ -1202,7 +1202,7 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 		/* Note (below) the case (qx == f2), where */
 		/* the LOS exactly meets the corner of a tile. */
 		while (y2 - ty) {
-			if (!cave_los(zcave, ty, tx)) return (FALSE);
+			if (!cave_los(zcave, ty, tx)) return(FALSE);
 
 			qx += m;
 
@@ -1210,7 +1210,7 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 				ty += sy;
 			} else if (qx > f2) {
 				tx += sx;
-				if (!cave_los(zcave, ty, tx)) return (FALSE);
+				if (!cave_los(zcave, ty, tx)) return(FALSE);
 				qx -= f1;
 				ty += sy;
 			} else {
@@ -1222,14 +1222,14 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 	}
 
 	/* Assume los */
-	return (TRUE);
+	return(TRUE);
 }
 
 /* Same as los, just ignores non-perma-wall grids - for monster targetting - C. Blue */
 #ifdef DOUBLE_LOS_SAFETY
 static bool los_wall_DLS(struct worldpos *wpos, int y1, int x1, int y2, int x2);
 bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
-	return (los_wall_DLS(wpos, y1, x1, y2, x2) || los_wall_DLS(wpos, y2, x2, y1, x1));
+	return(los_wall_DLS(wpos, y1, x1, y2, x2) || los_wall_DLS(wpos, y2, x2, y1, x1));
 }
 static bool los_wall_DLS(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 #else
@@ -1251,7 +1251,7 @@ bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 	int m;
 
 	cave_type **zcave;
-	if (!(zcave = getcave(wpos))) return FALSE;
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Extract the offset */
 	dy = y2 - y1;
@@ -1263,11 +1263,11 @@ bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 
 
 	/* Handle adjacent (or identical) grids */
-	if ((ax < 2) && (ay < 2)) return (TRUE);
+	if ((ax < 2) && (ay < 2)) return(TRUE);
 
 
 	/* Paranoia -- require "safe" origin */
-	/* if (!in_bounds(y1, x1)) return (FALSE); */
+	/* if (!in_bounds(y1, x1)) return(FALSE); */
 
 
 	/* Directly South/North */
@@ -1275,14 +1275,14 @@ bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 		/* South -- check for walls */
 		if (dy > 0) {
 			for (ty = y1 + 1; ty < y2; ty++)
-				if (!cave_los_wall(zcave, ty, x1)) return (FALSE);
+				if (!cave_los_wall(zcave, ty, x1)) return(FALSE);
 		/* North -- check for walls */
 		} else {
 			for (ty = y1 - 1; ty > y2; ty--)
-				if (!cave_los_wall(zcave, ty, x1)) return (FALSE);
+				if (!cave_los_wall(zcave, ty, x1)) return(FALSE);
 		}
 		/* Assume los */
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Directly East/West */
@@ -1290,14 +1290,14 @@ bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 		/* East -- check for walls */
 		if (dx > 0) {
 			for (tx = x1 + 1; tx < x2; tx++)
-				if (!cave_los_wall(zcave, y1, tx)) return (FALSE);
+				if (!cave_los_wall(zcave, y1, tx)) return(FALSE);
 		/* West -- check for walls */
 		} else {
 			for (tx = x1 - 1; tx > x2; tx--)
-				if (!cave_los_wall(zcave, y1, tx)) return (FALSE);
+				if (!cave_los_wall(zcave, y1, tx)) return(FALSE);
 		}
 		/* Assume los */
-		return (TRUE);
+		return(TRUE);
 	}
 
 
@@ -1309,11 +1309,11 @@ bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 	/* Vertical "knights" */
 	if (ax == 1) {
 		if (ay == 2)
-			if (cave_los_wall(zcave, y1 + sy, x1)) return (TRUE);
+			if (cave_los_wall(zcave, y1 + sy, x1)) return(TRUE);
 	/* Horizontal "knights" */
 	} else if (ay == 1) {
 		if (ax == 2)
-			if (cave_los_wall(zcave, y1, x1 + sx)) return (TRUE);
+			if (cave_los_wall(zcave, y1, x1 + sx)) return(TRUE);
 	}
 
 
@@ -1343,7 +1343,7 @@ bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 		/* Note (below) the case (qy == f2), where */
 		/* the LOS exactly meets the corner of a tile. */
 		while (x2 - tx) {
-			if (!cave_los_wall(zcave, ty, tx)) return (FALSE);
+			if (!cave_los_wall(zcave, ty, tx)) return(FALSE);
 
 			qy += m;
 
@@ -1351,7 +1351,7 @@ bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 				tx += sx;
 			} else if (qy > f2) {
 				ty += sy;
-				if (!cave_los_wall(zcave, ty, tx)) return (FALSE);
+				if (!cave_los_wall(zcave, ty, tx)) return(FALSE);
 				qy -= f1;
 				tx += sx;
 			} else {
@@ -1380,7 +1380,7 @@ bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 		/* Note (below) the case (qx == f2), where */
 		/* the LOS exactly meets the corner of a tile. */
 		while (y2 - ty) {
-			if (!cave_los_wall(zcave, ty, tx)) return (FALSE);
+			if (!cave_los_wall(zcave, ty, tx)) return(FALSE);
 
 			qx += m;
 
@@ -1388,7 +1388,7 @@ bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 				ty += sy;
 			} else if (qx > f2) {
 				tx += sx;
-				if (!cave_los_wall(zcave, ty, tx)) return (FALSE);
+				if (!cave_los_wall(zcave, ty, tx)) return(FALSE);
 				qx -= f1;
 				ty += sy;
 			} else {
@@ -1400,7 +1400,7 @@ bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 	}
 
 	/* Assume los */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -1450,25 +1450,25 @@ bool player_can_see_bold(int Ind, int y, int x) {
 	wpos = &p_ptr->wpos;
 
 	/* Blind players see nothing */
-	if (p_ptr->blind) return (FALSE);
+	if (p_ptr->blind) return(FALSE);
 
 	/* temp bug fix - evileye */
-	if (!(zcave = getcave(wpos))) return FALSE;
+	if (!(zcave = getcave(wpos))) return(FALSE);
 	c_ptr = &zcave[y][x];
 	w_ptr = &p_ptr->cave_flag[y][x];
 
 	/* Note that "torch-lite" yields "illumination" */
 	if ((c_ptr->info & CAVE_LITE) && (*w_ptr & CAVE_VIEW))
-		return (TRUE);
+		return(TRUE);
 
 	/* Require line of sight to the grid */
-	if (!player_has_los_bold(Ind, y, x)) return (FALSE);
+	if (!player_has_los_bold(Ind, y, x)) return(FALSE);
 
 	/* Require "perma-lite" of the grid */
-	if (!(c_ptr->info & CAVE_GLOW)) return (FALSE);
+	if (!(c_ptr->info & CAVE_GLOW)) return(FALSE);
 
 	/* Floors are simple */
-	if (cave_floor_bold(zcave, y, x)) return (TRUE);
+	if (cave_floor_bold(zcave, y, x)) return(TRUE);
 
 	/* Hack -- move towards player */
 	yy = (y < p_ptr->py) ? (y + 1) : (y > p_ptr->py) ? (y - 1) : y;
@@ -1477,11 +1477,11 @@ bool player_can_see_bold(int Ind, int y, int x) {
 	/* Check for "local" illumination */
 	if (zcave[yy][xx].info & CAVE_GLOW) {
 		/* Assume the wall is really illuminated */
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Assume not visible */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -1493,7 +1493,7 @@ bool no_lite(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	if (p_ptr->admin_dm) return(FALSE);
-	return (!player_can_see_bold(Ind, p_ptr->py, p_ptr->px));
+	return(!player_can_see_bold(Ind, p_ptr->py, p_ptr->px));
 }
 /* Returns true if the player grid is dark, ignoring vampire's intrinsic pseudo-'light'. */
 bool no_real_lite(int Ind) {
@@ -1502,20 +1502,20 @@ bool no_real_lite(int Ind) {
 	cave_type *c_ptr, **zcave;
 
 	zcave = getcave(&p_ptr->wpos);
-	if (!zcave) return FALSE;
+	if (!zcave) return(FALSE);
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	/* Floor is perma-lit? */
-	if (c_ptr->info & CAVE_GLOW) return FALSE;
+	if (c_ptr->info & CAVE_GLOW) return(FALSE);
 	/* Floor isn't lit at all? */
-	if (!(c_ptr->info & CAVE_LITE)) return TRUE;
+	if (!(c_ptr->info & CAVE_LITE)) return(TRUE);
 	/* Floor is only pseudo-lit, by vampiric 'light'? */
-	if (c_ptr->info & CAVE_LITE_VAMP) return TRUE;
+	if (c_ptr->info & CAVE_LITE_VAMP) return(TRUE);
 	/* Floor is lit by a light source */
-	return FALSE;
+	return(FALSE);
 #else /* new, lenient way */
-	if (!p_ptr->cur_lite || p_ptr->cloaked) return TRUE;
-	return FALSE;
+	if (!p_ptr->cur_lite || p_ptr->cloaked) return(TRUE);
+	return(FALSE);
 #endif
 }
 
@@ -1532,8 +1532,8 @@ bool cave_valid_bold(cave_type **zcave, int y, int x) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	/* Forbid perma-grids */
-/*	if (cave_perma_grid(c_ptr)) return (FALSE); */
-	if (cave_perma_bold(zcave, y, x)) return (FALSE);
+/*	if (cave_perma_grid(c_ptr)) return(FALSE); */
+	if (cave_perma_bold(zcave, y, x)) return(FALSE);
 
 	/* Check objects */
 	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx) {
@@ -1548,12 +1548,12 @@ bool cave_valid_bold(cave_type **zcave, int y, int x) {
 		/* Forbid artifact grids */
 		if (true_artifact_p(o_ptr)) {
 			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-			if (f4 & TR4_SPECIAL_GENE) return (FALSE);
+			if (f4 & TR4_SPECIAL_GENE) return(FALSE);
 		}
 	}
 
 	/* Accept */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -1641,7 +1641,7 @@ char get_shimmer_color() {
 	case 6: return TERM_L_DARK;
 	case 7: return TERM_GREEN;
 	}
-	return (TERM_VIOLET);
+	return(TERM_VIOLET);
 }
 #endif
 
@@ -1746,9 +1746,9 @@ static byte multi_hued_attr(monster_race *r_ptr) {
 
 	/* Monsters with no ranged attacks can be any color */
 #ifdef CLIENT_SHIMMER
-	if (!r_ptr->freq_innate) return (TERM_HALF);
+	if (!r_ptr->freq_innate) return(TERM_HALF);
 #else
-	if (!r_ptr->freq_innate) return (get_shimmer_color());
+	if (!r_ptr->freq_innate) return(get_shimmer_color());
 #endif
 
 	/* Check breaths */
@@ -1766,9 +1766,9 @@ static byte multi_hued_attr(monster_race *r_ptr) {
 
 		/* Monster can be of any color */
 #ifdef CLIENT_SHIMMER
-		if (first_color == 255) return (TERM_MULTI);
+		if (first_color == 255) return(TERM_MULTI);
 #else
-		if (first_color == 255) return (randint(15));
+		if (first_color == 255) return(randint(15));
 #endif
 
 
@@ -1777,9 +1777,9 @@ static byte multi_hued_attr(monster_race *r_ptr) {
 
 		/* Monsters with lots of breaths may be any color. */
 #ifdef CLIENT_SHIMMER
-		if (breaths == 6) return (TERM_MULTI);
+		if (breaths == 6) return(TERM_MULTI);
 #else
-		if (breaths == 6) return (randint(15));
+		if (breaths == 6) return(randint(15));
 #endif
 
 
@@ -1806,9 +1806,9 @@ static byte multi_hued_attr(monster_race *r_ptr) {
 
 	/* Monsters with no breaths may be of any color. */
 #ifdef CLIENT_SHIMMER
-	if (breaths == 0 || breaths == 5) return (TERM_HALF);
+	if (breaths == 0 || breaths == 5) return(TERM_HALF);
 #else
-	if (breaths == 0) return (get_shimmer_color());
+	if (breaths == 0) return(get_shimmer_color());
 #endif
 
 	/* If monster has one breath, store the second color too. */
@@ -1859,7 +1859,7 @@ static byte multi_hued_attr(monster_race *r_ptr) {
 	stored_colors++;
 
 	/* Pick a color at random */
-	return (allowed_attrs[rand_int(stored_colors)]);
+	return(allowed_attrs[rand_int(stored_colors)]);
 }
 
 /* Despite of its name, this gets both, attr and char, for a monster race.. */
@@ -2100,16 +2100,16 @@ static byte player_color(int Ind) {
 #ifdef EXTENDED_TERM_COLOURS
  #ifndef EXTENDED_COLOURS_PALANIM
 			//no longer allowed
-			return (TERM_L_DARK | (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW));
+			return(TERM_L_DARK | (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW));
  #else
 			if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) {
-				if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) return (TERM_L_DARK | TERM_OLD_BNW);
-				else return (TERM_L_DARK | TERM_OLD2_BNW);
+				if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) return(TERM_L_DARK | TERM_OLD_BNW);
+				else return(TERM_L_DARK | TERM_OLD2_BNW);
 			} else if (is_older_than(&p_ptr->version, 4, 7, 3, 0, 0, 0)) return TERM_OLD3_BNW;
 			else return TERM_BNW;
  #endif
 #else
-			return (TERM_L_DARK | TERM_BNW);
+			return(TERM_L_DARK | TERM_BNW);
 #endif
 		}
 		return TERM_L_DARK;
@@ -2285,15 +2285,15 @@ bool outdoor_affects(struct worldpos *wpos) {
 	/* Definitely excluded locations */
 	if ((in_sector00(wpos) && (sector00flags2 & LF2_INDOORS))
 	    || (l_ptr && (l_ptr->flags2 & LF2_INDOORS)))
-		return FALSE;
+		return(FALSE);
 
 	/* Otherwise included locations */
 	if (!wpos->wz || /* World surface */
 	    (d_ptr && d_ptr->type == DI_CLOUD_PLANES)) /* The Cloud Planes */
-		return TRUE;
+		return(TRUE);
 
 	/* Default */
-	return FALSE;
+	return(FALSE);
 }
 /*
  * Manipulate map grid colours, for example outside on world surface,
@@ -4508,14 +4508,14 @@ static byte priority(byte a, char32_t c) {
 		   PROBLEM: Colour can be modified for various reasons:
 		   Seasons, effects, and especially _staircase type-colouring_!! - C. Blue */
 #if 0 /* for this reason, let's skip the colour check for now >_> */
-		if ((f_ptr->z_char == c) && (f_ptr->z_attr == a)) return (p1);
+		if ((f_ptr->z_char == c) && (f_ptr->z_attr == a)) return(p1);
 #else
-		if (f_ptr->z_char == c) return (p1);
+		if (f_ptr->z_char == c) return(p1);
 #endif
 	}
 
 	/* Default */
-	return (20);
+	return(20);
 }
 
 
@@ -5655,7 +5655,7 @@ static bool update_view_aux(int Ind, int y, int x, int y1, int x1, int y2, int x
 	cave_type **zcave;
 
 
-	if (!(zcave = getcave(wpos))) return FALSE;
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	if (y < 0 || y >= MAX_HGT || x < 0 || x >= MAX_WID) return(FALSE);
 
@@ -5672,7 +5672,7 @@ static bool update_view_aux(int Ind, int y, int x, int y1, int x1, int y2, int x
 	f2 = (cave_los_grid(g2_c_ptr));
 
 	/* Totally blocked by physical walls */
-	if (!f1 && !f2) return (TRUE);
+	if (!f1 && !f2) return(TRUE);
 
 
 	/* Check for visibility */
@@ -5680,7 +5680,7 @@ static bool update_view_aux(int Ind, int y, int x, int y1, int x1, int y2, int x
 	v2 = (f2 && (*(g2_w_ptr) & CAVE_VIEW));
 
 	/* Totally blocked by "unviewable neighbors" */
-	if (!v1 && !v2) return (TRUE);
+	if (!v1 && !v2) return(TRUE);
 
 
 	/* Access the grid */
@@ -5700,33 +5700,33 @@ static bool update_view_aux(int Ind, int y, int x, int y1, int x1, int y2, int x
 	if (z1 && z2) {
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y, x);
-		return (wall);
+		return(wall);
 	}
 	/* Hack -- primary "easy" yields "viewed" */
 	if (z1) {
 		cave_view_hack(w_ptr, y, x);
-		return (wall);
+		return(wall);
 	}
 	/* Hack -- "view" plus "view" yields "view" */
 	if (v1 && v2) {
 		/* c_ptr->info |= CAVE_XTRA; */
 		cave_view_hack(w_ptr, y, x);
-		return (wall);
+		return(wall);
 	}
 	/* Mega-Hack -- the "los()" function works poorly on walls */
 	if (wall) {
 		cave_view_hack(w_ptr, y, x);
-		return (wall);
+		return(wall);
 	}
 	/* Hack -- check line of sight */
 	if (los(wpos, p_ptr->py, p_ptr->px, y, x)) {
 		cave_view_hack(w_ptr, y, x);
-		return (wall);
+		return(wall);
 	}
 
 
 	/* Assume no line of sight. */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -6388,7 +6388,7 @@ struct vinfo_hack {
 static bool ang_sort_comp_longs(int Ind, vptr u, vptr v, int a, int b) {
 	long *x = (long*)(u);
 
-	return (x[a] <= x[b]);
+	return(x[a] <= x[b]);
 }
 
 
@@ -6674,7 +6674,7 @@ errr vinfo_init(void)
 
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -7879,8 +7879,8 @@ bool cave_set_feat_live_ok(worldpos *wpos, int y, int x, int feat) {
 	int i;
 	//struct town_type *t_ptr; /* have town keep track of number of feature changes (not yet implemented) */
 
-	if (!(zcave = getcave(wpos))) return FALSE;
-	if (!in_bounds(y, x)) return FALSE;
+	if (!(zcave = getcave(wpos))) return(FALSE);
+	if (!in_bounds(y, x)) return(FALSE);
 	c_ptr = &zcave[y][x];
 
 	/* apply town-specific restrictions, preserving the intended town layout */
@@ -7891,51 +7891,51 @@ bool cave_set_feat_live_ok(worldpos *wpos, int y, int x, int feat) {
 		switch (feat) {
 		case FEAT_TREE:
 		case FEAT_BUSH:
-			if (TOWN_TERRAFORM_TREES == 0) return FALSE;
+			if (TOWN_TERRAFORM_TREES == 0) return(FALSE);
 			break;
 		case FEAT_WALL_EXTRA:
 		case FEAT_QUARTZ:
 		case FEAT_MAGMA:
-			if (TOWN_TERRAFORM_WALLS == 0) return FALSE;
+			if (TOWN_TERRAFORM_WALLS == 0) return(FALSE);
 			break;
 		case FEAT_SHAL_WATER:
 		case FEAT_DEEP_WATER:
-			if (TOWN_TERRAFORM_WATER == 0) return FALSE;
+			if (TOWN_TERRAFORM_WATER == 0) return(FALSE);
 			break;
 		case FEAT_GLYPH:
 		case FEAT_RUNE:
-			if (TOWN_TERRAFORM_GLYPHS == 0) return FALSE;
+			if (TOWN_TERRAFORM_GLYPHS == 0) return(FALSE);
 			break;
 		}
 
 		switch (c_ptr->feat) {
 		case FEAT_TREE:
 		case FEAT_BUSH:
-			if (TOWN_TERRAFORM_TREES == 0) return FALSE;
+			if (TOWN_TERRAFORM_TREES == 0) return(FALSE);
 			break;
 		case FEAT_WALL_EXTRA:
 		case FEAT_QUARTZ:
 		case FEAT_MAGMA:
-			if (TOWN_TERRAFORM_WALLS == 0) return FALSE;
+			if (TOWN_TERRAFORM_WALLS == 0) return(FALSE);
 			break;
 		case FEAT_SHAL_WATER:
 		case FEAT_DEEP_WATER:
-			if (TOWN_TERRAFORM_WATER == 0) return FALSE;
+			if (TOWN_TERRAFORM_WATER == 0) return(FALSE);
 			break;
 		case FEAT_GLYPH:
 		case FEAT_RUNE:
-			if (TOWN_TERRAFORM_GLYPHS == 0) return FALSE;
+			if (TOWN_TERRAFORM_GLYPHS == 0) return(FALSE);
 			break;
 		}
 #else
 		/* hack: only allow around store entrances */
 		if (feat == FEAT_GLYPH || feat == FEAT_RUNE) {
-			return FALSE; //disallow glyphs
+			return(FALSE); //disallow glyphs
 
 			for (i = 0; i < 9; i++)
 				if (zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat == FEAT_SHOP) break;
 			/* no nearby store entrance found? */
-			if (i == 9) return FALSE;
+			if (i == 9) return(FALSE);
 		}
 #endif
 	}
@@ -7955,10 +7955,10 @@ bool cave_set_feat_live_ok(worldpos *wpos, int y, int x, int feat) {
 	    (c_ptr->feat == FEAT_MUD) ||
 	    (c_ptr->feat == FEAT_FLOWER) ||
 	    (c_ptr->feat == FEAT_NETHER_MIST))))
-		return FALSE;
+		return(FALSE);
 
 	/* Don't mess with inns please! */
-	if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) return FALSE;
+	if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) return(FALSE);
 
 	/* No terraforming on impossible ground -
 	   compare twall_erosion() for consistency */
@@ -7971,9 +7971,9 @@ bool cave_set_feat_live_ok(worldpos *wpos, int y, int x, int feat) {
 #else
 	if (c_ptr->feat == FEAT_DEEP_LAVA || c_ptr->feat == FEAT_DEEP_WATER)
 #endif
-		return FALSE;
+		return(FALSE);
 
-	return TRUE;
+	return(TRUE);
 }
 
 /*
@@ -7995,8 +7995,8 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	dun_level *l_ptr = getfloor(wpos);
 	bool deep_water = l_ptr && (l_ptr->flags1 & LF1_DEEP_WATER);
 
-	if (!(zcave = getcave(wpos))) return FALSE;
-	if (!in_bounds(y, x)) return FALSE;
+	if (!(zcave = getcave(wpos))) return(FALSE);
+	if (!in_bounds(y, x)) return(FALSE);
 	c_ptr = &zcave[y][x];
 
 	/* apply town-specific restrictions, preserving the intended town layout */
@@ -8007,51 +8007,51 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 		switch (feat) {
 		case FEAT_TREE:
 		case FEAT_BUSH:
-			if (TOWN_TERRAFORM_TREES == 0) return FALSE;
+			if (TOWN_TERRAFORM_TREES == 0) return(FALSE);
 			break;
 		case FEAT_WALL_EXTRA:
 		case FEAT_QUARTZ:
 		case FEAT_MAGMA:
-			if (TOWN_TERRAFORM_WALLS == 0) return FALSE;
+			if (TOWN_TERRAFORM_WALLS == 0) return(FALSE);
 			break;
 		case FEAT_SHAL_WATER:
 		case FEAT_DEEP_WATER:
-			if (TOWN_TERRAFORM_WATER == 0) return FALSE;
+			if (TOWN_TERRAFORM_WATER == 0) return(FALSE);
 			break;
 		case FEAT_GLYPH:
 		case FEAT_RUNE:
-			if (TOWN_TERRAFORM_GLYPHS == 0) return FALSE;
+			if (TOWN_TERRAFORM_GLYPHS == 0) return(FALSE);
 			break;
 		}
 
 		switch (c_ptr->feat) {
 		case FEAT_TREE:
 		case FEAT_BUSH:
-			if (TOWN_TERRAFORM_TREES == 0) return FALSE;
+			if (TOWN_TERRAFORM_TREES == 0) return(FALSE);
 			break;
 		case FEAT_WALL_EXTRA:
 		case FEAT_QUARTZ:
 		case FEAT_MAGMA:
-			if (TOWN_TERRAFORM_WALLS == 0) return FALSE;
+			if (TOWN_TERRAFORM_WALLS == 0) return(FALSE);
 			break;
 		case FEAT_SHAL_WATER:
 		case FEAT_DEEP_WATER:
-			if (TOWN_TERRAFORM_WATER == 0) return FALSE;
+			if (TOWN_TERRAFORM_WATER == 0) return(FALSE);
 			break;
 		case FEAT_GLYPH:
 		case FEAT_RUNE:
-			if (TOWN_TERRAFORM_GLYPHS == 0) return FALSE;
+			if (TOWN_TERRAFORM_GLYPHS == 0) return(FALSE);
 			break;
 		}
 #else
 		/* hack: only allow around store entrances */
 		if (feat == FEAT_GLYPH || feat == FEAT_RUNE) {
-			return FALSE; //disallow glyphs
+			return(FALSE); //disallow glyphs
 
 			for (i = 0; i < 9; i++)
 				if (zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat == FEAT_SHOP) break;
 			/* no nearby store entrance found? */
-			if (i == 9) return FALSE;
+			if (i == 9) return(FALSE);
 		}
 #endif
 	}
@@ -8071,10 +8071,10 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	    (c_ptr->feat == FEAT_MUD) ||
 	    (c_ptr->feat == FEAT_FLOWER) ||
 	    (c_ptr->feat == FEAT_NETHER_MIST))))
-		return FALSE;
+		return(FALSE);
 
 	/* Don't mess with inns please! */
-	if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) return FALSE;
+	if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) return(FALSE);
 
 	/* No terraforming on impossible ground -
 	   compare twall_erosion() for consistency */
@@ -8087,7 +8087,7 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 #else
 	if (c_ptr->feat == FEAT_DEEP_LAVA || c_ptr->feat == FEAT_DEEP_WATER)
 #endif
-		return FALSE;
+		return(FALSE);
 
 	/* in Nether Realm, floor is always nether mist (or lava)! */
 	if (in_netherrealm(wpos)) switch (feat) {
@@ -8172,7 +8172,7 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 		    p_ptr->px == x && p_ptr->py == y)
 			set_tim_wraithstep(i, 0);
 	}
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -8292,7 +8292,7 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2)
 #ifdef DOUBLE_LOS_SAFETY
 static bool projectable_DLS(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range);
 bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
-	return (projectable_DLS(wpos, y1, x1, y2, x2, range) || projectable_DLS(wpos, y2, x2, y1, x1, range));
+	return(projectable_DLS(wpos, y1, x1, y2, x2, range) || projectable_DLS(wpos, y2, x2, y1, x1, range));
 }
 static bool projectable_DLS(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
 #else
@@ -8300,7 +8300,7 @@ bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2, int rang
 #endif
 	int dist, y, x;
 	cave_type **zcave;
-	if (!(zcave = getcave(wpos))) return FALSE;
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 #ifdef DOUBLE_LOS_SAFETY
 	/* catch ball-spell related call in project() which adds '+ dir * 99' aka distance of 99 */
@@ -8322,9 +8322,9 @@ bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2, int rang
 		if ((x == x2) && (y == y2)) {
 #ifdef CRUDE_TARGETTING_LOS_FIX
 			/* (bugfix via bad hack) ensure monsters cant snipe us from out of LoS */
-			if (!los(wpos, y1, x1, y2, x2)) return FALSE;
+			if (!los(wpos, y1, x1, y2, x2)) return(FALSE);
 #endif
-			return (TRUE);
+			return(TRUE);
 		}
 
 		/* Calculate the new location */
@@ -8332,14 +8332,14 @@ bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2, int rang
 	}
 
 	/* Assume obstruction */
-	return (FALSE);
+	return(FALSE);
 }
 
 /* Same as projectable(), but allows targetting the first grid in a wall */
 #ifdef DOUBLE_LOS_SAFETY
 static bool projectable_wall_DLS(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range);
 bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
-	return (projectable_wall_DLS(wpos, y1, x1, y2, x2, range) || projectable_wall_DLS(wpos, y2, x2, y1, x1, range));
+	return(projectable_wall_DLS(wpos, y1, x1, y2, x2, range) || projectable_wall_DLS(wpos, y2, x2, y1, x1, range));
 }
 static bool projectable_wall_DLS(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
 #else
@@ -8366,9 +8366,9 @@ bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2, int
 		if ((x == x2) && (y == y2)) {
 #ifdef CRUDE_TARGETTING_LOS_FIX
 			/* (bugfix via bad hack) ensure monsters cant snipe us from out of LoS */
-			if (!los(wpos, y1, x1, y2, x2)) return FALSE;
+			if (!los(wpos, y1, x1, y2, x2)) return(FALSE);
 #endif
-			return (TRUE);
+			return(TRUE);
 		}
 
 		/* Never go through walls */
@@ -8379,7 +8379,7 @@ bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2, int
 	}
 
 	/* Assume obstruction */
-	return (FALSE);
+	return(FALSE);
 }
 
 /* like projectable_wall(), but assumes that only _permanent walls_ are really obstacles to us
@@ -8387,7 +8387,7 @@ bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2, int
 #ifdef DOUBLE_LOS_SAFETY
 static bool projectable_wall_perm_DLS(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range);
 bool projectable_wall_perm(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
-	return (projectable_wall_perm_DLS(wpos, y1, x1, y2, x2, range) || projectable_wall_perm_DLS(wpos, y2, x2, y1, x1, range));
+	return(projectable_wall_perm_DLS(wpos, y1, x1, y2, x2, range) || projectable_wall_perm_DLS(wpos, y2, x2, y1, x1, range));
 }
 static bool projectable_wall_perm_DLS(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
 #else
@@ -8406,14 +8406,14 @@ bool projectable_wall_perm(struct worldpos *wpos, int y1, int x1, int y2, int x2
 		if (f_info[zcave[y][x].feat].flags1 & FF1_PERMANENT) break;
 
 		/* Check for arrival at "final target" */
-		if ((x == x2) && (y == y2)) return (TRUE);
+		if ((x == x2) && (y == y2)) return(TRUE);
 
 		/* Calculate the new location */
 		mmove2(&y, &x, y1, x1, y2, x2);
 	}
 
 	/* Assume obstruction */
-	return (FALSE);
+	return(FALSE);
 }
 
 /*
@@ -8427,17 +8427,17 @@ bool projectable_wall_perm(struct worldpos *wpos, int y1, int x1, int y2, int x2
 #ifdef DOUBLE_LOS_SAFETY
 static bool projectable_real_DLS(int Ind, int y1, int x1, int y2, int x2, int range);
 bool projectable_real(int Ind, int y1, int x1, int y2, int x2, int range) {
-	return ((projectable_DLS(&Players[Ind]->wpos, y1, x1, y2, x2, range) || projectable_DLS(&Players[Ind]->wpos, y2, x2, y1, x1, range))
+	return((projectable_DLS(&Players[Ind]->wpos, y1, x1, y2, x2, range) || projectable_DLS(&Players[Ind]->wpos, y2, x2, y1, x1, range))
 	    /* important: make sure we really don't hit an awake monster from our direction of shooting :-p  : */
 	    && projectable_real_DLS(Ind, y1, x1, y2, x2, range));
 }
 static bool projectable_real_DLS(int Ind, int y1, int x1, int y2, int x2, int range) {
 	int dist, y = y1, x = x1;
 	cave_type **zcave;
-	if (!(zcave = getcave(&Players[Ind]->wpos))) return FALSE;
+	if (!(zcave = getcave(&Players[Ind]->wpos))) return(FALSE);
 
 	for (dist = 0; dist <= range; dist++) {
-		if ((x == x2) && (y == y2)) return (TRUE);
+		if ((x == x2) && (y == y2)) return(TRUE);
 
 		/* Never pass through SLEEPING monsters */
 		if (dist && (zcave[y][x].m_idx > 0)
@@ -8452,13 +8452,13 @@ static bool projectable_real_DLS(int Ind, int y1, int x1, int y2, int x2, int ra
 #endif
 		mmove2(&y, &x, y1, x1, y2, x2);
 	}
-	return (FALSE);
+	return(FALSE);
 }
 #else
 bool projectable_real(int Ind, int y1, int x1, int y2, int x2, int range) {
 	int dist, y, x;
 	cave_type **zcave;
-	if (!(zcave = getcave(&Players[Ind]->wpos))) return FALSE;
+	if (!(zcave = getcave(&Players[Ind]->wpos))) return(FALSE);
 
 	/* Start at the initial location */
 	y = y1, x = x1;
@@ -8472,7 +8472,7 @@ bool projectable_real(int Ind, int y1, int x1, int y2, int x2, int range) {
 		if (f_info[zcave[y][x].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
 
 		/* Check for arrival at "final target" */
-		if ((x == x2) && (y == y2)) return (TRUE);
+		if ((x == x2) && (y == y2)) return(TRUE);
 
 		/* Never pass through SLEEPING monsters */
 		if (dist && (zcave[y][x].m_idx > 0)
@@ -8491,7 +8491,7 @@ bool projectable_real(int Ind, int y1, int x1, int y2, int x2, int range) {
 	}
 
 	/* Assume obstruction */
-	return (FALSE);
+	return(FALSE);
 }
 #endif
 
@@ -8499,14 +8499,14 @@ bool projectable_real(int Ind, int y1, int x1, int y2, int x2, int range) {
 #ifdef DOUBLE_LOS_SAFETY
 static bool projectable_wall_real_DLS(int Ind, int y1, int x1, int y2, int x2, int range);
 bool projectable_wall_real(int Ind, int y1, int x1, int y2, int x2, int range) {
-	return ((projectable_wall_DLS(&Players[Ind]->wpos, y1, x1, y2, x2, range) || projectable_wall_DLS(&Players[Ind]->wpos, y2, x2, y1, x1, range))
+	return((projectable_wall_DLS(&Players[Ind]->wpos, y1, x1, y2, x2, range) || projectable_wall_DLS(&Players[Ind]->wpos, y2, x2, y1, x1, range))
 	    /* important: make sure we really don't hit an awake monster from our direction of shooting :-p  : */
 	    && projectable_wall_real_DLS(Ind, y1, x1, y2, x2, range));
 }
 static bool projectable_wall_real_DLS(int Ind, int y1, int x1, int y2, int x2, int range) {
 	int dist, y, x;
 	cave_type **zcave;
-	if (!(zcave = getcave(&Players[Ind]->wpos))) return FALSE;
+	if (!(zcave = getcave(&Players[Ind]->wpos))) return(FALSE);
 
 	/* Start at the initial location */
 	y = y1, x = x1;
@@ -8514,7 +8514,7 @@ static bool projectable_wall_real_DLS(int Ind, int y1, int x1, int y2, int x2, i
 	/* See "project()" */
 	for (dist = 0; dist <= range; dist++) {
 		/* Check for arrival at "final target" */
-		if ((x == x2) && (y == y2)) return (TRUE);
+		if ((x == x2) && (y == y2)) return(TRUE);
 
 		/* Never pass through SLEEPING monsters */
 		if (dist && (zcave[y][x].m_idx > 0)
@@ -8533,14 +8533,14 @@ static bool projectable_wall_real_DLS(int Ind, int y1, int x1, int y2, int x2, i
 	}
 
 	/* Assume obstruction */
-	return (FALSE);
+	return(FALSE);
 }
 #else
 bool projectable_wall_real(int Ind, int y1, int x1, int y2, int x2, int range)
 {
 	int dist, y, x;
 	cave_type **zcave;
-	if (!(zcave = getcave(&Players[Ind]->wpos))) return FALSE;
+	if (!(zcave = getcave(&Players[Ind]->wpos))) return(FALSE);
 
 	/* Start at the initial location */
 	y = y1, x = x1;
@@ -8551,7 +8551,7 @@ bool projectable_wall_real(int Ind, int y1, int x1, int y2, int x2, int range)
 		if (f_info[zcave[y][x].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
 
 		/* Check for arrival at "final target" */
-		if ((x == x2) && (y == y2)) return (TRUE);
+		if ((x == x2) && (y == y2)) return(TRUE);
 
 		/* Never pass through walls */
 		if (dist && !cave_los(zcave, y, x)) break;
@@ -8573,7 +8573,7 @@ bool projectable_wall_real(int Ind, int y1, int x1, int y2, int x2, int range)
 	}
 
 	/* Assume obstruction */
-	return (FALSE);
+	return(FALSE);
 }
 #endif
 
@@ -8777,21 +8777,21 @@ void disturb(int Ind, int stop_search, int keep_resting) {
 /* FIXME - use worldpos and dungeon array! */
 bool is_xorder(struct worldpos *wpos) {
 	/* not implemented yet :p */
-	return (FALSE);
+	return(FALSE);
 #if 0
 	int i;
 
 	/* Town is never a quest */
-	if (!level) return (FALSE);
+	if (!level) return(FALSE);
 
 	/* Check quests */
 	for (i = 0; i < MAX_XO_IDX; i++) {
 		/* Check for quest */
-		if (xo_list[i].level == level) return (TRUE);
+		if (xo_list[i].level == level) return(TRUE);
 	}
 
 	/* Nope */
-	return (FALSE);
+	return(FALSE);
 #endif
 }
 
@@ -8804,10 +8804,10 @@ static int effect_pop(int who) {
 	for (i = 1; i < MAX_EFFECTS; i++) { /* effects[0] is not used */
 		if (!effects[i].time) return i;
 		if (effects[i].who == who) {
-			if (++cnt > MAX_EFFECTS_PLAYER) return -1;
+			if (++cnt > MAX_EFFECTS_PLAYER) return(-1);
 		}
 	}
-	return -1;
+	return(-1);
 }
 
 int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpos, int cy, int cx, int rad, s32b flags) {
@@ -8822,7 +8822,7 @@ int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpo
 #endif
 
 //s_printf("eff %d,%d\n", who, who2);
-	if ((i = effect_pop(who2)) == -1) return -1;
+	if ((i = effect_pop(who2)) == -1) return(-1);
 //s_printf("eff %d\n", i);
 	effects[i].interval = interval;
 	effects[i].type = type;
@@ -8921,7 +8921,7 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 		/* generally allow in town, restrictions are applied in cave_set_feat_live().) */
 		if (sector00 || valinor || nr_bottom) return(FALSE);
 
-		if (l_ptr && (l_ptr->flags2 & LF2_NO_RUNES)) return FALSE;
+		if (l_ptr && (l_ptr->flags2 & LF2_NO_RUNES)) return(FALSE);
 		break;
 		}
 
@@ -8951,7 +8951,7 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	default: ;
 	}
 
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -9183,6 +9183,6 @@ void aquatic_terrain_hack(cave_type **zcave, int x, int y) {
    static. - C. Blue
    Added for IDDC static towns, could maybe also be used for quests. */
 bool sustained_wpos(struct worldpos *wpos) {
-	if (is_fixed_irondeepdive_town(wpos, getlevel(wpos))) return TRUE;
-	return FALSE;
+	if (is_fixed_irondeepdive_town(wpos, getlevel(wpos))) return(TRUE);
+	return(FALSE);
 }

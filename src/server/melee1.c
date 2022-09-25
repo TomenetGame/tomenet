@@ -57,10 +57,10 @@ static int monster_critical(int dice, int sides, int dam) {
 	int total = dice * sides;
 
 	/* Must do at least 95% of perfect */
-	if (dam < total * 19 / 20) return (0);
+	if (dam < total * 19 / 20) return(0);
 
 	/* Weak blows rarely work */
-	if ((dam < 20) && (rand_int(100) >= dam)) return (0);
+	if ((dam < 20) && (rand_int(100) >= dam)) return(0);
 
 	/* Perfect damage */
 	if (dam == total) max++;
@@ -69,12 +69,12 @@ static int monster_critical(int dice, int sides, int dam) {
 	if (dam >= 40 && !rand_int(50)) max++;
 
 	/* Critical damage */
-	if (dam > 60) return (6 + max);
-	if (dam > 45) return (5 + max);
-	if (dam > 30) return (4 + max);
-	if (dam > 18) return (3 + max);
-	if (dam > 11) return (2 + max);
-	return (1 + max);
+	if (dam > 60) return(6 + max);
+	if (dam > 45) return(5 + max);
+	if (dam > 30) return(4 + max);
+	if (dam > 18) return(3 + max);
+	if (dam > 11) return(2 + max);
+	return(1 + max);
 }
 
 
@@ -95,10 +95,10 @@ static int check_hit(int Ind, int power, int level, bool flag) {
 	/* Percentile dice */
 	k = rand_int(100);
 	/* Hack -- Always miss or hit */
-	if (k < 10) return (k < 5);
+	if (k < 10) return(k < 5);
 
 	/* 'Blur' effect - miss more often */
-	if ((i = get_skill_scale(p_ptr, SKILL_OSHADOW, 20)) && no_real_lite(Ind) && rand_int(level + 10) < i) return FALSE;
+	if ((i = get_skill_scale(p_ptr, SKILL_OSHADOW, 20)) && no_real_lite(Ind) && rand_int(level + 10) < i) return(FALSE);
 
 	/* Calculate the "attack quality" */
 	i = (power + (level * 3));
@@ -106,7 +106,7 @@ static int check_hit(int Ind, int power, int level, bool flag) {
 	ac = (flag ? 0 : p_ptr->ac) + p_ptr->to_a;
 	/* Power and Level compete against Armor */
 #ifndef TO_AC_CAP_30
-	if ((i > 0) && (randint(i) > ((ac * 3) / 4))) return (TRUE);
+	if ((i > 0) && (randint(i) > ((ac * 3) / 4))) return(TRUE);
 #else
 	/* *3/4, *4/5, *5/6 and *6/7 are possible mainly:
 	   3/4 would mean a slight nerf to AC values,
@@ -116,11 +116,11 @@ static int check_hit(int Ind, int power, int level, bool flag) {
 	   However, note that *enchant* scrolls and shop enchantment service is indirectly buffed by TO_AC_CAP_30
 	   and that low-ac players also look a bit better in comparison to higher-ac ones now.
 	   All in all, 3/4 or 4/5 are the recommended values to use. */
-	if ((i > 0) && (randint(i) > ((ac * 4) / 5))) return (TRUE);
+	if ((i > 0) && (randint(i) > ((ac * 4) / 5))) return(TRUE);
 #endif
 
 	/* Assume miss */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -195,7 +195,7 @@ static bool do_eat_gold(int Ind, int m_idx) {
 #endif	// 0
 	s32b            gold;
 
-	if (safe_area(Ind)) return TRUE;
+	if (safe_area(Ind)) return(TRUE);
 
 	gold = (p_ptr->au / 10) + randint(25);
 	if (gold < 2) gold = 2;
@@ -247,7 +247,7 @@ static bool do_eat_gold(int Ind, int m_idx) {
 	p_ptr->window |= (PW_PLAYER);
 
 	/* Blink away */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -267,10 +267,10 @@ static bool do_eat_item(int Ind, int m_idx) {
 #endif
 
 	/* Amulet of Immortality */
-	//if (p_ptr->admin_invuln) return FALSE;
-	if (p_ptr->admin_invinc) return FALSE;
+	//if (p_ptr->admin_invuln) return(FALSE);
+	if (p_ptr->admin_invinc) return(FALSE);
 
-	if (safe_area(Ind)) return TRUE;
+	if (safe_area(Ind)) return(TRUE);
 
 	/* Find an item */
 	for (k = 0; k < 10; k++) {
@@ -380,7 +380,7 @@ static bool do_eat_item(int Ind, int m_idx) {
 		inven_item_optimize(Ind, i);
 
 		/* Done */
-		return (TRUE);
+		return(TRUE);
 	}
 	return(FALSE);
 }
@@ -416,7 +416,7 @@ static bool do_seduce(int Ind, int m_idx) {
 
 	if (crowd > 1) {
 		msg_print(Ind, "Two of you feel disturbed.");
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Get the monster name (or "it") */
@@ -431,7 +431,7 @@ static bool do_seduce(int Ind, int m_idx) {
 		chance *= 8;
 
 	/* Give up */
-	if (chance > 100) return (TRUE);
+	if (chance > 100) return(TRUE);
 
 	/* From what you'll undress? */
 	d = rand_int(6);
@@ -461,10 +461,10 @@ static bool do_seduce(int Ind, int m_idx) {
 		piece++;
 	}
 
-	if (piece || magik(chance)) return (FALSE);
+	if (piece || magik(chance)) return(FALSE);
 	if (p_ptr->chp < 4) {
 		msg_print(Ind, "You're too tired..");
-		return (TRUE);
+		return(TRUE);
 	}
 
 	msg_format(Ind, "You yield yourself to %s...", m_name);
@@ -537,7 +537,7 @@ static bool do_seduce(int Ind, int m_idx) {
 		}
 	}
 
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -576,7 +576,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 	bool player_vulnerable = FALSE;
 
 	/* Not allowed to attack */
-	if (r_ptr->flags1 & RF1_NEVER_BLOW) return (FALSE);
+	if (r_ptr->flags1 & RF1_NEVER_BLOW) return(FALSE);
 
 	/* Total armor */
 	ac = p_ptr->ac + p_ptr->to_a;
@@ -3500,7 +3500,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 
 	/* Assume we attacked */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -3517,7 +3517,7 @@ static int mon_check_hit(int m_idx, int power, int level) {
 	k = rand_int(100);
 
 	/* Hack -- Always miss or hit */
-	if (k < 10) return (k < 5);
+	if (k < 10) return(k < 5);
 
 	/* Calculate the "attack quality" */
 	i = (power + (level * 3));
@@ -3526,10 +3526,10 @@ static int mon_check_hit(int m_idx, int power, int level) {
 	ac = m_ptr->ac;
 
 	/* Power and Level compete against Armor */
-	if ((i > 0) && (randint(i) > ((ac * 3) / 4))) return (TRUE);
+	if ((i > 0) && (randint(i) > ((ac * 3) / 4))) return(TRUE);
 
 	/* Assume miss */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -3556,7 +3556,7 @@ bool monster_attack_normal(int tm_idx, int m_idx) {
 
 
 	/* Not allowed to attack */
-	if (r_ptr->flags1 & RF1_NEVER_BLOW) return (FALSE);
+	if (r_ptr->flags1 & RF1_NEVER_BLOW) return(FALSE);
 
 	/* Total armor */
 	ac = tm_ptr->ac;
@@ -3739,5 +3739,5 @@ bool monster_attack_normal(int tm_idx, int m_idx) {
 	}
 
 	/* Assume we attacked */
-	return (TRUE);
+	return(TRUE);
 }

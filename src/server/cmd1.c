@@ -100,9 +100,9 @@ bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x,
 			s_printf("NOTHINGHACK: cleared cave reference\n");
 		}
 #endif
-		return TRUE;
+		return(TRUE);
 	}
-	return FALSE;
+	return(FALSE);
 }
 bool nothing_test2(cave_type *c_ptr, int x, int y, struct worldpos *wpos, int marker) {
 	object_type *o_ptr;
@@ -111,18 +111,18 @@ bool nothing_test2(cave_type *c_ptr, int x, int y, struct worldpos *wpos, int ma
 #if 0 /* happens as it should in object2.c, marker 0, it seems. */
 		s_printf("NOTHING_TEST2: o_idx = 0 (%d)\n", marker);
 #endif
-		return FALSE;
+		return(FALSE);
 	}
 
 	o_ptr = &o_list[c_ptr->o_idx];
 	if (inarea(&o_ptr->wpos, wpos) &&
-	    (o_ptr->held_m_idx || (o_ptr->ix == x && o_ptr->iy == y))) return TRUE;
+	    (o_ptr->held_m_idx || (o_ptr->ix == x && o_ptr->iy == y))) return(TRUE);
 
 	s_printf("NOTHING_TEST2: o_idx %d, iwpos %d,%d,%d, ix,iy %d,%d. wpos %d,%d,%d x,y %d,%d (%d)\n",
 	    c_ptr->o_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy,
 	    wpos->wx, wpos->wy, wpos->wz, x, y,
 	    marker);
-	return FALSE;
+	return(FALSE);
 }
 
 /*
@@ -136,17 +136,17 @@ bool test_hit_fire(int chance, int ac, int vis) {
 	/* Percentile dice */
 	k = rand_int(100);
 	/* Hack -- Instant miss or hit */
-	if (k < 10) return (k < 5);
+	if (k < 10) return(k < 5);
 
 	/* Never hit */
-	if (chance <= 0) return (FALSE);
+	if (chance <= 0) return(FALSE);
 	/* Invisible monsters are harder to hit */
 	if (!vis) chance = (chance + 1) / 2;
 	/* Power competes against armor */
-	if (rand_int(chance) < (ac * 3 / 4)) return (FALSE);
+	if (rand_int(chance) < (ac * 3 / 4)) return(FALSE);
 
 	/* Assume hit */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -162,17 +162,17 @@ bool test_hit_melee(int chance, int ac, int vis) {
 	/* Percentile dice */
 	k = rand_int(100);
 	/* Hack -- Instant miss or hit */
-	if (k < 10) return (k < 5);
+	if (k < 10) return(k < 5);
 
 	/* Wimpy attack never hits */
-	if (chance <= 0) return (FALSE);
+	if (chance <= 0) return(FALSE);
 	/* Penalize invisible targets */
 	if (!vis) chance = (chance + 1) / 2;
 	/* Power must defeat armor */
-	if (rand_int(chance) < (ac * 3 / 4)) return (FALSE);
+	if (rand_int(chance) < (ac * 3 / 4)) return(FALSE);
 
 	/* Assume hit */
-	return (TRUE);
+	return(TRUE);
 }
 
 /* Check for rogueish melee skills eligibility, that is Critical-Strike and Backstabbing. Note that polearms are now allowed as a specialty (experimental). */
@@ -227,7 +227,7 @@ s16b critical_shot(int Ind, int weight, int plus, int dam, bool precision, bool 
 		}
 	}
 
-	return (dam);
+	return(dam);
 }
 
 
@@ -284,7 +284,7 @@ s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_cri
 		}
 	}
 
-	return (dam);
+	return(dam);
 }
 
 
@@ -880,21 +880,21 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 	/* If the object was thrown, reduce brand effect by 75%
 	   to avoid insane damage. */
 	if (thrown)
-		//return ((tdam * (((mult - FACTOR_MULT) * 10L) / 3 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
-		return (bonus / 2 + (tdam * (((mult - FACTOR_MULT) * 10L) / 3 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// hm, give bonus, see ammo comment below
+		//return((tdam * (((mult - FACTOR_MULT) * 10L) / 3 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
+		return(bonus / 2 + (tdam * (((mult - FACTOR_MULT) * 10L) / 3 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// hm, give bonus, see ammo comment below
 
 	/* Ranged weapons (except for boomerangs) get less benefit from brands */
 	if (o_ptr && is_ammo(o_ptr->tval))
-		//return ((tdam * (((mult - FACTOR_MULT) * 20L) / 5 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
-		return (bonus / 2 + (tdam * (((mult - FACTOR_MULT) * 20L) / 5 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// hm, rather give bonus, or some slays with 1d4 ammo will just not show ANY increase :/
-		//return ((tdam * mult) / FACTOR_MULT);
+		//return((tdam * (((mult - FACTOR_MULT) * 20L) / 5 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
+		return(bonus / 2 + (tdam * (((mult - FACTOR_MULT) * 20L) / 5 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// hm, rather give bonus, or some slays with 1d4 ammo will just not show ANY increase :/
+		//return((tdam * mult) / FACTOR_MULT);
 
 	/* Martial Arts styles (and bare-handed) get less benefit from brands */
 	if (!o_ptr || !o_ptr->k_idx)
-		return ((bonus * 2) / 3 + ((tdam * (((mult - FACTOR_MULT) * 10L) / 2 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT)));
+		return((bonus * 2) / 3 + ((tdam * (((mult - FACTOR_MULT) * 10L) / 2 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT)));
 
 	/* Return the total damage */
-	return (bonus + ((tdam * mult) / FACTOR_MULT));
+	return(bonus + ((tdam * mult) / FACTOR_MULT));
 }
 
 /*
@@ -1374,18 +1374,18 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 
 	/* If the object was thrown, reduce brand effect by 75%
 	   to avoid insane damage. */
-	if (thrown) return ((tdam * (((mult - FACTOR_MULT) * 10L) / 4 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
+	if (thrown) return((tdam * (((mult - FACTOR_MULT) * 10L) / 4 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
 
 	/* Ranged weapons (except for boomerangs) get less benefit from brands */
 	if (o_ptr && is_ammo(o_ptr->tval))
-		return ((tdam * (((mult - FACTOR_MULT) * 20L) / 5 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
+		return((tdam * (((mult - FACTOR_MULT) * 20L) / 5 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
 
 	/* Martial Arts styles get less benefit from brands */
 	if (!o_ptr || !o_ptr->k_idx)
-		return ((bonus * 2) / 3 + ((tdam * (((mult - FACTOR_MULT) * 10L) / 3 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT)));
+		return((bonus * 2) / 3 + ((tdam * (((mult - FACTOR_MULT) * 10L) / 3 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT)));
 
 	/* Return the total damage */
-	return (bonus + ((tdam * mult) / FACTOR_MULT));
+	return(bonus + ((tdam * mult) / FACTOR_MULT));
 }
 
 /*
@@ -1553,7 +1553,7 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 	bool delete_it;
 
 	/* Don't auto-stow unidentified items */
-	if (!object_known_p(Ind, o_ptr) || !object_aware_p(Ind, o_ptr)) return FALSE;
+	if (!object_known_p(Ind, o_ptr) || !object_aware_p(Ind, o_ptr)) return(FALSE);
 
 	/* Hack number */
 	if (pick_one) {
@@ -1604,15 +1604,15 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 		/* Tell the client */
 		Send_floor(Ind, 0);
 
-		return TRUE;
+		return(TRUE);
 	} else if (!pick_one) {
 		/* There are still items left in the stack, and we didn't try to pick up just one,
 		   so additionally try now to pick up the rest of this pile normally */
 		//o_ptr = &o_list[o_idx];
-		return FALSE;
+		return(FALSE);
 	}
 	/* We tried to pick_one, but still failed to stow it! So try to pick it up normally now. */
-	return FALSE;
+	return(FALSE);
 }
 #endif
 
@@ -2838,19 +2838,19 @@ static int check_hit(int Ind, int power) {
 	k = rand_int(100);
 
 	/* Hack -- 5% hit, 5% miss */
-	if (k < 10) return (k < 5);
+	if (k < 10) return(k < 5);
 
 	/* Paranoia -- No power */
-	if (power <= 0) return (FALSE);
+	if (power <= 0) return(FALSE);
 
 	/* Total armor */
 	ac = p_ptr->ac + p_ptr->to_a;
 
 	/* Power competes against Armor */
-	if (randint(power) > ((ac * 3) / 4)) return (TRUE);
+	if (randint(power) > ((ac * 3) / 4)) return(TRUE);
 
 	/* Assume miss */
-	return (FALSE);
+	return(FALSE);
 }
 #endif // if 0
 
@@ -6566,17 +6566,17 @@ bool do_prob_travel(int Ind, int dir) {
 	cave_type **zcave;
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
-	if (!(zcave = getcave(wpos))) return FALSE;
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Paranoia */
-	if (dir == 5) return FALSE;
-	if ((dir < 1) || (dir > 9)) return FALSE;
+	if (dir == 5) return(FALSE);
+	if ((dir < 1) || (dir > 9)) return(FALSE);
 
 	/* No probability travel in sticky vaults */
-	if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK)) return FALSE;
+	if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK)) return(FALSE);
 
 	/* Neither on NO_MAGIC levels */
-	if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return FALSE;
+	if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return(FALSE);
 
 	x += ddx[dir];
 	y += ddy[dir];
@@ -6601,7 +6601,7 @@ bool do_prob_travel(int Ind, int dir) {
 		do_move = TRUE;
 		break;
 	}
-	if (tries == 1000) return FALSE; /* fail */
+	if (tries == 1000) return(FALSE); /* fail */
 
 	if (do_move) {
 		int oy, ox;
@@ -6643,7 +6643,7 @@ bool do_prob_travel(int Ind, int dir) {
 		redraw_stuff(Ind);
 		window_stuff(Ind);
 	}
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -6665,7 +6665,7 @@ bool wraith_access(int Ind) {
 			}
 		}
 	}
-	return (house ? FALSE : TRUE);
+	return(house ? FALSE : TRUE);
 }
 
 
@@ -6687,7 +6687,7 @@ static bool wraith_access_virtual(int Ind, int y, int x)
 	p_ptr->py = oy;
 	p_ptr->px = ox;
 
-	return (result);
+	return(result);
 }
 
 
@@ -6701,14 +6701,14 @@ bool player_can_enter(int Ind, byte feature, bool comfortably) {
 
 	/* Dungeon Master pass through everything (cept array boundary :) */
 	if (p_ptr->admin_dm && !(f_info[feature].flags2 & FF2_BOUNDARY))
-		return (TRUE);
+		return(TRUE);
 
 	/* Special one-way doors for quests: Allow traversing if we're on a CAVE_ICKY grid. */
 	if (feature == FEAT_ESCAPE_DOOR || feature == FEAT_SICKBAY_DOOR) {
 		cave_type cave = getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px];
 		if ((cave.info & CAVE_ICKY) || (f_info[cave.feat].flags1 & FF1_PROTECTED))
-			return TRUE;
-		return FALSE;
+			return(TRUE);
+		return(FALSE);
 	}
 
 	/* Player can not walk through "walls" unless in Shadow Form */
@@ -6719,9 +6719,9 @@ bool player_can_enter(int Ind, byte feature, bool comfortably) {
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) {
 		if (feature == FEAT_HOME || (feature >= FEAT_DOOR_HEAD && feature <= FEAT_DOOR_TAIL)
 		    || feature == FEAT_BUSH || feature == FEAT_TREE || feature == FEAT_DEAD_TREE)
-			return TRUE;
+			return(TRUE);
 		//use natural drown/damage code for this stuff instead:
-		//if (feature == FEAT_DEEP_WATER || feature == FEAT_DEEP_LAVA) return FALSE;
+		//if (feature == FEAT_DEEP_WATER || feature == FEAT_DEEP_LAVA) return(FALSE);
 	}
 
 #if 0	// it's interesting.. hope we can have similar feature :)
@@ -6734,8 +6734,8 @@ bool player_can_enter(int Ind, byte feature, bool comfortably) {
 			if (comfortably &&
 			    //!(p_ptr->immune_water || p_ptr->res_water ||.
 			    !(p_ptr->can_swim || p_ptr->levitate || p_ptr->ghost || p_ptr->tim_wraith))
-				return FALSE;
-			return (TRUE);	/* you can pass, but you may suffer dmg */
+				return(FALSE);
+			return(TRUE);	/* you can pass, but you may suffer dmg */
 
 		case FEAT_SHAL_LAVA:
 		case FEAT_DEEP_LAVA:
@@ -6743,51 +6743,51 @@ bool player_can_enter(int Ind, byte feature, bool comfortably) {
 		case FEAT_GREAT_FIRE:
 			if (comfortably && !p_ptr->immune_fire &&
 			    !(p_ptr->resist_fire && p_ptr->oppose_fire))
-				return FALSE;
-			return (TRUE);	/* you can pass, but you may suffer dmg */
+				return(FALSE);
+			return(TRUE);	/* you can pass, but you may suffer dmg */
 
 		case FEAT_DEAD_TREE:
 			if ((p_ptr->levitate) || pass_wall || p_ptr->town_pass_trees)
-			    return (TRUE);
-			else return FALSE;
+			    return(TRUE);
+			else return(FALSE);
 		case FEAT_BUSH:
 		case FEAT_TREE:
 			/* 708 = Ent (passes trees), 83/142 novice ranger, 345 ranger, 637 ranger chieftain, 945 high-elven ranger */
 			if ((p_ptr->levitate) || (p_ptr->pass_trees) || pass_wall || p_ptr->town_pass_trees)
-				return (TRUE);
-			else return (FALSE);
+				return(TRUE);
+			else return(FALSE);
 #if 0
 		case FEAT_WALL_HOUSE:
-			if (!pass_wall || !wraith_access_virtual(Ind), xxx, yyy) return (FALSE);
-			else return (TRUE);
+			if (!pass_wall || !wraith_access_virtual(Ind), xxx, yyy) return(FALSE);
+			else return(TRUE);
 #endif
 
 		default:
 			if ((p_ptr->climb) && (f_info[feature].flags1 & FF1_CAN_CLIMB))
-				return (TRUE);
+				return(TRUE);
 			if ((p_ptr->levitate) &&
 			    ((f_info[feature].flags1 & FF1_CAN_LEVITATE) ||
 			    (f_info[feature].flags1 & FF1_CAN_FEATHER)))
-				return (TRUE);
+				return(TRUE);
 			else if (only_wall && (f_info[feature].flags1 & FF1_FLOOR))
-				return (FALSE);
+				return(FALSE);
 			else if ((p_ptr->feather_fall || p_ptr->tim_wraith) &&
 			    (f_info[feature].flags1 & FF1_CAN_FEATHER))
-				return (TRUE);
+				return(TRUE);
 			else if ((pass_wall || only_wall) &&
 			     (f_info[feature].flags1 & FF1_CAN_PASS))
-				return (TRUE);
+				return(TRUE);
 			else if (f_info[feature].flags1 & FF1_NO_WALK)
-				return (FALSE);
+				return(FALSE);
 			else if ((f_info[feature].flags1 & FF1_WEB) &&
 			    (!(r_info[p_ptr->body_monster].flags7 & RF7_SPIDER)))
-				return (FALSE);
+				return(FALSE);
 
 			else if ((f_info[feature].flags1 & FF1_WALL) && (!pass_wall || (f_info[feature].flags1 & FF1_PERMANENT)))
-				return FALSE;
+				return(FALSE);
 	}
 
-	return (TRUE);
+	return(TRUE);
 }
 
 /* Helper function for move_player():
@@ -7821,15 +7821,15 @@ int see_wall(int Ind, int dir, int y, int x)
 		/* Update the location's player index */
 		zcave[p_ptr->py][p_ptr->px].m_idx = 0 - Ind;
 		cave_midx_debug(wpos, p_ptr->py, p_ptr->px, -Ind);
-		return (FALSE);
+		return(FALSE);
 	}
 
 	/* Ghosts run right through everything */
-	if ((p_ptr->ghost || p_ptr->tim_wraith)) return (FALSE);
+	if ((p_ptr->ghost || p_ptr->tim_wraith)) return(FALSE);
 
 #if 0
 	/* Do wilderness hack, keep running from one outside level to another */
-	if ((!in_bounds(y, x)) && (wpos->wz == 0)) return FALSE;
+	if ((!in_bounds(y, x)) && (wpos->wz == 0)) return(FALSE);
 #else
 	/* replacing the above hack by simply using DONT_NOTICE_RUNNING | FLOOR | CAN_RUN
 	   flags in f_info for feat FEAT_PERM_CLEAR (0x16, the invisible level border).
@@ -7847,7 +7847,7 @@ int see_wall(int Ind, int dir, int y, int x)
 	/* Pft, it works, but update_lite also relies on the missing FLOOR, lol.
 	   Ok, really gonna try and fix the root instead, ie the different treatment by
 	   run-initialization in comparison to continue-running-testing.. */
-	if (zcave[y][x].feat == FEAT_PERM_CLEAR) return (FALSE); /* here goes part 1.. */
+	if (zcave[y][x].feat == FEAT_PERM_CLEAR) return(FALSE); /* here goes part 1.. */
 	/* appearently run_init() works ok, ie treats them as open area thanks to calling see_wall().
 	   checking run_test() now.. done. Added FEAT_PERM_CLEAR checks there too. Seems working fine now!
 	   (Appearently those grids aren't CAVE_MARK'ed.) */
@@ -7859,25 +7859,25 @@ int see_wall(int Ind, int dir, int y, int x)
 #endif
 
 	/* Must actually block motion */
-	if (cave_floor_bold(zcave, y, x)) return (FALSE);
+	if (cave_floor_bold(zcave, y, x)) return(FALSE);
 
-	if (f_info[zcave[y][x].feat].flags1 & FF1_CAN_RUN) return (FALSE);
+	if (f_info[zcave[y][x].feat].flags1 & FF1_CAN_RUN) return(FALSE);
 
 #if 1 /* NEW_RUNNING_FEAT */
 	/* hack - allow 'running' when levitating over something */
-	if ((f_info[zcave[y][x].feat].flags1 & (FF1_CAN_LEVITATE | FF1_CAN_RUN)) && p_ptr->levitate) return (FALSE);
+	if ((f_info[zcave[y][x].feat].flags1 & (FF1_CAN_LEVITATE | FF1_CAN_RUN)) && p_ptr->levitate) return(FALSE);
 	/* hack - allow 'running' if player may pass trees  */
 	if ((zcave[y][x].feat == FEAT_DEAD_TREE || zcave[y][x].feat == FEAT_TREE || zcave[y][x].feat == FEAT_BUSH)
-	     && p_ptr->pass_trees) return (FALSE);
+	     && p_ptr->pass_trees) return(FALSE);
 	/* hack - allow 'running' if player can swim - HARDCODED :( */
 	if ((zcave[y][x].feat == FEAT_SHAL_WATER || zcave[y][x].feat == FEAT_TAINTED_WATER || zcave[y][x].feat == FEAT_DEEP_WATER)
-	     && p_ptr->can_swim) return (FALSE);
+	     && p_ptr->can_swim) return(FALSE);
 #endif
 	/* Must be known to the player */
-	if (!(p_ptr->cave_flag[y][x] & CAVE_MARK)) return (FALSE);
+	if (!(p_ptr->cave_flag[y][x] & CAVE_MARK)) return(FALSE);
 
 	/* Default */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -7896,19 +7896,19 @@ static int see_nothing(int dir, int Ind, int y, int x)
 	x += ddx[dir];
 
 	/* Illegal grids are unknown */
-	if (!in_bounds(y, x)) return (TRUE);
+	if (!in_bounds(y, x)) return(TRUE);
 
 	/* Memorized grids are known */
-	if (p_ptr->cave_flag[y][x] & CAVE_MARK) return (FALSE);
+	if (p_ptr->cave_flag[y][x] & CAVE_MARK) return(FALSE);
 
 	/* Non-floor grids are unknown */
-	if (!cave_floor_bold(zcave, y, x)) return (TRUE);
+	if (!cave_floor_bold(zcave, y, x)) return(TRUE);
 
 	/* Viewable grids are known */
-	if (player_can_see_bold(Ind, y, x)) return (FALSE);
+	if (player_can_see_bold(Ind, y, x)) return(FALSE);
 
 	/* Default */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -8243,7 +8243,7 @@ static bool run_test(int Ind) {
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* XXX -- Ghosts never stop running */
-	if (p_ptr->ghost || p_ptr->tim_wraith) return (FALSE);
+	if (p_ptr->ghost || p_ptr->tim_wraith) return(FALSE);
 
 	/* No options yet */
 	option = 0;
@@ -8280,7 +8280,7 @@ static bool run_test(int Ind) {
 					s_printf("warning_run_lite: %s\n", p_ptr->name);
 				}
 			}
-			return TRUE;
+			return(TRUE);
 		}
 
 		/* Visible monsters abort running */
@@ -8293,27 +8293,27 @@ static bool run_test(int Ind) {
 			if (p_ptr->mon_vis[c_ptr->m_idx] &&
 			   (!(m_list[c_ptr->m_idx].special) &&
 			   r_info[m_list[c_ptr->m_idx].r_idx].level != 0))
-					return (TRUE);
+					return(TRUE);
 
 		}
 
 #ifdef HOSTILITY_ABORTS_RUNNING /* pvp mode chars cannot run with this on */
 		/* Hostile characters will stop each other from running.
 		 * This should lessen the melee storming effect in PVP fights */
-		if (c_ptr->m_idx < 0 && check_hostile(Ind, 0 - c_ptr->m_idx)) return (TRUE);
+		if (c_ptr->m_idx < 0 && check_hostile(Ind, 0 - c_ptr->m_idx)) return(TRUE);
 #endif
 
 		/* Visible objects abort running */
 		if (c_ptr->o_idx) {
 			/* Visible object */
-			if (p_ptr->obj_vis[c_ptr->o_idx]) return (TRUE);
+			if (p_ptr->obj_vis[c_ptr->o_idx]) return(TRUE);
 		}
 
 		/* Visible traps abort running */
-		if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && cs_ptr->sc.trap.found) return TRUE;
+		if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && cs_ptr->sc.trap.found) return(TRUE);
 
 		/* Hack -- basically stop in water */
-		if (c_ptr->feat == FEAT_DEEP_WATER && !aqua) return TRUE;
+		if (c_ptr->feat == FEAT_DEEP_WATER && !aqua) return(TRUE);
 
 		/* Assume unknown */
 		inv = TRUE;
@@ -8371,14 +8371,14 @@ static bool run_test(int Ind) {
 			if (f_info[c_ptr->feat].flags1 & FF1_DONT_NOTICE_RUNNING) notice = FALSE;
 
 			/* Interesting feature */
-			if (notice) return (TRUE);
+			if (notice) return(TRUE);
 
 			/* The grid is "visible" */
 			inv = FALSE;
 		}
 
 		/* Option -- ignore */
-		if (c_ptr->feat == FEAT_MON_TRAP && !p_ptr->find_ignore_montraps) return TRUE;
+		if (c_ptr->feat == FEAT_MON_TRAP && !p_ptr->find_ignore_montraps) return(TRUE);
 
 		/* Analyze unknown grids and floors */
 		/* wilderness hack to run from one level to the next */
@@ -8395,10 +8395,10 @@ static bool run_test(int Ind) {
 			else if (!option) option = new_dir;
 
 			/* Three new directions. Stop running. */
-			else if (option2) return (TRUE);
+			else if (option2) return(TRUE);
 
 			/* Two non-adjacent new directions.  Stop running. */
-			else if (option != cycle[chome[prev_dir] + i - 1]) return (TRUE);
+			else if (option != cycle[chome[prev_dir] + i - 1]) return(TRUE);
 
 			/* Two new (adjacent) directions (case 1) */
 			else if (new_dir & 0x01) {
@@ -8451,12 +8451,12 @@ static bool run_test(int Ind) {
 			       && cave_running_bold_trees(p_ptr, zcave, row, col)) )
 			    ) {
 				/* Looking to break right */
-				if (p_ptr->find_breakright) return (TRUE);
+				if (p_ptr->find_breakright) return(TRUE);
 			}
 			/* Obstacle */
 			else {
 				/* Looking to break left */
-				if (p_ptr->find_breakleft) return (TRUE);
+				if (p_ptr->find_breakleft) return(TRUE);
 			}
 		}
 
@@ -8478,12 +8478,12 @@ static bool run_test(int Ind) {
 			       && cave_running_bold_trees(p_ptr, zcave, row, col)) )
 			    ) {
 				/* Looking to break left */
-				if (p_ptr->find_breakleft) return (TRUE);
+				if (p_ptr->find_breakleft) return(TRUE);
 			}
 			/* Obstacle */
 			else {
 				/* Looking to break right */
-				if (p_ptr->find_breakright) return (TRUE);
+				if (p_ptr->find_breakright) return(TRUE);
 			}
 		}
 	}
@@ -8491,7 +8491,7 @@ static bool run_test(int Ind) {
 	/* Not looking for open area */
 	else {
 		/* No options */
-		if (!option) return (TRUE);
+		if (!option) return(TRUE);
 
 		/* One option */
 		else if (!option2) {
@@ -8531,7 +8531,7 @@ static bool run_test(int Ind) {
 				}
 
 				/* STOP: we are next to an intersection or a room */
-				else return (TRUE);
+				else return(TRUE);
 			}
 
 			/* This corner is seen to be enclosed; we cut the corner. */
@@ -8550,10 +8550,10 @@ static bool run_test(int Ind) {
 	}
 
 	/* About to hit a known wall, stop */
-	if (see_wall(Ind, p_ptr->find_current, p_ptr->py, p_ptr->px))return (TRUE);
+	if (see_wall(Ind, p_ptr->find_current, p_ptr->py, p_ptr->px))return(TRUE);
 
 	/* Failure */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -8707,7 +8707,7 @@ int apply_block_chance(player_type *p_ptr, int n) { /* n can already be modified
 	if (p_ptr->stun) n = (n * 7) / 10;
 	if (p_ptr->stun > 50) n = (n * 7) / 10;
 	if (!n) n = 1;
-	return (n);
+	return(n);
 }
 
 int apply_parry_chance(player_type *p_ptr, int n) { /* n can already be modified chance */
@@ -8718,7 +8718,7 @@ int apply_parry_chance(player_type *p_ptr, int n) { /* n can already be modified
 	if (p_ptr->stun) n = (n * 7) / 10;
 	if (p_ptr->stun > 50) n = (n * 7) / 10;
 	if (!n) n = 1;
-	return (n);
+	return(n);
 }
 
 /* Remember our previous pseudo-id feeling on flavoured items */
@@ -8755,10 +8755,10 @@ bool remember_sense(int Ind, int slot, object_type *o_ptr) {
 					o_ptr->auto_insc = TRUE;
 				}
 			}
-			return TRUE;
+			return(TRUE);
 		}
 		/* We have "felt" this kind of object already before */
 		o_ptr->ident |= (ID_SENSE);
 	}
-	return FALSE;
+	return(FALSE);
 }

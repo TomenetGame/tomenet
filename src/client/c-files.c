@@ -91,7 +91,7 @@ static s16b tokenize(char *buf, s16b num, char **tokens) {
 	tokens[i++] = s;
 
 	/* Number found */
-	return (i);
+	return(i);
 }
 
 
@@ -100,18 +100,18 @@ static s16b tokenize(char *buf, s16b num, char **tokens) {
  * Convert a octal-digit into a decimal
  */
 static int deoct(char c) {
-	if (isdigit(c)) return (D2I(c));
-	return (0);
+	if (isdigit(c)) return(D2I(c));
+	return(0);
 }
 
 /*
  * Convert a hexidecimal-digit into a decimal
  */
 static int dehex(char c) {
-	if (isdigit(c)) return (D2I(c));
-	if (islower(c)) return (A2I(c) + 10);
-	if (isupper(c)) return (A2I(tolower(c)) + 10);
-	return (0);
+	if (isdigit(c)) return(D2I(c));
+	if (islower(c)) return(A2I(c) + 10);
+	if (isupper(c)) return(A2I(tolower(c)) + 10);
+	return(0);
 }
 
 
@@ -230,12 +230,12 @@ static errr path_parse(char *buf, cptr file) {
 	buf[0] = '\0';
 
 	/* No file? */
-	if (!file) return (-1);
+	if (!file) return(-1);
 
 	/* File needs no parsing */
 	if (file[0] != '~') {
 		strcpy(buf, file);
-		return (0);
+		return(0);
 	}
 
 	/* Windows should never have ~ in filename */
@@ -249,7 +249,7 @@ static errr path_parse(char *buf, cptr file) {
 	s = strstr(u, PATH_SEP);
 
 	/* Hack -- no long user names */
-	if (s && (s >= u + sizeof(user))) return (1);
+	if (s && (s >= u + sizeof(user))) return(1);
 
 	/* Extract a user name */
 	if (s) {
@@ -268,7 +268,7 @@ static errr path_parse(char *buf, cptr file) {
 	else pw = getpwuid(getuid());
 
 	/* Nothing found? */
-	if (!pw) return (2);
+	if (!pw) return(2);
 
 	/* Make use of the info */
 	(void)strcpy(buf, pw->pw_dir);
@@ -279,7 +279,7 @@ static errr path_parse(char *buf, cptr file) {
 #endif
 #endif /* WIN32 */
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -294,11 +294,11 @@ FILE *my_fopen(cptr file, cptr mode) {
 	/* Hack -- Try to parse the path */
 	if ((err = path_parse(buf, file))) {
 		errno = 900 + err;
-		return (NULL);
+		return(NULL);
 	}
 
 	/* Attempt to fopen the file anyway */
-	return (fopen(buf, mode));
+	return(fopen(buf, mode));
 }
 
 
@@ -307,13 +307,13 @@ FILE *my_fopen(cptr file, cptr mode) {
  */
 errr my_fclose(FILE *fff) {
 	/* Require a file */
-	if (!fff) return (-1);
+	if (!fff) return(-1);
 
 	/* Close, check for error */
-	if (fclose(fff) == EOF) return (1);
+	if (fclose(fff) == EOF) return(1);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*
@@ -323,10 +323,10 @@ bool my_freadable(cptr file) {
 	FILE *fff;
 	fff = my_fopen(file, "rb");
 
-	if (fff) return (FALSE);
+	if (fff) return(FALSE);
 
 	my_fclose(fff);
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -351,7 +351,7 @@ errr my_fgets(FILE *fff, char *buf, huge n) {
 				buf[i] = '\0';
 
 				/* Success */
-				return (0);
+				return(0);
 			}
 
 			/* Handle tabs */
@@ -381,7 +381,7 @@ errr my_fgets(FILE *fff, char *buf, huge n) {
 	buf[0] = '\0';
 
 	/* Failure */
-	return (1);
+	return(1);
 }
 
 /*
@@ -803,23 +803,23 @@ errr process_pref_file_aux(char *buf) {
 	static char *macro__buf = NULL;
 
 	/* Skip "empty" lines */
-	if (!buf[0]) return (0);
+	if (!buf[0]) return(0);
 
 	/* Skip "blank" lines */
-	if (isspace(buf[0])) return (0);
+	if (isspace(buf[0])) return(0);
 
 	/* Skip comments */
-	if (buf[0] == '#') return (0);
+	if (buf[0] == '#') return(0);
 
 
 	/* Require "?:*" format */
-	if (buf[1] != ':') return (1);
+	if (buf[1] != ':') return(1);
 
 
 	/* Process "%:<fname>" */
 	if (buf[0] == '%') {
 		/* Attempt to Process the given file */
-		return (process_pref_file(buf + 2));
+		return(process_pref_file(buf + 2));
 	}
 
 	/* Necessary hack, otherwise 'options.prf' and 'window.prf' will also be
@@ -841,7 +841,7 @@ errr process_pref_file_aux(char *buf) {
 			i += 12;	/* gfx-fix by Tanix */
 			n1 = strtol(zz[1], NULL, 0);
 			n2 = strtol(zz[2], NULL, 0) + char_map_offset;
-			if (i >= MAX_R_IDX) return (1);
+			if (i >= MAX_R_IDX) return(1);
 #ifdef USE_GRAPHICS
 			if (!use_graphics)
 #endif
@@ -851,7 +851,7 @@ errr process_pref_file_aux(char *buf) {
 				Client_setup.r_char[i] = n2;
 				monster_mapping_mod = u32b_char_dict_set(monster_mapping_mod, n2, monster_mapping_org[i]);
 			}
-			return (0);
+			return(0);
 		}
 	}
 
@@ -862,14 +862,14 @@ errr process_pref_file_aux(char *buf) {
 			i = (huge)strtol(zz[0], NULL, 0);
 			n1 = strtol(zz[1], NULL, 0);
 			n2 = strtol(zz[2], NULL, 0) + char_map_offset;
-			if (i >= MAX_K_IDX) return (1);
+			if (i >= MAX_K_IDX) return(1);
 #ifdef USE_GRAPHICS
 			if (!use_graphics)
 #endif
 				if (n2 > MAX_FONT_CHAR) return(1);
 			if (n1) Client_setup.k_attr[i] = n1;
 			if (n2) Client_setup.k_char[i] = n2;
-			return (0);
+			return(0);
 		}
 	}
 
@@ -880,7 +880,7 @@ errr process_pref_file_aux(char *buf) {
 			i = (huge)strtol(zz[0], NULL, 0);
 			n1 = strtol(zz[1], NULL, 0);
 			n2 = strtol(zz[2], NULL, 0) + char_map_offset;
-			if (i >= MAX_F_IDX) return (1);
+			if (i >= MAX_F_IDX) return(1);
 #ifdef USE_GRAPHICS
 			if (!use_graphics)
 #endif
@@ -890,7 +890,7 @@ errr process_pref_file_aux(char *buf) {
 				Client_setup.f_char[i] = n2;
 				floor_mapping_mod = u32b_char_dict_set(floor_mapping_mod, n2, floor_mapping_org[i]);
 			}
-			return (0);
+			return(0);
 		}
 	}
 
@@ -908,7 +908,7 @@ errr process_pref_file_aux(char *buf) {
 				if (n2 > MAX_FONT_CHAR) return(1);
 			if (n1) Client_setup.u_attr[j] = n1;
 			if (n2) Client_setup.u_char[j] = n2;
-			return (0);
+			return(0);
 		}
 	}
 
@@ -916,7 +916,7 @@ errr process_pref_file_aux(char *buf) {
 	/* Process "E:<tv>:<a>/<c>" -- attr/char for equippy chars */
 	else if (buf[0] == 'E') {
 		/* Do nothing */
-		return (0);
+		return(0);
 
 #if 0
 		if (tokenize(buf + 2, 3, zz) == 3) {
@@ -925,7 +925,7 @@ errr process_pref_file_aux(char *buf) {
 			n2 = strtol(zz[2], NULL, 0);
 			if (n1) tval_to_attr[j] = n1;
 			if (n2) tval_to_char[j] = n2;
-			return (0);
+			return(0);
 		}
 #endif
 	}
@@ -939,7 +939,7 @@ errr process_pref_file_aux(char *buf) {
 		macro__buf = mem_alloc(strlen(buf));
 
 		text_to_ascii(macro__buf, buf + 2);
-		return (0);
+		return(0);
 	}
 
 	/* Process "P:<str>" -- create normal macro */
@@ -951,7 +951,7 @@ errr process_pref_file_aux(char *buf) {
 		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return 0;
 
 		macro_add(tmp, macro__buf, FALSE, FALSE);
-		return (0);
+		return(0);
 	}
 
 	/* Process "H:<str>" -- create hybrid macro */
@@ -963,7 +963,7 @@ errr process_pref_file_aux(char *buf) {
 		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return 0;
 
 		macro_add(tmp, macro__buf, FALSE, TRUE);
-		return (0);
+		return(0);
 	}
 
 	/* Process "C:<str>" -- create command macro */
@@ -975,7 +975,7 @@ errr process_pref_file_aux(char *buf) {
 		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return 0;
 
 		macro_add(tmp, macro__buf, TRUE, FALSE);
-		return (0);
+		return(0);
 	}
 
 	/* Process "D:<str>" -- delete a macro */
@@ -1000,7 +1000,7 @@ errr process_pref_file_aux(char *buf) {
 			if ((k > 9) || (k == 5)) k = 0;
 			keymap_cmds[i] = j;
 			keymap_dirs[i] = k;
-			return (0);
+			return(0);
 		}
 	}
 
@@ -1008,7 +1008,7 @@ errr process_pref_file_aux(char *buf) {
 	/* Process "V:<num>:<kv>:<rv>:<gv>:<bv>" -- visual info */
 	else if (buf[0] == 'V') {
 		/* Do nothing */
-		return (0);
+		return(0);
 
 		if (tokenize(buf + 2, 5, zz) == 5) {
 			i = (byte)strtol(zz[0], NULL, 0);
@@ -1016,7 +1016,7 @@ errr process_pref_file_aux(char *buf) {
 			color_table[i][1] = (byte)strtol(zz[2], NULL, 0);
 			color_table[i][2] = (byte)strtol(zz[3], NULL, 0);
 			color_table[i][3] = (byte)strtol(zz[4], NULL, 0);
-			return (0);
+			return(0);
 		}
 	}
 
@@ -1030,7 +1030,7 @@ errr process_pref_file_aux(char *buf) {
 				(*option_info[i].o_var) = FALSE;
 				Client_setup.options[i] = FALSE;
 				check_immediate_options(i, FALSE, in_game);
-				return (0);
+				return(0);
 			}
 		}
 	}
@@ -1044,7 +1044,7 @@ errr process_pref_file_aux(char *buf) {
 				(*option_info[i].o_var) = TRUE;
 				Client_setup.options[i] = TRUE;
 				check_immediate_options(i, TRUE, in_game);
-				return (0);
+				return(0);
 			}
 		}
 	}
@@ -1054,13 +1054,13 @@ errr process_pref_file_aux(char *buf) {
 		if (tokenize(buf + 2, 2, zz) == 2) {
 			i = (byte)strtol(zz[0], NULL, 0);
 			window_flag[i] = 1L << ((byte)strtol(zz[1], NULL, 0));
-			return (0);
+			return(0);
 		}
 	}
 
 
 	/* Failure */
-	return (1);
+	return(1);
 }
 
 
@@ -1083,7 +1083,7 @@ errr process_pref_file(cptr name) {
 	fp = my_fopen(buf, "r");
 
 	/* Catch errors */
-	if (!fp) return (-1);
+	if (!fp) return(-1);
 
 	/* Process the file */
 	while (0 == (err = my_fgets2(fp, &buf2, &n))) {
@@ -1104,7 +1104,7 @@ errr process_pref_file(cptr name) {
 	my_fclose(fp);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1443,7 +1443,7 @@ errr file_character(cptr name, bool quiet) {
 		clear_topline_forced();
 
 		/* Error */
-		return (-1);
+		return(-1);
 	}
 
 	/* Save the old screen */
@@ -1634,7 +1634,7 @@ errr file_character(cptr name, bool quiet) {
 	clear_topline_forced();
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*

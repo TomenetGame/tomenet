@@ -537,7 +537,7 @@ static int next_to_walls(struct worldpos *wpos, int y, int x)
 	if (f_info[zcave[y-1][x].feat].flags1 & FF1_WALL) k++;
 	if (f_info[zcave[y][x+1].feat].flags1 & FF1_WALL) k++;
 	if (f_info[zcave[y][x-1].feat].flags1 & FF1_WALL) k++;
-	return (k);
+	return(k);
 }
 
 
@@ -583,9 +583,9 @@ static int along_hallway(cave_type **zcave, int x, int y) {
 		if (walls != 3) continue;
 
 		/* success */
-		return (pos + 1);
+		return(pos + 1);
 	}
-	return 0;
+	return(0);
 }
 
 /*
@@ -789,34 +789,34 @@ bool place_between_targetted(struct worldpos *wpos, int y, int x, int ty, int tx
 	c_special *cs_ptr;
 
 	/* The two gates must be placed on different locations - apparently this actually happened! ^^ */
-	if (x == tx && y == ty) return FALSE;
+	if (x == tx && y == ty) return(FALSE);
 
-	if (!(zcave = getcave(wpos))) return FALSE;
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Require "naked" floor grid */
-	if (!cave_clean_bold(zcave, y, x)) return FALSE;
-	if (!cave_naked_bold(zcave, ty, tx)) return FALSE;
+	if (!cave_clean_bold(zcave, y, x)) return(FALSE);
+	if (!cave_naked_bold(zcave, ty, tx)) return(FALSE);
 
 	/* No between-gate over traps/house doors etc */
 	c_ptr = &zcave[y][x];
-	if (c_ptr->special) return FALSE;
+	if (c_ptr->special) return(FALSE);
 
 	/* Access the target grid */
 	c1_ptr = &zcave[ty][tx];
-	if (c1_ptr->special) return FALSE;
+	if (c1_ptr->special) return(FALSE);
 
-	if (!(cs_ptr = AddCS(c_ptr, CS_BETWEEN))) return FALSE;
+	if (!(cs_ptr = AddCS(c_ptr, CS_BETWEEN))) return(FALSE);
 	cave_set_feat(wpos, y, x, FEAT_BETWEEN);
 	cs_ptr->sc.between.fy = ty;
 	cs_ptr->sc.between.fx = tx;
 
 	/* XXX not 'between' gate can be generated */
-	if (!(cs_ptr = AddCS(c1_ptr, CS_BETWEEN))) return FALSE;
+	if (!(cs_ptr = AddCS(c1_ptr, CS_BETWEEN))) return(FALSE);
 	cave_set_feat(wpos, ty, tx, FEAT_BETWEEN);
 	cs_ptr->sc.between.fy = y;
 	cs_ptr->sc.between.fx = x;
 
-	return TRUE;
+	return(TRUE);
 }
 
 /*
@@ -865,18 +865,18 @@ bool place_between_dummy(struct worldpos *wpos, int y, int x) {
 	cave_type **zcave;
 	cave_type *c_ptr;
 
-	if (!(zcave = getcave(wpos))) return FALSE;
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Require "naked" floor grid */
-	if (!cave_clean_bold(zcave, y, x)) return FALSE;
+	if (!cave_clean_bold(zcave, y, x)) return(FALSE);
 
 	/* No between-gate over traps/house doors etc */
 	c_ptr = &zcave[y][x];
-	if (c_ptr->special) return FALSE;
+	if (c_ptr->special) return(FALSE);
 
 	cave_set_feat(wpos, y, x, FEAT_BETWEEN_TEMP);
 
-	return TRUE;
+	return(TRUE);
 }
 
 /*
@@ -1382,13 +1382,13 @@ static bool vault_aux_aquatic(int r_idx)
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
-	if (r_ptr->flags1 & RF1_UNIQUE) return (FALSE);
+	if (r_ptr->flags1 & RF1_UNIQUE) return(FALSE);
 
 	/* Require Aquatique */
-	if (!(r_ptr->flags7 & RF7_AQUATIC)) return (FALSE);
+	if (!(r_ptr->flags7 & RF7_AQUATIC)) return(FALSE);
 
 	/* Okay */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -2015,16 +2015,16 @@ static bool get_is_floor(worldpos *wpos, int x, int y)
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Out of bounds */
-	if (!in_bounds(y, x)) return (FALSE);	/* XXX */
+	if (!in_bounds(y, x)) return(FALSE);	/* XXX */
 
 	/* Do the real check: */
-	if (f_info[zcave[y][x].feat].flags1 & FF1_FLOOR) return (TRUE);
+	if (f_info[zcave[y][x].feat].flags1 & FF1_FLOOR) return(TRUE);
 #if 0
 	if (zcave[y][x].feat == FEAT_FLOOR ||
-		zcave[y][x].feat == FEAT_DEEP_WATER) return (TRUE);
+		zcave[y][x].feat == FEAT_DEEP_WATER) return(TRUE);
 #endif	/* 0 */
 
-	return (FALSE);
+	return(FALSE);
 }
 
 /*
@@ -2152,15 +2152,15 @@ bool room_alloc(worldpos *wpos, int x, int y, bool crowded, int by0, int bx0, in
 
 
 	/* Never run off the screen */
-	if ((by1 < 0) || (by2 >= dun->row_rooms)) return (FALSE);
-	if ((bx1 < 0) || (bx2 >= dun->col_rooms)) return (FALSE);
+	if ((by1 < 0) || (by2 >= dun->row_rooms)) return(FALSE);
+	if ((bx1 < 0) || (bx2 >= dun->col_rooms)) return(FALSE);
 
 	/* Verify open space */
 	for (by = by1; by <= by2; by++)
 	{
 		for (bx = bx1; bx <= bx2; bx++)
 		{
-			if (dun->room_map[by][bx]) return (FALSE);
+			if (dun->room_map[by][bx]) return(FALSE);
 		}
 	}
 
@@ -2202,7 +2202,7 @@ bool room_alloc(worldpos *wpos, int x, int y, bool crowded, int by0, int bx0, in
 			    *xx + x / 2 + 1, *yy + y / 2 + 1);
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -3284,9 +3284,9 @@ bool dungeon_aux(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	if (r_ptr->flags8 & RF8_DUNGEON)
-		return TRUE;
+		return(TRUE);
 	else
-		return FALSE;
+		return(FALSE);
 }
 
 /*
@@ -3297,17 +3297,17 @@ bool xorder_aux(int r_idx) {
 
 	/* Reject monsters that occur in the wilderness instead of the dungeon */
 	if (!(r_ptr->flags8 & RF8_DUNGEON))
-		return FALSE;
+		return(FALSE);
 
 	/* Reject monsters that require winner-status to encounter, if player isn't a winner */
 	if ((r_ptr->flags8 & RF8_NETHER_REALM) && !xorder_aux_extra)
-		return FALSE;
-	if (r_idx == RI_BAHAMUT) return FALSE; //Cloud Planes only
+		return(FALSE);
+	if (r_idx == RI_BAHAMUT) return(FALSE); //Cloud Planes only
 
 	/* Reject 'non-spawning' monsters */
-	if (!r_ptr->rarity) return (FALSE);
+	if (!r_ptr->rarity) return(FALSE);
 
-	return TRUE;
+	return(TRUE);
 }
 
 /*
@@ -3317,13 +3317,13 @@ static bool vault_aux_jelly(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
-	if (r_ptr->flags1 & RF1_UNIQUE) return (FALSE);
+	if (r_ptr->flags1 & RF1_UNIQUE) return(FALSE);
 
 	/* Require icky thing, jelly, mold, or mushroom */
-	if (!strchr("ijm,", r_ptr->d_char)) return (FALSE);
+	if (!strchr("ijm,", r_ptr->d_char)) return(FALSE);
 
 	/* Okay */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -3337,13 +3337,13 @@ static bool vault_aux_animal(int r_idx) {
 	if (r_ptr->flags7 & RF7_AQUATIC) return(FALSE);
 
 	/* Decline unique monsters */
-	if (r_ptr->flags1 & RF1_UNIQUE) return (FALSE);
+	if (r_ptr->flags1 & RF1_UNIQUE) return(FALSE);
 
 	/* Require "animal" flag */
-	if (!(r_ptr->flags3 & RF3_ANIMAL)) return (FALSE);
+	if (!(r_ptr->flags3 & RF3_ANIMAL)) return(FALSE);
 
 	/* Okay */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -3354,13 +3354,13 @@ static bool vault_aux_undead(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
-	if (r_ptr->flags1 & RF1_UNIQUE) return (FALSE);
+	if (r_ptr->flags1 & RF1_UNIQUE) return(FALSE);
 
 	/* Require Undead */
-	if (!(r_ptr->flags3 & RF3_UNDEAD)) return (FALSE);
+	if (!(r_ptr->flags3 & RF3_UNDEAD)) return(FALSE);
 
 	/* Okay */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -3372,28 +3372,28 @@ static bool vault_aux_chapel(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
-	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
+	if (r_ptr->flags1 & (RF1_UNIQUE)) return(FALSE);
 	/* Oops, anti-paladins! */
-	if (r_ptr->flags3 & (RF3_EVIL)) return (FALSE);
+	if (r_ptr->flags3 & (RF3_EVIL)) return(FALSE);
 
 	/* Require "priest" or Angel */
 	if (!((r_ptr->d_char == 'A') ||
 	    strstr((r_name + r_ptr->name), "riest") ||
 	    strstr((r_name + r_ptr->name), "aladin") ||
 	    strstr((r_name + r_ptr->name), "emplar")))
-		return (FALSE);
+		return(FALSE);
 
 	/* Okay */
-	return (TRUE);
+	return(TRUE);
 }
 static bool vault_aux_lesser_chapel(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
-	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
+	if (r_ptr->flags1 & (RF1_UNIQUE)) return(FALSE);
 
 	/* No Blade angels */
-	if (r_ptr->flags0 & RF0_NO_NEST) return (FALSE);
+	if (r_ptr->flags0 & RF0_NO_NEST) return(FALSE);
 
 	/* Require "priest" or Angel */
 //	if (!((r_ptr->d_char == 'A' && (r_ptr->level <= 70)) ||
@@ -3401,10 +3401,10 @@ static bool vault_aux_lesser_chapel(int r_idx) {
 	    strstr((r_name + r_ptr->name), "riest") ||
 	    strstr((r_name + r_ptr->name), "aladin") ||
 	    strstr((r_name + r_ptr->name), "emplar")))
-		return (FALSE);
+		return(FALSE);
 
 	/* Okay */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -3415,23 +3415,23 @@ static bool vault_aux_kennel(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
-	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
+	if (r_ptr->flags1 & (RF1_UNIQUE)) return(FALSE);
 
 	/* Require a Zephyr Hound or a dog */
-	return ((r_ptr->d_char == 'Z') || (r_ptr->d_char == 'C'));
+	return((r_ptr->d_char == 'Z') || (r_ptr->d_char == 'C'));
 
 }
 static bool vault_aux_lesser_kennel(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
-	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
+	if (r_ptr->flags1 & (RF1_UNIQUE)) return(FALSE);
 
 	/* Not too many Black Dogs */
-	if (r_ptr->flags0 & RF0_NO_NEST) return (FALSE);
+	if (r_ptr->flags0 & RF0_NO_NEST) return(FALSE);
 
 	/* Require a Zephyr Hound or a dog */
-	return ((r_ptr->d_char == 'Z') || (r_ptr->d_char == 'C'));
+	return((r_ptr->d_char == 'Z') || (r_ptr->d_char == 'C'));
 
 }
 
@@ -3443,19 +3443,19 @@ static bool vault_aux_treasure(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
-	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
+	if (r_ptr->flags1 & (RF1_UNIQUE)) return(FALSE);
 
 	/* Hack -- allow mimics */
-	if (r_ptr->flags9 & (RF9_MIMIC)) return (TRUE);
+	if (r_ptr->flags9 & (RF9_MIMIC)) return(TRUE);
 
 	/* Require Object form */
 	if (!((r_ptr->d_char == '!') || (r_ptr->d_char == '|') ||
 	    (r_ptr->d_char == '$') || (r_ptr->d_char == '?') ||
 	    (r_ptr->d_char == '=')))
-		return (FALSE);
+		return(FALSE);
 
 	/* Okay */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -3464,9 +3464,9 @@ static bool vault_aux_treasure(int r_idx) {
  */
 static bool vault_aux_clone(int r_idx) {
 	/* unsure - blades shouldn't happen, but should titans? */
-	if (r_info[r_idx].flags0 & RF0_NO_NEST) return (FALSE);
+	if (r_info[r_idx].flags0 & RF0_NO_NEST) return(FALSE);
 
-	return (r_idx == template_race);
+	return(r_idx == template_race);
 }
 
 
@@ -3474,7 +3474,7 @@ static bool vault_aux_clone(int r_idx) {
  * Helper function for "monster nest (symbol clone)"
  */
 static bool vault_aux_symbol(int r_idx) {
-	return ((r_info[r_idx].d_char == (r_info[template_race].d_char))
+	return((r_info[r_idx].d_char == (r_info[template_race].d_char))
 	    && !(r_info[r_idx].flags1 & RF1_UNIQUE)
 	    && !(r_info[r_idx].flags0 & RF0_NO_NEST));
 }
@@ -3488,13 +3488,13 @@ static bool vault_aux_orc(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
-	if (r_ptr->flags1 & RF1_UNIQUE) return (FALSE);
+	if (r_ptr->flags1 & RF1_UNIQUE) return(FALSE);
 
 	/* Hack -- Require "o" monsters */
-	if (!strchr("o", r_ptr->d_char)) return (FALSE);
+	if (!strchr("o", r_ptr->d_char)) return(FALSE);
 
 	/* Okay */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -3505,13 +3505,13 @@ static bool vault_aux_orc_ogre(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
-	if (r_ptr->flags1 & RF1_UNIQUE) return (FALSE);
+	if (r_ptr->flags1 & RF1_UNIQUE) return(FALSE);
 
 	/* Hack -- Require "o" monsters */
-	if (!strchr("oO", r_ptr->d_char)) return (FALSE);
+	if (!strchr("oO", r_ptr->d_char)) return(FALSE);
 
 	/* Okay */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -3522,13 +3522,13 @@ static bool vault_aux_troll(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
-	if (r_ptr->flags1 & RF1_UNIQUE) return (FALSE);
+	if (r_ptr->flags1 & RF1_UNIQUE) return(FALSE);
 
 	/* Hack -- Require "T" monsters */
-	if (!strchr("T", r_ptr->d_char)) return (FALSE);
+	if (!strchr("T", r_ptr->d_char)) return(FALSE);
 
 	/* Okay */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -3539,13 +3539,13 @@ static bool vault_aux_man(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
-	if (r_ptr->flags1 & RF1_UNIQUE) return (FALSE);
+	if (r_ptr->flags1 & RF1_UNIQUE) return(FALSE);
 
 	/* Hack -- Require "p" or "h" monsters */
-	if (!strchr("ph", r_ptr->d_char)) return (FALSE);
+	if (!strchr("ph", r_ptr->d_char)) return(FALSE);
 
 	/* Okay */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -3556,28 +3556,28 @@ static bool vault_aux_giant(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
-	if (r_ptr->flags1 & RF1_UNIQUE) return (FALSE);
+	if (r_ptr->flags1 & RF1_UNIQUE) return(FALSE);
 
 	/* Hack -- Require "P" monsters */
-	if (!strchr("P", r_ptr->d_char)) return (FALSE);
+	if (!strchr("P", r_ptr->d_char)) return(FALSE);
 
 	/* Okay */
-	return (TRUE);
+	return(TRUE);
 }
 static bool vault_aux_lesser_giant(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
-	if (r_ptr->flags1 & RF1_UNIQUE) return (FALSE);
+	if (r_ptr->flags1 & RF1_UNIQUE) return(FALSE);
 
 	/* No Titans */
-	if (r_ptr->flags0 & RF0_NO_NEST) return (FALSE);
+	if (r_ptr->flags0 & RF0_NO_NEST) return(FALSE);
 
 	/* Hack -- Require "P" monsters */
-	if (!strchr("P", r_ptr->d_char)) return (FALSE);
+	if (!strchr("P", r_ptr->d_char)) return(FALSE);
 
 	/* Okay */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -3594,19 +3594,19 @@ static bool vault_aux_dragon(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
-	if (r_ptr->flags1 & RF1_UNIQUE) return (FALSE);
+	if (r_ptr->flags1 & RF1_UNIQUE) return(FALSE);
 
 	/* Hack -- Require "d" or "D" monsters */
-	if (!strchr("Dd", r_ptr->d_char)) return (FALSE);
+	if (!strchr("Dd", r_ptr->d_char)) return(FALSE);
 
 	/* Hack -- Allow 'all stars' type */
-	if (!vault_aux_dragon_mask4) return (TRUE);
+	if (!vault_aux_dragon_mask4) return(TRUE);
 
 	/* Hack -- Require correct "breath attack" */
-	if (r_ptr->flags4 != vault_aux_dragon_mask4) return (FALSE);
+	if (r_ptr->flags4 != vault_aux_dragon_mask4) return(FALSE);
 
 	/* Okay */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -3617,13 +3617,13 @@ static bool vault_aux_demon(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
-	if (r_ptr->flags1 & RF1_UNIQUE) return (FALSE);
+	if (r_ptr->flags1 & RF1_UNIQUE) return(FALSE);
 
 	/* Hack -- Require "U" monsters */
-	if (!strchr("U", r_ptr->d_char)) return (FALSE);
+	if (!strchr("U", r_ptr->d_char)) return(FALSE);
 
 	/* Okay */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -4463,7 +4463,7 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 	u32b resf = make_resf(p_ptr), eff_resf;
 	int eff_forbid_true = 0, eff_forbid_rand = 0;
 
-	if (!(zcave = getcave(wpos))) return FALSE;
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	if (v_ptr->flags1 & VF1_NO_PENETR) dun->no_penetr = TRUE;
 #if 0 /* Hives mess up the overall level structure too badly - mikaelh */
@@ -4496,7 +4496,7 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 
 	/* At least 1/4 should be genetated */
 	if (!in_bounds_floor(l_ptr, cy, cx))
-		return FALSE;
+		return(FALSE);
 
 	/* Check for flags */
 	if (v_ptr->flags1 & VF1_FORCE_FLAGS) force = TRUE;
@@ -4849,7 +4849,7 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 	}
 
 	l_ptr->flags2 |= LF2_VAULT;
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -5238,10 +5238,10 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 static bool hack_isnt_wall(worldpos *wpos, int y, int x, int cutoff) {
 	cave_type **zcave;
 
-	if (!(zcave = getcave(wpos))) return (FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Already done */
-	if (zcave[y][x].info & CAVE_ICKY) return (FALSE);
+	if (zcave[y][x].info & CAVE_ICKY) return(FALSE);
 
 	/* Show that have looked at this square */
 	zcave[y][x].info |= (CAVE_ICKY);
@@ -5249,12 +5249,12 @@ static bool hack_isnt_wall(worldpos *wpos, int y, int x, int cutoff) {
 	/* If less than cutoff then is a floor */
 	if (zcave[y][x].temp <= cutoff) {
 		place_floor(wpos, y, x);
-		return (TRUE);
+		return(TRUE);
 	}
 	/* If greater than cutoff then is a wall */
 	else {
 		cave_set_feat(wpos, y, x, feat_wall_outer);
-		return (FALSE);
+		return(FALSE);
 	}
 }
 
@@ -5321,7 +5321,7 @@ static bool generate_fracave(worldpos *wpos, int y0, int x0, int xsize, int ysiz
 				zcave[y0+y-yhsize][x0+x-xhsize].info &= ~(CAVE_ICKY|CAVE_ROOM);
 			}
 		}
-		return FALSE;
+		return(FALSE);
 	}
 
 
@@ -5459,7 +5459,7 @@ static bool generate_fracave(worldpos *wpos, int y0, int x0, int xsize, int ysiz
 	 * holes in the dungeon), doesn't seem worth it.
 	 */
 
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -6592,11 +6592,11 @@ static int dist2(int x1, int y1, int x2, int y2,
 	 */
 
 	/* h1-h4 are constants that describe the metric */
-	if (dx >= 2 * dy) return (dx + (dy * h1) / h2);
-	if (dy >= 2 * dx) return (dy + (dx * h1) / h2);
+	if (dx >= 2 * dy) return(dx + (dy * h1) / h2);
+	if (dy >= 2 * dx) return(dy + (dx * h1) / h2);
 
 	/* 128/181 is approx. 1/sqrt(2) */
-	return (((dx + dy) * 128) / 181 +
+	return(((dx + dy) * 128) / 181 +
 		(dx * dx / (dy * h3) + dy * dy / (dx * h3)) * h4);
 }
 
@@ -7636,7 +7636,7 @@ static int next_to_corr(struct worldpos *wpos, int y1, int x1) {
 	}
 
 	/* Return the number of corridors */
-	return (k);
+	return(k);
 }
 
 
@@ -7659,19 +7659,19 @@ static bool possible_doorway(struct worldpos *wpos, int y, int x)
 		if ((zcave[y-1][x].feat >= FEAT_MAGMA) &&
 		    (zcave[y+1][x].feat >= FEAT_MAGMA))
 		{
-			return (TRUE);
+			return(TRUE);
 		}
 
 		/* Check Horizontal */
 		if ((zcave[y][x-1].feat >= FEAT_MAGMA) &&
 		    (zcave[y][x+1].feat >= FEAT_MAGMA))
 		{
-			return (TRUE);
+			return(TRUE);
 		}
 	}
 
 	/* No doorway */
-	return (FALSE);
+	return(FALSE);
 }
 #else	/* 0 */
 static int possible_doorway(struct worldpos *wpos, int y, int x)
@@ -7687,26 +7687,26 @@ static int possible_doorway(struct worldpos *wpos, int y, int x)
 			is_door(zcave[y+1][x].feat) ||
 			is_door(zcave[y][x-1].feat) ||
 			is_door(zcave[y][x+1].feat))
-			return (-1);
+			return(-1);
 
 		/* Check Vertical */
 		if ((zcave[y-1][x].feat >= FEAT_MAGMA) &&
 		    (zcave[y+1][x].feat >= FEAT_MAGMA))
 		{
-			return (8);
+			return(8);
 		}
 #if 1
 		if (in_bounds(y-2, x) &&
 			(zcave[y-2][x].feat >= FEAT_MAGMA) &&
 		    (zcave[y+1][x].feat >= FEAT_MAGMA))
 		{
-			return (1);
+			return(1);
 		}
 		if (in_bounds(y+2, x) &&
 			(zcave[y-1][x].feat >= FEAT_MAGMA) &&
 		    (zcave[y+2][x].feat >= FEAT_MAGMA))
 		{
-			return (0);
+			return(0);
 		}
 #endif	/* 0 */
 
@@ -7714,26 +7714,26 @@ static int possible_doorway(struct worldpos *wpos, int y, int x)
 		if ((zcave[y][x-1].feat >= FEAT_MAGMA) &&
 		    (zcave[y][x+1].feat >= FEAT_MAGMA))
 		{
-			return (8);
+			return(8);
 		}
 #if 1
 		if (in_bounds(y, x-2) &&
 			(zcave[y][x-2].feat >= FEAT_MAGMA) &&
 		    (zcave[y][x+1].feat >= FEAT_MAGMA))
 		{
-			return (3);
+			return(3);
 		}
 		if (in_bounds(y, x+2) &&
 			(zcave[y][x-1].feat >= FEAT_MAGMA) &&
 		    (zcave[y][x+2].feat >= FEAT_MAGMA))
 		{
-			return (2);
+			return(2);
 		}
 #endif	/* 0 */
 	}
 
 	/* No doorway */
-	return (-1);
+	return(-1);
 }
 #endif	/* 0 */
 
@@ -7902,10 +7902,10 @@ static bool room_build(struct worldpos *wpos, int y, int x, int typ, player_type
 	dungeon_type *d_ptr = getdungeon(wpos);
 
 	/* Restrict level */
-	if (getlevel(wpos) < room[typ].level) return (FALSE);
+	if (getlevel(wpos) < room[typ].level) return(FALSE);
 
 	/* Restrict "crowded" rooms */
-	if (dun->crowded && ((typ == 5) || (typ == 6))) return (FALSE);
+	if (dun->crowded && ((typ == 5) || (typ == 6))) return(FALSE);
 
 	/* Less rooms/vaults in some dungeons? */
 	if (d_ptr) {
@@ -7915,7 +7915,7 @@ static bool room_build(struct worldpos *wpos, int y, int x, int typ, player_type
 #endif
 		    (d_ptr->flags3 & DF3_NO_VAULTS))
 		    && (typ == 7 || typ == 8 || typ == 11))
-			return FALSE;
+			return(FALSE);
 
 		if ((
 #ifdef IRONDEEPDIVE_MIXED_TYPES
@@ -7923,12 +7923,12 @@ static bool room_build(struct worldpos *wpos, int y, int x, int typ, player_type
 #endif
 		    (d_ptr->flags3 & DF3_FEW_ROOMS))
 		    && rand_int(20))
-			return FALSE;
+			return(FALSE);
 
 #ifdef IDDC_FEWER_VAULTS
 		if (in_irondeepdive(wpos) && rand_int(4) &&
 		    (typ == 7 || typ == 8 || typ == 11))
-			return FALSE;
+			return(FALSE);
 #endif
 	}
 
@@ -7940,13 +7940,13 @@ static bool room_build(struct worldpos *wpos, int y, int x, int typ, player_type
 	x2 = x0 + room[typ].dx2;
 
 	/* Never run off the screen */
-	if ((y1 < 0) || (y2 >= dun->row_rooms)) return (FALSE);
-	if ((x1 < 0) || (x2 >= dun->col_rooms)) return (FALSE);
+	if ((y1 < 0) || (y2 >= dun->row_rooms)) return(FALSE);
+	if ((x1 < 0) || (x2 >= dun->col_rooms)) return(FALSE);
 
 	/* Verify open space */
 	for (y = y1; y <= y2; y++) {
 		for (x = x1; x <= x2; x++) {
-			if (dun->room_map[y][x]) return (FALSE);
+			if (dun->room_map[y][x]) return(FALSE);
 		}
 	}
 
@@ -7975,7 +7975,7 @@ static bool room_build(struct worldpos *wpos, int y, int x, int typ, player_type
 	case  1: build_type1 (wpos, y, x, p_ptr); break;
 
 	/* Paranoia */
-	default: return (FALSE);
+	default: return(FALSE);
 	}
 
 #if 0
@@ -7998,7 +7998,7 @@ static bool room_build(struct worldpos *wpos, int y, int x, int typ, player_type
 #endif	/* 0 */
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -8473,12 +8473,12 @@ static bool no_nearby_dungeontown(struct worldpos *wpos) {
 	if (wpos->wz > 0) {
 		tpos.wz = ((wpos->wz + 9) / 20) * 20 - 9;
 		/* forbid too shallow towns anyway (paranoia if called without checking first) */
-		if (tpos.wz <= 0) return TRUE;
+		if (tpos.wz <= 0) return(TRUE);
 		/* stay in bounds */
 		if (d_ptr->maxdepth < tpos.wz + max) max = d_ptr->maxdepth - tpos.wz;
 
 		for (i = 0; i <= max; i++) {
-			if (isdungeontown(&tpos)) return FALSE;
+			if (isdungeontown(&tpos)) return(FALSE);
 			tpos.wz++;
 		}
 	}
@@ -8486,16 +8486,16 @@ static bool no_nearby_dungeontown(struct worldpos *wpos) {
 	else {
 		tpos.wz = ((wpos->wz - 9) / 20) * 20 + 9;
 		/* forbid too shallow towns anyway (paranoia if called without checking first) */
-		if (tpos.wz >= 0) return TRUE;
+		if (tpos.wz >= 0) return(TRUE);
 		/* stay in bounds */
 		if (d_ptr->maxdepth < -tpos.wz + max) max = d_ptr->maxdepth + tpos.wz;
 
 		for (i = 0; i <= max; i++) {
-			if (isdungeontown(&tpos)) return FALSE;
+			if (isdungeontown(&tpos)) return(FALSE);
 			tpos.wz--;
 		}
 	}
-	return TRUE;
+	return(TRUE);
 }
 
 /*
@@ -11915,12 +11915,12 @@ void regenerate_cave(struct worldpos *wpos) {
    bush, depending on the season - C. Blue */
 int get_seasonal_tree(void) {
 	switch (season) {
-	case SEASON_SPRING: return (magik(70) ? FEAT_TREE : FEAT_BUSH); break;
-	case SEASON_SUMMER: return (magik(90) ? FEAT_TREE : FEAT_BUSH); break;
-	case SEASON_AUTUMN: return (magik(90) ? FEAT_TREE : FEAT_BUSH); break;
-	case SEASON_WINTER: return (magik(95) ? FEAT_TREE : FEAT_BUSH); break;
+	case SEASON_SPRING: return(magik(70) ? FEAT_TREE : FEAT_BUSH); break;
+	case SEASON_SUMMER: return(magik(90) ? FEAT_TREE : FEAT_BUSH); break;
+	case SEASON_AUTUMN: return(magik(90) ? FEAT_TREE : FEAT_BUSH); break;
+	case SEASON_WINTER: return(magik(95) ? FEAT_TREE : FEAT_BUSH); break;
 	}
-	return (FEAT_HIGH_MOUNTAIN); /* just to clear compiler warning */
+	return(FEAT_HIGH_MOUNTAIN); /* just to clear compiler warning */
 }
 
 #ifdef ENABLE_DOOR_CHECK
@@ -11961,7 +11961,7 @@ static bool door_makes_no_sense(cave_type **zcave, int x, int y) {
 	}
 #else
 	/* check 'sustaining-wall' condition */
-	if (DOOR_WALL(feat)) return FALSE;
+	if (DOOR_WALL(feat)) return(FALSE);
 #endif
 
 
@@ -11984,7 +11984,7 @@ static bool door_makes_no_sense(cave_type **zcave, int x, int y) {
 			if (!DOOR_FLOOR(feat)) ok_step = 4;
 			break;
 		case 4:
-			if (DOOR_FLOOR(feat)) return FALSE;
+			if (DOOR_FLOOR(feat)) return(FALSE);
 			break;
 		case 1:
 			if (!DOOR_FLOOR(feat)) ok_step = 3;
@@ -11993,22 +11993,22 @@ static bool door_makes_no_sense(cave_type **zcave, int x, int y) {
 			if (DOOR_FLOOR(feat)) ok_step = 5;
 			break;
 		case 5:
-			if (!DOOR_FLOOR(feat)) return FALSE;
+			if (!DOOR_FLOOR(feat)) return(FALSE);
 			break;
 		}
 #else
 		/* check 'sustaining-wall' condition */
-		if (!walls && DOOR_WALL(feat)) return FALSE;
+		if (!walls && DOOR_WALL(feat)) return(FALSE);
 #endif
 	}
 
 #ifdef DOOR_SEPARATING
 	/* condition of 'sustaining wall'? */
-	if (!walls) return TRUE;
+	if (!walls) return(TRUE);
 
 
 	/* exception for 'collapsed passages'? */
-	if (adjacent_floors <= 3) return FALSE;
+	if (adjacent_floors <= 3) return(FALSE);
 #endif
 
 #if 0 /* debug */
@@ -12016,6 +12016,6 @@ zcave[y][x].feat = FEAT_SEALED_DOOR;
 s_printf("TRUE\n");
 #endif
 
-	return TRUE;
+	return(TRUE);
 }
 #endif

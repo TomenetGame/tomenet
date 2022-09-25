@@ -886,7 +886,7 @@ static cptr extract_file_name(cptr s) {
 	while ((p >= s) && (*p != ':') && (*p != '\\')) p--;
 
 	/* Return file name */
-	return (p + 1);
+	return(p + 1);
 }
 
 
@@ -916,26 +916,26 @@ static bool check_file(cptr s) {
 	attrib = GetFileAttributes(path);
 
 	/* Require valid filename */
-	if (attrib == INVALID_FILE_NAME) return (FALSE);
+	if (attrib == INVALID_FILE_NAME) return(FALSE);
 
 	/* Prohibit directory */
-	if (attrib & FILE_ATTRIBUTE_DIRECTORY) return (FALSE);
+	if (attrib & FILE_ATTRIBUTE_DIRECTORY) return(FALSE);
 
 #else /* WIN32 */
 
 	/* Examine and verify */
-	if (_dos_getfileattr(path, &attrib)) return (FALSE);
+	if (_dos_getfileattr(path, &attrib)) return(FALSE);
 
 	/* Prohibit something */
-	if (attrib & FA_LABEL) return (FALSE);
+	if (attrib & FA_LABEL) return(FALSE);
 
 	/* Prohibit directory */
-	if (attrib & FA_DIREC) return (FALSE);
+	if (attrib & FA_DIREC) return(FALSE);
 
 #endif /* WIN32 */
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -971,26 +971,26 @@ bool check_dir(cptr s) {
 	attrib = GetFileAttributes(path);
 
 	/* Require valid filename */
-	if (attrib == INVALID_FILE_NAME) return (FALSE);
+	if (attrib == INVALID_FILE_NAME) return(FALSE);
 
 	/* Require directory */
-	if (!(attrib & FILE_ATTRIBUTE_DIRECTORY)) return (FALSE);
+	if (!(attrib & FILE_ATTRIBUTE_DIRECTORY)) return(FALSE);
 
 #else /* WIN32 */
 
 	/* Examine and verify */
-	if (_dos_getfileattr(path, &attrib)) return (FALSE);
+	if (_dos_getfileattr(path, &attrib)) return(FALSE);
 
 	/* Prohibit something */
-	if (attrib & FA_LABEL) return (FALSE);
+	if (attrib & FA_LABEL) return(FALSE);
 
 	/* Require directory */
-	if (!(attrib & FA_DIREC)) return (FALSE);
+	if (!(attrib & FA_DIREC)) return(FALSE);
 
 #endif /* WIN32 */
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -1593,7 +1593,7 @@ static errr term_force_font(term_data *td, cptr name) {
 
 #ifdef USE_LOGFONT
 	td->font_id = CreateFontIndirect(&(td->lf));
-	if (!td->font_id) return (1);
+	if (!td->font_id) return(1);
 	wid = td->lf.lfWidth;
 	hgt = td->lf.lfHeight;
 #else
@@ -1625,7 +1625,7 @@ static errr term_force_font(term_data *td, cptr name) {
 
 
 	/* No name given */
-	if (!name) return (1);
+	if (!name) return(1);
 
 	/* Extract the base name (with suffix) */
 	s = extract_file_name(name);
@@ -1659,7 +1659,7 @@ static errr term_force_font(term_data *td, cptr name) {
 
 
 	/* Verify file */
-	if (!check_file(buf)) return (1);
+	if (!check_file(buf)) return(1);
 
 
 	/* Save new font name */
@@ -1733,7 +1733,7 @@ static errr term_force_font(term_data *td, cptr name) {
 #endif
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*
@@ -1856,7 +1856,7 @@ static HDC myGetDC(HWND hWnd) {
  */
 static errr Term_user_win(int n) {
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1891,7 +1891,7 @@ static errr Term_xtra_win_react(void) {
 
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1948,7 +1948,7 @@ static errr Term_xtra_win_flush(void) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1991,7 +1991,7 @@ static errr Term_xtra_win_clear(void)
  */
 static errr Term_xtra_win_noise(void) {
 	MessageBeep(MB_ICONASTERISK);
-	return (0);
+	return(0);
 }
 
 
@@ -2000,29 +2000,29 @@ static errr Term_xtra_win_noise(void) {
  */
 static errr Term_xtra_win_sound(int v) {
 	/* Unknown sound */
-	if ((v < 0) || (v >= SOUND_MAX)) return (1);
+	if ((v < 0) || (v >= SOUND_MAX)) return(1);
 
 	/* Unknown sound */
-	if (!sound_file[v]) return (1);
+	if (!sound_file[v]) return(1);
 
 #ifdef USE_SOUND
 
 #ifdef WIN32
 
 	/* Play the sound, catch errors */
-	return (PlaySound(sound_file[v], 0, SND_FILENAME | SND_ASYNC));
+	return(PlaySound(sound_file[v], 0, SND_FILENAME | SND_ASYNC));
 
 #else /* WIN32 */
 
 	/* Play the sound, catch errors */
-	return (sndPlaySound(sound_file[v], SND_ASYNC));
+	return(sndPlaySound(sound_file[v], SND_ASYNC));
 
 #endif /* WIN32 */
 
 #endif /* USE_SOUND */
 
 	/* Oops */
-	return (1);
+	return(1);
 }
 
 
@@ -2056,7 +2056,7 @@ static errr Term_xtra_win_delay(int v) {
 #endif /* WIN32 */
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2073,7 +2073,7 @@ static errr Term_xtra_win_fresh(int v) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 #endif
 
@@ -2086,39 +2086,39 @@ static errr Term_xtra_win(int n, int v) {
 	switch (n) {
 		/* Make a bell sound */
 		case TERM_XTRA_NOISE:
-		return (Term_xtra_win_noise());
+		return(Term_xtra_win_noise());
 
 		/* Make a special sound */
 		case TERM_XTRA_SOUND:
-		return (Term_xtra_win_sound(v));
+		return(Term_xtra_win_sound(v));
 
 		/* Process random events */
 		case TERM_XTRA_BORED:
-		return (Term_xtra_win_event(0));
+		return(Term_xtra_win_event(0));
 
 		/* Process an event */
 		case TERM_XTRA_EVENT:
-		return (Term_xtra_win_event(v));
+		return(Term_xtra_win_event(v));
 
 		/* Flush all events */
 		case TERM_XTRA_FLUSH:
-		return (Term_xtra_win_flush());
+		return(Term_xtra_win_flush());
 
 		/* Clear the screen */
 		case TERM_XTRA_CLEAR:
-		return (Term_xtra_win_clear());
+		return(Term_xtra_win_clear());
 
 		/* React to global changes */
 		case TERM_XTRA_REACT:
-		return (Term_xtra_win_react());
+		return(Term_xtra_win_react());
 
 		/* Delay for some milliseconds */
 		case TERM_XTRA_DELAY:
-		return (Term_xtra_win_delay(v));
+		return(Term_xtra_win_delay(v));
 
 #ifdef OPTIMIZE_DRAWING
 		case TERM_XTRA_FRESH:
-		return (Term_xtra_win_fresh(v));
+		return(Term_xtra_win_fresh(v));
 #endif
 	}
 
@@ -2277,7 +2277,7 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 #else /* #ifdef USE_GRAPHICS */
 
 	/* Just erase this grid */
-	return (Term_wipe_win(x, y, 1));
+	return(Term_wipe_win(x, y, 1));
 
 #endif
 
@@ -4135,7 +4135,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 	quit(NULL);
 
 	/* Paranoia */
-	return (0);
+	return(0);
 }
 
 

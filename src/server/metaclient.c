@@ -238,12 +238,12 @@ static int meta_write(int flag) {
 
 		/* Failed to connect or send data */
 		meta_needs_update = FALSE;
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Toggle the update needed flag */
 	meta_needs_update = FALSE;
-	return TRUE;
+	return(TRUE);
 }
 
 /*

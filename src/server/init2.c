@@ -403,7 +403,7 @@ static errr init_f_info(void) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -490,7 +490,7 @@ static errr init_k_info(void) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -612,7 +612,7 @@ static errr init_a_info(void) {
 #endif
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -691,7 +691,7 @@ static errr init_s_info(void) {
 		(void)fd_close(fd);
 
 		/* Success */
-		if (!err) return (0);
+		if (!err) return(0);
 
 		/* Information */
 		msg_print("Ignoring obsolete/defective 's_info.raw' file.");
@@ -843,7 +843,7 @@ static errr init_s_info(void) {
 #endif	// USE_RAW_FILES
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -972,7 +972,7 @@ static errr init_e_info(void) {
 	C_KILL(e_tval_aux, TV_MAX, s16b);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*
@@ -1122,7 +1122,7 @@ for (i = 0; i < MAX_R_IDX; i++) {
 #endif
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1211,7 +1211,7 @@ static errr init_re_info(void) {
 #endif	/* ALLOW_TEMPLATES */
 
 	/* Success */
-	return (0);
+	return(0);
 }
 #endif	// RANDUNIS
 
@@ -1290,7 +1290,7 @@ static errr init_d_info(void) {
 		(void)fd_close(fd);
 
 		/* Success */
-		if (!err) return (0);
+		if (!err) return(0);
 
 		/* Information */
 		msg_print("Ignoring obsolete/defective 'd_info.raw' file.");
@@ -1444,7 +1444,7 @@ static errr init_d_info(void) {
 #endif	// USE_RAW_FILES
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1539,7 +1539,7 @@ static errr init_t_info(void) {
 #endif	/* ALLOW_TEMPLATES */
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1625,7 +1625,7 @@ static errr init_v_info(void) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1702,7 +1702,7 @@ static errr init_st_info(void) {
 		(void)fd_close(fd);
 
 		/* Success */
-		if (!err) return (0);
+		if (!err) return(0);
 
 		/* Information */
 		msg_print("Ignoring obsolete/defective 'st_info.raw' file.");
@@ -1846,7 +1846,7 @@ static errr init_st_info(void) {
 #endif	// USE_RAW_FILES
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1923,7 +1923,7 @@ static errr init_ow_info(void) {
 		(void)fd_close(fd);
 
 		/* Success */
-		if (!err) return (0);
+		if (!err) return(0);
 
 		/* Information */
 		msg_print("Ignoring obsolete/defective 'ow_info.raw' file.");
@@ -2071,7 +2071,7 @@ static errr init_ow_info(void) {
 #endif	// USE_RAW_FILES
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 #if 1
@@ -2148,7 +2148,7 @@ static errr init_ba_info(void) {
 		(void)fd_close(fd);
 
 		/* Success */
-		if (!err) return (0);
+		if (!err) return(0);
 
 		/* Information */
 		msg_print("Ignoring obsolete/defective 'ba_info.raw' file.");
@@ -2292,7 +2292,7 @@ static errr init_ba_info(void) {
 #endif	// USE_RAW_FILES
 
 	/* Success */
-	return (0);
+	return(0);
 }
 #endif	// 0
 
@@ -2354,7 +2354,7 @@ static errr init_q_info(void) {
 		/* Close it */
 		(void)fd_close(fd);
 		/* Success */
-		if (!err) return (0);
+		if (!err) return(0);
 
 		/* Information */
 		msg_print("Ignoring obsolete/defective 'q_info.raw' file.");
@@ -2482,7 +2482,7 @@ static errr init_q_info(void) {
 #endif	// USE_RAW_FILES
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2680,13 +2680,13 @@ static errr init_other(void) {
 #endif
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 static bool indepthrange(byte depth, byte type) {
-	if (depth < d_info[type].mindepth || depth > d_info[type].maxdepth) return FALSE;
-	return TRUE;
+	if (depth < d_info[type].mindepth || depth > d_info[type].maxdepth) return(FALSE);
+	return(TRUE);
 }
 
 static byte getiddctype(byte depth, byte last) {
@@ -2799,7 +2799,7 @@ static errr init_iddc() {
 		//s_printf("IDDC %d -- Type: %d Step: %d Next: %d Boss: %s\n", i, iddc[i].type, iddc[i].step, iddc[i].next, (i == d_info[type].maxdepth) ? "yes" : "no");
 	}
 
-	return 0;
+	return(0);
 }
 
 int scan_iddc() {
@@ -2815,16 +2815,16 @@ int scan_iddc() {
 		if (!(zcave = getcave(&wpos))) continue;
 		else {
 			s_printf("IDDC Scan Failed!\n");
-			return -1;
+			return(-1);
 		}
 	}
 	*/
 	if (!init_iddc()) {
 		s_printf("IDDC Scan Success!\n");
-		return 0;
+		return(0);
 	}
 	s_printf("IDDC Scan Failure!\n");
-	return -1;
+	return(-1);
 }
 #endif
 
@@ -3146,7 +3146,7 @@ static errr init_alloc(void) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 #if 0
@@ -3501,7 +3501,7 @@ bool load_server_cfg(void) {
 	if (cfg_file == (FILE*)NULL) {
 		//printf("Error : cannot open file tomenet.cfg\n");
 		printf("Error : cannot open file '%s'\n", MANGBAND_CFG);
-		return (FALSE);
+		return(FALSE);
 	}
 
 	/* Default value */
@@ -3513,7 +3513,7 @@ bool load_server_cfg(void) {
 	/* Close it */
 	fclose(cfg_file);
 
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -3728,7 +3728,7 @@ static errr reinit_r_info(void) {
 
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 static errr reinit_k_info(void) {
@@ -3801,7 +3801,7 @@ static errr reinit_k_info(void) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 #if 0 /*not done*/
@@ -3911,7 +3911,7 @@ static errr reinit_e_info(void) {
 	C_KILL(e_tval_aux, TV_MAX, s16b);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 static errr reinit_a_info(void) {
@@ -3973,7 +3973,7 @@ static errr reinit_a_info(void) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 #endif
 

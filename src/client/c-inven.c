@@ -23,10 +23,10 @@ bool abort_prompt = FALSE;
 
 s16b index_to_label(int i) {
 	/* Indices for "inven" are easy */
-	if (i < INVEN_WIELD) return (I2A(i));
+	if (i < INVEN_WIELD) return(I2A(i));
 
 	/* Indices for "equip" are offset */
-	return (I2A(i - INVEN_WIELD));
+	return(I2A(i - INVEN_WIELD));
 }
 
 
@@ -35,31 +35,31 @@ bool item_tester_okay(object_type *o_ptr) {
 	if (showing_equip) return TRUE;
 
 	/* Hack -- allow testing empty slots */
-	if (item_tester_full) return (TRUE);
+	if (item_tester_full) return(TRUE);
 
 	/* Require an item */
-	if (!o_ptr->tval) return (FALSE);
+	if (!o_ptr->tval) return(FALSE);
 
 	/* Hack -- ignore "gold" */
-	if (o_ptr->tval == TV_GOLD) return (FALSE);
+	if (o_ptr->tval == TV_GOLD) return(FALSE);
 
 	/* Check the tval */
 	if (item_tester_tval) {
-		if (!(item_tester_tval == o_ptr->tval)) return (FALSE);
+		if (!(item_tester_tval == o_ptr->tval)) return(FALSE);
 	}
 
 	/* Check the weight */
 	if (item_tester_max_weight) {
-		if (item_tester_max_weight < o_ptr->weight * o_ptr->number) return (FALSE);
+		if (item_tester_max_weight < o_ptr->weight * o_ptr->number) return(FALSE);
 	}
 
 	/* Check the hook */
 	if (item_tester_hook) {
-		if (!(*item_tester_hook)(o_ptr)) return (FALSE);
+		if (!(*item_tester_hook)(o_ptr)) return(FALSE);
 	}
 
 	/* Assume okay */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -67,36 +67,36 @@ static bool get_item_okay(int i) {
 #ifdef ENABLE_SUBINVEN
 	if (using_subinven != -1) {
 		/* Illegal items */
-		if ((i < 0) || (i >= using_subinven_size)) return (FALSE);
+		if ((i < 0) || (i >= using_subinven_size)) return(FALSE);
 
 		/* Verify the item */
-		if (!item_tester_okay(&subinventory[using_subinven][i])) return (FALSE);
+		if (!item_tester_okay(&subinventory[using_subinven][i])) return(FALSE);
 
 		/* Assume okay */
-		return (TRUE);
+		return(TRUE);
 	} else if (i >= 100) {
 		int s = i / 100 - 1;
 
 		i = i % 100;
 
 		/* Illegal items */
-		if ((i < 0) || (i >= inventory[s].pval)) return (FALSE);
+		if ((i < 0) || (i >= inventory[s].pval)) return(FALSE);
 
 		/* Verify the item */
-		if (!item_tester_okay(&subinventory[s][i])) return (FALSE);
+		if (!item_tester_okay(&subinventory[s][i])) return(FALSE);
 
 		/* Assume okay */
-		return (TRUE);
+		return(TRUE);
 	}
 #endif
 	/* Illegal items */
-	if ((i < 0) || (i >= INVEN_TOTAL)) return (FALSE);
+	if ((i < 0) || (i >= INVEN_TOTAL)) return(FALSE);
 
 	/* Verify the item */
-	if (!item_tester_okay(&inventory[i])) return (FALSE);
+	if (!item_tester_okay(&inventory[i])) return(FALSE);
 
 	/* Assume okay */
-	return (TRUE);
+	return(TRUE);
 }
 
 /* For c_get_item(): Capital letter leads to asking whether we really want to try that item. */
@@ -116,7 +116,7 @@ static bool verify(cptr prompt, int item) {
 	(void)sprintf(out_val, "%s %s?", prompt, o_name);
 
 	/* Query */
-	return (get_check2(out_val, FALSE));
+	return(get_check2(out_val, FALSE));
 }
 
 
@@ -127,18 +127,18 @@ static s16b c_label_to_inven(int c) {
 	i = (islower(c) ? A2I(c) : -1);
 
 	/* Verify the index */
-	if ((i < 0) || (i > INVEN_PACK)) return (-1);
+	if ((i < 0) || (i > INVEN_PACK)) return(-1);
 
 	/* Empty slots can never be chosen */
 #ifdef ENABLE_SUBINVEN
 	if (using_subinven != -1) {
-		if (!subinventory[using_subinven][i].tval) return (-1);
+		if (!subinventory[using_subinven][i].tval) return(-1);
 	} else
 #endif
-	if (!inventory[i].tval) return (-1);
+	if (!inventory[i].tval) return(-1);
 
 	/* Return the index */
-	return (i);
+	return(i);
 }
 
 static s16b c_label_to_equip(int c) {
@@ -148,13 +148,13 @@ static s16b c_label_to_equip(int c) {
 	i = (islower(c) ? A2I(c) : -1) + INVEN_WIELD;
 
 	/* Verify the index */
-	if ((i < INVEN_WIELD) || (i >= INVEN_TOTAL)) return (-1);
+	if ((i < INVEN_WIELD) || (i >= INVEN_TOTAL)) return(-1);
 
 	/* Empty slots can never be chosen */
-	if (!inventory[i].tval) return (-1);
+	if (!inventory[i].tval) return(-1);
 
 	/* Return the index */
-	return (i);
+	return(i);
 }
 
 
@@ -184,7 +184,7 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 	bool charged = (mode & CHECK_CHARGED) != 0;
 
 	/* neither inventory nor equipment is allowed to be searched? */
-	if (!inven && !equip) return (FALSE);
+	if (!inven && !equip) return(FALSE);
 
 	/* search tag in inventory before looking in equipment? (default is other way round) */
 	if (inven_first) {
@@ -330,7 +330,7 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 					*cp = i;
 
 					/* Success */
-					return (TRUE);
+					return(TRUE);
 				}
  #endif
 				postpone = FALSE;
@@ -380,7 +380,7 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 				*cp = i;
 
 				/* Success */
-				return (TRUE);
+				return(TRUE);
 #ifdef SMART_SWAP
 			    }
 #endif
@@ -461,7 +461,7 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 					*cp = i;
 
 					/* Success */
-					return (TRUE);
+					return(TRUE);
 				}
  #endif
 				postpone = FALSE;
@@ -511,7 +511,7 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 				*cp = i;
 
 				/* Success */
-				return (TRUE);
+				return(TRUE);
 #ifdef SMART_SWAP
 			    }
 #endif
@@ -529,7 +529,7 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 	}
 #endif
 	/* No such tag */
-	return (FALSE);
+	return(FALSE);
 }
 
 /*
@@ -904,7 +904,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		/* Stop macro execution if we're on safe_macros! */
 		if (parse_macro && c_cfg.safe_macros) flush_now();
 
-		return (FALSE);
+		return(FALSE);
 	}
 
 	/* Command macros work as an exception here */
@@ -1428,5 +1428,5 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 #ifdef ENABLE_SUBINVEN
 	//if (using_subinven != -1) cp += sub_i;
 #endif
-	return (item);
+	return(item);
 }

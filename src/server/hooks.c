@@ -64,7 +64,7 @@ bool check_hook(int h_idx)
 {
 	hooks_chain *c = hooks_heads[h_idx];
 
-	return (c != NULL);
+	return(c != NULL);
 }
 
 /* Add a hook */
@@ -86,9 +86,9 @@ hooks_chain* add_hook(int h_idx, cptr script, cptr name)
 		sprintf(new->script, "%s", script);
 		new->next = hooks_heads[h_idx];
 		hooks_heads[h_idx] = new;
-		return (new);
+		return(new);
 	}
-	else return (c);
+	else return(c);
 }
 
 /* Remove a hook */
@@ -173,60 +173,50 @@ static bool vprocess_hooks_return(int h_idx, char *ret, char *fmt, va_list *ap)
 			size = lua_gettop(L) - oldtop;
 
 			/* get the extra returns if needed */
-			for (i = 0; i < nbr - 1; i++)
-			{
-				if ((ret[i] == 'd') || (ret[i] == 'l'))
-				{
+			for (i = 0; i < nbr - 1; i++) {
+				if ((ret[i] == 'd') || (ret[i] == 'l')) {
 					if (lua_isnumber(L, (-size) + 1 + i)) process_hooks_return[i].num = tolua_getnumber(L, (-size) + 1 + i, 0);
 					else process_hooks_return[i].num = 0;
-				}
-				else if (ret[i] == 's')
-				{
+				} else if (ret[i] == 's') {
 					if (lua_isstring(L, (-size) + 1 + i)) process_hooks_return[i].str = (char*)tolua_getstring(L, (-size) + 1 + i, 0);
 					else process_hooks_return[i].str = NULL;
 				}
 				else process_hooks_return[i].num = 0;
 			}
 			/* Get the basic return(continue or stop the hook chain) */
-			if (tolua_getnumber(L, -size, 0))
-			{
+			if (tolua_getnumber(L, -size, 0)) {
 				lua_settop(L, oldtop);
-				return (TRUE);
+				return(TRUE);
 			}
-			if (process_hooks_restart)
-			{
+			if (process_hooks_restart) {
 				c = hooks_heads[h_idx];
 				process_hooks_restart = FALSE;
-			}
-			else
-				c = c->next;
+			} else c = c->next;
 			lua_settop(L, oldtop);
 		}
 	}
 
-	return FALSE;
+	return(FALSE);
 }
 
 #if 0 /* not used? - mikaelh */
-static bool process_hooks_ret(int h_idx, char *ret, char *fmt, ...)
-{
+static bool process_hooks_ret(int h_idx, char *ret, char *fmt, ...) {
 	va_list ap;
 	bool r;
 
 	va_start(ap, fmt);
 	r = vprocess_hooks_return(h_idx, ret, fmt, &ap);
 	va_end(ap);
-	return (r);
+	return(r);
 }
 #endif // 0
 
-bool process_hooks(int h_idx, char *fmt, ...)
-{
+bool process_hooks(int h_idx, char *fmt, ...) {
 	va_list ap;
 	bool ret;
 
 	va_start(ap, fmt);
 	ret = vprocess_hooks_return(h_idx, "", fmt, &ap);
 	va_end(ap);
-	return (ret);
+	return(ret);
 }

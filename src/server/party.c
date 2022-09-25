@@ -107,7 +107,7 @@ bool WriteAccount(struct account *r_acc, bool new) {
 /*
  Get an existing account and set default valid flags on it
  That will be SCORE on only (hack it for MULTI)
- Modified to return 0 if not found, 1 if found but already 100% validated,
+ Modified to return(0) if not found, 1 if found but already 100% validated,
  and -1 if found and there was still a character to validate on that account - C. Blue
  */
 int validate(char *name) {
@@ -160,7 +160,7 @@ int invalidate(char *name, bool admin) {
 	/* Security check: Only admins can invalidate admin accounts */
 	if (!admin && (acc.flags & ACC_ADMIN)) {
 		WIPE(&acc, struct account);
-		return 2;
+		return(2);
 	}
 
 	/* Modify account flags */
@@ -594,7 +594,7 @@ bool GetAccount(struct account *c_acc, cptr name, char *pass, bool leavepass) {
 	/* New account creation: Ensure password minimum length */
 	if (strlen(pass) < PASSWORD_MIN_LEN) {
 		s_printf("Password length must be at least %d.\n", PASSWORD_MIN_LEN);
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* No account found. Create trial account */
@@ -794,12 +794,12 @@ bool lookup_similar_account(cptr name, cptr accname) {
 	struct account acc;
 
 
-	if (allow_similar_names) return FALSE; //hack: always allow?
+	if (allow_similar_names) return(FALSE); //hack: always allow?
 
 	/* special exceptions (admins and their player accounts) */
 	if (!strcasecmp(name, "mikaelh") || /* vs 'mikael' */
 	    !strcasecmp(name, "c. blue")) /* vs 'c.blue' */
-		return FALSE; //allow!
+		return(FALSE); //allow!
 
 	WIPE(&acc, struct account);
 
@@ -809,7 +809,7 @@ bool lookup_similar_account(cptr name, cptr accname) {
 	fp = fopen(buf, "rb");
 	if (!fp) {
 		s_printf("ERROR: COULDN'T ACCESS ACCOUNT FILE IN lookup_similar_account()!\n");
-		return FALSE; /* cannot access account file */
+		return(FALSE); /* cannot access account file */
 	}
 	while (fread(&acc, sizeof(struct account), 1, fp)) {
 		/* Make sure passwords don't leak */
@@ -831,7 +831,7 @@ bool lookup_similar_account(cptr name, cptr accname) {
  #endif
 		    similar_names(name, acc.name)) {
 			s_printf("lookup_similar_account failed.\n");
-			return TRUE;
+			return(TRUE);
 		}
 #endif
 
@@ -843,17 +843,17 @@ bool lookup_similar_account(cptr name, cptr accname) {
 
 		/* Identical name (account vs character)? that's fine. */
 		if (!strcmp(acc.name, name)) {
-			return FALSE;
+			return(FALSE);
 		}
 
 		/* not identical but just too similar? forbidden! */
 		s_printf("lookup_similar_account (4): name '%s', aname '%s' (tmp '%s')\n", name, acc.name, tmpname);
-		return TRUE;
+		return(TRUE);
 	}
 	fclose(fp);
 
 	/* no identical/similar account found, all green! */
-	return FALSE;
+	return(FALSE);
 }
 
 /* Check for a character of similar name to 'name'. If one is found, the name
@@ -869,14 +869,14 @@ bool lookup_similar_character(cptr name, cptr accname) {
 	FILE *fp;
 	char buf[1024], tmpname[ACCNAME_LEN > CNAME_LEN ? ACCNAME_LEN : CNAME_LEN];
 	struct account acc;
-return FALSE; //TODO: Implement
+return(FALSE); //TODO: Implement
 
-	if (allow_similar_names) return FALSE; //hack: always allow?
+	if (allow_similar_names) return(FALSE); //hack: always allow?
 
 	/* special exceptions (admins and their player accounts) */
 	if (!strcasecmp(name, "mikaelh") || /* vs 'mikael' */
 	    !strcasecmp(name, "c. blue")) /* vs 'c.blue' */
-		return FALSE; //allow!
+		return(FALSE); //allow!
 
 	WIPE(&acc, struct account);
 
@@ -886,7 +886,7 @@ return FALSE; //TODO: Implement
 	fp = fopen(buf, "rb");
 	if (!fp) {
 		s_printf("ERROR: COULDN'T ACCESS ACCOUNT FILE IN lookup_similar_character()!\n");
-		return FALSE; /* cannot access account file */
+		return(FALSE); /* cannot access account file */
 	}
 	while (fread(&acc, sizeof(struct account), 1, fp)) {
 		/* Make sure passwords don't leak */
@@ -908,7 +908,7 @@ return FALSE; //TODO: Implement
  #endif
 		    similar_names(name, acc.name)) {
 			s_printf("lookup_similar_character failed.\n");
-			return TRUE;
+			return(TRUE);
 		}
 #endif
 
@@ -920,17 +920,17 @@ return FALSE; //TODO: Implement
 
 		/* Identical name (account vs character)? that's fine. */
 		if (!strcmp(acc.name, name)) {
-			return FALSE;
+			return(FALSE);
 		}
 
 		/* not identical but just too similar? forbidden! */
 		s_printf("lookup_similar_character (4): name '%s', aname '%s' (tmp '%s')\n", name, acc.name, tmpname);
-		return TRUE;
+		return(TRUE);
 	}
 	fclose(fp);
 
 	/* no identical/similar account found, all green! */
-	return FALSE;
+	return(FALSE);
 }
 
 /* Return account name of a specified PLAYER id */
@@ -1081,9 +1081,9 @@ int check_account(char *accname, char *c_name, int *Ind) {
 		for (i = 0; i < chars; i++)
 			if (!strcmp(c_name, lookup_player_name(id_list[i]))) break;
 		if (chars) C_KILL(id_list, chars, int);
-		if (i == chars) return 0; /* 'name already in use' */
+		if (i == chars) return(0); /* 'name already in use' */
 	} else if (!acc1_success && acc2_success) {
-		return 0; /* we don't even have an account yet? 'name already in use' for sure */
+		return(0); /* we don't even have an account yet? 'name already in use' for sure */
 	}
 
 	if (acc1_success) {
@@ -1183,7 +1183,7 @@ int check_account(char *accname, char *c_name, int *Ind) {
 				/* check for login-timing exploit */
 				if ((i = check_multi_exploit(accname, c_name))) {
 					*Ind = -i;
-					return -2;
+					return(-2);
 				}
 				/* check for normal ineligible multi-login attempts */
 				for (i = 1; i <= NumPlayers; i++) {
@@ -1302,7 +1302,7 @@ int guild_lookup(cptr name) {
 	}
 
 	/* No match */
-	return -1;
+	return(-1);
 }
 
 /*
@@ -1319,7 +1319,7 @@ int party_lookup(cptr name) {
 	}
 
 	/* No match */
-	return -1;
+	return(-1);
 }
 
 
@@ -1331,10 +1331,10 @@ bool player_in_party(int party_id, int Ind) {
 
 	/* Check - Fail on non party */
 	if (party_id && p_ptr->party == party_id)
-		return TRUE;
+		return(TRUE);
 
 	/* Not in the party */
-	return FALSE;
+	return(FALSE);
 }
 
 static bool group_name_legal_characters(cptr name) {
@@ -1346,8 +1346,8 @@ static bool group_name_legal_characters(cptr name) {
 		    (*ptr >= 'a' && *ptr <= 'z') ||
 		    (*ptr >= '0' && *ptr <= '9') ||
 		    strchr(" .,-'&_$%~#<>|", *ptr))) /* chars allowed for character name */
-			return FALSE;
-	return TRUE;
+			return(FALSE);
+	return(TRUE);
 }
 
 static bool party_name_legal(int Ind, char *name) {
@@ -1356,7 +1356,7 @@ static bool party_name_legal(int Ind, char *name) {
 
 	if (strlen(name) >= NAME_LEN) {
 		msg_format(Ind, "\377yParty name must not exceed %d characters!", NAME_LEN - 1);
-		return FALSE;
+		return(FALSE);
 	}
 
 	strncpy(buf, name, NAME_LEN);
@@ -1375,46 +1375,46 @@ static bool party_name_legal(int Ind, char *name) {
 	/* name consisted only of spaces? */
 	if (!buf[0]) {
 		msg_print(Ind, "\377ySorry, names must not just consist of spaces.");
-		return FALSE;
+		return(FALSE);
 	}
 	strcpy(name, buf);
 
 	/* Check for weird characters */
 	if (!group_name_legal_characters(name)) {
 		msg_print(Ind, "\377ySorry, that name contains illegal characters or symbols.");
-		return FALSE;
+		return(FALSE);
 	}
 	/* Prevent abuse */
 	strcpy(buf2, name);
 	if (ILLEGAL_GROUP_NAME(name) || handle_censor(buf2)) {
 		msg_print(Ind, "\377yThat party name is not available, please try again.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Check for already existing party by that name */
 	if (party_lookup(name) != -1) {
 		msg_print(Ind, "\377yA party by that name already exists.");
-		return FALSE;
+		return(FALSE);
 	}
 	/* Specific 'Iron Team' collision? */
 	if (!strcasecmp(name, "Iron Team")) { //exact match only, allow 'Iron Team of XYZ' style names
 		msg_print(Ind, "\377yA party may not exactly be called 'Iron Team'. Vary the name a bit.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Check for already existing guild by that name */
 	if (guild_lookup(name) != -1) {
 		msg_print(Ind, "\377yThere's already a guild using that name.");
-		return FALSE;
+		return(FALSE);
 	}
 	/* Specific 'Merchants Guild' collision? */
 	if (my_strcasestr(name, "Merchant") || my_strcasestr(name, "Mercant")) { //catch silyl typoing :p
 		msg_print(Ind, "\377yThere's already a guild using a too similar name."); //..and it's run by NPCs :)
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Success */
-	return TRUE;
+	return(TRUE);
 }
 
 static bool guild_name_legal(int Ind, char *name) {
@@ -1428,7 +1428,7 @@ static bool guild_name_legal(int Ind, char *name) {
 
 	if (strlen(name) >= NAME_LEN) {
 		msg_format(Ind, "\377yGuild name must not exceed %d characters!", NAME_LEN - 1);
-		return FALSE;
+		return(FALSE);
 	}
 
 	strncpy(buf, name, NAME_LEN);
@@ -1447,33 +1447,33 @@ static bool guild_name_legal(int Ind, char *name) {
 	/* name consisted only of spaces? */
 	if (!buf[0]) {
 		msg_print(Ind, "\377ySorry, names must not just consist of spaces.");
-		return FALSE;
+		return(FALSE);
 	}
 	strcpy(name, buf);
 
 	/* Check for weird characters */
 	if (!group_name_legal_characters(name)) {
 		msg_print(Ind, "\377ySorry, that name contains illegal characters or symbols.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Prevent abuse */
 	strcpy(buf2, name);
 	if (ILLEGAL_GROUP_NAME(name) || handle_censor(buf2)) {
 		msg_print(Ind, "\377yThat guild name is not available, please try again.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Check for already existing party by that name */
 	if (party_lookup(name) != -1) {
 		msg_print(Ind, "\377yThere's already a party using that name.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Specific 'Merchants Guild' collision? */
 	if (my_strcasestr(name, "Merchant") || my_strcasestr(name, "Mercant")) { //catch silyl typoing :p
 		msg_print(Ind, "\377yA guild by a too similar name already exists."); //..and it's run by NPCs :)
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Check for already existing guild by that name */
@@ -1492,10 +1492,10 @@ static bool guild_name_legal(int Ind, char *name) {
 			object_aware(Ind, o_ptr);
 			(void)inven_carry(Ind, o_ptr);
 			msg_print(Ind, "Spare key created.");
-			return FALSE;
+			return(FALSE);
 		}
 		msg_print(Ind, "\377yA guild by that name already exists.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Check for already existing guild with too similar name */
@@ -1509,7 +1509,7 @@ static bool guild_name_legal(int Ind, char *name) {
 		condense_name(buf2, guilds[index].name);
 		if (!strcmp(buf, buf2)) {
 			msg_print(Ind, "\377yA guild by a too similar name already exists.");
-			return FALSE;
+			return(FALSE);
 		}
 
 //#ifdef STRICT_SIMILAR_NAMES
@@ -1524,12 +1524,12 @@ static bool guild_name_legal(int Ind, char *name) {
 		    similar_names(buf, buf2)) {
 			s_printf("guild_name_legal failure.\n");
 			msg_print(Ind, "\377yA guild by a too similar name already exists.");
-			return FALSE;
+			return(FALSE);
 		}
 #endif
 	}
 
-	return TRUE;
+	return(TRUE);
 }
 
 /*
@@ -1544,16 +1544,16 @@ int guild_create(int Ind, cptr name) {
 	int *id_list, ids;
 
 	strcpy(temp, name);
-	if (!guild_name_legal(Ind, temp)) return FALSE;
+	if (!guild_name_legal(Ind, temp)) return(FALSE);
 
 	/* zonk */
 	if ((p_ptr->mode & MODE_PVP)) {
 		msg_print(Ind, "\377yPvP characters may not create a guild.");
-		return FALSE;
+		return(FALSE);
 	}
 	if ((p_ptr->mode & MODE_SOLO)) {
 		msg_print(Ind, "\377ySoloist characters may not create a guild.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* anti-cheeze: People could get an extra house on each character.
@@ -1564,14 +1564,14 @@ int guild_create(int Ind, cptr name) {
 	if (!success) {
 		/* uhh.. */
 		msg_print(Ind, "Sorry, guild creation has failed.");
-		return FALSE;
+		return(FALSE);
 	}
 	ids = player_id_list(&id_list, acc.id);
 	for (i = 0; i < ids; i++) {
 		if ((j = lookup_player_guild(id_list[i])) && /* one of his characters is in a guild.. */
 		    guilds[j].master == id_list[i]) { /* ..and he is actually the master of that guild? */
 			msg_print(Ind, "\377yOnly one character per account is allowed to be a guild master.");
-			return FALSE;
+			return(FALSE);
 		}
 	}
 	if (ids) C_KILL(id_list, ids, int);
@@ -1579,11 +1579,11 @@ int guild_create(int Ind, cptr name) {
 	/* Make sure this guy isn't in some other guild already */
 	if (p_ptr->guild != 0) {
 		msg_print(Ind, "\377yYou already belong to a guild!");
-		return FALSE;
+		return(FALSE);
 	}
 	if (p_ptr->lev < 30) {
 		msg_print(Ind, "\377yYou are not high enough level to start a guild.");
-		return FALSE;
+		return(FALSE);
 	}
 	/* This could probably be improved. */
 	if (p_ptr->au < GUILD_PRICE) {
@@ -1593,7 +1593,7 @@ int guild_create(int Ind, cptr name) {
 			msg_format(Ind, "\377yYou need %d,000 gold pieces to start a guild.", GUILD_PRICE / 1000);
 		else
 			msg_format(Ind, "\377yYou need %d gold pieces to start a guild.", GUILD_PRICE);
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Find the "best" party index */
@@ -1607,7 +1607,7 @@ int guild_create(int Ind, cptr name) {
 	if (index == 0) {
 		/* Error */
 		msg_print(Ind, "\377yThere aren't enough guild slots!");
-		return FALSE;
+		return(FALSE);
 	}
 
 
@@ -1745,23 +1745,23 @@ int party_create(int Ind, cptr name) {
 	char temp[160];
 
 	strcpy(temp, name);
-	if (!party_name_legal(Ind, temp)) return FALSE;
+	if (!party_name_legal(Ind, temp)) return(FALSE);
 
 	/* zonk */
 	if ((p_ptr->mode & MODE_PVP)) {
 		msg_print(Ind, "\377yPvP characters may not create a party.");
-		return FALSE;
+		return(FALSE);
 	}
 	if ((p_ptr->mode & MODE_SOLO)) {
 		msg_print(Ind, "\377ySoloist characters may not create a party.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* If he's party owner, it's name change */
 	if (streq(parties[p_ptr->party].owner, p_ptr->name)) {
 		if (parties[p_ptr->party].mode & PA_IRONTEAM) {
 			msg_print(Ind, "\377yYour party is an Iron Team. Choose '2) Create an Iron Team' instead.");
-			return FALSE;
+			return(FALSE);
 		}
 
 		strcpy(parties[p_ptr->party].name, temp);
@@ -1770,25 +1770,25 @@ int party_create(int Ind, cptr name) {
 		party_msg_format(p_ptr->party, "\377%cYour party is now called '%s'.", COLOUR_CHAT_GUILD, temp);
 
 		Send_party(Ind, FALSE, FALSE);
-		return TRUE;
+		return(TRUE);
 	}
 
 	/* Make sure this guy isn't in some other party already */
 	if (p_ptr->party != 0) {
 		msg_print(Ind, "\377yYou already belong to a party!");
-		return FALSE;
+		return(FALSE);
 	}
 
 #ifdef IDDC_IRON_COOP
 	if (in_irondeepdive(&p_ptr->wpos)) {
 		msg_print(Ind, "\377yCharacters must be outside the Ironman Deep Dive Challenge to form a party.");
-		return FALSE;
+		return(FALSE);
 	}
  #ifdef IDDC_IRON_TEAM_ONLY
 	/* we might just be passing by and not intending to enter IDDC, but we probably do intend to enter */
 	if (on_irondeepdive(&p_ptr->wpos)) {
 		msg_print(Ind, "\377yYou can only form 'Iron Team' parties for the Ironman Deep Dive Challenge.");
-		return FALSE;
+		return(FALSE);
 	}
  #endif
 #else
@@ -1796,7 +1796,7 @@ int party_create(int Ind, cptr name) {
 	/* we might just be passing by and not intending to enter IDDC, but we probably do intend to enter */
 	if (at_irondeepdive(&p_ptr->wpos)) {
 		msg_print(Ind, "\377yYou can only form 'Iron Team' parties for the Ironman Deep Dive Challenge.");
-		return FALSE;
+		return(FALSE);
 	}
  #endif
 #endif
@@ -1815,7 +1815,7 @@ int party_create(int Ind, cptr name) {
 	if (index == 0 || oldest == turn) {
 		/* Error */
 		msg_print(Ind, "\377yThere aren't enough party slots!");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Set party name */
@@ -1845,7 +1845,7 @@ int party_create(int Ind, cptr name) {
 	Send_party(Ind, FALSE, FALSE);
 
 	/* Success */
-	return TRUE;
+	return(TRUE);
 }
 
 int party_create_ironteam(int Ind, cptr name) {
@@ -1854,24 +1854,24 @@ int party_create_ironteam(int Ind, cptr name) {
 	char temp[160];
 
 	strcpy(temp, name);
-	if (!party_name_legal(Ind, temp)) return FALSE;
+	if (!party_name_legal(Ind, temp)) return(FALSE);
 
 	if ((p_ptr->mode & MODE_SOLO)) {
 		msg_print(Ind, "\377ySoloist characters may not create a party.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Only newly created characters can create an iron team */
 	if (p_ptr->max_exp > 0 || p_ptr->max_plv > 1) {
 		msg_print(Ind, "\377yOnly newly created characters without experience can create an iron team.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* If he's party owner, it's name change */
 	if (streq(parties[p_ptr->party].owner, p_ptr->name)) {
 		if (!(parties[p_ptr->party].mode & PA_IRONTEAM)) {
 			msg_print(Ind, "\377yYour party isn't an Iron Team. Choose '1) Create a party' instead.");
-			return FALSE;
+			return(FALSE);
 		}
 
 		strcpy(parties[p_ptr->party].name, temp);
@@ -1880,19 +1880,19 @@ int party_create_ironteam(int Ind, cptr name) {
 		party_msg_format(p_ptr->party, "\377%cYour iron team is now called '%s'.", COLOUR_CHAT_GUILD, temp);
 
 		Send_party(Ind, FALSE, FALSE);
-		return TRUE;
+		return(TRUE);
 	}
 
 	/* Make sure this guy isn't in some other party already */
 	if (p_ptr->party != 0) {
 		msg_print(Ind, "\377yYou already belong to a party!");
-		return FALSE;
+		return(FALSE);
 	}
 
 #ifdef IDDC_IRON_COOP
 	if (in_irondeepdive(&p_ptr->wpos)) {
 		msg_print(Ind, "\377yCharacters must be outside the Ironman Deep Dive Challenge to form a party.");
-		return FALSE;
+		return(FALSE);
 	}
 #endif
 
@@ -1910,7 +1910,7 @@ int party_create_ironteam(int Ind, cptr name) {
 	if (index == 0 || oldest == turn) {
 		/* Error */
 		msg_print(Ind, "\377yThere aren't enough party slots!");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Set party name */
@@ -1942,7 +1942,7 @@ int party_create_ironteam(int Ind, cptr name) {
 	Send_party(Ind, FALSE, FALSE);
 
 	/* Success */
-	return TRUE;
+	return(TRUE);
 }
 
 /*
@@ -1967,24 +1967,24 @@ int guild_add(int adder, cptr name) {
 	}
 
 	Ind = name_lookup_loose(adder, name, FALSE, TRUE, FALSE);
-	if (Ind <= 0) return FALSE;
+	if (Ind <= 0) return(FALSE);
 	p_ptr = Players[Ind];
 
 	/* Leaderless guilds do not allow addition of new members */
 	if (!lookup_player_name(guilds[guild_id].master)) {
 		msg_print(adder, "\377yNo new members can be added while the guild is leaderless.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Everlasting and other chars cannot be in the same guild */
 	if (compat_pmode(adder, Ind, TRUE)) {
 		msg_format(adder, "\377yYou cannot add %s characters to this guild.", compat_pmode(adder, Ind, TRUE));
-		return FALSE;
+		return(FALSE);
 	}
 
 	if (p_ptr->mode & MODE_SOLO) {
 		msg_print(Ind, "\377yThat player is a soloist. Those cannot join guilds.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Make sure this added person is neutral */
@@ -1994,12 +1994,12 @@ int guild_add(int adder, cptr name) {
 		else msg_print(adder, "\377yThat player is already in your guild.");
 
 		/* Abort */
-		return FALSE;
+		return(FALSE);
 	}
 
 	if (p_ptr->lev < guilds[guild_id].minlev) {
 		msg_format(adder, "\377yThat player does not meet the minimum level requirements, %d, of the guild.", guilds[guild_id].minlev);
-		return FALSE;
+		return(FALSE);
 	}
 
 #ifdef GUILD_ELIGIBLE_ACCOUNT_CAN_ADD
@@ -2009,7 +2009,7 @@ int guild_add(int adder, cptr name) {
 	if (!success) {
 		/* uhh.. */
 		msg_print(Ind, "Sorry, adding has failed.");
-		return FALSE;
+		return(FALSE);
 	}
 	ids = player_id_list(&id_list, acc.id);
 	for (i = 0; i < ids; i++) {
@@ -2035,11 +2035,11 @@ int guild_add(int adder, cptr name) {
 	    && guilds[guild_id].master != q_ptr->id
 	    && !is_admin(q_ptr)) {
 		msg_print(adder, "\377yYou cannot add new members.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Ignoring a player will prevent getting added to a party by him */
-	if (check_ignore(Ind, adder)) return FALSE;
+	if (check_ignore(Ind, adder)) return(FALSE);
 
 	/* Log - security */
 	if (!far_success) s_printf("GUILD_ADD: %s has been added to %s by %s.\n", p_ptr->name, guilds[guild_id].name, q_ptr->name);
@@ -2074,7 +2074,7 @@ int guild_add(int adder, cptr name) {
 	if (!p_ptr->wpos.wz) p_ptr->redraw |= PR_MAP;
 
 	/* Success */
-	return TRUE;
+	return(TRUE);
 }
 int guild_add_self(int Ind, cptr guild) {
 	player_type *p_ptr = Players[Ind];
@@ -2083,21 +2083,21 @@ int guild_add_self(int Ind, cptr guild) {
 	bool member = FALSE;
 
 	/* no guild name specified? */
-	if (!guild[0]) return FALSE;
+	if (!guild[0]) return(FALSE);
 
 	if (p_ptr->mode & MODE_SOLO) {
 		msg_print(Ind, "\377yAs a soloist you cannot join guilds.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	if (guild_id == -1) {
 		msg_print(Ind, "That guild does not exist.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	if (p_ptr->lev < guilds[guild_id].minlev) {
 		msg_format(Ind, "\377yYou do not meet the minimum level requirements, %d, of the guild.", guilds[guild_id].minlev);
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* check if he has a character in there already, to be eligible to self-add */
@@ -2106,7 +2106,7 @@ int guild_add_self(int Ind, cptr guild) {
 	if (!success) {
 		/* uhh.. */
 		msg_print(Ind, "Sorry, self-adding has failed.");
-		return FALSE;
+		return(FALSE);
 	}
 	ids = player_id_list(&id_list, acc.id);
 	for (i = 0; i < ids; i++) {
@@ -2117,7 +2117,7 @@ int guild_add_self(int Ind, cptr guild) {
 			if (compat_mode(p_ptr->mode, lookup_player_mode(id_list[i]))) {
 				msg_format(Ind, "\377yYou cannot join %s guilds.", compat_mode(p_ptr->mode, lookup_player_mode(id_list[i])));
 				if (ids) C_KILL(id_list, ids, int);
-				return FALSE;
+				return(FALSE);
 			}
 
 			/* player is guild master? -> ok */
@@ -2144,7 +2144,7 @@ int guild_add_self(int Ind, cptr guild) {
 	if (i == ids) {
 		if (!member) msg_print(Ind, "You do not have any character that is member of that guild.");
 		else msg_print(Ind, "You have no character in that guild that is allowed to add others.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Tell the guild about its new member */
@@ -2177,7 +2177,7 @@ int guild_add_self(int Ind, cptr guild) {
 	if (!p_ptr->wpos.wz) p_ptr->redraw |= PR_MAP;
 
 	/* Success */
-	return TRUE;
+	return(TRUE);
 }
 
 int guild_auto_add(int Ind, int guild_id, char *message) {
@@ -2185,21 +2185,21 @@ int guild_auto_add(int Ind, int guild_id, char *message) {
 	int i;
 
 	/* paranoia */
-	if (!guild_id) return FALSE;
-	if (p_ptr->guild) return FALSE;
+	if (!guild_id) return(FALSE);
+	if (p_ptr->guild) return(FALSE);
 
-	if (p_ptr->mode & MODE_SOLO) return FALSE;
+	if (p_ptr->mode & MODE_SOLO) return(FALSE);
 
-	if (!(guilds[guild_id].flags & GFLG_AUTO_READD)) return FALSE;
+	if (!(guilds[guild_id].flags & GFLG_AUTO_READD)) return(FALSE);
 
 	/* currently not eligible */
-	if (p_ptr->mode & MODE_PVP) return FALSE;
+	if (p_ptr->mode & MODE_PVP) return(FALSE);
 
 	/* Everlasting and other chars cannot be in the same guild */
 	if (guilds[guild_id].flags & GFLG_EVERLASTING) {
-		if (!(p_ptr->mode & MODE_EVERLASTING)) return FALSE;
+		if (!(p_ptr->mode & MODE_EVERLASTING)) return(FALSE);
 	} else
-		if ((p_ptr->mode & MODE_EVERLASTING)) return FALSE;
+		if ((p_ptr->mode & MODE_EVERLASTING)) return(FALSE);
 
 	/* Log - security */
 	s_printf("GUILD_ADD_AUTO: %s has been added to %s.\n", p_ptr->name, guilds[guild_id].name);
@@ -2233,7 +2233,7 @@ int guild_auto_add(int Ind, int guild_id, char *message) {
 	}
 
 	/* Success */
-	return TRUE;
+	return(TRUE);
 }
 
 /*
@@ -2246,15 +2246,15 @@ int party_add(int adder, cptr name) {
 
 	if (q_ptr->party == 0) {
 		msg_print(adder, "\377yYou don't belong to a party.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	Ind = name_lookup_loose(adder, name, FALSE, TRUE, FALSE);
-	if (Ind <= 0) return FALSE;
+	if (Ind <= 0) return(FALSE);
 
 	if (adder == Ind) {
 		msg_print(adder, "\377yYou cannot add yourself, you are already in the party.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Set pointer */
@@ -2267,7 +2267,7 @@ int party_add(int adder, cptr name) {
 		msg_print(adder, "\377yYou must be the owner to add someone.");
 
 		/* Abort */
-		return FALSE;
+		return(FALSE);
 	}
 #endif
 
@@ -2275,17 +2275,17 @@ int party_add(int adder, cptr name) {
 #ifdef IRON_TEAM_LEVEL9
 	if ((parties[party_id].mode & PA_IRONTEAM) && p_ptr->max_plv > 8) {
 		msg_print(adder, "\377yIron Team owners can no longer add further players when they hit level 9.");
-		return FALSE;
+		return(FALSE);
 	}
 #endif
 	if (parties[party_id].mode & PA_IRONTEAM_CLOSED) {
 		msg_print(adder, "\377yThis Iron Team has been closed, not allowing adding any further members.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	if (p_ptr->mode & MODE_SOLO) {
 		msg_print(Ind, "\377yThat player is a soloist. Those cannot join parties.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Make sure this added person is neutral */
@@ -2295,13 +2295,13 @@ int party_add(int adder, cptr name) {
 		else msg_print(adder, "\377yThat player is already in your party.");
 
 		/* Abort */
-		return FALSE;
+		return(FALSE);
 	}
 
 #ifdef IDDC_IRON_COOP
 	if (in_irondeepdive(&p_ptr->wpos) || in_irondeepdive(&q_ptr->wpos)) {
 		msg_print(adder, "\377yCharacters must be outside the Ironman Deep Dive Challenge to form a party.");
-		return FALSE;
+		return(FALSE);
 	}
 #endif
 
@@ -2310,7 +2310,7 @@ int party_add(int adder, cptr name) {
 	if ((in_irondeepdive(&p_ptr->wpos) || in_irondeepdive(&q_ptr->wpos)) &&
 	    !(in_irondeepdive(&p_ptr->wpos) && in_irondeepdive(&q_ptr->wpos))) {
 		msg_print(adder, "\377yCharacters outside of the IDDC cannot team up with characters inside.");
-		return FALSE;
+		return(FALSE);
 	}
 	/* Disallow adding someone to an IDDC party who already has another character in that party. */
 	if (in_irondeepdive(&p_ptr->wpos)) {
@@ -2329,7 +2329,7 @@ int party_add(int adder, cptr name) {
 		if (!success) {
 			/* uhh.. */
 			msg_print(Ind, "Sorry, adding has failed.");
-			return FALSE;
+			return(FALSE);
 		}
 		success = FALSE;
 		ids = player_id_list(&id_list, acc.id);
@@ -2345,7 +2345,7 @@ int party_add(int adder, cptr name) {
 		/* success = fail! */
 		if (success) {
 			msg_print(adder, "\377yThat player already has another character in that same IDDC party.");
-			return FALSE;
+			return(FALSE);
 		}
 
 		/* We can only add someone who is at least on the same floor as the currently deepest party member, for anti-cheeze of item farming */
@@ -2361,7 +2361,7 @@ int party_add(int adder, cptr name) {
 		}
 		if (ABS(p_ptr->wpos.wz) < ABS(max_depth)) {
 			msg_format(adder, "\377yPlayers to be added must at least match the depth of the party member currently farthest into the IDDC, which is %s at %dft!", max_depth_name, max_depth * 50);
-			return FALSE;
+			return(FALSE);
 		}
  #endif
 	}
@@ -2381,17 +2381,17 @@ int party_add(int adder, cptr name) {
 	/* Everlasting and other chars cannot be in the same party */
 	    (compat_mode(parties[party_id].cmode, p_ptr->mode))) {
 		msg_format(adder, "\377yYou cannot form a party with %s characters.", compat_mode(parties[party_id].cmode, p_ptr->mode));
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Only newly created characters can join an iron team */
 	if ((parties[party_id].mode & PA_IRONTEAM) && (p_ptr->max_exp > 0 || p_ptr->max_plv > 1)) {
 		msg_print(adder, "\377yOnly newly created characters without experience can join an iron team.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Ignoring a player will prevent getting added to a party by him */
-	if (check_ignore(Ind, adder)) return FALSE;
+	if (check_ignore(Ind, adder)) return(FALSE);
 
 	/* Log - security */
 	s_printf("PARTY_ADD: %s has been added to %s by %s.\n", p_ptr->name, parties[party_id].name, q_ptr->name);
@@ -2430,7 +2430,7 @@ int party_add(int adder, cptr name) {
 	if (!p_ptr->wpos.wz) p_ptr->redraw |= PR_MAP;
 
 	/* Success */
-	return TRUE;
+	return(TRUE);
 }
 int party_add_self(int Ind, cptr party) {
 	player_type *p_ptr = Players[Ind];
@@ -2446,19 +2446,19 @@ int party_add_self(int Ind, cptr party) {
 
 	if (p_ptr->mode & MODE_SOLO) {
 		msg_print(Ind, "\377yAs a soloist you cannot join parties.");
-		return FALSE;
+		return(FALSE);
 	}
 
 #ifdef IDDC_RESTRICTED_PARTYING
 	if (in_irondeepdive(&p_ptr->wpos)) {
 		msg_print(Ind, "You cannot add yourself to a party when inside the IDDC.");
-		return FALSE;
+		return(FALSE);
 	}
 #endif
 
 	if (party_id == -1) {
 		msg_print(Ind, "That party does not exist.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* check if he has a character in there already, to be eligible to self-add */
@@ -2467,7 +2467,7 @@ int party_add_self(int Ind, cptr party) {
 	if (!success) {
 		/* uhh.. */
 		msg_print(Ind, "Sorry, self-adding has failed.");
-		return FALSE;
+		return(FALSE);
 	}
 	success = FALSE;
 	ids = player_id_list(&id_list, acc.id);
@@ -2489,7 +2489,7 @@ int party_add_self(int Ind, cptr party) {
 #ifdef IDDC_IRON_COOP
 	if (in_irondeepdive(&p_ptr->wpos) || in_irondeepdive(&wpos_other)) {
 		msg_print(Ind, "\377yCharacters must be outside the Ironman Deep Dive Challenge to form a party.");
-		return FALSE;
+		return(FALSE);
 	}
 #endif
 
@@ -2509,31 +2509,31 @@ int party_add_self(int Ind, cptr party) {
 #endif
 	    compat_mode(p_ptr->mode, parties[party_id].cmode)) {
 		msg_format(Ind, "\377yYou cannot join %s parties.", compat_mode(p_ptr->mode, parties[party_id].cmode));
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Only newly created characters can join an iron team */
 	if ((parties[party_id].mode & PA_IRONTEAM) && (p_ptr->max_exp > 0 || p_ptr->max_plv > 1)) {
 		msg_print(Ind, "\377yOnly newly created characters without experience can join an iron team.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* failure? */
 	if (!success) {
 		msg_print(Ind, "You do not have any character that is member of that party.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Additional restriction for no-trading-mode-like characters */
 #ifdef IRON_TEAM_LEVEL9
 	if ((parties[party_id].mode & PA_IRONTEAM) && level_other >= 9) {
 		msg_print(Ind, "\377yIron Team owners can no longer add further players when they hit level 9.");
-		return FALSE;
+		return(FALSE);
 	}
 #endif
 	if (parties[party_id].mode & PA_IRONTEAM_CLOSED) {
 		msg_print(Ind, "\377yThis Iron Team has been closed, not allowing adding any further members.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Log - security */
@@ -2573,7 +2573,7 @@ int party_add_self(int Ind, cptr party) {
 	if (!p_ptr->wpos.wz) p_ptr->redraw |= PR_MAP;
 
 	/* Success */
-	return TRUE;
+	return(TRUE);
 }
 
 static void erase_guild_key(int id) {
@@ -2884,7 +2884,7 @@ int guild_remove(int remover, cptr name) {
 	if (!guild_id) {
 		if (!is_admin(q_ptr)) {
 			msg_print(remover, "\377yYou are not in a guild");
-			return FALSE;
+			return(FALSE);
 		}
 	}
 
@@ -2894,15 +2894,15 @@ int guild_remove(int remover, cptr name) {
 		msg_print(remover, "\377yYou must be the owner to delete someone.");
 
 		/* Abort */
-		return FALSE;
+		return(FALSE);
 	}
 
 	Ind = name_lookup_loose(remover, name, FALSE, TRUE, FALSE);
-	if (Ind <= 0) return FALSE;
+	if (Ind <= 0) return(FALSE);
 
 	if (Ind == remover) {	/* remove oneself from guild - leave */
 		guild_leave(remover, TRUE);
-		return TRUE;
+		return(TRUE);
 	}
 
 	p_ptr = Players[Ind];
@@ -2915,7 +2915,7 @@ int guild_remove(int remover, cptr name) {
 		msg_print(remover, "\377yYou can only delete guild members.");
 
 		/* Abort */
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Keep the guild, just lose a member */
@@ -2946,7 +2946,7 @@ int guild_remove(int remover, cptr name) {
 		}
 	}
 
-	return TRUE;
+	return(TRUE);
 }
 
 /*
@@ -2967,11 +2967,11 @@ int party_remove(int remover, cptr name) {
 		msg_print(remover, "\377yYou must be the owner to delete someone.");
 
 		/* Abort */
-		return FALSE;
+		return(FALSE);
 	}
 
 	Ind = name_lookup_loose(remover, name, FALSE, TRUE, FALSE);
-	if (Ind <= 0) return FALSE;
+	if (Ind <= 0) return(FALSE);
 	p_ptr = Players[Ind];
 
 	if ((!party_id || !streq(parties[party_id].owner, q_ptr->name)) && is_admin(q_ptr))
@@ -2982,7 +2982,7 @@ int party_remove(int remover, cptr name) {
 		msg_print(remover, "\377yYou can only delete party members.");
 
 		/* Abort */
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* See if this is the owner we're deleting */
@@ -3007,11 +3007,11 @@ int party_remove(int remover, cptr name) {
 		/* no other player online who is in the same party and could overtake leadership? Then erase party! */
 		if (i > NumPlayers) {
 			del_party(party_id);
-			return TRUE;
+			return(TRUE);
 		}
 	} else if (remover == Ind) {
 		del_party(party_id);
-		return TRUE;
+		return(TRUE);
 	}
 
 	/* Lose a member */
@@ -3039,7 +3039,7 @@ int party_remove(int remover, cptr name) {
 		if (!is_admin(p_ptr)) party_msg_format(party_id, "\374\377y%s has been removed from the party.", p_ptr->name);
 	}
 
-	return TRUE;
+	return(TRUE);
 }
 void party_close(int Ind) {
 	player_type *p_ptr = Players[Ind];
@@ -3185,21 +3185,21 @@ bool guild_rename(int Ind, char *new_name) {
 
 	if (!gid) {
 		msg_print(Ind, "\377yYou are not in a guild");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Leaderless guilds do not allow addition of new members */
 	if (p_ptr->id != guilds[gid].master) {
 		msg_print(Ind, "\377yOnly the guild master can rename a guild.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	if (!strcmp(guilds[gid].name, new_name)) {
 		msg_print(Ind, "\377yNew guild name must be different from its current name.");
-		return FALSE;
+		return(FALSE);
 	}
 
-	if (!guild_name_legal(Ind, new_name)) return FALSE;
+	if (!guild_name_legal(Ind, new_name)) return(FALSE);
 
 	/* This could probably be improved. */
 	if (p_ptr->au < GUILD_PRICE) {
@@ -3209,7 +3209,7 @@ bool guild_rename(int Ind, char *new_name) {
 			msg_format(Ind, "\377yYou need %d,000 gold pieces to rename a guild.", GUILD_PRICE / 1000);
 		else
 			msg_format(Ind, "\377yYou need %d gold pieces to rename a guild.", GUILD_PRICE);
-		return FALSE;
+		return(FALSE);
 	}
 
 
@@ -3231,7 +3231,7 @@ bool guild_rename(int Ind, char *new_name) {
 	    showdate(), guilds[gid].name, new_name);
 
 	strcpy(guilds[gid].name, new_name);
-	return TRUE;
+	return(TRUE);
 }
 
 /*
@@ -3455,12 +3455,12 @@ static bool players_in_level(int Ind, int Ind2) {
 	   (p_ptr->lev would be more logical but harsh) */
 	if (p_ptr->total_winner && p2_ptr->total_winner) {
 #ifdef KING_PARTY_FREE_THRESHOLD
-		if (KING_PARTY_FREE_THRESHOLD && p_ptr->max_lev >= KING_PARTY_FREE_THRESHOLD && p2_ptr->max_lev >= KING_PARTY_FREE_THRESHOLD) return TRUE;
+		if (KING_PARTY_FREE_THRESHOLD && p_ptr->max_lev >= KING_PARTY_FREE_THRESHOLD && p2_ptr->max_lev >= KING_PARTY_FREE_THRESHOLD) return(TRUE);
 #endif
-		if (ABS(p_ptr->max_lev - p2_ptr->max_lev) > MAX_KING_PARTY_LEVEL_DIFF) return FALSE;
-		return TRUE;
+		if (ABS(p_ptr->max_lev - p2_ptr->max_lev) > MAX_KING_PARTY_LEVEL_DIFF) return(FALSE);
+		return(TRUE);
 	}
-	if (ABS(p_ptr->max_lev - p2_ptr->max_lev) > MAX_PARTY_LEVEL_DIFF) return FALSE;
+	if (ABS(p_ptr->max_lev - p2_ptr->max_lev) > MAX_PARTY_LEVEL_DIFF) return(FALSE);
 
 	/* Winners and non-winners don't share experience!
 	   This is actually important because winners get special features
@@ -3468,9 +3468,9 @@ static bool players_in_level(int Ind, int Ind2) {
 	   nether realm, and are not meant to influence pre-king gameplay. */
 	if ((p_ptr->total_winner && !(p2_ptr->total_winner || p2_ptr->once_winner)) ||
 	    (p2_ptr->total_winner && !(p_ptr->total_winner || p_ptr->once_winner)))
-		return FALSE;
+		return(FALSE);
 
-	return TRUE;
+	return(TRUE);
 }
 
 /* Note: 'amount' is actually multiplied by 100 for extra decimal digits if we're very low level (Training Tower exp'ing).
@@ -3694,20 +3694,20 @@ bool add_hostility(int Ind, cptr name, bool initiator) {
 
 	if (!i) {
 s_printf("ADD_HOSTILITY: not found.\n");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Check for sillyness */
 	if (i == Ind) {
 		/* Message */
 		msg_print(Ind, "\377yYou cannot be hostile toward yourself.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* If it's a blood bond, players may fight in safe zones and with party members np */
 	if (i > 0) bb = check_blood_bond(Ind, i);
 #ifdef NO_PK
-	if (i < 0 || !bb) return FALSE;
+	if (i < 0 || !bb) return(FALSE);
 #endif
 
 	/* log any attempts */
@@ -3727,30 +3727,30 @@ s_printf("ADD_HOSTILITY: not found.\n");
 	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
 		if (!(p_ptr->pkill & PKILL_KILLER) && (p_ptr->pvpexception != 1)) {
 			msg_print(Ind, "\377yYou may not be hostile to other players.");
-			return FALSE;
+			return(FALSE);
 		}
 	}
 #endif
 
 	if (cfg.use_pk_rules == PK_RULES_NEVER && (p_ptr->pvpexception != 1)) {
 		msg_print(Ind, "\377yYou may not be hostile to other players.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Non-validated players may not pkill */
 	if (p_ptr->inval) {
 		msg_print(Ind, "Your account needs to be validated in order to fight other players.");
-		return FALSE;
+		return(FALSE);
 	}
 
 #if 1
 	if (!bb && initiator && !istown(&p_ptr->wpos)) {
 		msg_print(Ind, "\377yYou need to be in town to declare war.");
-		return FALSE;
+		return(FALSE);
 	}
 #endif
 
-	if (p_ptr->pvpexception == 2) return FALSE;
+	if (p_ptr->pvpexception == 2) return(FALSE);
 	if (p_ptr->pvpexception == 3) {
 		p_ptr->chp = -3;
 		strcpy(p_ptr->died_from, "adrenaline poisoning");
@@ -3759,7 +3759,7 @@ s_printf("ADD_HOSTILITY: not found.\n");
 		p_ptr->energy = -666;
 		//p_ptr->death = TRUE;
 		player_death(Ind);
-		return FALSE;
+		return(FALSE);
 	}
 
 	if (i > 0) {
@@ -3768,7 +3768,7 @@ s_printf("ADD_HOSTILITY: not found.\n");
 		/* Make sure players aren't in the same party */
 		if (!bb && p_ptr->party && player_in_party(p_ptr->party, i)) {
 			msg_format(Ind, "\377y%^s is in your party!", q_ptr->name);
-			return FALSE;
+			return(FALSE);
 		}
 
 		/* Ensure we don't add the same player twice */
@@ -3776,7 +3776,7 @@ s_printf("ADD_HOSTILITY: not found.\n");
 			/* Check this ID */
 			if (h_ptr->id == q_ptr->id) {
 				msg_format(Ind, "\377yYou are already hostile toward %s.", q_ptr->name);
-				return FALSE;
+				return(FALSE);
 			}
 		}
 
@@ -3800,7 +3800,7 @@ s_printf("ADD_HOSTILITY: not found.\n");
 		}
 
 		/* Success */
-		return TRUE;
+		return(TRUE);
 	} else {
 		/* Tweak - inverse i once more */
 		i = 0 - i;
@@ -3810,7 +3810,7 @@ s_printf("ADD_HOSTILITY: not found.\n");
 			/* Check this ID */
 			if (h_ptr->id == 0 - i) {
 				msg_format(Ind, "\377yYou are already hostile toward party '%s'.", parties[i].name);
-				return FALSE;
+				return(FALSE);
 			}
 		}
 
@@ -3835,7 +3835,7 @@ s_printf("ADD_HOSTILITY: not found.\n");
 		msg_broadcast_format(Ind, "\374\377R* %s declares war on party '%s'. *", p_ptr->name, parties[i].name);
 
 		/* Success */
-		return TRUE;
+		return(TRUE);
 	}
 }
 
@@ -3848,20 +3848,20 @@ bool remove_hostility(int Ind, cptr name) {
 	cptr p, q = NULL;
 	int i = name_lookup_loose(Ind, name, TRUE, TRUE, FALSE);
 
-	if (!i) return FALSE;
+	if (!i) return(FALSE);
 
 	/* Check for another silliness */
 	if (i == Ind) {
 		/* Message */
 		msg_print(Ind, "\377GYou are not hostile toward yourself.");
 
-		return FALSE;
+		return(FALSE);
 	}
 
 #ifdef NO_PK
 	/* If it's a blood bond, players may fight in safe zones and with party members np */
-	if (i < 0) return FALSE;
-	else if (!check_blood_bond(Ind, i)) return FALSE;
+	if (i < 0) return(FALSE);
+	else if (!check_blood_bond(Ind, i)) return(FALSE);
 #endif
 
 	/* Forge name */
@@ -3900,7 +3900,7 @@ bool remove_hostility(int Ind, cptr name) {
 				KILL(h_ptr, hostile_type);
 
 				/* Success */
-				return TRUE;
+				return(TRUE);
 			}
 		} else {
 			/* Efficiency */
@@ -3926,7 +3926,7 @@ bool remove_hostility(int Ind, cptr name) {
 				KILL(h_ptr, hostile_type);
 
 				/* Success */
-				return TRUE;
+				return(TRUE);
 			}
 		}
 	}
@@ -3965,16 +3965,16 @@ bool check_hostile(int attacker, int target) {
 		if (h_ptr->id > 0) {
 			/* Identical ID's yield hostility */
 			if (h_ptr->id == q_ptr->id)
-				return TRUE;
+				return(TRUE);
 		} else {
 			/* Check if target belongs to hostile party */
 			if (q_ptr->party == 0 - h_ptr->id)
-				return TRUE;
+				return(TRUE);
 		}
 	}
 
 	/* Not hostile */
-	return FALSE;
+	return(FALSE);
 }
 
 
@@ -3996,7 +3996,7 @@ bool add_ignore(int Ind, cptr name) {
 	if (!name) {
 		msg_print(Ind, "Usage: /ignore foobar");
 
-		return FALSE;
+		return(FALSE);
 	}
 
 #ifdef TOMENET_WORLDS
@@ -4041,14 +4041,14 @@ bool add_ignore(int Ind, cptr name) {
 #endif
 
 	i = name_lookup_loose(Ind, name, TRUE, TRUE, FALSE);
-	if (!i) return FALSE;
+	if (!i) return(FALSE);
 
 	/* Check for another silliness */
 	if (i == Ind) {
 		/* Message */
 		msg_print(Ind, "You cannot ignore yourself.");
 
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Forge name */
@@ -4087,7 +4087,7 @@ bool add_ignore(int Ind, cptr name) {
 				KILL(h_ptr, hostile_type);
 
 				/* Success */
-				return TRUE;
+				return(TRUE);
 			}
 		} else {
 			/* Efficiency */
@@ -4112,7 +4112,7 @@ bool add_ignore(int Ind, cptr name) {
 				KILL(h_ptr, hostile_type);
 
 				/* Success */
-				return TRUE;
+				return(TRUE);
 			}
 		}
 	}
@@ -4134,7 +4134,7 @@ bool add_ignore(int Ind, cptr name) {
 		msg_format(Ind, "You aren't hearing %s any more.", q_ptr->name);
 
 		/* Success */
-		return TRUE;
+		return(TRUE);
 	} else {
 		/* Tweak - inverse i once more */
 		i = 0 - i;
@@ -4153,7 +4153,7 @@ bool add_ignore(int Ind, cptr name) {
 		msg_format(Ind, "You aren't hearing party '%s' any more.", parties[i].name);
 
 		/* Success */
-		return TRUE;
+		return(TRUE);
 	}
 }
 
@@ -4170,16 +4170,16 @@ bool check_ignore(int attacker, int target) {
 		if (h_ptr->id > 0) {
 			/* Identical ID's yield hostility */
 			if (h_ptr->id == Players[target]->id)
-				return TRUE;
+				return(TRUE);
 		} else {
 			/* Check if target belongs to hostile party */
 			if (Players[target]->party == 0 - h_ptr->id)
-				return TRUE;
+				return(TRUE);
 		}
 	}
 
 	/* Not hostile */
-	return FALSE;
+	return(FALSE);
 }
 
 /*
@@ -4203,7 +4203,7 @@ bool check_ignore(int attacker, int target) {
  */
 static int hash_slot(int id) {
 	/* Be very efficient */
-	return (id & (NUM_HASH_ENTRIES - 1));
+	return(id & (NUM_HASH_ENTRIES - 1));
 }
 
 
@@ -4245,7 +4245,7 @@ byte lookup_player_level(int id) {
 		return ptr->level;
 
 	/* Not found */
-	return -1L;
+	return(-1L);
 }
 /* Return a player's custom sort order of a character in his account overview screen */
 byte lookup_player_order(s32b id) {
@@ -4255,7 +4255,7 @@ byte lookup_player_order(s32b id) {
 		return ptr->order;
 
 	/* Not found */
-	return -1L;
+	return(-1L);
 }
 void set_player_order(s32b id, byte order) {
 	hash_entry *ptr = lookup_player(id);
@@ -4272,17 +4272,17 @@ byte lookup_player_maxplv(int id) {
 		return ptr->max_plv;
 
 	/* Not found */
-	return -1L;
+	return(-1L);
 }
 
 byte lookup_player_admin(int id) {
 	hash_entry *ptr;
 
 	if ((ptr = lookup_player(id)))
-		return (ptr->admin ? 1 : 0);
+		return(ptr->admin ? 1 : 0);
 
 	/* Not found */
-	return -1L;
+	return(-1L);
 }
 
 u16b lookup_player_type(int id) {
@@ -4292,7 +4292,7 @@ u16b lookup_player_type(int id) {
 		return(ptr->race | (ptr->class <<8 ));
 
 	/* Not found */
-	return -1L;
+	return(-1L);
 }
 
 /*
@@ -4305,7 +4305,7 @@ s32b lookup_player_party(int id) {
 		return ptr->party;
 
 	/* Not found */
-	return -1L;
+	return(-1L);
 }
 
 s32b lookup_player_guild(int id) {
@@ -4315,7 +4315,7 @@ s32b lookup_player_guild(int id) {
 		return ptr->guild;
 
 	/* Not found */
-	return -1L;
+	return(-1L);
 }
 
 u32b lookup_player_guildflags(int id) {
@@ -4325,7 +4325,7 @@ u32b lookup_player_guildflags(int id) {
 		return ptr->guild_flags;
 
 	/* Not found */
-	return -1L;
+	return(-1L);
 }
 
 /*
@@ -4338,7 +4338,7 @@ time_t lookup_player_laston(int id) {
 		return ptr->laston;
 
 	/* Not found */
-	return -1L;
+	return(-1L);
 }
 
 /*
@@ -4392,7 +4392,7 @@ s32b lookup_player_au(int id) {
 		return ptr->au;
 
 	/* Not found */
-	return -1L;
+	return(-1L);
 }
 
 /*
@@ -4405,7 +4405,7 @@ s32b lookup_player_balance(int id) {
 		return ptr->balance;
 
 	/* Not found */
-	return -1L;
+	return(-1L);
 }
 #endif
 
@@ -4431,7 +4431,7 @@ int lookup_player_id(cptr name) {
 	}
 
 	/* Not found */
-	return 0;
+	return(0);
 }
 /* Case-insensitive lookup_player_id() */
 int lookup_case_player_id(cptr name) {
@@ -4453,7 +4453,7 @@ int lookup_case_player_id(cptr name) {
 	}
 
 	/* Not found */
-	return 0;
+	return(0);
 }
 
 bool fix_player_case(char *name) {
@@ -4472,9 +4472,9 @@ bool fix_player_case(char *name) {
 				/* Overwrite it with currently used capitalization */
 				if (strcmp(ptr->name, name)) {
 					strcpy(name, ptr->name);
-					return TRUE;
+					return(TRUE);
 				}
-				return FALSE;
+				return(FALSE);
 			}
 
 			/* Next entry in chain */
@@ -4483,7 +4483,7 @@ bool fix_player_case(char *name) {
 	}
 
 	/* Not found */
-	return FALSE;
+	return(FALSE);
 }
 
 /* Messed up version of lookup_player_id for house ownership changes
@@ -4521,15 +4521,15 @@ int lookup_player_id_messy(cptr name) {
 			if (tmp_id && (tmp_id != Players[i]->id)) /* mess-up detected */
 				s_printf("$ID-WARNING$ Player %s has hash id %d but character id %d.\n", Players[i]->name, tmp_id, Players[i]->id);
 			/* have character-id override the hash id.. sigh */
-			if (Players[i]->id > 0) return (Players[i]->id);
+			if (Players[i]->id > 0) return(Players[i]->id);
 			/* the > 0 check is paranoia.. */
 			break;
 		}
 
-	if (tmp_id) return (tmp_id);
+	if (tmp_id) return(tmp_id);
 
 	/* Not found */
-	return 0;
+	return(0);
 }
 
 u32b lookup_player_account(int id) {
@@ -4538,7 +4538,7 @@ u32b lookup_player_account(int id) {
 		return ptr->account;
 
 	/* Not found */
-	return -1L;
+	return(-1L);
 }
 
 byte lookup_player_winner(int id) {
@@ -4547,7 +4547,7 @@ byte lookup_player_winner(int id) {
 		return ptr->winner;
 
 	/* Not found */
-	return -1L;
+	return(-1L);
 }
 
 void stat_player(char *name, bool on) {
@@ -5668,8 +5668,7 @@ void set_pkill(int Ind, int delay) {
  *
  * These functions should be common with hostilityes in the future. -Jir-
  */
-bool pilot_set(int Ind, cptr name)
-{
+bool pilot_set(int Ind, cptr name) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	hostile_type *h_ptr, *i_ptr;
 	int i;
@@ -5678,21 +5677,19 @@ bool pilot_set(int Ind, cptr name)
 	/* Check for silliness */
 	if (!name) {
 		msg_print(Ind, "Usage: /pilot foobar");
-		return FALSE;
+		return(FALSE);
 	}
 
 	i = name_lookup_loose(Ind, name, TRUE, TRUE, FALSE);
 
-	if (!i) {
-		return FALSE;
-	}
+	if (!i) return(FALSE);
 
 	/* Check for another silliness */
 	if (i == Ind) {
 		/* Message */
 		msg_print(Ind, "You cannot follow yourself.");
 
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Forge name */
@@ -5718,7 +5715,7 @@ bool pilot_set(int Ind, cptr name)
 		msg_format(Ind, "You aren't hearing %s any more.", q_ptr->name);
 
 		/* Success */
-		return TRUE;
+		return(TRUE);
 	} else {
 		/* Tweak - inverse i once more */
 		i = 0 - i;
@@ -5737,7 +5734,7 @@ bool pilot_set(int Ind, cptr name)
 		msg_format(Ind, "You aren't hearing party '%s' any more.", parties[i].name);
 
 		/* Success */
-		return TRUE;
+		return(TRUE);
 	}
 }
 #endif	// 0

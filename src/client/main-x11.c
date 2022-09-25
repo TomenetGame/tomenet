@@ -431,7 +431,7 @@ static errr Metadpy_init_2(Display *dpy, cptr name) {
 			if (!name) name = "(default)";
 
 			/* Error */
-			return (-1);
+			return(-1);
 		}
 
 		/* We WILL have to Nuke it when done */
@@ -493,7 +493,7 @@ static errr Metadpy_init_2(Display *dpy, cptr name) {
 	/*** All done ***/
 
 	/* Return "success" ***/
-	return (0);
+	return(0);
 }
 
 /*
@@ -507,7 +507,7 @@ static errr Metadpy_update(int flush, int sync, int discard) {
 	if (sync) XSync(Metadpy->dpy, discard);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -518,7 +518,7 @@ static errr Metadpy_do_beep(void) {
 	/* Make a simple beep */
 	XBell(Metadpy->dpy, 100);
 
-	return (0);
+	return(0);
 }
 
 
@@ -540,7 +540,7 @@ static errr Infowin_set_name(cptr name) {
 	st = XStringListToTextProperty(&bp, 1, &tp);
 	if (st) XSetWMName(Metadpy->dpy, Infowin->win, &tp);
 	XFree(tp.value);
-	return (0);
+	return(0);
 }
 
 /*
@@ -574,7 +574,7 @@ static errr Infowin_init_data(Window dad, int x, int y, int w, int h, unsigned i
 	xid = XCreateSimpleWindow(Metadpy->dpy, dad, x, y, w, h, b, b_color, bg_color);
 	if (xid == 0) {
 		printf("Error creating window on display: %s\n", Metadpy->name);
-		return (1);
+		return(1);
 	}
 
 	/* Start out selecting No events */
@@ -601,7 +601,7 @@ static errr Infowin_init_data(Window dad, int x, int y, int w, int h, unsigned i
 	/* Mark it as nukable */
 	Infowin->nuke = 1;
 
-	return (0);
+	return(0);
 }
 
 
@@ -669,12 +669,12 @@ static int Infoclr_Opcode(cptr str) {
 		/* Is this the right oprname? */
 		if (streq(opcode_pairs[i * 2], str)) {
 			/* Convert the second element in the pair into a Code */
-			return (atoi(opcode_pairs[i * 2 + 1]));
+			return(atoi(opcode_pairs[i * 2 + 1]));
 		}
 	}
 
 	/* The code was not found, return -1 */
-	return (-1);
+	return(-1);
 }
 
 
@@ -699,19 +699,19 @@ static Pixell Infoclr_Pixell(cptr name) {
 	/* Attempt to Parse the name */
 	if (name && name[0]) {
 		/* The 'bg' color is available */
-		if (streq(name, "bg")) return (Metadpy->bg);
+		if (streq(name, "bg")) return(Metadpy->bg);
 
 		/* The 'fg' color is available */
-		if (streq(name, "fg")) return (Metadpy->fg);
+		if (streq(name, "fg")) return(Metadpy->fg);
 
 		/* The 'zg' color is available */
-		if (streq(name, "zg")) return (Metadpy->zg);
+		if (streq(name, "zg")) return(Metadpy->zg);
 
 		/* The 'white' color is available */
-		if (streq(name, "white")) return (Metadpy->white);
+		if (streq(name, "white")) return(Metadpy->white);
 
 		/* The 'black' color is available */
-		if (streq(name, "black")) return (Metadpy->black);
+		if (streq(name, "black")) return(Metadpy->black);
 
 		/* Attempt to parse 'name' into 'scrn' */
 		if (!(XParseColor(Metadpy->dpy, Metadpy->cmap, name, &scrn)))
@@ -726,14 +726,14 @@ static Pixell Infoclr_Pixell(cptr name) {
 		}
 
 		/* The Pixel was Allocated correctly */
-		else return (scrn.pixel);
+		else return(scrn.pixel);
 	}
 
 	/* Warn about the Default being Used */
 	plog_fmt("Warning: Using 'fg' for unknown color '%s'\n", name);
 
 	/* Default to the 'Foreground' color */
-	return (Metadpy->fg);
+	return(Metadpy->fg);
 }
 
 /*
@@ -757,11 +757,11 @@ static errr Infoclr_init_data(Pixell fg, Pixell bg, int op, int stip) {
 	/*** Simple error checking of opr and clr ***/
 
 	/* Check the 'Pixells' for realism */
-	if (bg > Metadpy->zg) return (-1);
-	if (fg > Metadpy->zg) return (-1);
+	if (bg > Metadpy->zg) return(-1);
+	if (fg > Metadpy->zg) return(-1);
 
 	/* Check the data for trueness */
-	if ((op < 0) || (op > 15)) return (-1);
+	if ((op < 0) || (op > 15)) return(-1);
 
 
 	/*** Create the requested 'GC' ***/
@@ -811,7 +811,7 @@ static errr Infoclr_init_data(Pixell fg, Pixell bg, int op, int stip) {
 	iclr->stip = stip ? 1 : 0;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*
@@ -841,7 +841,7 @@ static errr Infofnt_prepare(XFontStruct *info) {
 #endif
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*
@@ -857,7 +857,7 @@ static errr Infofnt_init_data(cptr name) {
 	/*** Load the info Fresh, using the name ***/
 
 	/* If the name is not given, report an error */
-	if (!name) return (-1);
+	if (!name) return(-1);
 
 	/* Attempt to load the font */
 	info = XLoadQueryFont(Metadpy->dpy, name);
@@ -865,7 +865,7 @@ static errr Infofnt_init_data(cptr name) {
 	/* The load failed, try to recover */
 	if (!info) {
 		fprintf(stderr, "Font not found: %s\n", name);
-		return (-1);
+		return(-1);
 	}
 
 
@@ -880,7 +880,7 @@ static errr Infofnt_init_data(cptr name) {
 		XFreeFont(Metadpy->dpy, info);
 
 		/* Fail */
-		return (-1);
+		return(-1);
 	}
 
 	/* Save a copy of the font name */
@@ -890,7 +890,7 @@ static errr Infofnt_init_data(cptr name) {
 	Infofnt->nuke = 1;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -915,7 +915,7 @@ static errr Infowin_set_mask (long mask) {
 	XSelectInput(Metadpy->dpy, Infowin->win, Infowin->mask);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -927,7 +927,7 @@ static errr Infowin_map (void) {
 	XMapWindow(Metadpy->dpy, Infowin->win);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*
@@ -938,7 +938,7 @@ static errr Infowin_raise(void) {
 	XRaiseWindow(Metadpy->dpy, Infowin->win);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*
@@ -949,7 +949,7 @@ static errr Infowin_set_focus(void) {
 	XSetInputFocus(Metadpy->dpy, Infowin->win, RevertToNone, CurrentTime);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*
@@ -962,7 +962,7 @@ static errr Infowin_move(int x, int y) {
 	XMoveWindow(Metadpy->dpy, Infowin->win, x, y);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*
@@ -975,7 +975,7 @@ static errr Infowin_resize(int w, int h) {
 	XResizeWindow(Metadpy->dpy, Infowin->win, w, h);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*
@@ -986,7 +986,7 @@ static errr Infowin_wipe(void) {
 	XClearWindow(Metadpy->dpy, Infowin->win);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*
@@ -999,7 +999,7 @@ static errr Infofnt_text_std(int x, int y, cptr str, int len) {
 	/*** Do a brief info analysis ***/
 
 	/* Do nothing if the string is null */
-	if (!str || !*str) return (-1);
+	if (!str || !*str) return(-1);
 
 	/* Get the length of the string */
 	if (len < 0) len = strlen (str);
@@ -1043,7 +1043,7 @@ static errr Infofnt_text_std(int x, int y, cptr str, int len) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1084,7 +1084,7 @@ static errr Infofnt_text_non(int x, int y, cptr str, int len) {
 	XFillRectangle(Metadpy->dpy, Infowin->win, Infoclr->gc, x, y, w, h);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1232,7 +1232,7 @@ static errr Infowin_set_size_hints(int x, int y, int w, int h, int b, int r_w, i
 	sh = XAllocSizeHints();
 
 	/* Oops */
-	if (!sh) return (1);
+	if (!sh) return(1);
 
 	/* Fixed window size */
 	if (fixed) {
@@ -1278,7 +1278,7 @@ static errr Infowin_set_class_hint(cptr name) {
 	char res_class[20];
 
 	ch = XAllocClassHint();
-	if (ch == NULL) return (1);
+	if (ch == NULL) return(1);
 
 	strcpy(res_name, name);
 	res_name[0] = FORCELOWER(res_name[0]);
@@ -1290,7 +1290,7 @@ static errr Infowin_set_class_hint(cptr name) {
 	XSetClassHint(Metadpy->dpy, Infowin->win, ch);
 
 	XFree(ch);
-	return (0);
+	return(0);
 }
 
 
@@ -1440,7 +1440,7 @@ static errr CheckEvent(bool wait) {
 	resize_window_x11_timers_handle();
 
 	/* Do not wait unless requested */
-	if (!wait && !XPending(Metadpy->dpy)) return (1);
+	if (!wait && !XPending(Metadpy->dpy)) return(1);
 
 	/* Load the Event */
 	XNextEvent(Metadpy->dpy, xev);
@@ -1560,7 +1560,7 @@ static errr CheckEvent(bool wait) {
 
 
 	/* Unknown window */
-	if (!td || !iwin) return (0);
+	if (!td || !iwin) return(0);
 
 
 	/* Hack -- activate the Term */
@@ -1716,7 +1716,7 @@ static errr CheckEvent(bool wait) {
 
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*
@@ -1766,7 +1766,7 @@ static errr Term_xtra_x11_level(int v) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1777,32 +1777,32 @@ static errr Term_xtra_x11(int n, int v) {
 	/* Handle a subset of the legal requests */
 	switch (n) {
 		/* Make a noise */
-		case TERM_XTRA_NOISE: Metadpy_do_beep(); return (0);
+		case TERM_XTRA_NOISE: Metadpy_do_beep(); return(0);
 
 		/* Flush the output XXX XXX XXX */
-		case TERM_XTRA_FRESH: Metadpy_update(1, 0, 0); return (0);
+		case TERM_XTRA_FRESH: Metadpy_update(1, 0, 0); return(0);
 
 		/* Process random events XXX XXX XXX */
-		case TERM_XTRA_BORED: return (CheckEvent(0));
+		case TERM_XTRA_BORED: return(CheckEvent(0));
 
 		/* Process Events XXX XXX XXX */
-		case TERM_XTRA_EVENT: return (CheckEvent(v));
+		case TERM_XTRA_EVENT: return(CheckEvent(v));
 
 		/* Flush the events XXX XXX XXX */
-		case TERM_XTRA_FLUSH: while (!CheckEvent(FALSE)); return (0);
+		case TERM_XTRA_FLUSH: while (!CheckEvent(FALSE)); return(0);
 
 		/* Handle change in the "level" */
-		case TERM_XTRA_LEVEL: return (Term_xtra_x11_level(v));
+		case TERM_XTRA_LEVEL: return(Term_xtra_x11_level(v));
 
 		/* Clear the screen */
-		case TERM_XTRA_CLEAR: Infowin_wipe(); return (0);
+		case TERM_XTRA_CLEAR: Infowin_wipe(); return(0);
 
 		/* Delay for some milliseconds */
-		case TERM_XTRA_DELAY: usleep(1000 * v); return (0);
+		case TERM_XTRA_DELAY: usleep(1000 * v); return(0);
 	}
 
 	/* Unknown */
-	return (1);
+	return(1);
 }
 
 
@@ -1817,7 +1817,7 @@ static errr Term_wipe_x11(int x, int y, int n) {
 	Infofnt_text_non(x, y, "", n);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1842,7 +1842,7 @@ static errr Term_curs_x11(int x, int y) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1878,7 +1878,7 @@ static errr Term_text_x11(int x, int y, int n, byte a, cptr s) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 #ifdef USE_GRAPHICS
@@ -1917,7 +1917,7 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 		/* Foreground color is the same as background color. If this was text, the tile would be rendered as solid block of color.
 		 * But an image tile could contain some other color pixels and could result in no solid color tile.
 		 * That's why paint a solid block as intended. */
-		return (Infofnt_text_std(x, y, " ", 1));
+		return(Infofnt_text_std(x, y, " ", 1));
 	}
 
 	term_data *td = (term_data*)(Term->data);
@@ -1949,7 +1949,7 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 		  x, y);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /* Salvaged and adapted from http://www.phial.com/angdirs/angband-291/src/maid-x11.c */
@@ -1976,7 +1976,7 @@ static unsigned long create_pixel(Display *dpy, byte red, byte green, byte blue)
 		quit_fmt("Couldn't allocate bitmap color '%s'\n", cname);
 	}
 
-	return (xcolour.pixel);
+	return(xcolour.pixel);
 }
 
 /*
@@ -2053,7 +2053,7 @@ static errr ReadBMPData(char *Name, char **data_return,  int *width_return, int 
 	/* Open the BMP file. */
 	if (NULL == (f = fopen(Name, "r"))) {
 		/* No such file. */
-		return (ReadBMPNoFile);
+		return(ReadBMPNoFile);
 	}
 
 	/* Read the "BITMAPFILEHEADER". */
@@ -2268,7 +2268,7 @@ static XImage *ResizeImage(Display *disp, XImage *Im,
 	Window root_win = DefaultRootWindow(disp);
 	(*bgmask_return) = XCreateBitmapFromData(disp, root_win, bgmask_data, width2, height2);
 	(*fgmask_return) = XCreateBitmapFromData(disp, root_win, fgmask_data, width2, height2);
-	return (Tmp);
+	return(Tmp);
 }
 
 #endif /* USE_GRAPHICS */
@@ -2445,7 +2445,7 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	Term_activate(t);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*
@@ -2569,7 +2569,7 @@ static term_data* term_idx_to_term_data(int term_idx) {
 	case 7: td = &term_7; break;
 	}
 
-	return (td);
+	return(td);
 }
 
 static int term_data_to_term_idx(term_data *td) {
@@ -2593,7 +2593,7 @@ errr init_x11(void) {
 	cptr dpy_name = "";
 
 	/* Init the Metadpy if possible */
-	if (Metadpy_init_name(dpy_name)) return (-1);
+	if (Metadpy_init_name(dpy_name)) return(-1);
 
 
 	/* set OS-specific resize_main_window() hook */
@@ -2852,7 +2852,7 @@ errr init_x11(void) {
 	Infowin_raise();
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 

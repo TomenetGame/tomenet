@@ -26,10 +26,10 @@ static s16b find_skill(cptr name) {
 	/* Scan skill list */
 	for (i = 1; i < MAX_SKILLS; i++)
 		/* The name matches */
-		if (streq((char*)s_info[i].name, name)) return (i);
+		if (streq((char*)s_info[i].name, name)) return(i);
 
 	/* No match found */
-	return (-1);
+	return(-1);
 }
 #endif
 
@@ -38,7 +38,7 @@ static s16b find_skill(cptr name) {
  *
  */
 s16b get_skill(int skill) {
-	return (p_ptr->s_info[skill].value / SKILL_STEP);
+	return(p_ptr->s_info[skill].value / SKILL_STEP);
 }
 
 
@@ -49,7 +49,7 @@ s16b get_skill_scale(player_type *pfft, int skill, u32b scale) {
 	(void) pfft; /* first parameter ignored in client code */
 
 	/* XXX XXX XXX */
-	return (((p_ptr->s_info[skill].value / 10) * (scale * (SKILL_STEP / 10)) /
+	return(((p_ptr->s_info[skill].value / 10) * (scale * (SKILL_STEP / 10)) /
 	    (SKILL_MAX / 10)) /
 	    (SKILL_STEP / 10));
 }
@@ -61,8 +61,8 @@ static int get_idx(int i) {
 	int j;
 
 	for (j = 1; j < MAX_SKILLS; j++)
-		if (s_info[j].order == i) return (j);
-	return (0);
+		if (s_info[j].order == i) return(j);
+	return(0);
 }
 
 
@@ -70,8 +70,8 @@ static bool has_child(int sel) {
 	int i;
 
 	for (i = 1; i < MAX_SKILLS; i++)
-		if (s_info[i].father == sel) return (TRUE);
-	return (FALSE);
+		if (s_info[i].father == sel) return(TRUE);
+	return(FALSE);
 }
 
 static bool has_active_child(int sel) {
@@ -81,8 +81,8 @@ static bool has_active_child(int sel) {
 		if ((s_info[i].father == sel) &&
 		    ((p_ptr->s_info[i].mod) || (p_ptr->s_info[i].value) ||
 		    has_active_child(i)))
-			return (TRUE);
-	return (FALSE);
+			return(TRUE);
+	return(FALSE);
 }
 
 /*
@@ -639,10 +639,10 @@ static int do_cmd_activate_skill_aux() {
 bool item_tester_hook_device(object_type *o_ptr) {
 	if ((o_ptr->tval == TV_ROD) ||
 	    (o_ptr->tval == TV_STAFF) ||
-	    (o_ptr->tval == TV_WAND)) return (TRUE);
+	    (o_ptr->tval == TV_WAND)) return(TRUE);
 
 	/* Assume not */
-	return (FALSE);
+	return(FALSE);
 }
 
 /*
@@ -651,25 +651,25 @@ bool item_tester_hook_device(object_type *o_ptr) {
 static bool item_tester_hook_potion(object_type *o_ptr) {
 	if ((o_ptr->tval == TV_POTION) ||
 	    (o_ptr->tval == TV_POTION2) ||
-	    (o_ptr->tval == TV_FLASK)) return (TRUE);
+	    (o_ptr->tval == TV_FLASK)) return(TRUE);
 
 	/* Assume not */
-	return (FALSE);
+	return(FALSE);
 }
 
 static bool item_tester_hook_scroll_rune(object_type *o_ptr) {
 	if ((o_ptr->tval == TV_SCROLL) ||
-	    (o_ptr->tval == TV_RUNE)) return (TRUE);
+	    (o_ptr->tval == TV_RUNE)) return(TRUE);
 
 	/* Assume not */
-	return (FALSE);
+	return(FALSE);
 }
 
 bool item_tester_hook_armour(object_type *o_ptr) {
-	return (is_armour(o_ptr->tval));
+	return(is_armour(o_ptr->tval));
 }
 bool item_tester_hook_weapon(object_type *o_ptr) {
-	return (is_melee_weapon(o_ptr->tval) || is_ammo(o_ptr->tval) ||
+	return(is_melee_weapon(o_ptr->tval) || is_ammo(o_ptr->tval) ||
 	    o_ptr->tval == TV_BOW || o_ptr->tval == TV_BOOMERANG ||
 	    (o_ptr->tval == TV_TRAPKIT && is_firearm_trapkit(o_ptr->sval)) ||
 	    o_ptr->tval == TV_DIGGING || o_ptr->tval == TV_MSTAFF);
@@ -717,12 +717,12 @@ bool item_tester_hook_custom_tome(object_type *o_ptr) {
 #endif
 }
 bool item_tester_hook_armour_no_shield(object_type *o_ptr) {
-	return (is_armour(o_ptr->tval) && o_ptr->tval != TV_SHIELD);
+	return(is_armour(o_ptr->tval) && o_ptr->tval != TV_SHIELD);
 }
 
 //ENABLE_DEMOLITIONIST
 bool item_tester_hook_chemical(object_type *o_ptr) {
-	return (o_ptr->tval == TV_CHEMICAL
+	return(o_ptr->tval == TV_CHEMICAL
 	    || o_ptr->tval == TV_BOTTLE
 	    || o_ptr->tval == TV_POTION
 	    || o_ptr->tval == TV_POTION2

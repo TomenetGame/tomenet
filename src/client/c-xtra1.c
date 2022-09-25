@@ -94,7 +94,7 @@ void cnv_stat(int val, char *out_val) {
 static int reduce_stat(int val, int reduce) {
 	int bonus;
 
-	if (val <= 18) return (val - reduce);
+	if (val <= 18) return(val - reduce);
 
 	/* Split it up */
 	bonus = (val - 18);
@@ -111,7 +111,7 @@ static int reduce_stat(int val, int reduce) {
 		if (reduce) val -= reduce;
 	}
 	/* Combine again */
-	return (val + bonus);
+	return(val + bonus);
 }
 
 /*
@@ -2520,13 +2520,13 @@ static cptr likert(int x, int y, int max) {
 	/* Negative values */
 	if (x < 0) {
 		likert_color = TERM_RED;
-		return ("Very Bad");
+		return("Very Bad");
 	}
 
 	/* Highest possible value reached */
 	if ((x >= max) && max) {
 		likert_color = TERM_L_UMBER;
-		return ("Legendary");
+		return("Legendary");
 	}
 
 	/* Analyze the value */
@@ -2534,43 +2534,43 @@ static cptr likert(int x, int y, int max) {
 		case 0:
 		case 1:
 			likert_color = TERM_RED;
-			return ("Bad");
+			return("Bad");
 		case 2:
 			likert_color = TERM_RED;
-			return ("Poor");
+			return("Poor");
 		case 3:
 		case 4:
 			likert_color = TERM_YELLOW;
-			return ("Fair");
+			return("Fair");
 		case 5:
 			likert_color = TERM_YELLOW;
-			return ("Good");
+			return("Good");
 		case 6:
 			likert_color = TERM_YELLOW;
-			return ("Very Good");
+			return("Very Good");
 		case 7:
 		case 8:
 			likert_color = TERM_L_GREEN;
-			return ("Excellent");
+			return("Excellent");
 		case 9:
 		case 10:
 		case 11:
 		case 12:
 		case 13:
 			likert_color = TERM_L_GREEN;
-			return ("Superb");
+			return("Superb");
 		case 14:
 		case 15:
 		case 16:
 		case 17:
 			likert_color = TERM_L_GREEN;
-			return ("Heroic");
+			return("Heroic");
 		default:
 			/* indicate that there is a maximum value */
 			if (max) likert_color = TERM_GREEN;
 			/* indicate that there is no maximum */
 			else likert_color = TERM_L_GREEN;
-			return ("Legendary");
+			return("Legendary");
 	}
 }
 

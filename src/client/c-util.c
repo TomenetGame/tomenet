@@ -110,11 +110,11 @@ static bool was_all_buffer = FALSE;
 static bool was_important_scrollback = FALSE;
 
 static char octify(uint i) {
-	return (hexsym[i%8]);
+	return(hexsym[i%8]);
 }
 
 static char hexify(uint i) {
-	return (hexsym[i%16]);
+	return(hexsym[i%16]);
 }
 
 void move_cursor(int row, int col) {
@@ -184,12 +184,12 @@ static int macro_maybe(cptr buf, int n) {
 		if (prefix(macro__pat[i], buf))
 		{
 			/* Ignore complete macros */
-			if (!streq(macro__pat[i], buf)) return (i);
+			if (!streq(macro__pat[i], buf)) return(i);
 		}
 	}
 
 	/* No matches */
-	return (-1);
+	return(-1);
 }
 
 
@@ -220,7 +220,7 @@ static int macro_ready(cptr buf) {
 	}
 
 	/* Return the result */
-	return (n);
+	return(n);
 }
 
 
@@ -881,11 +881,11 @@ static char inkey_aux(void) {
 
 
 	/* Do not check "ascii 28" */
-	if (ch == 28) return (ch);
+	if (ch == 28) return(ch);
 
 
 	/* Do not check "ascii 29" */
-	if (ch == 29) return (ch);
+	if (ch == 29) return(ch);
 
 	/* Do not check macro actions */
 	if (parse_macro) {
@@ -919,22 +919,22 @@ static char inkey_aux(void) {
 		}
 
 		/* return next macro character */
-		return (ch);
+		return(ch);
 	}
 
 	/* Do not check "control-underscore" sequences */
-	if (parse_under) return (ch);
+	if (parse_under) return(ch);
 
 	/* Do not check "control-backslash" sequences */
-	if (parse_slash) return (ch);
+	if (parse_slash) return(ch);
 
 
 	/* Efficiency -- Ignore impossible macros */
-	if (!macro__use[(byte)(ch)]) return (ch);
+	if (!macro__use[(byte)(ch)]) return(ch);
 
 	/* Efficiency -- Ignore inactive macros */
-	if ((((shopping && !c_cfg.macros_in_stores) || !inkey_flag || inkey_msg) && (macro__use[(byte)(ch)] == MACRO_USE_CMD)) || inkey_interact_macros) return (ch);
-	if ((((shopping && !c_cfg.macros_in_stores) || inkey_msg) && (macro__use[(byte)(ch)] == MACRO_USE_HYB)) || inkey_interact_macros) return (ch);
+	if ((((shopping && !c_cfg.macros_in_stores) || !inkey_flag || inkey_msg) && (macro__use[(byte)(ch)] == MACRO_USE_CMD)) || inkey_interact_macros) return(ch);
+	if ((((shopping && !c_cfg.macros_in_stores) || inkey_msg) && (macro__use[(byte)(ch)] == MACRO_USE_HYB)) || inkey_interact_macros) return(ch);
 
 	/* Save the first key, advance */
 	buf[p++] = ch;
@@ -984,14 +984,14 @@ static char inkey_aux(void) {
 		/* Push all the keys back on the queue */
 		while (p > 0) {
 			/* Push the key, notice over-flow */
-			if (Term_key_push(buf[--p])) return (0);
+			if (Term_key_push(buf[--p])) return(0);
 		}
 
 		/* Wait for (and remove) a pending key */
 		(void)Term_inkey(&ch, TRUE, TRUE);
 
 		/* Return the key */
-		return (ch);
+		return(ch);
 	}
 
 
@@ -1004,7 +1004,7 @@ static char inkey_aux(void) {
 
 	/* Push the "extra" keys back on the queue */
 	while (p > n) {
-		if (Term_key_push(buf[--p])) return (0);
+		if (Term_key_push(buf[--p])) return(0);
 	}
 
 	/* We are now inside a macro */
@@ -1016,7 +1016,7 @@ static char inkey_aux(void) {
 	abort_prompt = FALSE;
 
 	/* Push the "macro complete" key */
-	if (Term_key_push(29)) return (0);
+	if (Term_key_push(29)) return(0);
 
 
 	/* Access the macro action */
@@ -1029,7 +1029,7 @@ static char inkey_aux(void) {
 	/* Push the macro "action" onto the key queue */
 	while (n > 0) {
 		/* Push the key, notice over-flow */
-		if (Term_key_push(act[--n])) return (0);
+		if (Term_key_push(act[--n])) return(0);
 	}
 #else
 	/* Push all at once */
@@ -1037,7 +1037,7 @@ static char inkey_aux(void) {
 #endif
 
 	/* Force "inkey()" to call us again */
-	return (0);
+	return(0);
 }
 
 
@@ -1377,7 +1377,7 @@ char inkey(void) {
 
 	/* Return the keypress */
 	if (inkey_sleep) inkey_sleep_semaphore = TRUE;
-	return (ch);
+	return(ch);
 }
 
 static int hack_dir = 0;
@@ -1393,108 +1393,108 @@ char roguelike_commands(char command) {
 	switch (command) {
 
 	/* Movement (rogue keys) */
-	case 'b': hack_dir = 1; return (';');
-	case 'j': hack_dir = 2; return (';');
-	case 'n': hack_dir = 3; return (';');
-	case 'h': hack_dir = 4; return (';');
-	case 'l': hack_dir = 6; return (';');
-	case 'y': hack_dir = 7; return (';');
-	case 'k': hack_dir = 8; return (';');
-	case 'u': hack_dir = 9; return (';');
+	case 'b': hack_dir = 1; return(';');
+	case 'j': hack_dir = 2; return(';');
+	case 'n': hack_dir = 3; return(';');
+	case 'h': hack_dir = 4; return(';');
+	case 'l': hack_dir = 6; return(';');
+	case 'y': hack_dir = 7; return(';');
+	case 'k': hack_dir = 8; return(';');
+	case 'u': hack_dir = 9; return(';');
 
 	/* Running (shift + rogue keys) */
-	case 'B': hack_dir = 1; return ('.');
-	case 'J': hack_dir = 2; return ('.');
-	case 'N': hack_dir = 3; return ('.');
-	case 'H': hack_dir = 4; return ('.');
-	case 'L': hack_dir = 6; return ('.');
-	case 'Y': hack_dir = 7; return ('.');
-	case 'K': hack_dir = 8; return ('.');
-	case 'U': hack_dir = 9; return ('.');
+	case 'B': hack_dir = 1; return('.');
+	case 'J': hack_dir = 2; return('.');
+	case 'N': hack_dir = 3; return('.');
+	case 'H': hack_dir = 4; return('.');
+	case 'L': hack_dir = 6; return('.');
+	case 'Y': hack_dir = 7; return('.');
+	case 'K': hack_dir = 8; return('.');
+	case 'U': hack_dir = 9; return('.');
 
 	/* Tunnelling (control + rogue keys) */
-	case KTRL('B'): hack_dir = 1; return ('+');
-	case KTRL('J'): hack_dir = 2; return ('+');
-	case KTRL('N'): hack_dir = 3; return ('+');
-	case KTRL('H'): hack_dir = 4; return ('+');
-	case KTRL('L'): hack_dir = 6; return ('+');
-	case KTRL('Y'): hack_dir = 7; return ('+');
-	case KTRL('K'): hack_dir = 8; return ('+');
-	case KTRL('U'): hack_dir = 9; return ('+');
+	case KTRL('B'): hack_dir = 1; return('+');
+	case KTRL('J'): hack_dir = 2; return('+');
+	case KTRL('N'): hack_dir = 3; return('+');
+	case KTRL('H'): hack_dir = 4; return('+');
+	case KTRL('L'): hack_dir = 6; return('+');
+	case KTRL('Y'): hack_dir = 7; return('+');
+	case KTRL('K'): hack_dir = 8; return('+');
+	case KTRL('U'): hack_dir = 9; return('+');
 
 	/* Oops, audio mixer */
-	case KTRL('F'): return (KTRL('U'));
-	case KTRL('V'): return (KTRL('N'));
-	case KTRL('X'): return (KTRL('C'));
+	case KTRL('F'): return(KTRL('U'));
+	case KTRL('V'): return(KTRL('N'));
+	case KTRL('X'): return(KTRL('C'));
 
 	/* Hack -- Commit suicide */
 	/* ..instead display fps */
-	//case KTRL('C'): return ('Q');
+	//case KTRL('C'): return('Q');
 	/* Force-stack items */
-	case KTRL('C'): return ('K');
+	case KTRL('C'): return('K');
 
 	/* Hack -- White-space */
-	case KTRL('M'): return ('\r');
+	case KTRL('M'): return('\r');
 
 	/* Allow use of the "destroy" command */
-	case KTRL('D'): return ('k');
+	case KTRL('D'): return('k');
 
 	/* Locate player on map */
-	case KTRL('W'): return ('L');
+	case KTRL('W'): return('L');
 	/* Browse a book (Peruse) */
-	case 'P': return ('b');
+	case 'P': return('b');
 	/* Steal */
-	case KTRL('A'): return ('j');
+	case KTRL('A'): return('j');
 	/* Toggle search mode */
-	case '#': return ('S');
+	case '#': return('S');
 	/* Use a staff (Zap) */
-	case 'Z': return ('u');
+	case 'Z': return('u');
 	/* Take off equipment */
-	case 'T': return ('t');
+	case 'T': return('t');
 	/* Fire an item */
-	case 't': return ('f');
+	case 't': return('f');
 	/* Bash a door (Force) */
-	case 'f': return ('B');
+	case 'f': return('B');
 	/* Look around (examine) */
-	case 'x': return ('l');
+	case 'x': return('l');
 	/* Aim a wand (Zap) */
-	case 'z': return ('a');
+	case 'z': return('a');
 	/* Zap a rod (Activate) */
-	case 'a': return ('z');
+	case 'a': return('z');
 	/* Party mode */
-	case 'O': return ('P');
+	case 'O': return('P');
 
 	/* Secondary 'wear/wield' */
-	//case 'W': return ('W');
+	//case 'W': return('W');
 	/* Swap item */
-	case 'S': return ('x');
+	case 'S': return('x');
 	/* House commands */
-	case KTRL('E'): return ('h');
+	case KTRL('E'): return('h');
 	/* Reapply auto-inscriptions */
-	case KTRL('G'): return ('H');
+	case KTRL('G'): return('H');
 	/* Pick up exactly one item from a stack of same type of items (ie from piles, containing up to 99 <number> of this item) */
-	case KTRL('Z'): return (KTRL('G'));
+	case KTRL('Z'): return(KTRL('G'));
 
 	/* Run */
-	case ',': return ('.');
+	case ',': return('.');
 	/* Stay still (fake direction) */
-	case '.': hack_dir = 5; return (',');
+	case '.': hack_dir = 5; return(',');
 	/* Stay still (fake direction) */
-	case '5': hack_dir = 5; return (',');
+	case '5': hack_dir = 5; return(',');
 
 	/* Standard walking */
-	case '1': hack_dir = 1; return (';');
-	case '2': hack_dir = 2; return (';');
-	case '3': hack_dir = 3; return (';');
-	case '4': hack_dir = 4; return (';');
-	case '6': hack_dir = 6; return (';');
-	case '7': hack_dir = 7; return (';');
-	case '8': hack_dir = 8; return (';');
-	case '9': hack_dir = 9; return (';');
+	case '1': hack_dir = 1; return(';');
+	case '2': hack_dir = 2; return(';');
+	case '3': hack_dir = 3; return(';');
+	case '4': hack_dir = 4; return(';');
+	case '6': hack_dir = 6; return(';');
+	case '7': hack_dir = 7; return(';');
+	case '8': hack_dir = 8; return(';');
+	case '9': hack_dir = 9; return(';');
 	}
 
 	/* Default */
-	return (command);
+	return(command);
 }
 
 
@@ -1510,38 +1510,38 @@ char original_commands(char command) {
 	switch (command) {
 
 	/* Hack -- White space */
-	case KTRL('J'): return ('\r');
-	case KTRL('M'): return ('\r');
+	case KTRL('J'): return('\r');
+	case KTRL('M'): return('\r');
 
 	/* Tunnel */
-	case 'T': return ('+');
+	case 'T': return('+');
 
 	/* Run */
-	case '.': return ('.');
+	case '.': return('.');
 
 	/* Stay still (fake direction) */
-	case ',': hack_dir = 5; return (',');
+	case ',': hack_dir = 5; return(',');
 
 	/* Stay still (fake direction) */
-	case '5': hack_dir = 5; return (',');
+	case '5': hack_dir = 5; return(',');
 
 	/* Standard walking */
-	case '1': hack_dir = 1; return (';');
-	case '2': hack_dir = 2; return (';');
-	case '3': hack_dir = 3; return (';');
-	case '4': hack_dir = 4; return (';');
-	case '6': hack_dir = 6; return (';');
-	case '7': hack_dir = 7; return (';');
-	case '8': hack_dir = 8; return (';');
-	case '9': hack_dir = 9; return (';');
+	case '1': hack_dir = 1; return(';');
+	case '2': hack_dir = 2; return(';');
+	case '3': hack_dir = 3; return(';');
+	case '4': hack_dir = 4; return(';');
+	case '6': hack_dir = 6; return(';');
+	case '7': hack_dir = 7; return(';');
+	case '8': hack_dir = 8; return(';');
+	case '9': hack_dir = 9; return(';');
 
-	//(display fps) case KTRL('C'): return ('Q');
+	//(display fps) case KTRL('C'): return('Q');
 	/* Hack -- Commit suicide */
-	case KTRL('K'): return ('Q');
+	case KTRL('K'): return('Q');
 	}
 
 	/* Default */
-	return (command);
+	return(command);
 }
 
 
@@ -2100,7 +2100,7 @@ static bool search_history_aux(const char *msg, const char *buf) {
 		msgc = msgc_tmp + strlen(tmpbuf);
 #endif
 	}
-	return (tmpc != NULL);
+	return(tmpc != NULL);
 }
 /*
  * Get some input at the cursor location.
@@ -2755,10 +2755,10 @@ bool askfor_aux(char *buf, int len, char mode) {
 	if (!c_quit) Flush_queue();
 
 	/* Aborted */
-	if (i == ESCAPE) return (FALSE);
+	if (i == ESCAPE) return(FALSE);
 
 	/* Success */
-	if (nohist) return (TRUE);
+	if (nohist) return(TRUE);
 
 	/* Add this to the (chat) history.
 	   Update (chat) history whenever we repeat an old message, removing it from its old position and adding it on top.
@@ -2858,7 +2858,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 	}
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -2913,7 +2913,7 @@ bool get_string(cptr prompt, char *buf, int len) {
 	inkey_msg = inkey_msg_old;
 
 	/* Result */
-	return (res);
+	return(res);
 }
 
 
@@ -2944,10 +2944,10 @@ bool get_com(cptr prompt, char *command) {
 	Flush_queue();
 
 	/* Handle "cancel" */
-	if (*command == ESCAPE) return (FALSE);
+	if (*command == ESCAPE) return(FALSE);
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -3084,8 +3084,8 @@ bool get_dir(int *dp) {
 
 	*dp = dir;
 
-	if (!dir) return (FALSE);
-	return (TRUE);
+	if (!dir) return(FALSE);
+	return(TRUE);
 }
 
 
@@ -3189,8 +3189,8 @@ bool get_check2(cptr prompt, bool default_yes) {
 		return TRUE;
 	}
 
-	if ((i == 'Y') || (i == 'y')) return (TRUE);
-	return (FALSE);
+	if ((i == 'Y') || (i == 'y')) return(TRUE);
+	return(FALSE);
 }
 /* default_choice:
    0 = no preference, only accept y/Y/n/N for input
@@ -3234,8 +3234,8 @@ bool get_check3(cptr prompt, char default_choice) {
 		return TRUE;
 	}
 
-	if ((i == 'Y') || (i == 'y')) return (TRUE);
-	return (FALSE);
+	if ((i == 'Y') || (i == 'y')) return(TRUE);
+	return(FALSE);
 }
 
 byte get_3way(cptr prompt, bool default_no) {
@@ -3288,7 +3288,7 @@ cptr message_str(s32b age) {
 	cptr s;
 
 	/* Forgotten messages have no text */
-	if ((age < 0) || (age >= message_num())) return ("");
+	if ((age < 0) || (age >= message_num())) return("");
 
 	/* Acquire the "logical" index */
 	x = (message__next + MESSAGE_MAX - (age + 1)) % MESSAGE_MAX;
@@ -3300,7 +3300,7 @@ cptr message_str(s32b age) {
 	s = &message__buf[o];
 
 	/* Return the message text */
-	return (s);
+	return(s);
 }
 cptr message_str_chat(s32b age) {
 	s32b x;
@@ -3308,7 +3308,7 @@ cptr message_str_chat(s32b age) {
 	cptr s;
 
 	/* Forgotten messages have no text */
-	if ((age < 0) || (age >= message_num_chat())) return ("");
+	if ((age < 0) || (age >= message_num_chat())) return("");
 
 	/* Acquire the "logical" index */
 	x = (message__next_chat + MESSAGE_MAX - (age + 1)) % MESSAGE_MAX;
@@ -3320,7 +3320,7 @@ cptr message_str_chat(s32b age) {
 	s = &message__buf_chat[o];
 
 	/* Return the message text */
-	return (s);
+	return(s);
 }
 cptr message_str_msgnochat(s32b age) {
 	s32b x;
@@ -3328,7 +3328,7 @@ cptr message_str_msgnochat(s32b age) {
 	cptr s;
 
 	/* Forgotten messages have no text */
-	if ((age < 0) || (age >= message_num_msgnochat())) return ("");
+	if ((age < 0) || (age >= message_num_msgnochat())) return("");
 
 	/* Acquire the "logical" index */
 	x = (message__next_msgnochat + MESSAGE_MAX - (age + 1)) % MESSAGE_MAX;
@@ -3340,7 +3340,7 @@ cptr message_str_msgnochat(s32b age) {
 	s = &message__buf_msgnochat[o];
 
 	/* Return the message text */
-	return (s);
+	return(s);
 }
 cptr message_str_impscroll(s32b age) {
 	s32b x;
@@ -3348,7 +3348,7 @@ cptr message_str_impscroll(s32b age) {
 	cptr s;
 
 	/* Forgotten messages have no text */
-	if ((age < 0) || (age >= message_num_impscroll())) return ("");
+	if ((age < 0) || (age >= message_num_impscroll())) return("");
 
 	/* Acquire the "logical" index */
 	x = (message__next_impscroll + MESSAGE_MAX - (age + 1)) % MESSAGE_MAX;
@@ -3360,7 +3360,7 @@ cptr message_str_impscroll(s32b age) {
 	s = &message__buf_impscroll[o];
 
 	/* Return the message text */
-	return (s);
+	return(s);
 }
 
 
@@ -3387,7 +3387,7 @@ s32b message_num(void) {
 	n = (next - last);
 
 	/* Return the result */
-	return (n);
+	return(n);
 }
 s32b message_num_chat(void) {
 	int last, next, n;
@@ -3403,7 +3403,7 @@ s32b message_num_chat(void) {
 	n = (next - last);
 
 	/* Return the result */
-	return (n);
+	return(n);
 }
 s32b message_num_msgnochat(void) {
 	int last, next, n;
@@ -3419,7 +3419,7 @@ s32b message_num_msgnochat(void) {
 	n = (next - last);
 
 	/* Return the result */
-	return (n);
+	return(n);
 }
 s32b message_num_impscroll(void) {
 	int last, next, n;
@@ -3435,7 +3435,7 @@ s32b message_num_impscroll(void) {
 	n = (next - last);
 
 	/* Return the result */
-	return (n);
+	return(n);
 }
 
 
@@ -4349,7 +4349,7 @@ s32b c_get_quantity(cptr prompt, s32b max) {
 	}
 
 	/* Ask for a quantity */
-	if (!get_string(prompt, buf, QUANTITY_WIDTH)) return (0);
+	if (!get_string(prompt, buf, QUANTITY_WIDTH)) return(0);
 
 #if 1
 	/* special hack to enable old 'any letter = all' hack without interfering with 'k'/'M'/'G'/ for kilo/mega/giga: */
@@ -4431,7 +4431,7 @@ s32b c_get_quantity(cptr prompt, s32b max) {
 	if (amt < 0) amt = 0;
 
 	/* Return the result */
-	return (amt);
+	return(amt);
 }
 
 void clear_from(int row) {
@@ -4552,7 +4552,7 @@ static errr macro_dump(cptr fname) {
 	fff = my_fopen(buf, "w");
 
 	/* Failure */
-	if (!fff) return (-1);
+	if (!fff) return(-1);
 
 
 	/* Skip space */
@@ -4611,7 +4611,7 @@ static errr macro_dump(cptr fname) {
 	my_fclose(fff);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 static void get_macro_trigger(char *buf) {
@@ -8611,8 +8611,8 @@ static int font_name_cmp(const void *a, const void *b) {
 	if (!fmatch) return -1;  //paranoia - anyway, push 'broken' fonts towards the end of the list, just in case..
 	fhgt2 = atoi(fmatch + 1);
 
-	if (fwid1 != fwid2) return (fwid1 > fwid2) ? 1 : -1;
-	else if (fhgt1 != fhgt2) return (fhgt1 > fhgt2) ? 1 : -1;
+	if (fwid1 != fwid2) return(fwid1 > fwid2) ? 1 : -1;
+	else if (fhgt1 != fhgt2) return(fhgt1 > fhgt2) ? 1 : -1;
 	else return 0;
    #endif
 }
@@ -8975,7 +8975,7 @@ errr options_dump(cptr fname) {
 	fff = my_fopen(buf, "w");
 
 	/* Failure */
-	if (!fff) return (-1);
+	if (!fff) return(-1);
 
 
 	/* Skip space */
@@ -9035,7 +9035,7 @@ errr options_dump(cptr fname) {
 	my_fclose(fff);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 

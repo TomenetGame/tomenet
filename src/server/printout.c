@@ -134,18 +134,18 @@ int reverse_lines(cptr input_file, cptr output_file) {
 
 	/* Open the input file */
 	fd1 = open(input_file, O_RDONLY);
-	if (fd1 == -1) return -1;
+	if (fd1 == -1) return(-1);
 
 	fp1 = fdopen(fd1, "rb");
 	if (!fp1) {
 		close(fd1);
-		return -2;
+		return(-2);
 	}
 
 	/* Use fstat to get the size of the file */
 	if (fstat(fd1, &stbuf) == -1) {
 		fclose(fp1);
-		return -3;
+		return(-3);
 	}
 
 	file_size = stbuf.st_size;
@@ -153,14 +153,14 @@ int reverse_lines(cptr input_file, cptr output_file) {
 	buf = mem_alloc(file_size);
 	if (!buf) {
 		fclose(fp1);
-		return -4;
+		return(-4);
 	}
 
 	/* Read the whole input file */
 	if (fread(buf, 1, file_size, fp1) < file_size) {
 		mem_free(buf);
 		fclose(fp1);
-		return -5;
+		return(-5);
 	}
 
 	/* Open the output file */
@@ -168,7 +168,7 @@ int reverse_lines(cptr input_file, cptr output_file) {
 	if (!fp2) {
 		mem_free(buf);
 		fclose(fp1);
-		return -6;
+		return(-6);
 	}
 
 
@@ -226,7 +226,7 @@ int reverse_lines(cptr input_file, cptr output_file) {
 					mem_free(buf);
 					fclose(fp1);
 					fclose(fp2);
-					return -7;
+					return(-7);
 				}
 			}
 			prev_linebreak = tmp;
@@ -243,7 +243,7 @@ int reverse_lines(cptr input_file, cptr output_file) {
 			mem_free(buf);
 			fclose(fp1);
 			fclose(fp2);
-			return -7;
+			return(-7);
 		}
 	}
 
@@ -252,7 +252,7 @@ int reverse_lines(cptr input_file, cptr output_file) {
 	fclose(fp1);
 	fclose(fp2);
 
-	return 0;
+	return(0);
 }
 
 /* Log "legends" (achievements of various sort, viewable in the town hall) - C. Blue */

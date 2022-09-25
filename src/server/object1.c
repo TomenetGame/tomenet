@@ -479,16 +479,16 @@ static bool object_has_flavor(int i) {
 	case TV_POTION:
 	case TV_POTION2:	// Hack inside!
 	case TV_ROD:
-		return (TRUE);
+		return(TRUE);
 
 	/* Hack -- food SOMETIMES has a flavor */
 	case TV_FOOD:
-		if (k_ptr->sval <= SV_FOOD_MUSHROOMS_MAX) return (TRUE);
-		return (FALSE);
+		if (k_ptr->sval <= SV_FOOD_MUSHROOMS_MAX) return(TRUE);
+		return(FALSE);
 	}
 
 	/* Assume no flavor */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -515,7 +515,7 @@ static bool object_easy_know(int i) {
 	case TV_CORPSE:
 	case TV_HYPNOS:
 	case TV_RUNE:
-		return (TRUE);
+		return(TRUE);
 
 	/* All Food, Potions, Scrolls, Rods */
 	case TV_FOOD:
@@ -526,7 +526,7 @@ static bool object_easy_know(int i) {
 	case TV_ROD:
 	case TV_ROD_MAIN:
 	case TV_BATERIE:
-		return (TRUE);
+		return(TRUE);
 
 	/* Some Rings, Amulets, Lites */
 	case TV_RING:
@@ -535,12 +535,12 @@ static bool object_easy_know(int i) {
 	/* added default (for tools which got EASY_KNOW added,
 	   such as flint/climbing set) */
 	default:
-		if (k_ptr->flags3 & TR3_EASY_KNOW) return (TRUE);
-		return (FALSE);
+		if (k_ptr->flags3 & TR3_EASY_KNOW) return(TRUE);
+		return(FALSE);
 	}
 
 	/* Nope */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -555,34 +555,34 @@ static byte default_tval_to_attr(int tval) {
 	case TV_BOTTLE:
 	case TV_JUNK:
 	case TV_GAME:
-		return (TERM_WHITE);
+		return(TERM_WHITE);
 
 	case TV_CHEST:
-		return (TERM_SLATE);
+		return(TERM_SLATE);
 
 	case TV_SHOT:
 	case TV_BOLT:
 	case TV_ARROW:
-		return (TERM_L_UMBER);
+		return(TERM_L_UMBER);
 
 	case TV_LITE:
-		return (TERM_YELLOW);
+		return(TERM_YELLOW);
 
 	case TV_SPIKE:
-		return (TERM_SLATE);
+		return(TERM_SLATE);
 
 	case TV_BOOMERANG: /* maybe L_UMBER? */
 	case TV_BOW:
-		return (TERM_UMBER);
+		return(TERM_UMBER);
 
 	case TV_DIGGING:
-		return (TERM_SLATE);
+		return(TERM_SLATE);
 
 	case TV_BLUNT:
 	case TV_POLEARM:
 	case TV_SWORD:
 	case TV_AXE:
-		return (TERM_L_WHITE);
+		return(TERM_L_WHITE);
 
 	case TV_BOOTS:
 	case TV_GLOVES:
@@ -590,45 +590,45 @@ static byte default_tval_to_attr(int tval) {
 	case TV_HELM:
 	case TV_SHIELD:
 	case TV_CLOAK:
-		return (TERM_L_UMBER);
+		return(TERM_L_UMBER);
 
 	case TV_SOFT_ARMOR:
 	case TV_HARD_ARMOR:
 	case TV_DRAG_ARMOR:
-		return (TERM_SLATE);
+		return(TERM_SLATE);
 
 	case TV_GOLEM:
-		return (TERM_VIOLET);
+		return(TERM_VIOLET);
 
 	case TV_AMULET:
-		return (TERM_ORANGE);
+		return(TERM_ORANGE);
 
 	case TV_RING:
-		return (TERM_RED);
+		return(TERM_RED);
 
 	case TV_STAFF:
-		return (TERM_L_UMBER);
+		return(TERM_L_UMBER);
 
 	case TV_WAND:
-		return (TERM_L_GREEN);
+		return(TERM_L_GREEN);
 
 	case TV_ROD:
-		return (TERM_L_WHITE);
+		return(TERM_L_WHITE);
 
 	case TV_SCROLL:
 	case TV_PARCHMENT:
-		return (TERM_WHITE);
+		return(TERM_WHITE);
 
 	case TV_POTION:
 	case TV_POTION2:
 	case TV_BOOK:	/* Right? */
-		return (TERM_L_BLUE);
+		return(TERM_L_BLUE);
 
 	case TV_FLASK:
-		return (TERM_YELLOW);
+		return(TERM_YELLOW);
 
 	case TV_FOOD:
-		return (TERM_L_UMBER);
+		return(TERM_L_UMBER);
 
 	case TV_TRAPKIT:
 		return TERM_SLATE;
@@ -652,7 +652,7 @@ static byte default_tval_to_attr(int tval) {
 #endif
 	}
 
-	return (TERM_WHITE);
+	return(TERM_WHITE);
 }
 
 
@@ -669,11 +669,11 @@ static byte default_tval_to_char(int tval) {
 		object_kind *k_ptr = &k_info[i];
 
 		/* Use the first value we find */
-		if (k_ptr->tval == tval) return (k_ptr->k_char);
+		if (k_ptr->tval == tval) return(k_ptr->k_char);
 	}
 
 	/* Default to space */
-	return (' ');
+	return(' ');
 }
 
 
@@ -1057,26 +1057,26 @@ static byte object_d_attr(int i)
 		{
 			case TV_FOOD:
 				/* Hack for Mushroom of Unmagic */
-				if (indexx == SV_FOOD_UNMAGIC) return (TERM_MULTI);
-				else return (food_col[indexx]);
-			case TV_POTION: return (potion_col[indexx]);
-			case TV_SCROLL: return (scroll_col[indexx]);
-			case TV_AMULET: return (amulet_col[indexx]);
-			case TV_RING:   return (ring_col[indexx]);
-			case TV_STAFF:  return (staff_col[indexx]);
-			case TV_WAND:   return (wand_col[indexx]);
-			case TV_ROD:    return (rod_col[indexx]);
+				if (indexx == SV_FOOD_UNMAGIC) return(TERM_MULTI);
+				else return(food_col[indexx]);
+			case TV_POTION: return(potion_col[indexx]);
+			case TV_SCROLL: return(scroll_col[indexx]);
+			case TV_AMULET: return(amulet_col[indexx]);
+			case TV_RING:   return(ring_col[indexx]);
+			case TV_STAFF:  return(staff_col[indexx]);
+			case TV_WAND:   return(wand_col[indexx]);
+			case TV_ROD:    return(rod_col[indexx]);
 
 			/* hack -- borrow those of potions */
-			case TV_POTION2: return (potion_col[indexx + 4]); /* the first 4 potions are unique */
+			case TV_POTION2: return(potion_col[indexx + 4]); /* the first 4 potions are unique */
 		}
 	}
 
 	/* Default attr if legal */
-	if (k_ptr->k_attr) return (k_ptr->k_attr);
+	if (k_ptr->k_attr) return(k_ptr->k_attr);
 
 	/* Default to white */
-	return (TERM_WHITE);
+	return(TERM_WHITE);
 }
 
 
@@ -1088,7 +1088,7 @@ static byte object_d_char(int i)
 {
 	object_kind *k_ptr = &k_info[i];
 
-	return (k_ptr->k_char);
+	return(k_ptr->k_char);
 }
 
 
@@ -1741,7 +1741,7 @@ static char *object_desc_chr(char *t, char c) {
 	*t = '\0';
 
 	/* Result */
-	return (t);
+	return(t);
 }
 
 /*
@@ -1765,7 +1765,7 @@ static char *object_desc_str(char *t, cptr s) {
 	*t = '\0';
 
 	/* Result */
-	return (t);
+	return(t);
 }
 
 /*
@@ -1796,7 +1796,7 @@ static char *object_desc_num(char *t, uint n) {
 	*t = '\0';
 
 	/* Result */
-	return (t);
+	return(t);
 }
 
 /*
@@ -1843,7 +1843,7 @@ static char *object_desc_int(char *t, sint v) {
 	*t = '\0';
 
 	/* Result */
-	return (t);
+	return(t);
 }
 
 /*
@@ -1889,7 +1889,7 @@ static char *object_desc_per(char *t, sint v) {
 	*t = '\0';
 
 	/* Result */
-	return (t);
+	return(t);
 }
 
 
@@ -3239,7 +3239,7 @@ cptr item_activation(object_type *o_ptr) {
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Require activation ability */
-	if (!(f3 & TR3_ACTIVATE)) return (NULL);
+	if (!(f3 & TR3_ACTIVATE)) return(NULL);
 
 	// -------------------- artifacts -------------------- //
 
@@ -3326,8 +3326,8 @@ cptr item_activation(object_type *o_ptr) {
 	case ART_SOULKEEPER:
 		return "healing (1000) every 222..888 turns";
 	case ART_BELEGENNON:
-		//return ("healing (777), curing and heroism every 300 turns");
-		return ("teleport every 2..10 turns");
+		//return("healing (777), curing and heroism every 300 turns");
+		return("teleport every 2..10 turns");
 	case ART_CELEBORN:
 		return "genocide every 100..500 turns";
 	case ART_LUTHIEN:
@@ -3631,16 +3631,16 @@ cptr item_activation(object_type *o_ptr) {
 	if (o_ptr->tval == TV_GOLEM) {
 		switch (o_ptr->sval) {
 		case SV_GOLEM_ATTACK:
-			return ("commanding your golem to attack your target or stop doing so");
+			return("commanding your golem to attack your target or stop doing so");
 		case SV_GOLEM_GUARD:
-			return ("commanding your golem to stay and guard its position or stop doing so");
+			return("commanding your golem to stay and guard its position or stop doing so");
 		case SV_GOLEM_FOLLOW:
-			return ("commanding your golem to follow you or stop doing so");
+			return("commanding your golem to follow you or stop doing so");
 		}
 	}
 
 	if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_GLASS_SHARD)
-		return ("altering a death fate");
+		return("altering a death fate");
 
 #if 0
 	if (o_ptr->tval == TV_PARCHMENT && o_ptr->sval == SV_PARCHMENT_DEATH)
@@ -4576,7 +4576,7 @@ static void display_tool_handling(int Ind, object_type *o_ptr, FILE *fff, int In
 }
 
 /* New helper function for @@/@@@ inscriptions: Check if item might have hidden powers (in which case the inscription is declined).
-  ignore_id: If TRUE, the function ignores the item's ID_MENTAL state (aka *identified*) and hence can still return TRUE in that case. Added for shop-pasting.
+  ignore_id: If TRUE, the function ignores the item's ID_MENTAL state (aka *identified*) and hence can still return(TRUE) in that case. Added for shop-pasting.
   Ind is allowed to be 0 for the edge case of power-reinscribing when curse-flipping. And now also for use in object_known() to check for ID_NO_HIDDEN application.
 */
 bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id) {
@@ -4586,23 +4586,23 @@ bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id) {
 
 	/* item not already *id*ed or well known (flavoured item)? */
 	if ((!ignore_id && (o_ptr->ident & ID_MENTAL)) ||
-	    (k_info[o_ptr->k_idx].easy_know && aware && !o_ptr->name1 && !o_ptr->name2 && !o_ptr->name2b)) return FALSE;
+	    (k_info[o_ptr->k_idx].easy_know && aware && !o_ptr->name1 && !o_ptr->name2 && !o_ptr->name2b)) return(FALSE);
 
 	/* Un-*id*-ed artifacts can (and will) always have hidden powers.. */
-	if (o_ptr->name1) return TRUE;
+	if (o_ptr->name1) return(TRUE);
 
 	/* Unidentified items always qualify (if they're not easily known anyway and don't need ID, eg flavoured items) */
-	if (Ind && !object_known_p(Ind, o_ptr)) return TRUE;
+	if (Ind && !object_known_p(Ind, o_ptr)) return(TRUE);
 
 	/* be strict: unknown AM field counts too.
 	   Arts can have deviant AM fields. For non-arts however they're obvious by just normal ID, to reveal +hit,+dam values. */
-	if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD && o_ptr->name1) return TRUE;
+	if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD && o_ptr->name1) return(TRUE);
 
 	/* Assume we must *id* (just once) to learn sigil powers - Kurzel */
-	if (o_ptr->sigil) return TRUE;
+	if (o_ptr->sigil) return(TRUE);
 
 	/* Multi-Hued DSMs need *id* to reveal their immunities */
-	if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED) return TRUE;
+	if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED) return(TRUE);
 
 	/* Just add the fixed ego flags that we know to be on the item */
 	if (o_ptr->name2) {
@@ -4615,13 +4615,13 @@ bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id) {
 			if ((e_ptr->fego1[j] & ETR1_EASYKNOW_MASK) ||
 			    (e_ptr->fego2[j] & ETR2_EASYKNOW_MASK) ||
 			    /* random ego mods (R_xxx)? */
-			    (e_ptr->esp[j] & ESP_R_MASK)) return TRUE;
+			    (e_ptr->esp[j] & ESP_R_MASK)) return(TRUE);
 
 			/* random base mods? */
 			if (e_ptr->rar[j] != 100) {
 				if (e_ptr->flags1[j] | e_ptr->flags2[j] | e_ptr->flags3[j] |
 				    e_ptr->flags4[j] | e_ptr->flags5[j] | e_ptr->flags6[j] |
-				    e_ptr->esp[j]) return TRUE;
+				    e_ptr->esp[j]) return(TRUE);
 			}
 		}
 	}
@@ -4635,17 +4635,17 @@ bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id) {
 			if ((e_ptr->fego1[j] & ETR1_EASYKNOW_MASK) ||
 			    (e_ptr->fego2[j] & ETR2_EASYKNOW_MASK) ||
 			    /* random ego mods (R_xxx)? */
-			    (e_ptr->esp[j] & ESP_R_MASK)) return TRUE;
+			    (e_ptr->esp[j] & ESP_R_MASK)) return(TRUE);
 
 			/* random base mods? */
 			if (e_ptr->rar[j] != 100) {
 				if (e_ptr->flags1[j] | e_ptr->flags2[j] | e_ptr->flags3[j] |
 				    e_ptr->flags4[j] | e_ptr->flags5[j] | e_ptr->flags6[j] |
-				    e_ptr->esp[j]) return TRUE;
+				    e_ptr->esp[j]) return(TRUE);
 			}
 		}
 	}
-	return FALSE;
+	return(FALSE);
 }
 
 /* Display examine (x/I) text of an item we haven't *identified* yet. */
@@ -4982,7 +4982,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		Send_special_other(Ind);
 
 		/* Gave knowledge */
-		return (TRUE);
+		return(TRUE);
 	}
 #endif
 
@@ -5268,12 +5268,12 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		fff = my_fopen(p_ptr->infofile, "rb");
 		if (my_fgets(fff, buf, 1024, FALSE)) {
 			my_fclose(fff);
-			return (FALSE);
+			return(FALSE);
 		}
 		my_fclose(fff);
 		strcpy(p_ptr->cur_file_title, "Basic Item Information");
 		Send_special_other(Ind);
-		return (TRUE);
+		return(TRUE);
 	}
 
 
@@ -6002,7 +6002,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	fff = my_fopen(p_ptr->infofile, "rb");
 	if (my_fgets(fff, buf, 1024, FALSE)) {
 		my_fclose(fff);
-		return (FALSE);
+		return(FALSE);
 	}
 	my_fclose(fff);
 
@@ -6016,7 +6016,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	Send_special_other(Ind);
 
 	/* Gave knowledge */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -6027,14 +6027,14 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
  */
 s16b index_to_label(int i) {
 #ifdef ENABLE_SUBINVEN
-	if (i >= 100) return (I2A(i % 100));
+	if (i >= 100) return(I2A(i % 100));
 #endif
 
 	/* Indexes for "inven" are easy */
-	if (i < INVEN_WIELD) return (I2A(i));
+	if (i < INVEN_WIELD) return(I2A(i));
 
 	/* Indexes for "equip" are offset */
-	return (I2A(i - INVEN_WIELD));
+	return(I2A(i - INVEN_WIELD));
 }
 
 
@@ -6050,13 +6050,13 @@ s16b label_to_inven(int Ind, int c) {
 	i = (islower(c) ? A2I(c) : -1);
 
 	/* Verify the index */
-	if ((i < 0) || (i > INVEN_PACK)) return (-1);
+	if ((i < 0) || (i > INVEN_PACK)) return(-1);
 
 	/* Empty slots can never be chosen */
-	if (!p_ptr->inventory[i].k_idx) return (-1);
+	if (!p_ptr->inventory[i].k_idx) return(-1);
 
 	/* Return the index */
-	return (i);
+	return(i);
 }
 
 
@@ -6072,13 +6072,13 @@ s16b label_to_equip(int Ind, int c) {
 	i = (islower(c) ? A2I(c) : -1) + INVEN_WIELD;
 
 	/* Verify the index */
-	if ((i < INVEN_WIELD) || (i >= INVEN_TOTAL)) return (-1);
+	if ((i < INVEN_WIELD) || (i >= INVEN_TOTAL)) return(-1);
 
 	/* Empty slots can never be chosen */
-	if (!p_ptr->inventory[i].k_idx) return (-1);
+	if (!p_ptr->inventory[i].k_idx) return(-1);
 
 	/* Return the index */
-	return (i);
+	return(i);
 }
 
 
@@ -6094,72 +6094,72 @@ s16b wield_slot(int Ind, object_type *o_ptr) {
 	switch (o_ptr->tval) {
 	case TV_DIGGING:
 	case TV_TOOL:
-		return (INVEN_TOOL);
+		return(INVEN_TOOL);
 
 	case TV_BLUNT:
 	case TV_POLEARM:
 	case TV_SWORD:
 	case TV_AXE:
 	case TV_MSTAFF:
-		return (INVEN_WIELD);
+		return(INVEN_WIELD);
 
 	case TV_BOW:
 	case TV_BOOMERANG:
 	case TV_INSTRUMENT:
-		return (INVEN_BOW);
+		return(INVEN_BOW);
 
 	case TV_RING:
 		/* Use the right hand first */
-		if (Ind && !p_ptr->inventory[INVEN_RIGHT].k_idx) return (INVEN_RIGHT);
+		if (Ind && !p_ptr->inventory[INVEN_RIGHT].k_idx) return(INVEN_RIGHT);
 
 		/* Use the left hand for swapping (by default) */
-		return (INVEN_LEFT);
+		return(INVEN_LEFT);
 
 	case TV_AMULET:
-		return (INVEN_NECK);
+		return(INVEN_NECK);
 
 	case TV_LITE:
-		return (INVEN_LITE);
+		return(INVEN_LITE);
 
 	case TV_DRAG_ARMOR:
 	case TV_HARD_ARMOR:
 	case TV_SOFT_ARMOR:
-		return (INVEN_BODY);
+		return(INVEN_BODY);
 
 	case TV_CLOAK:
-		return (INVEN_OUTER);
+		return(INVEN_OUTER);
 
 	case TV_SHIELD:
-		return (INVEN_ARM);
+		return(INVEN_ARM);
 
 	case TV_CROWN:
 	case TV_HELM:
-		return (INVEN_HEAD);
+		return(INVEN_HEAD);
 
 	case TV_GLOVES:
-		return (INVEN_HANDS);
+		return(INVEN_HANDS);
 
 	case TV_BOOTS:
-		return (INVEN_FEET);
+		return(INVEN_FEET);
 
 	case TV_SHOT:
-		return (INVEN_AMMO);
+		return(INVEN_AMMO);
 	case TV_ARROW:
-		return (INVEN_AMMO);
+		return(INVEN_AMMO);
 	case TV_BOLT:
-		return (INVEN_AMMO);
+		return(INVEN_AMMO);
 
 	/* Special hack for custom objects that have wear/wield flag set */
 	case TV_SPECIAL:
-		if (o_ptr->sval != SV_CUSTOM_OBJECT || !(o_ptr->xtra3 & 0x0100)) return -1;
+		if (o_ptr->sval != SV_CUSTOM_OBJECT || !(o_ptr->xtra3 & 0x0100)) return(-1);
 		/* Paranoia - check for valid equipment slot */
-		if (o_ptr->xtra4 < INVEN_WIELD || o_ptr->xtra4 > INVEN_TOOL) return -1;
+		if (o_ptr->xtra4 < INVEN_WIELD || o_ptr->xtra4 > INVEN_TOOL) return(-1);
 		/* Equippable special object */
 		return o_ptr->xtra4;
 	}
 
 	/* No slot available */
-	return (-1);
+	return(-1);
 }
 
 
@@ -6202,7 +6202,7 @@ cptr mention_use(int Ind, int i) {
 	}
 
 	/* Return the result */
-	return (p);
+	return(p);
 }
 
 
@@ -6259,26 +6259,26 @@ cptr describe_use(int Ind, int i) {
  */
 bool item_tester_okay(object_type *o_ptr) {
 	/* Hack -- allow listing empty slots */
-	if (item_tester_full) return (TRUE);
+	if (item_tester_full) return(TRUE);
 
 	/* Require an item */
-	if (!o_ptr->k_idx) return (FALSE);
+	if (!o_ptr->k_idx) return(FALSE);
 
 	/* Hack -- ignore "gold" */
-	if (o_ptr->tval == TV_GOLD) return (FALSE);
+	if (o_ptr->tval == TV_GOLD) return(FALSE);
 
 	/* Check the tval */
 	if (item_tester_tval) {
-		if (!(item_tester_tval == o_ptr->tval)) return (FALSE);
+		if (!(item_tester_tval == o_ptr->tval)) return(FALSE);
 	}
 
 	/* Check the hook */
 	if (item_tester_hook) {
-		if (!(*item_tester_hook)(o_ptr)) return (FALSE);
+		if (!(*item_tester_hook)(o_ptr)) return(FALSE);
 	}
 
 	/* Assume okay */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -6625,16 +6625,16 @@ bool can_use(int Ind, object_type *o_ptr) {
 	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_HIGHLANDS || o_ptr->sval == SV_AMULET_HIGHLANDS2)) {
 		o_ptr->owner = p_ptr->id;
 		o_ptr->mode = p_ptr->mode;
-		return TRUE;
+		return(TRUE);
 	}
 
 	/* Owner always can use */
 	if (p_ptr->id == o_ptr->owner || p_ptr->admin_dm) {
 		if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].carrier = p_ptr->id;
-		return (TRUE);
+		return(TRUE);
 	}
 
-	if (o_ptr->level < 1 && o_ptr->owner && p_ptr->id != o_ptr->owner && !p_ptr->admin_dm) return (FALSE);
+	if (o_ptr->level < 1 && o_ptr->owner && p_ptr->id != o_ptr->owner && !p_ptr->admin_dm) return(FALSE);
 
 	/* Own unowned items (for stores).
 	   Note that CTRL+R -> display_inven() -> if (can_use()) checks will
@@ -6646,7 +6646,7 @@ bool can_use(int Ind, object_type *o_ptr) {
 		if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &o_ptr->wpos); /* paranoia? */
 	}
 
-	if (compat_pomode(Ind, o_ptr)) return FALSE;
+	if (compat_pomode(Ind, o_ptr)) return(FALSE);
 
 #ifndef RPG_SERVER
 	/* Hack -- convert if available */
@@ -6654,36 +6654,36 @@ bool can_use(int Ind, object_type *o_ptr) {
 	    && !p_ptr->admin_dm) {
 		o_ptr->owner = p_ptr->id;
 		if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].carrier = p_ptr->id;
-		return (TRUE);
+		return(TRUE);
 	}
-	else return (FALSE);
+	else return(FALSE);
 #else
 	if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].carrier = p_ptr->id;
-	return TRUE;
+	return(TRUE);
 #endif
 }
 
 /* Same as can_use() but avoids auto-owning items (to be used for admin characters)
-   and doesn't allow admin_dm to return TRUE in cases where normal characters would get FALSE. */
+   and doesn't allow admin_dm to return(TRUE) in cases where normal characters would get FALSE. */
 bool can_use_admin(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 
 	/* exception for Highlander Tournament amulets */
 	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_HIGHLANDS || o_ptr->sval == SV_AMULET_HIGHLANDS2))
-		return TRUE;
+		return(TRUE);
 
 	/* Owner always can use */
-	if (p_ptr->id == o_ptr->owner) return (TRUE);
+	if (p_ptr->id == o_ptr->owner) return(TRUE);
 
-	if (o_ptr->level < 1 && o_ptr->owner && p_ptr->id != o_ptr->owner) return (FALSE);
+	if (o_ptr->level < 1 && o_ptr->owner && p_ptr->id != o_ptr->owner) return(FALSE);
 
-	if (compat_pomode(Ind, o_ptr)) return FALSE;
+	if (compat_pomode(Ind, o_ptr)) return(FALSE);
 
 #ifndef RPG_SERVER
-	if (p_ptr->lev >= o_ptr->level || in_irondeepdive(&p_ptr->wpos)) return (TRUE);
-	else return (FALSE);
+	if (p_ptr->lev >= o_ptr->level || in_irondeepdive(&p_ptr->wpos)) return(TRUE);
+	else return(FALSE);
 #else
-	return TRUE;
+	return(TRUE);
 #endif
 }
 
@@ -6695,20 +6695,20 @@ bool can_use_verbose(int Ind, object_type *o_ptr) {
 	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_HIGHLANDS || o_ptr->sval == SV_AMULET_HIGHLANDS)) {
 		o_ptr->owner = p_ptr->id;
 		o_ptr->mode = p_ptr->mode;
-		return TRUE;
+		return(TRUE);
 	}
 
 	/* Owner always can use */
-	if (p_ptr->id == o_ptr->owner || p_ptr->admin_dm) return (TRUE);
+	if (p_ptr->id == o_ptr->owner || p_ptr->admin_dm) return(TRUE);
 
 	if (o_ptr->level < 1 && o_ptr->owner) {
 		msg_print(Ind, "You must be the owner in order to use it.");
-		return (FALSE);
+		return(FALSE);
 	}
 
 	if (compat_pomode(Ind, o_ptr)) {
 		msg_format(Ind, "You cannot use things that belong to %s players.", compat_pomode(Ind, o_ptr));
-		return FALSE;
+		return(FALSE);
 	}
 
 #ifndef RPG_SERVER /* hm not sure about this.. */
@@ -6717,10 +6717,10 @@ bool can_use_verbose(int Ind, object_type *o_ptr) {
 	    && !p_ptr->admin_dm) {
 		if (!o_ptr->owner && true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &o_ptr->wpos); /* paranoia? */
 		o_ptr->owner = p_ptr->id;
-		return (TRUE);
+		return(TRUE);
 	} else {
 		msg_print(Ind, "Your level is not high enough yet to use this.");
-		return (FALSE);
+		return(FALSE);
 	}
 #else
 	/* Let's still have this restriction - mikaelh */
@@ -6736,7 +6736,7 @@ bool can_use_verbose(int Ind, object_type *o_ptr) {
 
 	/* the_sandman: let's turn this off? Party trading is horrible with this one. Plus we
 	 * already only allow 1 char each account. */
-	return (TRUE);
+	return(TRUE);
 #endif
 }
 
@@ -6804,11 +6804,11 @@ byte get_attr_from_tval(object_type *o_ptr) {
 	if ((o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT) ||
 	    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT)) {
 		if (!o_ptr->xtra1) o_ptr->xtra1 = (s16b)attr;
-		return (byte)o_ptr->xtra1;
+		return(byte)o_ptr->xtra1;
 	}
 
 	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST)
-		return (byte)o_ptr->xtra2;
+		return(byte)o_ptr->xtra2;
 
 #if 0
 	if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_WOOD_PIECE)

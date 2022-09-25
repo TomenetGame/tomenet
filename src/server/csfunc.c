@@ -109,8 +109,8 @@ int dnahit(c_special *cs_ptr, int y, int x, int Ind) {
 	if (!dna) {
 		if (admin_p(Ind)) {
 			msg_print(Ind, "\377D(Corrupt house dna on this grid)");
-			return TRUE;
-		} else return FALSE;
+			return(TRUE);
+		} else return(FALSE);
 	}
 	if (access_door(Ind, dna, TRUE) || admin_p(Ind)) {
 		if (admin_p(Ind))

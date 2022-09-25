@@ -737,7 +737,7 @@ static bool between_effect(int Ind, cave_type *c_ptr) {
 	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	int wid, hgt;
 
-	if (!(cs_ptr = GetCS(c_ptr, CS_BETWEEN))) return (FALSE);
+	if (!(cs_ptr = GetCS(c_ptr, CS_BETWEEN))) return(FALSE);
 
 	/* allow void gates on surface levels (for 0,0 events) */
 	if (l_ptr) {
@@ -791,7 +791,7 @@ static bool between_effect(int Ind, cave_type *c_ptr) {
 	/* To avoid being teleported back */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-	return (TRUE);
+	return(TRUE);
 }
 
 /* for special gates (event: Dungeon Keeper) - C. Blue
@@ -866,10 +866,10 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 		p_ptr->global_event_temp = PEVF_PASS_00; /* clear all other flags, allow a final recall out */
 		recall_player(Ind, "");
-		return TRUE;
+		return(TRUE);
 	}
 
-	return FALSE;
+	return(FALSE);
 }
 
 /*
@@ -1795,7 +1795,7 @@ int pick_house(struct worldpos *wpos, int y, int x) {
 	}
 
 	/* Failure */
-	return -1;
+	return(-1);
 }
 /* Reverse function of pick_house() */
 int pick_player(house_type *h_ptr) {
@@ -1810,7 +1810,7 @@ int pick_player(house_type *h_ptr) {
 	}
 
 	/* Failure */
-	return 0;
+	return(0);
 }
 
 /* Test if a coordinate (player pos usually) is inside a building
@@ -1818,12 +1818,12 @@ int pick_player(house_type *h_ptr) {
 bool inside_house(struct worldpos *wpos, int x, int y) {
 	static cave_type *c_ptr, **zcave; //for efficiency
 
-	if (wpos->wz) return FALSE;
+	if (wpos->wz) return(FALSE);
 
 #if 0
 	/* In case CAVE_ICKY overworld-structures will exist in the future.
 	   Note that this will probably exclude all jails too. */
-	if (!istownarea(wpos, MAX_TOWNAREA)) return FALSE;
+	if (!istownarea(wpos, MAX_TOWNAREA)) return(FALSE);
 #endif
 
 	zcave = getcave(wpos);
@@ -1833,24 +1833,24 @@ bool inside_house(struct worldpos *wpos, int x, int y) {
 	   So kill_house_contents() will no longer trigger PLAYER_STORE_REMOVED log entries. :|
 	   (It seems too inefficient to allocate+generate+deallocate the floor for each item, need a better solution..)
 	   --- correction, kill_house_contents() WILL allocate the map and call delete_object->delete_object_idx which will trigger PLAYER_STORE_REMOVED. */
-	if (!zcave) return FALSE;
+	if (!zcave) return(FALSE);
 
 	c_ptr = &zcave[y][x];
 	/* assume all houses are on the world surface (and vaults aren't) */
 	if ((c_ptr->info & CAVE_ICKY) &&
 	    c_ptr->feat != FEAT_DEEP_WATER && c_ptr->feat != FEAT_DRAWBRIDGE) /* moat and drawbridge aren't "inside" the house! */
-		return TRUE;
+		return(TRUE);
 
-	return FALSE;
+	return(FALSE);
 }
 /* Another version, for efficiency */
 static bool inside_house_simple(cave_type *c_ptr) {
 	/* assume all houses are on the world surface (and vaults aren't) */
 	if ((c_ptr->info & CAVE_ICKY) &&
 	    c_ptr->feat != FEAT_DEEP_WATER && c_ptr->feat != FEAT_DRAWBRIDGE) /* moat and drawbridge aren't "inside" the house! */
-		return TRUE;
+		return(TRUE);
 
-	return FALSE;
+	return(FALSE);
 }
 /* like inside_house() but more costly since it returns the actual house index + 1,
    or 0 for 'not inside any house'.
@@ -1879,7 +1879,7 @@ int inside_which_house(struct worldpos *wpos, int x, int y) {
 		}
 	}
 
-	return -1;
+	return(-1);
 }
 
 bool inside_inn(player_type *p_ptr, cave_type *c_ptr) {
@@ -1889,8 +1889,8 @@ bool inside_inn(player_type *p_ptr, cave_type *c_ptr) {
 	if (((f_info[(c_ptr)->feat].flags1 & FF1_PROTECTED) &&
 	    (istown(&(p_ptr)->wpos) || isdungeontown(&(p_ptr)->wpos))) ||
 	    shop == STORE_HOME || shop == STORE_HOME_DUN || (p_ptr)->store_num == STORE_INN || (p_ptr)->store_num == STORE_DUNGEON_INN)
-		return TRUE;
-	return FALSE;
+		return(TRUE);
+	return(FALSE);
 }
 
 /* Door change permissions
@@ -1914,7 +1914,7 @@ static bool chmod_door(int Ind, struct dna_type *dna, char *args) {
 		}
 		if (dna->owner_type != OT_PLAYER) {
 			msg_print(Ind, "Only houses owned by the party owner can be given party access.");
-			return FALSE;
+			return(FALSE);
 		}
 		if (strcmp(parties[p_ptr->party].owner, lookup_player_name(dna->owner))) {
 			msg_print(Ind, "You must be owner of your party to allow party access.");
@@ -1950,7 +1950,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 		/* paranoia */
 		if (h_idx == -1) {
 			msg_print(Ind, "There is no transferrable house there.");
-			return FALSE;
+			return(FALSE);
 		}
 
 		/* Check house limit of target player! */
@@ -1965,7 +1965,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 			if (!GetAccount(&acc, p_ptr->accountname, NULL, FALSE)) { /* paranoia */
 				/* uhh.. */
 				msg_print(Ind, "Character not online, nor found in your list of characters.");
-				return FALSE;
+				return(FALSE);
 			}
 			ids = player_id_list(&id_list, acc.id);
 			for (j = 0; j < ids; j++)
@@ -2011,7 +2011,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 						NumPlayers--;
 						msg_print(Ind, "House transfer failed.");
 						if (ids) C_KILL(id_list, ids, int);
-						return FALSE;
+						return(FALSE);
 					}
 
 					/* break */
@@ -2027,7 +2027,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 				NumPlayers--;
 				msg_print(Ind, "House transfer failed.");
 				s_printf("HOUSE_CHOWN_SELF: FAILED. source %s, house %d, dest %s.\n", p_ptr->name, pick_house(&p_ptr->wpos, y, x), &args[2]);
-				return FALSE;
+				return(FALSE);
 			}
 			/* Log */
 			s_printf("HOUSE_CHOWN_SELF: source %s, house %d, dest %s.\n", p_ptr->name, pick_house(&p_ptr->wpos, y, x), &args[2]);
@@ -2061,7 +2061,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 				KILL(q_ptr, player_type);
 				NumPlayers--;
 			}
-			return FALSE;
+			return(FALSE);
 		}
 		if (Players[i]->mode & MODE_DED_IDDC) {
 			msg_print(Ind, "IDDC-exclusive characters may not own houses!");
@@ -2071,7 +2071,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 				KILL(q_ptr, player_type);
 				NumPlayers--;
 			}
-			return FALSE;
+			return(FALSE);
 		}
 		if (cfg.houses_per_player && (Players[i]->houses_owned >= ((Players[i]->lev > 50 ? 50 : Players[i]->lev) / cfg.houses_per_player)) && !is_admin(Players[i])) {
 			if ((int)(Players[i]->lev / cfg.houses_per_player) == 0)
@@ -2084,14 +2084,14 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 				KILL(q_ptr, player_type);
 				NumPlayers--;
 			}
-			return (FALSE);
+			return(FALSE);
 		}
 
 		//ACC_HOUSE_LIMIT
 		if (!loaded && /* actually not if we transfer to ourselves.. */
 		    acc_get_houses(Players[i]->accountname) >= cfg.acc_house_limit) {
 			msg_print(Ind, "That player cannot own more houses on his account!");
-			return FALSE;
+			return(FALSE);
 		}
 
 		if (houses[h_idx].flags & HF_MOAT) {
@@ -2103,7 +2103,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 					KILL(q_ptr, player_type);
 					NumPlayers--;
 				}
-				return FALSE;
+				return(FALSE);
 			}
 			if (cfg.castles_per_player && (Players[i]->castles_owned >= cfg.castles_per_player))  {
 				if (cfg.castles_per_player == 1)
@@ -2116,7 +2116,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 					KILL(q_ptr, player_type);
 					NumPlayers--;
 				}
-				return FALSE;
+				return(FALSE);
 			}
 		}
 
@@ -2148,23 +2148,23 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 		/* paranoia */
 		if (h_idx == -1) {
 			msg_print(Ind, "There is no transferrable house there.");
-			return FALSE;
+			return(FALSE);
 		}
 		/* only the guild master can assign an OT_GUILD house */
 		if (!p_ptr->guild || p_ptr->id != guilds[p_ptr->guild].master) {
 			msg_print(Ind, "You must be the guild master to give house ownership to a guild.");
-			return FALSE;
+			return(FALSE);
 		}
 		/* there can only be one guild hall */
 		if (guilds[p_ptr->guild].h_idx) {
 			msg_print(Ind, "The guild already has a guild hall.");
-			return FALSE;
+			return(FALSE);
 		}
 
 		/* guild halls must be mang-style houses (technically too, for CAVE_GUILD_SUS flag to work!) */
 		if ((houses[h_idx].flags & HF_TRAD)) {
 			msg_print(Ind, "\377yGuild halls must not be list-type (store-like) houses.");
-			return FALSE;
+			return(FALSE);
 		}
 
 		/* guild master loses one own house (side note: stays imprinted as 'creator' though), gets transferred to the guild as 'guild hall' */
@@ -2199,7 +2199,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 		break; */
 	default:
 		msg_print(Ind, "\377ySorry, this feature is not available");
-		if (!is_admin(p_ptr)) return FALSE;
+		if (!is_admin(p_ptr)) return(FALSE);
 	}
 
 	if (newowner != -1) {
@@ -2310,7 +2310,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 		KILL(q_ptr, player_type);
 		NumPlayers--;
 	}
-	return FALSE;
+	return(FALSE);
 }
 
 /* Returns > 0 if access is granted,
@@ -2381,9 +2381,9 @@ bool access_door(int Ind, struct dna_type *dna, bool note) {
 	switch (dna->owner_type) {
 	case OT_PLAYER:
 		/* new doors in new server different */
-		if (p_ptr->id == dna->owner && p_ptr->dna == dna->creator) return TRUE;
+		if (p_ptr->id == dna->owner && p_ptr->dna == dna->creator) return(TRUE);
 		/* allow access to houses owned by other characters of your own account as if they were yours (as long as mode is compatible) */
-		if (p_ptr->account == lookup_player_account(dna->owner)) return TRUE;
+		if (p_ptr->account == lookup_player_account(dna->owner)) return(TRUE);
 		/* party access? */
 		if (dna->a_flags & ACF_PARTY) {
 			if (!p_ptr->party) return(FALSE);
@@ -2557,7 +2557,7 @@ cptr get_house_owner(struct c_special *cs_ptr) {
 			break;
 		}
 	}
-	return (string);
+	return(string);
 }
 
 /*
@@ -3201,7 +3201,7 @@ byte twall_erosion(worldpos *wpos, int y, int x, byte feat) {
 	}
 
 	/* Result */
-	return (feat);
+	return(feat);
 }
 
 /*
@@ -3221,7 +3221,7 @@ bool twall(int Ind, int y, int x, byte feat) {
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Paranoia -- Require a wall or door or some such */
-	if (cave_floor_bold(zcave, y, x)) return (FALSE);
+	if (cave_floor_bold(zcave, y, x)) return(FALSE);
 
 	/* Remove the feature */
 	cave_set_feat_live(wpos, y, x, twall_erosion(wpos, y, x, feat));
@@ -3230,7 +3230,7 @@ bool twall(int Ind, int y, int x, byte feat) {
 	*w_ptr &= ~CAVE_MARK;
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -5469,12 +5469,12 @@ bool get_something_tval(int Ind, int tval, int *ip) {
 			(*ip) = i;
 
 			/* Success */
-			return (TRUE);
+			return(TRUE);
 		}
 	}
 
 	/* Oops */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -5744,7 +5744,7 @@ int do_cmd_run(int Ind, int dir) {
 				p_ptr->energy -= level_speed(&p_ptr->wpos);
 				msg_print(Ind, "You fail to break the confinement rune!");
 				disturb(Ind, 0, 0);
-				return 2;
+				return(2);
 			}
 		}
 
@@ -5753,7 +5753,7 @@ int do_cmd_run(int Ind, int dir) {
 			/* Prob travel */
 			if (p_ptr->prob_travel && (!cave_floor_bold(zcave, p_ptr->py, p_ptr->px))) {
 				(void)do_prob_travel(Ind, dir);
-				return 2;
+				return(2);
 			}
 
 			/* Handle the cfg_door_bump option */
@@ -5770,7 +5770,7 @@ int do_cmd_run(int Ind, int dir) {
 						/* If so, open it. */
 						do_cmd_open(Ind, dir);
 					}
-					return 2;
+					return(2);
 				}
 			}
 
@@ -5780,7 +5780,7 @@ int do_cmd_run(int Ind, int dir) {
 			/* Disturb */
 			disturb(Ind, 0, 0);
 
-			return 2;
+			return(2);
 		}
 
 		/* Make sure we have enough energy to start running */
@@ -5803,14 +5803,14 @@ int do_cmd_run(int Ind, int dir) {
 				 * in the first round of running.  */
 				p_ptr->energy = level_speed(&p_ptr->wpos);
 			}
-			return 2;
+			return(2);
 		}
 		/* If we don't have enough energy to run and monsters aren't around,
 		 * try to queue the run command.
 		 */
-		else return 0;
+		else return(0);
 	}
-	return 2;
+	return(2);
 }
 
 
@@ -5872,12 +5872,12 @@ void do_cmd_stay(int Ind, int pickup, bool one) {
  */
 int breakage_chance(object_type *o_ptr) {
 	/* artifacts never break */
-	if (artifact_p(o_ptr)) return 0;
-	if ((o_ptr->questor && o_ptr->questor_invincible)) return 0;
+	if (artifact_p(o_ptr)) return(0);
+	if ((o_ptr->questor && o_ptr->questor_invincible)) return(0);
 
 	/* Special: Light armour and shields seldom break */
-	if (is_textile_armour(o_ptr->tval, o_ptr->sval)) return 2;
-	if (o_ptr->tval == TV_SHIELD) return 2;
+	if (is_textile_armour(o_ptr->tval, o_ptr->sval)) return(2);
+	if (o_ptr->tval == TV_SHIELD) return(2);
 
 	/* Examine the item type */
 	switch (o_ptr->tval) {
@@ -5905,11 +5905,11 @@ int breakage_chance(object_type *o_ptr) {
 	case TV_SHOT:
 	case TV_BOLT:
 	case TV_ARROW:
-		if (o_ptr->sval == SV_AMMO_MAGIC && !cursed_p(o_ptr)) return (0);
-		else if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) return (10);
-		else if (o_ptr->tval == TV_SHOT) return (10);
-		else if (o_ptr->tval == TV_BOLT) return (15);
-		return (20);
+		if (o_ptr->sval == SV_AMMO_MAGIC && !cursed_p(o_ptr)) return(0);
+		else if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) return(10);
+		else if (o_ptr->tval == TV_SHOT) return(10);
+		else if (o_ptr->tval == TV_BOLT) return(15);
+		return(20);
 
 	/* seldom break */
 	case TV_BOOMERANG:
@@ -5918,17 +5918,17 @@ int breakage_chance(object_type *o_ptr) {
 	case TV_AMULET:
 	//case TV_RUNE:
 	case TV_GEM:
-		return 2;
+		return(2);
 
 	/* never break */
 	case TV_GAME:
 	case TV_GOLD:
 	case TV_KEY:
-		return 0;
+		return(0);
 
 	/* special */
 	case TV_GOLEM:
-		if (o_ptr->sval <= SV_GOLEM_ADAM) return 0; /* massive piece */
+		if (o_ptr->sval <= SV_GOLEM_ADAM) return(0); /* massive piece */
 		if (o_ptr->sval >= SV_GOLEM_ATTACK) return 25; /* scroll */
 		return 10; /* arm/leg */
 
@@ -7714,10 +7714,10 @@ bool interfere(int Ind, int chance) {
 	if (p_ptr->cloaked) return(FALSE);
 
 	/* too fast to get grabbed! */
-	if (p_ptr->shadow_running) return FALSE;
+	if (p_ptr->shadow_running) return(FALSE);
 
 	/* cannot interfere with ghosts */
-	if (p_ptr->ghost) return FALSE;
+	if (p_ptr->ghost) return(FALSE);
 
 	chance = chance * (100 - calmness) / 100;
 
@@ -7784,11 +7784,11 @@ bool interfere(int Ind, int chance) {
 				player_desc(Ind, m_name, -i, 0);
 			}
 			msg_format(Ind, "\377%c%^s interferes with your attempt!", COLOUR_IC_MON, m_name);
-			return TRUE;
+			return(TRUE);
 		}
 	}
 
-	return FALSE;
+	return(FALSE);
 }
 
 

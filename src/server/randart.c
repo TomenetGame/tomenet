@@ -82,12 +82,12 @@ static artifact_type randart;
  */
 static int bow_multiplier(int sval) {
 	switch (sval) {
-	case SV_SLING: case SV_SHORT_BOW: return 2;
+	case SV_SLING: case SV_SHORT_BOW: return(2);
 	case SV_LONG_BOW: case SV_LIGHT_XBOW: return 3;
 	case SV_HEAVY_XBOW: return 4;
 	  /*		default: msg_format ("Illegal bow sval %s\n", sval); */
 	}
-	return 0;
+	return(0);
 }
 #endif
 
@@ -1956,15 +1956,15 @@ artifact_type *randart_make(object_type *o_ptr) {
 
 	/* Mega Hack -- forbid randart polymorph rings(pval would be BAD) */
 	if ((k_ptr->tval == TV_RING) && (k_ptr->sval == SV_RING_POLYMORPH))
-		return (NULL);
+		return(NULL);
 
 	/* Forbid amulets of Telepathic Awareness */
 	if (k_ptr->tval == TV_AMULET && k_ptr->sval == SV_AMULET_ESP)
-		return (NULL);
+		return(NULL);
 
 	/* Forbid costumes too */
 	if ((k_ptr->tval == TV_SOFT_ARMOR) && (k_ptr->sval == SV_COSTUME))
-		return (NULL);
+		return(NULL);
 
 /* taken out the quality boosts again, since those weapons already deal insane damage.
    alternatively their damage could be lowered so they don't rival grond (7d8 weapon w/ kill flags..). */
@@ -2232,7 +2232,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 		   This would require a base item that is already extremely powerful (eg PDSM). */
 		if (tries == MAX_TRIES)
 			/* fail randart generation completely */
-			return (NULL);
+			return(NULL);
 #else /* allow them */
 		if (tries == MAX_TRIES)
 			/* just use the absolute base randart, ie without additional ability mods
@@ -2366,7 +2366,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 	Rand_quick = FALSE;
 
 	/* Return a pointer to the artifact_type */
-	return (a_ptr);
+	return(a_ptr);
 }
 
 
@@ -2737,7 +2737,7 @@ try_an_other_ego:
 	Rand_quick = FALSE;
 
 	/* Return a pointer to the artifact_type */
-	return (a_ptr);
+	return(a_ptr);
 }
 static void add_random_esp(artifact_type *a_ptr, int all) {
 	int rr = rand_int(25 + all);

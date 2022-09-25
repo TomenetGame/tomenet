@@ -33,7 +33,7 @@ bool init_s_info()
 			s_info[skill_tree_init[i][1]].order = order++;
 		}
 	}
-	return FALSE;
+	return(FALSE);
 }
 #endif	// 0
 
@@ -72,7 +72,7 @@ void init_skill(player_type *p_ptr, u32b value, s16b mod, int i) {
  */
 s16b get_skill(player_type *p_ptr, int skill)
 {
-	if (skill < 0 || skill >= MAX_SKILLS) return 0;
+	if (skill < 0 || skill >= MAX_SKILLS) return(0);
 #if 0
 	/* prevent breaking the +2 limit */
 	int s;
@@ -80,7 +80,7 @@ s16b get_skill(player_type *p_ptr, int skill)
 	if (s > p_ptr->lev + 2) s = p_ptr->lev + 2;
 	return s;
 #else
-	return (p_ptr->s_info[skill].value / SKILL_STEP);
+	return(p_ptr->s_info[skill].value / SKILL_STEP);
 #endif
 }
 
@@ -96,20 +96,20 @@ s16b get_skill_scale(player_type *p_ptr, int skill, u32b scale)
 /*	s =  ((p_ptr->s_info[skill].value * 1000) / SKILL_STEP);
 	if (s > (p_ptr->lev * 1000) + 2000) s = (p_ptr->lev * 1000) + 2000;
 	s = (s * SKILL_STEP) / 1000;
-	return (((s / 10) * (scale * (SKILL_STEP / 10)) / (SKILL_MAX / 10)) / (SKILL_STEP / 10)); */
+	return(((s / 10) * (scale * (SKILL_STEP / 10)) / (SKILL_MAX / 10)) / (SKILL_STEP / 10)); */
 
 	/* Cleaning up this mess too... - mikaelh */
 	s = p_ptr->s_info[skill].value;
 	if (s > (p_ptr->lev + 2) * SKILL_STEP) s = (p_ptr->lev + 2) * SKILL_STEP;
-	return ((s * scale) / SKILL_MAX);
+	return((s * scale) / SKILL_MAX);
 
 #else
 	/* XXX XXX XXX */
-	/* return (((p_ptr->s_info[skill].value / 10) * (scale * (SKILL_STEP / 10)) /
+	/* return(((p_ptr->s_info[skill].value / 10) * (scale * (SKILL_STEP / 10)) /
 		 (SKILL_MAX / 10)) /
 		(SKILL_STEP / 10)); */
 	/* Simpler formula suggested by Potter - mikaelh */
-	return ((p_ptr->s_info[skill].value * scale) / SKILL_MAX);
+	return((p_ptr->s_info[skill].value * scale) / SKILL_MAX);
 
 #endif
 }
@@ -118,7 +118,7 @@ s16b get_skill_scale(player_type *p_ptr, int skill, u32b scale)
    (Added this for minus_... in dungeon.c - C. Blue) */
 s16b get_skill_scale_fine(player_type *p_ptr, int skill, u32b scale)
 {
-	return (((p_ptr->s_info[skill].value * scale) / SKILL_MAX) +
+	return(((p_ptr->s_info[skill].value * scale) / SKILL_MAX) +
 		(magik(((p_ptr->s_info[skill].value * scale * 100) / SKILL_MAX) % 100) ? 1 : 0));
 }
 
@@ -126,19 +126,19 @@ s16b get_skill_scale_fine(player_type *p_ptr, int skill, u32b scale)
 static s32b modify_aux(s32b a, s32b b, char mod) {
 	switch (mod) {
 	case '+':
-		return (a + b);
+		return(a + b);
 		break;
 	case '-':
-		return (a - b);
+		return(a - b);
 		break;
 	case '=':
-		return (b);
+		return(b);
 		break;
 	case '%':
-		return ((a * b) / 100);
+		return((a * b) / 100);
 		break;
 	default:
-		return (0);
+		return(0);
 	}
 }
 
@@ -929,11 +929,11 @@ s16b find_skill(cptr name) {
 	//for (i = 1; i < max_s_idx; i++)
 	for (i = 0; i < MAX_SKILLS; i++) {
 		/* The name matches */
-		if (streq(s_info[i].name + s_name, name)) return (i);
+		if (streq(s_info[i].name + s_name, name)) return(i);
 	}
 
 	/* No match found */
-	return (-1);
+	return(-1);
 }
 
 /* return value by which a skill was auto-modified by related skills
@@ -972,7 +972,7 @@ static s32b modified_by_related(player_type *p_ptr, int i) {
 		}
 	}
 
-	return (val);
+	return(val);
 }
 
 /* Free all points spent into a certain skill and make them available again.

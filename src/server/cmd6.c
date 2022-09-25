@@ -1178,7 +1178,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 	}
 
 	bypass_invuln = FALSE;
-	return (ident);
+	return(ident);
 }
 
 /*
@@ -1903,12 +1903,12 @@ bool curse_armor(int Ind) {
 	o_ptr = &p_ptr->inventory[INVEN_BODY];
 
 	/* Nothing to curse */
-	if (!o_ptr->k_idx) return (FALSE);
+	if (!o_ptr->k_idx) return(FALSE);
 
 	/* might mess up quest stuff */
 	if (o_ptr->questor ||
 	    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST))
-		return FALSE;
+		return(FALSE);
 
 
 	/* Describe */
@@ -1970,7 +1970,7 @@ bool curse_armor(int Ind) {
 		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 	}
 
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -1987,13 +1987,13 @@ bool curse_weapon(int Ind) {
 
 	/* Nothing to curse */
 	if (!o_ptr->k_idx &&
-	    (!p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) return (FALSE);
+	    (!p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) return(FALSE);
 	if (!o_ptr->k_idx) o_ptr = &p_ptr->inventory[INVEN_ARM]; /* dual-wield..*/
 
 	/* might mess up quest stuff */
 	if (o_ptr->questor ||
 	    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST))
-		return FALSE;
+		return(FALSE);
 
 
 	/* Describe */
@@ -2056,7 +2056,7 @@ bool curse_weapon(int Ind) {
 	}
 
 	/* Notice */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -2077,12 +2077,12 @@ bool curse_an_item(int Ind, int slot) {
 	o_ptr = &p_ptr->inventory[slot];
 
 	/* Nothing to curse */
-	if (!o_ptr->k_idx) return (FALSE);
+	if (!o_ptr->k_idx) return(FALSE);
 
 	/* might mess up quest stuff */
 	if (o_ptr->questor ||
 	    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST))
-		return FALSE;
+		return(FALSE);
 
 	/* Describe */
 	object_desc(Ind, o_name, o_ptr, FALSE, 3);
@@ -2143,7 +2143,7 @@ bool curse_an_item(int Ind, int slot) {
 		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 	}
 
-	return (TRUE);
+	return(TRUE);
 }
 #endif	// 0
 
@@ -2266,7 +2266,7 @@ bool do_cancellation(int Ind) {
 		}
 	}
 
-	return (ident);
+	return(ident);
 }
 
 /*
@@ -2377,7 +2377,7 @@ static int check_self_summon(player_type *p_ptr) {
 
 	if (is_admin(p_ptr)) return(TRUE);
 
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_SUMMON)) return FALSE;
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_SUMMON)) return(FALSE);
 
 	if (((!cfg.surface_summoning) && (p_ptr->wpos.wz == 0))
 	    || istownarea(&p_ptr->wpos, MAX_TOWNAREA)) /* poly ring anticheeze (those don't run out in town area) */
@@ -4447,7 +4447,7 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 
 	default:
 		msg_print(Ind, "SERVER ERROR: Directional rod zapped in non-directional function!");
-		return FALSE;
+		return(FALSE);
 	}
 
 	return ident;
@@ -5294,16 +5294,16 @@ static bool item_tester_hook_activate(int Ind, object_type *o_ptr) {
 	u32b f3, dummy;
 
 	/* Not known */
-	if (!object_known_p(Ind, o_ptr)) return (FALSE);
+	if (!object_known_p(Ind, o_ptr)) return(FALSE);
 
 	/* Extract the flags */
 	object_flags(o_ptr, &dummy, &dummy, &f3, &dummy, &dummy, &dummy, &dummy);
 
 	/* Check activation flag */
-	if (f3 & TR3_ACTIVATE) return (TRUE);
+	if (f3 & TR3_ACTIVATE) return(TRUE);
 
 	/* Assume not */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -5397,14 +5397,14 @@ static bool brand_bolts(int Ind) {
 		o_ptr->discount = 100;
 
 		/* Notice */
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Fail */
 	msg_print(Ind, "The fiery enchantment failed.");
 
 	/* Notice */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -5413,7 +5413,7 @@ static bool brand_bolts(int Ind) {
 bool activation_requires_direction(object_type *o_ptr) {
 	/* Art DSMs are handled below */
 	if (o_ptr->tval == TV_DRAG_ARMOR && !o_ptr->name1)
-		return TRUE;
+		return(TRUE);
 
 	/* Artifacts activate by name */
 	if (o_ptr->name1) {
@@ -5454,13 +5454,13 @@ bool activation_requires_direction(object_type *o_ptr) {
 		case ART_HELLFIRE:
 		case ART_HAVOC:
 		case ART_WARPSPEAR:
-			return TRUE;
+			return(TRUE);
 		}
 	}
 
 	/* Hack -- Amulet of the Serpents can be activated as well */
 	else if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_SERPENT)) {
-		return TRUE;
+		return(TRUE);
 	}
 
 	else if (o_ptr->tval == TV_RING) {
@@ -5469,31 +5469,31 @@ bool activation_requires_direction(object_type *o_ptr) {
 		case SV_RING_ACID:
 		case SV_RING_ICE:
 		case SV_RING_FLAMES:
-			return TRUE;
+			return(TRUE);
 		}
 	}
 
 #ifdef ENABLE_DEMOLITIONIST
 	else if (o_ptr->tval == TV_CHARGE &&
 	    (o_ptr->sval == SV_CHARGE_SBLAST || o_ptr->sval == SV_CHARGE_FIREWALL || o_ptr->sval == SV_CHARGE_CASCADING))
-		return TRUE;
+		return(TRUE);
 #endif
 
 	/* All other items aren't activatable */
-	return FALSE;
+	return(FALSE);
 }
 
 bool rod_requires_direction(int Ind, object_type *o_ptr) {
 	int sval = o_ptr->sval;
 
-	if (Ind && !object_aware_p(Ind, o_ptr)) return TRUE;
+	if (Ind && !object_aware_p(Ind, o_ptr)) return(TRUE);
 
 	if ((sval >= SV_ROD_MIN_DIRECTION) &&
 	    !(sval == SV_ROD_DETECT_TRAP) &&
 	    !(sval == SV_ROD_HOME))
-		return TRUE;
+		return(TRUE);
 
-	return FALSE;
+	return(FALSE);
 }
 
 /*
@@ -7655,7 +7655,7 @@ bool unmagic(int Ind) {
 	/* Unmagic has no effect when the player is invulnerable. This prevents
 	 * stair-GoI from being canceled prematurely by unmagic mushrooms etc.
 	 */
-	if (p_ptr->invuln || p_ptr->martyr) return FALSE;
+	if (p_ptr->invuln || p_ptr->martyr) return(FALSE);
 
 	if (
 		set_adrenaline(Ind, 0) +
@@ -7714,7 +7714,7 @@ bool unmagic(int Ind) {
 	p_ptr->supp = 0;
 	p_ptr->support_timer = 0;
 #endif
-	return (ident);
+	return(ident);
 }
 
 /*
@@ -7801,8 +7801,8 @@ static int fletchery_items(int Ind, int type) {
 			if (!o_ptr->k_idx) continue;
 			if (!can_use_admin(Ind, o_ptr)) continue;
 			/* Broken Stick */
-			if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_WOODEN_STICK) return (i);
-			if (o_ptr->tval == TV_SKELETON) return (i);
+			if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_WOODEN_STICK) return(i);
+			if (o_ptr->tval == TV_SKELETON) return(i);
 		}
 		break;
 	case SKILL_SLING:
@@ -7811,13 +7811,13 @@ static int fletchery_items(int Ind, int type) {
 			if (!o_ptr->k_idx) continue;
 			if (!can_use_admin(Ind, o_ptr)) continue;
 			/* Shards of Pottery */
-			if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_POTTERY) return (i);
+			if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_POTTERY) return(i);
 		}
 		break;
 	}
 
 	/* Failed */
-	return (-1);
+	return(-1);
 }
 
 /* Dirty but useful macro */
@@ -9175,7 +9175,7 @@ bool create_snowball(int Ind, cave_type *c_ptr) {
 		if (!inven_carry_okay(Ind, &forge, 0x0)) {
 			msg_print(Ind, "You have no room in your inventory to pick up snow.");
 			p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
-			return FALSE;
+			return(FALSE);
 		}
 		inven_carry(Ind, &forge);
 		msg_print(Ind, "You pick up some snow and form a snowball.");
@@ -9183,7 +9183,7 @@ bool create_snowball(int Ind, cave_type *c_ptr) {
 		/* Take a turn */
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-		return TRUE;
+		return(TRUE);
 	}
-	return FALSE;
+	return(FALSE);
 }

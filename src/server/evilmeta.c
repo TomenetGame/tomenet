@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
 		/* call the meta */
 		callmeta();
 	}
-	return (0);
+	return(0);
 }
 
 /* the signal handler */
@@ -83,7 +83,7 @@ int connsocket(int port, char *host) {
 
 	/* Create a socket */
 	ss = socket(AF_INET, SOCK_STREAM, 0);
-	if (ss < 0) return (-1);
+	if (ss < 0) return(-1);
 #ifdef __NetBSD__
 	s_in.sin_len = sizeof(struct sockaddr_in);
 #endif
@@ -96,13 +96,13 @@ int connsocket(int port, char *host) {
 		/* Close the socket - mikaelh */
 		close(ss);
 
-		return (-1);
+		return(-1);
 	}
 	memcpy(&s_in.sin_addr, he->h_addr_list[0], sizeof(struct in_addr));
 
 	check = connect(ss, (struct sockaddr *)&s_in, sizeof(struct sockaddr_in));
 	if (check != -1) {
-		return (ss);
+		return(ss);
 	}
 	fprintf(stderr, "Couldnt connect to %s, %d\n", host, port);
 	fprintf(stderr, "errno: %d\n", errno);
@@ -110,6 +110,6 @@ int connsocket(int port, char *host) {
 	/* Close the socket - mikaelh */
 	close(ss);
 
-	if (errno == 4) return (-2);
-	return (-1);
+	if (errno == 4) return(-2);
+	return(-1);
 }

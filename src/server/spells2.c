@@ -156,12 +156,12 @@ int py_create_gateway(int Ind) {
 
 	if (!wpos->wz || !(zcave = getcave(wpos)) || !cave_clean_bold(zcave, p_ptr->py, p_ptr->px)) {
 		msg_format(Ind, "\377wThis spell has no effect here.");
-		return 0;
+		return(0);
 	}
 
 	if ((l_ptr->flags1 & LF1_CUSTOM_GATEWAY)) {
 		msg_print(Ind, "\377yThe presence of another active gateway spell is disturbing your attempt.");
-		return 0;
+		return(0);
 	}
 
 	if (p_ptr->voidx && p_ptr->voidy) {
@@ -178,11 +178,11 @@ int py_create_gateway(int Ind) {
 			msg_format_near(Ind, "\377v%s has successfully created a gateway!", p_ptr->name);
 		}
 		/* completed the spell successfully */
-		return 2;
+		return(2);
 	}
 
 	// Let's not have this in towns/houses; OK everywhere else
-	if (!allow_terraforming(wpos, FEAT_TREE)) return 0;
+	if (!allow_terraforming(wpos, FEAT_TREE)) return(0);
 
 	msg_format(Ind, "\377vYou set your mind to create a gateway here.");
 
@@ -190,7 +190,7 @@ int py_create_gateway(int Ind) {
 	p_ptr->voidy = p_ptr->py;
 
 	place_between_dummy(wpos, p_ptr->py, p_ptr->px);
-	return 1;
+	return(1);
 }
 /* A: instant wor for every party member on level. INCLUDING town recalls?
  *    /rec 32 32 -> will attempt to teleport party members to Bree.
@@ -339,7 +339,7 @@ bool create_garden(int Ind, int chance) {
 	struct worldpos *wpos = &(p_ptr->wpos);
 
 	cave_type **zcave;
-	if (!(zcave = getcave(wpos))) return (FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	if (!allow_terraforming(wpos, FEAT_TREE)) return(FALSE);
 
@@ -390,7 +390,7 @@ bool create_garden(int Ind, int chance) {
 	/* Message */
 	msg_print(Ind, "You see raw power escaping from the rocks!");
 	msg_print_near(Ind, "You see raw power escaping from the rocks!");
-	return (TRUE);
+	return(TRUE);
 }//garden
 
 /*
@@ -447,7 +447,7 @@ bool do_focus(int Ind, int p, int v) {
 #endif
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -459,7 +459,7 @@ bool do_focus(int Ind, int p, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -502,7 +502,7 @@ bool do_xtra_stats(int Ind, int s, int p, int v) {
 	p_ptr->xtrastat_tim = v;
 
 	/* Nothing to notice */
-	if (!notice) return (FALSE);
+	if (!notice) return(FALSE);
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
@@ -514,7 +514,7 @@ bool do_xtra_stats(int Ind, int s, int p, int v) {
 	handle_stuff(Ind);
 
 	/* Result */
-	return (TRUE);
+	return(TRUE);
 }//xtra stats
 
 /*
@@ -529,7 +529,7 @@ bool do_banish_animals(int Ind, int chance) {
 	dun_level *l_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
 
-	if (Ind < 0 || chance <= 0) return (FALSE);
+	if (Ind < 0 || chance <= 0) return(FALSE);
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	if ((l_ptr = getfloor(wpos)) && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);
 
@@ -576,7 +576,7 @@ bool do_banish_animals(int Ind, int chance) {
 			msg_format_near(Ind, "\377gYou see %s's tears of joy at the number of returning animals.", p_ptr->name);
 		}
 	}
-	return (TRUE);
+	return(TRUE);
 }
 
 /* For Dawn activation - C. Blue
@@ -589,7 +589,7 @@ bool do_banish_undead(int Ind, int chance) {
 	dun_level *l_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
 
-	if (Ind < 0 || chance <= 0) return (FALSE);
+	if (Ind < 0 || chance <= 0) return(FALSE);
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	if ((l_ptr = getfloor(wpos)) && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);
 
@@ -614,7 +614,7 @@ bool do_banish_undead(int Ind, int chance) {
 		}
 	}
 	/* (no time for tears of joy dealing with undead) */
-	return (TRUE);
+	return(TRUE);
 }
 
 /* For Mardra activation - C. Blue
@@ -627,7 +627,7 @@ bool do_banish_dragons(int Ind, int chance) {
 	dun_level *l_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
 
-	if (Ind < 0 || chance <= 0) return (FALSE);
+	if (Ind < 0 || chance <= 0) return(FALSE);
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	if ((l_ptr = getfloor(wpos)) && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);
 
@@ -652,7 +652,7 @@ bool do_banish_dragons(int Ind, int chance) {
 		}
 	}
 	/* (no time for tears of joy dealing with undead) */
-	return (TRUE);
+	return(TRUE);
 }
 
 #ifdef ENABLE_OCCULT /* Occult */
@@ -662,9 +662,9 @@ bool do_shadow_gate(int Ind, int range) {
 	int nx, ny, tx = -1, ty = -1, mdist = 999, dist, idx;
 	cave_type **zcave;
 
-	if (!p_ptr) return FALSE;
+	if (!p_ptr) return(FALSE);
 	zcave = getcave(&p_ptr->wpos);
-	if (!zcave) return FALSE;
+	if (!zcave) return(FALSE);
 
 	for (nx = p_ptr->px - range; nx <= p_ptr->px + range; nx++)
 	for (ny = p_ptr->py - range; ny <= p_ptr->py + range; ny++) {
@@ -693,11 +693,11 @@ bool do_shadow_gate(int Ind, int range) {
 	}
 	if (tx == -1) {
 		msg_print(Ind, "There is no adversary close enough to you.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	teleport_player_to(Ind, ty, tx, FALSE);
-	return TRUE;
+	return(TRUE);
 }
 #endif
 
@@ -712,13 +712,13 @@ bool hp_player(int Ind, int num) {
 	long eff_num; /* actual amount of HP gain */
 	long e = PVP_DIMINISHING_HEALING_CAP(p_ptr);
 
-	if (p_ptr->no_heal) return FALSE;
+	if (p_ptr->no_heal) return(FALSE);
 
 #ifdef AUTO_RET_NEW /* for drain life etc */
 	/* Don't allow phase/teleport for auto-retaliation methods */
 	if (p_ptr->auto_retaliaty) {
 		msg_print(Ind, "\377yYou cannot use means of healing for auto-retaliation.");
-		return FALSE;
+		return(FALSE);
 	}
 #endif
 
@@ -792,10 +792,10 @@ bool hp_player(int Ind, int num) {
 			}
 		}
 
-		return (TRUE);
+		return(TRUE);
 	}
 
-	return (FALSE);
+	return(FALSE);
 }
 
 /*
@@ -813,13 +813,13 @@ bool hp_player_quiet(int Ind, int num, bool autoeffect) {
 	long eff_num; /* actual amount of HP gain */
 	long e = PVP_DIMINISHING_HEALING_CAP(p_ptr);
 
-	if (p_ptr->no_heal && !autoeffect) return FALSE;
+	if (p_ptr->no_heal && !autoeffect) return(FALSE);
 
 #ifdef AUTO_RET_NEW /* for drain life etc */
 	/* Don't allow phase/teleport for auto-retaliation methods */
 	if (p_ptr->auto_retaliaty && !autoeffect) { /* note: healing by drain-life-autoret is possible with this */
 		msg_print(Ind, "\377yYou cannot use means of healing for auto-retaliation.");
-		return FALSE;
+		return(FALSE);
 	}
 #endif
 
@@ -878,10 +878,10 @@ bool hp_player_quiet(int Ind, int num, bool autoeffect) {
 		/* Window stuff */
 		p_ptr->window |= (PW_PLAYER);
 
-		return (TRUE);
+		return(TRUE);
 	}
 
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -997,7 +997,7 @@ bool do_dec_stat(int Ind, int stat, int mode) {
 			   desc_stat_neg[stat]);
 
 		/* Notice effect */
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Attempt to reduce the stat */
@@ -1006,11 +1006,11 @@ bool do_dec_stat(int Ind, int stat, int mode) {
 		msg_format(Ind, "You feel very %s.", desc_stat_neg[stat]);
 
 		/* Notice effect */
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Nothing obvious */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -1030,7 +1030,7 @@ bool do_dec_stat_time(int Ind, int stat, int mode, int sust_chance, int reductio
 		case A_DEX: if (p_ptr->sustain_dex) sust = TRUE; break;
 		case A_CON: if (p_ptr->sustain_con) sust = TRUE; break;
 		case A_CHR: if (p_ptr->sustain_chr) sust = TRUE; break;
-		default: return FALSE;
+		default: return(FALSE);
 	}
 
 	if (p_ptr->stat_cur[stat] <= 3) return(FALSE);
@@ -1042,7 +1042,7 @@ bool do_dec_stat_time(int Ind, int stat, int mode, int sust_chance, int reductio
 			   desc_stat_neg2[stat]);
 
 		/* Notice effect */
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Message */
@@ -1053,7 +1053,7 @@ bool do_dec_stat_time(int Ind, int stat, int mode, int sust_chance, int reductio
 	case 0:
 		if (dec_stat(Ind, stat, 10, mode)) {
 			/* Notice effect */
-			return (TRUE);
+			return(TRUE);
 		}
 		break;
 	case 1:
@@ -1073,7 +1073,7 @@ bool do_dec_stat_time(int Ind, int stat, int mode, int sust_chance, int reductio
 	p_ptr->update |= (PU_BONUS | PU_MANA | PU_HP | PU_SANITY);
 
 	/* Nothing obvious */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -1087,11 +1087,11 @@ bool do_res_stat(int Ind, int stat) {
 		msg_format(Ind, "You feel less %s.", desc_stat_neg[stat]);
 
 		/* Notice */
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Nothing obvious */
-	return (FALSE);
+	return(FALSE);
 }
 
 /*
@@ -1117,11 +1117,11 @@ bool do_res_stat_temp(int Ind, int stat) {
 		/* Message */
 		msg_format(Ind, "You feel less %s.", desc_stat_neg[stat]);
 		/* Success */
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Nothing to restore */
-	return (FALSE);
+	return(FALSE);
 }
 
 /*
@@ -1139,7 +1139,7 @@ bool do_inc_stat(int Ind, int stat) {
 		msg_format(Ind, "Wow!  You feel very %s!", desc_stat_pos[stat]);
 
 		/* Notice */
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Restoration worked */
@@ -1148,11 +1148,11 @@ bool do_inc_stat(int Ind, int stat) {
 		msg_format(Ind, "You feel less %s.", desc_stat_neg[stat]);
 
 		/* Notice */
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Nothing obvious */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -1367,8 +1367,8 @@ int remove_curse_aux(int Ind, int all, int pInd) {
 			break;
 	}
 
-	/* Return "something uncursed" */
-	return (cnt);
+	/* return"something uncursed" */
+	return(cnt);
 }
 
 
@@ -1378,7 +1378,7 @@ int remove_curse_aux(int Ind, int all, int pInd) {
  */
 bool remove_curse(int Ind) {
 #ifndef NEW_REMOVE_CURSE
-	return (remove_curse_aux(Ind, 0x0, 0));
+	return(remove_curse_aux(Ind, 0x0, 0));
 #else
 	/* assume we're called _only_ as the projectable holy school spell */
 	int i, p, r = 0;
@@ -1387,7 +1387,7 @@ bool remove_curse(int Ind) {
 
 	/* remove our own curse(s) first - can't remove other player's curses while we're not cleansed ;) */
 	i = remove_curse_aux(Ind, 0x0, 0);
-	if (i) return i;
+	if (i) returni;
 
 	/* remove someone else's curse */
 	if ((zcave = getcave(&p_ptr->wpos))) {
@@ -1400,7 +1400,7 @@ bool remove_curse(int Ind) {
 	}
 
 	/* remove our own curse(s) */
-	return r;
+	return(r);
 #endif
 }
 
@@ -1409,7 +1409,7 @@ bool remove_curse(int Ind) {
  */
 bool remove_all_curse(int Ind) {
 #ifndef NEW_REMOVE_CURSE
-	return (remove_curse_aux(Ind, 0x1, 0));
+	return(remove_curse_aux(Ind, 0x1, 0));
 #else
 	/* assume we're called _only_ as the projectable holy school spell */
 	int i, p, r = 0;
@@ -1418,7 +1418,7 @@ bool remove_all_curse(int Ind) {
 
 	/* remove our own curse(s) first - can't remove other player's curses while we're not cleansed ;) */
 	i = remove_curse_aux(Ind, 0x1, 0);
-	if (i) return i;
+	if (i) return(i);
 
 	/* remove someone else's curse */
 	if ((zcave = getcave(&p_ptr->wpos))) {
@@ -1429,7 +1429,7 @@ bool remove_all_curse(int Ind) {
 			break;
 		}
 	}
-	return r;
+	return(r);
 #endif
 }
 
@@ -1451,11 +1451,11 @@ bool restore_level(int Ind) {
 		check_experience(Ind);
 
 		/* Did something */
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* No effect */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -1802,8 +1802,8 @@ bool lose_all_info(int Ind) {
 	int i;
 	char note2[ONAME_LEN], noteid[10];
 
-	if (safe_area(Ind)) return TRUE;
-	if (p_ptr->auto_id) return FALSE;
+	if (safe_area(Ind)) return(TRUE);
+	if (p_ptr->auto_id) return(FALSE);
 
 	/* Forget info about objects */
 	for (i = 0; i < INVEN_TOTAL; i++) {
@@ -1846,7 +1846,7 @@ bool lose_all_info(int Ind) {
 	wiz_dark(Ind);
 
 	/* It worked */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -1874,13 +1874,13 @@ bool detect_treasure(int Ind, int rad) {
 	cave_type **zcave;
 
 	/* anti-exploit */
-	if (!local_panel(Ind)) return FALSE;
+	if (!local_panel(Ind)) return(FALSE);
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return(FALSE);
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return(FALSE);
 
 	/* Scan the current panel */
 //	for (y = p_ptr->panel_row_min; y <= p_ptr->panel_row_max; y++)
@@ -1950,7 +1950,7 @@ bool detect_treasure(int Ind, int rad) {
 			}
 		}
 	}
-	return (detect);
+	return(detect);
 }
 
 /* detect treasures level-wide, for DIGGING skill */
@@ -1968,8 +1968,8 @@ bool floor_detect_treasure(int Ind) {
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	if (!(l_ptr = getfloor(wpos))) return(FALSE); /* doesn't work on surface levels (wpos.wz == 0) */
 
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return(FALSE);
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return(FALSE);
 
 	/* Scan the whole level */
 	for (y = 0; y < l_ptr->hgt; y++) {
@@ -2024,7 +2024,7 @@ bool floor_detect_treasure(int Ind) {
 			}
 		}
 	}
-	return (detect);
+	return(detect);
 }
 
 /*
@@ -2052,13 +2052,13 @@ bool detect_magic(int Ind, int rad) {
 	cave_type **zcave;
 
 	/* anti-exploit */
-	if (!local_panel(Ind)) return FALSE;
+	if (!local_panel(Ind)) return(FALSE);
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return(FALSE);
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return(FALSE);
 
 	/* Scan the current panel */
 	//for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
@@ -2105,7 +2105,7 @@ bool detect_magic(int Ind, int rad) {
 	}
 
 	/* Return result */
-	return (detect);
+	return(detect);
 }
 
 /*
@@ -2122,10 +2122,10 @@ bool detect_creatures_xxx(int Ind, u32b match_flag) {
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
 	/* anti-exploit */
-	if (!local_panel(Ind)) return FALSE;
+	if (!local_panel(Ind)) return(FALSE);
 
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return(FALSE);
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return(FALSE);
 
 	/* Clear previously detected stuff */
 	clear_ovl(Ind);
@@ -2303,7 +2303,7 @@ bool detect_creatures_xxx(int Ind, u32b match_flag) {
 	}
 
 	/* Result */
-	return (flag);
+	return(flag);
 }
 bool detect_evil(int Ind) {
 	return(detect_creatures_xxx(Ind, RF3_EVIL));
@@ -2321,10 +2321,10 @@ bool detect_invisible(int Ind) {
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
 	/* anti-exploit */
-	if (!local_panel(Ind)) return FALSE;
+	if (!local_panel(Ind)) return(FALSE);
 
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return(FALSE);
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return(FALSE);
 
 	/* Clear previously detected stuff */
 	clear_ovl(Ind);
@@ -2437,7 +2437,7 @@ bool detect_invisible(int Ind) {
 	}
 
 	/* Result */
-	return (flag);
+	return(flag);
 }
 
 /*
@@ -2452,10 +2452,10 @@ bool detect_creatures(int Ind) {
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
 	/* anti-exploit */
-	if (!local_panel(Ind)) return FALSE;
+	if (!local_panel(Ind)) return(FALSE);
 
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return(FALSE);
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return(FALSE);
 
 	/* Clear previously detected stuff */
 	clear_ovl(Ind);
@@ -2563,7 +2563,7 @@ bool detect_creatures(int Ind) {
 	}
 
 	/* Result */
-	return (flag);
+	return(flag);
 }
 
 /* New Rogue technique */
@@ -2574,10 +2574,10 @@ bool detect_noise(int Ind) {
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
 	/* anti-exploit */
-	if (!local_panel(Ind)) return FALSE;
+	if (!local_panel(Ind)) return(FALSE);
 
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return(FALSE);
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return(FALSE);
 
 	/* Clear previously detected stuff */
 	clear_ovl(Ind);
@@ -2685,7 +2685,7 @@ bool detect_noise(int Ind) {
 	}
 
 	/* Result */
-	return (flag);
+	return(flag);
 }
 
 /* For Death Knights et al: Detect living creatures. */
@@ -2696,10 +2696,10 @@ bool detect_living(int Ind) {
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
 	/* anti-exploit */
-	if (!local_panel(Ind)) return FALSE;
+	if (!local_panel(Ind)) return(FALSE);
 
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return(FALSE);
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return(FALSE);
 
 	/* Clear previously detected stuff */
 	clear_ovl(Ind);
@@ -2802,7 +2802,7 @@ bool detect_living(int Ind) {
 	}
 
 	/* Result */
-	return (flag);
+	return(flag);
 }
 
 /*
@@ -2820,7 +2820,7 @@ bool detection(int Ind, int rad) {
 	if (detect_creatures(Ind)) detect = TRUE;	/* not radius-ed for now */
 
 	/* Result */
-	return (detect);
+	return(detect);
 }
 
 #if 1
@@ -2849,13 +2849,13 @@ bool detect_bounty(int Ind, int rad) {
 	object_type	*o_ptr;
 
 	/* anti-exploit */
-	if (!local_panel(Ind)) return FALSE;
+	if (!local_panel(Ind)) return(FALSE);
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	l_ptr = getfloor(wpos);
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return(FALSE);
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return(FALSE);
 
 
 	/* Scan the current panel */
@@ -3009,7 +3009,7 @@ bool detect_bounty(int Ind, int rad) {
 			}
 		}
 	}
-	return (detect);
+	return(detect);
 }
 #endif
 
@@ -3032,13 +3032,13 @@ bool detect_object(int Ind, int rad) {
 
 
 	/* anti-exploit */
-	if (!local_panel(Ind)) return FALSE;
+	if (!local_panel(Ind)) return(FALSE);
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return(FALSE);
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return(FALSE);
 
 	/* Scan the current panel */
 //	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
@@ -3075,7 +3075,7 @@ bool detect_object(int Ind, int rad) {
 		}
 	}
 
-	return (detect);
+	return(detect);
 }
 
 /* Combine treasure and object detection */
@@ -3093,13 +3093,13 @@ bool detect_treasure_object(int Ind, int rad) {
 	cave_type **zcave;
 
 	/* anti-exploit */
-	if (!local_panel(Ind)) return FALSE;
+	if (!local_panel(Ind)) return(FALSE);
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return(FALSE);
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return(FALSE);
 
 	/* Scan the current panel */
 	//for (y = p_ptr->panel_row_min; y <= p_ptr->panel_row_max; y++)
@@ -3169,7 +3169,7 @@ bool detect_treasure_object(int Ind, int rad) {
 			}
 		}
 	}
-	return (detect);
+	return(detect);
 }
 
 
@@ -3196,13 +3196,13 @@ bool detect_trap(int Ind, int rad) {
 
 
 	/* anti-exploit */
-	if (!local_panel(Ind)) return FALSE;
+	if (!local_panel(Ind)) return(FALSE);
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return(FALSE);
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return(FALSE);
 
 	/* Clear previously detected stuff */
 	clear_ovl(Ind);
@@ -3303,7 +3303,7 @@ bool detect_trap(int Ind, int rad) {
 #endif
 	}
 
-	return (detect);
+	return(detect);
 }
 
 
@@ -3326,13 +3326,13 @@ bool detect_sdoor(int Ind, int rad) {
 	cave_type **zcave;
 
 	/* anti-exploit */
-	if (!local_panel(Ind)) return FALSE;
+	if (!local_panel(Ind)) return(FALSE);
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return(FALSE);
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return(FALSE);
 
 	/* Scan the panel */
 //	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
@@ -3401,7 +3401,7 @@ bool detect_sdoor(int Ind, int rad) {
 		}
 	}
 
-	return (detect);
+	return(detect);
 }
 
 
@@ -3459,7 +3459,7 @@ void stair_creation(int Ind) {
 static bool item_tester_hook_weapon(object_type *o_ptr) {
 	switch (o_ptr->tval) {
 	case TV_TRAPKIT:/* <- and now new.. :) this allows cursing/enchanting shot/arrow/bolt trap kits! */
-		if (!is_firearm_trapkit(o_ptr->sval)) return FALSE;
+		if (!is_firearm_trapkit(o_ptr->sval)) return(FALSE);
 		/* Fall through */
 	case TV_SWORD:
 	case TV_BLUNT:
@@ -3472,17 +3472,17 @@ static bool item_tester_hook_weapon(object_type *o_ptr) {
 	case TV_MSTAFF:
 	case TV_BOOMERANG:
 	case TV_AXE:
-		return (TRUE);
+		return(TRUE);
 	/* Special object hack */
 	case TV_SPECIAL:
-		if (o_ptr->sval != SV_CUSTOM_OBJECT || !(o_ptr->xtra3 & 0x0100)) return FALSE;
+		if (o_ptr->sval != SV_CUSTOM_OBJECT || !(o_ptr->xtra3 & 0x0100)) return(FALSE);
 		/* Paranoia - check for valid equipment slot */
-		if (o_ptr->xtra4 < INVEN_WIELD || o_ptr->xtra4 > INVEN_TOOL) return FALSE;
+		if (o_ptr->xtra4 < INVEN_WIELD || o_ptr->xtra4 > INVEN_TOOL) return(FALSE);
 		/* Equippable special object */
-		return TRUE;
+		return(TRUE);
 	}
 
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -3502,10 +3502,10 @@ static bool item_tester_hook_armour(object_type *o_ptr) {
 	case TV_GLOVES:
 	/* and now new.. :) */
 	//nope, not enchantable -- case TV_TRAPKIT:
-		return (TRUE);
+		return(TRUE);
 	}
 
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -3537,10 +3537,10 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Unenchantable items always fail */
-	if (!is_enchantable(o_ptr)) return FALSE;
-	if (f5 & TR5_NO_ENCHANT) return (FALSE);
+	if (!is_enchantable(o_ptr)) return(FALSE);
+	if (f5 & TR5_NO_ENCHANT) return(FALSE);
 	/* Artifacts cannot be enchanted. */
-	if (a) return (FALSE);
+	if (a) return(FALSE);
 
 	/* Large piles resist enchantment */
 	prob = o_ptr->number * 100;
@@ -3686,7 +3686,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 	}
 
 	/* Failure */
-	if (!res) return (FALSE);
+	if (!res) return(FALSE);
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -3701,7 +3701,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 	p_ptr->redraw |= (PR_PLUSSES);
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 bool create_artifact(int Ind, bool nolife) {
@@ -3716,7 +3716,7 @@ bool create_artifact(int Ind, bool nolife) {
 	p_ptr->current_artifact_nolife = nolife;
 	get_item(Ind, ITH_NONE);
 
-	return TRUE;
+	return(TRUE);
 }
 
 bool create_artifact_aux(int Ind, int item) {
@@ -3743,22 +3743,22 @@ bool create_artifact_aux(int Ind, int item) {
 	    (o_ptr->tval == TV_SPECIAL)) /* <- must be checked here, not in randart_make() due to seals, see randart_make(). */
 	     && !is_admin(p_ptr)) {
 		msg_print(Ind, "\376\377yThe item appears unchanged!");
-		return FALSE;
+		return(FALSE);
 	}
 	if (o_ptr->name1) {
 		msg_print(Ind, "\376\377yThe creation fails due to the powerful magic of the target object!");
-		return FALSE;
+		return(FALSE);
 	}
 	if (o_ptr->name2 || o_ptr->name2b) {
 		msg_print(Ind, "\376\377yThe creation fails due to the strong magic of the target object!");
-		return FALSE;
+		return(FALSE);
 		o_ptr->name2 = 0;
 		o_ptr->name2b = 0;
 		msg_print(Ind, "The strong magic of that object dissolves!");
 	}
 	if (o_ptr->number > 1) {
 		/*msg_print(Ind, "The creation fails because the magic is split to multiple targets!");
-		return FALSE;*/
+		return(FALSE);*/
 		o_ptr->number = 1;
 		msg_print(Ind, "The stack of objects magically dissolves, leaving only a single item!");
 	}
@@ -3787,7 +3787,7 @@ bool create_artifact_aux(int Ind, int item) {
 			o_ptr->name3 = 0L;
 
 			msg_print(Ind, "The item appears unchanged!");
-			return FALSE;
+			return(FALSE);
 		}
 
 		/* If the resulting randart is allowed, leave the loop */
@@ -3829,7 +3829,7 @@ bool create_artifact_aux(int Ind, int item) {
 		p_ptr->using_up_item = -1;
 	}
 
-	return TRUE;
+	return(TRUE);
 }
 
 bool curse_spell(int Ind) {	// could be void
@@ -3837,7 +3837,7 @@ bool curse_spell(int Ind) {	// could be void
 	clear_current(Ind);
 	get_item(Ind, ITH_NONE);
 	p_ptr->current_curse = TRUE;	/* This is awful. I intend to change it */
-	return TRUE;
+	return(TRUE);
 }
 
 bool curse_spell_aux(int Ind, int item) {
@@ -3911,7 +3911,7 @@ bool enchant_spell(int Ind, int num_hit, int num_dam, int num_ac, int flags) {
 	p_ptr->current_enchant_a = num_ac;
 	p_ptr->current_enchant_flag = flags;
 
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -3948,7 +3948,7 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 #else
 		get_item(Ind, num_ac ? ITH_ENCH_AC_NO_SHIELD : ITH_ENCH_WEAP);
 #endif
-		return (FALSE);
+		return(FALSE);
 	}
 
 	/* Description */
@@ -4017,7 +4017,7 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 	/* Something happened */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -4029,7 +4029,7 @@ bool ident_spell(int Ind) {
 	if (p_ptr->current_item != -1) {
 		clear_current(Ind);
 		ident_spell_aux(Ind, p_ptr->current_item);
-		return TRUE;
+		return(TRUE);
 	}
 
 	get_item(Ind, ITH_ID);
@@ -4039,7 +4039,7 @@ bool ident_spell(int Ind) {
 
 	p_ptr->current_identify = 1;
 
-	return TRUE;
+	return(TRUE);
 }
 
 /*
@@ -4118,7 +4118,7 @@ bool ident_spell_aux(int Ind, int item) {
 	if (item >= 0) p_ptr->inventory[item].auto_insc = TRUE;
 
 	/* Something happened */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -4130,7 +4130,7 @@ bool identify_fully(int Ind) {
 	if (p_ptr->current_item != -1) {
 		clear_current(Ind);
 		identify_fully_item(Ind, p_ptr->current_item);
-		return TRUE;
+		return(TRUE);
 	}
 
 	get_item(Ind, ITH_STARID);
@@ -4140,7 +4140,7 @@ bool identify_fully(int Ind) {
 
 	p_ptr->current_star_identify = 1;
 
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -4219,7 +4219,7 @@ bool identify_fully_item(int Ind, int item) {
 	if (item >= 0) p_ptr->inventory[item].auto_insc = TRUE;
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 /* silent version of identify_fully_item() that doesn't display anything - C. Blue */
@@ -4262,7 +4262,7 @@ bool identify_fully_item_quiet(int Ind, int item) {
 	p_ptr->current_star_identify = 0;
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 /* variant of identify_fully_item_quiet that doesn't use player inventory,
@@ -4295,7 +4295,7 @@ bool identify_fully_object_quiet(int Ind, object_type *o_ptr) {
 	p_ptr->current_star_identify = 0;
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -4309,13 +4309,13 @@ bool item_tester_hook_recharge(object_type *o_ptr) {
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Some objects cannot be recharged */
-	if (f4 & TR4_NO_RECHARGE) return (FALSE);
+	if (f4 & TR4_NO_RECHARGE) return(FALSE);
 
 	/* Recharge staffs/wands/rods */
-	if (is_magic_device(o_ptr->tval)) return (TRUE);
+	if (is_magic_device(o_ptr->tval)) return(TRUE);
 
 	/* Nope */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -4329,7 +4329,7 @@ bool recharge(int Ind, int num) {
 
 	p_ptr->current_recharge = num;
 
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -4377,7 +4377,7 @@ bool recharge_aux(int Ind, int item, int pow) {
 	if (!item_tester_hook(o_ptr)) {
 		msg_print(Ind, "You cannot recharge that item.");
 		get_item(Ind, ITH_RECHARGE);
-		return (FALSE);
+		return(FALSE);
 	}
 
 	/* Extract the object "level" */
@@ -4387,7 +4387,7 @@ bool recharge_aux(int Ind, int item, int pow) {
 	if (o_ptr->tval == TV_ROD) {
 		if (pow <= 60) { /* not possible with scrolls of recharging */
 			msg_print(Ind, "The flow of mana seems not powerful enough to recharge a rod.");
-			return TRUE;
+			return(TRUE);
 		}
 
 		/* Extract a recharge power */
@@ -4529,7 +4529,7 @@ bool recharge_aux(int Ind, int item, int pow) {
 	p_ptr->current_recharge = 0;
 
 	/* Something was done */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -4620,7 +4620,7 @@ bool project_los_wall(int Ind, int typ, int dam, int time, int interval, char *a
 #endif
 
 	/* Result */
-	return (obvious);
+	return(obvious);
 }
 
 
@@ -4714,65 +4714,65 @@ bool project_los(int Ind, int typ, int dam, char *attacker) {
 #endif
 
 	/* Result */
-	return (obvious);
+	return(obvious);
 }
 
 
 /* Speed monsters */
 bool speed_monsters(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	return (project_los(Ind, GF_OLD_SPEED, p_ptr->lev, ""));
+	return(project_los(Ind, GF_OLD_SPEED, p_ptr->lev, ""));
 }
 /* Slow monsters */
 bool slow_monsters(int Ind, int pow) {
-	return (project_los(Ind, GF_OLD_SLOW, pow, ""));
+	return(project_los(Ind, GF_OLD_SLOW, pow, ""));
 }
 /* Sleep monsters */
 bool sleep_monsters(int Ind, int pow) {
-	return (project_los(Ind, GF_OLD_SLEEP, pow, ""));
+	return(project_los(Ind, GF_OLD_SLEEP, pow, ""));
 }
 /* Fear monsters */
 bool fear_monsters(int Ind, int pow) {
-	return (project_los(Ind, GF_TURN_ALL, pow, ""));
+	return(project_los(Ind, GF_TURN_ALL, pow, ""));
 }
 /* Stun monsters */
 bool stun_monsters(int Ind, int pow) {
-	return (project_los(Ind, GF_STUN, pow, ""));
+	return(project_los(Ind, GF_STUN, pow, ""));
 }
 
 
 /* Banish evil monsters */
 bool away_evil(int Ind, int dist) {
-	return (project_los(Ind, GF_AWAY_EVIL, dist, " banishes all evil"));
+	return(project_los(Ind, GF_AWAY_EVIL, dist, " banishes all evil"));
 }
 
 
 /* Turn undead */
 bool turn_undead(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	return (project_los(Ind, GF_TURN_UNDEAD, p_ptr->lev, " calls against all undead"));
+	return(project_los(Ind, GF_TURN_UNDEAD, p_ptr->lev, " calls against all undead"));
 }
 /* Turn everyone */
 bool turn_monsters(int Ind, int dam) {
-	return (project_los(Ind, GF_TURN_ALL, dam, " calls against all monsters"));
+	return(project_los(Ind, GF_TURN_ALL, dam, " calls against all monsters"));
 }
 
 
 /* Dispel undead monsters */
 bool dispel_undead(int Ind, int dam) {
-	return (project_los(Ind, GF_DISP_UNDEAD, dam, " banishes all undead"));
+	return(project_los(Ind, GF_DISP_UNDEAD, dam, " banishes all undead"));
 }
 /* Dispel evil monsters */
 bool dispel_evil(int Ind, int dam) {
-	return (project_los(Ind, GF_DISP_EVIL, dam, " banishes all evil"));
+	return(project_los(Ind, GF_DISP_EVIL, dam, " banishes all evil"));
 }
 /* Dispel demons */
 bool dispel_demons(int Ind, int dam) {
-	return (project_los(Ind, GF_DISP_DEMON, dam, " banishes all demons"));
+	return(project_los(Ind, GF_DISP_DEMON, dam, " banishes all demons"));
 }
 /* Dispel all monsters */
 bool dispel_monsters(int Ind, int dam) {
-	return (project_los(Ind, GF_DISP_ALL, dam, " banishes all monsters"));
+	return(project_los(Ind, GF_DISP_ALL, dam, " banishes all monsters"));
 }
 
 
@@ -5444,7 +5444,7 @@ bool genocide_aux(int Ind, worldpos *wpos, char typ) {
 
 	bypass_invuln = FALSE;
 
-	return (result);
+	return(result);
 }
 
 /*
@@ -5491,9 +5491,9 @@ bool genocide(int Ind) {
 	}
 
 	/* Check to make sure we found a monster */
-	if (d == 999) return FALSE;
+	if (d == 999) return(FALSE);
 
-	return (genocide_aux(Ind, wpos, typ));
+	return(genocide_aux(Ind, wpos, typ));
 }
 
 
@@ -5615,7 +5615,7 @@ bool obliteration(int who) {
 
 	bypass_invuln = FALSE;
 
-	return (result);
+	return(result);
 }
 
 
@@ -5694,7 +5694,7 @@ bool probing(int Ind) {
 	if (probe) msg_print(Ind, "That's all.");
 
 	/* Result */
-	return (probe);
+	return(probe);
 }
 
 
@@ -6658,7 +6658,7 @@ bool lite_area(int Ind, int dam, int rad) {
 	lite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 
 	/* Assume seen */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -6685,7 +6685,7 @@ bool unlite_area(int Ind, bool player, int dam, int rad) {
 	unlite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 
 	/* Assume seen */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -6756,7 +6756,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 
 	/* affect self + players + monsters AND give credit on kill */
 	flg = mod_ball_spell_flags(typ, flg);
-	return (project(0 - Ind, rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
+	return(project(0 - Ind, rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
 }
 
 /*
@@ -6826,7 +6826,7 @@ bool fire_burst(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 
 	/* affect self + players + monsters AND give credit on kill */
 	flg = mod_ball_spell_flags(typ, flg);
-	return (project(0 - Ind, rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
+	return(project(0 - Ind, rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
 }
 
 /*
@@ -6914,7 +6914,7 @@ bool fire_swarm(int Ind, int typ, int dir, int dam, int num, char *attacker) {
 		project(0 - Ind, 1, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker); //Always radius 1, probably don't want to spam project() with larger. - Kurzel
 	}
 
-	return (TRUE); //mh
+	return(TRUE); //mh
 }
 
 /*
@@ -6947,7 +6947,7 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int inter
 	project_interval = interval;
 	project_time = time;
 
-	if (snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker) < 0) return (FALSE);
+	if (snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker) < 0) return(FALSE);
 
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
 
@@ -6961,7 +6961,7 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int inter
 #endif
 
 	flg = mod_ball_spell_flags(typ, flg);
-	return (project(0 - Ind, (rad > 16) ? 16 : rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
+	return(project(0 - Ind, (rad > 16) ? 16 : rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
 }
 
 /*
@@ -6975,7 +6975,7 @@ bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, int interv
 
 	project_time_effect = eff;
 	snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
-	return (fire_cloud(Ind, typ, dir, dam, rad, time, interval, pattacker));
+	return(fire_cloud(Ind, typ, dir, dam, rad, time, interval, pattacker));
 }
 
 /*
@@ -6995,10 +6995,10 @@ bool cast_raindrop(worldpos *wpos, int x) {
 	pseudo_y_start = rand_int(66 - 1 + 20) - 20;
 	project_time = pseudo_y_start < 0 ? 20 + pseudo_y_start : 20;
 	if (pseudo_y_start < 0) pseudo_y_start = 0;
-	return (project(PROJECTOR_EFFECT, 0, wpos, pseudo_y_start, x, 0, GF_RAINDROP, flg, pattacker));
+	return(project(PROJECTOR_EFFECT, 0, wpos, pseudo_y_start, x, 0, GF_RAINDROP, flg, pattacker));
 
 	//project_time = 20;//1 + randint(66 - 3);
-	//return (project(PROJECTOR_EFFECT, 0, wpos, 1 + randint(66 - 3), x, 0, GF_RAINDROP, flg, pattacker));
+	//return(project(PROJECTOR_EFFECT, 0, wpos, 1 + randint(66 - 3), x, 0, GF_RAINDROP, flg, pattacker));
 }
 
 /*
@@ -7015,7 +7015,7 @@ bool cast_snowflake(worldpos *wpos, int x, int interval) {
 	project_interval = interval;
 	project_time = 100; /* just any value long enough to traverse the screen */
 
-	return (project(PROJECTOR_EFFECT, 0, wpos, 0, x, 0, GF_SNOWFLAKE, flg, pattacker));
+	return(project(PROJECTOR_EFFECT, 0, wpos, 0, x, 0, GF_SNOWFLAKE, flg, pattacker));
 }
 
 /*
@@ -7062,7 +7062,7 @@ bool cast_fireworks(worldpos *wpos, int x, int y, int typ) {
 	//if (project_time_effect == EFF_FIREWORKS3) project_time += 2 + 2;
 #endif
 
-	return (project(PROJECTOR_EFFECT, 0, wpos, y, x, 0, typ, flg, pattacker)); /* typ -> colour */
+	return(project(PROJECTOR_EFFECT, 0, wpos, y, x, 0, typ, flg, pattacker)); /* typ -> colour */
 }
 
 /* For Nether Realm collapse ;) - C. Blue */
@@ -7093,7 +7093,7 @@ bool cast_lightning(worldpos *wpos, int x, int y) {
 	sound_floor_vol(wpos, "thunder", NULL, SFX_TYPE_MISC, 100); //misc: no screen flashing
 #endif
 
-	return (project(PROJECTOR_EFFECT, 0, wpos, y, x, typ, GF_SHOW_LIGHTNING, flg, pattacker));
+	return(project(PROJECTOR_EFFECT, 0, wpos, y, x, typ, GF_SHOW_LIGHTNING, flg, pattacker));
 }
 
 bool cast_falling_star(worldpos *wpos, int x, int y, int dur) {
@@ -7105,7 +7105,7 @@ bool cast_falling_star(worldpos *wpos, int x, int y, int dur) {
 	project_time_effect = EFF_FALLING_STAR;
 	project_interval = 1;
 	project_time = dur;
-	return (project(PROJECTOR_EFFECT, 0, wpos, y, x, 0, GF_RAINDROP, flg, pattacker)); //GF_RAINDROP is a dummy anyway, can just reuse it here
+	return(project(PROJECTOR_EFFECT, 0, wpos, y, x, 0, GF_RAINDROP, flg, pattacker)); //GF_RAINDROP is a dummy anyway, can just reuse it here
 }
 
 /* For reworked Thunderstorm spell */
@@ -7120,7 +7120,7 @@ bool thunderstorm_visual(worldpos *wpos, int x, int y) {
 	project_time = 5;
 	project_interval = 3;
 
-	return (project(PROJECTOR_EFFECT, 0, wpos, y, x, 0, GF_THUNDER_VISUAL, flg, pattacker));
+	return(project(PROJECTOR_EFFECT, 0, wpos, y, x, 0, GF_THUNDER_VISUAL, flg, pattacker));
 }
 
 
@@ -7144,10 +7144,10 @@ bool swap_position(int Ind, int lty, int ltx) {
 #endif
 
 	p_ptr = Players[Ind];
-	if (!p_ptr) return FALSE;
+	if (!p_ptr) return(FALSE);
 
 	wpos = &p_ptr->wpos;
-	if (!(zcave = getcave(wpos))) return FALSE;
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	store_exit(Ind);
 
@@ -7263,7 +7263,7 @@ bool swap_position(int Ind, int lty, int ltx) {
 	/* Handle stuff */
 	if (!p_ptr->death) handle_stuff(Ind);
 
-	return panel;
+	return(panel);
 }
 
 
@@ -7293,7 +7293,7 @@ bool project_hook(int Ind, int typ, int dir, int dam, int flg, char *attacker) {
   }
 
 	/* Analyze the "dir" and the "target", do NOT explode */
-	return (project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
+	return(project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
 }
 
 
@@ -7325,7 +7325,7 @@ bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
 	}
 #endif
 
-	return (project_hook(Ind, typ, dir, dam, flg, pattacker));
+	return(project_hook(Ind, typ, dir, dam, flg, pattacker));
 }
 
 /*
@@ -7341,7 +7341,7 @@ bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker) {
 	if (Players[Ind]->sfx_magicattack) sound(Ind, "cast_beam", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
-	return (project_hook(Ind, typ, dir, dam, flg, pattacker));
+	return(project_hook(Ind, typ, dir, dam, flg, pattacker));
 }
 
 /*
@@ -7437,7 +7437,7 @@ bool fire_shot(int Ind, int typ, int dir, int dx, int dy, int rad, int num, char
 		}
 	}
 
-	return (obvious);
+	return(obvious);
 }
 
 /*
@@ -7465,7 +7465,7 @@ bool fire_cone(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 			tx = p_ptr->target_col;
 			ty = p_ptr->target_row;
 		} else { // Cone at self is a ball? - Kurzel
-			return fire_ball(Ind, typ, 5, dam, rad, attacker);
+			return(fire_ball(Ind, typ, 5, dam, rad, attacker));
 		}
 	}
 
@@ -7476,7 +7476,7 @@ bool fire_cone(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
 	snprintf(pattacker, 80, "%s%s", p_ptr->name, attacker);
 
-	return (project(0 - Ind, rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
+	return(project(0 - Ind, rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
 }
 
 /*
@@ -7512,7 +7512,7 @@ bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char 
 #endif
 
 	/* Analyze the "dir" and the "target", do NOT explode */
-	return (project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
+	return(project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
 }
 
 /*
@@ -7549,7 +7549,7 @@ bool fire_nova(int Ind, int typ, int dir, int dam, int time, int interval, char 
 #endif
 
 	/* Analyze the "dir" and the "target", do NOT explode */
-	return (project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
+	return(project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
 }
 
 /*
@@ -7558,11 +7558,11 @@ bool fire_nova(int Ind, int typ, int dir, int dam, int time, int interval, char 
 bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam, char *attacker) {
 #if 0 /* too dangerous in case it wakes up more monsters? */
 	if (rand_int(100) < prob)
-		return (fire_beam(Ind, typ, dir, dam, attacker));
+		return(fire_beam(Ind, typ, dir, dam, attacker));
 	else
-		return (fire_bolt(Ind, typ, dir, dam, attacker));
+		return(fire_bolt(Ind, typ, dir, dam, attacker));
 #else
-	return (fire_bolt(Ind, typ, dir, dam, attacker));
+	return(fire_bolt(Ind, typ, dir, dam, attacker));
 #endif
 }
 
@@ -7598,7 +7598,7 @@ bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
 	snprintf(pattacker, 80, "%s%s", p_ptr->name, attacker);
 
 	if (typ == GF_HEAL_PLAYER) flg |= PROJECT_PLAY; //mod_ball_spell_flags(typ, flg);
-	return (project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
+	return(project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
 }
 
 /* Added for new mindcrafter spells.
@@ -7633,9 +7633,9 @@ bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker) {
 		ty = p_ptr->target_row;
 	}
 
-	return (project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
+	return(project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
 #else
-	return (project_hook(Ind, typ, dir, dam, flg, pattacker));
+	return(project_hook(Ind, typ, dir, dam, flg, pattacker));
 #endif
 
 }
@@ -7648,7 +7648,7 @@ bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker) {
 
 bool lite_line(int Ind, int dir, int dam, bool starlight) {
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_KILL | PROJECT_NODF | PROJECT_NODO;
-	return (project_hook(Ind, starlight? GF_STARLITE : GF_LITE_WEAK, dir, dam, flg, ""));
+	return(project_hook(Ind, starlight? GF_STARLITE : GF_LITE_WEAK, dir, dam, flg, ""));
 }
 
 bool drain_life(int Ind, int dir, int dam) {
@@ -7664,91 +7664,91 @@ bool annihilate(int Ind, int dir, int dam) {
 
 bool wall_to_mud(int Ind, int dir) {
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODF | PROJECT_NODO;
-	return (project_hook(Ind, GF_KILL_WALL, dir, 20 + randint(30), flg, ""));
+	return(project_hook(Ind, GF_KILL_WALL, dir, 20 + randint(30), flg, ""));
 }
 
 bool destroy_trap_door(int Ind, int dir) {
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO;
-	return (project_hook(Ind, GF_KILL_TRAP_DOOR, dir, 0, flg, ""));
+	return(project_hook(Ind, GF_KILL_TRAP_DOOR, dir, 0, flg, ""));
 }
 
 bool disarm_trap_door(int Ind, int dir) {
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO;
-	return (project_hook(Ind, GF_KILL_TRAP, dir, 0, flg, ""));
+	return(project_hook(Ind, GF_KILL_TRAP, dir, 0, flg, ""));
 }
 
 bool heal_monster(int Ind, int dir) {
 	int flg = PROJECT_STOP | PROJECT_KILL;
 	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker), "%s heals you for", Players[Ind]->name);
-	return (project_hook(Ind, GF_OLD_HEAL, dir, 9999, flg, Players[Ind]->attacker)); // damroll(4, 6) was the traditional way
+	return(project_hook(Ind, GF_OLD_HEAL, dir, 9999, flg, Players[Ind]->attacker)); // damroll(4, 6) was the traditional way
 }
 
 bool speed_monster(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
-	return (project_hook(Ind, GF_OLD_SPEED, dir, p_ptr->lev, flg, ""));
+	return(project_hook(Ind, GF_OLD_SPEED, dir, p_ptr->lev, flg, ""));
 }
 
 bool slow_monster(int Ind, int dir, int pow) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
-	return (project_hook(Ind, GF_OLD_SLOW, dir, pow, flg, ""));
+	return(project_hook(Ind, GF_OLD_SLOW, dir, pow, flg, ""));
 }
 
 bool sleep_monster(int Ind, int dir, int pow) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
-	return (project_hook(Ind, GF_OLD_SLEEP, dir, pow, flg, ""));
+	return(project_hook(Ind, GF_OLD_SLEEP, dir, pow, flg, ""));
 }
 
 bool confuse_monster(int Ind, int dir, int pow) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
-	return (project_hook(Ind, GF_OLD_CONF, dir, pow, flg, ""));
+	return(project_hook(Ind, GF_OLD_CONF, dir, pow, flg, ""));
 }
 
 bool poly_monster(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_SELF | PROJECT_PLAY | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
-	return (project_hook(Ind, GF_OLD_POLY, dir, p_ptr->lev, flg, ""));
+	return(project_hook(Ind, GF_OLD_POLY, dir, p_ptr->lev, flg, ""));
 }
 
 bool clone_monster(int Ind, int dir) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
-	return (project_hook(Ind, GF_OLD_CLONE, dir, 0, flg, ""));
+	return(project_hook(Ind, GF_OLD_CLONE, dir, 0, flg, ""));
 }
 
 bool fear_monster(int Ind, int dir, int pow) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
-	return (project_hook(Ind, GF_TURN_ALL, dir, pow, flg, ""));
+	return(project_hook(Ind, GF_TURN_ALL, dir, pow, flg, ""));
 }
 
 bool teleport_monster(int Ind, int dir) {
 	int flg = PROJECT_BEAM | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
-	return (project_hook(Ind, GF_AWAY_ALL, dir, MAX_SIGHT * 5, flg, ""));
+	return(project_hook(Ind, GF_AWAY_ALL, dir, MAX_SIGHT * 5, flg, ""));
 }
 
 bool cure_light_wounds_proj(int Ind, int dir) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker), "%s heals you for", Players[Ind]->name);
-	return (project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(2, 10), flg, Players[Ind]->attacker));
+	return(project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(2, 10), flg, Players[Ind]->attacker));
 }
 
 bool cure_serious_wounds_proj(int Ind, int dir) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker), "%s heals you for", Players[Ind]->name);
-	return (project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(4, 10), flg, Players[Ind]->attacker));
+	return(project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(4, 10), flg, Players[Ind]->attacker));
 }
 
 bool cure_critical_wounds_proj(int Ind, int dir) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker), "%s heals you for", Players[Ind]->name);
-	return (project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(6, 10), flg, Players[Ind]->attacker));
+	return(project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(6, 10), flg, Players[Ind]->attacker));
 }
 
 bool heal_other_proj(int Ind, int dir) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker), "%s heals you for", Players[Ind]->name);
-	return (project_hook(Ind, GF_HEAL_PLAYER, dir, 100, flg, Players[Ind]->attacker));
+	return(project_hook(Ind, GF_HEAL_PLAYER, dir, 100, flg, Players[Ind]->attacker));
 }
 
 
@@ -7761,21 +7761,21 @@ bool door_creation(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE | PROJECT_NODF | PROJECT_NODO;
-	return (project(0 - Ind, 1, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_MAKE_DOOR, flg, ""));
+	return(project(0 - Ind, 1, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_MAKE_DOOR, flg, ""));
 }
 
 bool trap_creation(int Ind, int mod, int rad) {
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE | PROJECT_NODF | PROJECT_NODO;
-	return (project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, mod, GF_MAKE_TRAP, flg, ""));
+	return(project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, mod, GF_MAKE_TRAP, flg, ""));
 }
 
 bool destroy_doors_touch(int Ind, int rad) {
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE | PROJECT_NODF | PROJECT_NODO;
-	return (project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_DOOR, flg, ""));
+	return(project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_DOOR, flg, ""));
 }
 /* Only used for ART_BILBO atm: */
 bool destroy_traps_touch(int Ind, int rad) {
@@ -7798,11 +7798,11 @@ bool destroy_traps_touch(int Ind, int rad) {
 		msg_print(Ind, "Click!");
 		seen = TRUE;
 	}
-	return seen +
+	return(seen +
 #else
-	return
+	return(
 #endif
-	    (project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_TRAP, flg, ""));
+	    (project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_TRAP, flg, "")));
 }
 /* Normal trap/door destruction (scroll and ART_CASPANION): */
 bool destroy_traps_doors_touch(int Ind, int rad) {
@@ -7827,18 +7827,18 @@ bool destroy_traps_doors_touch(int Ind, int rad) {
 		seen = TRUE;
 		p_ptr->window |= PW_INVEN;
 	}
-	return seen ||
+	return(seen ||
 #else
-	return
+	return(
 #endif
-	    (project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_TRAP_DOOR, flg, ""));
+	    (project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_TRAP_DOOR, flg, "")));
 }
 
 bool sleep_monsters_touch(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_NORF | PROJECT_KILL | PROJECT_HIDE | PROJECT_NODF | PROJECT_NODO;
-	return (project(0 - Ind, 1, &p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev, GF_OLD_SLEEP, flg, ""));
+	return(project(0 - Ind, 1, &p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev, GF_OLD_SLEEP, flg, ""));
 }
 
 /* Scan magical powers for the golem */
@@ -7947,7 +7947,7 @@ static bool poly_build(int Ind, char *args) {
 #ifdef MAX_BUILDERS
 		if (num_build == MAX_BUILDERS) {
 			msg_print(Ind, "The builders are on strike!");
-			return FALSE;
+			return(FALSE);
 		}
 #endif
 		MAKE(curr, struct builder);
@@ -7983,7 +7983,7 @@ static bool poly_build(int Ind, char *args) {
 			C_KILL(curr->vert, MAXCOORD, char);
 			p_ptr->master_move_hook = NULL;
 			KILL(curr, struct builder);	/* Sack the builders! */
-			return FALSE;
+			return(FALSE);
 		}
 		zcave[curr->sy][curr->sx].feat = FEAT_HOME_OPEN;
 		/* CS_DNADOOR seems to be added twice (wild_add_uhouse)..
@@ -7995,12 +7995,12 @@ static bool poly_build(int Ind, char *args) {
 		}
 #endif
 		builders = curr;
-		return TRUE;
+		return(TRUE);
 	}
 
 	if (args) {
 		curr->moves += 25;
-		return TRUE;
+		return(TRUE);
 	}
 	x = p_ptr->px;
 	y = p_ptr->py;
@@ -8083,13 +8083,13 @@ static bool poly_build(int Ind, char *args) {
 		curr->player = 0;		/* send the builders home */
 		p_ptr->master_move_hook = NULL;
 		p_ptr->update |= PU_VIEW;
-		return TRUE;
+		return(TRUE);
 	}
 	/* no going off depth, and no spoiling moats */
 	if (inarea(&curr->wpos, &p_ptr->wpos) && !(zcave[curr->dy][curr->dx].info&CAVE_ICKY && zcave[curr->dy][curr->dx].feat == FEAT_DEEP_WATER)) {
 		zcave[curr->dy][curr->dx].feat = FEAT_WALL_EXTRA;
 //		zcave[curr->dy][curr->dx].feat = FEAT_WALL_HOUSE;
-		if (curr->cvert < MAXCOORD && (--curr->moves) > 0) return TRUE;
+		if (curr->cvert < MAXCOORD && (--curr->moves) > 0) return(TRUE);
 		p_ptr->update |= PU_VIEW;
 	}
 	msg_print(Ind, "Your house building attempt has failed");
@@ -8098,7 +8098,7 @@ static bool poly_build(int Ind, char *args) {
 	C_KILL(curr->vert, MAXCOORD, char);
 	curr->player = 0;		/* send the builders home */
 	p_ptr->master_move_hook = NULL;
-	return FALSE;
+	return(FALSE);
 }
 
 void house_creation(int Ind, bool floor, bool jail) {
@@ -8143,22 +8143,22 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 	char buf[80];
 
 	cave_type **zcave;
-	if (!(zcave = getcave(wpos))) return (0);
+	if (!(zcave = getcave(wpos))) return(0);
 	/* Verify location */
-	if (!in_bounds(y, x)) return (0);
+	if (!in_bounds(y, x)) return(0);
 	/* Require empty space */
-	if (!cave_empty_bold(zcave, y, x)) return (0);
+	if (!cave_empty_bold(zcave, y, x)) return(0);
 
 	/* Paranoia */
-	if (!r_idx) return (0);
+	if (!r_idx) return(0);
 
 	/* Paranoia */
-	if (!r_ptr->name) return (0);
+	if (!r_ptr->name) return(0);
 
 	/* Update r_ptr due to possible r_idx changes */
 	r_ptr = &r_info[r_idx];
 
-	if ((r_ptr->flags1 & RF1_UNIQUE)) return (0);
+	if ((r_ptr->flags1 & RF1_UNIQUE)) return(0);
 
 	c_ptr = &zcave[y][x];
 
@@ -8166,7 +8166,7 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 	c_ptr->m_idx = m_pop();
 
 	/* Mega-Hack -- catch "failure" */
-	if (!c_ptr->m_idx) return (0);
+	if (!c_ptr->m_idx) return(0);
 
 	/* Get a new monster record */
 	m_ptr = &m_list[c_ptr->m_idx];
@@ -8305,7 +8305,7 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 	} else m_ptr->astar_idx = -1;
 #endif
 
-	return (TRUE);
+	return(TRUE);
 }
 #ifdef RPG_SERVER
 bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx) {
@@ -8318,31 +8318,31 @@ bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx) {
 	char buf[80];
 
 	cave_type **zcave;
-	if (!(zcave = getcave(wpos))) return (0);
+	if (!(zcave = getcave(wpos))) return(0);
 
 
 	/* Verify location */
-	if (!in_bounds(y, x)) return (0);
+	if (!in_bounds(y, x)) return(0);
 	/* Require empty space */
-	if (!cave_empty_bold(zcave, y, x)) return (0);
+	if (!cave_empty_bold(zcave, y, x)) return(0);
 	/* Hack -- no creation on glyph of warding */
-	if (zcave[y][x].feat == FEAT_GLYPH) return (0);
-	if (zcave[y][x].feat == FEAT_RUNE) return (0);
+	if (zcave[y][x].feat == FEAT_GLYPH) return(0);
+	if (zcave[y][x].feat == FEAT_RUNE) return(0);
 
 	/* Paranoia */
-	if (!r_idx) return (0);
+	if (!r_idx) return(0);
 
 	/* Paranoia */
-	if (!r_ptr->name) return (0);
+	if (!r_ptr->name) return(0);
 
 	/* Update r_ptr due to possible r_idx changes */
 	r_ptr = &r_info[r_idx];
 
 	/* No uniques, obviously */
-	if (r_ptr->flags1 & RF1_UNIQUE) return (0);
+	if (r_ptr->flags1 & RF1_UNIQUE) return(0);
 
 	/* No breeders */
-	if (r_ptr->flags7 & RF7_MULTIPLY) return (0);
+	if (r_ptr->flags7 & RF7_MULTIPLY) return(0);
 
 	c_ptr = &zcave[y][x];
 
@@ -8350,7 +8350,7 @@ bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx) {
 	c_ptr->m_idx = m_pop();
 
 	/* Mega-Hack -- catch "failure" */
-	if (!c_ptr->m_idx) return (0);
+	if (!c_ptr->m_idx) return(0);
 
 	/* Get a new monster record */
 	m_ptr = &m_list[c_ptr->m_idx];
@@ -8441,7 +8441,7 @@ bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx) {
 	/* CON */
 	m_ptr->org_maxhp = m_ptr->maxhp;
 
-	return (TRUE);
+	return(TRUE);
 }
 
 /* Create a servant ! */
@@ -8461,9 +8461,9 @@ char pet_creation(int Ind)
 		   &(Players[Ind]->wpos), Players[Ind]->py, Players[Ind]->px + 1,  /* E of player */
 		   id);
 		Players[Ind]->has_pet = 1;
-		return 1;
+		return(1);
 	}
-	return 0;
+	return(0);
 }
 #endif
 
@@ -8790,12 +8790,11 @@ bool summon_cyber(int Ind, int s_clone, int clone_summoning) {
 
 	for (i = 0; i < max_cyber; i++)
 		ok = ok || summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, 100, s_clone, SUMMON_HI_DEMON, 1, clone_summoning);
-	return ok;
+	return(ok);
 }
 
 /* Heal insanity. */
-bool heal_insanity(int Ind, int val)
-{
+bool heal_insanity(int Ind, int val) {
 	player_type *p_ptr = Players[Ind];
 
 	if (p_ptr->csane < p_ptr->msane) {
@@ -8820,10 +8819,10 @@ bool heal_insanity(int Ind, int val)
 			msg_print(Ind, "You feel very sane.");
 		}
 
-		return TRUE;
+		return(TRUE);
 	}
 
-	return FALSE;
+	return(FALSE);
 }
 
 bool do_vermin_control(int Ind) {
@@ -8831,9 +8830,9 @@ bool do_vermin_control(int Ind) {
 	if (l_ptr && !(l_ptr->flags1 & LF1_NO_MULTIPLY)) {
 		l_ptr->flags1 |= LF1_NO_MULTIPLY;
 		msg_print(Ind, "You feel less itchy.");
-		return TRUE;
+		return(TRUE);
 	}
-	return FALSE;
+	return(FALSE);
 }
 
 void activate_rune(int Ind) {
@@ -9040,8 +9039,8 @@ static s16b ingredient2flag(int tval, int sval) {
 		break;
 	}
 
-	if (!bit) return 0x000; /* paranoia - not a valid ingredient */
-	return 1 << (bit - 1);
+	if (!bit) return(0x000); /* paranoia - not a valid ingredient */
+	return(1 << (bit - 1));
 }
 /* Helper function to combine two ingredients to form a new ingredient (not a mixture). */
 static int ingredients_to_ingredient(int sval1, int tval2, int sval2) {
@@ -9051,41 +9050,41 @@ static int ingredients_to_ingredient(int sval1, int tval2, int sval2) {
 		if (tval2 == TV_POTION) switch (sval2) {
 			case SV_POTION_WATER:
 			case SV_POTION_SALT_WATER:
-				return CI_RU;
+				return(CI_RU);
 		} else
  #else
 		/* Skip some steps very tolerantly.. */
-		if (tval2 == TV_POTION && sval2 == SV_POTION_SALT_WATER) return CI_ME;
-		else if (tval2 == TV_CHEMICAL && sval2 == SV_AMMONIA_SALT) return CI_ME;
+		if (tval2 == TV_POTION && sval2 == SV_POTION_SALT_WATER) return(CI_ME);
+		else if (tval2 == TV_CHEMICAL && sval2 == SV_AMMONIA_SALT) return(CI_ME);
 		else
  #endif
 		if ((tval2 == TV_FLASK && sval2 == SV_FLASK_ACID) ||
 		    (tval2 == TV_CHEMICAL && sval2 == SV_VITRIOL))
-			return CI_MC;
-		return 0;
+			return(CI_MC);
+		return(0);
 
 	/* NO_RUST_NO_HYDROXIDE: Existing instances of these may still be used, they just cannot be generated anymore */
 	case SV_RUST:
-		if (tval2 == TV_POTION && sval2 == SV_POTION_SALT_WATER) return CI_MH;
-		return 0;
+		if (tval2 == TV_POTION && sval2 == SV_POTION_SALT_WATER) return(CI_MH);
+		return(0);
 	case SV_METAL_HYDROXIDE:
 		if (tval2 == TV_CHEMICAL) switch (sval2) {
 			case SV_RUST:
 			case SV_AMMONIA_SALT:
-				return CI_ME;
+				return(CI_ME);
 		}
-		return 0;
+		return(0);
 
 	/* Allow dissolving vitriol to obtain acid (in a flask) */
 	case SV_VITRIOL:
 		if (tval2 == TV_POTION) switch (sval2) {
 		case SV_POTION_WATER:
 		case SV_POTION_SALT_WATER:
-			return CI_AC;
+			return(CI_AC);
 		}
-		return 0;
+		return(0);
 	}
-	return 0;
+	return(0);
 }
 /* Helper function to combine a mixture and an ingredient to form a new ingredient (not a mixture). */
 static int mixingred_to_ingredient(int Ind, object_type *o_ptr, int tval, int sval) {
@@ -9099,7 +9098,7 @@ static int mixingred_to_ingredient(int Ind, object_type *o_ptr, int tval, int sv
 		xtra2 |= ingflag;
 	else if (!(o_ptr->xtra3 & ingflag))
 		xtra3 |= ingflag;
-	else return -1; /* failure - mixture is saturated */
+	else return(-1); /* failure - mixture is saturated */
 
 	/* check if the result would be a valid ingredient */
  #ifndef NO_OIL_ACID
@@ -9113,12 +9112,12 @@ static int mixingred_to_ingredient(int Ind, object_type *o_ptr, int tval, int sv
 
 		if (!ox_ptr->k_idx || ox_ptr->sval == SV_LITE_FEANORIAN) {
 			msg_print(Ind, "You need to equip a fire-based light source to process this.");
-			return -1;
+			return(-1);
 		}
-		return CI_AC; /* Success - we created acid */
+		return(CI_AC); /* Success - we created acid */
 	}
 
-	return 0; /* Failure - we created some mixture, but not an ingredient */
+	return(0); /* Failure - we created some mixture, but not an ingredient */
 }
 /* Helper function to combine two mixtures to form a new ingredient (not a mixture). */
 static int mixmix_to_ingredient(int Ind, object_type *o_ptr, object_type *o2_ptr) {
@@ -9129,7 +9128,7 @@ static int mixmix_to_ingredient(int Ind, object_type *o_ptr, object_type *o2_ptr
 		f = 1 << i;
 		k = ((o_ptr->xtra1 & f) ? 1 : 0) + ((o_ptr->xtra2 & f) ? 1 : 0) + ((o_ptr->xtra3 & f) ? 1 : 0);
 		k += ((o2_ptr->xtra1 & f) ? 1 : 0) + ((o2_ptr->xtra2 & f) ? 1 : 0) + ((o2_ptr->xtra3 & f) ? 1 : 0);
-		if (k > 3) return -1; /* Error: Mixture would be oversaturated of this ingredient */
+		if (k > 3) return(-1); /* Error: Mixture would be oversaturated of this ingredient */
 
 		/* mix.. */
 		switch (k) {
@@ -9157,12 +9156,12 @@ static int mixmix_to_ingredient(int Ind, object_type *o_ptr, object_type *o2_ptr
 
 		if (!ox_ptr->k_idx || ox_ptr->sval == SV_LITE_FEANORIAN) {
 			msg_print(Ind, "You need to equip a fire-based light source to process this.");
-			return -1;
+			return(-1);
 		}
-		return CI_AC; /* Success - we created acid */
+		return(CI_AC); /* Success - we created acid */
 	}
 
-	return 0; /* Failure - we created some mixture, but not an ingredient */
+	return(0); /* Failure - we created some mixture, but not an ingredient */
 }
 /* Helper function to combine two ingredients to form a new mixture (not ingredient). */
 static void inging_to_mixture(int tval, int sval, int tval2, int sval2, object_type *q_ptr) {
@@ -9188,9 +9187,9 @@ static bool mixingred_to_mixture(object_type *o_ptr, int tval, int sval, object_
 		q_ptr->xtra2 |= ingflag;
 	else if (!(o_ptr->xtra3 & ingflag))
 		q_ptr->xtra3 |= ingflag;
-	else return FALSE; /* failure - mixture is saturated */
+	else return(FALSE); /* failure - mixture is saturated */
 
-	return TRUE;
+	return(TRUE);
 }
 /* Helper function to combine two mixtures to form a new mixture (not ingredient). */
 static bool mixmix_to_mixture(object_type *o_ptr, object_type *o2_ptr, object_type *q_ptr) {
@@ -9201,7 +9200,7 @@ static bool mixmix_to_mixture(object_type *o_ptr, object_type *o2_ptr, object_ty
 		f = 1 << i;
 		k = ((o_ptr->xtra1 & f) ? 1 : 0) + ((o_ptr->xtra2 & f) ? 1 : 0) + ((o_ptr->xtra3 & f) ? 1 : 0);
 		k += ((o2_ptr->xtra1 & f) ? 1 : 0) + ((o2_ptr->xtra2 & f) ? 1 : 0) + ((o2_ptr->xtra3 & f) ? 1 : 0);
-		if (k > 3) return FALSE; /* Error: Mixture would be oversaturated of this ingredient */
+		if (k > 3) return(FALSE); /* Error: Mixture would be oversaturated of this ingredient */
 
 		/* mix.. */
 		switch (k) {
@@ -9218,7 +9217,7 @@ static bool mixmix_to_mixture(object_type *o_ptr, object_type *o2_ptr, object_ty
 	q_ptr->xtra1 = xtra1;
 	q_ptr->xtra2 = xtra2;
 	q_ptr->xtra3 = xtra3;
-	return TRUE;
+	return(TRUE);
 }
 /* Mix two chemicals to form a new chemical, a mixture, or create a finished product aka a blast charge - C. Blue */
 void mix_chemicals(int Ind, int item) {
@@ -9904,23 +9903,23 @@ bool arm_charge_conditions(int Ind, object_type *o_ptr, bool thrown) {
 
 	if (o_ptr->owner != p_ptr->id) {
 		msg_print(Ind, "You must own the charge in order to arm it.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	if (!thrown) {
 		if (p_ptr->blind) {
 			msg_print(Ind, "You can't see anything.");
-			return FALSE;
+			return(FALSE);
 	}
 		if (no_lite(Ind)) {
 			msg_print(Ind, "You don't dare to set a charge in the darkness.");
-			return FALSE;
+			return(FALSE);
 		}
 	}
 
 	if (p_ptr->confused) {
 		msg_print(Ind, "You are too confused!");
-		return FALSE;
+		return(FALSE);
 	}
 #if 1 /* need something fiery to light the fuse with? */
 	{
@@ -9931,7 +9930,7 @@ bool arm_charge_conditions(int Ind, object_type *o_ptr, bool thrown) {
 
 			if (!ox2_ptr->k_idx || ox2_ptr->sval != SV_TOOL_FLINT) {
 				msg_print(Ind, "You need to equip a fire-based light source or a flint to light the fuse.");
-				return FALSE;
+				return(FALSE);
 			}
 		}
 	}
@@ -9941,21 +9940,21 @@ bool arm_charge_conditions(int Ind, object_type *o_ptr, bool thrown) {
 	/* for debugging/testing purpose */
 	if (!in_irondeepdive(wpos)) {
 		msg_print(Ind, "You may arm charges only inside the IDDC.");
-		return FALSE;
+		return(FALSE);
 	}
 #endif
 
 	//if (!thrown) {   -- don't allow terraforming in town!
 		if (istownarea(wpos, MAX_TOWNAREA)) {
 			msg_print(Ind, "You may not arm charges in town.");
-			return FALSE;
+			return(FALSE);
 		}
 	//}
 
 	if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) ||
 	    (c_ptr->info & CAVE_PROT)) {
 		msg_print(Ind, "\377yYou cannot arm charges while on this special floor.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	if (!thrown) {
@@ -9964,11 +9963,11 @@ bool arm_charge_conditions(int Ind, object_type *o_ptr, bool thrown) {
 		    !cave_set_feat_live_ok(&p_ptr->wpos, py, px, FEAT_MON_TRAP) ||
 		    c_ptr->special) {
 			msg_print(Ind, "\377yYou cannot place a charge here.");
-			return FALSE;
+			return(FALSE);
 		}
 	}
 
-	return TRUE;
+	return(TRUE);
 }
 /* Set direction (if applicable) and light the fuse at given length on a trap, arming it */
 void arm_charge_dir_and_fuse(object_type *o2_ptr, int dir) {
@@ -10284,7 +10283,7 @@ bool do_mstopcharm(int Ind) {
 	int m;
 	bool notice = TRUE;
 
-	if (p_ptr->mcharming == 0) return FALSE; /* optimization */
+	if (p_ptr->mcharming == 0) return(FALSE); /* optimization */
 	p_ptr->mcharming = 0;
 
 	for (m = m_top - 1; m >= 0; m--) {
@@ -10294,7 +10293,7 @@ bool do_mstopcharm(int Ind) {
 		notice = TRUE;
 	}
 	if (notice) msg_print(Ind, "Your charm spell breaks!");
-	return notice;
+	return(notice);
 }
 
 /* Returns TRUE if the monster is still under charm for this moment (eg attack attempt),
@@ -10310,7 +10309,7 @@ bool test_charmedignore(int Ind, s32b charmer_id, monster_type *m_ptr, monster_r
 	if (!Ind_charmer) {
 		/* Somehow the charmer has vanished - break the spell! */
 		m_ptr->charmedignore = 0;
-		return FALSE;
+		return(FALSE);
 	}
 
 	q_ptr = Players[Ind_charmer];
@@ -10318,7 +10317,7 @@ bool test_charmedignore(int Ind, s32b charmer_id, monster_type *m_ptr, monster_r
 	/* non team-mates are not affected (and would cost extra mana) */
 	if (Ind != Ind_charmer &&
 	    (!player_in_party(q_ptr->party, Ind)))
-		return FALSE;
+		return(FALSE);
 
 	/* some monsters cost more to maintain */
 	if (r_ptr->flags2 & RF2_SMART) diff++;
@@ -10334,20 +10333,20 @@ bool test_charmedignore(int Ind, s32b charmer_id, monster_type *m_ptr, monster_r
 		if (q_ptr->csp < 0) q_ptr->csp = 0;
 		if (q_ptr->csp < 1) {
 			do_mstopcharm(Ind_charmer);
-			return FALSE;
+			return(FALSE);
 		}
 		q_ptr->redraw |= PR_MANA;
 	}
 
 	if (Ind == Ind_charmer) {
 		/* the charm-caster himself is pretty safe */
-		if (magik(100 - diff)) return TRUE;
+		if (magik(100 - diff)) return(TRUE);
 	} else {
 		/* in same party? slightly reduced effect >:) */
-		if (magik(100 - 2 * diff)) return TRUE;
+		if (magik(100 - 2 * diff)) return(TRUE);
 	}
 	/* Oops, monster's own will flares up for a moment! */
-	return FALSE;
+	return(FALSE);
 }
 
 /* Add certain flags to a ball/breath/cloud projection depending on the damage type. */
@@ -10356,7 +10355,7 @@ u32b mod_ball_spell_flags(int typ, u32b flags) {
 	/* stuff that also acts on the casting player himself */
 	case GF_HEAL_PLAYER:
 	case GF_HEALINGCLOUD:
-		return (flags | PROJECT_PLAY);
+		return(flags | PROJECT_PLAY);
 	/* 'environmentally instant' stuff */
 	case GF_SOUND:
 	case GF_CONFUSION:
@@ -10368,7 +10367,7 @@ u32b mod_ball_spell_flags(int typ, u32b flags) {
 	case GF_UNBREATH:
 	case GF_THUNDER:
 	case GF_ANNIHILATION:
-		return (flags | PROJECT_LODF);
+		return(flags | PROJECT_LODF);
 	/* very powerful 'force' stuff */
 	case GF_FORCE:
 	case GF_METEOR:
@@ -10377,7 +10376,7 @@ u32b mod_ball_spell_flags(int typ, u32b flags) {
 	case GF_DETONATION:
 	case GF_ROCKET:
 	case GF_WAVE:
-		return (flags | PROJECT_LODF);
+		return(flags | PROJECT_LODF);
 	}
-	return flags;
+	return(flags);
 }

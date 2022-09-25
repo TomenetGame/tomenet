@@ -90,7 +90,7 @@ int world_index(int world_x, int world_y)
 
 	/* hack -- the town is 0 */
 	if (!ring) {
-		return 0;
+		return(0);
 	}
 
 	/* calculate the base offset of this ring */
@@ -138,7 +138,7 @@ static int towndist(int wx, int wy, s16b *townlev) {
 			*townlev = town[i].baselevel;
 		}
 	}
-	return (mindist);
+	return(mindist);
 }
 
 void init_wild_info_aux(int x, int y) {
@@ -457,11 +457,11 @@ static bool wild_monst_aux_town(int r_idx) {
 
 #if 0
 	/* Maggot is allowed :) */
-	if (r_idx == RI_FARMER_MAGGOT) return TRUE;
+	if (r_idx == RI_FARMER_MAGGOT) return(TRUE);
 #endif
 
-	if (r_ptr->flags8 & RF8_WILD_TOWN) return TRUE;
-	return FALSE;
+	if (r_ptr->flags8 & RF8_WILD_TOWN) return(TRUE);
+	return(FALSE);
 }
 
 
@@ -471,171 +471,171 @@ static bool wild_monst_aux_town(int r_idx) {
 static bool wild_monst_aux_lake(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_LAKE) return TRUE;
+	if (r_ptr->flags8 & RF8_WILD_LAKE) return(TRUE);
 
 	/* no reproducing monsters allowed */
-	if (r_ptr->flags7 & RF7_MULTIPLY) return FALSE;
+	if (r_ptr->flags7 & RF7_MULTIPLY) return(FALSE);
 
-	if (r_ptr->flags2 & RF2_AURA_FIRE) return FALSE;
+	if (r_ptr->flags2 & RF2_AURA_FIRE) return(FALSE);
 
 	/* animals are OK */
-	if (r_ptr->flags3 & RF3_ANIMAL) return TRUE;
+	if (r_ptr->flags3 & RF3_ANIMAL) return(TRUE);
 	/* humanoids and other races are OK */
-	if (strchr("ph", r_ptr->d_char)) return TRUE;
+	if (strchr("ph", r_ptr->d_char)) return(TRUE);
 
 #if 0 /* could be salt-water aquatics.. */
 	/* always allow aquatics! */
-	if (r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY)) return TRUE;
+	if (r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY)) return(TRUE);
 #else
-	if (r_ptr->flags7 & (RF7_CAN_SWIM | RF7_CAN_FLY)) return TRUE;
+	if (r_ptr->flags7 & (RF7_CAN_SWIM | RF7_CAN_FLY)) return(TRUE);
 #endif
 
 	/* No */
-	return FALSE;
+	return(FALSE);
 }
 
 static bool wild_monst_aux_river(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_LAKE) return TRUE;
+	if (r_ptr->flags8 & RF8_WILD_LAKE) return(TRUE);
 
 	/* no reproducing monsters allowed */
-	if (r_ptr->flags7 & RF7_MULTIPLY) return FALSE;
+	if (r_ptr->flags7 & RF7_MULTIPLY) return(FALSE);
 
-	if (r_ptr->flags2 & RF2_AURA_FIRE) return FALSE;
+	if (r_ptr->flags2 & RF2_AURA_FIRE) return(FALSE);
 
 	/* animals are OK */
-	if (r_ptr->flags3 & RF3_ANIMAL) return TRUE;
+	if (r_ptr->flags3 & RF3_ANIMAL) return(TRUE);
 	/* humanoids and other races are OK */
-	if (strchr("ph", r_ptr->d_char)) return TRUE;
+	if (strchr("ph", r_ptr->d_char)) return(TRUE);
 
 #if 0 /* could be salt-water aquatics.. */
 	/* always allow aquatics! */
-	if (r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY)) return TRUE;
+	if (r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY)) return(TRUE);
 #else
-	if (r_ptr->flags7 & (RF7_CAN_SWIM | RF7_CAN_FLY)) return TRUE;
+	if (r_ptr->flags7 & (RF7_CAN_SWIM | RF7_CAN_FLY)) return(TRUE);
 #endif
 
 	/* No */
-	return FALSE;
+	return(FALSE);
 }
 
 static bool wild_monst_aux_grassland(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_GRASS) return TRUE;
+	if (r_ptr->flags8 & RF8_WILD_GRASS) return(TRUE);
 
 	/* no reproducing monsters allowed */
-	if (r_ptr->flags7 & RF7_MULTIPLY) return FALSE;
+	if (r_ptr->flags7 & RF7_MULTIPLY) return(FALSE);
 
-	return FALSE;
+	return(FALSE);
 }
 
 static bool wild_monst_aux_forest(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_WOOD) return TRUE;
-	return FALSE;
+	if (r_ptr->flags8 & RF8_WILD_WOOD) return(TRUE);
+	return(FALSE);
 }
 
 static bool wild_monst_aux_swamp(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_SWAMP) return TRUE;
-	return FALSE;
+	if (r_ptr->flags8 & RF8_WILD_SWAMP) return(TRUE);
+	return(FALSE);
 }
 
 /* Hrm.. now it's exactly same with normal forest.. */
 static bool wild_monst_aux_denseforest(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_WOOD) return TRUE;
-	return FALSE;
+	if (r_ptr->flags8 & RF8_WILD_WOOD) return(TRUE);
+	return(FALSE);
 }
 
 static bool wild_monst_aux_wasteland(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_WASTE) return TRUE;
-	return FALSE;
+	if (r_ptr->flags8 & RF8_WILD_WASTE) return(TRUE);
+	return(FALSE);
 }
 
 static bool wild_monst_aux_desert(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_DESERT) return TRUE;
+	if (r_ptr->flags8 & RF8_WILD_DESERT) return(TRUE);
 
 	/* borrow from wasteland monsters */
-	//if (r_ptr->flags8 & RF8_WILD_WASTE) return TRUE;
+	//if (r_ptr->flags8 & RF8_WILD_WASTE) return(TRUE);
 
 	/* no aquatic life here */
-	if (r_ptr->flags7 & RF7_AQUATIC) return FALSE;
+	if (r_ptr->flags7 & RF7_AQUATIC) return(FALSE);
 
 	/* monsters that don't mind dry environment */
-	if (strchr("acsuwBCFIJKRS", r_ptr->d_char)) return TRUE;
+	if (strchr("acsuwBCFIJKRS", r_ptr->d_char)) return(TRUE);
 
-	return FALSE;
+	return(FALSE);
 }
 
 static bool wild_monst_aux_ice(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_ICE) return TRUE;
+	if (r_ptr->flags8 & RF8_WILD_ICE) return(TRUE);
 
 	/* no aquatic life here */
-	if (r_ptr->flags7 & RF7_AQUATIC) return FALSE;
+	if (r_ptr->flags7 & RF7_AQUATIC) return(FALSE);
 
 	/* no cold-susceptible monsters */
-	if (r_ptr->flags3 & RF3_SUSCEP_COLD) return FALSE;
+	if (r_ptr->flags3 & RF3_SUSCEP_COLD) return(FALSE);
 
 	/* monsters that don't mind cold environment */
-	if (r_ptr->flags3 & RF3_IM_COLD) return TRUE;
-	if (r_ptr->flags9 & RF9_RES_COLD) return TRUE;
+	if (r_ptr->flags3 & RF3_IM_COLD) return(TRUE);
+	if (r_ptr->flags9 & RF9_RES_COLD) return(TRUE);
 
 	/* borrow from wasteland monsters */
-	//if (r_ptr->flags8 & RF8_WILD_WASTE) return TRUE;
+	//if (r_ptr->flags8 & RF8_WILD_WASTE) return(TRUE);
 
-	return FALSE;
+	return(FALSE);
 }
 
 static bool wild_monst_aux_ocean(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_OCEAN) return TRUE;
-	return FALSE;
+	if (r_ptr->flags8 & RF8_WILD_OCEAN) return(TRUE);
+	return(FALSE);
 }
 
 static bool wild_monst_aux_oceanbed(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_OCEAN) return TRUE;
+	if (r_ptr->flags8 & RF8_WILD_OCEAN) return(TRUE);
 	/* No fresh water creatures */
-	if ((r_ptr->flags8 & RF8_WILD_SHORE) && !(r_ptr->flags8 & RF8_WILD_SWAMP)) return TRUE;
-	return FALSE;
+	if ((r_ptr->flags8 & RF8_WILD_SHORE) && !(r_ptr->flags8 & RF8_WILD_SWAMP)) return(TRUE);
+	return(FALSE);
 }
 
 static bool wild_monst_aux_shore(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_SHORE) return TRUE;
-	return FALSE;
+	if (r_ptr->flags8 & RF8_WILD_SHORE) return(TRUE);
+	return(FALSE);
 }
 
 static bool wild_monst_aux_volcano(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_VOLCANO) return TRUE;
+	if (r_ptr->flags8 & RF8_WILD_VOLCANO) return(TRUE);
 	/* Borrow some monsters from mountains */
-	else if ((r_ptr->flags8 & RF8_WILD_MOUNTAIN) && (r_ptr->flags3 & RF3_IM_FIRE)) return TRUE;
-	return FALSE;
+	else if ((r_ptr->flags8 & RF8_WILD_MOUNTAIN) && (r_ptr->flags3 & RF3_IM_FIRE)) return(TRUE);
+	return(FALSE);
 }
 
 static bool wild_monst_aux_mountain(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Borrow some monsters from volcanoes */
-	if (r_ptr->flags8 & (RF8_WILD_MOUNTAIN | RF8_WILD_VOLCANO)) return TRUE;
-	return FALSE;
+	if (r_ptr->flags8 & (RF8_WILD_MOUNTAIN | RF8_WILD_VOLCANO)) return(TRUE);
+	return(FALSE);
 }
 
 void set_mon_num_hook_wild(struct worldpos *wpos) {
@@ -933,36 +933,36 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y) {
 static bool wild_monst_aux_invaders(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags7 & RF7_AQUATIC) return FALSE;
+	if (r_ptr->flags7 & RF7_AQUATIC) return(FALSE);
 
 	/* invader species */
-	if (strchr("oTpOKbrm", r_ptr->d_char)) return TRUE;
-	if (my_strcasestr(r_name + r_ptr->name, "Dark-el") && r_ptr->level <= 12) return TRUE;
+	if (strchr("oTpOKbrm", r_ptr->d_char)) return(TRUE);
+	if (my_strcasestr(r_name + r_ptr->name, "Dark-el") && r_ptr->level <= 12) return(TRUE);
 
-	return FALSE;
+	return(FALSE);
 }
 
 static bool wild_monst_aux_home_owner(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* not aquatic */
-	if (r_ptr->flags7 & RF7_AQUATIC) return FALSE;
+	if (r_ptr->flags7 & RF7_AQUATIC) return(FALSE);
 
 	/* home owner species */
-	if (strchr("hpP", r_ptr->d_char)) return TRUE;
+	if (strchr("hpP", r_ptr->d_char)) return(TRUE);
 
-	return FALSE;
+	return(FALSE);
 }
 
 static int wild_obj_aux_bones(int k_idx, u32b resf) {
 	object_kind *k_ptr = &k_info[k_idx];
 
 	/* paranoia */
-	if (k_idx < 0) return 0;
+	if (k_idx < 0) return(0);
 
 	if (k_ptr->tval == TV_SKELETON) return 1000;
 
-	return 0;
+	return(0);
 }
 
 /* make a dwelling (building in the wilderness) 'interesting'.
@@ -1198,11 +1198,11 @@ static bool dwelling_check_entrance(worldpos *wpos, int y, int x) {
 			continue;
 
 		/* Found a neat entrance */
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Assume failure */
-	return (FALSE);
+	return(FALSE);
 }
 #else
 static bool dwelling_check_entrance(worldpos *wpos, int y, int x, int dir) {
@@ -1223,7 +1223,7 @@ static bool dwelling_check_entrance(worldpos *wpos, int y, int x, int dir) {
 	int i;
 	cave_type *c_ptr;
 	cave_type **zcave;
-	if (!(zcave = getcave(wpos))) return FALSE;
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	switch (dir) {
 	/* corners: 5 adjacent grids to check */
@@ -1246,7 +1246,7 @@ static bool dwelling_check_entrance(worldpos *wpos, int y, int x, int dir) {
 				continue;
 
 			/* Found a neat entrance */
-			return TRUE;
+			return(TRUE);
 		}
 		break;
 	/* sides: 3 adjacent grids to check */
@@ -1265,13 +1265,13 @@ static bool dwelling_check_entrance(worldpos *wpos, int y, int x, int dir) {
 				continue;
 
 			/* Found a neat entrance */
-			return TRUE;
+			return(TRUE);
 		}
 		break;
 	}
 
 	/* Assume failure */
-	return FALSE;
+	return(FALSE);
 }
 #endif
 
@@ -2645,7 +2645,7 @@ static void wild_bleed_level(int bleed_to_x, int bleed_to_y, int bleed_from_x, i
  */
 static int getlevel_wild_old(struct worldpos *wpos) {
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
-	return (w_ptr->radius);
+	return(w_ptr->radius);
 }
 
 /* determines whether or not to bleed from a given depth in a given direction.
@@ -2679,7 +2679,7 @@ static bool should_we_bleed(struct worldpos *wpos, char dir)
 
 	/* determine whether to bleed or not */
 	/* if a valid location */
-	if (!in_bounds_wild(neigh_y, neigh_x)) return FALSE;
+	if (!in_bounds_wild(neigh_y, neigh_x)) return(FALSE);
 
 	/* make sure the level type is defined */
 	neighbor.wx = neigh_x;
@@ -2693,9 +2693,9 @@ static bool should_we_bleed(struct worldpos *wpos, char dir)
 		Rand_value = seed_town + (getlevel_wild_old(wpos) + getlevel_wild_old(&neighbor)) * (93754);
 		tmp = rand_int(2);
 
-		if (tmp && (getlevel(wpos) < getlevel(&neighbor))) return TRUE;
-		else if (!tmp && (getlevel(wpos) > getlevel(&neighbor))) return TRUE;
-		else return FALSE;
+		if (tmp && (getlevel(wpos) < getlevel(&neighbor))) return(TRUE);
+		else if (!tmp && (getlevel(wpos) > getlevel(&neighbor))) return(TRUE);
+		else return(FALSE);
 	}
 
 	return(FALSE);
@@ -3908,8 +3908,8 @@ static bool island_aux(int y, int x, unsigned char type, unsigned char fill, int
 	bool added_decently = TRUE;
 	int ranval;
 
-	if (y < 0 || x < 0 || y >= MAX_WILD_Y || x >= MAX_WILD_Y) return (size_org - size >= 2);
-	if (wild_info[y][x].type != fill) return (size_org - size >= 2);
+	if (y < 0 || x < 0 || y >= MAX_WILD_Y || x >= MAX_WILD_Y) return(size_org - size >= 2);
+	if (wild_info[y][x].type != fill) return(size_org - size >= 2);
 	ranval = rand_int(15);
 	if (size) {
 		added_decently = FALSE;
@@ -4383,7 +4383,7 @@ bool reveal_wilderness_around_player(int Ind, int y, int x, int h, int w) {
 		}
 	}
 
-	return (shown);
+	return(shown);
 }
 
 /* Add new dungeons/towers that were added to d_info.txt after the server was already initialized - C. Blue */
@@ -4829,10 +4829,10 @@ int wild_gettown(int x, int y) {
 			if (town[i].x == x && town[i].y == y) return i;
 
 		/* paranoia - shouldn't be possible */
-		return -1;
+		return(-1);
 	}
 
-	if (wild_info[y][x].radius > MAX_TOWNAREA) return -1;
+	if (wild_info[y][x].radius > MAX_TOWNAREA) return(-1);
 
 	for (i = 0; i < numtowns; i++) {
 		if (town[i].x >= x - 3 &&
@@ -4843,5 +4843,5 @@ int wild_gettown(int x, int y) {
 	}
 
 	/* paranoia - shouldn't be possible */
-	return -1;
+	return(-1);
 }

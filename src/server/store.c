@@ -290,7 +290,7 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 	price = object_value(flip ? Ind : 0, o_ptr);
 
 	/* Worthless items */
-	if (price <= 0) return (0L);
+	if (price <= 0) return(0L);
 
 	/* Compute the racial factor */
 	if (is_state(Ind, st_ptr, STORE_LIKED))
@@ -388,10 +388,10 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 	price = (price * adjust + 50L) / 100L;
 
 	/* Note -- Never become "free" */
-	if (price <= 0L) return (1L);
+	if (price <= 0L) return(1L);
 
 	/* Return the price */
-	return (price);
+	return(price);
 }
 
 #ifdef PLAYER_STORES
@@ -463,7 +463,7 @@ s64b price_item_player_store(int Ind, object_type *o_ptr) {
 	final_price = player_store_inscribed(o_ptr, price, Ind ? TRUE : FALSE);
 
 	/* Return the price */
-	return (final_price);
+	return(final_price);
 }
 #endif
 
@@ -474,7 +474,7 @@ static int mass_roll(int num, int max) {
 	int i, t = 0;
 
 	for (i = 0; i < num; i++) t += rand_int(max);
-	return (t);
+	return(t);
 }
 
 
@@ -585,28 +585,28 @@ static void mass_produce(object_type *o_ptr, store_type *st_ptr) {
 /* o_ptr is one in store, j_ptr is one in new. */
 static bool store_object_similar(object_type *o_ptr, object_type *j_ptr) {
 	/* Hack -- Identical items cannot be stacked */
-	if (o_ptr == j_ptr) return (0);
+	if (o_ptr == j_ptr) return(0);
 
 
 	/* Don't EVER stack questors oO */
-	if (o_ptr->questor) return FALSE;
+	if (o_ptr->questor) return(FALSE);
 	/* Don't ever stack special quest items */
-	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST) return FALSE;
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST) return(FALSE);
 	/* Don't stack quest items if not from same quest AND stage! */
-	if (o_ptr->quest != j_ptr->quest || o_ptr->quest_stage != j_ptr->quest_stage) return FALSE;
+	if (o_ptr->quest != j_ptr->quest || o_ptr->quest_stage != j_ptr->quest_stage) return(FALSE);
 
 	/* Overpoweredness, Hello! - the_sandman */
-	if (o_ptr->tval == TV_ROD && o_ptr->sval == SV_ROD_HAVOC) return FALSE;
+	if (o_ptr->tval == TV_ROD && o_ptr->sval == SV_ROD_HAVOC) return(FALSE);
 
 	/* Don't stack potions of blood because of their timeout */
-	if ((o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) && o_ptr->timeout) return FALSE;
+	if ((o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) && o_ptr->timeout) return(FALSE);
 
 
 	/* Different objects cannot be stacked */
-	if (o_ptr->k_idx != j_ptr->k_idx) return (0);
+	if (o_ptr->k_idx != j_ptr->k_idx) return(0);
 
 	/* Different modes cannot be stacked */
-	if (o_ptr->owner && j_ptr->owner && compat_omode(o_ptr, j_ptr)) return (0);
+	if (o_ptr->owner && j_ptr->owner && compat_omode(o_ptr, j_ptr)) return(0);
 
 	/* Different charges (etc) cannot be stacked */
 	if (o_ptr->pval != j_ptr->pval &&
@@ -615,46 +615,46 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr) {
 #else
 	    o_ptr->tval != TV_WAND
 #endif
-		) return (0);
+		) return(0);
 	if (o_ptr->bpval != j_ptr->bpval
 #ifdef NEW_MDEV_STACKING
 	    && o_ptr->tval != TV_ROD
 #endif
-		) return (0);
+		) return(0);
 
 	/* Require many identical values */
-	if (o_ptr->to_h  !=  j_ptr->to_h) return (0);
-	if (o_ptr->to_d  !=  j_ptr->to_d) return (0);
-	if (o_ptr->to_a  !=  j_ptr->to_a) return (0);
+	if (o_ptr->to_h  !=  j_ptr->to_h) return(0);
+	if (o_ptr->to_d  !=  j_ptr->to_d) return(0);
+	if (o_ptr->to_a  !=  j_ptr->to_a) return(0);
 
 	/* Require identical "artifact" names */
 	/* Bad idea, randart ammo is stacked easily. (Rand)arts just
 	   shouldn't stack at all - C. Blue */
 #if 0
-	if (o_ptr->name1 != j_ptr->name1) return (0);
+	if (o_ptr->name1 != j_ptr->name1) return(0);
 #else
-	if (o_ptr->name1 || j_ptr->name1) return (0);
+	if (o_ptr->name1 || j_ptr->name1) return(0);
 #endif
 
 	/* Require identical "ego-item" names */
-	if (o_ptr->name2 != j_ptr->name2) return (0);
-	if (o_ptr->name2b != j_ptr->name2b) return (0);
+	if (o_ptr->name2 != j_ptr->name2) return(0);
+	if (o_ptr->name2b != j_ptr->name2b) return(0);
 
 	/* require same seed */
-	if (o_ptr->name3 != j_ptr->name3) return (0);
+	if (o_ptr->name3 != j_ptr->name3) return(0);
 
 	/* Hack -- Never stack "powerful" items */
-	if (o_ptr->xtra1 || j_ptr->xtra1) return (0);
+	if (o_ptr->xtra1 || j_ptr->xtra1) return(0);
 
 	/* Hack -- Never stack recharging items */
-	if (o_ptr->timeout != j_ptr->timeout) return (0);
-	if (o_ptr->timeout_magic != j_ptr->timeout_magic) return (0);
-	if (o_ptr->recharging != j_ptr->recharging) return (0);
+	if (o_ptr->timeout != j_ptr->timeout) return(0);
+	if (o_ptr->timeout_magic != j_ptr->timeout_magic) return(0);
+	if (o_ptr->recharging != j_ptr->recharging) return(0);
 
 	/* Require many identical values */
-	if (o_ptr->ac    !=  j_ptr->ac)   return (0);
-	if (o_ptr->dd    !=  j_ptr->dd)   return (0);
-	if (o_ptr->ds    !=  j_ptr->ds)   return (0);
+	if (o_ptr->ac != j_ptr->ac) return(0);
+	if (o_ptr->dd != j_ptr->dd) return(0);
+	if (o_ptr->ds != j_ptr->ds) return(0);
 
 	/* Hack -- Never stack chests */
 	if (o_ptr->tval == TV_CHEST) return (0);
@@ -666,22 +666,22 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr) {
 		return(0);
 
 	/* cheques may have different value, so they must not stack */
-	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE) return FALSE;
+	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE) return(FALSE);
 
 	/* Don't stack potions of blood because of their timeout */
-	//if ((o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) && o_ptr->timeout) return FALSE;
+	//if ((o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) && o_ptr->timeout) return(FALSE);
 
 	/* Require matching discounts */
-	if (o_ptr->discount != j_ptr->discount) return (0);
+	if (o_ptr->discount != j_ptr->discount) return(0);
 
 #ifdef PLAYER_STORES
 	/* Different inscriptions can be used to prevent stacking
 	   and thereby customize pile sizes :) */
-	if (o_ptr->note != j_ptr->note) return (0);
+	if (o_ptr->note != j_ptr->note) return(0);
 #endif
 
 	/* They match, so they must be similar */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -741,7 +741,7 @@ static bool store_check_num(store_type *st_ptr, object_type *o_ptr) {
 	object_type *j_ptr;
 
 	/* Free space is always usable */
-	if (st_ptr->stock_num < st_ptr->stock_size) return TRUE;
+	if (st_ptr->stock_num < st_ptr->stock_size) return(TRUE);
 
 	/* Normal stores do special stuff */
 	else {
@@ -751,12 +751,12 @@ static bool store_check_num(store_type *st_ptr, object_type *o_ptr) {
 			j_ptr = &st_ptr->stock[i];
 
 			/* Can the new object be combined with the old one? */
-			if (store_object_similar(j_ptr, o_ptr)) return (TRUE);
+			if (store_object_similar(j_ptr, o_ptr)) return(TRUE);
 		}
 	}
 
 	/* But there was no room at the inn... */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -772,16 +772,16 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 
 #ifdef PLAYER_STORES
 	/* player stores don't buy anything */
-	if (p_ptr->store_num <= -2) return FALSE;
+	if (p_ptr->store_num <= -2) return(FALSE);
 #endif
 
 	/* Hack: The Mathom House */
 	if (st_info[p_ptr->store_num].flags1 & SF1_MUSEUM) {
 		/* Museums won't buy true artifacts, since they'd be
 		   conserved and out of reach for players thereby. */
-		if (true_artifact_p(o_ptr)) return FALSE;
+		if (true_artifact_p(o_ptr)) return(FALSE);
 		/* Museum does accept even worthless donations.. */
-		return TRUE;
+		return(TRUE);
 	}
 
 	/* Switch on the store */
@@ -813,12 +813,12 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 			break;
 #ifdef ENABLE_SUBINVEN
 		case TV_SUBINVEN: /* Chest clones */
-			if (o_ptr->sval >= SV_SI_GROUP_CHEST_MIN && o_ptr->sval <= SV_SI_GROUP_CHEST_MAX) return TRUE;
-			if (o_ptr->sval == SV_SI_TRAPKIT_BAG) return TRUE;
-			return FALSE;
+			if (o_ptr->sval >= SV_SI_GROUP_CHEST_MIN && o_ptr->sval <= SV_SI_GROUP_CHEST_MAX) return(TRUE);
+			if (o_ptr->sval == SV_SI_TRAPKIT_BAG) return(TRUE);
+			return(FALSE);
 #endif
 		default:
-			return (FALSE);
+			return(FALSE);
 		}
 		break;
 
@@ -829,7 +829,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		switch (o_ptr->tval) {
 		case TV_GOLEM:
 			/* Buy massive pieces of wood/metal for forging/fletching! */
-			if (o_ptr->sval > SV_GOLEM_MATERIAL_MAX) return FALSE;
+			if (o_ptr->sval > SV_GOLEM_MATERIAL_MAX) return(FALSE);
 		case TV_BOOTS:
 		case TV_GLOVES:
 		case TV_CROWN:
@@ -841,7 +841,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_DRAG_ARMOR:
 			break;
 		default:
-			return (FALSE);
+			return(FALSE);
 		}
 		break;
 
@@ -852,7 +852,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		switch (o_ptr->tval) {
 		case TV_GOLEM:
 			/* Buy massive pieces of wood/metal for forging/fletching! */
-			if (o_ptr->sval > SV_GOLEM_MATERIAL_MAX) return FALSE;
+			if (o_ptr->sval > SV_GOLEM_MATERIAL_MAX) return(FALSE);
 		case TV_SHOT:
 		case TV_BOLT:
 		case TV_ARROW:
@@ -865,7 +865,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_BOOMERANG:
 			break;
 		default:
-			return (FALSE);
+			return(FALSE);
 		}
 		break;
 
@@ -877,14 +877,14 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_BOOK:
 			if (get_book_name_color(o_ptr) != TERM_GREEN &&
 			    get_book_name_color(o_ptr) != TERM_WHITE) /* unused custom books */
-				 return FALSE;
+				 return(FALSE);
 		case TV_SCROLL:
 		case TV_POTION:
 		case TV_POTION2:
 		case TV_BLUNT:
 			break;
 		default:
-			return (FALSE);
+			return(FALSE);
 		}
 		break;
 
@@ -896,12 +896,12 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		switch (o_ptr->tval) {
 #ifdef ENABLE_SUBINVEN
 		case TV_SUBINVEN:
-			if (o_ptr->sval != SV_SI_SATCHEL) return FALSE;
+			if (o_ptr->sval != SV_SI_SATCHEL) return(FALSE);
 			break;
 #endif
 #ifdef ENABLE_DEMOLITIONIST
 		case TV_TOOL:
-			if (o_ptr->sval != SV_TOOL_GRINDER) return FALSE;
+			if (o_ptr->sval != SV_TOOL_GRINDER) return(FALSE);
 			break;
 		case TV_CHEMICAL:
 #endif
@@ -914,7 +914,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_BOTTLE:
 			break;
 		default:
-			return (FALSE);
+			return(FALSE);
 		}
 		break;
 
@@ -926,7 +926,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_BOOK:
 			if (get_book_name_color(o_ptr) != TERM_L_BLUE &&
 			    get_book_name_color(o_ptr) != TERM_WHITE) /* unused custom books */
-				return FALSE;
+				return(FALSE);
 		case TV_AMULET:
 		case TV_RING:
 		case TV_STAFF:
@@ -943,15 +943,15 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 #ifdef ENABLE_DEMOLITIONIST
 		case TV_CHEMICAL:
 			/* Just because of novice mages dropping this... */
-			if (o_ptr->sval != SV_SALTPETRE) return FALSE; else break;
+			if (o_ptr->sval != SV_SALTPETRE) return(FALSE); else break;
 #endif
 #ifdef ENABLE_SUBINVEN
 		case TV_SUBINVEN:
-			if (o_ptr->sval != SV_SI_MDEVP_WRAPPING) return FALSE;
+			if (o_ptr->sval != SV_SI_MDEVP_WRAPPING) return(FALSE);
 			break;
 #endif
 		default:
-			return (FALSE);
+			return(FALSE);
 		}
 		break;
 
@@ -969,7 +969,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 #endif	/* 0 */
 			break;
 		default:
-			return (FALSE);
+			return(FALSE);
 		}
 		break;
 
@@ -982,7 +982,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_RUNE:
 			break;
 		default:
-			return (FALSE);
+			return(FALSE);
 		}
 		break;
 
@@ -993,7 +993,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_BOOTS:
 			break;
 		default:
-			return (FALSE);
+			return(FALSE);
 		}
 		break;
 
@@ -1005,7 +1005,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_RING:
 			break;
 		default:
-			return (FALSE);
+			return(FALSE);
 		}
 		break;
 
@@ -1022,7 +1022,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_WAND: if (o_ptr->sval != SV_WAND_STONE_TO_MUD) return(FALSE); else break;
 		case TV_POTION: if (o_ptr->sval != SV_POTION_DETONATIONS) return(FALSE); else break;
 		default:
-			return (FALSE);
+			return(FALSE);
 		}
 		break;
 
@@ -1044,7 +1044,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 			    (o_ptr->sval != SV_RING_RESIST_FIRE)) return(FALSE);
 			break;
 		default:
-			return (FALSE);
+			return(FALSE);
 		}
 		break;
 
@@ -1052,21 +1052,21 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		switch (o_ptr->tval) {
 		case TV_BOOK:
 			/* The owner is actually a druid? >_> */
-			if (get_book_name_color(o_ptr) != TERM_L_GREEN) return FALSE;
+			if (get_book_name_color(o_ptr) != TERM_L_GREEN) return(FALSE);
 			break;
 		case TV_FOOD:
 			if ((o_ptr->sval <= SV_FOOD_MUSHROOMS_MAX) || /* all mushrooms are of a herbalist's interest! */
 			    (o_ptr->sval == SV_FOOD_WAYBREAD) || (o_ptr->sval == SV_FOOD_ATHELAS) || /* 'normal' food, but counts as herbalist stuff due to their special nature */
 			    (o_ptr->sval == SV_FOOD_PINT_OF_ALE) || (o_ptr->sval == SV_FOOD_PINT_OF_WINE)) /* owner likes booze for a change =_= */
 				 break;
-			return (FALSE);
+			return(FALSE);
 		case TV_POTION:
 			/* Juice is nice */
 			if ((o_ptr->sval != SV_POTION_APPLE_JUICE) &&
 			    (o_ptr->sval != SV_POTION_SLIME_MOLD)) return(FALSE);
 			break;
 		default:
-			return (FALSE);
+			return(FALSE);
 		}
 		break;
 
@@ -1079,7 +1079,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_BOTTLE:
 			break;
 		default:
-			return (FALSE);
+			return(FALSE);
 		}
 		break;
 	case STORE_SPEC_SCROLL:
@@ -1088,7 +1088,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_SCROLL:
 			break;
 		default:
-			return (FALSE);
+			return(FALSE);
 		}
 		break;
 	case STORE_SPEC_CLOSECOMBAT:
@@ -1096,7 +1096,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		switch (o_ptr->tval) {
 		case TV_GOLEM:
 			/* Buy massive pieces of wood/metal for forging/fletching! */
-			if (o_ptr->sval > SV_GOLEM_MATERIAL_MAX) return FALSE;
+			if (o_ptr->sval > SV_GOLEM_MATERIAL_MAX) return(FALSE);
 		case TV_BOOTS:
 		case TV_GLOVES:
 		case TV_CROWN:
@@ -1117,7 +1117,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_MSTAFF:
 			break;
 		default:
-			return (FALSE);
+			return(FALSE);
 		}
 		break;
 
@@ -1126,7 +1126,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		switch (o_ptr->tval) {
 		case TV_GOLEM:
 			/* Buy massive pieces of wood/metal for forging/fletching! */
-			if (o_ptr->sval > SV_GOLEM_MATERIAL_MAX) return FALSE;
+			if (o_ptr->sval > SV_GOLEM_MATERIAL_MAX) return(FALSE);
 		case TV_SHOT:
 		case TV_BOLT:
 		case TV_ARROW:
@@ -1134,7 +1134,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_BOOMERANG:
 			break;
 		default:
-			return (FALSE);
+			return(FALSE);
 		}
 		break;
 
@@ -1144,48 +1144,48 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_BOOK:
 			break;
 		default:
-			return (FALSE);
+			return(FALSE);
 		}
 		break;
 
 	case STORE_STRADER: /* For ironman dungeons */
 #ifdef ENABLE_SUBINVEN
 		case TV_SUBINVEN:
-			if (o_ptr->sval != SV_SI_TRAPKIT_BAG) return FALSE;
+			if (o_ptr->sval != SV_SI_TRAPKIT_BAG) return(FALSE);
 			break;
 #endif
 		/* doesn't like very cheap items */
-		if (object_value(Ind, o_ptr) < 10) return (FALSE);
+		if (object_value(Ind, o_ptr) < 10) return(FALSE);
 		break;
 	}
 
 
 	/* XXX XXX XXX Ignore "worthless" items */
-	if (object_value(Ind, o_ptr) <= 0) return (FALSE);
+	if (object_value(Ind, o_ptr) <= 0) return(FALSE);
 
 	/* XXX Never OK to sell keys */
-	if (o_ptr->tval == TV_KEY) return (FALSE);
+	if (o_ptr->tval == TV_KEY) return(FALSE);
 
 	/* This prevents suicide-cheeze */
 #if 0 /* changed to allow selling own level 0 rewards that weren't discounted */
  #if STARTEQ_TREATMENT == 3
-	if (o_ptr->level < 1) return (FALSE);
+	if (o_ptr->level < 1) return(FALSE);
  #endif
  #if STARTEQ_TREATMENT == 2
-	if ((o_ptr->level < 1) && (o_ptr->owner != p_ptr->id)) return (FALSE);
+	if ((o_ptr->level < 1) && (o_ptr->owner != p_ptr->id)) return(FALSE);
  #endif
 #else
  #if STARTEQ_TREATMENT > 1
-	if ((o_ptr->level < 1) && (o_ptr->owner != p_ptr->id)) return (FALSE);
+	if ((o_ptr->level < 1) && (o_ptr->owner != p_ptr->id)) return(FALSE);
  #endif
 #endif
 	/* Assume okay */
-	return (TRUE);
+	return(TRUE);
 }
 
 static int get_spellbook_store_order(int pval) {
 	/* priests */
-	if (spell_school[pval] >= SCHOOL_HOFFENSE && spell_school[pval] <= SCHOOL_HSUPPORT) return 2;
+	if (spell_school[pval] >= SCHOOL_HOFFENSE && spell_school[pval] <= SCHOOL_HSUPPORT) return(2);
 	/* druids */
 	if (spell_school[pval] == SCHOOL_DRUID_ARCANE || spell_school[pval] == SCHOOL_DRUID_PHYSICAL) return 3;
 	/* astral tome */
@@ -1205,7 +1205,7 @@ static int get_spellbook_store_order(int pval) {
  #endif
 #endif
 	/* light blue for the rest (istari schools) */
-	return 1;
+	return(1);
 }
 
 /*
@@ -1246,7 +1246,7 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 #endif
 	if (value <= 0 &&
 	    !(st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM))
-		return (-1);
+		return(-1);
 
 	/* All store items are fully *identified* */
 	/* (I don't know it's too nice.. ) */
@@ -1280,19 +1280,19 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 		if (store_object_similar(j_ptr, o_ptr)) {
 			/* Hack: Can't have more than 1 of certain items at a time!
 			   Added for Artifact Creation - C. Blue */
-			if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION) return (-1);
-			if (o_ptr->tval == TV_ROD && o_ptr->sval == SV_ROD_HAVOC) return (-1);
+			if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION) return(-1);
+			if (o_ptr->tval == TV_ROD && o_ptr->sval == SV_ROD_HAVOC) return(-1);
 
 			/* Hack -- extra items disappear */
 			store_object_absorb(j_ptr, o_ptr);
 
 			/* All done */
-			return (slot);
+			return(slot);
 		}
 	}
 
 	/* No space? */
-	if (st_ptr->stock_num >= st_ptr->stock_size) return (-1);
+	if (st_ptr->stock_num >= st_ptr->stock_size) return(-1);
 
 
 	if (!(st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM)
@@ -1366,7 +1366,7 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 	st_ptr->stock[slot] = *o_ptr;
 
 	/* Return the location */
-	return (slot);
+	return(slot);
 }
 
 
@@ -1436,24 +1436,24 @@ static bool black_market_crap(object_type *o_ptr, int st_idx) {
 
 #if 1 /* not that big impact on the game, so, optional */
 	/* No golem items? */
-	if (o_ptr->tval == TV_GOLEM) return (TRUE);
+	if (o_ptr->tval == TV_GOLEM) return(TRUE);
 #endif
 
 	/* No Talismans in the BM (can only be found! >:) */
-	if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_LUCK) return (TRUE);
+	if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_LUCK) return(TRUE);
 
 	/* No Wilderness map pieces, now that they reveal a 3x3 patch.. */
-	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_WILDERNESS_MAP) return (TRUE);
+	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_WILDERNESS_MAP) return(TRUE);
 
 	/* No magic ammos either =) the_sandman */
-	if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC) return (TRUE);
+	if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC) return(TRUE);
 
 #if 0
 	/* No runes at all, actually... */
-	if (o_ptr->tval == TV_RUNE) return (TRUE);
+	if (o_ptr->tval == TV_RUNE) return(TRUE);
 #else
 	/* No runes except for lots of Au */
-	if (o_ptr->tval == TV_RUNE && st_idx != STORE_BLACKS) return (TRUE);
+	if (o_ptr->tval == TV_RUNE && st_idx != STORE_BLACKS) return(TRUE);
 #endif
 
 #if 0 /* Relieve players from endlessly scumming BM for these? */
@@ -1463,30 +1463,30 @@ static bool black_market_crap(object_type *o_ptr, int st_idx) {
 		case SV_AMULET_THE_MAGI:
 		case SV_AMULET_TRICKERY:
 		case SV_AMULET_DEVOTION:
-			return TRUE;
+			return(TRUE);
 		}
 	}
 #endif
 
 #if 0
 	/* No "Handbook"s in the BM (can only be found) - C. Blue */
-	if (o_ptr->tval == TV_BOOK && o_ptr->sval >= SV_BOOK_COMBO && o_ptr->sval < SV_CUSTOM_TOME_1) return (TRUE);
+	if (o_ptr->tval == TV_BOOK && o_ptr->sval >= SV_BOOK_COMBO && o_ptr->sval < SV_CUSTOM_TOME_1) return(TRUE);
 #endif
 
 	/* no ethereal ammo */
 	if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) return(TRUE);
 
 	/* No items that can be used by WINNERS_ONLY in the BM - C. Blue */
-	if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) return (TRUE);
+	if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) return(TRUE);
 
 
 	/* Ego items are never crap */
-	if (o_ptr->name2) return (FALSE);
+	if (o_ptr->name2) return(FALSE);
 
 	/* Good items are never crap */
-	if (o_ptr->to_a > 0) return (FALSE);
-	if (o_ptr->to_h > 0) return (FALSE);
-	if (o_ptr->to_d > 0) return (FALSE);
+	if (o_ptr->to_a > 0) return(FALSE);
+	if (o_ptr->to_h > 0) return(FALSE);
+	if (o_ptr->to_d > 0) return(FALSE);
 
 #if 0 /* Would mess up at least the dungeon BMs, and was buggy all the time anyway \
        * (returned FALSE instead of TRUE), so disabling it altogether. \
@@ -1498,10 +1498,10 @@ static bool black_market_crap(object_type *o_ptr, int st_idx) {
 			for (j = 0; j < st_info[i].table_num; j++) {
 				if (st_info[i].table[j][0] >= 10000) {
 					if (o_ptr->tval == st_info[i].table[j][0] - 10000)
-						return TRUE;
+						return(TRUE);
 				} else {
 					if (o_ptr->k_idx == st_info[i].table[j][0])
-						return TRUE;
+						return(TRUE);
 				}
 			}
 		}
@@ -1514,7 +1514,7 @@ static bool black_market_crap(object_type *o_ptr, int st_idx) {
 		/* for now only if the item is explicitely mentioned, not via sval-wildcard */
 		if (st_info[st_idx].table[j][0] < 10000 &&
 		    o_ptr->k_idx == st_info[st_idx].table[j][0])
-			return FALSE;
+			return(FALSE);
 #endif
 
     /* only perform this check for black markets in towns, not in dungeons */
@@ -1546,7 +1546,7 @@ static bool black_market_crap(object_type *o_ptr, int st_idx) {
 				object_type *j_ptr = &st_ptr[i].stock[j];
 
 				/* Duplicate item "type", assume crappy */
-				if (!j_ptr->owner && o_ptr->k_idx == j_ptr->k_idx) return (TRUE);
+				if (!j_ptr->owner && o_ptr->k_idx == j_ptr->k_idx) return(TRUE);
 			}
 		}
 	}
@@ -1555,7 +1555,7 @@ static bool black_market_crap(object_type *o_ptr, int st_idx) {
     }
 
 	/* Assume okay */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -1636,7 +1636,7 @@ static int return_level(store_type *st_ptr, int town_base_level) {
 	    st_ptr->st_idx == STORE_BOOK_DUN)
 		level += town_base_level;
 
-	return (level);
+	return(level);
 }
 
 /* Is it an ok object ? */ /* I don't like this kinda hack.. */
@@ -1653,11 +1653,11 @@ static int kind_is_storeok(int k_idx, u32b resf) {
 
 #if 0
 	if (k_info[k_idx].flags3 & TR3_NORM_ART)
-		return 0;
+		return(0);
 #endif	// 0
 
 	if (k_info[k_idx].flags3 & TR3_INSTA_ART)
-		return 0;
+		return(0);
 
 	p = kind_is_legal(k_idx, resf);
 	//p = kind_is_normal(k_idx, resf); //hm, how about this..?
@@ -2330,11 +2330,11 @@ static int gettown_dun(int Ind) {
 	dun_level *l_ptr;
 
 	/* formerly 0 was the default town for all non-regular-town stores (ie wild/dungeon stores) */
-	//return 0;
+	//return(0);
 
 	/* Use first normal town (Bree) for rogue stores in the wilderness
 	   (don't exist though, maybe in the future) */
-	if (p_ptr->wpos.wz == 0) return 0;
+	if (p_ptr->wpos.wz == 0) return(0);
 
 	/* For dungeon/tower floor stores, cycle through towns to allow
 	   multiple stores of same type to occur which aren't linked */
@@ -2930,7 +2930,7 @@ static bool sell_haggle(int Ind, object_type *o_ptr, s64b *price, bool quiet) {
 
 	/* Hack -- Return immediately */
 	*price = final_ask * o_ptr->number;
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -2947,12 +2947,12 @@ static bool retire_owner_p(store_type *st_ptr) {
 	    (sti_ptr->owners[0] == sti_ptr->owners[4]) &&
 	    (sti_ptr->owners[0] == sti_ptr->owners[5])) { /* MAX_STORE_OWNERS */
 		/* there is no other owner */
-		return FALSE;
+		return(FALSE);
 	}
 
-	if (rand_int(STORE_SHUFFLE) != 0) return FALSE;
+	if (rand_int(STORE_SHUFFLE) != 0) return(FALSE);
 
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -2968,9 +2968,9 @@ static bool store_attest_command(int store, int bact) {
 #endif
 
 	for (i = 0; i < STORE_MAX_ACTION; i++)
-		if (ba_info[st_info[store].actions[i]].action == bact) return (TRUE);
-		//if (st_info[store].actions[i] == action) return (TRUE);
-	return (FALSE);
+		if (ba_info[st_info[store].actions[i]].action == bact) return(TRUE);
+		//if (st_info[store].actions[i] == action) return(TRUE);
+	return(FALSE);
 }
 
 
@@ -4786,7 +4786,7 @@ bool merchant_mail_carry(int Ind, int i) {
 	if (mail_forge[i].tval == TV_GOLD) {
 		if (PY_MAX_GOLD - mail_forge[i].pval < p_ptr->au) {
 			msg_print(Ind, "\374\377yYou are currently carrying too much gold to receive a payment!");
-			return FALSE;
+			return(FALSE);
 		}
 		msg_format(Ind, "\374\377yThe accountant hands you a bag of %d gold pieces from %s.", mail_forge[i].pval, mail_sender[i]);
 		p_ptr->au += mail_forge[i].pval;
@@ -4806,7 +4806,7 @@ bool merchant_mail_carry(int Ind, int i) {
 
 		if (p_ptr->inven_cnt >= INVEN_PACK) {
 			msg_print(Ind, "\374\377yYou currently have no room in your inventory to receive a shipment!");
-			return FALSE;
+			return(FALSE);
 		}
 		msg_format(Ind, "\374\377yThe accountant hands you a package from %s!", mail_sender[i]);
 
@@ -4831,7 +4831,7 @@ bool merchant_mail_carry(int Ind, int i) {
 
 	/* reset mail slot */
 	mail_sender[i][0] = 0;
-	return TRUE;
+	return(TRUE);
 }
 void merchant_mail_delivery(int Ind) {
 	player_type *p_ptr = Players[Ind];
@@ -5352,45 +5352,45 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 	//if (o_ptr->tval == TV_GOLD && j_ptr->tval == TV_GOLD) return(TRUE);
 
 	/* Require identical object types */
-	if (o_ptr->k_idx != j_ptr->k_idx) return (FALSE);
+	if (o_ptr->k_idx != j_ptr->k_idx) return(FALSE);
 
 	/* Level 0 items and other items won't merge, since level 0 can't be sold to shops */
 	if (!(tolerance & 0x2) &&
 	    (!o_ptr->level || !j_ptr->level) &&
 	    (o_ptr->level != j_ptr->level))
-		return (FALSE);
+		return(FALSE);
 
 
 	/* Don't EVER stack questors oO */
-	if (o_ptr->questor) return FALSE;
+	if (o_ptr->questor) return(FALSE);
 	/* Don't ever stack special quest items */
-	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST) return FALSE;
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST) return(FALSE);
 	/* Don't stack quest items if not from same quest AND stage! */
-	if (o_ptr->quest != j_ptr->quest || o_ptr->quest_stage != j_ptr->quest_stage) return FALSE;
+	if (o_ptr->quest != j_ptr->quest || o_ptr->quest_stage != j_ptr->quest_stage) return(FALSE);
 
 
 	/* Don't stack potions of blood because of their timeout */
-	if ((o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) && o_ptr->timeout) return FALSE;
+	if ((o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) && o_ptr->timeout) return(FALSE);
 
 
 	/* Require same owner or convertable to same owner */
-	/*if (o_ptr->owner != j_ptr->owner) return (FALSE); */
+	/*if (o_ptr->owner != j_ptr->owner) return(FALSE); */
 	if (Ind) {
 		p_ptr = Players[Ind];
 		if (((o_ptr->owner != j_ptr->owner)
 		    && ((qlev < j_ptr->level)
 		    || (j_ptr->level < 1)))
-		    && (j_ptr->owner)) return (FALSE);
+		    && (j_ptr->owner)) return(FALSE);
 #if 0
 		if ((o_ptr->owner != p_ptr->id)
-		    && (o_ptr->owner != j_ptr->owner)) return (FALSE);
+		    && (o_ptr->owner != j_ptr->owner)) return(FALSE);
 #endif
 
 		/* Require objects from the same modus! */
 		/* A non-everlasting player won't have his items stacked w/ everlasting stuff */
 		if (compat_pomode(Ind, j_ptr)) return(FALSE);
 	} else {
-		if (o_ptr->owner != j_ptr->owner) return (FALSE);
+		if (o_ptr->owner != j_ptr->owner) return(FALSE);
 	}
 
 	/* Analyze the items */
@@ -5404,35 +5404,35 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 			    (o_ptr->weight != j_ptr->weight) ||
 			    (o_ptr->quest != j_ptr->quest) ||
 			    (o_ptr->quest_stage != j_ptr->quest_stage))
-				return FALSE;
+				return(FALSE);
 			break;
 		}
-		return FALSE;
+		return(FALSE);
 	/* Chests */
 	case TV_KEY:
 	case TV_CHEST:
 		/* Never okay */
-		return (FALSE);
+		return(FALSE);
 
 	/* Food and Potions and Scrolls */
 	case TV_SCROLL:
 		/* cheques may have different value, so they must not stack */
-		if (o_ptr->sval == SV_SCROLL_CHEQUE) return FALSE;
+		if (o_ptr->sval == SV_SCROLL_CHEQUE) return(FALSE);
 		/* fireworks of different type */
 		if (o_ptr->sval == SV_SCROLL_FIREWORK &&
 		    (o_ptr->xtra1 != j_ptr->xtra1 ||
 		    o_ptr->xtra2 != j_ptr->xtra2))
-			return FALSE;
+			return(FALSE);
 		/* Fall through */
 	case TV_FOOD:
 	case TV_POTION:
 	case TV_POTION2:
 		/* Hack for ego foods :) */
-		if (o_ptr->name2 != j_ptr->name2) return (FALSE);
-		if (o_ptr->name2b != j_ptr->name2b) return (FALSE);
+		if (o_ptr->name2 != j_ptr->name2) return(FALSE);
+		if (o_ptr->name2b != j_ptr->name2b) return(FALSE);
 
 		/* Don't stack potions of blood because of their timeout */
-		if (o_ptr->timeout) return FALSE;
+		if (o_ptr->timeout) return(FALSE);
 
 		/* Assume okay */
 		break;
@@ -5446,40 +5446,40 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 		    !object_known_p(Ind, j_ptr))) return(FALSE);
 
 		/* Beware artifatcs should not combine with "lesser" thing */
-		if (o_ptr->name1 != j_ptr->name1) return (FALSE);
-		if (!Ind || !p_ptr->stack_allow_devices) return (FALSE);
+		if (o_ptr->name1 != j_ptr->name1) return(FALSE);
+		if (!Ind || !p_ptr->stack_allow_devices) return(FALSE);
 
 		/* Do not combine recharged ones with non recharged ones. */
-		//if ((f4 & TR4_RECHARGED) != (f14 & TR4_RECHARGED)) return (FALSE);
+		//if ((f4 & TR4_RECHARGED) != (f14 & TR4_RECHARGED)) return(FALSE);
 
 		/* Do not combine different ego or normal ones */
-		if (o_ptr->name2 != j_ptr->name2) return (FALSE);
+		if (o_ptr->name2 != j_ptr->name2) return(FALSE);
 
 		/* Do not combine different ego or normal ones */
-		if (o_ptr->name2b != j_ptr->name2b) return (FALSE);
+		if (o_ptr->name2b != j_ptr->name2b) return(FALSE);
 
 		/* Assume okay */
 		break;
 
 	case TV_STAFF:
 		/* Require knowledge */
-		//if (!Ind || !object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr)) return (FALSE);
+		//if (!Ind || !object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr)) return(FALSE);
 		/* Require either knowledge or known empty for both staves. */
 		if ((!(o_ptr->ident & (ID_EMPTY)) &&
 		    !object_known_p(Ind, o_ptr)) ||
 		    (!(j_ptr->ident & (ID_EMPTY)) &&
 		    !object_known_p(Ind, j_ptr))) return(FALSE);
 
-		if (!Ind || !p_ptr->stack_allow_devices) return (FALSE);
-		if (o_ptr->name1 != j_ptr->name1) return (FALSE);
+		if (!Ind || !p_ptr->stack_allow_devices) return(FALSE);
+		if (o_ptr->name1 != j_ptr->name1) return(FALSE);
 
 		/* Require identical charges */
 #ifndef NEW_MDEV_STACKING
-		if (o_ptr->pval != j_ptr->pval) return (FALSE);
+		if (o_ptr->pval != j_ptr->pval) return(FALSE);
 #endif
 
-		if (o_ptr->name2 != j_ptr->name2) return (FALSE);
-		if (o_ptr->name2b != j_ptr->name2b) return (FALSE);
+		if (o_ptr->name2 != j_ptr->name2) return(FALSE);
+		if (o_ptr->name2b != j_ptr->name2b) return(FALSE);
 
 		/* Probably okay */
 		break;
@@ -5490,16 +5490,16 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 	/* Staffs and Wands and Rods */
 	case TV_ROD:
 		/* Overpoweredness, Hello! - the_sandman */
-		if (o_ptr->sval == SV_ROD_HAVOC) return (FALSE);
+		if (o_ptr->sval == SV_ROD_HAVOC) return(FALSE);
 
 		/* Require permission */
-		if (!Ind || !p_ptr->stack_allow_devices) return (FALSE);
+		if (!Ind || !p_ptr->stack_allow_devices) return(FALSE);
 
 		/* this is only for rods... the_sandman */
-		if (o_ptr->pval == 0 && j_ptr->pval != 0) return (FALSE); //lol :)
+		if (o_ptr->pval == 0 && j_ptr->pval != 0) return(FALSE); //lol :)
 
-		if (o_ptr->name2 != j_ptr->name2) return (FALSE);
-		if (o_ptr->name2b != j_ptr->name2b) return (FALSE);
+		if (o_ptr->name2 != j_ptr->name2) return(FALSE);
+		if (o_ptr->name2b != j_ptr->name2b) return(FALSE);
 
 		/* Probably okay */
 		break;
@@ -5524,11 +5524,11 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 	case TV_HARD_ARMOR:
 	case TV_TRAPKIT: /* so they don't stack carelessly - the_sandman */
 		/* Require permission */
-		if (!Ind || !p_ptr->stack_allow_items) return (FALSE);
+		if (!Ind || !p_ptr->stack_allow_items) return(FALSE);
 
 		/* XXX XXX XXX Require identical "sense" status */
 		/* if ((o_ptr->ident & ID_SENSE) != */
-		/*     (j_ptr->ident & ID_SENSE)) return (FALSE); */
+		/*     (j_ptr->ident & ID_SENSE)) return(FALSE); */
 
 		/* Costumes must be for same monster */
 		if ((o_ptr->tval == TV_SOFT_ARMOR) && (o_ptr->sval == SV_COSTUME)) {
@@ -5540,7 +5540,7 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 	/* Rings, Amulets, Lites */
 	case TV_RING:
 		/* no more, due to their 'timeout' ! */
-		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) return (FALSE);
+		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) return(FALSE);
 		/* Fall through */
 	case TV_AMULET:
 	case TV_LITE:
@@ -5562,9 +5562,9 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 		/* Require full knowledge of both items */
 //			if (o_ptr->tval == TV_BOOK) {
 		if (!Ind || !object_known_p(Ind, o_ptr) ||
-//			    !object_known_p(Ind, j_ptr) || (o_ptr->name3)) return (FALSE);
+//			    !object_known_p(Ind, j_ptr) || (o_ptr->name3)) return(FALSE);
 		    !object_known_p(Ind, j_ptr))
-			return (FALSE);
+			return(FALSE);
 //			}
 
 		/* different bpval? */
@@ -5582,16 +5582,16 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 		    artifact_p(o_ptr) || artifact_p(j_ptr))) ||
 		    (!is_ammo(o_ptr->tval) ||
 		    (!check_guard_inscription(o_ptr->note, 'M') && !check_guard_inscription(j_ptr->note, 'M')))) {
-			if (o_ptr->to_h != j_ptr->to_h) return (FALSE);
-			if (o_ptr->to_d != j_ptr->to_d) return (FALSE);
+			if (o_ptr->to_h != j_ptr->to_h) return(FALSE);
+			if (o_ptr->to_d != j_ptr->to_d) return(FALSE);
 		}
-		if (o_ptr->to_a != j_ptr->to_a) return (FALSE);
+		if (o_ptr->to_a != j_ptr->to_a) return(FALSE);
 
 		/* Require identical "pval" code */
-		if (o_ptr->pval != j_ptr->pval) return (FALSE);
+		if (o_ptr->pval != j_ptr->pval) return(FALSE);
 
 		/* Require identical "artifact" names <- this shouldnt happen right? */
-		if (o_ptr->name1 != j_ptr->name1) return (FALSE);
+		if (o_ptr->name1 != j_ptr->name1) return(FALSE);
 
 		/* Require identical "ego-item" names.
 		Allow swapped ego powers: Ie Arrow (SlayDragon,Ethereal) combines with Arrow (Ethereal,SlayDragon).
@@ -5599,31 +5599,31 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 
 		/* allow name2 and name2b to be swapped */
 		if (! ((o_ptr->name2 == j_ptr->name2b) && (o_ptr->name2b == j_ptr->name2))) {
-			if (o_ptr->name2 != j_ptr->name2) return (FALSE);
-			if (o_ptr->name2b != j_ptr->name2b) return (FALSE);
+			if (o_ptr->name2 != j_ptr->name2) return(FALSE);
+			if (o_ptr->name2b != j_ptr->name2b) return(FALSE);
 		}
 
 		/* Require identical random seeds */
-		if (o_ptr->name3 != j_ptr->name3) return (FALSE);
+		if (o_ptr->name3 != j_ptr->name3) return(FALSE);
 
 		/* Hack -- Never stack "powerful" items */
-//			if (o_ptr->xtra1 || j_ptr->xtra1) return (FALSE);
+//			if (o_ptr->xtra1 || j_ptr->xtra1) return(FALSE);
 
 		/* Hack -- Never stack recharging items */
-		if (o_ptr->timeout != j_ptr->timeout) return (FALSE);
-		if (o_ptr->timeout_magic != j_ptr->timeout_magic) return (FALSE);
-		if (o_ptr->recharging != j_ptr->recharging) return (FALSE);
+		if (o_ptr->timeout != j_ptr->timeout) return(FALSE);
+		if (o_ptr->timeout_magic != j_ptr->timeout_magic) return(FALSE);
+		if (o_ptr->recharging != j_ptr->recharging) return(FALSE);
 #if 0
 		if (o_ptr->timeout || j_ptr->timeout) {
 			if ((o_ptr->timeout != j_ptr->timeout) ||
-			(o_ptr->tval != TV_LITE)) return (FALSE);
+			(o_ptr->tval != TV_LITE)) return(FALSE);
 		}
 #endif	// 0
 
 		/* Require identical "values" */
-		if (o_ptr->ac != j_ptr->ac) return (FALSE);
-		if (o_ptr->dd != j_ptr->dd) return (FALSE);
-		if (o_ptr->ds != j_ptr->ds) return (FALSE);
+		if (o_ptr->ac != j_ptr->ac) return(FALSE);
+		if (o_ptr->dd != j_ptr->dd) return(FALSE);
+		if (o_ptr->ds != j_ptr->ds) return(FALSE);
 
 		/* Probably okay */
 		break;
@@ -5639,7 +5639,7 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 	default:
 		/* Require knowledge */
 		if (Ind && (!object_known_p(Ind, o_ptr) ||
-		    !object_known_p(Ind, j_ptr))) return (FALSE);
+		    !object_known_p(Ind, j_ptr))) return(FALSE);
 
 		/* Probably okay */
 		break;
@@ -5647,10 +5647,10 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 
 
 	/* Hack -- Require identical "cursed" status */
-	if ((o_ptr->ident & ID_CURSED) != (j_ptr->ident & ID_CURSED)) return (FALSE);
+	if ((o_ptr->ident & ID_CURSED) != (j_ptr->ident & ID_CURSED)) return(FALSE);
 
 	/* Hack -- Require identical "broken" status */
-	if ((o_ptr->ident & ID_BROKEN) != (j_ptr->ident & ID_BROKEN)) return (FALSE);
+	if ((o_ptr->ident & ID_BROKEN) != (j_ptr->ident & ID_BROKEN)) return(FALSE);
 
 
 	/* Hack -- require semi-matching "inscriptions" */
@@ -5663,16 +5663,16 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 	    && !is_realm_book(o_ptr)
 	    && !check_guard_inscription(o_ptr->note, 'M')
 	    && !check_guard_inscription(j_ptr->note, 'M'))
-		return (FALSE);
+		return(FALSE);
 
 	/* Hack -- normally require matching "inscriptions" */
-	if ((!Ind || !p_ptr->stack_force_notes) && (o_ptr->note != j_ptr->note)) return (FALSE);
+	if ((!Ind || !p_ptr->stack_force_notes) && (o_ptr->note != j_ptr->note)) return(FALSE);
 
 	/* Hack -- normally require matching "discounts" */
-	if ((!Ind || !p_ptr->stack_force_costs) && (o_ptr->discount != j_ptr->discount)) return (FALSE);
+	if ((!Ind || !p_ptr->stack_force_costs) && (o_ptr->discount != j_ptr->discount)) return(FALSE);
 
 	/* Maximal "stacking" limit */
-	if (total >= MAX_STACK_SIZE) return (FALSE);
+	if (total >= MAX_STACK_SIZE) return(FALSE);
 
 	/* An everlasting player will have _his_ items stack w/ non-everlasting stuff
 	(especially new items bought in the shops) and convert them all to everlasting */
@@ -5688,7 +5688,7 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 	}
 
 	/* They match, so they must be similar */
-	return (TRUE);
+	return(TRUE);
 }
 
 static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr) {
@@ -5721,12 +5721,12 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr) {
 			object_absorb(Ind, j_ptr, o_ptr);
 
 			/* All done */
-			return (slot);
+			return(slot);
 		}
 	}
 
 	/* No space? */
-	if (h_ptr->stock_num >= h_ptr->stock_size) return (-1);
+	if (h_ptr->stock_num >= h_ptr->stock_size) return(-1);
 
 
 	/* Determine the "value" of the item */
@@ -5823,7 +5823,7 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr) {
 	h_ptr->stock[slot] = *o_ptr;
 
 	/* Return the location */
-	return (slot);
+	return(slot);
 }
 
 /*
@@ -5886,7 +5886,7 @@ static bool home_check_num(int Ind, house_type *h_ptr, object_type *o_ptr) {
 	object_type *j_ptr;
 
 	/* Free space is always usable */
-	if (h_ptr->stock_num < h_ptr->stock_size) return TRUE;
+	if (h_ptr->stock_num < h_ptr->stock_size) return(TRUE);
 
 	/* The "home" acts like the player */
 	{
@@ -5896,10 +5896,10 @@ static bool home_check_num(int Ind, house_type *h_ptr, object_type *o_ptr) {
 			j_ptr = &h_ptr->stock[i];
 
 			/* Can the new object be combined with the old one? */
-			if (home_object_similar(Ind, j_ptr, o_ptr, 0x0)) return (TRUE);
+			if (home_object_similar(Ind, j_ptr, o_ptr, 0x0)) return(TRUE);
 		}
 	}
-	return (FALSE);
+	return(FALSE);
 }
 
 /*
@@ -7098,7 +7098,7 @@ static bool notify_owner(char cname[CNAME_LEN], char msg[MSG_LEN]) {
 	/* does target account exist? -- paranoia at this point! */
 	if (!GetAccount(&acc, tname, NULL, FALSE)) {
 		s_printf("Error: Player's account not found (%s).\n", tname);
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Look for free space to store the new note */
@@ -7109,11 +7109,11 @@ static bool notify_owner(char cname[CNAME_LEN], char msg[MSG_LEN]) {
 			break;
 		}
 		/* Don't send multiple identical notes */
-		if (!strcmp(priv_note[i], msg)) return TRUE;
+		if (!strcmp(priv_note[i], msg)) return(TRUE);
 	}
 	if (found_note == MAX_NOTES) {
 		s_printf("The server reached the maximum of %d pending notes.\n", MAX_NOTES);
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Check whether target is actually online by now :) */
@@ -7138,7 +7138,7 @@ static bool notify_owner(char cname[CNAME_LEN], char msg[MSG_LEN]) {
 	strcpy(priv_note[found_note], msg);
 	strcpy(priv_note_u[found_note], msg);
 	//s_printf("System Note for account '%s' has been stored.", priv_note_target[found_note]);
-	return TRUE;
+	return(TRUE);
 }
 
 /* Is an item inscribed correctly to be sold in a player-run store? - C. Blue
@@ -7151,26 +7151,26 @@ static s64b player_store_inscribed(object_type *o_ptr, u32b price, bool appraise
 	bool increase = FALSE, mult = FALSE;
 
 	/* no item? */
-	if (!o_ptr->k_idx) return -1;
+	if (!o_ptr->k_idx) return(-1);
 
 	if (!appraise) { //HOME_APPRAISAL
 		/* does it carry an inscription? */
-		if (!o_ptr->note) return -1;
+		if (!o_ptr->note) return(-1);
 
 		/* is it just a 'museum' item, ie not for sale? */
-		if ((p = strstr(quark_str(o_ptr->note), "@S-"))) return -2;
+		if ((p = strstr(quark_str(o_ptr->note), "@S-"))) return(-2);
 
 		/* is it a player-store inscription? */
-		if (!(p = strstr(quark_str(o_ptr->note), "@S"))) return -1;
+		if (!(p = strstr(quark_str(o_ptr->note), "@S"))) return(-1);
 	} else {
 		/* does it carry an inscription? */
 		if (!o_ptr->note) return price;
 
 		/* is it just a 'museum' item, ie not for sale? */
-		if ((p = strstr(quark_str(o_ptr->note), "@S-"))) return 0;
+		if ((p = strstr(quark_str(o_ptr->note), "@S-"))) return(0);
 
 		/* is it a player-store inscription? */
-		if (!(p = strstr(quark_str(o_ptr->note), "@S"))) return price;
+		if (!(p = strstr(quark_str(o_ptr->note), "@S"))) return(price);
 	}
 
 	/* is it an increase of the default price instead of a fixed price? */
@@ -7249,7 +7249,7 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 	int fsidx = -1; /* index of a free fake store to use */
 
 	/* access house door */
-	if (!(zcave = getcave(&p_ptr->wpos))) return FALSE;
+	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 
 	/* Check that noone else is already using the store! */
 	for (i = 1; i <= NumPlayers; i++) {
@@ -7269,7 +7269,7 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 					zcave[p_ptr->py][p_ptr->px].m_idx = -Ind;
 				} else {
 					msg_print(Ind, "The store is full.");
-					return TRUE;
+					return(TRUE);
 				}
 			}
 		}
@@ -7277,11 +7277,11 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 
 	/* Get house pointer and verify that it's a player store */
 	h_idx = pick_house(&p_ptr->wpos, y, x);
-	if (h_idx == -1) return FALSE;
+	if (h_idx == -1) return(FALSE);
 	h_ptr = &houses[h_idx];
 
 	/* prevent panic save if trying to access an unowned house with a pstore-inscribed item inside! */
-	if (!h_ptr->dna->owner) return FALSE;
+	if (!h_ptr->dna->owner) return(FALSE);
 
 	disturb(Ind, 0, 0);
 
@@ -7399,17 +7399,17 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 	}
 
 	/* if this house isn't a player-store, exit quietly */
-	if (!is_store) return FALSE;
+	if (!is_store) return(FALSE);
 
 	if (p_ptr->inval) {
 		msg_print(Ind, "\377yYou may not use a player store, wait for an admin to validate your account.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* if we're currently out of fake stores to use for this, display an excuse */
 	if (fsidx == -1) {
 		msg_print(Ind, "\377UThe shop is temporarily closed, please try again in a minute.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* HACK: Save fake store number.
@@ -7439,7 +7439,7 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 	/* Do not leave (unused?) */
 	leave_store = FALSE;
 
-	return TRUE;
+	return(TRUE);
 }
 
 /* Cut away the @S.. part of item inscriptions before
@@ -7530,7 +7530,7 @@ static bool player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 	char owner_name[NAME_LEN];
 
 	/* paranoia */
-	if (!o_ptr->number || !s_ptr->number) return FALSE;
+	if (!o_ptr->number || !s_ptr->number) return(FALSE);
 
 	/* create a blanco cheque ;) */
 	invcopy(&cheque, lookup_kind(TV_SCROLL, SV_SCROLL_CHEQUE));
@@ -7555,7 +7555,7 @@ static bool player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 	h_idx = pick_house(&p_ptr->wpos, p_ptr->ps_house_y, p_ptr->ps_house_x);
 	if (h_idx == -1) {
 		s_printf("PLAYER_STORE_ERROR: NO HOUSE! (value %d, buyer %s)\n", value, p_ptr->name);
-		return FALSE; /* oops? */
+		return(FALSE); /* oops? */
 	}
 	h_ptr = &houses[h_idx];
 
@@ -7569,7 +7569,7 @@ static bool player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 	if (!(zcave = getcave(&p_ptr->wpos))) {
 		s_printf("PLAYER_STORE_ERROR: NO ZCAVE! (owner %s (%d), value %d, buyer %s)\n",
 		    owner_name, h_ptr->dna->owner, value, p_ptr->name);
-		return FALSE; /* oops? */
+		return(FALSE); /* oops? */
 	}
 
 	/* paranoia: non-rectangular non-trad stores are currently not supported
@@ -7577,7 +7577,7 @@ static bool player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 	if (!(h_ptr->flags & HF_TRAD) && !(h_ptr->flags & HF_RECT)) {
 		msg_print(Ind, "\377ySorry, the store is currently not open for sale.");
 		msg_format(Ind, "\377y Please contact %s, the owner!", owner_name);
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* If it was completely bought out (ie the whole stack), we create a
@@ -7602,7 +7602,7 @@ static bool player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 				msg_print(Ind, "\377ySorry, the store is currently not open for sale.");
 				msg_format(Ind, "\377y Please contact %s, the owner!", owner_name);
 				notify_owner(owner_name, "One of your stores lacks an empty space for cheque generation!");
-				return FALSE;
+				return(FALSE);
 			}
 		}
 		/* non-trad house */
@@ -7617,7 +7617,7 @@ static bool player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 				msg_print(Ind, "\377ySorry, the store is currently not open for sale.");
 				msg_format(Ind, "\377y Please contact %s, the owner!", owner_name);
 				notify_owner(owner_name, "One of your stores lacks an empty space for cheque generation!");
-				return FALSE;
+				return(FALSE);
 			}
 		}
 	}
@@ -7699,7 +7699,7 @@ s_printf("PLAYER_STORE_HANDLE: mass-add, mang, owner %s (%d), %s, value %d, buye
 					   money goes poof :( */
 					s_printf("PLAYER_STORE_ERROR: NO SLOT! (owner %s (%d), value %d, buyer %s)\n",
 					    owner_name, h_ptr->dna->owner, value, p_ptr->name);
-					return FALSE;
+					return(FALSE);
 				}
 				/* add it to the stock and point to it.
 				   Note: Admitted Ind should be the owner and not the
@@ -7723,7 +7723,7 @@ s_printf("PLAYER_STORE_HANDLE: new mass, trad, owner %s (%d), %s, value %d, buye
 						    owner_name, h_ptr->dna->owner, value, p_ptr->name);
 						s_printf("debug: hidx %d; wpos %d,%d; o_ptr x,y %d,%d.\n",
 						    h_idx, p_ptr->wpos.wx, p_ptr->wpos.wy, o_ptr->ps_idx_x, o_ptr->ps_idx_y);
-						return FALSE;
+						return(FALSE);
 					}
 					/* Access free spot and verify its freeness.. */
 					x = -2 - p_ptr->ps_mcheque_x;
@@ -7736,7 +7736,7 @@ s_printf("PLAYER_STORE_HANDLE: new mass, trad, owner %s (%d), %s, value %d, buye
 						    owner_name, h_ptr->dna->owner, value, p_ptr->name);
 						s_printf("debug: hidx %d; wpos %d,%d; o_ptr x,y %d,%d; mcheque x,y %d,%d.\n",
 						    h_idx, p_ptr->wpos.wx, p_ptr->wpos.wy, o_ptr->ps_idx_x, o_ptr->ps_idx_y, x, y);
-						return FALSE;
+						return(FALSE);
 					}
 					/* Drop the cheque there */
 					drop_near(0, cheque_ptr, -1, &p_ptr->wpos, y, x);
@@ -7820,7 +7820,7 @@ s_printf("PLAYER_STORE_HANDLE: complete, mang, owner %s (%d), %s, value %d, buye
 		cptr acc_name = lookup_accountname(lookup_player_id(owner_name));
 		if (!acc_name) { //paranoia
 			s_printf("PLAYER_STORE_UNOWNED!\n");
-			return TRUE;
+			return(TRUE);
 		}
 		for (i = 1; i <= NumPlayers; i++) {
 			if (Players[i]->conn == NOT_CONNECTED) continue;
@@ -7838,7 +7838,7 @@ s_printf("PLAYER_STORE_HANDLE: complete, mang, owner %s (%d), %s, value %d, buye
 	}
 
 	/* successful purchase */
-	return TRUE;
+	return(TRUE);
 }
 #endif
 

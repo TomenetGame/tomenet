@@ -109,33 +109,33 @@
 //#define bad_dir1(d)	((d)<0 || (d)>9+1)	/* used for most targetting actions */
 static bool bad_dir1(int Ind, char *dir) {
 	/* paranoia? */
-	if (Ind == -1) return TRUE;
+	if (Ind == -1) return(TRUE);
 
-	if (*dir < 0 || *dir > 11) return TRUE;
+	if (*dir < 0 || *dir > 11) return(TRUE);
 	if (*dir == 11) {
 		if (target_okay(Ind)) *dir = 5;
 	}
 	else if (*dir == 10) {
-		if (!target_okay(Ind)) return TRUE;
+		if (!target_okay(Ind)) return(TRUE);
 		*dir = 5;
 	}
-	return FALSE;
+	return(FALSE);
 }
 #define bad_dir2(d)	((d)<128 || (d)>137)	/* dir + 128; used for manual target positioning */
 //#define bad_dir3(d)	((d)<-1 || (d)>9+1)	/* used for MKEY_SCHOOL activations */
 static bool bad_dir3(int Ind, char *dir) {
 	/* paranoia? */
-	if (Ind == -1) return TRUE;
+	if (Ind == -1) return(TRUE);
 
-	if (*dir < -1 || *dir > 11) return TRUE;
+	if (*dir < -1 || *dir > 11) return(TRUE);
 	if (*dir == 11) {
 		if (target_okay(Ind)) *dir = 5;
 	}
 	else if (*dir == 10) {
-		if (!target_okay(Ind)) return TRUE;
+		if (!target_okay(Ind)) return(TRUE);
 		*dir = 5;
 	}
-	return FALSE;
+	return(FALSE);
 }
 
 
@@ -466,7 +466,7 @@ static int Init_setup(void) {
 		Setup.setup_size += strlen(trait_info[i].title) + 1 + 4;
 	}
 
-	return 0;
+	return(0);
 }
 
 void init_players() {
@@ -487,13 +487,13 @@ void init_players() {
 bool Report_to_meta(int flag) {
 	/* Abort if the user doesn't want to report */
 	if (!cfg.report_to_meta || cfg.runlevel < 4 || ((cfg.runlevel > 1023) && (cfg.runlevel < 2045))) {
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* New implementation */
 //	s_printf("Reporting to meta...\n");
 	meta_report(flag);
-	return TRUE;
+	return(TRUE);
 }
 
 /* update tomenet.acc record structure to a new version - C. Blue
@@ -628,7 +628,7 @@ int Setup_net_server(void) {
 	Init_receive();
 
 	if (Init_setup() == -1)
-		return -1;
+		return(-1);
 
 	/*
 	 * The number of connections is limited by the number of bases
@@ -666,7 +666,7 @@ int Setup_net_server(void) {
 	/* Check for updating account file structure to a new version */
 	update_acc_file_version();
 
-	return 0;
+	return(0);
 }
 
 /* The contact socket */
@@ -816,11 +816,11 @@ static bool player_allowed(char *name) {
 	char buffer[80];
 	bool success = FALSE;
 	/* Hack -- allow 'guest' account */
-	/* if (!strcmp("Guest", name)) return TRUE; */
+	/* if (!strcmp("Guest", name)) return(TRUE); */
 
 	sfp = fopen("allowlist", "r");
 	if (sfp == (FILE*)NULL)
-		return TRUE;
+		return(TRUE);
 	else {
 		while (fgets(buffer, 80, sfp)) {
 			/* allow for \n */
@@ -849,66 +849,66 @@ static bool forbidden_name(char *cname) {
 
 
 	/* Hack -- allow 'guest' account */
-	/* if (!strcmp("Guest", name)) return FALSE; */
+	/* if (!strcmp("Guest", name)) return(FALSE); */
 
 	/* Note: Character names always start upper-case, so some of these
 	   aren't really needed on most file systems (semi-paranoia). */
 	/* Hardcode some critically important ones */
-	if (!strcmp(name, "system")) return TRUE; /* used as sender name for automatically generated notes */
-	if (!strcmp(name, "server")) return TRUE; /* server save file is stored in same folder as player save files */
-	if (!strcmp(name, "server.new")) return TRUE; /* server save file is stored in same folder as player save files */
-	if (!strcmp(name, "server.old")) return TRUE; /* server save file is stored in same folder as player save files */
-	if (!strncmp(name, "server", 6) && name[6] >= '0' && name[6] <= '9') return TRUE; /* prepare for multiple partial server save files */
-	if (strstr(name, "guild") && strstr(name, ".data")) return TRUE; /* moved guild hall save files to save folder, from data folder */
+	if (!strcmp(name, "system")) return(TRUE); /* used as sender name for automatically generated notes */
+	if (!strcmp(name, "server")) return(TRUE); /* server save file is stored in same folder as player save files */
+	if (!strcmp(name, "server.new")) return(TRUE); /* server save file is stored in same folder as player save files */
+	if (!strcmp(name, "server.old")) return(TRUE); /* server save file is stored in same folder as player save files */
+	if (!strncmp(name, "server", 6) && name[6] >= '0' && name[6] <= '9') return(TRUE); /* prepare for multiple partial server save files */
+	if (strstr(name, "guild") && strstr(name, ".data")) return(TRUE); /* moved guild hall save files to save folder, from data folder */
 	if (strlen(name) >= 5 && name[0] == 's' && name[1] == 'a' && name[2] == 'v' && name[3] == 'e' &&
-	    name[4] >= '0' && name[4] <= '9') return TRUE; /* backup save file folders, save00..saveNN */
-	if (!strcmp(name, "estate")) return TRUE; /* for new 'estate' folder that backs up houses. */
-	if (!strcmp(name, "quests")) return TRUE; /* dedicated quest state server save file */
-	if (!strcmp(name, "quests.new")) return TRUE; /* dedicated quest state server save file */
-	if (!strcmp(name, "quests.old")) return TRUE; /* dedicated quest state server save file */
+	    name[4] >= '0' && name[4] <= '9') return(TRUE); /* backup save file folders, save00..saveNN */
+	if (!strcmp(name, "estate")) return(TRUE); /* for new 'estate' folder that backs up houses. */
+	if (!strcmp(name, "quests")) return(TRUE); /* dedicated quest state server save file */
+	if (!strcmp(name, "quests.new")) return(TRUE); /* dedicated quest state server save file */
+	if (!strcmp(name, "quests.old")) return(TRUE); /* dedicated quest state server save file */
 
 	/* account file management */
-	if (!strcmp(name, "tomenet.acc")) return TRUE;
-	if (!strcmp(name, "tomenet.acc_old")) return TRUE;
-	if (!strcmp(name, "accedit")) return TRUE;
+	if (!strcmp(name, "tomenet.acc")) return(TRUE);
+	if (!strcmp(name, "tomenet.acc_old")) return(TRUE);
+	if (!strcmp(name, "accedit")) return(TRUE);
 
-	if (!strncmp(name, "save", 4) && name[4] >= '0' && name[4] <= '9') return TRUE; /* paranoia - backup folders "saveX..." */
-	if (!strncmp(name, "estate", 6)) return TRUE; /* paranoia - house contents backup folder for server resets */
+	if (!strncmp(name, "save", 4) && name[4] >= '0' && name[4] <= '9') return(TRUE); /* paranoia - backup folders "saveX..." */
+	if (!strncmp(name, "estate", 6)) return(TRUE); /* paranoia - house contents backup folder for server resets */
 
 	/* special death causes */
-	if (!strcmp(name, "insanity")) return TRUE;
-	if (!strcmp(name, "divine wrath")) return TRUE;
+	if (!strcmp(name, "insanity")) return(TRUE);
+	if (!strcmp(name, "divine wrath")) return(TRUE);
 #ifdef ENABLE_MAIA
-	if (!strcmp(name, "indecisiveness")) return TRUE;
+	if (!strcmp(name, "indecisiveness")) return(TRUE);
 #endif
-	if (!strcmp(name, "indetermination")) return TRUE;
-	if (!strcmp(name, "life draining")) return TRUE;
-	if (!strcmp(name, "Quitting")) return TRUE;
-	if (!strcmp(name, "Interrupting")) return TRUE;
+	if (!strcmp(name, "indetermination")) return(TRUE);
+	if (!strcmp(name, "life draining")) return(TRUE);
+	if (!strcmp(name, "Quitting")) return(TRUE);
+	if (!strcmp(name, "Interrupting")) return(TRUE);
 	/* not that important (just for in-game death msg design) */
-	if (strstr(name, "Farmer Maggot's dog")) return TRUE;
-	if (!strcmp(name, "Morgoth, Lord of Darkness")) return TRUE;
-	if (!strcmp(name, "It")) return TRUE; //only for log file actually?
-	if (!strcmp(name, "starvation")) return TRUE;
-	if (!strcmp(name, "poisonous food")) return TRUE;
+	if (strstr(name, "Farmer Maggot's dog")) return(TRUE);
+	if (!strcmp(name, "Morgoth, Lord of Darkness")) return(TRUE);
+	if (!strcmp(name, "It")) return(TRUE); //only for log file actually?
+	if (!strcmp(name, "starvation")) return(TRUE);
+	if (!strcmp(name, "poisonous food")) return(TRUE);
 	/* ..and there are a couple of unimportant death causes, which aren't checked, just set. */
 
 	/* Hardcode some not so important ones */
-	if (!strcmp(name, "tbot")) return TRUE; /* Sandman's internal chat bot */
-	if (!strcmp(name, "8ball")) return TRUE; /* Sandman's internal chat bot */
+	if (!strcmp(name, "tbot")) return(TRUE); /* Sandman's internal chat bot */
+	if (!strcmp(name, "8ball")) return(TRUE); /* Sandman's internal chat bot */
 	/* For logging chat relayed from IRC */
-	if (!strcmp(name, "irc")) return TRUE;
+	if (!strcmp(name, "irc")) return(TRUE);
 
 //ENABLE_GO_GAME - don't allow posing as one of the AI players
-	if (strstr(name, " (AI)")) return TRUE;
-	if (strstr(name, "Godalf, The ")) return TRUE;
+	if (strstr(name, " (AI)")) return(TRUE);
+	if (strstr(name, "Godalf, The ")) return(TRUE);
 
 
 	path_build(path_buf, 1024, ANGBAND_DIR_CONFIG, "badnames.txt");
 
 	sfp = fopen(path_buf, "r");
 	if (sfp == (FILE*) NULL)
-		return FALSE;
+		return(FALSE);
 	else {
 		while (fgets(buffer, 80, sfp)) {
 			/* allow for \n */
@@ -1049,7 +1049,7 @@ int check_multi_exploit(char *acc, char *nick) {
 #endif
 		return i;
 	}
-	return FALSE;
+	return(FALSE);
 }
 
 #if 0
@@ -1623,7 +1623,7 @@ bool Destroy_connection(int ind, char *reason_orig) {
 		errno = 0;
 		plog(format("Cannot destroy empty connection (\"%s\")", reason));
 		string_free(reason);
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Timestamp account for 'laston' moment */
@@ -1740,7 +1740,7 @@ bool Destroy_connection(int ind, char *reason_orig) {
 
 	string_free(reason);
 
-	return TRUE;
+	return(TRUE);
 }
 
 int Check_connection(char *real, char *nick, char *addr) {
@@ -1754,10 +1754,10 @@ int Check_connection(char *real, char *nick, char *addr) {
 				if (!strcmp(real, connp->real)
 					&& !strcmp(addr, connp->addr))
 						return connp->my_port;
-				return -1;
+				return(-1);
 			}
 	}
-	return -1;
+	return(-1);
 }
 
 
@@ -1789,14 +1789,14 @@ int Setup_connection(char *real, char *nick, char *addr, char *host, version_typ
 				&& strcmp(real, connp->real) == 0
 				&& version == connp->version)
 					return connp->my_port;
-			else return -1;
+			else return(-1);
 		}
 #endif
 	}
 
 	if (free_conn_index >= max_connections) {
 		s_printf("Full house for %s(%s)@%s\n", real, nick, host);
-		return -1;
+		return(-1);
 	}
 
 	/* Allocate the connection_t structure - mikaelh */
@@ -1807,7 +1807,7 @@ int Setup_connection(char *real, char *nick, char *addr, char *host, version_typ
 	if (connp == NULL) {
 		plog("Not enough memory for connection");
 		Destroy_connection(free_conn_index, "Server is out of memory.");
-		return -1;
+		return(-1);
 	}
 
 	// A TCP connection already exists with the client, use it.
@@ -1816,12 +1816,12 @@ int Setup_connection(char *real, char *nick, char *addr, char *host, version_typ
 	if ((my_port = GetPortNum(sock)) == 0) {
 		plog("Cannot get port from socket");
 		DgramClose(sock);
-		return -1;
+		return(-1);
 	}
 	if (SetSocketNonBlocking(sock, 1) == -1) {
 		plog("Cannot make client socket non-blocking");
 		DgramClose(sock);
-		return -1;
+		return(-1);
 	}
 	if (SocketLinger(sock) == -1)
 		plog("Couldn't set SO_LINGER on the socket");
@@ -1870,7 +1870,7 @@ int Setup_connection(char *real, char *nick, char *addr, char *host, version_typ
 	{
 		plog("Not enough memory for connection");
 		Destroy_connection(free_conn_index, "Server is out of memory.");
-		return -1;
+		return(-1);
 	}
 
 	// Remove the contact input handler
@@ -1889,7 +1889,7 @@ static int Handle_setup(int ind) {
 
 	if (connp->state != CONN_SETUP) {
 		Destroy_connection(ind, "not setup");
-		return -1;
+		return(-1);
 	}
 
 	if (connp->setup == 0) {
@@ -1911,7 +1911,7 @@ static int Handle_setup(int ind) {
 
 		if (n <= 0) {
 			Destroy_connection(ind, "Setup 0 write error");
-			return -1;
+			return(-1);
 		}
 
 		for (i = 0; i < Setup.max_race; i++) {
@@ -1962,7 +1962,7 @@ static int Handle_setup(int ind) {
 			/* If there is still unacked reliable data test for acks. */
 			Handle_input(-1, ind);
 			if (connp->state == CONN_FREE)
-				return -1;
+				return(-1);
 		}
 	}
 	/* if (connp->setup < Setup.setup_size) */
@@ -1970,7 +1970,7 @@ static int Handle_setup(int ind) {
 		len = MIN(connp->c.size, 4096) - connp->c.len;
 		if (len <= 0) {
 			/* Wait for acknowledgement of previously transmitted data. */
-			return 0;
+			return(0);
 		}
 	/*
 		if (len > Setup.setup_size - connp->setup)
@@ -1986,7 +1986,7 @@ static int Handle_setup(int ind) {
 		buf = (char *) &Setup.motd[0];
 		if (Sockbuf_write(&connp->c, &buf[connp->setup], len) != len) {
 			Destroy_connection(ind, "sockbuf write setup error");
-			return -1;
+			return(-1);
 		}
 		connp->setup += len;
 		if (len >= 512)
@@ -1998,7 +1998,7 @@ static int Handle_setup(int ind) {
 		//Conn_set_state(connp, CONN_DRAIN, CONN_LOGIN);
 		Conn_set_state(connp, CONN_LOGIN, CONN_LOGIN);
 
-	return 0;
+	return(0);
 }
 
 /*
@@ -2071,7 +2071,7 @@ static int Handle_listening(int ind) {
 
 	if (connp->state != CONN_LISTENING) {
 		Destroy_connection(ind, "not listening");
-		return -1;
+		return(-1);
 	}
 	errno = 0;
 
@@ -2092,7 +2092,7 @@ static int Handle_listening(int ind) {
 		else
 			Destroy_connection(ind, "read first packet error");
 		*/
-		return -1;
+		return(-1);
 	}
 	connp->his_port = DgramLastport(connp->r.sock);
 
@@ -2102,14 +2102,14 @@ static int Handle_listening(int ind) {
 		Send_reply(ind, PKT_VERIFY, PKT_FAILURE);
 		Send_reliable(ind);
 		Destroy_connection(ind, "not connecting");
-		return -1;
+		return(-1);
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%s%s%s", &type, real, nick, pass)) <= 0) {
 		Send_reply(ind, PKT_VERIFY, PKT_FAILURE);
 		Send_reliable(ind);
 		Destroy_connection(ind, "verify broken");
-		return -1;
+		return(-1);
 	}
 
 	/*
@@ -2136,7 +2136,7 @@ static int Handle_listening(int ind) {
 		Send_reply(ind, PKT_VERIFY, PKT_FAILURE);
 		Send_reliable(ind);
 		Destroy_connection(ind, "verify incorrect");
-		return -1;
+		return(-1);
 	}
 
 	/* Set his character info */
@@ -2148,12 +2148,12 @@ static int Handle_listening(int ind) {
 		|| Send_reliable(ind) <= 0)
 	{
 		Destroy_connection(ind, "confirm failed");
-		return -1;
+		return(-1);
 	}
 
 	Conn_set_state(connp, CONN_SETUP, CONN_SETUP);
 
-	return -1;
+	return(-1);
 }
 
 /*
@@ -3015,7 +3015,7 @@ static int Handle_login(int ind) {
 	if (Id >= MAX_ID) {
 		errno = 0;
 		plog(format("Id too big (%d)", Id));
-		return -1;
+		return(-1);
 	}
 
 	/* This will cause problems for account/char with same name */
@@ -3024,7 +3024,7 @@ static int Handle_login(int ind) {
 		if (strcasecmp(Players[i]->name, connp->nick) == 0) {
 			errno = 0;
 			plog(format("Name already in use %s", connp->nick));
-			return -1;
+			return(-1);
 		}
 	}
 #endif
@@ -3032,7 +3032,7 @@ static int Handle_login(int ind) {
 	if (!player_birth(NumPlayers + 1, ind, connp)) {
 		/* Failed, connection destroyed */
 		Destroy_connection(ind, "not login (1)");
-		return -1;
+		return(-1);
 	}
 	p_ptr = Players[NumPlayers + 1];
 	p_ptr->Ind = NumPlayers + 1;
@@ -3077,7 +3077,7 @@ static int Handle_login(int ind) {
 
 	if (Send_reply(ind, PKT_PLAY, PKT_SUCCESS) <= 0) {
 		plog("Cannot send play reply");
-		return -1;
+		return(-1);
 	}
 
 	/* Send party/guild information */
@@ -3094,12 +3094,12 @@ static int Handle_login(int ind) {
 	/* Hack -- terminate the data stream sent to the client */
 	if (Packet_printf(&connp->c, "%c", PKT_END) <= 0) {
 		Destroy_connection(p_ptr->conn, "write error");
-		return -1;
+		return(-1);
 	}
 
 	if (Send_reliable(ind) == -1) {
 		Destroy_connection(ind, "Couldn't send reliable data");
-		return -1;
+		return(-1);
 	}
 
 	num_logins++;
@@ -3681,7 +3681,7 @@ static int Handle_login(int ind) {
 				msg_format(i, "\374\377%c%s%s has entered the game.", COLOUR_SERVER, title, p_ptr->name);
 			if (msgbuf[0] && Players[i]->guild == p_ptr->guild) msg_print(i, msgbuf);
 		}
-		return 0;
+		return(0);
 	}
 
 	/* Non-admin character joined -> let everyone know */
@@ -3724,15 +3724,15 @@ static int Handle_login(int ind) {
 	/* Tell the meta server about the new player */
 	Report_to_meta(META_UPDATE);
 
-	return 0;
+	return(0);
 }
 
 /* wrapper function for local 'Conn' - C. Blue */
 int is_inactive(int Ind) {
 	if (Conn[Players[Ind]->conn]->inactive_keepalive)
-		return (Conn[Players[Ind]->conn]->inactive_keepalive);
+		return(Conn[Players[Ind]->conn]->inactive_keepalive);
 	else
-		return (Conn[Players[Ind]->conn]->inactive_ping / 2);
+		return(Conn[Players[Ind]->conn]->inactive_ping / 2);
 }
 
 /* Actually execute commands from the client command queue */
@@ -3953,7 +3953,7 @@ void Handle_input(int fd, int arg) {
 	if (Sockbuf_read(&connp->r) <= 0) {
 		// Check to make sure that an EAGAIN error didn't occur.  Sometimes on
 		// Linux when receiving a lot of traffic EAGAIN will occur on recv and
-		// Sockbuf_read will return 0.
+		// Sockbuf_read will return(0).
 		if (errno != EAGAIN) {
 			// If this happens, the the client has probably closed his TCP connection.
 			do_quit(ind, 0);
@@ -4149,7 +4149,7 @@ int Net_output(void) {
 			}
 			// Flush the output buffers
 		//	if (Sockbuf_flush(&connp->w) == -1)
-		//		return -1;
+		//		return(-1);
 		//}
 
 		//Sockbuf_clear(&connp->w);
@@ -4159,7 +4159,7 @@ int Net_output(void) {
 	if (!(turn % (15 * cfg.fps)))
 		Report_to_meta(META_UPDATE);
 
-	return 1;
+	return(1);
 }
 
 int Net_output1(int Ind) {
@@ -4167,8 +4167,8 @@ int Net_output1(int Ind) {
 	player_type *p_ptr = NULL;
 
 	p_ptr = Players[Ind];
-	if (p_ptr->conn == NOT_CONNECTED) return 0;
-	if (p_ptr->new_level_flag) return 2;
+	if (p_ptr->conn == NOT_CONNECTED) return(0);
+	if (p_ptr->new_level_flag) return(2);
 	connp = Conn[p_ptr->conn];
 
 	if (connp->c.len > 0) {
@@ -4179,7 +4179,7 @@ int Net_output1(int Ind) {
 			Send_reliable(p_ptr->conn);
 		}
 	}
-	return 1;
+	return(1);
 }
 
 /*
@@ -4195,7 +4195,7 @@ int Send_reply(int ind, int replyto, int result) {
 	n = Packet_printf(&connp->c, "%c%c%c", PKT_REPLY, replyto, result);
 	if (n == -1) {
 		Destroy_connection(ind, "write error");
-		return -1;
+		return(-1);
 	}
 
 	return n;
@@ -4208,7 +4208,7 @@ int Send_leave(int ind, int id) {
 		errno = 0;
 		plog(format("Connection not ready for leave info (%d,%d)",
 			connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	return Packet_printf(&connp->c, "%c%hd", PKT_LEAVE, id);
 }
@@ -4258,19 +4258,19 @@ static int Receive_quit(int ind) {
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) != 1) {
 		errno = 0;
 		Destroy_connection(ind, "receive error in quit");
-		return -1;
+		return(-1);
 	}
 
 	do_quit(ind, 0);
 
-	return 1;
+	return(1);
 }
 
 static bool ang_sort_comp_order(int Ind, vptr u, vptr v, int a, int b) {
 	byte *o = (byte*)(u); /* Order */
 	/* v is index, which is irrelevant as sorting criterium, but keeps track of the sort */
 
-	return (o[a] <= o[b]);
+	return(o[a] <= o[b]);
 }
 static void ang_sort_swap_order(int Ind, vptr u, vptr v, int a, int b) {
 	byte temp, *o = (byte*)(u), *i = (byte*)(v);
@@ -4308,7 +4308,7 @@ static int Receive_login(int ind) {
 		printf("%d\n", n);
 		plog("Failed reading login packet");
 		Destroy_connection(ind, "receive error in login");
-		return -1;
+		return(-1);
 	}
 
 	/* Hack for reordering characters:
@@ -4476,24 +4476,24 @@ static int Receive_login(int ind) {
 		if (!Admin_GetAccount(&acc, connp->nick) && lookup_similar_account(connp->nick, NULL)) {
 			//Destroy_connection(ind, "A too similar name is already in use. Check lower/upper case."); //<- if not doing any 'similar' checks, it makes sense to point out case-sensitivity
 			Destroy_connection(ind, "A too similar name is already in use, or you made a typo in name or password.");
-			return -1;
+			return(-1);
 		}
 		WIPE(&acc, struct account);
 
 		if (!connp->nick[0]) {
 			Destroy_connection(ind, "Pick a name and password!"); //for older clients up to 4.6.1a which didn't prevent entering empty creds
-			return -1;
+			return(-1);
 		}
 		if (!connp->pass[0]) {
 			Destroy_connection(ind, "You must enter a password too!");
-			return -1;
+			return(-1);
 		}
 
 		if (strlen(connp->pass) < PASSWORD_MIN_LEN) {
 			/* For now only restrict pw len for newly created accounts, so people can still log in with their old (too short) passwords */
 			if (!Admin_GetAccount(&acc, connp->nick)) {
 				Destroy_connection(ind, format("Password length must be at least %d!", PASSWORD_MIN_LEN));
-				return -1;
+				return(-1);
 			}
 		}
 
@@ -4716,7 +4716,7 @@ static int Receive_login(int ind) {
 		/* Account/Character names must be at least of length 2 (E_LENGTH) */
 		if (strlen(choice) < ACC_CHAR_MIN_LEN) {
 			Destroy_connection(ind, format("Account and character names must be at least %d characters long.", ACC_CHAR_MIN_LEN));
-			return -1;
+			return(-1);
 		}
 
 		/* Check for forbidden names (technical/lore reasons) */
@@ -4782,7 +4782,7 @@ static int Receive_login(int ind) {
 		    /* Exempt similar-checking for when the character name is exactly the same as his account name - that should always be allowed! */
 		    && strcmp(choice, connp->nick)) {
 			Destroy_connection(ind, "A too similar name exists. Please choose a different name.");
-			return -1;
+			return(-1);
 		}
 
 		/* at this point, we are authorised as the owner
@@ -4849,7 +4849,7 @@ static int Receive_login(int ind) {
 			break;
 		default:
 			Destroy_connection(ind, "unknown error");
-			return -1;
+			return(-1);
 		}
 
 		/* Check that no one else is creating a char with the same name - mikaelh */
@@ -4903,7 +4903,7 @@ static int Receive_login(int ind) {
 		    /* Exempt similar-checking for when the character name is exactly the same as his account name - that should always be allowed! */
 		    && strcmp(choice, connp->nick)) {
 			Destroy_connection(ind, "A too similar character name exists. Please choose a different name.");
-			return -1;
+			return(-1);
 		}
 #endif
 
@@ -4948,7 +4948,7 @@ static int Receive_play(int ind) {
 		errno = 0;
 		plog("Cannot receive play packet");
 		Destroy_connection(ind, "receive error in play");
-		return -1;
+		return(-1);
 	}
 
 	/* Do not tell me how much this sucks. I didn't do the design
@@ -4966,8 +4966,8 @@ static int Receive_play(int ind) {
 			plog(format("Packet is not of play type (%d)", ch));
 #endif	// DEBUG_LEVEL(1)
 	  //Destroy_connection(ind, "not play");
-	  //return -1;
-	  return 0;
+	  //return(-1);
+	  return(0);
 	}
 	//else
 	{
@@ -4976,14 +4976,14 @@ static int Receive_play(int ind) {
 				errno = 0;
 				plog("Play packet is broken");
 				Destroy_connection(ind, "receive error 2 in play");
-				return -1;
+				return(-1);
 			}
 		} else {
 			if ((n = Packet_scanf(&connp->r, "%hd%hd%hd", &sex, &race, &class)) <= 0) {
 				errno = 0;
 				plog("Play packet is broken");
 				Destroy_connection(ind, "receive error 2 in play");
-				return -1;
+				return(-1);
 			}
 		}
 
@@ -5078,7 +5078,7 @@ static int Receive_play(int ind) {
 			    limit, connp->r.len - (connp->r.ptr - connp->r.buf)));
 #endif
 			connp->r.ptr = connp->r.buf;
-			return 1;
+			return(1);
 		}
 
 #if DEBUG_LEVEL > 2
@@ -5092,7 +5092,7 @@ static int Receive_play(int ind) {
 			n = Packet_scanf(&connp->r, "%hd", &connp->stat_order[i]);
 			if (n <= 0) {
 				Destroy_connection(ind, "Misread stat order");
-				return -1;
+				return(-1);
 			}
 		}
 
@@ -5101,7 +5101,7 @@ static int Receive_play(int ind) {
 		n = Packet_scanf(&connp->r, "%hd", &connp->class_extra);
 		if (n <= 0) {
 			Destroy_connection(ind, "Misread class extra");
-			return -1;
+			return(-1);
 		}
 #endif	// 0
 
@@ -5111,7 +5111,7 @@ static int Receive_play(int ind) {
 				n = Packet_scanf(&connp->r, "%c", &connp->Client_setup.options[i]);
 				if (n <= 0) {
 					Destroy_connection(ind, "Misread options");
-					return -1;
+					return(-1);
 				}
 			}
 		} else if (is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0)) {
@@ -5119,7 +5119,7 @@ static int Receive_play(int ind) {
 				n = Packet_scanf(&connp->r, "%c", &connp->Client_setup.options[i]);
 				if (n <= 0) {
 					Destroy_connection(ind, "Misread options");
-					return -1;
+					return(-1);
 				}
 			}
 		} else {
@@ -5127,7 +5127,7 @@ static int Receive_play(int ind) {
 				n = Packet_scanf(&connp->r, "%c", &connp->Client_setup.options[i]);
 				if (n <= 0) {
 					Destroy_connection(ind, "Misread options");
-					return -1;
+					return(-1);
 				}
 			}
 		}
@@ -5138,7 +5138,7 @@ static int Receive_play(int ind) {
 			n = Packet_scanf(&connp->r, "%d%d", &screen_wid_32b, &screen_hgt_32b);
 			if (n <= 0) {
 				Destroy_connection(ind, "Misread dimensions");
-				return -1;
+				return(-1);
 			}
 			/* Conversion from 32 bits to 16 bits */
 			connp->Client_setup.screen_wid = screen_wid_32b;
@@ -5165,7 +5165,7 @@ static int Receive_play(int ind) {
 			if (n <= 0) {
 #ifdef STRICT_RECEIVE_PLAY
 				Destroy_connection(ind, "Misread unknown redefinitions");
-				return -1;
+				return(-1);
 #else
 				break;
 #endif
@@ -5191,7 +5191,7 @@ static int Receive_play(int ind) {
 			if (n <= 0) {
 #ifdef STRICT_RECEIVE_PLAY
 				Destroy_connection(ind, "Misread feature redefinitions");
-				return -1;
+				return(-1);
 #else
 				break;
 #endif
@@ -5219,7 +5219,7 @@ static int Receive_play(int ind) {
 			if (n <= 0) {
 #ifdef STRICT_RECEIVE_PLAY
 				Destroy_connection(ind, "Misread object redefinitions");
-				return -1;
+				return(-1);
 #else
 				break;
 #endif
@@ -5247,7 +5247,7 @@ static int Receive_play(int ind) {
 			if (n <= 0) {
 #ifdef STRICT_RECEIVE_PLAY
 				Destroy_connection(ind, "Misread monster redefinitions");
-				return -1;
+				return(-1);
 #else
 				break;
 #endif
@@ -5269,17 +5269,17 @@ static int Receive_play(int ind) {
 		if (connp->state != CONN_PLAYING) {
 			if (connp->state == CONN_READY) {
 				connp->r.ptr = connp->r.buf + connp->r.len;
-				return 0;
+				return(0);
 			}
 			errno = 0;
 			plog(format("Connection not in login state (%02x)", connp->state));
 			Destroy_connection(ind, "not login (2)");
-			return -1;
+			return(-1);
 		}
 		//if (Send_reliable_old(ind) == -1)
 		if (Send_reliable(ind) == -1)
-			return -1;
-		return 0;
+			return(-1);
+		return(0);
 	}
 
 	s_printf("AUDIO: %s features %hd, %hd.\n", connp->nick, sfx, mus);
@@ -5289,10 +5289,10 @@ static int Receive_play(int ind) {
 	Sockbuf_clear(&connp->w);
 	if (Handle_login(ind) == -1) {
 		/* The connection has already been destroyed */
-		return -1;
+		return(-1);
 	}
 
-	return 2;
+	return(2);
 }
 
 /* Head of file transfer system receive */
@@ -5347,11 +5347,11 @@ static int Receive_file(int ind) {
 					/* Rollback the socket buffer */
 					Sockbuf_rollback(&connp->r, bytes_read);
 
-					return 0;
+					return(0);
 				} else if (x == -2) {
 					/* Write failed */
 					s_printf("Receive_file: local_file_write failed!\n");
-					return 0;
+					return(0);
 				}
 				break;
 			case PKT_FILE_END:
@@ -5474,12 +5474,12 @@ int Send_reliable(int ind) {
 	/* Hack -- make sure we have a valid socket to write to.  -1 is used to
 	 * specify a player that has disconnected but is still "in game".
 	 */
-	if (connp->w.sock == -1) return 0;
+	if (connp->w.sock == -1) return(0);
 
 	if (Sockbuf_write(&connp->w, connp->c.buf, connp->c.len) != connp->c.len) {
 		plog("Cannot write reliable data");
 		Destroy_connection(ind, "write error");
-		return -1;
+		return(-1);
 	}
 	if ((num_written = Sockbuf_flush(&connp->w)) < connp->w.len) {
 		plog(format("Cannot flush reliable data (%d)", num_written));
@@ -5490,7 +5490,7 @@ int Send_reliable(int ind) {
 		save_game_panic();
 #endif
 
-		return -1;
+		return(-1);
 	}
 	Sockbuf_clear(&connp->c);
 	return num_written;
@@ -5506,21 +5506,21 @@ int Send_reliable_old(int ind) {
 
 	if (connp->c.len <= 0 || connp->last_send_loops == turn) {
 		connp->last_send_loops = turn;
-		return 0;
+		return(0);
 	}
 	read_buf = connp->c.buf;
 	max_todo = connp->c.len;
 	rel_off = connp->reliable_offset;
 	if (connp->w.len > 0) {
 		if (connp->w.len >= max_packet_size - min_send_size)
-			return 0;
+			return(0);
 		if (max_todo > max_packet_size - connp->w.len)
 			max_todo = max_packet_size - connp->w.len;
 	}
 	if (connp->retransmit_at_loop > turn) {
 		if (max_todo <= connp->reliable_unsent - connp->reliable_offset
 			+ min_send_size || connp->w.len == 0)
-			return 0;
+			return(0);
 	}
 	else if (connp->retransmit_at_loop != 0)
 		connp->acks >>= 1;
@@ -5534,7 +5534,7 @@ int Send_reliable_old(int ind) {
 		    || Sockbuf_write(&connp->w, read_buf, len) != len) {
 			plog("Cannot write reliable data");
 			Destroy_connection(ind, "write error");
-			return -1;
+			return(-1);
 		}
 
 		if ((n = Sockbuf_flush(&connp->w)) < len) {
@@ -5544,7 +5544,7 @@ int Send_reliable_old(int ind) {
 			} else {
 				plog(format("Cannot flush reliable data (%d)", n));
 				Destroy_connection(ind, "flush error");
-				return -1;
+				return(-1);
 			}
 		}
 
@@ -5558,7 +5558,7 @@ int Send_reliable_old(int ind) {
 	connp->last_send_loops = turn;
 
 	if (max_todo - todo <= 0)
-		return 0;
+		return(0);
 
 	if (connp->rtt_retransmit > MAX_RETRANSMIT)
 		connp->rtt_retransmit = MAX_RETRANSMIT;
@@ -5572,7 +5572,7 @@ int Send_reliable_old(int ind) {
 	if (rel_off > connp->reliable_unsent)
 		connp->reliable_unsent = rel_off;
 
-	return (max_todo - todo);
+	return(max_todo - todo);
 }
 #endif
 
@@ -5587,13 +5587,13 @@ static int Receive_ack(int ind) {
 		errno = 0;
 		plog(format("Cannot read ack packet (%d)", n));
 		Destroy_connection(ind, "read error");
-		return -1;
+		return(-1);
 	}
 	if (ch != PKT_ACK) {
 		errno = 0;
 		plog(format("Not an ack packet (%d)", ch));
 		Destroy_connection(ind, "not ack");
-		return -1;
+		return(-1);
 	}
 	rtt = turn - rel_loops;
 	if (rtt > 0 && rtt <= MAX_RTT) {
@@ -5615,10 +5615,10 @@ static int Receive_ack(int ind) {
 		plog(format("Bad ack (diff=%d,cru=%d,c=%d,len=%d)",
 			diff, rel, connp->reliable_offset, connp->c.len));
 		Destroy_connection(ind, "bad ack");
-		return -1;
+		return(-1);
 	}
 	else if (diff <= 0)
-		return 1;
+		return(1);
 	Sockbuf_advance(&connp->c, (int) diff);
 	connp->reliable_offset += diff;
 	if ((n = ((diff + 512 - 1) / 512)) > connp->acks)
@@ -5642,7 +5642,7 @@ static int Receive_ack(int ind) {
 
 	/*printf("Received ack to data sent at %d.\n", rel_loops);*/
 
-	return 1;
+	return(1);
 }
 #endif
 
@@ -5654,7 +5654,7 @@ static int Receive_discard(int ind) {
 		connp->r.ptr[0], connp->state));
 	connp->r.ptr = connp->r.buf + connp->r.len;
 
-	return 0;
+	return(0);
 }
 
 static int Receive_undefined(int ind) {
@@ -5669,8 +5669,8 @@ static int Receive_undefined(int ind) {
 	/* Discard everything - mikaelh */
 	connp->r.ptr = connp->r.buf + connp->r.len;
 
-	return -1;	/* Crash if not (evil) */
-	/*return 0;*/
+	return(-1);	/* Crash if not (evil) */
+	/*return(0);*/
 }
 
 int Send_plusses(int Ind, int tohit, int todam, int hr, int dr, int hm, int dm) {
@@ -5681,7 +5681,7 @@ int Send_plusses(int Ind, int tohit, int todam, int hr, int dr, int hm, int dm) 
 		errno = 0;
 		plog(format("Connection not ready for plusses (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
@@ -5701,7 +5701,7 @@ int Send_ac(int Ind, int base, int plus) {
 		errno = 0;
 		plog(format("Connection not ready for ac (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
@@ -5733,7 +5733,7 @@ int Send_experience(int Ind, int lev, s32b max, s32b cur, s32b adv, s32b adv_pre
 		errno = 0;
 		plog(format("Connection not ready for experience (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	if (is_newer_than(&Players[Ind]->version, 4, 5, 6, 0, 0, 1))
@@ -5759,7 +5759,7 @@ int Send_skill_init(int Ind, u16b i) {
 		errno = 0;
 		plog(format("Connection not ready for skill init (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	tmp = s_info[i].action_desc ? s_text + s_info[i].action_desc : "";
@@ -5787,7 +5787,7 @@ int Send_skill_points(int Ind) {
 		errno = 0;
 		plog(format("Connection not ready for skill mod (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	return Packet_printf(&connp->c, "%c%d", PKT_SKILL_PTS, p_ptr->skill_points);
 }
@@ -5802,7 +5802,7 @@ int Send_skill_info(int Ind, int i, bool keep) {
 		errno = 0;
 		plog(format("Connection not ready for skill mod (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	mkey = s_info[i].action_mkey;
@@ -5836,7 +5836,7 @@ int Send_gold(int Ind, s32b au, s32b balance) {
 		errno = 0;
 		plog(format("Connection not ready for gold (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
@@ -5855,7 +5855,7 @@ int Send_sanity(int Ind, byte attr, cptr msg) {
 		errno = 0;
 		plog(format("Connection not ready for hp (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	/* For client-side 'alert_offpanel_dam' */
@@ -5893,7 +5893,7 @@ int Send_hp(int Ind, int mhp, int chp) {
 		errno = 0;
 		plog(format("Connection not ready for hp (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
@@ -5927,7 +5927,7 @@ int Send_sp(int Ind, int msp, int csp) {
 		errno = 0;
 		plog(format("Connection not ready for sp (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
@@ -5973,7 +5973,7 @@ int Send_stamina(int Ind, int mst, int cst) {
 		errno = 0;
 		plog(format("Connection not ready for hp (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
@@ -6019,7 +6019,7 @@ int Send_char_info(int Ind, int race, int class, int trait, int sex, int mode, i
 		errno = 0;
 		plog(format("Connection not ready for char info (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	if (is_atleast(&connp->version, 4, 7, 3, 0, 0, 0)) {
@@ -6047,7 +6047,7 @@ int Send_various(int Ind, int hgt, int wgt, int age, int sc, cptr body) {
 		errno = 0;
 		plog(format("Connection not ready for various (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	return Packet_printf(&connp->c, "%c%hu%hu%hu%hu%s", PKT_VARIOUS, hgt, wgt, age, sc, body);
 }
@@ -6063,7 +6063,7 @@ int Send_stat(int Ind, int stat) {
 		errno = 0;
 		plog(format("Connection not ready for stat (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
@@ -6098,7 +6098,7 @@ int Send_history(int Ind, int line, cptr hist) {
 		errno = 0;
 		plog(format("Connection not ready for history (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	return Packet_printf(&connp->c, "%c%hu%s", PKT_HISTORY, line, hist);
 }
@@ -6133,7 +6133,7 @@ int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 		errno = 0;
 		plog(format("Connection not ready for inven (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	if (o_ptr->tval == TV_BOOK) pval = o_ptr->pval;
@@ -6168,7 +6168,7 @@ int Send_subinven(int Ind, char ipos, char pos, byte attr, int wgt, object_type 
 	connection_t *connp = Conn[Players[Ind]->conn];
 	char uses_dir = 0; /* flag whether a rod requires a direction for zapping or not */
 
-	if (is_older_than(&Players[Ind]->version, 4, 7, 4, 5, 0, 0)) return 0;
+	if (is_older_than(&Players[Ind]->version, 4, 7, 4, 5, 0, 0)) return(0);
 
 	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 
@@ -6187,7 +6187,7 @@ int Send_subinven(int Ind, char ipos, char pos, byte attr, int wgt, object_type 
 		errno = 0;
 		plog(format("Connection not ready for inven (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 //s_printf("%d %d %d %d %hu %hd %d %d %hd %hd %d %s \n", PKT_SI_MOVE, ipos, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
@@ -6207,7 +6207,7 @@ int Send_inven_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 		errno = 0;
 		plog(format("Connection not ready for inven (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	/* Also send ID / *ID* status */
@@ -6285,7 +6285,7 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 		errno = 0;
 		plog(format("Connection not ready for equip (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	/* for characters in forms that cannot use full equipment */
@@ -6325,7 +6325,7 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, name);
 	}
 
-	if (forward) return 0;
+	if (forward) return(0);
 
 	if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0))
 		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval,
@@ -6372,7 +6372,7 @@ int Send_title(int Ind, cptr title) {
 		errno = 0;
 		plog(format("Connection not ready for title (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	return Packet_printf(&connp->c, "%c%s", PKT_TITLE, title);
 }
@@ -6385,7 +6385,7 @@ int Send_extra_status(int Ind, cptr status) {
 		errno = 0;
 		plog(format("Connection not ready for extra status (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
@@ -6428,7 +6428,7 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 		errno = 0;
 		plog(format("Connection not ready for depth (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	/* Hack for Valinor */
@@ -6568,7 +6568,7 @@ int Send_depth_hack(int Ind, struct worldpos *wpos, bool ville, cptr desc) {
 		errno = 0;
 		plog(format("Connection not ready for depth (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	if (is_newer_than(&p_ptr->version, 4, 4, 1, 5, 0, 0)) {
@@ -6598,7 +6598,7 @@ int Send_food(int Ind, int food) {
 		errno = 0;
 		plog(format("Connection not ready for food (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
@@ -6617,7 +6617,7 @@ int Send_blind(int Ind, bool blind) {
 		errno = 0;
 		plog(format("Connection not ready for blind (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
@@ -6634,7 +6634,7 @@ int Send_confused(int Ind, bool confused) {
 		errno = 0;
 		plog(format("Connection not ready for confusion (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
@@ -6651,7 +6651,7 @@ int Send_fear(int Ind, bool fear) {
 		errno = 0;
 		plog(format("Connection not ready for fear (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
@@ -6668,7 +6668,7 @@ int Send_poison(int Ind, char poisoned) {
 		errno = 0;
 		plog(format("Connection not ready for poison (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
@@ -6684,13 +6684,13 @@ int Send_state(int Ind, bool paralyzed, bool searching, bool resting) {
 	/* give 'knocked out' priority over paralysis;
 	   give stun priority over search/rest */
 	if (is_newer_than(&connp->version, 4, 4, 2, 0, 0, 0) &&
-	    (p_ptr->stun > 100 || (!paralyzed && p_ptr->stun))) return 0;
+	    (p_ptr->stun > 100 || (!paralyzed && p_ptr->stun))) return(0);
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for state (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
@@ -6707,7 +6707,7 @@ int Send_speed(int Ind, int speed) {
 		errno = 0;
 		plog(format("Connection not ready for speed (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
@@ -6723,7 +6723,7 @@ int Send_study(int Ind, bool study) {
 		errno = 0;
 		plog(format("Connection not ready for study (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	return Packet_printf(&connp->c, "%c%c", PKT_STUDY, study);
 }
@@ -6746,10 +6746,10 @@ int Send_bpr(int Ind, byte bpr, byte attr) {
 		errno = 0;
 		plog(format("Connection not ready for bpr (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
-	if (bpr == 255 && is_older_than(&Players[Ind]->version, 4, 6, 1, 2, 0, 1)) return 0;
+	if (bpr == 255 && is_older_than(&Players[Ind]->version, 4, 6, 1, 2, 0, 1)) return(0);
 	return Packet_printf(&connp->c, "%c%c%c", PKT_BPR, bpr, attr);
 }
 
@@ -6761,7 +6761,7 @@ int Send_cut(int Ind, int cut) {
 		errno = 0;
 		plog(format("Connection not ready for cut (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
@@ -6777,13 +6777,13 @@ int Send_stun(int Ind, int stun) {
 
 	/* give 'knocked out' priority over paralysis */
 	if (is_newer_than(&connp->version, 4, 4, 2, 0, 0, 0) &&
-	    p_ptr->paralyzed && p_ptr->stun <= 100) return 0;
+	    p_ptr->paralyzed && p_ptr->stun <= 100) return(0);
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for stun (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
@@ -6803,7 +6803,7 @@ int Send_direction(int Ind) {
 		errno = 0;
 		plog(format("Connection not ready for direction (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return FALSE;
+		return(FALSE);
 	}
 #if 0 /* hmm? */
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
@@ -6822,7 +6822,7 @@ int Send_message(int Ind, cptr msg) {
 	char buf[80 +80]; // for +80 see below, at 'Clip end of msg'..
 
 	if (msg == NULL) {
-		//return 1;
+		//return(1);
 		/* Hack: Indicate a NULL string by sending a string just consisting of char \377 */
 		return Packet_printf(&connp->c, "%c%c%c", PKT_MESSAGE, 255, 0);
 	}
@@ -6831,7 +6831,7 @@ int Send_message(int Ind, cptr msg) {
 		errno = 0;
 		plog(format("Connection not ready for message (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	/* Clip end of msg if too long */
@@ -6875,9 +6875,9 @@ int Send_char(int Ind, int x, int y, byte a, char32_t c) {
 	connection_t *connp = Conn[p_ptr->conn], *connp2;
 
 	if (!BIT(Conn[Players[Ind]->conn]->state, CONN_PLAYING | CONN_READY))
-		return 0;
+		return(0);
 
-	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return 0;
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
@@ -6947,7 +6947,7 @@ int Send_spell_info(int Ind, int realm, int book, int i, cptr out_val) {
 		errno = 0;
 		plog(format("Connection not ready for spell info (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	return Packet_printf(&connp->c, "%c%d%d%d%hu%hu%hu%s", PKT_SPELL_INFO, p_ptr->innate_spells[0], p_ptr->innate_spells[1], p_ptr->innate_spells[2], realm, book, i, out_val);
 }
@@ -6960,7 +6960,7 @@ int Send_powers_info(int Ind) {
 		errno = 0;
 		plog(format("Connection not ready for spell info (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	return Packet_printf(&connp->c, "%c%d%d%d%d", PKT_POWERS_INFO, p_ptr->innate_spells[0], p_ptr->innate_spells[1], p_ptr->innate_spells[2], p_ptr->innate_spells[3]);
 }
@@ -6980,7 +6980,7 @@ int Send_technique_info(int Ind) {
 		errno = 0;
 		plog(format("Connection not ready for techniques info (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	/* backward compatibility before addition of 'detect_noise()' and 'apply_poison()' for rogues */
@@ -7003,7 +7003,7 @@ int Send_item_request(int Ind, signed char tester_hook) { //paranoia @ 'signed' 
 		errno = 0;
 		plog(format("Connection not ready for item request (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 #if 0 /* what is this needed for, actually? */
@@ -7030,7 +7030,7 @@ int Send_spell_request(int Ind, int item) {
 		errno = 0;
 		plog(format("Connection not ready for spell request (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	return Packet_printf(&connp->c, "%c%d", PKT_SPELL, item);
@@ -7045,7 +7045,7 @@ int Send_flush(int Ind) {
 		errno = 0;
 		plog(format("Connection not ready for flush (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	return Packet_printf(&connp->c, "%c", PKT_FLUSH);
 }
@@ -7082,11 +7082,11 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 		errno = 0;
 		plog(format("Connection not ready for line info (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
-	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return 0; /* bad hack for shortcut */
-	//if (p_ptr->esp_link && p_ptr->esp_link_type && (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED)) return 0;
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return(0); /* bad hack for shortcut */
+	//if (p_ptr->esp_link && p_ptr->esp_link_type && (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED)) return(0);
 
 	if ((Ind2 = get_esp_link(Ind, LINKF_VIEW, &p_ptr2))) connp2 = Conn[p_ptr2->conn];
 
@@ -7380,7 +7380,7 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 	/* Hack -- Prevent buffer overruns by flushing after each line sent */
 	/* Send_reliable(Players[Ind]->conn); */
 
-	return 1;
+	return(1);
 }
 
 int Send_line_info_forward(int Ind, int Ind_src, int y) {
@@ -7400,7 +7400,7 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 		errno = 0;
 		plog(format("Connection not ready for line info (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	/* Put a header on the packet */
@@ -7551,7 +7551,7 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 	/* Hack -- Prevent buffer overruns by flushing after each line sent */
 	/* Send_reliable(Players[Ind]->conn); */
 
-	return 1;
+	return(1);
 }
 
 int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
@@ -7566,10 +7566,10 @@ int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 		errno = 0;
 		plog(format("Connection not ready for minimap (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
-	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return 0;
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 
 	/* Sending this packet to a mind-linked person is bad - mikaelh */
 #if 0
@@ -7581,7 +7581,7 @@ int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 	if (Ind2) Packet_printf(&connp2->c, "%c%hd", PKT_MINI_MAP, y);
 
 	/* Hack: Just a 'transmission finished' marker packet? */
-	if (y == -1) return 1;
+	if (y == -1) return(1);
 
 	/* Each column */
 	for (x = 0; x < 80; x++) {
@@ -7785,7 +7785,7 @@ int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 	/* Hack -- Prevent buffer overruns by flushing after each line sent */
 	/* Send_reliable(Players[Ind]->conn); */
 
-	return 1;
+	return(1);
 }
 
 int Send_mini_map_pos(int Ind, int x, int y, byte a, char32_t c) {
@@ -7801,10 +7801,10 @@ int Send_mini_map_pos(int Ind, int x, int y, byte a, char32_t c) {
 		errno = 0;
 		plog(format("Connection not ready for minimap_pos (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
-	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return 0;
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 
 	/* Sending this packet to a mind-linked person is bad - mikaelh */
 #if 0
@@ -7818,7 +7818,7 @@ int Send_mini_map_pos(int Ind, int x, int y, byte a, char32_t c) {
 	else if (is_newer_than(&p_ptr->version, 4, 5, 5, 0, 0, 0)) Packet_printf(&connp->c, "%c%hd%hd%c%c", PKT_MINI_MAP_POS, xs, ys, a, (char)c);
 	//if (Ind2 && is_newer_than(&p_ptr2->version, 4, 5, 5, 0, 0, 0)) Packet_printf(&connp2->c, "%c%hd%hd%c%c", PKT_MINI_MAP_POS, xs, ys, a, c);
 
-	return 1;
+	return(1);
 }
 
 //int Send_store(int Ind, char pos, byte attr, int wgt, int number, int price, cptr name)
@@ -7834,11 +7834,11 @@ int Send_store(int Ind, char pos, byte attr, int wgt, int number, int price, cpt
 		errno = 0;
 		plog(format("Connection not ready for store item (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	/* don't segfault old clients which use STORE_INVEN_MAX = 48 */
-	if (pos >= 48 && is_older_than(&Players[Ind]->version, 4, 4, 9, 0, 0, 0)) return 0;
+	if (pos >= 48 && is_older_than(&Players[Ind]->version, 4, 4, 9, 0, 0, 0)) return(0);
 
 	/* Hack -- send pval only if it's School book */
 	if (tval != TV_BOOK) pval = 0;
@@ -7877,11 +7877,11 @@ int Send_store_wide(int Ind, char pos, byte attr, int wgt, int number, int price
 		errno = 0;
 		plog(format("Connection not ready for store item (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	/* don't segfault old clients which use STORE_INVEN_MAX = 48 */
-	if (pos >= 48 && is_older_than(&Players[Ind]->version, 4, 4, 9, 0, 0, 0)) return 0;
+	if (pos >= 48 && is_older_than(&Players[Ind]->version, 4, 4, 9, 0, 0, 0)) return(0);
 
 	/* Hack -- send pval only if it's School book */
 	if (tval != TV_BOOK) pval = 0;
@@ -7914,13 +7914,13 @@ int Send_store_special_str(int Ind, char line, char col, char attr, char *str) {
 	player_type *p_ptr2 = NULL;
 #endif
 
-	if (!is_newer_than(&connp->version, 4, 4, 6, 1, 0, 0)) return 0;
+	if (!is_newer_than(&connp->version, 4, 4, 6, 1, 0, 0)) return(0);
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for store item (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 #ifdef MINDLINK_STORE
@@ -7942,13 +7942,13 @@ int Send_store_special_char(int Ind, char line, char col, char attr, char c) {
 	player_type *p_ptr2 = NULL;
 #endif
 
-	if (!is_newer_than(&connp->version, 4, 4, 6, 1, 0, 0)) return 0;
+	if (!is_newer_than(&connp->version, 4, 4, 6, 1, 0, 0)) return(0);
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for store item (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 #ifdef MINDLINK_STORE
@@ -7970,13 +7970,13 @@ int Send_store_special_clr(int Ind, char line_start, char line_end) {
 	player_type *p_ptr2 = NULL;
 #endif
 
-	if (!is_newer_than(&connp->version, 4, 4, 6, 1, 0, 0)) return 0;
+	if (!is_newer_than(&connp->version, 4, 4, 6, 1, 0, 0)) return(0);
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for store item (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 #ifdef MINDLINK_STORE
@@ -8014,7 +8014,7 @@ int Send_store_info(int Ind, int num, cptr store, cptr owner, int items, int pur
 		errno = 0;
 		plog(format("Connection not ready for store info (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 #ifdef MINDLINK_STORE
@@ -8050,7 +8050,7 @@ int Send_store_action(int Ind, char pos, u16b bact, u16b action, cptr name, char
 		errno = 0;
 		plog(format("Connection not ready for store info (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 #ifdef MINDLINK_STORE
@@ -8074,7 +8074,7 @@ int Send_store_sell(int Ind, int price) {
 		errno = 0;
 		plog(format("Connection not ready for sell price (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 #ifdef MINDLINK_STORE
@@ -8098,7 +8098,7 @@ int Send_store_kick(int Ind) {
 		errno = 0;
 		plog(format("Connection not ready for store_kick (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 #ifdef MINDLINK_STORE
@@ -8120,7 +8120,7 @@ int Send_target_info(int Ind, int x, int y, cptr str) {
 		errno = 0;
 		plog(format("Connection not ready for target info (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	/* Copy */
@@ -8148,15 +8148,15 @@ int Send_sound(int Ind, int sound, int alternative, int type, int vol, s32b play
 	connection_t *connp2 = NULL;
 
 	/* Catch extremely rare crash: Player gets item on birth, sound attempts to play, but connection is already gone again */
-	if (!connp) return 0;
+	if (!connp) return(0);
 
 #ifdef USE_SOUND_2010
 	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) {
 		/* actually allow some critical sfx to pass */
-		if (sound != __sfx_bell && sound != __sfx_page && sound != __sfx_warning) return 0;
+		if (sound != __sfx_bell && sound != __sfx_page && sound != __sfx_warning) return(0);
 	}
 
-	if (sound == __sfx_am && !p_ptr->sfx_am) return 0;
+	if (sound == __sfx_am && !p_ptr->sfx_am) return(0);
 #endif
 
 #ifdef SFX_SHRIEK_VOLUME
@@ -8185,7 +8185,7 @@ int Send_sound(int Ind, int sound, int alternative, int type, int vol, s32b play
 		errno = 0;
 		plog(format("Connection not ready for sound (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 //	if (is_admin(p_ptr)) s_printf("USE_SOUND_2010: sound %d (alt %d) sent to player %s (%d).\n", sound, alternative, p_ptr->name, Ind);//debug
@@ -8238,7 +8238,7 @@ int Send_music(int Ind, int music, int musicalt) {
 		errno = 0;
 		plog(format("Connection not ready for music (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	if (is_newer_than(&connp->version, 4, 5, 6, 0, 0, 1))
@@ -8286,7 +8286,7 @@ int Send_music_vol(int Ind, int music, int musicalt, char vol) {
 		errno = 0;
 		plog(format("Connection not ready for music (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	//s_printf("USE_SOUND_2010: music %d sent to player %s (%d).\n", music, p_ptr->name, Ind);//debug
@@ -8313,7 +8313,7 @@ int Send_sfx_ambient(int Ind, int sfx_ambient, bool smooth) {
 	int i = -1;
 	cptr name = NULL;
 
-	if (p_ptr->muted_when_idle && sfx_ambient != SFX_AMBIENT_NONE) return 1;
+	if (p_ptr->muted_when_idle && sfx_ambient != SFX_AMBIENT_NONE) return(1);
 
 	//-1: smooth (poor with WoR, otherwise great), -2: sudden (needed for WoR/staircases)
 	switch (sfx_ambient) {
@@ -8351,7 +8351,7 @@ int Send_sfx_ambient(int Ind, int sfx_ambient, bool smooth) {
 	   instead of flaring up to 100% vol first and then reducing it a turn later (glitch).. */
 	//grid_affects_player(Ind, Players[Ind]->px, Players[Ind]->py);
 	/* Hack: Inns count as houses too */
-	if (!(zcave = getcave(&p_ptr->wpos))) return -1; //paranoia
+	if (!(zcave = getcave(&p_ptr->wpos))) return(-1); //paranoia
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 	if (inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py) || inside_inn(p_ptr, c_ptr) || p_ptr->store_num != -1) {
 		if (!p_ptr->grid_house) {
@@ -8413,7 +8413,7 @@ int Send_sfx_ambient(int Ind, int sfx_ambient, bool smooth) {
 		errno = 0;
 		plog(format("Connection not ready for ambient sfx (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	if (!is_newer_than(&connp->version, 4, 5, 4, 0, 0, 0)) return(-1);
@@ -8438,7 +8438,7 @@ int Send_sfx_volume(int Ind, char sfx_ambient_vol, char sfx_weather_vol) {
 		errno = 0;
 		plog(format("Connection not ready for ambient sfx (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	if (!is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0)) return(-1);
@@ -8455,7 +8455,7 @@ int Send_boni_col(int Ind, boni_col c) {
 		errno = 0;
 		plog(format("Connection not ready for boni_col (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	/* Dummy column? Use the stored last known column of this player then instead. */
@@ -8532,7 +8532,7 @@ int Send_beep(int Ind) {
 		errno = 0;
 		plog(format("Connection not ready for beep (page) (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	return Packet_printf(&connp->c, "%c", PKT_BEEP);
@@ -8545,7 +8545,7 @@ int Send_warning_beep(int Ind) {
 		errno = 0;
 		plog(format("Connection not ready for beep (warning) (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	if (is_newer_than(&Players[Ind]->version, 4, 5, 2, 0, 0, 0))
@@ -8562,7 +8562,7 @@ int Send_AFK(int Ind, byte afk) {
 		errno = 0;
 		plog(format("Connection not ready for AFK (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	return Packet_printf(&connp->c, "%c%c", PKT_AFK, afk);
 }
@@ -8577,7 +8577,7 @@ int Send_encumberment(int Ind, byte cumber_armor, byte awkward_armor, byte cumbe
 		errno = 0;
 		plog(format("Connection not ready for encumberment (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
@@ -8613,7 +8613,7 @@ int Send_special_line(int Ind, s32b max, s32b line, byte attr, cptr buf) {
 		errno = 0;
 		plog(format("Connection not ready for special line (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	switch (attr) {
@@ -8713,13 +8713,13 @@ int Send_special_line(int Ind, s32b max, s32b line, byte attr, cptr buf) {
 int Send_special_line_pos(int Ind, int line) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 
-	if (is_older_than(&Players[Ind]->version, 4, 7, 4, 6, 0, 0)) return 1;
+	if (is_older_than(&Players[Ind]->version, 4, 7, 4, 6, 0, 0)) return(1);
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for line pos (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	return Packet_printf(&connp->c, "%c%d", PKT_SPECIAL_LINE_POS, line);
@@ -8732,7 +8732,7 @@ int Send_floor(int Ind, char tval) {
 		errno = 0;
 		plog(format("Connection not ready for floor item (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	return Packet_printf(&connp->c, "%c%c", PKT_FLOOR, tval);
@@ -8745,7 +8745,7 @@ int Send_pickup_check(int Ind, cptr buf) {
 		errno = 0;
 		plog(format("Connection not ready for pickup check (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	return Packet_printf(&connp->c, "%c%s", PKT_PICKUP_CHECK, buf);
@@ -8780,14 +8780,14 @@ int Send_party(int Ind, bool leave, bool clear) {
 			errno = 0;
 			plog(format("Connection nor ready for party info (%d.%d.%d)",
 				Ind, connp->state, connp->id));
-			return 0;
+			return(0);
 		}
 		if (!is_newer_than(&Players[Ind]->version, 4, 4, 7, 0, 0, 0)) {
 			Packet_printf(&connp->c, "%c%s%s%s", PKT_PARTY, bufn_compat, "Members: - ", "Owner  : - ");
 		} else {
 			Packet_printf(&connp->c, "%c%s%s%s", PKT_PARTY, "", "", "");
 		}
-		return 1;
+		return(1);
 	}
 
 	/* prepare data for clients */
@@ -8829,7 +8829,7 @@ int Send_party(int Ind, bool leave, bool clear) {
 		}
 	}
 
-	return 1;
+	return(1);
 }
 
 int Send_guild(int Ind, bool leave, bool clear) {
@@ -8844,10 +8844,10 @@ int Send_guild(int Ind, bool leave, bool clear) {
 			errno = 0;
 			plog(format("Connection nor ready for guild info (%d.%d.%d)",
 				Ind, connp->state, connp->id));
-			return 0;
+			return(0);
 		}
 		Packet_printf(&connp->c, "%c%s%s%s", PKT_GUILD, "", "", "");
-		return 1;
+		return(1);
 	}
 
 	/* prepare data for clients */
@@ -8884,7 +8884,7 @@ int Send_guild(int Ind, bool leave, bool clear) {
 		}
 	}
 
-	return 1;
+	return(1);
 }
 
 int Send_guild_config(int id) {
@@ -8932,7 +8932,7 @@ int Send_guild_config(int id) {
 		for (j = 0; j < 5; j++) Packet_printf(&connp->c, "%s", g_ptr->adder[j]);
 	}
 
-	return 1;
+	return(1);
 }
 
 int Send_special_other(int Ind) {
@@ -8942,7 +8942,7 @@ int Send_special_other(int Ind) {
 		errno = 0;
 		plog(format("Connection not ready for special other (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	return Packet_printf(&connp->c, "%c", PKT_SPECIAL_OTHER);
@@ -9025,7 +9025,7 @@ int Send_skills(int Ind) {
 		errno = 0;
 		plog(format("Connection not ready for skills (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
@@ -9037,7 +9037,7 @@ int Send_skills(int Ind) {
 	Packet_printf(&connp->c, "%c", PKT_SKILLS);
 	for (i = 0; i < 12; i++) Packet_printf(&connp->c, "%hd", skills[i]);
 
-	return 1;
+	return(1);
 }
 
 
@@ -9048,7 +9048,7 @@ int Send_pause(int Ind) {
 		errno = 0;
 		plog(format("Connection not ready for skills (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	return Packet_printf(&connp->c, "%c", PKT_PAUSE);
@@ -9071,7 +9071,7 @@ int Send_monster_health(int Ind, int num, byte attr) {
 		errno = 0;
 		plog(format("Connection not ready for monster health bar (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	return Packet_printf(&connp->c, "%c%c%c", PKT_MONSTER_HEALTH, num, attr);
 }
@@ -9088,7 +9088,7 @@ int Send_chardump(int Ind, cptr tag) {
 		errno = 0;
 		plog(format("Connection not ready for chardump (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 #if 0 /* This works, but won't help non-death char dumps that are taken manually */
@@ -9131,7 +9131,7 @@ int Send_unique_monster(int Ind, int r_idx) {
 		errno = 0;
 		plog(format("Connection not ready for unique monster (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 	return Packet_printf(&connp->c, "%c%d%d%s", PKT_UNIQUE_MONSTER, r_info[r_idx].u_idx, p_ptr->r_killed[r_idx], r_name + r_info[r_idx].name);
 }
@@ -9163,7 +9163,7 @@ int Send_weather(int Ind, int weather_type, int weather_wind, int weather_gen_sp
 		errno = 0;
 		plog(format("Connection not ready for weather (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	/* hack: tell client to disable all clouds */
@@ -9269,7 +9269,7 @@ int Send_inventory_revision(int Ind) {
 		errno = 0;
 		plog(format("Connection not ready for inventory revision (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	return Packet_printf(&connp->c, "%c%d", PKT_INVENTORY_REV, p_ptr->inventory_revision);
@@ -9286,7 +9286,7 @@ int Send_account_info(int Ind) {
 		errno = 0;
 		plog(format("Connection not ready for account info (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	if (GetAccount(&acc, connp->nick, NULL, FALSE)) {
@@ -9304,7 +9304,7 @@ int Send_request_key(int Ind, int id, char *prompt) {
 		errno = 0;
 		plog(format("Connection not ready for request_key (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	Players[Ind]->request_id = id;
@@ -9320,7 +9320,7 @@ int Send_request_num(int Ind, int id, char *prompt, int max) {
 		errno = 0;
 		plog(format("Connection not ready for request_num (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	Players[Ind]->request_id = id;
@@ -9345,7 +9345,7 @@ int Send_request_str(int Ind, int id, char *prompt, char *std) {
 		errno = 0;
 		plog(format("Connection not ready for request_str (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	Players[Ind]->request_id = id;
@@ -9370,7 +9370,7 @@ int Send_request_cfr(int Ind, int id, char *prompt, char default_choice) {
 		errno = 0;
 		plog(format("Connection not ready for request_cfr (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	Players[Ind]->request_id = id;
@@ -9390,7 +9390,7 @@ int Send_request_abort(int Ind) {
 		errno = 0;
 		plog(format("Connection not ready for request_abort (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	return Packet_printf(&connp->c, "%c", PKT_REQUEST_ABORT);
@@ -9404,7 +9404,7 @@ int Send_apply_auto_insc(int Ind, int slot) {
 		errno = 0;
 		plog(format("Connection not ready for request_apply_auto_insc (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	return Packet_printf(&connp->c, "%c%c", PKT_AUTOINSCRIBE, (char)slot);
@@ -9418,7 +9418,7 @@ int Send_martyr(int Ind) {
 		errno = 0;
 		plog(format("Connection not ready for martyr (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	return Packet_printf(&connp->c, "%c%c", PKT_MARTYR, (char)Players[Ind]->martyr);
@@ -9445,7 +9445,7 @@ int Send_confirm(int Ind, int confirmed_command) {
 		errno = 0;
 		plog(format("Connection not ready for confirm (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	return Packet_printf(&connp->c, "%c%c", PKT_CONFIRM, confirmed_command);
@@ -9461,7 +9461,7 @@ int Send_item_newest(int Ind, int item) {
 		plog(format("Connection not ready for item_newest (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
 #endif
-		return 0;
+		return(0);
 	}
 
 	Players[Ind]->item_newest = item;
@@ -9479,7 +9479,7 @@ int Send_palette(int Ind, byte c, byte r, byte g, byte b) {
 		errno = 0;
 		plog(format("Connection not ready for palette (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_PALETTE, c, r, g, b);
@@ -9494,7 +9494,7 @@ int Send_idle(int Ind, bool idle) {
 		errno = 0;
 		plog(format("Connection not ready for idle (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	if (idle) {
@@ -9528,7 +9528,7 @@ int Send_Guide(int Ind, byte search_type, int lineno, const char* search_string)
 		errno = 0;
 		plog(format("Connection not ready for Guide (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	/* Hack: Allow NULL for search_string if not used. */
@@ -9544,7 +9544,7 @@ int Send_indicators(int Ind, u32b indicators) {
 		errno = 0;
 		plog(format("Connection not ready for indicators (%d.%d.%d)",
 					Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	return Packet_printf(&connp->c, "%c%d", PKT_INDICATORS, indicators);
@@ -9559,7 +9559,7 @@ int Send_playerlist(int Ind) {
 		errno = 0;
 		plog(format("Connection not ready for playerlist (%d.%d.%d)",
 					Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	Packet_printf(&connp->c, "%c%d", PKT_PLAYERLIST, NumPlayers);
@@ -9567,18 +9567,18 @@ int Send_playerlist(int Ind) {
 		write_player_info(i, playerinfo);
 		Packet_printf(&connp->c, "%s", playerinfo);
 	}
-	return 1;
+	return(1);
 }
 
 int Send_weather_colouring(int Ind, byte col_raindrop, byte col_snowflake, byte col_sandgrain, char c_sandgrain) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 
-	if (is_older_than(&Players[Ind]->version, 4, 7, 3, 1, 0, 0)) return 1;
+	if (is_older_than(&Players[Ind]->version, 4, 7, 3, 1, 0, 0)) return(1);
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for weather_colouring (%d.%d.%d)", Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	if (is_atleast(&connp->version, 4, 7, 4, 6, 0, 0))
@@ -9594,7 +9594,7 @@ int Send_whats_under_you_feet(int Ind, char *o_name, bool crossmod_item, bool ca
 		errno = 0;
 		plog(format("Connection not ready for whats_under_you_feet (%d.%d.%d)",
 					Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	if (is_atleast(&connp->version, 4, 7, 4, 1, 0, 0))
@@ -9610,12 +9610,12 @@ int Send_screenflash(int Ind) {
 		errno = 0;
 		plog(format("Connection not ready for screenflash (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	if (is_atleast(&connp->version, 4, 7, 4, 4, 0, 0))
 		return Packet_printf(&connp->c, "%c", PKT_SCREENFLASH);
-	return 1;
+	return(1);
 }
 
 int Send_version(int Ind) {
@@ -9625,13 +9625,13 @@ int Send_version(int Ind) {
 		errno = 0;
 		plog(format("Connection not ready for version (%d.%d.%d)",
 			Ind, connp->state, connp->id));
-		return 0;
+		return(0);
 	}
 
 	if (is_newer_than(&connp->version, 4, 8, 0, 0, 0, 0))
 		return Packet_printf(&connp->c, "%c", PKT_VERSION);
 	else s_printf("PKT_VERSION: Client version <= 4.8.0.0.0.0 not eligible.\n");
-	return 1;
+	return(1);
 }
 
 
@@ -9679,7 +9679,7 @@ static int Receive_keepalive(int ind) {
 		/* Kick a starving player */
 		if (p_ptr->idle_starve_kick && p_ptr->food < PY_FOOD_WEAK && connp->inactive_keepalive > STARVE_KICK_TIMER / 2) {
 			Destroy_connection(ind, STARVING_AUTOKICK_MSG);
-			return 2;
+			return(2);
 		}
 
 		else if (!p_ptr->afk && p_ptr->auto_afk && connp->inactive_keepalive > AUTO_AFK_TIMER / 2) { /* dont oscillate ;) */
@@ -9689,7 +9689,7 @@ static int Receive_keepalive(int ind) {
 		}
 	}
 
-	return 2;
+	return(2);
 }
 
 static int Receive_walk(int ind) {
@@ -9711,7 +9711,7 @@ static int Receive_walk(int ind) {
 	}
 
 	/* Sanity check */
-	if (bad_dir(dir)) return 1;
+	if (bad_dir(dir)) return(1);
 
 
 	/* bugged here if !p_ptr */
@@ -9721,7 +9721,7 @@ static int Receive_walk(int ind) {
 		disturb(player, 0, 0);
 #if 0 /* disabled, because this would prevent 'walking/running out of fire-till-kill/auto-ret' which is a bit annoying: \
 	 it'd actually first just do disturb() here, so the player would have to attempt a second time to run/walk, after that. - C. Blue */
-		return 1;
+		return(1);
 #endif
 	}
 
@@ -9745,7 +9745,7 @@ static int Receive_walk(int ind) {
 			}
 		}
 		do_cmd_walk(player, dir, p_ptr->always_pickup);
-		return 2;
+		return(2);
 	} else {
 		// Otherwise discared the walk request.
 		//if (!connp->q.len && p_ptr->autoattack)
@@ -9754,19 +9754,19 @@ static int Receive_walk(int ind) {
 		// sometimes call this function.
 		if (connp->q.len < 2) {
 			Packet_printf(&connp->q, "%c%c", PKT_WALK, dir);
-			return 0;
+			return(0);
 		} else {
 			// If we have a walk command queued at the end of the queue,
 			// then replace it with this queue request.
 			if (connp->q.buf[connp->q.len - 2] == PKT_WALK) {
 				connp->q.len -= 2;
 				Packet_printf(&connp->q, "%c%c", PKT_WALK, dir);
-				return 0;
+				return(0);
 			}
 		}
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_run(int ind) {
@@ -9868,13 +9868,13 @@ static int Receive_run(int ind) {
 	}
 
 	/* Sanity check */
-	if (bad_dir(dir)) return 1;
+	if (bad_dir(dir)) return(1);
 
 	/* Disturb if we want to change directions */
 	//if (dir != p_ptr->find_current) disturb(player, 0, 0);
 
 	/* Hack -- Fix the running in '5' bug */
-	if (dir == 5) return 1;
+	if (dir == 5) return(1);
 
 #if 0
 	/* Only process the run command if we are not already running in
@@ -9885,7 +9885,7 @@ static int Receive_run(int ind) {
 	{
 		// If we don't want to queue the command, return now.
 		if ((n = do_cmd_run(player, dir)) == 2) {
-			return 2;
+			return(2);
 		}
 		// If do_cmd_run returns a 0, then there wasn't enough energy
 		// to execute the run command.  Queue the run command if desired.
@@ -9899,12 +9899,12 @@ static int Receive_run(int ind) {
 			if (!connp->q.len) {
 #endif
 				Packet_printf(&connp->q, "%c%c", ch, dir);
-				return 0;
+				return(0);
 			}
 		}
 	}
 
-	return 1;
+	return(1);
 }
 
 int fake_Receive_tunnel(int Ind, int dir) {
@@ -9914,7 +9914,7 @@ int fake_Receive_tunnel(int Ind, int dir) {
 	/* all this is temp just to make it work */
 	if (p_ptr->command_rep == -1) {
 		p_ptr->command_rep = 0;
-		if (p_ptr->command_rep_discard == PKT_TUNNEL) return 0;
+		if (p_ptr->command_rep_discard == PKT_TUNNEL) return(0);
 	}
 
 	/* please redesign ALL of this out of higher level */
@@ -9926,11 +9926,11 @@ int fake_Receive_tunnel(int Ind, int dir) {
 			Packet_printf(&connp->q, "%c%c", PKT_TUNNEL, dir);
 			p_ptr->command_rep_discard = PKT_TUNNEL;
 		}
-		return 2;
+		return(2);
 	}
 
 	Packet_printf(&connp->q, "%c%c", PKT_TUNNEL, dir);
-	return 0;
+	return(0);
 }
 
 static int Receive_tunnel(int ind) {
@@ -9950,15 +9950,15 @@ static int Receive_tunnel(int ind) {
 		return n;
 	}
 
-	if (!p_ptr) return 1;
+	if (!p_ptr) return(1);
 
 	/* Sanity check */
-	if (bad_dir(dir)) return 1;
+	if (bad_dir(dir)) return(1);
 
 	/* all this is temp just to make it work */
 	if (p_ptr->command_rep == -1) {
 		p_ptr->command_rep = 0;
-		if (p_ptr->command_rep_discard == PKT_TUNNEL) return 0;
+		if (p_ptr->command_rep_discard == PKT_TUNNEL) return(0);
 	}
 
 	/* please redesign ALL of this out of higher level */
@@ -9970,11 +9970,11 @@ static int Receive_tunnel(int ind) {
 			Packet_printf(&connp->q, "%c%c", ch, dir);
 			p_ptr->command_rep_discard = PKT_TUNNEL;
 		}
-		return 2;
+		return(2);
 	}
 
 	Packet_printf(&connp->q, "%c%c", ch, dir);
-	return 0;
+	return(0);
 }
 
 static int Receive_aim_wand(int ind) {
@@ -9997,25 +9997,25 @@ static int Receive_aim_wand(int ind) {
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		/* Sanity check - mikaelh */
-		if (item >= INVEN_TOTAL) return 1;
-		if (bad_dir1(player, &dir)) return 1;
+		if (item >= INVEN_TOTAL) return(1);
+		if (bad_dir1(player, &dir)) return(1);
 
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 
 		if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
 		do_cmd_aim_wand(player, item, dir);
 		p_ptr->shooty_till_kill = FALSE;
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd%c", ch, item, dir);
-		return 0;
+		return(0);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_drop(int ind) {
@@ -10037,23 +10037,23 @@ static int Receive_drop(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (!verify_inven_item(player, item)) return 1;
+	if (!verify_inven_item(player, item)) return(1);
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 
 		do_cmd_drop(player, item, amt);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd%hd", ch, item, amt);
-		return 0;
+		return(0);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_fire(int ind) {
@@ -10067,7 +10067,7 @@ static int Receive_fire(int ind) {
 		player = GetInd[connp->id];
 		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-		if (!p_ptr->num_fire) return 1; //prevent div/0 in energy check below
+		if (!p_ptr->num_fire) return(1); //prevent div/0 in energy check below
 	}
 
 	//if ((n = Packet_scanf(&connp->r, "%c%c%hd", &ch, &dir, &item)) <= 0)
@@ -10108,7 +10108,7 @@ static int Receive_fire(int ind) {
 
 	if (p_ptr && p_ptr->energy >= energy) {
 		/* Sanity check */
-		if (bad_dir1(player, &dir)) return 1;
+		if (bad_dir1(player, &dir)) return(1);
 
 		if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
 		//do_cmd_fire(player, dir, item);
@@ -10117,14 +10117,14 @@ static int Receive_fire(int ind) {
 			if (p_ptr->ranged_double) do_cmd_fire(player, dir);
 		}
 		p_ptr->shooty_till_kill = FALSE;
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		//Packet_printf(&connp->q, "%c%c%hd", ch, dir, item);
 		Packet_printf(&connp->q, "%c%c", ch, dir);
-		return 0;
+		return(0);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_observe(int ind) {
@@ -10146,11 +10146,11 @@ static int Receive_observe(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (!verify_inven_item(player, item)) return 1;
+	if (!verify_inven_item(player, item)) return(1);
 
 	if (p_ptr) do_cmd_observe(player, item);
 
-	return 1;
+	return(1);
 }
 
 static int Receive_stand(int ind) {
@@ -10170,15 +10170,15 @@ static int Receive_stand(int ind) {
 		return n;
 	}
 
-	if (!p_ptr) return -1;
+	if (!p_ptr) return(-1);
 
 	/* disallow picking up items while paralyzed: */
 	if (p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_stay(player, 2, FALSE);
-		return 2;
+		return(2);
 	}
 	Packet_printf(&connp->q, "%c", ch);
-	return 0;
+	return(0);
 }
 /* Same as picking up an item, just that we know it's triggered by auto-pickup */
 static int Receive_stand_auto(int ind) {
@@ -10198,18 +10198,18 @@ static int Receive_stand_auto(int ind) {
 		return n;
 	}
 
-	if (!p_ptr) return -1;
+	if (!p_ptr) return(-1);
 
 	/* Don't apply auto-pickup inside houses */
-	if (inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py)) return 2;
+	if (inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py)) return(2);
 
 	/* disallow picking up items while paralyzed: */
 	if (p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_stay(player, 2, FALSE);
-		return 2;
+		return(2);
 	}
 	Packet_printf(&connp->q, "%c", ch);
-	return 0;
+	return(0);
 }
 static int Receive_stand_one(int ind) {
 	connection_t *connp = Conn[ind];
@@ -10228,15 +10228,15 @@ static int Receive_stand_one(int ind) {
 		return n;
 	}
 
-	if (!p_ptr) return -1;
+	if (!p_ptr) return(-1);
 
 	/* disallow picking up items while paralyzed: */
 	if (p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_stay(player, 2, TRUE);
-		return 2;
+		return(2);
 	}
 	Packet_printf(&connp->q, "%c", ch);
-	return 0;
+	return(0);
 }
 
 static int Receive_destroy(int ind) {
@@ -10258,23 +10258,23 @@ static int Receive_destroy(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (!verify_inven_item(player, item)) return 1;
+	if (!verify_inven_item(player, item)) return(1);
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 
 		do_cmd_destroy(player, item, amt);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd%hd", ch, item, amt);
-		return 0;
+		return(0);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_look(int ind) {
@@ -10305,11 +10305,11 @@ static int Receive_look(int ind) {
 	}
 
 	/* Sanity check */
-	if (bad_dir(dir) && bad_dir2(dir)) return 1;
+	if (bad_dir(dir) && bad_dir2(dir)) return(1);
 
 	if (p_ptr) do_cmd_look(player, dir);
 
-	return 1;
+	return(1);
 }
 
 /*
@@ -10363,20 +10363,20 @@ static int Receive_activate_skill(int ind) {
 		case MKEY_TRAP:
 		case MKEY_SCHOOL:
 			/* Sanity check - mikaelh */
-			if (!verify_inven_item(player, book)) return 1;
+			if (!verify_inven_item(player, book)) return(1);
 			break;
 		}
 
 		/* Sanity check - mikaelh */
-		if (item != -1 && !verify_inven_item(player, item)) return 1;
+		if (item != -1 && !verify_inven_item(player, item)) return(1);
 
-		if (bad_dir3(player, &dir)) return 1;
+		if (bad_dir3(player, &dir)) return(1);
 
 		p_ptr->current_char = (old == player) ? TRUE : FALSE;
 
 		if (p_ptr->ghost && !is_admin(p_ptr)) {
 			msg_print(player, "\377oYou need your body to use a skill.");
-			return 2;
+			return(2);
 		}
 
 #if 0
@@ -10392,7 +10392,7 @@ static int Receive_activate_skill(int ind) {
 			if (get_skill(p_ptr, SKILL_MIMIC)) {
 				if (spell == 25000 && dir) {
 					/* Character is unable to change preferred immunity? */
-					if (dir >= 2 && dir <= 8 && mimic_power_hindered(player)) return 2;
+					if (dir >= 2 && dir <= 8 && mimic_power_hindered(player)) return(2);
 
 					if (is_older_than(&p_ptr->version, 4, 7, 3, 2, 0, 0)) {
 						if (dir == 5) dir = 6;
@@ -10475,7 +10475,7 @@ static int Receive_activate_skill(int ind) {
 						msg_print(player, "\377yThat immunity does not exist.");
 						break;
 					}
-					return 2;
+					return(2);
 				}
 				if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
 				do_cmd_mimic(player, spell, dir);
@@ -10506,13 +10506,13 @@ static int Receive_activate_skill(int ind) {
 			book = replay_inven_changes(player, book);
 			if (book == 0xFF) {
 				msg_print(player, "Command failed because item is gone.");
-				return 1;
+				return(1);
 			}
 			/* Note that item can be -1 if the spell doesn't use any inventory item (unlike eg Telekinesis) */
 			item = replay_inven_changes(player, item);
 			if (item == 0xFF) {
 				msg_print(player, "Command failed because item is gone.");
-				return 1;
+				return(1);
 			}
 
 			/* Sanity check #2 */
@@ -10588,16 +10588,16 @@ static int Receive_activate_skill(int ind) {
 			do_pick_breath(player, book);
 			break;
 		}
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		p_ptr->current_spell = -1;
 		p_ptr->current_mind = -1;
 		Packet_printf(&connp->q, "%c%c%hd%hd%c%hd%hd", ch, mkey, book, spell, dir, item, aux);
-		return 0;
+		return(0);
 	}
 
 
-	return 1;
+	return(1);
 }
 
 static int Receive_open(int ind) {
@@ -10619,12 +10619,12 @@ static int Receive_open(int ind) {
 	}
 
 	/* Sanity check */
-	if (bad_dir(dir)) return 1;
+	if (bad_dir(dir)) return(1);
 
 	/* all this is temp just to make it work */
 	if (p_ptr->command_rep == -1) {
 		p_ptr->command_rep = 0;
-		if (p_ptr->command_rep_discard == PKT_OPEN) return 0;
+		if (p_ptr->command_rep_discard == PKT_OPEN) return(0);
 	}
 	if (p_ptr && p_ptr->command_rep != PKT_OPEN)
 		p_ptr->command_rep = -1;
@@ -10635,13 +10635,13 @@ static int Receive_open(int ind) {
 			Packet_printf(&connp->q, "%c%c", ch, dir);
 			p_ptr->command_rep_discard = PKT_OPEN;
 		}
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%c", ch, dir);
-		return 0;
+		return(0);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_mind(int ind) {
@@ -10658,9 +10658,9 @@ static int Receive_mind(int ind) {
 
 	if (player) {
 		change_mind(player, TRUE);
-		return 2;
+		return(2);
 	}
-	return 1;
+	return(1);
 }
 
 static int Receive_ghost(int ind) {
@@ -10683,13 +10683,13 @@ static int Receive_ghost(int ind) {
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_ghost_power(player, ability);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd", ch, ability);
-		return 0;
+		return(0);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_quaff(int ind) {
@@ -10711,23 +10711,23 @@ static int Receive_quaff(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (item >= INVEN_PACK) return 1;
+	if (item >= INVEN_PACK) return(1);
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 
 		do_cmd_quaff_potion(player, item);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd", ch, item);
-		return 0;
+		return(0);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_read(int ind) {
@@ -10749,26 +10749,26 @@ static int Receive_read(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (item >= INVEN_PACK) return 1;
+	if (item >= INVEN_PACK) return(1);
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 
 		/* Hack for id-command from !X: We're already at the correct index! */
 		if (p_ptr->current_item != -1) item = p_ptr->delayed_index;
 
 		do_cmd_read_scroll(player, item);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd", ch, item);
-		return 0;
+		return(0);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_search(int ind) {
@@ -10803,13 +10803,13 @@ static int Receive_search(int ind) {
 			Packet_printf(&connp->q, "%c", ch);
 			p_ptr->command_rep_discard = PKT_SEARCH;
 		}
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c", ch);
-		return 0;
+		return(0);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_take_off(int ind) {
@@ -10831,23 +10831,23 @@ static int Receive_take_off(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (item >= INVEN_TOTAL) return 1;
+	if (item >= INVEN_TOTAL) return(1);
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 
 		do_cmd_takeoff(player, item, 255);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd", ch, item);
-		return 0;
+		return(0);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_take_off_amt(int ind) {
@@ -10869,23 +10869,23 @@ static int Receive_take_off_amt(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (item >= INVEN_TOTAL) return 1;
+	if (item >= INVEN_TOTAL) return(1);
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 
 		do_cmd_takeoff(player, item, amt);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd%hd", ch, item, amt);
-		return 0;
+		return(0);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_use(int ind) {
@@ -10907,7 +10907,7 @@ static int Receive_use(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (!verify_inven_item(player, item)) return 1;
+	if (!verify_inven_item(player, item)) return(1);
 
 #ifdef XID_REPEAT
 	if (p_ptr->delayed_spell == -2) {
@@ -10931,7 +10931,7 @@ static int Receive_use(int ind) {
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 
 #ifdef XID_REPEAT
@@ -10942,13 +10942,13 @@ static int Receive_use(int ind) {
 #endif
 
 		do_cmd_use_staff(player, item);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd", ch, item);
-		return 0;
+		return(0);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_throw(int ind) {
@@ -10972,23 +10972,23 @@ static int Receive_throw(int ind) {
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		/* Sanity check - mikaelh */
-		if (item >= INVEN_TOTAL) return 1;
-		if (bad_dir1(player, &dir)) return 1;
+		if (item >= INVEN_TOTAL) return(1);
+		if (bad_dir1(player, &dir)) return(1);
 
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 
 		do_cmd_throw(player, dir, item, 0);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%c%hd", ch, dir, item);
-		return 0;
+		return(0);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_wield(int ind) {
@@ -11010,23 +11010,23 @@ static int Receive_wield(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (item >= INVEN_PACK) return 1;
+	if (item >= INVEN_PACK) return(1);
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 
 		do_cmd_wield(player, item, 0x0);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd", ch, item);
-		return 0;
+		return(0);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_zap(int ind) {
@@ -11048,7 +11048,7 @@ static int Receive_zap(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (!verify_inven_item(player, item)) return 1;
+	if (!verify_inven_item(player, item)) return(1);
 
 #ifdef XID_REPEAT
 	if (p_ptr->delayed_spell == -3) {
@@ -11074,7 +11074,7 @@ static int Receive_zap(int ind) {
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 
 #ifdef XID_REPEAT
@@ -11086,13 +11086,13 @@ static int Receive_zap(int ind) {
 
 		do_cmd_zap_rod(player, item, 0);
 		if (p_ptr->command_rep) p_ptr->command_rep_discard = PKT_ZAP;
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd", ch, item);
-		return 0;
+		return(0);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_zap_dir(int ind) {
@@ -11116,26 +11116,26 @@ static int Receive_zap_dir(int ind) {
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		/* Sanity check - mikaelh */
-		if (item >= INVEN_TOTAL) return 1;
-		if (bad_dir1(player, &dir)) return 1;
+		if (item >= INVEN_TOTAL) return(1);
+		if (bad_dir1(player, &dir)) return(1);
 
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 
 		if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
 
 		do_cmd_zap_rod(player, item, dir);
 		p_ptr->shooty_till_kill = FALSE;
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd%c", ch, item, dir);
-		return 0;
+		return(0);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_target(int ind) {
@@ -11157,11 +11157,11 @@ static int Receive_target(int ind) {
 	}
 
 	/* Sanity check */
-	if (bad_dir(dir) && bad_dir2(dir)) return 1;
+	if (bad_dir(dir) && bad_dir2(dir)) return(1);
 
 	if (p_ptr) do_cmd_target(player, dir);
 
-	return 1;
+	return(1);
 }
 
 static int Receive_target_friendly(int ind) {
@@ -11185,12 +11185,12 @@ static int Receive_target_friendly(int ind) {
 	}
 
 	/* Sanity check */
-	if (bad_dir(dir) && bad_dir2(dir)) return 1;
+	if (bad_dir(dir) && bad_dir2(dir)) return(1);
 
 	if (p_ptr)
 		do_cmd_target_friendly(player, dir);
 
-	return 1;
+	return(1);
 }
 
 static int Receive_inscribe(int ind) {
@@ -11215,19 +11215,19 @@ static int Receive_inscribe(int ind) {
 	inscription[MAX_CHARS - 1] = '\0';
 
 	/* Sanity check - mikaelh */
-	if (!verify_inven_item(player, item)) return 1;
+	if (!verify_inven_item(player, item)) return(1);
 
 	if (p_ptr) {
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 
 		do_cmd_inscribe(player, item, inscription);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_uninscribe(int ind) {
@@ -11249,19 +11249,19 @@ static int Receive_uninscribe(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (!verify_inven_item(player, item)) return 1;
+	if (!verify_inven_item(player, item)) return(1);
 
 	if (p_ptr) {
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 
 		do_cmd_uninscribe(player, item);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_autoinscribe(int ind) {
@@ -11283,20 +11283,20 @@ static int Receive_autoinscribe(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (item >= INVEN_TOTAL) return 1;
+	if (item >= INVEN_TOTAL) return(1);
 
 	if (p_ptr) {
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 
 		auto_inscribe(player, &(p_ptr->inventory[item]), TRUE);
 		p_ptr->window |= PW_INVEN;
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_activate(int ind) {
@@ -11319,7 +11319,7 @@ static int Receive_activate(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (!verify_inven_item(player, item)) return 1;
+	if (!verify_inven_item(player, item)) return(1);
 
 	/* all this is temp just to make it work */
 	if (p_ptr->command_rep == -1) {
@@ -11332,7 +11332,7 @@ static int Receive_activate(int ind) {
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 
 #ifdef XID_REPEAT
@@ -11343,13 +11343,13 @@ static int Receive_activate(int ind) {
 #endif
 
 		do_cmd_activate(player, item, 0);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd", ch, item);
-		return 0;
+		return(0);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_activate_dir(int ind) {
@@ -11372,23 +11372,23 @@ static int Receive_activate_dir(int ind) {
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		/* Sanity check - mikaelh */
-		if (item >= INVEN_TOTAL) return 1;
-		if (bad_dir1(player, &dir)) return 1;
+		if (item >= INVEN_TOTAL) return(1);
+		if (bad_dir1(player, &dir)) return(1);
 
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 
 		do_cmd_activate(player, item, dir);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd%c", ch, item, dir);
-		return 0;
+		return(0);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_bash(int ind) {
@@ -11409,7 +11409,7 @@ static int Receive_bash(int ind) {
 	}
 
 	/* Sanity check */
-	if (bad_dir1(player, &dir)) return 1;
+	if (bad_dir1(player, &dir)) return(1);
 
 	/* all this is temp just to make it work */
 	if (p_ptr->command_rep == -1) {
@@ -11426,13 +11426,13 @@ static int Receive_bash(int ind) {
 			Packet_printf(&connp->q, "%c%c", ch, dir);
 			p_ptr->command_rep_discard = PKT_BASH;
 		}
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%c", ch, dir);
-		return 0;
+		return(0);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_disarm(int ind) {
@@ -11453,7 +11453,7 @@ static int Receive_disarm(int ind) {
 	}
 
 	/* Sanity check */
-	if (bad_dir(dir)) return 1;
+	if (bad_dir(dir)) return(1);
 
 	/* all this is temp just to make it work */
 	if (p_ptr->command_rep == -1) {
@@ -11468,12 +11468,12 @@ static int Receive_disarm(int ind) {
 			Packet_printf(&connp->q, "%c%c", ch, dir);
 			p_ptr->command_rep_discard = PKT_DISARM;
 		}
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%c", ch, dir);
-		return 0;
+		return(0);
 	}
-	return 1;
+	return(1);
 }
 
 static int Receive_eat(int ind) {
@@ -11496,22 +11496,22 @@ static int Receive_eat(int ind) {
 
 	/* Sanity check - mikaelh */
 	if (item >= INVEN_TOTAL)
-		return 1;
+		return(1);
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 
 		do_cmd_eat_food(player, item);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd", ch, item);
-		return 0;
+		return(0);
 	}
-	return 1;
+	return(1);
 }
 
 static int Receive_fill(int ind) {
@@ -11534,21 +11534,21 @@ static int Receive_fill(int ind) {
 
 	/* Sanity check - mikaelh */
 	if (item >= INVEN_TOTAL)
-		return 1;
+		return(1);
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 		do_cmd_refill(player, item);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd", ch, item);
-		return 0;
+		return(0);
 	}
-	return 1;
+	return(1);
 }
 
 static int Receive_locate(int ind) {
@@ -11569,13 +11569,13 @@ static int Receive_locate(int ind) {
 	}
 
 	/* Sanity check */
-	if (bad_dir(dir)) return 1;
+	if (bad_dir(dir)) return(1);
 
 	if (p_ptr) {
 #if 0 /* too much slowdown of the game play ~~ */
 		if (!is_admin(p_ptr) && p_ptr->redraw_cooldown) {
 			Packet_printf(&connp->q, "%c%c", ch, dir);
-			return 0;
+			return(0);
 		}
 		/* have a small cooldown, albeit less than like from CTRL+R'ing directly */
 		p_ptr->redraw_cooldown = 1;
@@ -11583,7 +11583,7 @@ static int Receive_locate(int ind) {
 		do_cmd_locate(player, dir);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_map(int ind) {
@@ -11604,7 +11604,7 @@ static int Receive_map(int ind) {
 	}
 
 	if (p_ptr) do_cmd_view_map(player, mode);
-	return 1;
+	return(1);
 }
 
 static int Receive_search_mode(int ind) {
@@ -11625,7 +11625,7 @@ static int Receive_search_mode(int ind) {
 	}
 
 	if (p_ptr) do_cmd_toggle_search(player);
-	return 1;
+	return(1);
 }
 
 static int Receive_close(int ind)
@@ -11647,16 +11647,16 @@ static int Receive_close(int ind)
 	}
 
 	/* Sanity check */
-	if (bad_dir(dir)) return 1;
+	if (bad_dir(dir)) return(1);
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_close(player, dir);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%c", ch, dir);
-		return 0;
+		return(0);
 	}
-	return 1;
+	return(1);
 }
 
 static int Receive_skill_mod(int ind) {
@@ -11677,7 +11677,7 @@ static int Receive_skill_mod(int ind) {
 	}
 
 	if (p_ptr) increase_skill(player, i, FALSE);
-	return 1;
+	return(1);
 }
 
 static int Receive_skill_dev(int ind) {
@@ -11709,7 +11709,7 @@ static int Receive_skill_dev(int ind) {
 			p_ptr->s_info[i].dev = (dev == 0 ? FALSE : TRUE);
 		}
 	}
-	return 1;
+	return(1);
 }
 
 static int Receive_go_up(int ind)
@@ -11732,12 +11732,12 @@ static int Receive_go_up(int ind)
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_go_up(player);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c", ch);
-		return 0;
+		return(0);
 	}
-	return 1;
+	return(1);
 }
 
 static int Receive_go_down(int ind)
@@ -11760,12 +11760,12 @@ static int Receive_go_down(int ind)
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_go_down(player);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c", ch);
-		return 0;
+		return(0);
 	}
-	return 1;
+	return(1);
 }
 
 
@@ -11789,11 +11789,11 @@ static int Receive_direction(int ind)
 	}
 
 	/* Sanity check */
-	if (bad_dir1(player, &dir)) return 1;
+	if (bad_dir1(player, &dir)) return(1);
 
 	if (p_ptr) Handle_direction(player, dir);
 
-	return 1;
+	return(1);
 }
 
 static int Receive_item(int ind) {
@@ -11816,17 +11816,17 @@ static int Receive_item(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (!verify_inven_item(player, item)) return 1;
+	if (!verify_inven_item(player, item)) return(1);
 
 	if (p_ptr) {
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 		Handle_item(player, item);
 	}
-	return 1;
+	return(1);
 }
 
 /* for DISCRETE_SPELL_SYSTEM: DSS_EXPANDED_SCROLLS */
@@ -11851,19 +11851,19 @@ static int Receive_spell(int ind) {
 
 	/* Sanity check - mikaelh */
 	if (item >= INVEN_TOTAL)
-		return 1;
-	if (spell > max_spells) return 1;
+		return(1);
+	if (spell > max_spells) return(1);
 
 	if (p_ptr) {
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 		//Handle_item(player, item);
 		//TODO: finish tome_creation_aux() here
 	}
-	return 1;
+	return(1);
 }
 
 
@@ -11884,7 +11884,7 @@ static int Receive_message(int ind)
 	   (Changed it to MSG_LEN - C. Blue) */
 	buf[MSG_LEN - 1] = '\0';
 	player_talk(player, buf);
-	return 1;
+	return(1);
 }
 
 static int Receive_admin_house(int ind) {
@@ -11906,7 +11906,7 @@ static int Receive_admin_house(int ind) {
 	}
 
 	/* Sanity check */
-	if (bad_dir(dir)) return 1;
+	if (bad_dir(dir)) return(1);
 
 	house_admin(player, dir, buf);
 	return(1);
@@ -11937,7 +11937,7 @@ static int Receive_purchase(int ind) {
 	else if (p_ptr)
 		do_cmd_purchase_house(player, item);
 
-	return 1;
+	return(1);
 }
 
 static int Receive_sell(int ind) {
@@ -11960,7 +11960,7 @@ static int Receive_sell(int ind) {
 
 	if (player) store_sell(player, item, amt);
 
-	return 1;
+	return(1);
 }
 
 static int Receive_store_leave(int ind) {
@@ -11992,7 +11992,7 @@ static int Receive_store_leave(int ind) {
 		return n;
 	}
 
-	if (!player) return -1;
+	if (!player) return(-1);
 
 	/* Update stuff */
 	p_ptr->update |= (PU_VIEW | PU_LITE);
@@ -12016,7 +12016,7 @@ static int Receive_store_leave(int ind) {
 		handle_store_leave(player);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_store_confirm(int ind) {
@@ -12035,10 +12035,10 @@ static int Receive_store_confirm(int ind) {
 		return n;
 	}
 
-	if (!player) return -1;
+	if (!player) return(-1);
 
 	store_confirm(player);
-	return 1;
+	return(1);
 }
 
 /* Store code should be written to allow more kinds of actions in general..
@@ -12066,7 +12066,7 @@ static int Receive_store_examine(int ind) {
 	if (player && p_ptr->store_num != -1)
 		store_examine(player, item);
 
-	return 1;
+	return(1);
 }
 
 static int Receive_store_command(int ind) {
@@ -12093,7 +12093,7 @@ static int Receive_store_command(int ind) {
 	if (player && p_ptr->store_num != -1)
 		store_exec_command(player, action, item, item2, amt, gold);
 
-	return 1;
+	return(1);
 }
 
 static int Receive_drop_gold(int ind) {
@@ -12116,12 +12116,12 @@ static int Receive_drop_gold(int ind) {
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_drop_gold(player, amt);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%d", ch, amt);
-		return 0;
+		return(0);
 	}
-	return 1;
+	return(1);
 }
 
 static int Receive_steal(int ind) {
@@ -12142,16 +12142,16 @@ static int Receive_steal(int ind) {
 	}
 
 	/* Sanity check */
-	if (bad_dir(dir)) return 1;
+	if (bad_dir(dir)) return(1);
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_steal(player, dir);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%c", ch, dir);
-		return 0;
+		return(0);
 	}
-	return 1;
+	return(1);
 }
 
 
@@ -12183,12 +12183,12 @@ static int Receive_King(int ind) {
 				break;
 #endif
 		}
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%c", ch, type);
-		return 0;
+		return(0);
 	}
-	return 1;
+	return(1);
 }
 
 static int Receive_redraw(int ind) {
@@ -12226,7 +12226,7 @@ static int Receive_redraw(int ind) {
 		u32b f;
 		int i;
 
-		if (!player) return 0; //paranoia?
+		if (!player) return(0); //paranoia?
 
 #ifdef USE_SOUND_2010
 		/* Allow re-sending the same music we're already listening to, otherwise Send_music() would just 'optimize it out'.. */
@@ -12258,7 +12258,7 @@ static int Receive_redraw(int ind) {
  #endif
 		}
 #endif
-		return 1;
+		return(1);
 	}
 
 	if (player && !p_ptr->redraw_cooldown) {
@@ -12292,7 +12292,7 @@ static int Receive_redraw(int ind) {
 		}
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_rest(int ind) {
@@ -12320,7 +12320,7 @@ static int Receive_rest(int ind) {
 		/* Waking up takes no energy, although we will still be drowsy... */
 		if (p_ptr->resting) {
 			disturb(player, 0, 0);
-			return 2;
+			return(2);
 		}
 
 		/* Don't rest if we are poisoned or at max hit points and max spell points
@@ -12331,20 +12331,20 @@ static int Receive_rest(int ind) {
 		    (p_ptr->cst == p_ptr->mst)
 		    && !(p_ptr->prace == RACE_ENT && p_ptr->food < PY_FOOD_FULL)
 		    ))
-			return 2;
+			return(2);
 
 		if (p_ptr->mcharming) {
 			msg_print(player, "You cannot rest while focussing intently on a charm spell!");
-			return 2;
+			return(2);
 		}
 
-		if (!(zcave = getcave(&p_ptr->wpos))) return 2;
+		if (!(zcave = getcave(&p_ptr->wpos))) return(2);
 
 #if 0 /* why? don't see a reason atm */
 		/* Can't rest on a Void Jumpgate -- too dangerous */
 		if (zcave[p_ptr->py][p_ptr->px].feat == FEAT_BETWEEN) {
 			msg_print(player, "Resting on a Void Jumpgate is too dangerous!");
-			return 2;
+			return(2);
 		}
 #endif
 
@@ -12367,7 +12367,7 @@ static int Receive_rest(int ind) {
 
 			/* Redraw */
 			p_ptr->redraw |= (PR_STATE);
-			return 2;
+			return(2);
 		}
 		/* If we don't have enough energy to rest, disturb us (to stop
 		 * us from running) and queue the command.
@@ -12375,11 +12375,11 @@ static int Receive_rest(int ind) {
 		else {
 			disturb(player, 0, 0);
 			Packet_printf(&connp->q, "%c", ch);
-			return 0;
+			return(0);
 		}
 	}
 
-	return 1;
+	return(1);
 }
 
 void Handle_clear_buffer(int Ind) {
@@ -12450,7 +12450,7 @@ static int Receive_clear_buffer(int ind) {
 
 	if (player) Handle_clear_buffer(player);
 
-	return 1;
+	return(1);
 }
 
 static int Receive_clear_actions(int ind) {
@@ -12471,7 +12471,7 @@ static int Receive_clear_actions(int ind) {
 
 	if (player) Handle_clear_actions(player);
 
-	return 1;
+	return(1);
 }
 
 static int Receive_special_line(int ind) {
@@ -12589,7 +12589,7 @@ static int Receive_special_line(int ind) {
 		}
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_options(int ind) {
@@ -12654,7 +12654,7 @@ static int Receive_options(int ind) {
 		}
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_screen_dimensions(int ind) {
@@ -12687,7 +12687,7 @@ static int Receive_screen_dimensions(int ind) {
 		p_ptr->screen_wid = screen_wid_32b;
 		p_ptr->screen_hgt = screen_hgt_32b;
 #ifndef BIG_MAP
-		return 1;
+		return(1);
 #endif
 
 
@@ -12745,7 +12745,7 @@ static int Receive_screen_dimensions(int ind) {
 		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_suicide(int ind) {
@@ -12775,13 +12775,13 @@ static int Receive_suicide(int ind) {
 	if (extra1 != 1 || extra2 != 4) {
 		/* Invalid suicide command detected, clear the buffer now */
 		Sockbuf_clear(&connp->r);
-		return 1;
+		return(1);
 	}
 
 	/* Commit suicide */
 	do_cmd_suicide(player);
 
-	return 1;
+	return(1);
 }
 
 static int Receive_party(int ind) {
@@ -12792,13 +12792,13 @@ static int Receive_party(int ind) {
 	player_type *p_ptr;
 
 	if (connp->id != -1) player = GetInd[connp->id];
-	else return 1;
+	else return(1);
 	p_ptr = Players[player];
 
 	/* pvp-mode characters don't get a choice */
 	if (p_ptr->mode & MODE_PVP) {
 		msg_print(player, "\377oAs pvp-mode character you cannot use the party menu.");
-		return 1;
+		return(1);
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%s", &ch, &command, buf)) <= 0) {
@@ -12839,7 +12839,7 @@ static int Receive_party(int ind) {
 		break;
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_guild(int ind) {
@@ -12853,7 +12853,7 @@ static int Receive_guild(int ind) {
 		player = GetInd[connp->id];
 		p_ptr = Players[player];
 	}
-	else return 1;
+	else return(1);
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%s", &ch, &command, buf)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
@@ -12877,7 +12877,7 @@ static int Receive_guild(int ind) {
 		break;
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_guild_config(int ind) {
@@ -12894,18 +12894,18 @@ static int Receive_guild_config(int ind) {
 		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
 	}
-	if (!player) return 1;
+	if (!player) return(1);
 	p_ptr = Players[player];
 
 	/* Must be a guild master */
 	if (!p_ptr->guild) {
 		s_printf("GUILDCFG_EXPLOIT: (noguild) %s(%s) - %d, %d, %s\n", p_ptr->name, p_ptr->accountname, command, flags, adder);
-		return 1;
+		return(1);
 	}
 	guild = &guilds[p_ptr->guild];
 	if (guild->master != p_ptr->id) {
 		s_printf("GUILDCFG_EXPLOIT: (nomaster) %s(%s) - %d, %d, %s\n", p_ptr->name, p_ptr->accountname, command, flags, adder);
-		return 1;
+		return(1);
 	}
 
 	switch (command) {
@@ -12929,28 +12929,28 @@ static int Receive_guild_config(int ind) {
 			for (j = 0; j < 5; j++) if (streq(guild->adder[j], adder)) break;
 			if (j == 5) {
 				msg_print(player, "Player must be online to become an adder.");
-				return 1;
+				return(1);
 			}
 			if (streq(p_ptr->name, adder)) {
 				msg_print(player, "As guild master you can always add others.");
-				return 1;
+				return(1);
 			}
 			guild->adder[j][0] = '\0';
 			msg_format(player, "Player \377r%s\377w is no longer authorized to add others.", adder);
 			break;
 #else
 			msg_print(player, "Player not online.");
-			return 1;
+			return(1);
 #endif
 		}
 		if (n == player) {
 			msg_print(player, "As guild master you can always add others.");
-			return 1;
+			return(1);
 		}
 		q_ptr = Players[n];
 		if (q_ptr->guild != p_ptr->guild) {
 			msg_print(player, "That player is not in your guild.");
-			return 1;
+			return(1);
 		}
 
 		if ((q_ptr->guild_flags & PGF_ADDER)) {
@@ -12970,7 +12970,7 @@ static int Receive_guild_config(int ind) {
 			for (j = 0; j < 5; j++) if (guild->adder[j][0] == '\0') break; /* found a vacant slot? */
 			if (j == 5) {
 				msg_print(player, "You cannot designate more than 5 adders.");
-				return 1;
+				return(1);
 			}
 			strcpy(guild->adder[j], q_ptr->name);
 #endif
@@ -12988,7 +12988,7 @@ static int Receive_guild_config(int ind) {
 	}
 
 	Send_guild_config(p_ptr->guild);
-	return 1;
+	return(1);
 }
 
 void Handle_direction(int Ind, int dir) {
@@ -13101,13 +13101,13 @@ void Handle_item(int Ind, int item) {
 bool player_is_king(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
-	return FALSE;
+	return(FALSE);
 
 	if (p_ptr->total_winner && ((inarea(&p_ptr->own1, &p_ptr->wpos)) || (inarea(&p_ptr->own2, &p_ptr->wpos))))
-		return TRUE;
+		return(TRUE);
 
 	/* Assume false */
-	return FALSE;
+	return(FALSE);
 }
 
 /* receive a dungeon master command */
@@ -13133,7 +13133,7 @@ static int Receive_master(int ind) {
 		 */
 		Sockbuf_clear(&connp->r);
 		Sockbuf_clear(&connp->c);
-		return 2;
+		return(2);
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%s", &ch, &command, buf)) <= 0) {
@@ -13173,7 +13173,7 @@ static int Receive_master(int ind) {
 		}
 	}
 
-	return 2;
+	return(2);
 }
 
 /* automatic phase command, will try to phase door
@@ -13202,14 +13202,14 @@ static int Receive_autophase(int ind) {
 			if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_PHASE_DOOR)) {
 				/* found a phase scroll, read it! */
 				do_cmd_read_scroll(player, n);
-				return 1;
+				return(1);
 			}
 		}
 	}
 
 	/* Failure!  We are in trouble... */
 
-	return -1;
+	return(-1);
 }
 
 void end_mind(int Ind, bool update) {
@@ -13275,17 +13275,17 @@ static int Receive_spike(int ind) {
 	}
 
 	/* Sanity check */
-	if (bad_dir(dir)) return 1;
+	if (bad_dir(dir)) return(1);
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_spike(player, dir);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%c", ch, dir);
-		return 0;
+		return(0);
 	}
 
-	return 1;
+	return(1);
 }
 
 /*
@@ -13345,7 +13345,7 @@ static int Receive_raw_key(int ind) {
 						}
 					if (bbs_empty) msg_print(player, "\377s <nothing has been written on the board so far>");
 					break;
-//					return 1; /* consume no energy/don't disturb character (resting mode) */
+//					return(1); /* consume no energy/don't disturb character (resting mode) */
 #else
 				case '_':
 				case '!':
@@ -13359,21 +13359,21 @@ static int Receive_raw_key(int ind) {
 					break;
 			}
 		}
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		/* If we hit an unknown/unused raw key, don't wait for our energy,
 		   or disturb() would be called which is a bit annoying.. */
 		if (p_ptr->store_num == -1) {
 			//ALL keys are unused, so we don't need to check the value of 'key'
 			msg_format(player, "'%c' key is currently not used.  Hit '?' for help.", key);
-			return 2;
+			return(2);
 		}
 
 		Packet_printf(&connp->q, "%c%c", ch, key);
-		return 0;
+		return(0);
 	}
 
-	return 1;
+	return(1);
 }
 
 /* Reply to ping packets - mikaelh */
@@ -13418,7 +13418,7 @@ static int Receive_ping(int ind) {
 			/* Kick a starving player */
 			if (p_ptr->idle_starve_kick && p_ptr->food < PY_FOOD_WEAK && connp->inactive_ping > STARVE_KICK_TIMER) {
 				Destroy_connection(ind, STARVING_AUTOKICK_MSG);
-				return 2;
+				return(2);
 			}
 
 			else if (!p_ptr->afk && p_ptr->auto_afk && connp->inactive_ping > AUTO_AFK_TIMER) { /* dont oscillate ;) */
@@ -13432,7 +13432,7 @@ static int Receive_ping(int ind) {
 			errno = 0;
 			plog(format("Connection not ready for pong (%d.%d.%d)",
 				ind, connp->state, connp->id));
-			return 1;
+			return(1);
 		}
 
 		pong = 1;
@@ -13440,7 +13440,7 @@ static int Receive_ping(int ind) {
 		Packet_printf(&connp->c, "%c%c%d%d%d%S", PKT_PING, pong, id, tim, utim, buf);
 	}
 
-	return 2;
+	return(2);
 }
 
 static int Receive_sip(int ind) {
@@ -13460,12 +13460,12 @@ static int Receive_sip(int ind) {
 	}
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_drink_fountain(player);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c", ch);
-		return 0;
+		return(0);
 	}
-	return 1;
+	return(1);
 }
 
 
@@ -13498,12 +13498,12 @@ static int Receive_telekinesis(int ind) {
 			msg_print(player, "\377RYou concentrate on telekinesis!");
 			p_ptr->esp_link_flags |= LINKF_TELEKIN;
 		}
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c", ch);
-		return 0;
+		return(0);
 	}
-	return 1;
+	return(1);
 #endif
 }
 
@@ -13531,12 +13531,12 @@ static int Receive_BBS(int ind) {
 				bbs_empty = FALSE;
 			}
 		if (bbs_empty) msg_print(player, "\377s <nothing has been written on the board so far>");
-		return 2; /* consume no energy/don't disturb character (resting mode) */
+		return(2); /* consume no energy/don't disturb character (resting mode) */
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c", ch);
-		return 0;
+		return(0);
 	}
-	return 1;
+	return(1);
 }
 
 static int Receive_wield2(int ind) {
@@ -13559,22 +13559,22 @@ static int Receive_wield2(int ind) {
 
 	/* Sanity check - mikaelh */
 	if (item >= INVEN_TOTAL)
-		return 1;
+		return(1);
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 
 		do_cmd_wield(player, item, 0x2);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd", ch, item);
-		return 0;
+		return(0);
 	}
-	return 1;
+	return(1);
 }
 
 static int Receive_wield3(int ind) {
@@ -13600,15 +13600,15 @@ static int Receive_wield3(int ind) {
 		s16b item = replay_inven_changes(player, INVEN_WIELD);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 		do_cmd_wield(player, INVEN_WIELD, 0x8); //slot is just a dummy
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c", ch);
-		return 0;
+		return(0);
 	}
-	return 1;
+	return(1);
 }
 
 static int Receive_cloak(int ind) {
@@ -13628,12 +13628,12 @@ static int Receive_cloak(int ind) {
 	}
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_cloak(player);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c", ch);
-		return 0;
+		return(0);
 	}
-	return 1;
+	return(1);
 }
 
 void change_mind(int Ind, bool open_or_close) {
@@ -13741,10 +13741,10 @@ static int Receive_inventory_revision(int ind) {
 			return 3; /* special return code */
 		} else {
 			inven_confirm_revision(player, revision);
-			return 2;
+			return(2);
 		}
 	}
-	return 1;
+	return(1);
 }
 
 static int Receive_account_info(int ind) {
@@ -13764,7 +13764,7 @@ static int Receive_account_info(int ind) {
 		Send_account_info(player);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_change_password(int ind) {
@@ -13791,7 +13791,7 @@ static int Receive_change_password(int ind) {
 		memset(new_pass, 0, MAX_CHARS);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_force_stack(int ind) {
@@ -13815,19 +13815,19 @@ static int Receive_force_stack(int ind) {
 
 	/* Sanity check - mikaelh */
 	if (item >= INVEN_PACK)
-		return 1;
+		return(1);
 
 	if (p_ptr) {
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
 			msg_print(player, "Command failed because item is gone.");
-			return 1;
+			return(1);
 		}
 
 		do_cmd_force_stack(player, item);
 	}
 
-	return 1;
+	return(1);
 }
 
 static int Receive_request_key(int ind) {
@@ -13846,10 +13846,10 @@ static int Receive_request_key(int ind) {
 		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
 	}
-	if (!p_ptr) return 1;
+	if (!p_ptr) return(1);
 
 	handle_request_return_key(player, id, key);
-	return 2;
+	return(2);
 }
 static int Receive_request_num(int ind) {
 	connection_t *connp = Conn[ind];
@@ -13867,10 +13867,10 @@ static int Receive_request_num(int ind) {
 		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
 	}
-	if (!p_ptr) return 1;
+	if (!p_ptr) return(1);
 
 	handle_request_return_num(player, id, num);
-	return 2;
+	return(2);
 }
 static int Receive_request_str(int ind) {
 	connection_t *connp = Conn[ind];
@@ -13888,10 +13888,10 @@ static int Receive_request_str(int ind) {
 		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
 	}
-	if (!p_ptr) return 1;
+	if (!p_ptr) return(1);
 
 	handle_request_return_str(player, id, str);
-	return 2;
+	return(2);
 }
 static int Receive_request_cfr(int ind) {
 	connection_t *connp = Conn[ind];
@@ -13909,10 +13909,10 @@ static int Receive_request_cfr(int ind) {
 		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
 	}
-	if (!p_ptr) return 1;
+	if (!p_ptr) return(1);
 
 	handle_request_return_cfr(player, id, (cfr != 0));
-	return 2;
+	return(2);
 }
 
 /* Receive F:/R:/K:/U: definitions again (usually only transmitted once on startup,
@@ -13929,7 +13929,7 @@ static int Receive_client_setup(int ind) {
 		p_ptr = Players[player];
 	} else {
 		s_printf("Connection not ready for Receive_client_setup(ind=%d)\n", ind);
-		return -1;
+		return(-1);
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
@@ -14030,12 +14030,12 @@ static int Receive_client_setup(int ind) {
 
 	//note: no cooldown here atm, could be spammable..
 	p_ptr->redraw |= PR_MAP;
-	return 1;
+	return(1);
 
 	/* Rollback the socket buffer in case the packet isn't complete */
 	rollback:
 	connp->r.ptr = stored_sbuf_ptr;
-	return 0;
+	return(0);
 }
 //debugging:
 static int Receive_client_setup_U(int ind) {
@@ -14051,7 +14051,7 @@ static int Receive_client_setup_U(int ind) {
 		p_ptr = Players[player];
 	} else {
 		s_printf("Connection not ready for Receive_client_setup(ind=%d)\n", ind);
-		return -1;
+		return(-1);
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%d%d", &ch, &begin, &end)) <= 0) {
@@ -14063,7 +14063,7 @@ static int Receive_client_setup_U(int ind) {
 	/* Read the "unknown" char/attrs */
 	if (begin < 0 || begin >= TV_MAX || end < 0 || end > TV_MAX || end < begin) {
 		Destroy_connection(ind, "bad u-setup");
-		return -1;
+		return(-1);
 	}
 	for (i = begin; i < end; i++) {
 		/* 4.8.1 and newer clients use 32bit character size. */
@@ -14083,12 +14083,12 @@ static int Receive_client_setup_U(int ind) {
 
 	//note: no cooldown here atm, could be spammable..
 	p_ptr->redraw |= PR_MAP;
-	return 1;
+	return(1);
 
 	/* Rollback the socket buffer in case the packet isn't complete */
 	rollback:
 	connp->r.ptr = stored_sbuf_ptr;
-	return 0;
+	return(0);
 }
 static int Receive_client_setup_F(int ind) {
 	connection_t *connp = Conn[ind];
@@ -14103,7 +14103,7 @@ static int Receive_client_setup_F(int ind) {
 		p_ptr = Players[player];
 	} else {
 		s_printf("Connection not ready for Receive_client_setup(ind=%d)\n", ind);
-		return -1;
+		return(-1);
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%d%d", &ch, &begin, &end)) <= 0) {
@@ -14115,7 +14115,7 @@ static int Receive_client_setup_F(int ind) {
 	/* Read the "feature" char/attrs */
 	if (begin < 0 || begin >= MAX_F_IDX || end < 0 || end > MAX_F_IDX || end < begin) {
 		Destroy_connection(ind, "bad f-setup");
-		return -1;
+		return(-1);
 	}
 	for (i = begin; i < end; i++) {
 		connp->Client_setup.f_char[i] = 0; /* Needs to be initialized for proper packet read. */
@@ -14136,12 +14136,12 @@ static int Receive_client_setup_F(int ind) {
 
 	//note: no cooldown here atm, could be spammable..
 	p_ptr->redraw |= PR_MAP;
-	return 1;
+	return(1);
 
 	/* Rollback the socket buffer in case the packet isn't complete */
 	rollback:
 	connp->r.ptr = stored_sbuf_ptr;
-	return 0;
+	return(0);
 }
 static int Receive_client_setup_K(int ind) {
 	connection_t *connp = Conn[ind];
@@ -14156,7 +14156,7 @@ static int Receive_client_setup_K(int ind) {
 		p_ptr = Players[player];
 	} else {
 		s_printf("Connection not ready for Receive_client_setup(ind=%d)\n", ind);
-		return -1;
+		return(-1);
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%d%d", &ch, &begin, &end)) <= 0) {
@@ -14168,7 +14168,7 @@ static int Receive_client_setup_K(int ind) {
 	/* Read the "object" char/attrs */
 	if (begin < 0 || begin >= MAX_K_IDX || end < 0 || end > MAX_K_IDX || end < begin) {
 		Destroy_connection(ind, "bad k-setup");
-		return -1;
+		return(-1);
 	}
 	for (i = begin; i < end; i++) {
 		connp->Client_setup.k_char[i] = 0; /* Needs to be initialized for proper packet read. */
@@ -14189,12 +14189,12 @@ static int Receive_client_setup_K(int ind) {
 
 	//note: no cooldown here atm, could be spammable..
 	p_ptr->redraw |= PR_MAP;
-	return 1;
+	return(1);
 
 	/* Rollback the socket buffer in case the packet isn't complete */
 	rollback:
 	connp->r.ptr = stored_sbuf_ptr;
-	return 0;
+	return(0);
 }
 static int Receive_client_setup_R(int ind) {
 	connection_t *connp = Conn[ind];
@@ -14209,7 +14209,7 @@ static int Receive_client_setup_R(int ind) {
 		p_ptr = Players[player];
 	} else {
 		s_printf("Connection not ready for Receive_client_setup(ind=%d)\n", ind);
-		return -1;
+		return(-1);
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%d%d", &ch, &begin, &end)) <= 0) {
@@ -14221,7 +14221,7 @@ static int Receive_client_setup_R(int ind) {
 	/* Read the "monster" char/attrs */
 	if (begin < 0 || begin >= MAX_R_IDX || end < 0 || end > MAX_R_IDX || end < begin) {
 		Destroy_connection(ind, "bad r-setup");
-		return -1;
+		return(-1);
 	}
 	for (i = begin; i < end; i++) {
 		connp->Client_setup.r_char[i] = 0; /* Needs to be initialized for proper packet read. */
@@ -14242,12 +14242,12 @@ static int Receive_client_setup_R(int ind) {
 
 	//note: no cooldown here atm, could be spammable..
 	p_ptr->redraw |= PR_MAP;
-	return 1;
+	return(1);
 
 	/* Rollback the socket buffer in case the packet isn't complete */
 	rollback:
 	connp->r.ptr = stored_sbuf_ptr;
-	return 0;
+	return(0);
 }
 
 static int Receive_audio(int ind) {
@@ -14276,7 +14276,7 @@ static int Receive_audio(int ind) {
 		p_ptr->audio_mus = connp->audio_mus;
 	}
 #endif
-	return 2;
+	return(2);
 }
 
 #ifdef ENABLE_SUBINVEN
@@ -14300,12 +14300,12 @@ static int Receive_si_move(int ind) {
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_subinven_move(player, (int)islot);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd", ch, islot);
-		return 0;
+		return(0);
 	}
-	return 1;
+	return(1);
 }
 static int Receive_si_remove(int ind) {
 	connection_t *connp = Conn[ind];
@@ -14327,12 +14327,12 @@ static int Receive_si_remove(int ind) {
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_subinven_remove(player, (int)islot, (int)slot);
-		return 2;
+		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd%hd", ch, islot, slot);
-		return 0;
+		return(0);
 	}
-	return 1;
+	return(1);
 }
 #endif
 
@@ -14375,7 +14375,7 @@ static int Receive_version(int ind) {
 		}
 	}
 
-	return 1;
+	return(1);
 }
 
 
@@ -14391,8 +14391,8 @@ char *get_player_ip(int Ind) {
 
 bool get_conn_state_ok(int Ind) {
 	connection_t *connp = Conn[Players[Ind]->conn];
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) return FALSE;
-	return TRUE;
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) return(FALSE);
+	return(TRUE);
 }
 
 sockbuf_t *get_conn_q(int Ind) {

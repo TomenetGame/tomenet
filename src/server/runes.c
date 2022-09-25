@@ -99,7 +99,7 @@ int do_use_mp(int Ind, int mod, float mul) {
 	}
 
 	p_ptr->redraw |= PR_MANA;
-	return 0;
+	return(0);
 }
 
 void cast_rune_spell_header (int Ind, int a, int b) {

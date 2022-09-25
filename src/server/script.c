@@ -54,7 +54,7 @@ static int pern_errormessage(lua_State *L) {
 	buf[j] = '\0';
 	//msg_broadcast_format(0, "\377vLUA: %s", buf);
 	msg_admin("\377vLUA: %s", buf);
-	return (0);
+	return(0);
 }
 
 static struct luaL_reg pern_iolib[] = {
@@ -71,13 +71,13 @@ static struct luaL_reg pern_iolib[] = {
 #define DYADIC(name, op) \
     s32b name(s32b a, s32b b); \
     s32b name(s32b a, s32b b) { \
-		return (a op b); \
+		return(a op b); \
     }
 
 #define MONADIC(name, op) \
     s32b name(s32b b); \
     s32b name(s32b b) { \
-	return (op b); \
+	return(op b); \
     }
 
 
@@ -96,7 +96,7 @@ MONADIC(intBitNot,  ~ )
  */
 static int int_not(lua_State* L) {
 	lua_pushnumber(L, ~luaL_check_bit(L, 1));
-	return 1;
+	return(1);
 }
 
 
@@ -106,7 +106,7 @@ static int int_not(lua_State* L) {
  */
 static int int_mod(lua_State* L) {
 	lua_pushnumber(L, luaL_check_bit(L, 1) % luaL_check_bit(L, 2));
-	return 1;
+	return(1);
 }
 
 
@@ -121,7 +121,7 @@ static int int_and(lua_State *L) {
 	for (i = 2; i <= n; i++) w &= luaL_check_bit(L, i);
 	lua_pushnumber(L, w);
 
-	return 1;
+	return(1);
 }
 
 
@@ -136,7 +136,7 @@ static int int_or(lua_State *L) {
 	for (i = 2; i <= n; i++) w |= luaL_check_bit(L, i);
 	lua_pushnumber(L, w);
 
-	return 1;
+	return(1);
 }
 
 
@@ -151,7 +151,7 @@ static int int_xor(lua_State *L) {
 	for (i = 2; i <= n; i++) w ^= luaL_check_bit(L, i);
 	lua_pushnumber(L, w);
 
-	return 1;
+	return(1);
 }
 
 
@@ -161,7 +161,7 @@ static int int_xor(lua_State *L) {
  */
 static int int_lshift(lua_State* L) {
 	lua_pushnumber(L, luaL_check_bit(L, 1) << luaL_check_ubit(L, 2));
-	return 1;
+	return(1);
 }
 
 /*
@@ -170,7 +170,7 @@ static int int_lshift(lua_State* L) {
  */
 static int int_rshift(lua_State* L) {
 	lua_pushnumber(L, luaL_check_ubit(L, 1) >> luaL_check_ubit(L, 2));
-	return 1;
+	return(1);
 }
 
 /*
@@ -179,7 +179,7 @@ static int int_rshift(lua_State* L) {
  */
 static int int_arshift(lua_State* L) {
 	lua_pushnumber(L, luaL_check_bit(L, 1) >> luaL_check_ubit(L, 2));
-	return 1;
+	return(1);
 }
 
 
@@ -408,7 +408,7 @@ bool pern_dofile(int Ind, char *file) {
 	error = lua_dofile(L, buf);
 	lua_settop(L, oldtop);
 
-	return (error?TRUE:FALSE);
+	return(error?TRUE:FALSE);
 }
 
 int exec_lua(int Ind, char *file) {
@@ -431,7 +431,7 @@ int exec_lua(int Ind, char *file) {
 		res = 0;
 
 	lua_settop(L, oldtop);
-	return (res);
+	return(res);
 }
 
 cptr string_exec_lua(int Ind, char *file) {
@@ -452,7 +452,7 @@ cptr string_exec_lua(int Ind, char *file) {
 	} else res = "";
 
 	lua_settop(L, oldtop);
-	return (res);
+	return(res);
 }
 
 static FILE *lua_file;

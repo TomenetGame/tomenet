@@ -48,7 +48,7 @@ static int find_realm_skill(int realm)
 //	case REALM_PSI:
 //		return SKILL_;
 	};
-	return 0;
+	return(0);
 }
 
 /*
@@ -112,7 +112,7 @@ static s16b spell_chance(int Ind, int realm, magic_type *s_ptr)
 	if (chance > 95) chance = 95;
 
 	/* Return the chance */
-	return (chance);
+	return(chance);
 }
 #endif
 
@@ -179,7 +179,7 @@ bool check_antimagic(int Ind, int percentage) {
 					msg_format(i, "\377%cYour anti-magic field disrupts %s's attempts.", COLOUR_AM_PLY, p_ptr->name);
 				}
 			}
-			return TRUE;
+			return(TRUE);
 		}
 	}
 
@@ -230,12 +230,12 @@ bool check_antimagic(int Ind, int percentage) {
 #ifdef USE_SOUND_2010
 			sound(Ind, "am_field", NULL, SFX_TYPE_MON_MISC, FALSE);
 #endif
-			return TRUE;
+			return(TRUE);
 		}
 	}
 
 	/* Assume no antimagic */
-	return FALSE;
+	return(FALSE);
 }
 
 #if 0 /* not used? - mikaelh */
@@ -428,7 +428,7 @@ bool mimic_power_hindered(int Ind) {
 	if (p_ptr->anti_magic) {
 		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
 		Send_confirm(Ind, PKT_ACTIVATE_SKILL);
-		return TRUE;
+		return(TRUE);
 	}
 	if (p_ptr->antimagic) {
 #ifdef USE_SOUND_2010
@@ -436,7 +436,7 @@ bool mimic_power_hindered(int Ind) {
 #endif
 		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
 		Send_confirm(Ind, PKT_ACTIVATE_SKILL);
-		return TRUE;
+		return(TRUE);
 	}
 
 	/* Not when confused */
@@ -448,11 +448,11 @@ bool mimic_power_hindered(int Ind) {
 
 		msg_print(Ind, "You are too confused!");
 		Send_confirm(Ind, PKT_ACTIVATE_SKILL);
-		return TRUE;
+		return(TRUE);
 	}
 
 	/* power successfully used */
-	return FALSE;
+	return(FALSE);
 }
 
 static void do_mimic_power(int Ind, int power, int dir) {
@@ -1918,13 +1918,13 @@ bool cast_rune_spell(int Ind, u16b lo, u16b hi, int dir) {
 		p_ptr->current_rcraft = 1;
 		p_ptr->current_rcraft_e_flags = lo;
 		p_ptr->current_rcraft_m_flags = hi;
-		return FALSE;
+		return(FALSE);
 	}
 
 	if (p_ptr->no_house_magic && inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py)) {
 		msg_print(Ind, "You decide to better not cast a spell inside a house.");
 		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Paranoia */
@@ -1940,13 +1940,13 @@ bool cast_rune_spell(int Ind, u16b lo, u16b hi, int dir) {
 		ftk_maybe = exec_lua(Ind, format("return cast_rune_spell(%d, %d, %d)", Ind, dir, u));
 		ftk_type = exec_lua(Ind, format("return rcraft_ftk(%d)", u));
 		if (p_ptr->shooty_till_kill && ftk_maybe) {
-			if (ftk_type == 0) return FALSE;
+			if (ftk_type == 0) return(FALSE);
 #ifndef PY_PROJ_WALL
-			if (ftk_type == 1 && !projectable_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return FALSE;
+			if (ftk_type == 1 && !projectable_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return(FALSE);
 #else
-			if (ftk_type == 1 && !projectable_wall_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return FALSE;
+			if (ftk_type == 1 && !projectable_wall_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return(FALSE);
 #endif
-			if (dir != 5 || !target_okay(Ind)) return FALSE;
+			if (dir != 5 || !target_okay(Ind)) return(FALSE);
 			p_ptr->shooting_till_kill = TRUE;
 			p_ptr->shoot_till_kill_rcraft = TRUE;
 			p_ptr->FTK_e_flags = lo;
@@ -1959,7 +1959,7 @@ bool cast_rune_spell(int Ind, u16b lo, u16b hi, int dir) {
 		}
 		return ftk_maybe; // True if an attempt was made, for auto-retaliation
 	}
-	return FALSE;
+	return(FALSE);
 }
 
 /* Mimic powers, moved to their own functions - C. Blue */

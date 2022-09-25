@@ -660,7 +660,7 @@ int findacc(bool next) {
 		fseek(fp, 0L, SEEK_SET);
 		while ((x = fread(&c_acc, sizeof(struct account), 1, fp))) {
 			i++;
-			if (!strncmp(c_acc.name, sname, 30)) return (i - 1);
+			if (!strncmp(c_acc.name, sname, 30)) return(i - 1);
 		} while (x);
 
 		/* prepare for partial match search */
@@ -672,14 +672,14 @@ int findacc(bool next) {
 	l = strlen(sname);
 	while ((x = fread(&c_acc, sizeof(struct account), 1, fp))) {
 		i++;
-		if (!strncmp(c_acc.name, sname, l)) return (i - 1);
+		if (!strncmp(c_acc.name, sname, l)) return(i - 1);
 #ifdef PARTIAL_ANYWHERE
-		if (strstr(c_acc.name, sname2)) return (i - 1);
+		if (strstr(c_acc.name, sname2)) return(i - 1);
 #endif
 	} while (x);
 
 	status("Could not find that account");
-	return (-1);
+	return(-1);
 }
 
 void status(char *info) {
@@ -822,7 +822,7 @@ unsigned short ask(char *prompt) {
 	} while (1);
 	move(LINES - 1, 0);
 	clrtoeol();
-	return ((ch == 'Y' || ch == 'y'));
+	return((ch == 'Y' || ch == 'y'));
 }
 
 void purge_duplicates(void) {

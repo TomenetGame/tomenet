@@ -1384,7 +1384,7 @@ static bool invalid_server_conditions(char *buf) {
 		while (buf[ccn] != '$' && buf[ccn] != '!' && buf[ccn] != '\0')
 			{ cc[ccn - 1] = buf[ccn]; ccn++; }
 
-		if (buf[ccn] == '\0') return TRUE; /* error: end of line reached instead of completing the tag -> completely invalid */
+		if (buf[ccn] == '\0') return(TRUE); /* error: end of line reached instead of completing the tag -> completely invalid */
 
 		/* inverted rule? means that tag is between $...! symbols */
 		if (buf[ccn] == '!') negation = TRUE;
@@ -1597,7 +1597,7 @@ static errr grab_one_class_flag(s32b *choice, cptr what) {
 	for (i = 0; i < MAX_CLASS && (s = class_info[i].title); i++) {
 		if (streq(what, s)) {
 			(choice[i / 32]) |= (1U << i);
-			return (0);
+			return(0);
 		}
 	}
 
@@ -1605,7 +1605,7 @@ static errr grab_one_class_flag(s32b *choice, cptr what) {
 	if (!unknown_shut_up) s_printf("Unknown class flag '%s'.\n", what);
 
 	/* Failure */
-	return (1);
+	return(1);
 }
 static errr grab_one_race_allow_flag(s32b *choice, cptr what) {
 	int i;
@@ -1613,7 +1613,7 @@ static errr grab_one_race_allow_flag(s32b *choice, cptr what) {
 
 #ifndef ENABLE_MAIA
 	/* Hack, so ow_info.txt works */
-	if (streq(what, "Maia")) return 0;
+	if (streq(what, "Maia")) return(0);
 #endif
 
 	/* Scan classes flags */
@@ -1621,7 +1621,7 @@ static errr grab_one_race_allow_flag(s32b *choice, cptr what) {
 	for (i = 0; i < MAX_RACE && (s = race_info[i].title); i++) {
 		if (streq(what, s)) {
 			(choice[i / 32]) |= (1U << i);
-			return (0);
+			return(0);
 		}
 	}
 
@@ -1629,7 +1629,7 @@ static errr grab_one_race_allow_flag(s32b *choice, cptr what) {
 	if (!unknown_shut_up) s_printf("(1)Unknown race flag '%s'.\n", what);
 
 	/* Failure */
-	return (1);
+	return(1);
 }
 
 /*
@@ -1643,7 +1643,7 @@ static errr grab_one_player_realm_flag(s32b *realms, cptr what) {
 	for (i = 1; i < MAX_REALM; i++) {
 		if (streq(what, realm_names[i][0])) {
 			(realms[(i - 1) / 32]) |= (1U << (i - 1));
-			return (0);
+			return(0);
 		}
 	}
 #endif	// 0
@@ -1652,7 +1652,7 @@ static errr grab_one_player_realm_flag(s32b *realms, cptr what) {
 	if (!unknown_shut_up) s_printf("Unknown realm name '%s'.\n", what);
 
 	/* Error */
-	return (1);
+	return(1);
 }
 
 /*
@@ -1665,7 +1665,7 @@ static errr grab_one_vault_flag(vault_type *v_ptr, cptr what) {
 	for (i = 0; i < 32; i++) {
 		if (streq(what, v_info_flags1[i])) {
 			v_ptr->flags1 |= (1U << i);
-			return (0);
+			return(0);
 		}
 	}
 
@@ -1673,7 +1673,7 @@ static errr grab_one_vault_flag(vault_type *v_ptr, cptr what) {
 	s_printf("Unknown vault flag '%s'.\n", what);
 
 	/* Error */
-	return (1);
+	return(1);
 }
 
 
@@ -1714,7 +1714,7 @@ errr init_v_info_txt(FILE *fp, char *buf) {
 		if (!buf[0] || (buf[0] == '#')) continue;
 
 		/* Verify correct "colon" format */
-		if (buf[1] != ':') return (1);
+		if (buf[1] != ':') return(1);
 
 
 		/* Hack -- Process 'V' for "Version" */
@@ -1727,7 +1727,7 @@ errr init_v_info_txt(FILE *fp, char *buf) {
 			    (v2 != v_head->v_minor) ||
 			    (v3 != v_head->v_patch)) {
 				/* It only annoying -- DG */
-				//return (2);
+				//return(2);
 				//s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
 			}
 
@@ -1739,7 +1739,7 @@ errr init_v_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* No version yet */
-		if (!okay) return (2);
+		if (!okay) return(2);
 
 
 		/* Process 'N' for "New/Number/Name" */
@@ -1748,22 +1748,22 @@ errr init_v_info_txt(FILE *fp, char *buf) {
 			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
-			if (!s) return (1);
+			if (!s) return(1);
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
 
 			/* Paranoia -- require a name */
-			if (!*s) return (1);
+			if (!*s) return(1);
 
 			/* Get the index */
 			i = atoi(buf + 2);
 
 			/* Verify information */
-			if (i <= error_idx) return (4);
+			if (i <= error_idx) return(4);
 
 			/* Verify information */
-			if (i >= (int) v_head->info_num) return (2);
+			if (i >= (int) v_head->info_num) return(2);
 
 			/* Save the index */
 			error_idx = i;
@@ -1772,7 +1772,7 @@ errr init_v_info_txt(FILE *fp, char *buf) {
 			v_ptr = &v_info[i];
 
 			/* Hack -- Verify space */
-			if (v_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+			if (v_head->name_size + strlen(s) + 8 > fake_name_size) return(7);
 
 			/* Advance and Save the name index */
 			if (!v_ptr->name) v_ptr->name = ++v_head->name_size;
@@ -1788,7 +1788,7 @@ errr init_v_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* There better be a current v_ptr */
-		if (!v_ptr) return (3);
+		if (!v_ptr) return(3);
 
 
 		/* Process 'D' for "Description" */
@@ -1797,7 +1797,7 @@ errr init_v_info_txt(FILE *fp, char *buf) {
 			s = buf + 2;
 
 			/* Hack -- Verify space */
-			if (v_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
+			if (v_head->text_size + strlen(s) + 8 > fake_text_size) return(7);
 
 			/* Advance and Save the text index */
 			if (!v_ptr->text) v_ptr->text = ++v_head->text_size;
@@ -1818,7 +1818,7 @@ errr init_v_info_txt(FILE *fp, char *buf) {
 			int typ, rat, hgt, wid;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf + 2, "%d:%d:%d:%d", &typ, &rat, &hgt, &wid)) return (1);
+			if (4 != sscanf(buf + 2, "%d:%d:%d:%d", &typ, &rat, &hgt, &wid)) return(1);
 
 			/* Save the values */
 			v_ptr->typ = typ;
@@ -1844,7 +1844,7 @@ errr init_v_info_txt(FILE *fp, char *buf) {
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_vault_flag(v_ptr, s)) return (5);
+				if (0 != grab_one_vault_flag(v_ptr, s)) return(5);
 
 				/* Start the next entry */
 				s = t;
@@ -1855,7 +1855,7 @@ errr init_v_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* Oops */
-		return (6);
+		return(6);
 	}
 
 
@@ -1865,12 +1865,12 @@ errr init_v_info_txt(FILE *fp, char *buf) {
 
 
 	/* No version yet */
-	if (!okay) return (2);
+	if (!okay) return(2);
 
 	max_v_idx = ++error_idx;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1912,7 +1912,7 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 		if (!buf[0] || (buf[0] == '#')) continue;
 
 		/* Verify correct "colon" format */
-		if (buf[1] != ':') return (1);
+		if (buf[1] != ':') return(1);
 
 
 		/* Hack -- Process 'V' for "Version" */
@@ -1925,7 +1925,7 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 			    (v2 != f_head->v_minor) ||
 			    (v3 != f_head->v_patch)) {
 				/* It only annoying -- DG */
-				//return (2);
+				//return(2);
 				//s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
 			}
 
@@ -1937,7 +1937,7 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* No version yet */
-		if (!okay) return (2);
+		if (!okay) return(2);
 
 
 		/* Process 'N' for "New/Number/Name" */
@@ -1946,22 +1946,22 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
-			if (!s) return (1);
+			if (!s) return(1);
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
 
 			/* Paranoia -- require a name */
-			if (!*s) return (1);
+			if (!*s) return(1);
 
 			/* Get the index */
 			i = atoi(buf + 2);
 
 			/* Verify information */
-			if (i <= error_idx) return (4);
+			if (i <= error_idx) return(4);
 
 			/* Verify information */
-			if (i >= (int) f_head->info_num) return (2);
+			if (i >= (int) f_head->info_num) return(2);
 
 			/* Save the index */
 			error_idx = i;
@@ -1970,7 +1970,7 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 			f_ptr = &f_info[i];
 
 			/* Hack -- Verify space */
-			if (f_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+			if (f_head->name_size + strlen(s) + 8 > fake_name_size) return(7);
 
 			/* Advance and Save the name index */
 			if (!f_ptr->name) f_ptr->name = ++f_head->name_size;
@@ -1989,7 +1989,7 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* There better be a current f_ptr */
-		if (!f_ptr) return (3);
+		if (!f_ptr) return(3);
 
 
 #if 0
@@ -2000,7 +2000,7 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 			s = buf + 2;
 
 			/* Hack -- Verify space */
-			if (f_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
+			if (f_head->text_size + strlen(s) + 8 > fake_text_size) return(7);
 
 			/* Advance and Save the text index */
 			if (!f_ptr->text) f_ptr->text = ++f_head->text_size;
@@ -2023,7 +2023,7 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 			int mimic;
 
 			/* Scan for the values */
-			if (1 != sscanf(buf + 2, "%d", &mimic)) return (1);
+			if (1 != sscanf(buf + 2, "%d", &mimic)) return(1);
 
 			/* Save the values */
 			f_ptr->mimic = mimic;
@@ -2038,13 +2038,13 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 			int tmp;
 
 			/* Paranoia */
-			if (!buf[2]) return (1);
-			if (!buf[3]) return (1);
-			if (!buf[4]) return (1);
+			if (!buf[2]) return(1);
+			if (!buf[3]) return(1);
+			if (!buf[4]) return(1);
 
 			/* Extract the color */
 			tmp = color_char_to_attr(buf[4]);
-			if (tmp < 0) return (1);
+			if (tmp < 0) return(1);
 
 			/* Save the values */
 			f_ptr->f_char = buf[2];
@@ -2056,7 +2056,7 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 
 
 		/* Oops */
-		return (6);
+		return(6);
 	}
 
 
@@ -2066,11 +2066,11 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 
 
 	/* No version yet */
-	if (!okay) return (2);
+	if (!okay) return(2);
 
 
 	/* Success */
-	return (0);
+	return(0);
 }
 #else // 0
 
@@ -2084,11 +2084,11 @@ static errr grab_one_feature_flag(feature_type *f_ptr, cptr what) {
 	for (i = 0; i < 32; i++) {
 		if (streq(what, f_info_flags1[i])) {
 			f_ptr->flags1 |= (1U << i);
-			return (0);
+			return(0);
 		}
 		if (streq(what, f_info_flags2[i])) {
 			f_ptr->flags2 |= (1U << i);
-			return (0);
+			return(0);
 		}
 	}
 
@@ -2096,7 +2096,7 @@ static errr grab_one_feature_flag(feature_type *f_ptr, cptr what) {
 	s_printf("Unknown object flag '%s'.\n", what);
 
 	/* Error */
-	return (1);
+	return(1);
 }
 
 
@@ -2151,7 +2151,7 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 		if (!buf[0] || (buf[0] == '#')) continue;
 
 		/* Verify correct "colon" format */
-		if (buf[1] != ':') return (1);
+		if (buf[1] != ':') return(1);
 
 
 		/* Hack -- Process 'V' for "Version" */
@@ -2164,7 +2164,7 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 			    (v2 != f_head->v_minor) ||
 			    (v3 != f_head->v_patch)) {
 				/* It only annoying -- DG */
-				//return (2);
+				//return(2);
 				//s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
 			}
 
@@ -2176,7 +2176,7 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* No version yet */
-		if (!okay) return (2);
+		if (!okay) return(2);
 
 
 		/* Process 'N' for "New/Number/Name" */
@@ -2185,22 +2185,22 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
-			if (!s) return (1);
+			if (!s) return(1);
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
 
 			/* Paranoia -- require a name */
-			if (!*s) return (1);
+			if (!*s) return(1);
 
 			/* Get the index */
 			i = atoi(buf + 2);
 
 			/* Verify information */
-			if (i <= error_idx) return (4);
+			if (i <= error_idx) return(4);
 
 			/* Verify information */
-			if (i >= (int) f_head->info_num) return (2);
+			if (i >= (int) f_head->info_num) return(2);
 
 			/* Save the index */
 			error_idx = i;
@@ -2209,7 +2209,7 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 			f_ptr = &f_info[i];
 
 			/* Hack -- Verify space */
-			if (f_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+			if (f_head->name_size + strlen(s) + 8 > fake_name_size) return(7);
 
 			/* Advance and Save the name index */
 			if (!f_ptr->name) f_ptr->name = ++f_head->name_size;
@@ -2231,7 +2231,7 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* There better be a current f_ptr */
-		if (!f_ptr) return (3);
+		if (!f_ptr) return(3);
 
 
 		/* Process 'D' for "Descriptions" */
@@ -2240,7 +2240,7 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 			s = buf + 4;
 
 			/* Hack -- Verify space */
-			if (f_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
+			if (f_head->text_size + strlen(s) + 8 > fake_text_size) return(7);
 
 			switch (buf[2]) {
 				case '0':
@@ -2256,7 +2256,7 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 					f_ptr->block = ++f_head->text_size;
 					break;
 				default:
-					return (6);
+					return(6);
 					break;
 			}
 
@@ -2276,7 +2276,7 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 			int mimic;
 
 			/* Scan for the values */
-			if (1 != sscanf(buf + 2, "%d", &mimic)) return (1);
+			if (1 != sscanf(buf + 2, "%d", &mimic)) return(1);
 
 			/* Save the values */
 			f_ptr->mimic = mimic;
@@ -2291,7 +2291,7 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the values */
 			if (7 != sscanf(buf + 2, "%c:%c:%c:%c:%c:%c:%c",
-			    &s0, &s1, &s2, &s3, &s4, &s5, &s6)) return (1);
+			    &s0, &s1, &s2, &s3, &s4, &s5, &s6)) return(1);
 
 			/* Save the values */
 			f_ptr->shimmer[0] = color_char_to_attr(s0);
@@ -2312,15 +2312,15 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 			int tmp;
 
 			/* Paranoia */
-			if (!buf[2]) return (1);
-			if (!buf[3]) return (1);
-			if (!buf[4]) return (1);
+			if (!buf[2]) return(1);
+			if (!buf[3]) return(1);
+			if (!buf[4]) return(1);
 
 			/* Extract the color */
 			tmp = color_char_to_attr(buf[4]);
 
 			/* Paranoia */
-			if (tmp < 0) return (1);
+			if (tmp < 0) return(1);
 
 			/* Save the values */
 #if 0
@@ -2345,13 +2345,13 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 				if ((!f_ptr->d_side[i]) && (!f_ptr->d_dice[i])) break;
 
 			/* Oops, no more slots */
-			if (i == 4) return (1);
+			if (i == 4) return(1);
 
 			/* Scan for the values */
 			if (4 != sscanf(buf + 2, "%dd%d:%d:%d", &dice, &side, &freq, &type)) {
 				int j;
 
-				if (3 != sscanf(buf + 2, "%dd%d:%d", &dice, &side, &freq)) return (1);
+				if (3 != sscanf(buf + 2, "%dd%d:%d", &dice, &side, &freq)) return(1);
 
 				tmp = buf + 2;
 				for (j = 0; j < 2; j++) {
@@ -2396,7 +2396,7 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_feature_flag(f_ptr, s)) return (5);
+				if (0 != grab_one_feature_flag(f_ptr, s)) return(5);
 
 				/* Start the next entry */
 				s = t;
@@ -2409,7 +2409,7 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 
 
 		/* Oops */
-		return (6);
+		return(6);
 	}
 
 
@@ -2419,7 +2419,7 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 
 
 	/* No version yet */
-	if (!okay) return (2);
+	if (!okay) return(2);
 
 	max_f_idx = ++error_idx;
 
@@ -2428,7 +2428,7 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 		if ((f_info[i].flags2 & FF2_BOUNDARY)) f_info[i].flags1 |= FF1_PERMANENT;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 #endif	// 0
 
@@ -2443,45 +2443,45 @@ static errr grab_one_kind_flag(object_kind *k_ptr, cptr what) {
 		/* Check flags1 */
 		if (streq(what, k_info_flags1[i])) {
 			k_ptr->flags1 |= (1U << i);
-			return (0);
+			return(0);
 		}
 		/* Check flags2 */
 		if (streq(what, k_info_flags2[i])) {
 			k_ptr->flags2 |= (1U << i);
-			return (0);
+			return(0);
 		}
 #if 1
 		/* Check flags2 -- traps*/
 		if (streq(what, k_info_flags2_trap[i])) {
 			k_ptr->flags2 |= (1U << i);
-			return (0);
+			return(0);
 		}
 #endif	// 0
 		/* Check flags3 */
 		if (streq(what, k_info_flags3[i])) {
 			k_ptr->flags3 |= (1U << i);
-			return (0);
+			return(0);
 		}
 		/* Check flags4 */
 		if (streq(what, k_info_flags4[i])) {
 			k_ptr->flags4 |= (1U << i);
-			return (0);
+			return(0);
 		}
 		/* Check flags5 */
 		if (streq(what, k_info_flags5[i])) {
 			k_ptr->flags5 |= (1U << i);
-			return (0);
+			return(0);
 		}
 		/* Check flags6 */
 		if (streq(what, k_info_flags6[i])) {
 			k_ptr->flags6 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 		/* Check esp_flags */
 		if (streq(what, esp_flags[i])) {
 			k_ptr->esp |= (1U << i);
-			return (0);
+			return(0);
 		}
 	}
 
@@ -2489,7 +2489,7 @@ static errr grab_one_kind_flag(object_kind *k_ptr, cptr what) {
 	s_printf("Unknown object flag '%s'.\n", what);
 
 	/* Error */
-	return (1);
+	return(1);
 }
 
 
@@ -2534,7 +2534,7 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 		if (!buf[0] || (buf[0] == '#')) continue;
 
 		/* Verify correct "colon" format */
-		if (buf[1] != ':') return (1);
+		if (buf[1] != ':') return(1);
 
 
 		/* Hack -- Process 'V' for "Version" */
@@ -2547,7 +2547,7 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 			    (v2 != k_head->v_minor) ||
 			    (v3 != k_head->v_patch)) {
 				/* It only annoying -- DG */
-				//return (2);
+				//return(2);
 				//s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
 			}
 
@@ -2559,7 +2559,7 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* No version yet */
-		if (!okay) return (2);
+		if (!okay) return(2);
 
 
 		/* Process 'N' for "New/Number/Name" */
@@ -2568,13 +2568,13 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
-			if (!s) return (1);
+			if (!s) return(1);
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
 
 			/* Paranoia -- require a name */
-			if (!*s) return (1);
+			if (!*s) return(1);
 
 			/* Get the index */
 			//i = atoi(buf + 2);
@@ -2583,10 +2583,10 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 			i = ++idx;
 
 			/* Verify information */
-			if (i <= error_idx) return (4);
+			if (i <= error_idx) return(4);
 
 			/* Verify information */
-			if (i >= (int) k_head->info_num) return (2);
+			if (i >= (int) k_head->info_num) return(2);
 
 			/* Save the index */
 			error_idx = i;
@@ -2598,7 +2598,7 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 			k_info_num[atoi(buf + 2)] = i;
 
 			/* Hack -- Verify space */
-			if (k_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+			if (k_head->name_size + strlen(s) + 8 > fake_name_size) return(7);
 
 			/* Advance and Save the name index */
 			if (!k_ptr->name) k_ptr->name = ++k_head->name_size;
@@ -2614,7 +2614,7 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* There better be a current k_ptr */
-		if (!k_ptr) return (3);
+		if (!k_ptr) return(3);
 
 
 
@@ -2629,7 +2629,7 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 			strcat(tmp, "\n");
 
 			/* Hack -- Verify space */
-			if (k_head->text_size + strlen(tmp) + 8 > fake_text_size) return (7);
+			if (k_head->text_size + strlen(tmp) + 8 > fake_text_size) return(7);
 
 			/* Advance and Save the text index */
 			if (!k_ptr->text) k_ptr->text = ++k_head->text_size;
@@ -2652,9 +2652,9 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 			int tmp;
 
 			/* Paranoia */
-			if (!buf[2]) return (1);
-			if (!buf[3]) return (1);
-			if (!buf[4]) return (1);
+			if (!buf[2]) return(1);
+			if (!buf[3]) return(1);
+			if (!buf[4]) return(1);
 
 			/* Extract the char */
 			sym = buf[2];
@@ -2663,7 +2663,7 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 			tmp = color_char_to_attr(buf[4]);
 
 			/* Paranoia */
-			if (tmp < 0) return (1);
+			if (tmp < 0) return(1);
 
 			/* Save the values */
 			k_ptr->k_char = sym;
@@ -2678,7 +2678,7 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 			int tval, sval, pval;
 
 			/* Scan for the values */
-			if (3 != sscanf(buf + 2, "%d:%d:%d", &tval, &sval, &pval)) return (1);
+			if (3 != sscanf(buf + 2, "%d:%d:%d", &tval, &sval, &pval)) return(1);
 
 			/* Save the values */
 			k_ptr->tval = tval;
@@ -2696,7 +2696,7 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the values */
 			if (4 != sscanf(buf + 2, "%d:%d:%d:%d",
-			    &level, &extra, &wgt, &cost)) return (1);
+			    &level, &extra, &wgt, &cost)) return(1);
 
 			/* Save the values */
 			k_ptr->level = level;
@@ -2750,7 +2750,7 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the values */
 			if (6 != sscanf(buf + 2, "%d:%dd%d:%d:%d:%d",
-			    &ac, &hd1, &hd2, &th, &td, &ta)) return (1);
+			    &ac, &hd1, &hd2, &th, &td, &ta)) return(1);
 
 			k_ptr->ac = ac;
 			k_ptr->dd = hd1;
@@ -2777,7 +2777,7 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_kind_flag(k_ptr, s)) return (5);
+				if (0 != grab_one_kind_flag(k_ptr, s)) return(5);
 
 				/* Start the next entry */
 				s = t;
@@ -2789,7 +2789,7 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 
 
 		/* Oops */
-		return (6);
+		return(6);
 	}
 
 
@@ -2799,7 +2799,7 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 
 
 	/* No version yet */
-	if (!okay) return (2);
+	if (!okay) return(2);
 
 #if DEBUG_LEVEL > 2
 	/* Debug -- print total no. */
@@ -2809,7 +2809,7 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 	max_k_idx = ++idx;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2823,45 +2823,45 @@ static errr grab_one_artifact_flag(artifact_type *a_ptr, cptr what) {
 	for (i = 0; i < 32; i++) {
 		if (streq(what, k_info_flags1[i])) {
 			a_ptr->flags1 |= (1U << i);
-			return (0);
+			return(0);
 		}
 		/* Check flags2 */
 		if (streq(what, k_info_flags2[i])) {
 			a_ptr->flags2 |= (1U << i);
-			return (0);
+			return(0);
 		}
 		/* Check flags3 */
 		if (streq(what, k_info_flags3[i])) {
 			a_ptr->flags3 |= (1U << i);
-			return (0);
+			return(0);
 		}
 #if 1
 		/* Check flags2 -- traps (huh? - Jir -) */
 		if (streq(what, k_info_flags2_trap[i])) {
 			a_ptr->flags2 |= (1U << i);
-			return (0);
+			return(0);
 		}
 #endif	// 0
 		/* Check flags4 */
 		if (streq(what, k_info_flags4[i])) {
 			a_ptr->flags4 |= (1U << i);
-			return (0);
+			return(0);
 		}
 		/* Check flags5 */
 		if (streq(what, k_info_flags5[i])) {
 			a_ptr->flags5 |= (1U << i);
-			return (0);
+			return(0);
 		}
 		/* Check flags6 */
 		if (streq(what, k_info_flags6[i])) {
 			a_ptr->flags6 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 		/* Check esp_flags */
 		if (streq(what, esp_flags[i])) {
 			a_ptr->esp |= (1U << i);
-			return (0);
+			return(0);
 		}
 	}
 
@@ -2869,7 +2869,7 @@ static errr grab_one_artifact_flag(artifact_type *a_ptr, cptr what) {
 	s_printf("Unknown artifact flag '%s'.\n", what);
 
 	/* Error */
-	return (1);
+	return(1);
 }
 
 
@@ -2909,7 +2909,7 @@ errr init_a_info_txt(FILE *fp, char *buf) {
 		if (!buf[0] || (buf[0] == '#')) continue;
 
 		/* Verify correct "colon" format */
-		if (buf[1] != ':') return (1);
+		if (buf[1] != ':') return(1);
 
 
 		/* Hack -- Process 'V' for "Version" */
@@ -2922,7 +2922,7 @@ errr init_a_info_txt(FILE *fp, char *buf) {
 			    (v2 != a_head->v_minor) ||
 			    (v3 != a_head->v_patch)) {
 				/* It only annoying -- DG */
-				//return (2);
+				//return(2);
 				//s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
 			}
 
@@ -2934,7 +2934,7 @@ errr init_a_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* No version yet */
-		if (!okay) return (2);
+		if (!okay) return(2);
 
 
 		/* Process 'N' for "New/Number/Name" */
@@ -2943,22 +2943,22 @@ errr init_a_info_txt(FILE *fp, char *buf) {
 			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
-			if (!s) return (1);
+			if (!s) return(1);
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
 
 			/* Paranoia -- require a name */
-			if (!*s) return (1);
+			if (!*s) return(1);
 
 			/* Get the index */
 			i = atoi(buf + 2);
 
 			/* Verify information */
-			if (i < error_idx) return (4);
+			if (i < error_idx) return(4);
 
 			/* Verify information */
-			if (i >= (int) a_head->info_num) return (2);
+			if (i >= (int) a_head->info_num) return(2);
 
 			/* Save the index */
 			error_idx = i;
@@ -2967,7 +2967,7 @@ errr init_a_info_txt(FILE *fp, char *buf) {
 			a_ptr = &a_info[i];
 
 			/* Hack -- Verify space */
-			if (a_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+			if (a_head->name_size + strlen(s) + 8 > fake_name_size) return(7);
 
 			/* Advance and Save the name index */
 			if (!a_ptr->name) a_ptr->name = ++a_head->name_size;
@@ -2990,7 +2990,7 @@ errr init_a_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* There better be a current a_ptr */
-		if (!a_ptr) return (3);
+		if (!a_ptr) return(3);
 
 
 		/* Process 'D' for "Description" */
@@ -3004,7 +3004,7 @@ errr init_a_info_txt(FILE *fp, char *buf) {
 			strcat(tmp, "\n");
 
 			/* Hack -- Verify space */
-			if (a_head->text_size + strlen(tmp) + 8 > fake_text_size) return (7);
+			if (a_head->text_size + strlen(tmp) + 8 > fake_text_size) return(7);
 
 			/* Advance and Save the text index */
 			if (!a_ptr->text) a_ptr->text = ++a_head->text_size;
@@ -3026,7 +3026,7 @@ errr init_a_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the values */
 			if (3 != sscanf(buf + 2, "%d:%d:%d",
-			    &tval, &sval, &pval)) return (1);
+			    &tval, &sval, &pval)) return(1);
 
 			/* Save the values */
 			a_ptr->tval = tval;
@@ -3043,7 +3043,7 @@ errr init_a_info_txt(FILE *fp, char *buf) {
 			int cost;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf + 2, "%d:%d:%d:%d", &level, &rarity, &wgt, &cost)) return (1);
+			if (4 != sscanf(buf + 2, "%d:%d:%d:%d", &level, &rarity, &wgt, &cost)) return(1);
 
 			/* Save the values */
 			a_ptr->level = level;
@@ -3061,7 +3061,7 @@ errr init_a_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the values */
 			if (6 != sscanf(buf + 2, "%d:%dd%d:%d:%d:%d",
-			    &ac, &hd1, &hd2, &th, &td, &ta)) return (1);
+			    &ac, &hd1, &hd2, &th, &td, &ta)) return(1);
 
 			a_ptr->ac = ac;
 			a_ptr->dd = hd1;
@@ -3091,7 +3091,7 @@ errr init_a_info_txt(FILE *fp, char *buf) {
 			for (i = 0; i < power_max; i++)
 				if (!stricmp(s, powers_type[i].name)) break;
 
-			if (i == power_max) return (6);
+			if (i == power_max) return(6);
 
 			a_ptr->power = i;
 #endif	// 0
@@ -3113,7 +3113,7 @@ errr init_a_info_txt(FILE *fp, char *buf) {
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_artifact_flag(a_ptr, s)) return (5);
+				if (0 != grab_one_artifact_flag(a_ptr, s)) return(5);
 
 				/* Start the next entry */
 				s = t;
@@ -3125,7 +3125,7 @@ errr init_a_info_txt(FILE *fp, char *buf) {
 
 
 		/* Oops */
-		return (6);
+		return(6);
 	}
 
 
@@ -3135,12 +3135,12 @@ errr init_a_info_txt(FILE *fp, char *buf) {
 
 
 	/* No version yet */
-	if (!okay) return (2);
+	if (!okay) return(2);
 
 	max_a_idx = ++error_idx;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*
@@ -3153,7 +3153,7 @@ static errr grab_one_skill_flag(u32b *f1, cptr what) {
 	for (i = 0; i < 32; i++) {
 		if (streq(what, s_info_flags1[i])) {
 			(*f1) |= (1U << i);
-			return (0);
+			return(0);
 		}
 	}
 
@@ -3161,7 +3161,7 @@ static errr grab_one_skill_flag(u32b *f1, cptr what) {
 	s_printf("(2)Unknown skill flag '%s'.\n", what);
 
 	/* Error */
-	return (1);
+	return(1);
 }
 
 
@@ -3199,7 +3199,7 @@ errr init_s_info_txt(FILE *fp, char *buf) {
 		if (!buf[0] || (buf[0] == '#')) continue;
 
 		/* Verify correct "colon" format */
-		if (buf[1] != ':') return (1);
+		if (buf[1] != ':') return(1);
 
 
 		/* Hack -- Process 'V' for "Version" */
@@ -3213,12 +3213,12 @@ errr init_s_info_txt(FILE *fp, char *buf) {
 			    (v1 != s_head->v_major) ||
 			    (v2 != s_head->v_minor) ||
 			    (v3 != s_head->v_patch))
-				return (2);
+				return(2);
 
 #else /* VERIFY_VERSION_STAMP */
 
 			/* Scan for the values */
-			if (3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) return (2);
+			if (3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) return(2);
 
 #endif /* VERIFY_VERSION_STAMP */
 
@@ -3230,7 +3230,7 @@ errr init_s_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* No version yet */
-		if (!okay) return (2);
+		if (!okay) return(2);
 
 
 		/* Process 'T' for "skill Tree" */
@@ -3239,14 +3239,14 @@ errr init_s_info_txt(FILE *fp, char *buf) {
 			s16b s1, s2;
 
 			/* Scan for the values */
-			if (NULL == (sec = strchr(buf + 2, ':'))) return (1);
+			if (NULL == (sec = strchr(buf + 2, ':'))) return(1);
 			*sec = '\0';
 			sec++;
-			if (!*sec) return (1);
+			if (!*sec) return(1);
 
 			s1 = find_skill(buf + 2);
 			s2 = find_skill(sec);
-			if (s2 == -1) return (1);
+			if (s2 == -1) return(1);
 
 			s_info[s2].father = s1;
 			s_info[s2].order = order++;
@@ -3261,14 +3261,14 @@ errr init_s_info_txt(FILE *fp, char *buf) {
 			s16b s1, s2;
 
 			/* Scan for the values */
-			if (NULL == (sec = strchr(buf + 2, ':'))) return (1);
+			if (NULL == (sec = strchr(buf + 2, ':'))) return(1);
 			*sec = '\0';
 			sec++;
-			if (!*sec) return (1);
+			if (!*sec) return(1);
 
 			s1 = find_skill(buf + 2);
 			s2 = find_skill(sec);
-			if ((s1 == -1) || (s2 == -1)) return (1);
+			if ((s1 == -1) || (s2 == -1)) return(1);
 
 			/* Actually have it only one-way. If two-way is needed, just define the opposite way too in s_info.
 			   Reason: Anti-magic should disable Mimicry (and all other magic), but Mimicry shouldn't outright disable Anti-magic.
@@ -3287,18 +3287,18 @@ errr init_s_info_txt(FILE *fp, char *buf) {
 			s16b s1, s2;
 
 			/* Scan for the values */
-			if (NULL == (sec = strchr(buf + 2, ':'))) return (1);
+			if (NULL == (sec = strchr(buf + 2, ':'))) return(1);
 			*sec = '\0';
 			sec++;
-			if (!*sec) return (1);
-			if (NULL == (cval = strchr(sec, '%'))) return (1);
+			if (!*sec) return(1);
+			if (NULL == (cval = strchr(sec, '%'))) return(1);
 			*cval = '\0';
 			cval++;
-			if (!*cval) return (1);
+			if (!*cval) return(1);
 
 			s1 = find_skill(buf + 2);
 			s2 = find_skill(sec);
-			if ((s1 == -1) || (s2 == -1)) return (1);
+			if ((s1 == -1) || (s2 == -1)) return(1);
 
 			s_info[s1].action[s2] = -atoi(cval);
 
@@ -3312,18 +3312,18 @@ errr init_s_info_txt(FILE *fp, char *buf) {
 			s16b s1, s2;
 
 			/* Scan for the values */
-			if (NULL == (sec = strchr(buf + 2, ':'))) return (1);
+			if (NULL == (sec = strchr(buf + 2, ':'))) return(1);
 			*sec = '\0';
 			sec++;
-			if (!*sec) return (1);
-			if (NULL == (cval = strchr(sec, '%'))) return (1);
+			if (!*sec) return(1);
+			if (NULL == (cval = strchr(sec, '%'))) return(1);
 			*cval = '\0';
 			cval++;
-			if (!*cval) return (1);
+			if (!*cval) return(1);
 
 			s1 = find_skill(buf + 2);
 			s2 = find_skill(sec);
-			if ((s1 == -1) || (s2 == -1)) return (1);
+			if ((s1 == -1) || (s2 == -1)) return(1);
 
 			s_info[s1].action[s2] = atoi(cval);
 
@@ -3337,19 +3337,19 @@ errr init_s_info_txt(FILE *fp, char *buf) {
 			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
-			if (!s) return (1);
+			if (!s) return(1);
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
 
 			/* Paranoia -- require a name */
-			if (!*s) return (1);
+			if (!*s) return(1);
 
 			/* Get the index */
 			i = atoi(buf + 2);
 
 			/* Verify information */
-			if (i >= (int) s_head->info_num) return (2);
+			if (i >= (int) s_head->info_num) return(2);
 
 			/* Save the index */
 			error_idx = i;
@@ -3358,7 +3358,7 @@ errr init_s_info_txt(FILE *fp, char *buf) {
 			s_ptr = &s_info[i];
 
 			/* Hack -- Verify space */
-			if (s_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+			if (s_head->name_size + strlen(s) + 8 > fake_name_size) return(7);
 
 			/* Advance and Save the name index */
 			if (!s_ptr->name) s_ptr->name = ++s_head->name_size;
@@ -3381,7 +3381,7 @@ errr init_s_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* There better be a current s_ptr */
-		if (!s_ptr) return (3);
+		if (!s_ptr) return(3);
 
 		/* Process 'D' for "Description" */
 		if (buf[0] == 'D') {
@@ -3389,7 +3389,7 @@ errr init_s_info_txt(FILE *fp, char *buf) {
 			s = buf + 2;
 
 			/* Hack -- Verify space */
-			if (s_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
+			if (s_head->text_size + strlen(s) + 8 > fake_text_size) return(7);
 
 			/* Advance and Save the text index */
 			if (!s_ptr->desc) {
@@ -3419,12 +3419,12 @@ errr init_s_info_txt(FILE *fp, char *buf) {
 			/* Acquire the text */
 			s = buf + 2;
 
-			if (NULL == (txt = strchr(s, ':'))) return (1);
+			if (NULL == (txt = strchr(s, ':'))) return(1);
 			*txt = '\0';
 			txt++;
 
 			/* Hack -- Verify space */
-			if (s_head->text_size + strlen(txt) + 8 > fake_text_size) return (7);
+			if (s_head->text_size + strlen(txt) + 8 > fake_text_size) return(7);
 
 			/* Advance and Save the text index */
 			if (!s_ptr->action_desc) s_ptr->action_desc = ++s_head->text_size;
@@ -3445,7 +3445,7 @@ errr init_s_info_txt(FILE *fp, char *buf) {
 			int rate, tval;
 
 			/* Scan for the values */
-			if (2 != sscanf(buf + 2, "%d:%d", &rate, &tval)) return (1);
+			if (2 != sscanf(buf + 2, "%d:%d", &rate, &tval)) return(1);
 
 			/* Save the values */
 			s_ptr->rate = rate;
@@ -3471,7 +3471,7 @@ errr init_s_info_txt(FILE *fp, char *buf) {
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_skill_flag(&(s_ptr->flags1), s)) return (5);
+				if (0 != grab_one_skill_flag(&(s_ptr->flags1), s)) return(5);
 
 				/* Start the next entry */
 				s = t;
@@ -3482,7 +3482,7 @@ errr init_s_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* Oops */
-		return (6);
+		return(6);
 	}
 
 
@@ -3492,12 +3492,12 @@ errr init_s_info_txt(FILE *fp, char *buf) {
 
 
 	/* No version yet */
-	if (!okay) return (2);
+	if (!okay) return(2);
 
 	max_s_idx = ++error_idx;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -3511,51 +3511,51 @@ static bool grab_one_ego_item_flag(ego_item_type *e_ptr, cptr what, int n) {
 		/* Check flags1 */
 		if (streq(what, k_info_flags1[i])) {
 			e_ptr->flags1[n] |= (1U << i);
-			return (0);
+			return(0);
 		}
 		/* Check flags2 */
 		if (streq(what, k_info_flags2[i])) {
 			e_ptr->flags2[n] |= (1U << i);
-			return (0);
+			return(0);
 		}
 #if 1
 		/* Check flags2 -- traps */
 		if (streq(what, k_info_flags2_trap[i])) {
 			e_ptr->flags2[n] |= (1U << i);
-			return (0);
+			return(0);
 		}
 #endif	// 0
 		/* Check flags3 */
 		if (streq(what, k_info_flags3[i])) {
 			e_ptr->flags3[n] |= (1U << i);
-			return (0);
+			return(0);
 		}
 #if 1
 		/* Check flags4 */
 		if (streq(what, k_info_flags4[i])) {
 			e_ptr->flags4[n] |= (1U << i);
-			return (0);
+			return(0);
 		}
 		/* Check flags5 */
 		if (streq(what, k_info_flags5[i])) {
 			e_ptr->flags5[n] |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 		/* Check esp_flags */
 		if (streq(what, esp_flags[i])) {
 			e_ptr->esp[n] |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 		/* Check ego_flags */
 		if (streq(what, ego_flags1[i])) {
 			e_ptr->fego1[n] |= (1U << i);
-			return (0);
+			return(0);
 		}
 		if (streq(what, ego_flags2[i])) {
 			e_ptr->fego2[n] |= (1U << i);
-			return (0);
+			return(0);
 		}
 #endif
 	}
@@ -3563,7 +3563,7 @@ static bool grab_one_ego_item_flag(ego_item_type *e_ptr, cptr what, int n) {
 	s_printf("Unknown ego-item flag '%s'.\n", what);
 
 	/* Error */
-	return (1);
+	return(1);
 }
 
 
@@ -3606,7 +3606,7 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 		if (!buf[0] || (buf[0] == '#')) continue;
 
 		/* Verify correct "colon" format */
-		if (buf[1] != ':') return (1);
+		if (buf[1] != ':') return(1);
 
 
 		/* Hack -- Process 'V' for "Version" */
@@ -3619,7 +3619,7 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 			    (v2 != e_head->v_minor) ||
 			    (v3 != e_head->v_patch)) {
 				/* It only annoying -- DG */
-				//return (2);
+				//return(2);
 				//s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
 			}
 
@@ -3631,7 +3631,7 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* No version yet */
-		if (!okay) return (2);
+		if (!okay) return(2);
 
 
 		/* Process 'N' for "New/Number/Name" */
@@ -3640,13 +3640,13 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
-			if (!s) return (1);
+			if (!s) return(1);
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
 
 			/* Paranoia -- require a name */
-			if (!*s) return (1);
+			if (!*s) return(1);
 
 			/* Hack for Amulet of Telepathic Awareness: '-' becomes an empty name */
 			if (*s == '-') *s = 0;
@@ -3655,10 +3655,10 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 			i = atoi(buf + 2);
 
 			/* Verify information */
-			if (i < error_idx) return (4);
+			if (i < error_idx) return(4);
 
 			/* Verify information */
-			if (i >= (int) e_head->info_num) return (2);
+			if (i >= (int) e_head->info_num) return(2);
 
 			/* Save the index */
 			error_idx = i;
@@ -3667,7 +3667,7 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 			e_ptr = &e_info[i];
 
 			/* Hack -- Verify space */
-			if (e_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+			if (e_head->name_size + strlen(s) + 8 > fake_name_size) return(7);
 
 			/* Advance and Save the name index */
 			if (!e_ptr->name) e_ptr->name = ++e_head->name_size;
@@ -3701,7 +3701,7 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* There better be a current e_ptr */
-		if (!e_ptr) return (3);
+		if (!e_ptr) return(3);
 
 
 
@@ -3716,7 +3716,7 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 			strcat(tmp, "\n");
 
 			/* Hack -- Verify space */
-			if (e_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
+			if (e_head->text_size + strlen(s) + 8 > fake_text_size) return(7);
 
 			/* Advance and Save the text index */
 			if (!e_ptr->text) e_ptr->text = ++e_head->text_size;
@@ -3739,12 +3739,12 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 
 			if (cur_t == MAX_EGO_BASETYPES) {
 				s_printf("ERROR: Exceeded MAX_EGO_BASETYPES in ego index %d.\n", error_idx);
-				return (1);
+				return(1);
 			}
 
 			/* Scan for the values */
 			if (3 != sscanf(buf + 2, "%d:%d:%d",
-				&tv, &minsv, &maxsv)) return (1);
+				&tv, &minsv, &maxsv)) return(1);
 
 			/* Save the values */
 			e_ptr->tval[cur_t] = tv;
@@ -3762,7 +3762,7 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 			int rar;
 
 			/* Scan for the values */
-			if (1 != sscanf(buf + 2, "%d", &rar)) return (1);
+			if (1 != sscanf(buf + 2, "%d", &rar)) return(1);
 
 			cur_r++;
 
@@ -3781,7 +3781,7 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the values */
 			if (2 != sscanf(buf + 2, "%d:%d",
-					&slot, &rating)) return (1);
+					&slot, &rating)) return(1);
 
 			/* Save the values */
 			e_ptr->slot = slot;
@@ -3799,7 +3799,7 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the values */
 			if (3 != sscanf(buf + 2, "%c:%d:%d",
-				&pos, &slot, &rating)) return (1);
+				&pos, &slot, &rating)) return(1);
 
 			/* Save the values */
 			/* e_ptr->slot = slot; */
@@ -3817,7 +3817,7 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the values */
 			if (4 != sscanf(buf + 2, "%d:%d:%d:%d",
-					&level, &rarity, &pad2, &cost)) return (1);
+					&level, &rarity, &pad2, &cost)) return(1);
 
 			/* Save the values */
 			e_ptr->level = level;
@@ -3836,7 +3836,7 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the values */
 			if (4 != sscanf(buf + 2, "%d:%d:%d:%d",
-					&th, &td, &ta, &pv)) return (1);
+					&th, &td, &ta, &pv)) return(1);
 
 			e_ptr->max_to_h = th;
 			e_ptr->max_to_d = td;
@@ -3858,7 +3858,7 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 			for (i = 0; i < power_max; i++)
 				if (!stricmp(s, powers_type[i].name)) break;
 
-			if (i == power_max) return (6);
+			if (i == power_max) return(6);
 
 			e_ptr->power = i;
 
@@ -3869,7 +3869,7 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 
 		/* Hack -- Process 'F' for flags */
 		if (buf[0] == 'F') {
-			if (cur_r == -1) return (6);
+			if (cur_r == -1) return(6);
 
 			/* Parse every entry textually */
 			for (s = buf + 2; *s; ) {
@@ -3883,7 +3883,7 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_ego_item_flag(e_ptr, s, cur_r)) return (5);
+				if (0 != grab_one_ego_item_flag(e_ptr, s, cur_r)) return(5);
 
 				/* Start the next entry */
 				s = t;
@@ -3894,7 +3894,7 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* Oops */
-		return (6);
+		return(6);
 	}
 
 
@@ -3904,12 +3904,12 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 
 
 	/* No version yet */
-	if (!okay) return (2);
+	if (!okay) return(2);
 
 	max_e_idx = ++error_idx;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -3925,56 +3925,56 @@ static errr grab_one_basic_flag(monster_race *r_ptr, cptr what) {
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags3[i])) {
 			r_ptr->flags3 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags1 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags1[i])) {
 			r_ptr->flags1 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags2 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags2[i])) {
 			r_ptr->flags2 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags8 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags8[i])) {
 			r_ptr->flags8 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags7 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags7[i])) {
 			r_ptr->flags7 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags9 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags9[i])) {
 			r_ptr->flags9 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags0 -- contains both, spell and basic type */
 	for (i = 0; i < 32; i++)
 		if (((1U << i) & RF0_BASIC_MASK) && streq(what, r_info_flags0[i])) {
 			r_ptr->flags0 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Oops */
 	s_printf("Unknown 'basic' type monster flag '%s'.\n", what);
 
 	/* Failure */
-	return (1);
+	return(1);
 }
 
 
@@ -3988,35 +3988,35 @@ static errr grab_one_spell_flag(monster_race *r_ptr, cptr what) {
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags5[i])) {
 			r_ptr->flags5 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags6 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags6[i])) {
 			r_ptr->flags6 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags4 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags4[i])) {
 			r_ptr->flags4 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags0 -- contains both, spell and basic type */
 	for (i = 0; i < 32; i++)
 		if (((1U << i) & RF0_SPELL_MASK) && streq(what, r_info_flags0[i])) {
 			r_ptr->flags0 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Oops */
 	s_printf("Unknown 'spell' type monster flag '%s'.\n", what);
 
 	/* Failure */
-	return (1);
+	return(1);
 }
 
 
@@ -4058,7 +4058,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 		if (!buf[0] || (buf[0] == '#')) continue;
 
 		/* Verify correct "colon" format */
-		if (buf[1] != ':') return (1);
+		if (buf[1] != ':') return(1);
 
 
 		/* Hack -- Process 'V' for "Version" */
@@ -4071,7 +4071,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 			    (v2 != r_head->v_minor) ||
 			    (v3 != r_head->v_patch)) {
 				/* It only annoying -- DG */
-				//return (2);
+				//return(2);
 				//s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
 			}
 
@@ -4083,7 +4083,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* No version yet */
-		if (!okay) return (2);
+		if (!okay) return(2);
 
 
 		/* Process 'N' for "New/Number/Name" */
@@ -4092,22 +4092,22 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
-			if (!s) return (1);
+			if (!s) return(1);
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
 
 			/* Paranoia -- require a name */
-			if (!*s) return (1);
+			if (!*s) return(1);
 
 			/* Get the index */
 			i = atoi(buf + 2);
 
 			/* Verify information */
-			if (i < error_idx) return (4);
+			if (i < error_idx) return(4);
 
 			/* Verify information */
-			if (i >= (int) r_head->info_num) return (2);
+			if (i >= (int) r_head->info_num) return(2);
 
 			/* Save the index */
 			error_idx = i;
@@ -4116,7 +4116,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 			r_ptr = &r_info[i];
 
 			/* Hack -- Verify space */
-			if (r_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+			if (r_head->name_size + strlen(s) + 8 > fake_name_size) return(7);
 
 			/* Advance and Save the name index */
 			if (!r_ptr->name) r_ptr->name = ++r_head->name_size;
@@ -4149,7 +4149,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* There better be a current r_ptr */
-		if (!r_ptr) return (3);
+		if (!r_ptr) return(3);
 
 
 		/* Process 'D' for "Description" */
@@ -4174,7 +4174,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
  #endif
 
 			/* Hack -- Verify space */
-			if (r_head->text_size + strlen(tmp) + 8 > fake_text_size) return (7);
+			if (r_head->text_size + strlen(tmp) + 8 > fake_text_size) return(7);
 
 			/* Advance and Save the text index */
 			if (!r_ptr->text) r_ptr->text = ++r_head->text_size;
@@ -4196,9 +4196,9 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 			int tmp;
 
 			/* Paranoia */
-			if (!buf[2]) return (1);
-			if (!buf[3]) return (1);
-			if (!buf[4]) return (1);
+			if (!buf[2]) return(1);
+			if (!buf[3]) return(1);
+			if (!buf[4]) return(1);
 
 			/* Extract the char */
 			sym = buf[2];
@@ -4207,7 +4207,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 			tmp = color_char_to_attr(buf[4]);
 
 			/* Paranoia */
-			if (tmp < 0) return (1);
+			if (tmp < 0) return(1);
 
 			/* Save the values */
 			r_ptr->d_char = sym;
@@ -4223,7 +4223,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the other values */
 			if (6 != sscanf(buf + 2, "%d:%dd%d:%d:%d:%d",
-			    &spd, &hp1, &hp2, &aaf, &ac, &slp)) return (1);
+			    &spd, &hp1, &hp2, &aaf, &ac, &slp)) return(1);
 
 			/* Save the values */
 			r_ptr->speed = spd;
@@ -4244,7 +4244,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the other values */
 			if (BODY_MAX != sscanf(buf + 2, "%d:%d:%d:%d:%d:%d",
-			    &weap, &tors, &arms, &fing, &head, &legs)) return (1);
+			    &weap, &tors, &arms, &fing, &head, &legs)) return(1);
 
 			/* Save the values */
 			r_ptr->body_parts[BODY_WEAPON] = weap;
@@ -4269,7 +4269,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the values */
 			if (4 != sscanf(buf + 2, "%d:%d:%d:%d",
-			    &treasure, &combat, &magic, &tools)) return (1);
+			    &treasure, &combat, &magic, &tools)) return(1);
 
 			/* Save the values */
 			r_ptr->drops.treasure = treasure;
@@ -4288,7 +4288,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 			int exp;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf + 2, "%d:%d:%d:%d", &lev, &rar, &pad, &exp)) return (1);
+			if (4 != sscanf(buf + 2, "%d:%d:%d:%d", &lev, &rar, &pad, &exp)) return(1);
 
 			/* Save the values */
 			r_ptr->level = lev;
@@ -4315,7 +4315,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 				if (!r_ptr->blow[i].method) break;
 
 			/* Oops, no more slots */
-			if (i == 4) return (1);
+			if (i == 4) return(1);
 
 			/* Analyze the first field */
 			for (s = t = buf + 2; *t && (*t != ':'); t++) /* loop */;
@@ -4328,7 +4328,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 				if (streq(s, r_info_blow_method[n1])) break;
 
 			/* Invalid method */
-			if (!r_info_blow_method[n1]) return (1);
+			if (!r_info_blow_method[n1]) return(1);
 
 			/* Analyze the second field */
 			for (s = t; *t && (*t != ':'); t++) /* loop */;
@@ -4341,7 +4341,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 				if (streq(s, r_info_blow_effect[n2])) break;
 
 			/* Invalid effect */
-			if (!r_info_blow_effect[n2]) return (1);
+			if (!r_info_blow_effect[n2]) return(1);
 
 			/* Analyze the third field */
 			for (s = t; *t && (*t != 'd'); t++) /* loop */;
@@ -4389,7 +4389,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_basic_flag(r_ptr, s)) return (5);
+				if (0 != grab_one_basic_flag(r_ptr, s)) return(5);
 
 				/* Start the next entry */
 				s = t;
@@ -4425,7 +4425,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_spell_flag(r_ptr, s)) return (5);
+				if (0 != grab_one_spell_flag(r_ptr, s)) return(5);
 
 				/* Start the next entry */
 				s = t;
@@ -4436,7 +4436,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* Oops */
-		return (6);
+		return(6);
 	}
 
 
@@ -4668,12 +4668,12 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 	r_info[RI_BLUE].flags0 &= ~(RF0_ADMINISTRATIVE_PUSH | RF0_METEOR_SWARM | RF0_ADMINISTRATIVE_HOLD);
 
 	/* No version yet */
-	if (!okay) return (2);
+	if (!okay) return(2);
 
 	max_r_idx = ++error_idx;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 #ifdef RANDUNIS
@@ -4690,7 +4690,7 @@ static errr grab_one_basic_ego_flag(monster_ego *re_ptr, cptr what, bool add) {
 				re_ptr->mflags1 |= (1U << i);
 			else
 				re_ptr->nflags1 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags2 */
@@ -4700,7 +4700,7 @@ static errr grab_one_basic_ego_flag(monster_ego *re_ptr, cptr what, bool add) {
 				re_ptr->mflags2 |= (1U << i);
 			else
 				re_ptr->nflags2 |= (1U << i);
-			return (0);
+			return(0);
 		}
 	/* Scan flags3 */
 	for (i = 0; i < 32; i++)
@@ -4709,7 +4709,7 @@ static errr grab_one_basic_ego_flag(monster_ego *re_ptr, cptr what, bool add) {
 				re_ptr->mflags3 |= (1U << i);
 			else
 				re_ptr->nflags3 |= (1U << i);
-			return (0);
+			return(0);
 		}
 	/* Scan flags7 */
 	for (i = 0; i < 32; i++)
@@ -4718,7 +4718,7 @@ static errr grab_one_basic_ego_flag(monster_ego *re_ptr, cptr what, bool add) {
 				re_ptr->mflags7 |= (1U << i);
 			else
 				re_ptr->nflags7 |= (1U << i);
-			return (0);
+			return(0);
 		}
 	/* Scan flags8 */
 	for (i = 0; i < 32; i++)
@@ -4727,7 +4727,7 @@ static errr grab_one_basic_ego_flag(monster_ego *re_ptr, cptr what, bool add) {
 				re_ptr->mflags8 |= (1U << i);
 			else
 				re_ptr->nflags8 |= (1U << i);
-			return (0);
+			return(0);
 		}
 	/* Scan flags9 */
 	for (i = 0; i < 32; i++)
@@ -4736,7 +4736,7 @@ static errr grab_one_basic_ego_flag(monster_ego *re_ptr, cptr what, bool add) {
 				re_ptr->mflags9 |= (1U << i);
 			else
 				re_ptr->nflags9 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags0 -- contains both, spell and basic type */
@@ -4746,14 +4746,14 @@ static errr grab_one_basic_ego_flag(monster_ego *re_ptr, cptr what, bool add) {
 				re_ptr->mflags0 |= (1U << i);
 			else
 				re_ptr->nflags0 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Oops */
 	s_printf("Unknown 'basic' type monster flag '%s'.\n", what);
 
 	/* Failure */
-	return (1);
+	return(1);
 }
 
 
@@ -4770,7 +4770,7 @@ static errr grab_one_spell_ego_flag(monster_ego *re_ptr, cptr what, bool add) {
 				re_ptr->mflags4 |= (1U << i);
 			else
 				re_ptr->nflags4 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags5 */
@@ -4780,7 +4780,7 @@ static errr grab_one_spell_ego_flag(monster_ego *re_ptr, cptr what, bool add) {
 				re_ptr->mflags5 |= (1U << i);
 			else
 				re_ptr->nflags5 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags6 */
@@ -4790,7 +4790,7 @@ static errr grab_one_spell_ego_flag(monster_ego *re_ptr, cptr what, bool add) {
 				re_ptr->mflags6 |= (1U << i);
 			else
 				re_ptr->nflags6 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags0 -- contains both, spell and basic type */
@@ -4800,14 +4800,14 @@ static errr grab_one_spell_ego_flag(monster_ego *re_ptr, cptr what, bool add) {
 				re_ptr->mflags0 |= (1U << i);
 			else
 				re_ptr->nflags0 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Oops */
 	s_printf("Unknown 'spell' type monster flag '%s'.\n", what);
 
 	/* Failure */
-	return (1);
+	return(1);
 }
 
 
@@ -4835,7 +4835,7 @@ static errr grab_one_ego_flag(monster_ego *re_ptr, cptr what, bool must) {
 		if (streq(what, r_info_flags1[i])) {
 			if (must) re_ptr->flags1 |= (1U << i);
 			else re_ptr->hflags1 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags2 */
@@ -4843,7 +4843,7 @@ static errr grab_one_ego_flag(monster_ego *re_ptr, cptr what, bool must) {
 		if (streq(what, r_info_flags2[i])) {
 			if (must) re_ptr->flags2 |= (1U << i);
 			else re_ptr->hflags2 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags3 */
@@ -4851,7 +4851,7 @@ static errr grab_one_ego_flag(monster_ego *re_ptr, cptr what, bool must) {
 		if (streq(what, r_info_flags3[i])) {
 			if (must) re_ptr->flags3 |= (1U << i);
 			else re_ptr->hflags3 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags7 */
@@ -4859,7 +4859,7 @@ static errr grab_one_ego_flag(monster_ego *re_ptr, cptr what, bool must) {
 		if (streq(what, r_info_flags7[i])) {
 			if (must) re_ptr->flags7 |= (1U << i);
 			else re_ptr->hflags7 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags8 */
@@ -4867,7 +4867,7 @@ static errr grab_one_ego_flag(monster_ego *re_ptr, cptr what, bool must) {
 		if (streq(what, r_info_flags8[i])) {
 			if (must) re_ptr->flags8 |= (1U << i);
 			else re_ptr->hflags8 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags9 */
@@ -4875,7 +4875,7 @@ static errr grab_one_ego_flag(monster_ego *re_ptr, cptr what, bool must) {
 		if (streq(what, r_info_flags9[i])) {
 			if (must) re_ptr->flags9 |= (1U << i);
 			else re_ptr->hflags9 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags0 -- contains both, spell and basic type */
@@ -4883,14 +4883,14 @@ static errr grab_one_ego_flag(monster_ego *re_ptr, cptr what, bool must) {
 		if (((1U << i) & RF0_BASIC_MASK) && streq(what, r_info_flags0[i])) {
 			if (must) re_ptr->flags0 |= (1U << i);
 			else re_ptr->hflags0 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Oops */
 	s_printf("Unknown 'basic' type monster flag '%s'.\n", what);
 
 	/* Failure */
-	return (1);
+	return(1);
 }
 
 /*
@@ -4931,7 +4931,7 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 		if (!buf[0] || (buf[0] == '#')) continue;
 
 		/* Verify correct "colon" format */
-		if (buf[1] != ':') return (1);
+		if (buf[1] != ':') return(1);
 
 
 		/* Hack -- Process 'V' for "Version" */
@@ -4943,7 +4943,7 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 			    (v1 != re_head->v_major) ||
 			    (v2 != re_head->v_minor) ||
 			    (v3 != re_head->v_patch)) {
-				//return (2);
+				//return(2);
 				//s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
 			}
 
@@ -4955,7 +4955,7 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* No version yet */
-		if (!okay) return (2);
+		if (!okay) return(2);
 
 
 		/* Process 'N' for "New/Number/Name" */
@@ -4964,22 +4964,22 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
-			if (!s) return (1);
+			if (!s) return(1);
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
 
 			/* Paranoia -- require a name */
-			if (!*s) return (1);
+			if (!*s) return(1);
 
 			/* Get the index */
 			i = atoi(buf + 2);
 
 			/* Verify information */
-			if (i < error_idx) return (4);
+			if (i < error_idx) return(4);
 
 			/* Verify information */
-			if (i >= (int) re_head->info_num) return (2);
+			if (i >= (int) re_head->info_num) return(2);
 
 			/* Save the index */
 			error_idx = i;
@@ -4988,7 +4988,7 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 			re_ptr = &re_info[i];
 
 			/* Hack -- Verify space */
-			if (re_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+			if (re_head->name_size + strlen(s) + 8 > fake_name_size) return(7);
 
 			/* Advance and Save the name index */
 			if (!re_ptr->name) re_ptr->name = ++re_head->name_size;
@@ -5019,7 +5019,7 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* There better be a current re_ptr */
-		if (!re_ptr) return (3);
+		if (!re_ptr) return(3);
 
 		/* Process 'G' for "Graphics" (one line only) */
 		if (buf[0] == 'G') {
@@ -5027,9 +5027,9 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 			int tmp;
 
 			/* Paranoia */
-			if (!buf[2]) return (1);
-			if (!buf[3]) return (1);
-			if (!buf[4]) return (1);
+			if (!buf[2]) return(1);
+			if (!buf[3]) return(1);
+			if (!buf[4]) return(1);
 
 			/* Extract the char */
 			if (buf[2] != '*') sym = buf[2];
@@ -5040,7 +5040,7 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 			else tmp = MEGO_CHAR_ANY;
 
 			/* Paranoia */
-			if (tmp < 0) return (1);
+			if (tmp < 0) return(1);
 
 			/* Save the values */
 			re_ptr->d_char = sym;
@@ -5057,7 +5057,7 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the other values */
 			if (12 != sscanf(buf + 2, "%c%d:%c%dd%c%d:%c%d:%c%d:%c%d",
-			    &mspd, &spd, &mhp1, &hp1, &mhp2, &hp2, &maaf, &aaf, &mac, &ac, &mslp, &slp)) return (1);
+			    &mspd, &spd, &mhp1, &hp1, &mhp2, &hp2, &maaf, &aaf, &mac, &ac, &mslp, &slp)) return(1);
 
 			/* Save the values */
 			re_ptr->speed = (spd << 2) + monster_ego_modify(mspd);
@@ -5079,7 +5079,7 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the values */
 			if (8 != sscanf(buf + 2, "%c%d:%d:%c%d:%c%d:%c",
-			    &mlev, &lev, &rar, &mwt, &wt, &mexp, &exp, &pos)) return (1);
+			    &mlev, &lev, &rar, &mwt, &wt, &mexp, &exp, &pos)) return(1);
 
 			/* Save the values */
 			re_ptr->level = (lev << 2) + monster_ego_modify(mlev);
@@ -5100,7 +5100,7 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 			/* Oops, no more slots */
 			if (blow_num == 4) {
 				s_printf("no more slots!\n");
-				return (1);
+				return(1);
 			}
 
 			/* Analyze the first field */
@@ -5116,7 +5116,7 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 			/* Invalid method */
 			if (!r_info_blow_method[n1]) {
 				s_printf("invalid method!\n");
-				return (1);
+				return(1);
 			}
 
 			/* Analyze the second field */
@@ -5132,7 +5132,7 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 			/* Invalid effect */
 			if (!r_info_blow_effect[n2]) {
 				s_printf("invalid effect!\n");
-				return (1);
+				return(1);
 			}
 
 			/* Save the method */
@@ -5144,7 +5144,7 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 			/* Extract the damage dice and sides */
 			if (4 != sscanf(t, "%c%dd%c%d", &mdice, &dice, &mside, &side)) {
 				s_printf("strange dice!\n");
-				return (1);
+				return(1);
 			}
 
 			re_ptr->blow[blow_num].d_dice = dice;
@@ -5188,7 +5188,7 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_ego_flag(re_ptr, s, TRUE)) return (5);
+				if (0 != grab_one_ego_flag(re_ptr, s, TRUE)) return(5);
 
 				/* Start the next entry */
 				s = t;
@@ -5229,7 +5229,7 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_ego_flag(re_ptr, s, FALSE)) return (5);
+				if (0 != grab_one_ego_flag(re_ptr, s, FALSE)) return(5);
 
 				/* Start the next entry */
 				s = t;
@@ -5253,7 +5253,7 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_basic_ego_flag(re_ptr, s, TRUE)) return (5);
+				if (0 != grab_one_basic_ego_flag(re_ptr, s, TRUE)) return(5);
 
 				/* Start the next entry */
 				s = t;
@@ -5289,7 +5289,7 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_basic_ego_flag(re_ptr, s, FALSE)) return (5);
+				if (0 != grab_one_basic_ego_flag(re_ptr, s, FALSE)) return(5);
 
 				/* Start the next entry */
 				s = t;
@@ -5325,7 +5325,7 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_spell_ego_flag(re_ptr, s, TRUE)) return (5);
+				if (0 != grab_one_spell_ego_flag(re_ptr, s, TRUE)) return(5);
 
 				/* Start the next entry */
 				s = t;
@@ -5361,7 +5361,7 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_spell_ego_flag(re_ptr, s, FALSE)) return (5);
+				if (0 != grab_one_spell_ego_flag(re_ptr, s, FALSE)) return(5);
 
 				/* Start the next entry */
 				s = t;
@@ -5372,7 +5372,7 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* Oops */
-		return (6);
+		return(6);
 	}
 
 
@@ -5380,12 +5380,12 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 	++re_head->name_size;
 
 	/* No version yet */
-	if (!okay) return (2);
+	if (!okay) return(2);
 
 	max_re_idx = ++error_idx;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 #endif	//	RANDUNIS
@@ -5404,14 +5404,14 @@ static errr grab_one_trap_type_flag(trap_kind *t_ptr, cptr what) {
 	for (i = 0; i < 32; i++)
 		if (streq(what, t_info_flags[i])) {
 			t_ptr->flags |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Oops */
 	s_printf("Unknown trap_type flag '%s'.\n", what);
 
 	/* Error */
-	return (1);
+	return(1);
 }
 
 
@@ -5453,7 +5453,7 @@ errr init_t_info_txt(FILE *fp, char *buf) {
 		if (!buf[0] || (buf[0] == '#')) continue;
 
 		/* Verify correct "colon" format */
-		if (buf[1] != ':') return (1);
+		if (buf[1] != ':') return(1);
 
 
 		/* Hack -- Process 'V' for "Version" */
@@ -5465,7 +5465,7 @@ errr init_t_info_txt(FILE *fp, char *buf) {
 			    (v1 != t_head->v_major) ||
 			    (v2 != t_head->v_minor) ||
 			    (v3 != t_head->v_patch)) {
-				//return (2);
+				//return(2);
 				//s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
 			}
 
@@ -5477,7 +5477,7 @@ errr init_t_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* No version yet */
-		if (!okay) return (2);
+		if (!okay) return(2);
 
 
 		/* Process 'N' for "New/Number/Name" */
@@ -5486,22 +5486,22 @@ errr init_t_info_txt(FILE *fp, char *buf) {
 			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
-			if (!s) return (1);
+			if (!s) return(1);
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
 
 			/* Paranoia -- require a name */
-			if (!*s) return (1);
+			if (!*s) return(1);
 
 			/* Get the index */
 			i = atoi(buf + 2);
 
 			/* Verify information */
-			if (i <= error_idx) return (4);
+			if (i <= error_idx) return(4);
 
 			/* Verify information */
-			if (i >= (int) t_head->info_num) return (2);
+			if (i >= (int) t_head->info_num) return(2);
 
 			/* Save the index */
 			error_idx = i;
@@ -5510,7 +5510,7 @@ errr init_t_info_txt(FILE *fp, char *buf) {
 			t_ptr = &t_info[i];
 
 			/* Hack -- Verify space */
-			if (t_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+			if (t_head->name_size + strlen(s) + 8 > fake_name_size) return(7);
 
 			/* Advance and Save the name index */
 			if (!t_ptr->name) t_ptr->name = ++t_head->name_size;
@@ -5529,7 +5529,7 @@ errr init_t_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* There better be a current t_ptr */
-		if (!t_ptr) return (3);
+		if (!t_ptr) return(3);
 
 
 		/* Process 'I' for "Information" */
@@ -5543,7 +5543,7 @@ errr init_t_info_txt(FILE *fp, char *buf) {
 			if (9 != sscanf(buf + 2, "%d:%d:%d:%d:%d:%dd%d:%c:%d",
 			    &difficulty, &probability, &another,
 			    &p1valinc, &minlevel, &dd, &ds,
-			    &color, &vanish)) return (1);
+			    &color, &vanish)) return(1);
 
 			t_ptr->difficulty	= (byte)difficulty;
 			t_ptr->probability	= (s16b)probability;
@@ -5570,7 +5570,7 @@ errr init_t_info_txt(FILE *fp, char *buf) {
 			s = buf + 2;
 
 			/* Hack -- Verify space */
-			if (t_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
+			if (t_head->text_size + strlen(s) + 8 > fake_text_size) return(7);
 
 			/* Advance and Save the text index */
 			if (!t_ptr->text) t_ptr->text = ++t_head->text_size;
@@ -5600,7 +5600,7 @@ errr init_t_info_txt(FILE *fp, char *buf) {
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_trap_type_flag(t_ptr, s)) return (5);
+				if (0 != grab_one_trap_type_flag(t_ptr, s)) return(5);
 
 				/* Start the next entry */
 				s = t;
@@ -5612,7 +5612,7 @@ errr init_t_info_txt(FILE *fp, char *buf) {
 
 
 		/* Oops */
-		return (6);
+		return(6);
 	}
 
 
@@ -5622,12 +5622,12 @@ errr init_t_info_txt(FILE *fp, char *buf) {
 
 
 	/* No version yet */
-	if (!okay) return (2);
+	if (!okay) return(2);
 
 	max_t_idx = ++error_idx;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -5641,28 +5641,28 @@ static errr grab_one_dungeon_flag(dungeon_info_type *d_ptr, cptr what) {
 	for (i = 0; i < 32; i++)
 		if (streq(what, d_info_flags1[i])) {
 			d_ptr->flags1 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags2 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, d_info_flags2[i])) {
 			d_ptr->flags2 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags3 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, d_info_flags3[i])) {
 			d_ptr->flags3 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Oops */
 	s_printf("Unknown dungeon type flag '%s'.\n", what);
 
 	/* Failure */
-	return (1);
+	return(1);
 }
 
 /*
@@ -5675,21 +5675,21 @@ static errr grab_one_basic_monster_flag(dungeon_info_type *d_ptr, cptr what, byt
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags1[i])) {
 			d_ptr->rules[rule].mflags1 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags2 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags2[i])) {
 			d_ptr->rules[rule].mflags2 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags3 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags3[i])) {
 			d_ptr->rules[rule].mflags3 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* -- 4, 5, 6 are 'spell' type flags, not 'basic' */
@@ -5698,35 +5698,35 @@ static errr grab_one_basic_monster_flag(dungeon_info_type *d_ptr, cptr what, byt
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags7[i])) {
 			d_ptr->rules[rule].mflags7 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags8 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags8[i])) {
 			d_ptr->rules[rule].mflags8 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags9 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags9[i])) {
 			d_ptr->rules[rule].mflags9 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags0 -- contains both, spell and basic type */
 	for (i = 0; i < 32; i++)
 		if (((1U << i) & RF0_BASIC_MASK) && streq(what, r_info_flags0[i])) {
 			d_ptr->rules[rule].mflags0 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Oops */
 	s_printf("Unknown 'basic' type monster flag '%s'.\n", what);
 
 	/* Failure */
-	return (1);
+	return(1);
 }
 
 
@@ -5742,35 +5742,35 @@ static errr grab_one_spell_monster_flag(dungeon_info_type *d_ptr, cptr what, byt
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags4[i])) {
 			d_ptr->rules[rule].mflags4 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags5 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags5[i])) {
 			d_ptr->rules[rule].mflags5 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags6 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags6[i])) {
 			d_ptr->rules[rule].mflags6 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Scan flags0 */
 	for (i = 0; i < 32; i++)
 		if (((1U << i) & RF0_SPELL_MASK) && streq(what, r_info_flags0[i])) {
 			d_ptr->rules[rule].mflags0 |= (1U << i);
-			return (0);
+			return(0);
 		}
 
 	/* Oops */
 	s_printf("Unknown 'spell' type monster flag '%s'.\n", what);
 
 	/* Failure */
-	return (1);
+	return(1);
 }
 
 /*
@@ -5811,7 +5811,7 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 		if (!buf[0] || (buf[0] == '#')) continue;
 
 		/* Verify correct "colon" format */
-		if (buf[1] != ':') return (1);
+		if (buf[1] != ':') return(1);
 
 
 		/* Hack -- Process 'V' for "Version" */
@@ -5825,12 +5825,12 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 			    (v1 != d_head->v_major) ||
 			    (v2 != d_head->v_minor) ||
 			    (v3 != d_head->v_patch))
-				return (2);
+				return(2);
 
 #else /* VERIFY_VERSION_STAMP */
 
 			/* Scan for the values */
-			if (3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) return (2);
+			if (3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) return(2);
 
 #endif /* VERIFY_VERSION_STAMP */
 
@@ -5842,7 +5842,7 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* No version yet */
-		if (!okay) return (2);
+		if (!okay) return(2);
 
 
 		/* Process 'N' for "New/Number/Name" */
@@ -5851,22 +5851,22 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
-			if (!s) return (1);
+			if (!s) return(1);
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
 
 			/* Paranoia -- require a name */
-			if (!*s) return (1);
+			if (!*s) return(1);
 
 			/* Get the index */
 			i = atoi(buf + 2);
 
 			/* Verify information */
-			if (i < error_idx) return (4);
+			if (i < error_idx) return(4);
 
 			/* Verify information */
-			if (i >= (int) d_head->info_num) return (2);
+			if (i >= (int) d_head->info_num) return(2);
 
 			/* Save the index */
 			error_idx = i;
@@ -5881,7 +5881,7 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 			//d_ptr->idx = error_idx;
 
 			/* Hack -- Verify space */
-			if (d_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+			if (d_head->name_size + strlen(s) + 8 > fake_name_size) return(7);
 
 			/* Advance and Save the name index */
 			if (!d_ptr->name) d_ptr->name = ++d_head->name_size;
@@ -5920,7 +5920,7 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* There better be a current d_ptr */
-		if (!d_ptr) return (3);
+		if (!d_ptr) return(3);
 
 		/* Process 'D' for "Description */
 		if (buf[0] == 'D') {
@@ -5933,7 +5933,7 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 			s = buf + 6;
 
 			/* Hack -- Verify space */
-			if (d_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
+			if (d_head->text_size + strlen(s) + 8 > fake_text_size) return(7);
 
 			/* Advance and Save the text index */
 			if (!d_ptr->text) d_ptr->text = ++d_head->text_size;
@@ -5953,7 +5953,7 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 			int feat_boundary;
 
 			/* Scan for the values */
-			if (1 != sscanf(buf + 2, "%d", &feat_boundary)) return (1);
+			if (1 != sscanf(buf + 2, "%d", &feat_boundary)) return(1);
 
 			d_ptr->feat_boundary = feat_boundary;
 			/* Next... */
@@ -5968,7 +5968,7 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the values */
 			if (6 != sscanf(buf + 2, "%d:%d:%d:%d:%d:%d",
-			    &min_lev, &max_lev, &min_plev, &next, &min_alloc, &max_chance)) return (1);
+			    &min_lev, &max_lev, &min_plev, &next, &min_alloc, &max_chance)) return(1);
 
 			/* Save the values */
 			d_ptr->mindepth = min_lev;
@@ -5992,7 +5992,7 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 			    &f[0], &p[0], &f[1], &p[1], &f[2], &p[2], &f[3], &p[3], &f[4], &p[4])) {
 				/* Scan for the values - part ii*/
 				if (5 != sscanf(buf + 2, "%d:%d:%d:%d:%d", &p[0], &p[1],
-						&p[2], &p[3], &p[4])) return (1);
+						&p[2], &p[3], &p[4])) return(1);
 
 				/* Save the values */
 				for (i = 0; i < 5; i++) d_ptr->floor_percent[i][1] = p[i];
@@ -6016,7 +6016,7 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the values */
 			if (4 != sscanf(buf + 2, "%d:%d:%d:%d",
-			    &treasure, &combat, &magic, &tools)) return (1);
+			    &treasure, &combat, &magic, &tools)) return(1);
 
 			/* Save the values */
 			d_ptr->objs.treasure = treasure;
@@ -6039,7 +6039,7 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 			    &w[0], &p[0], &w[1], &p[1], &w[2], &p[2], &w[3], &p[3], &w[4], &p[4], &outer, &inner)) {
 				/* Scan for the values - part ii*/
 				if (5 != sscanf(buf + 2, "%d:%d:%d:%d:%d", &p[0], &p[1],
-				    &p[2], &p[3], &p[4])) return (1);
+				    &p[2], &p[3], &p[4])) return(1);
 
 				/* Save the values */
 				for (i = 0; i < 5; i++) d_ptr->fill_percent[i][1] = p[i];
@@ -6070,13 +6070,13 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 				if ((!d_ptr->d_side[i]) && (!d_ptr->d_dice[i])) break;
 
 			/* Oops, no more slots */
-			if (i == 4) return (1);
+			if (i == 4) return(1);
 
 			/* Scan for the values */
 			  if (4 != sscanf(buf + 2, "%dd%d:%d:%d", &dice, &side, &freq, &type)) {
 				int j;
 
-				if (3 != sscanf(buf + 2, "%dd%d:%d", &dice, &side, &freq)) return (1);
+				if (3 != sscanf(buf + 2, "%dd%d:%d", &dice, &side, &freq)) return(1);
 
 				tmp = buf + 2;
 				for (j = 0; j < 2; j++) {
@@ -6189,7 +6189,7 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_dungeon_flag(d_ptr, s)) return (5);
+				if (0 != grab_one_dungeon_flag(d_ptr, s)) return(5);
 
 				/* Start the next entry */
 				s = t;
@@ -6206,7 +6206,7 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the values */
 			if (2 != sscanf(buf + 2, "%d:%d",
-				&percent, &mode)) return (1);
+				&percent, &mode)) return(1);
 
 			/* Save the values */
 			r_char_number = 0;
@@ -6263,7 +6263,7 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_basic_monster_flag(d_ptr, s, rule_num)) return (5);
+				if (0 != grab_one_basic_monster_flag(d_ptr, s, rule_num)) return(5);
 
 				/* Start the next entry */
 				s = t;
@@ -6287,7 +6287,7 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_spell_monster_flag(d_ptr, s, rule_num)) return (5);
+				if (0 != grab_one_spell_monster_flag(d_ptr, s, rule_num)) return(5);
 
 				/* Start the next entry */
 				s = t;
@@ -6298,7 +6298,7 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* Oops */
-		return (6);
+		return(6);
 	}
 
 
@@ -6307,7 +6307,7 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 	++d_head->text_size;
 
 	/* No version yet */
-	if (!okay) return (2);
+	if (!okay) return(2);
 
 	/* Hack -- acquire total number */
 	max_d_idx = ++error_idx;
@@ -6318,7 +6318,7 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 #endif	// DEBUG_LEVEL
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -6334,19 +6334,19 @@ static errr grab_one_race_flag(owner_type *ow_ptr, int state, cptr what) {
 	unknown_shut_up = TRUE;
 	if (!grab_one_race_allow_flag(ow_ptr->races[state], what)) {
 		unknown_shut_up = FALSE;
-		return (0);
+		return(0);
 	}
 
 	/* Scan classes flags */
 	if (!grab_one_class_flag(ow_ptr->classes[state], what)) {
 		unknown_shut_up = FALSE;
-		return (0);
+		return(0);
 	}
 
 	/* Scan realms flags */
 	if (!grab_one_player_realm_flag(ow_ptr->realms[state], what)) {
 		unknown_shut_up = FALSE;
-		return (0);
+		return(0);
 	}
 
 	/* Oops */
@@ -6354,7 +6354,7 @@ static errr grab_one_race_flag(owner_type *ow_ptr, int state, cptr what) {
 	s_printf("Unknown race/class/realm flag '%s'.\n", what);
 
 	/* Failure */
-	return (1);
+	return(1);
 }
 
 /*
@@ -6367,7 +6367,7 @@ static errr grab_one_store_flag(store_info_type *st_ptr, cptr what) {
 	for (i = 0; i < 32; i++) {
 		if (streq(what, st_info_flags1[i])) {
 			st_ptr->flags1 |= (1U << i);
-			return (0);
+			return(0);
 		}
 	}
 
@@ -6375,7 +6375,7 @@ static errr grab_one_store_flag(store_info_type *st_ptr, cptr what) {
 	s_printf("Unknown store flag '%s'.\n", what);
 
 	/* Failure */
-	return (1);
+	return(1);
 }
 
 /*
@@ -6415,7 +6415,7 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 		if (!buf[0] || (buf[0] == '#')) continue;
 
 		/* Verify correct "colon" format */
-		if (buf[1] != ':') return (1);
+		if (buf[1] != ':') return(1);
 
 
 		/* Hack -- Process 'V' for "Version" */
@@ -6429,12 +6429,12 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 			    (v1 != st_head->v_major) ||
 			    (v2 != st_head->v_minor) ||
 			    (v3 != st_head->v_patch))
-				return (2);
+				return(2);
 
 #else /* VERIFY_VERSION_STAMP */
 
 			/* Scan for the values */
-			if (3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) return (2);
+			if (3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) return(2);
 
 #endif /* VERIFY_VERSION_STAMP */
 
@@ -6446,7 +6446,7 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* No version yet */
-		if (!okay) return (2);
+		if (!okay) return(2);
 
 
 		/* Process 'N' for "New/Number/Name" */
@@ -6455,13 +6455,13 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
-			if (!s) return (1);
+			if (!s) return(1);
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
 
 			/* Paranoia -- require a name */
-			if (!*s) return (1);
+			if (!*s) return(1);
 
 			/* Get the index */
 			i = atoi(buf + 2);
@@ -6469,10 +6469,10 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 			//++cnt;
 
 			/* Verify information */
-			if (i < error_idx) return (4);
+			if (i < error_idx) return(4);
 
 			/* Verify information */
-			if (i >= (int) st_head->info_num) return (2);
+			if (i >= (int) st_head->info_num) return(2);
 
 			/* Save the index */
 			error_idx = i;
@@ -6481,7 +6481,7 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 			st_ptr = &st_info[i];
 
 			/* Hack -- Verify space */
-			if (st_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+			if (st_head->name_size + strlen(s) + 8 > fake_name_size) return(7);
 
 			/* Advance and Save the name index */
 			if (!st_ptr->name) st_ptr->name = ++st_head->name_size;
@@ -6500,7 +6500,7 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* There better be a current st_ptr */
-		if (!st_ptr) return (3);
+		if (!st_ptr) return(3);
 
 		/* Process 'I' for "Items" (multiple lines) */
 		if (buf[0] == 'I') {
@@ -6508,13 +6508,13 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
-			if (!s) return (1);
+			if (!s) return(1);
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
 
 			/* Paranoia -- require a name */
-			if (!*s) return (1);
+			if (!*s) return(1);
 
 			/* Get the index */
 			st_ptr->table[item_idx][1] = atoi(buf + 2);
@@ -6534,7 +6534,7 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the values */
 			if (3 != sscanf(buf + 2, "%d:%d:%d",
-				&rar1, &tv1, &sv1)) return (1);
+				&rar1, &tv1, &sv1)) return(1);
 
 			/* Get the index */
 			st_ptr->table[item_idx][1] = rar1;
@@ -6554,13 +6554,13 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the values */
 			if (2 != sscanf(buf + 2, "%c:%c",
-				&c, &a)) return (1);
+				&c, &a)) return(1);
 
 			/* Extract the color */
 			attr = color_char_to_attr(a);
 
 			/* Paranoia */
-			if (attr < 0) return (1);
+			if (attr < 0) return(1);
 
 			/* Save the values */
 			st_ptr->d_char = c;
@@ -6576,7 +6576,7 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the values */
 			if (6 != sscanf(buf + 2, "%d:%d:%d:%d:%d:%d",
-				&a1, &a2, &a3, &a4, &a5, &a6)) return (1);
+				&a1, &a2, &a3, &a4, &a5, &a6)) return(1);
 
 			/* Save the values */
 			st_ptr->actions[0] = a1;
@@ -6604,7 +6604,7 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_store_flag(st_ptr, s)) return (5);
+				if (0 != grab_one_store_flag(st_ptr, s)) return(5);
 
 				/* Start the next entry */
 				s = t;
@@ -6620,7 +6620,7 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the values */
 			if (MAX_STORE_OWNERS != sscanf(buf + 2, "%d:%d:%d:%d:%d:%d",
-				&a1, &a2, &a3, &a4, &a5, &a6)) return (1);
+				&a1, &a2, &a3, &a4, &a5, &a6)) return(1);
 
 			/* Save the values */
 			st_ptr->owners[0] = a1;
@@ -6640,7 +6640,7 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the values */
 			if (1 != sscanf(buf + 2, "%d",
-				&max_obj)) return (1);
+				&max_obj)) return(1);
 
 			/* Save the values */
 			if (max_obj > STORE_INVEN_MAX) max_obj = STORE_INVEN_MAX;
@@ -6651,7 +6651,7 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* Oops */
-		return (6);
+		return(6);
 	}
 
 
@@ -6660,7 +6660,7 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 	++st_head->text_size;
 
 	/* No version yet */
-	if (!okay) return (2);
+	if (!okay) return(2);
 
 	/* Hack -- acquire total number */
 	max_st_idx = ++error_idx;
@@ -6671,7 +6671,7 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 #endif	// DEBUG_LEVEL
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*
@@ -6709,7 +6709,7 @@ errr init_ba_info_txt(FILE *fp, char *buf) {
 		if (!buf[0] || (buf[0] == '#')) continue;
 
 		/* Verify correct "colon" format */
-		if (buf[1] != ':') return (1);
+		if (buf[1] != ':') return(1);
 
 
 		/* Hack -- Process 'V' for "Version" */
@@ -6723,12 +6723,12 @@ errr init_ba_info_txt(FILE *fp, char *buf) {
 			    (v1 != ba_head->v_major) ||
 			    (v2 != ba_head->v_minor) ||
 			    (v3 != ba_head->v_patch))
-				return (2);
+				return(2);
 
 #else /* VERIFY_VERSION_STAMP */
 
 			/* Scan for the values */
-			if (3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) return (2);
+			if (3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) return(2);
 
 #endif /* VERIFY_VERSION_STAMP */
 
@@ -6740,7 +6740,7 @@ errr init_ba_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* No version yet */
-		if (!okay) return (2);
+		if (!okay) return(2);
 
 
 		/* Process 'N' for "New/Number/Name" */
@@ -6749,22 +6749,22 @@ errr init_ba_info_txt(FILE *fp, char *buf) {
 			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
-			if (!s) return (1);
+			if (!s) return(1);
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
 
 			/* Paranoia -- require a name */
-			if (!*s) return (1);
+			if (!*s) return(1);
 
 			/* Get the index */
 			i = atoi(buf + 2);
 
 			/* Verify information */
-			if (i < error_idx) return (4);
+			if (i < error_idx) return(4);
 
 			/* Verify information */
-			if (i >= (int) ba_head->info_num) return (2);
+			if (i >= (int) ba_head->info_num) return(2);
 
 			/* Save the index */
 			error_idx = i;
@@ -6773,7 +6773,7 @@ errr init_ba_info_txt(FILE *fp, char *buf) {
 			ba_ptr = &ba_info[i];
 
 			/* Hack -- Verify space */
-			if (ba_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+			if (ba_head->name_size + strlen(s) + 8 > fake_name_size) return(7);
 
 			/* Advance and Save the name index */
 			if (!ba_ptr->name) ba_ptr->name = ++ba_head->name_size;
@@ -6789,14 +6789,14 @@ errr init_ba_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* There better be a current ba_ptr */
-		if (!ba_ptr) return (3);
+		if (!ba_ptr) return(3);
 
 		/* Process 'C' for "Costs" (one line only) */
 		if (buf[0] == 'C') {
 			int ch, cn, cl;
 
 			/* Scan for the values */
-			if (3 != sscanf(buf + 2, "%d:%d:%d", &ch, &cn, &cl)) return (1);
+			if (3 != sscanf(buf + 2, "%d:%d:%d", &ch, &cn, &cl)) return(1);
 
 			/* Save the values */
 			ba_ptr->costs[STORE_HATED] = ch;
@@ -6815,7 +6815,7 @@ errr init_ba_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the values */
 			if (4 != sscanf(buf + 2, "%d:%d:%c:%u",
-				&act, &act_res, &letter, &flags)) return (1);
+				&act, &act_res, &letter, &flags)) return(1);
 
 			/* Save the values */
 			ba_ptr->action = act;
@@ -6828,7 +6828,7 @@ errr init_ba_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* Oops */
-		return (6);
+		return(6);
 	}
 
 
@@ -6837,12 +6837,12 @@ errr init_ba_info_txt(FILE *fp, char *buf) {
 	++ba_head->text_size;
 
 	/* No version yet */
-	if (!okay) return (2);
+	if (!okay) return(2);
 
 	max_ba_idx = ++error_idx;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*
@@ -6879,7 +6879,7 @@ errr init_ow_info_txt(FILE *fp, char *buf) {
 		if (!buf[0] || (buf[0] == '#')) continue;
 
 		/* Verify correct "colon" format */
-		if (buf[1] != ':') return (1);
+		if (buf[1] != ':') return(1);
 
 
 		/* Hack -- Process 'V' for "Version" */
@@ -6893,12 +6893,12 @@ errr init_ow_info_txt(FILE *fp, char *buf) {
 			    (v1 != ow_head->v_major) ||
 			    (v2 != ow_head->v_minor) ||
 			    (v3 != ow_head->v_patch))
-				return (2);
+				return(2);
 
 #else /* VERIFY_VERSION_STAMP */
 
 			/* Scan for the values */
-			if (3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) return (2);
+			if (3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) return(2);
 
 #endif /* VERIFY_VERSION_STAMP */
 
@@ -6910,7 +6910,7 @@ errr init_ow_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* No version yet */
-		if (!okay) return (2);
+		if (!okay) return(2);
 
 
 		/* Process 'N' for "New/Number/Name" */
@@ -6919,22 +6919,22 @@ errr init_ow_info_txt(FILE *fp, char *buf) {
 			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
-			if (!s) return (1);
+			if (!s) return(1);
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
 
 			/* Paranoia -- require a name */
-			if (!*s) return (1);
+			if (!*s) return(1);
 
 			/* Get the index */
 			i = atoi(buf + 2);
 
 			/* Verify information */
-			if (i < error_idx) return (4);
+			if (i < error_idx) return(4);
 
 			/* Verify information */
-			if (i >= (int) ow_head->info_num) return (2);
+			if (i >= (int) ow_head->info_num) return(2);
 
 			/* Save the index */
 			error_idx = i;
@@ -6943,7 +6943,7 @@ errr init_ow_info_txt(FILE *fp, char *buf) {
 			ow_ptr = &ow_info[i];
 
 			/* Hack -- Verify space */
-			if (ow_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+			if (ow_head->name_size + strlen(s) + 8 > fake_name_size) return(7);
 
 			/* Advance and Save the name index */
 			if (!ow_ptr->name) ow_ptr->name = ++ow_head->name_size;
@@ -6959,7 +6959,7 @@ errr init_ow_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* There better be a current ow_ptr */
-		if (!ow_ptr) return (3);
+		if (!ow_ptr) return(3);
 
 
 		/* Process 'C' for "Costs" (one line only) */
@@ -6968,7 +6968,7 @@ errr init_ow_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the values */
 			if (3 != sscanf(buf + 2, "%d:%d:%d",
-				&ch, &cn, &cl)) return (1);
+				&ch, &cn, &cl)) return(1);
 
 			/* Save the values */
 			ow_ptr->costs[STORE_HATED] = ch;
@@ -6985,7 +6985,7 @@ errr init_ow_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the values */
 			if (5 != sscanf(buf + 2, "%d:%d:%d:%d:%d",
-				&cost, &max_inf, &min_inf, &haggle, &insult)) return (1);
+				&cost, &max_inf, &min_inf, &haggle, &insult)) return(1);
 
 			/* Save the values */
 //			ow_ptr->max_cost = cost;
@@ -7013,7 +7013,7 @@ errr init_ow_info_txt(FILE *fp, char *buf) {
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_race_flag(ow_ptr, STORE_LIKED, s)) return (5);
+				if (0 != grab_one_race_flag(ow_ptr, STORE_LIKED, s)) return(5);
 
 				/* Start the next entry */
 				s = t;
@@ -7036,7 +7036,7 @@ errr init_ow_info_txt(FILE *fp, char *buf) {
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_race_flag(ow_ptr, STORE_HATED, s)) return (5);
+				if (0 != grab_one_race_flag(ow_ptr, STORE_HATED, s)) return(5);
 
 				/* Start the next entry */
 				s = t;
@@ -7047,7 +7047,7 @@ errr init_ow_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* Oops */
-		return (6);
+		return(6);
 	}
 
 
@@ -7056,12 +7056,12 @@ errr init_ow_info_txt(FILE *fp, char *buf) {
 	++ow_head->text_size;
 
 	/* No version yet */
-	if (!okay) return (2);
+	if (!okay) return(2);
 
 	max_ow_idx = ++error_idx;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -7126,7 +7126,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Skip comments and blank lines */
 		if (!buf[0] || (buf[0] == '#') || !buf[1]) continue;
 		/* Verify correct "colon" format */
-		if (buf[1] != ':' && buf[2] != ':') return (1);
+		if (buf[1] != ':' && buf[2] != ':') return(1);
 
 		/* Hack -- Process 'V' for "Version" */
 		if (buf[0] == 'V') {
@@ -7138,10 +7138,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			    (v1 != q_head->v_major) ||
 			    (v2 != q_head->v_minor) ||
 			    (v3 != q_head->v_patch))
-				return (2);
+				return(2);
 #else /* VERIFY_VERSION_STAMP */
 			/* Scan for the values */
-			if (3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) return (2);
+			if (3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) return(2);
 #endif /* VERIFY_VERSION_STAMP */
 			/* Okay to proceed */
 			okay = TRUE;
@@ -7149,7 +7149,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 		/* No version yet */
-		if (!okay) return (2);
+		if (!okay) return(2);
 
 		/* Process 'N' for "New/Number/Name" */
 		if (buf[0] == 'N') {
@@ -7158,19 +7158,19 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* Find the colon before the name */
 			s = strchr(buf + 2, ':');
 			/* Verify that colon */
-			if (!s) return (1);
+			if (!s) return(1);
 
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
 			/* Paranoia -- require a name */
-			if (!*s) return (1);
+			if (!*s) return(1);
 
 			/* Get the index */
 			i = atoi(buf + 2);
 			/* Verify information */
-			if (i < error_idx) return (4);
+			if (i < error_idx) return(4);
 			/* Verify information */
-			if (i >= (int) q_head->info_num) return (2);
+			if (i >= (int) q_head->info_num) return(2);
 
 			/* Save the index */
 			error_idx = i;
@@ -7195,13 +7195,13 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			/* Scan for the values -- careful: lenghts are hard-coded, QI_CODENAME_LEN, NAME_LEN - 1, MAX_CHARS - 1 */
 			if (6 != (j = sscanf(s, "%10[^:]:%19[^:]:%79[^:]:%8[^:]:%d:%d",
-			    codename, creator, questname, tmpbuf, &aa, &local))) return (1);
+			    codename, creator, questname, tmpbuf, &aa, &local))) return(1);
 
 			/* initialise prequest codenames */
 			for (k = 0; k < QI_PREREQUISITES; k++) q_ptr->prerequisites[k][0] = 0;
 
 			/* Hack -- Verify space */
-			if (q_head->name_size + strlen(questname) + 8 > fake_name_size) return (7);
+			if (q_head->name_size + strlen(questname) + 8 > fake_name_size) return(7);
 			/* Advance and Save the name index */
 			if (!q_ptr->name) q_ptr->name = ++q_head->name_size;
 			/* Append chars to the name */
@@ -7261,7 +7261,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* There better be a current q_ptr */
-		if (!q_ptr) return (3);
+		if (!q_ptr) return(3);
 
 		/* Process 'C' for list of stages (usually stage 0) that allow players to acquire the quest */
 		if (buf[0] == 'C') {
@@ -7269,7 +7269,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* read list of numbers, separated by colons */
 			while (*s >= '0' && *s <= '9') {
 				j = atoi(s);
-				if (j < 0 || j >= QI_STAGES) return 1;
+				if (j < 0 || j >= QI_STAGES) return(1);
 
 				q_stage = init_quest_stage(error_idx, j);
 				q_stage->accepts = TRUE;
@@ -7292,7 +7292,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			    &priv, &indiv, &minlev, &maxlev, races, classes,
 			    &mode_norm, &mode_el, &mode_pvp, &must_bat, &must_form,
 			    &qdcs))
-				return (1);
+				return(1);
 
 			q_ptr->privilege = priv;
 			q_ptr->individual = indiv;
@@ -7324,7 +7324,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			s = buf + 2;
 			if (11 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
-			    &night, &day, &mor, &fnoo, &noo, &aft, &eve, &mid, &dee, &tstart, &tstop)) return (1);
+			    &night, &day, &mor, &fnoo, &noo, &aft, &eve, &mid, &dee, &tstart, &tstop)) return(1);
 
 			q_ptr->night = (night != 0);
 			q_ptr->day = (day != 0);
@@ -7346,7 +7346,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			s = buf + 2;
 			if (3 != sscanf(s, "%d:%d:%d",
-			    &es, &q_ptr->max_duration, &cd)) return (1);
+			    &es, &q_ptr->max_duration, &cd)) return(1);
 
 			q_ptr->ending_stage = es;
 			q_ptr->cooldown = (s16b) cd;
@@ -7366,14 +7366,14 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q = atoi(s);
 
 			lc = q_ptr->questors;
-			if (lc >= QI_QUESTORS) return 1;
+			if (lc >= QI_QUESTORS) return(1);
 			q_questor = init_quest_questor(error_idx, lc);
 
 			switch (q) {
 			case QI_QUESTOR_NPC:
 				if (9 != sscanf(s, "%d:%d:%d:%d:%c:%c:%d:%d:%[^:]",
 				    &q, &lite, &ridx, &reidx, &ch, &attr, &minlv, &maxlv,
-				    tmpbuf)) return (1);
+				    tmpbuf)) return(1);
 				q_questor->type = q;
 				q_questor->lite = (unsigned char)lite;
 				q_questor->ridx = ridx;
@@ -7389,7 +7389,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			case QI_QUESTOR_PARCHMENT:
 				if (6 != sscanf(s, "%d:%d:%d:%c:%d:%[^:]",
 				    &q, &lite, &sval, &attr,
-				    &minlv, tmpbuf)) return (1);
+				    &minlv, tmpbuf)) return(1);
 				q_questor->type = q;
 				q_questor->lite = (unsigned char)lite;
 				q_questor->psval = sval;
@@ -7400,7 +7400,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			case QI_QUESTOR_ITEM_PICKUP:
 				if (15 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%c:%d:%[^:]",
 				    &q, &lite, &tval, &sval, &pval, &bpval, &name1, &name2, &name2b,
-				    &good, &great, &vgreat, &attr, &minlv, tmpbuf)) return (1);
+				    &good, &great, &vgreat, &attr, &minlv, tmpbuf)) return(1);
 				q_questor->type = q;
 				q_questor->lite = (unsigned char)lite;
 				q_questor->otval = tval;
@@ -7418,7 +7418,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				strcpy(q_questor->name, tmpbuf);
 				break;
 			default:
-				return 1;
+				return(1);
 			}
 
 			/* init defaults for optional line 'F' */
@@ -7437,10 +7437,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			int d, dtv, dsv, dpv, dbpv, dn1, dn2, dn2b, dg, dgr, dvgr, dcr, au, exp;
 			s = buf + 2;
 			if (14 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
-			    &d, &dtv, &dsv, &dpv, &dbpv, &dn1, &dn2, &dn2b, &dg, &dgr, &dvgr, &dcr, &au, &exp)) return (1);
+			    &d, &dtv, &dsv, &dpv, &dbpv, &dn1, &dn2, &dn2b, &dg, &dgr, &dvgr, &dcr, &au, &exp)) return(1);
 
 			lc = q_ptr->questors;
-			if (!lc) return 1; /* so a K-line must always follow somewhere after its Q line */
+			if (!lc) return(1); /* so a K-line must always follow somewhere after its Q line */
 			q_questor = init_quest_questor(error_idx, lc - 1); /* pick the newest, already existing one */
 
 			q_questor->drops = d;
@@ -7470,10 +7470,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 				s = buf + 2;
 				if (13 != sscanf(s, "%d:%u:%hu:%d:%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d", //byte, u16b, u32b
-				    &loc, &terrtype, &towns, &wx, &wy, &wz, &terr, &sx, &sy, &rad, tmpbuf, &tpx, &tpy)) return (1);
+				    &loc, &terrtype, &towns, &wx, &wy, &wz, &terr, &sx, &sy, &rad, tmpbuf, &tpx, &tpy)) return(1);
 
 				lc = q_ptr->questors;
-				if (!lc) return 1; /* so an L-line must always follow somewhere after its Q line */
+				if (!lc) return(1); /* so an L-line must always follow somewhere after its Q line */
 				q_questor = init_quest_questor(error_idx, lc - 1); /* pick the newest, already existing one */
 
 				q_questor->q_loc.s_location_type = (byte)loc;
@@ -7500,10 +7500,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				int lmin, lmax;
 				s = buf + 3;
 
-				if (2 > sscanf(s, "%d:%d", &lmin, &lmax)) return (1);
+				if (2 > sscanf(s, "%d:%d", &lmin, &lmax)) return(1);
 
 				lc = q_ptr->questors;
-				if (!lc) return 1; /* so an L-line must always follow somewhere after its Q line */
+				if (!lc) return(1); /* so an L-line must always follow somewhere after its Q line */
 				q_questor = init_quest_questor(error_idx, lc - 1); /* pick the newest, already existing one */
 
 				q_questor->q_loc.dlevmin = lmin;
@@ -7512,16 +7512,16 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				/* advance to 3rd parm, which is where the list of dungeon indices starts */
 				s = strchr(s, ':') + 1;
 				s = strchr(s, ':');
-				if (!s) return 1;
+				if (!s) return(1);
 				s++;
 
 				q_questor->q_loc.s_dungeons = 0;
 				/* read list of numbers, separated by colons */
 				while (*s >= '0' && *s <= '9') {
-					if (q_questor->q_loc.s_dungeons == MAX_D_IDX) return 1;
+					if (q_questor->q_loc.s_dungeons == MAX_D_IDX) return(1);
 
 					j = atoi(s);
-					if (j < 0 || j > 255) return 1;
+					if (j < 0 || j > 255) return(1);
 
 					q_questor->q_loc.s_dungeon[q_questor->q_loc.s_dungeons] = j;
 					q_questor->q_loc.s_dungeons++;
@@ -7532,20 +7532,20 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				}
 				continue;
 			}
-			return 1;
+			return(1);
 		}
 
 		/* Process 'F' for questor accept/spawn flags */
 		if (buf[0] == 'F') {
 			int aalos, aaint, talk, despawn, invinc;
 
-			if (lc_flagsacc == QI_QUESTORS) return 1;
-			if (lc_flagsacc >= q_ptr->questors) return 1; /* each 'F' line must succed somewhere after its 'Q' line */
+			if (lc_flagsacc == QI_QUESTORS) return(1);
+			if (lc_flagsacc >= q_ptr->questors) return(1); /* each 'F' line must succed somewhere after its 'Q' line */
 			q_questor = init_quest_questor(error_idx, lc_flagsacc);
 			s = buf + 2;
 
 			if (5 != sscanf(s, "%d:%d:%d:%d:%d",
-			    &aalos, &aaint, &talk, &despawn, &invinc)) return (1);
+			    &aalos, &aaint, &talk, &despawn, &invinc)) return(1);
 			q_questor->accept_los = (aalos != 0);
 			q_questor->accept_interact = (aaint != 0);
 			q_questor->talkable = (talk != 0);
@@ -7568,9 +7568,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				s = buf + 2;
 				if (13 > (j = sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d:%u:%u:%u:%79[^:]:%d:%d",
 				    &stage, &base, &max, &tow, &hard, &stor, &theme, tmpbuf2, &stat, &keep, &flags1, &flags2, &flags3, tmpbuf, &tx, &ty)))
-					return (1);
+					return(1);
 
-				if (stage < 0 || stage >= QI_STAGES) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return(1);
 				q_stage = init_quest_stage(error_idx, stage);
 
 				q_stage->dun_base = base;
@@ -7611,9 +7611,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 				s = buf + 3;
 				if (13 != sscanf(s, "%d:%d:%d:%u:%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d",
-				    &stage, &loc, &terrtype, &towns, &wx, &wy, &terr, &sx, &sy, &rad, tmpbuf, &tpx, &tpy)) return (1);
+				    &stage, &loc, &terrtype, &towns, &wx, &wy, &terr, &sx, &sy, &rad, tmpbuf, &tpx, &tpy)) return(1);
 
-				if (stage < 0 || stage >= QI_STAGES) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return(1);
 				q_stage = init_quest_stage(error_idx, stage);
 
 				q_stage->dun_loc.s_location_type = (byte)loc;
@@ -7637,7 +7637,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				}
 				continue;
 			}
-			return 1;
+			return(1);
 		}
 
 		/* Process 'm' for monster spawning for this quest */
@@ -7650,11 +7650,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				s = buf + 2;
 				if (12 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%c:%c:%d:%d%79[^:]",
 				    &stage, &amt, &grp, &scat, &clo, &ridx, &reidx, &rchar, &rattr, &lvmin, &lvmax, tmpbuf))
-					return (1);
+					return(1);
 
-				if (stage < 0 || stage >= QI_STAGES) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return(1);
 				q_stage = init_quest_stage(error_idx, stage);
-				if (q_stage->mspawns >= QI_STAGE_AUTO_MSPAWNS) return 1;
+				if (q_stage->mspawns >= QI_STAGE_AUTO_MSPAWNS) return(1);
 				q_mspawn = init_quest_monsterspawn(error_idx, stage, q_stage->mspawns);
 
 				q_mspawn->amount = amt;
@@ -7679,12 +7679,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 				s = buf + 3;
 				if (13 != sscanf(s, "%d:%d:%d:%u:%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d",
-				    &stage, &loc, &terrtype, &towns, &wx, &wy, &terr, &sx, &sy, &rad, tmpbuf, &tpx, &tpy)) return (1);
+				    &stage, &loc, &terrtype, &towns, &wx, &wy, &terr, &sx, &sy, &rad, tmpbuf, &tpx, &tpy)) return(1);
 
-				if (stage < 0 || stage >= QI_STAGES) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return(1);
 				q_stage = init_quest_stage(error_idx, stage);
 				lc = q_stage->mspawns;
-				if (!lc) return 1;
+				if (!lc) return(1);
 				q_mspawn = &q_stage->mspawn[lc - 1]; /* grab latest one */
 
 				q_mspawn->loc.s_location_type = (byte)loc;
@@ -7712,12 +7712,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 				s = buf + 3;
 				if (7 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d",
-				    &stage, &hostp, &hostq, &invincp, &invincq, &targetp, &targetq)) return (1);
+				    &stage, &hostp, &hostq, &invincp, &invincq, &targetp, &targetq)) return(1);
 
-				if (stage < 0 || stage >= QI_STAGES) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return(1);
 				q_stage = init_quest_stage(error_idx, stage);
 				lc = q_stage->mspawns;
-				if (!lc) return 1;
+				if (!lc) return(1);
 				q_mspawn = &q_stage->mspawn[lc - 1]; /* grab latest one */
 
 				q_mspawn->hostile_player = (hostp != 0);
@@ -7728,7 +7728,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_mspawn->target_questor = (targetq != 0);
 				continue;
 			}
-			return 1;
+			return(1);
 		}
 
 		/* Process 'A' for automatic things in a stage: spawn new quest, (timed) stage changes, quiet change (no dialogue)? */
@@ -7739,8 +7739,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 				s = buf + 2;
 				if (12 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%16[^:]:%d:%d:%d",
-				    &stage, &aq, &aa, &cs, &tsi, &tsia, &tsr, &qcs, flagbuf, &genox, &genoy, &genoz)) return (1);
-				if (stage < 0 || stage >= QI_STAGES) return 1;
+				    &stage, &aq, &aa, &cs, &tsi, &tsia, &tsr, &qcs, flagbuf, &genox, &genoy, &genoz)) return(1);
+				if (stage < 0 || stage >= QI_STAGES) return(1);
 				q_stage = init_quest_stage(error_idx, stage);
 
 				q_stage->activate_quest = aq;
@@ -7764,7 +7764,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 						q_stage->setflags |= (0x1 << (*cc - 'A')); /* set flag */
 					} else if (*cc >= 'a' && *cc < 'a' + QI_FLAGS) {
 						q_stage->clearflags |= (0x1 << (*cc - 'a')); /* clear flag */
-					} else return 1;
+					} else return(1);
 					cc++;
 				}
 
@@ -7779,10 +7779,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				   For example it would call activate_quest >:). */
 				if (cs != 255) {
 					if (cs >= 0) {
-						if (cs >= QI_STAGES) return 1;
+						if (cs >= QI_STAGES) return(1);
 						(void)init_quest_stage(error_idx, cs);
 					} else {
-						if (stage - cs >= QI_STAGES) return 1;
+						if (stage - cs >= QI_STAGES) return(1);
 						for (i = stage + 1; i <= stage - cs; i++)
 							(void)init_quest_stage(error_idx, i);
 					}
@@ -7793,8 +7793,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 				s = buf + 3;
 				if (9 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d",
-				    &stage, &qwpos, &qiwpos, &wx, &wy, &wz, &x, &y, &feat)) return (1);
-				if (stage < 0 || stage >= QI_STAGES) return 1;
+				    &stage, &qwpos, &qiwpos, &wx, &wy, &wz, &x, &y, &feat)) return(1);
+				if (stage < 0 || stage >= QI_STAGES) return(1);
 				q_stage = init_quest_stage(error_idx, stage);
 				q_feat = init_quest_feature(error_idx, stage, q_stage->feats); /* pop up a new one */
 
@@ -7808,7 +7808,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_feat->feat = feat;
 				continue;
 			}
-			return -1;
+			return(-1);
 		}
 
 		/* Process 'S' for questor changes/polymorphing/hostility */
@@ -7818,10 +7818,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			s = buf + 2;
 			if (12 != sscanf(s, "%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d:%c:%c:%d",
-			    &stage, &q, &talk, &despawn, &invinc, &dfail, tmpbuf, &ridx, &reidx, &rchar, &rattr, &lev)) return (1);
+			    &stage, &q, &talk, &despawn, &invinc, &dfail, tmpbuf, &ridx, &reidx, &rchar, &rattr, &lev)) return(1);
 
-			if (stage < 0 || stage >= QI_STAGES) return 1;
-			if (q < 0 || q > q_ptr->questors) return 1;
+			if (stage < 0 || stage >= QI_STAGES) return(1);
+			if (q < 0 || q > q_ptr->questors) return(1);
 			q_qmorph = init_quest_qmorph(error_idx, stage, questor);
 			q_qmorph->talkable = (talk != 0);
 			q_qmorph->despawned = (despawn != 0);
@@ -7848,10 +7848,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			s = buf + 2;
 			if (10 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
-			    &stage, &q, &unq, &hp, &hm, &hrhp, &hrtia, &hrtr, &cs, &qcs)) return (1);
+			    &stage, &q, &unq, &hp, &hm, &hrhp, &hrtia, &hrtr, &cs, &qcs)) return(1);
 
-			if (stage < 0 || stage >= QI_STAGES) return 1;
-			if (q < 0 || q > q_ptr->questors) return 1;
+			if (stage < 0 || stage >= QI_STAGES) return(1);
+			if (q < 0 || q > q_ptr->questors) return(1);
 			q_qhost = init_quest_qhostility(error_idx, stage, questor);
 			q_qhost->unquestor = (unq != 0);
 			q_qhost->hostile_player = (hp != 0);
@@ -7869,10 +7869,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			   For example it would call activate_quest >:). */
 			if (cs != 255) {
 				if (cs >= 0) {
-					if (cs >= QI_STAGES) return 1;
+					if (cs >= QI_STAGES) return(1);
 					(void)init_quest_stage(error_idx, cs);
 				} else {
-					if (stage - cs >= QI_STAGES) return 1;
+					if (stage - cs >= QI_STAGES) return(1);
 					for (i = stage + 1; i <= stage - cs; i++)
 						(void)init_quest_stage(error_idx, i);
 				}
@@ -7886,10 +7886,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			s = buf + 2;
 			if (17 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
-			    &stage, &q, &tpwx, &tpwy, &tpwz, &tpx, &tpy, &tppywx, &tppywy, &tppywz, &tppyx, &tppyy, &spd, &x, &y, &cs, &qcs)) return (1);
+			    &stage, &q, &tpwx, &tpwy, &tpwz, &tpx, &tpy, &tppywx, &tppywy, &tppywz, &tppyx, &tppyy, &spd, &x, &y, &cs, &qcs)) return(1);
 
-			if (stage < 0 || stage >= QI_STAGES) return 1;
-			if (q < 0 || q > q_ptr->questors) return 1;
+			if (stage < 0 || stage >= QI_STAGES) return(1);
+			if (q < 0 || q > q_ptr->questors) return(1);
 			q_qact = init_quest_qact(error_idx, stage, questor);
 
 			q_qact->tp_wpos.wx = tpwx;
@@ -7915,10 +7915,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			   For example it would call activate_quest >:). */
 			if (cs != 255) {
 				if (cs >= 0) {
-					if (cs >= QI_STAGES) return 1;
+					if (cs >= QI_STAGES) return(1);
 					(void)init_quest_stage(error_idx, cs);
 				} else {
-					if (stage - cs >= QI_STAGES) return 1;
+					if (stage - cs >= QI_STAGES) return(1);
 					for (i = stage + 1; i <= stage - cs; i++)
 						(void)init_quest_stage(error_idx, i);
 				}
@@ -7930,11 +7930,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		if (buf[0] == 'X') {
 			s = buf + 2;
 			if (3 != sscanf(s, "%d:%16[^:]:%79[^:]",//QI_FLAGS
-			    &stage, flagbuf, tmpbuf)) return (1);
+			    &stage, flagbuf, tmpbuf)) return(1);
 
-			if (stage < 0 || stage >= QI_STAGES) return 1;
+			if (stage < 0 || stage >= QI_STAGES) return(1);
 			q_stage = init_quest_stage(error_idx, stage);
-			if ((lc = q_stage->narration_lines) == QI_TALK_LINES) return 1;
+			if ((lc = q_stage->narration_lines) == QI_TALK_LINES) return(1);
 
 			c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 			strcpy(c, tmpbuf);
@@ -7945,7 +7945,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			while (*cc) {
 				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
 					q_stage->narration_flags[lc] |= (0x1 << (*cc - 'A')); /* set flag */
-				} else return 1;
+				} else return(1);
 				cc++;
 			}
 
@@ -7957,11 +7957,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		if (buf[0] == 'x') {
 			s = buf + 2;
 			if (3 != sscanf(s, "%d:%16[^:]:%79[^:]",//QI_FLAGS
-			    &stage, flagbuf, tmpbuf)) return (1);
+			    &stage, flagbuf, tmpbuf)) return(1);
 
-			if (stage < 0 || stage >= QI_STAGES) return 1;
+			if (stage < 0 || stage >= QI_STAGES) return(1);
 			q_stage = init_quest_stage(error_idx, stage);
-			if ((lc = q_stage->log_lines) == QI_LOG_LINES) return 1;
+			if ((lc = q_stage->log_lines) == QI_LOG_LINES) return(1);
 
 			c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 			strcpy(c, tmpbuf);
@@ -7972,7 +7972,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			while (*cc) {
 				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
 					q_stage->log_flags[lc] |= (0x1 << (*cc - 'A')); /* set flag */
-				} else return 1;
+				} else return(1);
 				cc++;
 			}
 
@@ -7991,15 +7991,15 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 				j = sscanf(s, "%d:%d:%d:%16[^:]:%79[^:]",//QI_FLAGS
 				    &questor, &stage, &examine, flagbuf, tmpbuf);
-				if (j != 5 && !(j == 3 && stage == -1)) return 1;
+				if (j != 5 && !(j == 3 && stage == -1)) return(1);
 
-				if (questor < 0 || questor >= QI_QUESTORS) return 1;
-				if (stage < 0 || stage >= QI_STAGES) return 1;
+				if (questor < 0 || questor >= QI_QUESTORS) return(1);
+				if (stage < 0 || stage >= QI_STAGES) return(1);
 				q_stage = init_quest_stage(error_idx, stage);
 
 				/* hack: examine = -stage => use previous stage */
 				if (examine < 0) {
-					if (-examine >= QI_STAGES) return 1;
+					if (-examine >= QI_STAGES) return(1);
 					q_stage->talk_examine[questor] = 1 - examine;
 					/* make sure it is initialised (to avoid paranoia and panic) */
 					(void)init_quest_stage(error_idx, -examine);
@@ -8007,7 +8007,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				}
 
 				lc = q_stage->talk_lines[questor];
-				if (lc == QI_TALK_LINES) return 1;
+				if (lc == QI_TALK_LINES) return(1);
 
 #if 0 /* allow full colour codes */
 				/* replace '{' by \377 */
@@ -8030,7 +8030,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				while (*cc) {
 					if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
 						q_stage->talk_flags[questor][lc] |= (0x1 << (*cc - 'A')); /* set flag */
-					} else return 1;
+					} else return(1);
 					cc++;
 				}
 
@@ -8042,10 +8042,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				s = buf + 3;
 
 				if (3 != sscanf(s, "%d:%d:%79[^:]",
-				    &questor, &stage, tmpbuf)) return (1);
+				    &questor, &stage, tmpbuf)) return(1);
 
-				if (questor < 0 || questor >= QI_QUESTORS) return 1;
-				if (stage < 0 || stage >= QI_STAGES) return 1;
+				if (questor < 0 || questor >= QI_QUESTORS) return(1);
+				if (stage < 0 || stage >= QI_STAGES) return(1);
 				q_stage = init_quest_stage(error_idx, stage);
 
 #if 0 /* allow full colour codes */
@@ -8069,15 +8069,15 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (buf[1] == ':') { /* init */
 				s = buf + 2;
 				if (6 != sscanf(s, "%d:%d:%16[^:]:%29[^:]:%16[^:]:%d", //QI_FLAGS,QI_KEYWORD_LEN
-				    &questor, &stage, flagbuf, tmpbuf, flagbuf2, &nextstage)) return (1);
+				    &questor, &stage, flagbuf, tmpbuf, flagbuf2, &nextstage)) return(1);
 
 				/* "-1" stands for 'all' */
-				if (questor < -1 || questor >= QI_QUESTORS) return 1;
-				if (stage < -1 || stage >= QI_STAGES) return 1;
-//				if (nextstage == stage) return 1; /* disallow reflexive stage changes for now */
+				if (questor < -1 || questor >= QI_QUESTORS) return(1);
+				if (stage < -1 || stage >= QI_STAGES) return(1);
+//				if (nextstage == stage) return(1); /* disallow reflexive stage changes for now */
 
 				lc = q_ptr->keywords;
-				if (lc >= QI_KEYWORDS) return 1;
+				if (lc >= QI_KEYWORDS) return(1);
 				q_key = init_quest_keyword(error_idx, lc);
 
 				/* hack: '~' denotes the empty keyword (since scanf cannot handle empty matches..) */
@@ -8106,7 +8106,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				while (*cc) {
 					if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
 						q_key->flags |= (0x1 << (*cc - 'A')); /* set flag */
-					} else return 1;
+					} else return(1);
 					cc++;
 				}
 				cc = flagbuf2;
@@ -8116,7 +8116,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 						q_key->setflags |= (0x1 << (*cc - 'A')); /* set flag */
 					} else if (*cc >= 'a' && *cc < 'a' + QI_FLAGS) {
 						q_key->clearflags |= (0x1 << (*cc - 'a')); /* clear flag */
-					} else return 1;
+					} else return(1);
 					cc++;
 				}
 
@@ -8127,10 +8127,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				   For example it would call activate_quest >:). */
 				if (nextstage != 255) {
 					if (nextstage >= 0) {
-						if (nextstage >= QI_STAGES) return 1;
+						if (nextstage >= QI_STAGES) return(1);
 						(void)init_quest_stage(error_idx, nextstage);
 					} else {
-						if (stage - nextstage >= QI_STAGES) return 1;
+						if (stage - nextstage >= QI_STAGES) return(1);
 						for (i = stage + 1; i <= stage - nextstage; i++)
 							(void)init_quest_stage(error_idx, i);
 					}
@@ -8140,13 +8140,13 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				s = buf + 3;
 
 				lc = q_ptr->keywords;
-				if (!lc) return 1;
+				if (!lc) return(1);
 				q_key = init_quest_keyword(error_idx, lc - 1); /* use newest one */
 
 				/* read list of numbers, separated by colons */
 				while (*s >= '0' && *s <= '9') {
 					j = atoi(s);
-					if (j < 0 || j >= QI_QUESTORS) return 1;
+					if (j < 0 || j >= QI_QUESTORS) return(1);
 
 					q_key->questor_ok[j] = TRUE;
 
@@ -8159,13 +8159,13 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				s = buf + 3;
 
 				lc = q_ptr->keywords;
-				if (!lc) return 1;
+				if (!lc) return(1);
 				q_key = init_quest_keyword(error_idx, lc - 1); /* use newest one */
 
 				/* read list of numbers, separated by colons */
 				while (*s >= '0' && *s <= '9') {
 					j = atoi(s);
-					if (j < 0 || j >= QI_STAGES) return 1;
+					if (j < 0 || j >= QI_STAGES) return(1);
 
 					q_key->stage_ok[j] = TRUE;
 
@@ -8175,7 +8175,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				}
 				continue;
 			}
-			return 1;
+			return(1);
 		}
 
 		/* Process 'y' for replies to keywords (depending on flags) */
@@ -8184,14 +8184,14 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (buf[1] == ':') { /* init */
 				s = buf + 2;
 				if (4 != sscanf(s, "%d:%d:%16[^:]:%29[^:]", //QI_FLAGS,QI_KEYWORD_LEN
-				    &questor, &stage, flagbuf, tmpbuf2)) return (1);
+				    &questor, &stage, flagbuf, tmpbuf2)) return(1);
 
 				/* "-1" stands for 'all' */
-				if (questor < -1 || questor >= QI_QUESTORS) return 1;
-				if (stage < -1 || stage >= QI_STAGES) return 1;
+				if (questor < -1 || questor >= QI_QUESTORS) return(1);
+				if (stage < -1 || stage >= QI_STAGES) return(1);
 
 				lc = q_ptr->kwreplies;
-				if (lc >= QI_KEYWORD_REPLIES) return 1;
+				if (lc >= QI_KEYWORD_REPLIES) return(1);
 				q_kwr = init_quest_kwreply(error_idx, lc);
 
 				/* find out the keyword's index */
@@ -8199,7 +8199,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					if (!strcmp(q_ptr->keyword[i].keyword, tmpbuf2)) break;
 				}
 				/* keyword not found -> error */
-				if (i == q_ptr->keywords) return 1;
+				if (i == q_ptr->keywords) return(1);
 
 				q_kwr->keyword_idx[0] = i;
 				if (questor != -1) q_kwr->questor_ok[questor] = TRUE;
@@ -8213,7 +8213,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				while (*cc) {
 					if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
 						flags |= (0x1 << (*cc - 'A')); /* set flag */
-					} else return 1;
+					} else return(1);
 					cc++;
 				}
 				q_kwr->flags = flags;
@@ -8222,7 +8222,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				s = buf + 3;
 
 				lc = q_ptr->kwreplies;
-				if (!lc) return 1;
+				if (!lc) return(1);
 				q_kwr = init_quest_kwreply(error_idx, lc - 1); /* use newest one */
 
 				/* read list of strings, separated by colons */
@@ -8245,13 +8245,13 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				s = buf + 3;
 
 				lc = q_ptr->kwreplies;
-				if (!lc) return 1;
+				if (!lc) return(1);
 				q_kwr = init_quest_kwreply(error_idx, lc - 1); /* use newest one */
 
 				/* read list of numbers, separated by colons */
 				while (*s >= '0' && *s <= '9') {
 					j = atoi(s);
-					if (j < 0 || j >= QI_QUESTORS) return 1;
+					if (j < 0 || j >= QI_QUESTORS) return(1);
 
 					q_kwr->questor_ok[j] = TRUE;
 
@@ -8264,13 +8264,13 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				s = buf + 3;
 
 				lc = q_ptr->kwreplies;
-				if (!lc) return 1;
+				if (!lc) return(1);
 				q_kwr = init_quest_kwreply(error_idx, lc - 1); /* use newest one */
 
 				/* read list of numbers, separated by colons */
 				while (*s >= '0' && *s <= '9') {
 					j = atoi(s);
-					if (j < 0 || j >= QI_STAGES) return 1;
+					if (j < 0 || j >= QI_STAGES) return(1);
 
 					q_kwr->stage_ok[j] = TRUE;
 
@@ -8282,13 +8282,13 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			} else if (buf[1] == 'R') { /* actual reply lines */
 				s = buf + 3;
 				if (2 != sscanf(s, "%16[^:]:%79[^:]", //QI_FLAGS
-				    flagbuf, tmpbuf)) return (1);
+				    flagbuf, tmpbuf)) return(1);
 
 				lc = q_ptr->kwreplies;
-				if (!lc) return 1;
+				if (!lc) return(1);
 				q_kwr = init_quest_kwreply(error_idx, lc - 1); /* use newest one */
 
-				if (q_kwr->lines == QI_TALK_LINES) return 1;
+				if (q_kwr->lines == QI_TALK_LINES) return(1);
 
 #if 0 /* allow full colour codes */
 				/* replace '{' by \377 */
@@ -8307,7 +8307,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				while (*cc) {
 					if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
 						flags |= (0x1 << (*cc - 'A')); /* set flag */
-					} else return 1;
+					} else return(1);
 					cc++;
 				}
 				q_kwr->replyflags[q_kwr->lines] = flags;
@@ -8315,7 +8315,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_kwr->lines++;
 				continue;
 			}
-			return 1;
+			return(1);
 		}
 
 		/* Process 'k' for kill quest goal */
@@ -8326,10 +8326,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				s = buf + 2;
 				if (5 != sscanf(s, "%d:%d:%d:%d:%d",
 				    &stage, &goal, &minlev, &maxlev, &num))
-					return (1);
+					return(1);
 
-				if (stage < 0 || stage >= QI_STAGES) return 1;
-				if (ABS(goal) > QI_GOALS) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return(1);
+				if (ABS(goal) > QI_GOALS) return(1);
 				q_kill = init_quest_kill(error_idx, stage, goal);
 				q_kill->rlevmin = minlev;
 				q_kill->rlevmax = maxlev;
@@ -8341,11 +8341,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				s = buf + 3;
 				if (3 > (k = sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
 				    &stage, &goal, &ridx[0], &ridx[1], &ridx[2], &ridx[3], &ridx[4], &ridx[5], &ridx[6], &ridx[7], &ridx[8], &ridx[9])))
-					return (1);
+					return(1);
 				k = k - 2;
 
-				if (stage < 0 || stage >= QI_STAGES) return 1;
-				if (ABS(goal) > QI_GOALS) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return(1);
+				if (ABS(goal) > QI_GOALS) return(1);
 				q_kill = init_quest_kill(error_idx, stage, goal);
 				for (j = 0; j < k; j++) q_kill->ridx[j] = ridx[j];
 				/* disable the unused criteria */
@@ -8357,11 +8357,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				s = buf + 3;
 				if (3 > (k = sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
 				    &stage, &goal, &reidx[0], &reidx[1], &reidx[2], &reidx[3], &reidx[4], &reidx[5], &reidx[6], &reidx[7], &reidx[8], &reidx[9])))
-					return (1);
+					return(1);
 				k = k - 2;
 
-				if (stage < 0 || stage >= QI_STAGES) return 1;
-				if (ABS(goal) > QI_GOALS) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return(1);
+				if (ABS(goal) > QI_GOALS) return(1);
 				q_kill = init_quest_kill(error_idx, stage, goal);
 				for (j = 0; j < k; j++) q_kill->reidx[j] = reidx[j];
 				/* disable the unused criteria */
@@ -8372,11 +8372,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				s = buf + 3;
 				if (4 > (k = sscanf(s, "%d:%d:%c:%c:%c:%c:%c:%c:%c:%c:%c:%c",
 				    &stage, &goal, &rchar[0], &rattr[0], &rchar[1], &rattr[1], &rchar[2], &rattr[2], &rchar[3], &rattr[3], &rchar[4], &rattr[4])))
-					return (1);
+					return(1);
 				k = (k - 2) / 2;
 
-				if (stage < 0 || stage >= QI_STAGES) return 1;
-				if (ABS(goal) > QI_GOALS) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return(1);
+				if (ABS(goal) > QI_GOALS) return(1);
 				q_kill = init_quest_kill(error_idx, stage, goal);
 				for (j = 0; j < k; j++) {
 					if (rchar[j] == '-') rchar[j] = 254; /* any */
@@ -8393,10 +8393,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				continue;
 			} else if (buf[1] == 'N') { /* partial name */
 				s = buf + 3;
-				if (2 > sscanf(s, "%d:%d", &stage, &goal)) return (1);
+				if (2 > sscanf(s, "%d:%d", &stage, &goal)) return(1);
 
-				if (stage < 0 || stage >= QI_STAGES) return 1;
-				if (ABS(goal) > QI_GOALS) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return(1);
+				if (ABS(goal) > QI_GOALS) return(1);
 				q_kill = init_quest_kill(error_idx, stage, goal);
 
 				/* read list of partial names, separated by colons */
@@ -8416,7 +8416,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				}
 				continue;
 			}
-			return -1;
+			return(-1);
 		}
 
 		/* Process 'r' for retrieve quest goal */
@@ -8428,10 +8428,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				s = buf + 2;
 				if (5 != sscanf(s, "%d:%d:%d:%d:%d",
 				    &stage, &goal, &minval, &num, &owok))
-					return (1);
+					return(1);
 
-				if (stage < 0 || stage >= QI_STAGES) return 1;
-				if (ABS(goal) > QI_GOALS) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return(1);
+				if (ABS(goal) > QI_GOALS) return(1);
 				q_ret = init_quest_retrieve(error_idx, stage, goal);
 				q_ret->ovalue = minval;
 				q_ret->number = num;
@@ -8445,11 +8445,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				    &stage, &goal,
 				    &tval[0], &sval[0], &tval[1], &sval[1], &tval[2], &sval[2], &tval[3], &sval[3], &tval[4], &sval[4],
 				    &tval[5], &sval[5], &tval[6], &sval[6], &tval[7], &sval[7], &tval[8], &sval[8], &tval[9], &sval[9])))
-					return (1);
+					return(1);
 				k = (k - 2) / 2;
 
-				if (stage < 0 || stage >= QI_STAGES) return 1;
-				if (ABS(goal) > QI_GOALS) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return(1);
+				if (ABS(goal) > QI_GOALS) return(1);
 				q_ret = init_quest_retrieve(error_idx, stage, goal);
 				for (j = 0; j < k; j++) {
 					q_ret->otval[j] = tval[j];
@@ -8473,11 +8473,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				    &pval[2], &bpval[2], &attr[2], &name1[2], &name2[2], &name2b[2],
 				    &pval[3], &bpval[3], &attr[3], &name1[3], &name2[3], &name2b[3],
 				    &pval[4], &bpval[4], &attr[4], &name1[4], &name2[4], &name2b[4])))
-					return (1);
+					return(1);
 				k = (k - 2) / 6;
 
-				if (stage < 0 || stage >= QI_STAGES) return 1;
-				if (ABS(goal) > QI_GOALS) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return(1);
+				if (ABS(goal) > QI_GOALS) return(1);
 				q_ret = init_quest_retrieve(error_idx, stage, goal);
 				for (j = 0; j < k; j++) {
 					q_ret->opval[j] = pval[j];
@@ -8500,10 +8500,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				continue;
 			} else if (buf[1] == 'N') { /* partial name */
 				s = buf + 3;
-				if (2 > sscanf(s, "%d:%d", &stage, &goal)) return (1);
+				if (2 > sscanf(s, "%d:%d", &stage, &goal)) return(1);
 
-				if (stage < 0 || stage >= QI_STAGES) return 1;
-				if (ABS(goal) > QI_GOALS) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return(1);
+				if (ABS(goal) > QI_GOALS) return(1);
 				q_ret = init_quest_retrieve(error_idx, stage, goal);
 
 				/* read list of partial names, separated by colons */
@@ -8523,7 +8523,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				}
 				continue;
 			}
-			return -1;
+			return(-1);
 		}
 
 		/* Process 'P' for position at which a kill/retrieve quest has to be executed */
@@ -8532,11 +8532,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			s = buf + 2;
 			if (12 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d",
-			    &stage, &goal, &wx, &wy, &wz, &terr, &x, &y, &rad, tmpbuf, &tpx, &tpy)) return (1);
+			    &stage, &goal, &wx, &wy, &wz, &terr, &x, &y, &rad, tmpbuf, &tpx, &tpy)) return(1);
 
-			if (stage < 0 || stage >= QI_STAGES) return 1;
+			if (stage < 0 || stage >= QI_STAGES) return(1);
 			q_stage = init_quest_stage(error_idx, stage);
-			if (ABS(goal) > QI_GOALS) return 1;
+			if (ABS(goal) > QI_GOALS) return(1);
 			q_goal = init_quest_goal(error_idx, stage, goal);
 			q_goal->target_pos = TRUE;
 			q_goal->target_wpos.wx = (char)wx;
@@ -8564,10 +8564,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			s = buf + 2;
 			if (13 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d",
-			    &stage, &goal, &tq, &wx, &wy, &wz, &terr, &x, &y, &rad, tmpbuf, &tpx, &tpy)) return (1);
+			    &stage, &goal, &tq, &wx, &wy, &wz, &terr, &x, &y, &rad, tmpbuf, &tpx, &tpy)) return(1);
 
-			if (stage < 0 || stage >= QI_STAGES) return 1;
-			if (ABS(goal) > QI_GOALS) return 1;
+			if (stage < 0 || stage >= QI_STAGES) return(1);
+			if (ABS(goal) > QI_GOALS) return(1);
 			q_del = init_quest_deliver(error_idx, stage, goal);
 			q_del->return_to_questor = tq == -1 ? 255 : tq;
 			q_del->wpos.wx = (char)wx;
@@ -8599,9 +8599,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				s = buf + 2;
 				if (7 != sscanf(s, "%d:%d:%c:%c:%d:%d:%79[^:]",
 				    &stage, &pval, &ochar, &oattr, &wgt, &lev, tmpbuf))
-					return (1);
+					return(1);
 
-				if (stage < 0 || stage >= QI_STAGES) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return(1);
 				q_stage = init_quest_stage(error_idx, stage);
 				q_qitem = init_quest_questitem(error_idx, stage, q_stage->qitems); /* pop up a new one */
 
@@ -8618,13 +8618,13 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 				s = buf + 3;
 				if (15 != sscanf(s, "%d:%d:%d:%d:%u:%d:%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d",
-				    &stage, &q, &loc, &terrtype, &towns, &wx, &wy, &wz, &terr, &sx, &sy, &rad, tmpbuf, &tpx, &tpy)) return (1);
+				    &stage, &q, &loc, &terrtype, &towns, &wx, &wy, &wz, &terr, &sx, &sy, &rad, tmpbuf, &tpx, &tpy)) return(1);
 
-				if (stage < 0 || stage >= QI_STAGES) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return(1);
 				q_stage = init_quest_stage(error_idx, stage);
 
 				lc = q_stage->qitems;
-				if (!lc) return 1; /* so an Bl-line must always follow somewhere after its B line */
+				if (!lc) return(1); /* so an Bl-line must always follow somewhere after its B line */
 				q_qitem = init_quest_questitem(error_idx, stage, lc - 1); /* pick the newest, already existing one */
 
 				q_qitem->questor_gives = (q == -1 ? 255 : q);
@@ -8654,10 +8654,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'Z' for how completed stage goals will change 'quest flags' */
 		if (buf[0] == 'Z') {
 			s = buf + 2;
-			if (3 != sscanf(s, "%d:%d:%16[^:]", &stage, &goal, flagbuf)) return (1);
+			if (3 != sscanf(s, "%d:%d:%16[^:]", &stage, &goal, flagbuf)) return(1);
 
-			if (stage < 0 || stage >= QI_STAGES) return 1;
-			if (ABS(goal) > QI_GOALS) return 1;
+			if (stage < 0 || stage >= QI_STAGES) return(1);
+			if (ABS(goal) > QI_GOALS) return(1);
 			q_goal = init_quest_goal(error_idx, stage, goal);
 
 			cc = flagbuf;
@@ -8667,7 +8667,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					q_goal->setflags |= (0x1 << (*cc - 'A')); /* set flag */
 				} else if (*cc >= 'a' && *cc < 'a' + QI_FLAGS) {
 					q_goal->clearflags |= (0x1 << (*cc - 'a')); /* clear flag */
-				} else return 1;
+				} else return(1);
 				cc++;
 			}
 			continue;
@@ -8678,17 +8678,17 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		if (buf[0] == 'G') {
 			/* first number is the stage, second the next stage */
 			stage = atoi(buf + 2);
-			if (stage < 0 || stage >= QI_STAGES) return 1;
+			if (stage < 0 || stage >= QI_STAGES) return(1);
 
 			q_stage = init_quest_stage(error_idx, stage);
 
-			if (!(c = strchr(buf + 2, ':'))) return 1;
+			if (!(c = strchr(buf + 2, ':'))) return(1);
 			c++;
 			nextstage = atoi(c);
-			if (!(c = strchr(c, ':'))) return 1;
+			if (!(c = strchr(c, ':'))) return(1);
 			c++;
 
-			//if (nextstage == stage) return 1; /* disallow reflexive stage changes for now */
+			//if (nextstage == stage) return(1); /* disallow reflexive stage changes for now */
 
 
 			/* already defined the max amount of different QI_FOLLOWUP_STAGES? */
@@ -8701,13 +8701,13 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					break;
 				}
 			}
-			if (k == QI_FOLLOWUP_STAGES) return -1; /* out of space */
+			if (k == QI_FOLLOWUP_STAGES) return(-1); /* out of space */
 
 			/* read list of numbers, separated by colons */
 			l = 0;
 			while (*c >= '0' && *c <= '9' && l < QI_STAGE_GOALS) {
 				j = atoi(c);
-				if (j < 1 || j > QI_GOALS) return 1; /* no optional goals allowed */
+				if (j < 1 || j > QI_GOALS) return(1); /* no optional goals allowed */
 				q_stage->goals_for_stage[k][l] = j - 1;
 
 				if (!(c = strchr(c, ':'))) break;
@@ -8723,10 +8723,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			   even -or especially if- it is just an empty, final stage.
 			   For example it would call activate_quest >:). */
 			if (nextstage >= 0) {
-				if (nextstage >= QI_STAGES) return 1;
+				if (nextstage >= QI_STAGES) return(1);
 				(void)init_quest_stage(error_idx, nextstage);
 			} else {
-				if (stage - nextstage >= QI_STAGES) return 1;
+				if (stage - nextstage >= QI_STAGES) return(1);
 				for (i = stage + 1; i <= stage - nextstage; i++)
 					(void)init_quest_stage(error_idx, i);
 			}
@@ -8741,22 +8741,22 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			/* first number is the stage, second the reward */
 			stage = atoi(buf + 2);
-			if (stage < 0 || stage >= QI_STAGES) return -1;
+			if (stage < 0 || stage >= QI_STAGES) return(-1);
 			q_stage = quest_qi_stage(error_idx, stage);
 
-			if (!(c = strchr(buf + 2, ':'))) return 1;
+			if (!(c = strchr(buf + 2, ':'))) return(1);
 			c++;
 			reward = atoi(c);
-			if (reward >= QI_STAGE_REWARDS) return -1; /* out of space */
+			if (reward >= QI_STAGE_REWARDS) return(-1); /* out of space */
 
-			if (!(c = strchr(c, ':'))) return 1;
+			if (!(c = strchr(c, ':'))) return(1);
 			c++;
 
 			/* read list of numbers, separated by colons */
 			l = 0;
 			while (*c >= '0' && *c <= '9' && l < QI_REWARD_GOALS) {
 				j = atoi(c);
-				if (ABS(j) > QI_GOALS) return 1;
+				if (ABS(j) > QI_GOALS) return(1);
 				/* If j is 0 it means there is no goal, reward is to be handed out for free.
 				   Any other j gets its ABS value decremented in init_quest_goal() to form the real goal-index. */
 				if (j) (void)init_quest_goal(error_idx, stage, j);
@@ -8781,20 +8781,20 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* first number is the stage */
 			s = buf + 2;
 			stage = atoi(s);
-			if (stage < 0 || stage >= QI_STAGES) return -1;
+			if (stage < 0 || stage >= QI_STAGES) return(-1);
 			q_stage = init_quest_stage(error_idx, stage);
 
-			if ((lc = q_stage->rewards) == QI_STAGE_REWARDS) return 1;
+			if ((lc = q_stage->rewards) == QI_STAGE_REWARDS) return(1);
 			q_rew = init_quest_reward(error_idx, stage, lc);
 
-			if (!(c = strchr(s, ':'))) return 1;
+			if (!(c = strchr(s, ':'))) return(1);
 			c++;
 
 			if (14 != sscanf(c, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
 			    &otval, &osval, &opval, &obpval, &oname1, &oname2, &oname2b,
 			    &good, &great, &vgreat, &createreward,
 			    &q_rew->gold, &q_rew->exp, &rstatus))
-				return (1);
+				return(1);
 
 			q_rew->otval = otval;
 			q_rew->osval = osval;
@@ -8812,7 +8812,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* Oops */
-		return (6);
+		return(6);
 	}
 
 	/* Complete the "name" and "text" sizes */
@@ -8820,7 +8820,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 	++q_head->text_size;
 
 	/* No version yet */
-	if (!okay) return (2);
+	if (!okay) return(2);
 
 	/* Hack -- acquire total number */
 	max_q_idx = ++error_idx;
@@ -8831,7 +8831,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 #endif	// DEBUG_LEVEL
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -8897,21 +8897,21 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 	cave_type **zcave;
 	zcave = getcave(wpos);
 
-	if (!zcave) return (-1);	/* maybe SIGSEGV soon anyway */
+	if (!zcave) return(-1);	/* maybe SIGSEGV soon anyway */
 
 	/* Skip "empty" lines */
-	if (!buf[0]) return (0);
+	if (!buf[0]) return(0);
 	/* Skip "blank" lines */
-	if (isspace(buf[0])) return (0);
+	if (isspace(buf[0])) return(0);
 	/* Skip comments */
-	if (buf[0] == '#') return (0);
+	if (buf[0] == '#') return(0);
 	/* Require "?:*" format */
-	if (buf[1] != ':') return (1);
+	if (buf[1] != ':') return(1);
 
 	/* Process "%:<fname>" */
 	if (buf[0] == '%') {
 		/* Attempt to Process the given file */
-		return (process_dungeon_file(buf + 2, wpos, yval, xval, ymax, xmax, FALSE));
+		return(process_dungeon_file(buf + 2, wpos, yval, xval, ymax, xmax, FALSE));
 	}
 
 	/* Process "N:<sleep>" */
@@ -8921,7 +8921,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 		if ((num = tokenize(buf + 2, 1, zz, ':', '/')) > 0)
 			meta_sleep = atoi(zz[0]);
 
-		return (0);
+		return(0);
 	}
 
 	/* Process "F:<letter>:<terrain>:<cave_info>:<monster>:<object>:<ego>:<artifact>:<trap>:<special>:<mimic>" -- info for dungeon grid */
@@ -9062,7 +9062,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			if (num > 9)
 				letter[index].mimic = atoi(zz[9]);
 
-			return (0);
+			return(0);
 		}
 	}
 
@@ -9330,12 +9330,12 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 		if ((process_dungeon_file_full) && (*xval < x)) *xval = x;
 		(*yval)++;
 
-		return (0);
+		return(0);
 	}
 
 	/* Process "W:<command>: ..." -- info for the wilderness */
 	else if (buf[0] == 'W') {
-		return (0);
+		return(0);
 #if 0
 		/* Process "W:D:<layout> */
 		/* Layout of the wilderness */
@@ -9348,21 +9348,21 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			int y = *yval;
 
 			for (x = 0; x < max_wild_x; x++) {
-				if (1 != sscanf(s + x, "%c", &i)) return (1);
+				if (1 != sscanf(s + x, "%c", &i)) return(1);
 				wild_map[y][x].feat = wildc2i[(int)i];
 			}
 
 			(*yval)++;
 
-			return (0);
+			return(0);
 		}
 		/* Process "M:<plus>:<line>" -- move line lines */
 		else if (buf[2] == 'M') {
 			if (tokenize(buf+4, 2, zz, ':', '/') == 2) {
 				if (atoi(zz[0])) (*yval) += atoi(zz[1]);
 				else (*yval) -= atoi(zz[1]);
-			} else return (1);
-			return (0);
+			} else return(1);
+			return(0);
 		}
 		/* Process "W:P:<x>:<y> - starting position in the wilderness */
 		else if (buf[2] == 'P') {
@@ -9371,19 +9371,19 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 				if (tokenize(buf+4, 2, zz, ':', '/') == 2) {
 					p_ptr->wilderness_x = atoi(zz[0]);
 					p_ptr->wilderness_y = atoi(zz[1]);
-				} else return (1);
+				} else return(1);
 			}
 
-			return (0);
+			return(0);
 		}
 		/* Process "W:E:<dungeon>:<y>:<x> - entrance to the dungeon <dungeon> */
 		else if (buf[2] == 'E') {
 			if (tokenize(buf+4, 3, zz, ':', '/') == 3)
 				wild_map[atoi(zz[1])][atoi(zz[2])].entrance = 1000 + atoi(zz[0]);
 			else
-				return (1);
+				return(1);
 
-			return (0);
+			return(0);
 		}
 #endif	// 0
 	}
@@ -9427,12 +9427,12 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
  #endif	// 0
 		}
 #endif
-		return (0);
+		return(0);
 	}
 
 	/* Process "M:<type>:<maximum>" -- set maximum values */
 	else if (buf[0] == 'M') {
-		return (0);
+		return(0);
 
 #if 0	// It's very nice code - this should be transmitted to the client, tho
 		if (tokenize(buf + 2, 3, zz, ':', '/') >= 2) {
@@ -9451,7 +9451,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			/* Maximum s_idx */
 			else if (zz[0][0] == 'k') {
 				max_s_idx = atoi(zz[1]);
-				if (max_s_idx > MAX_SKILLS) return (1);
+				if (max_s_idx > MAX_SKILLS) return(1);
 			}
 			/* Maximum k_idx */
 			else if (zz[0][0] == 'K')
@@ -9517,7 +9517,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			/* Maximum d_idx */
 			else if (zz[0][0] == 'D')
 				max_d_idx = atoi(zz[1]);
-			return (0);
+			return(0);
 		}
 #endif
 	}
@@ -9528,7 +9528,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			meta_width = atoi(zz[0]);
 			meta_height = atoi(zz[1]);
 		}
-		return (0);
+		return(0);
 	}
 	else if (buf[0] == 'B') { /* B:<boundary wall feat> */
 		int num;
@@ -9536,11 +9536,11 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 		/* Set a specific feature for the boundary walls instead of defaulting to FEAT_PERM_SOLID */
 		if ((num = tokenize(buf + 2, 1, zz, ':', '/')) > 0)
 			meta_boundary = atoi(zz[0]);
-		return (0);
+		return(0);
 	}
 
 	/* Failure */
-	return (1);
+	return(1);
 }
 
 
@@ -9787,7 +9787,7 @@ static cptr process_dungeon_file_expr(char **sp, char *fp) {
 	(*sp) = s;
 
 	/* Result */
-	return (v);
+	return(v);
 }
 #endif	// 0
 
@@ -9805,7 +9805,7 @@ errr process_dungeon_file(cptr name, worldpos *wpos, int *yval, int *xval, int y
 
 	cave_type **zcave;
 	zcave = getcave(wpos);
-	if (!zcave) return (-1);	/* maybe SIGSEGV soon anyway */
+	if (!zcave) return(-1);	/* maybe SIGSEGV soon anyway */
 
 	if (init) {
 		meta_sleep = TRUE;
@@ -9839,7 +9839,7 @@ errr process_dungeon_file(cptr name, worldpos *wpos, int *yval, int *xval, int y
 	/* No such file */
 	if (!fp) {
 		s_printf("Cannot find file %s at %s\n", name, buf);
-		return (-1);
+		return(-1);
 	}
 
 	/* Process the file */
@@ -9942,5 +9942,5 @@ errr process_dungeon_file(cptr name, worldpos *wpos, int *yval, int *xval, int y
 	}
 
 	/* Result */
-	return (err);
+	return(err);
 }

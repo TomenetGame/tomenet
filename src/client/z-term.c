@@ -270,13 +270,13 @@ static bool term_nanim(byte ta) {
 byte term2attr(byte ta) {
 #ifdef EXTENDED_BG_COLOURS
 	/* Experimental extra colours beyond normal 16/32 term colours. */
-	if (ta >= TERMX_START && ta < TERMX_START + TERMX_AMT) return (ta - TERMX_START) + CLIENT_PALETTE_SIZE;
+	if (ta >= TERMX_START && ta < TERMX_START + TERMX_AMT) return(ta - TERMX_START) + CLIENT_PALETTE_SIZE;
 #endif
 
 #ifdef EXTENDED_COLOURS_PALANIM
 	/* Extended base colour. Pass its location within the extended array range.
 	   The base colours + these extended clones of them for palette animation together define CLIENT_PALETTE_SIZE (16 (no animation) or 32 (duplicated palette for animation)). */
-	if (ta >= TERMA_OFFSET && ta < TERMA_OFFSET + BASE_PALETTE_SIZE) return (ta - TERMA_OFFSET) + BASE_PALETTE_SIZE; /* Use 'real' extended terminal colours ie 16..31. */
+	if (ta >= TERMA_OFFSET && ta < TERMA_OFFSET + BASE_PALETTE_SIZE) return(ta - TERMA_OFFSET) + BASE_PALETTE_SIZE; /* Use 'real' extended terminal colours ie 16..31. */
 #endif
 
 	/* Animated colour, pick one animation stage. */
@@ -303,7 +303,7 @@ static errr term_win_nuke(term_win *s, int w, int h) {
 	C_KILL(s->vc, h * w, char32_t);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -328,7 +328,7 @@ static errr term_win_init(term_win *s, int w, int h) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -357,7 +357,7 @@ static errr term_win_copy(term_win *s, term_win *f, int w, int h) {
 	s->cv = f->cv;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -459,8 +459,8 @@ static void QueueAttrChars(int x, int y, int n, byte a, char32_t *s) {
  * Perform the "user action" of type "n".
  */
 errr Term_user(int n) {
-	if (!Term->user_hook) return (-1);
-	return ((*Term->user_hook)(n));
+	if (!Term->user_hook) return(-1);
+	return((*Term->user_hook)(n));
 }
 
 /*
@@ -471,8 +471,8 @@ errr Term_user(int n) {
  * parameters may not make sense unless called from "term.c".
  */
 errr Term_xtra(int n, int v) {
-	if (!Term->xtra_hook) return (-1);
-	return ((*Term->xtra_hook)(n, v));
+	if (!Term->xtra_hook) return(-1);
+	return((*Term->xtra_hook)(n, v));
 }
 
 
@@ -486,10 +486,10 @@ errr Term_xtra(int n, int v) {
  */
 static errr Term_curs_hack(int x, int y) {
 	/* XXX XXX XXX */
-	if (x || y) return (-2);
+	if (x || y) return(-2);
 
 	/* Oops */
-	return (-1);
+	return(-1);
 }
 
 /*
@@ -498,10 +498,10 @@ static errr Term_curs_hack(int x, int y) {
  */
 static errr Term_wipe_hack(int x, int y, int n) {
 	/* XXX XXX XXX */
-	if (x || y || n) return (-2);
+	if (x || y || n) return(-2);
 
 	/* Oops */
-	return (-1);
+	return(-1);
 }
 
 /*
@@ -510,10 +510,10 @@ static errr Term_wipe_hack(int x, int y, int n) {
  */
 static errr Term_pict_hack(int x, int y, byte a, char32_t c) {
 	/* XXX XXX XXX */
-	if (x || y || a || c) return (-2);
+	if (x || y || a || c) return(-2);
 
 	/* Oops */
-	return (-1);
+	return(-1);
 }
 
 /*
@@ -522,10 +522,10 @@ static errr Term_pict_hack(int x, int y, byte a, char32_t c) {
  */
 static errr Term_text_hack(int x, int y, int n, byte a, cptr s) {
 	/* XXX XXX XXX */
-	if (x || y || n || a || s) return (-2);
+	if (x || y || n || a || s) return(-2);
 
 	/* Oops */
-	return (-1);
+	return(-1);
 }
 
 #ifdef CLIENT_SHIMMER
@@ -542,7 +542,7 @@ static char get_shimmer_color() {
 	case 6: return TERM_L_DARK;
 	case 7: return TERM_GREEN;
 	}
-	return (TERM_VIOLET);
+	return(TERM_VIOLET);
 }
 #endif
 
@@ -596,7 +596,7 @@ byte flick_colour(byte attr) {
 	/* additional flickering from 'black'n'white' flag? */
 	if (flags & TERM_BNW) {
 		if (!(attr && rand_int(6) < 4))
-			return (randint(2) < 2 ? TERM_L_DARK : TERM_WHITE);
+			return(randint(2) < 2 ? TERM_L_DARK : TERM_WHITE);
 		/* fall through */
 	/* additional flickering from 'pvp' flag? */
 	} else if (flags & TERM_PVP) {
@@ -611,7 +611,7 @@ byte flick_colour(byte attr) {
 #else
 	switch (attr) {
 	/* flickering from 'black'n'white' flag? */
-	case TERM_BNW: return (randint(2) < 2 ? TERM_L_DARK : TERM_WHITE);
+	case TERM_BNW: return(randint(2) < 2 ? TERM_L_DARK : TERM_WHITE);
 	case TERM_BNWM:
 		switch (randint(3)) {
 		case 1: return TERM_L_DARK;
@@ -664,7 +664,7 @@ byte flick_colour(byte attr) {
 
 	if (attr == TERM_SHIELDM) {
 /*	if ((attr >= TERM_SHIELDM) && (attr < TERM_SHIELDI)) {
-		if (randint(2) == 1) return (attr - TERM_SHIELDM);
+		if (randint(2) == 1) return(attr - TERM_SHIELDM);
 		if ((attr - TERM_SHIELDM) != TERM_VIOLET)
 		return((randint(2) == 1) ? TERM_VIOLET : TERM_ORANGE);
 		else
@@ -677,18 +677,18 @@ byte flick_colour(byte attr) {
 	}
 	if (attr == TERM_SHIELDI) {
 /*	if ((attr >= TERM_SHIELDI) && (attr <= 0xFF)) {
-		if (randint(4) == 1) return (attr - TERM_SHIELDI);
+		if (randint(4) == 1) return(attr - TERM_SHIELDI);
 */		switch (randint(5)) {
-		case 1: return (TERM_L_RED);
-		case 2: return (TERM_L_GREEN);
-		case 3: return (TERM_L_BLUE);
-		case 4: return (TERM_YELLOW);
-		case 5: return (TERM_VIOLET);
-/*		case 1: return (TERM_L_RED);
-		case 2: return (TERM_VIOLET);
-		case 3: return (TERM_RED);
-		case 4: return (TERM_L_DARK);
-		case 5: return (TERM_WHITE);
+		case 1: return(TERM_L_RED);
+		case 2: return(TERM_L_GREEN);
+		case 3: return(TERM_L_BLUE);
+		case 4: return(TERM_YELLOW);
+		case 5: return(TERM_VIOLET);
+/*		case 1: return(TERM_L_RED);
+		case 2: return(TERM_VIOLET);
+		case 3: return(TERM_RED);
+		case 4: return(TERM_L_DARK);
+		case 5: return(TERM_WHITE);
 */		}
 	}
 	switch (attr) {
@@ -722,64 +722,64 @@ byte flick_colour(byte attr) {
 	case TERM_CURSE:
 		return(randint(2) == 1 ? (randint(5) > 4 ? TERM_SLATE : TERM_L_DARK) : TERM_L_DARK);//note (...) is TERM_DARKNESS
 	case TERM_ANNI:
-		return (randint(2) == 1 ? (randint(5) > 4 ? TERM_SLATE : TERM_L_DARK) : TERM_L_DARK);//note (...) is TERM_DARKNESS
+		return(randint(2) == 1 ? (randint(5) > 4 ? TERM_SLATE : TERM_L_DARK) : TERM_L_DARK);//note (...) is TERM_DARKNESS
 	case TERM_PSI:
-		return (randint(5) != 1 ? (rand_int(2) ? (rand_int(2) ? TERM_YELLOW : TERM_L_BLUE) : TERM_L_WHITE) : TERM_WHITE);
+		return(randint(5) != 1 ? (rand_int(2) ? (rand_int(2) ? TERM_YELLOW : TERM_L_BLUE) : TERM_L_WHITE) : TERM_WHITE);
 	case TERM_NEXU:
-		return (randint(5) < 3 ? TERM_L_RED : TERM_VIOLET);
+		return(randint(5) < 3 ? TERM_L_RED : TERM_VIOLET);
 	case TERM_NETH:
-		return (randint(4) == 1 ? TERM_L_GREEN : TERM_L_DARK);
+		return(randint(4) == 1 ? TERM_L_GREEN : TERM_L_DARK);
 	case TERM_DISE:
-		return (randint(4) != 1 ? TERM_ORANGE : TERM_BLUE);
+		return(randint(4) != 1 ? TERM_ORANGE : TERM_BLUE);
 	case TERM_INER:
-		return (randint(5) < 3 ? TERM_SLATE : TERM_L_WHITE);
+		return(randint(5) < 3 ? TERM_SLATE : TERM_L_WHITE);
 	case TERM_FORC:
-		return (randint(5) < 3 ? TERM_L_WHITE : TERM_ORANGE);
+		return(randint(5) < 3 ? TERM_L_WHITE : TERM_ORANGE);
 	case TERM_GRAV:
-		return (randint(3) == 1 ? TERM_L_UMBER : TERM_SLATE);//was L_UMBER+UMBER
+		return(randint(3) == 1 ? TERM_L_UMBER : TERM_SLATE);//was L_UMBER+UMBER
 	case TERM_TIME:
-		return (randint(3) == 1 ? TERM_L_GREEN : TERM_L_BLUE);
+		return(randint(3) == 1 ? TERM_L_GREEN : TERM_L_BLUE);
 	case TERM_METEOR:
-		return (randint(3) == 1 ? TERM_RED : TERM_UMBER);
+		return(randint(3) == 1 ? TERM_RED : TERM_UMBER);
 	case TERM_MANA:
-		return (randint(5) != 1 ? TERM_VIOLET : TERM_L_BLUE);
+		return(randint(5) != 1 ? TERM_VIOLET : TERM_L_BLUE);
 	case TERM_WATE:
-		return (randint(20) == 1 ? TERM_L_BLUE : TERM_BLUE);//was randint(4)==1, but for rain this looks better!
+		return(randint(20) == 1 ? TERM_L_BLUE : TERM_BLUE);//was randint(4)==1, but for rain this looks better!
 	case TERM_ICE:
-		return (randint(4) == 1 ? TERM_L_BLUE : TERM_WHITE);
+		return(randint(4) == 1 ? TERM_L_BLUE : TERM_WHITE);
 	case TERM_PLAS:
-		return (randint(5) == 1 ? TERM_RED : TERM_L_RED);
+		return(randint(5) == 1 ? TERM_RED : TERM_L_RED);
 	case TERM_DETO:
-		return (randint(6) < 4 ? TERM_L_RED : (randint(4) == 1 ? TERM_RED : TERM_L_UMBER));
+		return(randint(6) < 4 ? TERM_L_RED : (randint(4) == 1 ? TERM_RED : TERM_L_UMBER));
 	case TERM_DISI:
-		return (randint(3) != 1 ? TERM_L_DARK : (randint(2) == 1 ? TERM_ORANGE : TERM_VIOLET));
+		return(randint(3) != 1 ? TERM_L_DARK : (randint(2) == 1 ? TERM_ORANGE : TERM_VIOLET));
 	case TERM_NUKE:
-		return (mh_attr(2));
+		return(mh_attr(2));
 	case TERM_UNBREATH:
-		return (randint(7) < 3 ? TERM_L_GREEN : TERM_GREEN);
+		return(randint(7) < 3 ? TERM_L_GREEN : TERM_GREEN);
 	case TERM_HOLYORB:
-		return (randint(6) == 1 ? TERM_ORANGE : TERM_L_DARK);
+		return(randint(6) == 1 ? TERM_ORANGE : TERM_L_DARK);
 	case TERM_HOLYFIRE:
-		return (randint(3) != 1 ? TERM_ORANGE : (randint(2) == 1 ? TERM_YELLOW : TERM_WHITE));
+		return(randint(3) != 1 ? TERM_ORANGE : (randint(2) == 1 ? TERM_YELLOW : TERM_WHITE));
 	case TERM_HELLFIRE:
-		return (randint(5) == 1 ? TERM_RED : TERM_L_DARK);
+		return(randint(5) == 1 ? TERM_RED : TERM_L_DARK);
 	case TERM_THUNDER:
-		return (randint(3) != 1 ? (randint(7) > 6 ? TERM_WHITE : (randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE))
+		return(randint(3) != 1 ? (randint(7) > 6 ? TERM_WHITE : (randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE))
 		    : (randint(2) == 1 ? TERM_YELLOW : (randint(5) > 3 ? TERM_ORANGE : TERM_YELLOW)));//note 1st (...) is TERM_ELEC, last (...) is TERM_LITE
 
 	case TERM_LAMP:
-		if (lamp_fainting) return (rand_term_lamp ? TERM_L_UMBER : TERM_UMBER);
-		return (rand_term_lamp ? TERM_YELLOW : TERM_ORANGE);
+		if (lamp_fainting) return(rand_term_lamp ? TERM_L_UMBER : TERM_UMBER);
+		return(rand_term_lamp ? TERM_YELLOW : TERM_ORANGE);
 	case TERM_LAMP_DARK:
 		//if (lamp_fainting) return TERM_UMBER; //hm :/
-		if (lamp_fainting) return (rand_term_lamp ? TERM_UMBER : TERM_L_DARK); //hmmm
-		return (rand_term_lamp ? TERM_L_UMBER : TERM_UMBER);
+		if (lamp_fainting) return(rand_term_lamp ? TERM_UMBER : TERM_L_DARK); //hmmm
+		return(rand_term_lamp ? TERM_L_UMBER : TERM_UMBER);
 
 	case TERM_EMBER:
-		return (rand_int(6) ? TERM_RED : (rand_int(2) ? TERM_ORANGE : TERM_L_RED));
+		return(rand_int(6) ? TERM_RED : (rand_int(2) ? TERM_ORANGE : TERM_L_RED));
 
 	case TERM_STARLITE:
-		return (rand_int(16) ? TERM_WHITE : (rand_int(4) ? TERM_BLUE : TERM_L_BLUE));
+		return(rand_int(16) ? TERM_WHITE : (rand_int(4) ? TERM_BLUE : TERM_L_BLUE));
 
 	case TERM_HAVOC: //inferno(deto) but fire looks better/mana/chaos ^^
 		switch (rand_int(9)) {
@@ -796,8 +796,8 @@ byte flick_colour(byte attr) {
 
  #ifdef ATMOSPHERIC_INTRO
 	case TERM_FIRETHIN: /* for ascii-art in client login screen */
-		//return (!rand_int(2) ? (randint(5) > 3 ? TERM_ORANGE : (rand_int(2) ? TERM_YELLOW : TERM_RED)) : TERM_DARK);
-		return (!rand_int(2) ? (rand_int(2) ? TERM_YELLOW : (rand_int(2) ? TERM_L_RED : TERM_RED)) : TERM_DARK);
+		//return(!rand_int(2) ? (randint(5) > 3 ? TERM_ORANGE : (rand_int(2) ? TERM_YELLOW : TERM_RED)) : TERM_DARK);
+		return(!rand_int(2) ? (rand_int(2) ? TERM_YELLOW : (rand_int(2) ? TERM_L_RED : TERM_RED)) : TERM_DARK);
  #endif
 #endif
 
@@ -1708,7 +1708,7 @@ errr Term_fresh(void) {
 
 
 	/* Do nothing unless "mapped" */
-	if (!Term->mapped_flag) return (1);
+	if (!Term->mapped_flag) return(1);
 
 
 	/* Paranoia -- enforce "fake" hooks if needed */
@@ -1963,7 +1963,7 @@ errr Term_fresh(void) {
 
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1976,13 +1976,13 @@ errr Term_fresh(void) {
  */
 errr Term_set_cursor(int v) {
 	/* Already done */
-	if (Term->scr->cv == v) return (1);
+	if (Term->scr->cv == v) return(1);
 
 	/* Change */
 	Term->scr->cv = v;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1996,8 +1996,8 @@ errr Term_gotoxy(int x, int y) {
 	int h = Term->hgt;
 
 	/* Verify */
-	if ((x < 0) || (x >= w)) return (-1);
-	if ((y < 0) || (y >= h)) return (-1);
+	if ((x < 0) || (x >= w)) return(-1);
+	if ((y < 0) || (y >= h)) return(-1);
 
 	/* Remember the cursor */
 	Term->scr->cx = x;
@@ -2007,7 +2007,7 @@ errr Term_gotoxy(int x, int y) {
 	Term->scr->cu = 0;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2022,11 +2022,11 @@ errr Term_draw(int x, int y, byte a, char32_t c) {
 	static bool semaphore = FALSE;
 
 	/* Verify location */
-	if ((x < 0) || (x >= w)) return (-1);
-	if ((y < 0) || (y >= h)) return (-1);
+	if ((x < 0) || (x >= w)) return(-1);
+	if ((y < 0) || (y >= h)) return(-1);
 
 	/* Paranoia -- illegal char */
-	if (!c) return (-2);
+	if (!c) return(-2);
 
 	/* Duplicate to current screen if it's only 'partially icky' */
 	if (screen_icky && !semaphore && !shopping
@@ -2048,7 +2048,7 @@ errr Term_draw(int x, int y, byte a, char32_t c) {
 	QueueAttrChar(x, y, a, c);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2072,10 +2072,10 @@ errr Term_addch(byte a, char c) {
 	int w = Term->wid;
 
 	/* Handle "unusable" cursor */
-	if (Term->scr->cu) return (-1);
+	if (Term->scr->cu) return(-1);
 
 	/* Paranoia -- no illegal chars */
-	if (!c) return (-2);
+	if (!c) return(-2);
 
 	/* Queue the given character for display */
 	QueueAttrChar(Term->scr->cx, Term->scr->cy, a, (char32_t)c);
@@ -2084,13 +2084,13 @@ errr Term_addch(byte a, char c) {
 	Term->scr->cx++;
 
 	/* Success */
-	if (Term->scr->cx < w) return (0);
+	if (Term->scr->cx < w) return(0);
 
 	/* Note "Useless" cursor */
 	Term->scr->cu = 1;
 
 	/* Note "Useless" cursor */
-	return (1);
+	return(1);
 }
 
 
@@ -2119,7 +2119,7 @@ errr Term_addstr(int n, byte a, cptr s) {
 	errr res = 0;
 
 	/* Handle "unusable" cursor */
-	if (Term->scr->cu) return (-1);
+	if (Term->scr->cu) return(-1);
 
 	/* Obtain maximal length */
 	k = (n < 0) ? (w + 1) : n;
@@ -2145,7 +2145,7 @@ errr Term_addstr(int n, byte a, cptr s) {
 	if (res) Term->scr->cu = 1;
 
 	/* Success (usually) */
-	return (res);
+	return(res);
 }
 
 
@@ -2156,13 +2156,13 @@ errr Term_putch(int x, int y, byte a, char c) {
 	errr res;
 
 	/* Move first */
-	if ((res = Term_gotoxy(x, y)) != 0) return (res);
+	if ((res = Term_gotoxy(x, y)) != 0) return(res);
 
 	/* Then add the char */
-	if ((res = Term_addch(a, c)) != 0) return (res);
+	if ((res = Term_addch(a, c)) != 0) return(res);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2183,7 +2183,7 @@ errr Term_putstr(int x, int y, int n, byte a, char *s) {
 	//bool first_colour_code_set = TRUE;
 
 	/* Move first */
-	if ((res = Term_gotoxy(x, y)) != 0) return (res);
+	if ((res = Term_gotoxy(x, y)) != 0) return(res);
 
 	/* Duplicate to current screen if it's only 'partially icky' */
 	if (screen_icky && !semaphore
@@ -2212,9 +2212,9 @@ errr Term_putstr(int x, int y, int n, byte a, char *s) {
 
 	if (!ptr) {
 		/* No color codes, just add the whole string */
-		if ((res = Term_addstr(n, a, s)) != 0) return (res);
+		if ((res = Term_addstr(n, a, s)) != 0) return(res);
 	} else {
-		if ((res = Term_addstr(ptr - s, a, s)) != 0) return (res);
+		if ((res = Term_addstr(ptr - s, a, s)) != 0) return(res);
 
 		/* Count the actual characters that have been printed on the screen */
 		count += ptr - s;
@@ -2259,24 +2259,24 @@ errr Term_putstr(int x, int y, int n, byte a, char *s) {
 			/* Check whether next_ptr is past the maximum number of characters */
 			if (n >= 0 && next_ptr - ptr + count >= n) {
 				/* Add the rest of the string */
-				if ((res = Term_addstr(n - count, a, ptr)) != 0) return (res);
+				if ((res = Term_addstr(n - count, a, ptr)) != 0) return(res);
 				next_ptr = NULL;
 			} else {
-				if ((res = Term_addstr(next_ptr - ptr, a, ptr)) != 0) return (res);
+				if ((res = Term_addstr(next_ptr - ptr, a, ptr)) != 0) return(res);
 
 				/* Count the actual characters that have been printed on the screen */
 				count += next_ptr - ptr;
 			}
 		} else {
 			/* Add the rest of the string */
-			if ((res = Term_addstr(n - count, a, ptr)) != 0) return (res);
+			if ((res = Term_addstr(n - count, a, ptr)) != 0) return(res);
 		}
 
 		ptr = next_ptr;
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2299,7 +2299,7 @@ errr Term_erase(int x, int y, int n) {
 
 
 	/* Place cursor */
-	if (Term_gotoxy(x, y)) return (-1);
+	if (Term_gotoxy(x, y)) return(-1);
 
 	/* Force legal size */
 	if (x + n > w) n = w - x;
@@ -2349,7 +2349,7 @@ errr Term_erase(int x, int y, int n) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2395,7 +2395,7 @@ errr Term_clear(void) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*
@@ -2409,7 +2409,7 @@ errr Term_redraw(void) {
 	Term_fresh();
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*
@@ -2444,7 +2444,7 @@ errr Term_redraw_section(int x1, int y1, int x2, int y2) {
 	Term_fresh();
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2462,7 +2462,7 @@ errr Term_get_cursor(int *v) {
 	(*v) = Term->scr->cv;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2475,7 +2475,7 @@ errr Term_get_size(int *w, int *h) {
 	(*h) = Term->hgt;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2488,10 +2488,10 @@ errr Term_locate(int *x, int *y) {
 	(*y) = Term->scr->cy;
 
 	/* Warn about "useless" cursor */
-	if (Term->scr->cu) return (1);
+	if (Term->scr->cu) return(1);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2505,15 +2505,15 @@ errr Term_what(int x, int y, byte *a, char32_t *c) {
 	int h = Term->hgt;
 
 	/* Verify location */
-	if ((x < 0) || (x >= w)) return (-1);
-	if ((y < 0) || (y >= h)) return (-1);
+	if ((x < 0) || (x >= w)) return(-1);
+	if ((y < 0) || (y >= h)) return(-1);
 
 	/* Direct access */
 	(*a) = Term->scr->a[y][x];
 	(*c) = Term->scr->c[y][x];
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2552,7 +2552,7 @@ errr (*Term_inkey_hook)(char *ch, bool wait, bool take) = NULL;
 errr Term_flush(void) {
 	/* XXX XXX XXX */
 	if (Term_inkey_hook) /* Special "Borg" hook (flush keys): */
-		return ((*Term_inkey_hook)(NULL, 0, 0));
+		return((*Term_inkey_hook)(NULL, 0, 0));
 
 	/* Hack -- Flush all events */
 	Term_xtra(TERM_XTRA_FLUSH, 0);
@@ -2561,7 +2561,7 @@ errr Term_flush(void) {
 	Term->keys->head = Term->keys->tail = Term->keys->length = 0;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2655,7 +2655,7 @@ static void Term_decrease_queue(key_queue *keys) {
  */
 errr Term_keypress_aux(key_queue *keys, int k) {
 	/* Hack -- Refuse to enqueue non-keys */
-	if (!k) return (-1);
+	if (!k) return(-1);
 
 	/* Store the char, advance the queue */
 	keys->queue[keys->head++] = k;
@@ -2671,7 +2671,7 @@ errr Term_keypress_aux(key_queue *keys, int k) {
 	if (keys->head == keys->size) keys->head = 0;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2694,7 +2694,7 @@ errr Term_keypress(int k) {
  */
 errr Term_key_push_aux(key_queue *keys, int k) {
 	/* Hack -- Refuse to enqueue non-keys */
-	if (!k) return (-1);
+	if (!k) return(-1);
 
 	/* Hack -- Overflow may induce circular queue */
 	if (keys->tail == 0) keys->tail = keys->size;
@@ -2710,7 +2710,7 @@ errr Term_key_push_aux(key_queue *keys, int k) {
 		Term_increase_queue(keys);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2761,7 +2761,7 @@ errr Term_key_push_buf_aux(key_queue *keys, cptr buf, int n) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2850,7 +2850,7 @@ errr refresh_minimap() {
 	//Reactivate the main window
 	Term_activate(ang_term[0]);
 
-	return (0);
+	return(0);
 }
 
 /*
@@ -2872,7 +2872,7 @@ errr Term_inkey(char *ch, bool wait, bool take) {
 	/* XXX XXX XXX */
 	if (Term_inkey_hook) {
 		/* Special "Borg" hook (generate keys) */
-		return ((*Term_inkey_hook)(ch, wait, take));
+		return((*Term_inkey_hook)(ch, wait, take));
 	}
 
 	/* Hack -- get bored */
@@ -2903,7 +2903,7 @@ errr Term_inkey(char *ch, bool wait, bool take) {
 	}
 
 	/* No keys are ready */
-	if (keys->head == keys->tail) return (1);
+	if (keys->head == keys->tail) return(1);
 
 	/* Extract the next keypress */
 	(*ch) = keys->queue[keys->tail];
@@ -2936,7 +2936,7 @@ errr Term_inkey(char *ch, bool wait, bool take) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2960,7 +2960,7 @@ errr Term_save(void) {
  	term_win_copy(Term->mem[screen_icky++], Term->scr, w, h);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2988,7 +2988,7 @@ errr Term_load(void) {
 	Term->y2 = h - 1;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -3017,7 +3017,7 @@ errr Term_restore(void) {
 	Term->y2 = h - 1;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -3059,10 +3059,10 @@ errr Term_resize(int w, int h) {
 	term_win *hold_mem[4];
 
 	/* Ignore illegal changes */
-	if ((w < 1) || (h < 1)) return (1);
+	if ((w < 1) || (h < 1)) return(1);
 
 	/* Ignore non-changes */
-	if ((Term->wid == w) && (Term->hgt == h)) return (1);
+	if ((Term->wid == w) && (Term->hgt == h)) return(1);
 
 	/* Minimum dimensions */
 	wid = MIN(Term->wid, w);
@@ -3187,7 +3187,7 @@ errr Term_resize(int w, int h) {
 
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -3203,7 +3203,7 @@ errr Term_resize(int w, int h) {
  */
 errr Term_activate(term *t) {
 	/* Hack -- already done */
-	if (Term == t) return (1);
+	if (Term == t) return(1);
 
 	/* Deactivate the old Term */
 	if (Term) Term_xtra(TERM_XTRA_LEVEL, 0);
@@ -3227,7 +3227,7 @@ errr Term_activate(term *t) {
 	if (Term) Term_xtra(TERM_XTRA_LEVEL, 1);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -3282,7 +3282,7 @@ errr term_nuke(term *t) {
 	KILL(t->keys, key_queue);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -3363,7 +3363,7 @@ errr term_init(term *t, int w, int h, int k) {
 
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /* Validates the screen terminal dimensions and changes them if they are not valid.

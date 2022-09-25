@@ -1555,10 +1555,10 @@ static bool wr_savefile_new(int Ind) {
 	write_buffer();
 
 	/* Error in save */
-	if (ferror(fff) || (fflush(fff) == EOF)) return FALSE;
+	if (ferror(fff) || (fflush(fff) == EOF)) return(FALSE);
 
 	/* Successful save */
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -1614,13 +1614,13 @@ static bool save_player_aux(int Ind, char *name) {
 
 
 	/* Failure */
-	if (!ok) return (FALSE);
+	if (!ok) return(FALSE);
 
 	/* Successful save */
 	/*server_saved = TRUE;*/
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -1717,7 +1717,7 @@ bool save_player(int Ind) {
 
 
 	/* Return the result */
-	return (result);
+	return(result);
 }
 
 
@@ -1727,9 +1727,9 @@ static bool file_exist(char *buf) {
 	fd = fd_open(buf, O_RDONLY);
 	if (fd >= 0) {
 		fd_close(fd);
-		return (TRUE);
+		return(TRUE);
 	}
-	else return (FALSE);
+	else return(FALSE);
 }
 
 
@@ -1786,7 +1786,7 @@ bool load_player(int Ind) {
 			what = "Server is closed for login now";
 			err = 1;
 		}
-		else return (TRUE);
+		else return(TRUE);
 	}
 
 
@@ -1812,7 +1812,7 @@ bool load_player(int Ind) {
 			what = "Server is closed for login now";
 			err = 1;
 		}
-		else return (TRUE);
+		else return(TRUE);
 	}
 
 
@@ -1841,7 +1841,7 @@ bool load_player(int Ind) {
 			msg_print(Ind, NULL);
 
 			/* Oops */
-			return (FALSE);
+			return(FALSE);
 		}
 
 		/* Create a lock file */
@@ -1966,7 +1966,7 @@ bool load_player(int Ind) {
 			sf_lives++;
 
 			/* Done */
-			return (TRUE);
+			return(TRUE);
 		}
 
 		/* A character was loaded */
@@ -1982,7 +1982,7 @@ bool load_player(int Ind) {
 		p_ptr->body_changed = TRUE;
 
 		/* Success */
-		return (TRUE);
+		return(TRUE);
 	}
 
 
@@ -2008,7 +2008,7 @@ bool load_player(int Ind) {
 				what, sf_major, sf_minor, sf_patch));
 
 	/* Oops */
-	return (FALSE);
+	return(FALSE);
 }
 
 /*
@@ -2269,10 +2269,10 @@ static bool wr_server_savefile() {
 	write_buffer();
 
 	/* Error in save */
-	if (ferror(fff) || (fflush(fff) == EOF)) return FALSE;
+	if (ferror(fff) || (fflush(fff) == EOF)) return(FALSE);
 
 	/* Successful save */
-	return TRUE;
+	return(TRUE);
 }
 
 /* write the wilderness and dungeon structure */
@@ -2449,13 +2449,13 @@ static bool save_server_aux(char *name) {
 
 
 	/* Failure */
-	if (!ok) return (FALSE);
+	if (!ok) return(FALSE);
 
 	/* Successful save */
 	/*server_saved = TRUE;*/
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -2477,7 +2477,7 @@ static bool load_server_info_classic(void) {
 		s_printf("Server savefile does not exist\n");
 
 		/* Allow this */
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Okay */
@@ -2545,13 +2545,13 @@ static bool load_server_info_classic(void) {
 		server_state_loaded = TRUE;
 
 		/* Success */
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Message */
 	s_printf("Error (%s) reading a %d.%d.%d server savefile.\n", what, sf_major, sf_minor, sf_patch);
 
-	return (FALSE);
+	return(FALSE);
 }
 
 /* Load the complete server info, either
@@ -2580,7 +2580,7 @@ bool load_server_info(void) {
 	s_printf("Server savefile does not exist\n");
 
 	/* Allow this */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -2627,7 +2627,7 @@ bool save_server_info() {
 	}
 
 	/* Return the result */
-	return (result);
+	return(result);
 }
 
 void wr_towns() {
@@ -2795,9 +2795,9 @@ static bool save_quests_file(void) {
 	/* Write the remaining contents of the buffer */
 	write_buffer();
 	/* Error in save */
-	if (ferror(fff) || (fflush(fff) == EOF)) return FALSE;
+	if (ferror(fff) || (fflush(fff) == EOF)) return(FALSE);
 	/* Successful save */
-	return TRUE;
+	return(TRUE);
 }
 static bool save_quests_aux(char *name) {
 	bool	ok = FALSE;
@@ -2819,8 +2819,8 @@ static bool save_quests_aux(char *name) {
 		}
 		if (!ok) (void)fd_kill(name);
 	}
-	if (!ok) return FALSE;
-	return TRUE;
+	if (!ok) return(FALSE);
+	return(TRUE);
 }
 void save_quests(void) {
 	//int result = FALSE;

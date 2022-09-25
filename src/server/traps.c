@@ -34,7 +34,7 @@ static void destroy_chest(object_type *o_ptr);
 
 #if 0
 static bool do_trap_of_silliness(int Ind, int power) {
-	//return (FALSE);
+	//return(FALSE);
 
 	player_type *p_ptr = Players[Ind];
 	int i, j;
@@ -50,7 +50,7 @@ static bool do_trap_of_silliness(int Ind, int power) {
 		p_ptr->trap_ident[j] = 0;
 	}
 
-	return (aware);
+	return(aware);
 
 }
 #endif // 0
@@ -60,13 +60,13 @@ static bool do_player_drop_items_aux(int Ind, int chance, int slot, object_type 
 	player_type *p_ptr = Players[Ind];
 	char o_name[ONAME_LEN];
 
-	if (!o_ptr->k_idx) return FALSE;
-	if (randint(100) > chance) return FALSE;
-	if (o_ptr->name1 == ART_POWER) return FALSE; /* The One Ring is safe */
+	if (!o_ptr->k_idx) return(FALSE);
+	if (randint(100) > chance) return(FALSE);
+	if (o_ptr->name1 == ART_POWER) return(FALSE); /* The One Ring is safe */
 	if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && (rand_int(100) > 9)) {
 		object_desc(Ind, o_name, o_ptr, TRUE, 0);
 		msg_format(Ind, "%s resists the effect!", o_name);
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* drop carefully */
@@ -75,7 +75,7 @@ static bool do_player_drop_items_aux(int Ind, int chance, int slot, object_type 
 	inven_item_optimize(Ind, slot);
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 	if (trap && !ident) msg_print(Ind, "You are startled by a sudden sound.");
-	return TRUE;
+	return(TRUE);
 }
 bool do_player_drop_items(int Ind, int chance, bool trap) {
 	player_type *p_ptr = Players[Ind];
@@ -86,7 +86,7 @@ bool do_player_drop_items(int Ind, int chance, bool trap) {
 #endif
 	bool ident = FALSE;
 
-	if (p_ptr->inval) return (FALSE);
+	if (p_ptr->inval) return(FALSE);
 
 	for (i = 0; i < INVEN_PACK; i++) {
 		tmp_obj = p_ptr->inventory[i];
@@ -107,7 +107,7 @@ bool do_player_drop_items(int Ind, int chance, bool trap) {
 	}
 
 	if (trap && !ident) msg_print(Ind, "You hear a sudden, strange sound.");
-	return (ident);
+	return(ident);
 }
 
 bool do_player_scatter_items(int Ind, int chance, int rad) {
@@ -118,7 +118,7 @@ bool do_player_scatter_items(int Ind, int chance, int rad) {
 	cave_type **zcave;
 	zcave = getcave(&p_ptr->wpos);
 
-	if (p_ptr->inval) return (FALSE);
+	if (p_ptr->inval) return(FALSE);
 
 	for (i = 0; i < INVEN_PACK; i++) {
 		if (!p_ptr->inventory[i].k_idx) continue;
@@ -166,7 +166,7 @@ bool do_player_scatter_items(int Ind, int chance, int rad) {
 		}
 	}
 
-	return (message);
+	return(message);
 }
 
 static bool do_player_trap_garbage(int Ind, int times) {
@@ -197,7 +197,7 @@ static bool do_player_trap_garbage(int Ind, int times) {
 		if (inven_carry(Ind, o_ptr) < 0)
 			drop_near(0, o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 	}
-	return (ident);
+	return(ident);
 }
 
 /*
@@ -306,7 +306,7 @@ static bool do_player_trap_call_out(int Ind) {
 		msg_format(Ind, "You hear a rapid-shifting wail, and %s appears!",m_name);
 		break;
 	}
-	return (ident);
+	return(ident);
 }
 
 /* done */
@@ -337,7 +337,7 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x) {
 	if (i_ptr == NULL) return(FALSE);
 
 	/* God save the arts :) */
-	if (i_ptr->name1 == ART_POWER) return (FALSE);
+	if (i_ptr->name1 == ART_POWER) return(FALSE);
 	if (cfg.anti_arts_hoard && true_artifact_p(i_ptr) && (rand_int(100) > 9)) return(FALSE);
 
 	while (o_idx == 0 && tries--) {
@@ -354,7 +354,7 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x) {
 		o_idx = drop_near_severe(Ind, i_ptr, 0, &p_ptr->wpos, y1, x1);
 	}
 
-	if (o_idx <= 0) return FALSE;
+	if (o_idx <= 0) return(FALSE);
 
 	o_ptr = &o_list[o_idx];
 
@@ -372,7 +372,7 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x) {
 
 		} else msg_format(Ind, "You suddenly don't see the %s anymore!", o_name);
 	} else msg_print(Ind, "You hear something move");
-	return (ident);
+	return(ident);
 }
 
 /*
@@ -486,7 +486,7 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval, s16b sval, 
 
 	drop_near(0, o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 
-	return TRUE;
+	return(TRUE);
 }
 
 /*
@@ -511,7 +511,7 @@ static bool player_handle_breath_trap(int Ind, s16b rad, s16b type, u16b trap) {
 	ident = project(PROJECTOR_TRAP, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, type,
 	    PROJECT_NORF | PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODO, t_name + t_ptr->name);
 	    // | PROJECT_KILL | PROJECT_JUMP
-	return (ident);
+	return(ident);
 }
 
 /*
@@ -2749,7 +2749,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 	    no_lite(Ind) || !inarea(&p_ptr->wpos, wpos) ||
 	    !los(wpos, p_ptr->py, p_ptr->px, y, x))
 	    //!player_has_los_bold(Ind, y, x))
-		return (FALSE);
+		return(FALSE);
 	else return ident;
 }
 
@@ -3164,24 +3164,24 @@ void wiz_place_trap(int Ind, int trap) {
 
 /* Hook to determine if an object is a device */
 static bool item_tester_hook_device(object_type *o_ptr) {
-	if (is_magic_device(o_ptr->tval)) return (TRUE);
+	if (is_magic_device(o_ptr->tval)) return(TRUE);
 	/* Assume not */
-	return (FALSE);
+	return(FALSE);
 }
 /* Hook to determine if an object is a potion */
 static bool item_tester_hook_potion(object_type *o_ptr) {
 	if ((o_ptr->tval == TV_POTION) ||
 	    (o_ptr->tval == TV_POTION2) ||
-	    (o_ptr->tval == TV_FLASK)) return (TRUE);
+	    (o_ptr->tval == TV_FLASK)) return(TRUE);
 	/* Assume not */
-	return (FALSE);
+	return(FALSE);
 }
 /* Hook to determine if an object is a scroll or rune */
 static bool item_tester_hook_scroll_rune(object_type *o_ptr) {
 	if ((o_ptr->tval == TV_SCROLL) ||
-	    (o_ptr->tval == TV_RUNE)) return (TRUE);
+	    (o_ptr->tval == TV_RUNE)) return(TRUE);
 	/* Assume not */
-	return (FALSE);
+	return(FALSE);
 }
 
 /*
@@ -3226,7 +3226,7 @@ static int pop_montrap(int Ind, object_type *j_ptr, int next_o_idx) {
 	}
 
 	/* Result */
-	return (o_idx);
+	return(o_idx);
 }
 
 /*
@@ -3664,7 +3664,7 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 	case SV_ROD_DETECTION:
 	case SV_ROD_DISARMING:
 		//m_ptr->smart |= SM_NOTE_TRAP;
-		return FALSE;
+		return(FALSE);
 
 	case SV_ROD_ILLUMINATION:
 		typ = GF_LITE;//GF_LITE_WEAK;
@@ -3769,7 +3769,7 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 		//+cloud hack, see below
 		break;
 	default:
-		return (FALSE);
+		return(FALSE);
 	}
 
 	if (dam) identify_mon_trap_load(who, o_ptr);
@@ -3819,7 +3819,7 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 	o_ptr->bpval++;
 #endif
 
-	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
+	return(zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
 /*
@@ -3851,7 +3851,7 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 	case SV_STAFF_MAPPING:
 	case SV_STAFF_PROBING:
 	case SV_STAFF_THE_MAGI:
-		return (FALSE);
+		return(FALSE);
 
 	case SV_STAFF_REMOVE_CURSE:
 		typ = GF_DISP_UNDEAD;
@@ -3883,7 +3883,7 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 			sound_mon_trap_aux("summon");
 #endif
 		}
-		return (FALSE);
+		return(FALSE);
 	case SV_STAFF_TELEPORTATION:
 		typ = GF_AWAY_ALL;
 		dam = 100;
@@ -3902,7 +3902,7 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 		break;
 	case SV_STAFF_DETECT_TRAP:
 		//m_ptr->smart |= SM_NOTE_TRAP;
-		return (FALSE);
+		return(FALSE);
 	case SV_STAFF_CURE_SERIOUS:
 		typ = GF_OLD_HEAL;
 		dam = damroll(6, 8);
@@ -3950,7 +3950,7 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 		genocide_aux(FALSE, r_ptr->d_char);
 		/* although there's no point in a multiple genocide trap... */
-		return (cave[y][x].m_idx == 0 ? TRUE : FALSE);
+		return(cave[y][x].m_idx == 0 ? TRUE : FALSE);
 		}
 #else
 	case SV_STAFF_GENOCIDE: {
@@ -3959,19 +3959,19 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 		identify_mon_trap_load(who, o_ptr);
 		/* although there's no point in a multiple genocide trap...
 		   ..monsters could resist at 1st attempt maybe? */
-		return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
+		return(zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 		}
 #endif
 	case SV_STAFF_EARTHQUAKES:
 		earthquake(&wpos, y, x, 10);
 		identify_mon_trap_load(who, o_ptr);
-		return (FALSE);
+		return(FALSE);
 	case SV_STAFF_DESTRUCTION:
 		destroy_area(&wpos, y, x, 15, TRUE, FEAT_FLOOR, 120);
 		identify_mon_trap_load(who, o_ptr);
-		return (FALSE);
+		return(FALSE);
 	default:
-		return (FALSE);
+		return(FALSE);
 	}
 
 	identify_mon_trap_load(who, o_ptr);
@@ -3998,7 +3998,7 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 
 	/* Actually hit the monster */
 	(void) project(0 - who, rad, &wpos, y, x, dam, typ, flg, "");
-	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
+	return(zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
 /*
@@ -4043,7 +4043,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 	case SV_SCROLL_DETECT_INVIS:
 	case SV_SCROLL_SATISFY_HUNGER:
 	case SV_SCROLL_TRAP_DOOR_DESTRUCTION:
-		return (FALSE);
+		return(FALSE);
 
 	case SV_SCROLL_RUNE_OF_PROTECTION:
 		typ = GF_STOP;
@@ -4069,10 +4069,10 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 			msg_print(who, "\377RYou hear a high-pitched humming noise echoing through the dungeons.");
 			msg_print_near(who, "\377RYou hear a high-pitched humming noise echoing through the dungeons.");
 		} else
-		return (FALSE);
+		return(FALSE);
 		break;
 	case SV_SCROLL_SUMMON_MONSTER:
-		if (no_summon) return FALSE;
+		if (no_summon) return(FALSE);
 		summon_override_checks = SO_IDDC;
 		for (k = 0; k < randint(3) ; k++) id |= summon_specific(&wpos, y, x, getlevel(&wpos), 0, SUMMON_ALL_U98, 1, 0);
 		summon_override_checks = SO_NONE;
@@ -4082,10 +4082,10 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 			sound_mon_trap_aux("summon");
 #endif
 		}
-		return (FALSE);
+		return(FALSE);
 		break;
 	case SV_SCROLL_SUMMON_UNDEAD:
-		if (no_summon) return FALSE;
+		if (no_summon) return(FALSE);
 		summon_override_checks = SO_IDDC;
 		for (k = 0; k < randint(3) ; k++) id |= summon_specific(&wpos, y, x, getlevel(&wpos), 0, SUMMON_UNDEAD, 1, 0);
 		summon_override_checks = SO_NONE;
@@ -4095,7 +4095,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 			sound_mon_trap_aux("summon");
 #endif
 		}
-		return (FALSE);
+		return(FALSE);
 		break;
 	case SV_SCROLL_PHASE_DOOR:
 		typ = GF_AWAY_ALL;
@@ -4110,7 +4110,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 	case SV_SCROLL_TELEPORT_LEVEL:
 		delete_monster(&wpos, y, x, TRUE);
 		identify_mon_trap_load(who, o_ptr);
-		return (TRUE);
+		return(TRUE);
 	case SV_SCROLL_LIGHT:
 		//lite_room(y, x);
 		typ = GF_LITE;//GF_LITE_WEAK;
@@ -4119,7 +4119,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 		break;
 	case SV_SCROLL_DETECT_TRAP:
 		//m_ptr->smart |= SM_NOTE_TRAP;
-		return (FALSE);
+		return(FALSE);
 	/* Hrm aren't they too small..? */
 	case SV_SCROLL_BLESSING:
 		typ = GF_HOLY_FIRE;
@@ -4140,7 +4140,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 	case SV_SCROLL_STAR_DESTRUCTION:
 		destroy_area(&wpos, y, x, 15, TRUE, FEAT_FLOOR, 120);
 		identify_mon_trap_load(who, o_ptr);
-		return (FALSE);
+		return(FALSE);
 	case SV_SCROLL_DISPEL_UNDEAD:
 		typ = GF_DISP_UNDEAD;
 		rad = 5;
@@ -4149,9 +4149,9 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 	case SV_SCROLL_GENOCIDE:
 		genocide_aux(0, &wpos, r_ptr->d_char);
 		/* although there's no point in a multiple genocide trap... */
-		//return (!(r_ptr->flags1 & RF1_UNIQUE));
+		//return(!(r_ptr->flags1 & RF1_UNIQUE));
 		identify_mon_trap_load(who, o_ptr);
-		return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
+		return(zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 	case SV_SCROLL_OBLITERATION:
 		obliteration(-m_idx);
 		identify_mon_trap_load(who, o_ptr);
@@ -4159,11 +4159,11 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 	case SV_SCROLL_ACQUIREMENT:
 		acquirement(who, &wpos, y, x, 1, TRUE, (wpos.wz != 0), make_resf(Players[who]));
 		identify_mon_trap_load(who, o_ptr);
-		return (FALSE);
+		return(FALSE);
 	case SV_SCROLL_STAR_ACQUIREMENT:
 		acquirement(who, &wpos, y, x, randint(2) + 1, TRUE, (wpos.wz != 0), make_resf(Players[who]));
 		identify_mon_trap_load(who, o_ptr);
-		return (FALSE);
+		return(FALSE);
 	case SV_SCROLL_REMOVE_CURSE:
 		typ = GF_DISP_UNDEAD;
 		rad = 5;
@@ -4179,7 +4179,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 			delete_monster(&wpos, y, x, TRUE);
 			identify_mon_trap_load(who, o_ptr);
 		}
-		return (TRUE);
+		return(TRUE);
 	case SV_SCROLL_FIRE:
 		typ = GF_FIRE;
 		rad = 3;
@@ -4197,7 +4197,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 		dam = 110;
 		break;
 	default:
-		return (FALSE);
+		return(FALSE);
 	}
 
 	identify_mon_trap_load(who, o_ptr);
@@ -4222,7 +4222,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 
 	/* Actually hit the monster */
 	(void) project(0 - who, rad, &wpos, y, x, dam, typ, flg, "");
-	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
+	return(zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
 /*
@@ -4244,7 +4244,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 	switch (check_for_wand_of_wonder(o_ptr->sval, &m_ptr->wpos)) {
 	case SV_WAND_DISARMING:
 	case SV_WAND_TRAP_DOOR_DEST:
-		return (FALSE);
+		return(FALSE);
 
 	case SV_WAND_HEAL_MONSTER:
 		typ = GF_OLD_HEAL;
@@ -4416,10 +4416,10 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 #endif
 		project(PROJECTOR_TRAP, 1, &m_ptr->wpos, y, x, 1, GF_STONE_WALL,
 			PROJECT_NORF | PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODO | PROJECT_NODF, "trap of walls"); /* shouldn't this strictly speaking be a projection from '0 - who' too?.. */
-		return (FALSE);
+		return(FALSE);
 
 	default:
-		return (FALSE);
+		return(FALSE);
 	}
 
 	identify_mon_trap_load(who, o_ptr);
@@ -4450,7 +4450,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 
 	/* Actually hit the monster */
 	(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, flg, "");
-	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
+	return(zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
 /*
@@ -4489,14 +4489,14 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 		case SV_POTION_ENLIGHTENMENT:
 		case SV_POTION_STAR_ENLIGHTENMENT:
 		case SV_POTION_SELF_KNOWLEDGE:
-			return (FALSE);
+			return(FALSE);
 
 		case SV_POTION_SALT_WATER:
 			/*if (!r_ptr->flags3 & RF3_NO_STUN) {
 				m_ptr->stunned += 5;
 				msg_print_near_monster(m_idx, "appears stunned");
 			}
-			return (FALSE);*/
+			return(FALSE);*/
 			typ = GF_BLIND;
 			dam = damroll(3, 2);
 			break;
@@ -4508,7 +4508,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 		case SV_POTION_DEC_INT:
 			//m_ptr->aaf--;
 		case SV_POTION_DEC_WIS:
-			return (FALSE);
+			return(FALSE);
 		case SV_POTION_DEC_DEX:
 			typ = GF_DEC_DEX;
 			dam = 1; /*dummmy*/
@@ -4520,7 +4520,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			fixed = TRUE;
 			break;
 		case SV_POTION_DEC_CHR:
-			return (FALSE);
+			return(FALSE);
 		case SV_POTION_RES_STR:
 			typ = GF_RES_STR;
 			dam = 1; /*dummmy*/
@@ -4528,7 +4528,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			break;
 		case SV_POTION_RES_INT:
 		case SV_POTION_RES_WIS:
-			return (FALSE);
+			return(FALSE);
 		case SV_POTION_RES_DEX:
 			typ = GF_RES_DEX;
 			dam = 1; /*dummmy*/
@@ -4540,7 +4540,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			fixed = TRUE;
 			break;
 		case SV_POTION_RES_CHR:
-			return (FALSE);
+			return(FALSE);
 		case SV_POTION_INC_STR:
 			typ = GF_INC_STR;
 			dam = 1; /*dummmy*/
@@ -4548,7 +4548,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			break;
 		case SV_POTION_INC_INT:
 		case SV_POTION_INC_WIS:
-			return (FALSE);
+			return(FALSE);
 		case SV_POTION_INC_DEX:
 			typ = GF_INC_DEX;
 			dam = 1; /*dummmy*/
@@ -4560,7 +4560,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			fixed = TRUE;
 			break;
 		case SV_POTION_INC_CHR:
-			return (FALSE);
+			return(FALSE);
 		case SV_POTION_AUGMENTATION:
 			typ = GF_AUGMENTATION;
 			dam = 1; /*dummmy*/
@@ -4636,7 +4636,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 		case SV_POTION_BOLDNESS:
 			/*if (m_ptr->monfear) msg_print_near_monster(m_idx, "recovers the courage");
 			m_ptr->monfear = 0;
-			return (FALSE);*/
+			return(FALSE);*/
 			rad = 4;
 			typ = GF_REMFEAR;
 			dam = 1; /*dummy*/
@@ -4693,7 +4693,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			rad = 3;
 			break;
 		default:
-			return (FALSE);
+			return(FALSE);
 		}
 	}
 	else if (o_ptr->tval == TV_FLASK) {
@@ -4712,7 +4712,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 #endif
 		}
 	}
-	else return (FALSE);
+	else return(FALSE);
 
 	identify_mon_trap_load(who, o_ptr);
 
@@ -4737,7 +4737,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 	/* Actually hit the monster */
 	//(void) project_m(who, y, x, 0, y, x, dam, typ);
 	(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, flg, "");
-	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
+	return(zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
 static bool mon_hit_trap_aux_rune(int who, int m_idx, object_type *o_ptr) {
@@ -4772,7 +4772,7 @@ static bool mon_hit_trap_aux_rune(int who, int m_idx, object_type *o_ptr) {
 
 	/* Actually hit the monster */
 	(void) project(0 - who, rad, &wpos, y, x, dam, typ, flg, "");
-	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
+	return(zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
 /*
@@ -4833,14 +4833,14 @@ bool mon_hit_trap(int m_idx) {
 	j_ptr = &object_type_body;
 
 	/* Paranoia */
-	if (!kit_o_ptr || !load_o_ptr) return (FALSE);
+	if (!kit_o_ptr || !load_o_ptr) return(FALSE);
 
 	/* Get trap properties */
 	object_flags(kit_o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Can set off check */
 	/* Ghosts only set off Ghost traps */
-	if ((r_ptr->flags2 & RF2_PASS_WALL) && !(f2 & TRAP2_KILL_GHOST)) return (FALSE);
+	if ((r_ptr->flags2 & RF2_PASS_WALL) && !(f2 & TRAP2_KILL_GHOST)) return(FALSE);
 
 	/* Some traps are specialized to some creatures */
 	if (f2 & TRAP2_ONLY_MASK) {
@@ -4852,7 +4852,7 @@ bool mon_hit_trap(int m_idx) {
 		if ((f2 & TRAP2_ONLY_ANIMAL) && (r_ptr->flags3 & RF3_ANIMAL)) affect = TRUE;
 
 		/* Don't set it off if forbidden */
-		if (!affect) return (FALSE);
+		if (!affect) return(FALSE);
 	}
 
 	/* XXX Hack -- is the trapper online? */
@@ -4961,9 +4961,9 @@ bool mon_hit_trap(int m_idx) {
 	    kit_o_ptr->sval == SV_TRAPKIT_DEVICE &&
 	    load_o_ptr->tval == TV_ROD) {
 #ifndef NEW_MDEV_STACKING
-		if (load_o_ptr->pval) return FALSE;
+		if (load_o_ptr->pval) return(FALSE);
 #else
-		if (load_o_ptr->bpval == load_o_ptr->number) return FALSE;
+		if (load_o_ptr->bpval == load_o_ptr->number) return(FALSE);
 #endif
 	}
 
@@ -5247,11 +5247,11 @@ bool mon_hit_trap(int m_idx) {
 	if (remove) do_cmd_disarm_mon_trap_aux(0, &wpos, my, mx);
 
 	/* did it die? */
-	return (dead);
+	return(dead);
 }
 /* For PvP: */
 bool py_hit_trap(int Ind) {
-	return FALSE;
+	return(FALSE);
 }
 
 static void destroy_chest(object_type *o_ptr) {

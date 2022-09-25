@@ -41,21 +41,21 @@ static bool is_state_aux(int Ind, store_type *s_ptr, int state) {
 
 	/* Check race */
 	if (ot_ptr->races[state][p_ptr->prace / 32] & (1U << (p_ptr->prace % 32)))
-		return (TRUE);
+		return(TRUE);
 
 	/* Check class */
 	if (ot_ptr->classes[state][p_ptr->pclass / 32] & (1U << (p_ptr->pclass % 32)))
-		return (TRUE);
+		return(TRUE);
 
 #if 0
 	/* Check realms */
 	if ((ot_ptr->realms[state][p_ptr->realm1 / 32] & (1U << (p_ptr->realm1 % 32))) ||
 	    (ot_ptr->realms[state][p_ptr->realm2 / 32] & (1U << (p_ptr->realm2 % 32))))
-		return (TRUE);
+		return(TRUE);
 #endif	// 0
 
 	/* All failed */
-	return (FALSE);
+	return(FALSE);
 }
 
 /* Display a list of 'achievements' in chronological order - C. Blue */
@@ -72,11 +72,11 @@ static void race_legends(int Ind) {
  */
 bool is_state(int Ind, store_type *s_ptr, int state) {
 	if (state == STORE_NORMAL) {
-		if (is_state_aux(Ind, s_ptr, STORE_LIKED)) return (FALSE);
-		if (is_state_aux(Ind, s_ptr, STORE_HATED)) return (FALSE);
-		return (TRUE);
+		if (is_state_aux(Ind, s_ptr, STORE_LIKED)) return(FALSE);
+		if (is_state_aux(Ind, s_ptr, STORE_HATED)) return(FALSE);
+		return(TRUE);
 	} else {
-		return (is_state_aux(Ind, s_ptr, state));
+		return(is_state_aux(Ind, s_ptr, state));
 	}
 }
 
@@ -879,7 +879,7 @@ static bool castle_quest(int y, int x) {
 	/* Is there a quest available at the building? */
 	if ((!plot) || (plots[plot] == QUEST_NULL)) {
 		put_str("I don't have a quest for you at the moment.",8,0);
-		return FALSE;
+		return(FALSE);
 	}
 
 	q_ptr = &quest[plots[plot]];
@@ -891,7 +891,7 @@ static bool castle_quest(int y, int x) {
 
 		process_hooks(HOOK_QUEST_FINISH, "(d)", plots[plot]);
 
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Quest is still unfinished */
@@ -901,7 +901,7 @@ static bool castle_quest(int y, int x) {
 		put_str("Use CTRL-Q to check the status of your quest.",9,0);
 		put_str("Return when you have completed your quest.",12,0);
 
-		return (FALSE);
+		return(FALSE);
 	}
 	/* Failed quest */
 	else if (q_ptr->status == QUEST_STATUS_FAILED) {
@@ -910,11 +910,11 @@ static bool castle_quest(int y, int x) {
 
 		process_hooks(HOOK_QUEST_FAIL, "(d)", plots[plot]);
 
-		return (FALSE);
+		return(FALSE);
 	}
 	/* No quest yet */
 	else if (q_ptr->status == QUEST_STATUS_UNTAKEN) {
-		if (process_hooks(HOOK_INIT_QUEST, "(d)", plots[plot])) return (FALSE);
+		if (process_hooks(HOOK_INIT_QUEST, "(d)", plots[plot])) return(FALSE);
 
 		q_ptr->status = QUEST_STATUS_TAKEN;
 
@@ -924,10 +924,10 @@ static bool castle_quest(int y, int x) {
 		/* Add the hooks */
 		if (quest[plots[plot]].type ==  HOOK_TYPE_C) quest[plots[plot]].init(plots[plot]);
 
-		return (TRUE);
+		return(TRUE);
 	}
 
-	return FALSE;
+	return(FALSE);
 }
 
 /*
@@ -1170,7 +1170,7 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac, int
 		msg_print("You already have been rewarded today.");
 		msg_print(NULL);
 
-		return (FALSE);
+		return(FALSE);
 	}
 #endif
 
@@ -1232,7 +1232,7 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac, int
 
 	if (i > iend) {
 		msg_print(Ind, "You don't have anything appropriate.");
-		return (FALSE);
+		return(FALSE);
 	}
 s_printf("BACT_ENCHANT: %s enchanted %s\n", p_ptr->name, tmp_str);
 #if 0
@@ -1248,13 +1248,13 @@ s_printf("BACT_ENCHANT: %s enchanted %s\n", p_ptr->name, tmp_str);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-	return (TRUE);
+	return(TRUE);
 }
 
 static int repair_cost(int k_idx, int to_x) {
 	int cost = (k_info[k_idx].cost >> 3) + 10;
 	//dagger:11, cutlass:23, broad sword/war maul:28, zweihander:46
-	return (((to_x - 3) * (to_x - 3)) / 8 - 1) * cost / 2; //increase slightly superlinearly, ie earlier repair is cheaper
+	return(((to_x - 3) * (to_x - 3)) / 8 - 1) * cost / 2; //increase slightly superlinearly, ie earlier repair is cheaper
 	//-1:1, -2:2, -3:3, -4:5, -5:7, -6:9, -7:11, -8:14, -9:17, -10:20
 }
 
@@ -1271,21 +1271,21 @@ static bool repair_item(int Ind, int i, bool iac) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	o_ptr = &p_ptr->inventory[i];
-	if (!o_ptr->tval) return FALSE;
+	if (!o_ptr->tval) return(FALSE);
 
 	/* eligible item in this equipment slot? */
 	if (iac) {
 		if (!is_armour(o_ptr->tval)) {
 			if (is_weapon(o_ptr->tval)) msg_print(Ind, "'I only repair armour. For weapons go see the weaponsmith, next door.'");
 			else msg_print(Ind, "'That is not a piece of armour.'");
-			return FALSE;
+			return(FALSE);
 		}
 
 		if (o_ptr->tval == TV_SHIELD)
 #ifdef NEW_SHIELDS_NO_AC
 		{
 			msg_print(Ind, "'That item isn't damaged.'");
-			return FALSE;
+			return(FALSE);
 		}
 #else
  #ifdef USE_NEW_SHIELDS
@@ -1304,18 +1304,18 @@ static bool repair_item(int Ind, int i, bool iac) {
 
 		if (o_ptr->to_a >= 0) {
 			msg_print(Ind, "'That looks pretty fine already.'");
-			return FALSE;
+			return(FALSE);
 		}
 		if (o_ptr->to_a < minenchant) {
 			msg_print(Ind, "'Sorry, but that piece of armour is beyond repair.'");
-			return FALSE;
+			return(FALSE);
 		}
 		cost = repair_cost(o_ptr->k_idx, o_ptr->to_a);
 	} else {
 		if (!is_weapon(o_ptr->tval)) {
 			if (is_armour(o_ptr->tval)) msg_print(Ind, "'I only repair weapons. For armour go to the armoury, next door.'");
 			else msg_print(Ind, "'That is not a weapon.'");
-			return FALSE;
+			return(FALSE);
 		}
 
 		/* Easteregg, well, or not: Repair Narsil to create Anduril - C. Blue */
@@ -1330,7 +1330,7 @@ static bool repair_item(int Ind, int i, bool iac) {
 				msg_print(Ind, "\374'Hmm, this broken sword seems special..");
 				msg_print(Ind, "\374 I have to admit it is beyond my abilities to repair this item!");
 				msg_print(Ind, "\374 You might try to seek out a famed elven smith in one of their cities.'");
-				return FALSE;
+				return(FALSE);
 			}
 
 			st_ptr = &town[t].townstore[p_ptr->store_num];
@@ -1339,7 +1339,7 @@ static bool repair_item(int Ind, int i, bool iac) {
 				msg_print(Ind, "\374'Hmm, I must admit it is beyond my ability to repair this sword.");
 				msg_print(Ind, "\374 But fret not, you have come to the right place!");
 				msg_print(Ind, "\374 Just wait for an elven smith I share shifts with, to look at this.'");
-				return FALSE;
+				return(FALSE);
 			}
 
 			msg_print(Ind, "'That is a quite special broken sword you have there!'");
@@ -1347,7 +1347,7 @@ static bool repair_item(int Ind, int i, bool iac) {
 			/* Cost should be the a_info.txt cost diff between those two! [70000] */
 			Send_request_cfr(Ind, RID_REPAIR_WEAPON, format("'That'll cost %d Au to repair, accept?'", a_info[ART_ANDURIL].cost - a_info[ART_NARSIL].cost), 0);
 			p_ptr->request_extra = i + 1;
-			return TRUE;
+			return(TRUE);
 		}
 
 		minenchant = -(o_ptr->dd * o_ptr->ds + 1) / 2;
@@ -1357,24 +1357,24 @@ static bool repair_item(int Ind, int i, bool iac) {
 
 		if (o_ptr->to_d >= 0) {
 			msg_print(Ind, "'That looks pretty fine already.'");
-			return FALSE;
+			return(FALSE);
 		}
 		if (o_ptr->to_d < minenchant) {
 			msg_print(Ind, "'Sorry, but that weapon is beyond repair.'");
-			return FALSE;
+			return(FALSE);
 		}
 		cost = repair_cost(o_ptr->k_idx, o_ptr->to_d);
 	}
 
 	if (!is_enchantable(o_ptr)) {
 		msg_print(Ind, "'Sorry, but that item cannot be repaired.'");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Artifacts cannot be repaired. */
 	if (artifact_p(o_ptr)) {
 		msg_print(Ind, "'Sorry, but artifacts cannot be repaired.'");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Extract the flags */
@@ -1383,13 +1383,13 @@ static bool repair_item(int Ind, int i, bool iac) {
 	/* Unenchantable items always fail */
 	if (f5 & TR5_NO_ENCHANT) {
 		msg_print(Ind, "'Sorry, but that item cannot be repaired.'");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* No easy fix for nothingness/morgul items */
 	if (cursed_p(o_ptr)) {
 		msg_print(Ind, "'Cursed items cannot be repaired!'");
-		return FALSE;
+		return(FALSE);
 	}
 
 	object_desc(Ind, tmp_str, o_ptr, FALSE, 1);
@@ -1397,7 +1397,7 @@ static bool repair_item(int Ind, int i, bool iac) {
 	if (iac) Send_request_cfr(Ind, RID_REPAIR_ARMOUR, format("'That'll cost %d Au to repair, accept?'", cost), 0);
 	else Send_request_cfr(Ind, RID_REPAIR_WEAPON, format("'That'll cost %d Au to repair, accept?'", cost), 0);
 	p_ptr->request_extra = i + 1;
-	return (TRUE);
+	return(TRUE);
 }
 bool repair_item_aux(int Ind, int i, bool iac) {
 	player_type *p_ptr = Players[Ind];
@@ -1408,23 +1408,23 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 	char tmp_str[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
-	if (!i) return FALSE; //paranoia
+	if (!i) return(FALSE); //paranoia
 	i--;
 	o_ptr = &p_ptr->inventory[i];
-	if (!o_ptr->tval) return FALSE;
+	if (!o_ptr->tval) return(FALSE);
 
 	/* eligible item in this equipment slot? */
 	if (iac) {
 		if (!is_armour(o_ptr->tval)) {
 			msg_print(Ind, "'That is not a piece of armour.'");
-			return FALSE;
+			return(FALSE);
 		}
 
 		if (o_ptr->tval == TV_SHIELD)
 #ifdef NEW_SHIELDS_NO_AC
 		{
 			msg_print(Ind, "'That item isn't damaged.'");
-			return FALSE;
+			return(FALSE);
 		}
 #else
  #ifdef USE_NEW_SHIELDS
@@ -1442,17 +1442,17 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 
 		if (o_ptr->to_a >= 0) {
 			msg_print(Ind, "A-'That looks pretty fine already.'");
-			return FALSE;
+			return(FALSE);
 		}
 		if (o_ptr->to_a < minenchant) {
 			msg_print(Ind, "'Sorry, but that piece of armour is beyond repair.'");
-			return FALSE;
+			return(FALSE);
 		}
 		cost = repair_cost(o_ptr->k_idx, o_ptr->to_a);
 	} else {
 		if (!is_weapon(o_ptr->tval)) {
 			msg_print(Ind, "W-'That is not a weapon.'");
-			return FALSE;
+			return(FALSE);
 		}
 
 		if (o_ptr->name1 == ART_NARSIL) {
@@ -1463,7 +1463,7 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 			object_desc(Ind, tmp_str, o_ptr, FALSE, 1);
 			if (p_ptr->au < cost) {
 				msg_print(Ind, "You do not have enough money!");
-				return FALSE;
+				return(FALSE);
 			}
 			p_ptr->au -= cost;
 			p_ptr->redraw |= PR_GOLD;
@@ -1496,7 +1496,7 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-			return (TRUE);
+			return(TRUE);
 		}
 
 		minenchant = -(o_ptr->dd * o_ptr->ds + 1) / 2;
@@ -1506,24 +1506,24 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 
 		if (o_ptr->to_d >= 0) {
 			msg_print(Ind, "'That looks pretty fine already.'");
-			return FALSE;
+			return(FALSE);
 		}
 		if (o_ptr->to_d < minenchant) {
 			msg_print(Ind, "'Sorry, but that weapon is beyond repair.'");
-			return FALSE;
+			return(FALSE);
 		}
 		cost = repair_cost(o_ptr->k_idx, o_ptr->to_d);
 	}
 
 	if (!is_enchantable(o_ptr)) {
 		msg_print(Ind, "'Sorry, but that item cannot be repaired.'");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Artifacts cannot be repaired. */
 	if (artifact_p(o_ptr)) {
 		msg_print(Ind, "'Sorry, but artifacts cannot be repaired.'");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Extract the flags */
@@ -1532,20 +1532,20 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 	/* Unenchantable items always fail */
 	if (f5 & TR5_NO_ENCHANT) {
 		msg_print(Ind, "'Sorry, but that item cannot be repaired.'");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* No easy fix for nothingness/morgul items */
 	if (cursed_p(o_ptr)) {
 		msg_print(Ind, "'Cursed items cannot be repaired!'");
-		return FALSE;
+		return(FALSE);
 	}
 
 	object_desc(Ind, tmp_str, o_ptr, FALSE, 1);
 
 	if (p_ptr->au < cost) {
 		msg_print(Ind, "You do not have enough money!");
-		return FALSE;
+		return(FALSE);
 	}
 	p_ptr->au -= cost;
 	p_ptr->redraw |= PR_GOLD;
@@ -1565,7 +1565,7 @@ s_printf("BACT_REPAIR: %s enchanted %s\n", p_ptr->name, tmp_str);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -1579,7 +1579,7 @@ static bool research_item(void) {
 #ifdef USE_SOUND_2010
 	sound(Ind, "store_id", NULL, SFX_TYPE_MISC, FALSE);
 #endif
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -1638,18 +1638,18 @@ static bool item_tester_hook_bounty(object_type* o_ptr) {
 
 	if (o_ptr->tval == TV_CORPSE) {
 		for (i = 1; i < MAX_BOUNTIES; i++) {
-			if (bounties[i][0] == o_ptr->pval2) return (TRUE);
+			if (bounties[i][0] == o_ptr->pval2) return(TRUE);
 		}
 	}
 
-	return (FALSE);
+	return(FALSE);
 }
 
 /* Filter to match the quest monster's corpse. */
 static bool item_tester_hook_quest_monster(object_type* o_ptr) {
 	if ((o_ptr->tval == TV_CORPSE) &&
-		(o_ptr->pval2 == bounties[0][0])) return (TRUE);
-	return (FALSE);
+		(o_ptr->pval2 == bounties[0][0])) return(TRUE);
+	return(FALSE);
 }
 
 
@@ -1661,10 +1661,10 @@ static int corpse_value_boost(int sval) {
 	switch (sval) {
 		case SV_CORPSE_HEAD:
 		case SV_CORPSE_SKULL:
-			return (1);
+			return(1);
 		/* Default to no boost. */
 		default:
-			return (0);
+			return(0);
 	}
 }
 
@@ -1723,7 +1723,7 @@ static void sell_corpses(void) {
  * Hook for bounty monster selection.
  */
 static bool mon_hook_bounty(int r_idx) {
-	return (lua_moon_hook_bounty(r_idx));
+	return(lua_moon_hook_bounty(r_idx));
 }
 
 
@@ -1921,7 +1921,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 
 	if (p_ptr->store_action) {
 		msg_print(Ind, "You are currently busy.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	if (is_state(Ind, st_ptr, STORE_LIKED))
@@ -1937,7 +1937,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 	{
 		msg_print(Ind, "You have no right to choose that!");
 		//msg_print(NULL);
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* If player has loan and the time is out, few things work in stores */
@@ -1952,7 +1952,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 		{
 			msg_print(Ind, "You are not allowed to do that until you have paid back your loan.");
 			msg_print(Ind, NULL);
-			return FALSE;
+			return(FALSE);
 		}
 	}
 #endif	// 0
@@ -1966,7 +1966,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 		    (bact != BACT_PAY_BACK_LOAN) && (bact != BACT_BUY))
 		{
 			msg_print(Ind, "The owner refuses it.");
-			return FALSE;
+			return(FALSE);
 		}
 	}
 
@@ -1974,7 +1974,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 	if (bcost > p_ptr->au) {
 		msg_print(Ind, "You do not have the gold!");
 //		msg_print(NULL);
-		return FALSE;
+		return(FALSE);
 	}
 
 	if (!bcost) set_reward = TRUE;
@@ -1994,7 +1994,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 //			paid = research_item(Ind, item);
 			paid = identify_fully_item(Ind, item);
 
-			return FALSE;//..and to complete the Send_gold() hack, return here
+			return(FALSE);//..and to complete the Send_gold() hack, return here
 			//break;
 #if 0
 		case BACT_TOWN_HISTORY:
@@ -2653,7 +2653,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 				fff = my_fopen(p_ptr->infofile, "rb");
 				if (my_fgets(fff, buf, 1024, FALSE)) {
 					my_fclose(fff);
-					return (FALSE);
+					return(FALSE);
 				}
 				my_fclose(fff);
 				/* Let the client know it's about to get some info */
@@ -2708,7 +2708,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 				if (admin_p(Ind)) continue;
 				if (!strcmp(mail_sender[i], p_ptr->name)) {
 					msg_print(Ind, "\377yYou can only have one active shipment at a time.");
-					return FALSE;
+					return(FALSE);
 				}
 			}
 			if (i == MAX_MERCHANT_MAILS) {
@@ -2740,7 +2740,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 				if (admin_p(Ind)) continue;
 				if (!strcmp(mail_sender[i], p_ptr->name)) {
 					msg_print(Ind, "\377yYou can only have one active shipment at a time.");
-					return FALSE;
+					return(FALSE);
 				}
 			}
 			if (i == MAX_MERCHANT_MAILS) {
@@ -2815,7 +2815,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 		Send_gold(Ind, p_ptr->au, p_ptr->balance);
 	}
 
-	return (recreate);
+	return(recreate);
 }
 
 

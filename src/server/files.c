@@ -110,7 +110,7 @@ s16b tokenize(char *buf, s16b num, char **tokens)
 	tokens[i++] = s;
 
 	/* Number found */
-	return (i);
+	return(i);
 }
 #else	// 0
 s16b tokenize(char *buf, s16b num, char **tokens, char delim1, char delim2)
@@ -171,7 +171,7 @@ s16b tokenize(char *buf, s16b num, char **tokens, char delim1, char delim2)
 	tokens[i++] = s;
 
 	/* Number found */
-	return (i);
+	return(i);
 }
 #endif	// 0
 
@@ -211,19 +211,19 @@ errr check_time(void)
 	struct tm               *tp;
 
 	/* No restrictions */
-	if (!check_time_flag) return (0);
+	if (!check_time_flag) return(0);
 
 	/* Check for time violation */
 	c = time((time_t *)0);
 	tp = localtime(&c);
 
 	/* Violation */
-	if (days[tp->tm_wday][tp->tm_hour + 4] != 'X') return (1);
+	if (days[tp->tm_wday][tp->tm_hour + 4] != 'X') return(1);
 
 #endif
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -248,7 +248,7 @@ errr check_time_init(void)
 	fp = my_fopen(buf, "r");
 
 	/* No file, no restrictions */
-	if (!fp) return (0);
+	if (!fp) return(0);
 
 	/* Assume restrictions */
 	check_time_flag = TRUE;
@@ -278,7 +278,7 @@ errr check_time_init(void)
 #endif
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -330,7 +330,7 @@ errr check_load(void)
 	struct statstime    st;
 
 	/* Success if not checking */
-	if (!check_load_value) return (0);
+	if (!check_load_value) return(0);
 
 	/* Check the load */
 	if (0 == rstat("localhost", &st))
@@ -339,13 +339,13 @@ errr check_load(void)
 		long val2 = (long)(check_load_value) * FSCALE;
 
 		/* Check for violation */
-		if (val1 >= val2) return (1);
+		if (val1 >= val2) return(1);
 	}
 
 #endif
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -372,7 +372,7 @@ errr check_load_init(void)
 	fp = my_fopen(buf, "r");
 
 	/* No file, no restrictions */
-	if (!fp) return (0);
+	if (!fp) return(0);
 
 	/* Default load */
 	check_load_value = 100;
@@ -408,7 +408,7 @@ errr check_load_init(void)
 #endif
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -670,7 +670,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 #endif
 
 		/* Oops */
-		return (TRUE);
+		return(TRUE);
 	}
 
 
@@ -784,7 +784,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 		fff = my_fopen(path, "rb");
 
 		/* Oops */
-		if (!fff) return (FALSE);
+		if (!fff) return(FALSE);
 
 		/* File has been restarted */
 		next = 0;
@@ -902,17 +902,17 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 		line = back;
 		find = NULL;
 		my_fclose(fff);	/* The evil file that waited open? */
-		return (TRUE);
+		return(TRUE);
 	}
 
 	/* Close the file */
 	my_fclose(fff);
 
 	/* Escape */
-	if (k == ESCAPE) return (FALSE);
+	if (k == ESCAPE) return(FALSE);
 
 	/* Normal return */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -941,7 +941,7 @@ errr show_file(int Ind, cptr name, cptr what, s32b line, int color, int divl, ch
 	(void)do_cmd_help_aux(Ind, name, what, line, color, divl, srcstr);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -966,7 +966,7 @@ bool process_player_name(int Ind, bool sf) {
 		Destroy_connection(p_ptr->conn, "Your name is too long!");
 
 		/* Abort */
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Cannot contain "icky" characters */
@@ -977,7 +977,7 @@ bool process_player_name(int Ind, bool sf) {
 			Destroy_connection(p_ptr->conn, "Your name contains control chars!");
 
 			/* Abort */
-			return FALSE;
+			return(FALSE);
 		}
 	}
 
@@ -1038,7 +1038,7 @@ bool process_player_name(int Ind, bool sf) {
 	}
 
 	/* Success */
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -1142,7 +1142,7 @@ unsigned int total_points(int Ind) {
 	   max_dlv? just enter the staircase in lothlorien and back up. -> no
 	   For now let's calc it basing on pure progress in gameplay!: */
 	//exp counts mainly, level factors in
-	//return (p_ptr->max_exp * (p_ptr->max_plv + 30) / 30);
+	//return(p_ptr->max_exp * (p_ptr->max_plv + 30) / 30);
 
 	/* Bonus */
 	bonusm = 100;
@@ -1205,14 +1205,14 @@ s_printf("points=%u\n", points);
 	return points;
 
 	//level counts mainly, exp factors in at higher levels
-	//return (p_ptr->max_plv * (300 + (p_ptr->max_exp / 100000)) / 300);
+	//return(p_ptr->max_plv * (300 + (p_ptr->max_exp / 100000)) / 300);
 #if 0
 	/* Maggot bonus.. beware, r_idx is hard-coded! */
 	int i = p_ptr->r_killed[8]? 50 : 100;
 	if (p_ptr->mode & MODE_HARD) i = i * 5 / 4;
 
-	if (p_ptr->mode & MODE_NO_GHOST) return (((p_ptr->max_exp + (100 * p_ptr->max_dlv)) * 4 / 3)*i/100);
-	else return ((p_ptr->max_exp + (100 * p_ptr->max_dlv) + p_ptr->au)*i/100);
+	if (p_ptr->mode & MODE_NO_GHOST) return(((p_ptr->max_exp + (100 * p_ptr->max_dlv)) * 4 / 3)*i/100);
+	else return((p_ptr->max_exp + (100 * p_ptr->max_dlv) + p_ptr->au)*i/100);
 #endif //0
 }
 
@@ -1392,7 +1392,7 @@ static int highscore_fd = -1;
 static int highscore_seek(int i)
 {
 	/* Seek for the requested record */
-	return (fd_seek(highscore_fd, (huge)(i) * sizeof(high_score)));
+	return(fd_seek(highscore_fd, (huge)(i) * sizeof(high_score)));
 }
 
 
@@ -1402,7 +1402,7 @@ static int highscore_seek(int i)
 static errr highscore_read(high_score *score)
 {
 	/* Read the record, note failure */
-	return (fd_read(highscore_fd, (char*)(score), sizeof(high_score)));
+	return(fd_read(highscore_fd, (char*)(score), sizeof(high_score)));
 }
 
 
@@ -1412,18 +1412,18 @@ static errr highscore_read(high_score *score)
 static int highscore_write(high_score *score)
 {
 	/* Write the record, note failure */
-	return (fd_write(highscore_fd, (char*)(score), sizeof(high_score)));
+	return(fd_write(highscore_fd, (char*)(score), sizeof(high_score)));
 }
 
 static int highscore_seek_old(int i)
 {
 	/* Seek for the requested record */
-	return (fd_seek(highscore_fd, (huge)(i) * sizeof(high_score_old)));
+	return(fd_seek(highscore_fd, (huge)(i) * sizeof(high_score_old)));
 }
 static errr highscore_read_old(high_score_old *score)
 {
 	/* Read the record, note failure */
-	return (fd_read(highscore_fd, (char*)(score), sizeof(high_score_old)));
+	return(fd_read(highscore_fd, (char*)(score), sizeof(high_score_old)));
 }
 
 
@@ -1449,10 +1449,10 @@ static int highscore_where(high_score *score, int *erased_slot)
 #endif
 
 	/* Paranoia -- it may not have opened */
-	if (highscore_fd < 0) return (-1);
+	if (highscore_fd < 0) return(-1);
 
 	/* Go to the start of the highscore file */
-	if (highscore_seek(0)) return (-1);
+	if (highscore_seek(0)) return(-1);
 
 
 #ifndef NEW_HISCORE /*restructuring with new hex flags, see #else branch - C. Blue */
@@ -1505,10 +1505,10 @@ static int highscore_where(high_score *score, int *erased_slot)
 		}
 	}
 
-	if (slot_ret != -1) return (slot_ret);
+	if (slot_ret != -1) return(slot_ret);
 
 	/* The "last" entry is always usable */
-	return (MAX_HISCORES - 1);
+	return(MAX_HISCORES - 1);
 #else
 	/* Read entries until we find a slot with lower score or arrive at the end */
 	for (i = 0; i < MAX_HISCORES; i++) {
@@ -1534,7 +1534,7 @@ static int highscore_where(high_score *score, int *erased_slot)
 	for (i = slot_ret + 1; i < MAX_HISCORES; i++) {
  #else
 	/* Go to the start of the highscore file */
-	if (highscore_seek(0)) return (-1);
+	if (highscore_seek(0)) return(-1);
 	/* now check previous entries before adding this one, if required
 	   according to our custom extended rule set from tomenet.cfg,
 	   whether we find an entry we have to actually replace with the
@@ -1666,7 +1666,7 @@ static int highscore_where(high_score *score, int *erased_slot)
 					     hack: useful display for display_scores_aux */
  #endif
 
-	return (slot_ret);
+	return(slot_ret);
 #endif
 }
 
@@ -1686,7 +1686,7 @@ static int highscore_add(high_score *score) {
 #endif
 
 	/* Paranoia -- it may not have opened */
-	if (highscore_fd < 0) return (-1);
+	if (highscore_fd < 0) return(-1);
 
 	/* Determine where the score should go */
 #ifndef NEW_HISCORE
@@ -1696,7 +1696,7 @@ static int highscore_add(high_score *score) {
 #endif
 	/* Hack -- Not on the list
 	   (ie didn't match conditions to replace previous score) */
-	if (slot < 0) return (-1);
+	if (slot < 0) return(-1);
 
 	/* Hack -- prepare to dump the new score */
 	the_score = (*score);
@@ -1706,12 +1706,12 @@ static int highscore_add(high_score *score) {
 		/* Slide all the scores down one */
 		for (i = slot; !done && (i < MAX_HISCORES); i++) {
 			/* Read the old guy, note errors */
-			if (highscore_seek(i)) return (-1);
+			if (highscore_seek(i)) return(-1);
 			if (highscore_read(&tmpscore)) done = TRUE;
 
 			/* Back up and dump the score we were holding */
-			if (highscore_seek(i)) return (-1);
-			if (highscore_write(&the_score)) return (-1);
+			if (highscore_seek(i)) return(-1);
+			if (highscore_write(&the_score)) return(-1);
 
 			if (move_up && !strcmp(score->who, tmpscore.who)) {
 				/* If older score is to be removed, we can stop here */
@@ -1725,12 +1725,12 @@ static int highscore_add(high_score *score) {
 		/* Move upwards through the score board */
 		for (i = slot; !done && (i >= 0); i--) {
 			/* Read the old guy, note errors */
-			if (highscore_seek(i)) return (-1);
+			if (highscore_seek(i)) return(-1);
 			if (highscore_read(&tmpscore)) done = TRUE;
 
 			/* Back up and dump the score we were holding */
-			if (highscore_seek(i)) return (-1);
-			if (highscore_write(&the_score)) return (-1);
+			if (highscore_seek(i)) return(-1);
+			if (highscore_write(&the_score)) return(-1);
 
 			if (!strcmp(score->who, tmpscore.who)) {
 				/* If older score is to be removed, we can stop here */
@@ -1769,18 +1769,18 @@ static int highscore_add(high_score *score) {
 //	for (i = slot; !done && (i < (erased_slot > -1 ? MAX_HISCORES - 1 : MAX_HISCORES)); i++) {
 	for (i = slot; !done && (i < cur_slots); i++) {
 		/* Read the old guy, note errors */
-		if (highscore_seek(i)) return (-1);
+		if (highscore_seek(i)) return(-1);
 		if (highscore_read(&tmpscore)) done = TRUE;
 		/* Back up and dump the score we were holding */
-		if (highscore_seek(i)) return (-1);
-		if (highscore_write(&the_score)) return (-1);
+		if (highscore_seek(i)) return(-1);
+		if (highscore_write(&the_score)) return(-1);
 		/* Hack -- Save the old score, for the next pass */
 		the_score = tmpscore;
 	}
 #endif
 
 	/* Return location used */
-	return (slot);
+	return(slot);
 }
 
 
@@ -2041,27 +2041,27 @@ static errr top_twenty(int Ind) {
 	high_score   the_score;
 	time_t ct = time((time_t*)0);
 
-	//if (is_admin(p_ptr)) return 0;
-	if (p_ptr->noscore) return 0;
+	//if (is_admin(p_ptr)) return(0);
+	if (p_ptr->noscore) return(0);
 
 	/* No score file */
 	if (highscore_fd < 0) {
 		s_printf("Score file unavailable.\n");
-		return (0);
+		return(0);
 	}
 
 	/* Interupted */
 	if (!p_ptr->total_winner && streq(p_ptr->died_from, "Interrupting")) {
 		msg_print(Ind, "Score not registered due to interruption.");
 		/* display_scores_aux(0, 10, -1, NULL); */
-		return (0);
+		return(0);
 	}
 
 	/* Quitter */
 	if (!p_ptr->total_winner && streq(p_ptr->died_from, "Quitting")) {
 		msg_print(Ind, "Score not registered due to quitting.");
 		/* display_scores_aux(0, 10, -1, NULL); */
-		return (0);
+		return(0);
 	}
 
 
@@ -2119,14 +2119,14 @@ static errr top_twenty(int Ind) {
 	the_score.mode[0] = p_ptr->mode;
 
 	/* Lock (for writing) the highscore file, or fail */
-	if (fd_lock(highscore_fd, F_WRLCK)) return (1);
+	if (fd_lock(highscore_fd, F_WRLCK)) return(1);
 
 	/* Add a new entry to the score list, see where it went */
 	//j = highscore_add(&the_score);
 	highscore_add(&the_score);
 
 	/* Unlock the highscore file, or fail */
-	if (fd_lock(highscore_fd, F_UNLCK)) return (1);
+	if (fd_lock(highscore_fd, F_UNLCK)) return(1);
 
 
 #if 0
@@ -2141,7 +2141,7 @@ static errr top_twenty(int Ind) {
 
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2161,7 +2161,7 @@ static errr predict_score(int Ind, int line) {
 	/* No score file */
 	if (highscore_fd < 0) {
 		s_printf("Score file unavailable.\n");
-		return (0);
+		return(0);
 	}
 
 
@@ -2226,7 +2226,7 @@ static errr predict_score(int Ind, int line) {
 
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2342,7 +2342,7 @@ void close_game(void) {
 			do_cmd_save_game(i);
 
 			/* Prompt for scores XXX XXX XXX */
-			/*prt("Press Return (or Escape).", 0, 40);*/
+			/*prt("Press return(or Escape).", 0, 40);*/
 		}
 
 
@@ -2424,7 +2424,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output, int max_len) {
 	fp = my_fopen(buf, "r");
 
 	/* Failed */
-	if (!fp) return (-1);
+	if (!fp) return(-1);
 
 	/* Find the entry of the monster */
 	while (TRUE) {
@@ -2450,13 +2450,13 @@ errr get_rnd_line(cptr file_name, int entry, char *output, int max_len) {
 					}
 				} else {
 					my_fclose(fp);
-					return (-1);
+					return(-1);
 				}
 			}
 		} else {
 			/* Reached end of file */
 			my_fclose(fp);
-			return (-1);
+			return(-1);
 		}
 
 	}
@@ -2479,7 +2479,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output, int max_len) {
 			line_num++;
 
 			my_fclose(fp);
-			return (-1);
+			return(-1);
 		}
 	}
 
@@ -2498,7 +2498,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output, int max_len) {
 				if (counter == line) break;
 			} else {
 				my_fclose(fp);
-				return (-1);
+				return(-1);
 			}
 		}
 
@@ -2510,7 +2510,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output, int max_len) {
 	my_fclose(fp);
 
 	/* Success */
-	return (line);
+	return(line);
 }
 
 /*
@@ -2534,7 +2534,7 @@ errr read_lines_to_memory(cptr file_name, char ***lines_out, int *num_lines_out)
 	fp = my_fopen(buf, "r");
 
 	/* Failed */
-	if (!fp) return (-1);
+	if (!fp) return(-1);
 
 	/* Find the entry of the monster */
 	while (TRUE) {
@@ -2550,7 +2550,7 @@ errr read_lines_to_memory(cptr file_name, char ***lines_out, int *num_lines_out)
 		} else {
 			/* Reached end of file */
 			my_fclose(fp);
-			return (-1);
+			return(-1);
 		}
 
 	}
@@ -2573,7 +2573,7 @@ errr read_lines_to_memory(cptr file_name, char ***lines_out, int *num_lines_out)
 			line_num++;
 
 			my_fclose(fp);
-			return (-1);
+			return(-1);
 		}
 	}
 
@@ -2591,7 +2591,7 @@ errr read_lines_to_memory(cptr file_name, char ***lines_out, int *num_lines_out)
 			lines[counter] = strdup(buf);
 		} else {
 			my_fclose(fp);
-			return (-1);
+			return(-1);
 		}
 	}
 
@@ -2603,7 +2603,7 @@ errr read_lines_to_memory(cptr file_name, char ***lines_out, int *num_lines_out)
 	*num_lines_out = numentries;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*
@@ -2629,7 +2629,7 @@ errr get_rnd_line_from_memory(char **lines, int numentries, char *output, int ma
 	}
 
 	/* Success */
-	return (line);
+	return(line);
 }
 
 /* Clear objects so that artifacts get saved.
@@ -2883,7 +2883,7 @@ BOOL ctrl_handler( DWORD fdwCtrlType ) {
 	/* Save everything and quit the game */
 	shutdown_server();
 
-	return TRUE;
+	return(TRUE);
 }
 
 /* Global unhandled exception handler */
@@ -3266,14 +3266,14 @@ ssize_t vread(int fd, char *buf, size_t len) {
 	vfile *vf = &vfiles[fd];
 
 	if (!vf->data) {
-		return -1;
+		return(-1);
 	}
 
 	if (vf->pos + len > vf->len) {
 		len = vf->len - vf->pos;
 	}
 
-	if (len < 0) return 0;
+	if (len < 0) return(0);
 
 	memcpy(buf, &vf->data[vf->pos], len);
 	vf->pos += len;
@@ -3291,7 +3291,7 @@ off_t vseek(int fd, off_t offset, int whence) {
 	} else if (whence == SEEK_END) {
 		vf->pos = vf->len + offset;
 	} else {
-		return -1;
+		return(-1);
 	}
 
 	return vf->pos;
@@ -3486,9 +3486,9 @@ bool highscore_file_convert(int Ind) {
 
 	for (i = 0; i < entries; i++) {
 		/* Skip to end */
-		if (highscore_seek(i)) return (-1);
+		if (highscore_seek(i)) return(-1);
 		/* add new entry */
-		if (highscore_write(&newscore[i])) return (-1);
+		if (highscore_write(&newscore[i])) return(-1);
 	}
 
 	/* Unlock the highscore file, or fail */

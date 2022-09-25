@@ -117,7 +117,7 @@ s16b modify_stat_value(int value, int amount) {
 	}
 
 	/* Return new value */
-	return (value);
+	return(value);
 }
 
 
@@ -1948,7 +1948,7 @@ static int weight_limit(int Ind) /* max. 3000 atm */ {
 	i = adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100;
 
 	/* Return the result */
-	return (i);
+	return(i);
 }
 
 /* Allow very lowspeed forms (still >110 though) to still give a slight +1 bonus, eg Kamikaze Yeek/Gold Ant which move at +3 speed naturally. 0 to disable. */
@@ -2742,8 +2742,8 @@ bool monk_heavy_armor(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	u16b monk_arm_wgt = 0;
 
-//	if (!(p_ptr->pclass == CLASS_MONK)) return FALSE;
-	if (!get_skill(p_ptr, SKILL_MARTIAL_ARTS)) return FALSE;
+//	if (!(p_ptr->pclass == CLASS_MONK)) return(FALSE);
+	if (!get_skill(p_ptr, SKILL_MARTIAL_ARTS)) return(FALSE);
 
 	/* Weight the armor */
 	monk_arm_wgt = armour_weight(p_ptr);
@@ -2756,8 +2756,8 @@ bool monk_heavy_armor(int Ind) {
 	monk_arm_wgt += p_ptr->inventory[INVEN_FEET].weight;
   #endif	// 0
 
-//	return (monk_arm_wgt > ( 100 + (p_ptr->lev * 4))) ;
-	return (monk_arm_wgt > 50 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 200));
+//	return(monk_arm_wgt > ( 100 + (p_ptr->lev * 4))) ;
+	return(monk_arm_wgt > 50 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 200));
  #endif
 }
 #endif	// 0
@@ -2765,7 +2765,7 @@ bool monk_heavy_armor(int Ind) {
 /* Are all the weapons wielded of the right type ? */
 int get_weaponmastery_skill(player_type *p_ptr, object_type *o_ptr) {
 	/* no item */
-	if (!o_ptr->k_idx) return -1;
+	if (!o_ptr->k_idx) return(-1);
 
 #if 1
 	/* EXPERIMENTAL - Hack for priests:
@@ -2786,9 +2786,9 @@ int get_weaponmastery_skill(player_type *p_ptr, object_type *o_ptr) {
 	case TV_BLUNT:		return SKILL_BLUNT;
 	case TV_POLEARM:	return SKILL_POLEARM;
 	/* not a weapon */
-	case TV_SHIELD:		return -1;
+	case TV_SHIELD:		return(-1);
 	/* unknown weapon type (TV_MSTAFF, maybe TV_DIGGING [EQUIPPABLE_DIGGERS]) */
-	default:		return -1;
+	default:		return(-1);
 	}
 }
 
@@ -2799,7 +2799,7 @@ int get_archery_skill(player_type *p_ptr) {
 
 	o_ptr = &p_ptr->inventory[INVEN_BOW];
 
-	if (!o_ptr->k_idx) return -1;
+	if (!o_ptr->k_idx) return(-1);
 
 	/* Hack -- Boomerang skill */
 	if (o_ptr->tval == TV_BOOMERANG) return SKILL_BOOMERANG;
@@ -2834,7 +2834,7 @@ int calc_blows_obj(int Ind, object_type *o_ptr) {
 	/* Extract the item flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
-	if (f4 & TR4_NEVER_BLOW) return 0;
+	if (f4 & TR4_NEVER_BLOW) return(0);
 
 	/* cap for Grond. Heaviest normal weapon is MoD at 40.0, which Grond originally was, too. - C. Blue */
 	if (eff_weight > 400) eff_weight = 400;
@@ -2927,7 +2927,7 @@ int calc_blows_obj(int Ind, object_type *o_ptr) {
 		}
 	}
 
-	return (num_blow);
+	return(num_blow);
 }
 
 int calc_blows_weapons(int Ind) {
@@ -2992,7 +2992,7 @@ int calc_crit_obj(int Ind, object_type *o_ptr) {
 		}
 	}
 
-	return (xcrit);
+	return(xcrit);
 }
 
 

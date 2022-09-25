@@ -29,13 +29,13 @@ bool rune_enchant(int Ind, int item) {
 	/* Not worn? */
 	if (INVEN_WIELD > item) {
 		msg_print(Ind, "You must be wearing that to attune the rune.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Artifact? */
 	if (o_ptr->name1) {
 		msg_print(Ind, "The artifact is unaffected by your attempts!");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* One sigil per element! */
@@ -49,7 +49,7 @@ bool rune_enchant(int Ind, int item) {
 	 || ((p_ptr->inventory[INVEN_HANDS].sigil == sval) && item != INVEN_HANDS)
 	 || ((p_ptr->inventory[INVEN_FEET].sigil == sval) && item != INVEN_FEET)) {
 		msg_format(Ind, "You may only inscribe one sigil per element.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Store the SVAL and SSEED */
@@ -72,7 +72,7 @@ bool rune_enchant(int Ind, int item) {
 	/* Clean up... */
 	inven_item_optimize(Ind, item);
 
-	return TRUE;
+	return(TRUE);
 }
 
 /*
@@ -89,7 +89,7 @@ bool warding_rune(int Ind, byte typ, int dam, byte rad) {
 	struct c_special *cs_ptr;
 
 	/* Allocate memory for a new rune */
-	if (!(cs_ptr = AddCS(c_ptr, CS_RUNE))) return FALSE;
+	if (!(cs_ptr = AddCS(c_ptr, CS_RUNE))) return(FALSE);
 
 	/* Preserve the old feature */
 	cs_ptr->sc.rune.feat = c_ptr->feat;
@@ -98,7 +98,7 @@ bool warding_rune(int Ind, byte typ, int dam, byte rad) {
 	if (!cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_RUNE)) {
 		msg_print(Ind, "You cannot place a glyph here.");
 		cs_erase(c_ptr, cs_ptr);
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Store info */
@@ -107,7 +107,7 @@ bool warding_rune(int Ind, byte typ, int dam, byte rad) {
 	cs_ptr->sc.rune.rad = rad;
 	cs_ptr->sc.rune.typ = typ;
 
-	return TRUE;
+	return(TRUE);
 }
 
 /*
@@ -161,9 +161,9 @@ bool warding_rune_break(int m_idx) {
 	}
 
 	/* Return True if the monster died, false otherwise! */
-	return (zcave[my][mx].m_idx == 0 ? TRUE : FALSE);
+	return(zcave[my][mx].m_idx == 0 ? TRUE : FALSE);
 }
 /* For PvP */
 bool py_warding_rune_break(int m_idx) {
-	return FALSE;
+	return(FALSE);
 }

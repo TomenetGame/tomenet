@@ -285,7 +285,7 @@ static bool int_outof(monster_race *r_ptr, int prob) {
 	if (!(r_ptr->flags2 & RF2_SMART)) prob = prob / 2;
 
 	/* Roll the dice */
-	return (rand_int(100) < prob);
+	return(rand_int(100) < prob);
 }
 
 
@@ -819,7 +819,7 @@ static bool summon_possible(worldpos *wpos, int y1, int x1) {
 		if (zcave[y][x].feat == FEAT_RUNE) continue;
 #if 0
 		/* Nor on the between */
-		if (cave[y][x].feat == FEAT_BETWEEN) return (FALSE);
+		if (cave[y][x].feat == FEAT_BETWEEN) return(FALSE);
 
 		/* ...nor on the Pattern */
 		if ((cave[y][x].feat >= FEAT_PATTERN_START)
@@ -828,10 +828,10 @@ static bool summon_possible(worldpos *wpos, int y1, int x1) {
 
 		/* Require empty floor grid in line of sight */
 		/* Changed to allow summoning on mountains */
-		if (cave_empty_bold(zcave,y,x) && los(wpos, y1,x1,y,x)) return (TRUE);
+		if (cave_empty_bold(zcave,y,x) && los(wpos, y1,x1,y,x)) return(TRUE);
 #if 0
 		if ((cave_empty_bold(zcave,y,x) || cave_empty_mountain(zcave,y,x)) &&
-		     los(wpos, y1,x1,y,x)) return (TRUE);
+		     los(wpos, y1,x1,y,x)) return(TRUE);
 #endif
 	}
 
@@ -850,7 +850,7 @@ static bool summon_possible(worldpos *wpos, int y1, int x1) {
 			if (zcave[y][x].feat == FEAT_RUNE) continue;
 #if 0
 			/* Nor on the between */
-			if (cave[y][x].feat == FEAT_BETWEEN) return (FALSE);
+			if (cave[y][x].feat == FEAT_BETWEEN) return(FALSE);
 
 			/* ...nor on the Pattern */
 			if ((cave[y][x].feat >= FEAT_PATTERN_START)
@@ -859,21 +859,21 @@ static bool summon_possible(worldpos *wpos, int y1, int x1) {
 
 			/* Require empty floor grid in line of sight */
 			/* Changed for summoning on mountains */
-			if (cave_empty_bold(zcave,y,x) && los(wpos, y1,x1,y,x)) return (TRUE);
+			if (cave_empty_bold(zcave,y,x) && los(wpos, y1,x1,y,x)) return(TRUE);
 #if 0
 			if ((cave_empty_bold(zcave,y,x) || cave_empty_mountain(zcave,y,x)) &&
-			    los(wpos, y1,x1,y,x)) return (TRUE);
+			    los(wpos, y1,x1,y,x)) return(TRUE);
 #endif
 		}
 	}
 #endif	// 0
-	return FALSE;
+	return(FALSE);
 }
 
 /*
  * Determine if a bolt spell will hit the player.
  *
- * This is exactly like "projectable", but it will return FALSE if a monster
+ * This is exactly like "projectable", but it will return(FALSE) if a monster
  * is in the way.
  */
 /* Potential high-profile BUG: bool los() 'Travel horiz/vert..' probably differs from
@@ -884,7 +884,7 @@ static bool summon_possible(worldpos *wpos, int y1, int x1) {
 #ifdef DOUBLE_LOS_SAFETY
 static bool clean_shot_DLS(worldpos *wpos, int y1, int x1, int y2, int x2, int range, int m_idx);
 static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2, int range, int m_idx) {
-	return (clean_shot_DLS(wpos, y1, x1, y2, x2, range, m_idx) || clean_shot_DLS(wpos, y2, x2, y1, x1, range, m_idx));
+	return(clean_shot_DLS(wpos, y1, x1, y2, x2, range, m_idx) || clean_shot_DLS(wpos, y2, x2, y1, x1, range, m_idx));
 }
 static bool clean_shot_DLS(worldpos *wpos, int y1, int x1, int y2, int x2, int range, int m_idx) {
 #else
@@ -917,9 +917,9 @@ static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2, int range
 		if ((x == x2) && (y == y2)) {
 #ifdef CRUDE_TARGETTING_LOS_FIX
 			/* (bugfix via bad hack) ensure monsters cant snipe us from out of LoS */
-			if (!los(wpos, y1, x1, y2, x2)) return FALSE;
+			if (!los(wpos, y1, x1, y2, x2)) return(FALSE);
 #endif
-			return (TRUE);
+			return(TRUE);
 		}
 
 		/* Calculate the new location */
@@ -927,13 +927,13 @@ static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2, int range
 	}
 
 	/* Assume obstruction */
-	return (FALSE);
+	return(FALSE);
 }
 /* Relates to clean_shot like projectable_wall to projectable */
 #ifdef DOUBLE_LOS_SAFETY
 static bool clean_shot_wall_DLS(worldpos *wpos, int y1, int x1, int y2, int x2, int range, int m_idx);
 static bool clean_shot_wall(worldpos *wpos, int y1, int x1, int y2, int x2, int range, int m_idx) {
-	return (clean_shot_wall_DLS(wpos, y1, x1, y2, x2, range, m_idx) || clean_shot_wall_DLS(wpos, y2, x2, y1, x1, range, m_idx));
+	return(clean_shot_wall_DLS(wpos, y1, x1, y2, x2, range, m_idx) || clean_shot_wall_DLS(wpos, y2, x2, y1, x1, range, m_idx));
 }
 static bool clean_shot_wall_DLS(worldpos *wpos, int y1, int x1, int y2, int x2, int range, int m_idx) {
 #else
@@ -963,9 +963,9 @@ static bool clean_shot_wall(worldpos *wpos, int y1, int x1, int y2, int x2, int 
 		if ((x == x2) && (y == y2)) {
 #ifdef CRUDE_TARGETTING_LOS_FIX
 			/* (bugfix via bad hack) ensure monsters cant snipe us from out of LoS */
-			if (!los(wpos, y1, x1, y2, x2)) return FALSE;
+			if (!los(wpos, y1, x1, y2, x2)) return(FALSE);
 #endif
-			return (TRUE);
+			return(TRUE);
 		}
 
 		/* Never pass through walls */
@@ -976,7 +976,7 @@ static bool clean_shot_wall(worldpos *wpos, int y1, int x1, int y2, int x2, int 
 	}
 
 	/* Assume obstruction */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -1169,7 +1169,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u3
 		f0 &= f0_mask;
 
 		/* Anything left? */
-		if (!(f4 || f5 || f6 || f0)) return (0);
+		if (!(f4 || f5 || f6 || f0)) return(0);
 	}
 
 #endif /* STUPID_MONSTER_SPELLS */
@@ -1259,10 +1259,10 @@ if (season_halloween) {
 }
 
 	/* Paranoia */
-	if (num == 0) return 0;
+	if (num == 0) return(0);
 
 	/* Pick at random */
-	return (spells[rand_int(num)]);
+	return(spells[rand_int(num)]);
 }
 
 static void administrative_push(int Ind, monster_type *m_ptr, cave_type **zcave) {
@@ -1350,10 +1350,10 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 
 
 	/* hack: if we cannot auto-retaliate vs a monster than we dont intercept either */
-	if (r_ptr->flags8 & RF8_NO_AUTORET) return FALSE;
+	if (r_ptr->flags8 & RF8_NO_AUTORET) return(FALSE);
 
 	/* cannot intercept elementals and vortices (not '#' at this time) */
-	if (strchr("Ev*", r_ptr->d_char)) return FALSE;
+	if (strchr("Ev*", r_ptr->d_char)) return(FALSE);
 
 	/* paranoia? */
 	if (!(zcave = getcave(wpos))) return(FALSE);
@@ -1379,7 +1379,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 		/* can't intercept while in wraithform if monster isn't */
 		if (q_ptr->tim_wraith &&
 		    ((r_ptr->flags2 & RF2_KILL_WALL) || !(r_ptr->flags2 & RF2_PASS_WALL)))
-			return FALSE;
+			return(FALSE);
 
 		if (q_ptr->cloaked || q_ptr->shadow_running) continue;
 
@@ -1484,7 +1484,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 			    format("\377%c%s intercepts it!", COLOUR_IC_NEAR, q_ptr->name));
 
 			administrative_push(i, m_ptr, zcave);
-			return TRUE;
+			return(TRUE);
 		}
 #else
 		if (grabchance >= INTERCEPT_CAP) {
@@ -1531,7 +1531,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 		    format("\377%c%s intercepts it!", COLOUR_IC_NEAR, Players[i_top]->name));
 
 		administrative_push(i_top, m_ptr, zcave);
-		return TRUE;
+		return(TRUE);
 	}
  #ifdef COMBO_AM_IC_CAP
 	m_ptr->intercepted = grabchance_top; //we tried
@@ -1543,7 +1543,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 #endif
 
 	/* Assume no grabbing */
-	return FALSE;
+	return(FALSE);
 }
 
 
@@ -1567,7 +1567,7 @@ static bool monst_check_antimagic(int Ind, int m_idx) {
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* this one just cannot be suppressed */
-	if (m_ptr->r_idx == RI_LIVING_LIGHTNING || m_ptr->r_idx == RI_BLUE) return FALSE;
+	if (m_ptr->r_idx == RI_LIVING_LIGHTNING || m_ptr->r_idx == RI_BLUE) return(FALSE);
 
 	/* bad hack: Also abuse this function to check for silence-effect - C. Blue */
 	if (m_ptr->silenced > 0 && magik(ANTIMAGIC_CAP)) { //could also use INTERCEPT_CAP instead
@@ -1655,7 +1655,7 @@ static bool monst_check_antimagic(int Ind, int m_idx) {
 			    format("\377%c%s's anti-magic field disrupts its attempts.", COLOUR_AM_NEAR, Players[anti_Ind]->name));
 #endif
 		}
-		return TRUE;
+		return(TRUE);
 	}
 
 #if 0
@@ -1709,13 +1709,13 @@ static bool monst_check_antimagic(int Ind, int m_idx) {
 			sound_near_monster(m_idx, "am_field", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 
-			return TRUE;
+			return(TRUE);
 		}
 	}
 #endif	// 0
 
 	/* Assume no antimagic */
-	return FALSE;
+	return(FALSE);
 }
 
 /* (Note that AM fields of players other than <Ind> will actually have only halved effect.) */
@@ -1758,7 +1758,7 @@ int world_check_antimagic(int Ind) {
 	if (magik(highest_antichance)) return anti_Ind;
 
 	/* Assume no antimagic effect */
-	return 0;
+	return(0);
 }
 
 /*
@@ -1817,7 +1817,7 @@ static int near_hit(int m_idx, int *yp, int *xp, int rad)
 			(*xp) = x;
 
 			/* Found nice place */
-			return (d);
+			return(d);
 		}
 	}
 
@@ -1855,17 +1855,17 @@ static int near_hit(int m_idx, int *yp, int *xp, int rad)
 						(*xp) = x;
 
 						/* Found nice place */
-						return (d);
+						return(d);
 					}
 				}
 			}
 		}
-		if (giveup) return (99);
+		if (giveup) return(99);
 	}
 #endif	// 0
 
 	/* No projectable place */
-	return (99);
+	return(99);
 }
 
 
@@ -2020,19 +2020,19 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 
 	wpos = &m_ptr->wpos;
-	if (!(zcave = getcave(wpos))) return FALSE;
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Don't attack your master */
-	if (p_ptr->id == m_ptr->owner) return (FALSE);
+	if (p_ptr->id == m_ptr->owner) return(FALSE);
 
 	/* Cannot cast spells when confused */
-	if (m_ptr->confused) return (FALSE);
+	if (m_ptr->confused) return(FALSE);
 
 	/* Hack -- Extract the spell probability */
 	chance = (r_ptr->freq_innate + r_ptr->freq_spell) / 2;
 
 	/* Not allowed to cast spells */
-	//if (!chance) return (FALSE);
+	//if (!chance) return(FALSE);
 
 	/* Specialty for AI_HYBRID (Tzeentch) so he actually does melee for a change despite casting 1_IN_1 */
 	if ((r_ptr->flags3 & RF3_AI_HYBRID) && !(m_ptr->mind & HYBRID_ANNOY)
@@ -2041,7 +2041,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		chance = 1000 / ((1000 / chance) + 10);
 
 	/* Only do spells occasionally */
-	if (rand_int(100) >= chance) return (FALSE);
+	if (rand_int(100) >= chance) return(FALSE);
 
 	/* Hack: Shrieking Test Blob always keeps shrieking (non-aggravating/disturbing! Just for sound test :D) */
 	if (m_ptr->r_idx == RI_BLOB_SHRIEK) {
@@ -2056,7 +2056,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 #ifdef USE_SOUND_2010
 		sound_near_monster(m_idx, "shriek", NULL, SFX_TYPE_MON_SPELL);
 #endif
-		return TRUE;
+		return(TRUE);
 	}
 
 
@@ -2116,7 +2116,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	 */
 #ifndef	STUPID_MONSTER_SPELLS /* see MAX_SIGHT in process_monsters */
 	if (m_ptr->cdis > MAX_RANGE) {
-		if (!los(wpos, y, x, m_ptr->fy, m_ptr->fx)) return (FALSE);
+		if (!los(wpos, y, x, m_ptr->fy, m_ptr->fx)) return(FALSE);
 
 		f4 &= (RF4_INDIRECT_MASK | (m_ptr->cdis <= MAX_RANGE + 12 ? RF4_SUMMON_MASK : 0));
 		f5 &= (RF5_INDIRECT_MASK | (m_ptr->cdis <= MAX_RANGE + 12 ? RF5_SUMMON_MASK : 0));
@@ -2124,7 +2124,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		f0 &= (RF0_INDIRECT_MASK | (m_ptr->cdis <= MAX_RANGE + 12 ? RF0_SUMMON_MASK : 0));
 
 		/* No spells left */
-		if (!f4 && !f5 && !f6 && !f0) return (FALSE);
+		if (!f4 && !f5 && !f6 && !f0) return(FALSE);
 
 		normal = FALSE;
 		direct = FALSE;
@@ -2139,29 +2139,29 @@ bool make_attack_spell(int Ind, int m_idx) {
  #endif
 	}
 #else	/* STUPID_MONSTER_SPELLS */
-	if (m_ptr->cdis > MAX_RANGE) return (FALSE);
+	if (m_ptr->cdis > MAX_RANGE) return(FALSE);
 #endif	/* STUPID_MONSTER_SPELLS */
 
 	/* Hack -- require projectable player */
 	if (normal) {
 		/* Check range */
-		//if (m_ptr->cdis > MAX_RANGE) return (FALSE);
+		//if (m_ptr->cdis > MAX_RANGE) return(FALSE);
 
 		/* Check path */
 #if INDIRECT_FREQ < 1
-		if (!projectable_wall(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px, MAX_RANGE)) return (FALSE);
+		if (!projectable_wall(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px, MAX_RANGE)) return(FALSE);
 #else
 		summon = (f4 & (RF4_SUMMON_MASK)) || (f5 & (RF5_SUMMON_MASK)) || (f6 & (RF6_SUMMON_MASK)) || (f0 & (RF0_SUMMON_MASK));
 
 		if (!projectable_wall(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px, MAX_RANGE)) {
 #ifdef STUPID_Q
-			if (r_ptr->d_char == 'Q') return (FALSE);
+			if (r_ptr->d_char == 'Q') return(FALSE);
 #endif	// STUPID_Q
 #ifdef Q_LOS_EXCEPTION
 			if (r_ptr->d_char == 'Q') summon = FALSE;
 #endif	// Q_LOS_EXCEPTION
 
-			if (!magik(INDIRECT_FREQ)) return (FALSE);
+			if (!magik(INDIRECT_FREQ)) return(FALSE);
 
 			direct = FALSE;
 
@@ -2195,7 +2195,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			f0 &= ~(RF0_DIRECT_MASK); /* (HACK) added - unsure if cool */
 
 			/* No spells left */
-			if (!f4 && !f5 && !f6 && !f0) return (FALSE);
+			if (!f4 && !f5 && !f6 && !f0) return(FALSE);
 		}
 #endif	// INDIRECT_FREQ
 	}
@@ -2213,7 +2213,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		f0 &= RF0_INT_MASK;
 
 		/* No spells left */
-		if (!f4 && !f5 && !f6 && !f0) return (FALSE);
+		if (!f4 && !f5 && !f6 && !f0) return(FALSE);
 	}
 
 
@@ -2223,7 +2223,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	remove_bad_spells(m_idx, &f4, &f5, &f6, &f6, &f0);
 
 	/* No spells left */
-	if (!f4 && !f5 && !f6 && !f0) return (FALSE);
+	if (!f4 && !f5 && !f6 && !f0) return(FALSE);
 
 #endif
 
@@ -2289,11 +2289,11 @@ bool make_attack_spell(int Ind, int m_idx) {
 #endif
 
 	/* No spells left */
-	if (!f4 && !f5 && !f6 && !f0) return (FALSE);
+	if (!f4 && !f5 && !f6 && !f0) return(FALSE);
 #endif	// STUPID_MONSTER_SPELLS
 
 	/* Stop if player is dead or gone */
-	if (p_ptr->suicided || p_ptr->death || p_ptr->new_level_flag) return (FALSE);
+	if (p_ptr->suicided || p_ptr->death || p_ptr->new_level_flag) return(FALSE);
 
 
 	/* Get the monster name (or "it") */
@@ -2305,7 +2305,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	thrown_spell = choose_attack_spell(Ind, m_idx, f4, f5, f6, f0, direct);
 
 	/* Abort if no spell was chosen */
-	if (!thrown_spell) return (FALSE);
+	if (!thrown_spell) return(FALSE);
 
 #if 0 /* currently, NO_MAGIC only inhibits player's wraithform and probtravel */
 	if (thrown_spell >= RF5_OFFSET && l_ptr && l_ptr->flags1 & LF1_NO_MAGIC) return(FALSE);
@@ -2333,13 +2333,13 @@ bool make_attack_spell(int Ind, int m_idx) {
 		/* Fail chance */
 		if (!admin && (magik(25 - (rlev + 3) / 4) || magik(factor))) {
 			if (direct) msg_format(Ind, "%^s tries to cast a spell, but fails.", m_name);
-			return (TRUE);
+			return(TRUE);
 		}
 
  #ifdef GENERIC_INTERCEPTION
-		if (monst_check_grab(m_idx, 85, "cast")) return (TRUE);
+		if (monst_check_grab(m_idx, 85, "cast")) return(TRUE);
  #else
-		if (monst_check_grab(m_idx, 75, "cast")) return (TRUE);
+		if (monst_check_grab(m_idx, 75, "cast")) return(TRUE);
  #endif
 	}
 #endif	// STUPID_MONSTER_SPELLS
@@ -3921,7 +3921,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 #endif
 
 	/* A spell was cast (or antimagic'ed) */
-	return (TRUE);
+	return(TRUE);
 }
 
 /* Doppelganger - don't cast like a monster, but pseudo-cast like a player;
@@ -3989,10 +3989,10 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 
 
 	wpos = &m_ptr->wpos;
-	if (!(zcave = getcave(wpos))) return FALSE;
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Don't attack your master */
-	if (p_ptr->id == m_ptr->owner) return (FALSE);
+	if (p_ptr->id == m_ptr->owner) return(FALSE);
 
 
 
@@ -4007,7 +4007,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	//runecraft..
 	/* Don't forget to check for own AM shell/field maybe? Hmm. */
 
-	if (m_ptr->cdis > MAX_RANGE) return FALSE;
+	if (m_ptr->cdis > MAX_RANGE) return(FALSE);
 
 	/* Analyze target's current live-abilities that it can utilize and copy them! */
 
@@ -4021,17 +4021,17 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 #endif
 
 	/* A spell was cast (or antimagic'ed) */
-	return (TRUE);
+	return(TRUE);
 
 
 	/* Cannot cast spells when confused */
-	if (m_ptr->confused) return (FALSE);
+	if (m_ptr->confused) return(FALSE);
 
 	/* Hack -- Extract the spell probability */
 	chance = (r_ptr->freq_innate + r_ptr->freq_spell) / 2;
 
 	/* Not allowed to cast spells */
-	//if (!chance) return (FALSE);
+	//if (!chance) return(FALSE);
 
 	/* Specialty for AI_HYBRID (Tzeentch) so he actually does melee for a change despite casting 1_IN_1 */
 	if ((r_ptr->flags3 & RF3_AI_HYBRID) && !(m_ptr->mind & HYBRID_ANNOY)
@@ -4040,7 +4040,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		chance = 1000 / ((1000 / chance) + 10);
 
 	/* Only do spells occasionally */
-	if (rand_int(100) >= chance) return (FALSE);
+	if (rand_int(100) >= chance) return(FALSE);
 
 
 	/* XXX XXX XXX Handle "track_target" option (?) */
@@ -4099,7 +4099,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	 */
 #ifndef	STUPID_MONSTER_SPELLS /* see MAX_SIGHT in process_monsters */
 	if (m_ptr->cdis > MAX_RANGE) {
-		if (!los(wpos, y, x, m_ptr->fy, m_ptr->fx)) return (FALSE);
+		if (!los(wpos, y, x, m_ptr->fy, m_ptr->fx)) return(FALSE);
 
 		f4 &= (RF4_INDIRECT_MASK | (m_ptr->cdis <= MAX_RANGE + 12 ? RF4_SUMMON_MASK : 0));
 		f5 &= (RF5_INDIRECT_MASK | (m_ptr->cdis <= MAX_RANGE + 12 ? RF5_SUMMON_MASK : 0));
@@ -4107,7 +4107,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		f0 &= (RF0_INDIRECT_MASK | (m_ptr->cdis <= MAX_RANGE + 12 ? RF0_SUMMON_MASK : 0));
 
 		/* No spells left */
-		if (!f4 && !f5 && !f6 && !f0) return (FALSE);
+		if (!f4 && !f5 && !f6 && !f0) return(FALSE);
 
 		normal = FALSE;
 		direct = FALSE;
@@ -4122,29 +4122,29 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
  #endif
 	}
 #else	/* STUPID_MONSTER_SPELLS */
-	if (m_ptr->cdis > MAX_RANGE) return (FALSE);
+	if (m_ptr->cdis > MAX_RANGE) return(FALSE);
 #endif	/* STUPID_MONSTER_SPELLS */
 
 	/* Hack -- require projectable player */
 	if (normal) {
 		/* Check range */
-		//if (m_ptr->cdis > MAX_RANGE) return (FALSE);
+		//if (m_ptr->cdis > MAX_RANGE) return(FALSE);
 
 		/* Check path */
 #if INDIRECT_FREQ < 1
-		if (!projectable_wall(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px, MAX_RANGE)) return (FALSE);
+		if (!projectable_wall(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px, MAX_RANGE)) return(FALSE);
 #else
 		summon = (f4 & (RF4_SUMMON_MASK)) || (f5 & (RF5_SUMMON_MASK)) || (f6 & (RF6_SUMMON_MASK)) || (f0 & (RF0_SUMMON_MASK));
 
 		if (!projectable_wall(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px, MAX_RANGE)) {
 #ifdef STUPID_Q
-			if (r_ptr->d_char == 'Q') return (FALSE);
+			if (r_ptr->d_char == 'Q') return(FALSE);
 #endif	// STUPID_Q
 #ifdef Q_LOS_EXCEPTION
 			if (r_ptr->d_char == 'Q') summon = FALSE;
 #endif	// Q_LOS_EXCEPTION
 
-			if (!magik(INDIRECT_FREQ)) return (FALSE);
+			if (!magik(INDIRECT_FREQ)) return(FALSE);
 
 			direct = FALSE;
 
@@ -4178,7 +4178,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			f0 &= ~(RF0_DIRECT_MASK); /* (HACK) added - unsure if cool */
 
 			/* No spells left */
-			if (!f4 && !f5 && !f6 && !f0) return (FALSE);
+			if (!f4 && !f5 && !f6 && !f0) return(FALSE);
 		}
 #endif	// INDIRECT_FREQ
 	}
@@ -4196,7 +4196,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		f0 &= RF0_INT_MASK;
 
 		/* No spells left */
-		if (!f4 && !f5 && !f6 && !f0) return (FALSE);
+		if (!f4 && !f5 && !f6 && !f0) return(FALSE);
 	}
 
 
@@ -4206,7 +4206,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	remove_bad_spells(m_idx, &f4, &f5, &f6, &f6, &f0);
 
 	/* No spells left */
-	if (!f4 && !f5 && !f6 && !f0) return (FALSE);
+	if (!f4 && !f5 && !f6 && !f0) return(FALSE);
 
 #endif
 
@@ -4272,11 +4272,11 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 #endif
 
 	/* No spells left */
-	if (!f4 && !f5 && !f6 && !f0) return (FALSE);
+	if (!f4 && !f5 && !f6 && !f0) return(FALSE);
 #endif	// STUPID_MONSTER_SPELLS
 
 	/* Stop if player is dead or gone */
-	if (p_ptr->suicided || p_ptr->death || p_ptr->new_level_flag) return (FALSE);
+	if (p_ptr->suicided || p_ptr->death || p_ptr->new_level_flag) return(FALSE);
 
 
 	/* Get the monster name (or "it") */
@@ -4288,7 +4288,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	thrown_spell = choose_attack_spell(Ind, m_idx, f4, f5, f6, f0, direct);
 
 	/* Abort if no spell was chosen */
-	if (!thrown_spell) return (FALSE);
+	if (!thrown_spell) return(FALSE);
 
 #if 0
 	if (thrown_spell > 127 && l_ptr && l_ptr->flags1 & LF1_NO_MAGIC)
@@ -4308,12 +4308,12 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 
 		if (magik(25 - (rlev + 3) / 4) || magik(factor)) {
 			if (direct) msg_format(Ind, "%^s tries to cast a spell, but fails.", m_name);
-			return (TRUE);
+			return(TRUE);
 		}
  #ifdef GENERIC_INTERCEPTION
-		if (monst_check_grab(m_idx, 85, "cast")) return (TRUE);
+		if (monst_check_grab(m_idx, 85, "cast")) return(TRUE);
  #else
-		if (monst_check_grab(m_idx, 75, "cast")) return (TRUE);
+		if (monst_check_grab(m_idx, 75, "cast")) return(TRUE);
  #endif
 	}
 #endif	// STUPID_MONSTER_SPELLS
@@ -5856,7 +5856,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 #endif
 
 	/* A spell was cast (or antimagic'ed) */
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -5890,7 +5890,7 @@ int mon_will_run(int Ind, int m_idx) {
  #if 0 // I'll run instead!
 	/* Hack -- aquatic life outa water */
 	if (zcave[m_ptr->fy][m_ptr->fx].feat != FEAT_DEEP_WATER) {
-		if (r_ptr->flags7 & RF7_AQUATIC) return (TRUE);
+		if (r_ptr->flags7 & RF7_AQUATIC) return(TRUE);
 	} else {
 		if (!(r_ptr->flags3 & RF3_UNDEAD) &&
 		    !(r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY) ))
@@ -5904,10 +5904,10 @@ int mon_will_run(int Ind, int m_idx) {
 #endif
 
 	/* Keep monsters from running too far away */
-	if (m_ptr->cdis > MAX_SIGHT + 5) return (FALSE);
+	if (m_ptr->cdis > MAX_SIGHT + 5) return(FALSE);
 
 	/* All "afraid" monsters will run away */
-	if (m_ptr->monfear) return (TRUE);
+	if (m_ptr->monfear) return(TRUE);
 
 #ifdef ALLOW_TERROR /* player level >> monster level -> 'terror' */
 	/* only if monster has a mind */
@@ -5916,7 +5916,7 @@ int mon_will_run(int Ind, int m_idx) {
 		return(FALSE);
 
 	/* Nearby monsters will not become terrified */
-	if (m_ptr->cdis <= 5) return (FALSE);
+	if (m_ptr->cdis <= 5) return(FALSE);
 
 	/* Examine player power (level) */
 	p_lev = p_ptr->lev;
@@ -5927,8 +5927,8 @@ int mon_will_run(int Ind, int m_idx) {
 	m_lev = r_ptr->level * 3 / 2 + (m_idx & 0x08) + 25;
 
 	/* Optimize extreme cases below */
-	if (m_lev > p_lev + 4) return (FALSE);
-	if (m_lev + 4 <= p_lev) return (TRUE);
+	if (m_lev > p_lev + 4) return(FALSE);
+	if (m_lev + 4 <= p_lev) return(TRUE);
 
 	/* Examine player health */
 	p_chp = p_ptr->chp;
@@ -5943,11 +5943,11 @@ int mon_will_run(int Ind, int m_idx) {
 	m_val = (m_lev * m_mhp) + (m_chp << 2);	/* div m_mhp */
 
 	/* Strong players scare strong monsters */
-	if (p_val * m_mhp > m_val * p_mhp) return (TRUE);
+	if (p_val * m_mhp > m_val * p_mhp) return(TRUE);
 #endif
 
 	/* Assume no terror */
-	return (FALSE);
+	return(FALSE);
 }
 
 
@@ -5984,14 +5984,14 @@ static bool get_moves_flow(int Ind, int m_idx, int *yp, int *xp) {
 	player_type *p_ptr = Players[Ind];
 	cave_type **zcave, *c_ptr;
 
-	if (!(zcave = getcave(&m_ptr->wpos))) return FALSE;
+	if (!(zcave = getcave(&m_ptr->wpos))) return(FALSE);
 
 	/* Monster flowing disabled */
-	if (!flow_by_sound && !flow_by_smell) return (FALSE);
+	if (!flow_by_sound && !flow_by_smell) return(FALSE);
 
 	/* Monster can go through rocks */
-	if (r_ptr->flags2 & RF2_PASS_WALL) return (FALSE);
-	if (r_ptr->flags2 & RF2_KILL_WALL) return (FALSE);
+	if (r_ptr->flags2 & RF2_PASS_WALL) return(FALSE);
+	if (r_ptr->flags2 & RF2_KILL_WALL) return(FALSE);
 
 	/* Monster location */
 	y1 = m_ptr->fy;
@@ -6003,18 +6003,18 @@ static bool get_moves_flow(int Ind, int m_idx, int *yp, int *xp) {
 	/* The player is not currently near the monster grid */
 	if (c_ptr->when < zcave[py][px]->when) {
 		/* The player has never been near the monster grid */
-		if (!c_ptr->when) return (FALSE);
+		if (!c_ptr->when) return(FALSE);
 
 		/* The monster is not allowed to track the player */
-		if (!flow_by_smell) return (FALSE);
+		if (!flow_by_smell) return(FALSE);
 	}
 
 	/* Monster is too far away to notice the player */
-	if (c_ptr->cost > MONSTER_FLOW_DEPTH) return (FALSE);
-	if (c_ptr->cost > r_ptr->aaf) return (FALSE);
+	if (c_ptr->cost > MONSTER_FLOW_DEPTH) return(FALSE);
+	if (c_ptr->cost > r_ptr->aaf) return(FALSE);
 
 	/* Hack -- Player can see us, run towards him */
-	if (player_has_los_bold(Ind, y1, x1)) return (FALSE);
+	if (player_has_los_bold(Ind, y1, x1)) return(FALSE);
 
 	/* Check nearby grids, diagonals first */
 	for (i = 7; i >= 0; i--) {
@@ -6041,10 +6041,10 @@ static bool get_moves_flow(int Ind, int m_idx, int *yp, int *xp) {
 	}
 
 	/* No legal move (?) */
-	if (!when) return (FALSE);
+	if (!when) return(FALSE);
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 #endif
@@ -6085,22 +6085,22 @@ static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 	bool skip, end = FALSE, found = FALSE;
 
 	/* Did we get a spare A* table? */
-	if (m_ptr->astar_idx == -1) return -2;
+	if (m_ptr->astar_idx == -1) return(-2);
 
  #if 0 /* such a monster shouldn't have gotten ASTAR flag in the first place */
 	/* Monster can go through permanent rocks even? Morgoth only, and he's never on
 	   levels with mountains or other perma-wall obstacles that he cannot destroy. */
-	if ((r_ptr->flags2 & RF2_PASS_WALL) && (r_ptr->flags2 & RF2_KILL_WALL)) return -2;
+	if ((r_ptr->flags2 & RF2_PASS_WALL) && (r_ptr->flags2 & RF2_KILL_WALL)) return(-2);
  #endif
 
-	if (!(zcave = getcave(&m_ptr->wpos))) return -2; //paranoia
+	if (!(zcave = getcave(&m_ptr->wpos))) return(-2); //paranoia
 
 	/* Monster location */
 	mx = m_ptr->fx;
 	my = m_ptr->fy;
 
 	/* Hack -- Player can see us, run towards him */
-	if (player_has_los_bold(Ind, my, mx)) return -2;
+	if (player_has_los_bold(Ind, my, mx)) return(-2);
 
 	ao = &astar_info_open[m_ptr->astar_idx];
 	ac = &astar_info_closed[m_ptr->astar_idx];
@@ -6140,7 +6140,7 @@ static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 		/* Are we allowed to set it now? */
 		//hack: we abused xp/yp to indicate that it's not yet our turn
 		if (*xp == mx && *yp == my) {
-			return -3; //not yet
+			return(-3); //not yet
 		}
 
 		switch (ao->result) {
@@ -6196,7 +6196,7 @@ static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 			ao->nodes = aoc;
 			ac->nodes = acc;
 
-			return -3;
+			return(-3);
 		}
  #endif
 		minF = 8192; //something higher than any expected movement cost, even in a maze level =P
@@ -6379,7 +6379,7 @@ s_printf("ASTAR: -1 (found, %d,%d,%d)\n", aoc, acc, turn);
 		*yp = acnode[i].y;
  #endif
 
-		return -1;
+		return(-1);
 	}
 
 	/* No legal move at all, aka the only node we checked
@@ -6395,7 +6395,7 @@ s_printf("ASTAR: 0 (no moves, %d,%d,%d)\n", aoc, acc, turn);
  #endif
 		/* Don't do anything herre if we can't move..
 		   get_moves() will try to cast blink or teleport in this case. */
-		return 0;
+		return(0);
 	}
 
 	/* We didn't find a clear way, ending up out of memory.
@@ -6413,7 +6413,7 @@ s_printf("ASTAR: 1 (indirect, %d,%d,%d)\n", aoc, acc, turn);
 	if (*xp == mx && *yp == my) //hack: we abused xp/yp to indicate that it's not yet our turn
 		ao->result = 1;
  #endif
-	return 1;
+	return(1);
 #else
 	/* Scan all grids on the closed list to find the one closest to the target.
 	   Condition: Must be an improvement over our current position! (Otherwise
@@ -6464,7 +6464,7 @@ s_printf("ASTAR: 1 (indirect, %d,%d,%d) -> [%d]:%d,%d d:%d\n", aoc, acc, turn, i
 		*yp = acnode[i].y;
  #endif
 
-		return 1;
+		return(1);
 	}
 #endif
 
@@ -6477,7 +6477,7 @@ s_printf("ASTAR: 2 (no good moves, %d,%d,%d)\n", aoc, acc, turn);
 	if (*xp == mx && *yp == my) //hack: we abused xp/yp to indicate that it's not yet our turn
 		ao->result = 2;
  #endif
-	return 2;
+	return(2);
 }
 #endif
 
@@ -6495,36 +6495,36 @@ static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr,
 	if (!c_ptr->effect) {
 		cave_type **zcave = getcave(&m_ptr->wpos), *c0_ptr = &zcave[m_ptr->fy][m_ptr->fx];
 #ifndef HEED_PAST_EFFECT
-		return (TRUE);
+		return(TRUE);
 #else
 		/* Don't allow monsters to 'jump' wave effects with good timing (esp EFF_THINWAVE):
 		   Only allow a monster to enter a grid, if it didn't have the wave effect on it last turn either,
 		   or if the monster was already hit on its current grid by this very effect just now. */
-		if (!c_ptr->effect_past || c0_ptr->effect == c_ptr->effect_past) return TRUE;
-		if (r_ptr->flags2 & RF2_STUPID) return (TRUE);
+		if (!c_ptr->effect_past || c0_ptr->effect == c_ptr->effect_past) return(TRUE);
+		if (r_ptr->flags2 & RF2_STUPID) return(TRUE);
 
 		e_ptr = &effects[c_ptr->effect_past];
 
-		if (e_ptr->who == m_idx) return (TRUE); /* It's mine :) */
-		if (e_ptr->flags & EFF_DUMMY) return TRUE;
+		if (e_ptr->who == m_idx) return(TRUE); /* It's mine :) */
+		if (e_ptr->flags & EFF_DUMMY) return(TRUE);
 
 		dam = approx_damage(m_idx, e_ptr->dam, e_ptr->type);
-		return (m_ptr->hp >= dam * 20);
+		return(m_ptr->hp >= dam * 20);
 #endif
 	}
-	if (r_ptr->flags2 & RF2_STUPID) return (TRUE);
+	if (r_ptr->flags2 & RF2_STUPID) return(TRUE);
 
 	e_ptr = &effects[c_ptr->effect];
 
 	/* It's mine :) */
-	if (e_ptr->who == m_idx) return (TRUE);
-	if (e_ptr->flags & EFF_DUMMY) return TRUE;
+	if (e_ptr->who == m_idx) return(TRUE);
+	if (e_ptr->flags & EFF_DUMMY) return(TRUE);
 
 	/* Use new function 'approx_damage()' for this - C. Blue */
 	dam = approx_damage(m_idx, e_ptr->dam, e_ptr->type);
 
 	/* Was 30, now less exploitable, ie avoid pushing monsters around without them able to retaliate */
-	return (m_ptr->hp >= dam * 20);
+	return(m_ptr->hp >= dam * 20);
 }
 
 #if 0	/* Replaced by monster_can_cross_terrain */
@@ -6534,11 +6534,11 @@ static bool monster_is_comfortable(monster_race *r_ptr, cave_type *c_ptr)
 	/* No worry */
 	if ((r_ptr->flags3 & RF3_UNDEAD) ||
 			(r_ptr->flags7 & (RF7_CAN_SWIM | RF7_CAN_FLY) ))
-		return (TRUE);
+		return(TRUE);
 
 	/* I'd like to be under the sea ./~ */
-	if (r_ptr->flags7 & RF7_AQUATIC) return (c_ptr->feat == FEAT_DEEP_WATER);
-	else return (c_ptr->feat != FEAT_DEEP_WATER);
+	if (r_ptr->flags7 & RF7_AQUATIC) return(c_ptr->feat == FEAT_DEEP_WATER);
+	else return(c_ptr->feat != FEAT_DEEP_WATER);
 }
 #endif	// 0
 
@@ -6622,12 +6622,12 @@ static bool find_noeffect(int m_idx, int *yp, int *xp)
 		(*xp) = fx - gx;
 
 		/* Found safe place */
-		return (TRUE);
+		return(TRUE);
 	}
 
 
 	/* No safe place */
-	return (FALSE);
+	return(FALSE);
 }
 
 /*
@@ -6663,7 +6663,7 @@ static bool find_terrain(int m_idx, int *yp, int *xp)
 		feat = FEAT_DEEP_WATER;
 		negate = TRUE;
 	}
-//	else return (TRUE);
+//	else return(TRUE);
 #endif	// 0
 
 	/* Start with adjacent locations, spread further */
@@ -6716,12 +6716,12 @@ static bool find_terrain(int m_idx, int *yp, int *xp)
 		(*xp) = fx - gx;
 
 		/* Found safe place */
-		return (TRUE);
+		return(TRUE);
 	}
 
 
 	/* No safe place */
-	return (FALSE);
+	return(FALSE);
 }
 
 /*
@@ -6812,7 +6812,7 @@ static bool find_safety(int Ind, int m_idx, int *yp, int *xp)
 		(*xp) = fx - gx;
 
 		/* Found safe place */
-		return (TRUE);
+		return(TRUE);
 	}
 
 #if 0
@@ -6872,13 +6872,13 @@ static bool find_safety(int Ind, int m_idx, int *yp, int *xp)
 			(*xp) = fx - gx;
 
 			/* Found safe place */
-			return (TRUE);
+			return(TRUE);
 		}
 	}
 #endif	// 0
 
 	/* No safe place */
-	return (FALSE);
+	return(FALSE);
 }
 #endif // SAFETY_RADIUS
 
@@ -6970,7 +6970,7 @@ static bool find_hiding(int Ind, int m_idx, int *yp, int *xp)
 		(*xp) = fx - gx;
 
 		/* Found good place */
-		return (TRUE);
+		return(TRUE);
 	}
 
 #if 0
@@ -7017,13 +7017,13 @@ static bool find_hiding(int Ind, int m_idx, int *yp, int *xp)
 			(*xp) = fx - gx;
 
 			/* Found good place */
-			return (TRUE);
+			return(TRUE);
 		}
 	}
 #endif	// 0
 
 	/* No good place */
-	return (FALSE);
+	return(FALSE);
 }
 #endif	// MONSTERS_HIDE_HEADS
 
@@ -7033,9 +7033,9 @@ static bool monster_can_pickup(monster_race *r_ptr, object_type *o_ptr) {
 	u32b flg3 = 0L;
 
 	/* Disallow destruction of Morgoth's crown and hammer and the Ring of Phasing */
-	if (indestructible_artifact_p(o_ptr)) return FALSE;
+	if (indestructible_artifact_p(o_ptr)) return(FALSE);
 
-	if (artifact_p(o_ptr) && (rand_int(150) > r_ptr->level)) return (FALSE);
+	if (artifact_p(o_ptr) && (rand_int(150) > r_ptr->level)) return(FALSE);
 
 	/* Extract some flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
@@ -7054,35 +7054,34 @@ static bool monster_can_pickup(monster_race *r_ptr, object_type *o_ptr) {
 	if (f1 & TR1_SLAY_EVIL) flg3 |= RF3_EVIL;
 
 	/* The object cannot be picked up by the monster */
-	if ((r_ptr->flags3 & flg3) && (rand_int(150) > r_ptr->level)) return (FALSE);
+	if ((r_ptr->flags3 & flg3) && (rand_int(150) > r_ptr->level)) return(FALSE);
 
 	/* Ok */
-	return (TRUE);
+	return(TRUE);
 }
 
 #ifdef MONSTER_DIG_FACTOR
-static int digging_difficulty(byte feat)
-{
+static int digging_difficulty(byte feat) {
 #if 0
 	if (!(f_info[feat].flags1 & FF1_TUNNELABLE) ||
-			(f_info[feat].flags1 & FF1_PERMANENT)) return (3000);
+	    (f_info[feat].flags1 & FF1_PERMANENT))
+		return(3000);
 #endif	// 0
 
-	if ((feat == FEAT_SANDWALL_H) || (feat == FEAT_SANDWALL_K)) return (25);
-	if (feat == FEAT_RUBBLE) return (30);
-	if (feat == FEAT_TREE) return (50);
-	if (feat == FEAT_BUSH) return (35);
-	if (feat == FEAT_IVY) return (20);
-	if (feat == FEAT_DEAD_TREE) return (30);	/* hehe it's evil */
-	if (feat >= FEAT_WALL_EXTRA) return (200);
-	if (feat >= FEAT_MAGMA)
-	{
-		if ((feat - FEAT_MAGMA) & 0x01) return (100);
-		else return (50);
+	if ((feat == FEAT_SANDWALL_H) || (feat == FEAT_SANDWALL_K)) return(25);
+	if (feat == FEAT_RUBBLE) return(30);
+	if (feat == FEAT_TREE) return(50);
+	if (feat == FEAT_BUSH) return(35);
+	if (feat == FEAT_IVY) return(20);
+	if (feat == FEAT_DEAD_TREE) return(30);	/* hehe it's evil */
+	if (feat >= FEAT_WALL_EXTRA) return(200);
+	if (feat >= FEAT_MAGMA) {
+		if ((feat - FEAT_MAGMA) & 0x01) return(100);
+		else return(50);
 	}
 
 	/* huh? ...it's not our role */
-	return (3000);
+	return(3000);
 }
 #endif
 
@@ -7098,8 +7097,8 @@ bool mon_allowed_pickup(int tval) {
 	    && tval != TV_SPECIAL
 #endif
 	)
-	    return TRUE;
-	return FALSE;
+	    return(TRUE);
+	return(FALSE);
 }
 
 /*
@@ -7110,7 +7109,7 @@ bool mon_allowed_pickup(int tval) {
  * Changed to bool for get_moves_astar():
  *  get_moves_astar() may actually use movement spells!
  *  So we need to know if that was done and end our turn prematurely accordingly,
- *  it will return FALSE usually, and TRUE if A* movement spells were used. - C. Blue
+ *  it will return(FALSE) usually, and TRUE if A* movement spells were used. - C. Blue
  */
 static bool get_moves(int Ind, int m_idx, int *mm) {
 	player_type *p_ptr = Players[Ind];
@@ -7182,25 +7181,25 @@ static bool get_moves(int Ind, int m_idx, int *mm) {
 				if (m_ptr->stunned > 50) factor += 25;
 				if (m_ptr->stunned) factor += 15;
 
-				if (magik(25 - (rlev + 3) / 4) || magik(factor)) return TRUE;
+				if (magik(25 - (rlev + 3) / 4) || magik(factor)) return(TRUE);
  #ifdef GENERIC_INTERCEPTION
-				if (monst_check_grab(m_idx, 85, "cast")) return TRUE;
+				if (monst_check_grab(m_idx, 85, "cast")) return(TRUE);
  #else
-				if (monst_check_grab(m_idx, 75, "cast")) return TRUE;
+				if (monst_check_grab(m_idx, 75, "cast")) return(TRUE);
  #endif
 			}
 #endif
 
-			if (monst_check_antimagic(Ind, m_idx)) return TRUE;
+			if (monst_check_antimagic(Ind, m_idx)) return(TRUE);
 
 			/* No teleporting within no-tele vaults and such */
 			if (zcave && //paranoia
 			    zcave[m_ptr->fy][m_ptr->fx].info & CAVE_STCK) {
 				//msg_format(Ind, "%^s fails to blink.", m_name);
-				return TRUE;
+				return(TRUE);
 			}
 
-			if (monst_check_grab(m_idx, 50, "teleport")) return TRUE;
+			if (monst_check_grab(m_idx, 50, "teleport")) return(TRUE);
 
 			switch (spellmove) {
 			case 1:
@@ -7208,7 +7207,7 @@ static bool get_moves(int Ind, int m_idx, int *mm) {
 					if (p_ptr->blind) msg_print(Ind, "You hear something blink away.");
 					else msg_format(Ind, "%^s blinks away.", m_name);
 				}
-				return TRUE;
+				return(TRUE);
 			case 2:
 				if (teleport_away(m_idx, MAX_SIGHT * 2 + 5) && p_ptr->mon_vis[m_idx]) {
 					if (p_ptr->blind) msg_print(Ind, "You hear something teleport away.");
@@ -7217,7 +7216,7 @@ static bool get_moves(int Ind, int m_idx, int *mm) {
 					sound_near_monster(m_idx, "teleport", NULL, SFX_TYPE_MON_SPELL);
 #endif
 				}
-				return TRUE;
+				return(TRUE);
 			}
 			break; //we didn't do anything - can't happen anymore at this point though - paranoia
 			}
@@ -7251,31 +7250,31 @@ static bool get_moves(int Ind, int m_idx, int *mm) {
 				if (m_ptr->stunned > 50) factor += 25;
 				if (m_ptr->stunned) factor += 15;
 
-				if (magik(25 - (rlev + 3) / 4) || magik(factor)) return TRUE;
+				if (magik(25 - (rlev + 3) / 4) || magik(factor)) return(TRUE);
  #ifdef GENERIC_INTERCEPTION
-				if (monst_check_grab(m_idx, 85, "cast")) return TRUE;
+				if (monst_check_grab(m_idx, 85, "cast")) return(TRUE);
  #else
-				if (monst_check_grab(m_idx, 75, "cast")) return TRUE;
+				if (monst_check_grab(m_idx, 75, "cast")) return(TRUE);
  #endif
 			}
 #endif
 
-			if (monst_check_antimagic(Ind, m_idx)) return TRUE;
+			if (monst_check_antimagic(Ind, m_idx)) return(TRUE);
 
 			/* No teleporting within no-tele vaults and such */
 			if (zcave && //paranoia
 			    zcave[m_ptr->fy][m_ptr->fx].info & CAVE_STCK) {
 				//msg_format(Ind, "%^s fails to blink.", m_name);
-				return TRUE;
+				return(TRUE);
 			}
 
-			if (monst_check_grab(m_idx, 50, "teleport")) return TRUE;
+			if (monst_check_grab(m_idx, 50, "teleport")) return(TRUE);
 
 			if (teleport_away(m_idx, 10) && p_ptr->mon_vis[m_idx]) {
 				if (p_ptr->blind) msg_print(Ind, "You hear something blink away.");
 				else msg_format(Ind, "%^s blinks away.", m_name);
 			}
-			return TRUE;
+			return(TRUE);
 			}
 		/* Either we're fine or we don't want to do anything special:
 		   -1 = we're performing A* fine.
@@ -7320,7 +7319,7 @@ s_printf("ASTAR_INCOMPLETE\n");
 			   finishes. So, compensate here to keep our energy up: */
 			m_ptr->energy += level_speed(&m_ptr->wpos); //cancel out energy reduction applied after returning
 
-			return TRUE;
+			return(TRUE);
 #endif
 		}
  #ifdef MONSTER_FLOW
@@ -7499,7 +7498,7 @@ s_printf("ASTAR_INCOMPLETE\n");
 				bool tested_so_far = FALSE;
 				/* Often stay still and don't move at all to save your
 				   turn for attacking in case the player appraoches. */
-				if (rand_int(100)) return FALSE;
+				if (rand_int(100)) return(FALSE);
 				/* Move randomly without getting closer -
 				   this will cancel the actual point of C_BLUE_AI!
 				   Moving randomly is merely eye-candy, that's why
@@ -7527,7 +7526,7 @@ s_printf("ASTAR_INCOMPLETE\n");
 				}
 				/* If monster didn't want to move randomly,
 				   just stay still (shouldn't happen though) */
-				if (!c_blue_ai_done) return FALSE;
+				if (!c_blue_ai_done) return(FALSE);
 			}
 		}
 	}
@@ -7536,7 +7535,7 @@ s_printf("ASTAR_INCOMPLETE\n");
 #if 0
 	/* Death orbs .. */
 	if (r_ptr->flags2 & RF2_DEATH_ORB) {
-		if (!los(m_ptr->fy, m_ptr->fx, y2, x2)) return FALSE;
+		if (!los(m_ptr->fy, m_ptr->fx, y2, x2)) return(FALSE);
 	}
 #endif
 
@@ -7546,7 +7545,7 @@ s_printf("ASTAR_INCOMPLETE\n");
 		int tx = x2, ty = y2;
 		cave_type **zcave;
 		/* paranoia */
-		if (!(zcave = getcave(&m_ptr->wpos))) return FALSE;
+		if (!(zcave = getcave(&m_ptr->wpos))) return(FALSE);
  #ifdef	MONSTERS_HIDE_HEADS
 		/*
 		 * Animal packs try to get the player out of corridors
@@ -7585,7 +7584,7 @@ s_printf("ASTAR_INCOMPLETE\n");
 			if (o_ptr->k_idx && mon_allowed_pickup(o_ptr->tval) &&
 			    monster_can_pickup(r_ptr, o_ptr)) {
 				/* Just Stay */
-				return FALSE;
+				return(FALSE);
 			}
 		}
 		if (!done && (r_ptr->flags2 & RF2_TAKE_ITEM) && magik(MONSTERS_GREEDY)) {
@@ -7697,7 +7696,7 @@ s_printf("ASTAR_INCOMPLETE\n");
 	{
 		/* Stay still if we have a perfect position towards the player -
 		   no need to waste our turn then */
-		if ((ABS(m_ptr->fy - y2) == 0) || (ABS(m_ptr->fx - x2) == 0)) return FALSE;
+		if ((ABS(m_ptr->fy - y2) == 0) || (ABS(m_ptr->fx - x2) == 0)) return(FALSE);
 	}
 #endif /* C_BLUE_AI */
 
@@ -7855,7 +7854,7 @@ s_printf("ASTAR_INCOMPLETE\n");
 		break;
 	}
 
-	return FALSE;
+	return(FALSE);
 }
 
 #ifdef ARCADE_SERVER
@@ -8061,7 +8060,7 @@ static bool get_moves_pet(int Ind, int m_idx, int *mm) {
 			/* no point if there are no players on depth */
 			/* and it would crash anyway ;) */
 
-			if (!(zcave = getcave(&m_ptr->wpos))) return FALSE;
+			if (!(zcave = getcave(&m_ptr->wpos))) return(FALSE);
 			c_ptr = &zcave[sy][sx];
 
 			if (!c_ptr->m_idx) continue;
@@ -8083,9 +8082,9 @@ static bool get_moves_pet(int Ind, int m_idx, int *mm) {
 	if ((p_ptr != NULL) && !tm_idx && (m_ptr->mind & GOLEM_FOLLOW))
 		tm_idx = -Ind;
 
-	if (!tm_idx) return FALSE;
+	if (!tm_idx) return(FALSE);
 
-	if (!(inarea(&m_ptr->wpos, (tm_idx > 0) ? &m_list[tm_idx].wpos : &Players[-tm_idx]->wpos))) return FALSE;
+	if (!(inarea(&m_ptr->wpos, (tm_idx > 0) ? &m_list[tm_idx].wpos : &Players[-tm_idx]->wpos))) return(FALSE);
 
 	y2 = (tm_idx > 0)?m_list[tm_idx].fy:Players[-tm_idx]->py;
 	x2 = (tm_idx > 0)?m_list[tm_idx].fx:Players[-tm_idx]->px;
@@ -8229,7 +8228,7 @@ static bool get_moves_pet(int Ind, int m_idx, int *mm) {
 		break;
 	}
 
-	return TRUE;
+	return(TRUE);
 }
 #endif
 
@@ -8271,7 +8270,7 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm) {
 			/* no point if there are no players on depth */
 			/* and it would crash anyway ;) */
 
-			if (!(zcave = getcave(&m_ptr->wpos))) return FALSE;
+			if (!(zcave = getcave(&m_ptr->wpos))) return(FALSE);
 			c_ptr = &zcave[sy][sx];
 
 			if (!c_ptr->m_idx) continue;
@@ -8293,9 +8292,9 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm) {
 	if ((p_ptr != NULL) && !tm_idx && (m_ptr->mind & GOLEM_FOLLOW))
 		tm_idx = -Ind;
 
-	if (!tm_idx) return FALSE;
+	if (!tm_idx) return(FALSE);
 
-	if (!(inarea(&m_ptr->wpos, (tm_idx > 0) ? &m_list[tm_idx].wpos : &Players[-tm_idx]->wpos))) return FALSE;
+	if (!(inarea(&m_ptr->wpos, (tm_idx > 0) ? &m_list[tm_idx].wpos : &Players[-tm_idx]->wpos))) return(FALSE);
 
 	y2 = (tm_idx > 0)?m_list[tm_idx].fy:Players[-tm_idx]->py;
 	x2 = (tm_idx > 0)?m_list[tm_idx].fx:Players[-tm_idx]->px;
@@ -8439,7 +8438,7 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm) {
 		break;
 	}
 
-	return TRUE;
+	return(TRUE);
 }
 
 static bool get_moves_questor(int Ind, int m_idx, int *mm) {
@@ -8467,7 +8466,7 @@ static bool get_moves_questor(int Ind, int m_idx, int *mm) {
 			/* no point if there are no players on depth */
 			/* and it would crash anyway ;) */
 
-			if (!(zcave = getcave(&m_ptr->wpos))) return FALSE;
+			if (!(zcave = getcave(&m_ptr->wpos))) return(FALSE);
 			c_ptr = &zcave[sy][sx];
 
 			if (!c_ptr->m_idx) continue;
@@ -8490,7 +8489,7 @@ static bool get_moves_questor(int Ind, int m_idx, int *mm) {
 		y2 = (tm_idx > 0) ? m_list[tm_idx].fy : Players[-tm_idx]->py;
 		x2 = (tm_idx > 0) ? m_list[tm_idx].fx : Players[-tm_idx]->px;
 		//isn't this BAD paranoia?
-		if (!(inarea(&m_ptr->wpos, (tm_idx > 0)? &m_list[tm_idx].wpos : &Players[-tm_idx]->wpos))) return FALSE;
+		if (!(inarea(&m_ptr->wpos, (tm_idx > 0)? &m_list[tm_idx].wpos : &Players[-tm_idx]->wpos))) return(FALSE);
 	}
 	/* continue moving */
 	else {
@@ -8589,7 +8588,7 @@ static bool get_moves_questor(int Ind, int m_idx, int *mm) {
 		}
 		break;
 	}
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -8688,7 +8687,7 @@ static bool player_invis(int Ind, monster_type *m_ptr, int dist) {
 
 #endif	// 0
 
-	return (inv >= randint((mlv * 10) / 7));
+	return(inv >= randint((mlv * 10) / 7));
 }
 
 /*
@@ -9003,7 +9002,7 @@ static player_type *get_melee_target(monster_race *r_ptr, monster_type *m_ptr, c
 	    )
 		return NULL;
 
-	return (p_idx_target ? Players[p_idx_target] : NULL);
+	return(p_idx_target ? Players[p_idx_target] : NULL);
 }
 
 /*

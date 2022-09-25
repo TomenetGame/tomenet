@@ -24,10 +24,10 @@
 magic_power *new_magic_power(int num) {
 	magic_power *m_ptr;
 	C_MAKE(m_ptr, num, magic_power);
-	return (m_ptr);
+	return(m_ptr);
 }
 magic_power *grab_magic_power(magic_power *m_ptr, int num) {
-	return (&m_ptr[num]);
+	return(&m_ptr[num]);
 }
 static char *magic_power_info_lua_fct;
 static void magic_power_info_lua(char *p, int power) {
@@ -41,7 +41,7 @@ static void magic_power_info_lua(char *p, int power) {
 }
 int get_magic_power_lua(int *sn, magic_power *powers, int max_powers, char *info_fct, int plev, int cast_stat) {
 	magic_power_info_lua_fct = info_fct;
-	return (get_magic_power(sn, powers, max_powers, magic_power_info_lua, plev, cast_stat));
+	return(get_magic_power(sn, powers, max_powers, magic_power_info_lua, plev, cast_stat));
 }
 
 bool lua_spell_success(magic_power *spell, int stat, char *oups_fct) {
@@ -86,9 +86,9 @@ bool lua_spell_success(magic_power *spell, int stat, char *oups_fct) {
 
 		if (oups_fct != NULL)
 			exec_lua(format("%s(%d)", oups_fct, chance));
-		return (FALSE);
+		return(FALSE);
 	}
-	return (TRUE);
+	return(TRUE);
 }
 
 /*
@@ -97,7 +97,7 @@ bool lua_spell_success(magic_power *spell, int stat, char *oups_fct) {
 object_type *new_object() {
 	object_type *o_ptr;
 	MAKE(o_ptr, object_type);
-	return (o_ptr);
+	return(o_ptr);
 }
 
 void end_object(object_type *o_ptr) {
@@ -127,7 +127,7 @@ s16b add_new_power(cptr name, cptr desc, cptr gain, cptr lose, byte level, byte 
 	powers_type[power_max - 1].stat = stat;
 	powers_type[power_max - 1].diff = diff;
 
-	return (power_max - 1);
+	return(power_max - 1);
 }
 
 static char *lua_item_tester_fct;
@@ -140,7 +140,7 @@ static bool lua_item_tester(object_type* o_ptr) {
 	lua_call(L, 1, 1);
 	ret = lua_tonumber(L, -1);
 	lua_settop(L, oldtop);
-	return (ret);
+	return(ret);
 }
 
 void lua_set_item_tester(int tval, char *fct) {
@@ -156,7 +156,7 @@ char *lua_object_desc(object_type *o_ptr, int pref, int mode) {
 	static char buf[150];
 
 	object_desc(buf, o_ptr, pref, mode);
-	return (buf);
+	return(buf);
 }
 
 /*
@@ -181,7 +181,7 @@ bool summon_lua_okay(int r_idx) {
 	lua_call(L, 1, 1);
 	ret = lua_tonumber(L, -1);
 	lua_settop(L, oldtop);
-	return (ret);
+	return(ret);
 }
 
 bool lua_summon_monster(int y, int x, int lev, bool friend, char *fct) {
@@ -214,7 +214,7 @@ s16b add_new_quest(char *name) {
 	for (i = 0; i < 10; i++)
 		strncpy(quest[max_xo_idx - 1].desc[i], "", 39);
 
-	return (max_xo_idx - 1);
+	return(max_xo_idx - 1);
 }
 
 void desc_quest(int q_idx, int d, char *desc) {
@@ -228,9 +228,9 @@ void desc_quest(int q_idx, int d, char *desc) {
 bool get_com_lua(cptr prompt, int *com) {
 	char c;
 
-	if (!get_com(prompt, &c)) return (FALSE);
+	if (!get_com(prompt, &c)) return(FALSE);
 	*com = c;
-	return (TRUE);
+	return(TRUE);
 }
 #endif	// 0
 
@@ -238,22 +238,22 @@ bool get_com_lua(cptr prompt, int *com) {
 s16b new_school(int i, cptr name, s16b skill) {
 	schools[i].name = string_make(name);
 	schools[i].skill = skill;
-	return (i);
+	return(i);
 }
 
 s16b new_spell(int i, cptr name) {
 	school_spells[i].name = string_make(name);
 	school_spells[i].level = 0;
 	school_spells[i].level = 0;
-	return (i);
+	return(i);
 }
 
 spell_type *grab_spell_type(s16b num) {
-	return (&school_spells[num]);
+	return(&school_spells[num]);
 }
 
 school_type *grab_school_type(s16b num) {
-	return (&schools[num]);
+	return(&schools[num]);
 }
 
 /* Change this fct if I want to switch to learnable spells */
@@ -376,13 +376,13 @@ s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, 
 	if (chance > 95) chance = 95;
 
 	/* Return the chance */
-	return (chance);
+	return(chance);
 }
 
 #if 0
 /* Cave */
 cave_type *lua_get_cave(int y, int x) {
-	return (&(cave[y][x]));
+	return(&(cave[y][x]));
 }
 
 void set_target(int y, int x) {
@@ -420,7 +420,7 @@ bool alloc_room(int by0, int bx0, int ysize, int xsize, int *y1, int *x1, int *y
 	int xval, yval, x, y;
 
 	/* Try to allocate space for room.  If fails, exit */
-	if (!room_alloc(xsize + 2, ysize + 2, FALSE, by0, bx0, &xval, &yval)) return FALSE;
+	if (!room_alloc(xsize + 2, ysize + 2, FALSE, by0, bx0, &xval, &yval)) return(FALSE);
 
 	/* Get corner values */
 	*y1 = yval - ysize / 2;
@@ -437,7 +437,7 @@ bool alloc_room(int by0, int bx0, int ysize, int xsize, int *y1, int *x1, int *y
 			c_ptr->info |= (CAVE_GLOW);
 		}
 	}
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -459,43 +459,43 @@ static bool lua_mon_hook_bounty(int r_idx) {
 	monster_race* r_ptr = &r_info[r_idx];
 
 	/* Reject 'non-spawning' monsters */
-	if (!r_ptr->rarity) return (FALSE);
+	if (!r_ptr->rarity) return(FALSE);
 
 	/* Reject uniques */
-	if ((r_ptr->flags1 & RF1_UNIQUE)) return (FALSE);
+	if ((r_ptr->flags1 & RF1_UNIQUE)) return(FALSE);
 
 	/* Reject quest NPCs */
-	//if ((r_ptr->flags1 & RF1_QUESTOR)) return (FALSE);
+	//if ((r_ptr->flags1 & RF1_QUESTOR)) return(FALSE);
 
 	/* Reject those who cannot leave anything */
-	if (!(r_ptr->flags9 & RF9_DROP_CORPSE)) return (FALSE);
+	if (!(r_ptr->flags9 & RF9_DROP_CORPSE)) return(FALSE);
 
 	/* Accept only monsters that can be generated */
-	if ((r_ptr->flags9 & RF9_SPECIAL_GENE)) return (FALSE);
+	if ((r_ptr->flags9 & RF9_SPECIAL_GENE)) return(FALSE);
 
 	/* Reject pets */
-	if ((r_ptr->flags7 & RF7_PET)) return (FALSE);
+	if ((r_ptr->flags7 & RF7_PET)) return(FALSE);
 
 	/* Reject friendly creatures */
-	if ((r_ptr->flags7 & RF7_FRIENDLY)) return (FALSE);
+	if ((r_ptr->flags7 & RF7_FRIENDLY)) return(FALSE);
 
 	/* Reject neutral creatures */
-	if ((r_ptr->flags7 & RF7_NEUTRAL)) return (FALSE);
+	if ((r_ptr->flags7 & RF7_NEUTRAL)) return(FALSE);
 
 	/* Accept only monsters that are not breeders */
-	if ((r_ptr->flags4 & RF4_MULTIPLY)) return (FALSE);
+	if ((r_ptr->flags4 & RF4_MULTIPLY)) return(FALSE);
 
 	/* Forbid joke monsters */
-	if ((r_ptr->flags8 & RF8_JOKEANGBAND)) return (FALSE);
+	if ((r_ptr->flags8 & RF8_JOKEANGBAND)) return(FALSE);
 
 	/* Forbid C. Blue's monsters */
-	if ((r_ptr->flags8 & RF8_BLUEBAND)) return (FALSE);
+	if ((r_ptr->flags8 & RF8_BLUEBAND)) return(FALSE);
 
 	/* Accept only monsters that are not good */
-	if ((r_ptr->flags3 & RF3_GOOD)) return (FALSE);
+	if ((r_ptr->flags3 & RF3_GOOD)) return(FALSE);
 
 	/* The rest are acceptable */
-	return (TRUE);
+	return(TRUE);
 }
 
 int lua_get_new_bounty_monster(int lev) {
@@ -1185,20 +1185,20 @@ void lua_get_date(int *weekday, int *day, int *month, int *year)
 
 /* for Player-Customizable Tomes feature - C. Blue */
 int get_inven_sval(int Ind, int inven_slot) {
-	return (Players[Ind]->inventory[inven_slot].sval);
+	return(Players[Ind]->inventory[inven_slot].sval);
 }
 s16b get_inven_xtra(int Ind, int inven_slot, int n) {
 	switch (n) {
-	case 1: return (Players[Ind]->inventory[inven_slot].xtra1);
-	case 2: return (Players[Ind]->inventory[inven_slot].xtra2);
-	case 3: return (Players[Ind]->inventory[inven_slot].xtra3);
-	case 4: return (Players[Ind]->inventory[inven_slot].xtra4);
-	case 5: return (Players[Ind]->inventory[inven_slot].xtra5);
-	case 6: return (Players[Ind]->inventory[inven_slot].xtra6);
-	case 7: return (Players[Ind]->inventory[inven_slot].xtra7);
-	case 8: return (Players[Ind]->inventory[inven_slot].xtra8);
-	case 9: return (Players[Ind]->inventory[inven_slot].xtra9);
-	default: return (0); //failure
+	case 1: return(Players[Ind]->inventory[inven_slot].xtra1);
+	case 2: return(Players[Ind]->inventory[inven_slot].xtra2);
+	case 3: return(Players[Ind]->inventory[inven_slot].xtra3);
+	case 4: return(Players[Ind]->inventory[inven_slot].xtra4);
+	case 5: return(Players[Ind]->inventory[inven_slot].xtra5);
+	case 6: return(Players[Ind]->inventory[inven_slot].xtra6);
+	case 7: return(Players[Ind]->inventory[inven_slot].xtra7);
+	case 8: return(Players[Ind]->inventory[inven_slot].xtra8);
+	case 9: return(Players[Ind]->inventory[inven_slot].xtra9);
+	default: return(0); //failure
 	}
 }
 
@@ -1279,38 +1279,38 @@ void lua_takeoff_costumes(int Ind) {
 }
 
 bool lua_is_unique(int r_idx) {
-	if (r_info[r_idx].flags1 & RF1_UNIQUE) return TRUE; else return FALSE;
+	if (r_info[r_idx].flags1 & RF1_UNIQUE) return(TRUE); else return(FALSE);
 }
 
 /* Return if a certain race/class combo could in theory learn a monster form if mimicry was high enough */
 bool lua_mimic_eligible(int Ind, int r_idx) {
 	/* also filter out unattainable (in theory) forms */
-	if (r_info[r_idx].rarity == 255) return FALSE;
-	if ((r_info[r_idx].flags1 & RF1_UNIQUE)) return FALSE;
-	if (!mon_allowed_chance(&r_info[r_idx])) return FALSE;
+	if (r_info[r_idx].rarity == 255) return(FALSE);
+	if ((r_info[r_idx].flags1 & RF1_UNIQUE)) return(FALSE);
+	if (!mon_allowed_chance(&r_info[r_idx])) return(FALSE);
 
 	if (Players[Ind]->prace == RACE_VAMPIRE) {
-		return (mimic_vampire(r_idx, Players[Ind]->lev));
+		return(mimic_vampire(r_idx, Players[Ind]->lev));
 	}
 
 	if (Players[Ind]->pclass == CLASS_SHAMAN) {
-		return (mimic_shaman(r_idx));
+		return(mimic_shaman(r_idx));
 	} else if (Players[Ind]->pclass == CLASS_DRUID) {
-		return (mimic_druid(r_idx, Players[Ind]->lev));
+		return(mimic_druid(r_idx, Players[Ind]->lev));
 	}
 
-	return TRUE;
+	return(TRUE);
 }
 
 /* Return if a monster form is considered basically humanoid, ie has all extremities required for full equipment */
 bool lua_mimic_humanoid(int r_idx) {
-	if (!r_info[r_idx].body_parts[BODY_WEAPON]) return FALSE;
-	if (r_info[r_idx].body_parts[BODY_FINGER] < 2) return FALSE;
-	if (!r_info[r_idx].body_parts[BODY_HEAD]) return FALSE;
-	if (!r_info[r_idx].body_parts[BODY_ARMS]) return FALSE;
-	if (!r_info[r_idx].body_parts[BODY_TORSO]) return FALSE;
-	if (!r_info[r_idx].body_parts[BODY_LEGS]) return FALSE;
-	return TRUE;
+	if (!r_info[r_idx].body_parts[BODY_WEAPON]) return(FALSE);
+	if (r_info[r_idx].body_parts[BODY_FINGER] < 2) return(FALSE);
+	if (!r_info[r_idx].body_parts[BODY_HEAD]) return(FALSE);
+	if (!r_info[r_idx].body_parts[BODY_ARMS]) return(FALSE);
+	if (!r_info[r_idx].body_parts[BODY_TORSO]) return(FALSE);
+	if (!r_info[r_idx].body_parts[BODY_LEGS]) return(FALSE);
+	return(TRUE);
 }
 
 void swear_add(char *word, int level) {

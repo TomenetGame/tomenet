@@ -498,7 +498,7 @@ static errr Term_xtra_gcu_alive(int v) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -608,15 +608,15 @@ static errr Term_xtra_gcu_event(int v) {
 		nodelay(stdscr, FALSE);
 
 		/* None ready */
-		if (i == ERR) return (1);
-		if (i == EOF) return (1);
+		if (i == ERR) return(1);
+		if (i == EOF) return(1);
 	}
 
 	/* Enqueue the keypress */
 	Term_keypress(i);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 #else	/* USE_GETCH */
@@ -643,26 +643,26 @@ static errr Term_xtra_gcu_event(int v) {
 		k = fcntl(0, F_GETFL, 0);
 
 		/* Oops */
-		if (k < 0) return (1);
+		if (k < 0) return(1);
 
 		/* Tell stdin not to block */
-		if (fcntl(0, F_SETFL, k | O_NDELAY) < 0) return (1);
+		if (fcntl(0, F_SETFL, k | O_NDELAY) < 0) return(1);
 
 		/* Read one byte, if possible */
 		i = read(0, buf, 1);
 
 		/* Replace the flags for stdin */
-		if (fcntl(0, F_SETFL, k)) return (1);
+		if (fcntl(0, F_SETFL, k)) return(1);
 	}
 
 	/* Ignore "invalid" keys */
-	if ((i != 1) || (!buf[0])) return (1);
+	if ((i != 1) || (!buf[0])) return(1);
 
 	/* Enqueue the keypress */
 	Term_keypress(buf[0]);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 #endif	/* USE_GETCH */
@@ -680,48 +680,48 @@ static errr Term_xtra_gcu(int n, int v) {
 		case TERM_XTRA_CLEAR:
 		touchwin(td->win);
 		(void)wclear(td->win);
-		return (0);
+		return(0);
 
 		/* Make a noise */
 		case TERM_XTRA_NOISE:
 		n = write(1, "\007", 1);
-		return (0);
+		return(0);
 
 		/* Flush the Curses buffer */
 		case TERM_XTRA_FRESH:
 		(void)wrefresh(td->win);
-		return (0);
+		return(0);
 
 #ifdef USE_CURS_SET
 
 		/* Change the cursor visibility */
 		case TERM_XTRA_SHAPE:
 		curs_set(v);
-		return (0);
+		return(0);
 
 #endif
 
 		/* Suspend/Resume curses */
 		case TERM_XTRA_ALIVE:
-		return (Term_xtra_gcu_alive(v));
+		return(Term_xtra_gcu_alive(v));
 
 		/* Process events */
 		case TERM_XTRA_EVENT:
-		return (Term_xtra_gcu_event(v));
+		return(Term_xtra_gcu_event(v));
 
 		/* Flush events */
 		case TERM_XTRA_FLUSH:
 		while (!Term_xtra_gcu_event(FALSE));
-		return (0);
+		return(0);
 
 		/* Delay */
 		case TERM_XTRA_DELAY:
 		usleep(1000 * v);
-		return (0);
+		return(0);
 	}
 
 	/* Unknown */
-	return (1);
+	return(1);
 }
 
 
@@ -735,7 +735,7 @@ static errr Term_curs_gcu(int x, int y) {
 	wmove(td->win, y, x);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -759,7 +759,7 @@ static errr Term_wipe_gcu(int x, int y, int n) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -799,7 +799,7 @@ static errr Term_text_gcu(int x, int y, int n, byte a, cptr s) {
 	waddstr(td->win, text);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -809,14 +809,14 @@ static errr term_data_init(term_data *td, int rows, int cols, int y, int x)
 	term *t = &td->t;
 
 	/* Make sure the window has a positive size */
-	if (rows <= 0 || cols <= 0) return (0);
+	if (rows <= 0 || cols <= 0) return(0);
 
 	td->win = newwin(rows, cols, y, x);
 
 	if (!td->win)
 	{
 		plog("Failed to setup curses window.");
-		return (-1);
+		return(-1);
 	}
 
 	/* Store size */
@@ -851,7 +851,7 @@ static errr term_data_init(term_data *td, int rows, int cols, int y, int x)
 
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*
@@ -893,10 +893,10 @@ errr init_gcu(void) {
 
 #if defined(USG)
 	/* Initialize for USG Unix */
-	if (initscr() == NULL) return (-1);
+	if (initscr() == NULL) return(-1);
 #else
 	/* Initialize for others systems */
-	if (initscr() == (WINDOW*)ERR) return (-1);
+	if (initscr() == (WINDOW*)ERR) return(-1);
 #endif
 
 
@@ -1093,7 +1093,7 @@ errr init_gcu(void) {
 	term_screen = &data[0].t;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 void enable_readability_blue_gcu(void) {

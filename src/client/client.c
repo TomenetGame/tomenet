@@ -427,7 +427,7 @@ static bool read_mangrc(cptr filename) {
 			enable_readability_blue_gcu();
 #endif
 	}
-	return (skip);
+	return(skip);
 }
 
 #ifdef USE_X11
@@ -675,7 +675,7 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 			remove(mangrc_filename);
 			rename(config_name2, mangrc_filename);
 
-			return (TRUE); //success
+			return(TRUE); //success
 
 		} else {
 			/* create .tomenetrc file, because it doesn't exist yet */
@@ -802,7 +802,7 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 	/* shouldn't really happen, but Matfil had a weird bug where only 'hintBigMap' is left in his .tomenetrc as the only line, so maybe: */
 	} else if (config) fclose(config);
 
-	return (FALSE); //failure
+	return(FALSE); //failure
 }
 
 bool write_mangrc_colourmap(void) {
@@ -871,11 +871,11 @@ bool write_mangrc_colourmap(void) {
 			remove(mangrc_filename);
 			rename(config_name2, mangrc_filename);
 
-			return (TRUE); //success
+			return(TRUE); //success
 		}
 	}
 
-	return (FALSE); //failure
+	return(FALSE); //failure
 }
 
 static void default_set(void) {

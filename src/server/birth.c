@@ -535,7 +535,7 @@ static int adjust_stat(int Ind, int value, s16b amount, int auto_roll) {
 	}
 
 	/* Return the result */
-	return (value);
+	return(value);
 }
 
 
@@ -689,7 +689,7 @@ static bool get_stats(int Ind, int stat_order[6]) {
 		/* If client has been hacked or a version desync error occured, quit. */
 		if (free_points < 0) {
 			s_printf("EXPLOIT: %s allocates too many (+%d) stat points.\n", p_ptr->name, -free_points);
-			return FALSE;
+			return(FALSE);
 		} else if (free_points) s_printf("STATPOINTS: %s allocates not all (-%d) stat points.\n", p_ptr->name, free_points);
 
 		/* Apply selected stats */
@@ -700,7 +700,7 @@ static bool get_stats(int Ind, int stat_order[6]) {
 		}
 	}
 
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -3238,7 +3238,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	/* Rare panic save: <name> transmitted by client was NULL -- check added 27.7.2020 */
 	if (!name) {
 		s_printf("%s ERROR (c_name is null): %s (race %d ; class %d ; trait %d).\n", showtime(), accname, race, class, trait);
-		return FALSE;
+		return(FALSE);
 	}
 
 #ifdef ENABLE_DEATHKNIGHT
@@ -3277,7 +3277,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	/* ..check.. */
 	if ((race_info_hack.choice & BITS(class)) == 0) {
 		s_printf("%s EXPLOIT_CLASS_CHOICE: %s(%s) chose race %d ; class %d ; trait %d.\n", showtime(), accname, name, race, class, trait);
-		return FALSE;
+		return(FALSE);
 	}
 #ifndef RPG_SERVER /* Cannot be PvP-mode because characters always NO_GHOST */
 	/* Hack for s_PVP_MAIA */
@@ -3290,12 +3290,12 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	/* If we have no traits available at all for this race then any trait choice is illegal*/
 	if (trait && (trait_info[0].choice & BITS(race))) {
 		s_printf("%s EXPLOIT_TRAIT_N/A: %s(%s) chose race %d ; class %d ; trait %d.\n", showtime(), accname, name, race, class, trait);
-		return FALSE;
+		return(FALSE);
 	}
 	/* Check for legal trait */
 	if ((trait_info[trait].choice & BITS(race)) == 0) {
 		s_printf("%s EXPLOIT_TRAIT_CHOICE: %s(%s) chose race %d ; class %d ; trait %d.\n", showtime(), accname, name, race, class, trait);
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Allocate memory for him */
@@ -3326,7 +3326,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	p_ptr->conn = conn;
 
 	/* Verify his name and create a savefile name */
-	if (!process_player_name(Ind, TRUE)) return FALSE;
+	if (!process_player_name(Ind, TRUE)) return(FALSE);
 
 	if (GetAccount(&acc, accname, NULL, FALSE)) {
 		p_ptr->account = acc.id;
@@ -3352,7 +3352,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	if (acc_banned) {
 		s_printf("\377RRefused ACC_BANNED account %s (character %s).\n", accname, name); /* Coloured for /cheeze */
 		Destroy_connection(conn, "*** Your account is temporarily suspended ***");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Attempt to load from a savefile */
@@ -3363,7 +3363,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	/* Try to load */
 	if (!load_player(Ind)) {
 		/* Loading failed badly */
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* init account-wide houses limit? // ACC_HOUSE_LIMIT */
@@ -3415,7 +3415,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 			Send_skill_info(Ind, SKILL_PICK_BREATH, TRUE);
 		}
 
-		return TRUE;
+		return(TRUE);
 	}
 
 	/* Else, loading failed, but we just create a new character */
@@ -3450,13 +3450,13 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	if (acc_banned) {
 		s_printf("Refused ACC_BANNED account %s (character %s).\n", accname, name);
 		Destroy_connection(conn, "*** Your account is temporarily suspended ***");
-		return FALSE;
+		return(FALSE);
 	}
 
 	p_ptr->turn = turn; /* Birth time (for info) */
 
 	/* Reprocess his name */
-	if (!process_player_name(Ind, TRUE)) return FALSE;
+	if (!process_player_name(Ind, TRUE)) return(FALSE);
 
 	confirm_admin(Ind);
 
@@ -3476,7 +3476,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		p_ptr->mode &= ~MODE_PVP;
 #else
 		Destroy_connection(conn, "Sorry, your account must be validated before you can choose 'PvP' mode.");
-		return FALSE;
+		return(FALSE);
 #endif
 	}
 
@@ -3538,7 +3538,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	p_ptr->maximize = cfg.maximize ? TRUE : FALSE;
 
 	/* No autoroller */
-	if (!get_stats(Ind, stat_order)) return FALSE;
+	if (!get_stats(Ind, stat_order)) return(FALSE);
 
 	/* Roll for base hitpoints */
 	get_extra(Ind);
@@ -3782,7 +3782,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	p_ptr->newly_created = TRUE;
 
 	/* Success */
-	return TRUE;
+	return(TRUE);
 }
 
 /* Disallow non-authorized admin (improvement needed!!) */

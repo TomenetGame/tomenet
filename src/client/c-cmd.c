@@ -6863,7 +6863,7 @@ void cmd_throw(void) {
 }
 
 static bool item_tester_browsable(object_type *o_ptr) {
-	return (is_realm_book(o_ptr) || o_ptr->tval == TV_BOOK
+	return(is_realm_book(o_ptr) || o_ptr->tval == TV_BOOK
 #ifdef ENABLE_SUBINVEN
 	    || o_ptr->tval == TV_SUBINVEN
 #endif
