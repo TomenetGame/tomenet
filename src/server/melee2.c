@@ -10554,6 +10554,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
  #else
 					msg_print_near_monster(m_idx, format("starts eating %s.", o_name));
  #endif
+#ifdef USE_SOUND_2010
+					sound_near_monster(m_idx, "eat", NULL, SFX_TYPE_MON_MISC);
+#endif
 
 					//m_ptr->energy -= level_speed(&m_ptr->wpos) * 8;//seconds, approx. 8 is max due to s16b overflow!
 					m_ptr->no_move = 15; //alernative method, comes with proper hacked message when it ends, too :)
