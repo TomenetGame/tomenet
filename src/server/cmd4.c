@@ -255,7 +255,7 @@ void do_cmd_check_artifacts(int Ind, int line, char *srcstr) {
 			else fprintf(fff, "\377%c", cattr);
 			fprintf(fff, "%sThe %s", admin ? " " :
 			    ((!multiple_artifact_p(&forge) && a_ptr->carrier == p_ptr->id) ? "  *  " : "     "),
-			    base_name);
+			    admin ? format("%.45s", base_name) : base_name);
 #endif
 			if (admin) {
 				char cs[3] = {'\377', 'o', 0}, cslv[3] = {'\377', 'd', 0};
