@@ -2941,7 +2941,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					fallback_uppercase = 4;
 					continue;
 				}
-				if (my_strcasestr(buf, "xp") && my_strcasestr(buf, "table")) strcpy(buf, "Experience Points Table");
+				if (my_strcasestr(buf, "xp") && (my_strcasestr(buf, "table") || my_strcasestr(buf, "tabl") || my_strcasestr(buf, "tab"))) strcpy(buf, "Experience Points Table");
 				if (my_strcasestr(buf, "demo") && my_strcasestr(buf, "char")) strcpy(buf, "Demolition Charges");
 				/* Demolitionist perk */
 				if (!strncasecmp(buf, "demol", 5) && !my_strcasestr(buf, "char")) { /* don't overlook chapter 'Demolition Charges'! */
