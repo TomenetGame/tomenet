@@ -11902,7 +11902,7 @@ void process_monsters(void) {
 				player_type *p_ptr = Players[Ind];
 
 				/* Not dependant on r_ptr->aaf as this is about the player's mental reach, not the monster's! */
-				if (distance(p_ptr->py, p_ptr->px, fy, fx) >= MAX_RANGE
+				if (distance(p_ptr->py, p_ptr->px, fy, fx) >= MAX_RANGE //maybe just "> MAX_RANGE"?
 				    || p_ptr->conn == NOT_CONNECTED
 				    || !inarea(&p_ptr->wpos, &m_ptr->wpos)) {
 					p_ptr->mcharming--;
