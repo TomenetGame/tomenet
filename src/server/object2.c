@@ -3899,6 +3899,8 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 		/* Sanity checks, and apply! */
 		if (i > 99) i = 99;
 		if (i > 0 && o_ptr->number > i) o_ptr->number = i;
+
+		if (Ind) Players[Ind]->warning_limitbottles = 1;
 	}
 
 	/* NEVER clone gold!!! - mikaelh
