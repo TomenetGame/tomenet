@@ -13007,11 +13007,10 @@ There are two classes of artifacts, 'true artifacts' (or short 'truearts',
 also called 'static artifacts') and 'random artifacts' or short 'randarts':
 
 
-True artifacts ('Truearts')
----------------------------
-True artifacts, also dubbed 'static artifacts', are predefined in the
-a_info.txt file and will always sell for their defined value even if they
-have not been *identified*.
+True artifacts ('Truearts', also called 'static artifacts')
+-----------------------------------------------------------
+True artifacts, are predefined in the a_info.txt file and will always sell for
+their defined value even if they have not been *identified*.
 You can search a list of all true artifacts in game, by pressing  ~ 6 .
 
 True Artifacts are unique. If an artifact is owned by a player, noone else can
@@ -13023,11 +13022,22 @@ disappear from the stock.
 
 Usually true artifacts may not be dropped into a house (will just disappear!)
 and may not be picked up by winners, ie characters that have beaten Morgoth.
-Since static artifacts are predefined and have fixed abilities, their number
-therefore is limited. Thanks to the existence of random artifacts (see below)
-this won't be able to cause any shortage of artifacts that can be found though.
+Artifacts in possession by a player when he beats Morgoth and hence acquires a
+royal winner title will disappear if he drops them. If he decides to keep them,
+they will now time out at twice the normal speed.
+There are a few exceptions: True artifacts specifically designed for winners!
+These have the WINNERS_ONLY flag and will actually timeout at half the normal
+speed at which artifacts time out (for non-winner players). So usually they
+should last for 10 weeks instead of the usual 5 weeks of normal true artifacts.
 
-Static artifacts will also be erased if they are left on the ground and the
+Since static artifacts are predefined and have fixed abilities, their number
+therefore is limited and only one of them can exist at a given time in the game
+world. Thanks to the existence of random artifacts (see below) this won't be
+able to cause any shortage of artifacts that can be found though, as you can
+still find infinitely many random artifacts even if all true artifacts are
+already in possession of other players.
+
+True artifacts will also be erased if they are left on the ground and the
 dungeon level or worldmap sector gets 'unstaticed', that means it gets reset
 because no players have been on it for a while (can be instantaneous for world
 map sectors or dungeon floors that are left without any players on them, and up
