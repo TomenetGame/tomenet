@@ -7635,9 +7635,15 @@ Bookstore       9       Sells books for istari, priests and all other (hybrid)
 Then there are various shops that just use a normal door '+' symbol, these are
 different everywhere. Some examples are mainly..
 
-The Inn                 Eg The Prancing Pony in Bree. While the '8' is just the
-                        entrance into the tavern, the + is the actual bar where
-                        you can order things from the innkeeper.
+Inn                     The first inn you see is the spawn point of newly
+                        created characters: The Prancing Pony in Bree.
+                        While the '8' is just the entrance into the tavern,
+                        the '+' is the actual bar where you can order things
+                        from the innkeeper.
+                        All inns are safe zones where you cannot get harmed by
+                        monsters from outside, and items dropped inside in inn
+                        will persist and not time out. If you go AFK in a town
+                        you should always do so in the local inn to be safe.
 
 Mayor's Office (Bree)   Allows you to turn in deed parchments you won in
                         tournaments or on other occasions for a reward.
