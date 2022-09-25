@@ -215,7 +215,8 @@ SENSEMONSTERS = add_spell {
 	["level"] = 	40,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
-	["fail"] = 	-15,
+	--["fail"] = 	-15, (was at level 30)
+	["fail"] = 	-30,
 	["am"] = 	75,
 	["spell"] = function()
 		set_tim_esp(Ind, 22 + randint(10) + get_level(Ind, SENSEMONSTERS, 28))
