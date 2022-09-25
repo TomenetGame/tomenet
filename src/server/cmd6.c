@@ -5317,7 +5317,7 @@ static void ring_of_power(int Ind, int dir) {
 
 	/* Pick a random effect */
 	//switch (randint(10) + (magick(50) ? 0 : get_skill_scale_fine(p_ptr, SKILL_DEVICE, 1))) { --hmm nah, forces magic device skill to use the ring, no good for a specialty such as this one
-	switch (randint(10)) {
+	switch (randint(7)) {
 	case 1:
 		/* Message */
 		msg_print(Ind, "You are surrounded by a *malignant* aura.");
