@@ -22,8 +22,12 @@
 
 #include "angband.h"
 
-
+/* Summer 2022 I migrated from SDL to SDL2, requiring SDL2_mixer v2.5 or higher
+   for Mix_SetPanning() and Mix_GetMusicPosition(). - C. Blue */
 #ifdef SOUND_SDL
+
+/* Enable ALMixer, overriding SDL? */
+//#define SOUND_AL_SDL
 
 /* allow pressing RETURN key to play any piece of music (like for sfx) -- only reason to disable: It's spoilery ;) */
 #define ENABLE_JUKEBOX
@@ -50,16 +54,18 @@
  #define USER_VOLUME_MUS
 #endif
 
+#ifdef SOUND_AL_SDL
+#else
 /*
 #include <SDL/SDL.h>
 #include <SDL/SDL_mixer.h>
 #include <SDL/SDL_thread.h>
 */
-
 /* This is the way recommended by the SDL web page */
-#include "SDL.h"
-#include "SDL_mixer.h"
-#include "SDL_thread.h"
+ #include "SDL.h"
+ #include "SDL_mixer.h"
+ #include "SDL_thread.h"
+#endif
 
 /* completely turn off mixing of disabled audio features (music, sound, weather, all)
    as opposed to just muting their volume? */
