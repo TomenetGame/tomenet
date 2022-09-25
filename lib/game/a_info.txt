@@ -2682,8 +2682,8 @@ W:15:1:2:20000
 P:0:1d1:0:0:0
 F:DEX | SUST_DEX | SEE_INVIS | DISARM | HIDE_TYPE
 F:ACTIVATE
-D:It's no surprise that a thief of highest caliber would come with the best
-D:tools available for his line of work.
+D:It's no surprise that a thi--burglar of the highest caliber would be equipped
+D:with the best tools available for his line of work.
 
 
 # The Sling of Halflings
