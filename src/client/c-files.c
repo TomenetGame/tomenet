@@ -452,12 +452,14 @@ static int my_fpeekc(FILE *fff) {
  * the allocated memory.
  * - mikaelh
  */
-errr my_fgets2(FILE *fff, char **line, int *n) {
+errr my_fgets2(FILE *fff, char **line, int *n, byte *fmt) {
 	int c;
 	int done = FALSE;
 	long len = 0;
 	long alloc = 4096;
 	char *buf, *tmp;
+
+	*fmt = OS_UNKNOWN;
 
 	/* Allocate some memory for the line */
 	if ((tmp = buf = mem_alloc(alloc)) == NULL) {
@@ -507,6 +509,8 @@ errr my_fgets2(FILE *fff, char **line, int *n) {
 			if (c2 == '\n') {
 				/* Skip the \n */
 				my_fgetc(fff);
+				/* File seems to be in 'DOS format' */
+				if (c == '\r') *fmt = OS_WIN32;
 			}
 
 			/* Terminate */
@@ -719,8 +723,26 @@ void init_file_paths(char *path) {
 #endif /* VM */
 }
 
+/* Convert a macro trigger key between Windows and Posix */
+static void key_autoconvert(char *tmp, byte fmt) {
+	if (fmt == VERSION_OS || fmt == OS_UNKNOWN || VERSION_OS == OS_UNKNOWN) return;
 
+	/* DOS -> Unix */
+	else if (fmt == OS_WIN32) {
 
+//key_map_dos_unix[][][]
+
+//c_msg_format("<%s>", tmp);
+	}
+
+	/* Unix -> DOS */
+	else if (VERSION_OS == OS_WIN32) {
+
+//key_map_dos_unix[][][]
+
+//c_msg_format("<%s>", tmp);
+	}
+}
 
 
 /*
@@ -793,7 +815,7 @@ void init_file_paths(char *path) {
  * value, otherwise is 0. This will be usefull, if the MAX_FONT_CHAR constant
  * changes, there will be no need to update the graphical .prf files.
  */
-errr process_pref_file_aux(char *buf) {
+errr process_pref_file_aux(char *buf, byte fmt) {
 	int i, j, k;
 	int n1, n2;
 
@@ -811,10 +833,8 @@ errr process_pref_file_aux(char *buf) {
 	/* Skip comments */
 	if (buf[0] == '#') return(0);
 
-
 	/* Require "?:*" format */
 	if (buf[1] != ':') return(1);
-
 
 	/* Process "%:<fname>" */
 	if (buf[0] == '%') {
@@ -947,6 +967,8 @@ errr process_pref_file_aux(char *buf) {
 		char tmp[1024];
 		text_to_ascii(tmp, buf + 2);
 
+		key_autoconvert(tmp, fmt);
+
 		//hack
 		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return(0);
 
@@ -959,6 +981,8 @@ errr process_pref_file_aux(char *buf) {
 		char tmp[1024];
 		text_to_ascii(tmp, buf + 2);
 
+		key_autoconvert(tmp, fmt);
+
 		//hack
 		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return(0);
 
@@ -970,6 +994,8 @@ errr process_pref_file_aux(char *buf) {
 	else if (buf[0] == 'C') {
 		char tmp[1024];
 		text_to_ascii(tmp, buf + 2);
+
+		key_autoconvert(tmp, fmt);
 
 		//hack
 		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return(0);
@@ -1075,6 +1101,7 @@ errr process_pref_file(cptr name) {
 	char buf[1024];
 	char *buf2;
 	int n, err;
+	byte fmt;
 
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, name);
@@ -1086,9 +1113,9 @@ errr process_pref_file(cptr name) {
 	if (!fp) return(-1);
 
 	/* Process the file */
-	while (0 == (err = my_fgets2(fp, &buf2, &n))) {
+	while (0 == (err = my_fgets2(fp, &buf2, &n, &fmt))) {
 		/* Process the line */
-		if (process_pref_file_aux(buf2)) {
+		if (process_pref_file_aux(buf2, fmt)) {
 			/* Useful error message */
 			printf("Error in '%s' parsing '%s'.\n", buf2, name);
 		}

@@ -6980,6 +6980,7 @@ void cmd_load_pref(void) {
 	char buf[1024];
 	FILE *fp;
 	char *buf2;
+	byte fmt;
 	int n, err;
 
 	buf[0] = '\0';
@@ -6992,9 +6993,9 @@ void cmd_load_pref(void) {
 	}
 
 	/* Process the file */
-	while (0 == (err = my_fgets2(fp, &buf2, &n))) {
+	while (0 == (err = my_fgets2(fp, &buf2, &n, &fmt))) {
 		/* Process the line */
-		if (process_pref_file_aux(buf2)) //printf("Error in '%s' parsing '%s'.\n", buf2, buf);
+		if (process_pref_file_aux(buf2, fmt)) //printf("Error in '%s' parsing '%s'.\n", buf2, buf);
 			c_message_add(format("\377yError in '%s' parsing '%s'.\n", buf2, buf));
 		mem_free(buf2);
 	}

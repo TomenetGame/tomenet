@@ -11400,3 +11400,218 @@ void colour_bignum(s32b bn, s32b bn_max, char *out_val, byte method) {
 		break;
 	}
 }
+
+/* key codes: ^__XXXX\r and ^_XXXX\r */
+char key_map_dos_unix[][3][10] = {
+	{"FFBE", "F1", ""},
+	{"FFBF", "F2", ""},
+	{"FFC0", "F3", ""},
+	{"FFC1", "F4", ""},
+	{"FFC2", "F5", ""},
+	{"FFC3", "F6", ""},
+	{"FFC4", "F7", ""},
+	{"FFC5", "F8", ""},
+	{"FFC6", "F9", ""},
+	{"FFC7", "F10", ""},
+	{"FFC8", "F11", ""},
+	{"FFC9", "F12", ""},
+
+	{"FF61", "PrtScr", ""},
+	{"FF14", "Scroll", ""},
+	{"FF13", "Pause", ""},
+
+	/* Arrow keys et al, also number pad at numlock off */
+	{"FF52", "Up", ""},
+	{"FF54", "Down", ""},
+	{"FF51", "Left", ""},
+	{"FF53", "Right", ""},
+	{"FF63", "Ins", ""}, // 'Del' is ctrl+b!
+	{"FF55", "PageUp", ""},
+	{"FF56", "PageDn", ""},
+	{"FF50", "Home", ""},
+	{"FF57", "End", ""},
+
+	/* Numper pad (Numlock independant) */
+	{"FFAF", "Num/", ""},
+	{"FFAA", "Num*", ""},
+	{"FFAD", "Num-", ""},
+	{"FFAB", "Num+", ""},
+	{"FF8D", "NumRet", ""},
+
+	/* Numper pad (Numlock off) */
+	{"FF9F", "num.", ""},
+	{"FF9E", "num0", ""},
+	{"FF9C", "num1", ""},
+	{"FF99", "num2", ""},
+	{"FF9B", "num3", ""},
+	{"FF96", "num4", ""},
+	{"FF9D", "num5", ""},
+	{"FF98", "num6", ""},
+	{"FF95", "num7", ""},
+	{"FF97", "num8", ""},
+	{"FF9A", "num9", ""},
+
+	/* Numper pad (Numlock off) */
+	{"FFAC", "NUM.", ""},
+	{"FFB0", "NUM0", ""},
+	{"FFB1", "NUM1", ""},
+	{"FFB2", "NUM2", ""},
+	{"FFB3", "NUM3", ""},
+	{"FFB4", "NUM4", ""},
+	{"FFB5", "NUM5", ""},
+	{"FFB6", "NUM6", ""},
+	{"FFB7", "NUM7", ""},
+	{"FFB8", "NUM8", ""},
+	{"FFB9", "NUM9", ""},
+
+	/* Number pad duplicate, apparently numbers only, no idea.. */
+	{"FFD8", "Num7", ""},
+	{"FFD9", "Num8", ""},
+	{"FFDA", "Num9", ""},
+	{"FFDB", "Num4", ""},
+	{"FFDC", "Num5", ""},
+	{"FFDD", "Num6", ""},
+	{"FFDE", "Num1", ""},
+	{"FFDF", "Num2", ""},
+	{"FFE0", "Num3", ""},
+
+	{"x3B", "F1", ""},
+	{"x3C", "F2", ""},
+	{"x3D", "F3", ""},
+	{"x3E", "F4", ""},
+	{"x3F", "F5", ""},
+	{"x40", "F6", ""},
+	{"x41", "F7", ""},
+	{"x42", "F8", ""},
+	{"x43", "F9", ""},
+	{"x44", "F10", ""},
+	{"x57", "F11", ""},
+	{"x58", "F12", ""},
+
+	//? 	{"x61", "PrtScr", ""},
+	//? 	{"x14", "Scroll", ""},
+	//? 	{"x13", "Pause", ""},
+
+	/* Arrow keys et al, also number pad at numlock off */
+	{"x48", "Up", ""},
+	{"x50", "Down", ""},
+	{"x4A", "num-", ""},
+	{"x4B", "Left", ""},
+	{"x4C", "num5", ""},
+	{"x4D", "Right", ""},
+	{"x4E", "num+", ""},
+	{"x52", "Ins", ""},
+	{"x53", "Del", ""},
+	{"x49", "PageUp", ""},
+	{"x51", "PageDn", ""},
+	{"x47", "Home", ""},
+	{"x4F", "End", ""},
+
+	/* Numper pad (Numlock off) */
+	/* -- duplicates of the normal keyboard key block listed above, while numlock is off! --
+	{"x53", "num.", ""},
+	{"x52", "num0", ""},
+	{"x4F", "num1", ""},
+	{"x50", "num2", ""},
+	{"x51", "num3", ""},
+	{"x4B", "num4", ""},
+	//(unusable with numlock off) 	{"x", "num5", ""},
+	{"x4D", "num6", ""},
+	{"x47", "num7", ""},
+	{"x48", "num8", ""},
+	{"x49", "num9", ""},
+
+	/* Numper pad (Numlock on)
+	   - same as the normal keyboard keys with corresponding symbols! - */
+
+	/* Strange codes left over.. looking like numpad */
+	{"x77", "Num7", ""},
+	{"x8D", "Num8", ""},
+	{"x84", "Num9", ""},
+	{"x8E", "Num-", ""},
+	{"x73", "Num4", ""},
+	{"x8F", "Num5", ""},
+	{"x74", "Num6", ""},
+	{"x90", "Num+", ""},
+	{"x75", "Num1", ""},
+	{"x91", "Num2", ""},
+	{"x76", "Num3", ""},
+	{"x92", "Num0", ""},
+	{"x93", "Num.", ""},
+	//} else if (bptr[0] == '_') {
+
+	/* Linux keycode */
+	//if (bptr[0] == 'F' && bptr[1] == 'F') {
+	{"FFBE", "F1", ""},
+	{"FFBF", "F2", ""},
+	{"FFC0", "F3", ""},
+	{"FFC1", "F4", ""},
+	{"FFC2", "F5", ""},
+	{"FFC3", "F6", ""},
+	{"FFC4", "F7", ""},
+	{"FFC5", "F8", ""},
+	{"FFC6", "F9", ""},
+	{"FFC7", "F10", ""},
+	{"FFC8", "F11", ""},
+	{"FFC9", "F12", ""},
+
+	{"FF61", "PrtScr", ""},
+	{"FF14", "Scroll", ""},
+	{"FF13", "Pause", ""},
+
+	/* Arrow keys et al, also number pad at numlock off */
+	{"FF52", "Up", ""},
+	{"FF54", "Down", ""},
+	{"FF51", "Left", ""},
+	{"FF53", "Right", ""},
+	{"FF63", "Ins", ""}, // 'Del' is ctrl+b!
+	{"FF55", "PageUp", ""},
+	{"FF56", "PageDn", ""},
+	{"FF50", "Home", ""},
+	{"FF57", "End", ""},
+
+	/* Numper pad (Numlock independant) */
+	{"FFAF", "Num/", ""},
+	{"FFAA", "Num*", ""},
+	{"FFAD", "Num-", ""},
+	{"FFAB", "Num+", ""},
+	{"FF8D", "NumRet", ""},
+
+	/* Numper pad (Numlock off) */
+	{"FF9F", "num.", ""},
+	{"FF9E", "num0", ""},
+	{"FF9C", "num1", ""},
+	{"FF99", "num2", ""},
+	{"FF9B", "num3", ""},
+	{"FF96", "num4", ""},
+	{"FF9D", "num5", ""},
+	{"FF98", "num6", ""},
+	{"FF95", "num7", ""},
+	{"FF97", "num8", ""},
+	{"FF9A", "num9", ""},
+
+	/* Numper pad (Numlock off) */
+	{"FFAC", "NUM.", ""},
+	{"FFB0", "NUM0", ""},
+	{"FFB1", "NUM1", ""},
+	{"FFB2", "NUM2", ""},
+	{"FFB3", "NUM3", ""},
+	{"FFB4", "NUM4", ""},
+	{"FFB5", "NUM5", ""},
+	{"FFB6", "NUM6", ""},
+	{"FFB7", "NUM7", ""},
+	{"FFB8", "NUM8", ""},
+	{"FFB9", "NUM9", ""},
+
+	/* Number pad duplicate, apparently numbers only, no idea.. */
+	{"FFD8", "Num7", ""},
+	{"FFD9", "Num8", ""},
+	{"FFDA", "Num9", ""},
+	{"FFDB", "Num4", ""},
+	{"FFDC", "Num5", ""},
+	{"FFDD", "Num6", ""},
+	{"FFDE", "Num1", ""},
+	{"FFDF", "Num2", ""},
+	{"FFE0", "Num3", ""},
+	//} else if (bptr[0] == '_') {
+};

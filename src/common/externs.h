@@ -324,7 +324,7 @@ extern void safe_setuid_grab(void);
 extern s16b tokenize(char *buf, s16b num, char **tokens);
 extern void display_player(int Ind, bool do_hist);
 extern errr file_character(cptr name, bool full);
-extern errr process_pref_file_aux(char *buf);
+extern errr process_pref_file_aux(char *buf, byte fmt);
 extern errr process_pref_file(cptr name);
 extern errr check_time_init(void);
 extern errr check_load_init(void);
