@@ -2207,6 +2207,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		else if (!strcasecmp(buf, "win") || !strcasecmp(buf, "winning") || !strcasecmp(buf, "winner")|| !strcasecmp(buf, "winners")) strcpy(init_search_string, "goal");
 		else if (!strcasecmp(buf, "king") || !strcasecmp(buf, "queen") || !strcasecmp(buf, "emperor")|| !strcasecmp(buf, "empress")) strcpy(init_search_string, "goal");
 		else if (!strcasecmp("OoD", buf)) strcpy(init_search_string, "OOD  "); //uh hacky: avoid overlap with OOD_xx flag
+		else if ((cp = my_strcasestr(buf, "town")) && (cp2 = my_strcasestr(buf, "dun")) && cp < cp2) strcpy(init_search_string, "town dungeons");
+		else if ((cp = my_strcasestr(buf, "town")) && (cp2 = my_strcasestr(buf, "dun")) && cp > cp2) strcpy(init_search_string, "IDDC");// dungeon towns
+		else if (my_strcasestr(buf, "dun") && my_strcasestr(buf, "list")) strcpy(init_search_string, "Dungeon"); //which in turn gets expanded to "Dungeon         " sth. instead of chapter "Dungeons"
 
 		/* clean up */
 		buf[0] = 0;
@@ -3517,7 +3520,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				if (my_strcasestr(buf, "Boss")) { //dungeon bosses
 					strcpy(chapter, "Dungeon, sorted by depth");
 					continue;
-				} else if (my_strcasestr(buf, "Dung")) { //dungeons
+				} else if (my_strcasestr("Dungeons", buf) && strlen(buf) >= 3) { //dungeons
 					strcpy(chapter, "Dungeon                 ");
 					continue;
 				}
