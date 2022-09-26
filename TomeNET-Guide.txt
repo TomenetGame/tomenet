@@ -6871,6 +6871,7 @@ Depending on how a player died, there are different kinds of death messages:
 - Some special, random death messages when the player gets killed by the game
   boss, Morgoth, Lord of Darkness.
 
+
 Death
 -----
 If a player dies, an automatic chardump is generated in /lib/user called
@@ -13535,6 +13536,58 @@ first need to defeat Sauron, the Sorceror though. See (1.3b) for details.
 By defeating Morgoth the player is awarded royal status. There will be two
 more dungeons that can only be entered by royalty and offer further, insanely
 hard challenges and new unique bosses.
+
+
+Variant-based monsters
+----------------------
+The TomeNET bestiary consists of 4 actual variants plus additions:
+- Monsters from original Angband aka "vanilla" monsters. ('BASEANGBAND' flag).
+- Monsters from ZAngband variant. ('ZANGBAND' flag.) Tend to be notably nasty.
+- Monsters from CthAngband (based on ZAngband) which is set in H.P. Lovecraft's
+  Dreamlands and the Cthulhu mythos. ELDRITCH_HORROR monsters are almost all
+  from this variant except for a few exceptions which are either related to
+  Warhammer or of unknown origin. ('CTHANGBAND' flag.)
+- Monsters from PernAngband (which was later renamed to ToME) which is based on
+  the Pern novels about Dragonriders by Anne McCaffrey (whose lawyer sent a
+  cease and desist order causing the name change and removal of Pern references
+  notably except for the still existing "Dragonriders" which is a sufficiently
+  generic term to be safe). ('PERNANGBAND' flag.)
+- "BlueBand" monsters. This is not a variation but simply refers to monsters
+  that C. Blue created and added to the game. ('BLUEBAND' flag.)
+
+In general, BASEANGBAND monsters are probably the easiest monsters of their
+respective level, while ZANGBAND and BLUEBAND monsters are probably the hardest
+with CTHANGBAND monsters following closely.
+
+However, this isn't true for very-high-level monsters, where all great wyrms,
+balrogs, and various top end uniques including the game's boss Morgoth are
+actually BASEANGBAND.
+
+Then there also seem to be errors in classification, for example Tik'srvzllat
+is currently carrying BASEANGBAND flag but it is definitely a special ToME
+addition. These could be corrected in the future, but in the end it doesn't
+really matter except maybe a bit for...
+
+Variant rarity -
+The default server settings for monster spawns consist of the following table
+of probabilities:
+- VANILLA_MONSTERS = 100%
+- ZANG_MONSTERS = 33%
+- CTH_MONSTERS = 33%
+- PERN_MONSTERS = 67%
+- CBLUE_MONSTERS = 67%
+
+This means that if a monster of the respective flag is generated, it must pass
+the percentage roll to actually be generated. So for example monsters from
+both ZANGBAND and CTHANGBAND are just 1/3 as common as normal Angband monsters,
+while PERNANGBAND and BLUEBAND monsters are 2/3 as common.
+
+This can have a bit of an effect on players looking for certain monsters -
+their rarity in the spoiler files (or in ~7) must then further be multiplied by
+this variant-rarity %chance to obtain the actual final spawn chance.
+Well, or almost final, as some dungeons in turn have rules for spawn rarities
+depending on monster classification, for example mostly undead and nonliving
+monsters in the Paths of the Dead, etc. - theorycraft is never over!
 
 
 (5.11a) Monster flags
