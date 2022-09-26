@@ -13553,7 +13553,7 @@ The TomeNET bestiary consists of 4 actual variants plus additions:
   notably except for the still existing "Dragonriders" which is a sufficiently
   generic term to be safe). ('PERNANGBAND' flag.)
 - "BlueBand" monsters. This is not a variation but simply refers to monsters
-  that C. Blue created and added to the game. ('BLUEBAND' flag.)
+  that I (C. Blue) created and added to the game. ('BLUEBAND' flag.)
 
 In general, BASEANGBAND monsters are probably the easiest monsters of their
 respective level, while ZANGBAND and BLUEBAND monsters are probably the hardest
