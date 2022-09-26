@@ -5668,6 +5668,9 @@ lying around waiting to be picked up.
 When in the dungeon, know that magic devices such as wands and staves can sell
 for quite a lot. Just make sure to identify them before selling because the
 shops will pay extra money for their amount of charges.
+Heavy armour and weaponry also sells for good cash, again make sure to always
+identify any item that gets pseudo-identified (aka 'felt') as {good} so you
+will receive the full worth of its enchantments and not just the base price.
 
 Money is vital if you are everlasting mode and have the 'instant resurrection'
 feature enabled in the temple: It costs a fee to activate when you die. If you
