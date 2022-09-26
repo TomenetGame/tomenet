@@ -13546,7 +13546,8 @@ The TomeNET bestiary consists of 4 actual variants plus additions:
 - Monsters from CthAngband (based on ZAngband) which is set in H.P. Lovecraft's
   Dreamlands and the Cthulhu mythos. ELDRITCH_HORROR monsters are almost all
   from this variant except for a few exceptions which are either related to
-  Warhammer or of unknown origin. ('CTHANGBAND' flag.)
+  Warhammer or of unknown origin (search the guide for 'eldritch' for related
+  information). ('CTHANGBAND' flag.)
 - Monsters from PernAngband (which was later renamed to ToME) which is based on
   the Pern novels about Dragonriders by Anne McCaffrey (whose lawyer sent a
   cease and desist order causing the name change and removal of Pern references
