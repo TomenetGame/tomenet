@@ -6833,6 +6833,18 @@ Lev.   Experience   Lev.   Experience   Lev.   Experience   Lev.   Experience
 (3.11) Death, ghosts and looting
 --------------------------------
 
+Death messages
+--------------
+Depending on how a player died, there are different kinds of death messages:
+committed suicide
+retired to a warm, sunny climate
+was defeated by
+was killed by
+was annihilated by
+was vaporized by
+was destroyed by
+was killed and destroyed by
+
 Death
 -----
 If a player dies, an automatic chardump is generated in /lib/user called
