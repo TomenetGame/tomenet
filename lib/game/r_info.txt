@@ -517,8 +517,8 @@ E:0:1:0:2:1:0
 O:0:0:0:0
 B:BITE:HURT:1d3
 B:BITE:HURT:1d3
-F:WEIRD_MIND | CAN_SWIM | WILD_TOO | DROP_CORPSE |
-F:WILD_GRASS | WILD_WASTE | WILD_SHORE | WILD_SWAMP | WILD_MOUNTAIN | WILD_DESERT
+F:WEIRD_MIND | CAN_SWIM | WILD_TOO | DROP_CORPSE | WILD_GRASS | WILD_WASTE
+F:WILD_SHORE | WILD_SWAMP | WILD_MOUNTAIN | WILD_DESERT
 F:ANIMAL | HAS_EGG | MORTAL | BASEANGBAND
 D:A small, harmless lizard.
 
@@ -5128,8 +5128,8 @@ O:0:0:0:0
 B:CLAW:HURT:6d3
 B:CLAW:HURT:6d3
 B:BITE:HURT:3d6
-F:CAN_FLY |
-F:WILD_ONLY | WILD_MOUNTAIN | WILD_VOLCANO | WILD_WASTE | WILD_WOOD | WILD_DESERT
+F:CAN_FLY | WILD_ONLY
+F:WILD_MOUNTAIN | WILD_VOLCANO | WILD_WASTE | WILD_WOOD | WILD_DESERT
 F:ANIMAL | GOOD | DROP_CORPSE | BASEANGBAND | HAS_EGG
 D:Greater and more intelligent than most of its kind, this great eagle is
 D:a messenger between the forces of good.
@@ -6058,7 +6058,7 @@ B:GAZE:EXP_40
 B:TOUCH:EAT_ITEM
 F:ONLY_ITEM | DROP_90 | DROP_1D2 | DROP_GOOD | DROP_GREAT | DROP_CORPSE |
 F:CHAR_MULTI | CHAR_CLEAR | ATTR_CLEAR | INVISIBLE | COLD_BLOOD | RES_DARK |
-F:NO_CONF | UNIQUE | FORCE_MAXHP | NO_SLEEP | CAN_SPEAK | REFLECTING | RES_MANA |
+F:NO_CONF | UNIQUE | FORCE_MAXHP | NO_SLEEP | CAN_SPEAK | REFLECTING | RES_MANA
 F:IM_FIRE | IM_ELEC | EMPTY_MIND | EVIL | SMART | RES_TELE | CAN_FLY |
 F:ZANGBAND
 S:1_IN_4
@@ -7767,10 +7767,10 @@ B:HIT:HURT:7d6
 B:BITE:HURT:3d10
 F:UNIQUE | MALE |
 F:FORCE_MAXHP |
-F:ESCORT | SPECIAL_GENE | MOVE_BODY | REGENERATE |
+F:ESCORT | SPECIAL_GENE | MOVE_BODY | REGENERATE | EVIL | TROLL
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | WILD_TOO | WILD_WOOD | RES_SHARDS |
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | DROP_SKELETON | DROP_CORPSE |
-F:EVIL | TROLL | IM_COLD | IM_POIS | HURT_LITE | HURT_ROCK | BASEANGBAND | NO_CUT
+F:IM_COLD | IM_POIS | HURT_LITE | HURT_ROCK | BASEANGBAND | NO_CUT
 S:1_IN_7
 S:BOULDER
 D:Big, brawny, powerful and with a taste for hobbit. He has friends called
@@ -7787,10 +7787,10 @@ B:HIT:HURT:7d6
 B:BITE:HURT:3d10
 F:UNIQUE | MALE |
 F:FORCE_MAXHP |
-F:ESCORT | SPECIAL_GENE | MOVE_BODY | REGENERATE |
+F:ESCORT | SPECIAL_GENE | MOVE_BODY | REGENERATE | EVIL | TROLL
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | WILD_TOO | WILD_WOOD | RES_SHARDS |
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | DROP_SKELETON | DROP_CORPSE
-F:EVIL | TROLL | IM_COLD | IM_POIS | HURT_LITE | HURT_ROCK | BASEANGBAND | NO_CUT
+F:IM_COLD | IM_POIS | HURT_LITE | HURT_ROCK | BASEANGBAND | NO_CUT
 S:1_IN_7
 S:BOULDER
 D:Big, brawny, powerful and with a taste for hobbit. He has friends called
@@ -7807,10 +7807,10 @@ B:HIT:HURT:7d6
 B:BITE:HURT:3d10
 F:UNIQUE | MALE |
 F:FORCE_MAXHP |
-F:ESCORT | SPECIAL_GENE | MOVE_BODY | REGENERATE |
+F:ESCORT | SPECIAL_GENE | MOVE_BODY | REGENERATE | EVIL | TROLL
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | WILD_TOO | WILD_WOOD | RES_SHARDS |
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | DROP_SKELETON | DROP_CORPSE |
-F:EVIL | TROLL | IM_COLD | IM_POIS | HURT_LITE | HURT_ROCK | BASEANGBAND | NO_CUT
+F:IM_COLD | IM_POIS | HURT_LITE | HURT_ROCK | BASEANGBAND | NO_CUT
 D:Big, brawny, powerful and with a taste for hobbit. He has friends called
 D:Bert and Bill.
 
@@ -8446,9 +8446,9 @@ W:35:2:0:200
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:EXPLODE:SHATTER:100d2
-F:FORCE_SLEEP | FORCE_MAXHP | UNIQUE | REFLECTING | RES_MANA | IM_POIS |
-F:EMPTY_MIND | COLD_BLOOD | BASH_DOOR | RES_FIRE | RES_COLD | RES_ELEC | RES_POIS
-F:NO_FEAR | NO_CONF | NO_SLEEP | NONLIVING | RES_TELE | JOKEANGBAND | NO_CUT
+F:FORCE_SLEEP | FORCE_MAXHP | UNIQUE | REFLECTING | RES_MANA | IM_POIS | NO_CUT
+F:COLD_BLOOD | BASH_DOOR | RES_FIRE | RES_COLD | RES_ELEC | RES_POIS
+F:EMPTY_MIND | NO_FEAR | NO_CONF | NO_SLEEP | NONLIVING | RES_TELE | JOKEANGBAND
 D:A shining machine of death and destruction.
 
 N:532:Dagashi
@@ -10212,9 +10212,9 @@ W:40:2:0:200
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:EXPLODE:SHATTER:200d2
-F:FORCE_SLEEP | FORCE_MAXHP | UNIQUE | REFLECTING | RES_MANA | IM_POIS |
-F:EMPTY_MIND | COLD_BLOOD | BASH_DOOR | RES_FIRE | RES_COLD | RES_ELEC | RES_POIS
-F:NO_FEAR | NO_CONF | NO_SLEEP | NONLIVING | RES_TELE | JOKEANGBAND | NO_CUT
+F:FORCE_SLEEP | FORCE_MAXHP | UNIQUE | REFLECTING | RES_MANA | IM_POIS | NO_CUT
+F:COLD_BLOOD | BASH_DOOR | RES_FIRE | RES_COLD | RES_ELEC | RES_POIS
+F:EMPTY_MIND | NO_FEAR | NO_CONF | NO_SLEEP | NONLIVING | RES_TELE | JOKEANGBAND
 D:A shining machine of death and destruction.
 
 N:628:Malekith the Accursed
@@ -18059,7 +18059,7 @@ O:10:20:70:0
 B:GAZE:TERRIFY:4d4
 B:HIT:HURT:8d6
 F:FORCE_SLEEP |
-F:ONLY_ITEM | DROP_3D2 | DROP_4D2 | DROP_GOOD | NO_FEAR | REFLECTING | RES_MANA |
+F:ONLY_ITEM | DROP_3D2 | DROP_4D2 | DROP_GOOD | NO_FEAR | REFLECTING | RES_MANA
 F:SMART | TAKE_ITEM | OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY |
 F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | NONLIVING |
 F:RES_TELE | ELDRITCH_HORROR | SHAPECHANGER | ATTR_MULTI |
@@ -19037,10 +19037,10 @@ F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | IM_PSI | CAN_FLY | CAN_CLIMB
 F:RES_SOUND
 S:1_IN_3
 S:TELE_TO | BA_MANA | BR_DISE | S_ANGEL
-D:An undeviable presence, designated to watch the skies and maintain their balance.
-D:Its aura is pure beyond expression, its eyes reflect supreme laws beyond
-D:comprehension, daring to look at it will drive you insane, let alone fighting
-D:it!
+D:An undeviable presence, designated to watch the skies and maintain their
+D:balance. Its aura is pure beyond expression, its eyes reflect supreme laws
+D:beyond comprehension, daring to look at it will drive you insane, let alone
+D:fighting it!
 
 N:1072:Solar Blade
 G:A:y
@@ -19060,10 +19060,10 @@ F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | IM_PSI | CAN_FLY | CAN_CLIMB
 F:RES_SOUND
 S:1_IN_3
 S:TELE_TO | BA_MANA | BR_DISE | S_ANGEL
-D:An undeviable presence, designated to watch sun, earth and moon and maintain their
-D:balance. Its aura is pure beyond expression, its eyes reflect supreme laws
-D:beyond comprehension, daring to look at it will drive you insane, let alone
-D:fighting it!
+D:An undeviable presence, designated to watch sun, earth and moon and maintain
+D:their balance. Its aura is pure beyond expression, its eyes reflect supreme
+D:laws beyond comprehension, daring to look at it will drive you insane, let
+D:alone fighting it!
 
 N:1073:Star Blade
 G:A:v
@@ -19083,9 +19083,9 @@ F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | IM_PSI | CAN_FLY | CAN_CLIMB
 F:RES_SOUND
 S:1_IN_3
 S:TELE_TO | BA_MANA | BR_DISE | S_ANGEL
-D:An undeviable presence, designated to watch the stars and the void and maintain
-D:their balance. Its aura is pure beyond expression, its eyes reflect supreme
-D:laws beyond comprehension, daring to look at it will drive you insane,
+D:An undeviable presence, designated to watch the stars and the void and
+D:maintain their balance. Its aura is pure beyond expression, its eyes reflect
+D:supreme laws beyond comprehension, daring to look at it will drive you insane,
 D:let alone fighting it!
 
 N:1074:Michael, the Guardian Overlord
@@ -19895,9 +19895,9 @@ B:CLAW:UN_BONUS:1d2
 B:CLAW:UN_BONUS:1d2
 B:BITE:ACID:1d2
 B:BITE:ACID:1d2
-F:FORCE_MAXHP | CAN_FLY | REFLECTING | NONLIVING | SMART | GENO_NO_THIN
-F:BASH_DOOR | POWERFUL | MOVE_BODY | PASS_WALL | KILL_ITEM | WILD_TOO
-F:NO_CONF | NO_SLEEP | NO_STUN | BLUEBAND | NO_CREDIT | DROP_1 | ONLY_ITEM | DROP_GOOD
+F:FORCE_MAXHP | CAN_FLY | REFLECTING | NONLIVING | GENO_NO_THIN | BASH_DOOR
+F:SMART | POWERFUL | MOVE_BODY | PASS_WALL | KILL_ITEM | DROP_GOOD | WILD_TOO
+F:NO_CONF | NO_SLEEP | NO_STUN | BLUEBAND | NO_CREDIT | DROP_1 | ONLY_ITEM
 F:IM_ACID | IM_COLD | IM_FIRE | IM_ELEC | IM_POIS | RES_NETH | RES_DISE
 D:A slate and insanely speedy bat of large size, conjured from great
 D:malevolence. Acid drips off its claws while this nightmare shoots
@@ -20182,8 +20182,8 @@ I:110:6d6:10:35:10
 W:5:0:13000:25
 E:0:1:0:0:1:0
 O:0:0:0:0
-F:ALLOW_RUNNING
-F:BASH_DOOR | FORCE_MAXHP | DROP_CORPSE | NO_FEAR | MORTAL | ANIMAL | GENO_NO_THIN
+F:ALLOW_RUNNING | GENO_NO_THIN
+F:BASH_DOOR | FORCE_MAXHP | DROP_CORPSE | NO_FEAR | MORTAL | ANIMAL
 F:WILD_TOO | WILD_WOOD | BLUEBAND | NO_DEATH | NO_TARGET | NO_AUTORET
 D:A domesticated black horse.
 
@@ -20193,8 +20193,8 @@ I:110:6d6:10:35:10
 W:5:0:13000:25
 E:0:1:0:0:1:0
 O:0:0:0:0
-F:ALLOW_RUNNING
-F:BASH_DOOR | FORCE_MAXHP | DROP_CORPSE | NO_FEAR | MORTAL | ANIMAL | GENO_NO_THIN
+F:ALLOW_RUNNING | GENO_NO_THIN
+F:BASH_DOOR | FORCE_MAXHP | DROP_CORPSE | NO_FEAR | MORTAL | ANIMAL
 F:WILD_TOO | WILD_WOOD | BLUEBAND | NO_DEATH | NO_TARGET | NO_AUTORET
 D:A domesticated grullo horse.
 
@@ -20204,8 +20204,8 @@ I:110:6d6:10:35:10
 W:5:0:12000:25
 E:0:1:0:0:1:0
 O:0:0:0:0
-F:ALLOW_RUNNING
-F:BASH_DOOR | FORCE_MAXHP | DROP_CORPSE | NO_FEAR | MORTAL | ANIMAL | GENO_NO_THIN
+F:ALLOW_RUNNING | GENO_NO_THIN
+F:BASH_DOOR | FORCE_MAXHP | DROP_CORPSE | NO_FEAR | MORTAL | ANIMAL
 F:WILD_TOO | WILD_WOOD | BLUEBAND | NO_DEATH | NO_TARGET | NO_AUTORET
 D:A domesticated grey horse.
 
@@ -20215,8 +20215,8 @@ I:110:6d6:10:35:10
 W:5:0:12000:25
 E:0:1:0:0:1:0
 O:0:0:0:0
-F:ALLOW_RUNNING
-F:BASH_DOOR | FORCE_MAXHP | DROP_CORPSE | NO_FEAR | MORTAL | ANIMAL | GENO_NO_THIN
+F:ALLOW_RUNNING| GENO_NO_THIN
+F:BASH_DOOR | FORCE_MAXHP | DROP_CORPSE | NO_FEAR | MORTAL | ANIMAL 
 F:WILD_TOO | WILD_WOOD | BLUEBAND | NO_DEATH | NO_TARGET | NO_AUTORET
 D:A domesticated chestnut horse.
 
@@ -20226,8 +20226,8 @@ I:110:6d6:10:35:10
 W:5:0:12000:25
 E:0:1:0:0:1:0
 O:0:0:0:0
-F:ALLOW_RUNNING
-F:BASH_DOOR | FORCE_MAXHP | DROP_CORPSE | NO_FEAR | MORTAL | ANIMAL | GENO_NO_THIN
+F:ALLOW_RUNNING | GENO_NO_THIN
+F:BASH_DOOR | FORCE_MAXHP | DROP_CORPSE | NO_FEAR | MORTAL | ANIMAL
 F:WILD_TOO | WILD_WOOD | BLUEBAND | NO_DEATH | NO_TARGET | NO_AUTORET
 D:A domesticated palomino horse.
 
@@ -20441,8 +20441,8 @@ E:1:1:2:2:1:2
 O:0:0:0:0
 F:BLUEBAND | GENO_NO_THIN | FORCE_MAXHP | NO_CREDIT | NO_REDUCE | DROP_CHOSEN
 F:IM_TELE | NO_FEAR | NONLIVING
-D:Upon shattering the grand mirror, the adventurer's image suddenly came to life!
-D:Showing no hesitation, empathy or doubt it attacked immediately!
+D:Upon shattering the grand mirror, the adventurer's image suddenly came to
+D:life! Showing no hesitation, empathy or doubt it attacked immediately!
 
 # a low-power version for the 'Dungeon Keeper' labyrinth event - C. Blue
 # Differences: no-death, slower, awake, bashes doors, has light, no spells
@@ -20506,8 +20506,8 @@ W:127:0:0:0
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:TOUCH:*
-F:ALLOW_RUNNING | BLUEBAND | NO_DEATH | ASTAR | OPEN_DOOR | IM_FIRE | IM_COLD | IM_ELEC
-F:CAN_FLY
+F:ALLOW_RUNNING | BLUEBAND | NO_DEATH | ASTAR | OPEN_DOOR
+F:CAN_FLY | IM_FIRE | IM_COLD | IM_ELEC
 F:AI_ANNOY
 D:For testing
 

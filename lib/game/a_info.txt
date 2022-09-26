@@ -88,7 +88,7 @@ D:A fiery circle of bronze, with mighty spells to ward off evil.
 N:5:of Ingwe
 I:40:11:4
 W:50:40:3:150000
-F:INT | WIS | CHR | SUST_INT | SUST_WIS | SUST_CHR | SEARCH | INFRA | HIDE_TYPE |
+F:INT | WIS | CHR | SUST_INT | SUST_WIS | SUST_CHR | SEARCH | INFRA | HIDE_TYPE
 F:SEE_INVIS | FREE_ACT | ACTIVATE | SLAY_EVIL
 F:RES_ACID | RES_COLD | RES_ELEC | RES_SHARDS | RES_CHAOS
 F:INSTA_ART
@@ -847,8 +847,8 @@ N:59:of Fingolfin
 I:31:5:4
 W:50:15:40:110000
 P:5:1d1:10:10:20
-F:DEX | HIDE_TYPE | LUCK | SHOW_MODS
-F:FREE_ACT | RES_LITE | RES_DARK | RES_CONF | RES_DISEN | RES_FEAR | RES_ACID | ACTIVATE
+F:DEX | HIDE_TYPE | LUCK | SHOW_MODS | ACTIVATE
+F:FREE_ACT | RES_LITE | RES_DARK | RES_CONF | RES_DISEN | RES_FEAR | RES_ACID
 Z:magic missile
 D:The hand-sheathing of Fingolfin, warrior-king of Elves and Men, who gave
 D:Morgoth seven mighty wounds and pain that will last forever.
@@ -1164,7 +1164,8 @@ D:of old; his lame foot will remind him of its might should he meet it again.
 
 # The Claymore 'Anduril'
 #should be nicer at W:30, but base item is W:40!
-#(side note: supposedly WHITE_LITE in the moonlight, but red light under the sun)
+#(side note: from lore supposedly WHITE_LITE in the moonlight,
+# but red light under the sun)
 
 N:83:'Anduril'
 I:23:23:4
@@ -1562,8 +1563,8 @@ N:111:'Grond'
 I:21:50:3
 W:100:1:666:500000
 P:0:9d9:30:30:0
-F:KILL_DRAGON | KILL_DEMON | KILL_UNDEAD | SLAY_EVIL | SLAY_ANIMAL | SLAY_TROLL | SLAY_ORC |
-F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD |
+F:KILL_DRAGON | KILL_DEMON | KILL_UNDEAD | SLAY_EVIL | SLAY_ANIMAL
+F:SLAY_TROLL | SLAY_ORC | RES_ACID | RES_ELEC | RES_FIRE | RES_COLD |
 F:AGGRAVATE | CURSED | HEAVY_CURSE | PERMA_CURSE |
 F:INSTA_ART | SPECIAL_GENE | SHOW_MODS | LEVELS | IMPACT |
 F:TUNNEL | LIFE | STR | CON | ESP_ALL | HIDE_TYPE
@@ -1811,8 +1812,9 @@ N:129:'Glimdrir'
 I:15:4:3
 W:30:25:20:50000
 P:0:3d5:15:16:0
-F:DEX | SPEED | FREE_ACT | BRAND_POIS | SLAY_EVIL | SLAY_UNDEAD | REGEN | HIDE_TYPE
-F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_SOUND | NO_TELE | CURSED
+F:DEX | SPEED | FREE_ACT | BRAND_POIS | SLAY_EVIL | SLAY_UNDEAD | REGEN
+F:HIDE_TYPE | RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_SOUND
+F:NO_TELE | CURSED
 D:A powerful boomerang that makes one agile and fast, with a thirst for
 D:evil and undead creatures, but demands its wielder not teleport, for fear
 D:of desertion.
@@ -1872,8 +1874,9 @@ D:A bolt imbued with the powers of the elements.
 #I:14:6:3
 #W:60:10:20:130000
 #P:0:3d4:0:0:0
-#F:CHR | SPEED | WIS | SEE_INVIS | RES_SOUND | ACTIVATE | STEALTH | LUCK | HIDE_TYPE
-#F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | ESP_DRAGONRIDER | ESP_UNIQUE |
+#F:CHR | SPEED | WIS | SEE_INVIS | RES_SOUND | ACTIVATE | STEALTH | LUCK
+#F:HIDE_TYPE | RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | ESP_DRAGONRIDER
+#F:ESP_UNIQUE
 #D:This harp that once belonged to Master Robinton makes those who use
 #D:it seem more beautiful.  It is also said that those who have
 #D:used it found themselves walking faster, as if to an unheard beat.
@@ -2067,8 +2070,8 @@ P:0:0d0:36:28:0
 F:SEE_INVIS | SLOW_DIGEST | FREE_ACT | SPEED | DEX | CON | LEVITATE | LUCK
 F:XTRA_MIGHT | XTRA_SHOTS | IM_ELEC | REFLECT | INVIS | STEALTH |
 F:SUST_STR | SUST_INT | SUST_WIS | SUST_DEX | SUST_CON | SUST_CHR |
-F:RES_CHAOS | RES_DISEN | RES_CONF | RES_BLIND | INFRA | ESP_ORC | ESP_TROLL | ESP_EVIL |
-F:PRECOGNITION | NO_MAGIC | ULTIMATE | HIDE_TYPE
+F:RES_CHAOS | RES_DISEN | RES_CONF | RES_BLIND | INFRA | ESP_ORC | ESP_TROLL
+F:ESP_EVIL | PRECOGNITION | NO_MAGIC | ULTIMATE | HIDE_TYPE
 F:SPECIAL_GENE
 D:Designed to be used with the Seeker Bolt of the Elves, this crossbow
 D:is perfect against the terrible powers of Morgoth.
@@ -2116,7 +2119,8 @@ N:156:'Orchast'
 I:24:11:4
 W:15:5:150:18000
 P:0:2d7:20:16:0
-F:STR | DEX | SEARCH | SLAY_ORC | ACTIVATE | HIDE_TYPE | SHOW_MODS | BRAND_FIRE | ESP_ORC
+F:ACTIVATE | HIDE_TYPE | SHOW_MODS
+F:STR | DEX | SEARCH | SLAY_ORC | BRAND_FIRE | ESP_ORC
 D:Forged by the dwarves of Khazad-dum in a time of desperation,
 D:this axe turned many a battle against the invading orcs.
 
@@ -2711,9 +2715,9 @@ P:0:2d3:0:0:0
 D:In the not too distant past, DarkGod created three pints of magic ale.
 D:This ale was of the highest quality and far stronger than other brews.
 D:But more importantly, it never seemed to run out! One could drink, drink,
-D:and drink some more, and there was always more.
-D:It came to pass that these three pints were bestowed upon Moltor, the drunkest
-D:of the Dwarves. For some time Moltor enjoyed his ale, and all was well.
+D:and drink some more, and there was always more. It came to pass that these
+D:three pints were bestowed upon Moltor, the drunkest of the Dwarves.
+D:For some time Moltor enjoyed his ale, and all was well.
 
 
 # The Sea-blue Silk Cape 'Ocean Soul'
@@ -3459,8 +3463,8 @@ N:279:'End of Days'
 I:24:32:6
 W:95:40:400:0
 P:0:7d10:-22:30:0
-F:SHOW_MODS | CURSED | HEAVY_CURSE | AUTO_CURSE | STR | IM_FIRE
-F:BRAND_FIRE | SLAY_ANIMAL | SLAY_GIANT | SLAY_UNDEAD | SLAY_DEMON | KILL_DRAGON
+F:SHOW_MODS | CURSED | HEAVY_CURSE | AUTO_CURSE | STR | IM_FIRE | BRAND_FIRE
+F:SLAY_ANIMAL | SLAY_GIANT | SLAY_UNDEAD | SLAY_DEMON | KILL_DRAGON
 #F:AGGRAVATE
 D:"I had a dream, which was not all a dream. The bright sun was extinguish'd,
 D:and the stars did wander darkling in the eternal space, rayless, and pathless,
@@ -3477,9 +3481,9 @@ P:0:3d13:20:-20:0
 F:SHOW_MODS | CURSED | HEAVY_CURSE | AUTO_CURSE | CHAOTIC | RES_CHAOS
 F:ACTIVATE | RETURNING
 D:A strange, translucent weapon with flashes of blue light running through it
-D:and along its surface, emitting a constant hum, some call it the singing spear.
-D:It feels surprisingly light. At first the wielder may not notice how deeply
-D:imbued by corruption this spear is.
+D:and along its surface, emitting a constant hum, some call it the singing
+D:spear. It feels surprisingly light. At first the wielder may not notice how
+D:deeply imbued by corruption this spear is.
 
 # The Rhomphaia of Utumno
 
@@ -3533,14 +3537,14 @@ D:great speed. The seven leagues however might just be a teleportation trick!
 #I:tval:sval:pval  [ie. TV_SHIELD, SV_SMALL_LEATHER_SHIELD, +0] (defines.h)
 #W:(depth):(rarity[arts only]):(weight):(price)
 #C. Blue - some current details about depth and rarity:
-#	depth is minimum dlev. however, 'ood' (ie on easier dlevs) is possible.
-#	rarity roll succeeds at chance 1/rarity.
-#	note: rarity should be choosen for gameplay purpose (so arts dont become
-#	      too super-rare) somewhat lower in case the k_info base type has
-#	      already a very high rarity (this was already mentioned in randart.c).
-#	note: for make_artifact_special (INSTA_ART) the global variable object_level
-#	      is also tested as a minimum for the arts k_info base object level
-#	      (ood possible here too, ie higher insta art despite lower object level).
+#  depth is minimum dlev. however, 'ood' (ie on easier dlevs) is possible.
+#  rarity roll succeeds at chance 1/rarity.
+#  note: rarity should be choosen for gameplay purpose (so arts dont become
+#    too super-rare) somewhat lower in case the k_info base type has
+#    already a very high rarity (this was already mentioned in randart.c).
+#  note: for make_artifact_special (INSTA_ART) the global variable object_level
+#    is also tested as a minimum for the arts k_info base object level
+#    (ood possible here too, ie higher insta art despite lower object level).
 #A:(depth)/(chance[1/value])   [multiple definitions are possible]
 #P:(AC):(base dam.):(to-hit):(to-dam):(+AC?)
 #F:(attribute)|...
