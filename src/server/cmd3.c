@@ -1980,8 +1980,8 @@ void do_cmd_drop_gold(int Ind, s32b amt) {
 /* 	un_afk_idle(Ind); */
 
 	/* Message */
-//	msg_format(Ind, "You drop %d pieces of gold.", amt);
-	msg_format(Ind, "You drop %d pieces of %s.", amt, k_name + k_info[tmp_obj.k_idx].name);
+	//msg_format(Ind, "You drop %d pieces of gold.", amt);
+	msg_format(Ind, "You drop %d pieces of gold in %s.", amt, k_name + k_info[tmp_obj.k_idx].name);
 
 #ifdef USE_SOUND_2010
 	sound(Ind, "drop_gold", NULL, SFX_TYPE_COMMAND, FALSE);
