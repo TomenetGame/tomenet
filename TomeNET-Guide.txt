@@ -3485,18 +3485,20 @@ Edit the makefile.mingw to have MINGW_TARGET reflect the prefix.
 For regexp search (only used for the guide-search in c-cmd.c) you will probably
 need a regexp lib, mingw-libgnurx should work fine.
 
-Next, for sound support you will have to download at least SDL v1.2.15 and
-SDL-mixer v1.2.12. Optionally you can get SMPEG for MP3-support or MikMod for
+Next, for sound support you will have to download at least SDL2 and SDL2-mixer
+v2.5 or higher. Optionally you can get SMPEG for MP3-support or MikMod for
 various mod-file suport, and libogg/libvorbis, but it's not required.
 Make sure you do _not_ download the designated 'mingw32' tar.gz from the
 libsdl.org page but get the generic src tarball at the top of that page
 instead.
 Detailed instructions for installing SDL are provided by Mikael here:
 https://muuttuja.org/tomenet/howto-install-sdl.txt
+These aim at SDL 1 though, we have now migrated to SDL 2, so they don't apply
+directly anymore, but they might still be helpful in some way.
 
 Adjust the makefile.mingw accordingly, which means setting SDL_CONFIG to the
-sdl-config script that should now be installed inside your mingw-prefix folder,
-so probably it looks like SDL_CONFIG = /usr/$(MINGW_TARGET)/bin/sdl-config.
+sdl2-config script that should now be installed inside your mingw-prefix folder
+so probably it looks like SDL_CONFIG = /usr/$(MINGW_TARGET)/bin/sdl2-config.
 
 You should be able to cross-compile the client now. First a paranoid clean-up,
 then build the client (or server I guess, if desired):
@@ -3534,20 +3536,21 @@ The package names are usually (may vary depending on the build system):
 build-essential, xorg-dev, libncurses5, libncurses5-dev, libgcrypt11 (or
 libgcrypt-dev), libc6-dev.
 
-Since version 4.4.5 which supports music and sound via SDL, you also need
-libsdl-mixer-devel, libsdl, libsmpeg. Usual package names (SDL version 1.2):
-libsdl-mixer1.2, libsdl-mixer1.2-dev, libsdl1.2debian, libsdl1.2-dev,
-(preferably libsdl1.2debian-pulseaudio, eg under Ubuntu), libsmpeg0,
+Since version 4.4.5 which supports music and sound via SDL2, you also need
+libsdl2-mixer-devel, libsdl2, libsmpeg. Usual package names (SDL2, not SDL!):
+libsdl2-mixer2.5, libsdl2-mixer2.5-dev, libsdl2debian, libsdl2-dev,
+(preferably libsdl2debian-pulseaudio, eg under Ubuntu), libsmpeg0,
 libsmpeg-dev and optionally more formats like libogg/libvorbis.
-Sometimes instead of the libsdl* packages your system might
-provide the packages simply named 'sdl' and 'sdl_mixer' instead.
+Sometimes instead of the libsdl2* packages your system might
+provide the packages simply named 'sdl2' and 'sdl2_mixer' instead.
 If you don't want to use audio, edit the makefile and compare the two
 paragraphs titled 'Without SDL' and 'With SDL' and edit the makefile
 accordingly, to compile it without SDL audio support.
 NOTE: If you are compiling the above packages yourself, make sure that you
 install the specific audio format libs (smpeg, ogg/vorbis/..) _before_ you
-install libsdl-mixer, so its configure script will recognize those formats
+install libsdl2-mixer, so its configure script will recognize those formats
 and enable support for the according file types.
+Note that sdl2_mixer must be at least version 2.5!
 
 Enter these two lines:
         make clean
@@ -3670,20 +3673,21 @@ Basically use the same instructions as for Linux above. Additionally:
    make
    sudo make install
  command chain from a terminal window.
- Note: libsdl_mixer can be found on www.libsdl.org too, by clicking on the
+ Note: libsdl2_mixer can be found on www.libsdl.org too, by clicking on the
  "Libraries" menu and searching for "mixer".
+ Note that sdl2_mixer must be at least version 2.5!
 
  If you have trouble installing those source packages, you could try to simply
  use MacPorts to fetch them, at https://www.macports.org/.
 
 Dependencies:
 -libgcrypt depends on libgpg-error, which you will need to install too.
--libsdl_mixer may complain about missing dependencies (at least Ogg Vorbis is
+-libsdl2_mixer may complain about missing dependencies (at least Ogg Vorbis is
  required for TomeNET, since it's the official audio format - the rest is only
  needed if you add custom audio files in the according file formats):
   -Ogg Vorbis library (www.xiph.org -> libogg and libvorbis) for OGG file
    support, which is what the official TomeNET audio files are.
-  -SMPEG library (icculus.org/smpeg) for MP3 file support. (libsdl_mixer's
+  -SMPEG library (icculus.org/smpeg) for MP3 file support. (libsdl2_mixer's
    configure script May also list additional notes regarding the environment
    variable SMPEG_CONFIG, don't miss them.)
   -MikMod library (mikmod.raphnet.net) for various module music support.
