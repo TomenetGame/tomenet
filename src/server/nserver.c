@@ -12518,7 +12518,8 @@ static int Receive_special_line(int ind) {
 				fd_kill(Players[player]->infofile);
 			break;
 		case SPECIAL_FILE_UNIQUE:
-			do_cmd_check_uniques(player, line, srcstr);
+			/* abuse 'line' to encode 'mode' parameter */
+			do_cmd_check_uniques(player, line % 100000, srcstr, line / 100000);
 			break;
 		case SPECIAL_FILE_ARTIFACT:
 			do_cmd_check_artifacts(player, line, srcstr);

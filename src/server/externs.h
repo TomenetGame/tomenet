@@ -731,7 +731,7 @@ extern bool subinven_group_player(int Ind, int group, int slot);
 
 /* cmd4.c */
 extern void do_cmd_check_artifacts(int Ind, int line, char *srcstr);
-extern void do_cmd_check_uniques(int Ind, int line, char *srcstr);
+extern void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode);
 extern void do_cmd_check_players(int Ind, int line, char *srcstr);
 //extern void do_admin_cmd_check_players(int Ind, int line, char *srcstr);  //NOT IMPLEMENTED
 extern void do_cmd_check_player_equip(int Ind, int line);

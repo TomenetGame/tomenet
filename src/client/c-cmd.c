@@ -5975,8 +5975,24 @@ void cmd_check_misc(void) {
 		choice = 0;
 		switch (i) {
 		case '3':
-			/* Send it */
-			cmd_uniques();
+			if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
+				inkey_msg_old = inkey_msg;
+				inkey_msg = TRUE;
+				// TODO: "uniques_alive","List only unslain uniques for your local party" <- replaced by this choice now:
+				//get_com("Which uniques? (ESC for all, SPACE for (party-)unslain, ! for bosses/top lv.)", &choice);
+				get_com("Which uniques? (ESC for all, SPACE for alive, 'b' for bosses)", &choice);
+				inkey_msg = inkey_msg_old;
+				if (choice == '!' || choice == 'b') choice = 2;
+				else if (choice == ' ' || choice == 'a') choice = 1;
+				else choice = 0;
+				/* Encode 'choice' in 'line' info */
+				if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0))
+					Send_special_line(SPECIAL_FILE_UNIQUE, choice * 100000, "");
+				else Send_special_line(SPECIAL_FILE_UNIQUE, choice * 100000, "");
+			} else {
+				/* Send it */
+				cmd_uniques();
+			}
 			break;
 		case '1':
 			cmd_artifacts();

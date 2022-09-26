@@ -360,10 +360,13 @@ void do_cmd_check_artifacts(int Ind, int line, char *srcstr) {
  * Any unique seen by any player will be shown.  Also, I plan to add the name
  * of the slayer (if any) to the list, so the others will know just how
  * powerful any certain player is.  --KLJ--
+ *
+ * mode:
+ * 0 = normal, full list.
+ * 1 = only show uniques the player hasn't slain yet.
+ * 2 = only show bosses/nazgul/top level monsters
  */
-/* Pfft, we should rewrite show_file so that we can change
- * the colour for each letter!	- Jir - */
-void do_cmd_check_uniques(int Ind, int line, char *srcstr) {
+void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode) {
 	monster_race *r_ptr;
 
 	int i, j, kk;
@@ -371,6 +374,7 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr) {
 	bool full;
 
 	int k, l, total = 0, own_highest = 0, own_highest_level = 0, killed = 0;
+	int nazgul_killed = 0, nazgul_total = 0, bosses_killed = 0, bosses_total = 0;
 	byte attr;
 
 	FILE *fff;
@@ -381,12 +385,24 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr) {
 	s16b idx[MAX_R_IDX];
 	char buf[17];
 
+	/* Method 1 (new, to support extra params from client request) */
+	if (is_atleast(&q_ptr->version, 4, 8, 1, 0, 0, 0)) {
+		fff = my_fopen(p_ptr->infofile, "wb");
 
-	/* Temporary file */
-	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
+		/* Current file viewing */
+		strcpy(p_ptr->cur_file, p_ptr->infofile);
 
-	/* Open a new file */
-	fff = my_fopen(file_name, "wb");
+		/* Let the player scroll through the info */
+		p_ptr->special_file_type = TRUE;
+	/* Method 2 (old up to 4.8.0) */
+	} else {
+		/* Temporary file */
+		if (path_temp(file_name, MAX_PATH_LENGTH)) return;
+
+		/* Open a new file */
+		fff = my_fopen(file_name, "wb");
+	}
+
 
 	if (!is_newer_than(&q_ptr->version, 4, 4, 7, 0, 0, 0))
 		fprintf(fff, "\377U============== Unique Monster List ==============\n");
@@ -399,8 +415,16 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr) {
 		if (r_ptr->flags1 & RF1_UNIQUE) {
 			/* Only display known uniques */
 			//if (r_ptr->r_sights && mon_allowed(r_ptr))
-			if (r_ptr->r_sights && mon_allowed_view(r_ptr))
-				idx[total++] = k;
+			if (!r_ptr->r_sights || !mon_allowed_view(r_ptr)) continue;
+
+			/* count all (known) uniques */
+			idx[total++] = k;
+
+			/* also count Nazgul */
+			if (r_ptr->flags7 & RF7_NAZGUL) nazgul_total++;
+
+			/* also count dungeon bosses */
+			if (r_ptr->flags0 & RF0_FINAL_GUARDIAN) bosses_total++;
 
 			if (q_ptr->r_killed[k] == 1) {
 				killed++;
@@ -409,6 +433,12 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr) {
 					own_highest = k;
 					own_highest_level = r_ptr->level;
 				}
+
+				/* also count Nazgul */
+				if (r_ptr->flags7 & RF7_NAZGUL) nazgul_killed++;
+
+				/* also count dungeon bosses */
+				if (r_ptr->flags0 & RF0_FINAL_GUARDIAN) bosses_killed++;
 			}
 		}
 	}
@@ -417,7 +447,9 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr) {
 		if (!(p_ptr->uniques_alive))
 			fprintf(fff, "\377U  (You haven't killed any unique monster so far.)\n");
 	} else {
-		fprintf(fff, "\377sYou have killed %d of %d known unique monsters.\n\n", killed, total);
+		fprintf(fff, "\377UYou have killed %d of %d known unique monsters.\n", killed, total);
+		fprintf(fff, "\377yYou have killed %d of %d known dungeon bosses.\n", bosses_killed, bosses_total);
+		fprintf(fff, "\377oYou have killed %d of %d known Nazgul.\n\n", nazgul_killed, nazgul_total);
 	}
 
 	if (total) {
@@ -453,6 +485,13 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr) {
 				}
 				if (!kk) continue;
 			}
+
+			if (mode == 1 && p_ptr->r_killed[k] == 1) continue;
+
+			/* Hm - arbitrary break points I guess: 70 (Glaurung/Tiamat), 90 (Ancalagon), 95 (Gothmog, but why not just 90 then), 98 (Super-uniques + Morgoth only) */
+			//if (mode == 2 && !(r_ptr->flags7 & RF7_NAZGUL) && !(r_ptr->flags0 & RF0_FINAL_GUARDIAN) && r_ptr->level < 70) continue;
+			/* Bosses only, including 'super uniques' for now */
+			if (mode == 2 && !(r_ptr->flags7 & RF7_NAZGUL) && !(r_ptr->flags0 & RF0_FINAL_GUARDIAN) && r_ptr->level != 100) continue; /* 100: Morgoth doesn't have a specific flag */
 
 			/* Output color byte */
 			c_out = (p_ptr->r_killed[k] == 1 || kk) ? 'w' : 'D';
@@ -608,11 +647,24 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr) {
 	/* Close the file */
 	my_fclose(fff);
 
-	/* Display the file contents */
-	show_file(Ind, file_name, "Unique Monster List", line, 0, 0, srcstr);
 
-	/* Remove the file */
-	fd_kill(file_name);
+	/* Method 1 (new, to support extra params from client request) */
+	if (is_atleast(&q_ptr->version, 4, 8, 1, 0, 0, 0)) {
+		switch (mode) {
+		case 0: strcpy(p_ptr->cur_file_title, "Unique Monster List"); break;
+		case 1: strcpy(p_ptr->cur_file_title, "Unique Monster List (\377BAlive\377-)"); break;
+		case 2: strcpy(p_ptr->cur_file_title, "Unique Monster List (\377BBosses\377-)"); break;
+		}
+		Send_special_other(Ind);
+	}
+	/* Method 2 (old up to 4.8.0) */
+	else {
+		/* Display the file contents */
+		show_file(Ind, file_name, "Unique Monster List", line, 0, 0, srcstr);
+
+		/* Remove the file */
+		fd_kill(file_name);
+	}
 }
 
 /* Keep these ANTI_MAXPLV_ defines consistent with party.c:party_gain_exp()! */
@@ -3145,7 +3197,7 @@ void do_cmd_check_server_settings(int Ind) {
  * New hack: @ results in learned form list (Arjen's suggestion) - C. Blue
  */
 #if 0 /* todo first: Add new counter for combined kill count to base version */
-#define HIDE_DUPLICATES /* Do not display dup_idx versions of a monster */
+ #define HIDE_DUPLICATES /* Do not display dup_idx versions of a monster */
 #endif
 void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev, bool uniques) {
 	player_type *p_ptr = Players[Ind];
