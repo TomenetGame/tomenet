@@ -664,7 +664,7 @@ char guide_school[64][MAX_CHARS];
 char guide_spell[256][MAX_CHARS];
 int guide_races = 0, guide_classes = 0, guide_skills = 0, guide_schools = 0, guide_spells = 0;
 char guide_chapter[256][MAX_CHARS], guide_chapter_no[256][8];
-int guide_chapters, guide_endofcontents = -1;
+int guide_chapters, guide_endofcontents;
 
 #ifdef WINDOWS
 bool win_dontmoveuser = FALSE;

@@ -3037,7 +3037,7 @@ void init_guide(void) {
 
 	guide_lastline = -1;
 	guide_chapters = 0;
-	guide_endofcontents = -1; //paranoia
+	guide_endofcontents = -1;
 
 	path_build(path, 1024, "", "TomeNET-Guide.txt");
 	guide_errno = errno = 0;
