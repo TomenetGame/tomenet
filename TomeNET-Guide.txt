@@ -16861,6 +16861,7 @@ create a character!):
     Vampire bats are fast, can fly (basically as effective as 'levitation')
     and are more resistant to sun burn than the humanoid vampire form,
     making them useful for travelling, although they move slightly erratically.
+    As a specialty, vampires can use their full equipment in vampire bat form.
     At level 35 they can become able to turn into vampiric mist (mimicry 365).
     In mist form, they can pass closed doors, traps without triggering them,
     have maximum stealth and be granted a shivering aura (or have their
@@ -16870,7 +16871,7 @@ create a character!):
     of the player's symbol, it's still there though.)
     However, Vampires cannot perform a lot of physical actions in mist form,
     such as fighting, and the creeping mist moves slower than they would in
-    their normal form.
+    their normal form. Vampires can use their full equipment in mist form too.
     Vampires cannot eat normal food, instead they need to feed off living
     creatures. This means that you need to kill monsters in melee range (though
     not necessarily by using melee attacks - spells or arrows work fine too) in
