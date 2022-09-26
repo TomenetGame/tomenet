@@ -3529,6 +3529,9 @@ static int Handle_login(int ind) {
 	if (p_ptr->newly_created) {
 		p_ptr->newly_created = FALSE;
 
+		/* Newly created chars are frozen for a moment, kind of annoying and feels wrong. Remedy: */
+		if (p_ptr->energy <= level_speed(&p_ptr->wpos)) p_ptr->energy = level_speed(&p_ptr->wpos) - 1;
+
 		/* hints */
 		newly_created_msg = TRUE;
 		if (p_ptr->mode & MODE_PVP) {
