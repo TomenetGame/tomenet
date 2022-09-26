@@ -8995,11 +8995,10 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 	if (chance < 0) chance = 0;
 
 	/* Hacks: Certain items are easier/harder to use in general: */
-
 #if 1
 	/* equippable magic devices are especially easy to use? (ie no wands/staves/rods)
 	   eg tele rings, serpent amulets, true artifacts */
-	else if (!is_magic_device(o_ptr->tval)) {
+	if (!is_magic_device(o_ptr->tval)) {
 		chance += 30;
 		chance = chance - lev / 10;
 	}
