@@ -6836,14 +6836,36 @@ Lev.   Experience   Lev.   Experience   Lev.   Experience   Lev.   Experience
 Death messages
 --------------
 Depending on how a player died, there are different kinds of death messages:
-committed suicide
-retired to a warm, sunny climate
-was defeated by
-was killed by
-was annihilated by
-was vaporized by
-was destroyed by
-was killed and destroyed by
+- "committed suicide"
+  The player committed suicide to delete his character permanently.
+- "retired to a warm, sunny climate"
+  This is like suicide, but what happens if winners attempt to suicide:
+  They simply retire. The character is deleted permanently same as suiciding.
+- "was defeated by"
+  The everlasting player was killed but got auto-resurrected because he had
+  the "instant resurrection" feature enabled in a temple.
+- "was killed by"
+  The player was killed.
+  If the message is enclosed in asterisk pairs, it was a permanent (no-ghost)
+  death, so the character is permanently deleted now.
+  If the message was not enclosed in asterisks, the player turned into a ghost
+  and is probably hoping to get rescued and revived now.
+- "was annihilated by"
+  Same as "was killed by", just different wording.
+  This message appears if the damage taken with the death blow was very high.
+- "was vaporized by"
+  Same as "was killed by", just different wording.
+  This message appears if the damage taken with the death blow was extreme.
+- "was destroyed by"
+  The player was permanently killed so his character has been deleted now.
+  Instead of the asterisk-paired "was killed by" message (which indicates
+  permanent death same as this message does) this message is used exclusively
+  for insanity-induced deaths.
+- "ghost was destroyed by"
+  The player's ghost was destroyed (ie 'killed').
+  This means the character is now permanently deleted.
+- Some special, random death messages when the player gets killed by the game
+  boss, Morgoth, Lord of Darkness.
 
 Death
 -----
