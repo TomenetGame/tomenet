@@ -3028,13 +3028,16 @@ static void init_floor_mapping(void) {
 #ifdef BUFFER_GUIDE
 char guide_line[GUIDE_LINES_MAX][MAX_CHARS + 1]; //one extra char per line for newline char '\n'
 #endif
-static void init_guide(void) {
+void init_guide(void) {
 	int i;
 
 	FILE *fff;
 	char path[1024], buf[MAX_CHARS * 2 + 1], *c, *c2;
 	byte contents = 0;
 
+	guide_lastline = -1;
+	guide_chapters = 0;
+	guide_endofcontents = -1; //paranoia
 
 	path_build(path, 1024, "", "TomeNET-Guide.txt");
 	guide_errno = errno = 0;

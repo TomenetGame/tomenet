@@ -656,7 +656,7 @@ bool player_pref_files_loaded = FALSE;
 #endif
 
 /* For in-client guide search */
-int guide_lastline = -1, guide_errno = 0;
+int guide_lastline, guide_errno;
 char guide_race[64][MAX_CHARS];
 char guide_class[64][MAX_CHARS];
 char guide_skill[128][MAX_CHARS];
@@ -664,7 +664,7 @@ char guide_school[64][MAX_CHARS];
 char guide_spell[256][MAX_CHARS];
 int guide_races = 0, guide_classes = 0, guide_skills = 0, guide_schools = 0, guide_spells = 0;
 char guide_chapter[256][MAX_CHARS], guide_chapter_no[256][8];
-int guide_chapters = 0, guide_endofcontents = -1;
+int guide_chapters, guide_endofcontents = -1;
 
 #ifdef WINDOWS
 bool win_dontmoveuser = FALSE;

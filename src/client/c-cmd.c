@@ -6515,6 +6515,11 @@ void cmd_message(void) {
 			inkey_msg = FALSE;
 			return;
 #endif
+		} else if (!strcasecmp(buf, "/reinit_guide")) { /* Undocumented: Re-init the guide (update buffered guide info if guide was changed while client is still running). */
+			init_guide();
+			c_msg_format("Guide reinitialized. (errno %d,lastline %d,endofcontents %d,chapters %d)", guide_errno, guide_lastline, guide_endofcontents, guide_chapters);
+			inkey_msg = FALSE;
+			return;
 		}
 
 		Send_msg(buf);

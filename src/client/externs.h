@@ -559,6 +559,7 @@ extern void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]
 extern void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]);
 extern void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]);
 extern bool check_dir2(cptr s);
+extern void init_guide(void);
 
 /* c-inven.c */
 extern s16b index_to_label(int i);
