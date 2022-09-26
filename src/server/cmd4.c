@@ -380,13 +380,13 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode) {
 	FILE *fff;
 	char file_name[MAX_PATH_LENGTH];
 
-	player_type *q_ptr = Players[Ind], *p_ptr = q_ptr;
-	bool admin = is_admin(q_ptr);
+	player_type *p_ptr = Players[Ind], *q_ptr;
+	bool admin = is_admin(p_ptr);
 	s16b idx[MAX_R_IDX];
 	char buf[17];
 
 	/* Method 1 (new, to support extra params from client request) */
-	if (is_atleast(&q_ptr->version, 4, 8, 1, 0, 0, 0)) {
+	if (is_atleast(&p_ptr->version, 4, 8, 1, 0, 0, 0)) {
 		fff = my_fopen(p_ptr->infofile, "wb");
 
 		/* Current file viewing */
@@ -404,7 +404,7 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode) {
 	}
 
 
-	if (!is_newer_than(&q_ptr->version, 4, 4, 7, 0, 0, 0))
+	if (!is_newer_than(&p_ptr->version, 4, 4, 7, 0, 0, 0))
 		fprintf(fff, "\377U============== Unique Monster List ==============\n");
 
 	/* Scan the monster races */
@@ -426,7 +426,7 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode) {
 			/* also count dungeon bosses */
 			if (r_ptr->flags0 & RF0_FINAL_GUARDIAN) bosses_total++;
 
-			if (q_ptr->r_killed[k] == 1) {
+			if (p_ptr->r_killed[k] == 1) {
 				killed++;
 				/* remember highest unique the viewing player actually killed */
 				if (own_highest_level <= r_ptr->level) {
@@ -641,7 +641,7 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode) {
 	}
 
 	/* finally.. */
-	if (!is_newer_than(&q_ptr->version, 4, 4, 7, 0, 0, 0))
+	if (!is_newer_than(&p_ptr->version, 4, 4, 7, 0, 0, 0))
 		fprintf(fff, "\377U========== End of Unique Monster List ==========\n");
 
 	/* Close the file */
@@ -649,7 +649,7 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode) {
 
 
 	/* Method 1 (new, to support extra params from client request) */
-	if (is_atleast(&q_ptr->version, 4, 8, 1, 0, 0, 0)) {
+	if (is_atleast(&p_ptr->version, 4, 8, 1, 0, 0, 0)) {
 		switch (mode) {
 		case 0: strcpy(p_ptr->cur_file_title, "Unique Monster List"); break;
 		case 1: strcpy(p_ptr->cur_file_title, "Unique Monster List (\377BAlive\377-)"); break;
