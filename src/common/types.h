@@ -3288,6 +3288,7 @@ struct player_type {
 	bool fluent_artifact_reset;
 	s16b corner_turn;		/* C. Blue - Fun stuff :) Make player vomit if he turns around ***a lot*** (can't happen in 'normal' gameplay) */
 	byte auto_transport;		/* automatic (scripted) transport sequences */
+	s32b auto_transport_turn;	/* for when timing is important for certain AT things */
 	byte paging;			/* Player being paged by others? (Beep counter) */
 	byte ignoring_chat;		/* Ignoring normal chat? (Will only see private & party messages then) */
 	//superseded by mutedchat -- bool muted; /* Being an ass? - the_sandman */

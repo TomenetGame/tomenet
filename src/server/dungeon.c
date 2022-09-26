@@ -3906,28 +3906,32 @@ static void process_player_begin(int Ind) {
 		p_ptr->update |= (PU_DISTANCE);
 		redraw_stuff(Ind);
 		p_ptr->auto_transport = AT_VALINOR3;
+		p_ptr->auto_transport_turn = turn;
 		break;
 	case AT_VALINOR3:	/* Orome mumbles */
-		if (turn % 300) break; /* cool down.. */
+		if (turn < p_ptr->auto_transport_turn + cfg.fps * 1) break; /* cool down.. */
 		msg_print(Ind, "\374 ");
 		msg_print(Ind, "\374\377oOrome, The Hunter, mumbles something about a spear..");
 		p_ptr->auto_transport = AT_VALINOR4;
+		p_ptr->auto_transport_turn = turn;
 		break;
 	case AT_VALINOR4:	/* Orome looks */
-		if (turn % 500) break; /* cool down.. */
+		if (turn < p_ptr->auto_transport_turn + cfg.fps * 5) break; /* cool down.. */
 		msg_print(Ind, "\374 ");
 		msg_print(Ind, "\374\377oOrome, The Hunter, notices you and surprise crosses his face!");
 		p_ptr->auto_transport = AT_VALINOR5;
+		p_ptr->auto_transport_turn = turn;
 		break;
 	case AT_VALINOR5:	/* Orome laughs */
-		if (turn % 500) break; /* cool down.. */
+		if (turn < p_ptr->auto_transport_turn + cfg.fps * 4) break; /* cool down.. */
 		msg_print(Ind, "\374 ");
 		msg_print(Ind, "\374\377oOrome, The Hunter, laughs out loudly!");
 		set_afraid(Ind, 8);
 		p_ptr->auto_transport = AT_VALINOR6;
+		p_ptr->auto_transport_turn = turn;
 		break;
 	case AT_VALINOR6:	/* Orome offers */
-		if (turn % 500) break; /* cool down.. */
+		if (turn < p_ptr->auto_transport_turn + cfg.fps * 8) break; /* cool down.. */
 		msg_print(Ind, "\374 ");
 		msg_print(Ind, "\374\377oOrome, The Hunter, offers you to stay here!");
 		msg_print(Ind, "\374\377y  (You may hit the suicide keys in order to retire here,");
@@ -3977,6 +3981,11 @@ static void process_player_begin(int Ind) {
 		zcave[p_ptr->py][p_ptr->px].m_idx = 0 - Ind;
 		everyone_lite_spot(&p_ptr->wpos, oy, ox);
 		everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+		break;
+	case AT_MUMBLE:
+		if (turn < p_ptr->auto_transport_turn + cfg.fps * 2) break; /* cool down.. */
+		msg_print(Ind, "\374\377BYou hear some very annoyed mumbling...");
+		p_ptr->auto_transport = 0;
 		break;
 	}
 

@@ -1037,6 +1037,8 @@ void do_cmd_go_down(int Ind) {
 			p_ptr->new_level_method = LEVEL_RAND;
 			p_ptr->temp_misc_1 |= 0x80;
 			recall_player(Ind, "");
+			p_ptr->auto_transport = AT_MUMBLE;
+			p_ptr->auto_transport_turn = turn;
 			return;
 		}
 		msg_print(Ind, "The gate twinkles silvery for a moment but it seems broken.");
