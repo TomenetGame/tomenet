@@ -2198,8 +2198,8 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		else if (my_strcasestr(buf, "magical") && my_strcasestr(buf, "dev")) strcpy(init_search_string, "magic devices"); //NOT -> magic device (skill name)
 		else if ((my_strcasestr(buf, "die") || my_strcasestr(buf, "dice")) && my_strcasestr(buf, "hp")) strcpy(init_search_string, "hp die");
 		else if (!strcasecmp(buf, "death") || !strcasecmp(buf, "dead")) strcpy(init_search_string, "Death, Ghosts"); //chapter (3.11) about when you died
-		else if (!strcasecmp("rescue", buf)) strcpy(buf, "Getting Help");
-		else if (!strcasecmp("mirror", buf)) strcpy(buf, "The Mirror");
+		else if (!strcasecmp("rescue", buf)) strcpy(init_search_string, "Getting Help");
+		else if (!strcasecmp("mirror", buf)) strcpy(init_search_string, "The Mirror");
 		else if (my_strcasestr(buf, "shop") && my_strcasestr(buf, "serv")) strcpy(init_search_string, "services");
 		else if (!strcasecmp(buf, "stor") || !strcasecmp(buf, "store") || !strcasecmp(buf, "stores")) strcpy(init_search_string, "Shops");
 		else if (my_strcasestr(buf, "shop") && my_strcasestr(buf, "player")) strcpy(init_search_string, "Player stores");
