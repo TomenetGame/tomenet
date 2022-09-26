@@ -4306,7 +4306,7 @@ void do_cmd_look(int Ind, int dir) {
 		q_ptr = Players[0 - c_ptr->m_idx];
 
 		if (get_skill(p_ptr, SKILL_DIVINATION) == 50)
-			sprintf(extrainfo, ", %d HP, %d AC, %d Spd", q_ptr->chp, q_ptr->ac, p_ptr->pspeed - 110);
+			sprintf(extrainfo, ", %d HP, %d AC, %d Spd", q_ptr->chp, q_ptr->ac + q_ptr->to_a, q_ptr->pspeed - 110);
 
 		/* Track health */
 		health_track(Ind, c_ptr->m_idx);
