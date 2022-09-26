@@ -321,15 +321,29 @@ static bool do_eat_item(int Ind, int m_idx) {
 
 		/* Message */
 #ifdef ENABLE_SUBINVEN
-		if (i >= 100)
+		if (i >= 100) {
+			char m_name[MNAME_LEN];
+
 			msg_format(Ind, "\376\377o%sour %s (%c)(%c) was stolen!",
 			    ((o_ptr->number > 1) ? "One of y" : "Y"),
 			    o_name, index_to_label(l), index_to_label(j));
-		else
+
+			monster_desc(Ind, m_name, m_idx, 0x1);
+			s_printf("EAT_ITEM: %s from %s : %s (%c)(%c)\n",
+			    m_name, p_ptr->name, o_name, index_to_label(l), index_to_label(j)); //may wrongly use o_name in plural but w/e
+		} else
 #endif
-		msg_format(Ind, "\376\377o%sour %s (%c) was stolen!",
-		    ((o_ptr->number > 1) ? "One of y" : "Y"),
-		    o_name, index_to_label(i));
+		{
+			char m_name[MNAME_LEN];
+
+			msg_format(Ind, "\376\377o%sour %s (%c) was stolen!",
+			    ((o_ptr->number > 1) ? "One of y" : "Y"),
+			    o_name, index_to_label(i));
+
+			monster_desc(Ind, m_name, m_idx, 0x1);
+			s_printf("EAT_ITEM: %s from %s : %s (%c)(%c)\n",
+			    m_name, p_ptr->name, o_name, index_to_label(l), index_to_label(j)); //may wrongly use o_name in plural but w/e
+		}
 
 		/* Option */
 #ifdef MONSTER_INVENTORY
