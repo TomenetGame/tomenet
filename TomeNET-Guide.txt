@@ -77,6 +77,7 @@ Contents
     (3.4a)  Start-up equipment & how to use it
     (3.4b)  Item basics
     (3.4c)  Item trading rules and exceptions
+    (3.4d)  Money
     (3.5)   Preparing the first time for fighting enemies
     (3.6)   Creating basic macros & inscribing items, predefined macros (READ!)
     (3.7)   Creating macros for ranged attacks & abilities (spells)
@@ -5640,6 +5641,39 @@ Within the IDDC, item levels don't even have any effect!
 For the Nether Realm, the items must have been found within the Nether Realm.
 As soon as a character leaves the worldmap sector of the Nether Realm, the
 items lose their ability to be traded between incompatible character modes.
+
+
+(3.4d) Money
+------------
+Your money is displayed as pieces of gold in TomeNET, traditionally abbreviated
+to 'Au' for latin 'Aurum', meaning 'gold'. 'Au' is also the chemical symbol for
+gold in the periodic table.
+
+If you find money in any other form than gold pieces, such as copper or gems,
+it will always just display the equivalent gold value and be treated as such.
+For example if you take a pile of copper it will say how many gold pieces you
+found..worth of copper. So you don't need to calculate anything, all money
+numbers in the game are always in gold pieces.
+
+It is a good idea to 'invest' money in your character!
+For example by buying consumables such as potions and scrolls, better equipment
+(especially look at player stores for this, by pressing ~P, that is tilde key
+to open the knowledge menu and then SHIFT+P to open the player store search in
+your web browser), or scrolls to enchant your equipment to-hit, to-damage and
+also to-ac (armour class).
+
+If you run out on money, you can make some basic amounts quickly by just going
+to the Training Tower in Bree, which often has some copper or silver piles just
+lying around waiting to be picked up.
+When in the dungeon, know that magic devices such as wands and staves can sell
+for quite a lot. Just make sure to identify them before selling because the
+shops will pay extra money for their amount of charges.
+
+Money is vital if you are everlasting mode and have the 'instant resurrection'
+feature enabled in the temple: It costs a fee to activate when you die. If you
+don't have enough money (your carried money and your banked money is added up
+for this, so you don't have to worry about how it is distributed) then you will
+not get auto-resurrected and instead just turn into a ghost.
 
 
 
