@@ -445,7 +445,7 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode) {
 
 	if (!own_highest) {
 		if (!(p_ptr->uniques_alive))
-			fprintf(fff, "\377U  (You haven't killed any unique monster so far.)\n");
+			fprintf(fff, "\377U  (You haven't killed any unique monster so far.)\n\n");
 	} else {
 		fprintf(fff, "\377UYou have killed %d of %d known unique monsters.\n", killed, total);
 		fprintf(fff, "\377yYou have killed %d of %d known dungeon bosses.\n", bosses_killed, bosses_total);
