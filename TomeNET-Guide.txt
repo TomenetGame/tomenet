@@ -13579,8 +13579,8 @@ of probabilities:
 
 This means that if a monster of the respective flag is generated, it must pass
 the percentage roll to actually be generated. So for example monsters from
-both ZANGBAND and CTHANGBAND are just 1/3 as common as normal Angband monsters,
-while PERNANGBAND and BLUEBAND monsters are 2/3 as common.
+group ZANGBAND or CTHANGBAND are just 1/3 as common as normal Angband monsters,
+while PERNANGBAND or BLUEBAND monsters are 2/3 as common.
 
 This can have a bit of an effect on players looking for certain monsters -
 their rarity in the spoiler files (or in ~7) must then further be multiplied by
