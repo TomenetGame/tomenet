@@ -5986,9 +5986,7 @@ void cmd_check_misc(void) {
 				else if (choice == ' ' || choice == 'a') choice = 1;
 				else choice = 0;
 				/* Encode 'choice' in 'line' info */
-				if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0))
-					Send_special_line(SPECIAL_FILE_UNIQUE, choice * 100000, "");
-				else Send_special_line(SPECIAL_FILE_UNIQUE, choice * 100000, "");
+				Send_special_line(SPECIAL_FILE_UNIQUE, choice * 100000, "");
 			} else {
 				/* Send it */
 				cmd_uniques();
