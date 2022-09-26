@@ -36,16 +36,24 @@ function quest_towneltalk(Ind, msg, topic)
 				msg_print(Ind, "\252\255U You should seek cure immediately. To my knowledge, a sprig of the healing herb Athelas can cure it.")
 				msg_print(Ind, "\252\255U Or maybe you happen to know a proficient healer? And I heard that in the city of Gondolin there is herbal healing service available for a fee.")
 				hinted = 1
+			--Continuous damage status effects, not displayed when Black Breath was already diagnosed to not overload..
+			elseif player.cut ~= 0 or player.poisoned ~= 0 or player.diseased ~= 0 then
+				if player.ghost == 0 and player.suscep_good == 0 then --Not for undead/demons
+					msg_print(Ind, "\252\255UOh my, "..msg..", you seem to be suffering from ailments! Hurry and seek out the temple immediately for their priests can certainly cure you.")
+					hinted = 1
+				end
 			end
 
 			--Hunger:
 			if player.food < 3000 then --PY_FOOD_ALERT
-				if hinted == 1 then
-					msg_print(Ind, "\252\255UYou also seem to be in dire need of food. I don't have any with me, but if you visit the temple (4), I'm sure they will hand you some.")
-				else
-					msg_print(Ind, "\252\255U"..msg..", you seem to be in dire need of food. I don't have any with me, but if you visit the temple (4), I'm sure they will hand you some.")
+				if player.ghost == 0 and player.suscep_good == 0 then --Not for undead/demons
+					if hinted == 1 then
+						msg_print(Ind, "\252\255UYou also seem to be in dire need of food. I don't have any with me, but if you visit the temple (4), I'm sure they will hand you some.")
+					else
+						msg_print(Ind, "\252\255U"..msg..", you seem to be in dire need of food. I don't have any with me, but if you visit the temple (4), I'm sure they will hand you some.")
+					end
+					hinted = 1
 				end
-				hinted = 1
 			end
 			--BpR:
 --[[  moved down to topic #0 for now, more indepth too
@@ -101,6 +109,7 @@ function quest_towneltalk(Ind, msg, topic)
 		--Give proper question about advice topics
 		--msg_print(Ind, " ")
 		if hinted == 1 then
+			msg_print(Ind, "\252 ");
 			msg_print(Ind, "\252\255UIs there anything else you need advice on?")
 		else
 			--Print a message that looks as if it came straight from q_info.txt, sort of ^^
