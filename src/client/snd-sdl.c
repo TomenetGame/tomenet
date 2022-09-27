@@ -47,12 +47,8 @@
 #define WEATHER_VOL_CLOUDS
 
 /* Allow user-defined custom volume factor for each sample or song? ([].volume) */
-//#ifdef TEST_CLIENT
- #define USER_VOLUME_SFX
-//#endif
-#ifdef TEST_CLIENT
- #define USER_VOLUME_MUS
-#endif
+#define USER_VOLUME_SFX
+#define USER_VOLUME_MUS
 
 #ifdef SOUND_AL_SDL
 #else
@@ -3834,7 +3830,7 @@ void do_cmd_options_mus_sdl(void) {
 			go = FALSE;
 			break;
 
-#ifdef USER_VOLUME_MUS /* needs work @ actual mixing algo */
+#ifdef USER_VOLUME_MUS
 		case 'v': {
 			//i = c_get_quantity("Enter volume % (1..100): ", 50);
 			bool inkey_msg_old = inkey_msg;
