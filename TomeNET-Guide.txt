@@ -8350,16 +8350,25 @@ in most cases has a chance to drop a specific artifact (FINAL_ARTIFACT) or
 (in rare cases) a specific (non-artifact) item (FINAL_OBJECT).
 If a boss cannot or will not drop a final artifact, a random stat potion is
 dropped instead (in addition to the usual loot).
+
 Morgoth and Zu-Aon always drop certain fixed artifacts.
 All other dungeon bosses can only drop their specific artifact if it has not
 already been found, and even then they only have a static 1/3 (1 in 3) chance
 to drop it (this flat 1-in-3 chance overrides any 'rarity' that may be
 specified in the artifact spoiler files - that rarity value only counts for
 artifacts not dropped by dungeon bosses).
+
 The bosses have different probabilities to appear, but none of them is overly
 rare (Azog being one of the rarer ones), so just reset the level a couple of
 times until you find the boss (by leaving the level, waiting for a little bit,
 then entering it again).
+
+Dungeon bosses ONLY appear at the final (deepest) floor of their respective
+dungeon, and they can only spawn at level generation time, never "live" and
+can never be summoned either (not even on the "correct" floor).
+Last but not least unlike "normal" unique monsters, dungeon bosses will never
+respawn for winners.
+
 Dungeon bosses have especially high hit points and yield an extraordinary
 amount of experience points when you defeat them. Apart from the specific
 artifact drop the higher level ones also tend to drop great items in general.
@@ -8371,8 +8380,8 @@ flag, which means you will usually get especially good loot from them.
 
 Dungeon bosses will bump the floor feeling up to at least 'special', same as
 any other unique monsters do (see (4.8) for more info about floor feelings).
-Unlike "normal" unique monsters, a dungeon boss will never respawn for you
-once you got kill credit for it.
+In the IDDC they will cause an additional floor feeling (that is displayed
+together with any other floor feelings): "You feel a commanding presence.."
 
 Here is a list of all dungeon bosses and the artifacts they are guarding:
 (Some names have been shortened to fit.)
