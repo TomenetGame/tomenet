@@ -4119,7 +4119,7 @@ struct global_event_type {
 	time_t started;		/* quest started */
 	time_t ending;		/* quest will end */
 	char title[64];		/* short title of this event (used for /gesign <n> player command) */
-	char description[10][78];	/* longer event description */
+	char description[10][MAX_CHARS_WIDE];	/* longer event description (full line = 80 chars, + colour codes) */
 	bool hidden;		/* hidden from the players? */
 	int min_participants;	/* minimum amount of participants */
 	int limited;		/* limited amount of participants? (smaller than MAX_GE_PARTICIPANTS) */

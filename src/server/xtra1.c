@@ -7800,7 +7800,6 @@ int start_global_event(int Ind, int getype, char *parm) {
 		strcpy(ge->description[6], " Rules: Make sure that you don't gain ANY experience until it starts.  ");
 		strcpy(ge->description[7], "        Also, you aren't allowed to pick up ANY gold/items from another");
 		strcpy(ge->description[8], "        player before the tournament begins!                           ");
-		strcpy(ge->description[9], "");
 		ge->noghost = TRUE;
 		ge->end_turn = ge->start_turn + cfg.fps * 60 * 90 ; /* 90 minutes max. duration,
 								most of the time is just for announcing it
@@ -7835,7 +7834,6 @@ int start_global_event(int Ind, int getype, char *parm) {
 		strcpy(ge->description[7], " (PvP-mode characters are an exception and will actually die for real!)");
 		//strcpy(ge->description[7], " (Note: Some creatures might be beyond the wizards' abilities.)");
 		strcpy(ge->description[8], format(" (Example: '\377U/evsign %d black orc vet\377w' gets you a veteran archer!)", n+1));
-		strcpy(ge->description[9], "");
 		ge->end_turn = ge->start_turn + cfg.fps * 60 * 30 ; /* 30 minutes max. duration, insta-start */
 #if 0
 		switch (rand_int(2)) { /* Determine terrain type! */
@@ -7853,16 +7851,16 @@ int start_global_event(int Ind, int getype, char *parm) {
 		break;
 	case GE_DUNGEON_KEEPER:	/* 'Dungeon Keeper' Labyrinth */
 		strcpy(ge->title, "Dungeon Keeper");
-		strcpy(ge->description[0], " Characters up to level 14 are eligible to sign up for this race for   ");
-		strcpy(ge->description[1], " your life, through a labyrinth that is guarded by the Horned Reaper!  ");
-		strcpy(ge->description[2], " Rules: Running, teleporting, healing, detection, maps and speed boni  ");
-		strcpy(ge->description[3], "        do NOT work. You don't need any items for this event, except   ");
-		strcpy(ge->description[4], "        for a brass lantern which you can buy from town store '1'.     ");
-		strcpy(ge->description[5], " Your goal is to find one of the escape beacons (light green '>') in   ");
-		strcpy(ge->description[6], " time, before the horned reaper finds you or the dungeon is flooded    ");
-		strcpy(ge->description[7], " with lava (begins after 5 minutes, after 8 minutes it is submerged    ");
-		strcpy(ge->description[8], " which will mean certain death, even if you are immune to fire).       ");
-		strcpy(ge->description[9], " The escape beacons are self-illuminating so you won't miss them.");
+		strcpy(ge->description[0], " Characters up to level 14 are eligible to sign up for this race for your life, ");
+		strcpy(ge->description[1], " through a labyrinth that is guarded by the Horned Reaper! Enforced rules are:  ");
+		strcpy(ge->description[2], "  \377yRunning, teleporting, healing, detection, maps and speed boni do NOT work.    ");
+		strcpy(ge->description[3], " You don't need any items for this event, except for a brass lantern which you  ");
+		strcpy(ge->description[4], " can buy from town store '\377U1\377w'. Your goal is to find one of the self-illuminated  ");
+		strcpy(ge->description[5], " escape beacons '\377G>\377w' (always at the center of a room, they are hard to miss) in  ");
+		strcpy(ge->description[6], " time before the horned reaper finds you or the dungeon is flooded with lava!   ");
+		strcpy(ge->description[7], " Flooding starts after 5 minutes and after 8 minutes it is fully submerged,     ");
+		strcpy(ge->description[8], " which will mean certain death even if you are immune to fire.                 ");
+		//strcpy(ge->description[9], " The escape beacons are self-illuminating so you won't miss them.");
 		ge->noghost = TRUE;
 		ge->end_turn = ge->start_turn + cfg.fps * 60 * 60 ; /* 60 minutes max. duration,
 								most of the time is just for announcing it
