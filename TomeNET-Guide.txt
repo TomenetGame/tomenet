@@ -8616,9 +8616,9 @@ A monster trap consists of
 -an item (or a stack of items) to load the trap kit.
 
 Each kind of trap kit requires different items serving as ammunition:
-Catapult Trap Kit       -       Sling ammo (fires with 2x base might).
+Catapult Trap Kit       -       Sling ammo (fires with 3x base might).
  (orange)
-Arrow Trap Kit          -       Arrows (fires with 3x base might).
+Arrow Trap Kit          -       Arrows (fires with 3.5x base might).
  (red)
 Bolt Trap Kit           -       Bolts (fires with 4x base might).
  (bright red)
@@ -8642,9 +8642,15 @@ After it went off (and is out of charges for device traps or out of ammo for
 automatic traps) you can pick up the trap kit to use it again.
 If it was a catapult/arrow/bolt trap kit you can often recover the ammunition
 too, in case it didn't break. (Magic ammo and artifact ammo never break).
+
 Note that if you use magic ammo or artifact ammo, you only need 1 as it is
 neverending, except for 'Extra Shots' trap kits - because they fire multiple
 simultaneous shots, they will require the appropriate amount of ammo.
+Ego traps that damage specific monster types always come with extra shots too.
+
+Extra shots means that the trap kit may fire up to +x additional shots after
+its initial triggering; note that you will only see message feedback for shots
+that actually hit the target, but no "miss" messages.
 If you load a trap kit with less than optimal ammo, it will still work though.
 
 Physical-missile trap kits, those are catapult, arrow and bolt trap kits, can
@@ -8652,52 +8658,73 @@ also be enchanted to hit and to damage with enchant weapon scrolls, same as any
 other weapon.
 
 Trap kits can have special (ego) powers:
-(prefixes:)
+
+Pprefixes:
+----------
 Automatic       - Can set off up to 99 times, with a 20% chance each time of
                   ceasing to function. Requires the according amount of ammo
-                  though, if it's not a device trap kit.
-Fully Automatic - Sets off up to 99 times.
-                  Requires the according amount of ammunition if it's not a
-                  device trap kit.
+                  though, if it's not a device trap kit. (AUTOMATIC_5 flag.)
+
+Fully Automatic - Sets off up to 99 times. Requires the according amount of
+                  ammunition if it's not a device trap kit. (AUTOMATIC_99.)
+
 Well-hidden     - Makes it harder for monsters to spot the trap.
+                  This is the STEALTH flag, which uses the (+pval) bonus.
+
 Complicated     - Trap gets an extra AC bonus, making it harder to disarm.
+                  This AC bonus is given in [+AC] brackets as usual.
+
 Obvious         - Curses the trap and makes it practically useless.
+                  It has the STEALTH flag but a negative (-pval) malus.
 
-(suffixes:)
-of Extra Might  - fires with +x (bonus shown in round brackets) extra might.
+Suffixes:
+---------
+of Extra Might  - Fires with +x (bonus shown in round brackets) extra might.
                   ("It fires missiles with extra might.")
-of Extra Shots  - fires +x (bonus shown in round brackets) extra shots/round.
+                  This flag increases the base might multiplier by +1.
+
+of Extra Shots  - Fires +x (bonus shown in round brackets) extra shots/round.
                   ("It fires missiles excessively fast.")
-for Dragons     - Only triggers against dragons. Especially hard to spot.
-                  Fires extra shots.
-for Demons      - Only triggers against demons. Especially hard to spot.
-                  Fires extra shots.
-for Animals     - Only triggers against animals. Especially hard to spot.
-                  Fires extra shots.
-for Undead      - Only triggers against undead. Especially hard to spot.
-                  Fires extra shots. May damage or destroy ghosts.
-for Evil        - Only triggers against evil. Especially hard to spot.
-                  Fires extra shots. May damage or destroy ghosts.
+                  This flag causes the trap to fire additional ammo each round.
 
-Trap kits can also have two special properties in addition to the above:
-Kill Ghosts     - trap kit will also harm creatures in wraithform (those are
-                  all creatures that can pass solid walls). Trap kits without
-                  KILL_GHOST flag cannot hurt wraithform creatures.
+for Dragons     - Only triggers against dragons.
+                  Has a stealth bonus and fires +x extra shots/round (+x).
 
-Teleport-To     - after triggering, if the monster is still alive, it will be
-                  teleported to the player (TELEPORT_TO).
+for Demons      - Only triggers against demons.
+                  Has a stealth bonus and fires +x extra shots/round (+x).
+
+for Animals     - Only triggers against animals.
+                  Has a stealth bonus and fires +x extra shots/round (+x).
+
+for Undead      - Only triggers against undead.
+                  Has a stealth bonus and fires +x extra shots/round (+x).
+                  Able to damage creatures in wraithform (PASS_WALL).
+
+for Evil        - Only triggers against evil.
+                  Has a stealth bonus and fires +x extra shots/round (+x).
+                  Able to damage creatures in wraithform (PASS_WALL).
+
+Trap kits can also have two special properties (flags):
+KILL_GHOST      - trap kit will also harm creatures in wraithform (those are
+                  all creatures that can pass solid walls, aka PASS_WALL flag).
+                  Trap kits without KILL_GHOST flag cannot hurt these monsters.
+                  This flag occurs on the Undead and Evil ego traps.
+
+TELEPORT_TO     - after triggering, if the monster is still alive, it will be
+                  teleported to the player.
+                  This flag occurs on an artifact trap.
 
 If monsters notice a trap they can try to disarm it:
 
-- A trap kit that has a pval (that's a number in round parentheses, eg (+2))
-  increases the trap's "stealth", making it well-hidden and therefore harder
-  for monsters to notice and disarm.
+- A trap kit that has the STEALTH flag will add the pval (the number in round
+  parentheses, eg (+2)) to the trap's "stealth", making it harder for monsters
+  to notice and disarm ("well-hidden").
 
 - A trap kit that has an "armour class" bonus, shown in brackets (eg [+8])
   increases the trap's complexity, making it harder for monsters to disarm.
 
 - Animals, empty-minded and stupid monsters have practically no chance to
-  disarm traps. Rogueish or ranger monsters and similar have a higher chance
+  disarm traps. Rogueish or ranger monsters and similar have a good chance
   to disarm traps.
 
 - Shooter traps (catapult, arrow, bolt) are somewhat easier to disarm than the
@@ -8707,9 +8734,8 @@ If monsters notice a trap they can try to disarm it:
   will have a significantly lower chance to disarm it. In general, you always
   want to have your traps on non-lit grids for this reason, if possible.
 
-Trap kits and ammo that were disarmed by a monster cannot be recovered.
-
 You can disarm your own traps to get back the trap kit (and ammunition).
+Make sure to check out the easy_disarm_montraps option or the /edmt command!
 
 
 Hints for quick and easy handling:
