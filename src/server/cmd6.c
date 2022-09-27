@@ -1802,6 +1802,8 @@ void do_cmd_fill_bottle(int Ind) {
 	q_ptr->iron_turn = turn;
 	item = inven_carry(Ind, q_ptr);
 
+	s_printf("FOUNTAIN_FILL: %s: %s\n", p_ptr->name, k_name + k_info[k_idx].name);
+
 	if (item >= 0) {
 		q_ptr = &p_ptr->inventory[item];
 		if (!object_aware_p(Ind, q_ptr) || !object_known_p(Ind, q_ptr)) /* was just object_known_p */
