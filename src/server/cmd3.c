@@ -4372,7 +4372,7 @@ void do_cmd_look(int Ind, int dir) {
 		//snprintf(out_val, sizeof(out_val), "%s (%s%s%s)", r_name_get(&m_list[c_ptr->m_idx]),
 		    m_ptr->level,
 		    look_mon_desc(c_ptr->m_idx, divi),
-		    divi_nd ? (m_ptr->clone ? "clone" : (done_unique ? "slain" : "")) : (m_ptr->clone ? ", clone" : (done_unique ? ", slain" : "")), (!divi_nd || m_ptr->clone || done_unique) ? ", " : "", extrainfo);
+		    divi_nd ? (m_ptr->clone ? "clone" : (done_unique ? "slain" : "")) : (m_ptr->clone ? ", clone" : (done_unique ? ", slain" : "")), ((!divi_nd || m_ptr->clone || done_unique) && extrainfo[0]) ? ", " : "", extrainfo);
 #else /* use different colour for uniques we already killed */
 		snprintf(out_val, sizeof(out_val), "%s%s (Lv %d, %s%s%s%s)",
 		//snprintf(out_val, sizeof(out_val), "%s%s (%s%s%s)",
@@ -4381,7 +4381,7 @@ void do_cmd_look(int Ind, int dir) {
 		    m_name,
 		    m_ptr->level,
 		    look_mon_desc(c_ptr->m_idx, divi),
-		    divi_nd ? (m_ptr->clone ? "clone" : "") : (m_ptr->clone ? ", clone" : ""), (!divi_nd || m_ptr->clone) ? ", " : "", extrainfo);
+		    divi_nd ? (m_ptr->clone ? "clone" : "") : (m_ptr->clone ? ", clone" : ""), ((!divi_nd || m_ptr->clone) && extrainfo[0]) ? ", " : "", extrainfo);
 #endif
 	/* An object */
 	} else if (c_ptr->o_idx) {
