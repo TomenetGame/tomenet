@@ -3665,14 +3665,13 @@ static bool item_tester_refill_lantern(object_type *o_ptr) {
 /*
  * Refill the players lamp (from the pack or floor)
  */
-static void do_cmd_refill_lamp(int Ind, int item)
-{
+static void do_cmd_refill_lamp(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 
 	object_type *o_ptr;
 	object_type *j_ptr;
 
-	long int used_fuel = 0, spilled_fuel = 0, available_fuel = 0;
+	long int used_fuel = 0, spilled_fuel = 0, available_fuel = 0, old_fuel;
 
 
 	/* Restrict the choices */
@@ -3708,13 +3707,14 @@ static void do_cmd_refill_lamp(int Ind, int item)
 	}
 
 	/* Let's not end afk for this. - C. Blue */
-/*	un_afk_idle(Ind); */
+	/* un_afk_idle(Ind); */
 
 	/* Take a partial turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 
 	/* Access the lantern */
 	j_ptr = &(p_ptr->inventory[INVEN_LITE]);
+	old_fuel = j_ptr->timeout;
 
 	/* Refuel */
 	used_fuel = j_ptr->timeout;
@@ -3778,12 +3778,18 @@ static void do_cmd_refill_lamp(int Ind, int item)
 			o_ptr->timeout -= ((used_fuel * 100000) / (100000 - ((100000 * spilled_fuel) / o_ptr->timeout)));
 			/* quick hack to hopefully fix rounding errors: */
 			if (o_ptr->timeout == 1) o_ptr->timeout = 0;
-//			inven_item_describe(Ind, item);
+			//inven_item_describe(Ind, item);
 		}
 	}
 
-	/* Recalculate torch */
-	p_ptr->update |= (PU_TORCH | PU_LITE);
+	/* We made an empty lamp work again? */
+	if (!old_fuel) {
+		/* Recalculate torch */
+		p_ptr->update |= (PU_TORCH | PU_LITE);
+		/* If lamp gives special abilities, reenable them */
+		p_ptr->update |= PU_BONUS;
+	}
+	/* We changed items that were involved in refueling */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 	/* If multiple lanterns are now 0 turns, they can be combined */
 	p_ptr->notice |= (PN_COMBINE);
