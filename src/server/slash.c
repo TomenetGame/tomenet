@@ -6403,12 +6403,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				object_type *o_ptr = &forge;
 				int exact = -1, prefix = -1, closest = -1, closest_dis = 9999;
 				char *s, *item;
+				bool true_order = FALSE;
 
 				WIPE(o_ptr, object_type);
 
 				if (!tk) {
-					msg_print(Ind, "\377oUsage:    /nwish [<#skip>:][#amount ]<item name>");
+					msg_print(Ind, "\377oUsage:    /nwish [[<#skip>]:][#amount ]<item name>");
 					msg_print(Ind, "\377oExample:  /nwish 1:3 probing");
+					msg_print(Ind, "\377oExample:  /nwish :4 fire");
 					return;
 				}
 
@@ -6416,6 +6418,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if ((s = strchr(message3, ':'))) {
 					k = atoi(message3);
 					item = s + 1;
+					true_order = TRUE; //skipping won't make sense if the results are reordered anyway, it would always skip certain combos
 				} else {
 					k = 0;
 					item = message3;
@@ -6439,33 +6442,41 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					if (!s) continue;
 
 					if (!strcasecmp(k_name + k_ptr->name, item)) {
+						/* skip? */
 						if (k) {
 							k--;
 							continue;
 						}
 						exact = i;
-						break;
+						break; /* best possible match found */
 					}
 					else if (prefix == -1 && s == k_name + k_ptr->name) {
+						/* skip? */
 						if (k) {
 							k--;
 							continue;
 						}
 						prefix = i;
+						if (true_order) break;
+						/* continue looking for exact match to override this one */
 					}
 					else if (s - (k_name + k_ptr->name) < closest_dis) {
+						/* skip? */
 						if (k) {
 							k--;
 							continue;
 						}
 						closest = i;
 						closest_dis = s - (k_name + k_ptr->name);
+						if (true_order) break;
+						/* continue looking for exact or prefix match to override this one */
 					}
 				}
 				if (exact == -1 && prefix == -1 && closest == -1) {
 					msg_print(Ind, "\377yItem not found.");
 					return;
 				}
+				/* Best match type priority, has no effect if true_order */
 				if (exact != -1) k_ptr = &k_info[exact];
 				else if (prefix != -1) k_ptr = &k_info[prefix];
 				else k_ptr = &k_info[closest];
