@@ -6404,20 +6404,43 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				int exact = -1, prefix = -1, closest = -1, closest_dis = 9999;
 				char *s, *item;
 				bool true_order = FALSE;
+
 				ego_item_type *e_ptr;
 				int e1 = 0, e2 = 0;
 				char xname[MAX_CHARS];
+
+				int pval = 999, bpval = 999;
 
 				WIPE(o_ptr, object_type);
 
 				if (!tk) {
 					//todo: allow specifying bpval/pval
-					msg_print(Ind, "\377oUsage:    /nwish [[<#skip>]:][#amount ][/<prefix-ego>/]<item name>[/<postfix-ego>]");//[ +<bpval>+<pval>]
+					msg_print(Ind, "\377oUsage:    /nwish [[<#skip>]:][#amount ][/<prefix-ego>/]<item name>[/<postfix-ego>] [+<bpval>][*<pval>]");
 					msg_print(Ind, "\377oExample:  /nwish 1:3 probing");
 					msg_print(Ind, "\377oExample:  /nwish :4 fire");
 					msg_print(Ind, "\377oExample:  /nwish 2 elven/hard lea/resis");
 					return;
 				}
+
+				/* First, eliminate pval/bpval strings */
+				if ((s = strchr(message3, '*'))) {
+					pval = atoi(s + 1);
+					if (pval < -128 || pval > 127) {
+						msg_print(Ind, "pval and bpval must be between -128 and 127.");
+						return;
+					}
+					*s = 0;
+				}
+				if ((s = strchr(message3, '+'))) {
+					bpval = atoi(s + 1);
+					if (bpval < -128 || bpval > 127) {
+						msg_print(Ind, "pval and bpval must be between -128 and 127.");
+						return;
+					}
+					*s = 0;
+				}
+				/* Trim trailing space */
+				if (message3[strlen(message3) - 1] == ' ') message3[strlen(message3) - 1] = 0;
 
 				/* check for skips */
 				if ((s = strchr(message3, ':'))) {
@@ -6542,6 +6565,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				//apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, RESF_NONE);
 				apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, o_ptr->name1 || o_ptr->name2, o_ptr->name1 || o_ptr->name2, FALSE, RESF_NONE);
+				if (bpval != 999) o_ptr->bpval = bpval;
+				if (pval != 999) o_ptr->pval = pval;
 				o_ptr->discount = 0;
 				o_ptr->owner = 0;
 				o_ptr->ident &= ~ID_NO_HIDDEN;
