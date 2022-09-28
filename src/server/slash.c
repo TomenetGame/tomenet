@@ -6404,13 +6404,18 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				int exact = -1, prefix = -1, closest = -1, closest_dis = 9999;
 				char *s, *item;
 				bool true_order = FALSE;
+				ego_item_type *e_ptr;
+				int e1 = 0, e2 = 0;
+				char xname[MAX_CHARS];
 
 				WIPE(o_ptr, object_type);
 
 				if (!tk) {
-					msg_print(Ind, "\377oUsage:    /nwish [[<#skip>]:][#amount ]<item name>");
+					//todo: allow specifying bpval/pval
+					msg_print(Ind, "\377oUsage:    /nwish [[<#skip>]:][#amount ][/<prefix-ego>/]<item name>[/<postfix-ego>]");//[ +<bpval>+<pval>]
 					msg_print(Ind, "\377oExample:  /nwish 1:3 probing");
 					msg_print(Ind, "\377oExample:  /nwish :4 fire");
+					msg_print(Ind, "\377oExample:  /nwish 2 elven/hard lea/resis");
 					return;
 				}
 
@@ -6430,7 +6435,55 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					item += 1;
 				} else tk = 1;
 
-				/* todo: actually allow ego power prefix/postfix */
+				/* allow ego power prefix/postfix */
+				if ((s = strchr(item, '/'))) {
+					/* prefix ego power specified? */
+					if (s == item) {
+						/* Grab ego name */
+						strcpy(xname, s + 1);
+						if (!(s = strchr(xname, '/'))) {
+							msg_print(Ind, "Missing '/' separator between prefix-ego power and item name.");
+							return;
+						}
+						*s = 0;
+						for (i = 1; i < MAX_E_IDX; i++) {
+							e_ptr = &e_info[i];
+							if (!e_ptr->name) continue;
+							if (!e_ptr->before) continue; /* must be prefix */
+							if (my_strcasestr(e_name + e_ptr->name, xname)) {
+								e1 = i;
+								break;
+							}
+						}
+						if (i == MAX_E_IDX) {
+							msg_print(Ind, "Prefix-ego power not found.");
+							return;
+						}
+						/* check for postfix ego power next */
+						item += strlen(xname) + 2; /* skip "/xname/" sequence */
+						s = strchr(item, '/');
+					}
+					/* postfix ego power specified? */
+					if (s) {
+						/* Terminate item name in 'item' before post-fix ego power name */
+						*s = 0;
+						/* Grab ego name */
+						strcpy(xname, s + 1);
+						for (i = 1; i < MAX_E_IDX; i++) {
+							e_ptr = &e_info[i];
+							if (!e_ptr->name) continue;
+							if (e_ptr->before) continue; /* must be postfix */
+							if (my_strcasestr(e_name + e_ptr->name, xname)) {
+								e2 = i;
+								break;
+							}
+						}
+						if (i == MAX_E_IDX) {
+							msg_print(Ind, "Postfix-ego power not found.");
+							return;
+						}
+					}
+				}
 
 				/* Prefer perfectly matching name over prefix-matching name
 				   over as-close-as-possible-to-prefix-matching name */
@@ -6482,8 +6535,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				else k_ptr = &k_info[closest];
 
 				invcopy(o_ptr, lookup_kind(k_ptr->tval, k_ptr->sval));
-
 				//o_ptr->number = o_ptr->weight >= 30 ? 1 : 99;
+
+				o_ptr->name2 = e1;
+				o_ptr->name2b = e2;
 
 				//apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, RESF_NONE);
 				apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, o_ptr->name1 || o_ptr->name2, o_ptr->name1 || o_ptr->name2, FALSE, RESF_NONE);
