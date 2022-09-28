@@ -319,7 +319,9 @@ extern cptr ANGBAND_DIR_GAME;
 
 extern bool disable_numlock;
 extern bool use_graphics;
+#ifdef USE_GRAPHICS
 extern char graphic_tiles[256];
+#endif
 extern bool use_sound, use_sound_org;
 extern bool quiet_mode;
 extern bool noweather_mode;
