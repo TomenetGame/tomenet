@@ -874,6 +874,8 @@ errr init_gcu(void) {
 	    !getenv("XTERM_VERSION")))
 		setenv("TERM", "xterm-16color", -1);
 
+	/* Graphic tiles are not supported in GCU client */
+	use_graphics = FALSE;
 
 	/* BIG_MAP is currently not supported in GCU client */
 	c_cfg.big_map = FALSE;
