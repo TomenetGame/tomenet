@@ -615,7 +615,7 @@ extern bool nothing_test2(cave_type *c_ptr, int x, int y, struct worldpos *wpos,
 extern bool test_hit_fire(int chance, int ac, int vis);
 extern bool test_hit_melee(int chance, int ac, int vis);
 extern s16b critical_shot(int Ind, int weight, int plus, int dam, bool precision, bool shot);
-extern s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_crits, int o_crit);
+extern s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_crits, int o_crit, bool weapon);
 extern s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, bool thrown);
 extern s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *p_ptr, bool thrown);
 extern void search(int Ind);

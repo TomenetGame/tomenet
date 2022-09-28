@@ -14990,9 +14990,9 @@ stated.
 
                                 Increases 'Fighting' and 'Bows/Throw'
                                 abilities somewhat, thereby increasing your
-                                chance to hit with melee, ranged weapons and
-                                when throwing an item and reducing your chance
-                                to get disarmed.
+                                chance to hit in melee (weaponless and with
+                                weapons), ranged weapons and when throwing an
+                                item and reducing your chance to get disarmed.
 
                                 If your Combat skill isn't zero, then you can
                                 press 'm' to check your base chance of
@@ -15002,10 +15002,10 @@ stated.
     +Weaponmastery              Slightly increases melee to-dam and to-hit for
      (1/3)                      armed combat: Hit gets increased by 1/3 of your
                                 skill, damage by 1/10.
-                                Improves your 'Fighting' ability somewhat,
-                                thereby further increasing your chance to hit
-                                with melee weapons and reducing your chance to
-                                get disarmed.
+                                Improves your 'Fighting' ability somewhat when
+                                wielding a weapon, thereby further increasing
+                                your chance to hit in melee and reducing your
+                                chance to get disarmed.
 
                                 Slightly increases your chance to score
                                 critical hits in armed combat (just 7.5% as

@@ -5878,6 +5878,7 @@ void calc_boni(int Ind) {
 	/* Weaponmastery bonus to hit and damage - not for MA!- C. Blue */
 	if (get_skill(p_ptr, SKILL_MASTERY) && melee_weapon && p_ptr->num_blow) {
 		int lev = get_skill(p_ptr, SKILL_MASTERY);
+
 		p_ptr->to_h_melee += lev / 3;
 		p_ptr->to_d_melee += lev / 10;
 	}
@@ -6262,8 +6263,8 @@ void calc_boni(int Ind) {
 	p_ptr->skill_fos += get_skill_scale(p_ptr, SKILL_SNEAKINESS, 5);
 
 	/* Affect Skill -- combat (normal) (Level, by Class) */
-	//p_ptr->skill_thn += p_ptr->cp_ptr->x_thn * ((2 * get_skill(p_ptr, SKILL_MASTERY)) + (1 * get_skill(p_ptr, SKILL_COMBAT))) / 100;
-	p_ptr->skill_thn += 40 * ((2 * get_skill(p_ptr, SKILL_MASTERY)) + (1 * get_skill(p_ptr, SKILL_COMBAT))) / 100;
+	//p_ptr->skill_thn += p_ptr->cp_ptr->x_thn * ((melee_weapon ? get_skill_scale(p_ptr, SKILL_MASTERY, 100)) + (1 * get_skill(p_ptr, SKILL_COMBAT))) / 100;
+	p_ptr->skill_thn += 40 * ((melee_weapon ? get_skill_scale(p_ptr, SKILL_MASTERY, 100) : 0) + (1 * get_skill(p_ptr, SKILL_COMBAT))) / 100;
 
 	/* Affect Skill -- combat (shooting) (Level, by Class) */
 	//p_ptr->skill_thb += (p_ptr->cp_ptr->x_thb * (((2 * get_skill(p_ptr, SKILL_ARCHERY)) + (1 * get_skill(p_ptr, SKILL_COMBAT))) / 10) / 10);

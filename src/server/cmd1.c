@@ -236,8 +236,9 @@ s16b critical_shot(int Ind, int weight, int plus, int dam, bool precision, bool 
  * Critical hits (by player)
  *
  * Factor in weapon weight, total plusses, player level.
+ * Also called for martial arts, then MA skill will simulate a 'weight'.
  */
-s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_crit, int o_crit) {
+s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_crit, int o_crit, bool weapon) {
 	player_type *p_ptr = Players[Ind];
 	int i, k, w;
 
@@ -254,7 +255,7 @@ s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_cri
 	if (w > 100) w = 10;
 	else w = 110 - w;
 	if (w < 10) w = 10; /* shouldn't happen anyways */
-	i = (w * 2) + ((p_ptr->to_h + plus) * 5) + get_skill_scale(p_ptr, SKILL_MASTERY, 150);
+	i = (w * 2) + ((p_ptr->to_h + plus) * 5) + (weapon ? get_skill_scale(p_ptr, SKILL_MASTERY, 150) : 0);
 
 	i += 50 * BOOST_CRIT(p_ptr->xtra_crit + o_crit); //0..2350; 10->1010, 20->1650, 35->2100, 50->2350
 	if (allow_skill_crit) i += get_skill_scale(p_ptr, SKILL_CRITS, 40 * 50);
@@ -2948,6 +2949,9 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 	bool		drainable = TRUE, backstab_feed = FALSE;
 	//bool		py_slept;
 	bool		no_pk;
+#ifndef NEW_DODGING
+	int		dodge_chance;
+#endif
 
 	monster_race *pr_ptr = &r_info[p_ptr->body_monster], *qr_ptr;
 	bool apply_monster_effects = TRUE;
@@ -3226,8 +3230,9 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 			 * 50 dodge vs lvl 70 => 17% max chance
 			 * ---- Level 79+ melee hits are not dodgable ----
 			 */
-			int dodge_chance = q_ptr->dodge_level - p_ptr->lev * 19 / 10;
+			dodge_chance = q_ptr->dodge_level - p_ptr->lev * 19 / 10;
 			if (dodge_chance > DODGE_CAP) dodge_chance = DODGE_CAP;
+
 			if (!backstab && (dodge_chance > 0) && magik(dodge_chance)) {
 				msg_format(Ind, "\377c%s dodges your attack!", COLOUR_DODGE_PLY, q_name);
 				switch (p_ptr->name[strlen(p_ptr->name) - 1]) {
@@ -3405,7 +3410,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 
-				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k - k2, FALSE, 0);
+				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k - k2, FALSE, 0, FALSE);
 				k3 += k2;
 #else
 				k = tot_dam_aux_player(Ind, NULL, k, q_ptr, FALSE);
@@ -3413,7 +3418,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 
-				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE, 0);
+				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE, 0, FALSE);
 #endif
 
 #ifdef CRIT_VS_BACKSTAB
@@ -3542,10 +3547,10 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				with light weapons, which have low dice. So for gain
 				we need the full damage including all to-dam boni */
 #ifdef CRIT_UNBRANDED
-				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k - k2, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(Ind, o_ptr));
+				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k - k2, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(Ind, o_ptr), TRUE);
 				k3 += k2;
 #else
-				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(Ind, o_ptr));
+				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(Ind, o_ptr), TRUE);
 #endif
 				k2 = k; /* remember damage before crit */
 #ifdef CRIT_VS_BACKSTAB
@@ -4079,7 +4084,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	bool		secondary_wield = (p_ptr->inventory[INVEN_ARM].k_idx != 0 && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD);
 	bool		dual_wield = primary_wield && secondary_wield && p_ptr->dual_mode; /* Note: primary_wield && secondary_wield == p_ptr->dual_wield (from xtra1.c) actually. */
 	int		dual_stab = (dual_wield ? 1 : 0); /* organizer variable for dual-wield backstab */
-	bool		martial = FALSE, did_stun, did_knee, did_slow;
+	bool		martial = FALSE, did_stun, did_knee, did_slow, weapon = primary_wield || secondary_wield;
 	int		block, parry;
 
 	int		vorpal_cut = 0;
@@ -4532,7 +4537,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 
-				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k - k2, FALSE, 0);
+				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k - k2, FALSE, 0, FALSE);
 				k3 += k2;
 #else
 				k = tot_dam_aux(Ind, NULL, k, m_ptr, FALSE);
@@ -4542,7 +4547,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 
-				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE, 0);
+				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE, 0, FALSE);
 #endif
 #ifdef CRIT_VS_VORPAL
 				k2 = k; /* remember damage before crit */
@@ -4732,10 +4737,10 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				with light weapons, which have low dice. So for gain
 				we need the full damage including all to-dam boni */
 #ifdef CRIT_UNBRANDED
-				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k - k2, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(Ind, o_ptr));
+				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k - k2, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(Ind, o_ptr), TRUE);
 				k3 += k2;
 #else
-				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(Ind, o_ptr));
+				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(Ind, o_ptr), TRUE);
 #endif
 #ifdef CRIT_VS_VORPAL
 				k2 = k; /* remember damage before crit */
@@ -4814,7 +4819,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 					stun_effect -= get_skill_scale(p_ptr, SKILL_BACKSTAB, 100);
 					if (rand_int(100) > stun_effect) { //-12..26
 						/* Omae wa mou shindeiru */
-						stun_effect = ((get_skill_scale(p_ptr, SKILL_MASTERY, 5) + adj_con_fix[p_ptr->stat_ind[A_DEX]] + 1) * (50 + rand_int(51) - (r_ptr->level / 3))) / 100;
+						stun_effect = (((weapon ? get_skill_scale(p_ptr, SKILL_MASTERY, 5) : 0) + adj_con_fix[p_ptr->stat_ind[A_DEX]] + 1) * (50 + rand_int(51) - (r_ptr->level / 3))) / 100;
 						if (stun_effect) {
 							m_ptr->stunned += stun_effect;
 							did_stun = TRUE; /* Nani? */
