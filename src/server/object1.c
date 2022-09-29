@@ -2768,8 +2768,18 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		}
 #ifdef SUBINVEN_CHESTS
 		else t = object_desc_str(t, " (locked)");/* To visually distinguish this lootable chest from subinven-chests in our inventory */
-#endif
 	}
+#endif
+#if 0 /* doesn't work atm, because we cannot know if we're inside the player inventory or on the floor/inside a house! So for now we just inscribe a chest 'empty' on opening it (empty-chest-hack). */
+#ifdef SUBINVEN_CHESTS
+	else if (o_ptr->tval == TV_SUBINVEN && o_ptr->sval >= SV_SI_GROUP_CHEST_MIN && o_ptr->sval <= SV_SI_GROUP_CHEST_MAX) {
+		/* Attach "empty" to bag-chests, unless player stored an object or more in them */
+		if (!p_ptr->subinventory[slot][0].k_idx) {
+			t = object_desc_str(t, " (empty)");
+		}
+	}
+#endif
+#endif
 
 	/* Display the item like a weapon */
 	if (f3 & TR3_SHOW_MODS) show_weapon = TRUE;

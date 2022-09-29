@@ -1727,6 +1727,9 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
 	o_ptr->pval = 0;
 	o_ptr->ident |= ID_KNOWN | ID_NO_HIDDEN; /* obsolete-- easy to see it's empty and that's it */
 
+	/* Known */
+	object_known(o_ptr);
+
 #ifdef SUBINVEN_CHESTS
 	/* Convert opened and therefore now empty chests to usable containers */
 	o_ptr->tval = TV_SUBINVEN;
@@ -1735,10 +1738,15 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
 	o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 	/* Fill in bpval */
 	o_ptr->bpval = k_info[o_ptr->k_idx].pval;
-#endif
 
-	/* Known */
-	object_known(o_ptr);
+	/* Because object_desc() cannot know whether this chest is in player inven or not,
+	   it can no longer auto-add " (empty)" to an opened chest that has been converted to a bag-chest.
+	   So for now we just inscribe it 'empty' here as a workaround. (See 'empty-chest-hack'.)
+	   And this inscription in turn will be auto-removed as soon as this bag-chest is picked up for the first time. (so we assume that chests can only be opened while they are outside the inventory).
+	   Note that calling object_known() will actually remove the 'empty' inscription, so it must be called above, before this. */
+	o_ptr->note = quark_add("empty");
+	o_ptr->xtra8 = 1; /* to allow quick check of 'empty'ness.. */
+#endif
 }
 
 

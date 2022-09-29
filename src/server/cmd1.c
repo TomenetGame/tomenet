@@ -2684,6 +2684,11 @@ s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr
 				/* for Ironman Deep Dive Challenge cross-trading */
 				o_ptr->mode = p_ptr->mode;
 
+#ifdef ENABLE_SUBINVEN
+				/* ('empty-chest-hack') - Auto-remove 'empty' inscription the first time we put something into the chest */
+				if (o_ptr->tval == TV_SUBINVEN && o_ptr->xtra8 && o_ptr->note && streq(quark_str(o_ptr->note), "empty")) o_ptr->note = 0;
+#endif
+
 				/* Carry the item */
 				o_ptr->quest_credited = TRUE; //hack: avoid double-crediting
 				slot = inven_carry(Ind, o_ptr);
