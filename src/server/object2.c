@@ -10311,6 +10311,14 @@ int drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, in
 			o_ptr->sseed = 0;
 		}
 
+#ifdef ENABLE_SUBINVEN
+		/* ('empty-chest-hack') - Auto-add 'empty' inscription when a bag-chest is dropped, as that will empty it in any case. */
+		if (o_ptr->tval == TV_SUBINVEN && o_ptr->sval >= SV_SI_GROUP_CHEST_MIN && o_ptr->sval <= SV_SI_GROUP_CHEST_MAX) {
+			o_ptr->note = quark_add("empty");
+			o_ptr->xtra8 = 1; /* to allow quick check of 'empty'ness.. */
+		}
+#endif
+
 		/* Success */
 		if (o_idx) {
 			/* Structure copy */
