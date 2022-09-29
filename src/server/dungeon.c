@@ -7773,13 +7773,15 @@ static void process_world(void) {
 			/* connection already has a character fully logged in? ignore! */
 			if (connp->state == 0x08) continue; // 0x08 = CONN_PLAYING
 
-#if 0 /* 0: don't restart even for those who just have logged in their account name and aren't creating a character yet */
-			if (!connp->c_name) continue; //has not chosen a character name to login yet? ignore then
-#endif
+			/* We now check all characters that aren't in-game yet, but in state 0x04 aka CONN_LOGIN:
+			   That is either still in character list screen or in character creation process. */
 
-			//ignore admins
+			/* Ignore characters that are not yet in the character creation phase but just in the character list screen? */
+			if (!connp->c_name) continue; /* (has not chosen a character name to login yet) */
+
+			/* Always ignore admins no matter what stage they are in */
 			if (GetInd[connp->id] && admin_p(GetInd[connp->id])) continue;
-			//ignore admin accounts that are about to login, too
+			/* Always ignore admin accounts that are about to login, too */
 			if (connp->nick) {
 				struct account acc;
 

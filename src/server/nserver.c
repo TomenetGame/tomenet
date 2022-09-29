@@ -4912,6 +4912,8 @@ static int Receive_login(int ind) {
 
 
 		Packet_printf(&connp->c, "%c", lookup_player_id(choice) ? SUCCESS : E_NEED_INFO);
+		/* Player now initiated character creation (or picked an existing character).
+		   This also means that some /shutXXX commands might we wait for him with shutdowns from server-auto-update commands. */
 		connp->c_name = strdup(choice);
 	} else {
 		/* fail login due to missing password */
