@@ -6674,12 +6674,12 @@ Chain_Macro:
 								switch (choice = inkey()) {
 								case ESCAPE:
 								case 'p':
-								case ':': /* Allow chatting */
-									cmd_message();
-									continue;
 								case '\010': /* backspace */
 									i = -2; /* leave */
 									break;
+								case ':': /* Allow chatting */
+									cmd_message();
+									continue;
 								case KTRL('T'):
 									/* Take a screenshot */
 									xhtml_screenshot("screenshot????");
