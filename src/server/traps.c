@@ -1181,7 +1181,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				if (((j_ptr->tval == TV_STAFF) || (j_ptr->tval == TV_WAND)) &&
 				    (j_ptr->pval)) {
 					ident = TRUE;
-					j_ptr->pval = j_ptr->pval / (randint(4)+1);
+					j_ptr->pval = j_ptr->pval / (randint(4) + 1);
 					/* Window stuff */
 					p_ptr->window |= PW_INVEN;
 					/* Combine / Reorder the pack */

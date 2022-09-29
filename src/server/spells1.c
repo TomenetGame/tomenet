@@ -3717,19 +3717,15 @@ bool dec_stat(int Ind, int stat, int amount, int mode) {
 			u16b dectime;
 
 			/* a little crude, perhaps */
-			dectime = rand_int(getlevel(&p_ptr->wpos)*50) + 50;
+			dectime = rand_int(getlevel(&p_ptr->wpos) * 50) + 50;
 
 			/* prevent overflow, stat_cnt = u16b */
 			/* or add another temporary drain... */
 			if ( ((p_ptr->stat_cnt[stat]+dectime)<p_ptr->stat_cnt[stat]) ||
-				(p_ptr->stat_los[stat]>0) )
-
-			{
+			    (p_ptr->stat_los[stat]>0) ) {
 				p_ptr->stat_cnt[stat] += dectime;
 				p_ptr->stat_los[stat] += loss;
-			}
-			else
-			{
+			} else {
 				p_ptr->stat_cnt[stat] = dectime;
 				p_ptr->stat_los[stat] = loss;
 			}
@@ -6463,7 +6459,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		if (r_ptr->flags3 & (RF3_GOOD)) {
 			if (r_ptr->flags3 & RF3_IM_FIRE) {
 				note = " resists";
-				dam *= 2; dam /= 2;//(randint(4)+3);
+				dam *= 2; dam /= 2;//(randint(4) + 3);
 #ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
 #endif
@@ -6494,7 +6490,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		} else {
 			if (r_ptr->flags3 & RF3_IM_FIRE) {
 				note = " resists a lot";
-				dam *= 2; dam /= 4;//(randint(6)+10);
+				dam *= 2; dam /= 4;//(randint(6) + 10);
 #ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
 #endif
@@ -6524,7 +6520,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			}
 			else {
 				//note = " is hit";
-				//dam *= 5; dam /= (randint(3)+4);
+				//dam *= 5; dam /= (randint(3) + 4);
 			}
 		}
 		//if (r_ptr->flags3 & (RF3_EVIL)) dam = (dam * 2) / 3;
@@ -6562,7 +6558,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		} else if (r_ptr->flags3 & (RF3_EVIL)) {
 			if (r_ptr->flags3 & RF3_IM_FIRE) {
 				note = " resists";
-				dam = (dam * 4) / 3;//(randint(4)+3);
+				dam = (dam * 4) / 3;//(randint(4) + 3);
 #ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
 #endif
@@ -6593,7 +6589,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		} else {
 			if (r_ptr->flags3 & RF3_IM_FIRE) {
 				note = " resists a lot";
-				dam *= 2; dam /= 4;//(randint(6)+10);
+				dam *= 2; dam /= 4;//(randint(6) + 10);
 #ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
 #endif
@@ -6615,7 +6611,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 #endif
 			else {
 				//note = " resists somewhat";
-				//dam *= 5; dam /= (randint(3)+4);
+				//dam *= 5; dam /= (randint(3) + 4);
 			}
 		}
 		break;
@@ -13390,20 +13386,20 @@ int approx_damage(int m_idx, int dam, int typ) {
 			dam = 0;
 		else if (r_ptr->flags3 & (RF3_EVIL)) {
 			if (r_ptr->flags3 & RF3_IM_FIRE) {
-				dam *= 2; dam = (dam * 2) / 3;//(randint(4)+3);
+				dam *= 2; dam = (dam * 2) / 3;//(randint(4) + 3);
 			} else if (r_ptr->flags9 & RF9_RES_FIRE)
 				dam = (dam * 3) / 2;
 			else
 				dam *= 2;
 		} else {
 			if (r_ptr->flags3 & RF3_IM_FIRE) {
-				dam *= 2; dam /= 3;//(randint(6)+10);
+				dam *= 2; dam /= 3;//(randint(6) + 10);
 			} else if (r_ptr->flags9 & RF9_RES_FIRE)
 				dam = (dam * 3) / 4;
 			else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
 				dam /= 2;
 			else {
-				//dam *= 5; dam /= (randint(3)+4);
+				//dam *= 5; dam /= (randint(3) + 4);
 			}
 		}
 		break;

@@ -8791,7 +8791,7 @@ void golem_creation(int Ind, int max) {
 bool summon_cyber(int Ind, int s_clone, int clone_summoning) {
 	player_type *p_ptr = Players[Ind];
 	int i;
-	int max_cyber = (getlevel(&p_ptr->wpos)/ 50) + randint(6);
+	int max_cyber = (getlevel(&p_ptr->wpos) / 50) + randint(6);
 	bool ok = FALSE;
 
 	for (i = 0; i < max_cyber; i++)

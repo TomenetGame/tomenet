@@ -2067,10 +2067,10 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 					if (count) value += count * PRICE_BOOST((count + pval), 2, 1) * 200L;
 				}
 
-//				if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1)* 300L);//was 500, then 400
+//				if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1) * 300L);//was 500, then 400
 //				if (f5 & (TR5_CRIT)) value += pval * pval * 5000L;/* was 20k, but speed is only 10k */
 				if (f5 & (TR5_CRIT)) value += (pval + 2) * (pval + 2) * 1500L;/* was 20k, but speed is only 10k */
-				if (f5 & (TR5_LUCK)) value += (PRICE_BOOST(pval, 0, 1)* 10L);
+				if (f5 & (TR5_LUCK)) value += (PRICE_BOOST(pval, 0, 1) * 10L);
 
 				/* Give credit for stealth and searching */
 //				if (f1 & TR1_STEALTH) value += (PRICE_BOOST(pval, 3, 1) * 100L);
@@ -2583,7 +2583,7 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 		if (o_ptr->ident & ID_CURSED) total -= 7500;
 		else total += 500;
 	}
-//	if (f3 & TR3_AGGRAVATE) total -= 10000; /* penalty 1 of 2 */
+	//if (f3 & TR3_AGGRAVATE) total -= 10000; /* penalty 1 of 2 */
 	if (f3 & TR3_BLESSED) total += 750;
 	if (f3 & TR3_CURSED) total -= 5000;
 	if (f3 & TR3_HEAVY_CURSE) total -= 12500;
@@ -2596,7 +2596,7 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	if (f4 & TR4_BLACK_BREATH) total -= 40000;
 	if (f4 & TR4_DG_CURSE) total -= 25000;
 	if (f4 & TR4_CLONE) total -= 20000;
-	//	if (f5 & TR5_LEVELS) total += o_ptr->elevel * 2000;
+	//if (f5 & TR5_LEVELS) total += o_ptr->elevel * 2000;
 
 	am = ((f4 & (TR4_ANTIMAGIC_50)) ? 50 : 0)
 		+ ((f4 & (TR4_ANTIMAGIC_30)) ? 30 : 0)
@@ -2604,8 +2604,8 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 		+ ((f4 & (TR4_ANTIMAGIC_10)) ? 10 : 0);
 	minus = o_ptr->to_h + o_ptr->to_d; // + pval;// + (o_ptr->to_a /
 	if (minus < 0) minus = 0;
-//		+ ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) ? -5 : 0);
-//	if (am > 0) total += (PRICE_BOOST(am, 1, 1)* 2000L);
+		// + ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) ? -5 : 0);
+	//if (am > 0) total += (PRICE_BOOST(am, 1, 1) * 2000L);
 	am -= minus;
 	if (am > 50) am = 50; /* paranoia, mustn't happen */
 	if (am > 37) {
@@ -3002,10 +3002,10 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 				if (count) value += count * PRICE_BOOST((count + pval), 2, 1) * 200L;
 			}
 
-			//if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1)* 300L);//was 500, then 400
-			//if (f5 & (TR5_CRIT)) value += pval * pval * 5000L;/* was 20k, but speed is only 10k */
+			//if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1) * 300L); //was 500, then 400
+			//if (f5 & (TR5_CRIT)) value += pval * pval * 5000L; /* was 20k, but speed is only 10k */
 			if (f5 & (TR5_CRIT)) value += (pval + 2) * (pval + 2) * 1500L;/* was 20k, but speed is only 10k */
-			if (f5 & (TR5_LUCK)) value += (PRICE_BOOST(pval, 0, 1)* 10L);
+			if (f5 & (TR5_LUCK)) value += (PRICE_BOOST(pval, 0, 1) * 10L);
 
 			/* Give credit for stealth and searching */
 			//if (f1 & TR1_STEALTH) value += (PRICE_BOOST(pval, 3, 1) * 100L);
@@ -5405,7 +5405,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
 		case SV_RING_LORDLY:
 #if 0	/* lordly pfft ring.. */
 			do {
-				random_resistance(o_ptr, FALSE, ((randint(20))+18));
+				random_resistance(o_ptr, FALSE, ((randint(20)) + 18));
 			} while (randint(4) == 1);
 #endif
 

@@ -1401,7 +1401,7 @@ static void new_palette(void) {
 	nEntries = 0;
 
 	/* Size of palette */
-	pLogPalSize = sizeof(LOGPALETTE) + (CLIENT_PALETTE_SIZE + nEntries)*sizeof(PALETTEENTRY);
+	pLogPalSize = sizeof(LOGPALETTE) + (CLIENT_PALETTE_SIZE + nEntries) * sizeof(PALETTEENTRY);
 
 	/* Allocate palette */
 	pLogPal = (LPLOGPALETTE)mem_alloc(pLogPalSize);
@@ -1488,7 +1488,7 @@ static void new_palette_ps(void) {
 	nEntries = 0;
 
 	/* Size of palette */
-	pLogPalSize = sizeof(LOGPALETTE) + (BASE_PALETTE_SIZE + nEntries)*sizeof(PALETTEENTRY);
+	pLogPalSize = sizeof(LOGPALETTE) + (BASE_PALETTE_SIZE + nEntries) * sizeof(PALETTEENTRY);
 
 	/* Allocate palette */
 	pLogPal = (LPLOGPALETTE)mem_alloc(pLogPalSize);

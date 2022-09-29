@@ -4505,11 +4505,11 @@ static void do_recall(int Ind, bool bypass) {
 	/* beware! bugs inside! (jir) (no longer I hope) */
 	/* world travel */
 	/* why wz again? (jir) */
-	else if ((!(p_ptr->recall_pos.wz) || !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & (WILD_F_UP|WILD_F_DOWN))) && !bypass) {
+	else if ((!(p_ptr->recall_pos.wz) || !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & (WILD_F_UP | WILD_F_DOWN))) && !bypass) {
 		int dis;
 
-		if (((!(p_ptr->wild_map[(wild_idx(&p_ptr->recall_pos))/8] &
-		    (1U << (wild_idx(&p_ptr->recall_pos))%8))) &&
+		if (((!(p_ptr->wild_map[(wild_idx(&p_ptr->recall_pos)) / 8] &
+		    (1U << (wild_idx(&p_ptr->recall_pos)) % 8))) &&
 		    !is_admin(p_ptr) ) ||
 		    inarea(&p_ptr->wpos, &p_ptr->recall_pos))
 		{
@@ -4906,10 +4906,10 @@ static bool process_player_end_aux(int Ind) {
 			//else if (PRACE_FLAG(PR1_SEMI_WRAITH) && (!p_ptr->wraith_form) && (f_info[cave[py][px].feat].flags1 & FF1_CAN_PASS))
 			else if (!p_ptr->tim_wraith &&
 			    !p_ptr->master_move_hook) { /* Hack -- builder is safe */
-				//int amt = 1 + ((p_ptr->lev)/5) + p_ptr->mhp / 100;
+				//int amt = 1 + ((p_ptr->lev) / 5) + p_ptr->mhp / 100;
 				/* Currently it only serves to reduce 'stuck' players' HP,
 				   so we might lower it a bit - C. Blue */
-				int amt = 1 + ((p_ptr->lev)/10) + p_ptr->mhp / 100;
+				int amt = 1 + ((p_ptr->lev) / 10) + p_ptr->mhp / 100;
 				int amt2 = p_ptr->msp / 35;
 
 				/* hack: disruption shield suffers a lot if it's got to withstand the walls oO */

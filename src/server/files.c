@@ -1211,8 +1211,8 @@ s_printf("points=%u\n", points);
 	int i = p_ptr->r_killed[8]? 50 : 100;
 	if (p_ptr->mode & MODE_HARD) i = i * 5 / 4;
 
-	if (p_ptr->mode & MODE_NO_GHOST) return(((p_ptr->max_exp + (100 * p_ptr->max_dlv)) * 4 / 3)*i/100);
-	else return((p_ptr->max_exp + (100 * p_ptr->max_dlv) + p_ptr->au)*i/100);
+	if (p_ptr->mode & MODE_NO_GHOST) return(((((p_ptr->max_exp + (100 * p_ptr->max_dlv)) * 4) / 3) * i) / 100);
+	else return(((p_ptr->max_exp + (100 * p_ptr->max_dlv) + p_ptr->au) * i) / 100);
 #endif //0
 }
 

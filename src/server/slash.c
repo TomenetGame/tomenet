@@ -1093,7 +1093,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_format(Ind, "\377oInscription {%s} not found.", c);
 					return;
 				}
-				//book = atoi(token[1])-1;
+				//book = atoi(token[1]) - 1;
 			} else {
 				*token[1] &= ~(0x20);
 				if (*token[1] >= 'A' && *token[1] <= 'W')

@@ -2791,7 +2791,7 @@ void do_cmd_check_server_settings(int Ind) {
 		fprintf(fff, "Inactive characters will be deleted after %d days.\n", CHARACTER_EXPIRY_DAYS);
 		fprintf(fff, "Accounts without characters will be deleted after %d days.\n", ACCOUNT_EXPIRY_DAYS);
 	}
-	fprintf(fff, "Game speed(FPS): %d (%+d%%)\n", cfg.fps, (cfg.fps-60)*100/60);
+	fprintf(fff, "Game speed(FPS): %d (%+d%%)\n", cfg.fps, ((cfg.fps - 60) * 100) / 60);
 	fprintf(fff, "\n");
 
 	/* level preservation */
@@ -2822,7 +2822,7 @@ void do_cmd_check_server_settings(int Ind) {
 	fprintf(fff, "\n");
 
 	fprintf(fff, "Characters' running speed is boosted (x%d, ie. %+d%%).\n", cfg.running_speed, (cfg.running_speed - 5) * 100 / 5);
-	fprintf(fff, "While 'resting', HP/MP recovers %d times quicker (%+d%%)\n", cfg.resting_rate, (cfg.resting_rate-3)*100/3);
+	fprintf(fff, "While 'resting', HP/MP recovers %d times quicker (%+d%%)\n", cfg.resting_rate, ((cfg.resting_rate - 3) * 100) / 3);
 
 	fprintf(fff, "Characters share XP if their max levels (before restorable drain) differ by..\n");
 	fprintf(fff, " at most %d for non-winners.\n", MAX_PARTY_LEVEL_DIFF);

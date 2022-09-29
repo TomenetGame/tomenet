@@ -1636,14 +1636,9 @@ static void build_streamer2(worldpos *wpos, int feat, int killwall) {
 						if ((i + j + 1) < mid) continue;
 					}
 					else if (j > (mid+ i)) continue;
-				}
-				else if (j < mid)
-				{
-					if (i > (mid + j))
-						continue;
-				}
-				else if ((i + j) > ((mid * 3)-1))
-					continue;
+				} else if (j < mid) {
+					if (i > (mid + j)) continue;
+				} else if ((i + j) > ((mid * 3) - 1)) continue;
 
 				c_ptr = &zcave[ty][tx];
 
@@ -1668,8 +1663,7 @@ int dist2(int x1, int y1, int x2, int y2, int h1, int h2, int h3, int h4)
 /*
  * Build an underground lake
  */
-static void lake_level(struct worldpos *wpos)
-{
+static void lake_level(struct worldpos *wpos) {
 	int y1, x1, y, x, k, t, n, rad;
 	int h1, h2, h3, h4;
 	bool distort = FALSE;
@@ -5124,16 +5118,16 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 
 
 	/* Initialise the step sizes */
-	xstep = xhstep = xsize*256;
-	ystep = yhstep = ysize*256;
-	xxsize = xsize*256;
-	yysize = ysize*256;
+	xstep = xhstep = xsize * 256;
+	ystep = yhstep = ysize * 256;
+	xxsize = xsize * 256;
+	yysize = ysize * 256;
 
 	/*
 	 * Fill in the rectangle with fractal height data - like the
 	 * 'plasma fractal' in fractint
 	 */
-	while ((xstep/256 > 1) || (ystep/256 > 1)) {
+	while ((xstep / 256 > 1) || (ystep / 256 > 1)) {
 		/* Halve the step sizes */
 		xstep = xhstep;
 		xhstep /= 2;
@@ -5145,22 +5139,22 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 			for (j = 0; j <= yysize; j += ystep) {
 				/* If greater than 'grid' level then is random */
 				if (xhstep / 256 > grd)
-					store_height(wpos, i/256, j/256, x0, y0, randint(maxsize), xhsize, yhsize, cutoff);
+					store_height(wpos, i / 256, j / 256, x0, y0, randint(maxsize), xhsize, yhsize, cutoff);
 				else {
 					cave_type *l, *r;
 					byte val;
 
 					/* Left point */
-					l = &zcave[j/256+y0-yhsize][(i-xhstep)/256+x0-xhsize];
+					l = &zcave[j / 256 + y0 - yhsize][(i - xhstep) / 256 + x0 - xhsize];
 
 					/* Right point */
-					r = &zcave[j/256+y0-yhsize][(i+xhstep)/256+x0-xhsize];
+					r = &zcave[j / 256 + y0 - yhsize][(i + xhstep) / 256 + x0 - xhsize];
 
 					/* Average of left and right points + random bit */
 					val = (l->temp + r->temp) / 2 +
-						  (randint(xstep/256) - xhstep/256) * roug / 16;
+						  (randint(xstep / 256) - xhstep / 256) * roug / 16;
 
-					store_height(wpos, i/256, j/256, x0, y0, val,
+					store_height(wpos, i / 256, j / 256, x0, y0, val,
 						     xhsize, yhsize, cutoff);
 				}
 			}
@@ -5170,23 +5164,23 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 		for (j = yhstep; j <= yysize - yhstep; j += ystep) {
 			for (i = 0; i <= xxsize; i += xstep) {
 				/* If greater than 'grid' level then is random */
-				if (xhstep/256 > grd)
-					store_height(wpos, i/256, j/256, x0, y0, randint(maxsize), xhsize, yhsize, cutoff);
+				if (xhstep / 256 > grd)
+					store_height(wpos, i / 256, j / 256, x0, y0, randint(maxsize), xhsize, yhsize, cutoff);
 				else {
 					cave_type *u, *d;
 					byte val;
 
 					/* Up point */
-					u = &zcave[(j-yhstep)/256+y0-yhsize][i/256+x0-xhsize];
+					u = &zcave[(j - yhstep) / 256 + y0 - yhsize][i / 256 + x0 - xhsize];
 
 					/* Down point */
-					d = &zcave[(j+yhstep)/256+y0-yhsize][i/256+x0-xhsize];
+					d = &zcave[(j + yhstep) / 256 + y0 - yhsize][i / 256 + x0 - xhsize];
 
 					/* Average of up and down points + random bit */
 					val = (u->temp + d->temp) / 2 +
-						  (randint(ystep/256) - yhstep/256) * roug / 16;
+						  (randint(ystep / 256) - yhstep / 256) * roug / 16;
 
-					store_height(wpos, i/256, j/256, x0, y0, val,
+					store_height(wpos, i / 256, j / 256, x0, y0, val,
 						     xhsize, yhsize, cutoff);
 				}
 			}
@@ -5196,23 +5190,23 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 		for (i = xhstep; i <= xxsize - xhstep; i += xstep) {
 			for (j = yhstep; j <= yysize - yhstep; j += ystep) {
 				/* If greater than 'grid' level then is random */
-				if (xhstep/256 > grd)
-					store_height(wpos, i/256, j/256, x0, y0, randint(maxsize), xhsize, yhsize, cutoff);
+				if (xhstep / 256 > grd)
+					store_height(wpos, i / 256, j / 256, x0, y0, randint(maxsize), xhsize, yhsize, cutoff);
 				else {
 					cave_type *ul, *dl, *ur, *dr;
 					byte val;
 
 					/* Up-left point */
-					ul = &zcave[(j-yhstep)/256+y0-yhsize][(i-xhstep)/256+x0-xhsize];
+					ul = &zcave[(j - yhstep) / 256 + y0 - yhsize][(i - xhstep) / 256 + x0 - xhsize];
 
 					/* Down-left point */
-					dl = &zcave[(j+yhstep)/256+y0-yhsize][(i-xhstep)/256+x0-xhsize];
+					dl = &zcave[(j + yhstep) / 256 + y0 - yhsize][(i - xhstep) / 256 + x0 - xhsize];
 
 					/* Up-right point */
-					ur = &zcave[(j-yhstep)/256+y0-yhsize][(i+xhstep)/256+x0-xhsize];
+					ur = &zcave[(j - yhstep) / 256 + y0 - yhsize][(i + xhstep) / 256 + x0 - xhsize];
 
 					/* Down-right point */
-					dr = &zcave[(j+yhstep)/256+y0-yhsize][(i+xhstep)/256+x0-xhsize];
+					dr = &zcave[(j + yhstep) / 256 + y0 - yhsize][(i + xhstep) / 256 + x0 - xhsize];
 
 					/*
 					 * average over all four corners + scale by diagsize to
@@ -5220,10 +5214,10 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 					 * of the fractal
 					 */
 					val = (ul->temp + dl->temp + ur->temp + dr->temp) / 4 +
-					      (randint(xstep/256) - xhstep/256) *
+					      (randint(xstep / 256) - xhstep / 256) *
 						  (diagsize / 16) / 256 * roug;
 
-					store_height(wpos, i/256, j/256, x0, y0, val,
+					store_height(wpos, i / 256, j / 256, x0, y0, val,
 						     xhsize, yhsize ,cutoff);
 				}
 			}
@@ -5286,7 +5280,7 @@ static void fill_hack(worldpos *wpos, int y0, int x0, int y, int x, int xsize, i
 			}
 
 			/* Affect boundary */
-			else zcave[y0+y+j-ysize/2][x0+x+i-xsize/2].info |= (CAVE_ICKY);
+			else zcave[y0 + y + j - ysize / 2][x0 + x + i - xsize / 2].info |= (CAVE_ICKY);
 		}
 	}
 }
@@ -5317,8 +5311,8 @@ static bool generate_fracave(worldpos *wpos, int y0, int x0, int xsize, int ysiz
 		/* Too small -- clear area and try again later */
 		for (x = 0; x <= xsize; ++x) {
 			for (y = 0; y < ysize; ++y) {
-				place_filler(wpos, y0+y-yhsize, x0+x-xhsize);
-				zcave[y0+y-yhsize][x0+x-xhsize].info &= ~(CAVE_ICKY|CAVE_ROOM);
+				place_filler(wpos, y0 + y - yhsize, x0 + x - xhsize);
+				zcave[y0 + y - yhsize][x0 + x - xhsize].info &= ~(CAVE_ICKY|CAVE_ROOM);
 			}
 		}
 		return(FALSE);
@@ -5336,15 +5330,15 @@ static bool generate_fracave(worldpos *wpos, int y0, int x0, int xsize, int ysiz
 
 		/* Next to a 'filled' region? -- set to be room walls */
 		if (c_ptr->info & CAVE_ICKY) {
-			cave_set_feat(wpos, 0+y0-yhsize, i+x0-xhsize, feat_wall_outer);
+			cave_set_feat(wpos, 0 + y0 - yhsize, i + x0 - xhsize, feat_wall_outer);
 
 			if (light) c_ptr->info |= (CAVE_GLOW);
 			if (room) c_ptr->info |= (CAVE_ROOM);
-			else place_filler(wpos, 0+y0-yhsize, i+x0-xhsize);
+			else place_filler(wpos, 0 + y0 - yhsize, i + x0 - xhsize);
 		}
 
 		/* Outside of the room -- set to be normal granite */
-		else place_filler(wpos, 0+y0-yhsize, i+x0-xhsize);
+		else place_filler(wpos, 0 + y0 - yhsize, i + x0 - xhsize);
 
 		/* Clear the icky flag -- don't need it any more */
 		c_ptr->info &= ~(CAVE_ICKY);
@@ -5355,14 +5349,14 @@ static bool generate_fracave(worldpos *wpos, int y0, int x0, int xsize, int ysiz
 
 		/* Next to a 'filled' region? -- set to be room walls */
 		if (c_ptr->info & CAVE_ICKY) {
-			cave_set_feat(wpos, ysize+y0-yhsize, i+x0-xhsize, feat_wall_outer);
+			cave_set_feat(wpos, ysize + y0 - yhsize, i + x0 - xhsize, feat_wall_outer);
 			if (light) c_ptr->info |= (CAVE_GLOW);
 			if (room) c_ptr->info |= (CAVE_ROOM);
-			else place_filler(wpos, ysize+y0-yhsize, i+x0-xhsize);
+			else place_filler(wpos, ysize + y0 - yhsize, i + x0 - xhsize);
 		}
 
 		/* Outside of the room -- set to be normal granite */
-		else place_filler(wpos, ysize+y0-yhsize, i+x0-xhsize);
+		else place_filler(wpos, ysize + y0 - yhsize, i + x0 - xhsize);
 
 		/* Clear the icky flag -- don't need it any more */
 		c_ptr->info &= ~(CAVE_ICKY);
@@ -5376,14 +5370,14 @@ static bool generate_fracave(worldpos *wpos, int y0, int x0, int xsize, int ysiz
 
 		/* Next to a 'filled' region? -- set to be room walls */
 		if (c_ptr->info & CAVE_ICKY) {
-			cave_set_feat(wpos, i+y0-yhsize, 0+x0-xhsize, feat_wall_outer);
+			cave_set_feat(wpos, i + y0 - yhsize, 0 + x0 - xhsize, feat_wall_outer);
 			if (light) c_ptr->info |= (CAVE_GLOW);
 			if (room) c_ptr->info |= (CAVE_ROOM);
-			else place_filler(wpos, i+y0-yhsize, 0+x0-xhsize);
+			else place_filler(wpos, i + y0 - yhsize, 0 + x0 - xhsize);
 		}
 
 		/* Outside of the room -- set to be normal granite */
-		else place_filler(wpos, i+y0-yhsize, 0+x0-xhsize);
+		else place_filler(wpos, i + y0 - yhsize, 0 + x0 - xhsize);
 
 		/* Clear the icky flag -- don't need it any more */
 		c_ptr->info &= ~(CAVE_ICKY);
@@ -5394,14 +5388,14 @@ static bool generate_fracave(worldpos *wpos, int y0, int x0, int xsize, int ysiz
 
 		/* Next to a 'filled' region? -- set to be room walls */
 		if (c_ptr->info & CAVE_ICKY) {
-			cave_set_feat(wpos, i+y0-yhsize, xsize+x0-xhsize, feat_wall_outer);
+			cave_set_feat(wpos, i + y0 - yhsize, xsize + x0 - xhsize, feat_wall_outer);
 			if (light) c_ptr->info |= (CAVE_GLOW);
 			if (room) c_ptr->info |= (CAVE_ROOM);
-			else place_filler(wpos, i+y0-yhsize, xsize+x0-xhsize);
+			else place_filler(wpos, i + y0 - yhsize, xsize + x0 - xhsize);
 		}
 
 		/* Outside of the room -- set to be normal granite */
-		else place_filler(wpos, i+y0-yhsize, xsize+x0-xhsize);
+		else place_filler(wpos, i + y0 - yhsize, xsize + x0 - xhsize);
 
 		/* Clear the icky flag -- don't need it any more */
 		c_ptr->info &= ~(CAVE_ICKY);
@@ -5437,12 +5431,12 @@ static bool generate_fracave(worldpos *wpos, int y0, int x0, int xsize, int ysiz
 				/* Set appropriate flags */
 				if (light) c_ptr->info |= (CAVE_GLOW);
 				if (room) c_ptr->info |= (CAVE_ROOM);
-				else place_filler(wpos, y+y0-yhsize, x+x0-xhsize);
+				else place_filler(wpos, y + y0 - yhsize, x + x0 - xhsize);
 			}
 
 			/* None of the above -- clear the unconnected regions */
 			else {
-				place_filler(wpos, y+y0-yhsize, x+x0-xhsize);
+				place_filler(wpos, y + y0 - yhsize, x + x0 - xhsize);
 				c_ptr->info &= ~(CAVE_ICKY|CAVE_ROOM);
 			}
 		}
@@ -5490,7 +5484,7 @@ static void build_cavern(worldpos *wpos) {
 
 	while (!done) {
 		/* Testing values for these parameters: feel free to adjust */
-		grd = 2^(randint(4) + 4);
+		grd = 2^(randint(4) + 4); //MATH!
 
 		/* Want average of about 16 */
 		roug =randint(8) * randint(4);
@@ -10033,14 +10027,13 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	    (build_special_store == 3 || build_special_store == 4 || build_special_store == 5)) {
 		/* Try hard to place one */
 		for (i = 0; i < 300; i++) {
-			y = rand_int(dun->l_ptr->hgt-4)+2;
-			x = rand_int(dun->l_ptr->wid-4)+2;
+			y = rand_int(dun->l_ptr->hgt - 4) + 2;
+			x = rand_int(dun->l_ptr->wid - 4) + 2;
 			csbm_ptr = &zcave[y][x];
 			/* Must be in a wall, must not be in perma wall. Outside of vaults. */
 			if ((f_info[csbm_ptr->feat].flags1 & FF1_WALL) &&
 			    !(f_info[csbm_ptr->feat].flags1 & FF1_PERMANENT) &&
-			    !(csbm_ptr->info & CAVE_ICKY))
-			{
+			    !(csbm_ptr->info & CAVE_ICKY)) {
 				/* must have at least 1 'free' adjacent field */
 				bool found1free = FALSE;
 				for (k = 0; k < 8; k++) {
@@ -11159,7 +11152,7 @@ static void town_gen(struct worldpos *wpos) {
 		Rand_quick = TRUE;
 
 		/* Hack -- Induce consistant town layout */
-		Rand_value = seed_town+(wpos->wx+wpos->wy*MAX_WILD_X);
+		Rand_value = seed_town + (wpos->wx + wpos->wy * MAX_WILD_X);
 
 		/* Hack -- fill with trees
 		 * This should be determined by wilderness information */

@@ -448,8 +448,7 @@ int main(int argc, char *argv[]) {
 
 #ifdef DUMB_WIN
 int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
-                       LPSTR lpCmdLine, int nCmdShow)
-{
+                       LPSTR lpCmdLine, int nCmdShow) {
 	MSG      msg;
 
 	//main(0, NULL);

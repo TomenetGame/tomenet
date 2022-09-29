@@ -2074,9 +2074,9 @@ static void sanity_blast(int Ind, int m_idx, bool necro) {
 		if (p_ptr->image) {
 			/* Something silly happens... */
 			msg_format(Ind, "You behold the %s visage of %s!",
-			    funny_desc[(randint(MAX_FUNNY))-1], m_name);
+			    funny_desc[(randint(MAX_FUNNY)) - 1], m_name);
 			if (randint(3) == 1) {
-				msg_print(Ind, funny_comments[randint(MAX_COMMENT)-1]);
+				msg_print(Ind, funny_comments[randint(MAX_COMMENT) - 1]);
 				p_ptr->image = (p_ptr->image + randint(m_ptr->level));
 			}
 			return; /* Never mind; we can't see it clearly enough */
@@ -2084,7 +2084,7 @@ static void sanity_blast(int Ind, int m_idx, bool necro) {
 
 		/* Something frightening happens... */
 		msg_format(Ind, "You behold the %s visage of %s!",
-		    horror_desc[(randint(MAX_HORROR))-1], m_name);
+		    horror_desc[(randint(MAX_HORROR)) - 1], m_name);
 
 #ifdef OLD_MONSTER_LORE
 		r_ptr->r_flags2 |= RF2_ELDRITCH_HORROR;

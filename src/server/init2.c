@@ -3442,7 +3442,7 @@ static void load_server_cfg_aux(FILE * cfg) {
 	/* Read in lines until we hit EOF */
 	while (fgets(line, 256, cfg) != NULL) {
 		// Chomp off the end of line character
-		line[strlen(line)-1] = '\0';
+		line[strlen(line) - 1] = '\0';
 
 		/* Parse the line that has been read in */
 		// If the line begins with a # or is empty, ignore it

@@ -45,7 +45,7 @@ cave_type **getcave(struct worldpos *wpos) {
 			}
 		}
 		else if (wild->dungeon && wpos->wz >= -wild->dungeon->maxdepth)
-			return(wild->dungeon->level[ABS(wpos->wz)-1].cave);
+			return(wild->dungeon->level[ABS(wpos->wz) - 1].cave);
 	}
 	return((cave_type **)NULL);
 }
@@ -69,7 +69,7 @@ struct dun_level *getfloor(struct worldpos *wpos) {
 
 	wild = &wild_info[wpos->wy][wpos->wx];
 	if (wpos->wz == 0) {
-/*		return(wild); */
+		/* return(wild); */
 		return(NULL);
 	} else {
 		if (wpos->wz > 0) {
@@ -4595,7 +4595,7 @@ void display_map(int Ind, int *cy, int *cx) {
 				}
 				else if (p_ptr->body_monster) tc = r_info[p_ptr->body_monster].d_char;
 				else if (p_ptr->fruit_bat) tc = 'b';
-				else if ((( p_ptr->chp * 95)/ (p_ptr->mhp * 10)) > TURN_CHAR_INTO_NUMBER) tc = '@';
+				else if (((p_ptr->chp * 95) / (p_ptr->mhp * 10)) > TURN_CHAR_INTO_NUMBER) tc = '@';
 				else {
 					if (p_ptr->chp < 0) tc = '-';
 					else {
@@ -4647,7 +4647,7 @@ void display_map(int Ind, int *cy, int *cx) {
 		   (or maybe instructions on how to navigate)
 		   to eg the left and right side of the map */
 		memset(sa, TERM_WHITE, sizeof(sa));
-		for (int i=0; i < sizeof(sc)/sizeof(sc[0]); i++) sc[i] = ' ';
+		for (int i = 0; i < sizeof(sc) / sizeof(sc[0]); i++) sc[i] = ' ';
 #endif
 
      		/* Display the line */
@@ -4934,7 +4934,7 @@ static void wild_display_map(int Ind, char mode) {
 		   (or maybe instructions on how to navigate)
 		   to eg the left and right side of the map */
 		memset(sa, TERM_WHITE, sizeof(sa));
-		for (int i=0; i < sizeof(sc)/sizeof(sc[0]); i++) sc[i] = ' ';
+		for (int i = 0; i < sizeof(sc) / sizeof(sc[0]); i++) sc[i] = ' ';
 #endif
 
 		/* Display the line */

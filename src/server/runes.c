@@ -54,7 +54,7 @@ int do_use_mp(int Ind, int mod, float mul) {
 
 #ifdef ALTERNATE_DMG
 	if (get_skill(p_ptr, SKILL_RUNEMASTERY) < RBARRIER) {
-		cost = cost*get_skill(p_ptr, SKILL_RUNEMASTERY)/RBARRIER + 1;
+		cost = cost * get_skill(p_ptr, SKILL_RUNEMASTERY) / RBARRIER + 1;
 		if (cost > RBARRIER) cost = RBARRIER;
 	}
 #endif
@@ -230,7 +230,7 @@ void cast_rune_spell (int Ind, int dir) {
 
 #ifdef ALTERNATE_DMG
 	if (get_skill(p_ptr, SKILL_RUNEMASTERY) < RBARRIER) {
-		rune_dmg = rune_dmg*get_skill(p_ptr, SKILL_RUNEMASTERY)/RBARRIER + 1;
+		rune_dmg = rune_dmg * get_skill(p_ptr, SKILL_RUNEMASTERY) / RBARRIER + 1;
 		if (rune_dmg > RBARRIER) rune_dmg = RBARRIER;
 	}
 #endif

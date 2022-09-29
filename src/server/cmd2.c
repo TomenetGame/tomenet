@@ -464,7 +464,7 @@ void do_cmd_go_up(int Ind) {
 #if 0 /* Disable use of dungeon names */
  #ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel -- Hardcode (final transition floor is 2 currently, transition immediately after static towns, paranoia for last floor)
 		else if (in_irondeepdive(wpos) && (iddc[ABS(wpos->wz)].step == 2 || ABS(wpos->wz) == IDDC_TOWN1_FIXED || ABS(wpos->wz) == IDDC_TOWN2_FIXED) && ABS(wpos->wz) != 127) {
-			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, d_name + d_info[iddc[ABS(wpos->wz)+1].type].name);
+			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, d_name + d_info[iddc[ABS(wpos->wz) + 1].type].name);
  #ifdef DED_IDDC_AWARE
 			if (obtained) msg_print(Ind, "\377gYou obtain some item knowledge.");
  #endif
@@ -475,12 +475,12 @@ void do_cmd_go_up(int Ind) {
 				if (p_ptr->admin_dm && cfg.secret_dungeon_master && !is_admin(Players[i])) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->party == p_ptr->party)
-					msg_format(i, "\374\377G[\377%c%s has entered %s..\377G]", COLOUR_DUNGEON, p_ptr->name, d_name + d_info[iddc[ABS(wpos->wz)+1].type].name);
+					msg_format(i, "\374\377G[\377%c%s has entered %s..\377G]", COLOUR_DUNGEON, p_ptr->name, d_name + d_info[iddc[ABS(wpos->wz) + 1].type].name);
 			}
 		}
 		else if (in_irondeepdive(wpos) && ABS(wpos->wz) != 127) {
-			if ((!iddc[ABS(wpos->wz)].step && iddc[ABS(wpos->wz)+1].step) || ABS(wpos->wz) == 39 || ABS(wpos->wz) == 79 || ABS(wpos->wz) == 119)  {
-				msg_format(Ind, "\377%cYou leave %s..", COLOUR_DUNGEON, d_name + d_info[iddc[ABS(wpos->wz)+1].type].name);
+			if ((!iddc[ABS(wpos->wz)].step && iddc[ABS(wpos->wz) + 1].step) || ABS(wpos->wz) == 39 || ABS(wpos->wz) == 79 || ABS(wpos->wz) == 119)  {
+				msg_format(Ind, "\377%cYou leave %s..", COLOUR_DUNGEON, d_name + d_info[iddc[ABS(wpos->wz) + 1].type].name);
 				if (p_ptr->party)
 				for (i = 1; i <= NumPlayers; i++) {
 					if (Players[i]->conn == NOT_CONNECTED) continue;
@@ -488,7 +488,7 @@ void do_cmd_go_up(int Ind) {
 					if (p_ptr->admin_dm && cfg.secret_dungeon_master && !is_admin(Players[i])) continue;
 					if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 					if (Players[i]->party == p_ptr->party)
-						msg_format(i, "\374\377G[\377%c%s has left %s..\377G]", COLOUR_DUNGEON, p_ptr->name, d_name + d_info[iddc[ABS(wpos->wz)+1].type].name);
+						msg_format(i, "\374\377G[\377%c%s has left %s..\377G]", COLOUR_DUNGEON, p_ptr->name, d_name + d_info[iddc[ABS(wpos->wz) + 1].type].name);
 				}
 			}
 		}
@@ -1329,7 +1329,7 @@ void do_cmd_go_down(int Ind) {
 #if 0 /* Disable use of dungeon names */
  #ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel -- Hardcode (final transition floor is 2 currently, transition immediately after static towns, paranoia for last floor)
 		else if (in_irondeepdive(wpos) && (iddc[ABS(wpos->wz)].step == 2 || ABS(wpos->wz) == IDDC_TOWN1_FIXED || ABS(wpos->wz) == IDDC_TOWN2_FIXED) && ABS(wpos->wz) != 127) {
-			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, d_name + d_info[iddc[ABS(wpos->wz)+1].type].name);
+			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, d_name + d_info[iddc[ABS(wpos->wz) + 1].type].name);
  #ifdef DED_IDDC_AWARE
 			if (obtained) msg_print(Ind, "\377gYou obtain some item knowledge.");
  #endif
@@ -1340,12 +1340,12 @@ void do_cmd_go_down(int Ind) {
 				if (p_ptr->admin_dm && cfg.secret_dungeon_master && !is_admin(Players[i])) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->party == p_ptr->party)
-					msg_format(i, "\374\377G[\377%c%s has entered %s..\377G]", COLOUR_DUNGEON, p_ptr->name, d_name + d_info[iddc[ABS(wpos->wz)+1].type].name);
+					msg_format(i, "\374\377G[\377%c%s has entered %s..\377G]", COLOUR_DUNGEON, p_ptr->name, d_name + d_info[iddc[ABS(wpos->wz) + 1].type].name);
 			}
 		}
 		else if (in_irondeepdive(wpos) && ABS(wpos->wz) != 127) {
-			if ((!iddc[ABS(wpos->wz)].step && iddc[ABS(wpos->wz)+1].step) || ABS(wpos->wz) == 39 || ABS(wpos->wz) == 79 || ABS(wpos->wz) == 119)  {
-				msg_format(Ind, "\377%cYou leave %s..", COLOUR_DUNGEON, d_name + d_info[iddc[ABS(wpos->wz)+1].type].name);
+			if ((!iddc[ABS(wpos->wz)].step && iddc[ABS(wpos->wz) + 1].step) || ABS(wpos->wz) == 39 || ABS(wpos->wz) == 79 || ABS(wpos->wz) == 119)  {
+				msg_format(Ind, "\377%cYou leave %s..", COLOUR_DUNGEON, d_name + d_info[iddc[ABS(wpos->wz) + 1].type].name);
 				if (p_ptr->party)
 				for (i = 1; i <= NumPlayers; i++) {
 					if (Players[i]->conn == NOT_CONNECTED) continue;
@@ -1353,7 +1353,7 @@ void do_cmd_go_down(int Ind) {
 					if (p_ptr->admin_dm && cfg.secret_dungeon_master && !is_admin(Players[i])) continue;
 					if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 					if (Players[i]->party == p_ptr->party)
-						msg_format(i, "\374\377G[\377%c%s has left %s..\377G]", COLOUR_DUNGEON, p_ptr->name, d_name + d_info[iddc[ABS(wpos->wz)+1].type].name);
+						msg_format(i, "\374\377G[\377%c%s has left %s..\377G]", COLOUR_DUNGEON, p_ptr->name, d_name + d_info[iddc[ABS(wpos->wz) + 1].type].name);
 				}
 			}
 		}
@@ -6002,7 +6002,7 @@ static void do_arrow_brand_effect(int Ind, int y, int x) {
 void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x, int might) {
 	//player_type *p_ptr = Players[Ind];
 	int rad = 0;
-	//int dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 2 * ((might/3)+1);
+	//int dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 2 * ((might / 3) + 1);
 	//int dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 4;
 	//int dam = (damroll(o_ptr->dd, o_ptr->ds) + 5) * 3 + o_ptr->to_d;
 	int dam = (damroll(o_ptr->dd, o_ptr->ds) + 10) * 2 + o_ptr->to_d;

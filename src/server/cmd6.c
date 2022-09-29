@@ -2881,7 +2881,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			fire_ball(Ind, GF_FIRE, 0, 200, 4, p_ptr->attacker);
 			/* Note: "Double" damage since it is centered on the player ... */
 			if (!(p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire))
-				//take_hit(Ind, 50+randint(50)+(p_ptr->suscep_fire)?20:0, "a Scroll of Fire", 0);
+				//take_hit(Ind, 50 + randint(50) + (p_ptr->suscep_fire) ? 20 : 0, "a Scroll of Fire", 0);
 				take_hit(Ind, 100 + randint(100), o_ptr ? "a Scroll of Fire" : "fire", 0);
 			ident = TRUE;
 			break;

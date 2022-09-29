@@ -11756,7 +11756,7 @@ bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note) {
 			if ((new_exp * (100 - m_ptr->clone)) / 100)
 				/* disabled for golems for now, till attack-bug (9k damage) has been solved */
 				if (!m_ptr->special && !m_ptr->owner)
-					monster_gain_exp(am_idx, (new_exp*(100-m_ptr->clone))/100, TRUE);
+					monster_gain_exp(am_idx, (new_exp * (100 - m_ptr->clone)) / 100, TRUE);
 		}
 /*
 switch (m_ptr->r_idx - 1) {
