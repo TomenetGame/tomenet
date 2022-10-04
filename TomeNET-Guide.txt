@@ -5061,7 +5061,7 @@ and for specific details about penalties that are applied.
 
 
 (3.3) Chat, chat messages and chat modes
----------------------------------------------
+----------------------------------------
 You can chat with other players by pressing the colon key ':' to enter the chat
 prompt, once you have joined a game with your character.
 
