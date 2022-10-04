@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 26. September 2022 - written by C. Blue (c_blue@gmx.net)  |
+| Latest update: 4. October 2022 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -72,7 +72,7 @@ Contents
     (3.1c)  Character names, collisions and reservations
     (3.2)   The display (user-interface)
     (3.2a)  The encumberment bar
-    (3.3)   Behaviour, chat messages and chat modes
+    (3.3)   Chat, chat messages and chat modes
     (3.4)   Inventory and equipment
     (3.4a)  Start-up equipment & how to use it
     (3.4b)  Item basics
@@ -5060,7 +5060,7 @@ and for specific details about penalties that are applied.
 
 
 
-(3.3) Behaviour, chat messages and chat modes
+(3.3) Chat, chat messages and chat modes
 ---------------------------------------------
 You can chat with other players by pressing the colon key ':' to enter the chat
 prompt, once you have joined a game with your character.
