@@ -6123,7 +6123,9 @@ void cmd_check_misc(void) {
 			URLMAN("http://github.com/TomenetGame/");
 			break;
 		case 'W':
-			URLMAN("https://www.tomenet.eu/");
+			/* Le quality de liferino~ */
+			URLMAN(format("https://www.tomenet.eu/?mode=%s&server=%s",
+			    (p_ptr->mode & MODE_EVERLASTING) ? "el" : "nel", server_name));
 			break;
 		case 'P':
 			/* Le quality de liferino~ */
