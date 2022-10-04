@@ -6127,11 +6127,8 @@ void cmd_check_misc(void) {
 			break;
 		case 'P':
 			/* Le quality de liferino~ */
-			if (p_ptr->mode & MODE_EVERLASTING) {
-				URLMAN("https://www.tomenet.eu/pstores.php?mode=el");
-			} else {
-				URLMAN("https://www.tomenet.eu/pstores.php");
-			}
+			URLMAN(format("https://www.tomenet.eu/pstores.php?mode=%s&server=%s",
+			    (p_ptr->mode & MODE_EVERLASTING) ? "el" : "nel", server_name));
 			break;
 		case 'R':
 			URLMAN("https://muuttuja.org/tomenet/monsters/index.php");
