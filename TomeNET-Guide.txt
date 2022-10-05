@@ -4478,6 +4478,9 @@ will be applied via the (exactly one!) regular expression specified in the file
 'lib/xtra/fonts-x11-menuscan.txt'.
 To add other fonts that don't match these criteria, you have to add their names
 manually in the file 'lib/xtra/fonts-x11-menuscan.txt'.
+When using a custom font that has different mapping than standard fonts you
+might need to turn off the option 'font_map_solid_walls' in = 1 if you spot
+any wall tiles that look not like they are supposed to in that particular font.
 Fedora 33: Tokariew wrote information about installing fonts on this OS here:
  https://github.com/TomenetGame/tomenet/issues/15
 
