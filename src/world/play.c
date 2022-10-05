@@ -20,7 +20,7 @@ void send_sinfo(struct client *ccl, struct client *priv) {
 
 	spk.type = WP_SINFO;
 	spk.serverid = 0;
-	strncpy(spk.d.sinfo.name, slist[ccl->authed-1].name, 30);
+	strncpy(spk.d.sinfo.name, slist[ccl->authed-1].name, 30 - 1);
 	spk.d.sinfo.sid = ccl->authed;
 	if (priv) reply(&spk, priv);
 	else relay(&spk, ccl);
