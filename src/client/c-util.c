@@ -8670,6 +8670,7 @@ static void do_cmd_options_fonts(void) {
 
   #ifdef USE_X11 /* Linux/OSX use at least the basic system fonts (/usr/share/fonts/misc) - C. Blue */
 	int misc_fonts = get_misc_fonts(font_name[fonts], MAX_FONTS - fonts, 256);
+
 	if (misc_fonts > 0) {
 		fonts += misc_fonts;
 	} else {
@@ -8689,6 +8690,7 @@ static void do_cmd_options_fonts(void) {
 	fff = fopen(path, "r");
 	if (fff) {
 		char tmp[256], *cp;
+
 		while (fonts < MAX_FONTS) {
 			if (!fgets(tmp_name, 256, fff)) break;
 			tmp_name[strlen(tmp_name) - 1] = 0; //remove trailing \n
