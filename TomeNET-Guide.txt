@@ -4487,8 +4487,8 @@ Fedora 33: Tokariew wrote information about installing fonts on this OS here:
 Since you might need/want to use mapping files to remap terrain features to the
 characters in your font, you can create font-preference files that contain
 mapping information.
-The default font mapping file is lib/user/font-win.prf. If it exists, this file
-will automatically be loaded by the game client.
+The default font mapping file is lib/user/font-win.prf (for Windows OS). If it
+exists, this file will automatically be loaded by the game client.
 However, the client first checks for the existance of a specific, custom font
 mapping file that has a filename: lib/user/font-custom-FONTNAME.prf and loads
 this instead of attempting to load font-win.prf.
