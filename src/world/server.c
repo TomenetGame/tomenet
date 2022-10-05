@@ -67,9 +67,14 @@ void loadservers() {
 	FILE *fp;
 	int i = 0, j, n;
 	char flags[20], line[160];
+#if 0
+	struct serverinfo slist_temp[MAX_SERVERS];
+	//char flags_temp[MAX_SERVERS][20];
+#endif
 
 	fp = fopen("servers", "r");
 	if (fp == (FILE*)NULL) return;
+	printf("Reading server list:\n");
 	do {
 		line[0] = 0;
 		if (!fgets(line, 160, fp)) break;
@@ -145,6 +150,21 @@ void loadservers() {
 	} while (!feof(fp) && i < MAX_SERVERS);
 	snum = i;
 	fclose(fp);
+
+#if 0 /* not cool because we get holes in the list */
+	/* Actually handle the static indices: They are meant to replace the indices the servers simply got from their loading order: - C. Blue */
+	for (n = 0; n < snum; n++) strcpy(slist[n].name, "<undefined>");
+	for (n = 0; n < snum; n++) {
+		slist[slist[n].static_index].name = slist[n].name;
+		slist[slist[n].static_index].pass = slist[n].pass;
+		//slist[slist[n].static_index].static_index = slist[n].static_index; --leave it
+		slist[slist[n].static_index].rflags = slist[n].rflags;
+		slist[slist[n].static_index].mflags = slist[n].mflags;
+	}
+	printf("Ordered by static indices, the final server list is:\n");
+	for (n = 0; n < snum; n++)
+		printf("%d. server: %s (static index %d): [%s]\n", i, slist[i].name, slist[i].static_index, slist[i].pass);
+#endif
 }
 
 void sig_pipe(int num) {

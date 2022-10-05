@@ -50,7 +50,7 @@ void world(int ser) {
 
 	while (1) {
 		int mfd = ser;
-		struct client *c_cl;
+		struct client *c_cl = NULL;
 		struct list *lp;
 
 		FD_ZERO(&fds);
@@ -161,7 +161,7 @@ void wproto(struct client *ccl) {
 			   and other data are shared. Some machines may
 			   use a dynamic IP, so this is made *more* necessary */
 
-			ccl->authed = pwcheck(wpk->d.auth.pass, wpk->d.auth.val);
+			ccl->authed = pwcheck(wpk->d.auth.pass, wpk->d.auth.val); /* This is the server's static_index + 1, since 0 means unauthed. */
 			if (ccl->authed) send_sinfo(ccl, NULL);
 			/* Send it the current players */
 			send_rplay(ccl);
@@ -172,6 +172,7 @@ void wproto(struct client *ccl) {
 			/* only relay all for now */
 			if (ccl->authed && ((ccl->authed > 0) || secure.chat)) {
 				char msg[MSG_LEN], *p = wpk->d.chat.ctxt;
+
 				client_all = client_chat = client_ctrlo = 0;
 				/* strip chat codes and reinsert them at the beginning */
 				if (*p == '\374') {
@@ -227,11 +228,11 @@ void wproto(struct client *ccl) {
  #endif
 #endif
 
-				//snprintf(msg, MSG_LEN, "\377o[\377%c%d\377o] %s", (ccl->authed > 0 ? 'g' : 'r'), ccl->authed, wpk->d.chat.ctxt);
+				//snprintf(msg, MSG_LEN, "\377o[\377%c%d\377o] %s", (ccl->authed > 0 ? 'g' : 'r'), ccl->authed - 1, wpk->d.chat.ctxt);
 				snprintf(msg, MSG_LEN, "%s%s\377%c[%d]\377%c %s%c",
 				    client_all ? "\374" : (client_chat ? "\375" : ""),
 				    client_ctrlo ? "\376" : "",
-				    (ccl->authed > 0 ? 'g' : 'r'), ccl->authed, WP_CHAT_DEFAULT_COLOUR, p, '\0');
+				    (ccl->authed > 0 ? 'g' : 'r'), ccl->authed - 1, WP_CHAT_DEFAULT_COLOUR, p, '\0');
 				//msg[MSG_LEN - 1] = '\0';
 				strncpy(wpk->d.chat.ctxt, msg, MSG_LEN);
 				relay(wpk, ccl);
@@ -257,7 +258,7 @@ void wproto(struct client *ccl) {
 					client_ctrlo = 1;
 					p++;
 				}
-				//snprintf(msg, MSG_LEN, "\377o[\377%c%d\377o] %s", (ccl->authed > 0 ? 'g' : 'r'), ccl->authed, wpk->d.chat.ctxt);
+				//snprintf(msg, MSG_LEN, "\377o[\377%c%d\377o] %s", (ccl->authed > 0 ? 'g' : 'r'), ccl->authed - 1, wpk->d.chat.ctxt);
 				snprintf(msg, MSG_LEN, "%s%s\377%c(IRC)\377w %s%c",
 				    client_all ? "\374" : (client_chat ? "\375" : ""),
 				    client_ctrlo ? "\376" : "",
@@ -274,7 +275,7 @@ void wproto(struct client *ccl) {
 
 				/* add same code in front as for WP_CHAT */
 				//char msg[MSG_LEN];
-				//snprintf(msg, MSG_LEN, "\377%c[%d]\377w %s", (ccl->authed > 0 ? 'g' : 'r'), ccl->authed, wpk->d.chat.ctxt);
+				//snprintf(msg, MSG_LEN, "\377%c[%d]\377w %s", (ccl->authed > 0 ? 'g' : 'r'), ccl->authed - 1, wpk->d.chat.ctxt);
 				//strncpy(wpk->d.chat.ctxt, msg, MSG_LEN);
 				//d.pmsg.player
 				//d.pmsg.victim
@@ -283,11 +284,11 @@ void wproto(struct client *ccl) {
 				struct list *lp;
 				struct client *dcl;
 
-				wpk->serverid = ccl->authed;
+				wpk->serverid = ccl->authed - 1;
 
 				for (lp = clist; lp; lp = lp->next) {
 					dcl = (struct client*)lp->data;
-					if (dcl->authed == wpk->d.pmsg.sid) send(dcl->fd, wpk, sizeof(struct wpacket), 0);
+					if (dcl->authed - 1 == wpk->d.pmsg.sid) send(dcl->fd, wpk, sizeof(struct wpacket), 0);
 				}
 			}
 			break;
@@ -296,7 +297,7 @@ void wproto(struct client *ccl) {
 		case WP_QPLAYER:
 			/* STORE players here */
 			if (ccl->authed && (ccl->authed > 0 || secure.play)) {
-				wpk->d.play.server = ccl->authed;
+				wpk->d.play.server = ccl->authed - 1;
 				add_rplayer(wpk);
 				relay(wpk, ccl);
 			}
@@ -332,7 +333,7 @@ void wproto(struct client *ccl) {
 				    client_all ? "\374" : (client_chat ? "\375" : ""),
 				    client_ctrlo ? "\376" : "",
 				    client_cmdreply ? "\373" : "",
-				    (ccl->authed > 0 ? 'g' : 'r'), ccl->authed, p);
+				    (ccl->authed > 0 ? 'g' : 'r'), ccl->authed - 1, p);
 				/* make sure it's null terminated (if snprintf exceeds 160 chars and places no \0) - mikaelh
 				   (replaced 160 by MSG_LEN - C. Blue) */
 				msg[MSG_LEN - 1] = '\0';
@@ -369,7 +370,7 @@ void relay(struct wpacket *wpk, struct client *talker) {
 	int morph = wpk->type, c;
 	char snl[20], *snp;
 
-	wpk->serverid = talker->authed;
+	wpk->serverid = talker->authed - 1;
 
 	for (lp = clist; lp; lp = lp->next) {
 		ccl = (struct client*)lp->data;
@@ -404,7 +405,7 @@ void relay(struct wpacket *wpk, struct client *talker) {
 		}
 
 		/* Specialty: Abuse chat.id for determining destination server. */
-		if (wpk->type == WP_IRCCHAT && wpk->d.chat.id != ccl->authed) continue;
+		if (wpk->type == WP_IRCCHAT && wpk->d.chat.id != ccl->authed - 1) continue;
 
 		send(ccl->fd, wpk, sizeof(struct wpacket), 0);
 		wpk->type = morph; /* unhack */
@@ -487,9 +488,10 @@ void remclient(struct list *dlp) {
 	if (ccl->authed > 0) {
 		/* Tell other servers if an authed server goes down */
 		struct wpacket spk;
+
 		rem_players(ccl->authed);
 		spk.type = WP_SQUIT;
-		spk.d.sid = ccl->authed;
+		spk.d.sid = ccl->authed - 1;
 		relay(&spk, ccl);
 	}
 	/* Close the socket - mikaelh */

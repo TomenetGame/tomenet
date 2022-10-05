@@ -63,7 +63,7 @@ short pwcheck(char *cpasswd, uint32_t val) {
 	for (i = 0; i < snum; i++) {
 		if (val == chk((unsigned char *)slist[i].pass, (unsigned char *)cpasswd)) {
 			printf("auth success\n");
-			return(i + 1);
+			return(slist[i].static_index + 1);
 		}
 	}
 	fprintf(stderr, "server failed authentication\n");
