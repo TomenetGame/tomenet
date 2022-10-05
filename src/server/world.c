@@ -13,6 +13,12 @@
 
 #include "../world/world.h"
 
+/* Use character \373 (ASCII 251) to indicate that our message is a reply to an IRC-gameserver-command ('?<command')
+   such as ?players, ?who, ?seen. This is used to tell the IRC-relay to not crop our server index number from our reply message.
+   Note that this \373 usage has nothing to do with the \373 used in object1.c, files.c, nclient.c and c-files.c.
+   The IRC-relay must be recent enough to handle the \373 code, otherwise you must comment out this definition: */
+#define USE_IRC_COMMANDREPLY_INDICATOR
+
 /* pfft. i'll use generic lists when i get around to it */
 struct svlist{
 	struct svlist *next;
@@ -250,28 +256,34 @@ void world_comm(int fd, int arg) {
 				}
 				/* list number + character names of players online */
 				else if (!strncmp(p, "?players", 8)) {
-					char buf[MSG_LEN];
+					char buf[MSG_LEN + MAX_CHARS], bufp[MSG_LEN + MAX_CHARS]; //overspill, will get cut off at MSG_LEN and indicated by '..' chars
 
-					strcpy(buf, " 0 Players: ");
 					x = 0;
+					bufp[0] = 0;
 					for (i = 1; i <= NumPlayers; i++) {
 						if (Players[i]->conn == NOT_CONNECTED) continue;
 						if (Players[i]->admin_dm && cfg.secret_dungeon_master) continue;
 
 						x++;
-						if (strlen(buf) + strlen(Players[i]->name) + 2 >= MSG_LEN - 20) continue; /* paranoia reserved */
-						if (x != 1) strcat(buf, ", ");
-						strcat(buf, Players[i]->name);
-						strcat(buf, " (");
-						strcat(buf, Players[i]->accountname);
-						strcat(buf, ")");
+						if (strlen(bufp) >= MSG_LEN) continue;
+
+						if (x != 1) strcat(bufp, ", ");
+						strcat(bufp, Players[i]->name);
+						strcat(bufp, " (");
+						strcat(bufp, Players[i]->accountname);
+						strcat(bufp, ")");
 					}
-					if (!x) strcpy(buf, "No players online");
+					if (!x) strcpy(buf, "\373No players online.");
 					else {
-						if (x >= 10) buf[0] = '0' + x / 10;
-						buf[1] = '0' + x % 10;
+						if (x == 1) strcpy(buf, "\3731 player: ");
+						else strcpy(buf, format("\373%d players: ", x));
+						strcat(buf, bufp);
+						if (buf[MSG_LEN - 1]) {
+							buf[MSG_LEN - 3] = '.';
+							buf[MSG_LEN - 2] = '.';
+							buf[MSG_LEN - 1] = 0;
+						}
 					}
-					if (x == 1) buf[9] = ' '; /* Player_s_ */
 					msg_to_irc(buf);
 					break;
 				}
@@ -279,7 +291,7 @@ void world_comm(int fd, int arg) {
 					char buf[MSG_LEN];
 
 					get_laston(p + 5 + 1, buf, FALSE, FALSE);
-					msg_to_irc(buf);
+					msg_to_irc(format("\373%s", buf));
 					break;
 				}
 				else if (!strncmp(p, "?who", 4)) {
@@ -303,7 +315,7 @@ void world_comm(int fd, int arg) {
 							if (!reserved_name_character[i][0]) break;
 
 							if (!strcmp(reserved_name_character[i], p + 5)) {
-								msg_to_irc(format("That deceased character belonged to account: %s", reserved_name_account[i]));
+								msg_to_irc(format("\373That deceased character belonged to account: %s", reserved_name_account[i]));
 								done = TRUE;
 								break;
 							}
@@ -312,21 +324,21 @@ void world_comm(int fd, int arg) {
 #endif
 
 #if 0 /* don't check for account name */
-						msg_to_irc("That character name does not exist.");
+						msg_to_irc("\373That character name does not exist.");
 #else /* check for account name */
-						if (!GetAccount(&acc, p + 5, NULL, FALSE)) msg_to_irc("That character or account name does not exist.");
-						else msg_to_irc("There is no such character, but there is an account of that name.");
+						if (!GetAccount(&acc, p + 5, NULL, FALSE)) msg_to_irc("\373That character or account name does not exist.");
+						else msg_to_irc("\373There is no such character, but there is an account of that name.");
 #endif
 						break;
 					}
 
 					acc = lookup_accountname(p_id);
 					if (!acc) {
-						msg_to_irc("***ERROR: No account found.");
+						msg_to_irc("\373***ERROR: No account found.");
 						break;
 					}
 					if (lookup_player_admin(p_id))
-						msg_to_irc(format("That administrative character belongs to: %s", acc));
+						msg_to_irc(format("\373That administrative character belongs to: %s", acc));
 					else {
 						u16b ptype = lookup_player_type(p_id);
 						int lev = lookup_player_level(p_id);
@@ -336,7 +348,7 @@ void world_comm(int fd, int arg) {
 						Dummy.pclass = (ptype & 0xff00) >> 8;
 						Dummy.ptrait = TRAIT_NONE;
 
-						msg_to_irc(format("That level %d %s%s belongs to: %s",
+						msg_to_irc(format("\373That level %d %s%s belongs to: %s",
 						    lev,
 						    //race_info[ptype & 0xff].title,
 						    //special_prace_lookup[ptype & 0xff],
@@ -600,6 +612,11 @@ void world_msg(char *text) {
 
 void msg_to_irc(char *text) {
 	int len;
+
+#ifndef USE_IRC_COMMANDREPLY_INDICATOR
+	/* Trim the indicator char, as we don't want to use it. */
+	if (text[0] == '\373') text++;
+#endif
 
 	if (WorldSocket == -1) return;
 	spk.type = WP_MSG_TO_IRC;

@@ -134,7 +134,7 @@ void handle(struct client *ccl) {
 //#define WP_CHAT_UNIFORM_COLOUR
 #define WP_CHAT_PROHIBIT_COLOURS
 void wproto(struct client *ccl) {
-	int client_chat, client_all, client_ctrlo;
+	int client_cmdreply, client_chat, client_all, client_ctrlo;
 	struct wpacket *wpk = (struct wpacket*)ccl->buf;
 
 	while (ccl->blen >= sizeof(struct wpacket)) {
@@ -305,7 +305,7 @@ void wproto(struct client *ccl) {
 		case WP_MESSAGE:
 		case WP_MSG_TO_IRC:
 			/* simple relay message */
-			client_all = client_chat = client_ctrlo = 0;
+			client_cmdreply = client_all = client_chat = client_ctrlo = 0;
 			if (ccl->authed && (ccl->authed > 0 || secure.msgs)) {
 				/* add same code in front as for WP_CHAT */
 				char msg[MSG_LEN], *p = wpk->d.smsg.stxt;
@@ -322,9 +322,16 @@ void wproto(struct client *ccl) {
 					client_ctrlo = 1;
 					p++;
 				}
-				snprintf(msg, MSG_LEN, "%s%s\377%c[%d]\377w %s",
+				/* Special world server code for irc-chat-command messages ('?<command>') replied to from game server to IRC.
+				   Note that it must come after the above codes, if any of them exist. */
+				if (*p == '\373') {
+					client_cmdreply = 1;
+					p++;
+				}
+				snprintf(msg, MSG_LEN, "%s%s%s\377%c[%d]\377w %s",
 				    client_all ? "\374" : (client_chat ? "\375" : ""),
 				    client_ctrlo ? "\376" : "",
+				    client_cmdreply ? "\373" : "",
 				    (ccl->authed > 0 ? 'g' : 'r'), ccl->authed, p);
 				/* make sure it's null terminated (if snprintf exceeds 160 chars and places no \0) - mikaelh
 				   (replaced 160 by MSG_LEN - C. Blue) */
