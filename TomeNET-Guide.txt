@@ -8096,6 +8096,7 @@ dubbed 'the divine game', on a 9x9 board against an opponent that gets
 picked for you based on your past results, for cold hard money!
 It is actually called Baduk in Korea, Igo in Japan and Weiqi in China. 'Go' is
 the western name, derived from the japanese name by omitting the first kanji.
+However, it almost means the same: The surrounding (encircling) game.
 
 You pay a wager only once on each of the 8 difficulty levels. You may then
 play for free until you manage to win on your current level. If you win you
