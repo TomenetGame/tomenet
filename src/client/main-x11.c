@@ -1221,6 +1221,9 @@ static term_data term_5;
 static term_data term_6;
 static term_data term_7;
 
+static term_data *x11_terms_term_data[ANGBAND_TERM_MAX] = {&screen, &mirror, &recall, &choice, &term_4, &term_5, &term_6, &term_7};
+static char *x11_terms_font_env[ANGBAND_TERM_MAX] = {"TOMENET_X11_FONT_SCREEN", "TOMENET_X11_FONT_MIRROR", "TOMENET_X11_FONT_RECALL", "TOMENET_X11_FONT_CHOICE", "TOMENET_X11_FONT_TERM_4", "TOMENET_X11_FONT_TERM_5", "TOMENET_X11_FONT_TERM_6", "TOMENET_X11_FONT_TERM_7"};
+static char *x11_terms_font_default[ANGBAND_TERM_MAX] = {DEFAULT_X11_FONT_SCREEN, DEFAULT_X11_FONT_MIRROR, DEFAULT_X11_FONT_RECALL, DEFAULT_X11_FONT_CHOICE, DEFAULT_X11_FONT_TERM_4, DEFAULT_X11_FONT_TERM_5, DEFAULT_X11_FONT_TERM_6, DEFAULT_X11_FONT_TERM_7};
 
 /*
  * Set the size hints of Infowin
@@ -2585,11 +2588,51 @@ static int term_data_to_term_idx(term_data *td) {
 }
 
 /*
+ * Initialization of i-th X11 terminal window.
+ */
+static errr x11_term_init(int term_id) {
+	if (term_id < 0 || term_id >= ANGBAND_TERM_MAX) {
+		printf("Terminal index %d out of bounds\n", term_id);
+		return(1);
+	}
+
+	if (ang_term[term_id]) {
+		printf("Terminal window with index %d is already initialized\n", term_id);
+		/* Success. */
+		return(0);
+	}
+
+	/* Check environment for X11 terminal font. */
+	cptr fnt_name = getenv(x11_terms_font_env[term_id]);
+	/* Check environment for "base" font. */
+	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
+	/* Use loaded (from config file) or predefined default font. */
+	if (!fnt_name) fnt_name = term_prefs[term_id].font;
+	/* Paranoia, use the default. */
+	if (!fnt_name) fnt_name = x11_terms_font_default[term_id];
+
+	/* Initialize the terminal window, allow resizing, for font changes. */
+	errr err = term_data_init(term_id, x11_terms_term_data[term_id], FALSE, ang_term_name[term_id], fnt_name);
+	/* Store created terminal with X11 term data to ang_term array, even if term_data_init failed. */
+	ang_term[term_id] = Term;
+
+	if (err != 0) {
+		printf("Error initializing term_data for X11 terminal with index %d\n", term_id);
+		if (term_nuke(ang_term[term_id]) != 0) {
+			printf("Error freeing X11 terminal with index %d after failed initialization\n", term_id);
+		};
+		return(err);
+	}
+
+	/* Success. */
+	return(0);
+}
+
+/*
  * Initialization function for an "X11" module to Angband
  */
 errr init_x11(void) {
 	int i;
-	cptr fnt_name = NULL;
 	cptr dpy_name = "";
 
 	/* Init the Metadpy if possible */
@@ -2616,6 +2659,7 @@ errr init_x11(void) {
 		else if (i) cname = color_name[1];
 		Infoclr_init_ccn (cname, "bg", "cpy", 0);
 	}
+
 #ifdef EXTENDED_BG_COLOURS
 	/* Prepare the extended background-using colors */
 	for (i = 0; i < TERMX_AMT; ++i) {
@@ -2707,147 +2751,27 @@ errr init_x11(void) {
 	}
 #endif /* USE_GRAPHICS */
 
-	{ /* Main window is always visible */
-		/* Check environment for "screen" font */
-		fnt_name = getenv("TOMENET_X11_FONT_SCREEN");
-		/* Check environment for "base" font */
-		if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-		/* Use loaded (from config file) or predefined default font */
-		if (!fnt_name) fnt_name = term_prefs[0].font;
-		/* paranoia; use the default */
-		if (!fnt_name) fnt_name = DEFAULT_X11_FONT_SCREEN;
-		/* Initialize the screen */
-		//	term_data_init(0, &screen, TRUE, "TomeNET", fnt_name);
-		//	term_data_init(0, &screen, TRUE, ang_term_name[0], fnt_name);
-		/* allow resizing, for font changes */
-		term_data_init(0, &screen, FALSE, ang_term_name[0], fnt_name);
-		term_screen = Term;
-		ang_term[0] = Term;
+	/* Initialize each term */
+	for (i = 0; i < ANGBAND_TERM_MAX; i++) {
+		/* Main window is always visible, all other depend on configuration. */
+		if (i == 0 || term_prefs[i].visible) {
+			if (x11_term_init(i) != 0) {
+				printf("Error initializing x11 terminal window with index %d\n", i);
+				if (i == 0) {
+					/* Can't run without main screen. */
+					return(1);
+				} else {
+					/* Switch off the visibility for the failed term. */
+					term_prefs[i].visible = FALSE;
+				}
+			}
+		}
 	}
 
-	if (term_prefs[1].visible) {
-		/* Check environment for "mirror" font */
-		fnt_name = getenv("TOMENET_X11_FONT_MIRROR");
-		/* Check environment for "base" font */
-		if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-		/* Use loaded (from config file) or predefined default font */
-		if (!fnt_name) fnt_name = term_prefs[1].font;
-		/* paranoia; use the default */
-		if (!fnt_name) fnt_name = DEFAULT_X11_FONT_MIRROR;
-
-		/* Initialize the mirror window */
-		term_data_init(1, &mirror, FALSE, ang_term_name[1], fnt_name);
-		term_mirror = Term;
-		ang_term[1] = Term;
-
-	}
-
-	if (term_prefs[2].visible) {
-		/* Check environment for "recall" font */
-		fnt_name = getenv("TOMENET_X11_FONT_RECALL");
-		/* Check environment for "base" font */
-		if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-		/* Use loaded (from config file) or predefined default font */
-		if (!fnt_name) fnt_name = term_prefs[2].font;
-		/* paranoia; use the default */
-		if (!fnt_name) fnt_name = DEFAULT_X11_FONT_RECALL;
-
-		/* Initialize the recall window */
-		term_data_init(2, &recall, FALSE, ang_term_name[2], fnt_name);
-		term_recall = Term;
-		ang_term[2] = Term;
-
-	}
-
-	if (term_prefs[3].visible) {
-		/* Check environment for "choice" font */
-		fnt_name = getenv("TOMENET_X11_FONT_CHOICE");
-		/* Check environment for "base" font */
-		if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-		/* Use loaded (from config file) or predefined default font */
-		if (!fnt_name) fnt_name = term_prefs[3].font;
-		/* paranoia; use the default */
-		if (!fnt_name) fnt_name = DEFAULT_X11_FONT_CHOICE;
-
-		/* Initialize the choice window */
-		term_data_init(3, &choice, FALSE, ang_term_name[3], fnt_name);
-		term_choice = Term;
-		ang_term[3] = Term;
-	}
-
-	if (term_prefs[4].visible) {
-		/* Check environment for "term4" font */
-		fnt_name = getenv("TOMENET_X11_FONT_TERM_4");
-		/* Check environment for "base" font */
-		if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-		/* Use loaded (from config file) or predefined default font */
-		if (!fnt_name) fnt_name = term_prefs[4].font;
-		/* paranoia; use the default */
-		if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_4;
-
-		/* Initialize the term_4 window */
-		term_data_init(4, &term_4, FALSE, ang_term_name[4], fnt_name);
-		term_term_4 = Term;
-		ang_term[4] = Term;
-
-	}
-
-	if (term_prefs[5].visible) {
-		/* Check environment for "term5" font */
-		fnt_name = getenv("TOMENET_X11_FONT_TERM_5");
-		/* Check environment for "base" font */
-		if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-		/* Use loaded (from config file) or predefined default font */
-		if (!fnt_name) fnt_name = term_prefs[5].font;
-		/* paranoia; use the default */
-		if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_5;
-
-		/* Initialize the term_5 window */
-		term_data_init(5, &term_5, FALSE, ang_term_name[5], fnt_name);
-		term_term_5 = Term;
-		ang_term[5] = Term;
-
-	}
-
-	if (term_prefs[6].visible) {
-		/* Check environment for "term6" font */
-		fnt_name = getenv("TOMENET_X11_FONT_TERM_6");
-		/* Check environment for "base" font */
-		if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-		/* Use loaded (from config file) or predefined default font */
-		if (!fnt_name) fnt_name = term_prefs[6].font;
-		/* paranoia; use the default */
-		if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_6;
-
-		/* Initialize the term_6 window */
-		term_data_init(6, &term_6, FALSE, ang_term_name[6], fnt_name);
-		term_term_6 = Term;
-		ang_term[6] = Term;
-
-	}
-
-	if (term_prefs[7].visible) {
-		/* Check environment for "term7" font */
-		fnt_name = getenv("TOMENET_X11_FONT_TERM_7");
-		/* Check environment for "base" font */
-		if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
-		/* Use loaded (from config file) or predefined default font */
-		if (!fnt_name) fnt_name = term_prefs[7].font;
-		/* paranoia; use the default */
-		if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_7;
-
-		/* Initialize the term_7 window */
-		term_data_init(7, &term_7, FALSE, ang_term_name[7], fnt_name);
-		term_term_7 = Term;
-		ang_term[7] = Term;
-
-	}
-
-
-	/* Activate the "Angband" window screen */
+	/* Activate the "Angband" main window screen. */
 	Term_activate(&screen.t);
 
-	/* Raise the "Angband" window */
+	/* Raise the "Angband" main window. */
 	Infowin_set(screen.outer);
 	Infowin_raise();
 
