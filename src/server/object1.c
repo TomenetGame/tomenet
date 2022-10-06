@@ -2125,6 +2125,11 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			}
 			break;
 		}
+		/* Optionally flavoury */
+		if (o_ptr->sval == SV_AMULET_INVINCIBILITY) {
+			basenm = "& Administrative Decree~";
+			break;
+		}
 
 		/* Color the object */
 		modstr = amulet_adj[indexx];

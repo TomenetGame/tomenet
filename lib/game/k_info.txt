@@ -7173,6 +7173,7 @@ I:40:37:0
 W:127:0:3:1
 A:127/0
 F:HIDE_TYPE
+D:Absolute authority renders the wielder untouchable by any harm and peril.
 
 #new potion since mana shield was changed a big deal
 N:921:*Restore Mana*
