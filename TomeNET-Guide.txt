@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 4. October 2022 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 6. October 2022 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -118,7 +118,7 @@ Contents
     (4.11a) Drain effects
     (4.12)  Malicious effects monsters can suffer
     (4.13)  Extermination orders, events and Ironman Challenge
-    (4.14)  In-game time system
+    (4.14)  Time systems, speed
     (4.14a) In-game metrics
     (4.15)  Swimming
     (4.16)  Teleportation
@@ -10126,7 +10126,7 @@ New year's eve
 
 
 
-(4.14) In-game time system
+(4.14) Time systems, speed
 --------------------------
 Three time systems are relevant for the players' game experience:
 
@@ -10268,6 +10268,9 @@ because the slower passing of turns counters the visual effect. In Khazad-dum
 however you'll see how astonishing fast they suddenly move. You wouldn't want
 to have to handle this time speed in the actual dungeon where you encounter
 the really bad guys..
+
+For limitations of speed vs real-time regarding server frame rate, see (8.7)
+which has information about the game engine limits.
 
 
 (4.14a) In-game metrics
