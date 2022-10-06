@@ -17024,6 +17024,14 @@ create a character!):
     level 20, will see the message "Your presence in the realm is forfeit!"
     and also meet their fate and be destroyed by indecisiveness at level 20.
 
+    You can verify your current status anytime either by checking your monster
+    list with ~ 2 or by using the '/ex' chat command, which will give you one
+    of these status messages if you are a Maia:
+    - no harbinger killed yet: "Your destiny in the realm is still undecided."
+    - killed a darkling: "Your are treading on the path to enlightenment."
+    - killed a candlebearer: "Your are treading on the path to corruption."
+    - killed both types, oops!: "Your presence in the realm is forfeit."
+
     After they underwent initiation at level 20, they may just kill all of them
     indiscriminately, same as any other monster, without consequences.
     At level 13, maiar will get a reminder if they haven't killed any darkling
