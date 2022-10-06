@@ -12391,10 +12391,11 @@ Weapons of Morgul
                 these weapons will get their mali reversed into boni when you
                 equip them, working in your favour! That doesn't mean their
                 curse is broken, though..
-                Since they have a heavy curse on them, you need to either use a
-                scroll of *remove curse* or use enchant scrolls to break it.
-                For details about the enchant-scrolls trick, which is usually
-                much cheaper, see paragraph '(5.14) Curses'.
+                Since they have a heavy curse on them, if you want to get rid
+                of them you will need to either use a scroll of *remove curse*
+                or use enchant scrolls to break it. For details about the trick
+                with enchant-scrolls, which are usually much cheaper, see the
+                paragraph '(5.14) Curses'.
                 Wielding a weapon of Morgul will allow you to see the invisible
                 but also infect you with Black Breath, drain your experience
                 and aggravate nearby monsters.
