@@ -129,10 +129,16 @@ void handle(struct client *ccl) {
 	wproto(ccl);
 }
 
-//#define WP_CHAT_DEFAULT_COLOUR 'w'
-#define WP_CHAT_DEFAULT_COLOUR 's'
+/* Strip all colour codes form chat lines (even from name, ie character-mode specific colouring)?
+   This will result in all cross-world chat to be displayed in the default colour specified here. */
 //#define WP_CHAT_UNIFORM_COLOUR
-#define WP_CHAT_PROHIBIT_COLOURS
+#if 0
+ #define WP_CHAT_DEFAULT_COLOUR 'w'
+#else /* This seems better to easily distinguish remote from local chat: */
+ #define WP_CHAT_DEFAULT_COLOUR 's'
+#endif
+/* Strip colour codes added by player as is feasible (cannot catch name-backward colouring)? */
+//#define WP_CHAT_PROHIBIT_COLOURS
 void wproto(struct client *ccl) {
 	int client_cmdreply, client_chat, client_all, client_ctrlo;
 	struct wpacket *wpk = (struct wpacket*)ccl->buf;
