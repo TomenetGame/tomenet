@@ -9526,13 +9526,13 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 
 		/* Limit items to not substitute endgame (Morgoth) gear (part 2/2) */
 		/* Mage staves (and Magi gloves as a side-effect) */
-		if ((f1 & TR1_MANA) && o_ptr->pval > 6) o_ptr->pval = 6;
+		if ((f1 & TR1_MANA) && o_ptr->pval > 5) o_ptr->pval = 5;
 		/* Limit melee weapons */
 		if (f1 & TR1_BLOWS) {
 			if (o_ptr->name2 == EGO_HA || o_ptr->name2b == EGO_HA) o_ptr->pval = 1;
 			else if (o_ptr->pval > 1) o_ptr->pval--;
 		}
-		if ((f5 & TR5_CRIT) && o_ptr->pval > 6) o_ptr->pval = 6;
+		if ((f5 & TR5_CRIT) && o_ptr->pval > 5) o_ptr->pval = 5;
 		/* Limit all weapons */
 		if (is_weapon(o_ptr->tval)) {
 			if (o_ptr->to_h > 20) o_ptr->to_h = 20;
