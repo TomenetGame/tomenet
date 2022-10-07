@@ -3579,6 +3579,13 @@ void erase_mon_trap(worldpos *wpos, int y, int x, int o_idx) {
 
 	c_ptr = &zcave[y][x];
 	cs_ptr = GetCS(c_ptr, CS_MON_TRAP);
+	/* This segfaulted local test server when the level was deallocated and still had a montrap on it.
+	   Specifically, cs_ptr->sc was pointing to 0x8 and sc/sc.montrap/sc.montrap.feat were all segfaults.
+	   So, adding a check for cs_ptr validity here.. - C. Blue, 2022-10-07 */
+	if (!cs_ptr) {
+		s_printf("WARNING: erase_mon_trap() called on invalid cs_ptr at (%d,%d,%d).\n", wpos->wx, wpos->wy, wpos->wz);
+		return;
+	}
 	cave_set_feat_live(wpos, y, x, cs_ptr->sc.montrap.feat);
 
 	/* Erase objects being carried */
