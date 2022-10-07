@@ -262,14 +262,16 @@ static cptr food_adj[MAX_SHROOM] = {
 	"Dark Blue", "Dark Green", "Dark Red", "Yellow", "Furry",
 	"Green", "Grey", "Light Blue", "Light Green", "Violet",
 	"Red", "Slimy", "Tan", "White", "White Spotted",
-	"Wrinkled", "Red Spotted"
+	"Wrinkled", "Orange"
 };
+/* note: 'reserve' TERM_L_RED for shrieker shroom (monster) ;).
+         TERM_L_UMBER is also for non-shroom food. */
 static byte food_col[MAX_SHROOM] = {
 	TERM_MULTI, TERM_BLUE, TERM_L_DARK, TERM_L_DARK, TERM_UMBER,
 	TERM_BLUE, TERM_GREEN, TERM_RED, TERM_YELLOW, TERM_L_WHITE,
 	TERM_GREEN, TERM_SLATE, TERM_L_BLUE, TERM_L_GREEN, TERM_VIOLET,
 	TERM_RED, TERM_SLATE, TERM_L_UMBER, TERM_WHITE, TERM_WHITE,
-	TERM_UMBER, TERM_L_RED
+	TERM_UMBER, TERM_ORANGE
 };
 
 
