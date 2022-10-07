@@ -15862,6 +15862,11 @@ stated.
                                 steal until the shopkeepers stop to watch you
                                 so intensely. The watchlist runs out slower
                                 than the blacklist.
+                                The blacklist and watchlist will be on hold for
+                                a character that isn't logged in, so it's best
+                                to steal before going to the dungeon or AFK,
+                                so your black-/watchlist have time to run out.
+
                                 The time period you'll be on these lists solely
                                 depends on the item's _base_ value (so it does
                                 not matter whether you got caught in a normal
