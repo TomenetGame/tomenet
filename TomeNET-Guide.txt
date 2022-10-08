@@ -13947,8 +13947,12 @@ UN_POWER        no resistance. It drains charges/energy from your items:
                 mitigated by magic device skill or un_power-form).
 TIME            time.
                 The damage can partially be mitigated by having the resistance.
-DISEASE         poison.
-                This attack can also decrease your constitution.
+DISEASE         no resistance (except in PvP, where it acts as poison instead).
+                This attack can in rare cases also decrease your constitution,
+                and in extremely rare cases decrease it permanently even.
+                True vampires and initiated maiar are immune against the
+                continuously damaging infection, although they may still
+                suffer the initial consitution loss.
 INSANITY        none. But certain mimicry forms, skills and classes/races gain
                 some damage reduction in three tiers, see (6.6) for details.
 HALLU           chaos.
