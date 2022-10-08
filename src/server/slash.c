@@ -6574,6 +6574,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				invcopy(o_ptr, lookup_kind(k_ptr->tval, k_ptr->sval));
 				//o_ptr->number = o_ptr->weight >= 30 ? 1 : 99;
 
+				if (!e1) e1 = e2;
 				o_ptr->name2 = e1;
 				o_ptr->name2b = e2;
 
