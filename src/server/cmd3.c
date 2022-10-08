@@ -2333,7 +2333,11 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 		int amt = o_ptr->bpval + o_ptr->pval;
 
 		tmpf1 = f1 & TR1_ATTR_MASK;
-		tmpf2 = f2 & (TR2_SUST_STR | TR2_SUST_INT | TR2_SUST_WIS | TR2_SUST_DEX | TR2_SUST_CON | TR2_SUST_CHR);
+		/* Specialty: Trap kits use TRAP2_ flags instead of normal TR2_ flags */
+		if (o_ptr->tval != TV_TRAPKIT)
+			tmpf2 = f2 & (TR2_SUST_STR | TR2_SUST_INT | TR2_SUST_WIS | TR2_SUST_DEX | TR2_SUST_CON | TR2_SUST_CHR);
+		else
+			tmpf2 = 0;
 		tmpf3 = tmpf1 & tmpf2;
 		if (!amt) tmpf1 = tmpf3 = 0x0; //item was disenchanted to zero? don't display stat effects then.
 		if (tmpf3) {
@@ -2373,8 +2377,18 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 		if (f3 & (TR3_XTRA_MIGHT)) strcat(powins, "Xm");
 		if (f3 & (TR3_XTRA_SHOTS)) strcat(powins, "Xs");
 	} else {
-		//if ((f3 & TR3_XTRA_MIGHT) && (f3 & TR3_XTRA_SHOTS)) strcat(powins, "XX");
-		if (f3 & (TR3_XTRA_SHOTS)) strcat(powins, "Xs"); /* Xm is visible easily as the multiplier */
+#if 0
+		/* On ranged weapons, Xm is visible easily as the multiplier, so can be omitted here.
+		   But trapkits don't show their multiplier (maybe change this?), so we need it even in redux: */
+		if (o_ptr->tval == TV_TRAPKIT) {
+			if (f3 & (TR3_XTRA_MIGHT)) strcat(powins, "Xm");
+			//if ((f3 & TR3_XTRA_MIGHT) && (f3 & TR3_XTRA_SHOTS)) strcat(powins, "XX");
+		}
+#else
+		/* Actually ALWAYS display this mod as it is pretty vital and might cause confusion if omitted */
+		if (f3 & (TR3_XTRA_MIGHT)) strcat(powins, "Xm");
+#endif
+		if (f3 & (TR3_XTRA_SHOTS)) strcat(powins, "Xs");
 	}
 
 	/* -- bpval/pval mods -- */
@@ -2492,6 +2506,24 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 	if (f4 & (TR4_CLIMB)) strcat(powins, "Climb"); /* Can only spawn on randarts and climbing sets */
 	if (f5 & (TR5_PASS_WATER)) strcat(powins, "Swim"); /* Ocean Soul only! */
 	if (f3 & (TR3_WRAITH)) strcat(powins, "Wraith"); /* Ethereal DSM only */
+
+	/* Specialty: Trap kits use TRAP2_ flags instead of normal TR2_ flags,
+	   and they probably fit best at this position here: */
+	if (o_ptr->tval == TV_TRAPKIT) {
+		if (strlen(powins) != l && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
+		if (f2 & TRAP2_AUTOMATIC_99) strcat(powins, "*Auto*");
+		else if (f2 & TRAP2_AUTOMATIC_5) strcat(powins, "Auto");
+		/* These are already a given from the item name */
+		if (!redux && (f2 & TRAP2_ONLY_MASK)) {
+			if (f2 & TRAP2_ONLY_DRAGON) strcat(powins, "<D>");
+			if (f2 & TRAP2_ONLY_DEMON) strcat(powins, "<U>");
+			if (f2 & TRAP2_ONLY_ANIMAL) strcat(powins, "<a>");
+			if (f2 & TRAP2_ONLY_UNDEAD) strcat(powins, "<W>");
+			if (f2 & TRAP2_ONLY_EVIL) strcat(powins, "<Evil>");
+		}
+		if (f2 & TRAP2_KILL_GHOST) strcat(powins, "Wf");
+		if (f2 & TRAP2_TELEPORT_TO) strcat(powins, "Tt");
+	}
 
 	/* -- auras, brands, slays, esp -- */
 	if (redux) {

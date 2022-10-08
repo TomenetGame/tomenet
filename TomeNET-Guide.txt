@@ -2242,11 +2242,10 @@ Item power inscription (added in 4.7.1):
                special powers. Only works with *identified* items.
                Can also be used on custom spell books. If used on handbooks or
                tomes however, it works like @@@, shortening the spell names.
-    @@@        Redux version. Avoids stats, extra might since it's obvious,
-               infra-vision, searching, and mods that are obvious because they
-               can only come from base item type (disarm, digging, luck),
-               light radius, slays and brands except for kill-flags, and
-               partial ESPs.
+    @@@        Redux version. Avoids stats, infra-vision, searching, and mods
+               that are obvious because they can only come from base item type
+               (disarm, digging, luck), light radius, slays and brands except
+               for kill-flags, partial ESPs, trap kits' eligible enemy type.
                Can also be used on custom spell books, will shorten the names.
 
     Resulting inscription details:
@@ -2274,6 +2273,12 @@ Item power inscription (added in 4.7.1):
     Refl/Inv/AM/Bless reflection/invisibility/anti-magic shell/Blessed
     ID                auto-ID
     Climb/Swim/Wraith climbing/swimming/wraithform
+    *Auto*/Auto       (fully) automatic trap kit
+    <D>/<U>/<a>/<W>/<Evil>
+                      trapkit's eligible target monster type:
+                      Dragon, demon, animal, undead, evil.
+    Wf                trapkit can harm wraithform (PASS_WALL) enemies
+    Tt                trapkit casts teleport-to-player on enemies
     AF/C/E            aura of fire/cold/electricity
     BF/C/E/A/P        brand of fire/cold/electricity/acid/poison
     +oTPaWUDEvil      slay orc/troll/giant/animal/undead/demon/dragon/evil
