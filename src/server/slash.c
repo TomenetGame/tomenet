@@ -4925,7 +4925,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			msg_format(Ind, "\377uYou are currently in %s.", get_dun_name(p_ptr->wpos.wx, p_ptr->wpos.wy, (p_ptr->wpos.wz > 0), d_ptr, 0, TRUE));
 			return;
 		}
-		else if (prefix(messagelc, "/kifu")) {
+		else if (prefix(messagelc, "/kifu") || prefix(messagelc, "/gibo")) {
 #ifdef ENABLE_GO_GAME
 			char *c, *email;
 			bool c_at = FALSE;
@@ -4933,14 +4933,20 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* Prevent silyl exploits (getting _everyone's_ SGFs emailed to you by naming your character after one of the AI players).
 			   Note that these names are now already checked in forbidden_names() on character creation. */
 			if (strstr(p_ptr->name, " (AI)") || strstr(p_ptr->name, "Godalf, The ")) {
-				msg_print(Ind, "Sorry, the /kifu command isn't available to you in particular. :-p");
+				msg_print(Ind, "Sorry, the /kifu or /gibo command isn't available to you in particular. :-p");
 				return;
 			}
 
 			if (tk != 1) { //Assume spaces aren't allowed in email address */
-				msg_print(Ind, "To request an email with your new kifus, enter:  /kifu <email address>");
-				msg_print(Ind, " Example:  /kifu alphago@google.com");
-				msg_print(Ind, " Note: Game kifus are picked by character name, not account-wide.");
+				if (prefix(messagelc, "/kifu")) {
+					msg_print(Ind, "To request an email with your new kifus, enter:  /kifu <email address>");
+					msg_print(Ind, " Example:  /kifu alphago@google.com");
+					msg_print(Ind, " Note: Game kifus are picked by character name, not account-wide.");
+				} else {
+					msg_print(Ind, "To request an email with your new gibos, enter:  /gibo <email address>");
+					msg_print(Ind, " Example:  /gibo alphago@google.com");
+					msg_print(Ind, " Note: Game gibos are picked by character name, not account-wide.");
+				}
 				return;
 			}
 
@@ -4968,15 +4974,23 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 
 			if (p_ptr->go_mail_cooldown) {
-				if (p_ptr->go_mail_cooldown >= 120) msg_format(Ind, "You have to wait for \377y%d\377w more minutes to email kifus.", p_ptr->go_mail_cooldown / 60);
-				else msg_format(Ind, "You have to wait for \377y%d\377w more seconds to email kifus.", p_ptr->go_mail_cooldown);
+				if (prefix(messagelc, "/kifu")) {
+					if (p_ptr->go_mail_cooldown >= 120) msg_format(Ind, "You have to wait for \377y%d\377w more minutes to email kifus.", p_ptr->go_mail_cooldown / 60);
+					else msg_format(Ind, "You have to wait for \377y%d\377w more seconds to email kifus.", p_ptr->go_mail_cooldown);
+				} else {
+					if (p_ptr->go_mail_cooldown >= 120) msg_format(Ind, "You have to wait for \377y%d\377w more minutes to email gibos.", p_ptr->go_mail_cooldown / 60);
+					else msg_format(Ind, "You have to wait for \377y%d\377w more seconds to email gibos.", p_ptr->go_mail_cooldown);
+				}
 				if (!is_admin(p_ptr)) return;
 			}
 			p_ptr->go_mail_cooldown = 300;
 
 			/* Send him an email to the requested address with all his new kifus.. */
 			i = system(format("sh ./go/email-kifu.sh %s \"%s\" &", email, p_ptr->name));
-			msg_format(Ind, "Mailing all new kifus of games played by character \377y%s\377w to \377y%s\377w. (If there are no new kifus, no email will be dispatched.)", p_ptr->name, email);
+			if (prefix(messagelc, "/kifu"))
+				msg_format(Ind, "Mailing all new kifus of games played by character \377y%s\377w to \377y%s\377w. (If there are no new kifus, no email will be dispatched.)", p_ptr->name, email);
+			else
+				msg_format(Ind, "Mailing all new gibos of games played by character \377y%s\377w to \377y%s\377w. (If there are no new gibos, no email will be dispatched.)", p_ptr->name, email);
 #else
 			msg_print(Ind, "Go game functionality are currently not available.");
 #endif

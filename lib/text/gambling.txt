@@ -147,6 +147,6 @@ Strategy:
  strategy. Smaller boards are used for non-serious games, 9x9 somewhat common,
  whereby the games become purely tactical and lack much of the 19x19 strategy.
 
-You can use the /kifu command to have the game email you your Go game records!
+You can use the /kifu or /gibo command to receive your game records via email!
 
 Enjoy!

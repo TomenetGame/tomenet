@@ -1620,15 +1620,16 @@ They all start with a slash '/' hence they're called slash commands:
             that has drops disabled you will see a message reminding you of it:
             "Ingredient drops [...] are currently suppressed."
 
-/kifu <email>
+/kifu <email>   (japanese name)
+/gibo <email>   (korean name)
             Use this command after you played Go in the casino in Minas Anor.
             It will send all your new Go game records as SGF files to the email
             specified. If you're using a Microsoft-related email address, eg
             outlook.com, note that Microsoft is notorious for blocking email
             from the email-provider used by TomeNET, so you might not get it.
-            The /kifu command works per character name, not per account name,
-            so you only get those kifus emailed that the character played on
-            which you used the command. (SGF is the 'Smart Game Format'.)
+            This command works per character name, not per account name, so you
+            only get those kifus emailed that the character played on which you
+            used the command. (SGF is the 'Smart Game Format'.)
 
 /know       Client-side command that invokes the knowledge menu, same as if the
             user pressed '~' key.
@@ -7788,7 +7789,8 @@ Casino                  Minas Anor has a casino. Go and try your luck!
                         (There are various gambling opportunities, and also
                         the ancient board game 'Go' which can be played on a
                         9x9 board for a one-time fee on each difficulty level.
-                        Get your Go game records emailed to you via "/kifu".)
+                        Get your Go game records emailed to you via "/kifu"
+                        (japanese) or "/gibo" (korean) command, same thing.)
                         For details about the gambling rules of the casino, see
                         subsequent (4.5a2) paragraph.
 
@@ -8180,7 +8182,8 @@ Strategy:
  strategy. Smaller boards are used for non-serious games, 9x9 somewhat common,
  whereby the games become purely tactical and lack much of the 19x19 strategy.
 
-You can use the /kifu command to have the game email you your Go game records!
+You can use the /kifu or /gibo command to have the game email you your Go game
+records!
 
 Enjoy!
 
