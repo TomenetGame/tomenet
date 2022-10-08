@@ -7793,7 +7793,7 @@ int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 	return(1);
 }
 
-int Send_mini_map_pos(int Ind, int x, int y, byte a, char32_t c) {
+int Send_mini_map_pos(int Ind, int x, int y, int y_offset, byte a, char32_t c) {
 	player_type *p_ptr = Players[Ind];
 	connection_t *connp = Conn[p_ptr->conn];
 	short int xs = (short int)x, ys = (short int)y; //note: this isn't required, can just use x and y instead
@@ -7817,9 +7817,13 @@ int Send_mini_map_pos(int Ind, int x, int y, byte a, char32_t c) {
 		connp2 = Conn[p_ptr2->conn];
 #endif
 
+#ifdef WILDMAP_ALLOW_SELECTOR_SCROLLING
+s_printf("wx,wy=%d,%d, tx,ty=%d,%d\n", p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->tmp_x, p_ptr->tmp_y);
+#endif
 	/* Packet header */
 	/* 4.8.1 and newer clients use 32bit character size. */
-	if (is_atleast(&p_ptr->version, 4, 8, 1, 0, 0, 0)) Packet_printf(&connp->c, "%c%hd%hd%c%u", PKT_MINI_MAP_POS, xs, ys, a, c);
+	if (is_atleast(&p_ptr->version, 4, 8, 1, 2, 0, 0)) Packet_printf(&connp->c, "%c%hd%hd%hd%c%u", PKT_MINI_MAP_POS, xs, ys, y_offset, a, c);
+	else if (is_atleast(&p_ptr->version, 4, 8, 1, 0, 0, 0)) Packet_printf(&connp->c, "%c%hd%hd%c%u", PKT_MINI_MAP_POS, xs, ys, a, c);
 	else if (is_newer_than(&p_ptr->version, 4, 5, 5, 0, 0, 0)) Packet_printf(&connp->c, "%c%hd%hd%c%c", PKT_MINI_MAP_POS, xs, ys, a, (char)c);
 	//if (Ind2 && is_newer_than(&p_ptr2->version, 4, 5, 5, 0, 0, 0)) Packet_printf(&connp2->c, "%c%hd%hd%c%c", PKT_MINI_MAP_POS, xs, ys, a, c);
 

@@ -1107,7 +1107,7 @@ extern bool in_game;
 extern bool rand_term_lamp;
 extern int rand_term_lamp_ticks;
 
-extern int minimap_posx, minimap_posy, minimap_selx, minimap_sely;
+extern int minimap_posx, minimap_posy, minimap_selx, minimap_sely, minimap_yoff;
 extern byte minimap_attr, minimap_selattr;
 extern char32_t minimap_char, minimap_selchar;
 

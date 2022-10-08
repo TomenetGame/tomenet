@@ -4599,12 +4599,12 @@ void display_map(int Ind, int *cy, int *cx) {
 				else {
 					if (p_ptr->chp < 0) tc = '-';
 					else {
-						int num;
-						num = (p_ptr->chp * 95) / (p_ptr->mhp * 10);
+						int num = (p_ptr->chp * 95) / (p_ptr->mhp * 10);
+
 						tc = '0' + num;
 					}
 				}
-				Send_mini_map_pos(Ind, x + (80 - MAP_WID - 2) / 2, y, ta, tc);
+				Send_mini_map_pos(Ind, x + (80 - MAP_WID - 2) / 2, y, 0, ta, tc);
 			}
 /* duplicate code end */
 			/* Save "best" */
@@ -4905,7 +4905,7 @@ static void wild_display_map(int Ind, char mode) {
 	if (!sent_pos) {
 #if 0
 		/* Don't draw it at all */
-		Send_mini_map_pos(Ind, -1, 0, 0, 0);
+		Send_mini_map_pos(Ind, -1, 0, 0, 0, 0);
 #else
 		/* Draw it on the map border as indicator:
 		     max_wx/wy - 2 (border size of 1 in each direction).
@@ -4914,13 +4914,13 @@ static void wild_display_map(int Ind, char mode) {
 		int yy = p_ptr->tmp_y + max_wy / 2;
 
 		/* On bottom border? */
-		if (p_ptr->wpos.wy < yy - (max_wy - 2)) Send_mini_map_pos(Ind, mmpx + offset_x, max_wy - 1, ma[max_wy - 1][mmpx], '-');
+		if (p_ptr->wpos.wy < yy - (max_wy - 2)) Send_mini_map_pos(Ind, mmpx + offset_x, max_wy - 1, p_ptr->wpos.wy - p_ptr->tmp_y, ma[max_wy - 1][mmpx], '-');
 		/* On top border? */
-		else if (p_ptr->wpos.wy > yy) Send_mini_map_pos(Ind, mmpx + offset_x, 0, ma[0][mmpx], '-');
+		else if (p_ptr->wpos.wy > yy) Send_mini_map_pos(Ind, mmpx + offset_x, 0, p_ptr->wpos.wy - p_ptr->tmp_y, ma[0][mmpx], '-');
 		/* On pfft? */
-		else Send_mini_map_pos(Ind, -1, 0, 0, 0); /* paranoia */
+		else Send_mini_map_pos(Ind, -1, 0, 0, 0, 0); /* paranoia */
 #endif
-	} else Send_mini_map_pos(Ind, mmpx + offset_x, mmpy, ma[mmpy][mmpx], mc[mmpy][mmpx]);
+	} else Send_mini_map_pos(Ind, mmpx + offset_x, mmpy, p_ptr->wpos.wy - p_ptr->tmp_y, ma[mmpy][mmpx], mc[mmpy][mmpx]);
 
 
 	/* Display each map line in order */

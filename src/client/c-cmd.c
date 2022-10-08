@@ -444,6 +444,17 @@ void cmd_map(char mode) {
 		/* Reset the line counter */
 		last_line_info = 0;
 
+#ifdef WILDMAP_ALLOW_SELECTOR_SCROLLING
+c_msg_format("cmd_map - wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p_ptr->wpos.wx, p_ptr->wpos.wy, minimap_selx, minimap_sely, minimap_posx, minimap_posy, minimap_yoff);
+		if (sel) {
+c_msg_format("cmd_map SEL - wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p_ptr->wpos.wx, p_ptr->wpos.wy, minimap_selx, minimap_sely, minimap_posx, minimap_posy, minimap_yoff);
+			//minimap_selx = minimap_posx;
+			//minimap_sely = minimap_posy;
+			//minimap_selattr = minimap_attr;
+			//minimap_selchar = minimap_char;
+		}
+#endif
+
 		while (TRUE) {
 			/* Remember the grid below our grid-selection marker */
 			if (sel) {
@@ -453,16 +464,37 @@ void cmd_map(char mode) {
 
 			/* Wait until we get the whole thing */
 			if (last_line_info == 23 + HGT_PLUS) {
-				/* Abuse this for drawing selection cursor */
-				int wx, wy;
 				if (minimap_selx != -1) {
+					int dis;
+					int wx, wy; /* For drawing selection cursor */
+
+#ifndef WILDMAP_ALLOW_SELECTOR_SCROLLING
 					wx = p_ptr->wpos.wx + minimap_selx - minimap_posx;
 					wy = p_ptr->wpos.wy - minimap_sely + minimap_posy;
-					Term_putstr(0, 9, -1, TERM_WHITE, " Select");
+#else
+					int yoff = p_ptr->wpos.wy - minimap_yoff; // = the 'y' world coordinate of the center point of the minimap
+
+					wx = p_ptr->wpos.wx + minimap_selx - minimap_posx;
+					/* minimap_yoff: p_ptr->wpos.wy - minimap_yoff = center point 'pseudo-wpos' of our map, to draw it around.
+					   (The x offset is always 32, as the 64x64 worldmap map fits on the screen horizontally.)
+					   The minimap_selx begins at left screen side, but minimap_sely (1..44 on a 46-lines screen aka big_map)
+					    begins at the _top_ instead of the bottom of the screen, so we have to translate. */
+					wy = yoff - 44 / 2 + 44 - minimap_sely; //44 = height of displayed map, with y_off being the wpos at the _center point_ of the displayed map
+c_msg_format("wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p_ptr->wpos.wx, p_ptr->wpos.wy, minimap_selx, minimap_sely, minimap_posx, minimap_posy, minimap_yoff);
+#endif
+
+					Term_putstr(0,  9, -1, TERM_WHITE, "\377o Select");
 					Term_putstr(0, 10, -1, TERM_WHITE, format("(%2d,%2d)", wx, wy));
+					Term_putstr(0, 11, -1, TERM_WHITE, format("%+3d,%+3d", wx - p_ptr->wpos.wx, wy - p_ptr->wpos.wy));
+					/* RECALL_MAX_RANGE uses distance() function, so we do the same:
+					   It was originally defined as 16, but has like ever been 24, so we just colourize accordingly to catch 'em all.. */
+					dis = distance(wx, wy, p_ptr->wpos.wx, p_ptr->wpos.wy);
+					Term_putstr(0, 12, -1, TERM_WHITE, format("Dist:\377%c%2d", dis <= 16 ? 'w' : (dis <= 24 ? 'y' : 'o'), dis));
 				} else {
-					Term_putstr(0, 9, -1, TERM_WHITE, "        ");
+					Term_putstr(0,  9, -1, TERM_WHITE, "        ");
 					Term_putstr(0, 10, -1, TERM_WHITE, "        ");
+					Term_putstr(0, 11, -1, TERM_WHITE, "        ");
+					Term_putstr(0, 12, -1, TERM_WHITE, "        ");
 				}
 
 				/* Hack - Get rid of the cursor - mikaelh */
@@ -482,6 +514,12 @@ void cmd_map(char mode) {
 				if (sel) {
 					Term_draw(minimap_selx, minimap_sely, minimap_selattr, minimap_selchar);
 					if (minimap_sely < CL_WINDOW_HGT - 2) minimap_sely++;
+#ifdef WILDMAP_ALLOW_SELECTOR_SCROLLING
+					else if (is_atleast(&server_version, 4, 8, 1, 2, 0, 0)) {
+						dir = 0x02;
+						break;
+					}
+#endif
 					continue;
 				}
 				dir = 0x02;
@@ -498,6 +536,12 @@ void cmd_map(char mode) {
 				if (sel) {
 					Term_draw(minimap_selx, minimap_sely, minimap_selattr, minimap_selchar);
 					if (minimap_sely > 1) minimap_sely--;
+#ifdef WILDMAP_ALLOW_SELECTOR_SCROLLING
+					else if (is_atleast(&server_version, 4, 8, 1, 2, 0, 0)) {
+						dir = 0x08;
+						break;
+					}
+#endif
 					continue;
 				}
 				dir = 0x08;
@@ -546,8 +590,9 @@ void cmd_map(char mode) {
 				}
 				dir = 0x08 | 0x04;
 				break;
-			} else if (ch == '5' || ch == ' ') {
+			} else if (ch == '5' || ch == ' ' || ch == 'r') {
 				if (sel) {
+					/* Return selector-X cursor onto the player's wpos sector */
 					Term_draw(minimap_selx, minimap_sely, minimap_selattr, minimap_selchar);
 					minimap_selx = minimap_posx;
 					minimap_sely = minimap_posy;
@@ -555,6 +600,7 @@ void cmd_map(char mode) {
 					minimap_selchar = minimap_char;
 					continue;
 				}
+				/* Center map on player's wpos again (inital map state) */
 				dir = 0x00;
 				break;
 			}
@@ -571,12 +617,6 @@ void cmd_map(char mode) {
 					minimap_selattr = minimap_attr;
 					minimap_selchar = minimap_char;
 				}
-			} else if (ch == 'r' && sel) {
-				Term_draw(minimap_selx, minimap_sely, minimap_selattr, minimap_selchar);
-				minimap_selx = minimap_posx;
-				minimap_sely = minimap_posy;
-				minimap_selattr = minimap_attr;
-				minimap_selchar = minimap_char;
 			} else if (ch == ESCAPE && sel == TRUE) {
 				Term_draw(minimap_selx, minimap_sely, minimap_selattr, minimap_selchar);
 				sel = FALSE;

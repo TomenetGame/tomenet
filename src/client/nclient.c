@@ -3388,28 +3388,70 @@ int Receive_line_info(void) {
 	draw = TRUE;
 #endif
 
-	/* Hack: Mark minimap transmission as complete, so we can start adding some extra info to it, such as coordinates. */
+	/* Hack: -1 marks minimap transmission as complete, so we can start adding some extra info to it, such as coordinates. */
 	if (ch == PKT_MINI_MAP && y == -1) {
-		int wx, wy, n = 1;
 		/* Deduce the currently selected world coords from our worldpos and the currently (client-side) selected grid.. */
 		if (screen_icky && minimap_posx != -1) {
-			Term_putstr(0, n++, -1, TERM_WHITE, "=World=");
-			Term_putstr(0, n++, -1, TERM_WHITE, "  Map");
-			n += 3;
+			int n = 1;
 
-			Term_putstr(0, n++, -1, TERM_WHITE, "  You");
+			Term_putstr(0, n++, -1, TERM_L_WHITE, "=World=");
+			Term_putstr(0, n++, -1, TERM_L_WHITE, "  Map");
+			n += 2;
+
+			Term_putstr(0, n++, -1, TERM_L_WHITE, " Your");
+			Term_putstr(0, n++, -1, TERM_L_WHITE, "Sector:");
 			Term_putstr(0, n++, -1, TERM_WHITE, format("(%2d,%2d)", p_ptr->wpos.wx, p_ptr->wpos.wy));
 			n++;
 
+#if 0 /* Note: We draw all this stuff instead in cmd_map(). minimap_selx is -1 here initially, unlike in cmd_map() (!) */
 			if (minimap_selx != -1) {
+				int wx, wy;
+				int dis;
+
 				wx = p_ptr->wpos.wx + minimap_selx - minimap_posx;
 				wy = p_ptr->wpos.wy - minimap_sely + minimap_posy;
-				Term_putstr(0, n++, -1, TERM_WHITE, " Select");
+				Term_putstr(0, n++, -1, TERM_WHITE, "\377o Select");
 				Term_putstr(0, n++, -1, TERM_WHITE, format("(%2d,%2d)", wx, wy));
+				Term_putstr(0, n++, -1, TERM_WHITE, format("%+3d,%+3d", wx - p_ptr->wpos.wx, wy - p_ptr->wpos.wy));
+				/* RECALL_MAX_RANGE uses distance() function, so we do the same:
+				   It was originally defined as 16, but has like ever been 24, so we just colourize accordingly to catch 'em all.. */
+				dis = distance(wx, wy, p_ptr->wpos.wx, p_ptr->wpos.wy);
+				Term_putstr(0, n++, -1, TERM_WHITE, format("Dist:\377%c%2d", dis <= 16 ? 'w' : (dis <= 24 ? 'y' : 'o'), dis));
 			} else {
 				Term_putstr(0, n++, -1, TERM_WHITE, "        ");
 				Term_putstr(0, n++, -1, TERM_WHITE, "        ");
+				Term_putstr(0, n++, -1, TERM_WHITE, "        ");
+				Term_putstr(0, n++, -1, TERM_WHITE, "        ");
 			}
+#elif defined(WILDMAP_ALLOW_SELECTOR_SCROLLING)
+c_msg_format("RLI minimap_selx=%d", minimap_selx);
+			if (minimap_selx != -1) {
+				int wx, wy;
+				int dis;
+				int yoff = p_ptr->wpos.wy - minimap_yoff; // = the 'y' world coordinate of the center point of the minimap
+
+				wy = yoff - 44 / 2 + 44 - minimap_sely; //44 = height of displayed map, with y_off being the wpos at the _center point_ of the displayed map
+				wx = p_ptr->wpos.wx + minimap_selx - minimap_posx;
+				//wy = p_ptr->wpos.wy - minimap_sely + minimap_posy;
+c_msg_format("RLI wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p_ptr->wpos.wx, p_ptr->wpos.wy, minimap_selx, minimap_sely, minimap_posx, minimap_posy, minimap_yoff);
+
+				Term_putstr(0, n++, -1, TERM_WHITE, "\377o Select");
+				Term_putstr(0, n++, -1, TERM_WHITE, format("(%2d,%2d)", wx, wy));
+				Term_putstr(0, n++, -1, TERM_WHITE, format("%+3d,%+3d", wx - p_ptr->wpos.wx, wy - p_ptr->wpos.wy));
+				/* RECALL_MAX_RANGE uses distance() function, so we do the same:
+				   It was originally defined as 16, but has like ever been 24, so we just colourize accordingly to catch 'em all.. */
+				dis = distance(wx, wy, p_ptr->wpos.wx, p_ptr->wpos.wy);
+				Term_putstr(0, n++, -1, TERM_WHITE, format("Dist:\377%c%2d", dis <= 16 ? 'w' : (dis <= 24 ? 'y' : 'o'), dis));
+			} else {
+				Term_putstr(0, n++, -1, TERM_WHITE, "        ");
+				Term_putstr(0, n++, -1, TERM_WHITE, "        ");
+				Term_putstr(0, n++, -1, TERM_WHITE, "        ");
+				Term_putstr(0, n++, -1, TERM_WHITE, "        ");
+			}
+#else
+//c_msg_format("RLI: wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d", p_ptr->wpos.wx, p_ptr->wpos.wy, minimap_selx, minimap_sely, minimap_posx, minimap_posy);
+			n += 4;
+#endif
 			n += 3;
 
 			Term_putstr(0, n++, -1, TERM_WHITE, "\377ys\377w+\377ydir\377w:");
@@ -3420,11 +3462,12 @@ int Receive_line_info(void) {
 			n++;
 			Term_putstr(0, n++, -1, TERM_WHITE, "\377yESC\377w:");
 			Term_putstr(0, n++, -1, TERM_WHITE, " Exit");
-			n += 5;
+			n += 3;
 
 			/* Specialty: Only display map key if in bigmap mode.
 			   (Note: This is the only check of this kind currently) */
 			if (screen_hgt == MAX_SCREEN_HGT) { //(c_cfg.big_map) {
+				Term_putstr(0, n++, -1, TERM_WHITE, "\377WLegend:");
 				Term_putstr(0, n++, -1, TERM_WHITE, "@ You");
 				Term_putstr(0, n++, -1, TERM_WHITE, "\377yT\377w Town");
 				Term_putstr(0, n++, -1, TERM_WHITE, "> Dung.");
@@ -3635,21 +3678,27 @@ int Receive_mini_map(void) {
 #endif
 
 int Receive_mini_map_pos(void) {
-	char	ch;
+	char ch;
 	char32_t c = 0; /* Needs to be reset for proper packet read. */
 	int n;
-	short int x, y;
-	byte	a;
+	short int x, y, y_offset = 0;
+	byte a;
 
 	/* 4.8.1 and newer servers communicate using 32bit character size. */
-	if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
+	if (is_atleast(&server_version, 4, 8, 1, 2, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%c%u", &ch, &x, &y, &y_offset, &a, &c)) <= 0) return n;
+	} else if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c%u", &ch, &x, &y, &a, &c)) <= 0) return n;
 	} else {
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c%c", &ch, &x, &y, &a, &c)) <= 0) return n;
 	}
 
+#ifdef WILDMAP_ALLOW_SELECTOR_SCROLLING
+c_msg_format("Rmmp x,y=%d,%d, yoff=%d", x,y,y_offset);
+#endif
 	minimap_posx = (int)x;
 	minimap_posy = (int)y;
+	minimap_yoff = (int)y_offset;
 	minimap_attr = a;
 	minimap_char = c;
 

@@ -447,7 +447,7 @@ bool in_game = FALSE;
 bool rand_term_lamp;
 int rand_term_lamp_ticks;
 
-int minimap_posx = -1, minimap_posy, minimap_selx = -1, minimap_sely;
+int minimap_posx = -1, minimap_posy, minimap_selx = -1, minimap_sely, minimap_yoff;
 byte minimap_attr, minimap_selattr;
 char32_t minimap_char, minimap_selchar;
 

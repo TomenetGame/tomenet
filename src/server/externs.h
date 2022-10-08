@@ -1197,7 +1197,7 @@ extern int Send_flush(int Ind);
 extern int Send_line_info(int Ind, int y, bool scr_only);
 extern int Send_line_info_forward(int Ind, int Ind_src, int y);
 extern int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc);
-extern int Send_mini_map_pos(int Ind, int x, int y, byte a, char32_t c);
+extern int Send_mini_map_pos(int Ind, int x, int y, int y_offset, byte a, char32_t c);
 extern int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval, char *powers);
 extern int Send_store_wide(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval,
     s16b xtra1, s16b xtra2, s16b xtra3, s16b xtra4, s16b xtra5, s16b xtra6, s16b xtra7, s16b xtra8, s16b xtra9);
