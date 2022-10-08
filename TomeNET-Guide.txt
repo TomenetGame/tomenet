@@ -724,8 +724,8 @@ V       V       enter/leave 'cloaking mode'. This can only be used by rogues.
                 or infra-vision.
                 Only a few monsters who are able to utilize ESP (telepathy) or
                 have especially powerful detection will still notice you.
-                Those are eyes, angels, Nazgul, nether guards, and unique
-                monsters which are both smart and powerful at once.
+                Those are eyes, angels, Nazgul, nether guards, and those unique
+                monsters which are both SMART and POWERFUL at once.
 
                 Taking damage (HP/sanity/experience), attacking, and some other
                 actions will immediately break cloaking.
@@ -755,7 +755,7 @@ V       V       enter/leave 'cloaking mode'. This can only be used by rogues.
                 Note: Cloaking has no effect on shoplifting; it breaks on
                 entering any shop.
                 Note: Although ESP is supposed to detect cloaked targets, for
-                now it's still set to override ESP of other players for the
+                now cloaking still overrides ESP of other _players_ for the
                 sake of PvP usage, similar to invisibility.
                 (Also see (5.16) for details on 'normal' invisibility.)
 
