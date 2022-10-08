@@ -535,6 +535,31 @@ static void rd_item(object_type *o_ptr) {
 	if (!older_than(4, 7, 9)) rd_byte(&o_ptr->embed);
 	else o_ptr->embed = 0;
 
+	if (!older_than(4, 8, 1)) {
+		u32b t32;
+
+		rd_s32b(&o_ptr->id);
+		rd_s32b(&o_ptr->f_id);
+		rd_string(o_ptr->f_name, CNAME_LEN);
+		rd_s32b(&o_ptr->f_turn);
+		rd_u32b(&t32);
+		o_ptr->f_time = (time_t)t32;
+		rd_u32b(&t32);
+		if (sizeof(time_t) >= 8) o_ptr->f_time += ((time_t)(t32)) << 32; //outlast heavier red dwarfs
+		rd_s16b(&o_ptr->f_wpos.wx);
+		rd_s16b(&o_ptr->f_wpos.wy);
+		rd_s16b(&o_ptr->f_wpos.wz);
+		rd_byte(&tmpbyte);
+		o_ptr->f_dun = (char)tmpbyte;
+		rd_byte(&o_ptr->f_player);
+		rd_s32b(&o_ptr->f_player_turn);
+		rd_u16b(&o_ptr->f_ridx);
+		rd_u16b(&o_ptr->f_reidx);
+		rd_s16b(&o_ptr->f_special);
+		rd_byte(&tmpbyte);
+		o_ptr->f_reward = (char)tmpbyte;
+	}
+
 
 	/* --- Process/verify the item --- */
 
@@ -2441,7 +2466,7 @@ if (p_ptr->updated_savegame == 0) {
 			invwipe(&p_ptr->subinventory[i][j]);
 #endif
 	/* Subinventory (ENABLE_SUBINVEN) */
-	if (!older_than(4, 7, 14)) {
+	if (!older_than(4, 7, 14)) { //should've been 4, 8, 0 in theory..
 		/* Read number of stored subinventories */
 		rd_byte(&tmp8u);
 		j = (int)tmp8u;

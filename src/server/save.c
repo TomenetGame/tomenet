@@ -223,6 +223,24 @@ static void wr_item(object_type *o_ptr) {
 	wr_s32b(o_ptr->iron_turn);
 
 	wr_byte(o_ptr->embed);
+
+	wr_s32b(o_ptr->id);
+	wr_s32b(o_ptr->f_id);
+	wr_string(o_ptr->f_name);
+	wr_s32b(o_ptr->f_turn);
+	wr_u32b((u32b)(o_ptr->f_time & 0xFFFFFFFF));
+	if (sizeof(time_t) >= 8) wr_u32b((u32b)(o_ptr->f_time >> 32));
+	else wr_u32b(0);
+	wr_s16b(o_ptr->f_wpos.wx);
+	wr_s16b(o_ptr->f_wpos.wy);
+	wr_s16b(o_ptr->f_wpos.wz);
+	wr_byte((unsigned char)o_ptr->f_dun);
+	wr_byte(o_ptr->f_player);
+	wr_s32b(o_ptr->f_player_turn);
+	wr_u16b(o_ptr->f_ridx);
+	wr_u16b(o_ptr->f_reidx);
+	wr_s16b(o_ptr->f_special);
+	wr_byte((unsigned char)o_ptr->f_reward);
 }
 
 /*
