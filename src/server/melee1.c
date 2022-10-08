@@ -2513,7 +2513,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 #endif
 
 					/* Take some damage */
-					//					carried_monster_hit = TRUE;
+					//carried_monster_hit = TRUE;
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, -m_idx);
 
@@ -2526,6 +2526,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					if (randint(100) < 11) {
 						/* 1% chance for perm. damage (pernA one was buggie? */
 						bool perm = (randint(10) == 1);
+
 						if (dec_stat(Ind, A_CON, randint(10), perm + 1)) obvious = TRUE;
 					}
 
