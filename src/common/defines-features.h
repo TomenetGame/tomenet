@@ -381,7 +381,8 @@
    Problem: lotr.fandom.com/wiki/Religion -> Ilúvatarism and Melkorism. But even if vamp/hk pray to Melkor, they still will kill him -_-. */
 //#define ALTARS_2021
 
-/* cmd_map(): Support initiating '2'/'8' map scrolling  while in 's'elector mode,
+/* Work in progress // debug code - do not enable this!
+   cmd_map(): Support initiating '2'/'8' map scrolling  while in 's'elector mode,
    by moving the X vertically out of the map
    (ie onto screen line 0 or 45 in 46-lines mode, aka big_map)?
    Note that retrieval from 'minimap_yoff' from server-side is just needed for this. - C. Blue */
