@@ -2476,7 +2476,7 @@ static char color_name[CLIENT_PALETTE_SIZE][8] = {
 	//"#585858",      /* DARKGRAY */
 	"#666666",      /* DARKGRAY */
  #endif
-	"#d7d7d7",      /* LIGHTGRAY */
+	"#cdcdcd",      /* LIGHTGRAY */
 	"#af00ff",      /* PURPLE */
 	"#ffff00",      /* YELLOW */
 	"#ff3030",      /* PINK */
@@ -2503,7 +2503,7 @@ static char color_name[CLIENT_PALETTE_SIZE][8] = {
 	//"#585858",      /* DARKGRAY */
 	"#666666",      /* DARKGRAY */
  #endif
-	"#d7d7d7",      /* LIGHTGRAY */
+	"#cdcdcd",      /* LIGHTGRAY */
 	"#af00ff",      /* PURPLE */
 	"#ffff00",      /* YELLOW */
 	"#ff3030",      /* PINK */

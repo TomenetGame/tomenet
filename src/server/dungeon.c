@@ -2190,7 +2190,7 @@ static unsigned int colour_std[BASE_PALETTE_SIZE] = {
 	//0x585858,      /* LDARK */
 	0x666666,      /* LDARK */
  #endif
-	0xd7d7d7,      /* LWHITE */
+	0xcdcdcd,      /* LWHITE */
 	0xaf00ff,      /* VIOLET */
 	0xffff00,      /* YELLOW */
 	0xff3030,      /* LRED */

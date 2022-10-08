@@ -747,7 +747,7 @@ static COLORREF win_clr[CLIENT_PALETTE_SIZE + TERMX_AMT] = {
 	//PALETTERGB(0x58, 0x58, 0x58),  /* 1 1 1  Lt. Dark */
 	PALETTERGB(0x66, 0x66, 0x66),  /* 1 1 1  Lt. Dark */
 #endif
-	PALETTERGB(0xD7, 0xD7, 0xD7),  /* 3 3 3  Lt. Slate */
+	PALETTERGB(0xCD, 0xCD, 0xCD),  /* 3 3 3  Lt. Slate */
 	PALETTERGB(0xAF, 0x00, 0xFF),  /* 4 0 4  Violet (was 2,0,2) */
 	PALETTERGB(0xFF, 0xFF, 0x00),  /* 4 4 0  Yellow */
 	PALETTERGB(0xFF, 0x30, 0x30),  /* 4 0 0  Lt. Red (was 0xFF,0,0) - see 'Red' - C. Blue */
@@ -775,7 +775,7 @@ static COLORREF win_clr[CLIENT_PALETTE_SIZE + TERMX_AMT] = {
 	//PALETTERGB(0x58, 0x58, 0x58),  /* 1 1 1  Lt. Dark */
 	PALETTERGB(0x66, 0x66, 0x66),  /* 1 1 1  Lt. Dark */
  #endif
-	PALETTERGB(0xD7, 0xD7, 0xD7),  /* 3 3 3  Lt. Slate */
+	PALETTERGB(0xCD, 0xCD, 0xCD),  /* 3 3 3  Lt. Slate */
 	PALETTERGB(0xAF, 0x00, 0xFF),  /* 4 0 4  Violet (was 2,0,2) */
 	PALETTERGB(0xFF, 0xFF, 0x00),  /* 4 4 0  Yellow */
 	PALETTERGB(0xFF, 0x30, 0x30),  /* 4 0 0  Lt. Red (was 0xFF,0,0) - see 'Red' - C. Blue */

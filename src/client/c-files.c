@@ -1691,7 +1691,7 @@ void xhtml_screenshot(cptr name) {
 		//"#585858",	/* DARKGRAY */
 		"#666666",	/* DARKGRAY */
 #endif
-		"#d7d7d7",	/* LIGHTGRAY */
+		"#cdcdcd",	/* LIGHTGRAY */
 		"#af00ff",	/* PURPLE */
 		"#ffff00",	/* YELLOW */
 		"#ff3030",	/* PINK */

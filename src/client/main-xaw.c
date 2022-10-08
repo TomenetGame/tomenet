@@ -104,7 +104,7 @@ And the newer colors look like:
 
 angband*color0:                         #000000
 angband*color1:                         #ffffff
-angband*color2:                         #d7d7d7
+angband*color2:                         #cdcdcd
 angband*color3:                         #ff9200
 angband*color4:                         #ff0000
 angband*color5:                         #00cd00
@@ -288,7 +288,7 @@ static XtResource resources[] =
 	{ XtNcolor1, XtCColor, XtRPixel, sizeof(Pixel),
 	offset(color[1]), XtRString, "white" },
 	{ XtNcolor2, XtCColor, XtRPixel, sizeof(Pixel),
-	offset(color[2]), XtRString, "#d7d7d7" },
+	offset(color[2]), XtRString, "#cdcdcd" },
 	{ XtNcolor3, XtCColor, XtRPixel, sizeof(Pixel),
 	offset(color[3]), XtRString, "#ff9200" },
 	{ XtNcolor4, XtCColor, XtRPixel, sizeof(Pixel),

@@ -476,7 +476,7 @@ u32b client_color_map[CLIENT_PALETTE_SIZE] = {
 	0x0000ff,	/* BLUE */
 	0x8d6600,	/* UMBER */
 	0x666666,	/* DARK GRAY */
-	0xd7d7d7,	/* LIGHT GRAY */
+	0xcdcdcd,	/* LIGHT GRAY */
 	0xaf00ff,	/* VIOLET */
 	0xffff00,	/* YELLOW */
 	0xff3030,	/* LIGHT RED */
@@ -494,7 +494,7 @@ u32b client_color_map[CLIENT_PALETTE_SIZE] = {
 	0x0000ff,	/* BLUE */
 	0x8d6600,	/* UMBER */
 	0x666666,	/* DARK GRAY */
-	0xd7d7d7,	/* LIGHT GRAY */
+	0xcdcdcd,	/* LIGHT GRAY */
 	0xaf00ff,	/* VIOLET */
 	0xffff00,	/* YELLOW */
 	0xff3030,	/* LIGHT RED */
@@ -527,7 +527,7 @@ u32b client_color_map_deu[CLIENT_PALETTE_SIZE] = {
 	0x006ddb,	/* BLUE (7) */
 	0x924900,	/* UMBER (12) */
 	0x666666,	/* DARK GRAY */
-	0xd7d7d7,	/* LIGHT GRAY */
+	0xcdcdcd,	/* LIGHT GRAY */
 	0xb6dbff,	/* VIOLET (10) */
 	0xffffa4,	/* YELLOW (16*) */
 	0x24ff24,	/* LIGHT RED (14) */
@@ -545,7 +545,7 @@ u32b client_color_map_deu[CLIENT_PALETTE_SIZE] = {
 	0x006ddb,	/* BLUE (7) */
 	0x924900,	/* UMBER (12) */
 	0x666666,	/* DARK GRAY */
-	0xd7d7d7,	/* LIGHT GRAY */
+	0xcdcdcd,	/* LIGHT GRAY */
 	0xb6dbff,	/* VIOLET (10) */
 	0xffffa4,	/* YELLOW (16*) */
 	0x24ff24,	/* LIGHT RED (14) */
@@ -566,7 +566,7 @@ u32b client_color_map_pro[CLIENT_PALETTE_SIZE] = {
 	0x006ddb,	/* BLUE (7) */
 	0x924900,	/* UMBER (12) */
 	0x666666,	/* DARK GRAY */
-	0xd7d7d7,	/* LIGHT GRAY */
+	0xcdcdcd,	/* LIGHT GRAY */
 	0xb6dbff,	/* VIOLET (10) */
 	0xffffa4,	/* YELLOW (16*) */
 	0x24ff24,	/* LIGHT RED (14) */
@@ -584,7 +584,7 @@ u32b client_color_map_pro[CLIENT_PALETTE_SIZE] = {
 	0x006ddb,	/* BLUE (7) */
 	0x924900,	/* UMBER (12) */
 	0x666666,	/* DARK GRAY */
-	0xd7d7d7,	/* LIGHT GRAY */
+	0xcdcdcd,	/* LIGHT GRAY */
 	0xb6dbff,	/* VIOLET (10) */
 	0xffffa4,	/* YELLOW (16*) */
 	0x24ff24,	/* LIGHT RED (14) */
@@ -605,7 +605,7 @@ u32b client_color_map_tri[CLIENT_PALETTE_SIZE] = {
 	0x6db6ff,	/* BLUE (9) */
 	0x490092,	/* UMBER (6) */
 	0x666666,	/* DARK GRAY */
-	0xd7d7d7,	/* LIGHT GRAY */
+	0xcdcdcd,	/* LIGHT GRAY */
 	0xffb677,	/* VIOLET (5) */
 	0xffff6d,	/* YELLOW (15) */
 	0xff6db6,	/* LIGHT RED (4 /13) */
@@ -625,7 +625,7 @@ u32b client_color_map_tri[CLIENT_PALETTE_SIZE] = {
 	0x6db6ff,	/* BLUE (9) */
 	0x490092,	/* UMBER (6) */
 	0x666666,	/* DARK GRAY */
-	0xd7d7d7,	/* LIGHT GRAY */
+	0xcdcdcd,	/* LIGHT GRAY */
 	0xffb677,	/* VIOLET (5) */
 	0xffff6d,	/* YELLOW (15) */
 	0xff6db6,	/* LIGHT RED (4 /13) */

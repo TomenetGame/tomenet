@@ -733,7 +733,7 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 			fputs("#colormap_6\t\t#0000ff\n", config2);
 			fputs("#colormap_7\t\t#8d6600\n", config2);
 			fputs("#colormap_8\t\t#666666\n", config2);
-			fputs("#colormap_9\t\t#d7d7d7\n", config2);
+			fputs("#colormap_9\t\t#cdcdcd\n", config2);
 			fputs("#colormap_10\t\t#af00ff\n", config2);
 			fputs("#colormap_11\t\t#ffff00\n", config2);
 			fputs("#colormap_12\t\t#ff3030\n", config2);
