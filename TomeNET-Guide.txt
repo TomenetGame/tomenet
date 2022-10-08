@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 6. October 2022 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 8. October 2022 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1573,6 +1573,10 @@ They all start with a slash '/' hence they're called slash commands:
 
             To access not a chapter, but a "header" of some subparagraph, try
             searching for all uppercase, eg "CONFUSION" instead of "confusion".
+
+            If a search initiated by this command wraps around once, it will
+            drop the search tier to basic text search, resulting in potentially
+            many more hits.
 
 /?c         Shortcut to your character's class description in the guide.
 /?r         Shortcut to your character's race description in the guide.

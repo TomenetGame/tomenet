@@ -2055,6 +2055,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 	char searchstr_re[MAX_CHARS];
 #endif
 
+	int first_result = -1; //for QoL hack to drop from /? guide search to basic text search tier
+
+
 	/* empty file? */
 	if (guide_lastline == -1) {
 		if (guide_errno <= 0) {
@@ -2422,6 +2425,8 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				if (ok && isalpha(chapter[strlen(chapter) - 1]) && isalpha(p[strlen(chapter)])) ok = FALSE;
 				/* Found it? */
 				if (ok) {
+					if (first_result == -1) first_result = searchline;
+
 					/* Hack: Abuse normal 's' search to colourize */
 					strcpy(withinsearch, chapter);
 
@@ -2443,6 +2448,8 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				/* Found it? Accomodate for colour code and '.' must not follow after the chapter marker */
 				if (searchline >= guide_endofcontents &&
 				    strstr(buf2, chapter) == buf2 + 2 && !strchr(strchr(buf2, ')'), '.')) {
+					if (first_result == -1) first_result = searchline;
+
 					chapter[0] = 0;
 					line = searchline;
 					/* Redraw line number display */
@@ -2510,6 +2517,8 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
  #endif
 						}
 
+						if (first_result == -1) first_result = searchline;
+
 						searchstr[0] = 0;
 						searchwrap = FALSE;
 						line = searchline;
@@ -2527,6 +2536,32 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 				/* We found a result (non-regexp) */
 				else if (my_strcasestr_skipcol(buf2, searchstr, search_uppercase)) {
+					/* QoL hack for guide search via /? command:
+					   Reduce searching tier once we wrapped around and are back to our first hit.
+					   Maybe todo: Reduce chapter-tier to uppercase-4 tier first, and slowly reduce tier further,
+					   instead of going down to basic text search level right away. Maybe this is better though. */
+					if (first_result == -1) first_result = searchline;
+					else if (searchline == first_result && (init_search_type == 2 || init_search_type == 3)) { /* we came here via /? command for upper-case or chapter search */
+						/* Inform user what's going on, ie why he suddenly gets so many search results */
+						//c_message_add("Guide-search wrapped around, dropping search tier to basic text search.");
+
+						/* Drop search tier */
+						search_uppercase = 0;
+						//if (lastchapter[0] != '(')
+						//if (lastchapter[0]) strcpy(searchstr, lastchapter);
+
+						/* Continue search from anew in this tier! */
+						line = searchline;
+						searchwrap = FALSE;
+						/* Disable checks to avoid loop:
+						   Ie we're not going to need this hack anymore, as we already arrived at the bottom tier (basic text search). */
+						first_result = guide_lastline + 1;
+
+						/* Ignore this repeated match and continue renewed search */
+						n--;
+						continue;
+					}
+
 					/* Reverse again to normal direction/location */
 					if (backwards) {
 						backwards = FALSE;
