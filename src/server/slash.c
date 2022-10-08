@@ -6429,7 +6429,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				if (!tk) {
 					//todo: allow specifying bpval/pval
-					msg_print(Ind, "\377oUsage:    /nwish [[<#skip>]:][#amount ][/<prefix-ego>/]<item name>[/<postfix-ego>] [+<bpval>][*<pval>]");
+					msg_print(Ind, "\377oUsage:    /nwish [[<#skip>]:][#amount ][/<prefix-ego>/]<item name>[/<postfix-ego>] [+<bpval>][^<pval>]");
 					msg_print(Ind, "\377oExample:  /nwish 1:3 probing");
 					msg_print(Ind, "\377oExample:  /nwish :4 fire");
 					msg_print(Ind, "\377oExample:  /nwish 2 elven/hard lea/resis");
@@ -6437,7 +6437,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 
 				/* First, eliminate pval/bpval strings */
-				if ((s = strchr(message3, '*'))) {
+				if ((s = strchr(message3, '^'))) {
 					pval = atoi(s + 1);
 					if (pval < -128 || pval > 127) {
 						msg_print(Ind, "pval and bpval must be between -128 and 127.");
