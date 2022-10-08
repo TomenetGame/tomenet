@@ -7794,7 +7794,7 @@ bool gain_au(int Ind, u32b amt, bool quiet, bool exempt) {
 
 /* backup all house prices and contents for all players to lib/save/estate/.
    partial: don't stop with failure if a character files can't be read. */
-#define ESTATE_BACKUP_VERSION "v4"
+#define ESTATE_BACKUP_VERSION "v5"
 bool backup_estate(bool partial) {
 	FILE *fp;
 	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], savefile[CNAME_LEN], c;
@@ -8140,6 +8140,7 @@ void restore_estate(int Ind) {
 	object_type forge, *o_ptr = &forge;
 	bool gained_anything = FALSE;
 	int conversion = 0;
+	object_type_v4 forge_v4, *o_ptr_v4 = &forge_v4;
 	object_type_v3 forge_v3, *o_ptr_v3 = &forge_v3;
 	object_type_v2 forge_v2, *o_ptr_v2 = &forge_v2;
 	object_type_v2a forge_v2a, *o_ptr_v2a = &forge_v2a;
@@ -8174,6 +8175,7 @@ void restore_estate(int Ind) {
 	if (streq(version, "v2a")) conversion = 2;
 	if (streq(version, "v2b")) conversion = 3;
 	if (streq(version, "v3")) conversion = 4;
+	if (streq(version, "v4")) conversion = 5;
 
 	/* open temporary file for writing the stuff the player left over */
 	strcpy(buf2, buf);
@@ -8185,7 +8187,8 @@ void restore_estate(int Ind) {
 		return;
 	}
 
-	/* relay to temporary file */
+	/* relay to temporary file, do not convert its version,
+	   but make it a 1:1 copy really except for items/gold the player received correctly */
 	fprintf(fp_tmp, "%s\n", version);
 
 	msg_print(Ind, "\377yChecking for money and items from estate stored for you...");
@@ -8580,6 +8583,100 @@ void restore_estate(int Ind) {
 				o_ptr->iron_turn = o_ptr_v3->iron_turn;
 				o_ptr->embed = 0; //convert
 				break;
+			case 5: r = fread(o_ptr_v4, sizeof(object_type_v4), 1, fp);
+				o_ptr->owner = o_ptr_v4->owner;
+				o_ptr->killer = o_ptr_v4->killer;
+				o_ptr->level = o_ptr_v4->level;
+				o_ptr->k_idx = o_ptr_v4->k_idx;
+				o_ptr->h_idx = o_ptr_v4->h_idx;
+				o_ptr->wpos = o_ptr_v4->wpos;
+				o_ptr->iy = o_ptr_v4->iy;
+				o_ptr->ix = o_ptr_v4->ix;
+				o_ptr->tval = o_ptr_v4->tval;
+				o_ptr->sval = o_ptr_v4->sval;
+				o_ptr->tval2 = o_ptr_v4->tval2;
+				o_ptr->sval2 = o_ptr_v4->sval2;
+				o_ptr->bpval = o_ptr_v4->bpval;
+				o_ptr->pval = o_ptr_v4->pval;
+				o_ptr->pval2 = o_ptr_v4->pval2;
+				o_ptr->pval3 = o_ptr_v4->pval3;
+				o_ptr->pval_org = o_ptr_v4->pval_org;
+				o_ptr->bpval_org = o_ptr_v4->bpval_org;
+				o_ptr->to_h_org = o_ptr_v4->to_h_org;
+				o_ptr->to_d_org = o_ptr_v4->to_d_org;
+				o_ptr->to_a_org = o_ptr_v4->to_a_org;
+				o_ptr->sigil = o_ptr_v4->sigil;
+				o_ptr->sseed = o_ptr_v4->sseed;
+				o_ptr->discount = o_ptr_v4->discount;
+				o_ptr->number = o_ptr_v4->number;
+				o_ptr->weight = o_ptr_v4->weight;
+				o_ptr->name1 = o_ptr_v4->name1;
+				o_ptr->name2 = o_ptr_v4->name2;
+				o_ptr->name2b = o_ptr_v4->name2b;
+				o_ptr->name3 = o_ptr_v4->name3;
+				o_ptr->name4 = o_ptr_v4->name4;
+				o_ptr->attr = o_ptr_v4->attr;
+				o_ptr->mode = o_ptr_v4->mode;
+				o_ptr->xtra1 = o_ptr_v4->xtra1;
+				o_ptr->xtra2 = o_ptr_v4->xtra2;
+				o_ptr->xtra3 = o_ptr_v4->xtra3;
+				o_ptr->xtra4 = o_ptr_v4->xtra4;
+				o_ptr->xtra5 = o_ptr_v4->xtra5;
+				o_ptr->xtra6 = o_ptr_v4->xtra6;
+				o_ptr->xtra7 = o_ptr_v4->xtra7;
+				o_ptr->xtra8 = o_ptr_v4->xtra8;
+				o_ptr->xtra9 = o_ptr_v4->xtra9;
+				o_ptr->uses_dir = o_ptr_v4->uses_dir;
+#ifdef PLAYER_STORES
+				o_ptr->ps_idx_x = o_ptr_v4->ps_idx_x;
+				o_ptr->ps_idx_y = o_ptr_v4->ps_idx_y;
+				o_ptr->appraised_value = o_ptr_v4->appraised_value;
+#endif
+				o_ptr->to_h = o_ptr_v4->to_h;
+				o_ptr->to_d = o_ptr_v4->to_d;
+				o_ptr->to_a = o_ptr_v4->to_a;
+				o_ptr->ac = o_ptr_v4->ac;
+				o_ptr->dd = o_ptr_v4->dd;
+				o_ptr->ds = o_ptr_v4->ds;
+				o_ptr->ident = o_ptr_v4->ident;
+				o_ptr->timeout = o_ptr_v4->timeout;
+				o_ptr->timeout_magic = o_ptr_v4->timeout_magic;
+				o_ptr->recharging = o_ptr_v4->recharging;
+				o_ptr->marked = o_ptr_v4->marked;
+				o_ptr->marked2 = o_ptr_v4->marked2;
+				o_ptr->questor = o_ptr_v4->questor;
+				o_ptr->quest = o_ptr_v4->quest;
+				o_ptr->quest_stage = o_ptr_v4->quest_stage;
+				o_ptr->questor_idx = o_ptr_v4->questor_idx;
+				o_ptr->questor_invincible = o_ptr_v4->questor_invincible;
+				o_ptr->quest_credited = o_ptr_v4->quest_credited;
+				o_ptr->note = o_ptr_v4->note;
+				o_ptr->note_utag = o_ptr_v4->note_utag;
+				o_ptr->inven_order = o_ptr_v4->inven_order;
+				o_ptr->next_o_idx = o_ptr_v4->next_o_idx;
+				o_ptr->held_m_idx = o_ptr_v4->held_m_idx;
+				o_ptr->auto_insc = o_ptr_v4->auto_insc;
+				o_ptr->stack_pos = o_ptr_v4->stack_pos;
+				o_ptr->cheeze_dlv = o_ptr_v4->cheeze_dlv;
+				o_ptr->cheeze_plv = o_ptr_v4->cheeze_plv;
+				o_ptr->cheeze_plv_carry = o_ptr_v4->cheeze_plv_carry;
+				o_ptr->housed = o_ptr_v4->housed;
+				o_ptr->changed = o_ptr_v4->changed;
+				o_ptr->NR_tradable = o_ptr_v4->NR_tradable;
+				o_ptr->no_soloist = o_ptr_v4->no_soloist;
+				o_ptr->temp = o_ptr_v4->temp;
+				o_ptr->iron_trade = o_ptr_v4->iron_trade;
+				o_ptr->iron_turn = o_ptr_v4->iron_turn;
+				o_ptr->embed = o_ptr_v4->embed;
+				//convert:
+				o_ptr->id = o_ptr->f_id = o_ptr->f_name[0] = 0; //don't generate an id here, whatever
+				o_ptr->f_turn = o_ptr->f_time = 0;
+				o_ptr->f_wpos = (struct worldpos){ 0, 0, 0 };
+				o_ptr->f_dun = 0;
+				o_ptr->f_player = o_ptr->f_player_turn = 0;
+				o_ptr->f_ridx = o_ptr->f_reidx = 0;
+				o_ptr->f_special = o_ptr->f_reward = 0;
+				break;
 			}
 			if (r == 0) {
 				s_printf("  error: Failed to read object.\n");
@@ -8636,7 +8733,30 @@ void restore_estate(int Ind) {
 
 					/* write failed gold gain back into new buffer file */
 					fprintf(fp_tmp, "OB:");
+#if 0
 					(void)fwrite(o_ptr, sizeof(object_type), 1, fp_tmp);
+#else
+					switch (conversion) {
+					case 0:
+						(void)fwrite(o_ptr, sizeof(object_type), 1, fp_tmp);
+						break;
+					case 1:
+						(void)fwrite(o_ptr_v2, sizeof(object_type_v2), 1, fp_tmp);
+						break;
+					case 2:
+						(void)fwrite(o_ptr_v2a, sizeof(object_type_v2a), 1, fp_tmp);
+						break;
+					case 3:
+						(void)fwrite(o_ptr_v2b, sizeof(object_type_v2b), 1, fp_tmp);
+						break;
+					case 4:
+						(void)fwrite(o_ptr_v3, sizeof(object_type_v3), 1, fp_tmp);
+						break;
+					case 5:
+						(void)fwrite(o_ptr_v4, sizeof(object_type_v4), 1, fp_tmp);
+						break;
+					}
+#endif
 
 					/* paranoia: should always be inscriptionless of course */
 					/* ..and its inscription */
@@ -8677,6 +8797,9 @@ void restore_estate(int Ind) {
 					break;
 				case 4:
 					(void)fwrite(o_ptr_v3, sizeof(object_type_v3), 1, fp_tmp);
+					break;
+				case 5:
+					(void)fwrite(o_ptr_v4, sizeof(object_type_v4), 1, fp_tmp);
 					break;
 				}
 
