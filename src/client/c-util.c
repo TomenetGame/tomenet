@@ -11317,6 +11317,7 @@ void handle_process_font_file(void) {
 #ifdef CUSTOM_FONT_PRF
 	}
 #endif
+	Send_font();
 }
 
 #ifdef RETRY_LOGIN

@@ -1361,16 +1361,20 @@ unsigned char Net_login() {
  * and we also have the map already.
  */
 int Net_start(int sex, int race, int class) {
-	int	i;
+	int i;
 	//int n;
-	int		type,
-			result;
+	int type, result;
+	char fname[1024];
 
 	Sockbuf_clear(&wbuf);
 	//n =
 	Packet_printf(&wbuf, "%c", PKT_PLAY);
 
-	if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0))
+	get_screen_font_name(fname);
+
+	if (is_atleast(&server_version, 4, 8, 1, 2, 0, 0))
+		Packet_printf(&wbuf, "%hd%hd%hd%hd%hd%hd%hd%s%s", sex, race, class, trait, audio_sfx, audio_music, use_graphics, graphic_tiles, fname);
+	else if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0))
 		Packet_printf(&wbuf, "%hd%hd%hd%hd%hd%hd", sex, race, class, trait, audio_sfx, audio_music);
 	else Packet_printf(&wbuf, "%hd%hd%hd", sex, race, class);
 
@@ -6885,6 +6889,20 @@ int Send_audio(void) {
 	if (is_older_than(&server_version, 4, 7, 3, 0, 0, 0)) return(-1);
 
 	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_AUDIO, audio_sfx, audio_music)) <= 0) return n;
+	return(1);
+}
+
+int Send_font(void) {
+	int n;
+	char fname[1024];
+
+	if (is_older_than(&server_version, 4, 8, 1, 2, 0, 0)) return(-1);
+
+	//&graphics_tile_wid, &graphics_tile_hgt)) {
+	//td->font_wid; td->font_hgt;
+
+	get_screen_font_name(fname);
+	if ((n = Packet_printf(&wbuf, "%c%hd%s%s", PKT_FONT, use_graphics, graphic_tiles, fname)) <= 0) return n;
 	return(1);
 }
 

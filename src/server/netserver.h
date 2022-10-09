@@ -176,6 +176,7 @@ static int Receive_client_setup_K(int ind);
 static int Receive_client_setup_R(int ind);
 
 static int Receive_audio(int ind);
+static int Receive_font(int ind);
 
 #ifdef ENABLE_SUBINVEN
 static int Receive_si_move(int ind);

@@ -897,6 +897,7 @@ extern int Send_request_cfr(int id, int cfr);
 extern void apply_auto_inscriptions(int slot, bool force);
 extern int Send_client_setup(void);
 extern int Send_audio(void);
+extern int Send_font(void);
 #ifdef ENABLE_SUBINVEN
 extern int Send_subinven_move(int item);
 extern int Send_subinven_remove(int item);

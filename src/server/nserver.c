@@ -401,6 +401,7 @@ static void Init_receive(void) {
 	playing_receive[PKT_SI_REMOVE]		= Receive_si_remove;
 #endif
 	playing_receive[PKT_VERSION]		= Receive_version;
+	playing_receive[PKT_FONT]		= Receive_font;
 }
 
 static int Init_setup(void) {
@@ -4937,6 +4938,8 @@ static int Receive_play(int ind) {
 	int i, n, limit;
 	s16b sex, race, class, trait = 0;
 	short int sfx = -1, mus = -1;
+	short int use_graphics;
+	char graphic_tiles[512], fname[512];
 
 	/* XXX */
 	n = Sockbuf_read(&connp->r);
@@ -4976,7 +4979,14 @@ static int Receive_play(int ind) {
 	}
 	//else
 	{
-		if (is_newer_than(&connp->version, 4, 4, 5, 10, 0, 0)) {
+		if (is_atleast(&connp->version, 4, 8, 1, 2, 0, 0)) {
+			if ((n = Packet_scanf(&connp->r, "%hd%hd%hd%hd%hd%hd%hd%s%s", &sex, &race, &class, &trait, &sfx, &mus, &use_graphics, graphic_tiles, fname)) <= 0) {
+				errno = 0;
+				plog("Play packet is broken");
+				Destroy_connection(ind, "receive error 2 in play");
+				return(-1);
+			}
+		} else if (is_newer_than(&connp->version, 4, 4, 5, 10, 0, 0)) {
 			if ((n = Packet_scanf(&connp->r, "%hd%hd%hd%hd%hd%hd", &sex, &race, &class, &trait, &sfx, &mus)) <= 0) {
 				errno = 0;
 				plog("Play packet is broken");
@@ -5290,6 +5300,10 @@ static int Receive_play(int ind) {
 	s_printf("AUDIO: %s features %hd, %hd.\n", connp->nick, sfx, mus);
 	connp->audio_sfx = (short int)sfx;
 	connp->audio_mus = (short int)mus;
+	s_printf("FONT: %s features %hd, <%s>, <%s>\n", connp->nick, use_graphics, graphic_tiles, fname);
+	connp->use_graphics = use_graphics;
+	strcpy(connp->graphic_tiles, graphic_tiles);
+	strcpy(connp->fname, fname);
 
 	Sockbuf_clear(&connp->w);
 	if (Handle_login(ind) == -1) {
@@ -14286,6 +14300,31 @@ static int Receive_audio(int ind) {
 		p_ptr->audio_mus = connp->audio_mus;
 	}
 #endif
+	return(2);
+}
+
+static int Receive_font(int ind) {
+	connection_t *connp = Conn[ind];
+	player_type *p_ptr = NULL;
+	char ch;
+	int n, player = -1;
+	short int use_graphics;
+	char graphic_tiles[1024], fname[1024];
+
+	if (connp->id != -1) {
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+	}
+
+	if ((n = Packet_scanf(&connp->r, "%c%hd%s%s", &ch, &use_graphics, graphic_tiles, fname)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return n;
+	}
+
+	s_printf("FONT_UPDATED: %s ('%s') features %hd, <%s>, <%s>.\n", connp->nick, p_ptr ? p_ptr->name : "---", use_graphics, graphic_tiles, fname);
+	connp->use_graphics = use_graphics;
+	strcpy(connp->graphic_tiles, graphic_tiles);
+	strcpy(connp->fname, fname);
 	return(2);
 }
 
