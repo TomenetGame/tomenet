@@ -3688,9 +3688,9 @@ int Receive_mini_map_pos(void) {
 	short int x, y, y_offset = 0;
 	byte a;
 
-	/* 4.8.1 and newer servers communicate using 32bit character size. */
 	if (is_atleast(&server_version, 4, 8, 1, 2, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%c%u", &ch, &x, &y, &y_offset, &a, &c)) <= 0) return n;
+	/* 4.8.1 and newer servers communicate using 32bit character size. */
 	} else if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c%u", &ch, &x, &y, &a, &c)) <= 0) return n;
 	} else {
