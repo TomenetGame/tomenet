@@ -7612,6 +7612,59 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "\377GDungeon is know FULLY KNOWN.");
 				return;
 			}
+			/* Find a particular feat anywhere on the world surface */
+			else if (prefix(messagelc, "/wlocfeat")) {
+				int wx, wy, x, y, found = 0;
+				struct worldpos tpos;
+				cave_type **zcave, *c_ptr;
+				//wilderness_type *wild;
+
+				if (!tk) {
+					msg_print(Ind, "Usage: /wlocfeat <feat index>");
+					return;
+				}
+				if (k < 1 || k > max_f_idx) {
+					msg_format(Ind, "Dungeon index must range from 1 to %d.", max_f_idx);
+					return;
+				}
+
+				tpos.wz = 0;
+				for (wx = 0; wx < MAX_WILD_X; wx++) {
+					for (wy = 0; wy < MAX_WILD_Y; wy++) {
+						tpos.wx = wx;
+						tpos.wy = wy;
+						//wild = &wild_info[wy][wx];
+
+						if (!(zcave = getcave(&tpos))) {
+							alloc_dungeon_level(&tpos);
+							if (!(zcave = getcave(&tpos))) continue; //paranoia
+						}
+
+						for (y = 1; y < MAX_HGT - 1; y++) {
+							for (x = 1; x < MAX_WID - 1; x++) {
+								c_ptr = &zcave[y][x];
+
+								/* Check for basic feat? */
+								if (c_ptr->feat == k) {
+									msg_format(Ind, "Found %d at (%d,%d) [%d,%d]", k, wx, wy, x, y);
+									found++;
+									if (found == 20) break;
+								}
+
+#if 0 //todo
+								/* Check for special feat? */
+								if (!(cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
+								}
+#endif
+							}
+							if (found == 20) break;
+						}
+					}
+				}
+				if (!found) msg_format(Ind, "Feat %d not found.", k);
+				else msg_print(Ind, "Done.");
+				return;
+			}
 			else if (prefix(messagelc, "/reloadmotd")) {
 				/* update MotD changes on the fly */
 				exec_lua(0, format("set_motd()"));
@@ -8455,11 +8508,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			/* wipe wilderness map of tournament players - mikaelh */
 			else if (prefix(messagelc, "/wipewild")) {
+				int p;
+
 				if (!tk) {
 					msg_print(Ind, "\377oUsage: /wipewild <player name>");
 					return;
 				}
-				int p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 				for (i = 0; i < MAX_WILD_8; i++)
 					Players[p]->wild_map[i] = 0;
