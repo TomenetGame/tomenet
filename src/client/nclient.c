@@ -4258,14 +4258,16 @@ int Receive_special_line(void) {
 			   (Prompt consistent with peruse_file() in c-files.c.)*/
 			/* indicate EOF by different status line colour */
 			if (cur_line + special_page_size >= max_line)
-				c_prt(TERM_ORANGE, format("[Space/p/Enter/BkSpc/g/G/#%s to navigate, ESC to exit.] (%d-%d/%d)",
+				c_prt(TERM_ORANGE, format("[Space/p/Enter/BkSpc/g/G/#%s navigate,%s ESC exit.] (%d-%d/%d)",
 				    //(p_ptr->admin_dm || p_ptr->admin_wiz) ? "/s/d/D" : "",
 				    "/s/d/D",
+				    my_strcasestr(special_line_title, "unique monster") ? " ! best," : "",
 				    cur_line + 1, max_line , max_line), 23 + HGT_PLUS, 0);
 			else
-				c_prt(TERM_L_WHITE, format("[Space/p/Enter/BkSpc/g/G/#%s to navigate, ESC to exit.] (%d-%d/%d)",
+				c_prt(TERM_L_WHITE, format("[Space/p/Enter/BkSpc/g/G/#%s navigate,%s ESC exit.] (%d-%d/%d)",
 				    //(p_ptr->admin_dm || p_ptr->admin_wiz) ? "/s/d/D" : "",
 				    "/s/d/D",
+				    my_strcasestr(special_line_title, "unique monster") ? " ! best," : "",
 				    cur_line + 1, cur_line + special_page_size, max_line), 23 + HGT_PLUS, 0);
 		}
 	}

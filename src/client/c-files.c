@@ -1233,14 +1233,16 @@ void peruse_file(void) {
 		/* Prompt. (Consistent with prompt in Receive_special_line() in nclient.c.) */
 		/* indicate EOF by different status line colour */
 		if (cur_line + special_page_size >= max_line)
-			c_prt(TERM_ORANGE, format("[Space/p/Enter/BkSpc/g/G/#%s to navigate, ESC to exit.] (%d-%d/%d)",
+			c_prt(TERM_ORANGE, format("[Space/p/Enter/BkSpc/g/G/#%s navigate,%s ESC exit.] (%d-%d/%d)",
 			    //(p_ptr->admin_dm || p_ptr->admin_wiz) ? "/s/d/D" : "",
 			    "/s/d/D",
+			    my_strcasestr(special_line_title, "unique monster") ? " ! best," : "",
 			    cur_line + 1, max_line , max_line), 23 + HGT_PLUS, 0);
 		else
-			c_prt(TERM_L_WHITE, format("[Space/p/Enter/BkSpc/g/G/#%s to navigate, ESC to exit.] (%d-%d/%d)",
+			c_prt(TERM_L_WHITE, format("[Space/p/Enter/BkSpc/g/G/#%s navigate,%s ESC exit.] (%d-%d/%d)",
 			    //(p_ptr->admin_dm || p_ptr->admin_wiz) ? "/s/d/D" : "",
 			    "/s/d/D",
+			    my_strcasestr(special_line_title, "unique monster") ? " ! best," : "",
 			    cur_line + 1, cur_line + special_page_size, max_line), 23 + HGT_PLUS, 0);
 		/* Get a keypress -
 		   hack: update max_line to its real value as soon as possible */
@@ -1257,7 +1259,6 @@ void peruse_file(void) {
 
 		k = inkey();
 		if (k == 1) continue;
-
 		line_searching = FALSE;
 
 		/* Hack -- go to a specific line */
@@ -1356,6 +1357,14 @@ void peruse_file(void) {
 		/* Exit on escape */
 		if (k == ESCAPE || k == KTRL('Q')) break;
 
+		/* Special functionality depending on information type */
+		if (k == '!') {
+			/* Unique monster list: Jump to strongest we slayed. */
+			if (my_strcasestr(special_line_title, "unique monster")) {
+				searching = TRUE;
+				strcpy(srcstr, "strongest unique monster");
+			}
+		}
 
 		/* Horizontal scroll */
 		if (k == '4' || k == '<' || k == 'h') {
