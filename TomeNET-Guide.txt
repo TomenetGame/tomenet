@@ -2246,7 +2246,7 @@ Item power inscription (added in 4.7.1):
                special powers. Only works with *identified* items.
                Can also be used on custom spell books. If used on handbooks or
                tomes however, it works like @@@, shortening the spell names.
-    @@@        Redux version. Avoids stats, infra-vision, searching, and mods
+    @@@        Redux version. Omits stats, infra-vision, searching, and mods
                that are obvious because they can only come from base item type
                (disarm, digging, luck), light radius, slays and brands except
                for kill-flags, partial ESPs, trap kits' eligible enemy type.
