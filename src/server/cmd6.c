@@ -2946,9 +2946,11 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 		case SV_SCROLL_WILDERNESS_MAP:
 		{
 #ifndef NEW_WILDERNESS_MAP_SCROLLS
-			/* Reveal a random dungeon location (C. Blue): */
+			/* Reveal a random static dungeon (no 'wilderness' dungeon) location. - C. Blue
+			   This exclude (temporary) event dungeons, including PvP arena. */
 			int x, y, d_tries, d_no;
 			dungeon_type *d_ptr;
+
 			if (rand_int(100) < 50) {
 				x = 0;
 				/* first dungeon (d_tries = 0) is always 'wildernis'
@@ -3019,13 +3021,16 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				//msg_format(Ind, "\377sYou learn the world map layout at sector \377u(%d,%d)\377s.", x, y); //for single (x,y) revelation
 				p_ptr->wild_map[(x + y * MAX_WILD_X) / 8] |= (1U << ((x + y * MAX_WILD_X) % 8));
 
-				if ((d_ptr = wild->tower) && d_ptr->type != DI_VALINOR) {
-					msg_print(Ind, "\377sYou learn that there is a tower at or next to that location, called:");
-					msg_format(Ind, "\377s  '\377u%s\377s'", get_dun_name(x, y, TRUE, d_ptr, 0, TRUE));
-				}
-				if ((d_ptr = wild->dungeon) && d_ptr->type != DI_VALINOR) {
-					msg_print(Ind, "\377sYou learn that there is a dungeon at or next to that location, called:");
-					msg_format(Ind, "\377s  '\377u%s\377s'", get_dun_name(x, y, FALSE, d_ptr, 0, TRUE));
+				/* Exclude (temporary) event dungeons at (0,0), including PvP arena */
+				if (x || y) {
+					if ((d_ptr = wild->tower) && d_ptr->type != DI_VALINOR && !(!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)) {
+						msg_print(Ind, "\377sYou learn that there is a tower at or next to that location, called:");
+						msg_format(Ind, "\377s  '\377u%s\377s'", get_dun_name(x, y, TRUE, d_ptr, 0, TRUE));
+					}
+					if ((d_ptr = wild->dungeon) && d_ptr->type != DI_VALINOR && !(!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)) {
+						msg_print(Ind, "\377sYou learn that there is a dungeon at or next to that location, called:");
+						msg_format(Ind, "\377s  '\377u%s\377s'", get_dun_name(x, y, FALSE, d_ptr, 0, TRUE));
+					}
 				}
 			}
 #endif

@@ -9090,117 +9090,133 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	if (!(zcave = getcave(wpos))) return;
 
 
-	if (m_ptr->r_idx == RI_BLUE && m_ptr->extra > 1) {
-		int who, ox = m_ptr->fx, oy = m_ptr->fy;
+	if (m_ptr->r_idx == RI_BLUE) {
+		if (m_ptr->extra > 1) {
+			int who, ox = m_ptr->fx, oy = m_ptr->fy;
 
-		/* Don't move too quickly to watch nicely */
-		if (m_ptr->extra2 < 1) {
-			m_ptr->extra2++;
+			/* Don't move too quickly to watch nicely */
+			if (m_ptr->extra2 < 1) {
+				m_ptr->extra2++;
+				return;
+			}
+			m_ptr->extra2 = 0;
+
+			m_ptr->extra++; //we begin here at 3 basically
+			if (m_ptr->extra == 10) {
+				floor_msg_format(wpos, "The guy in blue robes mumbles something about having a \377Bcold \377Lcave brew\377w..");
+				for (i = 1; i <= NumPlayers; i++) {
+					player_type *q_ptr = Players[i];
+
+					/* Skip disconnected players */
+					if (q_ptr->conn == NOT_CONNECTED) continue;
+					/* Skip players not on this depth */
+					if (!inarea(&q_ptr->wpos, wpos)) continue;
+
+					Send_music(Ind, -4, -4);
+				}
+			}
+			if (m_ptr->extra < 6) ;
+			else if (m_ptr->extra < 22) { //move right
+				zcave[oy][ox].m_idx = 0;
+				m_ptr->fx++;
+				who = zcave[oy][m_ptr->fx].m_idx;
+				if (who < 0) {
+					Players[-who]->px--;
+					zcave[oy][ox].m_idx = who;
+				}
+				zcave[m_ptr->fy][m_ptr->fx].m_idx = m_idx;
+				everyone_lite_spot(wpos, oy, ox);
+				everyone_lite_spot(wpos, m_ptr->fy, m_ptr->fx);
+				update_mon(m_idx, FALSE);//TRUE?
+			} else if (m_ptr->extra < 26) { //move right+up
+				zcave[oy][ox].m_idx = 0;
+				m_ptr->fx++;
+				m_ptr->fy--;
+				who = zcave[oy][m_ptr->fx].m_idx;
+				if (who < 0) {
+					Players[-who]->px--;
+					zcave[oy][ox].m_idx = who;
+				}
+				zcave[m_ptr->fy][m_ptr->fx].m_idx = m_idx;
+				everyone_lite_spot(wpos, oy, ox);
+				everyone_lite_spot(wpos, m_ptr->fy, m_ptr->fx);
+				update_mon(m_idx, FALSE);//TRUE?
+			} else if (m_ptr->extra < 31) { //move up
+				zcave[oy][ox].m_idx = 0;
+				m_ptr->fy--;
+				who = zcave[m_ptr->fy][ox].m_idx;
+				if (who < 0) {
+					Players[-who]->py++;
+					zcave[oy][ox].m_idx = who;
+				}
+				zcave[m_ptr->fy][m_ptr->fx].m_idx = m_idx;
+				everyone_lite_spot(wpos, oy, ox);
+				everyone_lite_spot(wpos, m_ptr->fy, m_ptr->fx);
+				update_mon(m_idx, FALSE);//TRUE?
+			} else if (m_ptr->extra < 35) { //open door ^^
+				if (m_ptr->extra == 33) {
+					zcave[2][55].feat = FEAT_UNSEALED_DOOR;
+					everyone_lite_spot(wpos, 2, 55);
+				}
+			} else if (m_ptr->extra < 45) { //move right
+				zcave[oy][ox].m_idx = 0;
+				m_ptr->fx++;
+				who = zcave[oy][m_ptr->fx].m_idx;
+				if (who < 0) {
+					Players[-who]->px--;
+					zcave[oy][ox].m_idx = who;
+				}
+				zcave[m_ptr->fy][m_ptr->fx].m_idx = m_idx;
+				everyone_lite_spot(wpos, oy, ox);
+				everyone_lite_spot(wpos, m_ptr->fy, m_ptr->fx);
+				update_mon(m_idx, FALSE);//TRUE?
+			} else { //*pouf!*
+				delete_monster_idx(m_idx, FALSE);
+			}
 			return;
 		}
-		m_ptr->extra2 = 0;
-
-		m_ptr->extra++; //we begin here at 3 basically
-		if (m_ptr->extra == 10) {
-			floor_msg_format(wpos, "The guy in blue robes mumbles something about having a \377Bcold \377Lcave brew\377w..");
-			for (i = 1; i <= NumPlayers; i++) {
-				player_type *q_ptr = Players[i];
-
-				/* Skip disconnected players */
-				if (q_ptr->conn == NOT_CONNECTED) continue;
-				/* Skip players not on this depth */
-				if (!inarea(&q_ptr->wpos, wpos)) continue;
-
-				Send_music(Ind, -4, -4);
+		else if (m_ptr->strongest_los) {
+			if (m_ptr->extra3 && m_ptr->extra3 < 75) {
+				m_ptr->extra3++;
+				switch (m_ptr->extra3) {
+				case 25:
+					floor_msg_format(wpos, "\377BThe guy in blue robes raises an eyebrow.");
+					break;
+				case 75:
+					floor_msg_format(wpos, "\377BThe guy in blue robes asks if you are planning to keep displaying that decree..");
+					break;
+				}
 			}
+			return;
 		}
-		if (m_ptr->extra < 6) ;
-		else if (m_ptr->extra < 22) { //move right
-			zcave[oy][ox].m_idx = 0;
-			m_ptr->fx++;
-			who = zcave[oy][m_ptr->fx].m_idx;
-			if (who < 0) {
-				Players[-who]->px--;
-				zcave[oy][ox].m_idx = who;
-			}
-			zcave[m_ptr->fy][m_ptr->fx].m_idx = m_idx;
-			everyone_lite_spot(wpos, oy, ox);
-			everyone_lite_spot(wpos, m_ptr->fy, m_ptr->fx);
-			update_mon(m_idx, FALSE);//TRUE?
-		} else if (m_ptr->extra < 26) { //move right+up
-			zcave[oy][ox].m_idx = 0;
-			m_ptr->fx++;
-			m_ptr->fy--;
-			who = zcave[oy][m_ptr->fx].m_idx;
-			if (who < 0) {
-				Players[-who]->px--;
-				zcave[oy][ox].m_idx = who;
-			}
-			zcave[m_ptr->fy][m_ptr->fx].m_idx = m_idx;
-			everyone_lite_spot(wpos, oy, ox);
-			everyone_lite_spot(wpos, m_ptr->fy, m_ptr->fx);
-			update_mon(m_idx, FALSE);//TRUE?
-		} else if (m_ptr->extra < 31) { //move up
-			zcave[oy][ox].m_idx = 0;
-			m_ptr->fy--;
-			who = zcave[m_ptr->fy][ox].m_idx;
-			if (who < 0) {
-				Players[-who]->py++;
-				zcave[oy][ox].m_idx = who;
-			}
-			zcave[m_ptr->fy][m_ptr->fx].m_idx = m_idx;
-			everyone_lite_spot(wpos, oy, ox);
-			everyone_lite_spot(wpos, m_ptr->fy, m_ptr->fx);
-			update_mon(m_idx, FALSE);//TRUE?
-		} else if (m_ptr->extra < 35) { //open door ^^
-			if (m_ptr->extra == 33) {
-				zcave[2][55].feat = FEAT_UNSEALED_DOOR;
-				everyone_lite_spot(wpos, 2, 55);
-			}
-		} else if (m_ptr->extra < 45) { //move right
-			zcave[oy][ox].m_idx = 0;
-			m_ptr->fx++;
-			who = zcave[oy][m_ptr->fx].m_idx;
-			if (who < 0) {
-				Players[-who]->px--;
-				zcave[oy][ox].m_idx = who;
-			}
-			zcave[m_ptr->fy][m_ptr->fx].m_idx = m_idx;
-			everyone_lite_spot(wpos, oy, ox);
-			everyone_lite_spot(wpos, m_ptr->fy, m_ptr->fx);
-			update_mon(m_idx, FALSE);//TRUE?
-		} else { //*pouf!*
-			delete_monster_idx(m_idx, FALSE);
-		}
-		return;
-	}
-	/* RF0_METEOR_SWARM */
-	else if (m_ptr->r_idx == RI_BLUE && m_ptr->hp < m_ptr->maxhp) {
-		m_ptr->extra2++;
-		if (m_ptr->extra2 == 30) {
-			int x, y, xs, ys, angle2, angle3;
-			int dam = 300, rad = 1, jitter = 2, dist = 3; //dist 3 if we don't draw diagonals, otherwise 4 recommended or it looks cluttered
+		/* RF0_METEOR_SWARM */
+		else if (m_ptr->hp < m_ptr->maxhp) {
+			m_ptr->extra2++;
+			if (m_ptr->extra2 == 30) {
+				int x, y, xs, ys, angle2, angle3;
+				int dam = 300, rad = 1, jitter = 2, dist = 3; //dist 3 if we don't draw diagonals, otherwise 4 recommended or it looks cluttered
 
-			x = p_ptr->px; y = p_ptr->py;
-			xs = x; ys = y;
-			//scatter(wpos, &ys, &xs, y, x, jitter / 2, TRUE);
-			if (!zcave[ys][xs].effect) mon_meteor_swarm(Ind, m_idx, GF_METEOR, dam, xs, ys, rad);
+				x = p_ptr->px; y = p_ptr->py;
+				xs = x; ys = y;
+				//scatter(wpos, &ys, &xs, y, x, jitter / 2, TRUE);
+				if (!zcave[ys][xs].effect) mon_meteor_swarm(Ind, m_idx, GF_METEOR, dam, xs, ys, rad);
 
-			angle2 = rand_int(8);
-			angle3 = rand_int(7);
-			if (angle3 == angle2) angle3++;
+				angle2 = rand_int(8);
+				angle3 = rand_int(7);
+				if (angle3 == angle2) angle3++;
 
-			x = p_ptr->px + ddx[angle2 + 1] * dist; y = p_ptr->py + ddy[angle2 + 1] * dist;
-			xs = x; ys = y;
-			scatter(wpos, &ys, &xs, y, x, jitter, TRUE);
-			if (!zcave[ys][xs].effect) mon_meteor_swarm(Ind, m_idx, GF_METEOR, dam, xs, ys, rad);
+				x = p_ptr->px + ddx[angle2 + 1] * dist; y = p_ptr->py + ddy[angle2 + 1] * dist;
+				xs = x; ys = y;
+				scatter(wpos, &ys, &xs, y, x, jitter, TRUE);
+				if (!zcave[ys][xs].effect) mon_meteor_swarm(Ind, m_idx, GF_METEOR, dam, xs, ys, rad);
 
-			x = p_ptr->px + ddx[angle3 + 1] * dist; y = p_ptr->py + ddy[angle3 + 1] * dist;
-			xs = x; ys = y;
-			scatter(wpos, &ys, &xs, y, x, jitter, TRUE);
-			if (!zcave[ys][xs].effect) mon_meteor_swarm(Ind, m_idx, GF_METEOR, dam, xs, ys, rad);
+				x = p_ptr->px + ddx[angle3 + 1] * dist; y = p_ptr->py + ddy[angle3 + 1] * dist;
+				xs = x; ys = y;
+				scatter(wpos, &ys, &xs, y, x, jitter, TRUE);
+				if (!zcave[ys][xs].effect) mon_meteor_swarm(Ind, m_idx, GF_METEOR, dam, xs, ys, rad);
 
-			m_ptr->extra2 = 0;
+				m_ptr->extra2 = 0;
+			}
 		}
 	}
 
@@ -11927,6 +11943,8 @@ void process_monsters(void) {
 		lowhp = 9999;
 		blos = FALSE;
 
+		m_ptr->strongest_los = 0;
+
 #ifdef C_BLUE_AI_MELEE
 		/* save our previous melee target.
 		   NOTE: This must be _after_ the energy-check. */
@@ -12153,8 +12171,10 @@ void process_monsters(void) {
 #ifdef TELEPORT_SURPRISES
 			    || TELEPORT_SURPRISED(p_ptr, r_ptr)
 #endif
-			    ) && (!m_ptr->owner || (m_ptr->owner != p_ptr->id))) /* for Dungeon Master GF_DOMINATE */
+			    ) && (!m_ptr->owner || (m_ptr->owner != p_ptr->id))) { /* for Dungeon Master GF_DOMINATE */
+				if (new_los && j <= MAX_SIGHT) m_ptr->strongest_los = pl;
 				continue;
+			}
 
 			/* For Arena Monster Challenge: Skip observers in the corners */
 			if ((zcave = getcave(&p_ptr->wpos)) && zcave[p_ptr->py][p_ptr->px].feat == FEAT_HIGHLY_PROTECTED)
@@ -12218,6 +12238,11 @@ void process_monsters(void) {
 			if (may_move_Ind) {
 				closest = may_move_Ind;
 				dis_to_closest = may_move_dis;
+			}
+			else if (m_ptr->strongest_los && m_ptr->r_idx == RI_BLUE) {
+				closest = m_ptr->strongest_los;
+				dis_to_closest = distance(Players[closest]->py, Players[closest]->px, fy, fx);
+				if (m_ptr->extra3 < 1) m_ptr->extra3 = 1;
 			}
 			/* can't act at all - process next monster */
 			else continue;

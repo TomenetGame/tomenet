@@ -1569,7 +1569,8 @@ struct monster_type {
 	byte intercepted;		/* remember best interception cap of adjacent players to determine reduction of subsequent antimagic field chances to avoid excessive suppression */
 #endif
 
-	s32b extra, extra2;		/* (not saved) extra flags for debugging/testing purpose;
+	s16b strongest_los;		/* Closest/most hp LoS to a player, no matter if actually a valid target or not */
+	s32b extra, extra2, extra3;	/* (not saved) extra flags for debugging/testing purpose;
 					   extra: also used for robins and target dummy's "snowiness" now; new: also for Sauron boosting; for Morgoth "roar" sfx */
 
 #ifdef MONSTER_ASTAR

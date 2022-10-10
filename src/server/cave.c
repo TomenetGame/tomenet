@@ -8882,12 +8882,13 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	bool nr_bottom = in_netherrealm(wpos) && getlevel(wpos) == netherrealm_end;
 	bool arena_pvp = in_pvparena(wpos);
 	bool arena_monster = (ge_special_sector && wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y && wpos->wz == WPOS_ARENA_Z);
+	bool death_fate = in_deathfate_x(wpos);
 
 	/* usually allow all changes (normal dungeons and town-unrelated world map) */
-	if (!arena_monster && !arena_pvp && !bree && !town && !townarea && !sector00 && !valinor && !nr_bottom) return(TRUE);
+	if (!arena_monster && !arena_pvp && !bree && !town && !townarea && !sector00 && !valinor && !nr_bottom && !death_fate) return(TRUE);
 
 	/* preserve arenas; disallow trees for balancing (pvp-arena) */
-	if (arena_pvp || arena_monster) return(FALSE);
+	if (arena_pvp || arena_monster || death_fate || valinor) return(FALSE);
 
 	switch (feat) {
 	/* water is annoying in all towns - mikaelh */
