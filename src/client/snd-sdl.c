@@ -2482,7 +2482,7 @@ static void fadein_next_music(void) {
 	/* Paranoia */
 	if (music_next < 0 || music_next >= MUSIC_MAX) return;
 
-	/* Sub-song file was disabled? (local audio options) */
+	/* Song file was disabled? (local audio options) */
 	if (songs[music_next].disabled) {
 		music_cur = music_next;
 		music_cur_song = music_next_song;
