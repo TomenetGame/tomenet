@@ -2106,50 +2106,35 @@ void handle_music(int Ind) {
 			   music while being in its surrounding area of houses. */
 			if (istown(&p_ptr->wpos) || p_ptr->music_current == tmus
 			    /* don't switch from town area music to wild music on day/night change: */
-			    || p_ptr->music_current == tmus_inverse)
+			    || p_ptr->music_current == tmus_inverse) {
 				/* Season-specific town music; with season-indenpendant town music as reserve.
 				   (And both are day/night-specific, so at least basic (season-independant)
 				    day AND night music must be present for each town type, or there will be silence at some point.) */
 				Send_music(Ind, tmus, tmus_reserve);
-			/* Wilderness music */
-			else if (night_surface) {
-				/* Nightly wilderness music */
-				switch (season) {
-				case SEASON_SPRING: Send_music(Ind, 105, 10);
-				case SEASON_SUMMER: Send_music(Ind, 107, 10);
-				case SEASON_AUTUMN: Send_music(Ind, 109, 10);
-				case SEASON_WINTER: Send_music(Ind, 111, 10);
-				}
-			} else {
-				/* Daily wilderness music */
-				switch (season) {
-				case SEASON_SPRING: Send_music(Ind, 104, 9);
-				case SEASON_SUMMER: Send_music(Ind, 106, 9);
-				case SEASON_AUTUMN: Send_music(Ind, 108, 9);
-				case SEASON_WINTER: Send_music(Ind, 110, 9);
-				}
+				return;
 			}
-			return;
-		} else { /* Not a town area, so it's wilderness */
-			if (night_surface) {
-				/* Nightly wilderness music */
-				switch (season) {
-				case SEASON_SPRING: Send_music(Ind, 105, 10);
-				case SEASON_SUMMER: Send_music(Ind, 107, 10);
-				case SEASON_AUTUMN: Send_music(Ind, 109, 10);
-				case SEASON_WINTER: Send_music(Ind, 111, 10);
-				}
-			} else {
-				/* Daily wilderness music */
-				switch (season) {
-				case SEASON_SPRING: Send_music(Ind, 104, 9);
-				case SEASON_SUMMER: Send_music(Ind, 106, 9);
-				case SEASON_AUTUMN: Send_music(Ind, 108, 9);
-				case SEASON_WINTER: Send_music(Ind, 110, 9);
-				}
-			}
-			return;
+			/* Fall through to wilderness music */
 		}
+
+		/* Play wilderness music */
+		if (night_surface) {
+			/* Nightly wilderness music */
+			switch (season) {
+			case SEASON_SPRING: Send_music(Ind, 105, 10); break;
+			case SEASON_SUMMER: Send_music(Ind, 107, 10); break;
+			case SEASON_AUTUMN: Send_music(Ind, 109, 10); break;
+			case SEASON_WINTER: Send_music(Ind, 111, 10); break;
+			}
+		} else {
+			/* Daily wilderness music */
+			switch (season) {
+			case SEASON_SPRING: Send_music(Ind, 104, 9); break;
+			case SEASON_SUMMER: Send_music(Ind, 106, 9); break;
+			case SEASON_AUTUMN: Send_music(Ind, 108, 9); break;
+			case SEASON_WINTER: Send_music(Ind, 110, 9); break;
+			}
+		}
+		return;
 	/* in the dungeon */
 	} else {
 		/* Dungeon towns have their own music to bolster the player's motivation ;) */
