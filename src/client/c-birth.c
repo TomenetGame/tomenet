@@ -1914,7 +1914,7 @@ void get_char_name(void) {
 	if (use_sound) {
 		/* Play back a fitting, non-common music piece, abused as 'intro theme'.. */
 		if (!music(exec_lua(0, "return get_music_index(\"title\")")))
-			music(exec_lua(0, "return get_music_index(\"town_generic\")"));
+			music(exec_lua(0, "return get_music_index(\"generic\")"));
 		/* Play background ambient sound effect (if enabled) */
 		sound_ambient(exec_lua(0, "return get_sound_index(\"ambient_fire\")"));
 	}
