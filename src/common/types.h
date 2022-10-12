@@ -4119,7 +4119,9 @@ struct client_opts {
 #endif
 
     //new additions
+	bool play_all;
 	bool shuffle_music;
+	bool first_song;
 	bool permawalls_shade;
 	bool topline_no_msg;
 	bool targetinfo_msg;

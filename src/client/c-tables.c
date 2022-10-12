@@ -385,11 +385,11 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "easy_tunnel",		"Automatically tunnel walls" },
 
     //page 6 - 87
-	{ &c_cfg.audio_paging,		TRUE,	5,	0, 88, TRUE,
+	{ &c_cfg.audio_paging,		TRUE,	9,	0, 88, TRUE,
 	    "audio_paging",		"Use audio system for page/alert, if available" },
-	{ &c_cfg.paging_master_volume,	FALSE,	5,	0, 89, TRUE,
+	{ &c_cfg.paging_master_volume,	FALSE,	9,	0, 89, TRUE,
 	    "paging_master_vol",	"Play page/alert sounds at master volume" },
-	{ &c_cfg.paging_max_volume,	FALSE,	5,	0, 90, TRUE,
+	{ &c_cfg.paging_max_volume,	FALSE,	9,	0, 90, TRUE,
 	    "paging_max_vol",		"Play page/alert sounds at maximum volume" },
 	{ &c_cfg.no_ovl_close_sfx,	TRUE,	5,	0, 91, TRUE,
 	    "no_ovl_close_sfx",		"Prevent re-playing sfx received after <100ms gap" },
@@ -419,19 +419,19 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "no_monsterattack_sfx",	"Don't play basic monster attack sound fx" },
 	{ &c_cfg.positional_audio,	TRUE,	5,	0, 104, TRUE,
 	    "positional_audio",		"Play '3d' positional sound fx, via normal stereo" },
-	{ &c_cfg.xxx,	FALSE,	7,	0, 105, FALSE,				// HOLE
-	    "xxx",		"---" },
+	{ &c_cfg.no_house_sfx,		FALSE,	5,	0, 105, TRUE,
+	    "no_house_sfx",		"Don't play ambient/weather sound in buildings" },
 	{ &c_cfg.quiet_house_sfx,	TRUE,	5,	0, 106, TRUE,
 	    "quiet_house_sfx",		"Play quieter ambient/weather sound in buildings" },
-	{ &c_cfg.no_house_sfx,		FALSE,	5,	0, 107, TRUE,
-	    "no_house_sfx",		"Don't play ambient/weather sound in buildings" },
+	{ &c_cfg.mute_when_idle,	FALSE,	5,	0, 107, TRUE,
+	    "mute_when_idle",		"Mute music+ambient sfx while AFK/idle in town" },
 	{ &c_cfg.alert_starvation,	TRUE,	7,	0, 108, TRUE, //moved exp_bar to page 2 to make room for this
 	    "alert_starvation",		"Beep when taking damage from starvation" },
 
     /* unmutable options, pfft -- these are never shown in any options menu (-> FALSE) */
-	{ &c_cfg.use_color,		TRUE,	1,	0, 109, FALSE,//works, but pretty useless - disabled to make room (we always use colours nowadays)		//HOLE
+	{ &c_cfg.use_color,		TRUE,	1,	0, 109, FALSE,//works, but pretty useless - disabled to make room (we always use colours nowadays)		//HOLE if we really want to completely remove it
 	    "use_color",		"(deprecated) Use color if possible" },
-	{ &c_cfg.other_query_flag,	FALSE,	2,	0, 110, FALSE, /* deprecated/not enabled: Verifies on mimic form change and warns about overflow/loss on various magic device/item handling */		//HOLE
+	{ &c_cfg.other_query_flag,	FALSE,	2,	0, 110, FALSE, /* deprecated/not enabled: Verifies on mimic form change and warns about overflow/loss on various magic device/item handling */		//HOLE if we really want to completely remove it
 	    "other_query_flag",		"Prompt for various information (mimic polymorph)" },
 
     /* deprecated/broken/todo options */
@@ -494,8 +494,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "screenshot_format",	"Screenshots are timestamped instead of numbered" },
 	{ &c_cfg.palette_animation,	TRUE,	1,	0, 124, TRUE,
 	    "palette_animation",	"Shade world surface colours depending on daytime" },
-	{ &c_cfg.mute_when_idle,	FALSE,	5,	0, 125, TRUE,
-	    "mute_when_idle",		"Mute music+ambient sfx while AFK/idle in town" },
+	{ &c_cfg.play_all,		FALSE,	5,	0, 125, TRUE,
+	    "play_all",			"Loop over all available songs instead of just one" },
 	{ &c_cfg.id_selection,		TRUE,	6,	0, 126, TRUE,
 	    "id_selection",		"Show/accept only eligible items for ID/*ID*" },
 	{ &c_cfg.hp_bar,		FALSE,	6,	0, 127, TRUE,
@@ -508,7 +508,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.find_ignore_montraps,	TRUE,	3,	0, 130, TRUE,
 	    "find_ignore_montraps",	"Run through monster traps" },
 
-	{ &c_cfg.quiet_os,		FALSE,	5,	0, 131, TRUE,
+	{ &c_cfg.quiet_os,		FALSE,	9,	0, 131, TRUE,
 	    "quiet_os",			"Don't play beep/alert/page beeps through OS" },
 	{ &c_cfg.disable_lightning,	FALSE,	1,	0, 132, TRUE,
 	    "disable_lightning",	"Disable visual screen flash effect for lightning" },
@@ -543,6 +543,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "clone_to_stdout",		"Clone client chat and messages to stdout" },
 	{ &c_cfg.clone_to_file,		FALSE,	7,	0, 146, TRUE,
 	    "clone_to_file",		"Clone client chat and messages to 'stdout.txt'" },
+	{ &c_cfg.first_song,		FALSE,	5,	0, 147, TRUE,
+	    "first_song",		"Always start with first song in a music.cfg entry" },
 };
 
 cptr melee_techniques[16] = {

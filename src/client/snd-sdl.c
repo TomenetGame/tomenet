@@ -2221,9 +2221,12 @@ static bool play_music(int event) {
 		return TRUE; //whatever..
 	}
 
-	/* 'shuffle_music' option changed? */
+	/* 'shuffle_music' or 'play_all' option changed? */
 	if (event == -3) {
 		if (c_cfg.shuffle_music) {
+			music_next = -1;
+			Mix_FadeOutMusic(500);
+		} else if (c_cfg.play_all) {
 			music_next = -1;
 			Mix_FadeOutMusic(500);
 		} else {
@@ -2273,17 +2276,33 @@ static bool play_music(int event) {
 	/* handle 'initial' songs with priority */
 	for (n = 0; n < songs[music_next].num; n++) if (songs[music_next].initial[n]) initials++;
 	/* no initial songs - just pick a song normally */
-	if (!initials) music_next_song = rand_int(songs[music_next].num);
+	if (!initials) {
+		if (!c_cfg.first_song)
+			/* Pick one song randomly */
+			music_next_song = rand_int(songs[music_next].num);
+		else
+			/* Start with the first song of the music.cfg entry */
+			music_next_song = 0;
+	}
 	/* pick an initial song first */
 	else {
-		initials = randint(initials);
-		for (n = 0; n < songs[music_next].num; n++) {
-			if (!songs[music_next].initial[n]) continue;
-			initials--;
-			if (initials) continue;
-			music_next_song = n;
-			break;
-		}
+		if (!c_cfg.first_song) {
+			/* Pick an initial song randomly */
+			initials = randint(initials);
+			for (n = 0; n < songs[music_next].num; n++) {
+				if (!songs[music_next].initial[n]) continue;
+				initials--;
+				if (initials) continue;
+				music_next_song = n;
+				break;
+			}
+		} else
+			/* Start with the first initial song of the music.cfg entry */
+			for (n = 0; n < songs[music_next].num; n++) {
+				if (!songs[music_next].initial[n]) continue;
+				music_next_song = 0;
+				break;
+			}
 	}
 
 	/* new: if upcoming music file is same as currently playing one, don't do anything */
@@ -2336,9 +2355,12 @@ static bool play_music_vol(int event, char vol) {
 		return TRUE; //whatever..
 	}
 
-	/* 'shuffle_music' option changed? */
+	/* 'shuffle_music' or 'play_all' option changed? */
 	if (event == -3) {
 		if (c_cfg.shuffle_music) {
+			music_next = -1;
+			Mix_FadeOutMusic(500);
+		} else if (c_cfg.play_all) {
 			music_next = -1;
 			Mix_FadeOutMusic(500);
 		} else {
@@ -2384,17 +2406,33 @@ static bool play_music_vol(int event, char vol) {
 	/* handle 'initial' songs with priority */
 	for (n = 0; n < songs[music_next].num; n++) if (songs[music_next].initial[n]) initials++;
 	/* no initial songs - just pick a song normally */
-	if (!initials) music_next_song = rand_int(songs[music_next].num);
+	if (!initials) {
+		if (!c_cfg.first_song)
+			/* Pick one song randomly */
+			music_next_song = rand_int(songs[music_next].num);
+		else
+			/* Start with the first song of the music.cfg entry */
+			music_next_song = 0;
+	}
 	/* pick an initial song first */
 	else {
-		initials = randint(initials);
-		for (n = 0; n < songs[music_next].num; n++) {
-			if (!songs[music_next].initial[n]) continue;
-			initials--;
-			if (initials) continue;
-			music_next_song = n;
-			break;
-		}
+		if (!c_cfg.first_song) {
+			/* Pick an initial song randomly */
+			initials = randint(initials);
+			for (n = 0; n < songs[music_next].num; n++) {
+				if (!songs[music_next].initial[n]) continue;
+				initials--;
+				if (initials) continue;
+				music_next_song = n;
+				break;
+			}
+		} else
+			/* Start with the first initial song of the music.cfg entry */
+			for (n = 0; n < songs[music_next].num; n++) {
+				if (!songs[music_next].initial[n]) continue;
+				music_next_song = 0;
+				break;
+			}
 	}
 
 	/* new: if upcoming music file is same as currently playing one, don't do anything */
@@ -2427,8 +2465,8 @@ static void fadein_next_music(void) {
 	if (!cfg_audio_master || !cfg_audio_music) return;
 #endif
 
-	/* Catch music_next == -1, this can now happen with shuffle_music option, since songs are no longer looped if it's enabled */
-	if (c_cfg.shuffle_music && music_next == -1) {
+	/* Catch music_next == -1, this can now happen with shuffle_music or play_all option, since songs are no longer looped if it's enabled */
+	if ((c_cfg.shuffle_music || c_cfg.play_all) && music_next == -1) {
 		int tries, mcs;
 		int n, initials = 0, noinit_map[MAX_SONGS], ni = 0;
 
@@ -2453,12 +2491,26 @@ static void fadein_next_music(void) {
 		/* no non-initial songs found? Don't play any subsequent music then. */
 		if (!ni) return;
 
-		/* stick with music event, but play different song, randomly */
-		tries = songs[music_cur].num == 1 ? 1 : 100;
-		mcs = music_cur_song;
-		while (tries--) {
-			mcs = noinit_map[rand_int(ni)];
-			if (music_cur_song != mcs) break; //find some other song than then one we've just played, or it's not really 'shuffle'..
+		if (c_cfg.shuffle_music) {
+			/* stick with music event, but play different song, randomly */
+			tries = songs[music_cur].num == 1 ? 1 : 100;
+			mcs = music_cur_song;
+			while (tries--) {
+				mcs = noinit_map[rand_int(ni)];
+				if (music_cur_song != mcs) break; //find some other song than then one we've just played, or it's not really 'shuffle'..
+			}
+		} else {
+			/* c_cfg.play_all: */
+			/* stick with music event, but play different song, in listed order */
+			tries = -1;
+			mcs = music_cur_song;
+			while (++tries < ni) {
+				mcs = noinit_map[tries];
+				if (mcs <= music_cur_song) continue;
+				break;
+			}
+			/* We already went through all (non-initial) songs? Start anew then: */
+			if (tries == ni) mcs = noinit_map[0];
 		}
 		music_cur_song = mcs;
 
@@ -2517,9 +2569,9 @@ static void fadein_next_music(void) {
 	music_next = -1;
 	/* Actually don't repeat 'initial' songs */
 	if (!songs[music_cur].initial[music_cur_song]) {
-		//Mix_PlayMusic(wave, c_cfg.shuffle_music ? 0 : -1);//-1 infinite, 0 once, or n times
-		Mix_FadeInMusic(wave, c_cfg.shuffle_music ? 0 : -1, 1000);
-	} else Mix_FadeInMusic(wave, c_cfg.shuffle_music ? 0 : 0, 1000);
+		//Mix_PlayMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : -1);//-1 infinite, 0 once, or n times
+		Mix_FadeInMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : -1, 1000);
+	} else Mix_FadeInMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : 0, 1000);
 }
 
 #ifdef JUKEBOX_INSTANT_PLAY
@@ -2541,7 +2593,9 @@ static bool play_music_instantly(int event) {
 	}
 	if (songs[event].num < 1) return FALSE; //paranoia
 
-	/* but play different song, iteratingly instead of randomly! */
+	/* But play different song, iteratingly instead of randomly:
+	   We ignore shuffle_music, play_all or 'initial' song type and just go through all songs
+	   one by one in their order listed in music.cfg. */
 	if (music_cur != event) {
 		music_cur = event;
 		music_cur_song = 0;
@@ -2564,7 +2618,7 @@ static bool play_music_instantly(int event) {
 	else Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 100));
 #endif
 
-	/* Actually play the thing. We loop this specific sub-song infinitely and ignore c_cfg.shuffle_music (or 'initial' song status) here.
+	/* Actually play the thing. We loop this specific sub-song infinitely and ignore c_cfg.shuffle_music and c_cfg.play_all (and 'initial' song status) here.
 	   To get to hear other sub-songs, the user can press ENTER again to restart this music event with a different sub-song. */
 	Mix_PlayMusic(wave, -1);
 	return TRUE;
@@ -2597,7 +2651,7 @@ static void reenable_music(void) {
 #endif
 
 	/* Take up playing again immediately, no fading in */
-	Mix_PlayMusic(wave, c_cfg.shuffle_music ? 0 : -1);
+	Mix_PlayMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : -1);
 }
 #endif
 

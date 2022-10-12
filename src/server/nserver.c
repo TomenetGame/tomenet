@@ -2550,7 +2550,8 @@ static void sync_options(int Ind, bool *options) {
 		else p_ptr->positional_audio = FALSE;
 		p_ptr->sfx_store = TRUE;//!options[105];
 		p_ptr->sfx_house_quiet = options[106];
-		p_ptr->sfx_house = !options[107];
+		if (is_atleast(&p_ptr->version, 4, 8, 1, 2, 0, 0)) p_ptr->sfx_house = !options[105];
+		else p_ptr->sfx_house = !options[107];
 
 #ifdef USE_SOUND_2010
 		/* Glitch: Even if the character has set sfx_house 0, it will still be received as 1 here for some reason on 1st option-sync after char login. */
@@ -2637,7 +2638,8 @@ static void sync_options(int Ind, bool *options) {
 				p_ptr->alert_starvation = options[108];
 			tmp = p_ptr->palette_animation;
 			if ((p_ptr->palette_animation = options[124]) != tmp) p_ptr->redraw |= PR_MAP;
-			p_ptr->mute_when_idle = options[125];
+			if (is_older_than(&p_ptr->version, 4, 8, 1, 2, 0, 0)) p_ptr->mute_when_idle = options[125];
+			p_ptr->mute_when_idle = options[107];
 			if (p_ptr->mute_when_idle && !p_ptr->muted_when_idle && (p_ptr->afk || p_ptr->idle_char >= 120) && istown(&p_ptr->wpos)) Send_idle(Ind, TRUE);
 			if (!p_ptr->mute_when_idle && p_ptr->muted_when_idle) Send_idle(Ind, FALSE);
 		}

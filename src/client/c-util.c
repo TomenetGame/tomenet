@@ -9735,8 +9735,8 @@ void do_cmd_options(void) {
 
 		/* Give some choices */
 		Term_putstr(3,  2, -1, TERM_WHITE, "(\377y1\377w/\377y2\377w/\377y3\377w/\377y4\377w) User interface options 1/2/3/4");
-		Term_putstr(3,  3, -1, TERM_WHITE, "(\377y5\377w)       Audio options");
-		Term_putstr(3,  4, -1, TERM_WHITE, "(\377y6\377w/\377y7\377w/\377y8\377w)   Gameplay options 1/2/3");
+		Term_putstr(3,  3, -1, TERM_WHITE, "(\377y5\377w/\377y6\377w)     Audio options");
+		Term_putstr(3,  4, -1, TERM_WHITE, "(\377y7\377w/\377y8\377w/\377y9\377w)   Gameplay options 1/2/3");
 		Term_putstr(3,  5, -1, TERM_WHITE, "(\377yw\377w)       Window flags");
 		Term_putstr(3,  7, -1, TERM_WHITE, "(\377os\377w/\377oS\377w)     Save all options & flags / Save to global.opt file (account-wide)");
 		Term_putstr(3,  8, -1, TERM_WHITE, "(\377ol\377w)       Load all options & flags");
@@ -9788,12 +9788,14 @@ void do_cmd_options(void) {
 		} else if (k == '4') {
 			do_cmd_options_aux(7, "User Interface Options 4");
 		} else if (k == '5') {
-			do_cmd_options_aux(5, "Audio Options");
+			do_cmd_options_aux(5, "Audio Options 1");
 		} else if (k == '6') {
-			do_cmd_options_aux(2, "Gameplay Options 1");
+			do_cmd_options_aux(9, "Audio Options 2");
 		} else if (k == '7') {
-			do_cmd_options_aux(3, "Gameplay Options 2");
+			do_cmd_options_aux(2, "Gameplay Options 1");
 		} else if (k == '8') {
+			do_cmd_options_aux(3, "Gameplay Options 2");
+		} else if (k == '9') {
 			do_cmd_options_aux(8, "Gameplay Options 3");
 		}
 
@@ -11132,8 +11134,8 @@ void check_immediate_options(int i, bool yes, bool playing) {
 	}
 
 #ifdef USE_SOUND_2010
-	/* Refresh music when shuffle_music is toggled */
-	if (option_info[i].o_var == &c_cfg.shuffle_music) {
+	/* Refresh music when shuffle_music or play_all is toggled */
+	if (option_info[i].o_var == &c_cfg.shuffle_music || option_info[i].o_var == &c_cfg.play_all) {
 		/* ..but only if we're not already in the process of changing music! */
 		if (music_next == -1)
 			music(-3); //refresh!
