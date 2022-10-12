@@ -1958,40 +1958,123 @@ void handle_music(int Ind) {
 			return;
 		}
 
-		/* play town music also in its surrounding area of houses, if we're coming from the town? */
+		/* Play town music. Also in its surrounding area of houses, if we're coming from the town.
+		   NOTE: I use the term 'seasonal music' for special seasonal events: Christmas, Halloween, New Year's Eve.
+		         I use the term 'season music' for music depending on the four seasons, spring, summer, autumn, winter. - C. Blue */
 		if (istownarea(&p_ptr->wpos, MAX_TOWNAREA)) {
-			int tmus = 0, tmus_inverse = 0;
-			int tmus_reserve = 1; //generic town day music
+			int tmus = 1, tmus_inverse = 1; //intended town day+night music (and 1 is generic town music as first fallback)
+			int tmus_reserve = 0, tmus_inverse_reserve = 0; //bandaid replacement town day+night music (and 0 is generic game music as first fallback)
+			bool seasonal_music = FALSE; //instead of town music we use special seasonal music
 
 			i = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].town_idx;
 
-			if (night_surface) switch (town[i].type) { //nightly music
+			switch (town[i].type) { //daily music
 			default:
-			case TOWN_VANILLA: tmus = 49; tmus_inverse = 1; break; //default town
-			case TOWN_BREE: tmus = 50; tmus_inverse = 3; break; //Bree
-			case TOWN_GONDOLIN: tmus = 51; tmus_inverse = 4; break; //Gondo
-			case TOWN_MINAS_ANOR: tmus = 52; tmus_inverse = 5; break; //Minas
-			case TOWN_LOTHLORIEN: tmus = 53; tmus_inverse = 6; break; //Loth
-			case TOWN_KHAZADDUM: tmus = 54; tmus_inverse = 7; break; //Khaz
+			case TOWN_VANILLA: tmus_reserve = 1; tmus_inverse_reserve = 49; //default town
+				switch (season) {
+				case SEASON_SPRING: tmus = 113; tmus_inverse = 112; break;
+				case SEASON_SUMMER: tmus = 125; tmus_inverse = 124; break;
+				case SEASON_AUTUMN: tmus = 137; tmus_inverse = 136; break;
+				case SEASON_WINTER: tmus = 149; tmus_inverse = 148; break;
+				default: tmus = tmus_reserve; tmus_inverse = tmus_inverse_reserve; //paranoia
+				}
+				break;
+			case TOWN_BREE: tmus_reserve = 50; tmus_inverse_reserve = 3; //Bree
+				switch (season) {
+				case SEASON_SPRING: tmus = 115; tmus_inverse = 114; break;
+				case SEASON_SUMMER: tmus = 127; tmus_inverse = 126; break;
+				case SEASON_AUTUMN: tmus = 139; tmus_inverse = 138; break;
+				case SEASON_WINTER: tmus = 151; tmus_inverse = 150; break;
+				default: tmus = tmus_reserve; tmus_inverse = tmus_inverse_reserve; //paranoia
+				}
+				break;
+			case TOWN_GONDOLIN: tmus_reserve = 51; tmus_inverse_reserve = 4; //Gondo
+				switch (season) {
+				case SEASON_SPRING: tmus = 113; tmus_inverse = 112; break;
+				case SEASON_SUMMER: tmus = 125; tmus_inverse = 124; break;
+				case SEASON_AUTUMN: tmus = 137; tmus_inverse = 136; break;
+				case SEASON_WINTER: tmus = 149; tmus_inverse = 148; break;
+				default: tmus = tmus_reserve; tmus_inverse = tmus_inverse_reserve; //paranoia
+				}
+				break;
+			case TOWN_MINAS_ANOR: tmus_reserve = 52; tmus_inverse_reserve = 5; //Minas
+				switch (season) {
+				case SEASON_SPRING: tmus = 113; tmus_inverse = 112; break;
+				case SEASON_SUMMER: tmus = 125; tmus_inverse = 124; break;
+				case SEASON_AUTUMN: tmus = 137; tmus_inverse = 136; break;
+				case SEASON_WINTER: tmus = 149; tmus_inverse = 148; break;
+				default: tmus = tmus_reserve; tmus_inverse = tmus_inverse_reserve; //paranoia
+				}
+				break;
+			case TOWN_LOTHLORIEN: tmus_reserve = 53; tmus_inverse_reserve = 6; //Loth
+				switch (season) {
+				case SEASON_SPRING: tmus = 113; tmus_inverse = 112; break;
+				case SEASON_SUMMER: tmus = 125; tmus_inverse = 124; break;
+				case SEASON_AUTUMN: tmus = 137; tmus_inverse = 136; break;
+				case SEASON_WINTER: tmus = 149; tmus_inverse = 148; break;
+				default: tmus = tmus_reserve; tmus_inverse = tmus_inverse_reserve; //paranoia
+				}
+				break;
+			case TOWN_KHAZADDUM: tmus_reserve = 54; tmus_inverse_reserve = 7; //Khaz
+				switch (season) {
+				case SEASON_SPRING: tmus = 113; tmus_inverse = 112; break;
+				case SEASON_SUMMER: tmus = 125; tmus_inverse = 124; break;
+				case SEASON_AUTUMN: tmus = 137; tmus_inverse = 136; break;
+				case SEASON_WINTER: tmus = 149; tmus_inverse = 148; break;
+				default: tmus = tmus_reserve; tmus_inverse = tmus_inverse_reserve; //paranoia
+				}
+				break;
 			}
-			else switch (town[i].type) { //daily music
-			default:
-			case TOWN_VANILLA: tmus = 1; tmus_inverse = 49; break; //default town
-			case TOWN_BREE: tmus = 3; tmus_inverse = 50; break; //Bree
-			case TOWN_GONDOLIN: tmus = 4; tmus_inverse = 51; break; //Gondo
-			case TOWN_MINAS_ANOR: tmus = 5; tmus_inverse = 52; break; //Minas
-			case TOWN_LOTHLORIEN: tmus = 6; tmus_inverse = 53; break; //Loth
-			case TOWN_KHAZADDUM: tmus = 7; tmus_inverse = 54; break; //Khaz
+			if (night_surface) { //nightly music
+				int x;
+
+				x = tmus;
+				tmus = tmus_inverse;
+				tmus_inverse = x;
+
+				x = tmus_reserve;
+				tmus_reserve = tmus_inverse_reserve;
+				tmus_inverse_reserve = x;
+			}
+
+			/* Seasonal music, overrides the music of the place (usually Bree) where it mainly takes place */
+			if (season_halloween) {
+				/* Designated place: Bree */
+				if (town[i].type == TOWN_BREE) {
+					/* We use town's season-independant nightly music as replacement for dedicated event music */
+					tmus_reserve = night_surface ? tmus_reserve : tmus_inverse_reserve;
+					tmus = 83;
+					seasonal_music = TRUE;
+				}
+			}
+			else if (season_xmas) {
+				/* Designated place: Bree */
+				if (town[i].type == TOWN_BREE) {
+					/* We use town's season-independant nightly music as replacement for dedicated event music */
+					tmus_reserve = night_surface ? tmus_reserve : tmus_inverse_reserve;
+					tmus = 84;
+					seasonal_music = TRUE;
+				}
+			}
+			else if (season_newyearseve) {
+				/* Designated place: Bree */
+				if (town[i].type == TOWN_BREE) {
+					/* We use town's season-independant nightly music as replacement for dedicated event music */
+					tmus_reserve = night_surface ? tmus_reserve : tmus_inverse_reserve;
+					tmus = 85;
+					seasonal_music = TRUE;
+				}
 			}
 
 			/* Sickbay hack */
 			if (p_ptr->music_monster == -3) {
-				Send_music(Ind, 86, tmus);
+				/* Play it safe: It we don't have sickbay music we can assume that we might not have seasonal music either */
+				Send_music(Ind, 86, seasonal_music ? tmus_reserve : tmus);
 				return;
 			}
 			/* Tavern hack */
 			if (p_ptr->music_monster == -4) {
-				//abuse tmus_inverse
+				/* Abuse tmus_inverse, it stores the town's specific tavern music now. */
 				if (night_surface) switch (town[i].type) { //nightly music
 				default:
 				case TOWN_VANILLA: tmus_inverse = 69; break; //default town
@@ -2010,34 +2093,11 @@ void handle_music(int Ind) {
 				case TOWN_LOTHLORIEN: tmus_inverse = 76; break; //Loth
 				case TOWN_KHAZADDUM: tmus_inverse = 78; break; //Khaz
 				}
-				Send_music(Ind, tmus_inverse, tmus);
+				/* Actual use seasonally independant town's music as replacement.
+				   If we have seasonal music, this way the tavern makes a difference.
+				   If we don't have seasonal music.. we cannot use it anyway =p. */
+				Send_music(Ind, tmus_inverse, seasonal_music ? tmus_reserve : tmus);
 				return;
-			}
-
-			/* Seasonal music, overrides the music of the place (usually Bree) where it mainly takes place */
-			if (season_halloween) {
-				/* Designated place: Bree */
-				if (town[i].type == TOWN_BREE) {
-					tmus_reserve = tmus_inverse; //correctly counter-switch day vs night music again, as replacement for dedicated event music
-					tmus_inverse = tmus;
-					tmus = 83;
-				}
-			}
-			else if (season_xmas) {
-				/* Designated place: Bree */
-				if (town[i].type == TOWN_BREE) {
-					tmus_reserve = tmus_inverse; //correctly counter-switch day vs night music again, as replacement for dedicated event music
-					tmus_inverse = tmus;
-					tmus = 84;
-				}
-			}
-			else if (season_newyearseve) {
-				/* Designated place: Bree */
-				if (town[i].type == TOWN_BREE) {
-					tmus_reserve = tmus_inverse; //correctly counter-switch day vs night music again, as replacement for dedicated event music
-					tmus_inverse = tmus;
-					tmus = 85;
-				}
 			}
 
 			/* now the specialty: If we're coming from elsewhere,
@@ -2047,7 +2107,10 @@ void handle_music(int Ind) {
 			if (istown(&p_ptr->wpos) || p_ptr->music_current == tmus
 			    /* don't switch from town area music to wild music on day/night change: */
 			    || p_ptr->music_current == tmus_inverse)
-				Send_music(Ind, tmus, night_surface ? tmus_inverse : tmus_reserve);
+				/* Season-specific town music; with season-indenpendant town music as reserve.
+				   (And both are day/night-specific, so at least basic (season-independant)
+				    day AND night music must be present for each town type, or there will be silence at some point.) */
+				Send_music(Ind, tmus, tmus_reserve);
 			/* Wilderness music */
 			else if (night_surface) {
 				/* Nightly wilderness music */
@@ -2067,7 +2130,7 @@ void handle_music(int Ind) {
 				}
 			}
 			return;
-		} else { /* Not a town, so it's wilderness */
+		} else { /* Not a town area, so it's wilderness */
 			if (night_surface) {
 				/* Nightly wilderness music */
 				switch (season) {

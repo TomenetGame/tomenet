@@ -465,6 +465,58 @@ audio_bgm = {
     "wilderness_autumn_night",
     "wilderness_winter_day",--110
     "wilderness_winter_night",
+
+    "town_generic_spring_day",
+    "town_generic_spring_night",
+    "Bree_spring_day",
+    "Bree_spring_night",
+    "Gondolin_spring_day",
+    "Gondolin_spring_night",
+    "MinasAnor_spring_day",
+    "MinasAnor_spring_night",
+    "Lothlorien_spring_day",--120
+    "Lothlorien_spring_night",
+    "Khazaddum_spring_day",
+    "Khazaddum_spring_night",
+
+    "town_generic_summer_day",
+    "town_generic_summer_night",
+    "Bree_summer_day",
+    "Bree_summer_night",
+    "Gondolin_summer_day",
+    "Gondolin_summer_night",
+    "MinasAnor_summer_day",--130
+    "MinasAnor_summer_night",
+    "Lothlorien_summer_day",
+    "Lothlorien_summer_night",
+    "Khazaddum_summer_day",
+    "Khazaddum_summer_night",
+
+    "town_generic_autumn_day",
+    "town_generic_autumn_night",
+    "Bree_autumn_day",
+    "Bree_autumn_night",
+    "Gondolin_autumn_day",--140
+    "Gondolin_autumn_night",
+    "MinasAnor_autumn_day",
+    "MinasAnor_autumn_night",
+    "Lothlorien_autumn_day",
+    "Lothlorien_autumn_night",
+    "Khazaddum_autumn_day",
+    "Khazaddum_autumn_night",
+
+    "town_generic_winter_day",
+    "town_generic_winter_night",
+    "Bree_winter_day",--150
+    "Bree_winter_night",
+    "Gondolin_winter_day",
+    "Gondolin_winter_night",
+    "MinasAnor_winter_day",
+    "MinasAnor_winter_night",
+    "Lothlorien_winter_day",
+    "Lothlorien_winter_night",
+    "Khazaddum_winter_day",
+    "Khazaddum_winter_night",--(159)
 }
 function get_music_name(idx)
     if audio_bgm[idx + 1] == nil then return "" end
