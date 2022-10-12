@@ -3224,8 +3224,8 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				}
 
 				if (!strcasecmp(buf, "Bree")
-				    || my_strcasestr(buf, "Barr")
-				    || my_strcasestr(buf, "Downs")
+				    || my_strcasestr(buf, "Barrow") /* "Barr" is too short, collides with Frost Barrier */
+				    //|| my_strcasestr(buf, "Downs")
 				    || my_strcasestr(buf, "Train")
 				    || my_strcasestr(buf, "Tower")
 				    || !strcasecmp(buf, "tt")) {
