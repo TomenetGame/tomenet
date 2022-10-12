@@ -1722,6 +1722,80 @@ static errr CheckEvent(bool wait) {
 	return(0);
 }
 
+#ifdef USE_GRAPHICS
+/* Frees all graphics structures in provided term_data and sets them to zero values. */
+static void free_graphics(term_data *td) {
+	if (td->tiles) {
+		XDestroyImage(td->tiles);
+		td->tiles = NULL;
+	}
+	if (td->bgmask) {
+		XFreePixmap(Metadpy->dpy, td->bgmask);
+		td->bgmask = None;
+	}
+	if (td->fgmask) {
+		XFreePixmap(Metadpy->dpy, td->fgmask);
+		td->fgmask = None;
+	}
+	if (td->tilePreparation) {
+		XFreePixmap(Metadpy->dpy, td->tilePreparation);
+		td->tilePreparation = None;
+	}
+}
+#endif
+
+/* Closes all X11 windows and frees all allocated data structures for input parameter. */
+static errr term_data_nuke(term_data *td) {
+	if (td == NULL) return(0);
+	if (td->outer && !td->outer->nuke) return(1);
+	if (td->inner && !td->inner->nuke) return(2);
+	if (td->fnt && !td->fnt->nuke) return(3);
+
+#ifdef USE_GRAPHICS
+	// Free graphics structures.
+	if (use_graphics) {
+		/* Free graphic tiles & masks. */
+		free_graphics(td);
+	}
+#endif
+
+	// Unmap & free inner window.
+	if (td->inner) {
+		if (Infowin == td->inner) Infowin_set(NULL);
+		if (td->inner->win) {
+			XSelectInput(Metadpy->dpy, td->inner->win, 0L);
+			XUnmapWindow(Metadpy->dpy, td->inner->win);
+			XDestroyWindow(Metadpy->dpy, td->inner->win);
+		}
+		FREE(td->inner, infowin);
+	}
+
+	// Unmap & free outer window.
+	if (td->outer) {
+		if (Infowin == td->outer) Infowin_set(NULL);
+		if (td->outer->win) {
+			XSelectInput(Metadpy->dpy, td->outer->win, 0L);
+			XUnmapWindow(Metadpy->dpy, td->outer->win);
+			XDestroyWindow(Metadpy->dpy, td->outer->win);
+		}
+		FREE(td->outer, infowin);
+	}
+
+	/* Reset timers just to be sure. */
+	td->resize_timer.tv_sec=0;
+	td->resize_timer.tv_nsec=0;
+
+	// Free font.
+	if (td->fnt) {
+		if (Infofnt == td->fnt) Infofnt_set(NULL);
+		if (td->fnt->info) XFreeFont(Metadpy->dpy, td->fnt->info);
+		if (td->fnt->name) string_free(td->fnt->name);
+		FREE(td->fnt, infofnt);
+	}
+
+	return(0);
+}
+
 /*
  * Handle destruction of a term.
  * Here we should properly destroy all windows and resources for terminal.
@@ -1751,6 +1825,9 @@ static void Term_nuke_x11(term *t) {
 		strncpy(term_prefs[term_idx].font, td->fnt->name, sizeof(term_prefs[term_idx].font));
 		term_prefs[term_idx].font[sizeof(term_prefs[term_idx].font) - 1] = '\0';
 	}
+
+	term_data_nuke(td);
+	t->data = NULL;
 }
 
 /*
@@ -2923,10 +3000,7 @@ static void term_force_font(int term_idx, cptr fnt_name) {
 		/* Resize graphic tiles if needed too. */
 		if (use_graphics) {
 			/* Free old tiles & masks */
-			XFreePixmap(Metadpy->dpy, td->bgmask);
-			XFreePixmap(Metadpy->dpy, td->fgmask);
-			XDestroyImage(td->tiles);
-			XFreePixmap(Metadpy->dpy, td->tilePreparation);
+			free_graphics(td);
 
 			/* If window was resized, grapics tiles need to be resized too. */
 			td->tiles = ResizeImage(Metadpy->dpy, graphics_image,
