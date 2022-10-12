@@ -106,7 +106,9 @@ bool world_check_ignore(int Ind, uint32_t id, int16_t server) {
 	return(FALSE);
 }
 
-#define WP_PMSG_DEFAULT_COLOUR 'W'
+/* Colour of private messages received across worlds.
+   Keep consistent with util.c definition! */
+#define WP_PMSG_DEFAULT_COLOUR 's'
 void world_comm(int fd, int arg) {
 	static char buffer[1024], msg[MSG_LEN], *msg_ptr, *wmsg_ptr, *wmsg_ptr2;
 	char cbuf[sizeof(struct wpacket)];

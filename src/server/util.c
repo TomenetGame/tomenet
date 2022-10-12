@@ -4964,6 +4964,9 @@ static bool may_address_dm(player_type *p_ptr) {
 //#define PUNISH_WHISPER /* Swearing in whispers gets punished (if not, it still gets censored depending on target's censor_swearing setting) */
 //#define PUNISH_PARTYCHAT /* Swearing in party chat gets punished (if not, it still gets censored depending on target's censor_swearing setting) */
 //#define PUNISH_GUILDCHAT /* Swearing in guild chat gets punished (if not, it still gets censored depending on target's censor_swearing setting) */
+/* Colour of private messages received across worlds.
+   Keep consistent with util.c definition! */
+#define WP_PMSG_DEFAULT_COLOUR 's'
 static void player_talk_aux(int Ind, char *message) {
 	int i, len, target = 0, target_raw_len = 0;
 	char search[MSG_LEN], sender[MAX_CHARS];
@@ -5536,11 +5539,7 @@ static void player_talk_aux(int Ind, char *message) {
 				/* prevent buffer overflow */
 				message[MSG_LEN - strlen(p_ptr->name) - 7 - 8 - strlen(w_player->name) + target_raw_len] = 0;//8 are world server tax
 				world_pmsg_send(p_ptr->id, p_ptr->name, w_player->name, colon + 1);
- #if 0
-				msg_format(Ind, "\375\377s[%s:%s] %s", p_ptr->name, w_player->name, colon + 1);
- #else /* world server handles the colour codes */
-				msg_format(Ind, "\375[%s:%s] %s", p_ptr->name, w_player->name, censor ? colon + 1 : colon_u + 1);
- #endif
+				msg_format(Ind, "\375\377%c[%s:%s] %s", WP_PMSG_DEFAULT_COLOUR, p_ptr->name, w_player->name, colon + 1);
 
 				/* hack: assume that the target player will become the
 				   one we want to 'reply' to, afterwards, if we don't
