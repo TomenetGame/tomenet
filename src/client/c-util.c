@@ -8842,7 +8842,6 @@ static void do_cmd_options_fonts(void) {
 		case 'v':
 			if (y == 0) break; /* main window cannot be invisible */
 			term_toggle_visibility(y);
-			Term_putstr(0, 15, -1, TERM_YELLOW, "-- Changes to window visibilities require a restart of the client --");
 			break;
 
 		case '+':

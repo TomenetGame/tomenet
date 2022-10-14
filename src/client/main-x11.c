@@ -2695,9 +2695,8 @@ static errr x11_term_init(int term_id) {
 
 	if (err != 0) {
 		printf("Error initializing term_data for X11 terminal with index %d\n", term_id);
-		if (term_nuke(ang_term[term_id]) != 0) {
-			printf("Error freeing X11 terminal with index %d after failed initialization\n", term_id);
-		};
+		term_nuke(ang_term[term_id]);
+		ang_term[term_id] = NULL;
 		return(err);
 	}
 
@@ -3198,15 +3197,41 @@ const char* get_font_name(int term_idx) {
 	if (td->fnt) return td->fnt->name;
 	else return DEFAULT_X11_FONT;
 }
+
 void set_font_name(int term_idx, char* fnt) {
 	term_force_font(term_idx, fnt);
 }
+
 void term_toggle_visibility(int term_idx) {
-	term_prefs[term_idx].visible = !term_prefs[term_idx].visible;
-	/* NOTE: toggling visible flag of a window during runtime is dangerous:
-	   Three "special hack"s were added in term_force_font(), terminal_window_real_coords_x11() and Term_nuke_x11()
-	   to accomodate for this and to continue to treat the window as invisible. */
+	if (term_idx == 0) {
+		printf("Warning: Toggling visibility for main terminal window is not allowed\n");
+		return;
+	}
+
+	if (ang_term[term_idx]) {
+		/* Window is visible, close it and free its resources. */
+		term_nuke(ang_term[term_idx]);
+		ang_term[term_idx] = NULL;
+		term_prefs[term_idx].visible = false;
+		return;
+	}
+
+	/* Create and initialize terminal window. */
+	if (x11_term_init(term_idx)) {
+		printf("Error initializing x11 terminal window with index %d\n", term_idx);
+		term_prefs[term_idx].visible = false;
+		return;
+	}
+	term_prefs[term_idx].visible = true;
+
+	/* After initializing the new window is active. Switch to main window. */
+	Term_activate(&screen.t);
+	Infowin_set(screen.outer);
+
+	/* Redraw all windows. */
+	cmd_redraw();
 }
+
 bool term_get_visibility(int term_idx) {
 	return term_prefs[term_idx].visible;
 }
