@@ -11668,7 +11668,7 @@ void process_objects(void) {
 		if (!(turn % cfg.fps) && o_ptr->tval == TV_CHARGE && o_ptr->timeout) {
 			o_ptr->timeout--;
 			if (!o_ptr->timeout) {
-				detonate_charge(i); //also calls destroy_object_idx() on it
+				detonate_charge(i); //also calls delete_object_idx() on it
 				continue;
 			}
 		}
