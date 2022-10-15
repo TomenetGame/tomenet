@@ -2534,6 +2534,7 @@
 	((feat) == FEAT_MORE || (feat) == FEAT_LESS || (feat) == FEAT_WAY_MORE || (feat) == FEAT_WAY_LESS || \
 	(feat) == FEAT_BETWEEN || (feat) == FEAT_BEACON)
 
+/* For aquatic monsters/players: These feats can always be passed without damaging/impairing them. */
 #define is_always_passable(feat) \
 	(is_door(feat) || is_stair(feat) || \
 	(feat) == FEAT_FOUNTAIN || (feat) == FEAT_EMPTY_FOUNTAIN || (feat) == FEAT_FOUNTAIN_BLOOD)
