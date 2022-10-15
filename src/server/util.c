@@ -7744,7 +7744,7 @@ void intshuffle(int *array, int size) {
    todo: actually create own types for these. would also make DF3_JAIL_DUNGEON obsolete.
    If 'extra' is set, special info is added: Town name, to keep the two Angbands apart. */
 char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type, bool extra) {
-	static char *jail = "Jail Dungeon";
+	static char *jail = "a Jail Dungeon";
 	static char *pvp_arena = "The PvP Arena";
 	static char *highlander = "The Highlands";
 	static char *irondeepdive = "The Ironman Deep Dive Challenge";
@@ -7760,8 +7760,8 @@ char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type, bool
 		/* hack for the two Angbands - so much hardcoding.... */
 		if (extra && !strcmp(d_name + d_info[type].name, "Angband")) {
 			if (town[TIDX_LORIEN].x == x && town[TIDX_LORIEN].y == y)
-				return angband_lothlorien;
-			else return angband_khazaddum;
+				return(angband_lothlorien);
+			else return(angband_khazaddum);
 		} else /* default */
 			return(d_name + d_info[type].name);
 	}
@@ -7770,17 +7770,17 @@ char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type, bool
 	if (x == WPOS_PVPARENA_X &&
 	    y == WPOS_PVPARENA_Y &&
 	    tower == (WPOS_PVPARENA_Z > 0))
-		return pvp_arena;
+		return(pvp_arena);
 
 	if (x == WPOS_HIGHLANDER_X &&
 	    y == WPOS_HIGHLANDER_Y &&
 	    tower == (WPOS_HIGHLANDER_DUN_Z > 0))
-		return highlander;
+		return(highlander);
 
 	if (x == WPOS_IRONDEEPDIVE_X &&
 	    y == WPOS_IRONDEEPDIVE_Y &&
 	    tower == (WPOS_IRONDEEPDIVE_Z > 0))
-		return irondeepdive;
+		return(irondeepdive);
 
 	if (d_ptr && (
 #if 0 /* obsolete fortunately (/fixjaildun) */
@@ -7792,7 +7792,7 @@ char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type, bool
 #endif
 	    /* yay */
 	    (d_ptr->flags3 & DF3_JAIL_DUNGEON) ))
-		return jail;
+		return(jail);
 
 	/* really just "Wilderness" */
 	return(d_name + d_info[type].name);
