@@ -4905,6 +4905,7 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 	object_type *o_ptr;
 	int i, inum = i_ptr->number;
 	char o_name[ONAME_LEN];
+	u32b f3 = 0x0, dummy;
 
 	/* Look for free spaces or spaces to merge with */
 	for (i = 0; i < s_ptr->bpval; i++) {
@@ -4916,6 +4917,11 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 			if (i_ptr->number + o_ptr->number > 99) i_ptr->number = 99 - o_ptr->number;
 			/* Merge partially or fully */
 			if (object_similar(Ind, o_ptr, i_ptr, 0x4)) {
+				/* Check whether this item was requested by an item-retrieval quest.
+				   Note about quest_credited check: inven_carry() is also called by carry(),
+				   resulting in double crediting otherwise! */
+				if (p_ptr->quest_any_r_within_target && !o_ptr->quest_credited) quest_check_goal_r(Ind, o_ptr);
+
 				object_absorb(Ind, o_ptr, i_ptr);
 				/* Describe the object */
 				object_desc(Ind, o_name, o_ptr, TRUE, 3);
@@ -4936,6 +4942,44 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 			*o_ptr = *i_ptr;
 			o_ptr->marked = 0;
 			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
+
+			/* Check whether this item was requested by an item-retrieval quest
+			   Note about quest_credited check: inven_carry() is also called by carry(),
+			   resulting in double crediting otherwise! */
+			if (p_ptr->quest_any_r_within_target && !o_ptr->quest_credited) quest_check_goal_r(Ind, o_ptr);
+
+			if (!o_ptr->owner && !p_ptr->admin_dm) {
+				o_ptr->owner = p_ptr->id;
+				o_ptr->mode = p_ptr->mode;
+				if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &o_ptr->wpos); /* paranoia? */
+
+				/* One-time imprint "*identifyability*" for client's ITH_STARID/item_tester_hook_starid: */
+				if (!maybe_hidden_powers(Ind, o_ptr, FALSE)) o_ptr->ident |= ID_NO_HIDDEN;
+			}
+
+			/* Auto id ? */
+			if (p_ptr->auto_id) {
+				object_aware(Ind, o_ptr);
+				object_known(o_ptr);
+			}
+
+			/* Auto-inscriber */
+#ifdef AUTO_INSCRIBER
+			if (p_ptr->auto_inscribe) auto_inscribe(Ind, o_ptr, 0);
+#endif
+
+			object_flags(o_ptr, &dummy, &dummy, &f3, &dummy, &dummy, &dummy, &dummy);
+
+			/* Auto Curse */
+			if (f3 & TR3_AUTO_CURSE) {
+				/* The object recurse itself ! */
+				if (!(o_ptr->ident & ID_CURSED)) {
+					o_ptr->ident |= ID_CURSED;
+					o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
+					note_toggle_cursed(o_ptr, TRUE);
+				}
+			}
+
 			/* Describe the object */
 			object_desc(Ind, o_name, o_ptr, TRUE, 3);
 			msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));

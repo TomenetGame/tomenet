@@ -1551,7 +1551,7 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 	int i, num;
 	object_type *s_ptr;
 	player_type *p_ptr = Players[Ind];
-	bool delete_it;
+	bool delete_it, fully_stowed = FALSE;
 
 	/* Don't auto-stow unidentified items */
 	if (!object_known_p(Ind, o_ptr) || !object_aware_p(Ind, o_ptr)) return(FALSE);
@@ -1571,7 +1571,7 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 		if (s_ptr->sval != sub_sval) continue;
 
 		/* Eligible subinventory found, try to move as much as possible */
-		if (subinven_stow_aux(Ind, o_ptr, i)) break; /* If complete stack was moved, we're done */
+		if ((fully_stowed = subinven_stow_aux(Ind, o_ptr, i))) break; /* If complete stack was moved, we're done */
  #ifdef SUBINVEN_LIMIT_GROUP
 		break;
  #endif
@@ -1593,7 +1593,7 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 	//p_ptr->window |= (PW_EQUIP | PW_PLAYER);
 
 	/* If it was not an item from the floor, we'll discard/delete it manually */
-	if (o_idx == -1) return delete_it;
+	if (o_idx == -1) return(delete_it);
 
 	/* We picked up everything there was! Delete original */
 	if (delete_it) {
@@ -1612,8 +1612,10 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 		//o_ptr = &o_list[o_idx];
 		return(FALSE);
 	}
+	/* We tried to pick_one and managed to stow it! So we're done. */
+	else if (fully_stowed) return(TRUE);
 	/* We tried to pick_one, but still failed to stow it! So try to pick it up normally now. */
-	return(FALSE);
+	else return(FALSE);
 }
 #endif
 
