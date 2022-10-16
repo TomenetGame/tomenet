@@ -2367,7 +2367,9 @@ int party_add(int adder, cptr name) {
 	}
 
 	if (
-#ifdef ALLOW_NR_CROSS_PARTIES /* Note: Currently unnecessarily restricted: Actually q_ptr check is not needed, also not enabled for party_add_self(). */
+#ifdef ALLOW_NR_CROSS_PARTIES
+	    /* Note: Currently unnecessarily restricted: Actually q_ptr check is not needed, also not enabled for party_add_self().
+	       Note: Above note might be wrong! total_winner check helps that we don't allow MODE_PVP to join! */
 	    (!q_ptr->total_winner || !p_ptr->total_winner ||
 	    !at_netherrealm(&q_ptr->wpos) || !at_netherrealm(&p_ptr->wpos)) &&
 #endif
@@ -2495,7 +2497,7 @@ int party_add_self(int Ind, cptr party) {
 
 	/* Everlasting and other chars cannot be in the same party */
 	if (
-#if 0 /* hm */
+#if 0 /* hm - anyway, if enabled, ensure that pvp-mode doesn't join! */
 #ifdef ALLOW_NR_CROSS_PARTIES
 	    (!p_ptr->total_winner || !at_netherrealm(&p_ptr->wpos)) &&
 #endif

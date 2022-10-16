@@ -148,7 +148,8 @@
 #define RACE_DIZ
 
 /* Allow kings/queens/emperors/empresses to team up for Nether Realm.
-   Must be at the worldmap sector of NR entrance, or inside NR. */
+   Must be at the worldmap sector of NR entrance, or inside NR.
+   Note: Careful, that PVP-mode isn't allowed. Maybe all checks should just be moved into compat_*() functions. */
 #define ALLOW_NR_CROSS_PARTIES
 /* Best to enable when ALLOW_NR_CROSS_PARTIES is enabled:
    Allow kings/queens/emperors/empresses to trade items that were found in the

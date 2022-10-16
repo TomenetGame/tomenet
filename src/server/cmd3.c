@@ -4340,8 +4340,31 @@ void do_cmd_look(int Ind, int dir) {
 	if (c_ptr->m_idx < 0 && p_ptr->play_vis[0-c_ptr->m_idx] &&
 	    (!Players[0-c_ptr->m_idx]->admin_dm || player_sees_dm(Ind))) {
 		char extrainfo[MAX_CHARS] = { 0 };
+		char attr;
 
 		q_ptr = Players[0 - c_ptr->m_idx];
+		/* If we are soloist, we just display everyone in white anyway, what gives.. */
+		attr = (q_ptr->mode & MODE_PVP) ? 'y' : (
+		    ((q_ptr->mode & MODE_EVERLASTING) && !(p_ptr->mode & MODE_EVERLASTING)) ? 'B' : (
+		    ((!(q_ptr->mode & MODE_EVERLASTING) && (p_ptr->mode & MODE_EVERLASTING)) || (q_ptr->mode & MODE_SOLO)) ? 'D' : 'w'
+		    ));
+#ifdef ALLOW_NR_CROSS_PARTIES /* Note: total_winner check helps that we don't allow MODE_PVP to join! */
+		if ((q_ptr->total_winner && p_ptr->total_winner &&
+		    at_netherrealm(&q_ptr->wpos) && at_netherrealm(&p_ptr->wpos)) ||
+#endif
+#ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
+ #ifndef IDDC_IRON_COOP
+		    in_irondeepdive(&p_ptr->wpos) ||
+ #else
+		    on_irondeepdive(&p_ptr->wpos) ||
+ #endif
+#endif
+		/* Everlasting and other chars can be in the same party? */
+		    !(compat_mode(q_ptr->mode, p_ptr->mode)))
+			attr = 'w';
+
+		/* Hostile players: Mark with special colour when 'l'ooking at him */
+		if (check_hostile(Ind, -c_ptr->m_idx)) attr = 'R';
 
 		if (get_skill(p_ptr, SKILL_DIVINATION) == 50)
 			sprintf(extrainfo, ", %d HP, %d AC, %d Spd", q_ptr->chp, q_ptr->ac + q_ptr->to_a, q_ptr->pspeed - 110);
@@ -4351,15 +4374,15 @@ void do_cmd_look(int Ind, int dir) {
 
 		/* Format string */
 		if ((q_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (q_ptr->inventory[INVEN_BODY].sval == SV_COSTUME)) {
-			snprintf(out_val, sizeof(out_val), "%s the %s (%s)%s", q_ptr->name, r_name + r_info[q_ptr->inventory[INVEN_BODY].bpval].name, get_ptitle(q_ptr, FALSE), extrainfo);
+			snprintf(out_val, sizeof(out_val), "\377%c%s the %s (%s)%s", attr, q_ptr->name, r_name + r_info[q_ptr->inventory[INVEN_BODY].bpval].name, get_ptitle(q_ptr, FALSE), extrainfo);
 		} else if (q_ptr->body_monster) {
-			snprintf(out_val, sizeof(out_val), "%s the %s (%s)%s", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, get_ptitle(q_ptr, FALSE), extrainfo);
+			snprintf(out_val, sizeof(out_val), "\377%c%s the %s (%s)%s", attr, q_ptr->name, r_name + r_info[q_ptr->body_monster].name, get_ptitle(q_ptr, FALSE), extrainfo);
 		} else {
 #if 0 /* use normal race_info.title */
-			snprintf(out_val, sizeof(out_val), "%s the %s %s%s", q_ptr->name, race_info[q_ptr->prace].title, get_ptitle(q_ptr, FALSE), extrainfo);
+			snprintf(out_val, sizeof(out_val), "\377%c%s the %s %s%s", attr, q_ptr->name, race_info[q_ptr->prace].title, get_ptitle(q_ptr, FALSE), extrainfo);
 			//, class_info[q_ptr->pclass].title
 #else /* use special_prace_lookup */
-			snprintf(out_val, sizeof(out_val), "%s the %s%s%s", q_ptr->name, get_prace2(q_ptr), get_ptitle(q_ptr, FALSE), extrainfo);
+			snprintf(out_val, sizeof(out_val), "\377%c%s the %s%s%s", attr, q_ptr->name, get_prace2(q_ptr), get_ptitle(q_ptr, FALSE), extrainfo);
 #endif
 		}
 	/* A monster */
