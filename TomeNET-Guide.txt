@@ -7630,6 +7630,7 @@ The world map, ranging from 0,0 (bottom left corner) to 63,63
 (top right corner), bears several other towns that you can find and
 explore. These towns often contain different shops (some are said to offer
 *Identify* service or even a cure to Black Breath) and harder dungeons.
+For a list of towns and their local dungeons, see (4.5b).
 
 However, they might also be a very dangerous place to stay, compared to Bree.
 In general you can say the harder the local dungeon entrance of a town the
