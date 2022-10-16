@@ -1747,9 +1747,6 @@ static void free_graphics(term_data *td) {
 /* Closes all X11 windows and frees all allocated data structures for input parameter. */
 static errr term_data_nuke(term_data *td) {
 	if (td == NULL) return(0);
-	if (td->outer && !td->outer->nuke) return(1);
-	if (td->inner && !td->inner->nuke) return(2);
-	if (td->fnt && !td->fnt->nuke) return(3);
 
 #ifdef USE_GRAPHICS
 	// Free graphics structures.
@@ -1760,7 +1757,7 @@ static errr term_data_nuke(term_data *td) {
 #endif
 
 	// Unmap & free inner window.
-	if (td->inner) {
+	if (td->inner && td->inner->nuke) {
 		if (Infowin == td->inner) Infowin_set(NULL);
 		if (td->inner->win) {
 			XSelectInput(Metadpy->dpy, td->inner->win, 0L);
@@ -1771,7 +1768,7 @@ static errr term_data_nuke(term_data *td) {
 	}
 
 	// Unmap & free outer window.
-	if (td->outer) {
+	if (td->outer && td->outer->nuke) {
 		if (Infowin == td->outer) Infowin_set(NULL);
 		if (td->outer->win) {
 			XSelectInput(Metadpy->dpy, td->outer->win, 0L);
@@ -1786,7 +1783,7 @@ static errr term_data_nuke(term_data *td) {
 	td->resize_timer.tv_nsec=0;
 
 	// Free font.
-	if (td->fnt) {
+	if (td->fnt && td->fnt->nuke) {
 		if (Infofnt == td->fnt) Infofnt_set(NULL);
 		if (td->fnt->info) XFreeFont(Metadpy->dpy, td->fnt->info);
 		if (td->fnt->name) string_free(td->fnt->name);
@@ -1794,6 +1791,29 @@ static errr term_data_nuke(term_data *td) {
 	}
 
 	return(0);
+}
+
+/* Saves terminal window position, dimensions and font for term_idx to term_prefs.
+ * Note: The term_prefs visibility is not handled here. */
+static void term_data_to_term_prefs(int term_idx) {
+	if (term_idx < 0 || term_idx >= ANGBAND_TERM_MAX) return;
+	term_data *td = term_idx_to_term_data(term_idx);
+
+	/* Update position. */
+	term_prefs[term_idx].x = td->outer->x;
+	term_prefs[term_idx].y = td->outer->y;
+
+	/* Update dimensions. */
+	int cols = td->inner->w / td->fnt->wid;
+	int rows = td->inner->h / td->fnt->hgt;
+	term_prefs[term_idx].columns = cols;
+	term_prefs[term_idx].lines = rows;
+
+	/* Update font. */
+	if (strcmp(term_prefs[term_idx].font, td->fnt->name) != 0) {
+		strncpy(term_prefs[term_idx].font, td->fnt->name, sizeof(term_prefs[term_idx].font));
+		term_prefs[term_idx].font[sizeof(term_prefs[term_idx].font) - 1] = '\0';
+	}
 }
 
 /*
@@ -1814,17 +1834,8 @@ static void Term_nuke_x11(term *t) {
 		printf("Error getting terminal index from term_data\n");
 		return;
 	}
-	int cols = td->inner->w / td->fnt->wid;
-	int rows = td->inner->h / td->fnt->hgt;
 
-	term_prefs[term_idx].x = td->outer->x;
-	term_prefs[term_idx].y = td->outer->y;
-	term_prefs[term_idx].columns = cols;
-	term_prefs[term_idx].lines = rows;
-	if (strcmp(term_prefs[term_idx].font, td->fnt->name) != 0) {
-		strncpy(term_prefs[term_idx].font, td->fnt->name, sizeof(term_prefs[term_idx].font));
-		term_prefs[term_idx].font[sizeof(term_prefs[term_idx].font) - 1] = '\0';
-	}
+	term_data_to_term_prefs(term_idx);
 
 	term_data_nuke(td);
 	t->data = NULL;
@@ -2836,9 +2847,6 @@ errr init_x11(void) {
 				if (i == 0) {
 					/* Can't run without main screen. */
 					return(1);
-				} else {
-					/* Switch off the visibility for the failed term. */
-					term_prefs[i].visible = FALSE;
 				}
 			}
 		}
@@ -2964,7 +2972,7 @@ static void term_force_font(int term_idx, cptr fnt_name) {
 	term_data *td = term_idx_to_term_data(term_idx);
 
 	/* non-visible window has no fnt-> .. */
-	if (!term_prefs[term_idx].visible) return;
+	if (!term_get_visibility(term_idx)) return;
 
 
 	/* special hack: this window was invisible, but we just toggled
@@ -3041,7 +3049,7 @@ void terminal_window_real_coords_x11(int term_idx, int *ret_x, int *ret_y) {
 	char got_frame_extents = FALSE;
 
 	/* non-visible window has no window info .. */
-	if (!term_prefs[term_idx].visible) {
+	if (!term_get_visibility(term_idx)) {
 		*ret_x = *ret_y = 0;
 		return;
 	}
@@ -3208,18 +3216,22 @@ void term_toggle_visibility(int term_idx) {
 		return;
 	}
 
-	if (ang_term[term_idx]) {
-		/* Window is visible, close it and free its resources. */
+	if (term_get_visibility(term_idx)) {
+		/* Window is visible, save it, close it and free its resources. */
+
+		/* Save window position, dimension and font to term_prefs, cause at quitting the nuke_hook won't be called for closed windows. */
+		term_data_to_term_prefs(term_idx);
+		term_prefs[term_idx].visible = false;
+
+		/* Destroy window and free resources. */
 		term_nuke(ang_term[term_idx]);
 		ang_term[term_idx] = NULL;
-		term_prefs[term_idx].visible = false;
 		return;
 	}
 
 	/* Create and initialize terminal window. */
 	if (x11_term_init(term_idx)) {
 		printf("Error initializing x11 terminal window with index %d\n", term_idx);
-		term_prefs[term_idx].visible = false;
 		return;
 	}
 	term_prefs[term_idx].visible = true;
@@ -3232,8 +3244,12 @@ void term_toggle_visibility(int term_idx) {
 	cmd_redraw();
 }
 
+/* Returns true if terminal window specified by term_idx is currently visible. */
 bool term_get_visibility(int term_idx) {
-	return term_prefs[term_idx].visible;
+	if (term_idx < 0 || term_idx >= ANGBAND_TERM_MAX) return false;
+
+	/* Only windows initialized in ang_term array are currently visible. */
+	return (bool)ang_term[term_idx];
 }
 
 /* automatically store name+password to ini file if we're a new player? */
@@ -3352,7 +3368,7 @@ void animate_palette(void) {
 	/* Refresh aka redraw windows with new colour */
 	for (i = 0; i < ANGBAND_TERM_MAX; i++) {
 
-		if (!term_prefs[i].visible) continue;
+		if (!term_get_visibility(i)) continue;
 		if (term_prefs[i].x == -32000 || term_prefs[i].y == -32000) continue;
 
 		Term_activate(&term_idx_to_term_data(i)->t);
@@ -3373,7 +3389,7 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	/* Check for refresh market at the end of a palette data transmission */
 	if (c == 127 || c == 128) {
 		/* Refresh aka redraw the main window with new colour */
-		if (!term_prefs[0].visible) return;
+		if (!term_get_visibility(0)) return;
 		if (term_prefs[0].x == -32000 || term_prefs[0].y == -32000) return;
 		Term_activate(&term_idx_to_term_data(0)->t);
 		Term_redraw_section(0, 0, Term->wid-1, Term->hgt-1);
@@ -3443,7 +3459,7 @@ void set_palette(byte c, byte r, byte g, byte b) {
 
 #ifndef PALANIM_OPTIMIZED
 	/* Refresh aka redraw the main window with new colour */
-	if (!term_prefs[0].visible) return;
+	if (!term_get_visibility(0)) return;
 	if (term_prefs[0].x == -32000 || term_prefs[0].y == -32000) return;
 	Term_activate(&term_idx_to_term_data(0)->t);
 	Term_xtra(TERM_XTRA_FRESH, 0);
@@ -3467,7 +3483,7 @@ void refresh_palette(void) {
 
 	/* Refresh aka redraw windows with new colour (term 0 is already done in set_palette(128) line above) */
 	for (i = 1; i < ANGBAND_TERM_MAX; i++) {
-		if (!term_prefs[i].visible) continue;
+		if (!term_get_visibility(i)) continue;
 		if (term_prefs[i].x == -32000 || term_prefs[i].y == -32000) continue;
 
 		Term_activate(&term_idx_to_term_data(i)->t);
