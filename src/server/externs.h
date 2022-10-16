@@ -1211,8 +1211,8 @@ extern int Send_store_kick(int Ind);
 extern int Send_target_info(int ind, int x, int y, cptr buf);
 extern int Send_sound(int ind, int sound, int alternative, int type, int vol, s32b player_id, int dist_x, int dist_y);
 #ifdef USE_SOUND_2010
-extern int Send_music(int ind, int music, int musicalt);
-extern int Send_music_vol(int ind, int music, int musicalt, char vol);
+extern int Send_music(int ind, int music, int musicalt, int musicalt2);
+extern int Send_music_vol(int ind, int music, int musicalt, int musicalt2, char vol);
 extern int Send_sfx_ambient(int ind, int sfx_ambient, bool smooth);
 extern int Send_sfx_volume(int ind, char sfx_ambient_volume, char sfx_weather_volume);
 #endif
@@ -2558,7 +2558,7 @@ extern unsigned char runtime_server;
 /* variables for controlling global events (automated Highlander Tournament) - C. Blue */
 extern global_event_type global_event[MAX_GLOBAL_EVENTS];
 extern int sector00separation, sector00downstairs, sector00wall, ge_special_sector; /* see variable.c */
-extern int sector00music, sector00musicalt, sector00music_dun, sector00musicalt_dun;
+extern int sector00music, sector00musicalt, sector00musicalt2, sector00music_dun, sector00musicalt_dun, sector00musicalt2_dun;
 extern u32b sector00flags1, sector00flags2;
 extern u32b ge_contender_buffer_ID[MAX_CONTENDER_BUFFERS];
 extern int ge_contender_buffer_deed[MAX_CONTENDER_BUFFERS];

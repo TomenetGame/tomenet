@@ -3615,7 +3615,7 @@ struct player_type {
 	char warning_powins, warning_drop_town, warning_subinven, warning_limitbottles;
 
 #ifdef USE_SOUND_2010
-	int music_current, musicalt_current, music_monster; //background music currently playing for him/her; an overriding monster music
+	int music_current, musicalt_current, musicalt2_current, music_monster; //background music currently playing for him/her; an overriding monster music
 	char music_vol;
 	int audio_sfx, audio_mus, music_start;
 	int sound_ambient;

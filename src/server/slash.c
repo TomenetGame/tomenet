@@ -9996,7 +9996,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "Using music of player %s.", Players[j]->name);
 				f = Players[Ind]->esp_link_flags;
 				Players[Ind]->esp_link_flags &= ~LINKF_VIEW_DEDICATED;
-				Send_music(Ind, Players[j]->music_current, -1);
+				Send_music(Ind, Players[j]->music_current, -1, -1);
 				Players[Ind]->esp_link_flags = f;
 				return;
 			}
@@ -10054,7 +10054,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 				msg_format(Ind, "Playing <%d>.", k);
-				Send_music(Ind, k, -4);
+				Send_music(Ind, k, -4, -4);
 				return;
 			}
 			else if (prefix(messagelc, "/pvmus")) { /* play specific music at specific volume */
@@ -10068,7 +10068,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				msg_format(Ind, "Playing <%d> at volume <%d%%>.", k, atoi(token[2]));
 				if (is_older_than(&p_ptr->version, 4, 7, 3, 2, 0, 0)) msg_print(Ind, "\377ySince your client version is < 4.7.3.2.0.0 the volume will always be 100%%.");
-				Send_music_vol(Ind, k, -4, atoi(token[2]));
+				Send_music_vol(Ind, k, -4, -4, atoi(token[2]));
 				return;
 			}
 			else if (prefix(messagelc, "/ppmus")) { /* play specific music for specific player */
@@ -10083,7 +10083,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				j = name_lookup_loose(Ind, strchr(message3, ' ') + 1, FALSE, FALSE, FALSE);
 				if (!j) return;
 				msg_format(Ind, "Playing <%d> for player %s.", k, Players[j]->name);
-				Send_music(j, k, -4);
+				Send_music(j, k, -4, -4);
 				return;
 			}
 #endif

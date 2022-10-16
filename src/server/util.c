@@ -1781,7 +1781,7 @@ void sound_near_monster_atk(int m_idx, int Ind, cptr name, cptr alternative, int
  *     dungeons - generic/ironman/forcedownhellish
  *     towns - generic day/night (used for Menegroth/Nargothrond at times)
  * Note - dun-gen-iron and dun-gen-fdhell are currently swapped. */
-#define GHOST_MUSIC_HACK Send_music(Ind, -1, -1);
+#define GHOST_MUSIC_HACK Send_music(Ind, -1, -1, -1);
 void handle_music(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	dun_level *l_ptr = NULL;
@@ -1796,15 +1796,15 @@ void handle_music(int Ind) {
 	    ) {
 		p_ptr->music_monster = -2;
  #if 0
-		if (p_ptr->wpos.wz == 0) Send_music(Ind, 1, -1); /* 'generic town' music instead of Bree default */
+		if (p_ptr->wpos.wz == 0) Send_music(Ind, 1, -1, -1); /* 'generic town' music instead of Bree default */
 		else {
 			//47 and 48 are actually pieces used in other arena events
-			if (rand_int(2)) Send_music(Ind, 47, 1);
-			else Send_music(Ind, 48, 1);
+			if (rand_int(2)) Send_music(Ind, 47, 1, 1);
+			else Send_music(Ind, 48, 1, 1);
 		}
  #else
-		if (p_ptr->wpos.wz == 0) Send_music(Ind, 48, 1); /* 'arena' ;) sounds a bit like Unreal Tournament menu music hehe */
-		else Send_music(Ind, 47, 1); /* 'death match' music (pvp arena) */
+		if (p_ptr->wpos.wz == 0) Send_music(Ind, 48, 1, 1); /* 'arena' ;) sounds a bit like Unreal Tournament menu music hehe */
+		else Send_music(Ind, 47, 1, 1); /* 'death match' music (pvp arena) */
  #endif
 		return;
 	}
@@ -1847,52 +1847,52 @@ void handle_music(int Ind) {
 		//Zu-Aon
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, 45, 14);
+		Send_music(Ind, 45, 14, 14);
 		return;
 	} else if ((i != -1) && (l_ptr->flags1 & LF1_NO_GHOST)) { /* Assuming that only Morgoth's floor has LF1_NO_GHOST */
 		//Morgoth
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		if (p_ptr->total_winner) Send_music(Ind, 88, 44);
-		else Send_music(Ind, 44, 14);
+		if (p_ptr->total_winner) Send_music(Ind, 88, 44, 44);
+		else Send_music(Ind, 44, 14, 14);
 		return;
 	}
 
 	if (in_valinor(&p_ptr->wpos)) {
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, 8, 1); //Valinor
+		Send_music(Ind, 8, 1, 1); //Valinor
 		return;
 	} else if (in_pvparena(&p_ptr->wpos)) {
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, 66, 47); //PvP Arena (Highlander Deathmatch as alternative)
+		Send_music(Ind, 66, 47, 47); //PvP Arena (Highlander Deathmatch as alternative)
 		return;
 	} else if (ge_special_sector && in_arena(&p_ptr->wpos)) {
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, 48, 0); //Monster Arena Challenge
+		Send_music(Ind, 48, 0, 0); //Monster Arena Challenge
 		return;
 	} else if (in_sector00(&p_ptr->wpos)) {
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, sector00music, sector00musicalt);
+		Send_music(Ind, sector00music, sector00musicalt, sector00musicalt2);
 		return;
 	} else if (in_sector00_dun(&p_ptr->wpos)) {
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, sector00music_dun, sector00musicalt_dun);
+		Send_music(Ind, sector00music_dun, sector00musicalt_dun, sector00musicalt2_dun);
 		return;
 	} else if (d_ptr && !d_ptr->type && d_ptr->theme == DI_DEATH_FATE) {
-		if (p_ptr->wpos.wz == 1 || p_ptr->wpos.wz == -1) Send_music(Ind, 98, 55); //party/halloween
-		else Send_music_vol(Ind, 98, 55, 20);
+		if (p_ptr->wpos.wz == 1 || p_ptr->wpos.wz == -1) Send_music(Ind, 98, 55, 55); //party/halloween
+		else Send_music_vol(Ind, 98, 55, 55, 20);
 		return;
 	} else if (d_ptr && d_ptr->type == DI_DEATH_FATE && (l_ptr->flags2 & LF2_BROKEN)) {
 		if (zcave && zcave[2][55].feat == FEAT_UNSEALED_DOOR) {
-			Send_music(Ind, -4, -4);
+			Send_music(Ind, -4, -4, -4);
 			return;
 		}
-		Send_music(Ind, 99, 47); //misc/highlander, or 13 for generic-iron
+		Send_music(Ind, 99, 47, 47); //misc/highlander, or 13 for generic-iron
 		return;
 	}
 
@@ -1902,7 +1902,7 @@ void handle_music(int Ind) {
 #if 0 /* hack: init music as 'higher priority than boss-specific': */
 		p_ptr->music_monster = -2;
 #endif
-		Send_music(Ind, 46, 14); //No-Tele vault
+		Send_music(Ind, 46, 14, 14); //No-Tele vault
 		return;
 	}
 
@@ -1911,7 +1911,7 @@ void handle_music(int Ind) {
 	   won't get overriden by the next subsequent Send_music() call from those below here.
 	   If another Send_music() is not called, GHOST_MUSIC_HACK is used as dummy replacement
 	   to satisfy the client's expectation. (Client 4.7.4b+ handle the ghost music.) */
-	if (p_ptr->ghost && !p_ptr->admin_dm) Send_music(Ind, 89, -1);
+	if (p_ptr->ghost && !p_ptr->admin_dm) Send_music(Ind, 89, -1, -1);
 
 	/* rest of the music has lower priority than already running, boss-specific music */
 	if (p_ptr->music_monster != -1
@@ -1930,23 +1930,23 @@ void handle_music(int Ind) {
 		case STORE_BLACK:
 		case STORE_BLACKX:
 		case STORE_BLACK_DUN: //dungeon town black market
-			Send_music(Ind, 94, 93);
+			Send_music(Ind, 94, 93, 93);
 			return;
 		case STORE_BLACKS: //dungeon store
-			Send_music(Ind, 94, 95);
+			Send_music(Ind, 94, 95, 95);
 			return;
 		//casino music! Could contain a lot of pseudo ambient sfx too ;)
 		case STORE_CASINO:
-			Send_music(Ind, 96, 93);
+			Send_music(Ind, 96, 93, 93);
 			return;
 		}
 		/* Hack: Shops that don't offer the option to buy (store action '2') anything, aka 'service shops' */
 		for (a = 0; a < STORE_MAX_ACTION; a++)
 			if (st_info[p_ptr->store_num].actions[a] == 2) break;
-		if (a == STORE_MAX_ACTION) Send_music(Ind, 97, -1); //service shop music
+		if (a == STORE_MAX_ACTION) Send_music(Ind, 97, -1, -1); //service shop music
 		/* Normal shops (in town or elsewhere) */
-		else if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA) && !isdungeontown(&p_ptr->wpos)) Send_music(Ind, 95, -1); //dungeon shops (and strange world-surface shops not attached to any town, if they exist oO)
-		else Send_music(Ind, 93, -1); //town shops
+		else if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA) && !isdungeontown(&p_ptr->wpos)) Send_music(Ind, 95, -1, -1); //dungeon shops (and strange world-surface shops not attached to any town, if they exist oO)
+		else Send_music(Ind, 93, -1, -1); //town shops
 		return;
 	}
 
@@ -1954,7 +1954,7 @@ void handle_music(int Ind) {
 	if (p_ptr->wpos.wz == 0) {
 		/* Jail hack */
 		if (p_ptr->music_monster == -5) {
-			Send_music(Ind, 87, 46);
+			Send_music(Ind, 87, 46, 46);
 			return;
 		}
 
@@ -1968,64 +1968,65 @@ void handle_music(int Ind) {
 
 			i = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].town_idx;
 
-			switch (town[i].type) { //daily music
+			/* Store daily music as default, nightly music as 'inverse'. */
+			switch (town[i].type) {
 			default:
 			case TOWN_VANILLA: tmus_reserve = 1; tmus_inverse_reserve = 49; //default town
 				switch (season) {
-				case SEASON_SPRING: tmus = 113; tmus_inverse = 112; break;
-				case SEASON_SUMMER: tmus = 125; tmus_inverse = 124; break;
-				case SEASON_AUTUMN: tmus = 137; tmus_inverse = 136; break;
-				case SEASON_WINTER: tmus = 149; tmus_inverse = 148; break;
+				case SEASON_SPRING: tmus = 130; tmus_inverse = 131; break;
+				case SEASON_SUMMER: tmus = 142; tmus_inverse = 143; break;
+				case SEASON_AUTUMN: tmus = 154; tmus_inverse = 155; break;
+				case SEASON_WINTER: tmus = 166; tmus_inverse = 167; break;
 				default: tmus = tmus_reserve; tmus_inverse = tmus_inverse_reserve; //paranoia
 				}
 				break;
-			case TOWN_BREE: tmus_reserve = 50; tmus_inverse_reserve = 3; //Bree
+			case TOWN_BREE: tmus_reserve = 3; tmus_inverse_reserve = 50; //Bree
 				switch (season) {
-				case SEASON_SPRING: tmus = 115; tmus_inverse = 114; break;
-				case SEASON_SUMMER: tmus = 127; tmus_inverse = 126; break;
-				case SEASON_AUTUMN: tmus = 139; tmus_inverse = 138; break;
-				case SEASON_WINTER: tmus = 151; tmus_inverse = 150; break;
+				case SEASON_SPRING: tmus = 132; tmus_inverse = 133; break;
+				case SEASON_SUMMER: tmus = 144; tmus_inverse = 145; break;
+				case SEASON_AUTUMN: tmus = 156; tmus_inverse = 157; break;
+				case SEASON_WINTER: tmus = 168; tmus_inverse = 169; break;
 				default: tmus = tmus_reserve; tmus_inverse = tmus_inverse_reserve; //paranoia
 				}
 				break;
-			case TOWN_GONDOLIN: tmus_reserve = 51; tmus_inverse_reserve = 4; //Gondo
+			case TOWN_GONDOLIN: tmus_reserve = 4; tmus_inverse_reserve = 51; //Gondo
 				switch (season) {
-				case SEASON_SPRING: tmus = 113; tmus_inverse = 112; break;
-				case SEASON_SUMMER: tmus = 125; tmus_inverse = 124; break;
-				case SEASON_AUTUMN: tmus = 137; tmus_inverse = 136; break;
-				case SEASON_WINTER: tmus = 149; tmus_inverse = 148; break;
+				case SEASON_SPRING: tmus = 134; tmus_inverse = 135; break;
+				case SEASON_SUMMER: tmus = 146; tmus_inverse = 147; break;
+				case SEASON_AUTUMN: tmus = 158; tmus_inverse = 159; break;
+				case SEASON_WINTER: tmus = 170; tmus_inverse = 171; break;
 				default: tmus = tmus_reserve; tmus_inverse = tmus_inverse_reserve; //paranoia
 				}
 				break;
-			case TOWN_MINAS_ANOR: tmus_reserve = 52; tmus_inverse_reserve = 5; //Minas
+			case TOWN_MINAS_ANOR: tmus_reserve = 5; tmus_inverse_reserve = 52; //Minas
 				switch (season) {
-				case SEASON_SPRING: tmus = 113; tmus_inverse = 112; break;
-				case SEASON_SUMMER: tmus = 125; tmus_inverse = 124; break;
-				case SEASON_AUTUMN: tmus = 137; tmus_inverse = 136; break;
-				case SEASON_WINTER: tmus = 149; tmus_inverse = 148; break;
+				case SEASON_SPRING: tmus = 136; tmus_inverse = 137; break;
+				case SEASON_SUMMER: tmus = 148; tmus_inverse = 149; break;
+				case SEASON_AUTUMN: tmus = 160; tmus_inverse = 161; break;
+				case SEASON_WINTER: tmus = 172; tmus_inverse = 173; break;
 				default: tmus = tmus_reserve; tmus_inverse = tmus_inverse_reserve; //paranoia
 				}
 				break;
-			case TOWN_LOTHLORIEN: tmus_reserve = 53; tmus_inverse_reserve = 6; //Loth
+			case TOWN_LOTHLORIEN: tmus_reserve = 6; tmus_inverse_reserve = 53; //Loth
 				switch (season) {
-				case SEASON_SPRING: tmus = 113; tmus_inverse = 112; break;
-				case SEASON_SUMMER: tmus = 125; tmus_inverse = 124; break;
-				case SEASON_AUTUMN: tmus = 137; tmus_inverse = 136; break;
-				case SEASON_WINTER: tmus = 149; tmus_inverse = 148; break;
+				case SEASON_SPRING: tmus = 138; tmus_inverse = 139; break;
+				case SEASON_SUMMER: tmus = 150; tmus_inverse = 151; break;
+				case SEASON_AUTUMN: tmus = 162; tmus_inverse = 163; break;
+				case SEASON_WINTER: tmus = 174; tmus_inverse = 175; break;
 				default: tmus = tmus_reserve; tmus_inverse = tmus_inverse_reserve; //paranoia
 				}
 				break;
-			case TOWN_KHAZADDUM: tmus_reserve = 54; tmus_inverse_reserve = 7; //Khaz
+			case TOWN_KHAZADDUM: tmus_reserve = 7; tmus_inverse_reserve = 54; //Khaz
 				switch (season) {
-				case SEASON_SPRING: tmus = 113; tmus_inverse = 112; break;
-				case SEASON_SUMMER: tmus = 125; tmus_inverse = 124; break;
-				case SEASON_AUTUMN: tmus = 137; tmus_inverse = 136; break;
-				case SEASON_WINTER: tmus = 149; tmus_inverse = 148; break;
+				case SEASON_SPRING: tmus = 140; tmus_inverse = 141; break;
+				case SEASON_SUMMER: tmus = 152; tmus_inverse = 153; break;
+				case SEASON_AUTUMN: tmus = 164; tmus_inverse = 165; break;
+				case SEASON_WINTER: tmus = 176; tmus_inverse = 177; break;
 				default: tmus = tmus_reserve; tmus_inverse = tmus_inverse_reserve; //paranoia
 				}
 				break;
 			}
-			if (night_surface) { //nightly music
+			if (night_surface) { //nightly music: The 'inverse' becomes the default and vice versa
 				int x;
 
 				x = tmus;
@@ -2069,13 +2070,13 @@ void handle_music(int Ind) {
 			/* Sickbay hack */
 			if (p_ptr->music_monster == -3) {
 				/* Play it safe: It we don't have sickbay music we can assume that we might not have seasonal music either */
-				Send_music(Ind, 86, seasonal_music ? tmus_reserve : tmus);
+				Send_music(Ind, 86, seasonal_music ? tmus_reserve : tmus, seasonal_music ? tmus_reserve : tmus);
 				return;
 			}
 			/* Tavern hack */
 			if (p_ptr->music_monster == -4) {
 				/* Abuse tmus_inverse, it stores the town's specific tavern music now. */
-				if (night_surface) switch (town[i].type) { //nightly music
+				if (night_surface) switch (town[i].type) { //nightly tavern music
 				default:
 				case TOWN_VANILLA: tmus_inverse = 69; break; //default town
 				case TOWN_BREE: tmus_inverse = 71; break; //Bree
@@ -2084,7 +2085,7 @@ void handle_music(int Ind) {
 				case TOWN_LOTHLORIEN: tmus_inverse = 77; break; //Loth
 				case TOWN_KHAZADDUM: tmus_inverse = 79; break; //Khaz
 				}
-				else switch (town[i].type) { //daily music
+				else switch (town[i].type) { //daily tavern music
 				default:
 				case TOWN_VANILLA: tmus_inverse = 68; break; //default town
 				case TOWN_BREE: tmus_inverse = 70; break; //Bree
@@ -2096,7 +2097,7 @@ void handle_music(int Ind) {
 				/* Actual use seasonally independant town's music as replacement.
 				   If we have seasonal music, this way the tavern makes a difference.
 				   If we don't have seasonal music.. we cannot use it anyway =p. */
-				Send_music(Ind, tmus_inverse, seasonal_music ? tmus_reserve : tmus);
+				Send_music(Ind, tmus_inverse, seasonal_music ? tmus_reserve : tmus, seasonal_music ? tmus_reserve : tmus);
 				return;
 			}
 
@@ -2110,7 +2111,7 @@ void handle_music(int Ind) {
 				/* Season-specific town music; with season-indenpendant town music as reserve.
 				   (And both are day/night-specific, so at least basic (season-independant)
 				    day AND night music must be present for each town type, or there will be silence at some point.) */
-				Send_music(Ind, tmus, tmus_reserve);
+				Send_music(Ind, tmus, tmus_reserve, tmus_reserve);
 				return;
 			}
 			/* Fall through to wilderness music */
@@ -2118,21 +2119,81 @@ void handle_music(int Ind) {
 
 		/* Play wilderness music */
 		if (night_surface) {
+			int m_terrain = -1, m_season = -1, m_fallback = 10;
+
 			/* Nightly wilderness music */
 			switch (season) {
-			case SEASON_SPRING: Send_music(Ind, 105, 10); break;
-			case SEASON_SUMMER: Send_music(Ind, 107, 10); break;
-			case SEASON_AUTUMN: Send_music(Ind, 109, 10); break;
-			case SEASON_WINTER: Send_music(Ind, 111, 10); break;
+			case SEASON_SPRING: m_season = 105; break;
+			case SEASON_SUMMER: m_season = 107; break;
+			case SEASON_AUTUMN: m_season = 109; break;
+			case SEASON_WINTER: m_season = 111; break;
 			}
+
+			/* Terrain-specific wilderness music */
+			switch (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type) {
+			case WILD_LAKE: m_terrain = 121; break;
+			case WILD_GRASSLAND: m_terrain = 113; break;
+			case WILD_FOREST: m_terrain = 115; break;
+			case WILD_VOLCANO: m_terrain = 117; break;
+			case WILD_SHORE1: m_terrain = 119; break;
+			case WILD_SHORE2: m_terrain = 119; break;
+			case WILD_OCEANBED1: m_terrain = 119; break;
+			case WILD_WASTELAND: m_terrain = 125; break;
+			case WILD_UNDEFINED: m_terrain = 113; break; //paranoia
+			case WILD_CLONE: m_terrain = 113; break; //paranoia
+			case WILD_TOWN: m_terrain = 113; break; //paranoia
+			case WILD_OCEAN: m_terrain = 119; break;
+			case WILD_RIVER: m_terrain = 121; break;
+			case WILD_COAST: m_terrain = 119; break;
+			case WILD_MOUNTAIN: m_terrain = 117; break;
+			case WILD_DENSEFOREST: m_terrain = 115; break;
+			case WILD_OCEANBED2: m_terrain = 119; break;
+			case WILD_DESERT: m_terrain = 127; break;
+			case WILD_ICE: m_terrain = 129; break;
+			case WILD_SWAMP: m_terrain = 123; break;
+			}
+
+			if (is_atleast(&p_ptr->version, 4, 8, 1, 2, 0, 0))
+				Send_music(Ind, m_terrain, m_season, m_fallback);
+			else Send_music(Ind, m_season, m_fallback, m_fallback);
 		} else {
+			int m_terrain = -1, m_season = -1, m_fallback = 9;
+
 			/* Daily wilderness music */
 			switch (season) {
-			case SEASON_SPRING: Send_music(Ind, 104, 9); break;
-			case SEASON_SUMMER: Send_music(Ind, 106, 9); break;
-			case SEASON_AUTUMN: Send_music(Ind, 108, 9); break;
-			case SEASON_WINTER: Send_music(Ind, 110, 9); break;
+			case SEASON_SPRING: m_season = 104; break;
+			case SEASON_SUMMER: m_season = 106; break;
+			case SEASON_AUTUMN: m_season = 108; break;
+			case SEASON_WINTER: m_season = 110; break;
 			}
+
+			/* Terrain-specific wilderness music */
+			switch (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type) {
+			case WILD_LAKE: m_terrain = 120; break;
+			case WILD_GRASSLAND: m_terrain = 112; break;
+			case WILD_FOREST: m_terrain = 114; break;
+			case WILD_VOLCANO: m_terrain = 116; break;
+			case WILD_SHORE1: m_terrain = 118; break;
+			case WILD_SHORE2: m_terrain = 118; break;
+			case WILD_OCEANBED1: m_terrain = 118; break;
+			case WILD_WASTELAND: m_terrain = 124; break;
+			case WILD_UNDEFINED: m_terrain = 112; break; //paranoia
+			case WILD_CLONE: m_terrain = 112; break; //paranoia
+			case WILD_TOWN: m_terrain = 112; break; //paranoia
+			case WILD_OCEAN: m_terrain = 118; break;
+			case WILD_RIVER: m_terrain = 120; break;
+			case WILD_COAST: m_terrain = 118; break;
+			case WILD_MOUNTAIN: m_terrain = 116; break;
+			case WILD_DENSEFOREST: m_terrain = 114; break;
+			case WILD_OCEANBED2: m_terrain = 118; break;
+			case WILD_DESERT: m_terrain = 126; break;
+			case WILD_ICE: m_terrain = 128; break;
+			case WILD_SWAMP: m_terrain = 122; break;
+			}
+
+			if (is_atleast(&p_ptr->version, 4, 8, 1, 2, 0, 0))
+				Send_music(Ind, m_terrain, m_season, m_fallback);
+			else Send_music(Ind, m_season, m_fallback, m_fallback);
 		}
 		return;
 	/* in the dungeon */
@@ -2143,25 +2204,25 @@ void handle_music(int Ind) {
 				if (dlev == 40) {
 					/* Tavern hack */
 					if (p_ptr->music_monster == -4) {
-						Send_music(Ind, 81, 57);
+						Send_music(Ind, 81, 57, 57);
 						return;
 					}
-					Send_music(Ind, 57, 1); /* Menegroth: own music, fallback to generic town */
+					Send_music(Ind, 57, 1, 1); /* Menegroth: own music, fallback to generic town */
 				} else {
 					/* Tavern hack */
 					if (p_ptr->music_monster == -4) {
-						Send_music(Ind, 82, 58);
+						Send_music(Ind, 82, 58, 58);
 						return;
 					}
-					Send_music(Ind, 58, 49); /* Nargothrond: own music, fallback to generic town night */
+					Send_music(Ind, 58, 49, 49); /* Nargothrond: own music, fallback to generic town night */
 				}
 			} else {
 				/* Tavern hack */
 				if (p_ptr->music_monster == -4) {
-					Send_music(Ind, 80, 2);
+					Send_music(Ind, 80, 2, 2);
 					return;
 				}
-				Send_music(Ind, 2, 1); /* the usual music for this case */
+				Send_music(Ind, 2, 1, 1); /* the usual music for this case */
 			}
 			return;
 		}
@@ -2174,7 +2235,7 @@ void handle_music(int Ind) {
 		{
 			if (p_ptr->distinct_floor_feeling || is_admin(p_ptr)) {
 				if (l_ptr->flags2 & LF2_OOD_HI) {
-					Send_music(Ind, 46, 14); //what a terrifying place
+					Send_music(Ind, 46, 14, 14); //what a terrifying place
 					return;
 				}
 			}
@@ -2184,49 +2245,49 @@ void handle_music(int Ind) {
 		switch (i) {
 		default:
 		case 0:
-			if (d_ptr->flags2 & DF2_NO_DEATH) Send_music(Ind, 12, 11);//note: music file (dungeon_generic_nodeath) is identical to the one of the Training Tower
-			else if (d_ptr->flags2 & DF2_IRON) Send_music(Ind, 13, 11);
-			else if ((d_ptr->flags2 & DF2_HELL) || (d_ptr->flags1 & DF1_FORCE_DOWN)) Send_music(Ind, 14, 11);
-			else Send_music(Ind, 11, 0); //dungeon, generic
+			if (d_ptr->flags2 & DF2_NO_DEATH) Send_music(Ind, 12, 11, 11);//note: music file (dungeon_generic_nodeath) is identical to the one of the Training Tower
+			else if (d_ptr->flags2 & DF2_IRON) Send_music(Ind, 13, 11, 11);
+			else if ((d_ptr->flags2 & DF2_HELL) || (d_ptr->flags1 & DF1_FORCE_DOWN)) Send_music(Ind, 14, 11, 11);
+			else Send_music(Ind, 11, 0, 0); //dungeon, generic
 			return;
-		case 1: Send_music(Ind, 32, 11); return; //Mirkwood
-		case 2: Send_music(Ind, 17, 11); return; //Mordor
-		case 3: Send_music(Ind, 19, 11); return; //Angband
-		case 4: Send_music(Ind, 16, 11); return; //Barrow-Downs
-		case 5: Send_music(Ind, 21, 11); return; //Mount Doom
-		case 6: Send_music(Ind, 22, 13); return; //Nether Realm
-		case 7: Send_music(Ind, 35, 11); return; //Submerged Ruins
-		case 8: Send_music(Ind, 26, 11); return; //Halls of Mandos
-		case 9: Send_music(Ind, 30, 11); return; //Cirith Ungol
-		case 10: Send_music(Ind, 28, 11); return; //The Heart of the Earth
-		case 16: Send_music(Ind, 18, 11); return; //The Paths of the Dead
-		case 17: Send_music(Ind, 37, 11); return; //The Illusory Castle
-		case 18: Send_music(Ind, 39, 11); return; //The Maze
-		case 19: Send_music(Ind, 20, 11); return; //The Orc Cave
-		case 20: Send_music(Ind, 36, 11); return; //Erebor
-		case 21: Send_music(Ind, 27, 11); return; //The Old Forest
-		case 22: Send_music(Ind, 29, 11); return; //The Mines of Moria
-		case 23: Send_music(Ind, 34, 11); return; //Dol Guldur
-		case 24: Send_music(Ind, 31, 11); return; //The Small Water Cave
-		case 25: Send_music(Ind, 38, 11); return; //The Sacred Land of Mountains
-		case 26: Send_music(Ind, 24, 11); return; //The Land of Rhun
-		case 27: Send_music(Ind, 25, 11); return; //The Sandworm Lair
-		case 28: Send_music(Ind, 33, 11); return; //Death Fate
-		case 29: Send_music(Ind, 23, 11); return; //The Helcaraxe
-		case 30: Send_music(Ind, 15, 12); return; //The Training Tower
+		case 1: Send_music(Ind, 32, 11, 11); return; //Mirkwood
+		case 2: Send_music(Ind, 17, 11, 11); return; //Mordor
+		case 3: Send_music(Ind, 19, 11, 11); return; //Angband
+		case 4: Send_music(Ind, 16, 11, 11); return; //Barrow-Downs
+		case 5: Send_music(Ind, 21, 11, 11); return; //Mount Doom
+		case 6: Send_music(Ind, 22, 13, 11); return; //Nether Realm
+		case 7: Send_music(Ind, 35, 11, 11); return; //Submerged Ruins
+		case 8: Send_music(Ind, 26, 11, 11); return; //Halls of Mandos
+		case 9: Send_music(Ind, 30, 11, 11); return; //Cirith Ungol
+		case 10: Send_music(Ind, 28, 11, 11); return; //The Heart of the Earth
+		case 16: Send_music(Ind, 18, 11, 11); return; //The Paths of the Dead
+		case 17: Send_music(Ind, 37, 11, 11); return; //The Illusory Castle
+		case 18: Send_music(Ind, 39, 11, 11); return; //The Maze
+		case 19: Send_music(Ind, 20, 11, 11); return; //The Orc Cave
+		case 20: Send_music(Ind, 36, 11, 11); return; //Erebor
+		case 21: Send_music(Ind, 27, 11, 11); return; //The Old Forest
+		case 22: Send_music(Ind, 29, 11, 11); return; //The Mines of Moria
+		case 23: Send_music(Ind, 34, 11, 11); return; //Dol Guldur
+		case 24: Send_music(Ind, 31, 11, 11); return; //The Small Water Cave
+		case 25: Send_music(Ind, 38, 11, 11); return; //The Sacred Land of Mountains
+		case 26: Send_music(Ind, 24, 11, 11); return; //The Land of Rhun
+		case 27: Send_music(Ind, 25, 11, 11); return; //The Sandworm Lair
+		case 28: Send_music(Ind, 33, 11, 11); return; //Death Fate
+		case 29: Send_music(Ind, 23, 11, 11); return; //The Helcaraxe
+		case 30: Send_music(Ind, 15, 12, 11); return; //The Training Tower
 		//31 is handled above by in_valinor() check
 		case 32:
-			if (is_newer_than(&p_ptr->version, 4, 5, 6, 0, 0, 1)) Send_music(Ind, 56, 13); //The Cloud Planes
+			if (is_newer_than(&p_ptr->version, 4, 5, 6, 0, 0, 1)) Send_music(Ind, 56, 13, 13); //The Cloud Planes
 			else {
-				if (p_ptr->audio_mus == 56) Send_music(Ind, 13, 0); /* outdated music pack? (use ironman music for now (forcedown/hellish doesn't fit)) */
-				else Send_music(Ind, 56, 13); /* the actual specific music for this dungeon */
+				if (p_ptr->audio_mus == 56) Send_music(Ind, 13, 0, 0); /* outdated music pack? (use ironman music for now (forcedown/hellish doesn't fit)) */
+				else Send_music(Ind, 56, 13, 13); /* the actual specific music for this dungeon */
 			}
 			return;
 		}
 	}
 
 	/* Shouldn't happen - send default (dungeon) music */
-	Send_music(Ind, 0, 0);
+	Send_music(Ind, 0, 0, 0);
 }
 void handle_seasonal_music(void) {
 	player_type *p_ptr;

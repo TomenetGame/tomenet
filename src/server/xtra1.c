@@ -7338,7 +7338,7 @@ void update_stuff(int Ind) {
 			/* hack: temporarily remove the dedicated mind-link flag, to allow Send_music() */
 			f = Players[Ind2]->esp_link_flags;
 			Players[Ind2]->esp_link_flags &= ~LINKF_VIEW_DEDICATED;
-			Send_music(Ind2, Players[Ind]->music_current, Players[Ind]->musicalt_current);
+			Send_music(Ind2, Players[Ind]->music_current, Players[Ind]->musicalt_current, Players[Ind]->musicalt2_current);
 			/* ultra hack-- abuse this for ambient sfx too ^^ */
 			Send_sfx_ambient(Ind2, Players[Ind]->sound_ambient, FALSE);
 			Players[Ind2]->esp_link_flags = f;
@@ -8567,6 +8567,7 @@ static void process_global_event(int ge_id) {
 
 			sector00music_dun = 62;
 			sector00musicalt_dun = 0;
+			sector00musicalt2_dun = 0;
 
 			/* teleport the participants into the dungeon */
 			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
@@ -8641,6 +8642,7 @@ static void process_global_event(int ge_id) {
 		case 2: /* final exp phase after the warning has been issued - end prematurely if needed (see above) */
 			sector00music_dun = 63;
 			sector00musicalt_dun = 0;
+			sector00musicalt2_dun = 0;
 
 			n = 0;
 			k = 0;
@@ -8668,6 +8670,7 @@ static void process_global_event(int ge_id) {
 			ge->state[3] = 0;
 			sector00music = 47; /* death match theme */
 			sector00musicalt = 0;
+			sector00musicalt2 = 0;
 
 			/* got a staircase to remove? */
 			if (ge->extra[5]) {
@@ -9016,6 +9019,7 @@ static void process_global_event(int ge_id) {
 			sector00separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
 			sector00music = 64;
 			sector00musicalt = 46; /* terrifying (notele) music */
+			sector00musicalt2 = 46;
 			sector00flags1 = LF1_NO_MAGIC_MAP | LF1_NO_MAGIC;
 			sector00flags2 = LF2_NO_RUN | LF2_NO_TELE | LF2_NO_DETECT | LF2_NO_ESP | LF2_NO_SPEED | LF2_NO_RES_HEAL | LF2_FAIR_TERRAIN_DAM | LF2_INDOORS;
 			sector00wall = FEAT_PERM_INNER; //FEAT_PERM_SOLID gets shaded to slate :/
@@ -9291,6 +9295,7 @@ static void process_global_event(int ge_id) {
 #ifdef USE_SOUND_2010
 			sector00music = 65;
 			sector00musicalt = 47; /* death match music */
+			sector00musicalt2 = 47;
 			for (i = 1; i <= NumPlayers; i++)
 				if (!Players[i]->admin_dm && in_sector00(&Players[i]->wpos))
 					handle_music(i);

@@ -6781,9 +6781,9 @@ if (cfg.unikill_format) {
 
 #ifdef USE_SOUND_2010
 	/* Dungeon-boss-slain music if available client-side */
-	if (is_Sauron) Send_music(Ind, 91, -1);
-	//else if (is_Morgoth) Send_music(Ind, 88, -1); //handled in handle_music() already
-	else if (is_ZuAon) Send_music(Ind, 92, -1);
+	if (is_Sauron) Send_music(Ind, 91, -1, -1);
+	//else if (is_Morgoth) Send_music(Ind, 88, -1, -1); //handled in handle_music() already
+	else if (is_ZuAon) Send_music(Ind, 92, -1, -1);
 #endif
 
 	if (r_idx == RI_BLUE) { /* just for now, testing */
@@ -6804,7 +6804,7 @@ if (cfg.unikill_format) {
 		    );
 #ifdef USE_SOUND_2010
 		/* Dungeon-boss-slain music if available client-side */
-		if (!is_Sauron && !is_Morgoth && !is_ZuAon) Send_music(Ind, 90, -1);
+		if (!is_Sauron && !is_Morgoth && !is_ZuAon) Send_music(Ind, 90, -1, -1);
 #endif
 
 		/* Drop final artifact? */
@@ -6964,7 +6964,7 @@ if (cfg.unikill_format) {
 	else if (r_ptr->flags1 & RF1_UNIQUE) {
 		/* Special-unique-slain music if available client-side */
 		//todo: make Nazgul check in melee2.c consistent with when this song is actually already playing..
-		if (r_ptr->level >= 98 && !is_Sauron && !is_Morgoth && !is_ZuAon) Send_music(Ind, 100, -1);
+		if (r_ptr->level >= 98 && !is_Sauron && !is_Morgoth && !is_ZuAon) Send_music(Ind, 100, -1, -1);
 
 		/* all-Nazgul-slain or Nazgul-slain music if available client-side, but don't override important music */
 		else if ((r_ptr->flags7 & RF7_NAZGUL) &&
@@ -6973,11 +6973,11 @@ if (cfg.unikill_format) {
 			if (p_ptr->r_killed[RI_UVATHA] == 1 && p_ptr->r_killed[RI_ADUNAPHEL] == 1 && p_ptr->r_killed[RI_AKHORAHIL] == 1 &&
 			    p_ptr->r_killed[RI_REN] == 1 && p_ptr->r_killed[RI_JI] == 1 && p_ptr->r_killed[RI_DWAR] == 1 &&
 			    p_ptr->r_killed[RI_HOARMUTH] == 1 && p_ptr->r_killed[RI_KHAMUL] == 1 && p_ptr->r_killed[RI_WITCHKING] == 1)
-				Send_music(Ind, 102, -1);
+				Send_music(Ind, 102, -1, -1);
 			else {
 				/* No further Nazgul in line of sight? */
 				//todo: implement some not too expensive check maybe -_-
-				Send_music(Ind, 101, -1);
+				Send_music(Ind, 101, -1, -1);
 			}
 		}
 	}

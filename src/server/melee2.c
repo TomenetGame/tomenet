@@ -9043,7 +9043,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 					/* Skip players not on this depth */
 					if (!inarea(&q_ptr->wpos, wpos)) continue;
 
-					Send_music(Ind, -4, -4);
+					Send_music(Ind, -4, -4, -4);
 				}
 			}
 			if (m_ptr->extra < 6) ;
@@ -12017,7 +12017,7 @@ void process_monsters(void) {
 				if (r_ptr->flags7 & RF7_NAZGUL) {
 					//Nazgul; doesn't override Sauron or Halloween (The Great Pumpkin)
 					if (p_ptr->music_monster != 43 && p_ptr->music_monster != 55) {
-						Send_music(pl, (p_ptr->music_monster = 42), -1);
+						Send_music(pl, (p_ptr->music_monster = 42), -1, -1);
 					}
 				} else if (r_ptr->flags1 & RF1_UNIQUE) {
 					if (m_ptr->r_idx == RI_SAURON) {
@@ -12029,7 +12029,7 @@ void process_monsters(void) {
 							else wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon->known |= 0x8;
 						}
  #endif
-						Send_music(pl, (p_ptr->music_monster = 43), -1);
+						Send_music(pl, (p_ptr->music_monster = 43), -1, -1);
 					}
 					//Dungeon boss or special unique? (can't override Sauron, Nazgul or Halloween)
 					else if (p_ptr->music_monster != 43 && p_ptr->music_monster != 42 && p_ptr->music_monster != 55) {
@@ -12042,20 +12042,20 @@ void process_monsters(void) {
 								else wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon->known |= 0x8;
 							}
  #endif
-							Send_music(pl, (p_ptr->music_monster = 41), -1);
+							Send_music(pl, (p_ptr->music_monster = 41), -1, -1);
 						//Special Unique (non-respawning)? Can't override dungeon boss..
 						} else if (r_ptr->level >= 98 && p_ptr->music_monster != 41) {
 							//Any of em
-							Send_music(pl, (p_ptr->music_monster = 40), -1);
+							Send_music(pl, (p_ptr->music_monster = 40), -1, -1);
 						}
 					}
 				} else if (m_ptr->r_idx == RI_PUMPKIN && p_ptr->music_monster != 43) {
 					//The Great Pumpkin; overrides Nazgul, Dungeon Bosses and even Special Uniques ^^
-					Send_music(pl, (p_ptr->music_monster = 55), -1);
+					Send_music(pl, (p_ptr->music_monster = 55), -1, -1);
 				} else if ((m_ptr->r_idx == RI_SANTA1 || m_ptr->r_idx == RI_SANTA2)
 				    && (p_ptr->music_monster != 43)) {
 					//Santa Claus
-					Send_music(pl, (p_ptr->music_monster = 67), -1);
+					Send_music(pl, (p_ptr->music_monster = 67), -1, -1);
 				}
 			}
 

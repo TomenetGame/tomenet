@@ -4067,9 +4067,11 @@ int Receive_sound(void) {
 
 int Receive_music(void) {
 	int	n;
-	char	ch, m, m2 = -1;
+	char	ch, m, m2 = -1, m3 = -1;
 
-	if (is_newer_than(&server_version, 4, 5, 6, 0, 0, 1)) {
+	if (is_atleast(&server_version, 4, 8, 1, 2, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%c", &ch, &m, &m2, &m3)) <= 0) return n;
+	} else if (is_newer_than(&server_version, 4, 5, 6, 0, 0, 1)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c", &ch, &m, &m2)) <= 0) return n;
 	} else {
 		if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &m)) <= 0) return n;
@@ -4086,16 +4088,20 @@ int Receive_music(void) {
 	if (!use_sound) return(1);
 	/* Try to play music, if fails try alternative music, if fails too stop playing any music.
 	   Special codes -1, -2 and -4 can be used here to induce alternate behaviour (see handle_music()). */
-	if (!music(m)) music(m2);
+	if (!music(m)) { if (!music(m2)) music(m3); }
 #endif
 
 	return(1);
 }
 int Receive_music_vol(void) {
 	int	n;
-	char	ch, m, m2 = -1, v;
+	char	ch, m, m2 = -1, m3 = -1, v;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c%c", &ch, &m, &m2, &v)) <= 0) return n;
+	if (is_atleast(&server_version, 4, 8, 1, 2, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &m, &m2, &m3, &v)) <= 0) return n;
+	} else {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%c", &ch, &m, &m2, &v)) <= 0) return n;
+	}
 
 #ifdef USE_SOUND_2010
 	/* Special hack for ghost music (4.7.4b+), see handle_music() in util.c */
@@ -4108,7 +4114,7 @@ int Receive_music_vol(void) {
 	if (!use_sound) return(1);
 	/* Try to play music, if fails try alternative music, if fails too stop playing any music.
 	   Special codes -1, -2 and -4 can be used here to induce alternate behaviour (see handle_music()). */
-	if (!music_volume(m, v)) music_volume(m2, v);
+	if (!music_volume(m, v)) { if (!music_volume(m2, v)) music_volume(m3, v); }
 #endif
 
 	return(1);
