@@ -466,7 +466,26 @@ audio_bgm = {
     "wilderness_winter_day",--110
     "wilderness_winter_night",
 
-    "town_generic_spring_day",
+    "wilderness_grass_day",
+    "wilderness_grass_night",
+    "wilderness_forest_day",
+    "wilderness_forest_night",
+    "wilderness_mountain_day",
+    "wilderness_mountain_night",
+    "wilderness_ocean_day",
+    "wilderness_ocean_night",
+    "wilderness_lake_day",--120
+    "wilderness_lake_night",
+    "wilderness_swamp_day",
+    "wilderness_swamp_night",
+    "wilderness_waste_day",
+    "wilderness_waste_night",
+    "wilderness_desert_day",
+    "wilderness_desert_night",
+    "wilderness_icywaste_day",
+    "wilderness_icywaste_night",
+
+    "town_generic_spring_day",--130
     "town_generic_spring_night",
     "Bree_spring_day",
     "Bree_spring_night",
@@ -474,9 +493,9 @@ audio_bgm = {
     "Gondolin_spring_night",
     "MinasAnor_spring_day",
     "MinasAnor_spring_night",
-    "Lothlorien_spring_day",--120
+    "Lothlorien_spring_day",
     "Lothlorien_spring_night",
-    "Khazaddum_spring_day",
+    "Khazaddum_spring_day",--140
     "Khazaddum_spring_night",
 
     "town_generic_summer_day",
@@ -485,9 +504,9 @@ audio_bgm = {
     "Bree_summer_night",
     "Gondolin_summer_day",
     "Gondolin_summer_night",
-    "MinasAnor_summer_day",--130
+    "MinasAnor_summer_day",
     "MinasAnor_summer_night",
-    "Lothlorien_summer_day",
+    "Lothlorien_summer_day",--150
     "Lothlorien_summer_night",
     "Khazaddum_summer_day",
     "Khazaddum_summer_night",
@@ -496,9 +515,9 @@ audio_bgm = {
     "town_generic_autumn_night",
     "Bree_autumn_day",
     "Bree_autumn_night",
-    "Gondolin_autumn_day",--140
+    "Gondolin_autumn_day",
     "Gondolin_autumn_night",
-    "MinasAnor_autumn_day",
+    "MinasAnor_autumn_day",--160
     "MinasAnor_autumn_night",
     "Lothlorien_autumn_day",
     "Lothlorien_autumn_night",
@@ -507,16 +526,16 @@ audio_bgm = {
 
     "town_generic_winter_day",
     "town_generic_winter_night",
-    "Bree_winter_day",--150
+    "Bree_winter_day",
     "Bree_winter_night",
-    "Gondolin_winter_day",
+    "Gondolin_winter_day",--170
     "Gondolin_winter_night",
     "MinasAnor_winter_day",
     "MinasAnor_winter_night",
     "Lothlorien_winter_day",
     "Lothlorien_winter_night",
     "Khazaddum_winter_day",
-    "Khazaddum_winter_night",--(159)
+    "Khazaddum_winter_night",--(177)
 }
 function get_music_name(idx)
     if audio_bgm[idx + 1] == nil then return "" end
