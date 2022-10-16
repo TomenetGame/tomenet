@@ -1416,7 +1416,7 @@ void do_cmd_drink_fountain(int Ind) {
 		/* if it's the sea, it's salt water */
 		if (!p_ptr->wpos.wz) {
 #ifndef USE_SOUND_2010
-			/* problem: WILD_COAST is used for both oceans and lakes */
+			/* problem: WILD_COAST is used for both oceans and lakes -- is it tho? on ~0 worldmap it doesn't look like it */
 			switch (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type) {
 			case WILD_SHORE1:
 			case WILD_SHORE2:
@@ -1672,7 +1672,7 @@ void do_cmd_fill_bottle(int Ind) {
 		/* World surface terrain? */
 		if (!p_ptr->wpos.wz) {
 #ifndef USE_SOUND_2010
-			/* problem: WILD_COAST is used for both oceans and lakes */
+			/* problem: WILD_COAST is used for both oceans and lakes -- is it tho? on ~0 worldmap it doesn't look like it */
 			switch (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type) {
 			case WILD_SHORE1:
 			case WILD_SHORE2:

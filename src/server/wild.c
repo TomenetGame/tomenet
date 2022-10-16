@@ -106,7 +106,7 @@ int world_index(int world_x, int world_y) {
 static void bleed_warn_feat(int wild_type, cave_type *c_ptr) {
 	switch (wild_type) {
 	case WILD_SWAMP: c_ptr->feat = FEAT_BUSH; break;
-//	case WILD_SHORE1: case WILD_SHORE2: case WILD_COAST:
+	//case WILD_SHORE1: case WILD_SHORE2: case WILD_COAST:
 	case WILD_LAKE: case WILD_RIVER:
 	case WILD_OCEANBED1: case WILD_OCEANBED2:
 	case WILD_OCEAN: c_ptr->feat = FEAT_SHAL_WATER; break;
@@ -2569,7 +2569,8 @@ static void wild_bleed_level(int bleed_to_x, int bleed_to_y, int bleed_from_x, i
 	   ambient sfx too, that the terrain type of the 'from' wilderness
 	   sector would trigger.
 	   idea: WILD_COAST should trigger the WILD_OCEAN ambient sfx, if there
-	   are actually some visible ocean feat grids bled onto it. */
+	   are actually some visible ocean feat grids bled onto it.
+	   (But WILD_COAST is also used for lakes? -- is it tho? on ~0 worldmap it doesn't look like it) */
 
 	/* need to use a priority list, if several different ambient-sfx-
 	   causing terrain types are bled into this sector: */

@@ -2469,7 +2469,7 @@ void process_ambient_sfx(void) {
 			if (IS_DAY) sound_floor_vol(&p_ptr->wpos, "animal_birdofprey", NULL, SFX_TYPE_AMBIENT, vol);
 			w_ptr->ambient_sfx_timer = 120 + rand_int(240); //very rarely
 			break;
-#if 0 /*  --used for both, oceans and lakes // todo: just check (wild_info[wpos->wy][wpos->wx].type == WILD_OCEAN || wild_info[wpos->wy][wpos->wx].bled == WILD_OCEAN) */
+#if 0 /*  --used for both, oceans and lakes -- is it tho? on ~0 worldmap it doesn't look like it // todo: just check (wild_info[wpos->wy][wpos->wx].type == WILD_OCEAN || wild_info[wpos->wy][wpos->wx].bled == WILD_OCEAN) */
 		case WILD_SHORE1:
 		case WILD_SHORE2:
 		case WILD_COAST:
