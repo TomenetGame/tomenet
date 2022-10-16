@@ -9138,6 +9138,18 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 
 			case EGO_REFLECT: //shields
 				continue;
+
+			/* Prevent ego with too bad random power */
+			case EGO_SEEING:
+				/* no lowest-level ESPs */
+				switch (esp) {
+				case ESP_ORC:
+				case ESP_TROLL:
+				case ESP_GIANT:
+				case ESP_DRAGONRIDER:
+					continue;
+				}
+				break; //accept
 			}
 		}
 
