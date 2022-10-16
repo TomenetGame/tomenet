@@ -2255,6 +2255,8 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		else if (my_strcasestr(buf, "dun") && my_strcasestr(buf, "list")) strcpy(init_search_string, "Dungeon"); //which in turn gets expanded to "Dungeon         " sth. instead of chapter "Dungeons"
 		else if (my_strcasestr(buf, "death") && my_strcasestr(buf, "msg")) strcpy(init_search_string, "death messages");
 		else if (!strcasecmp("speed", buf)) strcpy(init_search_string, "time"); //for now redirect 'speed' to chapter about in-game time systems
+		else if (!strcasecmp("city", buf)) strcpy(init_search_string, "town");
+		else if (!strcasecmp("cities", buf)) strcpy(init_search_string, "towns");
 
 		/* clean up */
 		buf[0] = 0;
