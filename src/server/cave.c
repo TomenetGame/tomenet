@@ -4796,7 +4796,7 @@ static void wild_display_map(int Ind, char mode) {
 				case WILD_GRASSLAND: tc = '.'; ta = TERM_GREEN; break;
 				case WILD_FOREST: tc = '*'; ta = TERM_GREEN; break;
 				case WILD_SWAMP:  tc = '%'; ta = TERM_VIOLET; break;
-				case WILD_DENSEFOREST: tc = '*'; ta = TERM_L_DARK; break;
+				case WILD_DENSEFOREST: tc = '#'; ta = TERM_GREEN; break;
 				case WILD_WASTELAND: tc = '.'; ta = TERM_UMBER; break;
 				case WILD_TOWN: tc = 'T'; ta = TERM_YELLOW; break;
 				case WILD_CLONE: tc = 'C'; ta = TERM_RED; break;

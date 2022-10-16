@@ -3456,7 +3456,7 @@ c_msg_format("RLI wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p
 //c_msg_format("RLI: wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d", p_ptr->wpos.wx, p_ptr->wpos.wy, minimap_selx, minimap_sely, minimap_posx, minimap_posy);
 			n += 4;
 #endif
-			n += 3;
+			n += 2;
 
 			Term_putstr(0, n++, -1, TERM_WHITE, "\377ys\377w+\377ydir\377w:");
 			Term_putstr(0, n++, -1, TERM_WHITE, " Select");
@@ -3466,7 +3466,7 @@ c_msg_format("RLI wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p
 			n++;
 			Term_putstr(0, n++, -1, TERM_WHITE, "\377yESC\377w:");
 			Term_putstr(0, n++, -1, TERM_WHITE, " Exit");
-			n += 3;
+			n += 2;
 
 			/* Specialty: Only display map key if in bigmap mode.
 			   (Note: This is the only check of this kind currently) */
@@ -3476,13 +3476,15 @@ c_msg_format("RLI wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p
 				Term_putstr(0, n++, -1, TERM_WHITE, "\377yT\377w Town");
 				Term_putstr(0, n++, -1, TERM_WHITE, "> Dung.");
 				Term_putstr(0, n++, -1, TERM_WHITE, "< Tower");
+				Term_putstr(0, n++, -1, TERM_WHITE, "\377u.\377w Waste");
 				Term_putstr(0, n++, -1, TERM_WHITE, "\377g.\377w Grass");
 				Term_putstr(0, n++, -1, TERM_WHITE, "\377g*\377w Woods");
-				Term_putstr(0, n++, -1, TERM_WHITE, "\377s*\377w Thick");
+				Term_putstr(0, n++, -1, TERM_WHITE, "\377g#\377w Thick");
 				Term_putstr(0, n++, -1, TERM_WHITE, "  woods");
 				Term_putstr(0, n++, -1, TERM_WHITE, "\377v%\377w Swamp");
+				Term_putstr(0, n++, -1, TERM_WHITE, "\377B~\377w Lake/");
+				Term_putstr(0, n++, -1, TERM_WHITE, "  river");
 				Term_putstr(0, n++, -1, TERM_WHITE, "\377U,\377w Coast");
-				Term_putstr(0, n++, -1, TERM_WHITE, "\377B~\377w River");
 				Term_putstr(0, n++, -1, TERM_WHITE, "\377b%\377w Ocean");
 				Term_putstr(0, n++, -1, TERM_WHITE, "\377D^\377w Mount");
 				Term_putstr(0, n++, -1, TERM_WHITE, "\377r^\377w Volca");
