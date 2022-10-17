@@ -10825,7 +10825,7 @@ void process_timers() {
 				}
 				fclose(fp);
 				//if (done) remove("__iproute.tmp"); /* Keep maybe, if we want to review it manually afterwards. */
-				if (!done) msg_print(i, "Route-ping response not yet ready, please wait...");
+				if (!done) ; //spammy! msg_print(i, "Route-ping response not yet ready, please wait...");
 				else if (ping_max == -1) msg_print(i, "No route-ping information available.");
 				else msg_format(i, " %s %s: %d ms", host_max, addr_max, ping_max);
 			}
