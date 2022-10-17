@@ -1076,4 +1076,5 @@ char dbgvars[MAX_CHARS] = { 0 };
 bool pvp_disabled = FALSE;
 byte Morgoth_x = -1, Morgoth_y = 0, Morgoth_z = 0;
 
-s32b fake_waitpid_geo = 0, fake_waitpid_ping = 0, fake_waitpid_clver = 0;
+s32b fake_waitpid_geo = 0, fake_waitpid_ping = 0, fake_waitpid_route = 0, fake_waitpid_clver = 0;
+char fake_waitxxx_ipaddr[MAX_CHARS] = { 0 };

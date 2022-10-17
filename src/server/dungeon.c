@@ -10706,6 +10706,7 @@ void process_timers() {
 					}
 				}
 				fclose(fp);
+				//remove("__ipinfo.tmp"); /* Keep maybe, if we want to review it manually afterwards. */
 				if (!y) msg_print(i, "Geo response not yet ready, please wait...");
 				else if (!x) msg_print(i, "No geo information available.");
 #if 1 /* Dump one long line */
@@ -10714,9 +10715,8 @@ void process_timers() {
 					msg_print(i, buf2);
 				}
 #endif
-				//remove("__ipinfo.tmp"); /* Keep maybe, if we want to review it manually afterwards. */
 			}
-		} else y = 1;
+		} else y = 1; /* Abort */
 		if (y) fake_waitpid_geo = 0;
 	}
 	if (fake_waitpid_ping) {
@@ -10738,23 +10738,99 @@ void process_timers() {
 			fp = fopen("__ipping.tmp", "r");
 			if (fp) {
 				i = p_ptr->Ind;
+
 				/* Read result and display the relevant parts */
 				x = 0;
 				while (!my_fgets(fp, buf, 80, FALSE)) {
+					/* File exists */
 					y = 1;
+
 					if ((s = strstr(buf, " time="))) {
+						/* Response time exists */
 						x = 1;
+
 						msg_print(i, s);
 						break;
 					}
 				}
 				fclose(fp);
-				if (!y) msg_print(i, "Ping response not yet ready, please wait...");
-				else if (!x) msg_print(i, "No ping information available.");
 				//remove("__ipping.tmp"); /* Keep maybe, if we want to review it manually afterwards. */
+				if (!y) msg_print(i, "Ping response not yet ready, please wait...");
+				else if (!x) {
+					msg_print(i, "No ping information available.");
+#if 1 /* Initiate fallback procedure (again POSIX-only), requires traceroute and grep: */
+					msg_print(i, "Falling back to traceroute check, please wait...");
+					/* Could specify optionally: '-n' (changes format though) and/or '-m 30' (max hops): */
+					i = system(format("traceroute %s | grep -oE -e \" [-.0-9a-z]+ \" -e \"\\([^ ]+\\)\" -e \"[ .0-9]+ms\" > __iproute.tmp && echo 'DONE' >> __iproute.tmp &", fake_waitxxx_ipaddr));
+					fake_waitpid_route = fake_waitpid_ping; /* Transfer report process from ping lookup to route lookup */
+#endif
+				}
 			}
-		} else y = 1;
+		} else y = 1; /* Abort */
 		if (y) fake_waitpid_ping = 0;
+	}
+	if (fake_waitpid_route) {
+		FILE *fp;
+		bool done = FALSE;
+
+		/* Check if admin caller is still present */
+		for (i = 1; i <= NumPlayers; i++) {
+			p_ptr = Players[i];
+			if (p_ptr->conn == NOT_CONNECTED) continue;
+			if (p_ptr->id != fake_waitpid_route) continue;
+			break;
+		}
+		/* Found him */
+		if (i <= NumPlayers) {
+			char buf[MAX_CHARS], *s;
+
+			fp = fopen("__iproute.tmp", "r");
+			if (fp) {
+				int ping_max = -1, ping_cur;
+				char host_max[MAX_CHARS], host_cur[MAX_CHARS];
+				char addr_max[MAX_CHARS], addr_cur[MAX_CHARS];
+				int header = 4;
+
+				i = p_ptr->Ind;
+
+				/* Read result and display the relevant parts.
+				   File format is: header line, { name, (ip), ping ms }, DONE line. */
+				while (!my_fgets(fp, buf, 80, FALSE)) {
+					/* Skip the response's header line */
+					if (header) {
+						header--;
+						continue;
+					}
+
+					/* File is complete? */
+					if (strstr(buf, "DONE")) {
+						done = TRUE;
+						break;
+					}
+					/* Skip hop index numbers (they get grep'ed too, maybe just adjust grep accordingly instead?) */
+					else if (strlen(buf) <= 4) continue;
+					/* Got a ping time? */
+					else if (strstr(buf, " ms")) {
+						ping_cur = atoi(buf);
+						if (ping_cur > ping_max) {
+							ping_max = ping_cur;
+							strcpy(host_max, host_cur);
+							strcpy(addr_max, addr_cur);
+						}
+					}
+					/* Got a host ip? */
+					else if ((s = strstr(buf, "("))) strcpy(addr_cur, s); //keep parenthesis :)
+					/* Got a host name */
+					else strcpy(host_cur, buf + 1);
+				}
+				fclose(fp);
+				//if (done) remove("__iproute.tmp"); /* Keep maybe, if we want to review it manually afterwards. */
+				if (!done) msg_print(i, "Route-ping response not yet ready, please wait...");
+				else if (ping_max == -1) msg_print(i, "No route-ping information available.");
+				else msg_format(i, " %s %s: %d ms", host_max, addr_max, ping_max);
+			}
+		} else done = TRUE; /* Abort */
+		if (done) fake_waitpid_route = 0;
 	}
 }
 

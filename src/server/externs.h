@@ -2615,9 +2615,8 @@ extern void do_slash_cmd(int Ind, char *message, char *message_u);
 extern void tym_evaluate(int Ind);
 extern void wish(int Ind, struct worldpos *wpos, int tval, int sval, int number, int bpval, int pval, int name1, int name2, int name2b, int level, object_type *ox_ptr);
 extern void lua_wish(int Ind, int tval, int sval, int number, int bpval, int pval, int name1, int name2, int name2b, int level);
-extern s32b fake_waitpid_geo, fake_waitpid_ping, fake_waitpid_clver;
-
-
+extern s32b fake_waitpid_geo, fake_waitpid_ping, fake_waitpid_route, fake_waitpid_clver;
+extern char fake_waitxxx_ipaddr[MAX_CHARS];
 
 #ifdef MONSTER_ASTAR
 extern astar_list_open astar_info_open[ASTAR_MAX_INSTANCES];
