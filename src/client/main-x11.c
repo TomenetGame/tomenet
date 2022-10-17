@@ -3240,8 +3240,8 @@ void term_toggle_visibility(int term_idx) {
 	Term_activate(&screen.t);
 	Infowin_set(screen.outer);
 
-	/* Redraw all windows. */
-	cmd_redraw();
+	/* Mark all windows for content refresh. */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP);//PW_LAGOMETER is called automatically, no need.
 }
 
 /* Returns true if terminal window specified by term_idx is currently visible. */
