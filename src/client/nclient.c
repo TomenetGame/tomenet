@@ -1373,7 +1373,11 @@ int Net_start(int sex, int race, int class) {
 	get_screen_font_name(fname);
 
 	if (is_atleast(&server_version, 4, 8, 1, 2, 0, 0))
+#ifdef USE_GRAPHICS
 		Packet_printf(&wbuf, "%hd%hd%hd%hd%hd%hd%hd%s%s", sex, race, class, trait, audio_sfx, audio_music, use_graphics, graphic_tiles, fname);
+#else
+		Packet_printf(&wbuf, "%hd%hd%hd%hd%hd%hd%hd%s%s", sex, race, class, trait, audio_sfx, audio_music, use_graphics, "NO_GRAPHICS", fname);
+#endif
 	else if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0))
 		Packet_printf(&wbuf, "%hd%hd%hd%hd%hd%hd", sex, race, class, trait, audio_sfx, audio_music);
 	else Packet_printf(&wbuf, "%hd%hd%hd", sex, race, class);
@@ -6912,7 +6916,11 @@ int Send_font(void) {
 	//td->font_wid; td->font_hgt;
 
 	get_screen_font_name(fname);
+#ifdef USE_GRAPHICS
 	if ((n = Packet_printf(&wbuf, "%c%hd%s%s", PKT_FONT, use_graphics, graphic_tiles, fname)) <= 0) return n;
+#else
+	if ((n = Packet_printf(&wbuf, "%c%hd%s%s", PKT_FONT, use_graphics, "NO_GRAPHICS", fname)) <= 0) return n;
+#endif
 	return(1);
 }
 
