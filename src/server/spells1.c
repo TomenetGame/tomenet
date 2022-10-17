@@ -2115,8 +2115,8 @@ destined_defeat:
 				s_printf("BLOOD_BOND: %s won the blood bond against %s\n", p2_ptr->name, p_ptr->name);
 				msg_broadcast_format(0, "\374\377c*** %s won the blood bond against %s. ***", p2_ptr->name, p_ptr->name);
 
-				remove_hostility(Ind, p2_ptr->name);
-				remove_hostility(Ind_attacker, p_ptr->name);
+				remove_hostility(Ind, p2_ptr->name, FALSE);
+				remove_hostility(Ind_attacker, p_ptr->name, FALSE);
 
 				remove_blood_bond(Ind, Ind_attacker);
 				remove_blood_bond(Ind_attacker, Ind);
@@ -9457,7 +9457,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					bool result = FALSE;
 
 					if (Players[Ind]->pvpexception < 2)
-						result = add_hostility(Ind, killer, FALSE);
+						result = add_hostility(Ind, killer, FALSE, FALSE);
 
 					/* Log it if no blood bond - mikaelh */
 					if (!player_list_find(p_ptr->blood_bond, Players[0 - who]->id)) {

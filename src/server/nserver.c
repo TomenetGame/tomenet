@@ -1388,11 +1388,11 @@ static void Delete_player(int Ind) {
 	/* Also remove hostility if (s)he was blood bonded - mikaelh */
 	if (p_ptr->blood_bond) {
 #if 0
-		remove_hostility(Ind, lookup_player_name(p_ptr->blood_bond));
+		remove_hostility(Ind, lookup_player_name(p_ptr->blood_bond), FALSE);
 
 		i = find_player(p_ptr->blood_bond);
 		if (i) {
-			remove_hostility(i, p_ptr->name);
+			remove_hostility(i, p_ptr->name, FALSE);
 			Players[i]->blood_bond = 0;
 		}
 
@@ -1403,12 +1403,12 @@ static void Delete_player(int Ind) {
 
 		while (pl_ptr) {
 			/* Remove hostility */
-			remove_hostility(Ind, lookup_player_name(pl_ptr->id));
+			remove_hostility(Ind, lookup_player_name(pl_ptr->id), FALSE);
 
 			i = find_player(pl_ptr->id);
 			if (i) {
 				/* Remove hostility and blood bond from the other player */
-				remove_hostility(i, p_ptr->name);
+				remove_hostility(i, p_ptr->name, FALSE);
 				remove_blood_bond(i, Ind);
 			}
 
@@ -12871,10 +12871,10 @@ static int Receive_party(int ind) {
 		party_leave(player, TRUE);
 		break;
 	case PARTY_HOSTILE:
-		add_hostility(player, buf, TRUE);
+		add_hostility(player, buf, TRUE, FALSE);
 		break;
 	case PARTY_PEACE:
-		remove_hostility(player, buf);
+		remove_hostility(player, buf, FALSE);
 		break;
 	case PARTY_CLOSE:
 		party_close(player);

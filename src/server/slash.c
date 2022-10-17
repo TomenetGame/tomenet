@@ -9556,12 +9556,57 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 							msg_format(Ind, "%s is hostile towards %s. (blood bond)", p_ptr->name, lookup_player_name(ptr->id));
 						else
 							msg_format(Ind, "%s is hostile towards %s.", p_ptr->name, lookup_player_name(ptr->id));
+						ptr = ptr->next;
 					}
-
-					ptr = ptr->next;
 				}
 
 				msg_print(Ind, "\377sEnd of hostility list.");
+				return;
+			}
+			else if (prefix(messagelc, "/mkhostile")) {
+				char *pn1 = message3, *pn2 = strchr(message3, ':');
+
+				if (!pn1[0] || !pn2 || !pn2[1]) {
+					msg_print(Ind, "Usage: /mkhostile <character name 1>:<character name 2>");
+					return;
+				}
+				*pn2 = 0;
+				pn2++;
+
+				j = name_lookup(Ind, pn1, FALSE, FALSE, TRUE);
+				if (!j) {
+					msg_format(Ind, "Character 1, <%s> not online.", pn1);
+					return;
+				}
+				k = name_lookup(Ind, pn2, FALSE, FALSE, TRUE);
+				if (!k) {
+					msg_format(Ind, "Character 2, <%s> not online.", pn2);
+					return;
+				}
+
+				(void)add_hostility(j, pn2, TRUE, TRUE);
+				return;
+			}
+			else if (prefix(messagelc, "/mkpeace")) {
+				char *pn1 = message3, *pn2 = strchr(message3, ':');
+
+				if (!pn1[0] || !pn2[0]) {
+					msg_print(Ind, "Usage: /mkhostile <character name 1>:<character name 2>");
+					return;
+				}
+
+				j = name_lookup(Ind, pn1, FALSE, FALSE, TRUE);
+				if (!j) {
+					msg_format(Ind, "Character 1, <%s> not online.", pn1);
+					return;
+				}
+				k = name_lookup(Ind, pn2, FALSE, FALSE, TRUE);
+				if (!k) {
+					msg_format(Ind, "Character 2, <%s> not online.", pn2);
+					return;
+				}
+
+				(void)remove_hostility(j, pn2, TRUE);
 				return;
 			}
 			else if (prefix(messagelc, "/debugstore")) { /* parameter is # of maintenance runs to perform at once (1..10) */

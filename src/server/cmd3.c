@@ -3624,7 +3624,7 @@ void do_cmd_steal(int Ind, int dir) {
 		/* Make target hostile */
 		if (q_ptr->exp > p_ptr->exp / 2 - 200) {
 			if (Players[0 - c_ptr->m_idx]->pvpexception < 2)
-			add_hostility(0 - c_ptr->m_idx, p_ptr->name, FALSE);
+			add_hostility(0 - c_ptr->m_idx, p_ptr->name, FALSE, FALSE);
 		}
 
 		/* Message */

@@ -3682,7 +3682,7 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 /*
  * Add a player to another player's list of hostilities.
  */
-bool add_hostility(int Ind, cptr name, bool initiator) {
+bool add_hostility(int Ind, cptr name, bool initiator, bool admin_forced) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	hostile_type *h_ptr;
 	int i;
@@ -3709,7 +3709,7 @@ s_printf("ADD_HOSTILITY: not found.\n");
 	/* If it's a blood bond, players may fight in safe zones and with party members np */
 	if (i > 0) bb = check_blood_bond(Ind, i);
 #ifdef NO_PK
-	if (i < 0 || !bb) return(FALSE);
+	if ((i < 0 || !bb) && !admin_forced) return(FALSE);
 #endif
 
 	/* log any attempts */
@@ -3844,7 +3844,7 @@ s_printf("ADD_HOSTILITY: not found.\n");
 /*
  * Remove an entry from a player's list of hostilities
  */
-bool remove_hostility(int Ind, cptr name) {
+bool remove_hostility(int Ind, cptr name, bool admin_forced) {
 	player_type *p_ptr = Players[Ind];
 	hostile_type *h_ptr, *i_ptr;
 	cptr p, q = NULL;
@@ -3862,8 +3862,8 @@ bool remove_hostility(int Ind, cptr name) {
 
 #ifdef NO_PK
 	/* If it's a blood bond, players may fight in safe zones and with party members np */
-	if (i < 0) return(FALSE);
-	else if (!check_blood_bond(Ind, i)) return(FALSE);
+	if (i < 0 && !admin_forced) return(FALSE);
+	else if (!check_blood_bond(Ind, i) && !admin_forced) return(FALSE);
 #endif
 
 	/* Forge name */
@@ -3883,7 +3883,7 @@ bool remove_hostility(int Ind, cptr name) {
 			p = lookup_player_name(h_ptr->id);
 
 			/* Check player name */
-//			if (p && (streq(p, q) || streq(p, name)))
+			//if (p && (streq(p, q) || streq(p, name)))
 			if (p && streq(p, q)) {
 				/* Delete this entry */
 				if (i_ptr) {
@@ -3909,7 +3909,7 @@ bool remove_hostility(int Ind, cptr name) {
 			if (i >= 0) continue;
 
 			/* Assume this is a party */
-//			if (streq(parties[0 - h_ptr->id].name, q))
+			//if (streq(parties[0 - h_ptr->id].name, q))
 			if (i == h_ptr->id) {
 				/* Delete this entry */
 				if (i_ptr) {

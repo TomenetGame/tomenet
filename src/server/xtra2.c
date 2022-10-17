@@ -13882,8 +13882,8 @@ void blood_bond(int Ind, object_type *o_ptr) {
 	p2_ptr->paging = 2;
 
 	/* new: auto-hostile, circumventing town peace zone functionality: */
-	add_hostility(Ind, p2_ptr->name, TRUE);
-	add_hostility(Ind2, p_ptr->name, FALSE);
+	add_hostility(Ind, p2_ptr->name, TRUE, FALSE);
+	add_hostility(Ind2, p_ptr->name, FALSE, FALSE);
 
 	p_ptr->update |= PU_BONUS;
 	p2_ptr->update |= PU_BONUS;
