@@ -2704,7 +2704,7 @@ static errr x11_term_init(int term_id) {
 	/* Store created terminal with X11 term data to ang_term array, even if term_data_init failed. */
 	ang_term[term_id] = Term;
 
-	if (err != 0) {
+	if (err) {
 		printf("Error initializing term_data for X11 terminal with index %d\n", term_id);
 		term_nuke(ang_term[term_id]);
 		ang_term[term_id] = NULL;
@@ -3217,7 +3217,7 @@ void term_toggle_visibility(int term_idx) {
 	}
 
 	if (term_get_visibility(term_idx)) {
-		/* Window is visible, save it, close it and free its resources. */
+		/* Window is visible. Save it, close it and free its resources. */
 
 		/* Save window position, dimension and font to term_prefs, cause at quitting the nuke_hook won't be called for closed windows. */
 		term_data_to_term_prefs(term_idx);
@@ -3228,17 +3228,19 @@ void term_toggle_visibility(int term_idx) {
 		ang_term[term_idx] = NULL;
 		return;
 	}
+	/* Window is not visible. Create it and draw content. */
 
 	/* Create and initialize terminal window. */
-	if (x11_term_init(term_idx)) {
+	errr err = x11_term_init(term_idx);
+	/* After initializing the new window is active. Switch to main window. */
+	Term_activate(&screen.t);
+
+	if (err) {
 		printf("Error initializing x11 terminal window with index %d\n", term_idx);
 		return;
 	}
+	/* Window was successfully created. */
 	term_prefs[term_idx].visible = true;
-
-	/* After initializing the new window is active. Switch to main window. */
-	Term_activate(&screen.t);
-	Infowin_set(screen.outer);
 
 	/* Mark all windows for content refresh. */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP);//PW_LAGOMETER is called automatically, no need.
