@@ -3203,7 +3203,8 @@ bool ask_for_bigmap(void) {
 const char* get_font_name(int term_idx) {
 	term_data *td = term_idx_to_term_data(term_idx);
 	if (td->fnt) return td->fnt->name;
-	else return DEFAULT_X11_FONT;
+	if (strlen(term_prefs[term_idx].font)) return term_prefs[term_idx].font;
+	return DEFAULT_X11_FONT;
 }
 
 void set_font_name(int term_idx, char* fnt) {
