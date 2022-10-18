@@ -2312,33 +2312,35 @@ bool askfor_aux(char *buf, int len, char mode) {
 
 				/* HACK - Change the prompt */
 				switch (chat_mode) {
-					case CHAT_MODE_PARTY:
-						c_prt(C_COLOUR_CHAT_PARTY, "Party: ", 0, 0);
+				case CHAT_MODE_PARTY:
+					c_prt(C_COLOUR_CHAT_PARTY, "Party: ", 0, 0);
 
-						/* Recalculate visible length */
-						vis_len = wid - 1 - sizeof("Party: ");
-						break;
-					case CHAT_MODE_LEVEL:
-						c_prt(C_COLOUR_CHAT_LEVEL, "Floor: ", 0, 0);
+					/* Recalculate visible length */
+					vis_len = wid - 1 - sizeof("Party: ");
+					break;
+				case CHAT_MODE_LEVEL:
+					c_prt(C_COLOUR_CHAT_LEVEL, "Floor: ", 0, 0);
 
-						/* Recalculate visible length */
-						vis_len = wid - 1 - sizeof("Floor: ");
-						break;
-					case CHAT_MODE_GUILD:
-						c_prt(C_COLOUR_CHAT_GUILD, "Guild: ", 0, 0);
+					/* Recalculate visible length */
+					vis_len = wid - 1 - sizeof("Floor: ");
+					break;
+				case CHAT_MODE_GUILD:
+					c_prt(C_COLOUR_CHAT_GUILD, "Guild: ", 0, 0);
 
-						/* Recalculate visible length */
-						vis_len = wid - 1 - sizeof("Guild: ");
-						break;
-					default:
-						prt("Message: ", 0, 0);
+					/* Recalculate visible length */
+					vis_len = wid - 1 - sizeof("Guild: ");
+					break;
+				default:
+					prt("Message: ", 0, 0);
 
-						/* Recalculate visible length */
-						vis_len = wid - 1 - sizeof("Message: ");
-						break;
+					/* Recalculate visible length */
+					vis_len = wid - 1 - sizeof("Message: ");
+					break;
 				}
 
 				Term_locate(&x, &y);
+
+				if (search) search_changed = TRUE; /* Redraw search term as it was visually erased */
 			}
 			break;
 
@@ -2350,33 +2352,35 @@ bool askfor_aux(char *buf, int len, char mode) {
 
 				/* HACK - Change the prompt */
 				switch (chat_mode) {
-					case CHAT_MODE_PARTY:
-						c_prt(C_COLOUR_CHAT_PARTY, "Party: ", 0, 0);
+				case CHAT_MODE_PARTY:
+					c_prt(C_COLOUR_CHAT_PARTY, "Party: ", 0, 0);
 
-						/* Recalculate visible length */
-						vis_len = wid - 1 - sizeof("Party: ");
-						break;
-					case CHAT_MODE_LEVEL:
-						c_prt(C_COLOUR_CHAT_LEVEL, "Floor: ", 0, 0);
+					/* Recalculate visible length */
+					vis_len = wid - 1 - sizeof("Party: ");
+					break;
+				case CHAT_MODE_LEVEL:
+					c_prt(C_COLOUR_CHAT_LEVEL, "Floor: ", 0, 0);
 
-						/* Recalculate visible length */
-						vis_len = wid - 1 - sizeof("Floor: ");
-						break;
-					case CHAT_MODE_GUILD:
-						c_prt(C_COLOUR_CHAT_GUILD, "Guild: ", 0, 0);
+					/* Recalculate visible length */
+					vis_len = wid - 1 - sizeof("Floor: ");
+					break;
+				case CHAT_MODE_GUILD:
+					c_prt(C_COLOUR_CHAT_GUILD, "Guild: ", 0, 0);
 
-						/* Recalculate visible length */
-						vis_len = wid - 1 - sizeof("Guild: ");
-						break;
-					default:
-						prt("Message: ", 0, 0);
+					/* Recalculate visible length */
+					vis_len = wid - 1 - sizeof("Guild: ");
+					break;
+				default:
+					prt("Message: ", 0, 0);
 
-						/* Recalculate visible length */
-						vis_len = wid - 1 - sizeof("Message: ");
-						break;
+					/* Recalculate visible length */
+					vis_len = wid - 1 - sizeof("Message: ");
+					break;
 				}
 
 				Term_locate(&x, &y);
+
+				if (search) search_changed = TRUE; /* Redraw search term as it was visually erased */
 			}
 			break;
 
@@ -2389,6 +2393,8 @@ bool askfor_aux(char *buf, int len, char mode) {
 				vis_len = wid - 1 - sizeof("Message: ");
 
 				Term_locate(&x, &y);
+
+				if (search) search_changed = TRUE; /* Redraw search term as it was visually erased */
 			}
 			break;
 
@@ -2401,6 +2407,8 @@ bool askfor_aux(char *buf, int len, char mode) {
 				vis_len = wid - 1 - sizeof("Party: ");
 
 				Term_locate(&x, &y);
+
+				if (search) search_changed = TRUE; /* Redraw search term as it was visually erased */
 			}
 			break;
 
@@ -2435,6 +2443,8 @@ bool askfor_aux(char *buf, int len, char mode) {
 				vis_len = wid - 1 - sizeof("Floor: ");
 
 				Term_locate(&x, &y);
+
+				//cannot happen, as CTRL+F has other behaviour (above) while searching--   if (search) search_changed = TRUE; /* Redraw search term as it was visually erased */
 			}
 			break;
 
@@ -2447,6 +2457,8 @@ bool askfor_aux(char *buf, int len, char mode) {
 				vis_len = wid - 1 - sizeof("Guild: ");
 
 				Term_locate(&x, &y);
+
+				if (search) search_changed = TRUE; /* Redraw search term as it was visually erased */
 			}
 			break;
 
@@ -2474,6 +2486,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			}
 
 			k = l = strlen(buf);
+
 			if (search) search_changed = TRUE; /* Search term was changed */
 			break;
 		case KTRL('P'):
@@ -2491,6 +2504,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			}
 
 			k = l = strlen(buf);
+
 			if (search) search_changed = TRUE; /* Search term was changed */
 			break;
 
@@ -2844,14 +2858,10 @@ bool askfor_aux(char *buf, int len, char mode) {
 		for (i = k; i >= 0; i--)
 			buf[i + 2] = buf[i];
 
-		if (chat_mode == CHAT_MODE_PARTY)
-			buf[0] = '!';
-		else if (chat_mode == CHAT_MODE_LEVEL)
-			buf[0] = '#';
-		else if (chat_mode == CHAT_MODE_GUILD)
-			buf[0] = '$';
-		else
-			buf[0] = '\0';
+		if (chat_mode == CHAT_MODE_PARTY) buf[0] = '!';
+		else if (chat_mode == CHAT_MODE_LEVEL) buf[0] = '#';
+		else if (chat_mode == CHAT_MODE_GUILD) buf[0] = '$';
+		else buf[0] = '\0';
 		buf[1] = ':';
 		k += 2;
 		buf[k] = '\0';
@@ -2889,15 +2899,15 @@ bool get_string(cptr prompt, char *buf, int len) {
 
 		/* HACK - Change the prompt according to current chat mode */
 		switch (chat_mode) {
-			case CHAT_MODE_PARTY:
-				c_prt(C_COLOUR_CHAT_PARTY, "Party: ", 0, 0);
-				break;
-			case CHAT_MODE_LEVEL:
-				c_prt(C_COLOUR_CHAT_LEVEL, "Floor: ", 0, 0);
-				break;
-			case CHAT_MODE_GUILD:
-				c_prt(C_COLOUR_CHAT_GUILD, "Guild: ", 0, 0);
-				break;
+		case CHAT_MODE_PARTY:
+			c_prt(C_COLOUR_CHAT_PARTY, "Party: ", 0, 0);
+			break;
+		case CHAT_MODE_LEVEL:
+			c_prt(C_COLOUR_CHAT_LEVEL, "Floor: ", 0, 0);
+			break;
+		case CHAT_MODE_GUILD:
+			c_prt(C_COLOUR_CHAT_GUILD, "Guild: ", 0, 0);
+			break;
 		}
 	}
 
@@ -5245,14 +5255,14 @@ void interact_macros(void) {
 						case 0x50: strcpy(bptr,  "Home"); break;
 						case 0x57: strcpy(bptr,  "End"); break;
 
-						/* Numper pad (Numlock independant) */
+						/* Number pad (Numlock independant) */
 						case 0xAF: strcpy(bptr,  "Num/"); break;
 						case 0xAA: strcpy(bptr,  "Num*"); break;
 						case 0xAD: strcpy(bptr,  "Num-"); break;
 						case 0xAB: strcpy(bptr,  "Num+"); break;
 						case 0x8D: strcpy(bptr,  "NumRet"); break;
 
-						/* Numper pad (Numlock off) */
+						/* Number pad (Numlock off) */
 						case 0x9F: strcpy(bptr,  "num."); break;
 						case 0x9E: strcpy(bptr,  "num0"); break;
 						case 0x9C: strcpy(bptr,  "num1"); break;
@@ -5265,7 +5275,7 @@ void interact_macros(void) {
 						case 0x97: strcpy(bptr,  "num8"); break;
 						case 0x9A: strcpy(bptr,  "num9"); break;
 
-						/* Numper pad (Numlock off) */
+						/* Number pad (Numlock off) */
 						case 0xAC: strcpy(bptr,  "NUM."); break;
 						case 0xB0: strcpy(bptr,  "NUM0"); break;
 						case 0xB1: strcpy(bptr,  "NUM1"); break;
@@ -5326,7 +5336,7 @@ void interact_macros(void) {
 						case 0x47: strcpy(bptr,  "Home"); break;
 						case 0x4F: strcpy(bptr,  "End"); break;
 
-						/* Numper pad (Numlock off) */
+						/* Number pad (Numlock off) */
 						/* -- duplicates of the normal keyboard key block listed above, while numlock is off! --
 						case 0x53: strcpy(bptr,  "num."); break;
 						case 0x52: strcpy(bptr,  "num0"); break;
@@ -5341,7 +5351,7 @@ void interact_macros(void) {
 						case 0x49: strcpy(bptr,  "num9"); break;
 						---- */
 
-						/* Numper pad (Numlock on)
+						/* Number pad (Numlock on)
 						   - same as the normal keyboard keys with corresponding symbols! - */
 
 						/* Strange codes left over.. looking like numpad */
@@ -5397,14 +5407,14 @@ void interact_macros(void) {
 						case 0x50: strcpy(bptr,  "Home"); break;
 						case 0x57: strcpy(bptr,  "End"); break;
 
-						/* Numper pad (Numlock independant) */
+						/* Number pad (Numlock independant) */
 						case 0xAF: strcpy(bptr,  "Num/"); break;
 						case 0xAA: strcpy(bptr,  "Num*"); break;
 						case 0xAD: strcpy(bptr,  "Num-"); break;
 						case 0xAB: strcpy(bptr,  "Num+"); break;
 						case 0x8D: strcpy(bptr,  "NumRet"); break;
 
-						/* Numper pad (Numlock off) */
+						/* Number pad (Numlock off) */
 						case 0x9F: strcpy(bptr,  "num."); break;
 						case 0x9E: strcpy(bptr,  "num0"); break;
 						case 0x9C: strcpy(bptr,  "num1"); break;
@@ -5417,7 +5427,7 @@ void interact_macros(void) {
 						case 0x97: strcpy(bptr,  "num8"); break;
 						case 0x9A: strcpy(bptr,  "num9"); break;
 
-						/* Numper pad (Numlock off) */
+						/* Number pad (Numlock off) */
 						case 0xAC: strcpy(bptr,  "NUM."); break;
 						case 0xB0: strcpy(bptr,  "NUM0"); break;
 						case 0xB1: strcpy(bptr,  "NUM1"); break;
@@ -11436,14 +11446,14 @@ char key_map_dos_unix[][3][10] = {
 	{"FF50", "Home", ""},
 	{"FF57", "End", ""},
 
-	/* Numper pad (Numlock independant) */
+	/* Number pad (Numlock independant) */
 	{"FFAF", "Num/", ""},
 	{"FFAA", "Num*", ""},
 	{"FFAD", "Num-", ""},
 	{"FFAB", "Num+", ""},
 	{"FF8D", "NumRet", ""},
 
-	/* Numper pad (Numlock off) */
+	/* Number pad (Numlock off) */
 	{"FF9F", "num.", ""},
 	{"FF9E", "num0", ""},
 	{"FF9C", "num1", ""},
@@ -11456,7 +11466,7 @@ char key_map_dos_unix[][3][10] = {
 	{"FF97", "num8", ""},
 	{"FF9A", "num9", ""},
 
-	/* Numper pad (Numlock off) */
+	/* Number pad (Numlock off) */
 	{"FFAC", "NUM.", ""},
 	{"FFB0", "NUM0", ""},
 	{"FFB1", "NUM1", ""},
@@ -11512,7 +11522,7 @@ char key_map_dos_unix[][3][10] = {
 	{"x47", "Home", ""},
 	{"x4F", "End", ""},
 
-	/* Numper pad (Numlock off) */
+	/* Number pad (Numlock off) */
 	/* -- duplicates of the normal keyboard key block listed above, while numlock is off! --
 	{"x53", "num.", ""},
 	{"x52", "num0", ""},
@@ -11524,9 +11534,9 @@ char key_map_dos_unix[][3][10] = {
 	{"x4D", "num6", ""},
 	{"x47", "num7", ""},
 	{"x48", "num8", ""},
-	{"x49", "num9", ""},
+	{"x49", "num9", ""}, */
 
-	/* Numper pad (Numlock on)
+	/* Number pad (Numlock on)
 	   - same as the normal keyboard keys with corresponding symbols! - */
 
 	/* Strange codes left over.. looking like numpad */
@@ -11575,14 +11585,14 @@ char key_map_dos_unix[][3][10] = {
 	{"FF50", "Home", ""},
 	{"FF57", "End", ""},
 
-	/* Numper pad (Numlock independant) */
+	/* Number pad (Numlock independant) */
 	{"FFAF", "Num/", ""},
 	{"FFAA", "Num*", ""},
 	{"FFAD", "Num-", ""},
 	{"FFAB", "Num+", ""},
 	{"FF8D", "NumRet", ""},
 
-	/* Numper pad (Numlock off) */
+	/* Number pad (Numlock off) */
 	{"FF9F", "num.", ""},
 	{"FF9E", "num0", ""},
 	{"FF9C", "num1", ""},
@@ -11595,7 +11605,7 @@ char key_map_dos_unix[][3][10] = {
 	{"FF97", "num8", ""},
 	{"FF9A", "num9", ""},
 
-	/* Numper pad (Numlock off) */
+	/* Number pad (Numlock off) */
 	{"FFAC", "NUM.", ""},
 	{"FFB0", "NUM0", ""},
 	{"FFB1", "NUM1", ""},
