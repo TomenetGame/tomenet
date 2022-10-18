@@ -2387,8 +2387,13 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	/* Prepare the standard font */
 	MAKE(td->fnt, infofnt);
 	Infofnt_set(td->fnt);
-	if (Infofnt_init_data(font) == -1)
-		fprintf(stderr, "Failed to load a font!\n");
+	if (Infofnt_init_data(font) == -1) {
+		fprintf(stderr, "Failed to load a font! Falling back to default font\n");
+		if (Infofnt_init_data(x11_terms_font_default[index]) == -1) {
+			fprintf(stderr, "Failed to load a default font\n");
+			return(1);
+		}
+	}
 
 	/* Hack -- extract key buffer size */
 	num = (fixed ? 1024 : 16);
@@ -2695,7 +2700,7 @@ static errr x11_term_init(int term_id) {
 	/* Check environment for "base" font. */
 	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
 	/* Use loaded (from config file) or predefined default font. */
-	if (!fnt_name) fnt_name = term_prefs[term_id].font;
+	if (!fnt_name && strlen(term_prefs[term_id].font)) fnt_name = term_prefs[term_id].font;
 	/* Paranoia, use the default. */
 	if (!fnt_name) fnt_name = x11_terms_font_default[term_id];
 
@@ -2843,7 +2848,7 @@ errr init_x11(void) {
 		/* Main window is always visible, all other depend on configuration. */
 		if (i == 0 || term_prefs[i].visible) {
 			if (x11_term_init(i) != 0) {
-				printf("Error initializing x11 terminal window with index %d\n", i);
+				printf("Error initializing X11 terminal window with index %d\n", i);
 				if (i == 0) {
 					/* Can't run without main screen. */
 					return(1);
@@ -3204,7 +3209,7 @@ const char* get_font_name(int term_idx) {
 	term_data *td = term_idx_to_term_data(term_idx);
 	if (td->fnt) return td->fnt->name;
 	if (strlen(term_prefs[term_idx].font)) return term_prefs[term_idx].font;
-	return DEFAULT_X11_FONT;
+	return x11_terms_font_default[term_idx];
 }
 
 void set_font_name(int term_idx, char* fnt) {
@@ -3237,7 +3242,7 @@ void term_toggle_visibility(int term_idx) {
 	Term_activate(&screen.t);
 
 	if (err) {
-		printf("Error initializing x11 terminal window with index %d\n", term_idx);
+		printf("Error initializing toggled X11 terminal window with index %d\n", term_idx);
 		return;
 	}
 	/* Window was successfully created. */
