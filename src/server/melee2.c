@@ -1949,9 +1949,10 @@ bool make_attack_spell(int Ind, int m_idx) {
 	dun_level	*l_ptr = getfloor(wpos);
 	int		k, chance, thrown_spell, rlev; // , failrate;
 	//byte		spell[128], num = 0;
-	u32b		f4, f5, f6, f7, f0;
 	monster_type	*m_ptr = &m_list[m_idx];
 	monster_race	*r_ptr = race_inf(m_ptr);
+	u32b		f1 = r_ptr->flags1, f2 = r_ptr->flags2, f3 = r_ptr->flags3; /* Non-spell flags for other checks (eg unique monster?) */
+	u32b		f4 = r_ptr->flags4, f5 = r_ptr->flags5, f6 = r_ptr->flags6, f7 = r_ptr->flags7, f0 = r_ptr->flags0; /* Flags for actual spell-casting */
 	//object_type	*o_ptr = &p_ptr->inventory[INVEN_WIELD];
 	char		m_name[MNAME_LEN], m_name_real[MNAME_LEN];
 	char		m_poss[MNAME_LEN];
@@ -1967,16 +1968,13 @@ bool make_attack_spell(int Ind, int m_idx) {
 	/* Summon count */
 	int count = 0;
 
-	/* scatter summoning target location if player is shadow running, ie hard to pin down */
-	if (p_ptr->shadow_running) scatter(wpos, &ys, &xs, y, x, 5, 0);
-
 	bool blind = (p_ptr->blind ? TRUE : FALSE);
 	/* Extract the "within-the-vision-ness" --
 	   Note: This now requires LoS because it is only used
 	         for non-direct spells. Idea here:
 	         We can easily guess who cast that fireball 'around the corner'.. */
 	bool visible = p_ptr->mon_vis[m_idx]
-			&& player_has_los_bold(Ind, m_ptr->fy, m_ptr->fx);//new: require LoS
+	    && player_has_los_bold(Ind, m_ptr->fy, m_ptr->fx);//new: require LoS
 	/* Extract the "see-able-ness" --
 	   Note: This allows non-LoS (aka ESP-only) visibility,
 	         because it is only used for direct spells. */
@@ -1985,10 +1983,10 @@ bool make_attack_spell(int Ind, int m_idx) {
 	bool normal = TRUE;
 	/* Assume "projectable" */
 	bool direct = TRUE, local = FALSE;
-	bool stupid = r_ptr->flags2 & (RF2_STUPID), summon = FALSE;
+	bool stupid = (f2 & RF2_STUPID), unique = (f1 & RF1_UNIQUE), summon = FALSE;
 
 	int rad = 0, srad;
-	//u32b f7 = race_inf(&m_list[m_idx])->flags7;
+	//u32b f7 = r_ptr->flags7;
 	int s_clone = 0, clone_summoning = m_ptr->clone_summoning;
 	int eff_m_hp = m_ptr->hp;
 	/* To avoid TELE_TO from CAVE_ICKY pos on player outside */
@@ -2006,6 +2004,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 	//int antichance = 0, antidis = 0;
 
 
+	/* scatter summoning target location if player is shadow running, ie hard to pin down */
+	if (p_ptr->shadow_running) scatter(wpos, &ys, &xs, y, x, 5, 0);
+
 	wpos = &m_ptr->wpos;
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
@@ -2022,7 +2023,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	//if (!chance) return(FALSE);
 
 	/* Specialty for AI_HYBRID (Tzeentch) so he actually does melee for a change despite casting 1_IN_1 */
-	if ((r_ptr->flags3 & RF3_AI_HYBRID) && !(m_ptr->mind & HYBRID_ANNOY)
+	if ((f3 & RF3_AI_HYBRID) && !(m_ptr->mind & HYBRID_ANNOY)
 	    && chance) //avoid div0
 		/* Shift chance from 1_IN_n to 1_IN_(n+i/10), where i should probably be between 10 and 20. */
 		chance = 1000 / ((1000 / chance) + 10);
@@ -2050,13 +2051,6 @@ bool make_attack_spell(int Ind, int m_idx) {
 	/* XXX XXX XXX Handle "track_target" option (?) */
 
 
-	/* Extract the racial spell flags */
-	f4 = r_ptr->flags4;
-	f5 = r_ptr->flags5;
-	f6 = r_ptr->flags6;
-	f7 = r_ptr->flags7;
-	f0 = r_ptr->flags0;
-
 	/* Hack for Tzeentch:
 	   Monsters that have both ASTAR and BLINK will not need to use it for movement purpose other than when ASTAR gets stuck.
 	   The other reason when BLINK is used is for escaping, which means player must be close or in line of sight. */
@@ -2078,7 +2072,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	if ((l_ptr && (l_ptr->flags2 & LF2_NO_TELE))
 	    || (in_sector00(wpos) && (sector00flags2 & LF2_NO_TELE))
 	    /* don't start futile attempts to tele on non-tele grids? */
-	    || (!stupid && (!(r_ptr->flags2 & RF2_EMPTY_MIND) || (r_ptr->flags2 & RF2_SMART)) && (zcave[oy][ox].info & CAVE_STCK))) {
+	    || (!stupid && (!(f2 & RF2_EMPTY_MIND) || (f2 & RF2_SMART)) && (zcave[oy][ox].info & CAVE_STCK))) {
 		/* Remove teleport spells */
 		f6 &= ~(RF6_BLINK | RF6_TPORT | RF6_TELE_TO | RF6_TELE_AWAY | RF6_TELE_LEVEL);
 	}
@@ -2093,7 +2087,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 	/* radius of ball spells and breathes.
 	 * XXX this doesn't reflect some exceptions(eg. radius=4 spells). */
-	srad = (r_ptr->flags2 & (RF2_POWERFUL)) ? 3 : 2; /* was 2 : 1 */
+	srad = (f2 & (RF2_POWERFUL)) ? 3 : 2; /* was 2 : 1 */
 
 	/* NOTE: it is abusable that MAX_RANGE is 18 and player arrow range
 	 * is 25-50; one can massacre uniques without any dangers.
@@ -2163,7 +2157,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 						srad : INDIRECT_SUMMONING_RADIUS);
 			else rad = 99;
 
-			//if (rad > 3 || (rad == 3 && !(r_ptr->flags2 & (RF2_POWERFUL))))
+			//if (rad > 3 || (rad == 3 && !(f2 & RF2_POWERFUL)))
 			if (rad > srad) {
 				local = TRUE;
 
@@ -2189,7 +2183,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 
 	/* Hack -- allow "desperate" spells */
-	if ((r_ptr->flags2 & RF2_SMART) &&
+	if ((f2 & RF2_SMART) &&
 	    (m_ptr->hp < m_ptr->maxhp / 10) &&
 	    (rand_int(100) < 50))
 	{
@@ -2837,7 +2831,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if ((p_ptr->esp_link_flags & LINKF_OPEN)) r1 *= 2;
 
 			/* Special boost - added for Tzeentch, but seems interesting in general ;) - C. Blue */
-			if (r_ptr->flags1 & RF1_UNIQUE) r1 *= 2;
+			if (unique) r1 *= 2;
 
 			/* Full drain */
 			if (r1 >= p_ptr->csp) {
@@ -2918,21 +2912,22 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 	/* RF5_CURSE (former CAUSE1~4) */
 	case RF5_OFFSET + 12: {
+#define SHOW_CURSE_DAMAGE /* Display the actual damage number in the curse message? */
 		/* No antimagic check -- is 'curse' magic? */
 		/* rebalance might be needed? */
-		int power = rlev / 2 + randint(rlev);
-
-#if 0 /* maybe in the future */
-		char damcol = 'o';
-		if (race_inf(m_ptr)->flags1 & RF1_UNIQUE) damcol = 'L';
-		msg_format(Ind, "%^s points at you and curses for \377%c%d \377wdamage.", m_name, damcol, dam);
-#endif
+		int power = rlev / 2 + randint(rlev), dam;;
+		char damcol = unique ? 'L' : 'o';
 
 		if (monst_check_antimagic(Ind, m_idx) && !(rand_int(4))) break;
 		disturb(Ind, 1, 0);
 		if (power < 15) {
+			dam = damroll(3, 8);
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+#ifdef SHOW_CURSE_DAMAGE
+			else msg_format(Ind, "%^s points at you and curses for \377%c%d \377wdamage.", m_name, damcol, dam);
+#else
 			else msg_format(Ind, "%^s points at you and curses.", m_name);
+#endif
 #ifdef USE_SOUND_2010
  #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
@@ -2944,13 +2939,18 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (rand_int(100) < p_ptr->skill_sav || p_ptr->no_cut)
 				msg_print(Ind, "You resist the effects!");
 			else
-				take_hit(Ind, damroll(3, 8), ddesc, -m_idx);
+				take_hit(Ind, dam, ddesc, -m_idx);
 			break;
 		}
 		/* RF5_CAUSE_2 */
 		else if (power < 35) {
+			dam = damroll(8, 8);
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+#ifdef SHOW_CURSE_DAMAGE
+			else msg_format(Ind, "%^s points at you and curses horribly for \377%c%d \377wdamage.", m_name, damcol, dam);
+#else
 			else msg_format(Ind, "%^s points at you and curses horribly.", m_name);
+#endif
 #ifdef USE_SOUND_2010
  #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
@@ -2962,15 +2962,20 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (rand_int(100) < p_ptr->skill_sav || p_ptr->no_cut)
 				msg_print(Ind, "You resist the effects!");
 			else {
-				take_hit(Ind, damroll(8, 8), ddesc, -m_idx);
+				take_hit(Ind, dam, ddesc, -m_idx);
 				(void)set_cut(Ind, p_ptr->cut + damroll(2, 3), -m_idx);
 			}
 			break;
 		}
 		/* RF5_CAUSE_3 */
 		else if (power < 50) {
+			dam = damroll(10, 15);
 			if (blind) msg_format(Ind, "%^s mumbles loudly.", m_name);
+#ifdef SHOW_CURSE_DAMAGE
+			else msg_format(Ind, "%^s points at you, incanting terribly for \377%c%d \377wdamage!", m_name, damcol, dam);
+#else
 			else msg_format(Ind, "%^s points at you, incanting terribly!", m_name);
+#endif
 #ifdef USE_SOUND_2010
  #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
@@ -2982,15 +2987,20 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (rand_int(100) < p_ptr->skill_sav || p_ptr->no_cut)
 				msg_print(Ind, "You resist the effects!");
 			else {
-				take_hit(Ind, damroll(10, 15), ddesc, -m_idx);
+				take_hit(Ind, dam, ddesc, -m_idx);
 				(void)set_cut(Ind, p_ptr->cut + damroll(5, 5), -m_idx);
 			}
 			break;
 		}
 		/* RF5_CAUSE_4 */
 		else {
+			dam = damroll(power / 4, 15); //was 15d15
 			if (blind) msg_format(Ind, "%^s screams the word 'DIE!'", m_name);
+#ifdef SHOW_CURSE_DAMAGE
+			else msg_format(Ind, "%^s points at you, screaming the word 'DIE' for \377%c%d \377wdamage!", m_name, damcol, dam);
+#else
 			else msg_format(Ind, "%^s points at you, screaming the word 'DIE'!", m_name);
+#endif
 #ifdef USE_SOUND_2010
  #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
@@ -3002,8 +3012,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (rand_int(100) < p_ptr->skill_sav || p_ptr->no_cut)
 				msg_print(Ind, "You resist the effects!");
 			else {
-				//take_hit(Ind, damroll(15, 15), ddesc, -m_idx);
-				take_hit(Ind, damroll(power / 4, 15), ddesc, -m_idx);
+				take_hit(Ind, dam, ddesc, -m_idx);
 				(void)set_cut(Ind, p_ptr->cut + damroll(10, 10), -m_idx);
 			}
 			break;
@@ -3614,7 +3623,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
-		sprintf(tmp, "%s %s", m_poss, ((r_ptr->flags1) & RF1_UNIQUE ? "minions" : "kin"));
+		sprintf(tmp, "%s %s", m_poss, (unique) ? "minions" : "kin");
 
 		summon_kin_type = r_ptr->d_char; /* Big hack */
 		for (k = 0; k < 6; k++)
@@ -3912,16 +3921,18 @@ bool make_attack_spell(int Ind, int m_idx) {
 }
 
 /* Doppelganger - don't cast like a monster, but pseudo-cast like a player;
-   Weaknesses in coding perhaps: mimicry-abilities, combat techniques, trauma? :o */
+   Weaknesses in coding perhaps: mimicry-abilities, combat techniques, trauma? :o - C. Blue
+   --- NOT IMPLEMENTED! SIMPLE_RI_MIRROR must be defined until this is actually implemented! --- */
 bool make_attack_spell_mirror(int Ind, int m_idx) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 	dun_level	*l_ptr = getfloor(wpos);
 	int		k, chance, thrown_spell, rlev; // , failrate;
 	//byte		spell[128], num = 0;
-	u32b		f4, f5, f6, f7, f0;
 	monster_type	*m_ptr = &m_list[m_idx];
 	monster_race	*r_ptr = race_inf(m_ptr);
+	u32b		f1 = r_ptr->flags1, f2 = r_ptr->flags2, f3 = r_ptr->flags3; /* Non-spell flags for other checks (eg unique monster?) */
+	u32b		f4 = r_ptr->flags4, f5 = r_ptr->flags5, f6 = r_ptr->flags6, f7 = r_ptr->flags7, f0 = r_ptr->flags0; /* Flags for actual spell-casting */
 	//object_type	*o_ptr = &p_ptr->inventory[INVEN_WIELD];
 	char		m_name[MNAME_LEN], m_name_real[MNAME_LEN];
 	char		m_poss[MNAME_LEN];
@@ -3936,16 +3947,13 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	/* Summon count */
 	int count = 0;
 
-	/* scatter summoning target location if player is shadow running, ie hard to pin down */
-	if (p_ptr->shadow_running) scatter(wpos, &ys, &xs, y, x, 5, 0);
-
 	bool blind = (p_ptr->blind ? TRUE : FALSE);
 	/* Extract the "within-the-vision-ness" --
 	   Note: This now requires LoS because it is only used
 	         for non-direct spells. Idea here:
 	         We can easily guess who cast that fireball 'around the corner'.. */
 	bool visible = p_ptr->mon_vis[m_idx]
-			&& player_has_los_bold(Ind, m_ptr->fy, m_ptr->fx);//new: require LoS
+	    && player_has_los_bold(Ind, m_ptr->fy, m_ptr->fx);//new: require LoS
 	/* Extract the "see-able-ness" --
 	   Note: This allows non-LoS (aka ESP-only) visibility,
 	         because it is only used for direct spells. */
@@ -3954,10 +3962,10 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	bool normal = TRUE;
 	/* Assume "projectable" */
 	bool direct = TRUE, local = FALSE;
-	bool stupid = r_ptr->flags2 & (RF2_STUPID), summon = FALSE;
+	bool stupid = (f2 & RF2_STUPID), unique = (f1 & RF1_UNIQUE), summon = FALSE;
 
 	int rad = 0, srad;
-	//u32b f7 = race_inf(&m_list[m_idx])->flags7;
+	//u32b f7 = r_ptr->flags7;
 	int s_clone = 0, clone_summoning = m_ptr->clone_summoning;
 	//int eff_m_hp;
 	/* To avoid TELE_TO from CAVE_ICKY pos on player outside */
@@ -3974,6 +3982,9 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 #endif
 	//int antichance = 0, antidis = 0;
 
+
+	/* scatter summoning target location if player is shadow running, ie hard to pin down */
+	if (p_ptr->shadow_running) scatter(wpos, &ys, &xs, y, x, 5, 0);
 
 	wpos = &m_ptr->wpos;
 	if (!(zcave = getcave(wpos))) return(FALSE);
@@ -4021,7 +4032,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	//if (!chance) return(FALSE);
 
 	/* Specialty for AI_HYBRID (Tzeentch) so he actually does melee for a change despite casting 1_IN_1 */
-	if ((r_ptr->flags3 & RF3_AI_HYBRID) && !(m_ptr->mind & HYBRID_ANNOY)
+	if ((f3 & RF3_AI_HYBRID) && !(m_ptr->mind & HYBRID_ANNOY)
 	    && chance) //avoid div0
 		/* Shift chance from 1_IN_n to 1_IN_(n+i/10), where i should probably be between 10 and 20. */
 		chance = 1000 / ((1000 / chance) + 10);
@@ -4032,13 +4043,6 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 
 	/* XXX XXX XXX Handle "track_target" option (?) */
 
-
-	/* Extract the racial spell flags */
-	f4 = r_ptr->flags4;
-	f5 = r_ptr->flags5;
-	f6 = r_ptr->flags6;
-	f7 = r_ptr->flags7;
-	f0 = r_ptr->flags0;
 
 	/* Hack for Tzeentch:
 	   Monsters that have both ASTAR and BLINK will not need to use it for movement purpose other than when ASTAR gets stuck.
@@ -4061,7 +4065,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	if ((l_ptr && (l_ptr->flags2 & LF2_NO_TELE))
 	    || (in_sector00(wpos) && (sector00flags2 & LF2_NO_TELE))
 	    /* don't start futile attempts to tele on non-tele grids? */
-	    || (!stupid && (!(r_ptr->flags2 & RF2_EMPTY_MIND) || (r_ptr->flags2 & RF2_SMART)) && (zcave[oy][ox].info & CAVE_STCK))) {
+	    || (!stupid && (!(f2 & RF2_EMPTY_MIND) || (f2 & RF2_SMART)) && (zcave[oy][ox].info & CAVE_STCK))) {
 		/* Remove teleport spells */
 		f6 &= ~(RF6_BLINK | RF6_TPORT | RF6_TELE_TO | RF6_TELE_AWAY | RF6_TELE_LEVEL);
 	}
@@ -4076,7 +4080,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 
 	/* radius of ball spells and breathes.
 	 * XXX this doesn't reflect some exceptions(eg. radius=4 spells). */
-	srad = (r_ptr->flags2 & (RF2_POWERFUL)) ? 3 : 2; /* was 2 : 1 */
+	srad = (f2 & RF2_POWERFUL) ? 3 : 2; /* was 2 : 1 */
 
 	/* NOTE: it is abusable that MAX_RANGE is 18 and player arrow range
 	 * is 25-50; one can massacre uniques without any dangers.
@@ -4146,7 +4150,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 						srad : INDIRECT_SUMMONING_RADIUS);
 			else rad = 99;
 
-			//if (rad > 3 || (rad == 3 && !(r_ptr->flags2 & (RF2_POWERFUL))))
+			//if (rad > 3 || (rad == 3 && !(f2 & RF2_POWERFUL)))
 			if (rad > srad) {
 				local = TRUE;
 
@@ -4172,7 +4176,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 
 
 	/* Hack -- allow "desperate" spells */
-	if ((r_ptr->flags2 & RF2_SMART) &&
+	if ((f2 & RF2_SMART) &&
 	    (m_ptr->hp < m_ptr->maxhp / 10) &&
 	    (rand_int(100) < 50))
 	{
@@ -4781,7 +4785,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			if ((p_ptr->esp_link_flags & LINKF_OPEN)) r1 *= 2;
 
 			/* Special boost - added for Tzeentch, but seems interesting in general ;) - C. Blue */
-			if (r_ptr->flags1 & RF1_UNIQUE) r1 *= 2;
+			if (unique) r1 *= 2;
 
 			/* Full drain */
 			if (r1 >= p_ptr->csp) {
@@ -4864,19 +4868,19 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	case RF5_OFFSET + 12: {
 		/* No antimagic check -- is 'curse' magic? */
 		/* rebalance might be needed? */
-		int power = rlev / 2 + randint(rlev);
-
-#if 0 /* maybe in the future */
-		char damcol = 'o';
-		if (race_inf(m_ptr)->flags1 & RF1_UNIQUE) damcol = 'L';
-		msg_format(Ind, "%^s points at you and curses for \377%c%d \377wdamage.", m_name, damcol, dam);
-#endif
+		int power = rlev / 2 + randint(rlev), dam;;
+		char damcol = unique ? 'L' : 'o';
 
 		if (monst_check_antimagic(Ind, m_idx) && !(rand_int(4))) break;
 		disturb(Ind, 1, 0);
 		if (power < 15) {
+			dam = damroll(3, 8);
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+#ifdef SHOW_CURSE_DAMAGE
+			else msg_format(Ind, "%^s points at you and curses for \377%c%d \377wdamage.", m_name, damcol, dam);
+#else
 			else msg_format(Ind, "%^s points at you and curses.", m_name);
+#endif
 #ifdef USE_SOUND_2010
  #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
@@ -4888,13 +4892,18 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			if (rand_int(100) < p_ptr->skill_sav || p_ptr->no_cut)
 				msg_print(Ind, "You resist the effects!");
 			else
-				take_hit(Ind, damroll(3, 8), ddesc, -m_idx);
+				take_hit(Ind, dam, ddesc, -m_idx);
 			break;
 		}
 		/* RF5_CAUSE_2 */
 		else if (power < 35) {
+			dam = damroll(8, 8);
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+#ifdef SHOW_CURSE_DAMAGE
+			else msg_format(Ind, "%^s points at you and curses horribly for \377%c%d \377wdamage.", m_name, damcol, dam);
+#else
 			else msg_format(Ind, "%^s points at you and curses horribly.", m_name);
+#endif
 #ifdef USE_SOUND_2010
  #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
@@ -4906,15 +4915,20 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			if (rand_int(100) < p_ptr->skill_sav || p_ptr->no_cut)
 				msg_print(Ind, "You resist the effects!");
 			else {
-				take_hit(Ind, damroll(8, 8), ddesc, -m_idx);
+				take_hit(Ind, dam, ddesc, -m_idx);
 				(void)set_cut(Ind, p_ptr->cut + damroll(2, 3), -m_idx);
 			}
 			break;
 		}
 		/* RF5_CAUSE_3 */
 		else if (power < 50) {
+			dam = damroll(10, 15);
 			if (blind) msg_format(Ind, "%^s mumbles loudly.", m_name);
+#ifdef SHOW_CURSE_DAMAGE
+			else msg_format(Ind, "%^s points at you, incanting terribly for \377%c%d \377wdamage!", m_name, damcol, dam);
+#else
 			else msg_format(Ind, "%^s points at you, incanting terribly!", m_name);
+#endif
 #ifdef USE_SOUND_2010
  #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
@@ -4926,15 +4940,20 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			if (rand_int(100) < p_ptr->skill_sav || p_ptr->no_cut)
 				msg_print(Ind, "You resist the effects!");
 			else {
-				take_hit(Ind, damroll(10, 15), ddesc, -m_idx);
+				take_hit(Ind, dam, ddesc, -m_idx);
 				(void)set_cut(Ind, p_ptr->cut + damroll(5, 5), -m_idx);
 			}
 			break;
 		}
 		/* RF5_CAUSE_4 */
 		else {
+			dam = damroll(power / 4, 15); //was 15d15
 			if (blind) msg_format(Ind, "%^s screams the word 'DIE!'", m_name);
+#ifdef SHOW_CURSE_DAMAGE
+			else msg_format(Ind, "%^s points at you, screaming the word 'DIE' for \377%c%d \377wdamage!", m_name, damcol, dam);
+#else
 			else msg_format(Ind, "%^s points at you, screaming the word 'DIE'!", m_name);
+#endif
 #ifdef USE_SOUND_2010
  #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
@@ -4946,8 +4965,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			if (rand_int(100) < p_ptr->skill_sav || p_ptr->no_cut)
 				msg_print(Ind, "You resist the effects!");
 			else {
-				//take_hit(Ind, damroll(15, 15), ddesc, -m_idx);
-				take_hit(Ind, damroll(power / 4, 15), ddesc, -m_idx);
+				take_hit(Ind, dam, ddesc, -m_idx);
 				(void)set_cut(Ind, p_ptr->cut + damroll(10, 10), -m_idx);
 			}
 			break;
@@ -5549,7 +5567,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
-		sprintf(tmp, "%s %s", m_poss, ((r_ptr->flags1) & RF1_UNIQUE ? "minions" : "kin"));
+		sprintf(tmp, "%s %s", m_poss, unique ? "minions" : "kin");
 
 		summon_kin_type = r_ptr->d_char; /* Big hack */
 		for (k = 0; k < 6; k++)
