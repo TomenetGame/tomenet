@@ -10761,7 +10761,7 @@ void process_timers() {
 #if 1 /* Initiate fallback procedure (again POSIX-only), requires traceroute and grep: */
 					msg_print(i, "Falling back to traceroute check, please wait...");
 					/* Could specify optionally: '-n' (changes format though) and/or '-m 30' (max hops): */
-					i = system(format("traceroute %s | grep -oE -e \" [-.0-9a-z]+ \" -e \"\\([^ ]+\\)\" -e \"[ .0-9]+ms\" > __iproute.tmp ; echo 'DONE' >> __iproute.tmp &", fake_waitxxx_ipaddr));
+					i = system(format("( traceroute %s | grep -oE -e \" [-.0-9a-z]+ \" -e \"\\([^ ]+\\)\" -e \"[ .0-9]+ms\" > __iproute.tmp ; echo 'DONE' >> __iproute.tmp ) &", fake_waitxxx_ipaddr));
 					fake_waitpid_route = fake_waitpid_ping; /* Transfer report process from ping lookup to route lookup */
 #endif
 				}
