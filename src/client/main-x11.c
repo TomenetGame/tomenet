@@ -2386,9 +2386,16 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 
 	/* Prepare the standard font */
 	MAKE(td->fnt, infofnt);
+	infofnt *old_infofnt = Infofnt;
 	Infofnt_set(td->fnt);
 	if (Infofnt_init_data(font) == -1) {
-		fprintf(stderr, "Failed to load a font! Falling back to default font\n");
+		if (in_game) {
+			Infofnt_set(old_infofnt);
+			plog("Failed to load the font! Falling back to default font.\n");
+			Infofnt_set(td->fnt);
+		} else {
+			fprintf(stderr, "Failed to load the font! Falling back to default font.\n");
+		}
 		if (Infofnt_init_data(x11_terms_font_default[index]) == -1) {
 			fprintf(stderr, "Failed to load a default font\n");
 			return(1);
