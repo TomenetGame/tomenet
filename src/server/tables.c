@@ -2482,16 +2482,16 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			'+', 700, },
 		{ SKILL_DEVICE,
-			'+', 1000,
+			'+', 0,
 			'+', 700, },
 		{ SKILL_SNEAKINESS,
-			'+', 1000,
+			'+', 0,
 			'+', 700, },
 		{ SKILL_STEALTH,
-			'+', 1000,
+			'+', 0,
 			'+', 600, },
 		{ SKILL_DISARM,
-			'+', 1000,
+			'+', 0,
 			'+', 900, },
 		{ SKILL_TRAPPING,
 			'+', 0,
@@ -2723,7 +2723,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			'+', 900, },
 		{ SKILL_INTERCEPT,
-			'+', 1000,
+			'+', 0,
 			'+', 600, }, //400
 		}, },
 
@@ -2751,7 +2751,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0, },
 #endif
 		{ SKILL_SWORD,
-			'+', 0,
+			'+', 1000,
 			'+', 600, },
 		{ SKILL_CRITS,
 			'+', 0,
@@ -2956,7 +2956,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 900, },
 		{ SKILL_DIG,
 			'+', 0,
-			'+', 1200, },
+			'+', 1100, },
 			/* Misc tree */
 		{ SKILL_CALMNESS,
 			'+', 0,
@@ -3519,7 +3519,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			'%', 140, },
 		{ SKILL_DIG,
-			'+', 0,
+			'+', 1000,
 			'+', 1400, },
 		{ SKILL_CALMNESS,
 			'+', 0,
@@ -4013,7 +4013,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			'%', 120, },
 		{ SKILL_DIG,
-			'+', 0,
+			'+', 1000,
 			'+', 1600, },
 		}, },
 
@@ -4409,7 +4409,7 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_MASTERY,
 			'+', 0,
 			'+', 400, },//800
-		{ SKILL_SWORD, //additionally to blunt! (or instead of it, under 1st CPRIEST version, before blunt was re-allowed)
+		{ SKILL_SWORD, //additionally to blunt! (or instead of it, under 1st CPRIEST version, before blunt was re-allowed), gets x1.3 to 650
 			'+', 0,
 			'+', 500, },
 #if 1 /* re-allow */
