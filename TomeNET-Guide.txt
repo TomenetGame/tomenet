@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 8. October 2022 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 23. October 2022 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -21989,7 +21989,13 @@ The techniques are as follows:
         If you wield a sling, you'll need to stand next to rubble and it'll
         create sling ammunition from it.
         The quality mainly depends on your archery skill and somewhat on your
-        ranged mastery skill, but is still somewhat random.
+        ranged mastery skill for that type of ammunition, but is still somewhat
+        random. If your archery skill is at least 20 you have a chance to
+        create ego items (for example branded or ethereal ammo). This chance
+        for crafting good or great ammo will continue to increase if you
+        further train your archery and particular ranged mastery skills.
+        If your archery and particular ranged mastery skills for the type of
+        ammunition are high enough you will instantly *identify* the result.
         If you want to create larger stacks of the same type of ammunition,
         collect a large stack of materials and use the skill on that stack
         (the total weight of that inventory slot determines the stack size).
