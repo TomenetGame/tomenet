@@ -864,7 +864,6 @@ static errr Infofnt_init_data(cptr name) {
 
 	/* The load failed, try to recover */
 	if (!info) {
-		fprintf(stderr, "Font not found: %s\n", name);
 		return(-1);
 	}
 
@@ -2389,15 +2388,23 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	infofnt *old_infofnt = Infofnt;
 	Infofnt_set(td->fnt);
 	if (Infofnt_init_data(font) == -1) {
+		/* Initialization failed, log and try to use the default font. */
+		fprintf(stderr, "Failed to load the \"%s\" font for terminal %d! Falling back to default font.\n", font, index);
 		if (in_game) {
+			/* If in game, inform the user. */
 			Infofnt_set(old_infofnt);
-			plog("Failed to load the font! Falling back to default font.\n");
+			plog_fmt("Failed to load the \"%s\" font! Falling back to default font.\n", font);
 			Infofnt_set(td->fnt);
-		} else {
-			fprintf(stderr, "Failed to load the font! Falling back to default font.\n");
-		}
+		} 
 		if (Infofnt_init_data(x11_terms_font_default[index]) == -1) {
-			fprintf(stderr, "Failed to load a default font\n");
+			/* Initialization of the default font failed too. Log, free allocated memory and return with error. */
+			fprintf(stderr, "Failed to load the default \"%s\" font for terminal %d\n", x11_terms_font_default[index], index);
+			Infofnt_set(old_infofnt);
+			if (in_game) {
+				/* If in game, inform the user. */
+				plog_fmt("Failed to load the default \"%s\" font too! Try to change font manually.\n", x11_terms_font_default[index]);
+			}
+			FREE(td->fnt, infofnt);
 			return(1);
 		}
 	}
@@ -2713,13 +2720,18 @@ static errr x11_term_init(int term_id) {
 
 	/* Initialize the terminal window, allow resizing, for font changes. */
 	errr err = term_data_init(term_id, x11_terms_term_data[term_id], FALSE, ang_term_name[term_id], fnt_name);
-	/* Store created terminal with X11 term data to ang_term array, even if term_data_init failed. */
-	ang_term[term_id] = Term;
+	/* Store created terminal with X11 term data to ang_term array, even if term_data_init failed, but only if there is one. */
+	int activated_term_idx = term_data_to_term_idx(Term->data);
+	if (activated_term_idx == term_id) {
+		ang_term[term_id] = Term;
+	}
 
 	if (err) {
 		printf("Error initializing term_data for X11 terminal with index %d\n", term_id);
-		term_nuke(ang_term[term_id]);
-		ang_term[term_id] = NULL;
+		if (ang_term[term_id]) {
+			term_nuke(ang_term[term_id]);
+			ang_term[term_id] = NULL;
+		}
 		return(err);
 	}
 
@@ -2995,11 +3007,27 @@ static void term_force_font(int term_idx, cptr fnt_name) {
 	int cols = ((td->outer->w - (2 * td->inner->b)) / td->fnt->wid);
 	int rows = ((td->outer->h - (2 * td->inner->b)) / td->fnt->hgt);
 
-	/* font change */
-	Infofnt_set(td->fnt);
-	string_free(Infofnt->name);
-	XFreeFont(Metadpy->dpy, Infofnt->info);
-	Infofnt_init_data(fnt_name);
+	/* Create and initialize font. */
+	infofnt *new_font;
+	MAKE(new_font, infofnt);
+	infofnt *old_infofnt = Infofnt;
+	Infofnt_set(new_font);
+	if (Infofnt_init_data(fnt_name)) {
+		/* Failed to initialize. */
+		fprintf(stderr, "Error forcing the \"%s\" font on terminal %d\n", fnt_name, term_idx);
+		Infofnt_set(old_infofnt);
+		if(in_game) {
+			plog_fmt("Failed to load the \"%s\" font!", fnt_name);
+		}
+		FREE(new_font, infofnt);
+		return;
+	} 
+
+	/* New font was successfully initialized, free the old one and use the new one. */
+	if (td->fnt->name) string_free(td->fnt->name);
+	if (td->fnt->info) XFreeFont(Metadpy->dpy, td->fnt->info);
+	FREE(td->fnt, infofnt);
+	td->fnt = new_font;
 
 	/* Desired size of "outer" window */
 	int wid_outer = (cols * td->fnt->wid) + (2 * td->inner->b);
@@ -3220,7 +3248,24 @@ const char* get_font_name(int term_idx) {
 }
 
 void set_font_name(int term_idx, char* fnt) {
+	if (term_idx < 0 || term_idx >=ANGBAND_TERM_MAX) {
+		fprintf(stderr, "Terminal index %d is out of bounds for set_font_name\n", term_idx);
+		return;
+	}
 	term_force_font(term_idx, fnt);
+
+	/* Redraw the terminal for which the font was forced. */
+	term_data *td = term_idx_to_term_data(term_idx);
+	if (&td->t != Term) {
+		/* Terminal for which the font was forced is not activated. Activate, redraw and activate the terminal before. */
+		term *old_term = Term;
+		Term_activate(&td->t);
+		Term_redraw();
+		Term_activate(old_term);
+	} else {
+		/* Terminal for which the font was forced is currently activated. Just redraw. */
+		Term_redraw();
+	}
 }
 
 void term_toggle_visibility(int term_idx) {
