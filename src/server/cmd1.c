@@ -1561,7 +1561,7 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 	if (pick_one) {
 		num = o_ptr->number;
 
-		/* for pick_one: need to divide wand charges */
+		/* for pick_one: need to divide wand/staff charges */
 		if (is_magic_device(o_ptr->tval) && num > 1) {
 			forge_one = *o_ptr;
 			forge_one.number = 1;
@@ -2541,7 +2541,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			if (okay) {
 				int slot;
 
-				/* for pick_one: need to divide wand charges - thanks Dj_Wolf */
+				/* for pick_one: need to divide wand/staff charges - thanks Dj_Wolf */
 				if (!delete_it && is_magic_device(o_ptr->tval)) {
 					o_floor_ptr->number = num_org; //temporarily unhack pick_one
 					divide_charged_item(o_ptr, o_floor_ptr, 1);

@@ -2453,7 +2453,7 @@ static void display_entry(int Ind, int pos) {
 	if (p_ptr->store_num == STORE_HOME || p_ptr->store_num == STORE_HOME_DUN) {
 		/* Describe the object */
 #ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
-		/* hack for wand charges to not get displayed accumulated (less comfortable) */
+		/* hack for wand/staff charges to not get displayed accumulated (less comfortable) */
 		if (o_ptr->tval == TV_WAND
  #ifdef NEW_MDEV_STACKING
 		    || o_ptr->tval == TV_STAFF
@@ -2516,7 +2516,7 @@ static void display_entry(int Ind, int pos) {
 
 		/* Describe the object (fully) */
 #ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
-		/* hack for wand charges to not get displayed accumulated (less comfortable) */
+		/* hack for wand/staff charges to not get displayed accumulated (less comfortable) */
 		if (o_ptr->tval == TV_WAND
  #ifdef NEW_MDEV_STACKING
 		    || o_ptr->tval == TV_STAFF
@@ -8055,7 +8055,7 @@ void export_player_store_offers(int *export_turns) {
  #endif
 
  #ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
-				/* hack for wand charges to not get displayed accumulated (less comfortable) */
+				/* hack for wand/staff charges to not get displayed accumulated (less comfortable) */
 				if (o_ptr->tval == TV_WAND
  #ifdef NEW_MDEV_STACKING
 				    || o_ptr->tval == TV_STAFF
@@ -8209,7 +8209,7 @@ void export_player_store_offers(int *export_turns) {
 #endif
 
 #ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
-		/* hack for wand charges to not get displayed accumulated (less comfortable) */
+		/* hack for wand/staff charges to not get displayed accumulated (less comfortable) */
 		if (o_ptr->tval == TV_WAND
 #ifdef NEW_MDEV_STACKING
 		    || o_ptr->tval == TV_STAFF

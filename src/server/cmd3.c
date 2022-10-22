@@ -4941,7 +4941,7 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 			/* Hack 'number' to allow merging stacks partially */
 			xnum = 99 - o_ptr->number;
 			if (i_ptr->number > xnum) {
-				/* need to divide wand charges */
+				/* need to divide wand/staff charges */
 				if (is_magic_device(i_ptr->tval)) {
 					forge_part = *i_ptr;
 					forge_part.number = xnum;
