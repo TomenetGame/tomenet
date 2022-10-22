@@ -4925,8 +4925,8 @@ void do_cmd_query_symbol(int Ind, char sym) {
 bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 	player_type *p_ptr = Players[Ind];
 	object_type *s_ptr = &p_ptr->inventory[sslot];
-	object_type *o_ptr;
-	int i, inum = i_ptr->number;
+	object_type *o_ptr, forge_part, *i_ptr_tmp = i_ptr;
+	int i, inum = i_ptr->number, xnum;
 	char o_name[ONAME_LEN];
 	u32b f3 = 0x0, dummy;
 
@@ -4936,8 +4936,20 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 		if (o_ptr->tval) {
 			/* Slot has no more stacking capacity? */
 			if (o_ptr->number == 99) continue;
+
+			forge_part.tval = 0;
 			/* Hack 'number' to allow merging stacks partially */
-			if (i_ptr->number + o_ptr->number > 99) i_ptr->number = 99 - o_ptr->number;
+			xnum = 99 - o_ptr->number;
+			if (i_ptr->number > xnum) {
+				/* need to divide wand charges */
+				if (is_magic_device(i_ptr->tval)) {
+					forge_part = *i_ptr;
+					forge_part.number = xnum;
+					divide_charged_item(&forge_part, i_ptr, xnum);
+					i_ptr->number -= xnum;
+					i_ptr = &forge_part;
+				} else i_ptr->number = xnum; /* Hack 'number' */
+			}
 			/* Merge partially or fully */
 			if (object_similar(Ind, o_ptr, i_ptr, 0x4)) {
 				/* Check whether this item was requested by an item-retrieval quest.
@@ -4953,6 +4965,8 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 				sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
  #endif
 
+				if (forge_part.tval) i_ptr = i_ptr_tmp;
+				else
 				i_ptr->number = inum - i_ptr->number; /* Unhack 'number' */
 				/* Manually do this here for now: Update subinven slot for client. */
 				display_subinven_aux(Ind, sslot, i);

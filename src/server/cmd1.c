@@ -1549,7 +1549,7 @@ void whats_under_your_feet(int Ind, bool force) {
    Returns TRUE if we have to set try_pickup = FALSE in carry() */
 bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one) {
 	int i, num;
-	object_type *s_ptr;
+	object_type *s_ptr, forge_one, *o_ptr_tmp = o_ptr;
 	player_type *p_ptr = Players[Ind];
 	bool delete_it, fully_stowed = FALSE;
 
@@ -1557,9 +1557,18 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 	if (!object_known_p(Ind, o_ptr) || !object_aware_p(Ind, o_ptr)) return(FALSE);
 
 	/* Hack number */
+	forge_one.tval = 0;
 	if (pick_one) {
 		num = o_ptr->number;
-		o_ptr->number = 1;
+
+		/* for pick_one: need to divide wand charges */
+		if (is_magic_device(o_ptr->tval) && num > 1) {
+			forge_one = *o_ptr;
+			forge_one.number = 1;
+			divide_charged_item(&forge_one, o_ptr, 1);
+			o_ptr->number--;
+			o_ptr = &forge_one;
+		} else o_ptr->number = 1;
 	}
 
 	for (i = 0; i < INVEN_PACK; i++) {
@@ -1577,6 +1586,8 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
  #endif
 	}
 
+	if (forge_one.tval) o_ptr = o_ptr_tmp;
+	else
 	/* Unhack number */
 	if (pick_one) o_ptr->number += num - 1;
 
