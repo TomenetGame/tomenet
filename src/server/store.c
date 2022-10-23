@@ -2063,6 +2063,9 @@ static void store_create(store_type *st_ptr) {
 		    o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && o_ptr->bpval > 10)
 			o_ptr->bpval = 10;
 
+		/* Same for +MP staves, find anything above +10 instead of purchasing it from Minas BM */
+		if (o_ptr->tval == TV_MSTAFF && o_ptr->pval > 10) o_ptr->pval = 10;
+
 		e_ptr = &e_info[o_ptr->name2];
 		e2_ptr = &e_info[o_ptr->name2b];
 
