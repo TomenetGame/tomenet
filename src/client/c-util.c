@@ -8792,7 +8792,7 @@ static void do_cmd_options_fonts(void) {
 	/* Interact */
 	while (go) {
 		/* Prompt XXX XXX XXX */
-		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w>, \377yv\377w (visibility), \377y-\377w/\377y+\377w (smaller/bigger), \377yENTER\377w (enter font name), \377yESC\377w)");
+		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w>, \377yv\377w (visibility), \377y-\377w/\377y+\377w,\377y=\377w (smaller/bigger), \377yENTER\377w (enter font name), \377yESC\377w)");
 		Term_putstr(0, 1, -1, TERM_WHITE, format("  (%d font%s and %d graphic font%s available, \377yl\377w to list in message window)", fonts, fonts == 1 ? "" : "s", graphic_fonts, graphic_fonts == 1 ? "" : "s"));
 
 		/* Display the windows */
@@ -8844,6 +8844,7 @@ static void do_cmd_options_fonts(void) {
 			term_toggle_visibility(y);
 			break;
 
+		case '=':
 		case '+':
 			/* find out which of the fonts in lib/xtra/fonts we're currently using */
 			if ((window_flag[y] & PW_MINIMAP) && graphic_fonts > 0)
