@@ -20736,12 +20736,12 @@ The exclusive astral school for Maiar.
 Most spells use INT and some use WIS for determining the failure rate. If no
 stat is mentioned, INT is therefore the norm.
 Instead of normal spell level, the spells of this school use an 'astral level'
-to determine damage or effect. This astral level consists to equal parts of
-your character level and your Astral Knowledge school level. This means that
-a level 49 character with 1.000 in Astral Knowledge will still cast spells that
-deal damage and have effects as if the spell was actually at level 25 (the
-average value of 1 and 49). (Spell success chance uses the normal spell level
-though, as all other magic schools do, not the astral level.)
+to determine damage or effect. This astral level consists to 1/4 of your
+character level and 3/4 of your Astral Knowledge school level. This means that
+a level 48 character with 1.250 in Astral Knowledge will still cast spells that
+deal damage and have effects as if the spell was actually at level 12 (48 * 3/4
++ 1.250 * 1/4, each multiple rounded down). (Spell success chance uses the
+normal spell level just like all other magic schools do, NOT the astral level.)
 
     Power Bolt      Casts a bolt of electricity/mana/dispelling depending on
                     your alignment:
