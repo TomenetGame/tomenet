@@ -6596,6 +6596,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (k >= 0) {
 					char o_name[ONAME_LEN];
 
+					o_ptr = &p_ptr->inventory[k];
 					object_desc(Ind, o_name, o_ptr, TRUE, 3);
 					msg_format(Ind, "You have %s (%c).", o_name, index_to_label(k));
 				}
@@ -6682,6 +6683,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (k >= 0) {
 					char o_name[ONAME_LEN];
 
+					o_ptr = &p_ptr->inventory[k];
 					object_desc(Ind, o_name, o_ptr, TRUE, 3);
 					msg_format(Ind, "You have %s (%c).", o_name, index_to_label(k));
 				}
@@ -6869,6 +6871,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (k >= 0) {
 					char o_name[ONAME_LEN];
 
+					o_ptr = &p_ptr->inventory[k];
 					object_desc(Ind, o_name, o_ptr, TRUE, 3);
 					msg_format(Ind, "You have %s (%c).", o_name, index_to_label(k));
 				}
