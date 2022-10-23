@@ -20743,11 +20743,10 @@ of 25.
 Power Bolt, Power Ray and Power Blast damage calculations again use the average
 of your astral level and your actual skill, so for these spells your character
 level will affect the spell level by 1/4 and your skill will affect it by 3/4.
-For example if your character is level 48 and your astral skill is 1.250 these
+For example if your character is level 49 and your astral skill is 1.250 these
 particular spells will deal damage and have effects as if the spell was in fact
-at level 12 (48 * 3/4 + 1.250 * 1/4, each multiple rounded down). (The success
-chance of spells uses the normal spell level just like all other magic schools
-do, NOT the astral level.)
+at level 13 ([([(49 + 1.250) / 2] + 1.250) / 2]). (The success chance of spells
+uses the normal spell level just like all other spells, NOT the astral level.)
 
     Power Bolt      Casts a bolt of electricity/mana/dispelling depending on
                     your alignment:

@@ -7,7 +7,7 @@ end
 function get_astral_dam(Ind, limit_lev)
 	local lev
 
-	lev = get_astral_lev(Ind) / 2 + (players(Ind).s_info[SKILL_ASTRAL + 1].value + 1) / 2000
+	lev = ((get_astral_lev(Ind) * 1000) + players(Ind).s_info[SKILL_ASTRAL + 1].value) / 2000
 	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 2 end
 	return (3 + ((lev * 3) / 5)), (1 + lev / 2)
 end
@@ -15,7 +15,7 @@ end
 function get_astral_ball_dam(Ind, limit_lev)
 	local lev
 
-	lev = get_astral_lev(Ind) / 2 + (players(Ind).s_info[SKILL_ASTRAL + 1].value + 1) / 2000
+	lev = ((get_astral_lev(Ind) * 1000) + players(Ind).s_info[SKILL_ASTRAL + 1].value ) / 2000
 	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 2 end
 	return lev * 9
 end
