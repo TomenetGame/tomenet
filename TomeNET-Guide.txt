@@ -21999,6 +21999,7 @@ The techniques are as follows:
         create ego items (for example branded or ethereal ammo). This chance
         for crafting good or great ammo will continue to increase if you
         further train your archery and particular ranged mastery skills.
+        It is not possible to craft any artifact ammunition.
         If your archery and particular ranged mastery skills for the type of
         ammunition are high enough you will instantly *identify* the result.
         If you want to create larger stacks of the same type of ammunition,
