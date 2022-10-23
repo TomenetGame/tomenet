@@ -1,11 +1,12 @@
 -- The astral school ///update-dummy-bytes
 
 function get_astral_lev(Ind)
-	return ((players(Ind).s_info[SKILL_ASTRAL + 1].value + 1) / 2000 + players(Ind).lev / 2)
+	return ((players(Ind).s_info[SKILL_ASTRAL + 1].value + (players(Ind).lev * 1000)) / 2000)
 end
 
 function get_astral_dam(Ind, limit_lev)
 	local lev
+
 	lev = get_astral_lev(Ind) / 2 + (players(Ind).s_info[SKILL_ASTRAL + 1].value + 1) / 2000
 	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 2 end
 	return (3 + ((lev * 3) / 5)), (1 + lev / 2)
@@ -13,6 +14,7 @@ end
 
 function get_astral_ball_dam(Ind, limit_lev)
 	local lev
+
 	lev = get_astral_lev(Ind) / 2 + (players(Ind).s_info[SKILL_ASTRAL + 1].value + 1) / 2000
 	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 2 end
 	return lev * 9
@@ -20,6 +22,7 @@ end
 
 function get_veng_power(Ind)
 	local l = get_astral_lev(Ind)
+
 	if (l > 50) then
 		return (500)
 	else
@@ -59,6 +62,7 @@ POWERBOLT_I = add_spell {
 	end,
 	["info"] = 	function()
 			local xx, yy
+
 			xx, yy = get_astral_dam(Ind, 1)
 			return "dam "..xx.."d"..yy
 	end,
@@ -91,6 +95,7 @@ POWERBOLT_II = add_spell {
 	end,
 	["info"] = 	function()
 			local xx, yy
+
 			xx, yy = get_astral_dam(Ind, 20)
 			return "dam "..xx.."d"..yy
 	end,
@@ -121,6 +126,7 @@ POWERBOLT_III = add_spell {
 	end,
 	["info"] = 	function()
 			local xx, yy
+
 			xx, yy = get_astral_dam(Ind, 0)
 			return "dam "..xx.."d"..yy
 	end,
@@ -153,6 +159,7 @@ POWERBEAM_I = add_spell {
 	end,
 	["info"] = 	function()
 			local xx, yy
+
 			xx, yy = get_astral_dam(Ind, 1)
 			return "dam "..xx.."d"..yy
 	end,
@@ -185,6 +192,7 @@ POWERBEAM_II = add_spell {
 	end,
 	["info"] = 	function()
 			local xx, yy
+
 			xx, yy = get_astral_dam(Ind, 15)
 			return "dam "..xx.."d"..yy
 	end,
@@ -215,6 +223,7 @@ POWERBEAM_III = add_spell {
 	end,
 	["info"] = 	function()
 			local xx, yy
+
 			xx, yy = get_astral_dam(Ind, 0)
 			return "dam "..xx.."d"..yy
 	end,
@@ -247,6 +256,7 @@ POWERBALL_I = add_spell {
 	end,
 	["info"] = 	function()
 			local dam
+
 			dam = get_astral_ball_dam(Ind, 1)
 			return "dam "..dam.." rad "..2 + get_level(Ind, POWERBALL_I, 2)
 	end,
@@ -277,6 +287,7 @@ POWERBALL_II = add_spell {
 	end,
 	["info"] = 	function()
 			local dam
+
 			dam = get_astral_ball_dam(Ind, 15)
 			return "dam "..dam.." rad "..2 + get_level(Ind, POWERBALL_I, 2)
 	end,
@@ -306,6 +317,7 @@ POWERBALL_III = add_spell {
 	end,
 	["info"] = 	function()
 			local dam
+
 			dam = get_astral_ball_dam(Ind, 0)
 			return "dam "..dam.." rad "..2 + get_level(Ind, POWERBALL_I, 2)
 	end,
@@ -327,6 +339,7 @@ RELOCATION = add_spell {
 	["am"] = 	67,
 	["spell"] = 	function(args)
 			local dur = randint(21 - get_level(Ind, RECALL, 15)) + 15 - get_level(Ind, RECALL, 10)
+
 			if args.book < 0 then return end
 			set_recall(Ind, dur, player.inventory[1 + args.book])
 	end,
@@ -455,14 +468,16 @@ POWERCLOUD = add_spell {
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 			local lev = get_astral_lev(Ind)
-				if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
-					fire_cloud(Ind, GF_MANA, args.dir, (1 + lev * 2), 3, (5 + lev / 5), 9, " conjures up a mana storm of")
-				else
-					fire_cloud(Ind, GF_INFERNO, args.dir, (1 + lev * 2), 3, (5 + lev / 5), 9, " conjures up inferno of")
-				end
+
+			if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
+				fire_cloud(Ind, GF_MANA, args.dir, (1 + lev * 2), 3, (5 + lev / 5), 9, " conjures up a mana storm of")
+			else
+				fire_cloud(Ind, GF_INFERNO, args.dir, (1 + lev * 2), 3, (5 + lev / 5), 9, " conjures up inferno of")
+			end
 	end,
 	["info"] = 	function()
 			local lev = get_astral_lev(Ind)
+
 			return "dam "..(1 + lev * 2).." rad 3 dur "..(5 + (lev / 5))
 	end,
 	["desc"] = 	{

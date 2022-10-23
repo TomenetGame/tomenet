@@ -20735,13 +20735,19 @@ In general, mindcraft schools are less affected by anti-magic fields.)
 The exclusive astral school for Maiar.
 Most spells use INT and some use WIS for determining the failure rate. If no
 stat is mentioned, INT is therefore the norm.
-Instead of normal spell level, the spells of this school use an 'astral level'
-to determine damage or effect. This astral level consists to 1/4 of your
-character level and 3/4 of your Astral Knowledge school level. This means that
-a level 48 character with 1.250 in Astral Knowledge will still cast spells that
-deal damage and have effects as if the spell was actually at level 12 (48 * 3/4
-+ 1.250 * 1/4, each multiple rounded down). (Spell success chance uses the
-normal spell level just like all other magic schools do, NOT the astral level.)
+Various spells of this school use an 'astral level' instead of the normal spell
+level to determine damage or effect. This astral level consists to 1/2 of your
+character level and 1/4 of your Astral Knowledge school level. This means that
+a level 49 character with 1.250 in Astral Knowledge will have an astral level
+of 25.
+Power Bolt, Power Ray and Power Blast damage calculations again use the average
+of your astral level and your actual skill, so for these spells your character
+level will affect the spell level by 1/4 and your skill will affect it by 3/4.
+For example if your character is level 48 and your astral skill is 1.250 these
+particular spells will deal damage and have effects as if the spell was in fact
+at level 12 (48 * 3/4 + 1.250 * 1/4, each multiple rounded down). (The success
+chance of spells uses the normal spell level just like all other magic schools
+do, NOT the astral level.)
 
     Power Bolt      Casts a bolt of electricity/mana/dispelling depending on
                     your alignment:
