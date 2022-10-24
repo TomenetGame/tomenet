@@ -803,9 +803,12 @@ static void rd_item(object_type *o_ptr) {
 	    && o_ptr->level < o_ptr->bpval * 5)
 		o_ptr->level = o_ptr->bpval * 5;
 
-	if (o_ptr->tval == TV_BOOTS && o_ptr->level && o_ptr->pval > 0) {
+	/* [Except for true art boots?] Adjust boots level too like speed rings */
+	if (o_ptr->tval == TV_BOOTS && o_ptr->level && o_ptr->pval > 0
+	    //&& !(o_ptr->name1 && o_ptr->name1 != ART_RANDART)
+	    ) {
 		if ((f1 & TR1_SPEED) && o_ptr->level < SPEED_RING_BASE_LEVEL + o_ptr->pval)
-		o_ptr->level = SPEED_RING_BASE_LEVEL + o_ptr->pval;
+			o_ptr->level = SPEED_RING_BASE_LEVEL + o_ptr->pval;
 	}
 
 	/* modified arms/legs for more transparency and less tediousness */
@@ -869,7 +872,7 @@ static void rd_item(object_type *o_ptr) {
 
  #if 0
 	/* fix shields previously ruined by formerly buggy code above */
-	if (o_ptr->tval == TV_SHIELD && !o_ptr->name1 && !o_ptr->name2 && !o_ptr->level && o_ptr->level <= 50) {
+	if (o_ptr->tval == TV_SHIELD && !o_ptr->name1 && !o_ptr->name2 && o_ptr->level && o_ptr->level <= 50) {
 		//if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) o_ptr->level = 51; else
 		o_ptr->level = 3;//whatever..
 	}
