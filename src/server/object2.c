@@ -6732,7 +6732,7 @@ void determine_level_req(int level, object_type *o_ptr) {
 	o_ptr->level = (j < 100) ? ((j > 1) ? j : 1) : 100;
 
 
-	/* --------------- Final bottom limits --------------- */
+	/* --------------- Soulbounds --------------- */
 
 
 	/* Anti-cheeze hacks */
@@ -6748,47 +6748,6 @@ void determine_level_req(int level, object_type *o_ptr) {
  #endif
 // #endif
 #endif
-	if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_TRAP_CREATION) && (o_ptr->level < 20)) o_ptr->level = 20;
-	if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_FIRE) && (o_ptr->level < 30)) o_ptr->level = 30;
-	if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_ICE) && (o_ptr->level < 30)) o_ptr->level = 30;
-	if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_CHAOS) && (o_ptr->level < 30)) o_ptr->level = 30;
-	/* Make randart +SPEED rings consistent with normal rings of speed.. */
-	if (o_ptr->tval == TV_RING && o_ptr->name1 == ART_RANDART && (a_ptr->flags1 & TR1_SPEED) && o_ptr->pval) {
-		if (o_ptr->level < SPEED_RING_BASE_LEVEL + o_ptr->pval)
-			o_ptr->level = SPEED_RING_BASE_LEVEL + o_ptr->pval;
-	} else if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED
-	    && o_ptr->level && o_ptr->bpval > 0
-	    && o_ptr->level != SPEED_RING_BASE_LEVEL + o_ptr->bpval)
-		o_ptr->level = SPEED_RING_BASE_LEVEL + o_ptr->bpval;
-	if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_SPEED
-	    && o_ptr->level && o_ptr->bpval > 0
-	    && o_ptr->level < o_ptr->bpval * 5)
-		o_ptr->level = o_ptr->bpval * 5;
-	//not just EGO_SPEED and EGO_ELVENKIND2, but all boots
-	if (o_ptr->tval == TV_BOOTS && o_ptr->level && o_ptr->pval > 0) {
-		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-		if ((f1 & TR1_SPEED) && o_ptr->level < SPEED_RING_BASE_LEVEL + o_ptr->pval)
-			o_ptr->level = SPEED_RING_BASE_LEVEL + o_ptr->pval;
-	}
-
-	if ((o_ptr->tval == TV_DRAG_ARMOR) && (o_ptr->sval == SV_DRAGON_POWER) && (o_ptr->level < 45)) o_ptr->level = 44 + randint(5);
-
-	if (o_ptr->tval == TV_LITE) {
-		if (o_ptr->name1 == ART_RANDART) {
-			switch (o_ptr->sval) {
-			case SV_LITE_DWARVEN: if (o_ptr->level < 30) o_ptr->level = 30; break;//ego powered lower limit is ~28, going slightly above that..
-			case SV_LITE_FEANORIAN: if (o_ptr->level < 38) o_ptr->level = 38; break;
-			}
-		} else {
-			switch (o_ptr->sval) {
-			case SV_LITE_DWARVEN: if (o_ptr->level < 20) o_ptr->level = 20; break;
-			case SV_LITE_FEANORIAN: if (o_ptr->level < 32) o_ptr->level = 32; break;
-			}
-		}
-	}
-
-	/* Fix cheap but high +dam weaponry: */
-	if (o_ptr->level * 10 < o_ptr->to_d * 12) o_ptr->level = (o_ptr->to_d * 12) / 10;
 
 
 	/* --------------- Reduce excessive level --------------- */
@@ -6860,6 +6819,66 @@ void determine_level_req(int level, object_type *o_ptr) {
 	if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) && (o_ptr->level <= 50))
 		o_ptr->level = 51 + rand_int(5);
 #endif
+
+
+	/* --------------- Enforce minimum level for certain items // KEEP CONSISTENT WITH load.c --------------- */
+
+
+	if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_TRAP_CREATION) && (o_ptr->level < 20)) o_ptr->level = 20;
+	if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_FIRE) && (o_ptr->level < 30)) o_ptr->level = 30;
+	if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_ICE) && (o_ptr->level < 30)) o_ptr->level = 30;
+	if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_CHAOS) && (o_ptr->level < 30)) o_ptr->level = 30;
+	/* Make randart +SPEED rings consistent with normal rings of speed.. */
+	if (o_ptr->tval == TV_RING && o_ptr->name1 == ART_RANDART && (a_ptr->flags1 & TR1_SPEED) && o_ptr->pval) {
+		if (o_ptr->level < SPEED_RING_BASE_LEVEL + o_ptr->pval)
+			o_ptr->level = SPEED_RING_BASE_LEVEL + o_ptr->pval;
+	} else if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED
+	    && o_ptr->level && o_ptr->bpval > 0
+	    && o_ptr->level != SPEED_RING_BASE_LEVEL + o_ptr->bpval)
+		o_ptr->level = SPEED_RING_BASE_LEVEL + o_ptr->bpval;
+	if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_SPEED
+	    && o_ptr->level && o_ptr->bpval > 0
+	    && o_ptr->level < o_ptr->bpval * 5)
+		o_ptr->level = o_ptr->bpval * 5;
+	//not just EGO_SPEED and EGO_ELVENKIND2, but all boots
+	if (o_ptr->tval == TV_BOOTS && o_ptr->level && o_ptr->pval > 0) {
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+		if ((f1 & TR1_SPEED) && o_ptr->level < SPEED_RING_BASE_LEVEL + o_ptr->pval)
+			o_ptr->level = SPEED_RING_BASE_LEVEL + o_ptr->pval;
+	}
+
+	if ((o_ptr->tval == TV_DRAG_ARMOR) && (o_ptr->sval == SV_DRAGON_POWER) && (o_ptr->level < 45)) o_ptr->level = 44 + randint(5);
+
+	if (o_ptr->tval == TV_LITE) {
+		if (o_ptr->name1 == ART_RANDART) {
+			switch (o_ptr->sval) {
+			case SV_LITE_DWARVEN: if (o_ptr->level < 30) o_ptr->level = 30; break;//ego powered lower limit is ~28, going slightly above that..
+			case SV_LITE_FEANORIAN: if (o_ptr->level < 38) o_ptr->level = 38; break;
+			}
+		} else {
+			switch (o_ptr->sval) {
+			case SV_LITE_DWARVEN: if (o_ptr->level < 20) o_ptr->level = 20; break;
+			case SV_LITE_FEANORIAN: if (o_ptr->level < 32) o_ptr->level = 32; break;
+			}
+		}
+	}
+
+	/* Anti-cheeze for trivially enchanted items */
+	if (is_weapon(o_ptr->tval) && !o_ptr->name1 && !o_ptr->name2 && o_ptr->level && o_ptr->level < 20) {
+		if (o_ptr->to_h > o_ptr->to_d) {
+			if (o_ptr->level < o_ptr->to_h) o_ptr->level = o_ptr->to_h;
+		} else {
+			if (o_ptr->level < o_ptr->to_d) o_ptr->level = o_ptr->to_d;
+		}
+		if (o_ptr->level > 20) o_ptr->level = 20;
+	}
+	if (is_armour(o_ptr->tval) && !o_ptr->name1 && !o_ptr->name2 && o_ptr->level && o_ptr->level < o_ptr->to_a && o_ptr->level < 20) {
+		o_ptr->level = o_ptr->to_a;
+		if (o_ptr->level > 20) o_ptr->level = 20; //don't exaggerate - for early mithril helmet finds etc
+	}
+
+	/* Fix cheap but high +dam weaponry: */
+	if (o_ptr->level * 10 < o_ptr->to_d * 12) o_ptr->level = (o_ptr->to_d * 12) / 10;
 }
 #else /* new way, quite reworked */
 void determine_level_req(int level, object_type *o_ptr) {
