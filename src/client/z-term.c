@@ -36,7 +36,7 @@ void (*resize_main_window)(int cols, int rows);
  *
  * This package was designed to help port the game "Angband" to a wide
  * variety of different platforms.  Angband, like many other games in
- * the "rogue-like" heirarchy, requires, at the minimum, the ability
+ * the "rogue-like" hierarchy, requires, at the minimum, the ability
  * to display "colored textual symbols" in a standard 80x24 "window",
  * such as that provided by most dumb terminals, and many old personal
  * computers, and to check for "keypresses" from the user.  The major
@@ -77,7 +77,7 @@ void (*resize_main_window)(int cols, int rows);
  *
  *
  * This package provides support for multiple windows, each of an
- * arbitrary size (up to 255x255), each with its own set of flags,
+ * arbitrary size, each with its own set of flags,
  * and its own hooks to handle several low-level procedures which
  * differ from platform to platform.  Then the main program simply
  * creates one or more "term" structures, setting the various flags
@@ -92,15 +92,17 @@ void (*resize_main_window)(int cols, int rows);
  * using flags and hooks appropriate to the given platform, so that
  * the "main()" function can call one (or more) of the "init_xxx()"
  * functions, as appropriate, to prepare the required "term_screen"
- * (and the optional "term_mirror", "term_choice", "term_recall")
- * pointers to "term" structures.  Other "main-xxx.c" systems contain
- * their own "main()" function which, in addition to doing everything
- * needed to initialize the actual program, also does everything that
- * the normal "init_xxx()" functions would do.
+ * (and the optional "term_mirror", "term_choice", "term_recall" and
+ * term_term_4 to term_term_7) pointers to "term" structures.  Other
+ * "main-xxx.c" systems contain their own "main()" function which,
+ * in addition to doing everything, needed to initialize the actual
+ * program, also does everything that the normal "init_xxx()" functions
+ * would do.
  *
  *
  * This package allows each "grid" in each window to hold an attr/char
- * pair, with each ranging from 0 to 255, and makes very few assumptions
+ * pair, with each ranging from 0 to 255 (The char can hold bigger values.
+ * See the "Edit 2020" paragraph bellow), and makes very few assumptions
  * about the meaning of any attr/char values.  Normally, we assume that
  * "attr 0" is "black", with the semantics that "black" text should be
  * sent to "Term_wipe()" instead of "Term_text()", but this behavior is
@@ -146,7 +148,7 @@ void (*resize_main_window)(int cols, int rows);
  * "term" to be initialized or destroyed, and which allow this package,
  * or a program, to access the special "hooks" defined for the current
  * "term", and a set of functions which those "hooks" can use to inform
- * this package of the results of certain occurances, for example, one
+ * this package of the results of certain occurrences, for example, one
  * such function allows this package to learn about user keypresses,
  * detected by one of the special "hooks".
  *
