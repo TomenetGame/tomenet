@@ -3159,8 +3159,8 @@ void resize_window_x11(int term_idx, int cols, int rows) {
 		int new_screen_rows = rows - SCREEN_PAD_Y;
 
 		if (screen_wid != new_screen_cols || screen_hgt != new_screen_rows) {
-			screen_wid=new_screen_cols;
-			screen_hgt=new_screen_rows;
+			screen_wid = new_screen_cols;
+			screen_hgt = new_screen_rows;
 
 			if (in_game) {
 				/* Switch big_map mode . */
