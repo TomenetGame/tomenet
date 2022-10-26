@@ -1734,7 +1734,7 @@ void xhtml_screenshot(cptr name, byte redux) {
 	char32_t unm_cc_idx;
 	byte cur_attr, prt_attr;
 	int i, x, y, max;
-	int y_start, y_end;
+	int y_start, y_end, ss_lines = 0;
 	char buf[1024];
 	char file_name[256];
 
@@ -1911,6 +1911,7 @@ void xhtml_screenshot(cptr name, byte redux) {
 				continue;
 			}
 		}
+		ss_lines++;
 
 		for (x = 0; x < Term->wid; x++) {
 			if (scr_aa[x] != cur_attr) {
@@ -2016,6 +2017,7 @@ void xhtml_screenshot(cptr name, byte redux) {
 
 	/* For PNG screenshot */
 	strcpy(screenshot_filename, file_name);
+	screenshot_height = ss_lines;
 }
 
 

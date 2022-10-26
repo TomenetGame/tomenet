@@ -5587,6 +5587,7 @@ bool png_screenshot(void) {
 	char buf[1024], file_name[1024], command[1024];
 	int k;
 	FILE *fp;
+	char height[5];
 
 	if (!screenshot_filename[0]) {
 		c_msg_print("\377yYou have not made a screenshot yet this session (CTRL+T).");
@@ -5657,11 +5658,18 @@ bool png_screenshot(void) {
 		strcat(executable, "\"");
 		remove("__temp__");
 
+		/* Bigmap screenshot */
+		if (screenshot_height == MAX_WINDOW_HGT) strcpy(height, "650");
+		/* Non-bigmap screenshot */
+		else if (screenshot_height == DEFAULT_TERM_HGT) strcpy(height, "365");
+		/* Custom size screenshot (new 2022) */
+		else sprintf(height, "%d", 52 + screenshot_height * 13);
+
 		//bug with webdriver_manager.chrome: requires --disable-gpu to work with headless, or "ERROR:gpu_init.cc(426) Passthrough is not supported, GL is disabled" heppens.
 			//--disable-software-rasterizer
-		sprintf(command, "%s --headless --disable-gpu --default-background-color=00000000 --window-size=%s --screenshot=%s %s",
+		sprintf(command, "%s --headless --disable-gpu --default-background-color=00000000 --window-size=640x%s --screenshot=%s %s",
 		    executable,
-		    screen_hgt == MAX_SCREEN_HGT ? "640x650" : "640x365",
+		    height,
 		    file_name,
 		    buf);
 
@@ -5697,11 +5705,18 @@ bool png_screenshot(void) {
 			strcat(executable, "\"");
 			remove("__temp__");
 
+			/* Bigmap screenshot */
+			if (screenshot_height == MAX_WINDOW_HGT) strcpy(height, "650");
+			/* Non-bigmap screenshot */
+			else if (screenshot_height == DEFAULT_TERM_HGT) strcpy(height, "365");
+			/* Custom size screenshot (new 2022) */
+			else sprintf(height, "%d", 52 + screenshot_height * 13);
+
 			//bug with webdriver_manager.chrome: requires --disable-gpu to work with headless, or "ERROR:gpu_init.cc(426) Passthrough is not supported, GL is disabled" heppens.
 			//--disable-software-rasterizer
-			sprintf(command, "%s --headless --disable-gpu --default-background-color=00000000 --window-size=%s --screenshot=%s %s",
+			sprintf(command, "%s --headless --disable-gpu --default-background-color=00000000 --window-size=640x%s --screenshot=%s %s",
 			    executable,
-			    screen_hgt == MAX_SCREEN_HGT ? "640x650" : "640x365",
+			    height,
 			    file_name,
 			    buf);
 
@@ -5737,9 +5752,16 @@ bool png_screenshot(void) {
 				strcat(executable, "\"");
 				remove("__temp__");
 
-				sprintf(command, "%s --headless --window-size %s --screenshot %s %s",
+				/* Bigmap screenshot */
+				if (screenshot_height == MAX_WINDOW_HGT) strcpy(height, "835");
+				/* Non-bigmap screenshot */
+				else if (screenshot_height == DEFAULT_TERM_HGT) strcpy(height, "470");
+				/* Custom size screenshot (new 2022) */
+				else sprintf(height, "%d", 60 + screenshot_height * 17);
+
+				sprintf(command, "%s --headless --window-size 660,%s --screenshot %s %s",
 				    executable,
-				    screen_hgt == MAX_SCREEN_HGT ? "660,835" : "660,470",
+				    height,
 				    file_name,
 				    buf);
 
@@ -5787,10 +5809,17 @@ bool png_screenshot(void) {
 	/* Try chromium, then chrome, then firefox */
 	k = system("chromium --version");
 	if (!k) {
+		/* Bigmap screenshot */
+		if (screenshot_height == MAX_WINDOW_HGT) strcpy(height, "750");
+		/* Non-bigmap screenshot */
+		else if (screenshot_height == DEFAULT_TERM_HGT) strcpy(height, "420");
+		/* Custom size screenshot (new 2022) */
+		else sprintf(height, "%d", 60 + screenshot_height * 15);
+
 		//bug with webdriver_manager.chrome: requires --disable-gpu to work with headless, or "ERROR:gpu_init.cc(426) Passthrough is not supported, GL is disabled" heppens.
 		//--disable-software-rasterizer
-		sprintf(command, "chromium --headless --disable-gpu --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
-		    screen_hgt == MAX_SCREEN_HGT ? "640x750" : "640x420",
+		sprintf(command, "chromium --headless --disable-gpu --default-background-color=00000000 --window-size=640x%s --screenshot=%s file://%s",
+		    height,
 		    file_name,
 		    buf);
 		//c_msg_print(command);
@@ -5804,10 +5833,17 @@ bool png_screenshot(void) {
 	} else {
 		k = system("chrome --version");
 		if (!k) {
+			/* Bigmap screenshot */
+			if (screenshot_height == MAX_WINDOW_HGT) strcpy(height, "750");
+			/* Non-bigmap screenshot */
+			else if (screenshot_height == DEFAULT_TERM_HGT) strcpy(height, "420");
+			/* Custom size screenshot (new 2022) */
+			else sprintf(height, "%d", 60 + screenshot_height * 15);
+
 			//bug with webdriver_manager.chrome: requires --disable-gpu to work with headless, or "ERROR:gpu_init.cc(426) Passthrough is not supported, GL is disabled" heppens.
 			//--disable-software-rasterizer
-			sprintf(command, "chrome --headless --disable-gpu --default-background-color=00000000 --window-size=%s --screenshot=%s file://%s",
-			    screen_hgt == MAX_SCREEN_HGT ? "640x750" : "640x420",
+			sprintf(command, "chrome --headless --disable-gpu --default-background-color=00000000 --window-size=640x%s --screenshot=%s file://%s",
+			    height,
 			    file_name,
 			    buf);
 			//c_msg_print(command);
@@ -5821,8 +5857,15 @@ bool png_screenshot(void) {
 		} else {
 			k = system("firefox --version");
 			if (!k) {
-				sprintf(command, "firefox --headless --window-size %s --screenshot %s file://%s",
-				    screen_hgt == MAX_SCREEN_HGT ? "640,750" : "640,420",
+				/* Bigmap screenshot */
+				if (screenshot_height == MAX_WINDOW_HGT) strcpy(height, "750");
+				/* Non-bigmap screenshot */
+				else if (screenshot_height == DEFAULT_TERM_HGT) strcpy(height, "420");
+				/* Custom size screenshot (new 2022) */
+				else sprintf(height, "%d", 60 + screenshot_height * 15);
+
+				sprintf(command, "firefox --headless --window-size 640,%s --screenshot %s file://%s",
+				    height,
 				    file_name,
 				    buf);
 				//c_msg_print(command);

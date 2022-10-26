@@ -1188,6 +1188,7 @@ extern unsigned char lamp_fainting;
 extern bool insanity_death;
 
 extern char screenshot_filename[1024];
+extern byte screenshot_height;
 
 //#ifdef ENABLE_JUKEBOX
 extern int curmus_timepos, oldticks, curmus_x, curmus_y, curmus_attr;
