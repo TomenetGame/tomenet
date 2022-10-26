@@ -19368,8 +19368,8 @@ F:JOKEANGBAND
 S:1_IN_3 |
 S:MOAN | SCARE | HOLD | TPORT
 #SLOW |
-D:On Halloween night, the Great Pumpkin rises out of his pumpkin patch
-D:and flies through the air with his bag of loot for all the adventurers!
+D:On Halloween night, the Great Pumpkin rises out of its pumpkin patch
+D:and flies through the air with its bag of loot for all the adventurers!
 
 #medium HP version -- DEPRECATED
 N:1087:The Great Pumpkin
@@ -19395,8 +19395,8 @@ F:JOKEANGBAND
 S:1_IN_3 |
 S:MOAN | SCARE | HOLD | TPORT
 #SLOW |
-D:On Halloween night, the Great Pumpkin rises out of his pumpkin patch
-D:and flies through the air with his bag of loot for all the adventurers!
+D:On Halloween night, the Great Pumpkin rises out of its pumpkin patch
+D:and flies through the air with its bag of loot for all the adventurers!
 
 #Halloween event:
 N:1088:The Great Pumpkin
@@ -19421,8 +19421,8 @@ $HALLOWEEN!F:JOKEANGBAND
 S:1_IN_3 |
 S:MOAN | SCARE | HOLD | TPORT
 #SLOW |
-D:On Halloween night, the Great Pumpkin rises out of his pumpkin patch
-D:and flies through the air with his bag of loot for all the adventurers!
+D:On Halloween night, the Great Pumpkin rises out of its pumpkin patch
+D:and flies through the air with its bag of loot for all the adventurers!
 
 N:1089:Forest Ghoul
 G:z:D
