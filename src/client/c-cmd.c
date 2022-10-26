@@ -348,7 +348,7 @@ void process_command() {
 	case 'h': cmd_purchase_house(); break;
 	case '/': cmd_all_in_one(); break;
 	case KTRL('S'): cmd_spike(); break;
-	case KTRL('T'): xhtml_screenshot("screenshot????"); break;
+	case KTRL('T'): xhtml_screenshot("screenshot????", FALSE); break;
 	case KTRL('I'): cmd_lagometer(); break;
 
 #ifdef USE_SOUND_2010
@@ -508,7 +508,7 @@ c_msg_format("wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p_ptr
 			/* Allow to chat, to tell exact macros to other people easily */
 			if (ch == ':') cmd_message();
 			/* Take a screenshot */
-			else if (ch == KTRL('T')) xhtml_screenshot("screenshot????");
+			else if (ch == KTRL('T')) xhtml_screenshot("screenshot????", FALSE);
 			/* locate map (normal / rogue-like keys) */
 			else if (ch == '2' || ch == 'j') {
 				if (sel) {
@@ -673,7 +673,7 @@ void cmd_locate(void) {
 
 			/* Take a screenshot */
 			if (ch == KTRL('T'))
-				xhtml_screenshot("screenshot????");
+				xhtml_screenshot("screenshot????", FALSE);
 
 			/* Extract direction */
 			dir = keymap_dirs[ch & 0x7F];
@@ -838,7 +838,7 @@ topline_icky = TRUE; /* Needed AGAIN. A failed 'stow' command causes topline to 
 		}
 		else switch (ch) {
 		case KTRL('T'):
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", FALSE);
 			break;
 		case 'x':
 			cmd_observe(USE_INVEN);
@@ -948,7 +948,7 @@ void cmd_subinven(int islot) {
 		}
 		else switch (ch) {
 		case KTRL('T'):
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", FALSE);
 			break;
 		case 'x':
 			cmd_observe(USE_INVEN);
@@ -1067,7 +1067,7 @@ void cmd_equip(void) {
 		}
 		else switch (ch) {
 		case KTRL('T'):
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", FALSE);
 			break;
 		case 'x':
 			cmd_observe(USE_EQUIP);
@@ -1730,7 +1730,7 @@ void cmd_look(void) {
 			clear_topline();
 			return;
 		case KTRL('T'):
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", FALSE);
 			break;
 		case 'p':
 			/* Toggle manual ground-targetting */
@@ -1760,7 +1760,7 @@ void cmd_look(void) {
 			clear_topline();
 			return;
 		case KTRL('T'):
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", FALSE);
 			break;
 		case 'p':
 			/* Toggle manual ground-targetting */
@@ -1923,7 +1923,7 @@ void cmd_character(void) {
 			break;
 		case KTRL('T'):
 			/* Take a screenshot */
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 			break;
 		case 'q': case 'Q': case ESCAPE: case 'C':
 			/* Quit */
@@ -2890,7 +2890,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			skip_redraw = TRUE;
 			continue;
 		case KTRL('T'):
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", FALSE);
 			skip_redraw = TRUE;
 			continue;
 
@@ -4399,7 +4399,7 @@ void browse_local_file(char* fname, int rememberance_index) {
 			skip_redraw = TRUE;
 			continue;
 		case KTRL('T'):
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", FALSE);
 			skip_redraw = TRUE;
 			continue;
 
@@ -4796,7 +4796,7 @@ static void artifact_lore(void) {
 		}
 		if (c == KTRL('T')) {
 			/* Take a screenshot */
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 			Term_fresh();
 #ifdef WINDOWS
 			Sleep(2000);
@@ -4917,7 +4917,7 @@ static void artifact_lore(void) {
 			}
 			if (c == KTRL('T')) {
 				/* Take a screenshot */
-				xhtml_screenshot("screenshot????");
+				xhtml_screenshot("screenshot????", 3);
 				Term_fresh();
 #ifdef WINDOWS
 				Sleep(2000);
@@ -5362,7 +5362,7 @@ static void monster_lore(void) {
 		}
 		if (c == KTRL('T')) {
 			/* Take a screenshot */
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 			Term_fresh();
 #ifdef WINDOWS
 			Sleep(2000);
@@ -5484,7 +5484,7 @@ static void monster_lore(void) {
 			}
 			if (c == KTRL('T')) {
 				/* Take a screenshot */
-				xhtml_screenshot("screenshot????");
+				xhtml_screenshot("screenshot????", 3);
 				Term_fresh();
 #ifdef WINDOWS
 				Sleep(2000);
@@ -5904,7 +5904,7 @@ static void cmd_spoilers(void) {
 		case ESCAPE:
 			break;
 		case KTRL('T'):
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", FALSE);
 			break;
 		case ':':
 			cmd_message();
@@ -6166,7 +6166,7 @@ void cmd_check_misc(void) {
 		case ESCAPE:
 			break;
 		case KTRL('T'):
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 			/* Redraw new screenshot filename: */
 			//Term_putstr( 5, row + 2,   -1, TERM_WHITE, format("    %s", screenshot_filename[0] ? screenshot_filename : "- no screenshot taken -"));
 			redraw = TRUE;
@@ -6321,10 +6321,10 @@ void cmd_message(void) {
 			char *space = strchr(buf, ' ');
 			if (space && space[1]) {
 				/* Use given parameter as filename */
-				xhtml_screenshot(space + 1);
+				xhtml_screenshot(space + 1, FALSE);
 			} else {
 				/* Default filename pattern */
-				xhtml_screenshot("screenshot????");
+				xhtml_screenshot("screenshot????", FALSE);
 			}
 			inkey_msg = FALSE;
 			return;
@@ -6700,7 +6700,7 @@ static void cmd_guild_options() {
 
 		/* Take a screenshot */
 		else if (i == KTRL('T'))
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 
 		else if (i == ':')
 			cmd_message();
@@ -6829,7 +6829,7 @@ void cmd_party(void) {
 
 		/* Take a screenshot */
 		else if (i == KTRL('T'))
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 
 		else if (i == ':')
 			cmd_message();
@@ -7157,7 +7157,7 @@ static void cmd_house_chown(int dir) {
 		case KTRL('Q'):
 			break;
 		case KTRL('T'):
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 			break;
 		default:
 			bell();
@@ -7294,7 +7294,7 @@ void cmd_purchase_house(void) {
 		case KTRL('Q'):
 			break;
 		case KTRL('T'):
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 			break;
 		default:
 			bell();
@@ -7354,7 +7354,7 @@ static void cmd_master_aux_level(void) {
 		if (i == ESCAPE) break;
 
 		/* Take a screenshot */
-		else if (i == KTRL('T')) xhtml_screenshot("screenshot????");
+		else if (i == KTRL('T')) xhtml_screenshot("screenshot????", 2);
 		/* static the current level */
 		else if (i == '1') Send_master(MASTER_LEVEL, "s");
 		/* unstatic the current level */
@@ -7477,7 +7477,7 @@ static void cmd_master_aux_generate_vault(void) {
 		if (i == ESCAPE) break;
 
 		/* Take a screenshot */
-		if (i == KTRL('T')) xhtml_screenshot("screenshot????");
+		if (i == KTRL('T')) xhtml_screenshot("screenshot????", 2);
 
 		/* Generate by number */
 		else if (i == '1') {
@@ -7535,7 +7535,7 @@ static void cmd_master_aux_generate(void) {
 		if (i == ESCAPE) break;
 
 		/* Take a screenshot */
-		else if (i == KTRL('T')) xhtml_screenshot("screenshot????");
+		else if (i == KTRL('T')) xhtml_screenshot("screenshot????", 2);
 
 		/* Generate a vault */
 		else if (i == '1') cmd_master_aux_generate_vault();
@@ -7596,7 +7596,7 @@ static void cmd_master_aux_build(void) {
 		switch (i) {
 		/* Take a screenshot */
 		case KTRL('T'):
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 			break;
 		/* Granite mode on */
 		case '1': buf[0] = FEAT_WALL_EXTRA; break;
@@ -7682,7 +7682,7 @@ static char * cmd_master_aux_summon_orcs(void) {
 		/* get the type of orc */
 		switch (i) {
 		case KTRL('T'):
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 			break;
 		case '1': strcpy(buf, "Snaga"); break;
 		case '2': strcpy(buf, "Cave orc"); break;
@@ -7748,7 +7748,7 @@ static char * cmd_master_aux_summon_undead_low(void) {
 		/* get the type of undead */
 		switch (i) {
 		case KTRL('T'):
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 			break;
 		case '1': strcpy(buf, "Poltergeist"); break;
 		case '2': strcpy(buf, "Green glutton ghost"); break;
@@ -7823,7 +7823,7 @@ static char * cmd_master_aux_summon_undead_high(void) {
 		/* get the type of undead */
 		switch (i) {
 		case KTRL('T'):
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 			break;
 		case '1': strcpy(buf, "Vampire"); break;
 		case '2': strcpy(buf, "Giant skeleton troll"); break;
@@ -7894,7 +7894,7 @@ static void cmd_master_aux_summon(void) {
 		switch (i) {
 		/* Take a screenshot */
 		case KTRL('T'):
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 			break;
 		/* orc menu */
 		case '1':
@@ -8010,7 +8010,7 @@ static void cmd_master_aux_summon(void) {
 			/* get the type of summoning */
 			switch (i) {
 			case KTRL('T'):
-				xhtml_screenshot("screenshot????");
+				xhtml_screenshot("screenshot????", 2);
 				break;
 			/* X here */
 			case '1':
@@ -8071,7 +8071,7 @@ static void cmd_master_aux_player() {
 		buf[0] = '\0';
 		switch (i) {
 		case KTRL('T'):
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 			break;
 		case '1':
 			buf[0] = 'E';
@@ -8185,7 +8185,7 @@ static void cmd_master_aux_system() {
 		i = inkey();
 		switch (i) {
 		case KTRL('T'):
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 			break;
 		case '1':
 			Send_special_line(SPECIAL_FILE_LOG, 0, "");
@@ -8249,7 +8249,7 @@ static void cmd_master(void) {
 
 		switch (i) {
 		case KTRL('T'):
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 			break;
 		case '1':
 			cmd_master_aux_level();
@@ -8366,7 +8366,7 @@ void cmd_lagometer(void) {
 		switch (k) {
 		/* Take a screenshot */
 		case KTRL('T'):
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 			break;
 		/* Enable */
 		case '1':

@@ -539,7 +539,7 @@ extern errr my_fgets2(FILE *fff, char **line, int *n, byte *fmt);
 extern errr file_character(cptr name, bool quiet);
 extern bool my_freadable(cptr file);
 extern errr get_safe_file(char *buf, cptr file);
-extern void xhtml_screenshot(cptr name);
+extern void xhtml_screenshot(cptr name, byte redux);
 extern void save_auto_inscriptions(cptr name);
 extern void load_auto_inscriptions(cptr name);
 extern void save_birth_file(cptr name, bool touch);

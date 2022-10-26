@@ -1339,7 +1339,15 @@ void peruse_file(void) {
 		if (k == 'G') cur_line = max_line - special_page_size;
 
 		/* Take a screenshot */
-		if (k == KTRL('T')) xhtml_screenshot("screenshot????");
+		if (k == KTRL('T')) {
+			/* Hack: Screenshots of item inspections are only as long as needed, line-wise */
+			if (special_line_type == SPECIAL_FILE_OTHER && cur_line == 0 &&
+			    (strstr(special_line_title, "Item Details") || strstr(special_line_title, "Basic Item Information")))
+				xhtml_screenshot("screenshot????", 1);
+			else
+			/* Normal */
+			xhtml_screenshot("screenshot????", FALSE);
+		}
 
 		/* allow chatting, as it's now also possible within stores */
 		if (k == ':') cmd_message();
@@ -1397,7 +1405,7 @@ void peruse_file(void) {
 #if 0 /* not useful :/ only very few items are practicably checkable this way */
 		/* Supahack: Pressing ? while looking at an item invokes the guide for that item's details if available */
 		if (k == '?' && special_line_type == SPECIAL_FILE_OTHER && cur_line == 0 &&
-		    (strstr(special_line_title, "Item Details") || strstr(special_line_title, "Basic Item Informatios"))) {
+		    (strstr(special_line_title, "Item Details") || strstr(special_line_title, "Basic Item Information"))) {
 			char uppercase[ONAME_LEN];
 			int i = 0, j = 4;
 
@@ -1677,8 +1685,13 @@ errr file_character(cptr name, bool quiet) {
 /*
  * Make an xhtml screenshot - mikaelh
  * Some code borrowed from ToME
+ * Mode 'redux' added (C. Blue):
+ * 0/FALSE:	normal,
+ * 1:		for item inspection, stop screenshot when two empty lines occur subsequently,
+ * 2:		use non-bigmap screen in any case,
+ * 3:		for monster/artifact lore aux - display only the relevant paragraph about the actual monster/item.
  */
-void xhtml_screenshot(cptr name) {
+void xhtml_screenshot(cptr name, byte redux) {
 	static cptr color_table[16 + 1] = {
 		"#000000",	/* BLACK */
 		"#ffffff",	/* WHITE */
@@ -1721,6 +1734,7 @@ void xhtml_screenshot(cptr name) {
 	char32_t unm_cc_idx;
 	byte cur_attr, prt_attr;
 	int i, x, y, max;
+	int y_start, y_end;
 	char buf[1024];
 	char file_name[256];
 
@@ -1852,9 +1866,51 @@ void xhtml_screenshot(cptr name) {
 	fprintf(fp, "<span style=\"color: %s\">", color_table[prt_attr]);
 
 	size_t bytes = 0;
-	for (y = 0; y < Term->hgt; y++) {
+	y_start = (redux == 1) ? 2 : ((redux == 3) ? 5 : 0);
+	y_end = (redux == 2) ? DEFAULT_TERM_HGT : Term->hgt;
+	for (y = y_start; y < y_end; y++) {
 		scr_aa = Term->scr->a[y];
 		scr_cc = Term->scr->c[y];
+
+		if (redux == 1) {
+			bool more = FALSE;
+
+			/* Preparse two lines, if both are blank we stop right before the first one and are done, assuming that no more content will follow. */
+			for (x = 0; x < Term->wid; x++)
+				if (scr_cc[x] != ' ') {
+					more = TRUE;
+					break;
+				}
+			/* Try next line? */
+			if (!more) {
+				scr_cc = Term->scr->c[y + 1];
+				for (x = 0; x < Term->wid; x++)
+					if (scr_cc[x] != ' ') {
+						more = TRUE;
+						break;
+					}
+				/* Restore pointer for actual screenshot */
+				scr_cc = Term->scr->c[y];
+			}
+			if (!more) {
+				y = Term->hgt - 1;
+				continue;
+			}
+		}
+		if (redux == 3 && y >= 7) {
+			bool more = FALSE;
+
+			/* Preparse one lines, if it's blank we stop right before t and are done, assuming that no more relevant content will follow. */
+			for (x = 0; x < Term->wid; x++)
+				if (scr_cc[x] != ' ') {
+					more = TRUE;
+					break;
+				}
+			if (!more) {
+				y = Term->hgt - 1;
+				continue;
+			}
+		}
 
 		for (x = 0; x < Term->wid; x++) {
 			if (scr_aa[x] != cur_attr) {

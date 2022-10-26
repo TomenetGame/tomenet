@@ -2534,7 +2534,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			}
 
 		case KTRL('T'): /* Take a screenshot */
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", FALSE);
 			break;
 
 		case '\n':
@@ -4752,7 +4752,7 @@ void interact_macros(void) {
 		else if (i == ':') cmd_message();
 
 		/* Take a screenshot */
-		else if (i == KTRL('T')) xhtml_screenshot("screenshot????");
+		else if (i == KTRL('T')) xhtml_screenshot("screenshot????", 2);
 
 		/* Load a pref file */
 		else if (i == 'l') {
@@ -5489,7 +5489,7 @@ void interact_macros(void) {
 						break;
 					case KTRL('T'):
 						/* Take a screenshot */
-						xhtml_screenshot("screenshot????");
+						xhtml_screenshot("screenshot????", 2);
 						/* keep current list */
 						i -= (i % 20) + 1;
 						break;
@@ -6144,7 +6144,7 @@ Chain_Macro:
 							continue;
 						case KTRL('T'):
 							/* Take a screenshot */
-							xhtml_screenshot("screenshot????");
+							xhtml_screenshot("screenshot????", 2);
 							continue;
 						default:
 							/* invalid action -> exit wizard */
@@ -6279,7 +6279,7 @@ Chain_Macro:
 								continue;
 							case KTRL('T'):
 								/* Take a screenshot */
-								xhtml_screenshot("screenshot????");
+								xhtml_screenshot("screenshot????", 2);
 								continue;
 							default:
 								/* invalid action -> exit wizard */
@@ -6338,7 +6338,7 @@ Chain_Macro:
 								continue;
 							case KTRL('T'):
 								/* Take a screenshot */
-								xhtml_screenshot("screenshot????");
+								xhtml_screenshot("screenshot????", 2);
 								continue;
 							default:
 								/* invalid action -> exit wizard */
@@ -6392,7 +6392,7 @@ Chain_Macro:
 								break;
 							case KTRL('T'):
 								/* Take a screenshot */
-								xhtml_screenshot("screenshot????");
+								xhtml_screenshot("screenshot????", 2);
 								break;
 							default:
 								i = (islower(choice) ? A2I(choice) : -1);
@@ -6483,7 +6483,7 @@ Chain_Macro:
 								continue;
 							case KTRL('T'):
 								/* Take a screenshot */
-								xhtml_screenshot("screenshot????");
+								xhtml_screenshot("screenshot????", 2);
 								continue;
 							default:
 								/* invalid action -> exit wizard */
@@ -6616,7 +6616,7 @@ Chain_Macro:
 								continue;
 							case KTRL('T'):
 								/* Take a screenshot */
-								xhtml_screenshot("screenshot????");
+								xhtml_screenshot("screenshot????", 2);
 								continue;
 							case 'y': case 'n': case 't':
 							case 'Y': case 'N': case 'T':
@@ -6667,7 +6667,7 @@ Chain_Macro:
 									continue;
 								case KTRL('T'):
 									/* Take a screenshot */
-									xhtml_screenshot("screenshot????");
+									xhtml_screenshot("screenshot????", 2);
 									continue;
 								case 'w':
 								case 'W':
@@ -6692,7 +6692,7 @@ Chain_Macro:
 									continue;
 								case KTRL('T'):
 									/* Take a screenshot */
-									xhtml_screenshot("screenshot????");
+									xhtml_screenshot("screenshot????", 2);
 									continue;
 								case 'w':
 								case 'W':
@@ -6758,7 +6758,7 @@ Chain_Macro:
 								continue;
 							case KTRL('T'):
 								/* Take a screenshot */
-								xhtml_screenshot("screenshot????");
+								xhtml_screenshot("screenshot????", 2);
 								continue;
 							default:
 								/* invalid action -> exit wizard */
@@ -6802,7 +6802,7 @@ Chain_Macro:
 										continue;
 									case KTRL('T'):
 										/* Take a screenshot */
-										xhtml_screenshot("screenshot????");
+										xhtml_screenshot("screenshot????", 2);
 										continue;
 									default:
 										/* invalid action -> exit wizard */
@@ -6894,7 +6894,7 @@ Chain_Macro:
 								continue;
 							case KTRL('T'):
 								/* Take a screenshot */
-								xhtml_screenshot("screenshot????");
+								xhtml_screenshot("screenshot????", 2);
 								continue;
 							default:
 								/* invalid action -> exit wizard */
@@ -6955,7 +6955,7 @@ Chain_Macro:
 								continue;
 							case KTRL('T'):
 								/* Take a screenshot */
-								xhtml_screenshot("screenshot????");
+								xhtml_screenshot("screenshot????", 2);
 								continue;
 							default:
 								/* invalid action -> exit wizard */
@@ -7365,7 +7365,7 @@ Chain_Macro:
 									continue;
 								case KTRL('T'):
 									/* Take a screenshot */
-									xhtml_screenshot("screenshot????");
+									xhtml_screenshot("screenshot????", 2);
 									continue;
 								default:
 									/* invalid action -> exit wizard */
@@ -7413,7 +7413,7 @@ Chain_Macro:
 										continue;
 									case KTRL('T'):
 										/* Take a screenshot */
-										xhtml_screenshot("screenshot????");
+										xhtml_screenshot("screenshot????", 2);
 										continue;
 									default:
 										/* invalid action -> exit wizard */
@@ -7495,7 +7495,7 @@ Chain_Macro:
 #if 0 /* no, because we allow remapping of this key too, here */
 						if (!strcmp(buf, format("%c", KTRL('T')))) {
 							/* Take a screenshot */
-							xhtml_screenshot("screenshot????");
+							xhtml_screenshot("screenshot????", 2);
 							continue;
 						} else
 #endif
@@ -7724,7 +7724,7 @@ void auto_inscriptions(void) {
 		switch (inkey()) {
 		case KTRL('T'):
 			/* Take a screenshot */
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 			redraw = FALSE;
 			break;
 		case ':':
@@ -8151,7 +8151,7 @@ static void do_cmd_options_aux(int page, cptr info) {
 
 		case KTRL('T'):
 			/* Take a screenshot */
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 			break;
 
 		case ':':
@@ -8499,7 +8499,7 @@ static void do_cmd_options_win(void) {
 
 			case KTRL('T'):
 				/* Take a screenshot */
-				xhtml_screenshot("screenshot????");
+				xhtml_screenshot("screenshot????", 2);
 				break;
 
 			/* specialty: allow chatting from within here */
@@ -8807,7 +8807,7 @@ static void do_cmd_options_fonts(void) {
 
 		case KTRL('T'):
 			/* Take a screenshot */
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 			break;
 		case ':':
 			/* specialty: allow chatting from within here */
@@ -9785,7 +9785,7 @@ void do_cmd_options(void) {
 		if (k == ESCAPE || k == KTRL('Q')) break;
 
 		/* Take a screenshot */
-		if (k == KTRL('T')) xhtml_screenshot("screenshot????");
+		if (k == KTRL('T')) xhtml_screenshot("screenshot????", 2);
 		/* specialty: allow chatting from within here */
 		else if (k == ':') cmd_message();
 
@@ -10172,8 +10172,8 @@ void c_close_game(cptr reason) {
 	Term->scr->cu = 1;
 
 	/* Display tomb screen without an input prompt, allow taking a 'clear' screenshot! */
-	//while (inkey() == KTRL('T')) xhtml_screenshot("screenshot????");
-	if (inkey() == KTRL('T')) xhtml_screenshot("screenshot????");
+	//while (inkey() == KTRL('T')) xhtml_screenshot("screenshot????", FALSE);
+	if (inkey() == KTRL('T')) xhtml_screenshot("screenshot????", FALSE);
 #endif
 
 	put_str("ESC to quit, 'f' to dump the record or any other key to proceed", 23, 0);
@@ -10257,7 +10257,7 @@ void c_close_game(cptr reason) {
 
 		else if (k == KTRL('T')) {
 			/* Take a screenshot */
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 		}
 
 		/* Dump */
@@ -10315,7 +10315,7 @@ void c_close_game(cptr reason) {
 
 		/* Take a screenshot */
 		if (k == KTRL('T'))
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", FALSE);
 
 		/* Character screen */
 		else if (k == '1' || k == 'C')
@@ -10551,7 +10551,7 @@ void interact_audio(void) {
 			break;
 		case KTRL('T'):
 			/* Take a screenshot */
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 			redraw = FALSE;
 			break;
 		case KTRL('U'):
@@ -10930,7 +10930,7 @@ void audio_pack_selector(void) {
 		switch (k) {
 		case KTRL('T'):
 			/* Take a screenshot */
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 			redraw = FALSE;
 			break;
 		case ESCAPE:

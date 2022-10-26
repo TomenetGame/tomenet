@@ -3415,7 +3415,7 @@ void do_cmd_options_sfx_sdl(void) {
 
 		case KTRL('T'):
 			/* Take a screenshot */
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 			break;
 		case ':':
 			/* specialty: allow chatting from within here */
@@ -3955,7 +3955,7 @@ void do_cmd_options_mus_sdl(void) {
 
 		case KTRL('T'):
 			/* Take a screenshot */
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 			break;
 		case ':':
 			/* specialty: allow chatting from within here */

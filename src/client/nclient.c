@@ -854,7 +854,7 @@ void Receive_login(void) {
 		if (ch == 'Q' || ch == KTRL('Q')) quit(NULL);
 		/* Take a screenshot */
 		if (ch == KTRL('T')) {
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", 2);
 			/* Redraw title line */
 			Term_fresh();
 #ifdef WINDOWS
@@ -4668,7 +4668,7 @@ int Receive_chardump(void) {
 	silent_dump = TRUE;
 	xhtml_screenshot(format("%s%s_%04d-%02d-%02d_%02d-%02d-%02d_screenshot", cname, type,
 	    1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday,
-	    ctl->tm_hour, ctl->tm_min, ctl->tm_sec));
+	    ctl->tm_hour, ctl->tm_min, ctl->tm_sec), FALSE);
 
 	if (screen_icky) Term_switch(0);
 

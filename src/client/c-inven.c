@@ -1170,7 +1170,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 		case KTRL('T'):
 			/* Take a screenshot */
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", FALSE);
 			break;
 
 		case '*':

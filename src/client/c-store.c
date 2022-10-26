@@ -720,7 +720,7 @@ static void store_process_command(int cmd) {
 
 		case KTRL('T'):
 			/* Take a screenshot */
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", FALSE);
 			break;
 
 		/* Browse */

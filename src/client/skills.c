@@ -327,7 +327,7 @@ void do_cmd_skill() {
 		}
 
 		/* Take a screenshot */
-		else if (c == KTRL('T')) xhtml_screenshot("screenshot????");
+		else if (c == KTRL('T')) xhtml_screenshot("screenshot????", FALSE);
 
 		/* specialty: allow chatting from within here */
 		else if (c == ':') cmd_message();
@@ -535,7 +535,7 @@ static int do_cmd_activate_skill_aux() {
 			break;
 		} else if (which == KTRL('T')) {
 			/* Take a screenshot */
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", FALSE);
 		} else if (which == '*' || which == '?' || which == ' ') {
 			mode = (mode)?FALSE:TRUE;
 			if (!mode && term_saved) {

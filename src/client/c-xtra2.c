@@ -428,7 +428,7 @@ void do_cmd_messages(void) {
 
 		if (k == KTRL('T')) {
 			/* Take a screenshot */
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", FALSE);
 			continue;
 		}
 
@@ -731,7 +731,7 @@ void do_cmd_messages_important(void) {
 
 		if (k == KTRL('T')) {
 			/* Take a screenshot */
-			xhtml_screenshot("screenshot????");
+			xhtml_screenshot("screenshot????", FALSE);
 			continue;
 		}
 
