@@ -4070,8 +4070,10 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 		/* Place a Great Pumpkin sometimes -- WARNING: HARDCODED r_idx */
 		if (no_high_level_players) {
 			r_idx = RI_PUMPKIN;
+			summon_override_checks = SO_FORCE_DEPTH;
 			if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, 0, 0) == 0) {
-//spam				s_printf("%s HALLOWEEN: Generated Great Pumpkin (%d) on %d,%d,%d (lev %d)\n", showtime(), r_idx, wpos->wx, wpos->wy, wpos->wz, lev);
+				summon_override_checks = SO_NONE;
+				//spam--  s_printf("%s HALLOWEEN: Generated Great Pumpkin (%d) on %d,%d,%d (lev %d)\n", showtime(), r_idx, wpos->wx, wpos->wy, wpos->wz, lev);
 				great_pumpkin_timer = -1; /* put generation on hold */
 				great_pumpkin_duration = 60; /* last for 60 minutes till it despawns on its own, to give other players a chance to find it */
 
@@ -4080,6 +4082,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 
 				return(TRUE);
 			}
+			summon_override_checks = SO_NONE;
 			/* oupsee */
 #if 0 /* not necessary/wrong even (if place_monster_aux() fails -> problem) */
 			great_pumpkin_timer = 1; /* <- just paranoia: no mass-emptiness in case above always fails for unknown reasons */
