@@ -1067,11 +1067,13 @@ void go_challenge_accept(int Ind, bool new_wager) {
 		p_ptr->go_level++;
 		if (p_ptr->go_level_top < p_ptr->go_level) {
 			p_ptr->go_level_top = p_ptr->go_level;
-#ifndef GO_BROADCAST_ALWAYS
+#if 0 /* this code is in the wrong place? we just issue a challenge here, haven't won yet.. */
+ #ifndef GO_BROADCAST_ALWAYS
 			if (p_ptr->go_level_top == TOP_RANK * 2 + 4) msg_broadcast_format(0, "\377U%s has defeated a Go legend!", p_ptr->name);
-#endif
-#ifdef GO_LEGENDS_LOG
+ #endif
+ #ifdef GO_LEGENDS_LOG
 			if (p_ptr->go_level_top == TOP_RANK * 2 + 4) l_printf("%s \\{U%s has defeated a Go legend\n", showdate(), p_ptr->name);
+ #endif
 #endif
 		}
 	}
@@ -2229,6 +2231,9 @@ static void go_engine_move_result(int move_result) {
 						p_ptr->go_level++;
  #ifdef GO_BROADCAST_ALWAYS
 						msg_broadcast_format(0, "\377U%s has defeated a Go legend!", p_ptr->name);
+  #ifdef TOMENET_WORLDS
+						if (cfg.worldd_events) world_msg(format("\377U%s has defeated a Go legend!", p_ptr->name));
+  #endif
  #endif
 					} else {
 						Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Wow! How can it be a draw");
@@ -2250,6 +2255,9 @@ static void go_engine_move_result(int move_result) {
 						p_ptr->go_level++;
  #ifdef GO_BROADCAST_ALWAYS
 						msg_broadcast_format(0, "\377U%s has defeated a Go legend!", p_ptr->name);
+  #ifdef TOMENET_WORLDS
+						if (cfg.worldd_events) world_msg(format("\377U%s has defeated a Go legend!", p_ptr->name));
+  #endif
  #endif
 					} else {
 						Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Just how unlikely is a draw?");
@@ -2269,6 +2277,9 @@ static void go_engine_move_result(int move_result) {
 						Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "I'm really trying to learn from it!");
  #ifdef GO_BROADCAST_ALWAYS
 						msg_broadcast_format(0, "\377U%s has defeated a Go legend!", p_ptr->name);
+  #ifdef TOMENET_WORLDS
+						if (cfg.worldd_events) world_msg(format("\377U%s has defeated a Go legend!", p_ptr->name));
+  #endif
  #endif
 					} else {
 						Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Holy.. you're not causing a draw");
@@ -2301,7 +2312,12 @@ static void go_engine_move_result(int move_result) {
 		if (p_ptr->go_level_top < p_ptr->go_level) {
 			p_ptr->go_level_top = p_ptr->go_level;
 #ifndef GO_BROADCAST_ALWAYS
-			if (p_ptr->go_level_top == TOP_RANK * 2 + 4) msg_broadcast_format(0, "\377U%s has defeated a Go legend!", p_ptr->name);
+			if (p_ptr->go_level_top == TOP_RANK * 2 + 4) {
+				msg_broadcast_format(0, "\377U%s has defeated a Go legend!", p_ptr->name);
+ #ifdef TOMENET_WORLDS
+				if (cfg.worldd_events) world_msg(format("\377U%s has defeated a Go legend!", p_ptr->name));
+ #endif
+			}
 #endif
 #ifdef GO_LEGENDS_LOG
 			if (p_ptr->go_level_top == TOP_RANK * 2 + 4) l_printf("%s \\{U%s has defeated a Go legend\n", showdate(), p_ptr->name);
