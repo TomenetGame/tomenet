@@ -10157,6 +10157,7 @@ Three time systems are relevant for the players' game experience:
 
 -in-game 'turns' (the /ex command tells you how fast you can move, ie how much
                  you can move each turn)
+ (Not to be confused with server-frame turns, which usually pass at 60 Hz.)
  Turns are small chunks of time during which players and monsters can make a
  move (or several moves if their speed is greater than the basic value of +0
  or less moves if they are especially slow).
@@ -10165,6 +10166,12 @@ Three time systems are relevant for the players' game experience:
  and monsters alike. This is done because both players and monsters will
  usually have gained more speed at higher levels and combat would become too
  fast to react properly.
+ You can measure the passing of turns simply by looking at your lamp fuel for
+ example, as it is measured in turns (of light) too, passing at 1 energy/turn
+ (unless you have fuel-prolonging powers, ie Temporal magic school training).
+ So to the player turns would pass at the speed of approximately 0.52s at depth
+ zero (0 ft, aka Bree town) and slow down on deeper floors to up to 1.92s per
+ turn at dungeon level 196 (-1550 ft, Nether Realm bottom).
 
 
 Real time:
