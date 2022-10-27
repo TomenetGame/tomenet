@@ -11713,9 +11713,9 @@ void timed_shutdown(int k, bool terminate) {
 
 	//msg_admins(0, format("\377w* Shutting down in %d minutes *", k));
 	if (terminate)
-		msg_broadcast_format(0, "\374\377I*** \377RAutomatic recall and server maintenance shutdown in %d minute%s. \377I***", k, (k == 1) ? "" : "s");
+		msg_broadcast_format(0, "\374\377I*** \377RAutomatic recall and server maintenance shutdown in max %d minute%s. \377I***", k, (k == 1) ? "" : "s");
 	else
-		msg_broadcast_format(0, "\374\377I*** \377RAutomatic recall and server restart in %d minute%s. \377I***", k, (k == 1) ? "" : "s");
+		msg_broadcast_format(0, "\374\377I*** \377RAutomatic recall and server restart in max %d minute%s. \377I***", k, (k == 1) ? "" : "s");
 
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
