@@ -544,6 +544,8 @@ uint32_t get_message_type(char *msg) {
 		   strstr(msg, " was defeated by ")) {
 		return WMF_PDEATH;
 	} else if ((!strncmp(msg, "\377a>>", 4) && strstr(msg, " wins ")) /* global events */
+	    || (strstr(msg, "defeated a tasty halloween")) || (strstr(msg, "Santa dropped the presents near")) /* halloween/xmas */
+	    || (strstr(msg, " has defeated a Go")) /* Go master */
 	    || (strstr(msg, " reached floor ")) /* ironman deep dive challenge - death */
 	    || (strstr(msg, " made it through the ")) /* ironman deep dive challenge - win */
 	    || (strstr(msg, " withdrew from the ")) /* ironman deep dive challenge - withdrawal */
