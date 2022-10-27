@@ -14169,7 +14169,7 @@ DG_CURSE        "It carries an ancient morgothian curse."
                 This curse will be on hold while you're in a town area.
                 Note that an anti-magic field has a chance to suppress it.
                 Having 'Holy Support' skill at 40.000 or better will completely
-                negate TY_CURSE effects.
+                negate DG_CURSE effects.
 
 If 'CURSED' or 'HEAVY_CURSE' occurs on an enchantable item such as a weapon or
 armour piece, the curses can alternatively be broken by enchanting the item's
