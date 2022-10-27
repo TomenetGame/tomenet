@@ -2707,6 +2707,10 @@ bool make_attack_spell(int Ind, int m_idx) {
 			disturb(Ind, 1, 0);
 			/* Colour change for Halloween */
 			msg_format(Ind, "\377o%^s %s", m_name, desc_moan_halloween[rand_int(4)]);
+#ifdef USE_SOUND_2010
+			/* Actually just use curse sfx for now, as monster_moin is not yet added to today's sfx pack version */
+			sound_near_monster(m_idx, "monster_moan", "curse", SFX_TYPE_MON_SPELL);
+#endif
 		}
 		break;
 
@@ -4661,6 +4665,10 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			disturb(Ind, 1, 0);
 			/* Colour change for Halloween */
 			msg_format(Ind, "\377o%^s %s", m_name, desc_moan_halloween[rand_int(4)]);
+#ifdef USE_SOUND_2010
+			/* Actually just use curse sfx for now, as monster_moin is not yet added to today's sfx pack version */
+			sound_near_monster(m_idx, "monster_moan", "curse", SFX_TYPE_MON_SPELL);
+#endif
 		}
 		break;
 
@@ -11973,6 +11981,10 @@ void process_monsters(void) {
 						else c = "south-east";
 					}
 					msg_format(pl, "\377oYou hear a ghastly moan from the %s..", c);
+#ifdef USE_SOUND_2010
+					/* Actually just use curse sfx for now, as monster_moin is not yet added to today's sfx pack version */
+					sound_near_monster(i, "monster_moan", "curse", SFX_TYPE_MON_SPELL);
+#endif
 				}
 			}
 		}

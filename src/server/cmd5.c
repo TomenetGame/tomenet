@@ -606,6 +606,16 @@ static void do_mimic_power(int Ind, int power, int dir) {
 	return;
 //#define RF4_MOAN			0x40000000      /* For Halloween event :) -C. Blue */
     case 30:
+#if 0
+	msg_print(Ind, "You moan.");
+	msg_format_near(Ind, "%s moans.", p_ptr->name);
+ #ifdef USE_SOUND_2010
+	/* Actually just use curse sfx for now, as monster_moin is not yet added to today's sfx pack version */
+	/* allow us to annoy others ;) */
+	//sound_near(Ind, "monster_moan", "curse", SFX_TYPE_MON_SPELL);
+	sound(Ind, "monster_moan", "curse", SFX_TYPE_MON_SPELL, TRUE);
+ #endif
+#endif
 	break;
 // #define RF4_BOULDER			0x80000000
     case 31:
