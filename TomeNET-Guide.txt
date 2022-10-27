@@ -10142,7 +10142,8 @@ New year's eve
 --------------------------
 Three time systems are relevant for the players' game experience:
 
--real time (you can check the server's time with /stime command by the way)
+-real time (you can check the server's time with /stime command by the way, and
+ your local time with /ctime aka client time.)
 
 -in-game day time (check in-game time with /time command)
  When NPCs inform you about anything time related, they will do so in in-game
