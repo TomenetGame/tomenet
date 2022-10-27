@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 23. October 2022 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 27. October 2022 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -10099,7 +10099,7 @@ Halloween
     "wails and seems to fade".
 
     The Pumpkin is aiming at intermediate-level characters. It can spawn on any
-    dungeon floor from level 1 to 35 (or 40 on Ironman server*),
+    dungeon floor from level 1 to 35 (or 40 on Ironman server),
     except it won't show up on the first 9 floors in the Ironman Deep Dive
     Challenge.
     It will usually be quite tough and might require teamwork to beat.
@@ -10117,10 +10117,6 @@ Halloween
 
     During Halloween, it will stay deep night on the world's surface and magic
     that lights up the world surface won't work.
-
-    (* the 'Ironman' server, also called 'RPG' server, is currently not
-    available. Instead, try the IDDC or Halls of Mandos, if you want to play
-    ironman-style.)
 
 Christmas
     Running from 23rd December to 27th December.
@@ -23804,7 +23800,8 @@ character) are banned.
 (8.6) Alternative ruleset 'Ironman Server'
 ------------------------------------------
 A server might be configured with a special ruleset called 'Ironman Server'
-rules. Such a server will be listed on the meta server under
+rules. (The Ironman server was also called 'RPG Server' in the past.)
+Such a server will be listed on the meta server under
   "TomeNET Ironman ..."
 instead of just
   "TomeNET ..."
