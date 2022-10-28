@@ -573,7 +573,7 @@ static errr Infowin_init_data(Window dad, int x, int y, int w, int h, unsigned i
 	/* Create the Window. */
 	xid = XCreateSimpleWindow(Metadpy->dpy, dad, x, y, w, h, b, b_color, bg_color);
 	if (xid == 0) {
-		printf("Error creating window on display: %s\n", Metadpy->name);
+		fprintf(stderr, "Error creating window on display: %s\n", Metadpy->name);
 		return(1);
 	}
 
@@ -1830,7 +1830,7 @@ static void Term_nuke_x11(term *t) {
 
 	int term_idx = term_data_to_term_idx(td);
 	if (term_idx < 0) {
-		printf("Error getting terminal index from term_data\n");
+		fprintf(stderr, "Error getting terminal index from term_data\n");
 		return;
 	}
 
@@ -2699,12 +2699,12 @@ static int term_data_to_term_idx(term_data *td) {
  */
 static errr x11_term_init(int term_id) {
 	if (term_id < 0 || term_id >= ANGBAND_TERM_MAX) {
-		printf("Terminal index %d out of bounds\n", term_id);
+		fprintf(stderr, "Terminal index %d out of bounds\n", term_id);
 		return(1);
 	}
 
 	if (ang_term[term_id]) {
-		printf("Terminal window with index %d is already initialized\n", term_id);
+		fprintf(stderr, "Terminal window with index %d is already initialized\n", term_id);
 		/* Success. */
 		return(0);
 	}
@@ -2726,7 +2726,7 @@ static errr x11_term_init(int term_id) {
 	}
 
 	if (err) {
-		printf("Error initializing term_data for X11 terminal with index %d\n", term_id);
+		fprintf(stderr, "Error initializing term_data for X11 terminal with index %d\n", term_id);
 		if (ang_term[term_id]) {
 			term_nuke(ang_term[term_id]);
 			ang_term[term_id] = NULL;
@@ -2791,12 +2791,12 @@ errr init_x11(void) {
 
 		/* Check for tiles string & extract tiles width & height. */
 		if (2 != sscanf(graphic_tiles, "%dx%d", &graphics_tile_wid, &graphics_tile_hgt)) {
-			printf("Couldn't extract tile dimensions from: %s\n", graphic_tiles);
+			fprintf(stderr, "Couldn't extract tile dimensions from: %s\n", graphic_tiles);
 			quit("Graphics load error");
 		}
 
 		if (graphics_tile_wid <= 0 || graphics_tile_hgt <= 0) {
-			printf("Invalid tiles dimensions: %dx%d\n", graphics_tile_wid, graphics_tile_hgt);
+			fprintf(stderr, "Invalid tiles dimensions: %dx%d\n", graphics_tile_wid, graphics_tile_hgt);
 			quit("Graphics load error");
 		}
 
@@ -2818,15 +2818,15 @@ errr init_x11(void) {
 		char *data = NULL;
 		errr rerr = 0;
 		if (0 != (rerr = ReadBMPData(filename, &data, &width, &height))) {
-			printf("Graphics file \"%s\" ", filename);
+			fprintf(stderr, "Graphics file \"%s\" ", filename);
 			switch (rerr) {
-				case ReadBMPNoFile:                   printf("can not be read.\n"); break;
-				case ReadBMPReadErrorOrUnexpectedEOF: printf("read error or unexpected end.\n"); break;
-				case ReadBMPInvalidFile:              printf("has incorrect BMP file format.\n"); break;
-				case ReadBMPNoImageData:              printf("contains no image data.\n"); break;
-				case ReadBMPUnexpectedEOF:            printf("unexpected end.\n"); break;
-				case ReadBMPIllegalBitCount:          printf("has illegal bit count, only 24bit and 32bit images are allowed.\n"); break;
-				default: printf("unexpected error.\n");
+				case ReadBMPNoFile:                   fprintf(stderr, "can not be read.\n"); break;
+				case ReadBMPReadErrorOrUnexpectedEOF: fprintf(stderr, "read error or unexpected end.\n"); break;
+				case ReadBMPInvalidFile:              fprintf(stderr, "has incorrect BMP file format.\n"); break;
+				case ReadBMPNoImageData:              fprintf(stderr, "contains no image data.\n"); break;
+				case ReadBMPUnexpectedEOF:            fprintf(stderr, "unexpected end.\n"); break;
+				case ReadBMPIllegalBitCount:          fprintf(stderr, "has illegal bit count, only 24bit and 32bit images are allowed.\n"); break;
+				default: fprintf(stderr, "unexpected error.\n");
 			}
 			quit("Graphics load error");
 		}
@@ -2834,7 +2834,7 @@ errr init_x11(void) {
 		/* Calculate tiles per row. */
 		graphics_image_tpr = width / graphics_tile_wid;
 		if (graphics_image_tpr <= 0) { /* Paranoia. */
-			printf("Invalid image tiles per row count: %d\n", graphics_image_tpr);
+			fprintf(stderr, "Invalid image tiles per row count: %d\n", graphics_image_tpr);
 			quit("Graphics load error");
 		}
 
@@ -2866,7 +2866,7 @@ errr init_x11(void) {
 		/* Main window is always visible, all other depend on configuration. */
 		if (i == 0 || term_prefs[i].visible) {
 			if (x11_term_init(i) != 0) {
-				printf("Error initializing X11 terminal window with index %d\n", i);
+				fprintf(stderr, "Error initializing X11 terminal window with index %d\n", i);
 				if (i == 0) {
 					/* Can't run without main screen. */
 					return(1);
@@ -3151,7 +3151,6 @@ void resize_window_x11(int term_idx, int cols, int rows) {
 
 	/* Clear timer. */
 	if (td->resize_timer.tv_sec > 0 || td->resize_timer.tv_nsec > 0) {
-		printf("Clear timer\n");
 		td->resize_timer.tv_sec=0;
 		td->resize_timer.tv_nsec=0;
 	}
@@ -3279,7 +3278,7 @@ void set_font_name(int term_idx, char* fnt) {
 
 void term_toggle_visibility(int term_idx) {
 	if (term_idx == 0) {
-		printf("Warning: Toggling visibility for main terminal window is not allowed\n");
+		fprintf(stderr, "Warning: Toggling visibility for main terminal window is not allowed\n");
 		return;
 	}
 
@@ -3303,7 +3302,7 @@ void term_toggle_visibility(int term_idx) {
 	Term_activate(&screen.t);
 
 	if (err) {
-		printf("Error initializing toggled X11 terminal window with index %d\n", term_idx);
+		fprintf(stderr, "Error initializing toggled X11 terminal window with index %d\n", term_idx);
 		return;
 	}
 	/* Window was successfully created. */
