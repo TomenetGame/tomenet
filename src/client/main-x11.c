@@ -3252,6 +3252,16 @@ void set_font_name(int term_idx, char* fnt) {
 		fprintf(stderr, "Terminal index %d is out of bounds for set_font_name\n", term_idx);
 		return;
 	}
+
+	if (!term_get_visibility(term_idx)) {
+		/* Terminal is not visible, Do nothing, just change the font name in preferences. */
+		if (strcmp(term_prefs[term_idx].font, fnt) != 0) {
+			strncpy(term_prefs[term_idx].font, fnt, sizeof(term_prefs[term_idx].font));
+			term_prefs[term_idx].font[sizeof(term_prefs[term_idx].font) - 1] = '\0';
+		}
+		return;
+	}
+
 	term_force_font(term_idx, fnt);
 
 	/* Redraw the terminal for which the font was forced. */
