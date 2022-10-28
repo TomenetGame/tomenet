@@ -2721,8 +2721,7 @@ static errr x11_term_init(int term_id) {
 	/* Initialize the terminal window, allow resizing, for font changes. */
 	errr err = term_data_init(term_id, x11_terms_term_data[term_id], FALSE, ang_term_name[term_id], fnt_name);
 	/* Store created terminal with X11 term data to ang_term array, even if term_data_init failed, but only if there is one. */
-	int activated_term_idx = term_data_to_term_idx(Term->data);
-	if (activated_term_idx == term_id) {
+	if (Term && term_data_to_term_idx(Term->data) == term_id) {
 		ang_term[term_id] = Term;
 	}
 
