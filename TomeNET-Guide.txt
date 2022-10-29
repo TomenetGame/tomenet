@@ -13327,6 +13327,11 @@ Items in your inventory can be destroyed if you are hit by an elemental
 attack. Those attacks can even have a very slim chance of damaging an item
 that you have equipped (see (5.10a) subsequently)!
 
+For the basic four elements, fire, cold, acid and lightning the damage done to
+your inventory or equipment depends somewhat on the amount of damage the attack
+does. Very low-damage attacks will even have no chance to pentrate the backpack
+hull, so your inventory won't be harmed at all by those.
+
 There are two different cases, inventory items and equipped items:
 
 -Inventory items can get destroyed or in some cases damaged by various
