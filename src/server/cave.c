@@ -812,7 +812,7 @@ void check_Morgoth(int Ind) {
 
 					/* place replacement monster (clone): Death Orb (Star-Spawn, GB, GWoP) */
 					summon_override_checks = SO_ALL; /* needed? */
-//					place_monster_one(&p_ptr->wpos, y, x, 975, FALSE, FALSE, FALSE, 100, 4 + cfg.clone_summoning);//DOrb (kills items)
+					//place_monster_one(&p_ptr->wpos, y, x, 975, FALSE, FALSE, FALSE, 100, 4 + cfg.clone_summoning);//DOrb (kills items)
 					place_monster_one(&p_ptr->wpos, y, x, 847, FALSE, FALSE, FALSE, 100, 4 + cfg.clone_summoning);//GWoP (best maybe)
 					summon_override_checks = SO_NONE;
 
@@ -826,6 +826,7 @@ void check_Morgoth(int Ind) {
 		}
 
 		tmphp = (m_ptr->org_maxhp * (2 * (num_on_depth - 1) + 3)) / 3; /* 2/3 HP boost for each additional player */
+s_printf("CHKMOR: tmphp=%d,org_maxhp=%d,num_on_depth=%d\n", tmphp, m_ptr->org_maxhp, num_on_depth);
 		/* More players here than Morgy has power for? */
 		if (m_ptr->maxhp < tmphp) {
 			m_ptr->maxhp = tmphp;
@@ -837,7 +838,7 @@ void check_Morgoth(int Ind) {
 			m_ptr->hp = m_ptr->maxhp;
 
 			/* log */
-			s_printf("Morgoth grows stronger\n");
+			s_printf("Morgoth grows stronger (%d)\n", num_on_depth);
 			/* Tell everyone related to Morgy's depth */
 			msg_print_near_monster(m_idx, "becomes stronger!");
 			return;
@@ -854,7 +855,7 @@ void check_Morgoth(int Ind) {
 			m_ptr->speed -= 6; /* also adjust base speed, only important for aggr-haste */
 
 			/* log */
-			s_printf("Morgoth weakens\n");
+			s_printf("Morgoth weakens (%d)\n", num_on_depth);
 			/* Tell everyone related to Morgy's depth */
 			msg_print_near_monster(m_idx, "becomes weaker!");
 			return;
