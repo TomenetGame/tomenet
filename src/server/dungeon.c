@@ -5644,7 +5644,7 @@ static bool process_player_end_aux(int Ind) {
 
 		if (tries) {
 			/* Hit a monster */
-			if (c_ptr->m_idx < 0) {
+			if (c_ptr->m_idx > 0) {
 				char m_name[MNAME_LEN];
 
 				monster_desc(Ind, m_name, c_ptr->m_idx, 0);
