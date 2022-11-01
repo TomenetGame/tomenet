@@ -901,10 +901,13 @@ errr init_gcu(void) {
 	if (initscr() == (WINDOW*)ERR) return(-1);
 #endif
 
-
-	/* Hack -- Require large screen, or Quit with message */
-	i = ((LINES < 24) || (COLS < 80));
-	if (i) quit("Angband needs an 80x24 'curses' screen");
+	/* Require large screen, or fail with a message. */
+	if ((LINES < 24) || (COLS < 80)) {
+		fprintf(stderr, "Angband needs an 80x24 'curses' screen\n");
+		/* Restore terminal first, then fail. */
+		endwin();
+		return(-2);
+	}
 
 
 	/* set OS-specific resize_main_window() hook */
