@@ -2389,7 +2389,7 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	Infofnt_set(td->fnt);
 	if (Infofnt_init_data(font) == -1) {
 		/* Initialization failed, log and try to use the default font. */
-		fprintf(stderr, "Failed to load the \"%s\" font for terminal %d! Falling back to default font.\n", font, index);
+		fprintf(stderr, "Failed to load the \"%s\" font for terminal %d\n", font, index);
 		if (in_game) {
 			/* If in game, inform the user. */
 			Infofnt_set(old_infofnt);

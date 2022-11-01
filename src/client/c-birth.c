@@ -124,7 +124,13 @@ static void choose_name(void) {
 #endif
 		if (askfor_aux(tmp, ACCNAME_LEN - 1, 0)) strcpy(nick, tmp);
 		/* at this point: ESC = quit game */
-		else exit(0);
+		else {
+			/* Nuke each term before exit. */
+			for (int j = ANGBAND_TERM_MAX - 1; j >= 0; j--) {
+				if (ang_term[j]) term_nuke(ang_term[j]);
+			}
+			exit(0);
+		}
 
 		/* All done */
 		break;
