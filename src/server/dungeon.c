@@ -10745,6 +10745,13 @@ void process_timers() {
 					/* File exists */
 					y = 1;
 
+					/* Catch error: Invalid IP address */
+					if (strstr(buf, "Name or service not known")) {
+						msg_print(i, "Ping error: Name or service not known.");
+						x = 1;
+						break;
+					}
+
 					if ((s = strstr(buf, " time="))) {
 						/* Response time exists */
 						x = 1;

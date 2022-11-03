@@ -12301,14 +12301,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/ping")) { /* (POSIX only) ping player's IP -- atm only one request can be pending at a time (aka 1 temporary filename only) */
+				bool ip = atoi(message3); /* specified an IP? */
+
 				if (!tk) {
 					msg_print(Ind, "\377oUsage: /ping <character name>");
-					return;
-				}
-
-				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
-				if (!j) {
-					msg_print(Ind, "\377yCharacter not online.");
+					msg_print(Ind, "\377oUsage: /ping <ip address>");
 					return;
 				}
 
@@ -12320,10 +12317,21 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 
-				/* Note: Could also use LUA's execute() hehee */
-				strcpy(fake_waitxxx_ipaddr, get_player_ip(j));
-				msg_format(Ind, "Pinging IP %s of player '%s'...", fake_waitxxx_ipaddr, Players[j]->name);
-				i = system(format("ping -c 1 -w 1 %s > __ipping.tmp &", fake_waitxxx_ipaddr));
+				if (!ip) {
+					j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
+					if (!j) {
+						msg_print(Ind, "\377yCharacter not online.");
+						return;
+					}
+					/* Note: Could also use LUA's execute() hehee */
+					strcpy(fake_waitxxx_ipaddr, get_player_ip(j));
+					msg_format(Ind, "Pinging IP %s of player '%s'...", fake_waitxxx_ipaddr, Players[j]->name);
+				} else {
+					strcpy(fake_waitxxx_ipaddr, message3);
+					msg_format(Ind, "Pinging IP %s ...", fake_waitxxx_ipaddr);
+				}
+
+				i = system(format("ping -c 1 -w 1 %s > __ipping.tmp 2>&1 &", fake_waitxxx_ipaddr));
 
 				fake_waitpid_ping = p_ptr->id; /* Poll result to admin */
 				return;
