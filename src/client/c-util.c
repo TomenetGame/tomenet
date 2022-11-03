@@ -6648,8 +6648,10 @@ Chain_Macro:
 							Term_putstr(5, 13, -1, TERM_L_GREEN, "    t\377g) take off an item");
 							Term_putstr(5, 14, -1, TERM_L_GREEN, "    x\377g) swap item(s)");
 						}
-						Term_putstr(5, 16, -1, TERM_GREEN, "Note: This macro depends on your current 'rogue_like_commands' option");
-						Term_putstr(5, 17, -1, TERM_GREEN, "      setting and will not work anymore if you change the keymap.");
+						Term_putstr(5, 15, -1, TERM_L_GREEN, "    d\377g) invoke '/dress' command (optionally with a tag)");
+						Term_putstr(5, 16, -1, TERM_L_GREEN, "    b\377g) invoke '/bed' command (optionally with a tag)");
+						Term_putstr(5, 18, -1, TERM_GREEN, "Note: This macro depends on your current 'rogue_like_commands' option");
+						Term_putstr(5, 19, -1, TERM_GREEN, "      setting and will not work anymore if you change the keymap.");
 						/* Hack: Hide the cursor */
 						Term->scr->cx = Term->wid;
 						Term->scr->cu = 1;
@@ -6673,6 +6675,9 @@ Chain_Macro:
 								case 'W':
 								case 'T':
 								case 'S':
+									break;
+								case 'd':
+								case 'b':
 									break;
 								default:
 									continue;
@@ -6699,6 +6704,9 @@ Chain_Macro:
 								case 't':
 								case 'x':
 									break;
+								case 'd':
+								case 'b':
+									break;
 								default:
 									continue;
 								}
@@ -6714,7 +6722,7 @@ Chain_Macro:
 
 						j = choice;
 						choice = mw_equip;
-						should_wait = TRUE;
+						if (j != 'd' && j != 'b') should_wait = TRUE; /* /dress and /bed don't need waiting for execution, as they are purely server-side */
 						break;
 
 					case mw_common:
@@ -7319,8 +7327,25 @@ Chain_Macro:
 								buf2[3] = 'S';
 								break;
 							}
-						buf2[4] = '@';
-						strcpy(buf2 + 5, buf);
+						switch (j) {
+						case 'd':
+							strcat(buf2, ":/dress");
+							if (buf[2]) { //buf[0+1] are "/r" if empty
+								strcat(buf2, " ");
+								strcat(buf2, buf);
+							} else strcat(buf2, buf);
+							break;
+						case 'b':
+							strcat(buf2, ":/bed");
+							if (buf[2]) { //buf[0+1] are "/r" if empty
+								strcat(buf2, " ");
+								strcat(buf2, buf);
+							} else strcat(buf2, buf);
+							break;
+						default:
+							buf2[4] = '@';
+							strcpy(buf2 + 5, buf);
+						}
 						break;
 					}
 

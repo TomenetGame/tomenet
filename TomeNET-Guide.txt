@@ -1406,9 +1406,14 @@ They all start with a slash '/' hence they're called slash commands:
 /dress [tag]
 /dr         Without tag it equips all items in your inventory that are: not
             cursed, not {worthless}, not {broken}, not {terrible}, and that are
-            known to you.
+            known to you. Also it will only equip an item if the fitting
+            equipment slot is empty yet.
             With tag it just equips all items that contain that tag in their
-            name or inscription somewhere (even if they are cursed).
+            name or inscription somewhere (even if they are cursed). It will
+            equip items even if the respective equipment slot is not empty.
+            This can for example be used to equip an item into the wield-slot
+            and another into the arm-slot with a single command, just inscribe
+            them both with the same tag.
             Opposite of /bed.
 
 /dun        Displays the name of the dungeon you're currently in.

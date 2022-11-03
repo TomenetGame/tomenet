@@ -1199,6 +1199,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		    (prefix(messagelc, "/dr") && !prefix(messagelc, "/draw"))) {
 			object_type *o_ptr;
 			bool gauche = FALSE;
+			bool dual = FALSE;
+			int ws;
 
 			/* Paralyzed? */
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
@@ -1209,7 +1211,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (!item_tester_hook_wear(Ind, i)) continue;
 
 				o_ptr = &(p_ptr->inventory[i]);
-				if (o_ptr->tval) continue;
+				if (o_ptr->tval && !tk) continue;
 
 				for (j = 0; j < INVEN_PACK; j++) {
 					o_ptr = &(p_ptr->inventory[j]);
@@ -1234,7 +1236,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					}
 
 					/* legal item? */
-					if (wield_slot(Ind, o_ptr) != i) continue;
+					ws = wield_slot(Ind, o_ptr);
+					/* handle dual-wield */
+					if (ws == INVEN_WIELD && dual) ws = INVEN_ARM; /* we just equipped an item in the primary wield slot, so move this one to secondary slot */
+					if (ws != i) continue;
 
 					do_cmd_wield(Ind, j, 0x0);
 
@@ -1243,6 +1248,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						i -= 2;
 						gauche = TRUE;
 					}
+
+					/* MEGAHACK 2 -- tweak to handle dual-wielding two stacked weapons right */
+					//if (is_melee_weapon(o_ptr->tval) && o_ptr->number && !dual) dual = TRUE;
+					if (ws == INVEN_WIELD && !dual) dual = TRUE;
 
 					switch (o_ptr->tval) {
 					case TV_SHOT:
