@@ -6739,9 +6739,16 @@ if (cfg.unikill_format) {
 #endif
 
 			/* Log superunique kills to its own file */
-			/* The Living Lightning is considered to be just a 'normal' dungeon boss. What about Bahamut? */
+#if 0
+			/* The Living Lightning is considered to be just a 'normal' dungeon boss. What about Bahamut? (Atm he is one) */
 			if (is_ZuAon || (!is_Sauron && !is_Morgoth && !(r_ptr->flags0 & RF0_FINAL_GUARDIAN) && r_ptr->level >= 98))
 				su_print(format("%s was slain by %s.\n", r_name_get(m_ptr), p_ptr->name));
+#else
+			/* The Living Lightning, even though a dungeon boss, is now considered a SU too,
+			   cause it's too strange to record Bahamut kills in that list but omit Living Lightning kills.. */
+			if (!is_Sauron && !is_Morgoth && r_ptr->level >= 98)
+				su_print(format("%s was slain by %s.\n", r_name_get(m_ptr), p_ptr->name));
+#endif
 		}
 	}
 
