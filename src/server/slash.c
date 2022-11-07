@@ -7684,6 +7684,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			else if (prefix(messagelc, "/anotes")) {
 				int notes = 0;
+
 				for (i = 0; i < MAX_ADMINNOTES; i++) {
 					/* search for pending notes of this player */
 					if (strcmp(admin_note[i], "")) {
@@ -7704,6 +7705,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			else if (prefix(messagelc, "/danote")) { /* Delete a global admin note to everyone */
 				int notes = 0;
+
 				if ((tk < 1) || (strlen(message2) < 8)) { /* Explain command usage */
 					msg_print(Ind, "\377oUse /danote <message index> to delete a message.");
 					msg_print(Ind, "\377oTo clear all pending notes of yours, type: /danote *");
@@ -7765,6 +7767,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			else if (prefix(messagelc, "/swarn")) { /* Send a global server warning everyone */
 				j = 0;
+
 				if (tk < 1) {
 					strcpy(server_warning, "");
 					msg_print(Ind, "Server warning has been cleared.");
@@ -8133,6 +8136,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				cave_type *c_ptr, **zcave = getcave(&p_ptr->wpos);
 				monster_type *m_ptr;
 				int x, y, i;
+
 				if (tk < 2) {
 					msg_print(Ind, "\377oUsage: /mblowdice <dice> <sides>");
 					return;
@@ -8205,15 +8209,18 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/fixchown")) {
 				int c = 0;
 				int p;
+
 				if (tk < 1) {
 					msg_print(Ind, "\377oUsage: /fixchown <player>");
 					return;
 				}
+				message3[0] = toupper(message3[0]); //qol
 				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				msg_format(Ind, "Fixing house owner %s...", token[1]);
 				for (i = 0; i < num_houses; i++) {
 					struct dna_type *dna = houses[i].dna;
-//					if ((dna->owner_type == OT_PLAYER) && (!strcmp(lookup_player_name(dna->owner), token[1])))
+
+					//if ((dna->owner_type == OT_PLAYER) && (!strcmp(lookup_player_name(dna->owner), token[1])))
 					if ((dna->owner_type == OT_PLAYER) && (dna->owner == lookup_player_id_messy(message3))) {
 						dna->creator = Players[p]->dna;
 						c++; /* :) */
@@ -8226,6 +8233,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* Check house number */
 			else if (prefix(messagelc, "/listhouses")) {
 				int cp = 0, cy = 0, cg = 0;
+
 				if (tk < 1) {
 					msg_print(Ind, "\377oUsage: /listhouses <owner-name>");
 					return;
@@ -8261,10 +8269,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/pyhpdbg")) {
 				char buf[MSG_LEN];
 				int p;
+
 				if (tk < 1) {
 					msg_print(Ind, "\377oUsage: /pyhpdbg <player name>");
 					return;
 				}
+				message3[0] = toupper(message3[0]); //qol
 				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 				for (i = 1; i <= 100; i += 10) {
@@ -8280,10 +8290,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* Reroll a player's birth hitdice to test major changes - C. Blue */
 			else if (prefix(messagelc, "/rollchar")) {
 				int p;
+
 				if (tk < 1) {
 					msg_print(Ind, "\377oUsage: /rollchar <player name>");
 					return;
 				}
+				message3[0] = toupper(message3[0]); //qol
 				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 				lua_recalc_char(p);
@@ -8294,10 +8306,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/roll!char")) {
 				int p, min = 9999, max = 0;
 				long avg = 0;
+
 				if (tk < 1) {
 					msg_print(Ind, "\377oUsage: /roll!char <player name>");
 					return;
 				}
+				message3[0] = toupper(message3[0]); //qol
 				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 				for (i = 0; i < 10000; i++) {
@@ -8314,10 +8328,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* Reroll a player's background history text (for d-elves/vampires/draconians, maybe ents) */
 			else if (prefix(messagelc, "/rollhistory")) {
 				int p;
+
 				if (tk < 1) {
 					msg_print(Ind, "\377oUsage: /rollhistory <player name>");
 					return;
 				}
+				message3[0] = toupper(message3[0]); //qol
 				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 				get_history(p);
@@ -8327,10 +8343,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			else if (prefix(messagelc, "/checkhistory")) {
 				int p;
+
 				if (tk < 1) {
 					msg_print(Ind, "\377oUsage: /checkhistory <player name>");
 					return;
 				}
+				message3[0] = toupper(message3[0]); //qol
 				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 				for (i = 0; i < 4; i++) msg_format(Ind, "[%d]: %s", i, Players[p]->history[i]);
@@ -8344,6 +8362,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "\377oUsage: /vxp <player name>");
 					return;
 				}
+				message3[0] = toupper(message3[0]); //qol
 				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 				verify_expfact(Ind, p);
@@ -8356,10 +8375,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* Blink a player */
 			else if (prefix(messagelc, "/blink")) {
 				int p;
+
 				if (tk < 1) {
 					msg_print(Ind, "\377oUsage: /blink <player name>");
 					return;
 				}
+				message3[0] = toupper(message3[0]); //qol
 				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 
@@ -8370,10 +8391,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* Teleport a player */
 			else if (prefix(messagelc, "/tport")) {
 				int p;
+
 				if (tk < 1) {
 					msg_print(Ind, "\377oUsage: /tport <player name>");
 					return;
 				}
+				message3[0] = toupper(message3[0]); //qol
 				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 
@@ -8394,6 +8417,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				x = atoi(token[1]);
 				y = atoi(token[2]);
+				message3[0] = toupper(message3[0]); //qol
 				p = name_lookup_loose(Ind, token[3], FALSE, FALSE, FALSE);
 				if (!p) return;
 
@@ -8458,6 +8482,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 
+				message3[0] = toupper(message3[0]); //qol
 				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 
@@ -8513,6 +8538,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* STRIP ALL TRUE ARTIFACTS FROM A PLAYER */
 			else if (prefix(messagelc, "/strat")) {
 				int p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
+
 				if (!p) return;
 				lua_strip_true_arts_from_present_player(Ind, 0);
 				msg_format(Ind, "Stripped arts from player %s.", Players[Ind]->name);
@@ -8594,6 +8620,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "Usage: /acclist <account name>");
 					return;
 				}
+				message3[0] = toupper(message3[0]); //qol
 				if (Admin_GetAccount(&acc, message3)) {
 					n = player_id_list(&id_list, acc.id);
 					msg_format(Ind, "Account '%s' has %d/%d (%d+%d+%d) character%s%c", message3, n, MAX_CHARS_PER_ACCOUNT + MAX_DED_IDDC_CHARS + MAX_DED_PVP_CHARS,
@@ -8634,6 +8661,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "Usage: /characc <character name>");
 					return;
 				}
+				message3[0] = toupper(message3[0]); //qol
 				if (!(p_id = lookup_player_id(message3))) {
 					msg_print(Ind, "That character name does not exist.");
 					return;
@@ -8683,6 +8711,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "Usage: /changeacc <character name:new account name>");
 					return;
 				}
+				message3[0] = toupper(message3[0]); //qol
 				*colon = 0;
 				colon++;
 				if (!(id = lookup_player_id(message3))) {
@@ -8814,6 +8843,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "Usage: /erasechar <character name>");
 					return;
 				}
+				message3[0] = toupper(message3[0]); //qol
 				msg_format(Ind, "Erasing character %s.", message3);
 				erase_player_name(message3);
 				return;
@@ -8824,6 +8854,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "Usage: /renamechar <character name>:<new name>");
 					return;
 				}
+				message3[0] = toupper(message3[0]); //qol
 				msg_format(Ind, "Renaming character %s.", message3);
 				rename_character(message3);
 				return;
