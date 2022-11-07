@@ -5165,7 +5165,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if (n) C_KILL(id_list, n, int);
 			WIPE(&acc, struct account);
 			return;
-		} else if (prefix(messagelc, "/ing") || prefix(messagelc, "/ingredients")) { /* toggle item-finding part of the Demolitionist perk */
+		} else if (prefix(messagelc, "/ing") || prefix(messagelc, "/ingredients")) { /* toggle item-finding part of the Demolitionist perk/Apply Poison users */
 			bool pois = (p_ptr->melee_techniques & MT_POISON);
 
 			/* Eligible for this command? */

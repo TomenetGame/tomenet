@@ -3933,6 +3933,11 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				forge.weight = k_info[forge.k_idx].weight;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
 				drop_near(0, &forge, -1, wpos, y, x);
+				if (!p_ptr->warning_ingredients) {
+					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
+					msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+					p_ptr->warning_ingredients = 1;
+				}
 			}
 #endif
 
@@ -3982,6 +3987,11 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				forge.weight = k_info[forge.k_idx].weight;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
 				drop_near(0, &forge, -1, wpos, y, x);
+				if (!p_ptr->warning_ingredients) {
+					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
+					msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+					p_ptr->warning_ingredients = 1;
+				}
 			}
 #endif
 
@@ -4054,6 +4064,11 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				forge.weight = k_info[forge.k_idx].weight;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
 				drop_near(0, &forge, -1, wpos, y, x);
+				if (!p_ptr->warning_ingredients) {
+					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
+					msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+					p_ptr->warning_ingredients = 1;
+				}
 			}
 #endif
 
@@ -4270,6 +4285,11 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				forge.weight = k_info[forge.k_idx].weight;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
 				drop_near(0, &forge, -1, wpos, y, x);
+				if (!p_ptr->warning_ingredients) {
+					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
+					msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+					p_ptr->warning_ingredients = 1;
+				}
 			}
 			/* Magma - Possibly find ingredients: Sulfur (volcanic/undersea), Vitriol */
 			else if (
@@ -4291,6 +4311,11 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				forge.weight = k_info[forge.k_idx].weight;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
 				drop_near(0, &forge, -1, wpos, y, x);
+				if (!p_ptr->warning_ingredients) {
+					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
+					msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+					p_ptr->warning_ingredients = 1;
+				}
 			}
 			/* Quartz (whatever =p) - Possibly find ingredients: Metal powder */
 			else if (
@@ -4312,6 +4337,11 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				forge.weight = k_info[forge.k_idx].weight;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
 				drop_near(0, &forge, -1, wpos, y, x);
+				if (!p_ptr->warning_ingredients) {
+					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
+					msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+					p_ptr->warning_ingredients = 1;
+				}
 			}
 #endif
 		}

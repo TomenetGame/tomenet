@@ -6352,6 +6352,11 @@ bool monster_death(int Ind, int m_idx) {
 			forge.marked2 = ITEM_REMOVAL_NORMAL;
 			drop_near(0, &forge, -1, wpos, y, x);
 			found_chemical = TRUE;
+			if (!p_ptr->warning_ingredients) {
+				msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
+				msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+				p_ptr->warning_ingredients = 1;
+			}
 		}
 	}
 	if ((r_ptr->flags4 & RF4_BR_ACID) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
@@ -6371,6 +6376,11 @@ bool monster_death(int Ind, int m_idx) {
 			forge.marked2 = ITEM_REMOVAL_NORMAL;
 			drop_near(0, &forge, -1, wpos, y, x);
 			found_chemical = TRUE;
+			if (!p_ptr->warning_ingredients) {
+				msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
+				msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+				p_ptr->warning_ingredients = 1;
+			}
 		}
 	}
 	if ((r_ptr->flags4 & RF4_BR_POIS) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
@@ -6390,6 +6400,11 @@ bool monster_death(int Ind, int m_idx) {
 			forge.marked2 = ITEM_REMOVAL_NORMAL;
 			drop_near(0, &forge, -1, wpos, y, x);
 			found_chemical = TRUE;
+			if (!p_ptr->warning_ingredients) {
+				msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
+				msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+				p_ptr->warning_ingredients = 1;
+			}
 		}
 	}
 	if (!found_chemical && ((r_ptr->flags3 & RF3_ANIMAL) || r_idx == RI_NOVICE_MAGE || r_idx == RI_NOVICE_MAGE_F)
@@ -6415,6 +6430,11 @@ bool monster_death(int Ind, int m_idx) {
 					forge.marked2 = ITEM_REMOVAL_NORMAL;
 					drop_near(0, &forge, -1, wpos, y, x);
 					found_chemical = TRUE;
+					if (!p_ptr->warning_ingredients) {
+						msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
+						msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+						p_ptr->warning_ingredients = 1;
+					}
 				}
 			}
 
@@ -6436,6 +6456,11 @@ bool monster_death(int Ind, int m_idx) {
 					forge.marked2 = ITEM_REMOVAL_NORMAL;
 					drop_near(0, &forge, -1, wpos, y, x);
 					found_chemical = TRUE;
+					if (!p_ptr->warning_ingredients) {
+						msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
+						msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+						p_ptr->warning_ingredients = 1;
+					}
 				}
 			}
 		}
@@ -6461,6 +6486,11 @@ bool monster_death(int Ind, int m_idx) {
 			forge.marked2 = ITEM_REMOVAL_NORMAL;
 			drop_near(0, &forge, -1, wpos, y, x);
 			//found_chemical = TRUE;
+			if (!p_ptr->warning_ingredients) {
+				msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
+				msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+				p_ptr->warning_ingredients = 1;
+			}
 		}
 	}
 
