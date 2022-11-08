@@ -6028,6 +6028,9 @@ static bool process_player_end_aux(int Ind) {
 		int anti_Ind = world_check_antimagic(Ind);
 
 		if (anti_Ind) {
+#ifdef USE_SOUND_2010
+			sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 			msg_format(anti_Ind, "\377%cA curse builds up but dissipates in your anti-magic field.", COLOUR_AM_GOOD);
 
 			switch (Players[anti_Ind]->name[strlen(Players[anti_Ind]->name) - 1]) {

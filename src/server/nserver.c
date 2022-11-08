@@ -2544,6 +2544,7 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->sfx_defense = !options[95];
 		p_ptr->half_sfx_attack = options[96];
 		p_ptr->cut_sfx_attack = options[97];
+		p_ptr->sfx_am = TRUE;
 		p_ptr->sfx_monsterattack = !options[103];
 		if (is_atleast(&p_ptr->version, 4, 8, 1, 1, 0, 0)) //was p_ptr->quiet_sfx_shriek
 			p_ptr->positional_audio = options[104];
@@ -8182,7 +8183,7 @@ int Send_sound(int Ind, int sound, int alternative, int type, int vol, s32b play
 		if (sound != __sfx_bell && sound != __sfx_page && sound != __sfx_warning) return(0);
 	}
 
-	if (sound == __sfx_am && !p_ptr->sfx_am) return(0);
+	//if (sound == __sfx_am && !p_ptr->sfx_am) return(0);  -- now done client-side in the sfx browser
 #endif
 
 #ifdef SFX_SHRIEK_VOLUME
