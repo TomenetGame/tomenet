@@ -6407,12 +6407,47 @@ bool monster_death(int Ind, int m_idx) {
 			}
 		}
 	}
-	if (!found_chemical && ((r_ptr->flags3 & RF3_ANIMAL) || r_idx == RI_NOVICE_MAGE || r_idx == RI_NOVICE_MAGE_F)
+	if (!found_chemical && ((r_ptr->flags3 & RF3_ANIMAL) || r_idx == RI_NOVICE_MAGE || r_idx == RI_NOVICE_MAGE_F || m_ptr->ego == RE_RUNEMASTER)
 	    && !(r_ptr->flags3 & (RF3_DEMON | RF3_UNDEAD | RF3_NONLIVING)) && !(r_ptr->flags7 & RF7_AQUATIC) && !p_ptr->IDDC_logscum) {
 		/* Avoid item flood */
 		if (!(r_ptr->flags1 & RF1_FRIENDS) || !rand_int(2)) {
+			/* Runemaster ego monsters can drop any ingredient */
+			if (m_ptr->ego == RE_RUNEMASTER && rand_int(3)) {
+				if (!p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST) {
+					object_type forge;
+					int s_chem = randint(9);
+#ifdef NO_RUST_NO_HYDROXIDE
+					    randint(9);
+
+					if (s_chem >= SV_METAL_HYDROXIDE) s_chem++;
+					if (s_chem >= SV_RUST) s_chem++;
+#else
+					    randint(11);
+#endif
+
+					invcopy(&forge, lookup_kind(TV_CHEMICAL, s_chem));
+					s_printf("CHEMICAL: %s found %d (kill).\n", p_ptr->name, s_chem);
+					forge.owner = p_ptr->id;
+					forge.ident |= ID_NO_HIDDEN;
+					forge.mode = p_ptr->mode;
+					forge.iron_trade = p_ptr->iron_trade;
+					forge.iron_turn = turn;
+					forge.level = 0;
+					forge.number = 1 + rand_int(3);
+					forge.weight = k_info[forge.k_idx].weight;
+					forge.marked2 = ITEM_REMOVAL_NORMAL;
+					drop_near(0, &forge, -1, wpos, y, x);
+					found_chemical = TRUE;
+					if (!p_ptr->warning_ingredients) {
+						msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
+						msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+						p_ptr->warning_ingredients = 1;
+					}
+				}
+			}
+
 			/* Saltpetre (guano: bats/birds) + newbie 'spell components' as per k_info diz */
-			if (r_ptr->d_char == 'b' || r_ptr->d_char == 'B' || r_ptr->d_char == 'H'
+			else if (r_ptr->d_char == 'b' || r_ptr->d_char == 'B' || r_ptr->d_char == 'H'
 			    || (!rand_int(2) && (r_idx == RI_NOVICE_MAGE || r_idx == RI_NOVICE_MAGE_F))) { /* '..leaving behind a trail of dropped spell components' */
 				if (!p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST && !rand_int(3)) {
 					object_type forge;

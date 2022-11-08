@@ -1453,6 +1453,15 @@
 #define RI_ARCADE_START		1115	/* first arcade-specific monster; TODO: add ARCADE flag instead */
 #define RI_ARCADE_END		1124	/* last arcade-specific monster; TODO: add ARCADE flag instead */
 
+
+/* Monster ego power indices from re_info.txt */
+#define RE_NONE			0
+#define RE_DRUNK		15
+#define RE_MASTER_THIEF		33	/* CHAR_CLEAR+ATTR_CLEAR */
+#define RE_SHADOWED		45	/* CHAR_CLEAR+ATTR_CLEAR */
+#define RE_RUNEMASTER		62
+
+
 /* Use normal monster abilities instead of truly mirrored abilities?
    (This is basically a placeholder until a true mirror image is eventually implemented..) */
 #define SIMPLE_RI_MIRROR
@@ -1467,11 +1476,6 @@
 #define MIRROR_REDUCE_DAM_DEALT_SPELL 20
 #define MIRROR_REDUCE_DAM_DEALT_AURA 20
 
-/* Monster ego power indices */
-#define RE_NONE			0
-#define RE_DRUNK		15
-#define RE_MASTER_THIEF		33	/* CHAR_CLEAR+ATTR_CLEAR */
-#define RE_SHADOWED		45	/* CHAR_CLEAR+ATTR_CLEAR */
 
 /* Summoning/spawning override flags for checks in monster placement routines */
 #define SO_NONE			0x0000	/* apply all checks (default) */
@@ -1511,6 +1515,7 @@
 #define LEVEL_PROB_TRAVEL	9
 #define LEVEL_TO_TEMPLE		10
 
+
 /*
  * Pkill flags
  */
@@ -1523,9 +1528,12 @@
 #define PKILL_KILLABLE		2	/* Can be killed */
 #define PKILL_KILLER		4	/* Can kill */
 
+
+/* Misc */
 #define BUMP_OPEN_DOOR		0x01
 #define BUMP_OPEN_HOUSE		0x02
 #define BUMP_OPEN_TRAP		0x04
+
 
 /*
  * The types of special file perusal.
