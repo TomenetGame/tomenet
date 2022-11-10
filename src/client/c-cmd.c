@@ -2246,6 +2246,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		else if (my_strcasestr(buf, "shop") && my_strcasestr(buf, "serv")) strcpy(init_search_string, "services");
 		else if (!strcasecmp(buf, "stor") || !strcasecmp(buf, "store") || !strcasecmp(buf, "stores")) strcpy(init_search_string, "Shops");
 		else if (my_strcasestr(buf, "shop") && my_strcasestr(buf, "player")) strcpy(init_search_string, "Player stores");
+		else if (my_strcasestr(buf, "store") && my_strcasestr(buf, "player")) strcpy(init_search_string, "Player stores");
 		else if (!strcasecmp("rw", buf)) strcpy(init_search_string, "Nazgul");
 		else if (!strcasecmp(buf, "win") || !strcasecmp(buf, "winning") || !strcasecmp(buf, "winner")|| !strcasecmp(buf, "winners")) strcpy(init_search_string, "goal");
 		else if (!strcasecmp(buf, "king") || !strcasecmp(buf, "queen") || !strcasecmp(buf, "emperor")|| !strcasecmp(buf, "empress")) strcpy(init_search_string, "goal");
