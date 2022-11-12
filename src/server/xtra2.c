@@ -8751,6 +8751,7 @@ void player_death(int Ind) {
 	bool just_fruitbat_transformation = (p_ptr->fruit_bat == -1);
 	bool retire = FALSE;
 	bool in_iddc = in_irondeepdive(&p_ptr->wpos);
+	object_type *inventory_copy = C_NEW(INVEN_TOTAL, object_type);
 
 
 	p_ptr->tmp_y = p_ptr->total_winner; //was: bool was_total_winner = p_ptr->total_winner,;
@@ -9574,13 +9575,13 @@ void player_death(int Ind) {
 	ang_sort_swap = ang_sort_swap_value;
 	/* Remember original position before sorting */
 	for (i = 0; i < INVEN_TOTAL; i++) p_ptr->inventory[i].inven_order = i;
-	memcpy(p_ptr->inventory_copy, p_ptr->inventory, sizeof(object_type) * INVEN_TOTAL);
+	memcpy(inventory_copy, p_ptr->inventory, sizeof(object_type) * INVEN_TOTAL);
 	/* Sort the player's inventory according to value */
-	ang_sort(Ind, p_ptr->inventory_copy, NULL, INVEN_TOTAL);
+	ang_sort(Ind, inventory_copy, NULL, INVEN_TOTAL);
 
 	/* Starting with the most valuable, drop things one by one. */
 	for (j = 0; j < INVEN_TOTAL; j++) {
-		i = p_ptr->inventory_copy[j].inven_order;
+		i = inventory_copy[j].inven_order;
 
 		o_ptr = &p_ptr->inventory[i];
 		/* Make sure we have an object */
@@ -9593,6 +9594,8 @@ void player_death(int Ind) {
 
 		death_drop_object(p_ptr, i, o_ptr);
 	}
+	C_FREE(inventory_copy, INVEN_TOTAL, object_type);
+
 	/* Invalidate 'item_newest' */
 	Send_item_newest(Ind, -1);
 
