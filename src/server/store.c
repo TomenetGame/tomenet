@@ -4308,7 +4308,7 @@ void store_confirm(int Ind) {
 
 #ifdef ENABLE_SUBINVEN
 	/* If we drop a subinventory, remove all items and place them into the player's inventory */
-	if (o_ptr->tval == TV_SUBINVEN && amt >= o_ptr->number) empty_subinven(Ind, item);
+	if (o_ptr->tval == TV_SUBINVEN && amt >= o_ptr->number) empty_subinven(Ind, item, FALSE);
 #endif
 
 	/* Take the item from the player, describe the result */
@@ -6021,7 +6021,7 @@ void home_sell(int Ind, int item, int amt) {
 
 #ifdef ENABLE_SUBINVEN
 	/* If we drop a subinventory, remove all items and place them into the player's inventory */
-	if (o_ptr->tval == TV_SUBINVEN && amt >= o_ptr->number) empty_subinven(Ind, item);
+	if (o_ptr->tval == TV_SUBINVEN && amt >= o_ptr->number) empty_subinven(Ind, item, FALSE);
 #endif
 
 	/* Take the item from the player, describe the result */

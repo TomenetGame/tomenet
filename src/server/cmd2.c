@@ -8020,7 +8020,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 		if (!returning) {
 #ifdef ENABLE_SUBINVEN
 			/* If we drop a subinventory, remove all items and place them into the player's inventory */
-			if (o_ptr->tval == TV_SUBINVEN && moved_number >= o_ptr->number) empty_subinven(Ind, item);
+			if (o_ptr->tval == TV_SUBINVEN && moved_number >= o_ptr->number) empty_subinven(Ind, item, FALSE);
 #endif
 
 			inven_item_increase(Ind, item, -moved_number);

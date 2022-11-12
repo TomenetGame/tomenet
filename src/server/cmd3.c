@@ -375,7 +375,7 @@ int inven_drop(int Ind, int item, int amt, bool force) {
 
 #ifdef ENABLE_SUBINVEN
 	/* If we drop a subinventory, remove all items and place them into the player's inventory */
-	if (o_ptr->tval == TV_SUBINVEN && amt >= o_ptr->number) empty_subinven(Ind, item);
+	if (o_ptr->tval == TV_SUBINVEN && amt >= o_ptr->number) empty_subinven(Ind, item, FALSE);
 #endif
 
 	/* Make a "fake" object */
@@ -2198,7 +2198,7 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 
 #ifdef ENABLE_SUBINVEN
 	/* If we destroy a subinventory - that was not on the floor already! - , remove all items and place them into the player's inventory */
-	if (o_ptr->tval == TV_SUBINVEN && item >= 0 && quantity >= o_ptr->number) empty_subinven(Ind, item);
+	if (o_ptr->tval == TV_SUBINVEN && item >= 0 && quantity >= o_ptr->number) empty_subinven(Ind, item, FALSE);
 #endif
 
 	/* Eliminate the item (from the pack) */

@@ -818,7 +818,7 @@ int auction_set(int Ind, int slot, cptr starting_price_string, cptr buyout_price
 
 #ifdef ENABLE_SUBINVEN
 	/* If we auction a subinventory, remove all items and place them into the player's inventory */
-	if (o_ptr->tval == TV_SUBINVEN && 1 >= o_ptr->number) empty_subinven(Ind, slot);
+	if (o_ptr->tval == TV_SUBINVEN && 1 >= o_ptr->number) empty_subinven(Ind, slot, FALSE);
 #endif
 
 	inven_item_increase(Ind, slot, -1);

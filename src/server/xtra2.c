@@ -8749,10 +8749,11 @@ void player_death(int Ind) {
 	bool world_broadcast = TRUE;
 #endif
 	bool just_fruitbat_transformation = (p_ptr->fruit_bat == -1);
-	bool was_total_winner = p_ptr->total_winner, retire = FALSE;
+	bool retire = FALSE;
 	bool in_iddc = in_irondeepdive(&p_ptr->wpos);
-	bool finally_killed; /* non-suicide no-rez-death */
 
+
+	p_ptr->tmp_y = p_ptr->total_winner; //was: bool was_total_winner = p_ptr->total_winner,;
 
 	/* Cancel any pending Word of Recall, of course. */
 	p_ptr->word_recall = 0;
@@ -9239,13 +9240,13 @@ void player_death(int Ind) {
 			/* Tell him what happened -- moved the messages up here so they get onto the chardump! */
 			msg_format(Ind, "\374\377RYou were defeated by %s, but the priests have saved you.", p_ptr->died_from);
 
-#if CHATTERBOX_LEVEL > 2
- #ifdef WHO_LET_THE_DOGS_OUT
+ #if CHATTERBOX_LEVEL > 2
+  #ifdef WHO_LET_THE_DOGS_OUT
 			if (strstr(p_ptr->died_from, "Farmer Maggot's dog") && magik(WHO_LET_THE_DOGS_OUT)) {
 				//msg_broadcast(0, "Suddenly a thought comes to your mind:");
 				msg_broadcast(0, "Who let the dogs out?");
 			} else
- #endif
+  #endif
 			/* Actually no last_words from death.txt for instant-resurrection-deaths? */
 			if (p_ptr->last_words) {
 				char death_message[80];
@@ -9253,14 +9254,14 @@ void player_death(int Ind) {
 				(void)get_rnd_line("death.txt", 0, death_message, 80);
 				msg_print(Ind, death_message);
 			}
-#endif
+ #endif
 
 			/* new - death dump for insta-res too! */
 			Send_chardump(Ind, "-death");
 
-#ifdef RACE_DIZ
+ #ifdef RACE_DIZ
 			display_diz_death(Ind);
-#endif
+ #endif
 
 			/* Hm, this doesn't need to be on the char dump actually */
 			msg_format(Ind, "\377oThey have requested a fee of %d gold pieces.", instant_res_cost);
@@ -9434,7 +9435,7 @@ void player_death(int Ind) {
 			/* No longer a winner */
 			p_ptr->total_winner = FALSE;
 
-			if (was_total_winner) {
+			if (p_ptr->tmp_y) {
 				/* Set all his artifacts back to normal-speed timeout */
 				if (!cfg.fallenkings_etiquette) {
 					for (j = 0; j < INVEN_TOTAL; j++)
@@ -9536,7 +9537,7 @@ void player_death(int Ind) {
 	/* Check for non-suicide final death, to prevent true artifacts from dropping by a winner if he cannot resurrect anyway.
 	   Note that suicide is excluded, as it can be/is handled separately - at least leave the option open
 	   (currently, true arts won't be dropped either in case of winner-suicide, as it makes sense.) */
-	finally_killed =
+	p_ptr->tmp_x = //was: bool finally_killed; /* non-suicide no-rez-death */
 	    ((p_ptr->ghost || (hell && !p_ptr->suicided)) ||
 	    insanity ||
 	    streq(p_ptr->died_from, "indecisiveness") ||
@@ -9548,14 +9549,14 @@ void player_death(int Ind) {
 
 	/* Don't "lose" items on suicide (they all poof anyway, except for true arts possibly) */
 #ifdef DEATH_PACK_ITEM_LOST
-	if (!p_ptr->suicided) inven_death_damage(Ind, FALSE);
+	if (!p_ptr->suicided) inven_death_damage(Ind, TRUE);
 #endif
 #ifdef DEATH_EQ_ITEM_LOST
-	if (!p_ptr->suicided) equip_death_damage(Ind, FALSE);
+	if (!p_ptr->suicided) equip_death_damage(Ind, TRUE);
 #endif
 	/* Soloists: Kill more items! Soloists are not really meant to interact with others much. */
 #ifdef DEATH_PACK_ITEM_LOST
-	if ((p_ptr->mode & MODE_SOLO) && !p_ptr->suicided) inven_death_damage(Ind, FALSE);
+	if ((p_ptr->mode & MODE_SOLO) && !p_ptr->suicided) inven_death_damage(Ind, TRUE);
 #endif
 #ifdef DEATH_EQ_ITEM_LOST
 	if ((p_ptr->mode & MODE_SOLO) && !p_ptr->suicided) {
@@ -9573,183 +9574,30 @@ void player_death(int Ind) {
 	ang_sort_swap = ang_sort_swap_value;
 	/* Remember original position before sorting */
 	for (i = 0; i < INVEN_TOTAL; i++) p_ptr->inventory[i].inven_order = i;
+	memcpy(p_ptr->inventory_copy, p_ptr->inventory, sizeof(object_type) * INVEN_TOTAL);
 	/* Sort the player's inventory according to value */
-	ang_sort(Ind, p_ptr->inventory, NULL, INVEN_TOTAL);
+	ang_sort(Ind, p_ptr->inventory_copy, NULL, INVEN_TOTAL);
 
 	/* Starting with the most valuable, drop things one by one. */
-	for (i = 0; i < INVEN_TOTAL; i++) {
-		bool away = FALSE;
+	for (j = 0; j < INVEN_TOTAL; j++) {
+		i = p_ptr->inventory_copy[j].inven_order;
 
 		o_ptr = &p_ptr->inventory[i];
 		/* Make sure we have an object */
 		if (o_ptr->k_idx == 0) continue;
 
-		if (o_ptr->questor) { /* questor items cannot be 'dropped', only destroyed! */
-			questitem_d(o_ptr, o_ptr->number);
-			continue;
-		}
-
-		/* Eat all true artifacts of Soloists */
-		if ((p_ptr->mode & MODE_SOLO) && true_artifact_p(o_ptr)) {
-			handle_art_d(o_ptr->name1);
-			questitem_d(o_ptr, o_ptr->number);
-			continue;
-		}
-
-		/* Set all his true artifacts back to normal-speed timeout */
-		if (was_total_winner && !cfg.fallenkings_etiquette &&
-		    p_ptr->inventory[i].name1 &&
-		    p_ptr->inventory[i].name1 != ART_RANDART)
-			a_info[p_ptr->inventory[i].name1].winner = FALSE;
-
-		/* If we committed suicide.. */
-		if (p_ptr->suicided) {
-			/* only drop artifacts -- new 2022: don't drop level 0 (ie untradable) artifacts (Nazgul rings littering Bree) */
-			 if (!artifact_p(o_ptr) || !o_ptr->level) {
-				questitem_d(o_ptr, o_ptr->number);
-				continue;
-			}
-
-			/* and if we were a total winner, don't drop any true artifacts */
-			if (true_artifact_p(o_ptr) &&
-			    ((cfg.anti_arts_hoard && undepositable_artifact_p(o_ptr)) ||
-			    (p_ptr->total_winner && !winner_artifact_p(o_ptr) && cfg.kings_etiquette))) {
-				/* set the artifact as unfound */
-				handle_art_d(o_ptr->name1);
-				/* Don't drop the artifact */
-				continue;
-			}
-		} else if (finally_killed) { /* Character erased? */
-			/* If we were a total winner, don't drop any true artifacts and never drop level 0 true artifacts */
-			if (true_artifact_p(o_ptr) &&
-			    ((cfg.anti_arts_hoard && undepositable_artifact_p(o_ptr)) ||
-			    (p_ptr->total_winner && !winner_artifact_p(o_ptr) && cfg.kings_etiquette) ||
-			    !o_ptr->level)) {
-				/* set the artifact as unfound */
-				handle_art_d(o_ptr->name1);
-				/* Don't drop the artifact */
-				continue;
-			}
-			/* Don't drop Nazgul rings or final-artifacts as they are level 0 and hence unsuable to anyone */
-			if (artifact_p(o_ptr) && !o_ptr->level) {
-				/* set the artifact as unfound */
-				if (o_ptr->name1 != ART_RANDART) handle_art_d(o_ptr->name1);
-				else questitem_d(o_ptr, o_ptr->number);
-				/* Don't drop the artifact */
-				continue;
-			}
-		}
-
-		/* Drop/scatter an item? */
-		if (!is_admin(p_ptr) && !p_ptr->inval &&
-		    /* actually do drop the untradable starter items, to reduce newbie frustration */
-		    (p_ptr->max_plv >= cfg.newbies_cannot_drop || !o_ptr->level)
-		    /* Don't drop Morgoth's crown or Grond */
-		    && !(o_ptr->name1 == ART_MORGOTH) && !(o_ptr->name1 == ART_GROND)
-#ifdef IDDC_NO_TRADE_CHEEZE
-		    && !(in_iddc && o_ptr->NR_tradable)
-#endif
-		    ) {
-#ifdef VAMPIRES_INV_CURSED
-			if (i >= INVEN_WIELD) {
-				if (p_ptr->prace == RACE_VAMPIRE) reverse_cursed(o_ptr);
- #ifdef ENABLE_HELLKNIGHT
-				else if (p_ptr->pclass == CLASS_HELLKNIGHT) reverse_cursed(o_ptr); //them too!
- #endif
- #ifdef ENABLE_CPRIEST
-				else if (p_ptr->pclass == CLASS_CPRIEST && p_ptr->body_monster == RI_BLOODTHIRSTER) reverse_cursed(o_ptr);
- #endif
-			}
+#ifdef ENABLE_SUBINVEN
+		/* Drop all items from a bag directly to the floor */
+		if (o_ptr->tval == TV_SUBINVEN) empty_subinven(Ind, i, TRUE);
 #endif
 
-			/* Check if the item should get scattered far away randomly for some reason */
-			if (true_artifact_p(o_ptr)) {
-				cave_type **zcave;
-
-				if ((zcave = getcave(&p_ptr->wpos))) { /* this should never.. */
-					if (inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py)) away = TRUE; /* Not inside houses */
-					if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_PROT) || (f_info[zcave[p_ptr->py][p_ptr->px].feat].flags1 & FF1_PROTECTED)) away = TRUE; /* Not inside inns.. */
-				}
-			}
-#ifdef DEATH_ITEM_SCATTER
-			/* Apply penalty of death */
-			else if (!artifact_p(o_ptr) && magik(DEATH_ITEM_SCATTER)) away = TRUE;
-#endif	/* DEATH_ITEM_SCATTER */
-
-			/* If the item isn't to be scattered, drop it here now */
-			if (!away) {
-				s16b res;
-
-				if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
-				else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
-				else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
-				/* Drop this one - if dropping fails for reasons that don't legitimately destroy the item, fallback to scattering it far away instead */
-				res = drop_near(0, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-				away = (res == -2);
-				/* Item failed to drop or get scattered and just gets eaten? Paranoia log */
-				if (res <= 0 && !away) {
-					char o_name[ONAME_LEN];
-
-					object_desc(0, o_name, o_ptr, TRUE, 3);
-					s_printf("Death-cannot-drop_near (%d) %s\n", res, o_name);
-				}
-			}
-
-			if (away) {
-				int o_idx = 0, x1, y1, try = 500;
-				cave_type **zcave;
-
-				if ((zcave = getcave(&p_ptr->wpos))) { /* this should never.. */
-					while (o_idx <= 0 && try--) {
-						x1 = rand_int(p_ptr->cur_wid);
-						y1 = rand_int(p_ptr->cur_hgt);
-
-						if (!cave_clean_bold(zcave, y1, x1)) continue; /* Must be floor */
-						if (true_artifact_p(o_ptr)) {
-							if (inside_house(&p_ptr->wpos, x1, y1)) continue; /* Not inside houses */
-							if ((zcave[y1][x1].info & CAVE_PROT) || (f_info[zcave[y1][x1].feat].flags1 & FF1_PROTECTED)) continue; /* Not inside inns.. */
-						}
-
-						if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
-						else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
-						else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
-						o_idx = drop_near(0, o_ptr, 0, &p_ptr->wpos, y1, x1);
-					}
-					/* Item failed to drop or get scattered and just gets eaten? Paranoia log */
-					if (o_idx <= 0) {
-						char o_name[ONAME_LEN];
-
-						object_desc(0, o_name, o_ptr, TRUE, 3);
-						s_printf("Death-failed-to-away %s\n", o_name);
-					}
-				} else s_printf("Death-NO-ZCAVE.\n"); //paranoia-log
-			}
-		} else {
-			/* set the artifact as unfound */
-			if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
-			questitem_d(o_ptr, o_ptr->number);
-
-			/* Extra logging for those cases of "where did my randart disappear to??1" */
-			if (o_ptr->name1 == ART_RANDART) {
-				char o_name[ONAME_LEN];
-
-				object_desc(0, o_name, o_ptr, TRUE, 3);
-
-				s_printf("%s Death-cannot-drop random artifact at (%d,%d,%d):\n  %s\n",
-				    showtime(),
-				    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
-				    o_name);
-			}
-		}
-
-		/* No more item */
-		invwipe(o_ptr);
+		death_drop_object(p_ptr, i, o_ptr);
 	}
 	/* Invalidate 'item_newest' */
 	Send_item_newest(Ind, -1);
 
 	/* Get rid of him if he's a ghost or suffers a no-ghost death */
-	if (finally_killed) {
+	if (p_ptr->tmp_x) {
 		/* Tell players */
 		if (insanity) {
 			/* Tell him */
@@ -10439,6 +10287,173 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 	}
 #endif
 }
+
+/* Drop an item on player's death */
+void death_drop_object(player_type *p_ptr, int i, object_type *o_ptr) {
+	bool away = FALSE;
+	bool in_iddc = in_irondeepdive(&p_ptr->wpos);
+
+	if (o_ptr->questor) { /* questor items cannot be 'dropped', only destroyed! */
+		questitem_d(o_ptr, o_ptr->number);
+		return;
+	}
+
+	/* Eat all true artifacts of Soloists */
+	if ((p_ptr->mode & MODE_SOLO) && true_artifact_p(o_ptr)) {
+		handle_art_d(o_ptr->name1);
+		questitem_d(o_ptr, o_ptr->number);
+		return;
+	}
+
+	/* Set all his true artifacts back to normal-speed timeout */
+	if (p_ptr->tmp_y && !cfg.fallenkings_etiquette &&
+	    o_ptr->name1 &&
+	    o_ptr->name1 != ART_RANDART)
+		a_info[o_ptr->name1].winner = FALSE;
+
+	/* If we committed suicide.. */
+	if (p_ptr->suicided) {
+		/* only drop artifacts -- new 2022: don't drop level 0 (ie untradable) artifacts (Nazgul rings littering Bree) */
+		 if (!artifact_p(o_ptr) || !o_ptr->level) {
+			questitem_d(o_ptr, o_ptr->number);
+			return;
+		}
+
+		/* and if we were a total winner, don't drop any true artifacts */
+		if (true_artifact_p(o_ptr) &&
+		    ((cfg.anti_arts_hoard && undepositable_artifact_p(o_ptr)) ||
+		    (p_ptr->total_winner && !winner_artifact_p(o_ptr) && cfg.kings_etiquette))) {
+			/* set the artifact as unfound */
+			handle_art_d(o_ptr->name1);
+			/* Don't drop the artifact */
+			return;
+		}
+	} else if (p_ptr->tmp_x) { /* Character erased? */
+		/* If we were a total winner, don't drop any true artifacts and never drop level 0 true artifacts */
+		if (true_artifact_p(o_ptr) &&
+		    ((cfg.anti_arts_hoard && undepositable_artifact_p(o_ptr)) ||
+		    (p_ptr->total_winner && !winner_artifact_p(o_ptr) && cfg.kings_etiquette) ||
+		    !o_ptr->level)) {
+			/* set the artifact as unfound */
+			handle_art_d(o_ptr->name1);
+			/* Don't drop the artifact */
+			return;
+		}
+		/* Don't drop Nazgul rings or final-artifacts as they are level 0 and hence unsuable to anyone */
+		if (artifact_p(o_ptr) && !o_ptr->level) {
+			/* set the artifact as unfound */
+			if (o_ptr->name1 != ART_RANDART) handle_art_d(o_ptr->name1);
+			else questitem_d(o_ptr, o_ptr->number);
+			/* Don't drop the artifact */
+			return;
+		}
+	}
+
+	/* Drop/scatter an item? */
+	if (!is_admin(p_ptr) && !p_ptr->inval &&
+	    /* actually do drop the untradable starter items, to reduce newbie frustration */
+	    (p_ptr->max_plv >= cfg.newbies_cannot_drop || !o_ptr->level)
+	    /* Don't drop Morgoth's crown or Grond */
+	    && !(o_ptr->name1 == ART_MORGOTH) && !(o_ptr->name1 == ART_GROND)
+#ifdef IDDC_NO_TRADE_CHEEZE
+	    && !(in_iddc && o_ptr->NR_tradable)
+#endif
+	    ) {
+#ifdef VAMPIRES_INV_CURSED
+		if (i >= INVEN_WIELD) {
+			if (p_ptr->prace == RACE_VAMPIRE) reverse_cursed(o_ptr);
+ #ifdef ENABLE_HELLKNIGHT
+			else if (p_ptr->pclass == CLASS_HELLKNIGHT) reverse_cursed(o_ptr); //them too!
+ #endif
+ #ifdef ENABLE_CPRIEST
+			else if (p_ptr->pclass == CLASS_CPRIEST && p_ptr->body_monster == RI_BLOODTHIRSTER) reverse_cursed(o_ptr);
+ #endif
+		}
+#endif
+
+		/* Check if the item should get scattered far away randomly for some reason */
+		if (true_artifact_p(o_ptr)) {
+			cave_type **zcave;
+
+			if ((zcave = getcave(&p_ptr->wpos))) { /* this should never.. */
+				if (inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py)) away = TRUE; /* Not inside houses */
+				if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_PROT) || (f_info[zcave[p_ptr->py][p_ptr->px].feat].flags1 & FF1_PROTECTED)) away = TRUE; /* Not inside inns.. */
+			}
+		}
+#ifdef DEATH_ITEM_SCATTER
+		/* Apply penalty of death */
+		else if (!artifact_p(o_ptr) && magik(DEATH_ITEM_SCATTER)) away = TRUE;
+#endif	/* DEATH_ITEM_SCATTER */
+
+		/* If the item isn't to be scattered, drop it here now */
+		if (!away) {
+			s16b res;
+
+			if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
+			else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
+			else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
+			/* Drop this one - if dropping fails for reasons that don't legitimately destroy the item, fallback to scattering it far away instead */
+			res = drop_near(0, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+			away = (res == -2);
+			/* Item failed to drop or get scattered and just gets eaten? Paranoia log */
+			if (res <= 0 && !away) {
+				char o_name[ONAME_LEN];
+					object_desc(0, o_name, o_ptr, TRUE, 3);
+				s_printf("Death-cannot-drop_near (%d) %s\n", res, o_name);
+			}
+		}
+
+		if (away) {
+			int o_idx = 0, x1, y1, try = 500;
+			cave_type **zcave;
+
+			if ((zcave = getcave(&p_ptr->wpos))) { /* this should never.. */
+				while (o_idx <= 0 && try--) {
+					x1 = rand_int(p_ptr->cur_wid);
+					y1 = rand_int(p_ptr->cur_hgt);
+
+					if (!cave_clean_bold(zcave, y1, x1)) continue; /* Must be floor */
+					if (true_artifact_p(o_ptr)) {
+						if (inside_house(&p_ptr->wpos, x1, y1)) continue; /* Not inside houses */
+						if ((zcave[y1][x1].info & CAVE_PROT) || (f_info[zcave[y1][x1].feat].flags1 & FF1_PROTECTED)) continue; /* Not inside inns.. */
+					}
+
+					if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
+					else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
+					else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
+					o_idx = drop_near(0, o_ptr, 0, &p_ptr->wpos, y1, x1);
+				}
+				/* Item failed to drop or get scattered and just gets eaten? Paranoia log */
+				if (o_idx <= 0) {
+					char o_name[ONAME_LEN];
+
+					object_desc(0, o_name, o_ptr, TRUE, 3);
+					s_printf("Death-failed-to-away %s\n", o_name);
+				}
+			} else s_printf("Death-NO-ZCAVE.\n"); //paranoia-log
+		}
+	} else {
+		/* set the artifact as unfound */
+		if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
+		questitem_d(o_ptr, o_ptr->number);
+
+		/* Extra logging for those cases of "where did my randart disappear to??1" */
+		if (o_ptr->name1 == ART_RANDART) {
+			char o_name[ONAME_LEN];
+
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+
+			s_printf("%s Death-cannot-drop random artifact at (%d,%d,%d):\n  %s\n",
+			    showtime(),
+			    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+			    o_name);
+		}
+	}
+
+	/* No more item */
+	invwipe(o_ptr);
+}
+
 
 /*
  * Resurrect a player
@@ -13773,7 +13788,7 @@ void telekinesis_aux(int Ind, int item) {
 
 #ifdef ENABLE_SUBINVEN
 	/* If we send a (stack of) subinventory, remove all items and place them into the player's inventory */
-	if (q_ptr->tval == TV_SUBINVEN) empty_subinven(Ind, item);
+	if (q_ptr->tval == TV_SUBINVEN) empty_subinven(Ind, item, FALSE);
 #endif
 
 	/* Wipe it */

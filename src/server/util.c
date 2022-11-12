@@ -9725,8 +9725,9 @@ void verify_subinven_size(int Ind, int slot, bool check) {
 		break;
 	}
 }
-/* Empty a subinventory, moving all contents to the player inventory, causing overflow if not enough space. */
-void empty_subinven(int Ind, int item) {
+/* Empty a subinventory, moving all contents to the player inventory, causing overflow if not enough space.
+   drop: Drop items to the floor instead of unstowing them into the backpack inventory (for case of player death). */
+void empty_subinven(int Ind, int item, bool drop) {
 	player_type *p_ptr = Players[Ind];
 	int i, s = p_ptr->inventory[item].bpval, k;
 	object_type *o_ptr;
@@ -9750,6 +9751,13 @@ void empty_subinven(int Ind, int item) {
 		o_ptr = &p_ptr->subinventory[item][i];
 		if (!o_ptr->tval) break;
 
+		/* Just silently drop items (on death)? */
+		if (drop) {
+			death_drop_object(p_ptr, i, o_ptr);
+			continue;
+		}
+
+		/* Place item into player inventory, or drop if full */
 		if (inven_carry_okay(Ind, o_ptr, 0x0)) {
 			k = inven_carry(Ind, o_ptr);
 			if (k != -1) { /* Paranoia, as we just checked for inven_carry_okay, it must be != -1 */
@@ -9757,8 +9765,10 @@ void empty_subinven(int Ind, int item) {
 				msg_format(Ind, "You have %s (%c).", o_name, index_to_label(k));
 			} else s_printf("empty_subinven(%d) PARANOIA.\n", Ind);
 		} else {
-			if (!overflow_msg) msg_format(Ind, "\376\377oYour pack overflows!");
-			overflow_msg = TRUE;
+			if (!overflow_msg) {
+				msg_format(Ind, "\376\377oYour pack overflows!");
+				overflow_msg = TRUE;
+			}
 			object_desc(Ind, o_name, o_ptr, TRUE, 3);
 			msg_format(Ind, "\376\377oYou drop %s.", o_name);
 #ifdef USE_SOUND_2010

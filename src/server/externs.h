@@ -2071,7 +2071,7 @@ extern bool verify_inven_item(int Ind, int item);
 extern void get_inven_item(int Ind, int item, object_type **o_ptr);
 #ifdef ENABLE_SUBINVEN
 extern void get_subinven_item(int Ind, int item, object_type **o_ptr, int *sitem, int *iitem);
-extern void empty_subinven(int Ind, int item);
+extern void empty_subinven(int Ind, int item, bool drop);
 extern void erase_subinven(int Ind, int item);
 extern void verify_subinven_size(int Ind, int slot, bool check);
 extern int get_subinven_group(int sval);
@@ -2297,6 +2297,7 @@ void merchant_mail_death(const char pname[CNAME_LEN]);
 #endif
 
 extern byte Morgoth_x, Morgoth_y, Morgoth_z;
+extern void death_drop_object(player_type *p_ptr, int i, object_type *o_ptr);
 
 
 /*

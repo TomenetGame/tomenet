@@ -9817,7 +9817,7 @@ void grind_chemicals(int Ind, int item) {
 
 #ifdef ENABLE_SUBINVEN
 	/* If we grind a subinventory (chest!), remove all items and place them into the player's inventory */
-	if (o_ptr->tval == TV_SUBINVEN && o_ptr->number <= 1) empty_subinven(Ind, item);
+	if (o_ptr->tval == TV_SUBINVEN && o_ptr->number <= 1) empty_subinven(Ind, item, FALSE);
 #endif
 
 	/* Erase the ingredient in the pack --
