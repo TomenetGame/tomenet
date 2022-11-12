@@ -1387,7 +1387,7 @@ bool remove_curse(int Ind) {
 
 	/* remove our own curse(s) first - can't remove other player's curses while we're not cleansed ;) */
 	i = remove_curse_aux(Ind, 0x0, 0);
-	if (i) returni;
+	if (i) return(i);
 
 	/* remove someone else's curse */
 	if ((zcave = getcave(&p_ptr->wpos))) {
