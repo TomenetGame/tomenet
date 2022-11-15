@@ -14029,7 +14029,9 @@ void remove_blood_bond(int Ind, int Ind2) {
 bool telekinesis(int Ind, object_type *o_ptr, int max_weight) {
 	player_type *p_ptr = Players[Ind];
 
-	get_item(Ind, ITH_MAX_WEIGHT + max_weight);
+	/* Dungeon Master has no weight limit */
+	if (p_ptr->admin_dm) get_item(Ind, ITH_NONE);
+	else get_item(Ind, ITH_MAX_WEIGHT + max_weight);
 
 	/* Clear any other pending actions */
 	clear_current(Ind);
