@@ -4925,7 +4925,7 @@ void do_cmd_query_symbol(int Ind, char sym) {
 bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 	player_type *p_ptr = Players[Ind];
 	object_type *s_ptr = &p_ptr->inventory[sslot];
-	object_type *o_ptr, forge_part, *i_ptr_tmp = i_ptr;
+	object_type *o_ptr, forge_copy, forge_part, *i_ptr_tmp = i_ptr;
 	int i, inum = i_ptr->number, xnum;
 	char o_name[ONAME_LEN];
 	u32b f3 = 0x0, dummy;
@@ -4943,10 +4943,12 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 			if (i_ptr->number > xnum) {
 				/* need to divide wand/staff charges */
 				if (is_magic_device(i_ptr->tval)) {
+					/* Create a working copy, as we seriously mess up source item pval too via divide_charged_item() */
+					forge_copy = *i_ptr;
 					forge_part = *i_ptr;
 					forge_part.number = xnum;
-					divide_charged_item(&forge_part, i_ptr, xnum);
-					i_ptr->number -= xnum;
+					divide_charged_item(&forge_part, &forge_copy, xnum);
+					forge_copy.number -= xnum;
 					i_ptr = &forge_part;
 				} else i_ptr->number = xnum; /* Hack 'number' */
 			}
@@ -4965,15 +4967,29 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 				sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
  #endif
 
-				if (forge_part.tval) i_ptr = i_ptr_tmp;
-				else
+				/* Magic device? */
+				if (forge_part.tval) {
+					/* Return to the original object, instead of the split-off partial object,
+					   so we can proceed trying to stack the rest somewhere in the subsequent slot(s).. */
+					i_ptr = i_ptr_tmp;
+					/* Also correctly reduce charges of original object, now that it was decided that we could absorb it (partially) */
+					*i_ptr = forge_copy;
+				} else /* Not a magic device */
 				i_ptr->number = inum - i_ptr->number; /* Unhack 'number' */
+
 				/* Manually do this here for now: Update subinven slot for client. */
 				display_subinven_aux(Ind, sslot, i);
 				/* That was the rest of the stack? Done. */
 				if (!i_ptr->number) break;
-			} else /* Couldn't use this slot at all */
-				i_ptr->number = inum; /* Unhack 'number' */
+			} else { /* Couldn't use this slot at all */
+				/* Magic device? */
+				if (forge_part.tval) {
+					/* Return to the original object, instead of the split-off partial object,
+					   so we can proceed trying to stack the rest somewhere in the subsequent slot(s).. */
+					i_ptr = i_ptr_tmp;
+				}
+				i_ptr->number = inum; /* Unhack 'number', back to the original, full amount */
+			}
 		} else {
 			/* Fully move to a free slot. Done. */
 			*o_ptr = *i_ptr;
