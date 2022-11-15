@@ -2310,6 +2310,22 @@ wrongly treated as @@@ inscription. For example like this:
 
 Word of Recall, provided by items (scrolls and rods) or spells:
 ---------------------------------------------------------------
+'Word of Recall' is far-distance teleportation magic that is used to either
+travel into or out of a dungeon or across the world map.
+
+When initiated, it will usually display this message in orange:
+'The air about you becomes charged...' - or similar, depending on the exact way
+the recall magic is initiated.
+However, it will not recall you immediately. Rather it will take a short amount
+of time until recall actually kicks in.
+Before that happens it is possible to cancel the pending recall magic again by
+initiating another recall (eg reading another scroll of 'word of recall').
+Again an orange message will inform you about the recall spell being cancelled:
+'A tension leaves the air around you...' - or similar.
+In special circumstances recall magic cannot be used at all, resulting in an
+orange message again, that goes similar to this:
+'There is some static discharge in the air around you, but nothing happens.'
+
 If you use these without inscription, they will just teleport you back into the
 dungeon you came from, to the deepest possible floor. If you use them on the
 world surface without inscription and there is no dungeon at your location that
