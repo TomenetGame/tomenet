@@ -7545,6 +7545,22 @@ if (cfg.unikill_format) {
 			}
 #endif
 
+		} else if (r_idx == RI_BAHAMUT) {
+			/* Get local object */
+			qq_ptr = &forge;
+
+			/* a rod of healing of the istari */
+			object_wipe(qq_ptr);
+			invcopy(qq_ptr, lookup_kind(TV_ROD, SV_ROD_HEALING));
+			qq_ptr->number = 1;
+			qq_ptr->note = local_quark;
+			qq_ptr->note_utag = strlen(quark_str(local_quark));
+			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NONE);
+			/* hack ego power */
+			qq_ptr->name2 = EGO_RISTARI;
+			qq_ptr->name2b = 0;
+			drop_near(0, qq_ptr, -1, wpos, y, x);
+
 		} else if (r_idx == RI_LIVING_LIGHTNING) {
 			int tries = 100;
 			object_type forge_bak, forge_fallback;
