@@ -13590,7 +13590,7 @@ void telekinesis_aux(int Ind, int item) {
 	p2_ptr = Players[Ind2];
 
 #ifdef TELEKINESIS_GETITEM_SERVERSIDE
-	if (q_ptr->weight * q_ptr->number > max_weight) {
+	if (max_weight && q_ptr->weight * q_ptr->number > max_weight) {
 		msg_format(Ind, "The item%s too heavy.", q_ptr->number > 1 ? "s are" : " is");
 		return;
 	}
@@ -14030,8 +14030,10 @@ bool telekinesis(int Ind, object_type *o_ptr, int max_weight) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Dungeon Master has no weight limit */
-	if (p_ptr->admin_dm) get_item(Ind, ITH_NONE);
-	else get_item(Ind, ITH_MAX_WEIGHT + max_weight);
+	if (p_ptr->admin_dm) {
+		get_item(Ind, ITH_NONE);
+		max_weight = 0; //hack for 'unlimited'
+	} else get_item(Ind, ITH_MAX_WEIGHT + max_weight);
 
 	/* Clear any other pending actions */
 	clear_current(Ind);
