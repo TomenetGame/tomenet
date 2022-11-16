@@ -3183,8 +3183,8 @@ A very dangerous thing about the Nazgul is that weapons get quickly destroyed
 if they come in contact with these corrupted beings.
 If you are a spell-caster who doesn't use his weapon to fight but just to
 profit from its magical abilities then it's strongly recommended to inscribe
-the weapon @Ox to avoid auto-retaliation, see (0.3) about inscriptions and
-(4.1a) about auto-retaliation.
+the weapon @Ox to avoid auto-retaliation, see (0.3) about inscriptions
+and (4.1a) about auto-retaliation.
 If you rely on melee weapons you must try to get your hands on an artifact
 since these resist Nazgul greatly! The Stormbringer also resists like an
 artifact. (It doesn't matter if the artifact is a random or a static one.)
@@ -3386,9 +3386,9 @@ Important: You should exit the game before attempting to update it!
 Note for LINUX:
 The Linux version of the TomeNET-Updater no longer requires 7zG (the graphical
 user interface of 7-zip), so you do not need to compile it yourself if your
-repository packages don't provide it. If you want to compile it anyway then see
-(2.1a) and there "a) Automatic audio pack installation - LINUX". That paragraph
-has short instructions on how to compile 7-zip from source in Linux.
+repository packages don't provide it. If you want to compile it anyway then
+see (2.1a) and there "a) Automatic audio pack installation - LINUX". That
+paragraph has short instructions on how to compile 7-zip from source in Linux.
 
 If you didn't have a sound or music pack installed yet, by "updating" it from
 the TomeNET-Updater these will actually be installed.
@@ -7593,8 +7593,8 @@ Red/orange/yellow '~' is deep lava, which deals a lot of heat damage.
 The fire damage lava inflicts might also destroy items in your inventory in
 case you're not immune to fire or at least double-resist fire - potions of
 resist heat are a cheap way to attain double resistance for a short time.
-(See (5.6) for more information about resistances, double resistance and
-(5.10) for details about item destruction by elemental effects.)
+(See (5.6) for more information about resistances, double resistance
+and (5.10) for details about item destruction by elemental effects.)
 
 Fountains-
 '_' are fountains. To drink from them use /sip command or press the '_' key.
@@ -16690,8 +16690,8 @@ For age, height, weight, social class and gender see (6.14).
 
 
 Apart from those generic abilities, there are several class- or race-specific
-active or passive abilities, given in the race/class descriptions in (6.4) and
-(6.5).
+active or passive abilities, given in the race/class descriptions in (6.4)
+and in (6.5).
 
 
 
@@ -21770,8 +21770,8 @@ their base level from a_info.txt counts, ie what is displayed at
 (6.11) Parrying and blocking
 -----------------------------
 There are a couple of ways to reduce damage taken. One is simply to have high
-armour class (see (5.12) for details), another one is 'Dodging' skill (see
-(6.2) for details).
+armour class (see (5.12) for details), another one is 'Dodging' skill
+(see (6.2) for details).
 This paragraph is about parrying/blocking only. Note that the chance values
 given below do not always apply as is, but sometimes depend on the the attack
 type and especially on a little bit of randomness when your character chooses
@@ -23747,10 +23747,10 @@ power is, the more likely the randart will be 'aggravating nearby creatures'.
 
 (8.5) Reward item creation
 --------------------------
-PvP mode characters may obtain item rewards by killing a lot of opponents (see
-(6.13) for details on PvP mode), and events such as Highlander Tournament and
-Dungeon Keeper will give parchments to the winners that can be turned in at the
-mayor's office for reward items.
+PvP mode characters may obtain item rewards by killing a lot of opponents
+(see (6.13) for details on PvP mode), and events such as Highlander Tournament
+and Dungeon Keeper will give parchments to the winners that can be turned in at
+the mayor's office for reward items.
 
 Reward items are different from all other items (those obtained from
 extermination orders, monsters, chests, acquirement scrolls or even
