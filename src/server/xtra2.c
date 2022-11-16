@@ -2030,8 +2030,8 @@ bool set_fast(int Ind, int v, int p) {
 
 	/* Open */
 	if (v) {
-		if (!p_ptr->fast) {
-			if (p > 0) {
+		if (!p_ptr->fast || p > p_ptr->fast_mod) { // Kurzel - notice higher speed
+			if (p > p_ptr->fast_mod) {
 				msg_format_near(Ind, "%s begins moving faster!", p_ptr->name);
 				msg_print(Ind, "You feel yourself moving faster!");
 			} else {
@@ -2058,7 +2058,7 @@ bool set_fast(int Ind, int v, int p) {
 
 	/* Use the value */
 	p_ptr->fast = v;
-	p_ptr->fast_mod = p;
+	p_ptr->fast_mod = (p_ptr->fast) ? ((p > p_ptr->fast_mod) ? p : p_ptr->fast_mod) : 0; // Kurzel - track changes
 
 	/* Nothing to notice */
 	if (!notice) return(FALSE);

@@ -6896,7 +6896,40 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			note = " resists";
 			dam *= 3; dam /= (randint(6) + 6);
 		}
-#if 1 /* fixed & sanified */
+#if 1 /* energy is too meta, drain speed instead - Kurzel */
+		else if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags9 & RF9_NO_REDUCE)) {
+			/* cannot be slowed */
+		} else if ((r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) /* cannot randint higher? (see 'resist' branch below) */
+		    || (RES_OLD(r_ptr->level, dam))) {
+			/* Allow un-hasting a monster! - suggested by Dj_Wolf */
+			if (m_ptr->mspeed >= m_ptr->speed + 3) {
+				m_ptr->mspeed -= 3;
+				note = " starts moving less fast again";
+			}
+		} else if (!quiet && m_ptr->mspeed >= 100 && m_ptr->mspeed > m_ptr->speed - 10) { /* PvE only - resist chance above as with GF_INERTIA - Kurzel */
+
+			// finally, if not immune to slow nor resisted, calculate "per hit" drain
+			int t = dam / 50 + 1; // cap: 1 for ammo, 5 for time breath, 5+ w/ runes
+
+			// drain speed only if target is slowed (or slain, but was slowable)
+			if (m_ptr->mspeed > m_ptr->speed - 10) {
+
+				note = " loses precious seconds to you";
+				note_dies = " loses their future to you";
+
+				// incrementally slow target, obey -10 limit
+				m_ptr->mspeed -= t;
+				if (m_ptr->mspeed < m_ptr->speed - 10) m_ptr->mspeed = m_ptr->speed - 10;
+
+				// incrementally haste player, obey +10 limit
+				t = p_ptr->fast_mod + t; // stackable
+				if (t > 10) t = 10; // +10 speed limit
+				if (t > dam / 5) t = dam / 5 + 1; // further limit low level runespells
+				set_fast(p_ptr->Ind, t + randint(5), t); // very short, but sustainable
+			}
+		}
+#endif
+#if 0 /* fixed & sanified */
 		else if (!quiet && rand_int(3) == 0) { /* only occur if a player cast this */
 			long t = m_ptr->hp / 10, tp = damroll(2, plev);
 
