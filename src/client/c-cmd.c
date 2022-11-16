@@ -2870,6 +2870,38 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		}
 		/* normal manual operation (resumed) */
 		if (!c_override) {
+#ifdef BUFFER_GUIDE
+			/* Hack: Backtrack to find out in which chapter we currently are, and display it in the top line */
+			int lc;
+			char chapter_header[10] = { 0 }, *lcc;
+
+			/* Search for chapter headers */
+			for (lc = line; lc >= guide_endofcontents; lc--) {
+				if (guide_line[lc][0] == '(' && guide_line[lc][1] >= '0' && guide_line[lc][1] <= '9') {
+					/* Major chapter */
+					if (guide_line[lc][2] == ')') { /* (x) */
+						strcpy(chapter_header, guide_line[lc]);
+						chapter_header[3] = 0;
+						break;
+					}
+					/* Minor chapter */
+					else if (guide_line[lc][2] == '.' && guide_line[lc][3] >= '0' && guide_line[lc][3] <= '9'
+					    && (lcc = strchr(guide_line[lc], ')')) <= guide_line[lc] + 8) { /* (x.y...), max (x.yzAbX) */
+						strcpy(chapter_header, guide_line[lc]);
+						*(chapter_header + (lcc - guide_line[lc]) + 1) = 0;
+						break;
+					}
+				}
+			}
+			/* Found one? */
+			if (chapter_header[0]) Term_putstr(14,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d - chapter %s]", line + 1, guide_lastline + 1, chapter_header));
+			/* Assume we're still in the guide contents listing, around the beginning of the guide */
+			else Term_putstr(14,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d - contents listing]", line + 1, guide_lastline + 1));
+			/* hide cursor */
+			Term->scr->cx = Term->wid;
+			Term->scr->cu = 1;
+#endif
+
 			//inkey_interact_macros = TRUE; /* Advantage: Macros in Backspace etc won't interfere; Drawback: Cannot use up/down while numlock is off. */
 			c = inkey();
 			//inkey_interact_macros = FALSE;
