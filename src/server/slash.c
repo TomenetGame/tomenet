@@ -6438,10 +6438,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				if (!tk) {
 					//todo: allow specifying bpval/pval
-					msg_print(Ind, "\377oUsage:    /nwish [[<#skip>]:][#amount ][/<prefix-ego>/]<item name>[/<postfix-ego>] [+<bpval>][^<pval>]");
+					msg_print(Ind, "\377oUsage:    /nwish [[<#skip>]:][#amount ][\\<prefix-ego>\\]<item name>[\\<postfix-ego>] [+<bpval>][^<pval>]");
 					msg_print(Ind, "\377oExample:  /nwish 1:3 probing");
 					msg_print(Ind, "\377oExample:  /nwish :4 fire");
-					msg_print(Ind, "\377oExample:  /nwish 2 elven/hard lea/resis");
+					msg_print(Ind, "\377oExample:  /nwish 2 elven\\hard lea\\resis");
 					return;
 				}
 
@@ -6482,13 +6482,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				} else tk = 1;
 
 				/* allow ego power prefix/postfix */
-				if ((s = strchr(item, '/'))) {
+				if ((s = strchr(item, '\\'))) {
 					/* prefix ego power specified? */
 					if (s == item) {
 						/* Grab ego name */
 						strcpy(xname, s + 1);
-						if (!(s = strchr(xname, '/'))) {
-							msg_print(Ind, "Missing '/' separator between prefix-ego power and item name.");
+						if (!(s = strchr(xname, '\\'))) {
+							msg_print(Ind, "Missing '\\' separator between prefix-ego power and item name.");
 							return;
 						}
 						*s = 0;
@@ -6507,7 +6507,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						}
 						/* check for postfix ego power next */
 						item += strlen(xname) + 2; /* skip "/xname/" sequence */
-						s = strchr(item, '/');
+						s = strchr(item, '\\');
 					}
 					/* postfix ego power specified? */
 					if (s) {
