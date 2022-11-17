@@ -53,6 +53,10 @@
  #define LOGIN_ROW 2
 #endif
 
+/* Use Windows TEMP folder (acquired from environment variable) for pinging the servers in the meta server list.
+   KEEP CONSISTENT WITH nclient.c! */
+#define WINDOWS_USE_TEMP
+
 
 
 /*
@@ -1920,7 +1924,8 @@ void get_char_name(void) {
 	if (use_sound) {
 		/* Play back a fitting, non-common music piece, abused as 'intro theme'.. */
 		if (!music(exec_lua(0, "return get_music_index(\"title\")")))
-			music(exec_lua(0, "return get_music_index(\"generic\")"));
+			//music(exec_lua(0, "return get_music_index(\"generic\")"));
+			music(exec_lua(0, "return get_music_index(\"town_generic\")"));
 		/* Play background ambient sound effect (if enabled) */
 		sound_ambient(exec_lua(0, "return get_sound_index(\"ambient_fire\")"));
 	}
@@ -2404,6 +2409,14 @@ bool get_server_name(void) {
 #ifdef META_PINGS
 	/* Test for 'ping' command availability (should always be there though).
 	   Temporarily abuse meta_pings_servers as marker (-1 = ping disabled). */
+ #if defined(WINDOWS) && defined(WINDOWS_USE_TEMP)
+	/* Use official Windows TEMP folder instead? */
+	if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+		strcpy(buf, getenv("HOMEDRIVE"));
+		strcat(buf, getenv("HOMEPATH"));
+		strcat(buf, "\\__ping.tmp");
+	} else
+ #endif
 	path_build(buf, 1024, ANGBAND_DIR_USER, "__ping.tmp");
  #ifdef WINDOWS
 	r = system(format("ping /? > %s 2>&1", buf));
@@ -2535,6 +2548,14 @@ bool get_server_name(void) {
 			si[j].dwFlags |= STARTF_USESTDHANDLES;
 
   #if 0 /* done in nclient.c atm? */
+   #if defined(WINDOWS) && defined(WINDOWS_USE_TEMP)
+			/* Use official Windows TEMP folder instead? */
+			if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+				strcpy(path, getenv("HOMEDRIVE"));
+				strcat(path, getenv("HOMEPATH"));
+				strcat(path, format("\\__ping_%s.tmp", meta_pings_server_name[i]));
+			} else
+   #endif
 			path_build(path, 1024, ANGBAND_DIR_USER, format("__ping_%s.tmp", meta_pings_server_name[j]));
 			fhan[j] = CreateFile(path,
 			    FILE_WRITE_DATA, //FILE_APPEND_DATA,
@@ -2572,9 +2593,25 @@ bool get_server_name(void) {
 			/* Disable pinging. */
 			for (i = 0; i < meta_pings_servers; i++) {
 				/* Clean up temp files */
+ #if defined(WINDOWS) && defined(WINDOWS_USE_TEMP)
+				/* Use official Windows TEMP folder instead? */
+				if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+					strcpy(path, getenv("HOMEDRIVE"));
+					strcat(path, getenv("HOMEPATH"));
+					strcat(path, format("\\__ping_%s.tmp", meta_pings_server_name[i]));
+				} else
+ #endif
 				path_build(path, 1024, ANGBAND_DIR_USER, format("__ping_%s.tmp", meta_pings_server_name[i]));
 				remove(path);
 			}
+ #if defined(WINDOWS) && defined(WINDOWS_USE_TEMP)
+			/* Use official Windows TEMP folder instead? */
+			if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+				strcpy(path, getenv("HOMEDRIVE"));
+				strcat(path, getenv("HOMEPATH"));
+				strcat(path, "\\__ping.tmp");
+			} else
+ #endif
 			path_build(path, 1024, ANGBAND_DIR_USER, "__ping.tmp");
 			remove(path);
 			meta_pings_servers = 0;
@@ -2587,9 +2624,25 @@ bool get_server_name(void) {
 			/* Disable pinging. */
 			for (i = 0; i < meta_pings_servers; i++) {
 				/* Clean up temp files */
+ #if defined(WINDOWS) && defined(WINDOWS_USE_TEMP)
+				/* Use official Windows TEMP folder instead? */
+				if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+					strcpy(path, getenv("HOMEDRIVE"));
+					strcat(path, getenv("HOMEPATH"));
+					strcat(path, format("\\__ping_%s.tmp", meta_pings_server_name[i]));
+				} else
+ #endif
 				path_build(path, 1024, ANGBAND_DIR_USER, format("__ping_%s.tmp", meta_pings_server_name[i]));
 				remove(path);
 			}
+ #if defined(WINDOWS) && defined(WINDOWS_USE_TEMP)
+			/* Use official Windows TEMP folder instead? */
+			if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+				strcpy(path, getenv("HOMEDRIVE"));
+				strcat(path, getenv("HOMEPATH"));
+				strcat(path, "\\__ping.tmp");
+			} else
+ #endif
 			path_build(path, 1024, ANGBAND_DIR_USER, "__ping.tmp");
 			remove(path);
 			meta_pings_servers = 0;
@@ -2608,9 +2661,25 @@ bool get_server_name(void) {
 	/* Disable pinging for the rest of the game again. */
 	for (i = 0; i < meta_pings_servers; i++) {
 		/* Clean up temp files */
+ #if defined(WINDOWS) && defined(WINDOWS_USE_TEMP)
+		/* Use official Windows TEMP folder instead? */
+		if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+			strcpy(path, getenv("HOMEDRIVE"));
+			strcat(path, getenv("HOMEPATH"));
+			strcat(path, format("\\__ping_%s.tmp", meta_pings_server_name[i]));
+		} else
+ #endif
 		path_build(path, 1024, ANGBAND_DIR_USER, format("__ping_%s.tmp", meta_pings_server_name[i]));
 		remove(path);
 	}
+ #if defined(WINDOWS) && defined(WINDOWS_USE_TEMP)
+	/* Use official Windows TEMP folder instead? */
+	if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+		strcpy(path, getenv("HOMEDRIVE"));
+		strcat(path, getenv("HOMEPATH"));
+		strcat(path, "\\__ping.tmp");
+	} else
+ #endif
 	path_build(path, 1024, ANGBAND_DIR_USER, "__ping.tmp");
 	remove(path);
 	meta_pings_servers = 0;

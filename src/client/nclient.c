@@ -52,6 +52,12 @@
 #define CHARNAME_ROMAN
 
 
+/* Use Windows TEMP folder (acquired from environment variable) for pinging the servers in the meta server list.
+   KEEP CONSISTENT WITH c-birth.c! */
+#define WINDOWS_USE_TEMP
+
+
+
 extern void flicker(void);
 
 int			ticks = 0; /* Keeps track of time in 100ms "ticks" */
@@ -6483,6 +6489,14 @@ static void do_meta_pings(void) {
 
 	for (i = 0; i < meta_pings_servers; i++) {
 		/* Build the temp filename for ping results -- would probably prefer to use OS' actual tempfs, but Windows, pft */
+#if defined(WINDOWS) && defined(WINDOWS_USE_TEMP)
+		/* Use official Windows TEMP folder instead? */
+		if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+			strcpy(path, getenv("HOMEDRIVE"));
+			strcat(path, getenv("HOMEPATH"));
+			strcat(path, format("\\__ping_%s.tmp", meta_pings_server_name[i]));
+		} else
+#endif
 		path_build(path, 1024, ANGBAND_DIR_USER, format("__ping_%s.tmp", meta_pings_server_name[i]));
 
 		/* Send a ping to each distinct server name, allowing for max 1000ms */
