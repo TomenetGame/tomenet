@@ -407,6 +407,7 @@ void do_cmd_go_up(int Ind) {
 #if 1
 		/* Give him some free ID scrolls when entering IDDC? */
 		{ object_type forge;
+
 		invcopy(&forge, lookup_kind(TV_SCROLL, SV_SCROLL_IDENTIFY));
 		forge.number = 20;
 		forge.level = 0;
@@ -1272,6 +1273,7 @@ void do_cmd_go_down(int Ind) {
 #if 1
 		/* Give him some free ID scrolls when entering IDDC? */
 		{ object_type forge;
+
 		invcopy(&forge, lookup_kind(TV_SCROLL, SV_SCROLL_IDENTIFY));
 		forge.number = 20;
 		forge.level = 0;
