@@ -13738,6 +13738,7 @@ void telekinesis_aux(int Ind, int item) {
 		handle_art_d(q_ptr->name1);
 	} else {
 		char o_name[ONAME_LEN];
+
 		/* If they're not within the same dungeon level,
 		   they cannot reach each other if
 		   one is in an IRON or NO_RECALL dungeon/tower */
