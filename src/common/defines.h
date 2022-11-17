@@ -5125,7 +5125,7 @@
  */
 #define ID_SENSE	0x0001	/* Item has been "sensed" */
 #define ID_FIXED	0x0002	/* Item has been "haggled" */
-#define ID_EMPTY	0x0004	/* Item charges are known */
+#define ID_EMPTY	0x0004	/* Item charges are known (Wand/Staff only) */
 #define ID_KNOWN	0x0008	/* Item abilities are known */
 #define ID_RUMOUR	0x0010	/* Item background is known */
 #define ID_MENTAL	0x0020	/* Item information is known (*ID*-ed) */
