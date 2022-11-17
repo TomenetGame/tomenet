@@ -7333,8 +7333,8 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 				if (p_ptr->team && ball != -1 && q_ptr->team != p_ptr->team) {
 					object_type *o_ptr = &q_ptr->inventory[ball];
 					object_type tmp_obj;
-					int tackle;
-					tackle = randint(20);
+					int tackle = randint(20);
+
 					if (tackle > 10) {
 						tmp_obj = *o_ptr;
 						if (tackle < 18) {
