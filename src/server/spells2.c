@@ -1822,9 +1822,11 @@ bool lose_all_info(int Ind) {
 			else o_ptr->note = quark_add(note2);
 		}
 
-		/* Hack -- Clear the "empty" flag */
-		o_ptr->ident &= ~ID_EMPTY;
-		note_toggle_empty(o_ptr, FALSE);
+		if (is_magic_device(o_ptr->tval)) {
+			/* Hack -- Clear the "empty" flag */
+			o_ptr->ident &= ~ID_EMPTY;
+			note_toggle_empty(o_ptr, FALSE);
+		}
 
 		/* Hack -- Clear the "known" flag */
 		o_ptr->ident &= ~ID_KNOWN;
