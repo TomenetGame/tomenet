@@ -115,6 +115,7 @@ HERBALTEA = add_spell {
 			set_food(Ind, PY_FOOD_MAX - 1)
 
 			if lvl >= 35 then
+				set_poisoned(Ind, 0, 0)
 				restore_level(Ind)
 				do_res_stat(Ind, A_STR)
 				do_res_stat(Ind, A_CON)
@@ -126,8 +127,9 @@ HERBALTEA = add_spell {
 					msg_print(Ind, "The hold of the Black Breath on you is broken!");
 					player.black_breath = FALSE
 				end
-				fire_ball(Ind, GF_RESTORE_PLAYER, 0, 1 + 2 + 4 + 8, 1, " gives you something bitter to drink.")
+				fire_ball(Ind, GF_RESTORE_PLAYER, 0, 1 + 2 + 4 + 8 + 16, 1, " gives you something bitter to drink.")
 			elseif lvl >= 25 then
+				set_poisoned(Ind, 0, 0)
 				restore_level(Ind)
 				do_res_stat(Ind, A_STR)
 				do_res_stat(Ind, A_CON)
@@ -135,15 +137,16 @@ HERBALTEA = add_spell {
 				do_res_stat(Ind, A_WIS)
 				do_res_stat(Ind, A_INT)
 				do_res_stat(Ind, A_CHR)
-				fire_ball(Ind, GF_RESTORE_PLAYER, 0, 1 + 2 + 4, 1, " gives you something bitter to drink.")
+				fire_ball(Ind, GF_RESTORE_PLAYER, 0, 1 + 2 + 4 + 16, 1, " gives you something bitter to drink.")
 			elseif lvl >= 20 then
+				set_poisoned(Ind, 0, 0)
 				restore_level(Ind)
-				fire_ball(Ind, GF_RESTORE_PLAYER, 0, 1 + 2, 1, " gives you something bitter to drink.")
+				fire_ball(Ind, GF_RESTORE_PLAYER, 0, 1 + 2 + 16, 1, " gives you something bitter to drink.")
 			elseif lvl >= 8 then
 				set_poisoned(Ind, 0, 0)
-				fire_ball(Ind, GF_CUREPOISON_PLAYER, 0, 1 + 2, 1, " gives you something bitter to drink.")
+				fire_ball(Ind, GF_RESTORE_PLAYER, 0, 1 + 16, 1, " gives you something bitter to drink.")
 			else
-				fire_ball(Ind, GF_SATHUNGER_PLAYER, 0, 1, 1, " gives you something bitter to drink.");
+				fire_ball(Ind, GF_RESTORE_PLAYER, 0, 1, 1, " gives you something bitter to drink.")
 			end
 			end,
 	["info"] = 	function()

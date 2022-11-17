@@ -11069,7 +11069,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 	case GF_RESTORE_PLAYER:
-		if (dam & 0x1) { /* Restore food */
+		if (dam & 0x01) { /* Restore food */
 			if (!p_ptr->suscep_life) {
 				//works for RACE_ENT too for now
 				set_food(Ind, PY_FOOD_MAX - 1);
@@ -11077,10 +11077,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				//else msg_format_near(Ind, "\377y%s looks like she is going to explode.", p_ptr->name);
 			}
 		}
-		if (dam & 0x2) { /* Restore exp */
+		if (dam & 0x10) /* Cure poison */
+			(void)set_poisoned(Ind, 0, 0);
+		if (dam & 0x02) /* Restore exp */
 			(void)restore_level(Ind);
-		}
-		if (dam & 0x4) { /* Restore stats */
+		if (dam & 0x04) { /* Restore stats */
 			(void)do_res_stat(Ind, A_STR);
 			(void)do_res_stat(Ind, A_CON);
 			(void)do_res_stat(Ind, A_DEX);
@@ -11088,7 +11089,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			(void)do_res_stat(Ind, A_INT);
 			(void)do_res_stat(Ind, A_CHR);
 		}
-		if (dam & 0x8) { /* Black breath (herbal tea) */
+		if (dam & 0x08) { /* Black breath (herbal tea) */
 			if (p_ptr->black_breath) {
 				msg_print(Ind, "The hold of the Black Breath on you is broken!");
 				p_ptr->black_breath = FALSE;
