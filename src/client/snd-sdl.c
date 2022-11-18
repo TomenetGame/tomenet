@@ -4023,7 +4023,7 @@ void do_cmd_options_mus_sdl(void) {
 			{ int lb, l;
 			//Mix_RewindMusic();
 			lb = 0;
-			l = 60 * 24 * 2; //asume 24 hours is max duration of any song
+			l = (99 * 60 + 59) * 2; //asume 99:59 min is max duration of any song
 			while (l > 1) {
 				l >>= 1;
 				Mix_SetMusicPosition(lb + l);
