@@ -3553,7 +3553,7 @@ void do_cmd_options_sfx_sdl(void) {
  #define MUSIC_SKIP 10 /* Jukebox backward/forward skip interval in seconds */
 #endif
 void do_cmd_options_mus_sdl(void) {
-	int i, i2, j, d, vertikal_offset = 3, horiz_offset = 5;
+	int i, i2, j, d, vertikal_offset = 3, horiz_offset = 5, song_dur = 0;
 	static int y = 0, j_sel = 0; // j_sel = -1; for initially jumping to playing song, see further below
 	char ch;
 	byte a, a2;
@@ -3637,7 +3637,7 @@ void do_cmd_options_mus_sdl(void) {
 		/* Display the events */
 		for (i = y - 10 ; i <= y + 10 ; i++) {
 			if (i < 0 || i >= audio_music) {
-				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, TERM_WHITE, "                                                          ");
+				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, TERM_WHITE, "                                                              ");
 				continue;
 			}
 
@@ -3666,7 +3666,7 @@ void do_cmd_options_mus_sdl(void) {
 			}
 
 			Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a2, format("  %3d", i + 1));
-			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, "                                                   ");
+			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, "                                                       ");
 			if (j == music_cur) {
 				a = (jukebox_playing != -1) ? TERM_L_BLUE : (a != TERM_L_DARK ? TERM_L_GREEN : TERM_L_DARK); /* blue = user-selected jukebox song, l-green = current game music */
 				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a, "*");
@@ -3674,7 +3674,8 @@ void do_cmd_options_mus_sdl(void) {
 				curmus_x = horiz_offset + 12;
 				curmus_y = vertikal_offset + i + 10 - y;
 				curmus_attr = a;
-				Term_putstr(curmus_x, curmus_y, -1, curmus_attr, format("%-38s  ([>]      )", (char*)lua_name));
+				if (!song_dur) Term_putstr(curmus_x, curmus_y, -1, curmus_attr, format("%-38s  (     )", (char*)lua_name));
+				else Term_putstr(curmus_x, curmus_y, -1, curmus_attr, format("%-38s  (     /%02d:%02d)", (char*)lua_name, song_dur / 60, song_dur % 60));
 				update_jukebox_timepos();
 			} else
 				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
@@ -3689,7 +3690,7 @@ void do_cmd_options_mus_sdl(void) {
 
 		/* display static selector */
 		Term_putstr(horiz_offset + 1, vertikal_offset + 10, -1, TERM_SELECTOR, ">>>");
-		Term_putstr(horiz_offset + 1 + 12 + 50 + 1, vertikal_offset + 10, -1, TERM_SELECTOR, "<<<");
+		Term_putstr(horiz_offset + 1 + 12 + 50 + 3, vertikal_offset + 10, -1, TERM_SELECTOR, "<<<");
 
 		/* Place Cursor */
 		//Term_gotoxy(20, vertikal_offset + y);
@@ -4017,6 +4018,29 @@ void do_cmd_options_mus_sdl(void) {
 
 			play_music(j_sel);
  #endif
+
+			/* Hack: Find out song length by trial and error o_O */
+			{ int lb, l;
+			//Mix_RewindMusic();
+			lb = 0;
+			l = 60 * 24 * 2; //asume 24 hours is max duration of any song
+			while (l > 1) {
+				l >>= 1;
+				Mix_SetMusicPosition(lb + l);
+
+				/* Check for overflow beyond actual song length */
+				i = (int)Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]);
+				/* Too far? */
+				if (!i) continue;
+
+				/* We found a minimum duration */
+				lb = i;
+			}
+			song_dur = lb;
+			/* Reset position */
+			Mix_SetMusicPosition(0);
+			}
+
 			curmus_timepos = 0; //song starts to play, at 0 seconds mark ie the beginning
 			break;
 #endif
@@ -4121,7 +4145,7 @@ void update_jukebox_timepos(void) {
 #if 0
 	curmus_timepos++; //doesn't catch when we reach the end of the song and have to reset to 0s again, so this should be if0'ed
 	/* Update jukebox song time stamp */
-	if (curmus_y != -1) Term_putstr(curmus_x + 34 + 11, curmus_y, -1, curmus_attr, format("%02d:%02d", curmus_timepos / 60, curmus_timepos % 60));
+	if (curmus_y != -1) Term_putstr(curmus_x + 34 + 7, curmus_y, -1, curmus_attr, format("%02d:%02d", curmus_timepos / 60, curmus_timepos % 60));
 #else
 	int i;
 
@@ -4132,7 +4156,7 @@ void update_jukebox_timepos(void) {
 	i = (int)Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]); //catches when we reach end of song and restart playing at 0s
 	if (curmus_timepos != -1) curmus_timepos = i;
 	/* Update jukebox song time stamp */
-	if (curmus_y != -1) Term_putstr(curmus_x + 34 + 11, curmus_y, -1, curmus_attr, format("%02d:%02d", i / 60, i % 60));
+	if (curmus_y != -1) Term_putstr(curmus_x + 34 + 7, curmus_y, -1, curmus_attr, format("%02d:%02d", i / 60, i % 60));
 #endif
 	/* Hack: Hide the cursor */
 	Term->scr->cx = Term->wid;
