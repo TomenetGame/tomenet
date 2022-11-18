@@ -8486,17 +8486,18 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 	Destroy_connection(p_ptr->conn, buf);
 }
 
+#ifdef DEATH_PACK_ITEM_LOST
 static void inven_death_damage(int Ind, int verbose) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
-	char o_name[ONAME_LEN];
 	int shuffle[INVEN_PACK];
+	char o_name[ONAME_LEN];
 	int inventory_loss = 0, inventory_loss_max = p_ptr->max_plv >= 30 ? 4 : (p_ptr->max_plv >= 20 ? 3 : (p_ptr->max_plv >= 10 ? 2 : 1));
 	bool inventory_loss_starteritems = (p_ptr->max_plv >= 10);
 	int i, j, k;
-#ifdef ENABLE_SUBINVEN
+ #ifdef ENABLE_SUBINVEN
 	int l;
-#endif
+ #endif
 
 	for (i = 0; i < INVEN_PACK; i++) shuffle[i] = i;
 	intshuffle(shuffle, INVEN_PACK);
@@ -8507,7 +8508,7 @@ static void inven_death_damage(int Ind, int verbose) {
 		o_ptr = &p_ptr->inventory[j];
 		if (!o_ptr->k_idx) continue;
 
-#ifdef ENABLE_SUBINVEN
+ #ifdef ENABLE_SUBINVEN
 		/* Don't destroy subinventories with items in them - too annoying to drop everything from it */
 		if (o_ptr->tval == TV_SUBINVEN) {
 			/* Check if not empty */
@@ -8525,12 +8526,12 @@ static void inven_death_damage(int Ind, int verbose) {
 			/* It was empty ('else')? Destroy the bag itself then. */
 			else o_ptr = &p_ptr->inventory[j];
 		}
-#endif
+ #endif
 		/* hack: don't discard his remaining gold - a penalty was already deducted from it */
 		if (o_ptr->tval == TV_GOLD) continue;
 		/* guild keys are supposedly indestructible, so whatever.. */
 		if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_GUILD_KEY) continue;
-#ifdef DEATH_PACK_ITEM_NICE
+ #ifdef DEATH_PACK_ITEM_NICE
 		/* don't be too nasty to magic device users */
 		if (is_magic_device(o_ptr->tval)) {
 			k = object_value_real(0, o_ptr);
@@ -8542,7 +8543,7 @@ static void inven_death_damage(int Ind, int verbose) {
 		    (o_ptr->sval == SV_CUSTOM_TOME_2 || o_ptr->sval == SV_CUSTOM_TOME_3)
 		    && rand_int(2))
 			continue;
-#endif
+ #endif
 		/* protect starter items? this is mainly for starter spell books.. */
 		if (!inventory_loss_starteritems && o_ptr->xtra9 == 1) continue;
 
@@ -8565,22 +8566,24 @@ static void inven_death_damage(int Ind, int verbose) {
 		}
 	}
 }
+#endif
 
 /* Method 1: Go for 1 item at most, skip empty slots, try all slots in random order;
    Method 2: Go for 1 item at most, skip empty slots but use absolute chance;
    Method 3: Like 0, but don't skip empty slots.
  */
 #define EQUIP_LOSS_METHOD 3
+#ifdef DEATH_EQ_ITEM_LOST
 static void equip_death_damage(int Ind, int verbose) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
-#if EQUIP_LOSS_METHOD != 3
+ #if EQUIP_LOSS_METHOD != 3
 	int shuffle[INVEN_TOTAL];
-#endif
+ #endif
 	int i, j;
 
-#if EQUIP_LOSS_METHOD == 1
+ #if EQUIP_LOSS_METHOD == 1
 	/* Former method. Specs: Stop after at most 1 item has been destroyed.
 	   Disadvantage: Gives incentive to equip useless items to dilute chance. */
 
@@ -8625,7 +8628,7 @@ static void equip_death_damage(int Ind, int verbose) {
 			}
 		}
 	}
-#else
+ #else
 	/* New method: Since we only destroy at most 1 item anyway, we can calculate the total chance based
 	   on DEATH_EQ_ITEM_LOST assuming full slot usage (Method 2), and just pick one existing item if needed.
 	   Advantage: Empty slots don't matter for total loss chance anymore.
@@ -8637,7 +8640,7 @@ static void equip_death_damage(int Ind, int verbose) {
 	j = 100000;
 	for (i = 0; i < INVEN_TOTAL - INVEN_WIELD; i++) j = (j * (100 - DEATH_EQ_ITEM_LOST)) / 100;
 	if (rand_int(100000) < j) return; /* Currently about 22.9% (10% for each of 14 slots) */
- #if EQUIP_LOSS_METHOD != 3
+  #if EQUIP_LOSS_METHOD != 3
 	/* Count existing items */
 	i = 0;
 	for (j = INVEN_WIELD; j < INVEN_TOTAL; j++) if (p_ptr->inventory[j].tval) shuffle[i++] = j;
@@ -8645,11 +8648,11 @@ static void equip_death_damage(int Ind, int verbose) {
 
 	/* Pick one and destroy it */
 	j = shuffle[rand_int(i)];
- #else
+  #else
 	/* Pick a random equipment slot, lucky if it's empty, otherwise destroy it */
 	j = INVEN_WIELD + rand_int(INVEN_TOTAL - INVEN_WIELD);
 	if (!p_ptr->inventory[j].tval) return;
- #endif
+  #endif
 
 	o_ptr = &p_ptr->inventory[j];
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
@@ -8669,8 +8672,9 @@ static void equip_death_damage(int Ind, int verbose) {
 
 	inven_item_increase(Ind, j, -(o_ptr->number));
 	inven_item_optimize(Ind, j);
-#endif
+ #endif
 }
+#endif
 
 #ifdef RACE_DIZ
 /* Tell player the monster's lore? (4.7.1b feature) */
