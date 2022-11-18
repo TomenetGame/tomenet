@@ -6415,7 +6415,7 @@ bool monster_death(int Ind, int m_idx) {
 			if (m_ptr->ego == RE_RUNEMASTER && rand_int(3)) {
 				if (!p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST) {
 					object_type forge;
-					int s_chem = randint(9);
+					int s_chem =
 #ifdef NO_RUST_NO_HYDROXIDE
 					    randint(9);
 
