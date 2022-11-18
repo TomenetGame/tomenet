@@ -19455,10 +19455,10 @@ school.
     Frost Barrier   Engulfs you in a storm of roaring cold that damages
                     all monsters standing next to you.
                     (It does not reduce damage you take from attacks.)
-                    Lv 16: Turns into a storm of shards of ice.
                     Required skill level for first spell level: 22.
 
                     Tier II: Level 37.
+                    Turns into a storm of shards of ice.
 
     Frost Ball      Conjures a frost ball.
                     Required skill level for first spell level: 22.
