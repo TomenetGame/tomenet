@@ -195,6 +195,15 @@ char *showtime(void) {
 	return buf;
 }
 
+char *compacttime(void) {
+	time_t		now;
+	static char	buf[80];
+
+	time(&now);
+	strftime(buf, 17, "%Y/%m/%d-%H:%M", localtime(&now));
+	return buf;
+}
+
 /* added for the BBS - C. Blue */
 char *showdate(void) {
 	time_t		now;
