@@ -1253,6 +1253,7 @@ extern int Send_screenflash(int ind);
 extern void Handle_direction(int Ind, int dir);
 extern void Handle_clear_buffer(int Ind);
 extern int Send_sanity(int ind, byte attr, cptr msg);
+extern char *compacttime(void);
 extern char *showtime(void);
 extern char *showdate(void);
 extern void get_date(int *weekday, int *day, int *month, int *year);
