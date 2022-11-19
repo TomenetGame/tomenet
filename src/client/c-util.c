@@ -4684,7 +4684,7 @@ void interact_macros(void) {
 	Term_save();
 
 	/* No macros should work within the macro menu itself */
-	inkey_interact_macros = TRUE;
+	inkey_interact_macros = TRUE; /* This makes setting inkey_msg = TRUE after cmd_message() redundant and therefore not needed */
 
 	/* Did we just finish recording a macro by entering this menu? */
 	if (recording_macro) {
@@ -7387,6 +7387,7 @@ Chain_Macro:
 									break;
 								case ':': /* Allow chatting */
 									cmd_message();
+									inkey_msg = TRUE; /* And suppress macros again.. */
 									continue;
 								case KTRL('T'):
 									/* Take a screenshot */
@@ -7755,6 +7756,7 @@ void auto_inscriptions(void) {
 		case ':':
 			/* Allow to chat, to tell exact inscription-related stuff to other people easily */
 			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
 			break;
 		case '?':
 		case 'h':
@@ -8182,6 +8184,7 @@ static void do_cmd_options_aux(int page, cptr info) {
 		case ':':
 			/* specialty: allow chatting from within here */
 			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
 			break;
 
 		case '-':
@@ -8530,6 +8533,7 @@ static void do_cmd_options_win(void) {
 			/* specialty: allow chatting from within here */
 			case ':':
 				cmd_message();
+				inkey_msg = TRUE; /* And suppress macros again.. */
 				break;
 
 			case 'T':
@@ -8837,6 +8841,7 @@ static void do_cmd_options_fonts(void) {
 		case ':':
 			/* specialty: allow chatting from within here */
 			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
 			break;
 
 		case 'v':
@@ -9573,6 +9578,7 @@ static void do_cmd_options_colourblindness(void) {
 		/* specialty: allow chatting from within here */
 		case ':':
 			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
 			continue;
 
 		case 'c':
@@ -9812,7 +9818,10 @@ void do_cmd_options(void) {
 		/* Take a screenshot */
 		if (k == KTRL('T')) xhtml_screenshot("screenshot????", 2);
 		/* specialty: allow chatting from within here */
-		else if (k == ':') cmd_message();
+		else if (k == ':') {
+			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
+		}
 
 		else if (k == '1') {
 			do_cmd_options_aux(1, "User Interface Options 1");
@@ -10572,6 +10581,7 @@ void interact_audio(void) {
 		/* allow chatting from within here */
 		case ':':
 			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
 			//redraw = FALSE; -- header 'mixer' gets overwritten -_-
 			break;
 		case KTRL('T'):

@@ -6778,8 +6778,10 @@ static void cmd_guild_options() {
 		else if (i == KTRL('T'))
 			xhtml_screenshot("screenshot????", 2);
 
-		else if (i == ':')
+		else if (i == ':') {
 			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
+		}
 
 		else if (guild_master && i == '1') {
 			if (guild.flags & GFLG_ALLOW_ADDERS) {
@@ -6907,8 +6909,10 @@ void cmd_party(void) {
 		else if (i == KTRL('T'))
 			xhtml_screenshot("screenshot????", 2);
 
-		else if (i == ':')
+		else if (i == ':') {
 			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
+		}
 
 		/* Create party */
 		else if (i == '1') {

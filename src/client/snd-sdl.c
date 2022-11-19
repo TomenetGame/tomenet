@@ -3420,6 +3420,7 @@ void do_cmd_options_sfx_sdl(void) {
 		case ':':
 			/* specialty: allow chatting from within here */
 			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
 			break;
 
 		case 't': //case ' ':
@@ -3961,6 +3962,7 @@ void do_cmd_options_mus_sdl(void) {
 		case ':':
 			/* specialty: allow chatting from within here */
 			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
 			break;
 
 		case 't': //case ' ':
