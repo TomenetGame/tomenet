@@ -66,9 +66,14 @@
 #define WAND_BEAM_CHANCE	20
 #define ROD_BEAM_CHANCE		10
 
+/* Basic ball damage for elemental attack wands/rods */
+#define MDEV_POWER		330
+/* Basic dice amount for elemental attack wands/rods */
+#define MDEV_DICE		13
+
 /* Boni of wands and staves over rods, to make up for the hassle of recharging them */
 #define NONROD_LEVEL_BONUS	10	/* Status effect application made easier */
-#define NONROD_DICE_BONUS		5	/* Bolt/beam spell damage */
+#define NONROD_DICE_BONUS	10	/* Bolt/beam spell damage */
 #define NONROD_POWER_BONUS	200	/* Ball spell damage */
 
 /* Quick hack to make use of firestones		- Jir -
@@ -4161,56 +4166,56 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 	case SV_WAND_ELEC_BOLT:
 		msg_format_near(Ind, "%s fires a lightning bolt.", p_ptr->name);
 		sprintf(p_ptr->attacker, " fires a lightning bolt for");
-		fire_bolt_or_beam(Ind, WAND_BEAM_CHANCE, GF_ELEC, dir, damroll(4 + get_skill_scale(p_ptr, SKILL_DEVICE, 45), 18 + NONROD_DICE_BONUS), p_ptr->attacker);
+		fire_bolt_or_beam(Ind, WAND_BEAM_CHANCE, GF_ELEC, dir, damroll(4 + get_skill_scale(p_ptr, SKILL_DEVICE, 45), MDEV_DICE + NONROD_DICE_BONUS), p_ptr->attacker);
 		ident = TRUE;
 		break;
 
 	case SV_WAND_COLD_BOLT:
 		msg_format_near(Ind, "%s fires a frost bolt.", p_ptr->name);
 		sprintf(p_ptr->attacker, " fires a frost bolt for");
-		fire_bolt_or_beam(Ind, WAND_BEAM_CHANCE, GF_COLD, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 45), 18 + NONROD_DICE_BONUS), p_ptr->attacker);
+		fire_bolt_or_beam(Ind, WAND_BEAM_CHANCE, GF_COLD, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 45), MDEV_DICE + NONROD_DICE_BONUS), p_ptr->attacker);
 		ident = TRUE;
 		break;
 
 	case SV_WAND_FIRE_BOLT:
 		msg_format_near(Ind, "%s fires a fire bolt.", p_ptr->name);
 		sprintf(p_ptr->attacker, " fires a fire bolt for");
-		fire_bolt_or_beam(Ind, WAND_BEAM_CHANCE, GF_FIRE, dir, damroll(7 + get_skill_scale(p_ptr, SKILL_DEVICE, 45), 18 + NONROD_DICE_BONUS), p_ptr->attacker);
+		fire_bolt_or_beam(Ind, WAND_BEAM_CHANCE, GF_FIRE, dir, damroll(7 + get_skill_scale(p_ptr, SKILL_DEVICE, 45), MDEV_DICE + NONROD_DICE_BONUS), p_ptr->attacker);
 		ident = TRUE;
 		break;
 
 	case SV_WAND_ACID_BOLT:
 		msg_format_near(Ind, "%s fires an acid bolt.", p_ptr->name);
 		sprintf(p_ptr->attacker, " fires an acid bolt for");
-		fire_bolt_or_beam(Ind, WAND_BEAM_CHANCE, GF_ACID, dir, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 45), 18 + NONROD_DICE_BONUS), p_ptr->attacker);
+		fire_bolt_or_beam(Ind, WAND_BEAM_CHANCE, GF_ACID, dir, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 45), MDEV_DICE + NONROD_DICE_BONUS), p_ptr->attacker);
 		ident = TRUE;
 		break;
 
 	case SV_WAND_ELEC_BALL:
 		msg_format_near(Ind, "%s fires a ball of electricity.", p_ptr->name);
 		sprintf(p_ptr->attacker, " fires a ball of electricity for");
-		fire_ball(Ind, GF_ELEC, dir, 80 + get_skill_scale(p_ptr, SKILL_DEVICE, 330 + NONROD_POWER_BONUS), 2, p_ptr->attacker);
+		fire_ball(Ind, GF_ELEC, dir, 80 + get_skill_scale(p_ptr, SKILL_DEVICE, MDEV_POWER + NONROD_POWER_BONUS), 2, p_ptr->attacker);
 		ident = TRUE;
 		break;
 
 	case SV_WAND_COLD_BALL:
 		msg_format_near(Ind, "%s fires a frost ball.", p_ptr->name);
 		sprintf(p_ptr->attacker, " fires a frost ball for");
-		fire_ball(Ind, GF_COLD, dir, 90 + get_skill_scale(p_ptr, SKILL_DEVICE, 330 + NONROD_POWER_BONUS), 2, p_ptr->attacker);
+		fire_ball(Ind, GF_COLD, dir, 90 + get_skill_scale(p_ptr, SKILL_DEVICE, MDEV_POWER + NONROD_POWER_BONUS), 2, p_ptr->attacker);
 		ident = TRUE;
 		break;
 
 	case SV_WAND_FIRE_BALL:
 		msg_format_near(Ind, "%s fires a fire ball.", p_ptr->name);
 		sprintf(p_ptr->attacker, " fires a fire ball for");
-		fire_ball(Ind, GF_FIRE, dir, 110 + get_skill_scale(p_ptr, SKILL_DEVICE, 330 + NONROD_POWER_BONUS), 2, p_ptr->attacker);
+		fire_ball(Ind, GF_FIRE, dir, 110 + get_skill_scale(p_ptr, SKILL_DEVICE, MDEV_POWER + NONROD_POWER_BONUS), 2, p_ptr->attacker);
 		ident = TRUE;
 		break;
 
 	case SV_WAND_ACID_BALL:
 		msg_format_near(Ind, "%s fires a ball of acid.", p_ptr->name);
 		sprintf(p_ptr->attacker, " fires a ball of acid for");
-		fire_ball(Ind, GF_ACID, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 330 + NONROD_POWER_BONUS), 2, p_ptr->attacker);
+		fire_ball(Ind, GF_ACID, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, MDEV_POWER + NONROD_POWER_BONUS), 2, p_ptr->attacker);
 		ident = TRUE;
 		break;
 
@@ -4221,14 +4226,14 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 	case SV_WAND_DRAGON_FIRE:
 		msg_format_near(Ind, "%s shoots dragonfire!", p_ptr->name);
 		sprintf(p_ptr->attacker, " shoots dragonfire for");
-		fire_ball(Ind, GF_FIRE, dir, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 300 + NONROD_POWER_BONUS), 3, p_ptr->attacker);
+		fire_ball(Ind, GF_FIRE, dir, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, MDEV_POWER + NONROD_POWER_BONUS), 3, p_ptr->attacker);
 		ident = TRUE;
 		break;
 
 	case SV_WAND_DRAGON_COLD:
 		msg_format_near(Ind, "%s shoots dragonfrost!", p_ptr->name);
 		sprintf(p_ptr->attacker, " shoots dragonfrost for");
-		fire_ball(Ind, GF_COLD, dir, 260 + get_skill_scale(p_ptr, SKILL_DEVICE, 260 + NONROD_POWER_BONUS), 3, p_ptr->attacker);
+		fire_ball(Ind, GF_COLD, dir, 250 + get_skill_scale(p_ptr, SKILL_DEVICE, MDEV_POWER + NONROD_POWER_BONUS), 3, p_ptr->attacker);
 		ident = TRUE;
 		break;
 
@@ -4237,27 +4242,27 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 		case 1:
 			msg_format_near(Ind, "%s shoots dragon lightning!", p_ptr->name);
 			sprintf(p_ptr->attacker, " shoots dragon lightning for");
-			fire_ball(Ind, GF_ELEC, dir, 320 + get_skill_scale(p_ptr, SKILL_DEVICE, 300 + NONROD_POWER_BONUS), 3, p_ptr->attacker);
+			fire_ball(Ind, GF_ELEC, dir, 320 + get_skill_scale(p_ptr, SKILL_DEVICE, MDEV_POWER + NONROD_POWER_BONUS), 3, p_ptr->attacker);
 			break;
 		case 2:
 			msg_format_near(Ind, "%s shoots dragon frost!", p_ptr->name);
 			sprintf(p_ptr->attacker, " shoots dragon frost for");
-			fire_ball(Ind, GF_COLD, dir, 320 + get_skill_scale(p_ptr, SKILL_DEVICE, 300 + NONROD_POWER_BONUS), 3, p_ptr->attacker);
+			fire_ball(Ind, GF_COLD, dir, 320 + get_skill_scale(p_ptr, SKILL_DEVICE, MDEV_POWER + NONROD_POWER_BONUS), 3, p_ptr->attacker);
 			break;
 		case 3:
 			msg_format_near(Ind, "%s shoots dragon fire!", p_ptr->name);
 			sprintf(p_ptr->attacker, " shoots dragon fire for");
-			fire_ball(Ind, GF_FIRE, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 300 + NONROD_POWER_BONUS), 3, p_ptr->attacker);
+			fire_ball(Ind, GF_FIRE, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, MDEV_POWER + NONROD_POWER_BONUS), 3, p_ptr->attacker);
 			break;
 		case 4:
 			msg_format_near(Ind, "%s shoots dragon acid!", p_ptr->name);
 			sprintf(p_ptr->attacker, " shoots dragon acid for");
-			fire_ball(Ind, GF_ACID, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 300 + NONROD_POWER_BONUS), 3, p_ptr->attacker);
+			fire_ball(Ind, GF_ACID, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, MDEV_POWER + NONROD_POWER_BONUS), 3, p_ptr->attacker);
 			break;
 		default:
 			msg_format_near(Ind, "%s shoots dragon poison!", p_ptr->name);
 			sprintf(p_ptr->attacker, " shoots dragon poison for");
-			fire_ball(Ind, GF_POIS, dir, 240 + get_skill_scale(p_ptr, SKILL_DEVICE, 300 + NONROD_POWER_BONUS), 3, p_ptr->attacker);
+			fire_ball(Ind, GF_POIS, dir, 240 + get_skill_scale(p_ptr, SKILL_DEVICE, MDEV_POWER + NONROD_POWER_BONUS), 3, p_ptr->attacker);
 			break;
 		}
 		ident = TRUE;
@@ -5018,7 +5023,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	case SV_ROD_ELEC_BOLT:
 		msg_format_near(Ind, "%s fires a lightning bolt.", p_ptr->name);
 		sprintf(p_ptr->attacker, " fires a lightning bolt for");
-		fire_bolt_or_beam(Ind, ROD_BEAM_CHANCE, GF_ELEC, dir, damroll(4 + get_skill_scale(p_ptr, SKILL_DEVICE, 45), 18), p_ptr->attacker);
+		fire_bolt_or_beam(Ind, ROD_BEAM_CHANCE, GF_ELEC, dir, damroll(4 + get_skill_scale(p_ptr, SKILL_DEVICE, 45), MDEV_DICE), p_ptr->attacker);
 		ident = TRUE;
 		/* up to 50% faster with maxed MD - the_sandman */
 		o_ptr->pval += 11 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
@@ -5027,7 +5032,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	case SV_ROD_COLD_BOLT:
 		msg_format_near(Ind, "%s fires a frost bolt.", p_ptr->name);
 		sprintf(p_ptr->attacker, " fires a frost bolt for");
-		fire_bolt_or_beam(Ind, ROD_BEAM_CHANCE, GF_COLD, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 45), 18), p_ptr->attacker);
+		fire_bolt_or_beam(Ind, ROD_BEAM_CHANCE, GF_COLD, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 45), MDEV_DICE), p_ptr->attacker);
 		ident = TRUE;
 		/* up to 50% faster with maxed MD - the_sandman */
 		o_ptr->pval += 13 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 6);
@@ -5036,7 +5041,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	case SV_ROD_FIRE_BOLT:
 		msg_format_near(Ind, "%s fires a fire bolt.", p_ptr->name);
 		sprintf(p_ptr->attacker, " fires a fire bolt for");
-		fire_bolt_or_beam(Ind, ROD_BEAM_CHANCE, GF_FIRE, dir, damroll(7 + get_skill_scale(p_ptr, SKILL_DEVICE, 45), 18), p_ptr->attacker);
+		fire_bolt_or_beam(Ind, ROD_BEAM_CHANCE, GF_FIRE, dir, damroll(7 + get_skill_scale(p_ptr, SKILL_DEVICE, 45), MDEV_DICE), p_ptr->attacker);
 		ident = TRUE;
 		/* up to 50% faster with maxed MD - the_sandman */
 		o_ptr->pval += 15 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7);
@@ -5045,7 +5050,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	case SV_ROD_ACID_BOLT:
 		msg_format_near(Ind, "%s fires an acid bolt.", p_ptr->name);
 		sprintf(p_ptr->attacker, " fires an acid bolt for");
-		fire_bolt_or_beam(Ind, ROD_BEAM_CHANCE, GF_ACID, dir, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 45), 18), p_ptr->attacker);
+		fire_bolt_or_beam(Ind, ROD_BEAM_CHANCE, GF_ACID, dir, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 45), MDEV_DICE), p_ptr->attacker);
 		ident = TRUE;
 		/* up to 50% faster with maxed MD - the_sandman */
 		o_ptr->pval += 12 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 6);
@@ -5054,7 +5059,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	case SV_ROD_ELEC_BALL:
 		msg_format_near(Ind, "%s fires a lightning ball.", p_ptr->name);
 		sprintf(p_ptr->attacker, " fires a lightning ball for");
-		fire_ball(Ind, GF_ELEC, dir, 32 + get_skill_scale(p_ptr, SKILL_DEVICE, 330), 2, p_ptr->attacker);
+		fire_ball(Ind, GF_ELEC, dir, 32 + get_skill_scale(p_ptr, SKILL_DEVICE, MDEV_POWER), 2, p_ptr->attacker);
 		ident = TRUE;
 		/* up to 50% faster with maxed MD - the_sandman */
 		o_ptr->pval += 23 - get_skill_scale(p_ptr, SKILL_DEVICE, 11);
@@ -5063,7 +5068,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	case SV_ROD_COLD_BALL:
 		msg_format_near(Ind, "%s fires a frost ball.", p_ptr->name);
 		sprintf(p_ptr->attacker, " fires a frost ball for");
-		fire_ball(Ind, GF_COLD, dir, 48 + get_skill_scale(p_ptr, SKILL_DEVICE, 330), 2, p_ptr->attacker);
+		fire_ball(Ind, GF_COLD, dir, 48 + get_skill_scale(p_ptr, SKILL_DEVICE, MDEV_POWER), 2, p_ptr->attacker);
 		ident = TRUE;
 		/* up to 50% faster with maxed MD - the_sandman */
 		o_ptr->pval += 25 - get_skill_scale(p_ptr, SKILL_DEVICE, 12);
@@ -5072,7 +5077,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	case SV_ROD_FIRE_BALL:
 		msg_format_near(Ind, "%s fires a fire ball.", p_ptr->name);
 		sprintf(p_ptr->attacker, " fires a fire ball for");
-		fire_ball(Ind, GF_FIRE, dir, 72 + get_skill_scale(p_ptr, SKILL_DEVICE, 330), 2, p_ptr->attacker);
+		fire_ball(Ind, GF_FIRE, dir, 72 + get_skill_scale(p_ptr, SKILL_DEVICE, MDEV_POWER), 2, p_ptr->attacker);
 		ident = TRUE;
 		/* up to 50% faster with maxed MD - the_sandman */
 		o_ptr->pval += 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
@@ -5081,7 +5086,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	case SV_ROD_ACID_BALL:
 		msg_format_near(Ind, "%s fires an acid ball.", p_ptr->name);
 		sprintf(p_ptr->attacker, " fires an acid ball for");
-		fire_ball(Ind, GF_ACID, dir, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 330), 2, p_ptr->attacker);
+		fire_ball(Ind, GF_ACID, dir, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, MDEV_POWER), 2, p_ptr->attacker);
 		ident = TRUE;
 		/* up to 50% faster with maxed MD - the_sandman */
 		o_ptr->pval += 27 - get_skill_scale(p_ptr, SKILL_DEVICE, 13);

@@ -2271,7 +2271,7 @@ I:65:18:0
 W:30:0:10:1000
 A:30/1
 P:0:1d1:0:0:0
-D:Casts a fire bolt for 7..52d18 damage.
+D:Casts a fire bolt for 7..52d23 damage.
 
 # More common now...
 N:273:Stone to Mud
@@ -2455,7 +2455,7 @@ I:65:16:0
 W:30:0:10:950
 A:30/1
 P:0:1d1:0:0:0
-D:Casts an acid bolt for 6..51d18 damage.
+D:Casts an acid bolt for 6..51d23 damage.
 
 N:295:Dragon's Flame
 G:-:d
@@ -2473,7 +2473,7 @@ W:50:0:10:2400
 A:50/4
 P:0:1d1:0:0:0
 F:IGNORE_ELEC
-D:Casts dragonfrost for 260..720 damage.
+D:Casts dragonfrost for 250..750 damage.
 
 N:297:Dragon's Breath
 G:-:d
@@ -2482,7 +2482,7 @@ W:60:0:10:2400
 A:60/4
 P:0:1d1:0:0:0
 F:IGNORE_ELEC
-D:Casts a random dragon odem for 240..900 damage.
+D:Casts a random dragon odem for 240..930 damage.
 
 N:298:Annihilation
 G:-:d
@@ -2992,7 +2992,7 @@ I:66:21:30
 W:20:0:15:2000
 A:20/1
 P:0:1d1:0:0:0
-D:Casts a lightning bolt for 4..49d18 damage.
+D:Casts a lightning bolt for 4..49d13 damage.
 
 N:358:Frost Bolts
 G:-:d
@@ -3000,7 +3000,7 @@ I:66:23:35
 W:25:0:15:2500
 A:25/1
 P:0:1d1:0:0:0
-D:Casts a frost bolt for 5..50d18 damage.
+D:Casts a frost bolt for 5..50d13 damage.
 
 N:359:Fire Bolts
 G:-:d
@@ -3008,7 +3008,7 @@ I:66:22:40
 W:30:0:15:3000
 A:30/1
 P:0:1d1:0:0:0
-D:Casts a fire bolt for 7..52d18 damage.
+D:Casts a fire bolt for 7..52d13 damage.
 
 N:360:Polymorph
 G:-:d
@@ -3096,7 +3096,7 @@ I:66:20:40
 W:40:0:15:3500
 A:40/1
 P:0:1d1:0:0:0
-D:Casts an acid bolt for 6..51d18 damage.
+D:Casts an acid bolt for 6..51d13 damage.
 
 N:371:Enlightenment
 G:-:d
@@ -6565,7 +6565,7 @@ I:65:33:0
 W:15:0:10:600
 A:15/1
 P:0:1d1:0:0:0
-D:Casts a lightning bolt for 4..49d18 damage.
+D:Casts a lightning bolt for 4..49d23 damage.
 
 ##Now Norcocth can go wild :) ##
 
