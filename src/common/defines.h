@@ -1630,24 +1630,26 @@
 #define SF1_NO_DISCOUNT		0x00000800L	/* no discount at all */
 #define SF1_NO_DISCOUNT2	0x00001000L	/* no 50%/75%/90% off */
 #define SF1_EGO			0x00002000L	/* often has ego items (should go with SF1_GOOD and SF1_GREAT) */
-#define SF1_RARE_EGO		0x00004000L	/* reroll on cheap ego items (value<25000) at 67% probability */
+#define SF1_RARE_EGO		0x00004000L	/* reroll on simple ego items (value<9000 or rarest rarity<7) at 75% probability */
 #define SF1_PRICE1		0x00008000L	/* prices * 1.5 */
 #define SF1_PRICE2		0x00010000L	/* double prices */
 #define SF1_PRICE4		0x00020000L	/* prices * 4 */
 #define SF1_PRICE16		0x00040000L	/* prices * 16 */
 #define SF1_GOOD		0x00080000L	/* apply_magic good */
 #define SF1_GREAT		0x00100000L	/* apply_magic great */
-#define SF1_PRICY_ITEMS1	0x00200000L	/* items are worth 1000+ */
-#define SF1_PRICY_ITEMS2	0x00400000L	/* items are worth 5000+ */
-#define SF1_PRICY_ITEMS3	0x00800000L	/* items are worth 10000+ */
-#define SF1_PRICY_ITEMS4	0x01000000L	/* items are worth 20000+ */
+#define SF1_PRICY_ITEMS1	0x00200000L	/* items are worth 3000+ */
+#define SF1_PRICY_ITEMS2	0x00400000L	/* items are worth 8000+ */
+#define SF1_PRICY_ITEMS3	0x00800000L	/* items are worth 15000+ */
+#define SF1_PRICY_ITEMS4	0x01000000L	/* items are worth 25000+ (except runes) */
 #define SF1_HARD_STEAL		0x02000000L	/* hard to steal from this shop */
 #define SF1_VHARD_STEAL		0x04000000L	/* very hard to steal from this shop */
 #define SF1_SPECIAL		0x08000000L	/* Store doesn't have an inventory but prints arbitrary text to screen instead */
 #define SF1_BUY67		0x10000000L	/* Shop buys for 67% of value */
-#define SF1_NO_DISCOUNT1	0x20000000L	/* no 20+% discounts */
+#define SF1_NO_DISCOUNT1	0x20000000L	/* no 20+% discounts even */
 #define SF1_SELL67		0x40000000L	/* Store sells for 67% of value */
 #define SF1_ZEROLEVEL		0x80000000L	/* all items are level 0 and can't be traded */
+
+#define SF1_NO_DISCOUNT3	(SF1_NO_DISCOUNT1 | SF1_NO_DISCOUNT2)	/* Hack: Reduce discounts somewhat */
 
 /* This seems to be bad, but backported once anyway;
  * consider removing them later */

@@ -2200,8 +2200,8 @@ static void store_create(store_type *st_ptr) {
 		    /* Reduce discount */
 		    o_ptr->discount = 0;
 		/* hack: SF1_NO_DISCOUNT3 removed and now emulated by actually specifying both 1 & 2, saving us a valuable flag slot */
-		else if ((st_info[st_ptr->st_idx].flags1 & (SF1_NO_DISCOUNT1 | SF1_NO_DISCOUNT2)) == (SF1_NO_DISCOUNT1 | SF1_NO_DISCOUNT2))
-		    /* Reduce discount */
+		else if ((st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT3) == SF1_NO_DISCOUNT3)
+		    /* Reduce discount somewhat */
 		    switch (o_ptr->discount) {
 		    case 10: o_ptr->discount = 10; break;
 		    case 25: o_ptr->discount = 20; break;
@@ -2221,7 +2221,7 @@ static void store_create(store_type *st_ptr) {
 		    case 100: o_ptr->discount = 25; break;
 		    }
 		else if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT1)
-		    /* Reduce discount */
+		    /* Reduce discount greatly */
 		    switch (o_ptr->discount) {
 		    case 10: o_ptr->discount = 0; break;
 		    case 25: o_ptr->discount = 0; break;
