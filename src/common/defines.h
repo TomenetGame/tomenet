@@ -1619,8 +1619,8 @@
 #define SF1_SHALLOW_LEVEL	0x00000002L	/* Add a little to minimum item level */
 #define SF1_MEDIUM_LEVEL	0x00000004L	/* Add to minimum item level */
 #define SF1_DEEP_LEVEL		0x00000008L	/* Add much to minimum item level */
-#define SF1_RARE		0x00000010L
-#define SF1_VERY_RARE		0x00000020L
+#define SF1_RARE		0x00000010L	/* k-chance must be >= 3 */
+#define SF1_VERY_RARE		0x00000020L	/* k-chance must be >= 8 */
 //#define SF1_COMMON		0x00000040L	/* Currently no effect */
 #define SF1_FLAT_BASE		0x00000040L	/* a) prevent rare base item types, b) give all base item types same probability */
 #define SF1_ALL_ITEM		0x00000080L	/* Works as the BM */
