@@ -4343,6 +4343,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 	player_type *p_ptr = Players[Ind];
 	bool ident = FALSE;
+	int i;
 
 #ifdef NEW_MDEV_STACKING
 	o_ptr->bpval++; /* count # of used rods of a stack of rods */
@@ -4432,11 +4433,11 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 		break;
 
 	case SV_ROD_HEALING:
-//scale moar!		if (hp_player(Ind, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
-		if (hp_player(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
+		i = 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300);
+		if (i > 300) i = 300;
+		if (hp_player(Ind, i)) ident = TRUE;
 		if (set_stun(Ind, p_ptr->stun - 250)) ident = TRUE;
 		if (set_cut(Ind, 0, 0)) ident = TRUE;
-//a bit too much?	if (o_ptr) o_ptr->pval += 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7);
 		if (o_ptr) o_ptr->pval += 15 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
 		break;
 
@@ -4790,6 +4791,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 void do_cmd_zap_rod_dir(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	int lev, item, ident, rad = DEFAULT_RADIUS_DEV(p_ptr), energy;
+	int i;
 	object_type *o_ptr;
 	u32b f4, dummy;
 	/* Hack -- let perception get aborted */
@@ -5174,11 +5176,11 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 		break;
 
 	case SV_ROD_HEALING:
-//scale moar!		if (hp_player(Ind, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
-		if (hp_player(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
+		i = 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300);
+		if (i > 300) i = 300;
+		if (hp_player(Ind, i)) ident = TRUE;
 		if (set_stun(Ind, 0)) ident = TRUE;
 		if (set_cut(Ind, p_ptr->cut - 250, 0)) ident = TRUE;
-//a bit too much?	o_ptr->pval += 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7);
 		o_ptr->pval += 15 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
 		break;
 
