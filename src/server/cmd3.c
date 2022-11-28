@@ -47,6 +47,19 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield, bool forc
 		return;
 	}
 
+	/* Prevent true arts poofing in house or for winners or in case of anti-hoard, if inventory overflows */
+	if (p_ptr->inven_cnt >= INVEN_PACK) {
+		/* The last item in the backpack is the one that would overflow to the floor */
+		object_type *o2_ptr = &p_ptr->inventory[INVEN_PACK - 1];
+
+		if (true_artifact_p(o2_ptr) && 
+		    ((inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py) && undepositable_artifact_p(o2_ptr) && cfg.anti_arts_house) ||
+		    (!is_admin(p_ptr) && ((cfg.anti_arts_hoard && undepositable_artifact_p(o2_ptr)) || (p_ptr->total_winner && !winner_artifact_p(o2_ptr) && cfg.kings_etiquette))))) {
+			msg_print(Ind, "\374\377yYour inventory is full and a true artifact would overflow and disappear here!");
+			return;
+		}
+	}
+
 #ifdef VAMPIRES_INV_CURSED
 	if (p_ptr->prace == RACE_VAMPIRE) reverse_cursed(o_ptr);
  #ifdef ENABLE_HELLKNIGHT
