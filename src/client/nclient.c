@@ -4055,7 +4055,7 @@ int Receive_sound(void) {
 			animate_lightning_type = t;
 			/* Potentially delay thunderclap sfx 'physically correct' ;) */
 			return(1);
-		default: /* eg SFX_TYPE_MISC: Just thunder sfx, no lightning implied. */
+		default: /* eg SFX_TYPE_MISC: Just thunder sfx, no lightning implied. Eg 'Thunderstorm' spell! */
 			//go on with normal sfx processing
 			break;
 		}
