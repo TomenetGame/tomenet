@@ -2984,6 +2984,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_subinven = 1;
 		p_ptr->warning_limitbottles = 1;
 		p_ptr->warning_ingredients = 1;
+		p_ptr->warning_id = 1;
 		return;
 	}
 
@@ -3156,6 +3157,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_hungry = 1;
 		p_ptr->warning_macros = 1;
 		p_ptr->warning_edmt = 1;
+		p_ptr->warning_id = 1;
 	}
 	if (p_ptr->max_plv > 20) {
 		p_ptr->warning_boomerang = 1;

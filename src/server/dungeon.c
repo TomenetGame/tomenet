@@ -566,6 +566,12 @@ static void sense_inventory(int Ind) {
 			    ((o_ptr->number == 1) ? "is" : "are"), feel);
 		}
 
+		if (!p_ptr->warning_id && (streq(feel, "good") || streq(feel, "excellent") || streq(feel, "special"))) {
+			msg_print(Ind, "\374\377yHINT: If you sense that an unknown item you found is 'good' or even better, make");
+			msg_print(Ind, "\374\377y      sure to identify it, eg with a \377oScroll of Identify\377y from the alchemist shop!");
+			p_ptr->warning_id = 1;
+		}
+
 		suppress_message = FALSE;
 
 		/* We have "felt" it */
