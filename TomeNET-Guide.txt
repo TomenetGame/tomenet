@@ -7422,6 +7422,7 @@ staircase colours (also visible on the world map):
 -Dungeons that allow neither recalling out, nor floating or providing stairs!
  There is usually only one such dungeon and that is the 'Death Fate'.
  Its entrance is a dark-flickering staircase.
+ However, there might still be a way to get out again!
  (The 'Death Fate' dungeon does actually not count as an 'ironman' dungeon and
  provides some special stuff, see (4.5c).)
 
