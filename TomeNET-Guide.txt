@@ -158,7 +158,7 @@ Contents
     (5.20)  Wraithform
 (6) Monster details
     (6.1)  Monsters
-    (6.1a) Normal monsters, unique monsters and boss monsters
+    (6.1a) Normal monsters, unique monsters, boss monsters and how they spawn
     (6.2)  Monster flags
     (6.3)  Loot tables, treasure classes
     (6.3a) Special item drops of monsters
@@ -166,8 +166,6 @@ Contents
     (6.5)  Monster attack types and brands
     (6.6)  Dispelling/banishing/turning monsters
     (6.7)  Monster auras
-    (6.8)  Monster spawning and being summoned
-    (6.9)  Monster summoning
 (7) Character details
     (7.1)   Attributes
     (7.2)   Skills, opposed skills
@@ -14265,8 +14263,10 @@ depending on monster classification, for example mostly undead and nonliving
 monsters in the Paths of the Dead, etc. - theorycraft is never over!
 
 
-(6.1a) Normal monsters, unique monsters and boss monsters
----------------------------------------------------------
+(6.1a) Normal monsters, unique monsters, boss monsters and how they spawn
+-------------------------------------------------------------------------
+spawning and being summoned
+monsters summoning
 
 
 
@@ -14939,16 +14939,6 @@ The warrior has lightning resistance, so the damage will be cut down to 1/3,
 which is 1 or 2.
 Since the warrior has 6 BpR, he will suffer between 6 and 12 (6*1 and 6*2)
 damage per turn while hitting the storm giant.
-
-
-
-(6.8) Monster spawning and being summoned
------------------------------------------
-
-
-
-(6.9) Monster summoning
------------------------
 
 
 
