@@ -479,7 +479,7 @@
  /* Buffer guide in RAM, to reduce searching times (especially on Windows OS, not really bad on Linux) */
  #define BUFFER_GUIDE
  #ifdef BUFFER_GUIDE
-  #define GUIDE_LINES_MAX 25000 //note: the guide is currently 20038 lines long
+  #define GUIDE_LINES_MAX 30000 //note: the guide is currently 25063 lines long
  #endif
 
  /* Use regex.h to offer regexp in-game guide searching; and now also auto-inscription regexp matching */
