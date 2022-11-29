@@ -12563,7 +12563,10 @@ Enchant
                 stack of items, instead of a single item, depending on the
                 stack size. It is easier to enchant a stack of ammunition than
                 enchanting a same-size stack of regular weapons/armour though.
-Fire/Ice/Chaos  Fires a ball of the according type around you. Make sure you
+Fire
+Ice
+Chaos
+                Fires a ball of the according type around you. Make sure you
                 resist it or you will take damage too.
 Genocide        Removes all monsters of a certain kind from the current level.
                 Drains your HP for each one removed.
