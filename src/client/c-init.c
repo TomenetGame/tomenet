@@ -3056,6 +3056,7 @@ void init_guide(void) {
 		guide_lastline++;
 
 #ifdef BUFFER_GUIDE
+		if (guide_lastline >= GUIDE_LINES_MAX) continue; //catch memory overflow aka "Bad socket filedescriptor" client termination error
 		strcpy(guide_line[guide_lastline], buf); //note: guide_lastline was initialized to -1, so it'll start at 0 here as it should
 #endif
 
@@ -3108,7 +3109,7 @@ void init_guide(void) {
 			continue;
 		}
 	}
-
+	my_fclose(fff);
 
 	/* empty file? */
 	if (guide_lastline == -1) {
@@ -3116,7 +3117,16 @@ void init_guide(void) {
 		c_message_add("\377y Try updating it with the TomeNET-Updater or download it manually.");
 		return;
 	}
-	my_fclose(fff);
+
+#ifdef BUFFER_GUIDE
+	/* too big file? */
+	if (guide_lastline >= GUIDE_LINES_MAX) {
+		c_message_add(format("\377yThe file TomeNET-Guide.txt was too big (%d/%d lines) to load completely!", guide_lastline, GUIDE_LINES_MAX));
+		c_message_add("\377y Update your client via TomeNET-Updater or install the latest client manually.");
+		/* cap */
+		guide_lastline = GUIDE_LINES_MAX - 1;
+	}
+#endif
 
 
 	guide_races = exec_lua(0, "return guide_races");
