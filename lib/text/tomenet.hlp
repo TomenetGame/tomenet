@@ -18,7 +18,7 @@ a  Aim wand    A  Activate      !  Show BBS        |  Uniques slain list
 b  Browse book B  Bash door     #  Highscores      =  Options menu
 c  Close door  C  Character     $  Drop gold       "  Load prf file (abs path)
 d  Drop        D  Disarm        %  Macro menu      \  Bypass the keymap (raw)
-e  Equip       E  Eat           &  Auto inscribe   CTRL+G  Pick up one item
+e  Equip       \{BE  Eat\{w           &  Auto inscribe   CTRL+G  Pick up one item
 f  Fire        F  Refill light  (  Friendly target CTRL+C  Toggle music
 \{Bg  Take item\{w   G  Skills        )  Clear buffer    CTRL+N  Toggle all audio
 h  Houses      H  Auto inscribe *  Target/look     \{BCTRL+U  Audio mixer\{w or

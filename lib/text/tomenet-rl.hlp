@@ -18,7 +18,7 @@ z  Zap wand    A  Activate      !  Show BBS        |   Uniques slain list
 P  Peruse book f  Bash door                        =   Options menu
 c  Close door  C  Character     $  Drop gold       "   Load prf file (abs path)
 d  Drop        D  Disarm        %  Macro menu      \   Bypass the keymap (raw)
-e  Equip       E  Eat           &  Auto inscribe   ^Z  Pick up one item
+e  Equip       \{BE  Eat\{w           &  Auto inscribe   ^Z  Pick up one item
 t  Fire        F  Refill light  (  Friendly target ^X  Toggle music
 \{Bg  Take item\{w   G  Skills        )  Clear buffer    ^V  Toggle all audio
 ^E Houses      ^G Auto inscribe *  Target/look     \{B^F  Audio mixer\{w or
