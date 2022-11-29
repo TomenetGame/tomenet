@@ -812,15 +812,6 @@ l       x       look at a player/monster/object (use direction keys for
                 targetting). Similar to targetting, while looking you can press
                 'p' to switch to manual cursor positioning, allowing you to
                 look at a specific grid, then press 'l' again to confirm.
-                (Unimportant side note: The look command also sets the entity
-                you are currently looking at as your target, even if it would
-                not make much sense because you are for example just looking at
-                another player who isn't even hostile towards you.
-                This means that you will aim at the entity you looked at in
-                case the '*t' command is unable to acquire a new valid 'real'
-                target when you use a ranged attack that requires a target.
-                This behaviour has no real effect on gameplay though it just
-                looks odd in those rare cases it happens :-p.)
 
 j       CTRL+A  attempt to steal from players (not recommended!).
 
