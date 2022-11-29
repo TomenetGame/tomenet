@@ -7995,7 +7995,7 @@ B:HIT:HURT:6d5
 F:UNIQUE | MALE | WEIRD_MIND | CAN_SPEAK |
 F:FORCE_MAXHP | WILD_TOO | DROP_CORPSE |
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD |
-F:DROP_CHOSEN |
+#F:DROP_CHOSEN |  -- disabled because there is no matching xtra2.c entry, oops?
 F:OPEN_DOOR | BASH_DOOR |
 F:IM_COLD | IM_POIS | ZANGBAND
 D:He who laughs at Groo's brains will find there is nothing to laugh
