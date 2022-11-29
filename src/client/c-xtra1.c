@@ -906,22 +906,36 @@ void prt_depth(int x, int y, int z, bool town, int colour, int colour_sector, cp
  */
 void prt_hunger(int food) {
 	int x, y;
+	static int warn_once = 3, food_prev;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
+	if (warn_once) {
+		if (!c_cfg.newbie_hints || p_ptr->max_plv > 15) warn_once = 0;
+		else if (food != -1) {
+			food_prev = food;
+			if ((warn_once >= 3 && food < PY_FOOD_ALERT) ||
+			    (warn_once >= 2 && food < PY_FOOD_WEAK) ||
+			    (warn_once >= 1 && food < PY_FOOD_FAINT)) {
+				warn_once--;
+				food_warn_once_timer = 50; /* deciseconds to glow (TERM_SELECTOR colour et al), before switching to normal, static colour */
+			}
+		} else food = food_prev; /* Just redraw, for switching from blinking to static colour for warn_once. */
+	}
+
 	if (food < PY_FOOD_FAINT)
-		c_put_str(TERM_RED, "Weak  ", ROW_HUNGRY, COL_HUNGRY);
+		c_put_str(food_warn_once_timer ? TERM_SEL_RED : TERM_L_RED, "Starved", ROW_HUNGRY, COL_HUNGRY);
 	else if (food < PY_FOOD_WEAK)
-		c_put_str(TERM_ORANGE, "Weak  ", ROW_HUNGRY, COL_HUNGRY);
+		c_put_str(food_warn_once_timer ? TERM_SELECTOR : TERM_ORANGE, "Starved", ROW_HUNGRY, COL_HUNGRY);
 	else if (food < PY_FOOD_ALERT)
-		c_put_str(TERM_YELLOW, "Hungry", ROW_HUNGRY, COL_HUNGRY);
+		c_put_str(food_warn_once_timer ? TERM_SELECTOR : TERM_YELLOW, "Hungry ", ROW_HUNGRY, COL_HUNGRY);
 	else if (food < PY_FOOD_FULL)
-		c_put_str(TERM_L_GREEN, "      ", ROW_HUNGRY, COL_HUNGRY);
+		c_put_str(TERM_L_GREEN, "       ", ROW_HUNGRY, COL_HUNGRY);
 	else if (food < PY_FOOD_MAX)
-		c_put_str(TERM_L_GREEN, "Full  ", ROW_HUNGRY, COL_HUNGRY);
+		c_put_str(TERM_L_GREEN, "Full   ", ROW_HUNGRY, COL_HUNGRY);
 	else
-		c_put_str(TERM_GREEN, "Gorged", ROW_HUNGRY, COL_HUNGRY);
+		c_put_str(TERM_GREEN, "Gorged ", ROW_HUNGRY, COL_HUNGRY);
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);
@@ -1077,7 +1091,7 @@ void prt_speed(int speed) {
 	Term_locate(&x, &y);
 
 	/* Display the speed */
-	c_put_str(attr, format("%-11s", buf), ROW_SPEED, COL_SPEED);
+	c_put_str(attr, format("%-9s", buf), ROW_SPEED, COL_SPEED);
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);

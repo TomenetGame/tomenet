@@ -2246,28 +2246,28 @@
 #define COL_CUT			0	/* <cut> */
 
 #define ROW_STUN		(23 + HGT_PLUS)
-#define COL_STUN		38	/* <stun> */
+#define COL_STUN		39	/* <stun> */
 
 #define ROW_HUNGRY		(23 + HGT_PLUS)
 #define COL_HUNGRY		0	/* "Weak" / "Hungry" / "Full" / "Gorged" */
 
 #define ROW_BLIND		(23 + HGT_PLUS)
-#define COL_BLIND		7	/* "Blind" */
+#define COL_BLIND		8	/* "Blind" */
 
 #define ROW_CONFUSED		(23 + HGT_PLUS)
-#define COL_CONFUSED		13	/* "Confused" */
+#define COL_CONFUSED		14	/* "Confused" */
 
 #define ROW_AFRAID		(23 + HGT_PLUS)
-#define COL_AFRAID		22	/* "Afraid" */
+#define COL_AFRAID		23	/* "Afraid" */
 
 #define ROW_POISONED		(23 + HGT_PLUS)
-#define COL_POISONED		29	/* "Poisoned" */
+#define COL_POISONED		30	/* "Poisoned" */
 
 #define ROW_STATE		(23 + HGT_PLUS)
-#define COL_STATE		38	/* <state> */
+#define COL_STATE		39	/* <state> */
 
 #define ROW_SPEED		(23 + HGT_PLUS)
-#define COL_SPEED		50	/* "Slow (-NN)" or "Fast (+NN)" */
+#define COL_SPEED		51	/* "Slow (-NN)" or "Fast (+NN)" */
 
 #define ROW_STUDY		(23 + HGT_PLUS)
 #define COL_STUDY		62	/* "Study" */

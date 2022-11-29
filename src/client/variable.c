@@ -708,6 +708,7 @@ char whats_under_your_feet[ONAME_LEN];
 int curmus_timepos = -1, oldticks = -1, curmus_x, curmus_y, curmus_attr;
 bool jukebox_screen = FALSE;
 //#endif
+int oldticksds = -1;
 
 bool map_town = FALSE;
 #ifdef META_PINGS
@@ -724,3 +725,4 @@ PROCESS_INFORMATION pi[META_PINGS];
 
 bool fullscreen_weather = FALSE; //RAINY_TOMB
 bool force_cui = FALSE;
+int food_warn_once_timer;

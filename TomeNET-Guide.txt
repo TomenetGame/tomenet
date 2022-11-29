@@ -648,7 +648,8 @@ E       E       eat food. Hunger can kill you, if you don't eat for a longer
                 while, depending on your character. You will see a yellow
                 'Hungry' appear below the status bar on the left side in the
                 main window, then it will change gradually to orange/red 'Weak'
-                and you will start getting paralysed by the lack of food!
+                or 'Starved' (in game version > 4.8.0) and you will start
+                getting paralysed by the lack of food!
                 Finally you will start losing hit points and eventually die
                 from starvation.
                 (Draconians can eat firestones to gain temporary special
@@ -1185,7 +1186,8 @@ They all start with a slash '/' hence they're called slash commands:
 /afk        toggle AFK (away from keyboard) mode if you have to take a
             quick break from playing.
             Note that your character won't need to consume food while afk _IF_
-            you are not already 'hungry' or even 'weak' from a lack of food!
+            you are not already 'hungry' or even 'weak' ('starved' in game
+            version > 4.8.0) from a lack of food!
             All other timed effects will continue to be processed (like
             magical effects such as haste/slowness/hallucination, pseudo-ID or
             wearing off of temporary stat drain from traps) and eventually
@@ -9262,19 +9264,26 @@ The various effects are:
 For 'Fear', 'Blindness', 'Confusion' and 'Paralysis' - please see (5.6).
 
 Hunger  -Gorged         Your speed gets reduced by 10.
+
         -Full           While being /afk in 'Full' state or in normal state
                         (normal = no food state is displayed, the 'Full'
                         disappeared), your digestion will be stopped, allowing
                         you to remain afk as long as you wish.
+
         -Hungry
-        -Weak (yellow)
-        -Weak (orange)
-        -Weak (red)     You lose hit points and get paralyzed even with FA.
-         (starving)     If you hit a bowel cramps trap, you instantly enter
+
+        -Weak (yellow) or 'Starved' in game version > 4.8.0
+
+        -Weak (orange) or 'Starved' in game version > 4.8.0
+
+        -Weak (red)    or 'Starved' in game version > 4.8.0
+         (starving)     You lose hit points and get paralyzed even with FA.
+                        If you hit a bowel cramps trap, you instantly enter
                         this nutrition state. 'Slow Digestion' will help to
                         not get insta-paralyzed!
-        You will regenerate hit points slower if you are weak, and not at
-        all if you are starving (red 'Weak').
+
+        You will regenerate hit points slower if you are weak (or starved),
+        and not at all if you are starving (red 'Weak' / red 'Starved').
 
         Note that you don't consume food in towns, in town areas, while AFK and
         not already hungry (or worse), and in the Arena Monster Challenge.
@@ -12919,7 +12928,8 @@ Amulet of Slow Digestion
 Ring of Slow Digestion
                         will slow your food digestion so you have to eat less
                         often. Also prevents instant paralysation if your food
-                        state hits red 'weak'.
+                        state hits red 'weak' (or red 'starved' in game version
+                        higher than 4.8.0).
 Ring of Polymorphing    Can be used by adept Mimicry-users to tansform
                         themselves. See (6.7a) for details on these rings.
 

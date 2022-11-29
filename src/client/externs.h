@@ -1194,6 +1194,8 @@ extern byte screenshot_height;
 extern int curmus_timepos, oldticks, curmus_x, curmus_y, curmus_attr;
 extern bool jukebox_screen;
 //#endif
+extern int oldticksds;
 
 extern bool map_town;
 extern bool force_cui;
+extern int food_warn_once_timer;

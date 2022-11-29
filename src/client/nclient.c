@@ -6201,6 +6201,15 @@ void update_ticks() {
 	newticks += cur_time.tv_usec / 100000;
 	ticks10 = (cur_time.tv_usec / 10000) % 10;
 
+	/* Track hunger colour animation in deciseconds */
+	if (newticks != oldticksds) {
+		oldticksds = newticks;
+		if (food_warn_once_timer) {
+			food_warn_once_timer--;
+			if (!food_warn_once_timer) prt_hunger(-1);
+		}
+	}
+
 	/* Assume that it has not been more than one second since this function was last called */
 	if (newticks < ticks) newticks += 10;
 	ticks = newticks;
