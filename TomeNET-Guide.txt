@@ -25059,4 +25059,15 @@ Solution:   If you really specified a supposedly valid search topic, check your
             search instead of a topic/chapter search.
             This will find any occurance of your search string in the guide.
 
+PROBLEM 69: When trying to login with a character I get an error
+            "Bad socket filedescriptor" and the client terminates.
+Solution:   Probably your client failed to pre-load the TomeNET Guide.
+            This happens if your client version is too old and the guide has
+            meanwhile become too big for it.
+            You can either update your client to the latest version, which
+            should be capable again to pre-buffer it correctly (the proper and
+            recommended way), or you could -as a temporary workaround- just
+            delete the TomeNET-Guide.txt file in your TomeNET folder (which is
+            not the recommended way of course).
+
 ===============================================================================
