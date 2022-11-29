@@ -2234,7 +2234,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		else if (!strcasecmp(buf, "go")) strcpy(init_search_string, "Go challenge");
 		/* Pft, inconsistency - basically, data uses 'color' while text uses 'colour'.. */
 		else if (init_search_type == 3 && !strcasecmp("color", init_search_string)) strcpy(init_search_string, "colour");
-		/* "(6.9) Parties, Iron Teams, Guilds" */
+		/* "(7.9) Parties, Iron Teams, Guilds" */
 		else if (!strcasecmp(buf, "team") || !strcasecmp(buf, "iron team") || !strcasecmp(buf, "ironteam")) strcpy(init_search_string, "teams");
 		else if (!strcasecmp(buf, "guild")) strcpy(init_search_string, "guilds");
 		else if (!strcasecmp(buf, "party")) strcpy(init_search_string, "parties");
