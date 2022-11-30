@@ -7577,36 +7577,33 @@ static void process_various(void) {
 			if (!p_ptr->total_winner) continue;
 			if (istownarea(&p_ptr->wpos, MAX_TOWNAREA)) continue; /* allow kings idling instead of having to switch chars */
 
-			/* Hack -- never Maggot and his dogs :) (also includes joke monsters Martti Ihrasaari and The Greater hell-beast) */
-			i = rand_range(57, max_r_idx - 1);
-			r_ptr = &r_info[i];
-
-			/* Make sure we are looking at a dead unique */
-			if (!(r_ptr->flags1 & RF1_UNIQUE)) {
-				j--;
-				continue;
-			}
-
-			if (p_ptr->r_killed[i] != 1) continue;
-
+			/* Randomly try finding a fundamentally eligible unique monster. Don't check alive/dead state yet though! */
+			do {
+				/* Hack -- never Maggot and his dogs :) (also includes joke monsters Martti Ihrasaari and The Greater hell-beast) */
+				i = rand_range(57, max_r_idx - 1); // (57 is Freesia)
+				r_ptr = &r_info[i];
+			} while (
+			/* Make sure we are looking at a unique */
+			    (!(r_ptr->flags1 & RF1_UNIQUE)) ||
 			/* Hack -- Sauron and Morgoth are exceptions (and all > Morgy-uniques)
-			   --- QUESTOR is currently NOT used!! - C. Blue */
-			//if (r_ptr->flags1 & RF1_QUESTOR) continue;
-			/* ..hardcoding them instead: */
-			if (r_ptr->level >= 98) continue; /* Not Michael either */
+			   ..and Michael neither, hardcoding them via maxlev: */
+			    r_ptr->level >= 98 ||
 			/* Redundant, since he's a dungeon boss, but anyway: (He's linked to Sauron) */
-			if (i == RI_DOL_GULDUR) continue;
-
-			if (r_ptr->flags7 & RF7_NAZGUL) continue; /* No nazguls */
-
+			    i == RI_DOL_GULDUR ||
+			/* No nazguls */
+			    (r_ptr->flags7 & RF7_NAZGUL) ||
 			/* Dungeon bosses probably shouldn't respawn */
-			if (r_ptr->flags0 & RF0_FINAL_GUARDIAN) continue;
+			    (r_ptr->flags0 & RF0_FINAL_GUARDIAN) ||
+			/* Special-dropping uniques neither? */
+			    //(r_ptr->flags1 & RF1_DROP_CHOSEN) || */
+			/* --- QUESTOR is currently NOT used!! - C. Blue */
+			    //(r_ptr->flags1 & RF1_QUESTOR) ||
+			/* The unique is currently administratively disabled via '/unidisable'? */
+			    !r_ptr->max_num);
 
-			/* Special-dropping uniques too! */
-			/* if (r_ptr->flags1 & RF1_DROP_CHOSEN) continue; */
-
-			//				if (r_ptr->max_num > 0) continue;
-			if (rand_int(cfg.unique_respawn_time * (r_ptr->level + 1)) > 9)
+			/* Unique isn't dead or fails respawn roll? Then this player is off the hook for now! */
+			if (p_ptr->r_killed[i] != 1 ||
+			    rand_int(cfg.unique_respawn_time * (r_ptr->level + 1)) > 9)
 				continue;
 
 			/* "Ressurect" the unique */
