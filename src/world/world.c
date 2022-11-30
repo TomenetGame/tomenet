@@ -527,21 +527,22 @@ uint32_t get_message_type(char *msg) {
 		return (WMF_HILVLUP | WMF_LVLUP);
 	} else if (strstr(msg, " has attained level ")) {
 		return WMF_LVLUP;
-	} else if (strstr(msg, " was slain by ")) {
+	} else if (strstr(msg, " was slain by ") ||
+	    (strstr(msg, " has defeated ") && strstr(msg, " mirror image."))) {
 		return WMF_UNIDEATH;
 	} else if (strstr(msg, " was destroyed by ") ||
-		   strstr(msg, " was wasted by ") ||
-		   strstr(msg, " was crushed by ") ||
-		   strstr(msg, " was shredded by ") ||
-		   strstr(msg, " was torn up by ") ||
-		   strstr(msg, " and destroyed by ") ||
-		   strstr(msg, " was killed by ") ||
-		   strstr(msg, " was annihilated by ") ||
-		   strstr(msg, " was vaporized by ") ||
-		   strstr(msg, " committed suicide.") ||
-		   strstr(msg, " has retired to ") ||
-		   strstr(msg, " bids farewell to this plane") ||
-		   strstr(msg, " was defeated by ")) {
+	    strstr(msg, " was wasted by ") ||
+	    strstr(msg, " was crushed by ") ||
+	    strstr(msg, " was shredded by ") ||
+	    strstr(msg, " was torn up by ") ||
+	    strstr(msg, " and destroyed by ") ||
+	    strstr(msg, " was killed by ") ||
+	    strstr(msg, " was annihilated by ") ||
+	    strstr(msg, " was vaporized by ") ||
+	    strstr(msg, " committed suicide.") ||
+	    strstr(msg, " has retired to ") ||
+	    strstr(msg, " bids farewell to this plane") ||
+	    strstr(msg, " was defeated by ")) {
 		return WMF_PDEATH;
 	} else if ((!strncmp(msg, "\377a>>", 4) && strstr(msg, " wins ")) /* global events */
 	    || (strstr(msg, "defeated a tasty halloween")) || (strstr(msg, "Santa dropped the presents near")) /* halloween/xmas */
