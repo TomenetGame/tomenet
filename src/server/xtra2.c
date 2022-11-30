@@ -5860,8 +5860,12 @@ bool monster_death(int Ind, int m_idx) {
 		else
 			sprintf(tmp, "\374\377c**\377s%s has defeated %s mirror image.\377c**", p_ptr->name, p_ptr->male ? "his" : "her");
 
-		if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master)) msg_broadcast(0, tmp);
-		else msg_print(Ind, tmp);
+		if (!p_ptr->admin_dm || !cfg.secret_dungeon_master) {
+			msg_broadcast(0, tmp);
+#ifdef TOMENET_WORLDS
+			if (cfg.worldd_unideath) world_msg(tmp);
+#endif
+		} else msg_print(Ind, tmp);
 
 		s_printf("MIRROR: %s (%d/%d) won.\n", p_ptr->name, p_ptr->max_plv, p_ptr->max_lev);
 	}
