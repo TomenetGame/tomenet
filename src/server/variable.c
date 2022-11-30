@@ -481,6 +481,7 @@ char *t_text;
  */
 header *r_head;
 monster_race *r_info;
+int rur_info_map[MAX_R_IDX];
 char *r_name;
 char *r_text;
 #ifdef MONS_PRE_SORT
@@ -711,6 +712,7 @@ u16b max_s_idx;
  * Maximum number of monsters in r_info.txt
  */
 u16b max_r_idx;
+u16b max_rur_idx; /* Unique monsters eligible for winner-respawning */
 
 /*
  * Maximum number of ego monsters in re_info.txt

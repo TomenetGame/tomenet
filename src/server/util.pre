@@ -233,6 +233,7 @@ extern s32b santa_claus_timer;
 extern bool night_surface;		/* Is it night outside? */
 extern u16b max_s_idx;
 extern u16b max_r_idx;
+extern u16b max_rur_idx;
 extern u16b max_re_idx;
 extern u16b max_k_idx;
 extern u16b max_v_idx;

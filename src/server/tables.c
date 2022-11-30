@@ -4982,7 +4982,7 @@ cptr player_title_special[MAX_CLASS][5][4] = {
 		//{"Mythical Assassin", "Mythical Assassin", "Myt.Assassin", "Myt.Assassin", },
 		//{"Death Fate", "Death Fate", "Death Fate", "Death Fate", },
 		{"Death's Hand", "Death's Hand", "Death's Hand", "Death's Hand", },
-		/* it's fitting, but let's not make the game too JOKEBANDish anyway^^ */
+		/* it's fitting, but let's not make the game too JOKEANGBANDish anyway^^ */
 		//{"RNG", "RNG", }, //LOL! Perfect, do you not think so? :) -adam
 	},
 

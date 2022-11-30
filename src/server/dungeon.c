@@ -7278,7 +7278,7 @@ void store_turnover() {
    depending on cfg.fps it might be skipped sometimes, which may or
    may not be critical depending on what it does! - C. Blue */
 static void process_various(void) {
-	int i, j;
+	int i, j, k;
 	int h = 0, m = 0, s = 0, dwd = 0, dd = 0, dm = 0, dy = 0;
 #ifndef ARCADE_SERVER
 	time_t now;
@@ -7410,7 +7410,7 @@ static void process_various(void) {
 			great_pumpkin_duration--;
 			if (!great_pumpkin_duration) {
 				monster_type *m_ptr;
-				int k, m_idx;
+				int m_idx;
 
 				for (k = m_top - 1; k >= 0; k--) {
 					/* Access the index */
@@ -7437,7 +7437,7 @@ static void process_various(void) {
 			}
 			else if (great_pumpkin_duration <= 5) {
 				monster_type *m_ptr;
-				int k, m_idx;
+				int m_idx;
 
 				for (k = m_top - 1; k >= 0; k--) {
 					/* Access the index */
@@ -7545,22 +7545,18 @@ static void process_various(void) {
 			/* Update the player retirement timers */
 			// If our retirement timer is set
 			if (p_ptr->retire_timer > 0) {
-				int k = p_ptr->retire_timer;
+				k = p_ptr->retire_timer;
 
 				// Decrement our retire timer
 				j = k - 1;
 
 				// Alert him
-				if (j <= 60) {
+				if (j <= 60)
 					msg_format(i, "\377rYou have %d minute%s of tenure left.", j, j > 1 ? "s" : "");
-				}
-				else if (j <= 1440 && !(k % 60)) {
+				else if (j <= 1440 && !(k % 60))
 					msg_format(i, "\377yYou have %d hours of tenure left.", j / 60);
-				}
-				else if (!(k % 1440)) {
+				else if (!(k % 1440))
 					msg_format(i, "\377GYou have %d days of tenure left.", j / 1440);
-				}
-
 
 				// If the timer runs out, forcibly retire
 				// this character.
@@ -7572,34 +7568,16 @@ static void process_various(void) {
 		/* Update the unique respawn timers */
 		/* I moved this out of the loop above so this may need some
 		 * tuning now - mikaelh */
+		if (max_rur_idx) { /* Paranoia: No unique monsters available? */
 		for (j = 1; j <= NumPlayers; j++) {
 			p_ptr = Players[j];
 			if (!p_ptr->total_winner) continue;
 			if (istownarea(&p_ptr->wpos, MAX_TOWNAREA)) continue; /* allow kings idling instead of having to switch chars */
 
-			/* Randomly try finding a fundamentally eligible unique monster. Don't check alive/dead state yet though! */
-			do {
-				/* Hack -- never Maggot and his dogs :) (also includes joke monsters Martti Ihrasaari and The Greater hell-beast) */
-				i = rand_range(57, max_r_idx - 1); // (57 is Freesia)
-				r_ptr = &r_info[i];
-			} while (
-			/* Make sure we are looking at a unique */
-			    (!(r_ptr->flags1 & RF1_UNIQUE)) ||
-			/* Hack -- Sauron and Morgoth are exceptions (and all > Morgy-uniques)
-			   ..and Michael neither, hardcoding them via maxlev: */
-			    r_ptr->level >= 98 ||
-			/* Redundant, since he's a dungeon boss, but anyway: (He's linked to Sauron) */
-			    i == RI_DOL_GULDUR ||
-			/* No nazguls */
-			    (r_ptr->flags7 & RF7_NAZGUL) ||
-			/* Dungeon bosses probably shouldn't respawn */
-			    (r_ptr->flags0 & RF0_FINAL_GUARDIAN) ||
-			/* Special-dropping uniques neither? */
-			    //(r_ptr->flags1 & RF1_DROP_CHOSEN) || */
-			/* --- QUESTOR is currently NOT used!! - C. Blue */
-			    //(r_ptr->flags1 & RF1_QUESTOR) ||
-			/* The unique is currently administratively disabled via '/unidisable'? */
-			    !r_ptr->max_num);
+			/* Randomly pick a basically eligible unique monster. */
+			k = rand_int(max_rur_idx);
+			i = rur_info_map[k];
+			r_ptr = &r_info[i];
 
 			/* Unique isn't dead or fails respawn roll? Then this player is off the hook for now! */
 			if (p_ptr->r_killed[i] != 1 ||
@@ -7613,6 +7591,7 @@ static void process_various(void) {
 			/* Tell the player */
 			/* the_sandman: added colour */
 			msg_format(j, "\374\377v%s rises from the dead!",(r_name + r_ptr->name));
+		}
 		}
 
 		/* discard reserved character names that exceed their timeout */

@@ -3581,6 +3581,44 @@ void init_some_arrays(void) {
 	if (init_d_info()) quit("Cannot initialize dungeon types");
 	//init_guardians();
 
+	/* From the initialized r_info and d_info (we need d-info to know final-guardians!) arrays,
+	   collect all unique monsters eligible for winner-respawning */
+	s_printf("[Initializing arrays... (winner-respawnable unique monsters)]\n");
+	max_rur_idx = 0;
+	if (max_r_idx) {
+		monster_race *r_ptr;
+
+		/* Hack -- never Maggot and his dogs :) (also includes joke monsters Martti Ihrasaari and The Greater hell-beast) */
+		for (h = 57; h < max_r_idx; h++) { // (57 is Freesia)
+			r_ptr = &r_info[h];
+
+			if (
+			/* Make sure we are looking at a unique */
+			    (!(r_ptr->flags1 & RF1_UNIQUE)) ||
+			/* Hack -- Sauron and Morgoth are exceptions (and all > Morgy-uniques)
+			   ..and Michael neither, hardcoding them via maxlev: */
+			    r_ptr->level >= 98 ||
+			/* Redundant, since he's a dungeon boss, but anyway: (He's linked to Sauron) */
+			    h == RI_DOL_GULDUR ||
+			/* No nazguls */
+			    (r_ptr->flags7 & RF7_NAZGUL) ||
+			/* Dungeon bosses probably shouldn't respawn */
+			    (r_ptr->flags0 & RF0_FINAL_GUARDIAN) ||
+			/* Special-dropping uniques neither? */
+			    //(r_ptr->flags1 & RF1_DROP_CHOSEN) || */
+			/* --- QUESTOR is currently NOT used!! - C. Blue */
+			    //(r_ptr->flags1 & RF1_QUESTOR) ||
+			/* Skip monsters that aren't configured to exist */
+			    !mon_allowed_chance(r_ptr))
+				continue;
+
+			/* Accept */
+			rur_info_map[max_rur_idx] = h;
+			//s_printf("#%3d) [%4d] %s\n", max_rur_idx, h, r_name + r_ptr->name); //debug
+			max_rur_idx++;
+		}
+	}
+
 	/* Initialize feature info */
 	s_printf("[Initializing arrays... (vaults)]\n");
 	if (init_v_info()) quit("Cannot initialize vaults");

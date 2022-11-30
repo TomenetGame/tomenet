@@ -5147,7 +5147,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf) {
 
 			/* Santa Claus costumes during xmas */
 			if (season_xmas) {
-				o_ptr->bpval = RI_SANTA1; /* JOKEBAND Santa Claus */
+				o_ptr->bpval = RI_SANTA1; /* JOKEANGBAND Santa Claus */
 				o_ptr->level = 1;
 			} else {
 				/* Default to the "player" */

@@ -412,6 +412,7 @@ extern s16b *e_tval_size;
 extern s16b **e_tval;
 extern header *r_head;
 extern monster_race *r_info;
+extern int rur_info_map[MAX_R_IDX];
 extern char *r_name;
 extern char *r_text;
 #ifdef MONS_PRE_SORT
@@ -445,6 +446,7 @@ extern char summon_kin_type;
 extern u16b old_max_s_idx;
 extern u16b max_s_idx;
 extern u16b max_r_idx;
+extern u16b max_rur_idx;
 extern u16b max_re_idx;
 extern u16b max_k_idx;
 extern u16b max_v_idx;
