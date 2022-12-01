@@ -14330,7 +14330,10 @@ Restrictions apply to live-spawning though:
  - Bloodletters of Khorne will not live-spawn (or get summoned) in groups,
    only one by one. (Because the danger of k.o. is deemed too high.)
  - The even monster 'The Great Pumpkin' cannot live-spawn.
-
+ - Monsters can't act for a random, very short amount of 'wind-up' time
+   (between 0 and up to 2/3s real-time on Nether Realm floors).
+   This also happens for summons except summons done by a player.
+   This makes spawns and monster-summons less deadly.
 Also note that at level generation time, monsters cannot spawn on staircases,
 but live-spawns can spawn on staircases.
 
@@ -14370,6 +14373,8 @@ end up of lower level instead.
 
 The same restrictions as for live-spawns listed above apply to summons as well,
 with the exception of summoning in the IDDC, which is allowed.
+Especially important, the 'wind-up' time for monsters getting summoned by other
+monsters applies, same as for live-spawns (see Live-spawn rules above).
 
 Note that monsters summoning other monsters will cause the summons to give less
 and less experience until they are 100% clones that do not yield any XP or loot
