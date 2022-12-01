@@ -14157,8 +14157,9 @@ move onto an adjacent grid. Killing townies is a good way to make some easy
 money. Just beware of mean-looking mercenaries and battle-scarred veterans.
 
 In Bree, the starter town, you might also meet an exception: The 'questor'
-standing a bit south of the inn, the 'Town Elder'. He is a flashing 't' and
-actually not hostile and you can talk to him a bit by bumping into him.
+standing a bit south of the inn, the 'Town Elder'. He is a purple 't' that
+sometimes flashes a bit and is actually not hostile, you can talk to him a bit
+by bumping into him.
 
 When you enter the training tower or the dungeon you will soon notice the
 variety of monsters, for example you will probably encounter a "floating eye",
