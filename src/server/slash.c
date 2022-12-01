@@ -1579,8 +1579,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					break;
 				}
 				if (!allcapsok) allcaps = FALSE;
-				/* Resolve conflict 'chapter no' vs 'line no' */
-				if (atoi(message3) > 8 && !dot) lineno = atoi(message3);
+				/* Resolve conflict 'chapter no' vs 'line no': We assume 0-9 are chapters and everything starting at 10 is therefore a line number. */
+				if (atoi(message3) > 9 && !dot) lineno = atoi(message3);
 
 				/* We're looking for help on a slash command? Use 'strict search' */
 				if (*message3 == '/') Send_Guide(Ind, 2, 0, message3);
