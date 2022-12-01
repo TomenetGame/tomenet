@@ -14756,9 +14756,9 @@ Morgoth
 Bahamut
     A rod of healing of the istari.
 The Living Lightning
-    A randart lightning ring that grants speed, an air tome, a rune of air and
-    of lightning, a rod of lightning balls of the istari and a randart sky
-    dragon scale mail.
+    A randart lightning ring that grants speed, an air tome, a rune of mana and
+    a rune of lightning, a rod of lightning balls of the istari and
+    a randart sky dragon scale mail.
 The Hellraiser
     A potion of learning and a scroll of artifact creation.
 Dor

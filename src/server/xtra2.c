@@ -7624,7 +7624,7 @@ if (cfg.unikill_format) {
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 			object_wipe(qq_ptr);
-			invcopy(qq_ptr, lookup_kind(TV_RUNE, 5));
+			invcopy(qq_ptr, lookup_kind(TV_RUNE, 32)); //mana
 			qq_ptr->number = 1;
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
@@ -7632,7 +7632,7 @@ if (cfg.unikill_format) {
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 			object_wipe(qq_ptr);
-			invcopy(qq_ptr, lookup_kind(TV_RUNE, 8));
+			invcopy(qq_ptr, lookup_kind(TV_RUNE, 9)); //elec
 			qq_ptr->number = 1;
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
