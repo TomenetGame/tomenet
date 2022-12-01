@@ -14312,9 +14312,9 @@ The rarity also affects mimics a lot that are going form-hunting, as rare
 monsters are harder to find and therefore take longer to learn their form.
 The rarity is listed in ~7 and in the r_info spoiler file in ~l.
 
-Lastly, worldmap terrain and dungeon types also determine the type of monster
-that may spawn, and/or modify the rarity of certain monster classes.
-For example..
+Lastly, worldmap terrain and dungeon types (see d_info spoiler file via ~ld)
+also determine the type of monster that may spawn, and/or modify the rarity of
+certain monster classes. For example..
  - the Orc Caves spawn a lot of orcs, much more in relation to other monsters
    than other dungeons.
  - Ocean on the worldmap spawns aquatic creatures but no land-based critters.
