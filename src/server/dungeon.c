@@ -7568,7 +7568,7 @@ static void process_various(void) {
 		/* Update the unique respawn timers */
 		/* I moved this out of the loop above so this may need some
 		 * tuning now - mikaelh */
-		if (max_rur_idx) { /* Paranoia: No unique monsters available? */
+		if (max_rur_idx) /* Paranoia: No unique monsters available? */
 		for (j = 1; j <= NumPlayers; j++) {
 			p_ptr = Players[j];
 			if (!p_ptr->total_winner) continue;
@@ -7591,7 +7591,6 @@ static void process_various(void) {
 			/* Tell the player */
 			/* the_sandman: added colour */
 			msg_format(j, "\374\377v%s rises from the dead!",(r_name + r_ptr->name));
-		}
 		}
 
 		/* discard reserved character names that exceed their timeout */
