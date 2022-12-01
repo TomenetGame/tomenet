@@ -14169,10 +14169,12 @@ If you're unlucky or your Saving Throw stat (Shift+C to check) isn't
 particularly great a floating eye might even lock you in paralyzation forever,
 making you easy prey for any other monster around.
 
-To check monster information you have three ways:
+To check monster information you have these ways:
 Press ~2 for monsters you have killed or ~3 for a list of 'unique' monsters.
 Press ~7 for the 'monster lore' search. It contains all monsters in the game
  execpt for ego-variations (see below).
+Press ~l for spoiler files and there check 'r' and 'E' for base monster races
+ and for ego monster types (modifiers that are applied to the base monsters).
 
 There are three types of monsters:
 -Basic monsters (over 1100 of those), such as "a Hill Orc" or "a Zog".
