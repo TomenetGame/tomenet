@@ -15076,7 +15076,7 @@ time he lands a blow the aura will retaliate, dealing lightning / cold / fire
 damage depending on the aura type. Some monsters even have multiple auras.
 The damage of such auras may be significant. Especially important is the fact,
 that the faster a player hits a monster, the more he will suffer from its
-auras.
+auras, as they are applied on each hit.
 
 The damage an aura deals is decided by a dice roll:
 [1 + (monsterlevel/26)] d [1 + (monsterlevel / 17)]
