@@ -14265,8 +14265,155 @@ monsters in the Paths of the Dead, etc. - theorycraft is never over!
 
 (6.1a) Normal monsters, unique monsters, boss monsters and how they spawn
 -------------------------------------------------------------------------
-spawning and being summoned
-monsters summoning
+
+Generation-time monster creation:
+---------------------------------
+When a player enters a dungeon (or tower) floor and causes it to be generated,
+monsters will be spawned on it depending on the floor level (also called
+'depth') and the player.
+
+In general, a dungeon floor of level N will randomly get monsters placed on it
+ranging in r-level from 1 up to N. (Level 0 monsters are for Bree town only.)
+
+This means that if you are looking for say a level 20 monster the highest
+probability to find it is at a dungeon floor of level 20. You could also go to
+a floor of level 25 for example, but then the total pool of easily eligible
+monsters is diluted a bit more from the addition of the level 21-25 monsters.
+
+World map sectors also work this way. Their levels depend on the level of the
+closest town sector and their distance to that town.
+
+However, 'Out of Depth' spawns are possible: A monster can, albeit rarely,
+occur on a dungeon floor that is way lower level than the monster. This can be
+pretty dangerous and will be indicated to the player by a yellow floor feeling,
+also see (4.8).
+
+Unique monsters (named monsters, eg "Lagduf, the Snaga") may also spawn on the
+dungeon floor if the player 'generating' it has not yet killed that particular
+unique monster already.
+
+Dungeon bosses are unique monsters too, but they can only be generated on the
+final floor of their respective dungeon. They are displayed in yellow colour
+in the uniques list in the knowledge menu (3~).
+
+
+Live-spawn monster creation:
+----------------------------
+Aside from this monster spawning at level generation time, monsters can also
+spawn 'live', ie while the player is already on the dungeon level and doing
+stuff. This can sometimes be dangerous if the player doesn't notice it and the
+monster is a nasty one.
+
+Restrictions apply to live-spawning though:
+ - The game boss, Morgoth, as well as any dungeon bosses cannot live-spawn.
+ - There are no live-spawns (except for breeders and summons) in the special
+   dungeon 'Ironman Deep Dive Challenge' (IDDC).
+ - Darklings and Candlebearers (for Maiar) cannot live-spawn.
+ - Unmakers cannot live-spawn (except for already existing ones multiplying).
+ - Live-spawns do not cause or alter a dungeon floor feeling!
+ - Bloodletters of Khorne will not live-spawn (or get summoned) in groups,
+   only one by one. (Because the danger of k.o. is deemed too high.)
+ - The even monster 'The Great Pumpkin' cannot live-spawn.
+
+Also note that at level generation time, monsters cannot spawn on staircases,
+but live-spawns can spawn on staircases.
+
+
+Unique monsters:
+----------------
+Once the player kills a unique (named) monster, he will never generate it again
+and the only way to actually meet it again is to have another player, who
+hasn't killed it yet, generate a dungeon level and hope for the particular
+unique to spawn on it.
+
+However, most unique monsters are eligible for auto-revivification once the
+player character obtains the WINNER status, by killing the game boss, Morgoth.
+See further below about uniques reviving for winners.
+
+Note that the game boss, Morgoth, cannot be encountered by players who haven't
+killed Sauron yet or who currently possess the winner status, ie royal title
+and purple name.
+Even if you attempt to have someone else generate the dungeon floor and Morgoth
+on it, you will be unable to go there and meet him!
+
+The same is true for the seasonal event mob 'The Great Pumpkin', for players
+not meeting the required level restrictions. (See 'Seasonal Events' in (4.13)).
+
+There is a special way for everlasting or normal characters who have already
+killed Morgoth but then died and thereby lost their royal status, to encounter
+Morgoth once more without help from another player, for a chance to regain
+their winner status. For details see chapter (4.5a) under 'The Mirror' on how
+to change your fate to enable you to 'solo re-king'.
+
+
+Monsters being summoned:
+------------------------
+Monsters (and players) can summon monsters of higher level than themselves.
+The summoning levels will be random though and the summoned monsters could also
+end up of lower level instead.
+
+The same restrictions as for live-spawns listed above apply to summons as well,
+with the exception of summoning in the IDDC, which is allowed.
+
+Note that monsters summoning other monsters will cause the summons to give less
+and less experience until they are 100% clones that do not yield any XP or loot
+anymore. So you can 'farm' summons for a while, but not endlessly.
+
+There are also special types of induced live-spawns that do not get summoned by
+the normal summoning mechanics and therefore do not count as 'summons' but are
+rather spawned as a result of another monster getting killed.
+Two very prominent examples are:
+ - Killing a pink horror spawns blue horrors.
+ - Killing a warrior of the dawn may spawn more warriors of the dawn.
+
+
+Dead uniques reviving again for winner characters:
+--------------------------------------------------
+A player that has beaten the game boss, Morgoth, and hasn't died since so he
+still carries the royal title and purple name will randomly get dead unique
+monsters he killed before revived back to life by the game, so he can kill
+them over and over again. Each time he kills them they may randomly revive
+again for him at a later time.
+If that happens he sees a message "Xyz rises from the dead!" in violet colour.
+
+This check happens once per minute for each eligible (ie winner) player.
+The check actually picks a random unique monster that belongs to the pool of
+respawn-eligible uniques and then checks if the player already killed it.
+
+If he killed it the game will roll dice against a 'resurrection chance' which
+is lower the higher level a monster is, so low-level monsters will resurrect
+faster than high-level monsters. If the monster passes the roll it will get
+resurrected!
+If the monster doesn't pass the roll or if it wasn't actually dead for the
+player but currently alive for him then nothing will happen this time.
+You can check which uniques you have currently killed or not in the knowledge
+menu (~3 key).
+
+This means that the more dead uniques you have the more likely each minute one
+of them will revive. On the other hand since one unique is picked randomly each
+time independantly of whether it is actually dead or alive to the player, it is
+not possible to cause a particular unique to respawn slower or faster (eg by
+killing or not killing other uniques). The chance PER UNIQUE will always be the
+same over the same amount of time.
+
+This revive-spawning is on hold while the player is in town or in the town area
+(the housing zones surrounding each town), so uniques will not respawn until
+the player leaves the town area and travels the world map or ventures into a
+dungeon/tower.
+
+Some unique monsters are not eligible for revivification, so once the player
+kills them he will never generate them again and the only way to actually meet
+them again is to have another player, who hasn't killed them yet, generate a
+dungeon level and hope for them to spawn on it:
+ - The monster level (r-level) must be lower than 98,
+   so the game bosses like Sauron and Morgoth also never revive.
+ - The Shadow of Dol Guldur never revives (as it is Sauron in disguise!)
+ - Nazgul never revive.
+ - Dungeon bosses never revive.
+
+(See exceptions for the game boss Morgoth and for the seasonal event
+monster 'The Great Pumpkin' explained further above, which cannot be
+generated for you by another player if you don't meet the requirements.)
 
 
 
