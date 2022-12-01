@@ -1574,6 +1574,8 @@ They all start with a slash '/' hence they're called slash commands:
 
             To access not a chapter, but a "header" of some subparagraph, try
             searching for all uppercase, eg "CONFUSION" instead of "confusion".
+            Basically this searches for occurances specifically at the
+            beginning of lines. Another example: "events" vs "EVENTS".
 
             If a search initiated by this command wraps around once, it will
             drop the search tier to basic text search, resulting in potentially
