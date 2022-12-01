@@ -14143,17 +14143,22 @@ damage as usual, even if the target is in wraithform too.
 
 (6.1) Monsters
 --------------
-All creatures in the game apart from special 'questors' and other player
-characters are actually "monsters", aka your enemies. Some might exhibit rather
-neutral looking movement or no movement at all, some might not even inflict
-damage, but none of them is friendly towards you and all of them will or in
-some way or another make your survival more difficult.
+All creatures in the game apart from special 'questors' and player characters
+are actually "monsters", aka your enemies. Some might exhibit rather neutral
+looking movement or no movement at all, some might not even inflict damage,
+but none of them is friendly towards you and all of them will in some way or
+another make your survival more difficult.
+
 Right after creating a new character you will already encounter "monsters" of
 some sort: Townspeople, denoted by the letter 't' and maybe some cats, birds or
 fish (if you happen to walk nearby the lake).
 Since all creatures are basically hostile, you will auto-attack them when you
 move onto an adjacent grid. Killing townies is a good way to make some easy
 money. Just beware of mean-looking mercenaries and battle-scarred veterans.
+
+In Bree, the starter town, you might also meet an exception: The 'questor'
+standing a bit south of the inn, the 'Town Elder'. He is a flashing 't' and
+actually not hostile and you can talk to him a bit by bumping into him.
 
 When you enter the training tower or the dungeon you will soon notice the
 variety of monsters, for example you will probably encounter a "floating eye",
