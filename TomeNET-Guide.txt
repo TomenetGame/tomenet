@@ -14304,6 +14304,14 @@ Dungeon bosses are unique monsters too, but they can only be generated on the
 final floor of their respective dungeon. They are displayed in yellow colour
 in the uniques list in the knowledge menu (3~).
 
+All monsters have their own 'rarity' parameter, which specifies how often
+a monster spawns. This becomes especially noticable when you are going for a
+dungeon boss that has a rarity above 'common': It might take several attempts
+at generating the final dungeon floor until you see him spawn.
+The rarity also affects mimics a lot that are going form-hunting, as rare
+monsters are harder to find and therefore take longer to learn their form.
+The rarity is listed in ~7 and in the r_info spoiler file in ~l.
+
 
 Live-spawn monster creation:
 ----------------------------
