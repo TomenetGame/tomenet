@@ -1199,8 +1199,9 @@
 #define TURN_CHAR_INTO_NUMBER_MULT 95
 /* At which % should a char turn into a number? (10 = always, -1 = never) default: [6] */
 #define TURN_CHAR_INTO_NUMBER 7
-/* Experimental (2022, Dec): When disruption shield is on, show HP instead if HP ratio becomes worse than MP ratio? To warn the player ie if he's cut/poisoned/diseased. */
-//#define TURN_CHAR_INTO_NUMBER_NEWMETHOD
+/* Experimental (2022, Dec): When disruption shield is on, [alternatingly] show HP instead if
+   HP ratio becomes worse than MP ratio? To warn the player ie if he's cut/poisoned/diseased. - C. Blue */
+#define TURN_CHAR_INTO_NUMBER_NEWMETHOD
 
 /* Martyrdom doesn't allow to restore mana? (deprecated, we use half damage
    output for GF_DISP_xxx damage types instead of this penalty) */

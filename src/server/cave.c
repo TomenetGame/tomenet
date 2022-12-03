@@ -4105,7 +4105,7 @@ void lite_spot(int Ind, int y, int x) {
 				c_mp = '0' + num_mp;
 			} else {
 				num_mp = 100;
-				c_mp = 'c';
+				c_mp = c;
 			}
 
 #ifndef TURN_CHAR_INTO_NUMBER_NEWMETHOD /* Current method: Manashield-number overwrites HP-number */
@@ -4113,11 +4113,16 @@ void lite_spot(int Ind, int y, int x) {
 			else c = c_hp;
 #else
 			/* Low HP? Then display number depending on HP over MP so player notices it easily! */
-			if (manashield && num_hp > num_mp) c = c_mp;
-			else {
+			if (!manashield) c = c_hp;
+			else if (num_hp <= num_mp
+ #if 1 /* Alternate between HP- and MP-based number? [1/2s] */
+			    && !((turn / (cfg.fps / 2)) % 2)
+ #endif
+			    ) {
 				c = c_hp;
-				a = TERM_PLASMA; //warn!
-			}
+				//a = TERM_PLASMA; //warn!
+				a = TERM_YELLOW; //better distinguishable from disshield colours
+			} else c = c_mp;
 #endif
 
 			/* snowed by a snowball hit? */
