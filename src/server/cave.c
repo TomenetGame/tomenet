@@ -3517,6 +3517,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 			   should instead determine the colour an _outside_ player gets to see. So we
 			   have to temporarily suppress his hallucinations to get the correct value. */
 			int tmp_image = p2_ptr->image;
+
 			p2_ptr->image = 0;
 			a = player_color(Ind2);
 			p2_ptr->image = tmp_image;
@@ -3587,21 +3588,23 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 #endif
 			}
 
-			if (((p2_ptr->chp * 95) / (p2_ptr->mhp * 10)) > TURN_CHAR_INTO_NUMBER) {
+			if (((p2_ptr->chp * TURN_CHAR_INTO_NUMBER_MULT) / (p2_ptr->mhp * 10)) > TURN_CHAR_INTO_NUMBER) {
 				/* part 'A' used to be here */
 			} else {
 				if (p2_ptr->chp < 0) c = '-';
 				else {
 					int num;
-					num = (p2_ptr->chp * 95) / (p2_ptr->mhp * 10);
+
+					num = (p2_ptr->chp * TURN_CHAR_INTO_NUMBER_MULT) / (p2_ptr->mhp * 10);
 					c = '0' + num;
 				}
 			}
 
-			/* admins sees intensity of mana shields */
+			/* admins sees (exact) intensity of mana shields */
 			if (p_ptr->admin_dm && p2_ptr->tim_manashield && p2_ptr->msp > 0) {
 				if (((p2_ptr->csp * 100) / (p2_ptr->msp * 10)) < 10) {
 					int num;
+
 					num = (p2_ptr->csp * 100) / (p2_ptr->msp * 10);
 					c = '0' + num;
 				}
@@ -3888,13 +3891,15 @@ void lite_spot(int Ind, int y, int x) {
 		byte a;
 		char32_t c;
 
-		/* Handle "player" */
+		/* Handle "player" seeing himself/herself */
 		if ((y == p_ptr->py) && (x == p_ptr->px)) {
 			monster_race *r_ptr = &r_info[p_ptr->body_monster];
+			int num_hp, num_mp;
+			char32_t c_hp, c_mp;
+			bool manashield = (p_ptr->tim_manashield && p_ptr->msp > 0);
 
-			if ((p_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p_ptr->inventory[INVEN_BODY].sval == SV_COSTUME)) {
+			if ((p_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p_ptr->inventory[INVEN_BODY].sval == SV_COSTUME))
 				r_ptr = &r_info[p_ptr->inventory[INVEN_BODY].bpval];
-			}
 
 			/* Get the "player" attr */
 			a = r_ptr->d_attr;
@@ -3906,10 +3911,9 @@ void lite_spot(int Ind, int y, int x) {
 #endif
 
 			/*if (p_ptr->invis && !p_ptr->body_monster) {  - hmm why not always TERM_VIOLET */
-			if (p_ptr->invis) {
-				/* special invis colour */
-				a = TERM_VIOLET;
-			}
+			/* special invis colour */
+			if (p_ptr->invis) a = TERM_VIOLET;
+
 			if (p_ptr->cloaked == 1) {
 				if (p_ptr->cloak_neutralized) a = TERM_SLATE;
 				else a = TERM_L_DARK;
@@ -4078,24 +4082,43 @@ void lite_spot(int Ind, int y, int x) {
 
 			/* bugfix on MASSIVE deaths (det/death) */
 			if (p_ptr->fruit_bat && !p_ptr->body_monster &&
-				!((p_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p_ptr->inventory[INVEN_BODY].sval == SV_COSTUME))) c = 'b';
+			    !((p_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p_ptr->inventory[INVEN_BODY].sval == SV_COSTUME)))
+				c = 'b';
 
 			if (p_ptr->consistent_players) c = '@';
 
-			if (p_ptr->chp < 0) c = '-';
-			else if (!p_ptr->tim_manashield) {
-				if (((p_ptr->chp * 95) / (p_ptr->mhp*10)) <= TURN_CHAR_INTO_NUMBER) {
-					int num;
-					num = (p_ptr->chp * 95) / (p_ptr->mhp * 10);
-					c = '0' + num;
-				}
-			} else if (p_ptr->msp > 0) {
-				if (((p_ptr->csp * 95) / (p_ptr->msp * 10)) <= TURN_CHAR_INTO_NUMBER) {
-					int num;
-					num = (p_ptr->csp * 95) / (p_ptr->msp * 10);
-					c = '0' + num;
-				}
+			/* Check if we see ourself turn into a number from lack of HP (or MP if disruption shield is active). */
+			if (p_ptr->chp < 0) {
+				c_hp = '-';
+				num_hp = -1;
+			} else if (((p_ptr->chp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->mhp * 10)) <= TURN_CHAR_INTO_NUMBER) {
+				num_hp = (p_ptr->chp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->mhp * 10);
+				c_hp = '0' + num_hp;
+			} else {
+				c_hp = c;
+				num_hp = 100;
 			}
+
+			if (manashield && ((p_ptr->csp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->msp * 10)) <= TURN_CHAR_INTO_NUMBER) {
+				num_mp = (p_ptr->csp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->msp * 10);
+				if (num_mp < 0) num_mp = 0; //paranoia
+				c_mp = '0' + num_mp;
+			} else {
+				num_mp = 100;
+				c_mp = 'c';
+			}
+
+#ifndef TURN_CHAR_INTO_NUMBER_NEWMETHOD /* Current method: Manashield-number overwrites HP-number */
+			if (manashield) c = c_mp;
+			else c = c_hp;
+#else
+			/* Low HP? Then display number depending on HP over MP so player notices it easily! */
+			if (manashield && num_hp > num_mp) c = c_mp;
+			else {
+				c = c_hp;
+				a = TERM_PLASMA; //warn!
+			}
+#endif
 
 			/* snowed by a snowball hit? */
 			if (p_ptr->temp_misc_1 & 0x08) a = TERM_WHITE;
@@ -4596,11 +4619,11 @@ void display_map(int Ind, int *cy, int *cx) {
 				}
 				else if (p_ptr->body_monster) tc = r_info[p_ptr->body_monster].d_char;
 				else if (p_ptr->fruit_bat) tc = 'b';
-				else if (((p_ptr->chp * 95) / (p_ptr->mhp * 10)) > TURN_CHAR_INTO_NUMBER) tc = '@';
+				else if (((p_ptr->chp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->mhp * 10)) > TURN_CHAR_INTO_NUMBER) tc = '@';
 				else {
 					if (p_ptr->chp < 0) tc = '-';
 					else {
-						int num = (p_ptr->chp * 95) / (p_ptr->mhp * 10);
+						int num = (p_ptr->chp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->mhp * 10);
 
 						tc = '0' + num;
 					}

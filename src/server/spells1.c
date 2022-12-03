@@ -1945,14 +1945,14 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	is acitavted (C. Blue) */
 /*	if (!p_ptr->tim_manashield)
 	{
-*/		old_num = (p_ptr->chp * 95) / (p_ptr->mhp * 10);
-		if (old_num >= 7) old_num = 10;
+*/		old_num = (p_ptr->chp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->mhp * 10);
+		if (old_num > TURN_CHAR_INTO_NUMBER) old_num = 10;
 /*	}
 	else if (p_ptr->msp > 0)
 	{
 
-		old_num = (p_ptr->csp * 95) / (p_ptr->msp*10);
-		if (old_num >= 7) old_num = 10;
+		old_num = (p_ptr->csp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->msp * 10);
+		if (old_num > TURN_CHAR_INTO_NUMBER) old_num = 10;
 	} */
 
 	/* for MODE_PVP only: prevent easy fleeing from PvP encounter >=) */
@@ -2079,7 +2079,7 @@ destined_defeat:
 	is acitavted (C. Blue) */
 /*	if (!p_ptr->tim_manashield)
 	{
-*/		new_num = (p_ptr->chp * 95) / (p_ptr->mhp * 10);
+*/		new_num = (p_ptr->chp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->mhp * 10);
 		if (new_num > TURN_CHAR_INTO_NUMBER) new_num = 10;
 /*	}
 	else

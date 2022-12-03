@@ -725,8 +725,8 @@ bool hp_player(int Ind, int num) {
 	p_ptr->test_heal += num;
 
 	// The "number" that the character is displayed as before healing
-	old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10);
-	if (old_num >= 7) old_num = 10;
+	old_num = (p_ptr->chp * 95) / (p_ptr->mhp * 10);
+	if (old_num > TURN_CHAR_INTO_NUMBER) old_num = 10;
 
 	/* player can't be healed while burning in the holy fire of martyrium */
 	if (p_ptr->martyr && !bypass_invuln) return(FALSE);
@@ -767,8 +767,8 @@ bool hp_player(int Ind, int num) {
 		p_ptr->redraw |= (PR_HP);
 
 		/* Figure out of if the player's "number" has changed */
-		new_num = (p_ptr->chp * 95) / (p_ptr->mhp * 10);
-		if (new_num >= 7) new_num = 10;
+		new_num = (p_ptr->chp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->mhp * 10);
+		if (new_num > TURN_CHAR_INTO_NUMBER) new_num = 10;
 
 		/* If so then refresh everyone's view of this player */
 		if (new_num != old_num)
@@ -828,8 +828,8 @@ bool hp_player_quiet(int Ind, int num, bool autoeffect) {
 	/* player can't be healed while burning in the holy fire of martyrium */
 	if (p_ptr->martyr && !bypass_invuln) return(FALSE);
 
-	old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10);
-	if (old_num >= 7) old_num = 10;
+	old_num = (p_ptr->chp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->mhp * 10);
+	if (old_num > TURN_CHAR_INTO_NUMBER) old_num = 10;
 
 	/* Hell mode is .. hard */
 	if ((p_ptr->mode & MODE_HARD) && (num > 3)) num = num * 3 / 4;
@@ -868,8 +868,8 @@ bool hp_player_quiet(int Ind, int num, bool autoeffect) {
 		p_ptr->redraw |= (PR_HP);
 
 		/* Figure out of if the player's "number" has changed */
-		new_num = (p_ptr->chp * 95) / (p_ptr->mhp*10);
-		if (new_num >= 7) new_num = 10;
+		new_num = (p_ptr->chp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->mhp * 10);
+		if (new_num > TURN_CHAR_INTO_NUMBER) new_num = 10;
 
 		/* If so then refresh everyone's view of this player */
 		if (new_num != old_num)
