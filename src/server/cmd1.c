@@ -1579,6 +1579,15 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 		/* Must fit the object type */
 		if (s_ptr->sval != sub_sval) continue;
 
+		/* Player disabled auto-stow via bag inscription? */
+		if (check_guard_inscription(s_ptr->note, 'S') ||
+		    (check_guard_inscription(s_ptr->note, 'O') && !o_ptr->owner)) {
+ #ifdef SUBINVEN_LIMIT_GROUP
+			break;
+ #endif
+			continue;
+		}
+
 		/* Eligible subinventory found, try to move as much as possible */
 		if ((fully_stowed = subinven_stow_aux(Ind, o_ptr, i))) break; /* If complete stack was moved, we're done */
  #ifdef SUBINVEN_LIMIT_GROUP

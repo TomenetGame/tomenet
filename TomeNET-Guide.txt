@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 1. December 2022 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 3. December 2022 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2219,6 +2219,10 @@ Empty bottles:
                 the amount of n bottles. Example:  !M10
                 This is mainly useful for when 'keep_bottle' option is enabled,
                 to prevent uncontrolled amassment of empty bottles.
+
+Bags (subinventory):
+    !S          Do not auto-stow items into this bag.
+    !O          Do not auto-stow unowned items (ie new loot) into this bag.
 
 Any item:
     !%          This will not actually be inscribed. The item will keep retain
@@ -5356,12 +5360,16 @@ There are four categories of subinventories:
   Alternatively you can activate them from the outside as usual with SHIFT+A,
   but then you have to use the '@' feature (call by item name) in the prompt,
   or simply create a macro using the macro wizard, which does it this way too.
+  If you pick up chemicals or mixtures they will be auto-stowed into this bag
+  unless inscribed (see further down).
 
 - Trap Kit Bag
   This bag compactly stores a surprising amount of trap kits and allows you to
   deploy them straight from within.
   To do so, you must use the '@' feature (call by item name) in the prompt,
   or simply create a macro using the macro wizard, which does it this way too.
+  If you pick up trap kits they will be auto-stowed into this bag unless
+  inscribed (see further down).
 
 - Antistatic Wrapping
   This bag can hold magic devices that do not require a directional activation
@@ -5372,6 +5380,8 @@ There are four categories of subinventories:
   Unknown rods are never eligible to be placed in this bag.
   Note that !C inscription (to alert when charged) on your magic devices works
   just fine when they are inside bags, just as usual.
+  If you pick up fitting magical devices they will be auto-stowed into this bag
+  unless inscribed (see further down).
 
 As you noticed, for now from outside the subinventory you cannot access any
 items inside except if you use the '@' (call by item name) feature in the item
@@ -5388,6 +5398,10 @@ A few generic commands are always available in any subinventory:
   - Inscribe or uninscribe an item ({ or }).
   - Pasting an item into chat via SHIFT+slot.
   - Unstow item, ie put it back to inventory (t).
+
+There are also two inscriptions that can be put onto these bags:
+  !S  Do not auto-stow items into this bag.
+  !O  Do not auto-stow unowned items (ie new loot) into this bag.
 
 
 (3.4a) Start-up equipment
