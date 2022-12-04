@@ -11262,7 +11262,7 @@ static void town_gen(struct worldpos *wpos) {
 
 
 /*
- * Allocate the space needed for a dungeon level
+ * Allocate the space needed for a dungeon level or worldmap sector
  */
 void alloc_dungeon_level(struct worldpos *wpos) {
 	int i;
@@ -11281,6 +11281,7 @@ void alloc_dungeon_level(struct worldpos *wpos) {
 
 	if (wpos->wz) {
 		struct dun_level *dlp;
+
 		d_ptr = (wpos->wz > 0 ? w_ptr->tower : w_ptr->dungeon);
 		dlp = &d_ptr->level[ABS(wpos->wz) - 1];
 		dlp->cave = zcave;
@@ -11319,7 +11320,7 @@ void alloc_dungeon_level(struct worldpos *wpos) {
 }
 
 /*
- * Deallocate the space needed for a dungeon level
+ * Deallocate the space needed for a dungeon level or worldmap sector
  */
 void dealloc_dungeon_level(struct worldpos *wpos) {
 	int i, j;
@@ -11661,7 +11662,7 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, 
 }
 
 /*
- * Generates a random dungeon level			-RAK-
+ * Generates a random dungeon level or wilderness sector  -RAK-
  *
  * Hack -- regenerate any "overflow" levels
  *
@@ -11736,6 +11737,7 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr) {
 
 			{
 				int retval = -1, type;
+
 				for (i = 0; i < numtowns; i++) {
 					if (town[i].x == wpos->wx && town[i].y == wpos->wy) {
 						retval = i;

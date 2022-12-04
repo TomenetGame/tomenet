@@ -4567,6 +4567,7 @@ void display_map(int Ind, int *cy, int *cx) {
 	player_type *p_ptr = Players[Ind];
 
 	int i, j, x, y;
+	int yt, xt;
 
 	byte ta;
 	char32_t tc;
@@ -4596,7 +4597,9 @@ void display_map(int Ind, int *cy, int *cx) {
 
 	/* Clear the chars and attributes */
 	memset(ma, TERM_WHITE, sizeof(ma));
-	for (int yt=0; yt < MAP_HGT + 2; yt++) for (int xt=0; xt < MAP_WID + 2; xt++) mc[yt][xt] = ' ';
+	for (yt = 0; yt < MAP_HGT + 2; yt++)
+		for (xt = 0; xt < MAP_WID + 2; xt++)
+			mc[yt][xt] = ' ';
 
 	/* No priority */
 	memset(mp, 0, sizeof(mp));

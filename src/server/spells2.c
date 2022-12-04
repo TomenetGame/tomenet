@@ -6404,15 +6404,18 @@ void wipe_spell(struct worldpos *wpos, int cy, int cx, int r) {
  */
 static void cave_temp_room_lite(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	int i;
+	int i, x, y, chance;
 	struct worldpos *wpos = &p_ptr->wpos;
+	monster_type *m_ptr;
+	monster_race *r_ptr;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Clear them all */
 	for (i = 0; i < p_ptr->temp_n; i++) {
-		int y = p_ptr->temp_y[i];
-		int x = p_ptr->temp_x[i];
+		y = p_ptr->temp_y[i];
+		x = p_ptr->temp_x[i];
 
 		cave_type *c_ptr = &zcave[y][x];
 
@@ -6427,9 +6430,9 @@ static void cave_temp_room_lite(int Ind) {
 
 		/* Process affected monsters */
 		if (c_ptr->m_idx > 0) {
-			int chance = 25;
-			monster_type	*m_ptr = &m_list[c_ptr->m_idx];
-			monster_race    *r_ptr = race_inf(m_ptr);
+			chance = 25;
+			m_ptr = &m_list[c_ptr->m_idx];
+			r_ptr = race_inf(m_ptr);
 
 			/* Update the monster */
 			update_mon(c_ptr->m_idx, FALSE);
@@ -6469,8 +6472,6 @@ static void cave_temp_room_lite(int Ind) {
 	p_ptr->temp_n = 0;
 }
 
-
-
 /*
  * This routine clears the entire "temp" set.
  *
@@ -6484,15 +6485,15 @@ static void cave_temp_room_lite(int Ind) {
  */
 static void cave_temp_room_unlite(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	int i;
+	int i, x, y;
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Clear them all */
 	for (i = 0; i < p_ptr->temp_n; i++) {
-		int y = p_ptr->temp_y[i];
-		int x = p_ptr->temp_x[i];
+		y = p_ptr->temp_y[i];
+		x = p_ptr->temp_x[i];
 		cave_type *c_ptr = &zcave[y][x];
 
 		/* No longer in the array */
@@ -6502,7 +6503,7 @@ static void cave_temp_room_unlite(int Ind) {
 		if (!(f_info[c_ptr->feat].flags2 & FF2_GLOW)) c_ptr->info &= ~CAVE_GLOW;
 
 		/* Hack -- Forget "boring" grids */
-//		if (c_ptr->feat <= FEAT_INVIS)
+		//if (c_ptr->feat <= FEAT_INVIS)
 		if (cave_plain_floor_grid(c_ptr)) {
 			/* Forget the grid */
 			p_ptr->cave_flag[y][x] &= ~CAVE_MARK;
@@ -6524,9 +6525,6 @@ static void cave_temp_room_unlite(int Ind) {
 	/* None left */
 	p_ptr->temp_n = 0;
 }
-
-
-
 
 /*
  * Aux function -- see below
@@ -6557,9 +6555,6 @@ static void cave_temp_room_aux(int Ind, struct worldpos *wpos, int y, int x) {
 	p_ptr->temp_n++;
 }
 
-
-
-
 /*
  * Illuminate any room containing the given location.
  */
@@ -6575,7 +6570,8 @@ void lite_room(int Ind, struct worldpos *wpos, int y1, int x1) {
 
 	/* While grids are in the queue, add their neighbors */
 	for (i = 0; i < p_ptr->temp_n; i++) {
-		x = p_ptr->temp_x[i], y = p_ptr->temp_y[i];
+		x = p_ptr->temp_x[i];
+		y = p_ptr->temp_y[i];
 
 		/* Walls get lit, but stop light */
 		if (!cave_floor_bold(zcave, y, x)) continue;
@@ -6595,6 +6591,119 @@ void lite_room(int Ind, struct worldpos *wpos, int y1, int x1) {
 
 	/* Now, lite them all up at once */
 	cave_temp_room_lite(Ind);
+}
+
+static void global_cave_temp_room_lite(worldpos *wpos) {
+	int i, x, y, chance;
+	monster_type *m_ptr;
+	monster_race *r_ptr;
+	cave_type **zcave;
+
+	if (!(zcave = getcave(wpos))) return;
+
+	/* Clear them all */
+	for (i = 0; i < global_temp_n; i++) {
+		y = global_temp_y[i];
+		x = global_temp_x[i];
+
+		cave_type *c_ptr = &zcave[y][x];
+
+		/* No longer in the array */
+		c_ptr->info &= ~CAVE_TEMP;
+
+		/* Update only non-CAVE_GLOW grids */
+		/* if (c_ptr->info & CAVE_GLOW) continue; */
+
+		/* Perma-Lite */
+		c_ptr->info |= CAVE_GLOW;
+
+		/* Process affected monsters */
+		if (c_ptr->m_idx > 0) {
+			chance = 25;
+			m_ptr = &m_list[c_ptr->m_idx];
+			r_ptr = race_inf(m_ptr);
+
+			/* Update the monster */
+			update_mon(c_ptr->m_idx, FALSE);
+
+			/* Stupid monsters rarely wake up */
+			if (r_ptr->flags2 & RF2_STUPID) chance = 10;
+
+			/* Smart monsters always wake up */
+			if (r_ptr->flags2 & RF2_SMART) chance = 100;
+
+			/* Sometimes monsters wake up */
+			if (m_ptr->csleep && (rand_int(100) < chance)) m_ptr->csleep = 0;
+		}
+
+		/* Note */
+		note_spot_depth(wpos, y, x);
+
+		/* Redraw */
+		everyone_lite_spot(wpos, y, x);
+	}
+
+	/* None left */
+	global_temp_n = 0;
+}
+
+static void global_cave_temp_room_aux(struct worldpos *wpos, int y, int x) {
+	cave_type *c_ptr;
+	cave_type **zcave;
+
+	if (!(zcave = getcave(wpos))) return;
+	c_ptr = &zcave[y][x];
+
+	/* Avoid infinite recursion */
+	if (c_ptr->info & CAVE_TEMP) return;
+
+	/* Do not "leave" the current room */
+	if (!(c_ptr->info & CAVE_ROOM)) return;
+
+	/* Paranoia -- verify space */
+	if (global_temp_n == TEMP_MAX) return;
+
+	/* Mark the grid as "seen" */
+	c_ptr->info |= CAVE_TEMP;
+
+	/* Add it to the "seen" set */
+	global_temp_y[global_temp_n] = y;
+	global_temp_x[global_temp_n] = x;
+	global_temp_n++;
+}
+
+void global_lite_room(struct worldpos *wpos, int y1, int x1) {
+	int i, x, y;
+
+	cave_type **zcave;
+	if (!(zcave = getcave(wpos))) return;
+
+	/* Add the initial grid */
+	global_cave_temp_room_aux(wpos, y1, x1);
+
+	/* While grids are in the queue, add their neighbors */
+	for (i = 0; i < global_temp_n; i++) {
+		x = global_temp_x[i];
+		y = global_temp_y[i];
+
+		/* Walls get lit, but stop light */
+		if (!cave_floor_bold(zcave, y, x) && zcave[y][x].feat != FEAT_HOME) continue;
+
+		/* Spread adjacent */
+		global_cave_temp_room_aux(wpos, y + 1, x);
+		global_cave_temp_room_aux(wpos, y - 1, x);
+		global_cave_temp_room_aux(wpos, y, x + 1);
+		global_cave_temp_room_aux(wpos, y, x - 1);
+
+		/* Spread diagonal */
+		global_cave_temp_room_aux(wpos, y + 1, x + 1);
+		global_cave_temp_room_aux(wpos, y - 1, x - 1);
+		global_cave_temp_room_aux(wpos, y - 1, x + 1);
+		global_cave_temp_room_aux(wpos, y + 1, x - 1);
+	}
+
+	/* Now, lite them all up at once */
+	global_cave_temp_room_lite(wpos);
 }
 
 

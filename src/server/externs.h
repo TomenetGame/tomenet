@@ -1744,6 +1744,7 @@ extern void earthquake(struct worldpos *wpos, int cy, int cx, int r);
 extern void wipe_spell(struct worldpos *wpos, int cy, int cx, int r);
 extern void lite_room(int Ind, struct worldpos *wpos, int y1, int x1);
 extern void unlite_room(int Ind, struct worldpos *wpos, int y1, int x1);
+extern void global_lite_room(struct worldpos *wpos, int y1, int x1); /* hackz */
 extern bool lite_area(int Ind, int dam, int rad);
 extern bool unlite_area(int Ind, bool player, int dam, int rad);
 extern bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker);
@@ -2704,3 +2705,7 @@ extern int dbgvar1b, dbgvar2b, dbgvar3b, dbgvar4b, dbgvar5b, dbgvar6b;
 extern char dbgvars[MAX_CHARS];
 
 extern bool pvp_disabled;
+
+extern s16b global_temp_n;
+extern byte global_temp_y[TEMP_MAX];
+extern byte global_temp_x[TEMP_MAX];

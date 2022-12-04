@@ -1522,46 +1522,46 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 #endif
 
 	switch (type) {
-		case WILD_LOG_CABIN:
-			wall_feature = FEAT_LOGS;
+	case WILD_LOG_CABIN:
+		wall_feature = FEAT_LOGS;
 
-			/* doors are locked 1/3 of the time */
-			if (rand_int(100) < 33) door_feature = FEAT_DOOR_HEAD + rand_int(7);
-			else door_feature = FEAT_DOOR_HEAD;
+		/* doors are locked 1/3 of the time */
+		if (rand_int(100) < 33) door_feature = FEAT_DOOR_HEAD + rand_int(7);
+		else door_feature = FEAT_DOOR_HEAD;
 
-			break;
-		case WILD_PERM_HOME:
-			wall_feature = FEAT_PERM_EXTRA;
-//			wall_feature = FEAT_WALL_HOUSE;
+		break;
+	case WILD_PERM_HOME:
+		wall_feature = FEAT_PERM_EXTRA;
+		//wall_feature = FEAT_WALL_HOUSE;
 
-			/* doors are locked 90% of the time */
-			if (rand_int(100) < 90) door_feature = FEAT_DOOR_HEAD + rand_int(7);
-			else door_feature = FEAT_DOOR_HEAD;
-			break;
-		case WILD_ROCK_HOME:
-			wall_feature = FEAT_WALL_EXTRA;
+		/* doors are locked 90% of the time */
+		if (rand_int(100) < 90) door_feature = FEAT_DOOR_HEAD + rand_int(7);
+		else door_feature = FEAT_DOOR_HEAD;
+		break;
+	case WILD_ROCK_HOME:
+		wall_feature = FEAT_WALL_EXTRA;
 
-			/* doors are locked 60% of the time */
-			if (rand_int(100) < 60) door_feature = FEAT_DOOR_HEAD + rand_int(7);
-			else door_feature = FEAT_DOOR_HEAD;
-			break;
-		case WILD_TOWN_HOME:
-//			wall_feature = FEAT_PERM_EXTRA;
-			wall_feature = FEAT_WALL_HOUSE;
-			door_feature = FEAT_HOME;
+		/* doors are locked 60% of the time */
+		if (rand_int(100) < 60) door_feature = FEAT_DOOR_HEAD + rand_int(7);
+		else door_feature = FEAT_DOOR_HEAD;
+		break;
+	case WILD_TOWN_HOME:
+		//wall_feature = FEAT_PERM_EXTRA;
+		wall_feature = FEAT_WALL_HOUSE;
+		door_feature = FEAT_HOME;
 
-			/* hack -- setup next possibile house addition */
-			MAKE(houses[num_houses].dna, struct dna_type);
-			houses[num_houses].x = h_x1;
-			houses[num_houses].y = h_y1;
-			houses[num_houses].flags = HF_RECT|HF_STOCK;
-			if (trad) houses[num_houses].flags |= HF_TRAD;
-			if (has_moat) houses[num_houses].flags |= HF_MOAT;
-			houses[num_houses].coords.rect.width = h_x2 - h_x1 + 1;
-			houses[num_houses].coords.rect.height = h_y2 - h_y1 + 1;
-			wpcopy(&houses[num_houses].wpos, wpos);
-			houses[num_houses].dna->price = initial_house_price(&houses[num_houses]);
-			break;
+		/* hack -- setup next possibile house addition */
+		MAKE(houses[num_houses].dna, struct dna_type);
+		houses[num_houses].x = h_x1;
+		houses[num_houses].y = h_y1;
+		houses[num_houses].flags = HF_RECT|HF_STOCK;
+		if (trad) houses[num_houses].flags |= HF_TRAD;
+		if (has_moat) houses[num_houses].flags |= HF_MOAT;
+		houses[num_houses].coords.rect.width = h_x2 - h_x1 + 1;
+		houses[num_houses].coords.rect.height = h_y2 - h_y1 + 1;
+		wpcopy(&houses[num_houses].wpos, wpos);
+		houses[num_houses].dna->price = initial_house_price(&houses[num_houses]);
+		break;
 	}
 
 
@@ -1787,7 +1787,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 #endif	// USE_MANG_HOUSE_ONLY
 
 			num_houses++;
-			if ((house_alloc-num_houses)<32) {
+			if ((house_alloc - num_houses) < 32) {
 				GROW(houses, house_alloc, house_alloc + 512, house_type);
 				GROW(houses_bak, house_alloc, house_alloc + 512, house_type);
 				house_alloc += 512;
@@ -1802,13 +1802,23 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 /* end evileye fix */
 			/* malloc madness otherwise */
 			KILL(houses[num_houses].dna, struct dna_type);
-//			cs_ptr->type = CS_DNADOOR;
+			//cs_ptr->type = CS_DNADOOR;
 			cs_ptr->sc.ptr = houses[tmp].dna;
 		}
 	}
 
 	/* make the building interesting */
-	wild_furnish_dwelling(wpos, h_x1 + 1,h_y1 + 1,h_x2 - 1,h_y2 - 1, type);
+	wild_furnish_dwelling(wpos, h_x1 + 1, h_y1 + 1, h_x2 - 1, h_y2 - 1, type);
+
+	/* Light up house? ^^ Suggested by Zeliwin. */
+	/* For now only rectangular houses for easy center point determination */
+	if (tmp == -1) tmp = num_houses - 1;
+	if (houses[tmp].flags & HF_RECT) {
+		/* For now only guild halls. Could offer lamps for player houses maybe. Kind of clunky design though. */
+		if (houses[tmp].dna->owner_type == OT_GUILD &&
+		    guilds[houses[tmp].dna->owner].master) /* Guild must not be leaderless (aka suspended) */
+			global_lite_room(wpos, (h_y1 + h_y2) / 2, (h_x1 + h_x2) / 2);
+	}
 
 	/* Hack -- use the "complex" RNG */
 	Rand_quick = rand_old;
@@ -2203,7 +2213,7 @@ static void wild_add_hotspot(struct worldpos *wpos) {
 
 	magnitude = 0;
 	/* set the terrain features to 0 by default */
-	memset(&hot_terrain,0,sizeof(terrain_type));
+	memset(&hot_terrain, 0, sizeof(terrain_type));
 
 	/* hack -- minimum hotspot radius of 3 */
 	while (magnitude < 3) {
@@ -3196,6 +3206,7 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 	return(success);
 }
 
+/* Note: These are USER-BUILT houses. Normal town area housing is added via wild_add_dwelling(). */
 void wild_add_uhouse(house_type *h_ptr) {
  	int x,y;
  	cave_type *c_ptr;
@@ -3247,22 +3258,30 @@ void wild_add_uhouse(house_type *h_ptr) {
 	 */
 	if (!(cs_ptr = AddCS(c_ptr, CS_DNADOOR))) {
 		if (!(cs_ptr = GetCS(c_ptr, CS_DNADOOR))) {
-			s_printf("House creation failed!! (wild_add_uhouse)\n");
+			s_printf("House creation failed!! (wild_add_uhouse, %d,%d,%d)\n", h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->wpos.wz);
 			return;
 		}
 	}
 	c_ptr->feat = FEAT_HOME;
 
 	cs_ptr->sc.ptr = h_ptr->dna;
+
+	/* Light up house? ^^ Suggested by Zeliwin. */
+	/* For now only rectangular houses for easy center point determination */
+	if (h_ptr->flags & HF_RECT) {
+		/* For now only guild halls. Could offer lamps for player houses maybe. Kind of clunky design though. */
+		if (h_ptr->dna->owner_type == OT_GUILD &&
+		    guilds[h_ptr->dna->owner].master) /* Guild must not be leaderless (aka suspended) */
+			global_lite_room(&h_ptr->wpos, (h_ptr->y + h_ptr->coords.rect.height) / 2, (h_ptr->x + h_ptr->coords.rect.width) / 2);
+	}
 }
 
 void wild_add_uhouses(struct worldpos *wpos) {
 	int i;
 
 	for (i = 0; i < num_houses; i++) {
-		if (inarea(&houses[i].wpos, wpos) && !(houses[i].flags & HF_STOCK)) {
+		if (inarea(&houses[i].wpos, wpos) && !(houses[i].flags & HF_STOCK))
 			wild_add_uhouse(&houses[i]);
-		}
 	}
 	load_guildhalls(wpos);
 }
@@ -3381,7 +3400,7 @@ static void wilderness_gen_hack(struct worldpos *wpos) {
 					found_more_water++;
 				}
 			}
-//			if (!found_more_water) c_ptr->feat = FEAT_SHAL_WATER;
+			//if (!found_more_water) c_ptr->feat = FEAT_SHAL_WATER;
 			/* also important for SEASON_WINTER, to turn lake border into ice */
 			if (found_more_water < 8) c_ptr->feat = FEAT_SHAL_WATER;
 		}
