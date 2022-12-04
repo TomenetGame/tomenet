@@ -2990,7 +2990,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			/* abuse chapter searching for extra functionality: search for chapter about a specific main term? */
 			if (isalpha(buf[0])) {
 				int find;
-				char tmpbuf[MAX_CHARS], temp_priority[MAX_CHARS] = { 0 };
+				char tmpbuf[MAX_CHARS], temp_priority[MAX_CHARS] = { 0 }, *s;
 
 				chapter[0] = 0;
 
@@ -3327,7 +3327,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					strcpy(chapter, "The Maze   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Ciri") || (my_strcasestr(buf, "Ung") && !my_strcasestr(buf, "Dung") && !my_strcasestr(buf, "Ungoli")) || !strcasecmp(buf, "cu")) { //Ungoliant check is just paranoia, not a dungeon boss
+				if (my_strcasestr(buf, "Ciri") || ((s = my_strcasestr(buf, "Ung")) && (s == buf || s[-1] == ' ') && !my_strcasestr(buf, "Ungoli")) || !strcasecmp(buf, "cu")) { //Ungoliant check is just paranoia, not a dungeon boss
 					strcpy(chapter, "Cirith Ungol   ");
 					continue;
 				}
