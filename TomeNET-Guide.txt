@@ -19631,6 +19631,14 @@ school.
                     Note that Disruption Shield actually prevents being
                     intercepted by enemies, making a skill like 'Calmness'
                     obsolete for higher-level istari!
+                    While disruption shield is active the player will see
+                    himself turning from '@' into numbers depending on his MP
+                    pool instead of HP.
+                    However, should his HP drop far enough that without shield
+                    he would turn into numbers, AND if his HP-based number
+                    would be lower than his MP-based number then his symbol
+                    alternates every 1/2 second between MP-based number and
+                    HP-based number with the latter being displayed in yellow.
                     Required skill level for first spell level: 35.
 
     BONI:           Mana resistance at 40.
