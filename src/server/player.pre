@@ -102,6 +102,21 @@ struct object_type
 
 	s32b iron_trade;
 	s32b iron_turn;
+
+	/* For item history tracking */
+	s32b id;			/* Item's unique ID (mhh) */
+	s32b f_id;			/* Original finder */
+	char f_name[CNAME_LEN];		/* Original finder's name */
+	s32b f_turn;			/* Found when, in-game? */
+	time_t f_time;			/* Found when, real-time? */
+	struct worldpos f_wpos;		/* Found at this wpos */
+	char f_dun;			/* Found in this dungeon type (d_info index, negative for IRONDEEPDIVE_MIXED_TYPES) */
+	byte f_player;			/* Received from a player / taken from a player's death loot oO */
+	s32b f_player_turn;		/* ^ when? */
+	u16b f_ridx;			/* Found from this [ego] monster */
+	u16b f_reidx;
+	s16b f_special;			/* Found from digging (1000+feat), or in a chest (sval), bought from a store(-idx), player store(-1000).. */
+	char f_reward;			/* Received as event(>0)/quest(<0) reward? */
 };
 
 /*
