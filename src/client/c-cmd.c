@@ -3963,7 +3963,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				if (!tempstr[0]) break;
 				strcpy(bookmark_name[i], tempstr);
 				bookmark_line[i] = line;
-				c_message_add(format("\377wAdded guide bookmark #%d at line %d", i + 1, line + 1));
+				c_message_add(format("\377wAdded guide bookmark #%d at line %d ('%s')", i + 1, line + 1, tempstr));
 				break;
 			}
 			if (i == GUIDE_BOOKMARKS) c_message_add(format("\377yMaximum amount of %d bookmarks reached, delete one first to add a new one.", GUIDE_BOOKMARKS));
@@ -4005,7 +4005,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 						c_message_add(format("\377yBookmark %c) does not exist.", c_temp - 'A' + 'a'));
 						continue;
 					}
-					c_message_add(format("\377wDeleted guide bookmark #%d at line %d", c_temp - 'A', line + 1));
+					c_message_add(format("\377wDeleted guide bookmark #%d at line %d ('%s')", c_temp - 'A', bookmark_line[c_temp - 'A'] + 1, bookmark_name[c_temp - 'A']));
 					for (i = c_temp - 'A'; i < GUIDE_BOOKMARKS - 1; i++) {
 						bookmark_line[i] = bookmark_line[i + 1];
 						strcpy(bookmark_name[i], bookmark_name[i + 1]);
