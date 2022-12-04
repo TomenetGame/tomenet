@@ -4402,6 +4402,49 @@ void recall_player(int Ind, char *message) {
 }
 
 
+/* Check if a player is unable to use Word of Recall (or teleportation) at his current location.
+   Important (for sector00 check): p_ptr->recall_pos.. must be set. */
+bool can_use_wordofrecall(player_type *p_ptr) {
+	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
+	cave_type **zcave = getcave(&p_ptr->wpos);
+	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
+	/* special restriction for global events (Highlander Tournament) */
+	if (sector00separation && !is_admin(p_ptr) && (
+	    (!p_ptr->recall_pos.wx && !p_ptr->recall_pos.wy) ||
+	    (!p_ptr->wpos.wx && !p_ptr->wpos.wy))
+	    && !(p_ptr->global_event_temp & PEVF_PASS_00))
+		return(FALSE);
+
+	if (d_ptr && !(getfloor(&p_ptr->wpos)->flags1 & LF1_IRON_RECALL) && (
+	    (((d_ptr->flags1 & DF1_FORCE_DOWN) || (d_ptr->flags2 & DF2_IRON)) && d_ptr->maxdepth > ABS(p_ptr->wpos.wz)) ||
+	    ((d_ptr->flags1 & DF1_NO_RECALL) || (d_ptr->flags2 & DF2_NO_EXIT_WOR))
+	    ))
+		return(FALSE);
+
+	if (p_ptr->anti_tele) return(FALSE);
+	if (zcave && (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK)) return(FALSE);
+#if 1
+	/* Prevent teleporting someone onto a vault grid - this was allowed but poses the following problem:
+	   A player entering a level via staircase into a vault can get teleported off the staircase.
+	   Even if the vault isn't no-tele he can still fail to teleport out if the vault occupies the whole map.
+	   Since this seems too harsh, let's just keep teleportation consistent in the way that you cannot tele onto icky grids in general. */
+	if (zcave && (zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY)) return(FALSE);
+#endif
+
+	if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) return(FALSE);
+
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return(FALSE);
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_TELE)) return(FALSE);
+	//if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) return(FALSE);
+
+	/* Space/Time Anchor */
+	if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) return(FALSE);
+
+	/* It's okay */
+	return(TRUE);
+}
+
 /* Handles WoR
  * XXX dirty -- REWRITEME
  */
@@ -4434,6 +4477,7 @@ static void do_recall(int Ind, bool bypass) {
 	if (!p_ptr->wpos.wz && !bypass) {
 		wilderness_type *w_ptr = &wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx];
 		dungeon_type *d_ptr = NULL;
+
 		if (p_ptr->recall_pos.wz < 0 && (w_ptr->flags & WILD_F_DOWN))
 			d_ptr = w_ptr->dungeon;
 		else if (p_ptr->recall_pos.wz > 0 && (w_ptr->flags & WILD_F_UP))
@@ -6441,7 +6485,7 @@ static bool process_player_end_aux(int Ind) {
 			msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his":"her");
 		}
 		/* No wraithform on NO_MAGIC levels - C. Blue */
-		else if (p_ptr->wpos.wz && l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+		else if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 			p_ptr->tim_wraith = 0;
 			p_ptr->tim_extra &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
 			msg_print(Ind, "You lose your wraith powers.");

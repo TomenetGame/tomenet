@@ -826,6 +826,7 @@ extern bool InitNewConsole(int write_fd);
 
 /* dungeon.c */
 extern void process_player_change_wpos(int Ind);
+extern bool can_use_wordofrecall(player_type *p_ptr);
 extern void recall_player(int Ind, char *message);
 extern int find_player(s32b id);
 extern int find_player_name(char *name);

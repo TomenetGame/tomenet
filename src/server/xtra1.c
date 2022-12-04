@@ -2473,7 +2473,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	/* Immaterial forms (WRAITH / PASS_WALL) drain the mimic's HP! */
 	if (r_ptr->flags2 & RF2_PASS_WALL) {
 		if (!(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) &&
-		    !(p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC))) {
+		    !(l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC))) {
 			//BAD!(recursion)	set_tim_wraith(Ind, 10000);
 			if (!p_ptr->tim_wraith) p_ptr->redraw |= PR_BPR_WRAITH;
 			p_ptr->tim_wraith = 10000; csheet_boni->cb[5] |= CB6_RWRTH;
@@ -4413,7 +4413,7 @@ void calc_boni(int Ind) {
 		if (f3 & (TR3_WRAITH)) {
 			//p_ptr->wraith_form = TRUE;
 			if (!(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) &&
-			    !(p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC))) {
+			    !(l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC))) {
 				//BAD!(recursion)	set_tim_wraith(Ind, 10000);
 				p_ptr->tim_wraith = 10000; csheet_boni[i-INVEN_WIELD].cb[5] |= CB6_RWRTH;
 				p_ptr->tim_extra &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
@@ -8349,8 +8349,6 @@ static void process_global_event(int ge_id) {
 
 			/* prepare to start the event! */
 			} else {
-				dungeon_type *d_ptr;
-
 				/* count participants first, to see if there are enough to start the event */
 				for (i = 0; i < MAX_GE_PARTICIPANTS; i++) {
 					if (!ge->participant[i]) continue;
@@ -8364,7 +8362,6 @@ static void process_global_event(int ge_id) {
 					}
 
 					p_ptr = Players[j];
-					d_ptr = getdungeon(&p_ptr->wpos);
 
 					/* Check that he still fulfils requirements, if any */
 					switch (ge->getype) {
@@ -8380,7 +8377,7 @@ static void process_global_event(int ge_id) {
 							ge->participant[i] = 0;
 							continue;
 						}
-						if (d_ptr && ((d_ptr->flags1 & (DF1_FORCE_DOWN | DF1_NO_RECALL)) || (d_ptr->flags2 & (DF2_IRON | DF2_NO_EXIT_WOR)))) {
+						if (!can_use_wordofrecall(p_ptr)) {
 							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' stuck in dungeon.\n", p_ptr->name);
 							msg_print(j, "\377oEvent participation failed because your dungeon doesn't allow recalling.");
 							msg_broadcast_format(j, "\377s%s isn't allowed to leave the dungeon to participate.", p_ptr->name);
@@ -8404,7 +8401,7 @@ static void process_global_event(int ge_id) {
 							ge->participant[i] = 0;
 							continue;
 						}
-						if (d_ptr && ((d_ptr->flags1 & (DF1_FORCE_DOWN | DF1_NO_RECALL)) || (d_ptr->flags2 & (DF2_IRON | DF2_NO_EXIT_WOR)))) {
+						if (!can_use_wordofrecall(p_ptr)) {
 							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' stuck in dungeon.\n", p_ptr->name);
 							msg_print(j, "\377oEvent participation failed because your dungeon doesn't allow recalling.");
 							msg_broadcast_format(j, "\377s%s isn't allowed to leave the dungeon to participate.", p_ptr->name);
