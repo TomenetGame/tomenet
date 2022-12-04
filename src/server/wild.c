@@ -1814,10 +1814,17 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 	/* For now only rectangular houses for easy center point determination */
 	if (tmp == -1) tmp = num_houses - 1;
 	if (houses[tmp].flags & HF_RECT) {
-		/* For now only guild halls. Could offer lamps for player houses maybe. Kind of clunky design though. */
-		if (houses[tmp].dna->owner_type == OT_GUILD &&
-		    guilds[houses[tmp].dna->owner].master) /* Guild must not be leaderless (aka suspended) */
-			global_lite_room(wpos, (h_y1 + h_y2) / 2, (h_x1 + h_x2) / 2);
+		/* For now only guild halls and castles, plebs has to light manually. Could offer lamps for player houses maybe. Kind of clunky design though. */
+		switch (houses[tmp].dna->owner_type) {
+		case OT_GUILD:
+			if (guilds[houses[tmp].dna->owner].master) /* Guild must not be leaderless (aka suspended) */
+				global_lite_room(wpos, (h_y1 + h_y2) / 2, (h_x1 + h_x2) / 2);
+			break;
+		case OT_PLAYER:
+			if (houses[tmp].flags & HF_MOAT)
+				global_lite_room(wpos, (h_y1 + h_y2) / 2, (h_x1 + h_x2) / 2);
+			break;
+		}
 	}
 
 	/* Hack -- use the "complex" RNG */
@@ -3269,10 +3276,17 @@ void wild_add_uhouse(house_type *h_ptr) {
 	/* Light up house? ^^ Suggested by Zeliwin. */
 	/* For now only rectangular houses for easy center point determination */
 	if (h_ptr->flags & HF_RECT) {
-		/* For now only guild halls. Could offer lamps for player houses maybe. Kind of clunky design though. */
-		if (h_ptr->dna->owner_type == OT_GUILD &&
-		    guilds[h_ptr->dna->owner].master) /* Guild must not be leaderless (aka suspended) */
-			global_lite_room(&h_ptr->wpos, (h_ptr->y + h_ptr->coords.rect.height) / 2, (h_ptr->x + h_ptr->coords.rect.width) / 2);
+		/* For now only guild halls and castles, plebs has to light manually. Could offer lamps for player houses maybe. Kind of clunky design though. */
+		switch (h_ptr->dna->owner_type) {
+		case OT_GUILD:
+			if (guilds[h_ptr->dna->owner].master) /* Guild must not be leaderless (aka suspended) */
+				global_lite_room(&h_ptr->wpos, (h_ptr->y + h_ptr->coords.rect.height) / 2, (h_ptr->x + h_ptr->coords.rect.width) / 2);
+			break;
+		case OT_PLAYER:
+			if (h_ptr->flags & HF_MOAT)
+				global_lite_room(&h_ptr->wpos, (h_ptr->y + h_ptr->coords.rect.height) / 2, (h_ptr->x + h_ptr->coords.rect.width) / 2);
+			break;
+		}
 	}
 }
 
