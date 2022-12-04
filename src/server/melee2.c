@@ -3400,7 +3400,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			break;
 		}
 
-		/* if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+		/* if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 			msg_format(Ind, "%^s fails to blink.", m_name);
 			break;
 		} */
@@ -3434,7 +3434,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			break;
 		}
 
-		/* if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+		/* if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 			msg_format(Ind, "%^s fails to teleport.", m_name);
 			break;
 		} */
@@ -3477,7 +3477,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			break;
 		}
 
-		/*if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+		/*if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 			msg_format(Ind, "%^s fails to command you to return.", m_name);
 			break;
 		} */
@@ -3514,7 +3514,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			break;
 		}
 
-		/*if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+		/*if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 			msg_format(Ind, "%^s fails to teleport you away.", m_name);
 			break;
 		}*/
@@ -3545,7 +3545,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			break;
 		}
 
-		/* if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+		/* if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 			msg_format(Ind, "%^s fails to teleport you away.", m_name);
 			break;
 		} */
@@ -5350,7 +5350,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			break;
 		}
 
-		/* if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+		/* if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 			msg_format(Ind, "%^s fails to blink.", m_name);
 			break;
 		} */
@@ -5380,7 +5380,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			break;
 		}
 
-		/* if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+		/* if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 			msg_format(Ind, "%^s fails to teleport.", m_name);
 			break;
 		} */
@@ -5425,7 +5425,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			break;
 		}
 
-		/*if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+		/*if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 			msg_format(Ind, "%^s fails to command you to return.", m_name);
 			break;
 		} */
@@ -5462,7 +5462,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			break;
 		}
 
-		/*if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+		/*if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 			msg_format(Ind, "%^s fails to teleport you away.", m_name);
 			break;
 		}*/
@@ -5493,7 +5493,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			break;
 		}
 
-		/* if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+		/* if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 			msg_format(Ind, "%^s fails to teleport you away.", m_name);
 			break;
 		} */

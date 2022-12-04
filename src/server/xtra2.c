@@ -1352,7 +1352,7 @@ bool set_tim_wraith(int Ind, int v) {
 	if (v) {
 		if (!p_ptr->tim_wraith) {
 			if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) ||
-			    (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC))) {
+			    (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC))) {
 				msg_print(Ind, "You feel different for a moment.");
 				v = 0;
 			} else {
@@ -1457,7 +1457,7 @@ bool set_tim_wraithstep(int Ind, int v) {
 	if (v) {
 		if (!p_ptr->tim_wraith) {
 			if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) ||
-			    (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC))) {
+			    (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC))) {
 				msg_print(Ind, "You feel different for a moment.");
 				v = 0;
 			} else {
@@ -9128,7 +9128,7 @@ void player_death(int Ind) {
 	if (erase) hell = TRUE;
 
 	/* Morgoth's level might be NO_GHOST! */
-	if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_GHOST)) hell = TRUE;
+	if (l_ptr && (l_ptr->flags1 & LF1_NO_GHOST)) hell = TRUE;
 
 	/* For global events (Highlander Tournament) */
 	/* either instakill in sector 0,0... */
@@ -9920,7 +9920,7 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 		if (!is_admin(p_ptr)) {
 			if (p_ptr->total_winner)
 				l_printf("%s \\{r%s royalty %s (%d) died\n", showdate(), p_ptr->male ? "His" : "Her", p_ptr->name, p_ptr->lev);
-			else if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_GHOST)
+			else if (l_ptr && (l_ptr->flags1 & LF1_NO_GHOST)
 			    /* actually verify that Morgoth hasn't despawned meanwhile */
 			    && (r_info[RI_MORGOTH].cur_num) && Morgoth_x == p_ptr->wpos.wx && Morgoth_y == p_ptr->wpos.wy && Morgoth_z == p_ptr->wpos.wz
 			    ) {

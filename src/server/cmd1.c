@@ -6608,7 +6608,7 @@ bool do_prob_travel(int Ind, int dir) {
 	if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK)) return(FALSE);
 
 	/* Neither on NO_MAGIC levels */
-	if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return(FALSE);
+	if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) return(FALSE);
 
 	x += ddx[dir];
 	y += ddy[dir];
@@ -6705,8 +6705,7 @@ bool wraith_access(int Ind) {
  * Hack function to determine if the player has access to the GIVEN location,
  * using the function above.	- Jir -
  */
-static bool wraith_access_virtual(int Ind, int y, int x)
-{
+static bool wraith_access_virtual(int Ind, int y, int x) {
 	player_type *p_ptr = Players[Ind];
 	int oy = p_ptr->py, ox = p_ptr->px;
 	bool result;
@@ -7828,8 +7827,7 @@ void black_breath_infection(int Ind, int Ind2) {
 /*
  * Hack -- Check for a "motion blocker" (see below)
  */
-int see_wall(int Ind, int dir, int y, int x)
-{
+int see_wall(int Ind, int dir, int y, int x) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
@@ -7916,8 +7914,7 @@ int see_wall(int Ind, int dir, int y, int x)
 /*
  * Hack -- Check for an "unknown corner" (see below)
  */
-static int see_nothing(int dir, int Ind, int y, int x)
-{
+static int see_nothing(int dir, int Ind, int y, int x) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
@@ -8172,17 +8169,14 @@ static void run_init(int Ind, int dir) {
 
 	/* Check for walls */
 	/* When in the town/wilderness, don't break left/right. -APD- */
-	if (see_wall(Ind, cycle[i+1], p_ptr->py, p_ptr->px))
-	{
+	if (see_wall(Ind, cycle[i+1], p_ptr->py, p_ptr->px)) {
 		/* if in the dungeon */
 //		if (p_ptr->wpos.wz)
 		{
 			p_ptr->find_breakleft = TRUE;
 			shortleft = TRUE;
 		}
-	}
-	else if (see_wall(Ind, cycle[i+1], row, col))
-	{
+	} else if (see_wall(Ind, cycle[i+1], row, col)) {
 		/* if in the dungeon */
 //		if (p_ptr->wpos.wz)
 		{
@@ -8192,17 +8186,14 @@ static void run_init(int Ind, int dir) {
 	}
 
 	/* Check for walls */
-	if (see_wall(Ind, cycle[i-1], p_ptr->py, p_ptr->px))
-	{
+	if (see_wall(Ind, cycle[i-1], p_ptr->py, p_ptr->px)) {
 		/* if in the dungeon */
 //		if (p_ptr->wpos.wz)
 		{
 			p_ptr->find_breakright = TRUE;
 			shortright = TRUE;
 		}
-	}
-	else if (see_wall(Ind, cycle[i-1], row, col))
-	{
+	} else if (see_wall(Ind, cycle[i-1], row, col)) {
 		/* if in the dungeon */
 //		if (p_ptr->wpos.wz)
 		{
@@ -8211,37 +8202,26 @@ static void run_init(int Ind, int dir) {
 		}
 	}
 
-	if (p_ptr->find_breakleft && p_ptr->find_breakright)
-	{
+	if (p_ptr->find_breakleft && p_ptr->find_breakright) {
 		/* Not looking for open area */
 		/* In the town/wilderness, always in an open area */
 //		if (p_ptr->wpos.wz)
 			p_ptr->find_openarea = FALSE;
 
 		/* Hack -- allow angled corridor entry */
-		if (dir & 0x01)
-		{
+		if (dir & 0x01) {
 			if (deepleft && !deepright)
-			{
 				p_ptr->find_prevdir = cycle[i - 1];
-			}
 			else if (deepright && !deepleft)
-			{
 				p_ptr->find_prevdir = cycle[i + 1];
-			}
 		}
 
 		/* Hack -- allow blunt corridor entry */
-		else if (see_wall(Ind, cycle[i], row, col))
-		{
+		else if (see_wall(Ind, cycle[i], row, col)) {
 			if (shortleft && !shortright)
-			{
 				p_ptr->find_prevdir = cycle[i - 2];
-			}
 			else if (shortright && !shortleft)
-			{
 				p_ptr->find_prevdir = cycle[i + 2];
-			}
 		}
 	}
 }
