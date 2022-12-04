@@ -2210,7 +2210,7 @@ bool detect_creatures_xxx(int Ind, u32b match_flag) {
 			if (q_ptr->prace != RACE_HALF_ORC && !(q_ptr->body_monster && (r_info[q_ptr->body_monster].flags3 & RF3_ORC))) continue;
 			break;
 		case RF3_DRAGON:
-			if (q_ptr->prace != RACE_DRACONIAN && !(q_ptr->body_monster && (r_info[q_ptr->body_monster].flags3 & (RF3_DRAGON |  RF3_DRAGONRIDER)))) continue;
+			if (q_ptr->prace != RACE_DRACONIAN && !(q_ptr->body_monster && (r_info[q_ptr->body_monster].flags3 & (RF3_DRAGON | RF3_DRAGONRIDER)))) continue;
 			break;
 		case RF3_ANIMAL:
 			if (q_ptr->prace != RACE_YEEK && !(q_ptr->body_monster && (r_info[q_ptr->body_monster].flags3 & RF3_ANIMAL))) continue;
@@ -5568,8 +5568,7 @@ bool obliteration(int who) {
 
 #ifdef NO_GENO_ON_ICKY
 		/* Not valid inside a vault */
-		if (zcave[m_ptr->fy][m_ptr->fx].info & CAVE_ICKY && p_ptr && !p_ptr->admin_dm)
-			continue;
+		if ((zcave[m_ptr->fy][m_ptr->fx].info & CAVE_ICKY) && p_ptr && !p_ptr->admin_dm) continue;
 #endif	// NO_GENO_ON_ICKY
 
 		/* Delete the monster */

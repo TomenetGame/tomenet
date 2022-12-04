@@ -179,8 +179,8 @@ void do_cmd_go_up(int Ind) {
 #ifndef RPG_SERVER
 	/* Is this a one-way tower? */
 	if (tower) {
-		if (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON ||
-		    wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP))
+		if ((wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON) ||
+		    (wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)))
 			one_way = TRUE;
 	}
 #endif
@@ -279,9 +279,9 @@ void do_cmd_go_up(int Ind) {
 #endif
 
 #if 0 /* 0'ed because in such a dungeon there shouldn't be any staircases generated in the first place. If there are, then it's probably for some special thingy and intended. Or it's a bug. */
-	/*if (dungeon && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON) {*/
-	if (dungeon && (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON ||
-	     wild_info[wpos->wy][wpos->wx].dungeon->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)) &&
+	/*if (dungeon && !p_ptr->ghost && (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON)) {*/
+	if (dungeon && ((wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON) ||
+	     (wild_info[wpos->wy][wpos->wx].dungeon->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP))) &&
 	     (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)) {
 		msg_print(Ind, "\377rThe stairways leading upwards are magically sealed in this dungeon.");
 		if (!is_admin(p_ptr)) return;
@@ -916,8 +916,8 @@ void do_cmd_go_down(int Ind) {
 #ifndef RPG_SERVER
 	/* Is this a one-way dungeon? */
 	if (dungeon) {
-		if (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON ||
-		    wild_info[wpos->wy][wpos->wx].dungeon->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP))
+		if ((wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON) ||
+		    (wild_info[wpos->wy][wpos->wx].dungeon->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)))
 			one_way = TRUE;
 	}
 #endif
@@ -1142,9 +1142,9 @@ void do_cmd_go_down(int Ind) {
 	}
 
 #if 0 /* 0'ed because in such a dungeon there shouldn't be any staircases generated in the first place. If there are, then it's probably for some special thingy and intended. Or it's a bug. */
-	/*if (tower && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON) {*/
-	if (tower && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON ||
-	     wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)) &&
+	/*if (tower && !p_ptr->ghost && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON)) {*/
+	if (tower && ((wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON) ||
+	     (wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP))) &&
 	    (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE)) {
 		msg_print(Ind, "\377rThe stairways leading downwards are magically sealed in this tower.");
 		if (!is_admin(p_ptr)) return;
@@ -2352,7 +2352,7 @@ bool access_door(int Ind, struct dna_type *dna, bool note) {
 
 	/* Test for cumulative restrictions */
 	if (p_ptr->dna != dna->creator) {
-		if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level) {
+		if ((dna->a_flags & ACF_LEVEL) && p_ptr->max_plv < dna->min_level) {
 			if (note) msg_print(Ind, "Your level doesn't match the house restriction yet.");
 			return(FALSE); /* defies logic a bit, but for speed */
 		}
@@ -2469,7 +2469,7 @@ int access_door_colour(int Ind, struct dna_type *dna) {
 				}
 				if (dna->a_flags & ACF_RACE) {
 					if (p_ptr->prace == ((dna->creator >> 8) & 0xff)) {
-						if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
+						if ((dna->a_flags & ACF_LEVEL) && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
 						return(TERM_WHITE);
 					} else return(TERM_ORANGE);
 				}
@@ -2477,30 +2477,30 @@ int access_door_colour(int Ind, struct dna_type *dna) {
 				/* ACF_WINNER and ACF_FALLENWINNER can be used together */
 				if ((dna->a_flags & ACF_WINNER) && (dna->a_flags & ACF_FALLENWINNER)) {
 					if (p_ptr->once_winner) {
-						if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
+						if ((dna->a_flags & ACF_LEVEL) && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
 						return(TERM_L_RED);
 					} else return(TERM_RED);
 				}
 				else if (dna->a_flags & ACF_WINNER) {
 					if (p_ptr->total_winner) {
-						if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
+						if ((dna->a_flags & ACF_LEVEL) && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
 						return(TERM_L_RED);
 					} else return(TERM_RED);
 				}
 				else if (dna->a_flags & ACF_FALLENWINNER) {
 					if (!p_ptr->total_winner && p_ptr->once_winner) {
-						if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
+						if ((dna->a_flags & ACF_LEVEL) && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
 						return(TERM_L_RED);
 					} else return(TERM_RED);
 				}
 
 				if (dna->a_flags & ACF_NOGHOST) {
 					if (p_ptr->mode & MODE_NO_GHOST) {
-						if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
+						if ((dna->a_flags & ACF_LEVEL) && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
 					}
 					return(TERM_L_DARK);
 				}
-				if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
+				if ((dna->a_flags & ACF_LEVEL) && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
 				return(TERM_L_BLUE);
 			}
 		}
@@ -2508,26 +2508,26 @@ int access_door_colour(int Ind, struct dna_type *dna) {
 	case OT_PARTY:
 		if (!p_ptr->party) return(TERM_SLATE);
 		if (player_in_party(dna->owner, Ind)) {
-			if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
+			if ((dna->a_flags & ACF_LEVEL) && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
 			return(TERM_L_BLUE);
 		}
 		break;
 	case OT_CLASS:
 		if (p_ptr->pclass == dna->owner) {
-			if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
+			if ((dna->a_flags & ACF_LEVEL) && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
 			return(TERM_WHITE);
 		}
 		break;
 	case OT_RACE:
 		if (p_ptr->pclass == dna->owner) {
-			if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
+			if ((dna->a_flags & ACF_LEVEL) && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
 			return(TERM_WHITE);
 		}
 		break;
 	case OT_GUILD:
 		if (!p_ptr->guild) return(TERM_SLATE);
 		if (p_ptr->guild == dna->owner) {
-			if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
+			if ((dna->a_flags & ACF_LEVEL) && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
 			return(TERM_VIOLET);
 		}
 		break;
@@ -5670,7 +5670,7 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 			c_ptr = &zcave[p_ptr->py + ddy[dir]][p_ptr->px + ddx[dir]];
 
 			/* This should be cfg.trap_bump_disarm? */
-			if (cfg.door_bump_open & BUMP_OPEN_TRAP &&
+			if ((cfg.door_bump_open & BUMP_OPEN_TRAP) &&
 			    p_ptr->easy_disarm &&
 			    (cs_ptr = GetCS(c_ptr, CS_TRAPS)) &&
 			    cs_ptr->sc.trap.found &&
@@ -5683,7 +5683,7 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 				return;
 			}
 
-			if (cfg.door_bump_open & BUMP_OPEN_DOOR &&
+			if ((cfg.door_bump_open & BUMP_OPEN_DOOR) &&
 			    p_ptr->easy_open &&
 			    (c_ptr->feat >= FEAT_DOOR_HEAD) &&
 			    (c_ptr->feat <= FEAT_DOOR_TAIL) &&
@@ -5691,7 +5691,7 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 				do_cmd_open(Ind, dir);
 				return;
 			}
-			else if (cfg.door_bump_open & BUMP_OPEN_DOOR &&
+			else if ((cfg.door_bump_open & BUMP_OPEN_DOOR) &&
 			    p_ptr->easy_open &&
 			    (c_ptr->feat == FEAT_HOME_HEAD) &&
 			    !CANNOT_OPERATE_SPECTRAL && !CANNOT_OPERATE_FORM) { /* players in WRAITHFORM can't open doors - mikaelh */
@@ -6863,7 +6863,7 @@ void do_cmd_fire(int Ind, int dir) {
 #ifdef KURZEL_PK
 					if ((
 #else
-					if ((p_ptr->pkill & PKILL_KILLER ||
+					if (((p_ptr->pkill & PKILL_KILLER) ||
 #endif
 					    check_hostile(Ind, 0 - c_ptr->m_idx) ||
 					    magik(NEUTRAL_FIRE_CHANCE)) &&
@@ -6881,7 +6881,7 @@ void do_cmd_fire(int Ind, int dir) {
 
 #ifndef KURZEL_PK
 						if (cfg.use_pk_rules == PK_RULES_DECLARE) {
-							if (zcave[p_ptr->py][p_ptr->px].info & CAVE_NOPK || zcave[q_ptr->py][q_ptr->px].info & CAVE_NOPK) {
+							if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_NOPK) || (zcave[q_ptr->py][q_ptr->px].info & CAVE_NOPK)) {
 								if (visible && (!player_in_party(Players[0 - c_ptr->m_idx]->party, Ind))) {
 									p_ptr->target_who = 0;
 									do_player_drop_items(Ind, 40, FALSE);

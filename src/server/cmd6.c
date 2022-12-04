@@ -6759,7 +6759,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				struct dungeon_type *d_ptr;
 				d_ptr = getdungeon(&p_ptr->wpos);
 
-				if (((d_ptr->flags2 & DF2_IRON || d_ptr->flags1 & DF1_FORCE_DOWN) && d_ptr->maxdepth > ABS(p_ptr->wpos.wz)) ||
+				if ((((d_ptr->flags2 & DF2_IRON) || (d_ptr->flags1 & DF1_FORCE_DOWN)) && d_ptr->maxdepth > ABS(p_ptr->wpos.wz)) ||
 				    (d_ptr->flags1 & DF1_NO_RECALL)) {
 					if (!(getfloor(&p_ptr->wpos)->flags1 & LF1_IRON_RECALL)) {
 						msg_print(Ind, "There are some flashes of light around you for a moment!");

@@ -980,9 +980,9 @@ static void add_ability(artifact_type *a_ptr) {
 				a_ptr->flags3 |= TR3_FEATHER;
 				do_pval(a_ptr);
 			} else if (r < 10) { //30
-				if (!(a_ptr->flags3 & TR3_SH_FIRE ||
-				     a_ptr->flags3 & TR3_SH_COLD ||
-				     a_ptr->flags3 & TR3_SH_ELEC)) {
+				if (!((a_ptr->flags3 & TR3_SH_FIRE) ||
+				     (a_ptr->flags3 & TR3_SH_COLD) ||
+				     (a_ptr->flags3 & TR3_SH_ELEC))) {
 					switch (rand_int(3)) {
 					case 0:	a_ptr->flags3 |= TR3_SH_FIRE;
 						a_ptr->flags2 |= TR2_RES_FIRE;

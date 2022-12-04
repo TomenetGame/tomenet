@@ -1427,7 +1427,7 @@ void teleport_player_level(int Ind, bool force) {
 	/* sometimes go down */
 	} else if ((can_go_down(wpos, 0x1) && wpos->wz > 1 &&
 	    ((!can_go_up(wpos, 0x1) || wpos->wz >= -1 || (rand_int(100) < 50)) ||
-	     (wpos->wz < 0 && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON)))
+	     (wpos->wz < 0 && (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON))))
 	    || (force && can_go_down_simple(wpos))) {
 		new_depth.wz--;
 		msg = "You sink through the floor.";
@@ -1435,7 +1435,7 @@ void teleport_player_level(int Ind, bool force) {
 	}
 	/* else go up */
 	else if ((can_go_up(wpos, 0x1) && wpos->wz < -1 &&
-	    !(wpos->wz > 0 && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON))
+	    !(wpos->wz > 0 && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON)))
 	    || (force && can_go_up_simple(wpos))) {
 		new_depth.wz++;
 		msg = "You rise up through the ceiling.";
@@ -1539,7 +1539,7 @@ void teleport_players_level(struct worldpos *wpos) {
 	/* sometimes go down */
 	} else if ((can_go_down(wpos, 0x1) && wpos->wz > 1 &&
 	    ((!can_go_up(wpos, 0x1) || wpos->wz >= -1 || (rand_int(100) < 50)) ||
-	     (wpos->wz < 0 && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON)))
+	     (wpos->wz < 0 && (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON))))
 	    || (can_go_down_simple(wpos))) {
 		new_wpos.wz--;
 		msg = "Some arcane magic suddenly makes you sink through the floor.";
@@ -1547,7 +1547,7 @@ void teleport_players_level(struct worldpos *wpos) {
 	}
 	/* else go up */
 	else if ((can_go_up(wpos, 0x1) && wpos->wz < -1 &&
-	    !(wpos->wz > 0 && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON))
+	    !(wpos->wz > 0 && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON)))
 	    || (can_go_up_simple(wpos))) {
 		new_wpos.wz++;
 		msg = "Some arcane magic suddenly makes you rise up through the ceiling.";

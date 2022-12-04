@@ -2438,11 +2438,11 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 
 	/* -- resistances & immunities -- */
 	if (o_ptr->tval != TV_TRAPKIT) {
-		if ((f2 & (TR2_IM_FIRE)) || (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED && o_ptr->xtra2 & 0x01)) i_f = TRUE;
-		if ((f2 & (TR2_IM_COLD)) || (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED && o_ptr->xtra2 & 0x02)) i_c = TRUE;
-		if ((f2 & (TR2_IM_ELEC)) || (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED && o_ptr->xtra2 & 0x04)) i_e = TRUE;
-		if ((f2 & (TR2_IM_ACID)) || (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED && o_ptr->xtra2 & 0x08)) i_a = TRUE;
-		if ((f2 & (TR2_IM_POISON)) || (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED && o_ptr->xtra2 & 0x10)) i_p = TRUE;
+		if ((f2 & (TR2_IM_FIRE)) || (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED && (o_ptr->xtra2 & 0x01))) i_f = TRUE;
+		if ((f2 & (TR2_IM_COLD)) || (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED && (o_ptr->xtra2 & 0x02))) i_c = TRUE;
+		if ((f2 & (TR2_IM_ELEC)) || (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED && (o_ptr->xtra2 & 0x04))) i_e = TRUE;
+		if ((f2 & (TR2_IM_ACID)) || (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED && (o_ptr->xtra2 & 0x08))) i_a = TRUE;
+		if ((f2 & (TR2_IM_POISON)) || (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED && (o_ptr->xtra2 & 0x10))) i_p = TRUE;
 		if (f2 & (TR2_IM_WATER)) i_w = TRUE;
 		if (f2 & (TR2_IM_NETHER)) i_n = TRUE;
 		if ((tmp = (i_f || i_c || i_e || i_a || i_p || i_w || i_n))) {

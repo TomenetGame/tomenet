@@ -4494,16 +4494,16 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 
 	/* Check for flags */
 	if (v_ptr->flags1 & VF1_FORCE_FLAGS) force = TRUE;
-	if (v_ptr->flags1 & VF1_NO_GENO && (magik(VAULT_FLAG_CHANCE) || force))
+	if ((v_ptr->flags1 & VF1_NO_GENO) && (magik(VAULT_FLAG_CHANCE) || force))
 		l_ptr->flags1 |= LF1_NO_GENO;
-	if (v_ptr->flags1 & VF1_NO_MAP && (magik(VAULT_FLAG_CHANCE) || force))
+	if ((v_ptr->flags1 & VF1_NO_MAP) && (magik(VAULT_FLAG_CHANCE) || force))
 		l_ptr->flags1 |= LF1_NO_MAP;
-	if (v_ptr->flags1 & VF1_NO_MAGIC_MAP && (magik(VAULT_FLAG_CHANCE) || force))
+	if ((v_ptr->flags1 & VF1_NO_MAGIC_MAP) && (magik(VAULT_FLAG_CHANCE) || force))
 		l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
-	if (v_ptr->flags1 & VF1_NO_DESTROY && (magik(VAULT_FLAG_CHANCE) || force))
+	if ((v_ptr->flags1 & VF1_NO_DESTROY) && (magik(VAULT_FLAG_CHANCE) || force))
 		l_ptr->flags1 |= LF1_NO_DESTROY;
-	if (v_ptr->flags1 & VF1_NO_MAGIC && (magik(VAULT_FLAG_CHANCE) || force)
-			&& lev < 100)
+	if ((v_ptr->flags1 & VF1_NO_MAGIC) && (magik(VAULT_FLAG_CHANCE) || force)
+	    && lev < 100)
 		l_ptr->flags1 |= LF1_NO_MAGIC;
 
 	/* Clean the between gates arrays */

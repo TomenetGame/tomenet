@@ -932,7 +932,7 @@ static void apply_effect(int k, int *who, struct worldpos *wpos, int x, int y, c
 			*who = PROJECTOR_PLAYER;
 		}
 		/* Storms end instantly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
-		if ((e_ptr->flags & EFF_STORM || e_ptr->flags & EFF_VORTEX)
+		if (((e_ptr->flags & EFF_STORM) || (e_ptr->flags & EFF_VORTEX))
 		    && (*who == PROJECTOR_PLAYER || Players[0 - *who]->death)) {
 			erase_effects(k);
 			*who = 0;
@@ -1079,7 +1079,7 @@ static void process_effects(void) {
 		}
 
 		/* Storm ends if the cause is gone */
-		if ((e_ptr->flags & EFF_STORM || e_ptr->flags & EFF_VORTEX)
+		if (((e_ptr->flags & EFF_STORM) || (e_ptr->flags & EFF_VORTEX))
 		    && (who == PROJECTOR_EFFECT || who == PROJECTOR_PLAYER)) {
 			erase_effects(k);
 			continue;
@@ -1131,7 +1131,7 @@ static void process_effects(void) {
 						who = PROJECTOR_PLAYER;
 					}
 					/* Storms end instantly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
-					if ((e_ptr->flags & EFF_STORM || e_ptr->flags & EFF_VORTEX)
+					if (((e_ptr->flags & EFF_STORM) || (e_ptr->flags & EFF_VORTEX))
 					    && (who == PROJECTOR_PLAYER || Players[0 - who]->death)) {
 						erase_effects(k);
 						break;
@@ -1164,7 +1164,7 @@ static void process_effects(void) {
 						c_ptr->effect = 0;
 						everyone_lite_spot(wpos, j, i);
 					}
-				} else if (e_ptr->flags & EFF_STORM || e_ptr->flags & EFF_VORTEX) {
+				} else if ((e_ptr->flags & EFF_STORM) || (e_ptr->flags & EFF_VORTEX)) {
 					c_ptr->effect = 0;
 					everyone_lite_spot(wpos, j, i);
 				} else if ((e_ptr->flags & EFF_SNOWING)) {
@@ -1590,7 +1590,7 @@ static void process_effects(void) {
 						who = PROJECTOR_PLAYER;
 					}
 					/* Storms end instantly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
-					if ((e_ptr->flags & EFF_STORM || e_ptr->flags & EFF_VORTEX)
+					if (((e_ptr->flags & EFF_STORM) || (e_ptr->flags & EFF_VORTEX))
 					    && (who == PROJECTOR_PLAYER || Players[0 - who]->death)) {
 						erase_effects(k);
 						break;
@@ -1621,7 +1621,7 @@ static void process_effects(void) {
 		if (e_ptr->flags & (EFF_WAVE | EFF_THINWAVE)) e_ptr->rad++;
 
 		/* Creates a "storm" effect*/
-		else if (e_ptr->flags & EFF_STORM && who > PROJECTOR_EFFECT) { //todo: the player-checks are paranoia? We already checked this far above
+		else if ((e_ptr->flags & EFF_STORM) && who > PROJECTOR_EFFECT) { //todo: the player-checks are paranoia? We already checked this far above
 			p_ptr = Players[0 - who];
 
 			e_ptr->cy = p_ptr->py;
@@ -1651,7 +1651,7 @@ static void process_effects(void) {
 		}
 
 		/* Maintain a "vortex" effect - Kurzel */
-		else if (e_ptr->flags & EFF_VORTEX && who > PROJECTOR_EFFECT) {
+		else if ((e_ptr->flags & EFF_VORTEX) && who > PROJECTOR_EFFECT) {
 			e_ptr->rad = 0; //Hack: Fix strange EFF_VORTEX behavior...
 			if (e_ptr->whot > 0) {
 				m_ptr = &m_list[e_ptr->whot];
@@ -4470,7 +4470,7 @@ static void do_recall(int Ind, bool bypass) {
 		d_ptr = getdungeon(&p_ptr->wpos);
 
 		/* Messages */
-		if (((d_ptr->flags2 & DF2_IRON || d_ptr->flags1 & DF1_FORCE_DOWN) && d_ptr->maxdepth > ABS(p_ptr->wpos.wz)) ||
+		if ((((d_ptr->flags2 & DF2_IRON) || (d_ptr->flags1 & DF1_FORCE_DOWN)) && d_ptr->maxdepth > ABS(p_ptr->wpos.wz)) ||
 		    (d_ptr->flags1 & DF1_NO_RECALL) || (d_ptr->flags2 & DF2_NO_EXIT_WOR)) {
 			if (!(getfloor(&p_ptr->wpos)->flags1 & LF1_IRON_RECALL)) {
 				msg_print(Ind, "You feel yourself being pulled toward the surface!");
@@ -9015,7 +9015,7 @@ void process_player_change_wpos(int Ind) {
 
 		if (m_ptr->owner != p_ptr->id) continue;
 
-		if (m_ptr->mind & GOLEM_GUARD && !(m_ptr->mind & GOLEM_FOLLOW)) continue;
+		if ((m_ptr->mind & GOLEM_GUARD) && !(m_ptr->mind & GOLEM_FOLLOW)) continue;
 
 		/* XXX XXX XXX (merging) */
 		starty = m_ptr->fy;
@@ -9025,7 +9025,7 @@ void process_player_change_wpos(int Ind) {
 
 		if (!m_ptr->wpos.wz && !(m_ptr->mind & GOLEM_FOLLOW)) continue;
 		/*
-		   if (m_ptr->mind & GOLEM_GUARD && !(m_ptr->mind&GOLEM_FOLLOW)) continue;
+		   if ((m_ptr->mind & GOLEM_GUARD) && !(m_ptr->mind&GOLEM_FOLLOW)) continue;
 		   */
 
 		/* Place the golems in an empty space */

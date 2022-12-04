@@ -8577,16 +8577,16 @@ static bool player_invis(int Ind, monster_type *m_ptr, int dist) {
 	monster_race *r_ptr = race_inf(m_ptr);
 	s16b inv, mlv;
 
-	if (r_ptr->flags2 & RF2_INVISIBLE ||
-	    //r_ptr->flags1 & RF1_QUESTOR ||
-	    r_ptr->flags3 & RF3_DRAGONRIDER)	/* have ESP */
+	if ((r_ptr->flags2 & RF2_INVISIBLE) ||
+	    //(r_ptr->flags1 & RF1_QUESTOR) ||
+	    (r_ptr->flags3 & RF3_DRAGONRIDER))	/* have ESP */
 		return(FALSE);
 	/* since RF1_QUESTOR is currently not used/completely implemented,
 	   I hard-code Morgoth and Sauron and Zu-Aon here - C. Blue */
 	if ((m_ptr->r_idx == RI_SAURON) || (m_ptr->r_idx == RI_MORGOTH) || (m_ptr->r_idx == RI_ZU_AON)) return(FALSE);
 
 	/* Probably they detect things by non-optical means */
-	if (r_ptr->flags3 & RF3_NONLIVING && r_ptr->flags2 & RF2_EMPTY_MIND)
+	if ((r_ptr->flags3 & RF3_NONLIVING) && (r_ptr->flags2 & RF2_EMPTY_MIND))
 		return(FALSE);
 
 	/* Added all monsters that can see through 'Cloaking' ability too - C. Blue */
@@ -9875,9 +9875,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		/* EVILEYE - correct me if i interpreted this wrongly. */
 		/* You're right, mine was wrong - Jir - */
 		else if (((r_ptr->flags2 & RF2_KILL_WALL) ||
-		    (!(r_ptr->flags1 & RF1_NEVER_MOVE ||
-		    r_ptr->flags2 & RF2_EMPTY_MIND ||
-		   r_ptr->flags2 & RF2_STUPID) &&
+		    (!((r_ptr->flags1 & RF1_NEVER_MOVE) ||
+		    (r_ptr->flags2 & RF2_EMPTY_MIND) ||
+		   (r_ptr->flags2 & RF2_STUPID)) &&
 		    (!rand_int(digging_difficulty(c_ptr->feat) * MONSTER_DIG_FACTOR)
 		     && magik(5 + r_ptr->level))))
 		    /* only if the feat is legal to remove (ie wallish) */

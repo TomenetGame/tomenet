@@ -1042,7 +1042,7 @@ errr get_obj_num_prep(u32b resf) {
 		//prevent generation of a mage staff -- Saruman specialty
 		if ((resf & RESF_CONDF_NOMSTAFF) && tval == TV_MSTAFF) p = 0;
 		//force generation of a mage staff:
-		if (resf & RESF_CONDF_MSTAFF && tval != TV_MSTAFF) p = 0;
+		if ((resf & RESF_CONDF_MSTAFF) && tval != TV_MSTAFF) p = 0;
 		//force generation of a sling or sling-ammo, if generating a combat item at all
 		if ((resf & RESF_COND_SLING) && which_theme(tval) == TC_COMBAT && (tval != TV_BOW || sval != SV_SLING) && tval != TV_SHOT) p = 0;
 		//force generation of a ranged weapon or ammo, if generating a combat item at all

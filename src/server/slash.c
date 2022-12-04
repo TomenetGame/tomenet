@@ -3934,7 +3934,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "You may not tip players who have zero experience points.");
 				return;
 			}
-			if (p_ptr->mode & MODE_DED_IDDC || q_ptr->mode & MODE_DED_IDDC) {
+			if ((p_ptr->mode & MODE_DED_IDDC) || (q_ptr->mode & MODE_DED_IDDC)) {
 				msg_print(Ind, "You may not tip players in IDDC mode.");
 				return;
 			}
@@ -4083,9 +4083,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_format(Ind,  "\377%cCurrent guild configuration (use /guild_cfg <flag name> command to change):", COLOUR_CHAT_GUILD);
 				else
 					msg_format(Ind,  "\377%cCurrent guild configuration:", COLOUR_CHAT_GUILD);
-				msg_format(Ind, "\377w    adders     : %s", *flags & GFLG_ALLOW_ADDERS ? "\377GYES" : "\377rno");
+				msg_format(Ind, "\377w    adders     : %s", (*flags & GFLG_ALLOW_ADDERS) ? "\377GYES" : "\377rno");
 				msg_print(Ind,  "\377W        Allows players designated via /guild_adder command to add others.");
-				msg_format(Ind, "\377w    autoreadd  : %s", *flags & GFLG_AUTO_READD ? "\377GYES" : "\377rno");
+				msg_format(Ind, "\377w    autoreadd  : %s", (*flags & GFLG_AUTO_READD) ? "\377GYES" : "\377rno");
 				msg_print(Ind,  "\377W        If a guild mate ghost-dies then the next character he logs on with");
 				msg_print(Ind,  "\377W        - if it is newly created - is automatically added to the guild again.");
 				msg_format(Ind, "\377w    minlev     : \377%c%d", guild->minlev <= 1 ? 'w' : (guild->minlev <= 10 ? 'G' : (guild->minlev < 20 ? 'g' :

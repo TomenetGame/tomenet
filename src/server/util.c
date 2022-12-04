@@ -6702,11 +6702,11 @@ bool show_floor_feeling(int Ind, bool dungeon_feeling) {
 		msg_print(Ind, "\377oThere is strong magic enclosing this dungeon.");
 #endif
 	/* Can leave IRONMAN? */
-	if ((l_ptr->flags1 & LF1_IRON_RECALL || ((d_ptr->flags1 & DF1_FORCE_DOWN) && d_ptr->maxdepth == ABS(p_ptr->wpos.wz)))
+	if (((l_ptr->flags1 & LF1_IRON_RECALL) || ((d_ptr->flags1 & DF1_FORCE_DOWN) && d_ptr->maxdepth == ABS(p_ptr->wpos.wz)))
 	    && !(d_ptr->flags2 & DF2_NO_EXIT_WOR))
 		msg_print(Ind, "\374\377gYou don't sense a magic barrier here!");
 
-	return(l_ptr->flags1 & LF1_FEELING_MASK ? TRUE : felt);
+	return((l_ptr->flags1 & LF1_FEELING_MASK) ? TRUE : felt);
 }
 
 /*
@@ -9000,7 +9000,7 @@ void grid_affects_player(int Ind, int ox, int oy) {
 	}
 
 	/* Handle entering/leaving no-teleport area */
-	if (zcave[y][x].info & CAVE_STCK && (ox == -1 || !(zcave[oy][ox].info & CAVE_STCK))) {
+	if ((zcave[y][x].info & CAVE_STCK) && (ox == -1 || !(zcave[oy][ox].info & CAVE_STCK))) {
 		msg_print(Ind, "\377DThe air in here feels very still.");
 		p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
 #ifdef USE_SOUND_2010
