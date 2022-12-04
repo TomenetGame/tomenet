@@ -4403,7 +4403,7 @@ void recall_player(int Ind, char *message) {
 
 
 /* Check if a player is unable to use Word of Recall (or teleportation) at his current location.
-   Important (for sector00 check): p_ptr->recall_pos.. must be set. */
+   Important, if sector00 check gets fully if 1'ed: p_ptr->recall_pos.. must be set. */
 bool can_use_wordofrecall(player_type *p_ptr) {
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 	cave_type **zcave = getcave(&p_ptr->wpos);
@@ -4411,9 +4411,14 @@ bool can_use_wordofrecall(player_type *p_ptr) {
 
 	/* special restriction for global events (Highlander Tournament) */
 	if (sector00separation && !is_admin(p_ptr) && (
-	    (!p_ptr->recall_pos.wx && !p_ptr->recall_pos.wy) ||
-	    (!p_ptr->wpos.wx && !p_ptr->wpos.wy))
-	    && !(p_ptr->global_event_temp & PEVF_PASS_00))
+	    (!p_ptr->wpos.wx && !p_ptr->wpos.wy)
+#if 0 /* for now not needed, as we only call this function atm to check on start of a global event */
+	    || (!p_ptr->recall_pos.wx && !p_ptr->recall_pos.wy))
+	    && !(p_ptr->global_event_temp & PEVF_PASS_00)
+#else
+	    )
+#endif
+	    )
 		return(FALSE);
 
 	if (d_ptr && !(getfloor(&p_ptr->wpos)->flags1 & LF1_IRON_RECALL) && (
