@@ -12077,7 +12077,8 @@ VORPAL ('Sharp' weapons, 'It is very sharp and can cut your foes.')
         Brand/slay effects will further increase the damage, if applicable.
         VORPAL requires an edged weapon, so swords, axes and several polearms
         can obtain 'VORPAL' mod via "Sharp" or "Spinning" ego power.
-        Regarding randarts, only sword-type weapons are eligible.
+        Regarding randarts, only sword-type weapons and razor boomerangs are
+        eligible for obtaining the VORPAL mod from randart ability creation.
         Note that Scythes of Slicing always come with VORPAL mod, be it as base
         item, ego item or even as randart.
 SLAY_WEAP (No message, can spawn other mods/increase dice randomly.)
