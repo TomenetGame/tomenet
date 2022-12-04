@@ -13105,9 +13105,9 @@ only depend on the item base type.
 (The only exception is the hit point bonus restriction mentioned above.)
 
 The level of the final object (ie the level restriction that determines what
-level someone else has to become the new item owner when trading the item)
-depends partially on its powers and partially on the depth where it was found,
-similar to any other type of loot actually.
+minimum level someone else has to be to become the new item owner when trading
+the item) depends partially on its powers and partially on the depth where it
+was found, similar to any other type of loot actually.
 If the item was manually created (via scroll of artifact creation) then the
 object level is determined as if the item was found on dungeon level 50.
 
