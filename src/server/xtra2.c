@@ -6025,6 +6025,7 @@ bool monster_death(int Ind, int m_idx) {
 		if (is_Sauron) {
 			if (d_ptr->type == DI_MT_DOOM) {
 				dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
 				l_ptr->flags1 |= LF1_IRON_RECALL;
 				floor_msg_format(&p_ptr->wpos, "\374\377gYou don't sense a magic barrier here!");
 			}
@@ -6831,6 +6832,7 @@ if (cfg.unikill_format) {
 #endif
 	    ) {
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
 		if (((((d_ptr->flags2 & DF2_IRON) || (d_ptr->flags1 & DF1_FORCE_DOWN))
 		    && d_ptr->maxdepth > ABS(p_ptr->wpos.wz)) ||
 		    (d_ptr->flags1 & DF1_NO_RECALL))
