@@ -4096,7 +4096,7 @@ void lite_spot(int Ind, int y, int x) {
 				c_hp = '0' + num_hp;
 			} else {
 				c_hp = c;
-				num_hp = 100;
+				num_hp = 10 + 1; //+1: <hack> for TURN_CHAR_INTO_NUMBER_NEWMETHOD, see below
 			}
 
 			if (manashield && ((p_ptr->csp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->msp * 10)) <= TURN_CHAR_INTO_NUMBER) {
@@ -4104,7 +4104,7 @@ void lite_spot(int Ind, int y, int x) {
 				if (num_mp < 0) num_mp = 0; //paranoia
 				c_mp = '0' + num_mp;
 			} else {
-				num_mp = 100;
+				num_mp = 10;
 				c_mp = c;
 			}
 
@@ -4114,7 +4114,7 @@ void lite_spot(int Ind, int y, int x) {
 #else
 			/* Low HP? Then display number depending on HP over MP so player notices it easily! */
 			if (!manashield) c = c_hp;
-			else if (num_hp <= num_mp
+			else if (num_hp <= num_mp /* <hack>, see above */
  #if 1 /* Alternate between HP- and MP-based number? [1/2s] */
 			    && !((turn / (cfg.fps / 2)) % 2)
  #endif
