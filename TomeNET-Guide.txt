@@ -9695,10 +9695,13 @@ Events (use /evinfo and /evsign commands to get information and to sign up)
 Note: Item rewards depend on your character, see (9.5) for more information
       about item rewards.
 
-Make sure that you aren't inside a dungeon that does not allow normal usage of
-Word of Recall when an event begins that you signed up for, or you will fail to
-join the event! (Eg ironman, forcedown, no-recall dungeons, even if you're on
-the final floor and could use Word of Recall.)
+Make sure that you aren't inside a dungeon or on a position on a dungeon floor
+or in a certain state regarding your character (eg equipment) that prevents the
+use use of Word of Recall!
+If that is the case when an event begins that you signed up for, you will fail
+to join the event!
+Such scenarios are for exaple: Ironman dungeons, forcedown dungeons, no-recall
+dungeons, no-teleport vaults, wearing a no-teleport item.
 
 Highlander Tournament (pvp, only one can win, 2+ participants)
     When you see a message, announcing a Highlander Tournament, type "/evinfo"
@@ -9724,8 +9727,9 @@ Highlander Tournament (pvp, only one can win, 2+ participants)
     and therefore become uneligible to participate.
     Picking up items belonging to other players will also give 1 experience.
 
-    When the event starts, all players are teleported into a specific dungeon
-    that is reserved for Highlander Tournament participants exclusively.
+    When the event starts, all participants are (if word-of-recall is legal at
+    their current position) teleported into a specific dungeon that is reserved
+    for Highlander Tournament participants exclusively.
     All players receive an Amulet of the Highlands which they should not forget
     to wear, because it gives the character considerable power.
     They now have 10 minutes to level up in this dungeon.
@@ -9790,9 +9794,9 @@ Dungeon Keeper (everyone can win, 1+ participants)
 
     Detailed course of the event:
 
-    When the event starts, all participants are transported into a labyrinth of
-    rooms made of impenetrable walls but connected by doors or even void jump
-    gates.
+    When the event starts, all participants are (if word-of-recall is legal at
+    their current position) are transported into a labyrinth of rooms made of
+    impenetrable walls but connected by doors or even void jump gates.
     The goal is to find one of four escape beacon, which is a light green '>'.
     Everyone who steps on an escape beacon and presses the '>' key will be
     teleported to Bree and has thereby successfully escaped the maze and
