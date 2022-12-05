@@ -309,7 +309,7 @@ void world_comm(int fd, int arg) {
 
 					get_laston(p + 5 + 1, buf, FALSE, FALSE);
  #ifdef NOCLUTTER_IRC_COMMANDS
-					if (x)
+					if (!strstr(buf, "Sorry, couldn't find")) /* If noone was found, suppress message */
  #endif
 					msg_to_irc(format("\373%s", buf));
 					break;
