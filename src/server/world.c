@@ -109,6 +109,10 @@ bool world_check_ignore(int Ind, uint32_t id, int16_t server) {
 /* Colour of private messages received across worlds.
    Keep consistent with util.c definition! */
 #define WP_PMSG_DEFAULT_COLOUR 's'
+/* Accept issuing IRC ?... commands from Discord too? */
+#define DISCORD_IRC_COMMANDS
+/* Suppress negative ?... command output to reduce clutter? */
+#define NOCLUTTER_IRC_COMMANDS
 void world_comm(int fd, int arg) {
 	static char buffer[1024], msg[MSG_LEN], *msg_ptr, *wmsg_ptr, *wmsg_ptr2;
 	char cbuf[sizeof(struct wpacket)];
@@ -252,12 +256,15 @@ void world_comm(int fd, int arg) {
 #if 1
 			/* Allow certain status commands from IRC to TomeNET server. */
 			if (((p = strchr(wpk->d.chat.ctxt, ']')) && *(p += 2) == '?')
- #if 1
+ #ifdef DISCORD_IRC_COMMANDS
 			    /* Allow those commands also from Discord. (Format: "\377y(IRC) [TDiscord] [Username] ?...".) */
 			    || (p && (p = strchr(p + 1, ']')) && *(p += 2) == '?')
  #endif
 			    ) {
 				if (!strncmp(p, "?help", 5)) {
+ //#ifdef NOCLUTTER_IRC_COMMANDS
+					if (wpk->d.sid == 1) /* Only the first authenticated server (ie with servers list index '1') gets to reply */
+ //#endif
 					msg_to_irc("Bot commands are: ?help, ?players, ?who, ?seen.");
 					break;
 				}
@@ -291,6 +298,9 @@ void world_comm(int fd, int arg) {
 							buf[MSG_LEN - 1] = 0;
 						}
 					}
+ #ifdef NOCLUTTER_IRC_COMMANDS
+					if (x)
+ #endif
 					msg_to_irc(buf);
 					break;
 				}
@@ -298,6 +308,9 @@ void world_comm(int fd, int arg) {
 					char buf[MSG_LEN];
 
 					get_laston(p + 5 + 1, buf, FALSE, FALSE);
+ #ifdef NOCLUTTER_IRC_COMMANDS
+					if (x)
+ #endif
 					msg_to_irc(format("\373%s", buf));
 					break;
 				}
@@ -306,7 +319,9 @@ void world_comm(int fd, int arg) {
 					cptr acc;
 
 					if (strlen(p) < 6) {
+ #ifndef NOCLUTTER_IRC_COMMANDS
 						msg_to_irc("You must specify a character name.");
+ #endif
 						break;
 					}
 
@@ -331,17 +346,27 @@ void world_comm(int fd, int arg) {
 #endif
 
 #if 0 /* don't check for account name */
+ #ifndef NOCLUTTER_IRC_COMMANDS
 						msg_to_irc("\373That character name does not exist.");
+ #endif
 #else /* check for account name */
-						if (!GetAccount(&acc, p + 5, NULL, FALSE)) msg_to_irc("\373That character or account name does not exist.");
-						else msg_to_irc("\373There is no such character, but there is an account of that name.");
+						if (!GetAccount(&acc, p + 5, NULL, FALSE))
+ #ifndef NOCLUTTER_IRC_COMMANDS
+							msg_to_irc("\373That character or account name does not exist.");
+ #else
+							;
+ #endif
+						else
+							msg_to_irc("\373There is no such character, but there is an account of that name.");
 #endif
 						break;
 					}
 
 					acc = lookup_accountname(p_id);
 					if (!acc) {
-						msg_to_irc("\373***ERROR: No account found.");
+ //#ifndef NOCLUTTER_IRC_COMMANDS
+						msg_to_irc("\373***ERROR: No account found."); //paranoia except on new server without any players
+ //#endif
 						break;
 					}
 					if (lookup_player_admin(p_id))
