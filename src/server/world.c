@@ -250,8 +250,13 @@ void world_comm(int fd, int arg) {
 			break;
 		case WP_IRCCHAT:
 #if 1
-			/* Allow certain status commands from IRC to TomeNET server */
-			if ((p = strchr(wpk->d.chat.ctxt, ']')) && *(p += 2) == '?') {
+			/* Allow certain status commands from IRC to TomeNET server. */
+			if (((p = strchr(wpk->d.chat.ctxt, ']')) && *(p += 2) == '?')
+ #if 1
+			    /* Allow those commands also from Discord. (Format: "\377y(IRC) [TDiscord] [Username] ?...".) */
+			    || (p && (p = strchr(p + 1, ']')) && *(p += 2) == '?')
+ #endif
+			    ) {
 				if (!strncmp(p, "?help", 5)) {
 					msg_to_irc("Bot commands are: ?help, ?players, ?who, ?seen.");
 					break;
