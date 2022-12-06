@@ -4085,7 +4085,8 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 	Term_load();
 }
 
-/* Remember things such as last line visited, last search term.. for up to this - 1 different fixed files (0 is reserved for 'not saved'). */
+/* Added based on cmd_the_guide() to similarly browse the client-side spoiler files. - C. Blue
+   Remember things such as last line visited, last search term.. for up to this - 1 different fixed files (0 is reserved for 'not saved'). */
 #define MAX_REMEMBERANCE_INDICES 10
 void browse_local_file(char* fname, int rememberance_index) {
 	static int line_cur[MAX_REMEMBERANCE_INDICES] = { 0 }, line_before_search[MAX_REMEMBERANCE_INDICES] = { 0 }, jumped_to_line[MAX_REMEMBERANCE_INDICES] = { 0 }, file_lastline[MAX_REMEMBERANCE_INDICES] = { -1 };
@@ -4095,7 +4096,7 @@ void browse_local_file(char* fname, int rememberance_index) {
 	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
 	int searchline = -1, within_cnt = 0, c = 0, n, line_presearch = line_cur[rememberance_index];
 	char searchstr[MAX_CHARS], withinsearch[MAX_CHARS];
-	char buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2;
+	char buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2, *buf2ptr;
 	char path[1024], bufdummy[MAX_CHARS + 1];
 	FILE *fff;
 
@@ -4108,6 +4109,14 @@ void browse_local_file(char* fname, int rememberance_index) {
 	regex_t re_src;
 	char searchstr_re[MAX_CHARS];
 #endif
+
+	bool syntax_W = (!streq(fname, "re_info.txt") && !streq(fname, "d_info.txt"));
+	bool syntax_W2 = streq(fname, "re_info.txt");
+	bool syntax_G = !streq(fname, "re_info.txt");
+	bool syntax_S = streq(fname, "f_info.txt");
+	char *tag_y, *tag_n, *tag_src;
+	bool tag_ok;
+
 
 	if (!rememberance_index || rememberance_index >= MAX_REMEMBERANCE_INDICES) {
 		rememberance_index = 0;
@@ -4361,21 +4370,145 @@ void browse_local_file(char* fname, int rememberance_index) {
 				*cp2 = 0;
 			}
 
+
+			/* Some sort of weak 'syntax highlighting' for slightly better readability ^^" */
+			buf2ptr = buf2;
+
+			/* $..$ and $..! lines: Display these toggles in red ($!) and green ($$) */
+			memset(buf, 0, sizeof(buf));
+			cp = buf2ptr;
+			if (buf2ptr[0] == '\377' && buf2ptr[1] == 'R') {
+				strcat(buf, "\377R");
+				tag_src = buf2ptr;
+
+				buf2ptr += 2;
+				cp = buf2ptr;
+			} else tag_src = NULL;
+
+			while (*buf2ptr == '$') {
+				tag_y = strchr(buf2ptr + 1, '$');
+				tag_n = strchr(buf2ptr + 1, '!');
+				if (!tag_y && !tag_n) break; //catch broken $... tag
+				if (tag_y && tag_n) {
+					if (tag_y < tag_n) {
+						tag_ok = TRUE;
+						cp = tag_y + 1;
+						if (tag_src > tag_y) tag_src = NULL;
+						if (!tag_src) strcat(buf, "\377g");
+					} else {
+						tag_ok = FALSE;
+						cp = tag_n + 1;
+						if (tag_src > tag_n) tag_src = NULL;
+						if (!tag_src) strcat(buf, "\377r");
+					}
+				} else if (tag_y) {
+					tag_ok = TRUE;
+					cp = tag_y + 1;
+					if (tag_src > tag_y) tag_src = NULL;
+					if (!tag_src) strcat(buf, "\377g");
+				} else {
+					tag_ok = FALSE;
+					cp = tag_n + 1;
+					if (tag_src > tag_n) tag_src = NULL;
+					if (!tag_src) strcat(buf, "\377r");
+				}
+
+				/* If the $-tag contains (part of) a search result, we must replace the \377w marker accordingly */
+				if ((cp2 = strstr(buf2ptr, "\377w")) && cp2 < cp)
+					*(cp2 + 1) = (tag_ok ? 'g' : 'r'); /* Comments are dark grey instead of white */
+
+				/* Add the colour-treated tag to the output line */
+				strncat(buf, buf2ptr, (int)(cp - buf2ptr));
+				// (no need to terminate buf after strncat cause we memset everything in buf to 0 at the start)
+
+				tag_src = strstr(buf2ptr, "\377R");
+				if (cp2 && cp2 < cp && tag_src < cp2) tag_src = NULL;
+				if (tag_src > cp) tag_src = NULL;
+				if (!tag_src) strcat(buf, "\377w"); /* Terminate $.. tag colour and start with standard colour again, for next tag/rest of the line */
+
+				buf2ptr = cp;
+			}
+			i = strlen(cp);
+			strcat(buf, cp);
+			strcpy(buf2, buf);
+			/* For the rest of the checks, statart AFTER the $.. tags, ie with buf2ptr instead of buf2. */
+			buf2ptr = buf2 + (strlen(buf2) - i);
+
+			/* W: lines - Level/depth in l-blue, Price/xp in yellow (re_info/d_info have different W-lines though.) */
+			if (syntax_W && buf2ptr[0] == 'W' && buf2ptr[1] == ':') {
+				/* Level/depth is at first ':' */
+				cp = buf2ptr + 2;
+
+				/* If the level/depth contains (part of) a search result, we must replace the \377w marker accordingly */
+				while ((cp2 = strstr(cp, "\377w"))) {
+					//if (atoi(cp2) == 127)
+				//TODO: fix this so it treats search results correctly colourwise (tag_src)
+					*(cp2 + 1) = 'B'; /* Level/depth are l-blue instead of white */
+				}
+
+				strncpy(buf, buf2ptr, (int)(cp - buf2ptr));
+				buf[(int)(cp - buf2ptr)] = 0;
+				cp2 = strchr(cp, ':');
+				if (atoi(cp) == 127)
+					strcat(buf, "\377s"); /* Level/depth 127 = not findable */
+				else
+					strcat(buf, "\377B"); /* Level/depth are l-blue instead of white */
+				strncat(buf, cp, (int)(cp2 - cp));
+				strcat(buf, "\377w"); // TODO: don't go back to white if we're within a search result! (tag_src)
+				strcat(buf, cp2);
+
+				strcpy(buf2ptr, buf);
+
+
+				/* For price/xp find the last ':', store its location in 'cp' */
+				cp2 = NULL;
+				cp = buf2ptr;
+				while ((cp = strchr(cp + 1, ':'))) cp2 = cp;
+				if (cp2) {
+					cp = cp2 + 1;
+
+					/* If the comment contains (part of) a search result, we must replace the \377w marker accordingly */
+					while ((cp2 = strstr(cp, "\377w")))
+						*(cp2 + 1) = 'y'; /* Prices are yellow instead of white */
+
+					strncpy(buf, buf2ptr, (int)(cp - buf2ptr));
+					buf[(int)(cp - buf2ptr)] = 0;
+					strcat(buf, "\377y"); /* Prices are yellow instead of white */
+					strcat(buf, cp);
+
+					strcpy(buf2ptr, buf);
+				}
+			}
+			/* W: lines - +Level in l-blue, +xp in yellow (re_info only.) */
+			if (syntax_W2 && buf2ptr[0] == 'W' && buf2ptr[1] == ':') {
+			}
+
+			/* G: lines (visuals) - have the symbol coloured in the given attr (re_info can have '*' for colour ie "don't change".) */
+			if (syntax_G && buf2ptr[0] == 'W' && buf2ptr[1] == ':') {
+			}
+
+			/* S: lines (visuals) - shimmer colours are displayed in their actual colour (ONLY in f_info.txt! Different in some others (spells)) */
+			if (syntax_S && buf2ptr[0] == 'W' && buf2ptr[1] == ':') {
+			}
+
+			/* Maybe todo: indicate by colour things that have 0 probability of being generated normally. */
+
 			/* Automatically add colour to "#" comments */
-			if ((cp = strchr(buf2, '#')) && (cp == buf2 || *(cp -1) != ':')) {
+			if ((cp = strchr(buf2ptr, '#')) && (cp == buf2ptr || *(cp -1) != ':')) {
 				/* If the comment contains (part of) a search result, we must replace the \377w marker accordingly */
 				while ((cp2 = strstr(cp, "\377w")))
 					*(cp2 + 1) = 'D'; /* Comments are dark grey instead of white */
 
-				strncpy(buf, buf2, (int)(cp - buf2));
-				buf[(int)(cp - buf2)] = 0;
+				strncpy(buf, buf2ptr, (int)(cp - buf2ptr));
+				buf[(int)(cp - buf2ptr)] = 0;
 				strcat(buf, "\377D"); /* Comments are dark grey instead of white */
 				strcat(buf, cp);
 
-				strcpy(buf2, buf);
+				strcpy(buf2ptr, buf);
 			}
 
-			/* Display processed line, colourized by chapters and search results */
+
+			/* Display processed line, colourized by chapters and search results (and 'syntax' highlighting) */
 			Term_putstr(0, 2 + n, -1, TERM_WHITE, buf2);
 		}
 
