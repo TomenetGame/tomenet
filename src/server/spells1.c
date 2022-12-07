@@ -4529,6 +4529,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (!p_ptr->warning_ingredients) {
 					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
 					msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+					msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
 					p_ptr->warning_ingredients = 1;
 				}
 				//spammy- s_printf("CHEMICAL: %s found charcoal (feat).\n", p_ptr->name);
@@ -5723,6 +5724,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					if (!p_ptr->warning_ingredients) {
 						msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
 						msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+						msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
 						p_ptr->warning_ingredients = 1;
 					}
 					s_printf("CHEMICAL: %s found charcoal (item).\n", p_ptr->name);

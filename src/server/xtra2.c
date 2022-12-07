@@ -6360,6 +6360,7 @@ bool monster_death(int Ind, int m_idx) {
 			if (!p_ptr->warning_ingredients) {
 				msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
 				msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+				msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
 				p_ptr->warning_ingredients = 1;
 			}
 		}
@@ -6384,6 +6385,7 @@ bool monster_death(int Ind, int m_idx) {
 			if (!p_ptr->warning_ingredients) {
 				msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
 				msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+				msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
 				p_ptr->warning_ingredients = 1;
 			}
 		}
@@ -6408,6 +6410,7 @@ bool monster_death(int Ind, int m_idx) {
 			if (!p_ptr->warning_ingredients) {
 				msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
 				msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+				msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
 				p_ptr->warning_ingredients = 1;
 			}
 		}
@@ -6446,6 +6449,7 @@ bool monster_death(int Ind, int m_idx) {
 					if (!p_ptr->warning_ingredients) {
 						msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
 						msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+						msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
 						p_ptr->warning_ingredients = 1;
 					}
 				}
@@ -6473,6 +6477,7 @@ bool monster_death(int Ind, int m_idx) {
 					if (!p_ptr->warning_ingredients) {
 						msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
 						msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+						msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
 						p_ptr->warning_ingredients = 1;
 					}
 				}
@@ -6499,6 +6504,7 @@ bool monster_death(int Ind, int m_idx) {
 					if (!p_ptr->warning_ingredients) {
 						msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
 						msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+						msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
 						p_ptr->warning_ingredients = 1;
 					}
 				}
@@ -6529,6 +6535,7 @@ bool monster_death(int Ind, int m_idx) {
 			if (!p_ptr->warning_ingredients) {
 				msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
 				msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
+				msg_print(Ind, "\374\377y      To save bag space you can buy an alchemy satchel at the alchemist in town.");
 				p_ptr->warning_ingredients = 1;
 			}
 		}
