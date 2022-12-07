@@ -193,8 +193,8 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 	player_type *p_ptr = Players[Ind];
 	int new_value = get_skill_scale(p_ptr, i, 500), n;
 
-//	int as = get_archery_skill(p_ptr);
-//	int ws = get_weaponmastery_skill(p_ptr);
+	//int as = get_archery_skill(p_ptr);
+	//int ws = get_weaponmastery_skill(p_ptr);
 
 	/* Tell the player about new abilities that he gained from the skill increase */
 	if (old_value == new_value) return;
@@ -718,11 +718,16 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		if (p_ptr->aura[AURA_DEATH]) toggle_aura(Ind, AURA_DEATH);
 		break;
 	case SKILL_TRAPPING:
+		if (old_value < 20 && new_value >= 20 && p_ptr->newbie_hints)
+			msg_print(Ind, "\374\377yHINT: To save bag space you can buy a trap kit bag at the town's general store."); //no p_ptr->warning_.. needed for this one ;)
 #ifdef ENABLE_DEMOLITIONIST
 		if (get_skill(p_ptr, SKILL_DIG) < 10)
 #endif
 		if (old_value < 100 && new_value >= 100)
 			msg_print(Ind, "\374\377GYou learn how to use the fighting technique 'Steam Blast'!");
+	case SKILL_DEVICE:
+		if (old_value < 20 && new_value >= 20 && p_ptr->newbie_hints)
+			msg_print(Ind, "\374\377yHINT: To save bag space you can buy an antistatic wrapping at the magic store."); //no p_ptr->warning_.. needed for this one ;)
 	}
 
 	/* New odd combo traits, mostly for Necro/Trauma related things, for DK/HK */
