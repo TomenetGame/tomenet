@@ -725,9 +725,11 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 #endif
 		if (old_value < 100 && new_value >= 100)
 			msg_print(Ind, "\374\377GYou learn how to use the fighting technique 'Steam Blast'!");
+		break;
 	case SKILL_DEVICE:
 		if (old_value < 20 && new_value >= 20 && p_ptr->newbie_hints)
 			msg_print(Ind, "\374\377yHINT: To save bag space you can buy an antistatic wrapping at the magic store."); //no p_ptr->warning_.. needed for this one ;)
+		break;
 	}
 
 	/* New odd combo traits, mostly for Necro/Trauma related things, for DK/HK */
