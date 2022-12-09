@@ -11982,7 +11982,8 @@ LIFE ('It affects your hit points.')
         have beaten Morgoth and hence have a violet coloured name in chat.
 AGGRAVATE ('It aggravates nearby creatures.')
         Wakes up all monsters in whose radius of awareness you are.
-        (Does not haste them as scrolls do, compare to (5.9)).
+        (Does not haste them unlike scrolls, shriek ability, traps or /scream
+        command do, compare (5.9)).
 REGEN   ('It speeds your hit point regeneration.')
         Your base HP regeneration speed will double.
 REGEN_MANA ('It speeds your mana recharging.')
@@ -12491,8 +12492,9 @@ Acquirement     Gives you a great item, generated randomly (may sometimes be
 Aggravate Monsters
                 Wakes up all monsters within about twice the maximum sight
                 range (a constant defaulting to 20, so aggrav. radius is ~40).
-                Hastes all monsters in your line of sight (same as SHRIEK
-                spell or traps of aggravation or the "/scream" command).
+                Unlike static aggravation (from item flag) this hastes all
+                monsters in your line of sight (same as SHRIEK ability or traps
+                of aggravation or the "/scream" command).
                 The haste effect is permanent, but most non-unique monsters can
                 be slowed down again by using any slowing magic.
 Blessing/Holy Chant/Holy Prayer
