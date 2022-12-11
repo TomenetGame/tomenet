@@ -291,7 +291,23 @@ void process_command() {
 
 	case 'C': cmd_character(); break;
 	case '~': cmd_check_misc(); break;
-	case '|': cmd_uniques(); break;
+	case '|':
+		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
+			char choice;
+			bool inkey_msg_old = inkey_msg;
+
+			inkey_msg = TRUE;
+			// TODO: "uniques_alive","List only unslain uniques for your local party" <- replaced by this choice now:
+			//get_com("Which uniques? (ESC for all, SPACE for (party-)unslain, ! for bosses/top lv.)", &choice);
+			get_com("Which uniques? (ESC for all, SPACE for alive, 'b' or 'e' for bosses)", &choice);
+			inkey_msg = inkey_msg_old;
+			if (choice == '!' || choice == 'b' || choice == 'e') choice = 2;
+			else if (choice == ' ' || choice == 'a') choice = 1;
+			else choice = 0;
+			/* Encode 'choice' in 'line' info */
+			Send_special_line(SPECIAL_FILE_UNIQUE, choice * 100000, "");
+		} else cmd_uniques();
+		break;
 	case '\'': cmd_player_equip(); break;
 	case '@': cmd_players(); break;
 	case '#': cmd_high_scores(); break;
