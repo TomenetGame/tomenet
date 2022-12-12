@@ -2650,15 +2650,15 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 		{ p_ptr->reduce_insanity = 1; csheet_boni->cb[3] |= CB4_RMIND; }
 	if ((r_ptr->flags2 & RF2_EMPTY_MIND) ||
 	    (r_ptr->flags9 & RF9_IM_PSI))
-		{ p_ptr->reduce_insanity = 2; csheet_boni->cb[3] |= CB5_XMIND; }
+		{ p_ptr->reduce_insanity = 2; csheet_boni->cb[4] |= CB5_XMIND; }
 
 	/* as long as not all resistances are implemented in r_info, use workaround via breaths */
 	//(Note: the 4 base + pois should actually be covered in r_info..)
-	if (r_info[i].flags4 & RF4_BR_ACID) { p_ptr->resist_acid = TRUE; csheet_boni->cb[1] |= CB2_RACID; }
-	if (r_info[i].flags4 & RF4_BR_ELEC) { p_ptr->resist_elec = TRUE; csheet_boni->cb[0] |= CB1_RELEC; }
-	if (r_info[i].flags4 & RF4_BR_FIRE) { p_ptr->resist_fire = TRUE; csheet_boni->cb[0] |= CB1_RFIRE; }
-	if (r_info[i].flags4 & RF4_BR_COLD) { p_ptr->resist_cold = TRUE; csheet_boni->cb[0] |= CB1_RCOLD; }
-	if (r_info[i].flags4 & RF4_BR_POIS) { p_ptr->resist_pois = TRUE; csheet_boni->cb[1] |= CB2_RPOIS; }
+	if (r_ptr->flags4 & RF4_BR_ACID) { p_ptr->resist_acid = TRUE; csheet_boni->cb[1] |= CB2_RACID; }
+	if (r_ptr->flags4 & RF4_BR_ELEC) { p_ptr->resist_elec = TRUE; csheet_boni->cb[0] |= CB1_RELEC; }
+	if (r_ptr->flags4 & RF4_BR_FIRE) { p_ptr->resist_fire = TRUE; csheet_boni->cb[0] |= CB1_RFIRE; }
+	if (r_ptr->flags4 & RF4_BR_COLD) { p_ptr->resist_cold = TRUE; csheet_boni->cb[0] |= CB1_RCOLD; }
+	if (r_ptr->flags4 & RF4_BR_POIS) { p_ptr->resist_pois = TRUE; csheet_boni->cb[1] |= CB2_RPOIS; }
 
 	if (r_ptr->flags4 & RF4_BR_LITE) { p_ptr->resist_lite = TRUE; csheet_boni->cb[2] |= CB3_RLITE; }
 	if (r_ptr->flags4 & RF4_BR_DARK) { p_ptr->resist_dark = TRUE; csheet_boni->cb[2] |= CB3_RDARK; }
@@ -6306,7 +6306,7 @@ void calc_boni(int Ind) {
 	/* - SKILL_HDEFENSE gives auto protection-from-evil */
 	//if (get_skill(p_ptr, SKILL_HDEFENSE) >= 40) { p_ptr->resist_lite = TRUE; p_ptr->resist_dark = TRUE; }
 	/* - SKILL_HCURING gives extra high regeneration in regen function, and reduces various effects */
-	//if (get_skill(p_ptr, SKILL_HCURING) >= 50 && !p_ptr->reduce_insanity) p_ptr->reduce_insanity = 1;
+	//if (get_skill(p_ptr, SKILL_HCURING) >= 50 && !p_ptr->reduce_insanity) p_ptr->reduce_insanity = 1;  //add: csheet_boni.. RMIND
 	/* - SKILL_HSUPPORT renders DG/TY_CURSE effectless and prevents hunger */
 
 	if (get_skill(p_ptr, SKILL_HSUPPORT) >= 50) csheet_boni[14].cb[6] |= CB7_IFOOD;
