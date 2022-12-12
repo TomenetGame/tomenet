@@ -5871,9 +5871,12 @@ void calc_boni(int Ind) {
 	}
 
 	/* A perma_cursed weapon stays even in weapon-less body form, reduce blows for that: */
-	if (melee_weapon &
-	    (!r_info[p_ptr->body_monster].body_parts[BODY_WEAPON]) &&
-	    (p_ptr->num_blow > 1)) p_ptr->num_blow = 1;
+	if (melee_weapon && p_ptr->body_monster &&
+	    /* Exception: Handle weapon-shamans in shaman-forms that don't have weapons in their 'wild' form */
+	    !(p_ptr->pclass == CLASS_SHAMAN && mimic_shaman_fulleq(r_info[p_ptr->body_monster].d_char)) &&
+	    /* If we cannot use weapons in this form and actually do get any attacks, reduce them to 1 */
+	    !r_info[p_ptr->body_monster].body_parts[BODY_WEAPON] && p_ptr->num_blow > 1)
+		p_ptr->num_blow = 1;
 
 	/* Weaponmastery bonus to hit and damage - not for MA!- C. Blue */
 	if (get_skill(p_ptr, SKILL_MASTERY) && melee_weapon && p_ptr->num_blow) {
