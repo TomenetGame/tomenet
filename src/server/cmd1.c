@@ -4741,6 +4741,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				//if (i && magik(20 + (i > 5 ? 5 : i) * 6)) {
 				if (i && magik(i > 5 ? 5 : i)) {
 					i = rand_int(i);
+
 					if (i < mon_aqua) weapon_takes_damage(Ind, GF_WATER, slot);
 					else if (i < mon_aqua + mon_acid) weapon_takes_damage(Ind, GF_ACID, slot);
 					else weapon_takes_damage(Ind, GF_FIRE, slot);

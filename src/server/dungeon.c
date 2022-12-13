@@ -4848,6 +4848,7 @@ static bool process_player_end_aux(int Ind) {
 			    !(p_ptr->body_monster && (r_info[p_ptr->body_monster].flags7 & (RF7_AQUATIC | RF7_CAN_SWIM)))) {
 				int hit = p_ptr->mhp >> 6;
 				int swim = get_skill_scale(p_ptr, SKILL_SWIM, 4500);
+
 				hit += randint(p_ptr->mhp >> 5);
 				if (!hit) hit = 1;
 
@@ -4863,6 +4864,7 @@ static bool process_player_end_aux(int Ind) {
 						if (!rand_int(5)) msg_print(Ind, "You cling to the wood!");
 					} else { /* Take damage from drowning */
 						long factor = (p_ptr->wt + p_ptr->total_weight / 10) - 150 - swim * 2; // 170
+
 						/* too heavy, always drown? */
 						if (factor < 300 && randint(factor) < 20) hit = 0;
 
@@ -4907,8 +4909,9 @@ static bool process_player_end_aux(int Ind) {
 		    && !is_always_passable(c_ptr->feat)
 		    && !p_ptr->tim_wraith)
 		{
-			long hit = p_ptr->mhp>>6; /* Take damage */
-			hit += randint(p_ptr->chp>>5);
+			long hit = p_ptr->mhp >> 6; /* Take damage */
+
+			hit += randint(p_ptr->chp >> 5);
 			/* Take CON into consideration(max 30%) */
 			hit = (hit * (80 - adj_str_wgt[p_ptr->stat_ind[A_CON]])) / 75;
 			if (!hit) hit = 1;
@@ -11694,7 +11697,7 @@ void eff_running_speed(int *real_speed, player_type *p_ptr, cave_type *c_ptr) {
 	    /* or running-swimming? */
 		else if ((c_ptr->feat == 84 || c_ptr->feat == 103 || c_ptr->feat == 174 || c_ptr->feat == 187) && p_ptr->can_swim) {
 			/* Allow Aquatic players run/swim at full speed */
-			if (!(r_info[p_ptr->body_monster].flags7&RF7_AQUATIC)) {
+			if (!(r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC)) {
 				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) *real_speed /= 2;
 				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_2) *real_speed /= 4;
 			}

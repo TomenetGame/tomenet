@@ -10202,6 +10202,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (!p_ptr->resist_water || magik(50)) {
 					/* Don't kill inventory in bloodbond... */
 					int breakable = 1;
+
 					if (IS_PVP && check_blood_bond(Ind, -who)) breakable = 0;
 					if (breakable) {
 						inven_damage(Ind, set_water_destroy, 1);
@@ -10604,6 +10605,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					if (!p_ptr->resist_water || magik(50)) {
 						/* Don't kill inventory in bloodbond... */
 						int breakable = 1;
+
 						if (IS_PVP) {
 							if (check_blood_bond(Ind, -who)) {
 								breakable = 0;
@@ -10651,6 +10653,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					if (!p_ptr->resist_water || magik(50)) {
 						/* Don't kill inventory in bloodbond... */
 						int breakable = 1;
+
 						if (IS_PVP && check_blood_bond(Ind, -who)) breakable = 0;
 						if (breakable) {
 							inven_damage(Ind, set_water_destroy, 1);
@@ -11332,6 +11335,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (!p_ptr->resist_shard || !p_ptr->resist_sound || !ignore_heat) {
 				/* Don't kill inventory in bloodbond... */
 				int breakable = 1;
+
 				if (IS_PVP && check_blood_bond(Ind, -who)) breakable = 0;
 				if (breakable) {
 					if (p_ptr->resist_shard && p_ptr->resist_sound) inven_damage(Ind, set_fire_destroy, 3);
@@ -11367,6 +11371,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (!p_ptr->resist_shard || !p_ptr->resist_sound || !ignore_heat) {
 				/* Don't kill inventory in bloodbond... */
 				int breakable = 1;
+
 				if (IS_PVP && check_blood_bond(Ind, -who)) breakable = 0;
 				if (breakable) {
 					if (p_ptr->resist_shard && p_ptr->resist_sound) inven_damage(Ind, set_fire_destroy, 3);
@@ -11412,6 +11417,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (randint(6) == 1) {
 					/* Don't kill inventory in bloodbond... */
 					int breakable = 1;
+
 					if (IS_PVP && check_blood_bond(Ind, -who)) breakable = 0;
 					if (breakable) inven_damage(Ind, set_acid_destroy, 2);
 				}
