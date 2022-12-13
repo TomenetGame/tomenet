@@ -3480,12 +3480,13 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 		cave_type *c_ptr;
 
 		/* Ring of dirt around the external wall, to set it apart a bit from trees and stuff */
-		for (zx = x - 3; zx <= x + 3; zx++) {
-			for (zy = y - 3; zy <= y + 3; zy++) {
+		for (zx = x - 4; zx <= x + 4; zx++) {
+			for (zy = y - 4; zy <= y + 4; zy++) {
 				i = (zx - x) * (zx - x) + (zy - y) * (zy - y);
 
 				/* Spare the 4 corner grids, we want to make it roundish, not a square */
-				if (i == 18) continue;
+				//if (i == 18) continue; //for 3x3 ring (-3..+3)
+				if (i == 32) continue; //for 4x4 ring (-4..+4)
 
 				/* Only need the outermost ring really, rest gets overwritten anyway, further down */
 				if (i < 8) continue;
