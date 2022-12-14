@@ -3911,7 +3911,12 @@ void do_cmd_options_mus_sdl(void) {
 			   (Note: If the selected song was already playing in-game via play_music_vol() this will ovewrite the volume
 			   and cause 'wrong' volume, but when it's actually re-played via play_music_vol() the volume will be correct.) */
 			if (!i) i = 100; /* Revert to default volume */
-			if (j_sel == music_cur) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, i));
+			if (j_sel == music_cur) {
+				int vn = CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, i);
+
+				if (i > 100 && vn >= MIX_MAX_VOLUME) c_message_add("\377w(This volume boost exceeds absolute maximum volume at current mixer settings.)");
+				Mix_VolumeMusic(vn);
+			}
 			break;
 			}
 		case '+':
