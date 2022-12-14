@@ -18884,7 +18884,18 @@ F: flag list
                 Insanity attacks are reduced a little bit. See (7.6).
     EMPTY_MIND/IM_PSI
                 Insanity attacks are reduced somewhat. See (7.6).
-    AQUATIC     Gives superb water resistance.
+    AQUATIC     Cuts down damage from water-based attacks against you to 1/4,
+                overriding 'normal' water resistance (if you have it).
+                Prevents your items from getting harmed by water in any way and
+                completely prevents stun and confusion effects from water-based
+                attacks.
+                Allows you to swim freely and at maximum running speed.
+                However, since you cannot breathe air in aquatic form, you will
+                suffer from Anoxia and can get stunned and even die from it if
+                you aren't in deep water, or - if your mimicked form weighs at
+                most 700 lbs - in shallow water. You are also safe from this
+                effect if your mimicked form is actually UNDEAD or while you
+                are in wraithform.
     NEVER_MOVE  Using this form, the player won't be able to move (except for
                 teleportation/phasing/recalling).
     RAND_25     The player has +10% chance of moving randomly.
@@ -19508,6 +19519,7 @@ Firebird                speedy and tough; can fly and passes most terrains;
     increasingly stunned and continuously take damage if you stay outside of
     deep water, beware.
     Aquatic forms also resist all water-based attacks *greatly*.
+    For more details, see AQUATIC flag in (7.7).
 
 
 
