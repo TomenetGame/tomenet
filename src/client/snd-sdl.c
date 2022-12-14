@@ -3893,8 +3893,8 @@ void do_cmd_options_mus_sdl(void) {
 			char tmp[80];
 
 			inkey_msg = TRUE;
-			Term_putstr(0, 1, -1, TERM_L_BLUE, "                                                                      ");
-			Term_putstr(0, 1, -1, TERM_L_BLUE, "  Enter volume % (1..200, other values will reset to 100%): ");
+			Term_putstr(0, 1, -1, TERM_L_BLUE, "                                                                              ");
+			Term_putstr(0, 1, -1, TERM_L_BLUE, "  Enter volume % (1..200, m to max, other values will reset to 100%): ");
 			strcpy(tmp, "100");
 			if (!askfor_aux(tmp, 4, 0)) {
 				inkey_msg = inkey_msg_old;
@@ -3902,9 +3902,14 @@ void do_cmd_options_mus_sdl(void) {
 				break;
 			}
 			inkey_msg = inkey_msg_old;
-			i = atoi(tmp);
-			if (i < 1 || i == 100) i = 0;
-			else if (i > 200) i = 200;
+			if (tmp[0] == 'm') {
+				for (i = 100; i < 200; i++)
+					if (CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, i) == MIX_MAX_VOLUME) break;
+			} else {
+				i = atoi(tmp);
+				if (i < 1 || i == 100) i = 0;
+				else if (i > 200) i = 200;
+			}
 			songs[j_sel].volume = i;
 
 			/* If song is currently playing, adjust volume live.
@@ -3914,7 +3919,10 @@ void do_cmd_options_mus_sdl(void) {
 			if (j_sel == music_cur) {
 				int vn = CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, i);
 
-				if (i > 100 && vn >= MIX_MAX_VOLUME) c_message_add("\377w(This volume boost exceeds absolute maximum volume at current mixer settings.)");
+				/* QoL: Notify if this high a boost value won't make a difference under the current mixer settings */
+				if (i > 100 && vn == MIX_MAX_VOLUME && CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, i - 1) == MIX_MAX_VOLUME)
+					c_msg_format("\377w(%d%% boost exceeds maximum possible volume at current mixer settings.)", i);
+
 				Mix_VolumeMusic(vn);
 			}
 			break;
