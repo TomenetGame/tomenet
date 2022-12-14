@@ -3395,7 +3395,7 @@ void do_cmd_options_sfx_sdl(void) {
 			char tmp[80];
 
 			inkey_msg = TRUE;
-			Term_putstr(0, 1, -1, TERM_L_BLUE, "                                                                      ");
+			Term_putstr(0, 1, -1, TERM_L_BLUE, "                                                                              ");
 			Term_putstr(0, 1, -1, TERM_L_BLUE, "  Enter volume % (1..200, other values will reset to 100%): ");
 			strcpy(tmp, "100");
 			if (!askfor_aux(tmp, 4, 0)) {
