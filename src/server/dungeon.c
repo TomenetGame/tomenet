@@ -11695,7 +11695,7 @@ void eff_running_speed(int *real_speed, player_type *p_ptr, cave_type *c_ptr) {
 			}
 		}
 	    /* or running-swimming? */
-		else if ((c_ptr->feat == 84 || c_ptr->feat == 103 || c_ptr->feat == 174 || c_ptr->feat == 187) && p_ptr->can_swim) {
+		else if ((c_ptr->feat == FEAT_SHAL_WATER || c_ptr->feat == FEAT_GLIT_WATER || c_ptr->feat == FEAT_TAINTED_WATER || c_ptr->feat == FEAT_DEEP_WATER) && p_ptr->can_swim) {
 			/* Allow Aquatic players run/swim at full speed */
 			if (!(r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC)) {
 				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) *real_speed /= 2;
