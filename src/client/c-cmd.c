@@ -4103,7 +4103,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 /* Added based on cmd_the_guide() to similarly browse the client-side spoiler files. - C. Blue
    Remember things such as last line visited, last search term.. for up to this - 1 different fixed files (0 is reserved for 'not saved'). */
-#define MAX_REMEMBERANCE_INDICES 10
+#define MAX_REMEMBERANCE_INDICES 11
 void browse_local_file(char* fname, int rememberance_index) {
 	static int line_cur[MAX_REMEMBERANCE_INDICES] = { 0 }, line_before_search[MAX_REMEMBERANCE_INDICES] = { 0 }, jumped_to_line[MAX_REMEMBERANCE_INDICES] = { 0 }, file_lastline[MAX_REMEMBERANCE_INDICES] = { -1 };
 	static char lastsearch[MAX_REMEMBERANCE_INDICES][MAX_CHARS] = { 0 };
@@ -4126,7 +4126,7 @@ void browse_local_file(char* fname, int rememberance_index) {
 	char searchstr_re[MAX_CHARS];
 #endif
 
-	bool syntax_W = (!streq(fname, "re_info.txt") && !streq(fname, "d_info.txt"));
+	bool syntax_W = (!streq(fname, "re_info.txt") && !streq(fname, "d_info.txt") && !streq(fname, "st_info.txt"));
 	bool syntax_W2 = streq(fname, "re_info.txt");
 	bool syntax_G = !streq(fname, "re_info.txt");
 	bool syntax_S = streq(fname, "f_info.txt");
@@ -6074,15 +6074,16 @@ static void cmd_spoilers(void) {
 	Term_clear();
 	topline_icky = TRUE;
 
-	Term_putstr(col, row + 0, -1, TERM_WHITE, "(\377yk\377w) k_info.txt  - Items (aka objects)");
-	Term_putstr(col, row + 1, -1, TERM_WHITE, "(\377ye\377w) e_info.txt  - Ego item powers");
-	Term_putstr(col, row + 2, -1, TERM_WHITE, "(\377yr\377w) r_info.txt  - Monsters (races)");
-	Term_putstr(col, row + 3, -1, TERM_WHITE, "(\377yE\377w) re_info.txt - Ego monster types (ego races)");
-	Term_putstr(col, row + 4, -1, TERM_WHITE, "(\377ya\377w) a_info.txt  - Artifacts (predefined aka true ones)");
-	Term_putstr(col, row + 5, -1, TERM_WHITE, "(\377yv\377w) v_info.txt  - Vaults");
-	Term_putstr(col, row + 6, -1, TERM_WHITE, "(\377yd\377w) d_info.txt  - Dungeons (predefined ones)");
-	Term_putstr(col, row + 7, -1, TERM_WHITE, "(\377yf\377w) f_info.txt  - Floor tile types");
-	Term_putstr(col, row + 8, -1, TERM_WHITE, "(\377yt\377w) tr_info.txt - Traps");
+	Term_putstr(col, row++, -1, TERM_WHITE, "(\377yk\377w) k_info.txt  - Items (aka objects)");
+	Term_putstr(col, row++, -1, TERM_WHITE, "(\377ye\377w) e_info.txt  - Ego item powers");
+	Term_putstr(col, row++, -1, TERM_WHITE, "(\377yr\377w) r_info.txt  - Monsters (races)");
+	Term_putstr(col, row++, -1, TERM_WHITE, "(\377yE\377w) re_info.txt - Ego monster types (ego races)");
+	Term_putstr(col, row++, -1, TERM_WHITE, "(\377ya\377w) a_info.txt  - Artifacts (predefined aka true ones)");
+	Term_putstr(col, row++, -1, TERM_WHITE, "(\377yt\377w) tr_info.txt - Traps");
+	Term_putstr(col, row++, -1, TERM_WHITE, "(\377yv\377w) v_info.txt  - Vaults");
+	Term_putstr(col, row++, -1, TERM_WHITE, "(\377yf\377w) f_info.txt  - Floor tile types");
+	Term_putstr(col, row++, -1, TERM_WHITE, "(\377yd\377w) d_info.txt  - Dungeons (predefined ones)");
+	Term_putstr(col, row++, -1, TERM_WHITE, "(\377ys\377w) st_info.txt - Stores");
 
 	while (i != ESCAPE) {
 		Term_putstr(0,  0, -1, TERM_BLUE, "Browse spoiler files (in TomeNET's lib/game folder)");
@@ -6122,6 +6123,9 @@ static void cmd_spoilers(void) {
 			break;
 		case 't':
 			browse_local_file("tr_info.txt", 9);
+			break;
+		case 's':
+			browse_local_file("st_info.txt", 10);
 			break;
 		case KTRL('Q'):
 			i = ESCAPE;
