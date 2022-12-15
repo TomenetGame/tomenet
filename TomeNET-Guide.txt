@@ -2053,7 +2053,7 @@ game server, you may enter these IRC commands:
 
 Depending on the TomeNET server settings and on the specific command,
 these IRC commands can actually also be used in the chat-bridge channel
-of the official TomeNET Discord server!
+of the official TomeNET Discord server! So they are 'Discord commands' sort of.
 
 
 
