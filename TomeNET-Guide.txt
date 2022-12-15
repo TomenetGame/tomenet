@@ -2051,6 +2051,10 @@ game server, you may enter these IRC commands:
                 Returns the account name that character belongs to, and basic
                 info on race, class and level. (Same as in-game command /who.)
 
+Depending on the TomeNET server settings and on the specific command,
+these IRC commands can actually also be used in the chat-bridge channel
+of the official TomeNET Discord server!
+
 
 
 (0.3) Important inscriptions, Word of Recall
@@ -3005,6 +3009,8 @@ with other players and developers via the following media:
       Server is "tomenet". Aside from the general channel there is a dedicated
       one for russian language chat and one for korean language chat.
       Follow this invite link to join: https://discord.gg/QGJw7fT
+      In the chat-bridge channel on the TomeNET Discord server you can usually
+      use IRC commands too (depends on the servers), see (0.2c) for details.
 
 
 (1.1b) How to set up IRC chat
