@@ -3594,6 +3594,7 @@ static void turn_off_numlock(void) {
 
 /*
  * Initialize everything, contact the server, and start the loop.
+ * skip:  Don't prompt for character name and pass, as we already read them from config (rc/ini) file or via commandline args. */
  */
 void client_init(char *argv1, bool skip) {
 	sockbuf_t ibuf;
