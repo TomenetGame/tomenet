@@ -1223,8 +1223,12 @@ int main(int argc, char **argv) {
 		Rand_state_init(seed);
 	}
 
-	/* Attempt to read default name/password from mangrc file */
-
+	/* Attempt to read default name/password from mangrc file.
+	   skip: set by reading name+pass from config (rc/ini) file.
+	   ..or via commandline args above:
+	   modus == 2: We got a nick (account name)
+	   modus == 3: We also got the password.
+	   !done: present login screen to prompt user for name+pass. */
 	done = (modus > 2 || skip) ? TRUE : FALSE;
 
 #ifdef UNIX_SOCKETS
