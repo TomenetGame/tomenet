@@ -12315,15 +12315,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				*/
 				char ip_addr[MAX_CHARS];
+				bool ip = atoi(message3); /* specified an IP? */
 
 				if (!tk) {
 					msg_print(Ind, "\377oUsage: /geo <character name>");
-					return;
-				}
-
-				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
-				if (!j) {
-					msg_print(Ind, "\377yCharacter not online.");
+					msg_print(Ind, "\377oUsage: /geo <ip address>");
 					return;
 				}
 
@@ -12332,9 +12328,25 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 
-				/* Note: Could also use LUA's execute() hehee */
-				strcpy(ip_addr, get_player_ip(j));
-				msg_format(Ind, "Looking up IP %s of player '%s'...", ip_addr, Players[j]->name);
+				if (!ip) {
+					j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
+					if (!j) {
+						msg_print(Ind, "\377yCharacter not online.");
+						return;
+					}
+					/* Note: Could also use LUA's execute() hehee */
+					strcpy(ip_addr, get_player_ip(j));
+					msg_format(Ind, "Looking up IP %s of player '%s'...", ip_addr, Players[j]->name);
+				} else {
+					char *p = strchr(message3, '/');
+
+					/* QoL: automatically cut off '/nnnnn' trailing port info if given */
+					if (p) *p = 0;
+
+					strcpy(ip_addr, message3);
+					msg_format(Ind, "Looking up IP %s ...", ip_addr);
+				}
+
 				i = system(format("curl https://ipinfo.io/%s > __ipinfo.tmp &", ip_addr));
 
 				fake_waitpid_geo = p_ptr->id; /* Poll result to admin */
@@ -12367,6 +12379,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					strcpy(fake_waitxxx_ipaddr, get_player_ip(j));
 					msg_format(Ind, "Pinging IP %s of player '%s'...", fake_waitxxx_ipaddr, Players[j]->name);
 				} else {
+					char *p = strchr(message3, '/');
+
+					/* QoL: automatically cut off '/nnnnn' trailing port info if given */
+					if (p) *p = 0;
+
 					strcpy(fake_waitxxx_ipaddr, message3);
 					msg_format(Ind, "Pinging IP %s ...", fake_waitxxx_ipaddr);
 				}
