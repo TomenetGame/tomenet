@@ -2286,6 +2286,25 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		init_search_type = 2;
 		force_uppercase = TRUE; //insc might not be alphanum, so force anyway, eg !*
 	}
+#if 0 /* go to 'command-line options' instead */
+	/* Searching for client commandline args? Always translate to uppercase 's'earch  */
+	if (init_search_string && init_search_string[0] == '-' && !init_search_string[2]) {
+		init_search_type = 2;
+		force_uppercase = TRUE; //insc might not be alphanum, so force anyway, eg !*
+	}
+#else
+	if (init_search_string && init_search_string[0] == '-' && !init_search_string[2]) {
+ #ifdef WINDOWS
+		strcpy(init_search_string, "POSIX COMMAND-LINE OPTIONS");
+ #else
+		strcpy(init_search_string, "POSIX COMMAND-LINE OPTIONS");
+ #endif
+		init_search_type = 2;
+		force_uppercase = TRUE; //insc might not be alphanum, so force anyway, eg !*
+		//fallback = TRUE;
+		//fallback_uppercase = 4;
+	}
+#endif
 
 	switch (init_search_type) {
 	case 1:
@@ -3800,6 +3819,10 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			if (!isalphanum(searchstr[0]) && searchstr[0] != '/' && searchstr[0] != '*' && !(searchstr[0] == '!' && !searchstr[2])) search_uppercase_ok = FALSE; /* slash cmd, *destruction*, !x inscription */
 			/* Hack: Inscriptions: Find both !<lowercase> and !<uppercase> */
 			if (searchstr[0] == '!' && !searchstr[2]) search_uppercase = 2; /* skip tier 4 and 3 (all-uppercase in actual text), start with 2 instead */
+#if 0 /* go to 'command-line options' instead */
+			/* Hack: Commandline parm: Find both -<lowercase> and -<uppercase> */
+			if (searchstr[0] == '-' && !searchstr[2]) search_uppercase = 2; /* skip tier 4 and 3 (all-uppercase in actual text), start with 2 instead */
+#endif
 
 			/* Check and go */
 			if (!search_uppercase_ok) search_uppercase = FALSE; /* must contain at least 1 (upper-case) letter */
