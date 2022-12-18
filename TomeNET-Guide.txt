@@ -180,7 +180,7 @@ Contents
     (7.6)   Sanity (or insanity)
     (7.7)   Mimicry details
     (7.7a)  Polymorph rings
-    (7.7b)  Useful low-level humanoid forms for weapon-using mimics
+    (7.7b)  Useful low-level humanoid forms for weapon-based mimicry and more
     (7.7c)  Druid forms
     (7.8)   Spells and prayers
     (7.8a)  Mimic powers
@@ -19182,11 +19182,12 @@ If a player forges a ring, his 'Magic Device' skill helps to obtain a higher
 amount of energy in the ring.
 
 
-(7.7b) Useful low-level humanoid forms for weapon-using mimics
---------------------------------------------------------------
-Mimics who use weapons have less choices for forms than martial artists who do
-not need to rely on humanoid forms and can just utilize easy-to-get forms such
-as fruit bat, wild cat, spiders, birds or hounds right away to great effect.
+(7.7b) Useful low-level humanoid forms for weapon-based mimicry and more
+------------------------------------------------------------------------
+Mimicry users who use weapons have less choices for forms than martial artists
+who do not need to rely on humanoid forms and can just utilize easy-to-get
+forms such as fruit bat, wild cat, spiders, birds or hounds right away to
+great effect.
 
 To use weapons however, the form must be humanoid or very close to it, which
 rules out animal forms. To make form-hunting a bit easier in the beginning here
