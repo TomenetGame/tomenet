@@ -37,7 +37,7 @@ int Receive_skill_init(void);
 int Receive_skill_points(void);
 int Receive_skill_info(void);
 int Receive_gold(void);
-int Receive_sp(void);
+int Receive_mp(void);
 int Receive_history(void);
 int Receive_char(void);
 int Receive_message(void);

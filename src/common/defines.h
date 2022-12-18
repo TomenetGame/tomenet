@@ -1252,7 +1252,7 @@
    Skip a floor if it already has players on it who are all not in your party. */
 #define PROBTRAVEL_AVOIDS_OTHERS
 
-#define CONDENSED_HP_SP		/* reduce HP and SP to 1 line each, instead of 1 line for max and 1 line for cur values? */
+#define CONDENSED_HP_MP		/* reduce HP and SP to 1 line each, instead of 1 line for max and 1 line for cur values? */
 
 /* Chance for a door that is bashed open to break. */
 #define DOOR_BASH_BREAKAGE	80
@@ -2168,8 +2168,8 @@
 #define CLIENT_PARTY_ROWHP	8
 #define CLIENT_PARTY_COLHP	0
 
-#define CLIENT_PARTY_ROWSP	9
-#define CLIENT_PARTY_COLSP	0
+#define CLIENT_PARTY_ROWMP	9
+#define CLIENT_PARTY_COLMP	0
 
 #define CLIENT_PARTY_ROWMBR	11
 #define CLIENT_PARTY_COLMBR	0
@@ -2199,7 +2199,7 @@
 #define COL_AC			0	/* "Cur AC xxxxx" */
 
 
-#ifndef CONDENSED_HP_SP
+#ifndef CONDENSED_HP_MP
  #define ROW_MAXHP		16
  #define COL_MAXHP		0	/* "Max HP xxxxx" */
 
@@ -2212,7 +2212,7 @@
  #define ROW_CURSP		19
  #define COL_CURSP		0	/* "Cur SP xxxxx" */
 
- #define ROW_EXSTA		-1      /* extra status, requires CONDENSED_HP_SP ! */
+ #define ROW_EXSTA		-1      /* extra status, requires CONDENSED_HP_MP ! */
  #define COL_EXSTA		-1
 #else
  #define ROW_MAXHP		17
@@ -2233,7 +2233,7 @@
  #define ROW_CURST		19	/* current stamina */
  #define COL_CURST		3
 
- #define ROW_EXSTA		20      /* extra status, requires CONDENSED_HP_SP ! */
+ #define ROW_EXSTA		20      /* extra status, requires CONDENSED_HP_MP ! */
  #define COL_EXSTA		0
 #endif
 
@@ -4664,7 +4664,7 @@
 #define PU_SKILL_INFO	0x00000004L	/* Update client skill info */
 #define PU_SANITY	0x00000008L     /* Calculate csane and msane */
 #define PU_HP		0x00000010L	/* Calculate chp and mhp */
-#define PU_MANA		0x00000020L	/* Calculate csp and msp */
+#define PU_MANA		0x00000020L	/* Calculate cmp and mmp */
 /* xxx */
 #define PU_SKILL_MOD	0x00000080L	/* Update client skill values/... */
 /* xxx (many) */

@@ -47,7 +47,7 @@
 #define PKT_EXPERIENCE		22
 #define PKT_GOLD		23
 #define PKT_HP			24
-#define PKT_SP			25
+#define PKT_MP			25
 #define PKT_CHAR_INFO		26
 #define PKT_VARIOUS		27
 #define PKT_STAT		28

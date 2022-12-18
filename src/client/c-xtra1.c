@@ -434,7 +434,7 @@ void prt_hp(int max, int cur, bool bar, bool boosted) {
 	}
 	/* DEG Default to else since only 2 types for now */
 	else {
-#ifndef CONDENSED_HP_SP
+#ifndef CONDENSED_HP_MP
 		put_str("Max HP ", ROW_MAXHP, COL_MAXHP);
 		sprintf(tmp, "%5d", max);
 		color = boosted ? TERM_L_BLUE : TERM_L_GREEN;
@@ -548,7 +548,7 @@ void prt_stamina(int max, int cur, bool bar) {
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
-#ifdef CONDENSED_HP_SP
+#ifdef CONDENSED_HP_MP
 	if (!bar) {
 		put_str("ST:    /", ROW_MAXST, 0);
 		if (max == -9999) sprintf(tmp, "   -");
@@ -625,7 +625,7 @@ void prt_stamina(int max, int cur, bool bar) {
 	Term_gotoxy(x, y);
 }
 /* DEG print party members hps to screen */
-void prt_party_stats(int member_num, byte color, char *member_name, int member_lev, int member_chp, int member_mhp, int member_csp, int member_msp) {
+void prt_party_stats(int member_num, byte color, char *member_name, int member_lev, int member_chp, int member_mhp, int member_cmp, int member_mmp) {
 	char tmp[32];
 	int rowspacing = 0;
 
@@ -660,15 +660,15 @@ void prt_party_stats(int member_num, byte color, char *member_name, int member_l
 	c_put_str(color, tmp, (CLIENT_PARTY_ROWMBR + rowspacing + 1) ,CLIENT_PARTY_COLMBR + 9);
 
 
-	sprintf(tmp, "SP: %4d ", member_msp);
+	sprintf(tmp, "SP: %4d ", member_mmp);
 	color = TERM_L_BLUE;
 	c_put_str(color, tmp, (CLIENT_PARTY_ROWMBR + rowspacing + 2) , CLIENT_PARTY_COLMBR + 0);
 
-	sprintf(tmp, "%4d", member_csp);
+	sprintf(tmp, "%4d", member_cmp);
 
-	if (member_csp >= member_msp)
+	if (member_cmp >= member_mmp)
 		color = TERM_L_BLUE;
-	else if (member_csp > member_msp / 10)
+	else if (member_cmp > member_mmp / 10)
 		color = TERM_YELLOW;
 	else
 		color = TERM_RED;
@@ -680,15 +680,15 @@ void prt_party_stats(int member_num, byte color, char *member_name, int member_l
 /*
  * Prints Max/Cur spell points
  */
-void prt_sp(int max, int cur, bool bar) {
+void prt_mp(int max, int cur, bool bar) {
 	if (shopping) return;
 	char tmp[32];
 	byte color;
 	int x, y; /* for remembering cursor pos */
 
-	sp_max = max;
-	sp_cur = cur;
-	sp_bar = bar;
+	mp_max = max;
+	mp_cur = cur;
+	mp_bar = bar;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
@@ -696,7 +696,7 @@ void prt_sp(int max, int cur, bool bar) {
 	if (client_mode == CLIENT_PARTY) {
 		sprintf(tmp, "MP: %4d ", max);
 		color = TERM_L_BLUE;
-		c_put_str(color, tmp, CLIENT_PARTY_ROWSP, CLIENT_PARTY_COLSP);
+		c_put_str(color, tmp, CLIENT_PARTY_ROWMP, CLIENT_PARTY_COLMP);
 
 		sprintf(tmp, "%4d", cur);
 		color = TERM_L_GREEN;
@@ -708,9 +708,9 @@ void prt_sp(int max, int cur, bool bar) {
 		else
 			color = TERM_RED;
 
-		c_put_str(color, tmp, CLIENT_PARTY_ROWSP, CLIENT_PARTY_COLSP + 9);
+		c_put_str(color, tmp, CLIENT_PARTY_ROWMP, CLIENT_PARTY_COLMP + 9);
 	} else {
-#ifndef CONDENSED_HP_SP
+#ifndef CONDENSED_HP_MP
 		put_str("Max MP ", ROW_MAXSP, COL_MAXSP);
 
 		sprintf(tmp, "%5d", max);
@@ -1407,7 +1407,7 @@ void prt_extra_status(cptr status) {
 	Term_locate(&x, &y);
 
 	if (ROW_EXSTA != -1) { /* paranoia: just in case we're a client
-				  without CONDENSED_HP_SP for some odd reason */
+				  without CONDENSED_HP_MP for some odd reason */
 		if (!recording_macro)
 			c_put_str(TERM_SLATE, status, ROW_EXSTA, COL_EXSTA);
 		else
@@ -3156,21 +3156,21 @@ void display_player(int hist) {
 		else
 			prt_num("Cur Hit Points ", p_ptr->chp, y_row2 + 1, 52, TERM_RED);
 
-		if (p_ptr->msp == -9999) {
+		if (p_ptr->mmp == -9999) {
 			put_str("Max MP (Mana)          ", y_row2 + 2, 52);
 			c_put_str(TERM_L_GREEN, "-", y_row2 + 2, 75);
 		} else
-			prt_num("Max MP (Mana)  ", p_ptr->msp, y_row2 + 2, 52, TERM_L_GREEN);
+			prt_num("Max MP (Mana)  ", p_ptr->mmp, y_row2 + 2, 52, TERM_L_GREEN);
 
-		if (p_ptr->csp == -9999) {
+		if (p_ptr->cmp == -9999) {
 			put_str("Cur MP (Mana)          ", y_row2 + 3, 52);
 			c_put_str(TERM_L_GREEN, "-", y_row2 + 3, 75);
-		} else if (p_ptr->csp >= p_ptr->msp)
-			prt_num("Cur MP (Mana)  ", p_ptr->csp, y_row2 + 3, 52, TERM_L_GREEN);
-		else if (p_ptr->csp > (p_ptr->msp) / 10)
-			prt_num("Cur MP (Mana)  ", p_ptr->csp, y_row2 + 3, 52, TERM_YELLOW);
+		} else if (p_ptr->cmp >= p_ptr->mmp)
+			prt_num("Cur MP (Mana)  ", p_ptr->cmp, y_row2 + 3, 52, TERM_L_GREEN);
+		else if (p_ptr->cmp > (p_ptr->mmp) / 10)
+			prt_num("Cur MP (Mana)  ", p_ptr->cmp, y_row2 + 3, 52, TERM_YELLOW);
 		else
-			prt_num("Cur MP (Mana)  ", p_ptr->csp, y_row2 + 3, 52, TERM_RED);
+			prt_num("Cur MP (Mana)  ", p_ptr->cmp, y_row2 + 3, 52, TERM_RED);
  #ifdef SHOW_SANITY
 		put_str("Cur Sanity", y_row2 + 4, 52);
 
@@ -3193,18 +3193,18 @@ void display_player(int hist) {
 				prt_num("", p_ptr->chp, y_row2, 62, TERM_RED);
 		}
 
-		if (p_ptr->msp == -9999) {
+		if (p_ptr->mmp == -9999) {
 			put_str("MP (Mana)", y_row2 + 1, 52);
 			c_put_str(TERM_L_GREEN, "-", y_row2 + 1, 71);
 		} else {
-			prt_num("MP (Mana)      ", p_ptr->msp, y_row2 + 1, 52, TERM_L_GREEN);
+			prt_num("MP (Mana)      ", p_ptr->mmp, y_row2 + 1, 52, TERM_L_GREEN);
 			c_put_str(TERM_L_GREEN, "/", y_row2 + 1, 71);
-			if (p_ptr->csp >= p_ptr->msp)
-				prt_num("", p_ptr->csp, y_row2 + 1, 62, TERM_L_GREEN);
-			else if (p_ptr->csp > (p_ptr->msp) / 10)
-				prt_num("", p_ptr->csp, y_row2 + 1, 62, TERM_YELLOW);
+			if (p_ptr->cmp >= p_ptr->mmp)
+				prt_num("", p_ptr->cmp, y_row2 + 1, 62, TERM_L_GREEN);
+			else if (p_ptr->cmp > (p_ptr->mmp) / 10)
+				prt_num("", p_ptr->cmp, y_row2 + 1, 62, TERM_YELLOW);
 			else
-				prt_num("", p_ptr->csp, y_row2 + 1, 62, TERM_RED);
+				prt_num("", p_ptr->cmp, y_row2 + 1, 62, TERM_RED);
 		}
 
 		if (p_ptr->mst == -9999) {

@@ -9254,7 +9254,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* Don't generate NO_MAGIC or DRAIN_MANA items if we do use magic. Or simply have mana even? */
 		if (caster
 #if 0 /* disabled to actually allow for example a melee+magicdevices ranger who does not use his MP! :o */
-		    || p_ptr->msp
+		    || p_ptr->mmp
 #endif
 		    ) {
 			if (f5 & TR5_DRAIN_MANA) continue;

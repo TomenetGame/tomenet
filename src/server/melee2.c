@@ -356,7 +356,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *
 
 		/* Know bizarre "resistances" */
 		if (p_ptr->free_act) smart |= SM_IMM_FREE;
-		if (!p_ptr->msp) smart |= SM_IMM_MANA;
+		if (!p_ptr->mmp) smart |= SM_IMM_MANA;
 	}
 
 	/* Nothing known */
@@ -2817,7 +2817,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	/* RF5_DRAIN_MANA */
 	case RF5_OFFSET + 9:
 		if (monst_check_antimagic(Ind, m_idx)) break;
-		if (p_ptr->csp) {
+		if (p_ptr->cmp) {
 			int r1;
 
 			/* Disturb if legal */
@@ -2829,7 +2829,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			/* Attack power */
 			//r1 = (randint(rlev * 2) + randint(3) + rlev + 10) / 4; //lv3 j: 4, lv10 m: 8, lv24 W: 15, lv40 e: 23, lv62 G: 34, lv86 U: 46
 			/* New attack power: Add a percentage depending on rlev! */
-			r1 = (randint(rlev * 2) + randint(3) + rlev + 10) / 4 + (p_ptr->msp * rlev) / 500; //lv3 j: +0%, lv10 m: +2%, lv24 W: +4%, lv40 e: +8%, lv62 G: +12%, lv86 U: +17%, Tzeentch +38% (if 2x UNIQUE)
+			r1 = (randint(rlev * 2) + randint(3) + rlev + 10) / 4 + (p_ptr->mmp * rlev) / 500; //lv3 j: +0%, lv10 m: +2%, lv24 W: +4%, lv40 e: +8%, lv62 G: +12%, lv86 U: +17%, Tzeentch +38% (if 2x UNIQUE)
 
 			/* An open mind invites mana drain attacks */
 			if ((p_ptr->esp_link_flags & LINKF_OPEN)) r1 *= 2;
@@ -2838,13 +2838,13 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (unique) r1 *= 2;
 
 			/* Full drain */
-			if (r1 >= p_ptr->csp) {
-				r1 = p_ptr->csp;
-				p_ptr->csp = 0;
-				p_ptr->csp_frac = 0;
+			if (r1 >= p_ptr->cmp) {
+				r1 = p_ptr->cmp;
+				p_ptr->cmp = 0;
+				p_ptr->cmp_frac = 0;
 			}
 			/* Partial drain */
-			else p_ptr->csp -= r1;
+			else p_ptr->cmp -= r1;
 
 			/* Redraw mana */
 			p_ptr->redraw |= (PR_MANA);
@@ -4775,7 +4775,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	/* RF5_DRAIN_MANA */
 	case RF5_OFFSET + 9:
 		if (monst_check_antimagic(Ind, m_idx)) break;
-		if (p_ptr->csp) {
+		if (p_ptr->cmp) {
 			int r1;
 
 			/* Disturb if legal */
@@ -4787,7 +4787,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			/* Attack power */
 			//r1 = (randint(rlev * 2) + randint(3) + rlev + 10) / 4; //lv3 j: 4, lv10 m: 8, lv24 W: 15, lv40 e: 23, lv62 G: 34, lv86 U: 46
 			/* New attack power: Add a percentage depending on rlev! */
-			r1 = (randint(rlev * 2) + randint(3) + rlev + 10) / 4 + (p_ptr->msp * rlev) / 500; //lv3 j: +0%, lv10 m: +2%, lv24 W: +4%, lv40 e: +8%, lv62 G: +12%, lv86 U: +17%, Tzeentch +38% (if 2x UNIQUE)
+			r1 = (randint(rlev * 2) + randint(3) + rlev + 10) / 4 + (p_ptr->mmp * rlev) / 500; //lv3 j: +0%, lv10 m: +2%, lv24 W: +4%, lv40 e: +8%, lv62 G: +12%, lv86 U: +17%, Tzeentch +38% (if 2x UNIQUE)
 
 			/* An open mind invites mana drain attacks */
 			if ((p_ptr->esp_link_flags & LINKF_OPEN)) r1 *= 2;
@@ -4796,13 +4796,13 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			if (unique) r1 *= 2;
 
 			/* Full drain */
-			if (r1 >= p_ptr->csp) {
-				r1 = p_ptr->csp;
-				p_ptr->csp = 0;
-				p_ptr->csp_frac = 0;
+			if (r1 >= p_ptr->cmp) {
+				r1 = p_ptr->cmp;
+				p_ptr->cmp = 0;
+				p_ptr->cmp_frac = 0;
 			}
 			/* Partial drain */
-			else p_ptr->csp -= r1;
+			else p_ptr->cmp -= r1;
 
 			/* Redraw mana */
 			p_ptr->redraw |= (PR_MANA);

@@ -234,7 +234,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_PLUSSES]	= Receive_plusses;
 	receive_tbl[PKT_EXPERIENCE]	= Receive_experience;
 	receive_tbl[PKT_GOLD]		= Receive_gold;
-	receive_tbl[PKT_SP]		= Receive_sp;
+	receive_tbl[PKT_MP]		= Receive_mp;
 	receive_tbl[PKT_HISTORY]	= Receive_history;
 	receive_tbl[PKT_CHAR]		= Receive_char;
 	receive_tbl[PKT_MESSAGE]	= Receive_message;
@@ -2692,7 +2692,7 @@ int Receive_gold(void) {
 	return(1);
 }
 
-int Receive_sp(void) {
+int Receive_mp(void) {
 	int	n;
 	char	ch;
 	s16b	max, cur;
@@ -2713,11 +2713,11 @@ int Receive_sp(void) {
 		c_msg_print("\377R*** LOW MANA WARNING! ***");
 	}
 
-	p_ptr->msp = max;
-	p_ptr->csp = cur;
+	p_ptr->mmp = max;
+	p_ptr->cmp = cur;
 
 	if (screen_icky) Term_switch(0);
-	prt_sp(max, cur, bar);
+	prt_mp(max, cur, bar);
 	draw_huge_bar(0, &prev_huge_cmp, cur, &prev_huge_mmp, max);
 	if (screen_icky) Term_switch(0);
 
@@ -4547,13 +4547,13 @@ int Receive_pickup_check(void) {
 
 
 int Receive_party_stats(void) {
-	int n,j,k,chp, mhp, csp, msp, color;
+	int n, j, k, chp, mhp, cmp, mmp, color;
 	char ch, partymembername[MAX_CHARS];
 
-	if ((n = Packet_scanf(&rbuf, "%c%d%d%s%d%d%d%d%d", &ch, &j, &color, &partymembername, &k, &chp, &mhp, &csp, &msp)) <= 0) return n;
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%s%d%d%d%d%d", &ch, &j, &color, &partymembername, &k, &chp, &mhp, &cmp, &mmp)) <= 0) return n;
 
 	if (screen_icky) Term_switch(0);
-	prt_party_stats(j,color,partymembername,k,chp,mhp,csp,msp);
+	prt_party_stats(j, color, partymembername, k, chp, mhp, cmp, mmp);
 	if (screen_icky) Term_switch(0);
 	return(1);
 }

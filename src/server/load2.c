@@ -1862,9 +1862,9 @@ static bool rd_extra(int Ind) {
 	/* hack for old chars */
 	if (p_ptr->mst != 10) p_ptr->mst = 10;
 
-	rd_s16b(&p_ptr->msp);
-	rd_s16b(&p_ptr->csp);
-	rd_u16b(&p_ptr->csp_frac);
+	rd_s16b(&p_ptr->mmp);
+	rd_s16b(&p_ptr->cmp);
+	rd_u16b(&p_ptr->cmp_frac);
 
 	rd_s16b(&p_ptr->max_plv);
 	rd_s16b(&p_ptr->max_dlv);

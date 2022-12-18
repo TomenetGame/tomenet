@@ -3601,11 +3601,11 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 			}
 
 			/* admins sees (exact) intensity of mana shields */
-			if (p_ptr->admin_dm && p2_ptr->tim_manashield && p2_ptr->msp > 0) {
-				if (((p2_ptr->csp * 100) / (p2_ptr->msp * 10)) < 10) {
+			if (p_ptr->admin_dm && p2_ptr->tim_manashield && p2_ptr->mmp > 0) {
+				if (((p2_ptr->cmp * 100) / (p2_ptr->mmp * 10)) < 10) {
 					int num;
 
-					num = (p2_ptr->csp * 100) / (p2_ptr->msp * 10);
+					num = (p2_ptr->cmp * 100) / (p2_ptr->mmp * 10);
 					c = '0' + num;
 				}
 			}
@@ -3896,7 +3896,7 @@ void lite_spot(int Ind, int y, int x) {
 			monster_race *r_ptr = &r_info[p_ptr->body_monster];
 			int num_hp, num_mp;
 			char32_t c_hp, c_mp;
-			bool manashield = (p_ptr->tim_manashield && p_ptr->msp > 0);
+			bool manashield = (p_ptr->tim_manashield && p_ptr->mmp > 0);
 
 			if ((p_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p_ptr->inventory[INVEN_BODY].sval == SV_COSTUME))
 				r_ptr = &r_info[p_ptr->inventory[INVEN_BODY].bpval];
@@ -4055,11 +4055,11 @@ void lite_spot(int Ind, int y, int x) {
 					if (p_ptr->nimbus > 15) a = TERM_YELLOW;
 					else a = TERM_ORANGE;
 				}
-				if (p_ptr->tim_manashield && p_ptr->msp > 0 && p_ptr->csp > 0) {
+				if (p_ptr->tim_manashield && p_ptr->mmp > 0 && p_ptr->cmp > 0) {
 					if (p_ptr->tim_manashield > 15) a = TERM_YELLOW;
 					else a = TERM_ORANGE;
 				}
-				if (p_ptr->kinetic_shield && p_ptr->msp > 0 && p_ptr->csp > 0) {
+				if (p_ptr->kinetic_shield && p_ptr->mmp > 0 && p_ptr->cmp > 0) {
 					if (p_ptr->kinetic_shield > 10) a = TERM_YELLOW;
 					else a = TERM_ORANGE;
 				}
@@ -4099,8 +4099,8 @@ void lite_spot(int Ind, int y, int x) {
 				num_hp = 10 + 1; //+1: <hack> for TURN_CHAR_INTO_NUMBER_NEWMETHOD, see below
 			}
 
-			if (manashield && ((p_ptr->csp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->msp * 10)) <= TURN_CHAR_INTO_NUMBER) {
-				num_mp = (p_ptr->csp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->msp * 10);
+			if (manashield && ((p_ptr->cmp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->mmp * 10)) <= TURN_CHAR_INTO_NUMBER) {
+				num_mp = (p_ptr->cmp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->mmp * 10);
 				if (num_mp < 0) num_mp = 0; //paranoia
 				c_mp = '0' + num_mp;
 			} else {

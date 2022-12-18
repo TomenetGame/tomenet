@@ -803,9 +803,9 @@ static void wr_extra(int Ind) {
 	wr_s16b(p_ptr->cst);
 	wr_s16b(p_ptr->cst_frac);
 
-	wr_s16b(p_ptr->msp);
-	wr_s16b(p_ptr->csp);
-	wr_u16b(p_ptr->csp_frac);
+	wr_s16b(p_ptr->mmp);
+	wr_s16b(p_ptr->cmp);
+	wr_u16b(p_ptr->cmp_frac);
 
 	/* Max Player and Dungeon Levels */
 	wr_s16b(p_ptr->max_plv);

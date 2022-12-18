@@ -3150,8 +3150,7 @@ void do_cmd_steal_from_monster(int Ind, int dir) {
 			m_ptr->csleep = 0;
 
 			/* Speed up because monsters are ANGRY when you try to thief them */
-			if (m_ptr->mspeed < m_ptr->speed + 15)
-				m_ptr->mspeed += 5; m_ptr->speed += 5;
+			if (m_ptr->mspeed < m_ptr->speed + 15) m_ptr->speed += 5;
 			screen_load();
 			break_cloaking(Ind, 0);
 			msg_print("Oops ! The monster is now really *ANGRY*.");

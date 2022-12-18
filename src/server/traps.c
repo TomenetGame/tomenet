@@ -433,9 +433,9 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval, s16b sval, 
 #ifdef ENABLE_OCCULT
 		    || p_ptr->spirit_shield
 #endif
-		    ) && p_ptr->csp >= (dd * ds) / 20) {
+		    ) && p_ptr->cmp >= (dd * ds) / 20) {
 			/* drains mana on hit */
-			p_ptr->csp -= (dd * ds) / 20;
+			p_ptr->cmp -= (dd * ds) / 20;
 			p_ptr->redraw |= PR_MANA;
 			/* test for deflection */
 #ifdef ENABLE_OCCULT
@@ -1017,14 +1017,14 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 
 		/* Trap of Mana Drain */
 		case TRAP_OF_MANA_DRAIN:
-			if (p_ptr->csp > 0) {
-				p_ptr->csp = 0;
-				p_ptr->csp_frac = 0;
+			if (p_ptr->cmp > 0) {
+				p_ptr->cmp = 0;
+				p_ptr->cmp_frac = 0;
 				p_ptr->redraw |= (PR_MANA);
 				msg_print(Ind, "You sense a great loss.");
 				ident = TRUE;
 			} else {
-				if (p_ptr->msp == 0) /* no sense saying this unless you never have mana */
+				if (p_ptr->mmp == 0) /* no sense saying this unless you never have mana */
 					msg_format(Ind, "Suddenly you feel glad you're only a %s.", p_ptr->cp_ptr->title);
 				else
 					msg_print(Ind, "Your head feels dizzy for a moment.");

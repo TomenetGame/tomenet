@@ -488,9 +488,9 @@ static bool do_seduce(int Ind, int m_idx) {
 		d = randint(9);
 		switch (d) {
 			case 1:
-				if (!p_ptr->csp) continue;
+				if (!p_ptr->cmp) continue;
 				msg_print(Ind, "You feel drained of energy!");
-				p_ptr->csp /= 2;
+				p_ptr->cmp /= 2;
 				done = TRUE;
 				p_ptr->redraw |= PR_MANA;
 				break;
@@ -940,13 +940,13 @@ bool make_attack_melee(int Ind, int m_idx) {
 						cost += clog;
 						//adds +0 (up to 45 damage) ..+3 (70 dam) ..+7 (150 dam) ..+13 (500 dam) ..+17 (1000 dam, hypothetically)
 					}
-					if (p_ptr->csp >= cost) {
+					if (p_ptr->cmp >= cost) {
 						/* test if it repelled the blow */
 						int chance = (p_ptr->lev * ((r_ptr->flags2 & RF2_POWERFUL) ? 67 : 100)) / r_ptr->level, max_chance;
 						// ^= usually 50% chance vs all mobs you'd encounter at your level, 33% vs double-level POWERFUL
 
 						/* drains mana on hit */
-						p_ptr->csp -= cost;
+						p_ptr->cmp -= cost;
 						p_ptr->redraw |= PR_MANA;
 
 						/* spirit shield is usually weaker than kinetic shield */
@@ -1431,9 +1431,9 @@ bool make_attack_melee(int Ind, int m_idx) {
 					}
 
 #ifdef UNPOWER_DRAINS_MP
-					if (p_ptr->csp) {
-						p_ptr->csp -= (p_ptr->mhp * (r_ptr->level + 30)) / 600;
-						if (p_ptr->csp < 0) p_ptr->csp = 0;
+					if (p_ptr->cmp) {
+						p_ptr->cmp -= (p_ptr->mhp * (r_ptr->level + 30)) / 600;
+						if (p_ptr->cmp < 0) p_ptr->cmp = 0;
 						p_ptr->redraw |= PR_MANA;
 						if (!obvious) msg_print(Ind, "Your psychic energy gets drained!");
 					}
@@ -1682,7 +1682,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
  #endif
 					/* Reduce the eat-lite damage part if we don't have (much) light */
-					if (dam_ele > o_ptr->timeout / 250) dam_ele = p_ptr->csp;
+					if (dam_ele > o_ptr->timeout / 250) dam_ele = p_ptr->cmp;
 
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
@@ -3029,7 +3029,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
  #endif
 					/* Reduce the eat-mana damage part if we don't have (much) mana */
-					if (dam_ele > p_ptr->csp) dam_ele = p_ptr->csp;
+					if (dam_ele > p_ptr->cmp) dam_ele = p_ptr->cmp;
 
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
@@ -3042,14 +3042,14 @@ bool make_attack_melee(int Ind, int m_idx) {
 					if (safe_area(Ind)) break;
 
 					/* Drain mana */
-					if (p_ptr->csp > 0) {
+					if (p_ptr->cmp > 0) {
 #if 0
-						p_ptr->csp -= dam_ele; //drain fixed amount depending on damage
-						p_ptr->csp -= (p_ptr->mhp * (r_ptr->level + 50)) / 1000; //additionally drain a percentage
+						p_ptr->cmp -= dam_ele; //drain fixed amount depending on damage
+						p_ptr->cmp -= (p_ptr->mhp * (r_ptr->level + 50)) / 1000; //additionally drain a percentage
 #else
-						p_ptr->csp -= (p_ptr->mhp * (r_ptr->level + 30)) / 600; //drain a percentage
+						p_ptr->cmp -= (p_ptr->mhp * (r_ptr->level + 30)) / 600; //drain a percentage
 #endif
-						if (p_ptr->csp < 0) p_ptr->csp = 0;
+						if (p_ptr->cmp < 0) p_ptr->cmp = 0;
 						p_ptr->redraw |= PR_MANA;
 						if (!obvious) msg_print(Ind, "Your psychic energy gets drained.");
 						obvious = TRUE;

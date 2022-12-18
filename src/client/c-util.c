@@ -8096,10 +8096,10 @@ void auto_inscriptions(void) {
 	if (changed3 != c_cfg.font_map_solid_walls ||
 	    changed4a != c_cfg.hp_bar || changed4b != c_cfg.mp_bar || changed4c != c_cfg.st_bar) {
 		if (changed4a != c_cfg.hp_bar) hp_bar = c_cfg.hp_bar;
-		if (changed4b != c_cfg.mp_bar) sp_bar = c_cfg.mp_bar;
+		if (changed4b != c_cfg.mp_bar) mp_bar = c_cfg.mp_bar;
 		if (changed4c != c_cfg.st_bar) st_bar = c_cfg.st_bar;
 		prt_hp(hp_max, hp_cur, hp_bar, hp_boosted);
-		prt_sp(sp_max, sp_cur, sp_bar);
+		prt_mp(mp_max, mp_cur, mp_bar);
 		prt_stamina(st_max, st_cur, st_bar);
 	}
 	if (changed5 != c_cfg.equip_text_colour) p_ptr->window |= PW_EQUIP;
@@ -11198,7 +11198,7 @@ void check_immediate_options(int i, bool yes, bool playing) {
 		if (screen_icky) Term_switch(0);
 		clear_huge_bars();
 		/* Avoid div/0 if client just logged in with a character, which also initializes the options and calls us */
-		if (p_ptr->msp) draw_huge_bar(0, &prev_huge_cmp, p_ptr->csp, &prev_huge_mmp, p_ptr->msp);
+		if (p_ptr->mmp) draw_huge_bar(0, &prev_huge_cmp, p_ptr->cmp, &prev_huge_mmp, p_ptr->mmp);
 		if (p_ptr->msane) draw_huge_bar(1, &prev_huge_csp, p_ptr->csane, &prev_huge_msp, p_ptr->msane);
 		if (p_ptr->mhp) draw_huge_bar(2, &prev_huge_chp, p_ptr->chp, &prev_huge_mhp, p_ptr->mhp);
 		if (screen_icky) Term_switch(0);

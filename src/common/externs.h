@@ -411,7 +411,7 @@ extern int Send_ac(int Ind, int base, int plus);
 extern int Send_experience(int Ind, int lev, int max_exp, int cur_exp, s32b adv_exp);
 extern int Send_gold(int Ind, s32b gold);
 extern int Send_hp(int Ind, int mhp, int chp);
-extern int Send_sp(int Ind, int msp, int csp);
+extern int Send_mp(int Ind, int mmp, int cmp);
 extern int Send_char_info(int Ind, int race, int class, int sex, int mode);
 extern int Send_various(int Ind, int height, int weight, int age, int sc);
 extern int Send_stat(int Ind, int stat);

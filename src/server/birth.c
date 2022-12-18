@@ -3749,9 +3749,9 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	/* Give the player some resurrections */
 	p_ptr->lives = cfg.lifes + 1;
 
-	/* msp is only calculated in calc_mana which is only in update_stuff though.. */
+	/* mmp is only calculated in calc_mana which is only in update_stuff though.. */
 	calc_mana(Ind);
-	p_ptr->csp = p_ptr->msp;
+	p_ptr->cmp = p_ptr->mmp;
 
 	/* Start with full stamina */
 	p_ptr->cst = 10;

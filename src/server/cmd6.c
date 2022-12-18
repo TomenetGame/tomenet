@@ -161,13 +161,13 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 				ident = TRUE;
 		}
 		/* new in 2022 - just to actually 'do' something - emergency usage (yay for Chaos Lineage) */
-		if (p_ptr->csp < p_ptr->msp
+		if (p_ptr->cmp < p_ptr->mmp
 #ifdef MARTYR_NO_MANA
 		    && !p_ptr->martyr
 #endif
 		    ) {
-			p_ptr->csp += 15;
-			if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
+			p_ptr->cmp += 15;
+			if (p_ptr->cmp > p_ptr->mmp) p_ptr->cmp = p_ptr->mmp;
 			p_ptr->redraw |= (PR_MANA);
 			p_ptr->window |= (PW_PLAYER);
 			ident = TRUE;
@@ -552,13 +552,13 @@ void do_cmd_eat_food(int Ind, int item) {
 			msg_print(Ind, "That tastes weird..");
 			switch (o_ptr->sval) {
 			case SV_FIRE_SMALL:
-				if (p_ptr->csp < p_ptr->msp
+				if (p_ptr->cmp < p_ptr->mmp
 #ifdef MARTYR_NO_MANA
 				    && !p_ptr->martyr
 #endif
 				    ) {
-					p_ptr->csp += 30;
-					if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
+					p_ptr->cmp += 30;
+					if (p_ptr->cmp > p_ptr->mmp) p_ptr->cmp = p_ptr->mmp;
 					msg_print(Ind, "You feel your head clearing.");
 					p_ptr->redraw |= (PR_MANA);
 					p_ptr->window |= (PW_PLAYER);
@@ -567,13 +567,13 @@ void do_cmd_eat_food(int Ind, int item) {
 				break;
 
 			case SV_FIRESTONE:
-				if (p_ptr->csp < p_ptr->msp
+				if (p_ptr->cmp < p_ptr->mmp
 #ifdef MARTYR_NO_MANA
 				    && !p_ptr->martyr
 #endif
 				    ) {
-					p_ptr->csp += 100;
-					if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
+					p_ptr->cmp += 100;
+					if (p_ptr->cmp > p_ptr->mmp) p_ptr->cmp = p_ptr->mmp;
 					msg_print(Ind, "You feel your head clearing.");
 					p_ptr->redraw |= (PR_MANA);
 					p_ptr->window |= (PW_PLAYER);
@@ -896,13 +896,13 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			ident = TRUE;
 			break;
 		case SV_POTION_RESTORE_MANA:
-			if (p_ptr->csp < p_ptr->msp
+			if (p_ptr->cmp < p_ptr->mmp
 #ifdef MARTYR_NO_MANA
 			    && !p_ptr->martyr
 #endif
 			    ) {
-				p_ptr->csp += 500;
-				if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
+				p_ptr->cmp += 500;
+				if (p_ptr->cmp > p_ptr->mmp) p_ptr->cmp = p_ptr->mmp;
 				msg_print(Ind, "You feel your head clearing.");
 				p_ptr->redraw |= (PR_MANA);
 				p_ptr->window |= (PW_PLAYER);
@@ -910,13 +910,13 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			}
 			break;
 		case SV_POTION_STAR_RESTORE_MANA:
-			if (p_ptr->csp < p_ptr->msp
+			if (p_ptr->cmp < p_ptr->mmp
 #ifdef MARTYR_NO_MANA
 			    && !p_ptr->martyr
 #endif
 			    ) {
-				p_ptr->csp += 1000;
-				if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
+				p_ptr->cmp += 1000;
+				if (p_ptr->cmp > p_ptr->mmp) p_ptr->cmp = p_ptr->mmp;
 				msg_print(Ind, "You feel your head clearing!");
 				p_ptr->redraw |= (PR_MANA);
 				p_ptr->window |= (PW_PLAYER);
@@ -3476,14 +3476,14 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 
 	case SV_STAFF_THE_MAGI:
 		if (do_res_stat(Ind, A_INT)) ident = TRUE;
-		if (p_ptr->csp < p_ptr->msp
+		if (p_ptr->cmp < p_ptr->mmp
 #ifdef MARTYR_NO_MANA
 		    && !p_ptr->martyr
 #endif
 		    ) {
-			p_ptr->csp += 500;
-			if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
-			p_ptr->csp_frac = 0;
+			p_ptr->cmp += 500;
+			if (p_ptr->cmp > p_ptr->mmp) p_ptr->cmp = p_ptr->mmp;
+			p_ptr->cmp_frac = 0;
 			ident = TRUE;
 			msg_print(Ind, "You feel your head clearing.");
 			p_ptr->redraw |= (PR_MANA);
@@ -6456,9 +6456,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			//if (!p_ptr->realm1)
 			if (1) {
 				/* Sufficient mana */
-				if (20 <= p_ptr->csp) {
+				if (20 <= p_ptr->cmp) {
 					/* Use some mana */
-					p_ptr->csp -= 20;
+					p_ptr->cmp -= 20;
 
 					/* Confusing. */
 					if (rand_int(5) == 0) (void)set_confused(Ind, p_ptr->confused + randint(5));
@@ -6467,8 +6467,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				/* Over-exert the player */
 				else {
 					/* No mana left */
-					p_ptr->csp = 0;
-					p_ptr->csp_frac = 0;
+					p_ptr->cmp = 0;
+					p_ptr->cmp_frac = 0;
 
 					/* Message */
 					msg_print(Ind, "You do not have enough mana to control the stone!");
@@ -6566,13 +6566,13 @@ void do_cmd_activate(int Ind, int item, int dir) {
 #endif
 		case ART_GANDALF:
 			msg_print(Ind, "Your mage staff glows deep blue...");
-			if (p_ptr->csp < p_ptr->msp
+			if (p_ptr->cmp < p_ptr->mmp
 #ifdef MARTYR_NO_MANA
 			     && !p_ptr->martyr
 #endif
 			     ) {
-				p_ptr->csp = p_ptr->msp;
-				p_ptr->csp_frac = 0;
+				p_ptr->cmp = p_ptr->mmp;
+				p_ptr->cmp_frac = 0;
 				msg_print(Ind, "You feel your head clearing.");
 				p_ptr->redraw |= (PR_MANA);
 				p_ptr->window |= (PW_PLAYER);

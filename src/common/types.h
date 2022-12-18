@@ -2624,9 +2624,9 @@ struct player_type {
 	s16b form_hp_ratio;		/* mimic form HP+ percentage */
 	bool hp_drained;		/* hack for client-size recognition of "harmless" lifedrain damage */
 
-	s16b msp;			/* Max mana pts */
-	s16b csp;			/* Cur mana pts */
-	u16b csp_frac;			/* Cur mana frac (times 2^16) */
+	s16b mmp;			/* Max mana pts */
+	s16b cmp;			/* Cur mana pts */
+	u16b cmp_frac;			/* Cur mana frac (times 2^16) */
 
 	s16b mst;			/* Max stamina pts */
 	s16b cst;			/* Cur stamina pts */

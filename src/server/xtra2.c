@@ -11164,14 +11164,14 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 //s_printf("gain %d\n", gain);
 #endif
 
-		if (gain && (p_ptr->csp < p_ptr->msp)
+		if (gain && (p_ptr->cmp < p_ptr->mmp)
 #ifdef MARTYR_NO_MANA
 		    && !p_ptr->martyr
 #endif
 		    ) {
 			msg_print(Ind, "You draw energy from the pain of your opponent.");
-			p_ptr->csp += gain;
-			if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
+			p_ptr->cmp += gain;
+			if (p_ptr->cmp > p_ptr->mmp) p_ptr->cmp = p_ptr->mmp;
 			p_ptr->redraw |= (PR_MANA);
 		}
 
@@ -11553,42 +11553,39 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			/*int gain = (r_ptr->level *
 			    get_skill_scale(p_ptr, SKILL_NECROMANCY, 100)) / 100 +
 			    get_skill(p_ptr, SKILL_NECROMANCY); */
-			long gain, gain_sp, skill; /* let's make it more complicated - gain HP and SP now - C. Blue */
+			long gain, gain_mp, skill; /* let's make it more complicated - gain HP and SP now - C. Blue */
 
 			skill = get_skill_scale(p_ptr, SKILL_NECROMANCY, 50);
 			gain = get_skill_scale(p_ptr, SKILL_NECROMANCY, 100);
 
 			gain = (m_ptr->level > gain ? gain : m_ptr->level);
-			gain_sp = gain;
+			gain_mp = gain;
 
 			if (skill >= 15) gain = (2 + gain) * (2 + gain) * (2 + gain) / 327; //15:+15,20:+32;30:+100,40:+226,50:+429
 			else gain = ((3 + skill) * (3 +  skill) - 9) / 21; //3:+1,5:+2,10:+7,14:+13
 			if (!gain) gain = 1; /* level 0 monsters (and super-low skill) give some energy too */
 
 #if 0 /* strange values I guess */
-			if (gain_sp >= 60) gain_sp = (gain_sp - 60) * 20 + 100;
-			else if (gain_sp >= 40) gain_sp = (gain_sp - 40) * 4 + 20;
-			else if (gain_sp >= 30) gain_sp = (gain_sp - 30) + 7;
-			else if (gain_sp >= 20) gain_sp = (gain_sp - 20) / 2 + 2;
-			else gain_sp /= 10;
-			if (!gain_sp && magik(25)) gain_sp = 1; /* level 0 monsters have chance to give energy too */
+			if (gain_mp >= 60) gain_mp = (gain_mp - 60) * 20 + 100;
+			else if (gain_mp >= 40) gain_mp = (gain_mp - 40) * 4 + 20;
+			else if (gain_mp >= 30) gain_mp = (gain_mp - 30) + 7;
+			else if (gain_mp >= 20) gain_mp = (gain_mp - 20) / 2 + 2;
+			else gain_mp /= 10;
+			if (!gain_mp && magik(25)) gain_mp = 1; /* level 0 monsters have chance to give energy too */
 #else
-			gain_sp = ((gain_sp + 1) * (gain_sp + 1)) / 75; //8:+1,12:+2,20:+5,25:+9,30:+12,40:+22,50:+34
-			if (!gain_sp) gain_sp = 1; /* level 0 monsters / low skill still give energy */
+			gain_mp = ((gain_mp + 1) * (gain_mp + 1)) / 75; //8:+1,12:+2,20:+5,25:+9,30:+12,40:+22,50:+34
+			if (!gain_mp) gain_mp = 1; /* level 0 monsters / low skill still give energy */
 #endif
 
-			if (((p_ptr->chp < p_ptr->mhp) || (p_ptr->csp < p_ptr->msp))
+			if (((p_ptr->chp < p_ptr->mhp) || (p_ptr->cmp < p_ptr->mmp))
 #ifdef MARTYR_NO_MANA
 			    && !p_ptr->martyr
 #endif
 			    ) {
 				msg_print(Ind, "You absorb the energy of the dying soul.");
-#ifndef MARTYR_NO_MANA
-				if (!p_ptr->martyr)
-#endif
-					hp_player_quiet(Ind, gain, TRUE);
-				p_ptr->csp += gain_sp;
-				if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
+				if (!p_ptr->martyr) hp_player_quiet(Ind, gain, TRUE);
+				p_ptr->cmp += gain_mp;
+				if (p_ptr->cmp > p_ptr->mmp) p_ptr->cmp = p_ptr->mmp;
 				p_ptr->redraw |= (PR_MANA);
 			}
 		}

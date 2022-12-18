@@ -1948,10 +1948,10 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 */		old_num = (p_ptr->chp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->mhp * 10);
 		if (old_num > TURN_CHAR_INTO_NUMBER) old_num = 10;
 /*	}
-	else if (p_ptr->msp > 0)
+	else if (p_ptr->mmp > 0)
 	{
 
-		old_num = (p_ptr->csp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->msp * 10);
+		old_num = (p_ptr->cmp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->mmp * 10);
 		if (old_num > TURN_CHAR_INTO_NUMBER) old_num = 10;
 	} */
 
@@ -2005,7 +2005,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 #if 1
 	//if (p_ptr->tim_manashield)
 	if (p_ptr->tim_manashield && (!bypass_invuln)) {
-		if (p_ptr->csp > 0) {
+		if (p_ptr->cmp > 0) {
 			int taken;
 
 			switch (p_ptr->pclass) {
@@ -2021,26 +2021,26 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 				break;
 			}
 
-			if (p_ptr->csp < taken) {
+			if (p_ptr->cmp < taken) {
 				switch (p_ptr->pclass) {
 				case CLASS_MAGE:
  #ifdef MELEE_HIT_DRAINS_SHIELD
-					if (melee_hit) damage = ((taken - p_ptr->csp) / 4) * 3;
+					if (melee_hit) damage = ((taken - p_ptr->cmp) / 4) * 3;
 					else
  #endif
-					damage = ((taken - p_ptr->csp) / 2) * 2;
+					damage = ((taken - p_ptr->cmp) / 2) * 2;
 					break;
 				default:
-					damage = ((taken - p_ptr->csp) / 2) * 1;
+					damage = ((taken - p_ptr->cmp) / 2) * 1;
 					break;
 				}
 
-				p_ptr->csp = 0;
+				p_ptr->cmp = 0;
 				/* mana shield stops on empty mana! */
 				set_tim_manashield(Ind, 0);
 			} else {
 				damage = 0;
-				p_ptr->csp -= taken;
+				p_ptr->cmp -= taken;
 			}
 
 			/* Display the spellpoints */
@@ -2084,7 +2084,7 @@ destined_defeat:
 /*	}
 	else
 	{
-		new_num = (p_ptr->csp * 95) / (p_ptr->msp*10);
+		new_num = (p_ptr->cmp * 95) / (p_ptr->mmp*10);
 		if (new_num >= 7) new_num = 10;
 	}
 */
@@ -2103,11 +2103,11 @@ destined_defeat:
 				p_ptr->chp = p_ptr->mhp;
 				p2_ptr->chp = p2_ptr->mhp;
 #ifdef MARTYR_NO_MANA
-				if (!p_ptr->martyr) p_ptr->csp = p_ptr->msp;
-				if (!p2_ptr->martyr) p2_ptr->csp = p2_ptr->msp;
+				if (!p_ptr->martyr) p_ptr->cmp = p_ptr->mmp;
+				if (!p2_ptr->martyr) p2_ptr->cmp = p2_ptr->mmp;
 #else
-				p_ptr->csp = p_ptr->msp;
-				p2_ptr->csp = p2_ptr->msp;
+				p_ptr->cmp = p_ptr->mmp;
+				p2_ptr->cmp = p2_ptr->mmp;
 #endif
 				p_ptr->redraw |= PR_HP | PR_MANA;
 				p2_ptr->redraw |= PR_HP | PR_MANA;
@@ -9728,11 +9728,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* pre-calc kinetic/spirit shield mana tax before doing the reflection check below */
 	if (physical_shield) {
 		if (!friendly_player && (typ == GF_SHOT || typ == GF_ARROW || typ == GF_BOLT || typ == GF_BOULDER || typ == GF_MISSILE)
-		    && p_ptr->csp >= dam / 7 &&
+		    && p_ptr->cmp >= dam / 7 &&
 		    !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
 		    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO))) { //why all of NORF+NODF+NODO checks though?
 			/* drain mana */
-			p_ptr->csp -= dam / 7;
+			p_ptr->cmp -= dam / 7;
 			p_ptr->redraw |= PR_MANA;
 		} else physical_shield = FALSE; /* failure to apply the shield to this particular attack */
 	}
@@ -10176,9 +10176,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		/* 'Nether Feedback' perk */
 		if (dam && get_skill(p_ptr, SKILL_OUNLIFE) == 50) {
-			p_ptr->csp += (dam + 5) / 10; //gain mana from ~10% of the damage
+			p_ptr->cmp += (dam + 5) / 10; //gain mana from ~10% of the damage
 			dam = (dam * 9 + 4) / 10; //reduce by ~10% flat
-			if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
+			if (p_ptr->cmp > p_ptr->mmp) p_ptr->cmp = p_ptr->mmp;
 			p_ptr->redraw |= (PR_MANA);
 		}
 		break;

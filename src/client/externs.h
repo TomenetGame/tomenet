@@ -683,8 +683,8 @@ extern void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s
 extern void prt_gold(int gold);
 extern void prt_ac(int ac, bool boosted);
 extern void prt_hp(int max, int cur, bool bar, bool boosted);
-extern void prt_party_stats(int member_num, byte color, char *member_name, int member_lev, int member_chp, int member_mhp, int member_csp, int member_msp);
-extern void prt_sp(int max, int cur, bool bar);
+extern void prt_party_stats(int member_num, byte color, char *member_name, int member_lev, int member_chp, int member_mhp, int member_cmp, int member_mmp);
+extern void prt_mp(int max, int cur, bool bar);
 extern void prt_depth(int x, int y, int z, bool town, int colour, int colour_sector, cptr buf);
 extern void prt_hunger(int food);
 extern void prt_blind_hallu(char blind_hallu);
@@ -1168,8 +1168,8 @@ extern byte showing_inven, showing_equip;
 extern int hp_max, hp_cur;
 extern bool hp_bar;
 extern bool hp_boosted;
-extern int sp_max, sp_cur;
-extern bool sp_bar;
+extern int mp_max, mp_cur;
+extern bool mp_bar;
 extern int st_max, st_cur;
 extern bool st_bar;
 

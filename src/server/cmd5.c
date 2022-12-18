@@ -71,11 +71,11 @@ static s16b spell_chance(int Ind, int realm, magic_type *s_ptr)
 	//chance -= adj_mag_stat[p_ptr->stat_ind[magic_info[realm].spell_stat]] - 3;
 
 	/* Not enough mana to cast */
-	if (s_ptr->smana > p_ptr->csp)
+	if (s_ptr->smana > p_ptr->cmp)
 	{
 		/* Hack -- Since at the moment casting spells without enough mana*/
 		/* is impossible, I'm taking this out, as it confuses people. */
-		/* chance += 5 * (s_ptr->smana - p_ptr->csp); */
+		/* chance += 5 * (s_ptr->smana - p_ptr->cmp); */
 	}
 
 	/* Extract the minimum failure rate */
@@ -489,7 +489,7 @@ static void do_mimic_power(int Ind, int power, int dir) {
 	j = power;
 
 	/* Check mana */
-	if (s_ptr->smana > p_ptr->csp) {
+	if (s_ptr->smana > p_ptr->cmp) {
 		msg_print(Ind, "You do not have enough mana to use this power.");
 		//msg_format(Ind, "You need %d mana to use this power.", s_ptr->smana);
 
@@ -787,17 +787,17 @@ static void do_mimic_power(int Ind, int power, int dir) {
     }
 	}
 
-	if (s_ptr->smana <= p_ptr->csp) {
+	if (s_ptr->smana <= p_ptr->cmp) {
 		/* Use some mana */
-		p_ptr->csp -= s_ptr->smana;
+		p_ptr->cmp -= s_ptr->smana;
 	}
 	/* Over-exert the player */
 	else {
-		int oops = s_ptr->smana - p_ptr->csp;
+		int oops = s_ptr->smana - p_ptr->cmp;
 
 		/* No mana left */
-		p_ptr->csp = 0;
-		p_ptr->csp_frac = 0;
+		p_ptr->cmp = 0;
+		p_ptr->cmp_frac = 0;
 
 		/* Message */
 		msg_print(Ind, "You faint from the effort!");
@@ -1311,18 +1311,18 @@ void do_mimic_power_aux(int Ind, int dir) {
 
 	//p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-	if (s_ptr->smana <= p_ptr->csp) {
+	if (s_ptr->smana <= p_ptr->cmp) {
 		/* Use some mana */
-		p_ptr->csp -= s_ptr->smana;
+		p_ptr->cmp -= s_ptr->smana;
 	}
 
 	/* Over-exert the player */
 	else {
-		int oops = s_ptr->smana - p_ptr->csp;
+		int oops = s_ptr->smana - p_ptr->cmp;
 
 		/* No mana left */
-		p_ptr->csp = 0;
-		p_ptr->csp_frac = 0;
+		p_ptr->cmp = 0;
+		p_ptr->cmp_frac = 0;
 
 		/* Message */
 		msg_print(Ind, "You faint from the effort!");
@@ -1465,13 +1465,13 @@ void do_mimic_change(int Ind, int r_idx, bool force) {
 	p_ptr->mimic_seed += rand_int(0xFFFF);
 
 	/* Penalise form-switching just for using a spell */
-	//p_ptr->csp /= 2;
+	//p_ptr->cmp /= 2;
 
 	/* Recalculate mana */
 	p_ptr->update |= (PU_MANA | PU_HP | PU_BONUS | PU_VIEW);
 
 	/* Tell the client */
-	p_ptr->redraw |= PR_VARIOUS | PR_MANA;//PR_MANA was for when p_ptr->csp was reduced as form-switch penalty
+	p_ptr->redraw |= PR_VARIOUS | PR_MANA;//PR_MANA was for when p_ptr->cmp was reduced as form-switch penalty
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);

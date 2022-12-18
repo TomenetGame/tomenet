@@ -362,11 +362,11 @@ static void prt_stamina(int Ind) {
 /*
  * Prints players max/cur spell points
  */
-static void prt_sp(int Ind) {
+static void prt_mp(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Do not show mana unless it matters */
-	Send_sp(Ind, p_ptr->msp, p_ptr->csp);
+	Send_mp(Ind, p_ptr->mmp, p_ptr->cmp);
 }
 
 
@@ -974,7 +974,7 @@ static void prt_frame_basic(int Ind) {
 #endif
 
 	/* Spellpoints */
-	prt_sp(Ind);
+	prt_mp(Ind);
 
 	/* Stamina */
 	prt_stamina(Ind);
@@ -1502,7 +1502,7 @@ void calc_mana(int Ind) {
 	/* give at least 1 MP under normal circumstances */
 	if (new_mana <= 0) new_mana = 1;
 
-	if (Ind2) new_mana += p_ptr2->msp / 2;
+	if (Ind2) new_mana += p_ptr2->mmp / 2;
 
 	/* Some classes dont use mana */
 	if ((p_ptr->pclass == CLASS_WARRIOR) ||
@@ -1514,21 +1514,21 @@ void calc_mana(int Ind) {
 #endif
 
 	/* Maximum mana has changed */
-	if (p_ptr->msp != new_mana) {
+	if (p_ptr->mmp != new_mana) {
 		/* Player has no mana now */
 		if (!new_mana) {
 			/* No mana left */
-			p_ptr->csp = 0;
-			p_ptr->csp_frac = 0;
+			p_ptr->cmp = 0;
+			p_ptr->cmp_frac = 0;
 		}
 
 		/* Player had no mana, has some now */
-		else if (!p_ptr->msp) {
+		else if (!p_ptr->mmp) {
 			/* Reset mana */
 #if 0 /* completely cheezable restoration */
-			p_ptr->csp = new_mana;
+			p_ptr->cmp = new_mana;
 #endif
-			p_ptr->csp_frac = 0;
+			p_ptr->cmp_frac = 0;
 		}
 
 		/* Player had some mana, adjust current mana */
@@ -1537,16 +1537,16 @@ void calc_mana(int Ind) {
 
 			/* change current mana proportionately to change of max mana, */
 			/* divide first to avoid overflow, little loss of accuracy */
-			value = ((((long)p_ptr->csp << 16) + p_ptr->csp_frac) /
-				p_ptr->msp * new_mana);
+			value = ((((long)p_ptr->cmp << 16) + p_ptr->cmp_frac) /
+				p_ptr->mmp * new_mana);
 
 			/* Extract mana components */
-			p_ptr->csp = (value >> 16);
-			p_ptr->csp_frac = (value & 0xFFFF);
+			p_ptr->cmp = (value >> 16);
+			p_ptr->cmp_frac = (value & 0xFFFF);
 		}
 
 		/* Save new mana */
-		p_ptr->msp = new_mana;
+		p_ptr->mmp = new_mana;
 
 		/* Display mana later */
 		p_ptr->redraw |= (PR_MANA);
@@ -7496,7 +7496,7 @@ void redraw_stuff(int Ind) {
 
 	if (p_ptr->redraw & PR_MANA) {
 		p_ptr->redraw &= ~(PR_MANA);
-		prt_sp(Ind);
+		prt_mp(Ind);
 	}
 
 	if (p_ptr->redraw & PR_GOLD) {

@@ -1158,7 +1158,7 @@ extern int Send_skill_info(int ind, int i, bool keep);
 extern int Send_gold(int Ind, s32b gold, s32b balance);
 extern int Send_hp(int Ind, int mhp, int chp);
 extern int Send_stamina(int Ind, int mst, int cst);
-extern int Send_sp(int Ind, int msp, int csp);
+extern int Send_mp(int Ind, int mmp, int cmp);
 extern int Send_char_info(int Ind, int race, int class, int trait, int sex, int mode, int lives, cptr name);
 extern int Send_various(int ind, int hgt, int wgt, int age, int sc, cptr body);
 extern int Send_stat(int Ind, int stat);

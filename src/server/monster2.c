@@ -5252,7 +5252,7 @@ void update_smart_learn(int Ind, int m_idx, int what) {
 		break;
 
 	case DRS_SMANA:
-		if (!p_ptr->msp) m_ptr->smart |= SM_IMM_MANA;
+		if (!p_ptr->mmp) m_ptr->smart |= SM_IMM_MANA;
 		break;
 
 	}

@@ -10445,9 +10445,9 @@ bool test_charmedignore(int Ind, s32b charmer_id, monster_type *m_ptr, monster_r
 	/* spell continuously burns mana! */
 	//if (turn % (cfg.fps / 10) == 0) {
 	if (!rand_int(6)) {
-		q_ptr->csp -= diff;
-		if (q_ptr->csp < 0) q_ptr->csp = 0;
-		if (q_ptr->csp < 1) {
+		q_ptr->cmp -= diff;
+		if (q_ptr->cmp < 0) q_ptr->cmp = 0;
+		if (q_ptr->cmp < 1) {
 			do_mstopcharm(Ind_charmer);
 			return(FALSE);
 		}

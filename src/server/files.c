@@ -506,7 +506,7 @@ static void display_player_middle(int Ind) {
 	Send_experience(Ind, p_ptr->lev, p_ptr->max_exp, p_ptr->exp, adv_exp, adv_exp_prev);
 	Send_gold(Ind, p_ptr->au);
 	Send_hp(Ind, p_ptr->mhp, p_ptr->chp);
-	Send_sp(Ind, p_ptr->msp, p_ptr->csp);
+	Send_mp(Ind, p_ptr->mmp, p_ptr->cmp);
 	Send_stamina(Ind, p_ptr->mst, p_ptr->cst);
 }
 

@@ -5944,18 +5944,18 @@ int Send_hp(int Ind, int mhp, int chp) {
 		return Packet_printf(&connp->c, "%c%hd%hd", PKT_HP, mhp, chp);
 }
 
-int Send_sp(int Ind, int msp, int csp) {
+int Send_mp(int Ind, int mmp, int cmp) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 
 	/* Display hack */
-	if (p_ptr->mana_bar) msp += 10000;
+	if (p_ptr->mana_bar) mmp += 10000;
 
 #if 1 /* can we use mana at all? */
 	if (is_newer_than(&p_ptr->version, 4, 4, 1, 3, 0, 0) &&
 	    (p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_ARCHER)) {
-		msp = -9999;
-		csp = -9999;
+		mmp = -9999;
+		cmp = -9999;
 	}
 #endif
 
@@ -5967,9 +5967,9 @@ int Send_sp(int Ind, int msp, int csp) {
 	}
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		Packet_printf(&connp2->c, "%c%hd%hd", PKT_SP, msp, csp);
+		Packet_printf(&connp2->c, "%c%hd%hd", PKT_MP, mmp, cmp);
 	}
-	return Packet_printf(&connp->c, "%c%hd%hd", PKT_SP, msp, csp);
+	return Packet_printf(&connp->c, "%c%hd%hd", PKT_MP, mmp, cmp);
 }
 
 int Send_stamina(int Ind, int mst, int cst) {
@@ -12382,7 +12382,7 @@ static int Receive_rest(int ind) {
 		   and max stamina */
 		if ((p_ptr->poisoned) || (p_ptr->diseased) || (p_ptr->cut) || (p_ptr->sun_burn) ||
 		    ((p_ptr->chp == p_ptr->mhp) &&
-		    (p_ptr->csp == p_ptr->msp) &&
+		    (p_ptr->cmp == p_ptr->mmp) &&
 		    (p_ptr->cst == p_ptr->mst)
 		    && !(p_ptr->prace == RACE_ENT && p_ptr->food < PY_FOOD_FULL)
 		    ))

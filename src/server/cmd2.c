@@ -6001,12 +6001,12 @@ int breakage_chance(object_type *o_ptr) {
 /* Magic brand, shield - Kurzel */
 void do_nimbus(int Ind, int y, int x) {
 	player_type *p_ptr = Players[Ind];
-	if (p_ptr->csp < 2) {
-		p_ptr->csp = 0;
+	if (p_ptr->cmp < 2) {
+		p_ptr->cmp = 0;
 		(void)set_nimbus(Ind, 0, p_ptr->nimbus_t, p_ptr->nimbus_d);
 		return;
 	}
-	p_ptr->csp = p_ptr->csp - 2;
+	p_ptr->cmp = p_ptr->cmp - 2;
 	p_ptr->redraw |= (PR_MANA);
 #ifdef USE_SOUND_2010
 	sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, TRUE);
