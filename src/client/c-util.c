@@ -11187,9 +11187,11 @@ void check_immediate_options(int i, bool yes, bool playing) {
 	}
 #endif
 
-	if (option_info[i].o_var == &c_cfg.mp_huge_bar ||
+	if ((option_info[i].o_var == &c_cfg.mp_huge_bar ||
 	    option_info[i].o_var == &c_cfg.sp_huge_bar ||
-	    option_info[i].o_var == &c_cfg.hp_huge_bar) {
+	    option_info[i].o_var == &c_cfg.hp_huge_bar) ||
+	    (option_info[i].o_var == &c_cfg.font_map_solid_walls &&
+	    (c_cfg.mp_huge_bar || c_cfg.sp_huge_bar || c_cfg.hp_huge_bar))) {
 		/* Reset static vars for hp/sp/mp for drawing huge bars to enforce redrawing */
 		prev_huge_cmp = prev_huge_csp = prev_huge_chp = -1;
 		if (screen_icky) Term_switch(0);
