@@ -11220,6 +11220,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	if (m_ptr->hp < 0) {
 		char m_name[MNAME_LEN], m_name_real[MNAME_LEN];
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
+		int xp_factor = 100;
 		bool necro = get_skill(p_ptr, SKILL_NECROMANCY) && !p_ptr->anti_magic && !get_skill(p_ptr, SKILL_ANTIMAGIC);
 #ifdef RACE_DIZ
 		bool lore = FALSE;
@@ -11416,48 +11417,41 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 		/* Award players of disadvantageous situations */
 		if (l_ptr) {
-			int factor = 100;
-			if (l_ptr->flags1 & LF1_NO_MAGIC)     factor += 10;
-			if (l_ptr->flags1 & LF1_NO_MAP)       factor += 15;
-			if (l_ptr->flags1 & LF1_NO_MAGIC_MAP) factor += 10;
-			if (l_ptr->flags1 & LF1_NO_DESTROY)   factor += 5;
-			if (l_ptr->flags1 & LF1_NO_GENO)      factor += 5;
-
-			tmp_exp = (tmp_exp * factor) / 100;
+			if (l_ptr->flags1 & LF1_NO_MAGIC)	xp_factor += 10;
+			if (l_ptr->flags1 & LF1_NO_MAP)		xp_factor += 15;
+			if (l_ptr->flags1 & LF1_NO_MAGIC_MAP)	xp_factor += 10;
+			if (l_ptr->flags1 & LF1_NO_DESTROY)	xp_factor += 5;
+			if (l_ptr->flags1 & LF1_NO_GENO)	xp_factor += 5;
 		}
-
 		if (p_ptr->wpos.wz) {
-			int factor = 100;
-			if (dt_ptr2->flags1 & DF1_NO_UP)		factor += 5;
-			if (dt_ptr2->flags2 & DF2_NO_RECALL_INTO)	factor += 5;
-			if (dt_ptr2->flags1 & DF1_NO_RECALL)		factor += 10;
-			if (dt_ptr2->flags1 & DF1_FORCE_DOWN)		factor += 10;
-			if (dt_ptr2->flags2 & DF2_IRON)			factor += 15;
-			if (dt_ptr2->flags2 & DF2_HELL)			factor += 10;
-			if (dt_ptr2->flags2 & DF2_NO_DEATH)		factor -= 50;
+			if (dt_ptr2->flags1 & DF1_NO_UP)		xp_factor += 5;
+			if (dt_ptr2->flags2 & DF2_NO_RECALL_INTO)	xp_factor += 5;
+			if (dt_ptr2->flags1 & DF1_NO_RECALL)		xp_factor += 10;
+			if (dt_ptr2->flags1 & DF1_FORCE_DOWN)		xp_factor += 10;
+			if (dt_ptr2->flags2 & DF2_IRON)			xp_factor += 15;
+			if (dt_ptr2->flags2 & DF2_HELL)			xp_factor += 10;
+			if (dt_ptr2->flags2 & DF2_NO_DEATH)		xp_factor -= 50;
 
-			if (dt_ptr2->flags3 & DF3_EXP_5)		factor += 5;
-			if (dt_ptr2->flags3 & DF3_EXP_10)		factor += 10;
-			if (dt_ptr2->flags3 & DF3_EXP_20)		factor += 20;
+			if (dt_ptr2->flags3 & DF3_EXP_5)	xp_factor += 5;
+			if (dt_ptr2->flags3 & DF3_EXP_10)	xp_factor += 10;
+			if (dt_ptr2->flags3 & DF3_EXP_20)	xp_factor += 20;
 
 #ifdef DUNGEON_VISIT_BONUS
 			if (!(dt_ptr2->flags3 & DF3_NO_DUNGEON_BONUS))
 				switch (dungeon_bonus[dt_ptr2->id]) {
-				case 3: factor += 20; break;
-				case 2: factor += 13; break;
-				case 1: factor += 7; break;
+				case 3: xp_factor += 20; break;
+				case 2: xp_factor += 13; break;
+				case 1: xp_factor += 7; break;
 				}
 #endif
-
-			tmp_exp = (tmp_exp * factor) / 100;
 		}
-
 		if (p_ptr->wpos.wz != 0) {
 			/* Monsters in the Nether Realm give extra-high exp,
 			   +2% per floor! (C. Blue) */
 			if (dt_ptr2->type == DI_NETHER_REALM)
-				tmp_exp = ((((-p_ptr->wpos.wz) * 2) + 100) * tmp_exp) / 100;
+				xp_factor += netherrealm_wpos_z * p_ptr->wpos.wz * 2;
 		}
+		tmp_exp = (tmp_exp * xp_factor) / 100;
 
 		/* factor in clone state */
 		tmp_exp = (tmp_exp * (100 - m_ptr->clone)) / 100;
