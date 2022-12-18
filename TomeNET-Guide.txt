@@ -17975,6 +17975,11 @@ create a character!):
     necromancy as they see fit. Accordingly at level 20 shamans learn to
     perceive the invisible.
 
+    A list of useful low-level forms for mimicry users, that includes shamans,
+    is given in (7.7b). It points out some forms that are usable exclusively
+    by shamans too and are not so useful to normal mimics. It also lists some
+    humanoid forms in case you are training a weapon skill.
+
     Hints:
     Maybe there's a friendly mimicry-user around who can forge some
     'Rings of Polymorphing' for you from forms he or she no longer uses.
