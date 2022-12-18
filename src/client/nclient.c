@@ -127,8 +127,11 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 	} else redraw = FALSE;
 
 	/* Ensure sane limits */
-	if (cur < 0) cur = 0;
-	if (!max) max = 1;
+	if (cur < 0) cur = 0; //happens eg if player dies and hence HP turns negative
+	if (!max) { //paranoia?
+		cur = 0; //prevent any visual overflow
+		max = 1;
+	}
 
 	c = (cur * HUGE_BAR_SIZE) / max;
 	p = (*prev * HUGE_BAR_SIZE) / max;
