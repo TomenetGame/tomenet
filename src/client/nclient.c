@@ -105,7 +105,7 @@ void clear_huge_bars(void) {
    0 : mp, 1 : sanity, 2 : hp
  */
 void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
-	int n, c = (cur * HUGE_BAR_SIZE) / max, p = (*prev * HUGE_BAR_SIZE) / max;
+	int n, c, p;
 	bool gain, redraw;
 	int ys, ye, x, pos;
 	char *marker;
@@ -118,12 +118,23 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 	}
 
 	/* Huge bars are only available in big_map mode */
-	if (screen_hgt != MAX_SCREEN_HGT || p == c) return;
+	if (screen_hgt != MAX_SCREEN_HGT) return;
 
+	/* Hack: Unset 'previous' value means we just need/want to redraw */
 	if (*prev == -1) {
 		redraw = TRUE;
 		*prev = 0;
 	} else redraw = FALSE;
+
+	/* Ensure sane limits */
+	if (cur < 0) cur = 0;
+	if (!max) max = 1;
+
+	c = (cur * HUGE_BAR_SIZE) / max;
+	p = (*prev * HUGE_BAR_SIZE) / max;
+
+	/* No change in values and we don't want to redraw? Nothing to do then */
+	if (p == c && !redraw) return;
 
 	switch (typ) {
 	case 0: if (!c_cfg.mp_huge_bar) return;
