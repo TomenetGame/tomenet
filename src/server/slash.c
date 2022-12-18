@@ -9871,6 +9871,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			   which space is actually occupied and which is free */
 			else if (prefix(messagelc, "/testdisplay")) {
 				struct worldpos wpos;
+
 				Send_extra_status(Ind, "ABCDEFGHIJKL");
 				//wpos.wx = 0; wpos.wy = 0; wpos.wz = 200;
 				//Send_depth(Ind, &wpos);
@@ -9890,6 +9891,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				Send_AFK(Ind, 1);
 				Send_encumberment(Ind, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 				Send_monster_health(Ind, 10, TERM_VIOLET);
+				if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 0)) Send_indicators(Ind, 0xFFFFFFFF);
 				return;
 			}
 			/* test new \376, \375, \374 chat line prefixes */
