@@ -11203,6 +11203,8 @@ void check_immediate_options(int i, bool yes, bool playing) {
 		if (p_ptr->mhp) draw_huge_bar(2, &prev_huge_chp, p_ptr->chp, &prev_huge_mhp, p_ptr->mhp);
 		if (screen_icky) Term_switch(0);
 	}
+	if (option_info[i].o_var == &c_cfg.sp_huge_bar && c_cfg.sp_huge_bar && is_older_than(&server_version, 4, 8, 1, 3, 0, 0))
+		c_message_add("Server version 4.8.1.3.0.0 or higher required for the 'huge sanity bar' feature.");
 }
 
 /* Helper functions for DONT_CLEAR_TOPLINE_IF_AVOIDABLE - C. Blue */

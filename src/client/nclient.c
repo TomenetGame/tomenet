@@ -1872,7 +1872,7 @@ int Receive_quit(void) {
 
 int Receive_sanity(void) {
 #ifdef SHOW_SANITY
-	int n, cur = 0, max = 1;
+	int n, cur = 0, max = 0;
 	char ch, buf[MAX_CHARS];
 	byte attr;
 
@@ -1908,7 +1908,8 @@ int Receive_sanity(void) {
 		c_msg_print("\377R*** LOW SANITY WARNING! ***");
 	}
 
-	draw_huge_bar(1, &prev_huge_csp, cur, &prev_huge_msp, max);
+	/* Servers < 4.8.1.3 do not support this for sanity! */
+	if (max) draw_huge_bar(1, &prev_huge_csp, cur, &prev_huge_msp, max);
 
 	if (screen_icky) Term_switch(0);
 
