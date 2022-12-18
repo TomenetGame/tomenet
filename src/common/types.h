@@ -3293,6 +3293,7 @@ struct player_type {
 	s16b csane;			/* Cur sanity */
 	u16b csane_frac;		/* Cur sanity frac */
 	byte sanity_bar;		/* preferred type of SN: bar, if player has sufficient Health skill */
+	byte sanity_bars_allowed;	/* amount of different sanity bar guis we can choose from (more detailed) */
 	byte health_bar;
 	byte mana_bar;
 	byte stamina_bar;
@@ -4162,6 +4163,7 @@ struct client_opts {
 	bool colourize_bignum;
 	bool clone_to_stdout;
 	bool clone_to_file;
+	bool mp_huge_bar, sp_huge_bar, hp_huge_bar;
 };
 
 /*

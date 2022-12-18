@@ -3539,6 +3539,9 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	/* Level one (never zero!) */
 	p_ptr->lev = 1;
 
+	/* Start with basic sanity display */
+	p_ptr->sanity_bars_allowed = 1;
+
 	/* Actually Generate */
 	p_ptr->maximize = cfg.maximize ? TRUE : FALSE;
 
@@ -3563,6 +3566,9 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 
 		p_ptr->lev = MIN_PVP_LEVEL;
 		p_ptr->skill_points = (p_ptr->lev - 1) * SKILL_NB_BASE;
+
+		/* Update our eligible sanity GUIs */
+		update_sanity_bars(p_ptr);
 
 		/* Hack for s_PVP_MAIA */
 		if (trait_hack) {
@@ -3721,6 +3727,10 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		admin_outfit(Ind, 0);
 		p_ptr->au = 1000000000;
 		p_ptr->lev = p_ptr->max_lev = p_ptr->max_plv = PY_MAX_PLAYER_LEVEL; //let's just use this (99) instead of the PY_MAX_LEVEL (100) which doesn't make sense
+
+		/* Update our eligible sanity GUIs */
+		update_sanity_bars(p_ptr);
+
 		p_ptr->exp = p_ptr->max_exp = PY_MAX_EXP;
 		p_ptr->skill_points = 9999;
 		//p_ptr->noscore = 1;

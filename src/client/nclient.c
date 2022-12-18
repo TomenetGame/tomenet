@@ -57,14 +57,18 @@
 #define WINDOWS_USE_TEMP
 
 
+/* Height of the huge bars [16, which is exactly the free space, with borders] */
+#define HUGE_BAR_SIZE 16
+
+
 
 extern void flicker(void);
 
-int			ticks = 0; /* Keeps track of time in 100ms "ticks" */
-int			ticks10 = 0; /* 'deci-ticks', counting just 0..9 in 10ms intervals */
-int			existing_characters = 0;
+int	ticks = 0; /* Keeps track of time in 100ms "ticks" */
+int	ticks10 = 0; /* 'deci-ticks', counting just 0..9 in 10ms intervals */
+int	existing_characters = 0;
 
-int			command_confirmed = -1;
+int	command_confirmed = -1;
 
 static void do_meta_pings(void);
 
@@ -72,6 +76,121 @@ static sockbuf_t	rbuf, wbuf, qbuf;
 static int		(*receive_tbl[256])(void);
 static int		last_send_anything;
 static char		initialized = 0;
+
+
+/* Based on Virus' MP bar mod */
+char *marker1 = "#######";
+char *marker2 = "####";
+char *marker3 = "###";
+#ifdef WINDOWS
+char smarker1[] = { FONT_MAP_SOLID_WIN, FONT_MAP_SOLID_WIN, FONT_MAP_SOLID_WIN, FONT_MAP_SOLID_WIN, FONT_MAP_SOLID_WIN, FONT_MAP_SOLID_WIN, FONT_MAP_SOLID_WIN, 0 };
+char smarker2[] = { FONT_MAP_SOLID_WIN, FONT_MAP_SOLID_WIN, FONT_MAP_SOLID_WIN, FONT_MAP_SOLID_WIN, 0 };
+char smarker3[] = { FONT_MAP_SOLID_WIN, FONT_MAP_SOLID_WIN, FONT_MAP_SOLID_WIN, 0 };
+#elif defined(USE_X11)
+char smarker1[] = { FONT_MAP_SOLID_X11, FONT_MAP_SOLID_X11, FONT_MAP_SOLID_X11, FONT_MAP_SOLID_X11, FONT_MAP_SOLID_X11, FONT_MAP_SOLID_X11, FONT_MAP_SOLID_X11, 0 };
+char smarker2[] = { FONT_MAP_SOLID_X11, FONT_MAP_SOLID_X11, FONT_MAP_SOLID_X11, FONT_MAP_SOLID_X11, 0 };
+char smarker3[] = { FONT_MAP_SOLID_X11, FONT_MAP_SOLID_X11, FONT_MAP_SOLID_X11, 0 };
+//#else /* command-line client ("-c") doesn't draw either! */
+#endif
+void clear_huge_bars(void) {
+	int n;
+
+	/* Huge bars are only available in big_map mode */
+	if (screen_hgt != MAX_SCREEN_HGT) return;
+
+	for (n = MAX_SCREEN_HGT - 2 - HUGE_BAR_SIZE; n <= MAX_SCREEN_HGT - 2; n++)
+		Term_putstr(1 , n, -1, TERM_DARK, "           ");
+}
+/* Typ:
+   0 : mp, 1 : sanity, 2 : hp
+ */
+void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
+	int n, c = (cur * HUGE_BAR_SIZE) / max, p = (*prev * HUGE_BAR_SIZE) / max;
+	bool gain, redraw;
+	int ys, ye, x, pos;
+	char *marker;
+	byte af, ae;
+
+	if (*prev_max != max) {
+		*prev_max = max;
+		/* Redraw the bar from scratch */
+		*prev = -1;
+	}
+
+	/* Huge bars are only available in big_map mode */
+	if (screen_hgt != MAX_SCREEN_HGT || p == c) return;
+
+	if (*prev == -1) {
+		redraw = TRUE;
+		*prev = 0;
+	} else redraw = FALSE;
+
+	switch (typ) {
+	case 0: if (!c_cfg.mp_huge_bar) return;
+		af = TERM_L_BLUE;
+		ae = TERM_L_DARK;
+		break;
+	case 1: if (!c_cfg.sp_huge_bar) return;
+		af = TERM_GREEN;
+		ae = TERM_L_RED;//TERM_ORANGE;//TERM_YELLOW;
+		break;
+	case 2: if (!c_cfg.hp_huge_bar) return;
+		af = TERM_L_GREEN;
+		ae = TERM_RED;
+		break;
+	}
+
+	gain = (c > p);
+	ys = MAX_SCREEN_HGT - 2 - (*prev * (HUGE_BAR_SIZE - 1)) / max;
+	ye = MAX_SCREEN_HGT - 2 - (cur * (HUGE_BAR_SIZE - 1)) / max;
+
+	/* Order of unimportance, from left to right: MP / SN / HP */
+	pos = -1;
+	if (c_cfg.mp_huge_bar) pos++;
+	if (typ > 0) {
+		if (c_cfg.sp_huge_bar) pos++;
+		if (typ > 1 && c_cfg.hp_huge_bar) pos++;
+	}
+	/* Find actual bar width */
+	switch ((c_cfg.mp_huge_bar ? 1 : 0) + (c_cfg.sp_huge_bar ? 1 : 0) + (c_cfg.hp_huge_bar ? 1 : 0)) {
+	case 1:
+		x = 3;
+#if defined(WINDOWS) || defined(USE_X11)
+		if (!force_cui && c_cfg.font_map_solid_walls) marker = smarker1;
+		else
+#endif
+		marker = marker1;
+		break;
+	case 2:
+		x = 2 + (4 + 1) * pos;
+#if defined(WINDOWS) || defined(USE_X11)
+		if (!force_cui && c_cfg.font_map_solid_walls) marker = smarker2;
+		else
+#endif
+		marker = marker2;
+		break;
+	case 3:
+		x = 1 + (3 + 1) * pos;
+#if defined(WINDOWS) || defined(USE_X11)
+		if (!force_cui && c_cfg.font_map_solid_walls) marker = smarker3;
+		else
+#endif
+		marker = marker3;
+		break;
+	}
+
+	/* Fill with red if we don't start out full */
+	if (redraw) {
+		for (n = MAX_SCREEN_HGT - 2 - (HUGE_BAR_SIZE - 1); n < ye; n++)
+			Term_putstr(x , n, -1, ae, marker);
+	}
+
+	/* Only draw the difference to before */
+	for (n = ys; gain ? (n >= ye) : (n < ye); gain ? n-- : n++)
+		Term_putstr(x , n, -1, gain ? af : ae, marker);
+
+	*prev = cur;
+}
 
 
 /*
@@ -941,6 +1060,9 @@ void Receive_login(void) {
 	else strcpy(c_name, names[ch - 'a']);
 	Term_clear();
 	strcpy(cname, c_name);
+
+	/* Reset static vars for hp/sp/mp for drawing huge bars to enforce redrawing, for the next char we log in with */
+	prev_huge_cmp = prev_huge_csp = prev_huge_chp = -1;
 }
 
 /*
@@ -1736,11 +1858,19 @@ int Receive_quit(void) {
 
 int Receive_sanity(void) {
 #ifdef SHOW_SANITY
-	int n;
+	int n, cur = 0, max = 1;
 	char ch, buf[MAX_CHARS];
 	byte attr;
 
-	if (is_newer_than(&server_version, 4, 6, 1, 2, 0, 0)) {
+	if (is_atleast(&server_version, 4, 8, 1, 3, 0, 0)) {
+		char dam;
+
+		if ((n = Packet_scanf(&rbuf, "%c%c%s%c%hd%hd", &ch, &attr, buf, &dam, &cur, &max)) <= 0) return n;
+ #ifdef USE_SOUND_2010
+		/* Send beep when we're losing Sanity while we're busy in some other window */
+		if (c_cfg.alert_offpanel_dam && screen_icky && dam) warning_page();
+ #endif
+	} else if (is_newer_than(&server_version, 4, 6, 1, 2, 0, 0)) {
 		char dam;
 
 		if ((n = Packet_scanf(&rbuf, "%c%c%s%c", &ch, &attr, buf, &dam)) <= 0) return n;
@@ -1749,6 +1879,9 @@ int Receive_sanity(void) {
 		if (c_cfg.alert_offpanel_dam && screen_icky && dam) warning_page();
  #endif
 	} else if ((n = Packet_scanf(&rbuf, "%c%c%s", &ch, &attr, buf)) <= 0) return n;
+
+	p_ptr->csane = cur;
+	p_ptr->msane = max;
 
 	strcpy(c_p_ptr->sanity, buf);
 	c_p_ptr->sanity_attr = attr;
@@ -1760,6 +1893,8 @@ int Receive_sanity(void) {
 		warning_page();
 		c_msg_print("\377R*** LOW SANITY WARNING! ***");
 	}
+
+	draw_huge_bar(1, &prev_huge_csp, cur, &prev_huge_msp, max);
 
 	if (screen_icky) Term_switch(0);
 
@@ -1856,6 +1991,7 @@ int Receive_hp(void) {
 		c_msg_print("\377R*** LOW HITPOINT WARNING! ***");
 	}
 
+	draw_huge_bar(2, &prev_huge_chp, cur, &prev_huge_mhp, max);
 	if (screen_icky) Term_switch(0);
 
 	/* Window stuff */
@@ -2567,6 +2703,7 @@ int Receive_sp(void) {
 
 	if (screen_icky) Term_switch(0);
 	prt_sp(max, cur, bar);
+	draw_huge_bar(0, &prev_huge_cmp, cur, &prev_huge_mmp, max);
 	if (screen_icky) Term_switch(0);
 
 	/* Window stuff */

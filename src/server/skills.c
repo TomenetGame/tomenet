@@ -709,6 +709,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 				msg_print(Ind, "\374\377GYour sanity indicator is more detailed now. Type '/snbar' to switch.");
 			}
 		}
+		update_sanity_bars(p_ptr);
 		break;
 	case SKILL_ANTIMAGIC:
 		if (!new_value) break; //paranoia..

@@ -194,7 +194,7 @@ int Input(void);
 int Send_reply(int ind, int replyto, int result);
 int Send_leave(int ind, int id);
 int Send_reliable(int ind);
-int Send_sanity(int ind, byte attr, cptr msg);
+int Send_sanity(int ind, byte attr, cptr msg, int cur, int max);
 
 char *compacttime(void);
 char *showtime(void);

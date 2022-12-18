@@ -1255,7 +1255,7 @@ extern int Send_screenflash(int ind);
 
 extern void Handle_direction(int Ind, int dir);
 extern void Handle_clear_buffer(int Ind);
-extern int Send_sanity(int ind, byte attr, cptr msg);
+extern int Send_sanity(int ind, byte attr, cptr msg, int cur, int max);
 extern char *compacttime(void);
 extern char *showtime(void);
 extern char *showdate(void);
@@ -2303,6 +2303,7 @@ void merchant_mail_death(const char pname[CNAME_LEN]);
 
 extern byte Morgoth_x, Morgoth_y, Morgoth_z;
 extern void death_drop_object(player_type *p_ptr, int i, object_type *o_ptr);
+extern void update_sanity_bars(player_type *p_ptr);
 
 
 /*

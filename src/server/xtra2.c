@@ -4517,6 +4517,26 @@ static void check_training(int Ind) {
 	if (magik(train)) p_ptr->skill_points++;
 }
 
+/* Update our eligible sanity GUIs */
+void update_sanity_bars(player_type *p_ptr) {
+	p_ptr->sanity_bars_allowed = 1;
+
+	if (get_skill(p_ptr, SKILL_HEALTH) >= 40) p_ptr->sanity_bars_allowed = 4;
+	else if (get_skill(p_ptr, SKILL_HEALTH) >= 200) p_ptr->sanity_bars_allowed = 3;
+	else if (get_skill(p_ptr, SKILL_HEALTH) >= 100) p_ptr->sanity_bars_allowed = 2;
+
+	if (p_ptr->pclass == CLASS_MINDCRAFTER) {
+		if (p_ptr->lev >= 40) p_ptr->sanity_bars_allowed = 4;
+		else if (p_ptr->lev >= 20 && p_ptr->sanity_bars_allowed != 4) p_ptr->sanity_bars_allowed = 3;
+		else if (p_ptr->lev >= 10 && p_ptr->sanity_bars_allowed == 1) p_ptr->sanity_bars_allowed = 2;
+	}
+
+	if (p_ptr->sanity_bar >= p_ptr->sanity_bars_allowed) {
+		p_ptr->sanity_bar = p_ptr->sanity_bars_allowed - 1;
+		p_ptr->redraw |= PR_SANITY;
+	}
+}
+
 /*
  * Advance experience levels and print experience
  */
@@ -4606,9 +4626,16 @@ void check_experience(int Ind) {
 		if (p_ptr->pclass == CLASS_MINDCRAFTER) {
 			i = get_skill(p_ptr, SKILL_HEALTH);
 			if (p_ptr->max_lev > i) i = p_ptr->max_lev;
-			if (i < 10) p_ptr->sanity_bar = 0;
-			else if (i < 20 && p_ptr->sanity_bar >= 2) p_ptr->sanity_bar = 1;
-			else if (i < 40 && p_ptr->sanity_bar == 3) p_ptr->sanity_bar = 2;
+			if (i < 10) {
+				p_ptr->sanity_bar = 0;
+				p_ptr->sanity_bars_allowed = 1;
+			} else if (i < 20) {
+				if (p_ptr->sanity_bar >= 2) p_ptr->sanity_bar = 1;
+				p_ptr->sanity_bars_allowed = 2;
+			} else if (i < 40) {
+				if (p_ptr->sanity_bar == 3) p_ptr->sanity_bar = 2;
+				p_ptr->sanity_bars_allowed = 3;
+			}
 			p_ptr->redraw |= PR_SANITY;
 		}
 	}
@@ -4735,6 +4762,8 @@ void check_experience(int Ind) {
 
 	/* Redraw level-depending stuff.. */
 	if (old_lev != p_ptr->lev) {
+		update_sanity_bars(p_ptr);
+
 		/* Update some stuff */
 		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SANITY);
 

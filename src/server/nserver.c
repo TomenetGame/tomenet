@@ -5877,7 +5877,7 @@ int Send_gold(int Ind, s32b au, s32b balance) {
 	return Packet_printf(&connp->c, "%c%d%d", PKT_GOLD, au, balance);
 }
 
-int Send_sanity(int Ind, byte attr, cptr msg) {
+int Send_sanity(int Ind, byte attr, cptr msg, int cur, int max) {
 #ifdef SHOW_SANITY
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL, *p_ptr = Players[Ind];
@@ -5895,12 +5895,16 @@ int Send_sanity(int Ind, byte attr, cptr msg) {
 
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		if (is_newer_than(&p_ptr2->version, 4, 6, 1, 2, 0, 0))
+		if (is_atleast(&p_ptr2->version, 4, 8, 1, 3, 0, 0))
+			Packet_printf(&connp2->c, "%c%c%s%c%hd%hd", PKT_SANITY, attr, msg, dam, cur, max);
+		else if (is_newer_than(&p_ptr2->version, 4, 6, 1, 2, 0, 0))
 			Packet_printf(&connp2->c, "%c%c%s%c", PKT_SANITY, attr, msg, dam);
 		else
 			Packet_printf(&connp2->c, "%c%c%s", PKT_SANITY, attr, msg);
 	}
-	if (is_newer_than(&p_ptr->version, 4, 6, 1, 2, 0, 0))
+	if (is_atleast(&p_ptr->version, 4, 8, 1, 3, 0, 0))
+		return Packet_printf(&connp->c, "%c%c%s%c%hd%hd", PKT_SANITY, attr, msg, dam, cur, max);
+	else if (is_newer_than(&p_ptr->version, 4, 6, 1, 2, 0, 0))
 		return Packet_printf(&connp->c, "%c%c%s%c", PKT_SANITY, attr, msg, dam);
 	else
 		return Packet_printf(&connp->c, "%c%c%s", PKT_SANITY, attr, msg);

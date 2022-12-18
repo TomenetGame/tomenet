@@ -267,33 +267,47 @@ static void prt_sanity(int Ind) {
  #else	// 0
 	char buf[20];
 	byte attr = TERM_L_GREEN;
-	int ratio;
+	int ratio, cur, max;
 	ratio = p_ptr->msane ? (p_ptr->csane * 100) / p_ptr->msane : 100;
 
 	/* Vague */
+	max = 6;
 	if (ratio < 0) {
 		/* This guy should be dead - for tombstone */
 		attr = TERM_RED;
 		strcpy(buf, "Vegetable");
+		cur = 0;
 	} else if (ratio < 10) {
 		//attr = TERM_RED;
 		attr = TERM_MULTI;
 		strcpy(buf, "      MAD");
+		cur = 1;
 	} else if (ratio < 25) {
 		attr = TERM_SHIELDI;
 		strcpy(buf, "   Insane");
+		cur = 2;
 	} else if (ratio < 50) {
 		attr = TERM_ORANGE;
 		strcpy(buf, "    Crazy");
+		cur = 3;
 	} else if (ratio < 75) {
 		attr = TERM_YELLOW;
 		strcpy(buf, "    Weird");
+		cur = 4;
 	} else if (ratio < 90) {
 		attr = TERM_GREEN;
 		strcpy(buf, "     Sane");
+		cur = 5;
 	} else {
 		attr = TERM_L_GREEN;
 		strcpy(buf, "    Sound");
+		cur = 6;
+	}
+
+	/* We are threoretically allowed to know the exact ratio? */
+	if (p_ptr->sanity_bars_allowed >= 2) {
+		cur = p_ptr->csane;
+		max = p_ptr->msane;
 	}
 
 	switch (p_ptr->sanity_bar) {
@@ -305,17 +319,18 @@ static void prt_sanity(int Ind) {
 		break;
 	case 1: /* Sanity Bar */
 		{
-			int tmp = ratio / 11;
-			strcpy(buf, "---------");
-			if (tmp > 0) strncpy(buf, "*********", tmp);
-			break;
+		int tmp = ratio / 11;
+
+		strcpy(buf, "---------");
+		if (tmp > 0) strncpy(buf, "*********", tmp);
+		break;
 		}
 	}
 	/* Terminate */
 	buf[9] = '\0';
 
 	/* Send it */
-	Send_sanity(Ind, attr, buf);
+	Send_sanity(Ind, attr, buf, cur, max);
 
  #endif	// 0
 #endif	// SHOW_SANITY

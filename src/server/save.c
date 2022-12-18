@@ -1776,11 +1776,8 @@ static bool file_exist(char *buf) {
  */
 bool load_player(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
 	int		fd = -1;
-
 	errr	err = 0;
-
 	byte	vvv[4];
 
 #ifdef VERIFY_TIMESTAMP
@@ -1998,6 +1995,8 @@ bool load_player(int Ind) {
 		}
 
 		p_ptr->body_changed = TRUE;
+
+		update_sanity_bars(p_ptr);
 
 		/* Success */
 		return(TRUE);

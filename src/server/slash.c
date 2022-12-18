@@ -3407,7 +3407,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		else if (prefix(messagelc, "/undoskills") || prefix(messagelc, "/undos")) {
 			/* Skill points gained */
 			int gain = p_ptr->skill_points_old - p_ptr->skill_points;
-			int skill = get_skill(p_ptr, SKILL_HEALTH), guis = 0;
 
 			if (gain && (p_ptr->reskill_possible & RESKILL_F_UNDO)) {
 				/* Take care of mimicry form in conjunction with anti-magic skill,
@@ -3449,21 +3448,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					p_ptr->aura[AURA_DEATH] = FALSE;
 				}
 
-				/* health (sanity display) */
-				if (skill >= 40) guis = 3;
-				else if (skill >= 20) guis = 2;
-				else if (skill >= 10) guis = 1;
-
-				if (p_ptr->pclass == CLASS_MINDCRAFTER) {
-					if (p_ptr->lev >= 40) guis = 3;
-					else if (p_ptr->lev >= 20 && guis != 3) guis = 2;
-					else if (p_ptr->lev >= 10 && guis == 0) guis = 1;
-				}
-
-				if (p_ptr->sanity_bar > guis) {
-					p_ptr->sanity_bar = guis;
-					p_ptr->redraw |= PR_SANITY;
-				}
+				/* Update our eligible sanity GUIs */
+				update_sanity_bars(p_ptr);
 
 				/* Update all skills */
 				calc_techniques(Ind);
@@ -4661,19 +4647,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 		else if (prefix(messagelc, "/snbar")) {
-			int skill = get_skill(p_ptr, SKILL_HEALTH), guis = 1;
-
-			if (skill >= 40) guis = 4;
-			else if (skill >= 20) guis = 3;
-			else if (skill >= 10) guis = 2;
-
-			if (p_ptr->pclass == CLASS_MINDCRAFTER) {
-				if (p_ptr->lev >= 40) guis = 4;
-				else if (p_ptr->lev >= 20 && guis != 4) guis = 3;
-				else if (p_ptr->lev >= 10 && guis == 1) guis = 2;
-			}
-
-			p_ptr->sanity_bar = (p_ptr->sanity_bar + 1) % guis;
+			p_ptr->sanity_bar = (p_ptr->sanity_bar + 1) % p_ptr->sanity_bars_allowed;
 			switch (p_ptr->sanity_bar) {
 			case 0: msg_print(Ind, "Sanity is now displayed as label."); break;
 			case 1: msg_print(Ind, "Sanity is now displayed as bar."); break;

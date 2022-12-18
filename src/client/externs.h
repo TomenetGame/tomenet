@@ -779,6 +779,8 @@ extern int animate_lightning, animate_lightning_vol, animate_lightning_type;
 extern short animate_lightning_icky;
 extern int animate_screenflash;
 extern short animate_screenflash_icky;
+extern void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max);
+extern void clear_huge_bars(void);
 extern void do_flicker(void);
 extern void do_mail(void);
 extern void update_ticks(void);
@@ -1199,3 +1201,7 @@ extern int oldticksds;
 extern bool map_town;
 extern bool force_cui;
 extern int food_warn_once_timer;
+
+extern int prev_huge_cmp, prev_huge_mmp;
+extern int prev_huge_csp, prev_huge_msp;
+extern int prev_huge_chp, prev_huge_mhp;

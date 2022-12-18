@@ -726,3 +726,7 @@ PROCESS_INFORMATION pi[META_PINGS];
 bool fullscreen_weather = FALSE; //RAINY_TOMB
 bool force_cui = FALSE;
 int food_warn_once_timer;
+
+int prev_huge_cmp = -1, prev_huge_mmp = -1;
+int prev_huge_csp = -1, prev_huge_msp = -1;
+int prev_huge_chp = -1, prev_huge_mhp = -1;

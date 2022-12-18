@@ -545,6 +545,13 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "clone_to_file",		"Clone client chat and messages to 'stdout.txt'" },
 	{ &c_cfg.first_song,		FALSE,	5,	0, 147, TRUE,
 	    "first_song",		"Always start with first song in a music.cfg entry" },
+
+	{ &c_cfg.mp_huge_bar,		FALSE,	7,	0, 148, TRUE,
+	    "mp_huge_bar",		"Also show mana pool as huge bar (big_map only)" },
+	{ &c_cfg.sp_huge_bar,		FALSE,	7,	0, 149, TRUE,
+	    "sp_huge_bar",		"Also show sanity as huge bar (big_map only)" },
+	{ &c_cfg.hp_huge_bar,		FALSE,	7,	0, 150, TRUE,
+	    "hp_huge_bar",		"Also show HP pool as huge bar (big_map only)" },
 };
 
 cptr melee_techniques[16] = {
