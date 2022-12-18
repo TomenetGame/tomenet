@@ -489,7 +489,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		break;
 	case SKILL_CONVEYANCE:
 		if (old_value < 500 && new_value >= 500)
-			msg_print(Ind, "\374\377GYou are impervious to feeble teleportation attacks.");
+			msg_print(Ind, "\374\377GYou have a greater chance to resist teleportation attacks.");
 		break;
 	case SKILL_DIVINATION:
 		if (old_value < 500 && new_value >= 500)
