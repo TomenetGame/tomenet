@@ -109,7 +109,9 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 	char *marker = marker3; //kill compiler warning
 	byte af = TERM_WHITE, ae = TERM_SLATE; //kill compiler warnings
 
-//c_msg_format("typ %d, cur %d, max %d", typ, cur, max);
+	/* Huge bars are only available in big_map mode */
+	if (screen_hgt != MAX_SCREEN_HGT) return;
+
 	/* handle and ignore hacks */
 	if (cur == -9999) cur = 0;
 	if (max == -9999) max = 0;
@@ -119,9 +121,6 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 		/* Redraw the bar from scratch */
 		*prev = -1;
 	}
-
-	/* Huge bars are only available in big_map mode */
-	if (screen_hgt != MAX_SCREEN_HGT) return;
 
 	/* Hack: Unset 'previous' value means we just need/want to redraw */
 	if (*prev == -1) {
@@ -139,7 +138,9 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 	c = (cur * HUGE_BAR_SIZE) / max;
 	p = (*prev * HUGE_BAR_SIZE) / max;
 
-//c_msg_format(" typ %d, c %d, p %d, cur %d, max %d, redraw %d", typ, c, p, cur, max, redraw);
+	/* Workaround relog glitch on some chars */
+	if (redraw) p = 0;
+
 	/* No change in values and we don't want to redraw? Nothing to do then */
 	if (p == c && !redraw) return;
 
@@ -196,7 +197,6 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 	ys = MAX_SCREEN_HGT - 2 - (gain ? p : c);
 	ye = MAX_SCREEN_HGT - 2 - (gain ? c : p);
 	col = (gain ? af : ae);
-//c_msg_format(" typ %d, gain %d, c %d, p %d, cur %d, max %d, ys %d, ye %d", typ, gain, c, p, cur, max, ys, ye);
 
 	/* Fill extra (non-green) part with red if we don't start out full */
 	if (redraw)
@@ -1078,9 +1078,6 @@ void Receive_login(void) {
 	else strcpy(c_name, names[ch - 'a']);
 	Term_clear();
 	strcpy(cname, c_name);
-
-	/* Reset static vars for hp/sp/mp for drawing huge bars to enforce redrawing, for the next char we log in with */
-	prev_huge_cmp = prev_huge_csp = prev_huge_chp = -1;
 }
 
 /*
