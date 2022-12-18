@@ -6781,6 +6781,7 @@ void view_exploration_history(int Ind) {
 	fff = my_fopen(file_name, "wb");
 
 	fprintf(fff, "\377U  ~ List of all known dungeons which adventurers have discovered in the past ~\n\n");
+	fprintf(fff, "\377U     (To discover a dungeon, somebody has to locate its entrance staircase)   \n\n");
 
 	/* output the actual list */
 	for (i = 1; i <= dungeon_id_max; i++) {
