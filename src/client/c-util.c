@@ -8072,8 +8072,9 @@ void auto_inscriptions(void) {
 	inkey_msg = FALSE;
 }
 
-/* Helper function for option manipulation - check before and after, and refresh stuff if the changes made require it */
-void options_immediate(bool init) {
+/* Helper function for option manipulation - check before and after, and refresh stuff if the changes made require it.
+   init: TRUE before an option gets changed, FALSE afterwards. */
+ void options_immediate(bool init) {
 	static bool changed1, changed2, changed3;
 	static bool changed4a, changed4b, changed4c;
 	static bool changed5, changed5a, changed6;
