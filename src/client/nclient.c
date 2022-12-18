@@ -112,9 +112,13 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 	/* Huge bars are only available in big_map mode */
 	if (screen_hgt != MAX_SCREEN_HGT) return;
 
-	/* handle and ignore hacks */
-	if (cur == -9999) cur = 0;
-	if (max == -9999) max = 0;
+	/* Ensure sane limits */
+	if (cur < 0) cur = 0; //happens eg if player dies and hence HP turns negative
+	/* handle and ignore hacks (-9999) */
+	if (max <= 0) {
+		cur = 0; //prevent any visual overflow
+		max = 1;
+	}
 
 	if (*prev_max != max) {
 		*prev_max = max;
@@ -127,13 +131,6 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 		redraw = TRUE;
 		*prev = 0;
 	} else redraw = FALSE;
-
-	/* Ensure sane limits */
-	if (cur < 0) cur = 0; //happens eg if player dies and hence HP turns negative
-	if (!max) { //paranoia?
-		cur = 0; //prevent any visual overflow
-		max = 1;
-	}
 
 	c = (cur * HUGE_BAR_SIZE) / max;
 	p = (*prev * HUGE_BAR_SIZE) / max;
