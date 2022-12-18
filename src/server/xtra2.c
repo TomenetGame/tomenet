@@ -4522,8 +4522,8 @@ void update_sanity_bars(player_type *p_ptr) {
 	p_ptr->sanity_bars_allowed = 1;
 
 	if (get_skill(p_ptr, SKILL_HEALTH) >= 40) p_ptr->sanity_bars_allowed = 4;
-	else if (get_skill(p_ptr, SKILL_HEALTH) >= 200) p_ptr->sanity_bars_allowed = 3;
-	else if (get_skill(p_ptr, SKILL_HEALTH) >= 100) p_ptr->sanity_bars_allowed = 2;
+	else if (get_skill(p_ptr, SKILL_HEALTH) >= 20) p_ptr->sanity_bars_allowed = 3;
+	else if (get_skill(p_ptr, SKILL_HEALTH) >= 10) p_ptr->sanity_bars_allowed = 2;
 
 	if (p_ptr->pclass == CLASS_MINDCRAFTER) {
 		if (p_ptr->lev >= 40) p_ptr->sanity_bars_allowed = 4;
@@ -4545,7 +4545,7 @@ void check_experience(int Ind) {
 	char str[160];
 
 	bool newlv = FALSE, reglv = FALSE;
-	int old_lev, i, old_max_lev = p_ptr->max_lev;
+	int old_lev, i; //old_max_lev = p_ptr->max_lev;
 	//long int i;
 #ifdef LEVEL_GAINING_LIMIT
 	int limit;
@@ -4622,23 +4622,7 @@ void check_experience(int Ind) {
 	}
 
 	/* We lost levels? Fortunately this has practically almost no effect as skills cannot be lost. */
-	if (old_max_lev > p_ptr->max_lev) {
-		if (p_ptr->pclass == CLASS_MINDCRAFTER) {
-			i = get_skill(p_ptr, SKILL_HEALTH);
-			if (p_ptr->max_lev > i) i = p_ptr->max_lev;
-			if (i < 10) {
-				p_ptr->sanity_bar = 0;
-				p_ptr->sanity_bars_allowed = 1;
-			} else if (i < 20) {
-				if (p_ptr->sanity_bar >= 2) p_ptr->sanity_bar = 1;
-				p_ptr->sanity_bars_allowed = 2;
-			} else if (i < 40) {
-				if (p_ptr->sanity_bar == 3) p_ptr->sanity_bar = 2;
-				p_ptr->sanity_bars_allowed = 3;
-			}
-			p_ptr->redraw |= PR_SANITY;
-		}
-	}
+	//if (old_max_lev > p_ptr->max_lev) .. nothing, currently! :) (except for sanity bars, which get updated further below)
 
 	/* Gain levels while possible */
 #ifndef ALT_EXPRATIO
@@ -5184,7 +5168,7 @@ void check_experience(int Ind) {
 		if (old_lev < 10 && p_ptr->lev >= 10) {
 			if (p_ptr->prace != RACE_VAMPIRE) msg_print(Ind, "\374\377GYou learn to keep hold of your sanity somewhat!");
 			if (i < 10) {
-				p_ptr->sanity_bar = 1;
+				p_ptr->sanity_bar = 1; //auto-advance sanity bar, so the player notices it
 				p_ptr->redraw |= PR_SANITY;
 				msg_print(Ind, "\374\377GYour sanity indicator is more detailed now. Type '/snbar' to switch.");
 			}
@@ -5192,7 +5176,7 @@ void check_experience(int Ind) {
 		if (old_lev < 20 && p_ptr->lev >= 20) {
 			if (p_ptr->prace != RACE_VAMPIRE) msg_print(Ind, "\374\377GYou learn to keep strong hold of your sanity better!");
 			if (i < 20) {
-				p_ptr->sanity_bar = 2;
+				p_ptr->sanity_bar = 2; //auto-advance sanity bar, so the player notices it
 				p_ptr->redraw |= PR_SANITY;
 				msg_print(Ind, "\374\377GYour sanity indicator is more detailed now. Type '/snbar' to switch.");
 			}
@@ -5200,7 +5184,7 @@ void check_experience(int Ind) {
 		if (old_lev < 40 && p_ptr->lev >= 40) {
 			msg_print(Ind, "\374\377GYou learn to keep hold of your sanity even better!");
 			if (i < 40) {
-				p_ptr->sanity_bar = 3;
+				p_ptr->sanity_bar = 3; //auto-advance sanity bar, so the player notices it
 				p_ptr->redraw |= PR_SANITY;
 				msg_print(Ind, "\374\377GYour sanity indicator is more detailed now. Type '/snbar' to switch.");
 			}

@@ -268,9 +268,10 @@ static void prt_sanity(int Ind) {
 	char buf[20];
 	byte attr = TERM_L_GREEN;
 	int ratio, cur, max;
+
 	ratio = p_ptr->msane ? (p_ptr->csane * 100) / p_ptr->msane : 100;
 
-	/* Vague */
+	/* Vague (ie first assume sanity_bars_allowed == 1) */
 	max = 6;
 	if (ratio < 0) {
 		/* This guy should be dead - for tombstone */
@@ -305,9 +306,13 @@ static void prt_sanity(int Ind) {
 	}
 
 	/* We are threoretically allowed to know the exact ratio? */
-	if (p_ptr->sanity_bars_allowed >= 2) {
+	if (p_ptr->sanity_bars_allowed >= 3) {
 		cur = p_ptr->csane;
 		max = p_ptr->msane;
+	} else if (p_ptr->sanity_bars_allowed == 2) {
+		/* ratio has 9 steps (with 0 as 10th, ie 0..9 stars) */
+		cur = ratio / 11;
+		max = 9;
 	}
 
 	switch (p_ptr->sanity_bar) {
