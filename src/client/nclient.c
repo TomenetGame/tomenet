@@ -107,9 +107,9 @@ void clear_huge_bars(void) {
 void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 	int n, c, p;
 	bool gain, redraw;
-	int ys, ye, x, pos;
-	char *marker;
-	byte af, ae;
+	int ys, ye, pos, x = 0; //kill compiler warning
+	char *marker = marker3; //kill compiler warning
+	byte af = TERM_WHITE, ae = TERM_SLATE; //kill compiler warnings
 
 	if (*prev_max != max) {
 		*prev_max = max;
