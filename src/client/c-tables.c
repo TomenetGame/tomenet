@@ -533,25 +533,25 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.destroy_all_unmatched,	FALSE,	8,	0, 141, TRUE,
 	    "destroy_all_unmatched",	"Destroys ALL unmatched items. (Like A'#' in &.)" },
 
-	{ &c_cfg.equip_text_colour,	FALSE,	6,	0, 142, TRUE,
-	    "equip_text_colour",	"Display equipment indices/weight in yellow" },
-	{ &c_cfg.equip_set_colour,	TRUE,	6,	0, 143, TRUE,
-	    "equip_set_colour",		"Colourize indices of items giving set bonus" },
-	{ &c_cfg.colourize_bignum,	FALSE,	6,	0, 144, TRUE,
-	    "colourize_bignum",		"Colourize prices, AU and XP in 3-digit columns" },
+	{ &c_cfg.mp_huge_bar,		FALSE,	6,	0, 142, TRUE,
+	    "mp_huge_bar",		"Also show mana pool as huge bar (big_map only)" },
+	{ &c_cfg.sp_huge_bar,		FALSE,	6,	0, 143, TRUE,
+	    "sp_huge_bar",		"Also show sanity as huge bar (big_map only)" },
+	{ &c_cfg.hp_huge_bar,		FALSE,	6,	0, 144, TRUE,
+	    "hp_huge_bar",		"Also show HP pool as huge bar (big_map only)" },
+
 	{ &c_cfg.clone_to_stdout,	FALSE,	7,	0, 145, TRUE,
 	    "clone_to_stdout",		"Clone client chat and messages to stdout" },
 	{ &c_cfg.clone_to_file,		FALSE,	7,	0, 146, TRUE,
 	    "clone_to_file",		"Clone client chat and messages to 'stdout.txt'" },
 	{ &c_cfg.first_song,		FALSE,	5,	0, 147, TRUE,
 	    "first_song",		"Always start with first song in a music.cfg entry" },
-
-	{ &c_cfg.mp_huge_bar,		FALSE,	7,	0, 148, TRUE,
-	    "mp_huge_bar",		"Also show mana pool as huge bar (big_map only)" },
-	{ &c_cfg.sp_huge_bar,		FALSE,	7,	0, 149, TRUE,
-	    "sp_huge_bar",		"Also show sanity as huge bar (big_map only)" },
-	{ &c_cfg.hp_huge_bar,		FALSE,	7,	0, 150, TRUE,
-	    "hp_huge_bar",		"Also show HP pool as huge bar (big_map only)" },
+	{ &c_cfg.equip_text_colour,	FALSE,	7,	0, 148, TRUE,
+	    "equip_text_colour",	"Display equipment indices/weight in yellow" },
+	{ &c_cfg.equip_set_colour,	TRUE,	7,	0, 149, TRUE,
+	    "equip_set_colour",		"Colourize indices of items giving set bonus" },
+	{ &c_cfg.colourize_bignum,	FALSE,	7,	0, 150, TRUE,
+	    "colourize_bignum",		"Colourize prices, AU and XP in 3-digit columns" },
 };
 
 cptr melee_techniques[16] = {
