@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 3. December 2022 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 18. December 2022 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -7329,6 +7329,10 @@ To enter a dungeon, you look for the staircase symbol '>', step on it and press
 the '>' key to enter. Same for entering towers, except their staircase goes
 upwards instead of downwards, and hence is a '<' symbol instead of '>'.
 
+To see a list of all dungeons you have discovered so far, press ~ 8.
+To see a list of all dungeon knowledge, including their locations, accumulated
+by players on the server so far, visit the Mathom-house in Bree (see (4.5a)).
+
 In Bree, there is often a so-called Training Tower, which is represented by a
 dark green '<'. Enter it by pressing the '<' key.
 The training tower allows you to 'die' without suffering major consequences
@@ -7559,6 +7563,7 @@ Staircases-
 '<' and '>' are staircases leading upwards or downwards into towers or
 dungeons. (Press the according key to walk the staircase. Whenever you take a
 staircase, you'll receive the 'stair GoI' buff, see (0.4) for details on that.)
+To discover a dungeon (or tower), you need to locate its entrance staircase.
 
 Doors-
 Light brown '+' are closed doors, ' are open or broken doors.
@@ -7665,6 +7670,9 @@ Icy waste       white '.'
 To view a list of all towns and dungeons you have discovered, press ~ 8 .
 Dungeons which have a dedicated final boss will indicate at the end of the
 line whether you have "conquered" them yet (aka slain that boss) or not.
+
+To see a list of all dungeon knowledge, including their locations, accumulated
+by players on the server so far, visit the Mathom-house in Bree (see (4.5a)).
 
 If you create a new character, it will start in 'Bree', a town located at
 position 32,32 on the world map (same position on all servers!).
@@ -7794,6 +7802,35 @@ Mayor's Office (Bree)   Allows you to turn in deed parchments you won in
                         noteworthy occurances that may happened lately.
                         There are other major buildings in different cities
                         that will provide extermination orders.
+
+The Mathom-house        This is located in the same building as the Mayor's
+                        Office, the biggest building in Bree.
+                        It allows donation of items (irrevocably), functioning
+                        similar to a museum.
+
+                        Most importantly though it holds a list of all known
+                        dungeons and their exploration states, under
+                        'Exploration history':
+                        As soon as someone on the server locates the entrance
+                        staircase to a dungeon or tower for the first time, it
+                        will be listed here for everyone to see.
+                        Likewise, the first time someone enters the dungeon,
+                        its starting depth will be made known here too.
+                        The first time someone visits the final (deepest) floor
+                        of the dungeon, this information will also be added.
+                        And lastly, if someone meets the dungeon's boss, its
+                        existance be recorded here too. If a dungeon has no
+                        boss then visiting its final floor will already result
+                        in the information being recorded here that it has no
+                        final guardian.
+
+                        The Mathom-house also has another function,
+                        'Exploration reports':
+                        This just lists how frequently dungeons have recently
+                        been visited, which decays over time again.
+                        In general, dungeons that haven't been visited for some
+                        time will yield extra experience bonus for players that
+                        go there, quad-tiered over +0%, +7%, +13% and +20%.
 
 The Merchants Guild     An NPC run guild that offers two services,
                         a bank account to deposit your money in so you won't
@@ -8278,6 +8315,10 @@ Some advice regarding towns and town dungeons can be found at (8.6).
 ---------------
 This paragraph is about dungeons that don't belong to any town.
 For dungeons that belong to specific towns, see the paragraph 'Towns' above.
+
+To see a list of all dungeons you have discovered so far, press ~ 8.
+To see a list of all dungeon knowledge, including their locations, accumulated
+by players on the server so far, visit the Mathom-house in Bree (see (4.5a)).
 
 The staircase colour of a dungeon indicates the dungeon type, compare (4.3).
 
