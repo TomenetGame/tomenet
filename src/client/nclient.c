@@ -101,15 +101,18 @@ void clear_huge_bars(void) {
 	for (n = MAX_SCREEN_HGT - 2 - HUGE_BAR_SIZE; n <= MAX_SCREEN_HGT - 2; n++)
 		Term_putstr(1 , n, -1, TERM_DARK, "           ");
 }
-/* Typ:
-   0 : mp, 1 : sanity, 2 : hp
- */
+/* Typ: 0 : mp, 1 : sanity, 2 : hp */
 void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 	int n, c, p;
 	bool gain, redraw;
-	int ys, ye, pos, x = 0; //kill compiler warning
+	int ys, ye, col, pos, x = 0; //kill compiler warning
 	char *marker = marker3; //kill compiler warning
 	byte af = TERM_WHITE, ae = TERM_SLATE; //kill compiler warnings
+
+//c_msg_format("typ %d, cur %d, max %d", typ, cur, max);
+	/* handle and ignore hacks */
+	if (cur == -9999) cur = 0;
+	if (max == -9999) max = 0;
 
 	if (*prev_max != max) {
 		*prev_max = max;
@@ -136,6 +139,7 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 	c = (cur * HUGE_BAR_SIZE) / max;
 	p = (*prev * HUGE_BAR_SIZE) / max;
 
+//c_msg_format(" typ %d, c %d, p %d, cur %d, max %d, redraw %d", typ, c, p, cur, max, redraw);
 	/* No change in values and we don't want to redraw? Nothing to do then */
 	if (p == c && !redraw) return;
 
@@ -153,10 +157,6 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 		ae = TERM_RED;
 		break;
 	}
-
-	gain = (c > p);
-	ys = MAX_SCREEN_HGT - 2 - (*prev * (HUGE_BAR_SIZE - 1)) / max;
-	ye = MAX_SCREEN_HGT - 2 - (cur * (HUGE_BAR_SIZE - 1)) / max;
 
 	/* Order of unimportance, from left to right: MP / SN / HP */
 	pos = -1;
@@ -192,16 +192,20 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 		marker = marker3;
 		break;
 	}
+	gain = (c > p);
+	ys = MAX_SCREEN_HGT - 2 - (gain ? p : c);
+	ye = MAX_SCREEN_HGT - 2 - (gain ? c : p);
+	col = (gain ? af : ae);
+//c_msg_format(" typ %d, gain %d, c %d, p %d, cur %d, max %d, ys %d, ye %d", typ, gain, c, p, cur, max, ys, ye);
 
-	/* Fill with red if we don't start out full */
-	if (redraw) {
-		for (n = MAX_SCREEN_HGT - 2 - (HUGE_BAR_SIZE - 1); n < ye; n++)
-			Term_putstr(x , n, -1, ae, marker);
-	}
+	/* Fill extra (non-green) part with red if we don't start out full */
+	if (redraw)
+		for (n = ye; n > MAX_SCREEN_HGT - 2 - HUGE_BAR_SIZE; n--)
+			Term_putstr(x, n, -1, ae, marker);
 
 	/* Only draw the difference to before */
-	for (n = ys; gain ? (n >= ye) : (n < ye); gain ? n-- : n++)
-		Term_putstr(x , n, -1, gain ? af : ae, marker);
+	for (n = ys; n > ye; n--)
+		Term_putstr(x, n, -1, col, marker);
 
 	*prev = cur;
 }
