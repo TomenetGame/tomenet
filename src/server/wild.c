@@ -3469,7 +3469,7 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 	/* Hack for Death Fate */
 	i = 0;
 	if (d_ptr->type == DI_DEATH_FATE) {
-		if (!in_bounds_array(y + 3, x + 3) || !in_bounds_array(y - 3, x - 3))
+		if (!in_bounds_array(y + 4, x + 4) || !in_bounds_array(y - 4, x - 4))
 			s_printf("WARNING: wilderness_gen() out of bounds dungeon decoration (DEATH FATE %d,%d).\n", wpos->wx, wpos->wy);
 		else
 			i = 1;
@@ -3486,7 +3486,8 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 
 				/* Spare the 4 corner grids, we want to make it roundish, not a square */
 				//if (i == 18) continue; //for 3x3 ring (-3..+3)
-				if (i == 32) continue; //for 4x4 ring (-4..+4)
+				//if (i == 32) continue; //for 4x4 ring (-4..+4)
+				if (i >= 25) continue; //for 4x4 ring (-4..+4 including the 4,3 grids)
 
 				/* Only need the outermost ring really, rest gets overwritten anyway, further down */
 				if (i < 8) continue;
