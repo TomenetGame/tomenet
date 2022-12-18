@@ -4647,6 +4647,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 		else if (prefix(messagelc, "/snbar")) {
+			if (p_ptr->sanity_bars_allowed == 1) {
+				msg_print(Ind, "Your sanity can only be displayed in the current label form.");
+				if (p_ptr->pclass == CLASS_MINDCRAFTER) {
+					msg_print(Ind, " To obtain more detailed options, advance to level 10, 20, 40");
+					msg_print(Ind, " or train your Health skill to 10, 20, 40 respectively.");
+				} else msg_print(Ind, " To obtain more detailed options, train your Health skill to 10, 20, 40.");
+				return;
+			}
 			p_ptr->sanity_bar = (p_ptr->sanity_bar + 1) % p_ptr->sanity_bars_allowed;
 			switch (p_ptr->sanity_bar) {
 			case 0: msg_print(Ind, "Sanity is now displayed as label."); break;

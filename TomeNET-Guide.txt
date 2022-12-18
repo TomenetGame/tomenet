@@ -1834,7 +1834,10 @@ They all start with a slash '/' hence they're called slash commands:
             Also see '_' key above, for additional information.)
 
 /snbar      Cycles through available types of sanity bars to display.
-            Which types are available depends on the 'Health' skill.
+            Which types are available depends on the 'Health' skill, or - only
+            if your class is mindcrafter though - on your character level too,
+            in which case whatever of the two is higher counts.
+            New views are unlocked at skill/level 10, 20 and 40.
 
 /snotes     Same as /motd.
 
