@@ -145,7 +145,8 @@ function rspell_cost(u,s)
 end
 
 function rspell_failure(p,u,x,c)
-  if x < 1 or p.cmp < c then
+  if p.cmp == nil then xxx = p.csp else xxx = p.cmp end
+  if x < 1 or xxx < c then
     return 100
   else
     x = 15 - (x > 15 and 15 or x)
@@ -267,7 +268,8 @@ function rcraft_prt(u,w)
         C = TERM_L_GREEN
         if w==0 then
           if p.stun~=0 or p.blind~=0 then C = TERM_YELLOW end
-          if p.cmp < c then C = TERM_ORANGE end
+          if p.cmp == nil then xxx = p.csp else xxx = p.cmp end
+          if xxx < c then C = TERM_ORANGE end
           if p.antimagic~=0 and p.admin_dm==0 then C = TERM_RED end -- UNHACK
           if p.anti_magic~=0 then C = TERM_RED end
         end
@@ -326,9 +328,10 @@ function rcraft_prt(u,w)
             x, y, 2),
           row+i+1, col)
         else
-          if p.cmp > c then
-            c = p.cmp
-            d = p.cmp
+          if p.cmp == nil then xxx = p.csp else xxx = p.cmp end
+          if xxx > c then
+            c = xxx
+            d = xxx
           end
           c_prt(C, format("%c) %-8s %5d %4d %3d%% dam %d dur %d backlash 20%%",
             strbyte('a')+i, XX[1], a, c, f,
@@ -439,7 +442,8 @@ function rcraft_arr_test(I,u)
   local a = rspell_ability(s,l)
   if a < 1 then return 0 end
   local c = rspell_cost(u,s)
-  if p.cmp < c then return 0 end
+  if p.cmp == nil then xxx = p.csp else xxx = p.cmp end
+  if xxx < c then return 0 end
   return 1
 end
 
@@ -486,7 +490,8 @@ function cast_rune_spell(I,D,u)
     return 0
   end
   local c = rspell_cost(u,s)
-  if p.cmp < c then
+  if p.cmp == nil then xxx = p.csp else xxx = p.cmp end
+  if xxx < c then
     msg_print(I,format("\255oYou do not have enough mana. (%s; cost: %d)",S,c))
     return 0
   end
@@ -507,8 +512,9 @@ function cast_rune_spell(I,D,u)
     if X then
       b = b + d / 10 + 1
     else
-      c = p.cmp
-      d = p.cmp
+      if p.cmp == nil then xxx = p.csp else xxx = p.cmp end
+      c = xxx
+      d = xxx
       b = b + d / 10 + 1
     end
   end
@@ -522,7 +528,11 @@ function cast_rune_spell(I,D,u)
   -- msg_print(I,format("You %strace %s %s.", b > 0 and "\255Rincompetently\255w " or "",SS,S))
   p.attacker = format(" traces %s %s for", SS, S)
   p.energy = p.energy - e
-  p.cmp = p.cmp - c
+  if p.cmp == nil then
+    p.csp = p.csp - c
+  else
+    p.cmp = p.cmp - c
+  end
   local r = rspell_radius(u,s)
   local t = rspell_duration(u,s)
   if band(u,BOLT)~=0 then
