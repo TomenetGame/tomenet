@@ -80,41 +80,40 @@
  * This function should be obsoleted when ToME power.c is backported.
  */
 /* Basically not cumulative */
-static void do_tank(int Ind, int power)
-{
+static void do_tank(int Ind, int power) {
 	// player_type *p_ptr = Players[Ind];
 	int i = randint(9);
-	switch (i)
-	{
-		case 1:
-			set_adrenaline(Ind, power + randint(power));
-			break;
-		case 2:
-			set_biofeedback(Ind, power + randint(power));
-			break;
-		case 3:
-		case 4:
-			set_tim_esp(Ind, power + randint(power));
-			break;
-		case 5:
-			set_prob_travel(Ind, power + randint(power));
-			break;
-		case 6:
-			set_fury(Ind, power + randint(power));
-			break;
-		case 7:
-			set_fast(Ind, power + randint(power), 10);
-			break;
-		case 8:
-			set_shero(Ind, power + randint(power));
-			break;
-		case 9:
-			set_oppose_acid(Ind, power + randint(power));
-			set_oppose_elec(Ind, power + randint(power));
-			set_oppose_fire(Ind, power + randint(power));
-			set_oppose_cold(Ind, power + randint(power));
-			set_oppose_pois(Ind, power + randint(power));
-			break;
+
+	switch (i) {
+	case 1:
+		set_adrenaline(Ind, power + randint(power));
+		break;
+	case 2:
+		set_biofeedback(Ind, power + randint(power));
+		break;
+	case 3:
+	case 4:
+		set_tim_esp(Ind, power + randint(power));
+		break;
+	case 5:
+		set_prob_travel(Ind, power + randint(power));
+		break;
+	case 6:
+		set_fury(Ind, power + randint(power));
+		break;
+	case 7:
+		set_fast(Ind, power + randint(power), 10);
+		break;
+	case 8:
+		set_shero(Ind, power + randint(power));
+		break;
+	case 9:
+		set_oppose_acid(Ind, power + randint(power));
+		set_oppose_elec(Ind, power + randint(power));
+		set_oppose_fire(Ind, power + randint(power));
+		set_oppose_cold(Ind, power + randint(power));
+		set_oppose_pois(Ind, power + randint(power));
+		break;
 	}
 }
 
@@ -1009,6 +1008,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 		case SV_POTION_EXPERIENCE:
 			if (p_ptr->exp < PY_MAX_EXP) {
 				s32b ee = (p_ptr->exp / 2) + 10;
+
 				if (ee > 100000L) ee = 100000L;
 #ifdef ALT_EXPRATIO
 				ee = (ee * (s64b)p_ptr->expfact) / 100L; /* give same amount to anyone */
