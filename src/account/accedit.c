@@ -683,14 +683,14 @@ int findacc(bool next) {
 }
 
 void status(char *info) {
-	mvprintw(LINES - 1, 0, info);
+	mvprintw(LINES - 1, 0, "%s", info);
 	beep();
 }
 
 void statinput(char *prompt, char *string, int max) {
 	char ch;
 	int pos = 0;
-	mvprintw(LINES - 1, 0, prompt);
+	mvprintw(LINES - 1, 0, "%s", prompt);
 	do {
 		ch = getch();
 		if (ch == '\n') break;
@@ -720,7 +720,7 @@ void statinput(char *prompt, char *string, int max) {
 void getstring(const char *prompt, char *string, int max) {
 	char ch;
 	int i = 0;
-	mvprintw(LINES - 1, 0, prompt);
+	mvprintw(LINES - 1, 0, "%s", prompt);
 	do {
 		ch = getch();
 		if (ch == '\b' && i > 0)
@@ -814,7 +814,7 @@ static char *t_crypt(char *inbuf, const char *salt) {
 
 unsigned short ask(char *prompt) {
 	char ch;
-	mvprintw(LINES - 1, 0, prompt);
+	mvprintw(LINES - 1, 0, "%s", prompt);
 	do {
 		ch = getch();
 		if (ch == 'Y' || ch == 'y') break;
