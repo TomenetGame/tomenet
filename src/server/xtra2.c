@@ -5880,7 +5880,25 @@ bool monster_death(int Ind, int m_idx) {
 #endif
 		} else msg_print(Ind, tmp);
 
-		s_printf("MIRROR: %s (%d/%d) won.\n", p_ptr->name, p_ptr->max_plv, p_ptr->max_lev);
+		/* First time reward */
+		if (!p_ptr->r_killed[RI_MIRROR]) {
+			/* Hack credit manually, as this monster has RF9_NO_CREDIT */
+			p_ptr->r_killed[RI_MIRROR] = 1;
+
+			/* SV_POTION_EXPERIENCE effect applied (keep consistent!) */
+			if (p_ptr->exp < PY_MAX_EXP) {
+				s32b ee = (p_ptr->exp / 2) + 10;
+				if (ee > 100000L) ee = 100000L;
+#ifdef ALT_EXPRATIO
+				ee = (ee * (s64b)p_ptr->expfact) / 100L; /* give same amount to anyone */
+#endif
+				if (!(p_ptr->mode & MODE_PVP)) {
+					msg_print(Ind, "\377GYou feel more experienced.");
+					gain_exp(Ind, ee);
+				}
+			}
+			s_printf("MIRROR: %s (%d/%d) won (1st).\n", p_ptr->name, p_ptr->max_plv, p_ptr->max_lev);
+		} else s_printf("MIRROR: %s (%d/%d) won.\n", p_ptr->name, p_ptr->max_plv, p_ptr->max_lev);
 	}
 
 	/*
