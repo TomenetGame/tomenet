@@ -921,6 +921,7 @@ void cmd_subinven(int islot) {
 	char buf[MSG_LEN];
 	object_type *i_ptr = &inventory[islot];
 	int subinven_size = i_ptr->pval;
+	bool leave = FALSE;
 
 	Term_save();
 	showing_inven = screen_icky;
@@ -963,6 +964,10 @@ void cmd_subinven(int islot) {
 			break;
 		}
 		else switch (ch) {
+		case ESCAPE:
+			/* Leave subinventory */
+			leave = TRUE;
+			break;
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????", FALSE);
 			break;
@@ -1023,8 +1028,7 @@ void cmd_subinven(int islot) {
 #endif
 		}
 
-		/* Default, eg ESC: */
-		break;
+		if (leave) break;
 	}
 
 	/* End redirection of inventory-related commands, as we left the subinventory */
