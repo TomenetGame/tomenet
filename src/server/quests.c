@@ -1084,7 +1084,7 @@ static void teleport_objects_away(struct worldpos *wpos, s16b x, s16b y, int dis
 		    cave_perma_bold(zcave, cy, cx)) continue;
 
 //		(void)floor_carry(cy, cx, &tmp_obj);
-		drop_near(0, &tmp_obj, 0, wpos, cy, cx);
+		drop_near(TRUE, 0, &tmp_obj, 0, wpos, cy, cx);
 		delete_object_idx(this_o_idx, FALSE);
 		break;
 	}
@@ -6108,7 +6108,7 @@ void questor_drop_specific(int Ind, int q_idx, int questor_idx, struct worldpos 
 			if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, wpos);
 #endif
 		}
-		drop_near(0, o_ptr, 0, wpos, y, x);
+		drop_near(TRUE, 0, o_ptr, 0, wpos, y, x);
 	}
 	/* instead use create_reward() like for events? */
 	else if (q_questor->drops_reward) {
@@ -6120,14 +6120,14 @@ void questor_drop_specific(int Ind, int q_idx, int questor_idx, struct worldpos 
 		case 5: break; /* 'allow randarts' */
 		}
 		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, resf, 3000);
-		drop_near(0, o_ptr, 0, wpos, y, x);
+		drop_near(TRUE, 0, o_ptr, 0, wpos, y, x);
 	}
 
 	/* drop gold too? */
 	if (q_questor->drops_gold) {
 		invcopy(o_ptr, gold_colour(q_questor->drops_gold, TRUE, FALSE));
 		o_ptr->pval = q_questor->drops_gold;
-		drop_near(0, o_ptr, 0, wpos, y, x);
+		drop_near(TRUE, 0, o_ptr, 0, wpos, y, x);
 	}
 }
 

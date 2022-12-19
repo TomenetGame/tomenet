@@ -5977,7 +5977,7 @@ bool monster_death(int Ind, int m_idx) {
 		invcopy(qq_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_ACQUIREMENT));
 		qq_ptr->number = 1;
 		apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
-		drop_near(0, qq_ptr, -1, wpos, y, x);
+		drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 	}
 
 	/* Let monsters explode! */
@@ -6386,7 +6386,7 @@ bool monster_death(int Ind, int m_idx) {
 			forge.number = 1 + rand_int(r_ptr->weight / 30000);
 			forge.weight = k_info[forge.k_idx].weight;
 			forge.marked2 = ITEM_REMOVAL_NORMAL;
-			drop_near(0, &forge, -1, wpos, y, x);
+			drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 			found_chemical = TRUE;
 			if (!p_ptr->warning_ingredients) {
 				msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
@@ -6411,7 +6411,7 @@ bool monster_death(int Ind, int m_idx) {
 			forge.number = 1 + rand_int(r_ptr->weight / 30000);
 			forge.weight = k_info[forge.k_idx].weight;
 			forge.marked2 = ITEM_REMOVAL_NORMAL;
-			drop_near(0, &forge, -1, wpos, y, x);
+			drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 			found_chemical = TRUE;
 			if (!p_ptr->warning_ingredients) {
 				msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
@@ -6436,7 +6436,7 @@ bool monster_death(int Ind, int m_idx) {
 			forge.number = 1 + rand_int(r_ptr->weight / 30000);
 			forge.weight = k_info[forge.k_idx].weight;
 			forge.marked2 = ITEM_REMOVAL_NORMAL;
-			drop_near(0, &forge, -1, wpos, y, x);
+			drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 			found_chemical = TRUE;
 			if (!p_ptr->warning_ingredients) {
 				msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
@@ -6475,7 +6475,7 @@ bool monster_death(int Ind, int m_idx) {
 					forge.number = 1 + rand_int(3);
 					forge.weight = k_info[forge.k_idx].weight;
 					forge.marked2 = ITEM_REMOVAL_NORMAL;
-					drop_near(0, &forge, -1, wpos, y, x);
+					drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 					found_chemical = TRUE;
 					if (!p_ptr->warning_ingredients) {
 						msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
@@ -6503,7 +6503,7 @@ bool monster_death(int Ind, int m_idx) {
 					forge.number = 1 + rand_int(r_ptr->weight / 2000);
 					forge.weight = k_info[forge.k_idx].weight;
 					forge.marked2 = ITEM_REMOVAL_NORMAL;
-					drop_near(0, &forge, -1, wpos, y, x);
+					drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 					found_chemical = TRUE;
 					if (!p_ptr->warning_ingredients) {
 						msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
@@ -6530,7 +6530,7 @@ bool monster_death(int Ind, int m_idx) {
 					forge.number = 1 + rand_int(r_ptr->weight / 2000);
 					forge.weight = k_info[forge.k_idx].weight;
 					forge.marked2 = ITEM_REMOVAL_NORMAL;
-					drop_near(0, &forge, -1, wpos, y, x);
+					drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 					found_chemical = TRUE;
 					if (!p_ptr->warning_ingredients) {
 						msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
@@ -6561,7 +6561,7 @@ bool monster_death(int Ind, int m_idx) {
 			forge.number = 1 + rand_int(r_ptr->weight / 30000);
 			forge.weight = k_info[forge.k_idx].weight;
 			forge.marked2 = ITEM_REMOVAL_NORMAL;
-			drop_near(0, &forge, -1, wpos, y, x);
+			drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 			//found_chemical = TRUE;
 			if (!p_ptr->warning_ingredients) {
 				msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
@@ -7012,7 +7012,7 @@ if (cfg.unikill_format) {
 					determine_artifact_timeout(a_idx, wpos);
 				}
 #endif
-				drop_near(0, qq_ptr, -1, wpos, y, x);
+				drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 				s_printf("..dropped.\n");
 				no_art = FALSE;
 			} else s_printf("..failed.\n");
@@ -7034,7 +7034,7 @@ if (cfg.unikill_format) {
 			object_desc(0, o_name, qq_ptr, TRUE, 3);
 			s_printf("replacement for FINAL_ARTIFACT: %s\n", o_name);
 			apply_magic(wpos, qq_ptr, -2, FALSE, TRUE, FALSE, FALSE, RESF_NONE);
-			drop_near(0, qq_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 		}
 		/* Drop final object? */
 		if (
@@ -7077,7 +7077,7 @@ if (cfg.unikill_format) {
 			/* One-time imprint "*identifyability*" for client's ITH_STARID/item_tester_hook_starid: */
 			if (!maybe_hidden_powers(Ind, qq_ptr, FALSE)) qq_ptr->ident |= ID_NO_HIDDEN;
 #endif
-			drop_near(0, qq_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 			s_printf("..dropped.\n");
 		}
 	}
@@ -7228,7 +7228,7 @@ if (cfg.unikill_format) {
 				/* Drop it in the dungeon */
 				if (wpos->wz) prize.marked2 = ITEM_REMOVAL_NEVER;
 				else prize.marked2 = ITEM_REMOVAL_DEATH_WILD;
-				drop_near(0, &prize, -1, wpos, y, x);
+				drop_near(TRUE, 0, &prize, -1, wpos, y, x);
 
 				/* Mega-Hack -- Prepare to make "Morgoth" */
 				invcopy(&prize, lookup_kind(TV_CROWN, SV_MORGOTH));
@@ -7245,7 +7245,7 @@ if (cfg.unikill_format) {
 				/* Drop it in the dungeon */
 				if (wpos->wz) prize.marked2 = ITEM_REMOVAL_NEVER;
 				else prize.marked2 = ITEM_REMOVAL_DEATH_WILD;
-				drop_near(0, &prize, -1, wpos, y, x);
+				drop_near(TRUE, 0, &prize, -1, wpos, y, x);
 
 
 				/* Further special drops as rewards.. */
@@ -7279,7 +7279,7 @@ if (cfg.unikill_format) {
 						qq_ptr->note_utag = strlen(quark_str(local_quark));
 						apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
 						/* drop one per player starting with 3rd player, use /d to figure who gets it maybe ^^ */
-						for (j = 3; j <= num; j++) drop_near(0, qq_ptr, -1, wpos, y, x);
+						for (j = 3; j <= num; j++) drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 					}
 				}
 
@@ -7317,7 +7317,7 @@ if (cfg.unikill_format) {
 
 			qq_ptr->bpval = 5;
 			/* Drop it in the dungeon */
-			drop_near(0, qq_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
 		/* finally made Robin Hood drop a Bow ;) */
 		} else if (r_idx == RI_ROBIN_HOOD && magik(50)) {
@@ -7328,7 +7328,7 @@ if (cfg.unikill_format) {
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, TRUE, TRUE, resf_chosen);
-			drop_near(0, qq_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
 		} else if (r_ptr->flags7 & RF7_NAZGUL) {
 			/* Get local object */
@@ -7364,7 +7364,7 @@ if (cfg.unikill_format) {
 			qq_ptr->iron_trade = p_ptr->iron_trade; //not sure if Nazgul rings should really be tradeable in IDDC..
 			qq_ptr->iron_turn = -1;
 #endif
-			drop_near(0, qq_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
 		/* Hack - the Dragonriders give some firestone */
 		} else if (r_ptr->flags3 & RF3_DRAGONRIDER) {
@@ -7377,7 +7377,7 @@ if (cfg.unikill_format) {
 			qq_ptr->number = (byte)rand_range(1,12);
 
 			/* Drop it in the dungeon */
-			drop_near(0, qq_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
 		/* PernAngband additions */
 		/* Mega^2-hack -- destroying the Stormbringer gives it us! But we cannot farm it for others as winner >_>. */
@@ -7422,7 +7422,7 @@ if (cfg.unikill_format) {
 			qq_ptr->to_d = 17 + rand_int(14);
 
 			/* Drop it in the dungeon */
-			drop_near(0, qq_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
 		/* Raal's Tomes of Destruction drop a Raal's Tome of Destruction -- EXPERIMENTAL */
 		} else if (r_idx == RI_RAALS_TOME && !rand_int(20)) {
@@ -7441,7 +7441,7 @@ if (cfg.unikill_format) {
 			}
 
 			/* Drop it in the dungeon */
-			drop_near(0, qq_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
 #if 0 /* Disabled - Idea doesn't work, because AP in general for cursed randarts is very low. There is no use in the items generated, except maybe lucky ID hat.. */
 		/* For DK/HK: Let these guys drop some heavily cursed, powerful randart for itemization fun.. */
@@ -7511,7 +7511,7 @@ if (cfg.unikill_format) {
  #endif
 
 			/* Drop it in the dungeon */
-			drop_near(0, qq_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 #else
 		/* For DK/HK: Let these guys drop some heavily cursed trueart for itemization fun.. */
 		} else if ((r_idx == RI_VLAD_DRACULA || r_idx == RI_MEPHISTOPHELES)
@@ -7584,7 +7584,7 @@ if (cfg.unikill_format) {
 				/* Log, drop it in the dungeon, done */
 				object_desc(0, o_name, qq_ptr, TRUE, 3);
 				s_printf("DROP_CHOSEN: Heavily Cursed Trueart <%s>\n", o_name);
-				drop_near(0, qq_ptr, -1, wpos, y, x);
+				drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 				break;
 			}
 #endif
@@ -7603,7 +7603,7 @@ if (cfg.unikill_format) {
 			/* hack ego power */
 			qq_ptr->name2 = EGO_RISTARI;
 			qq_ptr->name2b = 0;
-			drop_near(0, qq_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
 		} else if (r_idx == RI_LIVING_LIGHTNING) {
 			int tries = 100;
@@ -7653,7 +7653,7 @@ if (cfg.unikill_format) {
 			if (qq_ptr->pval < 6) object_copy(qq_ptr, &forge_fallback);
 #endif
 			qq_ptr->timeout_magic = 0;
-			drop_near(0, qq_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
 			object_wipe(qq_ptr);
 			invcopy(qq_ptr, lookup_kind(TV_BOOK, 2));
@@ -7661,7 +7661,7 @@ if (cfg.unikill_format) {
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NONE);
-			drop_near(0, qq_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
 			object_wipe(qq_ptr);
 			invcopy(qq_ptr, lookup_kind(TV_RUNE, 32)); //mana
@@ -7669,7 +7669,7 @@ if (cfg.unikill_format) {
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NONE);
-			drop_near(0, qq_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
 			object_wipe(qq_ptr);
 			invcopy(qq_ptr, lookup_kind(TV_RUNE, 9)); //elec
@@ -7677,7 +7677,7 @@ if (cfg.unikill_format) {
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NONE);
-			drop_near(0, qq_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
 			object_wipe(qq_ptr);
 			invcopy(qq_ptr, lookup_kind(TV_ROD, SV_ROD_ELEC_BALL));
@@ -7687,7 +7687,7 @@ if (cfg.unikill_format) {
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NONE);
 			qq_ptr->name2 = EGO_RISTARI;
 			qq_ptr->name2b = 0;
-			drop_near(0, qq_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
 			tries = 500;
 			while (tries) {
@@ -7713,7 +7713,7 @@ if (cfg.unikill_format) {
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 			qq_ptr->timeout_magic = 0;
-			drop_near(0, qq_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
 		} else if (r_idx == RI_HELLRAISER) {
 			/* Get local object */
@@ -7730,7 +7730,7 @@ if (cfg.unikill_format) {
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
 
 			/* Drop it in the dungeon */
-			drop_near(0, qq_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
 			/* Prepare a second reward */
 			object_wipe(qq_ptr);
@@ -7757,7 +7757,7 @@ if (cfg.unikill_format) {
 			//qq_ptr->iron_trade = p_ptr->iron_trade;
 			qq_ptr->iron_turn = -1;
 //#endif
-			drop_near(0, qq_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
 		} else if (r_idx == RI_DOR) {
 			/* Get local object */
@@ -7772,7 +7772,7 @@ if (cfg.unikill_format) {
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NONE);
 			qq_ptr->pval = qq_ptr->number * 5 + 3 + rand_int(4);
-			drop_near(0, qq_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 #endif
 
 			/* a rod of havoc */
@@ -7785,7 +7785,7 @@ if (cfg.unikill_format) {
 			/* hack ego power */
 			qq_ptr->name2 = EGO_RISTARI;
 			qq_ptr->name2b = 0;
-			drop_near(0, qq_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
 		/* dungeon boss, but drops multiple items */
 		} else if (is_ZuAon) {
@@ -7814,7 +7814,7 @@ if (cfg.unikill_format) {
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
 			/* Drop it in the dungeon */
-			drop_near(0, qq_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
 			/* Prepare a second reward */
 			object_wipe(qq_ptr);
@@ -7838,7 +7838,7 @@ if (cfg.unikill_format) {
 			//qq_ptr->iron_trade = p_ptr->iron_trade;
 			qq_ptr->iron_turn = -1;
 //#endif
-			drop_near(0, qq_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
 		} else if (r_idx == RI_MIRROR) {
 			qq_ptr = &forge;
@@ -7851,7 +7851,7 @@ if (cfg.unikill_format) {
 			//qq_ptr->iron_trade = p_ptr->iron_trade;  --needed?
 			//qq_ptr->iron_turn = -1;
 
-			drop_near(0, qq_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
 			/* Make sure we cannot enter IDDC afterwards to exploit-trade or sth */
 			gain_exp(Ind, 1);
@@ -7892,7 +7892,7 @@ if (cfg.unikill_format) {
 							qq_ptr->pval = 10;
 							determine_level_req(object_level, qq_ptr);
 						}
-						drop_near(0, qq_ptr, -1, wpos, y, x);
+						drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 					}
 				}
 			} else if (r_idx == RI_GORLIM) {
@@ -7994,7 +7994,7 @@ if (cfg.unikill_format) {
 					qq_ptr->iron_turn = turn;
 					determine_artifact_timeout(a_idx, wpos);
 #endif
-					drop_near(0, qq_ptr, -1, wpos, y, x);
+					drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 				}
 			}
 		}
@@ -8035,7 +8035,7 @@ if (cfg.unikill_format) {
 		qq_ptr->ident &= ~ID_CURSED; //paranoia
 		determine_level_req(0, qq_ptr);
 
-		drop_near(0, qq_ptr, -1, wpos, y, x);
+		drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 	}
  #endif
 #endif
@@ -8068,7 +8068,7 @@ if (cfg.unikill_format) {
 		apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
 
 		s_printf("NEWYEARSEVE: Dropped fireworks (%d,%d) for '%s'.\n", qq_ptr->xtra1, qq_ptr->xtra2, p_ptr->name);
-		drop_near(0, qq_ptr, -1, wpos, y, x);
+		drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 	}
 
 	/* for when a quest giver turned non-invincible */
@@ -10255,7 +10255,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 		if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
 		else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
 		else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
-		(void)drop_near(0, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+		(void)drop_near(TRUE, 0, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 	}
 
 	/* Give him his hit points back */
@@ -10460,7 +10460,7 @@ void death_drop_object(player_type *p_ptr, int i, object_type *o_ptr) {
 			else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
 			else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
 			/* Drop this one - if dropping fails for reasons that don't legitimately destroy the item, fallback to scattering it far away instead */
-			res = drop_near(0, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+			res = drop_near(FALSE, 0, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 			away = (res == -2);
 			/* Item failed to drop or get scattered and just gets eaten? Paranoia log */
 			if (res <= 0 && !away) {
@@ -10488,7 +10488,7 @@ void death_drop_object(player_type *p_ptr, int i, object_type *o_ptr) {
 					if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
 					else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
 					else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
-					o_idx = drop_near(0, o_ptr, 0, &p_ptr->wpos, y1, x1);
+					o_idx = drop_near(TRUE, 0, o_ptr, 0, &p_ptr->wpos, y1, x1);
 				}
 				/* Item failed to drop or get scattered and just gets eaten? Paranoia log */
 				if (o_idx <= 0) {
@@ -11252,6 +11252,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			o_ptr = &forge;
 
 			int i, head, arm, leg, part, ok;
+
 			head = arm = leg = part = 0;
 			for (i = 1; i < 5; i++) {
 				ok = 0;
@@ -11277,7 +11278,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 				o_ptr->mode = p_ptr->mode;
 				o_ptr->level = 1;
 				o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
-				(void)drop_near(0, o_ptr, 0, &m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+				(void)drop_near(TRUE, 0, o_ptr, 0, &m_ptr->wpos, m_ptr->fy, m_ptr->fx);
 			}
 		}
 #endif
@@ -14484,7 +14485,7 @@ bool master_build(int Ind, char * parms) {
 		invcopy(&newkey, lookup_kind(TV_KEY, SV_HOUSE_KEY));
 		newkey.pval = key->id;
 		newkey.marked2 = ITEM_REMOVAL_NEVER;
-		drop_near(0, &newkey, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+		drop_near(TRUE, 0, &newkey, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 		cs_ptr = ReplaceCS(c_ptr, CS_KEYDOOR);
 		if (cs_ptr) cs_ptr->sc.ptr = key;
 		else KILL(key, struct key_type);

@@ -8064,7 +8064,7 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 
 	forge.marked2 = removal_marker;
 	forge.discount = object_discount; /* usually 0, except for creation from stolen acquirement scrolls */
-	drop_near(0, &forge, -1, wpos, y, x);
+	drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 
 	/* for now ignore live-spawns. change that maybe? */
 	if (level_generation_time) {
@@ -9779,7 +9779,7 @@ void place_gold(int Ind, struct worldpos *wpos, int y, int x, int mult, int bonu
 	}
 
 	/* Drop it */
-	drop_near(0, &forge, -1, wpos, y, x);
+	drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 }
 
 
@@ -9869,7 +9869,6 @@ static bool dropped_the_one_ring(struct worldpos *wpos, cave_type *c_ptr) {
 /*
  * Let an item 'o_ptr' fall to the ground at or near (y,x).
  * The initial location is assumed to be "in_bounds()".
- * (This function is called by drop_near_severe() too.)
  *
  * This function takes a parameter "chance".  This is the percentage
  * chance that the item will "disappear" instead of drop.  If the object
@@ -9883,20 +9882,24 @@ static bool dropped_the_one_ring(struct worldpos *wpos, cave_type *c_ptr) {
  *
  * XXX XXX XXX Consider allowing objects to combine on the ground.
  *
- * Returns -1 for 'legal item death' (burnt up or just broke)
- * Returns -2 for 'code-limits item death' (no room, no cave paranoi)
+ * handle_d: Handle artifact/questitem decrement on '-2' code 'wrong' item destruction?
+ *           (It is always handled here for normal '-1' cases, independantly of handle_d.)
+ * Ind can be 0 if an item is not dropped from a player's inventory or equipment.
+ * Returns -1 for 'legal item death' (burnt up or just broke, as in 'the correct way of dropping this is to make it poof'!)
+ * Returns -2 for 'code-limits item death' (including 'no room'!, no cave paranoia)
  */
 #define DROP_KILL_NOTE /* todo: needs adjustments - see below */
 #define DROP_ON_STAIRS_IN_EMERGENCY
-int drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x) {
+int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x) {
 	int k, d, ny, nx, i, s;	// , y1, x1
 	int bs, bn;
 	int by, bx;
 	//int ty, tx;
 	int o_idx = -1;
-	int flag = 0;	// 1 = normal, 2 = combine, 3 = crash
+	int flag = 0;	// 1 = normal, 2 = combine (found an object_similar() in a pile), 3 = crash (kill object below us), 0 = no room at all!
 
-	cave_type	*c_ptr;
+	cave_type *c_ptr;
+	player_type *p_ptr = Ind ? Players[Ind] : NULL;
 
 	bool comb;
 	/* for destruction checks */
@@ -9923,7 +9926,14 @@ int drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, in
 	o_ptr->held_m_idx = 0;
 
 
-	if (!(zcave = getcave(wpos))) return(-2);
+	if (!(zcave = getcave(wpos))) {
+		if (handle_d) {
+			if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
+			questitem_d(o_ptr, o_ptr->number);
+		}
+
+		return(-2);
+	}
 
 	/* Handle normal "breakage" */
 	if (!arts && magik(chance)) {
@@ -10094,8 +10104,10 @@ int drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, in
 		}
 #endif
 
-		if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
-		questitem_d(o_ptr, o_ptr->number);
+		if (handle_d) {
+			if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
+			questitem_d(o_ptr, o_ptr->number);
+		}
 
 		/* Extra logging for those cases of "where did my randart disappear to??1" */
 		if (o_ptr->name1 == ART_RANDART) {
@@ -10201,8 +10213,10 @@ int drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, in
 #endif
 		}
 
-		if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1); /* just paranoia here */
-		questitem_d(o_ptr, o_ptr->number);
+		if (handle_d) {
+			if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1); /* just paranoia here */
+			questitem_d(o_ptr, o_ptr->number);
+		}
 
 		/* Extra logging for those cases of "where did my randart disappear to??1" */
 		if (o_ptr->name1 == ART_RANDART) {
@@ -10227,16 +10241,33 @@ int drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, in
 		return(-1);
 	}
 
-	/* Artifact always disappears, depending on tomenet.cfg flags */
-	/* this should be in drop_near_severe, would be cleaner sometime in the future.. */
+	/* Items dropped by admins never disappear by 'time out' */
+	if (p_ptr && is_admin(p_ptr)) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
+
+	/* True artifact may disappear, depending on tomenet.cfg flags */
 	if (wpos->wz == 0) { /* Assume houses are always on surface */
 		if (undepositable_artifact_p(o_ptr) && cfg.anti_arts_house && inside_house(wpos, nx, ny)) {
-			//char o_name[ONAME_LEN];
-			//object_desc(Ind, o_name, o_ptr, TRUE, 0);
-			//msg_format(Ind, "%s fades into the air!", o_name);
+			if (Ind) {
+				char o_name[ONAME_LEN];
+
+				object_desc(Ind, o_name, o_ptr, TRUE, 0);
+				msg_format(Ind, "%s fades into the air!", o_name);
+			}
 			handle_art_d(o_ptr->name1);
 			return(-1);
 		}
+	}
+	/* hm for now we also allow ring of phasing to be traded between winners. not needed though. */
+	if (p_ptr && true_artifact_p(o_ptr) && !is_admin(p_ptr) &&
+	    ((cfg.anti_arts_hoard && undepositable_artifact_p(o_ptr)) || (p_ptr->total_winner && !winner_artifact_p(o_ptr) && cfg.kings_etiquette)))
+	    //(cfg.anti_arts_hoard || (cfg.anti_arts_house && 0)) would be cleaner sometime in the future..
+	{
+		char o_name[ONAME_LEN];
+
+		object_desc(Ind, o_name, o_ptr, TRUE, 0);
+		msg_format(Ind, "%s fades into the air!", o_name);
+		handle_art_d(o_ptr->name1);
+		return(-1);
 	}
 
 	/* Scan objects in that grid for combination */
@@ -10314,8 +10345,10 @@ int drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, in
 			if (do_kill)
  #endif
 			{
-				if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1); /* just paranoia here */
-				questitem_d(o_ptr, o_ptr->number);
+				if (handle_d) {
+					if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1); /* just paranoia here */
+					questitem_d(o_ptr, o_ptr->number);
+				}
 
 				/* Extra logging for those cases of "where did my randart disappear to??1" */
 				if (o_ptr->name1 == ART_RANDART) {
@@ -10440,8 +10473,10 @@ int drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, in
 			/* Success */
 			//flag = TRUE;
 		} else /* paranoia: couldn't allocate a new object */ {
-			if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
-			questitem_d(o_ptr, o_ptr->number);
+			if (handle_d) {
+				if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
+				questitem_d(o_ptr, o_ptr->number);
+			}
 
 			/* Extra logging for those cases of "where did my randart disappear to??1" */
 			if (o_ptr->name1 == ART_RANDART) {
@@ -10475,31 +10510,6 @@ int drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, in
 
 	/* Result */
 	return(o_idx);
-}
-/* This function make the artifact disapper at once (cept randarts),
- * and call the normal dropping function otherwise.
- */
-
-int drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x) {
-	player_type *p_ptr = Players[Ind];
-
-	/* Items dropped by admins never disappear by 'time out' */
-	if (is_admin(p_ptr)) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
-
-	/* Artifact always disappears, depending on tomenet.cfg flags */
-	/* hm for now we also allow ring of phasing to be traded between winners. not needed though. */
-	if (true_artifact_p(o_ptr) && !is_admin(p_ptr) &&
-	    ((cfg.anti_arts_hoard && undepositable_artifact_p(o_ptr)) || (p_ptr->total_winner && !winner_artifact_p(o_ptr) && cfg.kings_etiquette)))
-	    //(cfg.anti_arts_hoard || (cfg.anti_arts_house && 0)) would be cleaner sometime in the future..
-	{
-		char	o_name[ONAME_LEN];
-		object_desc(Ind, o_name, o_ptr, TRUE, 0);
-
-		msg_format(Ind, "%s fades into the air!", o_name);
-		handle_art_d(o_ptr->name1);
-		return(-1);
-	}
-	else return(drop_near(Ind, o_ptr, chance, wpos, y, x));
 }
 
 

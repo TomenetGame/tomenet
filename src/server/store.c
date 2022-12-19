@@ -7743,7 +7743,7 @@ s_printf("PLAYER_STORE_HANDLE: new mass, trad, owner %s (%d), %s, value %d, buye
 						return(FALSE);
 					}
 					/* Drop the cheque there */
-					drop_near(0, cheque_ptr, -1, &p_ptr->wpos, y, x);
+					drop_near(TRUE, 0, cheque_ptr, -1, &p_ptr->wpos, y, x);
 					/* Access the new item and point to it */
 					cheque_ptr = &o_list[c_ptr->o_idx];
 s_printf("PLAYER_STORE_HANDLE: new mass, mang, owner %s (%d), %s, value %d, buyer %s)\n",
@@ -7810,7 +7810,7 @@ s_printf("PLAYER_STORE_HANDLE: complete, trad, owner %s (%d), %s, value %d, buye
 				floor_item_increase(c_ptr->o_idx, -s_ptr->number);
 				floor_item_optimize(c_ptr->o_idx);
 				/* Drop the cheque there */
-				drop_near(0, cheque_ptr, -1, &p_ptr->wpos, y, x);
+				drop_near(TRUE, 0, cheque_ptr, -1, &p_ptr->wpos, y, x);
 s_printf("PLAYER_STORE_HANDLE: complete, mang, owner %s (%d), %s, value %d, buyer %s)\n",
     owner_name, h_ptr->dna->owner, o0_name, value, p_ptr->name);
 			}

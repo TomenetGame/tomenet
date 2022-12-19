@@ -6551,7 +6551,7 @@ static void process_games(int Ind) {
 						if (!cave_floor_bold(zcave, oy, ox)) continue;
 						tmp_obj = p_ptr->inventory[ball];
 						tmp_obj.marked2 = ITEM_REMOVAL_NEVER;
-						drop_near(0, &tmp_obj, -1, &p_ptr->wpos, oy, ox);
+						drop_near(TRUE, 0, &tmp_obj, -1, &p_ptr->wpos, oy, ox);
 						printf("dropping at %d %d (%d)\n", ox, oy, try);
 						inven_item_increase(Ind, ball, -999);
 						inven_item_optimize(Ind, ball);
@@ -10481,7 +10481,7 @@ void pack_overflow(int Ind) {
 #endif
 
 		/* Drop it (carefully) near the player */
-		drop_near_severe(Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+		drop_near(TRUE, Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 
 #ifdef ENABLE_SUBINVEN
 		/* Paranoia? - If we drop a subinventory, remove all items and place them into the player's inventory */

@@ -9771,7 +9771,7 @@ void empty_subinven(int Ind, int item, bool drop) {
 #ifdef USE_SOUND_2010
 			sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
 #endif
-			drop_near_severe(Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+			drop_near(TRUE, Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 		}
 
 		invwipe(&p_ptr->subinventory[item][i]);

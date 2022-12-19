@@ -70,7 +70,7 @@ static bool do_player_drop_items_aux(int Ind, int chance, int slot, object_type 
 	}
 
 	/* drop carefully */
-	drop_near_severe(Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+	drop_near(TRUE, Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 	inven_item_increase(Ind, slot, -999);
 	inven_item_optimize(Ind, slot);
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -149,7 +149,7 @@ bool do_player_scatter_items(int Ind, int chance, int rad) {
 			inven_item_optimize(Ind, i);
 			p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 			//(void)floor_carry(cy, cx, &tmp_obj);
-			drop_near_severe(Ind, &tmp_obj, 0, &p_ptr->wpos, cy, cx);
+			drop_near(TRUE, Ind, &tmp_obj, 0, &p_ptr->wpos, cy, cx);
 			if (!message) {
 				msg_print(Ind, "You feel light-footed.");
 				message = TRUE;
@@ -195,7 +195,7 @@ static bool do_player_trap_garbage(int Ind, int times) {
 
 		ident = TRUE;
 		if (inven_carry(Ind, o_ptr) < 0)
-			drop_near(0, o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+			drop_near(TRUE, 0, o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 	}
 	return(ident);
 }
@@ -351,7 +351,7 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x) {
 		if (!(f_info[c_ptr->feat].flags1 & FF1_FLOOR)) continue;
 #endif
 		if (!cave_clean_bold(zcave, y1, x1)) continue;
-		o_idx = drop_near_severe(Ind, i_ptr, 0, &p_ptr->wpos, y1, x1);
+		o_idx = drop_near(TRUE, Ind, i_ptr, 0, &p_ptr->wpos, y1, x1);
 	}
 
 	if (o_idx <= 0) return(FALSE);
@@ -484,7 +484,7 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval, s16b sval, 
 		}
 	}
 
-	drop_near(0, o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+	drop_near(TRUE, 0, o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 
 	return(TRUE);
 }
@@ -1769,7 +1769,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 
 				p_ptr->au -= amt * price;
 				o_ptr->number = amt;
-				drop_near(0, o_ptr, -1, wpos, p_ptr->py, p_ptr->px);
+				drop_near(TRUE, 0, o_ptr, -1, wpos, p_ptr->py, p_ptr->px);
 
 				msg_print(Ind, "You feel like having a shot.");
 				ident = TRUE;
@@ -3540,11 +3540,11 @@ void do_cmd_disarm_mon_trap_aux(int Ind, worldpos *wpos, int y, int x) {
 					q_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 					msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
 				}
-				else drop_near(0, q_ptr, -1, wpos, y, x); //paranoia
+				else drop_near(TRUE, 0, q_ptr, -1, wpos, y, x); //paranoia
 			}
 		} else {
 			/* Drop it */
-			drop_near(0, q_ptr, -1, wpos, y, x);
+			drop_near(TRUE, 0, q_ptr, -1, wpos, y, x);
 		}
 	}
 
@@ -5123,7 +5123,7 @@ bool mon_hit_trap(int m_idx) {
 					/* Drop (or break) near that location,
 					   but only if non-exploding and non-ethereal. */
 					if (!load_o_ptr->pval && load_o_ptr->name2 != EGO_ETHEREAL && load_o_ptr->name2b != EGO_ETHEREAL)
-						drop_near(0, j_ptr, breakage_chance(j_ptr), &wpos, my, mx);
+						drop_near(TRUE, 0, j_ptr, breakage_chance(j_ptr), &wpos, my, mx);
 				}
 
 			}

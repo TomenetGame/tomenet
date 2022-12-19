@@ -696,7 +696,7 @@ extern void do_cmd_fusion(int Ind);
 
 
 /* cmd3.c */
-extern int inven_drop(int Ind, int item, int amt, bool force);
+extern int inven_drop(bool handle_d, int Ind, int item, int amt, bool force);
 extern void inven_takeoff(int Ind, int item, int amt, bool called_from_wield, bool force);
 extern void equip_thrown(int Ind, int slot, object_type *o_ptr, int original_number);
 extern void do_takeoff_impossible(int Ind);
@@ -1293,7 +1293,6 @@ extern void divide_charged_item(object_type *onew_ptr, object_type *o_ptr, int a
 extern void discharge_rod(object_type *o_ptr, int c);
 extern s32b unique_quark;
 extern void object_copy(object_type *o_ptr, object_type *j_ptr);
-extern int drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
 extern void object_wipe(object_type *o_ptr);
 extern bool can_use(int Ind, object_type *o_ptr);
 extern bool can_use_verbose(int Ind, object_type *o_ptr);
@@ -1360,7 +1359,7 @@ extern void acquirement_direct(int Ind, object_type *o_ptr, struct worldpos *wpo
 extern void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool great, bool verygreat, u32b resf, long int treshold);
 extern void give_reward(int Ind, u32b resf, cptr quark, int level, int discount);
 extern void place_gold(int Ind, struct worldpos *wpos, int y, int x, int mult, int bonus);
-extern int drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
+extern int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
 extern void pick_trap(struct worldpos *wpos, int y, int x);
 extern void compact_objects(int size, bool purge);
 extern int o_pop(void);

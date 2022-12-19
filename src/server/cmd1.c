@@ -7350,7 +7350,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 							msg_format_near(Ind2, "\377v%s is tackled by %s", q_ptr->name, p_ptr->name);
 							msg_format(Ind2, "\377r%s tackles you", p_ptr->name);
 							tmp_obj.marked2 = ITEM_REMOVAL_NEVER;
-							drop_near(0, &tmp_obj, -1, wpos, y, x);
+							drop_near(TRUE, 0, &tmp_obj, -1, wpos, y, x);
 						} else {
 							msg_format_near(Ind2, "\377v%s gets the ball from %s", p_ptr->name, q_ptr->name);
 							msg_format(Ind2, "\377v%s gets the ball from you", p_ptr->name);

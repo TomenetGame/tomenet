@@ -4524,7 +4524,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				forge.number = 1;
 				forge.weight = k_info[forge.k_idx].weight;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
-				drop_near(0, &forge, -1, wpos, y, x);
+				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 
 				if (!p_ptr->warning_ingredients) {
 					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
@@ -5608,7 +5608,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					    cave_perma_bold(zcave, cy, cx)) continue;
 
 					//(void)floor_carry(cy, cx, &tmp_obj);
-					drop_near(0, &tmp_obj, 0, wpos, cy, cx);
+					drop_near(TRUE, 0, &tmp_obj, 0, wpos, cy, cx);
 
 					/* XXX not working? */
 					if (!quiet && note_kill)
@@ -5720,7 +5720,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					forge.number = 1 + k_info[k_idx].weight / 180;
 					forge.weight = k_info[forge.k_idx].weight;
 					forge.marked2 = ITEM_REMOVAL_NORMAL;
-					drop_near(0, &forge, -1, wpos, y, x);
+					drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 					if (!p_ptr->warning_ingredients) {
 						msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
 						msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");

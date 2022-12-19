@@ -2754,22 +2754,10 @@ bool make_attack_melee(int Ind, int m_idx) {
 #endif
 
 								s_printf("%s EFFECT: Disarmed (drop) %s: %s.\n", showtime(), p_ptr->name, o_name);
-#if 0
-								/* Drop it (carefully) near the player */
- #ifdef DISARM_SCATTER
-								o_idx =
- #endif
-								    drop_near_severe(Ind, &p_ptr->inventory[slot], 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-								/* Decrease the item, optimize. */
-								inven_item_increase(Ind, slot, -p_ptr->inventory[slot].number);
-								inven_item_optimize(Ind, slot);
+#ifndef DISARM_SCATTER
+								inven_drop(TRUE, Ind, slot, 1, TRUE);
 #else
- #ifdef DISARM_SCATTER
-								o_idx =
- #endif
-								    inven_drop(Ind, slot, 1, TRUE);
-#endif
-#ifdef DISARM_SCATTER
+								o_idx = inven_drop(FALSE, Ind, slot, 1, TRUE);
 								if (o_idx == -1) s_printf("DISARM: ITEM DESTROYED.\n");
 								else if (o_idx == -2) {
 									int x1, y1, try = 500;
@@ -2783,7 +2771,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 											if (!cave_clean_bold(zcave, y1, x1)) continue;
 											forge.marked2 = ITEM_REMOVAL_DEATH_WILD;
-											o_idx = drop_near(0, &forge, 0, &p_ptr->wpos, y1, x1);
+											o_idx = drop_near(try ? FALSE : TRUE, 0, &forge, 0, &p_ptr->wpos, y1, x1);
 										}
 									s_printf("DISARM: SCATTERING %s.\n", o_idx > 0 ? "succeeded" : "failed");
 								}
@@ -2813,12 +2801,11 @@ bool make_attack_melee(int Ind, int m_idx) {
 								object_type forge = p_ptr->inventory[INVEN_WIELD];
 #endif
 
-#ifdef DISARM_SCATTER
-								o_idx =
-#endif
-								    inven_drop(Ind, INVEN_WIELD, 1, TRUE);
 								s_printf("%s EFFECT: Disarmed (dual, drop) %s: %s.\n", showtime(), p_ptr->name, o_name);
-#ifdef DISARM_SCATTER
+#ifndef DISARM_SCATTER
+								inven_drop(TRUE, Ind, INVEN_WIELD, 1, TRUE);
+#else
+								o_idx = inven_drop(FALSE, Ind, INVEN_WIELD, 1, TRUE);
 								if (o_idx == -1) s_printf("DISARM: ITEM DESTROYED.\n");
 								else if (o_idx == -2) {
 									int x1, y1, try = 500;
@@ -2832,7 +2819,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 											if (!cave_clean_bold(zcave, y1, x1)) continue;
 											forge.marked2 = ITEM_REMOVAL_DEATH_WILD;
-											o_idx = drop_near(0, &forge, 0, &p_ptr->wpos, y1, x1);
+											o_idx = drop_near(try ? FALSE : TRUE, 0, &forge, 0, &p_ptr->wpos, y1, x1);
 										}
 									s_printf("SCATTERING %s.\n", o_idx > 0 ? "succeeded" : "failed");
 								}
@@ -2850,14 +2837,13 @@ bool make_attack_melee(int Ind, int m_idx) {
 								object_type forge = p_ptr->inventory[INVEN_ARM];
 #endif
 
-#ifdef DISARM_SCATTER
-								o_idx =
-#endif
-								    inven_drop(Ind, INVEN_ARM, 1, TRUE);
 								s_printf("%s EFFECT: Disarmed (dual, drop) %s: %s.\n", showtime(), p_ptr->name, o_name);
-#ifdef DISARM_SCATTER
-								if (o_idx == -2) s_printf("DISARM: ITEM DESTROYED.\n");
-								else if (o_idx == -1) {
+#ifndef DISARM_SCATTER
+								inven_drop(TRUE, Ind, slot, 1, TRUE);
+#else
+								o_idx = inven_drop(FALSE, Ind, INVEN_ARM, 1, TRUE);
+								if (o_idx == -1) s_printf("DISARM: ITEM DESTROYED.\n");
+								else if (o_idx == -2) {
 									int x1, y1, try = 500;
 									cave_type **zcave;
 
@@ -2869,7 +2855,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 											if (!cave_clean_bold(zcave, y1, x1)) continue;
 											forge.marked2 = ITEM_REMOVAL_DEATH_WILD;
-											o_idx = drop_near(0, &forge, 0, &p_ptr->wpos, y1, x1);
+											o_idx = drop_near(try ? FALSE : TRUE, 0, &forge, 0, &p_ptr->wpos, y1, x1);
 										}
 									s_printf("SCATTERING %s.\n", o_idx > 0 ? "succeeded" : "failed");
 								}

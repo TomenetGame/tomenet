@@ -3832,7 +3832,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 //							forge.level = ;
 					forge.marked2 = ITEM_REMOVAL_NORMAL;
 					msg_print(Ind, "You have found something!");
-					drop_near(0, &forge, -1, wpos, y, x);
+					drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 					if (tval == TV_CHEST)
 						s_printf("DIGGING: %s found a chest.\n", p_ptr->name);
 					else if (tval == TV_RUNE)
@@ -3848,7 +3848,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					object_level = old_object_level;
 					object_desc(0, o_name, &forge, TRUE, 3);
 					s_printf("DIGGING: %s found item: %s.\n", p_ptr->name, o_name);
-					drop_near(0, &forge, -1, wpos, y, x);
+					drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 #else
 					object_level = find_level_base;
 					place_object(Ind, wpos, y, x, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_MID,
@@ -3901,7 +3901,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				//forge.level = ;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
 				msg_print(Ind, "You have found something!");
-				drop_near(0, &forge, -1, wpos, y, x);
+				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 				s_printf("DIGGING: %s found a massive wood piece.\n", p_ptr->name);
 			} else if (!rand_int(65 - get_skill(p_ptr, SKILL_DIG) / 2) && !p_ptr->IDDC_logscum) {
 				/* for player store signs: (non-massive) wood pieces */
@@ -3911,7 +3911,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				//forge.level = ;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
 				msg_print(Ind, "You have found something!");
-				drop_near(0, &forge, -1, wpos, y, x);
+				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 				s_printf("DIGGING: %s found a wood piece.\n", p_ptr->name);
 			}
 #ifdef ENABLE_DEMOLITIONIST
@@ -3934,7 +3934,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				forge.number = 1;
 				forge.weight = k_info[forge.k_idx].weight;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
-				drop_near(0, &forge, -1, wpos, y, x);
+				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 				if (!p_ptr->warning_ingredients) {
 					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
 					msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
@@ -3989,7 +3989,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				forge.number = 1;
 				forge.weight = k_info[forge.k_idx].weight;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
-				drop_near(0, &forge, -1, wpos, y, x);
+				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 				if (!p_ptr->warning_ingredients) {
 					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
 					msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
@@ -4067,7 +4067,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				forge.number = 1;
 				forge.weight = k_info[forge.k_idx].weight;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
-				drop_near(0, &forge, -1, wpos, y, x);
+				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 				if (!p_ptr->warning_ingredients) {
 					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
 					msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
@@ -4218,7 +4218,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					forge.number = 1;
 					//forge.level = ;
 					forge.marked2 = ITEM_REMOVAL_NORMAL;
-					drop_near(0, &forge, -1, wpos, y, x);
+					drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 					s_printf("DIGGING: %s found a %s.\n", p_ptr->name, tval == TV_GOLEM ? "metal piece" : "rune");
 				} else {
 					object_level = find_level;
@@ -4266,7 +4266,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					//forge.level = ;
 					forge.marked2 = ITEM_REMOVAL_NORMAL;
 					msg_print(Ind, "You have found something!");
-					drop_near(0, &forge, -1, wpos, y, x);
+					drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 					s_printf("DIGGING: %s found a rune.\n", p_ptr->name);
 			}
 #ifdef ENABLE_DEMOLITIONIST
@@ -4289,7 +4289,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				forge.number = 1;
 				forge.weight = k_info[forge.k_idx].weight;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
-				drop_near(0, &forge, -1, wpos, y, x);
+				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 				if (!p_ptr->warning_ingredients) {
 					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
 					msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
@@ -4316,7 +4316,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				forge.number = 1;
 				forge.weight = k_info[forge.k_idx].weight;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
-				drop_near(0, &forge, -1, wpos, y, x);
+				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 				if (!p_ptr->warning_ingredients) {
 					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
 					msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
@@ -4343,7 +4343,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				forge.number = 1;
 				forge.weight = k_info[forge.k_idx].weight;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
-				drop_near(0, &forge, -1, wpos, y, x);
+				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 				if (!p_ptr->warning_ingredients) {
 					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
 					msg_print(Ind, "\374\377y      Demolitionist perk. You can toggle these drops via the '\377o/ing\377y' command.");
@@ -4594,7 +4594,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					//forge.level = ;
 					forge.marked2 = ITEM_REMOVAL_NORMAL;
 					msg_print(Ind, "You have found something!");
-					drop_near(0, &forge, -1, wpos, y, x);
+					drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 					s_printf("DIGGING: %s found a rune.\n", p_ptr->name);
 				}
 			}
@@ -5063,11 +5063,11 @@ void do_cmd_disarm(int Ind, int dir) {
 					   the total chance for this is about 3% */
 					if (magik((sdis / 10) + 1)) {
 						apply_magic(&p_ptr->wpos, yay, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
-						drop_near(0, yay, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+						drop_near(TRUE, 0, yay, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 						msg_print(Ind, "You have created a wonderful trapkit using pieces of the disarmed trap.");
 					} else {
 						apply_magic(&p_ptr->wpos, yay, -2, TRUE, FALSE, FALSE, FALSE, make_resf(p_ptr));
-						drop_near(0, yay, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+						drop_near(TRUE, 0, yay, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 						msg_print(Ind, "You have fashioned a trapkit of a sort from the disarmed trap.");
 					}
 				}
@@ -7504,9 +7504,9 @@ void do_cmd_fire(int Ind, int dir) {
 #if 1 /* hope this works */
 					inven_item_increase(Ind, item, -1);
 					inven_item_optimize(Ind, item);
-					drop_near_severe(Ind, &throw_obj, 0, wpos, y, x);
+					drop_near(TRUE, Ind, &throw_obj, 0, wpos, y, x);
 #else /* silly - like failing to catch it instead of it not returning ;-p */
-					inven_drop(Ind, INVEN_BOW, 1, TRUE);
+					inven_drop(TRUE, Ind, INVEN_BOW, 1, TRUE);
 #endif
 				} else {
 					msg_format(Ind, "\377oYour %s is destroyed.",o_name);
@@ -7724,10 +7724,10 @@ void do_cmd_fire(int Ind, int dir) {
 #ifdef PY_FIRE_ON_WALL
 		if (!cave_los(zcave, y, x)) /* target coordinates were in a wall? */
 			/* drop it right there _before_ the wall, not 'in' the wall and then calling scatter().. */
-			drop_near(Ind, o_ptr, breakage, wpos, prev_y, prev_x);
+			drop_near(TRUE, Ind, o_ptr, breakage, wpos, prev_y, prev_x);
 		else
 #endif
-		drop_near(Ind, o_ptr, breakage, wpos, y, x);
+		drop_near(TRUE, Ind, o_ptr, breakage, wpos, y, x);
 	}
 
 	suppress_message = FALSE;
@@ -8245,7 +8245,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					msg_format_near(0 - c_ptr->m_idx, "\377r%s misses the ball", q_ptr->name);
 					msg_print(0 - c_ptr->m_idx, "\377rYou miss the ball");
 					o_ptr->marked2 = ITEM_REMOVAL_NEVER;
-					drop_near(0, o_ptr, -1, wpos, y, x);
+					drop_near(TRUE, 0, o_ptr, -1, wpos, y, x);
 				}
 				/* and stop */
 				return;
@@ -8677,12 +8677,19 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	   This is done to protect items inside houses from weird bashes that would erase them.
 	   (Funny hypothetical side effect: We could bash an item inside a house against another player
 	   who is inside the house too, he'd notice it, yet it lands in front of our own feet again.) */
-	if (drop_near_severe(Ind, o_ptr, j, wpos, y, x) == -2 /* bashing went wrong aka no space in house at target location? */
-	    && !wpos->wz /* world surface is condition for 'house' */
-	    && start_ix /* only if it was bashed, not if it was thrown */
-	    && inside_house_simple(&zcave[start_iy][start_ix]) /* starting location must be inside house */
-	    && inside_house_simple(&zcave[y][x])) /* target location must be inside house */
-		drop_near_severe(Ind, o_ptr, j, wpos, start_iy, start_ix);
+	if (drop_near(FALSE, Ind, o_ptr, j, wpos, y, x) == -2) { /* bashing went wrong aka no space in house at target location? */
+		/* Second chance? */
+		if (!wpos->wz /* world surface is condition for 'house' */
+		    && start_ix /* only if it was bashed, not if it was thrown */
+		    && inside_house_simple(&zcave[start_iy][start_ix]) /* starting location must be inside house */
+		    && inside_house_simple(&zcave[y][x])) /* target location must be inside house */
+			drop_near(TRUE, Ind, o_ptr, j, wpos, start_iy, start_ix);
+		else {
+			/* Manually clean up */
+			if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
+			questitem_d(o_ptr, o_ptr->number);
+		}
+	}
 }
 
 static void destroy_house(int Ind, struct dna_type *dna) {

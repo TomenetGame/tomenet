@@ -339,8 +339,9 @@ void equip_thrown(int Ind, int slot, object_type *o_ptr, int original_number) {
 /*
  * Drops (some of) an item from inventory to "near" the current location
  * force: bypass !d inscription.
+ * handle_d: pass to drop_near().
  */
-int inven_drop(int Ind, int item, int amt, bool force) {
+int inven_drop(bool handle_d, int Ind, int item, int amt, bool force) {
 	player_type *p_ptr = Players[Ind];
 
 	object_type		*o_ptr;
@@ -533,7 +534,12 @@ int inven_drop(int Ind, int item, int amt, bool force) {
 	    (item == INVEN_ARM && o_ptr->tval != TV_SHIELD))) set_melee_brand(Ind, 0, p_ptr->melee_brand_t, 0);
 
 	/* Drop it (carefully) near the player */
-	o_idx = drop_near_severe(Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+	o_idx = drop_near(handle_d, Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+	/* Clean up if needed, for 'intended' item destruction aka '-1' (not for unintended aka '-2'!): */
+	if (o_idx == -1) {
+		if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
+		questitem_d(o_ptr, o_ptr->number);
+	}
 
 	if (o_idx > 0) {
 		o_ptr = &o_list[o_idx];
@@ -1929,7 +1935,7 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 
 	/* Drop (some of) the item */
-	inven_drop(Ind, item, quantity, FALSE);
+	inven_drop(TRUE, Ind, item, quantity, FALSE);
 }
 
 
@@ -1984,7 +1990,7 @@ void do_cmd_drop_gold(int Ind, s32b amt) {
 	tmp_obj.iron_turn = turn;
 
 	/* Drop it */
-	drop_near(0, &tmp_obj, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+	drop_near(TRUE, 0, &tmp_obj, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 
 	/* Subtract from the player's gold */
 	p_ptr->au -= amt;
@@ -3662,7 +3668,7 @@ void do_cmd_steal(int Ind, int dir) {
 				/* An artifact 'resists' */
 				if (true_artifact_p(o_ptr) && rand_int(100) > 2) continue;
 
-				inven_drop(Ind, j, randint(o_ptr->number * 2), TRUE);
+				inven_drop(TRUE, Ind, j, randint(o_ptr->number * 2), TRUE);
 			}
 		}
 

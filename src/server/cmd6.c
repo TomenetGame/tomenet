@@ -1340,7 +1340,7 @@ void do_cmd_quaff_potion(int Ind, int item) {
 				s_printf("warning_limitbottles: %s\n", p_ptr->name);
 				p_ptr->warning_limitbottles = 1;
 			}
-		} else drop_near(0, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+		} else drop_near(TRUE, 0, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 		//if (item >= 0) inven_item_describe(Ind, item);
 	}
 }
@@ -2378,7 +2378,7 @@ static void do_lottery(int Ind, object_type *o_ptr) {
 			//j_ptr->pval = (gold >= 15000) ? 15000 : gold;
 			j_ptr->pval = drop;
 
-			drop_near(0, j_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+			drop_near(TRUE, 0, j_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 
 			gold -= drop;
 		}

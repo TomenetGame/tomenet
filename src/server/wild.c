@@ -914,7 +914,7 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y) {
 					/* Hack -- only drop food the first time */
 					food.marked2 = ITEM_REMOVAL_NEVER;
 					food.level = 1;
-					if (!(w_ptr->flags & WILD_F_GARDENS)) drop_near(0, &food, -1, wpos, y, x);
+					if (!(w_ptr->flags & WILD_F_GARDENS)) drop_near(TRUE, 0, &food, -1, wpos, y, x);
 				}
 			}
 		}
@@ -1074,7 +1074,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 				invcopy(&forge, k_idx);
 				forge.marked2 = ITEM_REMOVAL_NEVER;
 				forge.level = 1;
-				drop_near(0, &forge, -1, wpos, y, x);
+				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 
 				num_food--;
 			}
@@ -1098,7 +1098,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 				invcopy(&forge, k_idx);
 				forge.marked2 = ITEM_REMOVAL_NEVER;
 				forge.level = 1;
-				drop_near(0, &forge, -1, wpos, y, x);
+				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 
 				num_bones--;
 			}
