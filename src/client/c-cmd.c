@@ -7379,6 +7379,9 @@ void cmd_load_pref(void) {
 void cmd_redraw(void) {
 	Send_redraw(0);
 
+	/* Reset static vars for hp/sp/mp for drawing huge bars to enforce redrawing */
+	prev_huge_cmp = prev_huge_csp = prev_huge_chp = -1;
+
 #if 0 /* I think this is useless here - mikaelh */
 	keymap_init();
 #endif
