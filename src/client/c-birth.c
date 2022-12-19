@@ -54,7 +54,8 @@
 #endif
 
 /* Use Windows TEMP folder (acquired from environment variable) for pinging the servers in the meta server list.
-   KEEP CONSISTENT WITH nclient.c! */
+   KEEP CONSISTENT WITH nclient.c!
+   Note: We actually use the user's home folder still, not the os_temp_path. TODO maybe: Change that. */
 #define WINDOWS_USE_TEMP
 
 
