@@ -535,8 +535,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 
 	{ &c_cfg.mp_huge_bar,		FALSE,	6,	0, 142, TRUE,
 	    "mp_huge_bar",		"Also show mana pool as huge bar (big_map only)" },
-	{ &c_cfg.sp_huge_bar,		FALSE,	6,	0, 143, TRUE,
-	    "sp_huge_bar",		"Also show sanity as huge bar (big_map only)" },
+	{ &c_cfg.sn_huge_bar,		FALSE,	6,	0, 143, TRUE,
+	    "sn_huge_bar",		"Also show sanity as huge bar (big_map only)" },
 	{ &c_cfg.hp_huge_bar,		FALSE,	6,	0, 144, TRUE,
 	    "hp_huge_bar",		"Also show HP pool as huge bar (big_map only)" },
 

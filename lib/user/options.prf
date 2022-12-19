@@ -72,9 +72,9 @@ Y:id_selection
 X:hp_bar
 X:mp_bar
 X:st_bar
-X:equip_text_colour
-Y:equip_set_colour
-X:colourize_bignum
+X:mp_huge_bar
+X:sn_huge_bar
+X:hp_huge_bar
 
 X:alert_hitpoint
 X:alert_mana
@@ -84,13 +84,13 @@ Y:alert_starvation
 Y:screenshot_format
 X:clone_to_stdout
 X:clone_to_file
+X:equip_text_colour
+Y:equip_set_colour
+X:colourize_bignum
 
 
 # Audio options:
 
-Y:audio_paging
-X:paging_master_vol
-X:paging_max_vol
 Y:no_ovl_close_sfx
 Y:ovl_sfx_attack
 X:no_combat_sfx
@@ -105,10 +105,15 @@ Y:ovl_sfx_mon_spell
 Y:ovl_sfx_mon_misc
 X:no_monsterattack_sfx
 Y:positional_audio
-Y:quiet_house_sfx
 X:no_house_sfx
-X:shuffle_music
+Y:quiet_house_sfx
 X:mute_when_idle
+X:shuffle_music
+X:play_all
+X:first_song
+Y:audio_paging
+X:paging_master_vol
+X:paging_max_vol
 X:quiet_os
 
 

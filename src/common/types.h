@@ -4163,7 +4163,7 @@ struct client_opts {
 	bool colourize_bignum;
 	bool clone_to_stdout;
 	bool clone_to_file;
-	bool mp_huge_bar, sp_huge_bar, hp_huge_bar;
+	bool mp_huge_bar, sn_huge_bar, hp_huge_bar;
 };
 
 /*

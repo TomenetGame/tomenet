@@ -146,7 +146,7 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 		af = TERM_L_BLUE;
 		ae = TERM_L_DARK;
 		break;
-	case 1: if (!c_cfg.sp_huge_bar) return;
+	case 1: if (!c_cfg.sn_huge_bar) return;
 		af = TERM_GREEN;
 		ae = TERM_L_RED;//TERM_ORANGE;//TERM_YELLOW;
 		break;
@@ -160,11 +160,11 @@ void draw_huge_bar(int typ, int *prev, int cur, int *prev_max, int max) {
 	pos = -1;
 	if (c_cfg.mp_huge_bar) pos++;
 	if (typ > 0) {
-		if (c_cfg.sp_huge_bar) pos++;
+		if (c_cfg.sn_huge_bar) pos++;
 		if (typ > 1 && c_cfg.hp_huge_bar) pos++;
 	}
 	/* Find actual bar width */
-	switch ((c_cfg.mp_huge_bar ? 1 : 0) + (c_cfg.sp_huge_bar ? 1 : 0) + (c_cfg.hp_huge_bar ? 1 : 0)) {
+	switch ((c_cfg.mp_huge_bar ? 1 : 0) + (c_cfg.sn_huge_bar ? 1 : 0) + (c_cfg.hp_huge_bar ? 1 : 0)) {
 	case 1:
 		x = 3;
 #if defined(WINDOWS) || defined(USE_X11)
@@ -1907,7 +1907,7 @@ int Receive_sanity(void) {
 	}
 
 	/* Servers < 4.8.1.3 do not support this for sanity! */
-	if (max) draw_huge_bar(1, &prev_huge_csp, cur, &prev_huge_msp, max);
+	if (max) draw_huge_bar(1, &prev_huge_csn, cur, &prev_huge_msn, max);
 
 	if (screen_icky) Term_switch(0);
 

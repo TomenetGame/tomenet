@@ -1205,5 +1205,5 @@ extern bool force_cui;
 extern int food_warn_once_timer;
 
 extern int prev_huge_cmp, prev_huge_mmp;
-extern int prev_huge_csp, prev_huge_msp;
+extern int prev_huge_csn, prev_huge_msn;
 extern int prev_huge_chp, prev_huge_mhp;

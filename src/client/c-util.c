@@ -11189,21 +11189,21 @@ void check_immediate_options(int i, bool yes, bool playing) {
 #endif
 
 	if ((option_info[i].o_var == &c_cfg.mp_huge_bar ||
-	    option_info[i].o_var == &c_cfg.sp_huge_bar ||
+	    option_info[i].o_var == &c_cfg.sn_huge_bar ||
 	    option_info[i].o_var == &c_cfg.hp_huge_bar) ||
 	    (option_info[i].o_var == &c_cfg.font_map_solid_walls &&
-	    (c_cfg.mp_huge_bar || c_cfg.sp_huge_bar || c_cfg.hp_huge_bar))) {
+	    (c_cfg.mp_huge_bar || c_cfg.sn_huge_bar || c_cfg.hp_huge_bar))) {
 		/* Reset static vars for hp/sp/mp for drawing huge bars to enforce redrawing */
-		prev_huge_cmp = prev_huge_csp = prev_huge_chp = -1;
+		prev_huge_cmp = prev_huge_csn = prev_huge_chp = -1;
 		if (screen_icky) Term_switch(0);
 		clear_huge_bars();
 		/* Avoid div/0 if client just logged in with a character, which also initializes the options and calls us */
 		if (p_ptr->mmp) draw_huge_bar(0, &prev_huge_cmp, p_ptr->cmp, &prev_huge_mmp, p_ptr->mmp);
-		if (p_ptr->msane) draw_huge_bar(1, &prev_huge_csp, p_ptr->csane, &prev_huge_msp, p_ptr->msane);
+		if (p_ptr->msane) draw_huge_bar(1, &prev_huge_csn, p_ptr->csane, &prev_huge_msn, p_ptr->msane);
 		if (p_ptr->mhp) draw_huge_bar(2, &prev_huge_chp, p_ptr->chp, &prev_huge_mhp, p_ptr->mhp);
 		if (screen_icky) Term_switch(0);
 	}
-	if (option_info[i].o_var == &c_cfg.sp_huge_bar && c_cfg.sp_huge_bar && is_older_than(&server_version, 4, 8, 1, 3, 0, 0))
+	if (option_info[i].o_var == &c_cfg.sn_huge_bar && c_cfg.sn_huge_bar && is_older_than(&server_version, 4, 8, 1, 3, 0, 0))
 		c_message_add("Server version 4.8.1.3.0.0 or higher required for the 'huge sanity bar' feature.");
 }
 
