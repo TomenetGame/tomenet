@@ -6297,7 +6297,7 @@ void cmd_check_misc(void) {
 		Term->scr->cu = 1;
 
 		/* Hack to disable macros: Macros on SHIFT+X for example prohibits 'X' menu choice here.. */
-		inkey_interact_macros = TRUE; //TODO FIX: If this line isn't commented out, peruse_file() will need another '= FALSE' or macros won't work for navigation keys!
+		inkey_interact_macros = TRUE; //Note: If this line isn't commented out, peruse_file() will need another '= FALSE' or macros won't work for navigation keys, because the perused file is received WHILE we are waiting in exactly THIS inkey() here ^^.
 		i = inkey();
 		/* ..and reenable macros right away again, so navigation via arrow keys works. */
 		inkey_interact_macros = FALSE;

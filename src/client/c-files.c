@@ -1186,12 +1186,14 @@ void peruse_file(void) {
 	char tmp[80];
 	static char srcstr[80] = { 0 };
 	bool searching = FALSE, reverse = FALSE;
-	bool old_inkey_msg;
+	bool old_inkey_msg, old_inkey_interact_macros = inkey_interact_macros;
 
 	/* Initialize */
 	cur_line = 0;
 	cur_col = 0;
 	special_page_size = 20 + HGT_PLUS; /* assume 'non-odd_line' aka normal page size (vs 21 or --2) */
+
+	inkey_interact_macros = FALSE; //needed because we might be called here while we're waiting inside inkey() call in c-cmd.c, which just had this TRUE'd
 
 	/* Save the old screen */
 	Term_save();
@@ -1258,7 +1260,6 @@ void peruse_file(void) {
 		} else
 
 		/* Enable macros, so navigation via arrow keys works. */
-		inkey_interact_macros = FALSE; //needed due to glitch, see c-cmd.c "TODO FIX"
 		k = inkey();
 		if (k == 1) continue;
 		line_searching = FALSE;
@@ -1459,6 +1460,8 @@ void peruse_file(void) {
 		cmd_the_guide(0, 0, NULL);
 		Flush_queue();//needed?
 	}
+
+	inkey_interact_macros = old_inkey_interact_macros;
 }
 
 /*
