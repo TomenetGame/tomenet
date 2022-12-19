@@ -1257,6 +1257,8 @@ void peruse_file(void) {
 			within_cmd_player = FALSE;
 		} else
 
+		/* Enable macros, so navigation via arrow keys works. */
+		inkey_interact_macros = FALSE; //needed due to glitch, see c-cmd.c "TODO FIX"
 		k = inkey();
 		if (k == 1) continue;
 		line_searching = FALSE;
