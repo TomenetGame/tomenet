@@ -303,7 +303,7 @@ function get_power(i, s)
 	if check_affect(s, "piety", FALSE) then
 		return player.grace
 	else
-		return player.csp
+		return player.cmp
 	end
 end
 

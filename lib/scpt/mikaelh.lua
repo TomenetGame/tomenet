@@ -126,7 +126,7 @@ function update_p(name)
 -- PU_SKILL_INFO	0x00000004L	Update client skill info
 -- PU_SANITY		0x00000008L	Calculate csane and msane
 -- PU_HP		0x00000010L	Calculate chp and mhp
--- PU_MANA		0x00000020L	Calculate csp and msp
+-- PU_MANA		0x00000020L	Calculate cmp and mmp
 -- PU_SKILL_MOD		0x00000080L	Update client skill values/...
 -- PU_VIEW		0x00100000L	Update view
 -- PU_LITE		0x00200000L	Update lite

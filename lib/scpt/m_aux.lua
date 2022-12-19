@@ -107,7 +107,7 @@ function power_get_power(i, s)
 	if i ~= 0 then
 		player = players(i)
 	end
-	return player.csp
+	return player.cmp
 end
 
 -- Changes the amount of power(mana, piety, whatever) for the spell
