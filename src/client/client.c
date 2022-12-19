@@ -934,9 +934,8 @@ int main(int argc, char **argv) {
 	/* Set default values */
 	default_set();
 
-	/* Get file paths as early as possible */
-	init_stuff();
-
+	/* Get temp path for version-building below */
+	init_temp_path();
 	/* Acquire the version strings */
 	version_build();
 

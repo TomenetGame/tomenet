@@ -3629,7 +3629,7 @@ void client_init(char *argv1, bool skip) {
 	if (!plog_aux) plog_aux = plog_hook;
 
 	/* Setup the file paths */
-	//init_stuff(); -- even earlier now, in main() !
+	init_stuff();
 
 	/* Initialize various arrays */
 	init_arrays();

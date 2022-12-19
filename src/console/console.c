@@ -19,6 +19,8 @@ int main(int argc, char **argv)
 	/* Save the program name */
 	argv0 = argv[0];
 
+	/* Get temp path for version-building below */
+	init_temp_path();
 	/* Acquire the version strings */
 	version_build();
 

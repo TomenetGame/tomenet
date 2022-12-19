@@ -3905,9 +3905,8 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 	u32b seed;
 
 
-	/* Get file paths as early as possible */
-	init_stuff();
-
+	/* Get temp path for version-building below */
+	init_temp_path();
 	/* make version strings. */
 	version_build();
 

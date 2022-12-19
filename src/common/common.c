@@ -267,6 +267,30 @@ errr path_build(char *buf, int max, cptr path, cptr file) {
 	return (0);
 }
 
+char os_temp_path[1024];
+
+/* Find OS temp path */
+void init_temp_path(void) {
+	char *c;
+
+#ifdef WINDOWS
+	if ((c = getenv("TEMP"))) strcpy(os_temp_path, c);
+	else if ((c = getenv("TMP"))) strcpy(os_temp_path, c);
+	else if ((c = getenv("TEMPDIR"))) strcpy(os_temp_path, c);
+	else if ((c = getenv("TMPDIR"))) strcpy(os_temp_path, c);
+	else strcpy(os_temp_path, ".");
+#elif defined(USE_X11) || defined(USE_GCU)
+	if ((c = getenv("TMPDIR"))) strcpy(os_temp_path, c);
+	else if ((c = getenv("TMP"))) strcpy(os_temp_path, c);
+	else if ((c = getenv("TEMPDIR"))) strcpy(os_temp_path, c);
+	else if ((c = getenv("TEMP"))) strcpy(os_temp_path, c);
+	else strcpy(os_temp_path, "/tmp");
+#else
+	strcpy(os_temp_path, ".");
+#endif
+	//validate_dir(os_temp_path); - this is a client-side only function atm
+}
+
 /*
  * version strings
  */
@@ -309,7 +333,8 @@ void version_build() {
 	longVersion = string_make(temp);
 
 	/* Get OS version too */
-	path_build(buf, 1024, ANGBAND_DIR_USER, "__temp");
+	path_build(buf, 1024, os_temp_path, "__osname");
+
 #ifndef WINDOWS
 	size = system(format("uname -a > %s", buf));
 #else

@@ -116,6 +116,7 @@ extern char nick[MAX_CHARS];
 extern char pass[MAX_CHARS];
 extern char svname[MAX_CHARS];
 extern char path[1024];
+extern char os_temp_path[1024];
 extern char real_name[MAX_CHARS];
 extern char server_name[MAX_CHARS];
 extern s32b server_port;
@@ -529,6 +530,7 @@ extern void cmd_the_guide(byte init_search_type, int init_lineno, char* init_sea
 extern void text_to_ascii(char *buf, cptr str);
 extern FILE *my_fopen(cptr file, cptr mode);
 extern errr my_fclose(FILE *fff);
+extern void init_temp_path(void);
 extern void init_file_paths(char *path);
 extern errr process_pref_file(cptr buf);
 extern errr process_pref_file_aux(char *buf, byte fmt);

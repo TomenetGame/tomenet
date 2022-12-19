@@ -76,6 +76,8 @@ extern void prt_num(cptr header, int num, int row, int col, byte color);
 extern void prt_lnum(cptr header, s32b num, int row, int col, byte color);
 
 /* common/common.c */
+extern char os_temp_path[1024];
+extern void init_temp_path(void);
 extern cptr longVersion;
 extern cptr shortVersion;
 extern void version_build(void);

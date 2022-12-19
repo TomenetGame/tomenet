@@ -775,6 +775,9 @@ extern int stricmp(cptr a, cptr b);
 /* extern int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, ...); */
 #endif
 
+extern char os_temp_path[1024];
+extern void init_temp_path(void);
+
 extern cptr longVersion, os_version;
 extern cptr shortVersion;
 
