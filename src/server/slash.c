@@ -7618,7 +7618,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 				if (k < 1 || k > max_f_idx) {
-					msg_format(Ind, "Dungeon index must range from 1 to %d.", max_f_idx);
+					msg_format(Ind, "Feat index must range from 1 to %d.", max_f_idx);
 					return;
 				}
 
