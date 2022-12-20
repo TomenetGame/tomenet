@@ -6623,7 +6623,7 @@ static void do_meta_pings(void) {
 	char buf[MAX_CHARS]; /* read line by line */
 #endif
 	static FILE *fff;
-	static char alt = 0, reload_metalist = 0; /* <- Only truly needed static var, the rest is static just for execution time optimization */
+	static char alt = -1, reload_metalist = 0; /* <- Only truly needed static var, the rest is static just for execution time optimization */
 	static int method = 0;
 
 	if (!method) {
@@ -6644,8 +6644,8 @@ static void do_meta_pings(void) {
 #endif
 
 	/* Alternate function: 1) send out pings, 2) read results */
-	alt = (alt + 1) % 6;
-	if (alt > 1) return; //skipped a beat!
+	alt = (alt + 1) % 7;
+	if (alt != 0 && alt != 2) return; //skipped a beat!
 
 	for (i = 0; i < meta_pings_servers; i++) {
 		/* Build the temp filename for ping results -- would probably prefer to use OS' actual tempfs, but Windows, pft */
@@ -6660,7 +6660,7 @@ static void do_meta_pings(void) {
 		path_build(path, 1024, ANGBAND_DIR_USER, format("__ping_%s.tmp", meta_pings_server_name[i]));
 
 		/* Send a ping to each distinct server name, allowing for max 1000ms */
-		if (alt) {
+		if (alt == 2) {
  #ifdef WINDOWS
 			remove(path);//in case game was ctrl+c'ed while pinging on previous startup
 
@@ -6732,6 +6732,8 @@ static void do_meta_pings(void) {
 
 		/* Retrieve ping results */
 		else {
+			bool no_ttl_line = TRUE;
+
 			/* Assume our pinging result file is still being written to for some weird slowness OS reason -_- */
 			meta_pings_stuck[i] = TRUE;
 
@@ -6786,7 +6788,9 @@ if (exit_code != STILL_ACTIVE) {
 			while (my_fgets(fff, buf, MAX_CHARS) == 0) {
 				meta_pings_stuck[i] = FALSE; /* Yay, we can read the results finally.. */
 
+//printf("p[%d: <%s>\n", i, buf);
 				if (!my_strcasestr(buf, "ttl")) continue;
+				no_ttl_line = FALSE;
 
 				/* We found a line containing a response time. Now we look for 'ms' and go backwards till '='. */
 				c = strstr(buf, "ms");
@@ -6843,6 +6847,10 @@ printf("<%d>\n", r);
 			   except if file is being written to right now but not yet finished, ie 0 Bytes long for us? Wait more patiently aka retry next time.
 			   This may happen at least on Wine for the first two pings, until everything has been cached or sth, dunno really.. oO */
 			if (meta_pings_stuck[i]) continue; /* Don't assume anything, but just wait for now */
+			if (no_ttl_line) {
+				meta_pings_stuck[i] = TRUE;
+				continue;
+			}
 			meta_pings_result[i] = -1; /* Assume timeout */
 
 			/* Store ping result */
