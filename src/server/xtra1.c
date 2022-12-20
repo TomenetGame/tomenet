@@ -360,7 +360,7 @@ static void prt_stamina(int Ind) {
 }
 
 /*
- * Prints players max/cur spell points
+ * Prints players max/cur mana points
  */
 static void prt_mp(int Ind) {
 	player_type *p_ptr = Players[Ind];
@@ -973,7 +973,7 @@ static void prt_frame_basic(int Ind) {
 	prt_sanity(Ind);
 #endif
 
-	/* Spellpoints */
+	/* Mana points */
 	prt_mp(Ind);
 
 	/* Stamina */

@@ -2043,7 +2043,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 				p_ptr->cmp -= taken;
 			}
 
-			/* Display the spellpoints */
+			/* Display the mana points */
 			p_ptr->redraw |= (PR_MANA);
 		}
 	}

@@ -678,7 +678,7 @@ void prt_party_stats(int member_num, byte color, char *member_name, int member_l
 
 
 /*
- * Prints Max/Cur spell points
+ * Prints Max/Cur mana points
  */
 void prt_mp(int max, int cur, bool bar) {
 	if (shopping) return;
@@ -711,15 +711,15 @@ void prt_mp(int max, int cur, bool bar) {
 		c_put_str(color, tmp, CLIENT_PARTY_ROWMP, CLIENT_PARTY_COLMP + 9);
 	} else {
 #ifndef CONDENSED_HP_MP
-		put_str("Max MP ", ROW_MAXSP, COL_MAXSP);
+		put_str("Max MP ", ROW_MAXMP, COL_MAXMP);
 
 		sprintf(tmp, "%5d", max);
 		color = TERM_L_GREEN;
 
-		c_put_str(color, tmp, ROW_MAXSP, COL_MAXSP + 7);
+		c_put_str(color, tmp, ROW_MAXMP, COL_MAXMP + 7);
 
 
-		put_str("Cur MP ", ROW_CURSP, COL_CURSP);
+		put_str("Cur MP ", ROW_CURMP, COL_CURMP);
 
 		sprintf(tmp, "%5d", cur);
 
@@ -730,21 +730,21 @@ void prt_mp(int max, int cur, bool bar) {
 		else
 			color = TERM_RED;
 
-		c_put_str(color, tmp, ROW_CURSP, COL_CURSP + 7);
+		c_put_str(color, tmp, ROW_CURMP, COL_CURMP + 7);
 #else
 		if (!bar) {
-			put_str("MP:    /", ROW_MAXSP, 0);
+			put_str("MP:    /", ROW_MAXMP, 0);
 			if (max == -9999) sprintf(tmp, "   -");
 			else sprintf(tmp, "%4d", max);
 			color = TERM_L_GREEN;
-			c_put_str(color, tmp, ROW_MAXSP, COL_MAXSP);
+			c_put_str(color, tmp, ROW_MAXMP, COL_MAXMP);
 			if (cur == -9999) sprintf(tmp, "   -");
 			else sprintf(tmp, "%4d", cur);
 			if (cur >= max) color = TERM_L_GREEN;
 			else if (cur > (max * 2) / 5) color = TERM_YELLOW;
 			else if (cur > max / 6) color = TERM_ORANGE;
 			else color = TERM_RED;
-			c_put_str(color, tmp, ROW_CURSP, COL_CURSP);
+			c_put_str(color, tmp, ROW_CURMP, COL_CURMP);
 		} else {
 			char bar_char;
 #if 0 /* looks too strange with all 3 bars above each other */
@@ -760,7 +760,7 @@ void prt_mp(int max, int cur, bool bar) {
 				bar_char = '#';
  #if 0 /* use same colours as for HP/SN bars? */
 			color = TERM_L_GREEN;
-			put_str("MP          ", ROW_MAXSP, 0);
+			put_str("MP          ", ROW_MAXMP, 0);
 			if (max == -9999) sprintf(tmp, "   -/   -"); /* we just assume cur would also be -9999.. */
 			else {
 				int c, n = (9 * cur) / max;
@@ -781,10 +781,10 @@ void prt_mp(int max, int cur, bool bar) {
 			}
  #else /* use blue theme for mana instead? */
 			color = TERM_L_BLUE;
-			put_str("MP          ", ROW_MAXSP, 0);
+			put_str("MP          ", ROW_MAXMP, 0);
 			if (max == -9999) {
 				sprintf(tmp, "   -/   -"); /* we just assume cur would also be -9999.. */
-				c_put_str(color, tmp, ROW_CURSP, COL_CURSP);
+				c_put_str(color, tmp, ROW_CURMP, COL_CURMP);
 			} else {
 				int c, n = (9 * cur) / max;
   #ifdef HP_MP_ST_BAR_HALFSTEPS
@@ -811,7 +811,7 @@ void prt_mp(int max, int cur, bool bar) {
 					tmp[1] = 0;
 				}
 
-				c_put_str(color, tmp, ROW_CURSP, COL_CURSP);
+				c_put_str(color, tmp, ROW_CURMP, COL_CURMP);
 
   #ifdef HP_MP_ST_BAR_HALFSTEPS
 				/* Do we show a half step? */
@@ -821,7 +821,7 @@ void prt_mp(int max, int cur, bool bar) {
 					case TERM_BLUE: color = TERM_L_DARK; break;
 					case TERM_VIOLET: color = TERM_L_DARK; break;
 					}
-					c_put_str(color, format("%c", bar_char), ROW_CURSP, COL_CURSP + n);
+					c_put_str(color, format("%c", bar_char), ROW_CURMP, COL_CURMP + n);
 				}
   #endif
 			}

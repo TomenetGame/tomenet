@@ -822,7 +822,7 @@ static void do_mimic_power(int Ind, int power, int dir) {
 		p_ptr->shoot_till_kill_mimic = 0;
 	}
 
-	/* Display the spellpoints */
+	/* Display the mana points */
 	p_ptr->redraw |= (PR_MANA);
 }
 

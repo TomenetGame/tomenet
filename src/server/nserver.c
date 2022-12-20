@@ -12378,7 +12378,7 @@ static int Receive_rest(int ind) {
 			return(2);
 		}
 
-		/* Don't rest if we are poisoned or at max hit points and max spell points
+		/* Don't rest if we are poisoned or at max hit points and max mana points
 		   and max stamina */
 		if ((p_ptr->poisoned) || (p_ptr->diseased) || (p_ptr->cut) || (p_ptr->sun_burn) ||
 		    ((p_ptr->chp == p_ptr->mhp) &&

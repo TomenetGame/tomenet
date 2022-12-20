@@ -2206,11 +2206,11 @@
  #define ROW_CURHP		17
  #define COL_CURHP		0	/* "Cur HP xxxxx" */
 
- #define ROW_MAXSP		18
- #define COL_MAXSP		0	/* "Max SP xxxxx" */
+ #define ROW_MAXMP		18
+ #define COL_MAXMP		0	/* "Max MP xxxxx" */
 
- #define ROW_CURSP		19
- #define COL_CURSP		0	/* "Cur SP xxxxx" */
+ #define ROW_CURMP		19
+ #define COL_CURMP		0	/* "Cur MP xxxxx" */
 
  #define ROW_EXSTA		-1      /* extra status, requires CONDENSED_HP_MP ! */
  #define COL_EXSTA		-1
@@ -2221,11 +2221,11 @@
  #define ROW_CURHP		17
  #define COL_CURHP		3	/* "Cur HP xxxxx" */
 
- #define ROW_MAXSP		18
- #define COL_MAXSP		8	/* "Max SP xxxxx" */
+ #define ROW_MAXMP		18
+ #define COL_MAXMP		8	/* "Max MP xxxxx" */
 
- #define ROW_CURSP		18
- #define COL_CURSP		3	/* "Cur SP xxxxx" */
+ #define ROW_CURMP		18
+ #define COL_CURMP		3	/* "Cur MP xxxxx" */
 
  #define ROW_MAXST		19	/* current stamina */
  #define COL_MAXST		8
