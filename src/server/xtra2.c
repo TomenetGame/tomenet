@@ -5893,7 +5893,7 @@ bool monster_death(int Ind, int m_idx) {
 				ee = (ee * (s64b)p_ptr->expfact) / 100L; /* give same amount to anyone */
 #endif
 				if (!(p_ptr->mode & MODE_PVP)) {
-					msg_print(Ind, "\377GYou feel more experienced.");
+					//msg_print(Ind, "\377GYou feel more experienced.");
 					gain_exp(Ind, ee);
 				}
 			}
