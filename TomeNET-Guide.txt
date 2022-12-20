@@ -19992,11 +19992,6 @@ school.
     Teleport        Teleports you randomly within the floor.
                     Required skill level for first spell level: 10.
 
-    Wings of Wind   Grants feather falling.
-                    Lv 16: Lets you levitate.
-                    Required skill level for first spell level: 16.
-                    Shared spell (see above): Air, Conveyance.
-
     Teleport Away   Teleports a line of monsters away.
                     Required skill level for first spell level: 23.
 
@@ -20851,7 +20846,7 @@ All Unlife spells are Wisdom-based.)
                     It condenses the water and turns into poisonous ice shards.
 
     Nature's Call   Quickly grows trees around you.
-                    Required skill level for first spell level: 10.
+                    Required skill level for first spell level: 15
 
     Ancient Lore    Identifies all items in your inventory.
                     Required skill level for first spell level: 20.
