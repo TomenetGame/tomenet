@@ -9373,8 +9373,8 @@ Stun    -Stun           Reduces to-hit and to-dam.
                         while stun from sound attacks can only be prevented
                         by having sound resistance.
 
-                        Melee-based stun can be caused by HIT, PUNCH, KICK,
-                        BUTT and CRUSH type attacks, also see (*) below.
+                        Melee-based stun can be caused by monsters critically
+                        hitting you, also see (*) below.
 
         Most means of Curing, Cure Critical Wounds and Healing will also remove
         any stun. Therefore it is recommended to treat any form of stun
@@ -9385,8 +9385,7 @@ Stun    -Stun           Reduces to-hit and to-dam.
 Cut                     Cuts will make you lose HP continuously.
 (Graze, Light cut, Bad cut, Nasty cut, Severe cut, Deep gash, Mortal wound)
                         Cuts can be caused by melee based critical monster hits
-                        that use HIT, CLAW or BITE attack type (also see (*)
-                        below), or by shard attacks.
+                        (also see (*) below), or by shard attacks.
                         By transforming into a monster that has NO_CUT flag
                         (mostly undead forms), the player becomes immune to
                         cut effects.
@@ -9438,7 +9437,7 @@ Switch places           Monsters that have MOVE_BODY flag may switch place with
  For a monster attack to cause cuts or stun it must deal at least 95% of its
  potential damage maximum (rounded down). This is also called a 'critical hit'
  of a monster (has nothing to do with the critical-hit mechanics for player
- attacks).
+ attacks). See 'Critical hits by monsters' in (6.4) for more information.
 
 An attack type ('HIT') that can do both, cut and stun, will randomly do either
 one, but never both at once. The 95% damage criterium is measured for the final
@@ -14886,6 +14885,7 @@ Monsters may try to attack you in three different ways:
 -Shooting you.
 -Casting a spell that may wound you.
 
+
 Monster is trying to hit you:
 -----------------------------
 If a monster tries to hit you, the following happens:
@@ -14908,6 +14908,7 @@ If a monster tries to hit you, the following happens:
 Note that some attacks can bypass some of those defenses.
 More info further below.
 
+
 Monster is trying to shoot you:
 -------------------------------
 If a monster tries to shoot you, the following happens:
@@ -14922,6 +14923,7 @@ If a monster tries to shoot you, the following happens:
 5) your character takes damage. Armour class has no effect.
    If disruption shield is active, the damage will instead hit your mana pool
    instead of your hit points (unless you don't have enough mana).
+
 
 Monster is casting a spell that wounds you:
 -------------------------------------------
@@ -14954,16 +14956,30 @@ Armour class helps you twice:
 -It reduces the damage if a monster manages to hit you with a physical attack.
  This effect caps at 200 AC.
 
+
+Critical hits by monsters:
+--------------------------
 Monsters can score critical hits which can (depending on the attack type)
 result in a cutting or stunning effect against the player.
-A monster scores a critical hit if it inflicts a damage which is very close to
-its theoretical maximum. Weaker monsters (that don't inflict high amounts of
-damage) aren't able to score critical hits at all.
-The power of the resulting cut/stun depends on the damage too.
-So a high armour class helps a lot, to avoid critical monster hits and to
-reduce their power.
-For more information about monster crits, see (4.11).
 
+Attacks of HIT, CLAW or BITE type can result in a cut,
+attacks of HIT, PUNCH, KICK, BUTT and CRUSH type can result in stun.
+Cut and stun cannot both be applied by the same hit. If both effects are
+eligible it's a 50-50 chance which one will make it.
+
+For a hit to count as critical it must must deal at least 95% of its potential
+damage maximum (rounded down), so for example a monster hit dealing 5d5 damage
+must deal 24 or 25 damage.
+Monsters that hit you for less than 20 damage aren't able to score critical
+hits at all.
+The intensity of the resulting cut/stun depends on the dealt damage too,
+so a high armour class helps a lot, to avoid critical monster hits and to
+further reduce their power.
+For related information see (4.11), "melee-induced cuts and stuns".
+
+
+Monster melee damage cap:
+-------------------------
 Basic monsters (that means before any ego-power such as 'Warrior' or 'Holy'
 is applied as in 'Hill troll warrior' or 'Holy 5-headed hydra') have a cap on
 melee attacks, which limits their attacks to an _average_ of 700 total damage

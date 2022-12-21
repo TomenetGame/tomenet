@@ -2278,6 +2278,13 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		else if (!strcasecmp("speed", buf)) strcpy(init_search_string, "time"); //for now redirect 'speed' to chapter about in-game time systems
 		else if (!strcasecmp("city", buf)) strcpy(init_search_string, "town");
 		else if (!strcasecmp("cities", buf)) strcpy(init_search_string, "towns");
+		else if (!strcasecmp("dual wield", buf) || !strcasecmp("dual wielding", buf) || !strcasecmp("dual-wielding", buf)) strcpy(init_search_string, "dual-wield");
+		else if (!strcasecmp("spell power", buf) || !strcasecmp("spell pow", buf)) strcpy(init_search_string, "spell-power");
+		else if (!strcasecmp("crit", buf) || !strcasecmp("crits", buf) || !strcasecmp("critical", buf) ||
+		    (my_strcasestr(buf, "crit") && (my_strcasestr(buf, "hit") || my_strcasestr(buf, "strike") || my_strcasestr(buf, "mon")))) {
+			if (my_strcasestr(buf, "mon")) strcpy(init_search_string, "Critical hits by monsters"); //monster crits
+			else strcpy(init_search_string, "critical-strike"); //player crits
+		}
 
 		/* clean up */
 		buf[0] = 0;
