@@ -22096,7 +22096,12 @@ In detail, the magic device ability does this...
  greatly increases it.
 
 The 'Magic Device' skill does the following...
--increases the power of magic devices.
+-increases the power of magic devices, this depends on the device though.
+ You can usually see the damage output of magic devices when you inspect them
+ (press SHIFT+i to inspect an item). For example a wand of fire bolts may read:
+ "Casts a fire bolt for 7..52d23 damage." - This means the damage is 7d23 if
+ you have 0.000 skill points in 'Magic device' skill and it will deal 52d23 if
+ you have actually maximized the skill (50.000).
 -makes rods take less time to recharge.
 -helps to reduce effects of UN_POWER attacks (does not protect the remaining
  duration of a form gained from a ring of polymorphing).
@@ -22126,8 +22131,6 @@ Rods have more high level item types and hence are harder to use on average,
 staves and wands have more lower level types available in comparison.
 Wands are always used directional (with a target), staves are always used
 without a target, rods and other activatable items have both types.
-Wands and rods that cast elemental bolt spells or magic missiles have a small
-chance of actually casting a beam instead, on each activation.
 
 Equippable items and true artifacts may have higher levels in general, but are
 actually much easier to activate than normal magic devices. (For true artifacts
