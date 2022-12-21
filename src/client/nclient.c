@@ -6623,7 +6623,7 @@ static void do_meta_pings(void) {
 	char buf[MAX_CHARS]; /* read line by line */
 #endif
 	static FILE *fff;
-	static char alt = -1, reload_metalist = 0; /* <- Only truly needed static var, the rest is static just for execution time optimization */
+	static char alt = 1, reload_metalist = 0; /* <- Only truly needed static var, the rest is static just for execution time optimization */
 	static int method = 0;
 
 	if (!method) {
