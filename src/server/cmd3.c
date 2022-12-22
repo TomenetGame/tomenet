@@ -4526,7 +4526,9 @@ void do_cmd_look(int Ind, int dir) {
 				else
 					p1 = "A trap";
 
-				p2 = " on ";
+				if (f_info[c_ptr->feat].flags2 & FF2_NO_ARTICLE) p2 = " on ";
+				else if (is_a_vowel(name[0])) p1 = " on an ";
+				else p2 = " on a ";
 			}
 		}
 
