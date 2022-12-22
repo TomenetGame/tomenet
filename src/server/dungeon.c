@@ -8435,6 +8435,7 @@ int find_player(s32b id) {
 
 	for (i = 1; i <= NumPlayers; i++) {
 		player_type *p_ptr = Players[i];
+
 		if (Players[i]->conn == NOT_CONNECTED) return(0);
 		if (p_ptr->id == id) return i;
 	}
