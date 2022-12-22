@@ -978,8 +978,13 @@ G:.:7
 F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW
 F:NO_ARTICLE
 
+N:134:inn floor
+G:.:u
+F:FLOOR | CAN_RUN | SUPPORT_LIGHT | NO_ARTICLE
+F:DONT_NOTICE_RUNNING | PROTECTED | LAMP_LITE_OPTIONAL | NO_SHADE | REMEMBER
 
-# HOLE 134..158 -------------------------------------------------------------
+
+# HOLE 135..158 -------------------------------------------------------------
 
 
 #permanent magma vein

@@ -2771,17 +2771,6 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 	/* Access floor */
 	f_ptr = &f_info[feat];
 
-	/* hack for questor hard-coded lighting:
-	   Replace any permanent (daylight/townstore) light by 'fake' light source 'carried' by the questor */
-	if (c_ptr->info & CAVE_GLOW_HACK) {
-		if (!(f_info[c_ptr->feat].flags2 & FF2_GLOW)) c_ptr->info &= ~CAVE_GLOW;
-		c_ptr->info |= (CAVE_LITE | CAVE_LITE_WHITE);
-	}
-	else if (c_ptr->info & CAVE_GLOW_HACK_LAMP) {
-		if (!(f_info[c_ptr->feat].flags2 & FF2_GLOW)) c_ptr->info &= ~CAVE_GLOW;
-		c_ptr->info |= CAVE_LITE;
-	}
-
 	/* Floors (etc) */
 	/* XXX XXX Erm, it is DIRTY.  should be replaced soon */
 	//if (feat <= FEAT_INVIS)
@@ -5256,7 +5245,7 @@ void forget_lite(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i, x, y, j;
 
-	cave_type **zcave;
+	cave_type **zcave, *c_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
@@ -5268,10 +5257,13 @@ void forget_lite(int Ind) {
 	for (i = 0; i < p_ptr->lite_n; i++) {
 		y = p_ptr->lite_y[i];
 		x = p_ptr->lite_x[i];
+		c_ptr = &zcave[y][x];
 
-		/* Forget "LITE" flag */
-		p_ptr->cave_flag[y][x] &= ~CAVE_LITE;
-		zcave[y][x].info &= ~(CAVE_LITE | CAVE_LITE_VAMP | CAVE_LITE_WHITE);
+		/* Forget "LITE" flag? (Usually yes, except for questors/inns) */
+		if (!(c_ptr->info & (CAVE_GLOW_HACK | CAVE_GLOW_HACK_LAMP))) {
+			p_ptr->cave_flag[y][x] &= ~CAVE_LITE;
+			c_ptr->info &= ~(CAVE_LITE | CAVE_LITE_VAMP | CAVE_LITE_WHITE);
+		}
 
 		for (j = 1; j <= NumPlayers; j++) {
 			/* Make sure player is connected */
@@ -5288,10 +5280,10 @@ void forget_lite(int Ind) {
 
 			/* If someone else also lites this spot relite it */
 			if (Players[j]->cave_flag[y][x] & CAVE_LITE) {
-				zcave[y][x].info |= CAVE_LITE;
+				c_ptr->info |= CAVE_LITE;
 				switch (Players[j]->lite_type) {
-				case 1: zcave[y][x].info |= CAVE_LITE_VAMP; break;
-				case 2: zcave[y][x].info |= CAVE_LITE_WHITE; break;
+				case 1: c_ptr->info |= CAVE_LITE_VAMP; break;
+				case 2: c_ptr->info |= CAVE_LITE_WHITE; break;
 				}
 			}
 		}
@@ -5318,6 +5310,7 @@ void forget_lite(int Ind) {
  * top.  --KLJ--
  */
 #define cave_lite_hack(Y,X) \
+{ \
     switch (p_ptr->lite_type) { \
     case 0: zcave[Y][X].info &= ~(CAVE_LITE_WHITE | CAVE_LITE_VAMP); break; \
     case 1: if (!(zcave[Y][X].info & (CAVE_LITE | CAVE_LITE_WHITE))) zcave[Y][X].info |= CAVE_LITE_VAMP; break; \
@@ -5327,7 +5320,8 @@ void forget_lite(int Ind) {
     p_ptr->cave_flag[Y][X] |= CAVE_LITE; \
     p_ptr->lite_y[p_ptr->lite_n] = (Y); \
     p_ptr->lite_x[p_ptr->lite_n] = (X); \
-    p_ptr->lite_n++
+    p_ptr->lite_n++; \
+}
 
 /*
  * Update the set of grids "illuminated" by the player's lite.
@@ -5361,7 +5355,7 @@ void update_lite(int Ind) {
 	int i, x, y, min_x, max_x, min_y, max_y;
 
 	struct worldpos *wpos = &p_ptr->wpos;
-	cave_type **zcave;
+	cave_type **zcave, *c_ptr;
 	if (!(zcave = getcave(wpos))) return;
 
 	/*** Special case ***/
@@ -5387,10 +5381,14 @@ void update_lite(int Ind) {
 
 		y = p_ptr->lite_y[i];
 		x = p_ptr->lite_x[i];
+		c_ptr = &zcave[y][x];
 
 		/* Mark the grid as not "lite" */
-		p_ptr->cave_flag[y][x] &= ~CAVE_LITE;
-		zcave[y][x].info &= ~(CAVE_LITE | CAVE_LITE_VAMP | CAVE_LITE_WHITE);
+		/* Forget "LITE" flag? (Usually yes, except for questors/inns) */
+		if (!(c_ptr->info & (CAVE_GLOW_HACK | CAVE_GLOW_HACK_LAMP))) {
+			p_ptr->cave_flag[y][x] &= ~CAVE_LITE;
+			c_ptr->info &= ~(CAVE_LITE | CAVE_LITE_VAMP | CAVE_LITE_WHITE);
+		}
 
 		for (j = 1; j <= NumPlayers; j++) {
 			/* Make sure player is connected */
@@ -5407,15 +5405,15 @@ void update_lite(int Ind) {
 
 			/* If someone else also lites this spot relite it */
 			if (Players[j]->cave_flag[y][x] & CAVE_LITE) {
-				zcave[y][x].info |= CAVE_LITE;
+				c_ptr->info |= CAVE_LITE;
 				switch (Players[j]->lite_type) {
-				case 1: zcave[y][x].info |= CAVE_LITE_VAMP; break;
-				case 2: zcave[y][x].info |= CAVE_LITE_WHITE; break;
+				case 1: c_ptr->info |= CAVE_LITE_VAMP; break;
+				case 2: c_ptr->info |= CAVE_LITE_WHITE; break;
 				}
 			}
 		}
 		/* Mark the grid as "seen" */
-		zcave[y][x].info |= CAVE_TEMP;
+		c_ptr->info |= CAVE_TEMP;
 
 		/* Add it to the "seen" set */
 		p_ptr->temp_y[p_ptr->temp_n] = y;
@@ -5452,8 +5450,7 @@ void update_lite(int Ind) {
 		/* South of the player */
 		//if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px))
 		/* cave_los includes dark pits */
-		if (cave_los(zcave, p_ptr->py+1, p_ptr->px))
-		{
+		if (cave_los(zcave, p_ptr->py+1, p_ptr->px)) {
 			cave_lite_hack(p_ptr->py+2, p_ptr->px);
 			cave_lite_hack(p_ptr->py+2, p_ptr->px+1);
 			cave_lite_hack(p_ptr->py+2, p_ptr->px-1);
@@ -5497,27 +5494,23 @@ void update_lite(int Ind) {
 
 		/* South-East of the player */
 		//if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px+1))
-		if (cave_los(zcave, p_ptr->py+1, p_ptr->px+1)) {
+		if (cave_los(zcave, p_ptr->py+1, p_ptr->px+1))
 			cave_lite_hack(p_ptr->py+2, p_ptr->px+2);
-		}
 
 		/* South-West of the player */
 		//if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px-1))
-		if (cave_los(zcave, p_ptr->py+1, p_ptr->px-1)) {
+		if (cave_los(zcave, p_ptr->py+1, p_ptr->px-1))
 			cave_lite_hack(p_ptr->py+2, p_ptr->px-2);
-		}
 
 		/* North-East of the player */
 		//if (cave_floor_bold(zcave, p_ptr->py-1, p_ptr->px+1))
-		if (cave_los(zcave, p_ptr->py-1, p_ptr->px+1)) {
+		if (cave_los(zcave, p_ptr->py-1, p_ptr->px+1))
 			cave_lite_hack(p_ptr->py-2, p_ptr->px+2);
-		}
 
 		/* North-West of the player */
 		//if (cave_floor_bold(zcave, p_ptr->py-1, p_ptr->px-1))
-		if (cave_los(zcave, p_ptr->py-1, p_ptr->px-1)) {
+		if (cave_los(zcave, p_ptr->py-1, p_ptr->px-1))
 			cave_lite_hack(p_ptr->py-2, p_ptr->px-2);
-		}
 
 		/* Maximal north */
 		min_y = p_ptr->py - p;

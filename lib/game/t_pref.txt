@@ -128,8 +128,10 @@ F:A:208:3
 # team two
 F:+:209:3
 
-# C. Blue: special flags to protect players resting in '8' houses
+# C. Blue: special flags to protect players
 F:p:210:3
+# ..and for inns CAVE_GLOW_HACK_LAMP ('8' houses):
+F:q:134:4194323
 
 # High Mountain chain
 F:m:101:3
