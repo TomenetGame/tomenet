@@ -8579,30 +8579,43 @@ static void inven_death_damage(int Ind, int verbose) {
 		/* don't be too nasty to magic device users */
 		if (is_magic_device(o_ptr->tval)) {
 			k = object_value_real(0, o_ptr);
-			if (k >= 2000 && rand_int(2)) continue;//basic bolt rods
+			//if (k >= 2000 && rand_int(2)) continue;//basic bolt rods  --amount reduction below instead
 			if (k >= 30000 && rand_int(2)) continue;//anni wand (rocket,havoc)
 		}
+  #if 0 /* amount reduction below instead */
 		/* ..and to rare book carriers */
 		if (o_ptr->tval == TV_BOOK &&
 		    (o_ptr->sval == SV_CUSTOM_TOME_2 || o_ptr->sval == SV_CUSTOM_TOME_3)
 		    && rand_int(2))
 			continue;
+  #endif
  #endif
 		/* protect starter items? this is mainly for starter spell books.. */
 		if (!inventory_loss_starteritems && o_ptr->xtra9 == 1) continue;
 
 		if (magik(DEATH_PACK_ITEM_LOST)) {
+			k = o_ptr->number;
+			if (is_magic_device(o_ptr->tval)) k = (k + 2) / 3; //might be too harmful for lowbies if full stack poofs ('uge investment!)
+			if (o_ptr->tval == TV_BOOK &&
+			    (o_ptr->sval == SV_CUSTOM_TOME_2 || o_ptr->sval == SV_CUSTOM_TOME_3))
+				k = (k + 1) / 2;
+
 			object_desc(Ind, o_name, o_ptr, FALSE, 3);
-			s_printf("item_lost: %d %s (slot %d)\n", o_ptr->number, o_name, j);
-			if (verbose) msg_format(Ind, "\376\377oYour %s %s destroyed!", o_name, ((o_ptr->number > 1) ? "were" : "was"));
+			s_printf("item_lost: %d/%d %s (slot %d)\n", k, o_ptr->number, o_name, j);
+			if (verbose) {
+				if (k == o_ptr->number)
+					msg_format(Ind, "\376\377oYour %s %s destroyed!", o_name, ((o_ptr->number > 1) ? "were" : "was"));
+				else
+					msg_format(Ind, "\376\377o%s of your %s %s destroyed!", k == 1 ? "One" : "Some", o_name, ((k > 1) ? "were" : "was"));
+			}
 
 			if (true_artifact_p(o_ptr)) {
 				/* set the artifact as unfound */
 				handle_art_d(o_ptr->name1);
 			}
-			questitem_d(o_ptr, o_ptr->number);
+			questitem_d(o_ptr, k);
 
-			inven_item_increase(Ind, j, -(o_ptr->number));
+			inven_item_increase(Ind, j, -k);
 			inven_item_optimize(Ind, j);
 			inventory_loss++;
 
