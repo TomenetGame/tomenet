@@ -664,7 +664,7 @@ extern char original_commands(char command);
 extern char roguelike_commands(char command);
 extern void copy_to_clipboard(char *buf);
 extern bool paste_from_clipboard(char *buf, bool global);
-extern void colour_bignum(s32b bn, s32b bn_max, char *out_val, byte method);
+extern void colour_bignum(s32b bn, s32b bn_max, char *out_val, byte method, bool afford);
 
 /* c-store.c */
 extern bool leave_store;

@@ -204,14 +204,14 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 	colour = (p_ptr->exp < p_ptr->max_exp) ? TERM_YELLOW : (p_ptr->exp < PY_MAX_EXP ? TERM_L_GREEN : TERM_L_UMBER);
 	if (!c_cfg.exp_bar) {
 		if (!c_cfg.exp_need) {
-			if (c_cfg.colourize_bignum) colour_bignum(cur, PY_MAX_EXP, tmp, 2);
+			if (c_cfg.colourize_bignum) colour_bignum(cur, PY_MAX_EXP, tmp, 2, TRUE);
 			else sprintf(tmp, "%9d", (int)cur);
 		} else {
 			if (level >= PY_MAX_PLAYER_LEVEL || !adv)
 				(void)sprintf(tmp, "      ***");
 			else {
 				/* Hack -- display in minus (to avoid confusion chez player) */
-				if (c_cfg.colourize_bignum) colour_bignum((int)(cur - adv), PY_MAX_EXP, tmp, 1);
+				if (c_cfg.colourize_bignum) colour_bignum((int)(cur - adv), PY_MAX_EXP, tmp, 1, TRUE);
 				else sprintf(tmp, "%9d", (int)(cur - adv));
 			}
 		}
@@ -360,7 +360,7 @@ void prt_gold(int gold) {
 		/* Doesn't look thaaat nice colour-wise maybe, despite being easier to interpret :/ */
 		char tmp[(2 + 3) * 4 + 1];
 
-		colour_bignum(gold, PY_MAX_GOLD, tmp, 1);
+		colour_bignum(gold, PY_MAX_GOLD, tmp, 1, TRUE);
 
 		/* remember cursor position */
 		Term_locate(&x, &y);

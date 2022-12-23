@@ -105,8 +105,9 @@ static void display_entry(int pos, int entries) {
 					/* Normal display of the price */
 					(void)sprintf(out_val, "%9d  ", x);
 				} else {
-					if (p_ptr->au >= x && x >= 0) colour_bignum(x, -1, out_val, 0);
-					else (void)sprintf(out_val, "%9d  ", x); //will be coloured dark aka unaffordable
+					if (p_ptr->au >= x && x >= 0) colour_bignum(x, -1, out_val, 0, TRUE);
+					//else (void)sprintf(out_val, "%9d  ", x); //will be coloured uniformly dark aka unaffordable
+					else colour_bignum(x, -1, out_val, 0, FALSE);
 				}
 				c_put_str(p_ptr->au < x ? TERM_L_DARK : TERM_WHITE, out_val, i + 6, 68);
 			}
@@ -871,7 +872,7 @@ void c_store_prt_gold(void) {
 
 	prt("Gold Remaining: ", 19 + spacer, 53);
 
-	if (c_cfg.colourize_bignum) colour_bignum(p_ptr->au, -1, out_val, 0);
+	if (c_cfg.colourize_bignum) colour_bignum(p_ptr->au, -1, out_val, 0, TRUE);
 	else sprintf(out_val, "%10d", p_ptr->au);
 	put_str(out_val, 19 + spacer, 69);
 
@@ -879,7 +880,7 @@ void c_store_prt_gold(void) {
 	if (store_num == STORE_MERCHANTS_GUILD && p_ptr->balance) {
 		prt("Your balance  : ", 20 + spacer, 53);
 
-		if (c_cfg.colourize_bignum) colour_bignum(p_ptr->balance, -1, out_val, 0);
+		if (c_cfg.colourize_bignum) colour_bignum(p_ptr->balance, -1, out_val, 0, TRUE);
 		else sprintf(out_val, "%10d", p_ptr->balance);
 		put_str(out_val, 20 + spacer, 69);
 	} else {

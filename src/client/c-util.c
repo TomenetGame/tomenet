@@ -4469,7 +4469,7 @@ void prt_lnum(cptr header, s32b num, int row, int col, byte color) {
 	char out_val[32];
 
 	put_str(header, row, col);
-	if (c_cfg.colourize_bignum && color != TERM_L_UMBER) colour_bignum(num, -1, out_val, 1);
+	if (c_cfg.colourize_bignum && color != TERM_L_UMBER) colour_bignum(num, -1, out_val, 1, TRUE);
 	else (void)sprintf(out_val, "%10d", (int)num); /* Increased form 9 to 10 just for gold (~2 billion limit) */
 	c_put_str(color, out_val, row, col + len);
 }
@@ -11408,66 +11408,116 @@ void clear_macros(void) {
    0 - price tags inside stores (white/l-umber)
    1 - AU/XP line in main window (l-green/slate), also Au/Xp in C screen
    2 - like 1 but make it a length 9 number instead of length 10
+   afford: can we afford the price? if false, use dark colouring.
  */
-#define COLBIGNUM_A1 TERM_SLATE
-#define COLBIGNUM_A2 TERM_L_GREEN
 #define COLBIGNUM_A1S "\377y"
 #define COLBIGNUM_A2S "\377w"
-#define COLBIGNUM_B1 TERM_SLATE
-#define COLBIGNUM_B2 TERM_L_GREEN
 #define COLBIGNUM_B1S "\377W"
 #define COLBIGNUM_B2S "\377G"
-#define COLBIGNUM_M1 TERM_UMBER
-#define COLBIGNUM_M2 TERM_L_UMBER
 #define COLBIGNUM_M1S "\377u"
 #define COLBIGNUM_M2S "\377U"
+
+#define COLBIGNUM_DARK_A1S "\377s"
+#define COLBIGNUM_DARK_A2S "\377D"
+#define COLBIGNUM_DARK_B1S "\377s"
+#define COLBIGNUM_DARK_B2S "\377D"
+#define COLBIGNUM_DARK_M1S "\377s"
+#define COLBIGNUM_DARK_M2S "\377D"
+
 #define FIXED_PY_MAX_XXX
-void colour_bignum(s32b bn, s32b bn_max, char *out_val, byte method) {
+void colour_bignum(s32b bn, s32b bn_max, char *out_val, byte method, bool afford) {
 	out_val[0] = 0;
 
-	switch (method) {
-	case 0:
-		/* No billion prices in npc stores but could be in pstores */
-		if (bn >= 1000000000) (void)sprintf(out_val, COLBIGNUM_A1S "%d" COLBIGNUM_A2S "%03d" COLBIGNUM_A1S "%03d" COLBIGNUM_A2S "%03d", bn / 1000000000, (bn % 1000000000) / 1000000, (bn % 1000000) / 1000, bn % 1000);
-		else if (bn >= 1000000) (void)sprintf(out_val, COLBIGNUM_A2S "%3d" COLBIGNUM_A1S "%03d" COLBIGNUM_A2S "%03d", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
-		else if (bn >= 1000) (void)sprintf(out_val, COLBIGNUM_A1S "%6d" COLBIGNUM_A2S "%03d", bn / 1000, bn % 1000);
-		else (void)sprintf(out_val, COLBIGNUM_A2S "%9d", bn);
-		break;
-	case 1:
-		/* Doesn't look thaaat nice colour-wise maybe, despite being easier to interpret :/ */
-		if (bn != bn_max) {
-			/* Assume max of 4 triplets aka 12-digit number */
-			if (bn >= 1000000000) sprintf(out_val, COLBIGNUM_B1S "%1d" COLBIGNUM_B2S "%03d" COLBIGNUM_B1S "%03d" COLBIGNUM_B2S "%03d", bn / 1000000000, (bn % 1000000000) / 1000000, (bn % 1000000) / 1000, bn % 1000);
-			else if (bn >= 1000000) sprintf(out_val, COLBIGNUM_B2S "%4d" COLBIGNUM_B1S "%03d" COLBIGNUM_B2S "%03d", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
-			else if (bn >= 1000) sprintf(out_val, COLBIGNUM_B1S "%7d" COLBIGNUM_B2S "%03d", bn / 1000, bn % 1000);
-			else sprintf(out_val, COLBIGNUM_B2S "%10d", bn);
-		} else {
+	if (afford) {
+		switch (method) {
+		case 0:
+			/* No billion prices in npc stores but could be in pstores */
+			if (bn >= 1000000000) (void)sprintf(out_val, COLBIGNUM_A1S "%d" COLBIGNUM_A2S "%03d" COLBIGNUM_A1S "%03d" COLBIGNUM_A2S "%03d", bn / 1000000000, (bn % 1000000000) / 1000000, (bn % 1000000) / 1000, bn % 1000);
+			else if (bn >= 1000000) (void)sprintf(out_val, COLBIGNUM_A2S "%3d" COLBIGNUM_A1S "%03d" COLBIGNUM_A2S "%03d", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
+			else if (bn >= 1000) (void)sprintf(out_val, COLBIGNUM_A1S "%6d" COLBIGNUM_A2S "%03d", bn / 1000, bn % 1000);
+			else (void)sprintf(out_val, COLBIGNUM_A2S "%9d", bn);
+			break;
+		case 1:
+			/* Doesn't look thaaat nice colour-wise maybe, despite being easier to interpret :/ */
+			if (bn != bn_max) {
+				/* Assume max of 4 triplets aka 12-digit number */
+				if (bn >= 1000000000) sprintf(out_val, COLBIGNUM_B1S "%1d" COLBIGNUM_B2S "%03d" COLBIGNUM_B1S "%03d" COLBIGNUM_B2S "%03d", bn / 1000000000, (bn % 1000000000) / 1000000, (bn % 1000000) / 1000, bn % 1000);
+				else if (bn >= 1000000) sprintf(out_val, COLBIGNUM_B2S "%4d" COLBIGNUM_B1S "%03d" COLBIGNUM_B2S "%03d", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
+				else if (bn >= 1000) sprintf(out_val, COLBIGNUM_B1S "%7d" COLBIGNUM_B2S "%03d", bn / 1000, bn % 1000);
+				else sprintf(out_val, COLBIGNUM_B2S "%10d", bn);
+			} else {
 #ifndef FIXED_PY_MAX_XXX
-			/* Alternating umber tones for PY_MAX_GOLD/PY_MAX_EXP */
-			sprintf(out_val, COLBIGNUM_M2S "%1d" COLBIGNUM_M1S "%03d" COLBIGNUM_M2S "%03d" COLBIGNUM_M1S "%03d", bn / 1000000000, (bn % 1000000000) / 1000000, (bn % 1000000) / 1000, bn % 1000);
+				/* Alternating umber tones for PY_MAX_GOLD/PY_MAX_EXP */
+				sprintf(out_val, COLBIGNUM_M2S "%1d" COLBIGNUM_M1S "%03d" COLBIGNUM_M2S "%03d" COLBIGNUM_M1S "%03d", bn / 1000000000, (bn % 1000000000) / 1000000, (bn % 1000000) / 1000, bn % 1000);
 #else
-			/* Since they are constants, just display it all in one colour, cannot be misinterpreted */
-			sprintf(out_val, COLBIGNUM_M2S "%10d", bn);
+				/* Since they are constants, just display it all in one colour, cannot be misinterpreted */
+				sprintf(out_val, COLBIGNUM_M2S "%10d", bn);
 #endif
-		}
-		break;
-	case 2:
-		if (bn != bn_max) {
-			/* Assume max of 4 triplets aka 12-digit number */
-			if (bn >= 1000000) sprintf(out_val, COLBIGNUM_B2S "%3d" COLBIGNUM_B1S "%03d" COLBIGNUM_B2S "%03d", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
-			else if (bn >= 1000) sprintf(out_val, COLBIGNUM_B1S "%6d" COLBIGNUM_B2S "%03d", bn / 1000, bn % 1000);
-			else sprintf(out_val, COLBIGNUM_B2S "%9d", bn);
-		} else {
+			}
+			break;
+		case 2:
+			if (bn != bn_max) {
+				/* Assume max of 4 triplets aka 12-digit number */
+				if (bn >= 1000000) sprintf(out_val, COLBIGNUM_B2S "%3d" COLBIGNUM_B1S "%03d" COLBIGNUM_B2S "%03d", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
+				else if (bn >= 1000) sprintf(out_val, COLBIGNUM_B1S "%6d" COLBIGNUM_B2S "%03d", bn / 1000, bn % 1000);
+				else sprintf(out_val, COLBIGNUM_B2S "%9d", bn);
+			} else {
 #ifndef FIXED_PY_MAX_XXX
-			/* Alternating umber tones for PY_MAX_GOLD/PY_MAX_EXP */
-			sprintf(out_val, COLBIGNUM_M1S "%3d" COLBIGNUM_M2S "%03d" COLBIGNUM_M1S "%03d", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
+				/* Alternating umber tones for PY_MAX_GOLD/PY_MAX_EXP */
+				sprintf(out_val, COLBIGNUM_M1S "%3d" COLBIGNUM_M2S "%03d" COLBIGNUM_M1S "%03d", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
 #else
-			/* Since they are constants, just display it all in one colour, cannot be misinterpreted */
-			sprintf(out_val, COLBIGNUM_M2S "%9d", bn);
+				/* Since they are constants, just display it all in one colour, cannot be misinterpreted */
+				sprintf(out_val, COLBIGNUM_M2S "%9d", bn);
 #endif
+			}
+			break;
 		}
-		break;
+	} else {
+		switch (method) {
+		case 0:
+			/* No billion prices in npc stores but could be in pstores */
+			if (bn >= 1000000000) (void)sprintf(out_val, COLBIGNUM_DARK_A1S "%d" COLBIGNUM_DARK_A2S "%03d" COLBIGNUM_DARK_A1S "%03d" COLBIGNUM_DARK_A2S "%03d", bn / 1000000000, (bn % 1000000000) / 1000000, (bn % 1000000) / 1000, bn % 1000);
+			else if (bn >= 1000000) (void)sprintf(out_val, COLBIGNUM_DARK_A2S "%3d" COLBIGNUM_DARK_A1S "%03d" COLBIGNUM_DARK_A2S "%03d", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
+			else if (bn >= 1000) (void)sprintf(out_val, COLBIGNUM_DARK_A1S "%6d" COLBIGNUM_DARK_A2S "%03d", bn / 1000, bn % 1000);
+			else (void)sprintf(out_val, COLBIGNUM_DARK_A2S "%9d", bn);
+			break;
+		case 1:
+			/* Doesn't look thaaat nice colour-wise maybe, despite being easier to interpret :/ */
+			if (bn != bn_max) {
+				/* Assume max of 4 triplets aka 12-digit number */
+				if (bn >= 1000000000) sprintf(out_val, COLBIGNUM_DARK_B1S "%1d" COLBIGNUM_DARK_B2S "%03d" COLBIGNUM_DARK_B1S "%03d" COLBIGNUM_DARK_B2S "%03d", bn / 1000000000, (bn % 1000000000) / 1000000, (bn % 1000000) / 1000, bn % 1000);
+				else if (bn >= 1000000) sprintf(out_val, COLBIGNUM_DARK_B2S "%4d" COLBIGNUM_DARK_B1S "%03d" COLBIGNUM_DARK_B2S "%03d", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
+				else if (bn >= 1000) sprintf(out_val, COLBIGNUM_DARK_B1S "%7d" COLBIGNUM_DARK_B2S "%03d", bn / 1000, bn % 1000);
+				else sprintf(out_val, COLBIGNUM_DARK_B2S "%10d", bn);
+			} else {
+#ifndef FIXED_PY_MAX_XXX
+				/* Alternating umber tones for PY_MAX_GOLD/PY_MAX_EXP */
+				sprintf(out_val, COLBIGNUM_DARK_M2S "%1d" COLBIGNUM_DARK_M1S "%03d" COLBIGNUM_DARK_M2S "%03d" COLBIGNUM_DARK_M1S "%03d", bn / 1000000000, (bn % 1000000000) / 1000000, (bn % 1000000) / 1000, bn % 1000);
+#else
+				/* Since they are constants, just display it all in one colour, cannot be misinterpreted */
+				sprintf(out_val, COLBIGNUM_DARK_M2S "%10d", bn);
+#endif
+			}
+			break;
+		case 2:
+			if (bn != bn_max) {
+				/* Assume max of 4 triplets aka 12-digit number */
+				if (bn >= 1000000) sprintf(out_val, COLBIGNUM_DARK_B2S "%3d" COLBIGNUM_DARK_B1S "%03d" COLBIGNUM_DARK_B2S "%03d", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
+				else if (bn >= 1000) sprintf(out_val, COLBIGNUM_DARK_B1S "%6d" COLBIGNUM_DARK_B2S "%03d", bn / 1000, bn % 1000);
+				else sprintf(out_val, COLBIGNUM_DARK_B2S "%9d", bn);
+			} else {
+#ifndef FIXED_PY_MAX_XXX
+				/* Alternating umber tones for PY_MAX_GOLD/PY_MAX_EXP */
+				sprintf(out_val, COLBIGNUM_DARK_M1S "%3d" COLBIGNUM_DARK_M2S "%03d" COLBIGNUM_DARK_M1S "%03d", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
+#else
+				/* Since they are constants, just display it all in one colour, cannot be misinterpreted */
+				sprintf(out_val, COLBIGNUM_DARK_M2S "%9d", bn);
+#endif
+			}
+			break;
+		}
 	}
+
 }
 
 /* key codes: ^__XXXX\r and ^_XXXX\r */
