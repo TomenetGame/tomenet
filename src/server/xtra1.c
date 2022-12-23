@@ -76,7 +76,6 @@ void cnv_stat(int val, char *out_val) {
 }
 
 
-
 /*
  * Modify a stat value by a "modifier", return new value
  *
@@ -119,9 +118,6 @@ s16b modify_stat_value(int value, int amount) {
 	/* Return new value */
 	return(value);
 }
-
-
-
 
 
 /*
@@ -536,14 +532,8 @@ static void prt_bpr(int Ind) {
 
 static void prt_cut(int Ind) {
 	player_type *p_ptr = Players[Ind];
-//	cave_type **zcave;
 	int c = p_ptr->cut;
 
-#if 0 /* deprecated */
-	/* hack: no-tele indicator takes priority. */
-	if ((zcave = getcave(&p_ptr->wpos)))
-		if (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
-#endif
 	Send_cut(Ind, c); /* need to send this always since the client doesn't clear the whole field */
 }
 
@@ -560,8 +550,7 @@ static void prt_history(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 
-	for (i = 0; i < 4; i++)
-		Send_history(Ind, i, p_ptr->history[i]);
+	for (i = 0; i < 4; i++) Send_history(Ind, i, p_ptr->history[i]);
 }
 
 static void prt_various(int Ind) {
@@ -576,9 +565,6 @@ static void prt_plusses(int Ind) {
 
 	int show_tohit_m = p_ptr->dis_to_h + p_ptr->to_h_melee;
 	int show_todam_m = p_ptr->dis_to_d + p_ptr->to_d_melee;
-/*	int show_tohit_m = p_ptr->to_h_melee;
-	int show_todam_m = p_ptr->to_d_melee;
-*/
 	int show_tohit_r = p_ptr->dis_to_h + p_ptr->to_h_ranged;
 	int show_todam_r = p_ptr->to_d_ranged; //generic +dam never affects ranged
 
@@ -626,7 +612,6 @@ static void prt_plusses(int Ind) {
 		if (p_ptr->to_d_ranged_tmp) show_todam_r += 10000;
 	}
 
-//	Send_plusses(Ind, show_tohit_m, show_todam_m, show_tohit_r, show_todam_r, p_ptr->to_h_melee, p_ptr->to_d_melee);
 	Send_plusses(Ind, 0, 0, show_tohit_r, show_todam_r, show_tohit_m, show_todam_m);
 
 	/* (not gameplay relevant, just for easier handling in LUA scripts:) */
@@ -1290,7 +1275,7 @@ void calc_mana(int Ind) {
 		break;
 
 	case CLASS_ADVENTURER:
-//	case CLASS_BARD:
+	//case CLASS_BARD:
 	default:
 		/* 50% Int, 50% Wis --160 */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
@@ -1431,7 +1416,7 @@ void calc_mana(int Ind) {
 	cur_wgt = worn_armour_weight(p_ptr);
 
 	/* Determine the weight allowance */
-//	max_wgt = 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 250); break;
+	//max_wgt = 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 250); break;
 	switch (p_ptr->pclass) {
 	case CLASS_MAGE: max_wgt = 150 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
 	case CLASS_RANGER: max_wgt = 240 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
@@ -1460,29 +1445,11 @@ void calc_mana(int Ind) {
 	}
 
 	/* Heavy armor penalizes mana */
-//	if (((cur_wgt - max_wgt) / 10) > 0) {
 	if ((cur_wgt - max_wgt) > 0) {
 		/* Reduce mana */
-
-//		new_mana -= ((cur_wgt - max_wgt) * 2 / 3);
-
-		/* square root - C. Blue */
-/*		long tmp, tmp2;
-		tmp = (cur_wgt - max_wgt) * 1000;
-		tmp2 = 1000;
-		if (tmp > 1000) do {
-			tmp *= 1000;
-			tmp /= 1320;
-			tmp2 *= 1149;
-			tmp2 /= 1000;
-		} while (tmp > 1000)
-		tmp2 /= 1000;
-		new_mana *= (10 - tmp2);
-*/
-
-		/* At least reduce by 1 -_- */
 		int malus = (new_mana * (cur_wgt - max_wgt > 100 ? 100 : cur_wgt - max_wgt)) / 100;
 
+		/* At least reduce by 1 -_- */
 		if (!malus) malus = 1;
 		new_mana -= malus;
 
@@ -1771,9 +1738,7 @@ void calc_hitpoints(int Ind) {
 		finalHP += (raceHPbonus * 3) / FORM_REDUCES_RACE_DICE_INFLUENCE;
 
 		/* Reduce for pvp, or mimicry is too good */
-		if (p_ptr->mode & MODE_PVP) {
-			if (finalHP > mhp) finalHP = mhp + (finalHP - mhp + 1) / 2;
-		}
+		if ((p_ptr->mode & MODE_PVP) && finalHP > mhp) finalHP = mhp + (finalHP - mhp + 1) / 2;
 
 		/* done */
 		mhp = finalHP;
@@ -1806,13 +1771,9 @@ void calc_hitpoints(int Ind) {
 	if (to_life > 0) {
 		/* Reduce use of +LIFE items for mimics while in monster-form */
 		if (mhp > mhp_playerform) {
-			if (to_life > 0)
-				mhp += (mhp_playerform * to_life * mhp_playerform) / (10 * mhp);
-			else
-				mhp += (mhp_playerform * to_life) / 10;
-		} else {
-			mhp += (mhp * to_life) / 10;
-		}
+			if (to_life > 0) mhp += (mhp_playerform * to_life * mhp_playerform) / (10 * mhp);
+			else mhp += (mhp_playerform * to_life) / 10;
+		} else mhp += (mhp * to_life) / 10;
 	}
 
 #ifdef ENABLE_MAIA
@@ -1856,13 +1817,9 @@ void calc_hitpoints(int Ind) {
 
 	if (mhp > mhp_playerform) {
 		/* Reduce the use for mimics (while in monster-form) */
-		if (p_ptr->to_hp > 0)
-			mhp += (mhp_playerform * p_ptr->to_hp) / mhp;
-		else
-			mhp += p_ptr->to_hp;
-	} else {
-		mhp += p_ptr->to_hp;
-	}
+		if (p_ptr->to_hp > 0) mhp += (mhp_playerform * p_ptr->to_hp) / mhp;
+		else mhp += p_ptr->to_hp;
+	} else mhp += p_ptr->to_hp;
 #endif
 
 	/* Meditation increase mana at the cost of hp */
@@ -1904,35 +1861,6 @@ void calc_hitpoints(int Ind) {
  */
 static void calc_torch(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
-#if 0
-	object_type *o_ptr = &p_ptr->inventory[INVEN_LITE];
-
-	/* Base light radius */
-	p_ptr->cur_lite = p_ptr->lite;
-
-	/* Examine actual lites */
-	if (o_ptr->tval == TV_LITE) {
-		/* Torches (with fuel) provide some lite */
-		if ((o_ptr->sval == SV_LITE_TORCH) && (o_ptr->pval > 0))
-			p_ptr->cur_lite += 1;
-
-		/* Lanterns (with fuel) provide more lite */
-		if ((o_ptr->sval == SV_LITE_LANTERN) && (o_ptr->pval > 0))
-			p_ptr->cur_lite += 2;
-
-		/* Dwarven lanterns provide permanent radius 2 lite */
-		if (o_ptr->sval == SV_LITE_DWARVEN)
-			p_ptr->cur_lite += 2;
-
-		/* Feanorian lanterns provide permanent, bright, lite */
-		if (o_ptr->sval == SV_LITE_FEANORIAN)
-			p_ptr->cur_lite += 3;
-
-		/* Artifact Lites provide permanent, bright, lite */
-		if (artifact_p(o_ptr)) p_ptr->cur_lite += 3;
-	}
-#endif	// 0
 
 	/* Reduce lite when running if requested */
 	if (p_ptr->running && p_ptr->view_reduce_lite) {
@@ -1989,6 +1917,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	char mname[MNAME_LEN];
 
 	bool seduce = FALSE;
+
 
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
@@ -2756,39 +2685,12 @@ void calc_body_spells(int Ind) {
 	else Send_spell_info(Ind, 0, 0, 0, "");
 }
 
-#if 0	// moved to defines.h
-bool monk_heavy_armor(int Ind) {
- #if 1 // DGDGDGDG -- no more monks for the time being
-	player_type *p_ptr = Players[Ind];
-	u16b monk_arm_wgt = 0;
-
-//	if (!(p_ptr->pclass == CLASS_MONK)) return(FALSE);
-	if (!get_skill(p_ptr, SKILL_MARTIAL_ARTS)) return(FALSE);
-
-	/* Weight the armor */
-	monk_arm_wgt = armour_weight(p_ptr);
-  #if 0
-	monk_arm_wgt += p_ptr->inventory[INVEN_BODY].weight;
-	monk_arm_wgt += p_ptr->inventory[INVEN_HEAD].weight;
-	monk_arm_wgt += p_ptr->inventory[INVEN_ARM].weight;
-	monk_arm_wgt += p_ptr->inventory[INVEN_OUTER].weight;
-	monk_arm_wgt += p_ptr->inventory[INVEN_HANDS].weight;
-	monk_arm_wgt += p_ptr->inventory[INVEN_FEET].weight;
-  #endif	// 0
-
-//	return(monk_arm_wgt > ( 100 + (p_ptr->lev * 4)));
-	return(monk_arm_wgt > 50 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 200));
- #endif
-}
-#endif	// 0
-
 /* Are all the weapons wielded of the right type ? */
 int get_weaponmastery_skill(player_type *p_ptr, object_type *o_ptr) {
 	/* no item */
 	if (!o_ptr->k_idx) return(-1);
 
-#if 1
-	/* EXPERIMENTAL - Hack for priests:
+	/* Hack for priests:
 	   They always get full weapon skill if the weapon is BLESSED,
 	   even if it's not a 'Blunt' type weapon: */
 	if (p_ptr->pclass == CLASS_PRIEST && o_ptr->tval != TV_BLUNT && is_melee_weapon(o_ptr->tval)) {
@@ -2797,7 +2699,6 @@ int get_weaponmastery_skill(player_type *p_ptr, object_type *o_ptr) {
 		object_flags(o_ptr, &dummy, &dummy, &f3, &dummy, &dummy, &dummy, &dummy);
 		if (f3 & TR3_BLESSED) return SKILL_BLUNT;
 	}
-#endif
 
 	switch (o_ptr->tval) {
 	/* known weapon types */
@@ -3061,36 +2962,6 @@ void calc_boni(int Ind) {
 
 	int kk, jj;
 	boni_col csheet_boni[15];
-	/* Wipe the boni column data */
-	for (kk = 0; kk < 15; kk++) {
-		csheet_boni[kk].i = kk;
-		csheet_boni[kk].spd = 0;
-		csheet_boni[kk].slth = 0;
-		csheet_boni[kk].srch = 0;
-		csheet_boni[kk].infr = 0;
-		csheet_boni[kk].lite = 0;
-		csheet_boni[kk].dig = 0;
-		csheet_boni[kk].blow = 0;
-		csheet_boni[kk].crit = 0;
-		csheet_boni[kk].shot = 0;
-		csheet_boni[kk].migh = 0;
-		csheet_boni[kk].mxhp = 0;
-		csheet_boni[kk].mxmp = 0;
-		csheet_boni[kk].luck = 0;
-		csheet_boni[kk].pstr = 0;
-		csheet_boni[kk].pint = 0;
-		csheet_boni[kk].pwis = 0;
-		csheet_boni[kk].pdex = 0;
-		csheet_boni[kk].pcon = 0;
-		csheet_boni[kk].pchr = 0;
-		csheet_boni[kk].amfi = 0;
-		csheet_boni[kk].sigl = 0;
-		/* Clear the byte flags */
-		for (jj = 0; jj < 16; jj++)
-			csheet_boni[kk].cb[jj] = 0;
-		csheet_boni[kk].color = TERM_DARK;
-		csheet_boni[kk].symbol = ' '; //Empty item / form slot.
-	}
 
 	int j, hold, minus, am_bonus = 0, am_temp;
 	long w, i;
@@ -3147,6 +3018,7 @@ void calc_boni(int Ind) {
 
 	int equip_set_old[INVEN_TOTAL - INVEN_WIELD];
 
+
 	for (i = 0; i < INVEN_TOTAL - INVEN_WIELD; i++) {
 		equipment_set[i] = 0;
 		equipment_set_amount[i] = 0;
@@ -3155,6 +3027,36 @@ void calc_boni(int Ind) {
 	}
 #endif
 
+	/* Wipe the boni column data */
+	for (kk = 0; kk < 15; kk++) {
+		csheet_boni[kk].i = kk;
+		csheet_boni[kk].spd = 0;
+		csheet_boni[kk].slth = 0;
+		csheet_boni[kk].srch = 0;
+		csheet_boni[kk].infr = 0;
+		csheet_boni[kk].lite = 0;
+		csheet_boni[kk].dig = 0;
+		csheet_boni[kk].blow = 0;
+		csheet_boni[kk].crit = 0;
+		csheet_boni[kk].shot = 0;
+		csheet_boni[kk].migh = 0;
+		csheet_boni[kk].mxhp = 0;
+		csheet_boni[kk].mxmp = 0;
+		csheet_boni[kk].luck = 0;
+		csheet_boni[kk].pstr = 0;
+		csheet_boni[kk].pint = 0;
+		csheet_boni[kk].pwis = 0;
+		csheet_boni[kk].pdex = 0;
+		csheet_boni[kk].pcon = 0;
+		csheet_boni[kk].pchr = 0;
+		csheet_boni[kk].amfi = 0;
+		csheet_boni[kk].sigl = 0;
+		/* Clear the byte flags */
+		for (jj = 0; jj < 16; jj++)
+			csheet_boni[kk].cb[jj] = 0;
+		csheet_boni[kk].color = TERM_DARK;
+		csheet_boni[kk].symbol = ' '; //Empty item / form slot.
+	}
 
 	/* Save the old speed */
 	old_speed = p_ptr->pspeed;
@@ -7760,6 +7662,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 	int n, i;
 	player_type *p_ptr = NULL;
 	global_event_type *ge;
+
 	if (Ind) p_ptr = Players[Ind];
 #if 1 /* randomize the global_event's ID? (makes sense if you have 'hidden' events) */
 	int f = 0, c;
@@ -9422,6 +9325,7 @@ static void process_global_event(int ge_id) {
  */
 void process_global_events(void) {
 	int n;
+
 	for (n = 0; n < MAX_GLOBAL_EVENTS; n++)
 		if (global_event[n].getype != GE_NONE) {
 			if (!global_event[n].paused) process_global_event(n);
@@ -9437,6 +9341,7 @@ void process_global_events(void) {
 void update_check_file(void) {
 	FILE *fp;
 	char buf[1024];
+
 	path_build(buf, 1024, ANGBAND_DIR_DATA, "tomenet.check");
 	fp = fopen(buf, "wb");
 	if (fp) {
@@ -9543,27 +9448,27 @@ void calc_techniques(int Ind) {
 }
 
 /* helper function to provide shortcut for checking for mind-linked player.
-   flags == 0x0 means 'accept all flags'. */
+   flags == 0x0 means 'accept all flags'.
+   **p2_ptr can be NULL if it's not needed. */
 int get_esp_link(int Ind, u32b flags, player_type **p2_ptr) {
 	player_type *p_ptr = Players[Ind];
 	int Ind2 = 0;
-	(*p2_ptr) = NULL;
+
+	if (p2_ptr != NULL) (*p2_ptr) = NULL;
 
 	if (p_ptr->esp_link_type &&
 	    p_ptr->esp_link &&
 	    ((p_ptr->esp_link_flags & flags) || flags == 0x0)) {
 		Ind2 = find_player(p_ptr->esp_link);
 		if (!Ind2) end_mind(Ind, FALSE);
-		else (*p2_ptr) = Players[Ind2];
+		else if (p2_ptr != NULL) (*p2_ptr) = Players[Ind2];
 	}
 	return Ind2;
 }
 /* helper function to provide shortcut for controlling mind-linked player.
    flags == 0x0 means 'accept all flags'. */
-//void use_esp_link(int *Ind, u32b flags, player_type *p_ptr) {
 void use_esp_link(int *Ind, u32b flags) {
 	int Ind2;
-//	p_ptr = Players[*Ind];
 	player_type *p_ptr = Players[(*Ind)];
 
 	if (p_ptr->esp_link_type &&
@@ -9571,10 +9476,7 @@ void use_esp_link(int *Ind, u32b flags) {
 	    ((p_ptr->esp_link_flags & flags) || flags == 0x0)) {
 		Ind2 = find_player(p_ptr->esp_link);
 		if (!Ind2) end_mind((*Ind), FALSE);
-		else {
-//			p_ptr = Players[Ind2];
-			(*Ind) = Ind2;
-		}
+		else (*Ind) = Ind2;
 	}
 }
 
@@ -10420,10 +10322,8 @@ void handle_request_return_num(int Ind, int id, int num) {
 
 		p_ptr->au -= num;
 		p_ptr->redraw |= PR_GOLD;
-		if (num == 1)
-			msg_format(Ind, "Your donation of %d gold piece is well received.", num);
-		else
-			msg_format(Ind, "Your donation of %d gold pieces is well received.", num);
+		if (num == 1) msg_format(Ind, "Your donation of %d gold piece is well received.", num);
+		else msg_format(Ind, "Your donation of %d gold pieces is well received.", num);
 		msg_print(Ind, "You pray to the gods.");
 
 		/* no fallen winner yet or already donated enough and changed our fate? */
@@ -10508,8 +10408,7 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 	if (id >= RID_QUEST_ACQUIRE) {
 		if (cfr) quest_acquire_confirmed(Ind, id - RID_QUEST_ACQUIRE, FALSE);
 		return;
-	}
-	else if (id >= RID_QUEST) {
+	} else if (id >= RID_QUEST) {
 		char str[2];
 
 		if (cfr) str[0] = 'y';

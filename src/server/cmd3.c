@@ -575,7 +575,7 @@ int inven_drop(bool handle_d, int Ind, int item, int amt, bool force) {
 /*
  * The "wearable" tester
  */
-#if 1 /* new way: 'fruit bat body' is checked first: it's restrictions will be inherited by all other forms */
+/* new way: 'fruit bat body' is checked first: it's restrictions will be inherited by all other forms */
 bool item_tester_hook_wear(int Ind, int slot) {
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = NULL;
@@ -653,13 +653,13 @@ bool item_tester_hook_wear(int Ind, int slot) {
 		case INVEN_TOOL:
 			/* make a difference :) - C. Blue */
 			if (r_ptr->body_parts[BODY_ARMS] ||
-//			    r_ptr->body_parts[BODY_FINGER] ||
+			    //r_ptr->body_parts[BODY_FINGER] ||
 			    r_ptr->body_parts[BODY_WEAPON]) return(TRUE);
 			break;
 		case INVEN_HANDS:
 			if (fishy) return(FALSE);
-//			if (r_ptr->body_parts[BODY_FINGER]) return(TRUE); too silyl (and powerful)
-//			if (r_ptr->body_parts[BODY_ARMS]) return(TRUE); was standard, but now:
+			//if (r_ptr->body_parts[BODY_FINGER]) return(TRUE); too silyl (and powerful)
+			//if (r_ptr->body_parts[BODY_ARMS]) return(TRUE); was standard, but now:
 			if (r_ptr->body_parts[BODY_FINGER] && r_ptr->body_parts[BODY_ARMS]) return(TRUE);
 			break;
 		case INVEN_FEET:
@@ -674,162 +674,6 @@ bool item_tester_hook_wear(int Ind, int slot) {
 	/* Assume not wearable */
 	return(FALSE);
 }
-
-#else // old way, deprecated
-
-bool item_tester_hook_wear(int Ind, int slot) {
-	player_type *p_ptr = Players[Ind];
-	monster_race *r_ptr = NULL;
-	bool fishy = FALSE;
-	if (p_ptr->body_monster) {
-		r_ptr = &r_info[p_ptr->body_monster];
-		if (r_ptr->d_char == '~') fishy = TRUE;
-	}
-
-	/*
-	 * Hack -- restrictions by forms
-	 * I'm not quite sure if wielding 6 rings and 3 weps should be allowed..
-	 * Shapechanging Druids do not get penalized...
-
-	 * Another hack for shamans (very experimental):
-	 * They can use their full equipment in E and G (spirit/elemental/ghost) form.
-	 *
-	 * Druid bats can't wear full eq.
-	 */
-#if 0
-	if (p_ptr->body_monster &&
-	    ((p_ptr->pclass != CLASS_DRUID) || p_ptr->fruit_bat) &&
-	    ((p_ptr->pclass != CLASS_SHAMAN) || !mimic_shaman_fulleq(r_ptr->d_char)) &&
-	    ((p_ptr->prace != RACE_VAMPIRE) || p_ptr->fruit_bat)
-	    )
-#else
-	if (p_ptr->body_monster &&
-	    (p_ptr->pclass != CLASS_DRUID) &&
-	    ((p_ptr->pclass != CLASS_SHAMAN) || !mimic_shaman_fulleq(r_ptr->d_char)) &&
-	    (p_ptr->prace != RACE_VAMPIRE)
-	    )
-#endif
-	{
-		switch (slot) {
-		case INVEN_WIELD:
-		case INVEN_BOW:
-			if (r_ptr->body_parts[BODY_WEAPON]) return(TRUE);
-			break;
-		case INVEN_LEFT:
-			if (r_ptr->body_parts[BODY_FINGER] > 1) return(TRUE);
-			break;
-		case INVEN_RIGHT:
-			if (r_ptr->body_parts[BODY_FINGER]) return(TRUE);
-			break;
-		case INVEN_NECK:
-		case INVEN_HEAD:
-			if (r_ptr->body_parts[BODY_HEAD]) return(TRUE);
-			break;
-		case INVEN_LITE:
-			/* Always allow to carry light source? :/ */
-			/* return(TRUE); break; */
-			if (r_ptr->body_parts[BODY_WEAPON]) return(TRUE);
-			if (r_ptr->body_parts[BODY_FINGER]) return(TRUE);
-			if (r_ptr->body_parts[BODY_HEAD]) return(TRUE);
-			if (r_ptr->body_parts[BODY_ARMS]) return(TRUE);
-			break;
-		case INVEN_BODY:
-#ifdef BATS_ALLOW_BODY
-			/* note: this check is redundant, because bats actually DO have a torso atm!
-			   funnily, native fruit bat players do NOT have one without this option o_O. */
-			switch (p_ptr->body_monster) {
-			case 37: case 114: case 187: case 235: case 351:
-			case 377: case RI_VAMPIRE_BAT: case 406: case 484: case 968:
-				return(TRUE);
-			}
-#endif
-		case INVEN_OUTER:
-		case INVEN_AMMO:
-			if (r_ptr->body_parts[BODY_TORSO]) return(TRUE);
-			break;
-		case INVEN_ARM:
-			if (r_ptr->body_parts[BODY_ARMS]) return(TRUE);
-			break;
-		case INVEN_TOOL:
-			/* make a difference :) - C. Blue */
-			if (r_ptr->body_parts[BODY_ARMS] ||
-//			    r_ptr->body_parts[BODY_FINGER] ||
-			    r_ptr->body_parts[BODY_WEAPON]) return(TRUE);
-			break;
-		case INVEN_HANDS:
-			if (fishy) return(FALSE);
-//			if (r_ptr->body_parts[BODY_FINGER]) return(TRUE); too silyl (and powerful)
-//			if (r_ptr->body_parts[BODY_ARMS]) return(TRUE); was standard, but now:
-			if (r_ptr->body_parts[BODY_FINGER] && r_ptr->body_parts[BODY_ARMS]) return(TRUE);
-			break;
-		case INVEN_FEET:
-			if (r_ptr->body_parts[BODY_LEGS]) return(TRUE);
-			break;
-		}
-	}
-	/* Restrict fruit bats */
-#if 0
-	else if (p_ptr->fruit_bat && !p_ptr->body_monster)
-#else
-	else if (p_ptr->fruit_bat && (
-	    !p_ptr->body_monster ||
-	    p_ptr->pclass == CLASS_DRUID ||
-	    (p_ptr->pclass == CLASS_SHAMAN && !mimic_shaman_fulleq(r_ptr->d_char)) ||
-	    p_ptr->prace != RACE_VAMPIRE
-	    ))
-#endif
-	{
-		switch (slot) {
-		case INVEN_RIGHT:
-		case INVEN_LEFT:
-		case INVEN_NECK:
-		case INVEN_HEAD:
-		case INVEN_LITE:
-#ifdef BATS_ALLOW_BODY
-		case INVEN_BODY:	//allow this mayyyybe?
-#endif
-		case INVEN_OUTER:
-		case INVEN_ARM:
-		case INVEN_TOOL:	//allow them to wear, say, picks and shovels - the_sandman
-			return(TRUE);
-		}
-	}
-#if 0
-	else if (r_info[p_ptr->body_monster].flags3 & RF3_DRAGON) {
-		switch (slot) {
-		case INVEN_WIELD:
-		case INVEN_RIGHT:
-		case INVEN_LEFT:
-		case INVEN_HEAD:
-		case INVEN_BODY:
-		case INVEN_LITE:
-		case INVEN_FEET:
-			return(TRUE);
-		}
-	}
-#endif
-	/* non-fruit bats */
-	else {
-		/* Check for a usable slot */
-		if (slot >= INVEN_WIELD) {
-#if 0
-			/* use of shield is banned in do_cmd_wield if with 2H weapon.
-			 * 3 slots are too severe.. thoughts?	- Jir -
-			 */
-			if (slot == INVEN_BOW && p_ptr->inventory[INVEN_WIELD].k_idx) {
-				u32b f1, f2, f3, f4, f5, f6, esp;
-				object_flags(&p_ptr->inventory[INVEN_WIELD], &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-				if (f4 & TR4_MUST2H) return(FALSE);
-			}
-#endif	// 0
-			return(TRUE);
-		}
-	}
-
-	/* Assume not wearable */
-	return(FALSE);
-}
-#endif
 
 /* Take off things that are no more wearable */
 void do_takeoff_impossible(int Ind) {
@@ -1375,9 +1219,6 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 
 	process_hooks(HOOK_WIELD, "d", Ind);
 
-	/* Let's not end afk for this - C. Blue */
-/*	un_afk_idle(Ind); */
-
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -1420,10 +1261,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 		object_type *ot_ptr;
 		if (!takeoff_slot) takeoff_slot = slot;
 		ot_ptr = &(p_ptr->inventory[takeoff_slot]);
-#if 0
-		/* Take off the "entire" item if one is there */
-		if (p_ptr->inventory[takeoff_slot].k_idx) inven_takeoff(Ind, takeoff_slot, 255, TRUE);
-#else	// 0
+
 		/* Take off existing item */
 		if (takeoff_slot != INVEN_AMMO) {
 			if (ot_ptr->k_idx) {
@@ -1444,7 +1282,6 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 				}
 			}
 		}
-#endif	// 0
 
 		/* Wear the new stuff */
 		*o_ptr = tmp_obj;
@@ -1586,7 +1423,6 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 #else
 		msg_print(Ind, "\374\377RWarning: Using any melee weapon or bow renders Martial Arts skill effectless.");
 #endif
-//		s_printf("warning_ma_weapon: %s\n", p_ptr->name);
 		warn_takeoff = TRUE;
 
 		/* might find esp-weapon at non-low levels, so stop spamming this warning then */
@@ -1594,7 +1430,6 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	}
 	if (ma_warning_shield && p_ptr->warning_ma_shield == 0) {
 		msg_print(Ind, "\374\377RWarning: Using a shield will prevent Martial Arts combat styles.");
-//		s_printf("warning_ma_shield: %s\n", p_ptr->name);
 		warn_takeoff = TRUE;
 
 		/* might find esp-shield at non-low levels, so stop spamming this warning then */
@@ -1647,16 +1482,6 @@ void do_cmd_takeoff(int Ind, int item, int amt) {
 		Send_confirm(Ind, PKT_TAKE_OFF); //+PKT_TAKE_OFF_AMT
 		return;
 	}
-
-#if 0
-	/* Verify potential overflow */
-	if (p_ptr->inven_cnt >= INVEN_PACK) {
-		/* Verify with the player */
-		if (other_query_flag &&
-		    !get_check(Ind, "Your pack may overflow.  Continue? ")) return;
-	}
-#endif
-
 
 	/* Get the item (in the pack) */
 	if (item >= 0) o_ptr = &(p_ptr->inventory[item]);
@@ -1712,9 +1537,6 @@ void do_cmd_takeoff(int Ind, int item, int amt) {
 			else msg_format(Ind, "You force off %s.", o_name);
 		}
 	}
-
-	/* Let's not end afk for this - C. Blue */
-/*	un_afk_idle(Ind); */
 
 	/* Take a partial turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
@@ -1959,18 +1781,9 @@ void do_cmd_drop_gold(int Ind, s32b amt) {
 	}
 
 	/* Error checks */
-	if (amt > p_ptr->au) {
-		amt = p_ptr->au;
-/*		msg_print(Ind, "You do not have that much gold.");
-		return;
-*/
-	}
+	if (amt > p_ptr->au) amt = p_ptr->au;
 	if (amt > PY_MAX_GOLD) amt = PY_MAX_GOLD;
 	if (amt <= 0) return;
-
-	/* Setup the object */
-	/* XXX Use "gold" object kind */
-//	invcopy(&tmp_obj, 488);
 
 	/* hack: player-dropped piles are bigger at same value, than normal money drops ;) */
 	invcopy(&tmp_obj, gold_colour(amt, FALSE, TRUE));
@@ -1995,9 +1808,6 @@ void do_cmd_drop_gold(int Ind, s32b amt) {
 	/* Subtract from the player's gold */
 	p_ptr->au -= amt;
 
-	/* Let's not end afk for this - C. Blue */
-/* 	un_afk_idle(Ind); */
-
 	/* Message */
 	//msg_format(Ind, "You drop %d pieces of gold.", amt);
 	msg_format(Ind, "You drop %d pieces of gold in %s.", amt, k_name + k_info[tmp_obj.k_idx].name);
@@ -2006,15 +1816,12 @@ void do_cmd_drop_gold(int Ind, s32b amt) {
 	sound(Ind, "drop_gold", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
-/* #if DEBUG_LEVEL > 3 */
-//	if (amt >= 10000) {
-		p_ptr->last_gold_drop += amt;
-		if (turn - p_ptr->last_gold_drop_timer >= cfg.fps * 2) {
-			s_printf("Gold dropped (%d by %s at %d,%d,%d).\n", p_ptr->last_gold_drop, p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
-			p_ptr->last_gold_drop = 0;
-			p_ptr->last_gold_drop_timer = turn;
-		}
-//	}
+	p_ptr->last_gold_drop += amt;
+	if (turn - p_ptr->last_gold_drop_timer >= cfg.fps * 2) {
+		s_printf("Gold dropped (%d by %s at %d,%d,%d).\n", p_ptr->last_gold_drop, p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+		p_ptr->last_gold_drop = 0;
+		p_ptr->last_gold_drop_timer = turn;
+	}
 
 	break_cloaking(Ind, 5);
 	break_shadow_running(Ind);
@@ -2056,17 +1863,6 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return(FALSE);
 	};
-#if 0
-	/* Verify if needed */
-	if (!force || other_query_flag) {
-		/* Make a verification */
-		snprintf(out_val, sizeof(out_val), "Really destroy %s? ", o_name);
-		if (!get_check(Ind, out_val)) return(FALSE);
-	}
-#endif
-
-	/* Let's not end afk for this - C. Blue */
-/* 	un_afk_idle(Ind); */
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -2248,27 +2044,36 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 void do_cmd_observe(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
+	int i, Ind_t = 0;
+#ifdef ENABLE_SUBINVEN
+	int sub;
+#endif
+
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED)
+		for (i = 1; i <= NumPlayers; i++)
+			if (Players[i]->esp_link == p_ptr->id) {
+				Ind_t = i;
+				break;
+			}
 
 #ifdef ENABLE_SUBINVEN
-	int sub, i;
-
 	if (item >= 100) {
 		sub = item / 100 - 1;
 		i = item % 100;
 
-		o_ptr = &(p_ptr->subinventory[sub][i]);
+		o_ptr = Ind_t ? &(Players[Ind_t]->subinventory[sub][i]) : &(p_ptr->subinventory[sub][i]);
 
 		/* Require full knowledge */
 		if (!(o_ptr->ident & ID_MENTAL) && !is_admin(p_ptr)) observe_aux(Ind, o_ptr, item);
 		/* Describe it fully */
-		else if (!identify_fully_aux(Ind, o_ptr, FALSE, item, 0)) msg_print(Ind, "You see nothing special.");
+		else if (!identify_fully_aux(Ind, o_ptr, FALSE, item, Ind_t)) msg_print(Ind, "You see nothing special.");
 
 		return;
 	}
 #endif
 
 	/* Get the item (in the pack) */
-	if (item >= 0) o_ptr = &(p_ptr->inventory[item]);
+	if (item >= 0) o_ptr = Ind_t ? &(Players[Ind_t]->inventory[item]) : &(p_ptr->inventory[item]);
 	/* Get the item (on the floor) */
 	else {
 		if (-item >= o_max) return; /* item doesn't exist */
@@ -2278,7 +2083,7 @@ void do_cmd_observe(int Ind, int item) {
 	/* Require full knowledge */
 	if (!(o_ptr->ident & ID_MENTAL) && !is_admin(p_ptr)) observe_aux(Ind, o_ptr, item);
 	/* Describe it fully */
-	else if (!identify_fully_aux(Ind, o_ptr, FALSE, item, 0)) msg_print(Ind, "You see nothing special.");
+	else if (!identify_fully_aux(Ind, o_ptr, FALSE, item, Ind_t)) msg_print(Ind, "You see nothing special.");
 }
 
 
@@ -3850,8 +3655,7 @@ static void do_cmd_refill_lamp(int Ind, int item) {
 /*
  * An "item_tester_hook" for refilling torches
  */
-static bool item_tester_refill_torch(object_type *o_ptr)
-{
+static bool item_tester_refill_torch(object_type *o_ptr) {
 	/* (Rand)arts are not usable for refilling */
 	if (o_ptr->name1) return(FALSE);
 
@@ -3869,8 +3673,7 @@ static bool item_tester_refill_torch(object_type *o_ptr)
 /*
  * Refuel the players torch (from the pack or floor)
  */
-static void do_cmd_refill_torch(int Ind, int item)
-{
+static void do_cmd_refill_torch(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 
 	object_type *o_ptr;
@@ -3883,10 +3686,7 @@ static void do_cmd_refill_torch(int Ind, int item)
 	if (item > INVEN_TOTAL) return;
 
 	/* Get the item (in the pack) */
-	if (item >= 0) {
-		o_ptr = &(p_ptr->inventory[item]);
-	}
-
+	if (item >= 0) o_ptr = &(p_ptr->inventory[item]);
 	/* Get the item (on the floor) */
 	else {
 		if (-item >= o_max)
@@ -3911,9 +3711,6 @@ static void do_cmd_refill_torch(int Ind, int item)
 		return;
 	}
 
-	/* Let's not end afk for this. - C. Blue */
-/*	un_afk_idle(Ind); */
-
 	/* Take a partial turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 
@@ -3934,11 +3731,8 @@ static void do_cmd_refill_torch(int Ind, int item)
 		j_ptr->timeout = FUEL_TORCH;
 		msg_print(Ind, "Your torch is fully fueled.");
 	}
-
 	/* Refuel message */
-	else {
-		msg_print(Ind, "Your torch glows more brightly.");
-	}
+	else msg_print(Ind, "Your torch glows more brightly.");
 
 	/* Decrease the item (from the pack) */
 	if (item >= 0) {
@@ -3965,10 +3759,8 @@ static void do_cmd_refill_torch(int Ind, int item)
 /*
  * Refill the players lamp, or restock his torches
  */
-void do_cmd_refill(int Ind, int item)
-{
+void do_cmd_refill(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-
 	object_type *o_ptr;
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
@@ -3989,26 +3781,21 @@ void do_cmd_refill(int Ind, int item)
 	}
 
 	/* It's a lamp */
-	else if (o_ptr->sval == SV_LITE_LANTERN) {
+	else if (o_ptr->sval == SV_LITE_LANTERN)
 		do_cmd_refill_lamp(Ind, item);
-	}
 
 	/* It's a torch */
-	else if (o_ptr->sval == SV_LITE_TORCH) {
+	else if (o_ptr->sval == SV_LITE_TORCH)
 		do_cmd_refill_torch(Ind, item);
-	}
 
 	/* No torch to refill */
-	else {
-		msg_print(Ind, "Your light cannot be refilled.");
-	}
+	else msg_print(Ind, "Your light cannot be refilled.");
 }
 
 /*
  * Refill the players lamp, or restock his torches automatically.	- Jir -
  */
-bool do_auto_refill(int Ind)
-{
+bool do_auto_refill(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	object_type *o_ptr;
@@ -4070,25 +3857,23 @@ bool do_auto_refill(int Ind)
 /*
  * Target command
  */
-void do_cmd_target(int Ind, int dir)
-{
+void do_cmd_target(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Set the target */
 	if (target_set(Ind, dir) && !p_ptr->taciturn_messages) {
-//		msg_print(Ind, "Target Selected.");
+		//msg_print(Ind, "Target Selected.");
 	} else {
 		/*msg_print(Ind, "Target Aborted.");*/
 	}
 }
 
-void do_cmd_target_friendly(int Ind, int dir)
-{
+void do_cmd_target_friendly(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Set the target */
 	if (target_set_friendly(Ind, dir) && !p_ptr->taciturn_messages) {
-//		msg_print(Ind, "Target Selected.");
+		//msg_print(Ind, "Target Selected.");
 	} else {
 		/*msg_print(Ind, "Target Aborted.");*/
 	}
@@ -4215,6 +4000,7 @@ void do_cmd_look(int Ind, int dir) {
 	struct c_special *cs_ptr;
 
 	char out_val[MSG_LEN], tmp_val[MSG_LEN];
+
 
 	if (!(zcave = getcave(wpos))) return;
 
@@ -4917,20 +4703,15 @@ void do_cmd_query_symbol(int Ind, char sym) {
 
 
 	/* If no symbol, abort --KLJ-- */
-	if (!sym)
-		return;
+	if (!sym) return;
 
 	/* Find that character info, and describe it */
-	for (i = 0; ident_info[i]; ++i) {
+	for (i = 0; ident_info[i]; ++i)
 		if (sym == ident_info[i][0]) break;
-	}
 
 	/* Describe */
-	if (ident_info[i]) {
-		sprintf(buf, "%c - %s.", sym, ident_info[i] + 2);
-	} else {
-		sprintf(buf, "%c - %s.", sym, "Unknown Symbol");
-	}
+	if (ident_info[i]) sprintf(buf, "%c - %s.", sym, ident_info[i] + 2);
+	else sprintf(buf, "%c - %s.", sym, "Unknown Symbol");
 
 	/* Display the result */
 	msg_print(Ind, buf);
