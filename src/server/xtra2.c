@@ -5885,10 +5885,11 @@ bool monster_death(int Ind, int m_idx) {
 			/* Hack credit manually, as this monster has RF9_NO_CREDIT */
 			p_ptr->r_killed[RI_MIRROR] = 1;
 
-			/* SV_POTION_EXPERIENCE effect applied (keep consistent!) */
+			/* ~double SV_POTION_EXPERIENCE effect applied (keep consistent!) */
 			if (p_ptr->exp < PY_MAX_EXP) {
-				s32b ee = (p_ptr->exp / 2) + 10;
-				if (ee > 100000L) ee = 100000L;
+				s32b ee = p_ptr->exp + 10;
+
+				if (ee > 200000L) ee = 200000L;
 #ifdef ALT_EXPRATIO
 				ee = (ee * (s64b)p_ptr->expfact) / 100L; /* give same amount to anyone */
 #endif
