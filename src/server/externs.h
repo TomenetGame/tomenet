@@ -1381,6 +1381,7 @@ extern void combine_pack(int Ind);
 extern void reorder_pack(int Ind);
 extern void setup_objects(void);
 extern s16b m_bonus(int max, int level);
+extern s64b object_value_base(int Ind, object_type *o_ptr);
 extern s64b object_value_real(int Ind, object_type *o_ptr);
 extern s64b artifact_value_real(int Ind, object_type *o_ptr);
 extern s32b flag_cost(object_type *o_ptr, int plusses);
@@ -1871,6 +1872,7 @@ extern void view_exploration_records(int Ind);
 extern void view_exploration_history(int Ind);
 extern void reward_deed_item(int Ind, int item);
 extern void reward_deed_blessing(int Ind, int item);
+extern u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type);
 extern s64b price_item_player_store(int Ind, object_type *o_ptr);
 extern void view_highest_levels(int Ind);
 

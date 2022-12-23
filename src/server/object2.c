@@ -1473,7 +1473,7 @@ void object_tried(int Ind, object_type *o_ptr, bool flipped) {
  * Return the "value" of an "unknown" item
  * Make a guess at the value of non-aware items
  */
-static s64b object_value_base(int Ind, object_type *o_ptr) {
+s64b object_value_base(int Ind, object_type *o_ptr) {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 	/* Aware item -- use template cost */
@@ -2235,17 +2235,10 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 
 		/* keep consistent with store.c: price_item():
 		   This price will be the store-sells price so it must be higher than the store-buys price there. */
-		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) {
-			if (o_ptr->pval != 0) {
-				monster_race *r_ptr = &r_info[o_ptr->pval];
-				int r_val = (r_ptr->level * r_ptr->mexp + (120 + (r_ptr->speed - 90) * 4) * (50000 / ((50000 / (r_ptr->hdice * r_ptr->hside)) + 20))) / 3; /* mimic-like HP calc */
-
-				value += (r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100;
-			}
-		}
+		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) value += price_poly_ring(0, o_ptr, 1);
 
 		/* Give credit for bonuses */
-//		value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
+		//value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 		value += ((PRICE_BOOST(o_ptr->to_h, 12, 4) +
 			PRICE_BOOST(o_ptr->to_d, 7, 3) +
@@ -3160,12 +3153,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 		if (o_ptr->to_h < 0) return(0L);
 		if (o_ptr->to_d < 0) return(0L);
 #endif
-		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) {
-			monster_race *r_ptr = &r_info[o_ptr->pval];
-			int r_val = (r_ptr->level * r_ptr->mexp + (120 + (r_ptr->speed - 90) * 4) * (50000 / ((50000 / (r_ptr->hdice * r_ptr->hside)) + 20))) / 3; /* mimic-like HP calc */
-
-			value += (r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100;
-		}
+		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) value += price_poly_ring(0, o_ptr, 1);
 
 		/* Give credit for bonuses */
 //		value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);

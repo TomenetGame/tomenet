@@ -319,14 +319,7 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 
 		/* To prevent cheezing; keep consistent with object2.c: object_value_real():
 		   This store-buys price must be way lower than the store-sells price there. */
-		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) {
-			price = k_info[o_ptr->k_idx].cost;
-			if (o_ptr->pval != 0) {
-				price += r_info[o_ptr->pval].level * 100;
-				//price += (r_info[o_ptr->pval].level * r_info[o_ptr->pval].mexp) / 500;
-			}
-			if (o_ptr->name2) price += e_info[o_ptr->name2b].cost; /* 'Indestructible' ego, pft */
-		}
+		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) price = price_poly_ring(Ind, o_ptr, 0);
 
 		/* Mega-Hack -- Black market sucks */
 		if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) price /= 4;
@@ -415,6 +408,76 @@ static int player_store_factor(object_type *o_ptr, bool modified) {
 	else return PSTORE_FACTOR;
 }
 
+/* shop_type:
+ 0: npc store buys
+ 1: used as modifier in object_value_real() (for: npc store sells) - doesn't include base item value or ego power pricing or discount, only the form cost!
+ 2: player store
+ Ind matters only for type 0. TODO: For type 2 it should also matter, but this needs change in price_item_player_store()!
+*/
+u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
+	u32b price = 0;
+	monster_race *r_ptr;
+	u64b r_val = 0;
+
+	if (o_ptr->pval) {
+		u64b x, y, z, xp;
+
+		r_ptr = &r_info[o_ptr->pval];
+		xp = r_ptr->mexp;
+		/* Supa experimental: Actually a lower level for a more powerful form is GOOD!? */
+		x = (200 - r_ptr->level) / 10; //50; //(r_ptr->level + 100) / 5;
+		y = ((100 + xp) * (100 + xp)) / 10000;
+		z = (3 * (120 + (r_ptr->speed - 90) * 3) * (50000 / ((50000 / (r_ptr->hdice * r_ptr->hside)) + 20))) / 3; /* mimic-like HP calc sort of */
+		r_val = x * y + z;
+	}
+
+	switch (shop_type) {
+	case 0:
+		/* npc shop buys: very cheap */
+		/* We have to manually handle whether the player has IDed / knows the ring flavour or not! */
+		if (!object_known_p(Ind, o_ptr) && !object_aware_p(Ind, o_ptr)) {
+			price = object_value_base(Ind, o_ptr);
+			/* Apply discount (if any) */
+			if (o_ptr->discount) price -= (price * o_ptr->discount / 100L);
+			return(price);
+		}
+		price = k_info[o_ptr->k_idx].cost;
+		if (!price) return(0);
+		if (!object_known_p(Ind, o_ptr)) return(price);
+
+		if (o_ptr->name2) price += e_info[o_ptr->name2b].cost; /* 'Indestructible' ego, pft */
+		if (o_ptr->pval != 0) price += r_info[o_ptr->pval].level * 100;
+		break;
+	case 1:
+		/* npc shop sells: very expensive */
+		if (o_ptr->pval != 0) price += (r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100;
+		break;
+	case 2:
+		/* player store: balanced */
+		if (Ind && !object_known_p(Ind, o_ptr) && !object_aware_p(Ind, o_ptr)) {
+			price = object_value_base(Ind, o_ptr);
+			/* Apply discount (if any) */
+			if (o_ptr->discount) price -= (price * o_ptr->discount / 100L);
+			return(price);
+		}
+		price = k_info[o_ptr->k_idx].cost;
+		if (!price) return(0);
+		if (Ind && !object_known_p(Ind, o_ptr)) return(price * player_store_factor(o_ptr, FALSE));
+
+		if (o_ptr->name2) price += e_info[o_ptr->name2b].cost; /* 'Indestructible' ego, pft */
+		if (o_ptr->pval != 0) {
+			r_val /= 2; //half price of npc stores
+			price += (r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100;
+		}
+		//price *= player_store_factor(o_ptr, FALSE);
+
+		//note: o_ptr->discount doesn't apply in player stores
+		break;
+	}
+
+	return (price);
+}
+
 /* new hack: specify Ind to set the item's value; Ind == 0 -> retrieve it! */
 s64b price_item_player_store(int Ind, object_type *o_ptr) {
 	s64b price, final_price;
@@ -446,13 +509,15 @@ s64b price_item_player_store(int Ind, object_type *o_ptr) {
 		int discount = o_ptr->discount;
 
 		o_ptr->discount = 0;
-		price = object_value(Ind, o_ptr) * player_store_factor(o_ptr, FALSE); /* default: n * base price */
+		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) price = price_poly_ring(Ind, o_ptr, 2);
+		else price = object_value(Ind, o_ptr) * player_store_factor(o_ptr, FALSE); /* default: n * base price */
 		o_ptr->discount = discount;
 		o_ptr->appraised_value = price + 1;
 	}
 	/* Backward compatibility - converted old, unappraised items: */
 	else if (!o_ptr->appraised_value) {
-		price = object_value_real(0, o_ptr) * player_store_factor(o_ptr, FALSE); /* default: n * base price */
+		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) price = price_poly_ring(0, o_ptr, 2);
+		else price = object_value_real(0, o_ptr) * player_store_factor(o_ptr, FALSE); /* default: n * base price */
 		o_ptr->appraised_value = price + 1;
 	}
 	/* Retrieve stored value: */
