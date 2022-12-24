@@ -2307,7 +2307,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 #else
 	if (init_search_string && init_search_string[0] == '-' && !init_search_string[2]) {
  #ifdef WINDOWS
-		strcpy(init_search_string, "POSIX COMMAND-LINE OPTIONS");
+		strcpy(init_search_string, "WINDOWS COMMAND-LINE OPTIONS");
  #else
 		strcpy(init_search_string, "POSIX COMMAND-LINE OPTIONS");
  #endif
@@ -3659,7 +3659,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				}
 				if (my_strcasestr(buf, "Line") && (my_strcasestr(buf, "command") || my_strcasestr(buf, "cmd"))) {
 #ifdef WINDOWS
-					strcpy(buf, "POSIX COMMAND-LINE OPTIONS");
+					strcpy(buf, "WINDOWS COMMAND-LINE OPTIONS");
 #else
 					strcpy(buf, "POSIX COMMAND-LINE OPTIONS");
 #endif
