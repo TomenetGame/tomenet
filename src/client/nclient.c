@@ -4394,6 +4394,9 @@ int Receive_special_line(void) {
 	s32b	max, line;
 	char	buf[ONAME_LEN]; /* Allow colour codes! (was: MAX_CHARS, which is just 80) */
 	int	x, y, phys_line;
+#ifdef REGEX_SEARCH
+	bool	regexp_ok = is_atleast(&server_version, 4, 9, 0, 0, 0, 0);
+#endif
 
 	if (is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%d%d%c%I", &ch, &max, &line, &attr, buf)) <= 0) return n;
@@ -4429,13 +4432,21 @@ int Receive_special_line(void) {
 			if (cur_line + special_page_size >= max_line)
 				c_prt(TERM_ORANGE, format("[Space/p/Enter/BkSpc/g/G/#%s navigate,%s ESC exit.] (%d-%d/%d)",
 				    //(p_ptr->admin_dm || p_ptr->admin_wiz) ? "/s/d/D" : "",
+#ifdef REGEX_SEARCH
+				    regexp_ok ? "/s/d/D/r" : "/s/d/D",
+#else
 				    "/s/d/D",
+#endif
 				    my_strcasestr(special_line_title, "unique monster") ? " ! best," : "",
 				    cur_line + 1, max_line , max_line), 23 + HGT_PLUS, 0);
 			else
 				c_prt(TERM_L_WHITE, format("[Space/p/Enter/BkSpc/g/G/#%s navigate,%s ESC exit.] (%d-%d/%d)",
 				    //(p_ptr->admin_dm || p_ptr->admin_wiz) ? "/s/d/D" : "",
+#ifdef REGEX_SEARCH
+				    regexp_ok ? "/s/d/D/r" : "/s/d/D",
+#else
 				    "/s/d/D",
+#endif
 				    my_strcasestr(special_line_title, "unique monster") ? " ! best," : "",
 				    cur_line + 1, cur_line + special_page_size, max_line), 23 + HGT_PLUS, 0);
 		}

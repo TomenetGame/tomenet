@@ -22,6 +22,12 @@
 #endif
 #endif
 
+#define REGEX_SEARCH
+#ifdef REGEX_SEARCH
+ #include <regex.h>
+ #define REGEXP_ARRAY_SIZE 1
+#endif
+
 /* The first x highscore entries that are displayed to players: */
 #define SCORES_SHOWN 28
 
@@ -551,7 +557,7 @@ void display_player(int Ind) {
 #define SERVER_SIDE_SEARCH
 static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color, int divl, char *srcstr) {
 	int lines_per_page = 20 + HGT_PLUS;
-	bool searching = (srcstr && srcstr[0]), found = FALSE, reverse = FALSE;
+	bool searching = (srcstr && srcstr[0]), found = FALSE, reverse = FALSE, regexp;
 	int i, k = 0, srclinepre = -1, srclinepost = -1, srcline = -1, srclinerev = -1, srclinerevwrap = -1;
 	/* Number of "real" lines passed by */
 	s32b next = 0;
@@ -587,6 +593,12 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 		strcpy(buf, srcstr + 1);
 		strcpy(srcstr, buf);
 		reverse = TRUE;
+	}
+
+	/* Hack: Extract regexp flag */
+	if (line >= 1000000000) {
+		line -= 1000000000;
+		regexp = TRUE;
 	}
 
 	if (is_newer_than(&Players[Ind]->version, 4, 4, 7, 0, 0, 0)) {
@@ -707,10 +719,27 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 #ifdef SERVER_SIDE_SEARCH
 		/* Pre-Search: Find 1st match from start of file and 1st match after current line */
 		if (searching) {
-			if (srclinepre == -1 && next < line + 1 && my_strcasestr(buf, srcstr)) srclinepre = next - 1;
-			if (srclinepost == -1 && next > line + 1 && my_strcasestr(buf, srcstr)) srclinepost = next - 1;
-			if (next < line + 1 && my_strcasestr(buf, srcstr)) srclinerev = next - 1;
-			if (next > line + 1 && my_strcasestr(buf, srcstr)) srclinerevwrap = next - 1;
+ #ifdef REGEX_SEARCH
+			if (regexp) {
+				regex_t re_src;
+				int ires = regcomp(&re_src, srcstr, REG_EXTENDED | REG_ICASE);
+
+				if (ires != 0) msg_print(Ind, "\377oInvalid regular expression.");
+				else {
+					if (srclinepre == -1 && next < line + 1 && my_strregexp_skipcol(buf, re_src, NULL, NULL, NULL)) srclinepre = next - 1;
+					if (srclinepost == -1 && next > line + 1 && my_strregexp_skipcol(buf, re_src, NULL, NULL, NULL)) srclinepost = next - 1;
+					if (next < line + 1 && my_strregexp_skipcol(buf, re_src, NULL, NULL, NULL)) srclinerev = next - 1;
+					if (next > line + 1 && my_strregexp_skipcol(buf, re_src, NULL, NULL, NULL)) srclinerevwrap = next - 1;
+				}
+				regfree(&re_src);
+			} else
+ #endif
+			{
+				if (srclinepre == -1 && next < line + 1 && my_strcasestr(buf, srcstr)) srclinepre = next - 1;
+				if (srclinepost == -1 && next > line + 1 && my_strcasestr(buf, srcstr)) srclinepost = next - 1;
+				if (next < line + 1 && my_strcasestr(buf, srcstr)) srclinerev = next - 1;
+				if (next > line + 1 && my_strcasestr(buf, srcstr)) srclinerevwrap = next - 1;
+			}
 		}
 #endif
 	}

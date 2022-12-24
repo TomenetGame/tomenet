@@ -1186,6 +1186,10 @@ void peruse_file(void) {
 	char tmp[80];
 	static char srcstr[80] = { 0 };
 	bool searching = FALSE, reverse = FALSE;
+#ifdef REGEX_SEARCH
+	static bool regexp = FALSE;
+	bool regexp_ok = is_atleast(&server_version, 4, 9, 0, 0, 0, 0);
+#endif
 	bool old_inkey_msg, old_inkey_interact_macros = inkey_interact_macros;
 
 	/* Initialize */
@@ -1219,7 +1223,11 @@ void peruse_file(void) {
 				reverse = FALSE;
 			} else strcpy(tmp, srcstr);
 		}
+#ifdef REGEX_SEARCH
+		Send_special_line(special_line_type, cur_line + ((regexp && regexp_ok) ? 1000000000 : 0), searching ? tmp : ""); //+1000000000: not backwards compatible, requires 4.9.0+ server
+#else
 		Send_special_line(special_line_type, cur_line, searching ? tmp : "");
+#endif
 		searching = FALSE;
 
 		/* Show a general "title" */
@@ -1237,13 +1245,21 @@ void peruse_file(void) {
 		if (cur_line + special_page_size >= max_line)
 			c_prt(TERM_ORANGE, format("[Space/p/Enter/BkSpc/g/G/#%s navigate,%s ESC exit.] (%d-%d/%d)",
 			    //(p_ptr->admin_dm || p_ptr->admin_wiz) ? "/s/d/D" : "",
+#ifdef REGEX_SEARCH
+			    regexp_ok ? "/s/d/D/r" : "/s/d/D",
+#else
 			    "/s/d/D",
+#endif
 			    my_strcasestr(special_line_title, "unique monster") ? " ! best," : "",
 			    cur_line + 1, max_line , max_line), 23 + HGT_PLUS, 0);
 		else
 			c_prt(TERM_L_WHITE, format("[Space/p/Enter/BkSpc/g/G/#%s navigate,%s ESC exit.] (%d-%d/%d)",
 			    //(p_ptr->admin_dm || p_ptr->admin_wiz) ? "/s/d/D" : "",
+#ifdef REGEX_SEARCH
+			    regexp_ok ? "/s/d/D/r" : "/s/d/D",
+#else
 			    "/s/d/D",
+#endif
 			    my_strcasestr(special_line_title, "unique monster") ? " ! best," : "",
 			    cur_line + 1, cur_line + special_page_size, max_line), 23 + HGT_PLUS, 0);
 		/* Get a keypress -
@@ -1273,7 +1289,6 @@ void peruse_file(void) {
 			if (askfor_aux(tmp, 10, 0)) cur_line = atoi(tmp);
 			inkey_msg = old_inkey_msg;
 		}
-
 		/* Hack -- search for string */
 		if (k == 's') {
 			prt(format("Search for text: ", max_line), 23 + HGT_PLUS, 0);
@@ -1286,7 +1301,27 @@ void peruse_file(void) {
 				strcpy(srcstr, tmp);
 			}
 			inkey_msg = old_inkey_msg;
+#ifdef REGEX_SEARCH
+			regexp = FALSE;
+#endif
 		}
+#ifdef REGEX_SEARCH
+		/* Hack -- search for regexp string */
+		if (k == 'r' && regexp_ok) {
+			prt(format("Search for regexp: ", max_line), 23 + HGT_PLUS, 0);
+			//tmp[0] = 0;
+			strcpy(tmp, srcstr);
+			old_inkey_msg = inkey_msg;
+			inkey_msg = TRUE;
+			if (askfor_aux(tmp, 60, 0)) {
+				searching = TRUE;
+				regexp = TRUE;
+				strcpy(srcstr, tmp);
+			}
+			inkey_msg = old_inkey_msg;
+			regexp = TRUE;
+		}
+#endif
 		/* Search for next occurance */
 		if (k == 'd' && srcstr[0]) searching = TRUE;
 		/* Search for previous occurance */

@@ -12550,6 +12550,7 @@ static int Receive_special_line(int ind) {
 		}
 	} else {
 		s16b old_line;
+
 		if ((n = Packet_scanf(&connp->r, "%c%c%hd", &ch, &type, &old_line)) <= 0) {
 			if (n == -1) Destroy_connection(ind, "read error");
 			return n;

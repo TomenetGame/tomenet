@@ -8,6 +8,11 @@
  * (z-virt.h, z-util.h, z-form.h, term.h, random.h)
  */
 
+#define REGEX_SEARCH
+#ifdef REGEX_SEARCH
+ /* Just for regex_t type in function parameters */
+ #include <regex.h>
+#endif
 
 /*
  * Automatically generated "variable" declarations
@@ -738,6 +743,9 @@ extern void version_build(void);
 extern char *my_strcasestr(const char *big, const char *little);
 extern char *my_strcasestr_skipcol(const char *big, const char *little, byte strict);
 extern char *my_strstr_skipcol(const char *big, const char *little, byte strict);
+#ifdef REGEX_SEARCH
+extern bool my_strregexp_skipcol(char *buf2, regex_t re_src, char *searchstr_re, char *withinsearch, int *next_start);
+#endif
 extern bool is_newer_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build);
 extern bool is_older_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build);
 extern bool is_same_as(version_type *version, int major, int minor, int patch, int extra, int branch, int build);

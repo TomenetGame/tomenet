@@ -1997,64 +1997,6 @@ void cmd_high_scores(void) {
 	peruse_file();
 }
 
-#ifdef REGEX_SEARCH
-/* custom str-search function for regexps, to use instead of my_strcasestr..().
-   buf2 = the normal string to search in
-   re_src = the compiled regexp to search for
-   searchstr_re = the uncompiled string the user entered (clone of searchstr, but that one gets nulled on first hit, so need this clone backup)
-   withinsearch = returns the actual matched string in 'buf2'
-   next_start = returns next position in 'buf2' to start subsequent search or -1 for once-per-line matches (^/$) */
-static bool my_strregexp_skipcol(char *buf2, regex_t re_src, char *searchstr_re, char *withinsearch, int *next_start) {
-	int i, i2;
-	char buf2_skipcol[MAX_CHARS * 2 + 1], *c_skipcol, offset[MAX_CHARS * 2 + 1];
-	regmatch_t pmatch[REGEXP_ARRAY_SIZE + 1];
-
-	/* Don't confuse the regexp-matcher with colour codes */
-	buf2_skipcol[0] = 0;
-	i = i2 = 0;
-	c_skipcol = buf2;
-	while (c_skipcol[i2]) {
-		while (c_skipcol[i2] == '\377') {
-			i2++;
-			if (c_skipcol[i2] != 0) i2++; //paranoia: broken colour code
-		}
-		buf2_skipcol[i] = c_skipcol[i2];
-		offset[i] = i2;
-		i++;
-		i2++;
-	}
-	buf2_skipcol[i] = 0;
-
-	if (regexec(&re_src, buf2_skipcol, REGEXP_ARRAY_SIZE, pmatch, 0)) return FALSE;
-
-	/* Testing & Paranoia :) */
-	//c_message_add(format("re_nsub=%d", i, re_src.re_nsub));
-	if (pmatch[0].rm_so == -1) return FALSE;
-	/* Actually disallow searches that match empty strings */
-	if (pmatch[0].rm_eo - pmatch[0].rm_so == 0) return FALSE;
-
-	/* Just take the first match of the line.. */
-	strcpy(withinsearch, buf2_skipcol + pmatch[0].rm_so);
-	withinsearch[pmatch[0].rm_eo - pmatch[0].rm_so] = 0;
-
- #if 0 /* not needed, as now all sub-matches are also found by this function */
-	/* Hack: Searching for ^ or $ will only colour one result per line */
-	if (searchstr_re[0] == '^' || searchstr_re[strlen(searchstr_re) - 1] == '$') *next_start = -1;
-	else
- #endif
-	*next_start = offset[pmatch[0].rm_eo];
-
- #if 0
-	c_message_add(format("buf2:%s",buf2));
-	c_message_add(format("buf2_skipcol:%s",buf2_skipcol));
-	c_message_add(format("searchstr_re:%s",searchstr_re));
-	c_message_add(format("withinsearch:%s",withinsearch));
-	c_message_add(format("next_start:%d,so=%d,eo=%d,os=%d", *next_start, pmatch[0].rm_so, pmatch[0].rm_eo, offset[pmatch[0].rm_so]));
- #endif
-	return TRUE;
-}
-#endif
-
 //#ifndef BUFFER_GUIDE
 static char *fgets_inverse(char *buf, int max, FILE *f) {
 	int c, res, pos;
