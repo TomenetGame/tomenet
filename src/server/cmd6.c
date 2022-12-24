@@ -1403,7 +1403,6 @@ void do_cmd_drink_fountain(int Ind) {
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
-
 	/* HACK (sorta bad): if there's an item on the grid,
 	   tell us which it is, instead of trying to drink from
 	   a fountain! - C. Blue */
@@ -1412,11 +1411,10 @@ void do_cmd_drink_fountain(int Ind) {
 		return;
 	}
 
-
 	/* decided to allow players in WRAITHFORM to drink ;) */
 	if (p_ptr->ghost) {
 		msg_print(Ind, "Ghosts cannot interact.");
-		return;
+		if (!is_admin(p_ptr)) return;
 	}
 
 	if (c_ptr->feat == FEAT_EMPTY_FOUNTAIN) {
