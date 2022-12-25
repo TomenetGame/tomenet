@@ -255,7 +255,7 @@ void do_cmd_messages(void) {
 		    i, i + j - 1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
-		prt("[p/n/g/G/# navi, f filedump, CTRL+K copy last line, / search, = mark, ESC exit]", 23 + HGT_PLUS, 0);
+		prt("[p/n/g/G/# navi, f file, CTRL+K copy last line, / search, r regexp, = mark, ESC]", 23 + HGT_PLUS, 0);
 
 		/* Get a command */
 		k = inkey();
@@ -608,7 +608,7 @@ void do_cmd_messages_important(void) {
 		    i, i + j - 1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
-		prt("[p/n/g/G/# navi, f filedump, CTRL+K copy last line, / search, = mark, ESC exit]", 23 + HGT_PLUS, 0);
+		prt("[p/n/g/G/# navi, f file, CTRL+K copy last line, / search, r regexp, = mark, ESC]", 23 + HGT_PLUS, 0);
 
 		/* Get a command */
 		k = inkey();
