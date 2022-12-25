@@ -135,6 +135,9 @@ void do_cmd_messages(void) {
 	cptr nomsg_target = "Target selected.";
 	cptr nomsg_map = "Map sector ";
 
+	bool regexp = FALSE, marked; //REGEX_SEARCH
+
+
 	/* Total messages */
 	n = message_num();
 	nn = 0;  /* number of new messages */
@@ -223,24 +226,58 @@ void do_cmd_messages(void) {
 			}
 
 			/* Handle "shower" */
-			if (shower[0] && my_strcasestr(msg3, shower)) {
-				char tmp[MSG_LEN], *tc = tmp;
-				const char *tm = msg3;
+			marked = FALSE;
+			if (shower[0]) {
+				if (!regexp) {
+					if (my_strcasestr(msg3, shower)) {
+						char tmp[MSG_LEN], *tc = tmp;
+						const char *tm = msg3;
 
-				/* Lines can contain a lot of colour codes that would override this one, so we have to strip them first */
-				while (*tm) {
-					if (*tm == '\377') {
-						tm++;
-						if (*tm) tm++;
-						continue;
+						/* Lines can contain a lot of colour codes that would override this one, so we have to strip them first */
+						while (*tm) {
+							if (*tm == '\377') {
+								tm++;
+								if (*tm) tm++;
+								continue;
+							}
+							*tc = *tm;
+							tc++;
+							tm++;
+						}
+						*tc = 0;
+						Term_putstr(0, 21 + HGT_PLUS - j, -1, TERM_SELECTOR, tmp);
+						marked = TRUE;
 					}
-					*tc = *tm;
-					tc++;
-					tm++;
+				} else {
+					regex_t re_src;
+					regmatch_t pmatch[REGEX_ARRAY_SIZE + 1];
+
+					regcomp(&re_src, shower, REG_EXTENDED | REG_ICASE);
+					//if (ires != 0) --paranoia
+
+					if (!regexec(&re_src, msg3, REGEX_ARRAY_SIZE, pmatch, 0) && pmatch[0].rm_so != -1 && pmatch[0].rm_eo - pmatch[0].rm_so != 0) {
+						char tmp[MSG_LEN], *tc = tmp;
+						const char *tm = msg3;
+
+						/* Lines can contain a lot of colour codes that would override this one, so we have to strip them first */
+						while (*tm) {
+							if (*tm == '\377') {
+								tm++;
+								if (*tm) tm++;
+								continue;
+							}
+							*tc = *tm;
+							tc++;
+							tm++;
+						}
+						*tc = 0;
+						Term_putstr(0, 21 + HGT_PLUS - j, -1, TERM_SELECTOR, tmp);
+						marked = TRUE;
+					}
+					regfree(&re_src);
 				}
-				*tc = 0;
-				Term_putstr(0, 21 + HGT_PLUS - j, -1, TERM_SELECTOR, tmp);
-			} else { /* Normal line processing (ie no shower set) */
+			}
+			if (!marked) { /* Normal line processing (ie no shower set) */
 				/* Dump the messages, bottom to top */
 				Term_putstr(0, 21 + HGT_PLUS - j, -1, a, (char*)msg3);
 			}
@@ -358,6 +395,7 @@ void do_cmd_messages(void) {
 					break;
 				}
 			}
+			regexp = FALSE;
 		}
 #ifdef REGEX_SEARCH
 		/* Regexp search */
@@ -400,14 +438,15 @@ void do_cmd_messages(void) {
 
 				/* Hack -- also show */
 				//strcpy(shower, str);  --not the whole line, just the search string, or we only highlight exact duplicate lines somewhere
-				//strcpy(shower, finder); //make the search string also the highlight show-string
-				strcpy(shower, str);
+				strcpy(shower, finder); //make the search string also the highlight show-string
+				//strcpy(shower, re_src);
 
 				/* Done */
 				regfree(&re_src);
 				break;
 			}
 			if (z == n) regfree(&re_src);
+			regexp = TRUE;
 		}
 #endif
 
@@ -523,6 +562,9 @@ void do_cmd_messages_important(void) {
 	/* or after AFK) 					       */
 	cptr message_important[MESSAGE_MAX] = {0};
 
+	bool regexp = FALSE, marked; //REGEX_SEARCH
+
+
 	/* Display messages in different colors */
 
 	/* we use a dedicated important-scrollback-buffer to allow longer scrollbacks after message buffer got flooded with lots of combat messages */
@@ -580,24 +622,58 @@ void do_cmd_messages_important(void) {
 			}
 
 			/* Handle "shower" */
-			if (shower[0] && my_strcasestr(msg3, shower)) {
-				char tmp[MSG_LEN], *tc = tmp;
-				const char *tm = msg3;
+			marked = FALSE;
+			if (shower[0]) {
+				if (!regexp) {
+					if (my_strcasestr(msg3, shower)) {
+						char tmp[MSG_LEN], *tc = tmp;
+						const char *tm = msg3;
 
-				/* Lines can contain a lot of colour codes that would override this one, so we have to strip them first */
-				while (*tm) {
-					if (*tm == '\377') {
-						tm++;
-						if (*tm) tm++;
-						continue;
+						/* Lines can contain a lot of colour codes that would override this one, so we have to strip them first */
+						while (*tm) {
+							if (*tm == '\377') {
+								tm++;
+								if (*tm) tm++;
+								continue;
+							}
+							*tc = *tm;
+							tc++;
+							tm++;
+						}
+						*tc = 0;
+						Term_putstr(0, 21 + HGT_PLUS - j, -1, TERM_SELECTOR, tmp);
+						marked = TRUE;
 					}
-					*tc = *tm;
-					tc++;
-					tm++;
+				} else {
+					regex_t re_src;
+					regmatch_t pmatch[REGEX_ARRAY_SIZE + 1];
+
+					regcomp(&re_src, shower, REG_EXTENDED | REG_ICASE);
+					//if (ires != 0) --paranoia
+
+					if (!regexec(&re_src, msg3, REGEX_ARRAY_SIZE, pmatch, 0) && pmatch[0].rm_so != -1 && pmatch[0].rm_eo - pmatch[0].rm_so != 0) {
+						char tmp[MSG_LEN], *tc = tmp;
+						const char *tm = msg3;
+
+						/* Lines can contain a lot of colour codes that would override this one, so we have to strip them first */
+						while (*tm) {
+							if (*tm == '\377') {
+								tm++;
+								if (*tm) tm++;
+								continue;
+							}
+							*tc = *tm;
+							tc++;
+							tm++;
+						}
+						*tc = 0;
+						Term_putstr(0, 21 + HGT_PLUS - j, -1, TERM_SELECTOR, tmp);
+						marked = TRUE;
+					}
+					regfree(&re_src);
 				}
-				*tc = 0;
-				Term_putstr(0, 21 + HGT_PLUS - j, -1, TERM_SELECTOR, tmp);
-			} else { /* Normal line processing (ie no shower set) */
+			}
+			if (!marked) { /* Normal line processing (ie no shower set) */
 				/* Dump the messages, bottom to top */
 				Term_putstr(0, 21 + HGT_PLUS - j, -1, a, (char*)msg3);
 			}
@@ -712,6 +788,7 @@ void do_cmd_messages_important(void) {
 					break;
 				}
 			}
+			regexp = FALSE;
 		}
 #ifdef REGEX_SEARCH
 		/* Regexp search */
@@ -754,14 +831,15 @@ void do_cmd_messages_important(void) {
 
 				/* Hack -- also show */
 				//strcpy(shower, str);  --not the whole line, just the search string, or we only highlight exact duplicate lines somewhere
-				//strcpy(shower, finder); //make the search string also the highlight show-string
-				strcpy(shower, str);
+				strcpy(shower, finder); //make the search string also the highlight show-string
+				//strcpy(shower, re_src);
 
 				/* Done */
 				regfree(&re_src);
 				break;
 			}
 			if (z == n) regfree(&re_src);
+			regexp = TRUE;
 		}
 #endif
 
