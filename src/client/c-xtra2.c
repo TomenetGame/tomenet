@@ -3,6 +3,11 @@
 
 #include "angband.h"
 
+#define REGEX_SEARCH
+#ifdef REGEX_SEARCH
+ #include <regex.h>
+ #define REGEXP_ARRAY_SIZE 1
+#endif
 
 /* When copying to clipboard, attempt to combine long chat messages that got
    split up into multiple lines together again. (msg_print() breaks them up.) */
@@ -321,9 +326,9 @@ void do_cmd_messages(void) {
 		/* FIXME -- (x4) compressing seems to ruin it */
 		if (k == '/') {
 			int z;
-			/* suppress hybrid macros */
 			bool inkey_msg_old = inkey_msg;
 
+			/* suppress hybrid macros */
 			inkey_msg = TRUE;
 
 			/* Prompt */
@@ -337,7 +342,7 @@ void do_cmd_messages(void) {
 			inkey_msg = inkey_msg_old;
 
 			/* Scan messages */
-			for (z = i + 1; z < n; z++) {
+			for (z = i; z < n; z++) {
 				cptr str = message_recall[z];//message_str(z);
 
 				/* Handle "shower" */
@@ -354,6 +359,57 @@ void do_cmd_messages(void) {
 				}
 			}
 		}
+#ifdef REGEX_SEARCH
+		/* Regexp search */
+		if (k == 'r') {
+			int ires = -999;
+			regex_t re_src;
+			regmatch_t pmatch[REGEXP_ARRAY_SIZE + 1];
+
+			int z;
+			bool inkey_msg_old = inkey_msg;
+
+			/* suppress hybrid macros */
+			inkey_msg = TRUE;
+			/* Prompt */
+			prt("Find: ", 23 + HGT_PLUS, 0);
+			/* Get a "finder" string, or continue */
+			if (!askfor_aux(finder, 79, 0)) {
+				inkey_msg = inkey_msg_old;
+				continue;
+			}
+			inkey_msg = inkey_msg_old;
+
+			ires = regcomp(&re_src, finder, REG_EXTENDED | REG_ICASE);
+			if (ires != 0) {
+				c_msg_format("\377yInvalid regular expression (%d).", ires);
+				continue;
+			}
+
+			/* Scan messages */
+			for (z = i; z < n; z++) {
+				cptr str = message_recall[z];//message_str(z);
+
+				if (regexec(&re_src, str, REGEXP_ARRAY_SIZE, pmatch, 0)) continue;
+				if (pmatch[0].rm_so == -1) continue;
+				/* Actually disallow searches that match empty strings */
+				if (pmatch[0].rm_eo - pmatch[0].rm_so == 0) continue;
+
+				/* New location */
+				i = z;
+
+				/* Hack -- also show */
+				//strcpy(shower, str);  --not the whole line, just the search string, or we only highlight exact duplicate lines somewhere
+				//strcpy(shower, finder); //make the search string also the highlight show-string
+				strcpy(shower, str);
+
+				/* Done */
+				regfree(&re_src);
+				break;
+			}
+			if (z == n) regfree(&re_src);
+		}
+#endif
 
 		/* Recall 1 older message */
 		if ((k == '8') || (k == '\b') || k == 'k') {
@@ -604,6 +660,7 @@ void do_cmd_messages_important(void) {
 		if (k == '=') {
 			/* suppress hybrid macros */
 			bool inkey_msg_old = inkey_msg;
+
 			inkey_msg = TRUE;
 
 			/* Prompt */
@@ -639,7 +696,7 @@ void do_cmd_messages_important(void) {
 			inkey_msg = inkey_msg_old;
 
 			/* Scan messages */
-			for (z = i + 1; z < n; z++) {
+			for (z = i; z < n; z++) {
 				cptr str = message_important[z];//message_str_impscroll(z);
 
 				/* Handle "shower" */
@@ -656,6 +713,57 @@ void do_cmd_messages_important(void) {
 				}
 			}
 		}
+#ifdef REGEX_SEARCH
+		/* Regexp search */
+		if (k == 'r') {
+			int ires = -999;
+			regex_t re_src;
+			regmatch_t pmatch[REGEXP_ARRAY_SIZE + 1];
+
+			int z;
+			bool inkey_msg_old = inkey_msg;
+
+			/* suppress hybrid macros */
+			inkey_msg = TRUE;
+			/* Prompt */
+			prt("Find: ", 23 + HGT_PLUS, 0);
+			/* Get a "finder" string, or continue */
+			if (!askfor_aux(finder, 79, 0)) {
+				inkey_msg = inkey_msg_old;
+				continue;
+			}
+			inkey_msg = inkey_msg_old;
+
+			ires = regcomp(&re_src, finder, REG_EXTENDED | REG_ICASE);
+			if (ires != 0) {
+				c_msg_format("\377yInvalid regular expression (%d).", ires);
+				continue;
+			}
+
+			/* Scan messages */
+			for (z = i; z < n; z++) {
+				cptr str = message_important[z];//message_str(z);
+
+				if (regexec(&re_src, str, REGEXP_ARRAY_SIZE, pmatch, 0)) continue;
+				if (pmatch[0].rm_so == -1) continue;
+				/* Actually disallow searches that match empty strings */
+				if (pmatch[0].rm_eo - pmatch[0].rm_so == 0) continue;
+
+				/* New location */
+				i = z;
+
+				/* Hack -- also show */
+				//strcpy(shower, str);  --not the whole line, just the search string, or we only highlight exact duplicate lines somewhere
+				//strcpy(shower, finder); //make the search string also the highlight show-string
+				strcpy(shower, str);
+
+				/* Done */
+				regfree(&re_src);
+				break;
+			}
+			if (z == n) regfree(&re_src);
+		}
+#endif
 
 		/* Recall 1 older message */
 		if ((k == '8') || (k == '\b') || k == 'k') {
