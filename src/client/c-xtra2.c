@@ -307,8 +307,9 @@ void do_cmd_messages(void) {
 		if (k == '#') {
 			/* suppress hybrid macros */
 			bool inkey_msg_old = inkey_msg;
-			inkey_msg = TRUE;
 			char tmp[80];
+
+			inkey_msg = TRUE;
 			prt(format("Goto Line(max %d): ", n), 23 + HGT_PLUS, 0);
 			strcpy(tmp, "0");
 			if (askfor_aux(tmp, 79, 0)) {
@@ -344,6 +345,7 @@ void do_cmd_messages(void) {
 		if (k == '=') {
 			/* suppress hybrid macros */
 			bool inkey_msg_old = inkey_msg;
+
 			inkey_msg = TRUE;
 			/* Prompt */
 			prt("Mark: ", 23 + HGT_PLUS, 0);
@@ -506,6 +508,7 @@ void do_cmd_messages(void) {
 		/* Dump */
 		if ((k == 'f') || (k == 'F')) {
 			char tmp[80];
+
 			strnfmt(tmp, 79, "%s-msg.txt", cname);
 			if (get_string("Filename: ", tmp, 79)) {
 				if (tmp[0] && (tmp[0] != ' ')) {
@@ -703,8 +706,9 @@ void do_cmd_messages_important(void) {
 		if (k == '#') {
 			/* suppress hybrid macros */
 			bool inkey_msg_old = inkey_msg;
-			inkey_msg = TRUE;
 			char tmp[80];
+
+			inkey_msg = TRUE;
 			prt(format("Goto Line(max %d): ", n), 23 + HGT_PLUS, 0);
 			strcpy(tmp, "0");
 			if (askfor_aux(tmp, 79, 0)) {
@@ -904,6 +908,7 @@ void do_cmd_messages_important(void) {
 		/* Dump */
 		if ((k == 'f') || (k == 'F')) {
 			char tmp[80];
+
 			strnfmt(tmp, 79, "%s-important.txt", cname);
 			if (get_string("Filename: ", tmp, 79)) {
 				if (tmp[0] && (tmp[0] != ' ')) {
