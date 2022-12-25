@@ -577,11 +577,12 @@ bool my_strregexp_skipcol(char *buf2, regex_t re_src, char *searchstr_re, char *
 	if (next_start) *next_start = offset[pmatch[0].rm_eo];
 
  #if 0
-	c_message_add(format("buf2:%s",buf2));
-	c_message_add(format("buf2_skipcol:%s",buf2_skipcol));
-	c_message_add(format("searchstr_re:%s",searchstr_re));
-	c_message_add(format("withinsearch:%s",withinsearch));
-	c_message_add(format("next_start:%d,so=%d,eo=%d,os=%d", *next_start, pmatch[0].rm_so, pmatch[0].rm_eo, offset[pmatch[0].rm_so]));
+	printf("buf2:%s\n",buf2);
+	printf("buf2_skipcol:%s\n",buf2_skipcol);
+	if (searchstr_re) printf("searchstr_re:%s\n",searchstr_re);
+	if (withinsearch) printf("withinsearch:%s\n",withinsearch);
+	if (next_start) printf("next_start:%d,so=%d,eo=%d,os=%d\n", *next_start, pmatch[0].rm_so, pmatch[0].rm_eo, offset[pmatch[0].rm_so]);
+	else printf("next_start:NULL,so=%d,eo=%d,os=%d\n", pmatch[0].rm_so, pmatch[0].rm_eo, offset[pmatch[0].rm_so]);
  #endif
 	return TRUE;
 }
