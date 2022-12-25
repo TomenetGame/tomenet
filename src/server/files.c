@@ -724,7 +724,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 				regex_t re_src;
 				int ires = regcomp(&re_src, srcstr, REG_EXTENDED | REG_ICASE);
 
-				if (ires != 0) msg_print(Ind, "\377oInvalid regular expression.");
+				if (ires != 0) msg_format(Ind, "\377yInvalid regular expression (%d).", ires);
 				else {
 					if (srclinepre == -1 && next < line + 1 && my_strregexp_skipcol(buf, re_src, NULL, NULL, NULL)) srclinepre = next - 1;
 					if (srclinepost == -1 && next > line + 1 && my_strregexp_skipcol(buf, re_src, NULL, NULL, NULL)) srclinepost = next - 1;

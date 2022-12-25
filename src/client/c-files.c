@@ -2327,7 +2327,7 @@ void load_auto_inscriptions(cptr name) {
 			ires = regcomp(&re_src, regptr, REG_EXTENDED | REG_ICASE);
 			if (ires != 0) {
 				auto_inscription_invalid[c_eff] = TRUE;
-				c_message_add(format("\377oInvalid regular expression in auto-inscription #%d.", c_eff + 1));
+				c_msg_format("\377oInvalid regular expression in auto-inscription #%d.", c_eff + 1);
 			} else auto_inscription_invalid[c_eff] = FALSE;
 			regfree(&re_src);
 		}

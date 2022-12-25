@@ -3813,7 +3813,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			if (!ires) regfree(&re_src); /* release any previously compiled regexp first! */
 			ires = regcomp(&re_src, searchstr, i);
 			if (ires != 0) {
-				c_message_add(format("\377yInvalid regular expression (%d).", ires));
+				c_msg_format("\377yInvalid regular expression (%d).", ires);
 				searchstr[0] = 0;
 				continue;
 			}
@@ -4643,7 +4643,7 @@ void browse_local_file(char* fname, int rememberance_index) {
 			if (!ires) regfree(&re_src); /* release any previously compiled regexp first! */
 			ires = regcomp(&re_src, searchstr, i);
 			if (ires != 0) {
-				c_message_add(format("\377yInvalid regular expression (%d).", ires));
+				c_msg_format("\377yInvalid regular expression (%d).", ires);
 				searchstr[0] = 0;
 				continue;
 			}

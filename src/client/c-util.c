@@ -7957,7 +7957,7 @@ void auto_inscriptions(void) {
 				ires = regcomp(&re_src, regptr, REG_EXTENDED | REG_ICASE);
 				if (ires != 0) {
 					auto_inscription_invalid[cur_page * AUTOINS_PAGESIZE + cur_line] = TRUE;
-					c_message_add(format("\377oInvalid regular expression in auto-inscription #%d.", cur_page * AUTOINS_PAGESIZE + cur_line + 1));
+					c_msg_format("\377oInvalid regular expression in auto-inscription #%d.", cur_page * AUTOINS_PAGESIZE + cur_line + 1);
 					/* Re-colour the line to indicate error */
 					Term_putstr(11, cur_line + 1, -1, TERM_L_RED, buf_ptr);
 				} else auto_inscription_invalid[cur_page * AUTOINS_PAGESIZE + cur_line] = FALSE;

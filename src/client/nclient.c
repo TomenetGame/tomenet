@@ -5265,7 +5265,7 @@ void apply_auto_pickup(char *item_name) {
 
 			ires = regcomp(&re_src, match, REG_EXTENDED | REG_ICASE);
 			if (ires != 0) {
-				c_message_add(format("\377yInvalid regular expression (%d) in auto-inscription #%d.", ires, i));
+				c_msg_format("\377yInvalid regular expression (%d) in auto-inscription #%d.", ires, i);
 				continue;
 			}
 			if (regexec(&re_src, item_name, REGEXP_ARRAY_SIZE, pmatch, 0)) {
@@ -5443,7 +5443,7 @@ void apply_auto_inscriptions(int slot, bool force) {
 
 			ires = regcomp(&re_src, match, REG_EXTENDED | REG_ICASE);
 			if (ires != 0) {
-				//too spammy when auto-inscribing the whole inventory -- c_message_add(format("\377yInvalid regular expression (%d) in auto-inscription #%d.", ires, i));
+				//too spammy when auto-inscribing the whole inventory -- c_msg_format("\377yInvalid regular expression (%d) in auto-inscription #%d.", ires, i);
 				continue;
 			}
 			if (regexec(&re_src, inventory_name[slot], REGEXP_ARRAY_SIZE, pmatch, 0)) {
