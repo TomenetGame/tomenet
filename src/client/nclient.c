@@ -38,7 +38,7 @@
 
 #ifdef REGEX_SEARCH
  #include <regex.h>
- #define REGEXP_ARRAY_SIZE 1
+ #define REGEX_ARRAY_SIZE 1
 #endif
 
 
@@ -5238,7 +5238,7 @@ void apply_auto_pickup(char *item_name) {
 #ifdef REGEX_SEARCH
 	int ires = -999;
 	regex_t re_src;
-	regmatch_t pmatch[REGEXP_ARRAY_SIZE + 1];
+	regmatch_t pmatch[REGEX_ARRAY_SIZE + 1];
 #endif
 
 	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
@@ -5268,7 +5268,7 @@ void apply_auto_pickup(char *item_name) {
 				c_msg_format("\377yInvalid regular expression (%d) in auto-inscription #%d.", ires, i);
 				continue;
 			}
-			if (regexec(&re_src, item_name, REGEXP_ARRAY_SIZE, pmatch, 0)) {
+			if (regexec(&re_src, item_name, REGEX_ARRAY_SIZE, pmatch, 0)) {
 				regfree(&re_src);
 				continue;
 			}
@@ -5349,7 +5349,7 @@ void apply_auto_inscriptions(int slot, bool force) {
 #ifdef REGEX_SEARCH
 	int ires = -999;
 	regex_t re_src;
-	regmatch_t pmatch[REGEXP_ARRAY_SIZE + 1];
+	regmatch_t pmatch[REGEX_ARRAY_SIZE + 1];
 #endif
 
 	/* skip empty items */
@@ -5446,7 +5446,7 @@ void apply_auto_inscriptions(int slot, bool force) {
 				//too spammy when auto-inscribing the whole inventory -- c_msg_format("\377yInvalid regular expression (%d) in auto-inscription #%d.", ires, i);
 				continue;
 			}
-			if (regexec(&re_src, inventory_name[slot], REGEXP_ARRAY_SIZE, pmatch, 0)) {
+			if (regexec(&re_src, inventory_name[slot], REGEX_ARRAY_SIZE, pmatch, 0)) {
 				regfree(&re_src);
 				continue;
 			}

@@ -6,7 +6,7 @@
 #define REGEX_SEARCH
 #ifdef REGEX_SEARCH
  #include <regex.h>
- #define REGEXP_ARRAY_SIZE 1
+ #define REGEX_ARRAY_SIZE 1
 #endif
 
 /* When copying to clipboard, attempt to combine long chat messages that got
@@ -364,7 +364,7 @@ void do_cmd_messages(void) {
 		if (k == 'r') {
 			int ires = -999;
 			regex_t re_src;
-			regmatch_t pmatch[REGEXP_ARRAY_SIZE + 1];
+			regmatch_t pmatch[REGEX_ARRAY_SIZE + 1];
 
 			int z;
 			bool inkey_msg_old = inkey_msg;
@@ -390,7 +390,7 @@ void do_cmd_messages(void) {
 			for (z = i; z < n; z++) {
 				cptr str = message_recall[z];//message_str(z);
 
-				if (regexec(&re_src, str, REGEXP_ARRAY_SIZE, pmatch, 0)) continue;
+				if (regexec(&re_src, str, REGEX_ARRAY_SIZE, pmatch, 0)) continue;
 				if (pmatch[0].rm_so == -1) continue;
 				/* Actually disallow searches that match empty strings */
 				if (pmatch[0].rm_eo - pmatch[0].rm_so == 0) continue;
@@ -718,7 +718,7 @@ void do_cmd_messages_important(void) {
 		if (k == 'r') {
 			int ires = -999;
 			regex_t re_src;
-			regmatch_t pmatch[REGEXP_ARRAY_SIZE + 1];
+			regmatch_t pmatch[REGEX_ARRAY_SIZE + 1];
 
 			int z;
 			bool inkey_msg_old = inkey_msg;
@@ -744,7 +744,7 @@ void do_cmd_messages_important(void) {
 			for (z = i; z < n; z++) {
 				cptr str = message_important[z];//message_str(z);
 
-				if (regexec(&re_src, str, REGEXP_ARRAY_SIZE, pmatch, 0)) continue;
+				if (regexec(&re_src, str, REGEX_ARRAY_SIZE, pmatch, 0)) continue;
 				if (pmatch[0].rm_so == -1) continue;
 				/* Actually disallow searches that match empty strings */
 				if (pmatch[0].rm_eo - pmatch[0].rm_so == 0) continue;

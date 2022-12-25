@@ -6,7 +6,7 @@
 #define REGEX_SEARCH
 #ifdef REGEX_SEARCH
  #include <regex.h>
- #define REGEXP_ARRAY_SIZE 1
+ #define REGEX_ARRAY_SIZE 1
 #endif
 
 /*
@@ -537,7 +537,7 @@ char *my_strcasestr_skipcol(const char *big, const char *littlex, byte strict) {
 bool my_strregexp_skipcol(char *buf2, regex_t re_src, char *searchstr_re, char *withinsearch, int *next_start) {
 	int i, i2;
 	char buf2_skipcol[MAX_CHARS * 2 + 1], *c_skipcol, offset[MAX_CHARS * 2 + 1];
-	regmatch_t pmatch[REGEXP_ARRAY_SIZE + 1];
+	regmatch_t pmatch[REGEX_ARRAY_SIZE + 1];
 
 	/* Don't confuse the regexp-matcher with colour codes */
 	buf2_skipcol[0] = 0;
@@ -555,7 +555,7 @@ bool my_strregexp_skipcol(char *buf2, regex_t re_src, char *searchstr_re, char *
 	}
 	buf2_skipcol[i] = 0;
 
-	if (regexec(&re_src, buf2_skipcol, REGEXP_ARRAY_SIZE, pmatch, 0)) return FALSE;
+	if (regexec(&re_src, buf2_skipcol, REGEX_ARRAY_SIZE, pmatch, 0)) return FALSE;
 
 	/* Testing & Paranoia :) */
 	//c_message_add(format("re_nsub=%d", i, re_src.re_nsub));

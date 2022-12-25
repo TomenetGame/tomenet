@@ -16,7 +16,7 @@
 
 #if defined(REGEX_SEARCH) || defined(REGEX_URL)
  #include <regex.h>
- #define REGEXP_ARRAY_SIZE 1
+ #define REGEX_ARRAY_SIZE 1
 #endif
 
 #define MACRO_USE_CMD	0x01
@@ -1767,14 +1767,14 @@ c_msg_format("%c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c",
 #ifdef REGEX_URL
 	/* Also try to catch less clear URLs */
 	else {
-		regmatch_t pmatch[REGEXP_ARRAY_SIZE + 1]; /* take out the heavy calibre (´ `) */
+		regmatch_t pmatch[REGEX_ARRAY_SIZE + 1]; /* take out the heavy calibre (´ `) */
 		regex_t re;
 		int status = -999;
 
 		status = regcomp(&re, "[a-z0-9][a-z0-9]*\\.[a-z0-9][.a-z0-9]*(/[^ ]*)?", REG_EXTENDED|REG_ICASE);
 		if (status != 0) return; //error
 
-		status = regexec(&re, be, REGEXP_ARRAY_SIZE, pmatch, 0);
+		status = regexec(&re, be, REGEX_ARRAY_SIZE, pmatch, 0);
 		if (status) {
 			regfree(&re);
 			return; //not found

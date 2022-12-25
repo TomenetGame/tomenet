@@ -25,7 +25,6 @@
 #define REGEX_SEARCH
 #ifdef REGEX_SEARCH
  #include <regex.h>
- #define REGEXP_ARRAY_SIZE 1
 #endif
 
 /* The first x highscore entries that are displayed to players: */

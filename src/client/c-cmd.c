@@ -3,7 +3,6 @@
 
 #ifdef REGEX_SEARCH
  #include <regex.h>
- #define REGEXP_ARRAY_SIZE 1
 #endif
 
 /* reordering will allow these to be removed */
