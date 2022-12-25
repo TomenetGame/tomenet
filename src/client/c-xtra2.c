@@ -395,6 +395,8 @@ void do_cmd_messages(void) {
 					break;
 				}
 			}
+			if (z != n) j = -1; //no error beeping
+			else j = i; //error beeping: no match found
 			regexp = FALSE;
 		}
 #ifdef REGEX_SEARCH
@@ -446,6 +448,8 @@ void do_cmd_messages(void) {
 				break;
 			}
 			if (z == n) regfree(&re_src);
+			if (z != n) j = -1; //no error beeping
+			else j = i; //error beeping: no match found
 			regexp = TRUE;
 		}
 #endif
@@ -788,6 +792,8 @@ void do_cmd_messages_important(void) {
 					break;
 				}
 			}
+			if (z != n) j = -1; //no error beeping
+			else j = i; //error beeping: no match found
 			regexp = FALSE;
 		}
 #ifdef REGEX_SEARCH
@@ -839,6 +845,8 @@ void do_cmd_messages_important(void) {
 				break;
 			}
 			if (z == n) regfree(&re_src);
+			if (z != n) j = -1; //no error beeping
+			else j = i; //error beeping: no match found
 			regexp = TRUE;
 		}
 #endif
