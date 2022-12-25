@@ -557,7 +557,10 @@ void display_player(int Ind) {
 #define SERVER_SIDE_SEARCH
 static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color, int divl, char *srcstr) {
 	int lines_per_page = 20 + HGT_PLUS;
-	bool searching = (srcstr && srcstr[0]), found = FALSE, reverse = FALSE, regexp;
+	bool searching = (srcstr && srcstr[0]), found = FALSE, reverse = FALSE;
+#ifdef REGEX_SEARCH
+	bool regexp = FALSE;
+#endif
 	int i, k = 0, srclinepre = -1, srclinepost = -1, srcline = -1, srclinerev = -1, srclinerevwrap = -1;
 	/* Number of "real" lines passed by */
 	s32b next = 0;
@@ -598,7 +601,9 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 	/* Hack: Extract regexp flag */
 	if (line >= 1000000000) {
 		line -= 1000000000;
+#ifdef REGEX_SEARCH
 		regexp = TRUE;
+#endif
 	}
 
 	if (is_newer_than(&Players[Ind]->version, 4, 4, 7, 0, 0, 0)) {
