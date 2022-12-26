@@ -580,8 +580,7 @@ void do_cmd_messages_important(void) {
 	nn = 0;  /* number of new messages */
 
 	/* Filter message buffer for "important messages" add to message_important*/
-	//for (i = 0; i < n; i++)
-	for (i = n - 1; i >= 0; i--) { /* traverse from oldest to newest message */
+	for (i = 0; i < n; i++) {
 		message_important[nn] = message_str_impscroll(i);
 		nn++;
 	}
@@ -608,7 +607,7 @@ void do_cmd_messages_important(void) {
 		for (j = 0; (j < 20 + HGT_PLUS) && (i + j < n); j++) {
 			a = ab = ap = TERM_WHITE;
 
-			msg = message_important[nn - 1 - (i + j)]; /* because of inverted traversal direction, see further above */
+			msg = message_important[i + j];
 			if (!j) msg_raw = msg; //remember the bottom-most line
 
 			/* Note: msg2 is not used in this function as we don't do bundling of identical subsequent lines here unlike in do_cmd_messages(). */
