@@ -9,6 +9,9 @@
  #define REGEX_ARRAY_SIZE 1
 #endif
 
+/* Place search results near the top of the message history screen at a vertical screen ratio of n/12 (with 12/12 being the top-most line). */
+#define SEARCH_RESULT_UPPER 9
+
 /* When copying to clipboard, attempt to combine long chat messages that got
    split up into multiple lines together again. (msg_print() breaks them up.) */
 #define COPY_MULTILINE
@@ -381,13 +384,16 @@ void do_cmd_messages(void) {
 			inkey_msg = inkey_msg_old;
 
 			/* Scan messages */
-			for (z = i; z < n; z++) {
+			for (z = n - 1; z >= i; z--) {
 				cptr str = message_recall[z];//message_str(z);
 
 				/* Handle "shower" */
 				if (my_strcasestr(str, finder)) {
 					/* New location */
 					i = z;
+					/* Place it near the top of the screen if there are enough messages to do this */
+					i -= ((20 + HGT_PLUS - 1) * SEARCH_RESULT_UPPER) / 12;
+					if (i < 0) i = 0;
 
 					/* Hack -- also show */
 					//strcpy(shower, str);  --not the whole line, just the search string, or we only highlight exact duplicate lines somewhere
@@ -397,7 +403,7 @@ void do_cmd_messages(void) {
 					break;
 				}
 			}
-			if (z != n) j = -1; //no error beeping
+			if (z >= i) j = -1; //no error beeping
 			else j = i; //error beeping: no match found
 			regexp = FALSE;
 		}
@@ -429,7 +435,7 @@ void do_cmd_messages(void) {
 			}
 
 			/* Scan messages */
-			for (z = i; z < n; z++) {
+			for (z = n - 1; z >= i; z--) {
 				cptr str = message_recall[z];//message_str(z);
 
 				if (regexec(&re_src, str, REGEX_ARRAY_SIZE, pmatch, 0)) continue;
@@ -439,6 +445,9 @@ void do_cmd_messages(void) {
 
 				/* New location */
 				i = z;
+				/* Place it near the top of the screen if there are enough messages to do this */
+				i -= ((20 + HGT_PLUS - 1) * SEARCH_RESULT_UPPER) / 12;
+				if (i < 0) i = 0;
 
 				/* Hack -- also show */
 				//strcpy(shower, str);  --not the whole line, just the search string, or we only highlight exact duplicate lines somewhere
@@ -449,8 +458,8 @@ void do_cmd_messages(void) {
 				regfree(&re_src);
 				break;
 			}
-			if (z == n) regfree(&re_src);
-			if (z != n) j = -1; //no error beeping
+			if (z < i) regfree(&re_src);
+			if (z >= i) j = -1; //no error beeping
 			else j = i; //error beeping: no match found
 			regexp = TRUE;
 		}
@@ -779,13 +788,16 @@ void do_cmd_messages_important(void) {
 			inkey_msg = inkey_msg_old;
 
 			/* Scan messages */
-			for (z = i; z < n; z++) {
+			for (z = n - 1; z >= i; z--) {
 				cptr str = message_important[z];//message_str_impscroll(z);
 
 				/* Handle "shower" */
 				if (my_strcasestr(str, finder)) {
 					/* New location */
 					i = z;
+					/* Place it near the top of the screen if there are enough messages to do this */
+					i -= ((20 + HGT_PLUS - 1) * SEARCH_RESULT_UPPER) / 12;
+					if (i < 0) i = 0;
 
 					/* Hack -- also show */
 					//strcpy(shower, str);  --not the whole line, just the search string, or we only highlight exact duplicate lines somewhere
@@ -795,7 +807,7 @@ void do_cmd_messages_important(void) {
 					break;
 				}
 			}
-			if (z != n) j = -1; //no error beeping
+			if (z >= i) j = -1; //no error beeping
 			else j = i; //error beeping: no match found
 			regexp = FALSE;
 		}
@@ -827,7 +839,7 @@ void do_cmd_messages_important(void) {
 			}
 
 			/* Scan messages */
-			for (z = i; z < n; z++) {
+			for (z = n - 1; z >= i; z--) {
 				cptr str = message_important[z];//message_str(z);
 
 				if (regexec(&re_src, str, REGEX_ARRAY_SIZE, pmatch, 0)) continue;
@@ -837,6 +849,9 @@ void do_cmd_messages_important(void) {
 
 				/* New location */
 				i = z;
+				/* Place it near the top of the screen if there are enough messages to do this */
+				i -= ((20 + HGT_PLUS - 1) * SEARCH_RESULT_UPPER) / 12;
+				if (i < 0) i = 0;
 
 				/* Hack -- also show */
 				//strcpy(shower, str);  --not the whole line, just the search string, or we only highlight exact duplicate lines somewhere
@@ -847,8 +862,8 @@ void do_cmd_messages_important(void) {
 				regfree(&re_src);
 				break;
 			}
-			if (z == n) regfree(&re_src);
-			if (z != n) j = -1; //no error beeping
+			if (z < i) regfree(&re_src);
+			if (z >= i) j = -1; //no error beeping
 			else j = i; //error beeping: no match found
 			regexp = TRUE;
 		}
