@@ -30,6 +30,9 @@
 #include <regex.h>
 #include <time.h>
 
+// gettimeofday() requires <sys/time.h>
+#include <sys/time.h>
+
 /*
  * Notes on Colors:
  *
@@ -1168,7 +1171,7 @@ struct term_data {
 
 	infowin *outer;
 	infowin *inner;
-	struct timespec resize_timer;
+	struct timeval resize_timer;
 
 #ifdef USE_GRAPHICS
 
@@ -1188,12 +1191,12 @@ struct term_data {
  */
 static term_data screen;
 
-#define NANOSECONDS_IN_SECOND 1000000000
-static void timespec_add_ns(struct timespec *t, unsigned int ns) {
-	t->tv_nsec = t->tv_nsec + ns;
-	while (t->tv_nsec > NANOSECONDS_IN_SECOND) {
+#define MICROSECONDS_IN_SECOND 1000000
+static void timeval_add_us(struct timeval *t, unsigned int us) {
+	t->tv_usec = t->tv_usec + us;
+	while (t->tv_usec > MICROSECONDS_IN_SECOND) {
 		t->tv_sec++;
-		t->tv_nsec -= NANOSECONDS_IN_SECOND;
+		t->tv_usec -= MICROSECONDS_IN_SECOND;
 	}
 }
 
@@ -1399,16 +1402,16 @@ static void react_keypress(XEvent *xev) {
  * Handles all terminal windows resize timers.
  */
 static void resize_window_x11_timers_handle(void) {
-	struct timespec now = {0, 0};
+	struct timeval now = {0, 0};
 	for (int t_idx = 0; t_idx < ANGBAND_TERM_MAX; t_idx++) {
 		term_data *td = term_idx_to_term_data(t_idx);
-		if (td->resize_timer.tv_nsec != 0 || td->resize_timer.tv_sec != 0) {
-			if (now.tv_nsec == 0 && now.tv_sec == 0) {
-				clock_gettime(CLOCK_REALTIME, &now);
+		if (td->resize_timer.tv_usec != 0 || td->resize_timer.tv_sec != 0) {
+			if (now.tv_usec == 0 && now.tv_sec == 0) {
+				gettimeofday(&now, NULL);
 			}
-			if (now.tv_sec > td->resize_timer.tv_sec || (now.tv_sec == td->resize_timer.tv_sec && now.tv_nsec > td->resize_timer.tv_nsec)) {
+			if (now.tv_sec > td->resize_timer.tv_sec || (now.tv_sec == td->resize_timer.tv_sec && now.tv_usec > td->resize_timer.tv_usec)) {
 				td->resize_timer.tv_sec=0;
-				td->resize_timer.tv_nsec=0;
+				td->resize_timer.tv_usec=0;
 
 				resize_window_x11(t_idx, (td->outer->w - (2 * td->inner->b)) / td->fnt->wid, (td->outer->h - (2 * td->inner->b)) / td->fnt->hgt);
 
@@ -1699,8 +1702,8 @@ static errr CheckEvent(bool wait) {
 			/* Therefore if resize is true, then it has to come from other source (eg. user or WM resized the window). */
 			if (resize && Infowin->mapped) {
 				/* Window resize timer start. */
-				clock_gettime(CLOCK_REALTIME, &td->resize_timer);
-				timespec_add_ns(&td->resize_timer, 500000000); // Add 1/2 second.
+				gettimeofday(&td->resize_timer, NULL);
+				timeval_add_us(&td->resize_timer, 500000000); // Add 1/2 second.
 			}
 			break;
 		}
@@ -1779,7 +1782,7 @@ static errr term_data_nuke(term_data *td) {
 
 	/* Reset timers just to be sure. */
 	td->resize_timer.tv_sec=0;
-	td->resize_timer.tv_nsec=0;
+	td->resize_timer.tv_usec=0;
 
 	// Free font.
 	if (td->fnt && td->fnt->nuke) {
@@ -2463,7 +2466,7 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 
 	/* Reset timers just to be sure. */
 	td->resize_timer.tv_sec=0;
-	td->resize_timer.tv_nsec=0;
+	td->resize_timer.tv_usec=0;
 
 	/* Hack -- Assume full size windows */
 	wid = win_cols * td->fnt->wid;
@@ -3150,9 +3153,9 @@ void resize_window_x11(int term_idx, int cols, int rows) {
 	term_data *td = term_idx_to_term_data(term_idx);
 
 	/* Clear timer. */
-	if (td->resize_timer.tv_sec > 0 || td->resize_timer.tv_nsec > 0) {
+	if (td->resize_timer.tv_sec > 0 || td->resize_timer.tv_usec > 0) {
 		td->resize_timer.tv_sec=0;
-		td->resize_timer.tv_nsec=0;
+		td->resize_timer.tv_usec=0;
 	}
 
 	/* Validate input dimensions. */
