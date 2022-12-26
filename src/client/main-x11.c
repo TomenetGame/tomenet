@@ -1703,7 +1703,7 @@ static errr CheckEvent(bool wait) {
 			if (resize && Infowin->mapped) {
 				/* Window resize timer start. */
 				gettimeofday(&td->resize_timer, NULL);
-				timeval_add_us(&td->resize_timer, 500000000); // Add 1/2 second.
+				timeval_add_us(&td->resize_timer, 500000); // Add 1/2 second.
 			}
 			break;
 		}
