@@ -201,20 +201,20 @@ D:replenishing your mana. Requires living creatures who feel pain.
 I:1000:0
 
 N:28:Aura of Fear
-D:Aura that surrounds you and strikes fear in monsters that
-D:strike you in close combat, making them run away.
+D:Aura that surrounds you and strikes fear in monsters that hit you in close
+D:combat. At 20 grants fear resistance and fear brand to your melee attacks.
 A:15:Control your aura of fear
 I:1000:0
 
 N:29:Shivering Aura
-D:Aura that surrounds you and stuns monsters that strike you
-D:in close combat.
+D:Aura that surrounds you and stuns monsters that strike you in close combat.
+D:At 30.000 it will brand your melee attacks with frost.
 A:16:Control your shivering aura
 I:1000:0
 
 N:30:Aura of Death
-D:Aura that surrounds you and creates alternating waves of plasma
-D:and ice when monsters strike you in close combat.
+D:Aura that surrounds you, creating waves of plasma or ice when struck in close
+D:combat. At 40.000 grants plasma and ice brand to and ice brands to your melee.
 A:17:Control your aura of death
 I:1000:0
 

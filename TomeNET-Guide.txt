@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 25. December 2022 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 26. December 2022 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -16071,18 +16071,16 @@ stated.
                                 This chance increases with skill, but will not
                                 affect monsters with an rlevel more than 10
                                 above your character level.
-                                It is automatically enabled when you train the
-                                skill; you can disable the aura in 'm' menu.
-                                Typing '/ex' command into chat will display the
-                                state of all your auras.
+                                Also at 20 it will grant you fear resistance
+                                while the aura is active.
+                                The aura is automatically enabled when you
+                                train the skill; you can disable the aura in
+                                the 'm' menu. Typing '/ex' command into chat
+                                will display the state of all your auras.
                                 Being blood magic, auras will feed from your
                                 blood. This means that the speed of your hit
                                 point regeneration will be reduced while the
                                 aura is active.
-                                If your skill is at least 20.000 and your aura
-                                is unleashed, you obtain fear resistance and
-                                your melee attacks will apply a 'fear' status
-                                effect.
 
         .Shivering Aura         Monsters that hit you are stunned.
          (0.500)                Monsters that are immune to cold and those that
@@ -16095,10 +16093,10 @@ stated.
                                 At a skill of 30 the aura is so strong that
                                 your melee attacks (weapon as well as martial
                                 arts will be branded by it (cold brand).
-                                It is automatically enabled when you train the
-                                skill; you can disable the aura in 'm' menu.
-                                Typing '/ex' command into chat will display the
-                                state of all your auras.
+                                The aura is automatically enabled when you
+                                train the skill; you can disable the aura in
+                                the 'm' menu. Typing '/ex' command into chat
+                                will display the state of all your auras.
                                 Being blood magic, auras will feed from your
                                 blood. This means that the speed of your hit
                                 point regeneration will be reduced while the
@@ -16112,10 +16110,10 @@ stated.
                                 your melee attacks (weapon as well as martial
                                 arts) will be branded by it (alternating plasma
                                 or ice brand). (See (5.3) for brand details.)
-                                It is automatically enabled when you train the
-                                skill; you can disable the aura in 'm' menu.
-                                Typing '/ex' command into chat will display the
-                                state of all your auras.
+                                The aura is automatically enabled when you
+                                train the skill; you can disable the aura in
+                                the 'm' menu. Typing '/ex' command into chat
+                                will display the state of all your auras.
                                 Being blood magic, auras will feed from your
                                 blood. This means that the speed of your hit
                                 point regeneration will be reduced while the
