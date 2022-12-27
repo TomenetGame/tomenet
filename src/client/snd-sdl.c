@@ -662,21 +662,25 @@ static bool sound_sdl_init(bool no_cache) {
 		char *cur_token;
 		char *next_token;
 		int event;
+		char *c;
 
+		/* (2022, 4.9.0) strip preceding spaces/tabs */
+		c = buffer0;
+		while (*c == ' ' || *c == '\t') c++;
+		strcpy(bufferx, c);
 #if 1 /* linewrap via trailing ' \' */
-		strcpy(bufferx, buffer0);
 		/* New (2018): Allow linewrapping via trailing ' \' character sequence right before EOL */
-		while (strlen(buffer0) >= 2 && buffer0[strlen(buffer0) - 1] == '\\' && buffer0[strlen(buffer0) - 2] == ' ') {
+		while (strlen(buffer0) >= 2 && buffer0[strlen(buffer0) - 1] == '\\' && (buffer0[strlen(buffer0) - 2] == ' ' || buffer0[strlen(buffer0) - 2] == ' ')) {
 			if (strlen(bufferx) + strlen(buffer0) >= 4096) continue; /* String overflow protection: Discard all that is too much. */
 			buffer0[strlen(buffer0) - 2] = 0; /* Discard the '\' and the space (we re-insert the space next, if required) */
 			if (my_fgets(fff, buffer0, sizeof(buffer0)) == 0) {
 				/* If the continuation of the wrapped line doesn't start on a space, re-insert a space to ensure proper parameter separation */
-				if (buffer0[0] != ' ' && buffer0[0]) strcat(bufferx, " ");
+				if (buffer0[0] != ' ' && buffer0[0] != '\t' && buffer0[0]) strcat(bufferx, " ");
 				strcat(bufferx, buffer0);
 			}
 		}
-		strcpy(buffer0, bufferx);
 #endif
+		strcpy(buffer0, bufferx);
 
 		/* Lines starting on ';' count as 'provided event' but actually
 		   remain silent, as a way of disabling effects/songs without
@@ -693,17 +697,18 @@ static bool sound_sdl_init(bool no_cache) {
 		/* Skip meta data that we don't need here -- this is for [title] tag introduced in 4.7.1b+ */
 		if (!strncmp(buffer, "packname", 8) || !strncmp(buffer, "author", 6) || !strncmp(buffer, "description", 11)) continue;
 
-		/* Split the line into two: message name, and the rest */
-		search = strchr(buffer, ' ');
-		sample_list = strchr(search + 1, ' ');
+		/* Split the line into two: the key, and the rest */
+
+		search = strchr(buffer, '=');
 		/* no event name given? */
 		if (!search) continue;
-		/* no audio filenames listed? */
-		if (!sample_list) continue;
+		*search = 0;
+		/* Event name (key): Trim spaces/tabs */
+		while (search[strlen(search) - 1] == ' ' || search[strlen(search) - 1] == '\t') search[strlen(search) - 1] = 0;
+		while (search[strlen(search) - 1] == ' ' || search[strlen(search) - 1] == '\t') search[strlen(search) - 1] = 0;
 
-		/* Set the message name, and terminate at first space */
+		/* Set the event name */
 		cfg_name = buffer;
-		search[0] = '\0';
 
 		/* Make sure this is a valid event name */
 		for (event = SOUND_MAX_2010 - 1; event >= 0; event--) {
@@ -717,8 +722,12 @@ static bool sound_sdl_init(bool no_cache) {
 			continue;
 		}
 
-		/* Advance the sample list pointer so it's at the beginning of text */
-		sample_list++;
+		/* Songs: Trim spaces/tabs */
+		c = search + 1;
+		while (*c == ' ' || *c == '\t') c++;
+		sample_list = c;
+
+		/* no audio filenames listed? */
 		if (!sample_list[0]) continue;
 
 		/* Terminate the current token */
@@ -729,10 +738,10 @@ static bool sound_sdl_init(bool no_cache) {
 			search = strchr(cur_token, '\"');
 			if (search) {
 				search[0] = '\0';
-				search = strchr(search + 1, ' ');
+				search = strpbrk(search + 1, " \t");
 			}
 		} else {
-			search = strchr(cur_token, ' ');
+			search = strpbrk(cur_token, " \t");
 		}
 		if (search) {
 			search[0] = '\0';
@@ -740,6 +749,9 @@ static bool sound_sdl_init(bool no_cache) {
 		} else {
 			next_token = NULL;
 		}
+
+		/* Sounds: Trim spaces/tabs */
+		if (next_token) while (*next_token == ' ' || *next_token == '\t') next_token++;
 
 		/*
 		 * Now we find all the sample names and add them one by one
@@ -788,9 +800,18 @@ static bool sound_sdl_init(bool no_cache) {
 			/* Figure out next token */
 			cur_token = next_token;
 			if (next_token) {
-				/* Try to find a space */
-				search = strchr(cur_token, ' ');
-
+				/* Handle song names within quotes */
+				if (cur_token[0] == '\"') {
+					cur_token++;
+					search = strchr(cur_token, '\"');
+					if (search) {
+						search[0] = '\0';
+						search = strpbrk(search + 1, " \t");
+					}
+				} else {
+					/* Try to find a space */
+					search = strpbrk(cur_token, " \t");
+				}
 				/* If we can find one, terminate, and set new "next" */
 				if (search) {
 					search[0] = '\0';
@@ -799,6 +820,9 @@ static bool sound_sdl_init(bool no_cache) {
 					/* Otherwise prevent infinite looping */
 					next_token = NULL;
 				}
+
+				/* Sounds: Trim spaces/tabs */
+				if (next_token) while (*next_token == ' ' || *next_token == '\t') next_token++;
 			}
 		}
 
@@ -945,21 +969,25 @@ static bool sound_sdl_init(bool no_cache) {
 		char *next_token;
 		int event;
 		bool initial, reference;
+		char *c;
 
+		/* (2022, 4.9.0) strip preceding spaces/tabs */
+		c = buffer0;
+		while (*c == ' ' || *c == '\t') c++;
+		strcpy(bufferx, c);
 #if 1 /* linewrap via trailing ' \' */
-		strcpy(bufferx, buffer0);
 		/* New (2018): Allow linewrapping via trailing ' \' character sequence right before EOL */
-		while (strlen(buffer0) >= 2 && buffer0[strlen(buffer0) - 1] == '\\' && buffer0[strlen(buffer0) - 2] == ' ') {
+		while (strlen(buffer0) >= 2 && buffer0[strlen(buffer0) - 1] == '\\' && (buffer0[strlen(buffer0) - 2] == ' ' || buffer0[strlen(buffer0) - 2] == '\t')) {
 			if (strlen(bufferx) + strlen(buffer0) >= 4096) continue; /* String overflow protection: Discard all that is too much. */
 			buffer0[strlen(buffer0) - 2] = 0; /* Discard the '\' and the space (we re-insert the space next, if required) */
 			if (my_fgets(fff, buffer0, sizeof(buffer0)) == 0) {
 				/* If the continuation of the wrapped line doesn't start on a space, re-insert a space to ensure proper parameter separation */
-				if (buffer0[0] != ' ' && buffer0[0]) strcat(bufferx, " ");
+				if (buffer0[0] != ' ' && buffer0[0] != '\t' && buffer0[0]) strcat(bufferx, " ");
 				strcat(bufferx, buffer0);
 			}
 		}
-		strcpy(buffer0, bufferx);
 #endif
+		strcpy(buffer0, bufferx);
 
 		/* Lines starting on ';' count as 'provided event' but actually
 		   remain silent, as a way of disabling effects/songs without
@@ -976,17 +1004,19 @@ static bool sound_sdl_init(bool no_cache) {
 		/* Skip meta data that we don't need here -- this is for [title] tag introduced in 4.7.1b+ */
 		if (!strncmp(buffer, "packname", 8) || !strncmp(buffer, "author", 6) || !strncmp(buffer, "description", 11)) continue;
 
-		/* Split the line into two: message name, and the rest */
-		search = strchr(buffer, ' ');
-		song_list = strchr(search + 1, ' ');
+
+		/* Split the line into two: the key, and the rest */
+
+		search = strchr(buffer, '=');
 		/* no event name given? */
 		if (!search) continue;
-		/* no audio filenames listed? */
-		if (!song_list) continue;
+		*search = 0;
+		/* Event name (key): Trim spaces/tabs */
+		while (search[strlen(search) - 1] == ' ' || search[strlen(search) - 1] == '\t') search[strlen(search) - 1] = 0;
+		while (search[strlen(search) - 1] == ' ' || search[strlen(search) - 1] == '\t') search[strlen(search) - 1] = 0;
 
-		/* Set the message name, and terminate at first space */
+		/* Set the event name */
 		cfg_name = buffer;
-		search[0] = '\0';
 
 		/* Make sure this is a valid event name */
 		for (event = MUSIC_MAX - 1; event >= 0; event--) {
@@ -1000,8 +1030,12 @@ static bool sound_sdl_init(bool no_cache) {
 			continue;
 		}
 
-		/* Advance the sample list pointer so it's at the beginning of text */
-		song_list++;
+		/* Songs: Trim spaces/tabs */
+		c = search + 1;
+		while (*c == ' ' || *c == '\t') c++;
+		song_list = c;
+
+		/* no audio filenames listed? */
 		if (!song_list[0]) continue;
 
 		/* Terminate the current token */
@@ -1023,10 +1057,10 @@ static bool sound_sdl_init(bool no_cache) {
 			search = strchr(cur_token, '\"');
 			if (search) {
 				search[0] = '\0';
-				search = strchr(search + 1, ' ');
+				search = strpbrk(search + 1, " \t");
 			}
 		} else {
-			search = strchr(cur_token, ' ');
+			search = strpbrk(cur_token, " \t");
 		}
 		if (search) {
 			search[0] = '\0';
@@ -1034,6 +1068,9 @@ static bool sound_sdl_init(bool no_cache) {
 		} else {
 			next_token = NULL;
 		}
+
+		/* Songs: Trim spaces/tabs */
+		if (next_token) while (*next_token == ' ' || *next_token == '\t') next_token++;
 
 		/*
 		 * Now we find all the song names and add them one by one
@@ -1113,11 +1150,11 @@ static bool sound_sdl_init(bool no_cache) {
 					search = strchr(cur_token, '\"');
 					if (search) {
 						search[0] = '\0';
-						search = strchr(search + 1, ' ');
+						search = strpbrk(search + 1, " \t");
 					}
 				} else {
 					/* Try to find a space */
-					search = strchr(cur_token, ' ');
+					search = strpbrk(cur_token, " \t");
 				}
 				/* If we can find one, terminate, and set new "next" */
 				if (search) {
@@ -1127,6 +1164,9 @@ static bool sound_sdl_init(bool no_cache) {
 					/* Otherwise prevent infinite looping */
 					next_token = NULL;
 				}
+
+				/* Songs: Trim spaces/tabs */
+				if (next_token) while (*next_token == ' ' || *next_token == '\t') next_token++;
 			}
 		}
 
