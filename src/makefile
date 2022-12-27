@@ -239,6 +239,10 @@ X11BASE = /usr/X11R6
 # Account editor
 ACCEDIT_LIBS = -lcurses -lcrypt
 
+# Client doesn't need -lcrypt
+# Removing -lcrypt from client builds makes it easier to build because libcrypt has been removed from glibc
+SERVER_EXTRA_LIBS = -lcrypt
+
 
 ##
 ## Standard version -- supports X11 (main-x11.c)
@@ -249,11 +253,11 @@ ACCEDIT_LIBS = -lcurses -lcrypt
 #
 ## With SDL
 #CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags`
-#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lcrypt -lm `sdl-config --libs` -lSDL_mixer
+#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lm `sdl-config --libs` -lSDL_mixer
 ##
 ## Without SDL
 #CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99
-#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lcrypt -lm
+#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lm
 
 ##
 ## Variation: main-x11.c and main-gcu.c
@@ -273,15 +277,15 @@ ACCEDIT_LIBS = -lcurses -lcrypt
 #CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -D_DEFAULT_SOURCE -DACC32 -fPIE
 #CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
 #CFLAGS = -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
-#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl-config --libs` -lSDL_mixer
+#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lm `sdl-config --libs` -lSDL_mixer
 ##
 ## Without SDL
 #CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99
-#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
+#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lm
 ##
 ## Without USE_SOUND_2010 (aka compile without sound support) - make sure to remove #define USE_SOUND_2010 (and possibly #define USE_SOUND) in src/config.h too.
 #CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
-#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
+#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lm
 
 # With SDL2
 #  With sdl2-config
@@ -289,9 +293,9 @@ CFLAGS = -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D
 #  With manually set prefix
 #CFLAGS = -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL -I/usr/local/include/SDL2 -I/usr/include/SDL2 -D_REENTRANT -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
 #  With sdl2-config
-LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl2-config --libs` -lSDL2_mixer
+LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lm `sdl2-config --libs` -lSDL2_mixer
 #  With manually set prefix
-#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm -L/usr/local/lib -L/usr/lib -pthread -lSDL2 -lSDL2_mixer
+#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lm -L/usr/local/lib -L/usr/lib -pthread -lSDL2 -lSDL2_mixer
 
 # Some Linux distributions have a separate libtinfo, attempt to detect it
 HAVE_TINFO = $(shell ldconfig -p | grep -c libtinfo)
@@ -323,11 +327,11 @@ LDFLAGS += -Wl,-z,relro -Wl,-z,now
 ##
 ## With SDL
 #CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags`
-#LIBS = -L/usr/pkg/lib -lncurses -lcrypt -lm `sdl-config --libs` -lSDL_mixer
+#LIBS = -L/usr/pkg/lib -lncurses -lm `sdl-config --libs` -lSDL_mixer
 ##
 ## Without SDL
 #CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99
-#LIBS = -L/usr/pkg/lib -lncurses -lcrypt -lm
+#LIBS = -L/usr/pkg/lib -lncurses -lm
 
 
 ##
@@ -350,14 +354,14 @@ LDFLAGS += -Wl,-z,relro -Wl,-z,now
 ##
 ## With SDL
 #CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags`
-#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl-config --libs` -lSDL_mixer
+#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lm `sdl-config --libs` -lSDL_mixer
 #-lXtst (for numlock - obsolete)
 ## Uncomment this if you want to bundle libraries with the client
 #LDFLAGS = -Wl,-rpath,\$$ORIGIN
 ##
 ## Without SDL
 #CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99
-#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
+#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lm
 
 #GCC on Archlinux enabled “--enable-default-pie" by default at some point, so we add this or preproc will fail to build:
 #LDFLAGS += -no-pie
@@ -470,7 +474,7 @@ preproc/preproc: preproc/preproc.o
 #
 
 tomenet.server: $(SERV_OBJS) $(TOLUA)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o tomenet.server $(SERV_OBJS) $(LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o tomenet.server $(SERV_OBJS) $(LIBS) $(SERVER_EXTRA_LIBS)
 
 
 #
