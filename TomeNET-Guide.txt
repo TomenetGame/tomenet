@@ -3552,7 +3552,9 @@ make tomenet.exe
 Linux (using pre-compiled client):
 ----------------------------------
 Make sure that ncurses and crypt libraries are installed, package names are
-usually libncurses5 and libgcrypt11.
+usually libncurses5 and libxcrypt (formerly libgcrypt11). Depending on your
+system, there might or might not be numbers appended to the package names
+(eg libxcrypt1 instead of libxcrypt), just do a generic search.
 Enter the 'tomenet/' folder and type:
         ./tomenet
 to start the game.
@@ -3575,8 +3577,10 @@ Go into '/tomenet/src' where the file 'makefile' is located.
 Dependencies, that you must make sure you have installed:
 C-devel, X11-devel, ncurses, ncurses-devel and crypt libraries.
 The package names are usually (may vary depending on the build system):
-build-essential, xorg-dev, libncurses5, libncurses5-dev, libgcrypt11 (or
-libgcrypt-dev), libc6-dev.
+build-essential, xorg-dev, libncurses5, libncurses5-dev, libc6-dev, libxcrypt
+(formerly libgcrypt11) and libxcrypt-dev. Depending on your system, there might
+or might not be numbers appended to the package names (eg libxcrypt1 instead of
+libxcrypt), just do a generic search.
 
 Since version 4.4.5 which supports music and sound via SDL2, you also need
 libsdl2-mixer-devel, libsdl2, libsmpeg. Usual package names (SDL2, not SDL!):
@@ -3758,7 +3762,8 @@ then you might run into the following problems:
  like that by default.
 
 -If the LIBS linker flags in the makefile say '-lcrypt' that will cause an
- error about library not being found. Change it to '-lgcrypt' to fix it.
+ error about library not being found if using libgcrypt. In that case change it
+ to '-lgcrypt' to fix it.
 
 -If the LDFLAGS are empty the linker will throw a not-found error 22. Fix this
  by moving (or copying) the -L... library search-folder parameters from LIBS to
