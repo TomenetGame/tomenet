@@ -452,6 +452,9 @@ void cmd_map(char mode) {
 	//Term_draw(minimap_selx, minimap_sely, minimap_selattr, minimap_selchar);
 	minimap_selx = -1;
 
+	/* Accepting minimap network data, to be drawn over the main screen contents */
+	local_map_active = TRUE;
+
 	while (TRUE) {
 		/* Send the request */
 		Send_map(mode + dir);
@@ -658,6 +661,8 @@ c_msg_format("wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p_ptr
 		/* re-retrieve map */
 		continue;
 	}
+
+	local_map_active = FALSE;
 
 	/* Reload the screen */
 	Term_load();

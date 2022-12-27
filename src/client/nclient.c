@@ -3538,20 +3538,16 @@ int Receive_line_info(void) {
 	s16b	y;
 	byte	a;
 	byte	rep;
-	bool	draw = FALSE;
+	bool	draw = TRUE;
 	char *stored_sbuf_ptr = rbuf.ptr;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hd", &ch, &y)) <= 0) return n;
+	if ((n = Packet_scanf(&rbuf, "%c%hd", &ch, &y)) <= 0) return(n);
 
 	if (screen_icky && ch != PKT_MINI_MAP) Term_switch(0);
 
-#if 0
-	/* If this is the mini-map then we can draw if the screen is icky */
-	if (ch == PKT_MINI_MAP || (!screen_icky && !shopping))
-		draw = TRUE;
-#else
-	draw = TRUE;
-#endif
+	/* If this is the mini-map, discard package if we already left the minimap screen again!
+	   This would otherwise cause a visua glitch, and can happen if we exit faster than server latency! */
+	if (ch == PKT_MINI_MAP && !local_map_active) draw = FALSE;
 
 	/* Hack: -1 marks minimap transmission as complete, so we can start adding some extra info to it, such as coordinates. */
 	if (ch == PKT_MINI_MAP && y == -1) {

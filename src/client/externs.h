@@ -179,7 +179,7 @@ extern char guildhall_pos[14];
 extern setup_t Setup;
 extern client_setup_t Client_setup;
 
-extern bool shopping, perusing;
+extern bool shopping, perusing, local_map_active;
 
 extern s16b last_line_info;
 extern s32b cur_line;

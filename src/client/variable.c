@@ -70,8 +70,9 @@ char guildhall_pos[14];
 setup_t Setup;				/* The information given to us by the server */
 client_setup_t Client_setup;		/* The information we give to the server */
 
-bool shopping;				/* Are we in a store? */
-bool perusing;				/* Are we browinsg a help file or similar? */
+bool shopping = FALSE;			/* Are we in a store? */
+bool perusing = FALSE;			/* Are we browinsg a help file or similar? */
+bool local_map_active = FALSE;		/* Are we allowing minimap visuals appear over the main screen (map) visuals */
 
 s16b last_line_info;			/* Last line of info we've received */
 s32b max_line;				/* Maximum amount of "special" info */
