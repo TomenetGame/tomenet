@@ -2861,7 +2861,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 #ifdef BUFFER_GUIDE
 			/* Hack: Backtrack to find out in which chapter we currently are, and display it in the top line */
 			int lc;
-			char chapter_header[10] = { 0 }, *lcc;
+			char chapter_header[MAX_CHARS] = { 0 }, *lcc;
 
 			/* Search for chapter headers */
 			for (lc = line; lc >= guide_endofcontents; lc--) {
