@@ -237,7 +237,7 @@ X11BASE = /usr/X11R6
 
 
 # Account editor
-ACCEDIT_LIBS = -lcurses -lcrypt
+ACCEDIT_LIBS = -lncurses -lcrypt
 
 # Client doesn't need -lcrypt
 # Removing -lcrypt from client builds makes it easier to build because libcrypt has been removed from glibc
