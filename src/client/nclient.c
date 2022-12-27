@@ -3547,7 +3547,10 @@ int Receive_line_info(void) {
 
 	/* If this is the mini-map, discard package if we already left the minimap screen again!
 	   This would otherwise cause a visua glitch, and can happen if we exit faster than server latency! */
-	if (ch == PKT_MINI_MAP && !local_map_active) draw = FALSE;
+	if (ch == PKT_MINI_MAP && !local_map_active) {
+		if (y == -1) return(1);
+		draw = FALSE;
+	}
 
 	/* Hack: -1 marks minimap transmission as complete, so we can start adding some extra info to it, such as coordinates. */
 	if (ch == PKT_MINI_MAP && y == -1) {
@@ -3855,6 +3858,8 @@ int Receive_mini_map_pos(void) {
 	} else {
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c%c", &ch, &x, &y, &a, &c)) <= 0) return n;
 	}
+
+	if (!local_map_active) return(1);
 
 #ifdef WILDMAP_ALLOW_SELECTOR_SCROLLING
 c_msg_format("Rmmp x,y=%d,%d, yoff=%d", x,y,y_offset);
