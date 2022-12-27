@@ -4215,7 +4215,7 @@ int Send_reply(int ind, int replyto, int result) {
 		return(-1);
 	}
 
-	return n;
+	return(n);
 }
 
 int Send_leave(int ind, int id) {
@@ -5354,7 +5354,7 @@ static int Receive_file(int ind) {
 					/* Rollback the socket buffer */
 					Sockbuf_rollback(&connp->r, bytes_read);
 
-					return n;
+					return(n);
 				}
 				if (!is_admin(p_ptr)) {
 					msg_print(Ind, "\377rFile transfer refused");
@@ -5369,7 +5369,7 @@ static int Receive_file(int ind) {
 					/* Rollback the socket buffer */
 					Sockbuf_rollback(&connp->r, bytes_read);
 
-					return n;
+					return(n);
 				}
 				bytes_read += 2;
 				x = local_file_write(0, fnum, len);
@@ -5396,7 +5396,7 @@ static int Receive_file(int ind) {
 					/* Rollback the socket buffer */
 					Sockbuf_rollback(&connp->r, bytes_read);
 
-					return n;
+					return(n);
 				}
 				if (!is_admin(p_ptr)) {
 					msg_print(Ind, "\377rFile check refused");
@@ -5423,7 +5423,7 @@ static int Receive_file(int ind) {
 						/* Rollback the socket buffer */
 						Sockbuf_rollback(&connp->r, bytes_read);
 
-						return n;
+						return(n);
 					}
 					md5_digest_to_char_array(digest, digest_net);
 					check_return_new(ind, fnum, digest, Ind);
@@ -5432,7 +5432,7 @@ static int Receive_file(int ind) {
 						/* Rollback the socket buffer */
 						Sockbuf_rollback(&connp->r, bytes_read);
 
-						return n;
+						return(n);
 					}
 					check_return(ind, fnum, csum, Ind);
 				}
@@ -9313,7 +9313,7 @@ s_printf("sending local cloud %d (%d,%d - %d,%d)\n", i, cx1, cy1, cx2, cy2);
 		}
 	}
 
-	return n;
+	return(n);
 }
 
 int Send_inventory_revision(int Ind) {
@@ -9717,7 +9717,7 @@ static int Receive_keepalive(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* If client has not been hacked, this should set AFK after 1 minute
@@ -9764,7 +9764,7 @@ static int Receive_walk(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check */
@@ -9921,7 +9921,7 @@ static int Receive_run(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check */
@@ -10004,7 +10004,7 @@ static int Receive_tunnel(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (!p_ptr) return(1);
@@ -10049,7 +10049,7 @@ static int Receive_aim_wand(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%c", &ch, &item, &dir)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
@@ -10090,7 +10090,7 @@ static int Receive_drop(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &item, &amt)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check - mikaelh */
@@ -10130,7 +10130,7 @@ static int Receive_fire(int ind) {
 	//if ((n = Packet_scanf(&connp->r, "%c%c%hd", &ch, &dir, &item)) <= 0)
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Check confusion */
@@ -10199,7 +10199,7 @@ static int Receive_observe(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check - mikaelh */
@@ -10224,7 +10224,7 @@ static int Receive_stand(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (!p_ptr) return(-1);
@@ -10252,7 +10252,7 @@ static int Receive_stand_auto(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (!p_ptr) return(-1);
@@ -10282,7 +10282,7 @@ static int Receive_stand_one(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (!p_ptr) return(-1);
@@ -10311,7 +10311,7 @@ static int Receive_destroy(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &item, &amt)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check - mikaelh */
@@ -10351,13 +10351,13 @@ static int Receive_look(int ind) {
 		char old_dir;
 		if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &old_dir)) <= 0) {
 			if (n == -1) Destroy_connection(ind, "read error");
-			return n;
+			return(n);
 		}
 		dir = old_dir;
 	} else { /* for 'p' feature (manual ground-targetting) */
 		if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &dir)) <= 0) {
 			if (n == -1) Destroy_connection(ind, "read error");
-			return n;
+			return(n);
 		}
 	}
 
@@ -10389,7 +10389,7 @@ static int Receive_activate_skill(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%c%hd%hd%c%hd%hd", &ch, &mkey, &book, &spell, &dir, &item, &aux)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Not by class nor by item; by skill */
@@ -10672,7 +10672,7 @@ static int Receive_open(int ind) {
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0) {
 		if (n == -1)
 			Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check */
@@ -10710,7 +10710,7 @@ static int Receive_mind(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (player) {
@@ -10735,7 +10735,7 @@ static int Receive_ghost(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &ability)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
@@ -10764,7 +10764,7 @@ static int Receive_quaff(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check - mikaelh */
@@ -10802,7 +10802,7 @@ static int Receive_read(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check - mikaelh */
@@ -10842,7 +10842,7 @@ static int Receive_search(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* all this is temp just to make it work */
@@ -10884,7 +10884,7 @@ static int Receive_take_off(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check - mikaelh */
@@ -10922,7 +10922,7 @@ static int Receive_take_off_amt(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &item, &amt)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check - mikaelh */
@@ -10960,7 +10960,7 @@ static int Receive_use(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check - mikaelh */
@@ -11024,7 +11024,7 @@ static int Receive_throw(int ind) {
 	if ((n = Packet_scanf(&connp->r, "%c%c%hd", &ch, &dir, &item)) <= 0) {
 		if (n == -1)
 			Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
@@ -11063,7 +11063,7 @@ static int Receive_wield(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check - mikaelh */
@@ -11101,7 +11101,7 @@ static int Receive_zap(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check - mikaelh */
@@ -11168,7 +11168,7 @@ static int Receive_zap_dir(int ind) {
 	if ((n = Packet_scanf(&connp->r, "%c%hd%c", &ch, &item, &dir)) <= 0) {
 		if (n == -1)
 			Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
@@ -11210,7 +11210,7 @@ static int Receive_target(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &dir)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check */
@@ -11238,7 +11238,7 @@ static int Receive_target_friendly(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &dir)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check */
@@ -11266,7 +11266,7 @@ static int Receive_inscribe(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%s", &ch, &item, inscription)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 	/* paranoia? */
 	inscription[MAX_CHARS - 1] = '\0';
@@ -11302,7 +11302,7 @@ static int Receive_uninscribe(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check - mikaelh */
@@ -11336,7 +11336,7 @@ static int Receive_autoinscribe(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check - mikaelh */
@@ -11372,7 +11372,7 @@ static int Receive_activate(int ind) {
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0) {
 		if (n == -1)
 			Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check - mikaelh */
@@ -11424,7 +11424,7 @@ static int Receive_activate_dir(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%c", &ch, &item, &dir)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
@@ -11462,7 +11462,7 @@ static int Receive_bash(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check */
@@ -11506,7 +11506,7 @@ static int Receive_disarm(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check */
@@ -11548,7 +11548,7 @@ static int Receive_eat(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check - mikaelh */
@@ -11586,7 +11586,7 @@ static int Receive_fill(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check - mikaelh */
@@ -11622,7 +11622,7 @@ static int Receive_locate(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check */
@@ -11657,7 +11657,7 @@ static int Receive_map(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &mode)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (p_ptr) do_cmd_view_map(player, mode);
@@ -11678,7 +11678,7 @@ static int Receive_search_mode(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (p_ptr) do_cmd_toggle_search(player);
@@ -11700,7 +11700,7 @@ static int Receive_close(int ind)
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check */
@@ -11730,7 +11730,7 @@ static int Receive_skill_mod(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%d", &ch, &i)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (p_ptr) increase_skill(player, i, FALSE);
@@ -11752,7 +11752,7 @@ static int Receive_skill_dev(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%d%c", &ch, &i, &dev)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (p_ptr) {
@@ -11784,7 +11784,7 @@ static int Receive_go_up(int ind)
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
@@ -11812,7 +11812,7 @@ static int Receive_go_down(int ind)
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
@@ -11842,7 +11842,7 @@ static int Receive_direction(int ind)
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check */
@@ -11869,7 +11869,7 @@ static int Receive_item(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check - mikaelh */
@@ -11903,7 +11903,7 @@ static int Receive_spell(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &item, &spell)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check - mikaelh */
@@ -11934,7 +11934,7 @@ static int Receive_message(int ind)
 
 	if ((n = Packet_scanf(&connp->r, "%c%S", &ch, buf)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* A message longer than 159 characters will certainly cause problems - mikaelh
@@ -11959,7 +11959,7 @@ static int Receive_admin_house(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%s", &ch, &dir, buf)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check */
@@ -11986,7 +11986,7 @@ static int Receive_purchase(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &item, &amt)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (player && p_ptr->store_num != -1)
@@ -12012,7 +12012,7 @@ static int Receive_sell(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &item, &amt)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (player) store_sell(player, item, amt);
@@ -12046,7 +12046,7 @@ static int Receive_store_leave(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (!player) return(-1);
@@ -12089,7 +12089,7 @@ static int Receive_store_confirm(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (!player) return(-1);
@@ -12117,7 +12117,7 @@ static int Receive_store_examine(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (player && p_ptr->store_num != -1)
@@ -12144,7 +12144,7 @@ static int Receive_store_command(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%hd%hd%hd%d", &ch, &action, &item, &item2, &amt, &gold)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (player && p_ptr->store_num != -1)
@@ -12168,7 +12168,7 @@ static int Receive_drop_gold(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%d", &ch, &amt)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
@@ -12195,7 +12195,7 @@ static int Receive_steal(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check */
@@ -12229,7 +12229,7 @@ static int Receive_King(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &type)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (p_ptr) {
@@ -12256,7 +12256,7 @@ static int Receive_redraw(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &mode)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (connp->id != -1) {
@@ -12368,7 +12368,7 @@ static int Receive_rest(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (player) {
@@ -12503,7 +12503,7 @@ static int Receive_clear_buffer(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (player) Handle_clear_buffer(player);
@@ -12524,7 +12524,7 @@ static int Receive_clear_actions(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (player) Handle_clear_actions(player);
@@ -12544,19 +12544,19 @@ static int Receive_special_line(int ind) {
 	if (!is_older_than(&connp->version, 4, 7, 4, 6, 0, 0)) {
 		if ((n = Packet_scanf(&connp->r, "%c%c%d%s", &ch, &type, &line, srcstr)) <= 0) {
 			if (n == -1) Destroy_connection(ind, "read error");
-			return n;
+			return(n);
 		}
 	} else if (is_newer_than(&connp->version, 4, 4, 7, 0, 0, 0)) {
 		if ((n = Packet_scanf(&connp->r, "%c%c%d", &ch, &type, &line)) <= 0) {
 			if (n == -1) Destroy_connection(ind, "read error");
-			return n;
+			return(n);
 		}
 	} else {
 		s16b old_line;
 
 		if ((n = Packet_scanf(&connp->r, "%c%c%hd", &ch, &type, &old_line)) <= 0) {
 			if (n == -1) Destroy_connection(ind, "read error");
-			return n;
+			return(n);
 		}
 		line = old_line;
 	}
@@ -12665,7 +12665,7 @@ static int Receive_options(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (player) {
@@ -12677,7 +12677,7 @@ static int Receive_options(int ind) {
 				n = Packet_scanf(&connp->r, "%c", &options[i]);
 				if (n <= 0) {
 					Destroy_connection(ind, "read error");
-					return n;
+					return(n);
 				}
 			}
 		} else if (is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0)) {
@@ -12685,7 +12685,7 @@ static int Receive_options(int ind) {
 				n = Packet_scanf(&connp->r, "%c", &options[i]);
 				if (n <= 0) {
 					Destroy_connection(ind, "read error");
-					return n;
+					return(n);
 				}
 			}
 		} else {
@@ -12693,7 +12693,7 @@ static int Receive_options(int ind) {
 				n = Packet_scanf(&connp->r, "%c", &options[i]);
 				if (n <= 0) {
 					Destroy_connection(ind, "read error");
-					return n;
+					return(n);
 				}
 			}
 		}
@@ -12733,7 +12733,7 @@ static int Receive_screen_dimensions(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (player) {
@@ -12741,7 +12741,7 @@ static int Receive_screen_dimensions(int ind) {
 		n = Packet_scanf(&connp->r, "%d%d", &screen_wid_32b, &screen_hgt_32b);
 		if (n <= 0) {
 			Destroy_connection(ind, "read error");
-			return n;
+			return(n);
 		}
 		/* Convert from 32 bits to 16 bits */
 		p_ptr->screen_wid = screen_wid_32b;
@@ -12823,12 +12823,12 @@ static int Receive_suicide(int ind) {
 	if (is_newer_than(&connp->version, 4, 4, 2, 3, 0, 0)) {
 		if ((n = Packet_scanf(&connp->r, "%c%c%c", &ch, &extra1, &extra2)) <= 0) {
 			if (n == -1) Destroy_connection(ind, "read error");
-			return n;
+			return(n);
 		}
 	} else {
 		if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 			if (n == -1) Destroy_connection(ind, "read error");
-			return n;
+			return(n);
 		}
 	}
 
@@ -12863,7 +12863,7 @@ static int Receive_party(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%s", &ch, &command, buf)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* sanitize input - C. Blue */
@@ -12917,7 +12917,7 @@ static int Receive_guild(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%s", &ch, &command, buf)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	switch (command) {
@@ -12952,7 +12952,7 @@ static int Receive_guild_config(int ind) {
 	if (connp->id != -1) player = GetInd[connp->id];
 	if ((n = Packet_scanf(&connp->r, "%c%d%d%s", &ch, &command, &flags, adder)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 	if (!player) return(1);
 	p_ptr = Players[player];
@@ -13198,7 +13198,7 @@ static int Receive_master(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%s", &ch, &command, buf)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (player) {
@@ -13331,7 +13331,7 @@ static int Receive_spike(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check */
@@ -13366,7 +13366,7 @@ static int Receive_raw_key(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &key)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
@@ -13445,7 +13445,7 @@ static int Receive_ping(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%c%d%d%d%S", &ch, &pong, &id, &tim, &utim, &buf)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (!pong) {
@@ -13516,7 +13516,7 @@ static int Receive_sip(int ind) {
 	}
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_drink_fountain(player);
@@ -13545,7 +13545,7 @@ static int Receive_telekinesis(int ind) {
 	}
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		/* Open/close mind to receive items via telekinesis */
@@ -13580,7 +13580,7 @@ static int Receive_BBS(int ind) {
 	}
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 	if (p_ptr) {
 		/* Look at in-game bbs - C. Blue */
@@ -13614,7 +13614,7 @@ static int Receive_wield2(int ind) {
 	}
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check - mikaelh */
@@ -13651,7 +13651,7 @@ static int Receive_wield3(int ind) {
 	}
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
@@ -13684,7 +13684,7 @@ static int Receive_cloak(int ind) {
 	}
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_cloak(player);
@@ -13764,7 +13764,7 @@ static int Receive_inventory_revision(int ind) {
 	}
 	if ((n = Packet_scanf(&connp->r, "%c%d", &ch, &revision)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 	if (p_ptr) {
 		/* NOTE:
@@ -13817,7 +13817,7 @@ static int Receive_account_info(int ind) {
 	}
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (player > 0) {
@@ -13836,7 +13836,7 @@ static int Receive_change_password(int ind) {
 	if (connp->id != -1) player = GetInd[connp->id];
 	if ((n = Packet_scanf(&connp->r, "%c%s%s", &ch, old_pass, new_pass)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (player > 0) {
@@ -13870,7 +13870,7 @@ static int Receive_force_stack(int ind) {
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0) {
 		if (n == -1)
 			Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Sanity check - mikaelh */
@@ -13904,7 +13904,7 @@ static int Receive_request_key(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%d%c", &ch, &id, &key)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 	if (!p_ptr) return(1);
 
@@ -13925,7 +13925,7 @@ static int Receive_request_num(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%d%d", &ch, &id, &num)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 	if (!p_ptr) return(1);
 
@@ -13946,7 +13946,7 @@ static int Receive_request_str(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%d%s", &ch, &id, str)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 	if (!p_ptr) return(1);
 
@@ -13967,7 +13967,7 @@ static int Receive_request_cfr(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%d%d", &ch, &id, &cfr)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 	if (!p_ptr) return(1);
 
@@ -13995,7 +13995,7 @@ static int Receive_client_setup(int ind) {
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == 0) goto rollback;
 		else Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	char32_t max_char = 0;
@@ -14012,7 +14012,7 @@ static int Receive_client_setup(int ind) {
 		if (n == 0) goto rollback;
 		else if (n < 0) {
 			Destroy_connection(ind, "read error");
-			return n;
+			return(n);
 		}
 
 		if ( max_char < connp->Client_setup.u_char[i] ) {
@@ -14032,7 +14032,7 @@ static int Receive_client_setup(int ind) {
 		if (n == 0) goto rollback;
 		else if (n < 0) {
 			Destroy_connection(ind, "read error");
-			return n;
+			return(n);
 		}
 
 		if ( max_char < connp->Client_setup.f_char[i] ) {
@@ -14052,7 +14052,7 @@ static int Receive_client_setup(int ind) {
 		if (n == 0) goto rollback;
 		else if (n < 0) {
 			Destroy_connection(ind, "read error");
-			return n;
+			return(n);
 		}
 
 		if ( max_char < connp->Client_setup.k_char[i] ) {
@@ -14072,7 +14072,7 @@ static int Receive_client_setup(int ind) {
 		if (n == 0) goto rollback;
 		else if (n < 0) {
 			Destroy_connection(ind, "read error");
-			return n;
+			return(n);
 		}
 
 		if ( max_char < connp->Client_setup.r_char[i] ) {
@@ -14117,7 +14117,7 @@ static int Receive_client_setup_U(int ind) {
 	if ((n = Packet_scanf(&connp->r, "%c%d%d", &ch, &begin, &end)) <= 0) {
 		if (n == 0) goto rollback;
 		else Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Read the "unknown" char/attrs */
@@ -14135,7 +14135,7 @@ static int Receive_client_setup_U(int ind) {
 		if (n == 0) goto rollback;
 		else if (n < 0) {
 			Destroy_connection(ind, "read error");
-			return n;
+			return(n);
 		}
 	}
 
@@ -14169,7 +14169,7 @@ static int Receive_client_setup_F(int ind) {
 	if ((n = Packet_scanf(&connp->r, "%c%d%d", &ch, &begin, &end)) <= 0) {
 		if (n == 0) goto rollback;
 		else Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Read the "feature" char/attrs */
@@ -14188,7 +14188,7 @@ static int Receive_client_setup_F(int ind) {
 		if (n == 0) goto rollback;
 		else if (n < 0) {
 			Destroy_connection(ind, "read error");
-			return n;
+			return(n);
 		}
 	}
 
@@ -14222,7 +14222,7 @@ static int Receive_client_setup_K(int ind) {
 	if ((n = Packet_scanf(&connp->r, "%c%d%d", &ch, &begin, &end)) <= 0) {
 		if (n == 0) goto rollback;
 		else Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Read the "object" char/attrs */
@@ -14241,7 +14241,7 @@ static int Receive_client_setup_K(int ind) {
 		if (n == 0) goto rollback;
 		else if (n < 0) {
 			Destroy_connection(ind, "read error");
-			return n;
+			return(n);
 		}
 	}
 
@@ -14275,7 +14275,7 @@ static int Receive_client_setup_R(int ind) {
 	if ((n = Packet_scanf(&connp->r, "%c%d%d", &ch, &begin, &end)) <= 0) {
 		if (n == 0) goto rollback;
 		else Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	/* Read the "monster" char/attrs */
@@ -14294,7 +14294,7 @@ static int Receive_client_setup_R(int ind) {
 		if (n == 0) goto rollback;
 		else if (n < 0) {
 			Destroy_connection(ind, "read error");
-			return n;
+			return(n);
 		}
 	}
 
@@ -14324,7 +14324,7 @@ static int Receive_audio(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &sfx, &mus)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	s_printf("AUDIO_UPDATED: %s ('%s') features %hd, %hd.\n", connp->nick, p_ptr ? p_ptr->name : "---", sfx, mus);
@@ -14354,7 +14354,7 @@ static int Receive_font(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%s%s", &ch, &use_graphics, graphic_tiles, fname)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	s_printf("FONT_UPDATED: %s ('%s') features %hd, <%s>, <%s>.\n", connp->nick, p_ptr ? p_ptr->name : "---", use_graphics, graphic_tiles, fname);
@@ -14380,7 +14380,7 @@ static int Receive_si_move(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &islot)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
@@ -14407,7 +14407,7 @@ static int Receive_si_remove(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &islot, &slot)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
@@ -14432,7 +14432,7 @@ static int Receive_version(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%c%s%s", &ch, version, os_version)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
+		return(n);
 	}
 	/* paranoia? */
 	version[MAX_CHARS - 1] = '\0';

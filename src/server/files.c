@@ -3291,7 +3291,7 @@ int vclose(int fd) {
 		memset(vf, 0, sizeof(struct vfile));
 	}
 
-	return n;
+	return(n);
 }
 
 ssize_t vread(int fd, char *buf, size_t len) {
