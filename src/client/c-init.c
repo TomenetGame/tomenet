@@ -3675,8 +3675,8 @@ void client_init(char *argv1, bool skip) {
 		if (strchr(server_name, ':') &&
 		    /* Make sure it's not an IPv6 address. */
 		    !strchr(strchr(server_name, ':') + 1, ':')) {
-
 			char *port = strchr(server_name, ':');
+
 			cfg_game_port = atoi(port + 1);
 			*port = '\0';
 		}
