@@ -10757,6 +10757,7 @@ void audio_pack_selector(void) {
 	char sp_name[MAX_PACKS][MAX_CHARS], mp_name[MAX_PACKS][MAX_CHARS];
 	char sp_author[MAX_PACKS][MAX_CHARS], mp_author[MAX_PACKS][MAX_CHARS];
 	char sp_diz[MAX_PACKS][MAX_CHARS * 3], mp_diz[MAX_PACKS][MAX_CHARS * 3];
+	char *ckey, *cval;
 
 	FILE *fff, *fff2;
 #ifndef WINDOWS
@@ -10851,16 +10852,31 @@ void audio_pack_selector(void) {
 				while (!feof(fff2)) {
 					if (!fgets(buf, 1024, fff2)) break;
 					buf[strlen(buf) - 1] = 0;
-					if (!strncmp(buf, "packname = ", 11)) {
-						strcpy(sp_name[soundpacks], buf + 11);
+
+					/* Trim leading spaces/tabs */
+					ckey = buf;
+					while (*ckey == ' ' || *ckey == '\t') ckey++;
+
+					/* Search for key separator */
+					if (!(cval = strchr(ckey, '='))) continue;
+					*cval = 0;
+					cval++;
+					/* Trim spaces/tabs */
+					while (ckey[strlen(ckey) - 1] == ' ' || ckey[strlen(ckey) - 1] == '\t') ckey[strlen(ckey) - 1] = 0;
+					while (*cval == ' ' || *cval == '\t') cval++;
+					while (cval[strlen(cval) - 1] == ' ' || cval[strlen(cval) - 1] == '\t') cval[strlen(cval) - 1] = 0;
+
+					/* Scan for pack info */
+					if (!strcmp(ckey, "packname")) {
+						strcpy(sp_name[soundpacks], cval);
 						continue;
 					}
-					if (!strncmp(buf, "author = ", 9)) {
-						strcpy(sp_author[soundpacks], buf + 9);
+					if (!strcmp(ckey, "author")) {
+						strcpy(sp_author[soundpacks], cval);
 						continue;
 					}
-					if (!strncmp(buf, "description = ", 14)) {
-						strcpy(sp_diz[soundpacks], buf + 14);
+					if (!strcmp(ckey, "description")) {
+						strcpy(sp_diz[soundpacks], cval);
 						continue;
 					}
 				}
@@ -10891,16 +10907,31 @@ void audio_pack_selector(void) {
 				while (!feof(fff2)) {
 					if (!fgets(buf, 1024, fff2)) break;
 					buf[strlen(buf) - 1] = 0;
-					if (!strncmp(buf, "packname = ", 11)) {
-						strcpy(mp_name[musicpacks], buf + 11);
+
+					/* Trim leading spaces/tabs */
+					ckey = buf;
+					while (*ckey == ' ' || *ckey == '\t') ckey++;
+
+					/* Search for key separator */
+					if (!(cval = strchr(ckey, '='))) continue;
+					*cval = 0;
+					cval++;
+					/* Trim spaces/tabs */
+					while (ckey[strlen(ckey) - 1] == ' ' || ckey[strlen(ckey) - 1] == '\t') ckey[strlen(ckey) - 1] = 0;
+					while (*cval == ' ' || *cval == '\t') cval++;
+					while (cval[strlen(cval) - 1] == ' ' || cval[strlen(cval) - 1] == '\t') cval[strlen(cval) - 1] = 0;
+
+					/* Scan for pack info */
+					if (!strcmp(ckey, "packname")) {
+						strcpy(mp_name[musicpacks], cval);
 						continue;
 					}
-					if (!strncmp(buf, "author = ", 9)) {
-						strcpy(mp_author[musicpacks], buf + 9);
+					if (!strcmp(ckey, "author")) {
+						strcpy(mp_author[musicpacks], cval);
 						continue;
 					}
-					if (!strncmp(buf, "description = ", 14)) {
-						strcpy(mp_diz[musicpacks], buf + 14);
+					if (!strcmp(ckey, "description")) {
+						strcpy(mp_diz[musicpacks], cval);
 						continue;
 					}
 				}
