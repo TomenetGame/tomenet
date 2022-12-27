@@ -10876,6 +10876,16 @@ void process_timers() {
 		} else done = TRUE; /* Abort */
 		if (done) fake_waitpid_route = 0;
 	}
+	if (fake_waitpid_clver) {
+		/* Just time out in case client never responds */
+		fake_waitpid_clver_timer--;
+
+		/* Discard for good */
+		if (!fake_waitpid_clver_timer) {
+			fake_waitpid_clver = 0;
+			s_printf("clver request timed out.\n");
+		}
+	}
 }
 
 /* during new years eve, cast fireworks! - C. Blue

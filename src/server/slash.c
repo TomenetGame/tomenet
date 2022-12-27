@@ -12396,6 +12396,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				Send_version(j);
 				fake_waitpid_clver = p_ptr->id; /* Poll result to admin */
+				fake_waitpid_clver_timer = 3; /* Set response timeout (s) */
 				return;
 			}
 #ifdef EQUIPMENT_SET_BONUS

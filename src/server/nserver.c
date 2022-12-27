@@ -14454,6 +14454,7 @@ static int Receive_version(int ind) {
 			}
 
 			fake_waitpid_clver = 0;
+			fake_waitpid_clver_timer = 0;
 		}
 	}
 
