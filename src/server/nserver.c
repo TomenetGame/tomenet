@@ -7590,6 +7590,9 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 	return(1);
 }
 
+/* TODO: Make a new PKT_ packet type for this to allow the client to distinguish it from
+   normal line updates, so if someone enters and exits the map faster than server latency
+   the map won't stay on screen forever, forcing the user to refresh via CTRL+R. */
 int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 	player_type *p_ptr = Players[Ind];//, *p_ptr2 = NULL;
 	connection_t *connp = Conn[p_ptr->conn], *connp2 = NULL;
