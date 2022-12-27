@@ -4411,7 +4411,7 @@ int Receive_special_line(void) {
 	ap = TERM_WHITE;
 
 	/* For searching, when we allow empty lines at the end of the file, we have to clear previously displayed stuff. */
-	if (!line) clear_from(2);
+	if (special_line_type && !line) clear_from(2);
 
 	/* Hack - prepare for a special sized page (# of lines divisable by n) */
 	if (line >= 21 + HGT_PLUS) {
