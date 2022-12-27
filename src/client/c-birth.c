@@ -2393,6 +2393,9 @@ bool get_server_name(void) {
 	int j, k, l, bytes = 0, socket = -1, offsets[20], lines = 0;
 	char buf[1024], *ptr, c, out_val[260];
 #endif
+#ifdef META_PINGS
+	int tmpport;
+#endif
 
 	/* We NEED lua here, so if it aint initialized yet, do it */
 	init_lua();
@@ -2508,7 +2511,7 @@ bool get_server_name(void) {
 		/* Obtain all unique server names */
 		v = 0;
 		for (j = 0; j < meta_i; j++) {
-			call_lua(0, "meta_get", "(s,d)", "sd", meta_buf, j, &tmp, &server_port);
+			call_lua(0, "meta_get", "(s,d)", "sd", meta_buf, j, &tmp, &tmpport);
 			if (!tmp[0]) continue; //paranoia
 
 			/* Check for duplicate names */
