@@ -702,9 +702,14 @@ bool do_shadow_gate(int Ind, int range) {
 #endif
 
 /*
- * Increase players hit points, notice effects, and tell the player about it.
+ * Increase players hit points, notice effects.
+ * 'quiet' : don't tell the player it.
+ * 'autoeffect' : non-'intended' healing, that applies automatically,
+ *   such as necromancy, vampiric items, standard body regeneration;
+ *   set 'autoeffect' to TRUE if you want to do forced healing without
+ *   any implications.
  */
-bool hp_player(int Ind, int num) {
+bool hp_player(int Ind, int num, bool quiet, bool autoeffect) {
 	player_type *p_ptr = Players[Ind];
 
 	// The "number" that the character is displayed as before healing
@@ -712,106 +717,6 @@ bool hp_player(int Ind, int num) {
 	long eff_num; /* actual amount of HP gain */
 	long e = PVP_DIMINISHING_HEALING_CAP(p_ptr);
 
-	if (p_ptr->no_heal) return(FALSE);
-
-#ifdef AUTO_RET_NEW /* for drain life etc */
-	/* Don't allow phase/teleport for auto-retaliation methods */
-	if (p_ptr->auto_retaliaty) {
-		msg_print(Ind, "\377yYou cannot use means of healing for auto-retaliation.");
-		return(FALSE);
-	}
-#endif
-
-	p_ptr->test_heal += num;
-
-	// The "number" that the character is displayed as before healing
-	old_num = (p_ptr->chp * 95) / (p_ptr->mhp * 10);
-	if (old_num > TURN_CHAR_INTO_NUMBER) old_num = 10;
-
-	/* player can't be healed while burning in the holy fire of martyrium */
-	if (p_ptr->martyr && !bypass_invuln) return(FALSE);
-
-	/* Hell mode is .. hard */
-	if ((p_ptr->mode & MODE_HARD) && (num > 3)) num = num * 3 / 4;
-
-	eff_num = (p_ptr->mhp - p_ptr->chp < num) ? (p_ptr->mhp - p_ptr->chp) : num;
-
-	/* PVP mode uses diminishing healing - C. Blue */
-	if (p_ptr->mode & MODE_PVP) {
-		eff_num = eff_num * (p_ptr->heal_effect < e ? 100 :
-				    ((e * 100) / ((p_ptr->heal_effect - (e * 2) / 3) * 3)));
-		eff_num /= 100;
-	}
-
-	if (!eff_num) return(FALSE);
-
-	if (p_ptr->chp < p_ptr->mhp) {
-		/* data collection for PVP mode: weaken continous healing over time to prevent silliness (who stacks more pots) - C. Blue */
-		p_ptr->heal_effect += eff_num;
-
-		/* data collection for C_BLUE_AI: add up healing happening during current turn */
-		p_ptr->heal_turn[0] += eff_num;
-
-		/* refill HP, note that we can't use eff_num here due to chp_frac check */
-		num = eff_num;
-		p_ptr->chp += num;
-		if (p_ptr->chp > p_ptr->mhp) {
-			p_ptr->chp = p_ptr->mhp;
-			p_ptr->chp_frac = 0;
-		}
-
-		/* Update health bars */
-		update_health(0 - Ind);
-
-		/* Redraw */
-		p_ptr->redraw |= (PR_HP);
-
-		/* Figure out of if the player's "number" has changed */
-		new_num = (p_ptr->chp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->mhp * 10);
-		if (new_num > TURN_CHAR_INTO_NUMBER) new_num = 10;
-
-		/* If so then refresh everyone's view of this player */
-		if (new_num != old_num)
-			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_PLAYER);
-
-		num = num / 5;
-		if (num < 3) {
-			if (num == 0) {
-				msg_print(Ind, "You feel a little better.");
-			} else {
-				msg_print(Ind, "You feel better.");
-			}
-		} else {
-			if (num < 7) {
-				msg_print(Ind, "You feel much better.");
-			} else {
-				msg_print(Ind, "You feel very good.");
-			}
-		}
-
-		return(TRUE);
-	}
-
-	return(FALSE);
-}
-
-/*
- * Increase players hit points, notice effects, and don't tell the player it.
- * 'autoeffect' stands for non-'intended' healing, that applies automatically,
- * such as necromancy, vampiric items, standard body regeneration;
- * set 'autoeffect' to TRUE if you want to do forced healing without any
- * implications.
- */
-bool hp_player_quiet(int Ind, int num, bool autoeffect) {
-	player_type *p_ptr = Players[Ind];
-
-	// The "number" that the character is displayed as before healing
-	int old_num, new_num;
-	long eff_num; /* actual amount of HP gain */
-	long e = PVP_DIMINISHING_HEALING_CAP(p_ptr);
 
 	if (p_ptr->no_heal && !autoeffect) return(FALSE);
 
@@ -823,65 +728,75 @@ bool hp_player_quiet(int Ind, int num, bool autoeffect) {
 	}
 #endif
 
+	/* Hell mode is .. hard */
+	if ((p_ptr->mode & MODE_HARD) && (num > 3)) num = num * 3 / 4;
+
 	p_ptr->test_heal += num;
+
+	if (p_ptr->chp >= p_ptr->mhp) return(FALSE);
 
 	/* player can't be healed while burning in the holy fire of martyrium */
 	if (p_ptr->martyr && !bypass_invuln) return(FALSE);
 
-	old_num = (p_ptr->chp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->mhp * 10);
-	if (old_num > TURN_CHAR_INTO_NUMBER) old_num = 10;
-
-	/* Hell mode is .. hard */
-	if ((p_ptr->mode & MODE_HARD) && (num > 3)) num = num * 3 / 4;
-
-	eff_num = (p_ptr->mhp - p_ptr->chp < num) ? (p_ptr->mhp - p_ptr->chp) : num;
+	eff_num = num;
 
 	/* PVP mode uses diminishing healing - C. Blue */
 	if (!autoeffect && (p_ptr->mode & MODE_PVP)) {
 		eff_num = eff_num * (p_ptr->heal_effect < e ? 100 :
-				    ((e * 100) / ((p_ptr->heal_effect - (e * 2) / 3) * 3)));
+		    ((e * 100) / ((p_ptr->heal_effect - (e * 2) / 3) * 3)));
 		eff_num /= 100;
 	}
 
+	/* Can't 'overheal' */
+	eff_num = (p_ptr->mhp - p_ptr->chp < eff_num) ? (p_ptr->mhp - p_ptr->chp) : eff_num;
+
+	/* No effective healing left? */
 	if (!eff_num) return(FALSE);
 
-	if (p_ptr->chp < p_ptr->mhp) {
-		if (!autoeffect) {
-			/* data collection for PVP mode: weaken continous healing over time to prevent silliness (who stacks more pots) - C. Blue */
-			p_ptr->heal_effect += eff_num;
+	/* Data collection for PVP mode: weaken continous healing over time to prevent silliness (who stacks more pots) - C. Blue */
+	if (!autoeffect) p_ptr->heal_effect += eff_num;
+	/* Data collection for C_BLUE_AI: add up healing happening during current turn */
+	p_ptr->heal_turn[0] += eff_num;
+
+	old_num = (p_ptr->chp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->mhp * 10);
+	if (old_num > TURN_CHAR_INTO_NUMBER) old_num = 10;
+
+	/* Refill HP, note that we can't use eff_num here due to chp_frac check */
+	num = eff_num;
+	p_ptr->chp += num;
+	p_ptr->chp = p_ptr->mhp;
+	p_ptr->chp_frac = 0;
+
+	/* Figure out of if the player's "number" has changed */
+	new_num = (p_ptr->chp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->mhp * 10);
+	if (new_num > TURN_CHAR_INTO_NUMBER) new_num = 10;
+	/* If so then refresh everyone's view of this player */
+	if (new_num != old_num) everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+
+	/* Update health bars */
+	update_health(0 - Ind);
+	/* Redraw */
+	p_ptr->redraw |= (PR_HP);
+	/* Window stuff */
+	p_ptr->window |= (PW_PLAYER);
+
+	if (!quiet) {
+#if 0
+		num = num / 5;
+		if (num < 3) {
+			if (num == 0) msg_print(Ind, "You feel a little better.");
+			else msg_print(Ind, "You feel better.");
+		} else {
+			if (num < 7) msg_print(Ind, "You feel much better.");
+			else msg_print(Ind, "You feel very good.");
 		}
-		/* data collection for C_BLUE_AI: add up healing happening during current turn */
-		p_ptr->heal_turn[0] += eff_num;
-
-		/* refill HP, note that we can't use eff_num here due to chp_frac check */
-		num = eff_num;
-		p_ptr->chp += num;
-		if (p_ptr->chp > p_ptr->mhp) {
-			p_ptr->chp = p_ptr->mhp;
-			p_ptr->chp_frac = 0;
-		}
-
-		/* Update health bars */
-		update_health(0 - Ind);
-
-		/* Redraw */
-		p_ptr->redraw |= (PR_HP);
-
-		/* Figure out of if the player's "number" has changed */
-		new_num = (p_ptr->chp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->mhp * 10);
-		if (new_num > TURN_CHAR_INTO_NUMBER) new_num = 10;
-
-		/* If so then refresh everyone's view of this player */
-		if (new_num != old_num)
-			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_PLAYER);
-
-		return(TRUE);
+#else
+		/* Give actual healing numbers */
+		msg_format(Ind, "\377gYou are healed for %d hit points.", num);
+#endif
 	}
 
-	return(FALSE);
+	return(TRUE);
 }
 
 
@@ -894,7 +809,7 @@ void flash_bomb(int Ind) {
 	sound(Ind, "flash_bomb", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 
-//	project_los(Ind, GF_BLIND, (p_ptr->lev / 10) + 4, "");
+	//project_los(Ind, GF_BLIND, (p_ptr->lev / 10) + 4, "");
 	project_los(Ind, GF_BLIND, (p_ptr->lev / 10) + 8, "");
 }
 

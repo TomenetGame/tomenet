@@ -2300,7 +2300,7 @@ bool set_hero(int Ind, int v) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->hero) {
-			hp_player(Ind, 10);
+			hp_player(Ind, 10, TRUE, FALSE);
 			set_afraid(Ind, 0);
 			msg_format_near(Ind, "%s has become a hero.", p_ptr->name);
 			msg_print(Ind, "You feel like a hero!");
@@ -2350,7 +2350,7 @@ bool set_shero(int Ind, int v) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->shero) {
-			hp_player(Ind, 30);
+			hp_player(Ind, 30, TRUE, FALSE);
 			set_afraid(Ind, 0);
 
 			if (p_ptr->fury) {
@@ -2559,7 +2559,7 @@ bool set_martyr(int Ind, int v) {
 	if (v) {
 		if (!p_ptr->martyr) {
 			msg_print(Ind, "\377vYou feel the heavens grant your their powers.");
-			hp_player_quiet(Ind, 5000, FALSE); /* fully heal */
+			hp_player(Ind, 5000, TRUE, FALSE); /* fully heal */
 			p_ptr->martyr_timeout = 1000;
 			notice = TRUE;
 			s_printf("MARTYRDOM: %s\n", p_ptr->name);
@@ -11610,7 +11610,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 #endif
 			    ) {
 				msg_print(Ind, "You absorb the energy of the dying soul.");
-				if (!p_ptr->martyr) hp_player_quiet(Ind, gain, TRUE);
+				if (!p_ptr->martyr) hp_player(Ind, gain, TRUE, TRUE);
 				p_ptr->cmp += gain_mp;
 				if (p_ptr->cmp > p_ptr->mmp) p_ptr->cmp = p_ptr->mmp;
 				p_ptr->redraw |= (PR_MANA);

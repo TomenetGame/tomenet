@@ -797,8 +797,7 @@ static void regenhp(int Ind, int percent) {
 	/* Extract the new hitpoints */
 	new_chp = ((s32b)p_ptr->mhp) * percent + PY_REGEN_HPBASE;
 	/* Apply the healing */
-	hp_player_quiet(Ind, new_chp >> 16, TRUE);
-	//p_ptr->chp += new_chp >> 16;   /* div 65536 */
+	hp_player(Ind, new_chp >> 16, TRUE, TRUE);
 
 	/* check for overflow -- this is probably unneccecary */
 	if ((p_ptr->chp < 0) && (old_chp > 0)) p_ptr->chp = MAX_SHORT;
@@ -806,11 +805,9 @@ static void regenhp(int Ind, int percent) {
 	/* handle fractional hit point healing */
 	new_chp_frac = (new_chp & 0xFFFF) + p_ptr->chp_frac;	/* mod 65536 */
 	if (new_chp_frac >= 0x10000L) {
-		hp_player_quiet(Ind, 1, TRUE);
+		hp_player(Ind, 1, TRUE, TRUE);
 		p_ptr->chp_frac = new_chp_frac - 0x10000L;
-	} else {
-		p_ptr->chp_frac = new_chp_frac;
-	}
+	} else p_ptr->chp_frac = new_chp_frac;
 
 	p_ptr->test_heal = freeze_test_heal;
 }
@@ -5243,13 +5240,13 @@ static bool process_player_end_aux(int Ind) {
 	/* Increase regeneration by flat amount from timed regeneration powers */
 	if (p_ptr->tim_regen) {
 		/* Regeneration spell (Nature) and mushroom of fast metabolism */
-		if (p_ptr->tim_regen_pow > 0) hp_player_quiet(Ind, p_ptr->tim_regen_pow / 10 + (magik((p_ptr->tim_regen_pow % 10) * 10) ? 1 : 0), TRUE);
+		if (p_ptr->tim_regen_pow > 0) hp_player(Ind, p_ptr->tim_regen_pow / 10 + (magik((p_ptr->tim_regen_pow % 10) * 10) ? 1 : 0), TRUE, TRUE);
 		/* Nether Sap spell (Unlife) */
 		else if (p_ptr->tim_regen_pow < 0 && p_ptr->cmp >= 10) {
 			p_ptr->cmp -= 10;
 			p_ptr->redraw |= PR_MANA;
 			/* (Cannot be using Martyr as true vampire, so no need to check for regen inhibition, but hp_player_quiet() does check for it anyway.) */
-			hp_player_quiet(Ind, (-p_ptr->tim_regen_pow) / 10 + (magik(((-p_ptr->tim_regen_pow) % 10) * 10) ? 1 : 0), TRUE);
+			hp_player(Ind, (-p_ptr->tim_regen_pow) / 10 + (magik(((-p_ptr->tim_regen_pow) % 10) * 10) ? 1 : 0), TRUE, TRUE);
 		}
 	}
 

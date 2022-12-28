@@ -3821,7 +3821,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 #endif
 						}
 
-						hp_player_quiet(Ind, drain_heal, TRUE);
+						hp_player(Ind, drain_heal, TRUE, TRUE);
 						/* We get to keep some of it! */
 					}
 				}
@@ -4009,7 +4009,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				int leech = q_ptr->chp;
 				if (k < leech) leech = k;
 				leech /= 10;
-				hp_player_quiet(Ind, rand_int(leech), TRUE);
+				hp_player(Ind, rand_int(leech), TRUE, TRUE);
 			}
 #endif
 
@@ -5133,7 +5133,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 						}
 
 						if (m_ptr->r_idx == RI_BLUE) drain_heal >>= 1;
-						hp_player_quiet(Ind, drain_heal, TRUE);
+						hp_player(Ind, drain_heal, TRUE, TRUE);
 						/* We get to keep some of it! */
 					}
 				}
@@ -5264,7 +5264,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				int leech = m_ptr->hp;
 				if (k < leech) leech = k;
 				leech /= 10;
-				hp_player_quiet(Ind, rand_int(leech), TRUE);
+				hp_player(Ind, rand_int(leech), TRUE, TRUE);
 			}
 #endif
 

@@ -10778,7 +10778,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 	case GF_HPINCREASE_PLAYER:
-		(void)hp_player(Ind, dam);
+		(void)hp_player(Ind, dam, FALSE, FALSE);
 		dam = 0;
 		break;
 
@@ -10925,9 +10925,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			//(spammy) msg_format_near(Ind, "\377g%s has been healed for %d hit points!.", p_ptr->name, dam);
 			if (IS_OTHER_PLAYER(-who, Ind)) { /* paranoia? also don't notify ourselves about healing ourselves */
 				msg_format(-who, "\377w%s has been healed for \377g%d\377w hit points.", p_ptr->name, dam);
-				msg_format(Ind, "\377g%s heals you for %d hit points", Players[-who]->name, dam);
-			} else msg_format(Ind, "\377gYou are healed for %d hit points", dam);
-			hp_player_quiet(Ind, dam, FALSE);
+				msg_format(Ind, "\377g%s heals you for %d hit points.", Players[-who]->name, dam);
+			} else msg_format(Ind, "\377gYou are healed for %d hit points.", dam);
+			hp_player(Ind, dam, TRUE, FALSE);
 			dam = 0;
 		}
 		break;
@@ -10948,10 +10948,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 		} else {
 			/* Healed */
+			hp_player(Ind, dam, TRUE, FALSE); /* Actually 'quiet' .. */
+			/* ..and then we just print the received-message (omitting the message for the caster): */
 			msg_format(Ind, "\377gYou are healed for %d points.", dam);
-			//(spammy) msg_format_near(Ind, "\377g%s has been healed for %d hit points.", p_ptr->name, dam);
-
-			hp_player_quiet(Ind, dam, FALSE);
 			dam = 0;
 		}
 		break;
@@ -11445,7 +11444,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* For shattering potions, but maybe work for wands too? */
 	case GF_OLD_HEAL:
 		if (fuzzy) msg_print(Ind, "You are hit by something invigorating!");
-		(void)hp_player(Ind, dam);
+		(void)hp_player(Ind, dam, FALSE, FALSE);
 		dam = 0;
 		break;
 

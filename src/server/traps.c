@@ -620,7 +620,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 
 		case TRAP_OF_HEALING: {
 			destroy_traps_doors_touch(Ind, 0);
-			hp_player(Ind, p_ptr->mhp-p_ptr->chp);
+			hp_player(Ind, p_ptr->mhp - p_ptr->chp, FALSE, FALSE);
 			break;
 		}
 #endif
@@ -2175,7 +2175,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				if (!inarea(wpos, &q_ptr->wpos)) continue;
 
 				msg_print(k, "A fragrant mist fills the air...");
-				hp_player(k, 9999);
+				hp_player(k, 9999, FALSE, FALSE);
 				if (q_ptr->black_breath && magik(50)) {
 					msg_print(k, "The hold of the Black Breath on you is broken!");
 					q_ptr->black_breath = FALSE;

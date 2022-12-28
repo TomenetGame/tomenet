@@ -4680,7 +4680,7 @@ void do_cmd_store(int Ind) {
 	if (!p_ptr->ghost &&
 	    !p_ptr->tim_blacklist && (which == STORE_TEMPLE || which == STORE_TEMPLE_DUN) && !p_ptr->suscep_good) {
 		if (p_ptr->chp < p_ptr->mhp / 2 || p_ptr->cut) msg_print(Ind, "A temple priest applies a bandage."); /* Note: Doesn't make that much sense if HP loss was caused by poison */
-		if (p_ptr->chp < p_ptr->mhp / 2) hp_player_quiet(Ind, p_ptr->mhp / 3, TRUE);
+		if (p_ptr->chp < p_ptr->mhp / 2) hp_player(Ind, p_ptr->mhp / 3, TRUE, TRUE);
 		if (p_ptr->cut) set_cut(Ind, 0, 0);
 
 		if (p_ptr->blind || p_ptr->confused || p_ptr->poisoned || p_ptr->diseased) {

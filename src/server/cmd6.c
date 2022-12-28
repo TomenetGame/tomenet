@@ -242,7 +242,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 		if (p_ptr->cut < CUT_MORTAL_WOUND && set_cut(Ind, p_ptr->cut - 50, p_ptr->cut_attacker)) ident = TRUE;
 		//(void)set_poisoned(Ind, 0, 0);
 		//(void)set_image(Ind, 0);	// ok?
-		if (hp_player(Ind, damroll(6, 8))) ident = TRUE;
+		if (hp_player(Ind, damroll(6, 8), FALSE, FALSE)) ident = TRUE;
 		break;
 
 	case SV_FOOD_RESTORE_STR:
@@ -325,7 +325,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 			(void)set_poisoned(Ind, 0, 0);
 			(void)set_diseased(Ind, 0, 0);
 			(void)set_image(Ind, 0);	// ok?
-			(void)hp_player(Ind, damroll(5, 8));
+			(void)hp_player(Ind, damroll(5, 8), FALSE, FALSE);
 			set_food(Ind, PY_FOOD_MAX - 1);
 			ident = TRUE;
 		} else {
@@ -823,18 +823,18 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			if (set_shero(Ind, randint(15) + 20)) ident = TRUE; /* removed stacking */
 			break;
 		case SV_POTION_CURE_LIGHT:
-			if (hp_player(Ind, damroll(3, 8))) ident = TRUE;
+			if (hp_player(Ind, damroll(3, 8), FALSE, FALSE)) ident = TRUE;
 			if (set_blind(Ind, 0)) ident = TRUE;
 			if (p_ptr->cut < CUT_MORTAL_WOUND && set_cut(Ind, p_ptr->cut - 20, p_ptr->cut_attacker)) ident = TRUE;
 			break;
 		case SV_POTION_CURE_SERIOUS:
-			if (hp_player(Ind, damroll(6, 8))) ident = TRUE;
+			if (hp_player(Ind, damroll(6, 8), FALSE, FALSE)) ident = TRUE;
 			if (set_blind(Ind, 0)) ident = TRUE;
 			if (set_confused(Ind, 0)) ident = TRUE;
 			if (p_ptr->cut < CUT_MORTAL_WOUND && set_cut(Ind, p_ptr->cut - 50, p_ptr->cut_attacker)) ident = TRUE;
 			break;
 		case SV_POTION_CURE_CRITICAL:
-			if (hp_player(Ind, damroll(14, 8))) ident = TRUE;
+			if (hp_player(Ind, damroll(14, 8), FALSE, FALSE)) ident = TRUE;
 			if (set_blind(Ind, 0)) ident = TRUE;
 			if (set_confused(Ind, 0)) ident = TRUE;
 			//if (set_poisoned(Ind, 0, 0)) ident = TRUE;	/* use specialized pots */
@@ -842,7 +842,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			if (p_ptr->cut < CUT_MORTAL_WOUND && set_cut(Ind, p_ptr->cut - 250, 0)) ident = TRUE;
 			break;
 		case SV_POTION_HEALING:
-			if (hp_player(Ind, 300)) ident = TRUE;
+			if (hp_player(Ind, 300, FALSE, FALSE)) ident = TRUE;
 			if (set_blind(Ind, 0)) ident = TRUE;
 			if (set_confused(Ind, 0)) ident = TRUE;
 			//if (set_poisoned(Ind, 0, 0)) ident = TRUE;
@@ -850,7 +850,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			if (set_cut(Ind, p_ptr->cut - 250, 0)) ident = TRUE;
 			break;
 		case SV_POTION_STAR_HEALING:
-			if (hp_player(Ind, 700)) ident = TRUE;
+			if (hp_player(Ind, 700, FALSE, FALSE)) ident = TRUE;
 			if (set_blind(Ind, 0)) ident = TRUE;
 			if (set_confused(Ind, 0)) ident = TRUE;
 			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
@@ -866,7 +866,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 				else if (msg == 1) take_hit(Ind, 500, "a fountain of life", 0); //disabled
 				else take_hit(Ind, 500, "life", 0);
 			}
-			else hp_player(Ind, 700);
+			else hp_player(Ind, 700, FALSE, FALSE);
 			(void)set_poisoned(Ind, 0, 0);
 			(void)set_diseased(Ind, 0, 0);
 			(void)set_blind(Ind, 0);
@@ -1022,7 +1022,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			break;
 			/* additions from PernA */
 		case SV_POTION_CURING:
-			if (hp_player(Ind, damroll(9, 10))) ident = TRUE;
+			if (hp_player(Ind, damroll(9, 10), FALSE, FALSE)) ident = TRUE;
 			if (set_blind(Ind, 0)) ident = TRUE;
 			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
 			if (set_diseased(Ind, 0, 0)) ident = TRUE;
@@ -3446,12 +3446,12 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 		break;
 
 	case SV_STAFF_CURE_SERIOUS:
-		//if (hp_player(Ind, randint(8 + get_skill_scale(p_ptr, SKILL_DEVICE, 10)))) ident = TRUE;
+		//if (hp_player(Ind, randint(8 + get_skill_scale(p_ptr, SKILL_DEVICE, 10)), FALSE, FALSE)) ident = TRUE;
 		/* Turned it into 'Cure Serious Wounds' - C. Blue */
 		if (set_blind(Ind, 0)) ident = TRUE;
 		if (set_confused(Ind, 0)) ident = TRUE;
 		if (p_ptr->cut < CUT_MORTAL_WOUND && set_cut(Ind, p_ptr->cut - 50, p_ptr->cut_attacker)) ident = TRUE;
-		if (hp_player(Ind, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 9), 8))) ident = TRUE;
+		if (hp_player(Ind, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 9), 8), FALSE, FALSE)) ident = TRUE;
 		break;
 
 	case SV_STAFF_CURING:
@@ -3467,7 +3467,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 		break;
 
 	case SV_STAFF_HEALING:
-		if (hp_player(Ind, 250 + get_skill_scale(p_ptr, SKILL_DEVICE, 150))) ident = TRUE;
+		if (hp_player(Ind, 250 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), FALSE, FALSE)) ident = TRUE;
 		if (set_stun(Ind, 0)) ident = TRUE;
 		if (set_cut(Ind, p_ptr->cut - 250, 0)) ident = TRUE;
 		break;
@@ -3532,7 +3532,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 			if (set_diseased(Ind, 0, 0)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0, 0)) ident = TRUE;
-			if (hp_player(Ind, 50)) ident = TRUE;
+			if (hp_player(Ind, 50, FALSE, FALSE)) ident = TRUE;
 		}
 		break;
 
@@ -4137,7 +4137,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 	case SV_WAND_DRAIN_LIFE:
 		if (drain_life(Ind, dir, 10 + get_skill_scale(p_ptr, SKILL_DEVICE, 10))) {
 			ident = TRUE;
-			hp_player(Ind, p_ptr->ret_dam / 4);
+			hp_player(Ind, p_ptr->ret_dam / 4, FALSE, FALSE);
 			p_ptr->ret_dam = 0;
 		}
 		break;
@@ -4445,7 +4445,7 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 	case SV_ROD_HEALING:
 		i = 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300);
 		if (i > 300) i = 300;
-		if (hp_player(Ind, i)) ident = TRUE;
+		if (hp_player(Ind, i, FALSE, FALSE)) ident = TRUE;
 		if (set_stun(Ind, p_ptr->stun - 250)) ident = TRUE;
 		if (set_cut(Ind, 0, 0)) ident = TRUE;
 		if (o_ptr) o_ptr->pval += 15 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
@@ -5004,7 +5004,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	case SV_ROD_DRAIN_LIFE:
 		if (drain_life(Ind, dir, 10 + get_skill_scale(p_ptr, SKILL_DEVICE, 5))) {
 			ident = TRUE;
-			hp_player(Ind, p_ptr->ret_dam / 8);
+			hp_player(Ind, p_ptr->ret_dam / 8, FALSE, FALSE);
 			p_ptr->ret_dam = 0;
 		}
 		/* up to 50% faster with maxed MD - the_sandman */
@@ -5164,7 +5164,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	case SV_ROD_HEALING:
 		i = 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300);
 		if (i > 300) i = 300;
-		if (hp_player(Ind, i)) ident = TRUE;
+		if (hp_player(Ind, i, FALSE, FALSE)) ident = TRUE;
 		if (set_stun(Ind, 0)) ident = TRUE;
 		if (set_cut(Ind, p_ptr->cut - 250, 0)) ident = TRUE;
 		o_ptr->pval += 15 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
@@ -6098,7 +6098,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			break;
 		case ART_LOTHARANG:
 			msg_print(Ind, "Your battle axe radiates deep purple...");
-			hp_player(Ind, damroll(4, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)));
+			hp_player(Ind, damroll(4, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)), FALSE, FALSE);
 			if (p_ptr->cut < CUT_MORTAL_WOUND) (void)set_cut(Ind, p_ptr->cut - 50, p_ptr->cut_attacker);
 			o_ptr->recharging = rand_int(3) + 3 - get_skill_scale(p_ptr, SKILL_DEVICE, 2);//o_o
 			break;
@@ -6124,7 +6124,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_SOULKEEPER:
 			msg_print(Ind, "Your armour glows a bright white...");
 			msg_print(Ind, "\377GYou feel much better...");
-			(void)hp_player(Ind, 1000);
+			(void)hp_player(Ind, 1000, FALSE, FALSE);
 			(void)set_cut(Ind, 0, 0);
 			o_ptr->recharging = 888 - get_skill_scale(p_ptr, SKILL_DEVICE, 666);
 			break;
@@ -6210,7 +6210,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			break;
 		case ART_GONDOR:
 			msg_print(Ind, "\377GYou feel a warm tingling inside...");
-			(void)hp_player(Ind, 500);
+			(void)hp_player(Ind, 500, FALSE, FALSE);
 			(void)set_cut(Ind, 0, 0);
 			o_ptr->recharging = 500 - get_skill_scale(p_ptr, SKILL_DEVICE, 400);
 			break;
@@ -6516,7 +6516,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			break;
 		case ART_ERU:
 			msg_print(Ind, "Your sword glows an intense white...");
-			hp_player(Ind, 1000);
+			hp_player(Ind, 1000, FALSE, FALSE);
 			heal_insanity(Ind, 50);
 			set_blind(Ind, 0);
 			set_poisoned(Ind, 0, 0);
@@ -6558,7 +6558,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_ELESSAR:
 			if (p_ptr->black_breath) msg_print(Ind, "The hold of the Black Breath on you is broken!");
 			p_ptr->black_breath = FALSE;
-			hp_player(Ind, 100);
+			hp_player(Ind, 100, FALSE, FALSE);
 			o_ptr->recharging = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;
 #endif
@@ -7186,14 +7186,12 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			o_ptr->recharging = 100 - get_skill_scale(p_ptr, SKILL_DEVICE, 75);
 			break;
 		case ART_THEODEN:
-			if (drain_life(Ind, dir, 25))
-				hp_player(Ind, p_ptr->ret_dam / 3);
+			if (drain_life(Ind, dir, 25)) hp_player(Ind, p_ptr->ret_dam / 3, FALSE, FALSE);
 			p_ptr->ret_dam = 0;
 			o_ptr->recharging = 400 - get_skill_scale(p_ptr, SKILL_DEVICE, 300);
 			break;
 		case ART_TURMIL:
-			if (drain_life(Ind, dir, 15))
-				hp_player(Ind, p_ptr->ret_dam / 2);
+			if (drain_life(Ind, dir, 15)) hp_player(Ind, p_ptr->ret_dam / 2, FALSE, FALSE);
 			p_ptr->ret_dam = 0;
 			o_ptr->recharging = 70 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
 			break;
@@ -7299,12 +7297,11 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			fire_ball(Ind, GF_DARK, dir, 150 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 3, p_ptr->attacker);
 			o_ptr->recharging = 100 - get_skill_scale(p_ptr, SKILL_DEVICE, 80);
 			break;
-		case ART_NIGHT:
-		{
+		case ART_NIGHT: {
 			int i;
+
 			for (i = 0; i < 3; i++) {
-				if (drain_life(Ind, dir, 7))
-					hp_player(Ind, p_ptr->ret_dam / 2);
+				if (drain_life(Ind, dir, 7)) hp_player(Ind, p_ptr->ret_dam / 2, FALSE, FALSE);
 				p_ptr->ret_dam = 0;
 			}
 			o_ptr->recharging = 250 - get_skill_scale(p_ptr, SKILL_DEVICE, 200);

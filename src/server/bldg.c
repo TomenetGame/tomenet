@@ -2144,7 +2144,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 #ifdef USE_SOUND_2010
 			sound(Ind, "store_curing", NULL, SFX_TYPE_MISC, FALSE);
 #endif
-			hp_player(Ind, 200);
+			hp_player(Ind, 200, FALSE, FALSE);
 			set_poisoned(Ind, 0, 0);
 			set_diseased(Ind, 0, 0);
 			set_blind(Ind, 0);
@@ -2162,7 +2162,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 #ifdef USE_SOUND_2010
 			sound(Ind, "store_prayer", NULL, SFX_TYPE_MISC, FALSE);
 #endif
-			hp_player(Ind, 200);
+			hp_player(Ind, 200, FALSE, FALSE);
 			set_poisoned(Ind, 0, 0);
 			//set_diseased(Ind, 0, 0);
 			set_blind(Ind, 0);

@@ -714,9 +714,9 @@ static void do_mimic_power(int Ind, int power, int dir) {
 	return;
 // RF6_HEAL			0x00000004	/* Heal self */
     case 66:
-	if (p_ptr->lev >= 40) hp_player(Ind, ((rlev + 100) * (rlev + 100)) / 100);//225..400 (335 as eg avg)
-	else hp_player(Ind, ((rlev + 5) * (rlev + 30)) / 14);
-	//hp_player(Ind, rlev * 2);
+	if (p_ptr->lev >= 40) hp_player(Ind, ((rlev + 100) * (rlev + 100)) / 100, FALSE, FALSE);//225..400 (335 as eg avg)
+	else hp_player(Ind, ((rlev + 5) * (rlev + 30)) / 14, FALSE, FALSE);
+	//hp_player(Ind, rlev * 2, FALSE, FALSE);
 	break;
 //#define RF6_S_ANIMALS		   0x00000008      /* Summon animals */
     case 67:

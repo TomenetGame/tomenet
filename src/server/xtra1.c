@@ -8758,7 +8758,7 @@ static void process_global_event(int ge_id) {
 			set_diseased(j, 0, 0);
 			set_cut(j, 0, 0);
 			set_food(j, PY_FOOD_FULL);
-			hp_player_quiet(j, 5000, TRUE);
+			hp_player(j, 5000, TRUE, TRUE);
 
 			ge->state[0] = 7;
 			ge->state[1] = elapsed;

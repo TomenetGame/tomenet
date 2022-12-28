@@ -1678,8 +1678,7 @@ extern void golem_creation(int Ind, int max);
 #ifdef RPG_SERVER
 extern char pet_creation(int Ind);
 #endif
-extern bool hp_player(int Ind, int num);
-extern bool hp_player_quiet(int Ind, int num, bool autoeffect);
+extern bool hp_player(int Ind, int num, bool quiet, bool autoeffect);
 extern void warding_glyph(int Ind);
 extern void flash_bomb(int Ind);
 extern bool do_dec_stat(int Ind, int stat, int mode);
