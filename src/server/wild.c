@@ -3517,17 +3517,17 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 		zcave[y - 1][x + 1].feat = FEAT_HIGH_MOUNTAIN;
 		zcave[y + 1][x + 1].feat = FEAT_HIGH_MOUNTAIN;
 
-		/* Internal floor */
-		zcave[y - 1][x].feat = FEAT_DIRT;
-		zcave[y + 1][x].feat = FEAT_DIRT;
-		zcave[y][x - 1].feat = FEAT_DIRT;
-		zcave[y][x + 1].feat = FEAT_DIRT;
+		/* Internal floor - use a feat that prevents monster spawn/landing */
+		zcave[y - 1][x].feat = FEAT_PROTECTED;
+		zcave[y + 1][x].feat = FEAT_PROTECTED;
+		zcave[y][x - 1].feat = FEAT_PROTECTED;
+		zcave[y][x + 1].feat = FEAT_PROTECTED;
 		zcave[y - 1][x].info |= CAVE_NO_PROB;
 		zcave[y + 1][x].info |= CAVE_NO_PROB;
 		zcave[y][x - 1].info |= CAVE_NO_PROB;
 		zcave[y][x + 1].info |= CAVE_NO_PROB;
 
-		zcave[y][x].info |= CAVE_NO_PROB;
+		zcave[y][x].info |= CAVE_NO_PROB | CAVE_PROT;
 
 		/* Construction site sign(s) */
 		c_ptr = &zcave[y][x + 1];

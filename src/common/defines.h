@@ -4501,7 +4501,7 @@
 #define CAVE_DARKEN	0x00000400	/* world surface at night - change colours to darker variants */
 #define CAVE_ICKY_PERMA	0x00000800 	/* part of a perma-walled vault */
 
-#define CAVE_PROT	0x00001000	/* protected from monster-spawn + cannot be monster teleport destination */
+#define CAVE_PROT	0x00001000	/* protected from monster-spawn + cannot be monster teleport/summon/movement destination */
 #define CAVE_NEST_PIT	0x00002000	/* grid is part of a monster nest and target for monster placement */
 #define CAVE_MAGELOCK	0x00004000	/* Anti-exploit: Remember magelocked doors so they don't give exp repeatedly */
 #define CAVE_JAIL	0x00008000	/* part of a jail: for special colour/lighting of jail walls */

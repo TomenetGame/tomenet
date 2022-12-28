@@ -9781,7 +9781,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		}
 
 		/* "protected" grid without player on it => cannot enter!  - C. Blue */
-		else if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) &&
+		else if (((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) || (c_ptr->info & CAVE_PROT)) &&
 		    (c_ptr->m_idx >= 0)) {
 			/* nothing */
 		}
