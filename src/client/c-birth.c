@@ -2294,6 +2294,7 @@ static bool enter_server_name(void) {
 void display_experimental_meta(void) {
 	Term_clear();
 	call_lua(0, "meta_display", "(s)", "d", meta_buf, &meta_i);
+	Term_fresh();//added to try and debug WinXP partially-black meta screen problem
 }
 #endif
 bool meta_read_and_close(void) {
