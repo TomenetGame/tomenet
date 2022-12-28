@@ -533,9 +533,7 @@ bool check_st_anchor2(struct worldpos *wpos, int y, int x, int y2, int x2) {
 
 /*
  * Teleport a monster, normally up to "dis" grids away.
- *
  * Attempt to move the monster at least "dis/2" grids away.
- *
  * But allow variation to prevent infinite loops.
  */
 bool teleport_away(int m_idx, int dis) {
@@ -622,7 +620,6 @@ bool teleport_away(int m_idx, int dis) {
 			if (zcave[ny][nx].feat == FEAT_RUNE) continue;
 			/* No teleporting into vaults and such */
 			if (zcave[ny][nx].info & CAVE_ICKY) continue;
-
 			/* No teleportation onto protected grid (8-town-houses) */
 			if (zcave[ny][nx].info & CAVE_PROT) continue;
 			/* For instant-resurrection into sickbay: avoid ppl blinking into there on purpose, disturbing the patients -_- */
