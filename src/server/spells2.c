@@ -764,8 +764,7 @@ bool hp_player(int Ind, int num, bool quiet, bool autoeffect) {
 	/* Refill HP, note that we can't use eff_num here due to chp_frac check */
 	num = eff_num;
 	p_ptr->chp += num;
-	p_ptr->chp = p_ptr->mhp;
-	p_ptr->chp_frac = 0;
+	if (p_ptr->chp == p_ptr->mhp) p_ptr->chp_frac = 0;
 
 	/* Figure out of if the player's "number" has changed */
 	new_num = (p_ptr->chp * TURN_CHAR_INTO_NUMBER_MULT) / (p_ptr->mhp * 10);
