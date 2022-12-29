@@ -319,7 +319,7 @@ void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art) { /* m
 #endif	// 0
 
 		/* Delete the object */
-//		if (c_ptr->o_idx) delete_object_idx(c_ptr->o_idx, unfound_art);
+		//if (c_ptr->o_idx) delete_object_idx(c_ptr->o_idx, unfound_art);
 
 		/* Scan all objects in the grid */
 		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx) {
@@ -338,7 +338,7 @@ void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art) { /* m
 		/* Objects are gone */
 		c_ptr->o_idx = 0;
 
-//		everyone_lite_spot(wpos, y, x);
+		//everyone_lite_spot(wpos, y, x);
 	}
 	else {			/* Cave depth not static (houses etc) - do slow method */
 		int i;
@@ -381,7 +381,7 @@ void compact_objects(int size, bool purge) {
 	s32b cur_dis;
 #endif
 	struct worldpos *wpos;
-//	object_type *q_ptr;
+	//object_type *q_ptr;
 	cave_type *c_ptr, **zcave;
 
 	int tmp_max = o_max;
@@ -1826,7 +1826,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 		if (!value) return(0L);
 
 		/* Hack -- Use the artifact cost instead */
-//		value = a_ptr->cost;
+		//value = a_ptr->cost;
 	}
 
 	else {
@@ -1954,9 +1954,9 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 		    ((o_ptr->to_d) < 0 && ((o_ptr->to_d - k_ptr->to_d) < 0 || k_ptr->to_d < 0)) ||
 		    ((o_ptr->to_a) < 0 && ((o_ptr->to_a - k_ptr->to_a) < 0 || k_ptr->to_a < 0)) ||
 /* to allow Mummy Wrappings in bm! - C. Blue */
-//		    (o_ptr->pval < 0) || (o_ptr->bpval < 0)) &&
-//		    (o_ptr->pval < 0) || (o_ptr->bpval < k_ptr->pval)) &&
-//		    (o_ptr->pval < 0) || (o_ptr->tval != TV_ROD && o_ptr->bpval < k_ptr->pval)) &&
+	//    (o_ptr->pval < 0) || (o_ptr->bpval < 0)) &&
+	//    (o_ptr->pval < 0) || (o_ptr->bpval < k_ptr->pval)) &&
+	//    (o_ptr->pval < 0) || (o_ptr->tval != TV_ROD && o_ptr->bpval < k_ptr->pval)) &&
 		    (o_ptr->pval < 0) || (o_ptr->bpval < 0 && o_ptr->bpval < k_ptr->pval)) &&
 		    !(((o_ptr->to_h) > 0) ||
 		    ((o_ptr->to_d) > 0) ||
@@ -2010,16 +2010,16 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 			if ((o_ptr->tval == TV_SOFT_ARMOR) && (o_ptr->sval == SV_COSTUME))
 				pval = 0;
 
-//			int boost = 1U << pval;
+			//int boost = 1U << pval;
 
 			/* Hack -- Negative "pval" is always bad */
-//			if (pval < 0) return(0L);
+			//if (pval < 0) return(0L);
 
 			for (i = 0; i < 2; i++) {
 				int count = 0;
 
 				/* No pval */
-//				if (!pval)
+				//if (!pval)
 				if (pval <= 0) {
 					pval = o_ptr->pval;
 					continue;
@@ -2069,13 +2069,13 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 					if (count) value += count * PRICE_BOOST((count + pval), 2, 1) * 200L;
 				}
 
-//				if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1) * 300L);//was 500, then 400
-//				if (f5 & (TR5_CRIT)) value += pval * pval * 5000L;/* was 20k, but speed is only 10k */
+				//if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1) * 300L);//was 500, then 400
+				//if (f5 & (TR5_CRIT)) value += pval * pval * 5000L;/* was 20k, but speed is only 10k */
 				if (f5 & (TR5_CRIT)) value += (pval + 2) * (pval + 2) * 1500L;/* was 20k, but speed is only 10k */
 				if (f5 & (TR5_LUCK)) value += (PRICE_BOOST(pval, 0, 1) * 10L);
 
 				/* Give credit for stealth and searching */
-//				if (f1 & TR1_STEALTH) value += (PRICE_BOOST(pval, 3, 1) * 100L);
+				//if (f1 & TR1_STEALTH) value += (PRICE_BOOST(pval, 3, 1) * 100L);
 				if (f1 & TR1_STEALTH) value += pval * pval * 250L;//100
 				if (f1 & TR1_SEARCH) value += pval * pval * 200L;//200
 				if (f5 & TR5_DISARM) value += pval * pval * 100L;
@@ -2088,7 +2088,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 				if (o_ptr->tval == TV_RING) {
 					if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 2000L);//1500
 				} else {
-//					if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 3000L);
+					//if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 3000L);
 					if (f1 & TR1_BLOWS) value += pval * (pval + 2) * 5000L;
 				}
 
@@ -2116,11 +2116,11 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 					/* Give credit for speed bonus */
 					//if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 50000L);
 					if (f1 & TR1_SPEED) value += pval * pval * 10000L;
-//					if (f1 & TR1_SPEED) value += pval * pval * 7000L;
+					//if (f1 & TR1_SPEED) value += pval * pval * 7000L;
 				}
 				/* randarts and speed boots */
-//				else if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 100000L);
-//				else if (f1 & TR1_SPEED) value += pval * pval * 10000L;
+				//else if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 100000L);
+				//else if (f1 & TR1_SPEED) value += pval * pval * 10000L;
 				else if (f1 & TR1_SPEED) value += (pval + 1) * (pval + 1) * 6000L;//7000 -> //5000
 
 				pval = o_ptr->pval;
@@ -2262,7 +2262,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 		if (o_ptr->to_a < 0) return(0L);
 #endif
 		/* Give credit for bonuses */
-//		value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
+		//value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
 			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, PB1, PB2):
@@ -2301,7 +2301,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 		}
 #endif
 		/* Factor in the bonuses */
-//		value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
+		//value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
 			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, PB1, PB2):
@@ -2325,10 +2325,10 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 	case TV_ARROW:
 	case TV_BOLT:
 		/* Hack -- negative hit/damage bonuses */
-//		if (o_ptr->to_h + o_ptr->to_d < 0) return(0L);
+		//if (o_ptr->to_h + o_ptr->to_d < 0) return(0L);
 
 		/* Factor in the bonuses */
-//		value += ((o_ptr->to_h + o_ptr->to_d) * 5L);
+		//value += ((o_ptr->to_h + o_ptr->to_d) * 5L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
 			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, PB1, PB2):
@@ -2354,7 +2354,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 	/* hack against those 500k randarts */
 	if (o_ptr->name1 == ART_RANDART) {
 		value >>= 1; /* general randart value nerf */
-//		if (f3 & TR3_AGGRAVATE) value >>= 1; /* aggravate penalty 2 of 2 */
+		//if (f3 & TR3_AGGRAVATE) value >>= 1; /* aggravate penalty 2 of 2 */
 	}
 
 	/* hack for Ethereal ammunition */
@@ -2935,10 +2935,10 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 	case TV_LITE:
 	case TV_AMULET:
 	case TV_RING:
-	case TV_TRAPKIT:
-	{
+	case TV_TRAPKIT: {
 		/* they should be of bpval.. hopefully. */
 		int pval = o_ptr->bpval, kpval = k_ptr->pval;
+
 		/* If the bpval has been set to the k_info pval,
 		   don't increase the item's value for this
 		   granted pval, since it's already included in
@@ -3571,7 +3571,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 			if (!Ind || !p_ptr->stack_allow_devices) return(FALSE);
 
 			/* Do not combine recharged ones with non recharged ones. */
-//			if ((f4 & TR4_RECHARGED) != (f14 & TR4_RECHARGED)) return(FALSE);
+			//if ((f4 & TR4_RECHARGED) != (f14 & TR4_RECHARGED)) return(FALSE);
 
 			/* Do not combine different ego or normal ones */
 			if (o_ptr->name2 != j_ptr->name2) return(FALSE);
@@ -3940,8 +3940,8 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 	if (o_ptr->discount < j_ptr->discount) o_ptr->discount = j_ptr->discount;
 
 	/* Hack -- blend "inscriptions" */
-//	if (j_ptr->note) o_ptr->note = j_ptr->note;
-//	if (o_ptr->note) j_ptr->note = o_ptr->note;
+	//if (j_ptr->note) o_ptr->note = j_ptr->note;
+	//if (o_ptr->note) j_ptr->note = o_ptr->note;
 
 	/* Usually, the old object 'j_ptr' takes over the inscription of added object 'o_ptr'.
 	   However, in some cases it's reversed, if..
@@ -5163,7 +5163,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf) {
 	case TV_SHIELD:
 		if (o_ptr->sval == SV_DRAGON_SHIELD) {
 			/* pfft */
-//			dragon_resist(o_ptr);
+			//dragon_resist(o_ptr);
 			break;
 		}
 
@@ -5512,8 +5512,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
 			//o_ptr->to_d = randint(5);
 
 			/* Sorry.. */
-//					o_ptr->xtra1 = EGO_XTRA_ABILITY;
-//					o_ptr->xtra2 = randint(256);
+			//o_ptr->xtra1 = EGO_XTRA_ABILITY;
+			//o_ptr->xtra2 = randint(256);
 			break;
 
 		/* Amulet of the Moon -- never cursed */
@@ -5528,7 +5528,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
 
 		/* Amulet of the Magi -- never cursed */
 		case SV_AMULET_THE_MAGI:
-//					if (randint(3) == 1) o_ptr->art_flags3 |= TR3_SLOW_DIGEST;
+			//if (randint(3) == 1) o_ptr->art_flags3 |= TR3_SLOW_DIGEST;
 		case SV_AMULET_TRICKERY:
 		case SV_AMULET_DEVOTION:
 			o_ptr->bpval = 1 + m_bonus(3, level);
@@ -5622,8 +5622,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
 			o_ptr->to_h = -1 - m_bonus(10, level);
 			o_ptr->to_d = 1 + m_bonus(8, level);//was 15,..
 			if (rand_int(100) < 33) {
-//						o_ptr->xtra1 = EGO_XTRA_POWER;
-//						o_ptr->xtra2 = rand_int(255);
+				//o_ptr->xtra1 = EGO_XTRA_POWER;
+				//o_ptr->xtra2 = rand_int(255);
 			}
 			break;
 
@@ -10543,8 +10543,8 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 /* The note above is completely obsoleted.	- Jir -	*/
 void pick_trap(struct worldpos *wpos, int y, int x)
 {
-//	int feat;
-//	int tries = 100;
+	//int feat;
+	//int tries = 100;
 
 	cave_type **zcave;
 	cave_type *c_ptr;
@@ -11937,18 +11937,13 @@ void object_copy(object_type *o_ptr, object_type *j_ptr) {
 /*
  * Let the floor carry an object
  */
-int floor_carry(worldpos *wpos, int y, int x, object_type *j_ptr)
-{
+int floor_carry(worldpos *wpos, int y, int x, object_type *j_ptr) {
 	int n = 0;
-
 	int o_idx;
-
 	int this_o_idx, next_o_idx = 0;
 
-
 	/* Scan objects in that grid for combination */
-	for (this_o_idx = cave[y][x].o_idx; this_o_idx; this_o_idx = next_o_idx)
-	{
+	for (this_o_idx = cave[y][x].o_idx; this_o_idx; this_o_idx = next_o_idx) {
 		object_type *o_ptr;
 
 		/* Acquire object */
@@ -11958,8 +11953,7 @@ int floor_carry(worldpos *wpos, int y, int x, object_type *j_ptr)
 		next_o_idx = o_ptr->next_o_idx;
 
 		/* Check for combination */
-		if (object_similar(o_ptr, j_ptr, 0x0))
-		{
+		if (object_similar(o_ptr, j_ptr, 0x0)) {
 			/* Combine the items */
 			object_absorb(o_ptr, j_ptr);
 
@@ -11971,13 +11965,11 @@ int floor_carry(worldpos *wpos, int y, int x, object_type *j_ptr)
 		n++;
 	}
 
-
 	/* Make an object */
 	o_idx = o_pop();
 
 	/* Success */
-	if (o_idx)
-	{
+	if (o_idx) {
 		object_type *o_ptr;
 
 		/* Acquire object */
@@ -12289,9 +12281,7 @@ void inven_index_move(int Ind, s16b slot, s16b new_slot) {
 		if (list) {
 			while (list->next) list = list->next;
 			list->next = inv_change;
-		} else {
-			p_ptr->inventory_changes = inv_change;
-		}
+		} else p_ptr->inventory_changes = inv_change;
 
 		p_ptr->inventory_changed = TRUE;
 	}
@@ -12324,9 +12314,7 @@ void inven_index_erase(int Ind, s16b slot) {
 		if (list) {
 			while (list->next) list = list->next;
 			list->next = inv_change;
-		} else {
-			p_ptr->inventory_changes = inv_change;
-		}
+		} else p_ptr->inventory_changes = inv_change;
 
 		p_ptr->inventory_changed = TRUE;
 	}
@@ -12383,8 +12371,7 @@ void inven_confirm_revision(int Ind, int revision) {
 			next_change = inv_change->next;
 			KILL(inv_change, inventory_change_type);
 			inv_change = next_change;
-		}
-		else {
+		} else {
 			prev_change = inv_change;
 			inv_change = inv_change->next;
 		}
@@ -12780,6 +12767,7 @@ void hack_particular_item(void) {
 	int found = 0;
 
 	struct worldpos xwpos = { -1, 0, 0 };
+
 
 	xwpos.wx = xwpos.wy = xwpos.wz = 0;
 	hack_particular_item_prepare_wpos(&xwpos);
