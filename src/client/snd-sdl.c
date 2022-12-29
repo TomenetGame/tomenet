@@ -3999,11 +3999,17 @@ void do_cmd_options_mus_sdl(void) {
 #endif
 
 		case 'c': /* Jump to currently playing song */
+			i = 0;
 			for (j = 0; j < MUSIC_MAX; j++) {
+				/* skip songs that we don't have defined */
+				if (!songs[j].config) {
+					i++;
+					continue;
+				}
 				/* playing atm? */
 				if (j != music_cur) continue;
 				/* match */
-				j_sel = y = j;
+				j_sel = y = j - i;
 				break;
 			}
 			break;
