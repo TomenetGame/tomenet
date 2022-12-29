@@ -8157,7 +8157,8 @@ int Send_store_kick(int Ind) {
 int Send_target_info(int Ind, int x, int y, cptr str) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
-	char buf[80];
+	char buf[MSG_LEN];
+	int l = 0;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -8167,14 +8168,29 @@ int Send_target_info(int Ind, int x, int y, cptr str) {
 	}
 
 	/* Copy */
-	strncpy(buf, str, 80 - 1);
-	/* Paranoia -- Add null */
-	buf[80 - 1] = '\0';
+	strncpy(buf, str, MSG_LEN);
+	/* Cut off if too long */
+	l = cclen(str);
 
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
+		char buf2[MSG_LEN];
+
 		connp2 = Conn[p_ptr2->conn];
-		Packet_printf(&connp2->c, "%c%c%c%s", PKT_TARGET_INFO, x, y, buf);
+		strcpy(buf2, buf);
+		if (is_atleast(&connp2->version, 4, 9, 0, 1, 0, 0)) {
+			buf2[MAX_CHARS - 1 + l] = '\0';
+			Packet_printf(&connp2->c, "%c%c%c%S", PKT_TARGET_INFO, x, y, buf);
+		} else {
+			buf2[MAX_CHARS - 1] = '\0';
+			Packet_printf(&connp2->c, "%c%c%c%s", PKT_TARGET_INFO, x, y, buf2);
+		}
 	}
+
+	if (is_atleast(&connp->version, 4, 9, 0, 1, 0, 0)) {
+		buf[MAX_CHARS - 1 + l] = '\0';
+		return Packet_printf(&connp->c, "%c%c%c%S", PKT_TARGET_INFO, x, y, buf);
+	}
+	buf[MAX_CHARS - 1] = '\0';
 	return Packet_printf(&connp->c, "%c%c%c%s", PKT_TARGET_INFO, x, y, buf);
 }
 /* This function was used even without USE_SOUND_2010, in the old sound system. At the same time it is

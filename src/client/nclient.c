@@ -4128,9 +4128,13 @@ int Receive_sell(void) {
 
 int Receive_target_info(void) {
 	int	n;
-	char	ch, x, y, buf[MAX_CHARS];
+	char	ch, x, y, buf[MSG_LEN];
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c%s", &ch, &x, &y, buf)) <= 0) return(n);
+	if (is_atleast(&server_version, 4, 9, 0, 1, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%S", &ch, &x, &y, buf)) <= 0) return(n);
+	} else {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%s", &ch, &x, &y, buf)) <= 0) return(n);
+	}
 
 	/* Handle target message or description */
 	if (buf[0]) {

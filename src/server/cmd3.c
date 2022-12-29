@@ -3990,7 +3990,7 @@ void do_cmd_look(int Ind, int dir) {
 	player_type *q_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
-	int		y, x, i;
+	int y, x, i;
 
 	cave_type *c_ptr;
 	monster_type *m_ptr;
@@ -4206,7 +4206,7 @@ void do_cmd_look(int Ind, int dir) {
 		if (divi) {
 			if (divi_nd)
 				//sprintf(extrainfo, ", \377Uimmortal\377-");
-				sprintf(extrainfo, "\377U%s\377-, %d AC, %d Spd", (r_ptr->flags3 & (RF3_UNDEAD | RF3_NONLIVING)) ? "indestructible" : "immortal", m_ptr->ac, m_ptr->mspeed - 110);
+				sprintf(extrainfo, "\377U%s\377-, %d AC, %d Spd", (r_ptr->flags3 & (RF3_UNDEAD | RF3_NONLIVING)) ? (strlen(m_name) > 26 ? "ind." : "indestructible") : (strlen(m_name) > 30 ? "imm." : "immortal"), m_ptr->ac, m_ptr->mspeed - 110);
 			else
 				sprintf(extrainfo, "%d HP, %d AC, %d Spd", m_ptr->hp, m_ptr->ac, m_ptr->mspeed - 110);
 		}
