@@ -9781,7 +9781,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		}
 
 		/* "protected" grid without player on it => cannot enter!  - C. Blue */
-		else if (((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) || (c_ptr->info & CAVE_PROT)) &&
+		else if (((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) || (c_ptr->info & (CAVE_PROT | CAVE_NO_MONSTER))) &&
 		    (c_ptr->m_idx >= 0)) {
 			/* nothing */
 		}
@@ -12138,8 +12138,7 @@ void process_monsters(void) {
 			}
 
 			/* For Arena Monster Challenge: Skip observers in the corners */
-			if ((zcave = getcave(&p_ptr->wpos)) && zcave[p_ptr->py][p_ptr->px].feat == FEAT_HIGHLY_PROTECTED)
-				continue;
+			if ((zcave = getcave(&p_ptr->wpos)) && zcave[p_ptr->py][p_ptr->px].feat == FEAT_XPROTECT) continue;
 
 			/* can spot/uncloak cloaked player? */
 			if (p_ptr->cloaked == 1 && !p_ptr->cloak_neutralized) {

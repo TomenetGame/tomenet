@@ -3013,10 +3013,10 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 2\n");
 	if (!(summon_override_checks & SO_PROTECTED)) {
 		/* require non-protected field. - C. Blue
 		    Note that there are two ways (technically) to protect a field:
-		    1) use feature 210 for predefined map setups (which is a "protected brown '.' floor tile")
-		    2) use CAVE_PROT which can be toggled on runtime as required
+		    1) use CAVE_PROT or CAVE_NO_MONSTER which can be toggled on runtime as required
+		    2) use features (FEAT_PROTECT_INN_BAY/FEAT_XPROTECT) which have FF1_PROTECTED flag for predefined map setups (which is a "protected brown '.' floor tile")
 		*/
-		if (zcave[y][x].info & CAVE_PROT) return 7;
+		if (zcave[y][x].info & (CAVE_PROT | CAVE_NO_MONSTER)) return 7;
 		if (f_info[zcave[y][x].feat].flags1 & FF1_PROTECTED) return 8;
 
 #if 0 /* instead: no spawns in any dungeon town! */

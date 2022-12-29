@@ -3277,7 +3277,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 	}
 
 	if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) ||
-	    (c_ptr->info & CAVE_PROT)) {
+	    (c_ptr->info & (CAVE_PROT | CAVE_NO_MONSTER))) {
 		msg_print(Ind, "You cannot set monster traps on this special floor.");
 		return;
 	}

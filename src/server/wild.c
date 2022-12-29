@@ -3518,16 +3518,16 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 		zcave[y + 1][x + 1].feat = FEAT_HIGH_MOUNTAIN;
 
 		/* Internal floor - use a feat that prevents monster spawn/landing */
-		zcave[y - 1][x].feat = FEAT_PROTECTED;
-		zcave[y + 1][x].feat = FEAT_PROTECTED;
-		zcave[y][x - 1].feat = FEAT_PROTECTED;
-		zcave[y][x + 1].feat = FEAT_PROTECTED;
-		zcave[y - 1][x].info |= CAVE_NO_PROB;
-		zcave[y + 1][x].info |= CAVE_NO_PROB;
-		zcave[y][x - 1].info |= CAVE_NO_PROB;
-		zcave[y][x + 1].info |= CAVE_NO_PROB;
+		zcave[y - 1][x].feat = FEAT_DIRT;
+		zcave[y + 1][x].feat = FEAT_DIRT;
+		zcave[y][x - 1].feat = FEAT_DIRT;
+		zcave[y][x + 1].feat = FEAT_DIRT;
+		zcave[y - 1][x].info |= CAVE_NO_PROB | CAVE_NO_MONSTER;
+		zcave[y + 1][x].info |= CAVE_NO_PROB | CAVE_NO_MONSTER;
+		zcave[y][x - 1].info |= CAVE_NO_PROB | CAVE_NO_MONSTER;
+		zcave[y][x + 1].info |= CAVE_NO_PROB | CAVE_NO_MONSTER;
 
-		zcave[y][x].info |= CAVE_NO_PROB | CAVE_PROT;
+		zcave[y][x].info |= CAVE_NO_PROB | CAVE_NO_MONSTER;
 
 		/* Construction site sign(s) */
 		c_ptr = &zcave[y][x + 1];

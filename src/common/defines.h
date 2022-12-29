@@ -2525,13 +2525,13 @@
 /* Features 0xCF - 0xFF */
 #define FEAT_AGOAL		208
 #define FEAT_BGOAL		209
-#define FEAT_PROTECTED		210
+#define FEAT_PROTECT_INN_BAY	210
 #define FEAT_DECO_WATER		211
 #define FEAT_BUSH		219
 //
 #define FEAT_SEALED_DOOR	224	/* for pvp-arena, like Andur suggested */
 #define FEAT_UNSEALED_DOOR	225
-#define FEAT_HIGHLY_PROTECTED	226
+#define FEAT_XPROTECT		226
 #define FEAT_ESCAPE_DOOR	230	/* for quests - it's a one-way door!  */
 #define FEAT_SICKBAY_DOOR	231	/* for insta-res in town (or in general), to avoid kill-instares-loops while afk */
 #define FEAT_SICKBAY_AREA	232
@@ -4501,7 +4501,7 @@
 #define CAVE_DARKEN	0x00000400	/* world surface at night - change colours to darker variants */
 #define CAVE_ICKY_PERMA	0x00000800 	/* part of a perma-walled vault */
 
-#define CAVE_PROT	0x00001000	/* protected from monster-spawn + cannot be monster teleport/summon/movement destination */
+#define CAVE_PROT	0x00001000	/* no monster spawn/teleport/summon/movement on; no players teleport/recall to; no item stacking; cannot drop true arts; no traps/charges; cannot steal; no sunburn */
 #define CAVE_NEST_PIT	0x00002000	/* grid is part of a monster nest and target for monster placement */
 #define CAVE_MAGELOCK	0x00004000	/* Anti-exploit: Remember magelocked doors so they don't give exp repeatedly */
 #define CAVE_JAIL	0x00008000	/* part of a jail: for special colour/lighting of jail walls */
@@ -4520,6 +4520,8 @@
 #define CAVE_DECAL	0x02000000	/* Impossible to interact with anything on this grid or the grid itself except for looking at it (only implemented for monsters atm) */
 #define CAVE_MINED	0x04000000	/* Just for warning_tunnel_hidden, set when a treasure vein was mined on this grid */
 #define CAVE_NO_PROB	0x08000000	/* Cannot enter this grid via Probability Travel (but can exit) */
+
+#define CAVE_NO_MONSTER	0x10000000	/* protected from monster-spawn + cannot be monster teleport/summon/movement destination */
 
 /* Hack for p_ptr->cave_flag, which is only 1 byte in size: */
 #define CAVE_AOVL	CAVE_TEMP	/* Mark grid if it displays an overlay visual that could get auto-updated, ie monsters: A monster can move away automatically, rendering the overlay out of date. */
@@ -9324,7 +9326,7 @@ extern int PlayerUID;
 #define isalphanum(C) (isalpha(C) || isdigit(C))
 
 /* For debugging - fixed */
-//#define __GRID_DEBUG(Ind, wpos, feat, location, info)	if ((feat) == FEAT_HIGHLY_PROTECTED && !in_trainingtower(wpos)) s_printf("__GRID_DEBUG: %s, %d - (%d) '%s' (%d,%d,%d)\n", location, info, Ind, (Ind) > 0 ? Players[Ind]->name : "-", (wpos)->wx, (wpos)->wy, (wpos)->wz);
+//#define __GRID_DEBUG(Ind, wpos, feat, location, info)	if ((feat) == FEAT_XPROTECT && !in_trainingtower(wpos)) s_printf("__GRID_DEBUG: %s, %d - (%d) '%s' (%d,%d,%d)\n", location, info, Ind, (Ind) > 0 ? Players[Ind]->name : "-", (wpos)->wx, (wpos)->wy, (wpos)->wz);
 
 #ifdef CLIENT_SIDE
  #define AUTOINS_MATCH_LEN 55

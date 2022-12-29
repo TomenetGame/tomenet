@@ -10101,7 +10101,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx) {
 				c_ptr = &zcave[y][x];
 
 				/* Clear contents */
-				c_ptr->feat = FEAT_PROTECTED; //FEAT_FLOOR;
+				c_ptr->feat = FEAT_PROTECT_INN_BAY; //FEAT_FLOOR;
 
 				/* Declare this to be a room */
 				c_ptr->info |= (CAVE_ROOM | CAVE_GLOW | CAVE_NOPK);
@@ -10540,7 +10540,7 @@ static void switchable_shop_grids(cave_type **zcave) {
 		for (y = 1; y < MAX_HGT - 1; y++) {
 			if (zcave[y][x].feat != FEAT_SHOP
 			    /* let's not allow to chain-switch someone out of the inn.. o_o */
-			    || zcave[y][x].feat == FEAT_PROTECTED)
+			    || zcave[y][x].feat == FEAT_PROTECT_INN_BAY)
 				continue;
 			for (x2 = x - 1; x2 <= x + 1; x2++) {
 				for (y2 = y - 1; y2 <= y + 1; y2++) {

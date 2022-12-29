@@ -621,7 +621,7 @@ bool teleport_away(int m_idx, int dis) {
 			/* No teleporting into vaults and such */
 			if (zcave[ny][nx].info & CAVE_ICKY) continue;
 			/* No teleportation onto protected grid (8-town-houses) */
-			if (zcave[ny][nx].info & CAVE_PROT) continue;
+			if (zcave[ny][nx].info & (CAVE_PROT | CAVE_NO_MONSTER)) continue;
 			/* For instant-resurrection into sickbay: avoid ppl blinking into there on purpose, disturbing the patients -_- */
 			if (f_info[zcave[ny][nx].feat].flags1 & FF1_PROTECTED) continue;
 			/* Not onto (dungeon) stores */
@@ -759,7 +759,7 @@ void teleport_to_player(int Ind, int m_idx) {
 
 			/* No teleportation onto protected grid (8-town-houses) */
 			/* For instant-resurrection into sickbay: avoid ppl blinking into there on purpose, disturbing the patients -_- */
-			if (zcave[ny][nx].info & CAVE_PROT) continue;
+			if (zcave[ny][nx].info & (CAVE_PROT | CAVE_NO_MONSTER)) continue;
 			if (f_info[zcave[ny][nx].feat].flags1 & FF1_PROTECTED) continue;
 			/* Not onto (dungeon) stores */
 			if (zcave[ny][nx].feat == FEAT_SHOP) continue;

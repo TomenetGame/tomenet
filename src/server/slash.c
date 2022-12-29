@@ -655,7 +655,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						return;
 					}
 
-					if (c_ptr->feat == FEAT_PROTECTED && !wpos->wz) {
+					if (c_ptr->feat == FEAT_PROTECT_INN_BAY && !wpos->wz) {
 						o_ptr = &o_list[c_ptr->o_idx];
 						/* Allow getting rid of unusable items */
 						if (o_ptr->level) {
