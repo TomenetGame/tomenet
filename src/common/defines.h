@@ -2479,6 +2479,8 @@
 
 /* Features 0x74 - 0x9E -- unused */
 
+#define FEAT_INN		134
+
 #define FEAT_PERM_MAGMA		0x9F
 #define FEAT_BETWEEN		0xA0 /* 160 */
 
@@ -2525,7 +2527,7 @@
 /* Features 0xCF - 0xFF */
 #define FEAT_AGOAL		208
 #define FEAT_BGOAL		209
-#define FEAT_PROTECT_INN_BAY	210
+#define FEAT_PROTECT_BAY	210
 #define FEAT_DECO_WATER		211
 #define FEAT_BUSH		219
 //
@@ -6559,6 +6561,7 @@
 #define FF2_NO_ARTICLE		0x00000080L	/* floor feat doesn't have an article ('a(n)'/'the') in front of it when being described */
 #define FF2_GLOW		0x00000100L	/* Always visible, lit via CAVE_GLOW */
 #define FF2_ENTER_FROM_SPECIAL	0x00000200L	/* This grid can only be entered if the player is standing on CAVE_ICKY or FF1_PROTECTED */
+#define FF2_NO_PROB		0x00000400L	/* Don't allow probability travel onto this grid */
 //hole
 #define FF2_BOUNDARY		0x80000000L	/* Is permanent wall that serves as boundary of a dungeon level - cannot even be crossed by admins */
 

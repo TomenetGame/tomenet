@@ -571,7 +571,7 @@ F:FLOOR | REMEMBER | NOTICE | LAMP_LITE_OPTIONAL
 N:74:Building
 G:1:U
 F:FLOOR | PERMANENT | REMEMBER | NOTICE | CAN_RUN
-F:BLOCK_CONTACT
+F:BLOCK_CONTACT | NO_PROB
 
 # 75 --> 78 Quests index
 #Note: If FEAT_PERM_EXTRA has NO_SHADE, so should this,
@@ -1391,8 +1391,8 @@ D:2:A hideous looking ornate door is blocking your way.
 
 N:231:sickbay exit
 G:+:g
-F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | NOTICE | ENTER_FROM_SPECIAL
+F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT | PROTECTED
+F:DONT_NOTICE_RUNNING | NOTICE | ENTER_FROM_SPECIAL | NO_PROB
 D:0:You are not allowed to enter the temple's sickbay.
 D:1:Please do not disturb the patients!
 D:2:You are not allowed to enter the temple's sickbay.
@@ -1400,7 +1400,7 @@ D:2:You are not allowed to enter the temple's sickbay.
 N:232:sickbay area
 G:_:u
 F:FLOOR | CAN_RUN | SUPPORT_LIGHT | ENTER_FROM_SPECIAL
-F:DONT_NOTICE_RUNNING | PROTECTED | BLOCK_CONTACT
+F:DONT_NOTICE_RUNNING | PROTECTED | BLOCK_CONTACT | NO_PROB
 
 N:233:Iridescent Gate
 G:+:M

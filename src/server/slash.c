@@ -655,9 +655,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						return;
 					}
 
-					if (c_ptr->feat == FEAT_PROTECT_INN_BAY && !wpos->wz) {
+					if (c_ptr->feat == FEAT_INN) {
 						o_ptr = &o_list[c_ptr->o_idx];
-						/* Allow getting rid of unusable items */
+						/* Allow only getting rid of completely unusable items */
 						if (o_ptr->level) {
 							msg_print(Ind, "You cannot destroy items that aren't level 0 inside an inn.");
 							return;
