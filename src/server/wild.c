@@ -3538,6 +3538,9 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 		if (cs_ptr) cs_ptr->sc.ptr = sign;
 		else KILL(sign, struct floor_insc);
 
+		/* restore rng */
+		Rand_quick = rand_old;
+		Rand_value = tmp_seed;
 		return;
 	}
 #endif
@@ -3565,6 +3568,7 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 	/* towers use granite walls that look a bit like a tower basement */
 	if (d_ptr == w_ptr->tower) {
 		int rigged_rng = 0;
+
 #if 1 /* clear inner ring? */
 		for (k = 0; k < 9; k++) {
 			zx = x + ddx_ddd[k];
