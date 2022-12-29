@@ -11405,11 +11405,11 @@ void handle_process_font_file(void) {
 		if (in_game) Send_client_setup();
 	} else {
 #endif
-	/* Access the "visual" system pref file (if any) */
-	sprintf(buf, "font-%s.prf", ANGBAND_SYS);
-	process_pref_file(buf);
+		/* Access the "visual" system pref file (if any) */
+		sprintf(buf, "font-%s.prf", ANGBAND_SYS);
+		process_pref_file(buf);
 #ifdef USE_GRAPHICS
-	if (use_graphics) handle_process_graphics_file();
+		if (use_graphics) handle_process_graphics_file();
 #endif
 #ifdef CUSTOM_FONT_PRF
 	}

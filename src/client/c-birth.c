@@ -2380,12 +2380,15 @@ bool get_server_name(void) {
 
 #ifdef EXPERIMENTAL_META
 	int j;
-	char buf[1024], c;
+	char buf[1024], response[1024], c;
  #ifdef META_PINGS
 	int k, v, r;
 	FILE *fff;
   #if 0
 	char path[1024];
+  #endif
+  #ifdef WINDOWS
+	char xpath[1024];
   #endif
  #endif
 
@@ -2424,6 +2427,7 @@ bool get_server_name(void) {
  #endif
 	path_build(buf, 1024, ANGBAND_DIR_USER, "__ping.tmp");
  #ifdef WINDOWS
+	meta_pings_xpath[0] = 0;
 	r = system(format("ping /? > %s 2>&1", buf));
  #else /* assume POSIX */
 	r = system(format("ping -h > %s 2>&1", buf)); // (returns 2 on success)
@@ -2434,13 +2438,37 @@ bool get_server_name(void) {
 	if (!fff) meta_pings_servers = -1;
 	else {
 		meta_pings_servers = -1;
-		while (my_fgets(fff, buf, sizeof(buf)) == 0) {
-			if (!strstr(buf, "Usage")) continue; /* Same for all OS :) */
+		while (my_fgets(fff, response, sizeof(buf)) == 0) {
+			if (!strstr(response, "Usage")) continue; /* Same for all OS :) */
 			meta_pings_servers = 0;
 			break;
 		}
 		my_fclose(fff);
-		remove(buf); //apparently doesn't work on windows, wild guess: because ping /? is suddenly async and __ping.tmp is still opened? wtf.. We remedy this by another remove() after leaving the meta screen.
+		remove(buf);
+
+ #ifdef WINDOWS /* Try Win XP workaround */
+		if (meta_pings_servers == -1) {
+			strcpy(xpath, getenv("SYSTEMROOT"));
+			strcat(xpath, "\\system32");
+			r = system(format("%s\\ping /? > %s 2>&1", xpath, buf));
+			(void)r; //slay compiler warning;
+
+			/* second (and final) chance.. */
+			fff = my_fopen(buf, "r");
+			if (!fff) meta_pings_servers = -1;
+			else {
+				meta_pings_servers = -1;
+				while (my_fgets(fff, response, sizeof(buf)) == 0) {
+					if (!strstr(response, "Usage")) continue; /* Same for all OS :) */
+					meta_pings_servers = 0;
+					sprintf(meta_pings_xpath, " %s", xpath);
+					break;
+				}
+				my_fclose(fff);
+				remove(buf);
+			}
+		}
+ #endif
 	}
 #endif
 

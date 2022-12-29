@@ -6696,7 +6696,7 @@ static void do_meta_pings(void) {
 
 			/* Check for ping-wrap.exe's existance */
 			if (method == 1)
-				CreateProcess( NULL, format("ping-wrap.exe %s %s", meta_pings_server_name[i], path),
+				CreateProcess( NULL, format("ping-wrap.exe %s %s%s", meta_pings_server_name[i], path, meta_pings_xpath),
 				    NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
 			/* Fall back to cmd usage instead (causes terms to pop up once on start) */
 			else
