@@ -6297,7 +6297,7 @@ void calc_boni(int Ind) {
 		else if (p_ptr->inventory[INVEN_WIELD].k_idx || /* dual-wield */
 		    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD))
 			msg_print(Ind, "\377gYou have no trouble wielding your weapon.");
-		else
+		else if (!p_ptr->ghost)
 			msg_print(Ind, "\377gYou feel relieved to put down your heavy weapon.");
 
 		/* Save it */
@@ -6312,7 +6312,7 @@ void calc_boni(int Ind) {
 		else if (p_ptr->inventory[INVEN_WIELD].k_idx || /* dual-wield */
 		    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD))
 			msg_print(Ind, "\377gYou feel comfortable with your weapon.");
-		else
+		else if (!p_ptr->ghost)
 			msg_print(Ind, "\377gYou feel more comfortable after removing your weapon.");
 
 		/* Save it */
@@ -6326,7 +6326,7 @@ void calc_boni(int Ind) {
 			msg_print(Ind, "\377yUsing this large weapon together with a shield makes fighting harder.");
 		else if (p_ptr->inventory[INVEN_WIELD].k_idx)
 			msg_print(Ind, "\377gYou feel comfortable with your weapon.");
-		else if (!p_ptr->inventory[INVEN_ARM].k_idx)
+		else if (!p_ptr->inventory[INVEN_ARM].k_idx && !p_ptr->ghost)
 			msg_print(Ind, "\377gYou feel more dexterous after removing your shield.");
 
 		/* Save it */
@@ -6335,7 +6335,7 @@ void calc_boni(int Ind) {
 
 	if (p_ptr->old_easy_wield != p_ptr->easy_wield) {
 		/* suppress message if we're heavy-wielding */
-		if (!p_ptr->heavy_wield) {
+		if (!p_ptr->heavy_wield && !p_ptr->ghost) {
 			/* Message */
 			if (p_ptr->easy_wield) {
 				if (get_skill(p_ptr, SKILL_DUAL)) /* dual-wield */
@@ -6360,7 +6360,7 @@ void calc_boni(int Ind) {
 			msg_print(Ind, "\377oYou have trouble wielding such a heavy shield.");
 		else if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) /* dual-wielders */
 			msg_print(Ind, "\377gYou have no trouble wielding your shield.");
-		else
+		else if (!p_ptr->ghost)
 			msg_print(Ind, "\377gYou feel relieved to put down your heavy shield.");
 
 		/* Save it */
@@ -6374,7 +6374,7 @@ void calc_boni(int Ind) {
 			msg_print(Ind, "\377oYou have trouble wielding such a heavy bow.");
 		else if (p_ptr->inventory[INVEN_BOW].k_idx)
 			msg_print(Ind, "\377gYou have no trouble wielding your bow.");
-		else
+		else if (!p_ptr->ghost)
 			msg_print(Ind, "\377gYou feel relieved to put down your heavy bow.");
 
 		/* Save it */
@@ -6401,6 +6401,7 @@ void calc_boni(int Ind) {
 		/* Message */
 		if (p_ptr->heavy_tool)
 			msg_print(Ind, "\377oYou have trouble wielding such a heavy tool.");
+		else if (!p_ptr->ghost) ;
 		else if ((!p_ptr->inventory[INVEN_TOOL].k_idx || p_ptr->inventory[INVEN_TOOL].tval != TV_DIGGING)
 #ifdef EQUIPPABLE_DIGGERS
 		    && (!p_ptr->inventory[INVEN_WIELD].k_idx || p_ptr->inventory[INVEN_WIELD].tval != TV_DIGGING)
@@ -6432,7 +6433,7 @@ void calc_boni(int Ind) {
 			}
 		}
 	}
-	if (p_ptr->old_heavy_swim != p_ptr->heavy_swim) {
+	if (p_ptr->old_heavy_swim != p_ptr->heavy_swim && !p_ptr->ghost) {
 		if (p_ptr->heavy_swim)
 			msg_print(Ind, "\377yYou're too heavy to swim.");
 		else
