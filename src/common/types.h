@@ -3681,7 +3681,8 @@ struct player_type {
 	bool insta_res;			/* Instant resurrection */
 	s16b tmp_x, tmp_y;		/* temporary xtra stuff, can be used by whatever local hack, ie not concurrently with other stuff */
 	bool font_map_solid_walls;	/* Hack: Certain Windows bitmap fonts: Map walls to /127, solid block tile */
-	s16b flash_self;
+	bool flash_self, flash_self2;
+	s16b flashing_self;
 	bool flash_insane;
 	bool hilite_player;		/* possible resurrection of long since broken c_cfg.hilite_player: Draw cursor around us at all times. */
 	bool consistent_players;	/* Use consistent colouring for player and allies. Ignore all status/body_monster */
@@ -4011,6 +4012,7 @@ struct client_opts {
 
     //page 3
 	bool flash_player;
+	bool flash_player2;
 	bool hilite_player;
 	bool consistent_players;
 	bool recall_flicker;

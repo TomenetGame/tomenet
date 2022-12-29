@@ -780,10 +780,10 @@ static bool between_effect(int Ind, cave_type *c_ptr) {
 #endif
 	    swap_position(Ind, by, bx)
 #ifdef ENABLE_SELF_FLASHING
-	    && p_ptr->flash_self >= 0) {
+	    && p_ptr->flash_self) {
 		/* flicker player for a moment, to allow for easy location */
 		/* -- only do this when our view panel has changed */
-		p_ptr->flash_self = cfg.fps / FLASH_SELF_DIV;
+		p_ptr->flashing_self = cfg.fps / FLASH_SELF_DIV;
 	}
 #else
 	    ;

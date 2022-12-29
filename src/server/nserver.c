@@ -2489,7 +2489,7 @@ static void sync_options(int Ind, bool *options) {
 
 		//page 3
 
-		p_ptr->flash_self = options[44] ? 0 : -1;
+		p_ptr->flash_self = options[44];
 		p_ptr->hilite_player = options[45];
 		p_ptr->consistent_players = options[46];
 		tmp = p_ptr->permawalls_shade;
@@ -2670,6 +2670,12 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->easy_disarm_montraps = FALSE;
 		p_ptr->no_house_magic = FALSE;
 	}
+
+	if (is_atleast(&p_ptr->version, 4, 9, 0, 1, 0, 1)) p_ptr->flash_self2 = options[151];
+	else p_ptr->flash_self2 = FALSE;
+
+
+	/* Warn about certain options' current status */
 
 	if (p_ptr->limit_chat) msg_print(Ind, "\377yYou have enabled '\377olimit_chat\377y' in \377o=2\377y. Your chat is not globally visible!");
 	if (p_ptr->suppress_ingredients) {

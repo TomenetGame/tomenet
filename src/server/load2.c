@@ -2073,11 +2073,15 @@ static bool rd_extra(int Ind) {
 		lua_count_houses(Ind);
 	}
 
+#if 0
 	if (!older_than(4, 5, 6)) rd_s16b(&p_ptr->flash_self);
 	else {
 		strip_bytes(2);
-		p_ptr->flash_self = -1; /* disabled by default */
+		p_ptr->flash_self = FALSE; /* disabled by default */
 	}
+#else
+	strip_bytes(2);//HOLE
+#endif
 
 	if (!older_than(4, 5, 7)) {
 		rd_byte(&tmp8u);

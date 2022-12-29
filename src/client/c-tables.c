@@ -496,7 +496,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "palette_animation",	"Shade world surface colours depending on daytime" },
 	{ &c_cfg.play_all,		FALSE,	5,	0, 125, TRUE,
 	    "play_all",			"Loop over all available songs instead of just one" },
-	{ &c_cfg.id_selection,		TRUE,	6,	0, 126, TRUE,
+	{ &c_cfg.id_selection,		TRUE,	7,	0, 126, TRUE,
 	    "id_selection",		"Show/accept only eligible items for ID/*ID*" },
 	{ &c_cfg.hp_bar,		FALSE,	6,	0, 127, TRUE,
 	    "hp_bar",			"Display hit points as bar instead of numbers" },
@@ -552,6 +552,9 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "equip_set_colour",		"Colourize indices of items giving set bonus" },
 	{ &c_cfg.colourize_bignum,	FALSE,	7,	0, 150, TRUE,
 	    "colourize_bignum",		"Colourize prices, AU and XP in 3-digit columns" },
+
+	{ &c_cfg.flash_player2,		FALSE,	6,	0, 151, TRUE,
+	    "flash_player2",		"Flash own character icon after close relocation" },
 };
 
 cptr melee_techniques[16] = {

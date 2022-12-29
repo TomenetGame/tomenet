@@ -718,9 +718,11 @@
 #define MAX_PVP_LEVEL	30
 
 
-/* For flash player option, cfg.fps/n, for teleport [6] */
+/* For flash player 2 option, cfg.fps/n, for short range teleport [8] */
+#define FLASH_SELF_DIVS 8
+/* For flash player option, cfg.fps/n, for teleport [4] */
 #define FLASH_SELF_DIV 4
-/* For flash player option, cfg.fps/n, for floor change [4] */
+/* For flash player option, cfg.fps/n, for floor change [3] */
 #define FLASH_SELF_DIV2 3
 
 /* Time to be idle for auto-afk to kick in, in seconds [60] */

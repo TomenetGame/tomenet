@@ -4580,12 +4580,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #endif
 #ifdef ENABLE_SELF_FLASHING
 		} else if (prefix(messagelc, "/flash")) {
-			if (p_ptr->flash_self == -1) {
-				p_ptr->flash_self = 0;
-				msg_print(Ind, "Self-flashing when changing dungeon floor is now ENABLED.");
+			if (p_ptr->flash_self == FALSE) {
+				p_ptr->flash_self = TRUE;
+				msg_print(Ind, "Self-flashing when changing dungeon floor or sector is now ENABLED.");
 			} else {
-				p_ptr->flash_self = -1;
-				msg_print(Ind, "Self-flashing when changing dungeon floor is now DISABLED.");
+				p_ptr->flash_self = FALSE;
+				msg_print(Ind, "Self-flashing when changing dungeon floor or sector is now DISABLED.");
 			}
 			return;
 #endif

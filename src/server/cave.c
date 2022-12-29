@@ -4058,7 +4058,7 @@ void lite_spot(int Ind, int y, int x) {
 
 #ifdef ENABLE_SELF_FLASHING
 			/* display player in really easily spottable colours */
-			if (p_ptr->flash_self > 0) a = (p_ptr->flash_self % 2) ? TERM_L_RED : TERM_L_GREEN;
+			if (p_ptr->flashing_self > 0) a = (p_ptr->flashing_self % 2) ? TERM_L_RED : TERM_L_GREEN;
 #endif
 
 			/* display a low-on-sanity player flashy to himself? */

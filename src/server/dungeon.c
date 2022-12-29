@@ -9458,7 +9458,7 @@ void process_player_change_wpos(int Ind) {
 #ifdef ENABLE_SELF_FLASHING
 	/* if not travelling through wilderness smoothly,
 	   flicker player for a moment, to allow for easy location */
-	if (!smooth_ambient && p_ptr->flash_self >= 0) p_ptr->flash_self = cfg.fps / FLASH_SELF_DIV2; //todo: make client option
+	if (!smooth_ambient && p_ptr->flash_self) p_ptr->flashing_self = cfg.fps / FLASH_SELF_DIV2;
 #endif
 
 	grid_affects_player(Ind, -1, -1);
@@ -9792,9 +9792,10 @@ void dungeon(void) {
 
 #ifdef ENABLE_SELF_FLASHING
 		/* Check for hilite */
-		if (p_ptr->flash_self > 0 && !(turn % (cfg.fps / 15))) {
-			p_ptr->flash_self--;
-			everyone_lite_spot_move(i, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+		if (p_ptr->flashing_self > 0 && !(turn % (cfg.fps / 15))) {
+			p_ptr->flashing_self--;
+			//everyone_lite_spot_move(i, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+			lite_spot(i, p_ptr->py, p_ptr->px);
 		} else
 #endif
 		if (!(turn % (cfg.fps / 6))) {
