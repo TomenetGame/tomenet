@@ -459,7 +459,7 @@ bool equip_no_weapon = FALSE;
 
 bool auto_reincarnation = FALSE;
 char macro_trigger_exclusive[MAX_CHARS];
-bool macro_processing_exclusive;
+bool macro_processing_exclusive = FALSE;
 
 /* To make graphics char remappings easier and there is no need to update mapping files when MAX_FONT_CHAR changes. */
 char32_t char_map_offset = 0;
@@ -716,6 +716,9 @@ bool map_town = FALSE;
 int meta_pings_servers = 0, meta_pings_ticks = -1, meta_pings_server_duplicate[META_PINGS], meta_pings_result[META_PINGS];
 char meta_pings_server_name[META_PINGS][MAX_CHARS];
 bool  meta_pings_stuck[META_PINGS];
+ #ifdef WINDOWS
+char meta_pings_xpath[1024];
+ #endif
  #ifdef META_PINGS_CREATEFILE
 HANDLE fhan[META_PINGS] = { NULL }; //it's *void (aka PVOID)
 SECURITY_ATTRIBUTES sa[META_PINGS];
