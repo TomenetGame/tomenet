@@ -4579,13 +4579,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 #endif
 #ifdef ENABLE_SELF_FLASHING
-		} else if (prefix(messagelc, "/flash")) {
-			if (p_ptr->flash_self == FALSE) {
-				p_ptr->flash_self = TRUE;
-				msg_print(Ind, "Self-flashing when changing dungeon floor or sector is now ENABLED.");
+		} else if (prefix(messagelc, "/flash")) { //for before next client release, to make this already accessible
+			if (p_ptr->flash_self2 == FALSE) {
+				p_ptr->flash_self2 = TRUE;
+				msg_print(Ind, "Self-flashing on short-range teleportation is now ENABLED.");
 			} else {
-				p_ptr->flash_self = FALSE;
-				msg_print(Ind, "Self-flashing when changing dungeon floor or sector is now DISABLED.");
+				p_ptr->flash_self2 = FALSE;
+				msg_print(Ind, "Self-flashing on short-range teleportation is now DISABLED.");
 			}
 			return;
 #endif

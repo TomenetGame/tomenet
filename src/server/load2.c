@@ -2073,14 +2073,16 @@ static bool rd_extra(int Ind) {
 		lua_count_houses(Ind);
 	}
 
-#if 0
-	if (!older_than(4, 5, 6)) rd_s16b(&p_ptr->flash_self);
-	else {
+#if 1 /* To make this option, which isn't part of the current client, persistent before next client release */
+	if (!older_than(4, 5, 6)) {
+		rd_s16b(&tmp16s);
+		p_ptr->flash_self2 = tmp16u != 0;
+	} else {
 		strip_bytes(2);
-		p_ptr->flash_self = FALSE; /* disabled by default */
+		p_ptr->flash_self2 = FALSE;
 	}
 #else
-	strip_bytes(2);//HOLE
+	strip_bytes(2);
 #endif
 
 	if (!older_than(4, 5, 7)) {

@@ -940,8 +940,11 @@ static void wr_extra(int Ind) {
 	wr_u32b(p_ptr->gold_picked_up);
 	wr_byte(p_ptr->insta_res);
 	wr_byte(p_ptr->castles_owned);
-	//wr_s16b(p_ptr->flash_self);
-	wr_u16b(0x0); //HOLE
+#if 1 /* To make this option, which isn't part of the current client, persistent before next client release */
+	wr_s16b(p_ptr->flash_self2);
+#else
+	//wr_u16b(0x0);
+#endif
 	wr_byte(p_ptr->fluent_artifact_reset); /* for automatic artifact resets */
 	wr_byte(p_ptr->sanity_bar | (p_ptr->health_bar ? 0x04 : 0x00) | (p_ptr->mana_bar ? 0x08 : 0x00) | (p_ptr->stamina_bar ? 0x10 : 0x00));
 	wr_byte(p_ptr->IDDC_found_rndtown);

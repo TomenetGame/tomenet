@@ -3761,8 +3761,8 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	p_ptr->dual_mode = TRUE;
 
 	/* disabled flash_self by default */
-	p_ptr->flash_self = FALSE;
-	p_ptr->flash_self2 = FALSE;
+	//p_ptr->flash_self = FALSE;
+	//p_ptr->flash_self2 = FALSE;
 
 	/* hack: allow to get extra level feeling immediately */
 	p_ptr->turns_on_floor = TURNS_FOR_EXTRA_FEELING;
