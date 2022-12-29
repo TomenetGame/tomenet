@@ -3914,21 +3914,21 @@ static void process_player_begin(int Ind) {
 	case AT_VALINOR3:	/* Orome mumbles */
 		if (turn < p_ptr->auto_transport_turn + cfg.fps * 1) break; /* cool down.. */
 		msg_print(Ind, "\374 ");
-		msg_print(Ind, "\374\377oOrome, The Hunter, mumbles something about a spear..");
+		msg_print(Ind, "\374\377oOrome, the Hunter, mumbles something about a spear..");
 		p_ptr->auto_transport = AT_VALINOR4;
 		p_ptr->auto_transport_turn = turn;
 		break;
 	case AT_VALINOR4:	/* Orome looks */
 		if (turn < p_ptr->auto_transport_turn + cfg.fps * 5) break; /* cool down.. */
 		msg_print(Ind, "\374 ");
-		msg_print(Ind, "\374\377oOrome, The Hunter, notices you and surprise crosses his face!");
+		msg_print(Ind, "\374\377oOrome, the Hunter, notices you and surprise crosses his face!");
 		p_ptr->auto_transport = AT_VALINOR5;
 		p_ptr->auto_transport_turn = turn;
 		break;
 	case AT_VALINOR5:	/* Orome laughs */
 		if (turn < p_ptr->auto_transport_turn + cfg.fps * 4) break; /* cool down.. */
 		msg_print(Ind, "\374 ");
-		msg_print(Ind, "\374\377oOrome, The Hunter, laughs out loudly!");
+		msg_print(Ind, "\374\377oOrome, the Hunter, laughs out loudly!");
 		set_afraid(Ind, 8);
 		p_ptr->auto_transport = AT_VALINOR6;
 		p_ptr->auto_transport_turn = turn;
@@ -3936,7 +3936,7 @@ static void process_player_begin(int Ind) {
 	case AT_VALINOR6:	/* Orome offers */
 		if (turn < p_ptr->auto_transport_turn + cfg.fps * 8) break; /* cool down.. */
 		msg_print(Ind, "\374 ");
-		msg_print(Ind, "\374\377oOrome, The Hunter, offers you to stay here!");
+		msg_print(Ind, "\374\377oOrome, the Hunter, offers you to stay here!");
 		msg_print(Ind, "\374\377y  (You may hit the suicide keys in order to retire here,");
 		msg_print(Ind, "\374\377y  or take the staircase back to the mundane world.)");
 		msg_print(Ind, "\374 ");

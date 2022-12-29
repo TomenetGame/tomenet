@@ -9854,6 +9854,29 @@ static bool dropped_the_one_ring(struct worldpos *wpos, cave_type *c_ptr) {
 	return(TRUE);
 }
 
+static bool check_orome(int Ind, struct worldpos *wpos, cave_type **zcave, int x, int y) {
+	int x1, y1;
+	bool done = FALSE;
+
+	if (!in_valinor(wpos)) return(FALSE);
+	for (x1 = x - 1; x1 <= x + 1; x1++) {
+		for (y1 = y - 1; y1 <= y + 1; y1++) {
+			if (!in_bounds(y1, x1)) continue;
+			if (zcave[y1][x1].m_idx <= 0) continue;
+			if (m_list[zcave[y1][x1].m_idx].r_idx != RI_OROME) continue;
+			done = TRUE;
+			break;
+		}
+		if (done) break;
+	}
+	if (x1 == x + 2) return(FALSE);
+
+	msg_print(Ind, "\374 ");
+	msg_print(Ind, "\374\377oOrome, the Hunter, grabs his spear and shouts out in delight!");
+	set_afraid(Ind, 8);
+	return(TRUE);
+}
+
 /*
  * Let an item 'o_ptr' fall to the ground at or near (y,x).
  * The initial location is assumed to be "in_bounds()".
@@ -10235,7 +10258,7 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 	/* True artifact may disappear, depending on tomenet.cfg flags */
 	if (wpos->wz == 0) { /* Assume houses are always on surface */
 		if (undepositable_artifact_p(o_ptr) && cfg.anti_arts_house && inside_house(wpos, nx, ny)) {
-			if (Ind) {
+			if (Ind && (o_ptr->name1 != ART_OROME || !check_orome(Ind, wpos, zcave, x, y))) {
 				char o_name[ONAME_LEN];
 
 				object_desc(Ind, o_name, o_ptr, TRUE, 0);
@@ -10250,10 +10273,12 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 	    ((cfg.anti_arts_hoard && undepositable_artifact_p(o_ptr)) || (p_ptr->total_winner && !winner_artifact_p(o_ptr) && cfg.kings_etiquette)))
 	    //(cfg.anti_arts_hoard || (cfg.anti_arts_house && 0)) would be cleaner sometime in the future..
 	{
-		char o_name[ONAME_LEN];
+		if (Ind && (o_ptr->name1 != ART_OROME || !check_orome(Ind, wpos, zcave, x, y))) {
+			char o_name[ONAME_LEN];
 
-		object_desc(Ind, o_name, o_ptr, TRUE, 0);
-		msg_format(Ind, "%s fades into the air!", o_name);
+			object_desc(Ind, o_name, o_ptr, TRUE, 0);
+			msg_format(Ind, "%s fades into the air!", o_name);
+		}
 		handle_art_d(o_ptr->name1);
 		return(-1);
 	}
@@ -10284,6 +10309,11 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 	/* Successful drop */
 	//if (flag)
 	else {
+		if (Ind && o_ptr->name1 == ART_OROME && check_orome(Ind, wpos, zcave, x, y)) {
+			handle_art_d(o_ptr->name1);
+			return(-1);
+		}
+
 		/* Assume fails */
 		//flag = FALSE;
 
