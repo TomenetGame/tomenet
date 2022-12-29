@@ -1917,6 +1917,7 @@ static void init_artifact_list() {
 		/* normal artifacts: */
 		else {
 			int krar = kind_list_rarity[i], krar_boost, rar_boost;
+
 			krar_boost = krar + (krar * krar) / 500;
 			rar_boost = rar + (rar * rar) / 500;
 			if (rar < krar) {

@@ -518,6 +518,7 @@ static int get_mimic_spell(int *sn) {
 		} else if (choice == '@') {
 			char buf[80];
 			int c;
+
 			strcpy(buf, "");
 			if (!get_string("Power? ", buf, 79)) {
 				if (redraw) {

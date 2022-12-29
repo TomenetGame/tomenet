@@ -4868,6 +4868,7 @@ static void artifact_lore(void) {
 					list_idx[n] = i;
 				} else { /* already got a beginning-of-line match? swap them, cause exact match always take pos #0 */
 					int tmp = list_idx[0];
+
 					list_idx[0] = i;
 					list_idx[n] = tmp;
 
@@ -5395,6 +5396,7 @@ static void monster_lore(void) {
 						list_idx[n] = i;
 					} else { /* already got a beginning-of-line match? swap them, cause exact match always take pos #0 */
 						int tmp = list_idx[0];
+
 						list_idx[0] = i;
 						list_idx[n] = tmp;
 
@@ -8319,9 +8321,9 @@ static void cmd_master_aux_player() {
 			buf[0] = 't';
 			get_string("Enter player name:", &buf[1], 15);
 			break;
-		case '8':
-			{
+		case '8': {
 				int j;
+
 				buf[0] = 'B';
 				get_string("Message:", &buf[1], 69);
 				for (j = 0; j < 60; j++)
@@ -8353,11 +8355,10 @@ static void cmd_script_upload() {
 	if (!get_string("Script name: ", name, 30)) return;
 
 	/* Starting from protocol version 4.6.1.2, the client can receive 1024 bytes in one packet */
-	if (is_newer_than(&server_version, 4, 6, 1, 1, 0, 1)) {
+	if (is_newer_than(&server_version, 4, 6, 1, 1, 0, 1))
 		chunksize = 1024;
-	} else {
+	else
 		chunksize = 256;
-	}
 
 	remote_update(0, name, chunksize);
 }

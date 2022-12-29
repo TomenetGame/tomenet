@@ -68,12 +68,9 @@ void cnv_stat(int val, char *out_val) {
 		if (val > 18) {
 			int bonus = (val - 18);
 
-			if (bonus >= 220)
-				sprintf(out_val, "18/%3s", "***");
-			else if (bonus >= 100)
-				sprintf(out_val, "18/%03d", bonus);
-			else
-				sprintf(out_val, " 18/%02d", bonus);
+			if (bonus >= 220) sprintf(out_val, "18/%3s", "***");
+			else if (bonus >= 100) sprintf(out_val, "18/%03d", bonus);
+			else sprintf(out_val, " 18/%02d", bonus);
 		}
 		/* From 3 to 18 */
 		else sprintf(out_val, "    %2d", val);
@@ -82,10 +79,8 @@ void cnv_stat(int val, char *out_val) {
 		if (val > 18) {
 			int bonus = (val - 18);
 
-			if (bonus >= 220)
-				sprintf(out_val, "    **");
-			else
-				sprintf(out_val, "  %2d.%1d", 18 + (bonus / 10), bonus % 10);
+			if (bonus >= 220) sprintf(out_val, "    **");
+			else sprintf(out_val, "  %2d.%1d", 18 + (bonus / 10), bonus % 10);
 		}
 		/* From 3 to 18 */
 		else sprintf(out_val, "    %2d", val);
@@ -282,6 +277,7 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 #else /* finer double-scale 0..10 in 0.5 steps :D */
 		//if (!c_cfg.exp_need) {
 			int got = ((cur - adv_prev) * 20 + half_exp) / scale, i;
+
 			got_org = got;
 
 			for (i = 0; i < got / 2; i++) tmp[i] = exp_bar_char;
@@ -290,6 +286,7 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
  #if 0
 		else {
 			int got = ((cur - adv_prev) * 20 + half_exp) / scale, i;
+
 			got_org = got;
 
 			for (i = 0; i < got / 2; i++) tmp[i] = '-'; //10 'filled bubbles' = next level, so only need to display 9!
@@ -636,6 +633,7 @@ void prt_party_stats(int member_num, byte color, char *member_name, int member_l
 	if (member_name[0] == '\0' && member_lev == 0) {
 		/* Empty member? Just clear it - mikaelh */
 		int i;
+
 		for (i = CLIENT_PARTY_ROWMBR + rowspacing; i < CLIENT_PARTY_ROWMBR + rowspacing + 3; i++)
 			Term_erase(0, i, 12);
 		return;

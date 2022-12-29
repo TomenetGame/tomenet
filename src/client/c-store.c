@@ -65,6 +65,7 @@ static void display_entry(int pos, int entries) {
 		if (c_cfg.show_weights) {
 			/* Only show the weight of an individual item */
 			int wgt = o_ptr->weight;
+
 			(void)sprintf(out_val, "%3d.%d lb", wgt / 10, wgt % 10);
 			put_str(out_val, i + 6, 68);
 		}
