@@ -1828,7 +1828,7 @@ bool set_afraid(int Ind, int v) { /* bad status effect */
 	else {
 		if (p_ptr->afraid) {
 			msg_format_near(Ind, "%s appears bolder now.", p_ptr->name);
-			msg_print(Ind, "You feel bolder now.");
+			if (!in_valinor(&p_ptr->wpos)) msg_print(Ind, "You feel bolder now."); //for Orome
 			notice = TRUE;
 		}
 	}

@@ -3932,7 +3932,14 @@ static void process_player_begin(int Ind) {
 		if (turn < p_ptr->auto_transport_turn + cfg.fps * 4) break; /* cool down.. */
 		msg_print(Ind, "\374 ");
 		msg_print(Ind, "\374\377oOrome, the Hunter, laughs out loudly!");
-		set_afraid(Ind, 8);
+#if 0
+		set_afraid(Ind, 1 + 2 * (1 + get_skill_scale(p_ptr, SKILL_COMBAT, 3 + 1)));
+#else
+		p_ptr->afraid = 1 + 2 * (1 + get_skill_scale(p_ptr, SKILL_COMBAT, 3 + 1));
+		disturb(Ind, 0, 0);
+		p_ptr->redraw |= (PR_AFRAID);
+		handle_stuff(Ind);
+#endif
 		p_ptr->auto_transport = AT_VALINOR6;
 		p_ptr->auto_transport_turn = turn;
 		break;
@@ -3945,13 +3952,10 @@ static void process_player_begin(int Ind) {
 		msg_print(Ind, "\374 ");
 		p_ptr->auto_transport = 0;
 		break;
-	case AT_VALINORX:	/* Orome offers */
+	case AT_VALINORX:	/* Orome pats */
 		if (turn < p_ptr->auto_transport_turn + cfg.fps * 3) break; /* cool down.. */
 		msg_print(Ind, "\374 ");
 		msg_print(Ind, "\374\377oOrome, the Hunter, heartily *pats* you on the back!");
-#ifdef USE_SOUND_2010
-		//too much xD sound_near_site(Players[j]->py, Players[j]->px, &p_ptr->wpos, 0, "slap", "", SFX_TYPE_COMMAND, TRUE);
-#endif
 		bypass_invuln = TRUE;
 		take_hit(Ind, p_ptr->chp / 6, "a *pat* on the back", 0);
 		bypass_invuln = FALSE;

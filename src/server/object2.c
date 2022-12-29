@@ -9857,6 +9857,7 @@ static bool dropped_the_one_ring(struct worldpos *wpos, cave_type *c_ptr) {
 static bool check_orome(int Ind, struct worldpos *wpos, cave_type **zcave, int x, int y) {
 	int x1, y1;
 	bool done = FALSE;
+	player_type *p_ptr = Players[Ind];
 
 	if (!in_valinor(wpos)) return(FALSE);
 	for (x1 = x - 1; x1 <= x + 1; x1++) {
@@ -9873,12 +9874,22 @@ static bool check_orome(int Ind, struct worldpos *wpos, cave_type **zcave, int x
 
 	msg_print(Ind, "\374 ");
 	msg_print(Ind, "\374\377oOrome, the Hunter, grabs his spear and shouts out in delight!");
-	set_afraid(Ind, 8);
+#ifdef USE_SOUND_2010
+	//sound_item(Ind, TV_POLEARM, SV_HUNTING_SPEAR, "wearwield_");
+#endif
+#if 0
+	set_afraid(Ind, 1 + 1 * (1 + get_skill_scale(p_ptr, SKILL_COMBAT, 3 + 1)));
+#else
+	p_ptr->afraid = 1 + 1 * (1 + get_skill_scale(p_ptr, SKILL_COMBAT, 3 + 1));
+	disturb(Ind, 0, 0);
+	p_ptr->redraw |= (PR_AFRAID);
+	handle_stuff(Ind);
+#endif
 
 	/* Don't overwrite the normal sequence, in case the player was lightning fast to hand it over.. */
-	if (!Players[Ind]->auto_transport) {
-		Players[Ind]->auto_transport = AT_VALINORX;
-		Players[Ind]->auto_transport_turn = turn;
+	if (!p_ptr->auto_transport) {
+		p_ptr->auto_transport = AT_VALINORX;
+		p_ptr->auto_transport_turn = turn;
 	}
 
 	return(TRUE);
