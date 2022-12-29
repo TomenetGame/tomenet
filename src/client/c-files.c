@@ -846,12 +846,11 @@ errr process_pref_file_aux(char *buf, byte fmt) {
 	   loaded by 'pref.prf' and mess up the options and window flags. */
 	if (macro_processing_exclusive)
 		switch (buf[0]) {
-		case 'A':
-		case 'P':
-		case 'H':
-		case 'C':
-		case 'D': break;
-		default: return(0);
+		case 'A': //macro action
+		case 'P': case 'H': case 'C': //normal/hybrid/command macro
+		case 'D': //delete macro
+			break;
+		default: return(0); //just discard all other lines
 		}
 
 	/* Process "R:<num>:<a>/<c>" -- attr/char for monster races */
