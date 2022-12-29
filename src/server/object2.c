@@ -9874,6 +9874,13 @@ static bool check_orome(int Ind, struct worldpos *wpos, cave_type **zcave, int x
 	msg_print(Ind, "\374 ");
 	msg_print(Ind, "\374\377oOrome, the Hunter, grabs his spear and shouts out in delight!");
 	set_afraid(Ind, 8);
+
+	/* Don't overwrite the normal sequence, in case the player was lightning fast to hand it over.. */
+	if (!Players[Ind]->auto_transport) {
+		Players[Ind]->auto_transport = AT_VALINORX;
+		Players[Ind]->auto_transport_turn = turn;
+	}
+
 	return(TRUE);
 }
 

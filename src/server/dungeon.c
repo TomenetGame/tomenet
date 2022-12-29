@@ -3945,6 +3945,18 @@ static void process_player_begin(int Ind) {
 		msg_print(Ind, "\374 ");
 		p_ptr->auto_transport = 0;
 		break;
+	case AT_VALINORX:	/* Orome offers */
+		if (turn < p_ptr->auto_transport_turn + cfg.fps * 3) break; /* cool down.. */
+		msg_print(Ind, "\374 ");
+		msg_print(Ind, "\374\377oOrome, the Hunter, heartily *pats* you on the back!");
+#ifdef USE_SOUND_2010
+		//too much xD sound_near_site(Players[j]->py, Players[j]->px, &p_ptr->wpos, 0, "slap", "", SFX_TYPE_COMMAND, TRUE);
+#endif
+		bypass_invuln = TRUE;
+		take_hit(Ind, p_ptr->chp / 6, "a *pat* on the back", 0);
+		bypass_invuln = FALSE;
+		p_ptr->auto_transport = 0;
+		break;
 	case AT_PARTY:
 		disturb(Ind, 0, 0);//stop running for a moment..
 		p_ptr->auto_transport = 0;

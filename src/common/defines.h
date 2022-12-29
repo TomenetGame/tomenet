@@ -8775,6 +8775,7 @@ extern int PlayerUID;
 #define AT_PARTY	9
 #define AT_PARTY2	10
 #define AT_MUMBLE	11
+#define AT_VALINORX	12
 
 
 /* Admin-specific item powers - C. Blue */
