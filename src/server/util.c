@@ -9819,3 +9819,23 @@ int get_subinven_group(int sval) {
 }
  #endif
 #endif
+
+/* Returns amount of bytes used in a string by colour codes - C. Blue
+   Usage: Primarily to format colour-coded top-lines that must not exceed MAX_CHARS (ie 1 line, 80 chars)
+   in printed (aka visible) length, but may contain arbitrarily many colours. */
+int cclen(cptr str) {
+	int l = 0;
+	const char *c = str;
+
+	while (*c) {
+		if (*c == '\377') {
+			l++;
+			c++;
+			if (*c) l++;
+			else break;
+		}
+		c++;
+	}
+
+	return l;
+}
