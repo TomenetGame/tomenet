@@ -5882,7 +5882,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			/* erase items and monsters */
-			else if ((prefix(messagelc, "/clear-level") || prefix(messagelc, "/clv")) && !prefix(messagelc, "/clver")) {
+			else if ((prefix(messagelc, "/clear-level") || prefix(messagelc, "/clv ") || !strcmp(messagelc, "/clv")) && !prefix(messagelc, "/clver")) {
 				bool full = (tk);
 
 				/* Wipe even if town/wilderness */
