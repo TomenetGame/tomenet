@@ -1687,6 +1687,7 @@ static void init_kind_list() {
 			if (strlen(buf) < 3) continue;
 			else if (buf[0] == 'A') { /* depth, rarity +  (--note: Does not account for extra rarity increase due to OOD discrepancy between k-depth and a-depth) */
 				int best_rar = 255;
+
 				while (TRUE) {
 					if (!strchr(p1, ':')) break;
 					/* <ignore depth> */
