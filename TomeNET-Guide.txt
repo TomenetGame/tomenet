@@ -10225,8 +10225,8 @@ Halloween
     that lights up the world surface won't work.
 
 Christmas
-    Running from 23rd December to 27th December.
-    If seasons run at 2x speed, then also from 23rd June till 27th June.
+    Running from 23rd December to 26th December.
+    If seasons run at 2x speed, then also from 23rd June till 26th June.
 
     The server will recall all players (20 minutes ahead warning will be
     displayed) and restart, after which the event is live.
