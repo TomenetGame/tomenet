@@ -601,6 +601,7 @@ static void sense_inventory(int Ind) {
 		/* new: remove previous pseudo-id tag completely, since we've bumped our p-id tier meanwhile */
 		if (fail) {
 			char note2[80], noteid[10];
+
 			note_crop_pseudoid(note2, noteid, quark_str(o_ptr->note));
 			if (!note2[0]) o_ptr->note = o_ptr->note_utag = 0;
 			else o_ptr->note = quark_add(note2);
@@ -1199,6 +1200,7 @@ static void process_effects(void) {
 			/* Generate fireworks effects */
 			else if (e_ptr->flags & (EFF_FIREWORKS1 | EFF_FIREWORKS2 | EFF_FIREWORKS3)) {
 				int semi = (e_ptr->time + e_ptr->rad) / 2;
+
 				/* until half-time (or half-radius) the fireworks rise into the air */
 				if (e_ptr->rad < e_ptr->time) {
 					if (i == e_ptr->cx && j == e_ptr->cy - e_ptr->rad)
@@ -2810,17 +2812,17 @@ static void process_day_and_night() {
 	nightfall = (((turn / HOUR) % 24) == NIGHTFALL) && IS_NIGHT; /* IS_NIGHT is pointless at the time of coding this, just for consistencies sake with IS_DAY above. */
 
 #ifdef EXTENDED_COLOURS_PALANIM /* We're called every (HOUR / PALANIM_HOUR_DIV) instead of just every hour? */
-    if (!(turn % HOUR)) {
+	if (!(turn % HOUR)) {
 #endif
-	/* Day breaks - not during Halloween {>_>} or during NEW_YEARS_EVE (fireworks)! -- covered by IS_DAY now. */
-	if (sunrise)
-		sun_rises();
-	/* Night falls - but only if it was actually day so far:
-	   During HALLOWEEN as well as NEW_YEARS_EVE it stays night all the time >:) (see above) */
-	else if (nightfall && !night_surface)
-		night_falls();
+		/* Day breaks - not during Halloween {>_>} or during NEW_YEARS_EVE (fireworks)! -- covered by IS_DAY now. */
+		if (sunrise)
+			sun_rises();
+		/* Night falls - but only if it was actually day so far:
+		   During HALLOWEEN as well as NEW_YEARS_EVE it stays night all the time >:) (see above) */
+		else if (nightfall && !night_surface)
+			night_falls();
 #ifdef EXTENDED_COLOURS_PALANIM
-    }
+	}
 
 	/* Called every (HOUR / PALANIM_HOUR_DIV) [5 min in-game time] */
 	world_surface_palette();
@@ -2917,10 +2919,10 @@ static void process_world_player(int Ind) {
 
 #ifdef GHOST_FADING
 	if (p_ptr->ghost && !p_ptr->admin_dm &&
-//	    !(turn % GHOST_FADING))
-//	    !(turn % ((5100L - p_ptr->lev * 50)*GHOST_FADING)))
+	    //!(turn % GHOST_FADING))
+	    //!(turn % ((5100L - p_ptr->lev * 50)*GHOST_FADING)))
 	    !(turn % (GHOST_FADING / p_ptr->lev * 50)))
-//		(rand_int(10000) < p_ptr->lev * p_ptr->lev))
+		//(rand_int(10000) < p_ptr->lev * p_ptr->lev))
 		take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 10000L, "fading", TRUE, TRUE, FALSE, 0);
 #endif	// GHOST_FADING
 
@@ -2993,6 +2995,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 				} else {
 					int power = retaliate_mimic_power(Ind, choice - 1); /* immunity preference */
 					bool dir = FALSE;
+
 					if (innate_powers[power].smana > p_ptr->cmp && fallback) return(p_ptr->fail_no_melee);
 #if 0
 					if (power) {
@@ -3733,7 +3736,7 @@ static int auto_retaliate(int Ind) {
 
 		/* Attack him */
 		/* Stormbringer bypasses everything!! */
-//		py_attack(Ind, p_target_ptr->py, p_target_ptr->px);
+		//py_attack(Ind, p_target_ptr->py, p_target_ptr->px);
 		if (p_ptr->stormbringer || (
 #ifdef AUTO_RET_CMD
 		    !retaliate_cmd(Ind, fallback) &&
@@ -3767,7 +3770,7 @@ static int auto_retaliate(int Ind) {
 		}
 
 		/* Attack it */
-//		py_attack(Ind, m_target_ptr->fy, m_target_ptr->fx);
+		//py_attack(Ind, m_target_ptr->fy, m_target_ptr->fx);
 		if (p_ptr->stormbringer || (
 #ifdef AUTO_RET_CMD
 		    !retaliate_cmd(Ind, fallback) &&
@@ -4081,16 +4084,14 @@ static void apply_terrain_effect(int Ind) {
 				if (s == -1) s = p_ptr->lev;
 
 				/* Roll damage */
-				for (l = 0; l < d; l++) {
-					dam += randint(s);
-				}
+				for (l = 0; l < d; l++) dam += randint(s);
 
 				/* Apply damage */
 				project(PROJECTOR_TERRAIN, 0, &p_ptr->wpos, y, x, dam, f_ptr->d_type[i],
 				    PROJECT_NORF | PROJECT_KILL | PROJECT_HIDE | PROJECT_JUMP | PROJECT_NODO | PROJECT_NODF, "");
 
 				/* Hack -- notice death */
-//				if (!alive || death) return;
+				//if (!alive || death) return;
 				if (p_ptr->death) return;
 			}
 		}
@@ -4207,8 +4208,10 @@ void recall_player(int Ind, char *message) {
 	if (in_irondeepdive(&old_wpos)
 	    && !is_admin(p_ptr)) {
 		int i, j;
+
 #ifdef IRONDEEPDIVE_FIXED_TOWN_WITHDRAWAL
 		bool success = TRUE;
+
 		if (getlevel(&old_wpos) == IDDC_TOWN1_FIXED || getlevel(&old_wpos) == IDDC_TOWN2_FIXED) success = FALSE;
 		if (success)
 #endif
@@ -5286,6 +5289,7 @@ static bool process_player_end_aux(int Ind) {
 	if ((p_ptr->cst < p_ptr->mst) && !p_ptr->shadow_running) {
 		//int s = 2 * (76 + (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus_health) * 3);
 		int s = regen_boost_stamina * (54 + (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus_health) * 3);
+
 		if (p_ptr->resting && !p_ptr->searching) s *= 2;
 		p_ptr->cst_frac += s;
 		if (p_ptr->cst_frac >= 10000) {
@@ -6365,6 +6369,7 @@ static bool process_player_end_aux(int Ind) {
 		if (!p_ptr->esp_link_end) {
 			player_type *p_ptr2 = NULL;
 			int Ind2;
+
 			if ((Ind2 = get_esp_link(Ind, 0x0, &p_ptr2))) {
 				if (!(p_ptr->esp_link_flags & LINKF_HIDDEN)) {
 					msg_format(Ind, "\377RYou break the mind link with %s.", p_ptr2->name);
@@ -6537,6 +6542,7 @@ static void process_games(int Ind) {
 					object_type tmp_obj;
 					s16b ox, oy;
 					int try;
+
 					p_ptr->energy = 0;
 					snprintf(sstr, 80, "Score: \377RReds: %d  \377BBlues: %d", teamscore[0], teamscore[1]);
 					msg_broadcast(0, sstr);
@@ -6739,6 +6745,7 @@ static void process_player_end(int Ind) {
 	/* Handle running -- 5 times the speed of walking */
 	while (p_ptr->running && p_ptr->energy >= (level_speed(&p_ptr->wpos) * (real_speed + 1)) / real_speed) {
 		char consume_full_energy;
+
 		run_step(Ind, 0, &consume_full_energy);
 		if (consume_full_energy) {
 			/* Consume a full turn of energy in case we have e.g. attacked a monster */
@@ -7072,6 +7079,7 @@ void cheeze_trad_house() {
 		}
 		else if (h_ptr->dna->owner_type == OT_PARTY) {
 			int owner;
+
 			if ((owner = lookup_player_id(parties[h_ptr->dna->owner].owner))) {
 				for (i = 0; i < h_ptr->stock_num; i++) {
 					o_ptr = &h_ptr->stock[i];
@@ -7088,6 +7096,7 @@ void cheeze_trad_house() {
 		}
 		else if (h_ptr->dna->owner_type == OT_GUILD) {
 			int owner;
+
 			if ((owner = guilds[h_ptr->dna->owner].master)) {
 				for (i = 0; i < h_ptr->stock_num; i++) {
 					o_ptr = &h_ptr->stock[i];
@@ -8588,7 +8597,6 @@ void process_player_change_wpos(int Ind) {
 		    (!(cfg.fallenkings_etiquette && p_ptr->once_winner && !p_ptr->total_winner) &&
 		    !(cfg.kings_etiquette && p_ptr->total_winner));
 
-
 		for (j = 0; j < INVEN_TOTAL; j++) {
 			o_ptr = &p_ptr->inventory[j];
 			if (!o_ptr->k_idx || !true_artifact_p(o_ptr)) continue;
@@ -8909,6 +8917,7 @@ void process_player_change_wpos(int Ind) {
 					struct c_special *cs_ptr = GetCS(c_ptr, CS_SHOP);
 					if (cs_ptr) {
 						int which = cs_ptr->sc.omni;
+
 						if (which == STORE_TEMPLE) {
 							/* Found a temple */
 							startx = x;
@@ -9397,6 +9406,7 @@ void process_player_change_wpos(int Ind) {
 		/* scan inventory for any scrolls */
 		bool found_items = FALSE;
 		int i;
+
 		for (i = 0; i < INVEN_PACK; i++) {
 			if (!p_ptr->inventory[i].k_idx) continue;
 			if (!object_known_p(Ind, &p_ptr->inventory[i])) continue;
@@ -9741,18 +9751,21 @@ void dungeon(void) {
 			if (zcave) {
 				int x = rand_int(p_ptr->panel_col_max - p_ptr->panel_col_min) + p_ptr->panel_col_min;
 				int y = rand_int(p_ptr->panel_row_max - p_ptr->panel_row_min) + p_ptr->panel_row_min;
+
 				lite_spot(i, y, x);
  #if 0
 				struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
 				/* outside? */
 				if (!l_ptr) {
 					int x = rand_int(MAX_WID), y = rand_int(MAX_HGT);
+
 					if (zcave[y][x].feat == FEAT_DEEP_WATER ||
 					    zcave[y][x].feat == FEAT_SHAL_WATER)
 						lite_spot(i, y, x);
 				/* inside? */
 				} else {
 					int x = rand_int(l_ptr->wid), y = rand_int(l_ptr->hgt);
+
 					if (zcave[y][x].feat == FEAT_DEEP_WATER ||
 					    zcave[y][x].feat == FEAT_SHAL_WATER)
 						lite_spot(i, y, x);
@@ -9987,7 +10000,7 @@ void set_runlevel(int val) {
 			break;
 		case 5:
 			/* Shutdown warning mode, automatic timer */
-//			msg_broadcast(0, "\377yWarning. Server shutdown will take place in five minutes.");
+			//msg_broadcast(0, "\377yWarning. Server shutdown will take place in five minutes.");
 			msg_broadcast(0, "\374\377yWarning. Server shutdown will take place in ten minutes.");
 			break;
 		case 1024:
@@ -11132,6 +11145,7 @@ static void process_wild_weather() {
 				if (season_newyearseve) {
 					int txm = (cloud_x1[i] + (cloud_x2[i] - cloud_x1[i]) / 2) / MAX_WID; /* central wpos of this cloud */
 					int tym = cloud_y1[i] / MAX_HGT;
+
 					if (distance(tym, txm, cfg.town_y, cfg.town_x) <= 4) cloud_dur[i] = 1;
 				}
 				/* lose essence from raining/snowing */
@@ -11435,6 +11449,7 @@ if (NumPlayers && Players[NumPlayers]->wpos.wx == x && Players[NumPlayers]->wpos
 				{
 					/* this should allow smooth/consistent winds over slight changes in a player's wilderness position: */
 					int seed = (y + x + ((int)((turn / (cfg.fps * 1200)) % 90))) / 3; /* hourly change */
+
 					switch (seed % 30) {
 					case 0: case 1: case 2: case 3:		w_ptr->weather_wind = 0; break;
 					case 4:	case 5:	case 6:			w_ptr->weather_wind = 5; break;
