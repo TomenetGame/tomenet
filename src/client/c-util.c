@@ -5717,9 +5717,6 @@ void interact_macros(void) {
 
 			macro_processing_exclusive = TRUE;
 
-			//initialize_main_pref_files();
-			//initialize_player_pref_files();
-
 			/* Access the "basic" pref file */
 			strcpy(buf, "pref.prf");
 			process_pref_file(buf);
@@ -5775,9 +5772,6 @@ void interact_macros(void) {
 
 			macro_processing_exclusive = TRUE;
 
-			//initialize_main_pref_files();
-			//initialize_player_pref_files();
-
 			/* Access the "basic" pref file */
 			strcpy(buf, "pref.prf");
 			process_pref_file(buf);
@@ -5832,9 +5826,6 @@ void interact_macros(void) {
 			for (i = 0; i < 256; i++) macro__use[i] = 0;
 
 			macro_processing_exclusive = TRUE;
-
-			//initialize_main_pref_files();
-			//initialize_player_pref_files();
 
 			/* Access the "basic" pref file */
 			strcpy(buf, "pref.prf");
@@ -5892,9 +5883,6 @@ void interact_macros(void) {
 			for (i = 0; i < 256; i++) macro__use[i] = 0;
 
 			macro_processing_exclusive = TRUE;
-
-			//initialize_main_pref_files();
-			//initialize_player_pref_files();
 
 			/* Access the "basic" pref file */
 			strcpy(buf, "pref.prf");
@@ -5972,9 +5960,6 @@ void interact_macros(void) {
 			for (i = 0; i < 256; i++) macro__use[i] = 0;
 
 			macro_processing_exclusive = TRUE;
-
-			//initialize_main_pref_files();
-			//initialize_player_pref_files();
 
 			/* Access the "basic" pref file */
 			strcpy(buf, "pref.prf");
