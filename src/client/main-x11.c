@@ -2808,11 +2808,13 @@ errr init_x11(void) {
 
 		/* Build & allocate the graphics path. */
 		char path[1024];
+
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "graphics");
 		ANGBAND_DIR_XTRA_GRAPHICS = string_make(path);
 
 		/* Build the name of the graphics file. */
 		char filename[1024];
+
 		path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, graphic_tiles);
 		strcat(filename, ".bmp");
 
@@ -2820,6 +2822,7 @@ errr init_x11(void) {
 		int width = 0, height = 0;
 		char *data = NULL;
 		errr rerr = 0;
+
 		if (0 != (rerr = ReadBMPData(filename, &data, &width, &height))) {
 			fprintf(stderr, "Graphics file \"%s\" ", filename);
 			switch (rerr) {

@@ -1571,10 +1571,8 @@ static void term_window_resize(term_data *td) {
 
 
 /*
- * Force the use of a new "font file" for a term_data
- *
- * This function may be called before the "window" is ready
- *
+ * Force the use of a new "font file" for a term_data.
+ * This function may be called before the "window" is ready.
  * This function returns zero only if everything succeeds.
  */
 static errr term_force_font(term_data *td, cptr name) {
