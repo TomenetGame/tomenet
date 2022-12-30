@@ -3175,6 +3175,20 @@ static void Input_loop(void) {
 	in_game = TRUE;
 	prev_cname[0] = 0; //(re)init
 
+#if 1 /* requires in_game == TRUE in handle_process_font_file() */
+	/* ---- TODO: A little order glitch, that we workaround here - should fix this in a cleaner manner probably: ----     - C. Blue
+	        The visual modules (init_x11() / init_gcu() / init_windows()) are loaded BEFORE client_init() is called.
+	        That means the init_stuff()->init_file_paths() has't been done yet, and and custom fonts won't initialize their
+	        custom mapping .prf files either. Also, custom fonts are apparently reset even if this is put as far down as
+	        into Input_loop() (after client_init() has finished already), so for now until someone sorts this out cleanly,
+	        this workaround must really be here.
+	        Workaround: We just parse the fonts' custom prf files again, to re-init the fonts properly: */
+	/* Reload custom font prefs on main screen font change */
+	//WINDOWS: if (td == &data[0])
+	//POSIX: if (td == &screen)
+	handle_process_font_file();
+#endif
+
 	for (;;) {
 		/* Send out a keepalive packet if need be */
 		do_keepalive();
