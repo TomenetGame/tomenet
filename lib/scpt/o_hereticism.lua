@@ -264,7 +264,7 @@ ORESTORING = add_spell {
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 		drain_life(Ind, args.dir, 14 + get_level(Ind, ODRAINLIFE, 22))
-		hp_player(Ind, player.ret_dam / 4)
+		hp_player(Ind, player.ret_dam / 4, FALSE, FALSE)
 	end,
 	["info"] = 	function()
 		--return "drain "..(14 + get_level(Ind, ODRAINLIFE, 22)).."%, heal for 25%"

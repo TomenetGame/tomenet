@@ -375,7 +375,7 @@ HHOLYWORD = add_spell {
 	["fail"] = 	30,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
-			hp_player(Ind, 1000)
+			hp_player(Ind, 1000, FALSE, FALSE)
 			set_afraid(Ind, 0)
 			set_poisoned(Ind, 0, 0)
 			set_stun(Ind, 0, 0)

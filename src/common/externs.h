@@ -545,7 +545,7 @@ extern bool apply_disenchant(int Ind, int mode);
 extern bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int flg, char attacker[]);
 
 /* spells2.c */
-extern bool hp_player(int Ind, int num);
+extern bool hp_player(int Ind, int num, bool quiet, bool auto_effect);
 extern void warding_glyph(int Ind);
 extern bool do_dec_stat(int Ind, int stat);
 extern bool do_res_stat(int Ind, int stat);

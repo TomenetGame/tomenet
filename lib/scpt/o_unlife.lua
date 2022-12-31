@@ -223,7 +223,7 @@ ODRAINLIFE2 = add_spell {
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 		drain_life(Ind, args.dir, 14 + get_level(Ind, ODRAINLIFE2, 22))
-		hp_player(Ind, player.ret_dam / 4)
+		hp_player(Ind, player.ret_dam / 4, FALSE, FALSE)
 	end,
 	["info"] = 	function()
 		return (14 + get_level(Ind, ODRAINLIFE2, 22)).."% (max 900), 25% heal"
