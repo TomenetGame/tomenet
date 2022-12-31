@@ -9116,10 +9116,12 @@ void grid_affects_player(int Ind, int ox, int oy) {
 bool exceptionally_shareable_item(object_type *o_ptr) {
 	if (o_ptr->name1 || ((o_ptr->name2 || o_ptr->name2b) && o_ptr->tval != TV_FOOD)) return(FALSE);
 
-	if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||
+	if ((o_ptr->tval == TV_SCROLL && (
+	    o_ptr->sval == SV_SCROLL_WORD_OF_RECALL ||
+	    o_ptr->sval == SV_SCROLL_SATISFY_HUNGER ||
+	    o_ptr->sval == SV_SCROLL_FIREWORK)) ||
 	    (o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH) ||
 	    (o_ptr->tval == TV_FLASK && o_ptr->sval == SV_FLASK_OIL) ||
-	    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER) ||
 	    // "Why not share ale? -Molt" <- good idea, here too!
 	    (o_ptr->tval == TV_FOOD && o_ptr->sval > SV_FOOD_MUSHROOMS_MAX && !o_ptr->name1))
 		return(TRUE);
