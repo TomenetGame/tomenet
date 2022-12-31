@@ -2848,8 +2848,8 @@ void verify_day_and_night() {
 
 static void process_world_player(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	int	i;
-	//int	regen_amount, NumPlayers_old = NumPlayers;
+	int i;
+	//int regen_amount, NumPlayers_old = NumPlayers;
 
 
 	/*** Process the monsters ***/
@@ -9703,6 +9703,30 @@ void dungeon(void) {
 				k = k % TERM_MULTI;
 			}
 		}
+
+		/* Free firework drops sometimes, in the inn in Bree :o */
+		if (season_newyearseve && !rand_int(60)) {
+			object_type forge;
+			int x, y, t = 100;
+			struct worldpos wpos = {32, 32, 0};
+			cave_type **zcave = getcave(&wpos);
+
+			if (zcave) {
+				/* Create random firework scroll */
+				invcopy(&forge, lookup_kind(TV_SCROLL, SV_SCROLL_FIREWORK));
+				forge.number = 1;
+				apply_magic(&wpos, &forge, -1, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
+
+				/* The inn in Bree, hardcoded coordinates ugh */
+				while (--t) {
+					x = 120 + rand_int(5);
+					y = 27 + rand_int(5);
+					if (zcave[y][x].o_idx) continue;
+					drop_near(FALSE, 0, &forge, 0, &wpos, y, x);
+					break;
+				}
+			}
+		}
 	}
 	if ((turn % cfg.fps) == cfg.fps - 1)
 		for (i = 1; i <= NumPlayers; i++)
@@ -9764,6 +9788,7 @@ void dungeon(void) {
 			/* experimental water animation, trying to not be obnoxious -
 			   strategy: pick a random grid, if it's water, redraw it */
 			cave_type **zcave = getcave(&p_ptr->wpos);
+
 			if (zcave) {
 				int x = rand_int(p_ptr->panel_col_max - p_ptr->panel_col_min) + p_ptr->panel_col_min;
 				int y = rand_int(p_ptr->panel_row_max - p_ptr->panel_row_min) + p_ptr->panel_row_min;
