@@ -9705,7 +9705,7 @@ void dungeon(void) {
 		}
 
 		/* Free firework drops sometimes, in the inn in Bree :o (inn size is 5x5) */
-		if (season_newyearseve && !rand_int(60 * 5)) { //on average once per 3 minutes -> 125 minutes to fill the inn if not unlucky x/y rolls
+		if (season_newyearseve && !rand_int(60 * 10)) { //on average once per 10 minutes -> ~4h to fill the inn if not unlucky x/y rolls
 			object_type forge;
 			int x, y, t = 100;
 			struct worldpos wpos = {32, 32, 0};
