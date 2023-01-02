@@ -2529,13 +2529,13 @@
 /* Features 0xCF - 0xFF */
 #define FEAT_AGOAL		208
 #define FEAT_BGOAL		209
-#define FEAT_PROTECT_BAY	210
+#define FEAT_PROTECT		210	/* Stables, AMC arena */
 #define FEAT_DECO_WATER		211
 #define FEAT_BUSH		219
 //
 #define FEAT_SEALED_DOOR	224	/* for pvp-arena, like Andur suggested */
 #define FEAT_UNSEALED_DOOR	225
-#define FEAT_XPROTECT		226
+#define FEAT_XPROTECT		226	/* AMC arena corners */
 #define FEAT_ESCAPE_DOOR	230	/* for quests - it's a one-way door!  */
 #define FEAT_SICKBAY_DOOR	231	/* for insta-res in town (or in general), to avoid kill-instares-loops while afk */
 #define FEAT_SICKBAY_AREA	232
