@@ -2232,6 +2232,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			else strcpy(init_search_string, "critical-strike"); //player crits
 		}
 		else if (my_strcasestr(buf, "tech") && my_strcasestr(buf, "lev")) strcpy(init_search_string, "Technique levels");
+		else if (!strcasecmp("encumbrance", buf)) strcpy(init_search_string, "encumberment");
 
 		/* clean up */
 		buf[0] = 0;
