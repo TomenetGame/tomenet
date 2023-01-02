@@ -9706,12 +9706,13 @@ void dungeon(void) {
 
 		/* Free firework drops sometimes, in the inn in Bree :o (inn size is 5x5) */
 		if (season_newyearseve && !rand_int(60 * 10)) { //on average once per 10 minutes -> ~4h to fill the inn if not unlucky x/y rolls
-			object_type forge;
-			int x, y, t = 100;
 			struct worldpos wpos = {32, 32, 0};
 			cave_type **zcave = getcave(&wpos);
 
 			if (zcave) {
+				object_type forge, *o_ptr;
+				int x, y, t = 100, available = 0;
+
 				/* Create random firework scroll */
 				invcopy(&forge, lookup_kind(TV_SCROLL, SV_SCROLL_FIREWORK));
 				forge.number = 1;
@@ -9721,13 +9722,17 @@ void dungeon(void) {
 				while (--t) {
 					x = 120 + rand_int(5);
 					y = 27 + rand_int(5);
-					if (zcave[y][x].o_idx) continue;
+					if (zcave[y][x].o_idx) {
+						o_ptr = &o_list[zcave[y][x].o_idx];
+						if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_FIREWORK) available++;
+						continue;
+					}
 					drop_near(FALSE, 0, &forge, 0, &wpos, y, x);
 					break;
 				}
 
 				/* In case the inn is full, drop one in Bree, but much more seldomly */
-				if (!t && !rand_int(6)) { //on average once per 60 minutes
+				if (!t && available < 2 && !rand_int(6)) { //on average once per 60 minutes
 					t = 200;
 					while (--t) {
 						x = rand_int(MAX_WID - 2) + 1;
