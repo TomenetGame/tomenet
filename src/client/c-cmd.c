@@ -2233,6 +2233,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		}
 		else if (my_strcasestr(buf, "tech") && my_strcasestr(buf, "lev")) strcpy(init_search_string, "Technique levels");
 		else if (!strcasecmp("encumbrance", buf)) strcpy(init_search_string, "encumberment");
+		else if (my_strcasestr(buf, "auto") && my_strcasestr(buf, "destr")) strcpy(init_search_string, "auto-destr"); //auto-destroy
+		else if (my_strcasestr(buf, "auto") && my_strcasestr(buf, "pick")) strcpy(init_search_string, "auto-pick"); //auto-pickup
+		else if (my_strcasestr(buf, "auto") && my_strcasestr(buf, "ins")) strcpy(init_search_string, "auto-inscri"); //auto-inscription
 
 		/* clean up */
 		buf[0] = 0;
