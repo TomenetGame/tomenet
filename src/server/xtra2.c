@@ -10479,7 +10479,8 @@ void death_drop_object(player_type *p_ptr, int i, object_type *o_ptr) {
 			/* Item failed to drop or get scattered and just gets eaten? Paranoia log */
 			if (res <= 0 && !away) {
 				char o_name[ONAME_LEN];
-					object_desc(0, o_name, o_ptr, TRUE, 3);
+
+				object_desc(0, o_name, o_ptr, TRUE, 3);
 				s_printf("Death-cannot-drop_near (%d) %s\n", res, o_name);
 			}
 		}
