@@ -9725,6 +9725,16 @@ void dungeon(void) {
 					drop_near(FALSE, 0, &forge, 0, &wpos, y, x);
 					break;
 				}
+
+				/* In case the inn is full, drop one in Bree, but much more seldomly */
+				if (!t && !rand_int(6)) { //on average once per 60 minutes
+					t = 200;
+					while (--t) {
+						x = rand_int(MAX_WID - 2) + 1;
+						y = rand_int(MAX_HGT - 2) + 1;
+						if (drop_near(FALSE, 0, &forge, 0, &wpos, y, x) > 0) break;
+					}
+				}
 			}
 		}
 	}
