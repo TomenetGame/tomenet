@@ -1251,7 +1251,7 @@ F:DONT_NOTICE_RUNNING
 N:210:protected floor
 G:.:u
 F:FLOOR | CAN_RUN | SUPPORT_LIGHT | NO_ARTICLE
-F:DONT_NOTICE_RUNNING | PROTECTED
+F:DONT_NOTICE_RUNNING | PROTECTED | NO_PROB
 
 # Some decoration grids, made for Gondolin entrance to prevent people from getting stuck in there - C. Blue
 
@@ -1361,7 +1361,7 @@ F:FLOOR | NOTICE | REMEMBER | CAN_RUN
 
 N:226:highly protected floor
 G:.:U
-F:FLOOR | CAN_RUN | SUPPORT_LIGHT
+F:FLOOR | CAN_RUN | SUPPORT_LIGHT | NO_PROB
 F:DONT_NOTICE_RUNNING | PROTECTED | BLOCK_CONTACT
 
 $ARCADE_SERVER$N:227:orange wall
