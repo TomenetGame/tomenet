@@ -3197,7 +3197,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				}
 
 				/* There is no Black Breath chapter but it is explained fully in the chapter containing Nazgul info */
-				if (my_strcasestr(buf, "black") == buf || !strcasecmp(buf, "bb")) strcpy(buf, "nazgul");
+				if ((my_strcasestr(buf, "black") == buf && my_strcasestr(buf, "brea")) || !strcasecmp(buf, "bb")) strcpy(buf, "nazgul");
 
 				if (my_strcasestr(buf, "art") && my_strcasestr(buf, "cre")) strcpy(buf, "Artifact creation");
 
