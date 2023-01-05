@@ -9546,6 +9546,22 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	mm[4] = mm[5] = mm[6] = mm[7] = 0;
 
 
+	/* Occasionally 'slip' on icy floor, similar to player in move_player() */
+	if ((c_ptr->feat == FEAT_ICE || (c_ptr->info & CAVE_SLIPPERY)) &&
+	    !(m_ptr->r_idx == 52 || m_ptr->r_idx == 141 || m_ptr->r_idx == 179 || m_ptr->r_idx == 224) &&
+	    !(r_ptr->flags7 & RF7_CAN_FLY) && !(r_ptr->flags2 & RF2_PASS_WALL) &&
+	    /* Except for /animals/monsters/ that are used to cold, especially Yeti and co */
+	    !(r_ptr->flags3 & RF3_IM_COLD)) {
+	    //(r_info[p_ptr->body_monster].flags3 & (RF3_ANIMAL | RF3_IM_COLD)) == (RF3_ANIMAL | RF3_IM_COLD)))) {
+		if (magik(70 - r_ptr->level)) {
+			if (c_ptr->info & CAVE_SLIPPERY) {
+				c_ptr->info &= ~CAVE_SLIPPERY;
+				msg_print_near_monster(m_idx, "slips on the oily floor.");
+			} else msg_print_near_monster(m_idx, "slips on the oily floor.");
+			force_random_movement = TRUE;
+		}
+	}
+
 	/* Confused -- 100% random */
 	if (m_ptr->confused || force_random_movement || (r_ptr->flags1 & RF1_RAND_100)) {
 		/* Try four "random" directions */

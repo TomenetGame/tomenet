@@ -617,6 +617,7 @@ extern void player_weather(int Ind, bool entered_level, bool weather_changed, bo
 
 extern void aquatic_terrain_hack(cave_type **zcave, int x, int y);
 extern bool sustained_wpos(struct worldpos *wpos);
+extern void slippery_floor(int oily, struct worldpos *wpos, int x, int y);
 
 /* cmd1.c */
 extern byte cycle[], chome[];

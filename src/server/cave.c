@@ -9212,3 +9212,42 @@ bool sustained_wpos(struct worldpos *wpos) {
 	if (is_fixed_irondeepdive_town(wpos, getlevel(wpos))) return(TRUE);
 	return(FALSE);
 }
+
+/* Depending on amount of oil ('oily') and the floor type, make the floor slippery. - C. Blue
+   Since we don't really want that effect to be permanent, but at the same time not adding
+   a whole new array of grids to check for expiry of slippiness in time intervals (laziness),
+   let's just say for now that the effect simply ends when someone slips on it. */
+void slippery_floor(int oily, struct worldpos *wpos, int x, int y) {
+	cave_type **zcave = getcave(wpos), *c_ptr;
+
+	if (!zcave) return;
+	c_ptr = &zcave[y][x];
+
+	switch (c_ptr->feat) {
+	/* easily affected */
+	case FEAT_ICE: //already slippery anyway.. non-temporarily even
+	case FEAT_FLOOR:
+	case FEAT_LOOSE_DIRT:
+	case FEAT_IVY: //leaves should be slippery anyway
+	case FEAT_FLOWER:
+		if (oily < 4500) return; //brass lantern that is lowish on fuel
+		break;
+	/* not easily affected */
+	case FEAT_CROP:
+	case FEAT_ASH:
+	case FEAT_SNOW:
+	case FEAT_DIRT:
+	case FEAT_WEB:
+	case FEAT_GRASS:
+		if (oily < 7500) return; //oil flask
+		break;
+	/* unaffected */
+	default: /* Also spare staircases for now >_> */
+	//case FEAT_MUD:
+	//case FEAT_SAND:
+	//case FEAT_DARK_PIT:
+		return;
+	}
+
+	c_ptr->info |= CAVE_SLIPPERY;
+}

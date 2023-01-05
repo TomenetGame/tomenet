@@ -4526,6 +4526,7 @@
 #define CAVE_NO_PROB	0x08000000	/* Cannot enter this grid via Probability Travel (but can exit) */
 
 #define CAVE_NO_MONSTER	0x10000000	/* protected from monster-spawn + cannot be monster teleport/summon/movement destination */
+#define CAVE_SLIPPERY	0x20000000	/* Some oil on the ground made this grid slippery (compare FEAT_ICE maybe) */
 
 /* Hack for p_ptr->cave_flag, which is only 1 byte in size: */
 #define CAVE_AOVL	CAVE_TEMP	/* Mark grid if it displays an overlay visual that could get auto-updated, ie monsters: A monster can move away automatically, rendering the overlay out of date. */

@@ -7100,7 +7100,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	/* Slip on icy floor */
-	if ((c_ptr->feat == FEAT_ICE) && (!p_ptr->feather_fall && !p_ptr->levitate && !p_ptr->tim_wraith &&
+	if ((c_ptr->feat == FEAT_ICE || (c_ptr->info & CAVE_SLIPPERY)) && (!p_ptr->feather_fall && !p_ptr->levitate && !p_ptr->tim_wraith &&
 	    /* Except for /animals/monsters/ that are used to cold, especially Yeti and co */
 	    !(p_ptr->body_monster && //(r_info[p_ptr->body_monster].flags3 & (RF3_ANIMAL | RF3_IM_COLD)) == (RF3_ANIMAL | RF3_IM_COLD)))) {
 	    (r_info[p_ptr->body_monster].flags3 & RF3_IM_COLD)))) {
@@ -7111,7 +7111,10 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 				y = p_ptr->py + ddy[i];
 				x = p_ptr->px + ddx[i];
 			} while (i == 5 && --iterations > 0);
-			msg_print(Ind, "You slip on the icy floor.");
+			if (c_ptr->info & CAVE_SLIPPERY) {
+				c_ptr->info &= ~CAVE_SLIPPERY;
+				msg_print(Ind, "You slip on the oily floor.");
+			} else msg_print(Ind, "You slip on the icy floor.");
 		}
 #if 0
 		else

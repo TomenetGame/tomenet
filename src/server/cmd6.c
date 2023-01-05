@@ -1858,8 +1858,19 @@ void do_cmd_empty_potion(int Ind, int slot) {
 
 	/* specialty: empty brass lanterns, just to make them stack and sell later */
 	if (tval == TV_LITE && o_ptr->sval == SV_LITE_LANTERN) {
+		u32b f1, f2, f3, f4, f5, f6, esp;
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+
+		/* Only fuelable ones! */
+		if (!(f4 & TR4_FUEL_LITE)) {
+			msg_print(Ind, "\377oThis lantern magically runs without fuel, you cannot empty it.");
+			return;
+		}
+
 		if (o_ptr->number == 1) msg_print(Ind, "You empty the lantern.");
 		else msg_print(Ind, "You empty the stack of lanterns.");
+
+		slippery_floor(o_ptr->timeout, &p_ptr->wpos, p_ptr->px, p_ptr->py);
 
 		o_ptr->timeout = 0;
 #if 0 /* currently the /empty command translates all slots to lower-case/inventory-only */
@@ -1875,12 +1886,15 @@ void do_cmd_empty_potion(int Ind, int slot) {
 		return;
 	}
 
+#if 0 /* (a bit odd message) and why not actually? */
 	if (tval == TV_FLASK) {
 		msg_print(Ind, "\377oYou cannot use flasks for making potions.");
 		return;
 	}
+#endif
+	if (tval == TV_FLASK && o_ptr->sval == SV_FLASK_OIL) slippery_floor(o_ptr->pval, &p_ptr->wpos, p_ptr->px, p_ptr->py);
 
-	if (tval != TV_POTION && tval != TV_POTION2) {
+	if (tval != TV_POTION && tval != TV_POTION2 && tval != TV_FLASK) {
 		msg_print(Ind, "\377oYou cannot empty that.");
 		return;
 	}
