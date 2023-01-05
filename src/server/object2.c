@@ -8209,9 +8209,9 @@ void generate_object(int Ind, object_type *o_ptr, struct worldpos *wpos, bool go
 		/* Handle failure */
 		if (!k_idx) { /* always generate a reward. in case of failure, make a lamp for now.. */
 			switch (rand_int(3)) {
-			case 0:	k_idx = 527; break; /* everburning torch */
-			case 1:	k_idx = 525; break; /* dwarven lantern */
-			case 2:	k_idx = 530; break; /* feanorian lamp */
+			case 0: k_idx = lookup_kind(TV_LITE, SV_LITE_TORCH_EVER); break; /* everburning torch */
+			case 1: k_idx = lookup_kind(TV_LITE, SV_LITE_DWARVEN); break; /* dwarven lantern */
+			case 2: k_idx = lookup_kind(TV_LITE, SV_LITE_FEANORIAN); break; /* feanorian lamp */
 			}
 		}
 
