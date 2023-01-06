@@ -121,6 +121,7 @@ static void do_tank(int Ind, int power) {
 bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 	player_type *p_ptr = Players[Ind];
 	bool ident = FALSE;
+	int dam;
 
 	/* Analyze the food */
 	switch (sval) {
@@ -181,37 +182,61 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 		break;
 
 	case SV_FOOD_WEAKNESS:
-		if (!p_ptr->suscep_life) take_hit(Ind, damroll(4, 4), "bad food", 0);
+		if (!p_ptr->suscep_life) {
+			dam = damroll(4, 4);
+			msg_format(Ind, "Your body suffers from bad food for \377o%d \377wdamage!", dam);
+			take_hit(Ind, dam, "bad food", 0);
+		}
 		(void)do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL);
 		ident = TRUE;
 		break;
 
 	case SV_FOOD_SICKNESS:
-		if (!p_ptr->suscep_life) take_hit(Ind, damroll(5, 5), "bad food", 0);
+		if (!p_ptr->suscep_life) {
+			dam = damroll(5, 5);
+			msg_format(Ind, "Your body suffers from bad food for \377o%d \377wdamage!", dam);
+			take_hit(Ind, dam, "bad food", 0);
+		}
 		(void)do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL);
 		ident = TRUE;
 		break;
 
 	case SV_FOOD_STUPIDITY:
-		if (!p_ptr->suscep_life) take_hit(Ind, damroll(3, 3), "bad food", 0);
+		if (!p_ptr->suscep_life) {
+			dam = damroll(3, 3);
+			msg_format(Ind, "Your body suffers from bad food for \377o%d \377wdamage!", dam);
+			take_hit(Ind, dam, "bad food", 0);
+		}
 		(void)do_dec_stat(Ind, A_INT, STAT_DEC_NORMAL);
 		ident = TRUE;
 		break;
 
 	case SV_FOOD_NAIVETY:
-		if (!p_ptr->suscep_life) take_hit(Ind, damroll(3, 3), "bad food", 0);
+		if (!p_ptr->suscep_life) {
+			dam = damroll(3, 3);
+			msg_format(Ind, "Your body suffers from bad food for \377o%d \377wdamage!", dam);
+			take_hit(Ind, dam, "bad food", 0);
+		}
 		(void)do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL);
 		ident = TRUE;
 		break;
 
 	case SV_FOOD_UNHEALTH:
-		if (!p_ptr->suscep_life) take_hit(Ind, damroll(10, 10), "bad food", 0);
+		if (!p_ptr->suscep_life) {
+			dam = damroll(10, 10);
+			msg_format(Ind, "Your body suffers from bad food for \377o%d \377wdamage!", dam);
+			take_hit(Ind, dam, "bad food", 0);
+		}
 		(void)do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL);
 		ident = TRUE;
 		break;
 
 	case SV_FOOD_DISEASE:
-		if (!p_ptr->suscep_life) take_hit(Ind, damroll(8, 8), "contaminated food", 0);
+		if (!p_ptr->suscep_life) {
+			dam = damroll(8, 8);
+			msg_format(Ind, "Your body suffers from contaminated food for \377o%d \377wdamage!", dam);
+			take_hit(Ind, dam, "contaminated food", 0);
+		}
 		(void)do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL);
 		/* but wait, there's more */
 		set_diseased(Ind, p_ptr->diseased + rand_int(10) + 10, 0);
@@ -293,7 +318,11 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 			msg_print(Ind, "The hold of the Black Breath on you is broken!");
 			p_ptr->black_breath = FALSE;
 		}
-		if (p_ptr->suscep_life) take_hit(Ind, 250, "a sprig of athelas", 0);
+		if (p_ptr->suscep_life) {
+			dam = 250;
+			msg_format(Ind, "You are hit by cleansing powers for \377o%d \377wdamage!", dam);
+			take_hit(Ind, dam, "a sprig of athelas", 0);
+		}
 		ident = TRUE;
 		break;
 
@@ -329,8 +358,9 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 			set_food(Ind, PY_FOOD_MAX - 1);
 			ident = TRUE;
 		} else {
-			msg_print(Ind, "A surge of cleansing disrupts your body.");
-			take_hit(Ind, damroll(5, 2), "lembas", 0);
+			dam = damroll(5, 2);
+			msg_format(Ind, "A surge of cleansing disrupts your body for \377o%d \377wdamage!", dam);
+			take_hit(Ind, dam, "lembas", 0);
 		}
 		break;
 
@@ -640,7 +670,7 @@ void do_cmd_eat_food(int Ind, int item) {
    Apart from feeding us, the only effect of these hacks are the messages we receive. */
 bool quaff_potion(int Ind, int tval, int sval, int pval) {
 	player_type *p_ptr = Players[Ind];
-	int i, ident = FALSE, msg;
+	int i, ident = FALSE, msg, dam;
 
 	if (pval == -257) {
 		pval = 0;
@@ -675,7 +705,9 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 				(void)set_poisoned(Ind, 0, 0);
 				(void)set_paralyzed(Ind, p_ptr->paralyzed + 4);
 			} else if (p_ptr->prace == RACE_ENT) {
-				take_hit(Ind, damroll(2, 3), "ingesting salt water", 0);
+				dam = damroll(2, 3);
+				msg_format(Ind, "The salt water harms your metabolism for \377o%d \377wdamage!", dam);
+				take_hit(Ind, dam, "ingesting salt water", 0);
 				if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison))
 					if (set_poisoned(Ind, p_ptr->poisoned + rand_int(5) + 5, 0)) ident = TRUE;
 			} else {
@@ -717,9 +749,11 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			break;
 		case SV_POTION_RUINATION:
 			msg_print(Ind, "Your nerves and muscles feel weak and lifeless!");
-			if (!msg) take_hit(Ind, damroll(10, 10), "a potion of ruination", 0);
-			else if (msg == 1) take_hit(Ind, damroll(10, 10), "a fountain of ruination", 0);
-			else take_hit(Ind, damroll(10, 10), "ruination", 0);
+			dam = damroll(10, 10);
+			msg_format(Ind, "Your body is hit by ruination for \377o%d \377wdamage!", dam);
+			if (!msg) take_hit(Ind, dam, "a potion of ruination", 0);
+			else if (msg == 1) take_hit(Ind, dam, "a fountain of ruination", 0);
+			else take_hit(Ind, dam, "ruination", 0);
 			(void)dec_stat(Ind, A_DEX, 25, STAT_DEC_NORMAL);
 			(void)dec_stat(Ind, A_WIS, 25, STAT_DEC_NORMAL);
 			(void)dec_stat(Ind, A_CON, 25, STAT_DEC_NORMAL);
@@ -750,21 +784,23 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 #ifdef USE_SOUND_2010
 			sound(Ind, "detonation", NULL, SFX_TYPE_MISC, TRUE);
 #endif
-			msg_print(Ind, "Massive explosions rupture your body!");
+			dam = damroll(50, 20);
+			msg_format(Ind, "Massive explosions rupture your body for \377o%d \377wdamage!", dam);
 			msg_format_near(Ind, "%s blows up!", p_ptr->name);
-			if (!msg) take_hit(Ind, damroll(50, 20), "a potion of detonation", 0);
-			else if (msg == 1) take_hit(Ind, damroll(50, 20), "a fountain of detonation", 0); //disabled
-			else take_hit(Ind, damroll(50, 20), "detonations", 0);
+			if (!msg) take_hit(Ind, dam, "a potion of detonation", 0);
+			else if (msg == 1) take_hit(Ind, dam, "a fountain of detonation", 0); //disabled
+			else take_hit(Ind, dam, "detonations", 0);
 			(void)set_stun_raw(Ind, p_ptr->stun + 75);
 			(void)set_cut(Ind, p_ptr->cut + 5000, Ind);
 			ident = TRUE;
 			break;
 		case SV_POTION_DEATH:
 			if (!p_ptr->suscep_life) {
-				msg_print(Ind, "A feeling of death flows through your body.");
-				if (!msg) take_hit(Ind, 5000, "a potion of death", 0);
-				else if (msg == 1) take_hit(Ind, 5000, "a fountain of death", 0); //disabled
-				else take_hit(Ind, 5000, "death", 0);
+				dam = 5000;
+				msg_format(Ind, "A feeling of death flows through your body for \377o%d \377wdamage!", dam);
+				if (!msg) take_hit(Ind, dam, "a potion of death", 0);
+				else if (msg == 1) take_hit(Ind, dam, "a fountain of death", 0); //disabled
+				else take_hit(Ind, dam, "death", 0);
 				ident = TRUE;
 			} else {
 				if (msg != 2) {
@@ -862,9 +898,11 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			msg_print(Ind, "\377GYou feel life flow through your body!");
 			restore_level(Ind);
 			if (p_ptr->suscep_life) {
-				if (!msg) take_hit(Ind, 500, "a potion of life", 0);
-				else if (msg == 1) take_hit(Ind, 500, "a fountain of life", 0); //disabled
-				else take_hit(Ind, 500, "life", 0);
+				dam = 500;
+				msg_format(Ind, "A feeling of pure life flows through your body for \377o%d \377wdamage!", dam);
+				if (!msg) take_hit(Ind, dam, "a potion of life", 0);
+				else if (msg == 1) take_hit(Ind, dam, "a fountain of life", 0); //disabled
+				else take_hit(Ind, dam, "life", 0);
 			}
 			else hp_player(Ind, 700, FALSE, FALSE);
 			(void)set_poisoned(Ind, 0, 0);
@@ -2438,7 +2476,7 @@ static int check_self_summon(player_type *p_ptr) {
 bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool *used_up, bool *keep) {
 	player_type *p_ptr = Players[Ind];
 	int ident = FALSE;
-	int k;
+	int k, dam;
 	char	m_name[MNAME_LEN];
 	monster_type    *m_ptr;
 	monster_race    *r_ptr;
@@ -2750,9 +2788,12 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 		case SV_SCROLL_LIGHT:
 			if (lite_area(Ind, damroll(2, 8), 2)) ident = TRUE;
 			//if (p_ptr->suscep_lite && !p_ptr->resist_lite)
-			if (p_ptr->prace == RACE_VAMPIRE && !p_ptr->resist_lite)
-				take_hit(Ind, damroll(10, 3), o_ptr ? "a Scroll of Light" : "a flash of light", 0);
+			if (p_ptr->prace == RACE_VAMPIRE && !p_ptr->resist_lite) {
+				dam = damroll(10, 3);
+				msg_format(Ind, "You are hit by bright light for \377o%d \377wdamage!", dam);
+				take_hit(Ind, dam, o_ptr ? "a Scroll of Light" : "a flash of light", 0);
 				//if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind)
+			}
 			if (p_ptr->prace == RACE_VAMPIRE && !p_ptr->resist_lite && !p_ptr->resist_blind)
 				(void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 			break;
@@ -2793,7 +2834,9 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 		case SV_SCROLL_BLESSING:
 			if (p_ptr->suscep_good || p_ptr->suscep_life) {
 			//if (p_ptr->prace == RACE_VAMPIRE) {
-				take_hit(Ind, damroll(5, 3), o_ptr ? "a Scroll of Blessing" : "a blessing", 0);
+				dam = damroll(5, 3);
+				msg_format(Ind, "You are hit by a blessing for \377o%d \377wdamage!", dam);
+				take_hit(Ind, dam, o_ptr ? "a Scroll of Blessing" : "a blessing", 0);
 			} else if (p_ptr->blessed_power <= 8) {
 				p_ptr->blessed_power = 8;
 				if (set_blessed(Ind, randint(12) + 6)) ident = TRUE; /* removed stacking */
@@ -2803,7 +2846,9 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 		case SV_SCROLL_HOLY_CHANT:
 			if (p_ptr->suscep_good || p_ptr->suscep_life) {
 			//if (p_ptr->prace == RACE_VAMPIRE) {
-				take_hit(Ind, damroll(10, 3), o_ptr ? "a Scroll of Holy Chant" : "a chant", 0);
+				dam = damroll(10, 3);
+				msg_format(Ind, "You are hit by a blessing for \377o%d \377wdamage!", dam);
+				take_hit(Ind, dam, o_ptr ? "a Scroll of Holy Chant" : "a chant", 0);
 			} else if (p_ptr->blessed_power <= 14) {
 				p_ptr->blessed_power = 14;
 				if (set_blessed(Ind, randint(24) + 12)) ident = TRUE; /* removed stacking */
@@ -2813,7 +2858,9 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 		case SV_SCROLL_HOLY_PRAYER:
 			if (p_ptr->suscep_good || p_ptr->suscep_life) {
 			//if (p_ptr->prace == RACE_VAMPIRE) {
-				take_hit(Ind, damroll(30, 3), o_ptr ? "a Scroll of Holy Prayer" : "a holy prayer", 0);
+				dam = damroll(30, 3);
+				msg_format(Ind, "You are hit by a blessing for \377o%d \377wdamage!", dam);
+				take_hit(Ind, dam, o_ptr ? "a Scroll of Holy Prayer" : "a holy prayer", 0);
 			} else if (p_ptr->blessed_power <= 20) {
 				p_ptr->blessed_power = 20;
 				if (set_blessed(Ind, randint(48) + 24)) ident = TRUE; /* removed stacking */
@@ -2831,7 +2878,9 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 		case SV_SCROLL_PROTECTION_FROM_EVIL:
 			if (p_ptr->suscep_good || p_ptr->suscep_life) {
 			//if (p_ptr->prace == RACE_VAMPIRE) {
-				take_hit(Ind, damroll(10, 3), o_ptr ? "a Scroll of Protection from Evil" : "evil-repelling magic", 0);
+				dam = damroll(10, 3);
+				msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
+				take_hit(Ind, dam, o_ptr ? "a Scroll of Protection from Evil" : "evil-repelling magic", 0);
 			} else {
 				if (set_protevil(Ind, randint(15) + 30)) ident = TRUE; /* removed stacking */
 			}
@@ -2855,8 +2904,11 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 		case SV_SCROLL_DISPEL_UNDEAD:
 			if (dispel_undead(Ind, 100 + p_ptr->lev * 8)) ident = TRUE;
 			//if (p_ptr->suscep_life)
-			if (p_ptr->prace == RACE_VAMPIRE)
-				take_hit(Ind, damroll(30, 3), o_ptr ? "a Scroll of Dispel Undead" : "undead-dispelling magic", 0);
+			if (p_ptr->prace == RACE_VAMPIRE) {
+				dam = damroll(30, 3);
+				msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
+				take_hit(Ind, dam, o_ptr ? "a Scroll of Dispel Undead" : "undead-dispelling magic", 0);
+			}
 			break;
 
 		case SV_SCROLL_GENOCIDE:
@@ -2906,25 +2958,34 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			sprintf(p_ptr->attacker, " is enveloped by fire for");
 			fire_ball(Ind, GF_FIRE, 0, 200, 4, p_ptr->attacker);
 			/* Note: "Double" damage since it is centered on the player ... */
-			if (!(p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire))
+			if (!(p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire)) {
+				dam = 100 + randint(100);
+				msg_format(Ind, "You are hit by fire for \377o%d \377wdamage!", dam);
 				//take_hit(Ind, 50 + randint(50) + (p_ptr->suscep_fire) ? 20 : 0, "a Scroll of Fire", 0);
-				take_hit(Ind, 100 + randint(100), o_ptr ? "a Scroll of Fire" : "fire", 0);
+				take_hit(Ind, dam, o_ptr ? "a Scroll of Fire" : "fire", 0);
+			}
 			ident = TRUE;
 			break;
 
 		case SV_SCROLL_ICE:
 			sprintf(p_ptr->attacker, " enveloped by frost for");
 			fire_ball(Ind, GF_ICE, 0, 200, 4, p_ptr->attacker);
-			if (!(p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold))
-				take_hit(Ind, 100 + randint(100), o_ptr ? "a Scroll of Ice" : "ice", 0);
+			if (!(p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold)) {
+				dam = 100 + randint(100);
+				msg_format(Ind, "You are hit by frost for \377o%d \377wdamage!", dam);
+				take_hit(Ind, dam, o_ptr ? "a Scroll of Ice" : "ice", 0);
+			}
 			ident = TRUE;
 			break;
 
 		case SV_SCROLL_CHAOS:
 			sprintf(p_ptr->attacker, " is enveloped by raw chaos for");
 			fire_ball(Ind, GF_CHAOS, 0, 500, 4, p_ptr->attacker);
-			if (!p_ptr->resist_chaos)
-				take_hit(Ind, 111+randint(111), o_ptr ? "a Scroll of Chaos" : "chaos", 0);
+			if (!p_ptr->resist_chaos) {
+				dam = 111 + randint(111);
+				msg_format(Ind, "You are hit by chaos for \377o%d \377wdamage!", dam);
+				take_hit(Ind, dam, o_ptr ? "a Scroll of Chaos" : "chaos", 0);
+			}
 			ident = TRUE;
 			break;
 
@@ -3352,7 +3413,7 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 	player_type *p_ptr = Players[Ind];
 	bool ident = FALSE;
-	int k;
+	int k, dam;
 
 	/* Analyze the staff */
 	switch (sval) {
@@ -3417,7 +3478,11 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 		}
 		lite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 		for (k = 0; k < 8; k++) lite_line(Ind, ddd[k], damroll(5, 8) + get_skill_scale(p_ptr, SKILL_DEVICE, 100), TRUE);
-		if (p_ptr->suscep_lite) take_hit(Ind, damroll((p_ptr->resist_lite ? 10: 30), 3), msg ? "a staff of starlight" : "starlight", 0);
+		if (p_ptr->suscep_lite) {
+			dam = damroll((p_ptr->resist_lite ? 10: 30), 3);
+			msg_format(Ind, "You are hit by bright light for \377o%d \377wdamage!", dam);
+			take_hit(Ind, dam, msg ? "a staff of starlight" : "starlight", 0);
+		}
 		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 		ident = TRUE;
 		break;
@@ -3426,7 +3491,11 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 		if (msg) msg_format_near(Ind, "%s calls light.", p_ptr->name);
 		else msg_print_near(Ind, "A light appears.");
 		if (lite_area(Ind, damroll(2 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), 2)) ident = TRUE;
-		if (p_ptr->suscep_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(20, 3), msg ? "a staff of Light" : "light", 0);
+		if (p_ptr->suscep_lite && !p_ptr->resist_lite) {
+			dam = damroll(20, 3);
+			msg_format(Ind, "You are hit by bright light for \377o%d \377wdamage!", dam);
+			take_hit(Ind, dam, msg ? "a staff of Light" : "light", 0);
+		}
 		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 		break;
 
@@ -3523,7 +3592,9 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 	case SV_STAFF_DISPEL_EVIL:
 		if (dispel_evil(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300) + p_ptr->lev * 2)) ident = TRUE;
 		if (p_ptr->suscep_good) {
-			take_hit(Ind, damroll(30, 3), msg ? "a staff of dispel evil" : "evil-dispelling magic", 0);
+			dam = damroll(30, 3);
+			msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
+			take_hit(Ind, dam, msg ? "a staff of dispel evil" : "evil-dispelling magic", 0);
 			ident = TRUE;
 		}
 		break;
@@ -3535,7 +3606,9 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 	case SV_STAFF_HOLINESS:
 		if (dispel_evil(Ind, 200 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
 		if (p_ptr->suscep_good || p_ptr->suscep_life) {
-			take_hit(Ind, damroll(50, 3), msg ? "a staff of holiness" : "holy aura", 0);
+			dam = damroll(50, 3);
+			msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
+			take_hit(Ind, dam, msg ? "a staff of holiness" : "holy aura", 0);
 			ident = TRUE;
 		} else {
 			k = get_skill_scale(p_ptr, SKILL_DEVICE, 25);
@@ -4367,7 +4440,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 	player_type *p_ptr = Players[Ind];
 	bool ident = FALSE;
-	int i;
+	int i, dam;
 
 #ifdef NEW_MDEV_STACKING
 	o_ptr->bpval++; /* count # of used rods of a stack of rods */
@@ -4412,7 +4485,11 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 		if (o_ptr) msg_format_near(Ind, "%s calls light.", p_ptr->name);
 		else msg_print_near(Ind, "A light appears.");
 		if (lite_area(Ind, damroll(2, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 2)) ident = TRUE;
-		if (p_ptr->suscep_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(10, 3), "a rod of illumination", 0);
+		if (p_ptr->suscep_lite && !p_ptr->resist_lite) {
+			dam = damroll(10, 3);
+			msg_format(Ind, "You are hit by bright light for \377o%d \377wdamage!", dam);
+			take_hit(Ind, dam, "a rod of illumination", 0);
+		}
 		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 		//if (o_ptr) o_ptr->pval += 30;
 		/* up to a 50% faster with maxed MD - the_sandman */
@@ -4815,7 +4892,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 void do_cmd_zap_rod_dir(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	int lev, item, ident, rad = DEFAULT_RADIUS_DEV(p_ptr), energy;
-	int i;
+	int i, dam;
 	object_type *o_ptr;
 	u32b f4, dummy;
 	/* Hack -- let perception get aborted */
@@ -5135,7 +5212,11 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	case SV_ROD_ILLUMINATION:
 		msg_format_near(Ind, "%s calls light.", p_ptr->name);
 		if (lite_area(Ind, damroll(2, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 2)) ident = TRUE;
-		if (p_ptr->suscep_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(10, 3), "a rod of illumination", 0);
+		if (p_ptr->suscep_lite && !p_ptr->resist_lite) {
+			dam = damroll(10, 3);
+			msg_format(Ind, "You are hit by bright light for \377o%d \377wdamage!", dam);
+			take_hit(Ind, dam, "a rod of illumination", 0);
+		}
 		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 		/* up to a 50% faster with maxed MD - the_sandman */
 		o_ptr->pval += 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
@@ -5523,7 +5604,7 @@ bool rod_requires_direction(int Ind, object_type *o_ptr) {
  */
 void do_cmd_activate(int Ind, int item, int dir) {
 	player_type *p_ptr = Players[Ind];
-	int i, k;
+	int i, k, dam;
 	bool done = FALSE;
 	//int md = get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 	object_type *o_ptr;
@@ -6249,14 +6330,22 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_GALADRIEL:
 			msg_print(Ind, "The phial wells with clear light...");
 			lite_area(Ind, damroll(2, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 3);
-			if (p_ptr->suscep_lite) take_hit(Ind, damroll(50, 4), "The Phial of Galadriel", 0);
+			if (p_ptr->suscep_lite) {
+				dam = damroll(50, 4);
+				msg_format(Ind, "You are hit by bright light for \377o%d \377wdamage!", dam);
+				take_hit(Ind, dam, "The Phial of Galadriel", 0);
+			}
 			if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 			o_ptr->recharging = rand_int(10) + 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
 			break;
 		case ART_ELENDIL:
 			msg_print(Ind, "The star shines brightly...");
 			lite_area(Ind, damroll(2, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 3);
-			if (p_ptr->suscep_lite) take_hit(Ind, damroll(50, 4), "The Star of Elendil", 0);
+			if (p_ptr->suscep_lite) {
+				dam = damroll(50, 4);
+				msg_format(Ind, "You are hit by bright light for \377o%d \377wdamage!", dam);
+				take_hit(Ind, dam, "The Star of Elendil", 0);
+			}
 			if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 			map_area(Ind);
 			o_ptr->recharging = rand_int(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 40);
@@ -6272,14 +6361,18 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			msg_print(Ind, "An aura of good floods the area...");
 			dispel_evil(Ind, p_ptr->lev * 10 + get_skill_scale(p_ptr, SKILL_DEVICE, 500));
 			if (p_ptr->suscep_good) {
-				take_hit(Ind, damroll(35, 3), "The Amulet of Ingwe", 0);
+				dam = damroll(35, 3);
+				msg_format(Ind, "You are hit by dispelling power for \377o%d \377wdamage!", dam);
+				take_hit(Ind, dam, "The Amulet of Ingwe", 0);
 			}
 			o_ptr->recharging = rand_int(150) + 300 - get_skill_scale(p_ptr, SKILL_DEVICE, 250);
 			break;
 		case ART_CARLAMMAS:
 			msg_print(Ind, "The amulet lets out a shrill wail...");
 			if (p_ptr->suscep_good) {
-				take_hit(Ind, damroll(10, 3), "The Amulet of Carlammas", 0);
+				dam = damroll(10, 3);
+				msg_format(Ind, "You are hit by dispelling power for \377o%d \377wdamage!", dam);
+				take_hit(Ind, dam, "The Amulet of Carlammas", 0);
 			} else {
 				(void)set_protevil(Ind, randint(15) + 30); /* removed stacking */
 			}
@@ -6331,7 +6424,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_FUNDIN:
 			dispel_evil(Ind, p_ptr->lev * 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 400));
 			if (p_ptr->suscep_good) {
-				take_hit(Ind, damroll(35, 3), "the Ball-and-Chain of Fundin Bluecloak", 0);
+				dam = damroll(35, 3);
+				msg_format(Ind, "You are hit by dispelling power for \377o%d \377wdamage!", dam);
+				take_hit(Ind, dam, "the Ball-and-Chain of Fundin Bluecloak", 0);
 			}
 			o_ptr->recharging = rand_int(50) + 100 - get_skill_scale(p_ptr, SKILL_DEVICE, 80);
 			break;
@@ -6413,7 +6508,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_UNDEATH:
 			msg_print(Ind, "The phial wells with dark light...");
 			unlite_area(Ind, TRUE, damroll(2, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 3);
-			take_hit(Ind, damroll(10, 10), "activating The Phial of Undeath", 0);
+			dam = damroll(10, 10);
+			msg_format(Ind, "You are hit by dispelling power for \377o%d \377wdamage!", dam);
+			take_hit(Ind, dam, "activating The Phial of Undeath", 0);
 			if (!p_ptr->suscep_life) {
 				(void)dec_stat(Ind, A_DEX, 25, STAT_DEC_PERMANENT);
 				(void)dec_stat(Ind, A_WIS, 25, STAT_DEC_PERMANENT);
@@ -6426,7 +6523,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			break;
 		case ART_HIMRING:
 			if (p_ptr->suscep_good) {
-				take_hit(Ind, damroll(10, 3), "The Hard Leather Armour of Himring", 0);
+				dam = damroll(10, 3);
+				msg_format(Ind, "You are hit by dispelling power for \377o%d \377wdamage!", dam);
+				take_hit(Ind, dam, "The Hard Leather Armour of Himring", 0);
 			} else {
 				(void)set_protevil(Ind, randint(15) + 30); /* removed stacking */
 			}
@@ -6495,7 +6594,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 
 			/* Exercise a little care... */
 			//if (rand_int(20) == 0) take_hit(Ind, damroll(4, 10), "perilous secrets", 0); else
-			take_hit(Ind, damroll(1, 12), "perilous secrets", 0);
+			dam = damroll(1, 12);
+			msg_format(Ind, "You are hit by psionic power for \377o%d \377wdamage!", dam);
+			take_hit(Ind, dam, "perilous secrets", 0);
 
 			o_ptr->recharging = 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 6);
 			break;
@@ -6552,7 +6653,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			do_banish_undead(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 30));
  #if 0 /* just 0'ed because banish-dragons and banish-animals don't do anything either.. */
 			if (p_ptr->suscep_life) {
-				take_hit(Ind, damroll(100, 3), "The Long Sword of the Dawn", 0);
+				dam = damroll(100, 3);
+				msg_format(Ind, "You are hit by dispelling power for \377o%d \377wdamage!", dam);
+				take_hit(Ind, dam, "The Long Sword of the Dawn", 0);
 			}
  #endif
 #endif
@@ -6615,7 +6718,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			do_banish_dragons(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 30));
  #if 0 /* maybe doesn't make sense that her own coat does this (to her)?.. */
 			if (p_ptr->prace == RACE_DRACONIAN || (p_ptr->body_monster && (r_info[p_ptr->body_monster].flags3 & (RF3_DRAGON | RF3_DRAGONRIDER)))) {
-				take_hit(Ind, damroll(100, 3), "The Dragonrider Coat of Mardra", 0);
+				dam = damroll(100, 3);
+				msg_format(Ind, "You are hit by dispelling power for \377o%d \377wdamage!", dam);
+				take_hit(Ind, dam, "The Dragonrider Coat of Mardra", 0);
 			}
  #endif
 #endif
@@ -6710,7 +6815,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			do_banish_animals(Ind, 80);
  #if 0 /* 0'ed because the druid spell doing this too would be silyl, since druids are always in animal form */
 			if (p_ptr->prace == RACE_YEEK || (p_ptr->body_monster && (r_info[p_ptr->body_monster].flags3 & RF3_ANIMAL))) {
-				take_hit(Ind, damroll(100, 2), "The Slaughter Axe 'Naturebane'", 0);
+				dam = damroll(100, 2);
+				msg_format(Ind, "You are hit by dispelling power for \377o%d \377wdamage!", dam);
+				take_hit(Ind, dam, "The Slaughter Axe 'Naturebane'", 0);
 			}
  #endif
 			o_ptr->recharging = 200 + randint(200) - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
@@ -6735,7 +6842,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			break;
 		case ART_SOULGRIP:
 			if (p_ptr->suscep_life) {
-				take_hit(Ind, damroll(30, 3), "The Set of Leather Gloves 'Soul Grip'", 0);
+				dam = damroll(30, 3);
+				msg_format(Ind, "You are hit by a blessing for \377o%d \377wdamage!", dam);
+				take_hit(Ind, dam, "The Set of Leather Gloves 'Soul Grip'", 0);
 				o_ptr->recharging = 150 + randint(100) - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			} else if (p_ptr->blessed_power <= 20) {
 				msg_print(Ind, "Your gloves glow golden...");
@@ -6965,7 +7074,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				teleport_player(Ind, 200, FALSE);
 
 				/* It explodes, doesnt it ? */
-				take_hit(Ind, damroll(2, 10), "an exploding ring", 0);
+				dam = damroll(2, 10);
+				msg_format(Ind, "You are hit by an explosion for \377o%d \377wdamage!", dam);
+				take_hit(Ind, dam, "an exploding ring", 0);
 
 				inven_item_increase(Ind, item, -255);
 				inven_item_optimize(Ind, item);
