@@ -9199,7 +9199,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	char m_name[MNAME_LEN], m_name_gen[MNAME_LEN];
 	/* Monster name (for damage) */
 	char killer[MNAME_LEN];
-	/* Colour of the damage, either r (standard) or e (unique monster) */
+	/* Colour of the damage, either o (standard) or L (unique monster) (melee1.c: r and f) */
 	char damcol = 'o';
 	int psi_resists = 0, hack_dam = 0;
 	/* Hack -- messages */
