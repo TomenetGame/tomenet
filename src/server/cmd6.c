@@ -6362,7 +6362,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			dispel_evil(Ind, p_ptr->lev * 10 + get_skill_scale(p_ptr, SKILL_DEVICE, 500));
 			if (p_ptr->suscep_good) {
 				dam = damroll(35, 3);
-				msg_format(Ind, "You are hit by dispelling power for \377o%d \377wdamage!", dam);
+				msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, "The Amulet of Ingwe", 0);
 			}
 			o_ptr->recharging = rand_int(150) + 300 - get_skill_scale(p_ptr, SKILL_DEVICE, 250);
@@ -6371,7 +6371,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			msg_print(Ind, "The amulet lets out a shrill wail...");
 			if (p_ptr->suscep_good) {
 				dam = damroll(10, 3);
-				msg_format(Ind, "You are hit by dispelling power for \377o%d \377wdamage!", dam);
+				msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, "The Amulet of Carlammas", 0);
 			} else {
 				(void)set_protevil(Ind, randint(15) + 30); /* removed stacking */
@@ -6425,7 +6425,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			dispel_evil(Ind, p_ptr->lev * 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 400));
 			if (p_ptr->suscep_good) {
 				dam = damroll(35, 3);
-				msg_format(Ind, "You are hit by dispelling power for \377o%d \377wdamage!", dam);
+				msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, "the Ball-and-Chain of Fundin Bluecloak", 0);
 			}
 			o_ptr->recharging = rand_int(50) + 100 - get_skill_scale(p_ptr, SKILL_DEVICE, 80);
@@ -6509,7 +6509,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			msg_print(Ind, "The phial wells with dark light...");
 			unlite_area(Ind, TRUE, damroll(2, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 3);
 			dam = damroll(10, 10);
-			msg_format(Ind, "You are hit by dispelling power for \377o%d \377wdamage!", dam);
+			msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
 			take_hit(Ind, dam, "activating The Phial of Undeath", 0);
 			if (!p_ptr->suscep_life) {
 				(void)dec_stat(Ind, A_DEX, 25, STAT_DEC_PERMANENT);
@@ -6524,7 +6524,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_HIMRING:
 			if (p_ptr->suscep_good) {
 				dam = damroll(10, 3);
-				msg_format(Ind, "You are hit by dispelling power for \377o%d \377wdamage!", dam);
+				msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, "The Hard Leather Armour of Himring", 0);
 			} else {
 				(void)set_protevil(Ind, randint(15) + 30); /* removed stacking */
@@ -6595,7 +6595,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			/* Exercise a little care... */
 			//if (rand_int(20) == 0) take_hit(Ind, damroll(4, 10), "perilous secrets", 0); else
 			dam = damroll(1, 12);
-			msg_format(Ind, "You are hit by psionic power for \377o%d \377wdamage!", dam);
+			msg_format(Ind, "You are hit by psionic powers for \377o%d \377wdamage!", dam);
 			take_hit(Ind, dam, "perilous secrets", 0);
 
 			o_ptr->recharging = 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 6);
@@ -6654,7 +6654,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
  #if 0 /* just 0'ed because banish-dragons and banish-animals don't do anything either.. */
 			if (p_ptr->suscep_life) {
 				dam = damroll(100, 3);
-				msg_format(Ind, "You are hit by dispelling power for \377o%d \377wdamage!", dam);
+				msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, "The Long Sword of the Dawn", 0);
 			}
  #endif
@@ -6719,7 +6719,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
  #if 0 /* maybe doesn't make sense that her own coat does this (to her)?.. */
 			if (p_ptr->prace == RACE_DRACONIAN || (p_ptr->body_monster && (r_info[p_ptr->body_monster].flags3 & (RF3_DRAGON | RF3_DRAGONRIDER)))) {
 				dam = damroll(100, 3);
-				msg_format(Ind, "You are hit by dispelling power for \377o%d \377wdamage!", dam);
+				msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, "The Dragonrider Coat of Mardra", 0);
 			}
  #endif
@@ -6816,7 +6816,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
  #if 0 /* 0'ed because the druid spell doing this too would be silyl, since druids are always in animal form */
 			if (p_ptr->prace == RACE_YEEK || (p_ptr->body_monster && (r_info[p_ptr->body_monster].flags3 & RF3_ANIMAL))) {
 				dam = damroll(100, 2);
-				msg_format(Ind, "You are hit by dispelling power for \377o%d \377wdamage!", dam);
+				msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, "The Slaughter Axe 'Naturebane'", 0);
 			}
  #endif
