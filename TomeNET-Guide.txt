@@ -20688,7 +20688,7 @@ All Unlife spells are Wisdom-based.)
                     but never goes below 30% total exp loss) at 50.
 
 
-- Hereticism       [Spells are WIS-based unless noted otherwise.]
+- Hereticism        [Spells are WIS-based unless noted otherwise.]
 
     Terror          Casts fear and confusion into the hearts of others.
                     Required skill level for first spell level: 3.
@@ -21000,7 +21000,7 @@ In general, mindcraft schools are less affected by anti-magic fields.)
                     Required skill level for first spell level: 40.
 
 
-- Attunement       [Spells are INT-based.]
+- Attunement        [Spells are INT-based.]
 
     Clear Mind      Removes fear, confusion and hallucination. (auto-project)
                     Required skill level for first spell level: 3.
