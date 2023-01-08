@@ -1882,7 +1882,7 @@ They all start with a slash '/' hence they're called slash commands:
 /testyourmight <show|rs>
 /tym <show|rs[w|x]>
             '/tym show' will display your damage/healing output so far and
-            '/tym rs' will reset the damage/healing counters.
+            '/tym rs'  will reset the damage/healing counters.
             '/tym rsw' will reset the damage/healing counters but wait with
                        counting until you perform your first attack.
             '/tym rsx' will reset the damage/healing counters but wait with
@@ -1890,6 +1890,7 @@ They all start with a slash '/' hence they're called slash commands:
                        If you don't attack for 5 seconds afterwards, it will
                        automatically stop recording and evaluate the result.
                        This is the recommended way for stress-free testing.
+                       (The 5 idle seconds will be ignored in the calculation.)
 
             Displays damage and healing stats for your character, totals and
             averages over number of attacks and over time (# of seconds
