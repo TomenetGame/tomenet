@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 6. January 2023 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 8. January 2023 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -10757,6 +10757,26 @@ close and hit the player with devastating blows. It is recommended that you
 equip a ranged weapon as soon as possible, and enchant its 'to-damage' to at
 least +7 !
 
+The maximum range a projectile can travel is 18 (while the maximum distance
+your character can see is 20, be it with normal eye sight or infra-vision).
+However, you might not reach this far with any ranged weapon:
+- Throwing:
+  The item's weight caps downwards at 1.0 lb. The heavier it gets after that,
+  the more strength you will need to throw it far. Some item types inherently
+  fly farther than others.
+  The maximum distance is 15 for throwing weapons and 10 for all other items.
+- Firing:
+  - Boomerangs count as 'firing' although they are obviously thrown:
+    Their range is always 15.
+  - Launcher weapons (slings, bows, crossbows):
+    The range is at least 9 and increased by +3 times the shooter's multiplier,
+    to which 'extra might' is added.
+    Total range caps at 18.
+    Examples:
+    A Sling (x2) shoots as far as 9 + 3*2 = 15 grids.
+    A Long Bow of Extra Might (x4) shoots as far as 9 + 3*4 = 21, but since the
+    absolute maximum range for ranged attacks is always 18 its range is 18.
+
 Ranged weapons have to-hit and to-dam like melee weapons, but instead of
 dice they have a 'multiplier'.
 
@@ -15906,6 +15926,9 @@ stated.
                                 Increases ranged to-damage bonus when wielding
                                 a boomerang by +1 for every 2.500 increase.
 
+                                Grants +1 additional extra might every 5.000
+                                points increased.
+
                                 Reduces the chance of a boomerang to land on
                                 the ground instead of returning.
                                 Artifact boomerangs always return reliably.
@@ -19630,6 +19653,9 @@ from the very monster form they imitate, allowing them to cast most if not all
 spells that the monster would be able to use. As such, Mimicry has almost
 nothing to do with normal spell-casting either and is instead discussed in
 chapter (7.8a).
+
+The maximum range a spell can travel/affect is 18 (while the maximum distance
+your character can see is 20, be it with normal eye sight or infra-vision).
 
 The failure rate when attempting to successfully cast a spell is usually shown
 when browsing the according spell scroll/crystal, and is determined by your
