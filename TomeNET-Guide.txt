@@ -11034,7 +11034,7 @@ Here's a table to tell you the values for str_wgt:
 The armour weight limit is 5.0 lb + Martial Arts skill level * 0.44 lb.
 So for MA 50 it is 5.0 + 22.0 = 27.0 lb.
 If your armour becomes too heavy, you will see this warning message:
-"Your armour weight strains your martial arts performance."
+"The weight of your armour strains your martial arts performance."
 
 
 Here's a table, for those who prefer this view:
