@@ -9203,6 +9203,10 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* INT users cascade */
 		case CLASS_MAGE:
 			if ((o_ptr->name2 == EGO_MIGHT || o_ptr->name2 == EGO_LORDLINESS) && !o_ptr->name2b) continue;
+			/* Even if double-ego, skip if both ego powers are really no good for us */
+			if ((o_ptr->name2 == EGO_FROCK_PIETY && (!o_ptr->name2b || o_ptr->name2b == EGO_MARTIAL)) ||
+			    (o_ptr->name2b == EGO_FROCK_PIETY && o_ptr->name2 == EGO_MARTIAL))
+				continue;
 			__attribute__ ((fallthrough));
 		case CLASS_RUNEMASTER:
 			if (!melee_choice && o_ptr->name2 == EGO_MIGHT && !o_ptr->name2b) continue;
