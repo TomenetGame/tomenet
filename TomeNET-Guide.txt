@@ -2462,6 +2462,9 @@ Instead of using a "#" wildcard-rule, you can also toggle the option
 command), this option requires 'auto_destroy' option to be enabled.
 Auto-destroying and auto-pickup do not trigger inside houses.
 
+Should you decide to manually edit .ins files, make sure that a match string
+must not exceed 54 characters and a tag string must not exceed 16 characters.
+
 
 
 (0.4) Typical slang/abbreviations
