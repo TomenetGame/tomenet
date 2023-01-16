@@ -1667,6 +1667,7 @@ extern bool contains_significant_reactive_metal(object_type *o_ptr);
 extern bool contains_significant_wood(object_type *o_ptr);
 #endif
 extern bool blindable_monster(monster_race *r_ptr);
+extern int divide_spell_damage(int dam, int div, int typ);
 
 /* spells2.c */
 extern void summon_pet(int Ind, int max);

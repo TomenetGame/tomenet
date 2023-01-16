@@ -51,39 +51,6 @@
    can read what they supposedly do. */
 //#define DETECT_ABSENCE
 
-/* Helper function to educe spell damage by 50% while in wraithform.
- *  Some spells must be excempt, because their 'dam'
- * actually stores their functionality. - C. Blue
- */
-static void proj_dam_wraith(int typ, int *dam) {
-	switch (typ) {
-	case GF_RECALL_PLAYER: /* <- dam is timeout! */
-	case GF_RESTORE_PLAYER:
-	case GF_CURE_PLAYER:
-	case GF_CURING:
-	case GF_EXTRA_STATS:
-	case GF_EXTRA_TOHIT:
-		return;
-	case GF_HEAL_PLAYER:
-		*dam = (*dam & 0x3C00) + (*dam & 0x03FF) / 2;
-		return;
-	case GF_OLD_DRAIN:
-		/* - sorry, 4096 is the priest spell hack :P */
-		*dam = (*dam & 0x1000) + (*dam & 0x0FFF) / 2;
-		break;
-	case GF_ANNIHILATION:
-		/* - sorry, 8192 is the 'Brief' rune spell hack :P */
-		*dam = (*dam & 0x2000) + (*dam & 0x1FFF) / 2;
-		break;
-	case GF_DARK_WEAK:
-		/* - sorry, 8192 is the shadow spell hack :P */
-		*dam = (*dam & 0x2000) + (*dam & 0x1FFF) / 2;
-		break;
-	default:
-		*dam /= 2;
-	}
-}
-
 #ifdef ENABLE_MAIA
 /*
  * For angelic beings, this spell will gather any party
@@ -4463,7 +4430,7 @@ bool project_los_wall(int Ind, int typ, int dam, int time, int interval, char *a
 	else snprintf(pattacker, 80, "Something%s", attacker);
 
 	/* WRAITHFORM reduces damage/effect! */
-	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
+	if (p_ptr->tim_wraith) dam = divide_spell_damage(dam, 2, typ);
 
 #ifdef USE_SOUND_2010
 	sound(Ind, "cast_wall", NULL, SFX_TYPE_COMMAND, FALSE);
@@ -4555,7 +4522,7 @@ bool project_los(int Ind, int typ, int dam, char *attacker) {
 	else snprintf(pattacker, 80, "Something%s", attacker);
 
 	/* WRAITHFORM reduces damage/effect! */
-	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
+	if (p_ptr->tim_wraith) dam = divide_spell_damage(dam, 2, typ);
 #ifdef MARTYR_CUT_DISP
 	/* hack for Martyrdom, to avoid easy deep pit sweeping */
 	else if (p_ptr->martyr)
@@ -6669,7 +6636,7 @@ bool lite_area(int Ind, int dam, int rad) {
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_NODO | PROJECT_NODF;
 
 	/* WRAITHFORM reduces damage/effect! */
-	if (p_ptr->tim_wraith) proj_dam_wraith(GF_LITE_WEAK, &dam);
+	if (p_ptr->tim_wraith) dam = divide_spell_damage(dam, 2, GF_LITE_WEAK);
 
 	/* Hack -- Message */
 	if (!p_ptr->blind)
@@ -6699,7 +6666,7 @@ bool unlite_area(int Ind, bool player, int dam, int rad) {
 
 	if (player) { /* cast by a player? */
 		/* WRAITHFORM reduces damage/effect! */
-		if (p_ptr->tim_wraith) proj_dam_wraith(GF_DARK_WEAK, &dam);
+		if (p_ptr->tim_wraith) dam = divide_spell_damage(dam, 2, GF_DARK_WEAK);
 
 		/* Hook into the "project()" function */
 		(void)project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, GF_DARK_WEAK, flg, "");
@@ -6728,7 +6695,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 	int flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO;
 
 	/* WRAITHFORM reduces damage/effect */
-	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
+	if (p_ptr->tim_wraith) dam = divide_spell_damage(dam, 2, typ);
 
 	/* Use the given direction */
 	tx = p_ptr->px + 99 * ddx[dir];
@@ -6798,7 +6765,7 @@ bool fire_burst(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 
 
 	/* WRAITHFORM reduces damage/effect! */
-	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
+	if (p_ptr->tim_wraith) dam = divide_spell_damage(dam, 2, typ);
 
 	/* Use the given direction */
 	tx = p_ptr->px + 99 * ddx[dir];
@@ -6873,7 +6840,7 @@ bool fire_swarm(int Ind, int typ, int dir, int dam, int num, char *attacker) {
 
 
 	/* WRAITHFORM reduces damage/effect */
-	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
+	if (p_ptr->tim_wraith) dam = divide_spell_damage(dam, 2, typ);
 
 	/* Use the given direction */
 	tx = p_ptr->px + 99 * ddx[dir];
@@ -6956,7 +6923,7 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int inter
 	char pattacker[80];
 
 	/* WRAITHFORM reduces damage/effect! */
-	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
+	if (p_ptr->tim_wraith) dam = divide_spell_damage(dam, 2, typ);
 
 	/* Use the given direction */
 	tx = p_ptr->px + 99 * ddx[dir];
@@ -7299,7 +7266,7 @@ bool project_hook(int Ind, int typ, int dir, int dam, int flg, char *attacker) {
 	int tx, ty;
 
 	/* WRAITHFORM reduces damage/effect! */
-	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
+	if (p_ptr->tim_wraith) dam = divide_spell_damage(dam, 2, typ);
 
 	/* Pass through the target if needed */
 	flg |= (PROJECT_THRU);
@@ -7483,7 +7450,7 @@ bool fire_cone(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO | PROJECT_THRU | PROJECT_FULL;
 
 	/* WRAITHFORM reduces damage/effect */
-	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
+	if (p_ptr->tim_wraith) dam = divide_spell_damage(dam, 2, typ);
 
 	/* Use the given direction */
 	tx = p_ptr->px + ddx[dir];
@@ -7522,7 +7489,7 @@ bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char 
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_THRU | PROJECT_NODF | PROJECT_NODO;
 
 	/* WRAITHFORM reduces damage/effect! */
-	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
+	if (p_ptr->tim_wraith) dam = divide_spell_damage(dam, 2, typ);
 
 	/* Use the given direction */
 	tx = p_ptr->px + ddx[dir];
@@ -7559,7 +7526,7 @@ bool fire_nova(int Ind, int typ, int dir, int dam, int time, int interval, char 
 	int flg = PROJECT_STAR | PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO;
 
 	/* WRAITHFORM reduces damage/effect! */
-	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
+	if (p_ptr->tim_wraith) dam = divide_spell_damage(dam, 2, typ);
 
 	/* Use the given direction */
 	tx = p_ptr->px + ddx[dir];
@@ -7607,7 +7574,7 @@ bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
 	int flg = PROJECT_NORF | PROJECT_HIDE | PROJECT_STOP | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_EVSG | PROJECT_NODF | PROJECT_NODO;
 
 	/* WRAITHFORM reduces damage/effect! */
-	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
+	if (p_ptr->tim_wraith) dam = divide_spell_damage(dam, 2, typ);
 
 	/* Use the given direction */
 	tx = p_ptr->px + 99 * ddx[dir];
@@ -7654,7 +7621,7 @@ bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker) {
 	int tx = p_ptr->px + 99 * ddx[dir], ty = p_ptr->py + 99 * ddy[dir];
 
 	/* WRAITHFORM reduces damage/effect! */
-	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
+	if (p_ptr->tim_wraith) dam = divide_spell_damage(dam, 2, typ);
 
 	/* Hack -- Use an actual "target" */
 	if ((dir == 5) && target_okay(Ind)) {

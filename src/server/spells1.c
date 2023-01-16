@@ -4260,8 +4260,10 @@ static void apply_morph(int Ind, int power, char *killer, int Ind_attacker) {
 
 
 /* For project_..():
-   Decrease the damage over the radius. */
-static int radius_damage(int dam, int div, int typ) {
+   Decrease the damage over the radius, or reduce spell damage while using wraithform.
+   We cannot just divide all damage because some spells encode things in their damage,
+   so this function carefully sorts those out and handles them. - C. Blue */
+int divide_spell_damage(int dam, int div, int typ) {
 	switch (typ) {
 	/* When these are cast as 'ball spells' they'd be gimped too much probably: */
 	case GF_TELEPORT_PLAYER: //Kurzel - This and many others (buffs) could go here (pending approval..)!
@@ -4270,30 +4272,36 @@ static int radius_damage(int dam, int div, int typ) {
 	case GF_OLD_SLEEP:
 	case GF_TURN_ALL: //fear
 	case GF_TERROR:
-
-	/* Percent damage (eg. 20%) - Currently no ball versions of these - Kurzel */
-	case GF_OLD_DRAIN:
-	case GF_ANNIHILATION:
+	case GF_EXTRA_STATS:
+	case GF_EXTRA_TOHIT:
+	case GF_RESURRECT_PLAYER:
+	//case GF_ZEAL_PLAYER:
+	case GF_TBRAND_POIS:
+		return(dam);
 
 	/* These must not be reduced, since 'dam' stores the functionality */
 	case GF_RECALL_PLAYER: /* not for recall (dam is timeout) - mikaelh */
-	case GF_CURE_PLAYER:
 	case GF_RESTORE_PLAYER:
+	case GF_CURE_PLAYER:
 	case GF_CURING:
-	case GF_RESURRECT_PLAYER:
-	case GF_EXTRA_STATS:
-	case GF_EXTRA_TOHIT:
-	//case GF_ZEAL_PLAYER:
-	case GF_TBRAND_POIS:
-
+	case GF_STASIS: /* uses +1000 as hack - could be hacked like GF_DARK_WEAK etc if we really need ball-style stasis, but for now this is fine */
 		return(dam);
 
+	/* These are reduced despite 'dam' storing functionality - it is carefully calculated around that. */
+	case GF_HEAL_PLAYER:
+		return((dam & 0x3C00) + (dam & 0x03FF) / 2);
+	case GF_OLD_DRAIN: /* Percent damage (eg. 20%) - Currently no ball versions of these - Kurzel */
+		/* - sorry, 4096 is the priest spell hack :P */
+		return((dam & 0x1000) + (dam & 0x0FFF) / 2);
+	case GF_ANNIHILATION: /* Percent damage (eg. 20%) - Currently no ball versions of these - Kurzel */
+		/* - sorry, 8192 is the 'Brief' rune spell hack :P */
+		return((dam & 0x2000) + (dam & 0x1FFF) / 2);
 	case GF_DARK_WEAK:
-		/* May carry special flag for occult shadow darkness spell */
-		return(dam & 0x2000) + (dam & 0x1FFF) / div;
+		/* - sorry, 8192 is the shadow spell hack :P */
+		return((dam & 0x2000) + (dam & 0x1FFF) / 2);
 	}
 
-	/* default: half damage per grid of distance */
+	/* default: divide damage, usually depending on ball spell radius, or /2 for wraithform casts */
 	return(dam / div);
 }
 
@@ -4343,7 +4351,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Extract radius */
 	div = r + 1;
 	/* Decrease damage */
-	dam = radius_damage(dam, div, typ);
+	dam = divide_spell_damage(dam, div, typ);
 
 	/* XXX XXX */
 	who = who ? who : 0;
@@ -5190,7 +5198,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	div = r + 1;
 
 	/* Adjust damage */
-	dam = radius_damage(dam, div, typ);
+	dam = divide_spell_damage(dam, div, typ);
 
 
 	/* XXX XXX */
@@ -6103,7 +6111,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	div = r + 1;
 
 	/* Decrease damage */
-	dam = radius_damage(dam, div, typ);
+	dam = divide_spell_damage(dam, div, typ);
 
 
 	/* Mega-Hack */
@@ -9327,7 +9335,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	div = r + 1;
 
 	/* Damage decrease over radius */
-	dam = radius_damage(dam, div, typ);
+	dam = divide_spell_damage(dam, div, typ);
 
 	/* Hack -- always do at least one point of damage */
 	if (dam <= 0) dam = 1;
