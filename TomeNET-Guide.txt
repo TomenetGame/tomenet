@@ -21931,7 +21931,9 @@ Parties:
 
     A party owner may set access to one or more of his houses to 'party access'
     (use 'h' key next to the door) to allow all party members to access that
-    house.
+    house. Only houses of the party owner can be set to party access, houses of
+    normal members can not be set to party access.
+
     If the owner dies, the whole party is disbanded. (Exception: On a server
     running 'Ironman' rules the party ownership will be transferred to another
     player in the party automatically. See (9.6) for more information about

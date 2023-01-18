@@ -1910,10 +1910,12 @@ bool inside_inn(player_type *p_ptr, cave_type *c_ptr) {
  */
 static bool chmod_door(int Ind, struct dna_type *dna, char *args) {
 	player_type *p_ptr = Players[Ind];
+
 	if (!is_admin(p_ptr)) {
 		if (dna->creator != p_ptr->dna) {
-			/* note: the house 'master' is not necessarily the house owner! */
-			msg_print(Ind, "Only the house master may change permissions.");
+			/* note: the house 'master' (aka creator = first buyer/builder) is not necessarily the house owner! -- wrong!:
+			   It is always the current owner, except for guild halls, where the owner is the guild and this is the current-guild-master's dna. */
+			msg_print(Ind, "Only the house's master may change permissions.");
 			return(FALSE);
 		}
 		/* more security needed... */
@@ -1929,14 +1931,13 @@ static bool chmod_door(int Ind, struct dna_type *dna, char *args) {
 			return(FALSE);
 		}
 		if (strcmp(parties[p_ptr->party].owner, lookup_player_name(dna->owner))) {
-			msg_print(Ind, "You must be owner of your party to allow party access.");
+			//msg_print(Ind, "You must be owner of your party to allow party access.");
+			msg_print(Ind, "Only houses owned by the party owner can be given party access.");
 			return(FALSE);
 		}
 	}
 
-	if ((dna->a_flags = args[1])) {
-		dna->min_level = atoi(&args[2]);
-	}
+	if ((dna->a_flags = args[1])) dna->min_level = atoi(&args[2]);
 
 	return(TRUE);
 }
@@ -8744,6 +8745,7 @@ void house_admin(int Ind, int dir, char *args) {
 		c_ptr = &zcave[y][x];
 		if (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN) {
 			struct c_special *cs_ptr;
+
 			if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) {
 				/* Test for things that don't require access: */
 				switch (args[0]) {
