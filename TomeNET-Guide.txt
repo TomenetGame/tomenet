@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 11. January 2023 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 18. January 2023 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -9154,7 +9154,10 @@ Private houses can actually be bought by a player, and their access can be
 configured for example to allow everyone in your party to enter it.
 Press 'h' to buy or sell a private house, or to change house parameters (for
 example giving all your party members access to it). You need to stand directly
-next to the house door to do this.
+next to the house door to do this. The most common type of house access is
+definitely party access - only the owner of the party can set this, and only
+for houses he himself owns.
+
 If you sell a house you get half the money back it cost you to buy it, or
 actually even a bit less than half, depending on your charisma.
 (When that house is sold, all items that are still inside are erased.)
