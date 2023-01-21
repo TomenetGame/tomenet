@@ -293,6 +293,7 @@ void process_command() {
 	case '|':
 		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
 			char choice;
+#if 0 /* 0: for a choice, use ~ key; we just keep the 'normal' function as a shortcut on | for QoL */
 			bool inkey_msg_old = inkey_msg;
 
 			inkey_msg = TRUE;
@@ -303,6 +304,9 @@ void process_command() {
 			if (choice == '!' || choice == 'b' || choice == 'e') choice = 2;
 			else if (choice == ' ' || choice == 'a') choice = 1;
 			else choice = 0;
+#else
+			choice = 0;
+#endif
 			/* Encode 'choice' in 'line' info */
 			Send_special_line(SPECIAL_FILE_UNIQUE, choice * 100000, "");
 		} else cmd_uniques();
