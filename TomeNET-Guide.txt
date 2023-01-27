@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 18. January 2023 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 27. January 2023 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -15863,8 +15863,9 @@ stated.
 
     +Archery                    Improves ranged to-damage bonus somewhat, by +1
      (1/3)                      for every 5.000 increase in skill.
-                                Also increases 'Bows/Throw' ability somewhat,
-                                which in turn further increases hit chance.
+                                Also increases 'Bows/Throw' ability somewhat
+                                for when using slings, bows or crossbows, which
+                                in turn increases your hit chance with those.
 
                                 Allows you to learn shooting techniques and to
                                 gain the ability to craft ammunition,
@@ -15884,8 +15885,9 @@ stated.
 
         .Sling-mastery          Increases hit chance (while using a sling) by
                                 +1 for every 2.000 skill increase.
-                                Also increases Bows/Throw ability somewhat,
-                                which in turn further increases hit chance.
+                                Also increases Bows/Throw ability somewhat
+                                while using slings, which in turn further
+                                increases hit chance.
 
                                 At 10,20,30,40,50 you will get +1 additional
                                 shot per round each (while using a sling).
@@ -15924,7 +15926,9 @@ stated.
                                 ricochetting.
 
     .Boomerang-mastery          At 16.6, 33.3 and 50 you get +1 extra throw.
-                                Also increases 'Bows/Throw' ability somewhat,
+                                Also increases 'Bows/Throw' ability somewhat
+                                while using boomerangs and also regarding
+                                throwing any other kinds of items,
                                 which in turn further increases hit chance.
 
                                 Like sling ammo, boomerangs can ricochet.
