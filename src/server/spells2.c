@@ -5504,10 +5504,10 @@ bool obliteration(int who) {
 bool probing(int Ind) {
 	monster_type *m_ptr;
 	monster_race *r_ptr;
-	int	    i;
+	int i;
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
-	bool	probe = FALSE;
+	bool probe = FALSE;
 
 	/* Probe all (nearby) monsters */
 	for (i = 1; i < m_max; i++) {
@@ -5788,14 +5788,14 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
  * This has allowed massive simplification of the "monster" code.
  */
 void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
-	int		i, t, y, x, yy, xx, dy, dx, oy, ox;
-	int		damage = 0;
-	int		sn = 0, sy = 0, sx = 0;
+	int i, t, y, x, yy, xx, dy, dx, oy, ox;
+	int damage = 0;
+	int sn = 0, sy = 0, sx = 0;
 	int Ind;
 	player_type *p_ptr;
-	/*bool	hurt = FALSE;*/
-	cave_type	*c_ptr;
-	bool	map[32][32];
+	/*bool hurt = FALSE;*/
+	cave_type *c_ptr;
+	bool map[32][32];
 	dun_level *l_ptr = getfloor(wpos);
 	struct c_special *cs_ptr;	/* for special key doors */
 	cave_type **zcave;
@@ -6214,8 +6214,8 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 void wipe_spell(struct worldpos *wpos, int cy, int cx, int r) {
 	int		yy, xx, dy, dx;
 	cave_type	*c_ptr;
-
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 	/* Don't hurt town or surrounding areas */
 	if (istownarea(wpos, MAX_TOWNAREA)) return;
@@ -6266,13 +6266,9 @@ void wipe_spell(struct worldpos *wpos, int cy, int cx, int r) {
 
 /*
  * This routine clears the entire "temp" set.
- *
  * This routine will Perma-Lite all "temp" grids.
- *
  * This routine is used (only) by "lite_room()"
- *
  * Dark grids are illuminated.
- *
  * Also, process all affected monsters.
  *
  * SMART monsters always wake up when illuminated
@@ -6365,6 +6361,7 @@ static void cave_temp_room_unlite(int Ind) {
 	int i, x, y;
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Clear them all */
@@ -6408,9 +6405,9 @@ static void cave_temp_room_unlite(int Ind) {
  */
 static void cave_temp_room_aux(int Ind, struct worldpos *wpos, int y, int x) {
 	player_type *p_ptr = Players[Ind];
-
 	cave_type *c_ptr;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
@@ -6438,8 +6435,8 @@ static void cave_temp_room_aux(int Ind, struct worldpos *wpos, int y, int x) {
 void lite_room(int Ind, struct worldpos *wpos, int y1, int x1) {
 	player_type *p_ptr = Players[Ind];
 	int i, x, y;
-
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Add the initial grid */
@@ -6551,8 +6548,8 @@ static void global_cave_temp_room_aux(struct worldpos *wpos, int y, int x) {
 
 void global_lite_room(struct worldpos *wpos, int y1, int x1) {
 	int i, x, y;
-
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Add the initial grid */
@@ -6590,8 +6587,8 @@ void global_lite_room(struct worldpos *wpos, int y1, int x1) {
 void unlite_room(int Ind, struct worldpos *wpos, int y1, int x1) {
 	player_type *p_ptr = Players[Ind];
 	int i, x, y;
-
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Add the initial grid */
@@ -6687,7 +6684,6 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 	player_type *p_ptr = Players[Ind];
 	char pattacker[80];
 	int tx, ty;
-
 	int flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO;
 
 	/* WRAITHFORM reduces damage/effect */
@@ -6756,9 +6752,7 @@ bool fire_burst(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 	player_type *p_ptr = Players[Ind];
 	char pattacker[80];
 	int tx, ty;
-
 	int flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_FULL | PROJECT_NODO;
-
 
 	/* WRAITHFORM reduces damage/effect! */
 	if (p_ptr->tim_wraith) dam = divide_spell_damage(dam, 2, typ);
@@ -6913,9 +6907,7 @@ bool fire_swarm(int Ind, int typ, int dir, int dam, int num, char *attacker) {
 bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int interval, char *attacker) {
 	player_type *p_ptr = Players[Ind];
 	int tx, ty;
-
 	int flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO;
-
 	char pattacker[80];
 
 	/* WRAITHFORM reduces damage/effect! */
@@ -6970,11 +6962,10 @@ bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, int interv
  */
 bool cast_raindrop(worldpos *wpos, int x) {
 	char pattacker[80];
-	strcpy(pattacker, "");
 	int pseudo_y_start;
-
 	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
 
+	strcpy(pattacker, "");
 	project_time_effect = EFF_RAINING;
 	project_interval = 3;
 	/* let more drops appear at top line, simulating that they were
@@ -6994,9 +6985,9 @@ bool cast_raindrop(worldpos *wpos, int x) {
  */
 bool cast_snowflake(worldpos *wpos, int x, int interval) {
 	char pattacker[80];
-	strcpy(pattacker, "");
-
 	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
+
+	strcpy(pattacker, "");
 
 	project_time_effect = EFF_SNOWING;
 	project_interval = interval;
@@ -7011,10 +7002,9 @@ bool cast_snowflake(worldpos *wpos, int x, int interval) {
 bool cast_fireworks(worldpos *wpos, int x, int y, int typ) {
 	char pattacker[80];
 	dungeon_type *d_ptr = getdungeon(wpos);
+	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
 
 	strcpy(pattacker, "");
-
-	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
 
 	if (typ == -1) typ = rand_int(FIREWORK_COLOURS * 3); /* colour & style */
 
@@ -7085,10 +7075,9 @@ bool cast_lightning(worldpos *wpos, int x, int y) {
 
 bool cast_falling_star(worldpos *wpos, int x, int y, int dur) {
 	char pattacker[80];
-	strcpy(pattacker, "");
-
 	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
 
+	strcpy(pattacker, "");
 	project_time_effect = EFF_FALLING_STAR;
 	project_interval = 1;
 	project_time = dur;
@@ -7442,7 +7431,6 @@ bool fire_cone(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 	player_type *p_ptr = Players[Ind];
 	char pattacker[80];
 	int tx, ty;
-
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO | PROJECT_THRU | PROJECT_FULL;
 
 	/* WRAITHFORM reduces damage/effect */
@@ -7481,7 +7469,6 @@ bool fire_cone(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker) {
 	player_type *p_ptr = Players[Ind];
 	int tx, ty;
-
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_THRU | PROJECT_NODF | PROJECT_NODO;
 
 	/* WRAITHFORM reduces damage/effect! */
@@ -7518,7 +7505,6 @@ bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char 
 bool fire_nova(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker) {
 	player_type *p_ptr = Players[Ind];
 	int tx, ty;
-
 	int flg = PROJECT_STAR | PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO;
 
 	/* WRAITHFORM reduces damage/effect! */
@@ -7566,7 +7552,6 @@ bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
 	player_type *p_ptr = Players[Ind];
 	char pattacker[80];
 	int tx, ty;
-
 	int flg = PROJECT_NORF | PROJECT_HIDE | PROJECT_STOP | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_EVSG | PROJECT_NODF | PROJECT_NODO;
 
 	/* WRAITHFORM reduces damage/effect! */
@@ -7641,105 +7626,122 @@ bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker) {
 
 bool lite_line(int Ind, int dir, int dam, bool starlight) {
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_KILL | PROJECT_NODF | PROJECT_NODO;
+
 	return(project_hook(Ind, starlight? GF_STARLITE : GF_LITE_WEAK, dir, dam, flg, ""));
 }
 
 bool drain_life(int Ind, int dir, int dam) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
+
 	return(project_hook(Ind, GF_OLD_DRAIN, dir, dam, flg, ""));
 }
 
 bool annihilate(int Ind, int dir, int dam) {
 	//int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO; //old
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO | PROJECT_ITEM | PROJECT_GRID | PROJECT_EVSG;
+
 	return(project_hook(Ind, GF_ANNIHILATION, dir, dam, flg, ""));
 }
 
 bool wall_to_mud(int Ind, int dir) {
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODF | PROJECT_NODO;
+
 	return(project_hook(Ind, GF_KILL_WALL, dir, 20 + randint(30), flg, ""));
 }
 
 bool destroy_trap_door(int Ind, int dir) {
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO;
+
 	return(project_hook(Ind, GF_KILL_TRAP_DOOR, dir, 0, flg, ""));
 }
 
 bool disarm_trap_door(int Ind, int dir) {
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO;
+
 	return(project_hook(Ind, GF_KILL_TRAP, dir, 0, flg, ""));
 }
 
 bool heal_monster(int Ind, int dir) {
 	int flg = PROJECT_STOP | PROJECT_KILL;
+
 	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker), "%s heals you for", Players[Ind]->name);
 	return(project_hook(Ind, GF_OLD_HEAL, dir, 9999, flg, Players[Ind]->attacker)); // damroll(4, 6) was the traditional way
 }
 
 bool speed_monster(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
-
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
+
 	return(project_hook(Ind, GF_OLD_SPEED, dir, p_ptr->lev, flg, ""));
 }
 
 bool slow_monster(int Ind, int dir, int pow) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
+
 	return(project_hook(Ind, GF_OLD_SLOW, dir, pow, flg, ""));
 }
 
 bool sleep_monster(int Ind, int dir, int pow) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
+
 	return(project_hook(Ind, GF_OLD_SLEEP, dir, pow, flg, ""));
 }
 
 bool confuse_monster(int Ind, int dir, int pow) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
+
 	return(project_hook(Ind, GF_OLD_CONF, dir, pow, flg, ""));
 }
 
 bool poly_monster(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
-
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_SELF | PROJECT_PLAY | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
+
 	return(project_hook(Ind, GF_OLD_POLY, dir, p_ptr->lev, flg, ""));
 }
 
 bool clone_monster(int Ind, int dir) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
+
 	return(project_hook(Ind, GF_OLD_CLONE, dir, 0, flg, ""));
 }
 
 bool fear_monster(int Ind, int dir, int pow) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
+
 	return(project_hook(Ind, GF_TURN_ALL, dir, pow, flg, ""));
 }
 
 bool teleport_monster(int Ind, int dir) {
 	int flg = PROJECT_BEAM | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
+
 	return(project_hook(Ind, GF_AWAY_ALL, dir, MAX_SIGHT * 5, flg, ""));
 }
 
 bool cure_light_wounds_proj(int Ind, int dir) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
+
 	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker), "%s heals you for", Players[Ind]->name);
 	return(project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(2, 10), flg, Players[Ind]->attacker));
 }
 
 bool cure_serious_wounds_proj(int Ind, int dir) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
+
 	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker), "%s heals you for", Players[Ind]->name);
 	return(project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(4, 10), flg, Players[Ind]->attacker));
 }
 
 bool cure_critical_wounds_proj(int Ind, int dir) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
+
 	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker), "%s heals you for", Players[Ind]->name);
 	return(project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(6, 10), flg, Players[Ind]->attacker));
 }
 
 bool heal_other_proj(int Ind, int dir) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
+
 	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker), "%s heals you for", Players[Ind]->name);
 	return(project_hook(Ind, GF_HEAL_PLAYER, dir, 100, flg, Players[Ind]->attacker));
 }
@@ -7752,22 +7754,22 @@ bool heal_other_proj(int Ind, int dir) {
 
 bool door_creation(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE | PROJECT_NODF | PROJECT_NODO;
+
 	return(project(0 - Ind, 1, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_MAKE_DOOR, flg, ""));
 }
 
 bool trap_creation(int Ind, int mod, int rad) {
 	player_type *p_ptr = Players[Ind];
-
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE | PROJECT_NODF | PROJECT_NODO;
+
 	return(project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, mod, GF_MAKE_TRAP, flg, ""));
 }
 
 bool destroy_doors_touch(int Ind, int rad) {
 	player_type *p_ptr = Players[Ind];
-
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE | PROJECT_NODF | PROJECT_NODO;
+
 	return(project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_DOOR, flg, ""));
 }
 /* Only used for ART_BILBO atm: */
@@ -7829,8 +7831,8 @@ bool destroy_traps_doors_touch(int Ind, int rad) {
 
 bool sleep_monsters_touch(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
 	int flg = PROJECT_NORF | PROJECT_KILL | PROJECT_HIDE | PROJECT_NODF | PROJECT_NODO;
+
 	return(project(0 - Ind, 1, &p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev, GF_OLD_SLEEP, flg, ""));
 }
 
@@ -7917,23 +7919,20 @@ static bool poly_build(int Ind, char *args) {
 	int x, y;
 	int dir = 0;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 	while (curr) {
 		struct builder *prev = NULL;
 		bool kill = FALSE;
 		if (curr->player == p_ptr->id) break;
 		if (!lookup_player_name(curr->player)) {	/* disconnect or free builders */
-			if (prev)
-				prev->next = curr->next;
-			else
-				builders = curr->next;
+			if (prev) prev->next = curr->next;
+			else builders = curr->next;
 			kill = TRUE;
 		}
 		prev = curr;
 		curr = curr->next;
-		if (kill) {
-			KILL(prev, struct builder);
-		}
+		if (kill) KILL(prev, struct builder);
 	}
 
 	if (!curr) {			/* new builder */
@@ -7983,9 +7982,7 @@ static bool poly_build(int Ind, char *args) {
 		 * please correct it, Evileye?	- Jir -
 		 */
 #if 0
-		if ((curr->cs = AddCS(&zcave[curr->sy][curr->sx], CS_DNADOOR))) {
-			curr->cs->sc.ptr = curr->dna;
-		}
+		if ((curr->cs = AddCS(&zcave[curr->sy][curr->sx], CS_DNADOOR))) curr->cs->sc.ptr = curr->dna;
 #endif
 		builders = curr;
 		return(TRUE);
@@ -8081,7 +8078,7 @@ static bool poly_build(int Ind, char *args) {
 	/* no going off depth, and no spoiling moats */
 	if (inarea(&curr->wpos, &p_ptr->wpos) && !(zcave[curr->dy][curr->dx].info&CAVE_ICKY && zcave[curr->dy][curr->dx].feat == FEAT_DEEP_WATER)) {
 		zcave[curr->dy][curr->dx].feat = FEAT_WALL_EXTRA;
-//		zcave[curr->dy][curr->dx].feat = FEAT_WALL_HOUSE;
+		//zcave[curr->dy][curr->dx].feat = FEAT_WALL_HOUSE;
 		if (curr->cvert < MAXCOORD && (--curr->moves) > 0) return(TRUE);
 		p_ptr->update |= PU_VIEW;
 	}
@@ -8302,18 +8299,18 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 }
 #ifdef RPG_SERVER
 bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx) {
-	int		     Ind, j;
-	cave_type	       *c_ptr;
+	int		Ind, j;
+	cave_type	*c_ptr;
 
-	monster_type    *m_ptr;
-	monster_race    *r_ptr = &r_info[r_idx];
+	monster_type	*m_ptr;
+	monster_race	*r_ptr = &r_info[r_idx];
 
 	char buf[80];
 
 	cave_type **zcave;
+
+
 	if (!(zcave = getcave(wpos))) return(0);
-
-
 	/* Verify location */
 	if (!in_bounds(y, x)) return(0);
 	/* Require empty space */
@@ -8437,12 +8434,12 @@ bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx) {
 	return(TRUE);
 }
 
-/* Create a servant ! */
-char pet_creation(int Ind)
-{ //put the sanity tests here and call place_pet
+/* Create a servant ! -- The_sandman */
+char pet_creation(int Ind) { //put the sanity tests here and call place_pet
 	int id = 955; //green dr for now
 	/* bleh, green dr is too powerful, lets do spiders. i'm fond of spiders. */
 	int lev = Players[Ind]->lev;
+
 	if (lev < 5) id = (randint(2)>1 ? 60 /*cave S*/ : 62 /*wild cat*/);
 	else if (lev < 10) id = 127; //wood S
 	else if (lev < 15) id = 277; //mirkwood S
