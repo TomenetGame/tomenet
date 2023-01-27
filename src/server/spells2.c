@@ -549,7 +549,7 @@ bool do_banish_animals(int Ind, int chance) {
 /* For Dawn activation - C. Blue
    (note: highest non-unique undead is Black Reaver: level 74) */
 bool do_banish_undead(int Ind, int chance) {
-	int i, j = 0, c;
+	int i, c;
 	player_type *p_ptr;
 	p_ptr = Players[Ind];
 	cave_type **zcave;
@@ -577,17 +577,15 @@ bool do_banish_undead(int Ind, int chance) {
 		if (c > rand_int(100)) {
 			//off with you!
 			delete_monster_idx(i, TRUE);
-			j++;
 		}
 	}
-	/* (no time for tears of joy dealing with undead) */
 	return(TRUE);
 }
 
 /* For Mardra activation - C. Blue
    (note: highest non-unique D is GWoP: level 85) */
 bool do_banish_dragons(int Ind, int chance) {
-	int i, j = 0, c;
+	int i, c;
 	player_type *p_ptr;
 	p_ptr = Players[Ind];
 	cave_type **zcave;
@@ -615,10 +613,8 @@ bool do_banish_dragons(int Ind, int chance) {
 		if (c > rand_int(100)) {
 			//off with you!
 			delete_monster_idx(i, TRUE);
-			j++;
 		}
 	}
-	/* (no time for tears of joy dealing with undead) */
 	return(TRUE);
 }
 
