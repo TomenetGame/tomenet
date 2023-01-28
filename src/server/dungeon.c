@@ -9811,6 +9811,7 @@ void dungeon(void) {
 				lite_spot(i, y, x);
  #if 0
 				struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
 				/* outside? */
 				if (!l_ptr) {
 					int x = rand_int(MAX_WID), y = rand_int(MAX_HGT);
@@ -10083,8 +10084,7 @@ void set_runlevel(int val) {
 			/* Running */
 		default:
 			/* Cancelled shutdown */
-			if (cfg.runlevel != 6)
-				msg_broadcast(0, "\377GServer shutdown cancelled.");
+			if (cfg.runlevel != 6) msg_broadcast(0, "\377GServer shutdown cancelled.");
 			Report_to_meta(META_START);
 			//meta = TRUE;
 			val = 6;
@@ -10350,6 +10350,7 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool TOC_near_Br
 	 */
 	if (!server_dungeon) {
 		struct worldpos twpos;
+
 		twpos.wx = cfg.town_x;
 		twpos.wy = cfg.town_y;
 		twpos.wz = 0;
@@ -10479,6 +10480,7 @@ void shutdown_server(void) {
 	   people can die for real! (Because ge_special_sector is not saved.) */
 	if (ge_special_sector) {
 		struct worldpos wpos = { WPOS_ARENA_X, WPOS_ARENA_Y, WPOS_ARENA_Z };
+
 		dealloc_dungeon_level(&wpos);
 	}
 
@@ -10493,10 +10495,9 @@ void shutdown_server(void) {
 	go_engine_terminate();
 #endif
 
-	if (cfg.runlevel == -1)
-		quit("Terminating");
-	else
-		quit("Server state saved");
+	if (cfg.runlevel == -1) quit("Terminating");
+	else quit("Server state saved");
+
 	/* Just to be sure and to to keep the compiler happy */
 	exit(-1);
 }
