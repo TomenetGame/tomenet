@@ -4139,7 +4139,12 @@ void client_init(char *argv1, bool skip) {
 			inventory_name[bytes][0] = 0;
 			inventory_inscription[bytes] = 0;
 			inventory_inscription_len[bytes] = 0;
+ #ifdef ENABLE_SUBINVEN
+			for (retries = 0; retries <= SUBINVEN_PACK; retries++)
+				subinventory[bytes][retries].tval = 0;
+ #endif
 		}
+		for (bytes = 0; bytes < INVEN_TOTAL - INVEN_WIELD; bytes++) equip_set[bytes] = 0;
 		item_newest = -1;
 
 		/* retuuurrrnnnn... */
