@@ -4289,16 +4289,16 @@ int divide_spell_damage(int dam, int div, int typ) {
 
 	/* These are reduced despite 'dam' storing functionality - it is carefully calculated around that. */
 	case GF_HEAL_PLAYER:
-		return((dam & 0x3C00) + (dam & 0x03FF) / 2);
+		return((dam & 0x3C00) + (dam & 0x03FF) / div);
 	case GF_OLD_DRAIN: /* Percent damage (eg. 20%) - Currently no ball versions of these - Kurzel */
 		/* - sorry, 4096 is the priest spell hack :P */
-		return((dam & 0x1000) + (dam & 0x0FFF) / 2);
+		return((dam & 0x1000) + (dam & 0x0FFF) / div);
 	case GF_ANNIHILATION: /* Percent damage (eg. 20%) - Currently no ball versions of these - Kurzel */
 		/* - sorry, 8192 is the 'Brief' rune spell hack :P */
-		return((dam & 0x2000) + (dam & 0x1FFF) / 2);
+		return((dam & 0x2000) + (dam & 0x1FFF) / div);
 	case GF_DARK_WEAK:
 		/* - sorry, 8192 is the shadow spell hack :P */
-		return((dam & 0x2000) + (dam & 0x1FFF) / 2);
+		return((dam & 0x2000) + (dam & 0x1FFF) / div);
 	}
 
 	/* default: divide damage, usually depending on ball spell radius, or /2 for wraithform casts */
