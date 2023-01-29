@@ -802,13 +802,13 @@ static bool inn_comm(int Ind, int cmd) {
 			char rumor[MAX_CHARS_WIDE];
 #if 0 /* why this RNG stuff? also, it doesn't work (always same val) */
 			/* Set the RNG seed. */
-//			Rand_value = turn / (HOUR * 10);
+			//Rand_value = turn / (HOUR * 10);
 			Rand_value = time(NULL) / 600;
 			Rand_quick = TRUE;
 
-#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
 			sound(Ind, "store_listen", NULL, SFX_TYPE_MISC, FALSE);
-#endif
+ #endif
 			get_rnd_line("rumors.txt", 0, rumor, MAX_CHARS_WIDE);
 			bracer_ff(rumor);	/* colour it */
 			msg_format(Ind, "%s", rumor);

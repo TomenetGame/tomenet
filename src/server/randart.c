@@ -1929,10 +1929,6 @@ artifact_type *randart_make(object_type *o_ptr) {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 
-	/* Set the RNG seed. */
-	Rand_value = o_ptr->name3;
-	Rand_quick = TRUE;
-
 	/* Screen for disallowed TVALS */
 	if ((k_ptr->tval != TV_BOW) &&
 	    (k_ptr->tval != TV_BOOMERANG) &&
@@ -1965,6 +1961,10 @@ artifact_type *randart_make(object_type *o_ptr) {
 	/* Forbid costumes too */
 	if ((k_ptr->tval == TV_SOFT_ARMOR) && (k_ptr->sval == SV_COSTUME))
 		return(NULL);
+
+	/* Set the RNG seed. */
+	Rand_value = o_ptr->name3;
+	Rand_quick = TRUE;
 
 /* taken out the quality boosts again, since those weapons already deal insane damage.
    alternatively their damage could be lowered so they don't rival grond (7d8 weapon w/ kill flags..). */

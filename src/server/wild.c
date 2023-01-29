@@ -1415,7 +1415,10 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 	h_x2 = p_x2 - ((plot_xlen - house_xlen) / 2); h_y2 = p_y2 - ((plot_ylen - house_ylen) / 2);
 
 	/* return if we didn't get a plot */
-	if (p_x1 < 0) return;
+	if (p_x1 < 0) {
+		Rand_quick = rand_old;
+		return;
+	}
 
 	/* initialise x and y, which may not be specified at this point */
 	x = (h_x1 + h_x2) / 2;
@@ -1512,7 +1515,10 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 	/* Recalculate house parameters? */
 	if (hinders_door) {
 		/* has house become too small now (smaller than 3x3)? -> abort */
-		if (h_x2 - h_x1 < 2 || h_y2 - h_y1 < 2) return;
+		if (h_x2 - h_x1 < 2 || h_y2 - h_y1 < 2) {
+			Rand_quick = rand_old;
+			return;
+		}
 
 		area = (h_x2 - h_x1 - 1) * (h_y2 - h_y1 - 1);
 
@@ -1915,17 +1921,17 @@ int determine_wilderness_type(struct worldpos *wpos) {
 	bool rand_old = Rand_quick;
 	u32b old_seed = Rand_value;
 
-	/* Hack -- Use the "simple" RNG */
-	Rand_quick = TRUE;
-
-	/* Hack -- Induce consistant wilderness */
-	Rand_value = seed_town + (wpos->wx+wpos->wy*MAX_WILD_X) * 600;
-
 	/* check if the town */
 	if (istown(wpos)) return WILD_TOWN;
 
 	/* check if already defined */
 	if ((w_ptr->type != WILD_UNDEFINED) && (w_ptr->type != WILD_CLONE)) return w_ptr->type;
+
+	/* Hack -- Use the "simple" RNG */
+	Rand_quick = TRUE;
+
+	/* Hack -- Induce consistant wilderness */
+	Rand_value = seed_town + (wpos->wx + wpos->wy * MAX_WILD_X) * 600;
 
 	/* check for infinite loops */
 	if (w_ptr->type == WILD_CLONE) {
@@ -3371,7 +3377,7 @@ static void wilderness_gen_hack(struct worldpos *wpos) {
  #endif
 #endif
 
-//	wild_add_uhouses(wpos);
+	//wild_add_uhouses(wpos);
 
 
 #ifndef DEVEL_TOWN_COMPATIBILITY
@@ -3458,12 +3464,13 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 	int feat_ambient = di_ptr->fill_type[0];//->inner_wall;
 	int feat_ambient2 = (feat_ambient == FEAT_TREE) ? FEAT_BUSH : feat_ambient;
 	int feat_floor = FEAT_DIRT;
-	bool rand_old = Rand_quick; /* save rng */
-	u32b tmp_seed = Rand_value;
-	Rand_value = seed_town + (wpos->wx + wpos->wy * MAX_WILD_X) * 600; /* seed rng */
-	Rand_quick = TRUE;
 	int zx, zy;
 	bool rig_corners = FALSE; /* corners are always floor, to make ambient feats look more circular? */
+	bool rand_old = Rand_quick; /* save rng */
+	u32b tmp_seed = Rand_value;
+
+	Rand_value = seed_town + (wpos->wx + wpos->wy * MAX_WILD_X) * 600; /* seed rng */
+	Rand_quick = TRUE;
 
 #if 1 /* specialino visualino - maybe too much */
 	/* Hack for Death Fate */
