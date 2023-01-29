@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 27. January 2023 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 29. January 2023 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -17391,11 +17391,11 @@ create a character!):
     the vampire acquired resistance to light).
     Vampires fear the sunlight and any kind of items giving off powerful light
     (radius of 3 or more, artifact lights, or light sources that are blessed,
-    evil-slaying or undead-slaying). Asides from light sources aside they fear
-    all items that are blessed or *slay undead*. Any such item will burn them,
-    draining their hit points. Exceptions are cursed lights and items and the
-    "Stone of Lore" - these will not harm them.
-    They start with a mummy wrapping, because it can protect them from the
+    evil-slaying or undead-slaying or give off pure white light). Asides from
+    light sources aside they fear all items that are blessed or *slay undead*.
+    Any such item will burn them, draining their hit points. Exceptions are
+    cursed items, chaotic items and the "Stone of Lore", these are always safe.
+    Vampires start with a mummy wrapping, because it can protect them from the
     sunlight. If they are moving on the world surface (meaning not in a dungeon
     or tower) while it's day, the sun will burn them if they don't resist light
     or wear a mummy wrapping.
@@ -17948,6 +17948,9 @@ create a character!):
     exception as for vampires: Weapons "of nothingness" will do them no good
     either, and some randarts may fail to flip.) See the end of (5.12) for
     details on item-flipping.
+    Also similar to how vampires can be affected by items that are adverse to
+    undead, inflicting hit point drain by burning them, hell knights can be
+    affected in the same manner by items that are adverse to demons.
     Hell Knights have a very high chance to resist the adverse effects of
     encountering an eldritch horror (see (7.3) under 'Saving Throw' for details
     on those).
