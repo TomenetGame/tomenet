@@ -5548,6 +5548,7 @@ a Small Metal Shield {+,3} [17%]
     worse than 'superb' will mean that the character gets this base block
     chance somewhat reduced.
     Example values of the actual chance can be checked in 'm' menu.
+    For a complete rundown on parrying and blocking, see (7.11).
 
 a Long Sword {+,0} (2d6) (+0,+0)
     Again the {..} part is already know. What's new for all types of weapons is
