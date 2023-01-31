@@ -37,7 +37,7 @@ Contents
     (0.1d)  Readability improvements
     (0.2)   Command reference & key sets
     (0.2a)  Text editing keys
-    (0.2b)  Slash command reference
+    (0.2b)  Slash commands
     (0.2c)  IRC bot commands
     (0.3)   Important inscriptions, Word of Recall
     (0.3a)  The auto-inscription feature
