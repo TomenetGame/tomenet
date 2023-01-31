@@ -25,8 +25,13 @@
  #define ANIM_BASE 16 /* Counterpart to ANIM_OFFSET: The start of the basic, normal palette. Usually 0, except for Windows if PALANIM_SWAP is ever used. */
 #endif
 /* Animate not just the extended 'outside world' colours, that are used for day/night lightning,
-   but also the classic static colours that are used for everything else, allowing this to work inside a dungeon: */
-#define ANIM_FULL_PALETTE
+   but also the classic static colours that are used for everything else, allowing this to work inside a dungeon:
+   Uncool thing about it is it causes all chat text, character stats, just everything to get (lightning-)flashed.
+   Todo maybe: Use extended colours for the dungeon too, not just world surface.
+   Note that while lightning happens on world surface and doesn't need to work inside the dungeon,
+   flash happens inside the dungeon mainly, so disabling it here would render it practically completely non-existant. */
+#define ANIM_FULL_PALETTE_FLASH
+//#define ANIM_FULL_PALETTE_LIGHTNING
 
 #ifdef USE_SOUND_2010
 int animate_lightning_type = SFX_TYPE_AMBIENT;
@@ -4437,12 +4442,13 @@ void window_stuff(void) {
 	}
 }
 
-#define LF_END 20 /* duration of the lightning flash */
+#define FLASH_END 20 /* duration of the flash */
+/* Flash screen, special fx (not thunderstorm) */
 void do_animate_screenflash(bool reset) {
 	int i;
 	static bool active = FALSE; /* Don't overwrite palette backup from overlapping lightning strikes */
 	static byte or[BASE_PALETTE_SIZE], og[BASE_PALETTE_SIZE], ob[BASE_PALETTE_SIZE];
-#ifdef ANIM_FULL_PALETTE
+#ifdef ANIM_FULL_PALETTE_FLASH
 	static byte or0[BASE_PALETTE_SIZE], og0[BASE_PALETTE_SIZE], ob0[BASE_PALETTE_SIZE];
 #endif
 
@@ -4451,7 +4457,7 @@ void do_animate_screenflash(bool reset) {
 		if (active) {
 			if (c_cfg.palette_animation) {
 				for (i = 1; i < BASE_PALETTE_SIZE; i++) set_palette(i + ANIM_OFFSET, or[i], og[i], ob[i]);
-#ifdef ANIM_FULL_PALETTE
+#ifdef ANIM_FULL_PALETTE_FLASH
 				for (i = 1; i < BASE_PALETTE_SIZE; i++) set_palette(i + ANIM_BASE, or0[i], og0[i], ob0[i]);
 #endif
 				set_palette(128, 0, 0, 0); //refresh
@@ -4467,14 +4473,14 @@ void do_animate_screenflash(bool reset) {
 		/* First thing: Backup all colours before temporarily manipulating them */
 		if (!active) {
 			for (i = 1; i < BASE_PALETTE_SIZE; i++) get_palette(i + ANIM_OFFSET, &or[i], &og[i], &ob[i]);
-#ifdef ANIM_FULL_PALETTE
+#ifdef ANIM_FULL_PALETTE_FLASH
 			for (i = 1; i < BASE_PALETTE_SIZE; i++) get_palette(i + ANIM_BASE, &or0[i], &og0[i], &ob0[i]);
 #endif
 			active = TRUE;
 		}
 
 		for (i = 1; i < BASE_PALETTE_SIZE; i++) set_palette(i + ANIM_OFFSET, 0xFF, 0xFF, 0xFF);
-#ifdef ANIM_FULL_PALETTE
+#ifdef ANIM_FULL_PALETTE_FLASH
 		for (i = 1; i < BASE_PALETTE_SIZE; i++) set_palette(i + ANIM_BASE, 0xFF, 0xFF, 0xFF);
 #endif
 
@@ -4483,24 +4489,24 @@ void do_animate_screenflash(bool reset) {
 	default:
 		for (i = 1; i < BASE_PALETTE_SIZE; i++)
 			set_palette(i + ANIM_OFFSET,
-			    or[i] + ((0xFF - or[i]) * (LF_END - animate_screenflash)) / (LF_END - 1),
-			    og[i] + ((0xFF - og[i]) * (LF_END - animate_screenflash)) / (LF_END - 1),
-			    ob[i] + ((0xFF - ob[i]) * (LF_END - animate_screenflash)) / (LF_END - 1));
-#ifdef ANIM_FULL_PALETTE
+			    or[i] + ((0xFF - or[i]) * (FLASH_END - animate_screenflash)) / (FLASH_END - 1),
+			    og[i] + ((0xFF - og[i]) * (FLASH_END - animate_screenflash)) / (FLASH_END - 1),
+			    ob[i] + ((0xFF - ob[i]) * (FLASH_END - animate_screenflash)) / (FLASH_END - 1));
+#ifdef ANIM_FULL_PALETTE_FLASH
 		for (i = 1; i < BASE_PALETTE_SIZE; i++)
 			set_palette(i + ANIM_BASE,
-			    or0[i] + ((0xFF - or0[i]) * (LF_END - animate_screenflash)) / (LF_END - 1),
-			    og0[i] + ((0xFF - og0[i]) * (LF_END - animate_screenflash)) / (LF_END - 1),
-			    ob0[i] + ((0xFF - ob0[i]) * (LF_END - animate_screenflash)) / (LF_END - 1));
+			    or0[i] + ((0xFF - or0[i]) * (FLASH_END - animate_screenflash)) / (FLASH_END - 1),
+			    og0[i] + ((0xFF - og0[i]) * (FLASH_END - animate_screenflash)) / (FLASH_END - 1),
+			    ob0[i] + ((0xFF - ob0[i]) * (FLASH_END - animate_screenflash)) / (FLASH_END - 1));
 #endif
 
 		set_palette(128, 0, 0, 0); //refresh
 		break;
-	case LF_END:
+	case FLASH_END:
 		/* Restore all colours to what they were before */
 		if (active) {
 			for (i = 1; i < BASE_PALETTE_SIZE; i++) set_palette(i + ANIM_OFFSET, or[i], og[i], ob[i]);
-#ifdef ANIM_FULL_PALETTE
+#ifdef ANIM_FULL_PALETTE_FLASH
 			for (i = 1; i < BASE_PALETTE_SIZE; i++) set_palette(i + ANIM_BASE, or0[i], og0[i], ob0[i]);
 #endif
 			set_palette(128, 0, 0, 0); //refresh
@@ -4511,16 +4517,17 @@ void do_animate_screenflash(bool reset) {
 
 	/* Proceed through steps */
 	animate_screenflash++;
-	if (animate_screenflash == LF_END + 1) animate_screenflash = 0;
+	if (animate_screenflash == FLASH_END + 1) animate_screenflash = 0;
 }
 
 #define AL_END 12 /* duration of the lightning flash */
 #define AL_DECOUPLED /* because thunderclap happens too quickly, so decouple it from lightning animation speed */
+/* Client-side thunderstorm lightning flashes, triggered by thunder_sound_idx */
 void do_animate_lightning(bool reset) {
 	int i;
 	static bool active = FALSE; /* Don't overwrite palette backup from overlapping lightning strikes */
 	static byte or[BASE_PALETTE_SIZE], og[BASE_PALETTE_SIZE], ob[BASE_PALETTE_SIZE];
-#ifdef ANIM_FULL_PALETTE
+#ifdef ANIM_FULL_PALETTE_LIGHTNING
 	static byte or0[BASE_PALETTE_SIZE], og0[BASE_PALETTE_SIZE], ob0[BASE_PALETTE_SIZE];
 #endif
 #ifdef AL_DECOUPLED
@@ -4532,7 +4539,7 @@ void do_animate_lightning(bool reset) {
 		if (active) {
 			if (c_cfg.palette_animation) {
 				for (i = 1; i < BASE_PALETTE_SIZE; i++) set_palette(i + ANIM_OFFSET, or[i], og[i], ob[i]);
-#ifdef ANIM_FULL_PALETTE
+#ifdef ANIM_FULL_PALETTE_LIGHTNING
 				for (i = 1; i < BASE_PALETTE_SIZE; i++) set_palette(i + ANIM_BASE, or0[i], og0[i], ob0[i]);
 #endif
 				set_palette(128, 0, 0, 0); //refresh
@@ -4548,7 +4555,7 @@ void do_animate_lightning(bool reset) {
 		/* First thing: Backup all colours before temporarily manipulating them */
 		if (!active) {
 			for (i = 1; i < BASE_PALETTE_SIZE; i++) get_palette(i + ANIM_OFFSET, &or[i], &og[i], &ob[i]);
-#ifdef ANIM_FULL_PALETTE
+#ifdef ANIM_FULL_PALETTE_LIGHTNING
 			for (i = 1; i < BASE_PALETTE_SIZE; i++) get_palette(i + ANIM_BASE, &or0[i], &og0[i], &ob0[i]);
 #endif
 			active = TRUE;
@@ -4565,7 +4572,7 @@ void do_animate_lightning(bool reset) {
 		set_palette(13 + ANIM_OFFSET, 0xBB, 0xFF, 0xBB); //lgreen(29)
 		set_palette(15 + ANIM_OFFSET, 0xF7, 0xCD, 0x85); //lumber(31)
 
-#ifdef ANIM_FULL_PALETTE
+#ifdef ANIM_FULL_PALETTE_LIGHTNING
 		//set_palette(1, 0x99, 0x99, 0x99); //white(17)
 		set_palette(2, 0xCC, 0xCC, 0xFF); //slate(18)
 		set_palette(4, 0xFF, 0x77, 0x88); //red(20)
@@ -4584,7 +4591,7 @@ void do_animate_lightning(bool reset) {
 		/* Restore all colours to what they were before */
 		if (active) {
 			for (i = 1; i < BASE_PALETTE_SIZE; i++) set_palette(i + ANIM_OFFSET, or[i], og[i], ob[i]);
-#ifdef ANIM_FULL_PALETTE
+#ifdef ANIM_FULL_PALETTE_LIGHTNING
 			for (i = 1; i < BASE_PALETTE_SIZE; i++) set_palette(i + ANIM_BASE, or0[i], og0[i], ob0[i]);
 #endif
 			set_palette(128, 0, 0, 0); //refresh

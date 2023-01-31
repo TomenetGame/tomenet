@@ -4158,6 +4158,7 @@ int Receive_target_info(void) {
 	return(1);
 }
 
+/* Special fx (not thunderstorm) */
 int Receive_screenflash(void) {
 	int	n;
 	char	ch;
