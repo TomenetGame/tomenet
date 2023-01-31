@@ -2241,6 +2241,8 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		else if (my_strcasestr(buf, "auto") && my_strcasestr(buf, "pick")) strcpy(init_search_string, "auto-pick"); //auto-pickup
 		else if (my_strcasestr(buf, "auto") && my_strcasestr(buf, "ins")) strcpy(init_search_string, "auto-inscri"); //auto-inscription
 		else if (my_strcasestr(buf, "forc") && my_strcasestr(buf, "stack")) strcpy(init_search_string, "force-stack");
+		else if (!strcasecmp("key", buf) || !strcasecmp("keys", buf)) strcpy(init_search_string, "Command keys");
+		else if (!strcasecmp("command", buf) || !strcasecmp("commands", buf)) strcpy(init_search_string, "Slash commands");
 
 		/* clean up */
 		buf[0] = 0;
