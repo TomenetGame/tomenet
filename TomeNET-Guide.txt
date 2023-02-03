@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 29. January 2023 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 3. February 2023 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.0 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -23823,14 +23823,13 @@ gain any NEW mods it didn't already possess.
 -'Activation' does not tax the base power either. It's a free property same as
 ignore-flags mentioned above. (Prominent example: Dragon scale mails.)
 
--Note that any mod the base item type already possesses will definitely also be
-in the final randart.
+-Any mod the base item type already possesses will definitely also be on the
+final randart.
 Examples: Shadow Blades and Witan Boots will modify stealth, Demon Hammers
 will always have SLAY_DEMON mod.
 However, there are certain exceptions:
 1) if an item gains AGGRAVATE flag in the artifying process, it will lose any
-   stealth or invisibility. This allows more than +5 speed on Witan Boots for
-   example.
+   stealth or invisibility.
 2) Slay flags can be upgraded to kill flags. So a Demon Hammer will lose its
    granted SLAY_DEMON flag if it gets KILL_DEMON instead.
 3) -Resistances can be upgraded to immunities. So a Serpent Scale Mail will
@@ -23844,6 +23843,16 @@ However, there are certain exceptions:
    -Curse removes blessing
    -Experience drain removes hold-life
    -attribute mali remove the according sustenance (STR/INT/WIS/DEX/CON/CHR)
+
+-Mods provided by the base item, unless they are removed by these exceptions
+may limit the final randart mods:
+For example the base stealth bonus that all Shadow Blades come with will limit
+their bonus powers to the stealth cap of +5. So in order to gain for example a
+bonus of +10 to critical hits on a Shadow Blade it'd have to roll AGGRAVATE
+in order to remove the stealth bonus.
+There is one notable exception: Witan Boots. These have their fixed -2 stealth
+malus detached from their actual powers and can hence roll for example a speed
+bonus just as high as any other boots.
 
 MULTI-HUED DRAGON SCALE MAIL IMMUNITIES:
 
@@ -23921,9 +23930,7 @@ aren't allowed to give more than +5 to any character stat (str, int, etc).
 
 On boots, +speed mod takes precedence over most other limiting mods, which
 means that speed-limiting mods will be erased from the boots in most cases if
-they threaten to cut down the final pval. Note that mods provided by the base
-item type can never be removed, so the stealth mod will never be removed from
-Witan Boots and therefore always limit their speed to the stealth cap of +5.
+they threaten to cut down the final pval.
 
 
 Type-dependant mods:
@@ -24135,6 +24142,7 @@ Item Mod Limits:
 Certain power limits are applied on items, depending on mod-combinations or the
 item's base type.
 
+Items cannot give more than 2 immunities.
 Items cannot give more than +11 to speed, crit or mana.
 Items that give two of speed, crit or mana cannot give more than +6.
 Items that give speed, crit and mana cannot give more than +4.
