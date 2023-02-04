@@ -41,7 +41,7 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		9
 #define VERSION_PATCH		0
-#define VERSION_EXTRA		1
+#define VERSION_EXTRA		2
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -52,25 +52,25 @@
 #define VERSION_MAJOR_LATEST	4
 #define VERSION_MINOR_LATEST	9
 #define VERSION_PATCH_LATEST	0
-#define VERSION_EXTRA_LATEST	0
+#define VERSION_EXTRA_LATEST	2
 #define VERSION_BRANCH_LATEST	0
 #define VERSION_BUILD_LATEST	0
 
 /* maximum MAJOR/MINOR/PATCH version that counts as 'outdated' (should be 0-15). */
 #define VERSION_MAJOR_OUTDATED	4
-#define VERSION_MINOR_OUTDATED	8
-#define VERSION_PATCH_OUTDATED	1
-#define VERSION_EXTRA_OUTDATED	3
+#define VERSION_MINOR_OUTDATED	9
+#define VERSION_PATCH_OUTDATED	0
+#define VERSION_EXTRA_OUTDATED	1
 #define VERSION_BRANCH_OUTDATED	0
 #define VERSION_BUILD_OUTDATED	1 /* should always be 1 to invalidate previous 'test' versions */
 
 /* Server release version tag (such as "a", "b" etc), or empty if none:
    Minimum client version tag required to "play 100%". */
-#define SERVER_VERSION_TAG	""
+#define SERVER_VERSION_TAG	"a"
 
 /* Client-side only: Client release version tag, or empty if none
    (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_TAG		""
+#define CLIENT_TAG		"a"
 #ifndef TEST_CLIENT
  #define CLIENT_VERSION_TAG	CLIENT_TAG
 #else
