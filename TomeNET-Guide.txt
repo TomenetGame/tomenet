@@ -7223,7 +7223,7 @@ Magic devices:
                 You can restrict auto-retaliation to town-only by adding a 't'
                 after the '@O' like this: '@Ot'.
 
-Spellbooks:
+Spell scrolls, books or crystals:
     @Oc         You will auto-retaliate by casting the spell 'c)' from this
                 book (or any other spell, change the inscription accordingly).
                 You can restrict auto-retaliation to town-only by adding a 't'
