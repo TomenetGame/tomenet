@@ -208,7 +208,7 @@ I:1000:0
 
 N:29:Shivering Aura
 D:Aura that surrounds you and stuns monsters that strike you in close combat.
-D:At 30.000 it will brand your melee attacks with frost.
+D:At 30.000 it brands your melee attacks with frost and grants frost resistance.
 A:16:Control your shivering aura
 I:1000:0
 
