@@ -6286,6 +6286,10 @@ void calc_boni(int Ind) {
 	if (get_skill(p_ptr, SKILL_AURA_FEAR) >= 20 && p_ptr->aura[AURA_FEAR])
 		{ p_ptr->resist_fear = TRUE; csheet_boni[14].cb[4] |= CB5_RFEAR; }
 #endif
+	/* ..let's also do this for cold aura - C. Blue */
+	if (get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30 && p_ptr->aura[AURA_SHIVER])
+		{ p_ptr->resist_cold = TRUE; csheet_boni[14].cb[0] |= CB1_RCOLD; }
+
 	/* Hack -- Res Chaos -> Res Conf */
 	if (p_ptr->resist_chaos) p_ptr->resist_conf = TRUE;
 

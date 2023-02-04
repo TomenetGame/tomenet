@@ -16137,7 +16137,8 @@ stated.
                                 in their favour.
                                 At a skill of 30 the aura is so strong that
                                 your melee attacks (weapon as well as martial
-                                arts will be branded by it (cold brand).
+                                arts will be branded by it (cold brand) and
+                                you are granted resistance to cold.
                                 The aura is automatically enabled when you
                                 train the skill; you can disable the aura in
                                 the 'm' menu. Typing '/ex' command into chat
