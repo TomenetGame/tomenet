@@ -1610,9 +1610,9 @@ static void display_inven(void) {
 		if (c_cfg.show_weights && o_ptr->weight) {
 			wgt = o_ptr->weight * o_ptr->number;
 			if (wgt < 10000) /* still fitting into 3 digits? */
-				(void)sprintf(tmp_val, "%3li.%1li lb", wgt / 10, wgt % 10);
+				(void)sprintf(tmp_val, "%3li.%1li lb ", wgt / 10, wgt % 10);
 			else
-				(void)sprintf(tmp_val, "%3lik%1li lb", wgt / 10000, (wgt % 10000) / 1000);
+				(void)sprintf(tmp_val, "%3lik%1li lb ", wgt / 10000, (wgt % 10000) / 1000);
 			Term_putstr(71, i, -1, TERM_WHITE, tmp_val);
 		}
 	}
@@ -1685,9 +1685,9 @@ static void display_equip(void) {
 		if (c_cfg.show_weights && o_ptr->weight) {
 			wgt = o_ptr->weight * o_ptr->number;
 			if (wgt < 10000) /* still fitting into 3 digits? */
-				(void)sprintf(tmp_val, "%3li.%1li lb", wgt / 10, wgt % 10);
+				(void)sprintf(tmp_val, "%3li.%1li lb ", wgt / 10, wgt % 10);
 			else
-				(void)sprintf(tmp_val, "%3lik%1li lb", wgt / 10000, (wgt % 10000) / 1000);
+				(void)sprintf(tmp_val, "%3lik%1li lb ", wgt / 10000, (wgt % 10000) / 1000);
 
 			/* for 'greyed out' flexibility hack */
 			if (o_ptr->attr == TERM_L_DARK)
