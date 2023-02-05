@@ -7863,7 +7863,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					break;
 				}
 				if (!tries) msg_format(Ind, "Re-rolling failed (out of tries (10000))!");
-				else msg_format(Ind, "Re-rolled randart in inventory slot %d (Tries: %d).", atoi(token[1]), 10000 + 1 - tries);
+				else msg_format(Ind, "Re-rolled randart in inventory slot %d (Tries: %d).", k, 10000 + 1 - tries);
 				if (o_ptr->tval == TV_RING || o_ptr->tval == TV_AMULET) {
 					o_ptr->to_a = ta;
 					o_ptr->to_d = td;
@@ -7917,7 +7917,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					tries++;
 				}
 				if (!tries) msg_format(Ind, "Re-rolling failed, %d tries.", tries);
-				else msg_format(Ind, "Re-rolled randart in inventory slot %d (Tries: %d).", atoi(token[1]), tries);
+				else msg_format(Ind, "Re-rolled randart in inventory slot %d (Tries: %d).", k, tries);
 
 				o_ptr->ident |= ID_MENTAL; /* *id*ed */
 				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
@@ -7941,10 +7941,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				o_ptr->timeout = 0;
 				o_ptr->timeout_magic = 0;
 				o_ptr->recharging = 0;
+
 				return;/* see create_reward for proper loop */
+
 				apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, TRUE, TRUE, TRUE, FALSE, RESF_NOART);
 
-				msg_format(Ind, "Re-rolled ego in inventory slot %d!", atoi(token[1]));
+				msg_format(Ind, "Re-rolled ego in inventory slot %d!", k);
 				/* Window stuff */
 				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 				return;
