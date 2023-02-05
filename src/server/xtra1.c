@@ -3921,7 +3921,7 @@ void calc_boni(int Ind) {
 			/* maybe: strip 'the' too */
 			if (tmp_name_ptr[0] == 't' && tmp_name_ptr[1] == 'h' && tmp_name_ptr[2] == 'e' && tmp_name_ptr[3] == ' ') tmp_name_ptr += 4;
 #endif
-			msg_format(Ind, "TRUE (%2d): tmp_name_ptr='%s'", i, tmp_name_ptr);//debug
+			//msg_format(Ind, "TRUE (%2d): tmp_name_ptr='%s'", i, tmp_name_ptr);//debug
 
 			/* compare to all previous items (lower index) */
 			for (j = 0; j < i - INVEN_WIELD; j++)
