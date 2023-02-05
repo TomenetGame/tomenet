@@ -8367,6 +8367,8 @@ static bool run_test(int Ind) {
 			case FEAT_SHAFT_UP:
 			case FEAT_SHAFT_DOWN:
 			case FEAT_BETWEEN:
+			case FEAT_CYCLIC_LESS:
+			case FEAT_CYCLIC_MORE:
 			case FEAT_BEACON:
 				/* Option -- ignore */
 				if (p_ptr->find_ignore_stairs && !in_deathfate2(wpos)) notice = FALSE;

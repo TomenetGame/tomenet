@@ -2483,6 +2483,9 @@
 
 #define FEAT_INN		134
 
+#define FEAT_CYCLIC_LESS	135
+#define FEAT_CYCLIC_MORE	136
+
 #define FEAT_PERM_MAGMA		0x9F
 #define FEAT_BETWEEN		0xA0 /* 160 */
 
@@ -2552,7 +2555,7 @@
 
 #define is_stair(feat) \
 	((feat) == FEAT_MORE || (feat) == FEAT_LESS || (feat) == FEAT_WAY_MORE || (feat) == FEAT_WAY_LESS || \
-	(feat) == FEAT_BETWEEN || (feat) == FEAT_BEACON)
+	(feat) == FEAT_BETWEEN || (feat) == FEAT_BEACON || (feat) == FEAT_CYCLIC_MORE || (feat) == FEAT_CYCLIC_LESS)
 
 /* For aquatic monsters/players: These feats can always be passed without damaging/impairing them. */
 #define is_always_passable(feat) \
@@ -6723,6 +6726,7 @@
 #define DF3_DARK		0x10000000L	/* All unlit levels */
 #define DF3_NO_DARK		0x20000000L	/* Don't build unlit levels */
 #define DF3_SALT_WATER		0x40000000L	/* Dungeon has salt water instead of freshwater */
+#define DF3_CYCLIC_STAIRS	0x80000000L	/* Final level gets further stairs in dungeon's traversal direction generated that will lead out via (wpos-z-hack) */
 
 /* all flags that may modify a custom 'wilderness' (type 0) dungeon's appearance, 'theming' it,
    without changing its main flags (set by admin on dungeon creation) too much */
@@ -6811,6 +6815,8 @@
 #define LF2_NO_SPAWN		0x02000000L	/* disallow any monster spawn, even at level generation time. Monsters must be placed manually, hard-codedly, if desired. */
 #define LF2_BROKEN		0x04000000L	/* Control generation of broken feats. */
 #define LF2_NO_RUNES		0x08000000L	/* Disallow runes of protection on this floor */
+
+#define LF2_CYCLIC_STAIRS	0x10000000L	/* This level (final level) will generate further stairs in dungeon traversal direction, leading out (via wpos-z-hack) */
 
 
 /* vault flags for v_info */

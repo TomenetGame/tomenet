@@ -8793,6 +8793,11 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		}
 	}
 
+	/* Last level of the dungeon actually has further stairs leading out (ie will actually act like a word-of-recall)? */
+	if (d_ptr && (d_ptr->flags3 & DF3_CYCLIC_STAIRS) &&
+	    ((wpos->wz < 0 && wild_info[wpos->wy][wpos->wx].dungeon->maxdepth == -wpos->wz) ||
+	    (wpos->wz > 0 && wild_info[wpos->wy][wpos->wx].tower->maxdepth == wpos->wz)))
+		dun->l_ptr->flags2 |= LF2_CYCLIC_STAIRS;
 
 	/* Dungeon towns */
 	random_town_allowed = TRUE;
@@ -8901,7 +8906,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 #endif
 
 	/* So as not to generate too 'crowded' levels */
-	dun->ratio = 100 * dun->l_ptr->wid * dun->l_ptr->hgt / MAX_HGT / MAX_WID;
+	dun->ratio = (100 * dun->l_ptr->wid * dun->l_ptr->hgt) / MAX_HGT / MAX_WID;
 
 	/* Possible cavern */
 	if (rand_int(dun_lev) > DUN_CAVERN && magik(DUN_CAVERN2)) {
@@ -9352,6 +9357,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		   or rogues could cloak-scum for them to be next to each other (albeit ridiculously tedious probably, *probably*..) */
 		} else if (!netherrealm_bottom(wpos)) {
 			struct stairs_list stairs[5];
+
 			for (i = 0; i != 5 - 1; i++) stairs[i].x = -1; /* init usable elements */
 			stairs[i].y = -1; /* mark final 'terminator' element */
 
@@ -9375,6 +9381,56 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 				alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, 1, 2, NULL);
 		}
 
+	}
+
+	/* Generate special pseudo-staircases leading out of the dungeon */
+	if ((dun->l_ptr->flags2 & LF2_CYCLIC_STAIRS) && wpos->wz) { //wz check is paranoia
+		int num = (2 * dun->ratio) / 100 + 1, walls = 3;
+		int y = 5, x = 5, i, j, flag, tries; /* initialise x,y to kill compiler warnings */
+		int emergency_flag = TRUE, new_feat;
+
+		if (wpos->wz < 0) new_feat = FEAT_CYCLIC_MORE;
+		else new_feat = FEAT_CYCLIC_LESS;
+
+		/* Place "num" stairs */
+		for (i = 0; i < num; i++) {
+			tries = 1000; /* don't hang again. extremely rare though. wonder what the situation was like. */
+
+			/* Place some stairs */
+			for (flag = FALSE; !flag && tries; tries--) {
+				/* Try several times, then decrease "walls" */
+				for (j = 0; !flag && j <= 3000; j++) {
+					/* Pick a random grid */
+					y = 1 + rand_int(dun->l_ptr->hgt - 2);
+					x = 1 + rand_int(dun->l_ptr->wid - 2);
+
+					/* Require "naked" floor grid */
+					if (!cave_naked_bold(zcave, y, x)) continue;
+
+					/* No stairs inside nests/pits */
+					if (zcave[y][x].info & CAVE_NEST_PIT) continue;
+
+					/* Require a certain number of adjacent walls */
+					if (next_to_walls(wpos, y, x) < walls) continue;
+
+					/* Access the grid */
+					c_ptr = &zcave[y][x];
+
+					if (new_feat != -1) {
+						c_ptr->feat = new_feat;
+						aquatic_terrain_hack(zcave, x, y);
+					}
+
+					/* All done */
+					flag = TRUE;
+					emergency_flag = FALSE;
+				}
+
+				/* Require fewer walls */
+				if (walls) walls--;
+			}
+		}
+		if (emergency_flag) s_printf("Cyclic-Staircase-generation emergency at (%d, %d, %d)\n", wpos->wx, wpos->wy, wpos->wz);
 	}
 
 	/* Training Tower hack: Prevent those rare but occurring '<' on 50ft that completely entomb the newbie -_-
@@ -11685,6 +11741,7 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr) {
 	}
 	// Disabled to prevent log spam on live server
 	//s_printf("%s: Level generation took %d.%06d seconds.\n", __func__, (int)time_delta.tv_sec, (int)time_delta.tv_usec);
+	(void)num; //suppress 'unused' compiler warning
 }
 
 /* (Can ONLY be used on surface worldmap sectors.)

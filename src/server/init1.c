@@ -1184,7 +1184,7 @@ static cptr d_info_flags3[] = {
 	"DARK",
 	"NO_DARK",
 	"SALT_WATER",
-	"",
+	"CYCLIC_STAIRS",
 };
 
 #endif	// 1

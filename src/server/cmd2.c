@@ -223,6 +223,40 @@ void do_cmd_go_up(int Ind) {
 	/* Player grid */
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
+	if (c_ptr->feat == FEAT_CYCLIC_LESS) {
+		/* Hack -- take a turn */
+		p_ptr->energy -= level_speed(wpos);
+
+		/* Hack: Leave the dungeon, as we're taking a 'physical staircase out'! */
+		un_afk_idle(Ind);
+
+		everyone_lite_spot_move(Ind, wpos, p_ptr->py, p_ptr->px);
+		forget_lite(Ind);
+		forget_view(Ind);
+		p_ptr->energy -= level_speed(wpos);
+		p_ptr->new_level_method = LEVEL_GHOST;
+		wpcopy(&old_wpos, wpos);
+		wpos->wz = 0;
+		new_players_on_depth(&old_wpos, -1, TRUE);
+		p_ptr->new_level_flag = TRUE;
+		new_players_on_depth(wpos, 1, TRUE);
+
+		msg_format(Ind, "\377%cYou leave %s..", COLOUR_DUNGEON, get_dun_name(old_wpos.wx, old_wpos.wy, TRUE, wild_info[old_wpos.wy][old_wpos.wx].tower, 0, FALSE));
+#ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
+		if (p_ptr->party)
+		for (i = 1; i <= NumPlayers; i++) {
+		        if (Players[i]->conn == NOT_CONNECTED) continue;
+			if (i == Ind) continue;
+			if (p_ptr->admin_dm && cfg.secret_dungeon_master && !is_admin(Players[i])) continue;
+			if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
+			if (Players[i]->party == p_ptr->party)
+				msg_format(i, "\374\377G[\377%c%s has left %s..\377G]", COLOUR_DUNGEON, p_ptr->name, get_dun_name(old_wpos.wx, old_wpos.wy, TRUE, wild_info[old_wpos.wy][old_wpos.wx].tower, 0, FALSE));
+		}
+#endif
+		set_invuln_short(Ind, STAIR_GOI_LENGTH);
+		return;
+	}
+
 	/* Verify stairs if not a ghost, or admin wizard */
 	if (!is_admin(p_ptr) &&
 	    c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS &&
@@ -952,10 +986,10 @@ void do_cmd_go_down(int Ind) {
 
 	/* Hack -- Enter a store (and between gates, etc) */
 	if ((!p_ptr->ghost || is_admin(p_ptr)) &&
-			(c_ptr->feat == FEAT_SHOP))
+	    (c_ptr->feat == FEAT_SHOP))
 #if 0
-			(c_ptr->feat >= FEAT_SHOP_HEAD) &&
-			(c_ptr->feat <= FEAT_SHOP_TAIL))
+	    (c_ptr->feat >= FEAT_SHOP_HEAD) &&
+	    (c_ptr->feat <= FEAT_SHOP_TAIL))
 #endif	// 0
 	{
 		/* Disturb */
@@ -964,6 +998,31 @@ void do_cmd_go_down(int Ind) {
 		/* Hack -- Enter store */
 		command_new = '_';
 		do_cmd_store(Ind);
+		return;
+	}
+
+	if ((p_ptr->mode & MODE_DED_IDDC) && surface) {
+		if ((p_ptr->wpos.wx != WPOS_IRONDEEPDIVE_X || p_ptr->wpos.wy != WPOS_IRONDEEPDIVE_Y || -1 != WPOS_IRONDEEPDIVE_Z)
+#ifdef DED_IDDC_MANDOS
+		    && (p_ptr->wpos.wx != hallsofmandos_wpos_x || p_ptr->wpos.wy != hallsofmandos_wpos_y || -1 != hallsofmandos_wpos_z)
+#endif
+		    ) {
+#ifdef DED_IDDC_MANDOS
+			msg_print(Ind, "\377yYou may only enter the Ironman Deep Dive Challenge or the Halls of Mandos!");
+#else
+			msg_print(Ind, "\377yYou may not enter any other dungeon besides the Ironman Deep Dive Challenge!");
+#endif
+			return;
+		}
+#ifdef DED_IDDC_AWARE
+		for (i = 0; i < MAX_K_IDX; i++)
+			if (magik(DED_IDDC_AWARE)) p_ptr->obj_aware[i] = TRUE;
+		obtained = TRUE;
+#endif
+	}
+
+	if (cfg.runlevel < 5 && surface) {
+		msg_print(Ind, "The dungeon is closed");
 		return;
 	}
 
@@ -1057,28 +1116,37 @@ void do_cmd_go_down(int Ind) {
 		/* not transported? strange.. */
 	}
 
-	if ((p_ptr->mode & MODE_DED_IDDC) && surface) {
-		if ((p_ptr->wpos.wx != WPOS_IRONDEEPDIVE_X || p_ptr->wpos.wy != WPOS_IRONDEEPDIVE_Y || -1 != WPOS_IRONDEEPDIVE_Z)
-#ifdef DED_IDDC_MANDOS
-		    && (p_ptr->wpos.wx != hallsofmandos_wpos_x || p_ptr->wpos.wy != hallsofmandos_wpos_y || -1 != hallsofmandos_wpos_z)
-#endif
-		    ) {
-#ifdef DED_IDDC_MANDOS
-			msg_print(Ind, "\377yYou may only enter the Ironman Deep Dive Challenge or the Halls of Mandos!");
-#else
-			msg_print(Ind, "\377yYou may not enter any other dungeon besides the Ironman Deep Dive Challenge!");
-#endif
-			return;
-		}
-#ifdef DED_IDDC_AWARE
-		for (i = 0; i < MAX_K_IDX; i++)
-			if (magik(DED_IDDC_AWARE)) p_ptr->obj_aware[i] = TRUE;
-		obtained = TRUE;
-#endif
-	}
+	if (c_ptr->feat == FEAT_CYCLIC_MORE) {
+		/* Hack -- take a turn */
+		p_ptr->energy -= level_speed(wpos);
 
-	if (cfg.runlevel < 5 && surface) {
-		msg_print(Ind, "The dungeon is closed");
+		/* Hack: Leave the dungeon, as we're taking a 'physical staircase out'! */
+		un_afk_idle(Ind);
+
+		everyone_lite_spot_move(Ind, wpos, p_ptr->py, p_ptr->px);
+		forget_lite(Ind);
+		forget_view(Ind);
+		p_ptr->energy -= level_speed(wpos);
+		p_ptr->new_level_method = LEVEL_GHOST;
+		wpcopy(&old_wpos, wpos);
+		wpos->wz = 0;
+		new_players_on_depth(&old_wpos, -1, TRUE);
+		p_ptr->new_level_flag = TRUE;
+		new_players_on_depth(wpos, 1, TRUE);
+
+		msg_format(Ind, "\377%cYou leave %s..", COLOUR_DUNGEON, get_dun_name(old_wpos.wx, old_wpos.wy, TRUE, wild_info[old_wpos.wy][old_wpos.wx].tower, 0, FALSE));
+#ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
+		if (p_ptr->party)
+		for (i = 1; i <= NumPlayers; i++) {
+		        if (Players[i]->conn == NOT_CONNECTED) continue;
+			if (i == Ind) continue;
+			if (p_ptr->admin_dm && cfg.secret_dungeon_master && !is_admin(Players[i])) continue;
+			if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
+			if (Players[i]->party == p_ptr->party)
+				msg_format(i, "\374\377G[\377%c%s has left %s..\377G]", COLOUR_DUNGEON, p_ptr->name, get_dun_name(old_wpos.wx, old_wpos.wy, TRUE, wild_info[old_wpos.wy][old_wpos.wx].tower, 0, FALSE));
+		}
+#endif
+		set_invuln_short(Ind, STAIR_GOI_LENGTH);
 		return;
 	}
 

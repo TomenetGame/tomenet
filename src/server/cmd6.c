@@ -2496,18 +2496,15 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			cptr ins = quark_str(o_ptr->note);
 			bool floor = TRUE;
 			bool jail = FALSE;
+
 			msg_print(Ind, "This is a house creation scroll.");
 			ident = TRUE;
 			if (ins) {
 				while ((*ins != '\0')) {
 					if (*ins == '@') {
 						ins++;
-						if (*ins == 'F') {
-							floor = FALSE;
-						}
-						if (*ins == 'J') {
-							jail = TRUE;
-						}
+						if (*ins == 'F') floor = FALSE;
+						if (*ins == 'J') jail = TRUE;
 					}
 					ins++;
 				}

@@ -983,8 +983,20 @@ G:.:u
 F:FLOOR | CAN_RUN | SUPPORT_LIGHT | NO_ARTICLE
 F:DONT_NOTICE_RUNNING | PROTECTED | LAMP_LITE_OPTIONAL | NO_SHADE | REMEMBER
 
+#special cyclic staircase 'up' to leave a dungeon in traversal direction at the final floor
+N:135:staircase leading out
+G:<:w
+F:FLOOR | PERMANENT | NOTICE | SUPPORT_LIGHT | REMEMBER | CAN_RUN
+D:0:A staircase leading out
 
-# HOLE 135..158 -------------------------------------------------------------
+#special cyclic staircase 'down' to leave a dungeon in traversal direction at the final floor
+N:136:staircase leading out
+G:>:w
+F:FLOOR | PERMANENT | NOTICE | SUPPORT_LIGHT | REMEMBER | CAN_RUN
+D:0:A staircase leading out
+
+
+# HOLE 137..158 -------------------------------------------------------------
 
 
 #permanent magma vein

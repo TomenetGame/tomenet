@@ -4489,6 +4489,9 @@ static byte priority_table[][2] = {
 	{ FEAT_SHAFT_UP, 25 },
 	{ FEAT_SHAFT_DOWN, 25 },
 
+	{ FEAT_CYCLIC_LESS, 25 },
+	{ FEAT_CYCLIC_MORE, 25 },
+
 	/* Event Beacon (Dungeon Keeper) */
 	{ FEAT_BEACON, 26 },
 
@@ -8971,6 +8974,8 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	case FEAT_WAY_LESS:
 	case FEAT_BETWEEN:
 	case FEAT_BEACON:
+	case FEAT_CYCLIC_MORE:
+	case FEAT_CYCLIC_LESS:
 		break;
 
 	/* forgot any? just paranoia */
