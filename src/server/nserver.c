@@ -2391,7 +2391,7 @@ static void sync_options(int Ind, bool *options) {
 			else p_ptr->alert_mana = options[101];
 			p_ptr->exp_bar = options[103];//just for tracking this feature's popularity =P
 			p_ptr->consistent_players = options[104];
-			p_ptr->flash_self = options[105] ? 0 : -1;
+			p_ptr->flash_self = options[105] ? FALSE : TRUE;
 
 			if (is_older_than(&p_ptr->version, 4, 5, 8, 2, 0, 0)) {
 				p_ptr->alert_offpanel_dam = FALSE;
