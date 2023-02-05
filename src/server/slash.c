@@ -10820,7 +10820,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* Base flags for any jail dungeon */
 				d_ptr->flags3 = DF3_JAIL_DUNGEON | DF3_CYCLIC_STAIRS;
 				/* Make it a bit special/interesting :o */
-				//d_ptr->flags3 |= DF3_NO_TELE | DF3_NO_SUMMON | DF3_LIMIT_ESP | DF3_DARK; //DF3_NO_ESP | --and no magic mapping? :-s
+				d_ptr->flags3 |= DF3_DARK;
+				d_ptr->flags2 |= DF2_NO_MAGIC_MAP;
+				//d_ptr->flags3 |= DF3_NO_TELE | DF3_NO_SUMMON | DF3_LIMIT_ESP; //DF3_NO_ESP |
 				msg_print(Ind, "Jail-specific flags set.");
 				return;
 			}
