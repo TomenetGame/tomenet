@@ -3843,20 +3843,19 @@ void calc_boni(int Ind) {
 	p_ptr->to_h_tmp += p_ptr->focus_val;
 #endif
 
-	/* Scan the usable inventory */
+	/* Scan the equipment */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
-		o_ptr = &p_ptr->inventory[i];
-		k_ptr = &k_info[o_ptr->k_idx];
 		char32_t c;
 		byte a;
 
-		pval = o_ptr->pval;
-
+		o_ptr = &p_ptr->inventory[i];
 		/* Skip missing items */
 		if (!o_ptr->k_idx) {
-			csheet_boni[i-INVEN_WIELD].cb[12] |= CB13_XNOEQ; //Nothing equipped, grey out the table column
+			csheet_boni[i - INVEN_WIELD].cb[12] |= CB13_XNOEQ; //Nothing equipped, grey out the table column
 			continue;
 		}
+		k_ptr = &k_info[o_ptr->k_idx];
+		pval = o_ptr->pval;
 
 		/* Set item display info */
 		get_object_visuals(&c, &a, o_ptr, p_ptr);
@@ -3879,6 +3878,8 @@ void calc_boni(int Ind) {
 		if (o_ptr->name1 == ART_RANDART && !(o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPECIAL)) {
 			/* paranoia maybe? Make sure name4 field has been set: */
 			randart_name(o_ptr, NULL, tmp_name);
+			//msg_format(Ind, "RAND (%2d): tmp_name='%s'", i, tmp_name);//debug
+
 			/* compare to all previous items (lower index) */
 			for (j = 0; j < i - INVEN_WIELD; j++)
 				if (equipment_set[j] == o_ptr->name4 + 1) {
@@ -3904,19 +3905,25 @@ void calc_boni(int Ind) {
 		else if (o_ptr->name1 && o_ptr->name1 != ART_RANDART) {
 			strcpy(tmp_name, a_name + a_info[o_ptr->name1].name);
 			tmp_name_ptr = tmp_name;
+
+			/* Specialty for true art rings of power: Check for extended base name "<item> < of power> 'of <name>|<name'" and skip the 'of power' extension: */
+			if (!strncasecmp(tmp_name, "of power ", 9)) tmp_name_ptr += 9;
+
 			/* trim leading and terminating ' characters */
-			if (tmp_name[0] == '\'') {
+			if (tmp_name_ptr[0] == '\'') {
 				tmp_name_ptr++;
-				tmp_name[strlen(tmp_name_ptr)] = 0;
-			/* trim leading "of " */
-			} else if (tmp_name[0] == 'o' && tmp_name[1] == 'f' && tmp_name[2] == ' ')
-				tmp_name_ptr += 3;
+				tmp_name_ptr[strlen(tmp_name_ptr) - 1] = 0;
+			} else {
+				/* trim leading "of " */
+				if (tmp_name_ptr[0] == 'o' && tmp_name_ptr[1] == 'f' && tmp_name_ptr[2] == ' ') tmp_name_ptr += 3;
+			}
 #if 1
 			/* maybe: strip 'the' too */
-			if (tmp_name_ptr[0] == 't' && tmp_name_ptr[1] == 'h' && tmp_name_ptr[2] == 'e' && tmp_name_ptr[3] == ' ')
-				tmp_name_ptr += 4;
+			if (tmp_name_ptr[0] == 't' && tmp_name_ptr[1] == 'h' && tmp_name_ptr[2] == 'e' && tmp_name_ptr[3] == ' ') tmp_name_ptr += 4;
 #endif
-			/* compare */
+			msg_format(Ind, "TRUE (%2d): tmp_name_ptr='%s'", i, tmp_name_ptr);//debug
+
+			/* compare to all previous items (lower index) */
 			for (j = 0; j < i - INVEN_WIELD; j++)
 				if (!strcmp(equipment_set_name[j], tmp_name_ptr)) {
 					equipment_set_amount[j]++;
