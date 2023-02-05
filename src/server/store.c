@@ -416,7 +416,7 @@ static int player_store_factor(object_type *o_ptr, bool modified) {
 */
 u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 	u32b price = 0;
-	monster_race *r_ptr;
+	monster_race *r_ptr = &r_info[0]; //slay (unfounded) compiler warning
 	u64b r_val = 0;
 
 	if (o_ptr->pval) {
