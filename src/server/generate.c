@@ -8773,10 +8773,11 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	if (d_ptr && (d_ptr->flags2 & DF2_IRON)
 	    && !(d_ptr->flags2 & DF2_NO_EXIT_WOR)) {
 		if ((wpos->wz < 0 && wild_info[wpos->wy][wpos->wx].dungeon->maxdepth == -wpos->wz) ||
-		    (wpos->wz > 0 && wild_info[wpos->wy][wpos->wx].tower->maxdepth == wpos->wz))
-			dun->l_ptr->flags1 |= LF1_IRON_RECALL;
+		    (wpos->wz > 0 && wild_info[wpos->wy][wpos->wx].tower->maxdepth == wpos->wz)) {
+			/* Exit-stairs actually inhibit recall option! */
+			if (!(d_ptr->flags3 & DF3_CYCLIC_STAIRS)) dun->l_ptr->flags1 |= LF1_IRON_RECALL;
 		/* IRONMAN allows recalling sometimes, if IRONFIX or IRONRND */
-		else if (d_ptr && (dun_lev >= 20) && ( /* was 30 */
+		} else if (d_ptr && (dun_lev >= 20) && ( /* was 30 */
 		    (!(p_ptr->temp_misc_1 & 0x10) &&
 		    (((d_ptr->flags2 & DF2_IRONRND1) && magik(20)) ||
 		    ((d_ptr->flags2 & DF2_IRONRND2) && magik(12)) ||

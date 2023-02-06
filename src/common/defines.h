@@ -6726,7 +6726,7 @@
 #define DF3_DARK		0x10000000L	/* All unlit levels */
 #define DF3_NO_DARK		0x20000000L	/* Don't build unlit levels */
 #define DF3_SALT_WATER		0x40000000L	/* Dungeon has salt water instead of freshwater */
-#define DF3_CYCLIC_STAIRS	0x80000000L	/* Final level gets further stairs in dungeon's traversal direction generated that will lead out via (wpos-z-hack) */
+#define DF3_CYCLIC_STAIRS	0x80000000L	/* Final level gets further stairs in dungeon's traversal direction generated that will lead out via (wpos-z-hack). This will inhibit LF1_IRON_RECALL flag! */
 
 /* all flags that may modify a custom 'wilderness' (type 0) dungeon's appearance, 'theming' it,
    without changing its main flags (set by admin on dungeon creation) too much */
@@ -6816,7 +6816,7 @@
 #define LF2_BROKEN		0x04000000L	/* Control generation of broken feats. */
 #define LF2_NO_RUNES		0x08000000L	/* Disallow runes of protection on this floor */
 
-#define LF2_CYCLIC_STAIRS	0x10000000L	/* This level (final level) will generate further stairs in dungeon traversal direction, leading out (via wpos-z-hack) */
+#define LF2_CYCLIC_STAIRS	0x10000000L	/* This level (final level) will generate further stairs in dungeon traversal direction, leading out (via wpos-z-hack). This will inhibit LF1_IRON_RECALL flag! */
 
 
 /* vault flags for v_info */
