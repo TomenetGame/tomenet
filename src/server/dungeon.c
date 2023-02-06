@@ -11992,3 +11992,14 @@ bool cold_place(struct worldpos *wpos) {
 
 	return cold;
 }
+
+/* Apply flags for jail dungeons aka escape tunnels */
+void apply_jail_flags(u32b *f1, u32b *f2, u32b *f3) {
+	/* Base flags for any jail dungeon */
+	*f1 |= DF1_UNLISTED;
+	*f3 = DF3_JAIL_DUNGEON | DF3_CYCLIC_STAIRS;
+	/* Make it a bit special/interesting :o */
+	*f3 |= DF3_DARK;
+	*f2 |= DF2_NO_MAGIC_MAP;
+	//*f3 |= DF3_NO_TELE | DF3_NO_SUMMON | DF3_LIMIT_ESP; //DF3_NO_ESP |
+}

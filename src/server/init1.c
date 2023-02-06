@@ -1099,7 +1099,7 @@ static cptr d_info_flags1[] = {
 	"SAND_VEIN",
 	"CIRCULAR_ROOMS",
 	"EMPTY",
-	"DAMAGE_FEAT",
+	"UNLISTED",
 	"FLAT",
 	"TOWER",
 

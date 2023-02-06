@@ -6600,7 +6600,7 @@
 #define DF1_CIRCULAR_ROOMS	0x00080000L	/* Allow circular rooms */
 
 #define DF1_EMPTY		0x00100000L	/* All arena levels */
-#define DF1_DAMAGE_FEAT		0x00200000L	/* --- UNUSED */
+#define DF1_UNLISTED		0x00200000L	/* This dungeon won't be listed in players' dungeon lists (~8, cmd4.c) or info stores (eg mathom house, store.c) */
 #define DF1_FLAT		0x00400000L	/* Creates paths to next areas at edge of level, like Barrowdowns */
 #define DF1_TOWER		0x00800000L	/* You start at bottom and go up rather than the reverse */
 
@@ -6615,11 +6615,11 @@
 #define DF1_NO_STREAMERS	0x80000000L	/* No streamers (water, lava, trees) */
 
 /* all flags that may modify a custom 'wilderness' (type 0) dungeon's appearance, 'theming' it,
-   without changing its main flags (set my admin on dungeon creation) too much */
+   without changing its main flags (set by admin on dungeon creation) too much */
 #define DF1_THEME_MASK \
 	(DF1_MAZE | DF1_SMALL | DF1_SMALLEST | DF1_BIG | DF1_NO_DOORS | DF1_WATER_RIVER | DF1_LAVA_RIVER | \
 	DF1_WATER_RIVERS | DF1_WATER_RIVERS | DF1_CAVE | DF1_CAVERN | DF1_HOT | DF1_COLD | \
-	DF1_FORGET | DF1_NO_DESTROY | DF1_SAND_VEIN | DF1_CIRCULAR_ROOMS | DF1_EMPTY | DF1_DAMAGE_FEAT | \
+	DF1_FORGET | DF1_NO_DESTROY | DF1_SAND_VEIN | DF1_CIRCULAR_ROOMS | DF1_EMPTY | \
 	DF1_DOUBLE | DF1_LIFE_LEVEL | DF1_EVOLVE | DF1_NO_STREAMERS)
 
 
@@ -6681,7 +6681,7 @@
 #define DF2_NO_EXIT_MASK	(DF2_NO_EXIT_STAIR | DF2_NO_EXIT_WOR | DF2_NO_EXIT_PROB | DF2_NO_EXIT_FLOAT)
 
 /* all flags that may modify a custom 'wilderness' (type 0) dungeon's appearance, 'theming' it,
-   without changing its main flags (set my admin on dungeon creation) too much */
+   without changing its main flags (set by admin on dungeon creation) too much */
 #define DF2_THEME_MASK \
 	(DF2_NO_MAGIC_MAP | \
 	DF2_ADJUST_LEVEL_1_2)

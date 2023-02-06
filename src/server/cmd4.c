@@ -2450,7 +2450,7 @@ void do_cmd_knowledge_dungeons(int Ind) {
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 			    (d_ptr->known || admin) &&
 #endif
-			    ((d_ptr->type != DI_VALINOR && !(d_ptr->flags3 & DF3_JAIL_DUNGEON)) || admin) &&
+			    (!(d_ptr->flags1 & DF1_UNLISTED) || admin) &&
 			    (d_ptr->type || d_ptr->theme != DI_DEATH_FATE || admin)) {
 				i = d_ptr->type;
 
@@ -2571,7 +2571,7 @@ void do_cmd_knowledge_dungeons(int Ind) {
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 			    (d_ptr->known || admin) &&
 #endif
-			    ((d_ptr->type != DI_VALINOR && !(d_ptr->flags3 & DF3_JAIL_DUNGEON)) || admin) &&
+			    (!(d_ptr->flags1 & DF1_UNLISTED) || admin) &&
 			    (d_ptr->type || d_ptr->theme != DI_DEATH_FATE || admin)) {
 				i = d_ptr->type;
 

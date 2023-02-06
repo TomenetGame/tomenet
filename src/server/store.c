@@ -6788,14 +6788,16 @@ void view_exploration_records(int Ind) {
 		/* only show those dungeons that have been discovered */
 		if (dungeon_tower[i]) {
 			if (!wild_info[dungeon_y[i]][dungeon_x[i]].tower->known) continue;
-			/* Skip jail dungeons? */
-			if (wild_info[dungeon_y[i]][dungeon_x[i]].tower->flags3 & DF3_JAIL_DUNGEON) continue;
 		} else {
 			if (!wild_info[dungeon_y[i]][dungeon_x[i]].dungeon->known) continue;
-			/* Skip jail dungeons? */
-			if (wild_info[dungeon_y[i]][dungeon_x[i]].dungeon->flags3 & DF3_JAIL_DUNGEON) continue;
 		}
 #endif
+		/* Not to be listed dungeon? */
+		if (dungeon_tower[i]) {
+			if (wild_info[dungeon_y[i]][dungeon_x[i]].tower->flags1 & DF1_UNLISTED) continue;
+		} else {
+			if (wild_info[dungeon_y[i]][dungeon_x[i]].dungeon->flags1 & DF1_UNLISTED) continue;
+		}
 
 		/* only show those dungeons that have been well-explored! */
 		if (dungeon_bonus[i] >= 2) continue;
@@ -6861,8 +6863,8 @@ void view_exploration_history(int Ind) {
 		if (admin) known = 0x1 + 0x2 + 0x4 + 0x8;
 		if (!known) continue;
 
-		/* Skip jail dungeons? */
-		if (d_ptr->flags3 & DF3_JAIL_DUNGEON) continue;
+		/* Not to be listed dungeon? */
+		if (d_ptr->flags1 & DF1_UNLISTED) continue;
  #if 0
 		/* exclude IDDC */
 		if (dungeon_x[i] == WPOS_IRONDEEPDIVE_X &&

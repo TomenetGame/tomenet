@@ -10819,12 +10819,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (c_ptr->feat == FEAT_LESS) d_ptr = wild->tower;
 				else d_ptr = wild->dungeon;
 
-				/* Base flags for any jail dungeon */
-				d_ptr->flags3 = DF3_JAIL_DUNGEON | DF3_CYCLIC_STAIRS;
-				/* Make it a bit special/interesting :o */
-				d_ptr->flags3 |= DF3_DARK;
-				d_ptr->flags2 |= DF2_NO_MAGIC_MAP;
-				//d_ptr->flags3 |= DF3_NO_TELE | DF3_NO_SUMMON | DF3_LIMIT_ESP; //DF3_NO_ESP |
+				apply_jail_flags(&d_ptr->flags1, &d_ptr->flags2, &d_ptr->flags3);
 				msg_print(Ind, "Jail-specific flags set.");
 				return;
 			}
