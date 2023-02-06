@@ -2445,7 +2445,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output, int max_len) {
 	FILE    *fp;
 	char    buf[1024];
 	int     line = 0, counter, test, numentries;
-	int     line_num = 0;
+	//int     line_num = 0;
 	//bool    found = FALSE;
 
 
@@ -2463,7 +2463,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output, int max_len) {
 		/* Get a line from the file */
 		if (my_fgets(fp, buf, 1024, FALSE) == 0) {
 			/* Count the lines */
-			line_num++;
+			//line_num++;
 
 			/* Look for lines starting with 'N:' */
 			if ((buf[0] == 'N') && (buf[1] == ':')) {
@@ -2498,7 +2498,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output, int max_len) {
 		/* Get the line */
 		if (my_fgets(fp, buf, 1024, FALSE) == 0) {
 			/* Count the lines */
-			line_num++;
+			//line_num++;
 
 			/* Look for the number of entries */
 			if (isdigit(buf[0])) {
@@ -2508,7 +2508,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output, int max_len) {
 			}
 		} else {
 			/* Count the lines */
-			line_num++;
+			//line_num++;
 
 			my_fclose(fp);
 			return(-1);
@@ -2522,7 +2522,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output, int max_len) {
 		/* Get the random line */
 		for (counter = 0; counter <= line; counter++) {
 			/* Count the lines */
-			line_num++;
+			//line_num++;
 
 			/* Try to read the line */
 			if (my_fgets(fp, buf, 1024, FALSE) == 0) {
@@ -2555,7 +2555,7 @@ errr read_lines_to_memory(cptr file_name, char ***lines_out, int *num_lines_out)
 	FILE    *fp = NULL;
 	char    buf[1024];
 	int     counter = 0, numentries = 0;
-	int     line_num = 0;
+	//int     line_num = 0;
 	//bool    found = FALSE;
 
 
@@ -2573,7 +2573,7 @@ errr read_lines_to_memory(cptr file_name, char ***lines_out, int *num_lines_out)
 		/* Get a line from the file */
 		if (my_fgets(fp, buf, 1024, FALSE) == 0) {
 			/* Count the lines */
-			line_num++;
+			//line_num++;
 
 			/* Look for lines starting with 'N:' */
 			if ((buf[0] == 'N') && (buf[1] == ':')) {
@@ -2592,7 +2592,7 @@ errr read_lines_to_memory(cptr file_name, char ***lines_out, int *num_lines_out)
 		/* Get the line */
 		if (my_fgets(fp, buf, 1024, FALSE) == 0) {
 			/* Count the lines */
-			line_num++;
+			//line_num++;
 
 			/* Look for the number of entries */
 			if (isdigit(buf[0])) {
@@ -2602,7 +2602,7 @@ errr read_lines_to_memory(cptr file_name, char ***lines_out, int *num_lines_out)
 			}
 		} else {
 			/* Count the lines */
-			line_num++;
+			//line_num++;
 
 			my_fclose(fp);
 			return(-1);
@@ -2615,7 +2615,7 @@ errr read_lines_to_memory(cptr file_name, char ***lines_out, int *num_lines_out)
 	/* Read all entries */
 	for (counter = 0; counter < numentries; counter++) {
 		/* Count the lines */
-		line_num++;
+		//line_num++;
 
 		/* Try to read the line */
 		if (my_fgets(fp, buf, 1024, FALSE) == 0) {
