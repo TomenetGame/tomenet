@@ -6788,8 +6788,12 @@ void view_exploration_records(int Ind) {
 		/* only show those dungeons that have been discovered */
 		if (dungeon_tower[i]) {
 			if (!wild_info[dungeon_y[i]][dungeon_x[i]].tower->known) continue;
+			/* Skip jail dungeons? */
+			if (wild_info[dungeon_y[i]][dungeon_x[i]].tower->flags3 & DF3_JAIL_DUNGEON) continue;
 		} else {
 			if (!wild_info[dungeon_y[i]][dungeon_x[i]].dungeon->known) continue;
+			/* Skip jail dungeons? */
+			if (wild_info[dungeon_y[i]][dungeon_x[i]].dungeon->flags3 & DF3_JAIL_DUNGEON) continue;
 		}
 #endif
 
@@ -6857,6 +6861,8 @@ void view_exploration_history(int Ind) {
 		if (admin) known = 0x1 + 0x2 + 0x4 + 0x8;
 		if (!known) continue;
 
+		/* Skip jail dungeons? */
+		if (d_ptr->flags3 & DF3_JAIL_DUNGEON) continue;
  #if 0
 		/* exclude IDDC */
 		if (dungeon_x[i] == WPOS_IRONDEEPDIVE_X &&
