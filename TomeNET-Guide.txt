@@ -7537,10 +7537,9 @@ Note that jails (if the server has one) don't allow any sort of teleportation,
 nor will you turn into a ghost if you get killed there, instead you will get
 destroyed completely (basically same as if you were a no-ghost mode char).
 
-A jail usually has an ironman tower or dungeon inside. It has no deeper meaning
-and is certainly not required or recommended to take. If you're up for a pretty
-hard extra challenge and take it, you'll be a free man or woman if you make it
-out alive, though.
+A jail often has an ironman tower or dungeon inside, constituting an escape
+tunnel. If you don't feel like sitting out your punishment you could try taking
+your chances to escape. If you make it out alive you'll be a free man or woman.
 
 
 
