@@ -3807,7 +3807,6 @@ static void process_player_begin(int Ind) {
 
 	/* for AT_VALINOR: */
 	int i, x, y, xstart = 0, ystart = 0, ox, oy;
-	dungeon_type *d_ptr;
 	cave_type **zcave;
 	dun_level *l_ptr;
 
@@ -3841,33 +3840,15 @@ static void process_player_begin(int Ind) {
 		zcave = getcave(wpos);
 		l_ptr = getfloor(wpos);
 #endif
-#if 1
-		for (y = 0; y < MAX_WILD_Y; y++) {
-			for (x = 0; x < MAX_WILD_X; x++) {
-				if ((d_ptr = wild_info[y][x].tower) && (!strcmp(d_name + d_info[d_ptr->type].name, "The Shores of Valinor"))) {
-					p_ptr->recall_pos.wx = x;
-					p_ptr->recall_pos.wy = y;
-					p_ptr->recall_pos.wz = 1;
-					//p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
-					p_ptr->new_level_method = LEVEL_RAND;
-					recall_player(Ind, "");
-					break;
-				}
-				if ((d_ptr = wild_info[y][x].dungeon) && (!strcmp(d_name + d_info[d_ptr->type].name, "The Shores of Valinor"))) {
-					p_ptr->recall_pos.wx = x;
-					p_ptr->recall_pos.wy = y;
-					p_ptr->recall_pos.wz = -1;
-					// let's try LEVEL_OUTSIDE_RAND (5) instead of LEVEL_OUTSIDE (4) - C. Blue :)
-					//p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
-					p_ptr->new_level_method = LEVEL_RAND;
-					recall_player(Ind, "");
-					break;
-				}
-			}
-		}
+		p_ptr->recall_pos.wx = valinor_wpos_x;
+		p_ptr->recall_pos.wy = valinor_wpos_y;
+		p_ptr->recall_pos.wz = valinor_wpos_z;
+		// let's try LEVEL_OUTSIDE_RAND (5) instead of LEVEL_OUTSIDE (4) - C. Blue :)
+		//p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+		p_ptr->new_level_method = LEVEL_RAND;
+		recall_player(Ind, "");
 		p_ptr->auto_transport = AT_VALINOR2;
 		break;
-#endif
 	case AT_VALINOR2: /* (re-)generate Valinor from scratch; move player into position; lite it up for the show; place 'monsters' */
 		zcave = getcave(&p_ptr->wpos);
 		l_ptr = getfloor(&p_ptr->wpos);
@@ -3966,7 +3947,6 @@ static void process_player_begin(int Ind) {
 		p_ptr->auto_transport = 0;
 		p_ptr->recall_pos.wx = p_ptr->wpos.wx;
 		p_ptr->recall_pos.wy = p_ptr->wpos.wy;
-		d_ptr = getdungeon(&p_ptr->wpos);
 		//switch dungeon - assume that there is no other dungeon/tower on same wpos as Death Fate!
 		if (p_ptr->wpos.wz < 0) {
 			p_ptr->recall_pos.wz = 1;

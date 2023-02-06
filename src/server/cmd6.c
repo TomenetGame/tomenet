@@ -3051,7 +3051,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 					}
 				}
 
-				if (!strcmp(d_info[d_no].name + d_name, "The Shores of Valinor")) break;
+				if (d_info[d_no].flags1 & DF1_UNLISTED) break;
 
 				for (y = 0; y < MAX_WILD_Y; y++)
 				for (x = 0; x < MAX_WILD_X; x++) {
@@ -3107,11 +3107,11 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 
 				/* Exclude (temporary) event dungeons at (0,0), including PvP arena */
 				if (x || y) {
-					if ((d_ptr = wild->tower) && d_ptr->type != DI_VALINOR && !(!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)) {
+					if ((d_ptr = wild->tower) && !(d_ptr->flags1 & DF1_UNLISTED) && !(!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)) {
 						msg_print(Ind, "\377sYou learn that there is a tower at or next to that location, called:");
 						msg_format(Ind, "\377s  '\377u%s\377s'", get_dun_name(x, y, TRUE, d_ptr, 0, TRUE));
 					}
-					if ((d_ptr = wild->dungeon) && d_ptr->type != DI_VALINOR && !(!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)) {
+					if ((d_ptr = wild->dungeon) && !(d_ptr->flags1 & DF1_UNLISTED) && !(!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)) {
 						msg_print(Ind, "\377sYou learn that there is a dungeon at or next to that location, called:");
 						msg_format(Ind, "\377s  '\377u%s\377s'", get_dun_name(x, y, FALSE, d_ptr, 0, TRUE));
 					}

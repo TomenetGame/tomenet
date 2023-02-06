@@ -4843,12 +4843,12 @@ static void wild_display_map(int Ind, char mode) {
 					if (!x && !y) dun = tow = NULL;
 					/* Skip special stuff */
 					if (dun) {
-						if (dun->type == DI_VALINOR ||
+						if ((dun->flags1 & DF1_UNLISTED) ||
 						    (!dun->type && dun->theme == DI_DEATH_FATE))
 							dun = NULL;
 					}
 					if (tow) {
-						if (tow->type == DI_VALINOR ||
+						if ((tow->flags1 & DF1_UNLISTED) ||
 						    (!tow->type && tow->theme == DI_DEATH_FATE))
 							tow = NULL;
 					}

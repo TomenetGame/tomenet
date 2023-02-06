@@ -6772,6 +6772,7 @@ void view_exploration_records(int Ind) {
 	FILE *fff;
 	char file_name[MAX_PATH_LENGTH];
 	bool none = TRUE;
+	struct dungeon_type *d_ptr;
 
 	/* Temporary file */
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
@@ -6784,35 +6785,28 @@ void view_exploration_records(int Ind) {
 
 	/* output the actual list */
 	for (i = 1; i <= dungeon_id_max; i++) {
+		if (dungeon_tower[i]) d_ptr = wild_info[dungeon_y[i]][dungeon_x[i]].tower;
+		else d_ptr = wild_info[dungeon_y[i]][dungeon_x[i]].dungeon;
+
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 		/* only show those dungeons that have been discovered */
-		if (dungeon_tower[i]) {
-			if (!wild_info[dungeon_y[i]][dungeon_x[i]].tower->known) continue;
-		} else {
-			if (!wild_info[dungeon_y[i]][dungeon_x[i]].dungeon->known) continue;
-		}
+		if (!d_ptr->known) continue;
 #endif
-		/* Not to be listed dungeon? */
-		if (dungeon_tower[i]) {
-			if (wild_info[dungeon_y[i]][dungeon_x[i]].tower->flags1 & DF1_UNLISTED) continue;
-		} else {
-			if (wild_info[dungeon_y[i]][dungeon_x[i]].dungeon->flags1 & DF1_UNLISTED) continue;
-		}
 
-		/* only show those dungeons that have been well-explored! */
-		if (dungeon_bonus[i] >= 2) continue;
+		/* Not to be listed dungeon? */
+		if (d_ptr->flags1 & DF1_UNLISTED) continue;
 		/* exclude IDDC */
 		if (dungeon_x[i] == WPOS_IRONDEEPDIVE_X &&
 		    dungeon_y[i] == WPOS_IRONDEEPDIVE_Y &&
 		    dungeon_tower[i] == (WPOS_IRONDEEPDIVE_Z > 0))
 			continue;
-		/* exclude Valinor */
-		if (dungeon_x[i] == valinor_wpos_x &&
-		    dungeon_y[i] == valinor_wpos_y &&
-		    dungeon_tower[i] == (valinor_wpos_z > 0))
-			continue;
 		/* exclude event dungeons, those are at (0,0) */
 		if (!dungeon_x[i] && !dungeon_y[i]) continue;
+		/* exclude DF-type stuff */
+		if (!d_ptr->type && d_ptr->theme == DI_DEATH_FATE) continue;
+
+		/* only show those dungeons that have been well-explored! */
+		if (dungeon_bonus[i] >= 2) continue;
 
 		none = FALSE;
 		fprintf(fff, "             \377u%-30s %s\n",
@@ -6872,11 +6866,6 @@ void view_exploration_history(int Ind) {
 		    dungeon_tower[i] == (WPOS_IRONDEEPDIVE_Z > 0))
 			continue;
  #endif
-		/* exclude Valinor */
-		if (dungeon_x[i] == valinor_wpos_x &&
-		    dungeon_y[i] == valinor_wpos_y &&
-		    dungeon_tower[i] == (valinor_wpos_z > 0))
-			continue;
 		/* exclude event dungeons, those are at (0,0), also covers the pvp-arena */
 		if (!dungeon_x[i] && !dungeon_y[i]) continue;
 		/* exclude DF-type stuff */
