@@ -9554,17 +9554,19 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	    !(r_ptr->flags3 & RF3_IM_COLD)) {
 	    //(r_info[p_ptr->body_monster].flags3 & (RF3_ANIMAL | RF3_IM_COLD)) == (RF3_ANIMAL | RF3_IM_COLD)))) {
 		if (magik(70 - r_ptr->level)) {
+			force_random_movement = TRUE;
+			/* Oily floor */
 			if (c_ptr->info & CAVE_SLIPPERY) {
 				c_ptr->info &= ~CAVE_SLIPPERY;
 				msg_print_near_monster(m_idx, "slips on the oily floor.");
-			} else msg_print_near_monster(m_idx, "slips on the oily floor.");
-			force_random_movement = TRUE;
-			/* Additionally confuse for a moment */
-			if (m_ptr->confused < 3 &&
-			    !m_ptr->questor_invincible && !(r_ptr->flags7 & RF7_NO_DEATH) &&
-			    !(r_ptr->flags3 & RF3_NO_CONF) && !(r_ptr->flags4 & RF4_BR_CONF) &&
-			    !(r_ptr->flags4 & RF4_BR_CHAO) && !(r_ptr->flags9 & RF9_RES_CHAOS))
-				m_ptr->confused = 3;
+				/* Additionally confuse for a moment */
+				if (m_ptr->confused < 3 &&
+				    !m_ptr->questor_invincible && !(r_ptr->flags7 & RF7_NO_DEATH) &&
+				    !(r_ptr->flags3 & RF3_NO_CONF) && !(r_ptr->flags4 & RF4_BR_CONF) &&
+				    !(r_ptr->flags4 & RF4_BR_CHAO) && !(r_ptr->flags9 & RF9_RES_CHAOS))
+					m_ptr->confused = 3;
+			/* Icy floor */
+			} else msg_print_near_monster(m_idx, "slips on the icy floor.");
 		}
 	}
 
