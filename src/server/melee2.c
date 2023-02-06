@@ -8679,7 +8679,7 @@ static player_type *get_melee_target(monster_race *r_ptr, monster_type *m_ptr, c
 		int i, p_idx_chosen = p_idx_target, reason;
 		int p_idx[9], targets = 0;
 		int p_idx_weak[9], p_idx_medium[9];//, p_idx_strong[9];
-		int weak_targets = 0, medium_targets = 0, strong_targets = 0;
+		int weak_targets = 0, medium_targets = 0;//, strong_targets = 0;
 		int p_idx_low[9], low_targets = 0, lowest_target_level = 100, highest_target_level = 0;
 		cave_type *cd_ptr;
 		int p_idx_non_distracting[9], non_distracting_targets = 0;
@@ -8826,7 +8826,7 @@ static player_type *get_melee_target(monster_race *r_ptr, monster_type *m_ptr, c
 
 				switch (target_toughness) {
 				case 2:
-					strong_targets++;
+					//strong_targets++;
 					//p_idx_strong[strong_targets] = -cd_ptr->m_idx;
 					break;
 				case 1:
@@ -9559,6 +9559,12 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 				msg_print_near_monster(m_idx, "slips on the oily floor.");
 			} else msg_print_near_monster(m_idx, "slips on the oily floor.");
 			force_random_movement = TRUE;
+			/* Additionally confuse for a moment */
+			if (m_ptr->confused < 3 &&
+			    !m_ptr->questor_invincible && !(r_ptr->flags7 & RF7_NO_DEATH) &&
+			    !(r_ptr->flags3 & RF3_NO_CONF) && !(r_ptr->flags4 & RF4_BR_CONF) &&
+			    !(r_ptr->flags4 & RF4_BR_CHAO) && !(r_ptr->flags9 & RF9_RES_CHAOS))
+				m_ptr->confused = 3;
 		}
 	}
 
