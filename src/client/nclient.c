@@ -1667,8 +1667,7 @@ int Net_start(int sex, int race, int class) {
 	 * Sockbuf_advance(&rbuf, 3);
 	 * Actually process any leftover commands in rbuf
 	 */
-	if (Net_packet() == -1)
-		return(-1);
+	if (Net_packet() == -1) return(-1);
 
 	errno = 0;
 	return(0);
@@ -1820,10 +1819,11 @@ int Receive_reply(int *replyto, int *result) {
 	byte type, ch1, ch2;
 
 	n = Packet_scanf(&rbuf, "%c%c%c", &type, &ch1, &ch2);
-	if (n <= 0)
-		return(n);
+	if (n <= 0) return(n);
 	if (n != 3 || type != PKT_REPLY) {
 		plog("Can't receive reply packet");
+		*replyto = -1;
+		*result = -1;
 		return(1);
 	}
 	*replyto = ch1;
