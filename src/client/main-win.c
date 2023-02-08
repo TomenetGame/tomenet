@@ -1588,7 +1588,6 @@ static errr term_force_font(term_data *td, cptr name) {
 	int prev_font_hgt = td->font_hgt;
 #endif
 
-
 #ifdef USE_LOGFONT
 	td->font_id = CreateFontIndirect(&(td->lf));
 	if (!td->font_id) return(1);
@@ -1646,19 +1645,15 @@ static errr term_force_font(term_data *td, cptr name) {
 	/* Terminate */
 	base[i] = '\0';
 
-
 	/* Build base_font */
 	strcpy(base_font, base);
 	strcat(base_font, ".FON");
 
-
 	/* Access the font file */
 	path_build(buf, 1024, ANGBAND_DIR_XTRA_FONT, base_font);
 
-
 	/* Verify file */
 	if (!check_file(buf)) return(1);
-
 
 	/* Save new font name */
 	td->font_file = string_make(buf);
@@ -4276,6 +4271,7 @@ const char* get_font_name(int term_idx) {
 }
 void set_font_name(int term_idx, char* fnt) {
 	char fnt2[256], *fnt_ptr = fnt;
+
 	while (strchr(fnt_ptr, '\\')) fnt_ptr = strchr(fnt_ptr, '\\') + 1;
 	strcpy(fnt2, fnt_ptr);
 	term_force_font(&data[term_idx], fnt2);
