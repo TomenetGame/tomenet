@@ -1223,7 +1223,7 @@ static void load_prefs_aux(term_data *td, cptr sec_name) {
 		/* Only the rc/ini file determines big_map state now! It is not saved anywhere else! */
 		if (screen_hgt <= SCREEN_HGT) global_c_cfg_big_map = FALSE;
 		else global_c_cfg_big_map = TRUE;
-		resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
+		//resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT); -- visual system not yet initialized! ->segfault
 #endif
 	}
 
