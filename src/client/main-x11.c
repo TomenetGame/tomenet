@@ -2790,6 +2790,14 @@ errr init_x11(void) {
 
 #ifdef USE_GRAPHICS
 	if (use_graphics) {
+		char path[1024];
+		char filename[1024];
+		int width = 0, height = 0;
+		char *data = NULL;
+		errr rerr = 0;
+		int depth, x, y;
+		Visual *visual;
+
 		/* Load graphics file. Quit if file missing or load error. */
 
 		/* Check for tiles string & extract tiles width & height. */
@@ -2807,21 +2815,14 @@ errr init_x11(void) {
 		init_stuff();
 
 		/* Build & allocate the graphics path. */
-		char path[1024];
-
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "graphics");
 		ANGBAND_DIR_XTRA_GRAPHICS = string_make(path);
 
 		/* Build the name of the graphics file. */
-		char filename[1024];
-
 		path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, graphic_tiles);
 		strcat(filename, ".bmp");
 
 		/* Load .bmp image. */
-		int width = 0, height = 0;
-		char *data = NULL;
-		errr rerr = 0;
 
 		if (0 != (rerr = ReadBMPData(filename, &data, &width, &height))) {
 			fprintf(stderr, "Graphics file \"%s\" ", filename);
@@ -2848,8 +2849,8 @@ errr init_x11(void) {
 		createMasksFromData(data, width, height, &graphics_bgmask, &graphics_fgmask);
 
 		/* Store loaded image data in XImage format */
-		int depth = DefaultDepth(Metadpy->dpy, DefaultScreen(Metadpy->dpy));
-		Visual *visual = DefaultVisual(Metadpy->dpy, DefaultScreen(Metadpy->dpy));
+		depth = DefaultDepth(Metadpy->dpy, DefaultScreen(Metadpy->dpy));
+		visual = DefaultVisual(Metadpy->dpy, DefaultScreen(Metadpy->dpy));
 		graphics_image = XCreateImage(
 				Metadpy->dpy, visual, depth, ZPixmap, 0 /*offset*/,
 				data, width, height, 32 /*bitmap_pad*/, 0 /*bytes_per_line*/);
@@ -2857,8 +2858,8 @@ errr init_x11(void) {
 		/* Speedup Hack. Don't create and allocate pixel if default depth is 24bit. Is this kosher? */
 		if (depth != 24) {
 			/* Allocate color for each pixel and rewrite in image */
-			for (int y = 0; y < height; y++) {
-				for (int x = 0; x < width; x++) {
+			for (y = 0; y < height; y++) {
+				for (x = 0; x < width; x++) {
 					XPutPixel(graphics_image, x, y, create_pixel(Metadpy->dpy, data[4*(x+y*width)], data[4*(x+y*width)+1], data[4*(x+y*width)+2]));
 				}
 			}

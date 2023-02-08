@@ -9898,11 +9898,6 @@ void do_cmd_options(void) {
 			/* BIG_MAP is currently not supported in GCU client */
 			if (!strcmp(ANGBAND_SYS, "gcu")) {
 				c_message_add("\377ySorry, big_map is not available in the GCU (command-line) client.");
- #if 0 /* superfluous */
-				global_c_cfg_big_map = FALSE;
-				screen_hgt = SCREEN_HGT;
-				if (playing) Send_screen_dimensions();
- #endif
 				continue;
 			}
 
