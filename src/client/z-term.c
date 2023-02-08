@@ -3370,28 +3370,32 @@ errr term_init(term *t, int w, int h, int k) {
 
 /* Validates the screen terminal dimensions and changes them if they are not valid.
  * In this case the 'cols' and 'rows' is set to nearest lower valid value and if there is no such one, than to nearest higher valid value. */
-void validate_term_screen_dimensions(int *cols, int *rows) {
+bool validate_term_screen_dimensions(int *cols, int *rows) {
 	s16b wid = (s16b)(*cols) - SCREEN_PAD_X;
 	s16b hgt = (s16b)(*rows) - SCREEN_PAD_Y;
-	validate_screen_dimensions(&wid, &hgt);
+	bool res = validate_screen_dimensions(&wid, &hgt);
+
 	(*cols) = wid + SCREEN_PAD_X;
 	(*rows) = hgt + SCREEN_PAD_Y;
+	return(res);
 }
 
 /* Validates the dimensions for terminal under index 'term_idx'.
  * If the index is invalid, cols and rows will be set to 0.
  * If the dimensions for terminal are invalid, they will be changed to valid values.
  * In this case the 'cols' and 'rows' is set to nearest lower valid value and if there is no such one, than to nearest higher valid value. */
-void validate_term_dimensions(int term_idx, int *cols, int *rows) {
+bool validate_term_dimensions(int term_idx, int *cols, int *rows) {
+	bool res = FALSE;
+
 	if (term_idx < 0 || term_idx >= ANGBAND_TERM_MAX) {
 		(*cols) = 0;
 		(*rows) = 0;
-		return;
+		return(FALSE);
 	}
-	if (term_idx == 0) {
-		validate_term_screen_dimensions(cols, rows);
-	} else {
+	if (term_idx == 0) res = validate_term_screen_dimensions(cols, rows);
+	else {
 		if ((*cols) < 1) (*cols) = 1;
 		if ((*rows) < 1) (*rows) = 1;
 	}
+	return(res);
 }

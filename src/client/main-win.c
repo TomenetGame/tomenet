@@ -3169,8 +3169,8 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 			c_cfg.big_map = val;
 #else
 			/* Remember final size values from WM_SIZE -> SIZE_RESTORED */
-			if ((screen_term_rows == 24 && global_c_cfg_big_map) ||
-			    (screen_term_rows == 46 && !global_c_cfg_big_map)) {
+			if ((screen_term_rows != 24 && !global_c_cfg_big_map) ||
+			    (screen_term_rows != 46 && global_c_cfg_big_map)) {
 				bool val = !global_c_cfg_big_map;
 
 				global_c_cfg_big_map = val;

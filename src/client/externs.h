@@ -981,7 +981,7 @@ extern struct u32b_char_dict_t *u32b_char_dict_set(struct u32b_char_dict_t *star
 extern char *u32b_char_dict_get(struct u32b_char_dict_t *start, uint32_t key);
 extern struct u32b_char_dict_t *u32b_char_dict_unset(struct u32b_char_dict_t *start, uint32_t key);
 extern struct u32b_char_dict_t *u32b_char_dict_free(struct u32b_char_dict_t *start);
-extern void validate_screen_dimensions(s16b *width, s16b *height);
+extern bool validate_screen_dimensions(s16b *width, s16b *height);
 extern int distance(int y1, int x1, int y2, int x2);
 
 /* common/files.c */

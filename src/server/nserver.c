@@ -5179,7 +5179,7 @@ static int Receive_play(int ind) {
 			connp->Client_setup.screen_hgt = screen_hgt_32b;
 
 			/* fix limits */
-			validate_screen_dimensions(&connp->Client_setup.screen_wid, &connp->Client_setup.screen_hgt);
+			(void)validate_screen_dimensions(&connp->Client_setup.screen_wid, &connp->Client_setup.screen_hgt);
 		} else {
 			connp->Client_setup.screen_wid = SCREEN_WID;
 			connp->Client_setup.screen_hgt = SCREEN_HGT;
@@ -12774,7 +12774,7 @@ static int Receive_screen_dimensions(int ind) {
 
 
 		/* fix limits */
-		validate_screen_dimensions(&p_ptr->screen_wid, &p_ptr->screen_hgt);
+		(void)validate_screen_dimensions(&p_ptr->screen_wid, &p_ptr->screen_hgt);
 
 		connp->Client_setup.screen_wid = p_ptr->screen_wid;
 		connp->Client_setup.screen_hgt = p_ptr->screen_hgt;

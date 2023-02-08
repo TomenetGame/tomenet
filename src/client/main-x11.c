@@ -1258,7 +1258,7 @@ static errr Infowin_set_size_hints(int x, int y, int w, int h, int b, int r_w, i
 	sh->height = h;
 	sh->width_inc = r_w;
 	sh->height_inc = r_h;
-  sh->base_width = 2 * b;
+	sh->base_width = 2 * b;
 	sh->base_height = 2 * b;
 
 	/* Useful settings */
@@ -1331,7 +1331,7 @@ static void react_keypress(XEvent *xev) {
 	mo = (ev->state & Mod1Mask) ? TRUE : FALSE;
 
 	/* This is the NumLock state and usually it only causes problems - mikaelh */
-//	mx = (ev->state & Mod2Mask) ? TRUE : FALSE;
+	//mx = (ev->state & Mod2Mask) ? TRUE : FALSE;
 	mx = FALSE;
 
 
@@ -1403,12 +1403,12 @@ static void react_keypress(XEvent *xev) {
  */
 static void resize_window_x11_timers_handle(void) {
 	struct timeval now = {0, 0};
+
 	for (int t_idx = 0; t_idx < ANGBAND_TERM_MAX; t_idx++) {
 		term_data *td = term_idx_to_term_data(t_idx);
+
 		if (td->resize_timer.tv_usec != 0 || td->resize_timer.tv_sec != 0) {
-			if (now.tv_usec == 0 && now.tv_sec == 0) {
-				gettimeofday(&now, NULL);
-			}
+			if (now.tv_usec == 0 && now.tv_sec == 0) gettimeofday(&now, NULL);
 			if (now.tv_sec > td->resize_timer.tv_sec || (now.tv_sec == td->resize_timer.tv_sec && now.tv_usec > td->resize_timer.tv_usec)) {
 				td->resize_timer.tv_sec=0;
 				td->resize_timer.tv_usec=0;
@@ -3151,20 +3151,23 @@ void terminal_window_real_coords_x11(int term_idx, int *ret_x, int *ret_y) {
  * When the window is the main window, update the screen globals, handle bigmap and notify server if in game.
  */
 void resize_window_x11(int term_idx, int cols, int rows) {
+	bool rounding_down;
+
 	/* The 'term_idx_to_term_data()' returns '&screen' if 'term_idx' is out of bounds and it is not desired to resize screen terminal window in that case, so validate before. */
 	if (term_idx < 0 || term_idx >= ANGBAND_TERM_MAX) return;
 	term_data *td = term_idx_to_term_data(term_idx);
 
 	/* Clear timer. */
 	if (td->resize_timer.tv_sec > 0 || td->resize_timer.tv_usec > 0) {
-		td->resize_timer.tv_sec=0;
-		td->resize_timer.tv_usec=0;
+		td->resize_timer.tv_sec = 0;
+		td->resize_timer.tv_usec = 0;
 	}
 
 	/* Validate input dimensions. */
 	/* Our 'term_data' indexes in 'term_idx' are the same as 'ang_term' indexes so it's safe to use 'validate_term_dimensions()'. */
-	validate_term_dimensions(term_idx, &cols, &rows);
-
+	rounding_down = validate_term_dimensions(term_idx, &cols, &rows);
+	/* Are we actually enlarging the window? */
+	if (td == &screen && rounding_down && screen_hgt == SCREEN_HGT) rows = MAX_SCREEN_HGT + SCREEN_PAD_Y;
 
 	/* Calculate dimensions in pixels. */
 	int wid_inner = cols * td->fnt->wid;
@@ -3207,7 +3210,21 @@ void resize_window_x11(int term_idx, int cols, int rows) {
 		int new_screen_cols = cols - SCREEN_PAD_X;
 		int new_screen_rows = rows - SCREEN_PAD_Y;
 
+		/* avoid bottom line of garbage left from big_screen when shrinking to normal screen.. oO */
+		if (new_screen_rows < screen_hgt) clear_from(SCREEN_HGT + SCREEN_PAD_Y - 1);
+
 		if (screen_wid != new_screen_cols || screen_hgt != new_screen_rows) {
+#if 1 /* actually since we already do proper calcs for 'rows = ' above with rounding_down and also in validate_screen_dimensions(), this whole if-block here is 100% redundant! but w/e */
+			/* allow only 22 and 44 map lines (normal vs big_map) */
+			if (new_screen_rows <= SCREEN_HGT)
+				new_screen_rows = SCREEN_HGT;
+			else if (new_screen_rows < MAX_SCREEN_HGT) { //can currently not happen, because validate_screen_dimensions() will cut it down; we use rounding_down as workaround!
+				/* are we enlarging or shrinking the window? */
+				if (screen_hgt < new_screen_rows) new_screen_rows = MAX_SCREEN_HGT;
+				else new_screen_rows = SCREEN_HGT;
+			} else new_screen_rows = MAX_SCREEN_HGT;
+#endif
+
 			screen_wid = new_screen_cols;
 			screen_hgt = new_screen_rows;
 

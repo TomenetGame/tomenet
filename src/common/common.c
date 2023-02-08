@@ -920,23 +920,41 @@ struct u32b_char_dict_t *u32b_char_dict_free(struct u32b_char_dict_t *start) {
 }
 
 /* Validates provided screen dimensions. If the input dimensions are invalid, they will be changed to valid dimensions.
- * In this case the 'width' and 'height' is set to nearest lower valid value and if there is no such one, than to nearest higher valid value. */
-void validate_screen_dimensions(s16b *width, s16b *height) {
+ * In this case the 'width' and 'height' is set to nearest lower valid value and if there is no such one, than to nearest higher valid value.
+ * For big_map: Returns TRUE if rounding down to SCREEN_HGT from a value > SCREEN_HGT. */
+bool validate_screen_dimensions(s16b *width, s16b *height) {
 	s16b wid = *width, hgt = *height;
+	bool rounding_down = FALSE;
+
 #ifdef BIG_MAP
 	if (wid > MAX_SCREEN_WID) wid = MAX_SCREEN_WID;
 	if (wid < MIN_SCREEN_WID) wid = MIN_SCREEN_WID;
 	if (hgt > MAX_SCREEN_HGT) hgt = MAX_SCREEN_HGT;
 	if (hgt < MIN_SCREEN_HGT) hgt = MIN_SCREEN_HGT;
+ #if 0
 	/* for now until resolved: avoid dimensions whose half values aren't divisors of MAX_WID/HGT */
 	if (MAX_WID % (wid / 2)) wid = SCREEN_WID;
-	if (MAX_HGT % (hgt / 2)) hgt = SCREEN_HGT;
+	if (MAX_HGT % (hgt / 2)) {
+		if (hgt > SCREEN_HGT) rounding_down = TRUE;
+		hgt = SCREEN_HGT;
+	}
+ #else
+	/* just avoid invalid main window dimensions */
+	wid = SCREEN_WID;
+	if (hgt >= MAX_SCREEN_HGT) hgt = MAX_SCREEN_HGT;
+	else if (hgt > SCREEN_HGT) {
+		hgt = SCREEN_HGT;
+		rounding_down = TRUE;
+	} else hgt = SCREEN_HGT;
+ #endif
 #else
 	wid = SCREEN_WID;
 	hgt = SCREEN_HGT;
 #endif
 	(*width) = wid;
 	(*height) = hgt;
+
+	return(rounding_down);
 }
 
 /*
