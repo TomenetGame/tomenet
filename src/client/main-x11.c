@@ -3150,7 +3150,6 @@ void terminal_window_real_coords_x11(int term_idx, int *ret_x, int *ret_y) {
  * When the window is the main window, update the screen globals, handle bigmap and notify server if in game.
  */
 void resize_window_x11(int term_idx, int cols, int rows) {
-
 	/* The 'term_idx_to_term_data()' returns '&screen' if 'term_idx' is out of bounds and it is not desired to resize screen terminal window in that case, so validate before. */
 	if (term_idx < 0 || term_idx >= ANGBAND_TERM_MAX) return;
 	term_data *td = term_idx_to_term_data(term_idx);
@@ -3213,6 +3212,7 @@ void resize_window_x11(int term_idx, int cols, int rows) {
 
 			if (in_game) {
 				/* Switch big_map mode . */
+#ifndef GLOBAL_BIG_MAP
 				if (Client_setup.options[CO_BIGMAP] && rows == DEFAULT_TERM_HGT) {
 					/* Turn off big_map. */
 					c_cfg.big_map = FALSE;
@@ -3222,6 +3222,15 @@ void resize_window_x11(int term_idx, int cols, int rows) {
 					c_cfg.big_map = TRUE;
 					Client_setup.options[CO_BIGMAP] = TRUE;
 				}
+#else
+				if (global_c_cfg_big_map && rows == DEFAULT_TERM_HGT) {
+					/* Turn off big_map. */
+					global_c_cfg_big_map = FALSE;
+				} else if (!global_c_cfg_big_map && rows != DEFAULT_TERM_HGT) {
+					/* Turn on big_map. */
+					global_c_cfg_big_map = TRUE;
+				}
+#endif
 				/* Notify server and ask for a redraw. */
 				Send_screen_dimensions();
 			}

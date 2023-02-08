@@ -223,6 +223,9 @@ byte save_chat = 0;
 
 
 client_opts c_cfg;
+#ifdef GLOBAL_BIG_MAP
+bool global_c_cfg_big_map = FALSE;
+#endif
 
 u32b sflags3 = 0x0, sflags2 = 0x0, sflags1 = 0x0, sflags0 = 0x0;
 byte client_mode = CLIENT_NORMAL;
@@ -443,7 +446,10 @@ char last_prompt[MSG_LEN] = { 0 };
 bool last_prompt_macro = FALSE;
 
 int screen_wid = SCREEN_WID, screen_hgt = SCREEN_HGT;
-bool bigmap_hint = TRUE, global_big_map_hold = FALSE, firstrun = TRUE;
+bool bigmap_hint = TRUE, firstrun = TRUE;
+#ifndef GLOBAL_BIG_MAP
+bool global_big_map_hold = FALSE;
+#endif
 bool in_game = FALSE;
 bool rand_term_lamp;
 int rand_term_lamp_ticks;

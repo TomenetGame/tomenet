@@ -199,8 +199,13 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.page_on_afk_privmsg,	TRUE,	1,	0, 6, TRUE,
 	    "page_on_afk_privmsg",	"Beep when receiving a private message while AFK" },
 
+#ifndef GLOBAL_BIG_MAP
 	{ &c_cfg.big_map,		FALSE,	1,	0, 7, TRUE,
 	    "big_map",			"Double height of the map shown in the main window" },
+#else
+	{ &c_cfg.big_map,		FALSE,	1,	0, 7, FALSE,
+	    "big_map",			"Double height of the map shown in the main window" },
+#endif
 
 	{ &c_cfg.font_map_solid_walls,	TRUE,	1,	0, 8, TRUE,
 	    "font_map_solid_walls",	"Certain fonts only: Walls look like solid blocks" },

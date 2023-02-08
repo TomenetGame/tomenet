@@ -867,7 +867,6 @@ errr init_gcu(void) {
 	/*term *t = &term_screen_body;*/
 	int num_term = 4, next_win = 0;
 
-
 	/* hack -- work on Xfce4's 'Terminal' without requiring the user to set this */
 	if (!getenv("TERM") ||
 	    (!strcmp(getenv("TERM"), "xterm") &&
@@ -877,11 +876,16 @@ errr init_gcu(void) {
 	/* Graphic tiles are not supported in GCU client */
 	use_graphics = FALSE;
 
+#ifndef GLOBAL_BIG_MAP
 	/* BIG_MAP is currently not supported in GCU client */
 	c_cfg.big_map = FALSE;
 	Client_setup.options[CO_BIGMAP] = FALSE;
 	(*option_info[CO_BIGMAP].o_var) = FALSE;
 	screen_hgt = SCREEN_HGT;
+#else
+	global_c_cfg_big_map = FALSE;
+	screen_hgt = SCREEN_HGT;
+#endif
 
 	/* Hack for now: Palette animation seems to cause segfault on login in command-line client */
 	//no effect here, as it gets reset by check_immediate_options()

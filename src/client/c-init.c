@@ -209,10 +209,15 @@ void initialize_main_pref_files(void) {
 
 
 	if (!strcmp(ANGBAND_SYS, "gcu")) {
+#ifndef GLOBAL_BIG_MAP
 		/* Hack: command-line client cannot handle big_map */
 		c_cfg.big_map = FALSE;
 		(*option_info[CO_BIGMAP].o_var) = FALSE;
 		Client_setup.options[CO_BIGMAP] = FALSE;
+#else
+		/* And new way (no longer a toggleable option): */
+		global_c_cfg_big_map = FALSE;
+#endif
 
 		/* Hack for now: Palette animation seems to cause segfault on login in command-line client */
 		//no effect here, as it gets reset by check_immediate_options()
@@ -3167,9 +3172,11 @@ static void Input_loop(void) {
 		return;
 	}
 
+#ifndef GLOBAL_BIG_MAP
 	/* In case we loaded .prf files that modified our screen dimensions,
 	   we have to resend them. - C. Blue */
 	Send_screen_dimensions();
+#endif
 
 	/* For term-resizing hacks */
 	in_game = TRUE;
@@ -3961,6 +3968,7 @@ void client_init(char *argv1, bool skip) {
 	prt(format("Name        : %s", cname), 2, 1);
 #endif
 
+#ifndef GLOBAL_BIG_MAP
 	/* Put actual screen size changes from loading option files on hold
 	   until we've finished loading ALL option files,
 	   instead of switching and glitching back and forth.
@@ -3969,6 +3977,7 @@ void client_init(char *argv1, bool skip) {
 	   and exactly when global.opt said 'Y' to big_map option,
 	   while it would actually _not_ glitch out when it was set to 'X' in global.opt(!) */
 	global_big_map_hold = TRUE;
+#endif
 
 	/* Initialize the pref files */
 	initialize_main_pref_files();
@@ -3980,19 +3989,33 @@ void client_init(char *argv1, bool skip) {
 	Send_options();
 
 	/* Handle asking for big_map mode on first time startup */
+#ifndef GLOBAL_BIG_MAP
 	if (c_cfg.big_map) bigmap_hint = firstrun = FALSE;
-#if defined(USE_X11) || defined(WINDOWS)
+ #if defined(USE_X11) || defined(WINDOWS)
 	if (bigmap_hint && !c_cfg.big_map && strcmp(ANGBAND_SYS, "gcu") && ask_for_bigmap()) {
-	        c_cfg.big_map = TRUE;
+		c_cfg.big_map = TRUE;
 		Client_setup.options[CO_BIGMAP] = TRUE;
 		check_immediate_options(CO_BIGMAP, TRUE, FALSE);
 		//(void)options_dump("global.opt");
 		(void)options_dump(format("%s.opt", cname));
 	}
-#endif
+ #endif
 	/* If command-line client reads from same config file as X11 one it might
 	   read a big-map-enabled screen_hgt, so reset it: */
 	if (!strcmp(ANGBAND_SYS, "gcu")) screen_hgt = SCREEN_HGT;
+#else
+	if (global_c_cfg_big_map) bigmap_hint = firstrun = FALSE;
+ #if defined(USE_X11) || defined(WINDOWS)
+	if (bigmap_hint && global_c_cfg_big_map && strcmp(ANGBAND_SYS, "gcu") && ask_for_bigmap())
+		global_c_cfg_big_map = TRUE;
+ #endif
+	/* If command-line client reads from same config file as X11 one it might
+	   read a big-map-enabled screen_hgt, so reset it: */
+	if (!strcmp(ANGBAND_SYS, "gcu")) {
+		screen_hgt = SCREEN_HGT;
+		global_c_cfg_big_map = FALSE;
+	}
+#endif
 
 	/* Initiate character creation? */
 	if (status == E_NEED_INFO) {

@@ -9740,7 +9740,7 @@ static void do_cmd_options_colourblindness(void) {
  * in any options which control "visual" aspects of the game.
  */
 void do_cmd_options(void) {
-	int k;
+	int k, l;
 	char tmp[1024];
 
 	options_immediate(TRUE);
@@ -9761,39 +9761,51 @@ void do_cmd_options(void) {
 		c_prt(TERM_L_GREEN, "TomeNET options", 0, 0);
 
 		/* Give some choices */
-		Term_putstr(3,  2, -1, TERM_WHITE, "(\377y1\377w/\377y2\377w/\377y3\377w/\377y4\377w) User interface options 1/2/3/4");
-		Term_putstr(3,  3, -1, TERM_WHITE, "(\377y5\377w/\377y6\377w)     Audio options");
-		Term_putstr(3,  4, -1, TERM_WHITE, "(\377y7\377w/\377y8\377w/\377y9\377w)   Gameplay options 1/2/3");
-		Term_putstr(3,  5, -1, TERM_WHITE, "(\377yw\377w)       Window flags");
-		Term_putstr(3,  7, -1, TERM_WHITE, "(\377os\377w/\377oS\377w)     Save all options & flags / Save to global.opt file (account-wide)");
-		Term_putstr(3,  8, -1, TERM_WHITE, "(\377ol\377w)       Load all options & flags");
+		l = 2;
+		Term_putstr(3, l++, -1, TERM_WHITE, "(\377y1\377w/\377y2\377w/\377y3\377w/\377y4\377w) User interface options 1/2/3/4");
+		Term_putstr(3, l++, -1, TERM_WHITE, "(\377y5\377w/\377y6\377w)     Audio options");
+		Term_putstr(3, l++, -1, TERM_WHITE, "(\377y7\377w/\377y8\377w/\377y9\377w)   Gameplay options 1/2/3");
+		Term_putstr(3, l++, -1, TERM_WHITE, "(\377yw\377w)       Window flags");
+#ifdef GLOBAL_BIG_MAP
+		if (strcmp(ANGBAND_SYS, "gcu"))
+			Term_putstr(3, l++, -1, TERM_WHITE, "(\377yb\377w)       Toggle big_map (double screen height)");
+		else
+			Term_putstr(3, l++, -1, TERM_L_DARK, "(\377sb\377D)       Toggle big_map (double screen height) - NOT AVAILABLE ON GCU");
+#endif
+		l++;
+		Term_putstr(3, l++, -1, TERM_WHITE, "(\377os\377w/\377oS\377w)     Save all options & flags / Save to global.opt file (account-wide)");
+		Term_putstr(3, l++, -1, TERM_WHITE, "(\377ol\377w)       Load all options & flags");
 
-		Term_putstr(3, 10, -1, TERM_L_DARK, "----------------------------------------------------------------------------");
+		l++;
+		Term_putstr(3, l++, -1, TERM_L_DARK, "----------------------------------------------------------------------------");
+		l++;
 
-		Term_putstr(3, 12, -1, TERM_SLATE, "The following options are mostly saved automatically on quitting via CTRL+Q:");
+		Term_putstr(3, l++, -1, TERM_SLATE, "The following options are mostly saved automatically on quitting via CTRL+Q:");
+		l++;
 #ifdef USE_SOUND_2010
 		if (c_cfg.rogue_like_commands)
-			Term_putstr(3, 14, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+F hotkey) / Audio pack selector");
+			Term_putstr(3, l++, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+F hotkey) / Audio pack selector");
 		else
-			Term_putstr(3, 14, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+U hotkey) / Audio pack selector");
+			Term_putstr(3, l++, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+U hotkey) / Audio pack selector");
 
-		Term_putstr(3, 15, -1, TERM_WHITE, "(\377yn\377w/\377yN\377w) Disable/reenable specific sound effects/music");
+		Term_putstr(3, l++, -1, TERM_WHITE, "(\377yn\377w/\377yN\377w) Disable/reenable specific sound effects/music");
 #endif
 
 #if defined(WINDOWS) || defined(USE_X11)
 		/* Font (and window) settings aren't available in command-line mode */
 		if (strcmp(ANGBAND_SYS, "gcu")) {
  #ifdef ENABLE_SUBWINDOW_MENU
-			Term_putstr(3, 16, -1, TERM_WHITE, "(\377yf\377w) Window Fonts and Visibility");
+			Term_putstr(3, l++, -1, TERM_WHITE, "(\377yf\377w) Window Fonts and Visibility");
  #endif
 			/* CHANGE_FONTS_X11 */
-			Term_putstr(3, 17, -1, TERM_WHITE, "(\377yF\377w) Cycle all font sizes at once (can be tapped multiple times)");
+			Term_putstr(3, l++, -1, TERM_WHITE, "(\377yF\377w) Cycle all font sizes at once (can be tapped multiple times)");
 		}
 #endif
-		Term_putstr(3, 18, -1, TERM_WHITE, "(\377yc\377w) Colour palette and colour blindness options");
+		Term_putstr(3, l++, -1, TERM_WHITE, "(\377yc\377w) Colour palette and colour blindness options");
+		l++;
 
-		Term_putstr(3, 20, -1, TERM_WHITE, "(\377UA\377w) Account Options");
-		Term_putstr(3, 21, -1, TERM_WHITE, "(\377UI\377w) Install sound/music pack from 7z-file you placed in your TomeNET folder");
+		Term_putstr(3, l++, -1, TERM_WHITE, "(\377UA\377w) Account Options");
+		Term_putstr(3, l++, -1, TERM_WHITE, "(\377UI\377w) Install sound/music pack from 7z-file you placed in your TomeNET folder");
 
 		/* Get command */
 		k = inkey();
@@ -9880,6 +9892,42 @@ void do_cmd_options(void) {
 			/* Spawn */
 			do_cmd_options_win();
 		}
+#ifdef GLOBAL_BIG_MAP
+		/* Toggle big_map */
+		else if (k == 'b') {
+			/* BIG_MAP is currently not supported in GCU client */
+			if (!strcmp(ANGBAND_SYS, "gcu")) {
+				c_message_add("\377ySorry, big_map is not available in the GCU (command-line) client.");
+ #if 0 /* superfluous */
+				global_c_cfg_big_map = FALSE;
+				screen_hgt = SCREEN_HGT;
+				if (playing) Send_screen_dimensions();
+ #endif
+				continue;
+			}
+
+			global_c_cfg_big_map = !global_c_cfg_big_map;
+			if (is_newer_than(&server_version, 4, 4, 9, 1, 0, 1) /* redundant */
+			    && (sflags1 & SFLG1_BIG_MAP)) {
+				if (!global_c_cfg_big_map && screen_hgt != SCREEN_HGT) {
+					screen_hgt = SCREEN_HGT;
+					resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
+					if (screen_icky) Term_switch(0);
+					Term_clear(); /* get rid of map tiles where now status bars go instead */
+					if (screen_icky) Term_switch(0);
+					Send_screen_dimensions();
+				}
+				if (global_c_cfg_big_map && screen_hgt <= SCREEN_HGT) {
+					screen_hgt = MAX_SCREEN_HGT;
+					resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
+					if (screen_icky) Term_switch(0);
+					Term_clear(); /* paranoia ;) */
+					if (screen_icky) Term_switch(0);
+					Send_screen_dimensions();
+				}
+			}
+		}
+#endif
 
 #if defined(WINDOWS) || defined(USE_X11)
  #ifdef ENABLE_SUBWINDOW_MENU
@@ -11120,6 +11168,7 @@ void check_immediate_options(int i, bool yes, bool playing) {
 		}
 	}
 
+ #ifndef GLOBAL_BIG_MAP
 	/* BIG_MAP is currently not supported in GCU client */
 	if (!strcmp(ANGBAND_SYS, "gcu") && option_info[i].o_var == &c_cfg.big_map) {
 		c_cfg.big_map = FALSE;
@@ -11128,7 +11177,9 @@ void check_immediate_options(int i, bool yes, bool playing) {
 		screen_hgt = SCREEN_HGT;
 		if (playing) Send_screen_dimensions();
 	} else
+ #endif
 #endif
+#ifndef GLOBAL_BIG_MAP
 	/* Not yet. First, process all the option files before doing this */
 	if (option_info[i].o_var == &c_cfg.big_map && global_big_map_hold) return;
 
@@ -11158,6 +11209,7 @@ void check_immediate_options(int i, bool yes, bool playing) {
 			}
 		}
 	}
+#endif
 
 	/* Terminate all weather visuals and sounds via 'no_weather' option? */
 	if (!noweather_mode && option_info[i].o_var == &c_cfg.no_weather && c_cfg.no_weather) {

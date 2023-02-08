@@ -1096,7 +1096,12 @@ static void save_prefs_aux(term_data *td, cptr sec_name) {
 		WritePrivateProfileString(sec_name, "Rows", buf, ini_file);
 	} else {
 		int hgt;
+
+#ifndef GLOBAL_BIG_MAP
 		if (c_cfg.big_map || data[0].rows > SCREEN_HGT + SCREEN_PAD_Y) {
+#else
+		if (global_c_cfg_big_map || data[0].rows > SCREEN_HGT + SCREEN_PAD_Y) {
+#endif
 			/* only change height if we're currently running the default short height */
 			if (screen_hgt <= SCREEN_HGT)
 				hgt = SCREEN_PAD_Y + MAX_SCREEN_HGT;
@@ -1213,6 +1218,12 @@ static void load_prefs_aux(term_data *td, cptr sec_name) {
 		if (td->cols != 80) td->cols = 80;
 		screen_wid = td->cols - SCREEN_PAD_X;
 		screen_hgt = td->rows - SCREEN_PAD_Y;
+
+#ifdef GLOBAL_BIG_MAP
+		/* Only the rc/ini file determines big_map state now! It is not saved anywhere else! */
+		if (screen_hgt <= SCREEN_HGT) global_c_cfg_big_map = FALSE;
+		else global_c_cfg_big_map = TRUE;
+#endif
 	}
 
 	/* Window position */
@@ -1327,21 +1338,13 @@ static void load_prefs(void) {
 
 	/* Load window prefs */
 	load_prefs_aux(&data[0], "Main window");
-
 	/* XXX XXX XXX XXX */
-
 	load_prefs_aux(&data[1], "Mirror window");
-
 	load_prefs_aux(&data[2], "Recall window");
-
 	load_prefs_aux(&data[3], "Choice window");
-
 	load_prefs_aux(&data[4], "Term-4 window");
-
 	load_prefs_aux(&data[5], "Term-5 window");
-
 	load_prefs_aux(&data[6], "Term-6 window");
-
 	load_prefs_aux(&data[7], "Term-7 window");
 
 	bigmap_hint = (GetPrivateProfileInt("Base", "HintBigmap", 1, ini_file) != 0);
@@ -3155,6 +3158,7 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 		{
 			term *old;
 
+#ifndef GLOBAL_BIG_MAP
 			/* Remember final size values from WM_SIZE -> SIZE_RESTORED */
 			if ((screen_term_rows == 24 && Client_setup.options[CO_BIGMAP]) ||
 			    (screen_term_rows == 46 && !Client_setup.options[CO_BIGMAP])) {
@@ -3162,6 +3166,14 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
 				Client_setup.options[CO_BIGMAP] = val;
 			c_cfg.big_map = val;
+#else
+			/* Remember final size values from WM_SIZE -> SIZE_RESTORED */
+			if ((screen_term_rows == 24 && global_c_cfg_big_map) ||
+			    (screen_term_rows == 46 && !global_c_cfg_big_map)) {
+				bool val = !global_c_cfg_big_map;
+
+				global_c_cfg_big_map = val;
+#endif
 
 				if (!val) screen_hgt = SCREEN_HGT;
 				else screen_hgt = MAX_SCREEN_HGT;

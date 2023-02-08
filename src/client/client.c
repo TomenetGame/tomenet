@@ -419,6 +419,17 @@ static bool read_mangrc(cptr filename) {
 		/* Calculate game screen dimensions from main window dimensions. */
 		screen_wid = term_prefs[0].columns - SCREEN_PAD_X;
 		screen_hgt = term_prefs[0].lines - SCREEN_PAD_Y;
+#ifdef GLOBAL_BIG_MAP
+		/* Only the rc/ini file determines big_map state now! It is not saved anywhere else! */
+		if (screen_hgt <= SCREEN_HGT) global_c_cfg_big_map = FALSE;
+		else global_c_cfg_big_map = TRUE;
+ #if 0 /* the visuals aren't initialized yet! ANGBAND_SYS is not a valid string! */
+		if (!strcmp(ANGBAND_SYS, "gcu")) {
+			screen_hgt = SCREEN_HGT;
+			global_c_cfg_big_map = FALSE;
+		}
+ #endif
+#endif
 
 		if (lighterdarkblue && client_color_map[6] == 0x0000ff)
 #ifdef USE_X11

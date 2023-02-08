@@ -487,6 +487,9 @@
 
  /* Enable bookmarking feature? */
  #define GUIDE_BOOKMARKS 20
+
+ /* Disable c_cfg.big_map option and make it a client-global setting instead that spans over any login choice. */
+ #define GLOBAL_BIG_MAP
 #endif
 
 

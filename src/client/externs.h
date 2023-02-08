@@ -338,6 +338,9 @@ extern byte save_chat;
 
 
 extern client_opts c_cfg;
+#ifdef GLOBAL_BIG_MAP
+extern bool global_c_cfg_big_map;
+#endif
 
 extern u32b sflags3, sflags2, sflags1, sflags0;
 extern byte client_mode;

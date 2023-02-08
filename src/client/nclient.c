@@ -2468,8 +2468,10 @@ int Receive_char_info(void) {
 		initialize_player_pref_files();
 		player_pref_files_loaded = TRUE;
 
+#ifndef GLOBAL_BIG_MAP
 		global_big_map_hold = FALSE; //process BIG_MAP (option<7>) changes finally, all accumulated
 		check_immediate_options(7, c_cfg.big_map, TRUE);
+#endif
 
 		/* Character Overview Resist/Boni/Abilities Page on Startup? - Kurzel */
 		if (c_cfg.overview_startup) csheet_page = 2;
