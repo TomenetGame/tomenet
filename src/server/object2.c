@@ -11169,16 +11169,15 @@ bool inven_carry_cursed_okay(int Ind, object_type *o_ptr, byte tolerance) {
  */
 s16b inven_carry(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
-
-	int	 i, j, k;
-	int	n = -1;
+	int i, j, k;
+	int n = -1;
 #ifdef ENABLE_SUBINVEN
-#ifdef SUBINVEN_LIMIT_GROUP
-	bool	excess = FALSE;
+ #ifdef SUBINVEN_LIMIT_GROUP
+	bool excess = FALSE;
+ #endif
+	object_type forge;
 #endif
-#endif
-
-	object_type	*j_ptr;
+	object_type *j_ptr;
 	u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5, f6 = 0, esp = 0;
 
 	/* Check for combining */
@@ -11438,6 +11437,14 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 		p_ptr->warning_subinven = 1;
 	}
 #endif
+#endif
+
+#ifdef ENABLE_SUBINVEN
+	/* Workaround for visual bug: Clear all remains from old bag in same slot by 'erasing' the first bag slot. */
+	forge.tval = 0;
+	forge.sval = 0;
+	forge.k_idx = 0;
+	Send_subinven(Ind, i, 'a', TERM_WHITE, 0, &forge, "");
 #endif
 
 	return(i);
