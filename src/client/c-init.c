@@ -4163,6 +4163,7 @@ void client_init(char *argv1, bool skip) {
 			inventory_inscription[bytes] = 0;
 			inventory_inscription_len[bytes] = 0;
  #ifdef ENABLE_SUBINVEN
+			if (bytes > INVEN_PACK) continue;
 			for (retries = 0; retries <= SUBINVEN_PACK; retries++) {
 				subinventory[bytes][retries].tval = 0;
 				subinventory_name[bytes][retries][0] = 0;
