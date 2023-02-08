@@ -8754,23 +8754,25 @@ static void do_cmd_options_fonts(void) {
    #endif
 //  #endif
 
-  #ifdef WINDOWS /* windows client currently saves full paths (todo: just change to filename only) */
+   #ifdef WINDOWS /* windows client currently saves full paths (todo: just change to filename only) */
 	for (j = 0; j < fonts; j++) {
 		strcpy(tmp_name, font_name[j]);
 		//path_build(font_name[j], 1024, path, font_name[j]);
-		strcpy(font_name[j], ".\\");
+		//strcpy(font_name[j], ".\\");
+		font_name[j][0] = 0;
 		strcat(font_name[j], path);
 		strcat(font_name[j], "\\");
 		strcat(font_name[j], tmp_name);
 	}
 	for (j = 0; j < graphic_fonts; j++) {
 		strcpy(tmp_name, graphic_font_name[j]);
-		strcpy(graphic_font_name[j], ".\\");
+		//strcpy(graphic_font_name[j], ".\\");
+		graphic_font_name[j][0] = 0;
 		strcat(graphic_font_name[j], path);
 		strcat(graphic_font_name[j], "\\");
 		strcat(graphic_font_name[j], tmp_name);
 	}
-  #endif
+   #endif
 
 	/* suppress hybrid macros */
 	inkey_msg_old = inkey_msg;
@@ -8838,8 +8840,7 @@ static void do_cmd_options_fonts(void) {
 		case '=':
 		case '+':
 			/* find out which of the fonts in lib/xtra/fonts we're currently using */
-			if ((window_flag[y] & PW_MINIMAP) && graphic_fonts > 0)
-			{
+			if ((window_flag[y] & PW_MINIMAP) && graphic_fonts > 0) {
 				//Include the graphic fonts, because we are cycling the mini-map
 				for (j = 0; j < graphic_fonts - 1; j++) {
 					if (!strcasecmp(graphic_font_name[j], get_font_name(y))) {
@@ -8867,8 +8868,7 @@ static void do_cmd_options_fonts(void) {
 
 		case '-':
 			/* find out which of the fonts in lib/xtra/fonts we're currently using */
-			if ((window_flag[y] & PW_MINIMAP) && graphic_fonts > 0)
-			{
+			if ((window_flag[y] & PW_MINIMAP) && graphic_fonts > 0) {
 				//Include the graphic fonts, because we are cycling the mini-map
 				for (j = 1; j < graphic_fonts; j++) {
 					if (!strcasecmp(graphic_font_name[j], get_font_name(y))) {
