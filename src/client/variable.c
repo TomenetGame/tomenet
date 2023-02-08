@@ -205,8 +205,8 @@ cptr ANGBAND_DIR_USER;
 cptr ANGBAND_DIR_XTRA;
 cptr ANGBAND_DIR_GAME;
 
-bool disable_numlock;
-bool use_graphics;
+bool disable_numlock = FALSE;
+bool use_graphics = FALSE;
 #ifdef USE_GRAPHICS
 char graphic_tiles[256] = "\0";
 #endif
