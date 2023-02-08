@@ -3658,9 +3658,14 @@ POSIX command-line options:
 -C                      compatibility mode for ancient servers (deprecated)
 -e                      Create file 'tomenet.log' instead of displaying
                         error messages in the terminal
--f<config file>         use a different config file than ~/.tomenetrc
--F <fps>                set client internal engine fps (default is 100)
 -i                      ignore the ~/.tomenetrc config file
+                        This option must come before any -f options!
+-f<config file>         source (use) a specified config file. This is actually
+                        cumulative and does not cause the standard .tomenetrc
+                        to not be loaded. To _only_ load this config file and
+                        ignore .tomenetrc, specify -i option together with -f
+                        option and make sure that -i comes first!
+-F <fps>                set client internal engine fps (default is 100)
 -l<Account> <Password>  for example -lGandalf geheim
 -m                      skip motd (message of the day) on login
 -N<character name>      for example -NMagnet
