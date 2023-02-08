@@ -358,13 +358,9 @@ struct _term_data
 	uint     size_oh2;
 
 	byte     visible;
-
 	byte     size_hack;
-
 	cptr     font_want;
-
 	cptr     font_file;
-
 	HFONT    font_id;
 
 	uint     font_wid;
@@ -3134,11 +3130,16 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 					old_cols = cols;
 					old_rows = rows;
 
-					/* Hack -- do not allow bad resizing of main screen */
-					cols = 80;
-					/* respect big_map option */
-					if (rows <= 24 || (in_game && !(sflags1 & SFLG1_BIG_MAP))) rows = 24;
-					else rows = 46;
+#if 0 /* wrong place, must be done by WM_EXITSIZEMOVE */
+					/* Only restrict main screen window to certain dimensions, other windows are free */
+					if (td == &data[0]) {
+						/* Hack -- do not allow bad resizing of main screen */
+						cols = 80;
+						/* respect big_map option */
+						if (rows <= 24 || (in_game && !(sflags1 & SFLG1_BIG_MAP))) rows = 24;
+						else rows = 46;
+					}
+#endif
 
 					/* Remember for WM_EXITSIZEMOVE later */
 					screen_term_cols = cols;
@@ -3155,18 +3156,29 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 			}
 			break;
 
+		/* Note for WINE users: This even will NOT be sent if winecfg->graphics->"Allow window manager to decorate the windows" is enabled, so you must disable it! */
 		case WM_EXITSIZEMOVE:
 		{
 			term *old;
 
+			/* Only restrict main screen window to certain dimensions, other windows are free */
+			if (td != &data[0]) break;
+
+			/* main window has constant, fixed width */
+			screen_term_cols = 80;
+
 #ifndef GLOBAL_BIG_MAP
 			/* Remember final size values from WM_SIZE -> SIZE_RESTORED */
-			if ((screen_term_rows == 24 && Client_setup.options[CO_BIGMAP]) ||
-			    (screen_term_rows == 46 && !Client_setup.options[CO_BIGMAP])) {
+			if ((screen_term_rows != 24 && !Client_setup.options[CO_BIGMAP]) ||
+			    (screen_term_rows != 46 && Client_setup.options[CO_BIGMAP])) {
 				bool val = !Client_setup.options[CO_BIGMAP];
 
 				Client_setup.options[CO_BIGMAP] = val;
-			c_cfg.big_map = val;
+			    c_cfg.big_map = val;
+				if (screen_term_rows < 24) {
+					val = Client_setup.options[CO_BIGMAP] = FALSE;
+				    c_cfg.big_map = FALSE;
+				}
 #else
 			/* Remember final size values from WM_SIZE -> SIZE_RESTORED */
 			if ((screen_term_rows != 24 && !global_c_cfg_big_map) ||
@@ -3174,6 +3186,7 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 				bool val = !global_c_cfg_big_map;
 
 				global_c_cfg_big_map = val;
+				if (screen_term_rows < 24) val = global_c_cfg_big_map = FALSE;
 #endif
 
 				if (!val) screen_hgt = SCREEN_HGT;
@@ -3188,6 +3201,9 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 					cmd_redraw();
 				}
 			}
+
+			/* apply */
+			screen_term_rows = screen_hgt + SCREEN_PAD_Y;
 
 			/* Set main window size */
 			td->cols = screen_term_cols;
