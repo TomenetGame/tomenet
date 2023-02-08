@@ -1138,7 +1138,9 @@ int main(int argc, char **argv) {
 		puts("  -e                 Create file 'tomenet.log' instead of displaying");
 		puts("                     error messages in the terminal");
 		puts("  -i                 Ignore .tomenetrc (must come before any '-f' !)");
-		puts("  -f                 Specify an additional rc-file to read");
+		puts("  -f                 Specify an additional rc-file to read. The last file");
+		puts("                     that is read is used as default config file and any");
+		puts("                     changes that are saved will be saved to this file.");
 		puts("  -F                 Client FPS");
 		//puts("  -k                 don't disable numlock on client startup");
 		puts("  -l<nick> <passwd>  Login as");

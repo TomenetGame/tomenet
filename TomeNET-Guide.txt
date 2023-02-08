@@ -3665,6 +3665,9 @@ POSIX command-line options:
                         to not be loaded. To _only_ load this config file and
                         ignore .tomenetrc, specify -i option together with -f
                         option and make sure that -i comes first!
+                        The last file that is read is used as default config
+                        file and any changes that are saved will be saved to
+                        this file.
 -F <fps>                set client internal engine fps (default is 100)
 -l<Account> <Password>  for example -lGandalf geheim
 -m                      skip motd (message of the day) on login
