@@ -2,7 +2,7 @@
 |                              TomeNET Guide                               |
 +==========================================================================+-
 | Latest update: 8. February 2023 - written by C. Blue (c_blue@gmx.net)    |
-| for TomeNET version v4.9.0a - official websites are:                     :
+| for TomeNET version v4.9.0b - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
 | Runes & Runemastery sections by Kurzel (kurzel.tomenet@gmail.com)
@@ -1683,15 +1683,16 @@ They all start with a slash '/' hence they're called slash commands:
 
 /opty <option>
 /optvy <option>
-            Sets a client option to 'yes'. Eg: /opty big_map
+            Sets a client option to 'yes'. Eg: /opty font_map_solid_walls
             The /optvy command will display a feedback message (v = verbose).
 /optn <option>
 /optvn <option>
-            Sets a client option to 'no'. Eg: /optn big_map
+            Sets a client option to 'no'. Eg: /optn font_map_solid_walls
             The /optvn command will display a feedback message (v = verbose).
 /optt <option>
 /optvt <option>
-            Toggles a client option between 'yes' or 'no'. Eg: /optt big_map
+            Toggles a client option between 'yes' or 'no'.
+            Eg: /optt font_map_solid_walls
             The /optvt command will display a feedback message (v = verbose).
 
 /page <player-name>     Sends beeps to that player to help you getting his
@@ -4172,13 +4173,9 @@ By pressing the '=' key in game, you can access the options menu where you can
 tweak your client in some ways. Some of these options that aren't
 self-explaining or that are especially important are listed in detail here:
 
- (1, 2, 3, 4) User Interface Options
+ (1, 2, 3, 4) User Interface Options:
     Rogue-like commands (rogue_like_commands)
         Toggles between normal key set and traditional rogue-like key set.
-
-    Double height of the map shown in the main window (big_map)
-        Definitely enable this to see if you prefer it: It doubles the size of
-        the gameplay area displayed in the main window.
 
     Alert on taking damage while you are AFK (alert_afk_dam) and
     alert on taking damage while looking around the map via 'locate' command
@@ -4259,7 +4256,7 @@ self-explaining or that are especially important are listed in detail here:
         symbols and colours of monster forms for party members and the player
         himself.
 
- (5) Audio Options
+ (5, 6) Audio Options
     (See (2.1a) for more information about sound and music.)
 
     A bunch of stuff here, mostly you might want to look at attack-sound effect
@@ -4268,7 +4265,7 @@ self-explaining or that are especially important are listed in detail here:
 
     positional_audio is an especially interesting option, enabled by default.
 
- (6, 7, 8) Gameplay Options
+ (7, 8, 9) Gameplay Options
     Use old target by default (use_old_target)
         If this is on, a ranged attack via *t5 or *t- will not pick a new
         (ie closer) target if the previously acquired target is still okay.
@@ -4391,18 +4388,23 @@ self-explaining or that are especially important are listed in detail here:
         allows creating macros for fast toggling.
         Auto-destroying does not trigger inside houses.
 
- (8) Check Server Options
-    Displays a list of the server rules and configuration.
+ (w) Window flags
+    Here you can configure each of the program windows in detail.
+    It is recommended that you have one dedicated window for 'Display chat',
+    so you don't miss important messages during combat.
+
+ (b) Toggle big_map (double screen height)
+    Double height of map shown in the main window, dubbed 'big_map' setting.
+    Definitely enable this to see if you prefer it: It doubles the size of
+    the gameplay area displayed in the main TomeNET window.
+    To save this setting, make sure to quit the game via CTRL+Q and not by
+    terminating the game window via mouseclicking the window title bar's
+    'x' button.
 
  (A) Account options
     Here you can see if your account is valid. Invalid accounts are also
     indicated by a yellow 'I' in the players list you get with '@' key.
     Also, you can change your password here!
-
- (W) Window flags
-    Here you can configure each of the program windows in detail.
-    It is recommended that you have one dedicated window for 'Display chat',
-    so you don't miss important messages during combat.
 
 
 (2.3a) Client options configuration files
@@ -10434,8 +10436,8 @@ to you are actually diagonal of you! So now it might become clear how to do
 that event in the most effective way..
 
 Note that the map coordinates you see when pressing SHIFT+L (SHIFT+W with rogue
-like keymap) can differ depending on if you have 'big_map' option enabled or
-not in  = 1  options menu.
+like keymap) can differ depending on if you have 'big_map' setting enabled or
+not via  = b  .
 
 
 
@@ -25122,20 +25124,7 @@ Solution:   See (2.1a) for details on how to install audio packs. Also note
             is '7zip' (a sourceforge project at the time of writing)
             downloadable at:  https://www.7-zip.org/
 
-PROBLEM 34: On OS X when entering the game (right after picking a character) in
-            big_map mode with already large (46 lines) main window, the window
-            will suddenly become small (24 lines) again.
-            As of the time of writing this, the exact cause is still unknown.
-            A workaround is to perform the following steps:
-            -turn off big_map mode (= key for options, page 5) and save options
-            -exit client with CTRL+Q (so it will save the main window height)
-            -log on again, turn on big_map mode, save the options again.
-            -from now on, always exit the game via the window close button in
-             the window's titlebar, never via CTRL+Q. That way, your .tomenetrc
-             config file is never overwritten and hence your client will always
-             start with only 24 lines, switching back to correct big_map mode
-             only when you actually log in with a character, thus circumventing
-             the bug.
+PROBLEM 34: (Deprecated)
 
 PROBLEM 35: On certain terminal emulators, TomeNET when run in ncurses-mode
             ('-c' command-line option or just a GCU-only client) will display
