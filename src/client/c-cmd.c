@@ -2243,6 +2243,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		else if (my_strcasestr(buf, "forc") && my_strcasestr(buf, "stack")) strcpy(init_search_string, "force-stack");
 		else if (!strcasecmp("key", buf) || !strcasecmp("keys", buf)) strcpy(init_search_string, "Command keys");
 		else if (!strcasecmp("command", buf) || !strcasecmp("commands", buf)) strcpy(init_search_string, "Slash commands");
+		else if (!strcasecmp("macro", buf) || !strcasecmp("macros", buf)) strcpy(init_search_string, "basic macros"); //3.6
 
 		/* clean up */
 		buf[0] = 0;
@@ -3447,6 +3448,8 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					fallback = TRUE;
 					continue;
 				}
+				if (!strcasecmp("macro", buf) || !strcasecmp("macros", buf))
+					strcpy(buf, "basic macros"); //3.6
 
 				/* -- Lua-defined chapters -- */
 
