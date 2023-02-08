@@ -428,6 +428,7 @@ static bool read_mangrc(cptr filename) {
 			screen_hgt = SCREEN_HGT;
 			global_c_cfg_big_map = FALSE;
 		}
+		resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
  #endif
 #endif
 
@@ -935,7 +936,7 @@ static void default_set(void) {
 }
 
 int main(int argc, char **argv) {
-	int i, modus = 0;
+	int i, j, modus = 0;
 	bool done = FALSE, skip = FALSE;
 
 	/* Save the program name */
@@ -983,6 +984,7 @@ int main(int argc, char **argv) {
 		/* ignore rc files */
 		case 'i':
 			skip = FALSE;
+
 			strcpy(cname, "");
 			strcpy(svname, "");
 #ifdef USE_SOUND_2010
@@ -992,6 +994,34 @@ int main(int argc, char **argv) {
 			cfg_audio_master = cfg_audio_music = cfg_audio_sound = cfg_audio_weather = TRUE;
 			cfg_audio_master_volume = cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = AUDIO_VOLUME_DEFAULT;
 #endif
+
+			/* Reset certain variables that were possibly one-time set by reading the default .tomenetrc above */
+			nick[0] = pass[0] = meta_address[0] = 0;
+			//real_name[0] = path[0] = 0; --nope! or we can't login due to invalid real_name (it's just 'PLAYER' default)
+			cfg_game_port = 18348;
+			cfg_client_fps = 100;
+			use_graphics = disable_numlock = 0;
+			lighterdarkblue = FALSE;
+			for (j = 0; j < BASE_PALETTE_SIZE; j++) client_color_map[j] = client_color_map_org[j];
+			use_sound = TRUE;
+			quiet_mode = FALSE;
+			sound_hint = TRUE;
+			bigmap_hint = TRUE;
+			firstrun = TRUE;
+			no_cache_audio = FALSE;
+			cfg_soundpackfolder[0] = cfg_musicpackfolder[0] = 0;
+#ifdef GLOBAL_BIG_MAP
+			/* Also reset main window to non-big_map */
+			global_c_cfg_big_map = FALSE;
+			screen_hgt = SCREEN_HGT;
+ #ifdef WINDOWS
+			data[0].rows = screen_hgt + SCREEN_PAD_Y;
+ #else /* POSIX */
+			//screen->rows = screen_hgt + SCREEN_PAD_Y;
+			term_prefs[0].lines = screen_hgt + SCREEN_PAD_Y;
+ #endif
+#endif
+			//resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT); --visuals aren't initialized yet -> segfault.
 
 #if 0 /* This skips command-line arguments, not rc file */
 			modus = 2;
@@ -1107,9 +1137,9 @@ int main(int argc, char **argv) {
 		puts("  -C                 Compatibility mode for very old servers");
 		puts("  -e                 Create file 'tomenet.log' instead of displaying");
 		puts("                     error messages in the terminal");
-		puts("  -f                 Specify rc File to read");
+		puts("  -i                 Ignore .tomenetrc (must come before any '-f' !)");
+		puts("  -f                 Specify an additional rc-file to read");
 		puts("  -F                 Client FPS");
-		puts("  -i                 Ignore .tomenetrc");
 		//puts("  -k                 don't disable numlock on client startup");
 		puts("  -l<nick> <passwd>  Login as");
 		puts("  -m                 Skip motd (message of the day) on login");

@@ -4006,8 +4006,27 @@ void client_init(char *argv1, bool skip) {
 #else
 	if (global_c_cfg_big_map) bigmap_hint = firstrun = FALSE;
  #if defined(USE_X11) || defined(WINDOWS)
-	if (bigmap_hint && global_c_cfg_big_map && strcmp(ANGBAND_SYS, "gcu") && ask_for_bigmap())
+	if (bigmap_hint && !global_c_cfg_big_map && strcmp(ANGBAND_SYS, "gcu") && ask_for_bigmap()) {
 		global_c_cfg_big_map = TRUE;
+
+		if (is_newer_than(&server_version, 4, 4, 9, 1, 0, 1) /* redundant */
+		    && (sflags1 & SFLG1_BIG_MAP)) {
+			if (screen_hgt <= SCREEN_HGT) {
+				screen_hgt = MAX_SCREEN_HGT;
+				resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
+  #if 0
+				if (screen_icky) Term_switch(0);
+				Term_clear(); /* paranoia ;) */
+				if (screen_icky) Term_switch(0);
+				Send_screen_dimensions();
+  #endif
+			}
+		} else global_c_cfg_big_map = FALSE;
+	}
+	if (!global_c_cfg_big_map) {
+		screen_hgt = SCREEN_HGT;
+		resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
+	}
  #endif
 	/* If command-line client reads from same config file as X11 one it might
 	   read a big-map-enabled screen_hgt, so reset it: */
@@ -4204,6 +4223,9 @@ bool ask_for_bigmap_generic(void) {
 		} else if (ch == 'n' || ch == 'N') {
 			Term_clear();
 			ok = FALSE;
+#ifdef GLOBAL_BIG_MAP
+			global_c_cfg_big_map = FALSE;
+#endif
 			break;
 		}
 	}
