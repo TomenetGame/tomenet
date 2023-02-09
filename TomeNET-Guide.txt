@@ -15758,6 +15758,8 @@ stated.
      (0.228)                    Martial Arts users do not and cannot wield any
                                 weapons or they get penalised heavily, except
                                 for boomerangs.
+                                Note that as a specialty MA actually works with
+                                the 'Backstabbing' skill!
 
                                 They also get an armour class bonus for each
                                 _unused_ equipment slot that can take a piece
@@ -17781,7 +17783,8 @@ create a character!):
     fighting their way out of a tight spot. The master of traps and locks, no
     device is impossible for him to overcome.
     Their main way of combat is by either dual-wielding two sword-class weapons
-    such as daggers, or - rather rarely seen - utilizing martial arts.
+    such as daggers, or - rather rarely seen - utilizing martial arts. (As a
+    specialty the 'Backstabbing' skill actually works with martial arts.)
     Their primary stats are intelligence and dexterity, intelligence being very
     important if they aim to become proficient at magic, while dexterity makes
     up in combat prowess for what their strength might be lacking.
