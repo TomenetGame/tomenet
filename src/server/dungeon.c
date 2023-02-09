@@ -9488,7 +9488,7 @@ void dungeon(void) {
 
 		/* Auto-retire iron winners */
 		if (p_ptr->iron_winner_ded && p_ptr->wpos.wz != 0
-		    /* Still allow iron winners to reenter iddc/mandos, to actually be able to do something? */
+		    /* Still allow dedicated-mode iron winners to reenter iddc/mandos, to actually be able to do something? */
 		    && !in_irondeepdive(&p_ptr->wpos) && !in_hallsofmandos(&p_ptr->wpos)
 		    ) {
 			p_ptr->new_level_flag = FALSE; //clean up, needed?
