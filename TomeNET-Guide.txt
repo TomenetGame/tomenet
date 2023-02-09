@@ -10119,6 +10119,10 @@ Ironman Deep Dive Challenge (IDDC)
     If you make it through the IDDC, the title of "Iron Champion" will be
     bestowed on you. If you even manage to defeat Morgoth you will instead
     acquire the title of "Iron Emperor" or "Iron Empress" respectively.
+    You are allowed to re-enter the IDDC (and depending on server version) and
+    also the Halls of Mandos after you made it through.
+    However, if you are on a dedicated-IDDC character, you will automatically
+    retire (aka suicide) if you enter any other dungeon.
 
   Specialties:
     Mimicry users gain +9 extra kill credit on each kill, effectively
