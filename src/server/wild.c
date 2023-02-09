@@ -3785,38 +3785,6 @@ void wilderness_gen(struct worldpos *wpos) {
 	/* Hack -- Build some wilderness (from memory) */
 	wilderness_gen_hack(wpos);
 
-	/* Add ambient features to the entrance so it looks less bland ;) - C. Blue */
-	/* TODO: Add an 'inscription' to the dungeon/tower entrances, telling you what you're going to enter. :o
-	         Maybe it's simpler to just add such a message when actually stepping on a >/< symbol though, like the warning_staircase! */
-	if (!istown(wpos)) {
-		/* Tower */
-		if ((w_ptr->flags & WILD_F_UP) && can_go_up(wpos, 0x1)) {
-			zcave[w_ptr->dn_y][w_ptr->dn_x].feat = FEAT_LESS;
-			d_ptr = w_ptr->tower;
-			x = w_ptr->dn_x;
-			y = w_ptr->dn_y;
-			if (d_ptr && in_bounds_wide(y, x) && //paranoia
-			    /* don't overwrite house walls if house contains a staircase
-			       (also see second check for this, in decorate_dungeon_entrance()) */
-			    !(zcave[y][x].info & (CAVE_ROOM | CAVE_ICKY)))
-				decorate_dungeon_entrance(wpos, d_ptr, zcave, x, y);
-			else s_printf("WARNING: wilderness_gen() out of bounds dungeon decoration (tower %d,%d).\n", wpos->wx, wpos->wy);
-		}
-		/* Dungeon */
-		if ((w_ptr->flags & WILD_F_DOWN) && can_go_down(wpos, 0x1)) {
-			zcave[w_ptr->up_y][w_ptr->up_x].feat = FEAT_MORE;
-			d_ptr = w_ptr->dungeon;
-			x = w_ptr->up_x;
-			y = w_ptr->up_y;
-			if (d_ptr && in_bounds_wide(y, x) && //paranoia
-			    /* don't overwrite house walls if house contains a staircase
-			       (also see second check for this, in decorate_dungeon_entrance()) */
-			    !(zcave[y][x].info & (CAVE_ROOM | CAVE_ICKY)))
-				decorate_dungeon_entrance(wpos, d_ptr, zcave, x, y);
-			else s_printf("WARNING: wilderness_gen() out of bounds dungeon decoration (dungeon %d,%d).\n", wpos->wx, wpos->wy);
-		}
-	}
-
 	/* Day Light */
 	if (IS_DAY) {
 		/* Make some day-time residents */
@@ -3876,6 +3844,38 @@ void wilderness_gen(struct worldpos *wpos) {
 		}
 	}
 #endif
+
+	/* Add ambient features to any dungeonentrances so it looks less bland ;) - C. Blue */
+	/* TODO: Add an 'inscription' to the dungeon/tower entrances, telling you what you're going to enter. :o
+	         Maybe it's simpler to just add such a message when actually stepping on a >/< symbol though, like the warning_staircase! */
+	if (!istown(wpos)) {
+		/* Tower */
+		if ((w_ptr->flags & WILD_F_UP) && can_go_up(wpos, 0x1)) {
+			zcave[w_ptr->dn_y][w_ptr->dn_x].feat = FEAT_LESS;
+			d_ptr = w_ptr->tower;
+			x = w_ptr->dn_x;
+			y = w_ptr->dn_y;
+			if (d_ptr && in_bounds_wide(y, x) && //paranoia
+			    /* don't overwrite house walls if house contains a staircase
+			       (also see second check for this, in decorate_dungeon_entrance()) */
+			    !(zcave[y][x].info & (CAVE_ROOM | CAVE_ICKY)))
+				decorate_dungeon_entrance(wpos, d_ptr, zcave, x, y);
+			else s_printf("WARNING: wilderness_gen() out of bounds dungeon decoration (tower %d,%d).\n", wpos->wx, wpos->wy);
+		}
+		/* Dungeon */
+		if ((w_ptr->flags & WILD_F_DOWN) && can_go_down(wpos, 0x1)) {
+			zcave[w_ptr->up_y][w_ptr->up_x].feat = FEAT_MORE;
+			d_ptr = w_ptr->dungeon;
+			x = w_ptr->up_x;
+			y = w_ptr->up_y;
+			if (d_ptr && in_bounds_wide(y, x) && //paranoia
+			    /* don't overwrite house walls if house contains a staircase
+			       (also see second check for this, in decorate_dungeon_entrance()) */
+			    !(zcave[y][x].info & (CAVE_ROOM | CAVE_ICKY)))
+				decorate_dungeon_entrance(wpos, d_ptr, zcave, x, y);
+			else s_printf("WARNING: wilderness_gen() out of bounds dungeon decoration (dungeon %d,%d).\n", wpos->wx, wpos->wy);
+		}
+	}
 
 	/* Set if we have generated the level before (unused now though, that
 	   whether or not to respawn objects and monsters is decided by distinct
