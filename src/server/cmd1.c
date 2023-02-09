@@ -3721,6 +3721,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				// mimic forms for vampires/bats: 432, 520, 521, 623, 989
 				if (p_ptr->prace == RACE_VAMPIRE && drainable) {
 					int feed = q_ptr->mhp + 100;
+
 					//feed = (4 - (300 / feed)) * 1000;//1000..4000
 					feed = (6 - (300 / feed)) * 100;//300..600
 					if (backstab_feed) feed *= 2;
@@ -5262,6 +5263,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 			   Still to check: Vampire fruit bats! CURRENTLY STACKS! */
 			if (p_ptr->fruit_bat == 1 && !p_ptr->body_monster && drainable) {
 				int leech = m_ptr->hp;
+
 				if (k < leech) leech = k;
 				leech /= 10;
 				hp_player(Ind, rand_int(leech), TRUE, TRUE);
