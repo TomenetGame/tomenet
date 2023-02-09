@@ -15,20 +15,20 @@ D:#p######                                      ######                          
 D:#p##                                           ####                                           ##p#
 D:#p                                                                                              p#
 D:#p                                                                                              p#
-D:#p                   ##########                                    ##########                   p#
-D:#p                             ##########                ##########                             p#
-D:#p                      #WWW#                                        #LLL#                      p#
-D:#p                #     #WWW#                                        #LLL#     #                p#
-D:#p                #     #WWW#                   ##                   #LLL#     #                p#
+D:#p                   #############                              #############                   p#
+D:#p                                #######                #######                                p#
+D:#p                      #WWWWW#                                    #LLLLL#                      p#
+D:#p                #     #WWWWW#                                    #LLLLL#     #                p#
+D:#p                #     #WWWWW#                 ##                 #LLLLL#     #                p#
 D:#p       ##       #                             ##                             #       ##       p#
 D:#p      ####                                  ##  ##                                  ####      p#
 D:#p      ####                                  ##  ##                                  ####      p#
 D:#p       ##       #                             ##                             #       ##       p#
-D:#p                #     #LLL#                   ##                   #WWW#     #                p#
-D:#p                #     #LLL#                                        #WWW#     #                p#
-D:#p                      #LLL#                                        #WWW#                      p#
-D:#p                             ##########                ##########                             p#
-D:#p                   ##########                                    ##########                   p#
+D:#p                #     #LLLLL#                 ##                 #WWWWW#     #                p#
+D:#p                #     #LLLLL#                                    #WWWWW#     #                p#
+D:#p                      #LLLLL#                                    #WWWWW#                      p#
+D:#p                                #######                #######                                p#
+D:#p                   #############                              #############                   p#
 D:#p                                                                                              p#
 D:#p                                                                                              p#
 D:#p##                                           ####                                           ##p#
