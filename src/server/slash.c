@@ -10871,7 +10871,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				//d_ptr->maxdepth = 127;
 				return;
 			}
-			/* add experimental dungeon flags */
+			/* Add experimental dungeon flags ('make experimental dungeon').
+			   [Parm]: <none> = NTELE+NSUMM, 0 = +NO_ESP, <other> = +LIMIT_ESP.
+			   Use this command twice to remove all (^these 4) experimental flags again.
+			   Suggestion: Use this on the Halls of Mandos :). */
 			else if (prefix(messagelc, "/dunmkexp")) {
 				struct dungeon_type *d_ptr;
 				cave_type **zcave = getcave(&p_ptr->wpos);
