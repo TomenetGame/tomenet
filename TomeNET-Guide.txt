@@ -7485,12 +7485,15 @@ staircase colours (also visible on the world map):
  These can prevent teleportation, ESP, limit ESP vision to radius 10, prevent
  all kind of summoning (especially monsters summoning more monsters!).
  Such experimental dungeons have light umber coloured staircases (same colour
- as is used for maxed stats/abilities, ie light umber).
+ as is used for maxed stats/abilities, ie light brown).
  Experimental dungeons do not belong to the canon game and you enter on your
  own risk! (Well, you actually enter any dungeon at your own risk, so..)
 
-If a dungeon has several of these flags, the latter ones will override the
-staircase colour. So a hellish NO_RECALL_INTO dungeon has hellish-looking
+ If an experimental dungeon also is Ironman, Hellish or FORCE_DOWN its
+ staircase will instead be dark grey and flicker orange.
+
+If a dungeon has several of these flags listed, the latter ones will override
+the staircase colour. So a hellish NO_RECALL_INTO dungeon has hellish-looking
 staircases.
 
 Sometimes you might find ruins of old staircases that don't lead to any

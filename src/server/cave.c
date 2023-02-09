@@ -195,6 +195,14 @@ static int get_staircase_colour(dungeon_type *d_ptr, byte *c) {
 	/* (experimental testing stuff) */
 	if (d_ptr->flags3 & (DF3_NO_TELE | DF3_NO_ESP | DF3_LIMIT_ESP | DF3_NO_SUMMON)) {
 		*c = TERM_L_UMBER;
+
+		/* Still warn about one-way tickets though */
+		if (d_ptr->flags2 & (DF2_IRON | DF2_HELL | DF1_FORCE_DOWN)) *c = TERM_HOLYORB;
+		/* No exit at all - was ONLY former Death Fate (pre 4.7.3a?) */
+		if ((d_ptr->flags2 & DF2_NO_EXIT_STAIR) && (d_ptr->flags2 & DF2_NO_EXIT_PROB)
+		    && (d_ptr->flags2 & DF2_NO_EXIT_FLOAT) && (d_ptr->flags2 & DF2_NO_EXIT_WOR))
+			*c = TERM_HOLYORB; //would need different colour I guess, but this case is purely hypothetical anyway
+
 		return(0);
 	}
 
@@ -211,6 +219,7 @@ static int get_staircase_colour(dungeon_type *d_ptr, byte *c) {
 			return 7;
 		}
 	}
+	/* No exit at all - was ONLY former Death Fate (pre 4.7.3a?) */
 	if ((d_ptr->flags2 & DF2_NO_EXIT_STAIR)
 	    && (d_ptr->flags2 & DF2_NO_EXIT_PROB)
 	    && (d_ptr->flags2 & DF2_NO_EXIT_FLOAT)
