@@ -7153,7 +7153,7 @@ void store_debug_stock() {
 /* Inscription on mass cheques, ie cheques handling items sold partially from item stacks. */
  #define MASS_CHEQUE_NOTE "various piled items"
 
-static bool notify_owner(char cname[CNAME_LEN], char msg[MSG_LEN]) {
+static bool notify_owner(const char cname[CNAME_LEN], const char msg[MSG_LEN]) {
 	char tname[ACCNAME_LEN];
 	int i, found_note = 0;
 	struct account acc;
