@@ -8451,6 +8451,10 @@ See (4.3) under "Dungeon Types" -> "Experimental dungeons" for more details.
   store can spawn on very deep floors.
  -An IDDC-exclusive character is (under the usual server settings) also able to
   enter the Halls of Mandos instead of the IDDC!
+ -Depending on local server settings, the Halls of Mandos might have special
+  or unusual dungeon flags, such as 'disallow any teleport', 'limit ESP range'
+  and 'disallow any summoning', making gameplay quite distinguished from other
+  dungeons.
 
 
 (4.5c2) Example dungeon depth relations
