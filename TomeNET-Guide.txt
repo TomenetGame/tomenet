@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 8. February 2023 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 9. February 2023 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.0b - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -6778,7 +6778,13 @@ of in light green to indicate that it is drained), your maximum experience ie
 the amount you used to have before getting drained still profits by 10% of any
 experience you gain, so it is not completely wasted if you don't have a potion
 of restore life levels at hand, or some other means to restore your experience
-back to normal.
+back to normal. Yet it is highly inefficient as you waste 90% of the experience
+gained and you should use some means to restore your XP as soon as possible
+before continuing to kill monsters.
+
+If you died and turned into a ghost you will still gain experience from killing
+monsters, but all experience gains from any source are cut to 50% while you are
+dead.
 
 
 Recommended minimum depths for optimal experience gain
@@ -12538,6 +12544,8 @@ Experience      Gives you additionally half your current experience plus 10,
                 However, some players prefer to quaff it earlier, when it's
                 especially hard for them to reach the next level for some
                 reason, maybe harder than if they were at 200,000 exp already.
+                The XP gain from this potion is not affected by the experience
+                gain penalties (exp ratio) of your class or race.
 Heroism         Temporary effects: Increases CHP and MHP by 10. Removes fear.
                 +12 bonus to-hit. ("You feel like a hero!")
 Infra-vision    Temporarily grants you 100..200 ft of infra-vision randomly,
