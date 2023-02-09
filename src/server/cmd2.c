@@ -2016,7 +2016,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 	int newowner = -1;
 	int i, h_idx;
 	int acc_houses = acc_get_houses(p_ptr->accountname), acc_houses2;
-	bool loaded = FALSE;
+	bool loaded = FALSE, admin = admin_p(Ind);
 
 	/* to prevent house amount cheeze (houses_owned)
 	   let's just say house ownership can't be transferred.
@@ -2042,19 +2042,31 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 			struct account acc;
 			hash_entry *ptr;
 			object_type *o_ptr;
+			s32b id;
 
 			if (!GetAccount(&acc, p_ptr->accountname, NULL, FALSE)) { /* paranoia */
 				/* uhh.. */
-				msg_print(Ind, "Character not online, nor found in your list of characters.");
+				msg_print(Ind, "Your account is corrupted, please contact an admin.");
 				return(FALSE);
 			}
-			ids = player_id_list(&id_list, acc.id);
-			for (j = 0; j < ids; j++)
-				if (!strcmp(lookup_player_name(id_list[j]), &args[2])) break;
-			if (j == ids) {
-				msg_print(Ind, "Character not online, nor found in your list of characters.");
-				if (ids) C_KILL(id_list, ids, int);
-				return(FALSE);
+
+			if (admin) {
+				ids = 0; //not using id_list checks, instead direct access to all existing characters
+				if (!(id = lookup_player_id(&args[2]))) {
+					msg_print(Ind, "(Admin access) - Character does not exist.");
+					return(FALSE);
+				}
+				msg_format(Ind, "(Admin access) - Transferring house to %s (%s)", lookup_player_name(id), lookup_accountname(id));
+			} else {
+				ids = player_id_list(&id_list, acc.id);
+				for (j = 0; j < ids; j++)
+					if (!strcmp(lookup_player_name(id_list[j]), &args[2])) break;
+				if (j == ids) {
+					msg_print(Ind, "Character not online, nor found in your list of characters.");
+					if (ids) C_KILL(id_list, ids, int);
+					return(FALSE);
+				}
+				id = id_list[j];
 			}
 
 			/* hack - actually load that character (same account as us) */
@@ -2066,7 +2078,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 			for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
 				ptr = hash_table[slot];
 				while (ptr) {
-					if (ptr->id != id_list[j]) {
+					if (ptr->id != id) {
 						/* advance to next character */
 						ptr = ptr->next;
 						continue;
