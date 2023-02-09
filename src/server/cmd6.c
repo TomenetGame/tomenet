@@ -1054,8 +1054,8 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 				if (!(p_ptr->mode & MODE_PVP)) {
 					msg_print(Ind, "\377GYou feel more experienced.");
 					gain_exp(Ind, ee);
+					ident = TRUE;
 				}
-				ident = TRUE;
 			}
 			break;
 			/* additions from PernA */
