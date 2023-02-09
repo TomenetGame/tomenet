@@ -2872,7 +2872,7 @@ struct player_type {
 
 	u16b total_winner;		/* Is this guy the winner */
 	u16b once_winner;		/* Has this guy ever been a winner */
-	bool iron_winner, iron_winner_ded; /* for those who beat the Ironman Deep Dive Challenge */
+	byte iron_winner, iron_winner_ded; /* for those who beat the Ironman Deep Dive Challenge */
 	struct worldpos own1, own2;	/* IF we are a king what do we own ? */
 	u16b retire_timer;		/* The number of minutes this guy can play until
 					   he will be forcibly retired. */

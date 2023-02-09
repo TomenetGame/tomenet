@@ -2238,10 +2238,11 @@ if (p_ptr->updated_savegame == 0) {
 	rd_u16b(&p_ptr->total_winner);
 	if (!older_than(4, 3, 0)) rd_u16b(&p_ptr->once_winner);
 	if (!older_than(4, 4, 29)) {
-		rd_byte(&tmp8u);
-		if (tmp8u) p_ptr->iron_winner = TRUE;
-		rd_byte(&tmp8u);
-		if (tmp8u) p_ptr->iron_winner_ded = TRUE;
+		rd_byte(&p_ptr->iron_winner);
+		rd_byte(&p_ptr->iron_winner_ded);
+		/* convert from old bool type, restricting new byte type to less than 255 as we reserve that for former 'TRUE' value */
+		if (p_ptr->iron_winner == 255) p_ptr->iron_winner = 1;
+		if (p_ptr->iron_winner_ded == 255) p_ptr->iron_winner_ded = 1;
 	}
 
 	rd_s16b(&p_ptr->own1.wx);

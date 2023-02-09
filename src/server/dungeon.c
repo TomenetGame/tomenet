@@ -4277,11 +4277,21 @@ void recall_player(int Ind, char *message) {
 #ifdef IRONDEEPDIVE_FIXED_TOWN_WITHDRAWAL
 		if (success) {
 #endif
-			p_ptr->iron_winner = TRUE;
-			msg_print(Ind, "\374\377L***\377aYou made it through the Ironman Deep Dive challenge!\377L***");
-			sprintf(buf, "\374\377L***\377a%s made it through the Ironman Deep Dive challenge!\377L***", p_ptr->name);
+			if (p_ptr->iron_winner < 250) p_ptr->iron_winner++; /* actually count xD (byte, but need -1 for conversion from old bool type in load2.c) */
+			if (p_ptr->iron_winner == 1) {
+				msg_print(Ind, "\374\377L***\377aYou made it through the Ironman Deep Dive challenge!\377L***");
+				sprintf(buf, "\374\377L***\377a%s made it through the Ironman Deep Dive challenge!\377L***", p_ptr->name);
+				l_printf("%s \\{U%s (%d) made it through the Ironman Deep Dive challenge\n", showdate(), p_ptr->name, p_ptr->lev);
+			} else if (p_ptr->iron_winner <= 99) {
+				msg_format(Ind, "\374\377L***\377aYou made it through the Ironman Deep Dive challenge (x%d)!\377L***", p_ptr->iron_winner);
+				sprintf(buf, "\374\377L***\377a%s made it through the Ironman Deep Dive challenge (x%d)!\377L***", p_ptr->name, p_ptr->iron_winner);
+				l_printf("%s \\{U%s (%d) made it through the Ironman Deep Dive challenge (x%d)\n", showdate(), p_ptr->name, p_ptr->lev, p_ptr->iron_winner);
+			} else { /* Nobody could be this insane, RIIIIIGHT? */
+				msg_print(Ind, "\374\377L***\377aYou made it through the Ironman Deep Dive challenge (x99+)!\377L***");
+				sprintf(buf, "\374\377L***\377a%s made it through the Ironman Deep Dive challenge (x99+)!\377L***", p_ptr->name);
+				l_printf("%s \\{U%s (%d) made it through the Ironman Deep Dive challenge (x99+)\n", showdate(), p_ptr->name, p_ptr->lev);
+			}
 			msg_broadcast(Ind, buf);
-			l_printf("%s \\{U%s (%d) made it through the Ironman Deep Dive challenge\n", showdate(), p_ptr->name, p_ptr->lev);
 #ifdef TOMENET_WORLDS
 			if (cfg.worldd_events) world_msg(buf);
 #endif
@@ -4307,7 +4317,7 @@ void recall_player(int Ind, char *message) {
 				process_player_change_wpos(Ind);
 
 				/* Restrict character to world surface */
-				p_ptr->iron_winner_ded = TRUE;
+				if (p_ptr->iron_winner_ded < 250) p_ptr->iron_winner_ded++;
 			}
 
 			p_ptr->IDDC_flags = 0x0; //clear IDDC specialties
@@ -4391,7 +4401,7 @@ void recall_player(int Ind, char *message) {
 			process_player_change_wpos(Ind);
 
 			/* Restrict character to world surface */
-			//p_ptr->iron_winner_ded = TRUE; --not a winner from Mandos-conquering
+			//p_ptr->iron_winner_ded++; --not a winner from Mandos-conquering
 		}
 #endif
 	}
