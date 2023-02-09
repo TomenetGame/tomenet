@@ -4902,7 +4902,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			return;
 		}
-		else if (prefix(messagelc, "/dun")) { //dungeon name
+		else if (prefix(messagelc, "/dun") && (!messagelc[4] || messagelc[4] == ' ')) { //Display our current dungeon name
 			dungeon_type *d_ptr = NULL;
 
 			if (!p_ptr->wpos.wz) {
