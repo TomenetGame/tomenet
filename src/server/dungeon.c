@@ -9476,24 +9476,27 @@ void dungeon(void) {
 	/* Check for death.  Go backwards (very important!) */
 	for (i = NumPlayers; i > 0; i--) {
 		/* Check connection first */
-		if (Players[i]->conn == NOT_CONNECTED)
-			continue;
-
+		if (Players[i]->conn == NOT_CONNECTED) continue;
 		/* Check for death */
-		if (Players[i]->death)
-			player_death(i);
+		if (Players[i]->death) player_death(i);
 	}
 
 	/* Check player's depth info */
 	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
-		if (p_ptr->conn == NOT_CONNECTED || !p_ptr->new_level_flag)
-			continue;
-		if (p_ptr->iron_winner_ded && p_ptr->wpos.wz != 0) {
-			p_ptr->new_level_flag = FALSE;
+		if (p_ptr->conn == NOT_CONNECTED || !p_ptr->new_level_flag) continue;
+
+		/* Auto-retire iron winners */
+		if (p_ptr->iron_winner_ded && p_ptr->wpos.wz != 0
+		    /* Still allow iron winners to reenter iddc/mandos, to actually be able to do something? */
+		    && !in_irondeepdive(&p_ptr->wpos) && !in_hallsofmandos(&p_ptr->wpos)
+		    ) {
+			p_ptr->new_level_flag = FALSE; //clean up, needed?
 			do_cmd_suicide(i);
 			continue;
 		}
+
+		/* Process any wpos-change of player */
 		process_player_change_wpos(i);
 	}
 
