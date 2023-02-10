@@ -3396,7 +3396,7 @@ struct player_type {
 	s16b melkor_sacrifice;		/* How much hp has been sacrified for damage */
 #endif	/* 0 */
 
-	byte spell_project;		/* Do the spells(some) affect nearby party members ? */
+	byte spell_project;		/* Do the spells(some) affect nearby party members ? -- deprecated */
 
 	/* Special powers */
 //UNUSED
