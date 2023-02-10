@@ -11761,7 +11761,7 @@ Evil:   Double damage from holy based attacks (holy orb, holy fire)
 Good:   Double damage from hellfire attacks;
         eating Lembas;
         reading blessing or PfE scroll;
-        using dispel evil or holiness staff;
+        using dispel evil staff;
         hostile dispel evil effects;
         activating the true arts of Ingwe, Carlammas, Fundin Bluecloak, Himring
 Life:   Eating Lembas or sprigs of Athelas; quaffing potion of life;
@@ -12847,7 +12847,7 @@ Healing         Staves:
                 Rods:
                 Heals 100 to 400 hit points, depending on magic device skill,
                 cures stun and cuts.
-Holiness        Dispels nearby evil. Also protects you from evil for a while.
+Holiness        Dispels nearby undead. Also protects you from evil for a while.
                 Cures poison/disease/cuts, removes fear/stun, heals somewhat.
 Magi            Restores your intelligence and 500 mana points.
                 ('You feel your head clearing')

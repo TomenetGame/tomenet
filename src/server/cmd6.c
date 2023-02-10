@@ -3601,8 +3601,8 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 		break;
 
 	case SV_STAFF_HOLINESS:
-		if (dispel_evil(Ind, 200 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
-		if (p_ptr->suscep_good || p_ptr->suscep_life) {
+		if (dispel_undead(Ind, 200 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
+		if (p_ptr->suscep_life) {
 			dam = damroll(50, 3);
 			msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
 			take_hit(Ind, dam, msg ? "a staff of holiness" : "holy aura", 0);
