@@ -1430,6 +1430,11 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 	/* Insert the new item */
 	st_ptr->stock[slot] = *o_ptr;
 
+#ifdef PLAYER_STORES
+	/* 'B' flag: Keep the last item of the pile, which is unsellable */
+	if (o_ptr->note && strstr(quark_str(o_ptr->note), "@SB") && o_ptr->number > 1) st_ptr->stock[slot].number--;
+#endif
+
 	/* Return the location */
 	return(slot);
 }
@@ -2688,6 +2693,10 @@ static void display_entry(int Ind, int pos) {
 				} else {
 					x = price_item_player_store(0, o_ptr);
 
+					/* 'B' flag: Keep the last item of the pile, which is unsellable, but indicates that it might get restocked soonish by the player maybe */
+					if (strstr(quark_str(o_ptr->note), "@SB") && o_ptr->number == 1)
+						x = -2; /* Fall back to 'museum' mode until restocked. Todo: add price - 2 as 'SOLD OUT' tag^^ */
+
 					/* just to make it look slightly less odd on older clients */
 					if (x == -2) x = -1;
 				}
@@ -3604,7 +3613,10 @@ void store_purchase(int Ind, int item, int amt) {
 			msg_print(Ind, "The shopkeeper just modified the store, please re-enter!");
 			return; /* oops, the owner swapped our item for something else */
 		}
-		if (ho_ptr->number != o_ptr->number) {
+		if (ho_ptr->number != o_ptr->number
+		    /* This happens from @SB inscription: Offered stock is 1 less than provided stock, to keep the last item. */
+		    && !(strstr(quark_str(ho_ptr->note), "@SB") && ho_ptr->number == o_ptr->number + 1)
+		    ) {
 			s_printf("PLAYER_STORE_ERROR: BAD STOCK number! (%d vs %d)\n", ho_ptr->number, o_ptr->number);
 			msg_print(Ind, "The shopkeeper just modified the store, please re-enter!");
 			return; /* oops, the owner took away or added some of that item type.
@@ -3613,6 +3625,11 @@ void store_purchase(int Ind, int item, int amt) {
 
 		if (strstr(quark_str(ho_ptr->note), "@S-")) {
 			msg_print(Ind, "That item is not for sale.");
+			return;
+		}
+
+		if (strstr(quark_str(ho_ptr->note), "@SB") && ho_ptr->number == 1) {
+			msg_print(Ind, "That item is currently sold out.");
 			return;
 		}
 
@@ -6144,6 +6161,11 @@ void home_sell(int Ind, int item, int amt) {
 					continue;
 				}
   #endif
+				/* Currently 'sold out'? */
+				if (strstr(quark_str(o_ptr->note), "@SB") && o_ptr->numer == 1) {
+					i--;
+					continue;
+				}
 				i++;
 			}
 			else i--;
@@ -7239,17 +7261,23 @@ static s64b player_store_inscribed(object_type *o_ptr, u32b price, bool appraise
 		if (!(p = strstr(quark_str(o_ptr->note), "@S"))) return(price);
 	}
 
+	/* Advance to inscription contents */
+	p += 2;
+
+	/* Base-item keeper marker, skip (no price relevance) */
+	if (*p == 'B') p++;
+
 	/* is it an increase of the default price instead of a fixed price? */
-	if (p[2] == '+') {
+	if (*p == '+') {
 		increase = TRUE;
 		p++;
-	} else if (p[2] == '%') {
+	} else if (*p == '%') {
 		mult = TRUE;
 		p++;
 	}
 
 	/* is it a valid price tag? */
-	strncpy(buf, p + 2, 9);
+	strncpy(buf, p, 9);
 	buf[9] = '\0';
 	/* if no number follows, we'll assume no price change */
 	if (buf[0] < '0' || buf[0] > '9') return price;
@@ -7399,6 +7427,12 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 			/* test item for being for sale */
 			if (player_store_inscribed(o_ptr, 0, FALSE) == -1) continue;
 
+#if 1 /* Todo: add price -3 : 'SOLD OUT' tag ^^ */
+			/* 'B' flag: Keep the last item of the pile, which is unsellable, but indicates that it might get restocked soonish by the player maybe */
+			if (strstr(quark_str(o_ptr->note), "@SB") && o_ptr->number == 1)
+				continue; /* Don't display the final item as it's not for sale, skip */
+#endif
+
 			/* found an item for sale */
 			is_store = TRUE;
 			if (fsidx == -1) break; /* no available fake store? */
@@ -7444,6 +7478,12 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 
 					/* test it for being for sale */
 					if (player_store_inscribed(o_ptr, 0, FALSE) == -1) continue;
+
+#if 1 /* Todo: add price -3 : 'SOLD OUT' tag ^^ */
+					/* 'B' flag: Keep the last item of the pile, which is unsellable, but indicates that it might get restocked soonish by the player maybe */
+					if (strstr(quark_str(o_ptr->note), "@SB") && o_ptr->number == 1)
+						continue; /* Don't display the final item as it's not for sale, skip */
+#endif
 
 					/* found an item for sale */
 					is_store = TRUE;
@@ -7651,7 +7691,11 @@ static bool player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 	   Otherwise we look for a mass-cheque or create one if none exists
 	   yet which will be added to the house, so the store owner should
 	   keep 1 slot free for this or his money goes poof! */
-	if (s_ptr->number < o_ptr->number) mass_cheque = TRUE;
+	if (s_ptr->number < o_ptr->number
+	    /* Accomodate for @SB inscription: There will always be one item left, can never not create a mass cheque, or the new cheque might poof! */
+	    || strstr(quark_str(o_ptr->note), "@SB"))
+		mass_cheque = TRUE;
+
 	object_desc(0, o0_name, s_ptr, TRUE, 3);
 
 
@@ -8153,6 +8197,14 @@ void export_player_store_offers(int *export_turns) {
 				/* Cut out the @S pricing information from the inscription. */
 				player_stores_cut_inscription(o_name);
 
+				/* 'B' flag: Keep the last item of the pile, which is unsellable, but indicates that it might get restocked soonish by the player maybe */
+				if (strstr(quark_str(o_ptr->note), "@SB") && o_ptr->number == 1)
+ #if 1 /* Todo: add price -3 : 'SOLD OUT' tag ^^ */
+					continue; /* Don't display the final item as it's not for sale, skip */
+ #else
+					price = -2; /* Fall back to 'museum' mode until restocked. */
+ #endif
+
 				//TODO maybe: report house owner?
 				//h_ptr->dna->owner = p_ptr->id; //guilds[]
 				//h_ptr->dna->owner_type = OT_PLAYER; //OT_GUILD
@@ -8306,6 +8358,14 @@ void export_player_store_offers(int *export_turns) {
 		price = price_item_player_store(0, o_ptr);
 		/* Cut out the @S pricing information from the inscription. */
 		player_stores_cut_inscription(o_name);
+
+		/* 'B' flag: Keep the last item of the pile, which is unsellable, but indicates that it might get restocked soonish by the player maybe */
+		if (strstr(quark_str(o_ptr->note), "@SB") && o_ptr->number == 1)
+ #if 1 /* Todo: add price -3 : 'SOLD OUT' tag ^^ */
+			continue; /* Don't display the final item as it's not for sale, skip */
+ #else
+			price = -2; /* Fall back to 'museum' mode until restocked. */
+ #endif
 
 		//TODO maybe: report house owner?
 		//h_ptr->dna->owner = p_ptr->id; //guilds[]

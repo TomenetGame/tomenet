@@ -4596,22 +4596,31 @@ int handle_censor(char *line) {
  #endif
 
 	/* special expressions to exempt: '@S...<.>blabla': '@S-.shards' -> '*****hards' :-p */
-	if ((word = strstr(lcopy, "@S"))) {
+	if ((word = strstr(lcopy, "@S"))
+	    && (word[2] != ':')) { /* it's a store sign! (@S:) */
 		char *c = word + 2;
+		bool terminated = FALSE;
 
-		while (*c) {
+		/* confirm inscription validity */
+
+		if (*c == 'B') c++;
+		if (*c == '+' || *c == '%') c++;
+
+		while (TRUE) {
 			switch (*c) {
 			/* still within @S expression */
 			case 'k': case 'K': case 'm': case 'M':
-			case '-': case '0': case '1': case '2':
+			case '0': case '1': case '2':
 			case '3': case '4': case '5': case '6':
 			case '7': case '8': case '9':
 				c++;
 				continue;
 			/* end of @S expression */
-			case '.':
+			case 0: terminated = TRUE; /* fall through */
+			case '-':
+			case '.': case ' ':
 				/* prevent the whole expression from getting tested for swear words */
-				while (word <= c) {
+				while (word <= (terminated ? c - 1 : c)) {
 					//lcopy2[(word - lcopy)] = 'Z';
 					*word = 'Z';
 					word++;
@@ -4623,6 +4632,7 @@ int handle_censor(char *line) {
 				c = lcopy + strlen(lcopy); //to exit outer while loop
 				break;
 			}
+			if (terminated) break;
 		}
 	}
 

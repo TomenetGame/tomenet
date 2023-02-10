@@ -265,6 +265,7 @@ void delete_object_idx(int o_idx, bool unfound_art) {
 	if (!(o_ptr->held_m_idx) && !o_ptr->embed && o_ptr->note && strstr(quark_str(o_ptr->note), "@S")
 	    && inside_house(wpos, o_ptr->ix, o_ptr->iy)) {
 		char o_name[ONAME_LEN];//, p_name[NAME_LEN];
+
 		object_desc(0, o_name, o_ptr, TRUE, 3);
 		//s_printf("PLAYER_STORE_REMOVED (doidx): %s - %s (%d,%d,%d; %d,%d).\n",
 		s_printf("PLAYER_STORE_REMOVED (doidx): %s (%d,%d,%d; %d,%d).\n",

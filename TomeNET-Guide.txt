@@ -9323,6 +9323,12 @@ respectively:
   @S3k  will sell for 3000,
   @S1M  will sell for 1000000.
 
+If you want to keep the last item of a pile of items offered in your store,
+you can put a 'B' after the '@S', for 'base', eg:
+  @SB
+(This will always cause 'mass cheques' (those inscribed 'various piled items')
+to be used for sales of this item, as the pile can never run out.)
+
 If you want to display items that are not for sale, eg create a 'museum', you
 can inscribe the items
   @S-
