@@ -1365,11 +1365,6 @@ void self_knowledge(int Ind) {
 	strcpy(p_ptr->infofile, file_name);
 #endif	// 0
 
-	/* Slay warnings for unused flags */
-	(void)(f2);
-	(void)(f4);
-	(void)(f6);
-
 	/* Open a new file */
 	fff = my_fopen(p_ptr->infofile, "wb");
 	/* Current file viewing */
@@ -1404,25 +1399,22 @@ void self_knowledge(int Ind) {
 			life = TRUE;
 	}
 
+	/* Slay warnings for unused flags */
+	(void)(f2);
+	(void)(f4);
+	(void)(f6);
+
 	/* Mega Hack^3 -- describe the amulet of life saving */
 	if (life) fprintf(fff, "Your life will be saved from perilous scene once.\n");
 
-#if 0
-	k = 100 - p_ptr->csane * 100 / p_ptr->msane;
-	if (k < 100) {
-//		sprintf(info[i++], "%d%% of your mind is under your control.", k);
-		fprintf(fff, "%d%% of your mind is under your control.\n", k);
-	}
-#else
 	/* Insanity warning (better message needed!) */
 	if (p_ptr->csane < p_ptr->msane / 8) {
-		fprintf(fff, "You are next to mad.\n");
+		fprintf(fff, "You are very close to losing your mind.\n");
 	} else if (p_ptr->csane < p_ptr->msane / 4) {
 		fprintf(fff, "Your mind is filled with insane thoughts.\n");
 	} else if (p_ptr->csane < p_ptr->msane / 2) {
-		fprintf(fff, "You have a seed of insanity in your mind.\n");
+		fprintf(fff, "You are not mentally stable.\n");
 	}
-#endif
 
 	if (p_ptr->blind) fprintf(fff, "You cannot see.\n");
 	if (p_ptr->confused) fprintf(fff, "You are confused.\n");
@@ -1635,7 +1627,8 @@ void self_knowledge(int Ind) {
 	{
 		/* Indicate Blessing */
 		if (f3 & TR3_BLESSED) fprintf(fff, "Your weapon has been blessed by the gods.\n");
-		if (f5 & TR5_CHAOTIC) fprintf(fff, "Your weapon is branded with the Sign of Chaos.\n");
+		//if (f5 & TR5_CHAOTIC) fprintf(fff, "Your weapon is branded with the Sign of Chaos.\n"); --unify message, for guide search:
+		if (f5 & TR5_CHAOTIC) fprintf(fff, "Your weapon produces chaotic effects.\n");
 		/* Hack */
 		if (f5 & TR5_IMPACT) fprintf(fff, "The impact of your weapon can cause earthquakes.\n");
 		if (f5 & TR5_VORPAL) fprintf(fff, "Your weapon is very sharp.\n");
