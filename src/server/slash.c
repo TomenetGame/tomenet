@@ -1582,8 +1582,25 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* Resolve conflict 'chapter no' vs 'line no': We assume 0-9 are chapters and everything starting at 10 is therefore a line number. */
 				if (atoi(message3) > 9 && !dot) lineno = atoi(message3);
 
+				/* Catch UI elements */
+				if (!strcmp(message3, "LEVEL")) Send_Guide(Ind, 3, 0, "Experience");
+				else if (!strcmp(message3, "XP")) Send_Guide(Ind, 3, 0, "Experience");
+				else if (!strcmp(message3, "AU")) Send_Guide(Ind, 3, 0, "Money");
+				else if (!strcmp(message3, "SN")) Send_Guide(Ind, 3, 0, "Sanity");
+				else if (!strcmp(message3, "AC")) Send_Guide(Ind, 3, 0, "armour class");
+				else if (!strcmp(message3, "HP")) Send_Guide(Ind, 2, 0, "HP  ");
+				else if (!strcmp(message3, "MP")) Send_Guide(Ind, 2, 0, "MP  ");
+				else if (!strcmp(message3, "ST")) Send_Guide(Ind, 2, 0, "ST  ");
+				else if (!strcmp(message3, "ST")) Send_Guide(Ind, 3, 0, "Fighting/shooting techniques");
+				else if (!strcmp(message3, "Bl")) Send_Guide(Ind, 3, 0, "-combat stance");
+				else if (!strcmp(message3, "Df")) Send_Guide(Ind, 3, 0, "-combat stance");
+				else if (!strcmp(message3, "Of")) Send_Guide(Ind, 3, 0, "-combat stance");
+				else if (!strcmp(message3, "DH")) Send_Guide(Ind, 3, 0, "-dual-wield mode");
+				else if (!strcmp(message3, "MH")) Send_Guide(Ind, 3, 0, "-dual-wield mode");
+				else if (!strcmp(message3, "FK")) Send_Guide(Ind, 3, 0, "-fire-till-kill toggle");
+				//else if (!strcmp(message3, "Pj")) Send_Guide(Ind, 3, 0, ""); --deprecated for a long time
 				/* We're looking for help on a slash command? Use 'strict search' */
-				if (*message3 == '/') Send_Guide(Ind, 2, 0, message3);
+				else if (*message3 == '/') Send_Guide(Ind, 2, 0, message3);
 				/* We've entered a number? Interpret it as a 'line number' directly */
 				else if (lineno != -1) Send_Guide(Ind, 4, lineno, NULL);
 				/* If it's all caps use 'strict search' too (we're looking for a FLAG probably) */
