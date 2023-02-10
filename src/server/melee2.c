@@ -4870,6 +4870,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		/* rebalance might be needed? */
 		int power = rlev / 2 + randint(rlev), dam;;
 		char damcol = unique ? 'L' : 'o';
+		bool res = (rand_int(100) < p_ptr->skill_sav || p_ptr->no_cut);
 
 		if (monst_check_antimagic(Ind, m_idx) && !(rand_int(4))) break;
 		disturb(Ind, 1, 0);
@@ -4877,10 +4878,9 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			dam = damroll(3, 8);
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 #ifdef SHOW_CURSE_DAMAGE
-			else msg_format(Ind, "%^s points at you and curses for \377%c%d \377wdamage.", m_name, damcol, dam);
-#else
-			else msg_format(Ind, "%^s points at you and curses.", m_name);
+			else if (!res) msg_format(Ind, "%^s points at you and curses for \377%c%d \377wdamage.", m_name, damcol, dam);
 #endif
+			else msg_format(Ind, "%^s points at you and curses.", m_name);
 #ifdef USE_SOUND_2010
  #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
@@ -4889,10 +4889,8 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			sound_near_monster_atk(m_idx, Ind, "curse", NULL, SFX_TYPE_MON_SPELL);
  #endif
 #endif
-			if (rand_int(100) < p_ptr->skill_sav || p_ptr->no_cut)
-				msg_print(Ind, "You resist the effects!");
-			else
-				take_hit(Ind, dam, ddesc, -m_idx);
+			if (res) msg_print(Ind, "You resist the effects!");
+			else take_hit(Ind, dam, ddesc, -m_idx);
 			break;
 		}
 		/* RF5_CAUSE_2 */
@@ -4900,10 +4898,9 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			dam = damroll(8, 8);
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 #ifdef SHOW_CURSE_DAMAGE
-			else msg_format(Ind, "%^s points at you and curses horribly for \377%c%d \377wdamage.", m_name, damcol, dam);
-#else
-			else msg_format(Ind, "%^s points at you and curses horribly.", m_name);
+			else if (!res) msg_format(Ind, "%^s points at you and curses horribly for \377%c%d \377wdamage.", m_name, damcol, dam);
 #endif
+			else msg_format(Ind, "%^s points at you and curses horribly.", m_name);
 #ifdef USE_SOUND_2010
  #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
@@ -4912,8 +4909,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			sound_near_monster_atk(m_idx, Ind, "curse", NULL, SFX_TYPE_MON_SPELL);
  #endif
 #endif
-			if (rand_int(100) < p_ptr->skill_sav || p_ptr->no_cut)
-				msg_print(Ind, "You resist the effects!");
+			if (res) msg_print(Ind, "You resist the effects!");
 			else {
 				take_hit(Ind, dam, ddesc, -m_idx);
 				(void)set_cut(Ind, p_ptr->cut + damroll(2, 3), -m_idx);
@@ -4925,10 +4921,9 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			dam = damroll(10, 15);
 			if (blind) msg_format(Ind, "%^s mumbles loudly.", m_name);
 #ifdef SHOW_CURSE_DAMAGE
-			else msg_format(Ind, "%^s points at you, incanting terribly for \377%c%d \377wdamage!", m_name, damcol, dam);
-#else
-			else msg_format(Ind, "%^s points at you, incanting terribly!", m_name);
+			else if (!res) msg_format(Ind, "%^s points at you, incanting terribly for \377%c%d \377wdamage!", m_name, damcol, dam);
 #endif
+			else msg_format(Ind, "%^s points at you, incanting terribly!", m_name);
 #ifdef USE_SOUND_2010
  #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
@@ -4937,8 +4932,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			sound_near_monster_atk(m_idx, Ind, "curse", NULL, SFX_TYPE_MON_SPELL);
  #endif
 #endif
-			if (rand_int(100) < p_ptr->skill_sav || p_ptr->no_cut)
-				msg_print(Ind, "You resist the effects!");
+			if (res) msg_print(Ind, "You resist the effects!");
 			else {
 				take_hit(Ind, dam, ddesc, -m_idx);
 				(void)set_cut(Ind, p_ptr->cut + damroll(5, 5), -m_idx);
@@ -4950,10 +4944,9 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			dam = damroll(power / 4, 15); //was 15d15
 			if (blind) msg_format(Ind, "%^s screams the word 'DIE!'", m_name);
 #ifdef SHOW_CURSE_DAMAGE
-			else msg_format(Ind, "%^s points at you, screaming the word 'DIE' for \377%c%d \377wdamage!", m_name, damcol, dam);
-#else
-			else msg_format(Ind, "%^s points at you, screaming the word 'DIE'!", m_name);
+			else if (!res) msg_format(Ind, "%^s points at you, screaming the word 'DIE' for \377%c%d \377wdamage!", m_name, damcol, dam);
 #endif
+			else msg_format(Ind, "%^s points at you, screaming the word 'DIE'!", m_name);
 #ifdef USE_SOUND_2010
  #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
@@ -4962,8 +4955,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			sound_near_monster_atk(m_idx, Ind, "curse", NULL, SFX_TYPE_MON_SPELL);
  #endif
 #endif
-			if (rand_int(100) < p_ptr->skill_sav || p_ptr->no_cut)
-				msg_print(Ind, "You resist the effects!");
+			if (!res) msg_print(Ind, "You resist the effects!");
 			else {
 				take_hit(Ind, dam, ddesc, -m_idx);
 				(void)set_cut(Ind, p_ptr->cut + damroll(10, 10), -m_idx);
