@@ -14,27 +14,27 @@ But, as you get more experienced you will become better at surviving. Have fun!
                 Default keys (rogue-like keymap, ^ denotes CTRL):
 \{sKeys that already have predefined macros on them are coloured grey like this.
 \{D-------------------------------------------------------------------------------
-z  Zap wand    A  Activate      !  Show BBS        |   Uniques slain list
-P  Peruse book f  Bash door                        =   Options menu
-c  Close door  C  Character     $  Drop gold       "   Load prf file (abs path)
-d  Drop        D  Disarm        %  Macro menu      \   Bypass the keymap (raw)
-e  Equip       \{BE  Eat\{w           &  Auto inscribe   ^Z  Pick up one item
-t  Fire        F  Refill light  (  Friendly target ^X  Toggle music
-\{Bg  Take item\{w   G  Skills        )  Clear buffer    ^V  Toggle all audio
-^E Houses      ^G Auto inscribe *  Target/look     \{B^F  Audio mixer\{w or
-i  Inventory   I  Examine       .  Run                 switch chat mode
-^A Steal                        /  Use item        ^I  Lagometer or
-^D Destroy     ^C Force-stack   \{B:  Chat\{w                switch chat mode
-x  Look        ^W Locate (map)  \{B<  Go up\{w           ^O  Chat history
-m  Use ability M  Show minimap  \{B>  Go down\{w         ^P  All message history
-o  Open door      (also try ~0) \{B@  Player list\{w     ^R  Redraw screen
-p  Open mind   \{BO  Party menu\{w    ~  Knowledge menu  ^S  Spike a door
-q  Quaff       \{BQ  Suicide\{w       +  Tunnel (dig)    ^T  Screenshot
-r  Read scroll R  Rest          {  Inscribe        \{B^Q  Quit the game (and
-s  Search      #  Search mode   }  Uninscribe          \{B(auto-save window layout)
-\{BT  Take off\{w       (toggle)      '  Inspect party member or nearby/lowbie player
-Z  Use staff   +  Tunnel (dig)  _  Sip from fountain or show item on the floor
-v  Throw       V  Cloak         ?  Help/Guide      SPACE   Stop auto-repeating
-\{Bw  Wear/Wield\{w  W  Wear/Wield 2  \{s;  Guide search    [   Repeat chat command
-S  Swap        a  Aim rod       \{sX  Swap equipable items inscribed @x0
-\{s,  Reply to a private message   F1 Fire your ranged weapon at closest monster
+z   Zap wand    A  Activate      ! Show BBS        |   Uniques slain list
+P   Peruse book f  Bash door                       =   Options menu
+c   Close door  C  Character     $ Drop gold       "   Load prf file (abs path)
+d   Drop        D  Disarm        % Macro menu      \   Bypass the keymap (raw)
+e   Equip       \{BE  Eat\{w           & Auto inscribe   ^Z  Pick up one item
+t   Fire        F  Refill light  ( Friendly target ^X  Toggle music
+\{Bg/5 Take item\{w   G  Skills        ) Clear buffer    ^V  Toggle all audio
+^E  Houses      ^G Auto inscribe * Target/look     \{B^F  Audio mixer\{w or
+i   Inventory   I  Examine       . Run                 switch chat mode
+^A  Steal                        / Use item        ^I  Lagometer or
+^D  Destroy     ^C Force-stack   \{B: Chat\{w                switch chat mode
+x   Look        ^W Locate (map)  \{B< Go up\{w           ^O  Chat history
+m   Use ability M  Show minimap  \{B> Go down\{w         ^P  All message history
+o   Open door      (also try ~0) \{B@ Player list\{w     ^R  Redraw screen
+p   Open mind   \{BO  Party menu\{w    ~ Knowledge menu  ^S  Spike a door
+q   Quaff       \{BQ  Suicide\{w       + Tunnel (dig)    ^T  Screenshot
+r   Read scroll R  Rest          { Inscribe        \{B^Q  Quit the game (and
+s   Search      #  Search mode   } Uninscribe          \{B(auto-save window layout)
+\{BT   Take off\{w       (toggle)      ' Inspect party member or nearby/lowbie player
+Z   Use staff   +  Tunnel (dig)  _ Sip from fountain or show item on the floor
+v   Throw       V  Cloak         ? Help/Guide      SPACE  Stop auto-repeating
+\{Bw   Wear/Wield\{w  W  Wear/Wield 2  \{s; Guide search    [   Repeat chat command
+S   Swap        a  Aim rod       \{sX Swap equipable items inscribed @x0
+\{s,   Reply to a private message  F1 Fire your ranged weapon at closest monster
