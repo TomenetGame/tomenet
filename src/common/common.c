@@ -979,7 +979,7 @@ int distance(int y1, int x1, int y2, int x2) { /* Note: This is currently only u
 	dx = (x1 > x2) ? (x1 - x2) : (x2 - x1);
 
 	/* Hack -- approximate the distance */
-	d = (dy > dx) ? (dy + (dx>>1)) : (dx + (dy>>1));
+	d = (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
 
 	/* Return the distance */
 	return (d);

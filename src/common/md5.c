@@ -30,8 +30,7 @@ static void MD5Transform(MD5_uint32 buf[4], MD5_uint32 in[16]);
 /*
  * Note: this code is harmless on little-endian machines.
  */
-static void byteReverse(unsigned char *buf, unsigned longs)
-{
+static void byteReverse(unsigned char *buf, unsigned longs) {
     MD5_uint32 t;
     do {
 	t = (MD5_uint32) ((unsigned) buf[3] << 8 | buf[2]) << 16 |
@@ -46,8 +45,7 @@ static void byteReverse(unsigned char *buf, unsigned longs)
  * Start MD5 accumulation.  Set bit count to 0 and buffer to mysterious
  * initialization constants.
  */
-void MD5Init(MD5_CTX *ctx)
-{
+void MD5Init(MD5_CTX *ctx) {
     ctx->buf[0] = 0x67452301;
     ctx->buf[1] = 0xefcdab89;
     ctx->buf[2] = 0x98badcfe;
@@ -61,8 +59,7 @@ void MD5Init(MD5_CTX *ctx)
  * Update context to reflect the concatenation of another buffer full
  * of bytes.
  */
-void MD5Update(MD5_CTX *ctx, const unsigned char *buf, unsigned len)
-{
+void MD5Update(MD5_CTX *ctx, const unsigned char *buf, unsigned len) {
     MD5_uint32 t;
 
     /* Update bitcount */
@@ -109,8 +106,7 @@ void MD5Update(MD5_CTX *ctx, const unsigned char *buf, unsigned len)
  * Final wrapup - pad to 64-byte boundary with the bit pattern
  * 1 0* (64-bit count of bits processed, MSB-first)
  */
-void MD5Final(unsigned char digest[16], MD5_CTX *ctx)
-{
+void MD5Final(unsigned char digest[16], MD5_CTX *ctx) {
     unsigned count;
     unsigned char *p;
 
@@ -161,15 +157,14 @@ void MD5Final(unsigned char digest[16], MD5_CTX *ctx)
 
 /* This is the central step in the MD5 algorithm. */
 #define MD5STEP(f, w, x, y, z, data, s) \
-	( w += f(x, y, z) + data,  w = w<<s | w>>(32-s),  w += x )
+	( w += f(x, y, z) + data,  w = w << s | w >> (32 - s),  w += x )
 
 /*
  * The core of the MD5 algorithm, this alters an existing MD5 hash to
  * reflect the addition of 16 longwords of new data.  MD5Update blocks
  * the data and converts bytes into longwords for this routine.
  */
-static void MD5Transform(MD5_uint32 buf[4], MD5_uint32 in[16])
-{
+static void MD5Transform(MD5_uint32 buf[4], MD5_uint32 in[16]) {
     MD5_uint32 a, b, c, d;
 
     a = buf[0];
