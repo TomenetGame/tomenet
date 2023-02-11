@@ -2641,10 +2641,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 		else if (prefix(messagelc, "/note")) {
 			int notes = 0, found_note = MAX_NOTES;
-			j = 0;
 			bool colon = FALSE;
 			char tname[MAX_SLASH_LINE_LEN], *tpname; /* target's account name (must be *long* cause we temporarily store whole message2 in it..pft */
 			struct account acc;
+
+			j = 0;
 
 			if (tk < 1) { /* Explain command usage */
 				msg_print(Ind, "Usage:    /note <character or account name>:<text>");
