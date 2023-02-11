@@ -2913,13 +2913,13 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 					} else {
 						c_ptr->feat = fgetc(((struct guildsave*)data)->fp);
 						//if (c_ptr->feat>FEAT_INVIS)
-						if (!cave_plain_floor_grid(c_ptr))
-							c_ptr->info &= ~(CAVE_ROOM);
+						if (!cave_plain_floor_grid(c_ptr)) c_ptr->info &= ~(CAVE_ROOM);
 					}
 					everyone_lite_spot(&h_ptr->wpos, h_ptr->y + y, h_ptr->x + x);
 				}
 				else if (func == FILL_OBJECT) { /* object in house? */
 					object_type *o_ptr = (object_type*)data;
+
 					if (o_ptr->ix == h_ptr->x + x && o_ptr->iy == h_ptr->y + y && !o_ptr->embed && !o_ptr->held_m_idx) {
 						success = TRUE;
 						break;
@@ -2927,6 +2927,7 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 				}
 				else if (func == FILL_PLAYER) { /* player in house? */
 					player_type *p_ptr = (player_type*)data;
+
 					if (p_ptr->px == h_ptr->x + x && p_ptr->py == h_ptr->y + y) {
 						success = TRUE;
 						break;
@@ -2957,11 +2958,8 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 				}
 				else if (func == FILL_BUILD) {
 					if (x && y && x < h_ptr->coords.rect.width - 1 && y < h_ptr->coords.rect.height - 1) {
- 						if (!(h_ptr->flags & HF_NOFLOOR))
-							c_ptr->feat = FEAT_FLOOR;
-						if (h_ptr->flags & HF_JAIL) {
-							c_ptr->info |= (CAVE_STCK | CAVE_JAIL);
-						}
+ 						if (!(h_ptr->flags & HF_NOFLOOR)) c_ptr->feat = FEAT_FLOOR;
+						if (h_ptr->flags & HF_JAIL) c_ptr->info |= (CAVE_STCK | CAVE_JAIL);
  						c_ptr->info |= (CAVE_ICKY | CAVE_ROOM);
 
 #if 0 //moved to day->night change		//note: below hack is overridden by night atm :/ todo:fix
@@ -3029,24 +3027,20 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 		dy = ptr[1];
 		if (dx) {		/* dx/dy mutually exclusive */
 			if (dx < 0) {
-				for (x = sx; x > (sx + dx); x--) {
+				for (x = sx; x > (sx + dx); x--)
 					matrix[(x + 1 - minx) + (y + 1 - miny) * mw] = 1;
-				}
 			} else {
-				for (x = sx; x < (sx + dx); x++) {
+				for (x = sx; x < (sx + dx); x++)
 					matrix[(x + 1 - minx) + (y + 1 - miny) * mw] = 1;
-				}
 			}
 			sx = x;
 		} else {
 			if (dy < 0) {
-				for (y = sy; y > (sy + dy); y--) {
+				for (y = sy; y > (sy + dy); y--)
 					matrix[(x + 1 - minx) + (y + 1 - miny) * mw] = 1;
-				}
 			} else {
-				for (y = sy; y < (sy + dy); y++) {
+				for (y = sy; y < (sy + dy); y++)
 					matrix[(x + 1 - minx) + (y + 1 - miny) * mw] = 1;
-				}
 			}
 			sy = y;
 		}
@@ -3066,6 +3060,7 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 						struct key_type *key;
 						u16b id;
 						FILE *gfp = ((struct guildsave*)data)->fp;
+
 						c_ptr = &zcave[miny + (y - 1)][minx + (x - 1)];
 						if (((struct guildsave*)data)->mode) {
 							fputc(c_ptr->feat, gfp);
@@ -3082,9 +3077,8 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 						}
 						else{
 							c_ptr->feat = fgetc(((struct guildsave*)data)->fp);
-//							if (c_ptr->feat > FEAT_INVIS)
-							if (!cave_plain_floor_grid(c_ptr))
-								c_ptr->info &= ~(CAVE_ROOM);
+							//if (c_ptr->feat > FEAT_INVIS)
+							if (!cave_plain_floor_grid(c_ptr)) c_ptr->info &= ~(CAVE_ROOM);
 							if (c_ptr->feat == FEAT_HOME) {
 								id = (fgetc(gfp) << 8);
 								id |= fgetc(gfp);
@@ -3092,7 +3086,7 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 								if (!(cs_ptr = GetCS(c_ptr, CS_KEYDOOR))) {	/* no, not really. - evileye */
 									cs_ptr = AddCS(c_ptr, CS_KEYDOOR);
 									MAKE(cs_ptr->sc.ptr, struct key_type);
-//									cs_ptr->type = CS_KEYDOOR;
+									//cs_ptr->type = CS_KEYDOOR;
 								}
 								key = cs_ptr->sc.ptr;	/* isn't it dangerous? -Jir */
 								key->id = id;
@@ -3103,21 +3097,21 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 					}
 					if (func == FILL_PLAYER) {
 						player_type *p_ptr = (player_type*)data;
-						if (p_ptr->px == minx + (x - 1) && p_ptr->py == miny + (y - 1)) {
+
+						if (p_ptr->px == minx + (x - 1) && p_ptr->py == miny + (y - 1))
 							success = TRUE;
-						}
 						break;
 					}
 					if (func == FILL_MAKEHOUSE) {
-						if ((pick_house(wpos,miny + (y - 1), minx + (x - 1)) != -1)) {
+						if ((pick_house(wpos,miny + (y - 1), minx + (x - 1)) != -1))
 							success = FALSE;
-						}
 						zcave[miny + (y - 1)][minx + (x - 1)].info &= ~(CAVE_ICKY | CAVE_ROOM | CAVE_STCK | CAVE_JAIL);
 						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
 						break;
 					}
 					if (func == FILL_OBJECT) { /* object in house */
 						object_type *o_ptr = (object_type*)data;
+
 						if (o_ptr->ix == minx + (x - 1) && o_ptr->iy == miny + (y - 1) && !o_ptr->embed && !o_ptr->held_m_idx)
 							success = TRUE;
 						break;
@@ -3174,6 +3168,7 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 					if (func == FILL_CLEAR) break;
 					if (func == FILL_PLAYER) {
 						player_type *p_ptr = (player_type*)data;
+
 						if (p_ptr->px == minx + (x - 1) && p_ptr->py == miny + (y - 1))
 							success = TRUE;
 						break;
@@ -3189,7 +3184,7 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
 					}
 					else if (func == FILL_BUILD) {
-//						zcave[miny + (y - 1)][minx + (x - 1)].feat = FEAT_PERM_EXTRA;
+						//zcave[miny + (y - 1)][minx + (x - 1)].feat = FEAT_PERM_EXTRA;
 						zcave[miny + (y - 1)][minx + (x - 1)].feat = FEAT_WALL_HOUSE;
 						if (h_ptr->flags & HF_JAIL) zcave[miny + (y - 1)][minx + (x - 1)].info |= CAVE_JAIL;
 						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));

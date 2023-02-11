@@ -7850,6 +7850,7 @@ static void cmd_master_aux_build(void) {
 			buf[0] = FEAT_HOME_HEAD;
 			{
 				u16b keyid;
+
 				keyid = c_get_quantity("Enter key pval:", 0xffff);
 				sprintf(&buf[2], "%d", keyid);
 			}
