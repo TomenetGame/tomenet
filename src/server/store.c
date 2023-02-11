@@ -49,6 +49,9 @@
  #define STORE_SORT_SPELLS_BY_NAME
 #endif
 
+/* Show items that carry @SB inscription and are currently 'SOLD OUT' aka too low on stock to pass for being listed. */
+#define PSTORE_SOLDOUT
+
 
 static int gettown_dun(int Ind);
 
@@ -1279,7 +1282,10 @@ static int get_spellbook_store_order(int pval) {
 
 
 #ifdef PLAYER_STORES
-/* Helper function to determine amount of piled items to keep, via @SB inscription */
+/* Helper function to determine amount of piled items to keep, via @SB inscription.
+   Returns 0 if item has no 'B' tag.
+   Returns >0 aka reserved base stock (B-number), if item has 'B' tag and currently ample (more than base stock) supply.
+   Returns <0 aka -object.number, if item has 'B' tag and no available supply (less or equal to base stock). */
 int player_store_base(object_type *o_ptr) {
 	int keep;
 	char *c;
@@ -1288,10 +1294,9 @@ int player_store_base(object_type *o_ptr) {
 	if (!o_ptr->note || !(c = strstr(quark_str(o_ptr->note), "@SB"))) return(0);
 
 	/* No specific amount specified? Default to 1 */
-	if (c[4] != ';' && c[5] != ';') return(1);
-
+	if (c[4] != ';' && c[5] != ';') keep = 1;
 	/* Specified an amount, must range from 1 to 99 */
-	keep = atoi(c + 3);
+	else keep = atoi(c + 3);
 
 	if (keep >= o_ptr->number) return(-o_ptr->number); /* Object must have bigger amount provided than we want to keep as base stock, to be eligible for sale */
 	if (keep < 1) return(1);
@@ -1333,6 +1338,13 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 #endif
 
 	/* Evaluate the object */
+#ifdef PSTORE_SOLDOUT
+	if (!o_ptr->number) {
+		o_ptr->number = 1;
+		value = object_value(0, o_ptr);
+		o_ptr->number = 0; //hack for price=-3 aka SOLD OUT
+	} else
+#endif
 	value = object_value(0, o_ptr);
 
 	/* Cursed/Worthless items "disappear" when sold */
@@ -1440,6 +1452,13 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 			}
 
 			/* Evaluate that slot */
+#ifdef PSTORE_SOLDOUT
+			if (!j_ptr->number) {
+				j_ptr->number = 1;
+				j_value = object_value(0, j_ptr);
+				j_ptr->number = 0; //hack for price=-3 aka SOLD OUT
+			} else
+#endif
 			j_value = object_value(0, j_ptr);
 
 			/* Objects sort by decreasing value */
@@ -1462,8 +1481,13 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 
 #ifdef PLAYER_STORES
 	/* '@SB': Keep the last items of the pile, which are unsellable.
-	   (If keep were < 0, then store_carry() wouldn't have been called at all.) */
+	   (If keep were < 0, then store_carry() wouldn't have been called at all..) */
 	if ((keep = player_store_base(o_ptr)) > 0) st_ptr->stock[slot].number -= keep;
+ #ifdef PSTORE_SOLDOUT
+	/* do_cmd_player_store(): ..except if we want to display 'SOLD OUT' (aka price=-3) now instead of just not listing the item.
+	  (Note: keep = 0 would result from absence of @SB inscription.) */
+	else if (keep < 0) st_ptr->stock[slot].number = 0; //hack for price=-3 aka SOLD OUT
+ #endif
 #endif
 
 	/* Return the location */
@@ -2627,6 +2651,10 @@ static void display_entry(int Ind, int pos) {
  #endif
 		    ) {
 			i = o_ptr->pval;
+ #ifdef PSTORE_SOLDOUT
+			if (!o_ptr->number) o_ptr->pval = i;
+			else
+ #endif
 			o_ptr->pval = i / o_ptr->number;
 		}
 #endif
@@ -2652,6 +2680,7 @@ static void display_entry(int Ind, int pos) {
 				strcat(o_name, " ]=- ");
  #else /* center-aligned sign */
 				char tmp[ONAME_LEN], tmp2[ONAME_LEN];
+
 				ps_sign += 3;
 				strcpy(tmp, " =[ ");
 				if (!strlen(ps_sign)) strcat(tmp, "<a blank sign>");
@@ -2724,13 +2753,20 @@ static void display_entry(int Ind, int pos) {
 				} else {
 					x = price_item_player_store(0, o_ptr);
 
-#if 0 /* currently, items of psb < 0 wouldn't get added to the store's stock in the first place, so this is dead code */
+ #if 0 /* currently, items of psb < 0 wouldn't get added to the store's stock in the first place, so this is dead code */
 					/* 'B' flag: Keep the last items of the pile, which are unsellable, but indicates that it might get restocked soonish by the player maybe */
 					if (player_store_base(o_ptr) < 0) x = -2; /* Fall back to 'museum' mode until restocked. Todo: add price - 2 as 'SOLD OUT' tag^^ */
-#endif
+ #endif
 
 					/* just to make it look slightly less odd on older clients */
 					if (x == -2) x = -1;
+
+ #ifdef PSTORE_SOLDOUT
+					if (!o_ptr->number) {
+						x = -3; //number=0 is a hack for 'SOLD OUT' aka price = -3
+						attr = TERM_L_DARK; //also indicate unavailability via colour
+					}
+ #endif
 				}
 			} else
 #endif
@@ -3243,7 +3279,7 @@ void store_stole(int Ind, int item) {
 		return;
 	}
 
-//	ot_ptr = &owners[st][st_ptr->owner];
+	//ot_ptr = &owners[st][st_ptr->owner];
 	//ot_ptr = &ow_info[st_ptr->owner];
 
 	if (!store_attest_command(p_ptr->store_num, BACT_STEAL)) {
@@ -3367,7 +3403,7 @@ void store_stole(int Ind, int item) {
 		sell_obj.note = quark_add("stolen");
 
 #ifdef STEAL_CHEEZEREDUCTION
-//		if (!magik((5000000 / tbest) + 5))
+		//if (!magik((5000000 / tbest) + 5))
 		if ((!magik((5000000 / tbase) + 5))
 		    && !(in_irondeepdive(&p_ptr->wpos) &&
 		    (st_info[st_ptr->st_idx].flags1 & (SF1_VHARD_STEAL | SF1_HARD_STEAL))))
@@ -3509,17 +3545,19 @@ void store_purchase(int Ind, int item, int amt) {
 	store_type *st_ptr;
 	owner_type *ot_ptr;
 
-	int		i, choice;
-	int		item_new;
+	int i, choice;
+	int item_new;
 	byte tolerance = 0x0;
 
-	s64b		price, best;
+	s64b price, best;
 
-	object_type	sell_obj;
-	object_type	*o_ptr;
+	object_type sell_obj;
+	object_type *o_ptr;
 
-	char		o_name[ONAME_LEN];
-
+	char o_name[ONAME_LEN];
+#ifdef PLAYER_STORES
+	int keep = 0;
+#endif
 
 	if (amt < 1) {
 		s_printf("$INTRUSION$ Bad amount %d! Bought by %s.\n", amt, p_ptr->name);
@@ -3573,8 +3611,7 @@ void store_purchase(int Ind, int item, int amt) {
 
 
 	/* Sanity check - mikaelh */
-	if (item < 0 || item >= st_ptr->stock_size)
-		return;
+	if (item < 0 || item >= st_ptr->stock_size) return;
 
 	/* Get the actual item */
 	o_ptr = &st_ptr->stock[item];
@@ -3595,7 +3632,7 @@ void store_purchase(int Ind, int item, int amt) {
 	if (p_ptr->store_num <= -2) {
 		object_type *ho_ptr = NULL;
 		house_type *h_ptr;
-		int h_idx, keep;
+		int h_idx;
 		cave_type **zcave, *c_ptr;
 
 		if (!(zcave = getcave(&p_ptr->wpos))) {
@@ -3643,6 +3680,15 @@ void store_purchase(int Ind, int item, int amt) {
 			msg_print(Ind, "The shopkeeper just modified the store, please re-enter!");
 			return; /* oops, the owner swapped our item for something else */
 		}
+
+
+		/* Paranoia atm (item wouldn't have gotten added to the stock in the first place if < 0).
+		   NOT paranoia, if PSTORE_SOLDOUT is defined! Then we need this! */
+		if (player_store_base(ho_ptr) < 0) {
+			msg_print(Ind, "That item is currently sold out.");
+			return;
+		}
+
 		if (ho_ptr->number != o_ptr->number
 		    /* This happens from @SB inscription: Offered stock is n less than provided stock, to keep the last n item(s). */
 		    && !((keep = player_store_base(ho_ptr)) > 0 && ho_ptr->number == o_ptr->number + keep)
@@ -3655,12 +3701,6 @@ void store_purchase(int Ind, int item, int amt) {
 
 		if (strstr(quark_str(ho_ptr->note), "@S-")) {
 			msg_print(Ind, "That item is not for sale.");
-			return;
-		}
-
-		/* Paranoia atm (item wouldn't have gotten added to the stock in the first place if < 0) */
-		if (player_store_base(ho_ptr) < 0) {
-			msg_print(Ind, "That item is currently sold out.");
 			return;
 		}
 
@@ -3921,6 +3961,11 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 
 				/* Remove the bought items from the store */
 				store_item_increase(st_ptr, item, -amt);
+#ifdef PSTORE_SOLDOUT
+				/* In pstores, do not remove 'no more' aka number=0 items if they are 'SOLD OUT'
+				   ie from @SB inscription that is down to reserved base stock now! */
+				if (p_ptr->store_num > -2 || !keep)
+#endif
 				store_item_optimize(st_ptr, item);
 
 				/* Resend the basic store info */
@@ -4034,7 +4079,7 @@ void store_sell(int Ind, int item, int amt) {
 		return;
 	}
 
-//	st_ptr = &town[gettown(Ind)].townstore[p_ptr->store_num];
+	//st_ptr = &town[gettown(Ind)].townstore[p_ptr->store_num];
 
 	if (!store_attest_command(p_ptr->store_num, BACT_SELL)) return;
 
@@ -4126,8 +4171,8 @@ void store_sell(int Ind, int item, int amt) {
 	}
 
 	/* Access the store */
-//	i = gettown(Ind);
-//	store_type *st_ptr = &town[townval].townstore[i];
+	//i = gettown(Ind);
+	//store_type *st_ptr = &town[townval].townstore[i];
 
 	/* Is there room in the store (or the home?) */
 	if (gettown(Ind) != -1) { //DUNGEON STORES
@@ -4591,7 +4636,7 @@ void do_cmd_store(int Ind) {
 	}
 
 	/* Extract the store code */
-//	which = (c_ptr->feat - FEAT_SHOP_HEAD);
+	//which = (c_ptr->feat - FEAT_SHOP_HEAD);
 
 	if ((cs_ptr = GetCS(c_ptr, CS_SHOP))) {
 		which = cs_ptr->sc.omni;
@@ -5076,7 +5121,6 @@ void store_shuffle(store_type *st_ptr) {
  * Maintain the inventory at the stores.
  */
 void store_maint(store_type *st_ptr) {
-//	int	 i, j;
 	int j;
 	//owner_type *ot_ptr;
 	int tries = 200;
@@ -5138,14 +5182,14 @@ void store_maint(store_type *st_ptr) {
 #endif	// 0
 
 	/* Activate the owner */
-//	ot_ptr = &owners[st_ptr->st_idx][st_ptr->owner];
+	//ot_ptr = &owners[st_ptr->st_idx][st_ptr->owner];
 	//ot_ptr = &ow_info[st_ptr->owner];
 
 	/* Store keeper forgives the player */
 	st_ptr->insult_cur = 0;
 
 	/* Mega-Hack -- prune the black market */
-//	if (st_ptr->st_idx == 6)
+	//if (st_ptr->st_idx == 6)
 	if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) {
 		//bool town_bm = (st_ptr->st_idx == 6);
 
@@ -7516,10 +7560,12 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 					/* test it for being for sale */
 					if (player_store_inscribed(o_ptr, 0, FALSE) == -1) continue;
 
+#ifndef PSTORE_SOLDOUT
 					/* @SB: Don't display the final item(s), not for sale, skip */
-					if (player_store_base(o_ptr) < 0) continue;
+					if (player_store_base(o_ptr) < 0) continue; /* If uncommented, store_carry() must be able to handle @SB with keep < 0 */
 					/* Todo: Instead, add price -3 aka 'SOLD OUT' tag maybe, so we can keep displaying the last item(s) of the pile,
 					   unsellable, but indicating that the pile might get restocked soonish by the player. */
+#endif
 
 					/* found an item for sale */
 					is_store = TRUE;
