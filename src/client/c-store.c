@@ -112,8 +112,10 @@ static void display_entry(int pos, int entries) {
 					else colour_bignum(x, -1, out_val, 0, FALSE);
 				}
 				c_put_str(p_ptr->au < x ? TERM_L_DARK : TERM_WHITE, out_val, i + 6, 68);
-			} else if (x == -3) /* @SB inscription and sold out: */
+			} else if (x == -3) { /* @SB inscription and sold out: */
 				(void)sprintf(out_val, "\377D SOLD OUT  ");
+				c_put_str(TERM_L_DARK, out_val, i + 6, 68);
+			}
 		}
 	}
 }
