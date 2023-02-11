@@ -721,6 +721,7 @@ static void store_process_command(int cmd) {
 		case ESCAPE:
 		case KTRL('Q'):
 			leave_store = TRUE;
+			clear_pstore_visuals();
 			break;
 
 		case KTRL('T'):
@@ -1143,4 +1144,14 @@ void display_store_special(void) {
 
 	/* reload the term */
 	Term_load();
+}
+
+/* Fix visuals a bit: When entering a pstore after entering another pstore or npc store, the old contents might flicker
+   up for a moment until they get loaded from the new pstore. Clear them instead on leaving a pstore to prevent that. */
+void clear_pstore_visuals(void) {
+	int i;
+
+	if (store_num > -2) return;
+	for (i = 0; i < STORE_INVEN_MAX; i++)
+		store_names[i][0] = 0;
 }

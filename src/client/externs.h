@@ -689,6 +689,7 @@ extern void do_redraw_store(void);
 extern void store_paste_where(char *where);
 extern void store_paste_item(char *out_val, int item);
 extern int store_top;
+extern void clear_pstore_visuals(void);
 
 /* c-xtra1.c */
 extern void prt_stat(int stat, bool boosted);

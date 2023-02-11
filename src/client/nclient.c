@@ -4100,6 +4100,7 @@ int Receive_store_kick(void) {
 
 	/* Leave the store */
 	leave_store = TRUE;
+	clear_pstore_visuals();
 
 	return(1);
 }
