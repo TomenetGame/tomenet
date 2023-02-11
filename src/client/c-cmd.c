@@ -7404,6 +7404,7 @@ static void cmd_house_chmod(int dir) {
 	char buf[80];
 	char mod = ACF_NONE;
 	u16b minlev = 0;
+
 	Term_clear();
 	Term_putstr(0, 2, -1, TERM_BLUE, "Set new permissions");
 	if (get_check2("Allow party access?", FALSE)) mod |= ACF_PARTY;
