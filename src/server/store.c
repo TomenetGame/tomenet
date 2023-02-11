@@ -1273,6 +1273,30 @@ static int get_spellbook_store_order(int pval) {
 	return(1);
 }
 
+
+
+#ifdef PLAYER_STORES
+/* Helper function to determine amount of piled items to keep, via @SB inscription */
+int player_store_base(object_type *o_ptr) {
+	int keep;
+	char *c;
+
+	/* No '@SB' inscription? Nothing to keep as base stock then */
+	if (!o_ptr->note || !(c = strstr(quark_str(o_ptr->note), "@SB"))) return(0);
+
+	/* No specific amount specified? Default to 1 */
+	if (c[4] != ';' && c[5] != ';') return(1);
+
+	/* Specified an amount, must range from 1 to 99 */
+	keep = atoi(c + 3);
+
+	if (keep >= o_ptr->number) return(-o_ptr->number); /* Object must have bigger amount provided than we want to keep as base stock, to be eligible for sale */
+	if (keep < 1) return(1);
+	if (keep > 99) return(99);
+	return(keep);
+}
+#endif
+
 /*
  * Add the item "o_ptr" to a real stores inventory.
  *
@@ -1286,9 +1310,12 @@ static int get_spellbook_store_order(int pval) {
  * In all cases, return the slot (or -1) where the object was placed
  */
 static int store_carry(store_type *st_ptr, object_type *o_ptr) {
-	int		i, slot;
-	s64b	value, j_value;
-	object_type	*j_ptr;
+	int i, slot;
+#ifdef PLAYER_STORES
+	int keep;
+#endif
+	s64b value, j_value;
+	object_type *j_ptr;
 	s16b o_tv = o_ptr->tval, o_sv = o_ptr->sval, j_tv, j_sv;
 
 #ifdef ENABLE_SUBINVEN
@@ -1431,8 +1458,9 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 	st_ptr->stock[slot] = *o_ptr;
 
 #ifdef PLAYER_STORES
-	/* 'B' flag: Keep the last item of the pile, which is unsellable */
-	if (o_ptr->note && strstr(quark_str(o_ptr->note), "@SB") && o_ptr->number > 1) st_ptr->stock[slot].number--;
+	/* '@SB': Keep the last items of the pile, which are unsellable.
+	   (If keep were < 0, then store_carry() wouldn't have been called at all.) */
+	if ((keep = player_store_base(o_ptr)) > 0) st_ptr->stock[slot].number -= keep;
 #endif
 
 	/* Return the location */
@@ -2693,9 +2721,10 @@ static void display_entry(int Ind, int pos) {
 				} else {
 					x = price_item_player_store(0, o_ptr);
 
-					/* 'B' flag: Keep the last item of the pile, which is unsellable, but indicates that it might get restocked soonish by the player maybe */
-					if (strstr(quark_str(o_ptr->note), "@SB") && o_ptr->number == 1)
-						x = -2; /* Fall back to 'museum' mode until restocked. Todo: add price - 2 as 'SOLD OUT' tag^^ */
+#if 0 /* currently, items of psb < 0 wouldn't get added to the store's stock in the first place, so this is dead code */
+					/* 'B' flag: Keep the last items of the pile, which are unsellable, but indicates that it might get restocked soonish by the player maybe */
+					if (player_store_base(o_ptr) < 0) x = -2; /* Fall back to 'museum' mode until restocked. Todo: add price - 2 as 'SOLD OUT' tag^^ */
+#endif
 
 					/* just to make it look slightly less odd on older clients */
 					if (x == -2) x = -1;
@@ -3565,7 +3594,7 @@ void store_purchase(int Ind, int item, int amt) {
 	if (p_ptr->store_num <= -2) {
 		object_type *ho_ptr = NULL;
 		house_type *h_ptr;
-		int h_idx;
+		int h_idx, keep;
 		cave_type **zcave, *c_ptr;
 
 		if (!(zcave = getcave(&p_ptr->wpos))) {
@@ -3614,8 +3643,8 @@ void store_purchase(int Ind, int item, int amt) {
 			return; /* oops, the owner swapped our item for something else */
 		}
 		if (ho_ptr->number != o_ptr->number
-		    /* This happens from @SB inscription: Offered stock is 1 less than provided stock, to keep the last item. */
-		    && !(strstr(quark_str(ho_ptr->note), "@SB") && ho_ptr->number == o_ptr->number + 1)
+		    /* This happens from @SB inscription: Offered stock is n less than provided stock, to keep the last n item(s). */
+		    && !((keep = player_store_base(ho_ptr)) > 0 && ho_ptr->number == o_ptr->number + keep)
 		    ) {
 			s_printf("PLAYER_STORE_ERROR: BAD STOCK number! (%d vs %d)\n", ho_ptr->number, o_ptr->number);
 			msg_print(Ind, "The shopkeeper just modified the store, please re-enter!");
@@ -3628,7 +3657,8 @@ void store_purchase(int Ind, int item, int amt) {
 			return;
 		}
 
-		if (strstr(quark_str(ho_ptr->note), "@SB") && ho_ptr->number == 1) {
+		/* Paranoia atm (item wouldn't have gotten added to the stock in the first place if < 0) */
+		if (player_store_base(ho_ptr) < 0) {
 			msg_print(Ind, "That item is currently sold out.");
 			return;
 		}
@@ -6161,8 +6191,10 @@ void home_sell(int Ind, int item, int amt) {
 					continue;
 				}
   #endif
+
 				/* Currently 'sold out'? */
-				if (strstr(quark_str(o_ptr->note), "@SB") && o_ptr->numer == 1) {
+				/* Paranoia atm (item wouldn't have gotten added to the stock in the first place if < 0) */
+				if (player_store_base(o_ptr) < 0) {
 					i--;
 					continue;
 				}
@@ -7265,7 +7297,11 @@ static s64b player_store_inscribed(object_type *o_ptr, u32b price, bool appraise
 	p += 2;
 
 	/* Base-item keeper marker, skip (no price relevance) */
-	if (*p == 'B') p++;
+	if (*p == 'B') {
+		if (p[2] == ';') p += 3;
+		else if (p[3] == ';') p += 4;
+		else p++;
+	}
 
 	/* is it an increase of the default price instead of a fixed price? */
 	if (*p == '+') {
@@ -7429,8 +7465,7 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 
 #if 1 /* Todo: add price -3 : 'SOLD OUT' tag ^^ */
 			/* 'B' flag: Keep the last item of the pile, which is unsellable, but indicates that it might get restocked soonish by the player maybe */
-			if (strstr(quark_str(o_ptr->note), "@SB") && o_ptr->number == 1)
-				continue; /* Don't display the final item as it's not for sale, skip */
+			if (player_store_base(o_ptr) < 0) continue; /* Don't display the final item(s), not for sale, skip */
 #endif
 
 			/* found an item for sale */
@@ -7440,7 +7475,7 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 			/* also add it to the fake store already */
 			o_ptr->ps_idx_x = i;
 			store_carry(&fake_store[fsidx], o_ptr); /* attempt to carry the object */
-//			if (j == -1) s_printf("PLAYER_STORE_CMD: store_carry -1!\n");
+			//if (j == -1) s_printf("PLAYER_STORE_CMD: store_carry -1!\n");
 			if (fake_store[fsidx].stock_num == STORE_INVEN_MAX) break;
 		}
 	}
@@ -7479,11 +7514,10 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 					/* test it for being for sale */
 					if (player_store_inscribed(o_ptr, 0, FALSE) == -1) continue;
 
-#if 1 /* Todo: add price -3 : 'SOLD OUT' tag ^^ */
-					/* 'B' flag: Keep the last item of the pile, which is unsellable, but indicates that it might get restocked soonish by the player maybe */
-					if (strstr(quark_str(o_ptr->note), "@SB") && o_ptr->number == 1)
-						continue; /* Don't display the final item as it's not for sale, skip */
-#endif
+					/* @SB: Don't display the final item(s), not for sale, skip */
+					if (player_store_base(o_ptr) < 0) continue;
+					/* Todo: Instead, add price -3 aka 'SOLD OUT' tag maybe, so we can keep displaying the last item(s) of the pile,
+					   unsellable, but indicating that the pile might get restocked soonish by the player. */
 
 					/* found an item for sale */
 					is_store = TRUE;
@@ -7493,7 +7527,7 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 					o_ptr->ps_idx_x = cx;
 					o_ptr->ps_idx_y = cy;
 					store_carry(&fake_store[fsidx], o_ptr); /* attempt to carry the object */
-//						if (j == -1) s_printf("PLAYER_STORE_CMD: store_carry -1!\n");
+					//if (j == -1) s_printf("PLAYER_STORE_CMD: store_carry -1!\n");
 					/* if store is full (usually 48 items), we can stop */
 					if (fake_store[fsidx].stock_num == STORE_INVEN_MAX) break;
 				}
@@ -8197,8 +8231,8 @@ void export_player_store_offers(int *export_turns) {
 				/* Cut out the @S pricing information from the inscription. */
 				player_stores_cut_inscription(o_name);
 
-				/* 'B' flag: Keep the last item of the pile, which is unsellable, but indicates that it might get restocked soonish by the player maybe */
-				if (strstr(quark_str(o_ptr->note), "@SB") && o_ptr->number == 1)
+				/* '@SB': Keep the last item(s) of the pile, unsellable, but indicating that pile might get restocked soonish by the player */
+				if (player_store_base(o_ptr) < 0)
  #if 1 /* Todo: add price -3 : 'SOLD OUT' tag ^^ */
 					continue; /* Don't display the final item as it's not for sale, skip */
  #else
@@ -8359,8 +8393,8 @@ void export_player_store_offers(int *export_turns) {
 		/* Cut out the @S pricing information from the inscription. */
 		player_stores_cut_inscription(o_name);
 
-		/* 'B' flag: Keep the last item of the pile, which is unsellable, but indicates that it might get restocked soonish by the player maybe */
-		if (strstr(quark_str(o_ptr->note), "@SB") && o_ptr->number == 1)
+		/* 'B' flag: Keep the last item(s) of the pile, unsellable, but indicating that pile might get restocked soonish by the player */
+		if (player_store_base(o_ptr) < 0)
  #if 1 /* Todo: add price -3 : 'SOLD OUT' tag ^^ */
 			continue; /* Don't display the final item as it's not for sale, skip */
  #else

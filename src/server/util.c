@@ -4603,7 +4603,12 @@ int handle_censor(char *line) {
 
 		/* confirm inscription validity */
 
-		if (*c == 'B') c++;
+		if (*c == 'B') {
+			if (c[2] == ';') c += 3;
+			else if (c[3] == ';') c += 4;
+			else c++;
+		}
+
 		if (*c == '+' || *c == '%') c++;
 
 		while (TRUE) {

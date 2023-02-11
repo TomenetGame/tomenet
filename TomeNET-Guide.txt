@@ -9328,6 +9328,10 @@ you can put a 'B' after the '@S', for 'base', eg:
   @SB
 (This will always cause 'mass cheques' (those inscribed 'various piled items')
 to be used for sales of this item, as the pile can never run out.)
+You can also specify a number after the 'B' to set the exact minimum amount of
+items to keep (from 1 to 99). It must be terminated by a semikolon, eg:
+  @SB5;
+  @SB5;15000
 
 If you want to display items that are not for sale, eg create a 'museum', you
 can inscribe the items
