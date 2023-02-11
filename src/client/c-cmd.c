@@ -7519,6 +7519,10 @@ void cmd_purchase_house(void) {
 			break;
 		case 's':
 			cmd_house_store(dir);
+			/* Note that Term_load() at the end of this function, followed shortly after by
+			   Term_save() in display_store(), leads to that quick visual flickering -_- no
+			   good way to skip those two though, since we don't know whether house_admin()
+			   will fail on server-side..  - C. Blue */
 			i = ESCAPE;
 			break;
 		case 'k':
