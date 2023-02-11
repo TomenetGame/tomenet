@@ -79,16 +79,17 @@ u32b Rand_state[RAND_DEG];
 /*
  * Initialize the "complex" RNG using a new seed
  */
-void Rand_state_init(u32b seed)
-{
+void Rand_state_init(u32b seed) {
 #ifdef USE_SFMT
 #ifndef WIN32
 	/* SFMT initialization using /dev/urandom if possible */
 	const int seed_bytes = 2496;
 	char *seed_array[seed_bytes];
 	int fd = open("/dev/urandom", O_RDONLY);
+
 	if (fd >= 0) {
 		ssize_t result = read(fd, seed_array, seed_bytes);
+
 		if (result > 0) {
 			close(fd);
 			//fprintf(stderr, "Seeding SFMT using %d bytes from /dev/urandom\n", (int)result);
@@ -112,8 +113,7 @@ void Rand_state_init(u32b seed)
 	for (i = 1; i < RAND_DEG; i++) Rand_state[i] = LCRNG(Rand_state[i-1]);
 
 	/* Cycle the table ten times per degree */
-	for (i = 0; i < RAND_DEG * 10; i++)
-	{
+	for (i = 0; i < RAND_DEG * 10; i++) {
 		/* Acquire the next index */
 		j = Rand_place + 1;
 		if (j == RAND_DEG) j = 0;
@@ -134,16 +134,14 @@ void Rand_state_init(u32b seed)
  * Note that "m" should probably be less than 500000, or the
  * results may be rather biased towards low values.
  */
-s32b Rand_mod(s32b m)
-{
+s32b Rand_mod(s32b m) {
 	u32b r;
 
 	/* Hack -- simple case */
 	if (m <= 1) return (0);
 
 	/* Use the "simple" RNG */
-	if (Rand_quick)
-	{
+	if (Rand_quick) {
 		/* Cycle the generator */
 		r = (Rand_value = LCRNG(Rand_value));
 
@@ -152,8 +150,7 @@ s32b Rand_mod(s32b m)
 	}
 
 	/* Use the "complex" RNG */
-	else
-	{
+	else {
 #ifdef USE_SFMT
 		/* Use the SFMT */
 		r = gen_rand32() % m;
@@ -191,22 +188,19 @@ s32b Rand_mod(s32b m)
  * This method has no bias, and is much less affected by patterns
  * in the "low" bits of the underlying RNG's.
  */
-s32b Rand_div(s32b m)
-{
+s32b Rand_div(s32b m) {
 	u32b r, n;
 
 	/* Hack -- simple case */
 	if (m <= 1) return (0);
 
 	/* Use a simple RNG */
-	if (Rand_quick)
-	{
+	if (Rand_quick) {
 		/* Partition size */
 		n = (0x10000000 / m);
 
 		/* Wait for it */
-		while (1)
-		{
+		while (1) {
 			/* Cycle the generator */
 			r = (Rand_value = LCRNG(Rand_value));
 
@@ -219,15 +213,13 @@ s32b Rand_div(s32b m)
 	}
 
 	/* Use a complex RNG */
-	else
-	{
+	else {
 #ifdef USE_SFMT
 		/* Partition size */
 		n = (0xFFFFFFFF / m);
 
 		/* Wait for it */
-		while (1)
-		{
+		while (1) {
 			/* SFMT version */
 			r = gen_rand32() / n;
 			
@@ -239,8 +231,7 @@ s32b Rand_div(s32b m)
 		n = (0x10000000 / m);
 
 		/* Wait for it */
-		while (1)
-		{
+		while (1) {
 			int j;
 
 			/* Acquire the next index */
@@ -282,8 +273,7 @@ s32b Rand_div(s32b m)
 /*
  * The normal distribution table for the "randnor()" function (below)
  */
-static s16b randnor_table[RANDNOR_NUM] =
-{
+static s16b randnor_table[RANDNOR_NUM] = {
 	206,     613,    1022,    1430,		1838,	 2245,	  2652,	   3058,
 	3463,    3867,    4271,    4673,	5075,	 5475,	  5874,	   6271,
 	6667,    7061,    7454,    7845,	8234,	 8621,	  9006,	   9389,
@@ -342,8 +332,7 @@ static s16b randnor_table[RANDNOR_NUM] =
  *
  * Note that the binary search takes up to 16 quick iterations.
  */
-s16b randnor(int mean, int stand)
-{
+s16b randnor(int mean, int stand) {
 	s16b tmp;
 	s16b offset;
 
@@ -357,21 +346,14 @@ s16b randnor(int mean, int stand)
 	tmp = rand_int(32768);
 
 	/* Binary Search */
-	while (low < high)
-	{
+	while (low < high) {
 		int mid = (low + high) >> 1;
 
 		/* Move right if forced */
-		if (randnor_table[mid] < tmp)
-		{
-			low = mid + 1;
-		}
+		if (randnor_table[mid] < tmp) low = mid + 1;
 
 		/* Move left otherwise */
-		else
-		{
-			high = mid;
-		}
+		else high = mid;
 	}
 
 	/* Convert the index into an offset */
@@ -389,9 +371,9 @@ s16b randnor(int mean, int stand)
 /*
  * Generates damage for "2d6" style dice rolls
  */
-s32b damroll(int num, int sides)
-{
+s32b damroll(int num, int sides) {
 	int i, sum = 0;
+
 	for (i = 0; i < num; i++) sum += randint(sides);
 	return (sum);
 }
@@ -400,10 +382,6 @@ s32b damroll(int num, int sides)
 /*
  * Same as above, but always maximal
  */
-s32b maxroll(int num, int sides)
-{
+s32b maxroll(int num, int sides) {
 	return (num * sides);
 }
-
-
-
