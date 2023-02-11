@@ -357,7 +357,7 @@ void store_paste_item(char *out_val, int item) {
 	if (store_num == STORE_HOME || store_num == STORE_HOME_DUN) {
 		sprintf(out_val, " %s", store_names[item]);
 	/* Player stores with '@S-' inscription neither (museum mode) */
-	} else if (store_prices[item] < 0) {
+	} else if (store_prices[item] < 0 && store_prices[item] != -3) {
 		if (store_powers[item][0]) sprintf(out_val, " %s (%s)", store_names[item], store_powers[item]);
 		else sprintf(out_val, " %s", store_names[item]);
 	/* Normal [player-]store */
@@ -378,9 +378,8 @@ void store_paste_item(char *out_val, int item) {
 
 		/* @SB inscription and sold out: */
 		if (store_prices[item] == -3) snprintf(price, PRICE_LEN, "\377DSOLD OUT\377s");
-
 		/* Convert the price to more readable format */
-		if (store_prices[item] >= 10000000)
+		else if (store_prices[item] >= 10000000)
 			snprintf(price, PRICE_LEN, "%s%dM Au%s", price_col, store_prices[item] / 1000000, price_col2);
 		else if (store_prices[item] >= 10000)
 			snprintf(price, PRICE_LEN, "%s%dk Au%s", price_col, store_prices[item] / 1000, price_col2);
