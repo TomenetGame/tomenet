@@ -2246,10 +2246,8 @@ static bool wr_server_savefile() {
 	wr_s32b(tmp32u);
 
 	/* Dump the houses */
-	for (i = 0; i < num_houses; i++) {
-		if (!(houses[i].flags&HF_DELETED))
-			wr_house(&houses[i]);
-	}
+	for (i = 0; i < num_houses; i++)
+		if (!(houses[i].flags & HF_DELETED)) wr_house(&houses[i]);
 
 	/* Write the player name database */
 	wr_player_names();
