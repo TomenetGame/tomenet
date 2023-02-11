@@ -14126,6 +14126,7 @@ bool do_scroll_life(int Ind) {
 	cave_type * c_ptr;
 	cave_type **zcave;
 	zcave = getcave(&p_ptr->wpos);
+
 	if (!zcave) return(FALSE);
 
 	for (y = -1; y <= 1; y++) {
@@ -14160,12 +14161,11 @@ bool do_scroll_life(int Ind) {
 /* modified above function to instead restore XP... used in priest spell rememberence */
 bool do_restoreXP_other(int Ind) {
 	int x,y;
-
 	player_type * p_ptr = Players[Ind];
 	cave_type * c_ptr;
 	cave_type **zcave;
-	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 
+	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 	for (y = -1; y <= 1; y++) {
 		for (x = -1; x <= 1; x++) {
 			c_ptr = &zcave[p_ptr->py+y][p_ptr->px+x];
@@ -14221,9 +14221,9 @@ bool master_level(int Ind, char * parms) {
 
 	switch (parms[0]) {
 	/* unstatic the level */
-	case 'u':
-	{
+	case 'u': {
 		struct worldpos twpos;
+
 		wpcopy(&twpos, &p_ptr->wpos);
 		unstatic_level(&twpos);
 		/* additionally unstale it, simply by poofing it completely. - C. Blue */
@@ -14241,8 +14241,7 @@ bool master_level(int Ind, char * parms) {
 		break;
 
 	/* add dungeon stairs here */
-	case 'D':
-	{
+	case 'D': {
 		cave_type **zcave;
 		u32b f1 = 0x0, f2 = 0x0, f3 = 0x0;
 
@@ -14321,10 +14320,9 @@ bool master_level(int Ind, char * parms) {
 		break;
 	}
 
-	case 'R':
-	{
-		/* Remove dungeon (here) if it exists */
+	case 'R': { /* Remove dungeon (here) if it exists */
 		cave_type **zcave;
+
 		if (!(zcave = getcave(&p_ptr->wpos))) break;
 
 		/* either remove the dungeon we're currently in */
@@ -14359,9 +14357,9 @@ bool master_level(int Ind, char * parms) {
 		break;
 	}
 
-	case 'T':
-	{
+	case 'T': {
 		struct worldpos twpos;
+
 		if (!parms[1] || p_ptr->wpos.wz) return(FALSE);
 		if (istown(&p_ptr->wpos)) {
 			msg_print(Ind, "There is already a town here!");
@@ -14384,8 +14382,7 @@ bool master_level(int Ind, char * parms) {
 		if (getcave(&twpos))
 			dealloc_dungeon_level(&twpos);
 
-		break;
-	}
+		break; }
 	/* default -- do nothing. */
 	default: break;
 	}
