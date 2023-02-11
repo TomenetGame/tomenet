@@ -4230,7 +4230,7 @@ void store_sell(int Ind, int item, int amt) {
 	}
 }
 
-
+/* Player confirmed that he wants to sell an item to a store */
 void store_confirm(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	long item, amt;
@@ -8245,16 +8245,27 @@ void export_player_store_offers(int *export_turns) {
  #ifdef DONT_EXPORT_MUSEUM
 				if (strstr(quark_str(o_ptr->note), "@S-")) continue; //museum, don't display?
  #endif
+ #ifdef PSTORE_SOLDOUT
+				/* Currently sold out item, via @SB inscription --
+				   make sure these don't break shit due to div/0 first
+				   (such as wand/staff charges calc below, but also on the website). */
+				if (!o_ptr->number) continue;
+ #endif
 
  #ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
 				/* hack for wand/staff charges to not get displayed accumulated (less comfortable) */
 				if (o_ptr->tval == TV_WAND
- #ifdef NEW_MDEV_STACKING
+  #ifdef NEW_MDEV_STACKING
 				    || o_ptr->tval == TV_STAFF
- #endif
+  #endif
 				    ) {
 					int j = o_ptr->pval;
+
+  #ifdef PSTORE_SOLDOUT
+					if (o_ptr->number)
+  #endif
 					o_ptr->pval = j / o_ptr->number;
+
   #ifndef EXPORT_FLAVOUR_AWARE
 					object_desc(0, o_name, o_ptr, TRUE, 1024 + 3 + 64);
   #else
@@ -8395,6 +8406,12 @@ void export_player_store_offers(int *export_turns) {
 #ifdef DONT_EXPORT_MUSEUM
 		if (strstr(quark_str(o_ptr->note), "@S-")) continue; //museum, don't display?
 #endif
+#ifdef PSTORE_SOLDOUT
+		/* Currently sold out item, via @SB inscription --
+		   make sure these don't break shit due to div/0 first
+		   (such as wand/staff charges calc below, but also on the website). */
+		if (!o_ptr->number) continue;
+#endif
 
 #if 0 /* avoid a small lag spike? the inside_house() check isn't really needed */
 		/* expensive? yes, cause it basically all happens during the first loop run */
@@ -8411,12 +8428,17 @@ void export_player_store_offers(int *export_turns) {
 #ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
 		/* hack for wand/staff charges to not get displayed accumulated (less comfortable) */
 		if (o_ptr->tval == TV_WAND
-#ifdef NEW_MDEV_STACKING
+ #ifdef NEW_MDEV_STACKING
 		    || o_ptr->tval == TV_STAFF
-#endif
+ #endif
 		    ) {
 			int j = o_ptr->pval;
+
+ #ifdef PSTORE_SOLDOUT
+			if (o_ptr->number)
+ #endif
 			o_ptr->pval = j / o_ptr->number;
+
  #ifndef EXPORT_FLAVOUR_AWARE
 			object_desc(0, o_name, o_ptr, TRUE, 1024 + 3 + 64);
  #else
@@ -8443,11 +8465,11 @@ void export_player_store_offers(int *export_turns) {
 
 		/* 'B' flag: Keep the last item(s) of the pile, unsellable, but indicating that pile might get restocked soonish by the player */
 		if (player_store_base(o_ptr) < 0)
- #if 1 /* Todo: add price -3 : 'SOLD OUT' tag ^^ */
+#if 1 /* Todo: add price -3 : 'SOLD OUT' tag ^^ */
 			continue; /* Don't display the final item as it's not for sale, skip */
- #else
+#else
 			price = -2; /* Fall back to 'museum' mode until restocked. */
- #endif
+#endif
 
 		//TODO maybe: report house owner?
 		//h_ptr->dna->owner = p_ptr->id; //guilds[]
@@ -8456,7 +8478,7 @@ void export_player_store_offers(int *export_turns) {
 		//TODO maybe: report house colour
 		//HOUSE_PAINTING
 		//h_ptr->colour - 1
- #ifdef EXPORT_JSON
+#ifdef EXPORT_JSON
 		if (kommao) fprintf(fp, ",\n");
 		while ((cesc = strchr(o_name, '"'))) *cesc = '\''; //don't escape it, just replace instead, for laziness
 		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
@@ -8464,12 +8486,12 @@ void export_player_store_offers(int *export_turns) {
 		fprintf(fp, "{\"wx\":%d, \"wy\":%d, \"x\":%d, \"y\":%d, \"house\":%d, \"tval\":%d, \"sval\":%d, \"attr\":%d, \"lev\":%d, \"mode\":%d, \"price\":%ld, \"wgt\":%d, \"name\":\"%s\"}",
 		    o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, o_ptr->housed - 1, o_ptr->tval, o_ptr->sval, attr, o_ptr->level, o_ptr->mode, price, o_ptr->weight, json_escape_str(o_name_escaped, o_name, sizeof(o_name_escaped)));
 		kommao = TRUE;
- #else
+#else
 		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
 		else attr = get_attr_from_tval(o_ptr);
 		fprintf(fp, "(%d,%d) <%d,%d> [%d]: (%d, %d, %d, %d, %d, %d, %ld Au) %s\n",
 		    o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, o_ptr->housed - 1, o_ptr->tval, o_ptr->sval, attr, o_ptr->level, o_ptr->mode, price, o_ptr->weight, o_name);
- #endif
+#endif
 	}
 	if (step) { //not disabled? then log
 		(*export_turns)--;
