@@ -3399,6 +3399,7 @@ void do_cmd_show_houses(int Ind, bool local, bool own, s32b id) {
 
 	FILE *fff;
 
+
 	/* Paranoia */
 	// if (!letter) return;
 
@@ -3454,6 +3455,7 @@ void do_cmd_show_houses(int Ind, bool local, bool own, s32b id) {
 		a = access_door_colour(Ind, h_ptr->dna);
 		fprintf(fff, "\377%c", color_attr_to_char(a));
 
+		if (!admin)
 #if 1 /* compress even more, for non-admins, or they have too wide a line for house tag */
 		fprintf(fff, "%3d) [%d,%d] (%d,%d)", total,
 		    h_ptr->dy * 5 / MAX_HGT, h_ptr->dx * 5 / MAX_WID,
@@ -3470,9 +3472,13 @@ void do_cmd_show_houses(int Ind, bool local, bool own, s32b id) {
 		    wpos_format_compact(Ind, &h_ptr->wpos));
 		    //h_ptr->wpos.wz*50, h_ptr->wpos.wx, h_ptr->wpos.wy);
 #endif
+		else /* admin sees fine door x,y instead of rough subsector [x,y] */
+		fprintf(fff, "%3d) [%d,%d] (%d,%d)", total,
+		    h_ptr->dy, h_ptr->dx, h_ptr->wpos.wx, h_ptr->wpos.wy);
 
 		if (dna->creator == p_ptr->dna) {
 			s32b price = house_price_player(dna->price, p_ptr->stat_ind[A_CHR]);
+
 			if (admin) fprintf(fff, " %9d ", price); //compress a bit, too wide line for house tag otherwise
 			else fprintf(fff, " %9d Au", price);
 		}
