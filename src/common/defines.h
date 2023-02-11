@@ -612,6 +612,8 @@
 //#define MAX_GUILDNOTES 10
 #define MAX_GUILDNOTES MAX_GUILDS
 #define MAX_ADMINNOTES 20
+/* Max # of notes a player may have pending at a time [6] */
+#define MAX_NOTES_PLAYER 6
 
 /* Number of text lines for the in-game BBS */
 #define BBS_LINES 15
@@ -1690,6 +1692,8 @@
 #define STORE_HERBALIST	62
 #define STORE_STRADER	63	/* for ironman dungeons / RPG_SERVER settings */
 
+#define STORE_PLAYER	66	/* Player store template */
+
 /* The specialist shops - the_sandman */
 #define STORE_SPEC_AXE		38
 #define STORE_SPEC_BLUNT	39
@@ -1704,7 +1708,6 @@
 #define STORE_MATHOM_HOUSE	57
 #define STORE_SPEC_CLOSECOMBAT	64
 #define STORE_HIDDENLIBRARY	65
-//player store template is	66
 #define STORE_POTION_IDDC	67
 #define STORE_DUNGEON_INN	68
 
@@ -8660,6 +8663,7 @@ extern int PlayerUID;
  #define BACT_LOSE_MEMORIES_I		74
  #define BACT_LOSE_MEMORIES_II		75
 #endif
+#define BACT_CONTACT_OWNER		76
 /* If one adds new BACT_ do NOT forget to increase max_bact in variables.c */
 /* MAX_BA_IDX for TomeNET	- Jir - */
 
@@ -9075,6 +9079,7 @@ extern int PlayerUID;
  #define RID_LOSE_MEMORIES_I_SKILL	20
  #define RID_LOSE_MEMORIES_II_SKILL	21
 #endif
+#define RID_CONTACT_OWNER	22
 #define RID_QUEST		100	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
 #define RID_QUEST_ACQUIRE	(RID_QUEST + MAX_Q_IDX)	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
 

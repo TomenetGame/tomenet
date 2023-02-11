@@ -4540,7 +4540,7 @@ u32b lookup_player_account(int id) {
 		return ptr->account;
 
 	/* Not found */
-	return(-1L);
+	return(0L);
 }
 
 byte lookup_player_winner(int id) {

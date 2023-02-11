@@ -25,9 +25,6 @@
  #include <execinfo.h>
 #endif
 
-/* Max # of notes a player may have pending at a time [5] */
-#define MAX_NOTES_PLAYER 6
-
 
 static void do_slash_brief_help(int Ind);
 char pet_creation(int Ind);
@@ -2814,7 +2811,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			message2[j + MSG_LEN - 1] = '\0';
 
 			/* Check whether target is actually online by now :) */
-			if ((i = name_lookup_loose(Ind, tname, FALSE, FALSE, TRUE))
+			if ((i = name_lookup(Ind, tname, FALSE, FALSE, TRUE))
 			    && !check_ignore(i, Ind)) {
 				player_type *q_ptr = Players[i];
 

@@ -2862,8 +2862,8 @@ static void display_store(int Ind) {
 
 #ifdef PLAYER_STORES
 		if (p_ptr->store_num <= -2) {
-			/* Send fake building template, hard-coded index 66 in st_info. */
-			show_building(Ind, &town[0].townstore[66]);
+			/* Send fake building template from st_info.txt */
+			show_building(Ind, &town[0].townstore[STORE_PLAYER]);
 		} else
 #endif
 		/* Send the store actions info */
@@ -3071,9 +3071,7 @@ static bool store_attest_command(int store, int bact) {
 	int i;
 
 #ifdef PLAYER_STORES
-	/* Hack: Assume that in player stores all actions are legal
-	         that work for a certain 'normal' store too */
-	if (store <= -2) store = 0;
+	if (store <= -2) store = STORE_PLAYER;
 #endif
 
 	for (i = 0; i < STORE_MAX_ACTION; i++)
@@ -7442,7 +7440,7 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 		/* would need to set up a fake info template with legal
 		   commands and all.. see hack in show_building().
 		   So currently, setting st_idx is actually obsolete. */
-		fake_store[i].st_idx = 66;
+		fake_store[i].st_idx = STORE_PLAYER;
 		fsidx = i;
 		break;
 	}

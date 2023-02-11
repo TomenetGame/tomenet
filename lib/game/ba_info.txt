@@ -381,3 +381,7 @@ I:74:0:l:0
 N:81:Lose memories II
 C:0:0:0
 I:75:0:L:0
+
+N:82:Contact house owner
+C:0:0:0
+I:76:0:o:0

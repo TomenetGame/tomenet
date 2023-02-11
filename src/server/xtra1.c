@@ -10302,6 +10302,80 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		break;
 	}
 #endif
+#ifdef PLAYER_STORES
+	case RID_CONTACT_OWNER: {
+		int i;
+		int notes = 0, found_note = MAX_NOTES;
+		cptr tpname; /* target's account name (must be *long* cause we temporarily store whole message2 in it..pft */
+		store_type *sp_ptr;
+
+		/* Check whether player has his notes quota exceeded */
+		for (i = 0; i < MAX_NOTES; i++) {
+			if (!strcmp(priv_note_sender[i], p_ptr->name) ||
+			    !strcmp(priv_note_sender[i], p_ptr->accountname)) notes++;
+		}
+		if ((notes >= MAX_NOTES_PLAYER) && !is_admin(p_ptr)) {
+			msg_format(Ind, "\377oYou have already reached the maximum of %d pending notes per player.", MAX_NOTES_PLAYER);
+			return;
+		}
+
+		/* Look for free space to store the new note */
+		for (i = 0; i < MAX_NOTES; i++) {
+			if (!strcmp(priv_note[i], "")) {
+				/* found a free memory spot */
+				found_note = i;
+				break;
+			}
+		}
+		if (found_note == MAX_NOTES) {
+			msg_format(Ind, "\377oSorry, the server reached the maximum of %d pending notes.", MAX_NOTES);
+			return;
+		}
+
+		/* Get store owner name from the fake townstore template */
+		if (p_ptr->store_num > -2) {
+			msg_print(Ind, "\377oYou are not in a private store right now.");
+			return;
+		}
+
+		sp_ptr = &fake_store[-2 - p_ptr->store_num];
+		/* Paranoia */
+		if (!(tpname = lookup_accountname(sp_ptr->player_owner))) {
+			msg_print(Ind, "\377oServer error: Store owner's account name not found.");
+			return;
+		}
+
+		if (handle_censor(str)) {
+			s_printf("RID_CONTACT_OWNER: censored <%s>.\n", str);
+			msg_print(Ind, "Bad note text, check your wording please.");
+			return;
+		}
+
+		/* limit */
+		str[MSG_LEN - CNAME_LEN - 1] = '\0'; //paranoia @ length shortening by CNAME_LEN -_-'
+
+		/* Check whether target is actually online by now :) */
+		if ((i = name_lookup(Ind, tpname, FALSE, FALSE, TRUE))
+		    && !check_ignore(i, Ind)) {
+			player_type *q_ptr = Players[i];
+
+			if ((q_ptr->page_on_privmsg ||
+			    (q_ptr->page_on_afk_privmsg && q_ptr->afk)) &&
+			    q_ptr->paging == 0)
+				q_ptr->paging = 1;
+
+			msg_format(i, "\374\377RNote from %s: %s", p_ptr->name, str);
+			//return; //so double-msg him just to be safe he sees it
+		}
+
+		strcpy(priv_note_sender[found_note], p_ptr->accountname);
+		strcpy(priv_note_target[found_note], tpname);
+		strcpy(priv_note[found_note], str);
+		strcpy(priv_note_u[found_note], str); //uncensored to-store-owner note is same as censored for now
+
+		msg_print(Ind, "\377yYour note to the store owner has been sent."); //same colour as /note in slash.c
+		return; }
+#endif
 
 	default:;
 	}

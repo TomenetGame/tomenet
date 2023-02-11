@@ -94,6 +94,7 @@ void show_building(int Ind, store_type *s_ptr) {
 	char tmp_str[80];
 	store_info_type *st_ptr = &st_info[s_ptr->st_idx];
 	store_action_type *ba_ptr;
+	player_type *p_ptr = Players[Ind];
 
 	for (i = 0; i < 6; i++) {
 		ba_ptr = &ba_info[st_ptr->actions[i]];
@@ -111,6 +112,25 @@ void show_building(int Ind, store_type *s_ptr) {
 #endif
 #ifndef ENABLE_MERCHANT_MAIL
 		if (st_ptr->actions[i] == 74 || st_ptr->actions[i] == 75 || st_ptr->actions[i] == 76) { //BACT_SEND_ITEM/BACT_SEND_GOLD/BACT_SEND_ITEM_PAY
+			Send_store_action(Ind, i, 0, 0, "", TERM_DARK, '.', 0, 0);
+			continue;
+		}
+#endif
+
+#ifdef PLAYER_STORES
+		/* player store: cannot contact the owner if we're the owner */
+		if (st_ptr->actions[i] == 82 && p_ptr->store_num <= -2) { //BACT_CONTACT_OWNER
+			/* s_ptr is actually the fake townstore template, we need to access the actual store info behind it */
+			store_type *sp_ptr = &fake_store[-2 - p_ptr->store_num];
+
+			if (p_ptr->account == lookup_player_account(sp_ptr->player_owner)) {
+				Send_store_action(Ind, i, 0, 0, "", TERM_DARK, '.', 0, 0);
+				continue;
+			}
+		}
+#else
+		/* no player stores enabled: cannot contact any owner of it */
+		if (st_ptr->actions[i] == 82) {
 			Send_store_action(Ind, i, 0, 0, "", TERM_DARK, '.', 0, 0);
 			continue;
 		}
@@ -1234,7 +1254,7 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac, int
 		msg_print(Ind, "You don't have anything appropriate.");
 		return(FALSE);
 	}
-s_printf("BACT_ENCHANT: %s enchanted %s\n", p_ptr->name, tmp_str);
+	s_printf("BACT_ENCHANT: %s enchanted %s\n", p_ptr->name, tmp_str);
 #if 0
 	if (set_reward) p_ptr->rewards[ireward] = TRUE;
 #endif
@@ -1554,7 +1574,7 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 	else o_ptr->to_d = 0;
 	msg_format(Ind, "Your %s looks as good as new again!", tmp_str);
 
-s_printf("BACT_REPAIR: %s enchanted %s\n", p_ptr->name, tmp_str);
+	s_printf("BACT_REPAIR: %s enchanted %s\n", p_ptr->name, tmp_str);
 #ifdef USE_SOUND_2010
 	sound(Ind, "store_repair", NULL, SFX_TYPE_MISC, FALSE);
 #endif
@@ -2796,6 +2816,15 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 				}
 				Send_request_str(Ind, RID_LOSE_MEMORIES_II_SKILL, "Which skill do you wish to reset? ", "");
 			}
+			break;
+#endif
+#ifdef PLAYER_STORES
+		case BACT_CONTACT_OWNER:
+			if (is_older_than(&p_ptr->version, 4, 4, 6, 2, 0, 0)) {
+				msg_print(Ind, "\377yYou need an up-to-date client to do this.");
+				break;
+			}
+			Send_request_str(Ind, RID_CONTACT_OWNER, "Your note: ", "");
 			break;
 #endif
 		default:
