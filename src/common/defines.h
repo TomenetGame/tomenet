@@ -2358,12 +2358,12 @@
 /* Resurrected ones from Mangband/TomeNET */
 #define FEAT_CROP		0x12
 #define FEAT_LOOSE_DIRT		0x13
-#define FEAT_HOME_OPEN		0x14
+#define FEAT_HOME_OPEN		0x14	/* player's house door */
 #define FEAT_SIGN		0x15
 #define FEAT_PERM_CLEAR		0x16
 #define FEAT_LOGS		0x17
 #define FEAT_DRAWBRIDGE		0x18
-#define FEAT_HOME		0x19
+#define FEAT_HOME		0x19	/* player's house door */
 #define FEAT_WALL_HOUSE		0x1A	/* permanent wall for player houses */
 
 /* Backward compatibility Hack */
