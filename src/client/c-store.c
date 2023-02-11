@@ -111,7 +111,8 @@ static void display_entry(int pos, int entries) {
 					else colour_bignum(x, -1, out_val, 0, FALSE);
 				}
 				c_put_str(p_ptr->au < x ? TERM_L_DARK : TERM_WHITE, out_val, i + 6, 68);
-			}
+			} else if (x == -3) /* @SB inscription and sold out: */
+				(void)sprintf(out_val, "\377D SOLD OUT  ");
 		}
 	}
 }
@@ -374,6 +375,9 @@ void store_paste_item(char *out_val, int item) {
 			price_col[0] = 0;
 			price_col2[0] = 0;
 		}
+
+		/* @SB inscription and sold out: */
+		if (store_prices[item] == -3) snprintf(price, PRICE_LEN, "\377DSOLD OUT\377s");
 
 		/* Convert the price to more readable format */
 		if (store_prices[item] >= 10000000)

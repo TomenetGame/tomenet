@@ -478,7 +478,10 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 	return (price);
 }
 
-/* new hack: specify Ind to set the item's value; Ind == 0 -> retrieve it! */
+/* new hack: specify Ind to set the item's value; Ind == 0 -> retrieve it!
+   Inherited from player_store_inscribed():
+    Returns price or -2 if not for sale. Return -1 if not for display/not available.
+    May return -3 in the future for 'SOLD OUT' items from @SB inscription. */
 s64b price_item_player_store(int Ind, object_type *o_ptr) {
 	s64b price, final_price;
 
@@ -7263,6 +7266,7 @@ static bool notify_owner(const char cname[CNAME_LEN], const char msg[MSG_LEN]) {
 
 /* Is an item inscribed correctly to be sold in a player-run store? - C. Blue
    Returns price or -2 if not for sale. Return -1 if not for display/not available.
+   May return -3 in the future for 'SOLD OUT' items from @SB inscription.
    Pricing tag format:  @Snnnnnnnnn.  <- with dot for termination.
    Expects 'price' to be the minimum allowed price (2x base price or for some exceptions 1x base price). */
 static s64b player_store_inscribed(object_type *o_ptr, u32b price, bool appraise) {
