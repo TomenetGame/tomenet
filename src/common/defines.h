@@ -1668,7 +1668,7 @@
 #define STORE_ALCHEMIST	4
 #define STORE_MAGIC	5
 #define STORE_BLACK	6
-#define STORE_HOME	7
+#define STORE_HOME	7	/* player's house, NOT the inn (which is STORE_INN) */
 #define STORE_BOOK	8
 //#define STORE_PET	9
 #define STORE_RUNE	9
@@ -1716,7 +1716,7 @@
 #define STORE_ALCHEMIST_DUN	74
 #define STORE_MAGIC_DUN		75
 #define STORE_BLACK_DUN		76
-#define STORE_HOME_DUN		77
+#define STORE_HOME_DUN		77	/* player's house, but inside a dungeon (NOT the inn, which is STORE_DUNGEON_INN) -- currently this doesn't exist */
 #define STORE_BOOK_DUN		78
 //#define STORE_PET_DUN		79
 #define STORE_RUNE_DUN		79
