@@ -1582,7 +1582,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* Resolve conflict 'chapter no' vs 'line no': We assume 0-9 are chapters and everything starting at 10 is therefore a line number. */
 				if (atoi(message3) > 9 && !dot) lineno = atoi(message3);
 
-				/* Catch UI elements */
+				/* Catch UI elements -- this stuff could just as well be client-side, ie in cmd_the_guide(), like all the other search expressions there */
 				if (!strcmp(message3, "LEVEL")) Send_Guide(Ind, 3, 0, "Experience");
 				else if (!strcmp(message3, "XP")) Send_Guide(Ind, 3, 0, "Experience");
 				else if (!strcmp(message3, "AU")) Send_Guide(Ind, 3, 0, "Money");
@@ -1599,6 +1599,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				else if (!strcmp(message3, "MH")) Send_Guide(Ind, 3, 0, "-dual-wield mode");
 				else if (!strcmp(message3, "FK")) Send_Guide(Ind, 3, 0, "-fire-till-kill toggle");
 				//else if (!strcmp(message3, "Pj")) Send_Guide(Ind, 3, 0, ""); --deprecated for a long time
+
 				/* We're looking for help on a slash command? Use 'strict search' */
 				else if (*message3 == '/') Send_Guide(Ind, 2, 0, message3);
 				/* We've entered a number? Interpret it as a 'line number' directly */
