@@ -904,6 +904,7 @@ void do_redraw_store(void) {
 		if ((store_num == STORE_HOME || store_num == STORE_HOME_DUN)
 		    && c_store.max_cost) {
 			char buf[1024];
+
 			sprintf(buf, "%s (Stock: %d/%d)", c_store.store_name, store.stock_num, c_store.max_cost);
 			prt(buf, 3, 50);
 		}

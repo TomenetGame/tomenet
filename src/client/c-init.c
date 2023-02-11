@@ -2636,6 +2636,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 					/* reprint corrected multiplier info */
 					if (mult_line_pl != -1) {
 						char *c_mult = strstr(paste_lines[mult_line_pl], "(x");
+
 						if (c_mult) {
 							(*(c_mult + 2))++;
 							Term_putstr(1, 7 + mult_line_l, -1, ta_key, paste_lines[mult_line_pl] + 2);

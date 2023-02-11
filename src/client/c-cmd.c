@@ -6545,6 +6545,7 @@ void cmd_message(void) {
 		/* hack - screenshot - mikaelh */
 		if (prefix(buf, "/shot") || prefix(buf, "/screenshot")) {
 			char *space = strchr(buf, ' ');
+
 			if (space && space[1]) {
 				/* Use given parameter as filename */
 				xhtml_screenshot(space + 1, FALSE);

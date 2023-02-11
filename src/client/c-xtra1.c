@@ -566,6 +566,7 @@ void prt_stamina(int max, int cur, bool bar) {
 		c_put_str(color, tmp, ROW_CURST, COL_CURST);
 	} else {
 		char bar_char;
+
 #if 0 /* looks too strange with all 3 bars above each other */
  #ifdef WINDOWS
 		if (!force_cui && c_cfg.font_map_solid_walls) bar_char = FONT_MAP_SOLID_WIN; /* :-p hack */
@@ -750,6 +751,7 @@ void prt_mp(int max, int cur, bool bar) {
 			c_put_str(color, tmp, ROW_CURMP, COL_CURMP);
 		} else {
 			char bar_char;
+
 #if 0 /* looks too strange with all 3 bars above each other */
  #ifdef WINDOWS
 			if (!force_cui && c_cfg.font_map_solid_walls) bar_char = FONT_MAP_SOLID_WIN; /* :-p hack */

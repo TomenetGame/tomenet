@@ -2170,10 +2170,12 @@ static errr ReadBMPData(char *Name, char **data_return,  int *width_return, int 
 
 	for (int n = 0; err == 0 && n < abs(infoheader.biHeight); n++) {
 		int y = infoheader.biHeight - n - 1;
+
 		if (infoheader.biHeight < 0) y = n;
 
 		for (int x = 0; x < infoheader.biWidth; x++) {
 			int i = 4 * (y * infoheader.biWidth + x);
+
 			/* Usually the pixel colors are in BGR (or BGRA) order. The order can be different,
 			 * depending on header info, but for simplicity assume BGR (or BGRA) ordering. */
 			if (1 != fread(&data[i], 3, 1, f)) {err = ReadBMPUnexpectedEOF; break;}
@@ -2284,30 +2286,24 @@ static XImage *ResizeImage(Display *disp, XImage *Im,
 	C_MAKE(fgmask_data, new_masks_size, char);
 	memset(fgmask_data, 0, new_masks_size);
 
-	if (ix >= ox)
-	{
+	if (ix >= ox) {
 		px1 = &x1;
 		px2 = &x2;
 		dx1 = &ix;
 		dx2 = &ox;
-	}
-	else
-	{
+	} else {
 		px1 = &x2;
 		px2 = &x1;
 		dx1 = &ox;
 		dx2 = &ix;
 	}
 
-	if (iy >= oy)
-	{
+	if (iy >= oy) {
 		py1 = &y1;
 		py2 = &y2;
 		dy1 = &iy;
 		dy2 = &oy;
-	}
-	else
-	{
+	} else {
 		py1 = &y2;
 		py2 = &y1;
 		dy1 = &oy;
@@ -2316,33 +2312,27 @@ static XImage *ResizeImage(Display *disp, XImage *Im,
 
 	Ty = *dy1;
 
-	for (y1 = 0, y2 = 0; (y1 < height1) && (y2 < height2); )
-	{
+	for (y1 = 0, y2 = 0; (y1 < height1) && (y2 < height2); ) {
 		Tx = *dx1;
 
-		for (x1 = 0, x2 = 0; (x1 < width1) && (x2 < width2); )
-		{
+		for (x1 = 0, x2 = 0; (x1 < width1) && (x2 < width2); ) {
 			XPutPixel(Tmp, x2, y2, XGetPixel(Im, x1, y1));
 			u32b maskbitno = (x1 + (y1 * width1));
 			u32b newmaskbitno = (x2 + (y2 * paddedWidth2));
 			bool bgbit = bgbits[maskbitno/8] & (1<<(maskbitno%8));
-			if (bgbit) {
-				bgmask_data[newmaskbitno/8] |= 1<<(newmaskbitno%8);
-			} else {
-				bgmask_data[newmaskbitno/8] &= ~(1<<(newmaskbitno%8));
-			}
+
+			if (bgbit) bgmask_data[newmaskbitno/8] |= 1<<(newmaskbitno%8);
+			else bgmask_data[newmaskbitno/8] &= ~(1<<(newmaskbitno%8));
+
 			bool fgbit = fgbits[maskbitno/8] & (1<<(maskbitno%8));
-			if (fgbit) {
-				fgmask_data[newmaskbitno/8] |= 1<<(newmaskbitno%8);
-			} else {
-				fgmask_data[newmaskbitno/8] &= ~(1<<(newmaskbitno%8));
-			}
+
+			if (fgbit) fgmask_data[newmaskbitno/8] |= 1<<(newmaskbitno%8);
+			else fgmask_data[newmaskbitno/8] &= ~(1<<(newmaskbitno%8));
 
 			(*px1)++;
 
 			Tx -= *dx2;
-			if (Tx <= 0)
-			{
+			if (Tx <= 0) {
 				Tx += *dx1;
 				(*px2)++;
 			}
@@ -2351,8 +2341,7 @@ static XImage *ResizeImage(Display *disp, XImage *Im,
 		(*py1)++;
 
 		Ty -= *dy2;
-		if (Ty <= 0)
-		{
+		if (Ty <= 0) {
 			Ty += *dy1;
 			(*py2)++;
 		}
@@ -3119,6 +3108,7 @@ void terminal_window_real_coords_x11(int term_idx, int *ret_x, int *ret_y) {
 	    &nitems_return, &bytes_after_return, &data) == Success) {
 		if ((type_return == XA_CARDINAL) && (format_return == 32) && (nitems_return == 4) && (data)) {
 			unsigned long *ldata = (unsigned long *)data;
+
 			got_frame_extents = TRUE;
 			/* _NET_FRAME_EXTENTS format is left, right, top, bottom */
 			x_rel = ldata[0];

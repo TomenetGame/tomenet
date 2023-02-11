@@ -2558,6 +2558,7 @@ static void init_windows(void) {
 
 		/* Build the name of the graphics file. */
 		char filename[1024];
+
 		path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, graphic_tiles);
 		strcat(filename, ".bmp");
 
@@ -3692,11 +3693,13 @@ void init_stuff(void) {
 			/* copy it */
 #if 0
 			char out_val[2048];
+
 			sprintf(out_val, "copy %s %s", path2, path);
 			system(out_val);
 #else
 			FILE *fp, *fp2;
 			char buf[1024];
+
 			buf[0] = 0;
 			fp = fopen(path, "w");
 			fp2 = fopen(path2, "r");
@@ -3895,6 +3898,7 @@ static void turn_off_numlock(void) {
 	if (!r) {
 		DWORD err = GetLastError();
 		char *msg = (char*)malloc(sizeof(char) * 50);
+
 		sprintf(msg, "SendInput error (down): %lu", err);
 		plog(msg);
 	}
@@ -3907,6 +3911,7 @@ static void turn_off_numlock(void) {
 	if (!r) {
 		DWORD err = GetLastError();
 		char *msg = (char*)malloc(sizeof(char) * 50);
+
 		sprintf(msg, "SendInput error (up): %lu", err);
 		plog(msg);
 	}
@@ -4430,6 +4435,7 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	if (c == 127 || c == 128) {
  #ifdef PALANIM_OPTIMIZED2
 		int i;
+
 		/* Batch-apply all colour changes */
   #ifndef EXTENDED_COLOURS_PALANIM
 		for (i = 0; i < BASE_PALETTE_SIZE; i++)

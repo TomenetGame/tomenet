@@ -1063,36 +1063,34 @@ errr init_gcu(void) {
 		int y, x;
 
 		switch (i) {
-			case 0: rows = 24;
-				cols = 80;
-				y = x = 0;
-				break;
-			case 1: rows = LINES - 25;
-				cols = 80;
-				y = 25;
-				x = 0;
-				break;
-			case 2: rows = 24;
-				cols = COLS - 81;
-				y = 0;
-				x = 81;
-				break;
-			case 3: rows = LINES - 25;
-				cols = COLS - 81;
-				y = 25;
-				x = 81;
-				break;
-			default: rows = cols = 0;
-				 y = x = 0;
-				 break;
+		case 0: rows = 24;
+			cols = 80;
+			y = x = 0;
+			break;
+		case 1: rows = LINES - 25;
+			cols = 80;
+			y = 25;
+			x = 0;
+			break;
+		case 2: rows = 24;
+			cols = COLS - 81;
+			y = 0;
+			x = 81;
+			break;
+		case 3: rows = LINES - 25;
+			cols = COLS - 81;
+			y = 25;
+			x = 81;
+			break;
+		default: rows = cols = 0;
+			 y = x = 0;
+			 break;
 		}
 
 		if (rows <= 0 || cols <= 0) continue;
 
 		term_data_init(&data[next_win], rows, cols, y, x);
-
 		ang_term[next_win] = Term;
-
 		next_win++;
 	}
 

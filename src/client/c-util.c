@@ -1964,6 +1964,7 @@ bool paste_from_clipboard(char *buf, bool global) {
 		HANDLE hClipboardData = GetClipboardData(CF_TEXT);
 		if (hClipboardData) {
 			CHAR *pchData = (CHAR*) GlobalLock(hClipboardData);
+
 			if (pchData) {
 				strncpy(buf_esc, pchData, MSG_LEN - NAME_LEN - 13); //just accomodate for some colour codes and spacing, not really calculated it
 				buf_esc[MSG_LEN - NAME_LEN - 13] = 0;
@@ -5188,6 +5189,7 @@ void interact_macros(void) {
 					 * so the code tries to consider both */
 					m_ctrl = FALSE;
 					bool is_simple = FALSE;
+
 					switch (buf[1]) {
 						/* a lowercase letter indicates special key */
 						case 'b': sprintf(t_key, "Bsp/Del  "); break; // 'Backspace' and also 'Del' key! why?
@@ -8467,7 +8469,6 @@ static void do_cmd_options_win(void) {
 		/* Display the options */
 		for (i = 0; i < NR_OPTIONS_SHOWN; i++) {
 			byte a = TERM_WHITE;
-
 			cptr str = window_flag_desc[i];
 
 			/* Use color */
@@ -8480,8 +8481,7 @@ static void do_cmd_options_win(void) {
 			Term_putstr(0, i + vertikal_offset + 2, -1, a, (char*)str);
 
 			/* Display the windows */
-			for (j = 1; j < ANGBAND_TERM_MAX; j++)
-			{
+			for (j = 1; j < ANGBAND_TERM_MAX; j++) {
 				byte a = TERM_SLATE;
 				char c = '.';
 
@@ -8507,72 +8507,72 @@ static void do_cmd_options_win(void) {
 
 		/* Analyze */
 		switch (ch) {
-			case ESCAPE:
-				go = FALSE;
-				break;
+		case ESCAPE:
+			go = FALSE;
+			break;
 
-			case KTRL('T'):
-				/* Take a screenshot */
-				xhtml_screenshot("screenshot????", 2);
-				break;
+		case KTRL('T'):
+			/* Take a screenshot */
+			xhtml_screenshot("screenshot????", 2);
+			break;
 
-			/* specialty: allow chatting from within here */
-			case ':':
-				cmd_message();
-				inkey_msg = TRUE; /* And suppress macros again.. */
-				break;
+		/* specialty: allow chatting from within here */
+		case ':':
+			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
+			break;
 
-			case 'T':
-			case 't':
-				/* Clear windows */
-				for (j = 1; j < ANGBAND_TERM_MAX; j++)
-					window_flag[j] &= ~(1L << y);
+		case 'T':
+		case 't':
+			/* Clear windows */
+			for (j = 1; j < ANGBAND_TERM_MAX; j++)
+				window_flag[j] &= ~(1L << y);
 
-				/* Clear flags */
-				for (i = 1; i < NR_OPTIONS_SHOWN; i++)
-					window_flag[x] &= ~(1L << i);
+			/* Clear flags */
+			for (i = 1; i < NR_OPTIONS_SHOWN; i++)
+				window_flag[x] &= ~(1L << i);
 
-				/* Fall through */
+			/* Fall through */
 
-			case 'y':
-			case 'Y':
-				/* Ignore screen */
-				if (x == 0) break;
+		case 'y':
+		case 'Y':
+			/* Ignore screen */
+			if (x == 0) break;
 
-				/* Set flag */
-				window_flag[x] |= (1L << y);
+			/* Set flag */
+			window_flag[x] |= (1L << y);
 
-				/* Update windows */
-				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP);//PW_LAGOMETER is called automatically, no need.
-				window_stuff();
-				break;
+			/* Update windows */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP);//PW_LAGOMETER is called automatically, no need.
+			window_stuff();
+			break;
 
-			case 'n':
-			case 'N':
-				/* Clear flag */
-				window_flag[x] &= ~(1L << y);
+		case 'n':
+		case 'N':
+			/* Clear flag */
+			window_flag[x] &= ~(1L << y);
 
-				/* Update windows */
-				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP);//PW_LAGOMETER is called automatically, no need.
-				window_stuff();
-				break;
+			/* Update windows */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP);//PW_LAGOMETER is called automatically, no need.
+			window_stuff();
+			break;
 
-			case '\r':
-				/* Toggle flag */
-				window_flag[x] ^= (1L << y);
+		case '\r':
+			/* Toggle flag */
+			window_flag[x] ^= (1L << y);
 
-				/* Update windows */
-				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP);//PW_LAGOMETER is called automatically, no need.
-				window_stuff();
-				break;
+			/* Update windows */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP);//PW_LAGOMETER is called automatically, no need.
+			window_stuff();
+			break;
 
-			default:
-				d = keymap_dirs[ch & 0x7F];
+		default:
+			d = keymap_dirs[ch & 0x7F];
 
-				x = (x + ddx[d] + 6) % 7 + 1;
-				y = (y + ddy[d] + NR_OPTIONS_SHOWN) % NR_OPTIONS_SHOWN;
+			x = (x + ddx[d] + 6) % 7 + 1;
+			y = (y + ddy[d] + NR_OPTIONS_SHOWN) % NR_OPTIONS_SHOWN;
 
-				if (!d) bell();
+			if (!d) bell();
 		}
 	}
 
@@ -10074,6 +10074,7 @@ static void print_tomb(cptr reason) {
 			while (0 == my_fgets(fp, buf, 1024)) {
 #if 1 /* allow colour code shortcut: '\{' = colour, '{' = normal */
 				char *t = buf, *t2 = buf2;
+
 				while (*t) {
 					if (*t != '\\') *t2++ = *t++;
 					else {

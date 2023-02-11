@@ -964,8 +964,8 @@ errr process_pref_file_aux(char *buf, byte fmt) {
 	/* Process "P:<str>" -- create normal macro */
 	else if (buf[0] == 'P') {
 		char tmp[1024];
-		text_to_ascii(tmp, buf + 2);
 
+		text_to_ascii(tmp, buf + 2);
 		key_autoconvert(tmp, fmt);
 
 		//hack
@@ -978,8 +978,8 @@ errr process_pref_file_aux(char *buf, byte fmt) {
 	/* Process "H:<str>" -- create hybrid macro */
 	else if (buf[0] == 'H') {
 		char tmp[1024];
-		text_to_ascii(tmp, buf + 2);
 
+		text_to_ascii(tmp, buf + 2);
 		key_autoconvert(tmp, fmt);
 
 		//hack
@@ -992,8 +992,8 @@ errr process_pref_file_aux(char *buf, byte fmt) {
 	/* Process "C:<str>" -- create command macro */
 	else if (buf[0] == 'C') {
 		char tmp[1024];
-		text_to_ascii(tmp, buf + 2);
 
+		text_to_ascii(tmp, buf + 2);
 		key_autoconvert(tmp, fmt);
 
 		//hack
@@ -1006,6 +1006,7 @@ errr process_pref_file_aux(char *buf, byte fmt) {
 	/* Process "D:<str>" -- delete a macro */
 	else if (buf[0] == 'D') {
 		char tmp[1024];
+
 		text_to_ascii(tmp, buf + 2);
 
 		//hack
@@ -1866,6 +1867,7 @@ void xhtml_screenshot(cptr name, byte redux) {
 		fp = fopen(buf, "rb");
 		if (fp) {
 			char buf2[1028];
+
 			fclose(fp);
 			strcpy(buf2, buf);
 			strcat(buf2, ".bak");
@@ -2271,6 +2273,7 @@ void load_auto_inscriptions(cptr name) {
 		/* Old version (v1, before version tag was introduced): Convert '?' wildcard to new '*' wildcard automatically: */
 		if (version == 1) {
 			char *wc;
+
 			while ((wc = strchr(buf, '?'))) *wc = '#';
 		}
 

@@ -471,6 +471,7 @@ int Receive_file(void) {
 				}
 				if (is_newer_than(&server_version, 4, 6, 1, 1, 0, 1)) {
 					unsigned digest_net[4];
+
 					x = local_file_check_new(fname, digest);
 					md5_digest_to_bigendian_uint(digest_net, digest);
 					Packet_printf(&wbuf, "%c%c%hd%u%u%u%u", PKT_FILE, PKT_FILE_SUM, fnum, digest_net[0], digest_net[1], digest_net[2], digest_net[3]);
@@ -483,6 +484,7 @@ int Receive_file(void) {
 			case PKT_FILE_SUM:
 				if (is_newer_than(&server_version, 4, 6, 1, 1, 0, 1)) {
 					unsigned digest_net[4];
+
 					if ((n = Packet_scanf(&rbuf, "%u%u%u%u", &digest_net[0], &digest_net[1], &digest_net[2], &digest_net[3])) <= 0) {
 						/* Rollback the socket buffer */
 						Sockbuf_rollback(&rbuf, bytes_read);
@@ -2753,6 +2755,7 @@ int Receive_char(void) {
 	if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
 		/* Transfer only minimum number of bytes needed, according to client setup.*/
 		char *pc = (char *)&c;
+
 		switch (Client_setup.char_transfer_bytes) {
 			case 0:
 			case 1:
@@ -2939,12 +2942,15 @@ int Receive_message(void) {
 		/* Test sender's name, if it is us */
 		int we_sent_offset;
 		char *we_sent_p = strchr(buf, '[');
+
 		if (we_sent_p) {
 			char we_sent_buf[NAME_LEN + 1 + 10];
+
 			strncpy(we_sent_buf, we_sent_p + 1, NAME_LEN + 1 + 10);
 			we_sent_buf[NAME_LEN + 10] = '\0';
 			if (strchr(we_sent_buf, ']')) {
 				char exact_name[NAME_LEN + 1], *en_p = exact_name;
+
 				/* we found SOME name, so don't test it again */
 				we_sent_offset = strchr(buf, ']') - buf;
 				/* and also check if name = us, strictly */
@@ -3676,6 +3682,7 @@ c_msg_format("RLI wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p
 		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
 			/* Transfer only minimum number of bytes needed, according to client setup.*/
 			char *pc = (char *)&c;
+
 			switch (Client_setup.char_transfer_bytes) {
 				case 0:
 				case 1:
@@ -4685,6 +4692,7 @@ int Receive_guild_config(void) {
 	if (guildcfg_mode) {
 		int acnt = 0;
 		char buf[(NAME_LEN + 1) * 5 + 1];
+
 		if (guildhall_wx == -1) Term_putstr(5, 2, -1, TERM_SLATE, "The guild does not own a guild hall.");
 		else if (guildhall_wx >= 0) Term_putstr(5, 2, -1, TERM_L_UMBER, format("The guild hall is located in the %s area of (%d,%d).",
 		    guildhall_pos, guildhall_wx, guildhall_wy));
@@ -5582,6 +5590,7 @@ int Receive_request_cfr(void) {
 
 	if (is_newer_than(&server_version, 4, 5, 6, 0, 0, 1)) {
 		char dy;
+
 		if ((n = Packet_scanf(&rbuf, "%c%d%s%c", &ch, &id, prompt, &dy)) <= 0) return(n);
 		default_choice = dy;
 	} else {
@@ -6896,6 +6905,7 @@ if (exit_code != STILL_ACTIVE) {
 			//remove(path);
    #else /* use Windows specific functions */
 			long unsigned int read;
+
 			/* Access ping response file */
 			/* Parse OS specific 'ping' command response; win: 'time=NNNms', posix: 'time=NNN.NN ms',
 			   BUT.. have to watch out that "time" label can be OS-language specific!

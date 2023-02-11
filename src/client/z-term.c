@@ -945,6 +945,7 @@ void flicker() {
 	rand_term_lamp_ticks++;
 	if (rand_term_lamp_ticks == 1) {
 		int wind = weather_wind + (weather_wind % 2);
+
 		wind = (weather_wind && wind_noticable) ?
 		    (wind * 2 - 1) /* windy */
 		    : 20; /* no wind */
@@ -1000,6 +1001,7 @@ void flicker() {
 				/* Hack -- restore the actual character */
 				else if (attr || Term->always_text) {
 					char buf[2];
+
 					buf[0] = (char)ch;
 					buf[1] = '\0';
 					(void)((*Term->text_hook)(x, y, 1, attr, buf));
@@ -1754,6 +1756,7 @@ errr Term_fresh(void) {
 			/* Hack -- restore the actual character */
 			else if (a || Term->always_text) {
 				char buf[2];
+
 				buf[0] = (char)c;
 				buf[1] = '\0';
 				(void)((*Term->text_hook)(tx, ty, 1, a, buf));
@@ -2599,6 +2602,7 @@ static void Term_copy_queue_buf(char *dest, key_queue *keys) {
 #else
 		/* Copy the buffer in two parts */
 		int end = keys->size - keys->tail;
+
 		memcpy(dest, &keys->queue[keys->tail], end);
 		memcpy(&dest[end], keys->queue, keys->head);
 #endif

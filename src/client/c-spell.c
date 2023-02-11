@@ -775,6 +775,7 @@ void do_mimic() {
 				continue;
 			} else if (choice == '@') {
 				char buf[80];
+
 				strcpy(buf, "");
 				if (!get_string("Immunity? ", buf, 49)) {
 					if (redraw) {
