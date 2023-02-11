@@ -15,6 +15,7 @@ int store_top = 0;
  */
 void display_store_action() {
 	int i;
+
 	/* BIG_MAP leads to big shops */
 	int spacer = (screen_hgt == MAX_SCREEN_HGT) ? 14 : 0;
 
