@@ -10120,6 +10120,8 @@ Ironman Deep Dive Challenge (IDDC)
     Rogues should be aware that it's not possible to steal from general store,
     weaponsmith, armoury, temple, magic shop, black market and the special
     potion store in the dungeon towns.
+    This leaves only the Hidden Library, Herbalist, Alchemist and the Library
+    to steal from.
 
     If you use stolen enchant scrolls on an item while you are in a town,
     then the item will get a 100% off discount. If you want to use stolen
