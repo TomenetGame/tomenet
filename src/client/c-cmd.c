@@ -22,20 +22,20 @@ static void cmd_player_equip(void) {
 }
 
 static bool item_tester_edible(object_type *o_ptr) {
-	if (o_ptr->tval == TV_FOOD) return TRUE;
-	if (o_ptr->tval == TV_FIRESTONE) return TRUE;
-	if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) return TRUE;
-	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0001)) return TRUE;
+	if (o_ptr->tval == TV_FOOD) return(TRUE);
+	if (o_ptr->tval == TV_FIRESTONE) return(TRUE);
+	if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) return(TRUE);
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0001)) return(TRUE);
 
-	return FALSE;
+	return(FALSE);
 }
 
 /* XXX not fully functional */
 static bool item_tester_oils(object_type *o_ptr) {
-	if (o_ptr->tval == TV_LITE) return TRUE;
-	if (o_ptr->tval == TV_FLASK && o_ptr->sval == SV_FLASK_OIL) return TRUE;
+	if (o_ptr->tval == TV_LITE) return(TRUE);
+	if (o_ptr->tval == TV_FLASK && o_ptr->sval == SV_FLASK_OIL) return(TRUE);
 
-	return FALSE;
+	return(FALSE);
 }
 
 static void cmd_all_in_one(void) {
@@ -1447,15 +1447,15 @@ void cmd_steal(void) {
 }
 
 static bool item_tester_quaffable(object_type *o_ptr) {
-	if (o_ptr->tval == TV_POTION) return TRUE;
-	if (o_ptr->tval == TV_POTION2) return TRUE;
+	if (o_ptr->tval == TV_POTION) return(TRUE);
+	if (o_ptr->tval == TV_POTION2) return(TRUE);
 	if ((o_ptr->tval == TV_FOOD) &&
 			(o_ptr->sval == SV_FOOD_PINT_OF_ALE ||
 			 o_ptr->sval == SV_FOOD_PINT_OF_WINE) )
-			return TRUE;
-	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0002)) return TRUE;
+			return(TRUE);
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0002)) return(TRUE);
 
-	return FALSE;
+	return(FALSE);
 }
 
 void cmd_quaff(void) {
@@ -1475,11 +1475,11 @@ void cmd_quaff(void) {
 }
 
 static bool item_tester_readable(object_type *o_ptr) {
-	if (o_ptr->tval == TV_SCROLL) return TRUE;
-	if (o_ptr->tval == TV_PARCHMENT) return TRUE;
-	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0004)) return TRUE;
+	if (o_ptr->tval == TV_SCROLL) return(TRUE);
+	if (o_ptr->tval == TV_PARCHMENT) return(TRUE);
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0004)) return(TRUE);
 
-	return FALSE;
+	return(FALSE);
 }
 
 void cmd_read_scroll(void) {
@@ -1686,7 +1686,7 @@ int cmd_target(void) {
 		case 'q':
 			/* Clear top line */
 			clear_topline();
-			return FALSE;
+			return(FALSE);
 		case 't':
 		case '5':
 			done = TRUE;
@@ -1708,7 +1708,7 @@ int cmd_target(void) {
 				 */
 				/* Clear the top line */
 				clear_topline();
-				return FALSE;
+				return(FALSE);
 			} else {
 				if (position) Send_target(d + 128);
 				else Send_target(d);
@@ -1724,14 +1724,14 @@ int cmd_target(void) {
 	/* Print the message */
 	if (!c_cfg.taciturn_messages) prt("Target selected.", 0, 0);
 
-	return TRUE;
+	return(TRUE);
 }
 
 
 int cmd_target_friendly(void) {
 	/* Tell the server to init targetting */
 	Send_target_friendly(0);
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -5761,7 +5761,7 @@ bool png_screenshot(void) {
 #if !defined(WINDOWS) && !defined(USE_X11)
 	/* Neither WINDOWS nor USE_X11 */
 	c_msg_print("\377ySorry, creating a PNG file from a screenshot requires an X11 or Windows system.");
-	return FALSE;
+	return(FALSE);
 #else
 	char buf[1024], file_name[1024], command[1024];
 	int k;
@@ -5770,7 +5770,7 @@ bool png_screenshot(void) {
 
 	if (!screenshot_filename[0]) {
 		c_msg_print("\377yYou have not made a screenshot yet this session (CTRL+T).");
-		return FALSE;
+		return(FALSE);
 	}
 #endif
 
@@ -5782,10 +5782,10 @@ bool png_screenshot(void) {
 		GetModuleFileName(hModule, path, (sizeof(path)));
 	} else {
 		c_message_add("Screenshot: Module handle is NULL");
-		return FALSE;
+		return(FALSE);
 	}
 	while ((c2 = strchr(c, '\\'))) c = c2 + 1;
-	if (c == path) return FALSE; /* Error: No valid path. */
+	if (c == path) return(FALSE); /* Error: No valid path. */
 	*c = 0; //remove 'TomeNET.exe' from path
 
 	/* Build source xthml filename with full path */
@@ -5828,11 +5828,11 @@ bool png_screenshot(void) {
 		fgets(tmp, 1024, fp);
 		fclose(fp);
 		c = strchr(tmp, '"');
-		if (!c) return FALSE; //error
+		if (!c) return(FALSE); //error
 		strcpy(executable, "\"");
 		strcat(executable, c + 1);
 		c = strchr(executable + 1, '"');
-		if (!c) return FALSE; //error
+		if (!c) return(FALSE); //error
 		*c = 0;
 		strcat(executable, "\"");
 		remove("__temp__");
@@ -5861,7 +5861,7 @@ bool png_screenshot(void) {
 		if (k) c_msg_format("PNG screenshot via 'Chromium' failed (%d).", k);
 		else {
 			c_msg_format("PNG screenshot via 'Chromium' saved to %s.", SCREENSHOT_TARGET);
-			return TRUE;
+			return(TRUE);
 		}
 	} else {
 		//k = system("chrome.exe --version");  -- chrome is buggy and doesn't report but just starts up
@@ -5875,11 +5875,11 @@ bool png_screenshot(void) {
 			fgets(tmp, 1024, fp);
 			fclose(fp);
 			c = strchr(tmp, '"');
-			if (!c) return FALSE; //error
+			if (!c) return(FALSE); //error
 			strcpy(executable, "\"");
 			strcat(executable, c + 1);
 			c = strchr(executable + 1, '"');
-			if (!c) return FALSE; //error
+			if (!c) return(FALSE); //error
 			*c = 0;
 			strcat(executable, "\"");
 			remove("__temp__");
@@ -5908,7 +5908,7 @@ bool png_screenshot(void) {
 			if (k) c_msg_format("Automatic PNG screenshot with 'Chrome' failed (%d).", k);
 			else {
 				c_msg_format("PNG screenshot via 'Chrome' saved to %s.", SCREENSHOT_TARGET);
-				return TRUE;
+				return(TRUE);
 			}
 		} else {
 			//k = system("firefox --version --headless");  -- error 9009 "file not found" wut? due to bad path escaping/quoting without using a .bat file probably
@@ -5922,11 +5922,11 @@ bool png_screenshot(void) {
 				fgets(tmp, 1024, fp);
 				fclose(fp);
 				c = strchr(tmp, '"');
-				if (!c) return FALSE; //error
+				if (!c) return(FALSE); //error
 				strcpy(executable, "\"");
 				strcat(executable, c + 1);
 				c = strchr(executable + 1, '"');
-				if (!c) return FALSE; //error
+				if (!c) return(FALSE); //error
 				*c = 0;
 				strcat(executable, "\"");
 				remove("__temp__");
@@ -5953,14 +5953,14 @@ bool png_screenshot(void) {
 				if (k) c_msg_format("Automatic PNG screenshot with 'Firefox' failed (%d).", k);
 				else {
 					c_msg_format("PNG screenshot via 'Firefox' saved to %s.", SCREENSHOT_TARGET);
-					return TRUE;
+					return(TRUE);
 				}
 			}
 			/* failure */
 			else c_msg_print("\377yFor PNG creation, either Chrome or Firefox must be installed!");
 		}
 	}
-	return FALSE;
+	return(FALSE);
 #endif
 
 #ifdef USE_X11
@@ -5971,11 +5971,11 @@ bool png_screenshot(void) {
 
 	/* Get full path of xhtml screenshot file (the browsers suck and won't work with a relative path) */
 	k = system(format("readlink -f %s > __tmp__", buf));
-	if (k) return FALSE; //error
-	if (!(fp = fopen("__tmp__", "r"))) return FALSE; //error
+	if (k) return(FALSE); //error
+	if (!(fp = fopen("__tmp__", "r"))) return(FALSE); //error
 	if (!fgets(buf, 1024, fp)) {
 		fclose(fp);
-		return FALSE; //error
+		return(FALSE); //error
 	}
 	fclose(fp);
 	buf[strlen(buf) - 1] = 0; //remove trailing newline
@@ -5983,7 +5983,7 @@ bool png_screenshot(void) {
 
 	/* Get relative path of target image file (suddenly the browsers are fine with it) */
 	path_build(file_name, 1024, ANGBAND_DIR_USER, SCREENSHOT_TARGET);
-	if (k) return FALSE; //error
+	if (k) return(FALSE); //error
 
 	/* Try chromium, then chrome, then firefox */
 	k = system("chromium --version");
@@ -6007,7 +6007,7 @@ bool png_screenshot(void) {
 		if (k) c_msg_format("PNG screenshot with 'chromium' failed (%d).", k);
 		else {
 			c_msg_format("PNG screenshot via 'chromium' saved to %s.", SCREENSHOT_TARGET);
-			return TRUE;
+			return(TRUE);
 		}
 	} else {
 		k = system("chrome --version");
@@ -6031,7 +6031,7 @@ bool png_screenshot(void) {
 			if (k) c_msg_format("PNG screenshot with 'chrome' failed (%d).", k);
 			else {
 				c_msg_format("PNG screenshot via 'chrome' saved to %s.", SCREENSHOT_TARGET);
-				return TRUE;
+				return(TRUE);
 			}
 		} else {
 			k = system("firefox --version");
@@ -6052,14 +6052,14 @@ bool png_screenshot(void) {
 				if (k) c_msg_format("PNG screenshot with 'firefox' failed (%d).", k);
 				else {
 					c_msg_format("PNG screenshot via 'firefox' saved to %s.", SCREENSHOT_TARGET);
-					return TRUE;
+					return(TRUE);
 				}
 			}
 			/* failure */
 			else c_msg_print("\377yFor PNG creation, either Chromium, Chrome or Firefox must be installed!");
 		}
 	}
-	return FALSE;
+	return(FALSE);
 #endif
 }
 

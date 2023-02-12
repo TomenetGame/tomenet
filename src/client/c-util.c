@@ -301,7 +301,7 @@ bool macro_del(cptr pat) {
 		}
 	}
 
-	if (num == -1) return FALSE;
+	if (num == -1) return(FALSE);
 
 	/* Free it */
 	string_free(macro__pat[num]);
@@ -323,7 +323,7 @@ bool macro_del(cptr pat) {
 
 	macro__num--;
 
-	return TRUE;
+	return(TRUE);
 }
 
 /* Returns the difference between two timevals in milliseconds */
@@ -1998,11 +1998,11 @@ bool paste_from_clipboard(char *buf, bool global) {
 				*c2 = 0;
 
 				GlobalUnlock(hClipboardData);
-			} else return FALSE;
-		} else return FALSE;
+			} else return(FALSE);
+		} else return(FALSE);
 		CloseClipboard();
-	} else return FALSE;
-	return TRUE;
+	} else return(FALSE);
+	return(TRUE);
 #endif
 
 #ifdef USE_X11 /* relies on xclip being installed! */
@@ -2014,11 +2014,11 @@ bool paste_from_clipboard(char *buf, bool global) {
 	r = system("xclip -sel clip -o > __clipboard__");
 	if (r) {
 		c_message_add("Paste failed, make sure xclip is installed.");
-		return FALSE;
+		return(FALSE);
 	}
 	if (!(fp = fopen("__clipboard__", "r"))) {
 		c_message_add("Paste failed, make sure xclip is installed.");
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* combine multi-line text into one line, replacing the RETURNs by spaces if needed */
@@ -2064,10 +2064,10 @@ bool paste_from_clipboard(char *buf, bool global) {
 	*c2 = 0;
 
 	fclose(fp);
-	return TRUE;
+	return(TRUE);
 #endif
 
-	return FALSE;
+	return(FALSE);
 }
 
 #define SEARCH_NOCASE /* CTRL+C chat history search: Case-insensitive? */
@@ -3196,8 +3196,8 @@ bool get_check2(cptr prompt, bool default_yes) {
 
 	/* More normal */
 	if (default_yes) {
-		if (i == 'n' || i == 'N' || i == '\e') return FALSE;
-		return TRUE;
+		if (i == 'n' || i == 'N' || i == '\e') return(FALSE);
+		return(TRUE);
 	}
 
 	if ((i == 'Y') || (i == 'y')) return(TRUE);
@@ -3241,8 +3241,8 @@ bool get_check3(cptr prompt, char default_choice) {
 
 	/* More normal */
 	if (default_choice == 1) {
-		if (i == 'n' || i == 'N' || i == '\e') return FALSE;
-		return TRUE;
+		if (i == 'n' || i == 'N' || i == '\e') return(FALSE);
+		return(TRUE);
 	}
 
 	if ((i == 'Y') || (i == 'y')) return(TRUE);
@@ -10447,11 +10447,11 @@ void msg_format(int Ind, cptr fmt, ...) {
 
 #ifdef USE_SOUND_2010
 bool sound(int val, int type, int vol, s32b player_id, int dist_x, int dist_y) {
-	if (!use_sound) return TRUE;
+	if (!use_sound) return(TRUE);
 
 	/* play a sound */
 	if (sound_hook) return sound_hook(val, type, vol, player_id, dist_x, dist_y);
-	else return FALSE;
+	else return(FALSE);
 }
 
 void sound_weather(int val) {
@@ -10469,18 +10469,18 @@ void sound_weather_vol(int val, int vol) {
 }
 
 bool music(int val) {
-	if (!use_sound) return TRUE;
+	if (!use_sound) return(TRUE);
 
 	/* play a sound */
 	if (music_hook) return music_hook(val);
-	else return FALSE;
+	else return(FALSE);
 }
 bool music_volume(int val, char vol) {
-	if (!use_sound) return TRUE;
+	if (!use_sound) return(TRUE);
 
 	/* play a sound */
 	if (music_hook_vol) return music_hook_vol(val, vol);
-	else return FALSE;
+	else return(FALSE);
 }
 
 void sound_ambient(int val) {

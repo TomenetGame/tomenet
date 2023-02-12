@@ -118,12 +118,12 @@ static int new_fileid() {
 static bool client_user_path(char *newpath, cptr oldpath) {
 #ifndef WINDOWS
 	strcpy(newpath, oldpath);
-	return FALSE;
+	return(FALSE);
 #endif
 
 	if (!is_client_side) {
 		strcpy(newpath, oldpath);
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* replace ANGBAND_DIR by ANGBAND_DIR_SCPT/USER, as those might be in the user's home folder on Windows, instead of in the TomeNET folder. */
@@ -131,16 +131,16 @@ static bool client_user_path(char *newpath, cptr oldpath) {
 		strcpy(newpath, ANGBAND_DIR_SCPT);
 		strcat(newpath, "\\");
 		strcat(newpath, oldpath + 5);
-		return TRUE;
+		return(TRUE);
 	} else if (!strncmp(oldpath, "user/", 5)) {
 		strcpy(newpath, ANGBAND_DIR_USER);
 		strcat(newpath, "\\");
 		strcat(newpath, oldpath + 5);
-		return TRUE;
+		return(TRUE);
 	}
 
 	strcpy(newpath, oldpath);
-	return FALSE;
+	return(FALSE);
 }
 
 /* acknowledge recipient ready to receive more */

@@ -509,7 +509,7 @@ static bool open_audio(void) {
 		plog_fmt("Couldn't initialize SDL: %s", SDL_GetError());
 //		puts(format("Couldn't initialize SDL: %s", SDL_GetError()));
 //#endif
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Try to open the audio */
@@ -520,7 +520,7 @@ static bool open_audio(void) {
 		plog_fmt("Couldn't open mixer: %s", SDL_GetError());
 //		puts(format("Couldn't open mixer: %s", SDL_GetError()));
 //#endif
-		return FALSE;
+		return(FALSE);
 	}
 
 	if (cfg_max_channels > MAX_CHANNELS) cfg_max_channels = MAX_CHANNELS;
@@ -532,7 +532,7 @@ static bool open_audio(void) {
 	Mix_HookMusicFinished(fadein_next_music);
 
 	/* Success */
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -564,7 +564,7 @@ static bool sound_sdl_init(bool no_cache) {
 	load_song_mutex = SDL_CreateMutex();
 
 	/* Initialise the mixer  */
-	if (!open_audio()) return FALSE;
+	if (!open_audio()) return(FALSE);
 
 #ifdef DEBUG_SOUND
 	puts(format("sound_sdl_init() opened at %d Hz.", cfg_audio_rate));
@@ -613,7 +613,7 @@ static bool sound_sdl_init(bool no_cache) {
 	if (!fff) {
 #if 0
 		plog_fmt("Failed to open sound config (%s):\n    %s", path, strerror(errno));
-		return FALSE;
+		return(FALSE);
 #else /* try to use simple default file */
 		FILE *fff2;
 		char path2[2048];
@@ -622,14 +622,14 @@ static bool sound_sdl_init(bool no_cache) {
 		fff = my_fopen(path, "r");
 		if (!fff) {
 			plog_fmt("Failed to open default sound config (%s):\n    %s", path, strerror(errno));
-			return FALSE;
+			return(FALSE);
 		}
 
 		path_build(path2, sizeof(path2), ANGBAND_DIR_XTRA_SOUND, "sound.cfg");
 		fff2 = my_fopen(path2, "w");
 		if (!fff2) {
 			plog_fmt("Failed to write sound config (%s):\n    %s", path2, strerror(errno));
-			return FALSE;
+			return(FALSE);
 		}
 
 		while (my_fgets(fff, buffer, sizeof(buffer)) == 0)
@@ -643,7 +643,7 @@ static bool sound_sdl_init(bool no_cache) {
 		fff = my_fopen(path, "r");
 		if (!fff) {
 			plog_fmt("Failed to open sound config (%s):\n    %s", path, strerror(errno));
-			return FALSE;
+			return(FALSE);
 		}
 #endif
 	}
@@ -919,7 +919,7 @@ static bool sound_sdl_init(bool no_cache) {
 	if (!fff) {
 #if 0
 		plog_fmt("Failed to open music config (%s):\n    %s", path, strerror(errno));
-		return FALSE;
+		return(FALSE);
 #else /* try to use simple default file */
 		FILE *fff2;
 		char path2[2048];
@@ -928,14 +928,14 @@ static bool sound_sdl_init(bool no_cache) {
 		fff = my_fopen(path, "r");
 		if (!fff) {
 			plog_fmt("Failed to open default music config (%s):\n    %s", path, strerror(errno));
-			return FALSE;
+			return(FALSE);
 		}
 
 		path_build(path2, sizeof(path2), ANGBAND_DIR_XTRA_MUSIC, "music.cfg");
 		fff2 = my_fopen(path2, "w");
 		if (!fff2) {
 			plog_fmt("Failed to write music config (%s):\n    %s", path2, strerror(errno));
-			return FALSE;
+			return(FALSE);
 		}
 
 		while (my_fgets(fff, buffer, sizeof(buffer)) == 0)
@@ -949,7 +949,7 @@ static bool sound_sdl_init(bool no_cache) {
 		fff = my_fopen(path, "r");
 		if (!fff) {
 			plog_fmt("Failed to open music config (%s):\n    %s", path, strerror(errno));
-			return FALSE;
+			return(FALSE);
 		}
 #endif
 	}
@@ -1268,7 +1268,7 @@ static bool sound_sdl_init(bool no_cache) {
 #endif
 
 	/* Success */
-	return TRUE;
+	return(TRUE);
 }
 
 /*
@@ -1280,7 +1280,7 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 	bool test = FALSE;
 
 #ifdef DISABLE_MUTED_AUDIO
-	if (!cfg_audio_master || !cfg_audio_sound) return TRUE; /* claim that it 'succeeded' */
+	if (!cfg_audio_master || !cfg_audio_sound) return(TRUE); /* claim that it 'succeeded' */
 #endif
 
 #ifdef USER_VOLUME_SFX
@@ -1307,20 +1307,20 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 			for (s = 0; s < cfg_max_channels; s++) {
 				if (channel_sample[s] == event && channel_player_id[s] == player_id) {
 					Mix_FadeOutChannel(s, 450); //250..450 (more realistic timing vs smoother sound (avoid final 'spike'))
-					return TRUE;
+					return(TRUE);
 				}
 			}
-			return FALSE;
+			return(FALSE);
 		}
 	}
 
 	/* Paranoia */
-	if (event < 0 || event >= SOUND_MAX_2010) return FALSE;
+	if (event < 0 || event >= SOUND_MAX_2010) return(FALSE);
 
-	if (samples[event].disabled) return TRUE; /* claim that it 'succeeded' */
+	if (samples[event].disabled) return(TRUE); /* claim that it 'succeeded' */
 
 	/* Check there are samples for this event */
-	if (!samples[event].num) return FALSE;
+	if (!samples[event].num) return(FALSE);
 
 	/* already playing? allow to prevent multiple sounds of the same kind
 	   from being mixed simultaneously, for preventing silliness */
@@ -1350,17 +1350,17 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 	}
 	if (test) {
 #if 0 /* old method before sounds could've come from other players nearby us, too */
-		if (samples[event].current_channel != -1) return TRUE;
+		if (samples[event].current_channel != -1) return(TRUE);
 #else /* so now we need to allow multiple samples, IF they stem from different sources aka players */
 		for (s = 0; s < cfg_max_channels; s++) {
-			if (channel_sample[s] == event && channel_player_id[s] == player_id) return TRUE;
+			if (channel_sample[s] == event && channel_player_id[s] == player_id) return(TRUE);
 		}
 #endif
 	}
 
 	/* prevent playing duplicate sfx that were initiated very closely
 	   together in time, after one each other? (efficiency) */
-	if (c_cfg.no_ovl_close_sfx && ticks == samples[event].started_timer_tick) return TRUE;
+	if (c_cfg.no_ovl_close_sfx && ticks == samples[event].started_timer_tick) return(TRUE);
 
 
 	/* Choose a random event */
@@ -1373,11 +1373,11 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 			if (!(wave = load_sample(event, s))) {
 				/* we really failed to load it */
 				plog(format("SDL sound load failed (%d, %d).", event, s));
-				return FALSE;
+				return(FALSE);
 			}
 		} else {
 			/* Fail silently */
-			return TRUE;
+			return(TRUE);
 		}
 	}
 
@@ -1449,7 +1449,7 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 	samples[event].current_channel = s;
 	samples[event].started_timer_tick = ticks;
 
-	return TRUE;
+	return(TRUE);
 }
 /* play the 'bell' sound */
 #define BELL_REDUCTION 3 /* reduce volume of bell() sounds by this factor */
@@ -1457,12 +1457,12 @@ extern bool sound_bell(void) {
 	Mix_Chunk *wave = NULL;
 	int s, vols = 100;
 
-	if (bell_sound_idx == -1) return FALSE;
-	if (samples[bell_sound_idx].disabled) return TRUE; /* claim that it 'succeeded' */
-	if (!samples[bell_sound_idx].num) return FALSE;
+	if (bell_sound_idx == -1) return(FALSE);
+	if (samples[bell_sound_idx].disabled) return(TRUE); /* claim that it 'succeeded' */
+	if (!samples[bell_sound_idx].num) return(FALSE);
 
 	/* already playing? prevent multiple sounds of the same kind from being mixed simultaneously, for preventing silliness */
-	if (samples[bell_sound_idx].current_channel != -1) return TRUE;
+	if (samples[bell_sound_idx].current_channel != -1) return(TRUE);
 
 	/* Choose a random event */
 	s = rand_int(samples[bell_sound_idx].num);
@@ -1479,11 +1479,11 @@ extern bool sound_bell(void) {
 			if (!(wave = load_sample(bell_sound_idx, s))) {
 				/* we really failed to load it */
 				plog(format("SDL sound load failed (%d, %d).", bell_sound_idx, s));
-				return FALSE;
+				return(FALSE);
 			}
 		} else {
 			/* Fail silently */
-			return TRUE;
+			return(TRUE);
 		}
 	}
 
@@ -1501,19 +1501,19 @@ extern bool sound_bell(void) {
 	}
 	samples[bell_sound_idx].current_channel = s;
 
-	return TRUE;
+	return(TRUE);
 }
 /* play the 'page' sound */
 extern bool sound_page(void) {
 	Mix_Chunk *wave = NULL;
 	int s, vols = 100;
 
-	if (page_sound_idx == -1) return FALSE;
-	if (samples[page_sound_idx].disabled) return TRUE; /* claim that it 'succeeded' */
-	if (!samples[page_sound_idx].num) return FALSE;
+	if (page_sound_idx == -1) return(FALSE);
+	if (samples[page_sound_idx].disabled) return(TRUE); /* claim that it 'succeeded' */
+	if (!samples[page_sound_idx].num) return(FALSE);
 
 	/* already playing? prevent multiple sounds of the same kind from being mixed simultaneously, for preventing silliness */
-	if (samples[page_sound_idx].current_channel != -1) return TRUE;
+	if (samples[page_sound_idx].current_channel != -1) return(TRUE);
 
 	/* Choose a random event */
 	s = rand_int(samples[page_sound_idx].num);
@@ -1530,11 +1530,11 @@ extern bool sound_page(void) {
 			if (!(wave = load_sample(page_sound_idx, s))) {
 				/* we really failed to load it */
 				plog(format("SDL sound load failed (%d, %d).", page_sound_idx, s));
-				return FALSE;
+				return(FALSE);
 			}
 		} else {
 			/* Fail silently */
-			return TRUE;
+			return(TRUE);
 		}
 	}
 
@@ -1552,19 +1552,19 @@ extern bool sound_page(void) {
 	}
 	samples[page_sound_idx].current_channel = s;
 
-	return TRUE;
+	return(TRUE);
 }
 /* play the 'warning' sound */
 extern bool sound_warning(void) {
 	Mix_Chunk *wave = NULL;
 	int s, vols = 100;
 
-	if (warning_sound_idx == -1) return FALSE;
-	if (samples[warning_sound_idx].disabled) return TRUE; /* claim that it 'succeeded' */
-	if (!samples[warning_sound_idx].num) return FALSE;
+	if (warning_sound_idx == -1) return(FALSE);
+	if (samples[warning_sound_idx].disabled) return(TRUE); /* claim that it 'succeeded' */
+	if (!samples[warning_sound_idx].num) return(FALSE);
 
 	/* already playing? prevent multiple sounds of the same kind from being mixed simultaneously, for preventing silliness */
-	if (samples[warning_sound_idx].current_channel != -1) return TRUE;
+	if (samples[warning_sound_idx].current_channel != -1) return(TRUE);
 
 	/* Choose a random event */
 	s = rand_int(samples[warning_sound_idx].num);
@@ -1581,11 +1581,11 @@ extern bool sound_warning(void) {
 			if (!(wave = load_sample(warning_sound_idx, s))) {
 				/* we really failed to load it */
 				plog(format("SDL sound load failed (%d, %d).", warning_sound_idx, s));
-				return FALSE;
+				return(FALSE);
 			}
 		} else {
 			/* Fail silently */
-			return TRUE;
+			return(TRUE);
 		}
 	}
 
@@ -1604,7 +1604,7 @@ extern bool sound_warning(void) {
 	}
 	samples[warning_sound_idx].current_channel = s;
 
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -2237,18 +2237,18 @@ static bool play_music(int event) {
 	int n, initials = 0, vols = 100;
 
 	/* Paranoia */
-	if (event < -4 || event >= MUSIC_MAX) return FALSE;
+	if (event < -4 || event >= MUSIC_MAX) return(FALSE);
 
 	/* Don't play anything, just return "success", aka just keep playing what is currently playing.
 	   This is used for when the server sends music that doesn't have an alternative option, but
 	   should not stop the current music if it fails to play. */
-	if (event == -1) return TRUE;
+	if (event == -1) return(TRUE);
 
 #ifdef ENABLE_JUKEBOX
 	/* Jukebox hack: Don't interrupt current jukebox song, but remember event for later */
 	if (jukebox_playing != -1) {
 		jukebox_org = event;
-		return TRUE;
+		return(TRUE);
 	}
 #endif
 
@@ -2258,7 +2258,7 @@ static bool play_music(int event) {
 		if (Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT)
 			Mix_FadeOutMusic(500);
 		music_cur = -1;
-		return TRUE; //whatever..
+		return(TRUE); //whatever..
 	}
 
 	/* 'shuffle_music' or 'play_all' option changed? */
@@ -2273,7 +2273,7 @@ static bool play_music(int event) {
 			music_next = music_cur; //hack
 			music_next_song = music_cur_song;
 		}
-		return TRUE; //whatever..
+		return(TRUE); //whatever..
 	}
 
 #ifdef ATMOSPHERIC_INTRO
@@ -2283,12 +2283,12 @@ static bool play_music(int event) {
 		if (Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT)
 			Mix_FadeOutMusic(2000);
 		music_cur = -1;
-		return TRUE; /* claim that it 'succeeded' */
+		return(TRUE); /* claim that it 'succeeded' */
 	}
 #endif
 
 	/* Check there are samples for this event */
-	if (!songs[event].num) return FALSE;
+	if (!songs[event].num) return(FALSE);
 
 	/* Special hack for ghost music (4.7.4b+), see handle_music() in util.c */
 	if (event == 89 && is_atleast(&server_version, 4, 7, 4, 2, 0, 0)) skip_received_music = TRUE;
@@ -2305,7 +2305,7 @@ static bool play_music(int event) {
 			music_vol = 100;
 			Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, vols));
 		}
-		return TRUE; //pretend we played it
+		return(TRUE); //pretend we played it
 	}
 
 	music_next = event;
@@ -2354,7 +2354,7 @@ static bool play_music(int event) {
 	     )) {
 		music_next = event;
 		music_next_song = music_cur_song;
-		return TRUE;
+		return(TRUE);
 	}
 
 	/* check if music is already running, if so, fade it out first! */
@@ -2365,24 +2365,24 @@ static bool play_music(int event) {
 		//play immediately
 		fadein_next_music();
 	}
-	return TRUE;
+	return(TRUE);
 }
 static bool play_music_vol(int event, char vol) {
 	int n, initials = 0, vols = 100;
 
 	/* Paranoia */
-	if (event < -4 || event >= MUSIC_MAX) return FALSE;
+	if (event < -4 || event >= MUSIC_MAX) return(FALSE);
 
 	/* Don't play anything, just return "success", aka just keep playing what is currently playing.
 	   This is used for when the server sends music that doesn't have an alternative option, but
 	   should not stop the current music if it fails to play. */
-	if (event == -1) return TRUE;
+	if (event == -1) return(TRUE);
 
 #ifdef ENABLE_JUKEBOX
 	/* Jukebox hack: Don't interrupt current jukebox song, but remember event for later */
 	if (jukebox_playing != -1) {
 		jukebox_org = event;
-		return TRUE;
+		return(TRUE);
 	}
 #endif
 
@@ -2392,7 +2392,7 @@ static bool play_music_vol(int event, char vol) {
 		if (Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT)
 			Mix_FadeOutMusic(500);
 		music_cur = -1;
-		return TRUE; //whatever..
+		return(TRUE); //whatever..
 	}
 
 	/* 'shuffle_music' or 'play_all' option changed? */
@@ -2407,7 +2407,7 @@ static bool play_music_vol(int event, char vol) {
 			music_next = music_cur; //hack
 			music_next_song = music_cur_song;
 		}
-		return TRUE; //whatever..
+		return(TRUE); //whatever..
 	}
 
 #ifdef ATMOSPHERIC_INTRO
@@ -2417,12 +2417,12 @@ static bool play_music_vol(int event, char vol) {
 		if (Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT)
 			Mix_FadeOutMusic(2000);
 		music_cur = -1;
-		return TRUE; /* claim that it 'succeeded' */
+		return(TRUE); /* claim that it 'succeeded' */
 	}
 #endif
 
 	/* Check there are samples for this event */
-	if (!songs[event].num) return FALSE;
+	if (!songs[event].num) return(FALSE);
 
 	/* Special hack for ghost music (4.7.4b+), see handle_music() in util.c */
 	if (event == 89 && is_atleast(&server_version, 4, 7, 4, 2, 0, 0)) skip_received_music = TRUE;
@@ -2437,7 +2437,7 @@ static bool play_music_vol(int event, char vol) {
 		/* Just change volume if requested */
 		if (music_vol != vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[(int)vol]) / MIX_MAX_VOLUME, vols));
 		music_vol = vol;
-		return TRUE; //pretend we played it
+		return(TRUE); //pretend we played it
 	}
 
 	music_next = event;
@@ -2484,7 +2484,7 @@ static bool play_music_vol(int event, char vol) {
 	     )) {
 		music_next = event;
 		music_next_song = music_cur_song;
-		return TRUE;
+		return(TRUE);
 	}
 
 	/* check if music is already running, if so, fade it out first! */
@@ -2495,7 +2495,7 @@ static bool play_music_vol(int event, char vol) {
 		//play immediately
 		fadein_next_music();
 	}
-	return TRUE;
+	return(TRUE);
 }
 
 static void fadein_next_music(void) {
@@ -2623,15 +2623,15 @@ static bool play_music_instantly(int event) {
 	/* We just wanted to top currently playing music, do nothing more and just return. */
 	if (event == -2) {
 		music_cur = -1;
-		return TRUE; //whatever..
+		return(TRUE); //whatever..
 	}
 
 	/* Catch disabled songs */
 	if (songs[event].disabled) {
 		music_cur = -1;
-		return TRUE;
+		return(TRUE);
 	}
-	if (songs[event].num < 1) return FALSE; //paranoia
+	if (songs[event].num < 1) return(FALSE); //paranoia
 
 	/* But play different song, iteratingly instead of randomly:
 	   We ignore shuffle_music, play_all or 'initial' song type and just go through all songs
@@ -2649,7 +2649,7 @@ static bool play_music_instantly(int event) {
 		/* we really failed to load it */
 		plog(format("SDL music load failed (%d, %d).", music_cur, music_cur_song));
 		puts(format("SDL music load failed (%d, %d).", music_cur, music_cur_song));
-		return FALSE;
+		return(FALSE);
 	}
 
 #ifdef USER_VOLUME_MUS
@@ -2661,7 +2661,7 @@ static bool play_music_instantly(int event) {
 	/* Actually play the thing. We loop this specific sub-song infinitely and ignore c_cfg.shuffle_music and c_cfg.play_all (and 'initial' song status) here.
 	   To get to hear other sub-songs, the user can press ENTER again to restart this music event with a different sub-song. */
 	Mix_PlayMusic(wave, -1);
-	return TRUE;
+	return(TRUE);
 }
 #endif
 
@@ -3022,8 +3022,8 @@ static bool my_fexists(const char *fname) {
 	/* It worked */
 	if (fd != NULL) {
 		fclose(fd);
-		return TRUE;
-	} else return FALSE;
+		return(TRUE);
+	} else return(FALSE);
 }
 
 /* if audioCached is TRUE, load those audio files in a separate

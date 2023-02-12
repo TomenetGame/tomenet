@@ -31,14 +31,14 @@ static mem_realloc_hook realloc_aux;
  */
 bool mem_set_hooks(mem_alloc_hook alloc, mem_free_hook free, mem_realloc_hook realloc) {
 	/* Error-check */
-	if (!alloc || !free || !realloc) return FALSE;
+	if (!alloc || !free || !realloc) return(FALSE);
 
 	/* Set up hooks */
 	ralloc_aux = alloc;
 	rnfree_aux = free;
 	realloc_aux = realloc;
 
-	return TRUE;
+	return(TRUE);
 }
 
 

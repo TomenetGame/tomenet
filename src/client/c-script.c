@@ -627,7 +627,7 @@ bool call_lua(int Ind, cptr function, cptr args, cptr ret, ...) {
 	/* Call the function */
 	if (lua_call(L, nb, nbr)) {
 		plog_fmt("ERROR in lua_call while calling '%s' from call_lua.\nThings should start breaking up from now on!", function);
-		return FALSE;
+		return(FALSE);
 	}
 
 	/* Number of returned values, SHOULD be the same as nbr, but I'm paranoid */
@@ -637,26 +637,21 @@ bool call_lua(int Ind, cptr function, cptr args, cptr ret, ...) {
 	for (i = 0; ret[i]; i++) {
 		switch (ret[i]) {
 		case 'd':
-		case 'l':
-			{
+		case 'l': {
 				s32b *tmp = va_arg(ap, s32b*);
 
 				if (lua_isnumber(L, (-size) + i)) *tmp = tolua_getnumber(L, (-size) + i, 0);
 				else *tmp = 0;
 				break;
 			}
-
-		case 's':
-			{
+		case 's': {
 				cptr *tmp = va_arg(ap, cptr*);
 
 				if (lua_isstring(L, (-size) + i)) *tmp = tolua_getstring(L, (-size) + i, "");
 				else *tmp = NULL;
 				break;
 			}
-
-		case 'O':
-			{
+		case 'O': {
 				object_type **tmp = va_arg(ap, object_type**);
 
 				if (tolua_istype(L, (-size) + i, tolua_tag(L, "object_type"), 0))
@@ -665,15 +660,13 @@ bool call_lua(int Ind, cptr function, cptr args, cptr ret, ...) {
 					*tmp = NULL;
 				break;
 			}
-
 		default:
 			plog_fmt("ERROR in lua_call while calling '%s' from call_lua:\n  Unkown return type '%c'", function, ret[i]);
-			return FALSE;
+			return(FALSE);
 		}
 	}
+
 	lua_settop(L, oldtop);
-
 	va_end(ap);
-
-	return TRUE;
+	return(TRUE);
 }

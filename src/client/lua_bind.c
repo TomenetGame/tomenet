@@ -226,7 +226,7 @@ bool alloc_room(int by0, int bx0, int ysize, int xsize, int *y1, int *x1, int *y
 	int xval, yval, x, y;
 
 	/* Try to allocate space for room.  If fails, exit */
-	if (!room_alloc(xsize + 2, ysize + 2, FALSE, by0, bx0, &xval, &yval)) return FALSE;
+	if (!room_alloc(xsize + 2, ysize + 2, FALSE, by0, bx0, &xval, &yval)) return(FALSE);
 
 	/* Get corner values */
 	*y1 = yval - ysize / 2;
@@ -243,7 +243,7 @@ bool alloc_room(int by0, int bx0, int ysize, int xsize, int *y1, int *x1, int *y
 			c_ptr->info |= (CAVE_GLOW);
 		}
 	}
-	return TRUE;
+	return(TRUE);
 }
 
 

@@ -555,13 +555,13 @@ bool my_strregexp_skipcol(char *buf2, regex_t re_src, char *searchstr_re, char *
 	}
 	buf2_skipcol[i] = 0;
 
-	if (regexec(&re_src, buf2_skipcol, REGEX_ARRAY_SIZE, pmatch, 0)) return FALSE;
+	if (regexec(&re_src, buf2_skipcol, REGEX_ARRAY_SIZE, pmatch, 0)) return(FALSE);
 
 	/* Testing & Paranoia :) */
 	//c_message_add(format("re_nsub=%d", i, re_src.re_nsub));
-	if (pmatch[0].rm_so == -1) return FALSE;
+	if (pmatch[0].rm_so == -1) return(FALSE);
 	/* Actually disallow searches that match empty strings */
-	if (pmatch[0].rm_eo - pmatch[0].rm_so == 0) return FALSE;
+	if (pmatch[0].rm_eo - pmatch[0].rm_so == 0) return(FALSE);
 
 	/* Just take the first match of the line.. */
 	if (withinsearch) {
@@ -584,7 +584,7 @@ bool my_strregexp_skipcol(char *buf2, regex_t re_src, char *searchstr_re, char *
 	if (next_start) printf("next_start:%d,so=%d,eo=%d,os=%d\n", *next_start, pmatch[0].rm_so, pmatch[0].rm_eo, offset[pmatch[0].rm_so]);
 	else printf("next_start:NULL,so=%d,eo=%d,os=%d\n", pmatch[0].rm_so, pmatch[0].rm_eo, offset[pmatch[0].rm_so]);
  #endif
-	return TRUE;
+	return(TRUE);
 }
 #endif
 
@@ -733,67 +733,67 @@ char *roman_suffix(char* cname) {
  */
 bool is_older_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build) {
 	if (version->major > major)
-		return FALSE; /* very new */
+		return(FALSE); /* very new */
 	else if (version->major < major)
-		return TRUE; /* very old */
+		return(TRUE); /* very old */
 	else if (version->minor > minor)
-		return FALSE; /* pretty new */
+		return(FALSE); /* pretty new */
 	else if (version->minor < minor)
-		return TRUE; /* pretty old */
+		return(TRUE); /* pretty old */
 	else if (version->patch > patch)
-		return FALSE; /* somewhat new */
+		return(FALSE); /* somewhat new */
 	else if (version->patch < patch)
-		return TRUE; /* somewhat old */
+		return(TRUE); /* somewhat old */
 	else if (version->extra > extra)
-		return FALSE; /* a little newer */
+		return(FALSE); /* a little newer */
 	else if (version->extra < extra)
-		return TRUE; /* a little older */
+		return(TRUE); /* a little older */
 	/* Check that the branch is an exact match */
 	else if (version->branch == branch) {
 		/* Now check the build */
 		if (version->build > build)
-			return FALSE;
+			return(FALSE);
 		else if (version->build < build)
-			return TRUE;
+			return(TRUE);
 	}
 
 	/* Default */
-	return FALSE;
+	return(FALSE);
 }
 bool is_newer_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build) {
 //#ifdef ATMOSPHERIC_INTRO /* only defined client-side, so commented out is simpler for now */
 	/* hack for animating colours before we even have network contact to server */
-	if (!version->major) return TRUE;
+	if (!version->major) return(TRUE);
 //#endif
 
 	if (version->major < major)
-		return FALSE; /* very old */
+		return(FALSE); /* very old */
 	else if (version->major > major)
-		return TRUE; /* very new */
+		return(TRUE); /* very new */
 	else if (version->minor < minor)
-		return FALSE; /* pretty old */
+		return(FALSE); /* pretty old */
 	else if (version->minor > minor)
-		return TRUE; /* pretty new */
+		return(TRUE); /* pretty new */
 	else if (version->patch < patch)
-		return FALSE; /* somewhat old */
+		return(FALSE); /* somewhat old */
 	else if (version->patch > patch)
-		return TRUE; /* somewhat new */
+		return(TRUE); /* somewhat new */
 	else if (version->extra < extra)
-		return FALSE; /* a little older */
+		return(FALSE); /* a little older */
 	else if (version->extra > extra)
-		return TRUE; /* a little newer */
+		return(TRUE); /* a little newer */
 	/* Check that the branch is an exact match */
 	else if (version->branch == branch)
 	{
 		/* Now check the build */
 		if (version->build < build)
-			return FALSE;
+			return(FALSE);
 		else if (version->build > build)
-			return TRUE;
+			return(TRUE);
 	}
 
 	/* Default */
-	return FALSE;
+	return(FALSE);
 }
 bool is_same_as(version_type *version, int major, int minor, int patch, int extra, int branch, int build) {
 	if (version->major == major
@@ -802,9 +802,9 @@ bool is_same_as(version_type *version, int major, int minor, int patch, int extr
 	    && version->extra == extra
 	    && version->branch == branch
 	    && version->build == build)
-		return TRUE;
+		return(TRUE);
 
-	return FALSE;
+	return(FALSE);
 }
 
 /*

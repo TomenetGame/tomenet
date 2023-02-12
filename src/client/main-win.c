@@ -3217,18 +3217,18 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
 		case WM_PALETTECHANGED:
 			/* ignore if palette change caused by itself */
-			if ((HWND)wParam == hWnd) return FALSE;
+			if ((HWND)wParam == hWnd) return(FALSE);
 			/* otherwise, fall through!!! */
 
 		case WM_QUERYNEWPALETTE:
-			if (!paletted) return FALSE;
+			if (!paletted) return(FALSE);
 			hdc = GetDC(hWnd);
 			SelectPalette(hdc, hPal, FALSE);
 			i = RealizePalette(hdc);
 			/* if any palette entries changed, repaint the window. */
 			if (i) InvalidateRect(hWnd, NULL, TRUE);
 			ReleaseDC(hWnd, hdc);
-			return FALSE;
+			return(FALSE);
 
 		case WM_ACTIVATE:
 			if (wParam && !HIWORD(lParam)) {
@@ -3409,7 +3409,7 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 		case WM_PALETTECHANGED:
 			/* ignore if palette change caused by itself */
-			if ((HWND)wParam == hWnd) return FALSE;
+			if ((HWND)wParam == hWnd) return(FALSE);
 			/* otherwise, fall through!!! */
 
 		case WM_QUERYNEWPALETTE:
@@ -4263,8 +4263,8 @@ bool ask_for_bigmap(void) {
 	    "You can change this later anytime in the game's options menu.",
 	    "Enable 'big_map' option?",
 	    MB_YESNO + MB_ICONQUESTION) == IDYES)
-		return TRUE;
-	return FALSE;
+		return(TRUE);
+	return(FALSE);
 #else
 	return ask_for_bigmap_generic();
 #endif

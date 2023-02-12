@@ -12,8 +12,7 @@
 
 client_opts c_cfg;
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 	int i;
 
 	/* Save the program name */
@@ -25,40 +24,28 @@ int main(int argc, char **argv)
 	version_build();
 
 	/* Process the command line arguments */
-	for (i = 1; argv && (i < argc); i++)
-	{
+	for (i = 1; argv && (i < argc); i++) {
 		/* Require proper options */
-		if (argv[i][0] != '-')
-		{
+		if (argv[i][0] != '-') {
 			strcpy(server_name, argv[i]);
 			continue;
 		}
 
 		/* Analyze option */
-		switch (argv[i][1])
-		{
-			case 'p':
-			{
-				cfg_console_port = atoi(&argv[i][2]);
-				break;
-			}
-			case 'P':
-			{
-				strcpy(pass, argv[i]+2);
-				break;
-			}
-			case 'c':
-			{
-				force_cui = TRUE;
-				break;
-			}
-			case 's':
-			{
-				server_shutdown = TRUE;
-				break;
-			}
-
-			default:
+		switch (argv[i][1]) {
+		case 'p':
+			cfg_console_port = atoi(&argv[i][2]);
+			break;
+		case 'P':
+			strcpy(pass, argv[i]+2);
+			break;
+		case 'c':
+			force_cui = TRUE;
+			break;
+		case 's':
+			server_shutdown = TRUE;
+			break;
+		default:
 			/* Dump usage information */
 			puts(longVersion);
 			puts("Usage  : tomenet.console [options] [servername]");
@@ -79,20 +66,17 @@ int main(int argc, char **argv)
 
 static bool get_player_list(void) {
 	Packet_printf(&ibuf, "%c", CONSOLE_STATUS);
-
-	return TRUE;
+	return(TRUE);
 }
 
 static bool get_artifact_list(void) {
 	Packet_printf(&ibuf, "%c", CONSOLE_ARTIFACT_LIST);
-
-	return TRUE;
+	return(TRUE);
 }
 
 static bool get_unique_list(void) {
 	Packet_printf(&ibuf, "%c", CONSOLE_UNIQUE_LIST);
-
-	return TRUE;
+	return(TRUE);
 }
 
 static bool modify_artifact(void) {
@@ -106,7 +90,7 @@ static bool modify_artifact(void) {
 	artifact = c_get_quantity("Artifact to modify (by number): ", MAX_A_IDX);
 
 	/* Check for bad numbers */
-	if (!artifact) return FALSE;
+	if (!artifact) return(FALSE);
 
 	/* Print menu */
 	prt("Changing artifact status", 1, 1);
@@ -124,18 +108,18 @@ static bool modify_artifact(void) {
 		ch = inkey();
 
 		/* Check for bad key */
-		if (!ch) return FALSE;
+		if (!ch) return(FALSE);
 
 		/* Check for command */
 		switch (ch) {
 		case '1':
 			Packet_printf(&ibuf, "%c%d%d", CONSOLE_CHANGE_ARTIFACT, artifact, 0);
-			return TRUE;
+			return(TRUE);
 		case '2':
 			Packet_printf(&ibuf, "%c%d%d", CONSOLE_CHANGE_ARTIFACT, artifact, 1);
-			return TRUE;
+			return(TRUE);
 		case '3':
-			return FALSE;
+			return(FALSE);
 		}
 	}
 }
@@ -151,7 +135,7 @@ static bool modify_unique(void) {
 	unique = c_get_quantity("Unique to modify (by number): ", MAX_R_IDX);
 
 	/* Check for bad numbers */
-	if (!unique) return FALSE;
+	if (!unique) return(FALSE);
 
 	/* Print menu */
 	prt("Changing unique status", 1, 1);
@@ -164,50 +148,43 @@ static bool modify_unique(void) {
 	prt("Enter choice: ", 7, 1);
 
 	/* Try until done */
-	while (1)
-	{
+	while (1) {
 		/* Get key */
 		ch = inkey();
 
 		/* Check for bad key */
-		if (!ch) return FALSE;
+		if (!ch) return(FALSE);
 
 		/* Check for command */
-		switch (ch)
-		{
-			case '1':
-				/* Prompt for killer name */
-				prt("Enter the killer's name: ", 10, 1);
-				
-				/* Default */
-				strcpy(killer, "nobody");
+		switch (ch) {
+		case '1':
+			/* Prompt for killer name */
+			prt("Enter the killer's name: ", 10, 1);
+			/* Default */
+			strcpy(killer, "nobody");
+			/* Get an input */
+			askfor_aux(killer, 79, 0);
 
-				/* Get an input */
-				askfor_aux(killer, 79, 0);
+			/* Never send a null-length string */
+			if (!strlen(killer)) strcpy(killer, "nobody");
+			/* Send command */
+			Packet_printf(&ibuf, "%c%d%s", CONSOLE_CHANGE_UNIQUE, unique, killer);
 
-				/* Never send a null-length string */
-				if (!strlen(killer)) strcpy(killer, "nobody");
-
-				/* Send command */
-				Packet_printf(&ibuf, "%c%d%s", CONSOLE_CHANGE_UNIQUE, unique, killer);
-
-				return TRUE;
-			case '2':
-				Packet_printf(&ibuf, "%c%d%s", CONSOLE_CHANGE_UNIQUE, unique, "nobody");
-				return TRUE;
-			case '3':
-				return FALSE;
+			return(TRUE);
+		case '2':
+			Packet_printf(&ibuf, "%c%d%s", CONSOLE_CHANGE_UNIQUE, unique, "nobody");
+			return(TRUE);
+		case '3':
+			return(FALSE);
 		}
 	}
 }
 
-static bool get_player_info(void)
-{
-	return FALSE;
+static bool get_player_info(void) {
+	return(FALSE);
 }
 
-static bool send_message(void)
-{
+static bool send_message(void) {
 	char buf[80];
 
 	/* Clear screen */
@@ -222,11 +199,10 @@ static bool send_message(void)
 	/* Send it */
 	Packet_printf(&ibuf, "%c%s", CONSOLE_MESSAGE, buf);
 
-	return TRUE;
+	return(TRUE);
 }
 
-static bool kick_player(void)
-{
+static bool kick_player(void) {
 	char name[80];
 
 	/* Clear screen */
@@ -245,22 +221,20 @@ static bool kick_player(void)
 	askfor_aux(name, 79, 0);
 
 	/* Never send null-length string */
-	if (!strlen(name)) return FALSE;
+	if (!strlen(name)) return(FALSE);
 
 	/* Send command */
 	Packet_printf(&ibuf, "%c%s", CONSOLE_KICK_PLAYER, name);
 
-	return TRUE;
+	return(TRUE);
 }
 
-static bool reload_server_preferences()
-{
+static bool reload_server_preferences() {
 	Packet_printf(&ibuf, "%c", CONSOLE_RELOAD_SERVER_PREFERENCES);
-	return TRUE;
+	return(TRUE);
 }
 
-static bool shutdown_server(void)
-{
+static bool shutdown_server(void) {
 	char ch;
 
 	/* Clear screen */
@@ -276,64 +250,57 @@ static bool shutdown_server(void)
 	ch = inkey();
 
 	/* Check for anything except 'y' */
-	if (ch != 'y' && ch != 'Y') return FALSE;
+	if (ch != 'y' && ch != 'Y') return(FALSE);
 
 	/* Send the command */
 	Packet_printf(&ibuf, "%c", CONSOLE_SHUTDOWN);
 
-	return TRUE;
+	return(TRUE);
 }
 
-static bool quit_console(void)
-{
+static bool quit_console(void) {
 	quit(NULL);
-
-	return TRUE;
+	return(TRUE);
 }
 
-bool process_command(void)
-{
+bool process_command(void) {
 	/* Convert to lowercase if necessary */
 	if (command_cmd >= 'A' && command_cmd <= 'Z')
-	{
 		command_cmd += 'a' - 'A';
-	}
 
 	/* Check the command */
-	switch(command_cmd)
-	{
-		case 'a': return get_player_list();
-			  break;
-		case 'b': return get_artifact_list();
-			  break;
-		case 'c': return get_unique_list();
-			  break;
-		case 'd': return modify_artifact();
-			  break;
-		case 'e': return modify_unique();
-			  break;
-		case 'f': return get_player_info();
-			  break;
-		case 'g': return send_message();
-			  break;
-		case 'h': return kick_player();
-			  break;
-		case 'i': return reload_server_preferences();
-			  break;
-		case 'j': return shutdown_server();
-			  break;
-		case 'k': return quit_console();
-			  break;
-		default: /* Bad command */
-			  return FALSE;
+	switch(command_cmd) {
+	case 'a': return get_player_list();
+		  break;
+	case 'b': return get_artifact_list();
+		  break;
+	case 'c': return get_unique_list();
+		  break;
+	case 'd': return modify_artifact();
+		  break;
+	case 'e': return modify_unique();
+		  break;
+	case 'f': return get_player_info();
+		  break;
+	case 'g': return send_message();
+		  break;
+	case 'h': return kick_player();
+		  break;
+	case 'i': return reload_server_preferences();
+		  break;
+	case 'j': return shutdown_server();
+		  break;
+	case 'k': return quit_console();
+		  break;
+	default: /* Bad command */
+		  return(FALSE);
 	}
 
 	/* Oops.... */
-	return FALSE;
+	return(FALSE);
 }
 
-static void show_status(void)
-{
+static void show_status(void) {
 	int i, j, n, lev;
 	char buf[1024], name[1024], race[80], class[80];
 	struct worldpos wpos;
@@ -354,11 +321,9 @@ static void show_status(void)
 	j = 3;
 
 	/* Print each player's info */
-	for (i = 1; i <= n; i++)
-	{
+	for (i = 1; i <= n; i++) {
 		/* Check for end of page */
-		if (j == 21)
-		{
+		if (j == 21) {
 			/* Prompt */
 			prt("[Hit any key to continue]", 23, 1);
 
@@ -402,8 +367,7 @@ static void show_status(void)
 }
 
 
-static void show_artifact_list(void)
-{
+static void show_artifact_list(void) {
 	int i, j, n, number;
 	char name[80], buf[1024];
 
@@ -420,11 +384,9 @@ static void show_artifact_list(void)
 	j = 3;
 
 	/* Print each artifact info */
-	for (i = 1; i <= n; i++)
-	{
+	for (i = 1; i <= n; i++) {
 		/* Check for end of page */
-		if (j == 21)
-		{
+		if (j == 21) {
 			/* Prompt */
 			prt("[Hit any key to continue]", 23, 1);
 
@@ -464,8 +426,7 @@ static void show_artifact_list(void)
 	inkey();
 }
 
-static void show_unique_list(void)
-{
+static void show_unique_list(void) {
 	int i, j, n, number;
 	char name[80], buf[1024];
 
@@ -482,11 +443,9 @@ static void show_unique_list(void)
 	j = 3;
 
 	/* Print each artifact info */
-	for (i = 1; i <= n; i++)
-	{
+	for (i = 1; i <= n; i++) {
 		/* Check for end of page */
-		if (j == 21)
-		{
+		if (j == 21) {
 			/* Prompt */
 			prt("[Hit any key to continue]", 23, 1);
 
@@ -526,21 +485,17 @@ static void show_unique_list(void)
 	inkey();
 }
 
-static void show_generic_reply(void)
-{
+static void show_generic_reply(void) {
 	char status;
 
 	/* Extract reply */
 	Packet_scanf(&ibuf, "%c", &status);
 
 	/* Check for success */
-	if (status)
-	{
+	if (status) {
 		/* Message */
 		prt("Command succeeded!", 15, 1);
-	}
-	else
-	{
+	} else {
 		/* Message */
 		prt("Command failed!", 15, 1);
 	}
@@ -560,31 +515,31 @@ void process_reply(void) {
 
 	/* Determine what to do */
 	switch (ch) {
-		case CONSOLE_STATUS:
-			show_status();
-			break;
-		case CONSOLE_ARTIFACT_LIST:
-			show_artifact_list();
-			break;
-		case CONSOLE_UNIQUE_LIST:
-			show_unique_list();
-			break;
-		case CONSOLE_CHANGE_ARTIFACT:
-			show_generic_reply();
-			break;
-		case CONSOLE_CHANGE_UNIQUE:
-			show_generic_reply();
-			break;
-		case CONSOLE_KICK_PLAYER:
-			show_generic_reply();
-			break;
-		case CONSOLE_MESSAGE:
-			break;
-		case CONSOLE_SHUTDOWN:
-			quit("Server shutdown");
-			break;
-		case CONSOLE_DENIED:
-			quit("Denied access");
-			break;
+	case CONSOLE_STATUS:
+		show_status();
+		break;
+	case CONSOLE_ARTIFACT_LIST:
+		show_artifact_list();
+		break;
+	case CONSOLE_UNIQUE_LIST:
+		show_unique_list();
+		break;
+	case CONSOLE_CHANGE_ARTIFACT:
+		show_generic_reply();
+		break;
+	case CONSOLE_CHANGE_UNIQUE:
+		show_generic_reply();
+		break;
+	case CONSOLE_KICK_PLAYER:
+		show_generic_reply();
+		break;
+	case CONSOLE_MESSAGE:
+		break;
+	case CONSOLE_SHUTDOWN:
+		quit("Server shutdown");
+		break;
+	case CONSOLE_DENIED:
+		quit("Denied access");
+		break;
 	}
 }

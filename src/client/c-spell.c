@@ -527,7 +527,7 @@ static int get_mimic_spell(int *sn) {
 				}
 				screen_line_icky = -1;
 				screen_column_icky = -1;
-				return FALSE;
+				return(FALSE);
 			}
 
 			/* Find the power it is related to */
@@ -889,10 +889,10 @@ bool get_item_hook_find_spell(int *item, int mode) {
 
 	strcpy(buf, "");
 	if (!get_string("Spell name? ", buf, 79))
-		return FALSE;
+		return(FALSE);
 	sprintf(buf2, "return find_spell(\"%s\")", buf);
 	spell = exec_lua(0, buf2);
-	if (spell == -1) return FALSE;
+	if (spell == -1) return(FALSE);
 
 	for (i = 0; i < INVEN_TOTAL; i++) {
 		object_type *o_ptr = &inventory[i];
@@ -902,7 +902,7 @@ bool get_item_hook_find_spell(int *item, int mode) {
 			if ((o_ptr->sval == SV_SPELLBOOK) && (o_ptr->pval == spell)) {
 				*item = i;
 				hack_force_spell = spell;
-				return TRUE;
+				return(TRUE);
 			}
 			/* A normal book */
 			else {
@@ -910,13 +910,13 @@ bool get_item_hook_find_spell(int *item, int mode) {
 				if (exec_lua(0, buf2)) {
 					*item = i;
 					hack_force_spell = spell;
-					return TRUE;
+					return(TRUE);
 				}
 			}
 		}
 	}
 
-	return FALSE;
+	return(FALSE);
 }
 #else /* new method that allows to enter partial spell names, for comfortable 'I/II/III..' handling */
 #define ALLOW_DUPLICATE_NAMES /* Allow multiple spells of the same name? (in different schools). It picks the spell with highest level. */
@@ -933,7 +933,7 @@ bool get_item_hook_find_spell(int *item, int mode) {
 
 
 	strcpy(buf, "");
-	if (!get_string("Spell name? ", buf, 79)) return FALSE;
+	if (!get_string("Spell name? ", buf, 79)) return(FALSE);
 
 	if (strlen(buf) >= 4) {
 		bufptr = buf + strlen(buf);
@@ -985,7 +985,7 @@ bool get_item_hook_find_spell(int *item, int mode) {
 			sprintf(buf2, "return find_spell_from_item(%d, %d, \"%s\")", i, spos, buf);
 #endif
 			spell = exec_lua(0, buf2);
-			if (spell == -1) return FALSE; /* paranoia - can't happen */
+			if (spell == -1) return(FALSE); /* paranoia - can't happen */
 
 			/* hack: if this is a multi-version spell, keep it in mind but continue
 			   checking, if we can not cast this particular version of it. */
@@ -1031,7 +1031,7 @@ bool get_item_hook_find_spell(int *item, int mode) {
 
 			/* Ok, we found a spell that we can use, or we didn't find
 			   an alternative compound-spell's sub-spell variant. */
-			return TRUE;
+			return(TRUE);
 #else
 			sprintf(buf2, "return is_ok_spell2(0, %d)", spell);
 			if (!(slev = exec_lua(0, buf2))) continue;
@@ -1048,8 +1048,8 @@ bool get_item_hook_find_spell(int *item, int mode) {
 		} while (TRUE);
 	}
 
-	if (found_something) return TRUE;
-	return FALSE;
+	if (found_something) return(TRUE);
+	return(FALSE);
 }
 #endif
 
@@ -1553,7 +1553,7 @@ static int get_melee_technique(int *sn) {
 					Term_load();
 					Flush_queue();
 				}
-				return FALSE;
+				return(FALSE);
 			}
 
 			/* Find the skill it is related to */
@@ -1725,7 +1725,7 @@ static int get_ranged_technique(int *sn) {
 					Term_load();
 					Flush_queue();
 				}
-				return FALSE;
+				return(FALSE);
 			}
 
 			/* Find the skill it is related to */
@@ -1789,15 +1789,15 @@ void do_ranged_technique() {
 
 /* For only showing unidentified items */
 bool item_tester_hook_id(object_type *o_ptr) {
-	if (!c_cfg.id_selection) return TRUE;
-	if ((o_ptr->ident & 0x6)) return FALSE;
-	return TRUE;
+	if (!c_cfg.id_selection) return(TRUE);
+	if ((o_ptr->ident & 0x6)) return(FALSE);
+	return(TRUE);
 }
 /* For only showing non-*identified* items */
 bool item_tester_hook_starid(object_type *o_ptr) {
-	if (!c_cfg.id_selection) return TRUE;
-	if ((o_ptr->ident & 0x4)) return FALSE;
-	return TRUE;
+	if (!c_cfg.id_selection) return(TRUE);
+	if ((o_ptr->ident & 0x4)) return(FALSE);
+	return(TRUE);
 }
 
 bool item_tester_hook_rune_enchant(object_type *o_ptr) {
@@ -1815,8 +1815,8 @@ bool item_tester_hook_rune_enchant(object_type *o_ptr) {
 	    || (tval == TV_CROWN)
 	    || (tval == TV_HELM)
 	    || (tval == TV_GLOVES)
-	    || (tval == TV_BOOTS)) return TRUE;
-	return FALSE;
+	    || (tval == TV_BOOTS)) return(TRUE);
+	return(FALSE);
 }
 
 void do_runecraft() {

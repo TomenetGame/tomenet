@@ -591,7 +591,7 @@ static bool reorder_characters(int col, int col_cmd, int chars, char names[LOTSO
 		ch = inkey();
 		if (ch == '\e') {
 			c_put_str(TERM_L_BLUE, "                                                               ", col_cmd, 5);
-			return FALSE;
+			return(FALSE);
 		}
 		if (ch < 'a' || ch >= 'a' + chars) ch = 0;
 	}
@@ -608,7 +608,7 @@ static bool reorder_characters(int col, int col_cmd, int chars, char names[LOTSO
 		if (ch == '\e') {
 			c_put_str(TERM_L_BLUE, "                                                               ", col_cmd, 5);
 			c_put_str(TERM_L_BLUE, "                                                               ", col_cmd + 1, 5);
-			return FALSE;
+			return(FALSE);
 		}
 		if (ch < 'a' || ch >= 'a' + chars) ch = 0;
 	}
@@ -626,11 +626,11 @@ static bool reorder_characters(int col, int col_cmd, int chars, char names[LOTSO
 		plog("Packet scan error when trying to read server flags.");
 #ifdef RETRY_LOGIN
 		rl_connection_destroyed = TRUE;
-		return FALSE;
+		return(FALSE);
 #endif
 		quit(NULL);
 	}
-	return TRUE;
+	return(TRUE);
 }
 
 #define CHARSCREEN_COLOUR TERM_L_GREEN

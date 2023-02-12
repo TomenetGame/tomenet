@@ -258,14 +258,14 @@ term *Term = NULL;
 /* Check if a TERM_ colour is NOT animated */
 static bool term_nanim(byte ta) {
 #ifdef EXTENDED_BG_COLOURS
-	if (ta >= TERMX_START && ta < TERMX_START + TERMX_AMT) return TRUE;
+	if (ta >= TERMX_START && ta < TERMX_START + TERMX_AMT) return(TRUE);
 #endif
 #ifdef EXTENDED_COLOURS_PALANIM
-	if (ta >= TERMA_OFFSET && ta < TERMA_OFFSET + BASE_PALETTE_SIZE) return TRUE;
+	if (ta >= TERMA_OFFSET && ta < TERMA_OFFSET + BASE_PALETTE_SIZE) return(TRUE);
 #endif
-	if (ta < TERM_MULTI) return TRUE;
+	if (ta < TERM_MULTI) return(TRUE);
 
-	return FALSE;
+	return(FALSE);
 }
 
 /* Translate a TERM_ colour into an actual terminal colour to draw on screen */

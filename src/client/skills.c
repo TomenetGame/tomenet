@@ -570,7 +570,7 @@ static int do_cmd_activate_skill_aux() {
 				if (term_saved) Term_load();
 				screen_line_icky = -1;
 				screen_column_icky = -1;
-				return FALSE;
+				return(FALSE);
 			}
 
 			/* Can we convert to a number? */
@@ -681,8 +681,8 @@ bool item_tester_hook_custom_tome(object_type *o_ptr) {
 #endif
 
 	/* check for correct book type */
-	if (o_ptr->tval != TV_BOOK || o_ptr->sval != SV_SPELLBOOK) return FALSE;
-	return TRUE;
+	if (o_ptr->tval != TV_BOOK || o_ptr->sval != SV_SPELLBOOK) return(FALSE);
+	return(TRUE);
 
 #if 0
 	/* and even check for blank pages left */

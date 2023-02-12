@@ -32,7 +32,7 @@ s16b index_to_label(int i) {
 
 bool item_tester_okay(object_type *o_ptr) {
 	/* Hack for live_timeouts: If showing equip via cmd_equip(), always show all slots. */
-	if (showing_equip) return TRUE;
+	if (showing_equip) return(TRUE);
 
 	/* Hack -- allow testing empty slots */
 	if (item_tester_full) return(TRUE);
@@ -525,7 +525,7 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 #ifdef SMART_SWAP
 	if (i_found != -1) {
 		*cp = i_found;
-		return TRUE;
+		return(TRUE);
 	}
 #endif
 	/* No such tag */
@@ -555,7 +555,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 
 	strcpy(buf, "");
 	if (!get_string(get_item_hook_find_obj_what, buf, 79))
-		return FALSE;
+		return(FALSE);
 
 #ifdef ENABLE_SUBINVEN
     if (using_subinven != -1) {
@@ -625,10 +625,10 @@ bool get_item_hook_find_obj(int *item, int mode) {
 				}
 			}
 			*item = i;
-			return TRUE;
+			return(TRUE);
 		}
 	}
-	return FALSE;
+	return(FALSE);
     } else if (subinven) {
 	/* Scan all subinvens for item name match */
 	int l;
@@ -703,7 +703,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 					}
 				}
 				*item = i + (l + 1) * 100;
-				return TRUE;
+				return(TRUE);
 			}
 		}
 	}
@@ -813,16 +813,16 @@ bool get_item_hook_find_obj(int *item, int mode) {
 				}
 			}
 			*item = i;
-			return TRUE;
+			return(TRUE);
 		}
 	}
 #ifdef SMART_SWAP
 	if (i_found != -1) {
 		*item = i_found;
-		return TRUE;
+		return(TRUE);
 	}
 #endif
-	return FALSE;
+	return(FALSE);
 }
 
 bool (*get_item_extra_hook)(int *cp, int mode);

@@ -204,7 +204,7 @@ static bool enter_password(void) {
 		/* Get an input, ignore "Escape" */
 		if (askfor_aux(tmp, PASSWORD_LEN - 1, ASKFOR_PRIVATE)) strcpy(pass, tmp);
 		/* abort and jump back to name prompt? */
-		else return FALSE;
+		else return(FALSE);
 
 		/* Don't allow empty password */
 		if (!pass[0]) continue;
@@ -226,7 +226,7 @@ static bool enter_password(void) {
 
 	/* Erase the prompt, etc */
 	clear_from(20);
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -268,7 +268,7 @@ static bool choose_sex(void) {
 		if (!hazard) c = inkey();
 		if (c == 'Q' || c == KTRL('Q')) quit(NULL);
 #ifdef RETRY_LOGIN
-		if (rl_connection_destroyed) return FALSE;
+		if (rl_connection_destroyed) return(FALSE);
 #endif
 		if (c == 'm') {
 			sex |= MODE_MALE;
@@ -311,7 +311,7 @@ static bool choose_sex(void) {
 	}
 
 	clear_from(19);
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -416,12 +416,12 @@ race_redraw:
 
 		if (c == 'Q' || c == KTRL('Q')) quit(NULL);
 #ifdef RETRY_LOGIN
-		if (rl_connection_destroyed) return FALSE;
+		if (rl_connection_destroyed) return(FALSE);
 #endif
 		if (c == '\b') {
 			clear_diz();
 			clear_from(n);
-			return FALSE;
+			return(FALSE);
 		}
 
 		if (c == '?') {
@@ -534,7 +534,7 @@ race_redraw:
 
 	clear_diz();
 	clear_from(n);
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -572,12 +572,12 @@ static bool choose_trait(void) {
 
 
 	/* Absolutely no traits, not even #0 'N/A' */
-	if (Setup.max_trait == 0) return TRUE;
+	if (Setup.max_trait == 0) return(TRUE);
 
 #ifdef HIDE_UNAVAILABLE_TRAIT
 	/* If server doesn't support traits, or we only have the
 	   dummy 'N/A' trait available in general, skip trait choice */
-	if (Setup.max_trait == 1) return TRUE;
+	if (Setup.max_trait == 1) return(TRUE);
 #endif
 
 	/* Prepare to list, skip trait #0 'N/A' */
@@ -597,7 +597,7 @@ static bool choose_trait(void) {
 	/* No traits available? */
 	if (shown_traits == 0) {
 		/* Paranoia - server bug (not even 'N/A' "available") */
-		if (!(trait_info[0].choice & BITS(race))) return TRUE;
+		if (!(trait_info[0].choice & BITS(race))) return(TRUE);
 	}
 
 	/* No traits available for this race (except for 'N/A')? Skip forward then.
@@ -612,7 +612,7 @@ static bool choose_trait(void) {
 		c_put_str(TERM_L_BLUE, trait_info[0].title, 6, CHAR_COL);
  #endif
 #endif
-		return TRUE;
+		return(TRUE);
 	}
 
 	/* If we have traits available for the race chose, prepare to display them */
@@ -678,7 +678,7 @@ trait_redraw:
 
 		if (c == 'Q' || c == KTRL('Q')) quit(NULL);
 #ifdef RETRY_LOGIN
-		if (rl_connection_destroyed) return FALSE;
+		if (rl_connection_destroyed) return(FALSE);
 #endif
 
 		if (c == '?') {
@@ -702,7 +702,7 @@ trait_redraw:
 				c_put_str(TERM_SLATE, trait_info[dna_trait].title, 6, CHAR_COL);
 			}
 #endif
-			return FALSE;
+			return(FALSE);
 		}
 
 		/* Allow 'navigating', to highlight and display the descriptive text */
@@ -780,7 +780,7 @@ trait_redraw:
 #endif
 	clear_from(n);
 
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -900,12 +900,12 @@ class_redraw:
 
 		if (c == 'Q' || c == KTRL('Q')) quit(NULL);
 #ifdef RETRY_LOGIN
-		if (rl_connection_destroyed) return FALSE;
+		if (rl_connection_destroyed) return(FALSE);
 #endif
 		if (c == '\b') {
 			clear_diz();
 			clear_from(n - 3);
-			return FALSE;
+			return(FALSE);
 		}
 
 		if (c == '?') {
@@ -1034,7 +1034,7 @@ class_redraw:
 
 	clear_diz();
 	clear_from(n - 3); /* -3 so beginner-warnings are also cleared */
-	return TRUE;
+	return(TRUE);
 }
 
 
@@ -1101,7 +1101,7 @@ static bool choose_stat_order(void) {
 					c = inkey();
 					if (c == 'Q' || c == KTRL('Q')) quit(NULL);
 #ifdef RETRY_LOGIN
-					if (rl_connection_destroyed) return FALSE;
+					if (rl_connection_destroyed) return(FALSE);
 #endif
 					if (c == '*') hazard = TRUE;
 
@@ -1456,7 +1456,7 @@ static bool choose_stat_order(void) {
 			}
 			if (c == 'Q' || c == KTRL('Q')) quit(NULL);
 #ifdef RETRY_LOGIN
-			if (rl_connection_destroyed) return FALSE;
+			if (rl_connection_destroyed) return(FALSE);
 #endif
 			if (c == '\b') {
 				for (i = 0; i < 6; i++) stat_order[i] = stat_order_tmp[i];
@@ -1464,7 +1464,7 @@ static bool choose_stat_order(void) {
 				for (i = DIZ_ROW; i <= DIZ_ROW + 8; i++) Term_erase(30, i, 255);
 				clear_from(rowA);
 
-				return FALSE;
+				return(FALSE);
 			}
 			if (c == '#') {
 				if (valid_dna) {
@@ -1474,7 +1474,7 @@ static bool choose_stat_order(void) {
 					}
 					for (i = DIZ_ROW; i <= DIZ_ROW + 8; i++) Term_erase(30, i, 255);
 					clear_from(rowA);
-					return TRUE;
+					return(TRUE);
 				} else {
 					auto_reincarnation = FALSE;
 					hazard = FALSE;
@@ -1491,7 +1491,7 @@ static bool choose_stat_order(void) {
 		for (i = DIZ_ROW; i <= DIZ_ROW + 8; i++) Term_erase(30, i, 255);
 		clear_from(rowA);
 	}
-	return TRUE;
+	return(TRUE);
 }
 
 /* Quick hack!		- Jir -
@@ -1560,7 +1560,7 @@ static bool choose_mode(void) {
 
 			if (c == 'Q' || c == KTRL('Q')) quit(NULL);
 #ifdef RETRY_LOGIN
-			if (rl_connection_destroyed) return FALSE;
+			if (rl_connection_destroyed) return(FALSE);
 #endif
 
 			if (c == '?') {
@@ -1570,7 +1570,7 @@ static bool choose_mode(void) {
 
 			if (c == '\b') {
 				clear_from(15);
-				return FALSE;
+				return(FALSE);
 			} else if (c == 'p' && !s_RPG) {
 				sex |= MODE_PVP | MODE_DED_PVP;
 				c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
@@ -1643,7 +1643,7 @@ static bool choose_mode(void) {
 		}
 
 		clear_from(15);
-		return TRUE;
+		return(TRUE);
 	}
 
 	if (!s_RPG) {
@@ -1708,7 +1708,7 @@ static bool choose_mode(void) {
 
 		if (c == 'Q' || c == KTRL('Q')) quit(NULL);
 #ifdef RETRY_LOGIN
-		if (rl_connection_destroyed) return FALSE;
+		if (rl_connection_destroyed) return(FALSE);
 #endif
 
 		if (c == '?') {
@@ -1718,7 +1718,7 @@ static bool choose_mode(void) {
 
 		if (c == '\b') {
 			clear_from(15);
-			return FALSE;
+			return(FALSE);
 		}
 		else if (c == 'p' && !firstrun) {
 			sex |= MODE_PVP;
@@ -1804,7 +1804,7 @@ static bool choose_mode(void) {
 	}
 
 	clear_from(15);
-	return TRUE;
+	return(TRUE);
 }
 
 /* Fruit bat is now a "body modification" that can be applied to all "modes" - C. Blue */
@@ -1856,7 +1856,7 @@ static bool choose_body_modification(void) {
 
 		if (c == 'Q' || c == KTRL('Q')) quit(NULL);
 #ifdef RETRY_LOGIN
-		if (rl_connection_destroyed) return FALSE;
+		if (rl_connection_destroyed) return(FALSE);
 #endif
 
 		if (c == '?') {
@@ -1866,7 +1866,7 @@ static bool choose_body_modification(void) {
 
 		if (c == '\b') {
 			clear_from(19);
-			return FALSE;
+			return(FALSE);
 		}
 		else if (c == 'f' && !firstrun) {
 			sex |= MODE_FRUIT_BAT;
@@ -1910,7 +1910,7 @@ static bool choose_body_modification(void) {
 	}
 
 	clear_from(19);
-	return TRUE;
+	return(TRUE);
 }
 
 /*
@@ -2322,9 +2322,9 @@ bool meta_read_and_close(void) {
 	meta_i = 0;
 
 	/* Check for error while reading */
-	if (bytes <= 0) return FALSE;
+	if (bytes <= 0) return(FALSE);
 
-	return TRUE;
+	return(TRUE);
 }
 bool meta_connect(void) {
 	if (strlen(meta_address) > 0) {
@@ -2360,10 +2360,10 @@ bool meta_connect(void) {
 		Term_erase(0, 0, 80);
 		Term_erase(1, 0, 80);
 		prt("Failed to connect to meta server.", 0, 0);
-		return FALSE;
+		return(FALSE);
 	}
 
-	return TRUE;
+	return(TRUE);
 }
 
 /*
@@ -2681,7 +2681,7 @@ bool get_server_name(void) {
 			meta_pings_servers = 0;
 #endif
 			quit(NULL);
-			return FALSE;
+			return(FALSE);
 		}
 
 		/* Index */
@@ -2727,7 +2727,7 @@ bool get_server_name(void) {
 #endif
 
 	/* Success */
-	return TRUE;
+	return(TRUE);
 }
 
 /* Human */

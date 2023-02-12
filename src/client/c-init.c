@@ -86,9 +86,9 @@ bool check_dir2(cptr s) {
 
 	if (dp) {
 		closedir(dp);
-		return TRUE;
+		return(TRUE);
 	} else {
-		return FALSE;
+		return(FALSE);
 	}
 }
 
