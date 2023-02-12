@@ -6740,13 +6740,14 @@ bool player_can_enter(int Ind, byte feature, bool comfortably) {
 	/* Special one-way doors for quests: Allow traversing if we're on a CAVE_ICKY grid. */
 	if (feature == FEAT_ESCAPE_DOOR || feature == FEAT_SICKBAY_DOOR) {
 		cave_type cave = getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px];
+
 		if ((cave.info & CAVE_ICKY) || (f_info[cave.feat].flags1 & FF1_PROTECTED))
 			return(TRUE);
 		return(FALSE);
 	}
 
 	/* Player can not walk through "walls" unless in Shadow Form */
-//	if (p_ptr->wraith_form || (PRACE_FLAG(PR1_SEMI_WRAITH)))
+	//if (p_ptr->wraith_form || (PRACE_FLAG(PR1_SEMI_WRAITH)))
 	if (/*p_ptr->wraith_form ||*/ p_ptr->ghost || p_ptr->tim_wraith) pass_wall = TRUE;
 	else pass_wall = FALSE;
 
@@ -7711,8 +7712,6 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		/* Update the player indices */
 		zcave[oy][ox].m_idx = 0;
 		zcave[y][x].m_idx = 0 - Ind;
-
-
 
 		/* Spontaneous Searching */
 		if ((p_ptr->skill_fos >= 75) ||
