@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 10. February 2023 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 12. February 2023 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.0b - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -9339,6 +9339,10 @@ You can also specify a number after the 'B' to set the exact minimum amount of
 items to keep (from 1 to 99). It must be terminated by a semikolon, eg:
   @SB5;
   @SB5;15000
+Depending on the server settings, items inscribed @SB that are running too low,
+hitting the base stock limit specified via the B-tag and therefore stop being
+available for purchase in the store will be displayed in dark grey and possibly
+with the numerical prefix 'no more' and/or a price tag saying 'SOLD OUT'.
 
 If you want to display items that are not for sale, eg create a 'museum', you
 can inscribe the items
