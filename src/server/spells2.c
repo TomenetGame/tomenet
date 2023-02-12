@@ -5700,7 +5700,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 			if ((y == y1) && (x == x1)) continue;
 
 			/* Destroy "valid" grids */
-			//if ((cave_valid_bold(zcave, y, x)) && !(c_ptr->info&CAVE_ICKY))
+			//if ((cave_valid_bold(zcave, y, x)) && !(c_ptr->info & CAVE_ICKY))
 			if (cave_valid_bold(zcave, y, x)) {
 				struct c_special *cs_ptr;
 
@@ -8069,7 +8069,7 @@ static bool poly_build(int Ind, char *args) {
 		return(TRUE);
 	}
 	/* no going off depth, and no spoiling moats */
-	if (inarea(&curr->wpos, &p_ptr->wpos) && !(zcave[curr->dy][curr->dx].info&CAVE_ICKY && zcave[curr->dy][curr->dx].feat == FEAT_DEEP_WATER)) {
+	if (inarea(&curr->wpos, &p_ptr->wpos) && !(zcave[curr->dy][curr->dx].info & CAVE_ICKY && zcave[curr->dy][curr->dx].feat == FEAT_DEEP_WATER)) {
 		zcave[curr->dy][curr->dx].feat = FEAT_WALL_EXTRA;
 		//zcave[curr->dy][curr->dx].feat = FEAT_WALL_HOUSE;
 		if (curr->cvert < MAXCOORD && (--curr->moves) > 0) return(TRUE);

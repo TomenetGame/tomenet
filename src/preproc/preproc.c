@@ -68,15 +68,15 @@ int main(int argc, char *argv[]) {
 	}
 	if (strlen(argv[1]) == 0) { /* paranoia */
 		printf("Error: No input filename specified.\n");
-		return -2;
+		return(-2);
 	}
 	if (strlen(argv[1]) > 160) {
 		printf("Error: Input filename must not be longer than 160 characters.\n");
-		return -3;
+		return(-3);
 	}
 	if (strlen(argv[2]) == 0) { /* paranoia */
 		printf("Error: No output filename specified.\n");
-		return -4;
+		return(-4);
 	}
 
 
@@ -84,14 +84,14 @@ int main(int argc, char *argv[]) {
 	f_in = fopen(argv[1], "r");
 	if (f_in == NULL) {
 		printf("Error: Couldn't open input file to create working copy.\n");
-		return -13;
+		return(-13);
 	}
 
 	sprintf(tmp_file, "%s_", argv[1]);
 	f_out = fopen(tmp_file, "w");
 	if (f_out == NULL) {
 		printf("Error: Couldn't create temporary working copy file.\n");
-		return -14;
+		return(-14);
 	}
 
 	/* create temporary working copy */
@@ -115,14 +115,14 @@ int main(int argc, char *argv[]) {
 		f_in = fopen(tmp_file, "r");
 		if (f_in == NULL) {
 			printf("Error: Couldn't open custom-including input file.\n");
-			return -11;
+			return(-11);
 		}
 
 		sprintf(tmp_file, "%s__", argv[1]);
 		f_out = fopen(tmp_file, "w");
 		if (f_out == NULL) {
 			printf("Error: Couldn't create custom-including temporary file.\n");
-			return -12;
+			return(-12);
 		}
 
 		/* read a line */
@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
 			f_included = fopen(included_file_ptr, "r");
 			if (f_included == NULL) {
 				printf("Error: Couldn't open included file: %s\n", included_file_ptr);
-				return -10;
+				return(-10);
 			}
 
 			fputs("\n", f_out);
@@ -204,14 +204,14 @@ int main(int argc, char *argv[]) {
 	f_in = fopen(tmp_file, "r");
 	if (f_in == NULL) {
 		printf("Error: Couldn't open input file.\n");
-		return -5;
+		return(-5);
 	}
 
 	sprintf(tmp_file, "%s__", argv[1]);
 	f_out = fopen(tmp_file, "w");
 	if (f_out == NULL) {
 		printf("Error: Couldn't create temporary file.\n");
-		return -6;
+		return(-6);
 	}
 
 	/* read a line */
@@ -292,7 +292,7 @@ int main(int argc, char *argv[]) {
 
 	if (system(line) == -1) {
 		printf("Error: Couldn't execute C preprocessor.\n");
-		return -7;
+		return(-7);
 	}
 
 #ifndef DEBUG
@@ -307,13 +307,13 @@ int main(int argc, char *argv[]) {
 	f_in = fopen(tmp_file, "r");
 	if (f_in == NULL) {
 		printf("Error: Couldn't open preprocessed temporary file.\n");
-		return -8;
+		return(-8);
 	}
 
 	f_out = fopen(argv[2], "w");
 	if (f_out == NULL) {
 		printf("Error: Couldn't create output file.\n");
-		return -9;
+		return(-9);
 	}
 
 	/* read a line */

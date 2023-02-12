@@ -2544,7 +2544,7 @@ int access_door_colour(int Ind, struct dna_type *dna) {
 			if (!strcmp(parties[p_ptr->party].owner, lookup_player_name(dna->owner))) {
 				if (dna->a_flags & ACF_CLASS) {
 					if (p_ptr->pclass == (dna->creator & 0xff)) {
-						if (dna->a_flags&ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
+						if (dna->a_flags & ACF_LEVEL && p_ptr->max_plv < dna->min_level && p_ptr->dna != dna->creator) return(TERM_YELLOW);
 						return(TERM_WHITE);
 					} else return(TERM_ORANGE);
 				}

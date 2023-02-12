@@ -2689,13 +2689,13 @@ void wipeout_needless_objects() {
 			wpos.wz = 0;
 			if (getcave(&wpos) && !players_on_depth(&wpos)) wipe_o_list(&wpos);
 
-			if (wild->flags&WILD_F_UP)
+			if (wild->flags & WILD_F_UP)
 				for (k = 0;k < wild->tower->maxdepth; k++) {
 					wpos.wz = k;
 					if ((getcave(&wpos)) && (!players_on_depth(&wpos))) wipe_o_list(&wpos);
 				}
 
-			if (wild->flags&WILD_F_DOWN)
+			if (wild->flags & WILD_F_DOWN)
 				for (k = 0;k < wild->dungeon->maxdepth; k++) {
 					wpos.wz = -k;
 					if ((getcave(&wpos)) && (!players_on_depth(&wpos))) wipe_o_list(&wpos);

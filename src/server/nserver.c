@@ -1033,7 +1033,7 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 		}
 	}
 
-	return SUCCESS;
+	return(SUCCESS);
 }
 /* new, fix timing exploit that allows multi-login, part 2/2 (non-resuming) */
 int check_multi_exploit(char *acc, char *nick) {
@@ -1168,8 +1168,8 @@ static void Contact(int fd, int arg) {
 
 	if (getpeername(fd, (struct sockaddr *) &sin, &len) >= 0) {
 		u32b addr = ntohl(sin.sin_addr.s_addr);
-		strnfmt(host_addr, sizeof(host_addr), "%d.%d.%d.%d", (byte)(addr>>24),
-			(byte)(addr>>16), (byte)(addr>>8), (byte)addr);
+		strnfmt(host_addr, sizeof(host_addr), "%d.%d.%d.%d", (byte)(addr >> 24),
+			(byte)(addr >> 16), (byte)(addr >> 8), (byte)addr);
 	}
 #else
 	strcpy(host_addr, DgramLastaddr(fd));
@@ -1324,7 +1324,7 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 	*login_port = Setup_connection(real, nick, addr, host, version, fd);
 	if (*login_port == -1) return E_SOCKET;
 
-	return SUCCESS;
+	return(SUCCESS);
 }
 
 
@@ -3251,9 +3251,9 @@ static int Handle_login(int ind) {
  #endif
 		msg_print(NumPlayers, "\374\377y      For a list of commands press \377o?\377y key and \377ospacebar\377y to scroll down!");
 		msg_print(NumPlayers, "\374\377y ");
-//		msg_print(NumPlayers, "\377RTurn off \377oNUMLOCK\377R and hit \377oSHIFT+numkeys\377R to run (move quickly).");
-//		msg_print(NumPlayers, "\377RHit '\377o?\377R' key for help. Hit '\377o:\377R' to chat. Hit '\377o@\377R' to see who is online.");
-//		msg_print(NumPlayers, "\377R<< Welcome to TomeNET! >>");
+		//msg_print(NumPlayers, "\377RTurn off \377oNUMLOCK\377R and hit \377oSHIFT+numkeys\377R to run (move quickly).");
+		//msg_print(NumPlayers, "\377RHit '\377o?\377R' key for help. Hit '\377o:\377R' to chat. Hit '\377o@\377R' to see who is online.");
+		//msg_print(NumPlayers, "\377R<< Welcome to TomeNET! >>");
 
 		/* Play audio greeting too! - C. Blue */
 		if (greeting) { /* only the very 1st time, might become annoying */
@@ -4691,11 +4691,11 @@ static int Receive_login(int ind) {
 				sprintf(loc, "at (%d,%d), %dft", wpos.wx, wpos.wy, wpos.wz * 50);//..so we just assume 'ft' notation
 
 				if (is_newer_than(&connp->version, 4, 5, 7, 0, 0, 0))
-					Packet_printf(&connp->c, "%c%hd%s%s%hd%hd%hd%s", PKT_LOGIN, tmpm, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), ptype&0xff , ptype>>8, loc);
+					Packet_printf(&connp->c, "%c%hd%s%s%hd%hd%hd%s", PKT_LOGIN, tmpm, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), ptype & 0xff , ptype >> 8, loc);
 				else if (is_newer_than(&connp->version, 4, 4, 9, 2, 0, 0))
-					Packet_printf(&connp->c, "%c%hd%s%s%hd%hd%hd", PKT_LOGIN, tmpm, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), ptype&0xff , ptype>>8);
+					Packet_printf(&connp->c, "%c%hd%s%s%hd%hd%hd", PKT_LOGIN, tmpm, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), ptype & 0xff , ptype >> 8);
 				else
-					Packet_printf(&connp->c, "%c%s%s%hd%hd%hd", PKT_LOGIN, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), ptype&0xff , ptype>>8);
+					Packet_printf(&connp->c, "%c%s%s%hd%hd%hd", PKT_LOGIN, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), ptype & 0xff , ptype >> 8);
 			}
 			if (is_newer_than(&connp->version, 4, 5, 7, 0, 0, 0))
 				Packet_printf(&connp->c, "%c%hd%s%s%hd%hd%hd%s", PKT_LOGIN, 0, "", "", 0, 0 , 0, "");

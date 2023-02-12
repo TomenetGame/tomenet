@@ -493,7 +493,7 @@ int local_file_close(int ind, unsigned short fnum) {
 #endif
 	remove_ft(c_fd);
 
-	return success;
+	return(success);
 }
 
 /*
@@ -552,7 +552,7 @@ int local_file_check(char *fname, u32b *sum) {
 
 	fclose(fp);
 	*sum = total;
-	return success;
+	return(success);
 }
 
 /*
@@ -586,7 +586,7 @@ int local_file_check_new(char *fname, unsigned char digest_out[16]) {
 	if (!ferror(fp)) success = 1;
 
 	fclose(fp);
-	return success;
+	return(success);
 }
 
 /*

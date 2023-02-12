@@ -2314,7 +2314,7 @@ void update_mon(int m_idx, bool dist) {
 			dx = (p_ptr->px > fx) ? (p_ptr->px - fx) : (fx - p_ptr->px);
 
 			/* Approximate distance */
-			d = (dy > dx) ? (dy + (dx>>1)) : (dx + (dy>>1));
+			d = (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
 
 			/* Save the distance (in a byte) */
 			m_ptr->cdis = (d < 255) ? d : 255;
@@ -2324,7 +2324,7 @@ void update_mon(int m_idx, bool dist) {
 			dx = (p_ptr->px > fx) ? (p_ptr->px - fx) : (fx - p_ptr->px);
 
 			/* Approximate distance */
-			d = (dy > dx) ? (dy + (dx>>1)) : (dx + (dy>>1));
+			d = (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
 		}
 
 

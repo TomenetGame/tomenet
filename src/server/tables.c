@@ -1897,7 +1897,7 @@ player_race race_info[MAX_RACE] = {
 		66, 4, 100, 20,
 		0,
 		//No archer, rogue
-		CF_ALL&~CFR&~CFA,
+		CF_ALL & ~CFR & ~CFA,
 		90,
 
 		{{ SKILL_AXE,
@@ -2049,7 +2049,7 @@ player_race race_info[MAX_RACE] = {
 		82, 10, 180, 15,
 		8,
 		// no Paladins
-		CF_ALL&~CFL,
+		CF_ALL & ~CFL,
 		115,
 
 		{
@@ -2114,9 +2114,9 @@ player_race race_info[MAX_RACE] = {
 		15,
 		//No paladin,druid,priest,shaman/mimic
 #ifdef ENABLE_DEATHKNIGHT
-		(CF_ALL&~CFD&~CFP&~CFM&~CFS)|CFK,
+		(CF_ALL & ~CFD & ~CFP & ~CFM & ~CFS) | CFK,
 #else
-		CF_ALL&~CFL&~CFD&~CFP&~CFM&~CFS,
+		CF_ALL & ~CFL & ~CFD & ~CFP & ~CFM & ~CFS,
 #endif
 		125,
 
@@ -2226,7 +2226,7 @@ player_race race_info[MAX_RACE] = {
 		10,
 		/* Warrior and archer are disabled since they do not have MP */
 		/* ENABLE_HELLKNIGHT/ENABLE_CPRIEST note: These shouldn't have flags to be allowed, since they cannot be 'created' on birth: */
-		CF_ALL&~CFW&~CFA,
+		CF_ALL & ~CFW & ~CFA,
 		125,
 
 		{

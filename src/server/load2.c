@@ -1583,7 +1583,7 @@ static void rd_house(int n) {
 				cs_ptr->sc.ptr = house_ptr->dna;
 		}
 	}
-	if (house_ptr->flags&HF_RECT) {
+	if (house_ptr->flags & HF_RECT) {
 		rd_byte(&house_ptr->coords.rect.width);
 		rd_byte(&house_ptr->coords.rect.height);
 	}
@@ -3611,7 +3611,7 @@ errr rd_server_savefile() {
 	/* Read the available records */
 	for (i = 0; i < (unsigned int) num_houses; i++) {
 		rd_house(i);
-		if (!(houses[i].flags&HF_STOCK))
+		if (!(houses[i].flags & HF_STOCK))
 			wild_add_uhouse(&houses[i]);
 	}
 

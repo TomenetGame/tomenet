@@ -277,7 +277,7 @@ bool can_go_up(struct worldpos *wpos, byte mode) {
 #endif
 
 	/* Check for empty staircase without any connected dungeon/tower! */
-	if (!d_ptr) return((wild->flags&WILD_F_UP)?TRUE:FALSE); /* you MAY create 'empty' staircase */
+	if (!d_ptr) return((wild->flags & WILD_F_UP) ? TRUE : FALSE); /* you MAY create 'empty' staircase */
 
 	if (mode & 0x1) {
 		if (!wpos->wz && (d_ptr->flags2 & DF2_NO_ENTRY_STAIR)) return(FALSE);
@@ -315,7 +315,7 @@ bool can_go_down(struct worldpos *wpos, byte mode) {
 #endif
 
 	/* Check for empty staircase without any connected dungeon/tower! */
-	if (!d_ptr) return((wild->flags&WILD_F_DOWN)?TRUE:FALSE); /* you MAY create 'empty' staircase */
+	if (!d_ptr) return((wild->flags & WILD_F_DOWN) ? TRUE : FALSE); /* you MAY create 'empty' staircase */
 
 	if (mode & 0x1) {
 		if (!wpos->wz && (d_ptr->flags2 & DF2_NO_ENTRY_STAIR)) return(FALSE);
@@ -5550,7 +5550,7 @@ void update_lite(int Ind) {
 				if ((dy <= 2) && (dx <= 2)) continue;
 
 				/* Hack -- approximate the distance */
-				d = (dy > dx) ? (dy + (dx>>1)) : (dx + (dy>>1));
+				d = (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
 
 				/* Skip distant grids */
 				if (d > p) continue;
@@ -6072,7 +6072,7 @@ void update_view(int Ind) {
 		/* Acquire the "bounds" of the maximal circle */
 		z = over - n - n;
 		if (z > full - n) z = full - n;
-		while ((z + n + (n>>1)) > full) z--;
+		while ((z + n + (n >> 1)) > full) z--;
 
 
 		/* Access the four diagonal grids */

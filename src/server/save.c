@@ -2240,7 +2240,7 @@ static bool wr_server_savefile() {
 
 	tmp32u = 0L;
 	for (i = 0; i < num_houses; i++)
-		if (!(houses[i].flags&HF_DELETED)) tmp32u++;
+		if (!(houses[i].flags & HF_DELETED)) tmp32u++;
 
 	/* Note the number of houses */
 	wr_s32b(tmp32u);

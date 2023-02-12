@@ -10752,7 +10752,7 @@ static void process_monster_pet(int Ind, int m_idx) {
 	}
 
 	/* handle confusion */
-	if (m_ptr->confused && !(r_ptr->flags3&RF3_NO_CONF)) {
+	if (m_ptr->confused && !(r_ptr->flags3 & RF3_NO_CONF)) {
 		/* amount of "boldness" */
 		int d = randint(r_ptr->level / 10 + 1);
 

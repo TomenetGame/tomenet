@@ -67,7 +67,7 @@ GdkPixbuf *create_pixbuf(const gchar * filename) {
 		fprintf(stderr, "%s\n", error->message);
 		g_error_free(error);
 	}
-	return pixbuf;
+	return(pixbuf);
 }
 
 void show_error(gpointer window) {

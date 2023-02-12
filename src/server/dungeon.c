@@ -9090,7 +9090,7 @@ void process_player_change_wpos(int Ind) {
 
 		if (!m_ptr->wpos.wz && !(m_ptr->mind & GOLEM_FOLLOW)) continue;
 		/*
-		   if ((m_ptr->mind & GOLEM_GUARD) && !(m_ptr->mind&GOLEM_FOLLOW)) continue;
+		   if ((m_ptr->mind & GOLEM_GUARD) && !(m_ptr->mind & GOLEM_FOLLOW)) continue;
 		   */
 
 		/* Place the golems in an empty space */

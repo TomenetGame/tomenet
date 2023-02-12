@@ -3912,10 +3912,10 @@ static bool island_aux(int y, int x, unsigned char type, unsigned char fill, int
 	ranval = rand_int(15);
 	if (size) {
 		added_decently = FALSE;
-		if (ranval&1) added_decently = island_aux(y, x - 1, type, fill, size - 1, size_org) || added_decently;
-		if (ranval&2) added_decently = island_aux(y, x + 1, type, fill, size - 1, size_org) || added_decently;
-		if (ranval&4) added_decently = island_aux(y - 1, x, type, fill, size - 1, size_org) || added_decently;
-		if (ranval&8) added_decently = island_aux(y + 1, x, type, fill, size - 1, size_org) || added_decently;
+		if (ranval & 1) added_decently = island_aux(y, x - 1, type, fill, size - 1, size_org) || added_decently;
+		if (ranval & 2) added_decently = island_aux(y, x + 1, type, fill, size - 1, size_org) || added_decently;
+		if (ranval & 4) added_decently = island_aux(y - 1, x, type, fill, size - 1, size_org) || added_decently;
+		if (ranval & 8) added_decently = island_aux(y + 1, x, type, fill, size - 1, size_org) || added_decently;
 	}
 	if ((rand_int(7) == 0)) {
 		switch (type) {

@@ -510,26 +510,26 @@ uint32_t get_message_type(char *msg) {
 	/* catch usages of get_message_type() in debug places where msg might be empty */
 	if (!msg) {
 		fprintf(stderr, "Illegal get_message_type() call\n");
-		return 0;
+		return(0);
 	}
 	msg++;
 
 	if (strstr(msg, " has left the game.")) {
-		return WMF_PLEAVE;
+		return(WMF_PLEAVE);
 	} else if (strstr(msg, " has entered the game.") || strstr(msg, " sets foot into the world.")) {
-		return WMF_PJOIN;
+		return(WMF_PJOIN);
 	} else if (strstr(msg, "Morgoth, Lord of Darkness was slain by ")) {
-		return (WMF_PWIN | WMF_UNIDEATH);
+		return(WMF_PWIN | WMF_UNIDEATH);
 	} else if (strstr(msg, " is henceforth known as ")) {
-		return WMF_PWIN;
+		return(WMF_PWIN);
 	} else if (strstr(msg, " has attained level ") &&
 	    atoi(strstr(msg, " has attained level ") + 20) >= 30) {
-		return (WMF_HILVLUP | WMF_LVLUP);
+		return(WMF_HILVLUP | WMF_LVLUP);
 	} else if (strstr(msg, " has attained level ")) {
-		return WMF_LVLUP;
+		return(WMF_LVLUP);
 	} else if (strstr(msg, " was slain by ") ||
 	    (strstr(msg, " has defeated ") && strstr(msg, " mirror image."))) {
-		return WMF_UNIDEATH;
+		return(WMF_UNIDEATH);
 	} else if (strstr(msg, " was destroyed by ") ||
 	    strstr(msg, " was wasted by ") ||
 	    strstr(msg, " was crushed by ") ||
@@ -543,7 +543,7 @@ uint32_t get_message_type(char *msg) {
 	    strstr(msg, " has retired to ") ||
 	    strstr(msg, " bids farewell to this plane") ||
 	    strstr(msg, " was defeated by ")) {
-		return WMF_PDEATH;
+		return(WMF_PDEATH);
 	} else if ((!strncmp(msg, "\377a>>", 4) && strstr(msg, " wins ")) /* global events */
 	    || (strstr(msg, "defeated a tasty halloween")) || (strstr(msg, "Santa dropped the presents near")) /* halloween/xmas */
 	    || (strstr(msg, " has defeated a Go")) /* Go master */
@@ -551,8 +551,8 @@ uint32_t get_message_type(char *msg) {
 	    || (strstr(msg, " made it through the ")) /* ironman deep dive challenge - win */
 	    || (strstr(msg, " withdrew from the ")) /* ironman deep dive challenge - withdrawal */
 	    ) {
-		return WMF_EVENTS;
+		return(WMF_EVENTS);
 	}
 
-	return 0;
+	return(0);
 }
