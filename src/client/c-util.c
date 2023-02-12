@@ -1752,7 +1752,7 @@ c_msg_format("%c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c",
 
 				pos = strcspn(c2, " "); /* not allowed in any part of the URL, thereby terminating it */
 				strcpy(buf_prev, c); //swap strings so we don't do overlapping copying..
-				buf_prev[pos + (c2 - c)] = 0;
+				buf_prev[pos + (c2 - c)] = 0; //wrong compiler warning (c2 uninitialized)
 				strcpy(buf_esc, buf_prev);
 
 				/* Trim trailing dot, if any - in case someone wrote an URL and 'terminated' his line grammatically with a dot, like a normal sentence. */
