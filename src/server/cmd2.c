@@ -8777,6 +8777,7 @@ static void destroy_house(int Ind, struct dna_type *dna) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 	house_type *h_ptr;
+	char owner[MAX_CHARS], owner_type[20];
 
 	if (!is_admin(p_ptr)) {
 		msg_print(Ind, "\377rYour attempts to destroy the house fail.");
@@ -8786,11 +8787,23 @@ static void destroy_house(int Ind, struct dna_type *dna) {
 		h_ptr = &houses[i];
 		if (h_ptr->dna == dna) {
 			if (h_ptr->flags & HF_STOCK) {
-				msg_print(Ind, "\377oThat house may not be destroyed");
+				msg_print(Ind, "\377oThat house may not be destroyed. (HF_STOCK)");
 				//return;
 			}
+			switch (h_ptr->dna->owner_type) {
+			case OT_PLAYER:
+				strcpy(owner, lookup_player_name(h_ptr->dna->owner));
+				strcpy(owner_type, "P");
+				break;
+			case OT_GUILD:
+				strcpy(owner, guilds[h_ptr->dna->owner].name);
+				strcpy(owner_type, "G");
+				break;
+			default:
+				strcpy(owner, "UNDEFINED");
+			}
+			msg_format(Ind, "\377DThe house %d (dna: c=%d o=%s ot=%s; dx,dy=%d,%d) crumbles away.", i, h_ptr->dna->creator, owner, owner_type, h_ptr->dx, h_ptr->dy);
 			/* quicker than copying back an array. */
-			msg_print(Ind, "\377DThe house crumbles away.");
 			fill_house(h_ptr, FILL_MAKEHOUSE, NULL);
 			h_ptr->flags |= HF_DELETED;
 
