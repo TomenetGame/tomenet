@@ -8152,7 +8152,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				deltown(Ind);
 				return;
 			}
-			else if (prefix(messagelc, "/chouse")) { //count houses/castles -- USE THIS TO FIX BUGS LIKE "character cannot own more than 1" but has actually 0 houses
+			else if (prefix(messagelc, "/chouse")) { /* count houses/castles -- USE THIS TO FIX BUGS LIKE "character cannot own more than 1" but has actually 0 houses */
+				/* However, if a character owns a 'ghost house' that isn't generated in the game world, use /unownhouse to remove it from his list first, then run this. */
 				if (!tk) {
 					msg_print(Ind, "Usage: /chouse <character name>");
 					return;
@@ -11844,7 +11845,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/ahl")) { /* ACC_HOUSE_LIMIT - just in case anything goes wrong.. */
-				//instead, USE '/chouse' THIS TO FIX CHAR-SPECIFIC BUGS LIKE "character cannot own more than 1" but has actually 0 houses
+				/* Instead, USE '/chouse' THIS TO FIX CHAR-SPECIFIC BUGS LIKE "character cannot own more than 1" but has actually 0 houses. */
 				int i, h, ht = 0, ids, *id_list, n;
 				struct account acc;
 				hash_entry *ptr;
@@ -11968,6 +11969,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/unownhouse")) { /* Usage: /unownhouse <x> <y>   (door coordinates from ~9 or /hou) */
+				/* Use this command to fix 'ghost' houses that aren't placed in the game world but are still owned by someone.
+				   After running this command, do /chouse <cname> to recount his houses and fix his house count that way. */
 				house_type *h_ptr;
 				int x, y;
 				char owner[MAX_CHARS], owner_type[20];
