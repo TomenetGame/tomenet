@@ -3662,7 +3662,7 @@ bool monster_attack_normal(int tm_idx, int m_idx) {
 			if (dead && m_ptr->pet) {
 				char monster_name[MNAME_LEN];
 
-				monster_desc(find_player(m_ptr->owner), monster_name, tm_idx, 0x04&0x08);
+				monster_desc(find_player(m_ptr->owner), monster_name, tm_idx, 0x04 | 0x08);
 				msg_format(find_player(m_ptr->owner), "\377yYour pet killed %s.", monster_name);
 				if (!(Players[find_player(m_ptr->owner)]->mode & MODE_PVP))
 					gain_exp(find_player(m_ptr->owner), (unsigned int)(exp_gain));
