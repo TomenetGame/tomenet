@@ -9281,7 +9281,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #endif  // MONSTER_INVENTORY
 				return;
 			}
-			else if (prefix(messagelc, "/unown")) { /* clear owner of an item - C. Blue */
+			else if (prefix(messagelc, "/unown") && !prefix(messagelc, "/unownhou")) { /* clear owner of an item - C. Blue */
 				object_type *o_ptr;
 				if (!tk) {
 					msg_print(Ind, "No inventory slot specified.");
@@ -11937,7 +11937,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					    h_ptr->dx != x || h_ptr->dy != y)
 						continue;
 					if (h_ptr->flags & HF_STOCK) {
-						msg_print(Ind, "\377oThat house may not be destroyed. (HF_STOCK)");
+						//msg_print(Ind, "\377oThat house may not be destroyed. (HF_STOCK)");
+						msg_format(Ind, "\377oThat house %d (dna: c=%d o=%s ot=%s; dx,dy=%d,%d) is not eligible.", i, h_ptr->dna->creator, owner, owner_type, h_ptr->dx, h_ptr->dy);
 						//return;
 						continue;
 					}
@@ -11985,7 +11986,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					    h_ptr->dx != x || h_ptr->dy != y)
 						continue;
 					if (!(h_ptr->flags & HF_STOCK)) {
-						msg_print(Ind, "\377oThat house may not be unowned. (~HF_STOCK)");
+						//msg_print(Ind, "\377oThat house may not be unowned. (~HF_STOCK)");
+						msg_format(Ind, "\377oThat house %d (dna: c=%d o=%s ot=%s; dx,dy=%d,%d) is not eligible.", i, h_ptr->dna->creator, owner, owner_type, h_ptr->dx, h_ptr->dy);
 						//return;
 						continue;
 					}
