@@ -2748,6 +2748,7 @@ void do_cmd_open(int Ind, int dir) {
 			/* fun exception: open door mimic players */
 			if ((i = -c_ptr->m_idx) > 0) {
 				player_type *q_ptr = Players[i];
+
 				if (q_ptr->body_monster == RI_DOOR_MIMIC && !(q_ptr->temp_misc_1 & 0x01)) {
 					q_ptr->temp_misc_1 |= 0x01; /* 'open' :-p */
 					msg_print(i, "That tickles!");
@@ -2984,6 +2985,7 @@ void do_cmd_open(int Ind, int dir) {
 				/* We cannot access this house */
 				} else {
 					struct dna_type *dna = cs_ptr->sc.ptr;
+
 					if (!strcmp(get_house_owner(cs_ptr), "nobody.")) {
 						msg_format(Ind, "\377oThat house costs %d gold.", house_price_player(dna->price, p_ptr->stat_ind[A_CHR]));
 #ifdef USE_SOUND_2010
@@ -3008,6 +3010,7 @@ void do_cmd_open(int Ind, int dir) {
 
 			if ((cs_ptr = GetCS(c_ptr, CS_KEYDOOR))) { /* currently not used in the game */
 				struct key_type *key = cs_ptr->sc.ptr;
+
 				for ( j = 0; j < INVEN_PACK; j++) {
 					object_type *o_ptr = &p_ptr->inventory[j];
 					if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_HOUSE_KEY && o_ptr->pval == key->id) {
