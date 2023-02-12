@@ -12597,7 +12597,7 @@ static int Receive_special_line(int ind) {
 			break;
 		case SPECIAL_FILE_UNIQUE:
 			/* abuse 'line' to encode 'mode' parameter */
-			do_cmd_check_uniques(player, line % 100000, srcstr, line / 100000);
+			do_cmd_check_uniques(player, line % 100000, srcstr, line / 100000, 0);
 			break;
 		case SPECIAL_FILE_ARTIFACT:
 			do_cmd_check_artifacts(player, line, srcstr);

@@ -366,7 +366,7 @@ void do_cmd_check_artifacts(int Ind, int line, char *srcstr) {
  * 1 = only show uniques the player hasn't slain yet.
  * 2 = only show bosses/nazgul/top level monsters
  */
-void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode) {
+void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode, int Ind2) {
 	monster_race *r_ptr;
 
 	int i, j, kk;
@@ -380,20 +380,25 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode) {
 	FILE *fff;
 	char file_name[MAX_PATH_LENGTH];
 
-	player_type *p_ptr = Players[Ind], *q_ptr;
-	bool admin = is_admin(p_ptr);
+	player_type *p_ptr = Players[Ind], *q_ptr, *pt_ptr;
+	bool admin;
 	s16b idx[MAX_R_IDX];
 	char buf[17];
 
+
+	if (!Ind2) Ind2 = Ind;
+	pt_ptr = Players[Ind2];
+	admin = is_admin(pt_ptr);
+
 	/* Method 1 (new, to support extra params from client request) */
-	if (is_atleast(&p_ptr->version, 4, 8, 1, 0, 0, 0)) {
-		fff = my_fopen(p_ptr->infofile, "wb");
+	if (is_atleast(&pt_ptr->version, 4, 8, 1, 0, 0, 0)) {
+		fff = my_fopen(pt_ptr->infofile, "wb");
 
 		/* Current file viewing */
-		strcpy(p_ptr->cur_file, p_ptr->infofile);
+		strcpy(pt_ptr->cur_file, pt_ptr->infofile);
 
 		/* Let the player scroll through the info */
-		p_ptr->special_file_type = TRUE;
+		pt_ptr->special_file_type = TRUE;
 	/* Method 2 (old up to 4.8.0) */
 	} else {
 		/* Temporary file */
@@ -404,7 +409,7 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode) {
 	}
 
 
-	if (!is_newer_than(&p_ptr->version, 4, 4, 7, 0, 0, 0))
+	if (!is_newer_than(&pt_ptr->version, 4, 4, 7, 0, 0, 0))
 		fprintf(fff, "\377U============== Unique Monster List ==============\n");
 
 	/* Scan the monster races */
@@ -444,7 +449,7 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode) {
 	}
 
 	if (!own_highest) {
-		if (!(p_ptr->uniques_alive))
+		if (!(pt_ptr->uniques_alive))
 			fprintf(fff, "\377U  (You haven't killed any unique monster so far.)\n\n");
 	} else {
 		fprintf(fff, "\377UYou have killed %d of %d known unique monsters.\n", killed, total);
@@ -473,7 +478,7 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode) {
 
 			/* Compact list */
 			kk = 0;
-			if (p_ptr->uniques_alive && p_ptr->r_killed[k] == 1) {
+			if (pt_ptr->uniques_alive && p_ptr->r_killed[k] == 1) {
 				if (!p_ptr->party) continue; //No party. (._. )
 				for (i = 1; i <= NumPlayers; i++) {
 					q_ptr = Players[i];
@@ -504,7 +509,7 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode) {
 			//fprintf(fff, "%s has been killed by:\n", r_name + r_ptr->name);
 			/* different colour for uniques higher than Morgoth (the 'boss') */
 			//if (r_ptr->level > 100) fprintf(fff, "\377s%s was slain by", r_name + r_ptr->name); else
-			if (!(p_ptr->uniques_alive)) {
+			if (!(pt_ptr->uniques_alive)) {
 				if (k == RI_MORGOTH) fprintf(fff, "\377v%s (L100)\377%c was slain by", r_name + r_ptr->name, c_out);
 				else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) fprintf(fff, "\377y%s (L%d)\377%c was slain by", r_name + r_ptr->name, r_ptr->level, c_out);
 				else if ((r_ptr->flags7 & RF7_NAZGUL)) fprintf(fff, "\377o%s (L%d)\377%c was slain by", r_name + r_ptr->name, r_ptr->level, c_out);
@@ -520,9 +525,9 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode) {
 				q_ptr = Players[i];
 
 				/* don't display dungeon master to players */
-				if (q_ptr->admin_dm && !p_ptr->admin_dm) continue;
+				if (q_ptr->admin_dm && !pt_ptr->admin_dm) continue;
 
-				if (p_ptr->uniques_alive) {
+				if (pt_ptr->uniques_alive) {
 					if (p_ptr->id == q_ptr->id) continue;
 					if (!q_ptr->party) continue;
 					if (q_ptr->r_killed[k] == 1) continue;
@@ -615,7 +620,7 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode) {
 			}
 
 			/* not killed by anybody yet? */
-			if (!(p_ptr->uniques_alive)) {
+			if (!(pt_ptr->uniques_alive)) {
 				if (!ok) {
 					if (r_ptr->r_tkills) fprintf(fff, " somebody.");
 					else fprintf(fff, " \377Dnobody.");
@@ -626,7 +631,7 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode) {
 			if (!full) fprintf(fff, "\n");
 
 			/* extra marker line to show where our glory ends for the moment */
-			if (!(p_ptr->uniques_alive))
+			if (!(pt_ptr->uniques_alive))
 			if (own_highest && own_highest == k) {
 				fprintf(fff, "\377U  (strongest unique monster you have slain)\n");
 				/* only display this marker once */
@@ -634,14 +639,14 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode) {
 			}
 		}
 	} else {
-		if (!(p_ptr->uniques_alive)) {
+		if (!(pt_ptr->uniques_alive)) {
 			fprintf(fff, "\377w");
 			fprintf(fff, "No uniques were witnessed so far.\n");
 		}
 	}
 
 	/* finally.. */
-	if (!is_newer_than(&p_ptr->version, 4, 4, 7, 0, 0, 0))
+	if (!is_newer_than(&pt_ptr->version, 4, 4, 7, 0, 0, 0))
 		fprintf(fff, "\377U========== End of Unique Monster List ==========\n");
 
 	/* Close the file */
@@ -649,18 +654,18 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode) {
 
 
 	/* Method 1 (new, to support extra params from client request) */
-	if (is_atleast(&p_ptr->version, 4, 8, 1, 0, 0, 0)) {
+	if (is_atleast(&pt_ptr->version, 4, 8, 1, 0, 0, 0)) {
 		switch (mode) {
-		case 0: strcpy(p_ptr->cur_file_title, "Unique Monster List"); break;
-		case 1: strcpy(p_ptr->cur_file_title, "Unique Monster List (\377BAlive\377-)"); break;
-		case 2: strcpy(p_ptr->cur_file_title, "Unique Monster List (\377BBosses\377-)"); break;
+		case 0: strcpy(pt_ptr->cur_file_title, "Unique Monster List"); break;
+		case 1: strcpy(pt_ptr->cur_file_title, "Unique Monster List (\377BAlive\377-)"); break;
+		case 2: strcpy(pt_ptr->cur_file_title, "Unique Monster List (\377BBosses\377-)"); break;
 		}
-		Send_special_other(Ind);
+		Send_special_other(Ind2);
 	}
 	/* Method 2 (old up to 4.8.0) */
 	else {
 		/* Display the file contents */
-		show_file(Ind, file_name, "Unique Monster List", line, 0, 0, srcstr);
+		show_file(Ind2, file_name, "Unique Monster List", line, 0, 0, srcstr);
 
 		/* Remove the file */
 		fd_kill(file_name);

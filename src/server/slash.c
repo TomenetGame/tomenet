@@ -1828,6 +1828,39 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			do_cmd_show_houses(Ind, local, own, id);
 			return;
 		}
+		else if (prefix(messagelc, "/uniques") || prefix(messagelc, "/uni")) {
+			char *c = NULL;
+			int tInd = 0, choice = 0;
+
+			if (tk) {
+				if (token[1][0] == '?') {
+					if (admin) msg_print(Ind, "Usage: /uni [a|b][c<name>]  (to filter for alive/bosses, character)");
+					else msg_print(Ind, "Usage: /uni [a|b]  (to filter for 'alive' or 'bosses')");
+					return;
+				}
+
+				c = message3;
+				if (*c == 'a') {
+					c++;
+					choice = 1;
+				} else if (*c == 'b') {
+					c++;
+					choice = 2;
+				}
+				if (admin && *c == 'c') {
+					c++;
+					tInd = name_lookup(Ind, c, 0, FALSE, TRUE);
+					if (!tInd) {
+						msg_print(Ind, "That character name was not found.");
+						return;
+					}
+				}
+			}
+
+			if (!tInd) do_cmd_check_uniques(Ind, 0, "", choice, 0);
+			else do_cmd_check_uniques(tInd, 0, "", choice, Ind);
+			return;
+		}
 		else if (prefix(messagelc, "/object") || prefix(messagelc, "/obj")) {
 			if (!tk) {
 				do_cmd_show_known_item_letter(Ind, NULL);
@@ -6196,10 +6229,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				} else msg_print(Ind, "Usage: /sartifact (No. | (show | fix | reset! | ban!)");
 				return;
 			}
-			else if (prefix(messagelc, "/uniques")) {
+			else if (prefix(messagelc, "/auniques")) {
 				monster_race *r_ptr;
 				if (!tk) {
-					msg_print(Ind, "Usage: /uniques <seen|unseen|kill|nonkill>");
+					msg_print(Ind, "Usage: /auniques <seen|unseen|kill|nonkill>");
 					return;
 				}
 				if (prefix(token[tk], "unseen")) {
@@ -6235,11 +6268,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				return;
 			}
-			else if (prefix(messagelc, "/unique")) {
+			else if (prefix(messagelc, "/aunique")) {
 				monster_race *r_ptr;
 
 				if (tk < 2) {
-					msg_print(Ind, "Usage: /unique <index> <seen|unseen|kill|nonkill>");
+					msg_print(Ind, "Usage: /aunique <index> <seen|unseen|kill|nonkill>");
 					return;
 				}
 				if (k < 1 || k > MAX_R_IDX) {
@@ -6267,7 +6300,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				return;
 			}
-			else if (prefix(messagelc, "/unidisable")) {
+			else if (prefix(messagelc, "/aunidisable")) {
 				if (k) {
 					if (!(r_info[k].flags1 & RF1_UNIQUE)) return;
 					if (r_info[k].max_num) {
@@ -6278,11 +6311,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						msg_format(Ind, "(%d) %s is now \377Gfindable\377w.", k, r_name + r_info[k].name);
 					}
 				} else {
-					msg_print(Ind, "Usage: /unidisable <monster_index>");
+					msg_print(Ind, "Usage: /aunidisable <monster_index>");
 				}
 				return;
 			}
-			else if (prefix(messagelc, "/uniunkill")) {
+			else if (prefix(messagelc, "/auniunkill")) {
 				if (k) {
 					if (!(r_info[k].flags1 & RF1_UNIQUE)) {
 						msg_print(Ind, "That's not a unique monster.");
@@ -6295,22 +6328,22 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					r_info[k].r_tkills = 0;
 					msg_format(Ind, "(%d) %s kill count reset to \377G0\377w.", k, r_name + r_info[k].name);
 				} else {
-					msg_print(Ind, "Usage: /uniunkill <monster_index>");
+					msg_print(Ind, "Usage: /auniunkill <monster_index>");
 				}
 				return;
 			}
-			else if (prefix(messagelc, "/unicheck")) {
+			else if (prefix(messagelc, "/aunicheck")) {
 				if (!k || !(r_info[k].flags1 & RF1_UNIQUE)) {
-					msg_print(Ind, "Usage: /unicheck <unique_monster_index>");
+					msg_print(Ind, "Usage: /aunicheck <unique_monster_index>");
 					return;
 				}
 				msg_format(Ind, "(%d) %s has cur_num/max_num of %d/%d.",
 				    k, r_name + r_info[k].name, r_info[k].cur_num, r_info[k].max_num);
 				return;
 			}
-			else if (prefix(messagelc, "/unifix")) {
+			else if (prefix(messagelc, "/aunifix")) {
 				if (!k || !(r_info[k].flags1 & RF1_UNIQUE)) {
-					msg_print(Ind, "Usage: /unifix <unique_monster_index>");
+					msg_print(Ind, "Usage: /aunifix <unique_monster_index>");
 					return;
 				}
 				if (!r_info[k].max_num) {
@@ -9970,7 +10003,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			/* unidentifies an item */
-			else if (prefix(messagelc, "/unid")) {//note collision with /unidisable, prevented purely by order
+			else if (prefix(messagelc, "/un-id")) {//note collision with /unidisable, prevented purely by order
 				object_type *o_ptr;
 				char note2[80], noteid[10];
 
@@ -10007,7 +10040,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			/* un-know an item */
-			else if (prefix(messagelc, "/unkw")) {//includes /unid
+			else if (prefix(messagelc, "/unkw")) {//includes /un-id
 				object_type *o_ptr;
 				char note2[80], noteid[10];
 
