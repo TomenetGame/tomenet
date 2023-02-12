@@ -8248,6 +8248,7 @@ void kill_house_contents(house_type *h_ptr) {
 
 void kill_houses(int id, byte type) {
 	int i;
+
 	for (i = 0; i < num_houses; i++) {
 		struct dna_type *dna = houses[i].dna;
 		if (dna->owner == id && dna->owner_type == type) {
@@ -8264,6 +8265,7 @@ void kill_houses(int id, byte type) {
  */
 void kill_objs(int id) {
 	int i;
+
 	object_type *o_ptr;
 	for (i = 0; i < o_max; i++) {
 		o_ptr = &o_list[i];
