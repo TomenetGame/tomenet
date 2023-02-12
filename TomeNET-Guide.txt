@@ -5762,6 +5762,11 @@ Your money is displayed as pieces of gold in TomeNET, traditionally abbreviated
 to 'Au' for latin 'Aurum', meaning 'gold'. 'Au' is also the chemical symbol for
 gold in the periodic table.
 
+Any type of money on the floor is always denoted by a '$' symbol, and you can
+drop money from your inventory to the floor by pressing the '$' key, and use
+the letters 'k/K' and 'm/M' to denote 1000x and 1000000x, eg you can drop 2m
+or 2m43 or k6 to drop 2 million Au, 2.43 million Au or 600 Au.
+
 If you find money in any other form than gold pieces, such as copper or gems,
 it will always just display the equivalent gold value and be treated as such.
 For example if you take a pile of copper it will say how many gold pieces you
