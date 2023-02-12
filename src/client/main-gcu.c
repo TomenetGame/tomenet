@@ -907,7 +907,7 @@ errr init_gcu(void) {
 
 	/* Require large screen, or fail with a message. */
 	if ((LINES < 24) || (COLS < 80)) {
-		fprintf(stderr, "Angband needs an 80x24 'curses' screen\n");
+		fprintf(stderr, "TomeNET needs an 80x24 'curses' screen\n");
 		/* Restore terminal first, then fail. */
 		endwin();
 		return(-2);

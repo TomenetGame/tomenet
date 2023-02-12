@@ -2592,7 +2592,7 @@ static void init_windows(void) {
 	                           td_ptr->pos_x, td_ptr->pos_y,
 	                           td_ptr->size_wid, td_ptr->size_hgt,
 	                           HWND_DESKTOP, NULL, hInstance, NULL);
-	if (!td_ptr->w) quit("Failed to create Angband window");
+	if (!td_ptr->w) quit("Failed to create TomeNET window");
 	td_ptr = NULL;
 	term_data_link(&data[0]);
 	ang_term[0] = &data[0].t;
