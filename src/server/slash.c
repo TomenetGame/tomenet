@@ -1720,7 +1720,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "\377DThe air in here feels very still.");
 			return;
 		}
-		else if (prefix(messagelc, "/monster") ||	/* syntax: /mon [<char>] [+minlev] */
+		else if (prefix(messagelc, "/monsters") ||	/* syntax: /mon [<char>] [+minlev] */
 		    prefix(messagelc, "/mon")) {
 			int r_idx, num, numf;
 			monster_race *r_ptr;
@@ -1793,7 +1793,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			p_ptr->window |= (PW_INVEN);// | PW_EQUIP);
 			return;
 		}
-		else if (prefix(messagelc, "/house") || prefix(messagelc, "/hou")) {
+		else if (prefix(messagelc, "/houses") || prefix(messagelc, "/hou")) {
 			/* /hou [o][l] to only show the houses we actually own/that are actually here/both */
 			bool local = FALSE, own = FALSE;
 			char *c = NULL;

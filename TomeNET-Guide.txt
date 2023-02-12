@@ -1585,7 +1585,7 @@ They all start with a slash '/' hence they're called slash commands:
 /?r         Shortcut to your character's race description in the guide.
 /?t         Shortcut to your character's race trait in the guide.
 
-/house
+/houses
 /hou        Displays your houses, same as ~9, but offers two optional
             parameters to refine the search results:
             /hou o    will only show your own houses.
@@ -1653,6 +1653,7 @@ They all start with a slash '/' hence they're called slash commands:
 
 /me         Write an emote. Example: /me hides.
 
+/monsters
 /mon [<monster character>] [<+minimum level>]
             Same as going to ~ menu and selecting 'Monsters':
             Will show your kill count of all matching monsters.
@@ -1944,6 +1945,12 @@ They all start with a slash '/' hence they're called slash commands:
             You may reset a whole skill once per character, at The Mirror
             located in Lothlorien, when you are exactly level 35 - not earlier
             and not later! See (4.5a) for details about The Mirror.
+
+/uniques
+/uni        Displays your list of unique monsters, same as ~3. Offers similar
+            optional parameters to refine the search results:
+            /uni a    will only show uniques that are still alive for you.
+            /hou b    will only show bosses.
 
 /untag [<inscription>]
 /ut         If <inscription is omitted, it removes all inscriptions from items
