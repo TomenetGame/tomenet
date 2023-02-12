@@ -11945,10 +11945,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					case OT_PLAYER:
 						strcpy(owner, lookup_player_name(h_ptr->dna->owner));
 						strcpy(owner_type, "P");
+						//todo: adjust these -1 as applicable:
+						//p_ptr->houses_owned = ;
+						//p_ptr->castles_owned = ;
 						break;
 					case OT_GUILD:
 						strcpy(owner, guilds[h_ptr->dna->owner].name);
 						strcpy(owner_type, "G");
+						guilds[h_ptr->dna->owner].h_idx = 0;
 						break;
 					default:
 						strcpy(owner, "UNDEFINED");
@@ -11957,6 +11961,59 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					/* quicker than copying back an array. */
 					fill_house(h_ptr, FILL_MAKEHOUSE, NULL);
 					h_ptr->flags |= HF_DELETED;
+					//break;
+				}
+				msg_format(Ind, "Done (checked %d houses).", num_houses);
+				return;
+			}
+			else if (prefix(messagelc, "/unownhouse")) { /* Usage: /unownhouse <x> <y>   (door coordinates from ~9 or /hou) */
+				house_type *h_ptr;
+				int x, y;
+				char owner[MAX_CHARS], owner_type[20];
+
+				if (tk < 2) {
+					msg_print(Ind, "Usage: /unownhouse <x> <y>   (door coordinates in your current sector)");
+					return;
+				}
+				x = atoi(token[1]);
+				y = atoi(token[2]);
+
+				for (i = 0; i < num_houses; i++) {
+					h_ptr = &houses[i];
+					//if (h_ptr->dna == dna) {
+					if (h_ptr->wpos.wx != p_ptr->wpos.wx || h_ptr->wpos.wy != p_ptr->wpos.wy ||
+					    h_ptr->dx != x || h_ptr->dy != y)
+						continue;
+					if (!(h_ptr->flags & HF_STOCK)) {
+						msg_print(Ind, "\377oThat house may not be unowned. (~HF_STOCK)");
+						//return;
+						continue;
+					}
+					switch (h_ptr->dna->owner_type) {
+					case OT_PLAYER:
+						strcpy(owner, lookup_player_name(h_ptr->dna->owner));
+						strcpy(owner_type, "P");
+						//todo: adjust these -1 as applicable:
+						//p_ptr->houses_owned = ;
+						//p_ptr->castles_owned = ;
+						break;
+					case OT_GUILD:
+						strcpy(owner, guilds[h_ptr->dna->owner].name);
+						strcpy(owner_type, "G");
+						guilds[h_ptr->dna->owner].h_idx = 0;
+						break;
+					default:
+						strcpy(owner, "UNDEFINED");
+					}
+
+					msg_format(Ind, "\377DThe house %d (dna: c=%d o=%s ot=%s; dx,dy=%d,%d) is unowned.", i, h_ptr->dna->creator, owner, owner_type, h_ptr->dx, h_ptr->dy);
+
+					h_ptr->dna->creator = 0L;
+					h_ptr->dna->owner = 0L;
+					h_ptr->dna->owner_type = 0;
+					h_ptr->dna->a_flags = ACF_NONE;
+					//kill_house_contents(&houses[]);
+
 					//break;
 				}
 				msg_format(Ind, "Done (checked %d houses).", num_houses);
