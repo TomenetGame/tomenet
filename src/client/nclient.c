@@ -1432,7 +1432,7 @@ int Net_fd(void) {
 	/* prevent inkey() from crashing/causing Sockbuf_read() errors ("no read from non-readable socket..") */
 	if (rl_connection_state != 1) return(-1);
 #endif
-	return rbuf.sock;
+	return(rbuf.sock);
 }
 
 unsigned char Net_login() {
@@ -1454,7 +1454,7 @@ unsigned char Net_login() {
 	Receive_login();
 #ifdef RETRY_LOGIN
 	/* Our connection was destroyed in Receive_login() -> something wrong with our account crecedentials? */
-	if (rl_connection_destroyed) return E_RETRY_CONTACT;
+	if (rl_connection_destroyed) return(E_RETRY_CONTACT);
 	/* Prepare for refusal of a new character name we entered */
 	rl_connection_destructible = 1;
 #endif
@@ -1479,7 +1479,7 @@ unsigned char Net_login() {
 		rl_connection_destroyed = TRUE;
 		/* should be illegal character name this time.. */
 		plog(&rbuf.ptr[1]);
-		return E_RETRY_LOGIN;
+		return(E_RETRY_LOGIN);
 #endif
 		quit(&rbuf.ptr[1]);
 	}
@@ -1492,7 +1492,7 @@ unsigned char Net_login() {
 		plog("You were disconnected, probably because a server update happened meanwhile.\nPlease log in again.");
 		quit("Failed to read status code from server!");
 	}
-	return tc;
+	return(tc);
 }
 
 /*
@@ -7217,5 +7217,5 @@ int next_frame() {
 
 	us = time_between_frames - tv.tv_usec % time_between_frames;
 
-	return us;
+	return(us);
 }

@@ -333,7 +333,7 @@ static int diff_ms(struct timeval *begin, struct timeval *end) {
 	diff = (end->tv_sec - begin->tv_sec) * 1000;
 	diff += (end->tv_usec - begin->tv_usec) / 1000;
 
-	return diff;
+	return(diff);
 }
 
 /* ACCEPT_KEYS should be disabled or it'd cause the part labelled
@@ -857,13 +857,13 @@ static char inkey_aux(void) {
 			}
 
 			/* Hack - Leave a store */
-			if (shopping && leave_store) return ESCAPE;
+			if (shopping && leave_store) return(ESCAPE);
 
 			/* Are we supposed to abort a 'special input request'?
 			   (Ie outside game situation has changed, eg left store.) */
 			if (request_pending && request_abort) {
 				request_abort = FALSE;
-				return ESCAPE;
+				return(ESCAPE);
 			}
 
 			/* Redraw windows if necessary */
@@ -1238,7 +1238,7 @@ char inkey(void) {
 				/* Hack - Leave a store */
 				if (shopping && leave_store) {
 					if (inkey_sleep) inkey_sleep_semaphore = TRUE;
-					return ESCAPE;
+					return(ESCAPE);
 				}
  #endif
 
@@ -3286,7 +3286,7 @@ byte get_3way(cptr prompt, bool default_no) {
 	/* The top line is OK again */
 	topline_icky = FALSE;
 
-	return res;
+	return(res);
 }
 
 
@@ -11336,7 +11336,7 @@ u32b parse_color_code(const char *str) {
 		sscanf(str + 1, "%lx", &c);
 	}
 
-	return c;
+	return(c);
 }
 
 #ifdef USE_GRAPHICS

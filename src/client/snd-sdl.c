@@ -1300,7 +1300,7 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 					found = TRUE;
 				}
 			}
-			return found;
+			return(found);
 		}
 		/* stop sound of this type? */
 		else {

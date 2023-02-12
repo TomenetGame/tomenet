@@ -282,10 +282,10 @@ byte term2attr(byte ta) {
 #endif
 
 	/* Animated colour, pick one animation stage. */
-	if (ta >= TERM_MULTI) return flick_colour(ta);
+	if (ta >= TERM_MULTI) return(flick_colour(ta));
 
 	/* Base colour, pass through. */
-	return ta;
+	return(ta);
 }
 
 
@@ -536,13 +536,13 @@ static errr Term_text_hack(int x, int y, int n, byte a, cptr s) {
  */
 static char get_shimmer_color() {
 	switch (randint(7)) {
-	case 1: return TERM_RED;
-	case 2: return TERM_L_RED;
-	case 3: return TERM_WHITE;
-	case 4: return TERM_L_GREEN;
-	case 5: return TERM_BLUE;
-	case 6: return TERM_L_DARK;
-	case 7: return TERM_GREEN;
+	case 1: return(TERM_RED);
+	case 2: return(TERM_L_RED);
+	case 3: return(TERM_WHITE);
+	case 4: return(TERM_L_GREEN);
+	case 5: return(TERM_BLUE);
+	case 6: return(TERM_L_DARK);
+	case 7: return(TERM_GREEN);
 	}
 	return(TERM_VIOLET);
 }
@@ -604,9 +604,9 @@ byte flick_colour(byte attr) {
 	} else if (flags & TERM_PVP) {
 		if (!(attr && rand_int(6) < 3))
 			switch (randint(3)) {
-			case 1: return TERM_L_DARK;
-			case 2: return TERM_L_RED;
-			case 3: return TERM_YELLOW;
+			case 1: return(TERM_L_DARK);
+			case 2: return(TERM_L_RED);
+			case 3: return(TERM_YELLOW);
 			}
 		/* fall through */
 	}
@@ -616,50 +616,50 @@ byte flick_colour(byte attr) {
 	case TERM_BNW: return(randint(2) < 2 ? TERM_L_DARK : TERM_WHITE);
 	case TERM_BNWM:
 		switch (randint(3)) {
-		case 1: return TERM_L_DARK;
-		case 2: return TERM_WHITE;
-		case 3: return flick_colour(TERM_HOLYFIRE);
+		case 1: return(TERM_L_DARK);
+		case 2: return(TERM_WHITE);
+		case 3: return(flick_colour(TERM_HOLYFIRE));
 		}
 		/* Fall through should not happen, just silence the compiler */
 		__attribute__ ((fallthrough));
 	case TERM_BNWSR:
 		switch (randint(3)) {
-		case 1: return TERM_L_DARK;
-		case 2: return TERM_WHITE;
-		case 3: return TERM_BLUE;
+		case 1: return(TERM_L_DARK);
+		case 2: return(TERM_WHITE);
+		case 3: return(TERM_BLUE);
 		}
 		/* Fall through should not happen, just silence the compiler */
 		__attribute__ ((fallthrough));
 	case TERM_BNWKS:
 		switch (randint(3)) {
-		case 1: return TERM_L_DARK;
-		case 2: return TERM_WHITE;
-		case 3: return flick_colour(TERM_PSI);
+		case 1: return(TERM_L_DARK);
+		case 2: return(TERM_WHITE);
+		case 3: return(flick_colour(TERM_PSI));
 		}
 		/* Fall through should not happen, just silence the compiler */
 		__attribute__ ((fallthrough));
 	case TERM_BNWKS2:
 		switch (randint(3)) {
-		case 1: return TERM_L_DARK;
-		case 2: return TERM_WHITE;
-		case 3: return TERM_ORANGE;
+		case 1: return(TERM_L_DARK);
+		case 2: return(TERM_WHITE);
+		case 3: return(TERM_ORANGE);
 		}
 		/* Fall through should not happen, just silence the compiler */
 		__attribute__ ((fallthrough));
 	/* flickering from 'pvp' flag? */
 	case TERM_PVPBB:
 		switch (randint(3)) {
-		case 1: return TERM_L_DARK;
-		case 2: return TERM_SLATE;
-		case 3: return TERM_YELLOW;
+		case 1: return(TERM_L_DARK);
+		case 2: return(TERM_SLATE);
+		case 3: return(TERM_YELLOW);
 		}
 		/* Fall through should not happen, just silence the compiler */
 		__attribute__ ((fallthrough));
 	case TERM_PVP:
 		switch (randint(3)) {
-		case 1: return TERM_L_DARK;
-		case 2: return TERM_L_RED;
-		case 3: return TERM_YELLOW;
+		case 1: return(TERM_L_DARK);
+		case 2: return(TERM_L_RED);
+		case 3: return(TERM_YELLOW);
 		}
 	}
 #endif
@@ -672,9 +672,9 @@ byte flick_colour(byte attr) {
 		else
 		return((randint(2) == 1) ? TERM_L_RED : TERM_ORANGE);
 */		switch (randint(3)) {
-		case 1: return TERM_VIOLET;
-		case 2: return TERM_L_RED;
-		case 3: return TERM_ORANGE;
+		case 1: return(TERM_VIOLET);
+		case 2: return(TERM_L_RED);
+		case 3: return(TERM_ORANGE);
 		}
 	}
 	if (attr == TERM_SHIELDI) {
@@ -773,7 +773,7 @@ byte flick_colour(byte attr) {
 		if (lamp_fainting) return(rand_term_lamp ? TERM_L_UMBER : TERM_UMBER);
 		return(rand_term_lamp ? TERM_YELLOW : TERM_ORANGE);
 	case TERM_LAMP_DARK:
-		//if (lamp_fainting) return TERM_UMBER; //hm :/
+		//if (lamp_fainting) return(TERM_UMBER); //hm :/
 		if (lamp_fainting) return(rand_term_lamp ? TERM_UMBER : TERM_L_DARK); //hmmm
 		return(rand_term_lamp ? TERM_L_UMBER : TERM_UMBER);
 
@@ -787,13 +787,13 @@ byte flick_colour(byte attr) {
 		switch (rand_int(9)) {
 		case 0: case 1:
 		//case 2:
-			return TERM_VIOLET;//(mana) omit the light blue part
-		//case 3: return flick_colour(TERM_MULTI);//(chaos) omit completely, too colourful, the other colours will no longer have much effect
-		case 3: return TERM_ORANGE; //a little bit more fiery
-		case 4: return TERM_L_DARK; //some ash/hellishness?
+			return(TERM_VIOLET);//(mana) omit the light blue part
+		//case 3: return(flick_colour(TERM_MULTI));//(chaos) omit completely, too colourful, the other colours will no longer have much effect
+		case 3: return(TERM_ORANGE); //a little bit more fiery
+		case 4: return(TERM_L_DARK); //some ash/hellishness?
 		default:
-			return flick_colour(TERM_DETO);//(inferno aka deto)
-			//return flick_colour(TERM_FIRE);//(inferno aka deto) instead use fire
+			return(flick_colour(TERM_DETO));//(inferno aka deto)
+			//return(flick_colour(TERM_FIRE));//(inferno aka deto) instead use fire
 		}
 
  #ifdef ATMOSPHERIC_INTRO
@@ -807,25 +807,25 @@ byte flick_colour(byte attr) {
 		switch ((unsigned)ticks % 14) {
 		case 0: case 1:
 		case 14: case 15:
-			return TERM_UMBER;
+			return(TERM_UMBER);
 		case 2: case 3:
 		case 12: case 13:
-			return TERM_ORANGE;
+			return(TERM_ORANGE);
 		case 4: case 5: case 6:
 		case 7: case 8:
 		case 9: case 10: case 11:
-			return TERM_YELLOW;
+			return(TERM_YELLOW);
 		}
 		/* Fall through should not happen, just silence the compiler */
 		__attribute__ ((fallthrough));
 	case TERM_SMOOTHPAL:
 		switch ((((unsigned)ticks * 10) / 52) % 6) { //xD
-		case 0: return TERM_L_RED;
-		case 1: return TERM_ORANGE;
-		case 2: return TERM_YELLOW;
-		case 3: return TERM_L_GREEN;
-		case 4: return TERM_L_BLUE;
-		case 5: return TERM_VIOLET;
+		case 0: return(TERM_L_RED);
+		case 1: return(TERM_ORANGE);
+		case 2: return(TERM_YELLOW);
+		case 3: return(TERM_L_GREEN);
+		case 4: return(TERM_L_BLUE);
+		case 5: return(TERM_VIOLET);
 		}
 		/* Fall through should not happen, just silence the compiler */
 		__attribute__ ((fallthrough));
@@ -833,34 +833,34 @@ byte flick_colour(byte attr) {
 #if 0 /* somewhat calm still */
 		switch ((unsigned)ticks % 10) {
 		case 0: case 1:
-			return TERM_L_RED;
+			return(TERM_L_RED);
 		case 2: case 3:
 		case 8: case 9:
-			return TERM_RED;
+			return(TERM_RED);
 		case 4: case 5: case 6:
 		case 7: //case 8:
 		//case 9: //case 10: case 11:
-			return TERM_L_DARK;
+			return(TERM_L_DARK);
 		}
 #elif 0 /* faster */
 		switch ((unsigned)ticks % 8) {
 		case 0: case 1:
-			return TERM_L_RED;
+			return(TERM_L_RED);
 		case 2: case 3:
 		case 7: case 6:
-			return TERM_RED;
+			return(TERM_RED);
 		case 4: case 5:
-			return TERM_L_DARK;
+			return(TERM_L_DARK);
 		}
 #else /* more alarmy blip: 'pinging' red, then fading out */
 		switch ((unsigned)ticks % 5) {//6
 		case 0:
-			return TERM_L_RED;
+			return(TERM_L_RED);
 		case 1: case 2:
-			return TERM_RED;
+			return(TERM_RED);
 		case 3: case 4:
 		//case 5: /* slightly slower */
-			return TERM_L_DARK;
+			return(TERM_L_DARK);
 		}
 #endif
 		/* Fall through should not happen, just silence the compiler */
@@ -878,23 +878,23 @@ byte flick_colour(byte attr) {
 #if 0
 			case 0: case 1: case 2:
 			case 13: case 14: case 15:
-				return TERM_BLUE;
+				return(TERM_BLUE);
 			case 3: case 4: case 5:
 			case 10: case 11: case 12:
-				return TERM_SLATE;
+				return(TERM_SLATE);
 			case 6: case 7: case 8: case 9:
-				return TERM_L_BLUE;
+				return(TERM_L_BLUE);
 #else
 			case 0: case 1:
 			case 14: case 15:
-				return TERM_BLUE;
+				return(TERM_BLUE);
 			case 2: case 3:
 			case 12: case 13:
-				return TERM_SLATE;
+				return(TERM_SLATE);
 			case 7: case 8:
 			case 4: case 5: case 6:
 			case 9: case 10: case 11:
-				return TERM_L_BLUE;
+				return(TERM_L_BLUE);
 #endif
 			}
 		} else {
@@ -914,9 +914,9 @@ byte flick_colour(byte attr) {
 				}
 			}
  #endif
-			return term2attr(TERMX_BLUE); //great for skill screen for example (maybe in green though instead of blue)
+			return(term2attr(TERMX_BLUE)); //great for skill screen for example (maybe in green though instead of blue)
 #else /* dummy */
-			return TERM_L_BLUE;
+			return(TERM_L_BLUE);
 #endif
 		}
 		/* Fall through should not happen, just silence the compiler */
@@ -926,7 +926,7 @@ byte flick_colour(byte attr) {
 #if 0 /* old way: xhtml_screenshot() would call us on ANY colour, even non-animated */
 		return(attr); /* basically only happens in screenshot function, where flick_colour() is used indiscriminately on ALL colours even those not animated.. pft */
 #else /* new way: better fail-safe, more consistent */
-		return TERM_L_WHITE; //safe-fail, so whatever we were trying to do we won't exceed any basic colour array stuff..
+		return(TERM_L_WHITE); //safe-fail, so whatever we were trying to do we won't exceed any basic colour array stuff..
 #endif
 	}
 }

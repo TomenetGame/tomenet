@@ -127,7 +127,7 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus) {
  #endif
 #endif
 
-	return lvl;
+	return(lvl);
 }
 
 /* adj_mag_stat? stat_ind??  pfft */
@@ -309,7 +309,7 @@ int lua_get_new_bounty_monster(int lev) {
 	get_mon_num_hook = NULL;
 	get_mon_num_prep();
 
-	return r_idx;
+	return(r_idx);
 }
 
 #endif

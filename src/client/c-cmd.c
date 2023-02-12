@@ -2024,7 +2024,7 @@ static char *fgets_inverse(char *buf, int max, FILE *f) {
 	/* Rewind by this line + 1, to fulful our starting expectation for next time again */
 	fseek(f, pos - 1, SEEK_SET);
 
-	return ress;
+	return(ress);
 }
 //#endif
 
@@ -7935,7 +7935,7 @@ static char * cmd_master_aux_summon_orcs(void) {
 		}
 
 		/* if we got an orc type, return it */
-		if (buf[0]) return buf;
+		if (buf[0]) return(buf);
 
 		/* Flush messages */
 		clear_topline_forced();
@@ -8007,7 +8007,7 @@ static char * cmd_master_aux_summon_undead_low(void) {
 		}
 
 		/* if we got an undead type, return it */
-		if (buf[0]) return buf;
+		if (buf[0]) return(buf);
 
 		/* Flush messages */
 		clear_topline_forced();
@@ -8084,7 +8084,7 @@ static char * cmd_master_aux_summon_undead_high(void) {
 		}
 
 		/* if we got an undead type, return it */
-		if (buf[0]) return buf;
+		if (buf[0]) return(buf);
 
 		/* Flush messages */
 		clear_topline_forced();
