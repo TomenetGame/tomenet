@@ -8750,7 +8750,7 @@ Mode via 'S'. This will slow you down but make you search for traps on every
 step you take and at the same time prioritize displaying all known traps over
 items.
 
-Disarming traps will become an essential part of the gameplay later on. Vaults
+Later on, disarming traps will become an essential part of the gameplay. Vaults
 will have *lots* of traps and if you haven't got superior disarming skills (or
 wands of disarming / trap destruction) every single move of your character will
 have to be planned! This can be especially annoying and dangerous if there are
