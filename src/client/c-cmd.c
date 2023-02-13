@@ -2235,7 +2235,17 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			if (my_strcasestr(buf, "mon")) strcpy(init_search_string, "Critical hits by monsters"); //monster crits
 			else strcpy(init_search_string, "critical-strike"); //player crits
 		}
-		else if (my_strcasestr(buf, "tech") && my_strcasestr(buf, "lev")) strcpy(init_search_string, "Technique levels");
+		else if (my_strcasestr(buf, "tech")) {
+			int old = init_search_type;
+
+			init_search_type = 2;
+			 if (my_strcasestr(buf, "lev")) strcpy(init_search_string, "Technique levels");
+			 else if (my_strcasestr(buf, "fight") || my_strcasestr(buf, "melee")) strcpy(init_search_string, "Fighting techniques");
+			 else if (my_strcasestr(buf, "shoot") || my_strcasestr(buf, "range") || my_strcasestr(buf, "firing")) strcpy(init_search_string, "Shooting techniques");
+			 else if (my_strcasestr(buf, "rogue")) strcpy(init_search_string, "Rogue-specific fighting techniques");
+			 else if (my_strcasestr(buf, "other")) strcpy(init_search_string, "Other fighting techniques");
+			 else init_search_type = old;
+		}
 		else if (!strcasecmp("encumbrance", buf)) strcpy(init_search_string, "encumberment");
 		else if (my_strcasestr(buf, "auto") && my_strcasestr(buf, "destr")) strcpy(init_search_string, "auto-destr"); //auto-destroy
 		else if (my_strcasestr(buf, "auto") && my_strcasestr(buf, "pick")) strcpy(init_search_string, "auto-pick"); //auto-pickup
