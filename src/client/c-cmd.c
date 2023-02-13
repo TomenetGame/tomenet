@@ -6713,6 +6713,13 @@ void cmd_message(void) {
 				}
 			}
 
+			/* Hack for backward compatibility: Allow specifying 'big_map' although it's no longer a valid option but instead in = menu! */
+			if (!strcmp(buf + offset, "big_map")) {
+				set_bigmap(1, verbose);
+				inkey_msg = FALSE;
+				return;
+			}
+
 			for (i = 0; i < OPT_MAX; i++) {
 				if (!option_info[i].o_desc) continue;
 				if (strcmp(buf + offset, option_info[i].o_text)) continue;
@@ -6758,6 +6765,13 @@ void cmd_message(void) {
 				}
 			}
 
+			/* Hack for backward compatibility: Allow specifying 'big_map' although it's no longer a valid option but instead in = menu! */
+			if (!strcmp(buf + offset, "big_map")) {
+				set_bigmap(0, verbose);
+				inkey_msg = FALSE;
+				return;
+			}
+
 			for (i = 0; i < OPT_MAX; i++) {
 				if (!option_info[i].o_desc) continue;
 				if (strcmp(buf + offset, option_info[i].o_text)) continue;
@@ -6801,6 +6815,13 @@ void cmd_message(void) {
 					inkey_msg = FALSE;
 					return;
 				}
+			}
+
+			/* Hack for backward compatibility: Allow specifying 'big_map' although it's no longer a valid option but instead in = menu! */
+			if (!strcmp(buf + offset, "big_map")) {
+				set_bigmap(-1, verbose);
+				inkey_msg = FALSE;
+				return;
 			}
 
 			for (i = 0; i < OPT_MAX; i++) {

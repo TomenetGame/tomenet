@@ -9892,37 +9892,11 @@ void do_cmd_options(void) {
 		}
 #ifdef GLOBAL_BIG_MAP
 		/* Toggle big_map */
-		else if (k == 'b' || k == 'M' || k == 'm') {
-			/* BIG_MAP is currently not supported in GCU client */
-			if (!strcmp(ANGBAND_SYS, "gcu")) {
-				c_message_add("\377ySorry, big_map is not available in the GCU (command-line) client.");
-				continue;
-			}
-
-			if (k == 'b') global_c_cfg_big_map = !global_c_cfg_big_map;
-			else if (k == 'M') global_c_cfg_big_map = TRUE;
-			else if (k == 'm') global_c_cfg_big_map = FALSE;
-
-			if (is_newer_than(&server_version, 4, 4, 9, 1, 0, 1) /* redundant */
-			    && (sflags1 & SFLG1_BIG_MAP)) {
-				if (!global_c_cfg_big_map && screen_hgt != SCREEN_HGT) {
-					screen_hgt = SCREEN_HGT;
-					resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
-					if (screen_icky) Term_switch(0);
-					Term_clear(); /* get rid of map tiles where now status bars go instead */
-					if (screen_icky) Term_switch(0);
-					Send_screen_dimensions();
-				}
-				if (global_c_cfg_big_map && screen_hgt <= SCREEN_HGT) {
-					screen_hgt = MAX_SCREEN_HGT;
-					resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
-					if (screen_icky) Term_switch(0);
-					Term_clear(); /* paranoia ;) */
-					if (screen_icky) Term_switch(0);
-					Send_screen_dimensions();
-				}
-			}
-		}
+		else if (k == 'b') set_bigmap(-1, TRUE);
+		/* Enable big_map */
+		else if (k == 'M') set_bigmap(1, TRUE);
+		/* Disable big_map */
+		else if (k == 'm') set_bigmap(0, TRUE);
 #endif
 
 #if defined(WINDOWS) || defined(USE_X11)
@@ -11799,3 +11773,58 @@ char key_map_dos_unix[][3][10] = {
 	{"FFE0", "Num3", ""},
 	//} else if (bptr[0] == '_') {
 };
+
+/* -1: toggle, 0 = disable, 1 = enable */
+void set_bigmap(int bm, bool verbose) {
+	/* BIG_MAP is currently not supported in GCU client */
+	if (!strcmp(ANGBAND_SYS, "gcu")) {
+		c_message_add("\377ySorry, big_map is not available in the GCU (command-line) client.");
+		return;
+	}
+
+	switch (bm) {
+	case -1:
+		global_c_cfg_big_map = !global_c_cfg_big_map;
+		if (verbose) {
+			if (global_c_cfg_big_map) c_message_add("Toggled big_map mode to 'enabled'.");
+			else c_message_add("Toggled big_map mode to 'disabled'.");
+		}
+		break;
+	case 1:
+		if (global_c_cfg_big_map) {
+			c_message_add("The screen is already in big_map mode.");
+			return;
+		}
+		if (verbose) c_message_add("Set big_map mode to 'enabled'.");
+		global_c_cfg_big_map = TRUE;
+		break;
+	case 0:
+		if (!global_c_cfg_big_map) {
+			c_message_add("The screen is already not in big_map mode.");
+			return;
+		}
+		if (verbose) c_message_add("Set big_map mode to 'disabled'.");
+		global_c_cfg_big_map = FALSE;
+		break;
+	}
+
+	if (is_newer_than(&server_version, 4, 4, 9, 1, 0, 1) /* redundant */
+	    && (sflags1 & SFLG1_BIG_MAP)) {
+		if (!global_c_cfg_big_map && screen_hgt != SCREEN_HGT) {
+			screen_hgt = SCREEN_HGT;
+			resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
+			if (screen_icky) Term_switch(0);
+			Term_clear(); /* get rid of map tiles where now status bars go instead */
+			if (screen_icky) Term_switch(0);
+			Send_screen_dimensions();
+		}
+		if (global_c_cfg_big_map && screen_hgt <= SCREEN_HGT) {
+			screen_hgt = MAX_SCREEN_HGT;
+			resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
+			if (screen_icky) Term_switch(0);
+			Term_clear(); /* paranoia ;) */
+			if (screen_icky) Term_switch(0);
+			Send_screen_dimensions();
+		}
+	}
+}

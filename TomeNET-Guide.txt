@@ -1696,6 +1696,10 @@ They all start with a slash '/' hence they're called slash commands:
             Eg: /optt font_map_solid_walls
             The /optvt command will display a feedback message (v = verbose).
 
+            Quality of life hack:
+            You can actually refer 'big_map' via /opt commands even though it's
+            not a real option (anymore)!
+
 /page <player-name>     Sends beeps to that player to help you getting his
                         attention. (Using /ignore on a player will also
                         prevent getting paged by him.)
@@ -4426,6 +4430,9 @@ self-explaining or that are especially important are listed in detail here:
     To save this setting, make sure to quit the game via CTRL+Q and not by
     terminating the game window via mouseclicking the window title bar's
     'x' button.
+    Quality of life hack:
+    You can actually refer 'big_map' via /opt commands even though it's not a
+    real option (anymore)!
 
  (A) Account options
     Here you can see if your account is valid. Invalid accounts are also
