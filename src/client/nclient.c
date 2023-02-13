@@ -6990,6 +6990,9 @@ printf("<%d>\n", r);
 	}
 
 #ifdef META_DISPLAYPINGS_LATER
+	/* Display all ping results now in a batch, to reduce write operations to screen and
+	   keep delays after refreshing the meta list until ping times are re-displayed to a minimum. */
+
 	if (alt) return;
 	/* Refresh metaserver list every n*500 ms.
 	   Note that for now we don't re-read the actual servers for the cause of pinging.
