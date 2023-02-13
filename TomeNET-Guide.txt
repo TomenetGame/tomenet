@@ -1,8 +1,8 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 12. February 2023 - written by C. Blue (c_blue@gmx.net)   |
-| for TomeNET version v4.9.0b - official websites are:                     :
+| Latest update: 13. February 2023 - written by C. Blue (c_blue@gmx.net)   |
+| for TomeNET version v4.9.0c - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
 | Runes & Runemastery sections by Kurzel (kurzel.tomenet@gmail.com)
