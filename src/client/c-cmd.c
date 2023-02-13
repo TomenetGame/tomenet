@@ -2245,6 +2245,10 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		else if (!strcasecmp("command", buf) || !strcasecmp("commands", buf)) strcpy(init_search_string, "Slash commands");
 		else if (!strcasecmp("macro", buf) || !strcasecmp("macros", buf)) strcpy(init_search_string, "basic macros"); //3.6
 		else if (!strcasecmp("UI", buf) || !strcasecmp("GUI", buf)) strcpy(init_search_string, "user interface");
+		else if (!strcasecmp("fight", buf) || !strcasecmp("fighting", buf)) {
+			init_search_type = 2;
+			strcpy(init_search_string, "FIGHTING");
+		}
 
 		/* clean up */
 		buf[0] = 0;
