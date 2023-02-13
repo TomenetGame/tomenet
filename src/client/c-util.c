@@ -9766,7 +9766,7 @@ void do_cmd_options(void) {
 		Term_putstr(3, l++, -1, TERM_WHITE, "(\377yw\377w)       Window flags");
 #ifdef GLOBAL_BIG_MAP
 		if (strcmp(ANGBAND_SYS, "gcu"))
-			Term_putstr(3, l++, -1, TERM_WHITE, "(\377yb\377w/\377yM\377w/\377ym\377w)   Toggle/enable/disable big_map (double screen height)");
+			Term_putstr(3, l++, -1, TERM_WHITE, "(\377yb\377w/\377yM\377w/\377ym\377w)   Toggle/enable/disable big_map option (double screen height)");
 		else
 			Term_putstr(3, l++, -1, TERM_L_DARK, "(\377sb\377D/\377sM\377D/\377sm\377D)   Toggle/enable/disable big_map (double size) - NOT AVAILABLE ON GCU");
 #endif
@@ -9892,11 +9892,11 @@ void do_cmd_options(void) {
 		}
 #ifdef GLOBAL_BIG_MAP
 		/* Toggle big_map */
-		else if (k == 'b') set_bigmap(-1, TRUE);
+		else if (k == 'b') set_bigmap(-1, FALSE);
 		/* Enable big_map */
-		else if (k == 'M') set_bigmap(1, TRUE);
+		else if (k == 'M') set_bigmap(1, FALSE);
 		/* Disable big_map */
-		else if (k == 'm') set_bigmap(0, TRUE);
+		else if (k == 'm') set_bigmap(0, FALSE);
 #endif
 
 #if defined(WINDOWS) || defined(USE_X11)
