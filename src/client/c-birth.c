@@ -2295,8 +2295,10 @@ void display_experimental_meta(void) {
  #ifndef META_DISPLAYPINGS_LATER // -- now that GCU has a weird glitch where we have to redraw meta() after each getch() call from Term_inkey(), we don't want to clear because it also clears ping times display, blinking annoyingly.
 	Term_clear();
  #else
+  #if 0 /* We only really need this once: When refresh_meta_once is triggered. */
 	/* This is the one line of code inside Term_clear() that actually "enables" the screen again to get written on again, making the meta_display visible again oO - wtf */
 	Term->total_erase = TRUE;
+  #endif
  #endif
 	call_lua(0, "meta_display", "(s)", "d", meta_buf, &meta_i);
 	Term_fresh();//added to try and debug WinXP partially-black meta screen problem

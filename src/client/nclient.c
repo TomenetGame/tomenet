@@ -6441,6 +6441,10 @@ void update_ticks(void) {
  #ifdef META_DISPLAYPINGS_LATER
 	if (refresh_meta_once) {
 		refresh_meta_once = FALSE;
+
+		/* This is the one line of code inside Term_clear() that actually "enables" the screen again to get written on again, making the meta_display visible again oO - wtf */
+		Term->total_erase = TRUE;
+
 		display_experimental_meta();
 		/* hack: hide cursor */
 		Term->scr->cx = Term->wid;
@@ -6993,7 +6997,9 @@ printf("<%d>\n", r);
 	   We only re-read the metaserver list to update the amount/names of players on the servers. */
 	reload_metalist = (reload_metalist + 1) % 3; //3: 9s, ie the time needed for 3 ping refreshs
 	if (!reload_metalist && meta_connect() && meta_read_and_close()) { Term_clear(); display_experimental_meta(); }
+ #if 0 /* No need to refresh the meta list every 3s, just need refresh_meta_once */
 	else display_experimental_meta();
+ #endif
 	for (i = 0; i < meta_pings_servers; i++) {
 		if (!received_ok[i]) continue;
 		call_lua(0, "meta_add_ping", "(d,d)", "d", i, meta_pings_result[i], &r);
