@@ -9345,6 +9345,7 @@ respectively:
 If you want to keep the last item of a pile of items offered in your store,
 you can put a 'B' after the '@S', for 'base', eg:
   @SB
+  @SB15000
 (This will always cause 'mass cheques' (those inscribed 'various piled items')
 to be used for sales of this item, as the pile can never run out.)
 You can also specify a number after the 'B' to set the exact minimum amount of
