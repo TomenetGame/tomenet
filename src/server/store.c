@@ -8142,9 +8142,9 @@ void export_player_store_offers(int *export_turns) {
 #endif
 	static FILE *fp, *fph;
 
-	int i;
+	int i, keep;
 	long price;
-	object_type *o_ptr;
+	object_type forge, *o_ptr = &forge;
 	char o_name[ONAME_LEN], o_name_escaped[2 * ONAME_LEN], log[MAX_CHARS], attr;
 	struct timeval time_begin, time_end, time_delta;
 
@@ -8237,7 +8237,7 @@ void export_player_store_offers(int *export_turns) {
 			if (!(h_ptr->flags & HF_TRAD)) continue;
 
 			for (i = 0; i < h_ptr->stock_num; i++) {
-				o_ptr = &h_ptr->stock[i];
+				forge = h_ptr->stock[i]; //copy object, to modify the displayed o_ptr->number for @SB inscription
 
 				if (!o_ptr->k_idx) continue; //invalid item
 				if (!o_ptr->note) continue; //has no inscription
@@ -8245,11 +8245,12 @@ void export_player_store_offers(int *export_turns) {
  #ifdef DONT_EXPORT_MUSEUM
 				if (strstr(quark_str(o_ptr->note), "@S-")) continue; //museum, don't display?
  #endif
- #ifdef PSTORE_SOLDOUT
 				/* Currently sold out item, via @SB inscription --
 				   make sure these don't break shit due to div/0 first
 				   (such as wand/staff charges calc below, but also on the website). */
-				if (!o_ptr->number) continue;
+				keep = player_store_base(o_ptr);
+ #ifndef PSTORE_SOLDOUT /* Hide @SB unavailable items completely? */
+				if (keep < 0) continue;
  #endif
 
  #ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
@@ -8261,11 +8262,9 @@ void export_player_store_offers(int *export_turns) {
 				    ) {
 					int j = o_ptr->pval;
 
-  #ifdef PSTORE_SOLDOUT
-					if (o_ptr->number)
-  #endif
 					o_ptr->pval = j / o_ptr->number;
 
+					if (keep > 0) o_ptr->number -= keep;
   #ifndef EXPORT_FLAVOUR_AWARE
 					object_desc(0, o_name, o_ptr, TRUE, 1024 + 3 + 64);
   #else
@@ -8273,12 +8272,14 @@ void export_player_store_offers(int *export_turns) {
   #endif
 					o_ptr->pval = j; /* hack clean-up */
 				} else
+					if (keep > 0) o_ptr->number -= keep;
   #ifndef EXPORT_FLAVOUR_AWARE
 					object_desc(0, o_name, o_ptr, TRUE, 1024 + 3 + 64);
   #else
 					object_desc(0, o_name, o_ptr, TRUE, 3 + 64);
   #endif
  #else
+				if (keep > 0) o_ptr->number -= keep;
   #ifndef EXPORT_FLAVOUR_AWARE
 				object_desc(0, o_name, o_ptr, TRUE, 1024 + 3);
   #else
@@ -8290,12 +8291,8 @@ void export_player_store_offers(int *export_turns) {
 				/* Cut out the @S pricing information from the inscription. */
 				player_stores_cut_inscription(o_name);
 
-				/* '@SB': Keep the last item(s) of the pile, unsellable, but indicating that pile might get restocked soonish by the player */
-				if (player_store_base(o_ptr) < 0)
- #if 1 /* Todo: add price -3 : 'SOLD OUT' tag ^^ */
-					continue; /* Don't display the final item as it's not for sale, skip */
- #else
-					price = -2; /* Fall back to 'museum' mode until restocked. */
+ #ifdef PSTORE_SOLDOUT
+				if (keep < 0) price = -3; /* Display as 'SOLD OUT' */
  #endif
 
 				//TODO maybe: report house owner?
@@ -8397,7 +8394,7 @@ void export_player_store_offers(int *export_turns) {
 	/* note: the items are not sorted in any way */
 	for (i = turn % step; i < max_bak; i += step) {
 		coverage++;
-		o_ptr = &o_list_bak[i];
+		forge = o_list_bak[i]; //copy object, to modify the displayed o_ptr->number for @SB inscription
 
 		if (!o_ptr->k_idx) continue; //invalid item
 		if (o_ptr->held_m_idx) continue; //held by a monster
@@ -8406,11 +8403,12 @@ void export_player_store_offers(int *export_turns) {
 #ifdef DONT_EXPORT_MUSEUM
 		if (strstr(quark_str(o_ptr->note), "@S-")) continue; //museum, don't display?
 #endif
-#ifdef PSTORE_SOLDOUT
 		/* Currently sold out item, via @SB inscription --
 		   make sure these don't break shit due to div/0 first
 		   (such as wand/staff charges calc below, but also on the website). */
-		if (!o_ptr->number) continue;
+		keep = player_store_base(o_ptr);
+#ifndef PSTORE_SOLDOUT /* Hide @SB unavailable items completely? */
+		if (keep < 0) continue;
 #endif
 
 #if 0 /* avoid a small lag spike? the inside_house() check isn't really needed */
@@ -8439,6 +8437,7 @@ void export_player_store_offers(int *export_turns) {
  #endif
 			o_ptr->pval = j / o_ptr->number;
 
+			if (keep > 0) o_ptr->number -= keep;
  #ifndef EXPORT_FLAVOUR_AWARE
 			object_desc(0, o_name, o_ptr, TRUE, 1024 + 3 + 64);
  #else
@@ -8446,12 +8445,14 @@ void export_player_store_offers(int *export_turns) {
  #endif
 			o_ptr->pval = j; /* hack clean-up */
 		} else
+			if (keep > 0) o_ptr->number -= keep;
  #ifndef EXPORT_FLAVOUR_AWARE
 			object_desc(0, o_name, o_ptr, TRUE, 1024 + 3 + 64);
  #else
 			object_desc(0, o_name, o_ptr, TRUE, 3 + 64);
  #endif
 #else
+		if (keep > 0) o_ptr->number -= keep;
  #ifndef EXPORT_FLAVOUR_AWARE
 		object_desc(0, o_name, o_ptr, TRUE, 1024 + 3);
  #else
@@ -8463,12 +8464,8 @@ void export_player_store_offers(int *export_turns) {
 		/* Cut out the @S pricing information from the inscription. */
 		player_stores_cut_inscription(o_name);
 
-		/* 'B' flag: Keep the last item(s) of the pile, unsellable, but indicating that pile might get restocked soonish by the player */
-		if (player_store_base(o_ptr) < 0)
-#if 1 /* Todo: add price -3 : 'SOLD OUT' tag ^^ */
-			continue; /* Don't display the final item as it's not for sale, skip */
-#else
-			price = -2; /* Fall back to 'museum' mode until restocked. */
+#ifdef PSTORE_SOLDOUT
+		if (keep < 0) price = -3; /* Display as 'SOLD OUT' */
 #endif
 
 		//TODO maybe: report house owner?
