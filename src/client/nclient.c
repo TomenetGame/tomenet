@@ -6411,7 +6411,7 @@ int Send_version(void) {
  *
  * (Notes: ticks will count up continuously until overflowing int, while ticks10 just run from 0 to 9.)
  */
-void update_ticks() {
+void update_ticks(void) {
 	struct timeval cur_time;
 	int newticks;
 
@@ -6438,6 +6438,16 @@ void update_ticks() {
 //#endif
 
 #ifdef META_PINGS
+ #ifdef META_DISPLAYPINGS_LATER
+	if (refresh_meta_once) {
+		refresh_meta_once = FALSE;
+		display_experimental_meta();
+		/* hack: hide cursor */
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
+		//Term_set_cursor(0);
+	}
+ #endif
 	/* Ping meta-listed servers every 3 s, fetch results after half the time already (30/n ds) */
 	if (meta_pings_servers && meta_pings_ticks != ticks && !(ticks % (30 / 6))) do_meta_pings();
 #endif
@@ -6466,7 +6476,7 @@ void update_ticks() {
  * network output before calling this function again very bad things could
  * happen, such as an overflow of our send queue.
  */
-void do_keepalive() {
+void do_keepalive(void) {
 	/*
 	 * Check to see if it has been 2 seconds since we last sent anything.  Assume
 	 * that each game turn lasts 100 ms.
@@ -6477,7 +6487,7 @@ void do_keepalive() {
 
 #define FL_SPEED 1
 
-void do_flicker() {
+void do_flicker(void) {
 	static int flticks = 0;
 
 	if (ticks-flticks < FL_SPEED) return;
@@ -6485,7 +6495,7 @@ void do_flicker() {
 	flticks = ticks;
 }
 
-void do_mail() {
+void do_mail(void) {
 #ifdef CHECK_MAIL
  #ifdef SET_UID
 	static int mailticks = 0;
@@ -6538,7 +6548,7 @@ void do_mail() {
 
 /* Ping the server once a second when enabled - mikaelh
    do_ping is called every frame. */
-void do_ping() {
+void do_ping(void) {
 	static int last_ping = 0;
 	static int time_stamp_hour = -1, time_stamp_min = -1;
 
@@ -6720,6 +6730,10 @@ static void do_meta_pings(void) {
 	static char alt = 1, reload_metalist = 0; /* <- Only truly needed static var, the rest is static just for execution time optimization */
 	static int method = 0;
 
+#ifdef META_DISPLAYPINGS_LATER
+	bool received_ok[META_PINGS] = { FALSE };
+#endif
+
 	if (!method) {
 		if (access("ping-wrap.exe", F_OK) == 0) method = 1;
 		else method = 2;
@@ -6729,12 +6743,14 @@ static void do_meta_pings(void) {
 	meta_pings_ticks = ticks;
 
 #ifdef EXPERIMENTAL_META
+ #ifndef META_DISPLAYPINGS_LATER
 	/* Refresh metaserver list every n*500 ms.
 	   Note that for now we don't re-read the actual servers for the cause of pinging.
 	   Rather, we assume the servers don't change and we'll just continue to ping those.
 	   We only re-read the metaserver list to update the amount/names of players on the servers. */
 	reload_metalist = (reload_metalist + 1) % 18; //18: 9s, ie the time needed for 3 ping refreshs
 	if (!reload_metalist && meta_connect() && meta_read_and_close()) display_experimental_meta();
+ #endif
 #endif
 
 	/* Alternate function: 1) send out pings, 2) read results */
@@ -6840,6 +6856,7 @@ static void do_meta_pings(void) {
 				meta_pings_result[i] = meta_pings_result[meta_pings_server_duplicate[i]];
 
 				/* Live-update the meta server list -- pfft, actually we don't even need meta_pings_results[] */
+#ifndef META_DISPLAYPINGS_LATER
 				call_lua(0, "meta_add_ping", "(d,d)", "d", i, meta_pings_result[i], &r);
 				Term_fresh();
 				/* hack: hide cursor */
@@ -6847,7 +6864,9 @@ static void do_meta_pings(void) {
 				Term->scr->cu = 1;
 				Term_set_cursor(0);
 				//Term_xtra(TERM_XTRA_SHAPE, 1);
-
+#else
+				received_ok[i] = TRUE;
+#endif
 				continue;
 			}
 
@@ -6952,6 +6971,7 @@ printf("<%d>\n", r);
 			meta_pings_result[i] = r;
 
 			/* Live-update the meta server list -- pfft, actually we don't even need meta_pings_results[] */
+#ifndef META_DISPLAYPINGS_LATER
 			call_lua(0, "meta_add_ping", "(d,d)", "d", i, meta_pings_result[i], &r);
 			Term_fresh();
 			/* hack: hide cursor */
@@ -6959,8 +6979,32 @@ printf("<%d>\n", r);
 			Term->scr->cu = 1;
 			Term_set_cursor(0);
 			//Term_xtra(TERM_XTRA_SHAPE, 1);
+#else
+			received_ok[i] = TRUE;
+#endif
 		}
 	}
+
+#ifdef META_DISPLAYPINGS_LATER
+	if (alt) return;
+	/* Refresh metaserver list every n*500 ms.
+	   Note that for now we don't re-read the actual servers for the cause of pinging.
+	   Rather, we assume the servers don't change and we'll just continue to ping those.
+	   We only re-read the metaserver list to update the amount/names of players on the servers. */
+	reload_metalist = (reload_metalist + 1) % 3; //3: 9s, ie the time needed for 3 ping refreshs
+	if (!reload_metalist && meta_connect() && meta_read_and_close()) { Term_clear(); display_experimental_meta(); }
+	else display_experimental_meta();
+	for (i = 0; i < meta_pings_servers; i++) {
+		if (!received_ok[i]) continue;
+		call_lua(0, "meta_add_ping", "(d,d)", "d", i, meta_pings_result[i], &r);
+	}
+	Term_fresh();
+	/* hack: hide cursor */
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
+	Term_set_cursor(0);
+	//Term_xtra(TERM_XTRA_SHAPE, 1);
+#endif
 }
 #endif
 

@@ -730,7 +730,7 @@ static char inkey_aux(void) {
 			do_flicker();
 			(void)(Term_inkey(&ch, FALSE, TRUE));
 			if (ch) break;
-			update_ticks();
+			update_ticks();		// <-(x)!! in -c (terminal) mode, this is actually _the_ (only) update_ticks() that is called during meta server display and that is able to visibly redraw meta server list every 9s! (META_DISPLAYPINGS_LATER)
  #ifdef RAINY_TOMB
 			do_weather(FALSE);
  #endif
@@ -1146,7 +1146,6 @@ char inkey(void) {
 		(void)Term_set_cursor(1);
 	}
 
-
 	/* Hack -- Activate the screen */
 	Term_activate(term_screen);
 
@@ -1160,7 +1159,7 @@ char inkey(void) {
 		if (!inkey_base && inkey_scan && (0 != Term_inkey(&ch, FALSE, FALSE))) break;
 
 		/* Hack -- flush the output once no key is ready */
-		if (!done && (0 != Term_inkey(&ch, FALSE, FALSE))) {
+		if (!done && (0 != Term_inkey(&ch, FALSE, FALSE))) {		// <-(1)!! in -c (terminal) mode, this causes metaserver-display to blank out (META_DISPLAYPINGS_LATER)
 			/* Hack -- activate proper term */
 			Term_activate(old);
 
@@ -1177,7 +1176,6 @@ char inkey(void) {
 		/* Hack */
 		if (inkey_base) {
 			char xh;
-
 #if 0 /* don't block.. */
 			/* Check for keypress, optional wait */
 			(void)Term_inkey(&xh, !inkey_scan, TRUE);
@@ -1287,7 +1285,7 @@ char inkey(void) {
 		}
 
 		/* Get a key (see above) */
-		kk = ch = inkey_aux();
+		kk = ch = inkey_aux();//		<-(y)!! in -c (terminal) mode, this waits for keypress (META_DISPLAYPINGS_LATER)
 
 		/* Finished a "control-underscore" sequence */
 		if (parse_under && (ch <= 32)) {
@@ -9768,9 +9766,9 @@ void do_cmd_options(void) {
 		Term_putstr(3, l++, -1, TERM_WHITE, "(\377yw\377w)       Window flags");
 #ifdef GLOBAL_BIG_MAP
 		if (strcmp(ANGBAND_SYS, "gcu"))
-			Term_putstr(3, l++, -1, TERM_WHITE, "(\377yb\377w)       Toggle big_map (double screen height)");
+			Term_putstr(3, l++, -1, TERM_WHITE, "(\377yb\377w/\377yM\377w/\377ym\377w)   Toggle/enable/disable big_map (double screen height)");
 		else
-			Term_putstr(3, l++, -1, TERM_L_DARK, "(\377sb\377D)       Toggle big_map (double screen height) - NOT AVAILABLE ON GCU");
+			Term_putstr(3, l++, -1, TERM_L_DARK, "(\377sb\377D/\377sM\377D/\377sm\377D)   Toggle/enable/disable big_map (double size) - NOT AVAILABLE ON GCU");
 #endif
 		l++;
 		Term_putstr(3, l++, -1, TERM_WHITE, "(\377os\377w/\377oS\377w)     Save all options & flags / Save to global.opt file (account-wide)");
@@ -9894,14 +9892,17 @@ void do_cmd_options(void) {
 		}
 #ifdef GLOBAL_BIG_MAP
 		/* Toggle big_map */
-		else if (k == 'b') {
+		else if (k == 'b' || k == 'M' || k == 'm') {
 			/* BIG_MAP is currently not supported in GCU client */
 			if (!strcmp(ANGBAND_SYS, "gcu")) {
 				c_message_add("\377ySorry, big_map is not available in the GCU (command-line) client.");
 				continue;
 			}
 
-			global_c_cfg_big_map = !global_c_cfg_big_map;
+			if (k == 'b') global_c_cfg_big_map = !global_c_cfg_big_map;
+			else if (k == 'M') global_c_cfg_big_map = TRUE;
+			else if (k == 'm') global_c_cfg_big_map = FALSE;
+
 			if (is_newer_than(&server_version, 4, 4, 9, 1, 0, 1) /* redundant */
 			    && (sflags1 & SFLG1_BIG_MAP)) {
 				if (!global_c_cfg_big_map && screen_hgt != SCREEN_HGT) {

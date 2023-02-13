@@ -731,6 +731,9 @@ SECURITY_ATTRIBUTES sa[META_PINGS];
 STARTUPINFO si[META_PINGS];
 PROCESS_INFORMATION pi[META_PINGS];
  #endif
+ #ifdef META_DISPLAYPINGS_LATER
+bool refresh_meta_once = FALSE;
+ #endif
 #endif
 
 bool fullscreen_weather = FALSE; //RAINY_TOMB

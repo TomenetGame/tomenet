@@ -453,6 +453,9 @@ extern SECURITY_ATTRIBUTES sa[META_PINGS];
 extern STARTUPINFO si[META_PINGS];
 extern PROCESS_INFORMATION pi[META_PINGS];
  #endif
+ #ifdef META_DISPLAYPINGS_LATER
+extern bool refresh_meta_once;
+ #endif
 #endif
 #ifdef EXPERIMENTAL_META
 bool meta_connect(void);

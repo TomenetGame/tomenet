@@ -602,7 +602,8 @@ static errr Term_xtra_gcu_event(int v) {
 		nodelay(stdscr, TRUE);
 
 		/* Check for keypresses */
-		i = getch();
+//return(0);
+		i = getch();		// <-(4)!! in -c (terminal) mode, this causes metaserver-display to blank out (META_DISPLAYPINGS_LATER)
 
 		/* Wait for it next time */
 		nodelay(stdscr, FALSE);
@@ -707,7 +708,7 @@ static errr Term_xtra_gcu(int n, int v) {
 
 		/* Process events */
 		case TERM_XTRA_EVENT:
-		return(Term_xtra_gcu_event(v));
+		return(Term_xtra_gcu_event(v));		// <-(3)!! in -c (terminal) mode, this causes metaserver-display to blank out (META_DISPLAYPINGS_LATER)
 
 		/* Flush events */
 		case TERM_XTRA_FLUSH:

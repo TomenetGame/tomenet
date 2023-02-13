@@ -2292,7 +2292,12 @@ static bool enter_server_name(void) {
 
 #ifdef EXPERIMENTAL_META
 void display_experimental_meta(void) {
+ #ifndef META_DISPLAYPINGS_LATER // -- now that GCU has a weird glitch where we have to redraw meta() after each getch() call from Term_inkey(), we don't want to clear because it also clears ping times display, blinking annoyingly.
 	Term_clear();
+ #else
+	/* This is the one line of code inside Term_clear() that actually "enables" the screen again to get written on again, making the meta_display visible again oO - wtf */
+	Term->total_erase = TRUE;
+ #endif
 	call_lua(0, "meta_display", "(s)", "d", meta_buf, &meta_i);
 	Term_fresh();//added to try and debug WinXP partially-black meta screen problem
 }
@@ -2474,6 +2479,9 @@ bool get_server_name(void) {
 
 	/* Finally display the meta server list which we read earlier into the global variable meta_buf. */
 #ifdef EXPERIMENTAL_META
+ #ifdef META_DISPLAYPINGS_LATER
+	Term_clear();
+ #endif
 	display_experimental_meta();
 #else
 	/* Start at the beginning */
@@ -2608,15 +2616,23 @@ bool get_server_name(void) {
   #endif
 		}
  #endif
-	} else meta_pings_servers = 0;
+	}
 #endif
 
+#ifdef META_DISPLAYPINGS_LATER
+	/* Crazy GCU bug workaround, for first call of inkey() below ->->-> 'i = getch();' will actually blank out the screen for unknown reason! */
+	refresh_meta_once = TRUE;
+#endif
 	/* Ask to choose a server until happy */
 	while (1) {
 		/* Get a key */
 		Term->scr->cx = Term->wid;
 		Term->scr->cu = 1;
 		c = inkey();
+#ifdef META_DISPLAYPINGS_LATER
+		/* Without this, choosing a server too quickly may result in the login screen being partially overwritten with the meta server again */
+		refresh_meta_once = FALSE;
+#endif
 
 		/* Check for quit */
 		if (c == 'Q' || c == KTRL('Q')) {

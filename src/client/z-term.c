@@ -2904,7 +2904,7 @@ errr Term_inkey(char *ch, bool wait, bool take) {
 		/* Process pending events if necessary */
 		if (keys->head == keys->tail) {
 			/* Process events (do not wait) */
-			Term_xtra(TERM_XTRA_EVENT, FALSE);
+			Term_xtra(TERM_XTRA_EVENT, FALSE);		// <-(2)!! in -c (terminal) mode, this causes metaserver-display to blank out (META_DISPLAYPINGS_LATER)
 		}
 	}
 

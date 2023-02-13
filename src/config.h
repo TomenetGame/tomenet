@@ -841,4 +841,6 @@
   /* On Windows, use CreateProcess() with its own CreateFile() handle instead of piping the output? */
   //#define META_PINGS_CREATEFILE /* Doesn't work on Windows 7 despite working on Wine-Windows-7 */
  #endif
+ /* Fix weird glitch in GCU with hacky workaround insanity */
+ #define META_DISPLAYPINGS_LATER
 #endif
