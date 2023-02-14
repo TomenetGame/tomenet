@@ -12035,6 +12035,7 @@ bool lua_project(int who, int rad, struct worldpos *wpos, int y, int x, int dam,
 	return(project(who, rad, wpos, y, x, dam, typ, flg, attacker));
 }
 #endif
+//#define DEBUG_PROJECT_GRIDS	/* output some debug msgs */
 bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam, int typ, int flg, char *attacker) {
 	int	i, j, t;
 	int	 y1, x1, y2, x2;
@@ -12217,7 +12218,12 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	   reduce their time by 1 to make up for it, so the total # of damage applications is correct. */
 	if ((flg & PROJECT_BEAM) && (project_time_effect & EFF_WALL)) project_time--;
 
-	/* Project until done */
+	/* Project until done --
+	   aka travel to target destination,
+	   then 'explode' there later with radius 'rad' (0 for bolts/beams) */
+#ifdef DEBUG_PROJECT_GRIDS
+msg_format(-who, "_ x=%d,y=%d,x2=%d,y2=%d",x,y,x2,y2);
+#endif
 	while (TRUE) {
 		/* Check the grid */
 		c_ptr = &zcave[y][x];
@@ -12496,6 +12502,9 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 				effect = new_effect(who, typ, dam, project_time, project_interval, wpos, y, x, 0, project_time_effect);
 				if (effect != -1) zcave[y][x].effect = effect;
 			}
+#ifdef DEBUG_PROJECT_GRIDS
+msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
+#endif
 			gy[grids] = y;
 			gx[grids] = x;
 			grids++;
@@ -12505,7 +12514,6 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 
 	/* Cones */
 	if ((flg & PROJECT_BEAM) && (flg & PROJECT_FULL)) {
-
 		/* Trace without collision instead of scaling radius to target dist */
 		x = x9 = x1;
 		y = y9 = y1;
@@ -12575,6 +12583,9 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 						}
 					}
 					if (!duplicate) { // This is really bad, do better? - Kurzel
+#ifdef DEBUG_PROJECT_GRIDS
+//msg_format(-who, " FULL x=%d,y=%dgrids=%d",x,y,grids);
+#endif
 						gy[grids] = y;
 						gx[grids] = x;
 						grids++;
@@ -12751,9 +12762,17 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 
 	if (typ == GF_ROCKET || typ == GF_DETONATION) disi_range_limit = (flg & PROJECT_TRAP) ? 2 : 1;
 
-	/* If we found a "target", explode there */
-	if (true_dist <= MAX_RANGE && !suppress_explosion) {
+	/* If we found a "target", explode there. */
+	if (true_dist <= MAX_RANGE && !suppress_explosion
+	    && !((flg & PROJECT_BEAM) && !rad) /* Note regarding beams, 1/2 (see right below for 2nd part) - beams that have radius 0 don't need to 'explode' */
+	    ) {
 		dist = 0;
+
+		/* Note regarding beams 2/2 (see right above for 1st part). Explanation:
+		   Bolts or balls only affect their final landing grid, which will be their 'explosion' grid, determined in this sector of the code.
+		   However, beams already carry all grids of their path INCLUDING THE FINAL grid,
+		   and hence this 'explosion' code, which would add the final grid _again_, would cause that grid to get hit twice: */
+		if (flg & PROJECT_BEAM) dist = 1; /* for beams that have rad > 0, if such even exist.. [paranoia/nonsense] */
 
 		for (i = 0; i <= tdi[rad]; i++) {
 			/* Encode some more "radius" info */
@@ -12821,6 +12840,9 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			if (!los(wpos, y2, x2, y, x)) continue;
 
 			/* Save this grid */
+#ifdef DEBUG_PROJECT_GRIDS
+msg_format(-who, " expl x=%d,y=%d,grids=%d",x,y,grids);
+#endif
 			gy[grids] = y;
 			gx[grids] = x;
 			grids++;
@@ -13003,6 +13025,9 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		/* Start with "dist" of zero */
 		dist = 0;
 
+#ifdef DEBUG_PROJECT_GRIDS
+//msg_format(-who, "  pg_ x2=%d,y2=%d,r=%d,dam=%d,grids=%d",x2,y2,rad,dam,grids);
+#endif
 		/* Now hurt the cave grids (and objects) from the inside out */
 		for (i = 0; i < grids; i++) {
 			/* Hack -- Notice new "dist" values */
@@ -13016,6 +13041,9 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			/* Affect the feature */
 			if ((flg & PROJECT_STAY) || (flg & PROJECT_FULL)) dist = 0;
 
+#ifdef DEBUG_PROJECT_GRIDS
+msg_format(-who, "  pg x=%d,y=%d,r=%d,dam=%d,grids=%d",x,y,rad,dam,grids);
+#endif
 			if (project_f(0 - who, who, dist, wpos, y, x, dam, typ, flg)) notice = TRUE;
 		}
 	}
