@@ -275,7 +275,7 @@ void grow_trees(int Ind, int rad) {
 		if (cave_naked_bold(zcave, p_ptr->py + j, p_ptr->px + i) &&
 		    (zcave[p_ptr->py + j][p_ptr->px + i].feat != FEAT_HOME_OPEN)) /* HACK - not on open house door - mikaelh */
 		{
-			cave_set_feat_live(&p_ptr->wpos, p_ptr->py + j, p_ptr->px + i, magik(50)?FEAT_TREE:FEAT_BUSH);
+			cave_set_feat_live(&p_ptr->wpos, p_ptr->py + j, p_ptr->px + i, magik(50) ? FEAT_TREE : FEAT_BUSH);
 #if 1
 			/* Redraw - the trees might block view and cause wall shading etc! */
 			for (i = 1; i <= NumPlayers; i++) {
@@ -313,7 +313,6 @@ bool create_garden(int Ind, int chance) {
 	for (y = 0; y < MAX_HGT; y++) {
 		for (x = 0; x < MAX_WID; x++) {
 			if (!in_bounds(y, x)) continue;
-
 			c_ptr = &zcave[y][x];
 
 			/*
@@ -321,29 +320,26 @@ bool create_garden(int Ind, int chance) {
 			 * nasty effects >;) Imagine all those Z seeping out to get you...
 			 */
 			if (c_ptr->info & CAVE_ICKY) continue;
-
 			if ((cs_ptr = GetCS(c_ptr, CS_KEYDOOR))) continue;
-
 			if (cave_valid_bold(zcave, y, x) && ( /* <- destroyable, no art on grid, not FF1_PERMANENT */
-//				(c_ptr->feat == FEAT_QUARTZ) ||
-//				(c_ptr->feat == FEAT_MAGMA) ||
-//				(c_ptr->feat == FEAT_QUARTZ_H) ||
-//				(c_ptr->feat == FEAT_QUARTZ_K) ||
-//				(c_ptr->feat == FEAT_MAGMA_K) ||
-//				(c_ptr->feat == FEAT_SAND_WALL) ||
-//				(c_ptr->feat == FEAT_SAND_WALL_H) ||
-//				(c_ptr->feat == FEAT_SAND_WALL_K) ||
-//				(c_ptr->feat == FEAT_ICE_WALL) ||
-//				(c_ptr->feat == FEAT_GLASS_WALL) ||
-//				(c_ptr->feat == FEAT_ILLUS_WALL) ||
-				(c_ptr->feat == FEAT_WALL_EXTRA) || /* granite walls: */
-				(c_ptr->feat == FEAT_WALL_INNER) ||
-				(c_ptr->feat == FEAT_WALL_OUTER) ||
-				(c_ptr->feat == FEAT_WALL_SOLID))
-//				&& !cave_floor_bold(zcave, y, x) /* don't convert empty floor! */
-//				&& !(f_info[c_ptr->feat].flags1 & FF1_PERMANENT)
-			    )
-			{
+			    //(c_ptr->feat == FEAT_QUARTZ) ||
+			    //(c_ptr->feat == FEAT_MAGMA) ||
+			    //(c_ptr->feat == FEAT_QUARTZ_H) ||
+			    //(c_ptr->feat == FEAT_QUARTZ_K) ||
+			    //(c_ptr->feat == FEAT_MAGMA_K) ||
+			    //(c_ptr->feat == FEAT_SAND_WALL) ||
+			    //(c_ptr->feat == FEAT_SAND_WALL_H) ||
+			    //(c_ptr->feat == FEAT_SAND_WALL_K) ||
+			    //(c_ptr->feat == FEAT_ICE_WALL) ||
+			    //(c_ptr->feat == FEAT_GLASS_WALL) ||
+			    //(c_ptr->feat == FEAT_ILLUS_WALL) ||
+			    (c_ptr->feat == FEAT_WALL_EXTRA) || /* granite walls: */
+			    (c_ptr->feat == FEAT_WALL_INNER) ||
+			    (c_ptr->feat == FEAT_WALL_OUTER) ||
+			    (c_ptr->feat == FEAT_WALL_SOLID))
+			    //&& !cave_floor_bold(zcave, y, x) /* don't convert empty floor! */
+			    //&& !(f_info[c_ptr->feat].flags1 & FF1_PERMANENT)
+			    ) {
 				if (randint(100) < chance) {
 					/* Delete the object (if any) */
 					delete_object(wpos, y, x, TRUE);
