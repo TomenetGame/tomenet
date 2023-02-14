@@ -4930,6 +4930,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					msg_print(Ind, "The door resists.");
 					obvious = TRUE;
 				}
+				break;
 			}
 
 			/* Destroy doors (and secret doors) */
@@ -4943,6 +4944,9 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				/* Destroy the feature */
 				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_MUD : feat);
 			}
+
+			/* Non s2m'able features */
+			else break;
 
 			/* Forget the wall */
 			everyone_forget_spot(wpos, y, x);
