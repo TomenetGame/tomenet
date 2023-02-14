@@ -16735,6 +16735,12 @@ stated.
                                 This skill spills over especially generously
                                 into its parent skill 'Health'.
 
+                                Note that for the Digging skill to get applied,
+                                which includes any boni it might give such as
+                                improving what you can find or uncover, you
+                                must dig manually, ie not via any kind of magic
+                                or by using a KILL_WALL monster form (mimicry).
+
                                 In particular, every 10 digging skill you will
                                 have a chance to find an additional pile of
                                 cash from mining a treasure vein, up to 6 piles

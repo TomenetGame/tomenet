@@ -5447,7 +5447,7 @@ static bool process_player_end_aux(int Ind) {
 	}
 
 	/* Hack -- Tunnel */
-#if 0	// not used
+#if 0	// not used like this, it's a permanent ability gained from KILL_WALL mimicry forms
 	if (p_ptr->auto_tunnel)
 		p_ptr->auto_tunnel--;
 #endif	// 0

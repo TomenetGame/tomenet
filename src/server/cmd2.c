@@ -3386,7 +3386,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 #endif
 
 	u32b cinfo;
-	int mining = get_skill(p_ptr, SKILL_DIG);
+	int skill_dig = quiet_borer ? 0 : get_skill(p_ptr, SKILL_DIG), mining = skill_dig;
 	int dug_feat = FEAT_NONE, tval = 0, sval = 0, special_k_idx = 0; //chest / golem base material / rune
 	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
@@ -3987,7 +3987,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				msg_print(Ind, "You have found something!");
 				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 				s_printf("DIGGING: %s found a massive wood piece.\n", p_ptr->name);
-			} else if (!rand_int(65 - get_skill(p_ptr, SKILL_DIG) / 2) && !p_ptr->IDDC_logscum) {
+			} else if (!rand_int(65 - skill_dig / 2) && !p_ptr->IDDC_logscum) {
 				/* for player store signs: (non-massive) wood pieces */
 				invcopy(&forge, lookup_kind(TV_JUNK, SV_WOOD_PIECE));
 				apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
@@ -4004,7 +4004,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			    in_iddc &&
  #endif
 			    /* Note: Increased rarity from 5 to 20 because pieces of wood and other items containing wood can now be ground to chips simply */
-			    (!p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST) && !rand_int(3) && !p_ptr->IDDC_logscum) {
+			    (!p_ptr->suppress_ingredients && skill_dig >= ENABLE_DEMOLITIONIST) && !rand_int(3) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_WOOD_CHIPS));
@@ -4059,7 +4059,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			    in_iddc &&
  #endif
 			    /* Note: Increased rarity from 5 to 20 because pieces of wood and other items containing wood can now be ground to chips simply */
-			    (!p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST) && !rand_int(7) && !p_ptr->IDDC_logscum) {
+			    (!p_ptr->suppress_ingredients && skill_dig >= ENABLE_DEMOLITIONIST) && !rand_int(7) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_WOOD_CHIPS));
@@ -4137,7 +4137,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			    in_iddc &&
  #endif
 			    /* Note: Increased rarity from 5 to 20 because pieces of wood and other items containing wood can now be ground to chips simply */
-			    (!p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST) && !rand_int(7) && !p_ptr->IDDC_logscum) {
+			    (!p_ptr->suppress_ingredients && skill_dig >= ENABLE_DEMOLITIONIST) && !rand_int(7) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_WOOD_CHIPS));
@@ -4315,10 +4315,10 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					place_gold(Ind, wpos, y, x, tval, 0);
 					object_level = old_object_level;
 					if (nonobvious) s_printf("DIGGING: %s (F%d,S%d,O%d) digs nonobvious (x%d=%dAu).\n",
-					    p_ptr->name, find_level_base, get_skill(p_ptr, SKILL_DIG), object_level,
+					    p_ptr->name, find_level_base, skill_dig, object_level,
 					    tval, !c_ptr->o_idx ? 0 : (o_list[c_ptr->o_idx].tval != TV_GOLD ? 0 : o_list[c_ptr->o_idx].pval));
 					else s_printf("DIGGING: %s (F%d,S%d,O%d) digs obvious (x%d=%dAu).\n",
-					    p_ptr->name, find_level_base, get_skill(p_ptr, SKILL_DIG), object_level,
+					    p_ptr->name, find_level_base, skill_dig, object_level,
 					    tval, !c_ptr->o_idx ? 0 : (o_list[c_ptr->o_idx].tval != TV_GOLD ? 0 : o_list[c_ptr->o_idx].pval));
 					c_ptr->info |= CAVE_MINED; //mark for warning_tunnel_hidden
 				}
@@ -4359,7 +4359,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
  #ifdef DEMOLITIONIST_IDDC_ONLY
 			    in_iddc &&
  #endif
-			    soft && !p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST + 5 && !rand_int(7) && !p_ptr->IDDC_logscum) {
+			    soft && !p_ptr->suppress_ingredients && skill_dig >= ENABLE_DEMOLITIONIST + 5 && !rand_int(7) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_SALTPETRE));
@@ -4386,7 +4386,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
  #ifdef DEMOLITIONIST_IDDC_ONLY
 			    in_iddc &&
  #endif
-			    !hard && !soft && !p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST + 5 && !rand_int(7) && !p_ptr->IDDC_logscum) {
+			    !hard && !soft && !p_ptr->suppress_ingredients && skill_dig >= ENABLE_DEMOLITIONIST + 5 && !rand_int(7) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, rand_int(3) ? SV_SULFUR : SV_VITRIOL));
@@ -4413,7 +4413,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
  #ifdef DEMOLITIONIST_IDDC_ONLY
 			    in_iddc &&
  #endif
-			    hard && !p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST + 5 && !rand_int(7) && !p_ptr->IDDC_logscum) {
+			    hard && !p_ptr->suppress_ingredients && skill_dig >= ENABLE_DEMOLITIONIST + 5 && !rand_int(7) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_METAL_POWDER));
