@@ -7309,13 +7309,14 @@ Spell scrolls, books or crystals:
                 phase door, teleport or word of recall for auto-retaliation.
 
 If you want an auto-retaliation-enabling inscription to only work while you are
-around a town, add a 't' after the 'O', examples: '@Ot', '@Otb'.
-('t' cannot be combined with 'x'.)
+around a town (in town or in the town area aka housing area), add a 't' after
+the 'O', examples: '@Ot', '@Otb'.
+(Note that 't' cannot be combined with 'x'.)
 
-Alternative to @O...:
+Alternative to @O inscriptions, can be used on magic devices and for spells:
      @Q         If you want to fall back to melee-autoretaliation in case you
-                are out of mana, use a 'Q' symbol instead of the 'O'.
-                Examples: '@Qt', '@Qtb'.
+                are out of mana (or out of charges/energy on magic devices),
+                use a 'Q' symbol instead of the 'O'. Examples: '@Qt', '@Qtb'.
                 This is useful for classes that may use attack spells yet can
                 perform decently in close combat, such as paladin or
                 mindcrafter.
@@ -7325,16 +7326,22 @@ Aside from inscriptions there are also three commands for auto-retaliation:
 Melee:
     /ar [t]+   or   /ar -
                 Turn melee auto-retaliation on or off, see (0.2b) for details.
+                Optionally use 't' for 'in town only'.
     /ar help    Shows details for the /ar command.
 
 Mimic powers:
     /arm [Q][t]<power>   or   /arm -
                 Auto-retaliate with a mimic power, see (0.2b) for details.
+                Optionally use 't' for 'in town only',
+                and/or 'Q' for 'fallback to melee if out of mana'.
     /arm help   Shows details for the /arm command.
 
 Runes:
     /arr [Q][t]<a-f><a-f><a-h><a-f>   or   /arr -
                 Auto-retaliate with a runespell, See (0.2b) for details.
+                Optionally use 't' for 'in town only',
+                and/or 'Q' for 'fallback to melee if out of mana'.
+                The four mandatory parameters: rune, rune, mode, type.
     /arr help   Shows details for the /arr command.
 
 
