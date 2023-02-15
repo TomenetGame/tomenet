@@ -471,10 +471,12 @@ function cast_rune_spell(I,D,u)
     return 0
   end
   if p.antimagic~=0 and p.admin_dm==0 then
+    p.energy = p.energy - e
     msg_print(I,"\255wYour anti-magic field disrupts any magic attempts.")
     return 0
   end
   if p.anti_magic~=0 then
+    p.energy = p.energy - e
     msg_print(I,"\255wYour anti-magic shell disrupts any magic attempts.")
     return 0
   end
@@ -486,12 +488,14 @@ function cast_rune_spell(I,D,u)
   local a = rspell_ability(s,l)
   local S = rspell_name(u)
   if a < 1 then
+    p.energy = p.energy - (e / 3)
     msg_print(I,format("\255sYour skill is not high enough! (%s; level: %d)",S,a))
     return 0
   end
   local c = rspell_cost(u,s)
   if p.cmp == nil then xxx = p.csp else xxx = p.cmp end
   if xxx < c then
+    p.energy = p.energy - (e / 3)
     msg_print(I,format("\255oYou do not have enough mana. (%s; cost: %d)",S,c))
     return 0
   end
