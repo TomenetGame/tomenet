@@ -19019,8 +19019,12 @@ B: attack method : attack effect : damage
       stun the target.
     EXP_xx means the monster drains life on attacking. The player will
       receive HOLD_LIFE (resist life-draining attacks) from this form.
+      (It doesn't matter how strong the attack is, all of the variations,
+      EXP_10, EXP_20, EXP_40, EXP_80, have the same effect.)
     SHATTER will result in a bonus to player's STRength attribute.
-    LOSE_xxx will give the according sustenance.
+    LOSE_xxx will give the according sustenance, or even all sustenances for
+      LOSE_ALL. All other variations give single sustenance each:
+      LOSE_STR, LOSE_INT, LOSE_WIS, LOSE_DEX, LOSE_CON, LOSE_CHR.
     SEDUCE will grant charisma sustenance.
 
     Monster effects (like poisoning or paralyzing) are applied to
