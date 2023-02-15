@@ -3155,17 +3155,30 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 		/* Book doesn't contain a spell in the selected slot */
 		if (spell == -1) break;
 
+		/* Check if we're out of mana, to handle 'fallback' to melee  --
+		   in any case suppress OoM message (which would be displayed if do_cmd_mimic() gets called) */
 		cost = exec_lua(Ind, format("return get_mana(%d, %d)", Ind, spell));
-		if (cost > p_ptr->cmp && fallback) return(p_ptr->fail_no_melee);
+		if (cost > p_ptr->cmp) {
+			if (!fallback || p_ptr->fail_no_melee) {
+				p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
+				return(TRUE); //just out of mana, but no fallback
+			}
+			return(FALSE); //fallback to melee
+		}
 
 		/* Check that it's ok... more checks needed here? */
 		/* Limit amount of mana used? */
+#if 0
 		if (!p_ptr->blind && !no_lite(Ind) && !p_ptr->confused && cost <= p_ptr->cmp &&
 		    exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell))) {
 			cast_school_spell(Ind, item, spell, 5, -1, 0);
 			return(TRUE);
 		}
 		break;
+#else /* just let cast_school_spell() handle all failures, because it also deducts correct energy for each result case */
+		cast_school_spell(Ind, item, spell, 5, -1, 0);
+		return(TRUE);
+#endif
 	}
 
 	/* If all fails, then melee */
@@ -3223,9 +3236,9 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		if (innate_powers[power].smana > p_ptr->cmp) {
 			if (!fallback || p_ptr->fail_no_melee) {
 				p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
-				return(TRUE); //just out of mana, no fallback
+				return(TRUE); //just out of mana, but no fallback
 			}
-			return(FALSE);
+			return(FALSE); //fallback to melee
 		}
 
 		/* We have a valid attempt */
@@ -3271,7 +3284,7 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		if (exec_lua(Ind, format("return rcraft_arr_test(%d, %d)", Ind, u)) == 1) {
 			if (!fallback || p_ptr->fail_no_melee) {
 				p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
-				return(TRUE); //just out of mana, no fallback
+				return(TRUE); //just out of mana, but no fallback
 			}
 			return(FALSE); //fallback to melee
 		}
