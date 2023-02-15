@@ -2268,13 +2268,13 @@ Any item:
 
 Some examples for inscriptions to use with macros:
   An item that can be activated:
-    @A1         Pressing the keys 'A' and then '1' will activate that item.
+  Eg:  @A1      Pressing the keys 'A' and then '1' will activate that item.
 
   A potion:
-    @q3         Pressing 'q' then '3' will quaff that potion.
+  Eg:  @q3      Pressing 'q' then '3' will quaff that potion.
 
   A magic scroll:
-    @r0         Pressing the keys 'r' and '0' will read that scroll.
+  Eg:  @r0      Pressing the keys 'r' and '0' will read that scroll.
 
 etc.. you get the idea. :)
 
@@ -6407,8 +6407,7 @@ NOTE: Whenever the macro wizard asks you to enter a partial name of an item to
       which the macro wizard parses.
       Example:
       If you create a macro to quaff a potion and the wizard asks you to enter
-      the potion name or part of it you may instead just enter
-          @q1
+      the potion name or part of it you may instead just enter:   @q1
       and the resulting macro will attempt to quaff potions inscribed @q1.
 
 
@@ -7311,10 +7310,13 @@ If you want an auto-retaliation-enabling inscription to only work while you are
 around a town, add a 't' after the 'O', examples: '@Ot', '@Otb'.
 ('t' cannot be combined with 'x'.)
 
-If you want to fall back to melee-autoretaliation in case you are out of mana,
-use a 'Q' symbol instead of the 'O'. Examples: '@Qt', '@Qtb'.
-This is useful for classes that may use attack spells yet can perform decently
-in close combat, such as paladin or mindcrafter.
+Alternative to @O...:
+     @Q         If you want to fall back to melee-autoretaliation in case you
+                are out of mana, use a 'Q' symbol instead of the 'O'.
+                Examples: '@Qt', '@Qtb'.
+                This is useful for classes that may use attack spells yet can
+                perform decently in close combat, such as paladin or
+                mindcrafter.
 
 Aside from inscriptions there are also three commands for auto-retaliation:
 
