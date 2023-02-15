@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 14. February 2023 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 15. February 2023 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.0c - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -15170,21 +15170,41 @@ POISON          poison.
                 The damage can partially be mitigated by having the particular
                 (double) resistances or immunities and gets amplified by
                 susceptibility.
+DISEASE         no resistance (except in PvP, where it acts as poison instead).
+                This attack can in rare cases also decrease your constitution,
+                and in extremely rare cases decrease it permanently even.
+                True vampires and initiated maiar are immune against the
+                continuously damaging infection, although they may still
+                suffer the initial consitution loss.
 BLIND           blindness.
 CONFUSE         confusion (or chaos).
 TERRIFY         fear.
 PARALYZE        free action.
-EXP_xx          hold life.
-LOSE_xxx        sustain stats.
-EAT_xxx         DEX and stealing skill increase your chance to resist
-                EAT_ITEM (item stealing) and
-                EAT_GOLD (money stealing) attempts.
-                A backpack safety lock makes you highly resistant to both,
-                item theft via EAT_ITEM and money theft via EAT_GOLD.
-                Nothing helps against EAT_FOOD or EAT_LITE.
+EXP_xx          hold life, necromancy skill, necro+unlife maxed, level 99.
+                This attack drains xp and the only full protection is being
+                level 99 or having both Necromancy and Unlife both at 50.000.
+                Other than that, reducing the chance to lose xp from this
+                attack is done (stackingly) by having 'hold life', having a
+                higher saving throw, and having a higher 'necromancy' skill.
+                Variations: EXP_10, EXP_20, EXP_40, EXP_80.
+LOSE_xxx        sustain the affected stat or even all stats for LOSE_ALL.
+                This attack would reduce your stat(s) if they're not sustained:
+                LOSE_STR, LOSE_INT, LOSE_WIS, LOSE_DEX, LOSE_CON, LOSE_CHR.
+EAT_xxxx        There are five types with different means of mitigation:
+                - EAT_ITEM (item stealing) and
+                - EAT_GOLD (money stealing) attempts:
+                   DEX and stealing skill increase your chance to resist these.
+                   A backpack safety lock makes you highly resistant to both.
+                - EAT_FOOD (eats an edible item straight from your backpack)
+                - EAT_LITE (consumes the fuel of your light source, if fueled)
+                - EAT_MANA (drains your mana points):
+                   Nothing helps against these three.
 UN_BONUS        disenchantment.
-                The damage can partially be mitigated by having the resistance.
-UN_POWER        no resistance. It drains charges/energy from your items:
+                If unresisted, this attack will disenchant a random piece of
+                your equipment. The damage can partially be mitigated by having
+                disenchantment resistance.
+UN_POWER        magic device skill, fast-casting UN_POWER monster forms.
+                It drains charges/energy from your items:
                 "Energy drains from your pack" for magic devices or polymorph
                 rings in your inventory or "Energy drains from your equipment"
                 for worn polymorph rings.
@@ -15200,17 +15220,14 @@ UN_POWER        no resistance. It drains charges/energy from your items:
                 Also reduces the remaining duration of a polymorph ring form
                 the player is currently mimicking (this effect cannot be
                 mitigated by magic device skill or un_power-form).
-TIME            time.
-                The damage can partially be mitigated by having the resistance.
-DISEASE         no resistance (except in PvP, where it acts as poison instead).
-                This attack can in rare cases also decrease your constitution,
-                and in extremely rare cases decrease it permanently even.
-                True vampires and initiated maiar are immune against the
-                continuously damaging infection, although they may still
-                suffer the initial consitution loss.
+TIME            time resistance.
+                If unresisted it can drain xp, a single stat or all your stats
+                at once, same as any magical time-based attacks. The damage can
+                be mitigated partially by time resistance.
 INSANITY        none. But certain mimicry forms, skills and classes/races gain
                 some damage reduction in three tiers, see (7.6) for details.
 HALLU           chaos.
+                If unresisted, you will hallucinate for some time.
 PARASITE        <currently no effect>
 DISARM          'Fighting' ability.
                 Weapons wielded 2-handely are harder to disarm (stacking).
@@ -15239,10 +15256,11 @@ SEDUCE          none. Makes you take off equipped items.
                 - lose an item or gold (monster steals it; tools won't help!)
                 - gain some experience
                 - regain some drained sanity, if any.
-SHATTER         purely physical damage. Hits & causes an earthquake - very
-                dangerous, see (5.11).
+SHATTER         purely physical damage, therefore only AC helps.
+                Hits & causes an earthquake - very dangerous, see (5.11).
                 This damage type can be mitigated by AC.
 LITE            Light or blindness resistance.
+                Blindness resistance will prevent any blindness effect.
                 The damage can partially be mitigated by having light
                 resistance and gets amplified by susceptibility.
 
