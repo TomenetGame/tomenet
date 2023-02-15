@@ -3218,7 +3218,15 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		/* Check for valid attempt */
 		if (choice < 4) return(FALSE); /* 3 polymorph powers + immunity preference */
 		power = retaliate_mimic_power(Ind, choice - 1);
-		if (innate_powers[power].smana > p_ptr->cmp && fallback) return(p_ptr->fail_no_melee); /* not enough mana to even attempt */
+		/* Check if we're out of mana, to handle 'fallback' to melee  --
+		   in any case suppress OoM message (which would be displayed if do_cmd_mimic() gets called) */
+		if (innate_powers[power].smana > p_ptr->cmp) {
+			if (!fallback || p_ptr->fail_no_melee) {
+				p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
+				return(TRUE); //just out of mana, no fallback
+			}
+			return(FALSE);
+		}
 
 		/* We have a valid attempt */
 		switch (power / 32) {
@@ -3262,7 +3270,7 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		   in any case suppress OoM message (which would be displayed if cast_rune_spell() gets called) */
 		if (exec_lua(Ind, format("return rcraft_arr_test(%d, %d)", Ind, u)) == 1) {
 			if (!fallback || p_ptr->fail_no_melee) {
-				p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+				p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
 				return(TRUE); //just out of mana, no fallback
 			}
 			return(FALSE); //fallback to melee
