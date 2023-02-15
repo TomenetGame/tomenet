@@ -525,6 +525,7 @@ function cast_rune_spell(I,D,u)
   end
   -- Prevent suicide due to backlash, including spell 'failure', for now.
   if b > p.chp then -- Assume no resistance/immunity for simplicity. -.-"
+    p.energy = p.energy - e
     msg_print(I,format("\255RThe strain is far too great! (%s; backlash: %d)",S,b))
     return 0
   end
