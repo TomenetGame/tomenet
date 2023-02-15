@@ -4555,9 +4555,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			if (fallback) p_ptr->autoret_mu |= 0x1000; // 1-bit FLAG
+			p_ptr->autoret_mu = (town ? 0x4000 : 0x0000) | (*p - 'a' + 1); // 1-bit FLAG + actual power value (1-26), and init all flags to 0
 			//if (nosleep) p_ptr->autoret_mu |= 0x2000; // 1-bit FLAG
-			p_ptr->autoret_mu = (town ? 0x4000 : 0x0000) | (*p - 'a' + 1); // 1-bit FLAG + actual power value (1-26)
+			if (fallback) p_ptr->autoret_mu |= 0x1000; // 1-bit FLAG
 			show_autoret(Ind, 0x2, TRUE);
 
 			return;
@@ -4654,9 +4654,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			} else rt = (*p - 'a');
 
 			p_ptr->autoret_mu = 0x8000; // 1-bit FLAG - 'runespell' marker and init all flags to 0
-			if (fallback) p_ptr->autoret_mu |= 0x1000; // 1-bit FLAG
-			//if (nosleep) p_ptr->autoret_mu |= 0x2000; // 1-bit FLAG
 			if (town) p_ptr->autoret_mu |= 0x4000; // 1-bit FLAG
+			//if (nosleep) p_ptr->autoret_mu |= 0x2000; // 1-bit FLAG
+			if (fallback) p_ptr->autoret_mu |= 0x1000; // 1-bit FLAG
 
 			p_ptr->autoret_mu |= r1; // 3-bit integer
 			p_ptr->autoret_mu |= (r2 << 3); // 3-bit integer
