@@ -3258,15 +3258,12 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		u |= ((1 << ((ar & 0x01C0) >> 6)) << 16); // Mode   (3-bit) to byte
 		u |= ((1 << ((ar & 0x0E00) >> 9)) << 24); // Type   (3-bit) to byte
 
-		/* Is it allowed? */
-
-		if (exec_lua(Ind, format("return rcraft_arr_test(%d, %d)", Ind, u)) == 1 && fallback) return(p_ptr->fail_no_melee);
-
-		/* Try to cast it */
-		if (cast_rune_spell(Ind, (u16b)(u & 0xFFFF), (u16b)((u & 0xFFFF0000) >> 16), 5)) return(TRUE);
-		else if (fallback) return(p_ptr->fail_no_melee);
-
-		return(TRUE); // Energy is used already, don't fallthrough after a failure. (this is dead code!)
+		/* Check if castable. Only valid reason to keep 'fallback' option is if we're out of mana (1) */
+		if (exec_lua(Ind, format("return rcraft_arr_test(%d, %d)", Ind, u)) != 1) fallback = FALSE;
+		/* Try to cast it, deduct proper energy in any of the different outcome cases */
+		if (cast_rune_spell(Ind, (u16b)(u & 0xFFFF), (u16b)((u & 0xFFFF0000) >> 16), 5)) return(TRUE); //success
+		else if (fallback) return(p_ptr->fail_no_melee); //failure, but we can fallback to melee because it was
+		return(TRUE);
 	}
 
 	/* Neither /arm nor /arr was set, aka no 'command-retaliation' (note: /ar doesn't count for this) */

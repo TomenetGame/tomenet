@@ -431,19 +431,26 @@ function rcraft_arr_set(u)
 end
 
 function rcraft_arr_test(I,u)
-  if band(u,ENHA)~=0 and band(u,bor(STRM,SURG))~=0 then return 0 end
+  if band(u,ENHA) ~= 0 and band(u,bor(STRM,SURG)) ~= 0 then return 4 end
+
   -- Also silently fall-through to melee auto-ret in these cases...
   local p = players(I)
-  if p.confused~=0 then return 2 end
-  if p.antimagic~=0 and p.admin_dm==0 then return 2 end
-  if p.anti_magic~=0 then return 2 end
+  if p.confused ~= 0 then return 3 end
+  if p.antimagic ~= 0 and p.admin_dm == 0 then return 3 end
+  if p.anti_magic ~= 0 then return 3 end
+
   local l = rspell_level(u)
   local s = rspell_skill(I,u)
   local a = rspell_ability(s,l)
-  if a < 1 then return 1 end
+  if a < 1 then return 2 end
+
+  -- This case must be checked last, as it determines autoretaliation
+  -- 'fallback' to melee possibility, which all of the above failures inhibit
   local c = rspell_cost(u,s)
   if p.cmp == nil then xxx = p.csp else xxx = p.cmp end
-  if xxx < c then return 3 end
+  if xxx < c then return 1 end
+
+  -- All clear, we may cast
   return 0
 end
 
