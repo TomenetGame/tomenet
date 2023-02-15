@@ -467,6 +467,7 @@ function cast_rune_spell(I,D,u)
   local p = players(I)
   local e = rspell_energy(I,u)
   if p.confused~=0 then
+    p.energy = p.energy - e
     msg_print(I,"You are too confused!")
     return 0
   end
