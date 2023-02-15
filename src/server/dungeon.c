@@ -3257,15 +3257,18 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		u |= ((1 << ((ar & 0x0038) >> 3)) <<  8); // Rune 2 (3-bit) to byte
 		u |= ((1 << ((ar & 0x01C0) >> 6)) << 16); // Mode   (3-bit) to byte
 		u |= ((1 << ((ar & 0x0E00) >> 9)) << 24); // Type   (3-bit) to byte
+
 		/* Is it allowed? */
-		if (!(exec_lua(Ind, format("return rcraft_arr_test(%d, %d)", Ind, u)))) {
-			return(p_ptr->fail_no_melee);
-		}
+		if (!(exec_lua(Ind, format("return rcraft_arr_test(%d, %d)", Ind, u)))) return(p_ptr->fail_no_melee);
+
 		/* Try to cast it */
 		if (cast_rune_spell(Ind, (u16b)(u & 0xFFFF), (u16b)((u & 0xFFFF0000) >> 16), 5)) return(TRUE);
 		else return(p_ptr->fail_no_melee);
-		return(TRUE); // Energy is used already, don't fallthrough after a failure.
+
+		return(TRUE); // Energy is used already, don't fallthrough after a failure. (this is dead code!)
 	}
+
+	/* Neither /arm nor /arr was set, aka no 'command-retaliation' (note: /ar doesn't count for this) */
 	else return(FALSE);
 
 	/* If all fails, then melee */
