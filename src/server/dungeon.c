@@ -3642,6 +3642,12 @@ static bool auto_retaliate_test(int Ind) {
 						break;
 					}
 
+					/* Skip this item in case it has @Ot and we aren't in town */
+					if (*inscription == 't') {
+						p_ptr->warning_autoret = 99; /* seems he knows what he's doing! */
+						if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA)) break;
+					}
+
 					/* Select the first usable item with @O */
 					item = i;
 					i = INVEN_TOTAL;
@@ -3739,6 +3745,12 @@ static int auto_retaliate(int Ind) {
 	fallback = p_ptr->ar_fallback;
 	at_O_inscription = p_ptr->ar_at_O_inscription;
 	no_melee = p_ptr->ar_no_melee;
+
+	/* Don't melee if melee-ar is set to town-only */
+	if ((p_ptr->autoret_base & 0x5) == 0x4) { //(not a typo @ 5 vs 4: 1 means that melee-ret is disabled completely (and for paranoia: 0x2 is not available))
+		p_ptr->warning_autoret = 99; /* seems he knows what he's doing! */
+		if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA)) no_melee = TRUE;
+	}
 
 
 	/* If we have a player target, attack him. */

@@ -1818,9 +1818,9 @@ static bool rd_extra(int Ind) {
 	if (!p_ptr->id)
 		p_ptr->id = newid();
 
-	strip_bytes(5); //unused
+	strip_bytes(6); //unused
 
-	rd_u16b(&p_ptr->autoret_base); //0 means 'on' (default) - so there is no conversion needed for old chars since these bytes were 0 anyway
+	rd_byte(&p_ptr->autoret_base); //0 means 'on' (default) - so there is no conversion needed for old chars since these bytes were 0 anyway
 
 	rd_byte(&tmp8u);
 	p_ptr->suppress_ingredients = tmp8u;

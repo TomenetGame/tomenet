@@ -4463,7 +4463,7 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 */
 void show_autoret(int Ind, byte typ, bool verbose) {
 	player_type *p_ptr = Players[Ind];
-	u16b ar_base = p_ptr->autoret_base;
+	byte ar_base = p_ptr->autoret_base;
 	u16b ar_mu = p_ptr->autoret_mu;
 
 	/* Melee */

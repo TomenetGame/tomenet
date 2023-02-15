@@ -3510,7 +3510,7 @@ struct player_type {
 	bool shadow_running;
 
 #ifdef AUTO_RET_CMD
-	u16b autoret_base;		/* set auto-retaliation via command instead of inscription - used for martial arts and generic extra stuff (no sleeping monsters) */
+	byte autoret_base;		/* set auto-retaliation via command instead of inscription - used for martial arts and generic extra stuff (no sleeping monsters) */
 	u16b autoret_mu;		/* set auto-retaliation via command instead of inscription - used for mimics and runemasters ie magic that doesn't use items that could be inscribed */
  #endif
 	bool shoot_till_kill, shooty_till_kill, shooting_till_kill; /* Shoot a target until it's dead, like a ranged 'auto-retaliator' - C. Blue */

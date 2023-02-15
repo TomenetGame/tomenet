@@ -779,9 +779,9 @@ static void wr_extra(int Ind) {
 	wr_s32b(p_ptr->turns_idle);
 	wr_s32b(p_ptr->turns_active);
 
-	for (i = 0; i < 5; ++i) wr_byte(0); //unused
+	for (i = 0; i < 6; ++i) wr_byte(0); //unused
 
-	wr_u16b(p_ptr->autoret_base);
+	wr_byte(p_ptr->autoret_base);
 
 	wr_byte(p_ptr->suppress_ingredients);
 
