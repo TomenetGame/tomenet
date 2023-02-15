@@ -3175,7 +3175,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 #ifdef AUTO_RET_CMD
 /* Check auto-retaliation set via slash command /autoretX or /arX.
    This was added for mimics to use their powers without having to inscribe
-   a random item as a workaround.
+   a random item as a workaround, but is also used for runespells now.
    It returns FALSE if we want to attempt to auto-ret but can't because conditions
    aren't met, allowing us to instead try and melee-auto-ret.
    It returns TRUE if we want to auto-ret and also attempted it (no matter the
@@ -3184,7 +3184,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
    isn't needed to actually cast runespells. */
 static bool retaliate_cmd(int Ind, bool fallback) {
 	player_type *p_ptr = Players[Ind];
-	u16b ar = p_ptr->autoret;
+	u16b ar = p_ptr->autoret_mu;
 
 	/* no autoret set? */
 	if (!ar) return(FALSE);
@@ -3192,12 +3192,13 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 	/* Was a mimic power set for auto-ret? */
 	if (!(ar & 0x8000) && p_ptr->s_info[SKILL_MIMIC].value) {
 		/* Spell to cast */
-		int choice = ar - 1, power;
+		int choice, power;
 		bool dir = FALSE;
 
 		/* Is it variant @Ot for town-only auto-retaliation? */
 		if ((ar & 0x4000) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return(FALSE);
 		ar &= ~0x4000;
+		choice = ar - 1l;
 
 		/* Check for valid attempt */
 		if (choice < 4) return(FALSE); /* 3 polymorph powers + immunity preference */
@@ -3279,6 +3280,7 @@ static bool retaliate_cmd(int Ind, bool fallback) {
  * Fighters are allowed to use {@O-}, which is only used if his HP is 1/2 or less.
  * ({@O-} feature is commented out)
  */
+
 /* handle RF7_NO_TARGET monsters so they won't block auto-retaliation?
    This involves checking for retal-item before checking for retal-target.
    That is probably much more expensive on CPU than the other way round.
@@ -3287,6 +3289,10 @@ static bool retaliate_cmd(int Ind, bool fallback) {
    wraithed target, this code is in EXPENSIVE_NO_TARGET_TEST only, so it won't
    work if this isn't defined. This was already the case for melee, just not for @O ranged. */
 #define EXPENSIVE_NO_TARGET_TEST
+
+/* Allow '@Ox' on any equipped item to stop melee auto-ret, if no other '@O' was found already? */
+#define ALLOW_OX_ANYWHERE_HACK
+
 static bool auto_retaliate_test(int Ind) {
 	player_type *p_ptr = Players[Ind], *q_ptr, *p_target_ptr = NULL, *prev_p_target_ptr = NULL;
 	int d, i, tx, ty, target, prev_target, item = -1;
@@ -3372,6 +3378,7 @@ static bool auto_retaliate_test(int Ind) {
 	/* check if we're using physical damage attacks */
 	if (item != -1) physical = is_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF || is_ammo(o_ptr->tval);
 
+ #ifdef ALLOW_OX_ANYWHERE_HACK
 	/* Scan for @Ox to disable auto-retaliation only if no @O was found - mikaelh */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
@@ -3406,6 +3413,7 @@ static bool auto_retaliate_test(int Ind) {
 			inscription++;
 		}
 	}
+ #endif
 
 	/* no specific item inscribed -> use default melee attacks */
 	if (item == -1) physical = TRUE;
@@ -3692,7 +3700,7 @@ static bool auto_retaliate_test(int Ind) {
 	p_ptr->ar_item = item;
 	p_ptr->ar_fallback = fallback;
 	p_ptr->ar_at_O_inscription = at_O_inscription;
-	p_ptr->ar_no_melee = no_melee;
+	p_ptr->ar_no_melee = no_melee | (p_ptr->autoret_base & 0x1);
 
 	p_ptr->ar_test_fail = FALSE;
 	/* employ forced (via @O or @Q inscription) auto-retaliation? */
@@ -4931,7 +4939,7 @@ static bool process_player_end_aux(int Ind) {
 
 			if (randint(1000) < 10) {
 				msg_print(Ind, "\377rYou find it hard to stir!");
-//				do_dec_stat(Ind, A_DEX, STAT_DEC_TEMPORARY);
+				//do_dec_stat(Ind, A_DEX, STAT_DEC_TEMPORARY);
 				dec_stat(Ind, A_DEX, 10, STAT_DEC_TEMPORARY);
 			}
 

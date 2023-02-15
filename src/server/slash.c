@@ -4498,6 +4498,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			p_ptr->redraw |= PR_HISTORY;
 			return;
 #endif
+
 #ifdef AUTO_RET_CMD
 		} else if (prefix(messagelc, "/autoretm") || prefix(messagelc, "/arm")) {
 			char *p = token[1];
@@ -4510,28 +4511,37 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			/* Set up a spell by name for auto-retaliation, so mimics can use it too */
 			if (!tk) {
-				show_autoret(Ind, 1, TRUE);
+				show_autoret(Ind, 0x2, TRUE);
 				return;
 			}
 			if (streq(token[1], "help")) {
-				msg_print(Ind, "Set up a monster spell for auto-retaliation by specifying the spell slot letter");
-				msg_print(Ind, "starting with e), or '-' to disable. Optional prefix 't' for 'in town only'.");
-				msg_print(Ind, " Usage:    /arm [t]<mimic power slot (e..z)>");
-				msg_print(Ind, " Example:  /arm e    sets the first mimic power to auto-retaliate");
-				msg_print(Ind, " Example:  /arm th   sets the fourth mimic power, but only when in town");
-				msg_print(Ind, " Example:  /arm -    disables auto-retaliation with mimic powers");
+				msg_print(Ind, "Usage:     /arm [t]<mimic power slot (e..z)>");
+				msg_print(Ind, "           where 't' stands for 'in town only'.");
+				msg_print(Ind, "Set up a monster spell for auto-retaliation by specifying the spell slot letter.");
+				msg_print(Ind, "starting with e) up to 'z)', or '-' to disable. Optional prefix: 't'.");
+				msg_print(Ind, "Example:   /arm e        sets the first mimic power to auto-retaliate.");
+				msg_print(Ind, "Example:   /arm th       sets the fourth mimic power, but only when in town.");
+				msg_print(Ind, "Example:   /arm -        disables auto-retaliation with mimic powers.");
 				return;
-			}
-
-			if (*p == 't') {
-				town = TRUE;
-				p++;
 			}
 
 			if (*p == '-') {
 				msg_print(Ind, "Mimic power auto-retaliation is now disabled.");
-				p_ptr->autoret = 0x0;
+				p_ptr->autoret_mu = 0x0;
 				return;
+			}
+
+ #if 0
+			/* GWoP gives powers e)-z) exactly, have to check if this is a power or a real prefix */
+			if (*p == 's' && *(p + 1)) {
+				p_ptr->autoret_mu |= 0x2000; // 1-bit FLAG
+				p++;
+			}
+ #endif
+			/* GWoP gives powers e)-z) exactly, have to check if this is a power or a real prefix */
+			if (*p == 't' && *(p + 1)) {
+				town = TRUE;
+				p++;
 			}
 
 			if (*p < 'e' || *p > 'z') {
@@ -4539,15 +4549,18 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			msg_format(Ind, "Mimic power '%c)' is now set for auto-retaliation.", *p);
-			p_ptr->autoret = (town ? 0x4000 : 0x0000) | (*p - 'a' + 1);
+			p_ptr->autoret_mu = (town ? 0x4000 : 0x0000) | (*p - 'a' + 1);
+			//msg_format(Ind, "Mimic power '%c)' is now set for auto-retaliation.", *p);
+			show_autoret(Ind, 0x2, TRUE);
 
 			return;
 		} else if (prefix(messagelc, "/autoretr") || prefix(messagelc, "/arr")) {
 			char *p = token[1];
 
-	    /* Runespell hardcodes are bad, but easy... - Kurzel
+			/* Runespell hardcodes are bad, but easy... - Kurzel
 			 * 12 bits required for runespells after compression
+			 * 1 bit unused
+			 * 1 bit for no-sleepers flag
 			 * 1 bit for town flag
 			 * 1 bit for rune flag (so as not to try mimic powers)
 			 */
@@ -4564,69 +4577,121 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			/* Describe the current auto-retaliation setting */
 			if (!tk) {
-				show_autoret(Ind, 2, TRUE);
+				show_autoret(Ind, 0x4, TRUE);
 				return;
 			}
 
 			if (streq(token[1], "help")) {
-				msg_print(Ind, "Specify both runes, then mode and type, or '-' to disable.");
-				msg_print(Ind, "Optionally prefix 't' before a runespell to retaliate 'in town only'.");
-				msg_print(Ind, "Usage:   /arr <t><a-f><a-f><a-h><a-f> (town?, rune, rune, mode, type)");
-				msg_print(Ind, "Example: /arr aeda          Auto-retaliate with a moderate fire bolt.");
-				msg_print(Ind, "Example: /arr taeaa         Moderate fire bolt, but 'in town only'.");
-				msg_print(Ind, "Example: /arr -             Disable any auto-retaliation with runes.");
+				msg_print(Ind, "Usage:     /arr [t]<a-f><a-f><a-h><a-f>");
+				msg_print(Ind, "           where 't' stands for 'in town only'.");
+				msg_print(Ind, "Specify both runes, then mode and type, or just '-' to disable.");
+				msg_print(Ind, "Optional prefixe before the rune spell sequence: 't'.");
+				msg_print(Ind, "Example:   /arr aeda     auto-retaliate with a moderate fire bolt.");
+				msg_print(Ind, "Example:   /arr taeaa    moderate fire bolt, but 'in town only'.");
+				msg_print(Ind, "Example:   /arr -        disable any auto-retaliation with runes.");
 				return;
 			}
-
-			p_ptr->autoret = 0x0;
 
 			if (*p == '-') {
 				msg_print(Ind, "Runespell auto-retaliation is now disabled.");
+				p_ptr->autoret_mu = 0x0;
 				return;
 			}
 
+ #if 0
+			if (*p == 's') {
+				p_ptr->autoret_mu |= 0x2000; // 1-bit FLAG
+				p++;
+			}
+ #endif
 			if (*p == 't') {
-				p_ptr->autoret |= 0x4000; // 1-bit FLAG
+				p_ptr->autoret_mu |= 0x4000; // 1-bit FLAG
 				p++;
 			}
 
 			// Compress runespell... - Kurzel
 			if (*p < 'a' || *p > 'f') {
 				msg_print(Ind, "\377yFirst rune must be within range 'a' to 'f'!");
-				p_ptr->autoret = 0x0;
+				p_ptr->autoret_mu = 0x0;
 				return;
 			} else {
-				p_ptr->autoret |= (*p - 'a'); // 3-bit integer
+				p_ptr->autoret_mu |= (*p - 'a'); // 3-bit integer
 				p++;
-			}
-			if (*p < 'a' || *p > 'f') {
-				msg_print(Ind, "\377ySecond rune must be within range 'a' to 'f'!");
-				p_ptr->autoret = 0x0;
-				return;
-			} else {
-				p_ptr->autoret |= ((*p - 'a') << 3); // 3-bit integer
-				p++;
-			}
-			if (*p < 'a' || *p > 'h') {
-				msg_print(Ind, "\377yMode must be within range 'a' to 'h'!");
-				p_ptr->autoret = 0x0;
-				return;
-			} else {
-				p_ptr->autoret |= ((*p - 'a') << 6); // 3-bit integer
-				p++;
-			}
-			if (*p < 'a' || *p > 'f') {
-				msg_print(Ind, "\377yType must be within range 'a' to 'f'!");
-				p_ptr->autoret = 0x0;
-				return;
-			} else {
-				p_ptr->autoret |= ((*p - 'a') << 9); // 3-bit integer
-				p_ptr->autoret |= 0x8000; // 1-bit FLAG
 			}
 
-			show_autoret(Ind, 2, TRUE);
+			if (*p < 'a' || *p > 'f') {
+				msg_print(Ind, "\377ySecond rune must be within range 'a' to 'f'!");
+				p_ptr->autoret_mu = 0x0;
+				return;
+			} else {
+				p_ptr->autoret_mu |= ((*p - 'a') << 3); // 3-bit integer
+				p++;
+			}
+
+			if (*p < 'a' || *p > 'h') {
+				msg_print(Ind, "\377yMode must be within range 'a' to 'h'!");
+				p_ptr->autoret_mu = 0x0;
+				return;
+			} else {
+				p_ptr->autoret_mu |= ((*p - 'a') << 6); // 3-bit integer
+				p++;
+			}
+
+			if (*p < 'a' || *p > 'f') {
+				msg_print(Ind, "\377yType must be within range 'a' to 'f'!");
+				p_ptr->autoret_mu = 0x0;
+				return;
+			} else {
+				p_ptr->autoret_mu |= ((*p - 'a') << 9); // 3-bit integer
+				p_ptr->autoret_mu |= 0x8000; // 1-bit FLAG
+			}
+
+			show_autoret(Ind, 0x4, TRUE);
+			return;
+		} else if (prefix(messagelc, "/autoret") || prefix(messagelc, "/ar")) { /* Set basic auto-retaliation for melee */
+			char *p = token[1];
+			bool town = FALSE, nosleep = FALSE;
+
+			if (!tk) {
+				show_autoret(Ind, 0x1, TRUE);
+				return;
+			}
+			if (streq(token[1], "help")) {
+				msg_print(Ind, "Usage:     /ar [t]+");
+				msg_print(Ind, "           where 't' stands for 'in town only'.");
+				msg_print(Ind, "Set up auto-retaliation for melee, or just specify '-' to disable.");
+				msg_print(Ind, "Optional prefix when enabling with '+': 't'.");
+				msg_print(Ind, "Example:   /ar t+        enables melee auto-retaliation, but only in town.");
+				msg_print(Ind, "Example:   /ar -         disables melee auto-retaliation.");
+				return;
+			}
+
+ #if 0
+			if (*p == 's') {
+				nosleep = TRUE;
+				p++;
+			}
+ #endif
+			if (*p == 't') {
+				town = TRUE;
+				p++;
+			}
+
+			if (*p == '-') {
+				msg_print(Ind, "Melee auto-retaliation is now disabled.");
+				p_ptr->autoret_base = 0x1;
+				return;
+			} else if (*p == '+') {
+				msg_format(Ind, "Melee auto-retaliation is now enabled%s%s%s.",
+				    nosleep ? " against awake monsters" : "",
+				    nosleep && town ? " and only" : "",
+				    town ? " in town" : "");
+				p_ptr->autoret_base = 0x0 + (nosleep ? 0x2 : 0x0) + (town ? 0x4 : 0x0);
+				return;
+			} else msg_print(Ind, "Invalid command arguments specified. Try '/ar help'.");
 			return;
 #endif
+
 #ifdef ENABLE_SELF_FLASHING
 		} else if (prefix(messagelc, "/flash")) { //for before next client release, to make this already accessible
 			if (p_ptr->flash_self2 == FALSE) {

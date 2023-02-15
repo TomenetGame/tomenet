@@ -996,7 +996,7 @@ static void wr_extra(int Ind) {
 	/*wr_u32b(seed_town);*/
 	wr_s32b(p_ptr->mimic_seed);
 	wr_byte(p_ptr->mimic_immunity);
-	wr_u16b(p_ptr->autoret);
+	wr_u16b(p_ptr->autoret_mu);
 	wr_s16b(p_ptr->martyr_timeout);
 
 	/* Special stuff */

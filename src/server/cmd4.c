@@ -4204,7 +4204,7 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 #endif
 
 #ifdef AUTO_RET_CMD
-	show_autoret(Ind, 0, FALSE);
+	show_autoret(Ind, 0xF, FALSE);
 #endif
 
 	if (get_skill(p_ptr, SKILL_AURA_FEAR)) check_aura(Ind, 0); /* MAX_AURAS */
@@ -4463,34 +4463,43 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 */
 void show_autoret(int Ind, byte typ, bool verbose) {
 	player_type *p_ptr = Players[Ind];
-	u16b ar = p_ptr->autoret;
+	u16b ar_base = p_ptr->autoret_base;
+	u16b ar_mu = p_ptr->autoret_mu;
+
+	/* Melee */
+	if (typ & 0x1) {
+		if (ar_base & 0x1) msg_print(Ind, "Melee auto-retaliation is currently disabled.");
+		else msg_format(Ind, "Melee auto-retaliation is currently enabled%s%s%s.",
+		    (ar_base & 0x2) ? " against awake monsters" : "",
+		    ((ar_base & 0x6) == 0x6)  ? " and only" : "",
+		    (ar_base & 0x4) ? " in town" : "");
+	}
 
 	/* Mimic power */
-	if (typ != 2) {
-		if (!(ar & 0x8000) && (ar & 0x3FFF)) { /* Not set to 'runecraft' instead, and power is set to != 0? */
-			if (ar & 0x4000) msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation in towns.", (ar & ~0x4000) - 1 + 'a');
-			else msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation.", ar - 1 + 'a');
+	if (typ & 0x2) {
+		if (!(ar_mu & 0x8000) && (ar_mu & 0x3FFF)) { /* Not set to 'runecraft' instead, and power is set to != 0? */
+			if (ar_mu & 0x4000) msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation in towns.", (ar_mu & ~0x4000) - 1 + 'a');
+			else msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation.", ar_mu - 1 + 'a');
 		} else if (verbose) msg_print(Ind, "You have not set a mimic power for auto-retaliation. ('/arm help' for details.)");
 	}
 
 	/* Rune spell */
-	if (typ != 1) {
-		if (ar & 0x8000) {
+	if (typ & 0x4) {
+		if (ar_mu & 0x8000) {
 			/* Decompress runespell... - Kurzel */
 			u32b u = 0x0;
-			u |= (1 << (ar & 0x0007));                // Rune 1 (3-bit) to byte
-			u |= ((1 << ((ar & 0x0038) >> 3)) <<  8); // Rune 2 (3-bit) to byte
-			u |= ((1 << ((ar & 0x01C0) >> 6)) << 16); // Mode   (3-bit) to byte
-			u |= ((1 << ((ar & 0x0E00) >> 9)) << 24); // Type   (3-bit) to byte
+
+			u |= (1 << (ar_mu & 0x0007));                // Rune 1 (3-bit) to byte
+			u |= ((1 << ((ar_mu & 0x0038) >> 3)) <<  8); // Rune 2 (3-bit) to byte
+			u |= ((1 << ((ar_mu & 0x01C0) >> 6)) << 16); // Mode   (3-bit) to byte
+			u |= ((1 << ((ar_mu & 0x0E00) >> 9)) << 24); // Type   (3-bit) to byte
 			if (!(exec_lua(Ind, format("return rcraft_arr_set(%d)", u))))
 				msg_format(Ind, "You have set an invalid runespell for auto-retaliation (%s).",
-					string_exec_lua(0, format("return rspell_name(%d)", u))
-				);
+				    string_exec_lua(0, format("return rspell_name(%d)", u)));
 			else
 				msg_format(Ind, "You have set %s for auto-retaliation%s.",
-					string_exec_lua(0, format("return rspell_name(%d)", u)),
-					(ar & 0x4000) ? " in towns" : ""
-				);
+				    string_exec_lua(0, format("return rspell_name(%d)", u)),
+				    (ar_mu & 0x4000) ? " in towns" : "");
 		} else if (verbose) msg_print(Ind, "You have not set a runespell for auto-retaliation. ('/arr help' for details.)");
 	}
 }

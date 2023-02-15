@@ -1207,29 +1207,46 @@ They all start with a slash '/' hence they're called slash commands:
 /autotag
 /at         Apply auto-inscription settings to current inventory.
 
+/autoret
+/ar         Sets up auto-retaliation for melee.
+              Enter            /ar help          for this info in-game.
+              Usage:           /ar [t]+
+            or to disable:   /ar -
+            To enable any melee auto-retaliation in general, '+' has to be
+            specified. This can be combined with 't' if desired:
+            't': town-only? (optional)
+            Example:         /ar t+
+              This will enable auto-retaliation, but restrict it to town.
+            For more info about auto-retaliation, see (4.1).
+
 /autoretm
 /arm        Sets up auto-retaliation with a mimic power.
-            Enter  /arm help  for this information in-game.
-            Usage:   /arm [t]<power>   or to disable:   /arm -
-            The 't' is optional. If it's prefixed to the power, auto-ret will
-            only be used while in a town. Example:   /arm tg
-            This will auto-retaliate with mimic power 'g)', but only while in
-            town.
-            For more info see (7.8b), paragraph Auto-Retaliation.
+              Enter            /arm help          for this information in-game.
+              Usage:           /arm [t]<power>
+            or to disable:   /arm -
+            't': town-only? (optional)
+            Example:         /arm tg
+              This will auto-retaliate with mimic power 'g)', but only while in
+              town.
+            For more info about mimic powers see (7.8a).
 
             (Note that you cannot auto-retaliate with
               'Polymorph Self into a specific form'
             power aka 'c)', instead it will be treated like power 'b)' aka
-            'Polymorph Self into next form with fitting extremities'.
+              'Polymorph Self into next form with fitting extremities'.
             Then again using this kind of power for auto-ret doesn't make much
             sense anyway..)
+
 /autoretr
 /arr        Sets up auto-retaliation with runecraft.
-            Enter  /arr help  for this information in-game.
-            Usage:   /arr [t]<a-f><a-f><a-h><a-f>   or to disable:   /arr -
-            Parameters are:
-             t: town-only? (optional)
-             and then mandatory: rune, rune, mode, type
+              Enter            /arr help          for this info in-game.
+              Usage:           /arr [t]<a-f><a-f><a-h><a-f>
+            or to disable:   /arr -
+            't': town-only? (optional)
+            and then mandatory: rune, rune, mode, type
+            Example:         /arr saabc
+              Casts a lengthened ball of light, but only against a target that
+              isn't sleeping.
             For more info see (7.8b), paragraph Auto-Retaliation.
 
 /bbs <text>
@@ -7290,25 +7307,31 @@ Spell scrolls, books or crystals:
                 Note that you cannot use self-relocation spells such as
                 phase door, teleport or word of recall for auto-retaliation.
 
-Runes:          Auto-retaliate with a runespell. The format is rune, rune, mode
-    /arr abcd   then type. Selecting a non-damaging runespell or '/arr -' will
-                disable auto-retaliation. 't' is optional for town-only.
-                See (0.2b) for details.
-
-Mimic powers:   Auto-retaliate with a mimic power, format is (t is optional for
-    /arm tg     'town-only'): /arm [t]<power>
-                To disable mimic-power-autoretaliation again, use '/arm -'.
-                Note that you cannot use self-relocation spells such as blink
-                or teleport for auto-retaliation.
-                See (0.2b) for details.
-
 If you want an auto-retaliation-enabling inscription to only work while you are
 around a town, add a 't' after the 'O', examples: '@Ot', '@Otb'.
+('t' cannot be combined with 'x'.)
 
 If you want to fall back to melee-autoretaliation in case you are out of mana,
-use 'Q' symbol instead of 'O'. Examples: '@Qt', '@Qtb'.
+use a 'Q' symbol instead of the 'O'. Examples: '@Qt', '@Qtb'.
 This is useful for classes that may use attack spells yet can perform decently
 in close combat, such as paladin or mindcrafter.
+
+Aside from inscriptions there are also three commands for auto-retaliation:
+
+Melee:
+    /ar [t]+   or   /ar -
+                Turn melee auto-retaliation on or off, see (0.2b) for details.
+    /ar help    Shows details for the /ar command.
+
+Mimic powers:
+    /arm [t]<power>   or   /arm -
+                Auto-retaliate with a mimic power, see (0.2b) for details.
+    /arm help   Shows details for the /arm command.
+
+Runes:
+    /arr [t]<a-f><a-f><a-h><a-f>   or   /arr -
+                Auto-retaliate with a runespell, See (0.2b) for details.
+    /arr help   Shows details for the /arr command.
 
 
 
@@ -21506,8 +21529,10 @@ The monster spells ('S:' line in r_info.txt) are mostly also usable by a player
 transforming into the monster via Mimicry skill, these spells are also called
 'mimic powers', since they're not always spells in a strict sense of the word.
 (In general, monsters' summoning spells are never available as mimic powers.)
-Note that you cannot use any mimic powers if your skill is not a least 1.000,
+Note that you cannot use any mimic powers if your skill is not at least 1.000,
 resulting in the failure message "You cannot control your form."
+
+To auto-retaliate with eligible mimic powers, see '/arm' command in (0.2b).
 
 All mimic powers use intelligence stat to determine their failure rate.
 Their power usually depends on the level of the monster whose form the

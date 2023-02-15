@@ -2222,8 +2222,8 @@ if (p_ptr->updated_savegame == 0) {
 		p_ptr->mimic_immunity = tmp8u;
 	}
 
-	if (!older_than(4, 5, 4)) rd_u16b(&p_ptr->autoret);
-	else p_ptr->autoret = 0;
+	if (!older_than(4, 5, 4)) rd_u16b(&p_ptr->autoret_mu);
+	else p_ptr->autoret_mu = 0;
 
 	if (!older_than(4, 0, 6)) rd_s16b(&p_ptr->martyr_timeout);
 	else p_ptr->martyr_timeout = 0;
