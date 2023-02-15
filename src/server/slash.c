@@ -4556,6 +4556,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		} else if (prefix(messagelc, "/autoretr") || prefix(messagelc, "/arr")) {
 			char *p = token[1];
+			bool town = FALSE, nosleep = FALSE;
+			byte r1, r2, rm, rt;
 
 			/* Runespell hardcodes are bad, but easy... - Kurzel
 			 * 12 bits required for runespells after compression
@@ -4600,51 +4602,53 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
  #if 0
 			if (*p == 's') {
-				p_ptr->autoret_mu |= 0x2000; // 1-bit FLAG
+				nosleep = TRUE;
 				p++;
 			}
  #endif
 			if (*p == 't') {
-				p_ptr->autoret_mu |= 0x4000; // 1-bit FLAG
+				town = TRUE;
 				p++;
 			}
 
 			// Compress runespell... - Kurzel
 			if (*p < 'a' || *p > 'f') {
 				msg_print(Ind, "\377yFirst rune must be within range 'a' to 'f'!");
-				p_ptr->autoret_mu = 0x0;
 				return;
 			} else {
-				p_ptr->autoret_mu |= (*p - 'a'); // 3-bit integer
+				r1 = (*p - 'a');
 				p++;
 			}
 
 			if (*p < 'a' || *p > 'f') {
 				msg_print(Ind, "\377ySecond rune must be within range 'a' to 'f'!");
-				p_ptr->autoret_mu = 0x0;
 				return;
 			} else {
-				p_ptr->autoret_mu |= ((*p - 'a') << 3); // 3-bit integer
+				r2 = (*p - 'a');
 				p++;
 			}
 
 			if (*p < 'a' || *p > 'h') {
 				msg_print(Ind, "\377yMode must be within range 'a' to 'h'!");
-				p_ptr->autoret_mu = 0x0;
 				return;
 			} else {
-				p_ptr->autoret_mu |= ((*p - 'a') << 6); // 3-bit integer
+				rm = (*p - 'a');
 				p++;
 			}
 
 			if (*p < 'a' || *p > 'f') {
 				msg_print(Ind, "\377yType must be within range 'a' to 'f'!");
-				p_ptr->autoret_mu = 0x0;
 				return;
-			} else {
-				p_ptr->autoret_mu |= ((*p - 'a') << 9); // 3-bit integer
-				p_ptr->autoret_mu |= 0x8000; // 1-bit FLAG
-			}
+			} else rt = (*p - 'a');
+
+			p_ptr->autoret_mu = 0x8000; // 1-bit FLAG - 'runespell' marker and init all flags to 0
+			if (nosleep) p_ptr->autoret_mu |= 0x2000; // 1-bit FLAG
+			if (town) p_ptr->autoret_mu |= 0x4000; // 1-bit FLAG
+
+			p_ptr->autoret_mu |= r1; // 3-bit integer
+			p_ptr->autoret_mu |= (r2 << 3); // 3-bit integer
+			p_ptr->autoret_mu |= (rm << 6); // 3-bit integer
+			p_ptr->autoret_mu |= (rt << 9); // 3-bit integer
 
 			show_autoret(Ind, 0x4, TRUE);
 			return;

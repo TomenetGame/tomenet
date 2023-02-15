@@ -3229,21 +3229,25 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 
 	/* Was a rune set for auto-ret? */
 	else if ((ar & 0x8000)) {
+		u32b u = 0x0;
+
 		/* Is it variant @Ot for town-only auto-retaliation? */
 		if ((ar & 0x4000) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return(FALSE);
 		/* Wall safety? */
 		if (!target_able(Ind, p_ptr->target_who)) return(FALSE);
 		/* Decompress runespell... - Kurzel */
-		u32b u = 0x0;
+		ar &= ~(0x8000 | 0x4000);
+
 		u |= (1 << (ar & 0x0007));                // Rune 1 (3-bit) to byte
 		u |= ((1 << ((ar & 0x0038) >> 3)) <<  8); // Rune 2 (3-bit) to byte
 		u |= ((1 << ((ar & 0x01C0) >> 6)) << 16); // Mode   (3-bit) to byte
 		u |= ((1 << ((ar & 0x0E00) >> 9)) << 24); // Type   (3-bit) to byte
 		/* Is it allowed? */
-		if (!(exec_lua(Ind, format("return rcraft_arr_test(%d, %d)", Ind, u))))
+		if (!(exec_lua(Ind, format("return rcraft_arr_test(%d, %d)", Ind, u)))) {
 			return(p_ptr->fail_no_melee);
+		}
 		/* Try to cast it */
-		if (cast_rune_spell(Ind, (u16b)u, (u16b)(u >> 16), 5)) return(TRUE);
+		if (cast_rune_spell(Ind, (u16b)(u & 0xFFFF), (u16b)((u & 0xFFFF0000) >> 16), 5)) return(TRUE);
 		else return(p_ptr->fail_no_melee);
 		return(TRUE); // Energy is used already, don't fallthrough after a failure.
 	}
