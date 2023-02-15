@@ -3698,11 +3698,13 @@ static bool auto_retaliate_test(int Ind) {
 					if (*inscription == 'Q') fallback = TRUE;
 					inscription++;
 
+ #if 0 //wrong here?
 					/* Skip this item in case it has @Ox */
 					if (*inscription == 'x') {
 						p_ptr->warning_autoret = 99; /* seems he knows what he's doing! */
 						break;
 					}
+ #endif
 
 					/* Skip this item in case it has @Ot and we aren't in town */
 					if (*inscription == 't') {
