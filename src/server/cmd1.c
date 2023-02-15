@@ -7456,9 +7456,9 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 				if (!p_ptr->inventory[i].note) continue;
 				if (strstr(quark_str(p_ptr->inventory[i].note), "@M")) {
 					if (p_ptr->stormbringer || (
-#ifdef AUTO_RET_CMD
+ #ifdef AUTO_RET_CMD
 					    !retaliate_cmd(Ind, fallback) &&
-#endif
+ #endif
 					    !retaliate_item(Ind, item, at_O_inscription, fallback)))
 						py_attack(Ind, y, x, TRUE);
 				}
