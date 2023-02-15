@@ -2807,6 +2807,11 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 	o_ptr->note = quark_add(inscription);
 	o_ptr->note_utag = 0;
 
+	/* Warn about misspelling @O as @0 */
+	//if ((c = strstr(inscription, "@0")) && c[2] >= 'a' && c[2] <= 'z')
+	if (strstr(inscription, "@0"))
+		msg_print(Ind, "\377yNote: Retaliator-inscriptions are spelled with the letter O, not the number 0.");
+
 #ifdef ENABLE_SUBINVEN
 	if (item >= 100) {
 		display_subinven_aux(Ind, item / 100 - 1, item % 100);
