@@ -2984,20 +2984,20 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 			if (choice >= 0) {
 				/* shape-changing for retaliation is not so nice idea, eh? */
 				if (choice < 4) {	/* 3 polymorph powers + immunity preference */
-#if 1
+ #if 1
 					return(FALSE);
-#else
+ #else
 					/* hack: prevent 'polymorph into...' power */
 					if (choice == 2) do_cmd_mimic(Ind, 1, 5);
 					else do_cmd_mimic(Ind, choice, 5);
 					return(TRUE);
-#endif
+ #endif
 				} else {
 					int power = retaliate_mimic_power(Ind, choice - 1); /* immunity preference */
 					bool dir = FALSE;
 
 					if (innate_powers[power].smana > p_ptr->cmp && fallback) return(p_ptr->fail_no_melee);
-#if 0
+ #if 0
 					if (power) {
 						/* undirected power? */
 						switch (power) {
@@ -3012,7 +3012,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 						do_cmd_mimic(Ind, power + 3, 5);
 						return(TRUE);
 					}
-#else
+ #else
 					switch (power / 32) {
 					case 0: dir = monster_spells4[power].uses_dir;
 						break;
@@ -3025,7 +3025,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 					}
 					do_cmd_mimic(Ind, power + 3, dir ? 5 : 0);
 					return(TRUE);
-#endif
+ #endif
 				}
 			}
 		}
@@ -3036,10 +3036,10 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 #ifndef AUTO_RET_NEW
 	/* Only fighter classes can use various items for this */
 	if (is_fighter(p_ptr)) {
-#if 0
+ #if 0
 		/* item with {@O-} is used only when in danger */
 		if (*inscription == '-' && p_ptr->chp > p_ptr->mhp / 2) return(FALSE);
-#endif
+ #endif
 
 		switch (o_ptr->tval) {
 		/* non-directional ones */
@@ -3063,21 +3063,40 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 #else
 	switch (o_ptr->tval) {
 	case TV_STAFF:
-		if (((o_ptr->ident & ID_EMPTY) || ((o_ptr->ident & ID_KNOWN) && o_ptr->pval == 0))
-		    && fallback)
-			return(p_ptr->fail_no_melee);
+		/* Check if we're out of charges, to handle 'fallback' to melee  --
+		   in any case suppress out-of-charges message (which would be displayed if do_cmd_use_staff() gets called) */
+		if ((o_ptr->ident & ID_EMPTY) || ((o_ptr->ident & ID_KNOWN) && o_ptr->pval == 0)) {
+			if (!fallback || p_ptr->fail_no_melee) {
+				p_ptr->energy -= level_speed(&p_ptr->wpos);
+				return(TRUE); //just out of charges, but no fallback
+			}
+			return(FALSE); //fallback to melee
+		}
 		do_cmd_use_staff(Ind, item);
 		return(TRUE);
-	case TV_ROD:
-		if (o_ptr->pval != 0 && fallback)
-			return(p_ptr->fail_no_melee);
-		do_cmd_zap_rod(Ind, item, 5);
-		return(TRUE);
 	case TV_WAND:
-		if (((o_ptr->ident & ID_EMPTY) || ((o_ptr->ident & ID_KNOWN) && o_ptr->pval == 0))
-		    && fallback)
-			return(p_ptr->fail_no_melee);
+		/* Check if we're out of charges, to handle 'fallback' to melee  --
+		   in any case suppress out-of-charges message (which would be displayed if do_cmd_use_wand() gets called) */
+		if ((o_ptr->ident & ID_EMPTY) || ((o_ptr->ident & ID_KNOWN) && o_ptr->pval == 0)) {
+			if (!fallback || p_ptr->fail_no_melee) {
+				p_ptr->energy -= level_speed(&p_ptr->wpos);
+				return(TRUE); //just out of energy, but no fallback
+			}
+			return(FALSE); //fallback to melee
+		}
 		do_cmd_aim_wand(Ind, item, 5);
+		return(TRUE);
+	case TV_ROD:
+		/* Check if we're out of energy, to handle 'fallback' to melee  --
+		   in any case suppress out-of-energy message (which would be displayed if do_cmd_zap_rod() gets called) */
+		if (o_ptr->pval != 0) {
+			if (!fallback || p_ptr->fail_no_melee) {
+				p_ptr->energy -= level_speed(&p_ptr->wpos);
+				return(TRUE); //just out of energy, but no fallback
+			}
+			return(FALSE); //fallback to melee
+		}
+		do_cmd_zap_rod(Ind, item, 5);
 		return(TRUE);
 	}
 #endif
