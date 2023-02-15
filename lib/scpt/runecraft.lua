@@ -434,17 +434,17 @@ function rcraft_arr_test(I,u)
   if band(u,ENHA)~=0 and band(u,bor(STRM,SURG))~=0 then return 0 end
   -- Also silently fall-through to melee auto-ret in these cases...
   local p = players(I)
-  if p.confused~=0 then return 0 end
-  if p.antimagic~=0 and p.admin_dm==0 then return 0 end
-  if p.anti_magic~=0 then return 0 end
+  if p.confused~=0 then return 2 end
+  if p.antimagic~=0 and p.admin_dm==0 then return 2 end
+  if p.anti_magic~=0 then return 2 end
   local l = rspell_level(u)
   local s = rspell_skill(I,u)
   local a = rspell_ability(s,l)
-  if a < 1 then return 0 end
+  if a < 1 then return 1 end
   local c = rspell_cost(u,s)
   if p.cmp == nil then xxx = p.csp else xxx = p.cmp end
-  if xxx < c then return 0 end
-  return 1
+  if xxx < c then return 3 end
+  return 0
 end
 
 function rspell_name(u)

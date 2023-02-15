@@ -3195,6 +3195,14 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		int choice, power;
 		bool dir = FALSE;
 
+		/* Accept reasonable targets:
+		 * This prevents a player from getting stuck when facing a
+		 * monster inside a wall.
+		 * NOTE: The above statement becomes obsolete nowadays if
+		 * PY_PROJ_ and similar are defined.
+		 */
+		if (!target_able(Ind, p_ptr->target_who)) return(FALSE);
+
 		/* Is it variant @Ot for town-only auto-retaliation? */
 		if ((ar & 0x4000) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return(FALSE);
 
@@ -3211,14 +3219,6 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		if (choice < 4) return(FALSE); /* 3 polymorph powers + immunity preference */
 		power = retaliate_mimic_power(Ind, choice - 1);
 		if (innate_powers[power].smana > p_ptr->cmp && fallback) return(p_ptr->fail_no_melee); /* not enough mana to even attempt */
-
-		/* Accept reasonable targets:
-		 * This prevents a player from getting stuck when facing a
-		 * monster inside a wall.
-		 * NOTE: The above statement becomes obsolete nowadays if
-		 * PY_PROJ_ and similar are defined.
-		 */
-		if (!target_able(Ind, p_ptr->target_who)) return(FALSE);
 
 		/* We have a valid attempt */
 		switch (power / 32) {
@@ -3239,6 +3239,9 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 	else if ((ar & 0x8000)) {
 		u32b u = 0x0;
 
+		/* Wall safety? */
+		if (!target_able(Ind, p_ptr->target_who)) return(FALSE);
+
 		/* Is it variant @Ot for town-only auto-retaliation? */
 		if ((ar & 0x4000) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return(FALSE);
 
@@ -3250,20 +3253,18 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		/* Decompress runespell... - Kurzel */
 		ar &= ~(0x8000 | 0x4000 | 0x2000 | 0x1000);
 
-		/* Wall safety? */
-		if (!target_able(Ind, p_ptr->target_who)) return(FALSE);
-
 		u |= (1 << (ar & 0x0007));                // Rune 1 (3-bit) to byte
 		u |= ((1 << ((ar & 0x0038) >> 3)) <<  8); // Rune 2 (3-bit) to byte
 		u |= ((1 << ((ar & 0x01C0) >> 6)) << 16); // Mode   (3-bit) to byte
 		u |= ((1 << ((ar & 0x0E00) >> 9)) << 24); // Type   (3-bit) to byte
 
 		/* Is it allowed? */
-		if (!(exec_lua(Ind, format("return rcraft_arr_test(%d, %d)", Ind, u)))) return(p_ptr->fail_no_melee);
+
+		if (exec_lua(Ind, format("return rcraft_arr_test(%d, %d)", Ind, u)) == 1 && fallback) return(p_ptr->fail_no_melee);
 
 		/* Try to cast it */
 		if (cast_rune_spell(Ind, (u16b)(u & 0xFFFF), (u16b)((u & 0xFFFF0000) >> 16), 5)) return(TRUE);
-		else return(p_ptr->fail_no_melee);
+		else if (fallback) return(p_ptr->fail_no_melee);
 
 		return(TRUE); // Energy is used already, don't fallthrough after a failure. (this is dead code!)
 	}
