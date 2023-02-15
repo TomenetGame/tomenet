@@ -49,6 +49,11 @@
  #define PALANIM_HOUR_DIV	12
 #endif
 
+/* Failing auto-retaliation with item or cmd (magic devices, spells, mimic powers) due to being out of mana/charges/energy
+   and without melee-fallback will not cost the usual 1/3 energy it costs when attempting manually. */
+#define AUTORET_FAIL_FREE
+
+
 
 /* forward declarations */
 static void process_firework_creation(void);
@@ -3067,7 +3072,9 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 		   in any case suppress out-of-charges message (which would be displayed if do_cmd_use_staff() gets called) */
 		if ((o_ptr->ident & ID_EMPTY) || ((o_ptr->ident & ID_KNOWN) && o_ptr->pval == 0)) {
 			if (!fallback || p_ptr->fail_no_melee) {
+ #ifndef AUTORET_FAIL_FREE
 				p_ptr->energy -= level_speed(&p_ptr->wpos);
+ #endif
 				return(TRUE); //just out of charges, but no fallback
 			}
 			return(FALSE); //fallback to melee
@@ -3079,7 +3086,9 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 		   in any case suppress out-of-charges message (which would be displayed if do_cmd_use_wand() gets called) */
 		if ((o_ptr->ident & ID_EMPTY) || ((o_ptr->ident & ID_KNOWN) && o_ptr->pval == 0)) {
 			if (!fallback || p_ptr->fail_no_melee) {
+ #ifndef AUTORET_FAIL_FREE
 				p_ptr->energy -= level_speed(&p_ptr->wpos);
+ #endif
 				return(TRUE); //just out of energy, but no fallback
 			}
 			return(FALSE); //fallback to melee
@@ -3091,7 +3100,9 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 		   in any case suppress out-of-energy message (which would be displayed if do_cmd_zap_rod() gets called) */
 		if (o_ptr->pval != 0) {
 			if (!fallback || p_ptr->fail_no_melee) {
+ #ifndef AUTORET_FAIL_FREE
 				p_ptr->energy -= level_speed(&p_ptr->wpos);
+ #endif
 				return(TRUE); //just out of energy, but no fallback
 			}
 			return(FALSE); //fallback to melee
@@ -3179,7 +3190,9 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 		cost = exec_lua(Ind, format("return get_mana(%d, %d)", Ind, spell));
 		if (cost > p_ptr->cmp) {
 			if (!fallback || p_ptr->fail_no_melee) {
+#ifndef AUTORET_FAIL_FREE
 				p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
+#endif
 				return(TRUE); //just out of mana, but no fallback
 			}
 			return(FALSE); //fallback to melee
@@ -3254,7 +3267,9 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		   in any case suppress OoM message (which would be displayed if do_cmd_mimic() gets called) */
 		if (innate_powers[power].smana > p_ptr->cmp) {
 			if (!fallback || p_ptr->fail_no_melee) {
+ #ifndef AUTORET_FAIL_FREE
 				p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
+ #endif
 				return(TRUE); //just out of mana, but no fallback
 			}
 			return(FALSE); //fallback to melee
@@ -3302,7 +3317,9 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		   in any case suppress OoM message (which would be displayed if cast_rune_spell() gets called) */
 		if (exec_lua(Ind, format("return rcraft_arr_test(%d, %d)", Ind, u)) == 1) {
 			if (!fallback || p_ptr->fail_no_melee) {
+ #ifndef AUTORET_FAIL_FREE
 				p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
+ #endif
 				return(TRUE); //just out of mana, but no fallback
 			}
 			return(FALSE); //fallback to melee
