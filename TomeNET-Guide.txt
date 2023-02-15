@@ -1222,8 +1222,9 @@ They all start with a slash '/' hence they're called slash commands:
 /autoretm
 /arm        Sets up auto-retaliation with a mimic power.
               Enter            /arm help          for this information in-game.
-              Usage:           /arm [t]<power>
+              Usage:           /arm [q][t]<power>
             or to disable:   /arm -
+            'q': fallback to melee in case you're out of mana
             't': town-only? (optional)
             Example:         /arm tg
               This will auto-retaliate with mimic power 'g)', but only while in
@@ -1240,8 +1241,9 @@ They all start with a slash '/' hence they're called slash commands:
 /autoretr
 /arr        Sets up auto-retaliation with runecraft.
               Enter            /arr help          for this info in-game.
-              Usage:           /arr [t]<a-f><a-f><a-h><a-f>
+              Usage:           /arr [q][t]<a-f><a-f><a-h><a-f>
             or to disable:   /arr -
+            'q': fallback to melee in case you're out of mana
             't': town-only? (optional)
             and then mandatory: rune, rune, mode, type
             Example:         /arr saabc
@@ -7326,12 +7328,12 @@ Melee:
     /ar help    Shows details for the /ar command.
 
 Mimic powers:
-    /arm [t]<power>   or   /arm -
+    /arm [Q][t]<power>   or   /arm -
                 Auto-retaliate with a mimic power, see (0.2b) for details.
     /arm help   Shows details for the /arm command.
 
 Runes:
-    /arr [t]<a-f><a-f><a-h><a-f>   or   /arr -
+    /arr [Q][t]<a-f><a-f><a-h><a-f>   or   /arr -
                 Auto-retaliate with a runespell, See (0.2b) for details.
     /arr help   Shows details for the /arr command.
 

@@ -4502,7 +4502,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #ifdef AUTO_RET_CMD
 		} else if (prefix(messagelc, "/autoretm") || prefix(messagelc, "/arm")) {
 			char *p = token[1];
-			bool town = FALSE;
+			//bool nosleep = FALSE;
+			bool town = FALSE, fallback = FALSE;
 
 			if (p_ptr->prace == RACE_VAMPIRE || !p_ptr->s_info[SKILL_MIMIC].value) {
 				msg_print(Ind, "You cannot use mimic powers.");
@@ -4515,8 +4516,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			if (streq(token[1], "help")) {
-				msg_print(Ind, "Usage:     /arm [t]<mimic power slot (e..z)>");
-				msg_print(Ind, "           where 't' stands for 'in town only'.");
+				msg_print(Ind, "Usage:     /arm [q][t]<mimic power slot (e..z)>");
+				msg_print(Ind, "           where 'q' = fallback to melee, 't' = 'in town only'.");
 				msg_print(Ind, "Set up a monster spell for auto-retaliation by specifying the spell slot letter.");
 				msg_print(Ind, "starting with e) up to 'z)', or '-' to disable. Optional prefix: 't'.");
 				msg_print(Ind, "Example:   /arm e        sets the first mimic power to auto-retaliate.");
@@ -4531,6 +4532,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
+			/* GWoP gives powers e)-z) exactly, have to check if this is a power or a real prefix */
+			if (tolower(*p) == 'q' && *(p + 1)) { //accept Q as in @Q too
+				fallback = TRUE;
+				p++;
+			}
  #if 0
 			/* GWoP gives powers e)-z) exactly, have to check if this is a power or a real prefix */
 			if (*p == 's' && *(p + 1)) {
@@ -4549,14 +4555,16 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			p_ptr->autoret_mu = (town ? 0x4000 : 0x0000) | (*p - 'a' + 1);
-			//msg_format(Ind, "Mimic power '%c)' is now set for auto-retaliation.", *p);
+			if (fallback) p_ptr->autoret_mu |= 0x1000; // 1-bit FLAG
+			//if (nosleep) p_ptr->autoret_mu |= 0x2000; // 1-bit FLAG
+			p_ptr->autoret_mu = (town ? 0x4000 : 0x0000) | (*p - 'a' + 1); // 1-bit FLAG + actual power value (1-26)
 			show_autoret(Ind, 0x2, TRUE);
 
 			return;
 		} else if (prefix(messagelc, "/autoretr") || prefix(messagelc, "/arr")) {
 			char *p = token[1];
-			bool town = FALSE, nosleep = FALSE;
+			//bool nosleep = FALSE;
+			bool town = FALSE, fallback = FALSE;
 			byte r1, r2, rm, rt;
 
 			/* Runespell hardcodes are bad, but easy... - Kurzel
@@ -4584,8 +4592,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 
 			if (streq(token[1], "help")) {
-				msg_print(Ind, "Usage:     /arr [t]<a-f><a-f><a-h><a-f>");
-				msg_print(Ind, "           where 't' stands for 'in town only'.");
+				msg_print(Ind, "Usage:     /arr [q][t]<a-f><a-f><a-h><a-f>");
+				msg_print(Ind, "           where 'q' = fallback to melee, 't' = 'in town only'.");
 				msg_print(Ind, "Specify both runes, then mode and type, or just '-' to disable.");
 				msg_print(Ind, "Optional prefixe before the rune spell sequence: 't'.");
 				msg_print(Ind, "Example:   /arr aeda     auto-retaliate with a moderate fire bolt.");
@@ -4600,6 +4608,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
+			if (tolower(*p) == 'q') { //accept Q as in @Q too
+				fallback = TRUE;
+				p++;
+			}
  #if 0
 			if (*p == 's') {
 				nosleep = TRUE;
@@ -4642,7 +4654,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			} else rt = (*p - 'a');
 
 			p_ptr->autoret_mu = 0x8000; // 1-bit FLAG - 'runespell' marker and init all flags to 0
-			if (nosleep) p_ptr->autoret_mu |= 0x2000; // 1-bit FLAG
+			if (fallback) p_ptr->autoret_mu |= 0x1000; // 1-bit FLAG
+			//if (nosleep) p_ptr->autoret_mu |= 0x2000; // 1-bit FLAG
 			if (town) p_ptr->autoret_mu |= 0x4000; // 1-bit FLAG
 
 			p_ptr->autoret_mu |= r1; // 3-bit integer
@@ -4654,7 +4667,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		} else if (prefix(messagelc, "/autoret") || prefix(messagelc, "/ar")) { /* Set basic auto-retaliation for melee */
 			char *p = token[1];
-			bool town = FALSE, nosleep = FALSE;
+			//bool nosleep = FALSE;
+			bool town = FALSE;
 
 			if (!tk) {
 				show_autoret(Ind, 0x1, TRUE);
@@ -4686,11 +4700,17 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				p_ptr->autoret_base = 0x1;
 				return;
 			} else if (*p == '+') {
+ #if 0
 				msg_format(Ind, "Melee auto-retaliation is now enabled%s%s%s.",
 				    nosleep ? " against awake monsters" : "",
 				    nosleep && town ? " and only" : "",
 				    town ? " in town" : "");
-				p_ptr->autoret_base = 0x0 + (nosleep ? 0x2 : 0x0) + (town ? 0x4 : 0x0);
+				p_ptr->autoret_base = 0x0 + (nosleep ? 0x2 : 0x0) + (town ? 0x4 : 0x0); // 3-bits FLAGS
+ #else
+				msg_format(Ind, "Melee auto-retaliation is now enabled%s.",
+				    town ? " in town" : "");
+				p_ptr->autoret_base = 0x0 + (town ? 0x4 : 0x0);  // 3-bits FLAGS (with bit 1 (of 0..2) unused)
+ #endif
 				return;
 			} else msg_print(Ind, "Invalid command arguments specified. Try '/ar help'.");
 			return;

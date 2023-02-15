@@ -4477,9 +4477,12 @@ void show_autoret(int Ind, byte typ, bool verbose) {
 
 	/* Mimic power */
 	if (typ & 0x2) {
-		if (!(ar_mu & 0x8000) && (ar_mu & 0x3FFF)) { /* Not set to 'runecraft' instead, and power is set to != 0? */
-			if (ar_mu & 0x4000) msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation in towns.", (ar_mu & ~0x4000) - 1 + 'a');
-			else msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation.", ar_mu - 1 + 'a');
+		if (!(ar_mu & 0x8000) && (ar_mu & 0x0FFF)) { /* Not set to 'runecraft' instead, and power is set to != 0? */
+			msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation%s%s%s.",
+			    (ar_mu & 0x0FFF) - 1 + 'a',
+			    (ar_mu & 0x4000) ? " in town" : "",
+			    (ar_mu & 0x2000) ? " (no sleepers)" : "",
+			    (ar_mu & 0x1000) ? " with fallback" : "");
 		} else if (verbose) msg_print(Ind, "You have not set a mimic power for auto-retaliation. ('/arm help' for details.)");
 	}
 
@@ -4497,9 +4500,11 @@ void show_autoret(int Ind, byte typ, bool verbose) {
 				msg_format(Ind, "You have set an invalid runespell for auto-retaliation (%s).",
 				    string_exec_lua(0, format("return rspell_name(%d)", u)));
 			else
-				msg_format(Ind, "You have set %s for auto-retaliation%s.",
+				msg_format(Ind, "You have set %s for auto-retaliation%s%s%s.",
 				    string_exec_lua(0, format("return rspell_name(%d)", u)),
-				    (ar_mu & 0x4000) ? " in towns" : "");
+				    (ar_mu & 0x4000) ? " in town" : "",
+				    (ar_mu & 0x2000) ? " (no sleepers)" : "",
+				    (ar_mu & 0x1000) ? " + fallback" : "");
 		} else if (verbose) msg_print(Ind, "You have not set a runespell for auto-retaliation. ('/arr help' for details.)");
 	}
 }

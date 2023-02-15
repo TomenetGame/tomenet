@@ -3197,13 +3197,21 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 
 		/* Is it variant @Ot for town-only auto-retaliation? */
 		if ((ar & 0x4000) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return(FALSE);
-		ar &= ~0x4000;
+
+		//if (ar & 0x2000) nosleep = TRUE;
+
+		/* Fallback to melee if oom? */
+		if (ar & 0x1000) fallback = TRUE;
+
+		/* Extract mimic spell */
+		ar &= ~(0x1000 | 0x2000 | 0x4000);
 		choice = ar - 1l;
 
 		/* Check for valid attempt */
 		if (choice < 4) return(FALSE); /* 3 polymorph powers + immunity preference */
 		power = retaliate_mimic_power(Ind, choice - 1);
 		if (innate_powers[power].smana > p_ptr->cmp && fallback) return(p_ptr->fail_no_melee); /* not enough mana to even attempt */
+
 		/* Accept reasonable targets:
 		 * This prevents a player from getting stuck when facing a
 		 * monster inside a wall.
@@ -3233,10 +3241,17 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 
 		/* Is it variant @Ot for town-only auto-retaliation? */
 		if ((ar & 0x4000) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return(FALSE);
+
+		//if (ar & 0x2000) nosleep = TRUE;
+
+		/* Fallback to melee if oom? */
+		if (ar & 0x1000) fallback = TRUE;
+
+		/* Decompress runespell... - Kurzel */
+		ar &= ~(0x8000 | 0x4000 | 0x2000 | 0x1000);
+
 		/* Wall safety? */
 		if (!target_able(Ind, p_ptr->target_who)) return(FALSE);
-		/* Decompress runespell... - Kurzel */
-		ar &= ~(0x8000 | 0x4000);
 
 		u |= (1 << (ar & 0x0007));                // Rune 1 (3-bit) to byte
 		u |= ((1 << ((ar & 0x0038) >> 3)) <<  8); // Rune 2 (3-bit) to byte
