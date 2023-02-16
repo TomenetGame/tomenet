@@ -3189,6 +3189,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 		   in any case suppress OoM message (which would be displayed if do_cmd_mimic() gets called) */
 		cost = exec_lua(Ind, format("return get_mana(%d, %d)", Ind, spell));
 		if (cost > p_ptr->cmp) {
+		//todo: also check:	(if not castable while blind/conf) !p_ptr->blind && !no_lite(Ind) && !p_ptr->confused
 			if (!fallback || p_ptr->fail_no_melee) {
 #ifndef AUTORET_FAIL_FREE
 				p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
@@ -3266,6 +3267,7 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		/* Check if we're out of mana, to handle 'fallback' to melee  --
 		   in any case suppress OoM message (which would be displayed if do_cmd_mimic() gets called) */
 		if (innate_powers[power].smana > p_ptr->cmp) {
+		//todo: also check:	(if not castable while blind/conf) !p_ptr->blind && !no_lite(Ind) && !p_ptr->confused
 			if (!fallback || p_ptr->fail_no_melee) {
  #ifndef AUTORET_FAIL_FREE
 				p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
@@ -3316,6 +3318,7 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		/* Check if castable. Only valid reason to keep 'fallback' option is if we're out of mana (1) --
 		   in any case suppress OoM message (which would be displayed if cast_rune_spell() gets called) */
 		if (exec_lua(Ind, format("return rcraft_arr_test(%d, %d)", Ind, u)) == 1) {
+		//todo: also check:	(if not castable while blind/conf) !p_ptr->blind && !no_lite(Ind) && !p_ptr->confused
 			if (!fallback || p_ptr->fail_no_melee) {
  #ifndef AUTORET_FAIL_FREE
 				p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
