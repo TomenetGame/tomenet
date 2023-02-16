@@ -4439,7 +4439,7 @@ W:127:0:3:1
 A:127/0
 F:HIDE_TYPE
 
-# HOLE 516-520 (1st hole)
+# HOLE 517-520 (1st hole)
 ### Room for new objects added after 511 (Zangband 2.1.0): 512-575
 
 
