@@ -3193,7 +3193,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 #ifndef AUTORET_FAIL_FREE
 				p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
 #endif
-				return(TRUE); //just out of mana (or other problem), but no fallback
+				return(TRUE); //just out of mana (or other valid problem), but no fallback
 			}
 			return(FALSE); //fallback to melee
 		}
@@ -3260,7 +3260,7 @@ static bool retaliate_cmd(int Ind, bool fallback) {
  #ifndef AUTORET_FAIL_FREE
 				p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
  #endif
-				return(TRUE); //just out of mana, but no fallback
+				return(TRUE); //just out of mana (or other valid problem), but no fallback
 			}
 			return(FALSE); //fallback to melee
 		}
@@ -3303,15 +3303,14 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		u |= ((1 << ((ar & 0x01C0) >> 6)) << 16); // Mode   (3-bit) to byte
 		u |= ((1 << ((ar & 0x0E00) >> 9)) << 24); // Type   (3-bit) to byte
 
-		/* Check if castable. Only valid reason to keep 'fallback' option is if we're out of mana (1) --
+		/* Check if castable. Any problem is a valid reason to keep 'fallback' option now, not just if we're out of mana (1) --
 		   in any case suppress OoM message (which would be displayed if cast_rune_spell() gets called) */
-		if (exec_lua(Ind, format("return rcraft_arr_test(%d, %d)", Ind, u)) == 1) {
-		//todo: also check:	(if not castable while blind/conf) !p_ptr->blind && !no_lite(Ind) && !p_ptr->confused
+		if (exec_lua(Ind, format("return rcraft_arr_test(%d, %d)", Ind, u))) {
 			if (!fallback || p_ptr->fail_no_melee) {
  #ifndef AUTORET_FAIL_FREE
 				p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
  #endif
-				return(TRUE); //just out of mana, but no fallback
+				return(TRUE); //just out of mana (or other valid problem), but no fallback
 			}
 			return(FALSE); //fallback to melee
 		}
