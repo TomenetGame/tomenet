@@ -3752,6 +3752,9 @@ struct player_type {
 	u32b monsters_killed; //count everything, including clones
 	u32b traps_disarmed, traps_hit, doors_opened, doors_closed; //include house doors ^^
 	u32b used_recall_vert, used_recall_horiz, staircases_taken, gates_taken;
+	u16b revived_pc, killed_pc;
+	u32b buffed_pc;
+	u64b total_damage, total_heal;
 #endif
 };
 
