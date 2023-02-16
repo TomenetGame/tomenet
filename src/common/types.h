@@ -812,6 +812,7 @@ struct object_type {
 	char f_reward;			/* Received as event(>0)/quest(<0) reward? */
 #if 0 /* for future tracking */
 	u32b slain_monsters, slain_uniques, slain_players, times_activated, time_equipped, time_carried; //time in seconds is enough for ~130+ years
+	u32b slain_orcs, slain_trolls, slain_giants, slain_animals, slain_dragons, slain_demons, slain_undead, slain_evil;
 	byte slain_bosses, slain_nazgul, slain_superuniques, slain_sauron, slain_morgoth, slain_zuaon; //these don't respawn, so byte is fine
 	u64b done_damage, done_healing;
 	u16b got_damaged, got_repaired, got_enchanted;
