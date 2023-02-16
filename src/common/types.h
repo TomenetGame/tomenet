@@ -3747,6 +3747,8 @@ struct player_type {
 	u16b close_to_death; //was a 0 or 1 ^^
 	byte killed_sauron_plv, killed_morgoth_plv;
 	u32b chat_lines, slash_lines; //chat lines/slash commands written
+	u32b walls_tunneled, trees_hacked, treasures_mined;
+	u16b forms_learned; //mimicry, re-count lost forms (poly-ring creation) too I guess
 #endif
 };
 
