@@ -810,6 +810,12 @@ struct object_type {
 	u16b f_ridx, f_reidx;		/* Found from this [ego] monster */
 	s16b f_special;			/* Found from digging (1000+feat), or in a chest (sval), bought from a store(-idx), player store(-1000).. */
 	char f_reward;			/* Received as event(>0)/quest(<0) reward? */
+#if 0 /* for future tracking */
+	u32b slain_monsters, slain_uniques, slain_players, times_activated, time_equipped, time_carried; //time in seconds is enough for ~130+ years
+	byte slain_bosses, slain_nazgul, slain_superuniques, slain_sauron, slain_morgoth, slain_zuaon; //these don't respawn, so byte is fine
+	u64b done_damage, done_healing;
+	u16b got_damaged, got_repaired, got_enchanted;
+#endif
 };
 
 /* Estate restoration compatibility/conversion -- 2022-10-07 */
