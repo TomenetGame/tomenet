@@ -2963,7 +2963,7 @@ static int retaliate_mimic_power(int Ind, int choice) {
 static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
-	int cost, choice = 0, spell = 0;
+	int res, choice = 0, spell = 0;
 
 	if (item < 0) return(FALSE);
 	o_ptr = &p_ptr->inventory[item];
@@ -3185,33 +3185,21 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 		/* Book doesn't contain a spell in the selected slot */
 		if (spell == -1) break;
 
-		/* Check if we're out of mana, to handle 'fallback' to melee  --
+		/* Check if we're out of mana (or other problem), to handle 'fallback' to melee  --
 		   in any case suppress OoM message (which would be displayed if do_cmd_mimic() gets called) */
-		cost = exec_lua(Ind, format("return get_mana(%d, %d)", Ind, spell));
-		if (cost > p_ptr->cmp) {
-		//todo: also check:	(if not castable while blind/conf) !p_ptr->blind && !no_lite(Ind) && !p_ptr->confused
+		res = exec_lua(Ind, format("return test_school_spell(%d, %d)", Ind, spell));
+		if (res) {
 			if (!fallback || p_ptr->fail_no_melee) {
 #ifndef AUTORET_FAIL_FREE
 				p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
 #endif
-				return(TRUE); //just out of mana, but no fallback
+				return(TRUE); //just out of mana (or other problem), but no fallback
 			}
 			return(FALSE); //fallback to melee
 		}
-
-		/* Check that it's ok... more checks needed here? */
-		/* Limit amount of mana used? */
-#if 0
-		if (!p_ptr->blind && !no_lite(Ind) && !p_ptr->confused && cost <= p_ptr->cmp &&
-		    exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell))) {
-			cast_school_spell(Ind, item, spell, 5, -1, 0);
-			return(TRUE);
-		}
-		break;
-#else /* just let cast_school_spell() handle all failures, because it also deducts correct energy for each result case */
+		/* just let cast_school_spell() handle all failures, because it also deducts correct energy for each result case */
 		cast_school_spell(Ind, item, spell, 5, -1, 0);
 		return(TRUE);
-#endif
 	}
 
 	/* If all fails, then melee */

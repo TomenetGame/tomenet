@@ -836,6 +836,38 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 	return 1
 end
 
+
+function test_school_spell(i, s)
+	-- client-side (0) or server-side (>=1) ?
+	if i ~= 0 then
+		player = players(i)
+	end
+
+	local use = FALSE
+
+	-- Require lite
+	if (check_affect(s, "blind")) and ((player.blind > 0) or (no_lite(Ind) == TRUE)) then
+		return 1
+	end
+
+	-- Not when confused
+	if (check_affect(s, "confusion")) and (player.confused > 0) then
+		return 2
+	end
+
+	-- Enough mana
+	if (get_mana(i, s) > get_power(i, s)) then
+		return 3
+	end
+
+	-- Level requirements met?
+	if (get_level(i, s, 50, -50) < 1) then
+		return 4
+	end
+
+	return 0
+end
+
 --WARNING: Don't call this via exec_lua(0,..) from within a function that uses 'player' LUA variable!
 --There is also a safe C version of this function in object1.c.
 function get_spellbook_name_colour(i)
