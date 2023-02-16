@@ -3754,7 +3754,7 @@ struct player_type {
 	u32b used_recall_vert, used_recall_horiz, staircases_taken, gates_taken;
 	u16b revived_pc, killed_pc;
 	u32b buffed_pc;
-	u64b total_damage, total_heal;
+	u64b total_damage_melee, total_damage_ranged, total_damage_devices, total_damage_magic, total_heal_consumables, total_heal_devices, total_heal_magic;
 #endif
 };
 
