@@ -2952,7 +2952,7 @@ static int retaliate_mimic_power(int Ind, int choice) {
 		}
 	}
 
-	return(0);
+	return(-1); //power not available
 }
 
 /*
@@ -3000,6 +3000,8 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 				} else {
 					int power = retaliate_mimic_power(Ind, choice - 1); /* immunity preference */
 					bool dir = FALSE;
+
+					if (power == -1) return(!fallback || p_ptr->fail_no_melee); //tried to use unavailable power
 
 					if (innate_powers[power].smana > p_ptr->cmp && fallback) return(p_ptr->fail_no_melee);
  #if 0
@@ -3249,13 +3251,16 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		ar &= ~(0x1000 | 0x2000 | 0x4000);
 		choice = ar - 1l;
 
-		/* Check for valid attempt */
+		/* Check for generally valid mimic power */
 		if (choice < 4) return(FALSE); /* 3 polymorph powers + immunity preference */
+
+		/* Check if we can use the selected mimic power under the current circumstances */
 		power = retaliate_mimic_power(Ind, choice - 1);
-		/* Check if we're out of mana, to handle 'fallback' to melee  --
-		   in any case suppress OoM message (which would be displayed if do_cmd_mimic() gets called) */
-		if (innate_powers[power].smana > p_ptr->cmp) {
-		//todo: also check:	(if not castable while blind/conf) !p_ptr->blind && !no_lite(Ind) && !p_ptr->confused
+		/* Check if castable. Any problem is a valid reason to keep 'fallback' option now, not just if we're out of mana (1) --
+		   in any case suppress OoM message (which would be displayed if do_cmd_mimic()->do_mimic_power() gets called) */
+		if (power == -1 ||
+		    p_ptr->confused ||
+		    innate_powers[power].smana > p_ptr->cmp) {
 			if (!fallback || p_ptr->fail_no_melee) {
  #ifndef AUTORET_FAIL_FREE
 				p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
