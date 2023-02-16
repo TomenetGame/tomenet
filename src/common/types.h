@@ -3750,6 +3750,8 @@ struct player_type {
 	u32b walls_tunneled, trees_hacked, treasures_mined;
 	u16b forms_learned; //mimicry, re-count lost forms (poly-ring creation) too I guess
 	u32b monsters_killed; //count everything, including clones
+	u32b traps_disarmed, traps_hit, doors_opened, doors_closed; //include house doors ^^
+	u32b used_recall_vert, used_recall_horiz, staircases_taken, gates_taken;
 #endif
 };
 
