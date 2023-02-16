@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 15. February 2023 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 16. February 2023 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.0c - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -475,7 +475,7 @@ for certain colour blindness types (deuteranopia, protanopia, tritanopia) is to
 go to the  = C  options screen where you can set all of this.
 Don't forget to press 's' to save your changes.
 
-You probably want to turn off the option 'palette_animation' in = 3 if you use
+You probably want to turn off the option 'palette_animation' in = 1 if you use
 any colourblind mode or your own customized colours, because palette animation
 will override colours with interpolations of the 'normal' palette scheme.
 (palette_animation only has effect on colours while you are outdoors though.)
@@ -641,7 +641,7 @@ x       S       swap an item. This is basically like both "wear/wield" and
                 still use 'x', eg '@x0' when the macro is 'S0'!
 
 q       q       quaff a potion.
-                If you enable the 'keep_bottle' option (it's in =7 at the time
+                If you enable the 'keep_bottle' option (it's in =8 at the time
                 of writing this) your character will retain an empty bottle
                 which you can fill at a fountain.
 
@@ -1434,7 +1434,7 @@ They all start with a slash '/' hence they're called slash commands:
 /dun        Displays the name of the dungeon you're currently in.
 
 /edmt       This toggles the client option 'easy_disarm_montraps' manually.
-            (Note that this will not change the option in =7, if you enter that
+            (Note that this will not change the option in =8, if you enter that
             menu, the option state will be reset to what it is in there.)
             This will toggle the characters behaviour when walking into a
             monster trap: Whether it will automatically attempt to disarm it or
@@ -5245,7 +5245,7 @@ Example:
                                message is light blue (standard colour).
 
 If you cannot see coloured messages in your secondary Tomenet windows other
-than the big main window, check your client option settings by typing  =1
+than the big main window, check your client option settings by typing  =3
 and looking for 'Flicker messages in recall' (recall_flicker). Set it to
 'yes'.
 
@@ -9951,7 +9951,7 @@ Arena Monster Challenge (no losses or gains, for testing your abilities)
     NOTE: PvP mode characters are exempt from safety and can die for real!
 
 Dungeon Keeper (everyone can win, 1+ participants)
-    (You should enable 'easy_open' option in  = 6  for this event, which is
+    (You should enable 'easy_open' option in  = 8  for this event, which is
     enabled by default, and lets you open doors simply be moving into them.)
 
     Characters who want to participate must not be of higher level than 14.
@@ -13354,7 +13354,7 @@ name you equip the greater the luck bonus will be.
 
 If your client is newer than 4.8.0, it will display the indices of equipment
 slots providing set luck bonus in colours (see table below). This behaviour
-can be toggled with the 'equip_set_colour' option in =3.
+can be toggled with the 'equip_set_colour' option in =4.
 
 The randart rings of power dropped by Nazgul are exempt from this and won't
 give any kind of bonus nor contribute to one.
@@ -15410,7 +15410,7 @@ These depend on your race and class and the stat assignments you did during
 character creation process.
 
 Stats are displayed as values from 3 (minimum) to 18.
-(Note: This can be changed in TomeNET options, press key =1 and toggle
+(Note: This can be changed in TomeNET options, press key =2 and toggle
 'linear_stats' option. It is recommended to keep the traditional way though,
 which represents the D&D system of throwing three 6-sided dice to determine a
 stat).
@@ -17062,7 +17062,7 @@ Crafting ingredients from raw materials:
 - Reactive metal powder + acid or vitriol = caustic salt.
 - To obtain water or salt water you can just fill up an empty bottle with
   sea water or freshwater at the appropriate terrain. To obtain empty bottles
-  you can make use of the "/empty" command or the "keep_bottle" option in =7 .
+  you can make use of the "/empty" command or the "keep_bottle" option in =8 .
 
 Crafting actual explosive charges:
 ----------------------------------
