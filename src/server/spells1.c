@@ -2066,6 +2066,8 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	//if (strcmp(hit_from, "hazardous environment")) break_cloaking(Ind, 0);
 
 destined_defeat:
+	/* Catch death? */
+	if (p_ptr->admin_immort && p_ptr->chp < 0) p_ptr->chp = 0;
 
 	/* Update health bars */
 	update_health(0 - Ind);
@@ -2265,6 +2267,9 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	/* Hurt the player */
 	p_ptr->csane -= damage;
 
+	/* Catch death? */
+	if (p_ptr->admin_immort && p_ptr->csane < 0) p_ptr->csane = 0;
+
 	/* Display the hitpoints */
 	p_ptr->redraw |= (PR_SANITY);
 
@@ -2334,7 +2339,7 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 
 /* Decrease player's exp. This is another copy of the function above.
  * if mode is 'TRUE', it's permanent.
- * if fatal, player dies if runs out of exp.
+ * if fatal, player dies if runs out of exp. (atm: ghost fading, ghostly power usage, black breath)
  *
  * if not permanent nor fatal, use lose_exp instead.
  * - Jir -
@@ -2405,21 +2410,20 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool
 		   tries to cheeze events requiring 0 exp this way ;) */
 		if (p_ptr->max_exp < 1) p_ptr->max_exp = 1;
 	}
+	/* Catch death? */
+	if (p_ptr->admin_immort && p_ptr->exp < 0) p_ptr->exp = 0;
 
-	check_experience(Ind);
+	/* Hack: We die at <0 xp, not at 0 */
+	if (fatal && p_ptr->exp >= 0) fatal = FALSE;
+
+	check_experience(Ind); /* Actually applies lower limit of 0 to both exp and max_exp, in case it was negative */
 
 	/* Dead player */
-	if (fatal && p_ptr->exp == 0) {
-		/* Hack -- Note death */
-		/*msg_print(Ind, "\377RYou die.");
-		msg_print(Ind, NULL); - what's so 'hacky' about this?
-		It's in xtra2.c anyways, so gone here now. C. Blue */
-
+	if (fatal) {
 		/* Note cause of death */
 		/* To preserve the players original (pre-ghost) cause
 		   of death, use died_from_list.  To preserve the original
 		   depth, use died_from_depth. */
-
 		(void)strcpy(p_ptr->died_from, hit_from);
 		p_ptr->died_from_ridx = IS_MONSTER(Ind_attacker) ? m_list[-Ind_attacker].r_idx : 0;
 		if (!p_ptr->ghost) {
@@ -2428,9 +2432,6 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool
 			/* Hack to remember total winning */
 			if (p_ptr->total_winner) strcat(p_ptr->died_from_list, "\001");
 		}
-
-		/* No longer a winner */
-		//p_ptr->total_winner = FALSE;
 
 		/* Note death */
 		p_ptr->death = TRUE;

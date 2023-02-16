@@ -3797,6 +3797,7 @@
 #define SV_AMULET_SSHARD		40	/* Spirit Shard (artifact) */
 #define SV_AMULET_INVULNERABILITY	41	/* for admins */
 #define SV_AMULET_HIGHLANDS2		42	/* for highlander games, with ESP */
+#define SV_AMULET_IMMORTALITY		43	/* for admins */
 
 /* The sval codes for TV_RING */
 #define SV_RING_WOE			0

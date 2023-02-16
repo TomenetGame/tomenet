@@ -2937,6 +2937,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				switch (sval) {
 				case SV_AMULET_INVULNERABILITY:
 				case SV_AMULET_INVINCIBILITY:
+				case SV_AMULET_IMMORTALITY:
 				case SV_AMULET_HIGHLANDS:
 				case SV_AMULET_HIGHLANDS2:
 					return;

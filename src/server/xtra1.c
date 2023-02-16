@@ -843,7 +843,7 @@ static void health_redraw(int Ind) {
 			if (q_ptr->paralyzed) attr = TERM_BLUE;
 
 			/* Administrative invulnerability? */
-			if (q_ptr->admin_invinc || q_ptr->admin_invuln) attr = TERM_L_UMBER;
+			if (q_ptr->admin_immort || q_ptr->admin_invinc || q_ptr->admin_invuln) attr = TERM_L_UMBER;
 
 			/* Convert percent into "health" */
 			len = (pct < 10) ? 1 : (pct < 90) ? (pct / 10 + 1) : 10;
@@ -1104,14 +1104,17 @@ static void calc_sanity(int Ind) {
 	bonus = ((int)(adj_wis_msane[p_ptr->stat_ind[A_WIS]]) - 128);
 
 	/* Hack -- assume 5 sanity points per level. */
-	msane = 5*(lev+1) + (bonus * lev / 2);
+	msane = 5 * (lev + 1) + (bonus * lev / 2);
 
 	if (msane < lev + 1) msane = lev + 1;
 
 	if (p_ptr->msane != msane) {
-
 		/* Sanity carries over between levels. */
 		p_ptr->csane += (msane - p_ptr->msane);
+
+		/* Catch death? */
+		if (p_ptr->admin_immort && p_ptr->csane < 0) p_ptr->csane = 0;
+
 		/* If sanity just dropped to 0 or lower, die! */
 		if (p_ptr->csane < 0) {
 			if (!p_ptr->safe_sane) {
@@ -1127,7 +1130,7 @@ static void calc_sanity(int Ind) {
 					if (p_ptr->total_winner) strcat(p_ptr->died_from_list, "\001");
 				}
 				/* No longer a winner */
-//				p_ptr->total_winner = FALSE;
+				//p_ptr->total_winner = FALSE;
 				/* Note death */
 				p_ptr->death = TRUE;
 				p_ptr->deathblow = 0;
@@ -3308,7 +3311,7 @@ void calc_boni(int Ind) {
 #endif
 
 	/* Special admin items */
-	p_ptr->admin_invuln = p_ptr->admin_invinc = FALSE;
+	p_ptr->admin_immort = p_ptr->admin_invuln = p_ptr->admin_invinc = FALSE;
 
 	p_ptr->no_heal = FALSE;
 	p_ptr->no_hp_regen = FALSE;
@@ -3870,6 +3873,9 @@ void calc_boni(int Ind) {
 				/* fall through */
 			case SV_AMULET_INVULNERABILITY:
 				p_ptr->admin_invuln = TRUE;
+				/* fall through */
+			case SV_AMULET_IMMORTALITY:
+				p_ptr->admin_immort = TRUE;
 			}
 		}
 

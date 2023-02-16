@@ -4432,6 +4432,12 @@ A:15/30:35/65
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW | IGNORE_WATER
 
+N:516:*Immortality*
+G:":n
+I:40:43:0
+W:127:0:3:1
+A:127/0
+F:HIDE_TYPE
 
 # HOLE 516-520 (1st hole)
 ### Room for new objects added after 511 (Zangband 2.1.0): 512-575
@@ -7176,7 +7182,7 @@ F:SHOW_MODS | MUST2H | SLAY_GIANT | BRAND_ELEC
 F:IGNORE_FIRE | IGNORE_ACID
 
 N:920:*Invincibility*
-G:":d
+G:":l
 I:40:37:0
 W:127:0:3:1
 A:127/0
@@ -7666,14 +7672,11 @@ F:IGNORE_WATER
 #974 is Astral Grimoire
 
 N:975:*Invulnerability*
-G:":d
-I:40:41:3
+G:":V
+I:40:41:0
 W:127:0:3:1
 A:127/0
 F:HIDE_TYPE
-# | ESP_ALL
-# | SPEED | STR | DEX | CON | INT | WIS | CHR
-# | LIFE
 
 # 'Reward Tokens' for Highlander Tournament or other events. - C. Blue
 # Can be traded in town store or so, for items, temporary blessings or whatever.

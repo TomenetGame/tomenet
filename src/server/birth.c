@@ -1657,6 +1657,11 @@ void admin_outfit(int Ind, int realm) {
 	o_ptr->number = 1;
 	do_admin_outfit();
 
+	invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_IMMORTALITY));
+	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, RESF_NONE);
+	o_ptr->number = 1;
+	do_admin_outfit();
+
 	invcopy(o_ptr, lookup_kind(TV_CLOAK, SV_SHADOW_CLOAK));
 	o_ptr->name1 = ART_CLOAK_DM;
 	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, RESF_NONE);

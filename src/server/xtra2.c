@@ -5509,12 +5509,9 @@ return;
 void lose_exp(int Ind, s32b amount) {
 	player_type *p_ptr = Players[Ind];
 
-	/* Amulet of Immortality */
-	if (p_ptr->admin_invuln) return;
-
 	if (safe_area(Ind)) return;
 
-	/* Amulet of Immortality */
+	/* Amulet of Invulnerability */
 	if (p_ptr->admin_invuln) return;
 
 	/* Paranoia */
@@ -5544,7 +5541,7 @@ void lose_exp(int Ind, s32b amount) {
 #endif
 
 	/* Never drop below zero experience */
-	if (amount > p_ptr->exp) amount = p_ptr->exp - 1;
+	if (amount > p_ptr->exp) amount = p_ptr->exp;
 	if (!amount) return;
 
 #if 1
