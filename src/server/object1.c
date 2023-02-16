@@ -140,6 +140,7 @@ static cptr amulet_adj[MAX_AMULETS] = {
 	//grom: well, make it half-hued? or just dark! (h/D/s)
 	//spirit shard: white+silver (use q or c, glass or silver)
 	//-> replace by Z,e,m,(h),c/q
+
 	"Amber", "Driftwood", "Coral", "Agate", "Ivory",
 	"Obsidian", "Bone", "Brass", "Bronze", "Pewter",
 	"Tortoise Shell", "Golden", "Azure", "Crystal", "Silver",
@@ -150,14 +151,13 @@ static cptr amulet_adj[MAX_AMULETS] = {
 	"Malachite", "Adamantite", "Mother-of-pearl", "Runed", "Sandalwood",
 	"Emerald", "Aquamarine", "Orichalcum", "Shining", "Ebony",
 
-	"Meerschaum", "Jade", "Red Opal",
-	//"Glimmer-Stone",
+	"Meerschaum", "Jade", "Red Opal", "Glimmer-Stone",
 };
 /* Specialty for flavor_hacks(): Don't use unfitting materials for artifacts */
 static bool amulet_cheap[MAX_AMULETS] = {
 	0, 1, 1, 0, 0,   0, 1, 0, 0, 1,   1, 0, 0, 0, 0,   0, 0, 0, 0, 1,
 	1, 1, 1, 0, 1,   1, 0, 0, 0, 0,   1, 0, 0, 0, 1,   0, 0, 0, 0, 1,
-	0, 0, 0,
+	0, 0, 0, 1,
 };
 //todo: make money pile colours (gems) consistent with these
 #if 1 /*more animated TERMs*/
@@ -172,8 +172,7 @@ static byte amulet_col[MAX_AMULETS] = {
 	TERM_GREEN, TERM_VIOLET, TERM_L_WHITE, TERM_UMBER, TERM_L_WHITE,
 	TERM_GREEN, TERM_L_BLUE, TERM_ELEC, TERM_MULTI, TERM_L_DARK,
 
-	TERM_L_WHITE, TERM_L_GREEN, TERM_EMBER
-	//TERM_LITE/TERM_VIOLET/TERM_L_BLUE
+	TERM_L_WHITE, TERM_L_GREEN, TERM_EMBER, TERM_LITE
 };
 #else
 static byte amulet_col[MAX_AMULETS] = {
@@ -187,7 +186,7 @@ static byte amulet_col[MAX_AMULETS] = {
 	TERM_GREEN, TERM_VIOLET, TERM_L_WHITE, TERM_UMBER, TERM_L_WHITE,
 	TERM_GREEN, TERM_L_BLUE, TERM_ELEC, TERM_LITE, TERM_L_DARK,
 
-	TERM_L_WHITE, TERM_L_GREEN, TERM_RED
+	TERM_L_WHITE, TERM_L_GREEN, TERM_RED, TERM_YELLOW
 };
 #endif
 

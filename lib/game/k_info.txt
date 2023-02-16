@@ -4438,6 +4438,7 @@ I:40:43:0
 W:127:0:3:1
 A:127/0
 F:HIDE_TYPE
+D:Prevents hit points, sanity or experience from dropping below zero.
 
 # HOLE 517-520 (1st hole)
 ### Room for new objects added after 511 (Zangband 2.1.0): 512-575
@@ -7677,6 +7678,7 @@ I:40:41:0
 W:127:0:3:1
 A:127/0
 F:HIDE_TYPE
+D:Prevents any damage to hit points, experience or sanity.
 
 # 'Reward Tokens' for Highlander Tournament or other events. - C. Blue
 # Can be traded in town store or so, for items, temporary blessings or whatever.
