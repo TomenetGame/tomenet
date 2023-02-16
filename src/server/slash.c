@@ -4406,6 +4406,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		} else if (prefix(messagelc, "/quit") || prefix(messagelc, "/exit") || prefix(messagelc, "/leave")) {
 			do_quit(Players[Ind]->conn, 0);
 			return;
+		} else if (prefix(messagelc, "/suicide") || prefix(messagelc, "/sui") ||
+		    prefix(messagelc, "/retire") || prefix(messagelc, "/ret")) {
+			// same for p_ptr->rogue_like_commands true+false: Q
+			msg_print(Ind, "\377yPlease press \377RSHIFT+Q\377y to commit suicide or retire.");
+			return;
 #ifdef ENABLE_DRACONIAN_TRAITS
 		} else if (prefix(messagelc, "/trait")) {
 			if (!(p_ptr->prace == RACE_MAIA && (p_ptr->mode & MODE_PVP) && MIN_PVP_LEVEL >= 20)
