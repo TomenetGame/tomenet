@@ -3749,6 +3749,7 @@ struct player_type {
 	u32b chat_lines, slash_lines; //chat lines/slash commands written
 	u32b walls_tunneled, trees_hacked, treasures_mined;
 	u16b forms_learned; //mimicry, re-count lost forms (poly-ring creation) too I guess
+	u32b monsters_killed; //count everything, including clones
 #endif
 };
 
