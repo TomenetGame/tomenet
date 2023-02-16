@@ -3734,6 +3734,20 @@ struct player_type {
 
 	char multi_chat_line[MSG_LEN]; //ENABLE_MULTILINE_CENSOR
 	boni_col csheet_boni[16];
+
+#if 0 /* For the future */
+	/* Track some career stats ^^ */
+	u32b items_bought_npc, items_sold_npc, items_stolen; //npc stores
+	u32b items_bought_pc, items_sold_pc; //pstores
+	//u32b items_received, items_given; //direct trade via dropping: owned items transferred, basically
+	u32b items_looted, items_destroyed; //l00ting
+	u64b gold_spent_npc, gold_earned_npc; //npc stores
+	u64b gold_spent_pc, gold_earned_pc; //pstores
+	u64b gold_found; //l00ting
+	u16b close_to_death; //was a 0 or 1 ^^
+	byte killed_sauron_plv, killed_morgoth_plv;
+	u32b chat_lines, slash_lines; //chat lines/slash commands written
+#endif
 };
 
 /* For Monk martial arts */
