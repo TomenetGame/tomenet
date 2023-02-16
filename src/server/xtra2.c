@@ -1557,7 +1557,7 @@ bool set_blind(int Ind, int v) { /* bad status effect */
 	if (p_ptr->martyr && v) return(FALSE);
 
 	/* the admin wizard can not be blinded */
-	if (p_ptr->admin_wiz) return(1);
+	if (p_ptr->admin_wiz && v > p_ptr->blind) return(1);
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
