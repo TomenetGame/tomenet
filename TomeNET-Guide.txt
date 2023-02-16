@@ -1224,8 +1224,8 @@ They all start with a slash '/' hence they're called slash commands:
               Enter            /arm help          for this information in-game.
               Usage:           /arm [q][t]<power>
             or to disable:   /arm -
-            'q': fallback to melee in case you're out of mana
-            't': town-only? (optional)
+            'q': fallback to melee if you cannot cast right now.
+            't': town-only? (optional).
             Example:         /arm tg
               This will auto-retaliate with mimic power 'g)', but only while in
               town.
@@ -1243,8 +1243,8 @@ They all start with a slash '/' hence they're called slash commands:
               Enter            /arr help          for this info in-game.
               Usage:           /arr [q][t]<a-f><a-f><a-h><a-f>
             or to disable:   /arr -
-            'q': fallback to melee in case you're out of mana
-            't': town-only? (optional)
+            'q': fallback to melee if you cannot cast right now.
+            't': town-only? (optional).
             and then mandatory: rune, rune, mode, type
             Example:         /arr saabc
               Casts a lengthened ball of light, but only against a target that
@@ -7315,8 +7315,9 @@ the 'O', examples: '@Ot', '@Otb'.
 
 Alternative to @O inscriptions, can be used on magic devices and for spells:
      @Q         If you want to fall back to melee-autoretaliation in case you
-                are out of mana (or out of charges/energy on magic devices),
-                use a 'Q' symbol instead of the 'O'. Examples: '@Qt', '@Qtb'.
+                cannot cast right now (or out of charges/energy on magic
+                devices), use a 'Q' symbol instead of the 'O'.
+                Examples: '@Qt', '@Qtb'.
                 This is useful for classes that may use attack spells yet can
                 perform decently in close combat, such as paladin or
                 mindcrafter.
@@ -7333,14 +7334,14 @@ Mimic powers:
     /arm [Q][t]<power>   or   /arm -
                 Auto-retaliate with a mimic power, see (0.2b) for details.
                 Optionally use 't' for 'in town only',
-                and/or 'Q' for 'fallback to melee if out of mana'.
+                and/or 'Q' for 'fallback to melee if cannot cast'.
     /arm help   Shows details for the /arm command.
 
 Runes:
     /arr [Q][t]<a-f><a-f><a-h><a-f>   or   /arr -
                 Auto-retaliate with a runespell, See (0.2b) for details.
                 Optionally use 't' for 'in town only',
-                and/or 'Q' for 'fallback to melee if out of mana'.
+                and/or 'Q' for 'fallback to melee if cannot cast'.
                 The four mandatory parameters: rune, rune, mode, type.
     /arr help   Shows details for the /arr command.
 
