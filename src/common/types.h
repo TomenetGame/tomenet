@@ -3744,7 +3744,8 @@ struct player_type {
 
 #if 0 /* For the future */
 	/* Track some career stats ^^ */
-	u32b items_bought_npc, items_sold_npc, items_stolen; //npc stores
+	u32b items_bought_npc, items_sold_npc, items_stolen, items_ordered; //npc stores
+	u16b items_mailed;
 	u32b items_bought_pc, items_sold_pc; //pstores
 	//u32b items_received, items_given; //direct trade via dropping: owned items transferred, basically
 	u32b items_looted, items_destroyed; //l00ting
