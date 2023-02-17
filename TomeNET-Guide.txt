@@ -79,7 +79,7 @@ Contents
     (3.4c)  Item trading rules and exceptions
     (3.4d)  Money
     (3.5)   Preparing the first time for fighting enemies
-    (3.6)   Creating basic macros & inscribing items, predefined macros (READ!)
+    (3.6)   Creating basic macros & inscribing items, predefined macros
     (3.7)   Creating macros for ranged attacks & abilities (spells)
     (3.7a)  Ability codes [contained within (3.7)]
     (3.7b)  Quick'n'dirty macros
@@ -133,7 +133,7 @@ Contents
     (5.4)   Application of attack-affecting item mods
     (5.5)   Weight of weapons and armour, weight limits
     (5.6)   Resistances & caps, immunities, susceptibilities
-    (5.7)   Qualitative classification of items, identifying & selling items
+    (5.7)   Qualitative classification, identifying & selling items
     (5.7a)  Types of identification
     (5.7b)  The EASY_KNOW flag
     (5.8)   Special abilities of items
@@ -158,7 +158,7 @@ Contents
     (5.20)  Wraithform
 (6) Monster details
     (6.1)  Monsters
-    (6.1a) Normal monsters, unique monsters, boss monsters and how they spawn
+    (6.1a) Normal, boss & unique monsters and how they spawn
     (6.2)  Monster flags
     (6.3)  Loot tables, treasure classes
     (6.3a) Special item drops of monsters
@@ -180,7 +180,7 @@ Contents
     (7.6)   Sanity (or insanity)
     (7.7)   Mimicry details
     (7.7a)  Polymorph rings
-    (7.7b)  Useful low-level humanoid forms for weapon-based mimicry and more
+    (7.7b)  Useful low-level forms for weapon-based mimicry and more
     (7.7c)  Druid forms
     (7.8)   Spells and prayers
     (7.8a)  Mimic powers
@@ -8580,7 +8580,8 @@ Most dungeons have a dungeon boss (FINAL_GUARDIAN) at the final floor, which
 in most cases has a chance to drop a specific artifact (FINAL_ARTIFACT) or
 (in rare cases) a specific (non-artifact) item (FINAL_OBJECT).
 If a boss cannot or will not drop a final artifact, a random stat potion is
-dropped instead (in addition to the usual loot).
+dropped instead (in addition to the usual loot). For details on how bosses and
+other monsters spawn also see (6.1a).
 
 Morgoth and Zu-Aon always drop certain fixed artifacts.
 All other dungeon bosses can only drop their specific artifact if it has not
@@ -11902,8 +11903,8 @@ Also see (6.4) for details about melee attacks and melee damage caps.)
 
 
 
-(5.7) Qualitative classification of items, identifying & selling items
-----------------------------------------------------------------------
+(5.7) Qualitative classification, identifying & selling items
+-------------------------------------------------------------
 Items are classified by
 -a basic item type
 -a simple magical enchantment (to hit-chance, to damage, to armour class)
@@ -14531,8 +14532,8 @@ depending on monster classification, for example mostly undead and nonliving
 monsters in the Paths of the Dead, etc. - theorycraft is never over!
 
 
-(6.1a) Normal monsters, unique monsters, boss monsters and how they spawn
--------------------------------------------------------------------------
+(6.1a) Normal, boss & unique monsters and how they spawn
+--------------------------------------------------------
 
 Generation-time monster creation:
 ---------------------------------
@@ -19466,8 +19467,8 @@ If a player forges a ring, his 'Magic Device' skill helps to obtain a higher
 amount of energy in the ring.
 
 
-(7.7b) Useful low-level humanoid forms for weapon-based mimicry and more
-------------------------------------------------------------------------
+(7.7b) Useful low-level forms for weapon-based mimicry and more
+---------------------------------------------------------------
 Mimicry users who use weapons have less choices for forms than martial artists
 who do not need to rely on humanoid forms and can just utilize easy-to-get
 forms such as fruit bat, wild cat, spiders, birds or hounds right away to
