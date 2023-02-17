@@ -21874,7 +21874,7 @@ Darkness | Mana     | Poison         |   800  | Poison         |
 Nexus    | Nether   | Time           |   150  | Drain          |
 Nexus    | Chaos    | Sound          |   400  | Stun           | Potions
 Nexus    | Mana     | Shards         |   400  | Cuts           | Potion/Scrolls
-Nether   | Chaos    | Hellfire       |   800  | Slay Good      | Most Items
+Nether   | Chaos    | Hellfire       |   400  | Slay Good      | Most Items
 Nether   | Mana     | Force          |   250  | Stun           | Many Items
 Chaos    | Mana     | Disenchantment |   500  | Cancellation   | Magical Items
 
