@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 16. February 2023 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 17. February 2023 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.0c - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -22573,8 +22573,10 @@ The techniques are as follows:
         The poison will only last for a short while, so it's best to apply it
         before engaging in a fight.
         Learning this technique also causes you to occasionally harvest potions
-        of poison from larger poison breathing monsters. If you do not wish
-        this you can toggle it with the "/ing" slash command ("/ingredients").
+        of poison from larger poison breathing monsters, as long as you wield
+        a weapon when killing them.
+        If you do not wish to find these extra potions you can toggle it with
+        the "/ing" slash command ("/ingredients").
     Perceive Noise      2 stamina
         Listen carefully to every sound in your surroundings, thereby locating
         creatures. Some entities are so quiet that they cannot be detected this
