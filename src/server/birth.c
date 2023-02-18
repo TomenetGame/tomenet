@@ -3380,7 +3380,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	if (acc_houses == -1) {
 		if (GetAccount(&acc, accname, NULL, FALSE)) {
 			/* grab sum from hash table entries */
-			acc_houses = acc_sum_houses(&acc);
+			acc_houses = acc_sum_houses(&acc, FALSE);
 
 			acc_set_houses(accname, acc_houses);
 			s_printf("ACC_HOUSE_LIMIT_INIT: initialised %s(%s) with %d.\n", p_ptr->name, accname, acc_houses);

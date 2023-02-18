@@ -11980,7 +11980,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (ids) C_KILL(id_list, ids, int);
 
 				msg_format(Ind, "Account '%s' supposedly had %d houses in total (acc-stamp).", message3, acc_get_houses(message3));
-				i = acc_sum_houses(&acc);
+				i = acc_sum_houses(&acc, FALSE);
 				msg_format(Ind, "Account '%s' got id-based sum of houses of %d vs a real house count of %d.", message3, i, ht);
 
 				if (prefix(messagelc, "/ahlfix") && i != ht) { /* ACC_HOUSE_LIMIT - just in case anything goes wrong.. */

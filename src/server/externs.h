@@ -1567,7 +1567,7 @@ extern bool guild_rename(int Ind, char *new_name);
 extern void get_laston(char *name, char *response, bool admin, bool colour);
 extern bool lookup_similar_account(cptr name, cptr accname);
 extern bool lookup_similar_character(cptr name, cptr accname);
-extern char acc_sum_houses(struct account *acc);
+extern char acc_sum_houses(struct account *acc, bool quiet);
 extern char acc_get_houses(const char *name);
 extern int acc_set_houses(const char *name, char houses);
 extern void init_character_ordering(int Ind);

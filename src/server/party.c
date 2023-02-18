@@ -5956,7 +5956,7 @@ void fix_lost_guild_mode(int g_id) {
 }
 
 //ACC_HOUSE_LIMIT:
-char acc_sum_houses(struct account *acc) {
+char acc_sum_houses(struct account *acc, bool quiet) {
 	int i;
 	char j = 0;
 	int *id_list, ids;
@@ -5968,7 +5968,7 @@ char acc_sum_houses(struct account *acc) {
 			s_printf("ACC_SUM_HOUSES_ERROR: cannot lookup_player id %d.\n", id_list[i]);
 			continue;
 		}
-		s_printf("ACC_SUM_HOUSES: character %s adds %d houses.\n", ptr->name, ptr->houses);
+		if (!quiet) s_printf("ACC_SUM_HOUSES: character %s adds %d houses.\n", ptr->name, ptr->houses);
 		j += ptr->houses;
 	}
 
