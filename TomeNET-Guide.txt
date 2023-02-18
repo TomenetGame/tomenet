@@ -16195,6 +16195,8 @@ stated.
 
         .Necromancy             Drains life and mana from killed monsters,
          (0.500)                replenishing your HP and MP.
+                                Note that you need at least 1.000 Necromancy
+                                skill in order for it to work.
                                 Only works if you are able to see the target,
                                 and if you are not a player-ghost.
                                 The amount of points gained depends on the
