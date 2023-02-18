@@ -16199,6 +16199,7 @@ stated.
                                 skill in order for it to work.
                                 Only works if you are able to see the target,
                                 and if you are not a player-ghost.
+
                                 The amount of points gained depends on the
                                 skill and the target's level. To get maximum
                                 drain, the skill should be at least half as
@@ -16243,9 +16244,13 @@ stated.
                                 The amount of points gained depends linearly
                                 on your skill level and also somewhat on the
                                 damage you inflicted.
+
                                 Even if your inflicted damage and/or skill
-                                level is very low, each attack still has a
-                                (small) chance of replenishing at least 1 MP.
+                                level is so very low that the total amount is
+                                between 0 and 1 and therefore would actually
+                                get rounded down to zero, each attack still has
+                                a (small) chance of replenishing at least 1 MP.
+
                                 Traumaturgy is most effective with spells that
                                 have an area of effect and can therefore hit
                                 multiple monsters, such as balls and especially
