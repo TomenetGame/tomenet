@@ -3366,7 +3366,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					strcpy(chapter, "The Small Water Cave   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Subm") || my_strcasestr(buf, "Ruin") || !strcasecmp(buf, "sr")) {
+				if (my_strcasestr(buf, "Subm") || (my_strcasestr(buf, "Ruin") && !my_strcasestr(buf, "Ruina")) || !strcasecmp(buf, "sr")) {//potion of ruination
 					strcpy(chapter, "Submerged Ruins   ");
 					continue;
 				}
