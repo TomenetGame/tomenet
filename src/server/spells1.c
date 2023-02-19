@@ -5755,7 +5755,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				//hardcoded massive piece value and money svals..
 				switch (o_ptr->sval) {
 				case 1: //copper
-					if (dam < 1085 / 2 || o_ptr->pval < 1400 * SMELTING) break;
+					if (dam < (1085 * 10) / SMELTING_DIV || o_ptr->pval < 1400 * SMELTING) break;
 					invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_COPPER));
 					forge.owner = o_ptr->owner;
 					forge.mode = o_ptr->mode;
@@ -5767,7 +5767,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					*o_ptr = forge;
 					break;
 				case 2: //silver
-					if (dam < 962 / 2 || o_ptr->pval < 4500 * SMELTING) break;
+					if (dam < (962 * 10) / SMELTING_DIV || o_ptr->pval < 4500 * SMELTING) break;
 					invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_SILVER));
 					forge.owner = o_ptr->owner;
 					forge.mode = o_ptr->mode;
@@ -5779,7 +5779,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					*o_ptr = forge;
 					break;
 				case 10: //gold
-					if (dam < 1064 / 2 || o_ptr->pval < 20000 * SMELTING) break;
+					if (dam < (1064 * 10) / SMELTING_DIV || o_ptr->pval < 20000 * SMELTING) break;
 					invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_GOLD));
 					forge.owner = o_ptr->owner;
 					forge.mode = o_ptr->mode;
@@ -5798,7 +5798,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				int val = object_value_real(0, o_ptr) * o_ptr->number, wgt = o_ptr->weight * o_ptr->number;
 
 				//hardcoded massive piece value...
-				if (dam >= 1538 / 2 && val >= 800 && wgt >= 7900) {
+				if (dam >= (1538 * 10) / SMELTING_DIV && val >= 800 && wgt >= 7900) {
 					object_type forge;
 
 					invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_IRON));
@@ -5818,7 +5818,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				int val = object_value_real(0, o_ptr) * o_ptr->number, wgt = o_ptr->weight * o_ptr->number;
 
 				//hardcoded massive piece value...
-				if (dam >= 962 / 2 && val >= 4500 && wgt >= 10000) {
+				if (dam >= (962 * 10) / SMELTING_DIV && val >= 4500 && wgt >= 10000) {
 					object_type forge;
 
 					invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_SILVER));
@@ -5838,7 +5838,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				int val = object_value_real(0, o_ptr) * o_ptr->number, wgt = o_ptr->weight * o_ptr->number;
 
 				//hardcoded massive piece value...
-				if (dam >= 1064 / 2 && val >= 20000 && wgt >= 19000) {
+				if (dam >= (1064 * 10) / SMELTING_DIV && val >= 20000 && wgt >= 19000) {
 					object_type forge;
 
 					invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_IRON));

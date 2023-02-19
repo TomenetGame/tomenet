@@ -277,6 +277,8 @@
    The number is the cost factor for smelting coins into massive pieces; note: 7..17x is possible for default gold colour on player-dropped piles.
    Also allow melting items. */
 #define SMELTING 8
+/* Divide 'real' temperature * 10 by this to allow more easygoing usage if we just can't push the required numbers for technical reasons. */
+#define SMELTING_DIV 20
 
 /* Load 'D:' tags from e_info.txt file and display them on examining */
 #define EGO_DIZ
