@@ -25614,5 +25614,9 @@ PROBLEM 71: When playing the game via terminal or over SSH a lot of characters
             are rendered wrong, eg appearing as "^B" two-symbol combination
             even, making the display mostly unreadable.
 Solution:   Turn off 'font_map_solid_walls' in options page 1 (press = 1).
+PROBLEM 72: When using a custom font that remaps characters, some or most of
+            the tiles, monsters or other visuals seem to not map correctly but
+            are displayed as if it was a default font instead.
+Solution:   Turn off 'font_map_solid_walls' in options page 1 (press = 1).
 
 ===============================================================================
