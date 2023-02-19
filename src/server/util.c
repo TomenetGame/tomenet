@@ -7702,6 +7702,9 @@ cptr get_prace2(player_type *p_ptr) {
 #ifdef ENABLE_DEATHKNIGHT
 	if (p_ptr->pclass == CLASS_DEATHKNIGHT) return ""; else
 #endif
+#ifdef ENABLE_HELLKNIGHT
+	if (p_ptr->pclass == CLASS_HELLKNIGHT) return ""; else
+#endif
 	return special_prace_lookup2[p_ptr->prace];
 }
 /* like get_prace2(), but always returns the race. Also, no trailing space. */
