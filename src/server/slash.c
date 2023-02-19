@@ -5020,6 +5020,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				if (admin) {
 					struct worldpos wpos = lookup_player_wpos(p_id);
+
 					/* Note: This is 13 characters too long if name is really max and level 2-digits and depth is -XXX.
 					   Basically, the non-admin version perfectly fills out the whole line already if maxed except for royal title.
 					   So we shorten some text in it.. */
