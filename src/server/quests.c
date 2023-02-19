@@ -412,6 +412,9 @@ static void quest_text_replace(char *dest, cptr src, player_type *p_ptr) {
 		case 'C':
 			strcat(dest, class_info[p_ptr->pclass].title);
 			break;
+		case 'E':
+			strcat(dest, get_prace2(p_ptr));
+			break;
 
 		case 'n':
 			strcat(dest, p_ptr->name);
@@ -438,9 +441,17 @@ static void quest_text_replace(char *dest, cptr src, player_type *p_ptr) {
 			lp = pos - 1;
 			while (dest[++lp]) dest[lp] = tolower(dest[lp]);
 			break;
+		case 'e':
+			strcat(dest, get_prace2(p_ptr));
+			lp = pos - 1;
+			while (dest[++lp]) dest[lp] = tolower(dest[lp]);
+			break;
 
 		case 'P':
 			strcat(dest, format("%d", !p_ptr->party ? 0 : parties[p_ptr->party].members));
+			break;
+		case 'G':
+			strcat(dest, format("%d", !p_ptr->guild ? 0 : guilds[p_ptr->guild].members));
 			break;
 		}
 

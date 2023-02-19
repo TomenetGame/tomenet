@@ -125,9 +125,9 @@ V:1.0.0
 # -Although the 'examine' flag can be specified for each conversation line again, the last line existing for a questor/stage combination will take priority.
 # -About dialogues/narrations:
 #   Use [[...]] to highlight the text between the brackets.
-#   You can automatically insert the player's name, title, race, race-attribute ('elven') or class, by using these placeholders: $$N, $$T, $$R, $AA, $$C.
+#   You can automatically insert the player's name, title, race, race-attribute ('elven'), class, or trait-/class-affected race, by using these placeholders: $$N, $$T, $$R, $AA, $$C, $$E.
 #   If you don't want the first letter to be capitalised, use $$n, $$t, $$r, $$a, $$c instead.
-#   $$P will substitute the amount of party members (0 for no party).
+#   $$P will substitute the amount of party members (0 for no party), $$G for guild members.
 # -About keywords:
 #   "~" means the empty keyword "", user can just press ENTER key without writing anything to trigger it.
 #   a keyword prefixed with "~" means that only admins can use it. This prefix can only be used in Y-lines, NOT in any sublines (eg yY-lines).
