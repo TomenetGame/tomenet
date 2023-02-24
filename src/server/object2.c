@@ -12504,28 +12504,28 @@ bool erase_or_locate_artifact(int a_idx, bool erase) {
 				if (this_o_idx == i) {
 					monster_desc(0, m_name, o_ptr->held_m_idx, 0);
 					if (erase) {
-						s_printf("FLUENT_ARTIFACT_RESETS: %d - monster inventory (%d, '%s', #%d)\n  '%s'\n", a_idx, o_ptr->held_m_idx, m_name, j, o_name);
+						s_printf("FLUENT_ARTIFACT_RESETS: %d - monster inventory (%d, '%s', #%d, (%d,%d,%d))\n  '%s'\n", a_idx, o_ptr->held_m_idx, m_name, j, m_ptr->wpos.wx, m_ptr->wpos.wy, m_ptr->wpos.wz, o_name);
 						delete_object_idx(this_o_idx, TRUE);
 						msg_broadcast_format(0, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
-					} else s_printf("ARTIFACT_LOCATE: %d - monster inventory (%d, '%s', #%d)\n  '%s'\n", a_idx, o_ptr->held_m_idx, m_name, j, o_name);
+					} else s_printf("ARTIFACT_LOCATE: %d - monster inventory (%d, '%s', #%d, (%d,%d,%d))\n  '%s'\n", a_idx, o_ptr->held_m_idx, m_name, j, m_ptr->wpos.wx, m_ptr->wpos.wy, m_ptr->wpos.wz, o_name);
 					return(TRUE);
 				}
 				next_o_idx = q_ptr->next_o_idx;
 				j++;
 			}
 			/* paranoid fail */
-			if (erase) s_printf("FLUENT_ARTIFACT_RESETS_ERROR: %d - monster inventory (%d, '%s', #%d)\n  '%s'\n", a_idx, o_ptr->held_m_idx, m_name, i, o_name);
-			else s_printf("ARTIFACT_LOCATE_ERROR: %d - monster inventory (%d, '%s', #%d)\n  '%s'\n", a_idx, o_ptr->held_m_idx, m_name, i, o_name);
+			if (erase) s_printf("FLUENT_ARTIFACT_RESETS_ERROR: %d - monster inventory (%d, '%s', #%d, (%d,%d,%d))\n  '%s'\n", a_idx, o_ptr->held_m_idx, m_name, i, m_ptr->wpos.wx, m_ptr->wpos.wy, m_ptr->wpos.wz, o_name);
+			else s_printf("ARTIFACT_LOCATE_ERROR: %d - monster inventory (%d, '%s', #%d, (%d,%d,%d))\n  '%s'\n", a_idx, o_ptr->held_m_idx, m_name, i, m_ptr->wpos.wx, m_ptr->wpos.wy, m_ptr->wpos.wz, o_name);
 			return(FALSE);
 		}
 
 		/* Check monster traps for artifact trap kits / load */
 		if (o_ptr->embed == 1) {
 			if (erase) {
-				s_printf("FLUENT_ARTIFACT_RESETS: %d - monster trap '%s'\n", a_idx, o_name);
+				s_printf("FLUENT_ARTIFACT_RESETS: %d - monster trap (%d,%d,%d) '%s'\n", a_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_name);
 				delete_object_idx(i, TRUE);
 				msg_broadcast_format(0, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
-			} else s_printf("ARTIFACT_LOCATE: %d - monster trap '%s'\n", a_idx, o_name);
+			} else s_printf("ARTIFACT_LOCATE: %d - monster trap (%d,%d,%d) '%s'\n", a_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_name);
 			return(TRUE);
 		}
 
@@ -12553,10 +12553,10 @@ bool erase_or_locate_artifact(int a_idx, bool erase) {
 		}
 #endif
 		if (erase) {
-			s_printf("FLUENT_ARTIFACT_RESETS: %d - floor '%s'\n", a_idx, o_name);
+			s_printf("FLUENT_ARTIFACT_RESETS: %d - floor (%d,%d,%d) '%s'\n", a_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_name);
 			delete_object_idx(i, TRUE);
 			msg_broadcast_format(0, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
-		} else s_printf("ARTIFACT_LOCATE: %d - floor '%s'\n", a_idx, o_name);
+		} else s_printf("ARTIFACT_LOCATE: %d - floor (%d,%d,%d) '%s'\n", a_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_name);
 		return(TRUE);
 	}
 
