@@ -1306,7 +1306,9 @@ static errr Infowin_set_class_hint(cptr name) {
 static void react_keypress(XEvent *xev) {
 	int i, n, mc, ms, mo, mx;
 
+#ifndef ENABLE_SHIFT_SPECIALKEYS
 	uint ks1;
+#endif
 
 	XKeyEvent *ev = (XKeyEvent*)(xev);
 
@@ -1322,8 +1324,10 @@ static void react_keypress(XEvent *xev) {
 	/* Terminate */
 	buf[n] = '\0';
 
+#ifndef ENABLE_SHIFT_SPECIALKEYS
 	/* Hack -- convert into an unsigned int */
 	ks1 = (uint)(ks);
+#endif
 
 	/* Extract four "modifier flags" */
 	mc = (ev->state & ControlMask) ? TRUE : FALSE;
@@ -1349,16 +1353,13 @@ static void react_keypress(XEvent *xev) {
 	}
 
 
+#ifndef ENABLE_SHIFT_SPECIALKEYS /* Totally no need for this code, even if this feat weren't defined? ^^' */
 	/* Handle a few standard keys */
 	switch (ks1) {
 		case XK_Escape:
 		Term_keypress(ESCAPE); return;
 
 		case XK_Return:
-#ifdef ENABLE_SHIFT_SPECIALKEYS
-//c_msg_format("rk %lud", ks);
-break; //allow all shift keys etc to pass through
-#endif
 		Term_keypress('\r'); return;
 
 		case XK_Tab:
@@ -1368,6 +1369,7 @@ break; //allow all shift keys etc to pass through
 		case XK_BackSpace:
 		Term_keypress('\010'); return;
 	}
+#endif
 
 	/* Hack -- Use the KeySym */
 	if (ks) {
