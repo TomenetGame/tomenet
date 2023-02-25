@@ -10188,9 +10188,11 @@ Ironman Deep Dive Challenge (IDDC)
     a bookstore with a red '9' as an entrance), allowing you to purchase
     magic spells you might be missing. It also offers a special service to
     identify all items you are carrying.
+    The chance to find at least one library on your way down is around 1/2
+    up to dungeon level 10, 2/3 up to 13, 3/4 up to 15, and 4/5 up to 17.
     The Herbalist can also spawn in the IDDC (on lower/mid level floors).
-    On very deep floors after Nargothrond, a seasoned alchemist store may
-    appear, allowing you to resupply.
+    On very deep floors (ie after Nargothrond), a seasoned alchemist store may
+    appear, allowing you to resupply, at a 20% generation chance on each floor.
 
     Rogues should be aware that it's not possible to steal from general store,
     weaponsmith, armoury, temple, magic shop, black market and the special
