@@ -4212,7 +4212,7 @@ bool ask_for_bigmap_generic(void) {
 	Term_putstr(8, 3, -1, TERM_ORANGE, "Do you want \377Gdouble window size\377o aka 'big_map' option?");
 	Term_putstr(8, 5, -1, TERM_YELLOW, "  It is recommended to do this on desktops and normal laptops");
 	Term_putstr(8, 6, -1, TERM_YELLOW, "  but it may not fit on small netbook screens. You can change");
-	Term_putstr(8, 7, -1, TERM_YELLOW, "  this later anytime in the game's options menu: = 1 big_map.");
+	Term_putstr(8, 7, -1, TERM_YELLOW, "  this later in-game, in the options menu by pressing \377o= b\377y .");
 	Term_putstr(8, 9, -1, TERM_ORANGE, "Press '\377Gy\377o' to double the screen size now, '\377Rn\377o' to not enable.");
 
 	while (TRUE) {
