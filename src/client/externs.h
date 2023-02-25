@@ -235,7 +235,7 @@ extern bool inkey_msg;/* A chat message is currently being entered */
 extern bool inkey_letter_all;
 
 #ifdef ENABLE_SHIFT_SPECIALKEYS
-extern bool inkey_shift_special;
+extern byte inkey_shift_special;
 #endif
 
 extern s16b macro__num;

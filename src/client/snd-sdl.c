@@ -3528,7 +3528,7 @@ void do_cmd_options_sfx_sdl(void) {
 			dis = samples[j_sel].disabled;
 			samples[j_sel].disabled = FALSE;
 #ifdef ENABLE_SHIFT_SPECIALKEYS
-			if (inkey_shift_special & 0x1) {
+			if (inkey_shift_special == 0x1) {
 				int v = samples[j_sel].volume;
 
 				samples[j_sel].volume = 200; /* SHIFT+ENTER: Play at maximum allowed volume aka 200% boost. */
@@ -4090,7 +4090,7 @@ void do_cmd_options_mus_sdl(void) {
 
 			play_music_instantly(j_sel);
   #ifdef ENABLE_SHIFT_SPECIALKEYS
-			if (inkey_shift_special & 0x1) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200)); /* SHIFT+ENTER: Play at maximum allowed volume aka 200% boost. */
+			if (inkey_shift_special == 0x1) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200)); /* SHIFT+ENTER: Play at maximum allowed volume aka 200% boost. */
   #endif
 			songs[j_sel].disabled = dis;
  #else
@@ -4108,7 +4108,7 @@ void do_cmd_options_mus_sdl(void) {
 
 			play_music(j_sel);
   #ifdef ENABLE_SHIFT_SPECIALKEYS
-			if (inkey_shift_special & 0x1) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200)); /* SHIFT+ENTER: Play at maximum allowed volume aka 200% boost. */
+			if (inkey_shift_special == 0x1) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200)); /* SHIFT+ENTER: Play at maximum allowed volume aka 200% boost. */
   #endif
  #endif
 

@@ -928,9 +928,11 @@ static char inkey_aux(void) {
 #ifdef ENABLE_SHIFT_SPECIALKEYS
 	if (ch == 31) check_shift = TRUE;
 	else if (check_shift) {
-		//seems it's like this: 95 = no shift keys, 83 = 'shift' pressed
-		check_shift = FALSE;
+		//seems it's like this: 95 = no shift keys, 83 = 'shift' pressed, 78 = 'ctrl', 79 = 'alt'. All shiftkeys will follow right after each other.
 		if (ch == 83) inkey_shift_special |= 0x1;
+		else if (ch == 78) inkey_shift_special |= 0x2;
+		else if (ch == 79) inkey_shift_special |= 0x4;
+		else check_shift = FALSE; //no more shiftkeys in the sequence.
 	}
 #endif
 
