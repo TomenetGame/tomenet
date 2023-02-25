@@ -3194,11 +3194,17 @@ void do_cmd_options_sfx_sdl(void) {
 	/* Interact */
 	while (go) {
 #ifdef USER_VOLUME_SFX
-		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w/\377ys\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yv\377w volume, \377yRETURN\377w (play), \377yESC\377w)");
+ #ifdef ENABLE_SHIFT_SPECIALKEYS
+		if (strcmp(ANGBAND_SYS, "gcu"))
+			Term_putstr(0, 0, -1, TERM_WHITE, "  \377ydir\377w/\377y#\377w/\377ys\377w, \377yt\377w toggle, \377yy\377w/\377yn\377w enable/disable, \377yv\377w volume, \377y[SHIFT+]RETURN\377w [boost+]play");
+		else /* GCU cannot query shiftkey states easily, see macro triggers too (eg cannot distinguish between ENTER and SHIFT+ENTER on GCU..) */
+ #endif
+		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w/\377ys\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yv\377w volume, \377yRETURN\377w (play)");
+		Term_putstr(0, 1, -1, TERM_WHITE, "  \377yESC \377wleave and auto-save all changes.");
 #else
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w/\377ys\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yRETURN\377w (play), \377yESC\377w)");
-#endif
 		Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this page)");
+#endif
 
 		/* Display the events */
 		for (i = y - 10 ; i <= y + 10 ; i++) {
@@ -3260,6 +3266,9 @@ void do_cmd_options_sfx_sdl(void) {
 		Term->scr->cu = 1;
 
 		/* Get key */
+#ifdef ENABLE_SHIFT_SPECIALKEYS
+		inkey_shift_special = 0x0;
+#endif
 		ch = inkey();
 
 		/* Analyze */
@@ -3518,6 +3527,15 @@ void do_cmd_options_sfx_sdl(void) {
 
 			dis = samples[j_sel].disabled;
 			samples[j_sel].disabled = FALSE;
+#ifdef ENABLE_SHIFT_SPECIALKEYS
+			if (inkey_shift_special & 0x1) {
+				int v = samples[j_sel].volume;
+
+				samples[j_sel].volume = 200; /* SHIFT+ENTER: Play at maximum allowed volume aka 200% boost. */
+				sound(j_sel, SFX_TYPE_MISC, 100, 0, 0, 0);
+				samples[j_sel].volume = v;
+			} else
+#endif
 			sound(j_sel, SFX_TYPE_MISC, 100, 0, 0, 0);
 			samples[j_sel].disabled = dis;
 
@@ -3669,7 +3687,7 @@ void do_cmd_options_mus_sdl(void) {
  #endif
 		//Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this page)");
 		//Term_putstr(0, 1, -1, TERM_WHITE, format(" \377wChanges auto-save on leaving this UI.   \377BLEFT\377w Backward %d s, \377BRIGHT\377w Forward %d s", MUSIC_SKIP, MUSIC_SKIP));
-		Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yESC \377wLeave and auto-save all changes.   \377BLEFT\377w Backward %d s, \377BRIGHT\377w Forward %d s", MUSIC_SKIP, MUSIC_SKIP));
+		Term_putstr(0, 1, -1, TERM_WHITE, format(" \377yESC \377wleave and auto-save all changes.   \377BLEFT\377w Backward %d s, \377BRIGHT\377w Forward %d s", MUSIC_SKIP, MUSIC_SKIP));
 		curmus_y = -1; //assume not visible (outside of visible song list)
 #else
  #ifdef USER_VOLUME_MUS
