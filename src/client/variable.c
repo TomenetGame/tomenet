@@ -119,6 +119,10 @@ bool inkey_msg = FALSE;
 
 bool inkey_letter_all = FALSE;
 
+#ifdef ENABLE_SHIFT_SPECIALKEYS
+bool inkey_shift_special = 0x0;
+#endif
+
 s16b macro__num;
 cptr *macro__pat;
 cptr *macro__act;

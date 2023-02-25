@@ -3658,6 +3658,11 @@ void do_cmd_options_mus_sdl(void) {
 #ifdef ENABLE_JUKEBOX
  #ifdef USER_VOLUME_MUS
 		//Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377y#\377w/\377ys\377w select, \377yc\377w cur., \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yv\377w volume, \377yESC\377w leave, \377BRETURN\377w play");
+  #ifdef ENABLE_SHIFT_SPECIALKEYS
+		if (strcmp(ANGBAND_SYS, "gcu"))
+			Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377y#\377w/\377ys\377w select, \377yc\377w cur., \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yv\377w/\377y+\377w/\377y-\377w vol., \377B[SHIFT+]RETURN\377w play");
+		else /* GCU cannot query shiftkey states easily, see macro triggers too (eg cannot distinguish between ENTER and SHIFT+ENTER on GCU..) */
+  #endif
 		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377y#\377w/\377ys\377w select, \377yc\377w cur., \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yv\377w/\377y+\377w/\377y-\377w volume, \377BRETURN\377w play");
  #else
 		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377y#\377w/\377ys\377w select/search, \377yc\377w current, \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yESC\377w leave, \377BRETURN\377w play");
@@ -3740,6 +3745,9 @@ void do_cmd_options_mus_sdl(void) {
 		Term->scr->cu = 1;
 
 		/* Get key */
+#ifdef ENABLE_SHIFT_SPECIALKEYS
+		inkey_shift_special = 0x0;
+#endif
 		ch = inkey();
 
 		/* Analyze */
@@ -4063,6 +4071,9 @@ void do_cmd_options_mus_sdl(void) {
 			cfg_audio_music = TRUE;
 
 			play_music_instantly(j_sel);
+  #ifdef ENABLE_SHIFT_SPECIALKEYS
+			if (inkey_shift_special & 0x1) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200)); /* SHIFT+ENTER: Play at maximum allowed volume aka 200% boost. */
+  #endif
 			songs[j_sel].disabled = dis;
  #else
 			if (j_sel == music_cur) break;
@@ -4078,6 +4089,9 @@ void do_cmd_options_mus_sdl(void) {
 			cfg_audio_music = TRUE;
 
 			play_music(j_sel);
+  #ifdef ENABLE_SHIFT_SPECIALKEYS
+			if (inkey_shift_special & 0x1) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200)); /* SHIFT+ENTER: Play at maximum allowed volume aka 200% boost. */
+  #endif
  #endif
 
 			/* Hack: Find out song length by trial and error o_O */

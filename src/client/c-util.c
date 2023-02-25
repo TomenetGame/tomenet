@@ -676,6 +676,9 @@ static char inkey_aux(void) {
 	char	buf_atoi[5];
 	bool	inkey_max_line_set;
 	int net_fd;
+#ifdef ENABLE_SHIFT_SPECIALKEYS
+	static bool check_shift = FALSE;
+#endif
 
 	inkey_max_line_set = inkey_max_line;
 
@@ -838,7 +841,7 @@ static char inkey_aux(void) {
 			Net_flush();
 
 			/* Wait for .001 sec, or until there is net input */
-//			SetTimeout(0, 1000);
+			//SetTimeout(0, 1000);
 
 			/* Wait according to fps - mikaelh */
 			SetTimeout(0, next_frame());
@@ -921,6 +924,15 @@ static char inkey_aux(void) {
 		/* return next macro character */
 		return(ch);
 	}
+
+#ifdef ENABLE_SHIFT_SPECIALKEYS
+	if (ch == 31) check_shift = TRUE;
+	else if (check_shift) {
+		//seems it's like this: 95 = no shift keys, 83 = 'shift' pressed
+		check_shift = FALSE;
+		if (ch == 83) inkey_shift_special |= 0x1;
+	}
+#endif
 
 	/* Do not check "control-underscore" sequences */
 	if (parse_under) return(ch);
@@ -1113,7 +1125,6 @@ char inkey(void) {
 	term *old = Term;
 	int w = 0;
 	int skipping = FALSE;
-
 
 	/* Hack -- handle delayed "flush()" */
 	if (flush_later) {

@@ -3039,13 +3039,13 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 		case WM_KEYDOWN:
 		{
 			bool enhanced = FALSE;
-			bool mc = FALSE;
 			bool ms = FALSE;
+			bool mc = FALSE;
 			bool ma = FALSE;
 
 			/* Extract the modifiers */
-			if (GetKeyState(VK_CONTROL) & 0x8000) mc = TRUE;
 			if (GetKeyState(VK_SHIFT)   & 0x8000) ms = TRUE;
+			if (GetKeyState(VK_CONTROL) & 0x8000) mc = TRUE;
 			if (GetKeyState(VK_MENU)    & 0x8000) ma = TRUE;
 
 			/* Check for non-normal keys */
@@ -3083,6 +3083,13 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 		}
 
 		case WM_CHAR:
+#ifdef ENABLE_SHIFT_SPECIALKEYS
+			/* Extract the modifiers */
+			if (GetKeyState(VK_SHIFT)   & 0x8000) inkey_shift_special |= 0x1;
+			if (GetKeyState(VK_CONTROL) & 0x8000) inkey_shift_special |= 0x2;
+			if (GetKeyState(VK_MENU)    & 0x8000) inkey_shift_special |= 0x4;
+#endif
+
 			Term_keypress(wParam);
 			return(0);
 
@@ -3357,7 +3364,7 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 			return(0);
 
 		case WM_SYSKEYDOWN:
-		case WM_KEYDOWN:
+		case WM_KEYDOWN:	/* Note: This code is not called. Instead, AngbandWndProc() is called. */
 		{
 			bool enhanced = FALSE;
 			bool mc = FALSE;
@@ -3403,7 +3410,7 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 			break;
 		}
 
-		case WM_CHAR:
+		case WM_CHAR:		/* Note: This code is not called. Instead, AngbandWndProc() is called. */
 			Term_keypress(wParam);
 			return(0);
 

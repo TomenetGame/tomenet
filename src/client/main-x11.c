@@ -1355,6 +1355,10 @@ static void react_keypress(XEvent *xev) {
 		Term_keypress(ESCAPE); return;
 
 		case XK_Return:
+#ifdef ENABLE_SHIFT_SPECIALKEYS
+//c_msg_format("rk %lud", ks);
+break; //allow all shift keys etc to pass through
+#endif
 		Term_keypress('\r'); return;
 
 		case XK_Tab:

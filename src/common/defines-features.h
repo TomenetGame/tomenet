@@ -492,6 +492,11 @@
 
  /* Disable c_cfg.big_map option and make it a client-global setting instead that spans over any login choice. */
  #define GLOBAL_BIG_MAP
+
+ /* experimental: Allow things like SHIFT+ENTER in menus - C. Blue */
+ #ifdef TEST_CLIENT
+  #define ENABLE_SHIFT_SPECIALKEYS
+ #endif
 #endif
 
 
