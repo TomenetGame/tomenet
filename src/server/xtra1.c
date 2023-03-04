@@ -8530,6 +8530,7 @@ static void process_global_event(int ge_id) {
 						p_ptr->new_level_method = LEVEL_RAND;
 						recall_player(i, "");
 					}
+
 					/* Give him the amulet of the highlands */
 					invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_HIGHLANDS));
 					o_ptr->number = 1;
@@ -8541,8 +8542,12 @@ static void process_global_event(int ge_id) {
 					object_aware(i, o_ptr);
 					object_known(o_ptr);
 					inven_carry(i, o_ptr);
+
 					/* may only take part in one tournament per char */
 					gain_exp(i, 1);
+					p_ptr->event_participated = TRUE;
+					p_ptr->event_participated_flags |= 1 << (GE_HIGHLANDER - 1);
+
 					/* give some safe time for exp'ing */
 #ifndef KURZEL_PK
 					if (cfg.use_pk_rules == PK_RULES_DECLARE) {
@@ -8755,7 +8760,7 @@ static void process_global_event(int ge_id) {
 #ifdef USE_SOUND_2010
 			sound(j, "success", NULL, SFX_TYPE_MISC, FALSE);
 #endif
-			if (!p_ptr->max_exp) gain_exp(j, 1); /* may only take part in one tournament per char */
+			p_ptr->event_won_flags |= 1 << (GE_HIGHLANDER - 1);
 
 			/* don't create a actual reward here, but just a signed deed that can be turned in (at mayor's office)! */
 			k = lookup_kind(TV_PARCHMENT, SV_DEED_HIGHLANDER);
@@ -9008,12 +9013,12 @@ static void process_global_event(int ge_id) {
 			/* add all possible doors, vertically and horizontally */
 			for (x = 2; x < MAX_WID - 1; x += 4)
 			for (y = 4; y <= MAX_HGT - 4; y += 4) {
-//				if (zcave[y][x].feat != FEAT_PERM_INNER) continue;
+				//if (zcave[y][x].feat != FEAT_PERM_INNER) continue;
 				zcave[y][x].feat = FEAT_DOOR_HEAD;
 			}
 			for (y = 2; y < MAX_HGT - 1; y += 4)
 			for (x = 4; x <= MAX_WID - 4; x += 4) {
-//				if (zcave[y][x].feat != FEAT_PERM_INNER) continue;
+				//if (zcave[y][x].feat != FEAT_PERM_INNER) continue;
 				zcave[y][x].feat = FEAT_DOOR_HEAD;
 			}
 
@@ -9208,6 +9213,9 @@ static void process_global_event(int ge_id) {
 					p_ptr->global_event_temp |= PEVF_NOGHOST_00 | PEVF_NO_RUN_00 | PEVF_NOTELE_00 | PEVF_INDOORS_00 | PEVF_STCK_OK;
 					p_ptr->update |= PU_BONUS;
 					p_ptr->global_event_progress[ge_id][0] = 1; /* now in 0,0,0 sector */
+
+					p_ptr->event_participated = TRUE;
+					p_ptr->event_participated_flags |= 1 << (GE_DUNGEON_KEEPER - 1);
 
 					/* make sure they stop running (not really needed though..) */
 					disturb(i, 0, 0);

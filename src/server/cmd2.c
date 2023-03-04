@@ -868,8 +868,9 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 #endif
 				s_printf("%s EVENT_WON: %s wins %d (%s)\n", showtime(), p_ptr->name, d + 1, ge->title);
 				//l_printf("%s \\{s%s has won %s\n", showdate(), p_ptr->name, ge->title);
+				p_ptr->event_won_flags |= 1 << (GE_DUNGEON_KEEPER - 1);
 
-				/* may only take part in one Labyrinth race per char -- boost him to level 3 */
+				/* boost him to level 3, so he can distribute enough skills for the reward creation to work */
 				if (p_ptr->max_lev < 3) gain_exp_to_level(Ind, 3);
 				/* extra optional niceness :-p boost already-level-3 chars to level 4 just for the heck of it.. */
 				else gain_exp_to_level(Ind, 4);

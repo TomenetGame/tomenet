@@ -779,7 +779,18 @@ static void wr_extra(int Ind) {
 	wr_s32b(p_ptr->turns_idle);
 	wr_s32b(p_ptr->turns_active);
 
-	for (i = 0; i < 6; ++i) wr_byte(0); //unused
+	tmp8u = 0x0;
+	tmp8u |= (p_ptr->insta_res ? 0x1 : 0x0);
+	tmp8u |= (p_ptr->fluent_artifact_reset ? 0x2 : 0x0);
+	tmp8u |= (p_ptr->death ? 0x4 : 0x0);
+	tmp8u |= (p_ptr->black_breath ? 0x8 : 0x0);
+	tmp8u |= (p_ptr->event_participated ? 0x10 : 0x0);
+	tmp8u |= (p_ptr->IDDC_found_rndtown ? 0x20 : 0x0); //superfluous?
+	tmp8u |= (p_ptr->IDDC_logscum ? 0x40 : 0x0); //superfluous?
+	wr_byte(tmp8u);
+	wr_u16b(p_ptr->event_participated_flags);
+	wr_u16b(p_ptr->event_won_flags);
+	wr_byte(p_ptr->lifetime_flags);
 
 	wr_byte(p_ptr->autoret_base);
 
@@ -940,17 +951,13 @@ static void wr_extra(int Ind) {
 	}
 
 	wr_u32b(p_ptr->gold_picked_up);
-	wr_byte(p_ptr->insta_res);
 	wr_byte(p_ptr->castles_owned);
 #if 1 /* To make this option, which isn't part of the current client, persistent before next client release */
 	wr_s16b(p_ptr->flash_self2);
 #else
 	//wr_u16b(0x0);
 #endif
-	wr_byte(p_ptr->fluent_artifact_reset); /* for automatic artifact resets */
 	wr_byte(p_ptr->sanity_bar | (p_ptr->health_bar ? 0x04 : 0x00) | (p_ptr->mana_bar ? 0x08 : 0x00) | (p_ptr->stamina_bar ? 0x10 : 0x00));
-	wr_byte(p_ptr->IDDC_found_rndtown);
-	wr_byte(p_ptr->IDDC_logscum);
 	wr_byte(p_ptr->IDDC_flags);
 
 	wr_s16b(p_ptr->word_recall);
@@ -1017,11 +1024,6 @@ static void wr_extra(int Ind) {
 
 	wr_u16b(p_ptr->retire_timer);
 	wr_u16b(p_ptr->noscore);
-
-	/* Write death */
-	wr_byte(p_ptr->death);
-
-	wr_byte(p_ptr->black_breath);
 
 	wr_s16b(p_ptr->msane);
 	wr_s16b(p_ptr->csane);

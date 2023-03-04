@@ -1622,6 +1622,7 @@ static void rd_house(int n) {
 static void rd_wild(wilderness_type *w_ptr) {
 	/* future use */
 	strip_bytes(4);
+
 	/* terrain type */
 	rd_u16b(&w_ptr->type);
 
@@ -1685,7 +1686,7 @@ static bool rd_extra(int Ind) {
 	if (older_than(4, 4, 12)) {
 		/* Divinity support in savefile now on all servers - mikaelh */
 		if (older_than(4, 3, 2)) {
-//			p_ptr->divinity = DIVINE_UNDEF; /* which is simply 0 */
+			//p_ptr->divinity = DIVINE_UNDEF; /* which is simply 0 */
 			p_ptr->ptrait = TRAIT_NONE;
 		} else {
 			rd_byte(&tmp8u);
@@ -1815,10 +1816,22 @@ static bool rd_extra(int Ind) {
 	if (!older_than(4, 4, 6)) rd_s32b(&p_ptr->turns_active);
 
 	/* If he was created in the pre-ID days, give him one */
-	if (!p_ptr->id)
-		p_ptr->id = newid();
+	if (!p_ptr->id) p_ptr->id = newid();
 
-	strip_bytes(6); //unused
+	rd_byte(&tmp8u); //settings/lifetime state flags
+	if (!older_than(4, 9, 0)) {
+		p_ptr->insta_res = tmp8u & 0x1;
+		p_ptr->fluent_artifact_reset = tmp8u & 0x2;
+		p_ptr->death = tmp8u & 0x4;
+		p_ptr->black_breath = tmp8u & 0x8;
+		p_ptr->event_participated = tmp8u & 0x10;
+		p_ptr->IDDC_found_rndtown = tmp8u & 0x20; //superfluous?
+		p_ptr->IDDC_logscum = tmp8u & 0x40; //superfluous?
+	} else if (p_ptr->max_exp) p_ptr->event_participated = TRUE;
+	//these are zero if read from old save file < 4,9,0 :
+	rd_u16b(&p_ptr->event_participated_flags);
+	rd_u16b(&p_ptr->event_won_flags);
+	rd_byte(&p_ptr->lifetime_flags);
 
 	rd_byte(&p_ptr->autoret_base); //0 means 'on' (default) - so there is no conversion needed for old chars since these bytes were 0 anyway
 
@@ -2059,11 +2072,13 @@ static bool rd_extra(int Ind) {
 	if (!older_than(4, 4, 24)) rd_u32b(&p_ptr->gold_picked_up);
 	else strip_bytes(4);
 
-	if (!older_than(4, 4, 24)) {
-		rd_byte(&tmp8u);
-		p_ptr->insta_res = tmp8u;
+	if (older_than(4, 9, 0)) {
+		if (!older_than(4, 4, 24)) {
+			rd_byte(&tmp8u);
+			p_ptr->insta_res = tmp8u;
+		}
+		else strip_bytes(1);
 	}
-	else strip_bytes(1);
 	if (!older_than(4, 4, 25)) rd_byte(&p_ptr->castles_owned);
 	else strip_bytes(1);
 
@@ -2087,12 +2102,14 @@ static bool rd_extra(int Ind) {
 	strip_bytes(2);
 #endif
 
-	if (!older_than(4, 5, 7)) {
-		rd_byte(&tmp8u);
-		p_ptr->fluent_artifact_reset = tmp8u;
-	} else {
-		strip_bytes(1);
-		p_ptr->fluent_artifact_reset = FALSE;
+	if (older_than(4, 9, 0)) {
+		if (!older_than(4, 5, 7)) {
+			rd_byte(&tmp8u);
+			p_ptr->fluent_artifact_reset = tmp8u;
+		} else {
+			strip_bytes(1);
+			p_ptr->fluent_artifact_reset = FALSE;
+		}
 	}
 
 	if (!older_than(4, 5, 14)) {
@@ -2111,20 +2128,21 @@ static bool rd_extra(int Ind) {
 		else p_ptr->sanity_bar = 0;
 	}
 
-	if (!older_than(4, 5, 17)) {
-		rd_byte(&tmp8u);
-		p_ptr->IDDC_found_rndtown = tmp8u;
-	} else {
-		strip_bytes(1);
-		p_ptr->IDDC_found_rndtown = FALSE;
-	}
-
-	if (!older_than(4, 5, 18)) { //superfluous check! (as are the others above too, mostly..) We can just read the silyl byte since it's 0 anyway otherwise. --todo: cleanup
-		rd_byte(&tmp8u);
-		p_ptr->IDDC_logscum = (tmp8u != 0);
-	} else {
-		strip_bytes(1);
-		p_ptr->IDDC_logscum = FALSE;
+	if (older_than(4, 9, 0)) {
+		if (!older_than(4, 5, 17)) {
+			rd_byte(&tmp8u);
+			p_ptr->IDDC_found_rndtown = tmp8u;
+		} else {
+			strip_bytes(1);
+			p_ptr->IDDC_found_rndtown = FALSE;
+		}
+		if (!older_than(4, 5, 18)) { //superfluous check! (as are the others above too, mostly..) We can just read the silyl byte since it's 0 anyway otherwise. --todo: cleanup
+			rd_byte(&tmp8u);
+			p_ptr->IDDC_logscum = (tmp8u != 0);
+		} else {
+			strip_bytes(1);
+			p_ptr->IDDC_logscum = FALSE;
+		}
 	}
 
 	/* hack: no save file version increment for this one */
@@ -2257,11 +2275,13 @@ if (p_ptr->updated_savegame == 0) {
 	rd_u16b(&p_ptr->retire_timer);
 	rd_u16b(&p_ptr->noscore);
 
-	/* Read "death" */
-	rd_byte(&tmp8u);
-	p_ptr->death = tmp8u;
+	if (older_than(4, 9, 0)) {
+		/* Read "death" */
+		rd_byte(&tmp8u);
+		p_ptr->death = tmp8u;
 
-	rd_byte((byte*)&p_ptr->black_breath);
+		rd_byte((byte*)&p_ptr->black_breath);
+	}
 
 	rd_s16b(&p_ptr->msane);
 	rd_s16b(&p_ptr->csane);
@@ -2965,10 +2985,10 @@ static errr rd_savefile_new_aux(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i, j, err_code = 0;
 
-//	byte panic;
+	//byte panic;
 	u16b tmp16u;
 	u32b tmp32u;
-	byte tmpbyte;
+	byte tmp8u;
 
 
 #ifdef VERIFY_CHECKSUMS
@@ -3007,6 +3027,7 @@ static errr rd_savefile_new_aux(int Ind) {
 	/* Later use (always zero) */
 	rd_u32b(&tmp32u);
 
+
 	/* Object Memory */
 	rd_u16b(&tmp16u);
 
@@ -3018,15 +3039,13 @@ static errr rd_savefile_new_aux(int Ind) {
 
 	/* Read the object memory */
 	for (i = 0; i < tmp16u; i++) {
-		byte tmp8u;
-
 		rd_byte(&tmp8u);
-
 		Players[Ind]->obj_aware[i] = (tmp8u & 0x01) ? TRUE : FALSE;
 		Players[Ind]->obj_tried[i] = (tmp8u & 0x02) ? TRUE : FALSE;
 		Players[Ind]->obj_felt[i] = (tmp8u & 0x04) ? TRUE : FALSE;
 		Players[Ind]->obj_felt_heavy[i] = (tmp8u & 0x08) ? TRUE : FALSE;
 	}
+
 
 	/* Trap Memory */
 	rd_u16b(&tmp16u);
@@ -3037,14 +3056,23 @@ static errr rd_savefile_new_aux(int Ind) {
 		return(22);
 	}
 
-	/* Read the object memory */
-	for (i = 0; i < tmp16u; i++) {
-		byte tmp8u;
+	/* Read the trap memory */
+	//if (older_than(4, 9, 0)) {
+		for (i = 0; i < tmp16u; i++) {
+			rd_byte(&tmp8u);
+			Players[Ind]->trap_ident[i] = (tmp8u & 0x01) ? TRUE : FALSE;
+		}
+	/* pft, maybe not efficient enough ie bad tradeoff mem vs cpu, dunno though:
+	} else {
+		for (i = 0; i < tmp16u / 8; i++) {
+			rd_byte(&tmp8u);
+			for (j = 0; j < 8; j++) {
+				if (i * 8 + j >= tmp16u) break;
+				Players[Ind]->trap_ident[i * 8 + j] = (tmp8u & (1 << j)) ? TRUE : FALSE;
+			}
+		}
+	} */
 
-		rd_byte(&tmp8u);
-
-		Players[Ind]->trap_ident[i] = (tmp8u & 0x01) ? TRUE : FALSE;
-	}
 
 	/* Read the extra stuff */
 	err_code = rd_extra(Ind);
@@ -3132,9 +3160,8 @@ static errr rd_savefile_new_aux(int Ind) {
 			rd_s16b(&p_ptr->quest_idx[i]);
 			rd_string(p_ptr->quest_codename[i], 10);
 			if (older_than(4, 5, 21)) {
-				byte tmpbyte;
-				rd_byte(&tmpbyte);
-				p_ptr->quest_stage[i] = tmpbyte;
+				rd_byte(&tmp8u);
+				p_ptr->quest_stage[i] = tmp8u;
 			} else rd_s16b(&p_ptr->quest_stage[i]);
 			if (!older_than(4, 5, 27)) rd_s16b(&p_ptr->quest_stage_timer[i]);
 
@@ -3176,8 +3203,8 @@ static errr rd_savefile_new_aux(int Ind) {
 				rd_u16b(&p_ptr->quest_flags[i]);
 			else if (!older_than(4, 5, 21)) {
 				for (j = 0; j < QI_FLAGS; j++) {
-					rd_byte(&tmpbyte);
-					if (tmpbyte) p_ptr->quest_flags[i] |= (0x1 << j);
+					rd_byte(&tmp8u);
+					if (tmp8u) p_ptr->quest_flags[i] |= (0x1 << j);
 				}
 			}
 		}
@@ -3194,24 +3221,17 @@ static errr rd_savefile_new_aux(int Ind) {
 		}
 
 
-	if (!older_than(4, 0, 1)) {
-		rd_byte(&p_ptr->spell_project);
-	} else {
-		p_ptr->spell_project = 0;
-	}
+	if (!older_than(4, 0, 1)) rd_byte(&p_ptr->spell_project);
+	else p_ptr->spell_project = 0;
 
 	/* Special powers */
 	if (!older_than(4, 0, 2)) {
 		rd_s16b(&p_ptr->power_num);
-		for (i = 0; i < MAX_POWERS; i++) {
+		for (i = 0; i < MAX_POWERS; i++)
 			rd_s16b(&p_ptr->powers[i]);
-		}
-	} else {
-		p_ptr->power_num = 0;
-	}
+	} else p_ptr->power_num = 0;
 
 #ifdef VERIFY_CHECKSUMS
-
 	/* Save the checksum */
 	n_v_check = v_check;
 
@@ -3219,8 +3239,7 @@ static errr rd_savefile_new_aux(int Ind) {
 	rd_u32b(&o_v_check);
 
 	/* Verify */
-	if (o_v_check != n_v_check)
-	{
+	if (o_v_check != n_v_check) {
 		s_printf("Invalid checksum\n");
 		return(11);
 	}
@@ -3232,16 +3251,12 @@ static errr rd_savefile_new_aux(int Ind) {
 	/* Read the checksum */
 	rd_u32b(&o_x_check);
 
-
 	/* Verify */
-	if (o_x_check != n_x_check)
-	{
+	if (o_x_check != n_x_check) {
 		s_printf("Invalid encoded checksum\n");
 		return(11);
 	}
-
 #endif
-
 
 	/* Hack -- no ghosts */
 	r_info[MAX_R_IDX-1].max_num = 0;
