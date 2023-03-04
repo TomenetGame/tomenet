@@ -72,10 +72,10 @@ OCURSEDD_II = add_spell {
 	["ftk"] = 1,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-			fire_grid_bolt(Ind, GF_CAUSE, args.dir, 10 + get_level(Ind, OCURSEDD_I, 170), "points and curses for")
+			fire_grid_bolt(Ind, GF_CAUSE, args.dir, 10 + get_level(Ind, OCURSEDD_I, 220), "points and curses for")
 	end,
 	["info"] = 	function()
-			return "power "..(10 + get_level(Ind, OCURSEDD_I, 170))
+			return "power "..(10 + get_level(Ind, OCURSEDD_I, 220))
 	end,
 	["desc"] = 	{
 			"Curse an enemy, causing wounds.",
@@ -97,10 +97,10 @@ OCURSEDD_III = add_spell {
 	["ftk"] = 1,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-			fire_grid_bolt(Ind, GF_CAUSE, args.dir, 10 + get_level(Ind, OCURSEDD_I, 290), "points and curses for")
+			fire_grid_bolt(Ind, GF_CAUSE, args.dir, 10 + get_level(Ind, OCURSEDD_I, 390), "points and curses for")
 	end,
 	["info"] = 	function()
-			return "power "..(10 + get_level(Ind, OCURSEDD_I, 290))
+			return "power "..(10 + get_level(Ind, OCURSEDD_I, 390))
 	end,
 	["desc"] = 	{
 			"Curse an enemy, causing wounds.",
