@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 25. February 2023 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 4. March 2023 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.0c - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -5368,6 +5368,12 @@ appropriately. Asides from that you can also invoke your inventory in the main
 window by pressing the 'i' key.
 Inventory slots are indiscriminate, the order doesn't matter, you can always
 access any item equally, no matter where in your backpack it resides.
+All items in your inventory are ordered automatically by their type and some
+other parameters, determined by the game server. Their order therefore cannot
+be modified by the player. An exception is ammunition, which can be rearranged
+at least within all stacks of ammunition currently in your inventory, allowing
+you to create your desired auto-load order to work with the !L inscription.
+In order to rearrange ammunition stacks, just drop them and pick them up again.
 
 Your equipment, in contrast, are all items that you are wearing on your body.
 The equipment consists of defined slots that fulfil a specific purpose each.
