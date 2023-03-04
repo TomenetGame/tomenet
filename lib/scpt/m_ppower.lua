@@ -288,31 +288,3 @@ MSHIELD = add_spell {
 			"half of all incoming melee attacks and physical projectiles.",
 	}
 }
-
-if (def_hack("TEST_SERVER", nil)) then
-MFUSION = add_spell {
-	["name"] = 	"Mental Fusion",
-	["name2"] = 	"MFusion",
---	["name"] = 	"Corporeal Fusion",
---	["school"] = 	{SCHOOL_TCONTACT, SCHOOL_PPOWER, SCHOOL_MINTRUSION},
-	["school"] = 	{SCHOOL_TCONTACT, SCHOOL_PPOWER},
-	["am"] = 	50,
-	["spell_power"] = 0,
-	["level"] = 	40,
-	["mana"] = 	200,
-	["mana_max"] = 	200,
-	["fail"] = 	20,
-	["spell"] = 	function()
-			do_cmd_fusion(Ind)
-			end,
-	["info"] = 	function()
-			return ""
-			end,
-	["desc"] = 	{
-			"Fuses your mind with a friendly target with open mind nearby,",
-			"allowing you spell-casting but giving up control over your body.",
---			"Fuses your mind and body with a friendly target with open mind nearby,",
---			"allowing you spell-casting but giving up control over the body.",
-	}
-}
-end

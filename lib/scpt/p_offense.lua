@@ -120,29 +120,6 @@ HGLOBELIGHT_II = add_spell {
 	["desc"] = 	{ "Creates a powerful globe of pure light that hurts all foes.", }
 }
 
-if (def_hack("TEST_SERVER", nil)) then
-HCURSEDD = add_spell {
-	["name"] = 	"Cause wounds",
-	["name2"] = 	"Cause",
-	["school"] = 	{SCHOOL_HOFFENSE},
-	["spell_power"] = 0,
-	["am"] = 	75,
-	["level"] = 	5,
-	["mana"] = 	1,
-	["mana_max"] = 	20,
-	["fail"] = 	15,
-	["stat"] = 	A_WIS,
-	["ftk"] = 1,
-	["spell"] = 	function(args)
-			fire_grid_bolt(Ind, GF_MISSILE, args.dir, 10 + get_level(Ind, HCURSEDD, 300), "points and curses for")
-	end,
-	["info"] = 	function()
-			return "power "..(10 + get_level(Ind, HCURSEDD, 300))
-	end,
-	["desc"] = 	{ "Curse an enemy, causing wounds.", }
-}
-end
-
 function get_literay_dam(Ind, limit_lev)
 	local lev
 
@@ -363,27 +340,4 @@ EARTHQUAKE = add_spell {
 	["desc"] = 	{ "Creates a localized earthquake." }
 }
 
---[[
-HHOLYWORD = add_spell {
-	["name"] = 	"Holy Word",
-	["name2"] = 	"HWord",
-	["school"] = 	{SCHOOL_HOFFENSE, SCHOOL_HCURING},
-	["spell_power"] = 0,
-	["am"] = 	75,
-	["level"] = 	45,
-	["mana"] = 	500,
-	["fail"] = 	30,
-	["stat"] = 	A_WIS,
-	["spell"] = 	function(args)
-			hp_player(Ind, 1000, FALSE, FALSE)
-			set_afraid(Ind, 0)
-			set_poisoned(Ind, 0, 0)
-			set_stun(Ind, 0, 0)
-			set_cut(Ind, 0, 0)
-			end,
-	["info"] = 	function()
-			return "Dispels & heals."
-			end,
-	["desc"] = 	{ "Dispels evil, heals and cures you." }
-}
-]]
+--HHOLYWORD

@@ -250,29 +250,6 @@ ORESTORING = add_spell {
 	["desc"] = 	{ "Restores drained stats and lost experience.", }
 }
 
---[[SAPLIFE = add_spell {
-	["name"] = 	"Sap Life",
-	["name2"] = 	"Sap",
-	["school"] = 	{SCHOOL_OHERETICISM},
-	["spell_power"] = 0,
-	["am"] = 	75,
-	["level"] = 	37,
-	["mana"] = 	45,
-	["mana_max"] = 	45,
-	["fail"] = 	-60,
-	["stat"] = 	A_WIS,
-	["direction"] = TRUE,
-	["spell"] = 	function(args)
-		drain_life(Ind, args.dir, 14 + get_level(Ind, ODRAINLIFE, 22))
-		hp_player(Ind, player.ret_dam / 4, FALSE, FALSE)
-	end,
-	["info"] = 	function()
-		--return "drain "..(14 + get_level(Ind, ODRAINLIFE, 22)).."%, heal for 25%"
-		return (14 + get_level(Ind, ODRAINLIFE, 22)).."% (max 900), 25% heal"
-	end,
-	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
-}]]--
-
 LEVITATION = add_spell {
 	["name"] = 	"Levitation",
 	["name2"] = 	"Lev",
