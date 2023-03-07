@@ -141,7 +141,12 @@
 #  define strncasecmp strnicmp
 # endif
 #endif
-
+/* Note: The client-side code for Windows often runs into the trouble of Wine/Win7/Win10/Win11 etc. behaving
+         differently and inconsistently or straight out having bugs that Microsoft never bothered to fix.
+         In theory we could try to detect the specific Windows flavours, including Wine via loading kernel32.dll
+         and checking for presence of wine_get_unix_file_name().
+         However, at least for Wine (which aims at not being distinguishable easily) this is probably unreliable,
+         undocumented, and not worth the effort. - C. Blue */
 
 
 /*

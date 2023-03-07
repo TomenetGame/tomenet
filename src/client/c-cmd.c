@@ -6175,7 +6175,11 @@ static void cmd_spoilers(void) {
  /* 'start' for async */
  #define FILEMAN(p) (res = system(format("start explorer \"%s\"", p)));
  //#define URLMAN(p) (res = system(format("cmd /c start \"\" \"%s\"", p)));
+
+ /* According to The Scar in Firefox on Win 11 this does open the website but also causes it to start in 'diagnostics mode' (and was 100% fine in Win 7): */
  #define URLMAN(p) ShellExecute(NULL, "open", p, NULL, NULL, SW_SHOWNORMAL);
+ /* ..and according to him this works fine - but it doesn't work in Wine actually -_- : */
+ //#define URLMAN(p) (res = system(format("start \"%s\"", p)));
 #endif
 void cmd_check_misc(void) {
 	char i = 0, choice;
