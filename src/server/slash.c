@@ -1581,20 +1581,20 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				/* Catch UI elements -- this stuff could just as well be client-side, ie in cmd_the_guide(), like all the other search expressions there */
 				if (!strcmp(message3, "LEVEL")) Send_Guide(Ind, 3, 0, "Experience");
-				else if (!strcmp(message3, "XP")) Send_Guide(Ind, 3, 0, "Experience");
-				else if (!strcmp(message3, "AU")) Send_Guide(Ind, 3, 0, "Money");
-				else if (!strcmp(message3, "SN")) Send_Guide(Ind, 3, 0, "Sanity");
-				else if (!strcmp(message3, "AC")) Send_Guide(Ind, 3, 0, "armour class");
-				else if (!strcmp(message3, "HP")) Send_Guide(Ind, 2, 0, "HP  ");
-				else if (!strcmp(message3, "MP")) Send_Guide(Ind, 2, 0, "MP  ");
-				else if (!strcmp(message3, "ST")) Send_Guide(Ind, 2, 0, "ST  ");
-				else if (!strcmp(message3, "ST")) Send_Guide(Ind, 3, 0, "Fighting/shooting techniques");
-				else if (!strcmp(message3, "Bl")) Send_Guide(Ind, 3, 0, "-combat stance");
-				else if (!strcmp(message3, "Df")) Send_Guide(Ind, 3, 0, "-combat stance");
-				else if (!strcmp(message3, "Of")) Send_Guide(Ind, 3, 0, "-combat stance");
-				else if (!strcmp(message3, "DH")) Send_Guide(Ind, 3, 0, "-dual-wield mode");
-				else if (!strcmp(message3, "MH")) Send_Guide(Ind, 3, 0, "-dual-wield mode");
-				else if (!strcmp(message3, "FK")) Send_Guide(Ind, 3, 0, "-fire-till-kill toggle");
+				else if (!strcasecmp(message3, "XP")) Send_Guide(Ind, 3, 0, "Experience");
+				else if (!strcasecmp(message3, "AU")) Send_Guide(Ind, 3, 0, "Money");
+				else if (!strcasecmp(message3, "SN")) Send_Guide(Ind, 3, 0, "Sanity");
+				else if (!strcasecmp(message3, "AC")) Send_Guide(Ind, 3, 0, "armour class");
+				else if (!strcasecmp(message3, "HP")) Send_Guide(Ind, 2, 0, "HP  ");
+				else if (!strcasecmp(message3, "MP")) Send_Guide(Ind, 2, 0, "MP  ");
+				else if (!strcasecmp(message3, "ST")) Send_Guide(Ind, 2, 0, "ST  ");
+				//else if (!strcasecmp(message3, "ST")) Send_Guide(Ind, 3, 0, "Fighting/shooting techniques");
+				else if (!strcmp(message3, "Bl")) Send_Guide(Ind, 3, 0, "-combat stance");//collides: 'BL' for blacklist
+				else if (!strcmp(message3, "Df")) Send_Guide(Ind, 3, 0, "-combat stance");//collides: 'DF' for Death Fate
+				else if (!strcmp(message3, "Of")) Send_Guide(Ind, 3, 0, "-combat stance");//collides: 'OF' for Old Forest
+				else if (!strcasecmp(message3, "DH")) Send_Guide(Ind, 3, 0, "-dual-wield mode");//(is actually client-side covered too)
+				else if (!strcasecmp(message3, "MH")) Send_Guide(Ind, 3, 0, "-dual-wield mode");//(is actually client-side covered too)
+				else if (!strcasecmp(message3, "FK")) Send_Guide(Ind, 3, 0, "-fire-till-kill toggle");
 				//else if (!strcmp(message3, "Pj")) Send_Guide(Ind, 3, 0, ""); --deprecated for a long time
 
 				/* We're looking for help on a slash command? Use 'strict search' */
