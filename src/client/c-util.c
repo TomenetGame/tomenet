@@ -3165,6 +3165,7 @@ void put_str(cptr str, int row, int col) {
  *
  * The "prompt" should take the form "Query? "
  *
+ * Pressing ESC will accept the default_yes value.
  * Note that "[y/n]" is appended to the prompt.
  */
 bool get_check2(cptr prompt, bool default_yes) {
@@ -3202,12 +3203,11 @@ bool get_check2(cptr prompt, bool default_yes) {
 	topline_icky = FALSE;
 
 	/* Flush any events that came in while we were icky */
-	if (!c_quit)
-		Flush_queue();
+	if (!c_quit) Flush_queue();
 
 	/* More normal */
 	if (default_yes) {
-		if (i == 'n' || i == 'N' || i == '\e') return(FALSE);
+		if (i == 'n' || i == 'N') return(FALSE);
 		return(TRUE);
 	}
 
@@ -3217,7 +3217,8 @@ bool get_check2(cptr prompt, bool default_yes) {
 /* default_choice:
    0 = no preference, only accept y/Y/n/N for input
    1 = default is yes, any key besides n/N will count as yes
-   2 = default is yes, any key besides y/Y will count as no */
+   2 = default is yes, any key besides y/Y will count as no
+   Pressing ESC only works if default_choice isn't 0, and will accept the default_choice then. */
 bool get_check3(cptr prompt, char default_choice) {
 	int i;
 	char buf[80];
@@ -3252,7 +3253,7 @@ bool get_check3(cptr prompt, char default_choice) {
 
 	/* More normal */
 	if (default_choice == 1) {
-		if (i == 'n' || i == 'N' || i == '\e') return(FALSE);
+		if (i == 'n' || i == 'N') return(FALSE);
 		return(TRUE);
 	}
 
