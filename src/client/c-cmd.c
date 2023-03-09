@@ -7644,9 +7644,13 @@ static void cmd_master_aux_level(void) {
 			buf[5] = 0x01;//hack: avoid 0 byte
 			buf[6] = 0x01;//hack: avoid 0 byte
 			if (is_newer_than(&server_version, 4, 5, 6, 0, 0, 1)) {
+				char ts[3];
 				int t; //hooray for signed char..
 
-				t = c_get_quantity("Theme (0 = default vanilla, +100 to set type): ", -1);
+				strcpy(ts, "0");
+				if (!get_string("Theme (ESC/0 = default vanilla, +100 to set type instead): ", ts, 3)) t = 0;
+				else t = atoi(ts);
+
 				if (t >= 100) {
 					buf[7] = 100 - t;
 					/* Predefined dungeon -> nothing left to do then. */
@@ -7657,16 +7661,22 @@ static void cmd_master_aux_level(void) {
 					Send_master(MASTER_LEVEL, buf);
 					clear_topline_forced();
 					return;
-				} else buf[7] = t;
+				} else {
+					if (is_atleast(&server_version, 4, 9, 0, 5, 0, 0)) buf[7] = t + 1; //hack: avoid 0 byte
+					else buf[7] = t; //max len in this version is 8 anyway, so no info is lost even if this is 0.
+				}
 			} else buf[7] = 0;
 			buf[1] = c_get_quantity("Base level: ", 127);
+			if (!buf[1]) buf[1] = 1; //pressed ESC? Apply a default value (or dungeon creation will fail)
 			buf[2] = c_get_quantity("Max depth (1-127): ", 127);
+			if (!buf[2]) buf[2] = 3; //pressed ESC? Apply a default value (or dungeon creation will fail)
 			buf[3] = (get_check2("Is it a tower?", FALSE) ? 't' : 'd');
 			/*
 			 * FIXME: flags are u32b while buf[] is char!
 			 * This *REALLY* should be rewritten	- Jir -
 			 */
-			if (get_check2("Random dungeon (default)?", TRUE)) buf[5] |= 0x02;//DF2_RANDOM
+			//--removed as currently ALL dungeons are RANDOM (or panic save occurs due to undefined dungeon size!):
+			// if (get_check2("Random dungeon (default)?", TRUE)) buf[5] |= 0x02;//DF2_RANDOM
 			if (get_check2("Hellish?", FALSE)) buf[5] |= 0x04;//DF2_HELL
 			if (get_check2("Not mappable?", FALSE)) {
 				buf[4] |= 0x02;//DF1_FORGET
@@ -7700,7 +7710,30 @@ static void cmd_master_aux_level(void) {
 			} else if (get_check2("Generate misc iron stores (RPG rules style)?", FALSE)) {
 				buf[6] |= 0x04;//DF2_MISC_STORES
 			} else if (get_check2("Generate at least the hidden library?", FALSE)) buf[4] |= 0x04;//DF3_HIDDENLIB
-			buf[8] = '\0';
+			/* Allow any custom flags */
+			if (is_atleast(&server_version, 4, 9, 0, 5, 0, 0)) {
+				char fshex[9], fshextmp[9];
+
+				fshextmp[0] = 0;
+				(void)get_string("Custom DF1 flags (string of 8 hex chars, logical OR): ", fshextmp, 8);
+				memset(fshex, '0', 8);
+				strcpy(fshex + 8 - strlen(fshextmp), fshextmp);
+				strncpy(buf + 8, fshex, 8);
+
+				fshextmp[0] = 0;
+				(void)get_string("Custom DF2 flags (string of 8 hex chars, logical OR): ", fshextmp, 8);
+				memset(fshex, '0', 8);
+				strcpy(fshex + 8 - strlen(fshextmp), fshextmp);
+				strncpy(buf + 16, fshex, 8);
+
+				fshextmp[0] = 0;
+				(void)get_string("Custom DF3 flags (string of 8 hex chars, logical OR): ", fshextmp, 8);
+				memset(fshex, '0', 8);
+				strcpy(fshex + 8 - strlen(fshextmp), fshextmp);
+				strncpy(buf + 24, fshex, 8);
+
+				buf[32] = '\0'; /* Terminate */
+			} else buf[8] = '\0'; /* Terminate */
 			Send_master(MASTER_LEVEL, buf);
 		}
 		else if (i == '4') {

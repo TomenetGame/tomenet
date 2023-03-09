@@ -14244,7 +14244,28 @@ bool master_level(int Ind, char * parms) {
 	/* add dungeon stairs here */
 	case 'D': {
 		cave_type **zcave;
-		u32b f1 = 0x0, f2 = 0x0, f3 = 0x0;
+		u32b f1 = 0x0, f2 = 0x0, f3 = 0x0, ftmp;
+		int theme = 0;
+
+		/* Starting in 4.9.0.5: Allow arbitrary dungeon flags */
+		if (strlen(parms) >= 32) {
+			char fshex[9];
+
+			strncpy(fshex, parms + 8, 8);
+			fshex[8] = 0;
+			ftmp = strtoul(fshex, NULL, 16);
+			f1 |= ftmp;
+
+			strncpy(fshex, parms + 16, 8);
+			fshex[8] = 0;
+			ftmp = strtoul(fshex, NULL, 16);
+			f2 |= ftmp;
+
+			strncpy(fshex, parms + 24, 8);
+			fshex[8] = 0;
+			ftmp = strtoul(fshex, NULL, 16);
+			f3 |= ftmp;
+		}
 
 		if (!parms[1] || !parms[2] || p_ptr->wpos.wz) return(FALSE);
 		if (istown(&p_ptr->wpos)) {
@@ -14256,7 +14277,8 @@ bool master_level(int Ind, char * parms) {
 		if (parms[4] & 0x02) f1 |= DF1_FORGET;
 		if (parms[4] & 0x04) f3 |= (DF3_HIDDENLIB | DF3_DEEPSUPPLY);
 		if (parms[4] & 0x08) f3 |= DF3_NO_SIMPLE_STORES;
-		if (parms[5] & 0x02) f2 |= DF2_RANDOM;
+		//if (parms[5] & 0x02) f2 |= DF2_RANDOM;
+		f2 |= DF2_RANDOM; //currently ALL dungeons are RANDOM, or the dungeon size would be undefined, leading to panic save.
 		if (parms[5] & 0x04) f2 |= DF2_HELL;
 		if (parms[5] & 0x08) f2 |= DF2_NO_MAGIC_MAP;
 		if (parms[5] & 0x10) f2 |= DF2_IRON;
@@ -14277,10 +14299,14 @@ bool master_level(int Ind, char * parms) {
 		}
 		/* Hack: Negative theme makes it a type instead. */
 		if (parms[7] < 0) i = -parms[7];
-		else i = 0;
+		else {
+			i = 0;
+			theme = parms[7];
+			if (is_atleast(&p_ptr->version, 4, 9, 0, 5, 0, 0)) theme--; //unhack (to avoid 0-byte)
+		}
 
 		/* create tower or dungeon */
-		if (i) {
+		if (i) { /* Predefined tower/dungeon from d_info.txt */
 			if (d_info[i].flags1 & DF1_TOWER) {
 				s_printf("Added predefined tower %d.\n", i);
 				add_dungeon(&p_ptr->wpos, 0, 0, 0, 0, 0, TRUE, i, 0, 0, 0);
@@ -14294,26 +14320,32 @@ bool master_level(int Ind, char * parms) {
 				new_level_up_x(&p_ptr->wpos, p_ptr->px);
 				if ((zcave = getcave(&p_ptr->wpos))) zcave[p_ptr->py][p_ptr->px].feat = FEAT_MORE;
 			}
-		} else {
+		} else { /* Custom tower/dungeon */
 			if (parms[3] == 't' && !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_UP)) {
-				printf("tower: flags %x,%x\n", f1, f2);
+				printf("tower: flags %x,%x,%x\n", f1, f2, f3);
 				if ((zcave = getcave(&p_ptr->wpos))) {
 					zcave[p_ptr->py][p_ptr->px].feat = FEAT_LESS;
-					if (zcave[p_ptr->py][p_ptr->px].info & CAVE_JAIL) apply_jail_flags(&f1, &f2, &f3);
+					if (zcave[p_ptr->py][p_ptr->px].info & CAVE_JAIL) {
+						apply_jail_flags(&f1, &f2, &f3);
+						msg_print(Ind, "Applied jail flags.");
+					}
 				}
-				s_printf("Added generic tower of theme %d.\n", parms[7]);
-				add_dungeon(&p_ptr->wpos, parms[1], parms[2], f1, f2, f3, TRUE, 0, parms[7], 0, 0);
+				s_printf("Added generic tower (%d+%d) of theme %d.\n", parms[1], parms[2], theme);
+				add_dungeon(&p_ptr->wpos, parms[1], parms[2], f1, f2, f3, TRUE, 0, theme, 0, 0);
 				new_level_down_y(&p_ptr->wpos, p_ptr->py);
 				new_level_down_x(&p_ptr->wpos, p_ptr->px);
 			}
 			if (parms[3] == 'd' && !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_DOWN)) {
-				printf("dungeon: flags %x,%x\n", f1, f2);
+				printf("dungeon: flags %x,%x,%x\n", f1, f2, f3);
 				if ((zcave = getcave(&p_ptr->wpos))) {
 					zcave[p_ptr->py][p_ptr->px].feat = FEAT_MORE;
-					if (zcave[p_ptr->py][p_ptr->px].info & CAVE_JAIL) apply_jail_flags(&f1, &f2, &f3);
+					if (zcave[p_ptr->py][p_ptr->px].info & CAVE_JAIL) {
+						apply_jail_flags(&f1, &f2, &f3);
+						msg_print(Ind, "Applied jail flags.");
+					}
 				}
-				s_printf("Added generic dungeon of theme %d.\n", parms[7]);
-				add_dungeon(&p_ptr->wpos, parms[1], parms[2], f1, f2, f3, FALSE, 0, parms[7], 0, 0);
+				s_printf("Added generic dungeon (%d+%d) of theme %d.\n", parms[1], parms[2], theme);
+				add_dungeon(&p_ptr->wpos, parms[1], parms[2], f1, f2, f3, FALSE, 0, theme, 0, 0);
 				new_level_up_y(&p_ptr->wpos, p_ptr->py);
 				new_level_up_x(&p_ptr->wpos, p_ptr->px);
 			}

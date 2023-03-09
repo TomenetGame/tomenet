@@ -41,7 +41,7 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		9
 #define VERSION_PATCH		0
-#define VERSION_EXTRA		4
+#define VERSION_EXTRA		5
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
