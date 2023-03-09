@@ -13225,33 +13225,33 @@ static int Receive_master(int ind) {
 
 	if (player) {
 		switch (command) {
-			case MASTER_LEVEL:
-				master_level(player, buf);
-				break;
-			case MASTER_BUILD:
-				master_build(player, buf);
-				break;
-			case MASTER_SUMMON:
-				master_summon(player, buf);
-				break;
-			case MASTER_GENERATE:
-				master_generate(player, buf);
-				break;
-			case MASTER_PLAYER:
-				master_player(player, buf);
-				break;
-			case MASTER_SCRIPTS:
-				master_script_exec(player, buf);
-				break;
-			case MASTER_SCRIPTB:
-				master_script_begin(buf + 1, *buf);
-				break;
-			case MASTER_SCRIPTE:
-				master_script_end();
-				break;
-			case MASTER_SCRIPTL:
-				master_script_line(buf);
-				break;
+		case MASTER_LEVEL:
+			master_level(player, buf);
+			break;
+		case MASTER_BUILD:
+			master_build(player, buf);
+			break;
+		case MASTER_SUMMON:
+			master_summon(player, buf);
+			break;
+		case MASTER_GENERATE:
+			master_generate(player, buf);
+			break;
+		case MASTER_PLAYER:
+			master_player(player, buf);
+			break;
+		case MASTER_SCRIPTS:
+			master_script_exec(player, buf);
+			break;
+		case MASTER_SCRIPTB:
+			master_script_begin(buf + 1, *buf);
+			break;
+		case MASTER_SCRIPTE:
+			master_script_end();
+			break;
+		case MASTER_SCRIPTL:
+			master_script_line(buf);
+			break;
 		}
 	}
 
