@@ -80,8 +80,8 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield, bool forc
 	if (p_ptr->ammo_brand && item == INVEN_AMMO) set_ammo_brand(Ind, 0, p_ptr->ammo_brand_t, 0);
 	/* for now, if one of dual-wielded weapons is stashed away the brand fades for both..
 	   could use o_ptr->xtraX to mark them specifically maybe, but also requires distinct messages, maybe too much. */
-	else if (p_ptr->melee_brand && (item == INVEN_WIELD || /* dual-wield */
-	    (item == INVEN_ARM && o_ptr->tval != TV_SHIELD))) set_melee_brand(Ind, 0, p_ptr->melee_brand_t, 0);
+	else if (p_ptr->melee_brand && !p_ptr->melee_brand_ma && (item == INVEN_WIELD || /* dual-wield */
+	    (item == INVEN_ARM && o_ptr->tval != TV_SHIELD))) set_melee_brand(Ind, 0, p_ptr->melee_brand_t, 0, TRUE, FALSE);
 
 	/* Verify */
 	if (amt > o_ptr->number) amt = o_ptr->number;
@@ -261,8 +261,8 @@ void equip_thrown(int Ind, int slot, object_type *o_ptr, int original_number) {
 	if (p_ptr->ammo_brand && slot == INVEN_AMMO) set_ammo_brand(Ind, 0, p_ptr->ammo_brand_t, 0);
 	/* for now, if one of dual-wielded weapons is stashed away the brand fades for both..
 	   could use o_ptr->xtraX to mark them specifically maybe, but also requires distinct messages, maybe too much. */
-	else if (p_ptr->melee_brand && (slot == INVEN_WIELD || /* dual-wield */
-	    (slot == INVEN_ARM && o_ptr->tval != TV_SHIELD))) set_melee_brand(Ind, 0, p_ptr->melee_brand_t, 0);
+	else if (p_ptr->melee_brand && !p_ptr->melee_brand_ma && (slot == INVEN_WIELD || /* dual-wield */
+	    (slot == INVEN_ARM && o_ptr->tval != TV_SHIELD))) set_melee_brand(Ind, 0, p_ptr->melee_brand_t, 0, TRUE, FALSE);
 
 #if POLY_RING_METHOD == 0
 	/* Polymorph back */
@@ -530,8 +530,8 @@ int inven_drop(bool handle_d, int Ind, int item, int amt, bool force) {
 	if (p_ptr->ammo_brand && item == INVEN_AMMO) set_ammo_brand(Ind, 0, p_ptr->ammo_brand_t, 0);
 	/* for now, if one of dual-wielded weapons is stashed away the brand fades for both..
 	   could use o_ptr->xtraX to mark them specifically maybe, but also requires distinct messages, maybe too much. */
-	else if (p_ptr->melee_brand && (item == INVEN_WIELD || /* dual-wield */
-	    (item == INVEN_ARM && o_ptr->tval != TV_SHIELD))) set_melee_brand(Ind, 0, p_ptr->melee_brand_t, 0);
+	else if (p_ptr->melee_brand && !p_ptr->melee_brand_ma && (item == INVEN_WIELD || /* dual-wield */
+	    (item == INVEN_ARM && o_ptr->tval != TV_SHIELD))) set_melee_brand(Ind, 0, p_ptr->melee_brand_t, 0, TRUE, FALSE);
 
 	/* Drop it (carefully) near the player */
 	o_idx = drop_near(handle_d, Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
@@ -572,6 +572,29 @@ int inven_drop(bool handle_d, int Ind, int item, int amt, bool force) {
 	return o_idx;
 }
 
+/* Return type of hands:
+   0: no limbs, 1: hands, 2: claws/paws, 3: tentacles */
+int bodymonster_hands(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	monster_race *r_ptr = NULL;
+	bool fishy, spider;
+
+	if (!p_ptr->body_monster) return(1); //all player races have normal limbs atm
+
+	r_ptr = &r_info[p_ptr->body_monster];
+	fishy = r_ptr->d_char == '~';
+	spider = r_ptr->d_char == 'S';
+
+	if (r_ptr->body_parts[BODY_WEAPON]) {
+		if (fishy) return(3);
+		else return(1);
+	}
+
+	if (r_ptr->body_parts[BODY_FINGER] && !fishy && !spider) return(2);
+
+	return (0);
+}
+
 /*
  * The "wearable" tester
  */
@@ -580,6 +603,7 @@ bool item_tester_hook_wear(int Ind, int slot) {
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = NULL;
 	bool fishy = FALSE;
+
 	if (p_ptr->body_monster) {
 		r_ptr = &r_info[p_ptr->body_monster];
 		if (r_ptr->d_char == '~') fishy = TRUE;
@@ -1296,11 +1320,11 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 		switch (slot) {
 		case INVEN_WIELD:
 			act = "You are wielding";
-			if (p_ptr->melee_brand) set_melee_brand(Ind, 0, p_ptr->melee_brand_t, 0); /* actually only applies for dual-wield */
+			if (p_ptr->melee_brand && !p_ptr->melee_brand_ma) set_melee_brand(Ind, 0, p_ptr->melee_brand_t, 0, TRUE, FALSE); /* actually only applies for dual-wield */
 			break;
 		case INVEN_ARM:
 			act = "You are wielding";
-			if (p_ptr->melee_brand && slot_base != INVEN_ARM) set_melee_brand(Ind, 0, p_ptr->melee_brand_t, 0); /* dual-wield */
+			if (p_ptr->melee_brand && !p_ptr->melee_brand_ma && slot_base != INVEN_ARM) set_melee_brand(Ind, 0, p_ptr->melee_brand_t, 0, TRUE, FALSE); /* dual-wield */
 			break;
 		case INVEN_BOW: act = "You are shooting with"; break;
 		case INVEN_LITE: act = "Your light source is"; break;
@@ -1979,7 +2003,7 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 	}
 	/* for now, if one of dual-wielded weapons is stashed away the brand fades for both..
 	   could use o_ptr->xtraX to mark them specifically maybe, but also requires distinct messages, maybe too much. */
-	else if (p_ptr->melee_brand && (item == INVEN_WIELD || /* dual-wield */
+	else if (p_ptr->melee_brand && !p_ptr->melee_brand_ma && (item == INVEN_WIELD || /* dual-wield */
 	    (item == INVEN_ARM && o_ptr->tval != TV_SHIELD))) {
 		p_ptr->melee_brand = 0;
 		p_ptr->melee_brand_t = 0;

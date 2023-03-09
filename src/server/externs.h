@@ -739,6 +739,7 @@ extern void subinven_remove_aux(int Ind, int islot, int slot);
 extern bool subinven_group_player(int Ind, int group, int slot);
  #endif
 #endif
+extern int bodymonster_hands(int Ind);
 
 /* cmd4.c */
 extern void do_cmd_check_artifacts(int Ind, int line, char *srcstr);
@@ -2156,7 +2157,7 @@ extern bool set_tim_deflect(int Ind, int v);
 #ifdef ARCADE_SERVER
 extern void set_pushed(int Ind, int dir);
 #endif
-extern bool set_melee_brand(int Ind, int v, u16b t, int p);
+extern bool set_melee_brand(int Ind, int v, u16b t, int p, bool cast, bool weapons_only);
 extern s16b questid;
 extern bool imprison(int Ind, u16b time, char *reason);
 extern bool guild_build(int Ind);

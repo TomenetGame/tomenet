@@ -6917,7 +6917,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			o_ptr->recharging = 15 + randint(3) - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
 			break;
 		case ART_FIST:
-			set_melee_brand(Ind, 30 + rand_int(5) + get_skill_scale(p_ptr, SKILL_DEVICE, 10), TBRAND_HELLFIRE, 10);
+			set_melee_brand(Ind, 30 + rand_int(5) + get_skill_scale(p_ptr, SKILL_DEVICE, 10), TBRAND_HELLFIRE, 10, TRUE, FALSE);
 			o_ptr->recharging = 350 - get_skill_scale(p_ptr, SKILL_DEVICE, 200) + rand_int(50);
 			break;
 		case ART_WARPSPEAR:
@@ -8655,7 +8655,7 @@ s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 				inven_item_increase(Ind, i, -1);
 				inven_item_describe(Ind, i);
 				inven_item_optimize(Ind, i);
-				set_melee_brand(Ind, 50 + randint(20), TBRAND_POIS, 0);
+				set_melee_brand(Ind, 50 + randint(20), TBRAND_POIS, 0, TRUE, TRUE);
 				break;
 			}
 		if (i == INVEN_WIELD) {

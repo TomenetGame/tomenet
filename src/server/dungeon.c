@@ -5442,7 +5442,7 @@ static bool process_player_end_aux(int Ind) {
 
 	/* weapon brand time */
 	if (p_ptr->melee_brand)
-		(void)set_melee_brand(Ind, p_ptr->melee_brand - minus_magic, p_ptr->melee_brand_t, p_ptr->melee_brand_d);
+		(void)set_melee_brand(Ind, p_ptr->melee_brand - minus_magic, p_ptr->melee_brand_t, p_ptr->melee_brand_d, FALSE, !p_ptr->melee_brand_ma);
 
 	/* Hack -- Timed ESP */
 	if (p_ptr->tim_esp)

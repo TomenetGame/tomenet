@@ -190,13 +190,13 @@ POISONBLOOD = add_spell {
 			local dur
 			dur = randint(30) + 25 + get_level(Ind, POISONBLOOD, 25)
 			set_oppose_pois(Ind, dur)
-			set_melee_brand(Ind, dur, TBRAND_POIS, 10)
+			set_melee_brand(Ind, dur, TBRAND_POIS, 10, TRUE, FALSE)
 	end,
 	["info"] = 	function()
 			return "dur "..(25 + get_level(Ind, POISONBLOOD, 25)).."+d30"
 	end,
 	["desc"] = 	{
-			"Grants poison resistance and adds poison brand to your attacks.",
+			"Grants poison resistance and adds poison brand to your melee attacks.",
 	}
 }
 

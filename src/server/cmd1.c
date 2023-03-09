@@ -477,7 +477,9 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 		f1 |= p_ptr->slay_melee;
 
 		/* Temporary weapon branding */
-		if (p_ptr->melee_brand && o_ptr && o_ptr->k_idx) {
+		if (p_ptr->melee_brand &&
+		    ((o_ptr && o_ptr->k_idx && !p_ptr->melee_brand_ma) || /* we have a weapon brand? */
+		    ((!o_ptr || !o_ptr->k_idx) && p_ptr->melee_brand_ma))) { /* we have a barehanded brand? */
 			switch (p_ptr->melee_brand_t) {
 			case TBRAND_ELEC:
 				f1 |= TR1_BRAND_ELEC;
@@ -1037,7 +1039,9 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		f1 |= p_ptr->slay_melee;
 
 		/* Temporary weapon branding */
-		if (p_ptr->melee_brand && o_ptr && o_ptr->k_idx) {
+		if (p_ptr->melee_brand &&
+		    ((o_ptr && o_ptr->k_idx && !p_ptr->melee_brand_ma) || /* we have a weapon brand? */
+		    ((!o_ptr || !o_ptr->k_idx) && p_ptr->melee_brand_ma))) { /* we have a barehanded brand? */
 			switch (p_ptr->melee_brand_t) {
 			case TBRAND_ELEC:
 				f1 |= TR1_BRAND_ELEC;

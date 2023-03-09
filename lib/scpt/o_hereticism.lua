@@ -152,9 +152,9 @@ FIRERES = add_spell {
 		local dur
 		dur = randint(15) + 20 + get_level(Ind, FIRERES, 25)
 		if get_level(Ind, FIRERES, 50) >= 17 then
-			set_melee_brand(Ind, dur, TBRAND_HELLFIRE, 10)
+			set_melee_brand(Ind, dur, TBRAND_HELLFIRE, 10, TRUE, TRUE)
 		else
-			set_melee_brand(Ind, dur, TBRAND_FIRE, 10)
+			set_melee_brand(Ind, dur, TBRAND_FIRE, 10, TRUE, TRUE)
 		end
 		if get_level(Ind, FIRERES, 50) >= 7 then
 			set_oppose_fire(Ind, dur)

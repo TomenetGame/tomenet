@@ -5059,7 +5059,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (slot < 100)
  #endif
 	/* Temporary brands -- kinda hacky that they use p_ptr instead of o_ptr.. */
-	if (pt_ptr->melee_brand && is_melee_weapon(o_ptr->tval) && (slot == INVEN_WIELD || slot == INVEN_ARM))
+	if (pt_ptr->melee_brand && !pt_ptr->melee_brand_ma && is_melee_weapon(o_ptr->tval) && (slot == INVEN_WIELD || slot == INVEN_ARM))
 		switch (pt_ptr->melee_brand_t) {
 		case TBRAND_ELEC:
 			fprintf(fff, "\377BLightning charge has been applied to it temporarily.\n");

@@ -3046,9 +3046,10 @@ struct player_type {
 	s16b nimbus;	/* Timed -- Magic brand, shield, resist - Kurzel */
 	byte nimbus_t;	/* Timed -- GF_TYPE to resist and project() */
 	byte nimbus_d;	/* Timed -- Damage for project() */
-	s16b melee_brand;			/* Timed -- Weapon Branding */
-	u16b melee_brand_t;			/* Timed -- Weapon Branding */
-	s16b melee_brand_d;			/* Timed -- Weapon Branding */
+	s16b melee_brand;			/* Timed -- Weapon Branding, duration */
+	u16b melee_brand_t;			/* Timed -- Weapon Branding, type */
+	s16b melee_brand_d;			/* Timed -- Weapon Branding, flags? (just using '9' for hack atm) */
+	bool melee_brand_ma;			/* Flag to indicate it's the hands getting branded instead of weapons (for martial arts) */
 	s16b prob_travel;		/* Timed -- Probability travel */
 	s16b st_anchor;			/* Timed -- Space/Time Anchor */
 	s16b tim_esp;			/* Timed -- ESP */

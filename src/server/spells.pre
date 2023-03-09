@@ -305,7 +305,7 @@ extern bool do_shadow_gate(int Ind, int range);
 #endif
 
 /* xtra2.c */
-extern bool set_melee_brand(int Ind, int v, int t, int p);
+extern bool set_melee_brand(int Ind, int v, int t, int p, bool cast, bool weapons_only);
 extern bool set_ammo_brand(int Ind, int v, int t, int p);
 extern bool set_nimbus(int Ind, int v, byte t, byte d);
 
