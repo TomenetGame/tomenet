@@ -7644,7 +7644,7 @@ static void cmd_master_aux_level(void) {
 			buf[5] = 0x01;//hack: avoid 0 byte
 			buf[6] = 0x01;//hack: avoid 0 byte
 			if (is_newer_than(&server_version, 4, 5, 6, 0, 0, 1)) {
-				char ts[3];
+				char ts[4];
 				int t; //hooray for signed char..
 
 				strcpy(ts, "0");
