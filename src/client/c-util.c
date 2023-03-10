@@ -8112,7 +8112,7 @@ void auto_inscriptions(void) {
 /*
  * Interact with some options
  */
-static void do_cmd_options_aux(int page, cptr info) {
+static void do_cmd_options_aux(int page, cptr info, int select) {
 	char	ch;
 	int	i, k, n = 0, k_no_advance;
 	static int k_lasttime[6] = { 0, 0, 0, 0, 0, 0};
@@ -8120,6 +8120,7 @@ static void do_cmd_options_aux(int page, cptr info) {
 	char	buf[256];
 	bool	tmp;
 
+	if (select != -1) k_lasttime[page] = select;
 	k = k_no_advance = k_lasttime[page];
 
 	/* Lookup the options */
@@ -9770,7 +9771,7 @@ void do_cmd_options(void) {
 		Term_clear();
 
 		/* Why are we here */
-		c_prt(TERM_L_GREEN, "TomeNET options", 0, 0);
+		Term_putstr(0, 0, -1, TERM_L_GREEN, "TomeNET options - press '\377y/\377G' to search for an option");
 
 		/* Give some choices */
 		l = 2;
@@ -9819,6 +9820,10 @@ void do_cmd_options(void) {
 		Term_putstr(3, l++, -1, TERM_WHITE, "(\377UA\377w) Account Options");
 		Term_putstr(3, l++, -1, TERM_WHITE, "(\377UI\377w) Install sound/music pack from 7z-file you placed in your TomeNET folder");
 
+		/* hide cursor */
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
+
 		/* Get command */
 		k = inkey();
 
@@ -9834,23 +9839,56 @@ void do_cmd_options(void) {
 		}
 
 		else if (k == '1') {
-			do_cmd_options_aux(1, "User Interface Options 1");
+			do_cmd_options_aux(1, "User Interface Options 1", -1);
 		} else if (k == '2') {
-			do_cmd_options_aux(4, "User Interface Options 2");
+			do_cmd_options_aux(4, "User Interface Options 2", -1);
 		} else if (k == '3') {
-			do_cmd_options_aux(6, "User Interface Options 3");
+			do_cmd_options_aux(6, "User Interface Options 3", -1);
 		} else if (k == '4') {
-			do_cmd_options_aux(7, "User Interface Options 4");
+			do_cmd_options_aux(7, "User Interface Options 4", -1);
 		} else if (k == '5') {
-			do_cmd_options_aux(5, "Audio Options 1");
+			do_cmd_options_aux(5, "Audio Options 1", -1);
 		} else if (k == '6') {
-			do_cmd_options_aux(9, "Audio Options 2");
+			do_cmd_options_aux(9, "Audio Options 2", -1);
 		} else if (k == '7') {
-			do_cmd_options_aux(2, "Gameplay Options 1");
+			do_cmd_options_aux(2, "Gameplay Options 1", -1);
 		} else if (k == '8') {
-			do_cmd_options_aux(3, "Gameplay Options 2");
+			do_cmd_options_aux(3, "Gameplay Options 2", -1);
 		} else if (k == '9') {
-			do_cmd_options_aux(8, "Gameplay Options 3");
+			do_cmd_options_aux(8, "Gameplay Options 3", -1);
+		}
+
+		/* Search for an option (by name) */
+		else if (k == '/') {
+			int m;
+
+			Term_putstr(0, 23, -1, TERM_YELLOW, "Enter (partial) option name: ");
+			tmp[0] = 0;
+			if (!askfor_aux(tmp, 70, 0)) continue;
+
+			for (l = 0; l < OPT_MAX; l++) {
+				if (!option_info[l].o_desc) continue; //option exists?
+				if (!option_info[l].o_enabled) continue; //option is eligible?
+				if (!my_strcasestr(option_info[l].o_text, tmp)) continue; //(partial) match?
+
+				k = 0;
+				for (m = 0; m < l; m++)
+					if (option_info[m].o_page == option_info[l].o_page) k++;
+
+				switch(option_info[l].o_page) {
+				case 1:	do_cmd_options_aux(1, "User Interface Options 1", k); break;
+				case 4:	do_cmd_options_aux(4, "User Interface Options 2", k); break;
+				case 6:	do_cmd_options_aux(6, "User Interface Options 3", k); break;
+				case 7:	do_cmd_options_aux(7, "User Interface Options 4", k); break;
+				case 5:	do_cmd_options_aux(5, "Audio Options 1", k); break;
+				case 9:	do_cmd_options_aux(9, "Audio Options 2", k); break;
+				case 2:	do_cmd_options_aux(2, "Gameplay Options 1", k); break;
+				case 3:	do_cmd_options_aux(3, "Gameplay Options 2", k); break;
+				case 8: do_cmd_options_aux(8, "Gameplay Options 3", k); break;
+				default: c_msg_print("Option not found.");
+				}
+			}
+			if (l == OPT_MAX) c_msg_print("Option not found.");
 		}
 
 		/* Save a 'option' file */
