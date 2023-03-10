@@ -8112,7 +8112,7 @@ void auto_inscriptions(void) {
 /*
  * Interact with some options
  */
-static void do_cmd_options_aux(int page, cptr info, int select) {
+static bool do_cmd_options_aux(int page, cptr info, int select) {
 	char	ch;
 	int	i, k, n = 0, k_no_advance;
 	static int k_lasttime[6] = { 0, 0, 0, 0, 0, 0};
@@ -8140,7 +8140,10 @@ static void do_cmd_options_aux(int page, cptr info, int select) {
 	/* Interact with the player */
 	while (TRUE) {
 		/* Prompt XXX XXX XXX */
-		sprintf(buf, "%s (\377yUp/Down\377w, \377yy\377w/\377yn\377w/\377yLeft\377w/\377yRight\377w set, \377yt\377w/\377yA\377w-\377yZ\377w\377w toggle, \377yESC\377w accept)", info);
+		if (select == -1)
+			sprintf(buf, "%s (\377yUp/Down\377w, \377yy\377w/\377yn\377w/\377yLeft\377w/\377yRight\377w set, \377yt\377w/\377yA\377w-\377yZ\377w toggle, \377yESC\377w accept)", info);
+		else
+			sprintf(buf, "%s (\377yy\377w/\377yn\377w/\377yLeft\377w/\377yRight\377w set, \377yt\377w/\377yA\377w-\377yZ\377w toggle, \377y/\377w next, \377yESC\377w accept)", info);
 		//prompt_topline(buf);
 		Term_putstr(0, 0, -1, TERM_WHITE, buf);
 
@@ -8175,7 +8178,10 @@ static void do_cmd_options_aux(int page, cptr info, int select) {
 		case KTRL('Q'):
 			/* Next time on this options page, restore our position */
 			k_lasttime[page] = k_no_advance;
-			return;
+			return (FALSE);
+		case '/':
+			k_lasttime[page] = k_no_advance;
+			return (TRUE);
 
 		case KTRL('T'):
 			/* Take a screenshot */
@@ -9755,6 +9761,7 @@ static void do_cmd_options_colourblindness(void) {
 void do_cmd_options(void) {
 	int k, l;
 	char tmp[1024];
+	static char src[1024] = { 0 };
 
 	options_immediate(TRUE);
 
@@ -9861,34 +9868,48 @@ void do_cmd_options(void) {
 		/* Search for an option (by name) */
 		else if (k == '/') {
 			int m;
+			bool found = FALSE;
 
 			Term_putstr(0, 23, -1, TERM_YELLOW, "Enter (partial) option name: ");
-			tmp[0] = 0;
-			if (!askfor_aux(tmp, 70, 0)) continue;
+			if (!askfor_aux(src, 70, 0)) continue;
 
-			for (l = 0; l < OPT_MAX; l++) {
-				if (!option_info[l].o_desc) continue; //option exists?
-				if (!option_info[l].o_enabled) continue; //option is eligible?
-				if (!my_strcasestr(option_info[l].o_text, tmp)) continue; //(partial) match?
+			while (TRUE) {
+				for (l = 0; l < OPT_MAX; l++) {
+					if (!option_info[l].o_desc) continue; //option exists?
+					if (!option_info[l].o_enabled) continue; //option is eligible?
+					if (!my_strcasestr(option_info[l].o_text, src)) continue; //(partial) match?
 
-				k = 0;
-				for (m = 0; m < l; m++)
-					if (option_info[m].o_page == option_info[l].o_page) k++;
+					found = TRUE;
+					k = 0;
+					for (m = 0; m < l; m++)
+						if (option_info[m].o_page == option_info[l].o_page) k++;
 
-				switch(option_info[l].o_page) {
-				case 1:	do_cmd_options_aux(1, "User Interface Options 1", k); break;
-				case 4:	do_cmd_options_aux(4, "User Interface Options 2", k); break;
-				case 6:	do_cmd_options_aux(6, "User Interface Options 3", k); break;
-				case 7:	do_cmd_options_aux(7, "User Interface Options 4", k); break;
-				case 5:	do_cmd_options_aux(5, "Audio Options 1", k); break;
-				case 9:	do_cmd_options_aux(9, "Audio Options 2", k); break;
-				case 2:	do_cmd_options_aux(2, "Gameplay Options 1", k); break;
-				case 3:	do_cmd_options_aux(3, "Gameplay Options 2", k); break;
-				case 8: do_cmd_options_aux(8, "Gameplay Options 3", k); break;
-				default: c_msg_print("Option not found.");
+					switch(option_info[l].o_page) {
+					case 1:	m = do_cmd_options_aux(1, "User Interface Options 1", k); break;
+					case 4:	m = do_cmd_options_aux(4, "User Interface Options 2", k); break;
+					case 6:	m = do_cmd_options_aux(6, "User Interface Options 3", k); break;
+					case 7:	m = do_cmd_options_aux(7, "User Interface Options 4", k); break;
+					case 5:	m = do_cmd_options_aux(5, "Audio Options 1", k); break;
+					case 9:	m = do_cmd_options_aux(9, "Audio Options 2", k); break;
+					case 2:	m = do_cmd_options_aux(2, "Gameplay Options 1", k); break;
+					case 3:	m = do_cmd_options_aux(3, "Gameplay Options 2", k); break;
+					case 8: m = do_cmd_options_aux(8, "Gameplay Options 3", k); break;
+					default: m = found = FALSE; c_msg_print("Option not found.");
+					}
+
+					/* Don't continue searching? */
+					if (!m) {
+						found = FALSE;
+						break;
+					}
 				}
+				/* If we're not looking for subsequent results, leave the options page instead of wrapping around */
+				if (!found) {
+					if (l == OPT_MAX) c_msg_format("\377yOption '%s' not found.", src);
+					break;
+				}
+				/* ..otherwise start from the beginning again */
 			}
-			if (l == OPT_MAX) c_msg_print("Option not found.");
 		}
 
 		/* Save a 'option' file */
