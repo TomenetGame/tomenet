@@ -176,7 +176,7 @@ cptr window_flag_desc[9] = {
 
    byte	o_set;		//unused/deprecated
    byte	o_bit;		//deprecated
-   byte o_enabled;	//deprecated
+   byte o_enabled;	//is the option even available aka listed in the options menu?
 
    cptr	o_text;
    cptr	o_desc;
