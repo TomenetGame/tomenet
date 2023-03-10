@@ -9036,8 +9036,9 @@ extern int PlayerUID;
 #define INVENTORY_CHANGE_ERASE	3
 
 
-/* Client-side auto inscriptions - doubled to 200 after introduction of auto-pickup/destroy in 4.7.4 */
-#define MAX_AUTO_INSCRIPTIONS	200
+/* Client-side auto inscriptions - doubled to 200 after introduction of auto-pickup/destroy in 4.7.4;
+   increased to 500 on player request, whatever. */
+#define MAX_AUTO_INSCRIPTIONS	500
 
 /* Maximum amount of ping reception times logged for each player */
 #define MAX_PING_RECVS_LOGGED	10
