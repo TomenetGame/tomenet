@@ -396,10 +396,35 @@ void do_cmd_skill() {
 		/* Search for skill name */
 		else if (c == 's' || c == '/') {
 			char tmp[MAX_CHARS];
+			bool inkey_msg_old = inkey_msg;
+			int j, k;
 
 			prt("Search for skill: ", 23 + HGT_PLUS, 0);
 			tmp[0] = 0;
-			if (askfor_aux(tmp, MAX_CHARS, 0)) {
+			inkey_msg = TRUE; /* suppress hybrid macros */
+			if (!askfor_aux(tmp, MAX_CHARS, 0)) {
+				inkey_msg = inkey_msg_old;
+				continue;
+			}
+			inkey_msg = inkey_msg_old;
+
+			for (j = 1; j < MAX_SKILLS; j++) {
+				i = get_idx(j);
+
+				if (p_ptr->s_info[i].flags1 & SKF1_HIDDEN) continue;
+				if (!my_strcasestr((char*)s_info[i].name, tmp)) continue;
+
+				/* If the skill we're looking for is currently not developed, develop it and all
+				   parent skills recursively, so it's visible in our table and we can select it */
+				k = i;
+				while (!p_ptr->s_info[k].dev) {
+					p_ptr->s_info[k].dev = TRUE;
+					Send_skill_dev(k, TRUE);
+					k = s_info[k].father;
+					if (k == -1) break;
+				}
+				init_table(table, &max, FALSE);
+
 				for (i = 0; i < max; i++) {
 					if (!my_strcasestr((char*)s_info[table[i][0]].name, tmp)) continue;
 
@@ -409,6 +434,8 @@ void do_cmd_skill() {
 					if (start < 0) start = 0;
 					break;
 				}
+
+				break;
 			}
 		}
 
