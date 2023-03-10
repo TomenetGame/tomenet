@@ -9782,50 +9782,50 @@ void do_cmd_options(void) {
 
 		/* Give some choices */
 		l = 2;
-		Term_putstr(3, l++, -1, TERM_WHITE, "(\377y1\377w/\377y2\377w/\377y3\377w/\377y4\377w) User interface options 1/2/3/4");
-		Term_putstr(3, l++, -1, TERM_WHITE, "(\377y5\377w/\377y6\377w)     Audio options");
-		Term_putstr(3, l++, -1, TERM_WHITE, "(\377y7\377w/\377y8\377w/\377y9\377w)   Gameplay options 1/2/3");
-		Term_putstr(3, l++, -1, TERM_WHITE, "(\377yw\377w)       Window flags");
+		Term_putstr(2, l++, -1, TERM_WHITE, "(\377y1\377w/\377y2\377w/\377y3\377w/\377y4\377w) User interface options 1/2/3/4");
+		Term_putstr(2, l++, -1, TERM_WHITE, "(\377y5\377w/\377y6\377w)     Audio options");
+		Term_putstr(2, l++, -1, TERM_WHITE, "(\377y7\377w/\377y8\377w/\377y9\377w)   Gameplay options 1/2/3");
+		Term_putstr(2, l++, -1, TERM_WHITE, "(\377yw\377w)       Window flags");
 #ifdef GLOBAL_BIG_MAP
 		if (strcmp(ANGBAND_SYS, "gcu"))
-			Term_putstr(3, l++, -1, TERM_WHITE, "(\377yb\377w/\377yM\377w/\377ym\377w)   Toggle/enable/disable big_map option (double screen height)");
+			Term_putstr(2, l++, -1, TERM_WHITE, "(\377yb\377w/\377yM\377w/\377ym\377w)   Toggle/enable/disable big_map option (double screen height)");
 		else
-			Term_putstr(3, l++, -1, TERM_L_DARK, "(\377sb\377D/\377sM\377D/\377sm\377D)   Toggle/enable/disable big_map (double size) - NOT AVAILABLE ON GCU");
+			Term_putstr(2, l++, -1, TERM_L_DARK, "(\377sb\377D/\377sM\377D/\377sm\377D)   Toggle/enable/disable big_map (double size) - NOT AVAILABLE ON GCU");
 #endif
 		l++;
-		Term_putstr(3, l++, -1, TERM_WHITE, "(\377os\377w/\377oS\377w)     Save all options & flags / Save to global.opt file (account-wide)");
-		Term_putstr(3, l++, -1, TERM_WHITE, "(\377ol\377w)       Load all options & flags");
+		Term_putstr(2, l++, -1, TERM_WHITE, "(\377os\377w/\377oS\377w)     Save all options & flags / Save to global.opt file (account-wide)");
+		Term_putstr(2, l++, -1, TERM_WHITE, "(\377ol\377w)       Load all options & flags");
 
 		l++;
-		Term_putstr(3, l++, -1, TERM_L_DARK, "----------------------------------------------------------------------------");
+		Term_putstr(2, l++, -1, TERM_L_DARK, "----------------------------------------------------------------------------");
 		l++;
 
-		Term_putstr(3, l++, -1, TERM_SLATE, "The following options are mostly saved automatically on quitting via CTRL+Q:");
+		Term_putstr(2, l++, -1, TERM_SLATE, "The following settings are mostly saved automatically on quitting via CTRL+Q:");
 		l++;
 #ifdef USE_SOUND_2010
 		if (c_cfg.rogue_like_commands)
-			Term_putstr(3, l++, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+F hotkey) / Audio pack selector");
+			Term_putstr(2, l++, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+F hotkey) / Audio pack selector");
 		else
-			Term_putstr(3, l++, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+U hotkey) / Audio pack selector");
+			Term_putstr(2, l++, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+U hotkey) / Audio pack selector");
 
-		Term_putstr(3, l++, -1, TERM_WHITE, "(\377yn\377w/\377yN\377w) Disable/reenable specific sound effects/music");
+		Term_putstr(2, l++, -1, TERM_WHITE, "(\377yn\377w/\377yN\377w) Disable/reenable specific sound effects/music");
 #endif
 
 #if defined(WINDOWS) || defined(USE_X11)
 		/* Font (and window) settings aren't available in command-line mode */
 		if (strcmp(ANGBAND_SYS, "gcu")) {
  #ifdef ENABLE_SUBWINDOW_MENU
-			Term_putstr(3, l++, -1, TERM_WHITE, "(\377yf\377w) Window Fonts and Visibility");
+			Term_putstr(2, l++, -1, TERM_WHITE, "(\377yf\377w) Window Fonts and Visibility");
  #endif
 			/* CHANGE_FONTS_X11 */
-			Term_putstr(3, l++, -1, TERM_WHITE, "(\377yF\377w) Cycle all font sizes at once (can be tapped multiple times)");
+			Term_putstr(2, l++, -1, TERM_WHITE, "(\377yF\377w) Cycle all font sizes at once (can be tapped multiple times)");
 		}
 #endif
-		Term_putstr(3, l++, -1, TERM_WHITE, "(\377yc\377w) Colour palette and colour blindness options");
+		Term_putstr(2, l++, -1, TERM_WHITE, "(\377yc\377w) Colour palette and colour blindness options");
 		l++;
 
-		Term_putstr(3, l++, -1, TERM_WHITE, "(\377UA\377w) Account Options");
-		Term_putstr(3, l++, -1, TERM_WHITE, "(\377UI\377w) Install sound/music pack from 7z-file you placed in your TomeNET folder");
+		Term_putstr(2, l++, -1, TERM_WHITE, "(\377UA\377w) Account Options");
+		Term_putstr(2, l++, -1, TERM_WHITE, "(\377UI\377w) Install sound/music pack from 7z-file you placed in your TomeNET folder");
 
 		/* hide cursor */
 		Term->scr->cx = Term->wid;
