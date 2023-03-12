@@ -765,17 +765,18 @@ void Receive_login(void) {
 
 	if (s_ARCADE) {
 		c_put_str(TERM_SLATE, "The server is running 'ARCADE_SERVER' settings.", 21, 10);
-		/* Reset default values (2+1) back to zero */
-		max_ded_pvp_chars = max_ded_iddc_chars = 0;
+		if (is_older_than(&server_version, 4, 9, 0, 5, 0, 0)) {
+			/* Reset default values (2+1) back to zero */
+			max_ded_pvp_chars = max_ded_iddc_chars = max_cpa_plus = 0;
+		}
 	}
 	if (s_RPG) {
 		if (!s_ARCADE) c_put_str(TERM_SLATE, "The server is running 'IRONMAN_SERVER' settings.", 21, 10);
-		if (!s_RPG_ADMIN) {
-			max_cpa = 1;
-			max_cpa_plus = 0;
+		if (is_older_than(&server_version, 4, 9, 0, 5, 0, 0)) {
+			if (!s_RPG_ADMIN) max_cpa = 1;
+			/* Reset default values (2+1) back to zero */
+			max_ded_pvp_chars = max_ded_iddc_chars = max_cpa_plus = 0;
 		}
-		/* Reset default values (2+1) back to zero */
-		max_ded_pvp_chars = max_ded_iddc_chars = 0;
 	}
 	if (s_TEST) c_put_str(TERM_SLATE, "The server is running 'TEST_SERVER' settings.", 22, 25);
 	else if (s_FUN) c_put_str(TERM_SLATE, "The server is running 'FUN_SERVER' settings.", 22, 25);
