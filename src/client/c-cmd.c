@@ -2260,6 +2260,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			strcpy(init_search_string, "FIGHTING");
 		} else if (!strcasecmp("shoot", buf) || !strcasecmp("shooting", buf)) strcpy(init_search_string, "Ranged");
 		else if (!strcasecmp(buf, "bl")) strcpy(init_search_string, "blacklist");
+		else if (!strcasecmp(buf, "!")) strcpy(init_search_string, "! inscription");
 
 		/* clean up */
 		buf[0] = 0;
