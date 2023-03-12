@@ -7690,16 +7690,29 @@ void auto_inscriptions(void) {
 #endif
 				c = 's'; //TERM_SLATE
 				/* build a whole line */
+#if 0 /* squeeze out every last char we could use for the inscription */
 				strcpy(match_buf, format("\377%c<\377w", c));
+#else
+				strcpy(match_buf, format("\377%c>\377w", c));
+#endif
 				if (auto_inscription_invalid[cur_page * AUTOINS_PAGESIZE + i]) strcat(match_buf, "\377R");
 				strcat(match_buf, auto_inscription_match[cur_page * AUTOINS_PAGESIZE + i]);
+#if 0 /* squeeze out every last char we could use for the inscription */
 				strcat(match_buf, format("\377%c>", c));
+#endif
 				strcpy(tag_buf, "\377y");
 				strcat(tag_buf, auto_inscription_tag[cur_page * AUTOINS_PAGESIZE + i]);
+#if 0 /* squeeze out every last char we could use for the inscription */
 				sprintf(fff, "%3d %-62s %s%s<%s\377%c>", cur_page * AUTOINS_PAGESIZE + i + 1, match_buf, /* spacing = AUTOINS_MATCH_LEN + 7 */
 				    auto_inscription_autodestroy[cur_page * AUTOINS_PAGESIZE + i] ? "\377RA\377-" : (auto_inscription_autopickup[cur_page * AUTOINS_PAGESIZE + i] ? "\377Ga\377-" : " "),
 				    auto_inscription_invalid[cur_page * AUTOINS_PAGESIZE + i] ? "  " : "", /* silyl sprintf %- formatting.. */
 				    tag_buf, c);
+#else
+				sprintf(fff, "%3d %-59s %s%s\377%c>%s", cur_page * AUTOINS_PAGESIZE + i + 1, match_buf, /* spacing = AUTOINS_MATCH_LEN + 7 */
+				    auto_inscription_autodestroy[cur_page * AUTOINS_PAGESIZE + i] ? "\377RA\377-" : (auto_inscription_autopickup[cur_page * AUTOINS_PAGESIZE + i] ? "\377Ga\377-" : " "),
+				    auto_inscription_invalid[cur_page * AUTOINS_PAGESIZE + i] ? "  " : "", /* silyl sprintf %- formatting.. */
+				    c, tag_buf);
+#endif
 
 #ifdef INTEGRATED_SELECTOR
 				Term_putstr(0, i + 1, -1, auto_inscription_force[cur_page * AUTOINS_PAGESIZE + i] ? TERM_L_BLUE : TERM_WHITE, fff);
@@ -7715,16 +7728,29 @@ void auto_inscriptions(void) {
 				else if (i == prev_line) c = 's'; //TERM_SLATE
 				else continue;
 				/* build a whole line */
+#if 0 /* squeeze out every last char we could use for the inscription */
 				strcpy(match_buf, format("\377%c<\377w", c));
+#else
+				strcpy(match_buf, format("\377%c>\377w", c));
+#endif
 				if (auto_inscription_invalid[cur_page * AUTOINS_PAGESIZE + i]) strcat(match_buf, "\377R");
 				strcat(match_buf, auto_inscription_match[cur_page * AUTOINS_PAGESIZE + i]);
+#if 0 /* squeeze out every last char we could use for the inscription */
 				strcat(match_buf, format("\377%c>", c));
+#endif
 				strcpy(tag_buf, "\377y");
 				strcat(tag_buf, auto_inscription_tag[cur_page * AUTOINS_PAGESIZE + i]);
+#if 0 /* squeeze out every last char we could use for the inscription */
 				sprintf(fff, "%3d %-62s %s%s<%s\377%c>", cur_page * AUTOINS_PAGESIZE + i + 1, match_buf, /* spacing = AUTOINS_MATCH_LEN + 7 */
 				    auto_inscription_autodestroy[cur_page * AUTOINS_PAGESIZE + i] ? "\377RA\377-" : (auto_inscription_autopickup[cur_page * AUTOINS_PAGESIZE + i] ? "\377Ga\377-" : " "),
 				    auto_inscription_invalid[cur_page * AUTOINS_PAGESIZE + i] ? "  " : "", /* silyl sprintf %- formatting.. */
 				    tag_buf, c);
+#else
+				sprintf(fff, "%3d %-59s %s%s\377%c>%s", cur_page * AUTOINS_PAGESIZE + i + 1, match_buf, /* spacing = AUTOINS_MATCH_LEN + 7 */
+				    auto_inscription_autodestroy[cur_page * AUTOINS_PAGESIZE + i] ? "\377RA\377-" : (auto_inscription_autopickup[cur_page * AUTOINS_PAGESIZE + i] ? "\377Ga\377-" : " "),
+				    auto_inscription_invalid[cur_page * AUTOINS_PAGESIZE + i] ? "  " : "", /* silyl sprintf %- formatting.. */
+				    c, tag_buf);
+#endif
 
 #ifdef INTEGRATED_SELECTOR
 				Term_putstr(0, i + 1, -1, auto_inscription_force[cur_page * AUTOINS_PAGESIZE + i] ? TERM_L_BLUE : TERM_WHITE, fff);
@@ -7964,10 +7990,17 @@ void auto_inscriptions(void) {
 			}
 #endif
 
+#if 0 /* squeeze out every last char we could use for the inscription */
 			/* Clear previous tag string */
 			Term_putstr(62, cur_line + 1, -1, TERM_L_GREEN, "                ");
 			/* Go to the correct location */
 			Term_gotoxy(63, cur_line + 1);
+#else
+			/* Clear previous tag string */
+			Term_putstr(61, cur_line + 1, -1, TERM_L_GREEN, "                  ");
+			/* Go to the correct location */
+			Term_gotoxy(62, cur_line + 1);
+#endif
 			strcpy(buf, auto_inscription_tag[cur_page * AUTOINS_PAGESIZE + cur_line]);
 			/* Get a new tag string */
 			if (!askfor_aux(buf, AUTOINS_TAG_LEN - 1, 0)) {

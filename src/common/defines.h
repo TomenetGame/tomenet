@@ -9350,5 +9350,5 @@ extern int PlayerUID;
 
 #ifdef CLIENT_SIDE
  #define AUTOINS_MATCH_LEN 55
- #define AUTOINS_TAG_LEN 17
+ #define AUTOINS_TAG_LEN 19
 #endif
