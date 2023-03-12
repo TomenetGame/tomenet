@@ -2847,6 +2847,7 @@ int Receive_message(void) {
 	char ch;
 	char buf[MSG_LEN], *bptr, *sptr, *bnptr;
 	char l_buf[MSG_LEN], l_cname[NAME_LEN], *ptr, l_nick[NAME_LEN], called_name[NAME_LEN];
+	static bool got_note = FALSE;
 
 	if ((n = Packet_scanf(&rbuf, "%c%S", &ch, buf)) <= 0) return(n);
 
@@ -2856,15 +2857,15 @@ int Receive_message(void) {
 	/* Hack for tombstone music from insanity-deaths. (First four bytes are "\377w\377v".) */
 	if (!strcmp(buf + 4, "You turn into an unthinking vegetable.")) insanity_death = TRUE;
 
-	/* Hack for storing private messages to disk, in case we miss them */
-	if (!strncmp(buf + 6, "Note from ", 10)) {
+	/* Hack for storing private messages to disk, in case we miss them; handle multi-line messages (subsequent lines start on a space) */
+	if (!strncmp(buf + 6, "Note from ", 10) || (got_note && buf[2] == ' ')) {
 		FILE *fp;
 		char path[1024];
 
 		path_build(path, 1024, ANGBAND_DIR_USER, format("notes-%s.txt", nick));
 		fp = fopen(path, "a");
 		if (fp) {
-			char buf2[MSG_LEN], *c = buf + 6 + 10, *c2 = buf2;
+			char buf2[MSG_LEN] = { 0 }, *c = buf + (got_note ? 2 : 6 + 10), *c2 = buf2;
 
 			while (*c) {
 				switch (*c) {
@@ -2894,7 +2895,8 @@ int Receive_message(void) {
 			fprintf(fp, "%s\n", buf2);
 			fclose(fp);
 		}
-	}
+		got_note = TRUE;
+	} else got_note = FALSE;
 
 	/* Hack to clear topline: It's a translation of the former msg_print(Ind, NULL) hack, as we cannot transmit the NULL. */
 	if (buf[0] == '\377' && !buf[1]) {
