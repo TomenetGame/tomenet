@@ -6861,7 +6861,7 @@ static bool hack_message = FALSE;
 int Send_message(int Ind, cptr msg) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 	player_type *p_ptr = Players[Ind];
-	char buf[80 +80]; // for +80 see below, at 'Clip end of msg'..
+	char buf[MAX_CHARS_WIDE]; // for +80 see below, at 'Clip end of msg'..
 
 	if (msg == NULL) {
 		//return(1);
@@ -6882,8 +6882,8 @@ int Send_message(int Ind, cptr msg) {
 // (otherwise, lines with colour codes might be crippled here :| )
 	//strncpy(buf, msg, 78);
 	//buf[78] = '\0';
-	strncpy(buf, msg, 158);
-	buf[158] = '\0';
+	strncpy(buf, msg, MAX_CHARS_WIDE - 1);
+	buf[MAX_CHARS_WIDE - 1] = '\0';
 
 	if ((!hack_message) && p_ptr->esp_link_type && p_ptr->esp_link) {
 		if ((buf[0] != '\375' && (p_ptr->esp_link_flags & LINKF_MSG)) ||
