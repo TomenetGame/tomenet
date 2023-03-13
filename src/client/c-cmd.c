@@ -3936,6 +3936,14 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			continue;
 		/* Mark current search results on currently visible guide part */
 		case 'a':
+#if 1 /* causes erratic behaviour: 'a' again realigns document position */
+			/* Specialty: Unhack, unmarking an active marking */
+			if (marking) {
+				marking = FALSE;
+				continue;
+			}
+#endif
+
 			if (!lastsearch[0]) continue;
 
 			strcpy(searchstr, lastsearch);
@@ -4799,6 +4807,14 @@ void browse_local_file(char* fname, int rememberance_index) {
 			continue;
 		/* Mark current search results on currently visible file part */
 		case 'a':
+#if 1 /* causes erratic behaviour: 'a' again realigns document position */
+			/* Specialty: Unhack, unmarking an active marking */
+			if (marking) {
+				marking = FALSE;
+				continue;
+			}
+#endif
+
 			if (!lastsearch[rememberance_index][0]) continue;
 
 			strcpy(searchstr, lastsearch[rememberance_index]);
