@@ -2830,6 +2830,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		Term->scr->cx = Term->wid;
 		Term->scr->cu = 1;
 
+#ifdef ENABLE_SHIFT_SPECIALKEYS
+		inkey_shift_special = 0x0;
+#endif
 		/* we're here via /? command? */
 		if (c_override) {
 			if (c_override == 255) {
@@ -2961,12 +2964,21 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			continue;
 		/* page up/down */
 		case '9': case 'p': //rl:?
+		case 'P':
 			if (line == 0) line = guide_lastline - maxlines + 1;
+#ifdef ENABLE_SHIFT_SPECIALKEYS
+			else if (inkey_shift_special & 0x1) line -= maxlines / 2;
+#endif
 			else line -= maxlines;
 			if (line < 0) line = 0;
 			continue;
 		case '3': case 'n': case ' ': //rl:?
+		case 'N':
 			if (line < guide_lastline - maxlines) {
+#ifdef ENABLE_SHIFT_SPECIALKEYS
+				if (inkey_shift_special & 0x1) line += maxlines / 2;
+				else
+#endif
 				line += maxlines;
 				if (line > guide_lastline - maxlines) line = guide_lastline - maxlines;
 				if (line < 0) line = 0;
