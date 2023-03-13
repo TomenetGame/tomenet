@@ -4172,7 +4172,7 @@ void browse_local_file(char* fname, int rememberance_index) {
 	static int line_cur[MAX_REMEMBERANCE_INDICES] = { 0 }, line_before_search[MAX_REMEMBERANCE_INDICES] = { 0 }, jumped_to_line[MAX_REMEMBERANCE_INDICES] = { 0 }, file_lastline[MAX_REMEMBERANCE_INDICES] = { -1 };
 	static char lastsearch[MAX_REMEMBERANCE_INDICES][MAX_CHARS] = { 0 };
 
-	bool inkey_msg_old, within, within_col, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE, restore_pos = FALSE, marking = FALSE;
+	bool inkey_msg_old, within, within_col, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE, restore_pos = FALSE, marking = FALSE, marking_after = FALSE;
 	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
 	int searchline = -1, within_cnt = 0, c = 0, n, line_presearch = line_cur[rememberance_index];
 	char searchstr[MAX_CHARS], withinsearch[MAX_CHARS];
@@ -4287,9 +4287,14 @@ void browse_local_file(char* fname, int rememberance_index) {
 			}
 			*cp2 = 0;
 
+			/* Hack: keep last search results marked all the time, even while just navigating (pg)up/dn etc.. */
+			if (marking && !searchstr[0]) strcpy(searchstr, lastsearch[rememberance_index]);
+
 			/* Just mark last search's results within currently visible file piece */
 			if (marking) {
+#if 0 /* 0'ed is a hack: keep last search results marked all the time, even while just navigating (pg)up/dn etc.. */
 				marking = FALSE;
+#endif
 				strcpy(withinsearch, searchstr);
 				searchstr[0] = 0;
 			}
@@ -4621,6 +4626,11 @@ void browse_local_file(char* fname, int rememberance_index) {
 		skipped_redraw:
 		skip_redraw = FALSE;
 
+		if (marking_after) {
+			marking = TRUE;
+			marking_after = FALSE;
+		}
+
 		/* hide cursor */
 		Term->scr->cx = Term->wid;
 		Term->scr->cu = 1;
@@ -4684,6 +4694,7 @@ void browse_local_file(char* fname, int rememberance_index) {
 
 		/* search for keyword */
 		case 's':
+			marking = marking_after = FALSE; //clear hack
 #ifdef REGEX_SEARCH
 			search_regexp = FALSE;
 #endif
@@ -4706,12 +4717,18 @@ void browse_local_file(char* fname, int rememberance_index) {
 
 			strcpy(lastsearch[rememberance_index], searchstr);
 			searchline = line_cur[rememberance_index] - 1; //init searchline for string-search
+
+			/* Hack: keep last search results marked all the time, even while just navigating (pg)up/dn etc.. */
+			marking_after = TRUE;
+
 			continue;
 #ifdef REGEX_SEARCH
 		/* search for regexp ^^ why not! */
 		case 'r': /* <- case-insensitive */
 			__attribute__ ((fallthrough));
 		case 'R':
+			marking = marking_after = FALSE; //clear hack
+
 			if (c == 'r') i = REG_EXTENDED | REG_ICASE;// | REG_NEWLINE;
 			else i = REG_EXTENDED;// | REG_NEWLINE;
 
@@ -4747,15 +4764,22 @@ void browse_local_file(char* fname, int rememberance_index) {
 
 			search_regexp = TRUE;
 			strcpy(searchstr_re, searchstr); //clone just for ^/& evaluation later..
+
+			/* Hack: keep last search results marked all the time, even while just navigating (pg)up/dn etc.. */
+			marking_after = TRUE;
+
 			continue;
 #endif
-
 		/* special function now: Reset search. Means: Go to where I was before searching. */
 		case 'S':
+			marking = marking_after = FALSE; //clear hack
+
 			line_cur[rememberance_index] = line_before_search[rememberance_index];
 			continue;
 		/* search for next occurance of the previously used search keyword */
 		case 'd':
+			marking = marking_after = FALSE; //clear hack
+
 			if (!lastsearch[rememberance_index][0]) continue;
 
 			line_presearch = line_cur[rememberance_index];
@@ -4768,6 +4792,10 @@ void browse_local_file(char* fname, int rememberance_index) {
 
 			strcpy(searchstr, lastsearch[rememberance_index]);
 			searchline = line_cur[rememberance_index] - 1; //init searchline for string-search
+
+			/* Hack: keep last search results marked all the time, even while just navigating (pg)up/dn etc.. */
+			marking_after = TRUE;
+
 			continue;
 		/* Mark current search results on currently visible file part */
 		case 'a':
@@ -4798,6 +4826,8 @@ void browse_local_file(char* fname, int rememberance_index) {
 		/* search for previous occurance of the previously used search keyword */
 		case 'D':
 		case 'f':
+			marking = marking_after = FALSE; //clear hack
+
 			if (!lastsearch[rememberance_index][0]) continue;
 
 			line_presearch = line_cur[rememberance_index];
@@ -4813,6 +4843,10 @@ void browse_local_file(char* fname, int rememberance_index) {
 #endif
 			strcpy(searchstr, lastsearch[rememberance_index]);
 			searchline = line_cur[rememberance_index] - 1; //init searchline for string-search
+
+			/* Hack: keep last search results marked all the time, even while just navigating (pg)up/dn etc.. */
+			marking_after = TRUE;
+
 			continue;
 		/* jump to a specific line number */
 		case '#':
