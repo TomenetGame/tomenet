@@ -1305,13 +1305,9 @@ static errr Infowin_set_class_hint(cptr name) {
  */
 static void react_keypress(XEvent *xev) {
 	int i, n, mc, ms, mo, mx;
-
-//#ifndef ENABLE_SHIFT_SPECIALKEYS
 	uint ks1;
-//#endif
 
 	XKeyEvent *ev = (XKeyEvent*)(xev);
-
 	KeySym ks;
 
 	char buf[128];
@@ -1324,10 +1320,8 @@ static void react_keypress(XEvent *xev) {
 	/* Terminate */
 	buf[n] = '\0';
 
-//#ifndef ENABLE_SHIFT_SPECIALKEYS
 	/* Hack -- convert into an unsigned int */
 	ks1 = (uint)(ks);
-//#endif
 
 	/* Extract four "modifier flags" */
 	mc = (ev->state & ControlMask) ? TRUE : FALSE;
@@ -1342,6 +1336,12 @@ static void react_keypress(XEvent *xev) {
 	/* Hack -- Ignore "modifier keys" */
 	if (IsModifierKey(ks)) return;
 
+#ifdef ENABLE_SHIFT_SPECIALKEYS
+	/* As we're shortcutting the whole key-evaluation with the various 'return' calls here, set the shiftkey flags manually */
+	if (ms) inkey_shift_special |= 0x1;
+	if (mc) inkey_shift_special |= 0x2;
+	if (mo) inkey_shift_special |= 0x4;
+#endif
 
 	/* Normal keys with no modifiers */
 	if (n && !mo && !mx && !IsSpecialKey(ks)) {
@@ -1352,9 +1352,8 @@ static void react_keypress(XEvent *xev) {
 		return;
 	}
 
-#if 0 /* 0'ed, to Reinstatiate original code, read next comment for details: */
- /* Wrong ^! We need this code, to get clean keys returned from get_macro_trigger(), when pressing ESC key! (No idea if there are more cases than this; reinstatiating this code:) */
- #ifndef ENABLE_SHIFT_SPECIALKEYS /* Totally no need for this code, even if this feat weren't defined? ^^' */
+	/* Note, regarding new inkey_shift_special code:
+	   We need this switch() code here, to get clean keys returned from get_macro_trigger(), when pressing ESC key! (No idea if there are more cases than this): */
 	/* Handle a few standard keys */
 	switch (ks1) {
 		case XK_Escape:
@@ -1370,48 +1369,6 @@ static void react_keypress(XEvent *xev) {
 		case XK_BackSpace:
 		Term_keypress('\010'); return;
 	}
- #endif
-#else
-	/* Handle a few standard keys */
-	switch (ks1) {
-		case XK_Escape:
- #ifdef ENABLE_SHIFT_SPECIALKEYS
-		/* As we're shortcutting the whole key-evaluation with our early 'return' here, set the shiftkey flags manually */
-		if (ms) inkey_shift_special |= 0x1;
-		if (mc) inkey_shift_special |= 0x2;
-		if (mo) inkey_shift_special |= 0x4;
- #endif
-		Term_keypress(ESCAPE); return;
-
-		case XK_Return:
- #ifdef ENABLE_SHIFT_SPECIALKEYS
-		/* As we're shortcutting the whole key-evaluation with our early 'return' here, set the shiftkey flags manually */
-		if (ms) inkey_shift_special |= 0x1;
-		if (mc) inkey_shift_special |= 0x2;
-		if (mo) inkey_shift_special |= 0x4;
- #endif
-		Term_keypress('\r'); return;
-
-		case XK_Tab:
- #ifdef ENABLE_SHIFT_SPECIALKEYS
-		/* As we're shortcutting the whole key-evaluation with our early 'return' here, set the shiftkey flags manually */
-		if (ms) inkey_shift_special |= 0x1;
-		if (mc) inkey_shift_special |= 0x2;
-		if (mo) inkey_shift_special |= 0x4;
- #endif
-		Term_keypress('\t'); return;
-
-		case XK_Delete:
-		case XK_BackSpace:
- #ifdef ENABLE_SHIFT_SPECIALKEYS
-		/* As we're shortcutting the whole key-evaluation with our early 'return' here, set the shiftkey flags manually */
-		if (ms) inkey_shift_special |= 0x1;
-		if (mc) inkey_shift_special |= 0x2;
-		if (mo) inkey_shift_special |= 0x4;
- #endif
-		Term_keypress('\010'); return;
-	}
-#endif
 
 	/* Hack -- Use the KeySym */
 	if (ks) {

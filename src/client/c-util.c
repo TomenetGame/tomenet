@@ -676,9 +676,6 @@ static char inkey_aux(void) {
 	char	buf_atoi[5];
 	bool	inkey_max_line_set;
 	int net_fd;
-#ifdef ENABLE_SHIFT_SPECIALKEYS
-	static bool check_shift = FALSE;
-#endif
 
 	inkey_max_line_set = inkey_max_line;
 
@@ -924,17 +921,6 @@ static char inkey_aux(void) {
 		/* return next macro character */
 		return(ch);
 	}
-
-#ifdef ENABLE_SHIFT_SPECIALKEYS
-	if (ch == 31) check_shift = TRUE;
-	else if (check_shift) {
-		//seems it's like this: 95 = no shift keys, 83 = 'shift' pressed, 78 = 'ctrl', 79 = 'alt'. All shiftkeys will follow right after each other.
-		if (ch == 83) inkey_shift_special |= 0x1;
-		else if (ch == 78) inkey_shift_special |= 0x2;
-		else if (ch == 79) inkey_shift_special |= 0x4;
-		else check_shift = FALSE; //no more shiftkeys in the sequence.
-	}
-#endif
 
 	/* Do not check "control-underscore" sequences */
 	if (parse_under) return(ch);
