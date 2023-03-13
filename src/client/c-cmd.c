@@ -2040,7 +2040,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 	static char lastsearch[MAX_CHARS] = { 0 };
 	static char lastchapter[MAX_CHARS] = { 0 };
 
-	bool inkey_msg_old, within, within_col, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE, restore_pos = FALSE, marking = FALSE;
+	bool inkey_msg_old, within, within_col, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE, restore_pos = FALSE, marking = FALSE, marking_after = FALSE;
 	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
 	int searchline = -1, within_cnt = 0, c = 0, n, line_presearch = line;
 	char searchstr[MAX_CHARS], withinsearch[MAX_CHARS], chapter[MAX_CHARS]; //chapter[8]; -- now also used for terms
@@ -2466,6 +2466,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			}
 			*cp2 = 0;
 
+			/* Hack: keep last search results marked all the time, even while just navigating (pg)up/dn etc.. */
+			if (marking && !searchstr[0]) strcpy(searchstr, lastsearch);
+
 			/* New chapter functionality: Search for a specific chapter keyword? */
 			if (chapter[0] && chapter[0] != '(') {
 				bool ok = FALSE;
@@ -2529,7 +2532,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 			/* Just mark last search's results within currently visible guide piece */
 			else if (marking) {
+#if 0 /* 0'ed is a hack: keep last search results marked all the time, even while just navigating (pg)up/dn etc.. */
 				marking = FALSE;
+#endif
 				strcpy(withinsearch, searchstr);
 				searchstr[0] = 0;
 			}
@@ -2826,6 +2831,11 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		skipped_redraw:
 		skip_redraw = FALSE;
 
+		if (marking_after) {
+			marking = TRUE;
+			marking_after = FALSE;
+		}
+
 		/* hide cursor */
 		Term->scr->cx = Term->wid;
 		Term->scr->cu = 1;
@@ -2996,6 +3006,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 		/* seach for 'chapter': can be either a numerical one or a main term, such as race/class/skill names. */
 		case 'c':
+			marking = marking_after = FALSE; //clear hack
 #ifdef REGEX_SEARCH
 			search_regexp = FALSE;
 #endif
@@ -3020,6 +3031,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 			strcpy(lastchapter, buf); //a small life hack for remembering our chapter search term for subsequent normal searching
 			strcpy(lastsearch, buf); //further small life hack - not sure if a great idea or not..
+
+			/* Hack: keep last search results marked all the time, even while just navigating (pg)up/dn etc.. */
+			marking_after = TRUE;
 
 			/* abuse chapter searching for extra functionality: search for chapter about a specific main term? */
 			if (isalpha(buf[0])) {
@@ -3713,6 +3727,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				if (chapter[0]) continue;
 
 				/* Continue with failure (empty chapter[] string) */
+				marking_after = FALSE;//unhack
 				continue;
 			}
 
@@ -3768,9 +3783,11 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				continue;
 			}
 			chapter[0] = 0; //invalid chapter specified
+			marking_after = FALSE;//unhack
 			continue;
 		/* search for keyword */
 		case 's':
+			marking = marking_after = FALSE; //clear hack
 #ifdef REGEX_SEARCH
 			search_regexp = FALSE;
 #endif
@@ -3836,12 +3853,18 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 			strcpy(lastsearch, searchstr);
 			searchline = line - 1; //init searchline for string-search
+
+			/* Hack: keep last search results marked all the time, even while just navigating (pg)up/dn etc.. */
+			marking_after = TRUE;
+
 			continue;
 #ifdef REGEX_SEARCH
 		/* search for regexp ^^ why not! */
 		case 'r': /* <- case-insensitive */
 			__attribute__ ((fallthrough));
 		case 'R':
+			marking = marking_after = FALSE; //clear hack
+
 			if (c == 'r') i = REG_EXTENDED | REG_ICASE;// | REG_NEWLINE;
 			else i = REG_EXTENDED;// | REG_NEWLINE;
 
@@ -3877,15 +3900,23 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			search_uppercase = FALSE;
 			search_regexp = TRUE;
 			strcpy(searchstr_re, searchstr); //clone just for ^/& evaluation later..
+
+			/* Hack: keep last search results marked all the time, even while just navigating (pg)up/dn etc.. */
+			marking_after = TRUE;
+
 			continue;
 #endif
 
 		/* special function now: Reset search. Means: Go to where I was before searching. */
 		case 'S':
+			marking = marking_after = FALSE; //clear hack
+
 			line = line_before_search;
 			continue;
 		/* search for next occurance of the previously used search keyword */
 		case 'd':
+			marking = marking_after = FALSE; //clear hack
+
 			if (!lastsearch[0]) continue;
 
 			line_presearch = line;
@@ -3898,13 +3929,17 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 			strcpy(searchstr, lastsearch);
 			searchline = line - 1; //init searchline for string-search
+
+			/* Hack: keep last search results marked all the time, even while just navigating (pg)up/dn etc.. */
+			marking_after = TRUE;
+
 			continue;
 		/* Mark current search results on currently visible guide part */
 		case 'a':
 			if (!lastsearch[0]) continue;
 
 			strcpy(searchstr, lastsearch);
-			marking = TRUE;
+			marking_after = TRUE;
 			continue;
 		/* Enter a new (non-regexp) mark string and mark it on currently visible guide part */
 		case 'A':
@@ -3935,11 +3970,13 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			if (!searchstr[0]) continue;
 
 			strcpy(lastsearch, searchstr);
-			marking = TRUE;
+			marking_after = TRUE;
 			continue;
 		/* search for previous occurance of the previously used search keyword */
 		case 'D':
 		case 'f':
+			marking = marking_after = FALSE; //clear hack
+
 			if (!lastsearch[0]) continue;
 
 			line_presearch = line;
@@ -3955,6 +3992,10 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 #endif
 			strcpy(searchstr, lastsearch);
 			searchline = line - 1; //init searchline for string-search
+
+			/* Hack: keep last search results marked all the time, even while just navigating (pg)up/dn etc.. */
+			marking_after = TRUE;
+
 			continue;
 		/* jump to a specific line number */
 		case '#':
