@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 12. March 2023 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 18. March 2023 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.9.0c - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -13194,6 +13194,9 @@ Tarpaulin           When equipped a tarp prevents your inventory and equipment
                     you are attacked with water-based effects.
                     Note that your weapon is not included in this protection
                     when you for example attack a water-based monster with it.
+Grinding Tool       Used by demolitionists (see "Digging" skill in (7.2)) to
+                    grind items containing wood or metal, which they don't have
+                    any other use for, to wood chips or reactive metal powder.
 
 
 (5.9a) Activatable items
