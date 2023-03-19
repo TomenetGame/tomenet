@@ -1451,7 +1451,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 #define ADMIN_EXTRA_STATISTICS /* display some extra marker(s) for admins to check certain statistics (eg client options) */
 void do_cmd_check_players(int Ind, int line, char *srcstr) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
-	int k, lines = 0, compaction = (p_ptr->player_list ? 2 : 0) + (p_ptr->player_list2 ? 1 : 0) ;
+	int k, lines = 0, compaction = (p_ptr->player_list ? 2 : 0) + (p_ptr->player_list2 ? 1 : 0), admins = 0;
 	FILE *fff;
 	char file_name[MAX_PATH_LENGTH];
 
@@ -1474,14 +1474,15 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 		byte attr = 'w';
 
 		/* Only print connected players */
-		if (q_ptr->conn == NOT_CONNECTED)
-			continue;
+		if (q_ptr->conn == NOT_CONNECTED) continue;
 
 		/* don't display the dungeon master if the secret_dungeon_master
 		 * option is set
 		 */
-		if (q_ptr->admin_dm &&
-		   (cfg.secret_dungeon_master) && !admin) continue;
+		if (q_ptr->admin_dm) {
+			admins++;
+			if (cfg.secret_dungeon_master && !admin) continue;
+		}
 
 		iddc = in_irondeepdive(&q_ptr->wpos) || (q_ptr->mode & MODE_DED_IDDC);
 
@@ -1863,7 +1864,8 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 		k = 4; //reduce to divisable by 4 # of lines (which means -2)
 	else
 		k = 0;
-	show_file(Ind, file_name, "Players Online", line, 0, k, srcstr);
+	if (admin) show_file(Ind, file_name, format("Players Online (%d+%d)", NumPlayers - admins, admins), line, 0, k, srcstr);
+	else show_file(Ind, file_name, format("Players Online (%d)", NumPlayers - admins), line, 0, k, srcstr);
 
 	/* Remove the file */
 	fd_kill(file_name);
