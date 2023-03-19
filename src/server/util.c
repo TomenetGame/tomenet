@@ -9616,6 +9616,7 @@ plog(format("similar: n1='%s',n2='%s'", name1, name2));
 	if (diff >= 5 && diff > (diff2 * (words ? 6 : 5)) / 10) {
 	if (diff < 5 && !words && diff2 < diff + 2) {
 #endif
+#if 0
 	 /* more lenient */
 	if (diff >= 5 && diff > (diff2 * (words ? 6 : 6)) / 10) {
 		s_printf("similar_names (6a): name1 '%s', name2 '%s'\n", name1, name2);
@@ -9625,6 +9626,17 @@ plog(format("similar: n1='%s',n2='%s'", name1, name2));
 		s_printf("similar_names (6b): name1 '%s', name2 '%s'\n", name1, name2);
 		return 6;
 	}
+#else
+	 /* even more lenient, for Darkie */
+	if (diff >= 5 && diff > (diff2 * (words ? 8 : 8)) / 10) {
+		s_printf("similar_names (6a): name1 '%s', name2 '%s'\n", name1, name2);
+		return 6;
+	}
+	if (diff < 5 && !words && diff2 < diff + 2) {
+		s_printf("similar_names (6b): name1 '%s', name2 '%s'\n", name1, name2);
+		return 6;
+	}
+#endif
 
 	return(0); //ok!
 }
