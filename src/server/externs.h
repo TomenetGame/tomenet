@@ -1938,7 +1938,7 @@ extern char last_chat_line[MSG_LEN]; /* What was said */
 extern char last_chat_owner[NAME_LEN]; /* Who said it */
 // extern char last_chat_prev[MSG_LEN]; /* What was said before the above*/
 
-extern void use_ability_blade(int Ind);
+extern void check_dodge(int Ind);
 extern void check_parryblock(int Ind);
 extern void toggle_shoot_till_kill(int Ind);
 extern void toggle_dual_mode(int Ind);

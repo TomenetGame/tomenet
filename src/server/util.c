@@ -3853,7 +3853,7 @@ static char* dodge_diz(int chance) {
 /*
  * Dodge Chance Feedback.
  */
-void use_ability_blade(int Ind) {
+void check_dodge(int Ind) {
 	player_type *p_ptr = Players[Ind];
 #ifndef NEW_DODGING
 	int dun_level = getlevel(&p_ptr->wpos);
@@ -3878,8 +3878,7 @@ void use_ability_blade(int Ind) {
 		msg_format(Ind, "You will usually dodge a level %d monster.", dun_level);
  #endif
 #else
-	int lev;
-	lev = p_ptr->lev * 2 < 127 ? p_ptr->lev * 2 : 127;
+	int lev = p_ptr->lev * 2 < 127 ? p_ptr->lev * 2 : 127;
 
 	if (is_admin(p_ptr))
 		msg_format(Ind, "You have a %d%%/%d%% chance of dodging a level %d/%d monster.",

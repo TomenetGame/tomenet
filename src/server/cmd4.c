@@ -4194,7 +4194,7 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 	    p_ptr->inventory[INVEN_ARM].tval) /* dual-wield or shield */
 		check_parryblock(Ind);
 	/* show dodge chance if we have dodge skill */
-	if (get_skill(p_ptr, SKILL_DODGE)) use_ability_blade(Ind);
+	if (get_skill(p_ptr, SKILL_DODGE)) check_dodge(Ind);
 
 #if 0 /* this is already displayed to the left */
 	/* Insanity warning (better message needed!) */

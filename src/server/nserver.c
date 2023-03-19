@@ -10575,7 +10575,7 @@ static int Receive_activate_skill(int ind) {
 			break;
 
 		case MKEY_DODGE:
-			use_ability_blade(player);
+			check_dodge(player);
 			break;
 		case MKEY_FLETCHERY:
 			do_cmd_fletchery(player);
