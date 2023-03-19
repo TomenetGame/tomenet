@@ -1066,6 +1066,7 @@ extern bool mon_allowed_pickup(int tval);
 extern int world_check_antimagic(int Ind);
 extern void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad);
 extern void mon_meteor_swarm(int Ind, int m_idx, int typ, int dam, int x, int y, int rad);
+extern int calc_grab_chance(player_type *p_ptr, int mod, int rlev);
 
 /* monster.c */
 /* monster1.c monster2.c */
