@@ -820,6 +820,7 @@ static bool inn_comm(int Ind, int cmd) {
 		case BACT_RUMORS: /* Listen for rumors */
 		{
 			char rumor[MAX_CHARS_WIDE];
+
 #if 0 /* why this RNG stuff? also, it doesn't work (always same val) */
 			/* Set the RNG seed. */
 			//Rand_value = turn / (HOUR * 10);
@@ -2066,6 +2067,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			u16b flags = QUEST_MONSTER | QUEST_RANDOM | QUEST_RACE;
 			int lev = p_ptr->lev;
 			u16b type, num;
+
 			if (prepare_xorder(Ind, Ind, flags, &lev, &type, &num))
 				add_xorder(Ind, Ind, type, num, flags);
 #endif

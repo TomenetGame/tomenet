@@ -1490,6 +1490,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 	/* Got disrupted ? */
 	if (magik(grabchance_top)) {
 		char m_name[MNAME_LEN], m_name_real[MNAME_LEN], bgen[2], bgen_real[2];
+
 		/* Get the monster name (or "it") */
 		monster_desc(i_top, m_name, m_idx, 0x00);
 		monster_desc(i_top, m_name_real, m_idx, 0x100);
@@ -3266,6 +3267,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			msg_print(Ind, "You resist the effects!");
 		else {
 			int dummy = (((s32b) ((65 + randint(25)) * (p_ptr->chp))) / 100);
+
 			if (p_ptr->chp - dummy < 1) dummy = p_ptr->chp - 1;
 			msg_print(Ind, "You feel your life fade away!");
 			bypass_invuln = TRUE;
@@ -5210,6 +5212,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			msg_print(Ind, "You resist the effects!");
 		else {
 			int dummy = (((s32b) ((65 + randint(25)) * (p_ptr->chp))) / 100);
+
 			if (p_ptr->chp - dummy < 1) dummy = p_ptr->chp - 1;
 			msg_print(Ind, "You feel your life fade away!");
 			bypass_invuln = TRUE;
@@ -7100,83 +7103,83 @@ static bool get_moves(int Ind, int m_idx, int *mm) {
 			if (!(r_ptr->flags6 & (RF6_BLINK | RF6_TPORT))) break; //proceed normally.
 
 			{
-			int spellmove = 0; //two choices, blink or teleport
-			char m_name[MNAME_LEN];
-			int chance, rlev;
-			cave_type **zcave = getcave(&m_ptr->wpos);
+				int spellmove = 0; //two choices, blink or teleport
+				char m_name[MNAME_LEN];
+				int chance, rlev;
+				cave_type **zcave = getcave(&m_ptr->wpos);
 
-			chance = (r_ptr->freq_innate + r_ptr->freq_spell) / 2;
-			/* Only do spells occasionally */
-			if (rand_int(100) >= chance) break; //proceed normally.
+				chance = (r_ptr->freq_innate + r_ptr->freq_spell) / 2;
+				/* Only do spells occasionally */
+				if (rand_int(100) >= chance) break; //proceed normally.
 
-			if (r_ptr->flags6 & RF6_BLINK) spellmove += 2;
-			if (r_ptr->flags6 & RF6_TPORT) spellmove += 4;
+				if (r_ptr->flags6 & RF6_BLINK) spellmove += 2;
+				if (r_ptr->flags6 & RF6_TPORT) spellmove += 4;
 
-			switch (spellmove + rand_int(2)) {
-			case 2: case 3: case 6:
-				/* We blink */
-				spellmove = 1;
-				break;
-			case 4: case 5: case 7:
-				/* We teleport */
-				spellmove = 2;
-				break;
-			}
+				switch (spellmove + rand_int(2)) {
+				case 2: case 3: case 6:
+					/* We blink */
+					spellmove = 1;
+					break;
+				case 4: case 5: case 7:
+					/* We teleport */
+					spellmove = 2;
+					break;
+				}
 
-			/* --- COPY/PASTED from make_attack_spell() --- keep in sync! --- */
+				/* --- COPY/PASTED from make_attack_spell() --- keep in sync! --- */
 
-			/* Get the monster name (or "it") */
-			monster_desc(Ind, m_name, m_idx, 0x00);
+				/* Get the monster name (or "it") */
+				monster_desc(Ind, m_name, m_idx, 0x00);
 
-			/* Extract the monster level */
-			rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
+				/* Extract the monster level */
+				rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
 
  #ifndef STUPID_MONSTER_SPELLS
-			if (!(r_ptr->flags2 & (RF2_STUPID))) {
-				int factor = 0;
+				if (!(r_ptr->flags2 & (RF2_STUPID))) {
+					int factor = 0;
 
-				/* Extract the 'stun' factor */
-				if (m_ptr->stunned > 50) factor += 25;
-				if (m_ptr->stunned) factor += 15;
+					/* Extract the 'stun' factor */
+					if (m_ptr->stunned > 50) factor += 25;
+					if (m_ptr->stunned) factor += 15;
 
-				if (magik(25 - (rlev + 3) / 4) || magik(factor)) return(TRUE);
+					if (magik(25 - (rlev + 3) / 4) || magik(factor)) return(TRUE);
   #ifdef GENERIC_INTERCEPTION
-				if (monst_check_grab(m_idx, 85, "cast")) return(TRUE);
+					if (monst_check_grab(m_idx, 85, "cast")) return(TRUE);
   #else
-				if (monst_check_grab(m_idx, 75, "cast")) return(TRUE);
+					if (monst_check_grab(m_idx, 75, "cast")) return(TRUE);
   #endif
-			}
+				}
  #endif
 
-			if (monst_check_antimagic(Ind, m_idx)) return(TRUE);
+				if (monst_check_antimagic(Ind, m_idx)) return(TRUE);
 
-			/* No teleporting within no-tele vaults and such */
-			if (zcave && //paranoia
-			    zcave[m_ptr->fy][m_ptr->fx].info & CAVE_STCK) {
-				//msg_format(Ind, "%^s fails to blink.", m_name);
-				return(TRUE);
-			}
-
-			if (monst_check_grab(m_idx, 50, "teleport")) return(TRUE);
-
-			switch (spellmove) {
-			case 1:
-				if (teleport_away(m_idx, 10) && p_ptr->mon_vis[m_idx]) {
-					if (p_ptr->blind) msg_print(Ind, "You hear something blink away.");
-					else msg_format(Ind, "%^s blinks away.", m_name);
+				/* No teleporting within no-tele vaults and such */
+				if (zcave && //paranoia
+				    zcave[m_ptr->fy][m_ptr->fx].info & CAVE_STCK) {
+					//msg_format(Ind, "%^s fails to blink.", m_name);
+					return(TRUE);
 				}
-				return(TRUE);
-			case 2:
-				if (teleport_away(m_idx, MAX_SIGHT * 2 + 5) && p_ptr->mon_vis[m_idx]) {
-					if (p_ptr->blind) msg_print(Ind, "You hear something teleport away.");
-					else msg_format(Ind, "%^s teleports away.", m_name);
+
+				if (monst_check_grab(m_idx, 50, "teleport")) return(TRUE);
+
+				switch (spellmove) {
+				case 1:
+					if (teleport_away(m_idx, 10) && p_ptr->mon_vis[m_idx]) {
+						if (p_ptr->blind) msg_print(Ind, "You hear something blink away.");
+						else msg_format(Ind, "%^s blinks away.", m_name);
+					}
+					return(TRUE);
+				case 2:
+					if (teleport_away(m_idx, MAX_SIGHT * 2 + 5) && p_ptr->mon_vis[m_idx]) {
+						if (p_ptr->blind) msg_print(Ind, "You hear something teleport away.");
+						else msg_format(Ind, "%^s teleports away.", m_name);
  #ifdef USE_SOUND_2010
-					sound_near_monster(m_idx, "teleport", NULL, SFX_TYPE_MON_SPELL);
+						sound_near_monster(m_idx, "teleport", NULL, SFX_TYPE_MON_SPELL);
  #endif
+					}
+					return(TRUE);
 				}
-				return(TRUE);
-			}
-			break; //we didn't do anything - can't happen anymore at this point though - paranoia
+				break; //we didn't do anything - can't happen anymore at this point though - paranoia
 			}
 		case 2: /* No good moves (can't get closer) - blink or wait */
 			if (!(r_ptr->flags6 & RF6_BLINK)) break; //we can't blink. Proceed normally.
@@ -7184,55 +7187,55 @@ static bool get_moves(int Ind, int m_idx, int *mm) {
 
 			/* Blink to try and get past a hindering wall possibly */
 			{
-			char m_name[MNAME_LEN];
-			int chance, rlev;
-			cave_type **zcave = getcave(&m_ptr->wpos);
+				char m_name[MNAME_LEN];
+				int chance, rlev;
+				cave_type **zcave = getcave(&m_ptr->wpos);
 
-			chance = (r_ptr->freq_innate + r_ptr->freq_spell) / 2;
-			/* Only do spells occasionally */
-			if (rand_int(100) >= chance) break; //proceed normally.
+				chance = (r_ptr->freq_innate + r_ptr->freq_spell) / 2;
+				/* Only do spells occasionally */
+				if (rand_int(100) >= chance) break; //proceed normally.
 
-			/* --- COPY/PASTED from make_attack_spell() --- keep in sync! --- */
+				/* --- COPY/PASTED from make_attack_spell() --- keep in sync! --- */
 
-			/* Get the monster name (or "it") */
-			monster_desc(Ind, m_name, m_idx, 0x00);
+				/* Get the monster name (or "it") */
+				monster_desc(Ind, m_name, m_idx, 0x00);
 
-			/* Extract the monster level */
-			rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
+				/* Extract the monster level */
+				rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
 
  #ifndef STUPID_MONSTER_SPELLS
-			if (!(r_ptr->flags2 & (RF2_STUPID))) {
-				int factor = 0;
+				if (!(r_ptr->flags2 & (RF2_STUPID))) {
+					int factor = 0;
 
-				/* Extract the 'stun' factor */
-				if (m_ptr->stunned > 50) factor += 25;
-				if (m_ptr->stunned) factor += 15;
+					/* Extract the 'stun' factor */
+					if (m_ptr->stunned > 50) factor += 25;
+					if (m_ptr->stunned) factor += 15;
 
-				if (magik(25 - (rlev + 3) / 4) || magik(factor)) return(TRUE);
+					if (magik(25 - (rlev + 3) / 4) || magik(factor)) return(TRUE);
   #ifdef GENERIC_INTERCEPTION
-				if (monst_check_grab(m_idx, 85, "cast")) return(TRUE);
+					if (monst_check_grab(m_idx, 85, "cast")) return(TRUE);
   #else
-				if (monst_check_grab(m_idx, 75, "cast")) return(TRUE);
+					if (monst_check_grab(m_idx, 75, "cast")) return(TRUE);
   #endif
-			}
+				}
  #endif
 
-			if (monst_check_antimagic(Ind, m_idx)) return(TRUE);
+				if (monst_check_antimagic(Ind, m_idx)) return(TRUE);
 
-			/* No teleporting within no-tele vaults and such */
-			if (zcave && //paranoia
-			    zcave[m_ptr->fy][m_ptr->fx].info & CAVE_STCK) {
-				//msg_format(Ind, "%^s fails to blink.", m_name);
+				/* No teleporting within no-tele vaults and such */
+				if (zcave && //paranoia
+				    zcave[m_ptr->fy][m_ptr->fx].info & CAVE_STCK) {
+					//msg_format(Ind, "%^s fails to blink.", m_name);
+					return(TRUE);
+				}
+
+				if (monst_check_grab(m_idx, 50, "teleport")) return(TRUE);
+
+				if (teleport_away(m_idx, 10) && p_ptr->mon_vis[m_idx]) {
+					if (p_ptr->blind) msg_print(Ind, "You hear something blink away.");
+					else msg_format(Ind, "%^s blinks away.", m_name);
+				}
 				return(TRUE);
-			}
-
-			if (monst_check_grab(m_idx, 50, "teleport")) return(TRUE);
-
-			if (teleport_away(m_idx, 10) && p_ptr->mon_vis[m_idx]) {
-				if (p_ptr->blind) msg_print(Ind, "You hear something blink away.");
-				else msg_format(Ind, "%^s blinks away.", m_name);
-			}
-			return(TRUE);
 			}
 		/* Either we're fine or we don't want to do anything special:
 		   -1 = we're performing A* fine.
@@ -7439,8 +7442,10 @@ s_printf("ASTAR_INCOMPLETE\n");
 
 		int xt,yt, more_monsters_nearby = 0;
 		cave_type **zcave = getcave(&p_ptr->wpos);
+
 		if (zcave) {
 			monster_type *mx_ptr;
+
 			for (yt = m_ptr->fy - 5; yt <= m_ptr->fy + 5; yt ++)
 			for (xt = m_ptr->fx - 5; xt <= m_ptr->fx + 5; xt ++) {
 				if (in_bounds(yt,xt) && (zcave[yt][xt].m_idx > 0) &&
@@ -7454,6 +7459,7 @@ s_printf("ASTAR_INCOMPLETE\n");
 			if (more_monsters_nearby < 2) {
 				bool clockwise = TRUE; /* circle the player clockwise */
 				bool tested_so_far = FALSE;
+
 				/* Often stay still and don't move at all to save your
 				   turn for attacking in case the player appraoches. */
 				if (rand_int(100)) return(FALSE);
@@ -7502,6 +7508,7 @@ s_printf("ASTAR_INCOMPLETE\n");
 	if (!done) {
 		int tx = x2, ty = y2;
 		cave_type **zcave;
+
 		/* paranoia */
 		if (!(zcave = getcave(&m_ptr->wpos))) return(FALSE);
  #ifdef	MONSTERS_HIDE_HEADS
@@ -7999,8 +8006,7 @@ static bool get_moves_pet(int Ind, int m_idx, int *mm) {
 
 	if ((p_ptr != NULL) && (m_ptr->mind & GOLEM_ATTACK) && TARGET_BEING(p_ptr->target_who) && (p_ptr->target_who > 0 || check_hostile(Ind, -p_ptr->target_who)))
 		tm_idx = p_ptr->target_who;
-	else// if (m_ptr->mind & GOLEM_GUARD)
-	{
+	else { // if (m_ptr->mind & GOLEM_GUARD)
 		int sx, sy;
 		s32b max_hp = 0;
 
@@ -8219,6 +8225,7 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm) {
 		for (sy = m_ptr->fy - 1; sy <= m_ptr->fy + 1; sy++) {
 			cave_type *c_ptr;
 			cave_type **zcave;
+
 			if (!in_bounds(sy, sx)) continue;
 
 			/* ignore ourself */
@@ -9247,6 +9254,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 #if 0
 				if (p_ptr->mon_vis[m_idx]) {
 					char m_name[MNAME_LEN];
+
 					monster_desc(Ind, m_name, m_idx, 0);
 					msg_format(Ind, "%^s wakes up.", m_name);
 
@@ -9305,6 +9313,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 #if 0
 			if (p_ptr->mon_vis[m_idx]) {
 				char m_name[MNAME_LEN];
+
 				monster_desc(Ind, m_name, m_idx, 0);
 				msg_format(Ind, "\377o%^s is no longer stunned.", m_name);
 			}
@@ -9342,6 +9351,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 #if 0
 			if (p_ptr->mon_vis[m_idx]) {
 				char m_name[MNAME_LEN];
+
 				monster_desc(Ind, m_name, m_idx, 0);
 				msg_format(Ind, "%^s is no longer confused.", m_name);
 			}
@@ -10026,6 +10036,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 				/* Secret door */
 				if (c_ptr->feat == FEAT_SECRET) {
 					struct c_special *cs_ptr;
+
 					/* Clear mimic feature */
 					if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
 						cs_erase(c_ptr, cs_ptr);
@@ -10977,6 +10988,7 @@ static void process_monster_pet(int Ind, int m_idx) {
 				/* Secret door */
 				if (c_ptr->feat == FEAT_SECRET) {
 					struct c_special *cs_ptr;
+
 					/* Clear mimic feature */
 					if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
 						cs_erase(c_ptr, cs_ptr);
@@ -11420,6 +11432,7 @@ static void process_monster_golem(int Ind, int m_idx) {
 				/* Secret door */
 				if (c_ptr->feat == FEAT_SECRET) {
 					struct c_special *cs_ptr;
+
 					/* Clear mimic feature */
 					if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
 						cs_erase(c_ptr, cs_ptr);
@@ -12306,11 +12319,13 @@ void process_monsters(void) {
 #ifdef RPG_SERVER
 		else if (m_ptr->pet) { //pet
 			int p = find_player(m_ptr->owner);
+
 			process_monster_pet(p, i);
 		}
 #endif
 		else { //golem
 			int p = find_player(m_ptr->owner);
+
 			process_monster_golem(p, i);
 		}
 
@@ -12410,6 +12425,7 @@ void curse_equipment(int Ind, int chance, int heavy_chance) {
 	/* Extra, biased saving throw for blessed items */
 	if ((f3 & (TR3_BLESSED)) && (randint(888) > chance)) {
 		char o_name[ONAME_LEN];
+
 		object_desc(Ind, o_name, o_ptr, FALSE, 0);
 		msg_format(Ind, "Your %s resist%s cursing!", o_name,
 			((o_ptr->number > 1) ? "" : "s"));

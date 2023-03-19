@@ -3846,6 +3846,7 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 	/* Anti-cheeze */
 	if (okay && !artifact_p(o_ptr) && !ego_item_p(o_ptr) && magik(flags)) {
 		int discount = (100 - o_ptr->discount) / 2;
+
 		if (discount > 0) {
 			o_ptr->discount += discount;
 
@@ -7913,6 +7914,7 @@ static bool poly_build(int Ind, char *args) {
 	while (curr) {
 		struct builder *prev = NULL;
 		bool kill = FALSE;
+
 		if (curr->player == p_ptr->id) break;
 		if (!lookup_player_name(curr->player)) {	/* disconnect or free builders */
 			if (prev) prev->next = curr->next;
@@ -8049,6 +8051,7 @@ static bool poly_build(int Ind, char *args) {
 		houses[num_houses].dna = curr->dna;
 		if (curr->cvert >= 8 && fill_house(&houses[num_houses], FILL_MAKEHOUSE, NULL)) {
 			int area = (curr->maxx-curr->minx) * (curr->maxy-curr->miny);
+
 			houses[num_houses].flags |= HF_SELFBUILT;
 			curr->dna->price = area * area * 400; //initial_house_price(&houses[num_houses])
 			wild_add_uhouse(&houses[num_houses]);

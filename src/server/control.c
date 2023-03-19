@@ -35,6 +35,7 @@ void SGWHit(int read_fd, int arg) {
 		sdb = C_NEW(4096, char);
 		if (sdb != (char*)NULL) {
 			int i;
+
 			time(&now);
 			size += sprintf(sdb, "runtime=%d\n", (int)(now - cfg.runtime));
 			size += sprintf(&sdb[size], "turn=%d\n", turn);
@@ -233,6 +234,7 @@ void SGWHit(int read_fd, int arg) {
 			player_type *p_ptr;
 			int players = 0;
 			int day = bst(DAY, turn);
+
 			now = time(NULL);
 
 			/* Count players */

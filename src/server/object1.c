@@ -1043,33 +1043,30 @@ void flavor_hacks(void) {
  * Extract the "default" attr for each object
  * This function is used only by "flavor_init()"
  */
-static byte object_d_attr(int i)
-{
+static byte object_d_attr(int i) {
 	object_kind *k_ptr = &k_info[i];
 
 	/* Flavored items */
-	if (k_ptr->has_flavor)
-	{
+	if (k_ptr->has_flavor) {
 		/* Extract the indexx */
 		int indexx = k_ptr->sval;
 
 		/* Analyze the item */
-		switch (k_ptr->tval)
-		{
-			case TV_FOOD:
-				/* Hack for Mushroom of Unmagic */
-				if (indexx == SV_FOOD_UNMAGIC) return(TERM_MULTI);
-				else return(food_col[indexx]);
-			case TV_POTION: return(potion_col[indexx]);
-			case TV_SCROLL: return(scroll_col[indexx]);
-			case TV_AMULET: return(amulet_col[indexx]);
-			case TV_RING:   return(ring_col[indexx]);
-			case TV_STAFF:  return(staff_col[indexx]);
-			case TV_WAND:   return(wand_col[indexx]);
-			case TV_ROD:    return(rod_col[indexx]);
+		switch (k_ptr->tval) {
+		case TV_FOOD:
+			/* Hack for Mushroom of Unmagic */
+			if (indexx == SV_FOOD_UNMAGIC) return(TERM_MULTI);
+			else return(food_col[indexx]);
+		case TV_POTION: return(potion_col[indexx]);
+		case TV_SCROLL: return(scroll_col[indexx]);
+		case TV_AMULET: return(amulet_col[indexx]);
+		case TV_RING:   return(ring_col[indexx]);
+		case TV_STAFF:  return(staff_col[indexx]);
+		case TV_WAND:   return(wand_col[indexx]);
+		case TV_ROD:    return(rod_col[indexx]);
 
-			/* hack -- borrow those of potions */
-			case TV_POTION2: return(potion_col[indexx + 4]); /* the first 4 potions are unique */
+		/* hack -- borrow those of potions */
+		case TV_POTION2: return(potion_col[indexx + 4]); /* the first 4 potions are unique */
 		}
 	}
 
@@ -1085,8 +1082,7 @@ static byte object_d_attr(int i)
  * Extract the "default" char for each object
  * This function is used only by "flavor_init()"
  */
-static byte object_d_char(int i)
-{
+static byte object_d_char(int i) {
 	object_kind *k_ptr = &k_info[i];
 
 	return(k_ptr->k_char);
@@ -1098,13 +1094,11 @@ static byte object_d_char(int i)
  *
  * This is useful for switching on/off the "use_graphics" flag.
  */
-void reset_visuals(void)
-{
+void reset_visuals(void) {
 	int i;
 
 	/* Extract some info about terrain features */
-	for (i = 0; i < MAX_F_IDX; i++)
-	{
+	for (i = 0; i < MAX_F_IDX; i++) {
 		feature_type *f_ptr = &f_info[i];
 
 		/* Assume we will use the underlying values */
@@ -1113,8 +1107,7 @@ void reset_visuals(void)
 	}
 
 	/* Extract some info about objects */
-	for (i = 0; i < max_k_idx; i++)
-	{
+	for (i = 0; i < max_k_idx; i++) {
 		object_kind *k_ptr = &k_info[i];
 
 		/* Extract the "underlying" attr */
@@ -1129,8 +1122,7 @@ void reset_visuals(void)
 	}
 
 	/* Extract some info about monsters */
-	for (i = 0; i < MAX_R_IDX; i++)
-	{
+	for (i = 0; i < MAX_R_IDX; i++) {
 		/* Extract the "underlying" attr */
 		r_info[i].x_attr = r_info[i].d_attr;
 
@@ -1139,8 +1131,7 @@ void reset_visuals(void)
 	}
 
 	/* Extract attr/chars for equippy items (by tval) */
-	for (i = 0; i < 128; i++)
-	{
+	for (i = 0; i < 128; i++) {
 		/* Extract a default attr */
 		tval_to_attr[i] = default_tval_to_attr(i);
 
@@ -1215,6 +1206,11 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 	if (o_ptr->sigil) {
 		bool failed = 0;
 		if (o_ptr->sseed) {
+			/* Build the flag pool */
+			u32b flag_pool[192]; byte flag_category[192]; byte flag_count = 0; //192 is 32*6, aka max # of flags - Kurzel
+			s16b pval = o_ptr->pval; //PVAL for discrimination of flags
+			byte sigil = o_ptr->sigil;
+
 			/* Save RNG */
 			bool old_rand = Rand_quick;
 			u32b tmp_seed = Rand_value;
@@ -1222,11 +1218,6 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			/* Use the stored/quick RNG */
 			Rand_quick = TRUE;
 			Rand_value = o_ptr->sseed;
-
-			/* Build the flag pool */
-			u32b flag_pool[192]; byte flag_category[192]; byte flag_count = 0; //192 is 32*6, aka max # of flags - Kurzel
-			s16b pval = o_ptr->pval; //PVAL for discrimination of flags
-			byte sigil = o_ptr->sigil;
 
 			if (sigil == SV_R_LITE) {
 				if (!((*f2) & TR2_RES_LITE)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_LITE; flag_count++; }
@@ -3620,6 +3611,7 @@ cptr item_activation(object_type *o_ptr) {
 		case SV_RING_POLYMORPH:
 			if (o_ptr->pval) {
 				char m_name[MNAME_LEN];
+
 				m_name[0] = 0;
 				if (!(r_info[o_ptr->pval].flags8 & RF8_PLURAL)) {
 					if (is_a_vowel(*(r_info[o_ptr->pval].name + r_name)))
@@ -5314,6 +5306,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (f3 & TR3_ACTIVATE) {
 		/* TODO maybe: Some of the strings in item_activation() are rendered via format() and hence not constant! Might need free'ing! */
 		cptr activation = item_activation(o_ptr);
+
 		if (!activation) {
 			/* Mysterious message for items missing description (eg. golem command scrolls) - mikaelh */
 			if (wearable_p(o_ptr)) fprintf(fff, "When equipped, it can be activated.\n");
@@ -5974,6 +5967,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 			/* make message depend on pseudo-id status! */
 			if ((o_ptr->ident & ID_SENSE)) {
 				int quality;
+
 				if ((o_ptr->ident & ID_SENSE_HEAVY)) quality = pseudo_id_result(o_ptr, TRUE);
 				else quality = pseudo_id_result(o_ptr, FALSE);
 

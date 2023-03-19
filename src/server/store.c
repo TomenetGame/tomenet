@@ -7530,6 +7530,7 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 		/* ALL houses are currently rectangular, so this check seems obsolete.. */
 		if (h_ptr->flags & HF_RECT) {
 			int sy, sx, ey, ex, cx, cy;
+
 			sy = h_ptr->y + 1;
 			sx = h_ptr->x + 1;
 			ey = h_ptr->y + h_ptr->coords.rect.height - 1;
@@ -8010,6 +8011,7 @@ s_printf("PLAYER_STORE_HANDLE: complete, mang, owner %s (%d), %s, value %d, buye
 	/* Notify the store owner about the sale now or next time he logs in */
 	if (h_ptr->dna->owner_type == OT_PLAYER) {
 		cptr acc_name = lookup_accountname(lookup_player_id(owner_name));
+
 		if (!acc_name) { //paranoia
 			s_printf("PLAYER_STORE_UNOWNED!\n");
 			return(TRUE);

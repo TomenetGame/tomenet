@@ -3825,6 +3825,7 @@ bool apply_disenchant(int Ind, int mode) {
 	   Ethereal items don't get disenchanted, but rather disappear completely! */
 	if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) {
 		int i = randint(o_ptr->number / 5);
+
 		if (!i) i = 1;
 		msg_format(Ind, "\376\377o%s of your %s (%c) %s away!",
 		    (o_ptr->number == i ? "All" : (i != 1 ? "Some" : "One")), o_name, index_to_label(t),
@@ -4563,391 +4564,115 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 	/* Destroy locks and traps */
-	case GF_KILL_TRAP:
-		{
-			struct c_special *cs_ptr;
-			/* Destroy invisible traps */
-			//if (c_ptr->feat == FEAT_INVIS)
-			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
-				/* Hack -- special message */
-				if (!quiet && player_can_see_bold(Ind, y, x)) {
-					msg_print(Ind, "There is a bright flash of light!");
-					obvious = TRUE;
-				}
+	case GF_KILL_TRAP: {
+		struct c_special *cs_ptr;
 
-				/* Destroy the trap */
-//				c_ptr->feat = FEAT_FLOOR;
+		/* Destroy invisible traps */
+		//if (c_ptr->feat == FEAT_INVIS)
+		if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
+			/* Hack -- special message */
+			if (!quiet && player_can_see_bold(Ind, y, x)) {
+				msg_print(Ind, "There is a bright flash of light!");
+				obvious = TRUE;
+			}
+
+			/* Destroy the trap */
+			//c_ptr->feat = FEAT_FLOOR;
+			cs_erase(c_ptr, cs_ptr);
+
+			if (!quiet) {
+				/* Notice */
+				note_spot(Ind, y, x);
+
+				/* Redraw */
+				if (c_ptr->o_idx && !c_ptr->m_idx)
+					/* Make sure no traps are displayed on the screen anymore - mikaelh */
+					everyone_clear_ovl_spot(wpos, y, x);
+				else
+					everyone_lite_spot(wpos, y, x);
+			}
+		}
+
+		/* Secret / Locked doors are found and unlocked */
+		else if ((c_ptr->feat == FEAT_SECRET) ||
+		    ((c_ptr->feat >= FEAT_DOOR_HEAD + 0x01) &&
+		    (c_ptr->feat <= FEAT_DOOR_HEAD + 0x07))) {
+			/* Notice */
+			if (!quiet && (*w_ptr & CAVE_MARK)) {
+				msg_print(Ind, "Click!");
+				obvious = TRUE;
+			}
+
+			/* Unlock the door */
+			c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+
+			/* Clear mimic feature */
+			if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
 				cs_erase(c_ptr, cs_ptr);
 
-				if (!quiet) {
-					/* Notice */
-					note_spot(Ind, y, x);
-
-					/* Redraw */
-					if (c_ptr->o_idx && !c_ptr->m_idx)
-						/* Make sure no traps are displayed on the screen anymore - mikaelh */
-						everyone_clear_ovl_spot(wpos, y, x);
-					else
-						everyone_lite_spot(wpos, y, x);
-				}
-			}
-
-			/* Secret / Locked doors are found and unlocked */
-			else if ((c_ptr->feat == FEAT_SECRET) ||
-			    ((c_ptr->feat >= FEAT_DOOR_HEAD + 0x01) &&
-			    (c_ptr->feat <= FEAT_DOOR_HEAD + 0x07))) {
+			if (!quiet) {
 				/* Notice */
-				if (!quiet && (*w_ptr & CAVE_MARK)) {
-					msg_print(Ind, "Click!");
-					obvious = TRUE;
-				}
+				note_spot(Ind, y, x);
 
-				/* Unlock the door */
-				c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
-
-				/* Clear mimic feature */
-				if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
-					cs_erase(c_ptr, cs_ptr);
-
-				if (!quiet) {
-					/* Notice */
-					note_spot(Ind, y, x);
-
-					/* Redraw */
-					if (c_ptr->o_idx && !c_ptr->m_idx)
-						/* Make sure no traps are displayed on the screen anymore - mikaelh */
-						everyone_clear_ovl_spot(wpos, y, x);
-					else
-						everyone_lite_spot(wpos, y, x);
-				}
+				/* Redraw */
+				if (c_ptr->o_idx && !c_ptr->m_idx)
+					/* Make sure no traps are displayed on the screen anymore - mikaelh */
+					everyone_clear_ovl_spot(wpos, y, x);
+				else
+					everyone_lite_spot(wpos, y, x);
 			}
-
-			break;
 		}
+
+		break; }
 
 	/* Destroy Doors (and traps on them) */
-	case GF_KILL_DOOR:
-		{
-			byte feat = twall_erosion(wpos, y, x, FEAT_FLOOR);
-			struct c_special *cs_ptr;
-			bool door = FALSE;
+	case GF_KILL_DOOR: {
+		byte feat = twall_erosion(wpos, y, x, FEAT_FLOOR);
+		struct c_special *cs_ptr;
+		bool door = FALSE;
 
-			/* Destroy all visible traps and open doors */
-			if ((c_ptr->feat == FEAT_OPEN) ||
-			    (c_ptr->feat == FEAT_BROKEN)) {
-				door = TRUE;
+		/* Destroy all visible traps and open doors */
+		if ((c_ptr->feat == FEAT_OPEN) ||
+		    (c_ptr->feat == FEAT_BROKEN)) {
+			door = TRUE;
 
-				/* Hack -- special message */
-				if (!quiet && (*w_ptr & CAVE_MARK)) {
-					msg_print(Ind, "There is a bright flash of light!");
-					obvious = TRUE;
-				}
-
-				/* Destroy the feature */
-				cave_set_feat_live(wpos, y, x, feat);
-				/* Forget the wall */
-				everyone_forget_spot(wpos, y, x);
-
-				if (!quiet) {
-					/* Notice */
-					note_spot(Ind, y, x);
-
-					/* Redraw */
-					if (c_ptr->o_idx && !c_ptr->m_idx)
-						/* Make sure no traps are displayed on the screen anymore - mikaelh */
-						everyone_clear_ovl_spot(wpos, y, x);
-					else
-						everyone_lite_spot(wpos, y, x);
-				}
+			/* Hack -- special message */
+			if (!quiet && (*w_ptr & CAVE_MARK)) {
+				msg_print(Ind, "There is a bright flash of light!");
+				obvious = TRUE;
 			}
 
-			/* Destroy all closed doors */
-			if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-			    (c_ptr->feat <= FEAT_DOOR_TAIL)) {
-				door = TRUE;
+			/* Destroy the feature */
+			cave_set_feat_live(wpos, y, x, feat);
+			/* Forget the wall */
+			everyone_forget_spot(wpos, y, x);
 
-				/* Hack -- special message */
-				if (!quiet && (*w_ptr & CAVE_MARK)) {
-					msg_print(Ind, "There is a bright flash of light!");
-					obvious = TRUE;
-				}
+			if (!quiet) {
+				/* Notice */
+				note_spot(Ind, y, x);
 
-				/* Destroy the feature */
-				cave_set_feat_live(wpos, y, x, feat);
-
-				/* Forget the wall */
-				everyone_forget_spot(wpos, y, x);
-
-				if (!quiet) {
-					/* Notice */
-					note_spot(Ind, y, x);
-
-					/* Redraw */
+				/* Redraw */
+				if (c_ptr->o_idx && !c_ptr->m_idx)
+					/* Make sure no traps are displayed on the screen anymore - mikaelh */
+					everyone_clear_ovl_spot(wpos, y, x);
+				else
 					everyone_lite_spot(wpos, y, x);
-
-					/* Update some things */
-					p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
-				}
 			}
-
-			/* Destroy any traps that were on this door */
-			if (door && (cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
-				/* Hack -- special message */
-				if (!quiet && player_can_see_bold(Ind, y, x)) {
-					msg_print(Ind, "There is a bright flash of light!");
-					obvious = TRUE;
-				}
-
-				/* Destroy the feature */
-				//c_ptr->feat = FEAT_FLOOR;
-				cs_erase(c_ptr, cs_ptr);
-
-				/* Forget the wall */
-				everyone_forget_spot(wpos, y, x);
-
-				if (!quiet) {
-					/* Notice */
-					note_spot(Ind, y, x);
-
-					/* Redraw */
-					if (c_ptr->o_idx && !c_ptr->m_idx)
-						/* Make sure no traps are displayed on the screen anymore - mikaelh */
-						everyone_clear_ovl_spot(wpos, y, x);
-					else
-						everyone_lite_spot(wpos, y, x);
-				}
-			}
-			break;
 		}
 
-	/* Destroy Traps and Doors */
-	case GF_KILL_TRAP_DOOR:
-		{
-			byte feat = twall_erosion(wpos, y, x, FEAT_FLOOR);
-			struct c_special *cs_ptr;
+		/* Destroy all closed doors */
+		if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
+		    (c_ptr->feat <= FEAT_DOOR_TAIL)) {
+			door = TRUE;
 
-			/* Destroy any traps */
-			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
-				/* Hack -- special message */
-				if (!quiet && player_can_see_bold(Ind, y, x)) {
-					msg_print(Ind, "There is a bright flash of light!");
-					obvious = TRUE;
-				}
-
-				/* Destroy the feature */
-				//c_ptr->feat = FEAT_FLOOR;
-				cs_erase(c_ptr, cs_ptr);
-
-				/* Forget the wall */
-				everyone_forget_spot(wpos, y, x);
-
-				if (!quiet) {
-					/* Notice */
-					note_spot(Ind, y, x);
-
-					/* Redraw */
-					if (c_ptr->o_idx && !c_ptr->m_idx)
-						/* Make sure no traps are displayed on the screen anymore - mikaelh */
-						everyone_clear_ovl_spot(wpos, y, x);
-					else
-						everyone_lite_spot(wpos, y, x);
-				}
+			/* Hack -- special message */
+			if (!quiet && (*w_ptr & CAVE_MARK)) {
+				msg_print(Ind, "There is a bright flash of light!");
+				obvious = TRUE;
 			}
 
-			/* Destroy all visible traps and open doors */
-			if ((c_ptr->feat == FEAT_OPEN) ||
-			    (c_ptr->feat == FEAT_BROKEN)) {
-				/* Hack -- special message */
-				if (!quiet && (*w_ptr & CAVE_MARK)) {
-					msg_print(Ind, "There is a bright flash of light!");
-					obvious = TRUE;
-				}
-
-				/* Destroy the feature */
-				cave_set_feat_live(wpos, y, x, feat);
-				/* Forget the wall */
-				everyone_forget_spot(wpos, y, x);
-
-				if (!quiet) {
-					/* Notice */
-					note_spot(Ind, y, x);
-
-					/* Redraw */
-					if (c_ptr->o_idx && !c_ptr->m_idx)
-						/* Make sure no traps are displayed on the screen anymore - mikaelh */
-						everyone_clear_ovl_spot(wpos, y, x);
-					else
-						everyone_lite_spot(wpos, y, x);
-				}
-			}
-
-			/* Destroy all closed doors */
-			if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-			    (c_ptr->feat <= FEAT_DOOR_TAIL)) {
-				/* Hack -- special message */
-				if (!quiet && (*w_ptr & CAVE_MARK)) {
-					msg_print(Ind, "There is a bright flash of light!");
-					obvious = TRUE;
-				}
-
-				/* Destroy the feature */
-				cave_set_feat_live(wpos, y, x, feat);
-
-				/* Forget the wall */
-				everyone_forget_spot(wpos, y, x);
-
-				if (!quiet) {
-					/* Notice */
-					note_spot(Ind, y, x);
-
-					/* Redraw */
-					everyone_lite_spot(wpos, y, x);
-
-					/* Update some things */
-					p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
-				}
-			}
-			break;
-		}
-
-	/* Destroy walls (and doors) */
-	case GF_KILL_WALL:
-		{
-			byte feat = twall_erosion(wpos, y, x, FEAT_FLOOR);
-
-			if (!allow_terraforming(wpos, FEAT_TREE)) break;
-			/* Non-walls (etc) */
-			if (cave_los(zcave, y, x)) break;
-			/* Permanent walls */
-			if ((c_ptr->feat >= FEAT_PERM_EXTRA || c_ptr->feat == FEAT_PERM_CLEAR)
-			    && !(c_ptr->feat >= FEAT_SANDWALL && c_ptr->feat <= FEAT_SANDWALL_K)) break;
-
-			/* the_sandman: sandwalls are stm-able too? */
-			/* fixed it and also added the treasures in sandwalls - mikaelh */
-			/* Sandwall */
-			if (c_ptr->feat == FEAT_SANDWALL) {
-				/* Message */
-				if (!quiet && (*w_ptr & CAVE_MARK)) {
-					msg_print(Ind, "The sandwall collapses!");
-					obvious = TRUE;
-				}
-
-				/* Destroy the wall */
-				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_SAND : feat);
-			}
-			/* Sandwall with treasure */
-			else if (c_ptr->feat == FEAT_SANDWALL_H || c_ptr->feat == FEAT_SANDWALL_K) {
-				int old_object_level = object_level;
-
-				/* Message */
-				if (!quiet && (*w_ptr & CAVE_MARK)) {
-					msg_print(Ind, "The sandwall collapses!");
-					if (!istown(wpos)) msg_print(Ind, "You have found something!");
-					obvious = TRUE;
-				}
-
-				/* Destroy the wall */
-				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_SAND : feat);
-
-				/* Place some gold */
-				object_level = getlevel(&p_ptr->wpos);
-				if (!istown(wpos)) place_gold(Ind, wpos, y, x, 1, 0);
-				object_level = old_object_level;
-			}
-			/* Granite */
-			else if (c_ptr->feat >= FEAT_WALL_EXTRA) {
-				/* Message */
-				if (!quiet && (*w_ptr & CAVE_MARK)) {
-					msg_print(Ind, "The wall turns into mud!");
-					obvious = TRUE;
-				}
-
-				/* Destroy the wall */
-				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_MUD : feat);
-			}
-			/* Quartz / Magma with treasure */
-			else if (c_ptr->feat >= FEAT_MAGMA_H) {
-				int old_object_level = object_level;
-
-				/* Message */
-				if (!quiet && (*w_ptr & CAVE_MARK)) {
-					msg_print(Ind, "The vein turns into mud!");
-					if (!istown(wpos)) msg_print(Ind, "You have found something!");
-					obvious = TRUE;
-				}
-
-				/* Destroy the wall */
-				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_MUD : feat);
-
-				/* Place some gold */
-				object_level = getlevel(&p_ptr->wpos);
-				if (!istown(wpos)) place_gold(Ind, wpos, y, x, 1, 0);
-				object_level = old_object_level;
-			}
-
-			/* Quartz / Magma */
-			else if (c_ptr->feat >= FEAT_MAGMA) {
-				/* Message */
-				if (!quiet && (*w_ptr & CAVE_MARK)) {
-					msg_print(Ind, "The vein turns into mud!");
-					obvious = TRUE;
-				}
-
-				/* Destroy the wall */
-				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_MUD : feat);
-			}
-
-			/* Rubble */
-			else if (c_ptr->feat == FEAT_RUBBLE) {
-				/* Message */
-				if (!quiet && (*w_ptr & CAVE_MARK)) {
-					msg_print(Ind, "The rubble turns into mud!");
-					obvious = TRUE;
-				}
-
-				/* Destroy the rubble */
-				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_MUD : feat);
-
-				/* Hack -- place an object */
-				if (rand_int(100) < 10 && !quiet) {
-					/* Found something */
-					if (player_can_see_bold(Ind, y, x) && !istown(wpos)) {
-						msg_print(Ind, "There was something buried in the rubble!");
-						obvious = TRUE;
-					}
-
-					/* Place object */
-					if (!istown(wpos)) {
-						place_object_restrictor = RESF_NONE;
-						place_object(Ind, wpos, y, x, FALSE, FALSE, FALSE, make_resf(p_ptr) | RESF_LOW, default_obj_theme, p_ptr->luck, ITEM_REMOVAL_NORMAL, FALSE);
-					}
-				}
-			}
-
-			/* House doors are immune */
-			else if (c_ptr->feat == FEAT_HOME) {
-				/* Message */
-				if (!quiet && (*w_ptr & CAVE_MARK)) {
-					msg_print(Ind, "The door resists.");
-					obvious = TRUE;
-				}
-				break;
-			}
-
-			/* Destroy doors (and secret doors) */
-			else if (c_ptr->feat >= FEAT_DOOR_HEAD) {
-				/* Hack -- special message */
-				if (!quiet && (*w_ptr & CAVE_MARK)) {
-					msg_print(Ind, "The door turns into mud!");
-					obvious = TRUE;
-				}
-
-				/* Destroy the feature */
-				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_MUD : feat);
-			}
-
-			/* Non s2m'able features */
-			else break;
+			/* Destroy the feature */
+			cave_set_feat_live(wpos, y, x, feat);
 
 			/* Forget the wall */
 			everyone_forget_spot(wpos, y, x);
@@ -4960,11 +4685,280 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				everyone_lite_spot(wpos, y, x);
 
 				/* Update some things */
-				p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
+				p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
+			}
+		}
+
+		/* Destroy any traps that were on this door */
+		if (door && (cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
+			/* Hack -- special message */
+			if (!quiet && player_can_see_bold(Ind, y, x)) {
+				msg_print(Ind, "There is a bright flash of light!");
+				obvious = TRUE;
 			}
 
+			/* Destroy the feature */
+			//c_ptr->feat = FEAT_FLOOR;
+			cs_erase(c_ptr, cs_ptr);
+
+			/* Forget the wall */
+			everyone_forget_spot(wpos, y, x);
+
+			if (!quiet) {
+				/* Notice */
+				note_spot(Ind, y, x);
+
+				/* Redraw */
+				if (c_ptr->o_idx && !c_ptr->m_idx)
+					/* Make sure no traps are displayed on the screen anymore - mikaelh */
+					everyone_clear_ovl_spot(wpos, y, x);
+				else
+					everyone_lite_spot(wpos, y, x);
+			}
+		}
+		break; }
+
+	/* Destroy Traps and Doors */
+	case GF_KILL_TRAP_DOOR: {
+		byte feat = twall_erosion(wpos, y, x, FEAT_FLOOR);
+		struct c_special *cs_ptr;
+
+		/* Destroy any traps */
+		if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
+			/* Hack -- special message */
+			if (!quiet && player_can_see_bold(Ind, y, x)) {
+				msg_print(Ind, "There is a bright flash of light!");
+				obvious = TRUE;
+			}
+
+			/* Destroy the feature */
+			//c_ptr->feat = FEAT_FLOOR;
+			cs_erase(c_ptr, cs_ptr);
+
+			/* Forget the wall */
+			everyone_forget_spot(wpos, y, x);
+
+			if (!quiet) {
+				/* Notice */
+				note_spot(Ind, y, x);
+
+				/* Redraw */
+				if (c_ptr->o_idx && !c_ptr->m_idx)
+					/* Make sure no traps are displayed on the screen anymore - mikaelh */
+					everyone_clear_ovl_spot(wpos, y, x);
+				else
+					everyone_lite_spot(wpos, y, x);
+			}
+		}
+
+		/* Destroy all visible traps and open doors */
+		if ((c_ptr->feat == FEAT_OPEN) ||
+		    (c_ptr->feat == FEAT_BROKEN)) {
+			/* Hack -- special message */
+			if (!quiet && (*w_ptr & CAVE_MARK)) {
+				msg_print(Ind, "There is a bright flash of light!");
+				obvious = TRUE;
+			}
+
+			/* Destroy the feature */
+			cave_set_feat_live(wpos, y, x, feat);
+			/* Forget the wall */
+			everyone_forget_spot(wpos, y, x);
+
+			if (!quiet) {
+				/* Notice */
+				note_spot(Ind, y, x);
+
+				/* Redraw */
+				if (c_ptr->o_idx && !c_ptr->m_idx)
+					/* Make sure no traps are displayed on the screen anymore - mikaelh */
+					everyone_clear_ovl_spot(wpos, y, x);
+				else
+					everyone_lite_spot(wpos, y, x);
+			}
+		}
+
+		/* Destroy all closed doors */
+		if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
+		    (c_ptr->feat <= FEAT_DOOR_TAIL)) {
+			/* Hack -- special message */
+			if (!quiet && (*w_ptr & CAVE_MARK)) {
+				msg_print(Ind, "There is a bright flash of light!");
+				obvious = TRUE;
+			}
+
+			/* Destroy the feature */
+			cave_set_feat_live(wpos, y, x, feat);
+
+			/* Forget the wall */
+			everyone_forget_spot(wpos, y, x);
+
+			if (!quiet) {
+				/* Notice */
+				note_spot(Ind, y, x);
+
+				/* Redraw */
+				everyone_lite_spot(wpos, y, x);
+
+				/* Update some things */
+				p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
+			}
+		}
+		break; }
+
+	/* Destroy walls (and doors) */
+	case GF_KILL_WALL: {
+		byte feat = twall_erosion(wpos, y, x, FEAT_FLOOR);
+
+		if (!allow_terraforming(wpos, FEAT_TREE)) break;
+		/* Non-walls (etc) */
+		if (cave_los(zcave, y, x)) break;
+		/* Permanent walls */
+		if ((c_ptr->feat >= FEAT_PERM_EXTRA || c_ptr->feat == FEAT_PERM_CLEAR)
+		    && !(c_ptr->feat >= FEAT_SANDWALL && c_ptr->feat <= FEAT_SANDWALL_K)) break;
+
+		/* the_sandman: sandwalls are stm-able too? */
+		/* fixed it and also added the treasures in sandwalls - mikaelh */
+		/* Sandwall */
+		if (c_ptr->feat == FEAT_SANDWALL) {
+			/* Message */
+			if (!quiet && (*w_ptr & CAVE_MARK)) {
+				msg_print(Ind, "The sandwall collapses!");
+				obvious = TRUE;
+			}
+
+			/* Destroy the wall */
+			cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_SAND : feat);
+		}
+		/* Sandwall with treasure */
+		else if (c_ptr->feat == FEAT_SANDWALL_H || c_ptr->feat == FEAT_SANDWALL_K) {
+			int old_object_level = object_level;
+
+			/* Message */
+			if (!quiet && (*w_ptr & CAVE_MARK)) {
+				msg_print(Ind, "The sandwall collapses!");
+				if (!istown(wpos)) msg_print(Ind, "You have found something!");
+				obvious = TRUE;
+			}
+
+			/* Destroy the wall */
+			cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_SAND : feat);
+
+			/* Place some gold */
+			object_level = getlevel(&p_ptr->wpos);
+			if (!istown(wpos)) place_gold(Ind, wpos, y, x, 1, 0);
+			object_level = old_object_level;
+		}
+		/* Granite */
+		else if (c_ptr->feat >= FEAT_WALL_EXTRA) {
+			/* Message */
+			if (!quiet && (*w_ptr & CAVE_MARK)) {
+				msg_print(Ind, "The wall turns into mud!");
+				obvious = TRUE;
+			}
+
+			/* Destroy the wall */
+			cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_MUD : feat);
+		}
+		/* Quartz / Magma with treasure */
+		else if (c_ptr->feat >= FEAT_MAGMA_H) {
+			int old_object_level = object_level;
+
+			/* Message */
+			if (!quiet && (*w_ptr & CAVE_MARK)) {
+				msg_print(Ind, "The vein turns into mud!");
+				if (!istown(wpos)) msg_print(Ind, "You have found something!");
+				obvious = TRUE;
+			}
+
+			/* Destroy the wall */
+			cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_MUD : feat);
+
+			/* Place some gold */
+			object_level = getlevel(&p_ptr->wpos);
+			if (!istown(wpos)) place_gold(Ind, wpos, y, x, 1, 0);
+			object_level = old_object_level;
+		}
+
+		/* Quartz / Magma */
+		else if (c_ptr->feat >= FEAT_MAGMA) {
+			/* Message */
+			if (!quiet && (*w_ptr & CAVE_MARK)) {
+				msg_print(Ind, "The vein turns into mud!");
+				obvious = TRUE;
+			}
+
+			/* Destroy the wall */
+			cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_MUD : feat);
+		}
+
+		/* Rubble */
+		else if (c_ptr->feat == FEAT_RUBBLE) {
+			/* Message */
+			if (!quiet && (*w_ptr & CAVE_MARK)) {
+				msg_print(Ind, "The rubble turns into mud!");
+				obvious = TRUE;
+			}
+
+			/* Destroy the rubble */
+			cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_MUD : feat);
+
+			/* Hack -- place an object */
+			if (rand_int(100) < 10 && !quiet) {
+				/* Found something */
+				if (player_can_see_bold(Ind, y, x) && !istown(wpos)) {
+					msg_print(Ind, "There was something buried in the rubble!");
+					obvious = TRUE;
+				}
+
+				/* Place object */
+				if (!istown(wpos)) {
+					place_object_restrictor = RESF_NONE;
+					place_object(Ind, wpos, y, x, FALSE, FALSE, FALSE, make_resf(p_ptr) | RESF_LOW, default_obj_theme, p_ptr->luck, ITEM_REMOVAL_NORMAL, FALSE);
+				}
+			}
+		}
+
+		/* House doors are immune */
+		else if (c_ptr->feat == FEAT_HOME) {
+			/* Message */
+			if (!quiet && (*w_ptr & CAVE_MARK)) {
+				msg_print(Ind, "The door resists.");
+				obvious = TRUE;
+			}
 			break;
 		}
+
+		/* Destroy doors (and secret doors) */
+		else if (c_ptr->feat >= FEAT_DOOR_HEAD) {
+			/* Hack -- special message */
+			if (!quiet && (*w_ptr & CAVE_MARK)) {
+				msg_print(Ind, "The door turns into mud!");
+				obvious = TRUE;
+			}
+
+			/* Destroy the feature */
+			cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_MUD : feat);
+		}
+
+		/* Non s2m'able features */
+		else break;
+
+		/* Forget the wall */
+		everyone_forget_spot(wpos, y, x);
+
+		if (!quiet) {
+			/* Notice */
+			note_spot(Ind, y, x);
+
+			/* Redraw */
+			everyone_lite_spot(wpos, y, x);
+
+			/* Update some things */
+			p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
+		}
+
+		break; }
 
 	/* Make doors */
 	case GF_MAKE_DOOR:
@@ -5066,83 +5060,78 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		break;
 
-	case GF_KILL_GLYPH:
-		{
-			byte feat = twall_erosion(wpos, y, x, FEAT_DIRT);
+	case GF_KILL_GLYPH: {
+		byte feat = twall_erosion(wpos, y, x, FEAT_DIRT);
 
-			if (!allow_terraforming(wpos, FEAT_TREE)) break;
-			if (c_ptr->feat == FEAT_GLYPH || c_ptr->feat == FEAT_RUNE)
-				cave_set_feat_live(wpos, y, x, feat);
-		}
-		break;
+		if (!allow_terraforming(wpos, FEAT_TREE)) break;
+		if (c_ptr->feat == FEAT_GLYPH || c_ptr->feat == FEAT_RUNE)
+			cave_set_feat_live(wpos, y, x, feat);
+		break; }
 
 	// GF_ROCKET and GF_DISINTEGRATE are handled in project()
 
 	case GF_WATER:
 	case GF_WAVE:
 	case GF_VAPOUR:
-	case GF_WATERPOISON:	//New druid stuff
-		{
-			int p1 = 0;
-			int p2 = 0;
-			int f1 = FEAT_NONE;
-			int f2 = FEAT_NONE;
-			int f = FEAT_NONE;
-			int k;
+	case GF_WATERPOISON: {	//New druid stuff
+		int p1 = 0;
+		int p2 = 0;
+		int f1 = FEAT_NONE;
+		int f2 = FEAT_NONE;
+		int f = FEAT_NONE;
+		int k;
+		bool old_rand = Rand_quick;
+		u32b tmp_seed = Rand_value;
 
-			if (!allow_terraforming(wpos, FEAT_SHAL_WATER)) break;
-			/* "Permanent" features will stay */
-			if ((f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) break;
-			/* Needs more than 30 damage */
-			if (dam < 30) break;
+		if (!allow_terraforming(wpos, FEAT_SHAL_WATER)) break;
+		/* "Permanent" features will stay */
+		if ((f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) break;
+		/* Needs more than 30 damage */
+		if (dam < 30) break;
 
-			bool old_rand = Rand_quick;
-			u32b tmp_seed = Rand_value;
+		if ((c_ptr->feat == FEAT_FLOOR) ||
+		    (c_ptr->feat == FEAT_DIRT) ||
+		    (c_ptr->feat == FEAT_GRASS)) {
+			/* p1 % chance to create this feat */
+			p1 = 20; f1 = FEAT_SHAL_WATER;
 
-			if ((c_ptr->feat == FEAT_FLOOR) ||
-			    (c_ptr->feat == FEAT_DIRT) ||
-			    (c_ptr->feat == FEAT_GRASS)) {
-				/* p1 % chance to create this feat */
-				p1 = 20; f1 = FEAT_SHAL_WATER;
-
-				if (c_ptr->feat == FEAT_DIRT) {
-					/* reduce feat1 chance */
-					p1 = 10;
-					/* p2 % chance to create this feat */
-					p2 = 15; f2 = FEAT_MUD;
-				}
+			if (c_ptr->feat == FEAT_DIRT) {
+				/* reduce feat1 chance */
+				p1 = 10;
+				/* p2 % chance to create this feat */
+				p2 = 15; f2 = FEAT_MUD;
 			}
-			else if (c_ptr->feat == FEAT_SHAL_LAVA) {
-				/* 15% chance to convert it to normal floor */
-				p1 = 15; f1 = FEAT_VOLCANIC;//FEAT_ROCKY, FEAT_ASH
-			}
-
-			/* Use the stored/quick RNG */
-			Rand_quick = TRUE;
-			//using fixed seed here to make sure that repeated casting won't cover 100% of the area with water:
-			Rand_value = (3623 * wpos->wy + 29753) * (2843 * wpos->wx + 48869) + (1741 * y + 22109) * y * x + (x + 96779) * x + 42 + wpos->wz;
-
-			k = rand_int(100);
-
-			/* Restore RNG */
-			Rand_quick = old_rand;
-			Rand_value = tmp_seed;
-
-			if (k < p1) f = f1;
-			else if (k < p1 + p2) f = f2;
-
-			if (f) {
-//uses static array set in generate.c, fix!	if (f == FEAT_FLOOR) place_floor_live(wpos, y, x);
-				//else
-				cave_set_feat_live(wpos, y, x, f);
-				/* Notice */
-				if (!quiet) note_spot(Ind, y, x);
-				/* Redraw */
-				everyone_lite_spot(wpos, y, x);
-//				if (seen) obvious = TRUE;
-			}
-			break;
 		}
+		else if (c_ptr->feat == FEAT_SHAL_LAVA) {
+			/* 15% chance to convert it to normal floor */
+			p1 = 15; f1 = FEAT_VOLCANIC;//FEAT_ROCKY, FEAT_ASH
+		}
+
+		/* Use the stored/quick RNG */
+		Rand_quick = TRUE;
+		//using fixed seed here to make sure that repeated casting won't cover 100% of the area with water:
+		Rand_value = (3623 * wpos->wy + 29753) * (2843 * wpos->wx + 48869) + (1741 * y + 22109) * y * x + (x + 96779) * x + 42 + wpos->wz;
+
+		k = rand_int(100);
+
+		/* Restore RNG */
+		Rand_quick = old_rand;
+		Rand_value = tmp_seed;
+
+		if (k < p1) f = f1;
+		else if (k < p1 + p2) f = f2;
+
+		if (f) {
+			//uses static array set in generate.c, fix!	if (f == FEAT_FLOOR) place_floor_live(wpos, y, x);
+			//else
+			cave_set_feat_live(wpos, y, x, f);
+			/* Notice */
+			if (!quiet) note_spot(Ind, y, x);
+			/* Redraw */
+			everyone_lite_spot(wpos, y, x);
+			//if (seen) obvious = TRUE;
+		}
+		break; }
 	}
 
 	/* Return "Anything seen?" */
@@ -6255,58 +6244,56 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		break;
 
 	/* Mindcrafter's charm spell, makes monsters ignore you and your teammates (mostly..) */
-	case GF_CHARMIGNORE:
-		{
-			int diff = 1;
+	case GF_CHARMIGNORE: {
+		int diff = 1;
 
-			no_dam = TRUE;
+		no_dam = TRUE;
 
-			/* Skip sleeping targets */
-			if (m_ptr->csleep) break;
-			/* Already charmed? - no effect then */
-			if (m_ptr->charmedignore) break;
-			/* Not a valid target */
-			if ((m_ptr->pet && m_ptr->owner == p_ptr->id)
-			    || m_ptr->status == M_STATUS_FRIENDLY
-			    || (r_ptr->flags9 & RF9_NO_REDUCE))
-				break;
+		/* Skip sleeping targets */
+		if (m_ptr->csleep) break;
+		/* Already charmed? - no effect then */
+		if (m_ptr->charmedignore) break;
+		/* Not a valid target */
+		if ((m_ptr->pet && m_ptr->owner == p_ptr->id)
+		    || m_ptr->status == M_STATUS_FRIENDLY
+		    || (r_ptr->flags9 & RF9_NO_REDUCE))
+			break;
 
-			/* Don't affect hurt monsters! */
-			if (m_ptr->hp < m_ptr->maxhp) {
-				note = " seems too agitated to be charmed";
-				break;
-			}
-
-			/* Not successfully charmed? */
-			if ((r_ptr->flags9 & RF9_IM_PSI) ||
-			    (r_ptr->flags1 & RF1_UNIQUE) ||
-			    (r_ptr->flags3 & RF3_UNDEAD) ||
-			    (r_ptr->flags2 & RF2_EMPTY_MIND) ||
-			    (r_ptr->flags3 & RF3_NONLIVING)) {
-				note = " is unaffected";
-				break;
-			}
-			/* More difficult to charm? */
-			if (r_ptr->flags2 & RF2_SMART) diff++;
-			if (r_ptr->flags3 & RF3_NO_CONF) diff++;
-			if (r_ptr->flags1 & RF1_UNIQUE) diff++;
-			if (r_ptr->flags2 & RF2_POWERFUL) diff++;
-			if (r_ptr->level > (p_ptr->lev * 7) / 5) diff += (r_ptr->level - p_ptr->lev) / 20;
-
-			/* Monster resists the spell? */
-			if (magik(3 + diff * 2)) {
-				note = " resists the effect";
-				break;
-			}
-
-			/* Remember who charmed us */
-			m_ptr->charmedignore = p_ptr->id;
-			/* Count our victims, just for optimization atm */
-			p_ptr->mcharming++;
-
-			note = " seems to forget you were an enemy";
+		/* Don't affect hurt monsters! */
+		if (m_ptr->hp < m_ptr->maxhp) {
+			note = " seems too agitated to be charmed";
 			break;
 		}
+
+		/* Not successfully charmed? */
+		if ((r_ptr->flags9 & RF9_IM_PSI) ||
+		    (r_ptr->flags1 & RF1_UNIQUE) ||
+		    (r_ptr->flags3 & RF3_UNDEAD) ||
+		    (r_ptr->flags2 & RF2_EMPTY_MIND) ||
+		    (r_ptr->flags3 & RF3_NONLIVING)) {
+			note = " is unaffected";
+			break;
+		}
+		/* More difficult to charm? */
+		if (r_ptr->flags2 & RF2_SMART) diff++;
+		if (r_ptr->flags3 & RF3_NO_CONF) diff++;
+		if (r_ptr->flags1 & RF1_UNIQUE) diff++;
+		if (r_ptr->flags2 & RF2_POWERFUL) diff++;
+		if (r_ptr->level > (p_ptr->lev * 7) / 5) diff += (r_ptr->level - p_ptr->lev) / 20;
+
+		/* Monster resists the spell? */
+		if (magik(3 + diff * 2)) {
+			note = " resists the effect";
+			break;
+		}
+
+		/* Remember who charmed us */
+		m_ptr->charmedignore = p_ptr->id;
+		/* Count our victims, just for optimization atm */
+		p_ptr->mcharming++;
+
+		note = " seems to forget you were an enemy";
+		break; }
 
 	/* Earthquake the area */
 	case GF_EARTHQUAKE:
@@ -6748,80 +6735,77 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 		break;
 
-	case GF_HAVOC:
-		{
-			/* Inferno/Mana/Chaos */
-			int res1 = 0, res2 = 0, res3 = 0, res4 = 0, res5 = 0; //shard,sound,fire,mana,chaos
+	case GF_HAVOC: {
+		/* Inferno/Mana/Chaos */
+		int res1 = 0, res2 = 0, res3 = 0, res4 = 0, res5 = 0; //shard,sound,fire,mana,chaos
 
-			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
-				res1 = 2;
-			//RF8_NO_CUT/RF3_NO_STUN don't help here
-			if ((r_ptr->flags4 & RF4_BR_SOUN)  || (r_ptr->flags9 & RF9_RES_SOUND))
-				res2 = 2;
-			if (r_ptr->flags3 & RF3_IM_FIRE)
-				res3 = 4;
-			else if (r_ptr->flags9 & RF9_RES_FIRE)
-				res3 = 2;
-			//no SUSCEP_FIRE check
-			if ((r_ptr->flags4 & RF4_BR_MANA) || (r_ptr->flags9 & RF9_RES_MANA))
-				res4 = 3;
-			if ((r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS))
-				res5 = 3;
+		if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
+			res1 = 2;
+		//RF8_NO_CUT/RF3_NO_STUN don't help here
+		if ((r_ptr->flags4 & RF4_BR_SOUN)  || (r_ptr->flags9 & RF9_RES_SOUND))
+			res2 = 2;
+		if (r_ptr->flags3 & RF3_IM_FIRE)
+			res3 = 4;
+		else if (r_ptr->flags9 & RF9_RES_FIRE)
 
-			switch (res1 + res2 + res3 + res4 + res5) {
-			case 0: case 1: case 2: case 3: break;
-			case 4: case 5: case 6: case 7:
-				note = " resists somewhat";
-				dam = (dam * 3 + 3) / 4;
-				//do_cut = 0;
-				break;
-			case 8: case 9: case 10:
-				note = " resists";
-				dam /= 2;
-				break;
-			default: //11,12,13,14
-				note = " resists a lot";
-				dam /= 3;
-				break;
-			}
-			if (seen) obvious = TRUE;
+		res3 = 2;
+		//no SUSCEP_FIRE check
+		if ((r_ptr->flags4 & RF4_BR_MANA) || (r_ptr->flags9 & RF9_RES_MANA))
+			res4 = 3;
+		if ((r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS))
+			res5 = 3;
+
+		switch (res1 + res2 + res3 + res4 + res5) {
+		case 0: case 1: case 2: case 3: break;
+		case 4: case 5: case 6: case 7:
+			note = " resists somewhat";
+			dam = (dam * 3 + 3) / 4;
+			//do_cut = 0;
+			break;
+		case 8: case 9: case 10:
+			note = " resists";
+			dam /= 2;
+			break;
+		default: //11,12,13,14
+			note = " resists a lot";
+			dam /= 3;
 			break;
 		}
+		if (seen) obvious = TRUE;
+		break; }
 
 	/* Rocket: Shard resistance helps (PernA) */
 	//(Note that the sound part doesn't cause any stun effect. - intended) */
 	case GF_INFERNO:
 	case GF_DETONATION:
-	case GF_ROCKET:
-		{
-			int res1 = 0, res2 = 0, res3 = 0; //shard,sound,fire
+	case GF_ROCKET: {
+		int res1 = 0, res2 = 0, res3 = 0; //shard,sound,fire
 
-			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
-				res1 = 1;
-			//RF8_NO_CUT/RF3_NO_STUN don't help here
-			if ((r_ptr->flags4 & RF4_BR_SOUN)  || (r_ptr->flags9 & RF9_RES_SOUND))
-				res2 = 1;
-			if (r_ptr->flags3 & RF3_IM_FIRE)
-				res3 = 3;
-			else if (r_ptr->flags9 & RF9_RES_FIRE)
-				res3 = 1;
-			//no SUSCEP_FIRE check
+		if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
+			res1 = 1;
+		//RF8_NO_CUT/RF3_NO_STUN don't help here
+		if ((r_ptr->flags4 & RF4_BR_SOUN)  || (r_ptr->flags9 & RF9_RES_SOUND))
+			res2 = 1;
+		if (r_ptr->flags3 & RF3_IM_FIRE)
+			res3 = 3;
+		else if (r_ptr->flags9 & RF9_RES_FIRE)
+			res3 = 1;
+		//no SUSCEP_FIRE check
 
-			switch (res1 + res2 + res3) {
-			case 0: break;
-			case 1: case 2:
-				note = " resists somewhat";
-				dam = (dam * 3 + 3) / 4;
-				//do_cut = 0;
-				break;
-			default:
-				note = " resists";
-				dam /= 2;
-				break;
-			}
-			if (seen) obvious = TRUE;
+		switch (res1 + res2 + res3) {
+		case 0: break;
+		case 1: case 2:
+			note = " resists somewhat";
+			dam = (dam * 3 + 3) / 4;
+			//do_cut = 0;
+			break;
+		default:
+			note = " resists";
+			dam /= 2;
 			break;
 		}
+		if (seen) obvious = TRUE;
+		break; }
 
 	/* Sound -- Sound breathers resist */
 	case GF_STUN:
@@ -6962,43 +6946,41 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		break;
 
 	/* Gravity -- breathers resist */
-	case GF_GRAVITY:
-		{
-			bool resist_tele = FALSE;
-			//dun_level *l_ptr = getfloor(wpos);
+	case GF_GRAVITY: {
+		bool resist_tele = FALSE;
+		//dun_level *l_ptr = getfloor(wpos);
 
-			if (seen) obvious = TRUE;
+		if (seen) obvious = TRUE;
 
-			if ((r_ptr->flags3 & RF3_RES_TELE) || (r_ptr->flags9 & RF9_IM_TELE)) {
-				if ((r_ptr->flags1 & (RF1_UNIQUE)) || (r_ptr->flags9 & RF9_IM_TELE)) {
+		if ((r_ptr->flags3 & RF3_RES_TELE) || (r_ptr->flags9 & RF9_IM_TELE)) {
+			if ((r_ptr->flags1 & (RF1_UNIQUE)) || (r_ptr->flags9 & RF9_IM_TELE)) {
 #ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+				if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
 #endif
-					note = " resists";
-					resist_tele = TRUE;
-				} else if (m_ptr->level > randint(100)) {
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
-#endif
-					note = " resists";
-					resist_tele = TRUE;
-				}
-			}
-
-			if (!resist_tele) do_dist = 10;
-			else do_dist = 0;
-
-			if ((r_ptr->flags4 & RF4_BR_GRAV) ||
-			    (r_ptr->flags7 & RF7_CAN_FLY)) {
 				note = " resists";
-				dam *= 3; dam /= (randint(6) + 6);
-				do_dist = 0;
+				resist_tele = TRUE;
+			} else if (m_ptr->level > randint(100)) {
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+#endif
+				note = " resists";
+				resist_tele = TRUE;
 			}
-
-			//todo maybe: stun effect? might be op?
-
-			break;
 		}
+
+		if (!resist_tele) do_dist = 10;
+		else do_dist = 0;
+
+		if ((r_ptr->flags4 & RF4_BR_GRAV) ||
+		    (r_ptr->flags7 & RF7_CAN_FLY)) {
+			note = " resists";
+			dam *= 3; dam /= (randint(6) + 6);
+			do_dist = 0;
+		}
+
+		//todo maybe: stun effect? might be op?
+
+		break; }
 
 	/* Pure damage */
 	case GF_CODE:
@@ -7243,6 +7225,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* :) */
 		if (m_ptr->r_idx == RI_LEPER) {
 			int clone = m_list[c_ptr->m_idx].clone, clone_summoning = m_list[c_ptr->m_idx].clone_summoning;
+
 			delete_monster_idx(c_ptr->m_idx, TRUE);
 			switch (rand_int(10)) {
 			case 0: i = 1; break;
@@ -7509,8 +7492,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	case GF_CURSE:
 		/* Assume no obvious effect */
 		obvious = FALSE;
-		int curse = randint(3);
-		if (curse == 1) { //Slowing effect -- NOTE: KEEP CONSISTENT WITH GF_INERTIA AND GF_OLD_SLOW
+
+		switch(randint(3)) {
+		case 1: //Slowing effect -- NOTE: KEEP CONSISTENT WITH GF_INERTIA AND GF_OLD_SLOW
 			if ((r_ptr->flags1 & RF1_UNIQUE) ||
 			    (r_ptr->flags9 & RF9_NO_REDUCE) ||
 			    (r_ptr->flags4 & RF4_BR_INER)) {
@@ -7527,7 +7511,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			}
 			no_dam = TRUE;
 			break;
-		} else if (curse == 2) { //Conf
+		case 2: //Conf
 			/* Get confused later */
 			do_conf = damroll(3, (dam / 2)) + 1;
 
@@ -7559,7 +7543,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			} else if (r_ptr->flags3 & RF3_NO_CONF)
 				dam /= 2;
 			break;
-		} else { //Blind
+		default: //Blind
 			do_blind = dam;
 			no_dam = TRUE;
 			/* No obvious effect */
@@ -7865,36 +7849,34 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		break;
 
 	/* Teleport monster (Use "dam" as "power") */
-	case GF_AWAY_ALL:
-		{
-			bool resists_tele = FALSE;
-			//dun_level *l_ptr = getfloor(wpos);
+	case GF_AWAY_ALL: {
+		bool resists_tele = FALSE;
+		//dun_level *l_ptr = getfloor(wpos);
 
-			no_dam = TRUE;
+		no_dam = TRUE;
 
-			if ((r_ptr->flags9 & RF9_IM_TELE) ||
-			    (r_ptr->flags3 & (RF3_RES_TELE)) ||
-			    (r_ptr->flags1 & (RF1_UNIQUE))) {
+		if ((r_ptr->flags9 & RF9_IM_TELE) ||
+		    (r_ptr->flags3 & (RF3_RES_TELE)) ||
+		    (r_ptr->flags1 & (RF1_UNIQUE))) {
 #ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+			if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
 #endif
-				note = " is unaffected";
-				resists_tele = TRUE;
-			} else if (m_ptr->level > randint(100)) {
-				note = " resists";
-				resists_tele = TRUE;
-			}
-
-			if (!resists_tele) {
-				/* Obvious */
-				if (seen) obvious = TRUE;
-				/* Prepare to teleport */
-				do_dist = dam;
-			}
-
-			no_dam = TRUE;
-			break;
+			note = " is unaffected";
+			resists_tele = TRUE;
+		} else if (m_ptr->level > randint(100)) {
+			note = " resists";
+			resists_tele = TRUE;
 		}
+
+		if (!resists_tele) {
+			/* Obvious */
+			if (seen) obvious = TRUE;
+			/* Prepare to teleport */
+			do_dist = dam;
+		}
+
+		no_dam = TRUE;
+		break; }
 
 	/* Turn undead (Use "dam" as "power") -- overrides NO_FEAR, UNIQUE -- unused */
 	case GF_TURN_UNDEAD:
@@ -8143,55 +8125,53 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		break;
 
 	/* Teleport monster TO */
-	case GF_TELE_TO:
-		{
-			bool resists_tele = FALSE;
-			//dun_level *l_ptr = getfloor(wpos);
+	case GF_TELE_TO: {
+		bool resists_tele = FALSE;
+		//dun_level *l_ptr = getfloor(wpos);
 
-			/* Teleport to nowhere..? */
-			if (quiet) break;
+		/* Teleport to nowhere..? */
+		if (quiet) break;
 
-			if (!(r_ptr->flags9 & RF9_IM_TELE) &&
-			    !(r_ptr->flags3 & (RF3_RES_TELE))) {
-				if (r_ptr->flags1 & (RF1_UNIQUE)) {
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
-#endif
-					note = " is unaffected";
-					resists_tele = TRUE;
-				} else if (m_ptr->level > randint(100)) {
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
-#endif
-					note = " resists";
-					resists_tele = TRUE;
-				}
-			} else {
+		if (!(r_ptr->flags9 & RF9_IM_TELE) &&
+		    !(r_ptr->flags3 & (RF3_RES_TELE))) {
+			if (r_ptr->flags1 & (RF1_UNIQUE)) {
 #ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
 #endif
 				note = " is unaffected";
 				resists_tele = TRUE;
+			} else if (m_ptr->level > randint(100)) {
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+#endif
+				note = " resists";
+				resists_tele = TRUE;
 			}
-
-			if (!resists_tele) {
-				/* Obvious */
-				if (seen) obvious = TRUE;
-
-				/* Prepare to teleport */
-				//do_dist = dam;
-				teleport_to_player(Ind, c_ptr->m_idx);
-
-				/* Hack -- get new location */
-				y = m_ptr->fy;
-				x = m_ptr->fx;
-
-				/* Hack -- get new grid */
-				c_ptr = &zcave[y][x];
-			}
-			no_dam = TRUE;
-			break;
+		} else {
+#ifdef OLD_MONSTER_LORE
+			if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+#endif
+			note = " is unaffected";
+			resists_tele = TRUE;
 		}
+
+		if (!resists_tele) {
+			/* Obvious */
+			if (seen) obvious = TRUE;
+
+			/* Prepare to teleport */
+			//do_dist = dam;
+			teleport_to_player(Ind, c_ptr->m_idx);
+
+			/* Hack -- get new location */
+			y = m_ptr->fy;
+			x = m_ptr->fx;
+
+			/* Hack -- get new grid */
+			c_ptr = &zcave[y][x];
+		}
+		no_dam = TRUE;
+		break; }
 
 	/* Hand of Doom */
 	case GF_HAND_DOOM:
@@ -8203,10 +8183,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 #endif	// 0
 		{
 			int dummy = (((s32b) ((65 + randint(25)) * (m_ptr->hp))) / 100);
+
 			//msg_print(Ind, "You feel your life fade away!");
-
 			if (m_ptr->hp - dummy < 1) dummy = m_ptr->hp - 1;
-
 			dam = dummy;
 		}
 		break;
@@ -9043,6 +9022,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				         code already, for efficiency. */
 				bool got_potential_target = FALSE;
 				int p;
+
 				/* make sure only monsters who NEED to use this actually do use it.. (Morgoth doesn't) */
 				if (((r_ptr->flags2 & RF2_PASS_WALL) && (r_ptr->flags2 & RF2_KILL_WALL))
 				    || (r_ptr->flags0 & RF0_ASTAR)) { /* and it can apparently break a* movers? */
@@ -9528,6 +9508,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (check_hostile(Ind, 0 - who)) {
 #ifdef EXPERIMENTAL_PVP_SPELL_DAM
 				int __dam = randint(dam);
+
 				if (randint(1)) __dam *= -1;
 				dam += __dam;
 #else
@@ -10083,65 +10064,63 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 	/* Plasma -- Fire/Lightning/Force */
-	case GF_PLASMA:
-		{
-			bool ignore_fire = p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire;
-			bool ignore_elec = p_ptr->oppose_elec || p_ptr->resist_elec || p_ptr->immune_elec;
-			bool inven_fire = (p_ptr->oppose_fire && p_ptr->resist_fire) || p_ptr->immune_fire;
-			bool inven_elec = (p_ptr->oppose_elec && p_ptr->resist_elec) || p_ptr->immune_elec;
+	case GF_PLASMA: {
+		bool ignore_fire = p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire;
+		bool ignore_elec = p_ptr->oppose_elec || p_ptr->resist_elec || p_ptr->immune_elec;
+		bool inven_fire = (p_ptr->oppose_fire && p_ptr->resist_fire) || p_ptr->immune_fire;
+		bool inven_elec = (p_ptr->oppose_elec && p_ptr->resist_elec) || p_ptr->immune_elec;
 
-			/* 50% fire */
-			k = (dam + 1) / 2;
-			if (p_ptr->immune_fire) k = 0;
-			else if (p_ptr->resist_fire || p_ptr->oppose_fire) {
-				if (p_ptr->resist_fire) k = (k + 2) / 3;
-				if (p_ptr->oppose_fire) k = (k + 2) / 3;
-			} else if (p_ptr->suscep_fire) k *= 2;
-			/* 25% elec */
-			k_elec = (dam + 3) / 4;
-			if (p_ptr->immune_elec) k_elec = 0;
-			else if (p_ptr->resist_elec || p_ptr->oppose_elec) {
-				if (p_ptr->resist_elec) k_elec = (k_elec + 2) / 3;
-				if (p_ptr->oppose_elec) k_elec = (k_elec + 2) / 3;
-			} else if (p_ptr->suscep_elec) k_elec *= 2;
-			/* 25% force */
-			k_sound = (dam + 3) / 4;
-			if (p_ptr->resist_sound) k_sound = (k_sound + 1) / 2;
-			else (void)set_stun(Ind, p_ptr->stun + (randint((k_sound > 22) ? 35 : (k_sound * 4 / 3 + 5)))); //strong stun
-			dam = k + k_elec + k_sound;
+		/* 50% fire */
+		k = (dam + 1) / 2;
+		if (p_ptr->immune_fire) k = 0;
+		else if (p_ptr->resist_fire || p_ptr->oppose_fire) {
+			if (p_ptr->resist_fire) k = (k + 2) / 3;
+			if (p_ptr->oppose_fire) k = (k + 2) / 3;
+		} else if (p_ptr->suscep_fire) k *= 2;
+		/* 25% elec */
+		k_elec = (dam + 3) / 4;
+		if (p_ptr->immune_elec) k_elec = 0;
+		else if (p_ptr->resist_elec || p_ptr->oppose_elec) {
+			if (p_ptr->resist_elec) k_elec = (k_elec + 2) / 3;
+			if (p_ptr->oppose_elec) k_elec = (k_elec + 2) / 3;
+		} else if (p_ptr->suscep_elec) k_elec *= 2;
+		/* 25% force */
+		k_sound = (dam + 3) / 4;
+		if (p_ptr->resist_sound) k_sound = (k_sound + 1) / 2;
+		else (void)set_stun(Ind, p_ptr->stun + (randint((k_sound > 22) ? 35 : (k_sound * 4 / 3 + 5)))); //strong stun
+		dam = k + k_elec + k_sound;
 
-			if (fuzzy) msg_format(Ind, "You are hit by something hot for \377%c%d \377wdamage!", damcol, dam);
-			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+		if (fuzzy) msg_format(Ind, "You are hit by something hot for \377%c%d \377wdamage!", damcol, dam);
+		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 
-			take_hit(Ind, dam, killer, -who);
+		take_hit(Ind, dam, killer, -who);
 
-			/* Reduce stats */
-			if (!ignore_fire && !ignore_elec) {
-				if (randint(HURT_CHANCE) == 1) {
-					if (rand_int(3)) (void)do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-					else (void)do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-				}
-			} else if (ignore_elec) {
-				if (randint(HURT_CHANCE) == 1)
-					(void)do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-			} else if (ignore_fire) {
-				if (randint(HURT_CHANCE) == 1)
-					(void)do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+		/* Reduce stats */
+		if (!ignore_fire && !ignore_elec) {
+			if (randint(HURT_CHANCE) == 1) {
+				if (rand_int(3)) (void)do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+				else (void)do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
 			}
-
-			/* Don't kill inventory in bloodbond... */
-			if (IS_PVP && check_blood_bond(Ind, -who)) break;
-
-			/* Inventory damage */
-			if (inven_fire && inven_elec) break;
-			if (!inven_fire && !inven_elec) {
-				if (rand_int(3)) inven_damage(Ind, set_fire_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-				else inven_damage(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-			} else if (inven_elec) inven_damage(Ind, set_fire_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-			else inven_damage(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-
-			break;
+		} else if (ignore_elec) {
+			if (randint(HURT_CHANCE) == 1)
+				(void)do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
+		} else if (ignore_fire) {
+			if (randint(HURT_CHANCE) == 1)
+				(void)do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
 		}
+
+		/* Don't kill inventory in bloodbond... */
+		if (IS_PVP && check_blood_bond(Ind, -who)) break;
+
+		/* Inventory damage */
+		if (inven_fire && inven_elec) break;
+		if (!inven_fire && !inven_elec) {
+			if (rand_int(3)) inven_damage(Ind, set_fire_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+			else inven_damage(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+		} else if (inven_elec) inven_damage(Ind, set_fire_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+		else inven_damage(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+
+		break; }
 
 	/* Nether -- drain experience */
 	case GF_NETHER_WEAK:
@@ -10331,6 +10310,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		} else {
 			int k = (randint((dam > 90) ? 35 : (dam / 3 + 5)));
+
 			/* for medium dragons/turtles */
 			if (dam > 100 && p_ptr->stun < 35) k = 35;
 			/* for kavlax, ancient things, wyrms, and (unfortunately? dunno..) also aether vortex/hound */
@@ -10502,6 +10482,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		(void)set_slow(Ind, p_ptr->slow + rand_int(4) + 3);
 		if (!p_ptr->resist_sound) {
 			int k = (randint((dam > 90) ? 35 : (dam / 3 + 5)));
+
 			(void)set_stun(Ind, p_ptr->stun + k);
 		}
 		take_hit(Ind, dam, killer, -who);
@@ -10605,11 +10586,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 				else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			} else {
-				if (p_ptr->body_monster && (r_ptr->flags7 & RF7_AQUATIC)) {
+				if (p_ptr->body_monster && (r_ptr->flags7 & RF7_AQUATIC))
 					dam = (dam + 3) / 4;
-				} else if (p_ptr->resist_water) {
+				else if (p_ptr->resist_water)
 					dam = (dam + 2) / 3;
-				}
 				if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 				else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 				if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN && magik(20 + dam / 20) &&
@@ -10619,9 +10599,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 						int breakable = 1;
 
 						if (IS_PVP) {
-							if (check_blood_bond(Ind, -who)) {
-								breakable = 0;
-							}
+							if (check_blood_bond(Ind, -who)) breakable = 0;
 						}
 						if (breakable) {
 							inven_damage(Ind, set_water_destroy, 1);
@@ -10702,43 +10680,42 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 	case GF_CURSE:
-		{
-			int curse = randint(3);
-
-			if (curse == 1) { //Slow
-				if (fuzzy) msg_print(Ind, "Your body seems difficult to move!");
-				else msg_format(Ind, "%s curses at you, slowing your movements!", killer);
-				if (p_ptr->pspeed <= 100) {
-					/* unaffected */
-				} else if (p_ptr->mindboost && magik(p_ptr->mindboost_power)) {
-					/* resist the effect */
-				} else if (!p_ptr->free_act) {
-					(void)set_slow(Ind, p_ptr->slow + rand_int(3) + 4);
-				} else {
-					(void)set_slow(Ind, p_ptr->slow + rand_int(3) + 2);
-				}
-				dam = 0;
-			} else if (curse == 2) { //Conf
-				dam = damroll(3, (dam / 2)) + 1;
-				if (p_ptr->resist_conf || p_ptr->resist_chaos) {
-					if (fuzzy) msg_format(Ind, "Your mind is hit by confusion for \377%c%d \377wdamage!", damcol, dam);
-					else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-					dam *= 5; dam /= (randint(6) + 6);
-				} else {
-					if (fuzzy) msg_format(Ind, "Your mind is hit by confusion for \377%c%d \377wdamage!", damcol, dam);
-					else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-					if (!(p_ptr->mindboost && magik(p_ptr->mindboost_power)))
-						(void)set_confused(Ind, p_ptr->confused + randint(5) + 5);
-				}
-				take_hit(Ind, dam, killer, -who);
-			} else { //Blind
-				if (fuzzy) msg_print(Ind, "Your eyes suddenly burn!");
-				else msg_format(Ind, "%s casts a spell, burning your eyes!", killer);
-				if (!blind && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + randint(5) + 2);
-				dam = 0;
+		switch (randint(3)) {
+		case 1: //Slow
+			if (fuzzy) msg_print(Ind, "Your body seems difficult to move!");
+			else msg_format(Ind, "%s curses at you, slowing your movements!", killer);
+			if (p_ptr->pspeed <= 100) {
+				/* unaffected */
+			} else if (p_ptr->mindboost && magik(p_ptr->mindboost_power)) {
+				/* resist the effect */
+			} else if (!p_ptr->free_act) {
+				(void)set_slow(Ind, p_ptr->slow + rand_int(3) + 4);
+			} else {
+				(void)set_slow(Ind, p_ptr->slow + rand_int(3) + 2);
 			}
+			dam = 0;
 			break;
+		case 2: //Conf
+			dam = damroll(3, (dam / 2)) + 1;
+			if (p_ptr->resist_conf || p_ptr->resist_chaos) {
+				if (fuzzy) msg_format(Ind, "Your mind is hit by confusion for \377%c%d \377wdamage!", damcol, dam);
+				else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+				dam *= 5; dam /= (randint(6) + 6);
+			} else {
+				if (fuzzy) msg_format(Ind, "Your mind is hit by confusion for \377%c%d \377wdamage!", damcol, dam);
+				else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+				if (!(p_ptr->mindboost && magik(p_ptr->mindboost_power)))
+					(void)set_confused(Ind, p_ptr->confused + randint(5) + 5);
+			}
+			take_hit(Ind, dam, killer, -who);
+			break;
+		default: //Blind
+			if (fuzzy) msg_print(Ind, "Your eyes suddenly burn!");
+			else msg_format(Ind, "%s casts a spell, burning your eyes!", killer);
+			if (!blind && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + randint(5) + 2);
+			dam = 0;
 		}
+		break;
 
 	case GF_WRAITH_PLAYER:
 		if (fuzzy) msg_print(Ind, "You feel less constant!");
@@ -11005,50 +10982,49 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		dam = 0;
 		break;
 
-	case GF_TELEPORT_PLAYER:
-		{
-			int chance = (195 - p_ptr->skill_sav) / 2;
+	case GF_TELEPORT_PLAYER: {
+		int chance = (195 - p_ptr->skill_sav) / 2;
 
-			if (p_ptr->martyr) {
-				dam = 0;
-				break;
-			}
-			if (IS_PVP) {
-				/* protect players in inns */
-				cave_type **zcave;
-				cave_type *c_ptr;
-				if ((zcave = getcave(wpos))) {
-					c_ptr = &zcave[p_ptr->py][p_ptr->px];
-					if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) {
-						dam = 0;
-						break;
-					}
-				}
-
-				/* protect AFK players */
-				if (p_ptr->afk) {
-					dam = 0;
-					break;
-				}
-
-				/* Log PvP teleports - mikaelh */
-				s_printf("%s teleported (GF_TELEPORT_PLAYER) %s at (%d,%d,%d).\n", Players[0 - who]->name, p_ptr->name,
-				    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
-
-				/* Tell the one who caused it */
-				msg_format(0 - who, "You teleport %s away.", Players[0 - who]->play_vis[Ind] ? p_ptr->name : "It");
-			}
-
-			if (p_ptr->res_tele) chance >>= 1;
-			if (rand_int(100) < chance) {
-				if (fuzzy) msg_print(Ind, "Someone teleports you away!");
-				else msg_format(Ind, "%^s teleports you away!", killer);
-
-				teleport_player(Ind, dam, TRUE);
-			} else msg_print(Ind, "You resist the effect!");
+		if (p_ptr->martyr) {
 			dam = 0;
 			break;
 		}
+		if (IS_PVP) {
+			/* protect players in inns */
+			cave_type **zcave;
+			cave_type *c_ptr;
+
+			if ((zcave = getcave(wpos))) {
+				c_ptr = &zcave[p_ptr->py][p_ptr->px];
+				if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) {
+					dam = 0;
+					break;
+				}
+			}
+
+			/* protect AFK players */
+			if (p_ptr->afk) {
+				dam = 0;
+				break;
+			}
+
+			/* Log PvP teleports - mikaelh */
+			s_printf("%s teleported (GF_TELEPORT_PLAYER) %s at (%d,%d,%d).\n", Players[0 - who]->name, p_ptr->name,
+			    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+
+			/* Tell the one who caused it */
+			msg_format(0 - who, "You teleport %s away.", Players[0 - who]->play_vis[Ind] ? p_ptr->name : "It");
+		}
+
+		if (p_ptr->res_tele) chance >>= 1;
+		if (rand_int(100) < chance) {
+			if (fuzzy) msg_print(Ind, "Someone teleports you away!");
+			else msg_format(Ind, "%^s teleports you away!", killer);
+
+			teleport_player(Ind, dam, TRUE);
+		} else msg_print(Ind, "You resist the effect!");
+		dam = 0;
+		break; }
 
 	case GF_RECALL_PLAYER:
 		dam = 0;
@@ -11324,76 +11300,72 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		dam = 0;
 		break;
 
-	case GF_HAVOC:
-		{
-			bool ignore_heat = (p_ptr->resist_fire && p_ptr->oppose_fire) || p_ptr->immune_fire;
+	case GF_HAVOC: {
+		bool ignore_heat = (p_ptr->resist_fire && p_ptr->oppose_fire) || p_ptr->immune_fire;
 
-			if (p_ptr->resist_shard) dam = (dam * 5) / 6;
-			if (p_ptr->resist_sound) dam = (dam * 5) / 6;
-			if (p_ptr->immune_fire) dam = (dam * 4) / 5;
-			else if (p_ptr->resist_fire || p_ptr->oppose_fire) dam = (dam * 5) / 6;
-			if (p_ptr->resist_mana) dam = (dam * 5) / 6;
-			if (p_ptr->resist_chaos) dam = (dam * 5) / 6;
+		if (p_ptr->resist_shard) dam = (dam * 5) / 6;
+		if (p_ptr->resist_sound) dam = (dam * 5) / 6;
+		if (p_ptr->immune_fire) dam = (dam * 4) / 5;
+		else if (p_ptr->resist_fire || p_ptr->oppose_fire) dam = (dam * 5) / 6;
+		if (p_ptr->resist_mana) dam = (dam * 5) / 6;
+		if (p_ptr->resist_chaos) dam = (dam * 5) / 6;
 
-			if (fuzzy) msg_format(Ind, "There is a shockwave around you of \377%c%d \377wdamage!", damcol, dam);
-			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+		if (fuzzy) msg_format(Ind, "There is a shockwave around you of \377%c%d \377wdamage!", damcol, dam);
+		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 
-			if (!p_ptr->resist_shard && !p_ptr->no_cut)
-				(void)set_cut(Ind, p_ptr->cut + ( dam / 2), -who );
-			if (!p_ptr->resist_sound)
-				(void)set_stun(Ind, p_ptr->stun + randint(20));
+		if (!p_ptr->resist_shard && !p_ptr->no_cut)
+			(void)set_cut(Ind, p_ptr->cut + ( dam / 2), -who );
+		if (!p_ptr->resist_sound)
+			(void)set_stun(Ind, p_ptr->stun + randint(20));
 
-			if (!p_ptr->resist_shard || !p_ptr->resist_sound || !ignore_heat) {
-				/* Don't kill inventory in bloodbond... */
-				int breakable = 1;
+		if (!p_ptr->resist_shard || !p_ptr->resist_sound || !ignore_heat) {
+			/* Don't kill inventory in bloodbond... */
+			int breakable = 1;
 
-				if (IS_PVP && check_blood_bond(Ind, -who)) breakable = 0;
-				if (breakable) {
-					if (p_ptr->resist_shard && p_ptr->resist_sound) inven_damage(Ind, set_fire_destroy, 3);
-					else if (ignore_heat) inven_damage(Ind, set_impact_destroy, 3);
-					else inven_damage(Ind, set_rocket_destroy, 4);
-				}
+			if (IS_PVP && check_blood_bond(Ind, -who)) breakable = 0;
+			if (breakable) {
+				if (p_ptr->resist_shard && p_ptr->resist_sound) inven_damage(Ind, set_fire_destroy, 3);
+				else if (ignore_heat) inven_damage(Ind, set_impact_destroy, 3);
+				else inven_damage(Ind, set_rocket_destroy, 4);
 			}
-
-			take_hit(Ind, dam, killer, -who);
-			break;
 		}
+
+		take_hit(Ind, dam, killer, -who);
+		break; }
 
 	/* Rocket -- stun, cut, fire, raw impact */
 	case GF_INFERNO:
 	case GF_DETONATION:
-	case GF_ROCKET:
-		{
-			bool ignore_heat = (p_ptr->resist_fire && p_ptr->oppose_fire) || p_ptr->immune_fire;
+	case GF_ROCKET: {
+		bool ignore_heat = (p_ptr->resist_fire && p_ptr->oppose_fire) || p_ptr->immune_fire;
 
-			if (p_ptr->resist_shard) dam = (dam * 5) / 6;
-			if (p_ptr->resist_sound) dam = (dam * 5) / 6;
-			if (p_ptr->immune_fire) dam = (dam * 3) / 4;
-			else if (p_ptr->resist_fire || p_ptr->oppose_fire) dam = (dam * 4) / 5;
+		if (p_ptr->resist_shard) dam = (dam * 5) / 6;
+		if (p_ptr->resist_sound) dam = (dam * 5) / 6;
+		if (p_ptr->immune_fire) dam = (dam * 3) / 4;
+		else if (p_ptr->resist_fire || p_ptr->oppose_fire) dam = (dam * 4) / 5;
 
-			if (fuzzy) msg_format(Ind, "There is an explosion around you of \377%c%d \377wdamage!", damcol, dam);
-			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+		if (fuzzy) msg_format(Ind, "There is an explosion around you of \377%c%d \377wdamage!", damcol, dam);
+		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 
-			if (!p_ptr->resist_shard && !p_ptr->no_cut)
-				(void)set_cut(Ind, p_ptr->cut + ( dam / 2), -who );
-			if (!p_ptr->resist_sound)
-				(void)set_stun(Ind, p_ptr->stun + randint(20));
+		if (!p_ptr->resist_shard && !p_ptr->no_cut)
+			(void)set_cut(Ind, p_ptr->cut + ( dam / 2), -who );
+		if (!p_ptr->resist_sound)
+			(void)set_stun(Ind, p_ptr->stun + randint(20));
 
-			if (!p_ptr->resist_shard || !p_ptr->resist_sound || !ignore_heat) {
-				/* Don't kill inventory in bloodbond... */
-				int breakable = 1;
+		if (!p_ptr->resist_shard || !p_ptr->resist_sound || !ignore_heat) {
+			/* Don't kill inventory in bloodbond... */
+			int breakable = 1;
 
-				if (IS_PVP && check_blood_bond(Ind, -who)) breakable = 0;
-				if (breakable) {
-					if (p_ptr->resist_shard && p_ptr->resist_sound) inven_damage(Ind, set_fire_destroy, 3);
-					else if (ignore_heat) inven_damage(Ind, set_impact_destroy, 3);
-					else inven_damage(Ind, set_rocket_destroy, 4);
-				}
+			if (IS_PVP && check_blood_bond(Ind, -who)) breakable = 0;
+			if (breakable) {
+				if (p_ptr->resist_shard && p_ptr->resist_sound) inven_damage(Ind, set_fire_destroy, 3);
+				else if (ignore_heat) inven_damage(Ind, set_impact_destroy, 3);
+				else inven_damage(Ind, set_rocket_destroy, 4);
 			}
-
-			take_hit(Ind, dam, killer, -who);
-			break;
 		}
+
+		take_hit(Ind, dam, killer, -who);
+		break; }
 
 	/* Standard damage -- also poisons / mutates player */
 	case GF_NUKE:
@@ -11473,60 +11445,58 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		dam = 0;
 		break;
 
-	case GF_TELE_TO:
-		{
-			int chance = (195 - p_ptr->skill_sav) / (p_ptr->res_tele ? 4 : 2);
-			cave_type **zcave;
-			cave_type *c_ptr;
-			player_type *q_ptr;
+	case GF_TELE_TO: {
+		int chance = (195 - p_ptr->skill_sav) / (p_ptr->res_tele ? 4 : 2);
+		cave_type **zcave;
+		cave_type *c_ptr;
+		player_type *q_ptr;
 
-			/* No "real" damage */
-			dam = 0;
+		/* No "real" damage */
+		dam = 0;
 
-			if (!IS_PVP) break; //GF_TELE_TO can only be caused by other players
-			q_ptr = Players[0 - who];
+		if (!IS_PVP) break; //GF_TELE_TO can only be caused by other players
+		q_ptr = Players[0 - who];
 
-			/* protect players in inns */
-			if ((zcave = getcave(wpos))) {
-				c_ptr = &zcave[p_ptr->py][p_ptr->px];
-				if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) {
-					msg_format(Ind, "%^s commands you to return, but you are unaffected.", q_ptr->name);
-					break;
-				}
-			}
-
-			/* protect AFK players */
-			if (p_ptr->afk) {
+		/* protect players in inns */
+		if ((zcave = getcave(wpos))) {
+			c_ptr = &zcave[p_ptr->py][p_ptr->px];
+			if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) {
 				msg_format(Ind, "%^s commands you to return, but you are unaffected.", q_ptr->name);
 				break;
 			}
-
-			if (p_ptr->martyr) {
-				msg_format(Ind, "%^s commands you to return, but you don't care.", q_ptr->name);
-				break;
-			}
-
-			if (p_ptr->anti_tele || check_st_anchor2(&p_ptr->wpos, p_ptr->py, p_ptr->px, q_ptr->py, q_ptr->px)) {
-				msg_format(Ind, "%^s commands you to return, but you don't care.", q_ptr->name);
-				break;
-			}
-
-			if (magik(chance)) {
-				msg_format(Ind, "%^s commands you to return, but you don't care.", q_ptr->name);
-				break;
-			}
-
-			/* Log PvP teleports - mikaelh */
-			s_printf("%s teleported (GF_TELE_TO) %s at (%d,%d,%d).\n", Players[0 - who]->name, p_ptr->name,
-			    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
-
-			/* Tell the one who caused it */
-			msg_format(0 - who, "You command %s to return.", Players[0 - who]->play_vis[Ind] ? p_ptr->name : "It");
-
-			/* Prepare to teleport */
-			teleport_player_to(Ind, q_ptr->py, q_ptr->px, FALSE);
 		}
-		break;
+
+		/* protect AFK players */
+		if (p_ptr->afk) {
+			msg_format(Ind, "%^s commands you to return, but you are unaffected.", q_ptr->name);
+			break;
+		}
+
+		if (p_ptr->martyr) {
+			msg_format(Ind, "%^s commands you to return, but you don't care.", q_ptr->name);
+			break;
+		}
+
+		if (p_ptr->anti_tele || check_st_anchor2(&p_ptr->wpos, p_ptr->py, p_ptr->px, q_ptr->py, q_ptr->px)) {
+			msg_format(Ind, "%^s commands you to return, but you don't care.", q_ptr->name);
+			break;
+		}
+
+		if (magik(chance)) {
+			msg_format(Ind, "%^s commands you to return, but you don't care.", q_ptr->name);
+			break;
+		}
+
+		/* Log PvP teleports - mikaelh */
+		s_printf("%s teleported (GF_TELE_TO) %s at (%d,%d,%d).\n", Players[0 - who]->name, p_ptr->name,
+		    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+
+		/* Tell the one who caused it */
+		msg_format(0 - who, "You command %s to return.", Players[0 - who]->play_vis[Ind] ? p_ptr->name : "It");
+
+		/* Prepare to teleport */
+		teleport_player_to(Ind, q_ptr->py, q_ptr->px, FALSE);
+		break; }
 
 	/* Hand of Doom -- currently unused */
 	case GF_HAND_DOOM:
@@ -11557,6 +11527,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* protect players in inns */
 			cave_type **zcave;
 			cave_type *c_ptr;
+
 			if ((zcave = getcave(wpos))) {
 				c_ptr = &zcave[p_ptr->py][p_ptr->px];
 				if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) {
@@ -11604,6 +11575,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* protect players in inns */
 			cave_type **zcave;
 			cave_type *c_ptr;
+
 			if ((zcave = getcave(wpos))) {
 				c_ptr = &zcave[p_ptr->py][p_ptr->px];
 				if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) {
@@ -11641,50 +11613,49 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 	/* Teleport other -- Teleports */
-	case GF_AWAY_ALL:
-		{
-			int chance = 100 - p_ptr->skill_sav;
+	case GF_AWAY_ALL: {
+		int chance = 100 - p_ptr->skill_sav;
 
-			if (p_ptr->martyr) {
-				dam = 0;
-				break;
-			}
-			if (IS_PVP) {
-				/* protect players in inns */
-				cave_type **zcave;
-				cave_type *c_ptr;
-				if ((zcave = getcave(wpos))) {
-					c_ptr = &zcave[p_ptr->py][p_ptr->px];
-					if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) {
-						dam = 0;
-						break;
-					}
-				}
-
-				/* protect AFK players */
-				if (p_ptr->afk) {
-					dam = 0;
-					break;
-				}
-
-				/* Log PvP teleports - mikaelh */
-				s_printf("%s teleported (GF_AWAY_ALL) %s at (%d,%d,%d).\n", Players[0 - who]->name, p_ptr->name,
-				    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
-			}
-
-			if (p_ptr->res_tele) chance >>= 1;
-			if (rand_int(100) < chance) {
-				if (fuzzy) msg_print(Ind, "Someone teleports you away!");
-				else msg_format(Ind, "%^s teleports you away!", killer);
-				//teleport_player(Ind, 200, TRUE);
-				teleport_player(Ind, dam, TRUE);
-			}
-			else msg_print(Ind, "You resist the effect!");
-
-			/* No "real" damage */
+		if (p_ptr->martyr) {
 			dam = 0;
 			break;
 		}
+		if (IS_PVP) {
+			/* protect players in inns */
+			cave_type **zcave;
+			cave_type *c_ptr;
+
+			if ((zcave = getcave(wpos))) {
+				c_ptr = &zcave[p_ptr->py][p_ptr->px];
+				if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) {
+					dam = 0;
+					break;
+				}
+			}
+
+			/* protect AFK players */
+			if (p_ptr->afk) {
+				dam = 0;
+				break;
+			}
+
+			/* Log PvP teleports - mikaelh */
+			s_printf("%s teleported (GF_AWAY_ALL) %s at (%d,%d,%d).\n", Players[0 - who]->name, p_ptr->name,
+			    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+		}
+
+		if (p_ptr->res_tele) chance >>= 1;
+		if (rand_int(100) < chance) {
+			if (fuzzy) msg_print(Ind, "Someone teleports you away!");
+			else msg_format(Ind, "%^s teleports you away!", killer);
+			//teleport_player(Ind, 200, TRUE);
+			teleport_player(Ind, dam, TRUE);
+		}
+		else msg_print(Ind, "You resist the effect!");
+
+		/* No "real" damage */
+		dam = 0;
+		break; }
 
 	/* Turn undead (Use "dam" as "power") */
 	case GF_TURN_UNDEAD: /* currently unused */
@@ -11719,16 +11690,16 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Turn monster (Use "dam" as "power") */
 	case GF_TURN_ALL:
 		//if (p_ptr->body_monster) { --commented out to be consistent with GF_DISP_ALL
-			/* Attempt a saving throw */
-			if ((p_ptr->resist_fear) || ...?...) msg_print(Ind, "You are unaffected!");
-			else if (rand_int(100) < p_ptr->skill_sav)
-			//else if (RES_OLD(p_ptr->lev, dam))
-				msg_print(Ind, "You resist the effect!");
-			else (void)set_afraid(Ind, p_ptr->afraid + damroll(3, (dam / 2)) + 1);
+		/* Attempt a saving throw */
+		if ((p_ptr->resist_fear) || ...?...) msg_print(Ind, "You are unaffected!");
+		else if (rand_int(100) < p_ptr->skill_sav)
+		//else if (RES_OLD(p_ptr->lev, dam))
+			msg_print(Ind, "You resist the effect!");
+		else (void)set_afraid(Ind, p_ptr->afraid + damroll(3, (dam / 2)) + 1);
 		//}
-			/* No "real" damage */
-			dam = 0;
-			break;
+		/* No "real" damage */
+		dam = 0;
+		break;
 #endif
 
 	/* Dispel undead */
@@ -11809,21 +11780,19 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 	/* mimic spell 'Cause Wounds' aka monsters' 'Curse' */
-	case GF_CAUSE:
-		{
-			int chance = p_ptr->skill_sav;
+	case GF_CAUSE: {
+		int chance = p_ptr->skill_sav;
 
-			/* 'GOOD' players get 1.5x chance to resist (Angels' intrinsic resistance!) */
-			if (p_ptr->suscep_evil) chance = chance + (100 - chance) / 2;
-			if (chance > 95) chance = 95;
+		/* 'GOOD' players get 1.5x chance to resist (Angels' intrinsic resistance!) */
+		if (p_ptr->suscep_evil) chance = chance + (100 - chance) / 2;
+		if (chance > 95) chance = 95;
 
-			if (rand_int(100) < chance || p_ptr->no_cut) {
-				msg_print(Ind, "You resist the effect!");
-				break;
-			}
-			take_hit(Ind, dam, killer, -who);
+		if (rand_int(100) < chance || p_ptr->no_cut) {
+			msg_print(Ind, "You resist the effect!");
 			break;
 		}
+		take_hit(Ind, dam, killer, -who);
+		break; }
 
 	case GF_OLD_DRAIN:
 		dam = percent_damage(p_ptr->chp, dam);
@@ -12713,20 +12682,11 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 			char ch;
 			byte attr;
 
-			if (p_ptr->conn == NOT_CONNECTED)
-				continue;
-
-			if (!inarea(&p_ptr->wpos, wpos))
-				continue;
-
-			if (p_ptr->blind)
-				continue;
-
-			if (!panel_contains(y9, x9))
-				continue;
-
-			if (!player_has_los_bold(j, y9, x9))
-				continue;
+			if (p_ptr->conn == NOT_CONNECTED) continue;
+			if (!inarea(&p_ptr->wpos, wpos)) continue;
+			if (p_ptr->blind) continue;
+			if (!panel_contains(y9, x9)) continue;
+			if (!player_has_los_bold(j, y9, x9)) continue;
 
 			dispx = x9 - p_ptr->panel_col_prt;
 			dispy = y9 - p_ptr->panel_row_prt;
@@ -13569,70 +13529,66 @@ int approx_damage(int m_idx, int dam, int typ) {
 			dam /= 2;
 		break;
 
-	case GF_HAVOC:
-		{
-			int res1 = 0, res2 = 0, res3 = 0, res4 = 0, res5 = 0; //shard,sound,fire,mana,chaos
+	case GF_HAVOC: {
+		int res1 = 0, res2 = 0, res3 = 0, res4 = 0, res5 = 0; //shard,sound,fire,mana,chaos
 
-			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
-				res1 = 2;
-			//RF8_NO_CUT/RF3_NO_STUN doesn't help here
-			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND))
-				res2 = 2;
-			if (r_ptr->flags3 & RF3_IM_FIRE)
-				res3 = 4;
-			else if (r_ptr->flags9 & RF9_RES_FIRE)
-				res3 = 2;
-			//No SUSCEP_FIRE check
-			if ((r_ptr->flags4 & RF4_BR_MANA) || (r_ptr->flags9 & RF9_RES_MANA))
-				res4 = 3;
-			if ((r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS))
-				res5 = 3;
+		if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
+			res1 = 2;
+		//RF8_NO_CUT/RF3_NO_STUN doesn't help here
+		if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND))
+			res2 = 2;
+		if (r_ptr->flags3 & RF3_IM_FIRE)
+			res3 = 4;
+		else if (r_ptr->flags9 & RF9_RES_FIRE)
+			res3 = 2;
+		//No SUSCEP_FIRE check
+		if ((r_ptr->flags4 & RF4_BR_MANA) || (r_ptr->flags9 & RF9_RES_MANA))
+			res4 = 3;
+		if ((r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS))
+			res5 = 3;
 
-			switch (res1 + res2 + res3 + res4 + res5) {
-			case 0: case 1: case 2: case 3: break;
-			case 4: case 5: case 6: case 7:
-				dam = (dam * 3 + 3) / 4;
-				//do_cut = 0;
-				break;
-			case 8: case 9: case 10:
-				dam /= 2;
-				break;
-			default: //11,12,13,14
-				dam /= 3;
-				break;
-			}
+		switch (res1 + res2 + res3 + res4 + res5) {
+		case 0: case 1: case 2: case 3: break;
+		case 4: case 5: case 6: case 7:
+			dam = (dam * 3 + 3) / 4;
+			//do_cut = 0;
+			break;
+		case 8: case 9: case 10:
+			dam /= 2;
+			break;
+		default: //11,12,13,14
+			dam /= 3;
+			break;
 		}
-		break;
+		break; }
 
 	case GF_INFERNO:
 	case GF_DETONATION:
-	case GF_ROCKET:
-		{
-			int res1 = 0, res2 = 0, res3 = 0; //shard,sound,fire
+	case GF_ROCKET: {
+		int res1 = 0, res2 = 0, res3 = 0; //shard,sound,fire
 
-			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
-				res1 = 1;
-			//RF8_NO_CUT/RF3_NO_STUN don't help here
-			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND))
-				res2 = 1;
-			if (r_ptr->flags3 & RF3_IM_FIRE)
-				res3 = 3;
-			else if (r_ptr->flags9 & RF9_RES_FIRE)
-				res3 = 1;
-			//No SUSCEP_FIRE check
+		if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
+			res1 = 1;
+		//RF8_NO_CUT/RF3_NO_STUN don't help here
+		if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND))
+			res2 = 1;
+		if (r_ptr->flags3 & RF3_IM_FIRE)
+			res3 = 3;
+		else if (r_ptr->flags9 & RF9_RES_FIRE)
+			res3 = 1;
+		//No SUSCEP_FIRE check
 
-			switch (res1 + res2 + res3) {
-			case 0: break;
-			case 1: case 2:
-				dam = (dam * 3 + 3) / 4;
-				//do_cut = 0;
-				break;
-			default:
-				dam /= 2;
-				break;
-			}
+		switch (res1 + res2 + res3) {
+		case 0: break;
+		case 1: case 2:
+			dam = (dam * 3 + 3) / 4;
+			//do_cut = 0;
+			break;
+		default:
+			dam /= 2;
+			break;
 		}
-		break;
+		break; }
 
 	case GF_STUN:
 		//do_stun = 18;
@@ -13686,24 +13642,22 @@ int approx_damage(int m_idx, int dam, int typ) {
 			dam /= 3;
 		break;
 
-	case GF_GRAVITY:
-		{
-			bool resist_tele = FALSE;
+	case GF_GRAVITY: {
+		bool resist_tele = FALSE;
 
-			if ((r_ptr->flags3 & RF3_RES_TELE) || (r_ptr->flags9 & RF9_IM_TELE)) {
-				if ((r_ptr->flags1 & (RF1_UNIQUE)) || (r_ptr->flags9 & RF9_IM_TELE))
-					resist_tele = TRUE;
-			}
-
-			if (!resist_tele) {}//do_dist = 10;
-			else {}//do_dist = 0;
-
-			if (r_ptr->flags4 & RF4_BR_GRAV) {
-				dam /= 3;
-				//do_dist = 0;
-			}
-			break;
+		if ((r_ptr->flags3 & RF3_RES_TELE) || (r_ptr->flags9 & RF9_IM_TELE)) {
+			if ((r_ptr->flags1 & (RF1_UNIQUE)) || (r_ptr->flags9 & RF9_IM_TELE))
+				resist_tele = TRUE;
 		}
+
+		if (!resist_tele) {}//do_dist = 10;
+		else {}//do_dist = 0;
+
+		if (r_ptr->flags4 & RF4_BR_GRAV) {
+			dam /= 3;
+			//do_dist = 0;
+		}
+		break; }
 
 	case GF_CODE:
 		break;
