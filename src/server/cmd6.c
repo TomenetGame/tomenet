@@ -556,6 +556,7 @@ void do_cmd_eat_food(int Ind, int item) {
 	/* Firestones */
 	else if (o_ptr->tval == TV_FIRESTONE) {
 		bool dragon = FALSE;
+
 		if (p_ptr->body_monster) {
 			monster_race *r_ptr = &r_info[p_ptr->body_monster];
 			if (strchr("dD", r_ptr->d_char)) dragon = TRUE;
@@ -2923,8 +2924,8 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 		case SV_SCROLL_ACQUIREMENT:
 		{
 			int obj_tmp = object_level;
-			//if (!o_ptr) break;
 
+			//if (!o_ptr) break;
 			object_level = getlevel(&p_ptr->wpos);
 			if (o_ptr->discount == 100) object_discount = 100; /* stolen? */
 			s_printf("%s: ACQ_SCROLL: by player %s\n", showtime(), p_ptr->name);
@@ -2938,8 +2939,8 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 		case SV_SCROLL_STAR_ACQUIREMENT:
 		{
 			int obj_tmp = object_level;
-			//if (!o_ptr) break;
 
+			//if (!o_ptr) break;
 			object_level = getlevel(&p_ptr->wpos);
 			if (o_ptr->discount == 100) object_discount = 100; /* stolen? */
 			s_printf("%s: *ACQ_SCROLL*: by player %s\n", showtime(), p_ptr->name);
@@ -2994,7 +2995,6 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 
 		case SV_SCROLL_LOTTERY:
 			if (!o_ptr) break;
-
 			do_lottery(Ind, o_ptr);
 			ident = TRUE;
 			break;
@@ -3217,9 +3217,7 @@ void do_cmd_read_scroll(int Ind, int item) {
 	item_tester_tval = TV_SCROLL;
 
 	/* Get the item (in the pack) */
-	if (item >= 0) {
-		o_ptr = &p_ptr->inventory[item];
-	}
+	if (item >= 0) o_ptr = &p_ptr->inventory[item];
 	/* Get the item (on the floor) */
 	else {
 		if (-item >= o_max)
