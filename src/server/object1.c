@@ -6869,7 +6869,8 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 	bool ID_spell1_found = FALSE, ID_spell1a_found = FALSE, ID_spell1b_found = FALSE, ID_spell2_found = FALSE, ID_spell3_found = FALSE, ID_spell4_found = FALSE;
 	byte failure = 0x0;
 #ifdef ENABLE_SUBINVEN
-	int k = -1, j;
+	int k = -1;
+	int j = -1; /* init for silyl compiler warning */
 #endif
 
 	/* Look for ID / *ID* (the decadence) scrolls 1st */
