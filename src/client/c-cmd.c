@@ -2504,6 +2504,16 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					/* Redraw line number display */
 					if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (guide_lastline - line) + 1, guide_lastline + 1));
 					else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, guide_lastline + 1));
+#if 0
+/* Hack: Automatically mark all subsequent results too */
+strcpy(searchstr, lastsearch);
+marking_after = TRUE;
+#endif
+#if 1
+/* Hack: Prevent auto-marking all subsequent results on any next display refresh (eg from a simple navigational keypress).
+   User may just press 'a' to re-mark everything if wanted. */
+marking_after = marking = FALSE;
+#endif
 				} else {
 					/* Skip all lines until we find the desired chapter */
 					n--;
