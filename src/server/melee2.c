@@ -1316,6 +1316,84 @@ static void administrative_push(int Ind, monster_type *m_ptr, cave_type **zcave)
 	set_stun(Ind, p_ptr->stun + 10);
 }
 
+int calc_grab_chance(player_type *p_ptr, int mod, int rlev) {
+	int grabchance;
+#ifdef ENABLE_STANCES
+	int fac = 100;
+#endif
+#ifdef GENERIC_INTERCEPTION
+	int eff_lev;
+#endif
+
+	/* Ghosts cannot intercept */
+	if (p_ptr->ghost) return(0);
+	/* Vampire in mist form cannot intercept */
+	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) return(0);
+	/* Certain states forbid any intercepting */
+	if (p_ptr->cloaked || p_ptr->shadow_running) return(0);
+	if (p_ptr->confused || p_ptr->stun || p_ptr->afraid || p_ptr->paralyzed || p_ptr->resting) return(0);
+
+	grabchance = get_skill_scale(p_ptr, SKILL_INTERCEPT, 100);
+
+#ifdef ENABLE_STANCES
+	if (p_ptr->combat_stance == 1) switch (p_ptr->combat_stance_power) {
+		case 0: fac = 50; break;
+		case 1: fac = 55; break;
+		case 2: fac = 60; break;
+		case 3: fac = 65; break;
+	} else if (p_ptr->combat_stance == 2) switch (p_ptr->combat_stance_power) {
+		case 0: fac = 104; break;
+		case 1: fac = 107; break;
+		case 2: fac = 110; break;
+		case 3: fac = 115; break;
+	}
+ #ifndef GENERIC_INTERCEPTION /* old way: actually modify grabchance before subtracing rlev factor */
+	grabchance = (grabchance * fac) / 100;
+ #endif
+#endif
+
+	/* Apply Martial-arts bonus */
+	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(p_ptr) &&
+	    !p_ptr->inventory[INVEN_WIELD].k_idx &&
+#ifndef ENABLE_MA_BOOMERANG
+	    !p_ptr->inventory[INVEN_BOW].k_idx &&
+#else
+	    p_ptr->inventory[INVEN_BOW].tval != TV_BOW &&
+#endif
+	    !p_ptr->inventory[INVEN_ARM].k_idx)
+		grabchance += get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 25);
+
+	grabchance -= (rlev / 3);
+
+#ifdef GENERIC_INTERCEPTION
+	eff_lev = 0;
+	/* the skill is available to this character? (threshold is paranoia for ignoring
+	   racial-bonus flukes) - then give him a base chance even when untrained */
+	if (p_ptr->s_info[SKILL_INTERCEPT].mod >= 300) eff_lev = p_ptr->lev < 50 ? p_ptr->lev : 50;
+	/* alternatively, still make MA count, since it gives interception chance too */
+	else if (get_skill(p_ptr, SKILL_MARTIAL_ARTS)) {
+		eff_lev = get_skill(p_ptr, SKILL_MARTIAL_ARTS);
+		if (eff_lev > p_ptr->lev) eff_lev = p_ptr->lev;
+	}
+
+	//w/o G_I: 50.000: 67..115 -> 33..140 (MA); 0.000: -33..0
+	grabchance = (grabchance * 2) / 5;
+	if (eff_lev) grabchance += 5 + (eff_lev * 2) / 5;
+ #ifdef ENABLE_STANCES
+		grabchance = (grabchance * fac) / 100; /* new way: modify final grabchance after rlev subtraction has been applied */
+ #endif
+#endif
+
+	/* apply action-specific modifier */
+	grabchance = (grabchance * mod) / 100;
+
+	if (p_ptr->blind) grabchance /= 3;
+
+	if (grabchance <= 0) return(0);
+	if (grabchance >= INTERCEPT_CAP) return(INTERCEPT_CAP);
+	return(grabchance);
+}
+
 /* Check if player intercept's a monster's attempt to do something */
 //bool monst_check_grab(int Ind, int m_idx, cptr desc)
 /* Don't allow interception of multiple players to stack? */
@@ -1325,7 +1403,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 	monster_race    *r_ptr = race_inf(m_ptr);
 
 	worldpos *wpos = &m_ptr->wpos;
-	player_type *q_ptr;
+	player_type *p_ptr;
 
 	cave_type **zcave;
 	int i, x2 = m_ptr->fx, y2 = m_ptr->fy;
@@ -1333,13 +1411,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 #ifdef NO_INTERCEPTION_STACKING
 	int grabchance_top = 0, i_top = 0;
 #endif
-#ifdef GENERIC_INTERCEPTION
-	int eff_lev;
-#endif
 	int rlev = r_ptr->level;
-#ifdef ENABLE_STANCES
-	int fac;
-#endif
 
 
 	/* hack: if we cannot auto-retaliate vs a monster than we dont intercept either */
@@ -1352,100 +1424,25 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	for (i = 1; i <= NumPlayers; i++) {
-		q_ptr = Players[i];
+		p_ptr = Players[i];
 
 		/* Skip disconnected players */
-		if (q_ptr->conn == NOT_CONNECTED) continue;
-
+		if (p_ptr->conn == NOT_CONNECTED) continue;
 		/* Skip players not on this depth */
-		if (!inarea(&q_ptr->wpos, wpos)) continue;
-
+		if (!inarea(&p_ptr->wpos, wpos)) continue;
 		/* Skip dungeon masters */
-		if (q_ptr->admin_dm) continue;
-
-		/* Ghosts cannot intercept */
-		if (q_ptr->ghost) continue;
-
-		/* Vampire in mist form cannot intercept */
-		if (q_ptr->prace == RACE_VAMPIRE && q_ptr->body_monster == RI_VAMPIRIC_MIST) continue;
-
-		/* can't intercept while in wraithform if monster isn't */
-		if (q_ptr->tim_wraith &&
-		    ((r_ptr->flags2 & RF2_KILL_WALL) || !(r_ptr->flags2 & RF2_PASS_WALL)))
-			return(FALSE);
-
-		if (q_ptr->cloaked || q_ptr->shadow_running) continue;
-
-		if (q_ptr->confused || q_ptr->stun || q_ptr->afraid || q_ptr->paralyzed || q_ptr->resting) continue;
+		if (p_ptr->admin_dm) continue;
 
 		/* Cannot grab what you cannot see */
-		if (!q_ptr->mon_vis[m_idx]) continue;
+		if (!p_ptr->mon_vis[m_idx]) return(0);
+		/* can't intercept while in wraithform if monster isn't */
+		if (p_ptr->tim_wraith && ((r_ptr->flags2 & RF2_KILL_WALL) || !(r_ptr->flags2 & RF2_PASS_WALL))) continue;
+		/* Compute distance - can only grab adjacent monsters */
+		if (distance(y2, x2, p_ptr->py, p_ptr->px) > 1) return(0);
 
-		/* Compute distance */
-		if (distance(y2, x2, q_ptr->py, q_ptr->px) > 1) continue;
-
-		grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 100);
-
-#ifdef ENABLE_STANCES
-		fac = 100;
-		if (q_ptr->combat_stance == 1) switch (q_ptr->combat_stance_power) {
-			case 0: fac = 50; break;
-			case 1: fac = 55; break;
-			case 2: fac = 60; break;
-			case 3: fac = 65; break;
-		} else if (q_ptr->combat_stance == 2) switch (q_ptr->combat_stance_power) {
-			case 0: fac = 104; break;
-			case 1: fac = 107; break;
-			case 2: fac = 110; break;
-			case 3: fac = 115; break;
-		}
- #ifndef GENERIC_INTERCEPTION /* old way: actually modify grabchance before subtracing rlev factor */
-		grabchance = (grabchance * fac) / 100;
- #endif
-#endif
-
-		/* Apply Martial-arts bonus */
-		if (get_skill(q_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(q_ptr) &&
-		    !q_ptr->inventory[INVEN_WIELD].k_idx &&
-#ifndef ENABLE_MA_BOOMERANG
-		    !q_ptr->inventory[INVEN_BOW].k_idx &&
-#else
-		    q_ptr->inventory[INVEN_BOW].tval != TV_BOW &&
-#endif
-		    !q_ptr->inventory[INVEN_ARM].k_idx)
-			grabchance += get_skill_scale(q_ptr, SKILL_MARTIAL_ARTS, 25);
-
-		grabchance -= (rlev / 3);
-
-#ifdef GENERIC_INTERCEPTION
-		eff_lev = 0;
-		/* the skill is available to this character? (threshold is paranoia for ignoring
-		   racial-bonus flukes) - then give him a base chance even when untrained */
-		if (q_ptr->s_info[SKILL_INTERCEPT].mod >= 300) eff_lev = q_ptr->lev < 50 ? q_ptr->lev : 50;
-		/* alternatively, still make MA count, since it gives interception chance too */
-		else if (get_skill(q_ptr, SKILL_MARTIAL_ARTS)) {
-			eff_lev = get_skill(q_ptr, SKILL_MARTIAL_ARTS);
-			if (eff_lev > q_ptr->lev) eff_lev = q_ptr->lev;
-		}
-
-		//w/o G_I: 50.000: 67..115 -> 33..140 (MA); 0.000: -33..0
-		grabchance = (grabchance * 2) / 5;
-		if (eff_lev) grabchance += 5 + (eff_lev * 2) / 5;
- #ifdef ENABLE_STANCES
-		grabchance = (grabchance * fac) / 100; /* new way: modify final grabchance after rlev subtraction has been applied */
- #endif
-#endif
-
-		/* apply action-specific modifier */
-		grabchance = (grabchance * mod) / 100;
-
-		if (q_ptr->blind) grabchance /= 3;
-
-		if (grabchance <= 0) continue;
+		grabchance = calc_grab_chance(p_ptr, mod, rlev);
 
 #ifndef NO_INTERCEPTION_STACKING
-		if (grabchance >= INTERCEPT_CAP) grabchance = INTERCEPT_CAP;
-
 		/* Got disrupted ? */
 		if (magik(grabchance)) {
 			char m_name[MNAME_LEN], m_name_real[MNAME_LEN], bgen[2], bgen_real[2];
@@ -1472,23 +1469,19 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 
 			msg_format(i, "\377%cYou intercept %s'%s attempt to %s!", COLOUR_IC_GOOD, m_name, bgen, desc);
 			msg_print_near_monvar(i, m_idx,
-			    format("\377%c%s intercepts %s'%s attempt to %s!", COLOUR_IC_NEAR, q_ptr->name, m_name_real, bgen_real, desc),
-			    format("\377%c%s intercepts %s'%s attempt to %s!", COLOUR_IC_NEAR, q_ptr->name, m_name, bgen, desc),
-			    format("\377%c%s intercepts it!", COLOUR_IC_NEAR, q_ptr->name));
+			    format("\377%c%s intercepts %s'%s attempt to %s!", COLOUR_IC_NEAR, p_ptr->name, m_name_real, bgen_real, desc),
+			    format("\377%c%s intercepts %s'%s attempt to %s!", COLOUR_IC_NEAR, p_ptr->name, m_name, bgen, desc),
+			    format("\377%c%s intercepts it!", COLOUR_IC_NEAR, p_ptr->name));
 
 			administrative_push(i, m_ptr, zcave);
 			return(TRUE);
 		}
 #else
-		if (grabchance >= INTERCEPT_CAP) {
-			grabchance_top = INTERCEPT_CAP;
-			i_top = i;
-			/* can't go higher, so we may stop here */
-			break;
-		}
+		/* Remember highest grab chance and use that one */
 		if (grabchance > grabchance_top) {
 			grabchance_top = grabchance;
 			i_top = i;
+			if (grabchance_top == INTERCEPT_CAP) break; //Optimize?: Can't go higher, so we may just as well stop checking any further
 		}
 #endif
 	}
@@ -1500,6 +1493,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 		/* Get the monster name (or "it") */
 		monster_desc(i_top, m_name, m_idx, 0x00);
 		monster_desc(i_top, m_name_real, m_idx, 0x100);
+
 		switch (m_name[strlen(m_name) - 1]) {
 		case 's': case 'x': case 'z':
 			bgen[0] = 0;
@@ -1517,11 +1511,12 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 			bgen_real[1] = 0;
 		}
 
+		p_ptr = Players[i_top];
 		msg_format(i_top, "\377%cYou intercept %s'%s attempt to %s!", COLOUR_IC_GOOD, m_name, bgen, desc);
 		msg_print_near_monvar(i_top, m_idx,
-		    format("\377%c%s intercepts %s'%s attempt to %s!", COLOUR_IC_NEAR, Players[i_top]->name, m_name_real, bgen_real, desc),
-		    format("\377%c%s intercepts %s'%s attempt to %s!", COLOUR_IC_NEAR, Players[i_top]->name, m_name, bgen, desc),
-		    format("\377%c%s intercepts it!", COLOUR_IC_NEAR, Players[i_top]->name));
+		    format("\377%c%s intercepts %s'%s attempt to %s!", COLOUR_IC_NEAR, p_ptr->name, m_name_real, bgen_real, desc),
+		    format("\377%c%s intercepts %s'%s attempt to %s!", COLOUR_IC_NEAR, p_ptr->name, m_name, bgen, desc),
+		    format("\377%c%s intercepts it!", COLOUR_IC_NEAR, p_ptr->name));
 
 		administrative_push(i_top, m_ptr, zcave);
 		return(TRUE);
