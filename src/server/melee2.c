@@ -1338,7 +1338,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 #endif
 	int rlev = r_ptr->level;
 #ifdef ENABLE_STANCES
-	int fac = 100;
+	int fac;
 #endif
 
 
@@ -1376,8 +1376,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 
 		if (q_ptr->cloaked || q_ptr->shadow_running) continue;
 
-		if (q_ptr->confused || q_ptr->stun || q_ptr->afraid || q_ptr->paralyzed || q_ptr->resting)
-			continue;
+		if (q_ptr->confused || q_ptr->stun || q_ptr->afraid || q_ptr->paralyzed || q_ptr->resting) continue;
 
 		/* Cannot grab what you cannot see */
 		if (!q_ptr->mon_vis[m_idx]) continue;
@@ -1388,6 +1387,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 		grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 100);
 
 #ifdef ENABLE_STANCES
+		fac = 100;
 		if (q_ptr->combat_stance == 1) switch (q_ptr->combat_stance_power) {
 			case 0: fac = 50; break;
 			case 1: fac = 55; break;
