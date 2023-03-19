@@ -10577,6 +10577,11 @@ static int Receive_activate_skill(int ind) {
 		case MKEY_DODGE:
 			check_dodge(player);
 			break;
+/* todo
+		case MKEY_INTERCEPT:
+			check_intercept(player);
+			break;
+*/
 		case MKEY_FLETCHERY:
 			do_cmd_fletchery(player);
 			break;

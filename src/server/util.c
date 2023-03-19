@@ -3899,7 +3899,18 @@ void check_dodge(int Ind) {
 	return;
 }
 
+void check_intercept(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	int lev = p_ptr->lev * 2 < 127 ? p_ptr->lev * 2 : 127;
 
+	if (is_admin(p_ptr))
+		msg_format(Ind, "You have a %d%%/%d%% chance of intercepting a level %d/%d monster.",
+		    calc_grab_chance(p_ptr, 100, p_ptr->lev), calc_grab_chance(p_ptr, 100, lev), p_ptr->lev, lev);
+	else msg_format(Ind, "You have a %d%% chance of intercepting a level %d monster's attack.",
+	    calc_grab_chance(p_ptr, 100, p_ptr->lev), p_ptr->lev);
+
+	return;
+}
 
 void check_parryblock(int Ind) {
 #ifdef ENABLE_NEW_MELEE
