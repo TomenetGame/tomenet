@@ -1864,8 +1864,8 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 		k = 4; //reduce to divisable by 4 # of lines (which means -2)
 	else
 		k = 0;
-	if (admin) show_file(Ind, file_name, format("Players Online (%d+%d)", NumPlayers - admins, admins), line, 0, k, srcstr);
-	else show_file(Ind, file_name, format("Players Online (%d)", NumPlayers - admins), line, 0, k, srcstr);
+	if (admin) show_file(Ind, file_name, format("Players Online: %d+%d", NumPlayers - admins, admins), line, 0, k, srcstr);
+	else show_file(Ind, file_name, format("Players Online: %d", NumPlayers - admins), line, 0, k, srcstr);
 
 	/* Remove the file */
 	fd_kill(file_name);
