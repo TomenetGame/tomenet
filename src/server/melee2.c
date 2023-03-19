@@ -1380,7 +1380,7 @@ int calc_grab_chance(player_type *p_ptr, int mod, int rlev) {
 	grabchance = (grabchance * 2) / 5;
 	if (eff_lev) grabchance += 5 + (eff_lev * 2) / 5;
  #ifdef ENABLE_STANCES
-		grabchance = (grabchance * fac) / 100; /* new way: modify final grabchance after rlev subtraction has been applied */
+	grabchance = (grabchance * fac) / 100; /* new way: modify final grabchance after rlev subtraction has been applied */
  #endif
 #endif
 
