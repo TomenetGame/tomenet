@@ -3452,7 +3452,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 10\n");
 	/* does monster *prefer* roaming freely and isn't found in vaults/pits/nests usually? */
 	if ((r_ptr->flags0 & RF0_ROAMING)
 	    && !(summon_override_checks & (SO_GRID_EMPTY | SO_GRID_TERRAIN))) {
-		if ((c_ptr->info & (CAVE_ICKY | CAVE_NEST_PIT))) return 51;
+		if ((c_ptr->info & (CAVE_ICKY | CAVE_NEST_PIT))) return(51);
 	}
 
 #ifdef PMO_DEBUG
@@ -3466,7 +3466,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	c_ptr->m_idx = m_pop();
 
 	/* Mega-Hack -- catch "failure" */
-	if (!c_ptr->m_idx) return 49;
+	if (!c_ptr->m_idx) return(49);
 
 	/* Get a new monster record */
 	m_ptr = &m_list[c_ptr->m_idx];
@@ -3923,7 +3923,7 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 		/* s_printf("place_monster_one failed at (%d, %d, %d), y = %d, x = %d, r_idx = %d, feat = %d\n",
 			wpos->wx, wpos->wy, wpos->wz, y, x, r_idx, zcave[y][x].feat); */
 		/* Failure (!=0) */
-		return res;
+		return(res);
 	}
 	/* Success (==0) */
 
@@ -4368,7 +4368,7 @@ int alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp) {
 	if (res != 37) /* no spam for players who have killed the boss already */
 		s_printf("allocate_monster_specific()->place_monster_aux() failed for r_idx %d on %s (%d).\n", r_idx, wpos_format(0, wpos), res);
 
-	return res;
+	return(res);
 }
 
 /*
@@ -5279,7 +5279,7 @@ int race_index(char * name) {
 	/* for each monster race */
 	for (i = 1; i < MAX_R_IDX - 1; i++)
 		if (r_info[i].name)
-			if (!strcmp(&r_name[r_info[i].name],name)) return i;
+			if (!strcmp(&r_name[r_info[i].name],name)) return(i);
 	return(0);
 }
 
@@ -5301,7 +5301,7 @@ cptr r_name_get(monster_type *m_ptr) {
 		if (q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx) {
 			if (strlen(q_info[m_ptr->quest].questor[m_ptr->questor_idx].name)) {
 				snprintf(buf, sizeof(buf), "%s", q_info[m_ptr->quest].questor[m_ptr->questor_idx].name);
-				return buf;
+				return(buf);
 			} else return(r_name + m_ptr->r_ptr->name);
 		} else {
 			s_printf("QUESTOR DEPRECATED (r_name_get)\n");
@@ -5488,7 +5488,7 @@ int pick_ego_monster(int r_idx, int Level) {
 #endif
 
 		/* We finanly got one ? GREAT */
-		return ego;
+		return(ego);
 	}
 
 	/* Found none ? so sad, well no ego for the time being */
@@ -5530,7 +5530,7 @@ int pick_randuni(int r_idx, int Level) {
 		if (rand_int(re_ptr->rarity)) continue;
 
 		/* We finanly got one ? GREAT */
-		return ego;
+		return(ego);
 	}
 
 	/* Found none ? so sad, well no ego for the time being */
@@ -5550,7 +5550,7 @@ monster_race* race_info_idx(int r_idx, int ego, int randuni) {
 	int i;
 
 	/* No work needed */
-	if (!ego) return r_ptr;
+	if (!ego) return(r_ptr);
 
 	/* Copy the base monster */
 	COPY(nr_ptr, r_ptr, monster_race);
@@ -5633,7 +5633,7 @@ monster_race* race_info_idx(int r_idx, int ego, int randuni) {
 #endif
 
 	/* And finanly return a pointer to a fully working monster race */
-	return nr_ptr;
+	return(nr_ptr);
 }
 
 #endif	// RANDUNIS

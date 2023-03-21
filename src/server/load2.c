@@ -3085,7 +3085,7 @@ static errr rd_savefile_new_aux(int Ind) {
 	if (err_code == 1)
 		return(1);
 	else if (err_code)
-		return 35;
+		return(35);
 
 	/* Read the player_hp array */
 	rd_u16b(&tmp16u);
@@ -3116,7 +3116,7 @@ static errr rd_savefile_new_aux(int Ind) {
 		rd_u32b(&tmp32u);
 
 		/* if too many map entries */
-		if (tmp32u > MAX_WILD_X * MAX_WILD_Y) return 23;
+		if (tmp32u > MAX_WILD_X * MAX_WILD_Y) return(23);
 
 		/* read in the map */
 		for (i = 0; i < (int) tmp32u; i++)

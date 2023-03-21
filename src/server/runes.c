@@ -90,13 +90,8 @@ int do_use_mp(int Ind, int mod, float mul) {
 	if (p_ptr->rune_num_of_buffs)
 		cost += (1<<(p_ptr->rune_num_of_buffs + 3));
 
-	if (p_ptr->cmp < cost) {
-		return cost;
-	}
-
-	else {
-		p_ptr->cmp -= cost;
-	}
+	if (p_ptr->cmp < cost) return(cost);
+	else p_ptr->cmp -= cost;
 
 	p_ptr->redraw |= PR_MANA;
 	return(0);

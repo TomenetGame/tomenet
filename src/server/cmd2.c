@@ -1873,7 +1873,7 @@ int pick_house(struct worldpos *wpos, int y, int x) {
 		/* Check this one */
 		if (houses[i].dx == x && houses[i].dy == y && inarea(&houses[i].wpos, wpos))
 			/* Return */
-			return i;
+			return(i);
 	}
 
 	/* Failure */
@@ -1888,7 +1888,7 @@ int pick_player(house_type *h_ptr) {
 		/* Check this one */
 		if (Players[i]->px == h_ptr->dx && Players[i]->py == h_ptr->dy && inarea(&Players[i]->wpos, &h_ptr->wpos))
 			/* Return */
-			return i;
+			return(i);
 	}
 
 	/* Failure */
@@ -1953,7 +1953,7 @@ int inside_which_house(struct worldpos *wpos, int x, int y) {
 		if (h_ptr->flags & HF_RECT) {
 			if (h_ptr->x <= x && h_ptr->x + h_ptr->coords.rect.width - 1 >= x &&
 			    h_ptr->y <= y && h_ptr->y + h_ptr->coords.rect.height - 1 >= y)
-				return i + 1;
+				return(i + 1);
 #if 0 /* not needed atm */
 		} else {
 			/* anyone want to implement non-rectangular houses :-p? */
@@ -2516,7 +2516,7 @@ int access_door_colour(int Ind, struct dna_type *dna) {
 	player_type *p_ptr = Players[Ind];
 
 	/* paranoia: for when the poly-house door bug occurred */
-	if (!dna) return TERM_ACID;
+	if (!dna) return(TERM_ACID);
 
 	/* house doesn't belong to anybody? */
 	if (!dna->owner) return(TERM_UMBER);
@@ -2536,9 +2536,9 @@ int access_door_colour(int Ind, struct dna_type *dna) {
 	switch (dna->owner_type) {
 	case OT_PLAYER:
 		/* new doors in new server different */
-		if (p_ptr->id == dna->owner && p_ptr->dna == dna->creator) return TERM_L_GREEN;
+		if (p_ptr->id == dna->owner && p_ptr->dna == dna->creator) return(TERM_L_GREEN);
 		/* allow access to houses owned by other characters of your own account as if they were yours (as long as mode is compatible) */
-		if (p_ptr->account == lookup_player_account(dna->owner)) return TERM_GREEN;
+		if (p_ptr->account == lookup_player_account(dna->owner)) return(TERM_GREEN);
 		/* party access with possible restrictions */
 		if (dna->a_flags & ACF_PARTY) {
 			if (!p_ptr->party) return(TERM_SLATE);
@@ -6028,7 +6028,7 @@ int breakage_chance(object_type *o_ptr) {
 	case TV_POTION:
 	case TV_POTION2:
 	case TV_BOTTLE:
-		return 100;
+		return(100);
 
 	/* Often break */
 	case TV_FOOD:
@@ -6036,13 +6036,13 @@ int breakage_chance(object_type *o_ptr) {
 	case TV_LITE:
 	case TV_SKELETON:
 	case TV_TRAPKIT:
-		return 50;
+		return(50);
 
 	/* Sometimes break */
 	//case TV_SPIKE:
 	case TV_SCROLL:
 	case TV_WAND:
-		return 25;
+		return(25);
 
 	case TV_SHOT:
 	case TV_BOLT:
@@ -6071,12 +6071,12 @@ int breakage_chance(object_type *o_ptr) {
 	/* special */
 	case TV_GOLEM:
 		if (o_ptr->sval <= SV_GOLEM_ADAM) return(0); /* massive piece */
-		if (o_ptr->sval >= SV_GOLEM_ATTACK) return 25; /* scroll */
-		return 10; /* arm/leg */
+		if (o_ptr->sval >= SV_GOLEM_ATTACK) return(25); /* scroll */
+		return(10); /* arm/leg */
 
 #ifdef ENABLE_DEMOLITIONIST
 	case TV_CHARGE:
-		return 5;
+		return(5);
 #endif
 
 	/* for throwing weapons: Weapons in general are meant to be used for hitting, so should be ok */
@@ -6084,17 +6084,18 @@ int breakage_chance(object_type *o_ptr) {
 	case TV_AXE:
 	case TV_BLUNT:
 	case TV_POLEARM:
-		return 3;
+		return(3);
 	}
 
 	/* Default: Rarely break */
 	/* (eg rod, staff, mstaff, weapon, other armour, tool) */
-	return 10;
+	return(10);
 }
 
 /* Magic brand, shield - Kurzel */
 void do_nimbus(int Ind, int y, int x) {
 	player_type *p_ptr = Players[Ind];
+
 	if (p_ptr->cmp < 2) {
 		p_ptr->cmp = 0;
 		(void)set_nimbus(Ind, 0, p_ptr->nimbus_t, p_ptr->nimbus_d);
@@ -6200,7 +6201,7 @@ int get_shooter_mult(object_type *o_ptr) {
 		tmul = 4;
 		break;
 	}
-	return tmul;
+	return(tmul);
 }
 
 
