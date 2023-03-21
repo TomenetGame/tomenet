@@ -719,6 +719,7 @@ static void add_ability(artifact_type *a_ptr) {
 			}
 			else if (r < 40) {
 				int rr = rand_int(29);
+
 				if (rr < 1) a_ptr->esp |= (ESP_ORC);
 				else if (rr < 2) a_ptr->esp |= (ESP_TROLL);
 				else if (rr < 3) a_ptr->esp |= (ESP_DRAGON);
@@ -819,6 +820,7 @@ static void add_ability(artifact_type *a_ptr) {
 			}
 			else if (r < 73) {
 				int rsub = rand_int(24);
+
 				if ((rsub < 2) && !(a_ptr->flags1 & TR1_MULTMASK))
 					a_ptr->flags1 |= TR1_BRAND_ACID;
 				else if ((rsub < 4) && !(a_ptr->flags1 & TR1_MULTMASK))
@@ -1039,6 +1041,7 @@ static void add_ability(artifact_type *a_ptr) {
 			/* extra mods for royal armour */
 			if ((a_ptr->flags5 & TR5_WINNERS_ONLY) && !rand_int(10)) {
 				int rr = rand_int(100);
+
 				if (rr < 20) a_ptr->flags5 |= TR5_REFLECT;
 				else if (rr < 30) {
 					a_ptr->flags5 |= TR5_RES_MANA;
@@ -1267,6 +1270,7 @@ static void add_ability(artifact_type *a_ptr) {
 #endif	// 0
 				{
 					int rr = rand_int(29);
+
 					if (rr < 1) a_ptr->esp |= (ESP_ORC);
 					else if (rr < 2) a_ptr->esp |= (ESP_TROLL);
 					else if (rr < 3) a_ptr->esp |= (ESP_DRAGON);
@@ -2154,14 +2158,15 @@ artifact_type *randart_make(object_type *o_ptr) {
 		/* exploding art ammo is very rare - note: magic ammo can't explode */
 		if (magik(10) && (a_ptr->sval != SV_AMMO_MAGIC)) {
 			int power[27]= { GF_ELEC, GF_POIS, GF_ACID,
-			GF_COLD, GF_FIRE, GF_PLASMA, GF_LITE,
-			GF_DARK, GF_SHARDS, GF_SOUND,
-			GF_CONFUSION, GF_FORCE, GF_INERTIA,
-			GF_MANA, GF_METEOR, GF_ICE, GF_CHAOS,
-			GF_NETHER, GF_NEXUS, GF_TIME,
-			GF_GRAVITY, GF_KILL_WALL, GF_AWAY_ALL,
-			GF_TURN_ALL, GF_NUKE, //GF_STUN,
-			GF_DISINTEGRATE, GF_HELLFIRE };
+			    GF_COLD, GF_FIRE, GF_PLASMA, GF_LITE,
+			    GF_DARK, GF_SHARDS, GF_SOUND,
+			    GF_CONFUSION, GF_FORCE, GF_INERTIA,
+			    GF_MANA, GF_METEOR, GF_ICE, GF_CHAOS,
+			    GF_NETHER, GF_NEXUS, GF_TIME,
+			    GF_GRAVITY, GF_KILL_WALL, GF_AWAY_ALL,
+			    GF_TURN_ALL, GF_NUKE, //GF_STUN,
+			    GF_DISINTEGRATE, GF_HELLFIRE };
+
 			a_ptr->pval = power[rand_int(27)];
 		}
 	}
@@ -2305,6 +2310,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 	   however, let's use a more specific routine for ammo (note that it's _base_ level): */
 	if (is_ammo(k_ptr->tval)) {
 		int cost = 0;
+
 		/* in general: SLAYs, BRANDs, +dam, +dice all weigh much */
 		if (a_ptr->flags1 & TR1_VAMPIRIC) {a_ptr->level += 6; cost += 30000;}
 		if (a_ptr->flags1 & TR1_SLAY_EVIL) {a_ptr->level += 6; cost += 40000;}

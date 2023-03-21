@@ -1662,6 +1662,7 @@ static int verify_move_human(void) {
 	if ((engine_api == EAPI_GNUGO || engine_api == EAPI_PACHI) && sgf) {
 		/* translate char/num coords into char/char coords */
 		char m[3];
+
 		if (CPU_has_white) {
 			if (strlen(last_black_move) == 2) {
 				m[0] = last_black_move[0];
@@ -1683,6 +1684,7 @@ static int verify_move_human(void) {
 	/* Test for game over by double-passe */
 	if (pass_count == 2) {
 		char buf[10];
+
 #ifdef GO_DEBUGPRINT
 		printf("Both players passed consecutively, so the game ends.\n");
 #endif
@@ -1860,6 +1862,7 @@ static int verify_move_CPU(void) {
 	if ((engine_api == EAPI_GNUGO || engine_api == EAPI_PACHI) && sgf) {
 		/* translate char/num coords into char/char coords */
 		char m[3];
+
 		if (CPU_has_white) {
 			if (strlen(last_white_move) == 2) {
 				m[0] = last_white_move[0];
@@ -1881,6 +1884,7 @@ static int verify_move_CPU(void) {
 	/* Test for game over by double-passe */
 	if (pass_count == 2) {
 		char buf[10];
+
 #ifdef GO_DEBUGPRINT
 		printf("Both players passed consecutively, so the game ends.\n");
 #endif

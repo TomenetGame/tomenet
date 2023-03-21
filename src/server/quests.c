@@ -573,6 +573,7 @@ static bool quest_special_spawn_location(struct worldpos *wpos, s16b *x_result, 
 				if (wild_info[y][x].ondepth && tries > 1000) continue;
 
 				bool match = FALSE;
+
 				switch (wild_info[y][x].type) {
 				case WILD_OCEAN: match = (choice == RF8_WILD_OCEAN); break;
 				case WILD_LAKE: match = (choice == RF8_WILD_LAKE); break;
@@ -588,6 +589,7 @@ static bool quest_special_spawn_location(struct worldpos *wpos, s16b *x_result, 
 			}
 			if (!tries) { /* engage emergency eloquence */
 				bool match = FALSE;
+
 				for (x = 0; x < MAX_WILD_X; x++) {
 					for (y = 0; y < MAX_WILD_Y; y++) {
 						switch (wild_info[y][x].type) {
@@ -1968,11 +1970,11 @@ static bool quest_get_goal(int pInd, int q_idx, int goal, bool nisi) {
 
 	if (q_ptr->individual) {
 		if (nisi && p_ptr->quest_goals_nisi[i][goal]) return(FALSE);
-		return p_ptr->quest_goals[i][goal]; /* individual quest */
+		return(p_ptr->quest_goals[i][goal]); /* individual quest */
 	}
 
 	if (nisi && q_goal->nisi) return(FALSE);
-	return q_goal->cleared; /* global quest */
+	return(q_goal->cleared); /* global quest */
 }
 /* just return the 'nisi' state of a quest goal (for ungoal_r) */
 static bool quest_get_goal_nisi(int pInd, int q_idx, int goal) {
@@ -1990,7 +1992,7 @@ static bool quest_get_goal_nisi(int pInd, int q_idx, int goal) {
 
 	if (q_ptr->individual) return p_ptr->quest_goals_nisi[i][goal]; /* individual quest */
 
-	return q_goal->nisi; /* global quest */
+	return(q_goal->nisi); /* global quest */
 }
 
 /* Returns the current quest->stage struct. */
@@ -2985,6 +2987,7 @@ static byte quest_set_stage_individual(int Ind, int q_idx, int stage, bool quiet
 	if (!quiet) {
 		/* pre-scan narration if any line at all exists and passes the flag check */
 		bool anything = FALSE;
+
 		for (k = 0; k < QI_TALK_LINES; k++) {
 			if (q_stage->narration[k] &&
 			    ((q_stage->narration_flags[k] & quest_get_flags(Ind, q_idx)) == q_stage->narration_flags[k])) {

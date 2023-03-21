@@ -268,6 +268,7 @@ errr path_parse(char *buf, int max, cptr file) {
 	if (s)
 	{
 		int i;
+
 		for (i = 0; u < s; ++i) user[i] = *u++;
 		user[i] = '\0';
 		u = user;
@@ -645,15 +646,12 @@ errr fd_lock(int fd, int what) {
 # ifdef USG
 
 	/* Un-Lock */
-	if (what == F_UNLCK)
-	{
+	if (what == F_UNLCK) {
 		/* Unlock it, Ignore errors */
 		lockf(fd, F_ULOCK, 0);
 	}
-
 	/* Lock */
-	else
-	{
+	else {
 		/* Lock the score file */
 		if (lockf(fd, F_LOCK, 0) != 0) return(1);
 	}
@@ -661,15 +659,12 @@ errr fd_lock(int fd, int what) {
 #else
 
 	/* Un-Lock */
-	if (what == F_UNLCK)
-	{
+	if (what == F_UNLCK) {
 		/* Unlock it, Ignore errors */
 		(void)flock(fd, LOCK_UN);
 	}
-
 	/* Lock */
-	else
-	{
+	else {
 		/* Lock the score file */
 		if (flock(fd, LOCK_EX) != 0) return(1);
 	}
@@ -686,8 +681,7 @@ errr fd_lock(int fd, int what) {
 /*
  * Hack -- attempt to seek on a file descriptor
  */
-errr fd_seek(int fd, huge n)
-{
+errr fd_seek(int fd, huge n) {
 	huge p;
 
 	/* Verify fd */
@@ -710,16 +704,14 @@ errr fd_seek(int fd, huge n)
 /*
  * Hack -- attempt to read data from a file descriptor
  */
-errr fd_read(int fd, char *buf, huge n)
-{
+errr fd_read(int fd, char *buf, huge n) {
 	/* Verify the fd */
 	if (fd < 0) return(-1);
 
 #ifndef SET_UID
 
 	/* Read pieces */
-	while (n >= 16384)
-	{
+	while (n >= 16384) {
 		/* Read a piece */
 		if (read(fd, buf, 16384) != 16384) return(1);
 
@@ -743,16 +735,14 @@ errr fd_read(int fd, char *buf, huge n)
 /*
  * Hack -- Attempt to write data to a file descriptor
  */
-errr fd_write(int fd, cptr buf, huge n)
-{
+errr fd_write(int fd, cptr buf, huge n) {
 	/* Verify the fd */
 	if (fd < 0) return(-1);
 
 #ifndef SET_UID
 
 	/* Write pieces */
-	while (n >= 16384)
-	{
+	while (n >= 16384) {
 		/* Write a piece */
 		if (write(fd, buf, 16384) != 16384) return(1);
 
@@ -776,8 +766,7 @@ errr fd_write(int fd, cptr buf, huge n)
 /*
  * Hack -- attempt to close a file descriptor
  */
-errr fd_close(int fd)
-{
+errr fd_close(int fd) {
 	/* Verify the fd */
 	if (fd < 0) return(-1);
 
@@ -794,16 +783,14 @@ errr fd_close(int fd)
 /*
  * Convert a decimal to a single digit octal number
  */
-static char octify(uint i)
-{
+static char octify(uint i) {
 	return(hexsym[i%8]);
 }
 
 /*
  * Convert a decimal to a single digit hex number
  */
-static char hexify(uint i)
-{
+static char hexify(uint i) {
 	return(hexsym[i%16]);
 }
 
@@ -811,8 +798,7 @@ static char hexify(uint i)
 /*
  * Convert a octal-digit into a decimal
  */
-static int deoct(char c)
-{
+static int deoct(char c) {
 	if (isdigit(c)) return(D2I(c));
 	return(0);
 }
@@ -820,8 +806,7 @@ static int deoct(char c)
 /*
  * Convert a hexidecimal-digit into a decimal
  */
-static int dehex(char c)
-{
+static int dehex(char c) {
 	if (isdigit(c)) return(D2I(c));
 	if (islower(c)) return(A2I(c) + 10);
 	if (isupper(c)) return(A2I(tolower(c)) + 10);
@@ -836,98 +821,62 @@ static int dehex(char c)
  * parsing "\xFF" into a (signed) char.  Whoever thought of making
  * the "sign" of a "char" undefined is a complete moron.  Oh well.
  */
-void text_to_ascii(char *buf, cptr str)
-{
+void text_to_ascii(char *buf, cptr str) {
 	char *s = buf;
 
 	/* Analyze the "ascii" string */
-	while (*str)
-	{
+	while (*str) {
 		/* Backslash codes */
-		if (*str == '\\')
-		{
+		if (*str == '\\') {
 			/* Skip the backslash */
 			str++;
 
 			/* Hex-mode XXX */
-			if (*str == 'x')
-			{
+			if (*str == 'x') {
 				*s = 16 * dehex(*++str);
 				*s++ += dehex(*++str);
 			}
-
 			/* Hack -- simple way to specify "backslash" */
 			else if (*str == '\\')
-			{
 				*s++ = '\\';
-			}
-
 			/* Hack -- simple way to specify "caret" */
 			else if (*str == '^')
-			{
 				*s++ = '^';
-			}
-
 			/* Hack -- simple way to specify "space" */
 			else if (*str == 's')
-			{
 				*s++ = ' ';
-			}
-
 			/* Hack -- simple way to specify Escape */
 			else if (*str == 'e')
-			{
 				*s++ = ESCAPE;
-			}
-
 			/* Backspace */
 			else if (*str == 'b')
-			{
 				*s++ = '\b';
-			}
-
 			/* Newline */
 			else if (*str == 'n')
-			{
 				*s++ = '\n';
-			}
-
 			/* Return */
 			else if (*str == 'r')
-			{
 				*s++ = '\r';
-			}
-
 			/* Tab */
 			else if (*str == 't')
-			{
 				*s++ = '\t';
-			}
-
 			/* Octal-mode */
-			else if (*str == '0')
-			{
+			else if (*str == '0') {
 				*s = 8 * deoct(*++str);
 				*s++ += deoct(*++str);
 			}
-
 			/* Octal-mode */
-			else if (*str == '1')
-			{
+			else if (*str == '1') {
 				*s = 64 + 8 * deoct(*++str);
 				*s++ += deoct(*++str);
 			}
-
 			/* Octal-mode */
-			else if (*str == '2')
-			{
+			else if (*str == '2') {
 				*s = 64 * 2 + 8 * deoct(*++str);
 				*s++ += deoct(*++str);
 			}
-
 			/* Octal-mode */
-			else if (*str == '3')
-			{
+			else if (*str == '3') {
 				*s = 64 * 3 + 8 * deoct(*++str);
 				*s++ += deoct(*++str);
 			}
@@ -935,19 +884,13 @@ void text_to_ascii(char *buf, cptr str)
 			/* Skip the final char */
 			str++;
 		}
-
 		/* Normal Control codes */
-		else if (*str == '^')
-		{
+		else if (*str == '^') {
 			str++;
 			*s++ = (*str++ & 037);
 		}
-
 		/* Normal chars */
-		else
-		{
-			*s++ = *str++;
-		}
+		else *s++ = *str++;
 	}
 
 	/* Terminate */
@@ -958,73 +901,48 @@ void text_to_ascii(char *buf, cptr str)
 /*
  * Hack -- convert a string into a printable form
  */
-void ascii_to_text(char *buf, cptr str)
-{
+void ascii_to_text(char *buf, cptr str) {
 	char *s = buf;
 
 	/* Analyze the "ascii" string */
-	while (*str)
-	{
+	while (*str) {
 		byte i = (byte)(*str++);
 
-		if (i == ESCAPE)
-		{
+		if (i == ESCAPE) {
 			*s++ = '\\';
 			*s++ = 'e';
-		}
-		else if (i == ' ')
-		{
+		} else if (i == ' ') {
 			*s++ = '\\';
 			*s++ = 's';
-		}
-		else if (i == '\b')
-		{
+		} else if (i == '\b') {
 			*s++ = '\\';
 			*s++ = 'b';
-		}
-		else if (i == '\t')
-		{
+		} else if (i == '\t') {
 			*s++ = '\\';
 			*s++ = 't';
-		}
-		else if (i == '\n')
-		{
+		} else if (i == '\n') {
 			*s++ = '\\';
 			*s++ = 'n';
-		}
-		else if (i == '\r')
-		{
+		} else if (i == '\r') {
 			*s++ = '\\';
 			*s++ = 'r';
-		}
-		else if (i == '^')
-		{
+		} else if (i == '^') {
 			*s++ = '\\';
 			*s++ = '^';
-		}
-		else if (i == '\\')
-		{
+		} else if (i == '\\') {
 			*s++ = '\\';
 			*s++ = '\\';
-		}
-		else if (i < 32)
-		{
+		} else if (i < 32) {
 			*s++ = '^';
 			*s++ = i + 64;
-		}
-		else if (i < 127)
-		{
+		} else if (i < 127)
 			*s++ = i;
-		}
-		else if (i < 64)
-		{
+		else if (i < 64) {
 			*s++ = '\\';
 			*s++ = '0';
 			*s++ = octify(i / 8);
 			*s++ = octify(i % 8);
-		}
-		else
-		{
+		} else {
 			*s++ = '\\';
 			*s++ = 'x';
 			*s++ = hexify(i / 16);
@@ -7577,9 +7495,8 @@ char *json_escape_str(char *dest, const char *src, size_t n) {
 		if (outstr) {
 			if (destpos + outlen + 1 < n) {
 				char c2;
-				while ((c2 = *outstr++)) {
-					dest[destpos++] = c2;
-				}
+
+				while ((c2 = *outstr++)) dest[destpos++] = c2;
 			}
 		} else {
 			// Make sure output buffer has enough room

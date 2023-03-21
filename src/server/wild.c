@@ -264,6 +264,7 @@ void wild_bulldoze() {
 	for (y = 0; y < MAX_WILD_Y; y++) {
 		for (x = 0; x < MAX_WILD_X; x++) {
 			struct wilderness_type *w_ptr = &wild_info[y][x];
+
 			if (w_ptr->radius <= MAX_TOWNAREA &&
 			    (w_ptr->type == WILD_WASTELAND ||
 			    w_ptr->type == WILD_DESERT ||
@@ -4166,6 +4167,7 @@ static void fix_coasts() {
 		for (d = 0; d < 8; d++) {
 			int x2 = x + ddx_cyc[d];
 			int y2 = y + ddy_cyc[d];
+
 			if (in_bounds_wild(y2, x2)) {
 				switch (wild_info[y2][x2].type) {
 				case WILD_OCEAN:

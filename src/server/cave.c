@@ -500,72 +500,72 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 	if (in_deathfate(wpos)) {
 		struct dun_level *l_ptr = getfloor(wpos);
 
-	    if (l_ptr) {
-		/* Only 1 player? Make sure he's unfrozen */
-		if (l_ptr->ondepth == 1) {
-			for (i = 1; i <= NumPlayers; i++) {
-				p_ptr = Players[i];
-				if (p_ptr->conn == NOT_CONNECTED) continue;
-				if (p_ptr->admin_dm) continue;
-				if (!inarea(&p_ptr->wpos, wpos)) continue;
+		if (l_ptr) {
+			/* Only 1 player? Make sure he's unfrozen */
+			if (l_ptr->ondepth == 1) {
+				for (i = 1; i <= NumPlayers; i++) {
+					p_ptr = Players[i];
+					if (p_ptr->conn == NOT_CONNECTED) continue;
+					if (p_ptr->admin_dm) continue;
+					if (!inarea(&p_ptr->wpos, wpos)) continue;
 
-				if (p_ptr->paralyzed == 255) {
-					p_ptr->paralyzed = 0;
-					p_ptr->redraw |= PR_STATE;
-					msg_print(i, "You can move again!");
-					msg_format_near(i, "%s can move again.", p_ptr->name);
+					if (p_ptr->paralyzed == 255) {
+						p_ptr->paralyzed = 0;
+						p_ptr->redraw |= PR_STATE;
+						msg_print(i, "You can move again!");
+						msg_format_near(i, "%s can move again.", p_ptr->name);
+					}
+					break;
 				}
-				break;
-			}
-		} else {
-			bool para = TRUE, free = FALSE;
+			} else {
+				bool para = TRUE, free = FALSE;
 
-			/* Ensure that a player who just joined us here does get frozen in the first place */
-			for (i = 1; i <= NumPlayers; i++) {
-				p_ptr = Players[i];
-				if (p_ptr->conn == NOT_CONNECTED) continue;
-				if (p_ptr->admin_dm) continue;
-				if (!inarea(&p_ptr->wpos, wpos)) continue;
+				/* Ensure that a player who just joined us here does get frozen in the first place */
+				for (i = 1; i <= NumPlayers; i++) {
+					p_ptr = Players[i];
+					if (p_ptr->conn == NOT_CONNECTED) continue;
+					if (p_ptr->admin_dm) continue;
+					if (!inarea(&p_ptr->wpos, wpos)) continue;
 
-				if (!p_ptr->new_level_flag) continue;
-				p_ptr->paralyzed = 255;
-				p_ptr->redraw |= PR_STATE;
-				msg_print(i, "You are frozen in stasis!");
-				msg_format_near(i, "%s seems frozen in stasis!", p_ptr->name);
-				break;
-			}
-			/* Ensure that not more than one player is unfrozen (paranoia?) */
-			for (i = 1; i <= NumPlayers; i++) {
-				p_ptr = Players[i];
-				if (p_ptr->conn == NOT_CONNECTED) continue;
-				if (p_ptr->admin_dm) continue;
-				if (!inarea(&p_ptr->wpos, wpos)) continue;
-
-				if (p_ptr->paralyzed == 255) continue;
-				free = TRUE;
-				if (!para) {
+					if (!p_ptr->new_level_flag) continue;
 					p_ptr->paralyzed = 255;
 					p_ptr->redraw |= PR_STATE;
 					msg_print(i, "You are frozen in stasis!");
 					msg_format_near(i, "%s seems frozen in stasis!", p_ptr->name);
+					break;
 				}
-				else para = FALSE;
-			}
-			/* If everyone is frozen, ensure that one player is unfrozen, pick one player "randomly" */
-			if (!free) for (i = 1; i <= NumPlayers; i++) {
-				p_ptr = Players[i];
-				if (p_ptr->conn == NOT_CONNECTED) continue;
-				if (p_ptr->admin_dm) continue;
-				if (!inarea(&p_ptr->wpos, wpos)) continue;
+				/* Ensure that not more than one player is unfrozen (paranoia?) */
+				for (i = 1; i <= NumPlayers; i++) {
+					p_ptr = Players[i];
+					if (p_ptr->conn == NOT_CONNECTED) continue;
+					if (p_ptr->admin_dm) continue;
+					if (!inarea(&p_ptr->wpos, wpos)) continue;
 
-				p_ptr->paralyzed = 0;
-				p_ptr->redraw |= PR_STATE;
-				msg_print(i, "You can move again!");
-				msg_format_near(i, "%s can move again.", p_ptr->name);
-				break;
+					if (p_ptr->paralyzed == 255) continue;
+					free = TRUE;
+					if (!para) {
+						p_ptr->paralyzed = 255;
+						p_ptr->redraw |= PR_STATE;
+						msg_print(i, "You are frozen in stasis!");
+						msg_format_near(i, "%s seems frozen in stasis!", p_ptr->name);
+					}
+					else para = FALSE;
+				}
+				/* If everyone is frozen, ensure that one player is unfrozen, pick one player "randomly" */
+				if (!free) for (i = 1; i <= NumPlayers; i++) {
+					p_ptr = Players[i];
+					if (p_ptr->conn == NOT_CONNECTED) continue;
+					if (p_ptr->admin_dm) continue;
+					if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+					p_ptr->paralyzed = 0;
+					p_ptr->redraw |= PR_STATE;
+					msg_print(i, "You can move again!");
+					msg_format_near(i, "%s can move again.", p_ptr->name);
+					break;
+				}
 			}
-		}
-	    } else s_printf("NOPD: No l_ptr!\n");
+		} else s_printf("NOPD: No l_ptr!\n");
 	}
 #endif
 
@@ -878,6 +878,7 @@ int players_on_depth(struct worldpos *wpos) {
 		return(wild_info[wpos->wy][wpos->wx].ondepth);
 	else {
 		struct dungeon_type *d_ptr;
+
 		if (wpos->wz > 0)
 			d_ptr = wild_info[wpos->wy][wpos->wx].tower;
 		else
@@ -3064,6 +3065,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 			/* Hack to display detected traps */
 			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && c_ptr->feat != FEAT_ILLUS_WALL) {
 				int t_idx = cs_ptr->sc.trap.t_idx;
+
 				if (cs_ptr->sc.trap.found) {
 					/* Hack -- random hallucination */
 					if (p_ptr->image) {
@@ -3082,6 +3084,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 					a = TERM_L_GREEN;
 				} else {
 					struct dna_type *dna = cs_ptr->sc.ptr;
+
 					if (dna->owner && dna->owner_type)
 						a = TERM_L_DARK;
 				}
@@ -6449,28 +6452,22 @@ static void ang_sort_swap_longs(int Ind, vptr u, vptr v, int a, int b) {
 /*
  * Save a slope
  */
-static void vinfo_init_aux(vinfo_hack *hack, int y, int x, long m)
-{
+static void vinfo_init_aux(vinfo_hack *hack, int y, int x, long m) {
 	int i;
 
 	/* Handle "legal" slopes */
-	if ((m > 0) && (m <= SCALE))
-	{
+	if ((m > 0) && (m <= SCALE)) {
 		/* Look for that slope */
-		for (i = 0; i < hack->num_slopes; i++)
-		{
+		for (i = 0; i < hack->num_slopes; i++) {
 			if (hack->slopes[i] == m) break;
-		}
+		{
 
 		/* New slope */
-		if (i == hack->num_slopes)
-		{
+		if (i == hack->num_slopes) {
 			/* Paranoia */
 			if (hack->num_slopes >= VINFO_MAX_SLOPES)
-			{
 				quit_fmt("Too many slopes (%d)!",
 				 	VINFO_MAX_SLOPES);
-			}
 
 			/* Save the slope, and advance */
 			hack->slopes[hack->num_slopes++] = m;
@@ -6498,10 +6495,8 @@ static void vinfo_init_aux(vinfo_hack *hack, int y, int x, long m)
  * a number which is too high, running this function, and using the
  * error messages to obtain the correct values.
  */
-errr vinfo_init(void)
-{
+errr vinfo_init(void) {
 	int i, y, x;
-
 	long m;
 
 	vinfo_hack *hack;
@@ -6516,12 +6511,9 @@ errr vinfo_init(void)
 	/* Make hack */
 	MAKE(hack, vinfo_hack);
 
-
 	/* Analyze grids */
-	for (y = 0; y <= MAX_SIGHT; ++y)
-	{
-		for (x = y; x <= MAX_SIGHT; ++x)
-		{
+	for (y = 0; y <= MAX_SIGHT; ++y) {
+		for (x = y; x <= MAX_SIGHT; ++x) {
 			/* Skip grids which are out of sight range */
 			if (distance(0, 0, y, x) > MAX_SIGHT) continue;
 
@@ -6530,8 +6522,7 @@ errr vinfo_init(void)
 			hack->slopes_max[y][x] = 0;
 
 			/* Paranoia */
-			if (num_grids >= VINFO_MAX_GRIDS)
-			{
+			if (num_grids >= VINFO_MAX_GRIDS) {
 				quit_fmt("Too many grids (%d >= %d)!",
 					 num_grids, VINFO_MAX_GRIDS);
 			}
@@ -6565,21 +6556,15 @@ errr vinfo_init(void)
 		}
 	}
 
-
 	/* Enforce maximal efficiency */
 	if (num_grids < VINFO_MAX_GRIDS)
-	{
 		quit_fmt("Too few grids (%d < %d)!",
 			 num_grids, VINFO_MAX_GRIDS);
-	}
 
 	/* Enforce maximal efficiency */
 	if (hack->num_slopes < VINFO_MAX_SLOPES)
-	{
 		quit_fmt("Too few slopes (%d < %d)!",
 			 hack->num_slopes, VINFO_MAX_SLOPES);
-	}
-
 
 	/* Sort slopes numerically */
 	ang_sort_comp = ang_sort_comp_longs;
@@ -6591,17 +6576,13 @@ errr vinfo_init(void)
 	ang_sort(0, hack->slopes, NULL, hack->num_slopes);
 
 
-
 	/* Enqueue player grid */
 	queue[queue_tail++] = &vinfo[0];
 
 	/* Process queue */
-	while (queue_head < queue_tail)
-	{
+	while (queue_head < queue_tail) {
 		int e;
-
 		vinfo_type *p;
-
 
 		/* Index */
 		e = queue_head;
@@ -6613,7 +6594,6 @@ errr vinfo_init(void)
 		y = vinfo[e].grid_y[0];
 		x = vinfo[e].grid_x[0];
 
-
 		/* Compute grid offsets */
 		vinfo[e].grid_y[0] = +y; vinfo[e].grid_x[0] = +x;
 		vinfo[e].grid_y[1] = +x; vinfo[e].grid_x[1] = +y;
@@ -6624,37 +6604,30 @@ errr vinfo_init(void)
 		vinfo[e].grid_y[6] = -x; vinfo[e].grid_x[6] = +y;
 		vinfo[e].grid_y[7] = -y; vinfo[e].grid_x[7] = +x;
 
-
 		/* Analyze slopes */
-		for (i = 0; i < hack->num_slopes; ++i)
-		{
+		for (i = 0; i < hack->num_slopes; ++i) {
 			m = hack->slopes[i];
 
 			/* Memorize intersection slopes (for non-player-grids) */
 			if ((e > 0) &&
 			    (hack->slopes_min[y][x] < m) &&
-			    (m < hack->slopes_max[y][x]))
-			{
-				switch (i / 32)
-				{
-					case 3: vinfo[e].bits_3 |= (1U << (i % 32)); break;
-					case 2: vinfo[e].bits_2 |= (1U << (i % 32)); break;
-					case 1: vinfo[e].bits_1 |= (1U << (i % 32)); break;
-					case 0: vinfo[e].bits_0 |= (1U << (i % 32)); break;
+			    (m < hack->slopes_max[y][x])) {
+				switch (i / 32) {
+				case 3: vinfo[e].bits_3 |= (1U << (i % 32)); break;
+				case 2: vinfo[e].bits_2 |= (1U << (i % 32)); break;
+				case 1: vinfo[e].bits_1 |= (1U << (i % 32)); break;
+				case 0: vinfo[e].bits_0 |= (1U << (i % 32)); break;
 				}
 			}
 		}
-
 
 		/* Default */
 		vinfo[e].next_0 = &vinfo[0];
 
 		/* Grid next child */
-		if (distance(0, 0, y, x+1) <= MAX_SIGHT)
-		{
+		if (distance(0, 0, y, x+1) <= MAX_SIGHT) {
 			if ((queue[queue_tail-1]->grid_y[0] != y) ||
-			    (queue[queue_tail-1]->grid_x[0] != x + 1))
-			{
+			    (queue[queue_tail-1]->grid_x[0] != x + 1)) {
 				vinfo[queue_tail].grid_y[0] = y;
 				vinfo[queue_tail].grid_x[0] = x + 1;
 				queue[queue_tail] = &vinfo[queue_tail];
@@ -6664,16 +6637,13 @@ errr vinfo_init(void)
 			vinfo[e].next_0 = &vinfo[queue_tail - 1];
 		}
 
-
 		/* Default */
 		vinfo[e].next_1 = &vinfo[0];
 
 		/* Grid diag child */
-		if (distance(0, 0, y+1, x+1) <= MAX_SIGHT)
-		{
+		if (distance(0, 0, y+1, x+1) <= MAX_SIGHT) {
 			if ((queue[queue_tail-1]->grid_y[0] != y + 1) ||
-			    (queue[queue_tail-1]->grid_x[0] != x + 1))
-			{
+			    (queue[queue_tail-1]->grid_x[0] != x + 1)) {
 				vinfo[queue_tail].grid_y[0] = y + 1;
 				vinfo[queue_tail].grid_x[0] = x + 1;
 				queue[queue_tail] = &vinfo[queue_tail];
@@ -6683,10 +6653,8 @@ errr vinfo_init(void)
 			vinfo[e].next_1 = &vinfo[queue_tail - 1];
 		}
 
-
 		/* Hack -- main diagonal has special children */
 		if (y == x) vinfo[e].next_0 = vinfo[e].next_1;
-
 
 		/* Extra values */
 		vinfo[e].y = y;
@@ -6695,30 +6663,23 @@ errr vinfo_init(void)
 		vinfo[e].r = ((!y) ? x : (!x) ? y : (y == x) ? y : 0);
 	}
 
-
 	/* Verify maximal bits XXX XXX XXX */
 	if (((vinfo[1].bits_3 | vinfo[2].bits_3) != VINFO_BITS_3) ||
 	    ((vinfo[1].bits_2 | vinfo[2].bits_2) != VINFO_BITS_2) ||
 	    ((vinfo[1].bits_1 | vinfo[2].bits_1) != VINFO_BITS_1) ||
 	    ((vinfo[1].bits_0 | vinfo[2].bits_0) != VINFO_BITS_0))
-	{
 		quit("Incorrect bit masks!");
-	}
-
 
 	/* Kill hack */
 	KILL(hack, vinfo_hack);
-
 
 	/* Success */
 	return(0);
 }
 
 
-void update_view(int Ind)
-{
+void update_view(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
 
 	int full, over;
 	int o, n;
@@ -6736,13 +6697,14 @@ void update_view(int Ind)
 	int py = p_ptr->py;
 	int px = p_ptr->px;
 
-
 	cave_type *c_ptr;
 	byte *w_ptr;
 	bool unmap = FALSE;
 
 	cave_type **zcave;
 	struct worldpos *wpos;
+
+
 	wpos = &p_ptr->wpos;
 	if (!(zcave = getcave(wpos))) return;
 	if (p_ptr->wpos.wz) {
@@ -6755,18 +6717,15 @@ void update_view(int Ind)
 
 #if 0
 	/* Optimize */
-	if (p_ptr->view_reduce_view && istown(wpos)) /* town */
-	{
+	if (p_ptr->view_reduce_view && istown(wpos)) { /* town */
 		/* Full radius (10) */
 		full = MAX_SIGHT / 2;
 
 		/* Octagon factor (15) */
 		over = MAX_SIGHT * 3 / 4;
 	}
-
 	/* Normal */
-	else
-	{
+	else {
 		/* Full radius (20) */
 		full = MAX_SIGHT;
 
@@ -6781,8 +6740,7 @@ void update_view(int Ind)
 	/*** Step 0 -- Begin ***/
 
 	/* Save the old "view" grids for later */
-	for (n = 0; n < p_ptr->view_n; n++)
-	{
+	for (n = 0; n < p_ptr->view_n; n++) {
 		y = p_ptr->view_y[n];
 		x = p_ptr->view_x[n];
 
@@ -6794,8 +6752,7 @@ void update_view(int Ind)
 		*w_ptr &= ~(CAVE_VIEW);
 
 		/* Save "CAVE_SEEN" grids */
-		if (*w_ptr & (CAVE_XTRA))
-		{
+		if (*w_ptr & (CAVE_XTRA)) {
 			/* Set "CAVE_TEMP" flag */
 			info |= (CAVE_TEMP);
 
@@ -6828,8 +6785,7 @@ void update_view(int Ind)
 	/* Assume the player grid is viewable */
 	cave_view_hack(w_ptr, y, x);
 
-	if (c_ptr->info & (CAVE_GLOW | CAVE_LITE))
-	{
+	if (c_ptr->info & (CAVE_GLOW | CAVE_LITE)) {
 		/* Mark as "CAVE_SEEN" */
 		*w_ptr |= (CAVE_XTRA);
 	}
@@ -6838,8 +6794,7 @@ void update_view(int Ind)
 	/*** Step 2 -- octants ***/
 
 	/* Scan each octant */
-	for (o = 0; o < 8; o++)
-	{
+	for (o = 0; o < 8; o++) {
 		vinfo_type *p;
 
 		/* Last added */
@@ -6864,8 +6819,7 @@ void update_view(int Ind)
 		queue[queue_tail++] = &vinfo[2];
 
 		/* Process queue */
-		while (queue_head < queue_tail)
-		{
+		while (queue_head < queue_tail) {
 			/* Dequeue next grid */
 			p = queue[queue_head++];
 
@@ -6873,8 +6827,7 @@ void update_view(int Ind)
 			if ((bits0 & (p->bits_0)) ||
 			    (bits1 & (p->bits_1)) ||
 			    (bits2 & (p->bits_2)) ||
-			    (bits3 & (p->bits_3)))
-			{
+			    (bits3 & (p->bits_3))) {
 				/* Extract coordinate value */
 				y = py + p->grid_y[o];
 				x = px + p->grid_x[o];
@@ -6888,8 +6841,7 @@ void update_view(int Ind)
 
 				/* Handle wall */
 /*				if (info & (CAVE_WALL)) */
-				if (!cave_los_grid(c_ptr))
-				{
+				if (!cave_los_grid(c_ptr)) {
 					/* Clear bits */
 					bits0 &= ~(p->bits_0);
 					bits1 &= ~(p->bits_1);
@@ -6897,22 +6849,18 @@ void update_view(int Ind)
 					bits3 &= ~(p->bits_3);
 
 					/* Newly viewable wall */
-					if (!(*w_ptr & (CAVE_VIEW)))
-					{
+					if (!(*w_ptr & (CAVE_VIEW))) {
 						/* Mark as viewable */
 						/* *w_ptr |= (CAVE_VIEW); */
 
 #if 0	/* cannot handle other players' lite.. */
 						/* Torch-lit grids */
-						if (p->d < radius)
-						{
+						if (p->d < radius) {
 							/* Mark as "CAVE_SEEN" and torch-lit */
 							info |= (CAVE_SEEN | CAVE_PLIT);
 						}
-
 						/* Monster-lit grids */
-						else if (info & (CAVE_MLIT))
-						{
+						else if (info & (CAVE_MLIT)) {
 							/* Mark as "CAVE_SEEN" */
 							info |= (CAVE_SEEN);
 						}
@@ -6920,8 +6868,7 @@ void update_view(int Ind)
 #endif	/* 0 */
 
 						/* Perma-lit grids */
-						if (info & (CAVE_GLOW | CAVE_LITE))
-						{
+						if (info & (CAVE_GLOW | CAVE_LITE)) {
 							/* Hack -- move towards player */
 							int yy = (y < py) ? (y + 1) : (y > py) ? (y - 1) : y;
 							int xx = (x < px) ? (x + 1) : (x > px) ? (x - 1) : x;
@@ -6935,8 +6882,7 @@ void update_view(int Ind)
 							    (!(cave[y][xx].info & (CAVE_WALL)) &&
 							      (cave[y][xx].info & (CAVE_GLOW))) ||
 							    (!(cave[yy][x].info & (CAVE_WALL)) &&
-							      (cave[yy][x].info & (CAVE_GLOW))))
-							{
+							      (cave[yy][x].info & (CAVE_GLOW)))) {
 								/* Mark as seen */
 								info |= (CAVE_SEEN);
 							}
@@ -6944,8 +6890,7 @@ void update_view(int Ind)
 #else /* UPDATE_VIEW_COMPLEX_WALL_ILLUMINATION */
 
 							/* Check for "simple" illumination */
-							if (zcave[yy][xx].info & (CAVE_GLOW))
-							{
+							if (zcave[yy][xx].info & (CAVE_GLOW)) {
 								/* Mark as seen */
 								*w_ptr |= (CAVE_XTRA);
 							}
@@ -6963,45 +6908,30 @@ void update_view(int Ind)
 				}
 
 				/* Handle non-wall */
-				else
-				{
+				else {
 					/* Enqueue child */
 					if (last != p->next_0)
-					{
 						queue[queue_tail++] = last = p->next_0;
-					}
-
 					/* Enqueue child */
 					if (last != p->next_1)
-					{
 						queue[queue_tail++] = last = p->next_1;
-					}
-
 					/* Newly viewable non-wall */
-					if (!(*w_ptr & (CAVE_VIEW)))
-					{
+					if (!(*w_ptr & (CAVE_VIEW))) {
 						/* Mark as "viewable" */
 						/* *w_ptr |= (CAVE_VIEW); */
-
 #if 0
-
 						/* Torch-lit grids */
-						if (p->d < radius)
-						{
+						if (p->d < radius) {
 							/* Mark as "CAVE_SEEN" and torch-lit */
 							info |= (CAVE_SEEN | CAVE_PLIT);
 						}
-
 						/* Perma-lit or monster-lit grids */
-						else if (info & (CAVE_GLOW | CAVE_MLIT))
-						{
+						else if (info & (CAVE_GLOW | CAVE_MLIT)) {
 							/* Mark as "CAVE_SEEN" */
 							info |= (CAVE_SEEN);
 						}
 #endif	/* 0 */
-
-						if (info & (CAVE_GLOW | CAVE_LITE))
-						{
+						if (info & (CAVE_GLOW | CAVE_LITE)) {
 							/* Mark as "CAVE_SEEN" */
 							*w_ptr |= (CAVE_XTRA);
 						}
@@ -7023,11 +6953,9 @@ void update_view(int Ind)
 
 #if 0	/* not here (?) */
 	/* Handle blindness */
-	if (p_ptr->blind)
-	{
+	if (p_ptr->blind) {
 		/* Process "new" grids */
-		for (i = 0; i < fast_view_n; i++)
-		{
+		for (i = 0; i < fast_view_n; i++) {
 			/* Location */
 			y = view_y[i];
 			x = view_x[i];
@@ -7039,8 +6967,7 @@ void update_view(int Ind)
 #endif	/* 0 */
 
 	/* Update all the new grids */
-	for (n = 0; n < p_ptr->view_n; n++)
-	{
+	for (n = 0; n < p_ptr->view_n; n++) {
 		y = p_ptr->view_y[n];
 		x = p_ptr->view_x[n];
 
@@ -7067,8 +6994,7 @@ void update_view(int Ind)
 	}
 
 	/* Wipe the old grids, update as needed */
-	for (n = 0; n < p_ptr->temp_n; n++)
-	{
+	for (n = 0; n < p_ptr->temp_n; n++) {
 		y = p_ptr->temp_y[n];
 		x = p_ptr->temp_x[n];
 
@@ -7084,16 +7010,14 @@ void update_view(int Ind)
 		if ((*w_ptr & (CAVE_XTRA))) continue;
 
 		/* Forget it, dude */
-		if (unmap)
-		{
+		if (unmap) {
 			int this_o_idx, next_o_idx = 0;
 
 			*w_ptr &= ~CAVE_MARK;
 
 			/* make player forget of objects too */
 			/* too bad, traps cannot be forgotten this way.. */
-			for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
-			{
+			for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx) {
 				/* Acquire next object */
 				next_o_idx = o_list[this_o_idx].next_o_idx;
 
@@ -7136,21 +7060,16 @@ void update_view(int Ind)
 /*
  * Hack -- forget the "flow" information
  */
-void forget_flow(void)
-{
-
+void forget_flow(void) {
 #ifdef MONSTER_FLOW
-
 	int x, y;
 
 	/* Nothing to forget */
 	if (!flow_n) return;
 
 	/* Check the entire dungeon */
-	for (y = 0; y < cur_hgt; y++)
-	{
-		for (x = 0; x < cur_wid; x++)
-		{
+	for (y = 0; y < cur_hgt; y++) {
+		for (x = 0; x < cur_wid; x++) {
 			/* Forget the old data */
 			cave[y][x].cost = 0;
 			cave[y][x].when = 0;
@@ -7177,12 +7096,9 @@ static int flow_tail = 0;
 /*
  * Take note of a reachable grid.  Assume grid is legal.
  */
-static void update_flow_aux(int y, int x, int n)
-{
+static void update_flow_aux(int y, int x, int n) {
 	cave_type *c_ptr;
-
 	int old_head = flow_head;
-
 
 	/* Get the grid */
 	c_ptr = &cave[y][x];
@@ -7229,11 +7145,8 @@ static void update_flow_aux(int y, int x, int n)
  * We do not need a priority queue because the cost from grid
  * to grid is always "one" and we process them in order.
  */
-void update_flow(void)
-{
-
+void update_flow(void) {
 #ifdef MONSTER_FLOW
-
 	int x, y, d;
 
 	/* Hack -- disabled */
@@ -7243,14 +7156,12 @@ void update_flow(void)
 	if (temp_n) return;
 
 	/* Cycle the old entries (once per 128 updates) */
-	if (flow_n == 255)
-	{
+	if (flow_n == 255) {
 		/* Rotate the time-stamps */
-		for (y = 0; y < cur_hgt; y++)
-		{
-			for (x = 0; x < cur_wid; x++)
-			{
+		for (y = 0; y < cur_hgt; y++) {
+			for (x = 0; x < cur_wid; x++) {
 				int w = cave[y][x].when;
+
 				cave[y][x].when = (w > 128) ? (w - 128) : 0;
 			}
 		}
@@ -7270,8 +7181,7 @@ void update_flow(void)
 	update_flow_aux(py, px, 0);
 
 	/* Now process the queue */
-	while (flow_head != flow_tail)
-	{
+	while (flow_head != flow_tail) {
 		/* Extract the next entry */
 		y = temp_y[flow_tail];
 		x = temp_x[flow_tail];
@@ -7280,8 +7190,7 @@ void update_flow(void)
 		if (++flow_tail == TEMP_MAX) flow_tail = 0;
 
 		/* Add the "children" */
-		for (d = 0; d < 8; d++)
-		{
+		for (d = 0; d < 8; d++) {
 			/* Add that child if "legal" */
 			update_flow_aux(y+ddy_ddd[d], x+ddx_ddd[d], cave[y][x].cost+1);
 		}
@@ -7305,13 +7214,13 @@ void update_flow(void)
  */
 void map_area(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	int	     i, x, y, y1, y2, x1, x2;
+	int i, x, y, y1, y2, x1, x2;
 
-	cave_type       *c_ptr;
-	byte	    *w_ptr;
+	cave_type *c_ptr;
+	byte *w_ptr;
 
-/*	dungeon_type	*d_ptr = getdungeon(&p_ptr->wpos); */
-	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
+/*	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos); */
+	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 
@@ -8253,8 +8162,7 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2)
 		shift = dy >> 1;
 
 		/* Extract a shift factor */
-		for (k = 0; k < dist; k++)
-		{
+		for (k = 0; k < dist; k++) {
 			if (shift <= 0) shift += dy;
 			shift -= dx;
 		}
@@ -8289,8 +8197,7 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2)
 		shift = dx >> 1;
 
 		/* Extract a shift factor */
-		for (k = 0; k < dist; k++)
-		{
+		for (k = 0; k < dist; k++) {
 			if (shift <= 0) shift += dx;
 			shift -= dy;
 		}

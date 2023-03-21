@@ -137,6 +137,7 @@ int monster_check_experience(int m_idx, bool silent) {
 		/* Gain speed */
 		if (magik(50)) { //30
 			int speed = randint(2);
+
 			/* adjust cur and base speed */
 			m_ptr->speed += speed;
 			m_ptr->mspeed += speed;
@@ -448,6 +449,7 @@ void delete_monster(struct worldpos *wpos, int y, int x, bool unfound_arts) {
 		if (c_ptr->m_idx > 0) delete_monster_idx(c_ptr->m_idx, unfound_arts);
 	} else { /* still delete the monster, just slower method */
 		int i;
+
 		for (i = 1; i < m_max; i++) {
 			monster_type *m_ptr = &m_list[i];
 			if (m_ptr->r_idx && inarea(wpos, &m_ptr->wpos)) {
@@ -578,6 +580,7 @@ void compact_monsters(int size, bool purge) {
 		if (i != m_max) {
 			int ny = m_list[m_max].fy;
 			int nx = m_list[m_max].fx;
+
 			wpos = &m_list[m_max].wpos;
 
 			/* Update the cave */
@@ -3622,6 +3625,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	/* Enforce sleeping if needed */
 	if (slp && r_ptr->sleep) {
 		int val = r_ptr->sleep;
+
 		m_ptr->csleep = ((val * 2) + randint(val * 10));
 	}
 

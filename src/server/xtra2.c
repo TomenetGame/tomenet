@@ -4743,6 +4743,7 @@ void check_experience(int Ind) {
 				   player at level 50, save it in xsp: */
 				long xsp_mul = WEAK_SKILLBONUS * 1000000 / ((573000 / (100 + 35)) - 1000);
 				long xsp = ((573000 / (100 + p_ptr->expfact)) - 1) * xsp_mul;
+
 				xsp /= 1000000;
 				/* depending on his should-have-bonus give him an extra point randomly */
 				if (rand_int(100) < (xsp * 100 / 50)) p_ptr->skill_points++;
@@ -4879,6 +4880,7 @@ void check_experience(int Ind) {
 		/* scan inventory for any potions */
 		bool found_items = FALSE;
 		int i;
+
 		for (i = 0; i < INVEN_PACK; i++) {
 			if (!p_ptr->inventory[i].k_idx) continue;
 			if (!object_known_p(Ind, &p_ptr->inventory[i])) continue;
@@ -4899,6 +4901,7 @@ void check_experience(int Ind) {
 		/* scan inventory for any macroish inscriptions */
 		bool found_macroishness = FALSE;
 		int i;
+
 		for (i = 0; i < INVEN_PACK; i++)
 			if (p_ptr->inventory[i].k_idx &&
 			    p_ptr->inventory[i].note &&
@@ -4918,6 +4921,7 @@ void check_experience(int Ind) {
 		/* scan inventory for any potions */
 		bool found_items = FALSE;
 		int i;
+
 		for (i = 0; i < INVEN_PACK; i++) {
 			if (!p_ptr->inventory[i].k_idx) continue;
 			if (!object_known_p(Ind, &p_ptr->inventory[i])) continue;
@@ -4962,6 +4966,7 @@ void check_experience(int Ind) {
 		/* scan inventory for any scrolls/staves */
 		bool found_items = FALSE;
 		int i;
+
 		for (i = 0; i < INVEN_PACK; i++) {
 			if (!p_ptr->inventory[i].k_idx) continue;
 			if (!object_known_p(Ind, &p_ptr->inventory[i])) continue;
@@ -5992,6 +5997,7 @@ bool monster_death(int Ind, int m_idx) {
 	/* One more ultra-hack: An Unmaker goes out with a big bang! */
 	else if (r_idx == RI_UNMAKER) {
 		int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO;
+
 		(void)project(m_idx, 6, wpos, y, x, 150, GF_CHAOS, flg, "The Unmaker explodes for");
 	}
 
@@ -7659,6 +7665,7 @@ if (cfg.unikill_format) {
 		} else if (r_idx == RI_LIVING_LIGHTNING) {
 			int tries = 100;
 			object_type forge_bak, forge_fallback;
+
 			qq_ptr = &forge;
 			/* possible loot:
 			    skydsm,elec rod,elec ring,elec/mana rune,mage staff,tome of wind
@@ -8214,6 +8221,7 @@ void kill_house_contents(house_type *h_ptr) {
 #ifdef USE_MANG_HOUSE
 	if (h_ptr->flags & HF_RECT) {
 		int sy, sx, ey, ex, x, y;
+
 		sy = h_ptr->y + 1;
 		sx = h_ptr->x + 1;
 		ey = h_ptr->y + h_ptr->coords.rect.height - 1;
@@ -8285,6 +8293,7 @@ void kill_house_contents(house_type *h_ptr) {
 	/* hack: reset size/price of extendable (trad) houses */
 	if ((h_ptr->flags & HF_TRAD)) {
 		int area = (h_ptr->coords.rect.width - 2) * (h_ptr->coords.rect.height - 2);
+
 		h_ptr->stock_size = (area >= STORE_INVEN_MAX) ? STORE_INVEN_MAX : area;
 
 		/* note: trad houses currently can't have sizes > 30 (compare wild.c),
@@ -9739,6 +9748,7 @@ void player_death(int Ind) {
 #if CHATTERBOX_LEVEL > 2
 			if (p_ptr->last_words) {
 				char death_message[80];
+
 				(void)get_rnd_line("death.txt", 0, death_message, 80);
 				msg_print(Ind, death_message);
 			}
@@ -9811,6 +9821,7 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d de
  #endif
 			if (p_ptr->last_words) {
 				char death_message[80];
+
 				(void)get_rnd_line("death.txt", 0, death_message, 80);
 				msg_print(Ind, death_message);
 			}
@@ -9818,6 +9829,7 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d de
 #ifdef MORGOTH_FUNKY_KILL_MSGS /* Might add some atmosphere? (lol) - C. Blue */
 			if (!strcmp(p_ptr->died_from, "Morgoth, Lord of Darkness")) {
 				char funky_msg[20];
+
 				switch (randint(5)) {
 				case 1:strcpy(funky_msg, "wasted");break;
 				case 2:strcpy(funky_msg, "crushed");break;
@@ -9967,6 +9979,7 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 				check_killing_reward(killer);
 			} else { /* killed by monster/trap? still reward nearby pvp players! */
 				int players_in_area = 0, avg_kills;
+
 				for (i = 1; i <= NumPlayers; i++) {
 					if (i == Ind) continue;
 					if (is_admin(Players[i])) continue;
@@ -11693,6 +11706,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		/* Kill credit for quest */
 		if (!m_ptr->clone) {
 			int i, credit_idx = r_ptr->dup_idx ? r_ptr->dup_idx : m_ptr->r_idx;
+
 			for (i = 0; i < MAX_XORDERS; i++) {
 				if (p_ptr->xorder_id && xorders[i].id == p_ptr->xorder_id) {
 					if (credit_idx == xorders[i].type) {
@@ -13554,6 +13568,7 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr) {
 				/* It would be also amusing to limit the distance.. */
 				if ((*inscription == 'W') || (*inscription == 'X')) {
 					unsigned char * next;
+
 					inscription++;
 					p_ptr->recall_pos.wx = atoi((char *)inscription) % MAX_WILD_X;
 					p_ptr->recall_pos.wz = 0;
@@ -13578,6 +13593,7 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr) {
 #endif
 				else {
 					int tmp = 0;
+
 					if (*inscription == 'Z') inscription++;
 
 					/* convert the inscription into a level index */
@@ -14646,7 +14662,7 @@ static u16b master_summon_aux_monster_type(int Ind, char monster_type, char * mo
 			get_mon_num_hook = dungeon_aux;
 
 			/* return our monster */
-			return tmp;
+			return(tmp);
 		}
 
 	/* orc specified */
@@ -14714,7 +14730,7 @@ static u16b master_summon_aux_monster_type(int Ind, char monster_type, char * mo
 		if (!p_ptr->wpos.wz) set_mon_num_hook_wild(&p_ptr->wpos);
 
 		get_mon_num_prep(0, NULL);
-		return get_mon_num(monster_parms[0], monster_parms[0] - 20); //reduce OoD if we summon depth-specificly
+		return(get_mon_num(monster_parms[0], monster_parms[0] - 20)); //reduce OoD if we summon depth-specificly
 
 	default : break;
 	}
@@ -15001,6 +15017,7 @@ bool imprison(int Ind, u16b time, char *reason) {
 	p_ptr->tim_susp = 0;
 	if (!(p_ptr->admin_dm && cfg.secret_dungeon_master)) {
 		char string[MAX_CHARS];
+
 		snprintf(string, sizeof(string), "\374\377o%s was jailed for %s.", p_ptr->name, reason);
 		msg_broadcast(Ind, string);
 #ifdef USE_SOUND_2010
@@ -15101,6 +15118,7 @@ bool master_player(int Ind, char *parms) {
 		/* Delete a player from the database/savefile */
 		if (GetAccount(&acc, &parms[1], NULL, FALSE)) {
 			char name[80];
+
 			n = player_id_list(&id_list, acc.id);
 			for (i = 0; i < n; i++) {
 				strcpy(name, lookup_player_name(id_list[i]));

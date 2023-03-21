@@ -149,6 +149,7 @@ static void prt_title(int Ind) {
 #else
 	else if (p_ptr->total_winner) {
 		char t[MAX_CHARS];
+
 		strcpy(t, "\377v");
 		strcat(t, get_ptitle(p_ptr, TRUE));
 		Send_title(Ind, t);
@@ -5715,6 +5716,7 @@ void calc_boni(int Ind) {
 	    p_ptr->inventory[INVEN_BOW].tval != TV_BOW) {
 #endif
 		int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 50);
+
 		p_ptr->num_blow = 0;
 
 		/*the_sandman for the RPG server (might as well stay for all servers ^^ - C. Blue) */
@@ -5774,6 +5776,7 @@ void calc_boni(int Ind) {
 	if ((p_ptr->mode & MODE_HARD)) {
 		if (p_ptr->pspeed > 110) {
 			int speed = p_ptr->pspeed - 110;
+
 			speed = (speed + 1) / 2;
 			p_ptr->pspeed = speed + 110;
 		}
@@ -5786,6 +5789,7 @@ void calc_boni(int Ind) {
 		/* don't reduce +speed bonus from sneakiness skill */
 		if (p_ptr->pspeed > 110) {
 			int sneak = get_skill_scale(p_ptr, SKILL_SNEAKINESS, 7), speed = p_ptr->pspeed - 110 - sneak;
+
 			speed = (speed + 1) / 2;
 			p_ptr->pspeed = speed + 110 + sneak;
 		}
@@ -5830,6 +5834,7 @@ void calc_boni(int Ind) {
 		long temp_chance;
 		/* Get the armor weight */
 		int cur_wgt = armour_weight(p_ptr); /* change to worn_armour_weight if ever reactivated, and possibly adjust values */
+
 		/* Base dodge chance */
 		temp_chance = get_skill_scale(p_ptr, SKILL_DODGE, 150);
 		/* Armor weight bonus/penalty */
@@ -5854,6 +5859,7 @@ void calc_boni(int Ind) {
 		               also special is that although backpack and non-weapons grow similar, they grow separately! */
 		/* note: rings, amulet, light source and tool are simplifiedly counted to "weapons" here */
 		long int e = equip_weight(p_ptr), w = e - armour_weight(p_ptr), i = p_ptr->total_weight - e; /* possibly change to worn_armour_weight, but not really much difference/needed imho - C. Blue */
+
 		e = e - w;
 
 		/* prevent any weird overflows if 'someone' collects gronds */
@@ -6504,6 +6510,7 @@ void calc_boni(int Ind) {
 	/* reduce speeds, so high-level players can duel each other even in Bree - C. Blue */
 	if (p_ptr->blood_bond && (Ind2 = find_player(p_ptr->blood_bond))) {
 		int factor1 = 10, factor2 = 10, reduction;
+
 		if (p_ptr->pspeed < 110) {
 			factor2 = (factor2 * (10 + (110 - p_ptr->pspeed))) / 10;
 		} else {
@@ -9930,6 +9937,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		/* Hack -- Charge lite uniformly (occurance 2 of 2, keep in sync) */
 		if (forge.tval == TV_LITE) {
 			u32b f1, f2, f3, f4, f5, f6, esp;
+
 			object_flags(&forge, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 			/* Only fuelable ones! */
@@ -9994,6 +10002,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		dungeon_type *d_ptr;
 		struct worldpos wpos;
 		u32b f1, f2, f3, f4, f5, f6, esp;
+
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		if (!o_ptr->k_idx) {

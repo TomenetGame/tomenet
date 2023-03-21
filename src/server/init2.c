@@ -943,9 +943,7 @@ static errr init_e_info(void) {
 		for (j = 0; j < MAX_EGO_BASETYPES; j++) {
 			byte tval = e_ptr->tval[j];
 
-			if (tval < TV_MAX) {
-				e_tval_size[tval]++;
-			}
+			if (tval < TV_MAX) e_tval_size[tval]++;
 		}
 	}
 
@@ -963,9 +961,7 @@ static errr init_e_info(void) {
 		for (j = 0; j < MAX_EGO_BASETYPES; j++) {
 			byte tval = e_ptr->tval[j];
 
-			if (tval < TV_MAX) {
-				e_tval[tval][e_tval_aux[tval]++] = i;
-			}
+			if (tval < TV_MAX) e_tval[tval][e_tval_aux[tval]++] = i;
 		}
 	}
 
@@ -2582,10 +2578,12 @@ static errr init_other(void) {
 #ifdef PLAYER_STORES
 	{
 		int i;
+
 		/* allocate fake houses for player stores */
 		C_MAKE(fake_store, MAX_VISITED_PLAYER_STORES, store_type);
 		for (i = 0; i < MAX_VISITED_PLAYER_STORES; i++) {
 			store_type *st_ptr = &fake_store[i];
+
 			st_ptr->st_idx = 7;//fake home
 			st_ptr->town = 0;//whatever
 			st_ptr->stock_size = STORE_INVEN_MAX;
@@ -2674,6 +2672,7 @@ static errr init_other(void) {
 #ifdef MONSTER_ASTAR
 	{
 		int i;
+
 		for (i = 0; i < ASTAR_MAX_INSTANCES; i++)
 			astar_info_open[i].m_idx = -1;
 	}
@@ -3920,9 +3919,7 @@ static errr reinit_e_info(void) {
 		for (j = 0; j < MAX_EGO_BASETYPES; j++) {
 			byte tval = e_ptr->tval[j];
 
-			if (tval < TV_MAX) {
-				e_tval_size[tval]++;
-			}
+			if (tval < TV_MAX) e_tval_size[tval]++;
 		}
 	}
 
@@ -3940,9 +3937,7 @@ static errr reinit_e_info(void) {
 		for (j = 0; j < MAX_EGO_BASETYPES; j++) {
 			byte tval = e_ptr->tval[j];
 
-			if (tval < TV_MAX) {
-				e_tval[tval][e_tval_aux[tval]++] = i;
-			}
+			if (tval < TV_MAX) e_tval[tval][e_tval_aux[tval]++] = i;
 		}
 	}
 

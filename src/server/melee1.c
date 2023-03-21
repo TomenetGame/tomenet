@@ -1057,6 +1057,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 			if (p_ptr->weapon_parry && !bypass_weapon) {
 				if (magik(apply_parry_chance(p_ptr, p_ptr->weapon_parry))) {
 					int slot = INVEN_WIELD;
+
 					if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD && magik(50)) /* dual-wield? */
 						slot = INVEN_ARM;
 					msg_format(Ind, "\377%cYou parry %s attack.", COLOUR_PARRY_GOOD, m_name_gen);
@@ -1102,6 +1103,7 @@ bool make_attack_melee(int Ind, int m_idx) {
  #ifdef USE_PARRYING
 			if (attempt_parry && magik(apply_parry_chance(p_ptr, p_ptr->weapon_parry))) {
 				int slot = INVEN_WIELD;
+
 				if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD && magik(50)) /* dual-wield? */
 					slot = INVEN_ARM;
 				msg_format(Ind, "\377%cYou parry %s attack.", COLOUR_PARRY_GOOD, m_name_gen);
@@ -2609,6 +2611,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					}
 					case 6: case 7: case 8: case 9: {
 						int stat = rand_int(6);
+
 						switch (stat) {
 							case A_STR: act = "strong"; break;
 							case A_INT: act = "bright"; break;
@@ -3303,6 +3306,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_ELEC) && alive) {
 					if (!(r_ptr->flags3 & RF3_IM_ELEC)) {
 						int d = damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2);
+
 						if (r_ptr->flags9 & RF9_RES_ELEC) d /= 3;
 						if (r_ptr->flags9 & RF9_SUSCEP_ELEC) d *= 2;
 						if (m_ptr->r_idx == RI_MIRROR) d = (d * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;

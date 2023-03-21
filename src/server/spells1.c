@@ -2964,6 +2964,7 @@ int set_all_destroy(object_type *o_ptr) {
 //	if (is_realm_book(o_ptr) && o_ptr->sval >= SV_BOOK_MIN_GOOD) return(FALSE);
 	if (is_realm_book(o_ptr)) {
 		u32b f1, f2, f3, f4, f5, f6, esp;
+
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 		/* Hack^2 -- use this as a sign of being 'high books' */
 		if (f3 & TR3_IGNORE_ELEC) return(FALSE);

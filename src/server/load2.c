@@ -356,6 +356,7 @@ static void rd_item(object_type *o_ptr) {
 	} else {
 		/* Increase portability with pointers to correct type - mikaelh */
 		byte old_name1, old_name2;
+
 		rd_byte(&old_name1);
 		rd_byte(&old_name2);
 		o_ptr->name1 = old_name1;
@@ -427,6 +428,7 @@ static void rd_item(object_type *o_ptr) {
 	} else {
 		/* Increase portability with pointers to correct type - mikaelh */
 		byte old_name2b;
+
 		rd_byte(&old_name2b);
 		o_ptr->name2b = old_name2b;
 	}
@@ -1080,6 +1082,7 @@ static void rd_global_lore(int r_idx) {
 	/* Read the global monster limit */
 	if (s_older_than(4, 4, 8)) {
 		byte tmpbyte;
+
 		rd_byte(&tmpbyte);
 		r_ptr->max_num = tmpbyte;
 	} else {
@@ -1089,6 +1092,7 @@ static void rd_global_lore(int r_idx) {
 	if (!s_older_than(4, 3, 24)) {
 		if (s_older_than(4, 4, 8)) {
 			byte tmpbyte;
+
 			rd_byte(&tmpbyte);
 			r_ptr->cur_num = tmpbyte;
 		} else {
@@ -1441,6 +1445,7 @@ static void rd_guilds() {
 		if (!s_older_than(4, 5, 2)) rd_byte(&guilds[i].cmode);
 		else {
 			cptr name = NULL;
+
 			/* first entry is dummy anyway */
 			if (i == 0) guilds[0].cmode = 0;
 			else if (guilds[i].master && (name = lookup_player_name(guilds[i].master)) != NULL) {
@@ -1457,6 +1462,7 @@ static void rd_guilds() {
 		rd_s16b(&guilds[i].minlev);
 		if (!s_older_than(4, 4, 20)) {
 			int j;
+
 			for (j = 0; j < 5; j++)
 				rd_string(guilds[i].adder[j], NAME_LEN);
 		}
@@ -1497,6 +1503,7 @@ static void rd_party(int n) {
 		if (n == 0 || !party_ptr->members) party_ptr->cmode = 0;
 		else {
 			u32b p_id = lookup_player_id(party_ptr->owner);
+
 			if (p_id) {
 				parties[n].cmode = lookup_player_mode(p_id);
 				s_printf("Party '%s' (%d): Mode has been fixed to %d ('%s',%d).\n",
@@ -1567,15 +1574,14 @@ static void rd_house(int n) {
 
 	if ((zcave = getcave(&house_ptr->wpos))) {
 		struct c_special *cs_ptr;
+
 		if (house_ptr->flags & HF_STOCK) {
 			/* add dna to static levels even though town-generated */
 			if ((cs_ptr = GetCS(&zcave[house_ptr->dy][house_ptr->dx], CS_DNADOOR)))
 				cs_ptr->sc.ptr = house_ptr->dna;
 			else if ((cs_ptr = AddCS(&zcave[house_ptr->dy][house_ptr->dx], CS_DNADOOR)))
 				cs_ptr->sc.ptr = house_ptr->dna;
-		}
-		else
-		{
+		} else {
 			/* add dna to static levels */
 			if ((cs_ptr = GetCS(&zcave[house_ptr->dy][house_ptr->dx], CS_DNADOOR)))
 				cs_ptr->sc.ptr = house_ptr->dna;
@@ -1586,8 +1592,7 @@ static void rd_house(int n) {
 	if (house_ptr->flags & HF_RECT) {
 		rd_byte(&house_ptr->coords.rect.width);
 		rd_byte(&house_ptr->coords.rect.height);
-	}
-	else{
+	} else {
 		i = -2;
 		C_MAKE(house_ptr->coords.poly, MAXCOORD, char);
 		do {
@@ -2801,6 +2806,7 @@ static errr rd_floor(void) {
 
 						cave_type *hwc_ptr;
 						int hwx, hwy;
+
 						for (hwx = x - 1; hwx <= x + 1; hwx++)
 						for (hwy = y - 1; hwy <= y + 1; hwy++) {
 							if (!in_bounds(hwy, hwx)) continue;

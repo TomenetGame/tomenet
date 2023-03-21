@@ -1375,6 +1375,7 @@ void self_knowledge(int Ind) {
 	/* Acquire item flags from equipment */
 	for (k = INVEN_WIELD; k < INVEN_TOTAL; k++) {
 		u32b t1, t2, t3, t4, t5, t6, tesp;
+
 		o_ptr = &p_ptr->inventory[k];
 		/* Skip empty items */
 		if (!o_ptr->k_idx) continue;

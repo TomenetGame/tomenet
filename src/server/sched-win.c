@@ -166,6 +166,7 @@ void remove_input(int fd) {
 		FD_CLR(fd, &input_mask);
 		if (fd == (max_fd - 1)) {
 			int i;
+
 			max_fd = 0;
 			for (i = fd; --i >= 0; ) {
 				if (FD_ISSET(i, &input_mask) || FD_ISSET(i, &output_mask)) {
@@ -223,6 +224,7 @@ void remove_output(int fd) {
 		FD_CLR(fd, &output_mask);
 		if (fd == (max_fd - 1)) {
 			int i;
+
 			max_fd = 0;
 			for (i = fd; --i >= 0; ) {
 				if (FD_ISSET(i, &input_mask) || FD_ISSET(i, &output_mask)) {

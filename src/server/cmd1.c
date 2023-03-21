@@ -1875,6 +1875,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			cptr name = lookup_player_name(o_ptr->owner);
 			int lev = lookup_player_level(o_ptr->owner);
 			cptr acc_name = lookup_accountname(o_ptr->owner);
+
 			if (p_ptr->id != o_ptr->owner) {
  #if 0
 				if ((lev > p_ptr->lev + 7) && (p_ptr->lev < 40) && (name)) {
@@ -2227,6 +2228,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			/* copy-pasted from slash.c '/untag' command basically */
 			char note2[80];
 			int j = strlen(quark_str(o_ptr->note)) - o_ptr->note_utag;
+
 			if (j >= 0) { /* bugfix hack */
 				//s_printf("j: %d, strlen: %d, note_utag: %d, i: %d.\n", j, strlen(quark_str(o_ptr->note)), o_ptr->note_utag, i);
 				strncpy(note2, quark_str(o_ptr->note), j);
@@ -2287,9 +2289,10 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		else if (auto_load && is_ammo(o_ptr->tval) &&
 		    !p_ptr->inventory[INVEN_AMMO].k_idx) {
 			u32b f1, f2, f3, f4, f5, f6, esp;
-			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 			//note: 'pick_one' is not implemented here!
 			int slot = INVEN_AMMO;
+
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 			msg_print(Ind, "You put the ammo into your quiver.");
 
@@ -2372,9 +2375,9 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		else if (auto_load && o_ptr->tval == TV_BOOMERANG &&
 		    !p_ptr->inventory[INVEN_BOW].k_idx && item_tester_hook_wear(Ind, INVEN_BOW)) {
 			u32b f1, f2, f3, f4, f5, f6, esp;
-			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 			int slot = INVEN_BOW;
 
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 			msg_print(Ind, "You ready the boomerang.");
 
 			o_ptr->marked = 0;
@@ -2541,6 +2544,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			/* Hack -- query every item */
 			if (p_ptr->carry_query_flag && !confirm) {
 				char out_val[ONAME_LEN];
+
 				snprintf(out_val, ONAME_LEN, "Pick up %s? ", o_name);
 				Send_pickup_check(Ind, out_val);
 
@@ -2600,6 +2604,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 						if ((a_info[o_ptr->name1].level >= 100 || o_ptr->name1 == ART_DWARVEN_ALE)
 						    && !multiple_artifact_p(o_ptr) && !is_admin(p_ptr)) {
 							char o_name_short[ONAME_LEN];
+
 							object_desc(0, o_name_short, o_ptr, TRUE, 256);
 							l_printf("%s \\{U%s found %s\n", showdate(), p_ptr->name, o_name_short);
 						}
@@ -2637,6 +2642,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 					cptr name = lookup_player_name(o_ptr->owner);
 					int lev = lookup_player_level(o_ptr->owner);
 					cptr acc_name = lookup_accountname(o_ptr->owner);
+
 					object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
  #if 0
 					/* If level diff. is too large, target player is too low,
@@ -2770,6 +2776,7 @@ s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr
 							struct account acc;
 
 							bool success = GetAccount(&acc, p_ptr->accountname, NULL, FALSE);
+
 							/* paranoia */
 							if (success) {
 								int *id_list, ids, i, j;
@@ -3080,6 +3087,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
 		if (!(q_ptr->pkill & PKILL_KILLABLE)) {
 			char string[30];
+
 			snprintf(string, 30, "attacking %s", q_ptr->name);
 			s_printf("%s attacked defenceless %s\n", p_ptr->name, q_ptr->name);
 			if (!imprison(Ind, JAIL_MURDER_KPK, string)) {
@@ -3393,6 +3401,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				martial_arts *ma_ptr = &ma_blows[0], *old_ptr = &ma_blows[0];
 				int resist_stun = 0;
 				int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 50);
+
 				if (q_ptr->resist_conf) resist_stun += 44;
 				if (q_ptr->free_act) resist_stun += 44;
 
@@ -4012,6 +4021,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 			   Still to check: Vampire fruit bats! CURRENTLY STACKS! */
 			if (p_ptr->fruit_bat == 1 && !p_ptr->body_monster) {
 				int leech = q_ptr->chp;
+
 				if (k < leech) leech = k;
 				leech /= 10;
 				hp_player(Ind, rand_int(leech), TRUE, TRUE);
@@ -4320,6 +4330,8 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 
 	/* Attack once for each legal blow */
 	while (num++ < p_ptr->num_blow) {
+		u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5 = 0, f6 = 0, esp = 0;
+
 		did_stun = FALSE;
 		did_knee = FALSE;
 		did_slow = FALSE;
@@ -4380,7 +4392,6 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 			}
 		}
 
-		u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5 = 0, f6 = 0, esp = 0;
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 		chaos_effect = 0; // we need this methinks..?
 
@@ -4470,6 +4481,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				martial_arts * ma_ptr = &ma_blows[0], * old_ptr = &ma_blows[0];
 				int resist_stun = 0;
 				int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 50);
+
 				if (r_ptr->flags1 & RF1_UNIQUE) resist_stun += 88;
 				if (r_ptr->flags3 & RF3_NO_CONF) resist_stun += 44;
 				if (r_ptr->flags3 & RF3_NO_SLEEP) resist_stun += 44;
@@ -7349,6 +7361,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 				/* Tell both about it */
 				/* Hack if invisible */
 				int ball = has_ball(q_ptr);
+
 				if (p_ptr->team && ball != -1 && q_ptr->team != p_ptr->team) {
 					object_type *o_ptr = &q_ptr->inventory[ball];
 					object_type tmp_obj;

@@ -2058,6 +2058,7 @@ static void player_outfit(int Ind) {
 	/* Lantern of Brightness for Archers */
 	if (p_ptr->pclass == CLASS_ARCHER && p_ptr->prace != RACE_VAMPIRE) {
 		u32b f1, f2, f3, f4, f5, f6, esp;
+
 		do {
 			invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_LANTERN));
 			o_ptr->number = 1;
@@ -2476,6 +2477,7 @@ static void player_setup(int Ind, bool new) {
 #endif
 	} else if (p_ptr->wpos.wz) {
 		bool unknown = FALSE;
+
 		l_ptr = getfloor(wpos);
 
 		/* If player doesn't know this level.. */
@@ -2701,6 +2703,7 @@ static void player_setup(int Ind, bool new) {
 	/* And for 4.6.2, winner status for item-sending (ENABLE_MERCHANT_MAIL) */
 		time_t ttime;
 		byte w;
+
 		/* Verify mode */
 		w = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
 		verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, p_ptr->party, p_ptr->guild, p_ptr->guild_flags, 0, time(&ttime), p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0), *wpos, (char)p_ptr->houses_owned, w, 100);
@@ -2855,33 +2858,27 @@ static void do_bard_skill(int Ind)
 		{
 			bool resist = FALSE;
 			/* Racial skill 'resist' */
-			for (j = 0; j < MAX_SKILLS; j++)
-			{
+			for (j = 0; j < MAX_SKILLS; j++) {
 				/* Efficiency */
 				if (!p_ptr->rp_ptr->skills[j].skill) break;
 
-				if (p_ptr->rp_ptr->skills[j].skill == i)
-				{
+				if (p_ptr->rp_ptr->skills[j].skill == i) {
 					value = p_ptr->rp_ptr->skills[j].value;
 					mod = p_ptr->rp_ptr->skills[j].mod;
 
 					if (!value && !mod) continue;
-					if (p_ptr->rp_ptr->skills[j].vmod == '=')
-					{
+					if (p_ptr->rp_ptr->skills[j].vmod == '=') {
 						resist = TRUE;
 						break;
 					}
-					if (p_ptr->rp_ptr->skills[j].vmod == '+')
-					{
-						if (!resist)
-						{
+					if (p_ptr->rp_ptr->skills[j].vmod == '+') {
+						if (!resist) {
 							p_ptr->s_info[i].value = value;
 							p_ptr->s_info[i].mod = mod;
 							resist = TRUE;
 						}
 						/* Two plusses? bad manner, but we'll handle it.. */
-						else
-						{
+						else {
 							p_ptr->s_info[i].value += value;
 							p_ptr->s_info[i].mod += mod;
 						}
@@ -2914,8 +2911,7 @@ static void do_bard_skill(int Ind)
 
 			if (z == -1 || z == SKILL_NECROMANCY || z == SKILL_MISC) continue;
 
-			if (!p_ptr->s_info[z].value && !p_ptr->s_info[z].mod)
-			{
+			if (!p_ptr->s_info[z].value && !p_ptr->s_info[z].mod) {
 				p_ptr->s_info[z].dev = FALSE;
 				p_ptr->s_info[i].value = p_ptr->s_info[i].mod = 0;
 			}

@@ -5860,6 +5860,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		if (o_ptr->tval == TV_BOW) {
 			u32b ammo_f1 = 0, dummy;
 			object_type *x_ptr = &pt_ptr->inventory[INVEN_AMMO];
+
 			if (x_ptr->k_idx) {
 				if ((x_ptr->ident & ID_MENTAL)) {
 					object_flags(x_ptr, &ammo_f1, &dummy, &dummy, &dummy, &dummy, &dummy, &dummy);
@@ -5897,6 +5898,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (eff_full && wield_slot(0, o_ptr) == INVEN_AMMO) {
 		u32b shooter_f1 = 0, dummy;
 		object_type *x_ptr = &pt_ptr->inventory[INVEN_BOW];
+
 		if (x_ptr->k_idx && x_ptr->tval == TV_BOW &&
 		    (( (x_ptr->sval == SV_SHORT_BOW || x_ptr->sval == SV_LONG_BOW) && o_ptr->tval == TV_ARROW) ||
 		     ( (x_ptr->sval == SV_LIGHT_XBOW || x_ptr->sval == SV_HEAVY_XBOW) && o_ptr->tval == TV_BOLT) ||

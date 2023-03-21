@@ -5508,6 +5508,7 @@ static bool process_player_end_aux(int Ind) {
 #ifdef JAILER_KILLS_WOR
 				/* eat his WoR scrolls as suggested? */
 				bool found = FALSE, one = TRUE;
+
 				for (j = 0; j < INVEN_WIELD; j++) {
 					if (!p_ptr->inventory[j].k_idx) continue;
 					o_ptr = &p_ptr->inventory[j];
@@ -6628,53 +6629,53 @@ static void process_games(int Ind) {
 		int ball;
 
 		switch (gametype) {
-			/* rugby type game */
-			case EEGAME_RUGBY:
-				if ((ball = has_ball(p_ptr)) == -1) break;
+		/* rugby type game */
+		case EEGAME_RUGBY:
+			if ((ball = has_ball(p_ptr)) == -1) break;
 
-				if (p_ptr->team == 1 && c_ptr->feat == FEAT_BGOAL) {
-					teamscore[0]++;
-					msg_format_near(Ind, "\377R%s scored a goal!!!", p_ptr->name);
-					msg_print(Ind, "\377rYou scored a goal!!!");
-					score = 1;
-				}
-				if (p_ptr->team == 2 && c_ptr->feat == FEAT_AGOAL) {
-					teamscore[1]++;
-					msg_format_near(Ind, "\377B%s scored a goal!!!", p_ptr->name);
-					msg_print(Ind, "\377gYou scored a goal!!!");
-					score = 1;
-				}
-				if (score) {
-					object_type tmp_obj;
-					s16b ox, oy;
-					int try;
+			if (p_ptr->team == 1 && c_ptr->feat == FEAT_BGOAL) {
+				teamscore[0]++;
+				msg_format_near(Ind, "\377R%s scored a goal!!!", p_ptr->name);
+				msg_print(Ind, "\377rYou scored a goal!!!");
+				score = 1;
+			}
+			if (p_ptr->team == 2 && c_ptr->feat == FEAT_AGOAL) {
+				teamscore[1]++;
+				msg_format_near(Ind, "\377B%s scored a goal!!!", p_ptr->name);
+				msg_print(Ind, "\377gYou scored a goal!!!");
+				score = 1;
+			}
+			if (score) {
+				object_type tmp_obj;
+				s16b ox, oy;
+				int try;
 
-					p_ptr->energy = 0;
-					snprintf(sstr, 80, "Score: \377RReds: %d  \377BBlues: %d", teamscore[0], teamscore[1]);
-					msg_broadcast(0, sstr);
+				p_ptr->energy = 0;
+				snprintf(sstr, 80, "Score: \377RReds: %d  \377BBlues: %d", teamscore[0], teamscore[1]);
+				msg_broadcast(0, sstr);
 
-					for (try = 0; try < 1000; try++) {
-						ox = p_ptr->px + 5 - rand_int(10);
-						oy = p_ptr->py + 5 - rand_int(10);
-						if (!in_bounds(oy, ox)) continue;
-						if (!cave_floor_bold(zcave, oy, ox)) continue;
-						tmp_obj = p_ptr->inventory[ball];
-						tmp_obj.marked2 = ITEM_REMOVAL_NEVER;
-						drop_near(TRUE, 0, &tmp_obj, -1, &p_ptr->wpos, oy, ox);
-						printf("dropping at %d %d (%d)\n", ox, oy, try);
-						inven_item_increase(Ind, ball, -999);
-						inven_item_optimize(Ind, ball);
-						break;
-					}
-					/* Move the player from the goal area */
-					teleport_player_force(Ind, 20);
+				for (try = 0; try < 1000; try++) {
+					ox = p_ptr->px + 5 - rand_int(10);
+					oy = p_ptr->py + 5 - rand_int(10);
+					if (!in_bounds(oy, ox)) continue;
+					if (!cave_floor_bold(zcave, oy, ox)) continue;
+					tmp_obj = p_ptr->inventory[ball];
+					tmp_obj.marked2 = ITEM_REMOVAL_NEVER;
+					drop_near(TRUE, 0, &tmp_obj, -1, &p_ptr->wpos, oy, ox);
+					printf("dropping at %d %d (%d)\n", ox, oy, try);
+					inven_item_increase(Ind, ball, -999);
+					inven_item_optimize(Ind, ball);
+					break;
 				}
-				break;
-			/* capture the flag */
-			case EEGAME_CTF:
-				break;
-			default:
-				break; /* gcc 3.4 actually wants this - mikaelh */
+				/* Move the player from the goal area */
+				teleport_player_force(Ind, 20);
+			}
+			break;
+		/* capture the flag */
+		case EEGAME_CTF:
+			break;
+		default:
+			break; /* gcc 3.4 actually wants this - mikaelh */
 		}
 	}
 }
@@ -6853,12 +6854,11 @@ static void process_player_end(int Ind) {
 		char consume_full_energy;
 
 		run_step(Ind, 0, &consume_full_energy);
-		if (consume_full_energy) {
+		if (consume_full_energy)
 			/* Consume a full turn of energy in case we have e.g. attacked a monster */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-		} else {
+		else
 			p_ptr->energy -= level_speed(&p_ptr->wpos) / real_speed;
-		}
 	}
 
 
@@ -7072,6 +7072,7 @@ static void purge_old() {
 	//if (cfg.level_unstatic_chance > 0)
 	{
 		struct worldpos twpos;
+
 		twpos.wz = 0;
 #if 0 /* we get called every second or even less often? */
 		for (y = 0; y < MAX_WILD_Y; y++) {
@@ -9021,6 +9022,7 @@ void process_player_change_wpos(int Ind) {
 
 				if (c_ptr->feat == FEAT_SHOP) {
 					struct c_special *cs_ptr = GetCS(c_ptr, CS_SHOP);
+
 					if (cs_ptr) {
 						int which = cs_ptr->sc.omni;
 
@@ -9268,8 +9270,8 @@ void process_player_change_wpos(int Ind) {
 	if (wpos->wz == 0 && !istown(wpos)) {
 		if (wild_info[wpos->wy][wpos->wx].own) {
 			cptr p = lookup_player_name(wild_info[wpos->wy][wpos->wx].own);
-			if (p == NULL) p = "Someone";
 
+			if (p == NULL) p = "Someone";
 			msg_format(Ind, "You enter the land of %s.", p);
 		}
 	}
@@ -11056,6 +11058,7 @@ static void process_firework_creation() {
 
 	if (!fireworks_delay) { /* fire! */
 		worldpos wpos;
+
 		switch (rand_int(4)) {
 		case 0:	fireworks_delay = 0; break;
 		case 1:	fireworks_delay = 1; break;
@@ -11222,6 +11225,7 @@ static void process_weather_effect_creation() {
 	if (season == SEASON_WINTER) {
 		if (!(turn % ((cfg.fps + 29) / 30))) {
 			worldpos wpos;
+
 			/* Create snowflakes in Bree */
 			wpos.wx = 32; wpos.wy = 32; wpos.wz = 0;
 			cast_snowflake(&wpos, rand_int(MAX_WID - 2) + 1, 8);
@@ -11230,6 +11234,7 @@ static void process_weather_effect_creation() {
 	} else {
 		if (!(turn % ((cfg.fps + 59) / 60))) {
 			worldpos wpos;
+
 			/* Create raindrops in Bree */
 			wpos.wx = 32; wpos.wy = 32; wpos.wz = 0;
 			cast_raindrop(&wpos, rand_int(MAX_WID - 2) + 1);
@@ -11968,13 +11973,13 @@ int recall_depth_idx(struct worldpos *wpos, player_type *p_ptr) {
 			p_ptr->max_depth_wx[j] = wpos->wx;
 			p_ptr->max_depth_wy[j] = wpos->wy;
 			p_ptr->max_depth_tower[j] = (wpos->wz > 0);
-			return j;
+			return(j);
 		}
 		/* check dungeons we've already been to */
 		if (p_ptr->max_depth_wx[j] == wpos->wx &&
 		    p_ptr->max_depth_wy[j] == wpos->wy &&
 		    p_ptr->max_depth_tower[j] == (wpos->wz > 0))
-			return j;
+			return(j);
 	}
 	s_printf("p_ptr->max_depth[]: TOO MANY DUNGEONS ('%s',%d,%d,%d)!\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
 	return(-1);
@@ -11982,7 +11987,7 @@ int recall_depth_idx(struct worldpos *wpos, player_type *p_ptr) {
 int get_recall_depth(struct worldpos *wpos, player_type *p_ptr) {
 	int i = recall_depth_idx(wpos, p_ptr);
 	if (i == -1) return(0);
-	return p_ptr->max_depth[i];
+	return(p_ptr->max_depth[i]);
 }
 
 /* Inject a delayed command into the command queue, used for handling !X inscription:

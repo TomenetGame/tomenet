@@ -215,6 +215,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 	case SKILL_MARTIAL_ARTS:
 		if (old_value == 0 && new_value > 0) {
 			bool warn_takeoff = FALSE;
+
 			/* display some warnings if an item will severely conflict with Martial Arts skill */
 			if (p_ptr->inventory[INVEN_WIELD].k_idx ||
 			    is_melee_weapon(p_ptr->inventory[INVEN_ARM].tval) || /* for dual-wielders */

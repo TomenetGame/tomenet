@@ -117,6 +117,7 @@ static void meta_connect(int blocking) {
 #else
 		int errval = errno;
 #endif
+
 		s_printf("Failed to create meta socket! (errno = %d)\n", errval);
 		return;
 	}
@@ -131,9 +132,11 @@ static void meta_connect(int blocking) {
 	if (connect(sock, (struct sockaddr *)&meta_sockaddr, sizeof(meta_sockaddr)) == -1) {
 #ifdef WINDOWS
 		int errval = WSAGetLastError();
+
 		if (errval != WSAEINPROGRESS && errval != WSAEWOULDBLOCK) {
 #else
 		int errval = errno;
+
 		if (errval != EINPROGRESS && errval != EWOULDBLOCK) {
 #endif
 			s_printf("Failed to connect to metaserver! (errno = %d)\n", errval);
@@ -226,9 +229,11 @@ static int meta_write(int flag) {
 	if (send(meta_fd, buf_meta, strlen(buf_meta), 0) == -1) {
 #ifdef WINDOWS
 		int errval = WSAGetLastError();
+
 		if (errval != WSAEWOULDBLOCK) {
 #else
 		int errval = errno;
+
 		if (errval != EINPROGRESS && errval != EWOULDBLOCK) {
 #endif
 			s_printf("Writing to meta socket failed! (errno = %d)\n", errval);

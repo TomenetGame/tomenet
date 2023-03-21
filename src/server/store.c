@@ -1991,6 +1991,7 @@ static void store_create(store_type *st_ptr) {
 		/* Hack -- Charge lite uniformly (occurance 1 of 2, keep in sync) */
 		if (o_ptr->tval == TV_LITE) {
 			u32b f1, f2, f3, f4, f5, f6, esp;
+
 			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 			/* Only fuelable ones! */
@@ -6099,6 +6100,7 @@ void home_sell(int Ind, int item, int amt) {
 
 	if (cursed_p(o_ptr) && !is_admin(p_ptr)) {
 		u32b f1, f2, f3, f4, f5, f6, esp;
+
 		if (item >= INVEN_WIELD) {
 			msg_print(Ind, "Hmmm, it seems to be cursed.");
 			return;

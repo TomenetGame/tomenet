@@ -2496,8 +2496,10 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 		    + ((f4 & (TR4_ANTIMAGIC_30)) ? 30 : 0)
 		    + ((f4 & (TR4_ANTIMAGIC_20)) ? 20 : 0)
 		    + ((f4 & (TR4_ANTIMAGIC_10)) ? 10 : 0);
+
 		if (am) {
 			int j = o_ptr->to_h + o_ptr->to_d;// + o_ptr->pval + o_ptr->to_a;
+
 			if (j > 0) am -= j;
 			if (am > 50) am = 50;
 		}
@@ -4306,6 +4308,7 @@ void do_cmd_look(int Ind, int dir) {
 		/* Check if the object is on a detected trap */
 		if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
 			int t_idx = cs_ptr->sc.trap.t_idx;
+
 			if (cs_ptr->sc.trap.found) {
 				if (p_ptr->trap_ident[t_idx])
 					p1 = t_name + t_info[t_idx].name;

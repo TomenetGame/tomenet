@@ -7435,6 +7435,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'K' for questor drops/exp if it is killable and player manages to kill it */
 		if (buf[0] == 'K') {
 			int d, dtv, dsv, dpv, dbpv, dn1, dn2, dn2b, dg, dgr, dvgr, dcr, au, exp;
+
 			s = buf + 2;
 			if (14 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
 			    &d, &dtv, &dsv, &dpv, &dbpv, &dn1, &dn2, &dn2b, &dg, &dgr, &dvgr, &dcr, &au, &exp)) return(1);
@@ -7498,6 +7499,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				continue;
 			} else if (buf[1] == 'd') { /* dungeons */
 				int lmin, lmax;
+
 				s = buf + 3;
 
 				if (2 > sscanf(s, "%d:%d", &lmin, &lmax)) return(1);
@@ -8323,6 +8325,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* now we have 4 sub-types of 'k' lines -_- uhh */
 			if (buf[1] == ':') { /* init */
 				int minlev, maxlev, num;
+
 				s = buf + 2;
 				if (5 != sscanf(s, "%d:%d:%d:%d:%d",
 				    &stage, &goal, &minlev, &maxlev, &num))
@@ -8369,6 +8372,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				continue;
 			} else if (buf[1] == 'V') { /* specify visuals */
 				unsigned char rchar[5], rattr[5];
+
 				s = buf + 3;
 				if (4 > (k = sscanf(s, "%d:%d:%c:%c:%c:%c:%c:%c:%c:%c:%c:%c",
 				    &stage, &goal, &rchar[0], &rattr[0], &rchar[1], &rattr[1], &rchar[2], &rattr[2], &rchar[3], &rattr[3], &rchar[4], &rattr[4])))
@@ -9078,6 +9082,8 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 		int len = strlen(s);
 
 		int y = *yval;
+
+
 		*xval = xvalstart;
 		for (x = *xval, i = 0; ((x < xmax) && (i < len)); x++, s++, i++) {
 			/* Access the grid */
@@ -9167,6 +9173,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			/* Object (and possible trap) */
 			if ((random & RANDOM_OBJECT) && (random & RANDOM_TRAP)) {
 				int level = object_level;
+
 				//object_level = quest[p_ptr->inside_quest].level;
 				object_level = dun_level;
 
@@ -9314,6 +9321,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 					if ((cs_ptr = AddCS(c_ptr, CS_SHOP))) {
 						/* MEGAHACK till st_info is implemented */
 						int store = letter[idx].special;
+
 						// if (store > 8) store = 8;
 
 						/* hack for dungeon stores: add +70 for basic town stores */
@@ -9409,6 +9417,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 		if (tokenize(buf + 2, 2, zz, ':', '/') == 2) {
 			int yy = atoi(zz[0]);
 			int xx = atoi(zz[1]);
+
 			new_level_rand_y(wpos, yy);
 			new_level_rand_x(wpos, xx);
 

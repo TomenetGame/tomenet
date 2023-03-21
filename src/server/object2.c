@@ -343,6 +343,7 @@ void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art) { /* m
 	}
 	else {			/* Cave depth not static (houses etc) - do slow method */
 		int i;
+
 		for (i = 0; i < o_max; i++) {
 			object_type *o_ptr = &o_list[i];
 			if (o_ptr->k_idx && inarea(wpos, &o_ptr->wpos)) {
@@ -1998,6 +1999,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 		{
 			/* they should be of bpval.. hopefully. */
 			int pval = o_ptr->bpval, kpval = k_ptr->pval;
+
 			/* If the bpval has been set to the k_info pval,
 			   don't increase the item's value for this
 			   granted pval, since it's already included in
@@ -2144,6 +2146,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 	case TV_BOOK:
 		if (o_ptr->sval == SV_SPELLBOOK) {
 			int skill_level = 0, ego_value, ev;
+
 			/* 1: 145, 2: 240, 3: 375, 4: 540, 5: 735 */
 			ego_value = value - k_ptr->cost;
 			ev = ego_value > 700 ? 700 : ego_value;
@@ -2158,6 +2161,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 			/* Actually price these depending on the spells they contain :) */
 			int sl = 0, ego_value, ev;
 			long v = 0;
+
 			/* 1: 145, 2: 240, 3: 375, 4: 540, 5: 735 */
 			ego_value = value - k_ptr->cost;
 			ev = ego_value > 700 ? 700 : ego_value;
@@ -3071,6 +3075,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 	case TV_BOOK:
 		if (o_ptr->sval == SV_SPELLBOOK) {
 			int skill_level = 0;
+
 			/* 1: 145, 2: 240, 3: 375, 4: 540, 5: 735 */
 			if (o_ptr->pval < max_spells) skill_level = school_spells[o_ptr->pval].skill_level + 5;
 			/* override k_info.txt to have easier handling of possible changes here */
@@ -3081,6 +3086,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 			/* Actually price these depending on the spells they contain :) */
 			int sl = 0, ego_value, ev;
 			long v = 0;
+
 			/* 1: 145, 2: 240, 3: 375, 4: 540, 5: 735 */
 			ego_value = value - k_ptr->cost;
 			ev = ego_value > 700 ? 700 : ego_value;
@@ -3269,6 +3275,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 	if (o_ptr->tval == TV_BOW && (i = o_ptr->to_h + o_ptr->to_d * 2) >= 60) {
  #if 1
 		int ultraboost = i * (o_ptr->to_h + 10);
+
 		/* boost excessively for 'end game' dam/usability */
 		if ((f3 & TR3_XTRA_SHOTS) && (f3 & TR3_XTRA_MIGHT) &&
 		    o_ptr->to_d >= 24) value += (o_ptr->to_d - 23) * ultraboost * 10;
@@ -3293,6 +3300,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 		if (i >= 24) {
  #if 1 /* ultraboost for top-end stats? This can result in x2.5 prices for those, up to ~1M Au! */
 			int ultraboost = i * (o_ptr->to_h + 10);
+
 			/* boost excessively for 'end game' dam/usability */
 			if (o_ptr->to_d > 25) value += (o_ptr->to_d - 25) * ultraboost * 25;
 			/* boost even further for being vampiric in addition to being awesome */
@@ -5000,14 +5008,14 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power, u32b resf) {
 				if (randint(500) < level + 5) {
 					/* Exploding missile */
 					int power[27] = { GF_ELEC, GF_POIS, GF_ACID,
-						GF_COLD, GF_FIRE, GF_PLASMA, GF_LITE,
-						GF_DARK, GF_SHARDS, GF_SOUND,
-						GF_CONFUSION, GF_FORCE, GF_INERTIA,
-						GF_MANA, GF_METEOR, GF_ICE, GF_CHAOS,
-						GF_NETHER, GF_NEXUS, GF_TIME,
-						GF_GRAVITY, GF_KILL_WALL, GF_AWAY_ALL,
-						GF_TURN_ALL, GF_NUKE, //GF_STUN,
-						GF_DISINTEGRATE, GF_HELLFIRE };
+					    GF_COLD, GF_FIRE, GF_PLASMA, GF_LITE,
+					    GF_DARK, GF_SHARDS, GF_SOUND,
+					    GF_CONFUSION, GF_FORCE, GF_INERTIA,
+					    GF_MANA, GF_METEOR, GF_ICE, GF_CHAOS,
+					    GF_NETHER, GF_NEXUS, GF_TIME,
+					    GF_GRAVITY, GF_KILL_WALL, GF_AWAY_ALL,
+					    GF_TURN_ALL, GF_NUKE, //GF_STUN,
+					    GF_DISINTEGRATE, GF_HELLFIRE };
 
 					o_ptr->pval = power[rand_int(27)];
 				}
@@ -5123,6 +5131,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf) {
 		if (o_ptr->sval == SV_DRAGON_MULTIHUED) {
 			/* give 2 random immunities */
 			int imm1 = rand_int(5), imm2 = rand_int(4);
+
 			if (imm2 == imm1) imm2 = 4;
 			o_ptr->xtra2 |= 0x1 << imm1;
 			o_ptr->xtra2 |= 0x1 << imm2;

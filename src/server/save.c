@@ -1854,8 +1854,7 @@ bool load_player(int Ind) {
 		fkk = my_fopen(temp, "rb");
 
 		/* Oops, lock exists */
-		if (fkk)
-		{
+		if (fkk) {
 			/* Close the file */
 			my_fclose(fkk);
 
@@ -2405,6 +2404,7 @@ static void new_wr_floors() {
 			if (getcave(&cwpos) && players_on_depth(&cwpos)) wr_floor(&cwpos);
 			if (w_ptr->flags & WILD_F_DOWN) {
 				struct dungeon_type *d_ptr = w_ptr->dungeon;
+
 				for (z = 1; z <= d_ptr->maxdepth; z++) {
 					cwpos.wz = -z;
 					if (d_ptr->level[z - 1].ondepth && d_ptr->level[z - 1].cave)
@@ -2413,6 +2413,7 @@ static void new_wr_floors() {
 			}
 			if (w_ptr->flags & WILD_F_UP) {
 				struct dungeon_type *d_ptr = w_ptr->tower;
+
 				for (z = 1; z <= d_ptr->maxdepth; z++) {
 					cwpos.wz = z;
 					if (d_ptr->level[z - 1].ondepth && d_ptr->level[z - 1].cave)

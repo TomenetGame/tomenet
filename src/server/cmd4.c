@@ -213,6 +213,7 @@ void do_cmd_check_artifacts(int Ind, int line, char *srcstr) {
 
 				/* bad: should just use determine_artifact_timeout() for consistency, instead of hard-coding */
 				int long_timeout = winner_artifact_p(&forge) ? 60 * 2 : 60;
+
 #ifdef RPG_SERVER
 				long_timeout *= 2;
 #endif
@@ -304,6 +305,7 @@ void do_cmd_check_artifacts(int Ind, int line, char *srcstr) {
 					    || a_ptr->winner
  #endif
 					    ) && a_ptr->timeout > 0) ? a_ptr->timeout / 2 : a_ptr->timeout;
+
  #ifndef COLOURED_ARTS
 					sprintf(fmt, "%%%ds\377U", (int)(45 - strlen(base_name)));
 					fprintf(fff, fmt, "");
@@ -2155,6 +2157,7 @@ void write_player_info(int Ind, char *pinfo) {
 				if (!q_ptr->guild) fprintf(fff, ", Party:");
 				if (admin) { /* colourize (non-iron) party names for admins, for easy visual overview */
 					char pcol[3];
+
 					pcol[0] = '\377'; pcol[2] = 0;
 					pcol[1] = color_attr_to_char(parties[q_ptr->party].attr);
 					if (parties[q_ptr->party].mode & PA_IRONTEAM_CLOSED)
@@ -2318,6 +2321,7 @@ void do_cmd_check_player_equip(int Ind, int line) {
 		{
 			object_type *o_ptr = &q_ptr->inventory[i];
 			char o_name[ONAME_LEN];
+
 #ifdef WRAPPING_NEW
 			if (hidden) {
 				if ((i == INVEN_LITE || i == INVEN_AMMO) && !hidden_diz) {
@@ -2343,6 +2347,7 @@ void do_cmd_check_player_equip(int Ind, int line) {
 			/* for dual-wield, but also in general, INVEN_ARM should be visible too */
 			object_type *o_ptr = &q_ptr->inventory[INVEN_ARM];
 			char o_name[ONAME_LEN];
+
 			if (o_ptr->tval) {
 				object_desc(Ind, o_name, o_ptr, TRUE, 3 + 0x10);
 				fprintf(fff, "\377w %s\n", o_name);

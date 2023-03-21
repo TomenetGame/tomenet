@@ -422,13 +422,10 @@ int exec_lua(int Ind, char *file) {
 
 	if (!lua_dostring(L, file)) {
 		int size = lua_gettop(L) - oldtop;
-		if (size != 0)
-			res = tolua_getnumber(L, -size, 0);
-		else
-			res = 0;
-	}
-	else
-		res = 0;
+
+		if (size != 0) res = tolua_getnumber(L, -size, 0);
+		else res = 0;
+	} else res = 0;
 
 	lua_settop(L, oldtop);
 	return(res);
@@ -445,10 +442,9 @@ cptr string_exec_lua(int Ind, char *file) {
 
 	if (!lua_dostring(L, file)) {
 		int size = lua_gettop(L) - oldtop;
-		if (size != 0)
-			res = tolua_getstring(L, -size, "");
-		else
-			res = 0;
+
+		if (size != 0) res = tolua_getstring(L, -size, "");
+		else res = 0;
 	} else res = "";
 
 	lua_settop(L, oldtop);

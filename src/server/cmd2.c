@@ -1158,6 +1158,7 @@ void do_cmd_go_down(int Ind) {
 	    (!p_ptr->prob_travel || (c_ptr->info & CAVE_STCK)))
 	{
 		struct worldpos twpos;
+
 		wpcopy(&twpos, wpos);
 		if (twpos.wz > 0) twpos.wz--;
 		if (!p_ptr->ghost) {
@@ -2627,6 +2628,7 @@ cptr get_house_owner(struct c_special *cs_ptr) {
 	if (dna->owner) {
 //		char *name;
 		cptr name;
+
 		switch (dna->owner_type) {
 		case OT_PLAYER:
 			if ((name = lookup_player_name(dna->owner)))
@@ -3149,6 +3151,7 @@ void do_cmd_close(int Ind, int dir) {
 #if 1 /* just for fun */
 			/* fun exception: open door mimic players */
 			int i;
+
 			if ((i = -c_ptr->m_idx) > 0) {
 				player_type *q_ptr = Players[i];
 				if (q_ptr->body_monster == RI_DOOR_MIMIC && (q_ptr->temp_misc_1 & 0x01)) {
@@ -3519,6 +3522,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 #endif
 	    ) {
 		u32b fx, f5;
+
 		object_flags(o_ptr, &fx, &fx, &fx, &fx, &f5, &fx, &fx);
 		if (f5 & TR5_IMPACT) {
 			impact_power_tool = power; //1..530 (digging power is used)
@@ -3535,6 +3539,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 #endif
 	    ) {
 		u32b fx, f5;
+
 		object_flags(o2_ptr, &fx, &fx, &fx, &fx, &f5, &fx, &fx);
 		//~18 avg (6d6 weapon) -> 49% chance on attack; 5(best)..45(worst) total range
 		if (f5 & TR5_IMPACT) {
@@ -3549,6 +3554,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 #endif
 	    ) {
 		u32b fx, f5;
+
 		object_flags(o3_ptr, &fx, &fx, &fx, &fx, &f5, &fx, &fx);
 		//~18 avg (6d6 weapon) -> 49% chance on attack; 5(best)..45(worst) total range
 		if (f5 & TR5_IMPACT) {
@@ -5137,9 +5143,11 @@ void do_cmd_disarm(int Ind, int dir) {
 
 				/* A chance to drop a trapkit; equal to the trapping skill */
 				int sdis = (int)(p_ptr->s_info[SKILL_TRAPPING].value / 1000);
+
 				if (magik(sdis)) {
 					object_type forge;
 					object_type* yay = &forge;
+
 					invcopy(yay, lookup_kind(TV_TRAPKIT, randint(6)));
 
 					/* Let's make it so that there is always a chance for an awesome trap--
@@ -5396,6 +5404,7 @@ void do_cmd_bash(int Ind, int dir) {
 		    (c_ptr->feat <= FEAT_DOOR_TAIL)) &&
 		    c_ptr->feat != FEAT_HOME) {
 			int item;
+
 			/* Hack -- 'kick' an item ala NetHack */
 			if ((item = c_ptr->o_idx)) {
 				object_type *o_ptr = &o_list[c_ptr->o_idx];
@@ -7908,6 +7917,7 @@ bool interfere(int Ind, int chance) {
 		if (chance > 95) chance = 95;
 		if (rand_int(100) < chance) {
 			char m_name[MNAME_LEN];
+
 			if (i > 0) {
 				monster_desc(Ind, m_name, i, 0);
 			} else {
@@ -8484,6 +8494,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				    && !rand_int(5 - r_ptr->level / 50)) { /* decent chance to block throws */
 					if (visible) {
 						char hit_desc[MAX_CHARS + 12];
+
 						sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
 						hit_desc[2] = toupper(hit_desc[2]);
 						msg_print(Ind, hit_desc);
@@ -8695,6 +8706,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 #if 0
 					if (cave[y][x].m_idx) {
 						char m_name[MNAME_LEN];
+
 						monster_desc(m_name, &m_list[cave[y][x].m_idx], 0);
 						switch (is_friend(&m_list[cave[y][x].m_idx])) {
 						case 1:

@@ -1898,6 +1898,7 @@ void do_cmd_empty_potion(int Ind, int slot) {
 	/* specialty: empty brass lanterns, just to make them stack and sell later */
 	if (tval == TV_LITE && o_ptr->sval == SV_LITE_LANTERN) {
 		u32b f1, f2, f3, f4, f5, f6, esp;
+
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		/* Only fuelable ones! */

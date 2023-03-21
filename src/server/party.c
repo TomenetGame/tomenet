@@ -2779,6 +2779,7 @@ void del_guild(int id) {
 #else
 	if (guilds[id].h_idx) {
 		struct dna_type *dna = houses[guilds[id].h_idx - 1].dna;
+
 		dna->owner = 0L;
 		dna->creator = 0L;
 		dna->a_flags = ACF_NONE;
@@ -4005,6 +4006,7 @@ bool add_ignore(int Ind, cptr name) {
 	if ((pname = strchr(name, '@'))) {
 		struct remote_ignore *curr, *prev = NULL;
 		struct rplist *w_player;
+
 		strncpy(search, name, pname - name);
 		search[pname - name] = '\0';
 		snum = atoi(pname + 1);

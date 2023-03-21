@@ -3084,12 +3084,14 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		/* Doors into the rooms */
 		if (rand_int(100) < 50) {
 			int i = randint(10);
+
 			place_secret_door(wpos, y1 - 1, xval - i);
 			place_secret_door(wpos, y1 - 1, xval + i);
 			place_secret_door(wpos, y2 + 1, xval - i);
 			place_secret_door(wpos, y2 + 1, xval + i);
 		} else {
 			int i = randint(3);
+
 			place_secret_door(wpos, yval + i, x1 - 1);
 			place_secret_door(wpos, yval - i, x1 - 1);
 			place_secret_door(wpos, yval + i, x2 + 1);
@@ -8665,6 +8667,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		/* final floor is premade? */
 		if (ABS(wpos->wz) == d_ptr->maxdepth && q_qstage->dun_final_tpref) {
 			int xs = q_qstage->dun_final_tpref_x, ys = q_qstage->dun_final_tpref_y;
+
 			process_dungeon_file(q_qstage->dun_final_tpref, wpos, &ys, &xs, MAX_HGT, MAX_WID, TRUE);
 			return;
 		}
@@ -8859,6 +8862,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		}
 #endif
 		bool lit = rand_int(3) == 0;
+
 		/* prepare level: max size and permanent walls */
 		dun->l_ptr->wid = MAX_WID;
 		dun->l_ptr->hgt = MAX_HGT;
@@ -9237,6 +9241,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			for (i = 0; i < dun->cent_n; i++) {
 				int pick1 = rand_int(dun->cent_n);
 				int pick2 = rand_int(dun->cent_n);
+
 				y1 = dun->cent[pick1].y;
 				x1 = dun->cent[pick1].x;
 				dun->cent[pick1].y = dun->cent[pick2].y;
@@ -10337,6 +10342,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx) {
 		else {
 			int doory = 0, doorx = 0, dy, dx;
 			struct c_special *cs_ptr;
+
 			if (magik(75)) doorx = rand_int((x2 - x1 - 1) / 2);
 			else doory = rand_int((y2 - y1 - 1) / 2);
 
@@ -11296,6 +11302,7 @@ void dealloc_dungeon_level(struct worldpos *wpos) {
 	if (wpos->wz) {
 		struct dun_level *dlp;
 		struct dungeon_type *d_ptr;
+
 		d_ptr = (wpos->wz > 0 ? w_ptr->tower : w_ptr->dungeon);
 		dlp = &d_ptr->level[ABS(wpos->wz) - 1];
 		dlp->cave = NULL;
@@ -11330,6 +11337,7 @@ static void del_dungeon(struct worldpos *wpos, bool tower, bool force) {
 			    dungeon_y[i] == wpos->wy &&
 			    dungeon_tower[i] == tower) {
 				struct dungeon_type *d2_ptr, *d3_ptr;
+
 				s_printf("removing dungeon of index %d, new amount of dungeons is %d.\n", i, dungeon_id_max - 1);
 				for (; i < dungeon_id_max; i++) {
 					d2_ptr = (dungeon_tower[i] ?
@@ -11352,6 +11360,7 @@ static void del_dungeon(struct worldpos *wpos, bool tower, bool force) {
 		}
  #else
 		struct dungeon_type *d2_ptr;
+
 		s_printf("removing dungeon of index %d, new amount of dungeons is %d.\n", d_ptr->id, dungeon_id_max - 1);
 		for (i = d_ptr->id + 1; i <= dungeon_id_max; i++) {
 			d2_ptr = (dungeon_tower[i] ?

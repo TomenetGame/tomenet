@@ -70,14 +70,12 @@ s16b tokenize(char *buf, s16b num, char **tokens)
 		char *t;
 
 		/* Scan the string */
-		for (t = s; *t; t++)
-		{
+		for (t = s; *t; t++) {
 			/* Found a delimiter */
 			if ((*t == ':') || (*t == '/')) break;
 
 			/* Handle single quotes */
-			if (*t == '\'')
-			{
+			if (*t == '\'') {
 				/* Advance */
 				t++;
 
@@ -131,14 +129,12 @@ s16b tokenize(char *buf, s16b num, char **tokens, char delim1, char delim2)
 		char *t;
 
 		/* Scan the string */
-		for (t = s; *t; t++)
-		{
+		for (t = s; *t; t++) {
 			/* Found a delimiter */
 			if ((*t == delim1) || (*t == delim2)) break;
 
 			/* Handle single quotes */
-			if (*t == '\'')
-			{
+			if (*t == '\'') {
 				/* Advance */
 				t++;
 
@@ -338,8 +334,7 @@ errr check_load(void)
 	if (!check_load_value) return(0);
 
 	/* Check the load */
-	if (0 == rstat("localhost", &st))
-	{
+	if (0 == rstat("localhost", &st)) {
 		long val1 = (long)(st.avenrun[2]);
 		long val2 = (long)(check_load_value) * FSCALE;
 
@@ -357,17 +352,14 @@ errr check_load(void)
 /*
  * Initialize CHECK_LOAD
  */
-errr check_load_init(void)
-{
-
+errr check_load_init(void) {
 #ifdef CHECK_LOAD
+	FILE *fp;
 
-	FILE        *fp;
+	char buf[1024];
 
-	char    buf[1024];
-
-	char    temphost[MAXHOSTNAMELEN+1];
-	char    thishost[MAXHOSTNAMELEN+1];
+	char temphost[MAXHOSTNAMELEN+1];
+	char thishost[MAXHOSTNAMELEN+1];
 
 
 	/* Build the filename */
@@ -386,8 +378,7 @@ errr check_load_init(void)
 	(void)gethostname(thishost, (sizeof thishost) - 1);
 
 	/* Parse it */
-	while (0 == my_fgets(fp, buf, 1024, FALSE))
-	{
+	while (0 == my_fgets(fp, buf, 1024, FALSE)) {
 		int value;
 
 		/* Skip comments and blank lines */
@@ -701,8 +692,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 
 			/* Notice "menu" requests */
 			if ((buf[6] == b1) && isdigit(buf[7]) &&
-			    (buf[8] == b2) && (buf[9] == ' '))
-			{
+			    (buf[8] == b2) && (buf[9] == ' ')) {
 				/* This is a menu file */
 				//menu = TRUE;
 
@@ -1830,12 +1820,12 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 static void display_scores_aux(int Ind, int line, int note, int erased_slot, high_score *score)
 #endif
 {
-	int             i, j, from, to, place;//, attr
+	int i, j, from, to, place;//, attr
 	char attrc[3];
 
-	high_score      the_score;
+	high_score the_score;
 
-	char    out_val[256];
+	char out_val[256];
 
 	FILE *fff;
 	char file_name[MAX_PATH_LENGTH];
@@ -1890,10 +1880,8 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 		char modestr[20], modecol[5];
 		cptr gold, when, aged;
 
-
 		/* Hack -- indicate death in yellow */
 		//attr = (j == note) ? TERM_YELLOW : TERM_WHITE;
-
 
 		/* Mega-Hack -- insert a "fake" record */
 		if ((note == j) && score) {
@@ -3469,6 +3457,7 @@ bool highscore_file_convert(int Ind) {
 #else /* new conversion: inserting RACE_KOBOLD */
 	for (i = 0; i < entries; i++) {
 		int r;
+
 		strcpy(newscore[i].what, oldscore[i].what);
 		strcpy(newscore[i].pts, oldscore[i].pts);
 		strcpy(newscore[i].gold, oldscore[i].gold);

@@ -1168,6 +1168,7 @@ static void Contact(int fd, int arg) {
 
 	if (getpeername(fd, (struct sockaddr *) &sin, &len) >= 0) {
 		u32b addr = ntohl(sin.sin_addr.s_addr);
+
 		strnfmt(host_addr, sizeof(host_addr), "%d.%d.%d.%d", (byte)(addr >> 24),
 			(byte)(addr >> 16), (byte)(addr >> 8), (byte)addr);
 	}
@@ -1906,6 +1907,7 @@ static int Handle_setup(int ind) {
 		int mc = Setup.max_class;
 #ifdef ENABLE_DEATHKNIGHT
 		int ch;
+
 		/* The DK class should never be listed in the class list, since it shares a slot with Paladin:
 		   Make sure that old clients don't actually display the Death Knight class at the end of the list.
 		   Note: This will require old clients to update to play it, since they lack the setup info for DK class. */
@@ -2274,6 +2276,7 @@ static void sync_options(int Ind, bool *options) {
 			p_ptr->last_words = options[66];
 		} else {
 			bool vlf = p_ptr->view_lite_extra;
+
 			p_ptr->last_words = TRUE;
 			p_ptr->taciturn_messages = options[66];
 			p_ptr->view_lite_extra = options[65];
@@ -2341,6 +2344,7 @@ static void sync_options(int Ind, bool *options) {
 #ifdef USE_SOUND_2010
 			bool sfx_house_quiet = p_ptr->sfx_house_quiet, sfx_house = p_ptr->sfx_house;
 #endif
+
 			p_ptr->sfx_combat = !options[47];
 			p_ptr->sfx_magicattack = !options[48];
 			p_ptr->sfx_defense = !options[49];
@@ -3438,6 +3442,7 @@ static int Handle_login(int ind) {
 	for (i = 0; i < MAX_GLOBAL_EVENTS; i++)
 		if ((global_event[i].getype != GE_NONE) && (global_event[i].hidden == FALSE || is_admin(p_ptr))) {
 			int time_left = global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps);
+
 			/* Event is not in announcement phase anymore? */
 			if (time_left <= 0) continue;
 			/* Final announcement has not yet been made? */
@@ -3828,6 +3833,7 @@ void process_pending_commands(int ind) {
 			if (result == 0) {
 				/* Move the remaining data to the queue buffer - mikaelh */
 				int len = connp->r.len - (connp->r.ptr - connp->r.buf);
+
 				if (Sockbuf_write(&connp->q, connp->r.ptr, len) != len) {
 					errno = 0;
 					Destroy_connection(ind, "Can't copy data to queue");
@@ -3875,6 +3881,7 @@ void process_pending_commands(int ind) {
 		/* Queue all remaining packets now */
 		if (result == 3) {
 			int len = connp->r.len - (connp->r.ptr - connp->r.buf);
+
 			if (Sockbuf_write(&connp->q, connp->r.ptr, len) != len) {
 				errno = 0;
 				Destroy_connection(ind, "Can't copy data to queue");
@@ -5181,6 +5188,7 @@ static int Receive_play(int ind) {
 		/* Read screen dimensions */
 		if (is_newer_than(&connp->version, 4, 4, 9, 1, 0, 1)) {
 			int screen_wid_32b, screen_hgt_32b;
+
 			n = Packet_scanf(&connp->r, "%d%d", &screen_wid_32b, &screen_hgt_32b);
 			if (n <= 0) {
 				Destroy_connection(ind, "Misread dimensions");
@@ -5424,6 +5432,7 @@ static int Receive_file(int ind) {
 					/* Use MD5 checksums starting from protocol version 4.6.1.2 */
 					if (is_newer_than(&connp->version, 4, 6, 1, 1, 0, 1)) {
 						unsigned digest_net[4];
+
 						x = local_file_check_new(fname, digest);
 						md5_digest_to_bigendian_uint(digest_net, digest);
 						Packet_printf(&connp->w, "%c%c%hd%u%u%u%u", PKT_FILE, PKT_FILE_SUM, fnum, digest_net[0], digest_net[1], digest_net[2], digest_net[3]);
@@ -5437,6 +5446,7 @@ static int Receive_file(int ind) {
 			case PKT_FILE_SUM:
 				if (is_newer_than(&connp->version, 4, 6, 1, 1, 0, 1)) {
 					unsigned digest_net[4];
+
 					if ((n = Packet_scanf(&connp->r, "%u%u%u%u", &digest_net[0], &digest_net[1], &digest_net[2], &digest_net[3])) <= 0) {
 						/* Rollback the socket buffer */
 						Sockbuf_rollback(&connp->r, bytes_read);
@@ -6470,6 +6480,7 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 	 * in general, of course..	- Jir - */
 	if (ville) {
 		int i;
+
 		for (i = 0; i < numtowns; i++) {
 			if (town[i].x == wpos->wx && town[i].y == wpos->wy) {
 				desc = town_profile[town[i].type].name;
@@ -7040,6 +7051,7 @@ int Send_technique_info(int Ind) {
 	/* backward compatibility before addition of 'detect_noise()' and 'apply_poison()' for rogues */
 	if (is_older_than(&p_ptr->version, 4, 6, 1, 2, 0, 1)) {
 		u32b tech_compat = (p_ptr->melee_techniques & 0x0F) | ((p_ptr->melee_techniques & 0xFF00) >> 1);
+
 		return Packet_printf(&connp->c, "%c%d%d", PKT_TECHNIQUE_INFO, tech_compat, p_ptr->ranged_techniques);
 	}
 
@@ -10383,6 +10395,7 @@ static int Receive_look(int ind) {
 
 	if (is_older_than(&p_ptr->version, 4, 4, 9, 4, 0, 0)) {
 		char old_dir;
+
 		if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &old_dir)) <= 0) {
 			if (n == -1) Destroy_connection(ind, "read error");
 			return(n);
@@ -12777,6 +12790,7 @@ static int Receive_screen_dimensions(int ind) {
 
 	if (player) {
 		int screen_wid_32b, screen_hgt_32b;
+
 		n = Packet_scanf(&connp->r, "%d%d", &screen_wid_32b, &screen_hgt_32b);
 		if (n <= 0) {
 			Destroy_connection(ind, "read error");
