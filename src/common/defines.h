@@ -5383,7 +5383,7 @@
 #define TR5_FORCE_DEPTH			0x00001000L	/* Can only occur on depth >= its k_info level */
 #define TR5_WHITE_LIGHT			0x00002000L	/* Light source colour is white instead of flame-yellow (for CAVE_LITE_COLOURS) */
 #define TR5_IGNORE_DISEN		0x00004000L	/* For 'Arcane' ego power for Heavy winners-only armour */
-#define TR5_RES_TELE			0x00008000L     /* For Sky Dragon Scale Mail */
+#define TR5_RES_TELE			0x00008000L     /* Formerly for Sky Dragon Scale Mail -- now only used by Space-Time anchor. */
  #define TR5_DECAY		0x00010000L		/* Decay -- unused -- */
 #define TR5_IGNORE_MANA		0x00020000L		/* Item ignores Mana Damage */
 #define TR5_IGNORE_WATER	0x00040000L		/* Item ignores Water damage */

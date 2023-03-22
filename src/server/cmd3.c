@@ -2329,7 +2329,7 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 	if (f2 & (TR2_RES_BLIND)) strcat(powins, "Bl");
 	if (f2 & (TR2_RES_CONF)) strcat(powins, "Cf");
 	/* -- lesser/special resistance flags -- */
-	if (f5 & TR5_RES_TELE) strcat(powins, "RT"); /* Doesn't spawn anywhere atm. Was considered for Sky DSM in the past. */
+	if (f5 & TR5_RES_TELE) strcat(powins, "RT"); /* Doesn't spawn anywhere atm. except for Space-Time anchor. Was considered for Sky DSM in the past. */
 	if (f2 & (TR2_FREE_ACT)) strcat(powins, "FA");
 	if (f2 & (TR2_HOLD_LIFE)) strcat(powins, "HL");
 	if (f2 & (TR2_RES_FEAR)) strcat(powins, "Fe");
