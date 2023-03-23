@@ -2187,7 +2187,9 @@ void handle_music(int Ind) {
 		case 25: Send_music(Ind, 38, 11, 11); return; //The Sacred Land of Mountains
 		case 26: Send_music(Ind, 24, 11, 11); return; //The Land of Rhun
 		case 27: Send_music(Ind, 25, 11, 11); return; //The Sandworm Lair
-		case 28: Send_music(Ind, 33, 11, 11); return; //Death Fate
+		case 28: if (l_ptr && (l_ptr->flags2 & LF2_NO_RUN)) Send_music(Ind, 33, 11, 11);
+			else Send_music(Ind, 14, 33, 11);
+			return; //Death Fate
 		case 29: Send_music(Ind, 23, 11, 11); return; //The Helcaraxe
 		case 30: Send_music(Ind, 15, 12, 11); return; //The Training Tower
 		//31 is handled above by in_valinor() check
