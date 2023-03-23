@@ -6805,7 +6805,9 @@ byte get_attr_from_tval(object_type *o_ptr) {
 #endif
 
 #ifdef ENABLE_DEMOLITIONIST
+	
 	if (o_ptr->tval == TV_CHEMICAL && o_ptr->sval == SV_MIXTURE)
+	
 		return TERM_L_UMBER;
 #endif
 
@@ -6836,27 +6838,27 @@ byte get_attr_from_tval(object_type *o_ptr) {
    There is also an unsafe LUA version of this in s_aux.lua. */
 byte get_spellbook_name_colour(int pval) {
 	/* green for priests */
-	if (spell_school[pval] >= SCHOOL_HOFFENSE && spell_school[pval] <= SCHOOL_HSUPPORT) return TERM_GREEN;
+	if (spell_school[pval] >= SCHOOL_HOFFENSE && spell_school[pval] <= SCHOOL_HSUPPORT) return(TERM_GREEN);
 	/* light green for druids */
-	if (spell_school[pval] == SCHOOL_DRUID_ARCANE || spell_school[pval] == SCHOOL_DRUID_PHYSICAL) return TERM_L_GREEN;
+	if (spell_school[pval] == SCHOOL_DRUID_ARCANE || spell_school[pval] == SCHOOL_DRUID_PHYSICAL) return(TERM_L_GREEN);
 	/* orange for astral tome */
-	if (spell_school[pval] == SCHOOL_ASTRAL) return TERM_ORANGE;
+	if (spell_school[pval] == SCHOOL_ASTRAL) return(TERM_ORANGE);
 	/* yellow for mindcrafters */
-	if (spell_school[pval] >= SCHOOL_PPOWER && spell_school[pval] <= SCHOOL_MINTRUSION) return TERM_YELLOW;
+	if (spell_school[pval] >= SCHOOL_PPOWER && spell_school[pval] <= SCHOOL_MINTRUSION) return(TERM_YELLOW);
 #ifdef ENABLE_OCCULT
 	/* blue for Occult */
  #ifdef ENABLE_OUNLIFE
-	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OUNLIFE) return TERM_BLUE;
+	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OUNLIFE) return(TERM_BLUE);
  #else
   #ifdef ENABLE_OHERETICISM
-	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OHERETICISM) return TERM_BLUE;
+	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OHERETICISM) return(TERM_BLUE);
   #else
-	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OSPIRIT) return TERM_BLUE;
+	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OSPIRIT) return(TERM_BLUE);
   #endif
  #endif
 #endif
 	/* light blue for the rest (istari schools) */
-	return TERM_L_BLUE;
+	return(TERM_L_BLUE);
 }
 
 /* Search inventory for items inscribed !X to use them to identify a newly picked up object. */
