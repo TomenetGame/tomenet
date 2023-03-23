@@ -229,7 +229,7 @@ int new_auction()
 	GROW(auctions, auction_alloc, auction_alloc + 16, auction_type);
 	i = auction_alloc;
 	auction_alloc += 16;
-	return(i;
+	return(i);
 }
 
 int count_auctions_player(s32b player)
@@ -1024,7 +1024,7 @@ int auction_cancel(int Ind, int auction_id)
 	if (auction_id <= 0 || auction_id >= auction_alloc)
 	{
 		/* Invalid id */
-		return(AUCTION_ERROR_INVALID_ID;
+		return(AUCTION_ERROR_INVALID_ID);
 	}
 
 	auc_ptr = &auctions[auction_id];
