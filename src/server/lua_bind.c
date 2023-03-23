@@ -195,7 +195,7 @@ bool lua_summon_monster(int y, int x, int lev, bool friend, char *fct) {
 //	if (ok) sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 
-	return ok;
+	return(ok);
 }
 
 /*
@@ -318,7 +318,7 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus) {
  #endif
 #endif
 
-	return lvl;
+	return(lvl);
 }
 
 /* adj_mag_stat? stat_ind??  pfft */
@@ -512,7 +512,7 @@ int lua_get_new_bounty_monster(int lev) {
 	/* Undo the filters */
 	get_mon_num_hook = dungeon_aux;
 
-	return r_idx;
+	return(r_idx);
 }
 
 #endif
@@ -621,7 +621,7 @@ int lua_count_houses_id(s32b id) {
 					s_printf("HOUSES_EXCEEDED: non-(ex)winner %s owns castle(s).\n", lookup_player_name(id));
 			}
 		}
-	return ho;
+	return(ho);
 }
 
 /* keep whole function in sync with birth.c! */
@@ -808,12 +808,12 @@ char *lua_get_mon_name(int r_idx) {
 
 /* Return the last chat line */
 inline char *lua_get_last_chat_line() {
-	return last_chat_line;
+	return(last_chat_line);
 }
 
 /* Return the last person who said the last chat line */
 char *lua_get_last_chat_owner() {
-	return last_chat_owner;
+	return(last_chat_owner);
 }
 
 /* Reset all towns */
@@ -847,7 +847,7 @@ long lua_player_exp(int level, int expfact) {
 	adv = (s64b)player_exp[level - 2];
 #endif
 
-	return adv;
+	return(adv);
 }
 
 /* Fix all spellbooks not in players inventories, but in houses or on the floor.
@@ -1113,14 +1113,14 @@ s32b lua_get_skill_mod(int Ind, int i) {
 	s32b value = 0, mod = 0;
 	player_type *p_ptr = Players[Ind];
 	compute_skills(p_ptr, &value, &mod, i);
-	return mod;
+	return(mod);
 }
 
 s32b lua_get_skill_value(int Ind, int i) {
 	s32b value = 0, mod = 0;
 	player_type *p_ptr = Players[Ind];
 	compute_skills(p_ptr, &value, &mod, i);
-	return value;
+	return(value);
 }
 
 /* fix dual-wield slot position change */
@@ -1322,9 +1322,12 @@ void swear_add(char *word, int level) {
 	}
 	s_printf("FAILED to add swear word '%s' (%d).\n", word, level);
 }
-char *swear_get_word(int i) { return swear[i].word; }
-int swear_get_level(int i) { return swear[i].level; }
-
+char *swear_get_word(int i) {
+	return(swear[i].word);
+}
+int swear_get_level(int i) {
+	return(swear[i].level);
+}
 void nonswear_add(char *word, int affix) {
 	int i;
 
@@ -1336,8 +1339,12 @@ void nonswear_add(char *word, int affix) {
 	}
 	s_printf("FAILED to add non-swear word '%s'.\n", word);
 }
-char *nonswear_get(int i) { return nonswear[i]; }
-int nonswear_affix_get(int i) { return nonswear_affix[i]; }
+char *nonswear_get(int i) {
+	return(nonswear[i]);
+}
+int nonswear_affix_get(int i) {
+	return(nonswear_affix[i]);
+}
 void lua_swear_list(int Ind, int level) {
 	int i, c = 0;
 

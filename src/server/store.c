@@ -404,11 +404,11 @@ static int player_store_factor(object_type *o_ptr, bool modified) {
 	if ((o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED) ||
 	    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION) ||
 	    (o_ptr->name1 == ART_RANDART)) {
-		if (modified) return PSTORE_MIN_FACTOR_SPECIAL;
-		else return PSTORE_FACTOR_SPECIAL;
+		if (modified) return(PSTORE_MIN_FACTOR_SPECIAL);
+		else return(PSTORE_FACTOR_SPECIAL);
 	}
-	if (modified) return PSTORE_MIN_FACTOR;
-	else return PSTORE_FACTOR;
+	if (modified) return(PSTORE_MIN_FACTOR);
+	else return(PSTORE_FACTOR);
 }
 
 /* shop_type:
@@ -1258,20 +1258,20 @@ static int get_spellbook_store_order(int pval) {
 	/* priests */
 	if (spell_school[pval] >= SCHOOL_HOFFENSE && spell_school[pval] <= SCHOOL_HSUPPORT) return(2);
 	/* druids */
-	if (spell_school[pval] == SCHOOL_DRUID_ARCANE || spell_school[pval] == SCHOOL_DRUID_PHYSICAL) return 3;
+	if (spell_school[pval] == SCHOOL_DRUID_ARCANE || spell_school[pval] == SCHOOL_DRUID_PHYSICAL) return(3);
 	/* astral tome */
-	if (spell_school[pval] == SCHOOL_ASTRAL) return 5;
+	if (spell_school[pval] == SCHOOL_ASTRAL) return(5);
 	/* mindcrafters */
-	if (spell_school[pval] >= SCHOOL_PPOWER && spell_school[pval] <= SCHOOL_MINTRUSION) return 4;
+	if (spell_school[pval] >= SCHOOL_PPOWER && spell_school[pval] <= SCHOOL_MINTRUSION) return(4);
 #ifdef ENABLE_OCCULT
 	/* Occult */
  #ifdef ENABLE_OUNLIFE
-	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OUNLIFE) return 6;
+	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OUNLIFE) return(6);
  #else
   #ifdef ENABLE_OHERETICISM
-	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OHERETICISM) return 6;
+	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OHERETICISM) return(6);
   #else
-	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OSPIRIT) return 6;
+	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OSPIRIT) return(6);
   #endif
  #endif
 #endif
@@ -1791,7 +1791,7 @@ static int kind_is_storeok(int k_idx, u32b resf) {
 	if (k_ptr->level < (store_level / 2)) p = 0;
 
 	/* Return the PERMILLE */
-	return p;
+	return(p);
 }
 
 /*
@@ -7332,7 +7332,7 @@ static s64b player_store_inscribed(object_type *o_ptr, u32b price, bool appraise
 		if (!(p = strstr(quark_str(o_ptr->note), "@S"))) return(-1);
 	} else {
 		/* does it carry an inscription? */
-		if (!o_ptr->note) return price;
+		if (!o_ptr->note) return(price);
 
 		/* is it just a 'museum' item, ie not for sale? */
 		if ((p = strstr(quark_str(o_ptr->note), "@S-"))) return(0);
@@ -7364,7 +7364,7 @@ static s64b player_store_inscribed(object_type *o_ptr, u32b price, bool appraise
 	strncpy(buf, p, 9);
 	buf[9] = '\0';
 	/* if no number follows, we'll assume no price change */
-	if (buf[0] < '0' || buf[0] > '9') return price;
+	if (buf[0] < '0' || buf[0] > '9') return(price);
 
 	/* price limit is 2*10^9 */
 	final_price = atol(buf);
@@ -7379,7 +7379,7 @@ static s64b player_store_inscribed(object_type *o_ptr, u32b price, bool appraise
 			if (price <= PY_MAX_GOLD / 1000) final_price = (price * final_price) / 100;
 			else final_price = (price / 100) * final_price;
 		}
-		return final_price;
+		return(final_price);
 	}
 
 	/* a dot or space terminates the @S sequence */
@@ -7400,7 +7400,7 @@ static s64b player_store_inscribed(object_type *o_ptr, u32b price, bool appraise
 
 	if (final_price > PY_MAX_GOLD) final_price = PY_MAX_GOLD; //absolute maximum price
 	/* cannot be negative (paranoia, '-' cought above) */
-	if (final_price <= 0) return price;
+	if (final_price <= 0) return(price);
 
 	/* do we want to set or to increase the base price? */
 	if (increase) {
@@ -7411,7 +7411,7 @@ static s64b player_store_inscribed(object_type *o_ptr, u32b price, bool appraise
 		final_price = price;
 
 	/* everything ok: valid price between 1 and 2,000,000,000 */
-	return final_price;
+	return(final_price);
 }
 
 /* Player enters a player-run store - C. Blue */
@@ -7691,7 +7691,7 @@ u32b ps_get_cheque_value(object_type *o_ptr) {
 	value |= o_ptr->xtra2 << 8;
 	value |= o_ptr->xtra3 << 16;
 	value |= o_ptr->xtra4 << 24;
-	return value;
+	return(value);
 }
 
 /* Set 4-Byte cheque value from 4 Bytes xtra1..xtra4 - C. Blue */

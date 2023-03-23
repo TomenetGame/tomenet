@@ -632,23 +632,23 @@ static byte default_tval_to_attr(int tval) {
 		return(TERM_L_UMBER);
 
 	case TV_TRAPKIT:
-		return TERM_SLATE;
+		return(TERM_SLATE);
 	case TV_RUNE:
-		return TERM_L_RED;
+		return(TERM_L_RED);
 
 #ifdef ENABLE_DEMOLITIONIST
 	case TV_CHARGE:
-		return TERM_ORANGE;
+		return(TERM_ORANGE);
 	case TV_CHEMICAL:
-		//return TERM_UMBER; //too close to ranged weapons maybe
-		return TERM_YELLOW;
+		//return(TERM_UMBER); //too close to ranged weapons maybe
+		return(TERM_YELLOW);
 #endif
 #ifdef ENABLE_SUBINVEN
 	case TV_SUBINVEN:
  #ifdef SUBINVEN_UNIFIED_COLOUR
-		return TERM_SLATE; /* Use same as chests */
+		return(TERM_SLATE); /* Use same as chests */
  #else
-		return TERM_WHITE; /* Really depends on subtype later */
+		return(TERM_WHITE); /* Really depends on subtype later */
  #endif
 #endif
 	}
@@ -3253,249 +3253,249 @@ cptr item_activation(object_type *o_ptr) {
 	/* Some artifacts can be activated */
 	switch (o_ptr->name1) {
 	case ART_EOL:
-		return "a mana bolt (9..29d8) 2..7+d3 turns";
+		return("a mana bolt (9..29d8) 2..7+d3 turns");
 	case ART_SKULLCLEAVER:
-		return "destruction every 100..200+d200 turns";
+		return("destruction every 100..200+d200 turns");
 	case ART_HARADRIM:
-		return "berserk strength every 15..50+d40 turns";
+		return("berserk strength every 15..50+d40 turns");
 	case ART_FUNDIN:
-		return "dispelling evil (lev x8 +0..400) every 20..100+d50 turns";
+		return("dispelling evil (lev x8 +0..400) every 20..100+d50 turns");
 	case ART_NAIN:
-		return "stone-to-mud every 4..7+d5 turns";
+		return("stone-to-mud every 4..7+d5 turns");
 	case ART_CELEBRIMBOR:
-		return "temporary ESP (dur 20+d20) every 25..50+d25 turns";
+		return("temporary ESP (dur 20+d20) every 25..50+d25 turns");
 	case ART_UMBAR:
-		return "a magic arrow (10..30d10) every 5..20+d10 turns";
+		return("a magic arrow (10..30d10) every 5..20+d10 turns");
 	case ART_GILGALAD:
-		return "starlight (75..225) every 15..75+d50 turns";
+		return("starlight (75..225) every 15..75+d50 turns");
 	case ART_HIMRING:
-		return "protection from evil (dur 30+d15) every 75..225+d125 turns";
+		return("protection from evil (dur 30+d15) every 75..225+d125 turns");
 	case ART_NUMENOR:
-		return "analyzing monsters every 50..300+d200 turns";
+		return("analyzing monsters every 50..300+d200 turns");
 	case ART_NARTHANC:
-		return "a fire bolt (9..29d8) every 2..8+d8 turns";
+		return("a fire bolt (9..29d8) every 2..8+d8 turns");
 	case ART_NIMTHANC:
-		return "a frost bolt (6..26d8) every 2..7+d7 turns";
+		return("a frost bolt (6..26d8) every 2..7+d7 turns");
 	case ART_DETHANC:
-		return "a lightning bolt (4..24d8) every 2..6+d6 turns";
+		return("a lightning bolt (4..24d8) every 2..6+d6 turns");
 	case ART_RILIA:
-		return "a stinking cloud (4..11) every 2..4+d4 turns";
+		return("a stinking cloud (4..11) every 2..4+d4 turns");
 	case ART_BELANGIL:
-		return "a frost ball (48..108) every 2..5+d5 turns";
+		return("a frost ball (48..108) every 2..5+d5 turns");
 	case ART_DAL:
-		return "removing fear and curing poison every 5 turns";
+		return("removing fear and curing poison every 5 turns");
 	case ART_RINGIL:
-		return "a frost ball (100..400) every 75..300 turns";
+		return("a frost ball (100..400) every 75..300 turns");
 	case ART_ERU:
-		return "healing (1000), curing every 250..500 turns";
+		return("healing (1000), curing every 250..500 turns");
 	case ART_DAWN:
-		//return "summon the Legion of the Dawn every 500+d500 turns";
-		return "banishing undead (100..130) every 100..500+d100 turns";
+		//return("summon the Legion of the Dawn every 500+d500 turns");
+		return("banishing undead (100..130) every 100..500+d100 turns");
 	case ART_ANDURIL:
-		return "a fire ball (72..222) every 100..400 turns";
+		return("a fire ball (72..222) every 100..400 turns");
 	case ART_FIRESTAR:
-		return "a large fire ball (72..222) every 25..100 turns";
+		return("a large fire ball (72..222) every 25..100 turns");
 	case ART_FEANOR:
-		return "haste self (20+d20 turns) every 50..200 turns";
+		return("haste self (20+d20 turns) every 50..200 turns");
 	case ART_THEODEN:
-		return "draining life (25%) every 100..400 turns";
+		return("draining life (25%) every 100..400 turns");
 	case ART_TURMIL:
-		return "draining life (15%) every 20..70 turns";
+		return("draining life (15%) every 20..70 turns");
 	case ART_ARUNRUTH:
-		return "a frost bolt (12..27d8) every 100..500 turns";
+		return("a frost bolt (12..27d8) every 100..500 turns");
 	case ART_CASPANION:
-		return "door and trap destruction every 4..10 turns";
+		return("door and trap destruction every 4..10 turns");
 	case ART_AVAVIR:
-		return "word of recall every 100..200 turns";
+		return("word of recall every 100..200 turns");
 	case ART_TARATOL:
-		return "haste self (20+d20 turns) every 30..100+d50 turns";
+		return("haste self (20+d20 turns) every 30..100+d50 turns");
 	case ART_ERIRIL:
-		return "identifying every 2..10 turns";
+		return("identifying every 2..10 turns");
 	case ART_RUYIWANG:
 #if 0 /* ART_OLORIN */
-		//return "probing, detection and full id every 1000 turns";
-		return "probing and detection every 5..20 turns";
+		//return("probing, detection and full id every 1000 turns");
+		return("probing and detection every 5..20 turns");
 #else /* ART_RUYIWANG */
-		return "spinning around every 10..20+d5 turns";
+		return("spinning around every 10..20+d5 turns");
 #endif
 	case ART_EONWE:
-		return "obliteration every 500..1000 turns";
+		return("obliteration every 500..1000 turns");
 	case ART_LOTHARANG:
-		return "curing wounds (4d8..4d28) every 1..3+d3 turns";
+		return("curing wounds (4d8..4d28) every 1..3+d3 turns");
 	case ART_CUBRAGOL:
-		return "fire branding of bolts every 222..999 turns";
+		return("fire branding of bolts every 222..999 turns");
 	case ART_ANGUIREL:
-		return "a getaway every 15..35 turns";
+		return("a getaway every 15..35 turns");
 	case ART_AEGLOS:
-		return "a lightning ball (100..250) every 100..500 turns";
+		return("a lightning ball (100..250) every 100..500 turns");
 	case ART_OROME:
-		return "stone-to-mud every 2..5 turns";
+		return("stone-to-mud every 2..5 turns");
 	case ART_SOULKEEPER:
-		return "healing (1000) every 222..888 turns";
+		return("healing (1000) every 222..888 turns");
 	case ART_BELEGENNON:
 		//return("healing (777), curing and heroism every 300 turns");
 		return("teleport every 2..10 turns");
 	case ART_CELEBORN:
-		return "genocide every 100..500 turns";
+		return("genocide every 100..500 turns");
 	case ART_LUTHIEN:
-		return "restoring life levels every 100..450 turns";
+		return("restoring life levels every 100..450 turns");
 	case ART_ULMO:
-		return "teleporting away every 50..150 turns";
+		return("teleporting away every 50..150 turns");
 	case ART_COLLUIN:
-		return "resistance (20+d20 turns) every 55..111 turns";
+		return("resistance (20+d20 turns) every 55..111 turns");
 	case ART_HOLCOLLETH:
-		return "sleep every 15..55 turns";
+		return("sleep every 15..55 turns");
 	case ART_THINGOL:
-		return "recharging (60..100) an item every 20..70 turns";
+		return("recharging (60..100) an item every 20..70 turns");
 	case ART_COLANNON:
-		return "teleportation every 10..45 turns";
+		return("teleportation every 10..45 turns");
 	case ART_TOTILA:
-		return "confusing a monster (lev +10..60) every 10..50 turns";
+		return("confusing a monster (lev +10..60) every 10..50 turns");
 	case ART_CAMMITHRIM:
-		return "a magic missile (2..10d6) every 1..2 turns";
+		return("a magic missile (2..10d6) every 1..2 turns");
 	case ART_PAURHACH:
-		return "a fire bolt (9..29d8) every 2..8+d4 turns";
+		return("a fire bolt (9..29d8) every 2..8+d4 turns");
 	case ART_PAURNIMMEN:
-		return "a frost bolt (6..26d8) every 2..7+d3 turns";
+		return("a frost bolt (6..26d8) every 2..7+d3 turns");
 	case ART_PAURAEGEN:
-		return "a lightning bolt (4..24d8) every 2..6+d3 turns";
+		return("a lightning bolt (4..24d8) every 2..6+d3 turns");
 	case ART_PAURNEN:
-		return "an acid bolt (5..25d8) every 2..5+d2 turns";
+		return("an acid bolt (5..25d8) every 2..5+d2 turns");
 	case ART_FINGOLFIN:
-		return "a magical arrow (150) every 15..90+d30 turns";
+		return("a magical arrow (150) every 15..90+d30 turns");
 	case ART_HOLHENNETH:
-		return "detection every 15..55+d25 turns";
+		return("detection every 15..55+d25 turns");
 	case ART_GONDOR:
-		return "healing (500) every 100..500 turns";
+		return("healing (500) every 100..500 turns");
 	case ART_RAZORBACK:
-		return "lightning balls (8x150..600) every 300..1000 turns";
+		return("lightning balls (8x150..600) every 300..1000 turns");
 	case ART_BLADETURNER:
-		//return "invulnerability (4+d8) every 800 turns";
-		//return "Berserk rage, prayer and resistance every 200..400 turns";
-		return "Berserk rage and resistance every 200..400 turns";
+		//return("invulnerability (4+d8) every 800 turns");
+		//return("Berserk rage, prayer and resistance every 200..400 turns");
+		return("Berserk rage and resistance every 200..400 turns");
 	case ART_MEDIATOR:
-		//return "breathing elements (300..600), berserk, prayer, resistance every 100..400 turns";
-		return "breathing elements (300..600), berserk, resistance every 100..400 turns";
+		//return("breathing elements (300..600), berserk, prayer, resistance every 100..400 turns");
+		return("breathing elements (300..600), berserk, resistance every 100..400 turns");
 	case ART_KNOWLEDGE:
-		return "whispers from beyond 100..200+d100 turns";
+		return("whispers from beyond 100..200+d100 turns");
 	case ART_GALADRIEL:
-		return "illumination every 5..10+d10 turns";//damage details omitted
+		return("illumination every 5..10+d10 turns");//damage details omitted
 	case ART_UNDEATH:
-		return "darkness and ruination every 5..10+d10 turns";
+		return("darkness and ruination every 5..10+d10 turns");
 	case ART_ELENDIL:
-		return "magic mapping and light every 10..50+d25 turns";
+		return("magic mapping and light every 10..50+d25 turns");
 	case ART_THRAIN:
-		//return "detection every 30+d30 turns";
-		return "clairvoyance every 200..1000+d150 turns";
+		//return("detection every 30+d30 turns");
+		return("clairvoyance every 200..1000+d150 turns");
 	case ART_INGWE:
-		return "dispelling evil (lev x10 +0..500) every 50..300+d150 turns";
+		return("dispelling evil (lev x10 +0..500) every 50..300+d150 turns");
 	case ART_CARLAMMAS:
-		return "protection from evil every 25..225+d125 turns";
+		return("protection from evil every 25..225+d125 turns");
 	case ART_FLAR:
-		//return "dimension door every 100 turns";
-		return "creating a gateway every 500..1000 turns";
+		//return("dimension door every 100 turns");
+		return("creating a gateway every 500..1000 turns");
 	case ART_BARAHIR:
-		return "dispelling small life (100..400) every 15..55+d55 turns";
+		return("dispelling small life (100..400) every 15..55+d55 turns");
 	case ART_TULKAS:
-		return "haste self (75+d50 turns) every 50..150+d100 turns";
+		return("haste self (75+d50 turns) every 50..150+d100 turns");
 	case ART_NARYA:
-		return "a large fire ball (120..370) every 75..225+d75 turns";
+		return("a large fire ball (120..370) every 75..225+d75 turns");
 	case ART_NENYA:
-		return "a large frost ball (200..450) every 100..325+d125 turns";
+		return("a large frost ball (200..450) every 100..325+d125 turns");
 	case ART_VILYA:
-		return "a large lightning ball (250..500) every 100..425+d175 turns";
+		return("a large lightning ball (250..500) every 100..425+d175 turns");
 #if 0	// implement me!
 	case ART_NARYA:
-		return "healing (500) every 200+d100 turns";
+		return("healing (500) every 200+d100 turns");
 	case ART_NENYA:
-		return "healing (800) every 100+d200 turns";
+		return("healing (800) every 100+d200 turns");
 	case ART_VILYA:
-		return "greater healing (900) every 200+d200 turns";
+		return("greater healing (900) every 200+d200 turns");
 #endif
 	case ART_POWER:
-		//return "powerful things every 225..450+d450 turns";
-		return "powerful things every 450+d450 turns";
+		//return("powerful things every 225..450+d450 turns");
+		return("powerful things every 450+d450 turns");
 	case ART_STONE_LORE:
-		return "perilous identify every 4..10 turns (drains 20 mp)";
+		return("perilous identify every 4..10 turns (drains 20 mp)");
 	case ART_ANCHOR:
-		return "a Space-time barrier every 100..300+d20 turns";
+		return("a Space-time barrier every 100..300+d20 turns");
 	case ART_DOR: case ART_GORLIM:
-		return "rays of fear in every direction every 3x(lev+10) turns";
+		return("rays of fear in every direction every 3x(lev+10) turns");
 	case ART_GANDALF:
-		return "restoring mana every 222..666 turns";
+		return("restoring mana every 222..666 turns");
 	case ART_EVENSTAR:
-		return "restoration every 50..150 turns";
+		return("restoration every 50..150 turns");
 	case ART_ELESSAR:
-		return "healing and curing black breath every 100..200 turns";
+		return("healing and curing black breath every 100..200 turns");
 	case ART_MARDRA:
-		//return "summon a dragonrider every 1000 turns";
-		return "banishing dragons (100..130) every 500..1000 turns";
+		//return("summon a dragonrider every 1000 turns");
+		return("banishing dragons (100..130) every 500..1000 turns");
 	case ART_PALANTIR_ITHIL:
 	case ART_PALANTIR:
-		return "clairvoyance every 200..1000+d150 turns";
+		return("clairvoyance every 200..1000+d150 turns");
 #if 0
 	case ART_ROBINTON:
-		return music_info[3].desc;
+		return(music_info[3].desc;
 	case ART_PIEMUR:
-		return music_info[9].desc;
+		return(music_info[9].desc;
 	case ART_MENOLLY:
-		return music_info[10].desc;
+		return(music_info[10].desc;
 #endif	// 0
 	case ART_EREBOR:
-		return "opening a secret passage every 50..200 turns";
+		return("opening a secret passage every 50..200 turns");
 	case ART_DRUEDAIN:
-		return "detection every 49..99 turns";
+		return("detection every 49..99 turns");
 	case ART_ROHAN:
-		return "heroism, berserker rage, haste every 100..250+d50 turns";
+		return("heroism, berserker rage, haste every 100..250+d50 turns");
 	case ART_HELM:
-		return "a sound ball (300..600) every 300 turns";
+		return("a sound ball (300..600) every 300 turns");
 	case ART_BOROMIR:
-		return "mass human summoning every 500..1000 turns";
+		return("mass human summoning every 500..1000 turns");
 
 	case ART_HURIN:
-		return "berserker rage and +10 to speed (50) every 75..175+d75 turns";
+		return("berserker rage and +10 to speed (50) every 75..175+d75 turns");
 	case ART_AXE_GOTHMOG:
-		return "a fire ball (300..600) every 50..200+d200 turns";
+		return("a fire ball (300..600) every 50..200+d200 turns");
 	case ART_MELKOR:
-		return "a darkness storm (150..300) every 20..100 turns";
+		return("a darkness storm (150..300) every 20..100 turns");
 	case ART_GROND:
-		return "altering reality every 20000 turns";
+		return("altering reality every 20000 turns");
 	case ART_ORCHAST:
-		return "detecting orcs every 10 turns";
+		return("detecting orcs every 10 turns");
 	case ART_NIGHT:
-		return "draining life (3*7%) every 50..250 turns";
+		return("draining life (3*7%) every 50..250 turns");
 	case ART_NATUREBANE:
-		return "dispelling monsters (300) every 100..200+d200 turns";
+		return("dispelling monsters (300) every 100..200+d200 turns");
 	case ART_BILBO:
-		return "destroying locks and traps every 5..30+d10 turns";
+		return("destroying locks and traps every 5..30+d10 turns");
 	case ART_SOULGRIP:
-		return "holy prayer (+20 AC) every 50..150+d100 turns";
+		return("holy prayer (+20 AC) every 50..150+d100 turns");
 	case ART_GOGGLES_DM:
-		return "identifying possessions";
+		return("identifying possessions");
 	case ART_AMUGROM:
-		return "temporary resistance boost every 50..150+d50 turns";
+		return("temporary resistance boost every 50..150+d50 turns");
 	case ART_HELLFIRE:
-		return "invoking hellfire (400..600) every 30+d10 turns";
+		return("invoking hellfire (400..600) every 30+d10 turns");
 	case ART_SPIRITSHARD:
-		return "turning into a wraith every 50..100+d50 turns";
+		return("turning into a wraith every 50..100+d50 turns");
 	case ART_PHASING:
-		return "opening the final gate to the shores of Valinor every 1000 turns";
+		return("opening the final gate to the shores of Valinor every 1000 turns");
 	case ART_LEBOHAUM:
-		return "singing a cheerful song every 30 turns";
+		return("singing a cheerful song every 30 turns");
 	case ART_HAVOC:
-		return "invoking a force bolt (8..24d8) every 1+d2 turns";
+		return("invoking a force bolt (8..24d8) every 1+d2 turns");
 	case ART_SMASHER:
-		return "destroying doors every 10..15+d3 turns";
+		return("destroying doors every 10..15+d3 turns");
 	case ART_FIST:
-		return "hellfire brand every 150..350+d50 turns";
+		return("hellfire brand every 150..350+d50 turns");
 	case ART_WARPSPEAR:
-		return "teleport-to every 15..40+d5 turns";
+		return("teleport-to every 15..40+d5 turns");
 	case ART_SEVENLEAGUE:
-		return "teleportation every 5..15 turns";
+		return("teleportation every 5..15 turns");
 
 #if 0 /* no, eg randart serpent amulet should retain basic activation! */
 	/* For the moment ignore (non-ego) randarts */
-	case ART_RANDART: return "a crash ;-)";
+	case ART_RANDART: return("a crash ;-)");
 #endif
 	}
 
@@ -3503,26 +3503,26 @@ cptr item_activation(object_type *o_ptr) {
 
 	/* Some ego items can be activated */
 	if (is_ego_p(o_ptr, EGO_DRAGON))
-		return "teleportation every 25..50+d50 turns";
+		return("teleportation every 25..50+d50 turns");
 	if (is_ego_p(o_ptr, EGO_JUMP))
-		return "phase jump every 5..15+d10 turns";
+		return("phase jump every 5..15+d10 turns");
 	if (is_ego_p(o_ptr, EGO_SPINNING))
-		return "spinning around every 15..50+d25 turns";
+		return("spinning around every 15..50+d25 turns");
 	if (is_ego_p(o_ptr, EGO_FURY))
-		return "growing a fury every 50..100+d50 turns";
+		return("growing a fury every 50..100+d50 turns");
 	if (is_ego_p(o_ptr, EGO_NOLDOR))
-		return "detecting treasure every 5..20+d10 turns";
+		return("detecting treasure every 5..20+d10 turns");
 	if (is_ego_p(o_ptr, EGO_SPECTRAL))
-		return "wraithform every 25..50+d50 turns";
+		return("wraithform every 25..50+d50 turns");
 
 	if (is_ego_p(o_ptr, EGO_CLOAK_LORDLY_RES))
-		return "temporary resistance every 50..150+d20 turns";
+		return("temporary resistance every 50..150+d20 turns");
 	if (is_ego_p(o_ptr, EGO_AURA_FIRE2))
-		return "temporary fire resistance every 50..150+d20 turns";
+		return("temporary fire resistance every 50..150+d20 turns");
 	if (is_ego_p(o_ptr, EGO_AURA_ELEC2))
-		return "temporary lighting resistance every 50..150+d20 turns";
+		return("temporary lighting resistance every 50..150+d20 turns");
 	if (is_ego_p(o_ptr, EGO_AURA_COLD2))
-		return "temporary frost resistance every 50..150+d20 turns";
+		return("temporary frost resistance every 50..150+d20 turns");
 
 	//EGO_MUSIC_ELDAR, EGO_MUSIC_POWER
 
@@ -3533,81 +3533,81 @@ cptr item_activation(object_type *o_ptr) {
 		/* Branch on the sub-type */
 		switch (o_ptr->sval) {
 		case SV_DRAGON_BLUE:
-			return "breathing lightning (600..1200) every 200+d100 turns";
-			//return "polymorph into an Ancient Blue Dragon every 200+d100 turns";
+			return("breathing lightning (600..1200) every 200+d100 turns");
+			//return("polymorph into an Ancient Blue Dragon every 200+d100 turns");
 		case SV_DRAGON_WHITE:
-			return "breathing frost (600..1200) every 200+d100 turns";
-			//return "polymorph into an Ancient White Dragon every 200+d100 turns";
+			return("breathing frost (600..1200) every 200+d100 turns");
+			//return("polymorph into an Ancient White Dragon every 200+d100 turns");
 		case SV_DRAGON_BLACK:
-			return "breathing acid (600..1200) every 200+d100 turns";
-			//return "polymorph into an Ancient Black Dragon every 200+d100 turns";
+			return("breathing acid (600..1200) every 200+d100 turns");
+			//return("polymorph into an Ancient Black Dragon every 200+d100 turns");
 		case SV_DRAGON_GREEN:
-			return "breathing poison (600..1200) every 200+d100 turns";
-			//return "polymorph into an Ancient Green Dragon every 200+d100 turns";
+			return("breathing poison (600..1200) every 200+d100 turns");
+			//return("polymorph into an Ancient Green Dragon every 200+d100 turns");
 		case SV_DRAGON_RED:
-			return "breathing fire (600..1200) every 200+d100 turns";
-			//return "polymorph into an Ancient Red Dragon every 200+d100 turns";
+			return("breathing fire (600..1200) every 200+d100 turns");
+			//return("polymorph into an Ancient Red Dragon every 200+d100 turns");
 		case SV_DRAGON_MULTIHUED:
-			return "breathing the elements (600..1200) every 200+d100 turns";
-			//return "polymorph into an Ancient MultiHued Dragon every 200+d100 turns";
+			return("breathing the elements (600..1200) every 200+d100 turns");
+			//return("polymorph into an Ancient MultiHued Dragon every 200+d100 turns");
 		case SV_DRAGON_PSEUDO:
-			return "breathing light/dark (200..400) every 200+d100 turns";
-			//return "polymorph into an Ethereal Drake every 200+d100 turns";
-			//return "polymorph into a Pseudo Dragon every 200+d100 turns";
+			return("breathing light/dark (200..400) every 200+d100 turns");
+			//return("polymorph into an Ethereal Drake every 200+d100 turns");
+			//return("polymorph into a Pseudo Dragon every 200+d100 turns");
 		case SV_DRAGON_BRONZE:
-			return "breathing confusion (300..600) every 200+d100 turns";
-			//return "polymorph into an Ancient Bronze Dragon every 200+d100 turns";
+			return("breathing confusion (300..600) every 200+d100 turns");
+			//return("polymorph into an Ancient Bronze Dragon every 200+d100 turns");
 		case SV_DRAGON_GOLD:
-			return "breathing sound (400..800) every 200+d100 turns";
-			//return "polymorph into an Ancient Gold Dragon every 200+d100 turns";
+			return("breathing sound (400..800) every 200+d100 turns");
+			//return("polymorph into an Ancient Gold Dragon every 200+d100 turns");
 		case SV_DRAGON_CHAOS:
-			return "breathing chaos (600..1200) every 200+d100 turns";
-			//return "polymorph into a Great Wyrm of Chaos every 200+d100 turns";
+			return("breathing chaos (600..1200) every 200+d100 turns");
+			//return("polymorph into a Great Wyrm of Chaos every 200+d100 turns");
 		case SV_DRAGON_LAW:
-			return "breathing shards/sound (400..800) every 200+d100 turns";
-			//return "polymorph into a Great Wyrm of Law every 200+d100 turns";
+			return("breathing shards/sound (400..800) every 200+d100 turns");
+			//return("polymorph into a Great Wyrm of Law every 200+d100 turns");
 		case SV_DRAGON_BALANCE:
-			return "breathing disenchantment (500..1000) every 200+d100 turns";
-			//return "polymorph into a Great Wyrm of Balance every 200+d100 turns";
+			return("breathing disenchantment (500..1000) every 200+d100 turns");
+			//return("polymorph into a Great Wyrm of Balance every 200+d100 turns");
 		case SV_DRAGON_SHINING:
-			return "breathing light/dark (400..800) every 200+d100 turns";
-			//return "polymorph into an Ethereal Dragon every 200+d100 turns";
+			return("breathing light/dark (400..800) every 200+d100 turns");
+			//return("polymorph into an Ethereal Dragon every 200+d100 turns");
 		case SV_DRAGON_POWER:
-			return "breathing havoc (675..1675) every 200+d100 turns";
-			//return "polymorph into a Great Wyrm of Power every 200+d100 turns";
+			return("breathing havoc (675..1675) every 200+d100 turns");
+			//return("polymorph into a Great Wyrm of Power every 200+d100 turns");
 		case SV_DRAGON_DEATH:
-			return "breathing nether (550..1050) every 200+d100 turns";
-			//return "polymorph into a death drake every 200+d100 turns";
+			return("breathing nether (550..1050) every 200+d100 turns");
+			//return("polymorph into a death drake every 200+d100 turns");
 		case SV_DRAGON_CRYSTAL:
-			return "breathing shards (400..800) every 200+d100 turns";
-			//return "polymorph into a great crystal drake every 200+d100 turns";
+			return("breathing shards (400..800) every 200+d100 turns");
+			//return("polymorph into a great crystal drake every 200+d100 turns");
 		case SV_DRAGON_DRACOLICH:
-			return "breathing nether/cold (400..1200) every 200+d100 turns";
-			//return "polymorph into a dracolich every 200+d100 turns";
+			return("breathing nether/cold (400..1200) every 200+d100 turns");
+			//return("polymorph into a dracolich every 200+d100 turns");
 		case SV_DRAGON_DRACOLISK:
-			return "breathing fire/nexus (250..1200) every 200+d100 turns";
-			//return "polymorph into a dracolisk every 200+d100 turns";
+			return("breathing fire/nexus (250..1200) every 200+d100 turns");
+			//return("polymorph into a dracolisk every 200+d100 turns");
 		case SV_DRAGON_SKY:
-			return "breathing electricity/light/gravity (300..1200) every 200+d100 turns";
-			//return "polymorph into a sky drake every 200+d100 turns";
+			return("breathing electricity/light/gravity (300..1200) every 200+d100 turns");
+			//return("polymorph into a sky drake every 200+d100 turns");
 		case SV_DRAGON_SILVER:
-			return "breathing inertia/cold (250..1200) every 200+d100 turns";
-			//return "polymorph into an Ancient Gold Dragon every 200+d100 turns";
+			return("breathing inertia/cold (250..1200) every 200+d100 turns");
+			//return("polymorph into an Ancient Gold Dragon every 200+d100 turns");
 		}
 	}
 
 	if (o_ptr->tval == TV_RING) {
 		switch (o_ptr->sval) {
 		case SV_RING_ELEC:
-			return "a ball of lightning (50..200) and resist lightning every 25..50+d25 turns";
+			return("a ball of lightning (50..200) and resist lightning every 25..50+d25 turns");
 		case SV_RING_FLAMES:
-			return "a ball of fire (50..200) and resist fire every 25..50+d25 turns";
+			return("a ball of fire (50..200) and resist fire every 25..50+d25 turns");
 		case SV_RING_ICE:
-			return "a ball of cold (50..200) and resist cold every 25..50+d25 turns";
+			return("a ball of cold (50..200) and resist cold every 25..50+d25 turns");
 		case SV_RING_ACID:
-			return "a ball of acid (50..200) and resist acid every 25..50+d25 turns";
+			return("a ball of acid (50..200) and resist acid every 25..50+d25 turns");
 		case SV_RING_TELEPORTATION:
-			return "teleportation and destruction of the ring";
+			return("teleportation and destruction of the ring");
 		case SV_RING_POLYMORPH:
 			if (o_ptr->pval) {
 				char m_name[MNAME_LEN];
@@ -3619,9 +3619,9 @@ cptr item_activation(object_type *o_ptr) {
 					else strcpy(m_name, "a ");
 				}
 				strcat(m_name, r_info[o_ptr->pval].name + r_name);
-				return format("polymorphing into %s", m_name);
+				return(format("polymorphing into %s", m_name));
 			} else
-				return "memorizing the form you are mimicing";
+				return("memorizing the form you are mimicing");
 		}
 	}
 
@@ -3629,11 +3629,11 @@ cptr item_activation(object_type *o_ptr) {
 		switch (o_ptr->sval) {
 			/* The amulet of the moon can be activated for sleep */
 		case SV_AMULET_THE_MOON:
-			return "sleeping monsters (lev +20..100) every 100+d100 turns";
+			return("sleeping monsters (lev +20..100) every 100+d100 turns");
 		case SV_AMULET_SERPENT:
-			return "breathing venom (100..300) every 40+d60 turns";
+			return("breathing venom (100..300) every 40+d60 turns");
 		case SV_AMULET_RAGE:
-			return "growing a fury every 150+d100 turns";
+			return("growing a fury every 150+d100 turns");
 		}
 	}
 
@@ -3653,20 +3653,20 @@ cptr item_activation(object_type *o_ptr) {
 
 #if 0
 	if (o_ptr->tval == TV_PARCHMENT && o_ptr->sval == SV_PARCHMENT_DEATH)
-		return "Spiritual recall");
+		return("Spiritual recall");
 #endif
 
 	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval))
-		//return "transcribing a spell scroll or spell crystal into it";
-		return format("transcribing up to %d spell/prayer scrolls or spell crystals into it", o_ptr->bpval);
+		//return("transcribing a spell scroll or spell crystal into it");
+		return(format("transcribing up to %d spell/prayer scrolls or spell crystals into it", o_ptr->bpval));
 
-	if (o_ptr->tval == TV_RUNE) return "tracing a sigil onto equipment";
+	if (o_ptr->tval == TV_RUNE) return("tracing a sigil onto equipment");
 
 #ifdef ENABLE_DEMOLITIONIST
 	if (o_ptr->tval == TV_CHEMICAL) {
-		if (o_ptr->sval == SV_WOOD_CHIPS) return "heating up to get processed into charcoal";
-		else if (o_ptr->sval == SV_MIXTURE) return "combining with other chemicals or mixtures. Or with itself to form a product";
-		else return "combining with other chemical ingredients or mixtures";
+		if (o_ptr->sval == SV_WOOD_CHIPS) return("heating up to get processed into charcoal");
+		else if (o_ptr->sval == SV_MIXTURE) return("combining with other chemicals or mixtures. Or with itself to form a product");
+		else return("combining with other chemical ingredients or mixtures");
 	}
 	if (o_ptr->tval == TV_CHARGE) {
 		char *c;
@@ -3684,7 +3684,7 @@ cptr item_activation(object_type *o_ptr) {
 
 		return(format("ignition after %d seconds", fuse));
 	}
-	if (o_ptr->tval == TV_TOOL && o_ptr->sval == SV_TOOL_GRINDER) return "grinding things consisting of wood or metal to bits";
+	if (o_ptr->tval == TV_TOOL && o_ptr->sval == SV_TOOL_GRINDER) return("grinding things consisting of wood or metal to bits");
 #endif
 
 	/* Oops */
@@ -4770,9 +4770,9 @@ bool identify_fully_aux(int Ind, object_type *o_ptr, bool assume_aware, int slot
 	/* special hack (added for *id*ed items in player stores):
 	   we cannot fully inspect a flavoured item if we don't know the flavour yet */
 	if (!assume_aware && !object_aware_p(Ind, o_ptr))
-		return identify_combo_aux(Ind, o_ptr, FALSE, slot, Ind_target);
+		return(identify_combo_aux(Ind, o_ptr, FALSE, slot, Ind_target));
 
-	return identify_combo_aux(Ind, o_ptr, TRUE, slot, Ind_target);
+	return(identify_combo_aux(Ind, o_ptr, TRUE, slot, Ind_target));
 }
 #endif
 
@@ -6168,7 +6168,7 @@ s16b wield_slot(int Ind, object_type *o_ptr) {
 		/* Paranoia - check for valid equipment slot */
 		if (o_ptr->xtra4 < INVEN_WIELD || o_ptr->xtra4 > INVEN_TOOL) return(-1);
 		/* Equippable special object */
-		return o_ptr->xtra4;
+		return(o_ptr->xtra4);
 	}
 
 	/* No slot available */
@@ -6260,7 +6260,7 @@ cptr describe_use(int Ind, int i) {
 	}
 
 	/* Return the result */
-	return p;
+	return(p);
 }
 
 
@@ -6755,38 +6755,38 @@ bool can_use_verbose(int Ind, object_type *o_ptr) {
 
 byte get_book_name_color(object_type *o_ptr) {
 	if (o_ptr->sval == SV_SPELLBOOK) { /* Simple spell scrolls */
-		return get_spellbook_name_colour(o_ptr->pval);
+		return(get_spellbook_name_colour(o_ptr->pval));
 	} else if (is_custom_tome(o_ptr->sval)) { /* Custom books */
 		/* first annotated spell decides */
 		if (o_ptr->xtra1)
-			return get_spellbook_name_colour(o_ptr->xtra1 - 1);
+			return(get_spellbook_name_colour(o_ptr->xtra1 - 1));
 		else
-			return TERM_WHITE; /* unused custom book */
+			return(TERM_WHITE); /* unused custom book */
 	} else { /* School Tomes -- hard-coding partyyyeh ._. */
 		/* priests */
 		if ((o_ptr->sval >= 12 && o_ptr->sval <= 15) ||
 		    o_ptr->sval == 53 || o_ptr->sval == 56)
-			return TERM_GREEN;
+			return(TERM_GREEN);
 		/* druids */
-		else if (o_ptr->sval >= 16 && o_ptr->sval <= 17) return TERM_L_GREEN;
+		else if (o_ptr->sval >= 16 && o_ptr->sval <= 17) return(TERM_L_GREEN);
 		/* astral tome */
-		else if (o_ptr->sval == 18) return TERM_ORANGE;
+		else if (o_ptr->sval == 18) return(TERM_ORANGE);
 		/* mindcrafters */
-		else if (o_ptr->sval >= 19 && o_ptr->sval <= 21) return TERM_YELLOW;
+		else if (o_ptr->sval >= 19 && o_ptr->sval <= 21) return(TERM_YELLOW);
 #ifdef ENABLE_OCCULT
 		/* Occult */
  #ifdef ENABLE_OUNLIFE
-		else if (o_ptr->sval >= 22 && o_ptr->sval <= 25) return TERM_BLUE;
+		else if (o_ptr->sval >= 22 && o_ptr->sval <= 25) return(TERM_BLUE);
  #else
   #ifdef ENABLE_OHERETICISM
-		else if (o_ptr->sval >= 22 && o_ptr->sval <= 24) return TERM_BLUE;
+		else if (o_ptr->sval >= 22 && o_ptr->sval <= 24) return(TERM_BLUE);
   #else
-		else if (o_ptr->sval >= 22 && o_ptr->sval <= 23) return TERM_BLUE;
+		else if (o_ptr->sval >= 22 && o_ptr->sval <= 23) return(TERM_BLUE);
   #endif
  #endif
 #endif
 		/* mages (default) */
-		else return TERM_L_BLUE;
+		else return(TERM_L_BLUE);
 	}
 }
 
@@ -6808,26 +6808,26 @@ byte get_attr_from_tval(object_type *o_ptr) {
 	
 	if (o_ptr->tval == TV_CHEMICAL && o_ptr->sval == SV_MIXTURE)
 	
-		return TERM_L_UMBER;
+		return(TERM_L_UMBER);
 #endif
 
 #ifdef PLAYER_STORES
 	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE)
-		return TERM_L_UMBER;
+		return(TERM_L_UMBER);
 #endif
 
 	if ((o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT) ||
 	    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT)) {
 		if (!o_ptr->xtra1) o_ptr->xtra1 = (s16b)attr;
-		return(byte)o_ptr->xtra1;
+		return((byte)o_ptr->xtra1);
 	}
 
 	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST)
-		return(byte)o_ptr->xtra2;
+		return((byte)o_ptr->xtra2);
 
 #if 0
 	if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_WOOD_PIECE)
-		return TERM_UMBER;
+		return(TERM_UMBER);
 #endif
 
 	return(attr);

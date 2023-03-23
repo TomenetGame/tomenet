@@ -1745,7 +1745,7 @@ int world_check_antimagic(int Ind) {
 	}
 
 	/* Got disrupted ? */
-	if (magik(highest_antichance)) return anti_Ind;
+	if (magik(highest_antichance)) return(anti_Ind);
 
 	/* Assume no antimagic effect */
 	return(0);
@@ -1777,10 +1777,10 @@ static int near_hit(int m_idx, int *yp, int *xp, int rad) {
 
 	cave_type **zcave;
 
-	if (rad < 1) return 99;
+	if (rad < 1) return(99);
 
 	/* paranoia */
-	if (!(zcave = getcave(&m_ptr->wpos))) return 99;
+	if (!(zcave = getcave(&m_ptr->wpos))) return(99);
 
 	for (i = 1; i <= tdi[rad]; i++) {
 		if (i == tdi[d]) d++;
@@ -5893,7 +5893,7 @@ int mon_will_run(int Ind, int m_idx) {
 	}
  #else	// 0
 	if (!monster_can_cross_terrain(zcave[m_ptr->fy][m_ptr->fx].feat, r_ptr, FALSE, zcave[m_ptr->fy][m_ptr->fx].info))
-		return 999;
+		return(999);
  #endif	// 0
 
 #endif
@@ -6171,7 +6171,7 @@ static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 
 		/* Reset our list, for our next algorithm run */
 		ac->nodes = 0;
-		return ao->result;
+		return(ao->result);
 	}
 
 	/* Rememeber size of closed list, just so we won't immediately jump out again */

@@ -417,7 +417,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 	}
 
 	/* XXX	those potions that explode need to become "known" */
-	return angry;
+	return(angry);
 }
 
 
@@ -2767,7 +2767,7 @@ bool contains_significant_reactive_metal(object_type *o_ptr) {
 		return(FALSE);
 	}
 
-	return can_rust(o_ptr);
+	return(can_rust(o_ptr));
 }
 bool contains_significant_wood(object_type *o_ptr) {
 	switch (o_ptr->tval) {
@@ -8955,7 +8955,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	else {
 		bool fear = FALSE;
 
-		if (m_ptr->questor && (m_ptr->questor_invincible || (r_ptr->flags7 & RF7_NO_DEATH) || !(m_ptr->questor_hostile & 0x1))) return obvious;
+		if (m_ptr->questor && (m_ptr->questor_invincible || (r_ptr->flags7 & RF7_NO_DEATH) || !(m_ptr->questor_hostile & 0x1))) return(obvious);
 
 		if (p_ptr->admin_godly_strike) {
 			p_ptr->admin_godly_strike--;

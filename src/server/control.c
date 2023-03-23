@@ -85,7 +85,7 @@ static int Packet_getln(sockbuf_t *s, char *buf) {
 			/* Move the socket buffer pointer forward */
 			s->ptr = scan + 1;
 
-			return len;
+			return(len);
 		}
 	}
 
@@ -115,7 +115,7 @@ static int Packet_println(sockbuf_t *s, cptr fmt, ...) {
 
 	va_end(ap);
 
-	return rval;
+	return(rval);
 }
 
 /* GW connection handler */

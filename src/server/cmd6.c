@@ -475,7 +475,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 		break;
 	}
 
-	return ident;
+	return(ident);
 }
 
 /*
@@ -3183,7 +3183,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 		}
 	}
 
-	return ident;
+	return(ident);
 }
 
 /*
@@ -3645,7 +3645,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 		break;
 	}
 
-	return ident;
+	return(ident);
 }
 
 /*
@@ -4562,7 +4562,7 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 		return(FALSE);
 	}
 
-	return ident;
+	return(ident);
 }
 
 /*
