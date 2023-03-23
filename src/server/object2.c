@@ -6901,16 +6901,16 @@ void verify_level_req(object_type *o_ptr) {
 /* Set level req for polymorph ring on its creation - C. Blue */
 int ring_of_polymorph_level(int r_lev) {
 #if 0
-	if (r_lev == 0) return 5;
+	if (r_lev == 0) return(5);
 	/* 0->5..1->6..30->26..60->42..80->51..85->53..100->58 */
 	//return 5 + (1600 / ((2000 / (r_lev + 1)) + 10));
 	//return 10 + (1000 / ((2000 / r_lev) + 10));
 	//return 5 + (1000 / ((1500 / r_lev) + 5));
 	//return 5 + (1000 / ((1500 / r_lev) + 7));
 #else /* use two curves, low-lev and rest */
-	if (r_lev < 7) return 5;
+	if (r_lev < 7) return(5);
 	else if (r_lev < 30) return(850 / (1170 / r_lev)); /* 7 -> 5, 15 -> 10, 23 -> 16, 29 -> _21_ */
-	else return 5 + (1000 / ((1500 / r_lev) + 7)); /* 30 -> _22_, 60 -> 36, 80 -> 43, 100 -> 50 */
+	else return (5 + (1000 / ((1500 / r_lev) + 7))); /* 30 -> _22_, 60 -> 36, 80 -> 43, 100 -> 50 */
 #endif
 }
 
@@ -6961,7 +6961,7 @@ static int kind_is_theme(int k_idx) {
 	 *
 	 * Caution: Junks go into the allocation table.
 	 */
-	if (p == 100) return 100;
+	if (p == 100) return(100);
 
 
 	/* Pick probability to use */
@@ -7048,7 +7048,7 @@ static int kind_is_theme(int k_idx) {
 	}
 
 	/* Return the percentage */
-	return p;
+	return(p);
 }
 
 //#if FORCED_DROPS == 1  --now also used for tc_bias
@@ -7067,14 +7067,14 @@ static int which_theme(int tval) {
 #ifdef ENABLE_DEMOLITIONIST
 	case TV_CHEMICAL:
 #endif
-		return TC_JUNK;
+		return(TC_JUNK);
 
 	case TV_CHEST:
 	case TV_CROWN:
 	case TV_DRAG_ARMOR:
 	case TV_AMULET:
 	case TV_RING:
-		return TC_TREASURE;
+		return(TC_TREASURE);
 
 	case TV_SHOT:
 	case TV_ARROW:
@@ -7090,7 +7090,7 @@ static int which_theme(int tval) {
 	case TV_SHIELD:
 	case TV_SOFT_ARMOR:
 	case TV_HARD_ARMOR:
-		return TC_COMBAT;
+		return(TC_COMBAT);
 
 	case TV_MSTAFF:
 	case TV_STAFF:
@@ -7113,7 +7113,7 @@ static int which_theme(int tval) {
 	case TV_DAEMON_BOOK:
  #endif
 	case TV_BOOK:
-		return TC_MAGIC;
+		return(TC_MAGIC);
 
 	case TV_LITE:
 	case TV_CLOAK:
@@ -7130,7 +7130,7 @@ static int which_theme(int tval) {
 #ifdef ENABLE_SUBINVEN
 	case TV_SUBINVEN:
 #endif
-		return TC_TOOLS;
+		return(TC_TOOLS);
 
 	default: //paranoia
 		s_printf("ERROR: uncategorized item %d\n", tval);
@@ -7158,7 +7158,7 @@ int kind_is_legal(int k_idx, u32b resf) {
 	if (p && (resf & RESF_STOREFLAT)) p = 1000;
 
 	/* Return the percentage */
-	return p * 10;
+	return(p * 10);
 }
 
 /* Added for applying tc_bias values to kind_is_legal output */
@@ -7173,7 +7173,7 @@ static int kind_is_normal(int k_idx, u32b resf) {
 	case TC_JUNK: return(tc_p * tc_bias_junk) / 500;
 	}
 	//-1, unclassified item (paranoia)
-	return tc_p / TC_AMOUNT;
+	return(tc_p / TC_AMOUNT);
 }
 
 /*
@@ -7402,7 +7402,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case TC_JUNK: return(tc_p * tc_biasg_junk) / 500;
 		}
 		//-1, unclassified item (paranoia)
-		return tc_p / TC_AMOUNT;
+		return(tc_p / TC_AMOUNT);
 	}
 	//note: no tools atm :/ could add +2/+3 diggers?
 
@@ -7420,7 +7420,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 	case TC_JUNK: return(tc_p * tc_biasg_junk) / 500;
 	}
 	//-1, unclassified item (paranoia)
-	return tc_p / TC_AMOUNT;
+	return(tc_p / TC_AMOUNT);
 #endif
 #if 1
 	return(tc_p * 1) / 100; //absolute minimum chance that is guaranteed to be not 0 for any rarest item: 1%.
@@ -7679,7 +7679,7 @@ static int kind_is_great(int k_idx, u32b resf) {
 		case TC_JUNK: return(tc_p * tc_biasr_junk) / 500;
 		}
 		//-1, unclassified item (paranoia)
-		return tc_p / TC_AMOUNT;
+		return(tc_p / TC_AMOUNT);
 	}
 	//note: no tools atm :/ could add +2/+3 diggers?
 
@@ -7697,7 +7697,7 @@ static int kind_is_great(int k_idx, u32b resf) {
 	case TC_JUNK: return(tc_p * tc_biasr_junk) / 500;
 	}
 	//-1, unclassified item (paranoia)
-	return tc_p / TC_AMOUNT;
+	return(tc_p / TC_AMOUNT);
 #endif
 #if 1
 	return(tc_p * 1) / 100; //absolute minimum chance that is guaranteed to be not 0 for any rarest item: 1%.
@@ -7726,7 +7726,7 @@ static int kind_is_good_reward(int k_idx, u32b resf) {
 	case TV_HELM:
 	case TV_CROWN:
 		if (k_ptr->to_a < 0) return(0);
-		return 1000;
+		return(1000);
 
 	/* Weapons -- Good unless damaged */
 	case TV_BOW:
@@ -7738,7 +7738,7 @@ static int kind_is_good_reward(int k_idx, u32b resf) {
 	case TV_BOOMERANG:
 		if (k_ptr->to_h < 0) return(0);
 		if (k_ptr->to_d < 0) return(0);
-		return 1000;
+		return(1000);
 
 	/* Ammo -- Arrows/Bolts are good */
 	case TV_BOLT:
@@ -7747,11 +7747,11 @@ static int kind_is_good_reward(int k_idx, u32b resf) {
 		if (k_ptr->sval == SV_AMMO_CHARRED) return(0);
 		/* Fall through */
 	case TV_MSTAFF:
-		return 1000;
+		return(1000);
 
 	/* Trap kits are good now, since weapons are, too (required for dungeon keeper reward sval generation..) */
 	case TV_TRAPKIT:
-		return 1000;
+		return(1000);
 	}
 
 	/* Assume not good */
@@ -8331,16 +8331,16 @@ static int reward_melee_check(player_type *p_ptr, long int treshold) {
 /* Receive a shield instead of a weapon? Depends on actual weapon type! */
 	/* ..not if we're dual-wielding */
 	if (p_ptr->inventory[INVEN_WIELD].k_idx &&
-	    p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) return selection;
+	    p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) return(selection);
 	/* ..not if we're rogues or rangers (help the lazy ones who forgot to spend skill points) anyway */
-	if (p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_ARCHER) return selection;
+	if (p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_ARCHER) return(selection);
 	/* ..help lazy rangers somewhat: if he forgot to equip proper weaponry and hasn't skilled ranged weapon
 	   yet, he might get a shield otherwise, which is 'unusual' for rangers..
 	   (Make an exception if he WANTS to use a shield apparently.) */
 	if (p_ptr->pclass == CLASS_RANGER &&
-	    !(p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) return selection;
+	    !(p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) return(selection);
 	/* player's form cannot equip shields? */
-	if (!item_tester_hook_wear(p_ptr->Ind, INVEN_ARM)) return selection;
+	if (!item_tester_hook_wear(p_ptr->Ind, INVEN_ARM)) return(selection);
 //Nope, they can!	if (p_ptr->pclass == CLASS_SHAMAN) return(selection); /* shamans cannot cast magic well with shield. */
 	switch (selection) {
 	case 1: if magik(35) selection = 6; break;
@@ -8428,7 +8428,7 @@ static int reward_spell_check(player_type *p_ptr, long int treshold) {
 }
 static int reward_misc_check(player_type *p_ptr, long int treshold) {
 	/* TV_TRAPKIT */
-	if (p_ptr->s_info[SKILL_TRAPPING].value >= treshold) return 4;
+	if (p_ptr->s_info[SKILL_TRAPPING].value >= treshold) return(4);
 
 	/*  TV_LITE
 	    TV_AMULET
@@ -12420,7 +12420,7 @@ void inven_confirm_revision(int Ind, int revision) {
 /* Helper function to just return the proper a_info[].timeout for a newly created art but not do any modifications yet. */
 int get_artifact_timeout(int a_idx) {
 #ifndef FLUENT_ARTIFACT_RESETS
-	return timeout = -2; /* marker for when it gets reactivated */
+	return(-2); /* marker for when it gets reactivated */
 #else
 	object_type forge;
 	int i, timeout = a_info[a_idx].timeout;
@@ -12458,7 +12458,7 @@ int get_artifact_timeout(int a_idx) {
 	if (timeout > 0) timeout *= 2;
  #endif
 
-	return timeout;
+	return(timeout);
 #endif
 }
 /* Set timeout for a newly found artifact, for fluent artifact reset system
@@ -13532,7 +13532,7 @@ void init_treasure_classes(void) {
 /* Translates a wand of wonder into one of the svals it can randomly mirror.
    *wpos can be NULL if no restrictions are necessary. */
 int check_for_wand_of_wonder(int sval, struct worldpos *wpos) {
-	if (sval != SV_WAND_WONDER) return sval; /* identity */
+	if (sval != SV_WAND_WONDER) return(sval); /* identity */
 
 	/* Restrict: Leave out some especially powerful spells for pvp balance reasons. */
 	/* Highlander Tournament or PvP-arena */
@@ -13541,11 +13541,11 @@ int check_for_wand_of_wonder(int sval, struct worldpos *wpos) {
 		sval = rand_int(SV_WAND_WONDER - 4 - 2 - 1);
 		if (sval >= SV_WAND_DRAIN_LIFE) sval += 2; /* skip drain life and polymorph */
 		if (sval == SV_WAND_CHARM_MONSTER) sval++; /* not implemented, so skip it */
-		return sval;
+		return(sval);
 	}
 
 	/* Randomly ranslate, subtract any not implemented wand types */
 	sval = rand_int(SV_WAND_WONDER - 1);
 	if (sval == SV_WAND_CHARM_MONSTER) sval++; /* not implemented, so skip it */
-	return sval;
+	return(sval);
 }

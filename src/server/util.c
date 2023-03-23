@@ -3756,17 +3756,17 @@ void msg_guild_print(int Ind, cptr msg, cptr msg_u) {
 #if 0 /* unused atm */
 static char* dodge_diz(int chance) {
 	if (chance < 5)
-		return "almost no";
+		return("almost no");
 	else if (chance < 14)
-		return "a slight";
+		return("a slight");
 	else if (chance < 23)
-		return "a significant";
+		return("a significant";
 	else if (chance < 30)
-		return "a good";
+		return("a good");
 	else if (chance < 40)
-		return "a very good";
+		return("a very good");
 	else
-		return "a high";
+		return("a high");
 }
 #endif
 
@@ -3982,14 +3982,14 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 		/* if we already got a match and the test of the upfollowing
 		   position is negative, take that match, since we still want
 		   to get all occurances eventually, not just the last one. */
-		if (bufs[j] != bufl[i + j + add] && best) return best;
+		if (bufs[j] != bufl[i + j + add] && best) return(best);
  #endif
 
 		while (bufs[j] == bufl[i + j + add]) {
 			if (bufs[j + 1] == '\0') {
 				*eff_len = j + add + 1;
  #ifndef GET_MOST_DELAYED_MATCH
-				return &line[i]; /* FOUND */
+				return(&line[i]); /* FOUND */
  #else
 				best = &line[i];
 				break;
@@ -4000,7 +4000,7 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 			/* end of line? */
 			if (bufl[i + j + add] == '\0')
  #ifndef GET_MOST_DELAYED_MATCH
-				return(char*)NULL; /* NOT FOUND */
+				return((char*)NULL); /* NOT FOUND */
  #else
 				return(best);
  #endif
@@ -4824,7 +4824,7 @@ int handle_censor(char *line) {
 	if (j > i) i = j;
 	if (im > i) i = im;
 	if (jm > i) i = jm;
-	return i;
+	return(i);
 }
 
  #ifdef ENABLE_MULTILINE_CENSOR
@@ -4838,7 +4838,7 @@ int handle_ml_censor(int Ind, char *line) {
 	if (cl) {
 		/* We have to clear the buffer after a successful detection */
 		p_ptr->multi_chat_line[0] = 0;
-		return cl;
+		return(cl);
 	}
 
 	/* Construct relevant line to check, from the beginnning and ending parts of chat input lines.
@@ -6278,7 +6278,7 @@ int name_lookup_loose(int Ind, cptr name, u16b party, bool include_account_names
 	}
 
 	/* Success */
-	return target;
+	return(target);
 }
 
 /* copy/pasted from name_lookup_loose(), just without being loose.. */
@@ -6384,7 +6384,7 @@ int name_lookup(int Ind, cptr name, u16b party, bool include_account_names, bool
 	}
 
 	/* Success */
-	return target;
+	return(target);
 }
 
 /*
@@ -6469,7 +6469,7 @@ byte count_bits(u32b array) {
 		for (i = 0; i < 32; i++)
 			if (array & (1U << i)) k++;
 
-	return k;
+	return(k);
 }
 
 /*
@@ -6999,16 +6999,16 @@ cptr compat_pmode(int Ind1, int Ind2, bool strict) {
 
 	if (p1_ptr->mode & MODE_PVP) {
 		if (!(p2_ptr->mode & MODE_PVP)) {
-			return "non-pvp";
+			return("non-pvp");
 		}
 	} else if (p1_ptr->mode & MODE_EVERLASTING) {
 		if (!(p2_ptr->mode & MODE_EVERLASTING)) {
-			return "non-everlasting";
+			return("non-everlasting");
 		}
 	} else if (p2_ptr->mode & MODE_PVP) {
-		return "pvp";
+		return("pvp");
 	} else if (p2_ptr->mode & MODE_EVERLASTING) {
-		return "everlasting";
+		return("everlasting");
 	}
 	return(NULL); /* means "is compatible" */
 }
@@ -7037,22 +7037,22 @@ cptr compat_pomode(int Ind, object_type *o_ptr) {
 		if (!(o_ptr->mode & MODE_PVP)) {
 			if (o_ptr->mode & MODE_EVERLASTING) {
 				if (!(cfg.charmode_trading_restrictions & 2)) {
-					return "non-pvp";
+					return("non-pvp");
 				}
 			} else if (!(cfg.charmode_trading_restrictions & 4)) {
-				return "non-pvp";
+				return("non-pvp");
 			}
 		}
 	} else if (p_ptr->mode & MODE_EVERLASTING) {
 		if (o_ptr->mode & MODE_PVP) {
-			return "pvp";
+			return("pvp");
 		} else if (!(o_ptr->mode & MODE_EVERLASTING)) {
-			if (!(cfg.charmode_trading_restrictions & 1)) return "non-everlasting";
+			if (!(cfg.charmode_trading_restrictions & 1)) return("non-everlasting");
 		}
 	} else if (o_ptr->mode & MODE_PVP) {
-		return "pvp";
+		return("pvp");
 	} else if (o_ptr->mode & MODE_EVERLASTING) {
-		return "everlasting";
+		return("everlasting");
 	}
 	return(NULL); /* means "is compatible" */
 }
@@ -7070,22 +7070,22 @@ cptr compat_omode(object_type *o1_ptr, object_type *o2_ptr) {
 	/* ownership given for both items? */
 	if (!o1_ptr->owner) {
 		if (!o2_ptr->owner) return(NULL); /* always compatible */
-		else return "owned";
-	} else if (!o2_ptr->owner) return "owned";
+		else return("owned");
+	} else if (!o2_ptr->owner) return("owned");
 
 	/* both are owned. so compare actual modes */
 	if (o1_ptr->mode & MODE_PVP) {
 		if (!(o2_ptr->mode & MODE_PVP)) {
-			return "non-pvp";
+			return("non-pvp");
 		}
 	} else if (o1_ptr->mode & MODE_EVERLASTING) {
 		if (!(o2_ptr->mode & MODE_EVERLASTING)) {
-			return "non-everlasting";
+			return("non-everlasting");
 		}
 	} else if (o2_ptr->mode & MODE_PVP) {
-		return "pvp";
+		return("pvp");
 	} else if (o2_ptr->mode & MODE_EVERLASTING) {
-		return "everlasting";
+		return("everlasting");
 	}
 	return(NULL); /* means "is compatible" */
 }
@@ -7096,16 +7096,16 @@ cptr compat_omode(object_type *o1_ptr, object_type *o2_ptr) {
 cptr compat_mode(byte mode1, byte mode2) {
 	if (mode1 & MODE_PVP) {
 		if (!(mode2 & MODE_PVP)) {
-			return "non-pvp";
+			return("non-pvp");
 		}
 	} else if (mode1 & MODE_EVERLASTING) {
 		if (!(mode2 & MODE_EVERLASTING)) {
-			return "non-everlasting";
+			return("non-everlasting");
 		}
 	} else if (mode2 & MODE_PVP) {
-		return "pvp";
+		return("pvp");
 	} else if (mode2 & MODE_EVERLASTING) {
-		return "everlasting";
+		return("everlasting");
 	}
 	return(NULL); /* means "is compatible" */
 }
@@ -7377,22 +7377,22 @@ char *html_escape(const char *str) {
 		/* Return an empty string */
 		result = malloc(1);
 		*result = '\0';
-		return result;
+		return(result);
 	}
 
 	/* Calculate the resulting length */
 	tmp = str;
 	while (*tmp) {
 		switch (*tmp) {
-			case '<': case '>':
-				new_len += 3;
-				break;
-			case '&':
-				new_len += 4;
-				break;
-			case '"':
-				new_len += 5;
-				break;
+		case '<': case '>':
+			new_len += 3;
+			break;
+		case '&':
+			new_len += 4;
+			break;
+		case '"':
+			new_len += 5;
+			break;
 		}
 		new_len++;
 		tmp++;
@@ -7404,35 +7404,35 @@ char *html_escape(const char *str) {
 
 	while (*tmp) {
 		switch (*tmp) {
-			case '<':
-				result[i++] = '&';
-				result[i++] = 'l';
-				result[i++] = 't';
-				result[i++] = ';';
-				break;
-			case '>':
-				result[i++] = '&';
-				result[i++] = 'g';
-				result[i++] = 't';
-				result[i++] = ';';
-				break;
-			case '&':
-				result[i++] = '&';
-				result[i++] = 'a';
-				result[i++] = 'm';
-				result[i++] = 'p';
-				result[i++] = ';';
-				break;
-			case '"':
-				result[i++] = '&';
-				result[i++] = 'q';
-				result[i++] = 'u';
-				result[i++] = 'o';
-				result[i++] = 't';
-				result[i++] = ';';
-				break;
-			default:
-				result[i++] = *tmp;
+		case '<':
+			result[i++] = '&';
+			result[i++] = 'l';
+			result[i++] = 't';
+			result[i++] = ';';
+			break;
+		case '>':
+			result[i++] = '&';
+			result[i++] = 'g';
+			result[i++] = 't';
+			result[i++] = ';';
+			break;
+		case '&':
+			result[i++] = '&';
+			result[i++] = 'a';
+			result[i++] = 'm';
+			result[i++] = 'p';
+			result[i++] = ';';
+			break;
+		case '"':
+			result[i++] = '&';
+			result[i++] = 'q';
+			result[i++] = 'u';
+			result[i++] = 'o';
+			result[i++] = 't';
+			result[i++] = ';';
+			break;
+		default:
+			result[i++] = *tmp;
 		}
 		tmp++;
 	}
@@ -7440,7 +7440,7 @@ char *html_escape(const char *str) {
 	/* Terminate */
 	result[new_len] = '\0';
 
-	return result;
+	return(result);
 }
 
 #define JSON_ESCAPE_ARRAY_SIZE 93
@@ -7508,7 +7508,7 @@ char *json_escape_str(char *dest, const char *src, size_t n) {
 		}
 	}
 	dest[destpos] = '\0';
-	return dest;
+	return(dest);
 }
 
 /* level generation benchmark */
@@ -7568,7 +7568,7 @@ cptr timediff(struct timeval *begin, struct timeval *end) {
 	msec = usec / 1000;
 
 	snprintf(buf, 20, "%d.%03d", sec, msec);
-	return buf;
+	return(buf);
 }
 
 /* Strip special chars off player input 's', to prevent any problems/colours */
@@ -7618,43 +7618,43 @@ cptr get_prace2(player_type *p_ptr) {
 #ifdef ENABLE_MAIA
 	if (p_ptr->prace == RACE_MAIA && p_ptr->ptrait) {
 		if (p_ptr->ptrait == TRAIT_ENLIGHTENED)
-			return "Enlightened ";
+			return("Enlightened ");
 		else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
  #ifdef ENABLE_HELLKNIGHT
-			if (p_ptr->pclass == CLASS_HELLKNIGHT) return ""; else
+			if (p_ptr->pclass == CLASS_HELLKNIGHT) return(""); else
  #endif
-			return "Corrupted ";
+			return("Corrupted ");
 		} else
 			return special_prace_lookup2[p_ptr->prace];
 	} else
 #endif
 #ifdef ENABLE_DEATHKNIGHT
-	if (p_ptr->pclass == CLASS_DEATHKNIGHT) return ""; else
+	if (p_ptr->pclass == CLASS_DEATHKNIGHT) return(""); else
 #endif
 #ifdef ENABLE_HELLKNIGHT
-	if (p_ptr->pclass == CLASS_HELLKNIGHT) return ""; else
+	if (p_ptr->pclass == CLASS_HELLKNIGHT) return(""); else
 #endif
-	return special_prace_lookup2[p_ptr->prace];
+	return(special_prace_lookup2[p_ptr->prace]);
 }
 /* like get_prace2(), but always returns the race. Also, no trailing space. */
 cptr get_prace(player_type *p_ptr) {
 #ifdef ENABLE_MAIA
 	if (p_ptr->prace == RACE_MAIA && p_ptr->ptrait) {
 		if (p_ptr->ptrait == TRAIT_ENLIGHTENED)
-			return "Enlightened";
+			return("Enlightened");
 		else if (p_ptr->ptrait == TRAIT_CORRUPTED)
-			return "Corrupted";
+			return("Corrupted");
 		else
-			return special_prace_lookup[p_ptr->prace];
+			return(special_prace_lookup[p_ptr->prace]);
 	} else
 #endif
-	return special_prace_lookup[p_ptr->prace];
+	return(special_prace_lookup[p_ptr->prace]);
 }
 
 /* get player's title */
 cptr get_ptitle(player_type *p_ptr, bool short_form) {
-	if (p_ptr->lev < 60) return player_title[p_ptr->pclass][((p_ptr->lev / 5) < 10)? (p_ptr->lev / 5) : 10][(short_form ? 3 : 1) - p_ptr->male];
-	return player_title_special[p_ptr->pclass][(p_ptr->lev < PY_MAX_PLAYER_LEVEL) ? (p_ptr->lev - 60) / 10 : 4][(short_form ? 3 : 1) - p_ptr->male];
+	if (p_ptr->lev < 60) return(player_title[p_ptr->pclass][((p_ptr->lev / 5) < 10)? (p_ptr->lev / 5) : 10][(short_form ? 3 : 1) - p_ptr->male]);
+	return(player_title_special[p_ptr->pclass][(p_ptr->lev < PY_MAX_PLAYER_LEVEL) ? (p_ptr->lev - 60) / 10 : 4][(short_form ? 3 : 1) - p_ptr->male]);
 }
 
 #ifdef DUNGEON_VISIT_BONUS
@@ -8018,7 +8018,7 @@ bool backup_char_estate(int Ind, s32b h_id, s32b id) {
 			if (!backup_one_estate(&houses[i].wpos, houses[i].dx, houses[i].dy, id)) res = FALSE;
 		}
 	}
-	return res;
+	return(res);
 }
 /* Backup one house and give content ownership to a specific character */
 bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, s32b id) {
@@ -9196,14 +9196,14 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 	/* prevent div0 (0) and overflow (1) */
 	if (chance < 2) chance = 2;
 
-	return chance;
+	return(chance);
 }
 
 /* just for display purpose, return an actual average percentage value */
 int activate_magic_device_chance(int Ind, object_type *o_ptr, byte *permille) {
 	int chance = magic_device_base_chance(Ind, o_ptr);
 
-	if (o_ptr->tval == TV_RUNE) return chance; // Hack: Rune Boni - Kurzel
+	if (o_ptr->tval == TV_RUNE) return(chance); // Hack: Rune Boni - Kurzel
 
 	/* 100% not possible to reach:
 	   For chance >= 201 this produces a rounding error that would result in displayed 100%,
@@ -9231,7 +9231,7 @@ bool activate_magic_device(int Ind, object_type *o_ptr) {
 	byte permille;
 	int chance = activate_magic_device_chance(Ind, o_ptr, &permille);
 
-	if (o_ptr->tval == TV_RUNE) return magik(chance);
+	if (o_ptr->tval == TV_RUNE) return(magik(chance));
 
 	/* Certain items are heavily restricted (todo: use WINNERS_ONLY flag instead for cleanliness) */
 	if (o_ptr->name1 == ART_PHASING && !p_ptr->total_winner) {
@@ -9423,11 +9423,11 @@ plog(format("similar: n1='%s',n2='%s'", name1, name2));
 			//loosened up slightly
 			if (diff <= (min - 6 - (diff_bonus ? 1 : 0)) / 2 + 1) {
 				s_printf("similar_names (3a): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
-				return 3;
+				return(3);
 			}
 		} else { //normal case
 			s_printf("similar_names (3): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
-			return 3;
+			return(3);
 		}
 	}
 #else
@@ -9438,11 +9438,11 @@ plog(format("similar: n1='%s',n2='%s'", name1, name2));
 			//loosened up slightly
 			if (diff <= (min - 7 - (diff_bonus ? 1 : 0)) / 2 + 1) {
 				s_printf("similar_names (3a): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
-				return 3;
+				return(3);
 			}
 		} else { //normal case
 			s_printf("similar_names (3): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
-			return 3;
+			return(3);
 		}
 	}
 #endif
@@ -9474,7 +9474,7 @@ plog(format("similar: n1='%s',n2='%s'", name1, name2));
 	//too little difference between names? forbidden!
 	if (diff <= (min - 6) / 2 + 1) { //must use the 'loosened up' version used further above, since it'd override otherwise
 		s_printf("similar_names (4): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
-		return 4;
+		return(4);
 	}
 #endif
 #if 1	/* Check for exact anagrams */
@@ -9507,7 +9507,7 @@ plog(format("similar: n1='%s',n2='%s'", name1, name2));
 	}
 	if (!diff) { //perfect anagrams?
 		s_printf("similar_names (5): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
-		return 5;
+		return(5);
 	}
 #endif
 
@@ -9539,21 +9539,21 @@ plog(format("similar: n1='%s',n2='%s'", name1, name2));
 	 /* more lenient */
 	if (diff >= 5 && diff > (diff2 * (words ? 6 : 6)) / 10) {
 		s_printf("similar_names (6a): name1 '%s', name2 '%s'\n", name1, name2);
-		return 6;
+		return(6);
 	}
 	if (diff < 5 && !words && diff2 < diff + 2) {
 		s_printf("similar_names (6b): name1 '%s', name2 '%s'\n", name1, name2);
-		return 6;
+		return(6);
 	}
 #else
 	 /* even more lenient, for Darkie */
 	if (diff >= 5 && diff > (diff2 * (words ? 8 : 8)) / 10) {
 		s_printf("similar_names (6a): name1 '%s', name2 '%s'\n", name1, name2);
-		return 6;
+		return(6);
 	}
 	if (diff < 5 && !words && diff2 < diff + 2) {
 		s_printf("similar_names (6b): name1 '%s', name2 '%s'\n", name1, name2);
-		return 6;
+		return(6);
 	}
 #endif
 
@@ -9771,10 +9771,10 @@ int get_subinven_group(int sval) {
 	case SV_SI_SATCHEL:
 	case SV_SI_TRAPKIT_BAG:
 	case SV_SI_MDEVP_WRAPPING:
-		return sval; //identity
+		return(sval); //identity
 	default:
 		//combine multiple choices to a single group, using the first element as its identifier
-		if (sval >= SV_SI_GROUP_CHEST_MIN && sval <= SV_SI_GROUP_CHEST_MAX) return SV_SI_GROUP_CHEST_MIN;
+		if (sval >= SV_SI_GROUP_CHEST_MIN && sval <= SV_SI_GROUP_CHEST_MAX) return(SV_SI_GROUP_CHEST_MIN);
 	}
 	return(-1);
 }
@@ -9798,5 +9798,5 @@ int cclen(cptr str) {
 		c++;
 	}
 
-	return l;
+	return(l);
 }

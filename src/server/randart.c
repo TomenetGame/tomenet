@@ -83,8 +83,8 @@ static artifact_type randart;
 static int bow_multiplier(int sval) {
 	switch (sval) {
 	case SV_SLING: case SV_SHORT_BOW: return(2);
-	case SV_LONG_BOW: case SV_LIGHT_XBOW: return 3;
-	case SV_HEAVY_XBOW: return 4;
+	case SV_LONG_BOW: case SV_LIGHT_XBOW: return(3);
+	case SV_HEAVY_XBOW: return(4);
 	  /*		default: msg_format ("Illegal bow sval %s\n", sval); */
 	}
 	return(0);
@@ -450,7 +450,7 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 	if (a_ptr->flags3 & TR3_WRAITH) p += 20;
 	/* only for WINNERS_ONLY heavy armour basically :-o (note: nice vs Zu-Aon) */
 	if (a_ptr->flags5 & TR5_RES_MANA) p += 20;
-	return p;
+	return(p);
 }
 
 

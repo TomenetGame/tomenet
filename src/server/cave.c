@@ -216,7 +216,7 @@ static int get_staircase_colour(dungeon_type *d_ptr, byte *c) {
 	if (d_ptr->flags2 & DF2_NO_EXIT_WOR) {
 		if ((d_ptr->flags2 & DF2_IRON) || (d_ptr->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP))) {
 			*c = TERM_DARKNESS;
-			return 7;
+			return(7);
 		}
 	}
 	/* No exit at all - was ONLY former Death Fate (pre 4.7.3a?) */
@@ -225,24 +225,24 @@ static int get_staircase_colour(dungeon_type *d_ptr, byte *c) {
 	    && (d_ptr->flags2 & DF2_NO_EXIT_FLOAT)
 	    && (d_ptr->flags2 & DF2_NO_EXIT_WOR)) {
 		*c = TERM_DARKNESS;
-		return 7;
+		return(7);
 	}
 
 	if (d_ptr->flags2 & DF2_IRON) {
 		*c = TERM_L_DARK;
-		return 6;
+		return(6);
 	}
 	if (d_ptr->flags2 & DF2_HELL) {
 		*c = TERM_FIRE;
-		return 5;
+		return(5);
 	}
 	if (d_ptr->flags1 & DF1_FORCE_DOWN) {
 		*c = TERM_L_RED;
-		return 4;
+		return(4);
 	}
 	if (d_ptr->flags1 & DF1_NO_RECALL) {
 		*c = TERM_RED;
-		return 3;
+		return(3);
 	}
 	if (d_ptr->flags1 & DF1_NO_UP) {
 		*c = TERM_ORANGE;
@@ -1644,13 +1644,13 @@ static void image_random(byte *ap, char32_t *cp) {
  */
 char get_shimmer_color() {
 	switch (randint(7)) {
-	case 1: return TERM_RED;
-	case 2: return TERM_L_RED;
-	case 3: return TERM_WHITE;
-	case 4: return TERM_L_GREEN;
-	case 5: return TERM_BLUE;
-	case 6: return TERM_L_DARK;
-	case 7: return TERM_GREEN;
+	case 1: return(TERM_RED);
+	case 2: return(TERM_L_RED);
+	case 3: return(TERM_WHITE);
+	case 4: return(TERM_L_GREEN);
+	case 5: return(TERM_BLUE);
+	case 6: return(TERM_L_DARK);
+	case 7: return(TERM_GREEN);
 	}
 	return(TERM_VIOLET);
 }
@@ -2100,7 +2100,7 @@ static byte player_color(int Ind) {
 	/* Check that zcave isn't NULL - mikaelh */
 	if (!zcave) {
 		s_printf("DEBUG: zcave was NULL in player_color\n");
-		return TERM_L_DARK;
+		return(TERM_L_DARK);
 	}
 
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
@@ -2116,18 +2116,18 @@ static byte player_color(int Ind) {
 			if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) {
 				if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) return(TERM_L_DARK | TERM_OLD_BNW);
 				else return(TERM_L_DARK | TERM_OLD2_BNW);
-			} else if (is_older_than(&p_ptr->version, 4, 7, 3, 0, 0, 0)) return TERM_OLD3_BNW;
-			else return TERM_BNW;
+			} else if (is_older_than(&p_ptr->version, 4, 7, 3, 0, 0, 0)) return(TERM_OLD3_BNW);
+			else return(TERM_BNW);
  #endif
 #else
 			return(TERM_L_DARK | TERM_BNW);
 #endif
 		}
-		return TERM_L_DARK;
+		return(TERM_L_DARK);
 	}
 
 	/* Black Breath carriers emit malignant aura sometimes.. */
-	if (p_ptr->black_breath && magik(50)) return TERM_L_DARK;
+	if (p_ptr->black_breath && magik(50)) return(TERM_L_DARK);
 
 	/* Covered by a mummy wrapping? */
 	if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_WRAPPING) pcolor = TERM_L_DARK;
@@ -2144,48 +2144,48 @@ static byte player_color(int Ind) {
 		get_monster_color(Ind, NULL, &r_info[p_ptr->inventory[INVEN_BODY].bpval], c_ptr, &pcolor, &dummy);
 
 	/* See vampires burn in the sun sometimes.. */
-	if (p_ptr->sun_burn && magik(33)) return TERM_FIRE;
+	if (p_ptr->sun_burn && magik(33)) return(TERM_FIRE);
 
 	/* Mana Shield and GOI also flicker */
 	/* NOTE: For the player looking at himself, this is done in lite_spot(),
 		 which is called from set_tim_manashield().  */
 #ifdef EXTENDED_TERM_COLOURS
 	if (is_atleast(&p_ptr->version, 4, 5, 1, 2, 0, 0)) {
-		if (p_ptr->tim_manashield > 15) return TERM_SHIELDM;
-		else if (p_ptr->tim_manashield) return TERM_NEXU;
-		if (p_ptr->nimbus > 15) return spell_color(p_ptr->nimbus_t);
-		else if (p_ptr->nimbus) return magik(50) ? TERM_ICE : spell_color(p_ptr->nimbus_t);
-		if (p_ptr->invuln > 5) return TERM_SHIELDI;
+		if (p_ptr->tim_manashield > 15) return(TERM_SHIELDM);
+		else if (p_ptr->tim_manashield) return(TERM_NEXU);
+		if (p_ptr->nimbus > 15) return(spell_color(p_ptr->nimbus_t));
+		else if (p_ptr->nimbus) return(magik(50) ? TERM_ICE : spell_color(p_ptr->nimbus_t));
+		if (p_ptr->invuln > 5) return(TERM_SHIELDI);
 		else if (p_ptr->invuln
 		    && p_ptr->invuln_dur >= 5) /* avoid animating normal stair-GoI */
-			return TERM_NUKE;
+			return(TERM_NUKE);
 
  #ifndef EXTENDED_COLOURS_PALANIM
  //no longer allowed
 		if (p_ptr->kinetic_shield) {
-			if (p_ptr->kinetic_shield > 10) return pcolor |= TERM_BNW;
-			else return pcolor |= TERM_BNW; //no alternative
+			if (p_ptr->kinetic_shield > 10) return(pcolor |= TERM_BNW);
+			else return(pcolor |= TERM_BNW); //no alternative
 		}
  #else
 		if (p_ptr->kinetic_shield) {
 			if (p_ptr->kinetic_shield > 10) {
-				if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) return pcolor |= TERM_OLD2_BNW;
-				else if (is_older_than(&p_ptr->version, 4, 7, 3, 0, 0, 0)) return TERM_OLD3_BNWKS;
-				return TERM_BNWKS;
+				if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) return(pcolor |= TERM_OLD2_BNW);
+				else if (is_older_than(&p_ptr->version, 4, 7, 3, 0, 0, 0)) return(TERM_OLD3_BNWKS);
+				return(TERM_BNWKS);
 			}
-			if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) return pcolor |= TERM_OLD2_BNW; //no alternative
-			else return TERM_BNWKS2;
+			if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) return(pcolor |= TERM_OLD2_BNW); //no alternative
+			else return(TERM_BNWKS2);
 		}
  #endif
 	} else
 #endif
 	{
-		if (p_ptr->tim_manashield > 15) return TERM_SHIELDM;
-		if (p_ptr->nimbus > 15) return spell_color(p_ptr->nimbus_t);
-		if (p_ptr->invuln > 5) return TERM_SHIELDI;
+		if (p_ptr->tim_manashield > 15) return(TERM_SHIELDM;
+		if (p_ptr->nimbus > 15) return(spell_color(p_ptr->nimbus_t);
+		if (p_ptr->invuln > 5) return(TERM_SHIELDI);
 		if (p_ptr->kinetic_shield) {
-			if (p_ptr->kinetic_shield > 10) return pcolor |= TERM_OLD_BNW;
-			else return pcolor |= TERM_OLD_BNW; //no alternative
+			if (p_ptr->kinetic_shield > 10) return(pcolor |= TERM_OLD_BNW);
+			else return(pcolor |= TERM_OLD_BNW); //no alternative
 		}
 	}
 
@@ -2239,7 +2239,7 @@ static byte player_color(int Ind) {
 	}
 
 	/* Color is based off of class */
-	return pcolor;
+	return(pcolor);
 }
 
 byte get_trap_color(int Ind, int t_idx, int feat) {
@@ -2266,7 +2266,7 @@ byte get_trap_color(int Ind, int t_idx, int feat) {
 	if (feat == FEAT_DEEP_WATER || feat == FEAT_SHAL_WATER)
 		a = TERM_L_BLUE;
 
-	return a;
+	return(a);
 }
 
 byte get_monster_trap_color(int Ind, int o_idx, int feat) {
@@ -2285,7 +2285,7 @@ byte get_monster_trap_color(int Ind, int o_idx, int feat) {
 	if (feat == FEAT_DEEP_WATER || feat == FEAT_SHAL_WATER)
 		a = TERM_L_BLUE;
 
-	return a;
+	return(a);
 }
 
 /* Helper function to check whether a player is affected by day/night time colour shading/switching. */
@@ -2316,13 +2316,13 @@ int manipulate_cave_colour_season(cave_type *c_ptr, worldpos *wpos, int x, int y
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 
 	/* World surface manipulation only */
-	if (!outdoor_affects(wpos)) return colour;
+	if (!outdoor_affects(wpos)) return(colour);
 
 	/* Avoid TERM_L_GREEN vs TERM_GREEN confusion, since using TERM_GREEN for account-check now. */
-	if (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN) return colour;
+	if (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN) return(colour);
 	/* Also don't shade TERM_L_UMBER doors to TERM_UMBER while we're at it. */
 	if (c_ptr->feat == FEAT_OPEN || c_ptr->feat == FEAT_BROKEN || c_ptr->feat == FEAT_SHOP ||
-	    (c_ptr->feat >= FEAT_DOOR_HEAD && c_ptr->feat <= FEAT_DOOR_TAIL)) return colour;
+	    (c_ptr->feat >= FEAT_DOOR_HEAD && c_ptr->feat <= FEAT_DOOR_TAIL)) return(colour);
 
 	/* To use always the same feats for this everytime the player
 	   enters a worldmap sector, we seed the RNG with that particular
@@ -2487,21 +2487,21 @@ int manipulate_cave_colour_season(cave_type *c_ptr, worldpos *wpos, int x, int y
 
 	Rand_quick = old_rand; /* resume complex rng - mikaelh */
 	Rand_value = tmp_seed; /* restore RNG */
-	return colour;
+	return(colour);
 }
 static int manipulate_cave_colour_daytime(cave_type *c_ptr, worldpos *wpos, int x, int y, int colour, bool palanim) {
 	/* World surface (and CP!) manipulation only */
-	if (!outdoor_affects(wpos)) return colour;
+	if (!outdoor_affects(wpos)) return(colour);
 
 	/* Avoid TERM_L_GREEN vs TERM_GREEN confusion, since using TERM_GREEN for account-check now. */
-	if (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN) return colour;
+	if (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN) return(colour);
 	/* Also don't shade TERM_L_UMBER doors to TERM_UMBER while we're at it. */
 	if (c_ptr->feat == FEAT_OPEN || c_ptr->feat == FEAT_BROKEN || c_ptr->feat == FEAT_SHOP ||
-	    (c_ptr->feat >= FEAT_DOOR_HEAD && c_ptr->feat <= FEAT_DOOR_TAIL)) return colour;
+	    (c_ptr->feat >= FEAT_DOOR_HEAD && c_ptr->feat <= FEAT_DOOR_TAIL)) return(colour);
 
 #ifdef EXTENDED_COLOURS_PALANIM
 	/* Experimental: Let world_surface_palette() take care of it.. exploitable, yes ;) */
-	if (palanim) return colour;
+	if (palanim) return(colour);
 #endif
 
 	/* Darkness on the world surface at night. Darken all colours. */
@@ -2509,52 +2509,52 @@ static int manipulate_cave_colour_daytime(cave_type *c_ptr, worldpos *wpos, int 
 	    (!(c_ptr->info & (CAVE_GLOW | CAVE_LITE)) ||
 	    (f_info[c_ptr->feat].flags2 & FF2_NIGHT_DARK))) {
 		switch (colour) {
-		case TERM_DARK: return TERM_DARK;
-		case TERM_WHITE: return TERM_SLATE;
-		case TERM_SLATE: return TERM_L_DARK;
-		case TERM_ORANGE: return TERM_UMBER;
-		case TERM_RED: return TERM_RED;
-		case TERM_GREEN: return TERM_GREEN;
-		case TERM_BLUE: return TERM_BLUE;
-		case TERM_UMBER: return TERM_UMBER;
-		case TERM_L_DARK: return TERM_L_DARK;
-		case TERM_L_WHITE: return TERM_SLATE;
-		case TERM_VIOLET: return TERM_VIOLET;
-		case TERM_YELLOW: return TERM_L_UMBER;
-		case TERM_L_RED: return TERM_RED;
-		case TERM_L_GREEN: return TERM_GREEN;
-		case TERM_L_BLUE: return TERM_BLUE;
-		case TERM_L_UMBER: return TERM_UMBER;
+		case TERM_DARK: return(TERM_DARK);
+		case TERM_WHITE: return(TERM_SLATE);
+		case TERM_SLATE: return(TERM_L_DARK);
+		case TERM_ORANGE: return(TERM_UMBER);
+		case TERM_RED: return(TERM_RED);
+		case TERM_GREEN: return(TERM_GREEN);
+		case TERM_BLUE: return(TERM_BLUE);
+		case TERM_UMBER: return(TERM_UMBER);
+		case TERM_L_DARK: return(TERM_L_DARK);
+		case TERM_L_WHITE: return(TERM_SLATE);
+		case TERM_VIOLET: return(TERM_VIOLET);
+		case TERM_YELLOW: return(TERM_L_UMBER);
+		case TERM_L_RED: return(TERM_RED);
+		case TERM_L_GREEN: return(TERM_GREEN);
+		case TERM_L_BLUE: return(TERM_BLUE);
+		case TERM_L_UMBER: return(TERM_UMBER);
 		}
 	}
 
-	return colour;
+	return(colour);
 }
 static int manipulate_cave_colour(cave_type *c_ptr, worldpos *wpos, int x, int y, int colour, bool palanim) {
 	colour = manipulate_cave_colour_season(c_ptr, wpos, x,  y,  colour);
-	return manipulate_cave_colour_daytime(c_ptr, wpos, x,  y,  colour, palanim);
+	return(manipulate_cave_colour_daytime(c_ptr, wpos, x,  y,  colour, palanim);
 }
 #ifdef SHADE_ALL_FLOOR
 static int manipulate_cave_colour_shade(cave_type *c_ptr, worldpos *wpos, int x, int y, int colour) {
 	switch (colour) {
-	case TERM_DARK: return TERM_DARK;
-	case TERM_WHITE: return TERM_SLATE;
-	case TERM_SLATE: return TERM_L_DARK;
-	case TERM_ORANGE: return TERM_UMBER;
-	case TERM_RED: return TERM_RED;
-	case TERM_GREEN: return TERM_GREEN;
-	case TERM_BLUE: return TERM_BLUE;
-	case TERM_UMBER: return TERM_UMBER;
-	case TERM_L_DARK: return TERM_L_DARK;
-	case TERM_L_WHITE: return TERM_SLATE;
-	case TERM_VIOLET: return TERM_VIOLET;
-	case TERM_YELLOW: return TERM_L_UMBER;
-	case TERM_L_RED: return TERM_RED;
-	case TERM_L_GREEN: return TERM_GREEN;
-	case TERM_L_BLUE: return TERM_BLUE;
-	case TERM_L_UMBER: return TERM_UMBER;
+	case TERM_DARK: return(TERM_DARK);
+	case TERM_WHITE: return(TERM_SLATE);
+	case TERM_SLATE: return(TERM_L_DARK);
+	case TERM_ORANGE: return(TERM_UMBER);
+	case TERM_RED: return(TERM_RED);
+	case TERM_GREEN: return(TERM_GREEN);
+	case TERM_BLUE: return(TERM_BLUE);
+	case TERM_UMBER: return(TERM_UMBER);
+	case TERM_L_DARK: return(TERM_L_DARK);
+	case TERM_L_WHITE: return(TERM_SLATE);
+	case TERM_VIOLET: return(TERM_VIOLET);
+	case TERM_YELLOW: return(TERM_L_UMBER);
+	case TERM_L_RED: return(TERM_RED);
+	case TERM_L_GREEN: return(TERM_GREEN);
+	case TERM_L_BLUE: return(TERM_BLUE);
+	case TERM_L_UMBER: return(TERM_UMBER);
 	}
-	return colour;
+	return(colour);
 }
 #endif
 
@@ -8746,7 +8746,7 @@ static int effect_pop(int who) {
 	int i, cnt = 0;
 
 	for (i = 1; i < MAX_EFFECTS; i++) { /* effects[0] is not used */
-		if (!effects[i].time) return i;
+		if (!effects[i].time) return(i);
 		if (effects[i].who == who) {
 			if (++cnt > MAX_EFFECTS_PLAYER) return(-1);
 		}
@@ -8813,7 +8813,7 @@ msg_broadcast(0, "no flags");
 	} */
 #endif
 
-	return i;
+	return(i);
 }
 
 bool allow_terraforming(struct worldpos *wpos, byte feat) {
