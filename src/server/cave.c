@@ -2180,8 +2180,8 @@ static byte player_color(int Ind) {
 	} else
 #endif
 	{
-		if (p_ptr->tim_manashield > 15) return(TERM_SHIELDM;
-		if (p_ptr->nimbus > 15) return(spell_color(p_ptr->nimbus_t);
+		if (p_ptr->tim_manashield > 15) return(TERM_SHIELDM);
+		if (p_ptr->nimbus > 15) return(spell_color(p_ptr->nimbus_t));
 		if (p_ptr->invuln > 5) return(TERM_SHIELDI);
 		if (p_ptr->kinetic_shield) {
 			if (p_ptr->kinetic_shield > 10) return(pcolor |= TERM_OLD_BNW);
@@ -2532,7 +2532,7 @@ static int manipulate_cave_colour_daytime(cave_type *c_ptr, worldpos *wpos, int 
 }
 static int manipulate_cave_colour(cave_type *c_ptr, worldpos *wpos, int x, int y, int colour, bool palanim) {
 	colour = manipulate_cave_colour_season(c_ptr, wpos, x,  y,  colour);
-	return(manipulate_cave_colour_daytime(c_ptr, wpos, x,  y,  colour, palanim);
+	return(manipulate_cave_colour_daytime(c_ptr, wpos, x,  y,  colour, palanim));
 }
 #ifdef SHADE_ALL_FLOOR
 static int manipulate_cave_colour_shade(cave_type *c_ptr, worldpos *wpos, int x, int y, int colour) {
