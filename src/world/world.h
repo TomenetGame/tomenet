@@ -4,6 +4,7 @@
 
 #include <stdint.h>
 
+#define MAX_CHARS 80		/* Just for unicode-translation in irc-relay.c, which #includes this world.h. */
 #define MSG_LEN 256
 
 #define MAX_LTTL	20	/* Max TTL for temporary locks */
