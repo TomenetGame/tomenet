@@ -1017,7 +1017,7 @@ static bool is_wall(cave_type *c_ptr) {
 	if (feat == FEAT_IVY) return(TRUE);
 
 	/* Normal cases: use the WALL flag in f_info.txt */
-	return(f_info[feat].flags1 & FF1_WALL) ? TRUE : FALSE;
+	return((f_info[feat].flags1 & FF1_WALL) ? TRUE : FALSE);
 }
 
 

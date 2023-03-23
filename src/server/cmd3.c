@@ -569,7 +569,7 @@ int inven_drop(bool handle_d, int Ind, int item, int amt, bool force) {
 		}
 	}
 
-	return o_idx;
+	return(o_idx);
 }
 
 /* Return type of hands:
@@ -592,7 +592,7 @@ int bodymonster_hands(int Ind) {
 
 	if (r_ptr->body_parts[BODY_FINGER] && !fishy && !spider) return(2);
 
-	return (0);
+	return(0);
 }
 
 /*

@@ -2711,8 +2711,8 @@ static byte getiddctype(byte depth, byte last) {
 	}
 
 	//Return
-	if (n) return pool[rand_int(n)]; //rand_int(n):[0,n-1]
-	else return last; //Use the previous dungeon type on error!
+	if (n) return(pool[rand_int(n)]); //rand_int(n):[0,n-1]
+	else return(last); //Use the previous dungeon type on error!
 }
 
 //We could de-hardcode the depths of static towns, and iddc length, perhaps? - Kurzel

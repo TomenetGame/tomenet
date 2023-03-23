@@ -78,7 +78,7 @@ s16b get_skill(player_type *p_ptr, int skill)
 	int s;
 	s =  (p_ptr->s_info[skill].value / SKILL_STEP);
 	if (s > p_ptr->lev + 2) s = p_ptr->lev + 2;
-	return s;
+	return(s);
 #else
 	return(p_ptr->s_info[skill].value / SKILL_STEP);
 #endif

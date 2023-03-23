@@ -103,26 +103,26 @@ cptr value_check_aux1(object_type *o_ptr) {
 	/* Artifacts */
 	if (artifact_p(o_ptr)) {
 		/* Cursed/Broken */
-		if (cursed_p(o_ptr) || broken_p(o_ptr)) return "terrible";
+		if (cursed_p(o_ptr) || broken_p(o_ptr)) return("terrible");
 
 		/* Normal */
-		return "special";
+		return("special");
 	}
 
 	/* Ego-Items */
 	if (ego_item_p(o_ptr)) {
 		/* Hack for Stormbringer, so it doesn't show as "worthless" */
-		if (o_ptr->name2 == EGO_STORMBRINGER) return "terrible";
+		if (o_ptr->name2 == EGO_STORMBRINGER) return("terrible");
 
 #if 0
 		/* Cursed/Broken */
-		if (cursed_p(o_ptr) || broken_p(o_ptr)) return "worthless";
+		if (cursed_p(o_ptr) || broken_p(o_ptr)) return("worthless");
 #else
 		/* Cursed items */
-		if (cursed_p(o_ptr)) return "cursed";
+		if (cursed_p(o_ptr)) return("cursed");
 
 		/* Broken items */
-		if (broken_p(o_ptr)) return "worthless";
+		if (broken_p(o_ptr)) return("worthless");
 #endif
 
 		/* Normal */
@@ -130,21 +130,21 @@ cptr value_check_aux1(object_type *o_ptr) {
 		/* All exploding or ego-ammo is excellent.. */
 		if (is_ammo(o_ptr->tval) && (o_ptr->pval || o_ptr->name2 || o_ptr->name2b)) {
 			/* ..except for zero-money ego: Backbiting ammo! */
-			if (o_ptr->name2 && !e_info[o_ptr->name2].cost) return "worthless";
-			if (o_ptr->name2b && !e_info[o_ptr->name2b].cost) return "worthless";
-			return "excellent";
+			if (o_ptr->name2 && !e_info[o_ptr->name2].cost) return("worthless");
+			if (o_ptr->name2b && !e_info[o_ptr->name2b].cost) return("worthless");
+			return("excellent");
 		}
 
-		if (!object_value(0, o_ptr)) return "worthless";
-		if (object_value(0, o_ptr) < 4000) return "good";
-		return "excellent";
+		if (!object_value(0, o_ptr)) return("worthless");
+		if (object_value(0, o_ptr) < 4000) return("good");
+		return("excellent");
 	}
 
 	/* Cursed items */
-	if (cursed_p(o_ptr)) return "cursed";
+	if (cursed_p(o_ptr)) return("cursed");
 
 	/* Broken items */
-	if (broken_p(o_ptr)) return "broken";
+	if (broken_p(o_ptr)) return("broken");
 
 	/* Valid "tval" codes */
 	switch (o_ptr->tval) {
@@ -169,21 +169,21 @@ cptr value_check_aux1(object_type *o_ptr) {
 	case TV_BOOMERANG:
 		/* Good "armor" bonus */
 		if ((o_ptr->to_a > k_ptr->to_a) &&
-		    (o_ptr->to_a > 0)) return "good";
+		    (o_ptr->to_a > 0)) return("good");
 		/* Good "weapon" bonus */
 		if ((o_ptr->to_h - k_ptr->to_h + o_ptr->to_d - k_ptr->to_d > 0) &&
-		    (o_ptr->to_h > 0 || o_ptr->to_d > 0)) return "good";
+		    (o_ptr->to_h > 0 || o_ptr->to_d > 0)) return("good");
 		break;
 	default:
 		/* Good "armor" bonus */
-		if (o_ptr->to_a > 0) return "good";
+		if (o_ptr->to_a > 0) return("good");
 		/* Good "weapon" bonus */
-		if (o_ptr->to_h + o_ptr->to_d > 0) return "good";
+		if (o_ptr->to_h + o_ptr->to_d > 0) return("good");
 		break;
 	}
 
 	/* Default to "average" */
-	return "average";
+	return("average");
 }
 
 cptr value_check_aux1_magic(object_type *o_ptr) {
@@ -194,7 +194,7 @@ cptr value_check_aux1_magic(object_type *o_ptr) {
 	/* Scrolls, Potions, Wands, Staves and Rods */
 	case TV_SCROLL:
 		/* hack for cheques */
-		if (k_ptr->sval == SV_SCROLL_CHEQUE) return "good";
+		if (k_ptr->sval == SV_SCROLL_CHEQUE) return("good");
 		/* Fall through */
 	case TV_POTION:
 	case TV_POTION2:
@@ -203,46 +203,46 @@ cptr value_check_aux1_magic(object_type *o_ptr) {
 	case TV_ROD:
 	case TV_ROD_MAIN:
 		/* "Cursed" scrolls/potions have a cost of 0 */
-		if (k_ptr->cost == 0) return "bad";//"terrible";
+		if (k_ptr->cost == 0) return("bad");//"terrible");
 
 		/* Artifacts */
-		if (artifact_p(o_ptr)) return "special";
+		if (artifact_p(o_ptr)) return("special");
 
 		/* Scroll of Nothing, Apple Juice, etc. */
-		if (k_ptr->cost < 3) return "worthless"; //"average" or "worthless"
+		if (k_ptr->cost < 3) return("worthless"); //"average" or "worthless"
 
 		/*
 		 * Identify, Phase Door, Cure Light Wounds, etc. are
 		 * just average
 		 */
-		if (k_ptr->cost < 100) return "average";
+		if (k_ptr->cost < 100) return("average");
 
 		/* Enchant Armor, *Identify*, Restore Stat, etc. */
-		if (k_ptr->cost < 4000) return "good";
+		if (k_ptr->cost < 4000) return("good");
 
 		/* Acquirement, Deincarnation, Strength, Blood of Life, ... */
-		if (k_ptr->cost >= 4000) return "excellent";
+		if (k_ptr->cost >= 4000) return("excellent");
 
 		break;
 	/* Food */
 	case TV_FOOD:
 		/* "Cursed" food */
-		if (k_ptr->cost == 0) return "bad";//"terrible";
+		if (k_ptr->cost == 0) return("bad");//"terrible");
 
 		/* Artifacts */
-		if (artifact_p(o_ptr)) return "special";
+		if (artifact_p(o_ptr)) return("special");
 
 		/* Normal food (no magical properties) */
-		if (k_ptr->cost <= 10) return "average";
+		if (k_ptr->cost <= 10) return("average");
 
 		/* Everything else is good */
-		if (k_ptr->cost > 10) return "good";
+		if (k_ptr->cost > 10) return("good");
 
 		break;
 	}
 
 	/* No feeling */
-//	return "";
+//	return("");
 	return(NULL);
 }
 
@@ -254,19 +254,19 @@ cptr value_check_aux2(object_type *o_ptr) {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 	/* Cursed items (all of them) */
-	if (cursed_p(o_ptr)) return "cursed";
+	if (cursed_p(o_ptr)) return("cursed");
 
 	/* Broken items (all of them) */
-	if (broken_p(o_ptr)) return "broken";
+	if (broken_p(o_ptr)) return("broken");
 
 	/* Artifacts -- except cursed/broken ones */
-	if (artifact_p(o_ptr)) return "good";
+	if (artifact_p(o_ptr)) return("good");
 
 	/* Ego-Items -- except cursed/broken ones */
-	if (!k_ptr->cost) return "broken";
+	if (!k_ptr->cost) return("broken");
 	if (ego_item_p(o_ptr)) {
-		if (!object_value(0, o_ptr)) return "worthless";
-		return "good";
+		if (!object_value(0, o_ptr)) return("worthless");
+		return("good");
 	}
 
 	switch (o_ptr->tval) {
@@ -292,17 +292,17 @@ cptr value_check_aux2(object_type *o_ptr) {
 		/* Good "armor" bonus */
 		if (o_ptr->to_a > k_ptr->to_a
 		    && o_ptr->to_a > 0 /* for rusty armour....*/
-		    ) return "good";
+		    ) return("good");
 		/* Good "weapon" bonus */
 		if (o_ptr->to_h - k_ptr->to_h + o_ptr->to_d - k_ptr->to_d > 0
 		    && (o_ptr->to_h > 0 || o_ptr->to_d > 0) /* for broken daggers....*/
-		    ) return "good";
+		    ) return("good");
 		break;
 	default:
 		/* Good "armor" bonus */
-		if (o_ptr->to_a > 0) return "good";
+		if (o_ptr->to_a > 0) return("good");
 		/* Good "weapon" bonus */
-		if (o_ptr->to_h + o_ptr->to_d > 0) return "good";
+		if (o_ptr->to_h + o_ptr->to_d > 0) return("good");
 		break;
 	}
 
@@ -318,7 +318,7 @@ cptr value_check_aux2_magic(object_type *o_ptr) {
 	/* Scrolls, Potions, Wands, Staves and Rods */
 	case TV_SCROLL:
 		/* hack for cheques */
-		if (k_ptr->sval == SV_SCROLL_CHEQUE) return "good";
+		if (k_ptr->sval == SV_SCROLL_CHEQUE) return("good");
 		/* Fall through */
 	case TV_POTION:
 	case TV_POTION2:
@@ -326,47 +326,47 @@ cptr value_check_aux2_magic(object_type *o_ptr) {
 	case TV_STAFF:
 	case TV_ROD:
 		/* "Cursed" scrolls/potions have a cost of 0 */
-		if (k_ptr->cost == 0) return "bad";//"cursed";
+		if (k_ptr->cost == 0) return("bad");//"cursed");
 
 		/* Artifacts */
-		if (artifact_p(o_ptr)) return "good";
+		if (artifact_p(o_ptr)) return("good");
 
 		/* Scroll of Nothing, Apple Juice, etc. */
-		if (k_ptr->cost < 3) return "average";//or "worthless"
+		if (k_ptr->cost < 3) return("average");//or "worthless"
 
 		/*
 		 * Identify, Phase Door, Cure Light Wounds, etc. are
 		 * just average
 		 */
-		if (k_ptr->cost < 100) return "average";
+		if (k_ptr->cost < 100) return("average");
 
 		/* Enchant Armor, *Identify*, Restore Stat, etc. */
-		if (k_ptr->cost < 4000) return "good";
+		if (k_ptr->cost < 4000) return("good");
 
 		/* Acquirement, Deincarnation, Strength, Blood of Life, ... */
-		if (k_ptr->cost >= 4000) return "good";
+		if (k_ptr->cost >= 4000) return("good");
 
 		break;
 
 	/* Food */
 	case TV_FOOD:
 		/* "Cursed" food */
-		if (k_ptr->cost == 0) return "bad";//"cursed";
+		if (k_ptr->cost == 0) return("bad");//"cursed");
 
 		/* Artifacts */
-		if (artifact_p(o_ptr)) return "good";
+		if (artifact_p(o_ptr)) return("good");
 
 		/* Normal food (no magical properties) */
-		if (k_ptr->cost <= 10) return "average";
+		if (k_ptr->cost <= 10) return("average");
 
 		/* Everything else is good */
-		if (k_ptr->cost > 10) return "good";
+		if (k_ptr->cost > 10) return("good");
 
 		break;
 	}
 
 	/* No feeling */
-//	return "";
+//	return("");
 	return(NULL);
 }
 
@@ -655,10 +655,10 @@ static void sense_inventory(int Ind) {
 static int quality_check_aux1(object_type *o_ptr) {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
-	if (artifact_p(o_ptr)) return 3;
+	if (artifact_p(o_ptr)) return(3);
 
 	if (ego_item_p(o_ptr)) {
-		if (o_ptr->name2 == EGO_STORMBRINGER) return 3;
+		if (o_ptr->name2 == EGO_STORMBRINGER) return(3);
 		if (cursed_p(o_ptr) || broken_p(o_ptr)) return(2);
 		if (is_ammo(o_ptr->tval) && (o_ptr->pval || o_ptr->name2 || o_ptr->name2b)) return(2);
 		if (object_value(0, o_ptr) < 4000) return(1);
@@ -781,7 +781,7 @@ int pseudo_id_result(object_type *o_ptr) {
 		return(0);
 	}
 
-	return quality;
+	return(quality);
 }
 #endif
 
@@ -1919,7 +1919,7 @@ bool player_day(int Ind) {
 		p_ptr->redraw |= (PR_MAP); /* For Cloud Planes shading */
 		ret = TRUE;
 	}
-	if (p_ptr->wpos.wz) return ret;
+	if (p_ptr->wpos.wz) return(ret);
 	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS)) return(FALSE);
 	if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) return(FALSE);
 
@@ -1979,7 +1979,7 @@ bool player_night(int Ind) {
 		p_ptr->redraw |= (PR_MAP); /* For Cloud Planes shading */
 		ret = TRUE;
 	}
-	if (p_ptr->wpos.wz) return ret;
+	if (p_ptr->wpos.wz) return(ret);
 	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS)) return(FALSE);
 	if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) return(FALSE);
 
@@ -8550,7 +8550,7 @@ int find_player(s32b id) {
 		player_type *p_ptr = Players[i];
 
 		if (Players[i]->conn == NOT_CONNECTED) return(0);
-		if (p_ptr->id == id) return i;
+		if (p_ptr->id == id) return(i);
 	}
 
 	/* assume none */
@@ -8563,7 +8563,7 @@ int find_player_name(char *name) {
 	for (i = 1; i <= NumPlayers; i++) {
 		player_type *p_ptr = Players[i];
 
-		if (!strcmp(p_ptr->name, name)) return i;
+		if (!strcmp(p_ptr->name, name)) return(i);
 	}
 
 	/* assume none */
@@ -12088,7 +12088,7 @@ bool cold_place(struct worldpos *wpos) {
 		}
 	}
 
-	return cold;
+	return(cold);
 }
 
 /* Apply flags for jail dungeons aka escape tunnels */

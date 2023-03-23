@@ -306,7 +306,7 @@ u32b acc_get_flags(char *name) {
 		return(0);
 	}
 
-	return acc.flags;
+	return(acc.flags);
 }
 
 /* set or clear account flags */
@@ -388,7 +388,7 @@ s32b acc_get_guild(char *name) {
 		return(0);
 	}
 
-	return acc.guild_id;
+	return(acc.guild_id);
 }
 u32b acc_get_guild_dna(char *name) {
 	struct account acc;
@@ -398,7 +398,7 @@ u32b acc_get_guild_dna(char *name) {
 		return(0);
 	}
 
-	return acc.guild_dna;
+	return(acc.guild_dna);
 }
 
 int acc_set_deed_event(char *name, char deed_sval) {
@@ -428,7 +428,7 @@ char acc_get_deed_event(char *name) {
 		return(0);
 	}
 
-	return acc.deed_event;
+	return(acc.deed_event);
 }
 int acc_set_deed_achievement(char *name, char deed_sval) {
 	struct account acc;
@@ -456,7 +456,7 @@ char acc_get_deed_achievement(char *name) {
 		return(0);
 	}
 
-	return acc.deed_achievement;
+	return(acc.deed_achievement);
 }
 /* get account houses //ACC_HOUSE_LIMIT */
 char acc_get_houses(const char *name) {
@@ -466,7 +466,7 @@ char acc_get_houses(const char *name) {
 		return(0);
 	}
 
-	return acc.houses;
+	return(acc.houses);
 }
 
 /* set account houses */
@@ -494,7 +494,7 @@ unsigned char acc_get_runtime(const char *name) {
 	struct account acc;
 
 	if (!GetAccount(&acc, name, NULL, FALSE)) return(0);
-	return acc.runtime;
+	return(acc.runtime);
 }
 
 /* set account houses */
@@ -1296,9 +1296,7 @@ int guild_lookup(cptr name) {
 	/* Check each guild */
 	for (i = 0; i < MAX_GUILDS; i++) { /* start from 0 or from 1? */
 		/* Check name */
-		if (streq(guilds[i].name, name)) {
-			return i;
-		}
+		if (streq(guilds[i].name, name)) return(i);
 	}
 
 	/* No match */
@@ -1314,8 +1312,7 @@ int party_lookup(cptr name) {
 	/* Check each party */
 	for (i = 1; i < MAX_PARTIES; i++) { /* was i = 0 but real parties start from i = 1 - mikaelh */
 		/* Check name */
-		if (streq(parties[i].name, name))
-			return i;
+		if (streq(parties[i].name, name)) return(i);
 	}
 
 	/* No match */
@@ -4228,7 +4225,7 @@ hash_entry *lookup_player(int id) {
 	while (ptr) {
 		/* Check this entry */
 		if (ptr->id == id)
-			return ptr;
+			return(ptr);
 
 		/* Next entry in chain */
 		ptr = ptr->next;
@@ -4246,7 +4243,7 @@ byte lookup_player_level(int id) {
 	hash_entry *ptr;
 
 	if ((ptr = lookup_player(id)))
-		return ptr->level;
+		return(ptr->level);
 
 	/* Not found */
 	return(-1L);
@@ -4256,7 +4253,7 @@ byte lookup_player_order(s32b id) {
 	hash_entry *ptr;
 
 	if ((ptr = lookup_player(id)))
-		return ptr->order;
+		return(ptr->order);
 
 	/* Not found */
 	return(-1L);
@@ -4273,7 +4270,7 @@ byte lookup_player_maxplv(int id) {
 	hash_entry *ptr;
 
 	if ((ptr = lookup_player(id)))
-		return ptr->max_plv;
+		return(ptr->max_plv);
 
 	/* Not found */
 	return(-1L);
@@ -4306,7 +4303,7 @@ s32b lookup_player_party(int id) {
 	hash_entry *ptr;
 
 	if ((ptr = lookup_player(id)))
-		return ptr->party;
+		return(ptr->party);
 
 	/* Not found */
 	return(-1L);
@@ -4316,7 +4313,7 @@ s32b lookup_player_guild(int id) {
 	hash_entry *ptr;
 
 	if ((ptr = lookup_player(id)))
-		return ptr->guild;
+		return(ptr->guild);
 
 	/* Not found */
 	return(-1L);
@@ -4326,7 +4323,7 @@ u32b lookup_player_guildflags(int id) {
 	hash_entry *ptr;
 
 	if ((ptr = lookup_player(id)))
-		return ptr->guild_flags;
+		return(ptr->guild_flags);
 
 	/* Not found */
 	return(-1L);
@@ -4339,7 +4336,7 @@ time_t lookup_player_laston(int id) {
 	hash_entry *ptr;
 
 	if ((ptr = lookup_player(id)))
-		return ptr->laston;
+		return(ptr->laston);
 
 	/* Not found */
 	return(-1L);
@@ -4352,7 +4349,7 @@ cptr lookup_player_name(int id) {
 	hash_entry *ptr;
 
 	if ((ptr = lookup_player(id)))
-		return ptr->name;
+		return(ptr->name);
 
 	/* Not found */
 	return(NULL);
@@ -4365,10 +4362,10 @@ byte lookup_player_mode(int id) {
 	hash_entry *ptr;
 
 	if ((ptr = lookup_player(id)))
-		return ptr->mode;
+		return(ptr->mode);
 
 	/* Not found */
-	return 255;
+	return(255);
 }
 
 /*
@@ -4379,10 +4376,10 @@ struct worldpos lookup_player_wpos(int id) {
 	struct worldpos wpos = {-1, -1, 0};
 
 	if ((ptr = lookup_player(id)))
-		return ptr->wpos;
+		return(ptr->wpos);
 
 	/* Not found */
-	return wpos;
+	return(wpos);
 }
 
 #ifdef AUCTION_SYSTEM
@@ -4393,7 +4390,7 @@ s32b lookup_player_au(int id) {
 	hash_entry *ptr;
 
 	if ((ptr = lookup_player(id)))
-		return ptr->au;
+		return(ptr->au);
 
 	/* Not found */
 	return(-1L);
@@ -4406,7 +4403,7 @@ s32b lookup_player_balance(int id) {
 	hash_entry *ptr;
 
 	if ((ptr = lookup_player(id)))
-		return ptr->balance;
+		return(ptr->balance);
 
 	/* Not found */
 	return(-1L);
@@ -4428,7 +4425,7 @@ int lookup_player_id(cptr name) {
 		/* Check all entries in this chain */
 		while (ptr) {
 			/* Check this name */
-			if (!strcmp(ptr->name, name)) return ptr->id;
+			if (!strcmp(ptr->name, name)) return(ptr->id);
 			/* Next entry in chain */
 			ptr = ptr->next;
 		}
@@ -4450,7 +4447,7 @@ int lookup_case_player_id(cptr name) {
 		/* Check all entries in this chain */
 		while (ptr) {
 			/* Check this name */
-			if (!strcasecmp(ptr->name, name)) return ptr->id;
+			if (!strcasecmp(ptr->name, name)) return(ptr->id);
 			/* Next entry in chain */
 			ptr = ptr->next;
 		}
@@ -4539,7 +4536,7 @@ int lookup_player_id_messy(cptr name) {
 u32b lookup_player_account(int id) {
 	hash_entry *ptr;
 	if ((ptr = lookup_player(id)))
-		return ptr->account;
+		return(ptr->account);
 
 	/* Not found */
 	return(0L);
@@ -4548,7 +4545,7 @@ u32b lookup_player_account(int id) {
 byte lookup_player_winner(int id) {
 	hash_entry *ptr;
 	if ((ptr = lookup_player(id)))
-		return ptr->winner;
+		return(ptr->winner);
 
 	/* Not found */
 	return(-1L);
@@ -4779,7 +4776,7 @@ void sf_rename(const char *name, bool keep_copy) {
 			close(fd1);
 			/* paranoia - fall back to renaming */
 			rename(fname, fname_new);
-			return ;
+			return;
 		}
 
 		/* Use fstat to get the size of the file */
@@ -4806,7 +4803,7 @@ void sf_rename(const char *name, bool keep_copy) {
 			fclose(fp1);
 			/* paranoia - fall back to renaming */
 			rename(fname, fname_new);
-			return ;
+			return;
 		}
 
 		/* Open the output file */
@@ -5582,7 +5579,7 @@ int player_id_list(int **list, u32b account) {
 	/* Limit number of characters per account - C. Blue */
 	if (account && len > max_cpa) len = max_cpa;
 
-	return len;
+	return(len);
 }
 
 /* Change account that a player belong to.
@@ -5975,7 +5972,7 @@ char acc_sum_houses(struct account *acc, bool quiet) {
 	}
 
 	if (ids) C_KILL(id_list, ids, int);
-	return j;
+	return(j);
 }
 
 /* Initialize character ordering for the whole account database,

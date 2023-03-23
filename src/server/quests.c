@@ -1741,8 +1741,8 @@ void quest_deactivate(int q_idx) {
 s16b quest_get_cooldown(int pInd, int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 
-	if (pInd && q_ptr->individual) return Players[pInd]->quest_cooldown[q_idx];
-	return q_ptr->cur_cooldown;
+	if (pInd && q_ptr->individual) return(Players[pInd]->quest_cooldown[q_idx]);
+	return(q_ptr->cur_cooldown);
 }
 
 /* set a current quest's cooldown. Either just uses q_ptr->cur_cooldown directly for global
@@ -1957,7 +1957,7 @@ static bool quest_get_goal(int pInd, int q_idx, int goal, bool nisi) {
 
 	if (!pInd || !q_ptr->individual) {
 		if (nisi && q_goal->nisi) return(FALSE);
-		return q_goal->cleared; /* no player? global goal */
+		return(q_goal->cleared); /* no player? global goal */
 	}
 
 	p_ptr = Players[pInd];
@@ -1965,7 +1965,7 @@ static bool quest_get_goal(int pInd, int q_idx, int goal, bool nisi) {
 		if (p_ptr->quest_idx[i] == q_idx) break;
 	if (i == MAX_PQUESTS) {
 		if (nisi && q_goal->nisi) return(FALSE);
-		return q_goal->cleared; /* player isn't on this quest. return global goal. */
+		return(q_goal->cleared); /* player isn't on this quest. return global goal. */
 	}
 
 	if (q_ptr->individual) {
@@ -1983,25 +1983,25 @@ static bool quest_get_goal_nisi(int pInd, int q_idx, int goal) {
 	int i, stage = quest_get_stage(pInd, q_idx);
 	qi_goal *q_goal = &quest_qi_stage(q_idx, stage)->goal[goal];
 
-	if (!pInd || !q_ptr->individual) return q_goal->nisi; /* global quest */
+	if (!pInd || !q_ptr->individual) return(q_goal->nisi); /* global quest */
 
 	p_ptr = Players[pInd];
 	for (i = 0; i < MAX_PQUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
-	if (i == MAX_PQUESTS) return q_goal->nisi;  /* player isn't on this quest. return global goal. */
+	if (i == MAX_PQUESTS) return(q_goal->nisi);  /* player isn't on this quest. return global goal. */
 
-	if (q_ptr->individual) return p_ptr->quest_goals_nisi[i][goal]; /* individual quest */
+	if (q_ptr->individual) return(p_ptr->quest_goals_nisi[i][goal]); /* individual quest */
 
 	return(q_goal->nisi); /* global quest */
 }
 
 /* Returns the current quest->stage struct. */
 qi_stage *quest_cur_qi_stage(int q_idx) {
-	return &q_info[q_idx].stage[q_info[q_idx].cur_stage];
+	return(&q_info[q_idx].stage[q_info[q_idx].cur_stage]);
 }
 /* Returns a quest->stage struct to a 'stage' index used in q_info.txt. */
 qi_stage *quest_qi_stage(int q_idx, int stage) {
-	return &q_info[q_idx].stage[q_info[q_idx].stage_idx[stage]];
+	return(&q_info[q_idx].stage[q_info[q_idx].stage_idx[stage]]);
 }
 /* return the current quest stage. Either just uses q_ptr->cur_stage directly for global
    quests, or p_ptr->quest_stage for individual quests. */
@@ -2010,15 +2010,15 @@ s16b quest_get_stage(int pInd, int q_idx) {
 	player_type *p_ptr;
 	int i;
 
-	if (!pInd || !q_ptr->individual) return q_ptr->cur_stage; /* no player? global stage */
+	if (!pInd || !q_ptr->individual) return(q_ptr->cur_stage); /* no player? global stage */
 
 	p_ptr = Players[pInd];
 	for (i = 0; i < MAX_PQUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
 	if (i == MAX_PQUESTS) return(0); /* player isn't on this quest: pick stage 0, the entry stage */
 
-	if (q_ptr->individual) return p_ptr->quest_stage[i]; /* individual quest */
-	return q_ptr->cur_stage; /* global quest */
+	if (q_ptr->individual) return(p_ptr->quest_stage[i]); /* individual quest */
+	return(q_ptr->cur_stage); /* global quest */
 }
 
 /* return current quest flags. Either just uses q_ptr->flags directly for global
@@ -2028,15 +2028,15 @@ static u16b quest_get_flags(int pInd, int q_idx) {
 	player_type *p_ptr;
 	int i;
 
-	if (!pInd || !q_ptr->individual) return q_ptr->flags; /* no player? global goal */
+	if (!pInd || !q_ptr->individual) return(q_ptr->flags); /* no player? global goal */
 
 	p_ptr = Players[pInd];
 	for (i = 0; i < MAX_PQUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
-	if (i == MAX_PQUESTS) return q_ptr->flags; /* player isn't on this quest. return global goal. */
+	if (i == MAX_PQUESTS) return(q_ptr->flags); /* player isn't on this quest. return global goal. */
 
-	if (q_ptr->individual) return p_ptr->quest_flags[i]; /* individual quest */
-	return q_ptr->flags; /* global quest */
+	if (q_ptr->individual) return(p_ptr->quest_flags[i]); /* individual quest */
+	return(q_ptr->flags); /* global quest */
 }
 /* set/clear quest flags */
 static void quest_set_flags(int pInd, int q_idx, u16b set_mask, u16b clear_mask) {
@@ -2561,7 +2561,7 @@ static s16b quest_mspawn_pick(qi_monsterspawn *q_mspawn) {
 	int lev = q_mspawn->rlevmin + randint(q_mspawn->rlevmax - q_mspawn->rlevmin);
 
 	/* exact spec? */
-	if (q_mspawn->ridx) return q_mspawn->ridx;
+	if (q_mspawn->ridx) return(q_mspawn->ridx);
 
 	quest_aux_name = q_mspawn->name;
 	quest_aux_char = q_mspawn->rchar;
@@ -2570,7 +2570,7 @@ static s16b quest_mspawn_pick(qi_monsterspawn *q_mspawn) {
 	get_mon_num_hook = quest_aux;
 	get_mon_num2_hook = NULL;
 	get_mon_num_prep(0, NULL);//reject_uniques done in quest_aux()
-	return get_mon_num(lev, lev - 10);//-10 : reduce OOD;
+	return(get_mon_num(lev, lev - 10));//-10 : reduce OOD;
 }
 /* Spawn monsters on stage startup */
 static void quest_spawn_monsters(int q_idx, int stage) {
@@ -2975,7 +2975,7 @@ static byte quest_set_stage_individual(int Ind, int q_idx, int stage, bool quiet
 
 	for (j = 0; j < MAX_PQUESTS; j++)
 		if (p_ptr->quest_idx[j] == q_idx) break;
-	if (j == MAX_PQUESTS) return j; //paranoia, shouldn't happen
+	if (j == MAX_PQUESTS) return(j); //paranoia, shouldn't happen
 
 	/* clear any pending RIDs */
 	if (p_ptr->request_id >= RID_QUEST && p_ptr->request_id <= RID_QUEST_ACQUIRE + MAX_Q_IDX - 1) {
@@ -3052,7 +3052,7 @@ static byte quest_set_stage_individual(int Ind, int q_idx, int stage, bool quiet
 	if (final_player)
 		quest_spawn_questitems(q_idx, stage);
 
-	return j;
+	return(j);
 }
 /* Advance quest to a different stage (or start it out if stage is 0).
 
@@ -4828,9 +4828,9 @@ static int quest_goal_check_stage(int pInd, int q_idx) {
 			if (!quest_get_goal(pInd, q_idx, q_stage->goals_for_stage[j][i], FALSE)) break;
 		}
 		/* we may proceed to another stage? */
-		if (i == QI_STAGE_GOALS) return q_stage->next_stage_from_goals[j];
+		if (i == QI_STAGE_GOALS) return(q_stage->next_stage_from_goals[j]);
 	}
-	return 255; /* goals are not complete yet */
+	return(255); /* goals are not complete yet */
 }
 
 /* Apply status effect(s) to a specific player.
@@ -5493,7 +5493,7 @@ qi_questor *init_quest_questor(int q_idx, int num) {
 	qi_questor *p;
 
 	/* we already have this existing one */
-	if (q_ptr->questors > num) return &q_ptr->questor[num];
+	if (q_ptr->questors > num) return(&q_ptr->questor[num]);
 
 	/* allocate all missing instances up to the requested index */
 	p = (qi_questor*)realloc(q_ptr->questor, sizeof(qi_questor) * (num + 1));
@@ -5520,7 +5520,7 @@ qi_questor *init_quest_questor(int q_idx, int num) {
 	p->q_loc.tpref = NULL;
 
 	/* done, return the new, requested one */
-	return &q_ptr->questor[num];
+	return(&q_ptr->questor[num]);
 }
 
 /* Allocate/initialise a questor-morph, or return it if already existing. */
@@ -5529,7 +5529,7 @@ qi_questor_morph *init_quest_qmorph(int q_idx, int stage, int questor) {
 	qi_questor_morph *p;
 
 	/* we already have this existing one */
-	if (q_stage->questor_morph[questor]) return q_stage->questor_morph[questor];
+	if (q_stage->questor_morph[questor]) return(q_stage->questor_morph[questor]);
 
 	/* allocate a new one */
 	p = (qi_questor_morph*)malloc(sizeof(qi_questor_morph));
@@ -5545,7 +5545,7 @@ qi_questor_morph *init_quest_qmorph(int q_idx, int stage, int questor) {
 	p->name = NULL;
 
 	/* done, return the new, requested one */
-	return p;
+	return(p);
 }
 /* Allocate/initialise a questor-hostility, or return it if already existing. */
 qi_questor_hostility *init_quest_qhostility(int q_idx, int stage, int questor) {
@@ -5553,7 +5553,7 @@ qi_questor_hostility *init_quest_qhostility(int q_idx, int stage, int questor) {
 	qi_questor_hostility *p;
 
 	/* we already have this existing one */
-	if (q_stage->questor_hostility[questor]) return q_stage->questor_hostility[questor];
+	if (q_stage->questor_hostility[questor]) return(q_stage->questor_hostility[questor]);
 
 	/* allocate a new one */
 	p = (qi_questor_hostility*)malloc(sizeof(qi_questor_hostility));
@@ -5569,7 +5569,7 @@ qi_questor_hostility *init_quest_qhostility(int q_idx, int stage, int questor) {
 	q_stage->questor_hostility[questor] = p;
 
 	/* done, return the new, requested one */
-	return p;
+	return(p);
 }
 /* Allocate/initialise a questor-act, or return it if already existing. */
 qi_questor_act *init_quest_qact(int q_idx, int stage, int questor) {
@@ -5577,7 +5577,7 @@ qi_questor_act *init_quest_qact(int q_idx, int stage, int questor) {
 	qi_questor_act *p;
 
 	/* we already have this existing one */
-	if (q_stage->questor_act[questor]) return q_stage->questor_act[questor];
+	if (q_stage->questor_act[questor]) return(q_stage->questor_act[questor]);
 
 	/* allocate a new one */
 	p = (qi_questor_act*)malloc(sizeof(qi_questor_act));
@@ -5590,7 +5590,7 @@ qi_questor_act *init_quest_qact(int q_idx, int stage, int questor) {
 	q_stage->questor_act[questor] = p;
 
 	/* done, return the new, requested one */
-	return p;
+	return(p);
 }
 
 /* Allocate/initialise a quest stage, or return it if already existing. */
@@ -5608,7 +5608,7 @@ qi_stage *init_quest_stage(int q_idx, int num) {
 	}
 
 	/* we already have this existing one */
-	if (q_ptr->stage_idx[num] != -1) return &q_ptr->stage[q_ptr->stage_idx[num]];
+	if (q_ptr->stage_idx[num] != -1) return(&q_ptr->stage[q_ptr->stage_idx[num]]);
 
 	/* allocate a new one */
 	p = (qi_stage*)realloc(q_ptr->stage, sizeof(qi_stage) * (q_ptr->stages + 1));
@@ -5646,7 +5646,7 @@ qi_stage *init_quest_stage(int q_idx, int num) {
 	p->geno_wpos.wx = -1; //disable
 
 	/* done, return the new one */
-	return &q_ptr->stage[q_ptr->stages - 1];
+	return(&q_ptr->stage[q_ptr->stages - 1]);
 }
 
 /* Allocate/initialise a quest keyword, or return it if already existing. */
@@ -5655,7 +5655,7 @@ qi_keyword *init_quest_keyword(int q_idx, int num) {
 	qi_keyword *p;
 
 	/* we already have this existing one */
-	if (q_ptr->keywords > num) return &q_ptr->keyword[num];
+	if (q_ptr->keywords > num) return(&q_ptr->keyword[num]);
 
 	/* allocate all missing instances up to the requested index */
 	p = (qi_keyword*)realloc(q_ptr->keyword, sizeof(qi_keyword) * (num + 1));
@@ -5672,7 +5672,7 @@ qi_keyword *init_quest_keyword(int q_idx, int num) {
 	q_ptr->keywords = num + 1;
 
 	/* done, return the new, requested one */
-	return &q_ptr->keyword[num];
+	return(&q_ptr->keyword[num]);
 }
 
 /* Allocate/initialise a quest keyword reply, or return it if already existing. */
@@ -5681,7 +5681,7 @@ qi_kwreply *init_quest_kwreply(int q_idx, int num) {
 	qi_kwreply *p;
 
 	/* we already have this existing one */
-	if (q_ptr->kwreplies > num) return &q_ptr->kwreply[num];
+	if (q_ptr->kwreplies > num) return(&q_ptr->kwreply[num]);
 
 	/* allocate all missing instances up to the requested index */
 	p = (qi_kwreply*)realloc(q_ptr->kwreply, sizeof(qi_kwreply) * (num + 1));
@@ -5698,7 +5698,7 @@ qi_kwreply *init_quest_kwreply(int q_idx, int num) {
 	q_ptr->kwreplies = num + 1;
 
 	/* done, return the new, requested one */
-	return &q_ptr->kwreply[num];
+	return(&q_ptr->kwreply[num]);
 }
 
 /* Allocate/initialise a kill goal, or return it if already existing.
@@ -5710,7 +5710,7 @@ qi_kill *init_quest_kill(int q_idx, int stage, int q_info_goal) {
 	int i;
 
 	/* we already have this existing one */
-	if (q_goal->kill) return q_goal->kill;
+	if (q_goal->kill) return(q_goal->kill);
 
 	/* allocate a new one */
 	p = (qi_kill*)malloc(sizeof(qi_kill));
@@ -5735,7 +5735,7 @@ qi_kill *init_quest_kill(int q_idx, int stage, int q_info_goal) {
 		p->reidx[i] = -1;//accept all egos (incl. 0)
 
 	/* done, return the new, requested one */
-	return p;
+	return(p);
 }
 
 /* Allocate/initialise a kill goal, or return it if already existing.
@@ -5747,7 +5747,7 @@ qi_retrieve *init_quest_retrieve(int q_idx, int stage, int q_info_goal) {
 	int i;
 
 	/* we already have this existing one */
-	if (q_goal->retrieve) return q_goal->retrieve;
+	if (q_goal->retrieve) return(q_goal->retrieve);
 
 	/* allocate a new one */
 	p = (qi_retrieve*)malloc(sizeof(qi_retrieve));
@@ -5775,7 +5775,7 @@ qi_retrieve *init_quest_retrieve(int q_idx, int stage, int q_info_goal) {
 	}
 
 	/* done, return the new, requested one */
-	return p;
+	return(p);
 }
 
 /* Allocate/initialise a kill goal, or return it if already existing.
@@ -5786,7 +5786,7 @@ qi_deliver *init_quest_deliver(int q_idx, int stage, int q_info_goal) {
 	qi_deliver *p;
 
 	/* we already have this existing one */
-	if (q_goal->deliver) return q_goal->deliver;
+	if (q_goal->deliver) return(q_goal->deliver);
 
 	/* allocate a new one */
 	p = (qi_deliver*)malloc(sizeof(qi_deliver));
@@ -5802,7 +5802,7 @@ qi_deliver *init_quest_deliver(int q_idx, int stage, int q_info_goal) {
 	p->return_to_questor = 255;
 
 	/* done, return the new, requested one */
-	return p;
+	return(p);
 }
 
 /* Allocate/initialise a kill goal, or return it if already existing.
@@ -5824,7 +5824,7 @@ qi_goal *init_quest_goal(int q_idx, int stage, int q_info_goal) {
 	q_info_goal--; /* unhack it to represent internal goal index now */
 
 	/* we already have this existing one */
-	if (q_stage->goals > q_info_goal) return &q_stage->goal[q_info_goal];
+	if (q_stage->goals > q_info_goal) return(&q_stage->goal[q_info_goal]);
 
 	/* allocate all missing instances up to the requested index */
 	p = (qi_goal*)realloc(q_stage->goal, sizeof(qi_goal) * (q_info_goal + 1));
@@ -5848,7 +5848,7 @@ qi_goal *init_quest_goal(int q_idx, int stage, int q_info_goal) {
 	p->optional = opt; /* permanent forever! */
 
 	/* done, return the new, requested one */
-	return &q_stage->goal[q_info_goal];
+	return(&q_stage->goal[q_info_goal]);
 }
 
 /* Allocate/initialise a quest reward, or return it if already existing. */
@@ -5857,7 +5857,7 @@ qi_reward *init_quest_reward(int q_idx, int stage, int num) {
 	qi_reward *p;
 
 	/* we already have this existing one */
-	if (q_stage->rewards > num) return &q_stage->reward[num];
+	if (q_stage->rewards > num) return(&q_stage->reward[num]);
 
 	/* allocate all missing instances up to the requested index */
 	p = (qi_reward*)realloc(q_stage->reward, sizeof(qi_reward) * (num + 1));
@@ -5874,7 +5874,7 @@ qi_reward *init_quest_reward(int q_idx, int stage, int num) {
 	q_stage->rewards = num + 1;
 
 	/* done, return the new, requested one */
-	return &q_stage->reward[num];
+	return(&q_stage->reward[num]);
 }
 
 /* Allocate/initialise a custom quest item, or return it if already existing. */
@@ -5883,7 +5883,7 @@ qi_questitem *init_quest_questitem(int q_idx, int stage, int num) {
 	qi_questitem *p;
 
 	/* we already have this existing one */
-	if (q_stage->qitems > num) return &q_stage->qitem[num];
+	if (q_stage->qitems > num) return(&q_stage->qitem[num]);
 
 	/* allocate a new one */
 	p = (qi_questitem*)realloc(q_stage->qitem, sizeof(qi_questitem) * (q_stage->qitems + 1));
@@ -5903,7 +5903,7 @@ qi_questitem *init_quest_questitem(int q_idx, int stage, int num) {
 	q_stage->qitems++;
 
 	/* done, return the new one */
-	return &q_stage->qitem[q_stage->qitems - 1];
+	return(&q_stage->qitem[q_stage->qitems - 1]);
 }
 
 /* Allocate/initialise a cave feature to be built in a stage,
@@ -5914,7 +5914,7 @@ qi_feature *init_quest_feature(int q_idx, int stage, int num) {
 
 
 	/* we already have this existing one */
-	if (q_stage->feats > num) return &q_stage->feat[num];
+	if (q_stage->feats > num) return(&q_stage->feat[num]);
 
 	/* allocate a new one */
 	p = (qi_feature*)realloc(q_stage->feat, sizeof(qi_feature) * (q_stage->feats + 1));
@@ -5930,7 +5930,7 @@ qi_feature *init_quest_feature(int q_idx, int stage, int num) {
 	q_stage->feats++;
 
 	/* done, return the new one */
-	return &q_stage->feat[q_stage->feats - 1];
+	return(&q_stage->feat[q_stage->feats - 1]);
 }
 
 /* Allocate/initialise a monster spawn event in a stage,
@@ -5941,7 +5941,7 @@ qi_monsterspawn *init_quest_monsterspawn(int q_idx, int stage, int num) {
 
 
 	/* we already have this existing one */
-	if (q_stage->mspawns > num) return &q_stage->mspawn[num];
+	if (q_stage->mspawns > num) return(&q_stage->mspawn[num]);
 
 	/* allocate a new one */
 	p = (qi_monsterspawn*)realloc(q_stage->mspawn, sizeof(qi_monsterspawn) * (q_stage->mspawns + 1));
@@ -5957,7 +5957,7 @@ qi_monsterspawn *init_quest_monsterspawn(int q_idx, int stage, int num) {
 	q_stage->mspawns++;
 
 	/* done, return the new one */
-	return &q_stage->mspawn[q_stage->mspawns - 1];
+	return(&q_stage->mspawn[q_stage->mspawns - 1]);
 }
 
 /* Hack: if a quest was disabled in q_info, this will have set the

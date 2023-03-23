@@ -1719,7 +1719,7 @@ s32b flag_cost(object_type *o_ptr, int plusses) {
 	if (is_ammo(o_ptr->tval))
 		total >>= 2;
 
-	return total;
+	return(total);
 }
 
 
@@ -2624,7 +2624,7 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	if (is_ammo(o_ptr->tval))
 		total >>= 2;
 
-	return total;
+	return(total);
 }
 
 /* Return rating for especially useful armour, that means
@@ -2724,7 +2724,7 @@ static int artifact_flag_rating_armour(object_type *o_ptr) {
 
 	if (f3 & TR3_DRAIN_EXP) total >>= 1;
 
-	return total;
+	return(total);
 }
 
 /* Return rating for especially useful weapons, that means a
@@ -2797,7 +2797,7 @@ static int artifact_flag_rating_weapon(object_type *o_ptr) {
 
 	if (f4 & TR4_CLONE) total >>= 1;
 
-	return total;
+	return(total);
 }
 
 /* Return a sensible pricing for randarts, which
@@ -7166,11 +7166,11 @@ static int kind_is_normal(int k_idx, u32b resf) {
 	int tc_p = kind_is_legal(k_idx, resf);
 
 	switch (which_theme(k_info[k_idx].tval)) {
-	case TC_TREASURE: return(tc_p * tc_bias_treasure) / 500;
-	case TC_COMBAT: return(tc_p * tc_bias_combat) / 500;
-	case TC_MAGIC: return(tc_p * tc_bias_magic) / 500;
-	case TC_TOOLS: return(tc_p * tc_bias_tools) / 500;
-	case TC_JUNK: return(tc_p * tc_bias_junk) / 500;
+	case TC_TREASURE: return((tc_p * tc_bias_treasure) / 500);
+	case TC_COMBAT: return((tc_p * tc_bias_combat) / 500);
+	case TC_MAGIC: return((tc_p * tc_bias_magic) / 500);
+	case TC_TOOLS: return((tc_p * tc_bias_tools) / 500);
+	case TC_JUNK: return((tc_p * tc_bias_junk) / 500);
 	}
 	//-1, unclassified item (paranoia)
 	return(tc_p / TC_AMOUNT);
@@ -7199,15 +7199,15 @@ static int kind_is_good(int k_idx, u32b resf) {
 	case TV_GLOVES:
 	case TV_HELM:
 		if (k_ptr->to_a < 0) return(0);
-		return(tc_p * tc_biasg_combat) / 500;
+		return((tc_p * tc_biasg_combat) / 500);
 	case TV_DRAG_ARMOR:
 	case TV_CROWN:
 		if (k_ptr->to_a < 0) return(0);
-		return(tc_p * tc_biasg_treasure) / 500;
+		return((tc_p * tc_biasg_treasure) / 500);
 	case TV_CLOAK:
 	case TV_BOOTS:
 		if (k_ptr->to_a < 0) return(0);
-		return(tc_p * tc_biasg_tools) / 500;
+		return((tc_p * tc_biasg_tools) / 500);
 
 	/* Weapons -- Good unless damaged */
 	case TV_BOW:
@@ -7218,25 +7218,25 @@ static int kind_is_good(int k_idx, u32b resf) {
 	case TV_BOOMERANG:
 		if (k_ptr->to_h < 0) return(0);
 		if (k_ptr->to_d < 0) return(0);
-		return(tc_p * tc_biasg_combat) / 500;
+		return((tc_p * tc_biasg_combat) / 500);
 	/* Diggers are similar to weapons in this regard */
 	case TV_DIGGING:
 		if (k_ptr->to_h < 0) return(0);
 		if (k_ptr->to_d < 0) return(0);
-		return(tc_p * tc_biasg_tools) / 500;
+		return((tc_p * tc_biasg_tools) / 500);
 
 	/* Ammo -- Arrows/Bolts are good */
 	case TV_BOLT:
 	case TV_ARROW:
 	case TV_SHOT:
 		if (k_ptr->sval == SV_AMMO_CHARRED) return(0);
-		return(tc_p * tc_biasg_combat) / 500;
+		return((tc_p * tc_biasg_combat) / 500);
 	case TV_MSTAFF:
-		return(tc_p * tc_biasg_magic) / 500;
+		return((tc_p * tc_biasg_magic) / 500);
 
 	/* Trap kits are good now, since weapons are, too. */
 	case TV_TRAPKIT:
-		return(tc_p * tc_biasg_tools) / 500;
+		return((tc_p * tc_biasg_tools) / 500);
 
 	/* Rings -- Rings of Speed are good */
 	case TV_RING:
@@ -7274,7 +7274,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_RING_ACID:
 		case SV_RING_ELEC:
 #endif
-			return(tc_p * tc_biasg_magic) / 500;
+			return((tc_p * tc_biasg_magic) / 500);
 		}
 		break;
 
@@ -7289,7 +7289,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_LITE_PALANTIR:
 		case SV_ANCHOR_SPACETIME:
 		case SV_STONE_LORE:
-			return(tc_p * tc_biasg_tools) / 500;
+			return((tc_p * tc_biasg_tools) / 500);
 		}
 		break;
 
@@ -7317,7 +7317,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_AMULET_SSHARD:
 		case SV_AMULET_SPEED:
 		case SV_AMULET_TERKEN:
-			return(tc_p * tc_biasg_magic) / 500;
+			return((tc_p * tc_biasg_magic) / 500);
 		}
 		break;
 
@@ -7335,7 +7335,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_STAFF_EARTHQUAKES:
 		case SV_STAFF_DESTRUCTION:
 		case SV_STAFF_STAR_IDENTIFY:
-			return(tc_p * tc_biasg_magic) / 500;
+			return((tc_p * tc_biasg_magic) / 500);
 		}
 		break;
 	case TV_WAND:
@@ -7356,7 +7356,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_WAND_ROCKETS:
 		case SV_WAND_TELEPORT_AWAY:
 		//case SV_WAND_WALL_CREATION:
-			return(tc_p * tc_biasg_magic) / 500;
+			return((tc_p * tc_biasg_magic) / 500);
 		}
 		break;
 	case TV_ROD:
@@ -7381,7 +7381,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_ROD_COLD_BALL:
 		case SV_ROD_FIRE_BALL:
 		case SV_ROD_HAVOC:
-			return(tc_p * tc_biasg_magic) / 500;
+			return((tc_p * tc_biasg_magic) / 500);
 		}
 		break;
 	default:
@@ -7395,11 +7395,11 @@ static int kind_is_good(int k_idx, u32b resf) {
 		if (k_ptr->cost < 200) return(0); //except items that are really not GOOD
 
 		switch (which_theme(k_ptr->tval)) {
-		case TC_TREASURE: return(tc_p * tc_biasg_treasure) / 500;
-		case TC_COMBAT: return(tc_p * tc_biasg_combat) / 500;
-		case TC_MAGIC: return(tc_p * tc_biasg_magic) / 500;
-		case TC_TOOLS: return(tc_p * tc_biasg_tools) / 500;
-		case TC_JUNK: return(tc_p * tc_biasg_junk) / 500;
+		case TC_TREASURE: return((tc_p * tc_biasg_treasure) / 500);
+		case TC_COMBAT: return((tc_p * tc_biasg_combat) / 500);
+		case TC_MAGIC: return((tc_p * tc_biasg_magic) / 500);
+		case TC_TOOLS: return((tc_p * tc_biasg_tools) / 500);
+		case TC_JUNK: return((tc_p * tc_biasg_junk) / 500);
 		}
 		//-1, unclassified item (paranoia)
 		return(tc_p / TC_AMOUNT);
@@ -7413,17 +7413,17 @@ static int kind_is_good(int k_idx, u32b resf) {
 
 #if 0
 	switch (which_theme(k_ptr->tval)) {
-	case TC_TREASURE: return(tc_p * tc_biasg_treasure) / 500;
-	case TC_COMBAT: return(tc_p * tc_biasg_combat) / 500;
-	case TC_MAGIC: return(tc_p * tc_biasg_magic) / 500;
-	case TC_TOOLS: return(tc_p * tc_biasg_tools) / 500;
-	case TC_JUNK: return(tc_p * tc_biasg_junk) / 500;
+	case TC_TREASURE: return((tc_p * tc_biasg_treasure) / 500);
+	case TC_COMBAT: return((tc_p * tc_biasg_combat) / 500);
+	case TC_MAGIC: return((tc_p * tc_biasg_magic) / 500);
+	case TC_TOOLS: return((tc_p * tc_biasg_tools) / 500);
+	case TC_JUNK: return((tc_p * tc_biasg_junk) / 500);
 	}
 	//-1, unclassified item (paranoia)
 	return(tc_p / TC_AMOUNT);
 #endif
 #if 1
-	return(tc_p * 1) / 100; //absolute minimum chance that is guaranteed to be not 0 for any rarest item: 1%.
+	return((tc_p * 1) / 100); //absolute minimum chance that is guaranteed to be not 0 for any rarest item: 1%.
 #endif
 #if 0
 	return(0);
@@ -7453,15 +7453,15 @@ static int kind_is_great(int k_idx, u32b resf) {
 	case TV_GLOVES:
 	case TV_HELM:
 		if (k_ptr->to_a < 0) return(0);
-		return(tc_p * tc_biasr_combat) / 500;
+		return((tc_p * tc_biasr_combat) / 500);
 	case TV_DRAG_ARMOR:
 	case TV_CROWN:
 		if (k_ptr->to_a < 0) return(0);
-		return(tc_p * tc_biasr_magic) / 500;
+		return((tc_p * tc_biasr_magic) / 500);
 	case TV_CLOAK:
 	case TV_BOOTS:
 		if (k_ptr->to_a < 0) return(0);
-		return(tc_p * tc_biasr_tools) / 500;
+		return((tc_p * tc_biasr_tools) / 500);
 
 	/* Weapons -- Good unless damaged */
 	case TV_BOW:
@@ -7472,25 +7472,25 @@ static int kind_is_great(int k_idx, u32b resf) {
 	case TV_BOOMERANG:
 		if (k_ptr->to_h < 0) return(0);
 		if (k_ptr->to_d < 0) return(0);
-		return(tc_p * tc_biasr_combat) / 500;
+		return((tc_p * tc_biasr_combat) / 500);
 	/* Diggers are similar to weapons in this regard */
 	case TV_DIGGING:
 		if (k_ptr->to_h < 0) return(0);
 		if (k_ptr->to_d < 0) return(0);
-		return(tc_p * tc_biasr_tools) / 500;
+		return((tc_p * tc_biasr_tools) / 500);
 
 	/* Ammo -- Arrows/Bolts are good */
 	case TV_BOLT:
 	case TV_ARROW:
 	case TV_SHOT:
 		if (k_ptr->sval == SV_AMMO_CHARRED) return(0);
-		return(tc_p * tc_biasr_combat) / 500;
+		return((tc_p * tc_biasr_combat) / 500);
 	case TV_MSTAFF:
-		return(tc_p * tc_biasr_magic) / 500;
+		return((tc_p * tc_biasr_magic) / 500);
 
 	/* Trap kits are good now, since weapons are, too. */
 	case TV_TRAPKIT:
-		return(tc_p * tc_biasr_tools) / 500;
+		return((tc_p * tc_biasr_tools) / 500);
 
 	/* Rings -- Rings of Speed are good */
 	case TV_RING:
@@ -7514,7 +7514,7 @@ static int kind_is_great(int k_idx, u32b resf) {
 		case SV_RING_RES_CHAOS:
 		case SV_RING_INVIS:
 #endif
-			return(tc_p * tc_biasr_magic) / 500;
+			return((tc_p * tc_biasr_magic) / 500);
 		}
 		break;
 
@@ -7533,7 +7533,7 @@ static int kind_is_great(int k_idx, u32b resf) {
 		case SV_LITE_PALANTIR:
 		case SV_ANCHOR_SPACETIME:
 		case SV_STONE_LORE:
-			return(tc_p * tc_biasr_tools) / 500;
+			return((tc_p * tc_biasr_tools) / 500);
 		}
 		break;
 
@@ -7563,7 +7563,7 @@ static int kind_is_great(int k_idx, u32b resf) {
 		case SV_AMULET_RAGE:
 		case SV_AMULET_GROM:
 		case SV_AMULET_SSHARD:
-			return(tc_p * tc_biasr_magic) / 500;
+			return((tc_p * tc_biasr_magic) / 500);
 		}
 		break;
 
@@ -7586,7 +7586,7 @@ static int kind_is_great(int k_idx, u32b resf) {
 		case SV_STAFF_THE_MAGI:
 		case SV_STAFF_HOLINESS:
 		case SV_STAFF_STAR_IDENTIFY:
-			return(tc_p * tc_biasr_magic) / 500;
+			return((tc_p * tc_biasr_magic) / 500);
 		}
 		break;
 	case TV_WAND:
@@ -7609,7 +7609,7 @@ static int kind_is_great(int k_idx, u32b resf) {
 		case SV_WAND_DRAIN_LIFE:
 		case SV_WAND_ANNIHILATION:
 		case SV_WAND_ROCKETS:
-			return(tc_p * tc_biasr_magic) / 500;
+			return((tc_p * tc_biasr_magic) / 500);
 		}
 		break;
 	case TV_ROD:
@@ -7639,7 +7639,7 @@ static int kind_is_great(int k_idx, u32b resf) {
 		case SV_ROD_SPEED:
 		case SV_ROD_DRAIN_LIFE:
 		case SV_ROD_HAVOC:
-			return(tc_p * tc_biasr_magic) / 500;
+			return((tc_p * tc_biasr_magic) / 500);
 		}
 		break;
 
@@ -7650,11 +7650,11 @@ static int kind_is_great(int k_idx, u32b resf) {
 	case TV_BOOK:
 		/* No handbooks, even though they're pretty costly. */
 		if (k_ptr->cost <= 20000) return(0); //Tomes+Grimoires
-		return(tc_p * tc_biasr_magic) / 500;
+		return((tc_p * tc_biasr_magic) / 500);
 	case TV_GOLEM:
 		/* Only rare massive pieces (gold+), no arms/legs/scrolls */
 		if (k_ptr->cost < 20000) return(0);
-		return(tc_p * tc_biasr_junk) / 500;
+		return((tc_p * tc_biasr_junk) / 500);
 
 	default:
 		/* Specialty: Left over tvals.
@@ -7672,11 +7672,11 @@ static int kind_is_great(int k_idx, u32b resf) {
 		if (k_ptr->cost <= 7000) return(0); //except items that are really not GREAT (Note though: Artifact Ale is 5k :/)
 
 		switch (which_theme(k_ptr->tval)) {
-		case TC_TREASURE: return(tc_p * tc_biasr_treasure) / 500;
-		case TC_COMBAT: return(tc_p * tc_biasr_combat) / 500;
-		case TC_MAGIC: return(tc_p * tc_biasr_magic) / 500;
-		case TC_TOOLS: return(tc_p * tc_biasr_tools) / 500;
-		case TC_JUNK: return(tc_p * tc_biasr_junk) / 500;
+		case TC_TREASURE: return((tc_p * tc_biasr_treasure) / 500);
+		case TC_COMBAT: return((tc_p * tc_biasr_combat) / 500);
+		case TC_MAGIC: return((tc_p * tc_biasr_magic) / 500);
+		case TC_TOOLS: return((tc_p * tc_biasr_tools) / 500);
+		case TC_JUNK: return((tc_p * tc_biasr_junk) / 500);
 		}
 		//-1, unclassified item (paranoia)
 		return(tc_p / TC_AMOUNT);
@@ -7690,17 +7690,17 @@ static int kind_is_great(int k_idx, u32b resf) {
 
 #if 0
 	switch (which_theme(k_ptr->tval)) {
-	case TC_TREASURE: return(tc_p * tc_biasr_treasure) / 500;
-	case TC_COMBAT: return(tc_p * tc_biasr_combat) / 500;
-	case TC_MAGIC: return(tc_p * tc_biasr_magic) / 500;
-	case TC_TOOLS: return(tc_p * tc_biasr_tools) / 500;
-	case TC_JUNK: return(tc_p * tc_biasr_junk) / 500;
+	case TC_TREASURE: return((tc_p * tc_biasr_treasure) / 500);
+	case TC_COMBAT: return((tc_p * tc_biasr_combat) / 500);
+	case TC_MAGIC: return((tc_p * tc_biasr_magic) / 500);
+	case TC_TOOLS: return((tc_p * tc_biasr_tools) / 500);
+	case TC_JUNK: return((tc_p * tc_biasr_junk) / 500);
 	}
 	//-1, unclassified item (paranoia)
 	return(tc_p / TC_AMOUNT);
 #endif
 #if 1
-	return(tc_p * 1) / 100; //absolute minimum chance that is guaranteed to be not 0 for any rarest item: 1%.
+	return((tc_p * 1) / 100); //absolute minimum chance that is guaranteed to be not 0 for any rarest item: 1%.
 #endif
 #if 0
 	return(0);

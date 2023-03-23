@@ -2690,7 +2690,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 	    !los(wpos, p_ptr->py, p_ptr->px, y, x))
 	    //!player_has_los_bold(Ind, y, x))
 		return(FALSE);
-	else return ident;
+	else return(ident);
 }
 
 void player_activate_door_trap(int Ind, s16b y, s16b x) {

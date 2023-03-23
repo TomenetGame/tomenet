@@ -12372,7 +12372,7 @@ cptr look_mon_desc(int m_idx, bool check_immortal) {
 	   apparently maxhp can extremely rarely be 0 - C. Blue */
 	if (m_ptr->maxhp == 0) {
 		s_printf("DBG_MAXHP_3 %d,%d\n", m_ptr->r_idx, m_ptr->ego);
-		return "awake"; /* some excuse string ;) */
+		return("awake"); /* some excuse string ;) */
 	}
 
 	/* Calculate a health "percentage" */
@@ -12505,7 +12505,7 @@ static int player_wounded(s16b ind) {
 		wounded = 101;
 #endif
 
-	return wounded;
+	return(wounded);
 }
 
 /* this should probably be somewhere more logical, but I should probably be
@@ -13994,7 +13994,7 @@ int get_player(int Ind, object_type *o_ptr) {
 		return(0);
 	}
 
-	return Ind2;
+	return(Ind2);
 }
 
 /* Get base monster race to be conjured from an item inscription */
@@ -14038,7 +14038,7 @@ int get_monster(int Ind, object_type *o_ptr) {
 		return(0);
 	}
 
-	return r_idx;
+	return(r_idx);
 }
 
 void blood_bond(int Ind, object_type *o_ptr) {
@@ -14645,7 +14645,7 @@ static u16b master_summon_aux_monster_type(int Ind, char monster_type, char * mo
 	case 's':
 		/* allows specification by monster No. */
 		tmp = atoi(monster_parms);
-		if (tmp > 0) return tmp;
+		if (tmp > 0) return(tmp);
 
 		/* if the name was specified, summon this exact race */
 		if (strlen(monster_parms) > 1) return race_index(monster_parms);
@@ -15142,7 +15142,7 @@ static vault_type *get_vault(char *name) {
 
 	for (i = 0; i < MAX_V_IDX; i++) {
 		if (strstr(v_name + v_info[i].name, name))
-			return &v_info[i];
+			return(&v_info[i]);
 	}
 
 	return(NULL);
@@ -15268,7 +15268,7 @@ esp_link_type *check_esp_link(ind Ind, int Ind2) {
 
 	esp_ptr = p_ptr->esp_link;
 	while (esp_ptr) {
-		if (esp_ptr->id == p2_ptr->id) return esp_ptr;
+		if (esp_ptr->id == p2_ptr->id) return(esp_ptr);
 		esp_ptr = esp_ptr->next;
 	}
 	return(NULL);

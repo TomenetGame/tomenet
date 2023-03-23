@@ -1275,7 +1275,7 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac, int
 static int repair_cost(int k_idx, int to_x) {
 	int cost = (k_info[k_idx].cost >> 3) + 10;
 	//dagger:11, cutlass:23, broad sword/war maul:28, zweihander:46
-	return(((to_x - 3) * (to_x - 3)) / 8 - 1) * cost / 2; //increase slightly superlinearly, ie earlier repair is cheaper
+	return((((to_x - 3) * (to_x - 3)) / 8 - 1) * cost / 2); //increase slightly superlinearly, ie earlier repair is cheaper
 	//-1:1, -2:2, -3:3, -4:5, -5:7, -6:9, -7:11, -8:14, -9:17, -10:20
 }
 

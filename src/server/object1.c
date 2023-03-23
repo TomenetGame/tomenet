@@ -3435,11 +3435,11 @@ cptr item_activation(object_type *o_ptr) {
 		return("clairvoyance every 200..1000+d150 turns");
 #if 0
 	case ART_ROBINTON:
-		return(music_info[3].desc;
+		return(music_info[3].desc);
 	case ART_PIEMUR:
-		return(music_info[9].desc;
+		return(music_info[9].desc);
 	case ART_MENOLLY:
-		return(music_info[10].desc;
+		return(music_info[10].desc);
 #endif	// 0
 	case ART_EREBOR:
 		return("opening a secret passage every 50..200 turns");

@@ -264,12 +264,12 @@ int go_engine_init(void) {
 
 	if (!gocmd) {
 		s_printf("GO_ERROR: No engine defined during compile.\n");
-		return 7;
+		return(7);
 	}
 
 	if (access(gocmd, X_OK) != 0) {
 		s_printf("GO_ERROR: Engine executable not found.\n");
-		return 8;
+		return(8);
 	}
 
 	/* Try to create pipes for STDIN and STDOUT */
@@ -286,7 +286,7 @@ int go_engine_init(void) {
 	nPid = fork();
 	if (nPid < 0) {
 		s_printf("GO_ERROR: fork().\n");
-		return 3;
+		return(3);
 	} else if (nPid == 0) {
 		//close(STDIN_FILENO); close(STDOUT_FILENO); close(STDERR_FILENO);
 		/* dup pipe read/write to stdin/stdout */
@@ -329,7 +329,7 @@ int go_engine_init(void) {
 
 		/* We were unable to execute the engine? Game over! */
 		fprintf(stderr, "GO_ERROR: exec().\n");
-		//return 4;
+		//return(4);
 
 		/* Cause SIGPIPE to parent so they know what's up */
 		close(pipeto[0]);
@@ -351,12 +351,12 @@ int go_engine_init(void) {
 
 	if ((fw = fdopen(pipeto[1], "w")) == NULL) {
 		s_printf("GO_ERROR: fdopen() w.\n");
-		return 5;
+		return(5);
 	}
 	if ((fr = fdopen(pipefrom[0], "r")) == NULL) {
 		fclose(fw);
 		s_printf("GO_ERROR: fdopen() r.\n");
-		return 6;
+		return(6);
 	}
 
 	/* Set stream for reading to non-blocking */
@@ -473,12 +473,12 @@ int go_engine_init(void) {
 
 	if (!gocmd) {
 		s_printf("GO_ERROR: No engine defined during compile (HS).\n");
-		return 7;
+		return(7);
 	}
 
 	if (access(gocmd, X_OK) != 0) {
 		s_printf("GO_ERROR: Engine executable not found (HS).\n");
-		return 8;
+		return(8);
 	}
 
 	/* Try to create pipes for STDIN and STDOUT */
@@ -495,7 +495,7 @@ int go_engine_init(void) {
 	hs_nPid = fork();
 	if (hs_nPid < 0) {
 		s_printf("GO_ERROR: fork() (HS).\n");
-		return 3;
+		return(3);
 	} else if (hs_nPid == 0) {
 		//close(STDIN_FILENO); close(STDOUT_FILENO); close(STDERR_FILENO);
 		/* dup pipe read/write to stdin/stdout */
@@ -538,7 +538,7 @@ int go_engine_init(void) {
 
 		/* We were unable to execute the engine? Game over! */
 		fprintf(stderr, "GO_ERROR: exec().\n");
-		//return 4;
+		//return(4);
 
 		/* Cause SIGPIPE to parent so they know what's up */
 		close(hs_pipeto[0]);
@@ -556,12 +556,12 @@ int go_engine_init(void) {
 
 	if ((hs_fw = fdopen(hs_pipeto[1], "w")) == NULL) {
 		s_printf("GO_ERROR: fdopen() w (HS).\n");
-		return 5;
+		return(5);
 	}
 	if ((hs_fr = fdopen(hs_pipefrom[0], "r")) == NULL) {
 		fclose(hs_fw);
 		s_printf("GO_ERROR: fdopen() r (HS).\n");
-		return 6;
+		return(6);
 	}
 
 	/* Set stream for reading to non-blocking */
@@ -1446,7 +1446,7 @@ int go_engine_move_human(int Ind, char *py_move) {
 		go_engine_next_action = NACT_MOVE_CPU;
 #endif
 		go_engine_move_result(3);
-		return 3; //resign
+		return(3); //resign
 	}
 
 	Send_request_str(Ind, RID_GO_MOVE, "Invalid move. Try again: ", "");
@@ -1771,7 +1771,7 @@ static int verify_move_CPU(void) {
  #ifdef GO_DEBUGPRINT
 		printf("Your opponent's time has run out, therefore you have won the match!\n");
  #endif
-		return 4;
+		return(4);
 	}
 
 	/* CPU resigns */
@@ -1779,7 +1779,7 @@ static int verify_move_CPU(void) {
 #ifdef GO_DEBUGPRINT
 		printf("Your opponent has resigned, you have won the match!\n");
 #endif
-		return 5;
+		return(5);
 	}
 	/* CPU passes */
 	else if (!strcmp(pipe_buf[MAX_GTP_LINES - 1], "= PASS")) {

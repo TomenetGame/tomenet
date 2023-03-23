@@ -27,26 +27,24 @@
 /*
  * Return the skill associated with the realm
  */
-static int find_realm_skill(int realm)
-{
-	switch (realm)
-	{
+static int find_realm_skill(int realm) {
+	switch (realm) {
 	case REALM_MAGERY:
-		return SKILL_MAGERY;
+		return(SKILL_MAGERY);
 	case REALM_PRAYER:
-		return SKILL_PRAY;
+		return(SKILL_PRAY);
 	case REALM_SORCERY:
-		return SKILL_SORCERY;
+		return(SKILL_SORCERY);
 	case REALM_SHADOW:
-		return SKILL_SHADOW;
+		return(SKILL_SHADOW);
 	case REALM_HUNT:
-//		return SKILL_ARCHERY;
-		return SKILL_HUNTING;
+//		return(SKILL_ARCHERY);
+		return(SKILL_HUNTING);
 	case REALM_FIGHTING:
-//		return SKILL_MASTERY;
-		return SKILL_TECHNIQUE;
+//		return(SKILL_MASTERY);
+		return(SKILL_TECHNIQUE);
 //	case REALM_PSI:
-//		return SKILL_;
+//		return(SKILL_);
 	};
 	return(0);
 }
@@ -54,8 +52,7 @@ static int find_realm_skill(int realm)
 /*
  * Returns spell chance of failure for spell		-RAK-
  */
-static s16b spell_chance(int Ind, int realm, magic_type *s_ptr)
-{
+static s16b spell_chance(int Ind, int realm, magic_type *s_ptr) {
 	player_type *p_ptr = Players[Ind];
 
 	int chance, minfail, minminfail;
@@ -1967,7 +1964,7 @@ bool cast_rune_spell(int Ind, u16b lo, u16b hi, int dir) {
 			p_ptr->shoot_till_kill_wand = FALSE;
 			p_ptr->shoot_till_kill_rod = FALSE;
 		}
-		return ftk_maybe; // True if an attempt was made, for auto-retaliation
+		return(ftk_maybe); // True if an attempt was made, for auto-retaliation
 	}
 	return(FALSE);
 }

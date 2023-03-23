@@ -5887,9 +5887,9 @@ static bool psi_backlash(int Ind, int m_idx, int dam) {
 
 /* Percent damage calculation, preventing integer overflow! - Kurzel */
 static int percent_damage(int hp, int dam) {
-	if (hp > 9362) return(hp / 100) * dam;
-	else if (hp > 936) return((hp / 10) * dam) / 10;
-	else return(hp * dam) / 100;
+	if (hp > 9362) return((hp / 100) * dam);
+	else if (hp > 936) return(((hp / 10) * dam) / 10);
+	else return((hp * dam) / 100);
 }
 
 /*
@@ -11857,12 +11857,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
  * If the distance is not "one", we (may) return "*".
  */
 static char bolt_char(int y, int x, int ny, int nx) {
-	if ((ny == y) && (nx == x)) return '*';
-	if (ny == y) return '-';
-	if (nx == x) return '|';
-	if ((ny-y) == (x-nx)) return '/';
-	if ((ny-y) == (nx-x)) return '\\';
-	return '*';
+	if ((ny == y) && (nx == x)) return('*');
+	if (ny == y) return('-');
+	if (nx == x) return('|');
+	if ((ny - y) == (x - nx)) return('/');
+	if ((ny - y) == (nx - x)) return('\\');
+	return('*');
 }
 
 

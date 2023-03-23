@@ -2701,15 +2701,15 @@ int get_weaponmastery_skill(player_type *p_ptr, object_type *o_ptr) {
 		u32b dummy, f3;
 
 		object_flags(o_ptr, &dummy, &dummy, &f3, &dummy, &dummy, &dummy, &dummy);
-		if (f3 & TR3_BLESSED) return SKILL_BLUNT;
+		if (f3 & TR3_BLESSED) return(SKILL_BLUNT);
 	}
 
 	switch (o_ptr->tval) {
 	/* known weapon types */
-	case TV_SWORD:		return SKILL_SWORD;
-	case TV_AXE:		return SKILL_AXE;
-	case TV_BLUNT:		return SKILL_BLUNT;
-	case TV_POLEARM:	return SKILL_POLEARM;
+	case TV_SWORD:		return(SKILL_SWORD);
+	case TV_AXE:		return(SKILL_AXE);
+	case TV_BLUNT:		return(SKILL_BLUNT);
+	case TV_POLEARM:	return(SKILL_POLEARM);
 	/* not a weapon */
 	case TV_SHIELD:		return(-1);
 	/* unknown weapon type (TV_MSTAFF, maybe TV_DIGGING [EQUIPPABLE_DIGGERS]) */
@@ -2727,7 +2727,7 @@ int get_archery_skill(player_type *p_ptr) {
 	if (!o_ptr->k_idx) return(-1);
 
 	/* Hack -- Boomerang skill */
-	if (o_ptr->tval == TV_BOOMERANG) return SKILL_BOOMERANG;
+	if (o_ptr->tval == TV_BOOMERANG) return(SKILL_BOOMERANG);
 
 	switch (o_ptr->sval / 10) {
 	case 0:
@@ -2745,7 +2745,7 @@ int get_archery_skill(player_type *p_ptr) {
 	}
 
 	/* Everything is ok */
-	return skill;
+	return(skill);
 }
 
 
@@ -2896,7 +2896,7 @@ int calc_blows_weapons(int Ind) {
 #endif
 
 	/* done */
-	return num_blow;
+	return(num_blow);
 }
 
 int calc_crit_obj(int Ind, object_type *o_ptr) {
@@ -9497,7 +9497,7 @@ int get_esp_link(int Ind, u32b flags, player_type **p2_ptr) {
 		if (!Ind2) end_mind(Ind, FALSE);
 		else if (p2_ptr != NULL) (*p2_ptr) = Players[Ind2];
 	}
-	return Ind2;
+	return(Ind2);
 }
 /* helper function to provide shortcut for controlling mind-linked player.
    flags == 0x0 means 'accept all flags'. */

@@ -1581,7 +1581,7 @@ if (!season_newyearseve) {
 			invalid = TRUE;
 	}
 
-	return invalid; /* only pass if none of our tests proves to be invalid */
+	return(invalid); /* only pass if none of our tests proves to be invalid */
 }
 
 /*
@@ -4814,13 +4814,13 @@ static errr grab_one_spell_ego_flag(monster_ego *re_ptr, cptr what, bool add) {
 /* Values in re_info can be fixed, added, substracted or percented */
 static byte monster_ego_modify(char c) {
 	switch (c) {
-	case '+': return MEGO_ADD;
-	case '-': return MEGO_SUB;
-	case '=': return MEGO_FIX;
-	case '%': return MEGO_PRC;
+	case '+': return(MEGO_ADD);
+	case '-': return(MEGO_SUB);
+	case '=': return(MEGO_FIX);
+	case '%': return(MEGO_PRC);
 	default:
 		s_printf("Unknown monster ego value modifier %c.\n", c);
-		return MEGO_ADD;
+		return(MEGO_ADD);
 	}
 }
 

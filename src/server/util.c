@@ -3760,7 +3760,7 @@ static char* dodge_diz(int chance) {
 	else if (chance < 14)
 		return("a slight");
 	else if (chance < 23)
-		return("a significant";
+		return("a significant");
 	else if (chance < 30)
 		return("a good");
 	else if (chance < 40)
@@ -7625,7 +7625,7 @@ cptr get_prace2(player_type *p_ptr) {
  #endif
 			return("Corrupted ");
 		} else
-			return special_prace_lookup2[p_ptr->prace];
+			return(special_prace_lookup2[p_ptr->prace]);
 	} else
 #endif
 #ifdef ENABLE_DEATHKNIGHT
@@ -9223,7 +9223,7 @@ int activate_magic_device_chance(int Ind, object_type *o_ptr, byte *permille) {
 	/* Give everyone a (slight) chance */
 	if (!chance) return(1);
 
-	return chance;
+	return(chance);
 }
 
 bool activate_magic_device(int Ind, object_type *o_ptr) {

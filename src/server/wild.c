@@ -99,7 +99,7 @@ int world_index(int world_x, int world_y) {
 
 	idx = -(base + offset);
 
-	return idx;
+	return(idx);
 }
 
 #ifdef SIMPLE_BLEED
@@ -955,7 +955,7 @@ static int wild_obj_aux_bones(int k_idx, u32b resf) {
 	/* paranoia */
 	if (k_idx < 0) return(0);
 
-	if (k_ptr->tval == TV_SKELETON) return 1000;
+	if (k_ptr->tval == TV_SKELETON) return(1000);
 
 	return(0);
 }
@@ -1890,7 +1890,7 @@ static int wild_clone_closed_loop_total(struct worldpos *wpos) {
 		total_depth += (curr.wx + curr.wy * MAX_WILD_X);
 		iter++;
 	} while (!inarea(&curr, &start) && iter < 50);
-	return total_depth;
+	return(total_depth);
 }
 
 
@@ -1923,10 +1923,10 @@ int determine_wilderness_type(struct worldpos *wpos) {
 	u32b old_seed = Rand_value;
 
 	/* check if the town */
-	if (istown(wpos)) return WILD_TOWN;
+	if (istown(wpos)) return(WILD_TOWN);
 
 	/* check if already defined */
-	if ((w_ptr->type != WILD_UNDEFINED) && (w_ptr->type != WILD_CLONE)) return w_ptr->type;
+	if ((w_ptr->type != WILD_UNDEFINED) && (w_ptr->type != WILD_CLONE)) return(w_ptr->type);
 
 	/* Hack -- Use the "simple" RNG */
 	Rand_quick = TRUE;
@@ -2023,7 +2023,7 @@ int determine_wilderness_type(struct worldpos *wpos) {
 	/* Hack -- don't touch number generation. */
 	Rand_value = old_seed;
 
-	return w_ptr->type;
+	return(w_ptr->type);
 }
 
 
@@ -3929,7 +3929,7 @@ static bool island_aux(int y, int x, unsigned char type, unsigned char fill, int
 		}
 	}
 	wild_info[y][x].type = type;
-	return added_decently;
+	return(added_decently);
 }
 static bool island(int y, int x, unsigned char type, unsigned char fill, int size) {
 	int size_org = size;
@@ -3939,7 +3939,7 @@ static bool island(int y, int x, unsigned char type, unsigned char fill, int siz
 	if (size_org <= 4) size_org = 9999;
 
 	added_decently = island_aux(y, x, type, fill, size, size_org);
-	return added_decently;
+	return(added_decently);
 }
 
 static void makeland() {
@@ -3986,7 +3986,7 @@ static bool addhills() {
 		} while (wild_info[y][x].type != WILD_GRASSLAND);
 		if (island(y, x, WILD_MOUNTAIN, WILD_GRASSLAND, rand_int((1<<MAXMOUNT) - 1))) added = TRUE;
 	}
-	return added;
+	return(added);
 }
 
 static bool addlakes() {
@@ -4002,7 +4002,7 @@ static bool addlakes() {
 		} while (wild_info[y][x].type != WILD_GRASSLAND);
 		if (island(y, x, WILD_LAKE, WILD_GRASSLAND, rand_int((1<<MAXLAKE) - 1))) added = TRUE;
 	}
-	return added;
+	return(added);
 }
 
 static bool addwaste() {
@@ -4018,7 +4018,7 @@ static bool addwaste() {
 		} while (wild_info[y][x].type != WILD_GRASSLAND);
 		if (island(y, x, WILD_WASTELAND, WILD_GRASSLAND, rand_int((1<<MAXWASTE) - 1))) added = TRUE;
 	}
-	return added;
+	return(added);
 }
 
 static bool adddesert() {
@@ -4035,7 +4035,7 @@ static bool adddesert() {
 		if (island(y, x, WILD_DESERT, WILD_GRASSLAND, (1<<(MAXDESERT-1)) + rand_int((1<<(MAXDESERT-1))) - 1)) added = TRUE;
 		//if (island(y, x, WILD_DESERT, WILD_GRASSLAND, rand_int((1<<MAXDESERT) - 1))) added = TRUE;
 	}
-	return added;
+	return(added);
 }
 
 static bool addice() {
@@ -4050,9 +4050,9 @@ static bool addice() {
 			y = rand_int(MAX_WILD_Y - 1);
 		} while (wild_info[y][x].type != WILD_GRASSLAND);
 		if (island(y, x, WILD_ICE, WILD_GRASSLAND, (1<<(MAXICE-1)) + rand_int((1<<(MAXICE-1))) - 1)) added = TRUE;
-//		if (island(y, x, WILD_ICE, WILD_GRASSLAND, rand_int((1<<MAXICE) - 1))) added = TRUE;
+		//if (island(y, x, WILD_ICE, WILD_GRASSLAND, rand_int((1<<MAXICE) - 1))) added = TRUE;
 	}
-	return added;
+	return(added);
 }
 
 static bool addislands() {
@@ -4068,7 +4068,7 @@ static bool addislands() {
 		} while (wild_info[y][x].type != WILD_OCEANBED1);
 		if (island(y, x, WILD_GRASSLAND, WILD_OCEANBED1, rand_int((1U << MAXISLANDS) - 1))) added = TRUE;
 	}
-	return added;
+	return(added);
 }
 
 static bool addforest() {
@@ -4088,7 +4088,7 @@ static bool addforest() {
 		if (size > 3)
 			if (island(y, x, WILD_DENSEFOREST, WILD_FOREST, size - 3)) added = TRUE;
 	}
-	return added;
+	return(added);
 }
 
 static int mvx[] = {0, 1, 1, 1, 0, -1, -1, -1};
@@ -4151,7 +4151,7 @@ static bool addrivers() {
 		river(y, x);
 		added = TRUE;
 	}
-	return added;
+	return(added);
 }
 
 /* remove coastlines that aren't adjacent to any sort of sea terrain - C. Blue */
@@ -4772,7 +4772,7 @@ s32b house_price_area(int area, bool has_moat, bool random) {
 	/* Castles cost more */
 	if (has_moat) price = (price * 5) / 4;
 
-	return price;
+	return(price);
 }
 
 /* returns buying price of a house */
@@ -4792,7 +4792,7 @@ s32b initial_house_price(house_type *h_ptr) {
 	/* currently unused since this is only for house-creation houses,
 	   and those would require implementing non-HF_RECT area (see code above) first */
 	if (h_ptr->flags & HF_SELFBUILT)
-		return area * area * 400;
+		return(area * area * 400);
 #endif
 
 #ifdef DEVEL_TOWN_COMPATIBILITY /* old */
@@ -4814,13 +4814,13 @@ s32b initial_house_price(house_type *h_ptr) {
  #endif
 #endif
 
-	return price;
+	return(price);
 }
 
 s32b house_price_player(s32b house_price, int charisma) {
 	house_price = ((house_price / 20) * (100 + adj_chr_gold[charisma])) / 10; //max base house price value before int overflow: 180M Au
 	if (house_price < 100) house_price = 100;
-	return house_price;
+	return(house_price);
 }
 
 /* Returns town if we're within a town area of radius MAX_TOWNAREA (housing!).
@@ -4831,7 +4831,7 @@ int wild_gettown(int x, int y) {
 
 	if (wild_info[y][x].type == WILD_TOWN) {
 		for (i = 0; i < numtowns; i++)
-			if (town[i].x == x && town[i].y == y) return i;
+			if (town[i].x == x && town[i].y == y) return(i);
 
 		/* paranoia - shouldn't be possible */
 		return(-1);
@@ -4844,7 +4844,7 @@ int wild_gettown(int x, int y) {
 		    town[i].x <= x + 3 &&
 		    town[i].y >= y - 3 &&
 		    town[i].y <= y + 3)
-			return i;
+			return(i);
 	}
 
 	/* paranoia - shouldn't be possible */

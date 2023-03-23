@@ -192,7 +192,7 @@ char *showtime(void) {
 	sprintf(buf, "%02d %s (%s) %02d:%02d:%02d",
 		tmp->tm_mday, month_names[tmp->tm_mon], day_names[tmp->tm_wday],
 		tmp->tm_hour, tmp->tm_min, tmp->tm_sec);
-	return buf;
+	return(buf);
 }
 
 char *compacttime(void) {
@@ -201,7 +201,7 @@ char *compacttime(void) {
 
 	time(&now);
 	strftime(buf, 17, "%Y/%m/%d-%H:%M", localtime(&now));
-	return buf;
+	return(buf);
 }
 
 /* added for the BBS - C. Blue */
@@ -213,7 +213,7 @@ char *showdate(void) {
 	time(&now);
 	tmp = localtime(&now);
 	sprintf(buf, "%02d-%02d", tmp->tm_mon + 1, tmp->tm_mday);
-	return buf;
+	return(buf);
 }
 
 /* added for changing seasons via lua cron_24h() - C. Blue */
@@ -816,7 +816,7 @@ static int Reply(char *host_addr, int fd) {
 	if ((result = DgramWrite(fd, ibuf.buf, ibuf.len)) == -1)
 		GetSocketError(ibuf.sock);
 
-	return result;
+	return(result);
 }
 
 
@@ -958,12 +958,12 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 	connection_t *connp = NULL;
 	int i;
 
-	if (real_name[0] == 0 || host_name[0] == 0) return E_INVAL;
-	if (nick_name[0] < 'A' || nick_name[0] > 'Z') return E_LETTER;
-	if (strchr(nick_name, ':')) return E_INVAL;
+	if (real_name[0] == 0 || host_name[0] == 0) return(E_INVAL);
+	if (nick_name[0] < 'A' || nick_name[0] > 'Z') return(E_LETTER);
+	if (strchr(nick_name, ':')) return(E_INVAL);
 
 	/* Account/Character names must be at least of length 2 */
-	if (strlen(nick_name) < ACC_CHAR_MIN_LEN) return E_LENGTH; //Account name
+	if (strlen(nick_name) < ACC_CHAR_MIN_LEN) return(E_LENGTH); //Account name
 
 	if (check_for_resume) {
 		for (i = 1; i <= NumPlayers; i++) {
@@ -998,8 +998,8 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 						printf("%s %s\n", p_ptr->realname, p_ptr->addr);
 						Destroy_connection(p_ptr->conn, "resume connection");
 					}
-					else if (!strcasecmp(p_ptr->addr, addr)) return E_IN_USE_PC;
-					else return E_IN_USE;
+					else if (!strcasecmp(p_ptr->addr, addr)) return(E_IN_USE_PC);
+					else return(E_IN_USE);
 				}
 
 				/* All restrictions on the number of allowed players from one IP have
@@ -1012,7 +1012,7 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 				    !strcasecmp(Players[i]->addr, addr) &&
 				    strcasecmp(Players[i]->realname, cfg_admin_wizard) &&
 				    strcasecmp(Players[i]->realname, cfg_dungeon_master)) {
-					return E_TWO_PLAYERS;
+					return(E_TWO_PLAYERS);
 				}
 				*/
 			}
@@ -1029,7 +1029,7 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 				printf("%s %s\n", connp->real, connp->addr);
 				Destroy_connection(i, "resume connection");
 			}
-			else return E_IN_USE_DUP;
+			else return(E_IN_USE_DUP);
 		}
 	}
 
@@ -1057,7 +1057,7 @@ int check_multi_exploit(char *acc, char *nick) {
 			continue;
 		}
 #endif
-		return i;
+		return(i);
 	}
 	return(FALSE);
 }
@@ -1289,10 +1289,10 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 	/* Only check the account name for weird chars - mikaelh */
 	if (!validstring(nick))
 #endif
-		return E_INVAL;
+		return(E_INVAL);
 
 	if (NumPlayers >= max_connections)
-		return E_GAME_FULL;
+		return(E_GAME_FULL);
 
 #if 0	/* This would pass in the account name rather than the
 	   player's character name. Also, we must *always* allow
@@ -1301,29 +1301,29 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 	   (PKT_LOGIN) */
 	if ((status = Check_names(nick, real, host, addr, TRUE)) != SUCCESS) {
 		/*s_printf("Check_names failed with result %d.\n", status);*/
-		return status;
+		return(status);
 	}
 #endif
 
 #if 0
 	if (version < MY_VERSION)
-		return E_VERSION_OLD;
+		return(E_VERSION_OLD);
 	if (version > MY_VERSION)
-		return E_VERSION_UNKNOWN;
+		return(E_VERSION_UNKNOWN);
 #else
 	/* Extended version support */
 	if (is_older_than(version, MIN_VERSION_MAJOR, MIN_VERSION_MINOR, MIN_VERSION_PATCH, MIN_VERSION_EXTRA, 0, 0)) {
-		return E_VERSION_OLD;
+		return(E_VERSION_OLD);
 	} else if (is_newer_than(version, MAX_VERSION_MAJOR, MAX_VERSION_MINOR, MAX_VERSION_PATCH, MAX_VERSION_EXTRA, 0, INT_MAX)) {
-		return E_VERSION_UNKNOWN;
+		return(E_VERSION_UNKNOWN);
 	}
 #endif
 
-	if (!player_allowed(nick)) return E_INVITE;
+	if (!player_allowed(nick)) return(E_INVITE);
 	if (in_banlist(nick, addr, NULL, NULL)) return(E_BANNED);
 
 	*login_port = Setup_connection(real, nick, addr, host, version, fd);
-	if (*login_port == -1) return E_SOCKET;
+	if (*login_port == -1) return(E_SOCKET);
 
 	return(SUCCESS);
 }
@@ -1764,7 +1764,7 @@ int Check_connection(char *real, char *nick, char *addr) {
 			if (strcasecmp(connp->nick, nick) == 0) {
 				if (!strcmp(real, connp->real)
 					&& !strcmp(addr, connp->addr))
-						return connp->my_port;
+						return(connp->my_port);
 				return(-1);
 			}
 	}
@@ -1799,7 +1799,7 @@ int Setup_connection(char *real, char *nick, char *addr, char *host, version_typ
 			if (connp->state == CONN_LISTENING
 				&& strcmp(real, connp->real) == 0
 				&& version == connp->version)
-					return connp->my_port;
+					return(connp->my_port);
 			else return(-1);
 		}
 #endif
@@ -1889,7 +1889,7 @@ int Setup_connection(char *real, char *nick, char *addr, char *host, version_typ
 	// Install the game input handler
 	install_input(Handle_input, sock, free_conn_index);
 
-	return my_port;
+	return(my_port);
 }
 
 static int Handle_setup(int ind) {
@@ -4113,7 +4113,7 @@ int Net_input(void) {
 	if (num_logins | num_logouts)
 		num_logins = num_logouts = 0;
 
-	return login_in_progress;
+	return(login_in_progress);
 }
 
 int Net_output(void) {
@@ -4204,7 +4204,7 @@ int Net_output1(int Ind) {
 	if (connp->c.len > 0) {
 		if (Packet_printf(&connp->c, "%c", PKT_END) <= 0) {
 			Destroy_connection(p_ptr->conn, "write error");
-			return 3;
+			return(3);
 		} else {
 			Send_reliable(p_ptr->conn);
 		}
@@ -5553,7 +5553,7 @@ int Send_reliable(int ind) {
 		return(-1);
 	}
 	Sockbuf_clear(&connp->c);
-	return num_written;
+	return(num_written);
 }
 
 #if 0 /* old UDP networking stuff - mikaelh */
@@ -9618,7 +9618,7 @@ int Send_idle(int Ind, bool idle) {
 #endif
 	}
 
-	return res;
+	return(res);
 }
 
 /* Invoke Guide-search on client side remotely from the server.
@@ -13851,7 +13851,7 @@ static int Receive_inventory_revision(int ind) {
 			 * packets until the queue is empty
 			 */
 			Packet_printf(&connp->q, "%c%d", ch, revision);
-			return 3; /* special return code */
+			return(3); /* special return code */
 		} else {
 			inven_confirm_revision(player, revision);
 			return(2);
@@ -14535,5 +14535,5 @@ bool get_conn_state_ok(int Ind) {
 }
 
 sockbuf_t *get_conn_q(int Ind) {
-	return &Conn[Players[Ind]->conn]->q;
+	return(&Conn[Players[Ind]->conn]->q);
 }

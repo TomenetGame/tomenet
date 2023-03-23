@@ -1224,7 +1224,7 @@ s_printf("((((10000000 * bonusm) / bonusd) * tmp1) / tmp2) * tmp3 = %u\n", ((((1
 s_printf("points=%u\n", points);
  #endif
 #endif
-	return points;
+	return(points);
 
 	//level counts mainly, exp factors in at higher levels
 	//return(p_ptr->max_plv * (300 + (p_ptr->max_exp / 100000)) / 300);
@@ -1356,7 +1356,7 @@ int highscore_send(char *buffer, int max) {
 
 	fclose(hsp);
 
-	return len;
+	return(len);
 }
 
 int houses_send(char *buffer, int max) {
@@ -1399,7 +1399,7 @@ int houses_send(char *buffer, int max) {
 		}
 	}
 
-	return len;
+	return(len);
 }
 
 /*
@@ -3259,7 +3259,7 @@ int vopen(const char *pathname, int flags, int (*callback)(int, int)) {
 		vf->vflags |= VFILE_INPUT_INSTALLED;
 	}
 
-	return fd;
+	return(fd);
 }
 
 int vclose(int fd) {
@@ -3298,7 +3298,7 @@ ssize_t vread(int fd, char *buf, size_t len) {
 	memcpy(buf, &vf->data[vf->pos], len);
 	vf->pos += len;
 
-	return len;
+	return(len);
 }
 
 off_t vseek(int fd, off_t offset, int whence) {
@@ -3314,7 +3314,7 @@ off_t vseek(int fd, off_t offset, int whence) {
 		return(-1);
 	}
 
-	return vf->pos;
+	return(vf->pos);
 }
 
 #endif // 0
