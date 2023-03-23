@@ -4889,45 +4889,59 @@ void do_cmd_store(int Ind) {
 			object_type forge = p_ptr->item_order_forge;
 			char o_name[ONAME_LEN];
 			int slot;
+			bool no_space;
 
 			/* early delivery! (ie item appeared in regular stock meanwhile) */
 			if (num) {
  #ifndef PARTIAL_ITEM_DELIVERY
-				msg_print(Ind, "\377GYour order has arrived earlier than expected! Here, take it.");
+				no_space = !inven_carry_okay(Ind, &forge, 0x0);
+				if (no_space) msg_print(Ind, "\377GYour order has arrived earlier than expected but your inventory is full!");
+				else msg_print(Ind, "\377GYour order has arrived earlier than expected! Here, take it.");
  #else
 				if (num < p_ptr->item_order_forge.number) {
-					msg_print(Ind, "\377GPart of your order has arrived earlier than expected! Here, take it.");
 					forge.number = num;
-				} else
-					msg_print(Ind, "\377GYour order has arrived earlier than expected! Here, take it.");
+					no_space = !inven_carry_okay(Ind, &forge, 0x0);
+					if (no_space) msg_print(Ind, "\377GPart of your order has arrived earlier than expected but your inventory is full!");
+					else msg_print(Ind, "\377GPart of your order has arrived earlier than expected! Here, take it.");
+				} else {
+					no_space = !inven_carry_okay(Ind, &forge, 0x0);
+					if (no_space) msg_print(Ind, "\377GYour order has arrived earlier than expected but your inventory is full!");
+					else msg_print(Ind, "\377GYour order has arrived earlier than expected! Here, take it.");
+				}
  #endif
 			}
 			/* normal, full delivery */
-			else msg_print(Ind, "\377GYour order has arrived! Here, take it.");
-
-			object_aware(Ind, &forge);
-			object_known(&forge);
-			forge.ident |= ID_MENTAL;
-			forge.note = quark_add(format("%s Delivery", st_name + st_info[p_ptr->item_order_store - 1].name));
-			forge.iron_trade = p_ptr->iron_trade;
-			forge.iron_turn = -1;
-			slot = inven_carry(Ind, &forge);
-			if (slot != -1) {
-				object_desc(Ind, o_name, &p_ptr->inventory[slot], TRUE, 3);
-				msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
-				s_printf("item_order_store: <%s> st %d, to %d: %d %s (%" PRId64 " Au)\n", p_ptr->name, p_ptr->item_order_store, p_ptr->item_order_town, forge.number, o_name, p_ptr->item_order_cost);
-			} else {
-				object_desc(Ind, o_name, &forge, TRUE, 3);
-				s_printf("item_order_store (NOSLOT): <%s> st %d, to %d: %d %s (%" PRId64 " Au)\n", p_ptr->name, p_ptr->item_order_store, p_ptr->item_order_town, forge.number, o_name, p_ptr->item_order_cost);
+			else {
+				no_space = !inven_carry_okay(Ind, &forge, 0x0);
+				if (no_space) msg_print(Ind, "\377GYour order has arrived but your inventory is full!");
+				else msg_print(Ind, "\377GYour order has arrived! Here, take it.");
 			}
 
-			/* clear order */
+			if (!no_space) {
+				object_aware(Ind, &forge);
+				object_known(&forge);
+				forge.ident |= ID_MENTAL;
+				forge.note = quark_add(format("%s Delivery", st_name + st_info[p_ptr->item_order_store - 1].name));
+				forge.iron_trade = p_ptr->iron_trade;
+				forge.iron_turn = -1;
+				slot = inven_carry(Ind, &forge);
+				if (slot != -1) {
+					object_desc(Ind, o_name, &p_ptr->inventory[slot], TRUE, 3);
+					msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
+					s_printf("item_order_store: <%s> st %d, to %d: %d %s (%" PRId64 " Au)\n", p_ptr->name, p_ptr->item_order_store, p_ptr->item_order_town, forge.number, o_name, p_ptr->item_order_cost);
+				} else {
+					object_desc(Ind, o_name, &forge, TRUE, 3);
+					s_printf("item_order_store (NOSLOT): <%s> st %d, to %d: %d %s (%" PRId64 " Au)\n", p_ptr->name, p_ptr->item_order_store, p_ptr->item_order_town, forge.number, o_name, p_ptr->item_order_cost);
+				}
+
+				/* clear order */
  #ifdef PARTIAL_ITEM_DELIVERY
-			if (num && num < p_ptr->item_order_forge.number) //we're still waiting for the rest
-				p_ptr->item_order_forge.number -= num;
-			else
+				if (num && num < p_ptr->item_order_forge.number) //we're still waiting for the rest
+					p_ptr->item_order_forge.number -= num;
+				else
  #endif
-			p_ptr->item_order_store = 0;
+				p_ptr->item_order_store = 0;
+			}
 		}
 	}
 #endif
@@ -4966,8 +4980,9 @@ bool merchant_mail_carry(int Ind, int i) {
 		int slot;
 		char o_name[ONAME_LEN];
 
-		if (p_ptr->inven_cnt >= INVEN_PACK) {
-			msg_print(Ind, "\374\377yYou currently have no room in your inventory to receive a shipment!");
+		//if (p_ptr->inven_cnt >= INVEN_PACK) {
+		if (!inven_carry_okay(Ind, &mail_forge[i], 0x0)) {
+			msg_print(Ind, "\374\377yYou currently have no room in your inventory to receive the shipment!");
 			return(FALSE);
 		}
 		msg_format(Ind, "\374\377yThe accountant hands you a package from %s!", mail_sender[i]);
