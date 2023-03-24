@@ -3716,6 +3716,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 		else if (prefix(messagelc, "/slap")) { /* Slap someone around :-o */
 			cave_type **zcave = getcave(&p_ptr->wpos);
+
 			if (!tk) {
 				msg_print(Ind, "Usage: /slap <player name>");
 				return;
@@ -3761,6 +3762,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 		else if (prefix(messagelc, "/pat")) { /* Counterpart to /slap :-p */
 			cave_type **zcave = getcave(&p_ptr->wpos);
+
 			if (!tk) {
 				msg_print(Ind, "Usage: /pat <player name>");
 				return;
@@ -3813,6 +3815,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 		else if (prefix(messagelc, "/hug")) { /* Counterpart to /slap :-p */
 			cave_type **zcave = getcave(&p_ptr->wpos);
+
 			if (!tk) {
 				msg_print(Ind, "Usage: /hug <player name>");
 				return;
@@ -3846,6 +3849,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 		else if (prefix(messagelc, "/poke")) {
 			cave_type **zcave = getcave(&p_ptr->wpos);
+
 			if (!tk) {
 				msg_print(Ind, "Usage: /poke <player name>");
 				return;
@@ -7300,8 +7304,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				int scx, scy;
 				worldpos *tpos = &p_ptr->wpos;
 				cave_type **zcave = getcave(tpos);
-				if (!(zcave = getcave(tpos))) return;
 
+				if (!(zcave = getcave(tpos))) return;
 				if (!tk) {
 					msg_print(Ind, "Usage: /move-stair dun|tow");
 					return;
@@ -9949,6 +9953,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/debugitemremovalhouse")) {
 				cave_type **zcave;
 				object_type *o_ptr;
+
 				j = 0;
 				/* go through all items (well except for player inventories
 				   or tradehouses, but that's not needed anyway) */
@@ -9996,6 +10001,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/purgeitemremovalnever")) {
 				cave_type **zcave;
 				object_type *o_ptr;
+
 				j = 0;
 				/* go through all items (well except for player inventories
 				   or tradehouses, but that's not needed anyway) */

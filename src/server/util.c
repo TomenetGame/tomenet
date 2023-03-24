@@ -3610,8 +3610,8 @@ void msg_print_near_monster(int m_idx, cptr msg) {
 	monster_type	*m_ptr = &m_list[m_idx];
 	worldpos *wpos = &m_ptr->wpos;
 
-	if (!(zcave = getcave(wpos))) return;
 
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Check each player */
 	for (i = 1; i <= NumPlayers; i++) {

@@ -1394,6 +1394,7 @@ bool set_tim_wraith(int Ind, int v) {
 	bool notice = FALSE;
 	cave_type **zcave;
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
 	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 
 	/* Hack -- Force good values */
@@ -1431,6 +1432,7 @@ bool set_tim_wraith(int Ind, int v) {
 			 * To prevent breaking into houses */
 			/* important! check for illegal spaces */
 			cave_type **zcave;
+
 			zcave = getcave(&p_ptr->wpos);
 
 			/* prevent running out of wraithform if we have a permanent source -> refresh it */
@@ -1499,6 +1501,7 @@ bool set_tim_wraithstep(int Ind, int v) {
 	bool notice = FALSE;
 	cave_type **zcave;
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
 	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 
 	/* Hack -- Force good values */
@@ -1530,6 +1533,7 @@ bool set_tim_wraithstep(int Ind, int v) {
 			 * To prevent breaking into houses */
 			/* important! check for illegal spaces */
 			cave_type **zcave;
+
 			zcave = getcave(&p_ptr->wpos);
 
 			/* prevent running out of wraithform if we have a permanent source -> refresh it */
@@ -12989,17 +12993,15 @@ static bool autotarget = FALSE;
 bool target_set(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
-	int		i, m, idx;
-	int		y;
-	int		x;
-	//bool	flag = TRUE;
-	bool	flag = autotarget;
-	char	out_val[160];
-	cave_type		*c_ptr;
-	monster_type	*m_ptr;
-	cave_type **zcave;
-	if (!(zcave = getcave(wpos))) return(FALSE);
+	int i, m, idx;
+	int y, x;
+	//bool flag = TRUE;
+	bool flag = autotarget;
+	char out_val[160];
+	cave_type *c_ptr, **zcave;
+	monster_type *m_ptr;
 
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	if (!dir) {
 		x = p_ptr->px;
@@ -13241,12 +13243,10 @@ bool target_set_friendly(int Ind, int dir, ...) {
 	va_list ap;
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
-	cave_type **zcave;
-	int		i, m, castplayer, idx;
-	int		y;
-	int		x;
-	char	out_val[160];
-	cave_type	*c_ptr;
+	cave_type **zcave, *c_ptr;
+	int i, m, castplayer, idx;
+	int y, x;
+	char out_val[160];
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
@@ -13372,10 +13372,9 @@ bool target_set_friendly(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
-	int		i, m, idx;
-	int		y;
-	int		x;
-	char	out_val[160];
+	int i, m, idx;
+	int y, x;
+	char out_val[160];
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
@@ -14046,8 +14045,7 @@ void blood_bond(int Ind, object_type *o_ptr) {
 	//bool ok = FALSE;
 	int Ind2;
 	player_list_type *pl_ptr;
-	cave_type **zcave;
-	cave_type *c_ptr;
+	cave_type **zcave, *c_ptr;
 
 	if (p_ptr->pvpexception == 3) {
 		msg_print(Ind, "Sorry, you're *not* allowed to attack other players.");
@@ -14188,13 +14186,12 @@ bool telekinesis(int Ind, object_type *o_ptr, int max_weight) {
 
 /* this has finally earned its own function, to make it easy for restoration to do this also */
 bool do_scroll_life(int Ind) {
-	int x,y;
+	int x, y;
 
-	player_type * p_ptr = Players[Ind], *q_ptr;
-	cave_type * c_ptr;
-	cave_type **zcave;
+	player_type *p_ptr = Players[Ind], *q_ptr;
+	cave_type *c_ptr, **zcave;
+
 	zcave = getcave(&p_ptr->wpos);
-
 	if (!zcave) return(FALSE);
 
 	for (y = -1; y <= 1; y++) {

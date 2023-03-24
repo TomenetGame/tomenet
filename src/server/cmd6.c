@@ -2451,7 +2451,6 @@ static int check_self_summon(player_type *p_ptr) {
 	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
 	if (is_admin(p_ptr)) return(TRUE);
-
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_SUMMON)) return(FALSE);
 
 	if (((!cfg.surface_summoning) && (p_ptr->wpos.wz == 0))
@@ -8006,7 +8005,6 @@ void do_cmd_fletchery(int Ind) {
 	cave_type **zcave;
 
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
-
 
 	if (p_ptr->confused) {
 		msg_print(Ind, "You are too confused!");

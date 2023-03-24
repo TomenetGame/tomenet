@@ -2803,19 +2803,21 @@ static errr init_iddc() {
 
 int scan_iddc() {
 	/*
+	byte i;
 	struct worldpos wpos;
+
 	wpos.wx = WPOS_IRONDEEPDIVE_X;
 	wpos.wy = WPOS_IRONDEEPDIVE_Y;
+
 	//Lazy, don't mess with iddc if anyone is inside! (Could be improved...)
-	byte i;
 	for (i = 1; i < 128; i++) {
-		wpos.wz = i;
 		cave_type **zcave;
+
+		wpos.wz = i;
 		if (!(zcave = getcave(&wpos))) continue;
-		else {
-			s_printf("IDDC Scan Failed!\n");
-			return(-1);
-		}
+
+		s_printf("IDDC Scan Failed!\n");
+		return(-1);
 	}
 	*/
 	if (!init_iddc()) {

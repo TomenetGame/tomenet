@@ -6489,6 +6489,7 @@ static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr,
 	/* moved for efficiency */
 	if (!c_ptr->effect) {
 		cave_type **zcave = getcave(&m_ptr->wpos), *c0_ptr = &zcave[m_ptr->fy][m_ptr->fx];
+
 #ifndef HEED_PAST_EFFECT
 		return(TRUE);
 #else
@@ -6561,6 +6562,7 @@ static bool find_noeffect(int m_idx, int *yp, int *xp) {
 	char dx = magik(50) ? 1 : -1;
 
 	cave_type **zcave;
+
 	/* paranoia */
 	if (!(zcave = getcave(&m_ptr->wpos))) return(FALSE);
 
@@ -6644,6 +6646,7 @@ static bool find_terrain(int m_idx, int *yp, int *xp) {
 	int gy = 0, gx = 0, gdis = 0;
 
 	cave_type **zcave;
+
 	/* paranoia */
 	if (!(zcave = getcave(&m_ptr->wpos))) return(FALSE);
 
@@ -6737,6 +6740,7 @@ static bool find_safety(int Ind, int m_idx, int *yp, int *xp) {
 	int gy = 0, gx = 0, gdis = 0;
 
 	cave_type **zcave;
+
 	/* paranoia */
 	if (!(zcave = getcave(&m_ptr->wpos))) return(FALSE);
 
@@ -6882,6 +6886,7 @@ static bool find_hiding(int Ind, int m_idx, int *yp, int *xp) {
 	int gy = 0, gx = 0, gdis = 999, min;
 
 	cave_type **zcave;
+
 	/* paranoia */
 	if (!(zcave = getcave(&m_ptr->wpos))) return(FALSE);
 
@@ -7405,42 +7410,41 @@ s_printf("ASTAR_INCOMPLETE\n");
 	   Monster tries to make player approach so it gets attack turns! -C. Blue */
 	else if ((
  #if 1 /* Different behaviour, depending on monster type and level? */
-		/* Demons are reckless, undead/nonliving are rarely intelligent, animals neither */
-		((r_ptr->level >= 30) &&
-		!(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_ANIMAL | RF3_DEMON)) &&
-		!(r_ptr->flags2 & RF2_EMPTY_MIND)) ||
-		/* Elder animals have great instinct or intelligence */
-		((r_ptr->level >= 50) &&
-		!(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_DEMON)) &&
-		!(r_ptr->flags2 & RF2_EMPTY_MIND)) ||
+	    /* Demons are reckless, undead/nonliving are rarely intelligent, animals neither */
+	    ((r_ptr->level >= 30) &&
+	    !(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_ANIMAL | RF3_DEMON)) &&
+	    !(r_ptr->flags2 & RF2_EMPTY_MIND)) ||
+	    /* Elder animals have great instinct or intelligence */
+	    ((r_ptr->level >= 50) &&
+	    !(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_DEMON)) &&
+	    !(r_ptr->flags2 & RF2_EMPTY_MIND)) ||
  #endif
-		(r_ptr->flags2 & RF2_SMART)) && !(r_ptr->flags2 & RF2_STUPID) &&
-		/* Distance must == 2; distance() won't work for diagonals here */
-		((ABS(m_ptr->fy - y2) == 2 && ABS(m_ptr->fx - x2) <= 2) ||
-		(ABS(m_ptr->fy - y2) <= 2 && ABS(m_ptr->fx - x2) == 2)) &&
-		/* Player must be faster than the monster to cheeze */
-		(p_ptr->pspeed > m_ptr->mspeed) && rand_int(600) &&
+	    (r_ptr->flags2 & RF2_SMART)) && !(r_ptr->flags2 & RF2_STUPID) &&
+	    /* Distance must == 2; distance() won't work for diagonals here */
+	    ((ABS(m_ptr->fy - y2) == 2 && ABS(m_ptr->fx - x2) <= 2) ||
+	    (ABS(m_ptr->fy - y2) <= 2 && ABS(m_ptr->fx - x2) == 2)) &&
+	    /* Player must be faster than the monster to cheeze */
+	    (p_ptr->pspeed > m_ptr->mspeed) && rand_int(600) &&
  #if 1 /* Watch our/player's HP? */
-		/* As long as we have good HP there's no need to hold back,
-		   [if player is low on HP we should try to attack him anyways,
-		   this is not basing on consequent logic though, since we probably still can't hurt him] */
-		(((m_ptr->hp <= (m_ptr->maxhp * 3) / 4) && (p_ptr->chp > (p_ptr->mhp * 3) / 4)) ||
-		/* If we're very low on HP, only try to attack the player if he's hurt *badly* */
-		((m_ptr->hp < (m_ptr->maxhp * 1) / 2) && ((p_ptr->chp >= (p_ptr->mhp * 1) / 5) || (p_ptr->chp >= 200)))) &&
+	    /* As long as we have good HP there's no need to hold back,
+	       [if player is low on HP we should try to attack him anyways,
+	       this is not basing on consequent logic though, since we probably still can't hurt him] */
+	    (((m_ptr->hp <= (m_ptr->maxhp * 3) / 4) && (p_ptr->chp > (p_ptr->mhp * 3) / 4)) ||
+	    /* If we're very low on HP, only try to attack the player if he's hurt *badly* */
+	    ((m_ptr->hp < (m_ptr->maxhp * 1) / 2) && ((p_ptr->chp >= (p_ptr->mhp * 1) / 5) || (p_ptr->chp >= 200)))) &&
  #endif
-		/* No need to keep a distance if the player doesn't pose
-		   a potential threat in close combat: */
-		(p_ptr->s_info[SKILL_MASTERY].value >= 3000 || p_ptr->s_info[SKILL_MARTIAL_ARTS].value >= 10000) &&
-		/* If there's los we can just cast a spell -
-		   this assumes the monster can cast damaging spells, might need fixing */
-		//EXPERIMENTALLY COMMENTED OUT		!los(&p_ptr->wpos, y2, x2, m_ptr->fy, m_ptr->fx) &&
-		/* EMPTY_MINDed skeleton, zombie, spectral egos don't care anymore */
-		(m_ptr->ego != 1 && m_ptr->ego != 2 && m_ptr->ego != 4) &&
-		/* Only stay back if the player moved away from us -
-		   this assumes the monster didn't perform a RAND_ turn, might need fixing */
-		(m_ptr->last_target == p_ptr->id)) {
-
-		int xt,yt, more_monsters_nearby = 0;
+	    /* No need to keep a distance if the player doesn't pose
+	       a potential threat in close combat: */
+	    (p_ptr->s_info[SKILL_MASTERY].value >= 3000 || p_ptr->s_info[SKILL_MARTIAL_ARTS].value >= 10000) &&
+	    /* If there's los we can just cast a spell -
+	       this assumes the monster can cast damaging spells, might need fixing */
+	    //EXPERIMENTALLY COMMENTED OUT		!los(&p_ptr->wpos, y2, x2, m_ptr->fy, m_ptr->fx) &&
+	    /* EMPTY_MINDed skeleton, zombie, spectral egos don't care anymore */
+	    (m_ptr->ego != 1 && m_ptr->ego != 2 && m_ptr->ego != 4) &&
+	    /* Only stay back if the player moved away from us -
+	       this assumes the monster didn't perform a RAND_ turn, might need fixing */
+	    (m_ptr->last_target == p_ptr->id)) {
+		int xt, yt, more_monsters_nearby = 0;
 		cave_type **zcave = getcave(&p_ptr->wpos);
 
 		if (zcave) {
@@ -8013,8 +8017,8 @@ static bool get_moves_pet(int Ind, int m_idx, int *mm) {
 		/* Scan grids around */
 		for (sx = m_ptr->fx - 1; sx <= m_ptr->fx + 1; sx++)
 		for (sy = m_ptr->fy - 1; sy <= m_ptr->fy + 1; sy++) {
-			cave_type *c_ptr;
-			cave_type **zcave;
+			cave_type *c_ptr, **zcave;
+
 			if (!in_bounds(sy, sx)) continue;
 
 			/* ignore ourself */
@@ -8223,8 +8227,7 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm) {
 		/* Scan grids around */
 		for (sx = m_ptr->fx - 1; sx <= m_ptr->fx + 1; sx++)
 		for (sy = m_ptr->fy - 1; sy <= m_ptr->fy + 1; sy++) {
-			cave_type *c_ptr;
-			cave_type **zcave;
+			cave_type *c_ptr, **zcave;
 
 			if (!in_bounds(sy, sx)) continue;
 
@@ -8420,8 +8423,8 @@ static bool get_moves_questor(int Ind, int m_idx, int *mm) {
 		/* Scan grids around */
 		for (sx = m_ptr->fx - 1; sx <= m_ptr->fx + 1; sx++)
 		for (sy = m_ptr->fy - 1; sy <= m_ptr->fy + 1; sy++) {
-			cave_type *c_ptr;
-			cave_type **zcave;
+			cave_type *c_ptr, **zcave;
+
 			if (!in_bounds(sy, sx)) continue;
 
 			/* ignore ourself */
@@ -8643,11 +8646,10 @@ static bool player_invis(int Ind, monster_type *m_ptr, int dist) {
 void process_npcs() {
 #if 0
 	struct cave_type **zcave;
+
 	zcave = getcave(&Npcs[0].wpos);
 	if (!Npcs[0].active) return;
-	if (zcave != (cave_type**)NULL) {
-		process_hooks(HOOK_NPCTEST, "d", &Npcs[0]);
-	}
+	if (zcave != (cave_type**)NULL) process_hooks(HOOK_NPCTEST, "d", &Npcs[0]);
 #endif
 }
 
@@ -10716,11 +10718,11 @@ static void process_monster_pet(int Ind, int m_idx) {
 	bool		did_kill_wall;
 #endif
 
-
 	/* hack -- don't process monsters on wilderness levels that have not
 	 * been regenerated yet.
 	 */
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 
 #if 0
@@ -11151,11 +11153,11 @@ static void process_monster_golem(int Ind, int m_idx) {
 	bool		did_kill_wall;
 #endif
 
-
 	/* Hack -- don't process monsters on wilderness levels that have not
 	   been regenerated yet.
 	*/
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 
 	Ind_owner = find_player(m_ptr->owner);

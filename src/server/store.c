@@ -4619,6 +4619,7 @@ void do_cmd_store(int Ind) {
 
 	/* Access the player grid */
 	cave_type **zcave;
+
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
@@ -6815,6 +6816,7 @@ void do_cmd_trad_house(int Ind) {
 
 	/* Access the player grid */
 	cave_type **zcave;
+
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 

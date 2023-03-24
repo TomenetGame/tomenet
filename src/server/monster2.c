@@ -441,6 +441,7 @@ void delete_monster(struct worldpos *wpos, int y, int x, bool unfound_arts) {
 
 	/* Paranoia */
 	cave_type **zcave;
+
 	if (!in_bounds(y, x)) return;
 	if ((zcave = getcave(wpos))) {
 		/* Check the grid */
@@ -3782,6 +3783,7 @@ static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, 
 	byte hack_y[GROUP_MAX];
 	byte hack_x[GROUP_MAX];
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	dlev = getlevel(wpos);
@@ -3906,8 +3908,8 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 	monster_race *r_ptr = &r_info[r_idx];
 	cave_type **zcave;
 	int dlevel = getlevel(wpos), res;
-	if (!(zcave = getcave(wpos))) return(-1);
 
+	if (!(zcave = getcave(wpos))) return(-1);
 #ifdef ARCADE_SERVER
 	if (in_trainingtower(wpos)) return(-2);
 #endif

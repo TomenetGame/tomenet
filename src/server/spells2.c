@@ -304,10 +304,9 @@ bool create_garden(int Ind, int chance) {
 
 	struct c_special *cs_ptr;       /* for special key doors */
 	struct worldpos *wpos = &(p_ptr->wpos);
-
 	cave_type **zcave;
-	if (!(zcave = getcave(wpos))) return(FALSE);
 
+	if (!(zcave = getcave(wpos))) return(FALSE);
 	if (!allow_terraforming(wpos, FEAT_TREE)) return(FALSE);
 
 	for (y = 0; y < MAX_HGT; y++) {
@@ -491,19 +490,22 @@ bool do_banish_animals(int Ind, int chance) {
 	cave_type **zcave;
 	dun_level *l_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
+	monster_type *m_ptr;
+	monster_race *r_ptr;
 
 	if (Ind < 0 || chance <= 0) return(FALSE);
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	if ((l_ptr = getfloor(wpos)) && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);
 
 	for (i = 1; i < m_max; i++) {
-		monster_type *m_ptr = &m_list[i];
-		monster_race *r_ptr = race_inf(m_ptr);
+		m_ptr = &m_list[i];
+		r_ptr = race_inf(m_ptr);
+
+		if (!inarea(&m_ptr->wpos, wpos)) continue;
 		if ((r_ptr->flags1 & RF1_UNIQUE)) continue;
 		if (!(r_ptr->flags3 & RF3_ANIMAL)) continue;
 		if ((r_ptr->flags9 & RF9_IM_TELE)) continue;
 		//if ((r_ptr->flags3 & RF3_RES_TELE) && magik(50)) continue;
-		if (!inarea(&m_ptr->wpos, wpos)) continue;
 
 		/* Taken from genocide_aux(): Not valid inside a vault */
 		if (zcave[m_ptr->fy][m_ptr->fx].info & CAVE_ICKY) continue;
@@ -551,19 +553,22 @@ bool do_banish_undead(int Ind, int chance) {
 	cave_type **zcave;
 	dun_level *l_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
+	monster_type *m_ptr;
+	monster_race *r_ptr;
 
 	if (Ind < 0 || chance <= 0) return(FALSE);
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	if ((l_ptr = getfloor(wpos)) && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);
 
 	for (i = 1; i < m_max; i++) {
-		monster_type *m_ptr = &m_list[i];
-		monster_race *r_ptr = race_inf(m_ptr);
+		m_ptr = &m_list[i];
+		r_ptr = race_inf(m_ptr);
+
+		if (!inarea(&m_ptr->wpos, wpos)) continue;
 		if ((r_ptr->flags1 & RF1_UNIQUE)) continue;
 		if (!(r_ptr->flags3 & RF3_UNDEAD)) continue;
 		if ((r_ptr->flags9 & RF9_IM_TELE)) continue;
 		//if ((r_ptr->flags3 & RF3_RES_TELE) && magik(50)) continue;
-		if (!inarea(&m_ptr->wpos, wpos)) continue;
 
 		/* Taken from genocide_aux(): Not valid inside a vault */
 		if (zcave[m_ptr->fy][m_ptr->fx].info & CAVE_ICKY) continue;
@@ -587,19 +592,22 @@ bool do_banish_dragons(int Ind, int chance) {
 	cave_type **zcave;
 	dun_level *l_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
+	monster_type *m_ptr;
+	monster_race *r_ptr;
 
 	if (Ind < 0 || chance <= 0) return(FALSE);
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	if ((l_ptr = getfloor(wpos)) && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);
 
 	for (i = 1; i < m_max; i++) {
-		monster_type *m_ptr = &m_list[i];
-		monster_race *r_ptr = race_inf(m_ptr);
+		m_ptr = &m_list[i];
+		r_ptr = race_inf(m_ptr);
+
+		if (!inarea(&m_ptr->wpos, wpos)) continue;
 		if ((r_ptr->flags1 & RF1_UNIQUE)) continue;
 		if (!(r_ptr->flags3 & RF3_DRAGON)) continue;
 		if ((r_ptr->flags9 & RF9_IM_TELE)) continue;
 		//if ((r_ptr->flags3 & RF3_RES_TELE) && magik(50)) continue;
-		if (!inarea(&m_ptr->wpos, wpos)) continue;
 
 		/* Taken from genocide_aux(): Not valid inside a vault */
 		if (zcave[m_ptr->fy][m_ptr->fx].info & CAVE_ICKY) continue;
@@ -777,10 +785,9 @@ void flash_bomb(int Ind) {
  */
 void warding_glyph(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
 	cave_type **zcave;
-	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	if (!allow_terraforming(&p_ptr->wpos, FEAT_GLYPH) && !is_admin(p_ptr)) return;
 
 	if (!cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_GLYPH))
@@ -3077,9 +3084,9 @@ bool detect_trap(int Ind, int rad) {
 	clear_ovl(Ind);
 
 	/* Scan the current panel */
-//	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
+	//for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
 	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++) {
-//		for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
+		//for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
 		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++) {
 			/* Reject locations outside of dungeon */
 			if (!in_bounds_floor(l_ptr, i, j)) continue;
@@ -3092,7 +3099,7 @@ bool detect_trap(int Ind, int rad) {
 			w_ptr = &p_ptr->cave_flag[i][j];
 
 			/* Hack - traps on undetected doors cannot be found */
-/*			if (c_ptr->feat == FEAT_DOOR_TAIL + 1) continue;	--hmm why not */
+			/*if (c_ptr->feat == FEAT_DOOR_TAIL + 1) continue;	--hmm why not */
 
 			/* Detect traps on chests */
 			o_ptr = &o_list[c_ptr->o_idx];
@@ -3204,9 +3211,9 @@ bool detect_sdoor(int Ind, int rad) {
 	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return(FALSE);
 
 	/* Scan the panel */
-//	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
+	//for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
 	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++) {
-//		for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
+		//for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
 		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++) {
 			/* Reject locations outside of dungeon */
 			if (!in_bounds_floor(l_ptr, i, j)) continue;
@@ -3285,6 +3292,7 @@ void stair_creation(int Ind) {
 
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Access the player grid */
@@ -6396,8 +6404,7 @@ static void cave_temp_room_unlite(int Ind) {
  */
 static void cave_temp_room_aux(int Ind, struct worldpos *wpos, int y, int x) {
 	player_type *p_ptr = Players[Ind];
-	cave_type *c_ptr;
-	cave_type **zcave;
+	cave_type *c_ptr, **zcave;
 
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
@@ -7322,7 +7329,7 @@ bool fire_shot(int Ind, int typ, int dir, int dx, int dy, int rad, int num, char
 	dun_level *l_ptr = getfloor(wpos);
 	cave_type **zcave = getcave(wpos);
 	cave_type *c_ptr;
-	int i,j,x,y,x1,y1,y2,x2,y9,x9,tw,d,dd,dr,td,g;
+	int i, j, x, y, x1, y1, y2, x2, y9, x9, tw, d, dd, dr, td, g;
 	byte gx[512], gy[512];
 	bool obvious = FALSE;
 
@@ -8119,13 +8126,11 @@ void house_creation(int Ind, bool floor, bool jail) {
 extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_idx) {
 	int i, Ind, j;
 	cave_type *c_ptr;
-
 	monster_type *m_ptr;
 	monster_race *r_ptr = &r_info[r_idx];
-
 	char buf[80];
-
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return(0);
 	/* Verify location */
 	if (!in_bounds(y, x)) return(0);
@@ -8467,6 +8472,7 @@ void golem_creation(int Ind, int max) {
 	char o_name[ONAME_LEN];
 	unsigned char *inscription;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	/* Process the monsters */
@@ -9992,7 +9998,6 @@ void arm_charge(int Ind, int item, int dir) {
 
 	/* Check some conditions */
 	if (!arm_charge_conditions(Ind, o_ptr, FALSE)) return;
-
 
 	/* Try to place it */
 

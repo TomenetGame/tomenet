@@ -116,6 +116,7 @@ bool do_player_scatter_items(int Ind, int chance, int rad) {
 	s16b i,j;
 	bool message = FALSE;
 	cave_type **zcave;
+
 	zcave = getcave(&p_ptr->wpos);
 
 	if (p_ptr->inval) return(FALSE);
@@ -127,14 +128,15 @@ bool do_player_scatter_items(int Ind, int chance, int rad) {
 			object_type tmp_obj;
 			s16b cx = p_ptr->px + rad - rand_int(rad * 2);
 			s16b cy = p_ptr->py + rad - rand_int(rad * 2);
+
 			if (!in_bounds(cy,cx)) continue;
 			if (!cave_floor_bold(zcave, cy,cx)) continue;
 			o_ptr = &p_ptr->inventory[i];
 			tmp_obj = p_ptr->inventory[i];
 			if (cfg.anti_arts_hoard && true_artifact_p(&tmp_obj) && (rand_int(100) > 9)) {
 				char	o_name[ONAME_LEN];
-				object_desc(Ind, o_name, &tmp_obj, TRUE, 0);
 
+				object_desc(Ind, o_name, &tmp_obj, TRUE, 0);
 				msg_format(Ind, "%s resists the effect!", o_name);
 				continue;
 			}
@@ -234,7 +236,7 @@ static void do_player_trap_change_depth(int Ind, int dis) {
 
 static bool do_player_trap_call_out(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	s16b i,sn,cx,cy;
+	s16b i, sn, cx, cy;
 	s16b h_index = 0;
 	s16b h_level = 0;
 	monster_type *m_ptr;
@@ -242,9 +244,9 @@ static bool do_player_trap_call_out(int Ind) {
 	char m_name[MNAME_LEN];
 	bool ident = FALSE;
 	cave_type **zcave;
-	zcave = getcave(&p_ptr->wpos);
 	int old_x, old_y;
 
+	zcave = getcave(&p_ptr->wpos);
 	if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) return(FALSE);
 
 	for (i = 1; i < m_max; i++) {
@@ -327,6 +329,7 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x) {
 
 	/* Paranoia */
 	cave_type **zcave;
+
 	if (!in_bounds(y, x)) return(FALSE);
 	if ((zcave = getcave(&p_ptr->wpos))) {
 		/* naught */
@@ -549,8 +552,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 
 	/* Paranoia */
 	cave_type **zcave;
-	if (!in_bounds(y, x)) return(FALSE);
 
+	if (!in_bounds(y, x)) return(FALSE);
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	c_ptr = &zcave[y][x];
 
@@ -2888,7 +2891,7 @@ void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found
 #if 0
 	if (cave_floor_grid(c_ptr) || c_ptr->feat == FEAT_DEEP_WATER) flags = FTRAP_FLOOR;
 	else if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-			(c_ptr->feat <= FEAT_DOOR_TAIL + 1))
+	    (c_ptr->feat <= FEAT_DOOR_TAIL + 1))
 		flags = FTRAP_DOOR;
 	else return;
 #else
@@ -3063,8 +3066,8 @@ void wiz_place_trap(int Ind, int trap) {
 	}
 
 	if (((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-			(c_ptr->feat <= FEAT_DOOR_TAIL)) ||
-			c_ptr->feat == FEAT_OPEN)
+	    (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
+		c_ptr->feat == FEAT_OPEN)
 		flags = FTRAP_DOOR;
 	else flags = FTRAP_FLOOR;
 
@@ -3398,6 +3401,7 @@ void do_cmd_disarm_mon_trap_aux(int Ind, worldpos *wpos, int y, int x) {
 	cave_type *c_ptr;
 	cave_type **zcave;
 	struct c_special *cs_ptr;
+
 	if (!(zcave = getcave(wpos))) return;
 
 	if (Ind) p_ptr = Players[Ind];
@@ -3599,10 +3603,9 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 	//object_kind *tip_ptr = &k_info[lookup_kind(TV_ROD, o_ptr->pval)];
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 	bool perc = FALSE, fixed = FALSE;
-
 	cave_type **zcave;
-	zcave = getcave(&m_ptr->wpos);
 
+	zcave = getcave(&m_ptr->wpos);
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Depend on rod type */
@@ -3784,8 +3787,9 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;
 	cave_type **zcave;
-	zcave = getcave(&wpos);
 	bool id = FALSE, fixed = FALSE;
+
+	zcave = getcave(&wpos);
 
 	/* Depend on staff type */
 	switch (o_ptr->sval) {
@@ -3964,10 +3968,11 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 	int k;
 	bool id = FALSE, fixed = FALSE;
 	cave_type **zcave;
-	zcave = getcave(&wpos);
 	dun_level *l_ptr = getfloor(&wpos);
 	bool no_summon = (l_ptr && (l_ptr->flags2 & LF2_NO_SUMMON));
 	//bool no_teleport = (l_ptr && (l_ptr->flags2 & LF2_NO_TELE));
+
+	zcave = getcave(&wpos);
 
 	/* Depend on scroll type */
 	switch (o_ptr->sval) {
@@ -4183,9 +4188,10 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;
 	cave_type **zcave;
-	zcave = getcave(&m_ptr->wpos);
 	u32b flg = PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP | PROJECT_NODF | PROJECT_NODO;
 	bool perc = FALSE, fixed = FALSE;
+
+	zcave = getcave(&m_ptr->wpos);
 
 	/* Depend on wand type */
 	switch (check_for_wand_of_wonder(o_ptr->sval, &m_ptr->wpos)) {
@@ -4414,8 +4420,9 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;
 	cave_type **zcave;
-	zcave = getcave(&m_ptr->wpos);
 	bool fixed = FALSE;
+
+	zcave = getcave(&m_ptr->wpos);
 
 	/* Depend on potion type */
 	if (o_ptr->tval == TV_POTION) {
@@ -4763,7 +4770,6 @@ bool mon_hit_trap(int m_idx) {
 	int i, who = PROJECTOR_MON_TRAP;
 	cave_type *c_ptr;
 	cave_type **zcave;
-	//worldpos *wpos = &m_ptr->wpos;
 	worldpos wpos = m_ptr->wpos;
 
 	zcave = getcave(&wpos);

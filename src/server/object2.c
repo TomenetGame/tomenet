@@ -7778,11 +7778,11 @@ u32b place_object_restrictor = RESF_NONE;
 void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, u32b resf, obj_theme theme, int luck, byte removal_marker, bool preown) {
 	int prob, base, tmp_luck, i, dlev;
 	int tries = 0, k_idx, debug_k_idx = 0;
-
 	object_type forge;
 	dun_level *l_ptr = getfloor(wpos);
 	dungeon_type *d_ptr;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 	dlev = getlevel(wpos);
 	d_ptr = getdungeon(wpos);
@@ -8094,8 +8094,8 @@ void generate_object(int Ind, object_type *o_ptr, struct worldpos *wpos, bool go
 	int prob, base, tmp_luck, i, dlev;
 	int tries = 0, k_idx;
 	dungeon_type *d_ptr;
-
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 	dlev = getlevel(wpos);
 	d_ptr = getdungeon(wpos);
@@ -8270,6 +8270,7 @@ void generate_object(int Ind, object_type *o_ptr, struct worldpos *wpos, bool go
  */
 void acquirement(int Ind, struct worldpos *wpos, int y1, int x1, int num, bool great, bool verygreat, u32b resf) {
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Scatter some objects */
@@ -8288,6 +8289,7 @@ void acquirement(int Ind, struct worldpos *wpos, int y1, int x1, int num, bool g
  */
 void acquirement_direct(int Ind, object_type *o_ptr, struct worldpos *wpos, bool great, bool verygreat, u32b resf) {
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Place a good (or great) object */
@@ -10581,6 +10583,7 @@ void pick_trap(struct worldpos *wpos, int y, int x)
 	cave_type **zcave;
 	cave_type *c_ptr;
 	struct c_special *cs_ptr;
+
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 

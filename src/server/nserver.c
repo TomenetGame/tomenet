@@ -1371,12 +1371,12 @@ static void Delete_player(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 	inventory_change_type *inv_change;
+	/* Be paranoid */
+	cave_type **zcave;
 
 	/* terminate mindcrafter charm effect */
 	do_mstopcharm(Ind);
 
-	/* Be paranoid */
-	cave_type **zcave;
 	if ((zcave = getcave(&p_ptr->wpos))) {
 		/* There's nobody on this space anymore */
 		zcave[p_ptr->py][p_ptr->px].m_idx = 0;
@@ -6468,6 +6468,7 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 	cave_type **zcave;
 	bool no_tele = FALSE;
 	int dlev = getlevel(wpos);
+
 	if ((zcave = getcave(&p_ptr->wpos))) no_tele = (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) != 0;
 
 	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);

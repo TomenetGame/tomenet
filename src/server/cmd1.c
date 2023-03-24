@@ -1400,12 +1400,12 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 void search(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int           y, x, chance;
-
 	cave_type    *c_ptr;
 	object_type  *o_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 	struct c_special *cs_ptr;
+
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Admin doesn't */
@@ -7853,6 +7853,7 @@ int see_wall(int Ind, int dir, int y, int x) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Get the new location */
@@ -7863,7 +7864,7 @@ int see_wall(int Ind, int dir, int y, int x) {
 	/* XXX this should be blocked by permawalls, hopefully. */
 	/* Had a crash occuring in cave_floor_bold check, y = 1, x = -1, 32,32,-500
 	   So I'm trying an ugly hack - C. Blue */
-//	if (!in_bounds(y, x)) { /* RUNNING_FIX_DEBUG */
+	//if (!in_bounds(y, x)) { /* RUNNING_FIX_DEBUG */
 	if (!in_bounds_array(y, x)) {
 		/* Hack be sure the player is inbounds */
 		if (p_ptr->px < 0) p_ptr->px = 0;
@@ -7940,6 +7941,7 @@ static int see_nothing(int dir, int Ind, int y, int x) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Get the new location */
@@ -8148,11 +8150,10 @@ static bool find_breakleft;*/
  */
 static void run_init(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
-
-	int	     row, col, deepleft, deepright;
-	int	     i, shortleft, shortright;
-
+	int row, col, deepleft, deepright;
+	int i, shortleft, shortright;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	/* Manual direction changes reset the corner counter
@@ -8601,12 +8602,13 @@ void run_step(int Ind, int dir, char *consume_full_energy) {
 	player_type *p_ptr = Players[Ind];
 	int prev_dir;
 
-	/* We haven't done anything that would consume full turn energy by default */
-	*consume_full_energy = FALSE;
-
 	/* slower 'running' movement over certain terrain */
 	int real_speed = cfg.running_speed;
 	cave_type *c_ptr, **zcave;
+
+	/* We haven't done anything that would consume full turn energy by default */
+	*consume_full_energy = FALSE;
+
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 

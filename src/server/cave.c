@@ -1081,6 +1081,8 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 	int m;
 
 	cave_type **zcave;
+
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Extract the offset */
@@ -1262,6 +1264,8 @@ bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 	int m;
 
 	cave_type **zcave;
+
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Extract the offset */
@@ -1543,7 +1547,7 @@ bool cave_valid_bold(cave_type **zcave, int y, int x) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	/* Forbid perma-grids */
-/*	if (cave_perma_grid(c_ptr)) return(FALSE); */
+	/*if (cave_perma_grid(c_ptr)) return(FALSE); */
 	if (cave_perma_bold(zcave, y, x)) return(FALSE);
 
 	/* Check objects */
@@ -1566,12 +1570,6 @@ bool cave_valid_bold(cave_type **zcave, int y, int x) {
 	/* Accept */
 	return(TRUE);
 }
-
-
-
-
-
-
 
 
 /*
@@ -2095,6 +2093,7 @@ static byte player_color(int Ind) {
 	char32_t dummy;
 	cave_type **zcave = getcave(&p_ptr->wpos);
 	cave_type *c_ptr;
+
 	pcolor = p_ptr->cp_ptr->color;
 
 	/* Check that zcave isn't NULL - mikaelh */
@@ -2740,6 +2739,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 	bool lite_snow, keep = FALSE;
 
 	cave_type **zcave;
+
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	/* Get the cave */
@@ -3742,6 +3742,7 @@ void note_spot(int Ind, int y, int x) {
 
 	cave_type **zcave;
 	cave_type *c_ptr;
+
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[y][x];
 
@@ -5262,8 +5263,8 @@ void forget_lite(int Ind) {
 
 	cave_type **zcave, *c_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
-	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	/* None to forget */
 	if (!(p_ptr->lite_n)) return;
@@ -5371,6 +5372,7 @@ void update_lite(int Ind) {
 
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave, *c_ptr;
+
 	if (!(zcave = getcave(wpos))) return;
 
 	/*** Special case ***/
@@ -7219,7 +7221,7 @@ void map_area(int Ind) {
 	cave_type *c_ptr;
 	byte *w_ptr;
 
-/*	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos); */
+	/*dungeon_type *d_ptr = getdungeon(&p_ptr->wpos); */
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
@@ -7228,7 +7230,7 @@ void map_area(int Ind) {
 	if (!local_panel(Ind)) return;
 
 	if (!(zcave = getcave(wpos))) return;
-/*	if (d_ptr && d_ptr->flags & DUNGEON_NO_MAP) return; */
+	/*if (d_ptr && d_ptr->flags & DUNGEON_NO_MAP) return; */
 	if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC_MAP)) return;
 	if (in_sector00(wpos) && (sector00flags1 & LF1_NO_MAGIC_MAP)) return;
 
@@ -7251,10 +7253,10 @@ void map_area(int Ind) {
 			w_ptr = &p_ptr->cave_flag[y][x];
 
 			/* All non-walls are "checked" */
-//			if (c_ptr->feat < FEAT_SECRET)
+			//if (c_ptr->feat < FEAT_SECRET)
 			if (!is_wall(c_ptr)) {
 				/* Memorize normal features */
-//				if (c_ptr->feat > FEAT_INVIS)
+				//if (c_ptr->feat > FEAT_INVIS)
 				if (!cave_plain_floor_grid(c_ptr)) {
 					/* Memorize the object */
 					*w_ptr |= CAVE_MARK;
@@ -7266,7 +7268,7 @@ void map_area(int Ind) {
 					w_ptr = &p_ptr->cave_flag[y + ddy_ddd[i]][x + ddx_ddd[i]];
 
 					/* Memorize walls (etc) */
-//					if (c_ptr->feat >= FEAT_SECRET)
+					//if (c_ptr->feat >= FEAT_SECRET)
 					if (is_wall(c_ptr)) {
 						/* Memorize the walls */
 						*w_ptr |= CAVE_MARK;
@@ -7300,6 +7302,7 @@ void mind_map_level(int Ind, int pow) {
 	dun_level	*l_ptr = getfloor(&p_ptr->wpos);
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 
 	/* for mindcrafters too (NR requires) */
@@ -7511,7 +7514,7 @@ void wiz_lite(int Ind) {
 	cave_type       *c_ptr;
 	byte	    *w_ptr;
 
-/*	dungeon_type	*d_ptr = getdungeon(&p_ptr->wpos); */
+	/*dungeon_type	*d_ptr = getdungeon(&p_ptr->wpos); */
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
@@ -7521,7 +7524,7 @@ void wiz_lite(int Ind) {
 
 	if (!(zcave = getcave(wpos))) return;
 
-/*	if (d_ptr && d_ptr->flags & DUNGEON_NO_MAP) return; */
+	/*if (d_ptr && d_ptr->flags & DUNGEON_NO_MAP) return; */
 	if (l_ptr && l_ptr->flags1 & LF1_NO_MAGIC_MAP) return;
 	if (in_sector00(wpos) && (sector00flags1 & LF1_NO_MAGIC_MAP)) return;
 
@@ -7542,7 +7545,7 @@ void wiz_lite(int Ind) {
 
 			/* Process all non-walls */
 			//if (c_ptr->feat < FEAT_SECRET) <- deprecated; use next line if you want "clean" wizlite ;) - C. Blue
-//			if (!(f_info[c_ptr->feat].flags1 & FF1_WALL))
+			//if (!(f_info[c_ptr->feat].flags1 & FF1_WALL))
 			{
 				/* Scan all neighbors */
 				for (i = 0; i < 9; i++) {
@@ -7558,7 +7561,7 @@ void wiz_lite(int Ind) {
 					c_ptr->info |= (CAVE_GLOW);
 
 					/* Memorize normal features */
-//					if (c_ptr->feat > FEAT_INVIS)
+					//if (c_ptr->feat > FEAT_INVIS)
 					if (!cave_plain_floor_grid(c_ptr)) {
 						/* Memorize the grid */
 						*w_ptr |= CAVE_MARK;
@@ -7587,12 +7590,11 @@ void wiz_lite(int Ind) {
 
 
 /* from PernA	- Jir - */
-void wiz_lite_extra(int Ind)
-{
+void wiz_lite_extra(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int y, x;
 	struct worldpos *wpos = &p_ptr->wpos;
-//	dun_level *l_ptr = getfloor(wpos);
+	//dun_level *l_ptr = getfloor(wpos);
 	cave_type **zcave;
 	cave_type *c_ptr;
 
@@ -7601,24 +7603,22 @@ void wiz_lite_extra(int Ind)
 
 	if (!(zcave = getcave(wpos))) return;
 
-/*	if (d_ptr && d_ptr->flags & DUNGEON_NO_MAP) return; */
+	/*if (d_ptr && d_ptr->flags & DUNGEON_NO_MAP) return; */
 
 	for (y = 0; y < p_ptr->cur_hgt; y++) {
 		for (x = 0; x < p_ptr->cur_wid; x++) {
 			c_ptr = &zcave[y][x];
 			if (mood && !(c_ptr->info & CAVE_ICKY)) continue;
 			/* ligten up all grids and remember features */
-//			c_ptr->info |= (CAVE_GLOW | CAVE_MARK);
+			//c_ptr->info |= (CAVE_GLOW | CAVE_MARK);
 			/* lighten up all grids */
 			c_ptr->info |= CAVE_GLOW;
 		}
 	}
 
-
 	/* remember features too? */
-//	if (!(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC_MAP))
+	//if (!(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC_MAP))
 	wiz_lite(Ind);
-
 
 	for (x = 1; x <= NumPlayers; x++) {
 		p_ptr = Players[x];
@@ -7631,7 +7631,6 @@ void wiz_lite_extra(int Ind)
 		p_ptr->redraw |= PR_MAP;
 		p_ptr->window |= PW_OVERHEAD;
 	}
-
 }
 
 /*
@@ -7718,8 +7717,7 @@ void wiz_dark(int Ind) {
 }
 
 #ifdef ARCADE_SERVER
-extern int check_feat(worldpos *wpos, int y, int x)
-{
+extern int check_feat(worldpos *wpos, int y, int x) {
 	cave_type **zcave;
 	cave_type *c_ptr;
 
@@ -8244,6 +8242,7 @@ bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2, int rang
 #endif
 	int dist, y, x;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 #ifdef DOUBLE_LOS_SAFETY
@@ -8291,6 +8290,7 @@ bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2, int
 #endif
 	int dist, y, x;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 #ifdef DOUBLE_LOS_SAFETY
@@ -8338,6 +8338,7 @@ static bool projectable_wall_perm_DLS(struct worldpos *wpos, int y1, int x1, int
 bool projectable_wall_perm(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
 #endif
 	int dist, y, x;
+
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
@@ -8378,6 +8379,7 @@ bool projectable_real(int Ind, int y1, int x1, int y2, int x2, int range) {
 static bool projectable_real_DLS(int Ind, int y1, int x1, int y2, int x2, int range) {
 	int dist, y = y1, x = x1;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(&Players[Ind]->wpos))) return(FALSE);
 
 	for (dist = 0; dist <= range; dist++) {
@@ -8402,6 +8404,7 @@ static bool projectable_real_DLS(int Ind, int y1, int x1, int y2, int x2, int ra
 bool projectable_real(int Ind, int y1, int x1, int y2, int x2, int range) {
 	int dist, y, x;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(&Players[Ind]->wpos))) return(FALSE);
 
 	/* Start at the initial location */
@@ -8450,6 +8453,7 @@ bool projectable_wall_real(int Ind, int y1, int x1, int y2, int x2, int range) {
 static bool projectable_wall_real_DLS(int Ind, int y1, int x1, int y2, int x2, int range) {
 	int dist, y, x;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(&Players[Ind]->wpos))) return(FALSE);
 
 	/* Start at the initial location */
@@ -8480,10 +8484,10 @@ static bool projectable_wall_real_DLS(int Ind, int y1, int x1, int y2, int x2, i
 	return(FALSE);
 }
 #else
-bool projectable_wall_real(int Ind, int y1, int x1, int y2, int x2, int range)
-{
+bool projectable_wall_real(int Ind, int y1, int x1, int y2, int x2, int range) {
 	int dist, y, x;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(&Players[Ind]->wpos))) return(FALSE);
 
 	/* Start at the initial location */
@@ -8535,11 +8539,11 @@ bool projectable_wall_real(int Ind, int y1, int x1, int y2, int x2, int range)
 /* if d<16, consider using tdi,tdy,tdx; considerably quicker! */
 void scatter(struct worldpos *wpos, int *yp, int *xp, int y, int x, int d, int m) {
 	int nx, ny;
+	cave_type **zcave;
 	//long tries = 100000;
 	/* Reduced to 10k to lessen lockups - mikaelh */
 	long tries = 10000;
 
-	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) {
 		(*yp) = y;
 		(*xp) = x;

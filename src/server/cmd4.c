@@ -4368,9 +4368,7 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 
 
 	if (admin) {
-		cave_type **zcave;
-		cave_type *c_ptr;
-
+		cave_type **zcave, *c_ptr;
 		u32b td = (cfg.fps * 86400 - (turn % (cfg.fps * 86400))) / cfg.fps;
 		int h = td / 3600, m = (td - h * 3600) / 60, s = td - h * 3600 - m * 60;
 		u32b td1 = (cfg.fps * 3600 - (turn % (cfg.fps * 3600))) / cfg.fps;

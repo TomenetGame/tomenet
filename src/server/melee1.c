@@ -411,9 +411,8 @@ static bool do_seduce(int Ind, int m_idx) {
 	int d, i, j, ty, tx, chance, crowd = 0, piece = 0;
 	bool done = FALSE;
 	u32b f1, f2, f3, f4, f5, f6, esp;
+	cave_type **zcave, *c_ptr;
 
-	cave_type **zcave;
-	cave_type *c_ptr;
 	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 
 	for (d = 1; d <= 9; d++) {

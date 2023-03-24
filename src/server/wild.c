@@ -659,6 +659,7 @@ void wild_add_monster(struct worldpos *wpos) {
 	int monst_x, monst_y, r_idx;
 	int tries = 0;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Don't spawn during highlander tournament or global events in general (ancient D vs lvl 10 is silyl) */
@@ -704,6 +705,7 @@ void wild_add_monster(struct worldpos *wpos) {
 static void reserve_building_plot(struct worldpos *wpos, int *x1, int *y1, int *x2, int *y2, int xlen, int ylen, int xcen, int ycen) {
 	int x,y, attempts = 0, plot_clear;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 
 #ifdef DEVEL_TOWN_COMPATIBILITY
@@ -804,6 +806,7 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y) {
 	int tmp_seed;
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 
 	x1 = x2 = y1 = y2 = -1;
@@ -969,6 +972,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 	u32b old_seed = Rand_value;
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 
 	trys = cash = num_food = num_objects = num_bones = 0;
@@ -1177,6 +1181,7 @@ static bool dwelling_check_entrance(worldpos *wpos, int y, int x) {
 	int i;
 	cave_type *c_ptr;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	for (i = 1; i < tdi[1]; i++) {
@@ -1218,6 +1223,7 @@ static bool dwelling_check_entrance(worldpos *wpos, int y, int x, int dir) {
 	int i;
 	cave_type *c_ptr;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	switch (dir) {
@@ -3736,9 +3742,7 @@ void wilderness_gen(struct worldpos *wpos) {
 
 	if (!(zcave = getcave(wpos))) return;
 
-
 	process_hooks(HOOK_WILD_GEN, "d", wpos);
-
 
 	/* Perma-walls -- North/South*/
 	for (x = 0; x < MAX_WID; x++) {

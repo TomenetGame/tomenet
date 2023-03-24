@@ -1906,10 +1906,8 @@ bool player_day(int Ind) {
 	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	bool ret = FALSE;
 
-
 	/* Weather effect colouring may differ depending on daytime */
 	Send_weather_colouring(Ind, TERM_WATE, TERM_WHITE, TERM_L_UMBER, '+');
-
 
 	/* Shade map and darken/forget features */
 
@@ -1966,10 +1964,8 @@ bool player_night(int Ind) {
 	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	bool ret = FALSE;
 
-
 	/* Weather effect colouring may differ depending on daytime */
 	Send_weather_colouring(Ind, TERM_BLUE, TERM_WHITE, TERM_L_UMBER, '+');
-
 
 	/* Shade map and darken/forget features */
 
@@ -4152,10 +4148,9 @@ static void process_player_begin(int Ind) {
 static void apply_terrain_effect(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int y = p_ptr->py, x = p_ptr->px;
-	cave_type *c_ptr;
+	cave_type *c_ptr, **zcave;
 	feature_type *f_ptr;
 
-	cave_type **zcave;
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	c_ptr = &zcave[y][x];
@@ -4863,7 +4858,7 @@ int has_ball (player_type *p_ptr) {
  */
 static bool process_player_end_aux(int Ind) {
 	player_type	*p_ptr = Players[Ind];
-	cave_type	*c_ptr;
+	cave_type **zcave, *c_ptr;
 	object_type	*o_ptr;
 	int		i, j, k;
 	int		regen_amount; //, NumPlayers_old = NumPlayers;
@@ -4889,9 +4884,7 @@ static bool process_player_end_aux(int Ind) {
 		minus_magic += (i * j) / ANTIMAGIC_CAP + (magik(((i * j * 100) / ANTIMAGIC_CAP) % 100) ? 1 : 0);
 	} else minus_magic += get_skill_scale_fine(p_ptr, SKILL_ANTIMAGIC, 2); /* was 3 before, trying slightly less harsh 2 now */
 
-	cave_type **zcave;
 	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
-
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	/* Anything done here cannot be reduced by GoI/Manashield etc */

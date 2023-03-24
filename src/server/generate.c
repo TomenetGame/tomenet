@@ -431,7 +431,7 @@ static void correct_dir(int *rdir, int *cdir, int y1, int x1, int y2, int x2) {
 extern void arcade_wipe(worldpos *wpos) {
 	int my, mx;
 	cave_type **zcave;
-//	cave_type *c_ptr;
+	//cave_type *c_ptr;
 
 	if (!(zcave = getcave(wpos))) return;
 	for (mx = 1; mx < 131; mx++)
@@ -572,8 +572,7 @@ static int along_hallway(cave_type **zcave, int x, int y) {
  * Convert existing terrain type to rubble
  */
 static void place_rubble(struct worldpos *wpos, int y, int x) {
-	cave_type **zcave;
-	cave_type *c_ptr;
+	cave_type **zcave, *c_ptr;
 	int dir;
 
 	if (!(zcave = getcave(wpos))) return;
@@ -607,8 +606,7 @@ static void place_rubble(struct worldpos *wpos, int y, int x) {
  * Create a fountain here.
  */
 void place_fountain(struct worldpos *wpos, int y, int x) {
-	cave_type **zcave;
-	cave_type *c_ptr;
+	cave_type **zcave, *c_ptr;
 	int dun_lev;
 	c_special *cs_ptr;
 	int svals[SV_POTION_LAST + SV_POTION2_LAST + 1], maxsval = 0, k;
@@ -730,8 +728,7 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 
 /* Place a fountain of blood, for Vampires, as suggested by Mark -  C. Blue */
 void place_fountain_of_blood(struct worldpos *wpos, int y, int x) {
-	cave_type **zcave;
-	cave_type *c_ptr;
+	cave_type **zcave, *c_ptr;
 	c_special *cs_ptr;
 
 	if (!(zcave = getcave(wpos))) return;
@@ -762,8 +759,7 @@ static void place_altar(int y, int x) {
  * Place a between gate at the two specified locations
  */
 bool place_between_targetted(struct worldpos *wpos, int y, int x, int ty, int tx) {
-	cave_type **zcave;
-	cave_type *c_ptr, *c1_ptr;
+	cave_type **zcave, *c_ptr, *c1_ptr;
 	c_special *cs_ptr;
 
 	/* The two gates must be placed on different locations - apparently this actually happened! ^^ */
@@ -840,8 +836,7 @@ void place_between_ext(struct worldpos *wpos, int y, int x, int hgt, int wid) {
 
 /* For divine_gateway() - cool visuals only */
 bool place_between_dummy(struct worldpos *wpos, int y, int x) {
-	cave_type **zcave;
-	cave_type *c_ptr;
+	cave_type **zcave, *c_ptr;
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
@@ -879,8 +874,7 @@ extern void place_up_stairs(struct worldpos *wpos, int y, int x) {
  * Convert existing terrain type to "down stairs"
  */
 static void place_down_stairs(worldpos *wpos, int y, int x) {
-	cave_type **zcave;
-	cave_type *c_ptr;
+	cave_type **zcave, *c_ptr;
 
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
@@ -921,8 +915,7 @@ static void place_random_stairs(struct worldpos *wpos, int y, int x) {
  */
 static void place_locked_door(struct worldpos *wpos, int y, int x) {
 	int tmp;
-	cave_type **zcave;
-	cave_type *c_ptr;
+	cave_type **zcave, *c_ptr;
 
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
@@ -947,8 +940,7 @@ static void place_locked_door(struct worldpos *wpos, int y, int x) {
  */
 static void place_secret_door(struct worldpos *wpos, int y, int x) {
 	int tmp;
-	cave_type **zcave;
-	cave_type *c_ptr;
+	cave_type **zcave, *c_ptr;
 	struct c_special *cs_ptr;
 
 	if (!(zcave = getcave(wpos))) return;
@@ -1639,9 +1631,8 @@ static void lake_level(struct worldpos *wpos) {
 	int y1, x1, y, x, k, t, n, rad;
 	int h1, h2, h3, h4;
 	bool distort = FALSE;
-	cave_type *c_ptr;
+	cave_type *c_ptr, **zcave;
 
-	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Drop a few epi-centers (usually about two) */
@@ -10558,6 +10549,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx) {
 static void place_street(struct worldpos *wpos, int vert, int place) {
 	int y, x, y1, y2, x1, x2;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Vertical streets */

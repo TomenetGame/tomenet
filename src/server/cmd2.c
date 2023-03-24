@@ -3119,6 +3119,7 @@ void do_cmd_close(int Ind, int dir) {
 	bool cannot_form = CANNOT_OPERATE_FORM;
 
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Ghosts cannot close ; not in WRAITHFORM */
@@ -3278,6 +3279,7 @@ byte twall_erosion(worldpos *wpos, int y, int x, byte feat) {
 	int tx, ty, d;
 	cave_type **zcave;
 	cave_type *c_ptr;
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	for (d = 1; d <= 9; d++) {
@@ -3318,6 +3320,7 @@ bool twall(int Ind, int y, int x, byte feat) {
 	byte *w_ptr = &p_ptr->cave_flag[y][x];
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Paranoia -- Require a wall or door or some such */
@@ -5634,6 +5637,7 @@ void do_cmd_spike(int Ind, int dir) {
 
 	cave_type *c_ptr;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Ghosts cannot spike ; not in WRAITHFORM */
@@ -5717,6 +5721,7 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 
 	bool more = FALSE;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	if (!p_ptr->warning_numpadmove &&
@@ -7850,6 +7855,7 @@ bool interfere(int Ind, int chance) {
 	int d, i, tx, ty, x = p_ptr->px, y = p_ptr->py;
 	int calmness = get_skill_scale(p_ptr, SKILL_CALMNESS, 80);
 	cave_type **zcave;
+
 	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 
 	/* monster doesn't know the player is actually next to it?
@@ -7976,10 +7982,9 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	char o_name[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	bool throwing_weapon;
-
 	cave_type **zcave, *c_ptr;
-	if (!(zcave = getcave(wpos))) return;
 
+	if (!(zcave = getcave(wpos))) return;
 
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) {
 		msg_print(Ind, "You cannot throw things in mist form.");
@@ -8845,6 +8850,7 @@ void house_admin(int Ind, int dir, char *args) {
 	cave_type *c_ptr;
 	struct dna_type *dna;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;	//(FALSE);
 
 	if (dir && args) {
@@ -8922,6 +8928,7 @@ void do_cmd_purchase_house(int Ind, int dir) {
 	cave_type *c_ptr = NULL;
 	struct dna_type *dna;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Ghosts cannot buy houses */

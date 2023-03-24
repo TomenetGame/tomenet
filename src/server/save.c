@@ -1182,9 +1182,8 @@ static void wr_floor(struct worldpos *wpos) {
 	u32b prev_info = 0xffffffff;
 	unsigned char runlength;
 	struct c_special *cs_ptr;
+	cave_type *c_ptr, **zcave;
 
-	cave_type *c_ptr;
-	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
 #if DEBUG_LEVEL > 1
 //#if 1 > 0

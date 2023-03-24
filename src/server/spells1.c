@@ -831,6 +831,8 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 
 	/* Space/Time Anchor */
 	cave_type **zcave;
+
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
@@ -4344,8 +4346,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	player_type *p_ptr = (quiet ? NULL : Players[Ind]);
 
 	byte *w_ptr = (quiet ? NULL : &p_ptr->cave_flag[y][x]);
-	cave_type *c_ptr;
-	cave_type **zcave;
+	cave_type *c_ptr, **zcave;
 
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
@@ -5168,8 +5169,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	bool is_potion = FALSE, is_basic_potion = FALSE, is_flask = FALSE, is_meltable = FALSE;
 
 	int div;
-	cave_type **zcave;
-	cave_type *c_ptr;
+	cave_type **zcave, *c_ptr;
 	object_type *o_ptr;
 	object_kind *k_ptr;
 
@@ -5997,8 +5997,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	int plev = 25; /* replacement dummy for when a monster isn't
 			  affected by a real player but by eg a trap */
 
-	cave_type **zcave;
-	cave_type *c_ptr;
+	cave_type **zcave, *c_ptr;
 	player_type *p_ptr = NULL;
 
 
@@ -10992,8 +10991,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		if (IS_PVP) {
 			/* protect players in inns */
-			cave_type **zcave;
-			cave_type *c_ptr;
+			cave_type **zcave, *c_ptr;
 
 			if ((zcave = getcave(wpos))) {
 				c_ptr = &zcave[p_ptr->py][p_ptr->px];
@@ -11448,8 +11446,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	case GF_TELE_TO: {
 		int chance = (195 - p_ptr->skill_sav) / (p_ptr->res_tele ? 4 : 2);
-		cave_type **zcave;
-		cave_type *c_ptr;
+		cave_type **zcave, *c_ptr;
 		player_type *q_ptr;
 
 		/* No "real" damage */
@@ -11526,8 +11523,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		if (IS_PVP) {
 			/* protect players in inns */
-			cave_type **zcave;
-			cave_type *c_ptr;
+			cave_type **zcave, *c_ptr;
 
 			if ((zcave = getcave(wpos))) {
 				c_ptr = &zcave[p_ptr->py][p_ptr->px];
@@ -11574,8 +11570,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		if (IS_PVP) {
 			/* protect players in inns */
-			cave_type **zcave;
-			cave_type *c_ptr;
+			cave_type **zcave, *c_ptr;
 
 			if ((zcave = getcave(wpos))) {
 				c_ptr = &zcave[p_ptr->py][p_ptr->px];
@@ -11623,8 +11618,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		if (IS_PVP) {
 			/* protect players in inns */
-			cave_type **zcave;
-			cave_type *c_ptr;
+			cave_type **zcave, *c_ptr;
 
 			if ((zcave = getcave(wpos))) {
 				c_ptr = &zcave[p_ptr->py][p_ptr->px];

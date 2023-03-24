@@ -119,12 +119,14 @@ bool warding_rune_break(int m_idx) {
 	monster_type *m_ptr = &m_list[m_idx];
 	worldpos *wpos = &m_ptr->wpos;
 	cave_type **zcave = getcave(wpos);
-	if (!zcave) return(FALSE);
+
 	int my = m_ptr->fy;
 	int mx = m_ptr->fx;
 	cave_type *c_ptr = &zcave[my][mx];
 	struct c_special *cs_ptr = GetCS(c_ptr, CS_RUNE);
-	if (!cs_ptr) return(FALSE);
+
+
+	if (!zcave || !cs_ptr) return(FALSE);
 
 	/* Restore the feature */
 	cave_set_feat_live(wpos, my, mx, cs_ptr->sc.rune.feat);

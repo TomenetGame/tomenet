@@ -8899,8 +8899,8 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 	int dun_level = getlevel(wpos);
 	c_special *cs_ptr;
 	cave_type **zcave;
-	zcave = getcave(wpos);
 
+	zcave = getcave(wpos);
 	if (!zcave) return(-1);	/* maybe SIGSEGV soon anyway */
 
 	/* Skip "empty" lines */
@@ -9813,6 +9813,7 @@ errr process_dungeon_file(cptr name, worldpos *wpos, int *yval, int *xval, int y
 	int xmin = *xval;
 
 	cave_type **zcave;
+
 	zcave = getcave(wpos);
 	if (!zcave) return(-1);	/* maybe SIGSEGV soon anyway */
 
