@@ -25223,11 +25223,14 @@ Solution:   -If you're on Wifi (WLAN) plug in an ethernet cable instead!
             Alternatively you can try to configure your WLAN not to do that,
             however, WLAN can still be pretty prone to lag sometimes.
             -Test it on another PC on the same internet connection.
-            -Test it on a friend's internet connection.
+            -Test it on a friend's internet connection or use your mobile phone
+             to provide a wifi hot spot and check if the problem persists.
             -Check if it only happens on certain in-game actions you perform.
             -Check if it only happens at a certain time of the day.
             -Make sure you don't have downloads or uploads running in the
             background.
+            -A user reported that running Valve's 'Steam' gaming platform in
+             the background caused very regular major lag spikes for him.
 
 PROBLEM 27: I resized some TomeNET windows by dragging them with the mouse,
             but it seems it doesn't have the desired effect.
