@@ -3810,7 +3810,7 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 	item_tester_hook = item_tester_hook_weapon;
 
 	/* Enchant armor if requested */
- 	if (num_ac) item_tester_hook = item_tester_hook_armour;
+	if (num_ac) item_tester_hook = item_tester_hook_armour;
 
 	/* Get the item (in the pack) */
 	if (item >= 0) o_ptr = &p_ptr->inventory[item];

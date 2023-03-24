@@ -161,7 +161,7 @@ server_opts cfg = {
 	"changeme",	// console_password
 	"DungeonWizard",// admin_wizard
 	"DungeonMaster",// dungeon_master
-	"", 		// wserver,
+	"",		// wserver,
 
 	"",		// pass
 	/* s32b */
@@ -178,7 +178,7 @@ server_opts cfg = {
 
 	25, 150,	// anti_scum, dun_unusual,
 	32,32,		// town_x, town_y
-	0, 		// town_base,
+	0,		// town_base,
 
 	200, 50,	// store_turns, dun_store_turns
 	/* char */
@@ -193,7 +193,7 @@ server_opts cfg = {
 	// anti_arts_hoard, anti_arts_house, anti_arts_wild, anti_arts_shop, anti_arts_pickup, anti_arts_send
 	FALSE,TRUE,TRUE,FALSE,TRUE,TRUE,
 	FALSE,		// persistent_artifacts
-	FALSE,TRUE, 	// anti_cheeze_pickup, anti_cheeze_telekinesis
+	FALSE,TRUE,	// anti_cheeze_pickup, anti_cheeze_telekinesis
 	20,		// surface_item_removal (minutes for scan_objs)
 	45,		// dungeon_item_removal (minutes for scan_objs)
 	1440,		// death_wild_item_removal

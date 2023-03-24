@@ -9002,8 +9002,8 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 #endif
 	bool		random_move = FALSE;
 
-	cave_type    	*c_ptr;
-	object_type 	*o_ptr;
+	cave_type	*c_ptr;
+	object_type	*o_ptr;
 	monster_type	*y_ptr;
 
 	bool		do_turn;
@@ -10699,8 +10699,8 @@ static void process_monster_pet(int Ind, int m_idx) {
 
 	int			mm[8];
 
-	cave_type    	*c_ptr;
-	//object_type 	*o_ptr;
+	cave_type	*c_ptr;
+	//object_type	*o_ptr;
 	monster_type	*y_ptr;
 
 	bool		do_turn;
@@ -11134,8 +11134,8 @@ static void process_monster_golem(int Ind, int m_idx) {
 
 	int		mm[8];
 
-	cave_type    	*c_ptr;
-	//object_type 	*o_ptr;
+	cave_type	*c_ptr;
+	//object_type	*o_ptr;
 	monster_type	*y_ptr;
 
 	bool		do_turn;

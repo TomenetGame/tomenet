@@ -2322,16 +2322,16 @@ Only 70%-ify the skills that could potentially be updated when the player mutate
 
  /* Lookup for the race name */
 char *special_prace_lookup[MAX_RACE] = {
-/* RACE_HUMAN */ 	"Human",
-/* RACE_HALF_ELF */ 	"Half-Elven",
-/* RACE_ELF */ 		"Elven",
-/* RACE_HOBBIT */ 	"Hobbitonian",
-/* RACE_GNOME */ 	"Gnome",
-/* RACE_DWARF */ 	"Dwarven",
-/* RACE_HALF_ORC */ 	"Half-Orc",
-/* RACE_HALF_TROLL */ 	"Half-Troll",
+/* RACE_HUMAN */	"Human",
+/* RACE_HALF_ELF */	"Half-Elven",
+/* RACE_ELF */		"Elven",
+/* RACE_HOBBIT */	"Hobbitonian",
+/* RACE_GNOME */	"Gnome",
+/* RACE_DWARF */	"Dwarven",
+/* RACE_HALF_ORC */	"Half-Orc",
+/* RACE_HALF_TROLL */	"Half-Troll",
 
-/* RACE_DUNADAN */ 	"Western",
+/* RACE_DUNADAN */	"Western",
 /* According to Vir:
  *  Dunedain: men of the West,
  *  Dunadan:  man of the West.
@@ -2341,16 +2341,16 @@ char *special_prace_lookup[MAX_RACE] = {
  * Yes, I got the whole history off him =)
  * Sticking with "Western" for now, then. */
 
-/* RACE_HIGH_ELF */ 	"High-Elven",
-/* RACE_YEEK */ 	"Yeek",
-/* RACE_GOBLIN */ 	"Goblin",
-/* RACE_ENT */ 		"Ent",
-/* RACE_DRACONIAN */ 	"Draconian",
+/* RACE_HIGH_ELF */	"High-Elven",
+/* RACE_YEEK */		"Yeek",
+/* RACE_GOBLIN */	"Goblin",
+/* RACE_ENT */		"Ent",
+/* RACE_DRACONIAN */	"Draconian",
 #ifdef ENABLE_KOBOLD
  /* RACE_KOBOLD*/	"Kobold",
 #endif
-/* RACE_DARK_ELF */ 	"Dark-Elven",
-/* RACE_VAMPIRE */ 	"Vampire",
+/* RACE_DARK_ELF */	"Dark-Elven",
+/* RACE_VAMPIRE */	"Vampire",
 #ifdef ENABLE_MAIA
 /* RACE_MAIA */		"Maia",
 #endif
@@ -2358,16 +2358,16 @@ char *special_prace_lookup[MAX_RACE] = {
 
 /* Extra trailing space.. */
 char *special_prace_lookup2[MAX_RACE] = {
-/* RACE_HUMAN */ 	"Human ",
-/* RACE_HALF_ELF */ 	"Half-Elven ",
-/* RACE_ELF */ 		"Elven ",
-/* RACE_HOBBIT */ 	"Hobbitonian ",
-/* RACE_GNOME */ 	"Gnome ",
-/* RACE_DWARF */ 	"Dwarven ",
-/* RACE_HALF_ORC */ 	"Half-Orc ",
-/* RACE_HALF_TROLL */ 	"Half-Troll ",
+/* RACE_HUMAN */	"Human ",
+/* RACE_HALF_ELF */	"Half-Elven ",
+/* RACE_ELF */		"Elven ",
+/* RACE_HOBBIT */	"Hobbitonian ",
+/* RACE_GNOME */	"Gnome ",
+/* RACE_DWARF */	"Dwarven ",
+/* RACE_HALF_ORC */	"Half-Orc ",
+/* RACE_HALF_TROLL */	"Half-Troll ",
 
-/* RACE_DUNADAN */ 	"Western ",
+/* RACE_DUNADAN */	"Western ",
 /* According to Vir:
  *  Dunedain: men of the West,
  *  Dunadan:  man of the West.
@@ -2377,16 +2377,16 @@ char *special_prace_lookup2[MAX_RACE] = {
  * Yes, I got the whole history off him =)
  * Sticking with "Western" for now, then. */
 
-/* RACE_HIGH_ELF */ 	"High-Elven ",
-/* RACE_YEEK */ 	"Yeek ",
-/* RACE_GOBLIN */ 	"Goblin ",
-/* RACE_ENT */ 		"Ent ",
-/* RACE_DRACONIAN */ 	"Draconian ",
+/* RACE_HIGH_ELF */	"High-Elven ",
+/* RACE_YEEK */		"Yeek ",
+/* RACE_GOBLIN */	"Goblin ",
+/* RACE_ENT */		"Ent ",
+/* RACE_DRACONIAN */	"Draconian ",
 #ifdef ENABLE_KOBOLD
  /* RACE_KOBOLD*/	"Kobold ",
 #endif
-/* RACE_DARK_ELF */ 	"Dark-Elven ",
-/* RACE_VAMPIRE */ 	"Vampire ",
+/* RACE_DARK_ELF */	"Dark-Elven ",
+/* RACE_VAMPIRE */	"Vampire ",
 #ifdef ENABLE_MAIA
 /* RACE_MAIA */		"Maia ",
 #endif
@@ -5353,7 +5353,7 @@ byte mtech_lev[MAX_CLASS][16] = {
 	{4,	7,	0,	13,	0,	0,	0,	0,	0,	0,	20,	0,	0,	0,	0,	0},	//mimic
 	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//archer
 	{5,	7,	0,	9,	0,	0,	0,	0,	0,	0,	20,	0,	0,	0,	0,	0},	//paladin
-	{3,	8,	0,	13,	0,	0,	7,	0,	0,	0,	17, 	0,	0,	0,	0,	0},	//ranger
+	{3,	8,	0,	13,	0,	0,	7,	0,	0,	0,	17,	0,	0,	0,	0,	0},	//ranger
 	{3,	5,	9,	13,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//adventurer
 	{5,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//druid
 	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//shaman

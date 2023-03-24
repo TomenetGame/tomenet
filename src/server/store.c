@@ -6215,9 +6215,9 @@ void home_sell(int Ind, int item, int amt) {
 	}
 
 	/* The store gets that (known) item */
-//	if (sold_obj.tval != 8)	// What was it for.. ?
+	//if (sold_obj.tval != 8)	// What was it for.. ?
 	item_pos = home_carry(Ind, h_ptr, &sold_obj);
-//		item_pos = store_carry(p_ptr->store_num, &sold_obj);
+	//item_pos = store_carry(p_ptr->store_num, &sold_obj);
 
 	/* Resend the basic store info */
 	display_trad_house(Ind, h_ptr);
@@ -6245,7 +6245,7 @@ void home_sell(int Ind, int item, int amt) {
 		}
  /* TODO: implement for home_purchase too, and for dropping/picking up in mang-style houses! */
  #ifdef HOUSE_PAINTING_HIDE_UNSELLABLE
- 		for (item_pos = 0; item_pos < h_ptr->stock_num; item_pos++) {
+		for (item_pos = 0; item_pos < h_ptr->stock_num; item_pos++) {
 			o_ptr = &h_ptr->stock[item_pos];
 			if (o_ptr->note && strstr(quark_str(o_ptr->note), "@S")) {
   #ifdef HOUSE_PAINTING_HIDE_MUSEUM
@@ -6264,12 +6264,12 @@ void home_sell(int Ind, int item, int amt) {
 				i++;
 			}
 			else i--;
- 		}
- 		/* more useless items in the house than 'really' sellable ones? */
- 		if (i < 0) {
- 			h_ptr->colour = 0;
- 			fill_house(h_ptr, FILL_UNPAINT, NULL);
- 		}
+		}
+		/* more useless items in the house than 'really' sellable ones? */
+		if (i < 0) {
+			h_ptr->colour = 0;
+			fill_house(h_ptr, FILL_UNPAINT, NULL);
+		}
  #endif
 #endif
 	}
@@ -6443,14 +6443,15 @@ void home_purchase(int Ind, int item, int amt) {
 	if (p_ptr->id != o_ptr->owner
 	   //&& !(o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL) /* Heavy ball */
 	   ) {
-		cptr 	name = lookup_player_name(o_ptr->owner);
-		int 	lev = lookup_player_level(o_ptr->owner);
-		cptr	acc_name = lookup_accountname(o_ptr->owner);
+		cptr name = lookup_player_name(o_ptr->owner);
+		int lev = lookup_player_level(o_ptr->owner);
+		cptr acc_name = lookup_accountname(o_ptr->owner);
+
 		object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
 		/* If level diff. is too large, target player is too low,
 		   and items aren't loot of a dead player, this might be cheeze! */
  #if 0
-6		if ((lev > p_ptr->lev + 7) && (p_ptr->lev < 40) && (name)) {
+		if ((lev > p_ptr->lev + 7) && (p_ptr->lev < 40) && (name)) {
 		s_printf("%s -CHEEZY- Item transaction from %s(%d) to %s(%d) at (%d,%d,%d):\n  %s\n",
 				showtime(), name ? name : "(Dead player)", lev,
 				p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,

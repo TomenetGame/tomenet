@@ -5386,7 +5386,7 @@ void calc_boni(int Ind) {
 				p_ptr->xtra_might += get_skill_scale(p_ptr, archery, 1);
 				csheet_boni[14].migh += get_skill_scale(p_ptr, archery, 1);
  #else
- 				p_ptr->xtra_might += (get_skill(p_ptr, SKILL_ARCHERY) / 50);
+				p_ptr->xtra_might += (get_skill(p_ptr, SKILL_ARCHERY) / 50);
 				csheet_boni[14].migh += (get_skill(p_ptr, SKILL_ARCHERY) / 50);
  #endif
 #endif

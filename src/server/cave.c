@@ -3386,10 +3386,10 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 #ifdef HOUSE_PAINTING
 		if (c_ptr->feat == FEAT_WALL_HOUSE && c_ptr->colour) {
  #ifdef HOUSE_PAINTING_HIDE_BAD_MODE
- 			if (is_admin(p_ptr)) {
+			if (is_admin(p_ptr)) {
 				if (c_ptr->colour > 100) (*ap) = c_ptr->colour - 100 - 1;
 				else (*ap) = c_ptr->colour - 1;
- 			} else if (c_ptr->colour > 100) {
+			} else if (c_ptr->colour > 100) {
 				if ((p_ptr->mode & MODE_EVERLASTING)) (*ap) = c_ptr->colour - 100 - 1;
 			} else {
 				if (!(p_ptr->mode & MODE_EVERLASTING)) (*ap) = c_ptr->colour - 1;
@@ -4687,7 +4687,7 @@ void display_map(int Ind, int *cy, int *cx) {
 		for (int i = 0; i < sizeof(sc) / sizeof(sc[0]); i++) sc[i] = ' ';
 #endif
 
-     		/* Display the line */
+		/* Display the line */
 		for (x = 0; x < MAP_WID + 2; ++x) {
 			ta = ma[y][x];
 			tc = mc[y][x];
@@ -6469,7 +6469,7 @@ static void vinfo_init_aux(vinfo_hack *hack, int y, int x, long m) {
 			/* Paranoia */
 			if (hack->num_slopes >= VINFO_MAX_SLOPES)
 				quit_fmt("Too many slopes (%d)!",
-				 	VINFO_MAX_SLOPES);
+					VINFO_MAX_SLOPES);
 
 			/* Save the slope, and advance */
 			hack->slopes[hack->num_slopes++] = m;

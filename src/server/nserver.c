@@ -1670,7 +1670,7 @@ bool Destroy_connection(int ind, char *reason_orig) {
 		if (DgramWrite(sock, pkt, len) != len) {
 			GetSocketError(sock);
 //maybe remove this one too? Or have its error be cleared too? - C. Blue
-//    			DgramWrite(sock, pkt, len);
+//			DgramWrite(sock, pkt, len);
 		}
 #endif
 	}
@@ -3374,7 +3374,7 @@ static int Handle_login(int ind) {
 		}
 #endif
 		if (p_ptr->lives-1 == 1)
-    			msg_print(NumPlayers, "\377GYou have no more resurrections left!");
+			msg_print(NumPlayers, "\377GYou have no more resurrections left!");
 		else {
 			if (p_ptr->lives-1-1 == 1) msg_print(NumPlayers, "\377GYou have 1 resurrection left.");
 			else msg_format(NumPlayers, "\377GYou have %d resurrections left.", p_ptr->lives-1-1);
@@ -8278,11 +8278,11 @@ int Send_sound(int Ind, int sound, int alternative, int type, int vol, s32b play
 		return(0);
 	}
 
-//	if (is_admin(p_ptr)) s_printf("USE_SOUND_2010: sound %d (alt %d) sent to player %s (%d).\n", sound, alternative, p_ptr->name, Ind);//debug
+	//if (is_admin(p_ptr)) s_printf("USE_SOUND_2010: sound %d (alt %d) sent to player %s (%d).\n", sound, alternative, p_ptr->name, Ind);//debug
 
 	if (is_atleast(&connp->version, 4, 8, 1, 1, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%d%d%d%d%d%d%d", PKT_SOUND, sound, alternative, type, vol, player_id, dist_x, dist_y);
-	} else 	if (is_newer_than(&connp->version, 4, 4, 5, 3, 0, 0)) {
+	} else	if (is_newer_than(&connp->version, 4, 4, 5, 3, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%d%d%d%d%d", PKT_SOUND, sound, alternative, type, vol, player_id);
 	} else if (is_newer_than(&connp->version, 4, 4, 5, 1, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%d%d%d", PKT_SOUND, sound, alternative, type);
@@ -12689,16 +12689,16 @@ static int Receive_special_line(int ind) {
 			kludge[0] = (char) line;
 			kludge[1] = '\0';
 			do_cmd_show_known_item_letter(player, kludge);
- 			break;
+			break;
 		case SPECIAL_FILE_HOUSE:
 			do_cmd_show_houses(player, FALSE, FALSE, 0);
- 			break;
+			break;
 		case SPECIAL_FILE_TRAP:
 			do_cmd_knowledge_traps(player);
- 			break;
+			break;
 		case SPECIAL_FILE_RECALL:
 			do_cmd_knowledge_dungeons(player);
- 			break;
+			break;
 		}
 	}
 

@@ -155,14 +155,14 @@ void cast_rune_spell (int Ind, int dir) {
 	 * Set it as 0 and handle it on the end, if it has other non con-
 	 * ventional effects.
 	 */
-	int elem 	= 0; 	//What kind?
+	int elem	= 0;	//What kind?
 	char *elem_n	= NULL;
-	int rad 	= 3;  	//Radius, if applicable.
+	int rad		= 3;	//Radius, if applicable.
 	int notice	= 1;	//Did we cast it?
 	char *what = NULL; //What DID we cast? :-o
 
 	//Spam! It's so good it's gone!
-//	msg_print(Ind, "\377gYou draw your runes out...");
+	//msg_print(Ind, "\377gYou draw your runes out...");
 
 	switch (mod->sval) {
 		case SV_RUNE2_FIRE:

@@ -1350,7 +1350,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 				switch (o_ptr->tval) {
 					case TV_CROWN:
 						if (!((*f1) & TR1_MANA) && pval
-  					&& !(pval > 3))
+					&& !(pval > 3))
 							{ flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_MANA; flag_count++; }
 						if (!((*f3) & TR3_REGEN_MANA)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_REGEN_MANA; flag_count++; }
 					break;
@@ -1973,13 +1973,13 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 	char		tmp_val[ONAME_LEN];
 	static char	basenm2[ONAME_LEN];
-	bool 		short_item_names = FALSE;
-	u32b f1, f2, f3, f4, f5, f6, esp;
+	bool		short_item_names = FALSE;
+	u32b		f1, f2, f3, f4, f5, f6, esp;
 	object_kind	*k_ptr = &k_info[o_ptr->k_idx];
-	bool skip_base_article = FALSE;
-	bool special_rop = (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPECIAL);
+	bool		skip_base_article = FALSE;
+	bool		special_rop = (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPECIAL);
 #ifdef ENABLE_DEMOLITIONIST
-	char 		tmp_modstr[ONAME_LEN];
+	char		tmp_modstr[ONAME_LEN];
 #endif
 
 	/* Extract some flags */

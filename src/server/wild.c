@@ -703,7 +703,7 @@ void wild_add_monster(struct worldpos *wpos) {
 /* chooses a clear building location, possibly specified by xcen, ycen, and "reserves" it so
  * nothing else can choose any of its squares for building again */
 static void reserve_building_plot(struct worldpos *wpos, int *x1, int *y1, int *x2, int *y2, int xlen, int ylen, int xcen, int ycen) {
-	int x,y, attempts = 0, plot_clear;
+	int x, y, attempts = 0, plot_clear;
 	cave_type **zcave;
 
 	if (!(zcave = getcave(wpos))) return;
@@ -966,7 +966,7 @@ static int wild_obj_aux_bones(int k_idx, u32b resf) {
 /* make a dwelling (building in the wilderness) 'interesting'.
 */
 static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2, int y2, int type) {
-	int x,y, cash, num_food, num_objects, num_bones, trys, r_idx, k_idx, food_sval;
+	int x, y, cash, num_food, num_objects, num_bones, trys, r_idx, k_idx, food_sval;
 	bool inhabited, at_home, taken_over;
 	object_type forge;
 	u32b old_seed = Rand_value;
@@ -2912,7 +2912,7 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 	if (h_ptr->flags & HF_RECT) {
 		for (x = 0; x < h_ptr->coords.rect.width; x++) {
 			for (y = 0; y < h_ptr->coords.rect.height; y++) {
- 				c_ptr = &zcave[h_ptr->y + y][h_ptr->x + x];
+				c_ptr = &zcave[h_ptr->y + y][h_ptr->x + x];
 				if (func == FILL_GUILD) {
 					return(FALSE);	/* for now */
 					if (((struct guildsave*)data)->mode) {
@@ -2965,14 +2965,14 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 				}
 				else if (func == FILL_BUILD) {
 					if (x && y && x < h_ptr->coords.rect.width - 1 && y < h_ptr->coords.rect.height - 1) {
- 						if (!(h_ptr->flags & HF_NOFLOOR)) c_ptr->feat = FEAT_FLOOR;
+						if (!(h_ptr->flags & HF_NOFLOOR)) c_ptr->feat = FEAT_FLOOR;
 						if (h_ptr->flags & HF_JAIL) c_ptr->info |= (CAVE_STCK | CAVE_JAIL);
- 						c_ptr->info |= (CAVE_ICKY | CAVE_ROOM);
+						c_ptr->info |= (CAVE_ICKY | CAVE_ROOM);
 
 #if 0 //moved to day->night change		//note: below hack is overridden by night atm :/ todo:fix
- 						/* hack: lit owned houses for easier overview - only inside, not walls! */
+						/* hack: lit owned houses for easier overview - only inside, not walls! */
 //done above already				if (x > 0 && x < h_ptr->coords.rect.width - 1 && y > 0 && y < h_ptr->coords.rect.height)
- 						if (h_ptr->dna->owner) c_ptr->info |= CAVE_GLOW;
+						if (h_ptr->dna->owner) c_ptr->info |= CAVE_GLOW;
 #endif
 
 						/* 'suspended' guild houses ( = of leaderless guilds) */
@@ -2990,11 +2990,11 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 #endif
 				else if (func == FILL_GUILD_SUS) {
 					if (x && y && x < h_ptr->coords.rect.width - 1 && y < h_ptr->coords.rect.height - 1) //obsolete check
- 						c_ptr->info |= CAVE_GUILD_SUS;
+						c_ptr->info |= CAVE_GUILD_SUS;
 				}
 				else if (func == FILL_GUILD_SUS_UNDO) {
 					if (x && y && x < h_ptr->coords.rect.width - 1 && y < h_ptr->coords.rect.height - 1) //obsolete check
- 						c_ptr->info &= ~CAVE_GUILD_SUS;
+						c_ptr->info &= ~CAVE_GUILD_SUS;
 				}
 				else if (func == FILL_SFX_KNOCK) {
 					if (c_ptr->m_idx < 0) {
@@ -3223,8 +3223,8 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 
 /* Note: These are USER-BUILT houses. Normal town area housing is added via wild_add_dwelling(). */
 void wild_add_uhouse(house_type *h_ptr) {
- 	int x,y;
- 	cave_type *c_ptr;
+	int x, y;
+	cave_type *c_ptr;
 	struct worldpos *wpos = &h_ptr->wpos;
 	cave_type **zcave;
 	struct c_special *cs_ptr;

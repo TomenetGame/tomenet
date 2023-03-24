@@ -561,32 +561,33 @@ static bool do_seduce(int Ind, int m_idx) {
 bool make_attack_melee(int Ind, int m_idx) {
 	player_type *p_ptr = Players[Ind];
 
-	monster_type    *m_ptr = &m_list[m_idx];
-	monster_race    *r_ptr = race_inf(m_ptr);
+	monster_type *m_ptr = &m_list[m_idx];
+	monster_race *r_ptr = race_inf(m_ptr);
 
-	int      	ap_cnt;
-	int		mon_acid = 0, mon_fire = 0, blows_total = 0;
+	int	ap_cnt;
+	int	mon_acid = 0, mon_fire = 0, blows_total = 0;
 
-	int	     i, j, k, tmp, ac, rlev;
+	int	i, j, k, tmp, ac, rlev;
 #ifndef NEW_DODGING /* actually 'chance' is used a lot in this function -> FIXME */
 	int chance;
 #endif
-	int	     do_cut, do_stun, factor = 100;// blockchance, parrychance, malus;
-	int 		player_aura_dam;
+	int	do_cut, do_stun, factor = 100;// blockchance, parrychance, malus;
+	int	player_aura_dam;
 
-	object_type     *o_ptr;
+	object_type *o_ptr;
 
-	char	    o_name[ONAME_LEN];
-	char	    m_name[MNAME_LEN], m_name_gen[MNAME_LEN];
-	char	    ddesc[MNAME_LEN];
-	char		dam_msg[MAX_CHARS_WIDE] = { '\0' };
+	char	o_name[ONAME_LEN];
+	char	m_name[MNAME_LEN], m_name_gen[MNAME_LEN];
+	char	ddesc[MNAME_LEN];
+	char	dam_msg[MAX_CHARS_WIDE] = { '\0' };
 
-	bool	    blinked, prot = FALSE;
+	bool	blinked, prot = FALSE;
 
 	bool touched = FALSE, fear = FALSE, alive = TRUE;
 	bool explode = FALSE, gone = FALSE;
 
 	bool player_vulnerable = FALSE;
+
 
 	/* Not allowed to attack */
 	if (r_ptr->flags1 & RF1_NEVER_BLOW) return(FALSE);

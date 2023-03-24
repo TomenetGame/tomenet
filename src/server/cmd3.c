@@ -3752,7 +3752,7 @@ static void do_cmd_refill_torch(int Ind, int item) {
 	j_ptr->timeout += o_ptr->timeout;
 	/* Lose very slightly sometimes */
 	if (o_ptr->timeout >= 10) j_ptr->timeout -= rand_int(5);
- 	else j_ptr->timeout -= o_ptr->timeout / (2 + rand_int(5));
+	else j_ptr->timeout -= o_ptr->timeout / (2 + rand_int(5));
 
 	/* Message */
 	msg_print(Ind, "You combine the torches.");

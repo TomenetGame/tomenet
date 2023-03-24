@@ -6483,7 +6483,7 @@ void determine_level_req(int level, object_type *o_ptr) {
 
 	/* artifact */
 	if (o_ptr->name1) {
-	 	/* Randart */
+		/* Randart */
 		if (o_ptr->name1 == ART_RANDART) {
 			a_ptr = randart_make(o_ptr);
 			if (a_ptr == (artifact_type*)NULL) {

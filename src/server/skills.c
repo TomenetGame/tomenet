@@ -201,7 +201,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 	switch (i) {
 	case SKILL_CLIMB:	if (new_value == 10) msg_print(Ind, "\374\377GYou learn how to climb mountains!");
 				break;
-	case SKILL_LEVITATE: 	if (new_value == 10) msg_print(Ind, "\374\377GYou learn how to levitate!");
+	case SKILL_LEVITATE:	if (new_value == 10) msg_print(Ind, "\374\377GYou learn how to levitate!");
 				break;
 	case SKILL_FREEACT:	if (new_value == 10) msg_print(Ind, "\374\377GYou learn how to resist paralysis and move freely!");
 				break;

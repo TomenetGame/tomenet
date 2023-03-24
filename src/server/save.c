@@ -1295,8 +1295,8 @@ static void wr_floor(struct worldpos *wpos) {
 				if (i != CS_NONE) {
 
 					/* TODO: implement CS_DNADOOR and CS_KEYDOOR saving
-			 		* currently, their x,y,i is saved in vain.	- Jir -
-			 		*/
+					* currently, their x,y,i is saved in vain.	- Jir -
+					*/
 					wr_byte(x);
 					wr_byte(y);
 					wr_byte(i);

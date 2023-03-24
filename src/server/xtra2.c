@@ -14225,7 +14225,7 @@ bool do_scroll_life(int Ind) {
 
 /* modified above function to instead restore XP... used in priest spell rememberence */
 bool do_restoreXP_other(int Ind) {
-	int x,y;
+	int x, y;
 	player_type * p_ptr = Players[Ind];
 	cave_type * c_ptr;
 	cave_type **zcave;

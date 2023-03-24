@@ -2968,7 +2968,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 	int fear_chance;
 	bool pierced;
 
-	int 		bs_skill = get_skill_scale(p_ptr, SKILL_BACKSTAB, 50); //for pvp it's 1/2 of pve (100 there)
+	int		bs_skill = get_skill_scale(p_ptr, SKILL_BACKSTAB, 50); //for pvp it's 1/2 of pve (100 there)
 	bool		stab_skill = (bs_skill != 0 && !p_ptr->rogue_heavyarmor);
 	bool		sleep_stab = TRUE, cloaked_stab = (p_ptr->cloaked == 1), shadow_stab = (p_ptr->shadow_running); /* can player backstab the monster? */
 	bool		backstab = FALSE, stab_fleeing = FALSE; /* does player backstab the player? */
@@ -4143,7 +4143,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 
 	struct worldpos	*wpos = &p_ptr->wpos;
 	cave_type	**zcave;
-	cave_type 	*c_ptr;
+	cave_type	*c_ptr;
 
 	monster_race *pr_ptr = &r_info[p_ptr->body_monster];
 	int mon_aqua = 0, mon_acid = 0, mon_fire = 0;
@@ -5375,7 +5375,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 
 void py_bash(int Ind, int y, int x) {
 	cave_type	**zcave;
-	cave_type 	*c_ptr;
+	cave_type	*c_ptr;
 
 	if (!(zcave = getcave(&Players[Ind]->wpos))) return;
 	c_ptr = &zcave[y][x];
@@ -5409,7 +5409,7 @@ void py_bash_mon(int Ind, int y, int x) {
 
 	struct worldpos	*wpos = &p_ptr->wpos;
 	cave_type	**zcave;
-	cave_type 	*c_ptr;
+	cave_type	*c_ptr;
 
 #ifndef NEW_SHIELDS_NO_AC
 	int mon_acid = 0, mon_fire = 0;
@@ -5776,7 +5776,7 @@ void py_bash_py(int Ind, int y, int x) {
 
 	struct worldpos	*wpos = &p_ptr->wpos;
 	cave_type	**zcave;
-	cave_type 	*c_ptr;
+	cave_type	*c_ptr;
 
 #ifndef NEW_SHIELDS_NO_AC
 	int py_acid = 0, py_fire = 0;
@@ -6661,7 +6661,7 @@ bool do_prob_travel(int Ind, int dir) {
 		oy = p_ptr->py;
 		ox = p_ptr->px;
 
- 		 /* Move the player */
+		/* Move the player */
 		store_exit(Ind);
 		p_ptr->py = y;
 		p_ptr->px = x;

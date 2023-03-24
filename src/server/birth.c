@@ -355,7 +355,7 @@ static hist_type bg[] = {
 
 
 	/* Maiar background */
-	{"You are a Maiar spirit, bound to ", 				100,100,101, 70},
+	{"You are a Maiar spirit, bound to ",				100,100,101, 70},
 #if 1
 	{"Manwe Sulimo, King of the Valar. ",				 10,101,102,150},
 	{"Ulmo, King of the Sea. ",					 20,101,102,100},
@@ -381,8 +381,8 @@ static hist_type bg[] = {
 	{"to spend time in the mortal land. ",				100,104, 50,  0},
 	{"in the West. ",						 50,105, 50,  0},
 	{"in the West. ",						100,105, 54,  0},
-	//{"Your physical form is Elven in feature. ", 			 50,102, 54, 70},
-	//{"You manifest as a Human to casual observers. ", 		100,102, 50, 70},
+	//{"Your physical form is Elven in feature. ",			 50,102, 54, 70},
+	//{"You manifest as a Human to casual observers. ",		100,102, 50, 70},
 #else /* for testing max len */
 	{"Orome Aldaron, the Great Rider and Hunter of Valinor. ",	100,101,102,120},
 	{"You suspend your pilgrimage in Aman ",			100,102,104,  0},
@@ -450,7 +450,7 @@ static hist_type bg[] = {
 
 
 	/* Vampire (text inspired by Hengband) */
-	{"You arose from an unmarked grave. ", 			 20, 130, 132, 30},
+	{"You arose from an unmarked grave. ",			 20, 130, 132, 30},
 	{"In life you were a simple peasant. ",			 50, 130, 132, 40},
 	{"In life you were a decent citizen. ",			 70, 130, 132, 50},
 	//{"the victim of a powerful Vampire Lord. ",		100, 131, 132,  0},

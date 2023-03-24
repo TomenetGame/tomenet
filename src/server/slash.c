@@ -10,7 +10,7 @@
  * - evileye
  */
 
-/* #define NOTYET 	*//* only for testing and working atm */
+/* #define NOTYET	*//* only for testing and working atm */
 
 /* added this for consistency in some (unrelated) header-inclusion,
    it IS a server file, isn't it? */
@@ -9832,7 +9832,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					for (j = 0; j < max_st_idx; j++)
 						town[i].townstore[j].last_visit = turn;
 
- 					store_debug_mode = k;
+					store_debug_mode = k;
 
 					if (tk > 1) store_debug_quickmotion = atoi(token[2]);
 					else store_debug_quickmotion = 10;

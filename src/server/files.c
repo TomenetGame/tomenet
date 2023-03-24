@@ -1488,7 +1488,7 @@ static int highscore_where(high_score *score, int *erased_slot)
 			break;
 		}
 		if ((strcmp(the_score.pts, score->pts) < 0) && (slot_pts == -1))
-    			slot_pts = i;
+			slot_pts = i;
 		if ((!strcmp(the_score.who, score->who)) && (slot_name == -1))
 			slot_name = i;
 		if ((!strcmp(the_score.whose, score->whose)) && (slot_account == -1))
@@ -2346,7 +2346,7 @@ void close_game(void) {
 		if (p_ptr->death) {
 			/* Handle retirement */
 		        /* Retirement in Valinor? - C. Blue :) */
-	    		if (in_valinor(&p_ptr->wpos)) kingly(i, 2);
+			if (in_valinor(&p_ptr->wpos)) kingly(i, 2);
 			else if (p_ptr->total_winner) kingly(i, 1);
 
 			/* Save memories */
@@ -2694,7 +2694,7 @@ void wipeout_needless_objects() {
 	struct worldpos cwpos;
 	struct dungeon_type *d_ptr;
 	wilderness_type *w_ptr;
-	int x,y,z;
+	int x, y, z;
 
 	for (y = 0; y < MAX_WILD_Y; y++) {
 		cwpos.wy = y;

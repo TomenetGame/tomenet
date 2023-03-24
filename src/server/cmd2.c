@@ -8845,7 +8845,7 @@ static void destroy_house(int Ind, struct dna_type *dna) {
 void house_admin(int Ind, int dir, char *args) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
-	int x,y;
+	int x, y;
 	int success = 0;
 	cave_type *c_ptr;
 	struct dna_type *dna;

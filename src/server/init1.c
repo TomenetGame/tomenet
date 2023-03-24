@@ -204,7 +204,7 @@ static cptr r_info_flags2[] = {
 	"SHAPECHANGER",	// "XXX3X2",
 	"ATTR_ANY",	// "XXX4X2",
 	"POWERFUL",
-	"ELDRITCH_HORROR", 		//"XXX5X2",
+	"ELDRITCH_HORROR",		//"XXX5X2",
 	"AURA_FIRE",	// "XXX7X2",
 	"AURA_ELEC",	// "XXX6X2",
 	"OPEN_DOOR",

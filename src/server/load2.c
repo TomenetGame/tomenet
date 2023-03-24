@@ -1925,7 +1925,7 @@ static bool rd_extra(int Ind) {
 	p_ptr->lives = tmp8u;
 
 	/* hack, if save file was from an older version we need to convert it: */
- 	if (cfg.lifes && !p_ptr->lives) p_ptr->lives = cfg.lifes+1;
+	if (cfg.lifes && !p_ptr->lives) p_ptr->lives = cfg.lifes+1;
 	/* If the server's life amount was reduced, apply it to players */
 	if (cfg.lifes && (p_ptr->lives > cfg.lifes+1)) p_ptr->lives = cfg.lifes+1;
 

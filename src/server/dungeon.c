@@ -1190,7 +1190,7 @@ static void process_effects(void) {
 				} else if ((e_ptr->flags & EFF_SEEKER)) {
 					c_ptr->effect = 0;
 					everyone_lite_spot(wpos, j, i);
- 				}
+				}
 			}
 
 			/* --- Complex effects: Create next effect iteration and imprint it on grid --- */
@@ -5961,7 +5961,7 @@ static bool process_player_end_aux(int Ind) {
 					do_mimic_change(Ind, 0, TRUE);
 				}
 
- 				/* Decrease the item, optimize. */
+				/* Decrease the item, optimize. */
 				inven_item_increase(Ind, i, -1);
 				inven_item_optimize(Ind, i);
 			}

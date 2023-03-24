@@ -8837,8 +8837,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
  #if 0 /* for generic dungeons maybe */
 	     magik(30 / (ABS(((dun_lev + 10) % 20) - 10) + 1))
  #else /* irondeepdive specifically: no towns before 900 ft or around the static towns at 2k and 4k */
-	     magik(k = 25 / ( /* 35 -> 82.6% chance per -450..+500ft interval; 30 -> 78.8%; 25 -> 70.5%; 20 -> 62.3%; 15 -> 40.5%, 10 -> 35.4%, 5 -> 14.2% */
-	    		    /* 900..1500ft: 35 -> %; 30 ->70.8%; 25 -> 62.7%; 20 -> %; 15 -> %, 10 -> %, 5 -> % */
+	     magik(k = 25 / (	/* 35 -> 82.6% chance per -450..+500ft interval; 30 -> 78.8%; 25 -> 70.5%; 20 -> 62.3%; 15 -> 40.5%, 10 -> 35.4%, 5 -> 14.2% */
+				/* 900..1500ft: 35 -> %; 30 ->70.8%; 25 -> 62.7%; 20 -> %; 15 -> %, 10 -> %, 5 -> % */
 	     (dun_lev >= 18 && (dun_lev <= 40 - 10 || dun_lev > 40 + 10) && (dun_lev <= 80 - 10 || dun_lev > 80 + 10)) ?
 	     ABS(((dun_lev + 10) % 20) - 10) + 1 : 999
 	     ))
@@ -8868,7 +8868,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		/* add the town */
 		s_printf("DF2_TOWNS_: Adding a town at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
 		dun->l_ptr->flags1 |= LF1_DUNGEON_TOWN | LF1_NO_DESTROY;
- 		dun->l_ptr->flags1 &= ~(LF1_NO_MAP | LF1_NO_MAGIC_MAP);
+		dun->l_ptr->flags1 &= ~(LF1_NO_MAP | LF1_NO_MAGIC_MAP);
 		town_gen_hack(wpos);
 
 #ifdef IRONDEEPDIVE_STATIC_TOWNS
@@ -9767,7 +9767,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		for (my = 36; my < 43; my++)
 			for (mx = 63; mx < 70; mx++)
 				 cave_set_feat(wpos, my, mx, 209);
- 		for (my = 19; my < 26; my++)
+		for (my = 19; my < 26; my++)
 			for (mx = 1; mx < 8; mx++)
 				cave_set_feat(wpos, my, mx, 209);
 		for (my = 19; my < 26; my++)
@@ -10860,7 +10860,7 @@ static void town_gen_hack(struct worldpos *wpos) {
 			/* Pick a random unplaced store */
 			k = rand_int(n - (max_rooms - base_stores));
 
- 			/* Build that store at the proper location */
+			/* Build that store at the proper location */
  #if 0 /* I think I took this out for highlander town, but no need maybe; also required for ironman towns! - C. Blue */
 			/* No Black Market in additional towns - C. Blue */
 			if (rooms[k] != STORE_BLACK + (dungeon_town ? STORE_GENERAL_DUN : 0)) /* add +70 to get the dungeon version of the store */
