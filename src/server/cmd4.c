@@ -4200,8 +4200,8 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 		check_parryblock(Ind);
 	/* show dodge chance if we have dodge skill */
 	if (get_skill(p_ptr, SKILL_DODGE)) check_dodge(Ind);
-	/* show intercept chance if we have intercept skill or MA skill (which gives +intercept chance) */
-	if (get_skill(p_ptr, SKILL_INTERCEPT) || get_skill(p_ptr, SKILL_MARTIAL_ARTS)) check_intercept(Ind);
+	/* show intercept chance if we have intercept skill or MA skill (which gives +intercept chance) -- moved to MKEY_INTERCEPT, set by these two skills */
+	//if (get_skill(p_ptr, SKILL_INTERCEPT) || get_skill(p_ptr, SKILL_MARTIAL_ARTS)) check_intercept(Ind);
 
 #if 0 /* this is already displayed to the left */
 	/* Insanity warning (better message needed!) */

@@ -10455,7 +10455,8 @@ static int Receive_activate_skill(int ind) {
 		case MKEY_MELEE:
 		case MKEY_RANGED:
 		case MKEY_DODGE:
-		case MKEY_FLETCHERY:
+		//case MKEY_FLETCHERY:
+		case MKEY_INTERCEPT:
 		case MKEY_RCRAFT:
 		case MKEY_STANCE:
 		case MKEY_PARRYBLOCK:
@@ -10591,14 +10592,12 @@ static int Receive_activate_skill(int ind) {
 		case MKEY_DODGE:
 			check_dodge(player);
 			break;
-/* todo
+
+		/* case MKEY_FLETCHERY: do_cmd_fletchery(player); -- replaced by: */
 		case MKEY_INTERCEPT:
 			check_intercept(player);
 			break;
-*/
-		case MKEY_FLETCHERY:
-			do_cmd_fletchery(player);
-			break;
+
 #ifdef ENABLE_STANCES
 		case MKEY_STANCE:
 			do_cmd_stance(player, book);

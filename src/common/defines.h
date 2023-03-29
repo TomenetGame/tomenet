@@ -8347,7 +8347,9 @@ extern int PlayerUID;
 #define MKEY_RANGED		6	/* not "Hunting" anymore, but new archer abilities */
 
 #define MKEY_DODGE		8
-#define MKEY_FLETCHERY		9	/* constant to be unused when fletchery becomes subskill of archer abilities */
+//#define MKEY_FLETCHERY	9	/* constant to be unused when fletchery becomes subskill of archer abilities -- replaced by: */
+#define MKEY_INTERCEPT		9
+
 #define MKEY_TRAP		10
 #define MKEY_SCHOOL		11
 #define MKEY_RCRAFT		12

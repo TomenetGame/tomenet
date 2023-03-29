@@ -259,6 +259,7 @@ N:37:Martial Arts
 D:Ability to fight bare-handed effectively. Also increases Dodging skill.
 D:You mustn't use weapons or heavy armour, or various penalties may apply.
 #D:This is a primary skill for melee fighters.
+A:9:Check intercept chance
 I:1000:0
 
 ## DELETEME
@@ -280,6 +281,7 @@ I:1000:0
 N:41:Interception
 D:Ability to interfere with certain actions of opponents next to you,
 D:such as casting spells or running away.
+A:9:Check intercept chance
 I:1000:0
 
 N:42:Dodging
