@@ -4198,8 +4198,8 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 	if (is_melee_weapon(p_ptr->inventory[INVEN_WIELD].tval) ||
 	    p_ptr->inventory[INVEN_ARM].tval) /* dual-wield or shield */
 		check_parryblock(Ind);
-	/* show dodge chance if we have dodge skill */
-	if (get_skill(p_ptr, SKILL_DODGE)) check_dodge(Ind);
+	/* show dodge chance if we have dodge skill -- moved to MKEY_DODGE */
+	//if (get_skill(p_ptr, SKILL_DODGE)) check_dodge(Ind);
 	/* show intercept chance if we have intercept skill or MA skill (which gives +intercept chance) -- moved to MKEY_INTERCEPT, set by these two skills */
 	//if (get_skill(p_ptr, SKILL_INTERCEPT) || get_skill(p_ptr, SKILL_MARTIAL_ARTS)) check_intercept(Ind);
 

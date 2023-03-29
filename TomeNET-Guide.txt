@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 20. March 2023 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 30. March 2023 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.9.0c - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -6292,11 +6292,12 @@ To avoid this, you can directly choose which skill (ie spell-casting) you
 want to use in your macros, by specifying the "ability code"!
 
 Here is a list of all available ability codes:
-3       Use innate power (for mimicry-users)
+3       Use innate power (for mimicry users)
 4       Toggle Fire-till-kill mode, usable by anyone. See (5.2a).
 5       Fighting techniques (see (7.12))
 6       Shooting techniques (see (7.12))
 8       Check your dodge chance (for dodging skill)
+9       Check intercept chance (for martial arts or interception skill)
 (included in '6' now: 9       Craft ammunition (for archery skill))
 10      Set a monster trap (for trapping skill, see (4.7))
 11      Cast a magic spell / recite a holy prayer
@@ -15938,6 +15939,10 @@ stated.
                                 interception chance in both cases, as long as
                                 you keep Martial Arts at maximum possible.)
 
+                                You can check your average interception chance
+                                against opponents of same level by pressing
+                                'm' and choosing "Check intercept chance".
+
                                 Slightly increases your Dodging skill, simply
                                 by increasing your Martial Arts skill, as if
                                 'Dodging' was a parent skill of Martial Arts.
@@ -15985,6 +15990,10 @@ stated.
                                 To intercept an enemy it doesn't matter whether
                                 you have a weapon or shield equipped or not or
                                 whether you have autoretaliation on or off.
+
+                                You can check your average interception chance
+                                against opponents of same level by pressing
+                                'm' and choosing "Check intercept chance".
 
                                 Classes that have the Interception skill
                                 available for training will automatically gain
