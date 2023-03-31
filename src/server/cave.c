@@ -1510,7 +1510,7 @@ bool no_lite(int Ind) {
 	if (p_ptr->admin_dm) return(FALSE);
 	return(!player_can_see_bold(Ind, p_ptr->py, p_ptr->px));
 }
-/* Returns true if the player grid is dark, ignoring vampire's intrinsic pseudo-'light'. */
+/* Returns true if the player grid is dark, ignoring vampire's intrinsic pseudo-'light' (darkvision). */
 bool no_real_lite(int Ind) {
 	player_type *p_ptr = Players[Ind];
 #if 0 /* original, stricter way */
@@ -5378,7 +5378,7 @@ void update_lite(int Ind) {
 	/*** Special case ***/
 
 	/* Hack -- Player has no lite */
-	if (p_ptr->cur_lite <= 0 && p_ptr->cur_vlite <= 0) {
+	if (p_ptr->cur_lite <= 0 && p_ptr->cur_darkvision <= 0) {
 		/* Forget the old lite */
 		forget_lite(Ind);
 
@@ -5448,7 +5448,7 @@ void update_lite(int Ind) {
 	cave_lite_hack(p_ptr->py, p_ptr->px);
 
 	/* Radius 1 -- torch radius */
-	if (p_ptr->cur_lite >= 1 || p_ptr->cur_vlite >= 1) {
+	if (p_ptr->cur_lite >= 1 || p_ptr->cur_darkvision >= 1) {
 		/* Adjacent grid */
 		cave_lite_hack(p_ptr->py+1, p_ptr->px);
 		cave_lite_hack(p_ptr->py-1, p_ptr->px);
@@ -5463,7 +5463,7 @@ void update_lite(int Ind) {
 	}
 
 	/* Radius 2 -- lantern radius */
-	if (p_ptr->cur_lite >= 2 || p_ptr->cur_vlite >= 2) {
+	if (p_ptr->cur_lite >= 2 || p_ptr->cur_darkvision >= 2) {
 		/* South of the player */
 		//if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px))
 		/* cave_los includes dark pits */
@@ -5499,12 +5499,12 @@ void update_lite(int Ind) {
 	}
 
 	/* Radius 3+ -- artifact radius */
-	if (p_ptr->cur_lite >= 3 || p_ptr->cur_vlite >= 3) {
+	if (p_ptr->cur_lite >= 3 || p_ptr->cur_darkvision >= 3) {
 		int d, p;
 
 		/* Maximal radius */
 		p = p_ptr->cur_lite;
-		if (p_ptr->cur_vlite > p) p = p_ptr->cur_vlite;
+		if (p_ptr->cur_darkvision > p) p = p_ptr->cur_darkvision;
 
 		/* Paranoia -- see "LITE_MAX" */
 		if (p > LITE_CAP) p = LITE_CAP;

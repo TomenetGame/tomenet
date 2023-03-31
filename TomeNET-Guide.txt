@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 30. March 2023 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 31. March 2023 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.9.0c - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -17601,7 +17601,8 @@ create a character!):
     or tower) while it's day, the sun will burn them if they don't resist light
     or wear a mummy wrapping.
     They don't actually need a light source, since they are able to determine
-    their close surroundings even in complete darkness. This ability grows
+    their close surroundings even in complete darkness thanks to an intrinsic
+    trait exclusive for vampire race characters: Darkvision. This ability grows
     when the vampire rises in character-levels, starting at torch-wide radius
     and growing to lantern-wide radius already when reaching level 10.
     Regarding items, Vampires do not suffer a hit point drain from wielding a
@@ -20811,21 +20812,29 @@ All Unlife spells are Wisdom-based.)
     Darkness Storm  Conjures up a ball of darkness.
                     Required skill level for first spell level: 42.
 
-    BONI:           Increases infra-vision by +1 every 10 points, up to +5.
-                    (Note that infra-vision caps at TomeNET's generic maximum
-                    sight range, which is 200 ft aka 20 grids.)
-                    If you aren't using _any_ light source (note that intrinsic
-                    "light" of Vampire characters doesn't count as light), it
-                    increases the chance for monsters to miss you in melee
-                    combat (sort of a 'blur' effect) more often and at 10.000
-                    also gives you a walking speed increase, similar to how the
-                    'Sprint' technique works. This 'shadow walk' effect
-                    increases with every 10 points. Exception: While cloaked
-                    (rogues), blur and shadow walk will actually work with a
-                    light source too.
-                    At 30 grants darkness resistance.
+    BONI:           If you aren't using _any_ light source (note that intrinsic
+                    "light" of Vampire characters, aka darkvision, doesn't
+                    count as light), the Shadow skill...
+                    - increases the chance for monsters to miss you in melee
+                      combat (sort of a 'blur' effect) more often, the higher
+                      the skill is trained.
+                    - at 10.000 also gives you a walking speed increase similar
+                      to how the 'Sprint' technique works. This 'shadow walk'
+                      effect increases with every 10 points. Exception: While
+                      cloaked (rogues), blur and shadow walk will actually work
+                      with a light source too.
+
+                    At 30 grants darkvision, allowing you to read, run and see
+                    your surroundings without a light source. The radius starts
+                    at 1 and grows by +1 every five skill points up to 5 at 50.
+                    This darkvision perk does not stack with intrinsic vision
+                    that vampire race characters have, so it has no benefits or
+                    any effect for them.
+
                     At 35 and higher it will also grant a stealth bonus that
                     increases by +1 every five skill points, up to +4 at 50.
+
+                    At 40 grants darkness resistance.
 
 
 - Spirit            [Spells are WIS-based unless noted otherwise.]

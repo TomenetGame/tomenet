@@ -3107,7 +3107,7 @@ struct player_type {
 	bool old_heavy_swim;
 
 	s16b old_lite;			/* Old radius of lite (if any) */
-	s16b old_vlite;			/* Old radius of virtual lite (if any) */
+	s16b old_darkvision;		/* Old radius of virtual lite (if any) */
 	s16b old_view;			/* Old radius of view (if any) */
 
 	s16b old_food_aux;		/* Old value of food */
@@ -3130,7 +3130,7 @@ struct player_type {
 	bool heavy_swim;		/* Too heavy to swim without drowning chance? */
 
 	s16b cur_lite;			/* Radius of lite (if any) */
-	s16b cur_vlite;			/* radius of virtual light (not visible to others) */
+	s16b cur_darkvision;		/* radius of virtual light (not visible to others) */
 	byte lite_type;
 
 	//bool handle_on_hold;		/* For stacking of various character-modifying commands to avoid network spawm with 'write error' d/c in LUA scripting */

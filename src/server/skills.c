@@ -580,7 +580,20 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 
 #ifdef ENABLE_OCCULT /* Occult */
 	case SKILL_OSHADOW:
-		if (old_value < 300 && new_value >= 300
+		if ((old_value < 100 && new_value >= 100) ||
+		    (old_value < 200 && new_value >= 200) ||
+		    (old_value < 300 && new_value >= 300) ||
+		    (old_value < 400 && new_value >= 400) ||
+		    (old_value < 500 && new_value >= 500))
+			msg_print(Ind, "\374\377GYou walk slightly faster in the darkness.");
+		if ((old_value < 350 && new_value >= 350) ||
+		    (old_value < 400 && new_value >= 400) ||
+		    (old_value < 450 && new_value >= 450) ||
+		    (old_value < 500 && new_value >= 500))
+			msg_print(Ind, "\374\377GYour stealth has improved.");
+		if (old_value < 300 && new_value >= 300)
+			msg_print(Ind, "\374\377GYou have acquired darkvision.");
+		if (old_value < 400 && new_value >= 400
 		    && p_ptr->prace != RACE_HALF_ORC
 		    && p_ptr->prace != RACE_GOBLIN
 		    && p_ptr->prace != RACE_DARK_ELF

@@ -1870,11 +1870,11 @@ static void calc_torch(int Ind) {
 	if (p_ptr->running && p_ptr->view_reduce_lite) {
 		/* Reduce the lite radius if needed */
 		if (p_ptr->cur_lite > 1) p_ptr->cur_lite = 1;
-		if (p_ptr->cur_vlite > 1) p_ptr->cur_vlite = 1;
+		if (p_ptr->cur_darkvision > 1) p_ptr->cur_darkvision = 1;
 	}
 
 	/* Notice changes in the "lite radius" */
-	if ((p_ptr->old_lite != p_ptr->cur_lite) || (p_ptr->old_vlite != p_ptr->cur_vlite)) {
+	if ((p_ptr->old_lite != p_ptr->cur_lite) || (p_ptr->old_darkvision != p_ptr->cur_darkvision)) {
 		/* Update the lite */
 		p_ptr->update |= (PU_LITE);
 
@@ -1883,7 +1883,7 @@ static void calc_torch(int Ind) {
 
 		/* Remember the old lite */
 		p_ptr->old_lite = p_ptr->cur_lite;
-		p_ptr->old_vlite = p_ptr->cur_vlite;
+		p_ptr->old_darkvision = p_ptr->cur_darkvision;
 	}
 }
 
@@ -3166,7 +3166,7 @@ void calc_boni(int Ind) {
 	p_ptr->telepathy = 0;
 	p_ptr->lite = FALSE;
 	p_ptr->cur_lite = 0;
-	p_ptr->cur_vlite = 0;
+	p_ptr->cur_darkvision = 0;
 	p_ptr->sustain_str = FALSE;
 	p_ptr->sustain_int = FALSE;
 	p_ptr->sustain_wis = FALSE;
@@ -3541,8 +3541,9 @@ void calc_boni(int Ind) {
 #endif
 
 		/* sense surroundings without light source! (virtual lite / dark light) */
-		p_ptr->cur_vlite = 1 + p_ptr->lev / 10; csheet_boni[14].lite = 1 + p_ptr->lev / 10;
+		p_ptr->cur_darkvision = 1 + p_ptr->lev / 10; csheet_boni[14].lite = 1 + p_ptr->lev / 10;
 		csheet_boni[14].cb[12] |= CB13_XLITE;
+
 		//if (p_ptr->lev >= 30) p_ptr->levitate = TRUE; can poly into bat instead
 
 #ifdef ENABLE_DEATHKNIGHT
@@ -6262,16 +6263,30 @@ void calc_boni(int Ind) {
 #ifdef ENABLE_OCCULT /* Occult */
 	/* Should Occult schools really give boni? */
 	if (get_skill(p_ptr, SKILL_OSPIRIT) >= 40) { p_ptr->slay |= TR1_SLAY_UNDEAD; csheet_boni[14].cb[9] |= CB10_SUNDD; }
+ #if 0 /* replaced by darkvision at 30+ */
 	/* Infra-vision bonus: */
-	if (get_skill(p_ptr, SKILL_OSHADOW) >= 10) {
-		p_ptr->see_infra += get_skill(p_ptr, SKILL_OSHADOW) / 10;
-		csheet_boni[14].infr += get_skill(p_ptr, SKILL_OSHADOW) / 10;
+	if ((i = get_skill(p_ptr, SKILL_OSHADOW)) >= 10) {
+		p_ptr->see_infra += i / 10;
+		csheet_boni[14].infr += i / 10;
 	}
+ #else
+	/* Acquire darkvision */
+	if ((i = get_skill(p_ptr, SKILL_OSHADOW)) >= 30) {
+		/* sense surroundings without light source! (virtual lite / dark light) */
+		i = (i - 25) / 5; //+1..+5
+		if (i > p_ptr->cur_darkvision) {
+			csheet_boni[14].lite = i;
+			p_ptr->cur_darkvision = i;
+		}
+		csheet_boni[14].cb[12] |= CB13_XLITE;
+	}
+ #endif
 	if (get_skill(p_ptr, SKILL_OSHADOW) >= 30) {
-		p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK;
 		/* Stealth bonus: */
 		p_ptr->skill_stl += (get_skill(p_ptr, SKILL_OSHADOW) - 30) / 5;
 		csheet_boni[14].slth += (get_skill(p_ptr, SKILL_OSHADOW) - 30) / 5;
+
+		if (get_skill(p_ptr, SKILL_OSHADOW) >= 40) { p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK; }
 	}
  #if 0
 	if (get_skill(p_ptr, SKILL_OSHADOW) >= 45 && get_skill(p_ptr, SKILL_HDEFENSE) >= 45) {
@@ -6708,7 +6723,7 @@ void calc_boni(int Ind) {
 
 	/* Determine colour of our light radius */
 	old_lite_type = p_ptr->lite_type;
-	if (p_ptr->cur_vlite > p_ptr->cur_lite) p_ptr->lite_type = 1; /* vampiric */
+	if (p_ptr->cur_darkvision > p_ptr->cur_lite) p_ptr->lite_type = 1; /* vampiric */
 	else if (lite_inc_white > lite_inc_norm) p_ptr->lite_type = 2; /* artificial */
 	else p_ptr->lite_type = 0; /* normal, fiery */
 	if (old_lite_type != p_ptr->lite_type) {
