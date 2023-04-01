@@ -5666,7 +5666,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	}
 
 	/* Magic-unrelated activation: Before AM checks. */
-	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && !(o_ptr->xtra3 & 0x0030)) return;
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && !(o_ptr->xtra3 & 0x00F0)) return;
 
 	/* Anti-magic checks */
 	if (o_ptr->tval != TV_BOTTLE /* hack.. */
