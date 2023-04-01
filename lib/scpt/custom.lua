@@ -230,6 +230,6 @@ function beta(Ind, code)
 end
 
 --For usable custom objects:
-function custom_object(Ind, item)
+function custom_object(Ind, item, dir)
 
 end

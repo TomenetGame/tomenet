@@ -6164,7 +6164,7 @@ s16b wield_slot(int Ind, object_type *o_ptr) {
 
 	/* Special hack for custom objects that have wear/wield flag set */
 	case TV_SPECIAL:
-		if (o_ptr->sval != SV_CUSTOM_OBJECT || !(o_ptr->xtra3 & 0x0100)) return(-1);
+		if (o_ptr->sval != SV_CUSTOM_OBJECT || !(o_ptr->xtra3 & 0x0F00)) return(-1);
 		/* Paranoia - check for valid equipment slot */
 		if (o_ptr->xtra4 < INVEN_WIELD || o_ptr->xtra4 > INVEN_TOOL) return(-1);
 		/* Equippable special object */

@@ -837,11 +837,13 @@ bool wearable_p(object_type *o_ptr) {
 	case TV_AXE:
 	case TV_MSTAFF:
 	case TV_TOOL:
-		return (TRUE);
+		return(TRUE);
+	case TV_SPECIAL:
+		if (o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0F00)) return(TRUE);
 	}
 
 	/* Nope */
-	return (FALSE);
+	return(FALSE);
 }
 
 /* Very simple linked list for storing character redefinition mapping information. */

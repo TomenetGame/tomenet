@@ -615,7 +615,7 @@ void do_cmd_eat_food(int Ind, int item) {
 	} else if (o_ptr->tval == TV_GAME) msg_print(Ind, "Brrrrr.."); //snowball
 	else if (o_ptr->tval == TV_SPECIAL) { /* Edible custom object? */
 		msg_print(Ind, "*chomp*..."); //munch?..
-		exec_lua(0, format("custom_object(%d,%d)", Ind, item));
+		exec_lua(0, format("custom_object(%d,%d,0)", Ind, item));
 	}
 
 	/* Combine / Reorder the pack (later) */
@@ -637,8 +637,11 @@ void do_cmd_eat_food(int Ind, int item) {
 
 
 	/* Food can feed the player */
+#if 0
 	if (o_ptr->tval == TV_SPECIAL) feed = o_ptr->weight * 500; /* For comparison, a ration at 1.0 lbs (weight=10) feeds for 5000 */
-	else feed = o_ptr->pval;
+	else
+#endif
+	feed = o_ptr->pval;
 
 	if (!p_ptr->suscep_life)
 		(void)set_food(Ind, p_ptr->food + feed);
@@ -1295,7 +1298,7 @@ void do_cmd_quaff_potion(int Ind, int item) {
 	process_hooks(HOOK_QUAFF, "d", Ind);
 
 	if (o_ptr->tval != TV_SPECIAL) ident = quaff_potion(Ind, o_ptr->tval, o_ptr->sval, o_ptr->pval);
-	else exec_lua(0, format("custom_object(%d,%d)", Ind, item));
+	else exec_lua(0, format("custom_object(%d,%d,0)", Ind, item));
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -3340,7 +3343,7 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 	if (o_ptr->tval != TV_SPECIAL)
 		ident = read_scroll(Ind, o_ptr->tval, o_ptr->sval, o_ptr, item, &used_up, &keep);
 	else
-		exec_lua(0, format("custom_object(%d,%d)", Ind, item));
+		exec_lua(0, format("custom_object(%d,%d,0)", Ind, item));
 
 	break_cloaking(Ind, 4);
 	break_shadow_running(Ind);
@@ -5502,6 +5505,8 @@ static bool brand_bolts(int Ind) {
 /* hard-coded same as the 2 functions below, do_cmd_activate() and do_cmd_activate_dir().
    Returns TRUE if item is activatable, for sending the client proper targetting info. - C. Blue */
 bool activation_requires_direction(object_type *o_ptr) {
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT) return(o_ptr->xtra3 & 0x00C0);
+
 	/* Art DSMs are handled below */
 	if (o_ptr->tval == TV_DRAG_ARMOR && !o_ptr->name1)
 		return(TRUE);
@@ -5660,7 +5665,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		return;
 	}
 
-	//if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0010)) {
+	/* Magic-unrelated activation: Before AM checks. */
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && !(o_ptr->xtra3 & 0x0030)) return;
 
 	/* Anti-magic checks */
 	if (o_ptr->tval != TV_BOTTLE /* hack.. */
@@ -5669,6 +5675,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	    && o_ptr->tval != TV_CHARGE
 	    && !(o_ptr->tval == TV_TOOL && o_ptr->sval == SV_TOOL_GRINDER)
 #endif
+	    && !(o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && !(o_ptr->xtra3 & 0x0050))
 	    ) {
 		if (p_ptr->anti_magic) {
 			msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
@@ -5704,8 +5711,6 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			return;
 		}
 	}
-
-	//if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0020)) {
 
 	/* If the item can be equipped, it MUST be equipped to be activated */
 	if ((item < INVEN_WIELD) && wearable_p(o_ptr)) {
@@ -6051,7 +6056,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			inven_item_optimize(Ind, item);
 
 			/* Place charcoal into inventory */
-#ifdef ENABLE_SUBINVEN
+ #ifdef ENABLE_SUBINVEN
 			if (item >= 100) {
 				i = inven_carry(Ind, ox_ptr);
 				/* Automatically move it into the same bag if possible */
@@ -6059,7 +6064,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				(void)subinven_move_aux(Ind, i, item / 100 - 1);
 				return;
 			}
-#endif
+ #endif
 			inven_carry(Ind, ox_ptr);
 			return;
 		}
@@ -6082,6 +6087,11 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		return;
 	}
 #endif
+
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT) {
+		exec_lua(0, format("custom_object(%d,%d,0)", Ind, item));
+		return;
+	}
 
 	// -------------------- artifacts -------------------- //
 
@@ -7210,53 +7220,31 @@ void do_cmd_activate_dir(int Ind, int dir) {
 		o_ptr = &o_list[0 - item];
 	}
 
-	//if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0040)) {
-
-#if 0	/* if 0: All these checks are duplicate, no? They are already done in do_cmd_activate().
-	   The problem is with randomized checks, in this case the p_ptr->antimagic one,
-	   which hence changes the probability by being called duplicately! */
- #ifdef ENABLE_DEMOLITIONIST
-	if (o_ptr->tval == TV_CHARGE) {
-		/* .. calc chance based on Digging skill .. (but we're if 0'ed anyway!) */
-	} else
- #endif
-	{
-		if (p_ptr->anti_magic) {
-			msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
-			return;
-		}
-		if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
-			msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
-			return;
-		}
-		if (magik((p_ptr->antimagic * 8) / 5)) {
- #ifdef USE_SOUND_2010
-			sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
- #endif
-			msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
-			return;
-		}
-	}
-#endif
-
-	//if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0080)) {
-
-	/* If the item can be equipped, it MUST be equipped to be activated */
+	/* (paranoia?) If the item can be equipped, it MUST be equipped to be activated */
 	if ((item < INVEN_WIELD) && wearable_p(o_ptr)) {
 		msg_print(Ind, "You must be using this item to activate it.");
 		return;
 	}
 
+	/* paranoia? */
 	if (check_guard_inscription(o_ptr->note, 'A')) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
 	};
 
+	/* paranoia? */
 	if (!can_use_verbose(Ind, o_ptr)) return;
 
 	break_cloaking(Ind, 0);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
+
+	/* Custom objects --- (paranoia?) Directional activation. */
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT) {
+		exec_lua(0, format("custom_object(%d,%d,%d)", Ind, item, dir));
+		//&& !(o_ptr->xtra3 & 0x00C0))
+		return;
+	}
 
 	// -------------------- artifacts -------------------- //
 
