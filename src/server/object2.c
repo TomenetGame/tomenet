@@ -8811,6 +8811,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			invcopy(o_ptr, lookup_kind(TV_SPECIAL, SV_CUSTOM_OBJECT));
 			o_ptr->note = quark_add("a Cake");
 			o_ptr->xtra1 = 15;
+			o_ptr->xtra2 = ','; //the generic 'food' symbol
 			o_ptr->xtra3 = 0x0001; /* can 'eat' */
 			s_printf(" REWARD_CREATED: (%s) a Cake (1)\n", p_ptr->name);
 			/* serious alternatives: digger, magic device, a set of consumables */
@@ -8847,6 +8848,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 					invcopy(o_ptr, lookup_kind(TV_SPECIAL, SV_CUSTOM_OBJECT));
 					o_ptr->note = quark_add("a Cake");
 					o_ptr->xtra1 = 15;
+					o_ptr->xtra2 = ','; //the generic 'food' symbol
 					o_ptr->xtra3 = 0x0001; /* can 'eat' */
 					s_printf(" REWARD_CREATED: (%s) a Cake (2)\n", p_ptr->name);
 					/* serious alternatives: digger, magic device, a set of consumables */
@@ -8899,6 +8901,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			invcopy(o_ptr, lookup_kind(TV_SPECIAL, SV_CUSTOM_OBJECT));
 			o_ptr->note = quark_add("a Cake");
 			o_ptr->xtra1 = 15;
+			o_ptr->xtra2 = ','; //the generic 'food' symbol
 			o_ptr->xtra3 = 0x0001; /* can 'eat' */
 			s_printf(" REWARD_CREATED: (%s) a Cake (3)\n", p_ptr->name);
 			/* serious alternatives: digger, magic device, a set of consumables */
