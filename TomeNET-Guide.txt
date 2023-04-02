@@ -20691,7 +20691,7 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
     Detect Evil     Detects nearby evil monsters.
                     Required skill level for first spell level: 4.
 
-    Sanctuary       Puts nearby monsters asleep.
+    Sanctuary       Puts nearby monsters to sleep.
                     Required skill level for first spell level: 6
 
                     Tier II: Level 23.
