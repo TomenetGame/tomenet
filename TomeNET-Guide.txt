@@ -12582,7 +12582,7 @@ Blasted armour  Armour that has the prefix "blasted" has much less +AC bonus
                 scrolls of enchant armour to 'repair' it.
 Dragonrider Coat
                 Resists heat & cold.
-Elven Cloak     Increases your stealth, searching ability and luck.
+Elven Cloak     Increases your stealth and luck.
                 For details about luck see LUCK flag in (5.8).
 Elven Gloves    Regenerate hit points and mana points.
 Multi-hued Dragon Scale Mail
