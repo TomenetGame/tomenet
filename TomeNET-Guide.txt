@@ -16985,7 +16985,7 @@ Skills that become disabled on initiation will not be nulled and hence will
 continue to have effect, although the character won't be able to increase them
 any further after that.
 
-Besides changes in their skill tree, Maiar als gain particular abilities on
+Besides changes in their skill tree, Maiar also gain particular abilities on
 initiation, depending on their alignment. All the changes are listed here:
 
 Enlightened:
