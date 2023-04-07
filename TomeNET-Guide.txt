@@ -17637,7 +17637,8 @@ create a character!):
     and are more resistant to sun burn than the humanoid vampire form,
     making them useful for travelling, although they move slightly erratically.
     While vampires are in bat form, their mana pool is greatly reduced though.
-    As a specialty, vampires can use their full equipment in vampire bat form.
+    As a specialty, vampires can use their full equipment in vampire bat form
+    but cannot fight or cast well while transformed (reduced BpR and MP pool).
     At level 35 they can become able to turn into vampiric mist (mimicry 365).
     In mist form, they can pass closed doors, traps without triggering them,
     have maximum stealth and be granted a shivering aura (or have their
