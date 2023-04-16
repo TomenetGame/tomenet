@@ -4278,13 +4278,13 @@ int divide_spell_damage(int dam, int div, int typ) {
 	case GF_TURN_ALL: //fear
 	case GF_TERROR:
 	case GF_EXTRA_STATS:
-	case GF_EXTRA_TOHIT:
 	case GF_RESURRECT_PLAYER:
 	//case GF_ZEAL_PLAYER:
 	case GF_TBRAND_POIS:
 		return(dam);
 
 	/* These must not be reduced, since 'dam' stores the functionality */
+	case GF_EXTRA_TOHIT: /* encodes both duration and +hit in the 'dam' */
 	case GF_RECALL_PLAYER: /* not for recall (dam is timeout) - mikaelh */
 	case GF_RESTORE_PLAYER:
 	case GF_CURE_PLAYER:
@@ -4305,6 +4305,13 @@ int divide_spell_damage(int dam, int div, int typ) {
 		/* - sorry, 8192 is the shadow spell hack :P */
 		return((dam & 0x2000) + (dam & 0x1FFF) / div);
 	}
+
+	/* normal magical damage spells */
+
+	/* Hack -- always do at least one point of damage -- paranoia/meddling? */
+	if (dam <= 0) dam = 1;
+	/* Hack -- Never do excessive damage */
+	if (dam > MAGICAL_CAP) dam = MAGICAL_CAP;
 
 	/* default: divide damage, usually depending on ball spell radius, or /2 for wraithform casts */
 	return(dam / div);
@@ -9321,13 +9328,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Damage decrease over radius */
 	dam = divide_spell_damage(dam, div, typ);
-
-	/* Hack -- always do at least one point of damage */
-	if (dam <= 0) dam = 1;
-
-	/* Hack -- Never do excessive damage */
-	if (dam > MAGICAL_CAP) dam = MAGICAL_CAP;
-
 	/* If the player is blind, be more descriptive */
 	if (blind) fuzzy = TRUE;
 
@@ -9519,26 +9519,27 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			/* people not in the same party hit each other */
 			else if (!Players[0 - who]->party || !p_ptr->party ||
-				(!player_in_party(Players[0 - who]->party, Ind)))
+			    (!player_in_party(Players[0 - who]->party, Ind)))
 			{
 #if 0			/* NO - C. Blue */
 #else			/* changed it to YES..  - still C. Blue - but added an if..*/
 			if (check_hostile(0 - who, Ind)) {
-#ifdef EXPERIMENTAL_PVP_SPELL_DAM
+ #ifdef EXPERIMENTAL_PVP_SPELL_DAM
 				int __dam = randint(dam);
+
 				if (randint(1)) __dam *= -1;
 				dam += __dam;
-#else
+ #else
 				/* XXX Reduce damage by 1/3 */
 				dam = (dam + PVP_SPELL_DAM_REDUCTION - 1) / PVP_SPELL_DAM_REDUCTION;
-#endif
-#ifdef KURZEL_PK
+ #endif
+ #ifdef KURZEL_PK
 				if (!magik(NEUTRAL_FIRE_CHANCE))
-#else
+ #else
 				if ((cfg.use_pk_rules == PK_RULES_DECLARE &&
 				    !(p_ptr->pkill & PKILL_KILLER)) &&
 				    !magik(NEUTRAL_FIRE_CHANCE))
-#endif
+ #endif
 //#endif (<- use this endif, if above #if 0 becomes #if 1 again)			/* Just return without harming: */
 					return(FALSE);
 			} else { return(FALSE); }
@@ -9548,6 +9549,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #if FRIEND_FIRE_CHANCE
  #ifdef EXPERIMENTAL_PVP_SPELL_DAM
 				int __dam = randint(dam);
+
 				if (randint(1)) __dam *= -1;
 				dam += __dam;
  #else
@@ -10966,7 +10968,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		dam = 0;
 		break;
 
-	case GF_EXTRA_TOHIT: //unused
+	case GF_EXTRA_TOHIT:
 		k = dam / 100; //extract spell duration
 		dam = dam % 100; //extract to-hit bonus
 		do_focus(Ind, dam, k);
