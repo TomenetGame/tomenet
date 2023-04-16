@@ -4860,7 +4860,7 @@ static bool process_player_end_aux(int Ind) {
 	player_type	*p_ptr = Players[Ind];
 	cave_type **zcave, *c_ptr;
 	object_type	*o_ptr;
-	int		i, j, k;
+	int		i, j, k, autofood = 0;
 	int		regen_amount; //, NumPlayers_old = NumPlayers;
 	dun_level	*l_ptr = getfloor(&p_ptr->wpos);
 	dungeon_type	*d_ptr = getdungeon(&p_ptr->wpos);
@@ -5146,26 +5146,26 @@ static bool process_player_end_aux(int Ind) {
 	   Water helps much, natural floor helps some. */
 	if (!p_ptr->ghost && p_ptr->prace == RACE_ENT && p_ptr->resting) {
 		if (c_ptr->feat == FEAT_SHAL_WATER || c_ptr->feat == FEAT_DEEP_WATER || c_ptr->feat == FEAT_MUD) {
-			i = 200; //Delicious!
+			autofood = 200; //Delicious!
 		} else if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_DIRT) {
-			i = 100;
+			autofood = 100;
 		} else if (c_ptr->feat == FEAT_BUSH || c_ptr->feat == FEAT_TREE) {
-			i = 70;
+			autofood = 70;
 		} else {
-			i = 0;
+			autofood = 0;
 		}
-		if (i > 0 && set_food(Ind, p_ptr->food + i)) {
+		if (autofood > 0 && set_food(Ind, p_ptr->food + autofood)) {
 			msg_print(Ind, "You gain some nourishment from around you.");
 #if 0 /* spammy in town */
-			switch (i) {
+			switch (autofood) {
 				case 70:
 					msg_format_near(Ind, "\374\377wYou hear strange sounds coming from the direction of %s.", p_ptr->name);
 					break;
 				case 100:
-					msg_format_near(Ind, "\374\377w%s digs %s roots deep into the ground.", p_ptr->name, (p_ptr->male?"his":"her"));
+					msg_format_near(Ind, "\374\377w%s digs %s roots deep into the ground.", p_ptr->name, (p_ptr->male ? "his" : "her"));
 					break;
 				case 200:
-					msg_format_near(Ind, "\374\377w%s absorbs all the water around %s.", p_ptr->name, (p_ptr->male?"him":"her"));
+					msg_format_near(Ind, "\374\377w%s absorbs all the water around %s.", p_ptr->name, (p_ptr->male ? "him" : "her"));
 			}
 #endif
 		}
@@ -5401,7 +5401,11 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Disturb if we are done resting */
 	if ((p_ptr->resting) && (p_ptr->chp == p_ptr->mhp) && (p_ptr->cmp == p_ptr->mmp) && (p_ptr->cst == p_ptr->mst)
+#if 0 /* stop resting as an Ent when we reach 'full' food state? */
 	    && !(p_ptr->prace == RACE_ENT && p_ptr->food < PY_FOOD_FULL))
+#else /* Ents can continue to rest indefinitely to basically be afk without toggling afk state, yet still not going hungry? */
+	    && (p_ptr->prace != RACE_ENT || !autofood))
+#endif
 		disturb(Ind, 0, 0);
 
 	/* Finally, at the end of our turn, update certain counters. */
