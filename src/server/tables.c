@@ -4886,6 +4886,7 @@ cptr player_title[MAX_CLASS][11][4] = {
  #if 0
 		{"Tainted", "Tainted", "Tainted", "Tainted", },
 		{"Heretic", "Heretic", "Heretic", "Heretic", },
+		//Apostate
 		{"Dark Adept", "Dark Adept", "Dark Adept", "Dark Adept", },
 		//{"Sacrificer", "Sacrificer", "Sacricifer", "Sacrificer", },
 		{"Chosen", "Chosen", "Chosen", "Chosen", },
