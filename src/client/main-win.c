@@ -1348,7 +1348,7 @@ static void load_prefs(void) {
 
 	bigmap_hint = (GetPrivateProfileInt("Base", "HintBigmap", 1, ini_file) != 0);
 	if (!bigmap_hint) firstrun = FALSE;
-	WritePrivateProfileString("Base", "HintBigmap", "0\n", ini_file);
+	WritePrivateProfileString("Base", "HintBigmap", "0", ini_file);
 
 #ifdef USE_SOUND
 #ifndef USE_SOUND_2010
