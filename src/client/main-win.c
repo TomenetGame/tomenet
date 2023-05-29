@@ -77,6 +77,8 @@
 #  endif
 #endif
 
+// #define USE_LOGFONT // Kurzel - .FON security vulnerability on Windows? Ew.
+
 #ifdef USE_LOGFONT
 # if 0 /* too small */
 #  define DEFAULT_FONTNAME "8X13"
@@ -1346,7 +1348,7 @@ static void load_prefs(void) {
 
 	bigmap_hint = (GetPrivateProfileInt("Base", "HintBigmap", 1, ini_file) != 0);
 	if (!bigmap_hint) firstrun = FALSE;
-	WritePrivateProfileString("Base", "HintBigmap", "0", ini_file);
+	WritePrivateProfileString("Base", "HintBigmap", "0\n", ini_file);
 
 #ifdef USE_SOUND
 #ifndef USE_SOUND_2010
@@ -2521,8 +2523,10 @@ static void init_windows(void) {
 		td = &data[i];
 
 		strncpy(td->lf.lfFaceName, td->font_want, LF_FACESIZE);
-		td->lf.lfHeight = td->font_hgt;
-		td->lf.lfWidth  = td->font_wid;
+		// Kurzel - This was zeroing valid .INI values.
+		// td->lf.lfHeight = td->font_hgt;
+		// td->lf.lfWidth  = td->font_wid;
+		// pro-tip: win32 calls corrupting your .INI? flag it read-only!
 		td->lf.lfPitchAndFamily = FIXED_PITCH | FF_DONTCARE;
 		term_force_font(td, NULL);
 #else
