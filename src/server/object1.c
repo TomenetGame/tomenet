@@ -3950,7 +3950,7 @@ static void display_boomerang_damage(int Ind, object_type *o_ptr, FILE *fff, u32
  * Display the ammo damage done with a multiplier
  */
 //void output_ammo_dam(object_type *o_ptr, int mult, int mult2, cptr against, cptr against2, bool *first)
-static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, cptr against, cptr against2) {
+static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, int bonus, int bonus2, cptr against, cptr against2) {
 	player_type *p_ptr = Players[Ind];
 	int dam;
 	object_type *b_ptr = &p_ptr->inventory[INVEN_BOW];
@@ -3959,6 +3959,7 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 	dam = (o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5;
 	dam *= FACTOR_MULT + ((mult - FACTOR_MULT) * 2) / 5;
 	dam /= FACTOR_MULT;
+	dam += (bonus / 2) * 10;
 	dam += (o_ptr->to_d + b_ptr->to_d) * 10;
 	dam += (p_ptr->to_d_ranged) * 10;
 	dam *= tmul;
@@ -3975,6 +3976,7 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 		dam = (o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5;
 		dam *= FACTOR_MULT + ((mult2 - FACTOR_MULT) * 2) / 5;
 		dam /= FACTOR_MULT;
+		dam += (bonus2 / 2) * 10;
 		dam += (o_ptr->to_d + b_ptr->to_d) * 10;
 		dam += (p_ptr->to_d_ranged) * 10;
 		dam *= tmul;
@@ -4038,25 +4040,25 @@ static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f1,
 	f1 |= bow_f1;
 
 	fprintf(fff, "\n\377sUsing it with your current shooter you would do an average damage per shot of:\n");
-	if (f1 & TR1_SLAY_ANIMAL) output_ammo_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, "animals", NULL);
-	if (f1 & TR1_SLAY_EVIL) output_ammo_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, "evil creatures", NULL);
-	if (f1 & TR1_SLAY_ORC) output_ammo_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, "orcs", NULL);
-	if (f1 & TR1_SLAY_TROLL) output_ammo_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, "trolls", NULL);
-	if (f1 & TR1_SLAY_GIANT) output_ammo_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, "giants", NULL);
-	if (f1 & TR1_KILL_DRAGON) output_ammo_dam(Ind, fff, o_ptr, FACTOR_KILL, 0, "dragons", NULL);
-	else if (f1 & TR1_SLAY_DRAGON) output_ammo_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, "dragons", NULL);
-	if (f1 & TR1_KILL_UNDEAD) output_ammo_dam(Ind, fff, o_ptr, FACTOR_KILL, 0, "undead", NULL);
-	else if (f1 & TR1_SLAY_UNDEAD) output_ammo_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, "undead", NULL);
-	if (f1 & TR1_KILL_DEMON) output_ammo_dam(Ind, fff, o_ptr, FACTOR_KILL, 0, "demons", NULL);
-	else if (f1 & TR1_SLAY_DEMON) output_ammo_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, "demons", NULL);
+	if (f1 & TR1_SLAY_ANIMAL) output_ammo_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, FLAT_HURT_BONUS, 0, "animals", NULL);
+	if (f1 & TR1_SLAY_EVIL) output_ammo_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, FLAT_HURT_BONUS, 0, "evil creatures", NULL);
+	if (f1 & TR1_SLAY_ORC) output_ammo_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "orcs", NULL);
+	if (f1 & TR1_SLAY_TROLL) output_ammo_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "trolls", NULL);
+	if (f1 & TR1_SLAY_GIANT) output_ammo_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "giants", NULL);
+	if (f1 & TR1_KILL_DRAGON) output_ammo_dam(Ind, fff, o_ptr, FACTOR_KILL, 0, FLAT_KILL_BONUS, 0, "dragons", NULL);
+	else if (f1 & TR1_SLAY_DRAGON) output_ammo_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "dragons", NULL);
+	if (f1 & TR1_KILL_UNDEAD) output_ammo_dam(Ind, fff, o_ptr, FACTOR_KILL, 0, FLAT_KILL_BONUS, 0, "undead", NULL);
+	else if (f1 & TR1_SLAY_UNDEAD) output_ammo_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "undead", NULL);
+	if (f1 & TR1_KILL_DEMON) output_ammo_dam(Ind, fff, o_ptr, FACTOR_KILL, 0, FLAT_KILL_BONUS, 0, "demons", NULL);
+	else if (f1 & TR1_SLAY_DEMON) output_ammo_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "demons", NULL);
 
-	if (f1 & TR1_BRAND_FIRE) output_ammo_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non fire resistant creatures", "fire susceptible creatures");
-	if (f1 & TR1_BRAND_COLD) output_ammo_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non cold resistant creatures", "cold susceptible creatures");
-	if (f1 & TR1_BRAND_ELEC) output_ammo_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non lightning resistant creatures", "lightning susceptible creatures");
-	if (f1 & TR1_BRAND_ACID) output_ammo_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non acid resistant creatures", "acid susceptible creatures");
-	if (f1 & TR1_BRAND_POIS) output_ammo_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non poison resistant creatures", "poison susceptible creatures");
+	if (f1 & TR1_BRAND_FIRE) output_ammo_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non fire resistant creatures", "fire susceptible creatures");
+	if (f1 & TR1_BRAND_COLD) output_ammo_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non cold resistant creatures", "cold susceptible creatures");
+	if (f1 & TR1_BRAND_ELEC) output_ammo_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non lightning resistant creatures", "lightning susceptible creatures");
+	if (f1 & TR1_BRAND_ACID) output_ammo_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non acid resistant creatures", "acid susceptible creatures");
+	if (f1 & TR1_BRAND_POIS) output_ammo_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non poison resistant creatures", "poison susceptible creatures");
 
-	output_ammo_dam(Ind, fff, o_ptr, FACTOR_MULT, 0, (first) ? "all monsters" : "other monsters", NULL);
+	output_ammo_dam(Ind, fff, o_ptr, FACTOR_MULT, 0, 0, 0, (first) ? "all monsters" : "other monsters", NULL);
 	fprintf(fff, "\n");
 
 #if 0
@@ -4131,25 +4133,25 @@ static void display_shooter_damage(int Ind, object_type *o_ptr, FILE *fff, u32b 
 	f1 |= ammo_f1;
 
 	fprintf(fff, "\n\377sUsing it with your ammo you would have %d shot%s and do an average damage of:\n", p_ptr->num_fire, (p_ptr->num_fire > 1) ? "s" : "");
-	if (f1 & TR1_SLAY_ANIMAL) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_HURT, 0, "animals", NULL);
-	if (f1 & TR1_SLAY_EVIL) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_HURT, 0, "evil creatures", NULL);
-	if (f1 & TR1_SLAY_ORC) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_SLAY, 0, "orcs", NULL);
-	if (f1 & TR1_SLAY_TROLL) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_SLAY, 0, "trolls", NULL);
-	if (f1 & TR1_SLAY_GIANT) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_SLAY, 0, "giants", NULL);
-	if (f1 & TR1_KILL_DRAGON) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_KILL, 0, "dragons", NULL);
-	else if (f1 & TR1_SLAY_DRAGON) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_SLAY, 0, "dragons", NULL);
-	if (f1 & TR1_KILL_UNDEAD) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_KILL, 0, "undead", NULL);
-	else if (f1 & TR1_SLAY_UNDEAD) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_SLAY, 0, "undead", NULL);
-	if (f1 & TR1_KILL_DEMON) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_KILL, 0, "demons", NULL);
-	else if (f1 & TR1_SLAY_DEMON) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_SLAY, 0, "demons", NULL);
+	if (f1 & TR1_SLAY_ANIMAL) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_HURT, 0, FLAT_HURT_BONUS, 0, "animals", NULL);
+	if (f1 & TR1_SLAY_EVIL) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_HURT, 0, FLAT_HURT_BONUS, 0, "evil creatures", NULL);
+	if (f1 & TR1_SLAY_ORC) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "orcs", NULL);
+	if (f1 & TR1_SLAY_TROLL) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "trolls", NULL);
+	if (f1 & TR1_SLAY_GIANT) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "giants", NULL);
+	if (f1 & TR1_KILL_DRAGON) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_KILL, 0, FLAT_KILL_BONUS, 0, "dragons", NULL);
+	else if (f1 & TR1_SLAY_DRAGON) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "dragons", NULL);
+	if (f1 & TR1_KILL_UNDEAD) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_KILL, 0, FLAT_KILL_BONUS, 0, "undead", NULL);
+	else if (f1 & TR1_SLAY_UNDEAD) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "undead", NULL);
+	if (f1 & TR1_KILL_DEMON) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_KILL, 0, FLAT_KILL_BONUS, 0, "demons", NULL);
+	else if (f1 & TR1_SLAY_DEMON) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_SLAY, 0, FLAT_SLAY_BONUS, 0, "demons", NULL);
 
-	if (f1 & TR1_BRAND_FIRE) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non fire resistant creatures", "fire susceptible creatures");
-	if (f1 & TR1_BRAND_COLD) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non cold resistant creatures", "cold susceptible creatures");
-	if (f1 & TR1_BRAND_ELEC) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non lightning resistant creatures", "lightning susceptible creatures");
-	if (f1 & TR1_BRAND_ACID) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non acid resistant creatures", "acid susceptible creatures");
-	if (f1 & TR1_BRAND_POIS) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non poison resistant creatures", "poison susceptible creatures");
+	if (f1 & TR1_BRAND_FIRE) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non fire resistant creatures", "fire susceptible creatures");
+	if (f1 & TR1_BRAND_COLD) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non cold resistant creatures", "cold susceptible creatures");
+	if (f1 & TR1_BRAND_ELEC) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non lightning resistant creatures", "lightning susceptible creatures");
+	if (f1 & TR1_BRAND_ACID) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non acid resistant creatures", "acid susceptible creatures");
+	if (f1 & TR1_BRAND_POIS) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non poison resistant creatures", "poison susceptible creatures");
 
-	output_ammo_dam(Ind, fff, oa_ptr, FACTOR_MULT, 0, (first) ? "all monsters" : "other monsters", NULL);
+	output_ammo_dam(Ind, fff, oa_ptr, FACTOR_MULT, 0, 0, 0, (first) ? "all monsters" : "other monsters", NULL);
 	fprintf(fff, "\n");
 
 #if 0
