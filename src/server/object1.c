@@ -3957,11 +3957,11 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 	int tmul = get_shooter_mult(b_ptr) + p_ptr->xtra_might;
 
 	dam = (o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5;
+	dam *= FACTOR_MULT + ((mult - FACTOR_MULT) * 2) / 5;
+	dam /= FACTOR_MULT;
 	dam += (o_ptr->to_d + b_ptr->to_d) * 10;
 	dam += (p_ptr->to_d_ranged) * 10;
 	dam *= tmul;
-	dam *= FACTOR_MULT + ((mult - FACTOR_MULT) * 2) / 5;
-	dam /= FACTOR_MULT;
 	if (dam > 0) {
 		if (dam % 10)
 			fprintf(fff, "    %d.%d", dam / 10, dam % 10);
@@ -3973,11 +3973,11 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 	if (mult2) {
 		fprintf(fff, "\n");
 		dam = (o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5;
-		dam += (o_ptr->to_d + b_ptr->to_d) * 10;
-		dam *= tmul;
-		dam += (p_ptr->to_d_ranged) * 10;
 		dam *= FACTOR_MULT + ((mult2 - FACTOR_MULT) * 2) / 5;
 		dam /= FACTOR_MULT;
+		dam += (o_ptr->to_d + b_ptr->to_d) * 10;
+		dam += (p_ptr->to_d_ranged) * 10;
+		dam *= tmul;
 		if (dam > 0) {
 			if (dam % 10)
 				fprintf(fff, "    %d.%d", dam / 10, dam % 10);
