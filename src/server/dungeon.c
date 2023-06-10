@@ -5173,6 +5173,7 @@ static bool process_player_end_aux(int Ind) {
 	/* Ghosts don't need food */
 	/* Allow AFK-hivernation if not hungry */
 	else if (!p_ptr->ghost && !(p_ptr->afk && p_ptr->food >= PY_FOOD_ALERT) && !p_ptr->admin_dm &&
+	    p_ptr->paralyzed != 255 && /* Hack for forced stasis - also prevents damage from starving badly */
 	    /* Don't starve in town (but recover from being gorged) - C. Blue */
 	    //(!istown(&p_ptr->wpos) || p_ptr->food >= PY_FOOD_MAX))
 	    (!(istownarea(&p_ptr->wpos, MAX_TOWNAREA) || isdungeontown(&p_ptr->wpos) || safe_area(Ind)) //not in AMC either @ safe_area()
