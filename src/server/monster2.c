@@ -6236,21 +6236,29 @@ void py2mon_update_base(monster_type *m_ptr, player_type *p_ptr) {
 	else if (m < 50) i = 4;
 	else i = 6;
 	m -= i;
+ #ifdef TEST_SERVER /* spammy.. */
 s_printf("Mirror-melee:");
+ #endif
 	for (n = 0; n < k; n++) {
 		r_ptr->blow[n].d_dice = m_ptr->blow[n].d_dice = i * 2;
 		r_ptr->blow[n].d_side = m_ptr->blow[n].d_side = (m + i - 1) / i;
 		r_ptr->blow[n].method = m_ptr->blow[n].method = RBM_HIT;
 		r_ptr->blow[n].effect = m_ptr->blow[n].effect = RBE_HURT; //no brands as explained above
+ #ifdef TEST_SERVER /* spammy.. */
 s_printf(" %dd%d", r_ptr->blow[n].d_dice, r_ptr->blow[n].d_side);
+ #endif
 	}
 	/* Just some flavour variety for MA */
 	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) >= p_ptr->max_plv / 2) {
 		r_ptr->blow[1].method = m_ptr->blow[1].method = RBM_PUNCH;
 		r_ptr->blow[2].method = m_ptr->blow[2].method = RBM_KICK;
+ #ifdef TEST_SERVER /* spammy.. */
 s_printf(" (MA)\n");
+ #endif
 	}
+ #ifdef TEST_SERVER /* spammy.. */
 else s_printf("\n");
+ #endif
 #endif
 
 	/* Adjustable flags - cumulative again, ie don't get removed, just stacked up further, hah! */
