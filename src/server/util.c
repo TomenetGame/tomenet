@@ -7658,7 +7658,7 @@ cptr get_ptitle(player_type *p_ptr, bool short_form) {
 }
 #ifdef ENABLE_SUBCLASS_TITLE
 cptr get_ptitle2(player_type *p_ptr, bool short_form) {
-  if (!(p_ptr->sclass)) return ""; // paranoia?
+	if (!(p_ptr->sclass)) return ""; // paranoia?
 	if (p_ptr->lev < 60) return(player_title[p_ptr->sclass-1][((p_ptr->lev / 5) < 10)? (p_ptr->lev / 5) : 10][(short_form ? 3 : 1) - p_ptr->male]);
 	return(player_title_special[p_ptr->sclass-1][(p_ptr->lev < PY_MAX_PLAYER_LEVEL) ? (p_ptr->lev - 60) / 10 : 4][(short_form ? 3 : 1) - p_ptr->male]);
 }

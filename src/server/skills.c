@@ -1137,7 +1137,7 @@ void subclass_skills(int Ind, int class) {
 		 This will make much more viable combinations than adventurers! - Kurzel
 		 Just 50% from each class was about equivalent to adventurer ratios. */
 	/* Double racial mods by compute_skills() twice? Seems fine! MOAR RACE */
-  /* +200% XP penalty is better aligned with Maia at 400%, also...
+	/* +200% XP penalty is better aligned with Maia at 400%, also...
 		 Doubling maia initial race mods means 49% skills for sub-class maia!
 		 This provides a competitive skill boost option for the lesser races. */
 	/* Perhaps disable Maia, dual/multiclass history seems to forbid high XP. */

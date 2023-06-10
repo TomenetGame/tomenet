@@ -3515,7 +3515,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 #ifdef ENABLE_SUBCLASS
 	p_ptr->sclass = 0; // set to 0 until selectable by c-birth.c - Kurzel
 #else
-  p_ptr->oops = 0; // implicit default prior to ENABLE_SUBCLASS ?? - Kurzel
+	p_ptr->oops = 0; // implicit default prior to ENABLE_SUBCLASS ?? - Kurzel
 #endif
 	p_ptr->ptrait = trait;
 	p_ptr->align_good = 0x7fff;	/* start neutral */

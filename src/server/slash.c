@@ -4289,6 +4289,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		/* kurzel.dev EXPERIMENTAL #1 - Subclassing! (Weight skill modifiers.) */
 		else if (prefix(messagelc, "/subclass") || prefix(messagelc, "/sc")) {
 			int class; // p_ptr->pclass;
+
 			if (!tk) {
 				msg_print(Ind, "\377oThis command combines your class skill ratios with those of a second class!");
 				msg_print(Ind, "\377oUse this command only before gaining experience, to assess your options.");

@@ -1708,9 +1708,9 @@ static bool rd_extra(int Ind) {
 #endif
 	rd_byte(&p_ptr->pclass);
 #ifdef ENABLE_SUBCLASS
-  if (!older_than(4, 9, 1)) rd_byte(&p_ptr->sclass);
+	if (!older_than(4, 9, 1)) rd_byte(&p_ptr->sclass);
 #else
-  if (!older_than(4, 9, 1)) rd_byte(&p_ptr->oops)
+	if (!older_than(4, 9, 1)) rd_byte(&p_ptr->oops)
 #endif
 	if (!older_than(4, 4, 11)) rd_byte(&p_ptr->ptrait);
 	if (older_than(4, 3, 5)) { /* class order changed: warrior now first class, so newbies won't choose adventurer */
