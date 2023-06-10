@@ -15388,15 +15388,24 @@ HOLD            Although not so special and already mentioned in the text above
 (6.6) Dispelling/banishing/turning monsters
 -------------------------------------------
 The terms 'dispel' and 'banish' are unfortunately used in an ambiguous manner
-throughout the game.
-In most cases it just means that damage is afflicted to specific monster tupes
+throughout the game:
+
+In most cases it just means that damage is afflicted to specific monster types
 but sometimes it can indeed mean that the target is teleported away or even
 removed completely from the floor, or at least that there is a chance (usually
 depending on the monster's level) for that to happen.
+Refer to the spell description to find out if it deals damage or has a teleport
+effect instead.
+
+Dispelling magic that deals damage is irresistible and monsters don't even have
+a saving throw against it. Against other players though, when used in player vs
+player combat, they can actually roll a saving throw.
 
 The term 'turn' as in 'turn evil' however is used in only one way: It refers to
 a fear-like effect that makes them run away from you instead of approaching you
 as a target.
+Unlike dispelling, magic that 'turns' will let each affected monster roll a
+saving throw.
 
 
 
