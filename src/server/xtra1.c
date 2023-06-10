@@ -2899,7 +2899,7 @@ int calc_blows_weapons(int Ind) {
 	return(num_blow);
 }
 
-int calc_crit_obj(int Ind, object_type *o_ptr) {
+int calc_crit_obj(object_type *o_ptr) {
 	int xcrit = 0;
 	u32b f1, f2, f3, f4, f5, f6, esp;
 

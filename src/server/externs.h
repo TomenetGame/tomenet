@@ -2122,7 +2122,7 @@ extern int get_archery_skill(player_type *p_ptr);
 extern int get_weaponmastery_skill(player_type *p_ptr, object_type *o_ptr);
 extern int calc_blows_obj(int Ind, object_type *o_ptr);
 extern int calc_blows_weapons(int Ind);
-extern int calc_crit_obj(int Ind, object_type *o_ptr);
+extern int calc_crit_obj(object_type *o_ptr);
 
 extern int start_global_event(int Ind, int getype, char *parm);
 extern void stop_global_event(int Ind, int n);
