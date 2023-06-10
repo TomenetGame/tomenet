@@ -1284,7 +1284,7 @@ void do_cmd_quaff_potion(int Ind, int item) {
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	/* For outdated learning potions */
-	if (o_ptr->xtra1) {
+	if (o_ptr->tval != TV_SPECIAL && o_ptr->xtra1) {
 		msg_print(Ind, "This potion seems to have crystallized and cannot be consumed anymore.");
 		return;
 	}
