@@ -158,9 +158,12 @@ F:NO_SHADE
 
 N:21:signpost
 #G:#:y  looks too much like trees.
+#G:+:u  looks too much like a door, sent two people on a wild goose chase..
+# % is used for a lot of things already :/
+# & is same as mirror, pfft - still maybe best
 #possible: %:U, %:o, &:y, &:o, &:U, +:y, +:u, +:o
-G:+:u
-F:WALL | NO_WALK | CAN_PASS | NOTICE | SUPPORT_LIGHT
+G:&:o
+F:WALL | NO_WALK | CAN_PASS | NOTICE | SUPPORT_LIGHT | PERMANENT
 #NO_VISION |
 
 # 0x28 --> home door (strength 1)
