@@ -6152,6 +6152,40 @@ void p2mon_update_base_aux(monster_race *r_ptr, int *magicness, int tval, int sv
 		break;
 	}
 }
+static bool check_for_spell(player_type *p_ptr, cptr spell_name) {
+	int s = exec_lua(p_ptr->Ind, format("return %s", spell_name));
+	int i;
+	object_type *o_ptr;
+
+	/* Error - spell doesn't exist in the game (anymore?)! */
+	if (s < 0) {
+		return(FALSE);
+	}
+
+	/* We are not eligible for this spell anyway, even if we had it with us? */
+	if (!exec_lua(p_ptr->Ind, format("return is_ok_spell(%d, %d)", p_ptr->Ind, s))) {
+		return(FALSE);
+	}
+
+	for (i = 0; i < INVEN_PACK; i++) {
+		o_ptr = &p_ptr->inventory[i];
+		if (!o_ptr->tval) {
+			return(FALSE);
+		}
+
+		if (o_ptr->tval != TV_BOOK) continue;
+
+		if (o_ptr->sval == SV_SPELLBOOK) {
+			if (o_ptr->pval != s) continue;
+			return(TRUE);
+		} else {
+			if (!exec_lua(p_ptr->Ind, format("return spell_in_book2(%d, %d, %d)", i, o_ptr->sval, s))) continue;
+			return(TRUE);
+		}
+	}
+
+	return(FALSE);
+}
 void py2mon_update_base(monster_type *m_ptr, player_type *p_ptr) {
 	monster_race *r_ptr = &r_info[RI_MIRROR];
 	int i, k, m, n, magicness = 0;
@@ -6188,8 +6222,14 @@ void py2mon_update_base(monster_type *m_ptr, player_type *p_ptr) {
 #endif
 	/* Simply translate our hit chance into monster ac bonus to counter it */
 	i += p_ptr->overall_tohit_m;
+
 	/* Kinetic Shield gives extra AC */
-	if (get_skill(p_ptr, SKILL_PPOWER) >= thresh_spell) i += 50;
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "MSHIELD"))
+#else
+	if (get_skill(p_ptr, SKILL_PPOWER) >= thresh_spell)
+#endif
+		i += 75;
 	/* Simply add to AC, although this won't help against magic bolt spells, exploiterino */
 	if ((m = get_skill(p_ptr, SKILL_DODGE))) i += (100 * m) / (p_ptr->max_plv >= 50 ? 50 : p_ptr->max_plv);
 #endif
@@ -6667,8 +6707,10 @@ else s_printf("\n");
 		r_ptr->freq_innate = r_ptr->freq_spell = 90;
 		break;
 	}
-#endif
+ #ifdef TEST_SERVER /* spammy.. */
 s_printf("freq=%d, magicness=%d\n", r_ptr->freq_spell, magicness);
+ #endif
+#endif
 }
 void py2mon_update_equip(monster_type *m_ptr, player_type *p_ptr) {
 	//monster_race *r_ptr = &r_info[RI_MIRROR];
