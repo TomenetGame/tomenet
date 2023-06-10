@@ -1201,7 +1201,7 @@ void respec_skills(int Ind, bool update_skills) {
 	if (p_ptr->fruit_bat == 1) fruit_bat_skills(p_ptr);
 
 #ifdef ENABLE_SUBCLASS
-	if (p_ptr->sclass) subclass_skills(Ind, (p_ptr->sclass-1));
+	if (p_ptr->sclass) subclass_skills(Ind, (p_ptr->sclass - 1));
 #endif
 
 	/* Update the client */

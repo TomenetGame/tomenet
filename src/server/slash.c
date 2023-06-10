@@ -4350,7 +4350,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			} else {
 				// p_ptr->expfact += 100; // +100% (worthy penalty for +33% skills?)
 				p_ptr->expfact += 200; // +200% to be in-line with Maia at +400%
-        p_ptr->sclass = class + 1; // 0 = pre-existing default (oops) - Kurzel
+				p_ptr->sclass = class + 1; // 0 = pre-existing default (oops) - Kurzel
 				msg_print(Ind, "\377ySubclass successful.");
 			}
 

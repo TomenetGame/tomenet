@@ -9834,7 +9834,7 @@ s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s ; trait=%s ; %d dea
 #endif
 
 #ifdef ENABLE_SUBCLASS_TITLE
-s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; subclass=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, class_info[p_ptr->sclass-1].title, p_ptr->deaths);
+s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; subclass=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, class_info[p_ptr->sclass - 1].title, p_ptr->deaths);
 #else
 s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
 #endif

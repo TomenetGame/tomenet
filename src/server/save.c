@@ -719,7 +719,7 @@ static void wr_extra(int Ind) {
 #ifdef ENABLE_SUBCLASS
 	wr_byte(p_ptr->sclass);
 #else
-	wr_byte(0); // p_ptr->oops
+	wr_byte(0);
 #endif
 	wr_byte(p_ptr->ptrait);
 	wr_byte(p_ptr->male);
