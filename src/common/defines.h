@@ -6169,7 +6169,7 @@
    Note: RF0_ is an exception in that it holds both 'basic' and 'spell' flags.
    This is important for parsing F:/S: lines in r_info, H:/M:/O:/S: lines in re_info and
    M:/S: lines in d_info (which should only accept 'basic' or 'spell' flags respectively).
-   For cleanliness I added masks flags to separate these two use cases. */
+   For cleanliness I added flag-masks to separate these two use cases. */
 #define RF0_S_HI_MONSTER	0x00000001
 #define RF0_S_HI_MONSTERS	0x00000002
 #define RF0_S_HI_UNIQUE		0x00000004
