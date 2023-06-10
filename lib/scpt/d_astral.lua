@@ -199,7 +199,6 @@ POWERBEAM_II = add_spell {
 	["desc"] = 	{
 			"Enlightened: conjures up a powerful beam of light.",
 			"Corrupted: conjures up a powerful darkness beam.",
-			"Neutral: conjures up a beam of lightning.",
 		}
 }
 POWERBEAM_III = add_spell {
