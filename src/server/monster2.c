@@ -6582,6 +6582,8 @@ else s_printf("\n");
 			//raging inferno -- maybe just stick with BA_DISE to not overkill..
 			//r_ptr->flags4 |= RF4_ROCKET; magicness++; }
 			break;
+		default: /* Uninitiated yet */
+			r_ptr->flags5 |= RF5_BA_ELEC; magicness++;
 		}
 	}
 #endif
