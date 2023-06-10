@@ -11731,6 +11731,7 @@ Disenchantment  This attack does massive damage and can also disenchant your
                 disenchantment of your equipment.
                 Breath damage is monster HP/6, it caps at 500.
                 Disenchantment bolts do 25+(4d5)+(level*3/2) damage.
+                Disenchantment balls do 40+(level*4)+(6d10) damage.
                 If disenchantment hits items on the floor, it can even reduce
                 their magical (+X) pval bonus.
                 Artifacts have a chance to resist disenchantment.
@@ -15398,14 +15399,13 @@ Refer to the spell description to find out if it deals damage or has a teleport
 effect instead.
 
 Dispelling magic that deals damage is irresistible and monsters don't even have
-a saving throw against it. Against other players though, when used in player vs
-player combat, they can actually roll a saving throw.
+a saving throw against it. It also works (the same way) in PvP combat.
 
 The term 'turn' as in 'turn evil' however is used in only one way: It refers to
 a fear-like effect that makes them run away from you instead of approaching you
 as a target.
-Unlike dispelling, magic that 'turns' will let each affected monster roll a
-saving throw.
+Unlike dispelling, magic that 'turns' will let each affected monster or player
+roll a saving throw.
 
 
 

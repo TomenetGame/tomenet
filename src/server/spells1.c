@@ -10496,6 +10496,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer, -who);
 		break;
+
 	case GF_MANA:
 		if (p_ptr->resist_mana) { dam *= 6; dam /= (randint(6) + 6); }
 		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
@@ -10503,7 +10504,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		take_hit(Ind, dam, killer, -who);
 		break;
 
-	/* Pure damage */
+	/* Pure damage + stun */
 	case GF_METEOR:
 		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
@@ -11703,8 +11704,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	case GF_DISP_UNDEAD:
 		/* Only affect undead */
 		if (p_ptr->ghost || p_ptr->suscep_life) {
+#if 0 /* monsters do not resist either */
 			if (rand_int(100) < p_ptr->skill_sav) msg_print(Ind, "You shudder, but you resist the effect!");
-			else {
+			else
+#endif
+			{
 				/* Message */
 				msg_print(Ind, "You shudder!");
 				dam /= 3; /* full dam is too harsh */
@@ -11721,15 +11725,16 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	case GF_DISP_EVIL:
 		/* Only affect evil */
 		if (p_ptr->suscep_good) {
-			if (rand_int(100) < p_ptr->skill_sav)
-				msg_print(Ind, "You shudder, but you resist the effect!");
-			else {
+#if 0 /* monsters do not resist either */
+			if (rand_int(100) < p_ptr->skill_sav) msg_print(Ind, "You shudder, but you resist the effect!");
+			else
+#endif
+			{
 				msg_print(Ind, "You shudder!");
 				dam /= 3; /* full dam is too harsh */
 				take_hit(Ind, dam, killer, -who);
 			}
 		}
-
 		/* Ignore other monsters */
 		else
 			/* No damage */
@@ -11739,8 +11744,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	case GF_DISP_DEMON:
 		/* Only affect demons */
 		if (p_ptr->body_monster && (r_ptr->flags3 & RF3_DEMON)) {
+#if 0 /* monsters do not resist either */
 			if (rand_int(100) < p_ptr->skill_sav) msg_print(Ind, "You shudder, but you resist the effect!");
-			else {
+			else
+#endif
+			{
 				/* Message */
 				msg_print(Ind, "You shudder!");
 				dam /= 3; /* full dam is too harsh */
@@ -11767,8 +11775,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 		}
 #else
+ #if 0 /* monsters do not resist either */
 		if (rand_int(100) < p_ptr->skill_sav) msg_print(Ind, "You shudder, but you resist the effect!");
-		else {
+		else
+ #endif
+		{
 			/* Message */
 			msg_print(Ind, "You shudder!");
 			take_hit(Ind, dam, killer, -who);
