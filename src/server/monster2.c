@@ -6457,23 +6457,77 @@ else s_printf("\n");
 
 	//if (get_skill(p_ptr, SKILL_TEMPORAL) >= thresh_spell) { r_ptr->flags6 |= RF6_HASTE; magicness++; } -- we already copy the max speed flatly
 
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "MANATHRUST_I") || check_for_spell(p_ptr, "MANATHRUST_II") || check_for_spell(p_ptr, "MANATHRUST_III")) { r_ptr->flags5 |= RF5_BO_MANA; magicness++; }
+	/* manaheal: mana potions are present in the player's inventory? */
+	if (check_for_spell(p_ptr, "MANASHIELD") && manaheal) { r_ptr->flags6 |= RF6_HEAL; magicness++; }
+#else
 	if (get_skill(p_ptr, SKILL_MANA) >= thresh_spell) {
 		r_ptr->flags5 |= RF5_BO_MANA; magicness++;
 		/* Heal via pseudo disruption shield by 'quaffing' pseudo mana potions? */
 		if (manaheal) { r_ptr->flags6 |= RF6_HEAL; magicness++; }
 	}
+#endif
+
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "FIREFLASH_I") || check_for_spell(p_ptr, "FIREFLASH_II") ||
+	    check_for_spell(p_ptr, "FIREBALL_I") || check_for_spell(p_ptr, "FIREBALL_II"))
+		{ r_ptr->flags5 |= RF5_BA_FIRE; magicness++; }
+	/* Separate minor spells, they result in just fire bolt instead of fire ball */
+	else if (check_for_spell(p_ptr, "FIREBOLT_I") || check_for_spell(p_ptr, "FIREBOLT_II") || check_for_spell(p_ptr, "FIREBOLT_III") ||
+	    check_for_spell(p_ptr, "FIREWALL_I") || check_for_spell(p_ptr, "FIREWALL_II") ||
+	    check_for_spell(p_ptr, "GLOBELIGHT_II"))
+		{ r_ptr->flags5 |= RF5_BO_FIRE; magicness++; }
+#else
 	if (get_skill(p_ptr, SKILL_FIRE) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_FIRE; magicness++; } //weakness: not holy fire unlike Fireflash!
+#endif
+
+#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#else
 	if (get_skill(p_ptr, SKILL_AIR) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_POIS | RF5_BO_ELEC; magicness++; }
+#endif
+
+#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#else
 	if (get_skill(p_ptr, SKILL_WATER) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_COLD | RF5_BO_WATE; magicness++; }
+#endif
+
+#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#else
 	if (get_skill(p_ptr, SKILL_EARTH) >= thresh_spell) { r_ptr->flags5 |= RF5_BO_ACID; magicness++; }
+#endif
+
+#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#else
 	if (get_skill(p_ptr, SKILL_UDUN) >= thresh_spell) { r_ptr->flags0 |= RF0_BO_DISE | RF0_BA_DISE; magicness++; } //beam+hellfire
+#endif
+
 	//if (get_skill(p_ptr, SKILL_MIND)) { r_ptr->flags |= RF__; magicness++; } -- nothing except confuse
 	//if (get_skill(p_ptr, SKILL_DIVINATION)) { r_ptr->flags |= RF__; magicness++; } -- nothing here
+
+#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#else
 	if (get_skill(p_ptr, SKILL_CONVEYANCE) >= thresh_spell) { r_ptr->flags6 |= RF6_BLINK | RF6_TPORT; magicness++; }
+#endif
+
+#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#else
 	if (get_skill(p_ptr, SKILL_NATURE) >= thresh_spell) {
 		r_ptr->flags6 |= RF6_HEAL; magicness++;
 		r_ptr->flags5 |= RF5_BO_ELEC; magicness++;
 	}
+#endif
+
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	/* uuhhhh not gonna check for every frigging spell here, probably :p Just using the thresh_spell check below instead. */
+	//if (check_for_spell(p_ptr, "")) {}....
+#endif
 	if (get_skill(p_ptr, SKILL_SORCERY) >= thresh_spell) { /* o_o */
 		//r_ptr->flags6 |= RF6_HASTE; magicness++; -- we already copy the max speed flatly
 		r_ptr->flags5 |= RF5_BO_MANA; magicness++;
@@ -6486,6 +6540,9 @@ else s_printf("\n");
 		r_ptr->flags6 |= RF6_HEAL; magicness++;
 	}
 
+#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#else
 	if (get_skill(p_ptr, SKILL_ASTRAL) >= thresh_spell) {
 		switch (p_ptr->ptrait) {
 		case TRAIT_ENLIGHTENED:
@@ -6498,27 +6555,55 @@ else s_printf("\n");
 			break;
 		}
 	}
+#endif
 
+#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#else
 	if (get_skill(p_ptr, SKILL_DRUID_ARCANE) >= thresh_spell) {
 		r_ptr->flags5 |= RF5_BA_POIS; magicness++;
 		r_ptr->flags0 |= RF0_BR_ICE; magicness++; //ball
 	}
+#endif
+
+#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#else
 	if (get_skill(p_ptr, SKILL_DRUID_PHYSICAL) >= thresh_spell) {
 		//r_ptr->flags6 |= RF6_HASTE; magicness++; -- we already copy the max speed flatly
 		r_ptr->flags6 |= RF6_HEAL; magicness++;
 	}
+#endif
 
+#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#else
 	if (get_skill(p_ptr, SKILL_OSHADOW) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_DARK; magicness++; }
+#endif
+
+#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#else
 	if (get_skill(p_ptr, SKILL_OSPIRIT) >= thresh_spell) {
 		r_ptr->flags5 |= RF5_CURSE; magicness++;
 		r_ptr->flags5 |= RF5_BO_ELEC; magicness++;
 		r_ptr->flags4 |= RF4_BR_LITE; magicness++; //bolt
 	}
+#endif
+
+#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#else
 	if (get_skill(p_ptr, SKILL_OHERETICISM) >= thresh_spell) {
 		r_ptr->flags5 |= RF5_BO_FIRE; magicness++;
 		r_ptr->flags5 |= RF5_BA_CHAO; magicness++; //bolt
 		r_ptr->flags2 |= RF2_AURA_FIRE;
 	}
+#endif
+
+#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#else
 	if (get_skill(p_ptr, SKILL_OUNLIFE) >= thresh_spell) {
  #if 0
 		r_ptr->flags5 |= RF5_SLOW; magicness++;
@@ -6528,6 +6613,7 @@ else s_printf("\n");
 		r_ptr->flags2 |= RF2_REGENERATE; //Nether Sap weak version
 		r_ptr->flags5 |= RF5_BO_NETH;
 	}
+#endif
 
 	if (get_skill(p_ptr, SKILL_R_LITE) >= thresh_spell) {
 		r_ptr->flags4 |= RF4_BR_LITE; magicness++; //ball
@@ -6564,13 +6650,22 @@ else s_printf("\n");
 	}
 	/* Note: Some more (status effect) combos omitted, these should be sufficient for now. */
 
+#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#else
 	if (get_skill(p_ptr, SKILL_PPOWER) >= thresh_spell) {
 		r_ptr->flags6 |= RF6_BLINK | RF6_TPORT | RF6_TELE_AWAY; magicness++;
 		r_ptr->flags5 |= RF5_BA_FIRE; magicness++;
 		r_ptr->flags5 |= RF5_BA_COLD; magicness++;
 		//kinetic shield: extra ac given further up
 	}
+#endif
+
 	//if (get_skill(p_ptr, SKILL_TCONTACT) >= thresh_spell) { r_ptr->flags6 |= RF6_HASTE; magicness++; } -- we already copy the max speed flatly
+
+#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#else
 	if (get_skill(p_ptr, SKILL_MINTRUSION) >= thresh_spell) {
 		//we got psi-immunity vs 40+ MCs! So no need to replicate the Psionic Blast/Storm spells maybe
  #if 0
@@ -6580,14 +6675,26 @@ else s_printf("\n");
  #endif
 		r_ptr->flags5 |= RF5_BRAIN_SMASH; magicness++; //RF5_MIND_BLAST
 	}
+#endif
 
+#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#else
 	if (get_skill(p_ptr, SKILL_HOFFENSE) >= thresh_spell) {
 		r_ptr->flags5 |= RF5_CURSE; magicness++;
 		r_ptr->flags0 |= RF0_BA_DISE; magicness++; //"OoD" -_-
 		if (get_skill(p_ptr, SKILL_OSHADOW) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_CHAO; magicness++; } //bolt
 	}
+#endif
+
 	//if (get_skill(p_ptr, SKILL_HDEFENSE) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; } -- nothing here! all accounted for
+
+#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#else
 	if (get_skill(p_ptr, SKILL_HCURING) >= thresh_spell) { r_ptr->flags6 |= RF6_HEAL; magicness++; }
+#endif
+
 	//if (get_skill(p_ptr, SKILL_HSUPPORT) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; } -- nothing here!
 
 	/* Flags 7 */
