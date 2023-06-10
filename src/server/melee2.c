@@ -3907,6 +3907,50 @@ bool make_attack_spell(int Ind, int m_idx) {
 		//update_smart_learn(Ind, m_idx, DRS_HELLFIRE); -- doesn't exist
 		break;
 
+	/* RF0_BO_LITE (strictly, beam, as it mirrors Power Ray spell) */
+	case RF0_OFFSET + 26:
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a bolt of light of", m_name);
+		bolt(Ind, m_idx, GF_LITE, 1 + damroll(1 + rlev / 3, 1 + rlev / 4), SFX_BOLT_MAGIC);
+		update_smart_learn(Ind, m_idx, DRS_LITE);
+		break;
+
+	/* RF0_BO_DARK (strictly, beam, as it mirrors Power Ray spell) */
+	case RF0_OFFSET + 27:
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a darkness bolt of", m_name);
+		bolt(Ind, m_idx, GF_DARK, 1 + damroll(1 + rlev / 3, 1 + rlev / 4), SFX_BOLT_MAGIC);
+		update_smart_learn(Ind, m_idx, DRS_DARK);
+		break;
+
+	/* RF0_DISPEL */
+	case RF0_OFFSET + 28: {
+		int dam = damroll(1 + rlev / 3, 1 + rlev / 4);
+		char damcol = unique ? 'L' : 'o';
+
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		disturb(Ind, 1, 0);
+
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		else msg_format(Ind, "%^s dispels you for \377%c%d \377wdamage.", m_name, damcol, dam);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s dispels you for", m_name);
+		take_hit(Ind, dam, ddesc, -m_idx);
+
+#ifdef USE_SOUND_2010
+ #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
+		if (p_ptr->sfx_monsterattack) sound(Ind, "ball", NULL, SFX_TYPE_MON_SPELL, FALSE);
+ #else
+		if (p_ptr->sfx_monsterattack) sound(Ind, "ball", NULL, SFX_TYPE_MON_SPELL, FALSE);
+		sound_near_monster_atk(m_idx, Ind, "ball", NULL, SFX_TYPE_MON_SPELL);
+ #endif
+#endif
+		break;
+		}
+
 	default:
 		/* catch any non-existant spells */
 		s_printf("ERROR: Invalid monster spell %d for r_idx %d. (f4=%d,f5=%d,f6=%d,f0=%d)\n", thrown_spell, m_ptr->r_idx, f4, f5, f6, f0);
@@ -5847,6 +5891,80 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		breath(Ind, m_idx, GF_WATER, ((m_ptr->hp / 5) > 300 ? 300 : (m_ptr->hp / 5)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_WATER);
 		break;
+
+	/* RF0_BA_LITE */
+	case RF0_OFFSET + 23:
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a light ball of", m_name);
+		ball(Ind, m_idx, GF_LITE, (10 + damroll(6, 10) + rlev), y, x, srad);
+		update_smart_learn(Ind, m_idx, DRS_LITE);
+		break;
+
+	/* RF0_BO_WALL */
+	case RF0_OFFSET + 24:
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a force bolt of", m_name);
+		bolt(Ind, m_idx, GF_FORCE, 25 + damroll(4, 5) + (rlev * 2) / 2, SFX_BOLT_MAGIC);
+		//update_smart_learn(Ind, m_idx, DRS_SOUND); --not exactly it
+		break;
+
+	/* RF0_BA_HELLFIRE */
+	case RF0_OFFSET + 25:
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts hellfire of", m_name);
+		ball(Ind, m_idx, GF_HELLFIRE, (70 + damroll(10, 10) + rlev * 2), y, x, srad);
+		//update_smart_learn(Ind, m_idx, DRS_HELLFIRE); -- doesn't exist
+		break;
+
+	/* RF0_BO_LITE (strictly, beam, as it mirrors Power Ray spell) */
+	case RF0_OFFSET + 26:
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a bolt of light of", m_name);
+		bolt(Ind, m_idx, GF_LITE, 1 + damroll(1 + rlev / 3, 1 + rlev / 4), SFX_BOLT_MAGIC);
+		update_smart_learn(Ind, m_idx, DRS_LITE);
+		break;
+
+	/* RF0_BO_DARK (strictly, beam, as it mirrors Power Ray spell) */
+	case RF0_OFFSET + 27:
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a darkness bolt of", m_name);
+		bolt(Ind, m_idx, GF_DARK, 1 + damroll(1 + rlev / 3, 1 + rlev / 4), SFX_BOLT_MAGIC);
+		update_smart_learn(Ind, m_idx, DRS_DARK);
+		break;
+
+	/* RF0_DISPEL */
+	case RF0_OFFSET + 28: {
+		int dam = damroll(1 + rlev / 3, 1 + rlev / 4);
+		char damcol = unique ? 'L' : 'o';
+
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		disturb(Ind, 1, 0);
+
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		else msg_format(Ind, "%^s dispels you for \377%c%d \377wdamage.", m_name, damcol, dam);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s dispels you for", m_name);
+		take_hit(Ind, dam, ddesc, -m_idx);
+
+#ifdef USE_SOUND_2010
+ #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
+		if (p_ptr->sfx_monsterattack) sound(Ind, "ball", NULL, SFX_TYPE_MON_SPELL, FALSE);
+ #else
+		if (p_ptr->sfx_monsterattack) sound(Ind, "ball", NULL, SFX_TYPE_MON_SPELL, FALSE);
+		sound_near_monster_atk(m_idx, Ind, "ball", NULL, SFX_TYPE_MON_SPELL);
+ #endif
+#endif
+		break;
+		}
 
 	default:
 		/* catch any non-existant spells */

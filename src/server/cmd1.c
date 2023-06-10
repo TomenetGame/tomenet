@@ -175,11 +175,6 @@ bool test_hit_melee(int chance, int ac, int vis) {
 	return(TRUE);
 }
 
-/* Check for rogueish melee skills eligibility, that is Critical-Strike and Backstabbing. Note that polearms are now allowed as a specialty (experimental). */
-#define rogue_armed_melee(o_ptr, p_ptr)	(((o_ptr)->tval == TV_SWORD || (o_ptr)->tval == TV_POLEARM) && (o_ptr)->weight <= 100 && !((p_ptr)->rogue_heavyarmor))
-#define rogue_armed_melee_any(p_ptr)	((is_melee_weapon((p_ptr)->inventory[INVEN_WIELD]) && rogue_armed_melee(&(p_ptr)->inventory[INVEN_WIELD])) || \
-					(is_melee_weapon((p_ptr)->inventory[INVEN_ARM]) && rogue_armed_melee(&(p_ptr)->inventory[INVEN_ARM])))
-
 /*
  * Critical hits (from objects thrown by player)
  * Factor in item weight, total plusses, and player level.

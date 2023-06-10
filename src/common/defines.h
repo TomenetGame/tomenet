@@ -6196,6 +6196,9 @@
 #define RF0_BA_LITE			0x00800000	/* Mirror: Globe of Light */
 #define RF0_BO_WALL		0x01000000		/* Mirror: Strike */
 #define RF0_BA_HELLFIRE		0x02000000		/* Mirror: Hellfire */
+#define RF0_BO_LITE		0x04000000		/* Mirror: Power Ray */
+#define RF0_BO_DARK		0x08000000		/* Mirror: Power Ray */
+#define RF0_DISPEL			0x10000000	/* Mirror: Vengenance [Corrupted] */
 /* !!! NOTE: if you add more flags, adjust RF0_SPELL_MASK accordingly !!! */
 
 #define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT)		/* | RF0_NO_NEST */
@@ -8227,6 +8230,12 @@ extern int PlayerUID;
 	   (get_skill(p_ptr, SKILL_CRITS))) && \
 	 (armour_weight(p_ptr) > \
 	 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 70)))
+
+/* Check for rogueish melee skills eligibility, that is Critical-Strike and Backstabbing. Note that polearms are now allowed as a specialty (experimental). */
+#define rogue_armed_melee(o_ptr, p_ptr)	(((o_ptr)->tval == TV_SWORD || (o_ptr)->tval == TV_POLEARM) && (o_ptr)->weight <= 100 && !((p_ptr)->rogue_heavyarmor))
+/* For mirror image crit translation */
+#define rogue_armed_melee_any(p_ptr)	((is_melee_weapon((p_ptr)->inventory[INVEN_WIELD].tval) && rogue_armed_melee(&(p_ptr)->inventory[INVEN_WIELD], (p_ptr))) || \
+					(is_melee_weapon((p_ptr)->inventory[INVEN_ARM].tval) && rogue_armed_melee(&(p_ptr)->inventory[INVEN_ARM], (p_ptr))))
 
 /* maximum weapon weight to allow dual-wielding, 999 for no limit	[999] */
 #define DUAL_MAX_WEIGHT 999

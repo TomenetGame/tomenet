@@ -6433,12 +6433,23 @@ else s_printf("\n");
 	//if (get_skill(p_ptr, SKILL_AURA_SHIVER)) { r_ptr->flags |= RF__; magicness++; }
 	//if (get_skill(p_ptr, SKILL_AURA_DEATH)) { r_ptr->flags |= RF__; magicness++; }
 
-
-	if ((m = get_skill(p_ptr, SKILL_CRITS))) {
+	/* Add crit skill and xtra crit from items to damage */
+	m = 0;
+	if (!(m = get_skill(p_ptr, SKILL_CRITS)) && rogue_armed_melee_any(p_ptr)) m = 0;
+	n = 0;
+	if (is_melee_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
+		n = calc_crit_obj(&p_ptr->inventory[INVEN_WIELD]);
+		if (p_ptr->dual_mode && is_melee_weapon(p_ptr->inventory[INVEN_ARM].tval) && !p_ptr->rogue_heavyarmor) {
+			n += calc_crit_obj(&p_ptr->inventory[INVEN_ARM]);
+			n /= 2;
+		}
+	} else if (is_melee_weapon(p_ptr->inventory[INVEN_ARM].tval)) n = calc_crit_obj(&p_ptr->inventory[INVEN_ARM]);
+	m += n + p_ptr->xtra_crit;
+	if (m > 0) {
 		/* boost damage */
 		for (n = 0; n < 4; n++) {
 			if (r_ptr->blow[n].method == RBM_NONE) continue;
-			r_ptr->blow[n].d_side = m_ptr->blow[n].d_side = (r_ptr->blow[n].d_side * 100) / (100 - m);
+			r_ptr->blow[n].d_side = m_ptr->blow[n].d_side = (r_ptr->blow[n].d_side * (100 + m)) / 100;
 		}
 	}
 
@@ -6555,7 +6566,7 @@ else s_printf("\n");
 #ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
 	/* uuhhhh not gonna check for every frigging spell here, probably :p Just re-use the simple thresh_spell check... */
 	//if (check_for_spell(p_ptr, "every-frigging-spell-for-sorcery")) {}....
-#else
+#endif
 	if (get_skill(p_ptr, SKILL_SORCERY) >= thresh_spell) { /* o_o */
 		//r_ptr->flags6 |= RF6_HASTE; magicness++; -- we already copy the max speed flatly
 		r_ptr->flags5 |= RF5_BO_MANA; magicness++;
@@ -6567,10 +6578,59 @@ else s_printf("\n");
 		r_ptr->flags6 |= RF6_BLINK | RF6_TPORT; magicness++;
 		r_ptr->flags6 |= RF6_HEAL; magicness++;
 	}
-#endif
 
-#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	magflag = FALSE;
+	if (check_for_spell(p_ptr, "POWERCLOUD")) {
+		switch (p_ptr->ptrait) {
+		case TRAIT_ENLIGHTENED:
+			r_ptr->flags5 |= RF5_BA_MANA; magflag = TRUE;
+			break;
+		case TRAIT_CORRUPTED:
+			r_ptr->flags0 |= RF5_BA_CHAO; magflag = TRUE; //RF4_ROCKET is tooo much, RF0_BA_DISE overused (but good!), PLASMA/NUKE not cutting it
+			break;
+		}
+	}
+	else if (check_for_spell(p_ptr, "POWERBALL_I") || check_for_spell(p_ptr, "POWERBALL_II") || check_for_spell(p_ptr, "POWERBALL_III")) {
+		switch (p_ptr->ptrait) {
+		case TRAIT_ENLIGHTENED:
+			r_ptr->flags5 |= RF5_BA_MANA; magflag = TRUE;
+			break;
+		case TRAIT_CORRUPTED:
+			r_ptr->flags0 |= RF0_BA_DISE; magflag = TRUE; //dispel
+			break;
+		default: /* Uninitiated yet */
+			r_ptr->flags5 |= RF5_BA_ELEC; magflag = TRUE;
+		}
+	}
+	else if (check_for_spell(p_ptr, "POWERBEAM_I") || check_for_spell(p_ptr, "POWERBEAM_II") || check_for_spell(p_ptr, "POWERBEAM_III")) {
+		switch (p_ptr->ptrait) {
+		case TRAIT_ENLIGHTENED:
+			r_ptr->flags0 |= RF0_BO_LITE; magflag = TRUE;
+			break;
+		case TRAIT_CORRUPTED:
+			r_ptr->flags0 |= RF0_BO_DARK; magflag = TRUE;
+			break;
+		default: /* Uninitiated yet */
+			r_ptr->flags5 |= RF5_BO_ELEC; magflag = TRUE;
+		}
+	}
+	else if (check_for_spell(p_ptr, "POWERBOLT_I") || check_for_spell(p_ptr, "POWERBOLT_II") || check_for_spell(p_ptr, "POWERBOLT_III")) {
+		switch (p_ptr->ptrait) {
+		case TRAIT_ENLIGHTENED:
+			r_ptr->flags5 |= RF5_BO_MANA; magflag = TRUE;
+			break;
+		case TRAIT_CORRUPTED:
+			r_ptr->flags0 |= RF0_BO_DISE; magflag = TRUE;
+			break;
+		default: /* Uninitiated yet */
+			r_ptr->flags5 |= RF5_BO_ELEC; magflag = TRUE;
+		}
+	}
+	if (p_ptr->ptrait == TRAIT_CORRUPTED && check_for_spell(p_ptr, "VENGEANCE")) { r_ptr->flags0 |= RF0_DISPEL; magflag = TRUE; }
+	//EMPOWERMENT is auto-applied via stat changes
+	//INTENSIFY is prevented by NO_REDUCE, handled by auto-application of mana resist, crit is handled with other crit stuff (via xtra_crit).
+	if (magflag) magicness++;
 #else
 	if (get_skill(p_ptr, SKILL_ASTRAL) >= thresh_spell) {
 		switch (p_ptr->ptrait) {
