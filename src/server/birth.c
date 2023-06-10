@@ -3512,6 +3512,11 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	p_ptr->male = (sex & MODE_MALE) ? 1 : 0;
 	p_ptr->prace = race;
 	p_ptr->pclass = class;
+#ifdef ENABLE_SUBCLASS
+	p_ptr->sclass = 0; // set to 0 until selectable by c-birth.c - Kurzel
+#else
+  p_ptr->oops = 0; // implicit default prior to ENABLE_SUBCLASS ?? - Kurzel
+#endif
 	p_ptr->ptrait = trait;
 	p_ptr->align_good = 0x7fff;	/* start neutral */
 	p_ptr->align_law = 0x7fff;

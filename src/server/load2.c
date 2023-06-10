@@ -1707,6 +1707,11 @@ static bool rd_extra(int Ind) {
 	if (older_than(4, 4, 28) && p_ptr->prace >= RACE_KOBOLD) p_ptr->prace++;
 #endif
 	rd_byte(&p_ptr->pclass);
+#ifdef ENABLE_SUBCLASS
+  if (!older_than(4, 9, 1)) rd_byte(&p_ptr->sclass);
+#else
+  if (!older_than(4, 9, 1)) rd_byte(&p_ptr->oops)
+#endif
 	if (!older_than(4, 4, 11)) rd_byte(&p_ptr->ptrait);
 	if (older_than(4, 3, 5)) { /* class order changed: warrior now first class, so newbies won't choose adventurer */
 		if (p_ptr->pclass == CLASS_WARRIOR) p_ptr->pclass = CLASS_ADVENTURER;

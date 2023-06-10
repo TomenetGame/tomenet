@@ -4209,15 +4209,31 @@ void do_cmd_look(int Ind, int dir) {
 
 		/* Format string */
 		if ((q_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (q_ptr->inventory[INVEN_BODY].sval == SV_COSTUME)) {
+#ifdef ENABLE_SUBCLASS_TITLE
+			snprintf(out_val, sizeof(out_val), "\377%c%s the %s (%s %s)%s", attr, q_ptr->name, r_name + r_info[q_ptr->inventory[INVEN_BODY].bpval].name, get_ptitle(q_ptr, FALSE), get_ptitle2(q_ptr, FALSE), extrainfo);
+#else
 			snprintf(out_val, sizeof(out_val), "\377%c%s the %s (%s)%s", attr, q_ptr->name, r_name + r_info[q_ptr->inventory[INVEN_BODY].bpval].name, get_ptitle(q_ptr, FALSE), extrainfo);
+#endif
 		} else if (q_ptr->body_monster) {
+#ifdef ENABLE_SUBCLASS_TITLE
+			snprintf(out_val, sizeof(out_val), "\377%c%s the %s (%s %s)%s", attr, q_ptr->name, r_name + r_info[q_ptr->body_monster].name, get_ptitle(q_ptr, FALSE), get_ptitle2(q_ptr, FALSE), extrainfo);
+#else
 			snprintf(out_val, sizeof(out_val), "\377%c%s the %s (%s)%s", attr, q_ptr->name, r_name + r_info[q_ptr->body_monster].name, get_ptitle(q_ptr, FALSE), extrainfo);
+#endif
 		} else {
 #if 0 /* use normal race_info.title */
+ #ifdef ENABLE_SUBCLASS_TITLE
+			snprintf(out_val, sizeof(out_val), "\377%c%s the %s %s %s%s", attr, q_ptr->name, race_info[q_ptr->prace].title, get_ptitle(q_ptr, FALSE), get_ptitle2(q_ptr, FALSE), extrainfo);
+ #else
 			snprintf(out_val, sizeof(out_val), "\377%c%s the %s %s%s", attr, q_ptr->name, race_info[q_ptr->prace].title, get_ptitle(q_ptr, FALSE), extrainfo);
+ #endif
 			//, class_info[q_ptr->pclass].title
 #else /* use special_prace_lookup */
+ #ifdef ENABLE_SUBCLASS_TITLE
+			snprintf(out_val, sizeof(out_val), "\377%c%s the %s%s %s%s", attr, q_ptr->name, get_prace2(q_ptr), get_ptitle(q_ptr, FALSE), get_ptitle2(q_ptr, FALSE), extrainfo);
+ #else
 			snprintf(out_val, sizeof(out_val), "\377%c%s the %s%s%s", attr, q_ptr->name, get_prace2(q_ptr), get_ptitle(q_ptr, FALSE), extrainfo);
+ #endif
 #endif
 		}
 	/* A monster */

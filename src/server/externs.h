@@ -2146,6 +2146,9 @@ extern void limit_energy(player_type *p_ptr);
 extern cptr get_prace(player_type *p_ptr);
 extern cptr get_prace2(player_type *p_ptr);
 extern cptr get_ptitle(player_type *p_ptr, bool short_form);
+#ifdef ENABLE_SUBCLASS_TITLE
+extern cptr get_ptitle2(player_type *p_ptr, bool short_form);
+#endif
 
 #ifdef DUNGEON_VISIT_BONUS
 extern void reindex_dungeons();
@@ -2395,6 +2398,9 @@ extern void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i);
 extern s16b find_skill(cptr name);
 extern void msg_gained_abilities(int Ind, int old_value, int i);
 extern void respec_skill(int Ind, int i, bool update_skill, bool polymorph);
+#ifdef ENABLE_SUBCLASS
+extern void subclass_skills(int Ind, int class);
+#endif
 extern void respec_skills(int Ind, bool update_skills);
 extern int invested_skill_points(int Ind, int i);
 extern void fruit_bat_skills(player_type *p_ptr);

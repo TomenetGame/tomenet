@@ -1124,6 +1124,59 @@ void respec_skill(int Ind, int i, bool update_skill, bool polymorph) {
 	p_ptr->reskill_possible |= RESKILL_F_UNDO;
 }
 
+#ifdef ENABLE_SUBCLASS
+/* Subclass - Average new class ratios with existing class ratios. - Kurzel */
+void subclass_skills(int Ind, int class) {
+	player_type *p_ptr = Players[Ind];
+	int class0 = p_ptr->pclass; // original
+	int i;
+	s32b v, m; /* base starting skill value, skill modifier */
+
+	/* Average existing ratios with new class ratios; that's all! */
+	/* Apply 2/3 instead of 1/2 ratio per class, balancing +100% XP penalty.
+		 This will make much more viable combinations than adventurers! - Kurzel
+		 Just 50% from each class was about equivalent to adventurer ratios. */
+	/* Double racial mods by compute_skills() twice? Seems fine! MOAR RACE */
+  /* +200% XP penalty is better aligned with Maia at 400%, also...
+		 Doubling maia initial race mods means 49% skills for sub-class maia!
+		 This provides a competitive skill boost option for the lesser races. */
+	/* Perhaps disable Maia, dual/multiclass history seems to forbid high XP. */
+
+	// Reset mods
+	for (i = 0; i < MAX_SKILLS; i++) {
+		v = 0; m = 0;
+		compute_skills(p_ptr, &v, &m, i);
+		p_ptr->s_info[i].mod = m;
+	}
+
+	// Subclass!
+	if (p_ptr->pclass != class)
+		for (i = 0; i < MAX_SKILLS; i++) {
+			// 1st Class
+			v = 0; m = 0;
+			compute_skills(p_ptr, &v, &m, i);
+			p_ptr->s_info[i].mod = m;
+			// 2nd Class
+			v = 0; m = 0;
+			p_ptr->pclass = class;
+			p_ptr->cp_ptr = &class_info[p_ptr->pclass];
+			compute_skills(p_ptr, &v, &m, i);
+			p_ptr->s_info[i].mod += m;
+			p_ptr->pclass = class0;
+			p_ptr->cp_ptr = &class_info[p_ptr->pclass];
+			// Weight
+			p_ptr->s_info[i].mod *= 2;
+			p_ptr->s_info[i].mod /= 3;
+		}
+
+	// Don't forget batties. <_<
+	if (p_ptr->fruit_bat == 1) fruit_bat_skills(p_ptr);
+
+	/* Update the client */
+	for (i = 0; i < MAX_SKILLS; i++) Send_skill_info(Ind, i, FALSE);
+}
+#endif
+
 /* Complete skill-chart reset (full respec) - C. Blue
    update_skill: Change base value and base mod to up-to-date values. */
 void respec_skills(int Ind, bool update_skills) {
@@ -1146,6 +1199,11 @@ void respec_skills(int Ind, bool update_skills) {
 		}
 	}
 	if (p_ptr->fruit_bat == 1) fruit_bat_skills(p_ptr);
+
+#ifdef ENABLE_SUBCLASS
+	if (p_ptr->sclass) subclass_skills(Ind, (p_ptr->sclass-1));
+#endif
+
 	/* Update the client */
 	for (i = 0; i < MAX_SKILLS; i++) Send_skill_info(Ind, i, FALSE);
 

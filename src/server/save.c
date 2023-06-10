@@ -716,6 +716,11 @@ static void wr_extra(int Ind) {
 	/* Race/Class/Gender/Party */
 	wr_byte(p_ptr->prace);
 	wr_byte(p_ptr->pclass);
+#ifdef ENABLE_SUBCLASS
+	wr_byte(p_ptr->sclass);
+#else
+	wr_byte(0); // p_ptr->oops
+#endif
 	wr_byte(p_ptr->ptrait);
 	wr_byte(p_ptr->male);
 	wr_u16b(p_ptr->party); /* changed to u16b to allow more parties - mikaelh */

@@ -2089,12 +2089,20 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 static byte player_color(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	//monster_race *r_ptr = &r_info[p_ptr->body_monster];
+#ifdef ENABLE_SUBCLASS_COLOR
+	byte pcolor = (p_ptr->sclass && magik(33)) ? p_ptr->sclass-1 : p_ptr->pclass;
+#else
 	byte pcolor = p_ptr->pclass;
+#endif
 	char32_t dummy;
 	cave_type **zcave = getcave(&p_ptr->wpos);
 	cave_type *c_ptr;
 
+#ifdef ENABLE_SUBCLASS_COLOR
+	pcolor = class_info[pcolor].color;
+#else
 	pcolor = p_ptr->cp_ptr->color;
+#endif
 
 	/* Check that zcave isn't NULL - mikaelh */
 	if (!zcave) {

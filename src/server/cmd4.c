@@ -682,6 +682,9 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 	player_type *p_ptr = Players[Ind];
 	int modify_number = 0, compaction = (p_ptr->player_list ? 2 : 0) + (p_ptr->player_list2 ? 1 : 0);
 	cptr p = "";
+#ifdef ENABLE_SUBCLASS_TITLE
+	cptr p2 = "";
+#endif
 	char info_chars[4];
 	bool text_pk = FALSE, text_silent = FALSE, text_afk = FALSE, text_ignoring_chat = FALSE, text_allow_dm_chat = FALSE;
 	bool iddc = in_irondeepdive(&q_ptr->wpos) || (q_ptr->mode & MODE_DED_IDDC);
@@ -737,6 +740,9 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 
 	/* Prepare title at this point already */
 	p = get_ptitle(q_ptr, FALSE);
+#ifdef ENABLE_SUBCLASS_TITLE
+	p2 = get_ptitle2(q_ptr, FALSE);
+#endif
 
 	if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 		if (compaction != 2) { /* #ifndef COMPACT_ALT */
@@ -760,7 +766,11 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 
 			fprintf(fff, "%s, %sL%d \377%c", q_ptr->name, attr_p, q_ptr->lev, attr);
 
+#ifdef ENABLE_SUBCLASS_TITLE
+			fprintf(fff, "%s%s %s", get_prace2(q_ptr), p, p2);
+#else
 			fprintf(fff, "%s%s", get_prace2(q_ptr),  p);
+#endif
 
 			/* PK */
 			if (cfg.use_pk_rules == PK_RULES_DECLARE) {
@@ -896,7 +906,11 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 			fprintf(fff, "%s, %sL%d\377%c %s ", q_ptr->name, attr_p, q_ptr->lev, attr, q_ptr->male ? "Male" : "Female");
   #endif
 
+#ifdef ENABLE_SUBCLASS_TITLE
+			fprintf(fff, "%s%s %s", get_prace2(q_ptr), p, p2);
+#else
 			fprintf(fff, "%s%s", get_prace2(q_ptr),  p);
+#endif
 
 			/* PK */
 			if (cfg.use_pk_rules == PK_RULES_DECLARE) {
@@ -1026,6 +1040,9 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 
 			fprintf(fff, "%s", get_prace2(q_ptr));
 			fprintf(fff, "%s", class_info[q_ptr->pclass].title);
+#ifdef ENABLE_SUBCLASS_TITLE
+			if (q_ptr->sclass != MAX_CLASS) fprintf(fff, "%s", class_info[q_ptr->sclass].title);
+#endif
 
 			/* location */
 			if (attr == 'G' || attr == 'B' || admin
@@ -1273,7 +1290,11 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 				else fprintf(fff, "Swordswoman ");
 				break; //Judge for Highlander games
 			default:
-				fprintf(fff, "%s", class_info[q_ptr->pclass].title); break;
+				fprintf(fff, "%s", class_info[q_ptr->pclass].title);
+#ifdef ENABLE_SUBCLASS_TITLE
+				if (q_ptr->sclass != MAX_CLASS) fprintf(fff, "%s", class_info[q_ptr->sclass].title);
+#endif
+        break;
 			}
 
 			if (q_ptr->mode & MODE_PVP) fprintf(fff, " Gladiator");
@@ -1305,7 +1326,11 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
     #else
 			fprintf(fff, "  %s the ", q_ptr->name);
     #endif
+    #ifdef ENABLE_SUBCLASS_TITLE
+			fprintf(fff, "%s%s %s", get_prace2(q_ptr), p, p2);
+    #else
 			fprintf(fff, "%s%s", get_prace2(q_ptr),  p);
+    #endif
    #endif
 			if (q_ptr->mode & MODE_PVP) fprintf(fff, " Gladiator");
 
@@ -1981,6 +2006,9 @@ void write_player_info(int Ind, char *pinfo) {
 
 	/* Prepare title at this point already */
 	p = get_ptitle(q_ptr, FALSE);
+#ifdef ENABLE_SUBCLASS_TITLE
+	p2 = get_ptitle2(q_ptr, FALSE);
+#endif
 
 	char flag_str[12];
 
@@ -2000,6 +2028,9 @@ void write_player_info(int Ind, char *pinfo) {
 
 	fprintf(fff, "%s", get_prace2(q_ptr));
 	fprintf(fff, "%s", class_info[q_ptr->pclass].title);
+#ifdef ENABLE_SUBCLASS_TITLE
+	if (q_ptr->sclass != MAX_CLASS) fprintf(fff, "%s", class_info[q_ptr->sclass].title);
+#endif
 
 	/* location */
 	if (attr == 'G' || attr == 'B' || admin

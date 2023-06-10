@@ -4285,6 +4285,79 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			restore_estate(Ind);
 			return;
 		}
+#ifdef ENABLE_SUBCLASS
+		/* kurzel.dev EXPERIMENTAL #1 - Subclassing! (Weight skill modifiers.) */
+		else if (prefix(messagelc, "/subclass") || prefix(messagelc, "/sc")) {
+			int class; // p_ptr->pclass;
+			if (!tk) {
+				msg_print(Ind, "\377oThis command combines your class skill ratios with those of a second class!");
+				msg_print(Ind, "\377oUse this command only before gaining experience, to assess your options.");
+				msg_print(Ind, "\377oSelecting your original class will reset any changes to your skill ratios.");
+				msg_print(Ind,  "\377oUsage:    /subclass <class-name>");
+				msg_format(Ind, "\377oExample:  /subclass warrior");
+				msg_format(Ind, "\377oExample:  /subclass istar");
+				msg_print(Ind, "\377RWARNING: The experience penalty for subclassing is +200%!");
+				msg_print(Ind, "\377RWARNING: Each class contributes 2/3 of their skill ratios.");
+				msg_print(Ind, "\377RWARNING: Race mods are doubled! Maia cannot subclass.");
+				msg_print(Ind, "\377xBETA: Your account must be very-privileged to test this feature!");
+				return;
+			}
+
+			if (p_ptr->privileged < 2) { // Extra-restricted for testing on main?
+				msg_print(Ind, "\377yYou must attain more privileges to test this feature!");
+				return;
+			}
+
+			if (p_ptr->prace == RACE_MAIA) {
+				msg_print(Ind, "\377yMaia cannot train a subclass!");
+				return;
+			}
+
+			if (!strcmp(message3, "warrior")) class = CLASS_WARRIOR;
+			else if (!strcmp(message3, "istar")) class = CLASS_MAGE;
+			else if (!strcmp(message3, "priest")) class = CLASS_PRIEST;
+			else if (!strcmp(message3, "rogue")) class = CLASS_ROGUE;
+			else if (!strcmp(message3, "mimic")) class = CLASS_MIMIC;
+			else if (!strcmp(message3, "archer")) class = CLASS_ARCHER;
+			else if (!strcmp(message3, "paladin")) class = CLASS_PALADIN;
+			else if (!strcmp(message3, "ranger")) class = CLASS_RANGER;
+			else if (!strcmp(message3, "adventurer")) class = CLASS_ADVENTURER;
+			else if (!strcmp(message3, "druid")) class = CLASS_DRUID;
+			else if (!strcmp(message3, "shaman")) class = CLASS_SHAMAN;
+			else if (!strcmp(message3, "runemaster")) class = CLASS_RUNEMASTER;
+			else if (!strcmp(message3, "mindcrafter")) class = CLASS_MINDCRAFTER;
+			else {
+				msg_print(Ind, "\377yYou entered an invalid class, please try again.");
+				return;
+			}
+
+			if (!(p_ptr->rp_ptr->choice & BITS(class))) {
+				msg_print(Ind, "\377yYour race is not compatible with that class!");
+				return;
+			}
+
+			if (p_ptr->max_exp || p_ptr->max_plv > 1) {
+				msg_print(Ind, "\377yYou must subclass before gaining experience!");
+				return;
+			}
+
+			// Subclass!
+			subclass_skills(Ind, class); // 50% -> *2/3
+			p_ptr->expfact = p_ptr->rp_ptr->r_exp * (100 + p_ptr->cp_ptr->c_exp) / 100;
+			if (p_ptr->pclass == class)	{
+				msg_print(Ind, "\377yResetting skill ratios to your original class.");
+			} else {
+				// p_ptr->expfact += 100; // +100% (worthy penalty for +33% skills?)
+				p_ptr->expfact += 200; // +200% to be in-line with Maia at +400%
+        p_ptr->sclass = class + 1; // 0 = pre-existing default (oops) - Kurzel
+				msg_print(Ind, "\377ySubclass successful.");
+			}
+
+			p_ptr->redraw |= PR_SKILLS | PR_MISC;
+			p_ptr->update |= PU_SKILL_INFO | PU_SKILL_MOD;
+			return;
+		}
+#endif
 		/* Specialty: Convert current character into a 'slot-exclusive' character if possible */
 		else if (prefix(messagelc, "/convertexclusive")) {
 			int ok, err_Ind;

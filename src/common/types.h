@@ -2581,8 +2581,12 @@ struct player_type {
 	byte pclass;			/* Class index */
 	byte ptrait;
 	byte male;			/* Sex of character */
+#ifdef ENABLE_SUBCLASS
+	byte sclass;			/* Secondary class index - Kurzel */
+#else
 //FREE
 	byte oops;			/* Unused */
+#endif
 
 	skill_player s_info[MAX_SKILLS]; /* Player skills */
 	s16b skill_points;		/* number of skills assignable */
