@@ -177,6 +177,8 @@ bool test_hit_melee(int chance, int ac, int vis) {
 
 /* Check for rogueish melee skills eligibility, that is Critical-Strike and Backstabbing. Note that polearms are now allowed as a specialty (experimental). */
 #define rogue_armed_melee(o_ptr, p_ptr)	(((o_ptr)->tval == TV_SWORD || (o_ptr)->tval == TV_POLEARM) && (o_ptr)->weight <= 100 && !((p_ptr)->rogue_heavyarmor))
+#define rogue_armed_melee_any(p_ptr)	((is_melee_weapon((p_ptr)->inventory[INVEN_WIELD]) && rogue_armed_melee(&(p_ptr)->inventory[INVEN_WIELD])) || \
+					(is_melee_weapon((p_ptr)->inventory[INVEN_ARM]) && rogue_armed_melee(&(p_ptr)->inventory[INVEN_ARM])))
 
 /*
  * Critical hits (from objects thrown by player)
@@ -3587,10 +3589,10 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				with light weapons, which have low dice. So for gain
 				we need the full damage including all to-dam boni */
 #ifdef CRIT_UNBRANDED
-				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k - k2, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(Ind, o_ptr), TRUE);
+				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k - k2, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(o_ptr), TRUE);
 				k3 += k2;
 #else
-				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(Ind, o_ptr), TRUE);
+				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(o_ptr), TRUE);
 #endif
 				k2 = k; /* remember damage before crit */
 #ifdef CRIT_VS_BACKSTAB
@@ -4782,10 +4784,10 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				with light weapons, which have low dice. So for gain
 				we need the full damage including all to-dam boni */
 #ifdef CRIT_UNBRANDED
-				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k - k2, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(Ind, o_ptr), TRUE);
+				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k - k2, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(o_ptr), TRUE);
 				k3 += k2;
 #else
-				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(Ind, o_ptr), TRUE);
+				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(o_ptr), TRUE);
 #endif
 #ifdef CRIT_VS_VORPAL
 				k2 = k; /* remember damage before crit */
