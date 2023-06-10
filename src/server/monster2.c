@@ -6152,6 +6152,7 @@ void p2mon_update_base_aux(monster_race *r_ptr, int *magicness, int tval, int sv
 		break;
 	}
 }
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
 static bool check_for_spell(player_type *p_ptr, cptr spell_name) {
 	int s = exec_lua(p_ptr->Ind, format("return %s", spell_name));
 	int i;
@@ -6159,19 +6160,16 @@ static bool check_for_spell(player_type *p_ptr, cptr spell_name) {
 
 	/* Error - spell doesn't exist in the game (anymore?)! */
 	if (s < 0) {
+		s_printf("check_for_spell(): ERROR! Spell '%s' not in game.\n", spell_name);
 		return(FALSE);
 	}
 
 	/* We are not eligible for this spell anyway, even if we had it with us? */
-	if (!exec_lua(p_ptr->Ind, format("return is_ok_spell(%d, %d)", p_ptr->Ind, s))) {
-		return(FALSE);
-	}
+	if (!exec_lua(p_ptr->Ind, format("return is_ok_spell(%d, %d)", p_ptr->Ind, s))) return(FALSE);
 
 	for (i = 0; i < INVEN_PACK; i++) {
 		o_ptr = &p_ptr->inventory[i];
-		if (!o_ptr->tval) {
-			return(FALSE);
-		}
+		if (!o_ptr->tval) return(FALSE);
 
 		if (o_ptr->tval != TV_BOOK) continue;
 
@@ -6186,6 +6184,7 @@ static bool check_for_spell(player_type *p_ptr, cptr spell_name) {
 
 	return(FALSE);
 }
+#endif
 void py2mon_update_base(monster_type *m_ptr, player_type *p_ptr) {
 	monster_race *r_ptr = &r_info[RI_MIRROR];
 	int i, k, m, n, magicness = 0;
@@ -6197,6 +6196,9 @@ void py2mon_update_base(monster_type *m_ptr, player_type *p_ptr) {
 #endif
 	int tval, sval;
 	bool manaheal = FALSE;
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	bool magflag;
+#endif
 
 	/* Who knows the silylness.. */
 	m_ptr->level = r_ptr->level = p_ptr->max_plv;
@@ -6476,20 +6478,31 @@ else s_printf("\n");
 	/* Separate minor spells, they result in just fire bolt instead of fire ball */
 	else if (check_for_spell(p_ptr, "FIREBOLT_I") || check_for_spell(p_ptr, "FIREBOLT_II") || check_for_spell(p_ptr, "FIREBOLT_III") ||
 	    check_for_spell(p_ptr, "FIREWALL_I") || check_for_spell(p_ptr, "FIREWALL_II") ||
-	    check_for_spell(p_ptr, "GLOBELIGHT_II"))
+	    check_for_spell(p_ptr, "GLOBELIGHT_II")) //there is no BO_LITE or BA_LITE actually..
 		{ r_ptr->flags5 |= RF5_BO_FIRE; magicness++; }
 #else
 	if (get_skill(p_ptr, SKILL_FIRE) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_FIRE; magicness++; } //weakness: not holy fire unlike Fireflash!
 #endif
 
-#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	magflag = FALSE;
+	if (check_for_spell(p_ptr, "THUNDERSTORM")) { r_ptr->flags5 |= RF5_BA_ELEC; magflag = TRUE; }
+	else if (check_for_spell(p_ptr, "LIGHTNINGBOLT_I") || check_for_spell(p_ptr, "LIGHTNINGBOLT_II") || check_for_spell(p_ptr, "LIGHTNINGBOLT_III")) { r_ptr->flags5 |= RF5_BO_ELEC; magflag = TRUE; }
+	if (check_for_spell(p_ptr, "NOXIOUSCLOUD_I") || check_for_spell(p_ptr, "NOXIOUSCLOUD_II") || check_for_spell(p_ptr, "NOXIOUSCLOUD_III")) { r_ptr->flags5 |= RF5_BA_POIS; magflag = TRUE; }
+	if (magflag) magicness++;
 #else
 	if (get_skill(p_ptr, SKILL_AIR) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_POIS | RF5_BO_ELEC; magicness++; }
 #endif
 
-#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	magflag = FALSE;
+	if (check_for_spell(p_ptr, "ICESTORM_I") || check_for_spell(p_ptr, "ICESTORM_II")) { r_ptr->flags5 |= RF5_BA_COLD; magflag = TRUE; }
+	else if (check_for_spell(p_ptr, "FROSTBALL_I") || check_for_spell(p_ptr, "FROSTBALL_II")) { r_ptr->flags5 |= RF5_BA_COLD; magflag = TRUE; }
+	else if (check_for_spell(p_ptr, "FROSTBOLT_I") || check_for_spell(p_ptr, "FROSTBOLT_II") || check_for_spell(p_ptr, "FROSTBOLT_III")) { r_ptr->flags5 |= RF5_BO_COLD; magflag = TRUE; }
+	if (check_for_spell(p_ptr, "VAPOR_I") || check_for_spell(p_ptr, "VAPOR_II") || check_for_spell(p_ptr, "VAPOR_III")) { r_ptr->flags5 |= RF5_BA_WATE; magflag = TRUE; }
+	else if (check_for_spell(p_ptr, "TIDALWAVE_I") || check_for_spell(p_ptr, "TIDALWAVE_II")) { r_ptr->flags5 |= RF5_BA_WATE; magflag = TRUE; }
+	else if (check_for_spell(p_ptr, "WATERBOLT_I") || check_for_spell(p_ptr, "WATERBOLT_II") || check_for_spell(p_ptr, "WATERBOLT_III")) { r_ptr->flags5 |= RF5_BO_WATE; magflag = TRUE; }
+	if (magflag) magicness++;
 #else
 	if (get_skill(p_ptr, SKILL_WATER) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_COLD | RF5_BO_WATE; magicness++; }
 #endif
