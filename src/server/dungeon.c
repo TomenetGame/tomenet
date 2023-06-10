@@ -1871,12 +1871,12 @@ static void regen_monsters(void) {
 
 #ifdef TROLL_REGENERATION
 			/* Experimental - Trolls are super-regenerators (hard-coded) */
-			if (m_ptr->r_idx == RI_HALF_TROLL) frac *= 3;
-			else if (r_ptr->d_char == 'T') frac *= 4;
+			if (m_ptr->r_idx == RI_HALF_TROLL || (r_ptr->flags2 & RF2_REGENERATE_T2)) frac *= 3;
+			else if (r_ptr->d_char == 'T' || (r_ptr->flags2 & RF2_REGENERATE_TH)) frac *= 4;
 			else
 #endif
 #ifdef HYDRA_REGENERATION
-			if (r_ptr->d_char == 'M') frac *= 4;
+			if (r_ptr->d_char == 'M' || (r_ptr->flags2 & RF2_REGENERATE_TH)) frac *= 4;
 			else
 #endif
 			/* Hack -- Some monsters regenerate quickly */

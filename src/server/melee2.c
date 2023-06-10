@@ -407,6 +407,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *
 		if (int_outof(r_ptr, 100)) f4 &= ~RF4_BR_FIRE;
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_BA_FIRE;
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_BO_FIRE;
+		if (int_outof(r_ptr, 50)) f0 &= ~RF0_BA_HELLFIRE;
  #ifdef SMART_COMPOUND_ELEMENTS
 		if (int_outof(r_ptr, 50)) f4 &= ~RF4_BR_PLAS;
 		if (int_outof(r_ptr, 50)) f5 &= ~RF5_BO_PLAS;
@@ -415,6 +416,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *
 		if (int_outof(r_ptr, 80)) f4 &= ~RF4_BR_FIRE;
 		if (int_outof(r_ptr, 80)) f5 &= ~RF5_BA_FIRE;
 		if (int_outof(r_ptr, 80)) f5 &= ~RF5_BO_FIRE;
+		if (int_outof(r_ptr, 20)) f0 &= ~RF0_BA_HELLFIRE;
  #ifdef SMART_COMPOUND_ELEMENTS
 		if (int_outof(r_ptr, 35)) f4 &= ~RF4_BR_PLAS;
 		if (int_outof(r_ptr, 35)) f5 &= ~RF5_BO_PLAS;
@@ -423,6 +425,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *
 		if (int_outof(r_ptr, 30)) f4 &= ~RF4_BR_FIRE;
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BA_FIRE;
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BO_FIRE;
+		if (int_outof(r_ptr, 35)) f0 &= ~RF0_BA_HELLFIRE;
  #ifdef SMART_COMPOUND_ELEMENTS
 		if (int_outof(r_ptr, 20)) f4 &= ~RF4_BR_PLAS;
 		if (int_outof(r_ptr, 20)) f5 &= ~RF5_BO_PLAS;
@@ -489,6 +492,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *
 	}
 	if (smart & SM_RES_LITE) {
 		if (int_outof(r_ptr, 50)) f4 &= ~RF4_BR_LITE;
+		if (int_outof(r_ptr, 50)) f0 &= ~RF0_BA_LITE;
 	}
 	if (smart & SM_RES_DARK) {
 		if (int_outof(r_ptr, 50)) f4 &= ~RF4_BR_DARK;
@@ -3871,6 +3875,36 @@ bool make_attack_spell(int Ind, int m_idx) {
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes water for", m_name);
 		breath(Ind, m_idx, GF_WATER, ((eff_m_hp / 5) > 300 ? 300 : (eff_m_hp / 5)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_WATER);
+		break;
+
+	/* RF0_BA_LITE */
+	case RF0_OFFSET + 23:
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a light ball of", m_name);
+		ball(Ind, m_idx, GF_LITE, (10 + damroll(6, 10) + rlev), y, x, srad);
+		update_smart_learn(Ind, m_idx, DRS_LITE);
+		break;
+
+	/* RF0_BO_WALL */
+	case RF0_OFFSET + 24:
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a force bolt of", m_name);
+		bolt(Ind, m_idx, GF_FORCE, 25 + damroll(4, 5) + (rlev * 2) / 2, SFX_BOLT_MAGIC);
+		//update_smart_learn(Ind, m_idx, DRS_SOUND); --not exactly it
+		break;
+
+	/* RF0_BA_HELLFIRE */
+	case RF0_OFFSET + 25:
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts hellfire of", m_name);
+		ball(Ind, m_idx, GF_HELLFIRE, (70 + damroll(10, 10) + rlev * 2), y, x, srad);
+		//update_smart_learn(Ind, m_idx, DRS_HELLFIRE); -- doesn't exist
 		break;
 
 	default:

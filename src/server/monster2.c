@@ -6349,7 +6349,8 @@ else s_printf("\n");
 	if (p_ptr->resist_sound) r_ptr->flags3 |= RF3_NO_STUN; //hmm
 #else
 	/* Just give it, because the monster won't heal in time to recover from k.o.
-	   Unfair advantage though: MA users can get stunned from kicks and punches. */
+	   Unfair advantage though: MA users can get stunned from kicks and punches.
+	   This also makes mirroring school spells that gives stun status effects obsolete (Udun, Mindcraft) */
 	r_ptr->flags3 |= RF3_NO_STUN;
 #endif
 
@@ -6478,8 +6479,8 @@ else s_printf("\n");
 	/* Separate minor spells, they result in just fire bolt instead of fire ball */
 	else if (check_for_spell(p_ptr, "FIREBOLT_I") || check_for_spell(p_ptr, "FIREBOLT_II") || check_for_spell(p_ptr, "FIREBOLT_III") ||
 	    check_for_spell(p_ptr, "FIREWALL_I") || check_for_spell(p_ptr, "FIREWALL_II") ||
-	    check_for_spell(p_ptr, "GLOBELIGHT_II")) //there is no BO_LITE or BA_LITE actually..
-		{ r_ptr->flags5 |= RF5_BO_FIRE; magicness++; }
+	    check_for_spell(p_ptr, "GLOBELIGHT_II"))
+		{ r_ptr->flags0 |= RF0_BA_LITE; magicness++; }
 #else
 	if (get_skill(p_ptr, SKILL_FIRE) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_FIRE; magicness++; } //weakness: not holy fire unlike Fireflash!
 #endif
@@ -6507,29 +6508,43 @@ else s_printf("\n");
 	if (get_skill(p_ptr, SKILL_WATER) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_COLD | RF5_BO_WATE; magicness++; }
 #endif
 
-#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	magflag = FALSE;
+	if (check_for_spell(p_ptr, "ACIDBOLT_I") || check_for_spell(p_ptr, "ACIDBOLT_II") || check_for_spell(p_ptr, "ACIDBOLT_III")) { r_ptr->flags5 |= RF5_BO_ACID; magflag = TRUE; }
+	if (check_for_spell(p_ptr, "STRIKE_I") || check_for_spell(p_ptr, "STRIKE_II")) { r_ptr->flags0 |= RF0_BO_WALL; magflag = TRUE; }
+	if (magflag) magicness++;
 #else
 	if (get_skill(p_ptr, SKILL_EARTH) >= thresh_spell) { r_ptr->flags5 |= RF5_BO_ACID; magicness++; }
 #endif
 
-#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	magflag = FALSE;
+	if (check_for_spell(p_ptr, "DISEBOLT")) { r_ptr->flags0 |= RF0_BO_DISE; magflag = TRUE; }// | RF0_BA_DISE?
+	if (check_for_spell(p_ptr, "HELLFIRE_I") || check_for_spell(p_ptr, "HELLFIRE_II")) { r_ptr->flags0 |= RF0_BA_HELLFIRE; magflag = TRUE; }
+	if (magflag) magicness++;
 #else
-	if (get_skill(p_ptr, SKILL_UDUN) >= thresh_spell) { r_ptr->flags0 |= RF0_BO_DISE | RF0_BA_DISE; magicness++; } //beam+hellfire
+	if (get_skill(p_ptr, SKILL_UDUN) >= thresh_spell) { r_ptr->flags0 |= RF0_BO_DISE | RF0_BA_HELLFIRE; magicness++; } //beam+hellfire
 #endif
 
 	//if (get_skill(p_ptr, SKILL_MIND)) { r_ptr->flags |= RF__; magicness++; } -- nothing except confuse
 	//if (get_skill(p_ptr, SKILL_DIVINATION)) { r_ptr->flags |= RF__; magicness++; } -- nothing here
 
-#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	magflag = FALSE;
+	if (check_for_spell(p_ptr, "BLINK")) { r_ptr->flags6 |= RF6_BLINK; magflag = TRUE; }
+	if (check_for_spell(p_ptr, "TELEPORT")) { r_ptr->flags6 |= RF6_TPORT; magflag = TRUE; }
+	if (magflag) magicness++;
 #else
 	if (get_skill(p_ptr, SKILL_CONVEYANCE) >= thresh_spell) { r_ptr->flags6 |= RF6_BLINK | RF6_TPORT; magicness++; }
 #endif
 
-#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "RECOVERY_I") || check_for_spell(p_ptr, "RECOVERY_II")) { r_ptr->flags3 |= RF3_NO_CONF | RF3_NO_STUN; r_ptr->flags9 |= RF9_RES_POIS; }
+	if (check_for_spell(p_ptr, "REGENERATION")) { r_ptr->flags2 |= RF2_REGENERATE; }
+	if (check_for_spell(p_ptr, "RESISTS_II")) { r_ptr->flags9 |= RF9_RES_FIRE | RF9_RES_COLD | RF9_RES_ACID | RF9_RES_ELEC; }
+	else if (check_for_spell(p_ptr, "RESISTS_I")) { r_ptr->flags9 |= RF9_RES_FIRE | RF9_RES_COLD; }
+	if (check_for_spell(p_ptr, "HEALING_I") || check_for_spell(p_ptr, "HEALING_II") || check_for_spell(p_ptr, "HEALING_III")) { r_ptr->flags6 |= RF6_HEAL; magicness++; }
+	if (check_for_spell(p_ptr, "THUNDERSTORM")) { r_ptr->flags5 |= RF5_BA_ELEC; magicness++; }
 #else
 	if (get_skill(p_ptr, SKILL_NATURE) >= thresh_spell) {
 		r_ptr->flags6 |= RF6_HEAL; magicness++;
@@ -6538,9 +6553,9 @@ else s_printf("\n");
 #endif
 
 #ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	/* uuhhhh not gonna check for every frigging spell here, probably :p Just using the thresh_spell check below instead. */
-	//if (check_for_spell(p_ptr, "")) {}....
-#endif
+	/* uuhhhh not gonna check for every frigging spell here, probably :p Just re-use the simple thresh_spell check... */
+	//if (check_for_spell(p_ptr, "every-frigging-spell-for-sorcery")) {}....
+#else
 	if (get_skill(p_ptr, SKILL_SORCERY) >= thresh_spell) { /* o_o */
 		//r_ptr->flags6 |= RF6_HASTE; magicness++; -- we already copy the max speed flatly
 		r_ptr->flags5 |= RF5_BO_MANA; magicness++;
@@ -6552,6 +6567,7 @@ else s_printf("\n");
 		r_ptr->flags6 |= RF6_BLINK | RF6_TPORT; magicness++;
 		r_ptr->flags6 |= RF6_HEAL; magicness++;
 	}
+#endif
 
 #ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
 	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
@@ -6772,6 +6788,19 @@ else s_printf("\n");
 	if (p_ptr->reduce_insanity >= 2) {
 		/* not restricting for now */
 	}
+
+#ifdef TROLL_REGENERATION
+	/* Experimental - Trolls are super-regenerators (hard-coded) */
+	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'T' && p_ptr->body_monster != RI_HALF_TROLL) r_ptr->flags2 |= RF2_REGENERATE_T2;
+	else if (p_ptr->prace == RACE_HALF_TROLL || p_ptr->body_monster == RI_HALF_TROLL) r_ptr->flags2 |= RF2_REGENERATE_TH;
+	else
+#endif
+#ifdef HYDRA_REGENERATION
+	/* Experimental - Hydras are super-regenerators aka regrowing heads */
+	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'M') r_ptr->flags2 |= RF2_REGENERATE_TH;
+	else
+#endif
+	;
 
 	/* Determine chance to use available spells/items */
 	switch (p_ptr->pclass) {

@@ -5858,8 +5858,8 @@
 #define RF2_BRAIN_4			0x08000000
 #define RF2_BRAIN_5		0x10000000
 #define RF2_BRAIN_6		0x20000000
-#define RF2_BRAIN_7		0x40000000
-#define RF2_BRAIN_8		0x80000000
+#define RF2_REGENERATE_T2	0x40000000	/* Monster has half-troll-like regeneration */
+#define RF2_REGENERATE_TH	0x80000000	/* Monster has troll- or hydra-like regeneration */
 
 /*
  * New monster race bit flags
@@ -6193,6 +6193,9 @@
 #define RF0_ADMINISTRATIVE_PUSH		0x00100000	/* Push back */
 #define RF0_METEOR_SWARM		0x00200000
 #define RF0_ADMINISTRATIVE_HOLD		0x00400000	/* Irresistible paralysis */
+#define RF0_BA_LITE			0x00800000	/* Mirror: Globe of Light */
+#define RF0_BO_WALL		0x01000000		/* Mirror: Strike */
+#define RF0_BA_HELLFIRE		0x02000000		/* Mirror: Hellfire */
 /* !!! NOTE: if you add more flags, adjust RF0_SPELL_MASK accordingly !!! */
 
 #define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT)		/* | RF0_NO_NEST */

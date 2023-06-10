@@ -221,8 +221,8 @@ static cptr r_info_flags2[] = {
 	"BRAIN_4",
 	"BRAIN_5",
 	"BRAIN_6",
-	"BRAIN_7",
-	"BRAIN_8"
+	"REGENERATE_T2",
+	"REGENERATE_TH"
 };
 
 /*
