@@ -4400,7 +4400,7 @@ void do_cmd_look(int Ind, int dir) {
 			name = "signpost \377D(bump to read)\377w";
 
 		if (feat == FEAT_GRAND_MIRROR)
-			name = "A grand mirror stands before you. Your reflection seems to stare at you..";
+			name = "grand mirror stands before you. Your reflection seems to stare at you..";
 
 		/* Message */
 		if (strlen(info)) snprintf(out_val, sizeof(out_val), "%s%s%s (%s)", p1, p2, name, info);
