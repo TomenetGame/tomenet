@@ -9043,6 +9043,7 @@ void player_death(int Ind) {
 			for (i = 0; i <= INVEN_PACK; i++) {
 				o_ptr = &p_ptr->inventory[i];
 				if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_GLASS_SHARD) {
+					msg_format(Ind, "\377o%s shatters...", o_ptr->number != 1 ? "One of your glass shards" : "Your glass shard");
 					inven_item_increase(Ind, i, -1);
 					inven_item_describe(Ind, i);
 					inven_item_optimize(Ind, i);
