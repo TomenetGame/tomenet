@@ -6962,6 +6962,7 @@ void do_cmd_fire(int Ind, int dir) {
 					if (!p_ptr->ammo_brand || (p_ptr->ammo_brand_t != TBRAND_VORP)) break;
 				} else {
 					cave_type *c_ptr = &zcave[y][x];
+
 					q_ptr = Players[0 - c_ptr->m_idx];
 
 					p_ptr->test_attacks++;
@@ -7272,10 +7273,7 @@ void do_cmd_fire(int Ind, int dir) {
 						if (visible) msg_format(Ind, "The %s was deflected.", o_name);
 						num_ricochet = 1;
 						hit_body = 1;
-
-						if (!boomerang && !magic && o_ptr->pval)
-							do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
-
+						if (!boomerang && !magic && o_ptr->pval) do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 						break;
 					}
 
@@ -7292,8 +7290,7 @@ void do_cmd_fire(int Ind, int dir) {
 							msg_print(Ind, hit_desc);
 						}
 						hit_body = 1;
-						if (!boomerang && !magic && o_ptr->pval)
-							do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
+						if (!boomerang && !magic && o_ptr->pval) do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 						break;
 					}
 #endif
