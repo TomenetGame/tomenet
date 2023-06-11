@@ -8282,7 +8282,7 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 	m_ptr->org_maxhp = m_ptr->maxhp;
 
 #ifdef MONSTER_ASTAR
-	if (r_ptr->flags0 & RF0_ASTAR) {
+	if (r_ptr->flagsA & RFA_ASTAR) {
 		/* search for an available A* table to use */
 		for (j = 0; j < ASTAR_MAX_INSTANCES; j++) {
 			/* found an available instance? */

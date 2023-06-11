@@ -1953,6 +1953,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	monster_race	*r_ptr = race_inf(m_ptr);
 	u32b		f1 = r_ptr->flags1, f2 = r_ptr->flags2, f3 = r_ptr->flags3; /* Non-spell flags for other checks (eg unique monster?) */
 	u32b		f4 = r_ptr->flags4, f5 = r_ptr->flags5, f6 = r_ptr->flags6, f7 = r_ptr->flags7, f0 = r_ptr->flags0; /* Flags for actual spell-casting */
+	u32b		fA = r_ptr->flagsA; /* more non-spell flags */
 	//object_type	*o_ptr = &p_ptr->inventory[INVEN_WIELD];
 	char		m_name[MNAME_LEN], m_name_real[MNAME_LEN];
 	char		m_poss[MNAME_LEN];
@@ -2054,7 +2055,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	/* Hack for Tzeentch:
 	   Monsters that have both ASTAR and BLINK will not need to use it for movement purpose other than when ASTAR gets stuck.
 	   The other reason when BLINK is used is for escaping, which means player must be close or in line of sight. */
-	if ((f0 & RF0_ASTAR) && (f6 & RF6_BLINK)
+	if ((fA & RFA_ASTAR) && (f6 & RF6_BLINK)
 	    && distance(y, x, oy, ox) >= ANNOY_DISTANCE - 1 && !los(wpos, y, x, oy, ox))
 		f6 &= ~RF6_BLINK;
 
@@ -4024,6 +4025,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	monster_race	*r_ptr = race_inf(m_ptr);
 	u32b		f1 = r_ptr->flags1, f2 = r_ptr->flags2, f3 = r_ptr->flags3; /* Non-spell flags for other checks (eg unique monster?) */
 	u32b		f4 = r_ptr->flags4, f5 = r_ptr->flags5, f6 = r_ptr->flags6, f7 = r_ptr->flags7, f0 = r_ptr->flags0; /* Flags for actual spell-casting */
+	u32b		fA = r_ptr->flagsA; /* more non-spell flags */
 	//object_type	*o_ptr = &p_ptr->inventory[INVEN_WIELD];
 	char		m_name[MNAME_LEN], m_name_real[MNAME_LEN];
 	char		m_poss[MNAME_LEN];
@@ -4138,7 +4140,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	/* Hack for Tzeentch:
 	   Monsters that have both ASTAR and BLINK will not need to use it for movement purpose other than when ASTAR gets stuck.
 	   The other reason when BLINK is used is for escaping, which means player must be close or in line of sight. */
-	if ((f0 & RF0_ASTAR) && (f6 & RF6_BLINK)
+	if ((fA & RFA_ASTAR) && (f6 & RF6_BLINK)
 	    && distance(y, x, oy, ox) >= ANNOY_DISTANCE - 1 && !los(wpos, y, x, oy, ox))
 		f6 &= ~RF6_BLINK;
 
@@ -7292,7 +7294,7 @@ static bool get_moves(int Ind, int m_idx, int *mm) {
 
 #ifdef MONSTER_ASTAR
 	/* Monster uses A* pathfinding algorithm? - C. Blue */
-	if ((r_ptr->flags0 & RF0_ASTAR) && (m_ptr->astar_idx != -1))
+	if ((r_ptr->flagsA & RFA_ASTAR) && (m_ptr->astar_idx != -1))
 		switch (get_moves_astar(Ind, m_idx, &y2, &x2)) {
 		case 0: /* No moves (entombed) - blink or teleport */
 			//no worky: m_ptr->ai_state |= AI_STATE_EFFECT;
@@ -8774,7 +8776,7 @@ static bool player_invis(int Ind, monster_type *m_ptr, int dist) {
 	if (strchr("eAN", r_ptr->d_char) ||
 	    ((r_ptr->flags1 & RF1_UNIQUE) && (r_ptr->flags2 & RF2_SMART) && (r_ptr->flags2 & RF2_POWERFUL)) ||
 #ifdef MONSTER_ASTAR
-	    (r_ptr->flags0 & RF0_ASTAR) || /* hmm.. */
+	    (r_ptr->flagsA & RFA_ASTAR) || /* hmm.. */
 #endif
 	    (r_ptr->flags7 & RF7_NAZGUL))
 		return(FALSE);
@@ -9802,11 +9804,11 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	}
 
 	/* 5% random movement */
-	else if ((r_ptr->flags0 & RF0_RAND_5) &&
+	else if ((r_ptr->flagsA & RFA_RAND_5) &&
 	    (rand_int(100) < 5)) {
 #ifdef OLD_MONSTER_LORE
 		/* Memorize flags */
-		if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags0 |= RF0_RAND_5;
+		if (p_ptr->mon_vis[m_idx]) r_ptr->r_flagsA |= RFA_RAND_5;
 #endif
 
 		/* Try four "random" directions */
@@ -12274,7 +12276,7 @@ void process_monsters(void) {
 					//Dungeon boss or special unique? (can't override Sauron, Nazgul or Halloween)
 					else if (p_ptr->music_monster != 43 && p_ptr->music_monster != 42 && p_ptr->music_monster != 55) {
 						//Dungeon boss?
-						if (r_ptr->flags0 & RF0_FINAL_GUARDIAN) {
+						if (r_ptr->flagsA & RFA_FINAL_GUARDIAN) {
  #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 							/* we now 'learned' who is the boss of this dungeon */
 							if (!is_admin(p_ptr)) {

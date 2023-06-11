@@ -3565,7 +3565,7 @@ errr rd_server_savefile() {
 	for (i = 1; i < m_max; i++) {
 		m_ptr = &m_list[i];
 		r_ptr = race_inf(m_ptr);
-		if (r_ptr->flags0 & RF0_ASTAR) {
+		if (r_ptr->flagsA & RFA_ASTAR) {
 			/* search for an available A* table to use */
 			for (j = 0; j < ASTAR_MAX_INSTANCES; j++) {
 				/* found an available instance? */

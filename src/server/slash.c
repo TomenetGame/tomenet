@@ -12295,7 +12295,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				for (i = 1; i < m_max; i++) {
 					m_ptr = &m_list[i];
 					r_ptr = race_inf(m_ptr);
-					if (!(r_ptr->flags0 & RF0_ASTAR)) continue;
+					if (!(r_ptr->flagsA & RFA_ASTAR)) continue;
 
 					/* search for an available A* table to use */
 					tk++;

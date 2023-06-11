@@ -1000,7 +1000,7 @@ static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
 	r_ptr->freq_spell = rbase_ptr->freq_spell;
 
 #ifdef MONSTER_ASTAR
-	if (r_ptr->flags0 & RF0_ASTAR) {
+	if (r_ptr->flagsA & RFA_ASTAR) {
 		/* search for an available A* table to use */
 		for (i = 0; i < ASTAR_MAX_INSTANCES; i++) {
 			/* found an available instance? */

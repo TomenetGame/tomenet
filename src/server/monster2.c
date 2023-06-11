@@ -355,7 +355,7 @@ void delete_monster_idx(int i, bool unfound_arts) {
 		s_printf("delete_monster_idx: Deleting questor (midx%d,Q%d,qidx%d) at %d,%d,%d.\n", i, m_ptr->quest, m_ptr->questor_idx, wpos->wx, wpos->wy, wpos->wz);
 
 #ifdef MONSTER_ASTAR
-	if ((r_ptr->flags0 & RF0_ASTAR) && (m_ptr->astar_idx != -1))
+	if ((r_ptr->flagsA & RFA_ASTAR) && (m_ptr->astar_idx != -1))
 		astar_info_open[m_ptr->astar_idx].m_idx = -1;
 #endif
 
@@ -3007,7 +3007,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 1\n");
 		and no unmakers, hm! */
 	if (!level_generation_time && !(summon_override_checks & SO_BOSS_MONSTERS) &&
 	    (r_idx == RI_DARKLING || r_idx == RI_CANDLEBEARER
-	    || (r_ptr->flags0 & RF0_FINAL_GUARDIAN)
+	    || (r_ptr->flagsA & RFA_FINAL_GUARDIAN)
 	    || (r_idx == RI_UNMAKER && !clo && !clone_summoning)
 	    )) return(50);
 
@@ -3042,7 +3042,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 2\n");
 		    !(cave_empty_mountain(zcave, y, x) &&
 		     ((r_ptr->flags8 & RF8_WILD_MOUNTAIN) ||
 		     (r_ptr->flags8 & RF8_WILD_VOLCANO) ||
-		     (r_ptr->flags0 & RF0_CAN_CLIMB))
+		     (r_ptr->flagsA & RFA_CAN_CLIMB))
 		     ))))
 			return(12);
 #endif
@@ -3145,7 +3145,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 
 	if (!(summon_override_checks & SO_BOSS_MONSTERS)) {
 		/* Dungeon boss? */
-		if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
+		if ((r_ptr->flagsA & RFA_FINAL_GUARDIAN)) {
 			/* May only spawn when a floor is being generated */
 			if (!d_ptr || !level_generation_time) {
 #if DEBUG_LEVEL > 2
@@ -3451,7 +3451,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 10\n");
 	c_ptr = &zcave[y][x];
 
 	/* does monster *prefer* roaming freely and isn't found in vaults/pits/nests usually? */
-	if ((r_ptr->flags0 & RF0_ROAMING)
+	if ((r_ptr->flagsA & RFA_ROAMING)
 	    && !(summon_override_checks & (SO_GRID_EMPTY | SO_GRID_TERRAIN))) {
 		if ((c_ptr->info & (CAVE_ICKY | CAVE_NEST_PIT))) return(51);
 	}
@@ -3647,7 +3647,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	m_ptr->org_maxhp = m_ptr->maxhp;
 
 #ifdef MONSTER_ASTAR
-	if (r_ptr->flags0 & RF0_ASTAR) {
+	if (r_ptr->flagsA & RFA_ASTAR) {
 		/* search for an available A* table to use */
 		for (j = 0; j < ASTAR_MAX_INSTANCES; j++) {
 			/* found an available instance? */
@@ -3665,7 +3665,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	} else m_ptr->astar_idx = -1;
 #endif
 
-	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
+	if ((r_ptr->flagsA & RFA_FINAL_GUARDIAN)) {
 		s_printf("FINAL_GUARDIAN %d spawned\n", r_idx);
 		if (level_generation_time && l_ptr) l_ptr->flags2 |= LF2_DUN_BOSS; /* Floor feeling (IDDC) */
 	}
@@ -3872,7 +3872,7 @@ static bool place_monster_okay_escort(int r_idx) {
 	if (z_ptr->level > r_ptr->level) return(FALSE);
 
 	/* Skip Black Dogs, Wild Rabbits and a few high-profile mimic forms.. */
-	if (z_ptr->flags0 & RF0_NO_GROUP_MASK) return(FALSE);
+	if (z_ptr->flagsA & RFA_NO_GROUP_MASK) return(FALSE);
 
 	/* Skip unique monsters */
 	if (z_ptr->flags1 & RF1_UNIQUE) return(FALSE);
@@ -4327,7 +4327,7 @@ int alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp) {
 			if (broke) continue;
 		}
 		/* does monster *prefer* roaming freely and isn't found in vaults/pits/nests usually? */
-		if ((r_info[r_idx].flags0 & RF0_ROAMING)
+		if ((r_info[r_idx].flagsA & RFA_ROAMING)
 		    && !(summon_override_checks & (SO_GRID_EMPTY | SO_GRID_TERRAIN))) {
 			if ((zcave[y][x].info & (CAVE_ICKY | CAVE_NEST_PIT))) continue;
 		}
@@ -4390,7 +4390,7 @@ static bool summon_specific_okay(int r_idx) {
 	bool okay = FALSE;
 
 	/* Dungeon bosses are never okay; they can only be generated on level creation time */
-	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) return(FALSE);
+	if ((r_ptr->flagsA & RFA_FINAL_GUARDIAN)) return(FALSE);
 
 	/* Hack -- no specific type specified */
 	if (!summon_specific_type) return(TRUE); /* 'SUMMON_ALL' */
@@ -4587,7 +4587,7 @@ static bool summon_specific_okay(int r_idx) {
 		break;
 	case SUMMON_PATIENT:
 		okay = ((r_ptr->flags1 & RF1_NEVER_MOVE) &&
-		    !(r_ptr->flags4 || r_ptr->flags5 || r_ptr->flags6 || (r_ptr->flags0 & RF0_SPELL_MASK))
+		    !(r_ptr->flags4 || r_ptr->flags5 || r_ptr->flags6 || r_ptr->flags0)
 #ifdef EXPLICITE_UNIQUE_SUMMONING
 		    && !(r_ptr->flags1 & RF1_UNIQUE)
 #endif
@@ -5873,7 +5873,7 @@ void py2mon_init(void) {
 	/* Extra stats that are always granted to init tactical challenge: */
 	r_ptr->flags3 |= RF3_NO_FEAR | RF3_NO_CONF | RF3_NO_SLEEP; //just prevent 'mental' conditions, so stun is still allowed
 	r_ptr->flags7 |= RF7_CAN_SWIM | RF7_CAN_FLY | RF7_NO_ESP; //just whatever, paranoia - however, we're not a real being, so no ESP! :o
-	r_ptr->flags0 |= RF0_CAN_CLIMB | RF0_ASTAR; // A* is important to see through player-invisibility, which it actually implies!
+	r_ptr->flagsA |= RFA_CAN_CLIMB | RFA_ASTAR; // A* is important to see through player-invisibility, which it actually implies!
 }
 void py2mon_init_base(monster_type *m_ptr, player_type *p_ptr) {
 	monster_race *r_ptr = &r_info[RI_MIRROR];
@@ -6307,7 +6307,9 @@ else s_printf("\n");
 	if (p_ptr->no_cut) r_ptr->flags8 |= RF8_NO_CUT;
 	if (p_ptr->regenerate) r_ptr->flags2 |= RF2_REGENERATE;
 	if (p_ptr->reflect) r_ptr->flags2 |= RF2_REFLECTING;
+#if 0 /* Note: Currently mirror sees through invisibility. We if0 this out completely, so the player isn't suddenly at a huge disadvantage if he cannot see through it, oopsie! */
 	if (p_ptr->invis || p_ptr->tim_invisibility) r_ptr->flags2 |= RF2_INVISIBLE;
+#endif
 	/* Adjustable abilities */
 	//if (p_ptr->aura[AURA_FEAR]) ; //todo: cause fear-melee
 	if (p_ptr->aura[AURA_SHIVER]) r_ptr->flags3 |= RF3_AURA_COLD;
@@ -6502,6 +6504,7 @@ else s_printf("\n");
 	else if (check_for_spell(p_ptr, "LIGHTNINGBOLT_I") || check_for_spell(p_ptr, "LIGHTNINGBOLT_II") || check_for_spell(p_ptr, "LIGHTNINGBOLT_III")) { r_ptr->flags5 |= RF5_BO_ELEC; magflag = TRUE; }
 	if (check_for_spell(p_ptr, "NOXIOUSCLOUD_I") || check_for_spell(p_ptr, "NOXIOUSCLOUD_II") || check_for_spell(p_ptr, "NOXIOUSCLOUD_III")) { r_ptr->flags5 |= RF5_BA_POIS; magflag = TRUE; }
 	if (magflag) magicness++;
+	//invis: mirror sees through invis, so obsolete.
 #else
 	if (get_skill(p_ptr, SKILL_AIR) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_POIS | RF5_BO_ELEC; magicness++; }
 #endif
@@ -6660,7 +6663,7 @@ else s_printf("\n");
 #endif
 
 #ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	if (check_for_spell(p_ptr, "HEALINGCLOUD_I") || check_for_spell(p_ptr, "HEALINGCLOUD_II") || check_for_spell(p_ptr, "HEALINGCLOUD_III")) { r_ptr->flags6 |= RF6_HEAL; magicness++; )
+	if (check_for_spell(p_ptr, "HEALINGCLOUD_I") || check_for_spell(p_ptr, "HEALINGCLOUD_II") || check_for_spell(p_ptr, "HEALINGCLOUD_III")) { r_ptr->flags6 |= RF6_HEAL; magicness++; }
 	//r_ptr->flags9 |= RF9_RES_POIS; } --nah
 	/* Note: Focus is currently ignored, so player gains great +hit chance advantage. */
 #else
@@ -6671,9 +6674,14 @@ else s_printf("\n");
 #endif
 
 #ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
-	//bo_dark->ba_dark, res_pois (no melee pois brand), invis (just make player invis not work on mirror instead!)
-	//chaos bolt (h-off), drain life (necro), ba-dark
+	if (check_for_spell(p_ptr, "POISONRES")) { r_ptr->flags9 |= RF9_RES_POIS; }
+	magflag = FALSE;
+	if (check_for_spell(p_ptr, "DARKBALL")) { r_ptr->flags5 |= RF5_BA_DARK; magflag = TRUE; }
+	else if (check_for_spell(p_ptr, "DARKBOLT_I") || check_for_spell(p_ptr, "DARKBOLT_II") || check_for_spell(p_ptr, "DARKBOLT_III")) { r_ptr->flags5 |= RF5_BA_DARK; magflag = TRUE; }
+	//invis: mirror sees through invis, so obsolete.
+	if (check_for_spell(p_ptr, "CHAOSBOLT")) { r_ptr->flags9 |= RF9_RES_POIS; }
+	if (check_for_spell(p_ptr, "ODRAINLIFE")) { r_ptr->flags9 |= RF9_RES_POIS; }
+	if (magflag) magicness++;
 #else
 	if (get_skill(p_ptr, SKILL_OSHADOW) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_DARK; magicness++; }
 #endif

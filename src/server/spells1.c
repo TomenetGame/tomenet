@@ -9032,7 +9032,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 				/* make sure only monsters who NEED to use this actually do use it.. (Morgoth doesn't) */
 				if (((r_ptr->flags2 & RF2_PASS_WALL) && (r_ptr->flags2 & RF2_KILL_WALL))
-				    || (r_ptr->flags0 & RF0_ASTAR)) { /* and it can apparently break a* movers? */
+				    || (r_ptr->flagsA & RFA_ASTAR)) { /* and it can apparently break a* movers? */
 					got_potential_target = TRUE;
 				}
 				else if ((r_ptr->flags2 & RF2_PASS_WALL) || (r_ptr->flags2 & RF2_KILL_WALL)) {

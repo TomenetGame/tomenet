@@ -2333,7 +2333,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 
 	/* Forms that occur in the mountains are able to pass them */
 	if ((r_ptr->flags8 & (RF8_WILD_MOUNTAIN | RF8_WILD_VOLCANO)) ||
-	    (r_ptr->flags0 & RF0_CAN_CLIMB))
+	    (r_ptr->flagsA & RFA_CAN_CLIMB))
 		{ p_ptr->climb = TRUE; csheet_boni->cb[5] |= CB6_RCLMB; }
 
 	/* Orcs get resist_dark */

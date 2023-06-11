@@ -515,34 +515,68 @@ static cptr r_info_flags0[] = {
 	"S_HI_MONSTER",
 	"S_HI_MONSTERS",
 	"S_HI_UNIQUE",
-	"ASTAR",//4
-	"NO_ESCORT",
-	"NO_NEST",
-	"FINAL_GUARDIAN", /* should not be used in r_info, since it's set implicitely from d_info */
-	"BO_DISE",//8
+	"BO_DISE",//4
 	"BA_DISE",
-	"ROAMING",
-	"DROP_1",
-	"CAN_CLIMB",//12
-	"RAND_5",
-	"DROP_2",
 	"S_DEMONS",
-	"S_DRAGONS",//16
-	"S_HI_DEMON",
+	"S_DRAGONS",
+	"S_HI_DEMON",//8
 	"S_HI_DRAGON",
 	"BR_ICE",
-	"BR_WATER",//20
-	"ADMINISTRATIVE_PUSH",
-	"METEOR_SWARM",
-	"ADMINISTRATIVE_HOLD",
-	"BA_LITE",//24
+	"BR_WATER",
+	"BA_LITE",//12
 	"BO_WALL",
 	"BA_HELLFIRE",
 	"BO_LITE",
-	"BO_DARK",//28
+	"BO_DARK",//26
 	"DISPEL",
 	"WATERPOISON",
 	"ICEPOISON",
+	"BO_CHAO",//20
+	"X00100000",
+	"X00200000",
+	"X00400000",
+	"X00800000",//24
+	"X01000000",
+	"X02000000",
+	"X04000000",
+	"X08000000",//28
+	"X10000000",
+	"X20000000",
+	"X40000000",
+	"X80000000",//32
+};
+static cptr r_info_flagsA[] = {
+	"ASTAR",
+	"NO_ESCORT",
+	"NO_NEST",
+	"FINAL_GUARDIAN", /* should not be used in r_info, since it's set implicitely from d_info */ //4
+	"ROAMING",
+	"DROP_1",
+	"CAN_CLIMB",
+	"RAND_5", //8
+	"DROP_2",
+	"ADMINISTRATIVE_PUSH",
+	"METEOR_SWARM",
+	"ADMINISTRATIVE_HOLD", //12
+	"X00001000",
+	"X00002000",
+	"X00004000",
+	"X00008000",//16
+	"X00010000",
+	"X00020000",
+	"X00040000",
+	"X00080000",//20
+	"X00100000",
+	"X00200000",
+	"X00400000",
+	"X00800000",//24
+	"X01000000",
+	"X02000000",
+	"X04000000",
+	"X08000000",//28
+	"X10000000",
+	"X20000000",
+	"X40000000",
 	"X80000000",//32
 };
 
@@ -3963,10 +3997,10 @@ static errr grab_one_basic_flag(monster_race *r_ptr, cptr what) {
 			return(0);
 		}
 
-	/* Scan flags0 -- contains both, spell and basic type */
+	/* Scan flagsA -- more basic types */
 	for (i = 0; i < 32; i++)
-		if (((1U << i) & RF0_BASIC_MASK) && streq(what, r_info_flags0[i])) {
-			r_ptr->flags0 |= (1U << i);
+		if (streq(what, r_info_flagsA[i])) {
+			r_ptr->flagsA |= (1U << i);
 			return(0);
 		}
 
@@ -4005,9 +4039,9 @@ static errr grab_one_spell_flag(monster_race *r_ptr, cptr what) {
 			return(0);
 		}
 
-	/* Scan flags0 -- contains both, spell and basic type */
+	/* Scan flags0 -- additional spells */
 	for (i = 0; i < 32; i++)
-		if (((1U << i) & RF0_SPELL_MASK) && streq(what, r_info_flags0[i])) {
+		if (streq(what, r_info_flags0[i])) {
 			r_ptr->flags0 |= (1U << i);
 			return(0);
 		}
@@ -4665,7 +4699,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 	}
 
 	r_info[RI_BLUE].flags6 &= ~RF6_HEAL;
-	r_info[RI_BLUE].flags0 &= ~(RF0_ADMINISTRATIVE_PUSH | RF0_METEOR_SWARM | RF0_ADMINISTRATIVE_HOLD);
+	//r_info[RI_BLUE].flagsA &= ~(RFA_ADMINISTRATIVE_PUSH | RFA_METEOR_SWARM | RFA_ADMINISTRATIVE_HOLD);
 
 	/* No version yet */
 	if (!okay) return(2);
@@ -4739,13 +4773,13 @@ static errr grab_one_basic_ego_flag(monster_ego *re_ptr, cptr what, bool add) {
 			return(0);
 		}
 
-	/* Scan flags0 -- contains both, spell and basic type */
+	/* Scan flagsA -- more basic types */
 	for (i = 0; i < 32; i++)
-		if (((1U << i) & RF0_BASIC_MASK) && streq(what, r_info_flags0[i])) {
+		if (streq(what, r_info_flagsA[i])) {
 			if (add)
-				re_ptr->mflags0 |= (1U << i);
+				re_ptr->mflagsA |= (1U << i);
 			else
-				re_ptr->nflags0 |= (1U << i);
+				re_ptr->nflagsA |= (1U << i);
 			return(0);
 		}
 
@@ -4793,9 +4827,9 @@ static errr grab_one_spell_ego_flag(monster_ego *re_ptr, cptr what, bool add) {
 			return(0);
 		}
 
-	/* Scan flags0 -- contains both, spell and basic type */
+	/* Scan flags0 -- additional spells */
 	for (i = 0; i < 32; i++)
-		if (((1U << i) & RF0_SPELL_MASK) && streq(what, r_info_flags0[i])) {
+		if (streq(what, r_info_flags0[i])) {
 			if (add)
 				re_ptr->mflags0 |= (1U << i);
 			else
@@ -4878,11 +4912,11 @@ static errr grab_one_ego_flag(monster_ego *re_ptr, cptr what, bool must) {
 			return(0);
 		}
 
-	/* Scan flags0 -- contains both, spell and basic type */
+	/* Scan flags0 -- contains more basic types */
 	for (i = 0; i < 32; i++)
-		if (((1U << i) & RF0_BASIC_MASK) && streq(what, r_info_flags0[i])) {
-			if (must) re_ptr->flags0 |= (1U << i);
-			else re_ptr->hflags0 |= (1U << i);
+		if (streq(what, r_info_flagsA[i])) {
+			if (must) re_ptr->flagsA |= (1U << i);
+			else re_ptr->hflagsA |= (1U << i);
 			return(0);
 		}
 
@@ -5715,10 +5749,10 @@ static errr grab_one_basic_monster_flag(dungeon_info_type *d_ptr, cptr what, byt
 			return(0);
 		}
 
-	/* Scan flags0 -- contains both, spell and basic type */
+	/* Scan flagsA -- contains more basic types */
 	for (i = 0; i < 32; i++)
-		if (((1U << i) & RF0_BASIC_MASK) && streq(what, r_info_flags0[i])) {
-			d_ptr->rules[rule].mflags0 |= (1U << i);
+		if (streq(what, r_info_flagsA[i])) {
+			d_ptr->rules[rule].mflagsA |= (1U << i);
 			return(0);
 		}
 
@@ -5761,7 +5795,7 @@ static errr grab_one_spell_monster_flag(dungeon_info_type *d_ptr, cptr what, byt
 
 	/* Scan flags0 */
 	for (i = 0; i < 32; i++)
-		if (((1U << i) & RF0_SPELL_MASK) && streq(what, r_info_flags0[i])) {
+		if (streq(what, r_info_flags0[i])) {
 			d_ptr->rules[rule].mflags0 |= (1U << i);
 			return(0);
 		}
@@ -6179,7 +6213,7 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 					d_ptr->final_guardian = monst;
 
 					/* automatically mark it as such, no need for doing that in r_info.txt */
-					r_info[monst].flags0 |= RF0_FINAL_GUARDIAN;
+					r_info[monst].flagsA |= RFA_FINAL_GUARDIAN;
 
 					/* Start at next entry */
 					s = t;

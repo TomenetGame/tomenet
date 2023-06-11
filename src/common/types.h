@@ -439,6 +439,7 @@ struct monster_race {
 	u32b flags9;			/* Flags 9 (drops info) */
 
 	u32b flags0;			/* Flags 10 (extra spells) */
+	u32b flagsA;			/* Flags A (extra basic flags) */
 #endif
 
 	monster_blow blow[4];	/* Up to four blows per round */
@@ -1634,19 +1635,20 @@ struct monster_ego {
 
 	/* Ego flags */
 	u32b flags1;			/* Flags 1 */
-	u32b flags2;			/* Flags 1 */
-	u32b flags3;			/* Flags 1 */
-	u32b flags7;			/* Flags 1 */
-	u32b flags8;			/* Flags 1 */
-	u32b flags9;			/* Flags 1 */
-	u32b flags0;			/* Flags 1 */
+	u32b flags2;			/* Flags 2 */
+	u32b flags3;			/* Flags 3 */
+	u32b flags7;			/* Flags 7 */
+	u32b flags8;			/* Flags 8 */
+	u32b flags9;			/* Flags 9 */
+	u32b flagsA;			/* Flags A */
+
 	u32b hflags1;			/* Flags 1 */
-	u32b hflags2;			/* Flags 1 */
-	u32b hflags3;			/* Flags 1 */
-	u32b hflags7;			/* Flags 1 */
-	u32b hflags8;			/* Flags 1 */
-	u32b hflags9;			/* Flags 1 */
-	u32b hflags0;			/* Flags 1 */
+	u32b hflags2;			/* Flags 2 */
+	u32b hflags3;			/* Flags 3 */
+	u32b hflags7;			/* Flags 7 */
+	u32b hflags8;			/* Flags 8 */
+	u32b hflags9;			/* Flags 9 */
+	u32b hflagsA;			/* Flags A */
 
 	/* Monster flags */
 	u32b mflags1;			/* Flags 1 (general) */
@@ -1659,6 +1661,7 @@ struct monster_ego {
 	u32b mflags8;			/* Flags 8 (wilderness info) */
 	u32b mflags9;			/* Flags 9 (drops info) */
 	u32b mflags0;			/* Flags 10 (extra spells) */
+	u32b mflagsA;			/* Flags A (extra basic) */
 
 	/* Negative Flags, to be removed from the monster flags */
 	u32b nflags1;			/* Flags 1 (general) */
@@ -1671,6 +1674,7 @@ struct monster_ego {
 	u32b nflags8;			/* Flags 8 (wilderness info) */
 	u32b nflags9;			/* Flags 9 (drops info) */
 	u32b nflags0;			/* Flags 10 (extra spells) */
+	u32b nflagsA;			/* Flags A (extra basic) */
 
 	s16b level;			/* Level of creature */
 	s16b rarity;			/* Rarity of creature */
@@ -3799,6 +3803,7 @@ struct rule_type {
 	u32b mflags8;
 	u32b mflags9;
 	u32b mflags0;
+	u32b mflagsA;
 
 	char32_t r_char[10];			/* Monster race allowed */
 };

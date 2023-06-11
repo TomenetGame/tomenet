@@ -6173,50 +6173,44 @@
 #define RF0_S_HI_MONSTER	0x00000001
 #define RF0_S_HI_MONSTERS	0x00000002
 #define RF0_S_HI_UNIQUE		0x00000004
-#define RF0_ASTAR		0x00000008		/* monster uses A* pathfinding (use with care, might strain CPU) */
-#define RF0_NO_ESCORT			0x00000010	/* monster will never occur in groups, like escorts or nests/pits */
-#define RF0_NO_NEST			0x00000020	/* monster will never occur in groups, like escorts or nests/pits */
-#define RF0_FINAL_GUARDIAN		0x00000040	/* monster is defined as FINAL_GUARDIAN_ in d_info.txt */
-#define RF0_BO_DISE			0x00000080
-#define RF0_BA_DISE		0x00000100
-#define RF0_ROAMING		0x00000200		/* monster never spawns in vaults or pits (ie on CAVE_ICKY/CAVE_NEST_PIT grids) */
-#define RF0_DROP_1		0x00000400		/* Drop exactly 1 item/gold pile */
-#define RF0_CAN_CLIMB		0x00000800		/* Monster can climb */
-#define RF0_RAND_5			0x00001000	/* Moves very slightly randomly (5%) (for Panda, so it's not appearing totally 'passive' - C. Blue) */
-#define RF0_DROP_2			0x00002000	/* Drop exactly 2 items/gold piles */
-#define RF0_S_DEMONS			0x00004000	/* Summon Demons -- unused */
-#define RF0_S_DRAGONS			0x00008000	/* Summon Dragons -- unused */
-#define RF0_S_HI_DEMON		0x00010000		/* Summon Greater Demon (Tzeentch) */
-#define RF0_S_HI_DRAGON		0x00020000		/* Summon Ancient Dragon -- unused */
-#define RF0_BR_ICE		0x00040000		/* For Bahamuth */
-#define RF0_BR_WATER		0x00080000		/* Finally no more antimagic field vs water hounds :p */
-#define RF0_ADMINISTRATIVE_PUSH		0x00100000	/* Push back */
-#define RF0_METEOR_SWARM		0x00200000
-#define RF0_ADMINISTRATIVE_HOLD		0x00400000	/* Irresistible paralysis */
-#define RF0_BA_LITE			0x00800000	/* Mirror: Globe of Light */
-#define RF0_BO_WALL		0x01000000		/* Mirror: Strike */
-#define RF0_BA_HELLFIRE		0x02000000		/* Mirror: Hellfire */
-#define RF0_BO_LITE		0x04000000		/* Mirror: Power Ray */
-#define RF0_BO_DARK		0x08000000		/* Mirror: Power Ray */
-#define RF0_DISPEL			0x10000000	/* Mirror: Vengenance [Corrupted] */
-#define RF0_WATERPOISON			0x20000000	/* Mirror: Toxic Moisture I/II */
-#define RF0_ICEPOISON			0x40000000	/* Mirror: Toxic Moisture III */
-/* !!! NOTE: if you add more flags, adjust RF0_SPELL_MASK (and other masks) accordingly !!! */
+#define RF0_BO_DISE		0x00000008
+#define RF0_BA_DISE			0x00000010
+#define RF0_S_DEMONS			0x00000020	/* Summon Demons -- unused */
+#define RF0_S_DRAGONS			0x00000040	/* Summon Dragons -- unused */
+#define RF0_S_HI_DEMON			0x00000080	/* Summon Greater Demon (Tzeentch) */
+#define RF0_S_HI_DRAGON		0x00000100		/* Summon Ancient Dragon -- unused */
+#define RF0_BR_ICE		0x00000200		/* For Bahamuth */
+#define RF0_BR_WATER		0x00000400		/* Finally no more antimagic field vs water hounds :p */
+#define RF0_BA_LITE		0x00000800		/* Mirror: Globe of Light */
+#define RF0_BO_WALL			0x00001000	/* Mirror: Strike */
+#define RF0_BA_HELLFIRE			0x00002000	/* Mirror: Hellfire */
+#define RF0_BO_LITE			0x00004000	/* Mirror: Power Ray */
+#define RF0_BO_DARK			0x00008000	/* Mirror: Power Ray */
+#define RF0_DISPEL		0x00010000		/* Mirror: Vengenance [Corrupted] */
+#define RF0_WATERPOISON		0x00020000		/* Mirror: Toxic Moisture I/II */
+#define RF0_ICEPOISON		0x00040000		/* Mirror: Toxic Moisture III */
+#define RF0_BO_CHAOS		0x00080000		/* Mirror: Chaos Bolt (Shadow/HOff) */
 
-#define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT)		/* | RF0_NO_NEST */
 #define RF0_PLAYER_SPELLS (RF0_BO_DISE | RF0_BA_DISE | RF0_BR_ICE | RF0_BR_WATER)
 #define RF0_RADIUS_SPELLS (RF0_BA_DISE | RF0_BR_ICE | RF0_BR_WATER)
 
-/* Special addition, since RF0_ mixes quite different types of flags.
-   This is to sort them out a bit.
-   Note that breaths are spells too, as in handled in 'S:' lines (in r_info, re_info, and d_info). */
-#define RF0_SPELL_MASK (RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_BO_DISE | RF0_BA_DISE | \
-			RF0_S_DEMONS | RF0_S_DRAGONS | RF0_S_HI_DEMON | RF0_S_HI_DRAGON | RF0_BR_ICE | RF0_BR_WATER | \
-			RF0_ADMINISTRATIVE_PUSH | RF0_METEOR_SWARM | RF0_ADMINISTRATIVE_HOLD | \
-			RF0_BA_LITE | RF0_BO_WALL | RF0_BA_HELLFIRE | RF0_BO_LITE | RF0_BO_DARK | RF0_DISPEL | \
-			RF0_WATERPOISON | RF0_ICEPOISON)
-/* All flags that are defined and that are not 'spell' type -> are automatically 'basic' type. */
-#define RF0_BASIC_MASK (0x007FFFFF & (~RF0_SPELL_MASK))
+
+/* Additional basic flags */
+#define RFA_ASTAR		0x00000001		/* monster uses A* pathfinding (use with care, might strain CPU) */
+#define RFA_NO_ESCORT		0x00000002		/* monster will never occur in groups, like escorts or nests/pits */
+#define RFA_NO_NEST		0x00000004		/* monster will never occur in groups, like escorts or nests/pits */
+#define RFA_FINAL_GUARDIAN	0x00000008		/* monster is defined as FINAL_GUARDIAN_ in d_info.txt */
+#define RFA_ROAMING			0x00000010	/* monster never spawns in vaults or pits (ie on CAVE_ICKY/CAVE_NEST_PIT grids) */
+#define RFA_DROP_1			0x00000020	/* Drop exactly 1 item/gold pile */
+#define RFA_CAN_CLIMB			0x00000040	/* Monster can climb */
+#define RFA_RAND_5			0x00000080	/* Moves very slightly randomly (5%) (for Panda, so it's not appearing totally 'passive' - C. Blue) */
+#define RFA_DROP_2		0x00000100		/* Drop exactly 2 items/gold piles */
+#define RFA_ADMINISTRATIVE_PUSH	0x00000200		/* Push back */
+#define RFA_METEOR_SWARM	0x00000400		/* Targetted delayed orbital attack */
+#define RFA_ADMINISTRATIVE_HOLD	0x00000800		/* Irresistible paralysis */
+
+#define RFA_NO_GROUP_MASK	(RFA_NO_ESCORT)		/* | RFA_NO_NEST */
+
 
 /* currently disabled r_info.txt flags (not implemented or some other reason) */
 #define RF1_DISABLE_MASK	(0x0)
@@ -6232,6 +6226,7 @@
 #define RF9_DISABLE_MASK	(0x0)
 
 #define RF0_DISABLE_MASK	(0x0)
+#define RFA_DISABLE_MASK	(0x0)
 
 /*
  * Hack -- choose "intelligent" spells when desperate
@@ -7393,7 +7388,7 @@
     ((f_info[(C)->feat].flags1 & FF1_WEB) && ((R)->flags7 & RF7_SPIDER)) || \
     /* Some monsters live in the mountains natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
     (((C)->feat == FEAT_MOUNTAIN) && \
-    (((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO) || ((R)->flags0 & RF0_CAN_CLIMB))))
+    (((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO) || ((R)->flagsA & RFA_CAN_CLIMB))))
 
     //((C)->m_idx < 0)) /* Player ghost in wall XXX */
     // (((c_ptr->feat != FEAT_SHOP) && /* Tavern entrance?(need GetCS to check that) // if (c_ptr->feat == FEAT_SHOP_TAIL - 1) */
@@ -7421,7 +7416,7 @@
 ((f_info[(C)->feat].flags1 & FF1_WEB) && ((R)->flags7 & RF7_SPIDER)) || \
 /* Some monsters live in the mountains natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
 (((C)->feat == FEAT_MOUNTAIN) && \
-(((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO) || ((R)->flags0 & RF0_CAN_CLIMB))) || \
+(((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO) || ((R)->flagsA & RFA_CAN_CLIMB))) || \
 /* Monster moves through walls (and doors) */ \
 /*  -- added check whether it's actually a WALL, to prevent monsters from crossing terrain they don't like (eg lava) */ \
 /*              else if (r_ptr->flags2 & RF2_PASS_WALL) */ \
@@ -7449,7 +7444,7 @@
 ((f_info[(C)->feat].flags1 & FF1_WEB) && ((R)->flags7 & RF7_SPIDER)) || \
 /* Some monsters live in the mountains natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
 (((C)->feat == FEAT_MOUNTAIN) && \
-(((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO) || ((R)->flags0 & RF0_CAN_CLIMB))) || \
+(((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO) || ((R)->flagsA & RFA_CAN_CLIMB))) || \
 /* Monster moves through walls (and doors) */ \
 /*  -- added check whether it's actually a WALL, to prevent monsters from crossing terrain they don't like (eg lava) */ \
 /*              else if (r_ptr->flags2 & RF2_PASS_WALL) */ \
