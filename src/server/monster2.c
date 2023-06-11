@@ -6948,6 +6948,8 @@ else s_printf("\n");
 	/* Sort spells: Remove weaker versions, eg remove fire bolt if we have fire ball */
 	//      ...TODO...
 
+	/* Note: Same as players' spellcasting, the mirror's spellcasting cannot be intercepted! */
+
 
 	/* Flags 7 */
 	//if (p_ptr->pclass == CLASS_MAGE) r_ptr->flags7 |= RF7_AI_ANNOY; -- no, because the monster should chase the player in any case

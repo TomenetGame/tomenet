@@ -1473,6 +1473,8 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 	int rlev = r_ptr->level;
 
 
+	if (m_ptr->r_idx == RI_MIRROR) return(FALSE);
+
 	/* hack: if we cannot auto-retaliate vs a monster than we dont intercept either */
 	if (r_ptr->flags8 & RF8_NO_AUTORET) return(FALSE);
 

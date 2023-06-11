@@ -6197,7 +6197,7 @@
 
 
 /* Additional basic flags (ie not spell-flags, 'S:') */
-//#define RFA_XXXXXXX1		0x00000001		/* xxx1 */
+//#define RFA_NO_INTERCEPT	0x00000001		/* Cannot intercept this monster */
 
 
 /* currently disabled r_info.txt flags (not implemented or some other reason) */
