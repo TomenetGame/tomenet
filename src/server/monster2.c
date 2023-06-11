@@ -6868,17 +6868,18 @@ else s_printf("\n");
 	}
 #endif
 
-#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
 	magflag = FALSE;
-	if (check_for_spell(p_ptr, "HCURSE_I") || check_for_spell(p_ptr, "HCURSE_II") || check_for_spell(p_ptr, "HCURSE_III"))
-	if (check_for_spell(p_ptr, "HGLOBELIGHT_I") || check_for_spell(p_ptr, "HGLOBELIGHT_II"))
-	if (check_for_spell(p_ptr, "HLITERAY"))
+	if (check_for_spell(p_ptr, "HCURSE_I") || check_for_spell(p_ptr, "HCURSE_II") || check_for_spell(p_ptr, "HCURSE_III")) { r_ptr->flags5 |= RF5_CURSE; magflag = TRUE; }
+	if (check_for_spell(p_ptr, "HGLOBELIGHT_I") || check_for_spell(p_ptr, "HGLOBELIGHT_II")) { r_ptr->flags0 |= RF0_BA_LITE; magflag = TRUE; }
+	if (check_for_spell(p_ptr, "HLITERAY")) { r_ptr->flags0 |= RF0_BO_LITE; magflag = TRUE; }
 	if (magflag) magicness++;
 	magflag = FALSE;
-	if (check_for_spell(p_ptr, "HORBDRAIN_I") || check_for_spell(p_ptr, "HORBDRAIN_II"))
-	/* ignore exorcism and release souls as they cannot affect the mirror anyway */
-	if (check_for_spell(p_ptr, "HDRAINCLOUD"))
-	//we ignore exorcism/redemption and other pure anti-evil/undead/xxx spells as we are supposedly NONLIVING and also won't retaliate with these spells for ez-ness..
+	if (check_for_spell(p_ptr, "HORBDRAIN_I") || check_for_spell(p_ptr, "HORBDRAIN_II")) { r_ptr->flags0 |= RF0_DISPEL; magflag = TRUE; } /* Seems usable as replacement? */
+	/* For now, no mirror to Annihilation - we just count it for magicness anyway */
+	if (check_for_spell(p_ptr, "HDRAINCLOUD")) magflag = TRUE;
+	/* We ignore exorcism and release souls as they cannot affect the mirror anyway */
+	// We ignore exorcism/redemption and other pure anti-evil/undead/xxx spells as we are supposedly NONLIVING and also won't retaliate with these spells for ez-ness..
 	if (magflag) magicness++;
 #else
 	if (get_skill(p_ptr, SKILL_HOFFENSE) >= thresh_spell) {
@@ -6888,7 +6889,7 @@ else s_printf("\n");
 	}
 #endif
 
-#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
  #ifdef RI_MIRROR_PREEMPT_RES /* optional, to get us the 'initiative' - could almost just as well wait for the player to cast resists as they get auto-copied to us anyway */
 	if (check_for_spell(p_ptr, "HRESISTS_III")) { r_ptr->flags9 |= RF9_RES_FIRE | RF9_RES_COLD | RF9_RES_ACID | RF9_RES_ELEC | RF9_RES_POIS; }
 	else if (check_for_spell(p_ptr, "HRESISTS_II")) { r_ptr->flags9 |= RF9_RES_FIRE | RF9_RES_COLD | RF9_RES_ACID | RF9_RES_ELEC; }
@@ -6899,10 +6900,11 @@ else s_printf("\n");
 	//if (get_skill(p_ptr, SKILL_HDEFENSE) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; } -- nothing here! all accounted for
 #endif
 
-#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	if (check_for_spell(p_ptr, "HCUREWOUNDS_I") || check_for_spell(p_ptr, "HCUREWOUNDS_II"))
-	if (check_for_spell(p_ptr, "HHEALING2_I") || check_for_spell(p_ptr, "HHEALING2_II") || check_for_spell(p_ptr, "HHEALING2_III"))
-	if (check_for_spell(p_ptr, "HHEALING_I") || check_for_spell(p_ptr, "HHEALING_II") || check_for_spell(p_ptr, "HHEALING_III"))
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "HCUREWOUNDS_I") || check_for_spell(p_ptr, "HCUREWOUNDS_II") ||
+	    check_for_spell(p_ptr, "HHEALING_I") || check_for_spell(p_ptr, "HHEALING_II") || check_for_spell(p_ptr, "HHEALING_III") ||
+	    check_for_spell(p_ptr, "HHEALING2_I") || check_for_spell(p_ptr, "HHEALING2_II") || check_for_spell(p_ptr, "HHEALING2_III"))
+		{ r_ptr->flags6 |= RF6_HEAL; magicness++; }
 #else
 	if (get_skill(p_ptr, SKILL_HCURING) >= thresh_spell) { r_ptr->flags6 |= RF6_HEAL; magicness++; }
 #endif
