@@ -368,13 +368,6 @@
 /* --------------------- TESTING/EXPERIMENTAL - This stuff is hot alpha/beta.. --------------------- */
 /* ------------------------------------------------------------------------------------------------- */
 
-/* Allow subclassing ie. planned access to skills from a secondary class!
-   Enables role customization while preserving unique features of base classes.
-   Currently applies a big +200% XP penalty for 2/3 ratios from both classes. */
-#define ENABLE_SUBCLASS
-#define ENABLE_SUBCLASS_TITLE // show secondary title when long format is called for (eg. @ screen)
-#define ENABLE_SUBCLASS_COLOR // alternate color in cave.c but not in @ screen (where title is seen)
-
 /* Allow to press alt-wield (shift+W) to equip a digging tool into the weapon slot! (4.7.4b+ test).
    Note that digging tools must all receive MUST2H flag for this. - C. Blue */
 #define EQUIPPABLE_DIGGERS
@@ -421,6 +414,13 @@
 
 /* Specific settings for test-server only */
 #ifdef TEST_SERVER
+ /* Allow subclassing ie. planned access to skills from a secondary class!
+   Enables role customization while preserving unique features of base classes.
+   Currently applies a big +200% XP penalty for 2/3 ratios from both classes. */
+ #define ENABLE_SUBCLASS
+ #define ENABLE_SUBCLASS_TITLE // show secondary title when long format is called for (eg. @ screen)
+ #define ENABLE_SUBCLASS_COLOR // alternate color in cave.c but not in @ screen (where title is seen)
+
  #define NEW_REMOVE_CURSE	/* rc has fail chance; allow projecting rc spell on others */
 
  #define ENABLE_ASSASSINATE	/* experimental fighting technique for rogues - devalues Backstabbing too much probably */
