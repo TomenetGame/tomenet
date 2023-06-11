@@ -190,7 +190,7 @@ void do_cmd_go_up(int Ind) {
 		return;
 
 	/* Can we move ? */
-	if (r_ptr->flags1 & RF1_NEVER_MOVE) {
+	if (r_ptr->flags2 & RF2_NEVER_MOVE) {
 		msg_print(Ind, "You cannot move by nature.");
 		return;
 	}
@@ -962,7 +962,7 @@ void do_cmd_go_down(int Ind) {
 		return;
 
 	/* Can we move ? */
-	if (r_ptr->flags1 & RF1_NEVER_MOVE) {
+	if (r_ptr->flags2 & RF2_NEVER_MOVE) {
 		msg_print(Ind, "You cannot move by nature.");
 		return;
 	}
@@ -7880,10 +7880,10 @@ bool interfere(int Ind, int chance) {
 		if (i > 0) {
 			m_ptr = &m_list[i];
 			r_ptr = race_inf(m_ptr);
-			//if (r_info[m_list[i].r_idx].flags1 & RF1_NEVER_MOVE)
+			//if (r_info[m_list[i].r_idx].flags2 & RF2_NEVER_MOVE)
 			/* monster doesn't act? */
-			if (r_ptr->flags1 & RF1_NEVER_MOVE) continue;
-			if (r_ptr->flags7 & RF7_NEVER_ACT) continue;
+			if (r_ptr->flags2 & RF2_NEVER_MOVE) continue;
+			if (r_ptr->flags2 & RF2_NEVER_ACT) continue;
 			if (m_ptr->status == M_STATUS_FRIENDLY) continue;
 			/* Sleeping etc.. monsters don't interfere o_O - C. Blue */
 			if (m_ptr->csleep || m_ptr->monfear || m_ptr->stunned || m_ptr->confused)
@@ -7895,8 +7895,8 @@ bool interfere(int Ind, int chance) {
 			/* hostile player? */
 			if (!check_hostile(Ind, -i) ||
 			    q_ptr->paralyzed || q_ptr->stun > 100 || q_ptr->confused || q_ptr->afraid ||
-			    (r_info[q_ptr->body_monster].flags1 & RF1_NEVER_MOVE) ||
-			    (r_info[q_ptr->body_monster].flags7 & RF7_NEVER_ACT))
+			    (r_info[q_ptr->body_monster].flags2 & RF2_NEVER_MOVE) ||
+			    (r_info[q_ptr->body_monster].flags2 & RF2_NEVER_ACT))
 				continue;
 #ifdef ENABLE_STANCES
 			if (q_ptr->combat_stance == 1) switch (q_ptr->combat_stance_power) {

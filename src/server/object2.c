@@ -10062,8 +10062,8 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 		   Target Dummy, so players can get their items (ammo) back - C. Blue */
 		if (c_ptr->m_idx > 0) {
 			r_ptr = race_inf(&m_list[c_ptr->m_idx]);
-			if (((r_ptr->flags1 & RF1_NEVER_MOVE) ||
-			    (r_ptr->flags7 & RF7_NEVER_ACT)) &&
+			if (((r_ptr->flags2 & RF2_NEVER_MOVE) ||
+			    (r_ptr->flags2 & RF2_NEVER_ACT)) &&
 			    (r_ptr->flags7 & RF7_NO_DEATH))
 			continue;
 		}

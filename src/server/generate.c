@@ -3298,7 +3298,7 @@ static bool vault_aux_lesser_chapel(int r_idx) {
 	if (r_ptr->flags1 & (RF1_UNIQUE)) return(FALSE);
 
 	/* No Blade angels */
-	if (r_ptr->flags0 & RF0_NO_NEST) return(FALSE);
+	if (r_ptr->flags2 & RF2_NO_NEST) return(FALSE);
 
 	/* Require "priest" or Angel */
 //	if (!((r_ptr->d_char == 'A' && (r_ptr->level <= 70)) ||
@@ -3333,7 +3333,7 @@ static bool vault_aux_lesser_kennel(int r_idx) {
 	if (r_ptr->flags1 & (RF1_UNIQUE)) return(FALSE);
 
 	/* Not too many Black Dogs */
-	if (r_ptr->flags0 & RF0_NO_NEST) return(FALSE);
+	if (r_ptr->flags2 & RF2_NO_NEST) return(FALSE);
 
 	/* Require a Zephyr Hound or a dog */
 	return((r_ptr->d_char == 'Z') || (r_ptr->d_char == 'C'));
@@ -3369,7 +3369,7 @@ static bool vault_aux_treasure(int r_idx) {
  */
 static bool vault_aux_clone(int r_idx) {
 	/* unsure - blades shouldn't happen, but should titans? */
-	if (r_info[r_idx].flags0 & RF0_NO_NEST) return(FALSE);
+	if (r_info[r_idx].flags2 & RF2_NO_NEST) return(FALSE);
 
 	return(r_idx == template_race);
 }
@@ -3381,7 +3381,7 @@ static bool vault_aux_clone(int r_idx) {
 static bool vault_aux_symbol(int r_idx) {
 	return((r_info[r_idx].d_char == (r_info[template_race].d_char))
 	    && !(r_info[r_idx].flags1 & RF1_UNIQUE)
-	    && !(r_info[r_idx].flags0 & RF0_NO_NEST));
+	    && !(r_info[r_idx].flags2 & RF2_NO_NEST));
 }
 
 
@@ -3476,7 +3476,7 @@ static bool vault_aux_lesser_giant(int r_idx) {
 	if (r_ptr->flags1 & RF1_UNIQUE) return(FALSE);
 
 	/* No Titans */
-	if (r_ptr->flags0 & RF0_NO_NEST) return(FALSE);
+	if (r_ptr->flags2 & RF2_NO_NEST) return(FALSE);
 
 	/* Hack -- Require "P" monsters */
 	if (!strchr("P", r_ptr->d_char)) return(FALSE);

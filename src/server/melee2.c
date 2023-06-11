@@ -1953,7 +1953,6 @@ bool make_attack_spell(int Ind, int m_idx) {
 	monster_race	*r_ptr = race_inf(m_ptr);
 	u32b		f1 = r_ptr->flags1, f2 = r_ptr->flags2, f3 = r_ptr->flags3; /* Non-spell flags for other checks (eg unique monster?) */
 	u32b		f4 = r_ptr->flags4, f5 = r_ptr->flags5, f6 = r_ptr->flags6, f7 = r_ptr->flags7, f0 = r_ptr->flags0; /* Flags for actual spell-casting */
-	u32b		fA = r_ptr->flagsA; /* more non-spell flags */
 	//object_type	*o_ptr = &p_ptr->inventory[INVEN_WIELD];
 	char		m_name[MNAME_LEN], m_name_real[MNAME_LEN];
 	char		m_poss[MNAME_LEN];
@@ -2055,7 +2054,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	/* Hack for Tzeentch:
 	   Monsters that have both ASTAR and BLINK will not need to use it for movement purpose other than when ASTAR gets stuck.
 	   The other reason when BLINK is used is for escaping, which means player must be close or in line of sight. */
-	if ((fA & RFA_ASTAR) && (f6 & RF6_BLINK)
+	if ((f7 & RF7_ASTAR) && (f6 & RF6_BLINK)
 	    && distance(y, x, oy, ox) >= ANNOY_DISTANCE - 1 && !los(wpos, y, x, oy, ox))
 		f6 &= ~RF6_BLINK;
 
@@ -4025,7 +4024,6 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	monster_race	*r_ptr = race_inf(m_ptr);
 	u32b		f1 = r_ptr->flags1, f2 = r_ptr->flags2, f3 = r_ptr->flags3; /* Non-spell flags for other checks (eg unique monster?) */
 	u32b		f4 = r_ptr->flags4, f5 = r_ptr->flags5, f6 = r_ptr->flags6, f7 = r_ptr->flags7, f0 = r_ptr->flags0; /* Flags for actual spell-casting */
-	u32b		fA = r_ptr->flagsA; /* more non-spell flags */
 	//object_type	*o_ptr = &p_ptr->inventory[INVEN_WIELD];
 	char		m_name[MNAME_LEN], m_name_real[MNAME_LEN];
 	char		m_poss[MNAME_LEN];
@@ -4140,7 +4138,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	/* Hack for Tzeentch:
 	   Monsters that have both ASTAR and BLINK will not need to use it for movement purpose other than when ASTAR gets stuck.
 	   The other reason when BLINK is used is for escaping, which means player must be close or in line of sight. */
-	if ((fA & RFA_ASTAR) && (f6 & RF6_BLINK)
+	if ((f7 & RF7_ASTAR) && (f6 & RF6_BLINK)
 	    && distance(y, x, oy, ox) >= ANNOY_DISTANCE - 1 && !los(wpos, y, x, oy, ox))
 		f6 &= ~RF6_BLINK;
 
@@ -7294,7 +7292,7 @@ static bool get_moves(int Ind, int m_idx, int *mm) {
 
 #ifdef MONSTER_ASTAR
 	/* Monster uses A* pathfinding algorithm? - C. Blue */
-	if ((r_ptr->flagsA & RFA_ASTAR) && (m_ptr->astar_idx != -1))
+	if ((r_ptr->flags7 & RF7_ASTAR) && (m_ptr->astar_idx != -1))
 		switch (get_moves_astar(Ind, m_idx, &y2, &x2)) {
 		case 0: /* No moves (entombed) - blink or teleport */
 			//no worky: m_ptr->ai_state |= AI_STATE_EFFECT;
@@ -7498,7 +7496,7 @@ s_printf("ASTAR_INCOMPLETE\n");
 	y = m_ptr->fy - y2;
 	x = m_ptr->fx - x2;
 
-	if ((r_ptr->flags1 & RF1_NEVER_MOVE) || m_ptr->no_move) {
+	if ((r_ptr->flags2 & RF2_NEVER_MOVE) || m_ptr->no_move) {
 		done = TRUE;
 		m_ptr->last_target = 0;
 	}
@@ -8037,7 +8035,7 @@ static void get_moves_arc(int targy, int targx, int m_idx, int *mm) {
 	y = m_ptr->fy - y2;
 	x = m_ptr->fx - x2;
 
-	if ((r_ptr->flags1 & RF1_NEVER_MOVE) || m_ptr->no_move) {
+	if ((r_ptr->flags2 & RF2_NEVER_MOVE) || m_ptr->no_move) {
 		//done = TRUE;
 		m_ptr->last_target = 0;
 	}
@@ -8776,7 +8774,7 @@ static bool player_invis(int Ind, monster_type *m_ptr, int dist) {
 	if (strchr("eAN", r_ptr->d_char) ||
 	    ((r_ptr->flags1 & RF1_UNIQUE) && (r_ptr->flags2 & RF2_SMART) && (r_ptr->flags2 & RF2_POWERFUL)) ||
 #ifdef MONSTER_ASTAR
-	    (r_ptr->flagsA & RFA_ASTAR) || /* hmm.. */
+	    (r_ptr->flags7 & RF7_ASTAR) || /* hmm.. */
 #endif
 	    (r_ptr->flags7 & RF7_NAZGUL))
 		return(FALSE);
@@ -9804,11 +9802,11 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	}
 
 	/* 5% random movement */
-	else if ((r_ptr->flagsA & RFA_RAND_5) &&
+	else if ((r_ptr->flags1 & RF1_RAND_5) &&
 	    (rand_int(100) < 5)) {
 #ifdef OLD_MONSTER_LORE
 		/* Memorize flags */
-		if (p_ptr->mon_vis[m_idx]) r_ptr->r_flagsA |= RFA_RAND_5;
+		if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags1 |= RF1_RAND_5;
 #endif
 
 		/* Try four "random" directions */
@@ -9941,7 +9939,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	do_move = FALSE;
 	do_view = FALSE;
 	/* for AI_ANNOY only: fall back to attacking if out of moves */
-	do_melee = ((r_ptr->flags7 & RF7_AI_ANNOY) && !(r_ptr->flags1 & RF1_NEVER_BLOW));
+	do_melee = ((r_ptr->flags7 & RF7_AI_ANNOY) && !(r_ptr->flags2 & RF2_NEVER_BLOW));
 
 	/* Assume nothing */
 	did_open_door = FALSE;
@@ -10084,7 +10082,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		/* EVILEYE - correct me if i interpreted this wrongly. */
 		/* You're right, mine was wrong - Jir - */
 		else if (((r_ptr->flags2 & RF2_KILL_WALL) ||
-		    (!((r_ptr->flags1 & RF1_NEVER_MOVE) ||
+		    (!((r_ptr->flags2 & RF2_NEVER_MOVE) ||
 		    (r_ptr->flags2 & RF2_EMPTY_MIND) ||
 		   (r_ptr->flags2 & RF2_STUPID)) &&
 		    (!rand_int(digging_difficulty(c_ptr->feat) * MONSTER_DIG_FACTOR)
@@ -10268,7 +10266,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 		/* Hack -- check for Glyph of Warding / Rune of Protection */
 		if (do_move && (c_ptr->feat == FEAT_GLYPH) &&
-		    !((r_ptr->flags1 & RF1_NEVER_MOVE) && (r_ptr->flags1 & RF1_NEVER_BLOW))) {
+		    !((r_ptr->flags2 & RF2_NEVER_MOVE) && (r_ptr->flags2 & RF2_NEVER_BLOW))) {
 			/* Assume no move allowed */
 			do_move = FALSE;
 
@@ -10309,10 +10307,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 		/* Some monsters never attack */
 		if (do_move && (ny == p_ptr->py) && (nx == p_ptr->px) &&
-		    (r_ptr->flags1 & RF1_NEVER_BLOW)) {
+		    (r_ptr->flags2 & RF2_NEVER_BLOW)) {
 #ifdef OLD_MONSTER_LORE
 			/* Hack -- memorize lack of attacks */
-			/* if (m_ptr->ml) r_ptr->r_flags1 |= RF1_NEVER_BLOW; */
+			/* if (m_ptr->ml) r_ptr->r_flags2 |= RF2_NEVER_BLOW; */
 #endif
 
 			/* Do not move */
@@ -10362,10 +10360,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 
 		/* Some monsters never move */
-		if (do_move && ((r_ptr->flags1 & RF1_NEVER_MOVE) || m_ptr->no_move)) {
+		if (do_move && ((r_ptr->flags2 & RF2_NEVER_MOVE) || m_ptr->no_move)) {
 #ifdef OLD_MONSTER_LORE
 			/* Hack -- memorize lack of attacks */
-			/* if (m_ptr->ml) r_ptr->r_flags1 |= RF1_NEVER_MOVE; */
+			/* if (m_ptr->ml) r_ptr->r_flags2 |= RF2_NEVER_MOVE; */
 #endif
 
 			/* Do not move */
@@ -11875,7 +11873,7 @@ void process_monsters(void) {
 
 #if 0 /* bugged here, moved downwards a couple of lines */
 		/* Added for Valinor - C. Blue */
-		if (r_ptr->flags7 & RF7_NEVER_ACT) m_ptr->energy = 0;
+		if (r_ptr->flags2 & RF2_NEVER_ACT) m_ptr->energy = 0;
 #endif
 
 		/* Give this monster some energy */
@@ -11890,7 +11888,7 @@ void process_monsters(void) {
 		tmp = level_speed(&m_ptr->wpos);
 
 		/* Added for Valinor; also used by target dummy - C. Blue */
-		if (r_ptr->flags7 & RF7_NEVER_ACT) m_ptr->energy = 0;
+		if (r_ptr->flags2 & RF2_NEVER_ACT) m_ptr->energy = 0;
 		/* Specialty when we want to sync events and keep players and monsters on a short hiatus for reading story or w/e */
 		if (m_ptr->suspended) {
 			if (m_ptr->suspended > turn) m_ptr->energy = 0;
@@ -12276,7 +12274,7 @@ void process_monsters(void) {
 					//Dungeon boss or special unique? (can't override Sauron, Nazgul or Halloween)
 					else if (p_ptr->music_monster != 43 && p_ptr->music_monster != 42 && p_ptr->music_monster != 55) {
 						//Dungeon boss?
-						if (r_ptr->flagsA & RFA_FINAL_GUARDIAN) {
+						if (r_ptr->flags8 & RF8_FINAL_GUARDIAN) {
  #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 							/* we now 'learned' who is the boss of this dungeon */
 							if (!is_admin(p_ptr)) {

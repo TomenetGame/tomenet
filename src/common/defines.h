@@ -5801,14 +5801,13 @@
 #define RF1_FORCE_DEPTH			0x00000100	/* Start at "correct" depth */
 #define RF1_FORCE_MAXHP			0x00000200	/* Start with max hitpoints */
 #define RF1_FORCE_SLEEP			0x00000400	/* Start out with very low energy - but this is now deprecated since monsters even start out with negative energy nowadays to avoid insta-breath-kills - C. Blue */
-#define RF1_FORCE_EXTRA			0x00000800	/* Start out something -- UNUSED */
-//^hole
+#define RF1_RAND_5			0x00000800	/* Moves very slightly randomly (5%) (for Panda, so it's not appearing totally 'passive' - C. Blue) */
 #define RF1_FRIEND		0x00001000	/* Arrive with a friend */
 #define RF1_FRIENDS		0x00002000	/* Arrive with some friends */
 #define RF1_ESCORT		0x00004000	/* Arrive with an escort */
 #define RF1_ESCORTS		0x00008000	/* Arrive with some escorts */
-#define RF1_NEVER_BLOW			0x00010000	/* Never make physical blow */
-#define RF1_NEVER_MOVE			0x00020000	/* Never make physical move */
+#define RF1_DROP_1			0x00010000	/* Drop exactly 1 item/gold pile */
+#define RF1_DROP_2			0x00020000	/* Drop exactly 2 items/gold piles */
 #define RF1_RAND_25			0x00040000	/* Moves randomly (25%) */
 #define RF1_RAND_50			0x00080000	/* Moves randomly (50%) */
 #define RF1_ONLY_GOLD		0x00100000	/* Drop only gold */
@@ -5851,15 +5850,16 @@
 #define RF2_KILL_BODY		0x00200000	/* Monster can kill monsters */
 #define RF2_TAKE_ITEM		0x00400000	/* Monster can pick up items */
 #define RF2_KILL_ITEM		0x00800000	/* Monster can crush items */
-//POTENTIAL FLAG HOLE: those RF2_BRAINs..
-#define RF2_BRAIN_1			0x01000000 /* unusued..? */
-#define RF2_BRAIN_2			0x02000000
-#define RF2_BRAIN_3			0x04000000
-#define RF2_BRAIN_4			0x08000000
-#define RF2_BRAIN_5		0x10000000
-#define RF2_BRAIN_6		0x20000000
+#define RF2_NEVER_BLOW			0x01000000	/* Never make physical blow */
+#define RF2_NEVER_MOVE			0x02000000	/* Never make physical move */
+#define RF2_NEVER_ACT			0x04000000	/* Monster doesn't perform any kind of movement, attacks, spells or whatever. */
+#define RF2_NO_ESCORT			0x08000000	/* monster will never occur in groups, like escorts or nests/pits */
+#define RF2_NO_NEST		0x10000000	/* monster will never occur in groups, like escorts or nests/pits */
+#define RF2_ROAMING		0x20000000	/* monster never spawns in vaults or pits (ie on CAVE_ICKY/CAVE_NEST_PIT grids) */
 #define RF2_REGENERATE_T2	0x40000000	/* Monster has half-troll-like regeneration */
 #define RF2_REGENERATE_TH	0x80000000	/* Monster has troll- or hydra-like regeneration */
+
+#define RF2_NO_GROUP_MASK	(RF2_NO_ESCORT)		/* | RF2_NO_NEST */
 
 /*
  * New monster race bit flags
@@ -6040,8 +6040,7 @@
 #define RF7_CAN_FLY		0x00000004	/* Monster can fly */
 #define RF7_FRIENDLY		0x00000008	/* Monster is friendly */
 #define RF7_PET				0x00000010	/* Monster is a pet */
-#define RF7_MORTAL			0x00000020	/* Monster is a mortal being -- UNUSED */
-//^effectless, but actually used in r_info
+#define RF7_CAN_CLIMB			0x00000020	/* Monster can climb */
 #define RF7_SPIDER			0x00000040	/* Monster is a spider (can pass webs) */
 #define RF7_NAZGUL			0x00000080	/* Monster is a Nazgul */
 #define RF7_DG_CURSE		0x00000100	/* If killed the monster grant a DG Curse to the player */
@@ -6056,7 +6055,7 @@
 #define RF7_DROPRANDART		0x00010000	/* not implemented - Drops a random artifact */
 #define RF7_AI_PLAYER		0x00020000	/* not implemented */
 #define RF7_NO_THEFT		0x00040000	/* unused (stealing from monsters is disabled) */
-#define RF7_NEVER_ACT		0x00080000	/* Monster doesn't perform any kind of movement, attacks, spells or whatever. */
+#define RF7_ASTAR		0x00080000	/* monster uses A* pathfinding (use with care, might strain CPU) */
 #define RF7_NO_ESP			0x00100000	/* monster isn't ESPable */
 #define RF7_ATTR_BASE			0x00200000	/* show base attr too. Atm works if a) only 1 breath and ATTR_MULTI (DRs) or b) ATTR_BNW is set */
 #define RF7_VORTEX			0x00400000	/* experimental: flicker extremely fast - not working atm */
@@ -6103,7 +6102,7 @@
 #define RF8_PSEUDO_UNIQUE	0x04000000	/* Not a unique monster (does not appear in the uniques list), but named/looks like one (added for Santa Claus); monster form cannot be learnt by mimics. Cannot be cloned. */
 #define RF8_GENO_PERSIST	0x08000000	/* Don't automatically genocide/compact this monster */
 #define RF8_GENO_NO_THIN		0x10000000	/* Don't genocide this monster when thinning out surface spawns */
-//HOLE
+#define RF8_FINAL_GUARDIAN		0x20000000	/* monster is defined as FINAL_GUARDIAN_ in d_info.txt */
 #define RF8_WILD_SWAMP			0x40000000	/* ToDo: Implement Swamp */
 #define RF8_WILD_TOO			0x80000000
 
@@ -6196,20 +6195,9 @@
 
 
 /* Additional basic flags */
-#define RFA_ASTAR		0x00000001		/* monster uses A* pathfinding (use with care, might strain CPU) */
-#define RFA_NO_ESCORT		0x00000002		/* monster will never occur in groups, like escorts or nests/pits */
-#define RFA_NO_NEST		0x00000004		/* monster will never occur in groups, like escorts or nests/pits */
-#define RFA_FINAL_GUARDIAN	0x00000008		/* monster is defined as FINAL_GUARDIAN_ in d_info.txt */
-#define RFA_ROAMING			0x00000010	/* monster never spawns in vaults or pits (ie on CAVE_ICKY/CAVE_NEST_PIT grids) */
-#define RFA_DROP_1			0x00000020	/* Drop exactly 1 item/gold pile */
-#define RFA_CAN_CLIMB			0x00000040	/* Monster can climb */
-#define RFA_RAND_5			0x00000080	/* Moves very slightly randomly (5%) (for Panda, so it's not appearing totally 'passive' - C. Blue) */
-#define RFA_DROP_2		0x00000100		/* Drop exactly 2 items/gold piles */
 #define RFA_ADMINISTRATIVE_PUSH	0x00000200		/* Push back */
 #define RFA_METEOR_SWARM	0x00000400		/* Targetted delayed orbital attack */
 #define RFA_ADMINISTRATIVE_HOLD	0x00000800		/* Irresistible paralysis */
-
-#define RFA_NO_GROUP_MASK	(RFA_NO_ESCORT)		/* | RFA_NO_NEST */
 
 
 /* currently disabled r_info.txt flags (not implemented or some other reason) */
@@ -7388,7 +7376,7 @@
     ((f_info[(C)->feat].flags1 & FF1_WEB) && ((R)->flags7 & RF7_SPIDER)) || \
     /* Some monsters live in the mountains natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
     (((C)->feat == FEAT_MOUNTAIN) && \
-    (((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO) || ((R)->flagsA & RFA_CAN_CLIMB))))
+    (((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO) || ((R)->flags7 & RF7_CAN_CLIMB))))
 
     //((C)->m_idx < 0)) /* Player ghost in wall XXX */
     // (((c_ptr->feat != FEAT_SHOP) && /* Tavern entrance?(need GetCS to check that) // if (c_ptr->feat == FEAT_SHOP_TAIL - 1) */
@@ -7416,7 +7404,7 @@
 ((f_info[(C)->feat].flags1 & FF1_WEB) && ((R)->flags7 & RF7_SPIDER)) || \
 /* Some monsters live in the mountains natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
 (((C)->feat == FEAT_MOUNTAIN) && \
-(((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO) || ((R)->flagsA & RFA_CAN_CLIMB))) || \
+(((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO) || ((R)->flags7 & RF7_CAN_CLIMB))) || \
 /* Monster moves through walls (and doors) */ \
 /*  -- added check whether it's actually a WALL, to prevent monsters from crossing terrain they don't like (eg lava) */ \
 /*              else if (r_ptr->flags2 & RF2_PASS_WALL) */ \
@@ -7444,7 +7432,7 @@
 ((f_info[(C)->feat].flags1 & FF1_WEB) && ((R)->flags7 & RF7_SPIDER)) || \
 /* Some monsters live in the mountains natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
 (((C)->feat == FEAT_MOUNTAIN) && \
-(((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO) || ((R)->flagsA & RFA_CAN_CLIMB))) || \
+(((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO) || ((R)->flags7 & RF7_CAN_CLIMB))) || \
 /* Monster moves through walls (and doors) */ \
 /*  -- added check whether it's actually a WALL, to prevent monsters from crossing terrain they don't like (eg lava) */ \
 /*              else if (r_ptr->flags2 & RF2_PASS_WALL) */ \

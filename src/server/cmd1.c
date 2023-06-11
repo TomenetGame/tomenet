@@ -4515,7 +4515,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 
 				else if (ma_ptr->effect == MA_SLOW) {
 #if 0 /* less message order problems */
-					if (!((r_ptr->flags1 & RF1_NEVER_MOVE)
+					if (!((r_ptr->flags2 & RF2_NEVER_MOVE)
 					    || strchr("ANUjmeEv$,DdsbBFIJQSXclnw!=?+", r_ptr->d_char))) {
 						msg_format(Ind, "You kick %s in the ankle.", m_name);
 						special_effect = MA_SLOW;
@@ -4524,14 +4524,14 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 						//msg_format(Ind, ma_ptr->desc, m_name);
 					}
 #else
-					if (!((r_ptr->flags1 & RF1_NEVER_MOVE)
+					if (!((r_ptr->flags2 & RF2_NEVER_MOVE)
 					    || strchr("ANUjmeEv$,DdsbBFIJQSXclnw!=?+", r_ptr->d_char)))
 						special_effect = MA_SLOW;
 					sprintf(hit_desc, ma_ptr->desc, m_name);
 #endif
 				} else if (ma_ptr->effect == MA_ROYAL_SLOW) { /* works against U,D,d,J,c,n */
 #if 0 /* less message order problems */
-					if (!((r_ptr->flags1 & RF1_NEVER_MOVE)
+					if (!((r_ptr->flags2 & RF2_NEVER_MOVE)
 					    || strchr("ANjmeEv$,sbBFIQSXlw!=?+", r_ptr->d_char))) {
 						switch (m_name[strlen(m_name) - 1]) {
 						case 's': case 'x': case 'z':
@@ -4546,7 +4546,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 						//msg_format(Ind, ma_ptr->desc, m_name);
 					}
 #else
-					if (!((r_ptr->flags1 & RF1_NEVER_MOVE)
+					if (!((r_ptr->flags2 & RF2_NEVER_MOVE)
 					    || strchr("ANjmeEv$,sbBFIQSXlw!=?+", r_ptr->d_char)))
 						special_effect = MA_SLOW;
 					sprintf(hit_desc, ma_ptr->desc, m_name);
@@ -6064,7 +6064,7 @@ void py_attack(int Ind, int y, int x, byte old) {
 	struct worldpos *wpos = &p_ptr->wpos;
 
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) return;
-	if (p_ptr->body_monster && (r_info[p_ptr->body_monster].flags1 & RF1_NEVER_BLOW)) return;
+	if (p_ptr->body_monster && (r_info[p_ptr->body_monster].flags2 & RF2_NEVER_BLOW)) return;
 	if (!p_ptr->num_blow) return; //prevent div/0 in py_attack_..() routines
 
 	if (!(zcave = getcave(wpos))) return;
@@ -6124,7 +6124,7 @@ void spin_attack(int Ind) {
 	struct worldpos *wpos = &p_ptr->wpos;
 
 	if (!(zcave = getcave(wpos))) return;
-	if (p_ptr->body_monster && (r_info[p_ptr->body_monster].flags1 & RF1_NEVER_BLOW)) return;
+	if (p_ptr->body_monster && (r_info[p_ptr->body_monster].flags2 & RF2_NEVER_BLOW)) return;
 	if (!p_ptr->num_blow) return; /* paranoia */
 
 	/* In case we got here by weapon activation: */
@@ -7029,7 +7029,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	un_afk_idle(Ind);
 
 	/* Can we move ? */
-	if (r_ptr->flags1 & RF1_NEVER_MOVE) {
+	if (r_ptr->flags2 & RF2_NEVER_MOVE) {
 		msg_print(Ind, "You cannot move by nature.");
 		disturb(Ind, 0, 0); /* Stop us in case we were running */
 		return;

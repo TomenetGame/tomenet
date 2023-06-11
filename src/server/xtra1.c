@@ -2333,7 +2333,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 
 	/* Forms that occur in the mountains are able to pass them */
 	if ((r_ptr->flags8 & (RF8_WILD_MOUNTAIN | RF8_WILD_VOLCANO)) ||
-	    (r_ptr->flagsA & RFA_CAN_CLIMB))
+	    (r_ptr->flags7 & RF7_CAN_CLIMB))
 		{ p_ptr->climb = TRUE; csheet_boni->cb[5] |= CB6_RCLMB; }
 
 	/* Orcs get resist_dark */
@@ -2415,7 +2415,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	p_ptr->stat_add[A_CHR] += d; csheet_boni->pchr += d;
 
 
-	//if (r_ptr->flags1 & RF1_NEVER_MOVE) p_ptr->immovable = TRUE;
+	//if (r_ptr->flags2 & RF2_NEVER_MOVE) p_ptr->immovable = TRUE;
 	if (r_ptr->flags2 & RF2_STUPID) { p_ptr->stat_add[A_INT] -= 2; csheet_boni->pint -= 2; }
 	if (r_ptr->flags2 & RF2_SMART) { p_ptr->stat_add[A_INT] += 2; csheet_boni->pint += 2; }
 	if (r_ptr->flags2 & RF2_INVISIBLE) {
@@ -5828,7 +5828,7 @@ void calc_boni(int Ind) {
 	}
 
 	if (get_skill(p_ptr, SKILL_DODGE) && !p_ptr->rogue_heavyarmor)
-	//if (!(r_ptr->flags1 & RF1_NEVER_MOVE)); // not for now
+	//if (!(r_ptr->flags2 & RF2_NEVER_MOVE)); // not for now
 	{
 #ifndef NEW_DODGING /* reworking dodge, see #else.. */
 		/* use a long var temporarily to handle v.high total_weight */
@@ -7142,7 +7142,7 @@ void calc_boni(int Ind) {
 
 	/* hack: no physical attacks */
 	if ((p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) ||
-	    (p_ptr->body_monster && (r_info[p_ptr->body_monster].flags1 & RF1_NEVER_BLOW)) ||
+	    (p_ptr->body_monster && (r_info[p_ptr->body_monster].flags2 & RF2_NEVER_BLOW)) ||
 	    never_blow == 0x1 || ((never_blow == 0x2 || never_blow == 0x4) && !(p_ptr->dual_wield && p_ptr->dual_mode)) || never_blow == 0x6)
 		p_ptr->num_blow = 0;
 	if ((p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) ||
@@ -8112,7 +8112,7 @@ void global_event_signup(int Ind, int n, cptr parm) {
 									if (!is_admin(p_ptr) &&
 									    ((r_info[i].flags1 & RF1_UNIQUE) ||
 									    //(r_info[i].flags1 & RF1_QUESTOR) ||
-									    (r_info[i].flags7 & RF7_NEVER_ACT) ||
+									    (r_info[i].flags2 & RF2_NEVER_ACT) ||
 									    (r_info[i].flags7 & RF7_PET) ||
 									    (r_info[i].flags7 & RF7_NEUTRAL) ||
 									    (r_info[i].flags7 & RF7_FRIENDLY) ||
@@ -8186,7 +8186,8 @@ void global_event_signup(int Ind, int n, cptr parm) {
 		if (!is_admin(p_ptr) &&
 		    //((r_info[r_found].flags1 & (RF1_UNIQUE | RF1_QUESTOR)) ||
 		    ((r_info[r_found].flags1 & RF1_UNIQUE) ||
-		    (r_info[r_found].flags7 & (RF7_NEVER_ACT | RF7_NO_DEATH | RF7_PET | RF7_NEUTRAL | RF7_FRIENDLY)) ||
+		    (r_info[r_found].flags2 & (RF2_NEVER_ACT)) ||
+		    (r_info[r_found].flags7 & (RF7_NO_DEATH | RF7_PET | RF7_NEUTRAL | RF7_FRIENDLY)) ||
 		    (r_info[r_found].flags8 & (RF8_GENO_NO_THIN | RF8_JOKEANGBAND)) ||
 		    (r_info[r_found].rarity == 255))) {
 			msg_print(Ind, "\377ySorry, that creature is beyond the wizards' abilities.");

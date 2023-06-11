@@ -157,30 +157,37 @@ static cptr r_info_flags1[] = {
 	"RAND_100", //was: "QUESTOR",
 	"MALE",
 	"FEMALE",
+
 	"CHAR_CLEAR",
 	"CHAR_MULTI",
 	"ATTR_CLEAR",
 	"ATTR_MULTI",
+
 	"FORCE_DEPTH",
 	"FORCE_MAXHP",
 	"FORCE_SLEEP",
-	"FORCE_EXTRA",
+	"RAND_5",
+
 	"FRIEND",
 	"FRIENDS",
 	"ESCORT",
 	"ESCORTS",
-	"NEVER_BLOW",
-	"NEVER_MOVE",
+
+	"DROP_1",
+	"DROP_2",
 	"RAND_25",
 	"RAND_50",
+
 	"ONLY_GOLD",
 	"ONLY_ITEM",
 	"DROP_60",
 	"DROP_90",
+
 	"DROP_1D2",
 	"DROP_2D2",
 	"DROP_3D2",
 	"DROP_4D2",
+
 	"DROP_GOOD",
 	"DROP_GREAT",
 	"DROP_USEFUL",
@@ -193,34 +200,41 @@ static cptr r_info_flags1[] = {
 static cptr r_info_flags2[] = {
 	"STUPID",
 	"SMART",
-	"CAN_SPEAK",	// "XXX1X2",
-	"REFLECTING",	// "XXX2X2",
+	"CAN_SPEAK",
+	"REFLECTING",
+
 	"INVISIBLE",
 	"COLD_BLOOD",
 	"EMPTY_MIND",
 	"WEIRD_MIND",
-	"DEATH_ORB",	// "MULTIPLY",
+
+	"DEATH_ORB",
 	"REGENERATE",
-	"SHAPECHANGER",	// "XXX3X2",
-	"ATTR_ANY",	// "XXX4X2",
+	"SHAPECHANGER",
+	"ATTR_ANY",
+
 	"POWERFUL",
-	"ELDRITCH_HORROR",		//"XXX5X2",
-	"AURA_FIRE",	// "XXX7X2",
-	"AURA_ELEC",	// "XXX6X2",
+	"ELDRITCH_HORROR",
+	"AURA_FIRE",
+	"AURA_ELEC",
+
 	"OPEN_DOOR",
 	"BASH_DOOR",
 	"PASS_WALL",
 	"KILL_WALL",
+
 	"MOVE_BODY",
 	"KILL_BODY",
 	"TAKE_ITEM",
 	"KILL_ITEM",
-	"BRAIN_1",
-	"BRAIN_2",
-	"BRAIN_3",
-	"BRAIN_4",
-	"BRAIN_5",
-	"BRAIN_6",
+
+	"NEVER_BLOW",
+	"NEVER_MOVE",
+	"NEVER_ACT",
+	"NO_ESCORT",
+
+	"NO_NEST",
+	"ROAMING",
 	"REGENERATE_T2",
 	"REGENERATE_TH"
 };
@@ -233,30 +247,37 @@ static cptr r_info_flags3[] = {
 	"TROLL",
 	"GIANT",
 	"DRAGON",
+
 	"DEMON",
 	"UNDEAD",
 	"EVIL",
 	"ANIMAL",
-	"DRAGONRIDER",	// "XXX1X3",
-	"GOOD",	// "XXX2X3",
-	"AURA_COLD",	// "XXX3X3",
-	"NONLIVING",	// "IM_TELE",
+
+	"DRAGONRIDER",
+	"GOOD",
+	"AURA_COLD",
+	"NONLIVING",
+
 	"HURT_LITE",
 	"HURT_ROCK",
-	"SUSCEP_FIRE",	// "HURT_FIRE",
-	"SUSCEP_COLD",	// "HURT_COLD",
+	"SUSCEP_FIRE",
+	"SUSCEP_COLD",
+
 	"IM_ACID",
 	"IM_ELEC",
 	"IM_FIRE",
 	"IM_COLD",
+
 	"IM_POIS",
-	"RES_TELE",	// "IM_PSI",
+	"RES_TELE",
 	"RES_NETH",
 	"RES_WATE",
+
 	"IM_WATER",
 	"RES_NEXU",
 	"RES_DISE",
 	"AI_HYBRID",
+
 	"NO_FEAR",
 	"NO_STUN",
 	"NO_CONF",
@@ -269,37 +290,44 @@ static cptr r_info_flags3[] = {
 /* spells 96-127 (innate) */
 static cptr r_info_flags4[] = {
 	"SHRIEK",
-	"UNMAGIC",		//	"CAUSE_4",
-	"S_ANIMAL",	// "XXX3X4",
-	"ROCKET",	// "XXX4X4",
+	"UNMAGIC",
+	"S_ANIMAL",
+	"ROCKET",
+
 	"ARROW_1",	// former 1/2 (arrow), now arrow/light
 	"ARROW_2",	// former 3/4 (missile), now shot/heavy
 	"ARROW_3",	//	"ARROW_3", now bolt/heavy
 	"ARROW_4",	//	"ARROW_4", now missile/heavy
+
 	"BR_ACID",
 	"BR_ELEC",
 	"BR_FIRE",
 	"BR_COLD",
+
 	"BR_POIS",
 	"BR_NETH",
 	"BR_LITE",
 	"BR_DARK",
+
 	"BR_CONF",
 	"BR_SOUN",
 	"BR_CHAO",
 	"BR_DISE",
+
 	"BR_NEXU",
 	"BR_TIME",
 	"BR_INER",
 	"BR_GRAV",
+
 	"BR_SHAR",
 	"BR_PLAS",
 	"BR_WALL",
 	"BR_MANA",
-	"BR_DISI",	// "XXX8X4"
-	"BR_NUKE",	// "XXX6X4",
-	"MOAN",		//"XXX",    <- MOAN is for Halloween event :) -C. Blue
-	"BOULDER",	// "XXX",
+
+	"BR_DISI",
+	"BR_NUKE",
+	"MOAN",		// <- MOAN is for Halloween event :) -C. Blue
+	"BOULDER",
 };
 
 /*
@@ -311,30 +339,37 @@ static cptr r_info_flags5[] = {
 	"BA_ELEC",
 	"BA_FIRE",
 	"BA_COLD",
+
 	"BA_POIS",
 	"BA_NETH",
 	"BA_WATE",
 	"BA_MANA",
+
 	"BA_DARK",
 	"DRAIN_MANA",
 	"MIND_BLAST",
 	"BRAIN_SMASH",
+
 	"CURSE",	//	"CAUSE_1",
 	"BO_CODE",
-	"BA_NUKE",	// "XXX5X4",
-	"BA_CHAO",	// "XXX7X4",
+	"BA_NUKE",
+	"BA_CHAO",
+
 	"BO_ACID",
 	"BO_ELEC",
 	"BO_FIRE",
 	"BO_COLD",
+
 	"BO_POIS",
 	"BO_NETH",
 	"BO_WATE",
 	"BO_MANA",
+
 	"BO_PLAS",
 	"BO_ICEE",
 	"MISSILE",
 	"SCARE",
+
 	"BLIND",
 	"CONF",
 	"SLOW",
@@ -347,33 +382,40 @@ static cptr r_info_flags5[] = {
 /* spells 160-191 (bizarre) */
 static cptr r_info_flags6[] = {
 	"HASTE",
-	"HAND_DOOM",	// "XXX1X6",
+	"HAND_DOOM",
 	"HEAL",
-	"S_ANIMALS",	// "XXX2X6",
+	"S_ANIMALS",
+
 	"BLINK",
 	"TPORT",
-	"RAISE_DEAD",	// "XXX3X6", -- not implemented
-	"S_BUG",	// "XXX4X6",
+	"RAISE_DEAD",	// -- not implemented
+	"S_BUG",
+
 	"TELE_TO",
 	"TELE_AWAY",
 	"TELE_LEVEL",
-	"S_RNG",	// "XXX5",
+	"S_RNG",
+
 	"DARKNESS",
 	"TRAPS",
 	"FORGET",
-	"S_DRAGONRIDER",	// "XXX6X6",
-	"S_KIN",	// "XXX7X6",
-	"S_HI_DEMONS",	// "XXX8X6",
+	"S_DRAGONRIDER",
+
+	"S_KIN",
+	"S_HI_DEMONS",
 	"S_MONSTER",
 	"S_MONSTERS",
+
 	"S_ANTS",
 	"S_SPIDERS",
 	"S_HOUNDS",
 	"S_HYDRAS",
+
 	"S_ANGEL",
 	"S_DEMON",
 	"S_UNDEAD",
 	"S_DRAGON",
+
 	"S_HI_UNDEAD",
 	"S_HI_DRAGONS",
 	"S_NAZGUL",
@@ -393,34 +435,41 @@ static cptr r_info_flags7[] = {
 	"CAN_SWIM",
 	"CAN_FLY",
 	"FRIENDLY",
+
 	"PET",
-	"MORTAL",
+	"CAN_CLIMB",
 	"SPIDER",
 	"NAZGUL",
+
 	"DG_CURSE",
 	"POSSESSOR",
 	"NO_DEATH",
 	"NO_TARGET",
+
 	"AI_ANNOY",
 	"AI_SPECIAL",
 	"NEUTRAL",
 	"DROP_ART",
+
 	"DROP_RANDART",
 	"AI_PLAYER",
 	"NO_THEFT",
-	"NEVER_ACT",
+	"ASTAR",
+
 	"NO_ESP",
 	"ATTR_BASE",
 	"VORTEX",
 	"OOD_20",
+
 	"OOD_15",
 	"OOD_10",
 	"ATTR_BNW",
-	"S_LOWEXP", //"XXX7X27",
-	"S_NOEXP", //"XXX7X28",
-	"ATTR_BREATH",	//"XXX7X29",
-	"MULTIPLY",		//"XXX7X30",
-	"DISBELIEVE",	//"XXX7X31",
+	"S_LOWEXP",
+
+	"S_NOEXP",
+	"ATTR_BREATH",
+	"MULTIPLY",
+	"DISBELIEVE",
 };
 
 /*
@@ -431,33 +480,39 @@ static cptr r_info_flags8[] = {
 	"WILD_TOWN",
 	"WILD_EASY",	/* ground without requirements: town/shore/waste/grass/swamp */
 	"WILD_SHORE",
+
 	"WILD_OCEAN",
 	"WILD_WASTE",
 	"WILD_WOOD",
 	"WILD_VOLCANO",
+
 	"WILD_LAKE",
 	"WILD_MOUNTAIN",
 	"WILD_GRASS",
 	"NO_CUT",
+
 	"CTHANGBAND",
 	"PERNANGBAND",
 	"ZANGBAND",
 	"JOKEANGBAND",
+
 	"BASEANGBAND",
 	"BLUEBAND",
 	"NO_AUTORET",
 	"WILD_DESERT",
+
 	"WILD_ICE",
 	"NETHER_REALM",
 	"PLURAL",
 	"NO_BLOCK",
+
 	"ALLOW_RUNNING",
 	"AVOID_PERMAWALLS",
 	"PSEUDO_UNIQUE",
 	"GENO_PERSIST",
+
 	"GENO_NO_THIN",
-	"XXX",
-	//^hole
+	"FINAL_GUARDIAN", /* should not be used in r_info, since it's set implicitely from d_info */ //4
 	"WILD_SWAMP",	/* ToDo: Implement Swamp */
 	"WILD_TOO",
 };
@@ -484,7 +539,7 @@ static cptr r_info_flags9[] = {
 
 	"ONLY_DEPTH",
 	"SPECIAL_GENE",
-	"NO_REDUCE",
+	"NO_REDUCE",	//hole
 	"RES_ACID",
 
 	"RES_ELEC",
@@ -502,7 +557,7 @@ static cptr r_info_flags9[] = {
 	"RES_TIME",
 	"RES_MANA",
 
-	"X10000000",
+	"X10000000", //hole
 	"IM_TELE",
 	"IM_PSI",
 	"RES_PSI",
@@ -515,69 +570,83 @@ static cptr r_info_flags0[] = {
 	"S_HI_MONSTER",
 	"S_HI_MONSTERS",
 	"S_HI_UNIQUE",
-	"BO_DISE",//4
+	"BO_DISE",
+
 	"BA_DISE",
 	"S_DEMONS",
 	"S_DRAGONS",
-	"S_HI_DEMON",//8
+	"S_HI_DEMON",
+
 	"S_HI_DRAGON",
 	"BR_ICE",
 	"BR_WATER",
-	"BA_LITE",//12
+	"BA_LITE",
+
 	"BO_WALL",
 	"BA_HELLFIRE",
 	"BO_LITE",
-	"BO_DARK",//26
+	"BO_DARK",
+
 	"DISPEL",
 	"WATERPOISON",
 	"ICEPOISON",
-	"BO_CHAO",//20
+	"BO_CHAO",
+
 	"X00100000",
 	"X00200000",
 	"X00400000",
-	"X00800000",//24
+	"X00800000",
+
 	"X01000000",
 	"X02000000",
 	"X04000000",
-	"X08000000",//28
+	"X08000000",
+
 	"X10000000",
 	"X20000000",
 	"X40000000",
-	"X80000000",//32
+	"X80000000",
 };
 static cptr r_info_flagsA[] = {
-	"ASTAR",
-	"NO_ESCORT",
-	"NO_NEST",
-	"FINAL_GUARDIAN", /* should not be used in r_info, since it's set implicitely from d_info */ //4
-	"ROAMING",
-	"DROP_1",
-	"CAN_CLIMB",
-	"RAND_5", //8
-	"DROP_2",
 	"ADMINISTRATIVE_PUSH",
 	"METEOR_SWARM",
-	"ADMINISTRATIVE_HOLD", //12
+	"ADMINISTRATIVE_HOLD",
+	"X00000008",
+
+	"X00000010",
+	"X00000020",
+	"X00000040",
+	"X00000080",
+
+	"X00000100",
+	"X00000200",
+	"X00000400",
+	"X00000800",
+
 	"X00001000",
 	"X00002000",
 	"X00004000",
-	"X00008000",//16
+	"X00008000",
+
 	"X00010000",
 	"X00020000",
 	"X00040000",
-	"X00080000",//20
+	"X00080000",
+
 	"X00100000",
 	"X00200000",
 	"X00400000",
-	"X00800000",//24
+	"X00800000",
+
 	"X01000000",
 	"X02000000",
 	"X04000000",
-	"X08000000",//28
+	"X08000000",
+
 	"X10000000",
 	"X20000000",
 	"X40000000",
-	"X80000000",//32
+	"X80000000",
 };
 
 /*
@@ -4504,7 +4573,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 	r_ptr->flags1 |= (RF1_UNIQUE);
 
 	/* Hack -- Try to prevent a few "potential" bugs */
-	r_ptr->flags1 |= (RF1_NEVER_MOVE | RF1_NEVER_BLOW);
+	r_ptr->flags2 |= (RF2_NEVER_MOVE | RF2_NEVER_BLOW);
 
 	/* Hack -- Try to prevent a few "potential" bugs */
 	r_ptr->hdice = r_ptr->hside = 1;
@@ -6213,7 +6282,7 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 					d_ptr->final_guardian = monst;
 
 					/* automatically mark it as such, no need for doing that in r_info.txt */
-					r_info[monst].flagsA |= RFA_FINAL_GUARDIAN;
+					r_info[monst].flags8 |= RF8_FINAL_GUARDIAN;
 
 					/* Start at next entry */
 					s = t;

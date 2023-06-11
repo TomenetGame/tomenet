@@ -954,8 +954,9 @@ static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
 	r_ptr->flags0 = rbase_ptr->flags0;
 
 	r_ptr->flags1 |= RF1_FORCE_MAXHP;
+	r_ptr->flags2 |= RF2_NEVER_ACT;
 	r_ptr->flags3 |= RF3_RES_TELE | RF3_RES_NEXU;
-	r_ptr->flags7 |= RF7_NO_TARGET | RF7_NEVER_ACT;
+	r_ptr->flags7 |= RF7_NO_TARGET;
 	if (q_questor->invincible) r_ptr->flags7 |= RF7_NO_DEATH; //for now we just use NO_DEATH flag for invincibility
 	r_ptr->flags8 |= RF8_GENO_PERSIST | RF8_GENO_NO_THIN | RF8_ALLOW_RUNNING | RF8_NO_AUTORET;
 	r_ptr->flags9 |= RF9_IM_TELE;
@@ -1000,7 +1001,7 @@ static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
 	r_ptr->freq_spell = rbase_ptr->freq_spell;
 
 #ifdef MONSTER_ASTAR
-	if (r_ptr->flagsA & RFA_ASTAR) {
+	if (r_ptr->flags7 & RF7_ASTAR) {
 		/* search for an available A* table to use */
 		for (i = 0; i < ASTAR_MAX_INSTANCES; i++) {
 			/* found an available instance? */
@@ -2334,7 +2335,8 @@ static void quest_questor_hostility(int q_idx, int stage, int questor_idx) {
 
 	/* questor turns hostile to players? */
 	if (q_qhost->hostile_player) {
-		r_ptr->flags7 &= ~(RF7_NO_TARGET | RF7_NEVER_ACT);//| RF7_NO_DEATH; --done in quest_questor_morph() actually
+		r_ptr->flags2 &= ~(RF2_NEVER_ACT);
+		r_ptr->flags7 &= ~(RF7_NO_TARGET);//| RF7_NO_DEATH; --done in quest_questor_morph() actually
 		m_ptr->questor_hostile |= 0x1;
 	}
 
@@ -6231,7 +6233,8 @@ void quest_questor_reverts(int q_idx, int questor_idx, struct worldpos *wpos) {
 	monster_type *m_ptr = &m_list[q_questor->mo_idx];
 	monster_race *r_ptr = m_ptr->r_ptr;
 
-	r_ptr->flags7 |= (RF7_NO_TARGET | RF7_NEVER_ACT);//| RF7_NO_DEATH; --done in quest_questor_morph() actually
+	r_ptr->flags2 |= (RF2_NEVER_ACT);
+	r_ptr->flags7 |= (RF7_NO_TARGET);//| RF7_NO_DEATH; --done in quest_questor_morph() actually
 	m_ptr->questor_hostile = 0x0;
 
 	/* change stage? */

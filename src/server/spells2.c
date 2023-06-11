@@ -6081,7 +6081,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 					sn = 0;
 
 					/* Monster can move to escape the wall */
-					if (!(r_ptr->flags1 & RF1_NEVER_MOVE)) {
+					if (!(r_ptr->flags2 & RF2_NEVER_MOVE)) {
 						/* Look for safety */
 						for (i = 0; i < 8; i++) {
 							/* Access the grid */
@@ -8282,7 +8282,7 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 	m_ptr->org_maxhp = m_ptr->maxhp;
 
 #ifdef MONSTER_ASTAR
-	if (r_ptr->flagsA & RFA_ASTAR) {
+	if (r_ptr->flags7 & RF7_ASTAR) {
 		/* search for an available A* table to use */
 		for (j = 0; j < ASTAR_MAX_INSTANCES; j++) {
 			/* found an available instance? */

@@ -6148,9 +6148,9 @@ bool monster_death(int Ind, int m_idx) {
 	/* Determine how much we can drop */
 	if ((r_ptr->flags1 & RF1_DROP_60) && (rand_int(100) < 60)) number++;
 	if ((r_ptr->flags1 & RF1_DROP_90) && (rand_int(100) < 90)) number++;
-	if (r_ptr->flagsA & RFA_DROP_1) number++;
+	if (r_ptr->flags1 & RF1_DROP_1) number++;
 	if (r_ptr->flags1 & RF1_DROP_1D2) number += damroll(1, 2);
-	if (r_ptr->flagsA & RFA_DROP_2) number += 2;
+	if (r_ptr->flags1 & RF1_DROP_2) number += 2;
 	if (r_ptr->flags1 & RF1_DROP_2D2) number += damroll(2, 2);
 	if (r_ptr->flags1 & RF1_DROP_3D2) number += damroll(3, 2);
 	if (r_ptr->flags1 & RF1_DROP_4D2) number += damroll(4, 2);
@@ -6821,7 +6821,7 @@ if (cfg.unikill_format) {
 			snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by %s %s.\377x**", r_name_get(m_ptr), titlebuf, p_ptr->name);
  #endif
 #endif
-		else if ((r_ptr->flagsA & RFA_FINAL_GUARDIAN)) {
+		else if ((r_ptr->flags8 & RF8_FINAL_GUARDIAN)) {
 #ifdef IDDC_BOSS_COL
  #ifdef ENABLE_SUBCLASS_TITLE
 			if (in_iddc) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by %s %s %s.\377D**", r_name_get(m_ptr), titlebuf, titlebuf2, p_ptr->name);
@@ -6852,7 +6852,7 @@ if (cfg.unikill_format) {
 			else if (is_ZuAon)
 				snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by %s.\377x**", r_name_get(m_ptr), p_ptr->name);
 #endif
-			else if ((r_ptr->flagsA & RFA_FINAL_GUARDIAN)) {
+			else if ((r_ptr->flags8 & RF8_FINAL_GUARDIAN)) {
 #ifdef IDDC_BOSS_COL
 				if (in_iddc) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by %s.\377D**", r_name_get(m_ptr), p_ptr->name);
 				else
@@ -6867,7 +6867,7 @@ if (cfg.unikill_format) {
 			else if (is_ZuAon)
 				snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by fusion %s-%s.\377x**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
 #endif
-			else if ((r_ptr->flagsA & RFA_FINAL_GUARDIAN)) {
+			else if ((r_ptr->flags8 & RF8_FINAL_GUARDIAN)) {
 #ifdef IDDC_BOSS_COL
 				if (in_iddc) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by fusion %s-%s.\377D**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
 				else
@@ -6889,7 +6889,7 @@ if (cfg.unikill_format) {
 					else if (is_ZuAon)
 						snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by %s of %s.\377x**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
 #endif
-					else if ((r_ptr->flagsA & RFA_FINAL_GUARDIAN)) {
+					else if ((r_ptr->flags8 & RF8_FINAL_GUARDIAN)) {
 #ifdef IDDC_BOSS_COL
 						if (in_iddc) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by %s of %s.\377D**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
 						else
@@ -6940,7 +6940,7 @@ if (cfg.unikill_format) {
 			/* Log superunique kills to its own file */
 #if 0
 			/* The Living Lightning is considered to be just a 'normal' dungeon boss. What about Bahamut? (Atm he is one) */
-			if (is_ZuAon || (!is_Sauron && !is_Morgoth && !(r_ptr->flagsA & RFA_FINAL_GUARDIAN) && r_ptr->level >= 98))
+			if (is_ZuAon || (!is_Sauron && !is_Morgoth && !(r_ptr->flags8 & RF8_FINAL_GUARDIAN) && r_ptr->level >= 98))
 				su_print(format("%s was slain by %s.\n", r_name_get(m_ptr), p_ptr->name));
 #else
 			/* The Living Lightning, even though a dungeon boss, is now considered a SU too,
@@ -7005,7 +7005,7 @@ if (cfg.unikill_format) {
 	}
 
 	/* Dungeon bosses often drop a dungeon-set true artifact (for now 1 in 3 chance) */
-	if ((r_ptr->flagsA & RFA_FINAL_GUARDIAN)) {
+	if ((r_ptr->flags8 & RF8_FINAL_GUARDIAN)) {
 		bool no_art = TRUE;
 
 		msg_format(Ind, "\374\377UYou have conquered %s!", d_name +
@@ -11936,9 +11936,9 @@ void monster_death_mon(int am_idx, int m_idx) {
 	/* Determine how much we can drop */
 	if ((r_ptr->flags1 & RF1_DROP_60) && (rand_int(100) < 60)) number++;
 	if ((r_ptr->flags1 & RF1_DROP_90) && (rand_int(100) < 90)) number++;
-	if (r_ptr->flagsA & RFA_DROP_1) number++;
+	if (r_ptr->flags1 & RF1_DROP_1) number++;
 	if (r_ptr->flags1 & RF1_DROP_1D2) number += damroll(1, 2);
-	if (r_ptr->flagsA & RFA_DROP_2) number += 2;
+	if (r_ptr->flags1 & RF1_DROP_2) number += 2;
 	if (r_ptr->flags1 & RF1_DROP_2D2) number += damroll(2, 2);
 	if (r_ptr->flags1 & RF1_DROP_3D2) number += damroll(3, 2);
 	if (r_ptr->flags1 & RF1_DROP_4D2) number += damroll(4, 2);

@@ -590,7 +590,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 
 	/* Not allowed to attack */
-	if (r_ptr->flags1 & RF1_NEVER_BLOW) return(FALSE);
+	if (r_ptr->flags2 & RF2_NEVER_BLOW) return(FALSE);
 
 	/* Total armor */
 	ac = p_ptr->ac + p_ptr->to_a;
@@ -3562,7 +3562,7 @@ bool monster_attack_normal(int tm_idx, int m_idx) {
 
 
 	/* Not allowed to attack */
-	if (r_ptr->flags1 & RF1_NEVER_BLOW) return(FALSE);
+	if (r_ptr->flags2 & RF2_NEVER_BLOW) return(FALSE);
 
 	/* Total armor */
 	ac = tm_ptr->ac;

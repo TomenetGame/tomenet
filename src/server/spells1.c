@@ -8121,9 +8121,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		break;
 	case GF_DOMINATE:
 		if (!quiet) {
-			if ((!(r_ptr->flags1 & (RF1_UNIQUE | RF1_NEVER_MOVE)) &&
+			if ((!(r_ptr->flags1 & RF1_UNIQUE) &&
+			    !(r_ptr->flags2 & RF2_NEVER_MOVE) &&
 			    //!(r_ptr->flags7 & RF7_NO_DEATH)
-			    !(r_ptr->flags9 & RF9_IM_PSI) && !(r_ptr->flags7 & RF7_MULTIPLY)) ||
+			    !(r_ptr->flags9 & RF9_IM_PSI) &&
+			    !(r_ptr->flags7 & RF7_MULTIPLY)) ||
 			    is_admin(p_ptr))
 				m_ptr->owner = p_ptr->id;
 			note = " starts following you";
@@ -9032,7 +9034,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 				/* make sure only monsters who NEED to use this actually do use it.. (Morgoth doesn't) */
 				if (((r_ptr->flags2 & RF2_PASS_WALL) && (r_ptr->flags2 & RF2_KILL_WALL))
-				    || (r_ptr->flagsA & RFA_ASTAR)) { /* and it can apparently break a* movers? */
+				    || (r_ptr->flags7 & RF7_ASTAR)) { /* and it can apparently break a* movers? */
 					got_potential_target = TRUE;
 				}
 				else if ((r_ptr->flags2 & RF2_PASS_WALL) || (r_ptr->flags2 & RF2_KILL_WALL)) {

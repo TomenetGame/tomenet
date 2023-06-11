@@ -3088,7 +3088,7 @@ static errr init_alloc(void) {
 			p = p * mon_allowed_chance(r_ptr) / 100;
 
 			/* for more efficiency: no dungeon bosses, done now in level-generation routine - C. Blue */
-			if (r_ptr->flagsA & RFA_FINAL_GUARDIAN) {
+			if (r_ptr->flags8 & RF8_FINAL_GUARDIAN) {
 				/* exception: Sauron in the IDDC/Halls of Mandos (real check is done in place_monster_one() anyway..) */
 				if (i != RI_SAURON) p = 0;
 			}
@@ -3604,7 +3604,7 @@ void init_some_arrays(void) {
 			/* No nazguls */
 			    (r_ptr->flags7 & RF7_NAZGUL) ||
 			/* Dungeon bosses probably shouldn't respawn */
-			    (r_ptr->flagsA & RFA_FINAL_GUARDIAN) ||
+			    (r_ptr->flags8 & RF8_FINAL_GUARDIAN) ||
 			/* Special-dropping uniques neither? */
 			    //(r_ptr->flags1 & RF1_DROP_CHOSEN) || */
 			/* --- QUESTOR is currently NOT used!! - C. Blue */
