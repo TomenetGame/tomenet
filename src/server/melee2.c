@@ -8764,7 +8764,7 @@ static bool player_invis(int Ind, monster_type *m_ptr, int dist) {
 		return(FALSE);
 	/* since RF1_QUESTOR is currently not used/completely implemented,
 	   I hard-code Morgoth and Sauron and Zu-Aon here - C. Blue */
-	if ((m_ptr->r_idx == RI_SAURON) || (m_ptr->r_idx == RI_MORGOTH) || (m_ptr->r_idx == RI_ZU_AON)) return(FALSE);
+	if (m_ptr->r_idx == RI_SAURON || m_ptr->r_idx == RI_MORGOTH || m_ptr->r_idx == RI_ZU_AON || m_ptr->r_idx == RI_MIRROR) return(FALSE);
 
 	/* Probably they detect things by non-optical means */
 	if ((r_ptr->flags3 & RF3_NONLIVING) && (r_ptr->flags2 & RF2_EMPTY_MIND))
