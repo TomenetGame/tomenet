@@ -6158,10 +6158,34 @@ void p2mon_update_base_aux(monster_race *r_ptr, int *magicness, int tval, int sv
 }
 #ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
 static bool check_for_spell(player_type *p_ptr, cptr spell_name) {
-	int s = exec_lua(p_ptr->Ind, format("return %s", spell_name));
-	int i;
+	bool nil;
+	int s, i;
 	object_type *o_ptr;
+	/* Remember up to 20 nonexistant spells */
+	static char bad_name[20][30] = { 0 };
 
+	nil = exec_lua(p_ptr->Ind, format("return rawget(globals(),\"%s\") == nil", spell_name));
+	if (nil == 1) {
+		bool found = FALSE;
+
+		/* Give message only the first time for each nonexistant spell, to avoid spam */
+		for (i = 0; i < 20; i++) {
+			if (!bad_name[i][0]) {
+				strcpy(bad_name[i], spell_name);
+				break;
+			}
+
+			if (strcmp(bad_name[i], spell_name)) continue;
+
+			found = TRUE;
+			break;
+		}
+		if (!found) s_printf("Mirror: ERROR: Non-existant spell '%s'\n", spell_name);
+
+		return(FALSE);
+	}
+
+	s = exec_lua(p_ptr->Ind, format("return %s", spell_name));
 	/* Error - spell doesn't exist in the game (anymore?)! */
 	if (s < 0) {
 		s_printf("check_for_spell(): ERROR! Spell '%s' not in game.\n", spell_name);
@@ -6863,6 +6887,11 @@ else s_printf("\n");
 #endif
 
 	//if (get_skill(p_ptr, SKILL_HSUPPORT) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; } -- nothing here!
+
+	/* Mimic powers */
+	if (p_ptr->body_monster) {
+		/* Simply copy them over to our attack spells arrays? */
+	}
 
 	/* Flags 7 */
 	//if (p_ptr->pclass == CLASS_MAGE) r_ptr->flags7 |= RF7_AI_ANNOY; -- no, because the monster should chase the player in any case
