@@ -6710,7 +6710,7 @@ else s_printf("\n");
 	if (check_for_spell(p_ptr, "FIRERES")) r_ptr->flags9 |= RF9_RES_FIRE; //Wrathflame: just ignored aside from fire res.
 	//Demonic Strength: TODO maybe: give +damage but not +HP as that is always flatly compared (same for Extra Growth)
 	magflag = FALSE;
-	if (check_for_spell(p_ptr, "FLAMEWAVE_I") || check_for_spell(p_ptr, "FLAMEWAVE_II") || check_for_spell(p_ptr, "FLAMEWAVE_III")) { r_ptr->flags5 |= RF5_BA_FIRE; magflag = TRUE; }
+	if (check_for_spell(p_ptr, "FLAMEWAVE_I") || check_for_spell(p_ptr, "FLAMEWAVE_II")) { r_ptr->flags5 |= RF5_BA_FIRE; magflag = TRUE; }
 	else if (check_for_spell(p_ptr, "OFIREBOLT_I") || check_for_spell(p_ptr, "OFIREBOLT_II") || check_for_spell(p_ptr, "OFIREBOLT_III")) { r_ptr->flags5 |= RF5_BO_FIRE; magflag = TRUE; }
 	if (check_for_spell(p_ptr, "CHAOSBOLT2")) { r_ptr->flags0 |= RF0_BO_CHAOS; magflag = TRUE; }
 	if (magflag) magicness++;
@@ -6829,6 +6829,7 @@ else s_printf("\n");
 
 #ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
 	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
 	//curse, holy light II, bo/ba-lite STRONG, OoD, doomed grounds (annih), bo/ba-chaos [OShadow]
 	//we ignore exorcism/redemption and other pure anti-evil/undead/xxx spells as we are supposedly NONLIVING and also won't retaliate with these spells for ez-ness..
 #else
@@ -6846,6 +6847,7 @@ else s_printf("\n");
 #endif
 
 #ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
 	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
 	//heal; prevent placing runes, gods won't accept martyrium here!
 #else
