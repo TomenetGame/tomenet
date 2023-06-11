@@ -442,7 +442,7 @@ static cptr r_info_flags7[] = {
 	"NAZGUL",
 
 	"DG_CURSE",
-	"POSSESSOR",
+	"MORTAL",
 	"NO_DEATH",
 	"NO_TARGET",
 
@@ -557,7 +557,7 @@ static cptr r_info_flags9[] = {
 	"RES_TIME",
 	"RES_MANA",
 
-	"VAMPIRIC", //hole
+	"VAMPIRIC",
 	"IM_TELE",
 	"IM_PSI",
 	"RES_PSI",
@@ -603,14 +603,14 @@ static cptr r_info_flags0[] = {
 	"X08000000",
 
 	"X10000000",
-	"X20000000",
-	"X40000000",
-	"X80000000",
-};
-static cptr r_info_flagsA[] = {
 	"ADMINISTRATIVE_PUSH",
 	"METEOR_SWARM",
 	"ADMINISTRATIVE_HOLD",
+};
+static cptr r_info_flagsA[] = {
+	"X00000001",
+	"X00000002",
+	"X00000004",
 	"X00000008",
 
 	"X00000010",
@@ -4768,7 +4768,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 	}
 
 	r_info[RI_BLUE].flags6 &= ~RF6_HEAL;
-	//r_info[RI_BLUE].flagsA &= ~(RFA_ADMINISTRATIVE_PUSH | RFA_METEOR_SWARM | RFA_ADMINISTRATIVE_HOLD);
+	r_info[RI_BLUE].flags0 &= ~(RF0_ADMINISTRATIVE_PUSH | RF0_METEOR_SWARM | RF0_ADMINISTRATIVE_HOLD);
 
 	/* No version yet */
 	if (!okay) return(2);

@@ -6044,8 +6044,7 @@
 #define RF7_SPIDER			0x00000040	/* Monster is a spider (can pass webs) */
 #define RF7_NAZGUL			0x00000080	/* Monster is a Nazgul */
 #define RF7_DG_CURSE		0x00000100	/* If killed the monster grant a DG Curse to the player */
-#define RF7_POSSESSOR		0x00000200	/* Is it a dreaded possessor monster ? -- UNUSED */
-//^effectless, but actually used in r_info
+#define RF7_MORTAL		0x00000200	/* Is it mortal? No consequences in code -- [HOLE] */
 #define RF7_NO_DEATH		0x00000400	/* Cannot be killed */
 #define RF7_NO_TARGET		0x00000800	/* Cannot be targeted */
 #define RF7_AI_ANNOY			0x00001000	/* Try to tease the player */
@@ -6136,7 +6135,6 @@
 #define RF9_ONLY_DEPTH			0x00001000	/* The monster can only be generated at the GIVEN depth */
 #define RF9_SPECIAL_GENE		0x00002000	/* The monster can only be generated in special conditions like quests, special dungeons, ... NOTE: currently no effect! */
 #define RF9_NO_REDUCE			0x00004000	/* The monster cannot be afflicted by non-temporary stat-reducing effects */
-//HOLE^
 /* no_conf, no_fear, no_sleep, res_<others> already exist (C. Blue) */
 /* These flags are added to r_info for improved logic in mimic forms (eg chaos hound gives res_chaos) */
 /* The resistance flags are added to distinguish between im_ and res_ now. Until now im_ was simply a strong res. */
@@ -6191,15 +6189,16 @@
 #define RF0_BO_CHAOS		0x00080000		/* Mirror: Chaos Bolt (Shadow/HOff) */
 #define RF0_DRAIN_LIFE			0x00100000	/* Mirror: Drain Life (Shadow/Necro) */
 
+#define RF0_ADMINISTRATIVE_PUSH		0x20000000	/* Push back */
+#define RF0_METEOR_SWARM		0x40000000	/* Targetted delayed orbital attack */
+#define RF0_ADMINISTRATIVE_HOLD		0x80000000	/* Irresistible paralysis */
 
 #define RF0_PLAYER_SPELLS (RF0_BO_DISE | RF0_BA_DISE | RF0_BR_ICE | RF0_BR_WATER)
 #define RF0_RADIUS_SPELLS (RF0_BA_DISE | RF0_BR_ICE | RF0_BR_WATER)
 
 
 /* Additional basic flags */
-#define RFA_ADMINISTRATIVE_PUSH	0x00000200		/* Push back */
-#define RFA_METEOR_SWARM	0x00000400		/* Targetted delayed orbital attack */
-#define RFA_ADMINISTRATIVE_HOLD	0x00000800		/* Irresistible paralysis */
+//#define RFA_XXXXXXX1		0x00000001		/* xxx1 */
 
 
 /* currently disabled r_info.txt flags (not implemented or some other reason) */
