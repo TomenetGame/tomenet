@@ -5891,6 +5891,8 @@ void py2mon_init_base(monster_type *m_ptr, player_type *p_ptr) {
 	/* AC could just be set/adjusted later like the rest: */
 	m_ptr->org_ac = m_ptr->ac = p_ptr->ac + p_ptr->to_a;
 
+s_printf("Mirror: level %d, hp %d, speed %d, ac %d\n", m_ptr->level, m_ptr->org_maxhp, m_ptr->mspeed, m_ptr->org_ac);
+
 	/* Immutable stats: */
 	if (p_ptr->male) r_ptr->flags1 |= RF1_MALE; else r_ptr->flags1 |= RF1_FEMALE;
 	r_ptr->flags2 |= RF2_SMART | RF2_POWERFUL | RF2_OPEN_DOOR | RF2_BASH_DOOR; //note that RF2_POWERFUL covers resist_blind(!)
@@ -6237,13 +6239,17 @@ void py2mon_update_base(monster_type *m_ptr, player_type *p_ptr) {
 
 	/* On-the-fly adjustable stats, in case they 'improve' (aka player tries to game the system): */
 	/* Determine speed */
-	if (m_ptr->speed < p_ptr->pspeed) m_ptr->speed = m_ptr->mspeed = p_ptr->pspeed;
+	if (m_ptr->speed < p_ptr->pspeed) {
+		m_ptr->speed = m_ptr->mspeed = p_ptr->pspeed;
+s_printf("Mirror-update: speed %d\n", m_ptr->mspeed);
+	}
 	/* Determine HP */
 	if (m_ptr->org_maxhp < p_ptr->mhp) {
 		n = p_ptr->mhp - m_ptr->org_maxhp;
 		m_ptr->org_maxhp += n;
 		m_ptr->maxhp += n;
 		m_ptr->hp += n;
+s_printf("Mirror-update: hp %d\n", m_ptr->org_maxhp);
 	}
 	/* Determine AC */
 #ifndef SIMPLE_RI_MIRROR
@@ -6271,6 +6277,7 @@ void py2mon_update_base(monster_type *m_ptr, player_type *p_ptr) {
 		n = i - m_ptr->org_ac;
 		m_ptr->org_ac += n;
 		m_ptr->ac += n;
+s_printf("Mirror-update: ac %d\n", m_ptr->org_ac);
 	}
 
 #ifdef SIMPLE_RI_MIRROR
@@ -6689,9 +6696,9 @@ else s_printf("\n");
 #endif
 
 #ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	if (check_for_spell(p_ptr, "WATERPOISON_III")) { r_ptr->flags0 |= RF0_ICEPOISON; magicness++; }
-	else if (check_for_spell(p_ptr, "WATERPOISON_II")) { r_ptr->flags0 |= RF0_WATERPOISON; magicness++; }
-	else if (check_for_spell(p_ptr, "WATERPOISON_I")) { r_ptr->flags5 |= RF5_BA_POIS; magicness++; }
+	if (check_for_spell(p_ptr, "WATERPOISON_III")) { r_ptr->flags0 |= RF0_ICEPOISON; magicness += 2; }
+	else if (check_for_spell(p_ptr, "WATERPOISON_II")) { r_ptr->flags0 |= RF0_WATERPOISON; magicness += 2; }
+	else if (check_for_spell(p_ptr, "WATERPOISON_I")) { r_ptr->flags5 |= RF5_BA_POIS; magicness += 2; }
 #else
 	if (get_skill(p_ptr, SKILL_DRUID_ARCANE) >= thresh_spell) {
 		r_ptr->flags5 |= RF5_BA_POIS; magicness++;
@@ -6733,10 +6740,14 @@ else s_printf("\n");
 	magflag = FALSE;
 	if (check_for_spell(p_ptr, "LITEBEAM_I") || check_for_spell(p_ptr, "LITEBEAM_II") || check_for_spell(p_ptr, "LITEBEAM_III")) { r_ptr->flags0 |= RF0_BO_LITE; magflag = TRUE; }
 	else if (check_for_spell(p_ptr, "STARLIGHT_I") || check_for_spell(p_ptr, "STARLIGHT_II")) { r_ptr->flags0 |= RF0_BA_LITE; magflag = TRUE; }
-	if (check_for_spell(p_ptr, "OLIGHTNINGBOLT_I") || check_for_spell(p_ptr, "OLIGHTNINGBOLT_II") || check_for_spell(p_ptr, "OLIGHTNINGBOLT_III")) { r_ptr->flags5 |= RF5_BO_ELEC; magflag = TRUE; }
-	if (check_for_spell(p_ptr, "OCURSEDD_I") || check_for_spell(p_ptr, "OCURSEDD_II") || check_for_spell(p_ptr, "OCURSEDD_III")) { r_ptr->flags5 |= RF5_CURSE; magflag = TRUE; }
 	if (magflag) magicness++;
+	magflag = FALSE;
+	if (check_for_spell(p_ptr, "OLIGHTNINGBOLT_I") || check_for_spell(p_ptr, "OLIGHTNINGBOLT_II") || check_for_spell(p_ptr, "OLIGHTNINGBOLT_III")) { r_ptr->flags5 |= RF5_BO_ELEC; magflag = TRUE; }
+	if (magflag) magicness++;
+	magflag = FALSE;
+	if (check_for_spell(p_ptr, "OCURSEDD_I") || check_for_spell(p_ptr, "OCURSEDD_II") || check_for_spell(p_ptr, "OCURSEDD_III")) { r_ptr->flags5 |= RF5_CURSE; magflag = TRUE; }
 	//guardian spirit II increases AC like kinetic shield (GS I is ignored).
+	if (magflag) magicness++;
 #else
 	if (get_skill(p_ptr, SKILL_OSPIRIT) >= thresh_spell) {
 		r_ptr->flags5 |= RF5_CURSE; magicness++;
@@ -6753,6 +6764,8 @@ else s_printf("\n");
 	magflag = FALSE;
 	if (check_for_spell(p_ptr, "FLAMEWAVE_I") || check_for_spell(p_ptr, "FLAMEWAVE_II")) { r_ptr->flags5 |= RF5_BA_FIRE; magflag = TRUE; }
 	else if (check_for_spell(p_ptr, "OFIREBOLT_I") || check_for_spell(p_ptr, "OFIREBOLT_II") || check_for_spell(p_ptr, "OFIREBOLT_III")) { r_ptr->flags5 |= RF5_BO_FIRE; magflag = TRUE; }
+	if (magflag) magicness++;
+	magflag = FALSE;
 	if (check_for_spell(p_ptr, "CHAOSBOLT2")) { r_ptr->flags0 |= RF0_BO_CHAOS; magflag = TRUE; }
 	if (magflag) magicness++;
 	if (check_for_spell(p_ptr, "FIRESTORM")) r_ptr->flags2 |= RF2_AURA_FIRE; //supa weak in comparison lol, not even hellfire - might be op though if it really had the real thing? dunno
@@ -6922,6 +6935,12 @@ else s_printf("\n");
 		r_ptr->flags5 |= p_ptr->innate_spells[1];
 		r_ptr->flags6 |= p_ptr->innate_spells[2];
 		r_ptr->flags0 |= p_ptr->innate_spells[3];
+
+		/* And enable use of magic, actually */
+		if (p_ptr->innate_spells[0]) magicness++;
+		if (p_ptr->innate_spells[1]) magicness++;
+		if (p_ptr->innate_spells[2]) magicness++;
+		if (p_ptr->innate_spells[3]) magicness++;
 	}
 
 	/* Trapping - the floor is untrappable and unglyphable! */
