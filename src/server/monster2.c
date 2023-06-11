@@ -6888,10 +6888,13 @@ else s_printf("\n");
 
 	//if (get_skill(p_ptr, SKILL_HSUPPORT) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; } -- nothing here!
 
-	/* Mimic powers */
+	/* TODO: Mimic powers */
 	if (p_ptr->body_monster) {
 		/* Simply copy them over to our attack spells arrays? */
 	}
+
+	/* TODO: Trapping - is the floor untrappable/glyphable? */
+
 
 	/* Flags 7 */
 	//if (p_ptr->pclass == CLASS_MAGE) r_ptr->flags7 |= RF7_AI_ANNOY; -- no, because the monster should chase the player in any case
