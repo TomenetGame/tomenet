@@ -3355,7 +3355,11 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 
 #ifdef USE_SOUND_2010
 			if (sfx == 0 && p_ptr->sfx_combat) {
-				if (o_ptr->k_idx && (is_melee_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
+				if (o_ptr->k_idx && (is_melee_weapon(o_ptr->tval) ||
+ #ifdef EQUIPPABLE_DIGGERS
+				    o_ptr->tval == TV_DIGGING ||
+ #endif
+				    o_ptr->tval == TV_MSTAFF))
 					switch (o_ptr->tval) {
 					case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 					case TV_BLUNT:	if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
@@ -3737,7 +3741,11 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				/* hack: always play 'hit' sfx for final killing hit,
 				   so if we didn't play it already (we did so if sfx==0) then play it now instead. */
 				if (sfx && p_ptr->sfx_combat) {
-					if (o_ptr->k_idx && (is_melee_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
+					if (o_ptr->k_idx && (is_melee_weapon(o_ptr->tval) ||
+ #ifdef EQUIPPABLE_DIGGERS
+					    o_ptr->tval == TV_DIGGING ||
+ #endif
+					    o_ptr->tval == TV_MSTAFF))
 						switch (o_ptr->tval) {
 						case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 						case TV_BLUNT:	if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
@@ -4434,7 +4442,11 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 
 #ifdef USE_SOUND_2010
 			if (sfx == 0 && p_ptr->sfx_combat) {
-				if (o_ptr->k_idx && (is_melee_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
+				if (o_ptr->k_idx && (is_melee_weapon(o_ptr->tval) ||
+ #ifdef EQUIPPABLE_DIGGERS
+				    o_ptr->tval == TV_DIGGING ||
+ #endif
+				    o_ptr->tval == TV_MSTAFF))
 					switch (o_ptr->tval) {
 					case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 					case TV_BLUNT:	if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
@@ -4985,7 +4997,11 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				/* hack: always play 'hit' sfx for final killing hit,
 				   so if we didn't play it already (we did so if sfx==0) then play it now instead. */
 				if (sfx && p_ptr->sfx_combat) {
-					if (o_ptr->k_idx && (is_melee_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
+					if (o_ptr->k_idx && (is_melee_weapon(o_ptr->tval) ||
+ #ifdef EQUIPPABLE_DIGGERS
+					    o_ptr->tval == TV_DIGGING ||
+ #endif
+					    o_ptr->tval == TV_MSTAFF))
 						switch (o_ptr->tval) {
 						case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 						case TV_BLUNT:	if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
