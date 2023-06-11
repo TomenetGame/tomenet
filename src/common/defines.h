@@ -6044,7 +6044,7 @@
 #define RF7_SPIDER			0x00000040	/* Monster is a spider (can pass webs) */
 #define RF7_NAZGUL			0x00000080	/* Monster is a Nazgul */
 #define RF7_DG_CURSE		0x00000100	/* If killed the monster grant a DG Curse to the player */
-#define RF7_MORTAL		0x00000200	/* Is it mortal? No consequences in code -- [HOLE] */
+#define RF7_MORTAL		0x00000200	/* Is it mortal? -- UNUSED -- [HOLE] */
 #define RF7_NO_DEATH		0x00000400	/* Cannot be killed */
 #define RF7_NO_TARGET		0x00000800	/* Cannot be targeted */
 #define RF7_AI_ANNOY			0x00001000	/* Try to tease the player */
@@ -6135,9 +6135,6 @@
 #define RF9_ONLY_DEPTH			0x00001000	/* The monster can only be generated at the GIVEN depth */
 #define RF9_SPECIAL_GENE		0x00002000	/* The monster can only be generated in special conditions like quests, special dungeons, ... NOTE: currently no effect! */
 #define RF9_NO_REDUCE			0x00004000	/* The monster cannot be afflicted by non-temporary stat-reducing effects */
-/* no_conf, no_fear, no_sleep, res_<others> already exist (C. Blue) */
-/* These flags are added to r_info for improved logic in mimic forms (eg chaos hound gives res_chaos) */
-/* The resistance flags are added to distinguish between im_ and res_ now. Until now im_ was simply a strong res. */
 #define RF9_RES_ACID			0x00008000L
 #define RF9_RES_ELEC		0x00010000L
 #define RF9_RES_FIRE		0x00020000L
@@ -6152,20 +6149,12 @@
 #define RF9_RES_TIME		0x04000000L
 #define RF9_RES_MANA		0x08000000L
 #define RF9_VAMPIRIC			0x10000000
-/* Hm, fits in perfectly :) Fate? */
-/* these flags are not in PernA nor in PernM-monsters,
- * but the code for them already exists in our code..
- * Let's consider of recycling them :)		- Jir - */
 #define RF9_IM_TELE			0x20000000      /* Resist teleportation */
 #define RF9_IM_PSI			0x40000000	/* Immune to psi */
 #define RF9_RES_PSI			0x80000000	/* Resist psi */
 
 
-/* New monster attack spells and stuff - C. Blue
-   Note: RF0_ is an exception in that it holds both 'basic' and 'spell' flags.
-   This is important for parsing F:/S: lines in r_info, H:/M:/O:/S: lines in re_info and
-   M:/S: lines in d_info (which should only accept 'basic' or 'spell' flags respectively).
-   For cleanliness I added flag-masks to separate these two use cases. */
+/* New monster attack spells and stuff - C. Blue */
 #define RF0_S_HI_MONSTER	0x00000001
 #define RF0_S_HI_MONSTERS	0x00000002
 #define RF0_S_HI_UNIQUE		0x00000004
@@ -6177,7 +6166,6 @@
 #define RF0_S_HI_DRAGON		0x00000100		/* Summon Ancient Dragon -- unused */
 #define RF0_BR_ICE		0x00000200		/* For Bahamuth */
 #define RF0_BR_WATER		0x00000400		/* Finally no more antimagic field vs water hounds :p */
-
 #define RF0_BA_LITE		0x00000800		/* Mirror: Globe of Light */
 #define RF0_BO_WALL			0x00001000	/* Mirror: Strike */
 #define RF0_BA_HELLFIRE			0x00002000	/* Mirror: Hellfire */
@@ -6188,7 +6176,7 @@
 #define RF0_ICEPOISON		0x00040000		/* Mirror: Toxic Moisture III */
 #define RF0_BO_CHAOS		0x00080000		/* Mirror: Chaos Bolt (Shadow/HOff) */
 #define RF0_DRAIN_LIFE			0x00100000	/* Mirror: Drain Life (Shadow/Necro) */
-
+//hole
 #define RF0_ADMINISTRATIVE_PUSH		0x20000000	/* Push back */
 #define RF0_METEOR_SWARM		0x40000000	/* Targetted delayed orbital attack */
 #define RF0_ADMINISTRATIVE_HOLD		0x80000000	/* Irresistible paralysis */
@@ -6197,7 +6185,7 @@
 #define RF0_RADIUS_SPELLS (RF0_BA_DISE | RF0_BR_ICE | RF0_BR_WATER)
 
 
-/* Additional basic flags */
+/* Additional basic flags (ie not spell-flags, 'S:') */
 //#define RFA_XXXXXXX1		0x00000001		/* xxx1 */
 
 
