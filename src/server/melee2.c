@@ -3951,6 +3951,26 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 		}
 
+	/* RF0_WATERPOISON */
+	case RF0_OFFSET + 29:
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts toxic moisture for", m_name);
+		ball(Ind, m_idx, GF_WATERPOISON, damroll(12, 2), y, x, srad);
+		//update_smart_learn(Ind, m_idx, DRS_POIS);
+		break;
+
+	/* RF0_ICEPOISON */
+	case RF0_OFFSET + 30:
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts icy toxic moisture for", m_name);
+		ball(Ind, m_idx, GF_ICEPOISON, damroll(12, 2), y, x, srad);
+		//update_smart_learn(Ind, m_idx, DRS_POIS);
+		break;
+
 	default:
 		/* catch any non-existant spells */
 		s_printf("ERROR: Invalid monster spell %d for r_idx %d. (f4=%d,f5=%d,f6=%d,f0=%d)\n", thrown_spell, m_ptr->r_idx, f4, f5, f6, f0);
@@ -5965,6 +5985,26 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 #endif
 		break;
 		}
+
+	/* RF0_WATERPOISON */
+	case RF0_OFFSET + 29:
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts toxic moisture for", m_name);
+		ball(Ind, m_idx, GF_WATERPOISON, damroll(12, 2), y, x, srad);
+		//update_smart_learn(Ind, m_idx, DRS_POIS);
+		break;
+
+	/* RF0_ICEPOISON */
+	case RF0_OFFSET + 30:
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts icy toxic moisture for", m_name);
+		ball(Ind, m_idx, GF_ICEPOISON, damroll(12, 2), y, x, srad);
+		//update_smart_learn(Ind, m_idx, DRS_POIS);
+		break;
 
 	default:
 		/* catch any non-existant spells */

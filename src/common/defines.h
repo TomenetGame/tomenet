@@ -6199,8 +6199,9 @@
 #define RF0_BO_LITE		0x04000000		/* Mirror: Power Ray */
 #define RF0_BO_DARK		0x08000000		/* Mirror: Power Ray */
 #define RF0_DISPEL			0x10000000	/* Mirror: Vengenance [Corrupted] */
-//icepoison, waterpoison; bo-dark; 
-/* !!! NOTE: if you add more flags, adjust RF0_SPELL_MASK accordingly !!! */
+#define RF0_WATERPOISON			0x20000000	/* Mirror: Toxic Moisture I/II */
+#define RF0_ICEPOISON			0x40000000	/* Mirror: Toxic Moisture III */
+/* !!! NOTE: if you add more flags, adjust RF0_SPELL_MASK (and other masks) accordingly !!! */
 
 #define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT)		/* | RF0_NO_NEST */
 #define RF0_PLAYER_SPELLS (RF0_BO_DISE | RF0_BA_DISE | RF0_BR_ICE | RF0_BR_WATER)
@@ -6211,7 +6212,9 @@
    Note that breaths are spells too, as in handled in 'S:' lines (in r_info, re_info, and d_info). */
 #define RF0_SPELL_MASK (RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_BO_DISE | RF0_BA_DISE | \
 			RF0_S_DEMONS | RF0_S_DRAGONS | RF0_S_HI_DEMON | RF0_S_HI_DRAGON | RF0_BR_ICE | RF0_BR_WATER | \
-			RF0_ADMINISTRATIVE_PUSH | RF0_METEOR_SWARM | RF0_ADMINISTRATIVE_HOLD)
+			RF0_ADMINISTRATIVE_PUSH | RF0_METEOR_SWARM | RF0_ADMINISTRATIVE_HOLD | \
+			RF0_BA_LITE | RF0_BO_WALL | RF0_BA_HELLFIRE | RF0_BO_LITE | RF0_BO_DARK | RF0_DISPEL | \
+			RF0_WATERPOISON | RF0_ICEPOISON)
 /* All flags that are defined and that are not 'spell' type -> are automatically 'basic' type. */
 #define RF0_BASIC_MASK (0x007FFFFF & (~RF0_SPELL_MASK))
 
@@ -6293,7 +6296,7 @@
 	 RF6_TRAPS | RF6_FORGET)
 
 #define RF0_DIRECT_MASK \
-	(RF0_BO_DISE)
+	(RF0_BO_DISE | RF0_BO_WALL | RF0_BO_LITE | RF0_BO_DARK)
 
 
 /*
@@ -6311,7 +6314,7 @@
 	(0L)
 
 #define RF0_BOLT_MASK \
-	(RF0_BO_DISE)
+	(RF0_BO_DISE | RF0_BO_WALL | RF0_BO_LITE | RF0_BO_DARK)
 
 
 /* Hack -- summon spells */
@@ -6371,7 +6374,10 @@
 	(RF6_HAND_DOOM)
 
 #define RF0_ATTACK_MASK \
-	(RF0_BO_DISE | RF0_BA_DISE | RF0_BR_ICE | RF0_BR_WATER)
+	(RF0_BO_DISE | RF0_BA_DISE | RF0_BR_ICE | RF0_BR_WATER | \
+	RF0_BA_LITE | RF0_BO_WALL | RF0_BA_HELLFIRE | RF0_BO_LITE | RF0_BO_DARK | RF0_DISPEL | \
+	RF0_WATERPOISON | RF0_ICEPOISON)
+
 
 
 /*
@@ -6456,7 +6462,8 @@
 	RF6_S_SPIDERS | RF6_S_HOUNDS | RF6_S_HYDRAS | RF6_S_ANGEL | RF6_S_DEMON | RF6_S_UNDEAD | RF6_S_DRAGON | \
 	RF6_S_HI_UNDEAD | RF6_S_HI_DRAGONS | RF6_S_NAZGUL | RF6_S_UNIQUE)
 #define RF0_SPELLCASTER_MASK \
-	(RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_BO_DISE | RF0_BA_DISE | RF0_S_DEMONS | RF0_S_DRAGONS | RF0_S_HI_DEMON | RF0_S_HI_DRAGON)
+	(RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_BO_DISE | RF0_BA_DISE | RF0_S_DEMONS | RF0_S_DRAGONS | RF0_S_HI_DEMON | RF0_S_HI_DRAGON | \
+	RF0_BA_LITE | RF0_BO_WALL | RF0_BA_HELLFIRE | RF0_BO_LITE | RF0_BO_DARK | RF0_DISPEL | RF0_WATERPOISON | RF0_ICEPOISON)
 
 
 /*

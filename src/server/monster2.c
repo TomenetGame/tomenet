@@ -6648,9 +6648,10 @@ else s_printf("\n");
 	}
 #endif
 
-#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
-	//waterpoison, icepoison
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "WATERPOISON_III")) { r_ptr->flags0 |= RF0_ICEPOISON; magicness++; }
+	else if (check_for_spell(p_ptr, "WATERPOISON_II")) { r_ptr->flags0 |= RF0_WATERPOISON; magicness++; }
+	else if (check_for_spell(p_ptr, "WATERPOISON_I")) { r_ptr->flags5 |= RF5_BA_POIS; magicness++; }
 #else
 	if (get_skill(p_ptr, SKILL_DRUID_ARCANE) >= thresh_spell) {
 		r_ptr->flags5 |= RF5_BA_POIS; magicness++;
@@ -6672,7 +6673,7 @@ else s_printf("\n");
 
 #ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
 	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
-	//bo_dark, res_pois (no melee pois brand), invis (just make player invis not work on mirror instead!)
+	//bo_dark->ba_dark, res_pois (no melee pois brand), invis (just make player invis not work on mirror instead!)
 	//chaos bolt (h-off), drain life (necro), ba-dark
 #else
 	if (get_skill(p_ptr, SKILL_OSHADOW) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_DARK; magicness++; }
