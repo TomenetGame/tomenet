@@ -6913,12 +6913,19 @@ else s_printf("\n");
 	//if (get_skill(p_ptr, SKILL_HSUPPORT) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; } -- nothing here!
 #endif
 
-	/* TODO: Mimic powers */
+	/* Mimic powers */
 	if (p_ptr->body_monster) {
 		/* Simply copy them over to our attack spells arrays? */
+		r_ptr->flags4 |= p_ptr->innate_spells[0];
+		r_ptr->flags5 |= p_ptr->innate_spells[1];
+		r_ptr->flags6 |= p_ptr->innate_spells[2];
+		r_ptr->flags0 |= p_ptr->innate_spells[3];
 	}
 
-	/* TODO: Trapping - is the floor untrappable/glyphable? */
+	/* Trapping - the floor is untrappable and unglyphable! */
+
+	/* Sort spells: Remove weaker versions, eg remove fire bolt if we have fire ball */
+	//      ...TODO...
 
 
 	/* Flags 7 */
