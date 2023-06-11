@@ -6153,8 +6153,7 @@
 #define RF9_RES_CHAOS		0x02000000L
 #define RF9_RES_TIME		0x04000000L
 #define RF9_RES_MANA		0x08000000L
-//HOLE:
-//#define RF9_XXX			0x10000000L	//HOLE
+#define RF9_VAMPIRIC			0x10000000
 /* Hm, fits in perfectly :) Fate? */
 /* these flags are not in PernA nor in PernM-monsters,
  * but the code for them already exists in our code..
@@ -6180,6 +6179,7 @@
 #define RF0_S_HI_DRAGON		0x00000100		/* Summon Ancient Dragon -- unused */
 #define RF0_BR_ICE		0x00000200		/* For Bahamuth */
 #define RF0_BR_WATER		0x00000400		/* Finally no more antimagic field vs water hounds :p */
+
 #define RF0_BA_LITE		0x00000800		/* Mirror: Globe of Light */
 #define RF0_BO_WALL			0x00001000	/* Mirror: Strike */
 #define RF0_BA_HELLFIRE			0x00002000	/* Mirror: Hellfire */
@@ -6189,6 +6189,8 @@
 #define RF0_WATERPOISON		0x00020000		/* Mirror: Toxic Moisture I/II */
 #define RF0_ICEPOISON		0x00040000		/* Mirror: Toxic Moisture III */
 #define RF0_BO_CHAOS		0x00080000		/* Mirror: Chaos Bolt (Shadow/HOff) */
+#define RF0_DRAIN_LIFE			0x00100000	/* Mirror: Drain Life (Shadow/Necro) */
+
 
 #define RF0_PLAYER_SPELLS (RF0_BO_DISE | RF0_BA_DISE | RF0_BR_ICE | RF0_BR_WATER)
 #define RF0_RADIUS_SPELLS (RF0_BA_DISE | RF0_BR_ICE | RF0_BR_WATER)

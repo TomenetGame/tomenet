@@ -6225,11 +6225,11 @@ void py2mon_update_base(monster_type *m_ptr, player_type *p_ptr) {
 	/* Simply translate our hit chance into monster ac bonus to counter it */
 	i += p_ptr->overall_tohit_m;
 
-	/* Kinetic Shield gives extra AC */
+	/* Kinetic Shield / Guardian Spirit give extra AC */
 #ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	if (check_for_spell(p_ptr, "MSHIELD"))
+	if (check_for_spell(p_ptr, "MSHIELD") || check_for_spell(p_ptr, "GUARDIANSPIRIT_II"))
 #else
-	if (get_skill(p_ptr, SKILL_PPOWER) >= thresh_spell)
+	if (get_skill(p_ptr, SKILL_PPOWER) >= thresh_spell || get_skill(p_ptr, SKILL_OSPIRIT) >= thresh_spell)
 #endif
 		i += 75;
 	/* Simply add to AC, although this won't help against magic bolt spells, exploiterino */
@@ -6554,7 +6554,7 @@ else s_printf("\n");
 
 #ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
 	if (check_for_spell(p_ptr, "RECOVERY_I") || check_for_spell(p_ptr, "RECOVERY_II")) { r_ptr->flags3 |= RF3_NO_CONF | RF3_NO_STUN; } //r_ptr->flags9 |= RF9_RES_POIS; } -- nah
-	if (check_for_spell(p_ptr, "REGENERATION")) { r_ptr->flags2 |= RF2_REGENERATE; }
+	if (check_for_spell(p_ptr, "REGENERATION")) r_ptr->flags2 |= RF2_REGENERATE;
 	if (check_for_spell(p_ptr, "RESISTS_II")) { r_ptr->flags9 |= RF9_RES_FIRE | RF9_RES_COLD | RF9_RES_ACID | RF9_RES_ELEC; }
 	else if (check_for_spell(p_ptr, "RESISTS_I")) { r_ptr->flags9 |= RF9_RES_FIRE | RF9_RES_COLD; }
 	if (check_for_spell(p_ptr, "HEALING_I") || check_for_spell(p_ptr, "HEALING_II") || check_for_spell(p_ptr, "HEALING_III")) { r_ptr->flags6 |= RF6_HEAL; magicness++; }
@@ -6666,6 +6666,7 @@ else s_printf("\n");
 	if (check_for_spell(p_ptr, "HEALINGCLOUD_I") || check_for_spell(p_ptr, "HEALINGCLOUD_II") || check_for_spell(p_ptr, "HEALINGCLOUD_III")) { r_ptr->flags6 |= RF6_HEAL; magicness++; }
 	//r_ptr->flags9 |= RF9_RES_POIS; } --nah
 	/* Note: Focus is currently ignored, so player gains great +hit chance advantage. */
+	//Extra Growth: TODO maybe: give +damage, possibly +AC, but not +HP as that is always flatly compared (same for Demonic Strength)
 #else
 	if (get_skill(p_ptr, SKILL_DRUID_PHYSICAL) >= thresh_spell) {
 		//r_ptr->flags6 |= RF6_HASTE; magicness++; -- we already copy the max speed flatly
@@ -6673,23 +6674,30 @@ else s_printf("\n");
 	}
 #endif
 
-#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	if (check_for_spell(p_ptr, "POISONRES")) { r_ptr->flags9 |= RF9_RES_POIS; }
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "POISONRES")) r_ptr->flags9 |= RF9_RES_POIS;
 	magflag = FALSE;
 	if (check_for_spell(p_ptr, "DARKBALL")) { r_ptr->flags5 |= RF5_BA_DARK; magflag = TRUE; }
 	else if (check_for_spell(p_ptr, "DARKBOLT_I") || check_for_spell(p_ptr, "DARKBOLT_II") || check_for_spell(p_ptr, "DARKBOLT_III")) { r_ptr->flags5 |= RF5_BA_DARK; magflag = TRUE; }
 	//invis: mirror sees through invis, so obsolete.
-	if (check_for_spell(p_ptr, "CHAOSBOLT")) { r_ptr->flags9 |= RF9_RES_POIS; }
-	if (check_for_spell(p_ptr, "ODRAINLIFE")) { r_ptr->flags9 |= RF9_RES_POIS; }
+	if (magflag) magicness++;
+	magflag = FALSE; //extra magicness, pft
+	if (check_for_spell(p_ptr, "ODRAINLIFE")) { r_ptr->flags0 |= RF0_DRAIN_LIFE; magflag = TRUE; }
+	//else //or maybe more consistent to keep both spells?
+	if (check_for_spell(p_ptr, "CHAOSBOLT")) { r_ptr->flags0 |= RF0_BO_CHAOS; magflag = TRUE; }
 	if (magflag) magicness++;
 #else
 	if (get_skill(p_ptr, SKILL_OSHADOW) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_DARK; magicness++; }
 #endif
 
-#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
-	//curse, bo-lite, ba-lite, bo-elec
-	//guardian spirit II -> increase AC! (like kinetic shield) (ignore guardian spirit I)
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	magflag = FALSE;
+	if (check_for_spell(p_ptr, "LITEBEAM_I") || check_for_spell(p_ptr, "LITEBEAM_II") || check_for_spell(p_ptr, "LITEBEAM_III")) { r_ptr->flags0 |= RF0_BO_LITE; magflag = TRUE; }
+	else if (check_for_spell(p_ptr, "STARLIGHT_I") || check_for_spell(p_ptr, "STARLIGHT_II")) { r_ptr->flags0 |= RF0_BA_LITE; magflag = TRUE; }
+	if (check_for_spell(p_ptr, "OLIGHTNINGBOLT_I") || check_for_spell(p_ptr, "OLIGHTNINGBOLT_II") || check_for_spell(p_ptr, "OLIGHTNINGBOLT_III")) { r_ptr->flags5 |= RF5_BO_ELEC; magflag = TRUE; }
+	if (check_for_spell(p_ptr, "OCURSEDD_I") || check_for_spell(p_ptr, "OCURSEDD_II") || check_for_spell(p_ptr, "OCURSEDD_III")) { r_ptr->flags5 |= RF5_CURSE; magflag = TRUE; }
+	if (magflag) magicness++;
+	//guardian spirit II increases AC like kinetic shield (GS I is ignored).
 #else
 	if (get_skill(p_ptr, SKILL_OSPIRIT) >= thresh_spell) {
 		r_ptr->flags5 |= RF5_CURSE; magicness++;
@@ -6698,9 +6706,16 @@ else s_printf("\n");
 	}
 #endif
 
-#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
-	//wrathflame: just ignore, or increase damage dice instead?
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "FIRERES")) r_ptr->flags9 |= RF9_RES_FIRE; //Wrathflame: just ignored aside from fire res.
+	//Demonic Strength: TODO maybe: give +damage but not +HP as that is always flatly compared (same for Extra Growth)
+	magflag = FALSE;
+	if (check_for_spell(p_ptr, "FLAMEWAVE_I") || check_for_spell(p_ptr, "FLAMEWAVE_II") || check_for_spell(p_ptr, "FLAMEWAVE_III")) { r_ptr->flags5 |= RF5_BA_FIRE; magflag = TRUE; }
+	else if (check_for_spell(p_ptr, "OFIREBOLT_I") || check_for_spell(p_ptr, "OFIREBOLT_II") || check_for_spell(p_ptr, "OFIREBOLT_III")) { r_ptr->flags5 |= RF5_BO_FIRE; magflag = TRUE; }
+	if (check_for_spell(p_ptr, "CHAOSBOLT2")) { r_ptr->flags0 |= RF0_BO_CHAOS; magflag = TRUE; }
+	if (magflag) magicness++;
+	if (check_for_spell(p_ptr, "FIRESTORM")) r_ptr->flags2 |= RF2_AURA_FIRE; //supa weak in comparison lol, not even hellfire - might be op though if it really had the real thing? dunno
+	//BLOODSACRIFICE: Covered by auto stat adjustments - uhoh! Might be not a good idea for once to use it?
 #else
 	if (get_skill(p_ptr, SKILL_OHERETICISM) >= thresh_spell) {
 		r_ptr->flags5 |= RF5_BO_FIRE; magicness++;
@@ -6709,10 +6724,20 @@ else s_printf("\n");
 	}
 #endif
 
-#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	//Nether Sap
+	if (check_for_spell(p_ptr, "OREGEN")) {
+		r_ptr->flags2 |= RF2_REGENERATE;
+ #ifdef TROLL_REGENERATION
+		r_ptr->flags2 |= RF2_REGENERATE_T2;
+ #endif
+	}
+	if (check_for_spell(p_ptr, "OIMBUE")) r_ptr->flags9 |= RF9_VAMPIRIC;
+	magflag = FALSE;
+	if (check_for_spell(p_ptr, "NETHERBOLT")) { r_ptr->flags5 |= RF5_BO_NETH; magflag = TRUE; }
+	if (check_for_spell(p_ptr, "ODRAINLIFE2")) { r_ptr->flags0 |= RF0_DRAIN_LIFE; magflag = TRUE; }
+	if (magflag) magicness++;
 	//nether sap + touch of hunger: could turn into T2 regen or better even
-	//drain life
 #else
 	if (get_skill(p_ptr, SKILL_OUNLIFE) >= thresh_spell) {
  #if 0

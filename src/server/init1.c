@@ -557,7 +557,7 @@ static cptr r_info_flags9[] = {
 	"RES_TIME",
 	"RES_MANA",
 
-	"X10000000", //hole
+	"VAMPIRIC", //hole
 	"IM_TELE",
 	"IM_PSI",
 	"RES_PSI",

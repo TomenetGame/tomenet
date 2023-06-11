@@ -3139,6 +3139,16 @@ bool make_attack_melee(int Ind, int m_idx) {
 			}
 
 			if (touched) {
+				/* Apply monster-vampirism (2023! just for mirror fight ~_~ - C. Blue) */
+				if ((r_ptr->flags9 & RF9_VAMPIRIC) && m_ptr->hp < m_ptr->maxhp) {
+					/* Heal */
+					m_ptr->hp += damage / 3;
+					if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp = m_ptr->maxhp;
+
+					/* Redraw (later) if needed */
+					update_health(m_idx);
+				}
+
 				/* Check if our 'intrinsic' (Blood Magic, not from item/external spell) auras were suppressed by our own antimagic field. */
 				bool aura_ok = !magik((p_ptr->antimagic * 8) / 5);
 				int auras_failed = 0;
