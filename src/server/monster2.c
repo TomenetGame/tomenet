@@ -6587,8 +6587,10 @@ else s_printf("\n");
 #ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
 	if (check_for_spell(p_ptr, "RECOVERY_I") || check_for_spell(p_ptr, "RECOVERY_II")) { r_ptr->flags3 |= RF3_NO_CONF | RF3_NO_STUN; } //r_ptr->flags9 |= RF9_RES_POIS; } -- nah
 	if (check_for_spell(p_ptr, "REGENERATION")) r_ptr->flags2 |= RF2_REGENERATE;
+ #ifdef RI_MIRROR_PREEMPT_RES /* optional, to get us the 'initiative' - could almost just as well wait for the player to cast resists as they get auto-copied to us anyway */
 	if (check_for_spell(p_ptr, "RESISTS_II")) { r_ptr->flags9 |= RF9_RES_FIRE | RF9_RES_COLD | RF9_RES_ACID | RF9_RES_ELEC; }
 	else if (check_for_spell(p_ptr, "RESISTS_I")) { r_ptr->flags9 |= RF9_RES_FIRE | RF9_RES_COLD; }
+ #endif
 	if (check_for_spell(p_ptr, "HEALING_I") || check_for_spell(p_ptr, "HEALING_II") || check_for_spell(p_ptr, "HEALING_III")) { r_ptr->flags6 |= RF6_HEAL; magicness++; }
 	if (check_for_spell(p_ptr, "THUNDERSTORM")) { r_ptr->flags5 |= RF5_BA_ELEC; magicness++; }
 #else
@@ -6666,6 +6668,9 @@ else s_printf("\n");
 	//EMPOWERMENT is auto-applied via stat changes
 	//INTENSIFY is prevented by NO_REDUCE, handled by auto-application of mana resist, crit is handled with other crit stuff (via xtra_crit).
 	if (magflag) magicness++;
+ #ifdef RI_MIRROR_PREEMPT_RES /* optional, to get us the 'initiative' - could almost just as well wait for the player to cast resists as they get auto-copied to us anyway */
+	if (p_ptr->ptrait == TRAIT_ENLIGHTENED && check_for_spell(p_ptr, "INTENSIFY")) r_ptr->flags9 |= RF9_RES_MANA;
+ #endif
 #else
 	if (get_skill(p_ptr, SKILL_ASTRAL) >= thresh_spell) {
 		switch (p_ptr->ptrait) {
@@ -6707,7 +6712,9 @@ else s_printf("\n");
 #endif
 
 #ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
+ #ifdef RI_MIRROR_PREEMPT_RES /* optional, to get us the 'initiative' - could almost just as well wait for the player to cast resists as they get auto-copied to us anyway */
 	if (check_for_spell(p_ptr, "POISONRES")) r_ptr->flags9 |= RF9_RES_POIS;
+ #endif
 	magflag = FALSE;
 	if (check_for_spell(p_ptr, "DARKBALL")) { r_ptr->flags5 |= RF5_BA_DARK; magflag = TRUE; }
 	else if (check_for_spell(p_ptr, "DARKBOLT_I") || check_for_spell(p_ptr, "DARKBOLT_II") || check_for_spell(p_ptr, "DARKBOLT_III")) { r_ptr->flags5 |= RF5_BA_DARK; magflag = TRUE; }
@@ -6739,7 +6746,9 @@ else s_printf("\n");
 #endif
 
 #ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
+ #ifdef RI_MIRROR_PREEMPT_RES /* optional, to get us the 'initiative' - could almost just as well wait for the player to cast resists as they get auto-copied to us anyway */
 	if (check_for_spell(p_ptr, "FIRERES")) r_ptr->flags9 |= RF9_RES_FIRE; //Wrathflame: just ignored aside from fire res.
+ #endif
 	//Demonic Strength: TODO maybe: give +damage but not +HP as that is always flatly compared (same for Extra Growth)
 	magflag = FALSE;
 	if (check_for_spell(p_ptr, "FLAMEWAVE_I") || check_for_spell(p_ptr, "FLAMEWAVE_II")) { r_ptr->flags5 |= RF5_BA_FIRE; magflag = TRUE; }
@@ -6860,10 +6869,17 @@ else s_printf("\n");
 #endif
 
 #ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
-	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
-	//curse, holy light II, bo/ba-lite STRONG, OoD, doomed grounds (annih), bo/ba-chaos [OShadow]
+	magflag = FALSE;
+	if (check_for_spell(p_ptr, "HCURSE_I") || check_for_spell(p_ptr, "HCURSE_II") || check_for_spell(p_ptr, "HCURSE_III"))
+	if (check_for_spell(p_ptr, "HGLOBELIGHT_I") || check_for_spell(p_ptr, "HGLOBELIGHT_II"))
+	if (check_for_spell(p_ptr, "HLITERAY"))
+	if (magflag) magicness++;
+	magflag = FALSE;
+	if (check_for_spell(p_ptr, "HORBDRAIN_I") || check_for_spell(p_ptr, "HORBDRAIN_II"))
+	/* ignore exorcism and release souls as they cannot affect the mirror anyway */
+	if (check_for_spell(p_ptr, "HDRAINCLOUD"))
 	//we ignore exorcism/redemption and other pure anti-evil/undead/xxx spells as we are supposedly NONLIVING and also won't retaliate with these spells for ez-ness..
+	if (magflag) magicness++;
 #else
 	if (get_skill(p_ptr, SKILL_HOFFENSE) >= thresh_spell) {
 		r_ptr->flags5 |= RF5_CURSE; magicness++;
@@ -6873,20 +6889,29 @@ else s_printf("\n");
 #endif
 
 #ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	//hres i/ii/iii -> give resistances!
+ #ifdef RI_MIRROR_PREEMPT_RES /* optional, to get us the 'initiative' - could almost just as well wait for the player to cast resists as they get auto-copied to us anyway */
+	if (check_for_spell(p_ptr, "HRESISTS_III")) { r_ptr->flags9 |= RF9_RES_FIRE | RF9_RES_COLD | RF9_RES_ACID | RF9_RES_ELEC | RF9_RES_POIS; }
+	else if (check_for_spell(p_ptr, "HRESISTS_II")) { r_ptr->flags9 |= RF9_RES_FIRE | RF9_RES_COLD | RF9_RES_ACID | RF9_RES_ELEC; }
+	else if (check_for_spell(p_ptr, "HRESISTS_I")) { r_ptr->flags9 |= RF9_RES_FIRE | RF9_RES_COLD; }
+ #endif
+	//Notes: Placing runes is not possible. And gods won't accept martyrium here.
 #else
 	//if (get_skill(p_ptr, SKILL_HDEFENSE) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; } -- nothing here! all accounted for
 #endif
 
 #ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
-	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
-	//heal; prevent placing runes, gods won't accept martyrium here!
+	if (check_for_spell(p_ptr, "HCUREWOUNDS_I") || check_for_spell(p_ptr, "HCUREWOUNDS_II"))
+	if (check_for_spell(p_ptr, "HHEALING2_I") || check_for_spell(p_ptr, "HHEALING2_II") || check_for_spell(p_ptr, "HHEALING2_III"))
+	if (check_for_spell(p_ptr, "HHEALING_I") || check_for_spell(p_ptr, "HHEALING_II") || check_for_spell(p_ptr, "HHEALING_III"))
 #else
 	if (get_skill(p_ptr, SKILL_HCURING) >= thresh_spell) { r_ptr->flags6 |= RF6_HEAL; magicness++; }
 #endif
 
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	//Globe of Light was already checked in HOFFENSE above. Nothing left here.
+#else
 	//if (get_skill(p_ptr, SKILL_HSUPPORT) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; } -- nothing here!
+#endif
 
 	/* TODO: Mimic powers */
 	if (p_ptr->body_monster) {

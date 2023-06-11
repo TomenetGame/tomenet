@@ -2757,9 +2757,14 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod) {
 	/* Paranoia -- verify location */
 	cave_type **zcave;
 
+	struct dun_level *l_ptr = getfloor(wpos);
+
+
 #ifdef ARCADE_SERVER
 	return;
 #endif
+
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_TRAPS)) return;
 
 	/* Not in Arena Monster Challenge, nor PvP Arena */
 	if (in_arena(wpos) || in_pvparena(wpos)) return;
@@ -3196,6 +3201,8 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 	cave_type *c_ptr;
 	cave_type **zcave;
 	struct c_special *cs_ptr;
+	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
 
 	zcave = getcave(&p_ptr->wpos);
 	c_ptr = &zcave[py][px];
@@ -3219,9 +3226,8 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 		return;
 	}
 
-	if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) ||
-	    (c_ptr->info & (CAVE_PROT | CAVE_NO_MONSTER))) {
-		msg_print(Ind, "You cannot set monster traps on this special floor.");
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_TRAPS)) {
+		msg_print(Ind, "This whole floor is not suitable for setting monster traps.");
 		return;
 	}
 

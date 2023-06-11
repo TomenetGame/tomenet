@@ -8439,7 +8439,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		dun = &dun_body;
 		dun->l_ptr = getfloor(wpos);
 		dun->l_ptr->flags1 = LF1_NO_DESTROY;
-		dun->l_ptr->flags2 = LF2_NO_SUMMON | LF2_NO_LIVE_SPAWN | LF2_NO_RUNES;
+		dun->l_ptr->flags2 = LF2_NO_SUMMON | LF2_NO_LIVE_SPAWN | LF2_NO_RUNES | LF2_NO_TRAPS;
 #ifdef SIMPLE_RI_MIRROR
 		dun->l_ptr->flags2 |= LF2_NO_RUN; /* Don't allow too easy kiting */
 #endif
@@ -8509,7 +8509,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		dun = &dun_body;
 		dun->l_ptr = getfloor(wpos);
 		dun->l_ptr->flags1 = LF1_NO_DESTROY | LF1_NO_MAGIC;
-		dun->l_ptr->flags2 = LF2_NO_SUMMON | LF2_NO_LIVE_SPAWN | LF2_NO_RUNES | LF2_NO_TELE;
+		dun->l_ptr->flags2 = LF2_NO_SUMMON | LF2_NO_LIVE_SPAWN | LF2_NO_RUNES | LF2_NO_TELE | LF2_NO_TRAPS;
 		dun->l_ptr->monsters_generated = dun->l_ptr->monsters_spawned = dun->l_ptr->monsters_killed = 0;
 		//if (season_halloween && p_ptr && (p_ptr->prob_travel || p_ptr->ghost)) dun->l_ptr->flags1 |= LF1_FAST_DIVE;
 
@@ -8548,7 +8548,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		dun = &dun_body;
 		dun->l_ptr = getfloor(wpos);
 		dun->l_ptr->flags1 = LF1_NO_DESTROY;
-		dun->l_ptr->flags2 = LF2_NO_SUMMON | LF2_NO_LIVE_SPAWN | LF2_NO_RUNES;
+		dun->l_ptr->flags2 = LF2_NO_SUMMON | LF2_NO_LIVE_SPAWN | LF2_NO_RUNES | LF2_NO_TRAPS;
 		dun->l_ptr->monsters_generated = dun->l_ptr->monsters_spawned = dun->l_ptr->monsters_killed = 0;
 		//if (season_halloween && p_ptr && (p_ptr->prob_travel || p_ptr->ghost)) dun->l_ptr->flags1 |= LF1_FAST_DIVE;
 

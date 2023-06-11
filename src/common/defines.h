@@ -1484,6 +1484,10 @@
    This can make things easier by diluting spells, but also much harder for key spells such as healing. */
 #define SIMPLE_RI_MIRROR_CHECKFORSPELLS
 
+/* 'Cast' all resistance-giving spells preemptively ie gain all available resistances from spells right at
+   the beginning of the fight? If not, we will acquire the missing ones as soon as the player casts them, instead. */
+#define RI_MIRROR_PREEMPT_RES
+
 /* Reduced % of damage taken by the mirror */
 #define MIRROR_REDUCE_DAM_TAKEN_MELEE 20
 #define MIRROR_REDUCE_DAM_TAKEN_THROW 20
@@ -6819,6 +6823,7 @@
 
 #define LF2_CYCLIC_STAIRS	0x10000000L	/* This level (final level) will generate further stairs in dungeon traversal direction, leading out (via wpos-z-hack). This will inhibit LF1_IRON_RECALL flag! */
 #define LF2_NO_MARTYR_SAC	0x20000000L	/* This level does not allow any divine/hellish favour: No Martyr/Blood Sacrifice */
+#define LF2_NO_TRAPS		0x40000000L	/* Disallow any traps and monster traps on this floor */
 
 
 /* vault flags for v_info */
