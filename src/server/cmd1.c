@@ -2191,7 +2191,10 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				else msg_format(Ind, "You must be level %d or higher to pick up that artifact!", o_ptr->level);
 				if (!is_admin(p_ptr)) return;
 			}
-
+			else if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_GLASS_SHARD) {
+				msg_print(Ind, "You cannot seem to grasp the shard.");
+				if (!is_admin(p_ptr)) return;
+			}
 		}
 #endif
 		/* Save old inscription in case pickup fails */

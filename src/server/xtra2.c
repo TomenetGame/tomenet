@@ -9022,6 +9022,11 @@ void player_death(int Ind) {
 	if (d_ptr) {
 		if (d_ptr->flags2 & DF2_NO_DEATH) secure = TRUE;
 		if (d_ptr->type == DI_DEATH_FATE || (!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)) {
+			int x, y, oidx;
+			cave_type **zcave = getcave(&p_ptr->wpos);
+			object_type *o_ptr;
+			bool found = FALSE;
+
 			/* ok, be lenient about mirror fight, but still.. */
 			secure = TRUE;
 			penalty = TRUE;
@@ -9030,6 +9035,37 @@ void player_death(int Ind) {
 			msg_broadcast_format(0, "\374\377A** %s was defeated by %s mirror image! **", p_ptr->name, p_ptr->male ? "His" : "Her");
 			//s_printf("MIRROR_RESULT: %s (%d) was defeated (%d damage).\n", p_ptr->name, p_ptr->lev, p_ptr->deathblow);
 #endif
+
+			/* Make sure to have it cost 1 shard, so the leniency of allowing to survive
+			   a lost fight now cannot be abused to collect shards via cheap blood-gating. */
+
+			/* 1/2 - Scan him */
+			for (i = 0; i <= INVEN_PACK; i++) {
+				o_ptr = &p_ptr->inventory[i];
+				if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_GLASS_SHARD) {
+					inven_item_increase(Ind, i, -1);
+					inven_item_describe(Ind, i);
+					inven_item_optimize(Ind, i);
+					found = TRUE;
+					break;
+				}
+			}
+
+			/* 2/2 - Scan the floor -- obsolete as you cannot drop items in DF anyway */
+			if (!found && l_ptr && zcave) {
+				for (x = 1; x < l_ptr->wid - 1; x++) {
+					for (y = 1; y < l_ptr->hgt - 1; y++) {
+						oidx = zcave[y][x].o_idx;
+						if (!oidx) continue;
+						o_ptr = &o_list[oidx];
+						if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_GLASS_SHARD && o_ptr->owner == p_ptr->id) {
+							floor_item_increase(oidx, -1);
+							floor_item_optimize(oidx);
+						}
+					}
+				}
+			}
+
 		}
 	}
 
@@ -13950,6 +13986,11 @@ void telekinesis_aux(int Ind, int item) {
 	if (p2_ptr->store_num != -1) {
 		msg_print(Ind, "Target player is currently shopping.");
 		return;
+	}
+
+	if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_GLASS_SHARD) {
+		msg_print(Ind, "The shard seems to be unaffected by telekinesis magic.");
+		if (!is_admin(p_ptr)) return;
 	}
 
 	/* You cannot send artifact */
