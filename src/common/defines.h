@@ -6811,6 +6811,7 @@
 #define LF2_NO_RUNES		0x08000000L	/* Disallow runes of protection on this floor */
 
 #define LF2_CYCLIC_STAIRS	0x10000000L	/* This level (final level) will generate further stairs in dungeon traversal direction, leading out (via wpos-z-hack). This will inhibit LF1_IRON_RECALL flag! */
+#define LF2_NO_MARTYR_SAC	0x20000000L	/* This level does not allow any divine/hellish favour: No Martyr/Blood Sacrifice */
 
 
 /* vault flags for v_info */

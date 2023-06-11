@@ -8486,7 +8486,10 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			new_level_down_x(wpos, startx);
 			new_level_down_y(wpos, starty);
 			s_printf("DF-way (%s(%s)L%d:%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev, i);
-		} else s_printf("DF-mirror (%s(%s)L%d:%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev, i);
+		} else {
+			dun->l_ptr->flags2 |= LF2_NO_MARTYR_SAC;
+			s_printf("DF-mirror (%s(%s)L%d:%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev, i);
+		}
 		//wipe_m_list(&p_ptr->wpos);
 
 		/* reattach objects and monsters */

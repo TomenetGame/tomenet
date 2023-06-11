@@ -2420,9 +2420,22 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 		else if (prefix(messagelc, "/martyr") || prefix(messagelc, "/mar")) {
+			struct dun_level *l_ptr;
+			u32b lflags2 = 0x0;
+
 			/* we cannot cast 'martyr' spell at all? */
 			if (exec_lua(0, format("return get_level(%d, HMARTYR, 50, 0)", Ind)) < 1) {
 				msg_print(Ind, "You know not how to open the heavens.");
+				return;
+			}
+
+			if (in_sector00(&p_ptr->wpos)) lflags2 = sector00flags2;
+			else if (p_ptr->wpos.wz) {
+				l_ptr = getfloor(&p_ptr->wpos);
+				if (l_ptr) lflags2 = l_ptr->flags2;
+			}
+			if (lflags2 & LF2_NO_MARTYR_SAC) {
+				msg_print(Ind, "\377yThe heavens will not grant you martyrium here.");
 				return;
 			}
 
@@ -2434,12 +2447,26 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 #ifdef ENABLE_HELLKNIGHT
 		else if (prefix(messagelc, "/sacrifice") || prefix(messagelc, "/sac")) {
+			struct dun_level *l_ptr;
+			u32b lflags2 = 0x0;
+
+			/* we cannot cast 'blood sacrifice' spell at all? */
 			if ((p_ptr->pclass != CLASS_HELLKNIGHT
  #ifdef ENABLE_CPRIEST
 			    && p_ptr->pclass != CLASS_CPRIEST
  #endif
 			    ) || exec_lua(0, format("return get_level(%d, BLOODSACRIFICE, 50, 0)", Ind)) < 1) {
 				msg_print(Ind, "You know not how to open the maelstrom of chaos.");
+				return;
+			}
+
+			if (in_sector00(&p_ptr->wpos)) lflags2 = sector00flags2;
+			else if (p_ptr->wpos.wz) {
+				l_ptr = getfloor(&p_ptr->wpos);
+				if (l_ptr) lflags2 = l_ptr->flags2;
+			}
+			if (lflags2 & LF2_NO_MARTYR_SAC) {
+				msg_print(Ind, "\377yThe maelstrom of chaos will not devour your blood sacrifice here.");
 				return;
 			}
 
