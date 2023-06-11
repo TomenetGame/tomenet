@@ -6499,9 +6499,14 @@ else s_printf("\n");
 	if (get_skill(p_ptr, SKILL_XBOW) >= thresh_skill) { r_ptr->flags4 |= RF4_ARROW_3; magicness++; }
 	if (get_skill(p_ptr, SKILL_BOOMERANG) >= thresh_skill) { r_ptr->flags4 |= RF4_ARROW_4; magicness++; } //it's "missile", but we don't have a monster-boomerang-skill
 
+
+//TODO: Archery - it doesnt take anything into account, such as actual skill, Archery skill, SpR, or even ranged +hit,+dam
+
+
+
 	if (get_skill(p_ptr, SKILL_TRAPPING) >= thresh_skill) { r_ptr->flags6 |= RF6_TRAPS; magicness++; }
 	//if (get_skill(p_ptr, SKILL_ANTIMAGIC)) r_ptr->flags7 |= RF7_DISBELIEVE -- not for now maybe
- #if 0 /* maybe simply make mirror non-intercepting and non-interceptable? fair trade */
+ #if 0 /* maybe simply make mirror non-intercepting and non-interceptable? fair trade - done. Same as player spells aren't interceptible either. */
 	if (get_skill(p_ptr, SKILL_CALMNESS)) { r_ptr->flags |= RF__; magicness++; }
 	if (get_skill(p_ptr, SKILL_INTERCEPT)) { r_ptr->flags |= RF__; magicness++; }
  #endif
