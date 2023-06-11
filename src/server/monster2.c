@@ -6550,7 +6550,7 @@ else s_printf("\n");
 #endif
 
 #ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	if (check_for_spell(p_ptr, "RECOVERY_I") || check_for_spell(p_ptr, "RECOVERY_II")) { r_ptr->flags3 |= RF3_NO_CONF | RF3_NO_STUN; r_ptr->flags9 |= RF9_RES_POIS; }
+	if (check_for_spell(p_ptr, "RECOVERY_I") || check_for_spell(p_ptr, "RECOVERY_II")) { r_ptr->flags3 |= RF3_NO_CONF | RF3_NO_STUN; } //r_ptr->flags9 |= RF9_RES_POIS; } -- nah
 	if (check_for_spell(p_ptr, "REGENERATION")) { r_ptr->flags2 |= RF2_REGENERATE; }
 	if (check_for_spell(p_ptr, "RESISTS_II")) { r_ptr->flags9 |= RF9_RES_FIRE | RF9_RES_COLD | RF9_RES_ACID | RF9_RES_ELEC; }
 	else if (check_for_spell(p_ptr, "RESISTS_I")) { r_ptr->flags9 |= RF9_RES_FIRE | RF9_RES_COLD; }
@@ -6650,6 +6650,7 @@ else s_printf("\n");
 
 #ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
 	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+	//waterpoison, icepoison
 #else
 	if (get_skill(p_ptr, SKILL_DRUID_ARCANE) >= thresh_spell) {
 		r_ptr->flags5 |= RF5_BA_POIS; magicness++;
@@ -6659,6 +6660,9 @@ else s_printf("\n");
 
 #ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
 	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+	//healing
+	//r_ptr->flags9 |= RF9_RES_POIS; } --nah
+	/* Note: Focus is currently ignored, so player gains great +hit chance advantage. */
 #else
 	if (get_skill(p_ptr, SKILL_DRUID_PHYSICAL) >= thresh_spell) {
 		//r_ptr->flags6 |= RF6_HASTE; magicness++; -- we already copy the max speed flatly
@@ -6668,12 +6672,16 @@ else s_printf("\n");
 
 #ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
 	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+	//bo_dark, res_pois (no melee pois brand), invis (just make player invis not work on mirror instead!)
+	//chaos bolt (h-off), drain life (necro), ba-dark
 #else
 	if (get_skill(p_ptr, SKILL_OSHADOW) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_DARK; magicness++; }
 #endif
 
 #ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
 	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+	//curse, bo-lite, ba-lite, bo-elec
+	//guardian spirit II -> increase AC! (like kinetic shield) (ignore guardian spirit I)
 #else
 	if (get_skill(p_ptr, SKILL_OSPIRIT) >= thresh_spell) {
 		r_ptr->flags5 |= RF5_CURSE; magicness++;
@@ -6684,6 +6692,7 @@ else s_printf("\n");
 
 #ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
 	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+	//wrathflame: just ignore, or increase damage dice instead?
 #else
 	if (get_skill(p_ptr, SKILL_OHERETICISM) >= thresh_spell) {
 		r_ptr->flags5 |= RF5_BO_FIRE; magicness++;
@@ -6694,6 +6703,8 @@ else s_printf("\n");
 
 #ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
 	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+	//nether sap + touch of hunger: could turn into T2 regen or better even
+	//drain life
 #else
 	if (get_skill(p_ptr, SKILL_OUNLIFE) >= thresh_spell) {
  #if 0
@@ -6706,6 +6717,7 @@ else s_printf("\n");
 	}
 #endif
 
+	//disallow placing floor runes!
 	if (get_skill(p_ptr, SKILL_R_LITE) >= thresh_spell) {
 		r_ptr->flags4 |= RF4_BR_LITE; magicness++; //ball
 		//SKILL_R_DARK -> conf
@@ -6743,6 +6755,7 @@ else s_printf("\n");
 
 #ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
 	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+	//pyro, cryo, blink, tele, teleaway
 #else
 	if (get_skill(p_ptr, SKILL_PPOWER) >= thresh_spell) {
 		r_ptr->flags6 |= RF6_BLINK | RF6_TPORT | RF6_TELE_AWAY; magicness++;
@@ -6756,6 +6769,7 @@ else s_printf("\n");
 
 #ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
 	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+	//psionic blast, psi storm, silence
 #else
 	if (get_skill(p_ptr, SKILL_MINTRUSION) >= thresh_spell) {
 		//we got psi-immunity vs 40+ MCs! So no need to replicate the Psionic Blast/Storm spells maybe
@@ -6770,6 +6784,8 @@ else s_printf("\n");
 
 #ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
 	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+	//curse, holy light II, bo/ba-lite STRONG, OoD, doomed grounds (annih), bo/ba-chaos [OShadow]
+	//we ignore exorcism/redemption and other pure anti-evil/undead/xxx spells as we are supposedly NONLIVING and also won't retaliate with these spells for ez-ness..
 #else
 	if (get_skill(p_ptr, SKILL_HOFFENSE) >= thresh_spell) {
 		r_ptr->flags5 |= RF5_CURSE; magicness++;
@@ -6778,10 +6794,15 @@ else s_printf("\n");
 	}
 #endif
 
+#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	//hres i/ii/iii -> give resistances!
+#else
 	//if (get_skill(p_ptr, SKILL_HDEFENSE) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; } -- nothing here! all accounted for
+#endif
 
 #ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
 	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
+	//heal; prevent placing runes, gods won't accept martyrium here!
 #else
 	if (get_skill(p_ptr, SKILL_HCURING) >= thresh_spell) { r_ptr->flags6 |= RF6_HEAL; magicness++; }
 #endif

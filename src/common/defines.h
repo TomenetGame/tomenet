@@ -6199,6 +6199,7 @@
 #define RF0_BO_LITE		0x04000000		/* Mirror: Power Ray */
 #define RF0_BO_DARK		0x08000000		/* Mirror: Power Ray */
 #define RF0_DISPEL			0x10000000	/* Mirror: Vengenance [Corrupted] */
+//icepoison, waterpoison; bo-dark; 
 /* !!! NOTE: if you add more flags, adjust RF0_SPELL_MASK accordingly !!! */
 
 #define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT)		/* | RF0_NO_NEST */
