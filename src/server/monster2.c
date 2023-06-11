@@ -6786,9 +6786,19 @@ else s_printf("\n");
 	}
 	/* Note: Some more (status effect) combos omitted, these should be sufficient for now. */
 
-#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
-	//pyro, cryo, blink, tele, teleaway
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	magflag = FALSE;
+	//Psychic Hammer: Skip, because its damage output would probably be too high (GF_FORCE bolt)
+	if (check_for_spell(p_ptr, "MPYROKINESIS_I") || check_for_spell(p_ptr, "MPYROKINESIS_II")) { r_ptr->flags5 |= RF5_BO_FIRE; magflag = TRUE; }
+	if (check_for_spell(p_ptr, "MCRYOKINESIS_I") || check_for_spell(p_ptr, "MCRYOKINESIS_II")) { r_ptr->flags5 |= RF5_BO_COLD; magflag = TRUE; }
+	if (magflag) magicness++;
+	magflag = FALSE;
+	if (check_for_spell(p_ptr, "MBLINK")) { r_ptr->flags6 |= RF6_BLINK; magflag = TRUE; }
+	if (check_for_spell(p_ptr, "MTELEPORT")) { r_ptr->flags6 |= RF6_TPORT; magflag = TRUE; }
+	//MTELETOWARDS is ignored; MFEEDBACK is ignored (despite potential Grav resistance :p)
+	if (check_for_spell(p_ptr, "MTELEAWAY")) { r_ptr->flags6 |= RF6_TELE_AWAY; magflag = TRUE; }
+	//Kinetic shield instead factors into AC.
+	if (magflag) magicness++;
 #else
 	if (get_skill(p_ptr, SKILL_PPOWER) >= thresh_spell) {
 		r_ptr->flags6 |= RF6_BLINK | RF6_TPORT | RF6_TELE_AWAY; magicness++;
@@ -6800,9 +6810,11 @@ else s_printf("\n");
 
 	//if (get_skill(p_ptr, SKILL_TCONTACT) >= thresh_spell) { r_ptr->flags6 |= RF6_HASTE; magicness++; } -- we already copy the max speed flatly
 
-#ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
-	//psionic blast, psi storm, silence
+#ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
+	if (check_for_spell(p_ptr, "MMINDBLAST_I") || check_for_spell(p_ptr, "MMINDBLAST_II") || check_for_spell(p_ptr, "MMINDBLAST_III") ||
+	    check_for_spell(p_ptr, "MPSISTORM_I") || check_for_spell(p_ptr, "MPSISTORM_II"))
+		{ r_ptr->flags0 |= RF0_BO_PSI; magicness += 2; }
+	//MSILENCE: Too big and random a factor to allow, and saves us work to exclude it.
 #else
 	if (get_skill(p_ptr, SKILL_MINTRUSION) >= thresh_spell) {
 		//we got psi-immunity vs 40+ MCs! So no need to replicate the Psionic Blast/Storm spells maybe

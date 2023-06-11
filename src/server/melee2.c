@@ -618,6 +618,61 @@ static void bolt(int Ind, int m_idx, int typ, int dam_hp, int sfx_typ) {
 	/* Target the player with a bolt attack */
 	(void)project(m_idx, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam_hp, typ, flg, p_ptr->attacker);
 }
+/* added just for psi bolt in mirror fight... -_- */
+static void grid_bolt(int Ind, int m_idx, int typ, int dam_hp, int sfx_typ) {
+	player_type *p_ptr = Players[Ind];
+	int flg = PROJECT_NORF | PROJECT_HIDE | PROJECT_KILL | PROJECT_GRID | PROJECT_NODF | PROJECT_NODO;
+
+#ifdef USE_SOUND_2010
+ #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
+	if (p_ptr->sfx_monsterattack)
+		switch (sfx_typ) {
+		case SFX_BOLT_MAGIC:
+			sound(Ind, "cast_bolt", NULL, SFX_TYPE_MON_SPELL, TRUE);
+			break;
+		case SFX_BOLT_SHOT:
+			sound(Ind, "fire_shot", NULL, SFX_TYPE_MON_SPELL, TRUE);
+			break;
+		case SFX_BOLT_ARROW:
+			sound(Ind, "fire_arrow", NULL, SFX_TYPE_MON_SPELL, TRUE);
+			break;
+		case SFX_BOLT_BOLT:
+			sound(Ind, "fire_bolt", NULL, SFX_TYPE_MON_SPELL, TRUE);
+			break;
+		case SFX_BOLT_MISSILE:
+			sound(Ind, "fire_missile", NULL, SFX_TYPE_MON_SPELL, TRUE);
+			break;
+		case SFX_BOLT_BOULDER:
+			sound(Ind, "throw_boulder", NULL, SFX_TYPE_MON_SPELL, TRUE);
+			break;
+		}
+ #else
+	switch (sfx_typ) {
+	case SFX_BOLT_MAGIC:
+		sound_near_monster_atk(m_idx, 0, "cast_bolt", NULL, SFX_TYPE_MON_SPELL);
+		break;
+	case SFX_BOLT_SHOT:
+		sound_near_monster_atk(m_idx, 0, "fire_shot", NULL, SFX_TYPE_MON_SPELL);
+		break;
+	case SFX_BOLT_ARROW:
+		sound_near_monster_atk(m_idx, 0, "fire_arrow", NULL, SFX_TYPE_MON_SPELL);
+		break;
+	case SFX_BOLT_BOLT:
+		sound_near_monster_atk(m_idx, 0, "fire_bolt", NULL, SFX_TYPE_MON_SPELL);
+		break;
+	case SFX_BOLT_MISSILE:
+		sound_near_monster_atk(m_idx, 0, "fire_missile", NULL, SFX_TYPE_MON_SPELL);
+		break;
+	case SFX_BOLT_BOULDER:
+		sound_near_monster_atk(m_idx, 0, "throw_boulder", NULL, SFX_TYPE_MON_SPELL);
+		break;
+	}
+ #endif
+#endif
+
+	/* Target the player with a bolt attack */
+	(void)project(m_idx, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam_hp, typ, flg, p_ptr->attacker);
+}
 
 
 /*
@@ -4018,6 +4073,16 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 		}
 
+	/* RF0_BO_PSI */
+	case RF0_OFFSET + 21:
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a psi bolt of", m_name);
+		grid_bolt(Ind, m_idx, GF_PSI, 30 + damroll(5, 5) + (rlev * 3) / 2, SFX_BOLT_MAGIC);
+		//update_smart_learn(Ind, m_idx, DRS_PSI);
+		break;
+
 	default:
 		/* catch any non-existant spells */
 		s_printf("ERROR: Invalid monster spell %d for r_idx %d. (f4=%d,f5=%d,f6=%d,f0=%d)\n", thrown_spell, m_ptr->r_idx, f4, f5, f6, f0);
@@ -6099,6 +6164,16 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		}
 		break;
 		}
+
+	/* RF0_BO_PSI */
+	case RF0_OFFSET + 21:
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a psi bolt of", m_name);
+		grid_bolt(Ind, m_idx, GF_PSI, 30 + damroll(5, 5) + (rlev * 3) / 2, SFX_BOLT_MAGIC);
+		//update_smart_learn(Ind, m_idx, DRS_PSI);
+		break;
 
 	default:
 		/* catch any non-existant spells */

@@ -592,8 +592,8 @@ static cptr r_info_flags0[] = {
 	"ICEPOISON",
 	"BO_CHAO",
 
-	"X00100000",
-	"X00200000",
+	"DRAIN_LIFE",
+	"BO_PSI",
 	"X00400000",
 	"X00800000",
 

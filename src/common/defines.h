@@ -6176,6 +6176,7 @@
 #define RF0_ICEPOISON		0x00040000		/* Mirror: Toxic Moisture III */
 #define RF0_BO_CHAOS		0x00080000		/* Mirror: Chaos Bolt (Shadow/HOff) */
 #define RF0_DRAIN_LIFE			0x00100000	/* Mirror: Drain Life (Shadow/Necro) */
+#define RF0_BO_PSI			0x00200000	/* Mirror: Psionic Blast [+Psi Storm] */
 //hole
 #define RF0_ADMINISTRATIVE_PUSH		0x20000000	/* Push back */
 #define RF0_METEOR_SWARM		0x40000000	/* Targetted delayed orbital attack */
