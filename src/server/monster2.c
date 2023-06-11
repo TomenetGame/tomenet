@@ -5879,7 +5879,11 @@ void py2mon_init_base(monster_type *m_ptr, player_type *p_ptr) {
 	monster_race *r_ptr = &r_info[RI_MIRROR];
 
 	/* Fixed stats */
+#ifdef RI_MIRROR_MAXPLV
 	m_ptr->level = r_ptr->level = p_ptr->max_plv;
+#else
+	m_ptr->level = r_ptr->level = p_ptr->max_lev;
+#endif
 	/* On-the-fly adjustable stats, in case they 'improve' (aka player tries to game the system),
 	   so just set the most important ones here to give an initial definition frame: */
 	m_ptr->speed = m_ptr->mspeed = p_ptr->pspeed;
@@ -6201,7 +6205,11 @@ void py2mon_update_base(monster_type *m_ptr, player_type *p_ptr) {
 #endif
 
 	/* Who knows the silylness.. */
+#ifdef RI_MIRROR_MAXPLV
 	m_ptr->level = r_ptr->level = p_ptr->max_plv;
+#else
+	m_ptr->level = r_ptr->level = p_ptr->max_lev;
+#endif
 
 	/* On-the-fly adjustable stats, in case they 'improve' (aka player tries to game the system): */
 	/* Determine speed */

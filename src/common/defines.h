@@ -1475,16 +1475,22 @@
 /* Use normal monster abilities instead of truly mirrored abilities?
    (This is basically a placeholder until a true mirror image is eventually implemented..) */
 #define SIMPLE_RI_MIRROR
+
+/* Use player's max_plv instead of max_lev as level? */
+//#define RI_MIRROR_MAXPLV
+
 /* Only learn spells if the player actually carries them too?
    Otherwise the pure school knowledge of the player is sufficient for the mirror to know all fitting spells!
    This can make things easier by diluting spells, but also much harder for key spells such as healing. */
 #define SIMPLE_RI_MIRROR_CHECKFORSPELLS
+
 /* Reduced % of damage taken by the mirror */
 #define MIRROR_REDUCE_DAM_TAKEN_MELEE 20
 #define MIRROR_REDUCE_DAM_TAKEN_THROW 20
 #define MIRROR_REDUCE_DAM_TAKEN_RANGED 20
 #define MIRROR_REDUCE_DAM_TAKEN_SPELL 20
 #define MIRROR_REDUCE_DAM_TAKEN_AURA 20
+
 /* Reduced % of damage dealt by the mirror */
 #define MIRROR_REDUCE_DAM_DEALT_MELEE 20
 #define MIRROR_REDUCE_DAM_DEALT_SPELL 20
