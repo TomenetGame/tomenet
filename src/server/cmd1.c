@@ -290,9 +290,6 @@ s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_cri
 /*
  * Brands (including slay mods) the given damage depending on object type, hitting a given monster.
  *
- * Note that "flasks of oil" do NOT do fire damage, although they
- * certainly could be made to do so.  XXX XXX
- *
  * Note that most brands and slays are x3, except Slay Animal (x2),
  * Slay Evil (x2), and Kill dragon (x5).
  */
@@ -899,9 +896,6 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 
 /*
  * Brands (including slay mods) the given damage depending on object type, hitting a given player.
- *
- * Note that "flasks of oil" do NOT do fire damage, although they
- * certainly could be made to do so.  XXX XXX
  */
 s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_ptr, bool thrown) {
 	int mult = FACTOR_MULT, bonus = 0;
