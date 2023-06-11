@@ -9027,7 +9027,7 @@ void player_death(int Ind) {
 			penalty = TRUE;
 #if 1 /* Global message? */
 			/* Note: AMC defeat msg uses \376 instead of \374, but mirror-success msg is actually \374 so this one too for now. */
-			msg_broadcast_format(0, "\374\377A** %s mirror image has defeated %s! **", p_ptr->male ? "His" : "Her", p_ptr->name);
+			msg_broadcast_format(0, "\374\377A** %s was defeated by %s mirror image! **", p_ptr->name, p_ptr->male ? "His" : "Her");
 			//s_printf("MIRROR_RESULT: %s (%d) was defeated (%d damage).\n", p_ptr->name, p_ptr->lev, p_ptr->deathblow);
 #endif
 		}
