@@ -6660,8 +6660,7 @@ else s_printf("\n");
 #endif
 
 #ifdef _SIMPLE_RI_MIRROR_CHECKFORSPELLS
-	if (check_for_spell(p_ptr, "_I") || check_for_spell(p_ptr, "_II") || check_for_spell(p_ptr, "_III")) {
-	//healing
+	if (check_for_spell(p_ptr, "HEALINGCLOUD_I") || check_for_spell(p_ptr, "HEALINGCLOUD_II") || check_for_spell(p_ptr, "HEALINGCLOUD_III")) { r_ptr->flags6 |= RF6_HEAL; magicness++; )
 	//r_ptr->flags9 |= RF9_RES_POIS; } --nah
 	/* Note: Focus is currently ignored, so player gains great +hit chance advantage. */
 #else
