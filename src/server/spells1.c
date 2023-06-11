@@ -7620,7 +7620,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 		break;
 
-	/* Random between ice (shards+water) and poison. At the moment its 3:1:1 shards:water:poison chance
+	/* Random between ice (shards+water) and poison. At the moment its 4:3:3 shards:water:poison chance
 			- the_sandman */
 	case GF_ICEPOISON:
 		switch (randint(10)) {
