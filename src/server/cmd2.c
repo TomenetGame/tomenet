@@ -7880,7 +7880,7 @@ bool interfere(int Ind, int chance) {
 		if (i > 0) {
 			m_ptr = &m_list[i];
 			r_ptr = race_inf(m_ptr);
-//			if (r_info[m_list[i].r_idx].flags1 & RF1_NEVER_MOVE)
+			//if (r_info[m_list[i].r_idx].flags1 & RF1_NEVER_MOVE)
 			/* monster doesn't act? */
 			if (r_ptr->flags1 & RF1_NEVER_MOVE) continue;
 			if (r_ptr->flags7 & RF7_NEVER_ACT) continue;
@@ -7926,7 +7926,7 @@ bool interfere(int Ind, int chance) {
 				monster_desc(Ind, m_name, i, 0);
 			} else {
 				/* FIXME: even not visible... :( */
-//				strcpy(m_name, q_ptr->name);
+				//strcpy(m_name, q_ptr->name);
 				/* fixed :) */
 				player_desc(Ind, m_name, -i, 0);
 			}
