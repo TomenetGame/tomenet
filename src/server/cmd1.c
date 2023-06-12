@@ -3369,10 +3369,10 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 							else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
 							break;
 					case TV_AXE: sound(Ind, "hit_axe", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
+					case TV_POLEARM: sound(Ind, "hit_polearm", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
  #ifdef EQUIPPABLE_DIGGERS
 					case TV_DIGGING:
  #endif
-					case TV_POLEARM: sound(Ind, "hit_polearm", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 					case TV_MSTAFF: sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 					}
 				else
@@ -3755,10 +3755,10 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 								else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
 								break;
 						case TV_AXE: sound(Ind, "hit_axe", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
+						case TV_POLEARM: sound(Ind, "hit_polearm", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
  #ifdef EQUIPPABLE_DIGGERS
 						case TV_DIGGING:
  #endif
-						case TV_POLEARM: sound(Ind, "hit_polearm", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 						case TV_MSTAFF: sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 						}
 					else
@@ -4456,10 +4456,10 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 							else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
 							break;
 					case TV_AXE: sound(Ind, "hit_axe", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
+					case TV_POLEARM: sound(Ind, "hit_polearm", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
  #ifdef EQUIPPABLE_DIGGERS
 					case TV_DIGGING:
  #endif
-					case TV_POLEARM: sound(Ind, "hit_polearm", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 					case TV_MSTAFF: sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 					}
 				else
@@ -5011,10 +5011,10 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 								else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
 								break;
 						case TV_AXE: sound(Ind, "hit_axe", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
+						case TV_POLEARM: sound(Ind, "hit_polearm", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
  #ifdef EQUIPPABLE_DIGGERS
 						case TV_DIGGING:
  #endif
-						case TV_POLEARM: sound(Ind, "hit_polearm", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 						case TV_MSTAFF: sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 						}
 					else
