@@ -8787,6 +8787,64 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				return;
 			}
+			/* Move to a specific floor (x,y) position on the current level */
+			else if (prefix(messagelc, "/loc") || prefix(messagelc, "/locate")) {
+				int x, y, ox, oy;
+				cave_type **zcave;
+
+				if (tk < 2) {
+					msg_print(Ind, "\377oUsage: /locate <x> <y>");
+					return;
+				}
+
+				x = atoi(token[1]);
+				y = atoi(token[2]);
+
+				if (!in_bounds_floor(getfloor(&p_ptr->wpos), y, x)) {
+					msg_print(Ind, "Error: Location not in_bounds.");
+					return;
+				}
+				if (!(zcave = getcave(&p_ptr->wpos))) {
+					msg_print(Ind, "Error: Cannot getcave().");
+					return;
+				}
+
+				/* Save the old location */
+				oy = p_ptr->py;
+				ox = p_ptr->px;
+
+				/* Move the player */
+				p_ptr->py = y;
+				p_ptr->px = x;
+
+				/* The player isn't here anymore */
+				zcave[oy][ox].m_idx = 0;
+
+				/* The player is now here */
+				zcave[y][x].m_idx = 0 - Ind;
+				cave_midx_debug(&p_ptr->wpos, y, x, -Ind);
+
+				/* Redraw the old spot */
+				everyone_lite_spot(&p_ptr->wpos, oy, ox);
+
+				/* Redraw the new spot */
+				everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+
+				/* Check for new panel (redraw map) */
+				verify_panel(Ind);
+
+				/* Update stuff */
+				p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+
+				/* Update the monsters */
+				p_ptr->update |= (PU_DISTANCE);
+
+				/* Window stuff */
+				p_ptr->window |= (PW_OVERHEAD);
+
+				handle_stuff(Ind);
+				return;
+			}
 			/* STRIP ALL TRUE ARTIFACTS FROM ALL PLAYERS (!) */
 			else if (prefix(messagelc, "/strathash")) {
 				msg_print(Ind, "Stripping all players.");
