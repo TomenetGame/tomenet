@@ -192,7 +192,10 @@ static int get_staircase_colour(dungeon_type *d_ptr, byte *c) {
 		return(-2);
 	}
 
-	/* (experimental testing stuff) */
+	/* (experimental testing stuff) --
+	   note that these flags are also used for Halls of Mandos, so its staircase
+	   would appear as TERM_HOLYORB yet the warning text speaks of 'dark grey staircase'.
+	   This is probably fine as most of TERM_HOLYORB is actually dark grey. */
 	if (d_ptr->flags3 & (DF3_NO_TELE | DF3_NO_ESP | DF3_LIMIT_ESP | DF3_NO_SUMMON)) {
 		*c = TERM_L_UMBER;
 
