@@ -8344,6 +8344,7 @@ void kill_houses(int id, byte type) {
 
 	for (i = 0; i < num_houses; i++) {
 		struct dna_type *dna = houses[i].dna;
+
 		if (dna->owner == id && dna->owner_type == type) {
 			dna->owner = 0L;
 			dna->creator = 0L;
