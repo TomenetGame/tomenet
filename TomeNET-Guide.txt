@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 10. June 2023 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 13. June 2023 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.0c - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -116,6 +116,7 @@ Contents
     (4.10a) Player stores
     (4.11)  Malicious effects players can suffer
     (4.11a) Drain effects
+    (4.11b) Common recurring combat buffs
     (4.12)  Malicious effects monsters can suffer
     (4.13)  Extermination orders, events and Ironman Challenge
     (4.14)  Time systems, speed
@@ -9783,6 +9784,43 @@ Sanity drain
 
 
 
+(4.11b) Common recurring combat buffs
+-------------------------------------
+On the plus side, there are three very common recurring combat buffs that can
+be acquired by lots of different sources such as potions, item activations,
+spells or techniques, that might warrant some detailed explanation here.
+
+These buffs are temporary and do not stack with the same type of buff even
+when acquired from a different source, for example quaffing a potion of berserk
+strength and then using the fighting technique 'Berserk' will have no extra
+effect over just using one of the two (it will just reset the effect's timer).
+
+Heroism stacks with either, Fury or Berserk Rage, but Berserk Rage will cancel
+and override Fury and vice versa: Fury cannot go into effect while Berserk Rage
+is already active.
+
+Heroism:          Remove and resist fear.
+                  Initially heals you for 10 HP.
+                  Increases hit points (CHP and MHP) by 10.
+                  Increases to-hit (melee and ranged) by 12.
+
+Fury:             Remove and resist fear.
+                  Increases Speed by 5.
+                  Increases to-damage (melee only) by 10.
+                  Reduces to-hit (melee and ranged) by 10.
+                  Reduces AC by 20.
+                  Slightly reduces your resistance to Psionic effects.
+
+Berserk Rage:     Remove and resist fear.
+                  Initially heals you for 30 HP.
+                  Increases hit points (CHP and MHP) by 20.
+                  Increases Strength by 10.
+                  Reduces AC by 10.
+                  Slightly increases your resistance to Psionic effects.
+                  Increases your throwing distance (but doesn't increase caps).
+
+
+
 (4.12) Malicious effects monsters can suffer
 --------------------------------------------
 Monsters can be affected by similar effects as players.
@@ -11044,7 +11082,8 @@ Damage of thrown items depends on their damage dice, to-damage enchantment and
 the thrower's strength. Throwing distance depends on item weight and strength.
 Effective throwing weapons can be thrown especially far and will also deal
 somewhat more damage if they weigh more. While under the effect of Berserk,
-the range is further increased. Note that the max range is capped, however.
+the range is further increased. Note that the max range is always capped,
+however, and this cap cannot be extended by berserk effects either.
 
 The effect a shattered potion applies is in general the same that a fumes trap
 loaded with that potion would cause, just that the fumes from the trap are
@@ -11111,6 +11150,8 @@ Kill Demon  |       3         | It is a great bane of demons.
 Same as in the 'brands' table, x1.5 will become x1.2 for ranged weapons and
 x1.17 for Martial Arts, x2 becomes x1.4 and x1.33 and x3 will become x1.8
 and x1.67 respectively.
+(Note: The term 'holy fury' is just a fluffy description for the multiplier
+and has nothing to do with the 'fury' buff that also exists in the game.)
 
 Giants, Undead, Trolls, Orcs, Dragons, Demons are all 'Evil'.
 
@@ -12616,8 +12657,8 @@ Potions
 Augmentation    Raises all your stats.
 Berserk Strength
                 Temporary effects: Heals you for 30, increases CHP and MHP by
-                20, become fearless, -10 malus to ac and +10 to strength.
-                Does not stack with 'Berserk' technique.
+                20, become fearless, -10 malus to ac and +10 to strength,
+                compare (4.11b). Does not stack with 'Berserk' technique.
                 ("You feel like a killing machine!")
 Blood           Cannot be found or bought, but only gathered from fountains of
                 blood which are found in the Paths of the Dead. These feed true
@@ -12677,7 +12718,7 @@ Experience      Gives you additionally half your current experience plus 10,
                 The XP gain from this potion is not affected by the experience
                 gain penalties (exp ratio) of your class or race.
 Heroism         Temporary effects: Increases CHP and MHP by 10. Removes fear.
-                +12 bonus to-hit. ("You feel like a hero!")
+                +12 bonus to-hit, compare (4.11b). ("You feel like a hero!")
 Infra-vision    Temporarily grants you 100..200 ft of infra-vision randomly,
                 ie the ability to see warm-blooded creatures from afar, even
                 in complete darkness or if they are invisible to normal sight.
@@ -13033,7 +13074,7 @@ Ale and wine        Will satisfy your hunger somewhat, and may have random side
                     paralysation, fear, blindness (methyl? ew), vomitting if
                     your stomach isn't relatively empty, temporary stat
                     decrease (except for strength), slowness,
-                    heroism, berserk, speed.
+                    heroism, berserk, speed (compare (4.11b)).
                     Note that the unique dwarven ale of the Khazad is vastly
                     superiour to normal ale or wine, and will mostly affect the
                     drinker positively, not ever causing negative side effects
@@ -13086,8 +13127,10 @@ Firestones          These can be eaten by Draconians and players in dragon
                         - Physical Instability:     Probability Travel.
                         - Fury:         speed bonus, to-dam bonus, no fear,
                                         to-hit malus, to-ac malus.
+                                        Compare (4.11b).
                         - Speed-up:     Speed bonus.
-                        - Heroism:      +10 CHP/MHP, +12 to-hit, resist fear.
+                        - Heroism:      +10 CHP/MHP, +12 to-hit, resist fear,
+                                        compare (4.11b).
                         - Temp res:     Temporary base and poison resistance.
                     If you eat too many of them over a short period of time you
                     might get poisoned by adrenaline overdose, with lethal
@@ -13226,13 +13269,13 @@ Cloaks of Lordly Resistanc: Temporary base+poison resistance.
 Dragon Scale Mails: According breath attack.
 Weapons of the Thunderlords: Teleportation.
 Weapons of Spinning: Spin attack.
-Fury weapons: Fury.
+Fury weapons: Fury, compare (4.11b).
 Noldor caps: Treasure detection.
 Spectral weapons: Wraithform (see (5.20)).
 
 Serpent amulets: Poison breath.
 Moon amulets: Sleep monsters.
-Rage amulets: Berserk.
+Rage amulets: Fury, compare (4.11b).
 Elemental rings: Breath the ring element and temporary resistance to it.
 Teleportation rings: Explode for teleportation.
 
@@ -21485,7 +21528,7 @@ uses the normal spell level just like all other spells, NOT the astral level.)
                     (This spell uses WISDOM to determine fail-rates!)
                     Required skill level for first spell level: 30.
 
-    Empowerment     Enlightened: Incite self-fury.
+    Empowerment     Enlightened: Incite self-fury, compare (4.11b).
                     Corrupted: Increases own hit points temporarily.
                     (This spell uses WISDOM to determine fail-rates!)
                     Note that this effect is the same as and stacks with +LIFE
@@ -22610,7 +22653,7 @@ The techniques are as follows:
         (Spinning around costs a turn of energy.)
     Berserk             10 stamina
         Temporary effects: Heals you for 30 HP, increases CHP and MHP by 20,
-        become fearless, -10 malus to ac and +10 to strength.
+        become fearless, -10 malus to ac and +10 to strength, compare (4.11b).
         (Entering berserk rage does not cost movement energy.)
         Does not stack with a potion of berserk strength.
 
@@ -22922,7 +22965,7 @@ Beginners (level 1)
   improve the chance to hit the opponent, which will raise the fighting
   potential for example against enemies like Farmer Maggot's dogs. Even if
   your character has a decent amount of Hit Points, these potions raise your
-  fighting abilities a good deal.
+  fighting abilities a good deal, compare (4.11b).
 + Potion of Cure Light Wounds
   They become useless quickly while you gain some character levels since they
   don't heal very many HP (Hit Points). At the beginning they are very helpful
@@ -22962,11 +23005,12 @@ Medium level character (up to 25)
   These will always fully satisfy your hunger and they are not eaten by rot
   jellys ;) Lembas (elvish waybread) are also nice but very rare.
 + Many Potions of Cure Critical Wounds, maybe some Potions of Healing.
-+ Some Potions of Berserk Strength (mainly for fighter classes)
-  These potions work similar to heroism, they rise your damage output instead
-  of your hit chance, allowing you to deal very extreme damage. Unfortunately
-  they are quite rare. If they are used together with potions of speed the
-  result can be devastating.
++ Some Potions of Berserk Strength (mainly for fighter classes).
+  These potions work similar to heroism, but they rise your strength instead
+  of your hit chance, allowing you to deal greatly increased damage,
+  compare (4.11b).
+  Unfortunately they are quite rare. If they are used together with potions
+  of speed the result can be devastating.
 + Several Scrolls of Word of Recall
 + Several scrolls of Identify
   Since you will encounter the more nice (or more dangerous..) loot the deeper

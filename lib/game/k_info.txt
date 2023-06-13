@@ -2144,8 +2144,8 @@ W:3:0:4:250
 A:3/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
-D:Temporarily removes fear and increases strength, hit points and damage,
-D:while it makes the user reckless, reducing his armour class.
+D:Temporarily puts you into berserk rage, removing fear and increasing strength,
+D:hit points and damage, while it makes you reckless, reducing your armour class.
 
 N:259:Boldness
 G:!:d
