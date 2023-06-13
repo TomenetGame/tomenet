@@ -9037,6 +9037,13 @@ void player_death(int Ind) {
 			//s_printf("MIRROR_RESULT: %s (%d) was defeated (%d damage).\n", p_ptr->name, p_ptr->lev, p_ptr->deathblow);
 #endif
 
+			/* Remove permanent stasis */
+			if (p_ptr->paralyzed == 255) {
+				p_ptr->paralyzed = 0;
+				p_ptr->redraw |= PR_STATE;
+				/* (no message) */
+			}
+
 			/* Make sure to have it cost 1 shard, so the leniency of allowing to survive
 			   a lost fight now cannot be abused to collect shards via cheap blood-gating. */
 
