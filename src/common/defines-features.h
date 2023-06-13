@@ -424,6 +424,9 @@
 				traps,
 				handles for heavy weapons
 
+	* maybe combine Textule and Fletcher? Seems not much to do @ cloth and leather armour really.. except if it includes DSMs maybe..
+	  could become weaver or plaiter..
+
 	Alchemist		crafts potions,
 				can create volatile runes,
 				uses volatile runes to craft scrolls and spells,
