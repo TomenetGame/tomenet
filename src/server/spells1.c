@@ -9878,8 +9878,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (rand_int(100) < p_ptr->skill_sav && !(p_ptr->esp_link_flags & LINKF_OPEN)) /* An open mind invites psi attacks */
 			psi_resists++;
 		if (p_ptr->mindboost && magik(p_ptr->mindboost_power)) psi_resists++;
+		if (p_ptr->shero) psi_resists++; /* Note: Berserk is like a trance and actually increases your resistance to psionic effects (!) :) .. */
 
-		if ((p_ptr->shero) && (rand_int(100) >= p_ptr->skill_sav)) psi_resists--;
+		if ((p_ptr->fury) && (rand_int(100) >= p_ptr->skill_sav)) psi_resists--; /* ..unlike fury, which is swinging around wildly while super annoyed */
 		if (p_ptr->confused) psi_resists--;
 		if (p_ptr->image) psi_resists--;
 		if (p_ptr->stun) psi_resists--;
