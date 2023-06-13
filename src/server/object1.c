@@ -3446,14 +3446,14 @@ cptr item_activation(object_type *o_ptr) {
 	case ART_DRUEDAIN:
 		return("detection every 49..99 turns");
 	case ART_ROHAN:
-		return("heroism, berserker rage, haste every 100..250+d50 turns");
+		return("heroism, berserk rage, haste every 100..250+d50 turns");
 	case ART_HELM:
 		return("a sound ball (300..600) every 300 turns");
 	case ART_BOROMIR:
 		return("mass human summoning every 500..1000 turns");
 
 	case ART_HURIN:
-		return("berserker rage and +10 to speed (50) every 75..175+d75 turns");
+		return("berserk rage and +10 to speed (50) every 75..175+d75 turns");
 	case ART_AXE_GOTHMOG:
 		return("a fire ball (300..600) every 50..200+d200 turns");
 	case ART_MELKOR:
