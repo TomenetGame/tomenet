@@ -1289,7 +1289,7 @@ bool set_invis(int Ind, int v, int p) {
 }
 
 /*
- * Set "p_ptr->fury", notice observable changes
+ * Set "p_ptr->fury", notice observable changes (Fury, gets overridden by Berserk)
  */
 bool set_fury(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
@@ -2343,7 +2343,7 @@ bool set_res_fear(int Ind, int v) {
 }
 
 /*
- * Set "p_ptr->hero", notice observable changes
+ * Set "p_ptr->hero", notice observable changes (Heroism)
  */
 bool set_hero(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
@@ -2393,7 +2393,7 @@ bool set_hero(int Ind, int v) {
 
 
 /*
- * Set "p_ptr->shero", notice observable changes
+ * Set "p_ptr->shero", notice observable changes (Berserk Rage, overrides Fury)
  */
 bool set_shero(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
