@@ -384,6 +384,86 @@
    Problem: lotr.fandom.com/wiki/Religion -> Ilúvatarism and Melkorism. But even if vamp/hk pray to Melkor, they still will kill him -_-. */
 //#define ALTARS_2021
 
+/* One of the bigger things - add actual crafting to the game? - C. Blue
+    Goals:
+	Allow to gain basically any possible item in the game, therefore exchanging targetted grind vs some RNG result.
+	Depend on each other, with certain crafting results being ingredients in turn for some other item/craft.
+
+    Problems:
+	Loot drops are already fitting very well, crafting could dilute things too much.
+	    -> ppl can dismantle 'useless' loot they find, to obtain raw materials for crafting,
+	       giving every item a (small) purpose perhaps
+
+	Ingredient spam, mixed into loot, requiring extra space in inventory/houses etc.
+	    -> add a profession bag^^,
+	    -> keep # of ingredients strongly in check, but offer a decent variery ot intermediary-tier items that are used up in subsequent crafts maybe
+
+	Require stationary tools eg forge? Which symbol for those? & and % are interesting, but already overused, so just ':' left maybe.
+	    -> could be cool to require very special/hidden forges etc perhaps.
+	    -> not sure how this is solved in towns - every profession has its station? a bit cluttery. Maybe not all of them need one?
+
+	Everyone becomes a crafter? Need to spend skill points? Need to create an extra crafting char? (Same as for Stealing atm.)
+	Otoh it'd also not be good if everyone could be a crafter 'for free' anyway, diluting crafting a lot, instead of it being a perk of choice, to stand out.
+	    -> some items could be too hard for anyone to use except the crafter, or w/e, just get level 0'ed if really necessary.
+	    -> one char must be limited to one crafting profession
+	    -> profession skill goes from 0.000 to 50.000 so it aligns with charlevel, but needs a bigger ratio to require maybe just ~5 levels worth of skill points (25)
+	    -> specialty: while skill does increase your potential crafting level, there is a cLev that needs to be brought up to the skill-unlocked mLev of crafting,
+	       by actually performing crafting actions! Eg 20.000 blacksmithing, but your cur-skill is at 3.418 because you have only created 3 helmets so far ^^-
+	       The amount of work to put into it should increase polynomially, basically comparable to XP gain from monster-slaying, for the parallel 'game of crafting' vs 'game of monster-slaying'.
+
+    Crafts:
+	Blacksmith		requires Fletcher for hafted weapons,
+				Textile Worker for heavy armour and shields,
+				crafts swords etc w/o any supply chain items (just pure metal).
+
+	Textile Worker		cloth and leather armour,
+				inlays for heavy armour
+
+	Fletcher		ranged weapons,
+				staves (anything w/o metal warheads),
+				traps,
+				handles for heavy weapons
+
+	Alchemist		crafts potions,
+				can create volatile runes,
+				uses volatile runes to craft scrolls and spells,
+				uses engraved runes to craft devices.
+
+	Rune scribe		crafts runes, both volatile and engraved,
+				can create scrolls and spells from volatile runes,
+				can create runemaster-usable rune stones (aka 'runes' in the game right now),
+				uses engraved runes to enchant items permanently
+
+	2 types of runes:
+		1) volatile runes (paper runes^^)
+			these are for scrolls, spells
+		2) engraved runes (on solid materials, rock, metal, wood)
+			these are for enchantments (items) and magic devices, and for runecraft
+
+    In-game symbols:
+	Much like for demolition: * for ingredients probably.
+	':' for stationary tools such as a forge perhaps. '%' and especially '&' would be nice but are overused,
+	or we move/switch those around a bit..
+
+    Tool items (pocketed, stationary), Ingredients/material items:
+	Blacksmithing
+	    hammer, forge
+	    metal bars, mithril bars, adamantite bars
+	Textileworking
+	    needle/cutter, loom
+	    cloth, leather
+	Fletchery
+	    slicer, workbench
+	    wood, leather
+	Alchemy
+	    mixing flask (potions), pen (scrolls/spells), laboratory
+	    paper/ink, various tinctures/essences
+	Runescript
+	    pen/chisel
+	    ink, paper/rocks, - (?)
+*/
+//#define CRAFTING_2023
+
 /* Work in progress // debug code - do not enable this!
    cmd_map(): Support initiating '2'/'8' map scrolling  while in 's'elector mode,
    by moving the X vertically out of the map
