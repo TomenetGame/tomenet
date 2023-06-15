@@ -3527,8 +3527,8 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 
 	/* Analyze the items */
 	switch (o_ptr->tval) {
-		/* quest items */
 		case TV_SPECIAL:
+			/* quest items -- redundant, these are already excluded above */
 			if (o_ptr->sval == SV_QUEST) {
 				if ((o_ptr->pval != j_ptr->pval) ||
 				    (o_ptr->xtra1 != j_ptr->xtra1) ||
@@ -3539,6 +3539,36 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 					return(FALSE);
 				break;
 			}
+
+			/* allow practically-identical 'custom' items to stack */
+			if (o_ptr->sval == SV_CUSTOM_OBJECT &&
+			    o_ptr->pval == j_ptr->pval &&
+			    o_ptr->bpval == j_ptr->bpval &&
+			    o_ptr->pval2 == j_ptr->pval2 &&
+			    o_ptr->pval3 == j_ptr->pval3 &&
+			    o_ptr->xtra1 == j_ptr->xtra1 &&
+			    o_ptr->xtra2 == j_ptr->xtra2 &&
+			    o_ptr->xtra3 == j_ptr->xtra3 &&
+			    o_ptr->xtra4 == j_ptr->xtra4 &&
+			    o_ptr->xtra5 == j_ptr->xtra5 &&
+			    o_ptr->xtra6 == j_ptr->xtra6 &&
+			    o_ptr->xtra7 == j_ptr->xtra7 &&
+			    o_ptr->xtra8 == j_ptr->xtra8 &&
+			    o_ptr->xtra9 == j_ptr->xtra9 &&
+			    o_ptr->sseed == j_ptr->sseed &&
+			    o_ptr->name1 == j_ptr->name1 &&
+			    o_ptr->name2 == j_ptr->name2 &&
+			    o_ptr->name2b == j_ptr->name2b &&
+			    o_ptr->name3 == j_ptr->name3 &&
+			    o_ptr->name4 == j_ptr->name4 &&
+			    o_ptr->to_h == j_ptr->to_h &&
+			    o_ptr->to_d == j_ptr->to_d &&
+			    o_ptr->to_a == j_ptr->to_a &&
+			    o_ptr->ac == j_ptr->ac &&
+			    o_ptr->dd == j_ptr->dd &&
+			    o_ptr->ds == j_ptr->ds)
+				break;
+
 			return(FALSE);
 
 		/* Chests */
