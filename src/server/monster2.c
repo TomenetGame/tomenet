@@ -6144,8 +6144,8 @@ void p2mon_update_base_aux(monster_race *r_ptr, int *magicness, int tval, int sv
  #if 0 /* Sigh, will have to disable runes on this floor -_- */
 		case SV_SCROLL_RUNE_OF_PROTECTION: r_ptr->flags |= RF_; (*magicness)++; break;
  #endif
-		case SV_SCROLL_PHASE_DOOR: r_ptr->flags6 |= RF6_BLINK; (*magicness)++; break;
-		case SV_SCROLL_TELEPORT: r_ptr->flags6 |= RF6_TPORT; (*magicness)++; break;
+		case SV_SCROLL_PHASE_DOOR: r_ptr->flags0 |= RF0_BLINK_PHYS; (*magicness)++; break;
+		case SV_SCROLL_TELEPORT: r_ptr->flags0 |= RF0_TPORT_PHYS; (*magicness)++; break;
  #if 0 /* these either have no effect or aren't feasible to use (as we won't gain anything from deleting the mirror image) */
 		case SV_SCROLL_GENOCIDE: r_ptr->flags |= RF_; (*magicness)++; break;
 		case SV_SCROLL_OBLITERATION: r_ptr->flags |= RF_; (*magicness)++; break;
@@ -6987,7 +6987,9 @@ else s_printf("\n");
 
 
 	/* Remove weak spell versions */
-	if (r_ptr->flags0 & RF0_HEAL_PHYS) r_ptr->flags6 &= ~RF6_HEAL; /* physical heal is always better than spell heal (same effect but not affected by AM) */
+	if (r_ptr->flags0 & RF0_HEAL_PHYS) r_ptr->flags6 &= ~RF6_HEAL;
+	if (r_ptr->flags0 & RF0_BLINK_PHYS) r_ptr->flags6 &= ~RF6_BLINK;
+	if (r_ptr->flags0 & RF0_TPORT_PHYS) r_ptr->flags6 &= ~RF6_TPORT;
 
 	// TODO: remove bolt spells if we have a stronger ball version, remove ball version if we have a stronger breath version (no AM!)..
 

@@ -2111,9 +2111,11 @@ bool make_attack_spell(int Ind, int m_idx) {
 	/* Hack for Tzeentch:
 	   Monsters that have both ASTAR and BLINK will not need to use it for movement purpose other than when ASTAR gets stuck.
 	   The other reason when BLINK is used is for escaping, which means player must be close or in line of sight. */
-	if ((f7 & RF7_ASTAR) && (f6 & RF6_BLINK)
-	    && distance(y, x, oy, ox) >= ANNOY_DISTANCE - 1 && !los(wpos, y, x, oy, ox))
+	if ((f7 & RF7_ASTAR) && ((f6 & RF6_BLINK) || (f0 & RF0_BLINK_PHYS))
+	    && distance(y, x, oy, ox) >= ANNOY_DISTANCE - 1 && !los(wpos, y, x, oy, ox)) {
 		f6 &= ~RF6_BLINK;
+		f0 &= ~RF0_BLINK_PHYS;
+	}
 
 	/* unable to summon on this floor? */
 	if ((l_ptr && (l_ptr->flags2 & LF2_NO_SUMMON))
@@ -2132,6 +2134,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	    || (!stupid && (!(f2 & RF2_EMPTY_MIND) || (f2 & RF2_SMART)) && (zcave[oy][ox].info & CAVE_STCK))) {
 		/* Remove teleport spells */
 		f6 &= ~(RF6_BLINK | RF6_TPORT | RF6_TELE_TO | RF6_TELE_AWAY | RF6_TELE_LEVEL);
+		f0 &= ~(RF0_BLINK_PHYS | RF0_TPORT_PHYS);
 	}
 
 	/* reduce exp from summons and from summons' summons.. */
@@ -3476,11 +3479,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 	/* RF6_TPORT */
 	case RF6_OFFSET + 5:
-		if (m_ptr->r_idx != RI_MIRROR) { /* uses scrolls! */
-			if (monst_check_antimagic(Ind, m_idx)) break;
-			//if (monst_check_grab(Ind, m_idx)) break;
-			if (monst_check_grab(m_idx, 50, "cast")) break;
-		}
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		//if (monst_check_grab(Ind, m_idx)) break;
+		if (monst_check_grab(m_idx, 50, "cast")) break;
 
 		/* No teleporting within no-tele vaults and such */
 		if (zcave[oy][ox].info & CAVE_STCK) {
@@ -4177,6 +4178,54 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 		break;
 
+	/* RF0_BLINK_PHYS */
+	case RF0_OFFSET + 23:
+		/* No teleporting within no-tele vaults and such */
+		if (zcave[oy][ox].info & CAVE_STCK) {
+			//msg_format(Ind, "%^s fails to blink.", m_name);
+			break;
+		}
+
+		/* if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+			msg_format(Ind, "%^s fails to blink.", m_name);
+			break;
+		} */
+
+		if (teleport_away(m_idx, 10) && visible) {
+			//disturb(Ind, 1, 0);
+			if (blind) msg_print(Ind, "You hear something blink away.");
+			else msg_format(Ind, "%^s blinks away.", m_name);
+#ifdef USE_SOUND_2010
+			/* redudant: already done in teleport_away()
+			sound_near_monster(m_idx, "blink", NULL, SFX_TYPE_MON_SPELL);
+			*/
+#endif
+		}
+		break;
+
+	/* RF0_TPORT_PHYS */
+	case RF0_OFFSET + 24:
+		/* No teleporting within no-tele vaults and such */
+		if (zcave[oy][ox].info & CAVE_STCK) {
+			//msg_format(Ind, "%^s fails to teleport.", m_name);
+			break;
+		}
+
+		/* if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+			msg_format(Ind, "%^s fails to teleport.", m_name);
+			break;
+		} */
+
+		if (teleport_away(m_idx, MAX_SIGHT * 2 + 5) && visible) {
+			//disturb(Ind, 1, 0);
+			if (blind) msg_print(Ind, "You hear something teleport away.");
+			else msg_format(Ind, "%^s teleports away.", m_name);
+#ifdef USE_SOUND_2010
+			sound_near_monster(m_idx, "teleport", NULL, SFX_TYPE_MON_SPELL);
+#endif
+		}
+		break;
+
 	default:
 		/* catch any non-existant spells */
 		s_printf("ERROR: Invalid monster spell %d for r_idx %d. (f4=%d,f5=%d,f6=%d,f0=%d)\n", thrown_spell, m_ptr->r_idx, f4, f5, f6, f0);
@@ -4344,9 +4393,11 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	/* Hack for Tzeentch:
 	   Monsters that have both ASTAR and BLINK will not need to use it for movement purpose other than when ASTAR gets stuck.
 	   The other reason when BLINK is used is for escaping, which means player must be close or in line of sight. */
-	if ((f7 & RF7_ASTAR) && (f6 & RF6_BLINK)
-	    && distance(y, x, oy, ox) >= ANNOY_DISTANCE - 1 && !los(wpos, y, x, oy, ox))
+	if ((f7 & RF7_ASTAR) && ((f6 & RF6_BLINK) || (f0 & RF0_BLINK_PHYS))
+	    && distance(y, x, oy, ox) >= ANNOY_DISTANCE - 1 && !los(wpos, y, x, oy, ox)) {
 		f6 &= ~RF6_BLINK;
+		f0 &= ~RF0_BLINK_PHYS;
+	}
 
 	/* unable to summon on this floor? */
 	if ((l_ptr && (l_ptr->flags2 & LF2_NO_SUMMON))
@@ -4365,6 +4416,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	    || (!stupid && (!(f2 & RF2_EMPTY_MIND) || (f2 & RF2_SMART)) && (zcave[oy][ox].info & CAVE_STCK))) {
 		/* Remove teleport spells */
 		f6 &= ~(RF6_BLINK | RF6_TPORT | RF6_TELE_TO | RF6_TELE_AWAY | RF6_TELE_LEVEL);
+		f0 &= ~(RF0_BLINK_PHYS | RF0_TPORT_PHYS);
 	}
 
 	/* reduce exp from summons and from summons' summons.. */
@@ -5677,8 +5729,6 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			break;
 		} */
 
-		//if (monst_check_grab(Ind, m_idx)) break;
-		if (monst_check_grab(m_idx, 50, "teleport")) break;
 		if (teleport_away(m_idx, MAX_SIGHT * 2 + 5) && visible) {
 			//disturb(Ind, 1, 0);
 			if (blind) msg_print(Ind, "You hear something teleport away.");
@@ -6361,6 +6411,54 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			if (visible && seen) msg_format(Ind, "%^s recovers %s courage.", m_name, m_poss);
 		}
 
+		break;
+
+	/* RF0_BLINK_PHYS */
+	case RF0_OFFSET + 23:
+		/* No teleporting within no-tele vaults and such */
+		if (zcave[oy][ox].info & CAVE_STCK) {
+			//msg_format(Ind, "%^s fails to blink.", m_name);
+			break;
+		}
+
+		/* if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+			msg_format(Ind, "%^s fails to blink.", m_name);
+			break;
+		} */
+
+		if (teleport_away(m_idx, 10) && visible) {
+			//disturb(Ind, 1, 0);
+			if (blind) msg_print(Ind, "You hear something blink away.");
+			else msg_format(Ind, "%^s blinks away.", m_name);
+#ifdef USE_SOUND_2010
+			/* redudant: already done in teleport_away()
+			sound_near_monster(m_idx, "blink", NULL, SFX_TYPE_MON_SPELL);
+			*/
+#endif
+		}
+		break;
+
+	/* RF0_TPORT_PHYS */
+	case RF0_OFFSET + 24:
+		/* No teleporting within no-tele vaults and such */
+		if (zcave[oy][ox].info & CAVE_STCK) {
+			//msg_format(Ind, "%^s fails to teleport.", m_name);
+			break;
+		}
+
+		/* if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+			msg_format(Ind, "%^s fails to teleport.", m_name);
+			break;
+		} */
+
+		if (teleport_away(m_idx, MAX_SIGHT * 2 + 5) && visible) {
+			//disturb(Ind, 1, 0);
+			if (blind) msg_print(Ind, "You hear something teleport away.");
+			else msg_format(Ind, "%^s teleports away.", m_name);
+#ifdef USE_SOUND_2010
+			sound_near_monster(m_idx, "teleport", NULL, SFX_TYPE_MON_SPELL);
+#endif
+		}
 		break;
 
 	default:
@@ -7654,7 +7752,7 @@ static bool get_moves(int Ind, int m_idx, int *mm) {
 		case 0: /* No moves (entombed) - blink or teleport */
 			//no worky: m_ptr->ai_state |= AI_STATE_EFFECT;
 
-			if (!(r_ptr->flags6 & (RF6_BLINK | RF6_TPORT))) break; //proceed normally.
+			if (!(r_ptr->flags6 & (RF6_BLINK | RF6_TPORT)) && !(r_ptr->flags0 & (RF0_BLINK_PHYS | RF0_TPORT_PHYS))) break; //proceed normally.
 
 			{
 				int spellmove = 0; //two choices, blink or teleport
@@ -7666,8 +7764,8 @@ static bool get_moves(int Ind, int m_idx, int *mm) {
 				/* Only do spells occasionally */
 				if (rand_int(100) >= chance) break; //proceed normally.
 
-				if (r_ptr->flags6 & RF6_BLINK) spellmove += 2;
-				if (r_ptr->flags6 & RF6_TPORT) spellmove += 4;
+				if ((r_ptr->flags6 & RF6_BLINK) || (r_ptr->flags0 & RF0_BLINK_PHYS)) spellmove += 2;
+				if ((r_ptr->flags6 & RF6_TPORT) || (r_ptr->flags0 & RF0_TPORT_PHYS)) spellmove += 4;
 
 				switch (spellmove + rand_int(2)) {
 				case 2: case 3: case 6:
@@ -7736,7 +7834,7 @@ static bool get_moves(int Ind, int m_idx, int *mm) {
 				break; //we didn't do anything - can't happen anymore at this point though - paranoia
 			}
 		case 2: /* No good moves (can't get closer) - blink or wait */
-			if (!(r_ptr->flags6 & RF6_BLINK)) break; //we can't blink. Proceed normally.
+			if (!(r_ptr->flags6 & RF6_BLINK) && !(r_ptr->flags0 & RF0_BLINK_PHYS)) break; //we can't blink. Proceed normally.
 			if (rand_int(3)) break; //we decided to not to blink, but just wait..
 
 			/* Blink to try and get past a hindering wall possibly */
