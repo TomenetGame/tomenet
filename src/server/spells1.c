@@ -6307,7 +6307,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		no_dam = TRUE; //lul
 		break;
 
-	/* Magic Missile & co -- pure physical (!) damage */
+	/* Ranged weapons, missile, boulder -- all pure physical (!) damage, even though GF_MISSILE is also used for RF5_MISSILE (magic missile monster spell) */
 	case GF_MISSILE:
 	case GF_SHOT:
 	case GF_ARROW:
