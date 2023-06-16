@@ -4740,6 +4740,8 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		if (power > 20) dice += 2;
 		if (power > 30) dice += 2;
 #endif
+		dice <<= 1; /* Experimental: Extra damage for Mirror Image, to compete vs archers and co */
+
 		disturb(Ind, 1, 0);
 		if (monst_check_grab(m_idx, 100, "fire")) break;
 		for (k = 0; k < fois; k++) {
@@ -4761,6 +4763,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		if (power > 20) dice += 2;
 		if (power > 30) dice += 2;
 #endif
+		dice <<= 1; /* Experimental: Extra damage for Mirror Image, to compete vs archers and co */
 
 		disturb(Ind, 1, 0);
 		if (monst_check_grab(m_idx, 100, "fire")) break;
@@ -4778,6 +4781,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		if (power > 20) dice += 2;
 		if (power > 30) dice += 2;
 #endif
+		dice <<= 1; /* Experimental: Extra damage for Mirror Image, to compete vs archers and co */
 
 		disturb(Ind, 1, 0);
 		if (monst_check_grab(m_idx, 100, "fire")) break;
@@ -4787,7 +4791,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 		}
 
-	/* former RF4_ARROW_4 (generic missile, heavy) */
+	/* former RF4_ARROW_4 (generic missile, heavy - physical, and used as boomerang-mirror for mirror image) */
 	case RF4_OFFSET + 7: {
 		int	dice = 3 + rlev / 5;
 #if 0
@@ -4795,6 +4799,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		if (power > 20) dice += 2;
 		if (power > 30) dice += 2;
 #endif
+		dice <<= 1; /* Experimental: Extra damage for Mirror Image, to compete vs archers and co */
 
 		disturb(Ind, 1, 0);
 		if (blind) msg_print(Ind, "You hear a strange noise.");
