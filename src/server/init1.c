@@ -291,7 +291,7 @@ static cptr r_info_flags3[] = {
 static cptr r_info_flags4[] = {
 	"SHRIEK",
 	"UNMAGIC",
-	"S_ANIMAL",
+	"TRAPS",
 	"ROCKET",
 
 	"ARROW_1",	// former 1/2 (arrow), now arrow/light
@@ -397,7 +397,7 @@ static cptr r_info_flags6[] = {
 	"S_RNG",
 
 	"DARKNESS",
-	"TRAPS",
+	"S_ANIMAL",
 	"FORGET",
 	"S_DRAGONRIDER",
 
