@@ -3644,10 +3644,16 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 	/* RF6_TRAPS */
 	case RF6_OFFSET + 13:
+#if 0 /* this was a 'spell' */
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles and cackles evilly.", m_name);
 		else msg_format(Ind, "%^s casts a spell and cackles evilly.", m_name);
+#else /* but it should be a physical ability, same as for the player, especially for the mirror image */
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s cackles evilly.", m_name);
+		else msg_format(Ind, "%^s pulls some wires and cackles evilly.", m_name);
+#endif
 		(void)trap_creation(Ind, 3, magik(rlev) ? (magik(30) ? 3 : 2) : 1);
 		break;
 
@@ -5736,10 +5742,16 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 
 	/* RF6_TRAPS */
 	case RF6_OFFSET + 13:
+#if 0 /* this was a 'spell' */
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles and cackles evilly.", m_name);
 		else msg_format(Ind, "%^s casts a spell and cackles evilly.", m_name);
+#else /* but it should be a physical ability, same as for the player, especially for the mirror image */
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s cackles evilly.", m_name);
+		else msg_format(Ind, "%^s pulls some wires and cackles evilly.", m_name);
+#endif
 		(void)trap_creation(Ind, 3, magik(rlev) ? (magik(30) ? 3 : 2) : 1);
 		break;
 
