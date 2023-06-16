@@ -6342,6 +6342,10 @@ else s_printf("\n");
  #endif
 #endif
 
+	/* For visuals: Is a 'block' message eligible? */
+	if (p_ptr->inventory[INVEN_WIELD].tval != TV_SHIELD && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) r_ptr->flags8 |= RF8_NO_BLOCK;
+	else r_ptr->flags8 &= ~RF8_NO_BLOCK;
+
 	/* Adjustable flags - cumulative again, ie don't get removed, just stacked up further, hah! */
 	if (p_ptr->no_cut) r_ptr->flags8 |= RF8_NO_CUT;
 	if (p_ptr->regenerate) r_ptr->flags2 |= RF2_REGENERATE;
