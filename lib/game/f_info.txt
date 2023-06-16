@@ -1142,8 +1142,10 @@ F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT
 N:188:glass wall
 #G:.:B
 G:#:B
-F:NO_WALK | WALL | PERMANENT | NOTICE
-F:DONT_NOTICE_RUNNING
+#F:NO_WALK | WALL | PERMANENT | NOTICE
+#F:DONT_NOTICE_RUNNING
+F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
+#making glass transparent again? - Kurzel
 D:1:This glass seems to be totally impenetrable.
 D:2:a glass wall blocking your way
 
