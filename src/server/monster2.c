@@ -6985,6 +6985,13 @@ else s_printf("\n");
 	if (p_ptr->reduce_insanity) r_ptr->flags9 |= RF9_RES_PSI;
 	if (p_ptr->reduce_insanity == 3) r_ptr->flags9 |= RF9_IM_PSI; //bonus >:o
 
+
+	/* Remove weak spell versions */
+	if (r_ptr->flags0 & RF0_HEAL_PHYS) r_ptr->flags6 &= ~RF6_HEAL; /* physical heal is always better than spell heal (same effect but not affected by AM) */
+
+	// TODO: remove bolt spells if we have a stronger ball version, remove ball version if we have a stronger breath version (no AM!)..
+
+
 	/* Remove spells that we know we're immune to */
 	if (p_ptr->immune_acid) {
 		r_ptr->flags4 &= ~(RF4_BR_ACID);
