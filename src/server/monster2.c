@@ -6262,6 +6262,7 @@ s_printf("Mirror-update: hp %d\n", m_ptr->org_maxhp);
 #endif
 	/* Simply translate our hit chance into monster ac bonus to counter it */
 	i += p_ptr->overall_tohit_m;
+	if (p_ptr->overall_tohit_m > 5000) i -= 10000; //unhack '10000' code (meaning 'temp-buffed')
 
 	/* Kinetic Shield / Guardian Spirit give extra AC */
 #ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
@@ -6274,11 +6275,10 @@ s_printf("Mirror-update: hp %d\n", m_ptr->org_maxhp);
 	if ((m = get_skill(p_ptr, SKILL_DODGE))) i += (100 * m) / (p_ptr->max_plv >= 50 ? 50 : p_ptr->max_plv);
 #endif
 	if (m_ptr->org_ac < i) {
-s_printf("Mirror-update: org_ac %d < i %d -> ", m_ptr->org_ac, i);
 		n = i - m_ptr->org_ac;
 		m_ptr->org_ac += n;
 		m_ptr->ac += n;
-s_printf("Mirror-update: %d ac / %d ac_org\n", m_ptr->ac, m_ptr->org_ac);
+s_printf("Mirror-update: ac %d (%d)\n", m_ptr->ac, m_ptr->org_ac);
 	}
 
 #ifdef SIMPLE_RI_MIRROR
@@ -6299,6 +6299,7 @@ s_printf("Mirror-update: %d ac / %d ac_org\n", m_ptr->ac, m_ptr->org_ac);
 	   so we just keep the highest possible damage variation */
 	m = (m >= n ? m : n);
 	m += p_ptr->overall_todam_m;
+	if (p_ptr->overall_todam_m > 5000) m -= 10000; //unhack '10000' code (meaning 'temp-buffed')
 	/* Note: We don't apply p_ptr->melee_brand or item-brands etc,
 	   because it's too tricky to sort out combinations of them for monsters against player resistances,
 	   as monsters can only apply one type of brand per attack unlike the player who can stack brands (and slays). */
