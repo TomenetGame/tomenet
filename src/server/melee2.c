@@ -3347,13 +3347,11 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 	/* RF6_HEAL */
 	case RF6_OFFSET + 2:
-		if (m_ptr->r_idx != RI_MIRROR) { /* uses potions! */
-			if (monst_check_antimagic(Ind, m_idx)) break;
-			if (visible) {
-				//disturb(Ind, 1, 0);
-				if (blind) msg_format(Ind, "%^s mumbles.", m_name);
-				else msg_format(Ind, "%^s concentrates on %s wounds.", m_name, m_poss);
-			}
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		if (visible) {
+			//disturb(Ind, 1, 0);
+			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+			else msg_format(Ind, "%^s concentrates on %s wounds.", m_name, m_poss);
 		}
 
 		/* Some heal data for 'rlev * 6' ('1' means 100%, assuming max hp dice):
@@ -4089,6 +4087,94 @@ bool make_attack_spell(int Ind, int m_idx) {
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a psi bolt of", m_name);
 		grid_bolt(Ind, m_idx, GF_PSI, 30 + damroll(5, 5) + (rlev * 3) / 2, SFX_BOLT_MAGIC);
 		//update_smart_learn(Ind, m_idx, DRS_PSI);
+		break;
+
+	/* RF0_HEAL_PHYS */
+	case RF0_OFFSET + 22:
+		if (visible) {
+			//disturb(Ind, 1, 0);
+			if (blind) msg_format(Ind, "%^s makes a gulping noise.", m_name);
+			else msg_format(Ind, "%^s quaffs a potion.", m_name);
+		}
+
+		/* Some heal data for 'rlev * 6' ('1' means 100%, assuming max hp dice):
+		   Novice priest solo/group ~1/2, ~1
+		   Wormtongue ~1/5, Robin Hood ~1/3, Orfax ~1/2
+		   Moon Beast ~3/4, Priest ~3/4
+		   Boldor ~1/4, Khim/Ibun ~1/6, It ~1/5
+		   Archangel ~1/3
+		   Shelob ~1/10
+		   Cherub ~1/4, Greater Mummy ~2/3
+		   Castamir ~1/4,
+		   Lesser Titan ~1/8,
+		   Jack of Shadows ~1/9,
+		   Utgard-Loke ~1/15,
+		   Demilich, Keeper of Secrets ~1/10,
+		   Saruman ~1/19,
+		   Ungoliant ~1/30,
+		   Nodens ~1/15,
+		   Star-Spawn ~1/15,
+		   Nether Guard (assumed 45kHP, lv121) ~1/60,
+		   Zu-Aon (assumed 117kHP, lv147) ~1/130.
+
+		   For most monsters in low/mid levels, 1/4 was a decent effective
+		   average for HEAL. Low-HP monsters would naturally profit especially
+		   much, such as priests, working out nicely.
+		   The problem starts with high-HP monsters, especially since HP and
+		   damage in TomeNET are higher on average than in vanilla.
+		   As Mikael pointed out, monsters that are SMART will prefer heal
+		   spells when wounded, and possibly also teleport. And monsters that
+		   teleport in general, also can heal while the player has to reapproach.
+		   This is especially nasty if the monster casts 1_IN_1 or similar.
+		   So to the normal HEAL that is still feasible for those cases. - C. Blue
+		*/
+
+		/* Note, no need to check for RF2_STUPID, since there is no
+		   stupid monster that can heal so far. */
+		if ((r_ptr->flags4 & RF4_ESCAPE_MASK) ||
+		    (r_ptr->flags5 & RF5_ESCAPE_MASK) ||
+		    (r_ptr->flags6 & RF6_ESCAPE_MASK) ||
+		    (r_ptr->flags0 & RF0_ESCAPE_MASK)) {
+			/* Heal some */
+			m_ptr->hp += (rlev * 6);
+		} else {
+			/* New: Make it useful for high-level monsters. Abuse k and count. */
+			k = rlev * 6;
+			count = m_ptr->maxhp / 5; /* Good values would probably be 1/6..1/4 */
+			m_ptr->hp += (k < count) ? count : k;
+		}
+
+		if (m_ptr->stunned) {
+			m_ptr->stunned -= rlev * 2;
+			if (m_ptr->stunned <= 0) {
+				m_ptr->stunned = 0;
+				if (visible && seen) msg_format(Ind, "%^s no longer looks stunned!", m_name);
+				//else msg_format(Ind, "%^s no longer sounds stunned!", m_name);
+			}
+		}
+
+		/* Fully healed? */
+		if (m_ptr->hp >= m_ptr->maxhp) {
+			m_ptr->hp = m_ptr->maxhp;
+			if (visible && seen) msg_format(Ind, "%^s looks REALLY healthy!", m_name);
+			//else msg_format(Ind, "%^s sounds REALLY healthy!", m_name);
+		}
+		/* Partially healed */
+		else {
+			if (visible && seen) msg_format(Ind, "%^s looks healthier.", m_name);
+			//else msg_format(Ind, "%^s sounds healthier.", m_name);
+		}
+
+		/* Redraw (later) if needed */
+		update_health(m_idx);
+
+		/* Cancel fear */
+		if (m_ptr->monfear) {
+			/* Cancel fear */
+			m_ptr->monfear = 0;
+			if (visible && seen) msg_format(Ind, "%^s recovers %s courage.", m_name, m_poss);
+		}
+
 		break;
 
 	default:
@@ -6187,6 +6273,94 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a psi bolt of", m_name);
 		grid_bolt(Ind, m_idx, GF_PSI, 30 + damroll(5, 5) + (rlev * 3) / 2, SFX_BOLT_MAGIC);
 		//update_smart_learn(Ind, m_idx, DRS_PSI);
+		break;
+
+	/* RF0_HEAL_PHYS */
+	case RF0_OFFSET + 22:
+		if (visible) {
+			//disturb(Ind, 1, 0);
+			if (blind) msg_format(Ind, "%^s makes a gulping noise.", m_name);
+			else msg_format(Ind, "%^s quaffs a potion.", m_name);
+		}
+
+		/* Some heal data for 'rlev * 6' ('1' means 100%, assuming max hp dice):
+		   Novice priest solo/group ~1/2, ~1
+		   Wormtongue ~1/5, Robin Hood ~1/3, Orfax ~1/2
+		   Moon Beast ~3/4, Priest ~3/4
+		   Boldor ~1/4, Khim/Ibun ~1/6, It ~1/5
+		   Archangel ~1/3
+		   Shelob ~1/10
+		   Cherub ~1/4, Greater Mummy ~2/3
+		   Castamir ~1/4,
+		   Lesser Titan ~1/8,
+		   Jack of Shadows ~1/9,
+		   Utgard-Loke ~1/15,
+		   Demilich, Keeper of Secrets ~1/10,
+		   Saruman ~1/19,
+		   Ungoliant ~1/30,
+		   Nodens ~1/15,
+		   Star-Spawn ~1/15,
+		   Nether Guard (assumed 45kHP, lv121) ~1/60,
+		   Zu-Aon (assumed 117kHP, lv147) ~1/130.
+
+		   For most monsters in low/mid levels, 1/4 was a decent effective
+		   average for HEAL. Low-HP monsters would naturally profit especially
+		   much, such as priests, working out nicely.
+		   The problem starts with high-HP monsters, especially since HP and
+		   damage in TomeNET are higher on average than in vanilla.
+		   As Mikael pointed out, monsters that are SMART will prefer heal
+		   spells when wounded, and possibly also teleport. And monsters that
+		   teleport in general, also can heal while the player has to reapproach.
+		   This is especially nasty if the monster casts 1_IN_1 or similar.
+		   So to the normal HEAL that is still feasible for those cases. - C. Blue
+		*/
+
+		/* Note, no need to check for RF2_STUPID, since there is no
+		   stupid monster that can heal so far. */
+		if ((r_ptr->flags4 & RF4_ESCAPE_MASK) ||
+		    (r_ptr->flags5 & RF5_ESCAPE_MASK) ||
+		    (r_ptr->flags6 & RF6_ESCAPE_MASK) ||
+		    (r_ptr->flags0 & RF0_ESCAPE_MASK)) {
+			/* Heal some */
+			m_ptr->hp += (rlev * 6);
+		} else {
+			/* New: Make it useful for high-level monsters. Abuse k and count. */
+			k = rlev * 6;
+			count = m_ptr->maxhp / 5; /* Good values would probably be 1/6..1/4 */
+			m_ptr->hp += (k < count) ? count : k;
+		}
+
+		if (m_ptr->stunned) {
+			m_ptr->stunned -= rlev * 2;
+			if (m_ptr->stunned <= 0) {
+				m_ptr->stunned = 0;
+				if (visible && seen) msg_format(Ind, "%^s no longer looks stunned!", m_name);
+				//else msg_format(Ind, "%^s no longer sounds stunned!", m_name);
+			}
+		}
+
+		/* Fully healed? */
+		if (m_ptr->hp >= m_ptr->maxhp) {
+			m_ptr->hp = m_ptr->maxhp;
+			if (visible && seen) msg_format(Ind, "%^s looks REALLY healthy!", m_name);
+			//else msg_format(Ind, "%^s sounds REALLY healthy!", m_name);
+		}
+		/* Partially healed */
+		else {
+			if (visible && seen) msg_format(Ind, "%^s looks healthier.", m_name);
+			//else msg_format(Ind, "%^s sounds healthier.", m_name);
+		}
+
+		/* Redraw (later) if needed */
+		update_health(m_idx);
+
+		/* Cancel fear */
+		if (m_ptr->monfear) {
+			/* Cancel fear */
+			m_ptr->monfear = 0;
+			if (visible && seen) msg_format(Ind, "%^s recovers %s courage.", m_name, m_poss);
+		}
+
 		break;
 
 	default:

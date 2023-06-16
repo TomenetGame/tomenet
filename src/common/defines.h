@@ -6187,11 +6187,14 @@
 #define RF0_BO_CHAOS		0x00080000		/* Mirror: Chaos Bolt (Shadow/HOff) */
 #define RF0_DRAIN_LIFE			0x00100000	/* Mirror: Drain Life (Shadow/Necro) */
 #define RF0_BO_PSI			0x00200000	/* Mirror: Psionic Blast [+Psi Storm] */
+#define RF0_HEAL_PHYS			0x00400000	/* Mirror: Heal by physical means, eg Potion of Healing */
 //hole
 #define RF0_ADMINISTRATIVE_PUSH		0x20000000	/* Push back */
 #define RF0_METEOR_SWARM		0x40000000	/* Targetted delayed orbital attack */
 #define RF0_ADMINISTRATIVE_HOLD		0x80000000	/* Irresistible paralysis */
 
+/* Note: Even if RF0_HEAL_PHYS was ever enabled for non-mirror monsters, it is still NOT a player-spell ever,
+         as it intrinsically depends on an item (potion of healing */
 #define RF0_PLAYER_SPELLS (RF0_BO_DISE | RF0_BA_DISE | RF0_BR_ICE | RF0_BR_WATER)
 #define RF0_RADIUS_SPELLS (RF0_BA_DISE | RF0_BR_ICE | RF0_BR_WATER | RF0_BA_LITE | RF0_BA_HELLFIRE | RF0_WATERPOISON | RF0_ICEPOISON)
 
@@ -6238,7 +6241,7 @@
 	RF6_S_DRAGONRIDER | RF6_S_BUG | RF6_S_RNG | RF6_S_ANIMALS)
 
  #define RF0_INT_MASK \
-	(RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_S_DEMONS | RF0_S_DRAGONS | RF0_S_HI_DEMON | RF0_S_HI_DRAGON)
+	(RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_S_DEMONS | RF0_S_DRAGONS | RF0_S_HI_DEMON | RF0_S_HI_DRAGON | RF0_HEAL_PHYS)
 #else
  #define RF4_INT_MASK (0L)
  #define RF5_INT_MASK (0L)
@@ -6259,7 +6262,7 @@
 	(RF6_HASTE | RF6_BLINK | RF6_TPORT | RF6_HEAL)
 
 #define RF0_INDIRECT_MASK \
-	(0L)
+	(RF0_HEAL_PHYS)
 
 
 /*
@@ -6422,7 +6425,7 @@
 	(RF6_HEAL)
 
 #define RF0_HEAL_MASK \
-	(0L)
+	(RF0_HEAL_PHYS)
 
 /* Masks to find out if a monster is really a spellcaster,
    which uses magic spells, or if the 'spells' are merely
@@ -6449,7 +6452,7 @@
 
 #define RF0_SPELLCASTER_MASK \
 	(RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_BO_DISE | RF0_BA_DISE | RF0_S_DEMONS | RF0_S_DRAGONS | RF0_S_HI_DEMON | RF0_S_HI_DRAGON | \
-	RF0_BA_LITE | RF0_BO_WALL | RF0_BA_HELLFIRE | RF0_BO_LITE | RF0_BO_DARK | RF0_DISPEL | RF0_WATERPOISON | RF0_ICEPOISON | RF0_BO_CHAOS | RF0_DRAIN_LIFE | RF0_BO_PSI)
+	RF0_BA_LITE | RF0_BO_WALL | RF0_BA_HELLFIRE | RF0_BO_LITE | RF0_BO_DARK | RF0_DISPEL | RF0_WATERPOISON | RF0_ICEPOISON | RF0_BO_CHAOS | RF0_DRAIN_LIFE | RF0_BO_PSI | RF0_HEAL_PHYS)
 
 
 /*

@@ -6072,12 +6072,12 @@ void p2mon_update_base_aux(monster_race *r_ptr, int *magicness, int tval, int sv
 		case SV_POTION_HEROISM: r_ptr->flags |= RF_; (*magicness)++; break;
 		case SV_POTION_BERSERK_STRENGTH: r_ptr->flags |= RF_; (*magicness)++; break;
  #endif
-		case SV_POTION_CURE_LIGHT: r_ptr->flags6 |= RF6_HEAL; (*magicness)++; break;
-		case SV_POTION_CURE_SERIOUS: r_ptr->flags6 |= RF6_HEAL; (*magicness)++; break;
-		case SV_POTION_CURE_CRITICAL: r_ptr->flags6 |= RF6_HEAL; (*magicness)++; break;
-		case SV_POTION_STAR_HEALING: r_ptr->flags6 |= RF6_HEAL; (*magicness)++; break;
-		case SV_POTION_HEALING: r_ptr->flags6 |= RF6_HEAL; (*magicness)++; break;
-		case SV_POTION_LIFE: r_ptr->flags6 |= RF6_HEAL; (*magicness)++; break;
+		case SV_POTION_CURE_LIGHT: r_ptr->flags0 |= RF0_HEAL_PHYS; (*magicness)++; break;
+		case SV_POTION_CURE_SERIOUS: r_ptr->flags0 |= RF0_HEAL_PHYS; (*magicness)++; break;
+		case SV_POTION_CURE_CRITICAL: r_ptr->flags0 |= RF0_HEAL_PHYS; (*magicness)++; break;
+		case SV_POTION_STAR_HEALING: r_ptr->flags0 |= RF0_HEAL_PHYS; (*magicness)++; break;
+		case SV_POTION_HEALING: r_ptr->flags0 |= RF0_HEAL_PHYS; (*magicness)++; break;
+		case SV_POTION_LIFE: r_ptr->flags0 |= RF0_HEAL_PHYS; (*magicness)++; break;
 		/* Hack: Disruption shield */
  #if 0 /* 0 -> Leave a l**ph*le: We assume noone is crazy enough to collect many *mana*, and if she is, she deserves the win! :D */
 		case SV_POTION_STAR_RESTORE_MANA:
@@ -6524,12 +6524,12 @@ else s_printf("\n");
 #ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
 	if (check_for_spell(p_ptr, "MANATHRUST_I") || check_for_spell(p_ptr, "MANATHRUST_II") || check_for_spell(p_ptr, "MANATHRUST_III")) { r_ptr->flags5 |= RF5_BO_MANA; magicness++; }
 	/* manaheal: mana potions are present in the player's inventory? */
-	if (check_for_spell(p_ptr, "MANASHIELD") && manaheal) { r_ptr->flags6 |= RF6_HEAL; magicness++; }
+	if (check_for_spell(p_ptr, "MANASHIELD") && manaheal) { r_ptr->flags0 |= RF0_HEAL_PHYS; magicness++; }
 #else
 	if (get_skill(p_ptr, SKILL_MANA) >= thresh_spell) {
 		r_ptr->flags5 |= RF5_BO_MANA; magicness++;
 		/* Heal via pseudo disruption shield by 'quaffing' pseudo mana potions? */
-		if (manaheal) { r_ptr->flags6 |= RF6_HEAL; magicness++; }
+		if (manaheal) { r_ptr->flags0 |= RF0_HEAL_PHYS; magicness++; }
 	}
 #endif
 

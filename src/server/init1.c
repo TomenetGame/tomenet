@@ -594,7 +594,7 @@ static cptr r_info_flags0[] = {
 
 	"DRAIN_LIFE",
 	"BO_PSI",
-	"X00400000",
+	"HEAL_PHYS",
 	"X00800000",
 
 	"X01000000",
