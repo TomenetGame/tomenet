@@ -6274,10 +6274,11 @@ s_printf("Mirror-update: hp %d\n", m_ptr->org_maxhp);
 	if ((m = get_skill(p_ptr, SKILL_DODGE))) i += (100 * m) / (p_ptr->max_plv >= 50 ? 50 : p_ptr->max_plv);
 #endif
 	if (m_ptr->org_ac < i) {
+s_printf("Mirror-update: org_ac %d < i %d -> ", m_ptr->org_ac, i);
 		n = i - m_ptr->org_ac;
 		m_ptr->org_ac += n;
 		m_ptr->ac += n;
-s_printf("Mirror-update: ac %d\n", m_ptr->org_ac);
+s_printf("Mirror-update: %d ac / %d ac_org\n", m_ptr->ac, m_ptr->org_ac);
 	}
 
 #ifdef SIMPLE_RI_MIRROR
