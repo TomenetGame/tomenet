@@ -540,10 +540,9 @@ static void do_mimic_power(int Ind, int power, int dir) {
 	break;
 //#define RF4_UNMAGIC		     0x00000002      /* Cancel player's timed spell */
     case 1:
-      break;
-//#define RF4_S_ANIMAL		    0x00000004  /* Summon animals */
+//#define RF4_TRAPS			0x00002000	/* Create Traps */
     case 2:
-	break;
+      break;
 //#define RF4_ROCKET		      0x00000008  /* TY: Rocket */
     case 3:
 //#define RF4_ARROW_1			0x00000010	/* Fire an arrow (light) */
@@ -751,8 +750,9 @@ static void do_mimic_power(int Ind, int power, int dir) {
 	//unlite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px); --not really useful, instead let's buff it:
 	unlite_area(Ind, TRUE, 10, 3); //causes darkness damage around the player!
       break;
-// RF6_TRAPS			0x00002000	/* Create Traps */
+// RF6_S_ANIMAL		    0x00000004  /* Summon animals */
     case 77:
+	break;
 // RF6_FORGET			0x00004000	/* Cause amnesia */
     case 78:
 	p_ptr->current_spell = j;
@@ -765,13 +765,13 @@ static void do_mimic_power(int Ind, int power, int dir) {
 /* RF_0 ------------------------------------------------------------------------------------------------- */
 
 //#define RF0_BO_DISE
-    case 96+7:
+    case 96 + 3:
 //#define RF0_BA_DISE
-    case 96+8:
+    case 96 + 4:
 //#define RF0_BR_ICE
-    case 96+18:
+    case 96 + 24:
 //#define RF0_BR_WATER
-    case 96+19:
+    case 96 + 25:
 	p_ptr->current_spell = j;
 	get_aim_dir(Ind);
 	return;
@@ -872,6 +872,14 @@ void do_mimic_power_aux(int Ind, int dir) {
 //#define RF4_ARROW_1			0x00000010	/* Fire arrow(s) (light) */
 		/* XXX: ARROW_1 gives extra-shot to the player; we'd better
 		 * remove this 'innate' power? (see calc_body_bonus) */
+// RF4_TRAPS			0x00002000	/* Create Traps */
+    case 2:
+	sprintf(p_ptr->attacker, " cackles evilly");
+#if 0 /* Note: These traps would be exploitable for xp badly. */
+	//msg_print(Ind, "You cackle evilly.");
+	fire_ball(Ind, GF_MAKE_TRAP, dir, 1, 1 + rlev / 30, p_ptr->attacker);
+#endif
+	break;
     case 3:
 	sprintf(p_ptr->attacker, " fires a rocket for");
 	msg_print(Ind, "You fire a rocket.");
@@ -1257,14 +1265,6 @@ void do_mimic_power_aux(int Ind, int dir) {
 	sprintf(p_ptr->attacker, " invokes a teleportation spell");
 	(void)fire_beam(Ind, GF_AWAY_ALL, dir, rlev, p_ptr->attacker);
 	break;
-// RF6_TRAPS			0x00002000	/* Create Traps */
-    case 77:
-	sprintf(p_ptr->attacker, " cackles evilly");
-#if 0 /* Note: These traps would be exploitable for xp badly. */
-	//msg_print(Ind, "You cackle evilly.");
-	fire_ball(Ind, GF_MAKE_TRAP, dir, 1, 1 + rlev / 30, p_ptr->attacker);
-#endif
-	break;
 // RF6_FORGET
     case 78:
 	sprintf(p_ptr->attacker, " tries to blank your mind");
@@ -1273,27 +1273,27 @@ void do_mimic_power_aux(int Ind, int dir) {
 
 //TODO: implement 96+ mimic spells, aka RF0_, aka innate_spells[3]
 /* RF0_BO_DISE */
-    case 96+7:
+    case 96 + 3:
 	sprintf(p_ptr->attacker, " casts a disenchantment bolt for");
 	msg_print(Ind, "You cast a disenchantment bolt.");
 	//fire_bolt(Ind, GF_DISENCHANT, dir, damroll(7, 8) + (rlev / 3) + rlev_bonus / 3, p_ptr->attacker);
 	fire_bolt(Ind, GF_DISENCHANT, dir, 25 + damroll(4, 5) + (rlev * 3) / 2 + rlev_bonus / 3, p_ptr->attacker);
 	break;
 // RF0_BA_DISE			0x00010000	/* Acid Bolt */
-    case 96+8:
+    case 96 + 4:
 	sprintf(p_ptr->attacker, " casts a disenchantment ball");
 	msg_print(Ind, "You cast a  disenchantment ball.");
 	//fire_ball(Ind, GF_DISENCHANT, dir, (rlev * 2) + damroll(10, 10) + rlev_bonus, 4, p_ptr->attacker);
 	fire_ball(Ind, GF_DISENCHANT, dir, 60 + damroll(10, 10) + rlev + rlev_bonus, rad, p_ptr->attacker);
 	break;
 // RF0_BR_ICE
-    case 96+18:
+    case 96 + 24:
 	sprintf(p_ptr->attacker, " breathes ice for");
 	msg_print(Ind, "You breathe ice.");
 	fire_ball(Ind, GF_ICE, dir, (((p_ptr->chp * 10) / MIMIC_DIV4) > 350) ? 350 : ((p_ptr->chp * 10) / MIMIC_DIV4) , rad, p_ptr->attacker);
 	break;
 // RF5_BR_WATER
-    case 96+19:
+    case 96 + 25:
 	sprintf(p_ptr->attacker, " breathes water for");
 	msg_print(Ind, "You breathe water.");
 	fire_ball(Ind, GF_WATER, dir, (((p_ptr->chp * 10) / MIMIC_DIV4) > 300) ? 300 : ((p_ptr->chp * 10) / MIMIC_DIV4) , rad, p_ptr->attacker);

@@ -5912,7 +5912,7 @@
  */
 #define RF4_SHRIEK		0x00000001	/* Shriek for help */
 #define RF4_UNMAGIC		0x00000002	/* Cancel player's timed spell */
-#define RF4_S_ANIMAL		0x00000004	/* Summon animals */
+#define RF4_TRAPS		0x00000004	/* Create Traps */
 #define RF4_ROCKET		0x00000008	/* TY: Rocket */
 #define RF4_ARROW_1			0x00000010	/* Fire an arrow (light) */
 #define RF4_ARROW_2			0x00000020	/* Fire a shot (heavy) */
@@ -6018,7 +6018,7 @@
 #define RF6_TELE_LEVEL		0x00000400	/* Move player vertically */
 #define RF6_S_RNG		0x00000800	/* Summon RNG */
 #define RF6_DARKNESS			0x00001000	/* Create Darkness */
-#define RF6_TRAPS			0x00002000	/* Create Traps */
+#define RF6_S_ANIMAL			0x00002000	/* Summon animals */
 #define RF6_FORGET			0x00004000	/* Cause amnesia */
 #define RF6_S_DRAGONRIDER		0x00008000	/* Summon DragonRiders */
 #define RF6_S_KIN		0x00010000	/* Summon "kin" */
@@ -6174,23 +6174,23 @@
 #define RF0_S_DRAGONS			0x00000040	/* Summon Dragons -- unused */
 #define RF0_S_HI_DEMON			0x00000080	/* Summon Greater Demon (Tzeentch) */
 #define RF0_S_HI_DRAGON		0x00000100		/* Summon Ancient Dragon -- unused */
-#define RF0_BR_ICE		0x00000200		/* For Bahamuth */
-#define RF0_BR_WATER		0x00000400		/* Finally no more antimagic field vs water hounds :p */
-#define RF0_BA_LITE		0x00000800		/* Mirror: Globe of Light */
-#define RF0_BO_WALL			0x00001000	/* Mirror: Strike */
-#define RF0_BA_HELLFIRE			0x00002000	/* Mirror: Hellfire */
-#define RF0_BO_LITE			0x00004000	/* Mirror: Power Ray */
-#define RF0_BO_DARK			0x00008000	/* Mirror: Power Ray */
-#define RF0_DISPEL		0x00010000		/* Mirror: Vengenance [Corrupted] */
-#define RF0_WATERPOISON		0x00020000		/* Mirror: Toxic Moisture I/II */
-#define RF0_ICEPOISON		0x00040000		/* Mirror: Toxic Moisture III */
-#define RF0_BO_CHAOS		0x00080000		/* Mirror: Chaos Bolt (Shadow/HOff) */
-#define RF0_DRAIN_LIFE			0x00100000	/* Mirror: Drain Life (Shadow/Necro) */
-#define RF0_BO_PSI			0x00200000	/* Mirror: Psionic Blast [+Psi Storm] */
-#define RF0_HEAL_PHYS			0x00400000	/* Mirror: Heal by physical means, eg Potion of Healing */
-#define RF0_BLINK_PHYS			0x00800000	/* Mirror: Phase door scroll */
-#define RF0_TPORT_PHYS			0x01000000	/* Mirror: Teleportation scroll */
-//hole
+#define RF0_BA_LITE		0x00000200		/* Mirror: Globe of Light */
+#define RF0_BO_WALL		0x00000400		/* Mirror: Strike */
+#define RF0_BA_HELLFIRE		0x00000800		/* Mirror: Hellfire */
+#define RF0_BO_LITE			0x00001000	/* Mirror: Power Ray */
+#define RF0_BO_DARK			0x00002000	/* Mirror: Power Ray */
+#define RF0_DISPEL			0x00004000	/* Mirror: Vengenance [Corrupted] */
+#define RF0_WATERPOISON			0x00008000	/* Mirror: Toxic Moisture I/II */
+#define RF0_ICEPOISON		0x00010000		/* Mirror: Toxic Moisture III */
+#define RF0_BO_CHAOS		0x00020000		/* Mirror: Chaos Bolt (Shadow/HOff) */
+#define RF0_DRAIN_LIFE		0x00040000		/* Mirror: Drain Life (Shadow/Necro) */
+#define RF0_BO_PSI		0x00080000		/* Mirror: Psionic Blast [+Psi Storm] */
+//hole -- note! Above this line must be all spells that can be failed to cast, below this line all spells that don't have a chance to fail!
+#define RF0_BR_ICE		0x01000000		/* For Bahamuth */
+#define RF0_BR_WATER		0x02000000		/* Finally no more antimagic field vs water hounds :p */
+#define RF0_HEAL_PHYS		0x04000000		/* Mirror: Heal by physical means, eg Potion of Healing */
+#define RF0_BLINK_PHYS		0x08000000		/* Mirror: Phase door scroll */
+#define RF0_TPORT_PHYS			0x10000000	/* Mirror: Teleportation scroll */
 #define RF0_ADMINISTRATIVE_PUSH		0x20000000	/* Push back */
 #define RF0_METEOR_SWARM		0x40000000	/* Targetted delayed orbital attack */
 #define RF0_ADMINISTRATIVE_HOLD		0x80000000	/* Irresistible paralysis */
@@ -6228,14 +6228,14 @@
 
 #if 0 /* I think it's possible that this accidentally prevents the monster from casting when it could and should - C. Blue */
  #define RF4_INT_MASK \
-	(RF4_S_ANIMAL | RF4_UNMAGIC)
+	(RF4_UNMAGIC | RF4_TRAPS)
 
  #define RF5_INT_MASK \
 	(RF5_HOLD | RF5_SLOW | RF5_CONF | RF5_BLIND | RF5_SCARE)
 
  #define RF6_INT_MASK \
 	(RF6_BLINK |  RF6_TPORT | RF6_TELE_LEVEL | RF6_TELE_AWAY | \
-	RF6_HEAL | RF6_HASTE | RF6_TRAPS | \
+	RF6_HEAL | RF6_HASTE | RF6_S_ANIMAL | \
 	RF6_S_KIN | RF6_S_HI_DEMONS | RF6_S_MONSTER | RF6_S_MONSTERS | \
 	RF6_S_ANTS | RF6_S_SPIDERS | RF6_S_HOUNDS | RF6_S_HYDRAS | \
 	RF6_S_ANGEL | RF6_S_DRAGON | RF6_S_UNDEAD | RF6_S_DEMON | \
@@ -6271,7 +6271,7 @@
  * Spells castable only when within the sight
  */
 #define RF4_DIRECT_MASK \
-	(RF4_SHRIEK | RF4_UNMAGIC | RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4 | RF4_BOULDER)
+	(RF4_SHRIEK | RF4_UNMAGIC | RF4_TRAPS | RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4 | RF4_BOULDER)
 
 #define RF5_DIRECT_MASK \
 	(RF5_DRAIN_MANA | RF5_MIND_BLAST | RF5_BRAIN_SMASH | RF5_CURSE | \
@@ -6281,7 +6281,7 @@
 
 #define RF6_DIRECT_MASK \
 	(RF6_TELE_TO | RF6_TELE_AWAY | RF6_TELE_LEVEL | RF6_DARKNESS | \
-	 RF6_TRAPS | RF6_FORGET)
+	 RF6_FORGET)
 
 #define RF0_DIRECT_MASK \
 	(RF0_BO_DISE | RF0_BO_WALL | RF0_BO_LITE | RF0_BO_DARK | RF0_DISPEL | RF0_BO_CHAOS | RF0_DRAIN_LIFE | RF0_BO_PSI)
@@ -6309,7 +6309,7 @@
 /* Hack -- summon spells */
 
 #define RF4_SUMMON_MASK \
-	(RF4_S_ANIMAL)
+	(0L)
 
 #define RF5_SUMMON_MASK \
 	(0L)
@@ -6318,7 +6318,7 @@
 	(RF6_S_KIN | RF6_S_HI_DEMONS | RF6_S_MONSTER | RF6_S_MONSTERS | RF6_S_ANTS | \
 	RF6_S_SPIDERS | RF6_S_HOUNDS | RF6_S_HYDRAS | RF6_S_ANGEL | RF6_S_DEMON | \
 	RF6_S_UNDEAD | RF6_S_DRAGON | RF6_S_HI_UNDEAD | RF6_S_HI_DRAGONS | \
-	RF6_S_NAZGUL | RF6_S_UNIQUE | RF6_S_DRAGONRIDER | RF6_S_BUG | RF6_S_RNG)
+	RF6_S_NAZGUL | RF6_S_UNIQUE | RF6_S_DRAGONRIDER | RF6_S_BUG | RF6_S_RNG | RF6_S_ANIMAL | RF6_S_ANIMALS)
 
 #define RF0_SUMMON_MASK \
 	(RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_S_DEMONS | RF0_S_DRAGONS | RF0_S_HI_DEMON | RF0_S_HI_DRAGON)
@@ -6386,7 +6386,7 @@
  * Annoying spells
  */
 #define RF4_ANNOY_MASK \
-	(RF4_SHRIEK | RF4_UNMAGIC | RF4_MOAN)
+	(RF4_SHRIEK | RF4_UNMAGIC | RF4_TRAPS | RF4_MOAN)
 /*	(RF4_SHRIEK | RF4_UNMAGIC)  ranged MOAN added for Halloween event. -C. Blue */
 
 #define RF5_ANNOY_MASK \
@@ -6394,7 +6394,7 @@
 	 RF5_SCARE | RF5_BLIND | RF5_CONF | RF5_SLOW | RF5_HOLD)
 
 #define RF6_ANNOY_MASK \
-	(RF6_TELE_TO | RF6_DARKNESS | RF6_TRAPS | RF6_FORGET)
+	(RF6_TELE_TO | RF6_DARKNESS | RF6_FORGET)
 
 #define RF0_ANNOY_MASK \
 	(0L)
@@ -6433,8 +6433,10 @@
    which uses magic spells, or if the 'spells' are merely
    actions as firing arrows, breathing or hurling boulders.. - C. Blue */
 
+/* RF4_TRAPS and RF6_FORGET don't count as spells (trapping / telepathy) */
+
 #define	RF4_SPELLCASTER_MASK \
-	(RF4_S_ANIMAL)
+	(0L)
 
 #define	RF5_SPELLCASTER_MASK \
 	(RF5_BA_ACID | RF5_BA_ELEC | RF5_BA_FIRE | RF5_BA_COLD | RF5_BA_POIS | \
@@ -6443,14 +6445,13 @@
 	RF5_BO_CODE | RF5_BO_ACID | RF5_BO_ELEC | RF5_BO_FIRE | RF5_BO_COLD | RF5_BO_POIS |\
 	RF5_BO_NETH | RF5_BO_WATE | RF5_BO_MANA | RF5_BO_PLAS | \
 	RF5_BO_ICEE | RF5_SCARE | RF5_BLIND | RF5_CONF | RF5_SLOW | RF5_HOLD)
-	/* RF6_TRAPS and RF6_FORGET don't count as spells (trapping / telepathy) */
 
 #define RF6_SPELLCASTER_MASK \
 	(RF6_HASTE | RF6_HAND_DOOM | RF6_HEAL | RF6_S_ANIMALS | RF6_BLINK | RF6_TPORT | \
 	RF6_RAISE_DEAD | RF6_S_BUG | RF6_TELE_TO | RF6_TELE_AWAY | RF6_TELE_LEVEL | RF6_S_RNG | RF6_DARKNESS | \
 	RF6_S_DRAGONRIDER | RF6_S_KIN | RF6_S_HI_DEMONS | RF6_S_MONSTER | RF6_S_MONSTERS | RF6_S_ANTS | \
 	RF6_S_SPIDERS | RF6_S_HOUNDS | RF6_S_HYDRAS | RF6_S_ANGEL | RF6_S_DEMON | RF6_S_UNDEAD | RF6_S_DRAGON | \
-	RF6_S_HI_UNDEAD | RF6_S_HI_DRAGONS | RF6_S_NAZGUL | RF6_S_UNIQUE)
+	RF6_S_HI_UNDEAD | RF6_S_HI_DRAGONS | RF6_S_NAZGUL | RF6_S_UNIQUE | RF6_S_ANIMAL)
 
 #define RF0_SPELLCASTER_MASK \
 	(RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_BO_DISE | RF0_BA_DISE | RF0_S_DEMONS | RF0_S_DRAGONS | RF0_S_HI_DEMON | RF0_S_HI_DRAGON | \

@@ -6508,7 +6508,7 @@ else s_printf("\n");
 
 
  #if 0 /* this floor is actually not trappable! So this is a wasted skill copy */
-	if (get_skill(p_ptr, SKILL_TRAPPING) >= thresh_skill) { r_ptr->flags6 |= RF6_TRAPS; magicness++; }
+	if (get_skill(p_ptr, SKILL_TRAPPING) >= thresh_skill) { r_ptr->flags4 |= RF4_TRAPS; magicness++; }
  #endif
 	//if (get_skill(p_ptr, SKILL_ANTIMAGIC)) r_ptr->flags7 |= RF7_DISBELIEVE -- not for now maybe
  #if 0 /* maybe simply make mirror non-intercepting and non-interceptable? fair trade - done. Same as player spells aren't interceptible either. */

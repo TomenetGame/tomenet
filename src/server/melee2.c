@@ -2362,8 +2362,8 @@ bool make_attack_spell(int Ind, int m_idx) {
 	else
 	/* Check for spell failure chance and generic interception for 'real' spells */
 	if (!stupid &&
-	    ((thrown_spell >= RF5_OFFSET && thrown_spell != RF6_OFFSET + 4 && thrown_spell != RF6_OFFSET + 5) /* Blink and TPort have their own checks! */
-	    || thrown_spell == RF4_OFFSET + 2)) { /* S_ANIMAL, which is misplaced in the RF4 category, so we need to hardcode its check here */
+	    thrown_spell >= RF5_OFFSET && thrown_spell < RF0_OFFSET + 24
+	    && thrown_spell != RF6_OFFSET + 4 && thrown_spell != RF6_OFFSET + 5 ) { /* Blink and TPort have their own checks! */
 		int factor = 0;
 
 		/* Extract the 'stun' factor */
@@ -2462,18 +2462,19 @@ bool make_attack_spell(int Ind, int m_idx) {
 			msg_print(Ind, "You are unaffected!");
 		break;
 
-#if 0
-	/* RF4_XXX3X4 */
+	/* RF4_TRAPS */
 	case RF4_OFFSET + 2:
-		break;
-#endif
-
-	/* RF4_S_ANIMAL */
-	case RF4_OFFSET + 2:
+#if 0 /* this was a 'spell' */
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
-		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_ANIMAL, 1, clone_summoning);
-		HANDLE_SUMMON("something", "an animal")
+		if (blind) msg_format(Ind, "%^s mumbles and cackles evilly.", m_name);
+		else msg_format(Ind, "%^s casts a spell and cackles evilly.", m_name);
+#else /* but it should be a physical ability, same as for the player, especially for the mirror image */
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s cackles evilly.", m_name);
+		else msg_format(Ind, "%^s pulls some wires and cackles evilly.", m_name);
+#endif
+		(void)trap_creation(Ind, 3, magik(rlev) ? (magik(30) ? 3 : 2) : 1);
 		break;
 
 	/* RF4_ROCKET */
@@ -3641,19 +3642,12 @@ bool make_attack_spell(int Ind, int m_idx) {
 		(void)unlite_area(Ind, FALSE, 0, 3);
 		break;
 
-	/* RF6_TRAPS */
+	/* RF6_S_ANIMAL */
 	case RF6_OFFSET + 13:
-#if 0 /* this was a 'spell' */
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
-		if (blind) msg_format(Ind, "%^s mumbles and cackles evilly.", m_name);
-		else msg_format(Ind, "%^s casts a spell and cackles evilly.", m_name);
-#else /* but it should be a physical ability, same as for the player, especially for the mirror image */
-		disturb(Ind, 1, 0);
-		if (blind) msg_format(Ind, "%^s cackles evilly.", m_name);
-		else msg_format(Ind, "%^s pulls some wires and cackles evilly.", m_name);
-#endif
-		(void)trap_creation(Ind, 3, magik(rlev) ? (magik(30) ? 3 : 2) : 1);
+		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_ANIMAL, 1, clone_summoning);
+		HANDLE_SUMMON("something", "an animal")
 		break;
 
 	/* RF6_FORGET */
@@ -3929,27 +3923,8 @@ bool make_attack_spell(int Ind, int m_idx) {
 		HANDLE_SUMMON2("You feel a powerful entity appear nearby.", "ancient dragon")
 		break;
 
-	/* RF0_BR_ICE */
-	case RF0_OFFSET + 9:
-		disturb(Ind, 1, 0);
-		if (blind) msg_format(Ind, "%^s breathes.", m_name);
-		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes ice for", m_name);
-		breath(Ind, m_idx, GF_ICE, ((eff_m_hp / 6) > 500 ? 500 : (eff_m_hp / 6)), y, x, srad);
-		update_smart_learn(Ind, m_idx, DRS_SHARD);
-		update_smart_learn(Ind, m_idx, DRS_COLD);
-		break;
-
-	/* RF0_BR_WATER */
-	case RF0_OFFSET + 10:
-		disturb(Ind, 1, 0);
-		if (blind) msg_format(Ind, "%^s breathes.", m_name);
-		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes water for", m_name);
-		breath(Ind, m_idx, GF_WATER, ((eff_m_hp / 5) > 300 ? 300 : (eff_m_hp / 5)), y, x, srad);
-		update_smart_learn(Ind, m_idx, DRS_WATER);
-		break;
-
 	/* RF0_BA_LITE */
-	case RF0_OFFSET + 11:
+	case RF0_OFFSET + 9:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3959,7 +3934,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF0_BO_WALL */
-	case RF0_OFFSET + 12:
+	case RF0_OFFSET + 10:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3969,7 +3944,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF0_BA_HELLFIRE */
-	case RF0_OFFSET + 13:
+	case RF0_OFFSET + 11:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3979,7 +3954,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF0_BO_LITE (strictly, beam, as it mirrors Power Ray spell) */
-	case RF0_OFFSET + 14:
+	case RF0_OFFSET + 12:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3989,7 +3964,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF0_BO_DARK (strictly, beam, as it mirrors Power Ray spell) */
-	case RF0_OFFSET + 15:
+	case RF0_OFFSET + 13:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3999,7 +3974,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF0_DISPEL */
-	case RF0_OFFSET + 16: {
+	case RF0_OFFSET + 14: {
 		int dam = damroll(1 + rlev / 3, 1 + rlev / 4);
 		char damcol = unique ? 'L' : 'o';
 
@@ -4023,7 +3998,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		}
 
 	/* RF0_WATERPOISON */
-	case RF0_OFFSET + 17:
+	case RF0_OFFSET + 15:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -4033,7 +4008,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF0_ICEPOISON */
-	case RF0_OFFSET + 18:
+	case RF0_OFFSET + 16:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -4043,7 +4018,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF0_BO_CHAOS */
-	case RF0_OFFSET + 19:
+	case RF0_OFFSET + 17:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -4052,7 +4027,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		update_smart_learn(Ind, m_idx, DRS_CHAOS);
 
 	/* RF0_DRAIN_LIFE */
-	case RF0_OFFSET + 20: {
+	case RF0_OFFSET + 18: {
 		int dam = damroll(1 + rlev / 3, 1 + rlev / 4);
 		char damcol = unique ? 'L' : 'o';
 
@@ -4081,7 +4056,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		}
 
 	/* RF0_BO_PSI */
-	case RF0_OFFSET + 21:
+	case RF0_OFFSET + 19:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -4090,8 +4065,27 @@ bool make_attack_spell(int Ind, int m_idx) {
 		//update_smart_learn(Ind, m_idx, DRS_PSI);
 		break;
 
+	/* RF0_BR_ICE */
+	case RF0_OFFSET + 24:
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s breathes.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes ice for", m_name);
+		breath(Ind, m_idx, GF_ICE, ((eff_m_hp / 6) > 500 ? 500 : (eff_m_hp / 6)), y, x, srad);
+		update_smart_learn(Ind, m_idx, DRS_SHARD);
+		update_smart_learn(Ind, m_idx, DRS_COLD);
+		break;
+
+	/* RF0_BR_WATER */
+	case RF0_OFFSET + 25:
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s breathes.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes water for", m_name);
+		breath(Ind, m_idx, GF_WATER, ((eff_m_hp / 5) > 300 ? 300 : (eff_m_hp / 5)), y, x, srad);
+		update_smart_learn(Ind, m_idx, DRS_WATER);
+		break;
+
 	/* RF0_HEAL_PHYS */
-	case RF0_OFFSET + 22:
+	case RF0_OFFSET + 26:
 		if (visible) {
 			//disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s makes a gulping noise.", m_name);
@@ -4179,7 +4173,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF0_BLINK_PHYS */
-	case RF0_OFFSET + 23:
+	case RF0_OFFSET + 27:
 		/* No teleporting within no-tele vaults and such */
 		if (zcave[oy][ox].info & CAVE_STCK) {
 			//msg_format(Ind, "%^s fails to blink.", m_name);
@@ -4204,7 +4198,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF0_TPORT_PHYS */
-	case RF0_OFFSET + 24:
+	case RF0_OFFSET + 28:
 		/* No teleporting within no-tele vaults and such */
 		if (zcave[oy][ox].info & CAVE_STCK) {
 			//msg_format(Ind, "%^s fails to teleport.", m_name);
@@ -4639,7 +4633,9 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
 
 #ifndef STUPID_MONSTER_SPELLS
-	if (!stupid && (thrown_spell >= 128 || thrown_spell == 98)) { //98 = S_ANIMAL
+	if (!stupid &&
+	    thrown_spell >= RF5_OFFSET && thrown_spell < RF0_OFFSET + 24
+	    && thrown_spell != RF6_OFFSET + 4 && thrown_spell != RF6_OFFSET + 5) { /* Blink and TPort have their own checks! */
 		int factor = 0;
 
 		/* Extract the 'stun' factor */
@@ -4705,18 +4701,19 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			msg_print(Ind, "You are unaffected!");
 		break;
 
-#if 0
-	/* RF4_XXX3X4 */
+	/* RF4_TRAPS */
 	case RF4_OFFSET + 2:
-		break;
-#endif
-
-	/* RF4_S_ANIMAL */
-	case RF4_OFFSET + 2:
+#if 0 /* this was a 'spell' */
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
-		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_ANIMAL, 1, clone_summoning);
-		HANDLE_SUMMON("something", "an animal")
+		if (blind) msg_format(Ind, "%^s mumbles and cackles evilly.", m_name);
+		else msg_format(Ind, "%^s casts a spell and cackles evilly.", m_name);
+#else /* but it should be a physical ability, same as for the player, especially for the mirror image */
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s cackles evilly.", m_name);
+		else msg_format(Ind, "%^s pulls some wires and cackles evilly.", m_name);
+#endif
+		(void)trap_creation(Ind, 3, magik(rlev) ? (magik(30) ? 3 : 2) : 1);
 		break;
 
 	/* RF4_ROCKET */
@@ -5876,19 +5873,13 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		(void)unlite_area(Ind, FALSE, 0, 3);
 		break;
 
-	/* RF6_TRAPS */
+
+	/* RF6_S_ANIMAL */
 	case RF6_OFFSET + 13:
-#if 0 /* this was a 'spell' */
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
-		if (blind) msg_format(Ind, "%^s mumbles and cackles evilly.", m_name);
-		else msg_format(Ind, "%^s casts a spell and cackles evilly.", m_name);
-#else /* but it should be a physical ability, same as for the player, especially for the mirror image */
-		disturb(Ind, 1, 0);
-		if (blind) msg_format(Ind, "%^s cackles evilly.", m_name);
-		else msg_format(Ind, "%^s pulls some wires and cackles evilly.", m_name);
-#endif
-		(void)trap_creation(Ind, 3, magik(rlev) ? (magik(30) ? 3 : 2) : 1);
+		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_ANIMAL, 1, clone_summoning);
+		HANDLE_SUMMON("something", "an animal")
 		break;
 
 	/* RF6_FORGET */
@@ -6164,27 +6155,8 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		HANDLE_SUMMON2("You feel a powerful entity appear nearby.", "ancient dragon")
 		break;
 
-	/* RF0_BR_ICE */
-	case RF0_OFFSET + 9:
-		disturb(Ind, 1, 0);
-		if (blind) msg_format(Ind, "%^s breathes.", m_name);
-		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes ice for", m_name);
-		breath(Ind, m_idx, GF_ICE, ((m_ptr->hp / 6) > 500 ? 500 : (m_ptr->hp / 6)), y, x, srad);
-		update_smart_learn(Ind, m_idx, DRS_SHARD);
-		update_smart_learn(Ind, m_idx, DRS_COLD);
-		break;
-
-	/* RF0_BR_WATER */
-	case RF0_OFFSET + 10:
-		disturb(Ind, 1, 0);
-		if (blind) msg_format(Ind, "%^s breathes.", m_name);
-		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes water for", m_name);
-		breath(Ind, m_idx, GF_WATER, ((m_ptr->hp / 5) > 300 ? 300 : (m_ptr->hp / 5)), y, x, srad);
-		update_smart_learn(Ind, m_idx, DRS_WATER);
-		break;
-
 	/* RF0_BA_LITE */
-	case RF0_OFFSET + 11:
+	case RF0_OFFSET + 9:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -6194,7 +6166,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF0_BO_WALL */
-	case RF0_OFFSET + 12:
+	case RF0_OFFSET + 10:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -6204,7 +6176,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF0_BA_HELLFIRE */
-	case RF0_OFFSET + 13:
+	case RF0_OFFSET + 11:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -6214,7 +6186,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF0_BO_LITE (strictly, beam, as it mirrors Power Ray spell) */
-	case RF0_OFFSET + 14:
+	case RF0_OFFSET + 12:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -6224,7 +6196,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF0_BO_DARK (strictly, beam, as it mirrors Power Ray spell) */
-	case RF0_OFFSET + 15:
+	case RF0_OFFSET + 13:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -6234,7 +6206,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF0_DISPEL */
-	case RF0_OFFSET + 16: {
+	case RF0_OFFSET + 14: {
 		int dam = damroll(1 + rlev / 3, 1 + rlev / 4);
 		char damcol = unique ? 'L' : 'o';
 
@@ -6258,7 +6230,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		}
 
 	/* RF0_WATERPOISON */
-	case RF0_OFFSET + 17:
+	case RF0_OFFSET + 15:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -6268,7 +6240,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF0_ICEPOISON */
-	case RF0_OFFSET + 18:
+	case RF0_OFFSET + 16:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -6278,7 +6250,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF0_BO_CHAOS */
-	case RF0_OFFSET + 19:
+	case RF0_OFFSET + 17:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -6287,7 +6259,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		update_smart_learn(Ind, m_idx, DRS_CHAOS);
 
 	/* RF0_DRAIN_LIFE */
-	case RF0_OFFSET + 20: {
+	case RF0_OFFSET + 18: {
 		int dam = damroll(1 + rlev / 3, 1 + rlev / 4);
 		char damcol = unique ? 'L' : 'o';
 
@@ -6316,7 +6288,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		}
 
 	/* RF0_BO_PSI */
-	case RF0_OFFSET + 21:
+	case RF0_OFFSET + 19:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -6325,8 +6297,27 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		//update_smart_learn(Ind, m_idx, DRS_PSI);
 		break;
 
+	/* RF0_BR_ICE */
+	case RF0_OFFSET + 24:
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s breathes.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes ice for", m_name);
+		breath(Ind, m_idx, GF_ICE, ((m_ptr->hp / 6) > 500 ? 500 : (m_ptr->hp / 6)), y, x, srad);
+		update_smart_learn(Ind, m_idx, DRS_SHARD);
+		update_smart_learn(Ind, m_idx, DRS_COLD);
+		break;
+
+	/* RF0_BR_WATER */
+	case RF0_OFFSET + 25:
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s breathes.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes water for", m_name);
+		breath(Ind, m_idx, GF_WATER, ((m_ptr->hp / 5) > 300 ? 300 : (m_ptr->hp / 5)), y, x, srad);
+		update_smart_learn(Ind, m_idx, DRS_WATER);
+		break;
+
 	/* RF0_HEAL_PHYS */
-	case RF0_OFFSET + 22:
+	case RF0_OFFSET + 26:
 		if (visible) {
 			//disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s makes a gulping noise.", m_name);
@@ -6414,7 +6405,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF0_BLINK_PHYS */
-	case RF0_OFFSET + 23:
+	case RF0_OFFSET + 27:
 		/* No teleporting within no-tele vaults and such */
 		if (zcave[oy][ox].info & CAVE_STCK) {
 			//msg_format(Ind, "%^s fails to blink.", m_name);
@@ -6439,7 +6430,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		break;
 
 	/* RF0_TPORT_PHYS */
-	case RF0_OFFSET + 24:
+	case RF0_OFFSET + 28:
 		/* No teleporting within no-tele vaults and such */
 		if (zcave[oy][ox].info & CAVE_STCK) {
 			//msg_format(Ind, "%^s fails to teleport.", m_name);

@@ -156,8 +156,8 @@ magic_type innate_powers[128] = {
   {0, 2, 0, 0, 0},
 // RF4_UNMAGIC                  0x00000002      /* (?) */
   {0, 0, 0, 0, 0},
-// (S_ANIMAL) RF4_XXX3          0x00000004      /* (?) */
-  {0, 0, 0, 0, 0},
+// RF4_TRAPS                    0x00002000      /* Create Traps */
+  {0, 15, 25, 0, 0},
 // RF4_ROCKET                   0x00000008      /* (?) */
   {0, 60, 70, 0, 2},
 // RF4_ARROW_1                  0x00000010      /* Fire an arrow (light) */
@@ -314,8 +314,8 @@ magic_type innate_powers[128] = {
   {0, 0, 0, 0, 0},
 // RF6_DARKNESS                 0x00001000      /* Create Darkness */
   {0, 6, 8, 0, 0},
-// RF6_TRAPS                    0x00002000      /* Create Traps */
-  {0, 15, 25, 0, 0},
+// (S_ANIMAL) RF4_XXX3          0x00000004      /* (?) */
+  {0, 0, 0, 0, 0},
 // RF6_FORGET                   0x00004000      /* Cause amnesia */
   {0, 25, 35, 0, 0},
 // RF6_XXX5                     0x00008000      /* (unavailable) */
@@ -362,24 +362,27 @@ magic_type innate_powers[128] = {
   {0, 0, 0, 0, 0},
 // RF0_XXX5                     0x00000004      /* (unavailable) */
   {0, 0, 0, 0, 0},
+// RF0_BO_DISE			0x00000080
+  {0, 15, 20, 0, 1},
+
+// RF0_BA_DISE			0x00000100
+  {0, 30, 40, 0, 1},
 // RF0_XXX5                     0x00000008      /* (unavailable) */
   {0, 0, 0, 0, 0},
 // RF0_XXX5                     0x00000010      /* (unavailable) */
   {0, 0, 0, 0, 0},
 // RF0_XXX5                     0x00000020      /* (unavailable) */
   {0, 0, 0, 0, 0},
+
 // RF0_XXX5                     0x00000040      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF0_BO_DISE			0x00000080
-  {0, 15, 20, 0, 1},
-// RF0_BA_DISE			0x00000100
-  {0, 30, 40, 0, 1},
 // RF0_XXX5                     0x00000200      /* (unavailable) */
   {0, 0, 0, 0, 0},
 // RF0_XXX5                     0x00000400      /* (unavailable) */
   {0, 0, 0, 0, 0},
 // RF0_XXX5                     0x00000800      /* (unavailable) */
   {0, 0, 0, 0, 0},
+
 // RF0_XXX5                     0x00001000      /* (unavailable) */
   {0, 0, 0, 0, 0},
 // RF0_XXX5                     0x00002000      /* (unavailable) */
@@ -388,36 +391,39 @@ magic_type innate_powers[128] = {
   {0, 0, 0, 0, 0},
 // RF0_XXX5                     0x00008000      /* (unavailable) */
   {0, 0, 0, 0, 0},
+
 // RF0_XXX5                     0x00010000      /* (unavailable) */
   {0, 0, 0, 0, 0},
 // RF0_XXX5                     0x00020000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF0_BR_ICE			0x00040000
-  {0, 20, 27, 0, 2},
-// RF0_BR_WATER			0x00080000
-  {0, 25, 30, 0, 2},
-
 // RF0_XXX3                     0x00100000      /* (unavailable) */
   {0, 0, 0, 0, 0},
 // RF0_XXX5                     0x00200000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF0_XXX5                     0x00400000      /* (unavailable) */
-  {0, 0, 0, 0, 0},
-// RF0_XXX5                     0x00800000      /* (unavailable) */
-  {0, 0, 0, 0, 0},
+
 // RF0_XXX5                     0x01000000      /* (unavailable) */
   {0, 0, 0, 0, 0},
 // RF0_XXX5                     0x02000000      /* (unavailable) */
   {0, 0, 0, 0, 0},
 // RF0_XXX5                     0x04000000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF0_BO_DISE			0x08000000
-  {0, 15, 20, 0, 1},
-// RF0_BA_DISE			0x10000000
-  {0, 30, 40, 0, 1},
-// RF0_XXX5                     0x20000000      /* (unavailable) */
+// RF0_XXX5                     0x80000000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF0_XXX5                     0x40000000      /* (unavailable) */
+
+// RF0_BR_ICE			0x00040000
+  {0, 20, 27, 0, 2},
+// RF0_BR_WATER			0x00080000
+  {0, 25, 30, 0, 2},
+// RF0_XXX5                     0x00400000      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x00800000      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+
+// RF0_XXX5                     0x01000000      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x02000000      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x04000000      /* (unavailable) */
   {0, 0, 0, 0, 0},
 // RF0_XXX5                     0x80000000      /* (unavailable) */
   {0, 0, 0, 0, 0},

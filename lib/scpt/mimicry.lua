@@ -58,7 +58,7 @@ Cause Amnesia           Confuses a target.
 monster_spells4_lua = {
   {"Shriek", 0},
   {"Negate magic", 0},
-  {"XXX", 1},
+  {"Trap Creation", 0},
   {"Fire Rocket", 1},
 
   {"Arrow", 1},
@@ -158,7 +158,7 @@ monster_spells6_lua = {
   {"XXX", 1},
 
   {"Darkness", 0},
-  {"Trap Creation", 0},
+  {"XXX", 1},
   {"Cause Amnesia", 1},
   {"XXX", 1},
 
@@ -188,11 +188,6 @@ monster_spells0_lua = {
   {"XXX", 1},
   {"XXX", 1},
   {"XXX", 1},
-  {"XXX", 1},
-
-  {"XXX", 1},
-  {"XXX", 1},
-  {"XXX", 1},
   {"Disenchantment Bolt", 1},
 
   {"Disenchantment Ball", 1},
@@ -207,16 +202,21 @@ monster_spells0_lua = {
 
   {"XXX", 1},
   {"XXX", 1},
+  {"XXX", 1},
+  {"XXX", 1},
+
+  {"XXX", 1},
+  {"XXX", 1},
+  {"XXX", 1},
+  {"XXX", 1},
+
+  {"XXX", 1},
+  {"XXX", 1},
+  {"XXX", 1},
+  {"XXX", 1},
+
   {"Breathe Ice", 1},
   {"Breathe Water", 1},
-
-  {"XXX", 1},
-  {"XXX", 1},
-  {"XXX", 1},
-  {"XXX", 1},
-
-  {"XXX", 1},
-  {"XXX", 1},
   {"XXX", 1},
   {"XXX", 1},
 
@@ -234,10 +234,11 @@ innate_powers_lua = {
 	{0, 2, 0, 0, 0},
 --// RF4_UNMAGIC		0x00000002	/* (?) */
 	{0, 0, 0, 0, 0},
---// (S_ANIMAL) RF4_XXX3	0x00000004	/* (?) */
-	{0, 0, 0, 0, 0},
+--// RF4_TRAPS			0x00002000	/* Create Traps */
+	{0, 15, 25, 0, 0},
 --// RF4_ROCKET			0x00000008	/* (?) */
 	{0, 60, 70, 0, 2},
+
 --// RF4_ARROW_1		0x00000010	/* Fire an arrow (light) */
 	{0, 2, 5, 0, 1},
 --// RF4_ARROW_2		0x00000020	/* Fire an shot (heavy) */
@@ -246,6 +247,7 @@ innate_powers_lua = {
 	{0, 2, 7, 0, 1},
 --// XXX (RF4_ARROW_4)		0x00000080	/* Fire missiles (heavy) */
 	{0, 3, 9, 0, 1},
+
 --// RF4_BR_ACID		0x00000100	/* Breathe Acid */
 	{0, 10, 20, 0, 2},
 --// RF4_BR_ELEC		0x00000200	/* Breathe Elec */
@@ -254,6 +256,7 @@ innate_powers_lua = {
 	{0, 10, 20, 0, 2},
 --// RF4_BR_COLD		0x00000800	/* Breathe Cold */
 	{0, 10, 20, 0, 2},
+
 --// RF4_BR_POIS		0x00001000	/* Breathe Poison */
 	{0, 13, 25, 0, 2},
 --// RF4_BR_NETH		0x00002000	/* Breathe Nether */
@@ -262,6 +265,7 @@ innate_powers_lua = {
 	{0, 10, 20, 0, 2},
 --// RF4_BR_DARK		0x00008000	/* Breathe Dark */
 	{0, 10, 20, 0, 2},
+
 --// RF4_BR_CONF		0x00010000	/* Breathe Confusion */
 	{0, 10, 25, 0, 2},
 --// RF4_BR_SOUN		0x00020000	/* Breathe Sound */
@@ -270,6 +274,7 @@ innate_powers_lua = {
 	{0, 25, 40, 0, 2},
 --// RF4_BR_DISE		0x00080000	/* Breathe Disenchant */
 	{0, 28, 45, 0, 2},
+
 --// RF4_BR_NEXU		0x00100000	/* Breathe Nexus */
 	{0, 20, 45, 0, 2},
 --// RF4_BR_TIME		0x00200000	/* Breathe Time */
@@ -278,6 +283,7 @@ innate_powers_lua = {
 	{0, 25, 35, 0, 2},
 --// RF4_BR_GRAV		0x00800000	/* Breathe Gravity */
 	{0, 25, 35, 0, 2},
+
 --// RF4_BR_SHAR		0x01000000	/* Breathe Shards */
 	{0, 15, 25, 0, 2},
 --// RF4_BR_PLAS		0x02000000	/* Breathe Plasma */
@@ -286,6 +292,7 @@ innate_powers_lua = {
 	{0, 30, 40, 0, 2},
 --// RF4_BR_MANA		0x08000000	/* Breathe Mana */
 	{0, 35, 45, 0, 2},
+
 --// RF4_BR_DISI		0x10000000
 	{0, 50, 70, 0, 2},
 --// RF4_BR_NUKE		0x20000000
@@ -304,6 +311,7 @@ innate_powers_lua = {
 	{0, 8, 10, 0, 2},
 --// RF5_BA_COLD		0x00000008	/* Cold Ball */
 	{0, 8, 10, 0, 2},
+
 --// RF5_BA_POIS		0x00000010	/* Poison Ball */
 	{0, 11, 20, 0, 2},
 --// RF5_BA_NETH		0x00000020	/* Nether Ball */
@@ -312,6 +320,7 @@ innate_powers_lua = {
 	{0, 17, 30, 0, 2},
 --// RF5_BA_MANA		0x00000080	/* Mana Storm */
 	{0, 45, 50, 0, 2},
+
 --// RF5_BA_DARK		0x00000100	/* Darkness Storm */
 	{0, 20, 0, 0, 2},
 --// RF5_DRAIN_MANA		0x00000200	/* Drain Mana */
@@ -320,6 +329,7 @@ innate_powers_lua = {
 	{0, 15, 13, 0, 2},
 --// RF5_BRAIN_SMASH		0x00000800	/* Smash Brain */
 	{0, 25, 15, 0, 2},
+
 --// RF5_CAUSE_1		0x00001000	/* Cause Light Wound */
 	{0, 3, 15, 0, 1},
 --// RF5_CAUSE_2		0x00002000	/* Cause Serious Wound */
@@ -328,6 +338,7 @@ innate_powers_lua = {
 	{0, 30, 30, 0, 2},
 --// RF5_BA_CHAO		0x00008000	/* Chaos Ball */
 	{0, 45, 40, 0, 2},
+
 --// RF5_BO_ACID		0x00010000	/* Acid Bolt */
 	{0, 4, 13, 0, 1},
 --// RF5_BO_ELEC		0x00020000	/* Elec Bolt (unused) */
@@ -336,6 +347,7 @@ innate_powers_lua = {
 	{0, 4, 13, 0, 1},
 --// RF5_BO_COLD		0x00080000	/* Cold Bolt */
 	{0, 3, 13, 0, 1},
+
 --// RF5_BO_POIS		0x00100000	/* Poison Bolt (unused) */
 	{0, 5, 16, 0, 1},
 --// RF5_BO_NETH		0x00200000	/* Nether Bolt */
@@ -344,6 +356,7 @@ innate_powers_lua = {
 	{0, 13, 18, 0, 1},
 --// RF5_BO_MANA		0x00800000	/* Mana Bolt */
 	{0, 20, 25, 0, 1},
+
 --// RF5_BO_PLAS		0x01000000	/* Plasma Bolt */
 	{0, 15, 18, 0, 1},
 --// RF5_BO_ICEE		0x02000000	/* Ice Bolt */
@@ -352,6 +365,7 @@ innate_powers_lua = {
 	{0, 2, 5, 0, 1},
 --// RF5_SCARE			0x08000000	/* Frighten Player */
 	{0, 3, 8, 0, 0},
+
 --// RF5_BLIND			0x10000000	/* Blind Player */
 	{0, 5, 8, 0, 0},
 --// RF5_CONF			0x20000000	/* Confuse Player */
@@ -370,6 +384,7 @@ innate_powers_lua = {
 	{0, 10, 20, 0, 0},
 --// RF6_XXX2			0x00000008	/* Heal a lot (?) */
 	{0, 0, 0, 0, 0},
+
 --// RF6_BLINK			0x00000010	/* Teleport Short */
 	{0, 5, 15, 0, 0},
 --// RF6_TPORT			0x00000020	/* Teleport Long */
@@ -378,6 +393,7 @@ innate_powers_lua = {
 	{0, 0, 0, 0, 0},
 --// RF6_XXX4			0x00000080	/* Move to Monster (?) */
 	{0, 0, 0, 0, 0},
+
 --// RF6_TELE_TO		0x00000100	/* Move player to monster */
 	{0, 20, 30, 0, 0},
 --// RF6_TELE_AWAY		0x00000200	/* Move player far away */
@@ -386,14 +402,16 @@ innate_powers_lua = {
 	{0, 30, 60, 0, 0},
 --// RF6_XXX5			0x00000800	/* Move player (?) */
 	{0, 0, 0, 0, 0},
+
 --// RF6_DARKNESS	 	0x00001000	/* Create Darkness */
 	{0, 6, 8, 0, 0},
---// RF6_TRAPS			0x00002000	/* Create Traps */
-	{0, 15, 25, 0, 0},
+--// (S_ANIMAL) RF4_XXX3	0x00000004	/* (?) */
+	{0, 0, 0, 0, 0},
 --// RF6_FORGET			0x00004000	/* Cause amnesia */
 	{0, 25, 35, 0, 0},
 --// RF6_XXX5			0x00008000	/* (unavailable) */
 	{0, 0, 0, 0, 0},
+
 --// RF6_XXX5			0x00010000	/* (unavailable) */
 	{0, 0, 0, 0, 0},
 --// RF6_XXX5			0x00020000	/* (unavailable) */
@@ -402,6 +420,7 @@ innate_powers_lua = {
 	{0, 0, 0, 0, 0},
 --// RF6_XXX5			0x00080000	/* (unavailable) */
 	{0, 0, 0, 0, 0},
+
 --// RF6_XXX5			0x00100000	/* (unavailable) */
 	{0, 0, 0, 0, 0},
 --// RF6_XXX5			0x00200000	/* (unavailable) */
@@ -410,6 +429,7 @@ innate_powers_lua = {
 	{0, 0, 0, 0, 0},
 --// RF6_XXX5			0x00800000	/* (unavailable) */
 	{0, 0, 0, 0, 0},
+
 --// RF6_XXX5			0x01000000	/* (unavailable) */
 	{0, 0, 0, 0, 0},
 --// RF6_XXX5			0x02000000	/* (unavailable) */
@@ -418,6 +438,7 @@ innate_powers_lua = {
 	{0, 0, 0, 0, 0},
 --// RF6_XXX5			0x08000000	/* (unavailable) */
 	{0, 0, 0, 0, 0},
+
 --// RF6_XXX5			0x10000000	/* (unavailable) */
 	{0, 0, 0, 0, 0},
 --// RF6_XXX5			0x20000000	/* (unavailable) */
@@ -434,22 +455,27 @@ innate_powers_lua = {
 	{0, 0, 0, 0, 0},
 --// RF0_XXX5			0x00000004	/* (unavailable) */
 	{0, 0, 0, 0, 0},
+--// RF0_BO_DISE		0x00000080
+	{0, 15, 20, 0, 1},
+
+--// RF0_BA_DISE		0x00000100
+	{0, 30, 40, 0, 1},
 --// RF0_XXX5			0x00000008	/* (unavailable) */
 	{0, 0, 0, 0, 0},
+--// RF0_XXX5			0x00000008	/* (unavailable) */
+	{0, 0, 0, 0, 0},
+--// RF0_XXX5			0x00000008	/* (unavailable) */
+	{0, 0, 0, 0, 0},
+
 --// RF0_XXX5			0x00000010	/* (unavailable) */
 	{0, 0, 0, 0, 0},
 --// RF0_XXX5			0x00000020	/* (unavailable) */
 	{0, 0, 0, 0, 0},
 --// RF0_XXX5			0x00000040	/* (unavailable) */
 	{0, 0, 0, 0, 0},
-
---// RF0_BO_DISE		0x00000080
-	{0, 15, 20, 0, 1},
---// RF0_BA_DISE		0x00000100
-	{0, 30, 40, 0, 1},
-
 --// RF0_XXX5			0x00000200	/* (unavailable) */
 	{0, 0, 0, 0, 0},
+
 --// RF0_XXX5			0x00000400	/* (unavailable) */
 	{0, 0, 0, 0, 0},
 --// RF0_XXX5			0x00000800	/* (unavailable) */
@@ -458,6 +484,7 @@ innate_powers_lua = {
 	{0, 0, 0, 0, 0},
 --// RF0_XXX5			0x00002000	/* (unavailable) */
 	{0, 0, 0, 0, 0},
+
 --// RF0_XXX5			0x00004000	/* (unavailable) */
 	{0, 0, 0, 0, 0},
 --// RF0_XXX5			0x00008000	/* (unavailable) */
@@ -467,11 +494,6 @@ innate_powers_lua = {
 --// RF0_XXX5			0x00020000	/* (unavailable) */
 	{0, 0, 0, 0, 0},
 
---// RF0_BR_ICE			0x00040000
-	{0, 20, 27, 0, 2},
---// RF0_BR_WATER>		0x00080000
-	{0, 25, 30, 0, 2},
-
 --// RF0_XXX3			0x00100000	/* (unavailable) */
 	{0, 0, 0, 0, 0},
 --// RF0_XXX5			0x00200000	/* (unavailable) */
@@ -480,16 +502,18 @@ innate_powers_lua = {
 	{0, 0, 0, 0, 0},
 --// RF0_XXX5			0x00800000	/* (unavailable) */
 	{0, 0, 0, 0, 0},
+
+--// RF0_BR_ICE			0x00040000
+	{0, 20, 27, 0, 2},
+--// RF0_BR_WATER>		0x00080000
+	{0, 25, 30, 0, 2},
 --// RF0_XXX5			0x01000000	/* (unavailable) */
 	{0, 0, 0, 0, 0},
 --// RF0_XXX5			0x02000000	/* (unavailable) */
 	{0, 0, 0, 0, 0},
+
 --// RF0_XXX5			0x04000000	/* (unavailable) */
 	{0, 0, 0, 0, 0},
---// RF0_BO_DISE		0x08000000
-	{0, 15, 20, 0, 1},
---// RF0_BA_DISE		0x10000000
-	{0, 30, 40, 0, 1},
 --// RF0_XXX5			0x20000000	/* (unavailable) */
 	{0, 0, 0, 0, 0},
 --// RF0_XXX5			0x40000000	/* (unavailable) */
