@@ -7428,7 +7428,7 @@ void do_cmd_fire(int Ind, int dir) {
 						if (!(r_ptr->flags1 & RF1_UNIQUE)) tdam = m_ptr->hp + 1;
 					}
 
-#define RI_MIRROR_REDUCED_RANGED 6
+#define RI_MIRROR_REDUCED_RANGED 3
 #ifdef RI_MIRROR_REDUCED_RANGED
 					/* Experimental: Extra damage reduction vs shooting */
 					if (m_ptr->r_idx == RI_MIRROR) tdam = (tdam + RI_MIRROR_REDUCED_RANGED - 1) / RI_MIRROR_REDUCED_RANGED;
