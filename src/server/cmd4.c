@@ -767,7 +767,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 			fprintf(fff, "%s, %sL%d \377%c", q_ptr->name, attr_p, q_ptr->lev, attr);
 
 #ifdef ENABLE_SUBCLASS_TITLE
-			fprintf(fff, "%s%s %s", get_prace2(q_ptr), p, p2);
+			fprintf(fff, "%s%s%s%s", get_prace2(q_ptr), p, (q_ptr->sclass) ? " " : "", p2);
 #else
 			fprintf(fff, "%s%s", get_prace2(q_ptr),  p);
 #endif
@@ -907,7 +907,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
   #endif
 
 #ifdef ENABLE_SUBCLASS_TITLE
-			fprintf(fff, "%s%s %s", get_prace2(q_ptr), p, p2);
+			fprintf(fff, "%s%s%s%s", get_prace2(q_ptr), p, (q_ptr->sclass) ? " " : "", p2);
 #else
 			fprintf(fff, "%s%s", get_prace2(q_ptr),  p);
 #endif
@@ -1041,7 +1041,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 			fprintf(fff, "%s", get_prace2(q_ptr));
 			fprintf(fff, "%s", class_info[q_ptr->pclass].title);
 #ifdef ENABLE_SUBCLASS_TITLE
-			if (q_ptr->sclass != MAX_CLASS) fprintf(fff, "%s", class_info[q_ptr->sclass].title);
+			if (q_ptr->sclass) fprintf(fff, "%s", class_info[q_ptr->sclass-1].title);
 #endif
 
 			/* location */
@@ -1292,7 +1292,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 			default:
 				fprintf(fff, "%s", class_info[q_ptr->pclass].title);
 #ifdef ENABLE_SUBCLASS_TITLE
-				if (q_ptr->sclass != MAX_CLASS) fprintf(fff, "%s", class_info[q_ptr->sclass].title);
+				if (q_ptr->sclass) fprintf(fff, "%s", class_info[q_ptr->sclass-1].title);
 #endif
         break;
 			}
@@ -1327,7 +1327,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 			fprintf(fff, "  %s the ", q_ptr->name);
     #endif
     #ifdef ENABLE_SUBCLASS_TITLE
-			fprintf(fff, "%s%s %s", get_prace2(q_ptr), p, p2);
+			fprintf(fff, "%s%s%s%s", get_prace2(q_ptr), p, (q_ptr->sclass) ? " " : "", p2);
     #else
 			fprintf(fff, "%s%s", get_prace2(q_ptr),  p);
     #endif
@@ -2029,7 +2029,7 @@ void write_player_info(int Ind, char *pinfo) {
 	fprintf(fff, "%s", get_prace2(q_ptr));
 	fprintf(fff, "%s", class_info[q_ptr->pclass].title);
 #ifdef ENABLE_SUBCLASS_TITLE
-	if (q_ptr->sclass != MAX_CLASS) fprintf(fff, "%s", class_info[q_ptr->sclass].title);
+	if (q_ptr->sclass) fprintf(fff, "%s", class_info[q_ptr->sclass-1].title);
 #endif
 
 	/* location */

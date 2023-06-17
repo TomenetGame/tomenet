@@ -5769,10 +5769,7 @@ bool monster_death(int Ind, int m_idx) {
 	int	number = 0;
 
 	char buf[160], m_name[MAX_CHARS], o_name[ONAME_LEN];
-	cptr titlebuf;
-#ifdef ENABLE_SUBCLASS_TITLE
-	cptr titlebuf2;
-#endif
+	char titlebuf[160];
 
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 
@@ -5930,7 +5927,7 @@ bool monster_death(int Ind, int m_idx) {
 
 		if (cfg.unikill_format)
 #ifdef ENABLE_SUBCLASS_TITLE
-			sprintf(tmp, "\374\377c**\377s%s %s %s has defeated %s mirror image.\377c**", get_ptitle(q_ptr, FALSE), get_ptitle2(q_ptr, FALSE), p_ptr->name, p_ptr->male ? "his" : "her");
+			sprintf(tmp, "\374\377c**\377s%s%s%s %s has defeated %s mirror image.\377c**", get_ptitle(q_ptr, FALSE), (q_ptr->sclass) ? " " : "", get_ptitle2(q_ptr, FALSE), p_ptr->name, p_ptr->male ? "his" : "her");
 #else
 			sprintf(tmp, "\374\377c**\377s%s %s has defeated %s mirror image.\377c**", get_ptitle(q_ptr, FALSE), p_ptr->name, p_ptr->male ? "his" : "her");
 #endif
@@ -6802,45 +6799,28 @@ bool monster_death(int Ind, int m_idx) {
 		/* give credit to the killer by default */
 if (cfg.unikill_format) {
 	/* let's try with titles before the name :) -C. Blue */
-		titlebuf = get_ptitle(q_ptr, FALSE);
+		strcpy(titlebuf, get_ptitle(q_ptr, FALSE));
 #ifdef ENABLE_SUBCLASS_TITLE
-		titlebuf2 = get_ptitle2(q_ptr, FALSE);
+		if (q_ptr->sclass) {
+			strcat(titlebuf, " ");
+			strcat(titlebuf, get_ptitle2(q_ptr, FALSE));
+		}
 #endif
 
 		if (is_Morgoth)
-#ifdef ENABLE_SUBCLASS_TITLE
-			snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s %s %s.\377v**", r_name_get(m_ptr), titlebuf, titlebuf2, p_ptr->name);
-#else
 			snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s %s.\377v**", r_name_get(m_ptr), titlebuf, p_ptr->name);
-#endif
 #ifdef ZU_AON_FLASHY_MSG
 		else if (is_ZuAon)
- #ifdef ENABLE_SUBCLASS_TITLE
-			snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by %s %s %s.\377x**", r_name_get(m_ptr), titlebuf, titlebuf2, p_ptr->name);
- #else
 			snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by %s %s.\377x**", r_name_get(m_ptr), titlebuf, p_ptr->name);
- #endif
 #endif
 		else if ((r_ptr->flags8 & RF8_FINAL_GUARDIAN)) {
 #ifdef IDDC_BOSS_COL
- #ifdef ENABLE_SUBCLASS_TITLE
-			if (in_iddc) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by %s %s %s.\377D**", r_name_get(m_ptr), titlebuf, titlebuf2, p_ptr->name);
- #else
 			if (in_iddc) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by %s %s.\377D**", r_name_get(m_ptr), titlebuf, p_ptr->name);
- #endif
 			else
 #endif
-#ifdef ENABLE_SUBCLASS_TITLE
-			snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s %s %s.\377U**", r_name_get(m_ptr), titlebuf, titlebuf2, p_ptr->name);
-#else
 			snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s %s.\377U**", r_name_get(m_ptr), titlebuf, p_ptr->name);
-#endif
 		} else
-#ifdef ENABLE_SUBCLASS_TITLE
-			snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by %s %s %s.\377b**", r_name_get(m_ptr), titlebuf, titlebuf2, p_ptr->name);
-#else
 			snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by %s %s.\377b**", r_name_get(m_ptr), titlebuf, p_ptr->name);
-#endif
 } else {
 	/* for now disabled (works though) since we don't have telepath class
 	   at the moment, and party names would make the line grow too long if
@@ -8918,10 +8898,7 @@ void player_death(int Ind) {
 	//int inven_sort_map[INVEN_TOTAL];
 	//wilderness_type *wild;
 	bool hell = TRUE, secure = FALSE, ge_secure = FALSE, pvp = ((p_ptr->mode & MODE_PVP) != 0), erase = FALSE, insanity = streq(p_ptr->died_from, "insanity"), penalty = FALSE;
-	cptr titlebuf;
-#ifdef ENABLE_SUBCLASS_TITLE
-	cptr titlebuf2;
-#endif
+	char titlebuf[160];
 	int death_type = -1; /* keep track of the way (s)he died, for buffer_account_for_event_deed() */
 #ifdef TOMENET_WORLDS
 	bool world_broadcast = TRUE;
@@ -8970,9 +8947,12 @@ void player_death(int Ind) {
 	}
 
 	/* prepare player's title */
-	titlebuf = get_ptitle(p_ptr, FALSE);
+	strcpy(titlebuf, get_ptitle(p_ptr, FALSE));
 #ifdef ENABLE_SUBCLASS_TITLE
-	titlebuf2 = get_ptitle2(p_ptr, FALSE);
+	if (p_ptr->sclass) {
+		strcat(titlebuf, " ");
+		strcat(titlebuf, get_ptitle2(p_ptr, FALSE));
+	}
 #endif
 
 	break_cloaking(Ind, 0);
@@ -9451,11 +9431,7 @@ void player_death(int Ind) {
 
 			/* Message to other players */
 			if (cfg.unikill_format)
-#ifdef ENABLE_SUBCLASS_TITLE
-				snprintf(buf, sizeof(buf), "\374\377D%s %s %s (%d) was defeated by %s.", titlebuf, titlebuf2, p_ptr->name, p_ptr->lev, p_ptr->died_from);
-#else
 				snprintf(buf, sizeof(buf), "\374\377D%s %s (%d) was defeated by %s.", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
-#endif
 			else
 				snprintf(buf, sizeof(buf), "\374\377D%s (%d) was defeated by %s.", p_ptr->name, p_ptr->lev, p_ptr->died_from);
 
@@ -9853,11 +9829,7 @@ void player_death(int Ind) {
 s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
 
 			if (cfg.unikill_format)
-#ifdef ENABLE_SUBCLASS_TITLE
-			snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s %s (%d) was destroyed by \377m%s\377r.\377%c**", msg_layout, titlebuf, titlebuf2, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
-#else
 			snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was destroyed by \377m%s\377r.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
-#endif
 			else
 			snprintf(buf, sizeof(buf), "\374\377%c**\377r%s (%d) was destroyed by \377m%s\377r.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 			s_printf("%s%s - %s (%d%s) was destroyed by %s for %d damage at %d, %d, %d.\n", FORMATDEATH, showtime(), p_ptr->name, p_ptr->lev, p_ptr->admin_dm ? " DM" : (p_ptr->admin_wiz ? " DW" : ""), p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
@@ -9884,7 +9856,11 @@ s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s ; trait=%s ; %d dea
 #endif
 
 #ifdef ENABLE_SUBCLASS_TITLE
-s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; subclass=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, class_info[p_ptr->sclass - 1].title, p_ptr->deaths);
+if (p_ptr->sclass) {
+	s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; subclass=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, class_info[p_ptr->sclass - 1].title, p_ptr->deaths);
+} else {
+	s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
+}
 #else
 s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
 #endif
@@ -9892,18 +9868,10 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d de
 			if (cfg.unikill_format) {
 				switch (p_ptr->name[strlen(p_ptr->name) - 1]) {
 				case 's': case 'x': case 'z':
-#ifdef ENABLE_SUBCLASS_TITLE
-					snprintf(buf, sizeof(buf), "\374\377a**\377r%s %s %s' (%d) ghost was destroyed by %s.\377a**", titlebuf, titlebuf2, p_ptr->name, p_ptr->lev, p_ptr->died_from);
-#else
 					snprintf(buf, sizeof(buf), "\374\377a**\377r%s %s' (%d) ghost was destroyed by %s.\377a**", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
-#endif
 					break;
 				default:
-#ifdef ENABLE_SUBCLASS_TITLE
-					snprintf(buf, sizeof(buf), "\374\377a**\377r%s %s %s's (%d) ghost was destroyed by %s.\377a**", titlebuf, titlebuf2, p_ptr->name, p_ptr->lev, p_ptr->died_from);
-#else
 					snprintf(buf, sizeof(buf), "\374\377a**\377r%s %s's (%d) ghost was destroyed by %s.\377a**", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
-#endif
 				}
 			} else {
 				switch (p_ptr->name[strlen(p_ptr->name) - 1]) {
@@ -9949,11 +9917,7 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d de
 				}
 				msg_format(Ind, "\374\377%c**\377rYou have been %s by %s.\377%c**", msg_layout, funky_msg, p_ptr->died_from, msg_layout);
 				if (cfg.unikill_format) {
-#ifdef ENABLE_SUBCLASS_TITLE
-					snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s %s (%d) was %s by %s.\377%c**", msg_layout, titlebuf, titlebuf2, p_ptr->name, p_ptr->lev, funky_msg, p_ptr->died_from, msg_layout);
-#else
 					snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was %s by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, funky_msg, p_ptr->died_from, msg_layout);
-#endif
 				} else {
 					snprintf(buf, sizeof(buf), "\374\377%c**\377r%s (%d) was %s and destroyed by %s.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, funky_msg, p_ptr->died_from, msg_layout);
 				}
@@ -9983,23 +9947,11 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d de
 					    || streq(p_ptr->died_from, "starvation")
 					    || streq(p_ptr->died_from, "poisonous food")
 					    || insanity)
-#ifdef ENABLE_SUBCLASS_TITLE
-						snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s %s (%d) was killed by %s.\377%c**", msg_layout, titlebuf, titlebuf2, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
-#else
 						snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was killed by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
-#endif
 					else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450)))
-#ifdef ENABLE_SUBCLASS_TITLE
-						snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s %s (%d) was annihilated by %s.\377%c**", msg_layout, titlebuf, titlebuf2, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
-#else
 						snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was annihilated by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
-#endif
 					else
-#ifdef ENABLE_SUBCLASS_TITLE
-						snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s %s (%d) was vaporized by %s.\377%c**", msg_layout, titlebuf, titlebuf2, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
-#else
 						snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was vaporized by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
-#endif
 				} else {
 					if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
 #ifdef ENABLE_MAIA
@@ -10208,26 +10160,14 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 			    || insanity) {
 				/* snprintf(buf, sizeof(buf), "\374\377r%s was killed by %s.", p_ptr->name, p_ptr->died_from); */
 				/* Add the player lvl to the death message. the_sandman */
-#ifdef ENABLE_SUBCLASS_TITLE
-				snprintf(buf, sizeof(buf), "\374\377r%s %s %s (%d) was killed by %s", titlebuf, titlebuf2, p_ptr->name, p_ptr->lev, p_ptr->died_from);
-#else
 				snprintf(buf, sizeof(buf), "\374\377r%s %s (%d) was killed by %s", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
-#endif
 			}
 			else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450))) {
 				/* snprintf(buf, sizeof(buf), "\377r%s was annihilated by %s.", p_ptr->name, p_ptr->died_from); */
-#ifdef ENABLE_SUBCLASS_TITLE
-				snprintf(buf, sizeof(buf), "\374\377r%s %s %s (%d) was annihilated by %s", titlebuf, titlebuf2, p_ptr->name, p_ptr->lev, p_ptr->died_from);
-#else
 				snprintf(buf, sizeof(buf), "\374\377r%s %s (%d) was annihilated by %s", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
-#endif
 			}
 			else {
-#ifdef ENABLE_SUBCLASS_TITLE
-				snprintf(buf, sizeof(buf), "\374\377r%s %s %s (%d) was vaporized by %s.", titlebuf, titlebuf2, p_ptr->name, p_ptr->lev, p_ptr->died_from);
-#else
 				snprintf(buf, sizeof(buf), "\374\377r%s %s (%d) was vaporized by %s.", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
-#endif
 			}
 		} else {
 			if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
@@ -13283,13 +13223,13 @@ bool target_set(int Ind, int dir) {
 				q_ptr = Players[0 - p_ptr->target_idx[i]];
 				if (q_ptr->body_monster) {
 #ifdef ENABLE_SUBCLASS_TITLE
-					snprintf(out_val, sizeof(out_val), "%s the %s (%s %s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, get_ptitle(q_ptr, FALSE), get_ptitle2(q_ptr, FALSE));
+					snprintf(out_val, sizeof(out_val), "%s the %s (%s%s%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, get_ptitle(q_ptr, FALSE), (q_ptr->sclass) ? " " : "", get_ptitle2(q_ptr, FALSE));
 #else
 					snprintf(out_val, sizeof(out_val), "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, get_ptitle(q_ptr, FALSE));
 #endif
 				} else {
 #ifdef ENABLE_SUBCLASS_TITLE
-					snprintf(out_val, sizeof(out_val), "%s the %s%s %s", q_ptr->name, get_prace2(q_ptr), get_ptitle(q_ptr, FALSE), get_ptitle2(q_ptr, FALSE));
+					snprintf(out_val, sizeof(out_val), "%s the %s%s%s%s", q_ptr->name, get_prace2(q_ptr), get_ptitle(q_ptr, FALSE), (q_ptr->sclass) ? " " : "", get_ptitle2(q_ptr, FALSE));
 #else
 					snprintf(out_val, sizeof(out_val), "%s the %s%s", q_ptr->name, get_prace2(q_ptr), get_ptitle(q_ptr, FALSE));
 #endif

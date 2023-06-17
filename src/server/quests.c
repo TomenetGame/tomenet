@@ -403,8 +403,10 @@ static void quest_text_replace(char *dest, cptr src, player_type *p_ptr) {
 		case 'T':
 			strcat(dest, get_ptitle(p_ptr, FALSE));
 #ifdef ENABLE_SUBCLASS_TITLE
-			strcat(dest, " ");
-			strcat(dest, get_ptitle2(p_ptr, FALSE));
+			if (p_ptr->sclass) {
+				strcat(dest, " ");
+				strcat(dest, get_ptitle2(p_ptr, FALSE));
+			}
 #endif
 			break;
 		case 'R':
@@ -428,8 +430,10 @@ static void quest_text_replace(char *dest, cptr src, player_type *p_ptr) {
 		case 't':
 			strcat(dest, get_ptitle(p_ptr, FALSE));
 #ifdef ENABLE_SUBCLASS_TITLE
-			strcat(dest, " ");
-			strcat(dest, get_ptitle2(p_ptr, FALSE));
+			if (p_ptr->sclass) {
+				strcat(dest, " ");
+				strcat(dest, get_ptitle2(p_ptr, FALSE));
+			}
 #endif
 			lp = pos - 1;
 			while (dest[++lp]) dest[lp] = tolower(dest[lp]);
