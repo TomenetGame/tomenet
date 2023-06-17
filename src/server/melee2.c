@@ -4736,16 +4736,19 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	/* RF4_ARROW_1 (arrow, light) */
 	case RF4_OFFSET + 4: {
 		//int power = rlev / 2 + randint(rlev / 2),
-		int	dice = 1 + rlev / 8,
+		int dice = 1 + rlev / 8,
 		fois = 1 + rlev / 20;
 #if 0
 		if (power > 8) dice += 2;
 		if (power > 20) dice += 2;
 		if (power > 30) dice += 2;
 #endif
+if (m_ptr->r_idx == RI_MIRROR) s_printf("dice = %d, ", dice);
 #ifdef RI_MIRROR_STRONG_ARROW
 		dice *= RI_MIRROR_STRONG_ARROW; /* Experimental: Extra damage for Mirror Image, to compete vs archers and co */
+if (m_ptr->r_idx == RI_MIRROR) s_printf("dice = %d", dice);
 #endif
+if (m_ptr->r_idx == RI_MIRROR) s_printf("\n");
 
 		disturb(Ind, 1, 0);
 		if (monst_check_grab(m_idx, 100, "fire")) break;
@@ -4762,7 +4765,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	case RF4_OFFSET + 5: {
 		//int power = rlev / 2 + randint(rlev / 2),
 		//fois = 1 + rlev / 20;
-		int	dice = 3 + rlev / 5;
+		int dice = 3 + rlev / 5;
 #if 0
 		if (power > 8) dice += 2;
 		if (power > 20) dice += 2;
@@ -4782,7 +4785,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 
 	/* former RF4_ARROW_3 (bolt, heavy) */
 	case RF4_OFFSET + 6: {
-		int	dice = 3 + rlev / 5;
+		int dice = 3 + rlev / 5;
 #if 0
 		if (power > 8) dice += 2;
 		if (power > 20) dice += 2;
@@ -4802,7 +4805,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 
 	/* former RF4_ARROW_4 (generic missile, heavy - physical, and used as boomerang-mirror for mirror image) */
 	case RF4_OFFSET + 7: {
-		int	dice = 3 + rlev / 5;
+		int dice = 3 + rlev / 5;
 #if 0
 		if (power > 8) dice += 2;
 		if (power > 20) dice += 2;
