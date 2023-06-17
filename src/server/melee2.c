@@ -4730,7 +4730,8 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		update_smart_learn(Ind, m_idx, DRS_FIRE);
 		break;
 
-#define RI_MIRROR_STRONG_ARROW
+/* Increase physical shooter damage? */
+#define RI_MIRROR_STRONG_ARROW 6
 
 	/* RF4_ARROW_1 (arrow, light) */
 	case RF4_OFFSET + 4: {
@@ -4743,7 +4744,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		if (power > 30) dice += 2;
 #endif
 #ifdef RI_MIRROR_STRONG_ARROW
-		dice <<= 1; /* Experimental: Extra damage for Mirror Image, to compete vs archers and co */
+		dice *= RI_MIRROR_STRONG_ARROW; /* Experimental: Extra damage for Mirror Image, to compete vs archers and co */
 #endif
 
 		disturb(Ind, 1, 0);
@@ -4768,7 +4769,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		if (power > 30) dice += 2;
 #endif
 #ifdef RI_MIRROR_STRONG_ARROW
-		dice <<= 1; /* Experimental: Extra damage for Mirror Image, to compete vs archers and co */
+		dice *= RI_MIRROR_STRONG_ARROW; /* Experimental: Extra damage for Mirror Image, to compete vs archers and co */
 #endif
 
 		disturb(Ind, 1, 0);
@@ -4788,7 +4789,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		if (power > 30) dice += 2;
 #endif
 #ifdef RI_MIRROR_STRONG_ARROW
-		dice <<= 1; /* Experimental: Extra damage for Mirror Image, to compete vs archers and co */
+		dice *= RI_MIRROR_STRONG_ARROW; /* Experimental: Extra damage for Mirror Image, to compete vs archers and co */
 #endif
 
 		disturb(Ind, 1, 0);
@@ -4808,7 +4809,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		if (power > 30) dice += 2;
 #endif
 #ifdef RI_MIRROR_STRONG_ARROW
-		dice <<= 1; /* Experimental: Extra damage for Mirror Image, to compete vs archers and co */
+		dice *= RI_MIRROR_STRONG_ARROW; /* Experimental: Extra damage for Mirror Image, to compete vs archers and co */
 #endif
 
 		disturb(Ind, 1, 0);
