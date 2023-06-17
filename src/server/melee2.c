@@ -2358,7 +2358,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 #ifndef STUPID_MONSTER_SPELLS
 	/* Check for spell failure chance and generic interception for 'real' spells */
 	if (!stupid &&
-	    thrown_spell >= RF5_OFFSET && thrown_spell < RF0_OFFSET + 24
+	    thrown_spell >= RF5_OFFSET && thrown_spell < RF0_OFFSET + RF0_NONFAIL_LIMITER
 	    && thrown_spell != RF6_OFFSET + 4 && thrown_spell != RF6_OFFSET + 5) { /* Blink and TPort have their own checks! */
 		int factor = 0;
 
@@ -4640,7 +4640,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 
 #ifndef STUPID_MONSTER_SPELLS
 	if (!stupid &&
-	    thrown_spell >= RF5_OFFSET && thrown_spell < RF0_OFFSET + 24
+	    thrown_spell >= RF5_OFFSET && thrown_spell < RF0_OFFSET + RF0_NONFAIL_LIMITER
 	    && thrown_spell != RF6_OFFSET + 4 && thrown_spell != RF6_OFFSET + 5) { /* Blink and TPort have their own checks! */
 		int factor = 0;
 

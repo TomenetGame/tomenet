@@ -6185,7 +6185,10 @@
 #define RF0_BO_CHAOS		0x00020000		/* Mirror: Chaos Bolt (Shadow/HOff) */
 #define RF0_DRAIN_LIFE		0x00040000		/* Mirror: Drain Life (Shadow/Necro) */
 #define RF0_BO_PSI		0x00080000		/* Mirror: Psionic Blast [+Psi Storm] */
-//hole -- note! Above this line must be all spells that can be failed to cast, below this line all spells that don't have a chance to fail!
+//hole
+
+#define RF0_NONFAIL_LIMITER	24			/* note! RF0_OFFSET + this = Spells that cannot fail on casting, because they are not cast spells but 'skills'. */
+
 #define RF0_BR_ICE		0x01000000		/* For Bahamuth */
 #define RF0_BR_WATER		0x02000000		/* Finally no more antimagic field vs water hounds :p */
 #define RF0_HEAL_PHYS		0x04000000		/* Mirror: Heal by physical means, eg Potion of Healing */
