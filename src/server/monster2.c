@@ -6500,10 +6500,12 @@ else s_printf("\n");
 		}
 	}
 
-	if (get_skill(p_ptr, SKILL_SLING) >= thresh_skill) { r_ptr->flags4 |= RF4_ARROW_2; magicness++; }
-	if (get_skill(p_ptr, SKILL_BOW) >= thresh_skill) { r_ptr->flags4 |= RF4_ARROW_1; magicness++; }
-	if (get_skill(p_ptr, SKILL_XBOW) >= thresh_skill) { r_ptr->flags4 |= RF4_ARROW_3; magicness++; }
-	if (get_skill(p_ptr, SKILL_BOOMERANG) >= thresh_skill) { r_ptr->flags4 |= RF4_ARROW_4; magicness++; } //it's "missile", but we don't have a monster-boomerang-skill
+	if (p_ptr->inventory[INVEN_BOW].tval == TV_BOOMERANG && get_skill(p_ptr, SKILL_BOOMERANG) >= thresh_skill) { r_ptr->flags4 |= RF4_ARROW_4; magicness++; } //it's "missile", but we don't have a monster-boomerang-skill
+	if (p_ptr->inventory[INVEN_BOW].tval == TV_BOW) {
+		if (get_skill(p_ptr, SKILL_SLING) >= thresh_skill && p_ptr->inventory[INVEN_BOW].tval == SV_SLING && p_ptr->inventory[INVEN_AMMO].tval == TV_SHOT) { r_ptr->flags4 |= RF4_ARROW_2; magicness++; }
+		if (get_skill(p_ptr, SKILL_BOW) >= thresh_skill && (p_ptr->inventory[INVEN_BOW].tval == SV_SHORT_BOW || p_ptr->inventory[INVEN_BOW].tval == SV_LONG_BOW) && p_ptr->inventory[INVEN_AMMO].tval == TV_ARROW) { r_ptr->flags4 |= RF4_ARROW_1; magicness++; }
+		if (get_skill(p_ptr, SKILL_XBOW) >= thresh_skill && (p_ptr->inventory[INVEN_BOW].tval == SV_LIGHT_XBOW || p_ptr->inventory[INVEN_BOW].tval == SV_HEAVY_XBOW) && p_ptr->inventory[INVEN_AMMO].tval == TV_BOLT) { r_ptr->flags4 |= RF4_ARROW_3; magicness++; }
+	}
 
 
 //TODO: Archery - it doesnt take anything into account, such as actual skill, Archery skill, SpR, or even ranged +hit,+dam
