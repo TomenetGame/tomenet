@@ -7428,6 +7428,12 @@ void do_cmd_fire(int Ind, int dir) {
 						if (!(r_ptr->flags1 & RF1_UNIQUE)) tdam = m_ptr->hp + 1;
 					}
 
+#define RI_MIRROR_REDUCED_RANGED 4
+#ifdef RI_MIRROR_REDUCED_RANGED
+					/* Experimental: Extra damage reduction vs shooting */
+					if (m_ptr->r_idx == RI_MIRROR) tdam = (tdam + RI_MIRROR_REDUCED_RANGED - 1) / RI_MIRROR_REDUCED_RANGED;
+#endif
+
 					/* Hit the monster, check for death */
 					if (mon_take_hit(Ind, c_ptr->m_idx, tdam, &fear, note_dies)) {
 						/* note: if the monster we hit wasn't the one targetted, then continue shooting.

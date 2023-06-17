@@ -4730,6 +4730,8 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		update_smart_learn(Ind, m_idx, DRS_FIRE);
 		break;
 
+#define RI_MIRROR_STRONG_ARROW
+
 	/* RF4_ARROW_1 (arrow, light) */
 	case RF4_OFFSET + 4: {
 		//int power = rlev / 2 + randint(rlev / 2),
@@ -4740,7 +4742,9 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		if (power > 20) dice += 2;
 		if (power > 30) dice += 2;
 #endif
+#ifdef RI_MIRROR_STRONG_ARROW
 		dice <<= 1; /* Experimental: Extra damage for Mirror Image, to compete vs archers and co */
+#endif
 
 		disturb(Ind, 1, 0);
 		if (monst_check_grab(m_idx, 100, "fire")) break;
@@ -4763,7 +4767,9 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		if (power > 20) dice += 2;
 		if (power > 30) dice += 2;
 #endif
+#ifdef RI_MIRROR_STRONG_ARROW
 		dice <<= 1; /* Experimental: Extra damage for Mirror Image, to compete vs archers and co */
+#endif
 
 		disturb(Ind, 1, 0);
 		if (monst_check_grab(m_idx, 100, "fire")) break;
@@ -4781,7 +4787,9 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		if (power > 20) dice += 2;
 		if (power > 30) dice += 2;
 #endif
+#ifdef RI_MIRROR_STRONG_ARROW
 		dice <<= 1; /* Experimental: Extra damage for Mirror Image, to compete vs archers and co */
+#endif
 
 		disturb(Ind, 1, 0);
 		if (monst_check_grab(m_idx, 100, "fire")) break;
@@ -4799,7 +4807,9 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		if (power > 20) dice += 2;
 		if (power > 30) dice += 2;
 #endif
+#ifdef RI_MIRROR_STRONG_ARROW
 		dice <<= 1; /* Experimental: Extra damage for Mirror Image, to compete vs archers and co */
+#endif
 
 		disturb(Ind, 1, 0);
 		if (blind) msg_print(Ind, "You hear a strange noise.");
