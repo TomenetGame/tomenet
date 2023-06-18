@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 13. June 2023 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 18. June 2023 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.0c - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -22645,7 +22645,7 @@ The techniques are as follows:
         (Distracting costs half a turn of energy.)
     Track Animals       3 stamina    (rangers only)
         Read animal tracks, disclosing their whereabouts in your surroundings.
-    Spin                8 stamina
+    Spin                5 stamina
         A sweep that hits all adjacent monsters and may stun them if they don't
         resist. You might even perform more than one complete sweep circle,
         hitting some or all monsters multiple times, based on your number of
