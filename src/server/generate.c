@@ -6749,7 +6749,7 @@ static void build_type12(worldpos *wpos, int by0, int bx0, player_type *p_ptr) {
  *
  * static char maze[(MAX_HGT / 2) + 2][(MAX_WID / 2) + 2];
  */
-typedef char maze_row[(MAX_WID / 2) + 2];
+typedef signed char maze_row[(MAX_WID / 2) + 2];
 
 static void dig(maze_row *maze, int y, int x, int d) {
 	int k;

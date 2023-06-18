@@ -34,7 +34,7 @@
 
 
 static int math_abs (lua_State *L) {
-  lua_pushnumber(L, fabs(luaL_check_number(L, 1)));
+  lua_pushnumber(L, labs(luaL_check_number(L, 1)));
   return 1;
 }
 
