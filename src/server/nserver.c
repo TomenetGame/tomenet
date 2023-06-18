@@ -560,7 +560,7 @@ static bool update_acc_file_version(void) {
 		acc.unused1 = acc.unused2 = acc.unused3 = 0;
 
 		/* changes/additions */
-		acc.houses = -1; //init value, means "please count me" // ACC_HOUSE_LIMIT
+		acc.houses = 127; //init value, means "please count me" // ACC_HOUSE_LIMIT
 
 		/* write it back */
 		if (fwrite(&acc, sizeof(struct account), 1, fp) < 1)

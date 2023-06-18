@@ -3700,7 +3700,7 @@ errr rd_server_savefile() {
 			// ACC_HOUSE_LIMIT
 			//see further below. We need to close the server save file first, to load player savefiles, so we can't do this here!
 			if (!s_older_than(4, 6, 3)) rd_byte(&houses);
-			else houses = -1;
+			else houses = 127; //hack: "re-count me!"
 
 			if (!s_older_than(4, 6, 8)) rd_byte(&winner);
 			else winner = 0;
@@ -3830,8 +3830,8 @@ errr rd_server_savefile() {
 		ptr = hash_table[i];
 		/* Check all entries in this chain */
 		while (ptr) {
-			if (ptr->houses == -1) {
-				/* hack */
+			if (ptr->houses == 127) {
+				/* hack: re-count me! */
 				player_type *p_ptr;
 				time_t ttime;
 

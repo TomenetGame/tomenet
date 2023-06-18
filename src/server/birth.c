@@ -3373,7 +3373,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	}
 
 	/* init account-wide houses limit? // ACC_HOUSE_LIMIT */
-	if (acc_houses == -1) {
+	if (acc_houses == 127) { //hack: "re-count me!"
 		if (GetAccount(&acc, accname, NULL, FALSE)) {
 			/* grab sum from hash table entries */
 			acc_houses = acc_sum_houses(&acc, FALSE);
