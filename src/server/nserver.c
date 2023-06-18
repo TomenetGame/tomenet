@@ -107,7 +107,7 @@
 /* Sanity check of client input */
 #define bad_dir(d)	((d)<0 || (d)>9)	/* used for non-targetting actions that require a direction */
 //#define bad_dir1(d)	((d)<0 || (d)>9+1)	/* used for most targetting actions */
-static bool bad_dir1(int Ind, char *dir) {
+static bool bad_dir1(int Ind, signed char *dir) {
 	/* paranoia? */
 	if (Ind == -1) return(TRUE);
 
@@ -123,7 +123,7 @@ static bool bad_dir1(int Ind, char *dir) {
 }
 #define bad_dir2(d)	((d)<128 || (d)>137)	/* dir + 128; used for manual target positioning */
 //#define bad_dir3(d)	((d)<-1 || (d)>9+1)	/* used for MKEY_SCHOOL activations */
-static bool bad_dir3(int Ind, char *dir) {
+static bool bad_dir3(int Ind, signed char *dir) {
 	/* paranoia? */
 	if (Ind == -1) return(TRUE);
 
@@ -9799,7 +9799,8 @@ static int Receive_keepalive(int ind) {
 static int Receive_walk(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-	char ch, dir;
+	char ch;
+	signed char dir;
 	int n, player = -1;
 
 	if (connp->id != -1) {
@@ -9878,7 +9879,7 @@ static int Receive_run(int ind) {
 	player_type *p_ptr = NULL;
 	char ch;
 	int i, n, player = -1;
-	char dir;
+	signed char dir;
 	dun_level *l_ptr = NULL;
 
 	if (connp->id != -1) {
@@ -10040,7 +10041,8 @@ int fake_Receive_tunnel(int Ind, int dir) {
 static int Receive_tunnel(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-	char ch, dir;
+	char ch;
+	signed char dir;
 	int n, player = -1;
 
 	if (connp->id != -1) {
@@ -10084,7 +10086,8 @@ static int Receive_tunnel(int ind) {
 static int Receive_aim_wand(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-	char ch, dir;
+	char ch;
+	signed char dir;
 	s16b item;
 	int n, player = -1;
 
@@ -10163,7 +10166,8 @@ static int Receive_drop(int ind) {
 static int Receive_fire(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-	char ch, dir = 5;
+	char ch;
+	signed char dir = 5;
 	int n, player = -1, energy;
 	//s16b item;
 
@@ -10424,7 +10428,8 @@ static int Receive_look(int ind) {
 static int Receive_activate_skill(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-	char ch, mkey, dir;
+	char ch, mkey;
+	signed char dir;
 	int n, player = -1, old = -1;
 	s16b book, spell, item, aux;
 
@@ -10712,7 +10717,8 @@ static int Receive_activate_skill(int ind) {
 static int Receive_open(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-	char ch, dir;
+	char ch;
+	signed char dir;
 	int n, player = -1;
 
 	if (connp->id != -1) {
@@ -11063,7 +11069,8 @@ static int Receive_use(int ind) {
 static int Receive_throw(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-	char ch, dir;
+	char ch;
+	signed char dir;
 	int n, player = -1;
 	s16b item;
 
@@ -11207,7 +11214,8 @@ static int Receive_zap(int ind) {
 static int Receive_zap_dir(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-	char ch, dir;
+	char ch;
+	signed char dir;
 	s16b item;
 	int n, player = -1;
 
@@ -11464,7 +11472,8 @@ static int Receive_activate(int ind) {
 static int Receive_activate_dir(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-	char ch, dir;
+	char ch;
+	signed char dir;
 	s16b item;
 	int n, player = -1;
 
@@ -11503,7 +11512,8 @@ static int Receive_activate_dir(int ind) {
 static int Receive_bash(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-	char ch, dir;
+	char ch;
+	signed char dir;
 	int n, player = -1;
 
 	if (connp->id != -1) {
@@ -11547,7 +11557,8 @@ static int Receive_bash(int ind) {
 static int Receive_disarm(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-	char ch, dir;
+	char ch;
+	signed char dir;
 	int n, player = -1;
 
 	if (connp->id != -1) {
@@ -11663,7 +11674,8 @@ static int Receive_fill(int ind) {
 static int Receive_locate(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-	char ch, dir;
+	char ch;
+	signed char dir;
 	int n, player = -1;
 
 	if (connp->id != -1) {
@@ -11737,11 +11749,11 @@ static int Receive_search_mode(int ind) {
 	return(1);
 }
 
-static int Receive_close(int ind)
-{
+static int Receive_close(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-	char ch, dir;
+	char ch;
+	signed char dir;
 	int n, player = -1;
 
 	if (connp->id != -1) {
@@ -11878,10 +11890,10 @@ static int Receive_go_down(int ind)
 }
 
 
-static int Receive_direction(int ind)
-{
+static int Receive_direction(int ind) {
 	connection_t *connp = Conn[ind];
-	char ch, dir;
+	char ch;
+	signed char dir;
 	int n, player = -1;
 	player_type *p_ptr = NULL;
 
@@ -12236,12 +12248,13 @@ static int Receive_drop_gold(int ind) {
 static int Receive_steal(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-	char ch, dir;
+	char ch;
+	signed char dir;
 	int n, player = -1;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
-//		use_esp_link(&player, LINKF_OBJ);
+		//use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
 	}
 
@@ -13373,7 +13386,8 @@ void end_mind(int Ind, bool update) {
 static int Receive_spike(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-	char ch, dir;
+	char ch;
+	signed char dir;
 	int n, player = -1;
 
 	if (connp->id != -1) {
