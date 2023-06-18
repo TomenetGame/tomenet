@@ -3274,7 +3274,7 @@ const char* get_font_name(int term_idx) {
 }
 
 void set_font_name(int term_idx, char* fnt) {
-	if (term_idx < 0 || term_idx >=ANGBAND_TERM_MAX) {
+	if (term_idx < 0 || term_idx >= ANGBAND_TERM_MAX) {
 		fprintf(stderr, "Terminal index %d is out of bounds for set_font_name\n", term_idx);
 		return;
 	}
@@ -3342,10 +3342,10 @@ void term_toggle_visibility(int term_idx) {
 
 /* Returns true if terminal window specified by term_idx is currently visible. */
 bool term_get_visibility(int term_idx) {
-	if (term_idx < 0 || term_idx >= ANGBAND_TERM_MAX) return false;
+	if (term_idx < 0 || term_idx >= ANGBAND_TERM_MAX) return(false);
 
 	/* Only windows initialized in ang_term array are currently visible. */
-	return (bool)ang_term[term_idx];
+	return((bool)ang_term[term_idx]);
 }
 
 /* automatically store name+password to ini file if we're a new player? */

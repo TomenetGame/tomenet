@@ -42,7 +42,7 @@ PRE_ALWAYS static __m128i mm_recursion(__m128i *a, __m128i *b,
     y = _mm_and_si128(y, mask);
     z = _mm_xor_si128(z, x);
     z = _mm_xor_si128(z, y);
-    return z;
+    return(z);
 }
 
 /**

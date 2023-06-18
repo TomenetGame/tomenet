@@ -58,7 +58,7 @@ inline static vector unsigned int vec_recursion(vector unsigned int a,
     v = vec_xor(v, x);
     z = vec_xor(z, y);
     z = vec_xor(z, v);
-    return z;
+    return(z);
 }
 
 /**
