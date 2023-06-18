@@ -1005,11 +1005,13 @@ int main(int argc, char **argv) {
 			for (j = 0; j < BASE_PALETTE_SIZE; j++) client_color_map[j] = client_color_map_org[j];
 			use_sound = TRUE;
 			quiet_mode = FALSE;
+#ifdef USE_SOUND_2010
 			sound_hint = TRUE;
-			bigmap_hint = TRUE;
-			firstrun = TRUE;
 			no_cache_audio = FALSE;
+#endif
 			cfg_soundpackfolder[0] = cfg_musicpackfolder[0] = 0;
+			firstrun = TRUE;
+			bigmap_hint = TRUE;
 #ifdef GLOBAL_BIG_MAP
 			/* Also reset main window to non-big_map */
 			global_c_cfg_big_map = FALSE;
