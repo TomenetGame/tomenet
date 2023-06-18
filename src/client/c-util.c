@@ -110,11 +110,11 @@ static bool was_all_buffer = FALSE;
 static bool was_important_scrollback = FALSE;
 
 static char octify(uint i) {
-	return(hexsym[i%8]);
+	return(hexsym[i % 8]);
 }
 
 static char hexify(uint i) {
-	return(hexsym[i%16]);
+	return(hexsym[i % 16]);
 }
 
 void move_cursor(int row, int col) {

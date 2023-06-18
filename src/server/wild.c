@@ -874,10 +874,10 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y) {
 	}
 
 	/* alternating rows of crops */
-	for (y = y1+1; y <= y2-1; y ++) {
-		for (x = x1+1; x <= x2-1; x++) {
+	for (y = y1 + 1; y <= y2 - 1; y ++) {
+		for (x = x1 + 1; x <= x2 - 1; x++) {
 			/* different orientations */
-			if (((!orientation) && (y%2)) || ((orientation) && (x%2))) {
+			if (((!orientation) && (y % 2)) || ((orientation) && (x % 2))) {
 				/* set to crop */
 				zcave[y][x].feat = FEAT_CROP;
 				/* random chance of food */
@@ -987,14 +987,14 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 			/* hack -- no farms near the town */
 			if (w_ptr->radius > 1) {
 				/* are we a farmer? */
-				if (rand_int(100) < 50) wild_add_garden(wpos, (x1 + x2) / 2,(y1 + y2) / 2);
+				if (rand_int(100) < 50) wild_add_garden(wpos, (x1 + x2) / 2, (y1 + y2) / 2);
 			}
 			/* Fall through */
 		case WILD_ROCK_HOME:
 			/* hack -- no farms near the town */
 			if (w_ptr->radius > 1) {
 				/* are we a farmer? */
-				if (rand_int(100) < 40) wild_add_garden(wpos, (x1 + x2) / 2,(y1 + y2) / 2);
+				if (rand_int(100) < 40) wild_add_garden(wpos, (x1 + x2) / 2, (y1 + y2) / 2);
 			}
 			/* Fall through */
 		case WILD_PERM_HOME:
@@ -2386,7 +2386,7 @@ static void wild_gen_bleedmap_aux(int *bleedmap, int span, char dir) {
 			if (bleedmap[c + span] != 0xFFFF) below = bleedmap[c + span];
 			else below = 0;
 
-			noise_mag = (dir%2) ? 70 : 25;
+			noise_mag = (dir % 2) ? 70 : 25;
 			/* randomness proportional to span */
 			rand_noise = ((rand_int(noise_mag * 2) - noise_mag) * span) / 64;
 			bleedmag = ((above + below) / 2) + rand_noise;
@@ -2809,7 +2809,7 @@ static void bleed_with_neighbors(struct worldpos *wpos) {
 							/* share a point */
 							/* seed the number generator */
 							Rand_value = seed_town + (getlevel_wild_old(wpos) + getlevel_wild_old(&neighbor)) * (89791);
-							share_point[c][d] = rand_int(((c%2) ? 70 : 25));
+							share_point[c][d] = rand_int(((c % 2) ? 70 : 25));
 						}
 						else share_point[c][d] = 0;
 					}
@@ -2825,7 +2825,7 @@ static void bleed_with_neighbors(struct worldpos *wpos) {
 
 	/* do the bleeds */
 	for (c = 0; c < 4; c++) {
-		tmp = c+1; if (tmp > 3) tmp = 0;
+		tmp = c + 1; if (tmp > 3) tmp = 0;
 		if (do_bleed[c]) {
 			if ((!share_point[c][0]) && (!bleed_zero[c])) start = -1;
 			else if (share_point[c][0]) start = share_point[c][0];
@@ -3959,7 +3959,7 @@ static void makeland() {
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
 		} while (wild_info[y][x].type != WILD_UNDEFINED);
-		island(y, x, WILD_GRASSLAND, WILD_UNDEFINED, rand_int(1<<density));
+		island(y, x, WILD_GRASSLAND, WILD_UNDEFINED, rand_int(1 << density));
 	}
 }
 
@@ -3990,7 +3990,7 @@ static bool addhills() {
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
 		} while (wild_info[y][x].type != WILD_GRASSLAND);
-		if (island(y, x, WILD_MOUNTAIN, WILD_GRASSLAND, rand_int((1<<MAXMOUNT) - 1))) added = TRUE;
+		if (island(y, x, WILD_MOUNTAIN, WILD_GRASSLAND, rand_int((1 << MAXMOUNT) - 1))) added = TRUE;
 	}
 	return(added);
 }
@@ -4006,7 +4006,7 @@ static bool addlakes() {
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
 		} while (wild_info[y][x].type != WILD_GRASSLAND);
-		if (island(y, x, WILD_LAKE, WILD_GRASSLAND, rand_int((1<<MAXLAKE) - 1))) added = TRUE;
+		if (island(y, x, WILD_LAKE, WILD_GRASSLAND, rand_int((1 << MAXLAKE) - 1))) added = TRUE;
 	}
 	return(added);
 }
@@ -4022,7 +4022,7 @@ static bool addwaste() {
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
 		} while (wild_info[y][x].type != WILD_GRASSLAND);
-		if (island(y, x, WILD_WASTELAND, WILD_GRASSLAND, rand_int((1<<MAXWASTE) - 1))) added = TRUE;
+		if (island(y, x, WILD_WASTELAND, WILD_GRASSLAND, rand_int((1 << MAXWASTE) - 1))) added = TRUE;
 	}
 	return(added);
 }
@@ -4038,8 +4038,8 @@ static bool adddesert() {
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
 		} while (wild_info[y][x].type != WILD_GRASSLAND);
-		if (island(y, x, WILD_DESERT, WILD_GRASSLAND, (1<<(MAXDESERT-1)) + rand_int((1<<(MAXDESERT-1))) - 1)) added = TRUE;
-		//if (island(y, x, WILD_DESERT, WILD_GRASSLAND, rand_int((1<<MAXDESERT) - 1))) added = TRUE;
+		if (island(y, x, WILD_DESERT, WILD_GRASSLAND, (1 << (MAXDESERT - 1)) + rand_int((1 << (MAXDESERT-1))) - 1)) added = TRUE;
+		//if (island(y, x, WILD_DESERT, WILD_GRASSLAND, rand_int((1 << MAXDESERT) - 1))) added = TRUE;
 	}
 	return(added);
 }
@@ -4055,8 +4055,8 @@ static bool addice() {
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
 		} while (wild_info[y][x].type != WILD_GRASSLAND);
-		if (island(y, x, WILD_ICE, WILD_GRASSLAND, (1<<(MAXICE-1)) + rand_int((1<<(MAXICE-1))) - 1)) added = TRUE;
-		//if (island(y, x, WILD_ICE, WILD_GRASSLAND, rand_int((1<<MAXICE) - 1))) added = TRUE;
+		if (island(y, x, WILD_ICE, WILD_GRASSLAND, (1 << (MAXICE - 1)) + rand_int((1 << (MAXICE - 1))) - 1)) added = TRUE;
+		//if (island(y, x, WILD_ICE, WILD_GRASSLAND, rand_int((1 << MAXICE) - 1))) added = TRUE;
 	}
 	return(added);
 }

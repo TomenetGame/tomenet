@@ -1623,7 +1623,7 @@ void admin_outfit(int Ind, int realm) {
 
 
 	/* Hack -- assume the player has an initial knowledge of the area close to town */
-	for (i = 0; i < MAX_WILD_X*MAX_WILD_Y; i++)  p_ptr->wild_map[i/8] |= 1<<(i%8);
+	for (i = 0; i < MAX_WILD_X * MAX_WILD_Y; i++)  p_ptr->wild_map[i / 8] |= 1 << (i % 8);
 
 #if 0 /* book spam stopped for now -_-  -C. Blue */
 	for (i = 0; i < 255; i++) {

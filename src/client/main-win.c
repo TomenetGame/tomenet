@@ -3074,8 +3074,8 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 				Term_keypress('x');
 
 				/* Encode the hexidecimal scan code */
-				Term_keypress(hexsym[i/16]);
-				Term_keypress(hexsym[i%16]);
+				Term_keypress(hexsym[i / 16]);
+				Term_keypress(hexsym[i % 16]);
 
 				/* End the macro trigger */
 				Term_keypress(13);

@@ -47,7 +47,7 @@
  *
  *   3) Due to the workings of the init routines, many colors
  *   may also be dealt with by their actual pixel values.  Note that
- *   the pixel with all bits set is "zg = (1<<metadpy->depth)-1", which
+ *   the pixel with all bits set is "zg = (1 << metadpy->depth) - 1", which
  *   is not necessarily either black or white.
  */
 
@@ -2215,7 +2215,7 @@ static errr ReadBMPData(char *Name, char **data_return,  int *width_return, int 
  * Function will not free memory if allready allocated in bgmask_return/fgmask_return input variable.
  */
 static void createMasksFromData(char* data, int width, int height, char **bgmask_return, char **fgmask_return) {
-	int masks_size = width * height / 8 + (width*height%8 == 0 ? 0 : 1);
+	int masks_size = width * height / 8 + (width * height % 8 == 0 ? 0 : 1);
 
 	char *bgmask;
 	C_MAKE(bgmask, masks_size, char);
@@ -2227,17 +2227,17 @@ static void createMasksFromData(char* data, int width, int height, char **bgmask
 
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
-			u32b bit = y*width + x;
-			byte r = data[4*(x+y*width)];
-			byte g = data[4*(x+y*width)+1];
-			byte b = data[4*(x+y*width)+2];
+			u32b bit = y * width + x;
+			byte r = data[4 * (x + y * width)];
+			byte g = data[4 * (x + y * width) + 1];
+			byte b = data[4 * (x + y * width) + 2];
 
 			if (r != 0 || g != 0 || b != 0) {
-				bgmask[bit/8] |= 1 << (bit%8);
+				bgmask[bit / 8] |= 1 << (bit % 8);
 			}
 			if (r == 255 && g == 0 && b == 255) {
-				fgmask[bit/8] |= 1 << (bit%8);
-				bgmask[bit/8] &= ~((char)1 << (bit%8));
+				fgmask[bit / 8] |= 1 << (bit % 8);
+				bgmask[bit / 8] &= ~((char)1 << (bit % 8));
 			}
 		}
 	}
@@ -2324,15 +2324,15 @@ static XImage *ResizeImage(Display *disp, XImage *Im,
 			XPutPixel(Tmp, x2, y2, XGetPixel(Im, x1, y1));
 			u32b maskbitno = (x1 + (y1 * width1));
 			u32b newmaskbitno = (x2 + (y2 * paddedWidth2));
-			bool bgbit = bgbits[maskbitno/8] & (1<<(maskbitno%8));
+			bool bgbit = bgbits[maskbitno / 8] & (1 << (maskbitno % 8));
 
-			if (bgbit) bgmask_data[newmaskbitno/8] |= 1<<(newmaskbitno%8);
-			else bgmask_data[newmaskbitno/8] &= ~(1<<(newmaskbitno%8));
+			if (bgbit) bgmask_data[newmaskbitno / 8] |= 1 << (newmaskbitno % 8);
+			else bgmask_data[newmaskbitno / 8] &= ~(1 << (newmaskbitno % 8));
 
-			bool fgbit = fgbits[maskbitno/8] & (1<<(maskbitno%8));
+			bool fgbit = fgbits[maskbitno / 8] & (1 << (maskbitno % 8));
 
-			if (fgbit) fgmask_data[newmaskbitno/8] |= 1<<(newmaskbitno%8);
-			else fgmask_data[newmaskbitno/8] &= ~(1<<(newmaskbitno%8));
+			if (fgbit) fgmask_data[newmaskbitno / 8] |= 1 << (newmaskbitno % 8);
+			else fgmask_data[newmaskbitno / 8] &= ~(1 << (newmaskbitno % 8));
 
 			(*px1)++;
 

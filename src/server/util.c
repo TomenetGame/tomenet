@@ -784,14 +784,14 @@ errr fd_close(int fd) {
  * Convert a decimal to a single digit octal number
  */
 static char octify(uint i) {
-	return(hexsym[i%8]);
+	return(hexsym[i % 8]);
 }
 
 /*
  * Convert a decimal to a single digit hex number
  */
 static char hexify(uint i) {
-	return(hexsym[i%16]);
+	return(hexsym[i % 16]);
 }
 
 

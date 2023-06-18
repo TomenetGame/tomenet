@@ -88,7 +88,7 @@ int do_use_mp(int Ind, int mod, float mul) {
 	}
 
 	if (p_ptr->rune_num_of_buffs)
-		cost += (1<<(p_ptr->rune_num_of_buffs + 3));
+		cost += (1 << (p_ptr->rune_num_of_buffs + 3));
 
 	if (p_ptr->cmp < cost) return(cost);
 	else p_ptr->cmp -= cost;
@@ -121,18 +121,15 @@ void cast_rune_spell (int Ind, int dir) {
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	/* Check some conditions */
-	if (p_ptr->blind)
-	{
+	if (p_ptr->blind) {
 		msg_print(Ind, "\377rYou can't see anything.");
 		return;
 	}
-	if (no_lite(Ind))
-	{
+	if (no_lite(Ind)) {
 		msg_print(Ind, "\377rYou find it hard to see your hands without a light");
 		return;
 	}
-	if (p_ptr->confused)
-	{
+	if (p_ptr->confused) {
 		msg_print(Ind, "\377rYou are too confused!");
 		return;
 	}

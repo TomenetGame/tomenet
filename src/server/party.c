@@ -4290,7 +4290,7 @@ u16b lookup_player_type(int id) {
 	hash_entry *ptr;
 
 	if ((ptr = lookup_player(id)))
-		return(ptr->race | (ptr->class <<8 ));
+		return(ptr->race | (ptr->class << 8));
 
 	/* Not found */
 	return(-1L);
