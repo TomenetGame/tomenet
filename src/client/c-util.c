@@ -10336,6 +10336,7 @@ void c_close_game(cptr reason) {
 			}
 		}
 
+ #ifdef USE_SOUND_2010
 		if (use_sound) {
 			if (weather_type % 10 == 1) { //rain
 				if (weather_wind >= 1 && weather_wind <= 2) sound_weather(rain2_sound_idx);
@@ -10345,6 +10346,7 @@ void c_close_game(cptr reason) {
 				else sound_weather(snow1_sound_idx);
 			}
 		}
+ #endif
 	} else weather_type = 0;
 #endif
 	/* TODO: bandle them in one loop instead of 2 */
@@ -10381,7 +10383,9 @@ void c_close_game(cptr reason) {
 					    panel_map_c[x][y - 1]);
 				}
 			}
+ #ifdef USE_SOUND_2010
 			if (use_sound) sound_weather(-1); //fade out
+ #endif
 #endif
 			return;
 		}
@@ -10414,7 +10418,9 @@ void c_close_game(cptr reason) {
 #ifdef RAINY_TOMB
 	weather_elements = 0;
 	weather_type = 0;
+ #ifdef USE_SOUND_2010
 	if (use_sound) sound_weather(-1); //fade out
+ #endif
 #endif
 
 	/* Interact */
