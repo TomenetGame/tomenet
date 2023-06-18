@@ -6643,6 +6643,7 @@ void cmd_check_misc(void) {
 			fp = fopen("__tmp__", "r");
 			if (fp) {
 				c = fgets(buf, MAX_CHARS, fp);
+				//todo maybe: error handling if xdg-mime fails
 				fclose(fp);
 				buf[strlen(buf) - 1] = 0;
 				r = system(format("%s %s &", buf, mangrc_filename));
