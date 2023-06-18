@@ -3298,7 +3298,12 @@ int weapon_takes_damage(int Ind, int typ, int slot) {
 	if ((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) return(FALSE);
 
 	/* No damage left to be done */
+#if 0
 	if (o_ptr->to_d <= -10) return(FALSE);
+#else
+	/* Actually, limit max damage against weapon dice, so the user doesn't deal less damage than bare-handed. */
+	if (o_ptr->to_d <= -((o_ptr->dd * (o_ptr->ds + 1) + 1) / 2)) return(FALSE);
+#endif
 
 	/* Describe */
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
