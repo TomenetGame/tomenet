@@ -6633,17 +6633,23 @@ void cmd_check_misc(void) {
 		    }
 #endif
 #ifdef USE_X11
+		    {
 			//system(format("xdg-open %s &", mangrc_filename));
 			//FILEMAN(mangrc_filename);
 			//system("cat /usr/share/applications/`xdg-mime query default text/plain` | grep -o 'Exec.*' | head -n 1 | grep -o '=.*' | grep -o '[0-9a-z]*' > __tmp__");
-			system("cat /usr/share/applications/`xdg-mime query default text/plain` | grep -o 'Exec.*' | grep -o '=.*' | grep -o '[0-9a-z]*' > __tmp__");
+			int r = system("cat /usr/share/applications/`xdg-mime query default text/plain` | grep -o 'Exec.*' | grep -o '=.*' | grep -o '[0-9a-z]*' > __tmp__");
+			char *c;
+
 			fp = fopen("__tmp__", "r");
 			if (fp) {
-				fgets(buf, MAX_CHARS, fp);
+				c = fgets(buf, MAX_CHARS, fp);
 				fclose(fp);
 				buf[strlen(buf) - 1] = 0;
-				system(format("%s %s &", buf, mangrc_filename));
+				r = system(format("%s %s &", buf, mangrc_filename));
 			}
+			(void)r;
+			(void)c;
+		    }
 #endif
 			break;
 
