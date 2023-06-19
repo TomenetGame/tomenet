@@ -233,3 +233,7 @@ end
 function custom_object(Ind, item, dir)
 
 end
+--For usable custom objects, emulate k_info diz. Index is 1..n.
+function custom_object_diz(index)
+
+end

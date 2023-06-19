@@ -5021,6 +5021,11 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (aware)
  #endif
 	{
+		/* Custom objects can emulate a k-diz via LUA function */
+		if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && o_ptr->xtra5)
+			fprintf(fff, "%s", string_exec_lua(0, format("return custom_object_diz(%d)", o_ptr->xtra5)));
+		else
+
 		if (k_info[o_ptr->k_idx].text)
 			fprintf(fff, "%s", k_text + k_info[o_ptr->k_idx].text);
  #ifdef EGO_DIZ
