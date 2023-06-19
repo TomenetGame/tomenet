@@ -6718,15 +6718,14 @@ bool monster_death(int Ind, int m_idx) {
 			/* There is a 1 in (m_ptr->level - kill count)^2 chance of learning form straight away
 			 * to make it easier (at least statistically) getting forms in the iron server. Plus,
 			 * mimicked speed and hp are lowered already anyway.	- the_sandman */
-			if ( ( r_info[r_idx].level - p_ptr->r_mimicry[credit_idx] > 0 ) &&
-			     ( (randint((r_info[r_idx].level - p_ptr->r_mimicry[credit_idx]) *
-			    (r_info[r_idx].level - p_ptr->r_mimicry[credit_idx])) == 1))) {
-				    /* Instant form learning! */
+			if ((r_info[r_idx].level - p_ptr->r_mimicry[credit_idx] > 0) &&
+			     ((randint((r_info[r_idx].level - p_ptr->r_mimicry[credit_idx]) *
+			    (r_info[r_idx].level - p_ptr->r_mimicry[credit_idx])) == 1)))
+				/* Instant form learning! */
 				p_ptr->r_mimicry[credit_idx] = r_info[credit_idx].level;
-			} else {
+			else
 				/* Normal form-learning process: +1 credit */
 				p_ptr->r_mimicry[credit_idx]++;
-			}
 
 			/* (Note: There is no PvP mode on RPG-server) */
 #else
@@ -6861,8 +6860,7 @@ if (cfg.unikill_format) {
 		   level, and the level is not 0 (the town)  */
 		if (p_ptr->party) {
 			for (i = 1; i <= NumPlayers; i++) {
-				if ( (Players[i]->party == p_ptr->party) && (inarea(&Players[i]->wpos, &p_ptr->wpos)) && (i != Ind) && (p_ptr->wpos.wz) )
-				{
+				if ((Players[i]->party == p_ptr->party) && (inarea(&Players[i]->wpos, &p_ptr->wpos)) && (i != Ind) && (p_ptr->wpos.wz)) {
 					if (is_Morgoth)
 						snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s of %s.\377v**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
 #ifdef ZU_AON_FLASHY_MSG

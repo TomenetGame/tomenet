@@ -2908,7 +2908,7 @@ int set_impact_destroy(object_type *o_ptr) {
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 	/* Hack -- borrow flag */
-//	if (f3 & TR3_IGNORE_COLD) return(FALSE);
+	//if (f3 & TR3_IGNORE_COLD) return(FALSE);
 	return(TRUE);
 }
 
@@ -2963,7 +2963,7 @@ int set_rocket_destroy(object_type *o_ptr) {
  */
 int set_all_destroy(object_type *o_ptr) {
 	if (artifact_p(o_ptr)) return(FALSE);
-//	if (is_realm_book(o_ptr) && o_ptr->sval >= SV_BOOK_MIN_GOOD) return(FALSE);
+	//if (is_realm_book(o_ptr) && o_ptr->sval >= SV_BOOK_MIN_GOOD) return(FALSE);
 	if (is_realm_book(o_ptr)) {
 		u32b f1, f2, f3, f4, f5, f6, esp;
 
@@ -3578,9 +3578,9 @@ bool inc_stat(int Ind, int stat) {
 #endif
 		}
 		/* Gain 1/6 to 1/3 of distance to 18/100 */
-		else if (value < 18+98) {
+		else if (value < 18 + 98) {
 			/* Approximate gain value */
-			gain = (((18+100) - value) / 2 + 3) / 2;
+			gain = (((18 + 100) - value) / 2 + 3) / 2;
 
 			/* Paranoia */
 			if (gain < 1) gain = 1;
@@ -3592,7 +3592,7 @@ bool inc_stat(int Ind, int stat) {
 			value += randint(gain) + gain / 2;
 
 			/* Maximal value */
-			if (value > 18+99) value = 18 + 99;
+			if (value > 18 + 99) value = 18 + 99;
 		}
 
 		/* Gain one point at a time */
@@ -3697,9 +3697,9 @@ bool dec_stat(int Ind, int stat, int amount, int mode) {
 			/* Hack -- Decrement by a random amount between one-quarter */
 			/* and one-half of the stat bonus times the percentage, with a */
 			/* minimum damage of half the percentage. -CWS */
-			loss = (((max-18) / 2 + 1) / 2 + 1);
+			loss = (((max - 18) / 2 + 1) / 2 + 1);
 			loss = ((randint(loss) + loss) * amount) / 100;
-			if (loss < amount/2) loss = amount/2;
+			if (loss < amount / 2) loss = amount / 2;
 
 			/* Lose some points */
 			max = max - loss;
@@ -3729,8 +3729,8 @@ bool dec_stat(int Ind, int stat, int amount, int mode) {
 
 			/* prevent overflow, stat_cnt = u16b */
 			/* or add another temporary drain... */
-			if ( ((p_ptr->stat_cnt[stat]+dectime)<p_ptr->stat_cnt[stat]) ||
-			    (p_ptr->stat_los[stat]>0) ) {
+			if (((p_ptr->stat_cnt[stat] + dectime) < p_ptr->stat_cnt[stat]) ||
+			    (p_ptr->stat_los[stat] > 0)) {
 				p_ptr->stat_cnt[stat] += dectime;
 				p_ptr->stat_los[stat] += loss;
 			} else {

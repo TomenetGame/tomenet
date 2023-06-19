@@ -735,8 +735,8 @@ static void reserve_building_plot(struct worldpos *wpos, int *x1, int *y1, int *
 			*x2 = *x1 + xlen - 1;
 			*y2 = *y1 + ylen - 1;
 
-			if ( (!in_bounds(*y1, *x1)) ||
-			     (!in_bounds(*y2, *x2)) ) {
+			if ((!in_bounds(*y1, *x1)) ||
+			     (!in_bounds(*y2, *x2))) {
 				*x1 = *y1 = *x2 = *y2 = -1;
 				return;
 			}
@@ -770,15 +770,14 @@ static void reserve_building_plot(struct worldpos *wpos, int *x1, int *y1, int *
 
 		/* hack -- buildings and farms can partially, but not completly,
 		   be built on water. */
-		if ( (zcave[*y1][*x1].feat == FEAT_DEEP_WATER) &&
-		     (zcave[*y2][*x2].feat == FEAT_DEEP_WATER) ) plot_clear = 0;
+		if ((zcave[*y1][*x1].feat == FEAT_DEEP_WATER) &&
+		     (zcave[*y2][*x2].feat == FEAT_DEEP_WATER)) plot_clear = 0;
 
 		/* if we have a clear plot, reserve it and return */
 		if (plot_clear) {
 			for (y = *y1; y <= *y2; y++) {
-				for (x = *x1; x <= *x2; x++) {
+				for (x = *x1; x <= *x2; x++)
 					zcave[y][x].info |= CAVE_XTRA;
-				}
 			}
 			return;
 		}
@@ -829,8 +828,8 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y) {
 		/* we have obtained a valid plot */
 		if (x1 > 0) {
 			 /* maximum distance to field of 40 */
-			if ( ((x1 - x) * (x1 - x) + (y1 - y) * (y1 - y) <= 40 * 40) ||
-			     ((x2 - x) * (x2 - x) + (y2 - y) * (y2 - y) <= 40 * 40) ) break;
+			if (((x1 - x) * (x1 - x) + (y1 - y) * (y1 - y) <= 40 * 40) ||
+			     ((x2 - x) * (x2 - x) + (y2 - y) * (y2 - y) <= 40 * 40)) break;
 		}
 		attempts++;
 	}

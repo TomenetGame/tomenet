@@ -10757,7 +10757,7 @@ static void town_gen_hack(struct worldpos *wpos) {
 #ifdef DEVEL_TOWN_COMPATIBILITY
 	/* -APD- place the auction house near the central stores */
 	auction_x = rand_int(5) + 3;
-	if ( (auction_x == 3) || (auction_x == 8) ) auction_y = rand_int(1) + 1;
+	if ((auction_x == 3) || (auction_x == 8)) auction_y = rand_int(1) + 1;
 	else auction_y = (rand_int(1) * 3) + 1; /* 1 or 4 */
 #endif
 #endif
@@ -10922,12 +10922,11 @@ static void town_gen_hack(struct worldpos *wpos) {
 			/* don't build "homes" in dungeon towns */
 			if (!(rooms[k] == STORE_HOUSE && dungeon_town)) {
  #ifdef DEVEL_TOWN_COMPATIBILITY
-				if ( (y != auction_y) || (x != auction_x) ) {
+				if ((y != auction_y) || (x != auction_x))
 					/* Build that store at the proper location */
 					build_store(wpos, rooms[k], y, x);
-				} else { /* auction time! */
+				else /* auction time! */
 					build_store(wpos, STORE_AUCTION, y, x);
-				}
  #else
 				build_store(wpos, rooms[k], y, x);
  #endif

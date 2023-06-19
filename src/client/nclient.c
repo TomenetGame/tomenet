@@ -1551,15 +1551,12 @@ int Net_start(int sex, int race, int class) {
 	/* Send the "unknown" redefinitions */
 	for (i = 0; i < TV_MAX; i++) {
 		/* 4.8.1 and newer servers communicate using 32bit character size. */
-		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
+		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0))
 			Packet_printf(&wbuf, "%c%u", Client_setup.u_attr[i], Client_setup.u_char[i]);
-		} else {
+		else
 			Packet_printf(&wbuf, "%c%c", Client_setup.u_attr[i], Client_setup.u_char[i]);
-		}
 
-		if ( max_char < Client_setup.u_char[i] ) {
-			max_char = Client_setup.u_char[i];
-		}
+		if (max_char < Client_setup.u_char[i]) max_char = Client_setup.u_char[i];
 	}
 
 	/* Send the "feature" redefinitions */
@@ -1568,15 +1565,12 @@ int Net_start(int sex, int race, int class) {
 
 	for (i = 0; i < limit; i++) {
 		/* 4.8.1 and newer servers communicate using 32bit character size. */
-		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
+		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0))
 			Packet_printf(&wbuf, "%c%u", Client_setup.f_attr[i], Client_setup.f_char[i]);
-		} else {
+		else
 			Packet_printf(&wbuf, "%c%c", Client_setup.f_attr[i], Client_setup.f_char[i]);
-		}
 
-		if ( max_char < Client_setup.f_char[i] ) {
-			max_char = Client_setup.f_char[i];
-		}
+		if (max_char < Client_setup.f_char[i]) max_char = Client_setup.f_char[i];
 	}
 
 	/* Send the "object" redefinitions */
@@ -1585,15 +1579,12 @@ int Net_start(int sex, int race, int class) {
 
 	for (i = 0; i < limit; i++) {
 		/* 4.8.1 and newer servers communicate using 32bit character size. */
-		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
+		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0))
 			Packet_printf(&wbuf, "%c%u", Client_setup.k_attr[i], Client_setup.k_char[i]);
-		} else {
+		else
 			Packet_printf(&wbuf, "%c%c", Client_setup.k_attr[i], Client_setup.k_char[i]);
-		}
 
-		if ( max_char < Client_setup.k_char[i] ) {
-			max_char = Client_setup.k_char[i];
-		}
+		if (max_char < Client_setup.k_char[i]) max_char = Client_setup.k_char[i];
 	}
 
 	/* Send the "monster" redefinitions */
@@ -1602,26 +1593,20 @@ int Net_start(int sex, int race, int class) {
 
 	for (i = 0; i < limit; i++) {
 		/* 4.8.1 and newer servers communicate using 32bit character size. */
-		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
+		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0))
 			Packet_printf(&wbuf, "%c%u", Client_setup.r_attr[i], Client_setup.r_char[i]);
-		} else {
+		else
 			Packet_printf(&wbuf, "%c%c", Client_setup.r_attr[i], Client_setup.r_char[i]);
-		}
 
-		if ( max_char < Client_setup.r_char[i] ) {
-			max_char = Client_setup.r_char[i];
-		}
+		if (max_char < Client_setup.r_char[i]) max_char = Client_setup.r_char[i];
 	}
 
 	/* Calculate and update minimum character transfer bytes */
 	Client_setup.char_transfer_bytes = 0;
-	for ( ; max_char != 0; max_char >>= 8 ) {
-		Client_setup.char_transfer_bytes += 1;
-	}
+	for ( ; max_char != 0; max_char >>= 8) Client_setup.char_transfer_bytes += 1;
 #endif
 
-	if (Sockbuf_flush(&wbuf) == -1)
-		quit("Can't send start play packet");
+	if (Sockbuf_flush(&wbuf) == -1) quit("Can't send start play packet");
 
 	/* Wait for data to arrive */
 	SetTimeout(5, 0);
@@ -7111,57 +7096,45 @@ int Send_client_setup(void) {
 	/* Send the "unknown" redefinitions */
 	for (i = 0; i < TV_MAX; i++) {
 		/* 4.8.1 and newer servers communicate using 32bit character size. */
-		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
+		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0))
 			Packet_printf(&wbuf, "%c%u", Client_setup.u_attr[i], Client_setup.u_char[i]);
-		} else {
+		else
 			Packet_printf(&wbuf, "%c%c", Client_setup.u_attr[i], Client_setup.u_char[i]);
-		}
 
-		if ( max_char < Client_setup.u_char[i] ) {
-			max_char = Client_setup.u_char[i];
-		}
+		if (max_char < Client_setup.u_char[i]) max_char = Client_setup.u_char[i];
 	}
 
 	/* Send the "feature" redefinitions */
 	for (i = 0; i < MAX_F_IDX; i++) {
 		/* 4.8.1 and newer servers communicate using 32bit character size. */
-		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
+		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0))
 			Packet_printf(&wbuf, "%c%u", Client_setup.f_attr[i], Client_setup.f_char[i]);
-		} else {
+		else
 			Packet_printf(&wbuf, "%c%c", Client_setup.f_attr[i], Client_setup.f_char[i]);
-		}
 
-		if ( max_char < Client_setup.f_char[i] ) {
-			max_char = Client_setup.f_char[i];
-		}
+		if (max_char < Client_setup.f_char[i]) max_char = Client_setup.f_char[i];
 	}
 
 	/* Send the "object" redefinitions */
 	for (i = 0; i < MAX_K_IDX; i++) {
 		/* 4.8.1 and newer servers communicate using 32bit character size. */
-		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
+		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0))
 			Packet_printf(&wbuf, "%c%u", Client_setup.k_attr[i], Client_setup.k_char[i]);
-		} else {
+		else
 			Packet_printf(&wbuf, "%c%c", Client_setup.k_attr[i], Client_setup.k_char[i]);
-		}
 
-		if ( max_char < Client_setup.k_char[i] ) {
-			max_char = Client_setup.k_char[i];
-		}
+		if (max_char < Client_setup.k_char[i]) max_char = Client_setup.k_char[i];
 	}
 
 	/* Send the "monster" redefinitions */
 	for (i = 0; i < MAX_R_IDX; i++) {
 		/* 4.8.1 and newer servers communicate using 32bit character size. */
-		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0)) {
+		if (is_atleast(&server_version, 4, 8, 1, 0, 0, 0))
 			Packet_printf(&wbuf, "%c%u", Client_setup.r_attr[i], Client_setup.r_char[i]);
-		} else {
+		else
 			Packet_printf(&wbuf, "%c%c", Client_setup.r_attr[i], Client_setup.r_char[i]);
-		}
 
-		if ( max_char < Client_setup.r_char[i] ) {
-			max_char = Client_setup.r_char[i];
-		}
+		if (max_char < Client_setup.r_char[i]) max_char = Client_setup.r_char[i];
 	}
 
 	/* Calculate and update minimum character transfer bytes */

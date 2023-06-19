@@ -327,12 +327,9 @@ typedef struct _term_data term_data;
  * while "font_want" can be in almost any form as long as it could
  * be construed as attempting to represent the name of a font or file.
  */
-struct _term_data
-{
+struct _term_data {
 	term     t;
-
 	cptr     s;
-
 	HWND     w;
 
 #ifdef USE_GRAPHICS
@@ -414,7 +411,7 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent) {
 	for (int y = 0; y < bm.bmHeight; y++) {
 		for (int x = 0; x < bm.bmWidth; x++) {
 			COLORREF p = GetPixel(hdcMem, x, y);
-			if ( p == crTransparent ) {
+			if (p == crTransparent) {
 				/* Set mask pixel. */
 				SetPixel(hdcMem2, x, y, RGB(255, 255, 255));
 				/* Erase origin pixel */
@@ -515,8 +512,7 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 			(*px1)++;
 
 			Tx -= *dx2;
-			if (Tx <= 0)
-			{
+			if (Tx <= 0) {
 				Tx += *dx1;
 				(*px2)++;
 			}
@@ -525,8 +521,7 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 		(*py1)++;
 
 		Ty -= *dy2;
-		if (Ty <= 0)
-		{
+		if (Ty <= 0) {
 			Ty += *dy1;
 			(*py2)++;
 		}
@@ -556,23 +551,21 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 }
 
 static void releaseCreatedGraphicsObjects(term_data *td) {
-	if ( td == NULL ) {
-		return;
-	}
+	if (td == NULL) return;
 
-	if ( td->hdcTilePreparation != NULL ) {
+	if (td->hdcTilePreparation != NULL) {
 		DeleteDC(td->hdcTilePreparation);
 		td->hdcTilePreparation = NULL;
 	}
-	if ( td->hdcTiles != NULL ) {
+	if (td->hdcTiles != NULL) {
 		DeleteDC(td->hdcTiles);
 		td->hdcTiles = NULL;
 	}
-	if ( td->hdcBgMask != NULL ) {
+	if (td->hdcBgMask != NULL) {
 		DeleteDC(td->hdcBgMask);
 		td->hdcBgMask = NULL;
 	}
-	if ( td->hdcFgMask != NULL ) {
+	if (td->hdcFgMask != NULL) {
 		DeleteDC(td->hdcFgMask);
 		td->hdcFgMask = NULL;
 	}
@@ -585,9 +578,8 @@ static void recreateGraphicsObjects(term_data *td) {
 	HBITMAP hbmBgMask,hbmFgMask;
 	HBITMAP hbmTiles = ResizeTilesWithMasks(g_hbmTiles, graphics_tile_wid, graphics_tile_hgt, td->font_wid, td->font_hgt, g_hbmBgMask, g_hbmFgMask, &hbmBgMask, &hbmFgMask);
 
-	if ( hbmTiles == NULL || hbmBgMask == NULL || hbmFgMask == NULL || hbmTilePreparation == NULL) {
+	if (hbmTiles == NULL || hbmBgMask == NULL || hbmFgMask == NULL || hbmTilePreparation == NULL)
 		quit("Resizing tiles or masks failed.\n");
-	}
 
 	/* Get device content for current window. */
 	HDC hdc = GetDC(td->w);
@@ -613,9 +605,8 @@ static void recreateGraphicsObjects(term_data *td) {
 	/* Release */
 	ReleaseDC(td->w, hdc);
 
-	if ( td->hdcTiles == NULL || td->hdcBgMask == NULL || td->hdcFgMask == NULL || td->hdcTilePreparation == NULL) {
+	if (td->hdcTiles == NULL || td->hdcBgMask == NULL || td->hdcFgMask == NULL || td->hdcTilePreparation == NULL)
 		quit("Creating device content handles for tiles, tile preparation or masks failed.\n");
-	}
 }
 
 #endif
@@ -1722,9 +1713,8 @@ static errr term_force_font(term_data *td, cptr name) {
 	if (td == &data[0]) handle_process_font_file();
 
 #ifdef USE_GRAPHICS
-	if ( use_graphics && g_hbmTiles != NULL && ( prev_font_wid != td->font_wid || prev_font_hgt != td->font_hgt ) ) {
+	if (use_graphics && g_hbmTiles != NULL && (prev_font_wid != td->font_wid || prev_font_hgt != td->font_hgt))
 		recreateGraphicsObjects(td);
-	}
 #endif
 
 	/* Success */
@@ -3460,8 +3450,7 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 /*
  * Error message -- See "z-util.c"
  */
-static void hack_plog(cptr str)
-{
+static void hack_plog(cptr str) {
 	/* Give a warning */
 	if (str) MessageBox(NULL, str, "Warning", MB_OK);
 }
@@ -3470,8 +3459,7 @@ static void hack_plog(cptr str)
 /*
  * Quit with error message -- See "z-util.c"
  */
-static void hack_quit(cptr str)
-{
+static void hack_quit(cptr str) {
 	/* Give a warning */
 	if (str) MessageBox(NULL, str, "Quitting", MB_OK | MB_ICONSTOP);
 
@@ -3493,8 +3481,7 @@ static void hack_quit(cptr str)
 /*
  * Fatal error (see "z-util.c")
  */
-static void hack_core(cptr str)
-{
+static void hack_core(cptr str) {
 	/* Give a warning */
 	if (str) MessageBox(NULL, str, "Error", MB_OK | MB_ICONSTOP);
 

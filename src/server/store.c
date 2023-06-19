@@ -4206,7 +4206,7 @@ void store_sell(int Ind, int item, int amt) {
 	}
 
 	/* Real store */
-	if ( p_ptr->store_num != STORE_HOME && p_ptr->store_num != STORE_HOME_DUN) {
+	if (p_ptr->store_num != STORE_HOME && p_ptr->store_num != STORE_HOME_DUN) {
 		/* Describe the transaction */
 		msg_format(Ind, "Selling %s (%c).", o_name, index_to_label(item));
 

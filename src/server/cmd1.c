@@ -7294,11 +7294,11 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		/* TODO: always swap when in party
 		 * this can allow one to pass through walls... :(
 		 */
-		else if ( (!p_ptr->ghost && !q_ptr->ghost &&
+		else if ((!p_ptr->ghost && !q_ptr->ghost &&
 		    ((ddy[q_ptr->last_dir] == -(ddy[dir]) &&
 		    ddx[q_ptr->last_dir] == (-ddx[dir]))) ||
 		    (player_in_party(p_ptr->party, Ind2) &&
-		    q_ptr->store_num == -1) )||
+		    q_ptr->store_num == -1)) ||
 		    (q_ptr->admin_dm) )
 #else
 		else if (((!p_ptr->ghost && !q_ptr->ghost &&

@@ -97,9 +97,9 @@ typedef struct infofnt infofnt;
  */
 
 struct metadpy {
-	Display	*dpy;
-	Screen	*screen;
-	Window	root;
+	Display		*dpy;
+	Screen		*screen;
+	Window		root;
 	Colormap	cmap;
 
 	char		*name;
@@ -110,12 +110,12 @@ struct metadpy {
 	uint		height;
 	uint		depth;
 
-	Pixell	black;
-	Pixell	white;
+	Pixell		black;
+	Pixell		white;
 
-	Pixell	bg;
-	Pixell	fg;
-	Pixell	zg;
+	Pixell		bg;
+	Pixell		fg;
+	Pixell		zg;
 
 	uint		mono:1;
 	uint		color:1;
@@ -153,24 +153,24 @@ struct metadpy {
 
 struct infowin {
 	Window		win;
-	long			mask;
+	long		mask;
 
-	s16b			x, y;
-	s16b			w, h;
-	u16b			b;
+	s16b		x, y;
+	s16b		w, h;
+	u16b		b;
 
-	byte			byte1;
+	byte		byte1;
 
-	uint			mapped:1;
-	uint			redraw:1;
-	uint			resize:1;
+	uint		mapped:1;
+	uint		redraw:1;
+	uint		resize:1;
 
-	uint			nuke:1;
+	uint		nuke:1;
 
-	uint			flag1:1;
-	uint			flag2:1;
-	uint			flag3:1;
-	uint			flag4:1;
+	uint		flag1:1;
+	uint		flag2:1;
+	uint		flag3:1;
+	uint		flag4:1;
 };
 
 
@@ -192,14 +192,14 @@ struct infowin {
  */
 
 struct infoclr {
-	GC			gc;
+	GC		gc;
 
 	Pixell		fg;
 	Pixell		bg;
 
-	uint			code:4;
-	uint			stip:1;
-	uint			nuke:1;
+	uint		code:4;
+	uint		stip:1;
+	uint		nuke:1;
 };
 
 
@@ -222,7 +222,7 @@ struct infoclr {
  */
 
 struct infofnt {
-	XFontStruct	*info;
+	XFontStruct		*info;
 
 	cptr			name;
 
@@ -275,19 +275,19 @@ struct infofnt {
 /**** Available Macros ****/
 
 /* Init an infowin by giving father as an (info_win*) (or NULL), and data */
-#define Infowin_init_dad(D,X,Y,W,H,B,FG,BG) \
+#define Infowin_init_dad(D, X, Y, W, H, B, FG, BG) \
 	Infowin_init_data(((D) ? ((D)->win) : (Window)(None)), \
-	                  X,Y,W,H,B,FG,BG)
+	                  X, Y, W, H, B, FG, BG)
 
 
 /* Init a top level infowin by pos,size,bord,Colors */
-#define Infowin_init_top(X,Y,W,H,B,FG,BG) \
-	Infowin_init_data(None,X,Y,W,H,B,FG,BG)
+#define Infowin_init_top(X, Y, W, H, B, FG, BG) \
+	Infowin_init_data(None, X, Y, W, H, B, FG, BG)
 
 
 /* Request a new standard window by giving Dad infowin and X,Y,W,H */
-#define Infowin_init_std(D,X,Y,W,H,B) \
-	Infowin_init_dad(D,X,Y,W,H,B,Metadpy->bg,Metadpy->bg)
+#define Infowin_init_std(D, X, Y, W, H, B) \
+	Infowin_init_dad(D, X, Y, W, H, B, Metadpy->bg,Metadpy->bg)
 
 
 /* Set the current Infowin */
@@ -314,17 +314,17 @@ struct infofnt {
 
 /**** Available Macros (Requests) ****/
 
-#define Infoclr_init_ppo(F,B,O,M) \
-	Infoclr_init_data(F,B,O,M)
+#define Infoclr_init_ppo(F, B, O, M) \
+	Infoclr_init_data(F, B, O, M)
 
-#define Infoclr_init_cco(F,B,O,M) \
-	Infoclr_init_ppo(Infoclr_Pixell(F),Infoclr_Pixell(B),O,M)
+#define Infoclr_init_cco(F, B, O , M) \
+	Infoclr_init_ppo(Infoclr_Pixell(F), Infoclr_Pixell(B), O, M)
 
-#define Infoclr_init_ppn(F,B,O,M) \
-	Infoclr_init_ppo(F,B,Infoclr_Opcode(O),M)
+#define Infoclr_init_ppn(F, B, O, M) \
+	Infoclr_init_ppo(F, B, Infoclr_Opcode(O), M)
 
-#define Infoclr_init_ccn(F,B,O,M) \
-	Infoclr_init_cco(F,B,Infoclr_Opcode(O),M)
+#define Infoclr_init_ccn(F, B, O, M) \
+	Infoclr_init_cco(F, B, Infoclr_Opcode(O), M)
 
 
 /* SHUT: x-infoclr.h */
@@ -718,15 +718,11 @@ static Pixell Infoclr_Pixell(cptr name) {
 
 		/* Attempt to parse 'name' into 'scrn' */
 		if (!(XParseColor(Metadpy->dpy, Metadpy->cmap, name, &scrn)))
-		{
 			plog_fmt("Warning: Couldn't parse color '%s'\n", name);
-		}
 
 		/* Attempt to Allocate the Parsed color */
 		if (!(XAllocColor (Metadpy->dpy, Metadpy->cmap, &scrn)))
-		{
 			plog_fmt("Warning: Couldn't allocate color '%s'\n", name);
-		}
 
 		/* The Pixel was Allocated correctly */
 		else return(scrn.pixel);
@@ -866,9 +862,7 @@ static errr Infofnt_init_data(cptr name) {
 	info = XLoadQueryFont(Metadpy->dpy, name);
 
 	/* The load failed, try to recover */
-	if (!info) {
-		return(-1);
-	}
+	if (!info) return(-1);
 
 
 	/*** Init the font ***/
@@ -1030,19 +1024,17 @@ static errr Infofnt_text_std(int x, int y, cptr str, int len) {
 	/* Monotize the font */
 	if (Infofnt->mono) {
 		/* Do each character */
-		for (i = 0; i < len; ++i) {
+		for (i = 0; i < len; ++i)
 			/* Note that the Infoclr is set up to contain the Infofnt */
 			XDrawImageString(Metadpy->dpy, Infowin->win, Infoclr->gc,
 			                 x + i * Infofnt->wid + Infofnt->off, y, str + i, 1);
-		}
 	}
 
 	/* Assume monospaced font */
-	else {
+	else
 		/* Note that the Infoclr is set up to contain the Infofnt */
 		XDrawImageString(Metadpy->dpy, Infowin->win, Infoclr->gc,
 		                 x, y, str, len);
-	}
 
 	/* Success */
 	return(0);
@@ -2070,9 +2062,7 @@ static unsigned long create_pixel(Display *dpy, byte red, byte green, byte blue)
 
 	/* Attempt to Allocate the Parsed color. */
 	if (!(XAllocColor(dpy, cmap, &xcolour)))
-	{
 		quit_fmt("Couldn't allocate bitmap color '%s'\n", cname);
-	}
 
 	return(xcolour.pixel);
 }
@@ -2096,8 +2086,7 @@ typedef struct BITMAPFILEHEADER {
 /*
  * The Win32 "BITMAPINFOHEADER" type.
  */
-typedef struct BITMAPINFOHEADER
-{
+typedef struct BITMAPINFOHEADER {
 	u32b biSize;           // Size of this header (in bytes).
 	u32b biWidth;          // width of bitmap in pixels.
 	u32b biHeight;         // height of bitmap in pixels (if positive, bottom-up, with origin in lower left corner, if negative, top-down, with origin in upper left corner).
@@ -2114,8 +2103,7 @@ typedef struct BITMAPINFOHEADER
 /*
  * The Win32 "RGBQUAD" type.
  */
-typedef struct RGBQUAD
-{
+typedef struct RGBQUAD {
 	unsigned char r,g,b;
 	unsigned char filler;
 } RGBQUAD;
@@ -2142,17 +2130,15 @@ typedef struct RGBQUAD
  * Function will not free memory if allready allocated in data_return input variable.
  */
 static errr ReadBMPData(char *Name, char **data_return,  int *width_return, int *height_return) {
-
 	FILE *f;
 	BITMAPFILEHEADER fileheader;
 	BITMAPINFOHEADER infoheader;
 	vptr fileheaderhack = (vptr)((char *)(&fileheader) + sizeof(fileheader.bfAlign));
 
 	/* Open the BMP file. */
-	if (NULL == (f = fopen(Name, "r"))) {
+	if (NULL == (f = fopen(Name, "r")))
 		/* No such file. */
 		return(ReadBMPNoFile);
-	}
 
 	/* Read the "BITMAPFILEHEADER". */
 	if (1 != fread(fileheaderhack, sizeof(fileheader) - sizeof(fileheader.bfAlign), 1, f)) {fclose(f); return(ReadBMPReadErrorOrUnexpectedEOF);}
@@ -2166,8 +2152,8 @@ static errr ReadBMPData(char *Name, char **data_return,  int *width_return, int 
 	if (0 != fseek(f, fileheader.bfOffBytes, SEEK_SET)) {fclose(f); return(ReadBMPUnexpectedEOF);}
 
 	char *data;
-	C_MAKE(data, infoheader.biWidth*infoheader.biHeight*4, char);
-	memset(data, 0, infoheader.biWidth*infoheader.biHeight*4);
+	C_MAKE(data, infoheader.biWidth*infoheader.biHeight * 4, char);
+	memset(data, 0, infoheader.biWidth*infoheader.biHeight * 4);
 	errr err = 0;
 
 	/* Every line is padded, to have multiple o 4 bytes. */
@@ -2232,9 +2218,9 @@ static void createMasksFromData(char* data, int width, int height, char **bgmask
 			byte g = data[4 * (x + y * width) + 1];
 			byte b = data[4 * (x + y * width) + 2];
 
-			if (r != 0 || g != 0 || b != 0) {
+			if (r != 0 || g != 0 || b != 0)
 				bgmask[bit / 8] |= 1 << (bit % 8);
-			}
+
 			if (r == 255 && g == 0 && b == 255) {
 				fgmask[bit / 8] |= 1 << (bit % 8);
 				bgmask[bit / 8] &= ~((char)1 << (bit % 8));
@@ -2255,15 +2241,13 @@ static void createMasksFromData(char* data, int width, int height, char **bgmask
  */
 static XImage *ResizeImage(Display *disp, XImage *Im,
                            int ix, int iy, int ox, int oy,
-                           char *bgbits, char *fgbits, Pixmap *bgmask_return, Pixmap *fgmask_return)
-{
+                           char *bgbits, char *fgbits, Pixmap *bgmask_return, Pixmap *fgmask_return) {
 	int width1, height1, width2, height2;
 	int x1, x2, y1, y2, Tx, Ty;
 	int *px1, *px2, *dx1, *dx2;
 	int *py1, *py2, *dy1, *dy2;
 
 	XImage *Tmp;
-
 	char *Data;
 
 
@@ -2868,10 +2852,8 @@ errr init_x11(void) {
 		if (i == 0 || term_prefs[i].visible) {
 			if (x11_term_init(i) != 0) {
 				fprintf(stderr, "Error initializing X11 terminal window with index %d\n", i);
-				if (i == 0) {
-					/* Can't run without main screen. */
-					return(1);
-				}
+				/* Can't run without main screen. */
+				if (i == 0) return(1);
 			}
 		}
 	}
@@ -3097,9 +3079,7 @@ void terminal_window_real_coords_x11(int term_idx, int *ret_x, int *ret_y) {
 
 	/* special hack: this window was invisible, but we just toggled
 	   it to become visible on next client start. - C. Blue */
-	if (!td->fnt) {
-		*ret_x = *ret_y = 0;
-	}
+	if (!td->fnt) *ret_x = *ret_y = 0;
 
 	iwin = td->outer;
 	Infowin_set(iwin);
@@ -3175,15 +3155,13 @@ void resize_window_x11(int term_idx, int cols, int rows) {
 
 	/* Resize the outer window if dimensions differ. */
 	Infowin_set(td->outer);
-	if ((Infowin->w != wid_outer) || (Infowin->h != hgt_outer)) {
+	if ((Infowin->w != wid_outer) || (Infowin->h != hgt_outer))
 		Infowin_resize(wid_outer, hgt_outer);
-	}
 
 	/* Resize the inner window if dimensions differ. */
 	Infowin_set(td->inner);
-	if (Infowin->w != wid_inner || Infowin->h != hgt_inner) {
+	if (Infowin->w != wid_inner || Infowin->h != hgt_inner)
 		Infowin_resize(wid_inner, hgt_inner);
-	}
 
 	/* Restore saved Infowin. */
 	Infowin_set(iwin);
@@ -3250,10 +3228,8 @@ void resize_window_x11(int term_idx, int cols, int rows) {
 		}
 	}
 
-	if (in_game) {
-		/* Ask for a redraw. */
-		cmd_redraw();
-	}
+	/* Ask for a redraw. */
+	if (in_game) cmd_redraw();
 }
 
 /* Resizes main terminal window to dimensions in input. */

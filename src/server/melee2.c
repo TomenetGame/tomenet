@@ -10512,7 +10512,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 		/* Permanent wall */
 		/* Hack: Morgy DIGS!! */
-		//else if ( (c_ptr->feat >= FEAT_PERM_EXTRA &&
+		//else if ((c_ptr->feat >= FEAT_PERM_EXTRA &&
 		else if (((f_info[c_ptr->feat].flags1 & FF1_PERMANENT) &&
 		    !((r_ptr->flags2 & RF2_KILL_WALL) &&
 		     (r_ptr->flags2 & RF2_PASS_WALL) &&
@@ -11517,9 +11517,9 @@ static void process_monster_pet(int Ind, int m_idx) {
 		{
 			/* Nothing */
 		}
-		else if ( (c_ptr->feat == FEAT_TREE) ||
-			(c_ptr->feat == FEAT_BUSH) ||
-			(c_ptr->feat == FEAT_DEAD_TREE)) {
+		else if ((c_ptr->feat == FEAT_TREE) ||
+		    (c_ptr->feat == FEAT_BUSH) ||
+		    (c_ptr->feat == FEAT_DEAD_TREE)) {
 			if (r_ptr->flags7 & RF7_CAN_FLY)
 				do_move = TRUE;
 		}

@@ -11425,9 +11425,7 @@ static void handle_process_graphics_file(void) {
 	 * The grafics redefinition can use tile indexing from 0 and
 	 * there is no need to update graphics files after MAX_FONT_CHAR is changed. */
 	char_map_offset = MAX_FONT_CHAR + 1;
-	if ( process_pref_file(fname) == -1 ) {
-		printf("Can't read graphics preferences file: %s\n", fname);
-	}
+	if (process_pref_file(fname) == -1) printf("Can't read graphics preferences file: %s\n", fname);
 	char_map_offset = 0;
 }
 #endif
