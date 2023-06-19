@@ -4653,7 +4653,7 @@ static void do_recall(int Ind, bool bypass) {
 			new_pos.wy = p_ptr->wpos.wy;
 			new_pos.wz = 0;
 #if 0
-			p_ptr->new_level_method = ( istown(&new_pos) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND );
+			p_ptr->new_level_method = (istown(&new_pos) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND);
 #endif
 			p_ptr->new_level_method = (p_ptr->wpos.wz>0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
 		}
@@ -9062,9 +9062,9 @@ void process_player_change_wpos(int Ind) {
 				emergency_y = starty;
 			}
 		}
-		while (  ((zcave[starty][startx].info & CAVE_ICKY)
+		while (((zcave[starty][startx].info & CAVE_ICKY)
 			|| (!cave_floor_bold(zcave, starty, startx)))
-			&& (++tries < 10000) );
+			&& (++tries < 10000));
 		if (tries == 10000 && emergency_x) {
 			startx = emergency_x;
 			starty = emergency_y;

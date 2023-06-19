@@ -5902,12 +5902,12 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		object_type *x_ptr = &pt_ptr->inventory[INVEN_BOW];
 
 		if (x_ptr->k_idx && x_ptr->tval == TV_BOW &&
-		    (( (x_ptr->sval == SV_SHORT_BOW || x_ptr->sval == SV_LONG_BOW) && o_ptr->tval == TV_ARROW) ||
-		     ( (x_ptr->sval == SV_LIGHT_XBOW || x_ptr->sval == SV_HEAVY_XBOW) && o_ptr->tval == TV_BOLT) ||
+		    (((x_ptr->sval == SV_SHORT_BOW || x_ptr->sval == SV_LONG_BOW) && o_ptr->tval == TV_ARROW) ||
+		     ((x_ptr->sval == SV_LIGHT_XBOW || x_ptr->sval == SV_HEAVY_XBOW) && o_ptr->tval == TV_BOLT) ||
 		     (x_ptr->sval == SV_SLING && o_ptr->tval == TV_SHOT))) {
-			if ((x_ptr->ident & ID_MENTAL)) {
+			if ((x_ptr->ident & ID_MENTAL))
 				object_flags(x_ptr, &shooter_f1, &dummy, &dummy, &dummy, &dummy, &dummy, &dummy);
-			} else {
+			else {
 				/* Just assume basic fixed flags */
 				shooter_f1 = k_info[o_ptr->k_idx].flags1;
 				/* item has undergone basic ID (or is easy-know and basic)? */

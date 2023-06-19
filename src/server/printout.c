@@ -52,7 +52,7 @@ extern int s_setup(char *str) {
 	return(TRUE);
 }
 
-extern int s_shutdown( void ) {
+extern int s_shutdown(void) {
 	if (fp != NULL) fclose(fp);
 	return(TRUE);
 }

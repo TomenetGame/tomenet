@@ -455,8 +455,8 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 			/* Extract the item flags */
 			object_flags(e_ptr, &ef1, &ef2, &ef3, &ef4, &ef5, &ef6, &eesp);
 
-			if (( (e_ptr->sval == SV_SHORT_BOW || e_ptr->sval == SV_LONG_BOW) && o_ptr->tval == TV_ARROW) ||
-			   ( (e_ptr->sval == SV_LIGHT_XBOW || e_ptr->sval == SV_HEAVY_XBOW) && o_ptr->tval == TV_BOLT) ||
+			if (((e_ptr->sval == SV_SHORT_BOW || e_ptr->sval == SV_LONG_BOW) && o_ptr->tval == TV_ARROW) ||
+			   ((e_ptr->sval == SV_LIGHT_XBOW || e_ptr->sval == SV_HEAVY_XBOW) && o_ptr->tval == TV_BOLT) ||
 			   (e_ptr->sval == SV_SLING && o_ptr->tval == TV_SHOT))
 				f1 |= ef1;
 		}
@@ -1014,8 +1014,8 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 			/* Extract the item flags */
 			object_flags(e_ptr, &ef1, &ef2, &ef3, &ef4, &ef5, &ef6, &eesp);
 
-			if (( (e_ptr->sval == SV_SHORT_BOW || e_ptr->sval == SV_LONG_BOW) && o_ptr->tval == TV_ARROW) ||
-			   ( (e_ptr->sval == SV_LIGHT_XBOW || e_ptr->sval == SV_HEAVY_XBOW) && o_ptr->tval == TV_BOLT) ||
+			if (((e_ptr->sval == SV_SHORT_BOW || e_ptr->sval == SV_LONG_BOW) && o_ptr->tval == TV_ARROW) ||
+			   ((e_ptr->sval == SV_LIGHT_XBOW || e_ptr->sval == SV_HEAVY_XBOW) && o_ptr->tval == TV_BOLT) ||
 			   (e_ptr->sval == SV_SLING && o_ptr->tval == TV_SHOT))
 				f1 |= ef1;
 		}

@@ -10364,7 +10364,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx) {
 				dx = (i < 2 ? x1 : x2);
 				dy = ((i % 2) ? y2 : y1);
 #endif	/* 1 */
-				x = ( i < 2  ? x1 : x1 + (x2 - x1) / 2);
+				x = (i < 2  ? x1 : x1 + (x2 - x1) / 2);
 				y = ((i % 2) ? y1 + (y2 - y1) / 2 : y1);
 				c_ptr = &zcave[y][x];
 

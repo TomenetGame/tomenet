@@ -3804,9 +3804,9 @@ void process_pending_commands(int ind) {
 	// to lack of energy will be put into the queue for next turn by the
 	// respective receive function.
 
-	//while ( (p_ptr->energy >= level_speed(p_ptr->dun_depth)) &&
-	//while ( (connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) &&
-	//while ( (connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) &&
+	//while ((p_ptr->energy >= level_speed(p_ptr->dun_depth)) &&
+	//while ((connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) &&
+	//while ((connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) &&
 	while ((connp->r.ptr < connp->r.buf + connp->r.len)) {
 		char *foo = connp->r.ptr;
 		type = (connp->r.ptr[0] & 0xFF);
@@ -5306,8 +5306,7 @@ static int Receive_play(int ind) {
 
 		/* Calculate and update minimum character transfer bytes */
 		connp->Client_setup.char_transfer_bytes = 0;
-		for ( ; max_char != 0; max_char >>= 8 )
-			connp->Client_setup.char_transfer_bytes += 1;
+		for (; max_char != 0; max_char >>= 8) connp->Client_setup.char_transfer_bytes += 1;
 #endif	// #if 1
 	}
 	if (connp->state != CONN_LOGIN) {
@@ -5822,11 +5821,11 @@ int Send_skill_init(int Ind, u16b i) {
 
 	/* Note: %hd is 2 bytes - use this for x16b.
 	   We can use %c for bytes. */
-	return( Packet_printf(&connp->c, "%c%hd%hd%hd%hd%d%c%S%S%S",
+	return(Packet_printf(&connp->c, "%c%hd%hd%hd%hd%d%c%S%S%S",
 		PKT_SKILL_INIT, i,
 		s_info[i].father, s_info[i].order, mkey,
 		s_info[i].flags1, s_info[i].tval, s_name+s_info[i].name,
-		s_text+s_info[i].desc, tmp ? tmp : "" ) );
+		s_text+s_info[i].desc, tmp ? tmp : "" ));
 
 }
 
@@ -14132,9 +14131,7 @@ static int Receive_client_setup(int ind) {
 
 	/* Calculate and update minimum character transfer bytes */
 	connp->Client_setup.char_transfer_bytes = 0;
-	for ( ; max_char != 0; max_char >>= 8 ) {
-		connp->Client_setup.char_transfer_bytes += 1;
-	}
+	for (; max_char != 0; max_char >>= 8) connp->Client_setup.char_transfer_bytes += 1;
 
 	set_player_font_definitions(ind, player);
 

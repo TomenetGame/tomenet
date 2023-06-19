@@ -2685,7 +2685,7 @@ cptr quark_str(s32b i) {
  * look for "!*Erm" type, and "!* !A !f" type.
  */
 
-bool check_guard_inscription( s16b quark, char what ) {
+bool check_guard_inscription(s16b quark, char what) {
 	const char *ax = quark_str(quark);
 
 	if (ax == NULL) return(FALSE);

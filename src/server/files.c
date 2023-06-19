@@ -2899,7 +2899,7 @@ LPTOP_LEVEL_EXCEPTION_FILTER old_handler;
 /* Callback to be called by Windows when our term closes, the user
  * logs off, the system is shutdown, etc.
  */
-BOOL ctrl_handler( DWORD fdwCtrlType ) {
+BOOL ctrl_handler(DWORD fdwCtrlType) {
 	/* Save everything and quit the game */
 	shutdown_server();
 
