@@ -1593,6 +1593,9 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode) {
 			if ((r_ptr->flags8 & RF8_PLURAL))
 				(void)strcpy(desc, name);
 			else {
+				/* Hack: It's not 'the mirror image' but 'your mirror image' */
+				if (m_ptr->r_idx == RI_MIRROR) (void)strcpy(desc, "your ");
+				else
 				/* Indefinite monsters need an indefinite article */
 				(void)strcpy(desc, is_a_vowel(name[0]) ? "an " : "a ");
 				(void)strcat(desc, name);
@@ -1601,6 +1604,9 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode) {
 
 		/* It could be a normal, definite, monster */
 		else {
+			/* Hack: It's not 'the mirror image' but 'your mirror image' */
+			if (m_ptr->r_idx == RI_MIRROR) (void)strcpy(desc, "your ");
+			else
 			/* Definite monsters need a definite article */
 			(void)strcpy(desc, "the ");
 			(void)strcat(desc, name);
@@ -1709,6 +1715,9 @@ void monster_desc2(char *desc, monster_type *m_ptr, int mode) {
 			if ((r_ptr->flags8 & RF8_PLURAL))
 				(void)strcpy(desc, name);
 			else {
+				/* Hack: It's not 'the mirror image' but 'your mirror image' */
+				if (m_ptr->r_idx == RI_MIRROR) (void)strcpy(desc, "your ");
+				else
 				/* Indefinite monsters need an indefinite article */
 				(void)strcpy(desc, is_a_vowel(name[0]) ? "an " : "a ");
 				(void)strcat(desc, name);
@@ -1717,6 +1726,9 @@ void monster_desc2(char *desc, monster_type *m_ptr, int mode) {
 
 		/* It could be a normal, definite, monster */
 		else {
+			/* Hack: It's not 'the mirror image' but 'your mirror image' */
+			if (m_ptr->r_idx == RI_MIRROR) (void)strcpy(desc, "your ");
+			else
 			/* Definite monsters need a definite article */
 			(void)strcpy(desc, "the ");
 			(void)strcat(desc, name);
