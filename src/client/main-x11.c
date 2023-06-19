@@ -2088,8 +2088,8 @@ typedef struct BITMAPFILEHEADER {
  */
 typedef struct BITMAPINFOHEADER {
 	u32b biSize;           // Size of this header (in bytes).
-	u32b biWidth;          // width of bitmap in pixels.
-	u32b biHeight;         // height of bitmap in pixels (if positive, bottom-up, with origin in lower left corner, if negative, top-down, with origin in upper left corner).
+	s32b biWidth;          // width of bitmap in pixels.
+	s32b biHeight;         // height of bitmap in pixels (if positive, bottom-up, with origin in lower left corner, if negative, top-down, with origin in upper left corner).
 	u16b biPlanes;         // No. of planes for the target device, this is always 1.
 	u16b biBitCount;       // No. of bits per pixel.
 	u32b biCompresion;     // 0 or 3 - uncompressed. THIS PROGRAM CONSIDERS ONLY UNCOMPRESSED BMP images.
