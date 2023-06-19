@@ -5360,7 +5360,7 @@ void do_cmd_bash(int Ind, int dir) {
 #endif
 		}
 		else if (c_ptr->feat == FEAT_GRAND_MIRROR) {
-			int x2, y2;
+			int x2, y2, i;
 
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 			cave_set_feat_live(&p_ptr->wpos, y, x, FEAT_SHATTERED_MIRROR);
@@ -5401,6 +5401,17 @@ void do_cmd_bash(int Ind, int dir) {
 				} else s_printf("MIRROR misplaced for '%s' (%d)!\n", p_ptr->name, Ind); //paranoia?
 			} else s_printf("MIRROR placement failed for '%s' (%d)!\n", p_ptr->name, Ind); //paranoia?
 			summon_override_checks = SO_NONE;
+
+			for (i = 1; i <= NumPlayers; i++) {
+				player_type *q_ptr = Players[i];
+
+				/* Skip disconnected players */
+				if (q_ptr->conn == NOT_CONNECTED) continue;
+				/* Skip players not on this depth */
+				if (!inarea(&q_ptr->wpos, wpos)) continue;
+
+				Send_music(Ind, -4, -4, -4);
+			}
 		}
 		/* Nothing useful */
 		else if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&
