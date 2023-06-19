@@ -5807,7 +5807,7 @@
 #define RF1_CHAR_CLEAR		0x00000010	/* Absorbs symbol */
 #define RF1_CHAR_MULTI		0x00000020	/* Changes symbol */
 #define RF1_ATTR_CLEAR		0x00000040	/* Absorbs color */
-#define RF1_ATTR_MULTI		0x00000080	/* Changes color */
+#define RF1_ATTR_MULTI		0x00000080	/* Changes color depending on breaths */
 #define RF1_FORCE_DEPTH			0x00000100	/* Start at "correct" depth */
 #define RF1_FORCE_MAXHP			0x00000200	/* Start with max hitpoints */
 #define RF1_FORCE_SLEEP			0x00000400	/* Start out with very low energy - but this is now deprecated since monsters even start out with negative energy nowadays to avoid insta-breath-kills - C. Blue */
@@ -5847,7 +5847,7 @@
 #define RF2_DEATH_ORB			0x00000100	/* Death Orb */
 #define RF2_REGENERATE			0x00000200	/* Monster regenerates */
 #define RF2_SHAPECHANGER		0x00000400	/* TY: shapechanger */
-#define RF2_ATTR_ANY			0x00000800	/* TY: Attr_any */
+#define RF2_ATTR_ANY			0x00000800	/* TY: Attr_any - can shimmer in any colour */
 #define RF2_POWERFUL		0x00001000	/* Monster has strong breath */
 #define RF2_ELDRITCH_HORROR	0x00002000	/* Sanity-blasting horror    */
 #define RF2_AURA_FIRE		0x00004000	/* Burns in melee */
