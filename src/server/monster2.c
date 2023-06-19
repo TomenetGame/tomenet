@@ -5900,6 +5900,12 @@ void py2mon_init_base(monster_type *m_ptr, player_type *p_ptr) {
 	   so just set the most important ones here to give an initial definition frame: */
 	m_ptr->speed = m_ptr->mspeed = p_ptr->pspeed;
 	m_ptr->org_maxhp = m_ptr->maxhp = m_ptr->hp = p_ptr->mhp;
+	/* Hack some reasonable values for hit dice (instead of the default 3d6!);
+	   this isn't really required, as casting uses org_maxhp specifically for the mirror image
+	   (unlike for normal monsters who use hit dice instead), but it still helps consistency just for the heck of it maybe,
+	   and would allow us to remove the org_maxhp hack if we wanted to.. */
+	r_ptr->hdice = m_ptr->level;
+	r_ptr->hside = (m_ptr->org_maxhp + m_ptr->level / 2) / m_ptr->level; //trying to get somewhat reasonable rounding, whatever..
 	/* AC could just be set/adjusted later like the rest: */
 	m_ptr->org_ac = m_ptr->ac = p_ptr->ac + p_ptr->to_a;
 
