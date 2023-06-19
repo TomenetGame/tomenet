@@ -2301,10 +2301,10 @@ static XImage *ResizeImage(Display *disp, XImage *Im,
 
 	Ty = *dy1;
 
-	for (y1 = 0, y2 = 0; (y1 < height1) && (y2 < height2); ) {
+	for (y1 = 0, y2 = 0; (y1 < height1) && (y2 < height2); ) { /* Wrong compiler warning, the loop vars _are_ modified via px/dx/py/dy */
 		Tx = *dx1;
 
-		for (x1 = 0, x2 = 0; (x1 < width1) && (x2 < width2); ) {
+		for (x1 = 0, x2 = 0; (x1 < width1) && (x2 < width2); ) { /* Wrong compiler warning, the loop vars _are_ modified via px/dx/py/dy */
 			XPutPixel(Tmp, x2, y2, XGetPixel(Im, x1, y1));
 			u32b maskbitno = (x1 + (y1 * width1));
 			u32b newmaskbitno = (x2 + (y2 * paddedWidth2));
