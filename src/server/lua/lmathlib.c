@@ -232,6 +232,14 @@ LUALIB_API void lua_mathlibopen (lua_State *L) {
   luaL_openl(L, mathlib);
   lua_pushcfunction(L, math_pow);
   lua_settagmethod(L, LUA_TNUMBER, "pow");
+
+  /* Note: This whole LUA version was hacked a long time ago to use 'long' as number type, so this will cause
+     a warning and PI is actually just 3 for us =-p this has no effect whatsoever on TomeNET code anyway.. */
+#if 0 /* Standard code, works but may give a warning about double->long */
   lua_pushnumber(L, PI);
+#else /* Same, just fixed the warning ^^ */
+  lua_pushnumber(L, (long)(PI));
+#endif
+
   lua_setglobal(L, "PI");
 }
