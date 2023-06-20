@@ -2807,6 +2807,10 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			/* No break, we want to continue the description */
 			__attribute__ ((fallthrough));
 
+		case TV_SPECIAL:
+			if (o_ptr->tval == TV_SPECIAL && (o_ptr->sval != SV_CUSTOM_OBJECT || wield_slot(0, o_ptr) == -1)) break;
+			__attribute__ ((fallthrough));
+
 		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_SWORD:
