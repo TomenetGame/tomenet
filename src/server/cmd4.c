@@ -1066,10 +1066,11 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 					struct dungeon_type *d_ptr = getdungeon(&q_ptr->wpos);
 
 					if (lv >= 126 || d_ptr->type == DI_MT_DOOM || (lv >= 98 && !q_ptr->total_winner && q_ptr->r_killed[RI_SAURON] == 1)) col = 'R';
+					else if (d_ptr->type == DI_DEATH_FATE || (!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)) col = 'y';
 					/* extended hack: see orange colour for 'engaged' characters, ie not in town and not afk */
 					else if (!q_ptr->afk) col = 'o';
 				}
-				if (col) fprintf(fff, ", %s%c%s%s", "\377", col, wpos_format_compact(Ind, &q_ptr->wpos), "\377-");
+				if (col) fprintf(fff, ", \377%c%s\377-", col, wpos_format_compact(Ind, &q_ptr->wpos));
 				else fprintf(fff, ", %s", wpos_format_compact(Ind, &q_ptr->wpos));
 #endif
   #endif
@@ -2054,10 +2055,11 @@ void write_player_info(int Ind, char *pinfo) {
 			struct dungeon_type *d_ptr = getdungeon(&q_ptr->wpos);
 
 			if (lv >= 126 || d_ptr->type == DI_MT_DOOM || (lv >= 98 && !q_ptr->total_winner && q_ptr->r_killed[RI_SAURON] == 1)) col = 'R';
+			else if (d_ptr->type == DI_DEATH_FATE || (!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)) col = 'y';
 			/* extended hack: see orange colour for 'engaged' characters, ie not in town and not afk */
 			else if (!q_ptr->afk) col = 'o';
 		}
-		if (col) fprintf(fff, ", %s%c%s%s", "\377", col, wpos_format_compact(Ind, &q_ptr->wpos), "\377-");
+		if (col) fprintf(fff, ", \377%c%s\377-", col, wpos_format_compact(Ind, &q_ptr->wpos));
 		else fprintf(fff, ", %s", wpos_format_compact(Ind, &q_ptr->wpos));
   #endif
  #endif
