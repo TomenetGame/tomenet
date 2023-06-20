@@ -4497,13 +4497,23 @@
 
 /* svals for TV_SPECIAL */
 #define SV_SEAL				0	/* for invalid items */
-#define SV_CUSTOM_OBJECT		1	/* fun vanity objects, customizable by admins: xtra1 = ap, xtra2 = cp, xtra3 = commands/susceptibilities: */
-						/* 0x0001 eat, 0x0002 quaff, 0x0004 read, 0x0008 can rust (equip damage from water),
-						   0x0010 activate-no-am, 0x0020 activate-am, 0x0040 activate-dir-no-am, 0x0080 activate-dir-am,
-						   0x0100 wear/wield, 0x0200 wear/wield faking another item.
-						    Parameter for xtra3 = 0x0100: xtra4 = wear/wield slot.
-						    Parameter for xtra3 = 0x0200: xtra4 = fake tval, xtra5 = fake sval, xtra6 = fake bpval [, xtra7 = fake name2, xtra8 = fake name2b, xtra9 = fake pval].
-						   0x0400 hates impact, 0x0800 hates water, 0x1000 hates elec, 0x2000 hates cold, 0x4000 hates fire, 0x8000 hates acid */
+#define SV_CUSTOM_OBJECT		1	/* custom/fun/vanity objects, definable by admins via (user-read-only) inscription and xtraN flags: */
+						/* xtra1 = ap,
+						   xtra2 = cp,
+						   xtra3 = commands/susceptibilities:
+						    0x0001 eat, 0x0002 quaff, 0x0004 read, 0x0008 can rust (equip damage from water),
+						    0x0010 activate-no-am, 0x0020 activate-am, 0x0040 activate-dir-no-am, 0x0080 activate-dir-am,
+						    0x0100 wear/wield an specify a specific equipment slot:
+						      tval2 = wear/wield slot. -- TODO: implement fully
+						    0x0200 wear/wield faking another item, using fake tval/sval to determine equipment slot:
+						      tval2 = fake tval, sval2 = fake sval. -- TODO: implement fully
+						    0x0300 (mask), in both cases:
+						     xtra6 = fake bpval [, xtra7 = fake name2, xtra8 = fake name2b, xtra9 = fake pval]. -- TODO: implement (fully)?
+						    0x0400 hates impact, 0x0800 hates water, 0x1000 hates elec, 0x2000 hates cold, 0x4000 hates fire, 0x8000 hates acid;
+						   xtra4 = handedness for wielding:
+						    0x0001 COULD2H, 0x0002 SHOULD2H, 0x0004, MUST2H. -- TODO: implement
+						   xtra5 = custom fake k-info diz via LUA custom_object_diz().
+						   (xtra6/7/8/9 = reserved for xtra3 & 0x200, see above.) */
 #define SV_QUEST			2	/* a custom quest item (not to be confused with questors) */
 
 

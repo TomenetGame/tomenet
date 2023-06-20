@@ -3334,7 +3334,9 @@ void stair_creation(int Ind) {
  * Hook to specify "weapon"
  */
 static bool item_tester_hook_weapon(object_type *o_ptr) {
-	switch (o_ptr->tval) {
+	int tval = (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0200)) ? o_ptr->tval2 : o_ptr->tval;
+
+	switch (tval) {
 	case TV_TRAPKIT:/* <- and now new.. :) this allows cursing/enchanting shot/arrow/bolt trap kits! */
 		if (!is_firearm_trapkit(o_ptr->sval)) return(FALSE);
 		/* Fall through */
@@ -3352,9 +3354,9 @@ static bool item_tester_hook_weapon(object_type *o_ptr) {
 		return(TRUE);
 	/* Special object hack */
 	case TV_SPECIAL:
-		if (o_ptr->sval != SV_CUSTOM_OBJECT || !(o_ptr->xtra3 & 0x0300)) return(FALSE); //0x0100: weapon, 0x0200: 2h-weapon
+		if (o_ptr->sval != SV_CUSTOM_OBJECT || !(o_ptr->xtra3 & 0x0100)) return(FALSE);
 		/* Paranoia - check for valid equipment slot */
-		if (o_ptr->xtra4 < INVEN_WIELD || o_ptr->xtra4 > INVEN_TOOL) return(FALSE);
+		if (o_ptr->tval2 != INVEN_WIELD) return(FALSE);
 		/* Equippable special object */
 		return(TRUE);
 	}
@@ -3367,7 +3369,9 @@ static bool item_tester_hook_weapon(object_type *o_ptr) {
  * Hook to specify "armour"
  */
 static bool item_tester_hook_armour(object_type *o_ptr) {
-	switch (o_ptr->tval) {
+	int tval = (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0200)) ? o_ptr->tval2 : o_ptr->tval;
+
+	switch (tval) {
 	case TV_DRAG_ARMOR:
 	case TV_HARD_ARMOR:
 	case TV_SOFT_ARMOR:
@@ -3378,13 +3382,13 @@ static bool item_tester_hook_armour(object_type *o_ptr) {
 	case TV_BOOTS:
 	case TV_GLOVES:
 	/* and now new.. :) */
-	//nope, not enchantable -- case TV_TRAPKIT:
+	//nope, not enchantable to-a, only to-h/d -- case TV_TRAPKIT:
 		return(TRUE);
 	/* Special object hack */
 	case TV_SPECIAL:
-		if (o_ptr->sval != SV_CUSTOM_OBJECT || !(o_ptr->xtra3 & 0x0C00)) return(FALSE); //0x0400: shield, 0x0800: armour
+		if (o_ptr->sval != SV_CUSTOM_OBJECT || !(o_ptr->xtra3 & 0x0100)) return(FALSE);
 		/* Paranoia - check for valid equipment slot */
-		if (o_ptr->xtra4 < INVEN_WIELD || o_ptr->xtra4 > INVEN_TOOL) return(FALSE);
+		if (o_ptr->tval2 != INVEN_ARM && (o_ptr->tval2 < INVEN_BODY || o_ptr->tval2 > INVEN_FEET)) return(FALSE);
 		/* Equippable special object */
 		return(TRUE);
 	}

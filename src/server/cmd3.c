@@ -1222,7 +1222,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	/* display some warnings if the item will severely conflict with Martial Arts skill */
 	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS)) {
 		if ((is_melee_weapon(o_ptr->tval) ||
-		    (o_ptr->tval == TV_SPECIAL && o_ptr->xtra4 == INVEN_WIELD) ||
+		    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0100) && o_ptr->tval2 == INVEN_WIELD) ||
 		    o_ptr->tval == TV_MSTAFF ||
 #ifndef ENABLE_MA_BOOMERANG
 		    o_ptr->tval == TV_BOOMERANG ||

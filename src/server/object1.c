@@ -6109,9 +6109,10 @@ s16b label_to_equip(int Ind, int c) {
 s16b wield_slot(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = NULL;
 	if (Ind) p_ptr = Players[Ind];
+	int tval = (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0200)) ? o_ptr->tval2 : o_ptr->tval;
 
 	/* Slot for equipment */
-	switch (o_ptr->tval) {
+	switch (tval) {
 	case TV_DIGGING:
 	case TV_TOOL:
 		return(INVEN_TOOL);
@@ -6171,11 +6172,11 @@ s16b wield_slot(int Ind, object_type *o_ptr) {
 
 	/* Special hack for custom objects that have wear/wield flag set */
 	case TV_SPECIAL:
-		if (o_ptr->sval != SV_CUSTOM_OBJECT || !(o_ptr->xtra3 & 0x0F00)) return(-1);
+		if (o_ptr->sval != SV_CUSTOM_OBJECT || !(o_ptr->xtra3 & 0x0100)) return(-1);
 		/* Paranoia - check for valid equipment slot */
-		if (o_ptr->xtra4 < INVEN_WIELD || o_ptr->xtra4 > INVEN_TOOL) return(-1);
+		if (o_ptr->tval2 < INVEN_WIELD || o_ptr->tval2 > INVEN_TOOL) return(-1);
 		/* Equippable special object */
-		return(o_ptr->xtra4);
+		return(o_ptr->tval2);
 	}
 
 	/* No slot available */
