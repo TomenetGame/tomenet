@@ -5451,8 +5451,10 @@ void do_cmd_bash(int Ind, int dir) {
 				if (o_ptr->tval == TV_POTION ||
 				    o_ptr->tval == TV_POTION2 ||
 				    o_ptr->tval == TV_FLASK ||
-				    o_ptr->tval == TV_BOTTLE) {
-					char            o_name[ONAME_LEN];
+				    o_ptr->tval == TV_BOTTLE ||
+				    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0002))) {
+					char o_name[ONAME_LEN];
+
 					object_desc(Ind, o_name, o_ptr, FALSE, 3);
 
 					/* S(he) is no longer afk */
@@ -8703,7 +8705,8 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	if (k_info[o_ptr->k_idx].tval == TV_POTION ||
 	    k_info[o_ptr->k_idx].tval == TV_POTION2 ||
 	    k_info[o_ptr->k_idx].tval == TV_FLASK ||
-	    k_info[o_ptr->k_idx].tval == TV_BOTTLE) {
+	    k_info[o_ptr->k_idx].tval == TV_BOTTLE ||
+	    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0002))) {
 		if ((hit_body) || (hit_wall) || (randint(100) < j)) {
 			/* hack: shatter _on_ the wall grid, not _before_ it */
 			if (hit_wall) {

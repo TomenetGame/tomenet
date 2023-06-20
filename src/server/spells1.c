@@ -2517,6 +2517,10 @@ static bool hates_acid(object_type *o_ptr) {
 		if (o_ptr->sval == SV_RUST || o_ptr->sval == SV_MIXTURE) break; /* Mixture is safely contained in a bottle */
 		return(TRUE);
 #endif
+
+	case TV_SPECIAL:
+		if (o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x8000)) return(TRUE);
+		break;
 	}
 
 	return(FALSE);
@@ -2534,6 +2538,9 @@ static bool hates_elec(object_type *o_ptr) {
 	case TV_BOOK:
 		if (o_ptr->sval >= 19 && o_ptr->sval <= 21) return(TRUE);
 		return(FALSE);
+	case TV_SPECIAL:
+		if (o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x1000)) return(TRUE);
+		break;
 	}
 
 	return(FALSE);
@@ -2612,6 +2619,9 @@ bool hates_fire(object_type *o_ptr) {
 		if (o_ptr->sval == SV_CHARCOAL || o_ptr->sval == SV_RUST) return(TRUE); /* note: metal powder burns up too */
 		break;
 #endif
+	case TV_SPECIAL:
+		if (o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x4000)) return(TRUE);
+		break;
 	}
 
 	return(FALSE);
@@ -2627,6 +2637,9 @@ static bool hates_cold(object_type *o_ptr) {
 	case TV_FLASK:
 	//case TV_BOTTLE:  <- empty! unlike potions..
 		return(TRUE);
+	case TV_SPECIAL:
+		if (o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x2000)) return(TRUE);
+		break;
 	}
 
 	return(FALSE);
@@ -2643,6 +2656,9 @@ static bool hates_impact(object_type *o_ptr) {
 	case TV_BOTTLE:
 	case TV_EGG:
 		return(TRUE);
+	case TV_SPECIAL:
+		if (o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0400)) return(TRUE);
+		break;
 	}
 
 	return(FALSE);
@@ -2667,6 +2683,9 @@ bool hates_water(object_type *o_ptr) {
 		if (o_ptr->sval == SV_CHARCOAL || o_ptr->sval == SV_RUST || o_ptr->sval == SV_WOOD_CHIPS || o_ptr->sval == SV_MIXTURE) break;
 		return(TRUE);
 #endif
+	case TV_SPECIAL:
+		if (o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0800)) return(TRUE);
+		break;
 	}
 
 	return(FALSE);
@@ -2695,6 +2714,9 @@ static bool can_rust(object_type *o_ptr) {
 	case TV_AXE:
 	case TV_BOW: /* nonmetallic check filtered out slings and bows already */
 		return(TRUE);
+	case TV_SPECIAL:
+		if (o_ptr->sval == SV_CUSTOM_OBJECT && (o_ptr->xtra3 & 0x0008)) return(TRUE);
+		break;
 
 	}
 
