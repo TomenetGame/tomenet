@@ -2395,12 +2395,16 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 	/* Hacks for modifying the damage in special circumstances */
 	if (m_ptr->r_idx == RI_MIRROR) {
-		//assume full HP for breath attacks, because we just use them to emulate missing ball spells:
+		/* Assume full HP for breath attacks, because we just use them to emulate missing ball spells: */
 #if 0 /* the mirror image has 3d6 ^^ it does not copy hd/hs from the player, only the final HP! */
 		eff_m_hp = r_ptr->hdice * r_ptr->hside;
 #else
 		eff_m_hp = m_ptr->org_maxhp;
 #endif
+		/* Further, the eff_m_hp taken from mirroring a player's hp is much too low for efficient breath attacks, as monsters usually
+		   have many more HP than the player, so it needs boosting if we use the usual breath-damage formulas for "normal" monsters here too: */
+		eff_m_hp *= 3;
+
 		/* boost damage output of weaker monster spells, basically bolt spells, which for players are high-damage spells */
 		switch (thrown_spell) {
 		case RF4_OFFSET + 4: rlev *= 1; break; //arrow
