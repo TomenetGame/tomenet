@@ -10029,6 +10029,9 @@ void dungeon(void) {
 
 	/* Process everything else */
 	if (!(turn % 10)) {
+		char buf[1024];
+		FILE *fp;
+
 		process_various();
 
 		/* Hack -- Regenerate the monsters every hundred game turns */
@@ -10051,6 +10054,28 @@ void dungeon(void) {
 					Send_request_cfr(i, p_ptr->delay_cfr_id, p_ptr->delay_cfr_prompt, p_ptr->delay_cfr_default_choice);
 				}
 			}
+		}
+
+		/* EXPERIMENTAL: Poll for AI responses, output them through 8ball. - C. Blue */
+		path_build(buf, 1024, ANGBAND_DIR_DATA, "external-response.log");
+		if ((fp = fopen(buf, "r")) != NULL) {
+			if (!feof(fp)) {
+				char str[1024], *c;
+
+				if (fgets(str, 1024, fp) != NULL) {
+					/* Change all " into ' to avoid conflict with lua eight_ball("..") command syntax. */
+					c = str - 1;
+					while(*(++c)) if (*c == '"') *c = '\'';
+					/* Remove all linebreaks or LUA will break */
+					c = str - 1;
+					while(*(++c)) if (*c == '\n' || *c == '\r') *c = ' ';
+
+					exec_lua(0, format("eight_ball(\"%s\")", str));
+				}
+			}
+			fclose(fp);
+			/* Clear response file after having processed the response (through 8ball) */
+			remove(buf);
 		}
 	}
 

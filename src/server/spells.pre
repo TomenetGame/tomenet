@@ -349,6 +349,7 @@ extern s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bo
 extern s32b lua_spell_chance(int Ind, s32b chance, int level, int skill_level, int mana, int cur_mana, int stat);
 /* extern u32b get_school_spell(cptr do_what); */
 extern void lua_s_print(cptr logstr);
+extern void lua_x_print(cptr logstr);
 extern void lua_add_anote(char *anote);
 extern void lua_del_anotes();
 extern void lua_broadcast_motd();

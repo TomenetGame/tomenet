@@ -33,6 +33,9 @@ static int inits = FALSE;
 static FILE *fpe = NULL;	/* the 'erasure.log' file */
 static int inite = FALSE;
 
+static FILE *fpx = NULL;	/* the 'external.log' file */
+//static int initx = FALSE;
+
 /* s_print_only_to_file
  * Controls if we should only print to file
  * FALSE = screen and file
@@ -66,14 +69,35 @@ extern int s_printf(const char *str, ...) {
 	}
 
 	va_start(va, str);
-	vfprintf(fp,str,va);
+	vfprintf(fp, str, va);
 	va_end(va);
 	va_start(va, str);
-	if (!print_to_file) vprintf(str,va);
+	if (!print_to_file) vprintf(str, va);
 	va_end(va);
 
 	/* KLJ -- Flush the log so that people can look at it while the server is running */
 	fflush(fp);
+
+	return(TRUE);
+}
+
+/* This one does not keep a file continuously open, because another external source might
+   reinitialize (aka erase) the file at any time, after processing! */
+extern int x_printf(const char *str, ...) {
+	char path[MAX_PATH_LENGTH];
+	va_list va;
+
+	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "external.log");
+
+	fpx = fopen(path, "a+");
+	//initx = TRUE;
+
+	fprintf(fpx, "%s - ", showtime());
+
+	va_start(va, str);
+	vfprintf(fpx, str, va);
+	va_end(va);
+	fflush(fpx);
 
 	return(TRUE);
 }
@@ -106,11 +130,11 @@ extern bool rfe_printf(char *str, ...) {
 	}
 
 	va_start(va, str);
-	vfprintf(fpr,str,va);
+	vfprintf(fpr, str, va);
 	/*
 	va_end(va);
 	va_start(va, str);
-	if (!print_to_file) vprintf(str,va);
+	if (!print_to_file) vprintf(str, va);
 	*/
 	va_end(va);
 
@@ -260,9 +284,10 @@ int reverse_lines(cptr input_file, cptr output_file) {
 extern int l_printf(char *str, ...) {
 	char path[MAX_PATH_LENGTH];
 	char path_rev[MAX_PATH_LENGTH];
+	va_list va;
+
 	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends.log");
 	path_build(path_rev, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends-rev.log");
-	va_list va;
 
 	if (initl == FALSE) { /* in case we don't start her up properly */
 		fpl = fopen(path, "a+");
@@ -284,9 +309,9 @@ extern int l_printf(char *str, ...) {
 /* Log all -CHEEZY- transactions into a separate file besides tomenet.log */
 extern int c_printf(char *str, ...) {
 	char path[MAX_PATH_LENGTH];
-	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "cheeze.log");
 	va_list va;
 
+	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "cheeze.log");
 	if (initc == FALSE) { /* in case we don't start her up properly */
 		fpc = fopen(path, "a+");
 		initc = TRUE;
@@ -302,9 +327,9 @@ extern int c_printf(char *str, ...) {
 /* Log amount of players logged on, to generate a "traffic chart" :) - C. Blue */
 extern int p_printf(char *str, ...) {
 	char path[MAX_PATH_LENGTH];
-	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "traffic.log");
 	va_list va;
 
+	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "traffic.log");
 	if (initp == FALSE) { /* in case we don't start her up properly */
 		fpp = fopen(path, "a+");
 		initp = TRUE;
@@ -320,9 +345,9 @@ extern int p_printf(char *str, ...) {
 /* Log superunique kills - C. Blue */
 extern int su_print(char *str) {
 	char path[MAX_PATH_LENGTH];
-	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "superuniques.log");
 	int dwd = 0, dd = 0, dm = 0, dy = 0;
 
+	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "superuniques.log");
 	get_date(&dwd, &dd, &dm, &dy);
 
 	if (inits == FALSE) { /* in case we don't start her up properly */
@@ -340,9 +365,9 @@ extern int su_print(char *str) {
    but instead from either /erasechar command or inactivity timeout. */
 extern int e_printf(char *str, ...) {
 	char path[MAX_PATH_LENGTH];
-	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "erasure.log");
 	va_list va;
 
+	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "erasure.log");
 	if (inite == FALSE) { /* in case we don't start her up properly */
 		fpe = fopen(path, "a+");
 		inite = TRUE;
