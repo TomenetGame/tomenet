@@ -10070,8 +10070,8 @@ void dungeon(void) {
 					c = str - 1;
 					while(*(++c)) if (*c == '\n' || *c == '\r') *c = ' ';
 
-					/* Cut message of at MSG_LEN minus the name length.. */
-					str[MSG_LEN - 1] = 0;
+					/* Cut message of at MSG_LEN minus "\374\377y[8ball] " chat prefix length */
+					str[MSG_LEN - 1 - 10] = 0;
 
 					/* Cut off trailing remains of a sentence -_- (even required for AI response, as it also gets cut off often) */
 					c = str + strlen(str) - 1;
