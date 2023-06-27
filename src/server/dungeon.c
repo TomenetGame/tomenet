@@ -10060,8 +10060,10 @@ void dungeon(void) {
 		path_build(buf, 1024, ANGBAND_DIR_DATA, "external-response.log");
 		if ((fp = fopen(buf, "r")) != NULL) {
 			if (!feof(fp)) {
-				char str[1024], *c;
-				bool open_parenthesis = strchr(str, '(');
+				char str[1024], *c, strtmp[1024], *open_parenthesis, *o, *p;
+				bool within_parentheses = FALSE;
+				/* Cut message of at MSG_LEN minus "\374\377y[8ball] " chat prefix length: */
+				int maxlen = MSG_LEN - 1 - 10;
 
 				if (fgets(str, 1024, fp) != NULL) {
 					/* Change all " into ' to avoid conflict with lua eight_ball("..") command syntax. */
@@ -10071,16 +10073,46 @@ void dungeon(void) {
 					c = str - 1;
 					while(*(++c)) if (*c == '\n' || *c == '\r') *c = ' ';
 
-					/* Cut message of at MSG_LEN minus "\374\377y[8ball] " chat prefix length */
-					str[MSG_LEN - 1 - 10] = 0;
+					open_parenthesis = strchr(str, '(');
+
+					/* If response exceeds our maximum message length, get rid of parentheses-structs first */
+					while (strlen(str) > maxlen && open_parenthesis) {
+						p = NULL;
+						o = open_parenthesis;
+
+						while (!p) {
+							p = strchr(o, ')');
+							if (!p) break;
+
+							/* Skip smileys within parentheses.. */
+							if (p == str || *(p - 1) != '-') break;
+							o = p;
+							p = NULL;
+						}
+
+						/* Crop out the parentheses struct */
+						if (p) {
+							strcpy(strtmp, str);
+							if (*(p + 1) == ' ') p++; /* Skip a space after the closing parenthesis */
+							strcpy(o, strtmp + (p - str) + 1);
+
+							open_parenthesis = strchr(str, '(');
+						} else break;
+					}
+
+					/* Truncate so we don't exceed our maximum message length! (Panic save ensues) */
+					str[maxlen] = 0;
 
 					/* Cut off trailing remains of a sentence -_- (even required for AI response, as it also gets cut off often).
-					   Try to make sure we catch at least one whole sentence, denotedly limited by according punctuation marks.
-					   Parenthesis-structures work too, just don't confuse smileys with it. */
+					   Try to make sure we catch at least one whole sentence, denotedly limited by according punctuation marks. */
 					c = str + strlen(str) - 1;
-					while(c > str && *c != '.' && *c != '!' && *c != ';' && !(open_parenthesis && (*c == ')' && *(c - 1) != '-'))) c--;
-					/* In the case of parentheses, don't replace it with a dot but add a dot, if there is space. */
-					if (*c == ')' && c < str + MSG_LEN - 1 - 10 - 1) *(++c) = '.';
+					while(c > str && ((*c != '.' && *c != '!' && *c != ';') || within_parentheses)) {
+						if (open_parenthesis) {
+							if (*c == ')' && *(c - 1) != '-') within_parentheses = TRUE;
+							if (*c == '(') within_parentheses = FALSE;
+						}
+						c--;
+					}
 					/* ..however, some responses have so long sentences that there is maybe only a comma, none of the above marks.. */
 					if (c == str) {
 						c = str + strlen(str) - 1;
