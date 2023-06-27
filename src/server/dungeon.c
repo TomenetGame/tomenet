@@ -10155,8 +10155,11 @@ void dungeon(void) {
 				}
 			}
 			fclose(fp);
-			/* Clear response file after having processed the response (through 8ball) */
-			remove(buf);
+
+			/* Clear response file after having processed the response (through 8ball), as it's no longer pending but has been processed now. */
+			/* Create a backup just for debugging/checking: */
+			remove(format("%s.bak", buf));
+			rename(buf, format("%s.bak", buf));
 		}
 	}
 
