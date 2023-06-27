@@ -10073,11 +10073,44 @@ void dungeon(void) {
 					/* Cut message of at MSG_LEN minus "\374\377y[8ball] " chat prefix length */
 					str[MSG_LEN - 1 - 10] = 0;
 
-					/* Cut off trailing remains of a sentence -_- (even required for AI response, as it also gets cut off often) */
+					/* Cut off trailing remains of a sentence -_- (even required for AI response, as it also gets cut off often).
+					   Try to make sure we catch at least one whole sentence, denotedly limited by according punctuation marks. */
 					c = str + strlen(str) - 1;
 					while(c > str && *c != '.' && *c != '!' && *c != ';') c--;
-					*c = '.';
-					*(c + 1) = 0;
+					/* ..however, some responses have so long sentences that there is maybe only a comma, none of the above marks.. */
+					if (c == str) {
+						c = str + strlen(str) - 1;
+						while(c > str && *c != ',') c--;
+						/* Avoid sillily short results */
+						if (c < str + 10) c = str;
+					}
+					/* ..and some crazy ones don't even have a comma :/ ..*/
+					if (c == str) {
+						char *c1, *c2, *c3, *c4, *c5;
+
+						c = str + strlen(str) - 1;
+						/* Beeeest effort at "language" gogo.. */
+						c1 = my_strcasestr(str, "that");
+						c2 = my_strcasestr(str, "what");
+						c3 = my_strcasestr(str, "which");
+						c4 = my_strcasestr(str, "who");
+						c5 = my_strcasestr(str, "where");
+						if (c2 > c1) c1 = c2;
+						if (c3 > c1) c1 = c3;
+						if (c4 > c1) c1 = c4;
+						if (c5 > c1) c1 = c5;
+						c = c1;
+						/* Also strip the space before this word */
+						if (c > str) c--;
+						/* Avoid sillily short results */
+						if (c < str + 10) c = NULL;
+					}
+
+					/* Found any valid way to somehow truncate the line? =_= */
+					if (c) {
+						*c = '.';
+						*(c + 1) = 0;
+					}
 
 					exec_lua(0, format("eight_ball(\"%s\")", str));
 				}
