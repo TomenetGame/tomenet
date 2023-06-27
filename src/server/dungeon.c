@@ -10112,6 +10112,9 @@ void dungeon(void) {
 						*(c + 1) = 0;
 					}
 
+					/* A new weirdness has popped up: It started generating [more and more] trailing dot-triplets, separated with spaces, at the end of each answer */
+					while (str[strlen(str) - 1] == ' ' || (str[strlen(str) - 1] == '.' && (str[strlen(str) - 2] == '.' || str[strlen(str) - 2] == ' '))) str[strlen(str) - 1] = 0;
+
 					exec_lua(0, format("eight_ball(\"%s\")", str));
 				}
 			}
