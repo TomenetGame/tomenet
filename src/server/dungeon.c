@@ -10074,9 +10074,12 @@ void dungeon(void) {
 					str[MSG_LEN - 1 - 10] = 0;
 
 					/* Cut off trailing remains of a sentence -_- (even required for AI response, as it also gets cut off often).
-					   Try to make sure we catch at least one whole sentence, denotedly limited by according punctuation marks. */
+					   Try to make sure we catch at least one whole sentence, denotedly limited by according punctuation marks.
+					   Parenthesis-structures work too, just don't confuse smileys with it. */
 					c = str + strlen(str) - 1;
-					while(c > str && *c != '.' && *c != '!' && *c != ';') c--;
+					while(c > str && *c != '.' && *c != '!' && *c != ';' && (*c != ')' || *(c - 1) == '-')) c--;
+					/* In the case of parentheses, don't replace it with a dot but add a dot, if there is space. */
+					if (*c == ')' && c < str + MSG_LEN - 1 - 10 - 1) *(++c) = '.';
 					/* ..however, some responses have so long sentences that there is maybe only a comma, none of the above marks.. */
 					if (c == str) {
 						c = str + strlen(str) - 1;
