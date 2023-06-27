@@ -10061,6 +10061,7 @@ void dungeon(void) {
 		if ((fp = fopen(buf, "r")) != NULL) {
 			if (!feof(fp)) {
 				char str[1024], *c;
+				bool open_parenthesis = strchr(str, '(');
 
 				if (fgets(str, 1024, fp) != NULL) {
 					/* Change all " into ' to avoid conflict with lua eight_ball("..") command syntax. */
@@ -10077,7 +10078,7 @@ void dungeon(void) {
 					   Try to make sure we catch at least one whole sentence, denotedly limited by according punctuation marks.
 					   Parenthesis-structures work too, just don't confuse smileys with it. */
 					c = str + strlen(str) - 1;
-					while(c > str && *c != '.' && *c != '!' && *c != ';' && (*c != ')' || *(c - 1) == '-')) c--;
+					while(c > str && *c != '.' && *c != '!' && *c != ';' && !(open_parenthesis && (*c == ')' && *(c - 1) != '-'))) c--;
 					/* In the case of parentheses, don't replace it with a dot but add a dot, if there is space. */
 					if (*c == ')' && c < str + MSG_LEN - 1 - 10 - 1) *(++c) = '.';
 					/* ..however, some responses have so long sentences that there is maybe only a comma, none of the above marks.. */
