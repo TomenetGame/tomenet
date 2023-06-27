@@ -10108,12 +10108,12 @@ void dungeon(void) {
 
 					/* Found any valid way to somehow truncate the line? =_= */
 					if (c) {
-						*c = '.';
+						if (*c != '!') *c = '.'; /* At the end of the text, replace a comma or semicolon or space, but not an exclamation mark. */
 						*(c + 1) = 0;
 					}
 
 					/* A new weirdness has popped up: It started generating [more and more] trailing dot-triplets, separated with spaces, at the end of each answer */
-					while (str[strlen(str) - 1] == ' ' || (str[strlen(str) - 1] == '.' && (str[strlen(str) - 2] == '.' || str[strlen(str) - 2] == ' '))) str[strlen(str) - 1] = 0;
+					while (str[strlen(str) - 1] == ' ' || (str[strlen(str) - 1] == '.' && (str[strlen(str) - 2] == '.' || str[strlen(str) - 2] == ' ' || str[strlen(str) - 2] == '!'))) str[strlen(str) - 1] = 0;
 
 					exec_lua(0, format("eight_ball(\"%s\")", str));
 				}
