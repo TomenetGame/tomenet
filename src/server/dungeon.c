@@ -10109,7 +10109,7 @@ void dungeon(void) {
 					/* Cut off trailing remains of a sentence -_- (even required for AI response, as it also gets cut off often).
 					   Try to make sure we catch at least one whole sentence, denotedly limited by according punctuation marks. */
 					c = str + strlen(str) - 1;
-					while(c > str && ((*c != '.' && *c != '!' && *c != ';') || within_parentheses)) {
+					while(c > str && ((*c != '.' && *c != '?'  && *c != '!' && *c != ';') || within_parentheses)) {
 						if (open_parenthesis) {
 							if (*c == ')' && *(c - 1) != '-') within_parentheses = TRUE;
 							if (*c == '(') within_parentheses = FALSE;
@@ -10147,12 +10147,12 @@ void dungeon(void) {
 
 					/* Found any valid way to somehow truncate the line? =_= */
 					if (c) {
-						if (*c != '!') *c = '.'; /* At the end of the text, replace a comma or semicolon or space, but not an exclamation mark. */
+						if (*c != '?' && *c != '!') *c = '.'; /* At the end of the text, replace a comma or semicolon or space, but not an exclamation mark. */
 						*(c + 1) = 0;
 					}
 
 					/* A new weirdness has popped up: It started generating [more and more] trailing dot-triplets, separated with spaces, at the end of each answer */
-					while (str[strlen(str) - 1] == ' ' || (str[strlen(str) - 1] == '.' && (str[strlen(str) - 2] == '.' || str[strlen(str) - 2] == ' ' || str[strlen(str) - 2] == '!'))) str[strlen(str) - 1] = 0;
+					while (str[strlen(str) - 1] == ' ' || (str[strlen(str) - 1] == '.' && (str[strlen(str) - 2] == '.' || str[strlen(str) - 2] == ' ' || str[strlen(str) - 2] == '?' || str[strlen(str) - 2] == '!'))) str[strlen(str) - 1] = 0;
 
 					exec_lua(0, format("eight_ball(\"%s\")", str));
 				}
