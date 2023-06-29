@@ -10060,12 +10060,15 @@ void dungeon(void) {
 		path_build(buf, 1024, ANGBAND_DIR_DATA, "external-response.log");
 		if ((fp = fopen(buf, "r")) != NULL) {
 			if (!feof(fp)) {
-				char str[1024], *c, strtmp[1024], *open_parenthesis, *o, *p;
+				char strbase[1024], *str, *c, strtmp[1024], *open_parenthesis, *o, *p;
 				bool within_parentheses = FALSE;
 				/* Cut message of at MSG_LEN minus "\374\377y[8ball] " chat prefix length: */
 				int maxlen = MSG_LEN - 1 - 10;
 
-				if (fgets(str, 1024, fp) != NULL) {
+				if (fgets(strbase, 1024, fp) != NULL) {
+					str = strbase;
+					/* Trim leading spaces */
+					while (*str == ' ') str++;
 					/* Change all " into ' to avoid conflict with lua eight_ball("..") command syntax. */
 					c = str - 1;
 					while(*(++c)) if (*c == '"') *c = '\'';
