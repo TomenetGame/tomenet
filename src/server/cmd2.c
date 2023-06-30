@@ -749,7 +749,7 @@ void do_cmd_go_up(int Ind) {
 
 	/* C. Blue -- Megahack to fix the player having enough energy left to perform another action after taking upstairs,
 	   but insufficient energy to perform another action after taking downstairs, due to different new floor speeds!
-	   Especially for going upwards this is required to fix the "you cannot see" bug, when the player has enoug
+	   Especially for going upwards this is required to fix the "you cannot see" bug, when the player has enough
 	   energy to cast a spell BEFORE process_player_change_wpos() gets called, while when going downstairs,
 	   in receive_activate_skill() the spellcast command will rebound once due to insufficient energy, resulting in
 	   the spell to actually work (even though this could be considered exactly the wrong way around :D)..
@@ -1650,7 +1650,7 @@ void do_cmd_go_down(int Ind) {
 
 	/* C. Blue -- Megahack to fix the player having enough energy left to perform another action after taking upstairs,
 	   but insufficient energy to perform another action after taking downstairs, due to different new floor speeds!
-	   Especially for going upwards this is required to fix the "you cannot see" bug, when the player has enoug
+	   Especially for going upwards this is required to fix the "you cannot see" bug, when the player has enough
 	   energy to cast a spell BEFORE process_player_change_wpos() gets called, while when going downstairs,
 	   in receive_activate_skill() the spellcast command will rebound once due to insufficient energy, resulting in
 	   the spell to actually work (even though this could be considered exactly the wrong way around :D)..
