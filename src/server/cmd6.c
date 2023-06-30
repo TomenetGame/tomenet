@@ -156,8 +156,12 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 
 	case SV_FOOD_HALLUCINATION:
 		if (!p_ptr->resist_chaos) {
-			take_sanity_hit(Ind, 2, "drugs", 0);
+			take_sanity_hit(Ind, (p_ptr->msane + 39) / 20, "drugs", 0);
+#if 0 /* Note: spell_stack_limit is actually just 200.. */
 			if (set_image(Ind, p_ptr->image + rand_int(250) + 250))
+#else
+			if (set_image(Ind, p_ptr->image + rand_int(100) + 100))
+#endif
 				ident = TRUE;
 		}
 		/* new in 2022 - just to actually 'do' something - emergency usage (yay for Chaos Lineage) */
@@ -166,6 +170,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 		    && !p_ptr->martyr
 #endif
 		    ) {
+			set_image(Ind, p_ptr->image + rand_int(3) + 3); /* Still very small hallu effect */
 			p_ptr->cmp += 15;
 			if (p_ptr->cmp > p_ptr->mmp) p_ptr->cmp = p_ptr->mmp;
 			p_ptr->redraw |= (PR_MANA);

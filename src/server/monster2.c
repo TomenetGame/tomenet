@@ -2108,7 +2108,7 @@ static void sanity_blast(int Ind, int m_idx, bool necro) {
 		if (!p_ptr->resist_conf)
 			(void)set_confused(Ind, p_ptr->confused + rand_int(4) + 4);
 		if ((!p_ptr->resist_chaos) && (randint(3) == 1))
-			(void)set_image(Ind, p_ptr->image + rand_int(250) + 150);
+			(void)set_image(Ind, p_ptr->image + rand_int(100) + 100);
 		return;
 	}
 
@@ -2129,7 +2129,7 @@ static void sanity_blast(int Ind, int m_idx, bool necro) {
 		while (rand_int(100) > p_ptr->skill_sav && p_ptr->stat_cur[A_WIS] > 3)
 			(void)do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL);
 		if (!p_ptr->resist_chaos)
-			(void)set_image(Ind, p_ptr->image + rand_int(250) + 150);
+			(void)set_image(Ind, p_ptr->image + rand_int(100) + 100);
 		return;
 	}
 
