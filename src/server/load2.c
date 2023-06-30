@@ -2388,12 +2388,13 @@ if (p_ptr->updated_savegame == 0) {
 		rd_u16b(&p_ptr->deaths);
 		rd_u16b(&p_ptr->soft_deaths);
 
-		/* array of 'warnings' and hints aimed at newbies */
+		/* array of 'warnings' and hints aimed at newbies or are redundant/pampering */
 		rd_u16b(&tmp16u);
 		if (tmp16u & 0x01) p_ptr->warning_technique_melee = 1;
 		if (tmp16u & 0x02) p_ptr->warning_technique_ranged = 1;
 		if (tmp16u & 0x04) p_ptr->warning_drained = 1;
 		if (tmp16u & 0x08) p_ptr->warning_blastcharge = 1;
+		if (tmp16u & 0x10) p_ptr->warning_sanity = 1;
 	} else {
 		/* auto-enable for now (MAX_AURAS) */
 		if (get_skill(p_ptr, SKILL_AURA_FEAR)) p_ptr->aura[AURA_FEAR] = TRUE;

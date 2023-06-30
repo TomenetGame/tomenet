@@ -1077,6 +1077,9 @@ static void wr_extra(int Ind) {
 	if (p_ptr->warning_technique_ranged == 1) tmp16u |= 0x02;
 	if (p_ptr->warning_drained == 1) tmp16u |= 0x04;
 	if (p_ptr->warning_blastcharge == 1) tmp16u |= 0x08;
+	/* and also save warnings that we just don't want to repeat, as they overlap with actual non-warning feedback messages anyway
+	   - or because the player has to act carefully on his own responsibility */
+	if (p_ptr->warning_sanity == 1) tmp16u |= 0x10;
 	wr_u16b(tmp16u);
 
 	wr_string(p_ptr->info_msg);

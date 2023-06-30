@@ -2986,6 +2986,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_limitbottles = 1;
 		p_ptr->warning_ingredients = 1;
 		p_ptr->warning_id = 1;
+		p_ptr->warning_sanity = 1;
 		return;
 	}
 

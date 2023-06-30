@@ -2337,6 +2337,11 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 		msg_print(Ind, "\377rYou feel insanity creep into your mind..");
 		msg_print(Ind, NULL);
 	}
+
+	if (!p_ptr->warning_sanity && p_ptr->csane < p_ptr->msane / 2) { /* <50% is the 'Crazy' threshold */
+		msg_print(Ind, "\377RWARNING: If your sanity ever drops below zero, you die PERMANENTLY!");
+		p_ptr->warning_sanity = 1;
+	}
 }
 
 /* Decrease player's exp. This is another copy of the function above.
