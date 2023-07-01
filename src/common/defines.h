@@ -5403,7 +5403,7 @@
 #define TR5_CRIT			0x00000020L	/* More critical hits */
 #define TR5_ATTR_MULTI			0x00000040L	/* Object shimmer -- only allowed in k_info */
  #define TR5_WOUNDING			0x00000080L	/* Wounds monsters -- not implemented -- (maybe give +hit/+dam bonus?) */
- #define TR5_FULL_NAME		0x00000100L		/* Uses direct name from k_info - UNUSED appearently/not implemented -- */
+ #define TR5_FULL_NAME		0x00000100L		/* Uses direct name from k_info - a bunch of items have this seemingly randomly (mostly books?), but it's UNUSED appearently/not implemented -- */
 #define TR5_LUCK		0x00000200L		/* Luck += pval */
 #define TR5_XXX			0x00000400L	//hole (was plasma res)
  #define TR5_LEVELS		0x00000800L		/* Can gain exp/exp levels !! -- unused -- */
