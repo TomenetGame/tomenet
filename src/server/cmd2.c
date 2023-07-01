@@ -6191,13 +6191,18 @@ void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x,
 
 /*
  * Return multiplier of an object
+ * NOTE: Launchers are pretty hacky! The (sval % 10) actually encodes the multiplier!
+ *       So slings must have sval 2, bows 12 and 13, xbows 23 and 24.
  */
 int get_shooter_mult(object_type *o_ptr) {
 	/* Assume a base multiplier */
-	int tmul = 1;
+	int tmul = 1, sval;
+
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200) sval = o_ptr->sval2;
+	else sval = o_ptr->sval;
 
 	/* Analyze the launcher */
-	switch (o_ptr->sval) {
+	switch (sval) {
 	case SV_SLING:
 		/* Sling and ammo */
 		tmul = 2;
@@ -6449,6 +6454,7 @@ void do_cmd_fire(int Ind, int dir) {
 			+ o_ptr->to_h + j_ptr->to_h);
 		chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
 
+		//tmul = j_ptr->sval % 10;
 		tmul = get_shooter_mult(j_ptr);
 	} else {
 		/* Actually "fire" the object */

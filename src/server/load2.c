@@ -636,6 +636,13 @@ static void rd_item(object_type *o_ptr) {
 	o_ptr->ac = k_ptr->ac;
 	o_ptr->dd = k_ptr->dd;
 	o_ptr->ds = k_ptr->ds;
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200) {
+		int idx = lookup_kind(o_ptr->tval2, o_ptr->sval2);
+
+		o_ptr->ac = k_info[idx].ac;
+		o_ptr->dd = k_info[idx].dd;
+		o_ptr->ds = k_info[idx].ds;
+	}
 
 	/* Acquire standard weight */
 	o_ptr->weight = k_ptr->weight;

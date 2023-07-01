@@ -1982,6 +1982,11 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	char		tmp_modstr[ONAME_LEN];
 #endif
 
+	/* For custom objects mimicking other objects: */
+	int		tval;
+	object_type	forge, *ox_ptr = &forge;
+
+
 	/* Extract some flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
@@ -2794,30 +2799,34 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	}
 #endif
 
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200) {
+		tval = o_ptr->tval2;
+		invcopy(ox_ptr, lookup_kind(o_ptr->tval2, o_ptr->sval2));
+
+		/* Hack: Actually permanently *(re)transfer* the dice and base AC onto the custom item! */
+		o_ptr->dd = ox_ptr->dd;
+		o_ptr->ds = ox_ptr->ds;
+		o_ptr->ac = ox_ptr->ac;
+	} else tval = o_ptr->tval;
 
 	/* Dump base weapon info */
-	switch (o_ptr->tval) {
-		/* Missiles and Weapons */
-		case TV_SHOT:
-		case TV_BOLT:
-		case TV_ARROW:
-			/* Exploding arrow? */
-			if (o_ptr->pval != 0 && known)
-				t = object_desc_str(t, " (exploding)");
-			/* No break, we want to continue the description */
-			__attribute__ ((fallthrough));
+	switch (tval) {
+	/* Missiles and Weapons */
+	case TV_SHOT:
+	case TV_BOLT:
+	case TV_ARROW:
+		/* Exploding arrow? */
+		if (o_ptr->pval != 0 && known) t = object_desc_str(t, " (exploding)");
+		/* No break, we want to continue the description */
+		__attribute__ ((fallthrough));
 
-		case TV_SPECIAL:
-			if (o_ptr->tval == TV_SPECIAL && (o_ptr->sval != SV_CUSTOM_OBJECT || wield_slot(0, o_ptr) == -1)) break;
-			__attribute__ ((fallthrough));
-
-		case TV_BLUNT:
-		case TV_POLEARM:
-		case TV_SWORD:
-		case TV_DIGGING:
-		case TV_BOOMERANG:
-		case TV_AXE:
-		case TV_MSTAFF:
+	case TV_BLUNT:
+	case TV_POLEARM:
+	case TV_SWORD:
+	case TV_DIGGING:
+	case TV_BOOMERANG:
+	case TV_AXE:
+	case TV_MSTAFF:
 
 		/* Append a "damage" string */
 		if (!(mode & 8)) t = object_desc_chr(t, ' ');
@@ -2831,11 +2840,12 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		break;
 
 
-		/* Bows get a special "damage string" */
-		case TV_BOW:
+	/* Bows get a special "damage string" */
+	case TV_BOW:
 
 		/* Mega-Hack -- Extract the "base power" */
-		power = (o_ptr->sval % 10);
+		//power = (sval % 10);
+		power = get_shooter_mult(o_ptr);
 
 		/* Apply the "Extra Might" flag */
 		if (f3 & TR3_XTRA_MIGHT) power++;
