@@ -366,7 +366,8 @@
    Spells cast from that book get boni:
     -20% MP cost,
     -5% fail rate,
-    +1 spell level (does not affect fail rate but does affect MP cost, but nowadays MP cost is fixed anyway, so no effect). */
+    +1 spell level (does not affect fail rate but does affect MP cost, but nowadays MP cost is fixed anyway, so no effect;
+                   does not affect spells that were not yet castable, similar to how the Spell-power skill works). */
 #define WIELD_BOOKS
 
 
