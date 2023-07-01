@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 21. June 2023 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 1. July 2023 - written by C. Blue (c_blue@gmx.net)        |
 | for TomeNET version v4.9.0c - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -20007,6 +20007,33 @@ effect in higher tiers, such as bolt -> ball -> line of sight.
 Magic, holy and occult schools give certain permanent boni and abilities to
 the player, when trained to a certain extent. The boni are listed below each
 school.
+
+
+Experimental Quirk: Wielding a spell book
+-----------------------------------------
+Depending on the server settings, an experimental quirk might be enabled:
+You can 'w' (wield) a spell book (that includes any book, spell scroll, or
+spell crystal) like a 2-handed weapon.
+
+All spells in that book will receive some boni when you cast them. Usually:
+ - 20% reduced MP cost
+ - 5% reduced failure rate
+ - +1 effective spell level (increasing the spell's power, much like the
+      skill 'Spell-power' does - only works on spells that you alread know!)
+
+This quirk might be useful for certain lower level characters, but might lose
+its appeal at higher levels where you find other powerful items to wield
+instead, such as highly enchanted mage staves or weapons.
+
+As this quirk is classified as 'experimental', the effects might be subject
+to change, which will probably appear as a note in the message of the day (~f).
+
+With a somewhat recent client up to version 4.9.0c you can use this quirk just
+fine, but you won't be able to browse the equipped book, and you can only cast
+from it by using the macro wizard (or manually creating macros that cast spells
+by their name).
+If you use the latest github code or a client of version higher than 4.9.0c
+these limitations will be fixed.
 
 
 - Wizardry -
