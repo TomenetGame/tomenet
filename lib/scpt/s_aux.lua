@@ -692,6 +692,8 @@ function spell_chance(i, s, inven_slot)
 	end
 
 	local __prev_inven_slot = __cur_inven_slot
+	__cur_inven_slot = -1
+	local lev = get_level(i, s, 50)
 	__cur_inven_slot = inven_slot
 
 	-- Hack: "101" means 100% chance to succeed ('fail' is unsigned byte, so it'll be 157) - C. Blue
@@ -699,10 +701,10 @@ function spell_chance(i, s, inven_slot)
 		chance = 0
 	-- A new hack: "102" means greatly reduced fail chance (from 0 base fail chance) - C. Blue
 	elseif (s_ptr.fail == 102) then
-		chance = (lua_spell_chance(i, 0, get_level(i, s, 50), s_ptr.skill_level, get_mana(i, s, inven_slot), get_power(i, s), get_spell_stat(s)) + 5) / 6
+		chance = (lua_spell_chance(i, 0, lev, s_ptr.skill_level, get_mana(i, s, inven_slot), get_power(i, s), get_spell_stat(s)) + 5) / 6
 	else
 		-- Extract the base spell failure rate
-		chance = lua_spell_chance(i, s_ptr.fail, get_level(i, s, 50), s_ptr.skill_level, get_mana(i, s, inven_slot), get_power(i, s), get_spell_stat(s))
+		chance = lua_spell_chance(i, s_ptr.fail, lev, s_ptr.skill_level, get_mana(i, s, inven_slot), get_power(i, s), get_spell_stat(s))
 	end
 
 	__cur_inven_slot = __prev_inven_slot
