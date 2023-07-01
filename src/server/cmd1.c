@@ -2970,7 +2970,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 	bool		sleep_stab = TRUE, cloaked_stab = (p_ptr->cloaked == 1), shadow_stab = (p_ptr->shadow_running); /* can player backstab the monster? */
 	bool		backstab = FALSE, stab_fleeing = FALSE; /* does player backstab the player? */
 	bool		primary_wield, secondary_wield, dual_wield;
-	int		dual_stab = (dual_wield ? 1 : 0); /* organizer variable for dual-wield backstab */
+	int		dual_stab;
 	bool		martial = FALSE;
 
 	int		vorpal_cut = 0;
@@ -3001,29 +3001,20 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 	u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5 = 0, f6 = 0, esp = 0;
 
 
-	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200) {
-		int tval;
+	o_ptr = &p_ptr->inventory[INVEN_WIELD];
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200)
+		primary_wield = is_melee_item(o_ptr->tval2);
+	else
+		primary_wield = is_melee_item(o_ptr->tval);
 
-		primary_wield = is_melee_item(p_ptr->inventory[INVEN_WIELD].tval2);
-		if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200)
-			tval = p_ptr->inventory[INVEN_ARM].tval2;
-		else
-			tval = p_ptr->inventory[INVEN_ARM].tval;
-		secondary_wield = (tval != 0 && tval != TV_SHIELD);
-		dual_wield = primary_wield && secondary_wield && p_ptr->dual_mode; /* Note: primary_wield && secondary_wield == p_ptr->dual_wield (from xtra1.c) actually. */
-		dual_stab = (dual_wield ? 1 : 0); /* organizer variable for dual-wield backstab */
-	} else {
-		int tval;
+	o_ptr = &p_ptr->inventory[INVEN_ARM];
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200)
+		secondary_wield = (o_ptr->tval2 != 0 && o_ptr->tval2 != TV_SHIELD);
+	else
+		secondary_wield = (o_ptr->tval != 0 && o_ptr->tval != TV_SHIELD);
 
-		primary_wield = is_melee_item(p_ptr->inventory[INVEN_WIELD].tval);
-		if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200)
-			tval = p_ptr->inventory[INVEN_ARM].tval2;
-		else
-			tval = p_ptr->inventory[INVEN_ARM].tval;
-		secondary_wield = (tval != 0 && tval != TV_SHIELD);
-		dual_wield = primary_wield && secondary_wield && p_ptr->dual_mode; /* Note: primary_wield && secondary_wield == p_ptr->dual_wield (from xtra1.c) actually. */
-		dual_stab = (dual_wield ? 1 : 0); /* organizer variable for dual-wield backstab */
-	}
+	dual_wield = primary_wield && secondary_wield && p_ptr->dual_mode; /* Note: primary_wield && secondary_wield == p_ptr->dual_wield (from xtra1.c) actually. */
+	dual_stab = (dual_wield ? 1 : 0); /* organizer variable for dual-wield backstab */
 
 
 	if (!(zcave = getcave(wpos))) return;
@@ -4162,7 +4153,8 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	bool		backstab = FALSE, stab_fleeing = FALSE; /* does player backstab the monster? */
 	bool		primary_wield, secondary_wield, dual_wield;
 	int		dual_stab;
-	bool		martial = FALSE, did_stun, did_knee, did_slow, weapon = primary_wield || secondary_wield;
+	bool		martial = FALSE, did_stun, did_knee, did_slow;
+	bool		weapon; //atm PvE only: Backstabbing can cause stun effect
 	int		block, parry;
 
 	int		vorpal_cut = 0;
@@ -4193,29 +4185,21 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	monster_effect[5] = 0;
 
 
-	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200) {
-		int tval;
+	o_ptr = &p_ptr->inventory[INVEN_WIELD];
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200)
+		primary_wield = is_melee_item(o_ptr->tval2);
+	else
+		primary_wield = is_melee_item(o_ptr->tval);
 
-		primary_wield = is_melee_item(p_ptr->inventory[INVEN_WIELD].tval2);
-		if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200)
-			tval = p_ptr->inventory[INVEN_ARM].tval2;
-		else
-			tval = p_ptr->inventory[INVEN_ARM].tval;
-		secondary_wield = (tval != 0 && tval != TV_SHIELD);
-		dual_wield = primary_wield && secondary_wield && p_ptr->dual_mode; /* Note: primary_wield && secondary_wield == p_ptr->dual_wield (from xtra1.c) actually. */
-		dual_stab = (dual_wield ? 1 : 0); /* organizer variable for dual-wield backstab */
-	} else {
-		int tval;
+	o_ptr = &p_ptr->inventory[INVEN_ARM];
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200)
+		secondary_wield = (o_ptr->tval2 != 0 && o_ptr->tval2 != TV_SHIELD);
+	else
+		secondary_wield = (o_ptr->tval != 0 && o_ptr->tval != TV_SHIELD);
 
-		primary_wield = is_melee_item(p_ptr->inventory[INVEN_WIELD].tval);
-		if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200)
-			tval = p_ptr->inventory[INVEN_ARM].tval2;
-		else
-			tval = p_ptr->inventory[INVEN_ARM].tval;
-		secondary_wield = (tval != 0 && tval != TV_SHIELD);
-		dual_wield = primary_wield && secondary_wield && p_ptr->dual_mode; /* Note: primary_wield && secondary_wield == p_ptr->dual_wield (from xtra1.c) actually. */
-		dual_stab = (dual_wield ? 1 : 0); /* organizer variable for dual-wield backstab */
-	}
+	dual_wield = primary_wield && secondary_wield && p_ptr->dual_mode; /* Note: primary_wield && secondary_wield == p_ptr->dual_wield (from xtra1.c) actually. */
+	dual_stab = (dual_wield ? 1 : 0); /* organizer variable for dual-wield backstab */
+	weapon = primary_wield || secondary_wield;
 
 
 	if (!(zcave = getcave(wpos))) return;
@@ -4439,11 +4423,11 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 			}
 		}
 
+		o_ptr = &p_ptr->inventory[slot];
 #ifdef WIELD_BOOKS
 		/* We _are_ wielding an item, but it does _not_ count in any way for melee attacking?
 		   (Unlike for exaple a Mage Staff, which does count; it has dice and can be enchanted even.)
 		   Then hack it to point to an empty item (same as an empty wield slot): */
-		o_ptr = &p_ptr->inventory[slot];
 		if (!primary_wield && slot == INVEN_WIELD && o_ptr->tval) o_ptr = &forge_zero;
 #endif
 
