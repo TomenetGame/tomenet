@@ -2754,77 +2754,85 @@ D:and cures stun and most cuts.
 
 ##### School Books #####
 
-$NEW_TOMES!N:330:& Tome~ of Magical Energy
-$NEW_TOMES$N:330:& Tome~ of Magical Energy
+N:330:& Tome~ of Magical Energy
 G:?:M
 I:111:0:0
 W:50:0:30:25000
 A:50/50:100/50
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW | IGNORE_WATER | IGNORE_MANA
+# for WIELD_BOOKS:
+F:REGEN_MANA
 
-$NEW_TOMES!N:331:& Tome~ of the Eternal Flame
-$NEW_TOMES$N:331:& Tome~ of the Eternal Flame
+N:331:& Tome~ of the Eternal Flame
 G:?:f
 I:111:1:0
 W:50:0:30:25000
 A:50/50:100/50
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW | IGNORE_FIRE | IGNORE_WATER
+# for WIELD_BOOKS:
+F:RES_FIRE | SH_FIRE | BRAND_FIRE
 
-$NEW_TOMES!N:332:& Tome~ of the Blowing Wind
-$NEW_TOMES$N:332:& Tome~ of the Blowing Wind
+N:332:& Tome~ of the Blowing Wind
 G:?:e
 I:111:2:0
 W:50:0:30:25000
 A:50/50:100/50
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW | IGNORE_ELEC | IGNORE_WATER
+# for WIELD_BOOKS:
+F:RES_COLD | SH_COLD | BRAND_COLD
 
-$NEW_TOMES!N:333:& Tome~ of the Impenetrable Earth
-$NEW_TOMES$N:333:& Tome~ of the Impenetrable Earth
+N:333:& Tome~ of the Impenetrable Earth
 G:?:H
 I:111:3:0
 W:50:0:30:25000
 A:50/50:100/50
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW | IGNORE_ACID | IGNORE_WATER
+# for WIELD_BOOKS:
+F:RES_SHARDS | RES_ACID
 
-$NEW_TOMES!N:334:& Tome~ of the Everrunning Wave
-$NEW_TOMES$N:334:& Tome~ of the Everrunning Wave
+N:334:& Tome~ of the Everrunning Wave
 G:?:Y
 I:111:4:0
 W:50:0:30:25000
 A:50/50:100/50
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW | IGNORE_WATER
+# for WIELD_BOOKS:
+F:RES_WATER
 
-$NEW_TOMES!N:335:& Tome~ of Translocation
-$NEW_TOMES$N:335:& Tome~ of Translocation
+N:335:& Tome~ of Translocation
 G:?:q
 I:111:5:0
 W:50:0:30:25000
 A:50/50:100/50
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW | IGNORE_WATER
+# for WIELD_BOOKS:
+F:RES_TELE
 
-$NEW_TOMES!N:336:& Tome~ of the Tree
-$NEW_TOMES$N:336:& Tome~ of the Tree
+N:336:& Tome~ of the Tree
 G:?:u
 I:111:6:0
 W:50:0:30:25000
 A:50/50:100/50
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW | IGNORE_WATER
+# for WIELD_BOOKS:
+F:REGEN | RES_BLIND
 
-$NEW_TOMES!N:337:& Tome~ of Knowledge
-$NEW_TOMES$N:337:& Tome~ of Knowledge
+N:337:& Tome~ of Knowledge
 G:?:D
 I:111:7:0
 W:50:0:30:25000
 A:50/50:100/50
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW | IGNORE_WATER
+# for WIELD_BOOKS:
+F:RES_CONF
 
 
 ##### Chests #####
@@ -3177,6 +3185,8 @@ $ENABLE_OCCULT$W:50:0:30:25000
 $ENABLE_OCCULT$A:50/50:100/50
 $ENABLE_OCCULT$P:0:1d1:0:0:0
 $ENABLE_OCCULT$F:FULL_NAME | EASY_KNOW | IGNORE_WATER
+# for WIELD_BOOKS:
+$ENABLE_OCCULT$F:RES_DARK
 
 $ENABLE_OCCULT$N:380:& Tome~ of Spirits
 $ENABLE_OCCULT$G:?:i
@@ -3185,6 +3195,8 @@ $ENABLE_OCCULT$W:50:0:30:25000
 $ENABLE_OCCULT$A:50/50:100/50
 $ENABLE_OCCULT$P:0:1d1:0:0:0
 $ENABLE_OCCULT$F:FULL_NAME | EASY_KNOW | IGNORE_WATER | IGNORE_FIRE
+# for WIELD_BOOKS:
+$ENABLE_OCCULT$F:RES_LITE
 
 N:381:& Snowball~
 G:*:w
@@ -3218,6 +3230,8 @@ $ENABLE_OHERETICISM$W:50:0:30:25000
 $ENABLE_OHERETICISM$A:50/50:100/50
 $ENABLE_OHERETICISM$P:0:1d1:0:0:0
 $ENABLE_OHERETICISM$F:FULL_NAME | EASY_KNOW | IGNORE_WATER | IGNORE_FIRE
+$ENABLE_OHERETICISM$# for WIELD_BOOKS:
+$ENABLE_OHERETICISM$F:RES_CHAOS
 
 
 # Extra weapons to buff some categories away from too high rarity
@@ -3866,6 +3880,8 @@ $ENABLE_OUNLIFE$W:50:0:30:25000
 $ENABLE_OUNLIFE$A:50/50:100/50
 $ENABLE_OUNLIFE$P:0:1d1:0:0:0
 $ENABLE_OUNLIFE$F:FULL_NAME | EASY_KNOW | IGNORE_WATER
+$ENABLE_OUNLIFE$# for WIELD_BOOKS:
+$ENABLE_OUNLIFE$F:HOLD_LIFE
 
 
 $ENABLE_DEMOLITIONIST$N:448:& Grinding Tool~
@@ -6167,14 +6183,15 @@ A:20/3
 F:LEVITATE | EASY_KNOW
 
 
-$NEW_TOMES!N:756:& Tome~ of the Time
-$NEW_TOMES$N:756:& Tome~ of the Time
+N:756:& Tome~ of the Time
 G:?:t
 I:111:8:0
 W:50:0:30:25000
 A:50/50:100/50
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW | IGNORE_WATER | IGNORE_ACID
+# for WIELD_BOOKS:
+F:RES_TIME
 
 $NEW_TOMES!N:757:& Spellbook~ of #
 $NEW_TOMES$N:757:& Spell Scroll~ of #
@@ -6188,49 +6205,52 @@ F:FULL_NAME | EASY_KNOW | IGNORE_WATER
 D:Spell scrolls can be reused infinitely.
 
 #removed Meta school (spells went to Mana and Nature)
-#$NEW_TOMES!N:758:& Tome~ of Meta Spells
-#$NEW_TOMES$N:758:& Tome~ of Meta Spells
+#N:758:& Tome~ of Meta Spells
 #G:?:F
 #I:111:9:0
 #W:50:0:30:25000
 #A:50/50:100/50
 #P:0:1d1:0:0:0
 #F:FULL_NAME | EASY_KNOW | IGNORE_WATER
+# for WIELD_BOOKS:
+#F:FREE_ACT
 
 #removed Mind school (spells went to Udun and Divination)
-#$NEW_TOMES!N:759:& Tome~ of the Mind
-#$NEW_TOMES$N:759:& Tome~ of the Mind
+#N:759:& Tome~ of the Mind
 #G:?:z
 #I:111:10:0
 #W:50:0:30:25000
 #A:50/50:100/50
 #P:0:1d1:0:0:0
 #F:FULL_NAME | EASY_KNOW | IGNORE_WATER
+# for WIELD_BOOKS:
+#F:RES_CONF
 
-#N:760:& Holy Tome~ of Eru Iluvatar
-#G:?:G
-#I:111:20:0
-#W:50:0:30:25000
-#A:50/4
-#P:0:1d1:0:0:0
-#F:FULL_NAME | EASY_KNOW | IGNORE_WATER
-#
-#N:761:& Holy Tome~ of Manwe Sulimo
-#G:?:B
-#I:111:21:0
-#W:50:0:30:25000
-#A:50/4
-#P:0:1d1:0:0:0
-#F:FULL_NAME | EASY_KNOW | IGNORE_WATER
-#
-#N:762:& War Tome~ of Tulkas
-#G:?:R
-#I:111:22:0
-#W:50:0:30:25000
-#A:50/4
-#P:0:1d1:0:0:0
-#F:FULL_NAME | EASY_KNOW | IGNORE_WATER
-#
+##N:760:& Holy Tome~ of Eru Iluvatar
+##G:?:G
+##I:111:20:0
+##W:50:0:30:25000
+##A:50/4
+##P:0:1d1:0:0:0
+##F:FULL_NAME | EASY_KNOW | IGNORE_WATER
+##
+##N:761:& Holy Tome~ of Manwe Sulimo
+##G:?:B
+##I:111:21:0
+##W:50:0:30:25000
+##A:50/4
+##P:0:1d1:0:0:0
+##F:FULL_NAME | EASY_KNOW | IGNORE_WATER
+##
+##N:762:& War Tome~ of Tulkas
+##G:?:R
+##I:111:22:0
+##W:50:0:30:25000
+##A:50/4
+##P:0:1d1:0:0:0
+##F:FULL_NAME | EASY_KNOW | IGNORE_WATER
+##
+
 N:763:& Unholy Tome~ of the Hellflame
 G:?:X
 I:111:11:0
@@ -6238,14 +6258,17 @@ W:50:0:30:25000
 A:50/50:100/50
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW | IGNORE_WATER | IGNORE_FIRE
-#
-#N:764:& Corrupted Tome~ of Melkor
-#G:?:D
-#I:111:23:0
-#W:50:0:30:25000
-#A:50/4
-#P:0:1d1:0:0:0
-#F:FULL_NAME | EASY_KNOW | IGNORE_WATER
+# for WIELD_BOOKS:
+F:RES_FIRE | SH_FIRE | BRAND_FIRE
+
+##
+##N:764:& Corrupted Tome~ of Melkor
+##G:?:D
+##I:111:23:0
+##W:50:0:30:25000
+##A:50/4
+##P:0:1d1:0:0:0
+##F:FULL_NAME | EASY_KNOW | IGNORE_WATER
 
 # HOLE 765-769
 
@@ -7202,17 +7225,17 @@ D:Restores 1000 MP.
 
 # Tomes with Priest/Paladin prayers (svals 18,19 still free)
 
-$NEW_TOMES!N:922:& Tome~ of Holy Offense
-$NEW_TOMES$N:922:& Tome~ of Holy Offense
+N:922:& Tome~ of Holy Offense
 G:?:J
 I:111:12:0
 W:50:0:30:25000
 A:50/50:100/50
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW | IGNORE_WATER
+# for WIELD_BOOKS:
+F:LITE1
 
-$NEW_TOMES!N:923:& Tome~ of Holy Defense
-$NEW_TOMES$N:923:& Tome~ of Holy Defense
+N:923:& Tome~ of Holy Defense
 #G:?:S <-very similar to Astral Grimoire
 G:?:V
 I:111:13:0
@@ -7220,53 +7243,60 @@ W:50:0:30:25000
 A:50/50:100/50
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW | IGNORE_WATER | IGNORE_FIRE | IGNORE_ACID
+# for WIELD_BOOKS:
+F:HOLD_LIFE
 
-$NEW_TOMES!N:924:& Tome~ of Holy Curing
-$NEW_TOMES$N:924:& Tome~ of Holy Curing
+N:924:& Tome~ of Holy Curing
 G:?:g
 I:111:14:0
 W:50:0:30:25000
 A:50/50:100/50
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW | IGNORE_WATER
+# for WIELD_BOOKS:
+F:REGEN
 
-$NEW_TOMES!N:925:& Tome~ of Holy Support
-$NEW_TOMES$N:925:& Tome~ of Holy Support
+N:925:& Tome~ of Holy Support
 G:?:C
 I:111:15:0
 W:50:0:30:25000
 A:50/50:100/50
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW | IGNORE_WATER
+# for WIELD_BOOKS:
+F:SLOW_DIGEST
 
 # Tomes for Druid
 
-#$NEW_TOMES!N:950:& Tome~ of Druidism
-#$NEW_TOMES$N:950:& Tome~ of Druidism
+#N:950:& Tome~ of Druidism
 #G:?:G
 #I:111:16:0
 #W:50:0:30:37500
 #A:50/4
 #P:0:1d1:0:0:0
 #F:FULL_NAME | EASY_KNOW | IGNORE_WATER
+## for WIELD_BOOKS:
+#F:REGEN
 
-$NEW_TOMES!N:950:& Tome~ of Arcane Lore
-$NEW_TOMES$N:950:& Tome~ of Arcane Lore
+N:950:& Tome~ of Arcane Lore
 G:?:K
 I:111:16:0
 W:50:0:30:25000
 A:50/50:100/50
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW | IGNORE_WATER
+# for WIELD_BOOKS:
+F:REGEN_MANA
 
-$NEW_TOMES!N:951:& Tome~ of Physical Lore
-$NEW_TOMES$N:951:& Tome~ of Physical Lore
+N:951:& Tome~ of Physical Lore
 G:?:G
 I:111:17:0
 W:50:0:30:25000
 A:50/50:100/50
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW | IGNORE_WATER
+# for WIELD_BOOKS:
+F:REGEN
 
 
 N:926:& Heavy Ball~
@@ -7860,6 +7890,8 @@ $ENABLE_MCRAFT$W:50:0:30:25000
 $ENABLE_MCRAFT$A:50/50:100/50
 $ENABLE_MCRAFT$P:0:1d1:0:0:0
 $ENABLE_MCRAFT$F:FULL_NAME | EASY_KNOW | IGNORE_WATER | IGNORE_FIRE | IGNORE_ACID
+$ENABLE_MCRAFT$# for WIELD_BOOKS:
+$ENABLE_MCRAFT$F:FREE_ACT
 
 $ENABLE_MCRAFT$N:997:& Greater Crystal~ of Attunement
 $ENABLE_MCRAFT$G:*:i
@@ -7868,6 +7900,8 @@ $ENABLE_MCRAFT$W:50:0:30:25000
 $ENABLE_MCRAFT$A:50/50:100/50
 $ENABLE_MCRAFT$P:0:1d1:0:0:0
 $ENABLE_MCRAFT$F:FULL_NAME | EASY_KNOW | IGNORE_WATER | IGNORE_FIRE | IGNORE_ACID
+$ENABLE_MCRAFT$# for WIELD_BOOKS:
+$ENABLE_MCRAFT$F:ESP_UNIQUE
 
 $ENABLE_MCRAFT$N:998:& Greater Crystal~ of Mental Intrusion
 $ENABLE_MCRAFT$G:*:P
@@ -7876,6 +7910,8 @@ $ENABLE_MCRAFT$W:50:0:30:25000
 $ENABLE_MCRAFT$A:50/50:100/50
 $ENABLE_MCRAFT$P:0:1d1:0:0:0
 $ENABLE_MCRAFT$F:FULL_NAME | EASY_KNOW | IGNORE_WATER | IGNORE_FIRE | IGNORE_ACID
+$ENABLE_MCRAFT$# for WIELD_BOOKS:
+$ENABLE_MCRAFT$F:RES_CONF
 
 N:999:& Infernal Axe~
 G:/:R

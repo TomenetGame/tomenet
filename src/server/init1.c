@@ -2900,9 +2900,21 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 	++k_head->name_size;
 	++k_head->text_size;
 
-#ifdef WIELD_BOOKS
+#ifdef WIELD_BOOKS /* Now these cases could be done via $WIELD_BOOKS tags too maybe (which currently aren't implemented) */
+	/* All books acquire '2-handed' flag */
 	for (i = 1; i < MAX_K_IDX; i++)
 		if (k_info[i].tval == TV_BOOK) k_info[i].flags4 |= TR4_MUST2H;
+#else
+	/* All books lose their WIELD_BOOKS-intended extra powers */
+	for (i = 1; i < MAX_K_IDX; i++)
+		if (k_info[i].tval == TV_BOOK) {
+			k_info[i].flags1 = 0x0;
+			k_info[i].flags2 = 0x0;
+			k_info[i].flags3 &= (TR3_EASY_KNOW | TR3_IGNORE_ACID | TR3_IGNORE_COLD | TR3_IGNORE_FIRE | TR3_IGNORE_ELEC);
+			k_info[i].flags4 = 0x0;
+			k_info[i].flags5 &= (TR5_IGNORE_DISEN | TR5_IGNORE_MANA | TR5_IGNORE_WATER);
+			//flags6 ignored atm
+		}
 #endif
 
 	/* No version yet */
