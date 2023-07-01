@@ -1337,6 +1337,11 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 	if (o_tv == TV_CHEMICAL) o_tv = 10;
 #endif
 
+	if (o_tv == TV_SPECIAL && o_sv == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200) {
+		o_tv = o_ptr->tval2;
+		o_sv = o_ptr->sval2;
+	}
+
 	/* Evaluate the object */
 #ifdef PSTORE_SOLDOUT
 	if (!o_ptr->number) {
@@ -1427,6 +1432,11 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 			if (j_tv == TV_CHARGE) j_tv = 9;
 			if (j_tv == TV_CHEMICAL) j_tv = 10;
 #endif
+
+			if (j_tv == TV_SPECIAL && j_sv == SV_CUSTOM_OBJECT && j_ptr->xtra3 & 0x0200) {
+				j_tv = j_ptr->tval2;
+				j_sv = j_ptr->sval2;
+			}
 
 #ifdef PLAYER_STORES
 			/* Always skip store signs, since they are usually 'titles', aka above objects they describe */
@@ -5886,6 +5896,10 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr) {
 	if (o_tv == TV_CHEMICAL) o_tv = 10;
 #endif
 
+	if (o_tv == TV_SPECIAL && o_sv == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200) {
+		o_tv = o_ptr->tval2;
+		o_sv = o_ptr->sval2;
+	}
 
 	/* Check each existing item (try to combine) */
 	for (slot = 0; slot < h_ptr->stock_num; slot++) {
@@ -5932,6 +5946,11 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr) {
 			if (j_tv == TV_CHARGE) j_tv = 9;
 			if (j_tv == TV_CHEMICAL) j_tv = 10;
 #endif
+
+			if (j_tv == TV_SPECIAL && j_sv == SV_CUSTOM_OBJECT && j_ptr->xtra3 & 0x0200) {
+				j_tv = j_ptr->tval2;
+				j_sv = j_ptr->sval2;
+			}
 
 #ifdef PLAYER_STORES
 			/* Always skip store signs, since they are usually 'titles', aka above objects they describe */

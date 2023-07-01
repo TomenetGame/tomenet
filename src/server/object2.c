@@ -11315,6 +11315,11 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 		if (o_tv == TV_CHEMICAL) o_tv = 10;
 #endif
 
+		if (o_tv == TV_SPECIAL && o_sv == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200) {
+			o_tv = o_ptr->tval2;
+			o_sv = o_ptr->sval2;
+		}
+
 		/* Get the "value" of the item */
 		o_value = object_value(Ind, o_ptr);
 
@@ -11338,6 +11343,11 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 			if (j_tv == TV_CHARGE) j_tv = 9;
 			if (j_tv == TV_CHEMICAL) j_tv = 10;
 #endif
+
+			if (j_tv == TV_SPECIAL && j_sv == SV_CUSTOM_OBJECT && j_ptr->xtra3 & 0x0200) {
+				j_tv = j_ptr->tval2;
+				j_sv = j_ptr->sval2;
+			}
 
 			/* Objects sort by decreasing type */
 			if (o_tv > j_tv) break;
@@ -11672,6 +11682,11 @@ void reorder_pack(int Ind) {
 		if (o_tv == TV_CHEMICAL) o_tv = 10;
 #endif
 
+		if (o_tv == TV_SPECIAL && o_sv == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200) {
+			o_tv = o_ptr->tval2;
+			o_sv = o_ptr->sval2;
+		}
+
 		/* Get the "value" of the item */
 		o_value = object_value(Ind, o_ptr);
 
@@ -11696,6 +11711,11 @@ void reorder_pack(int Ind) {
 			if (j_tv == TV_CHARGE) j_tv = 9;
 			if (j_tv == TV_CHEMICAL) j_tv = 10;
 #endif
+
+			if (j_tv == TV_SPECIAL && j_sv == SV_CUSTOM_OBJECT && j_ptr->xtra3 & 0x0200) {
+				j_tv = j_ptr->tval2;
+				j_sv = j_ptr->sval2;
+			}
 
 			/* Objects sort by decreasing type */
 			if (o_tv > j_tv) break;
