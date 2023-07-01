@@ -1819,6 +1819,9 @@ They all start with a slash '/' hence they're called slash commands:
 /ref        Redraw the screen (do this if it's messed up for some reason).
             or simply hit CTRL+R)
 
+/reinit_guide
+           (Undocumented developer command that reloads the guide from drive.)
+
 /retire
 /ret        Gives a short message to use SHIFT+Q instead.
 
