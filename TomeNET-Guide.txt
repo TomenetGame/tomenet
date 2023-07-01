@@ -20013,7 +20013,10 @@ Experimental Quirk: Wielding a spell book
 -----------------------------------------
 Depending on the server settings, an experimental quirk might be enabled:
 You can 'w' (wield) a spell book (that includes any book, spell scroll, or
-spell crystal) like a 2-handed weapon.
+spell crystal) like a 2-handed weapon. An equipped book (or scroll/crystal)
+will not count as melee weapon, so any melee combat you engage in will work
+exactly as if you were fighting bare-handed (and martial arts skills won't
+be applied).
 
 All spells in that book will receive some boni when you cast them. Usually:
  - 20% reduced MP cost
