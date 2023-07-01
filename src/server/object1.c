@@ -6181,6 +6181,11 @@ s16b wield_slot(int Ind, object_type *o_ptr) {
 		if (o_ptr->tval2 < INVEN_WIELD || o_ptr->tval2 > INVEN_TOOL) return(-1);
 		/* Equippable special object */
 		return(o_ptr->tval2);
+
+#ifdef WIELD_BOOKS
+	case TV_BOOK:
+		return(INVEN_WIELD);
+#endif
 	}
 
 	/* No slot available */

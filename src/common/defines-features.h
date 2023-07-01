@@ -362,6 +362,13 @@
 /* Restrict placing blast charges to within the IDDC, for debugging/testing purpose */
 //#define DEMOLITIONIST_BLAST_IDDC_ONLY
 
+/* Allow wielding spell books? (count as 2-handed item, count as bare-handed aka 'no item equipped and no martial arts applied' for attacking)
+   Spells cast from that book get boni:
+    -20% MP cost,
+    -5% fail rate,
+    +1 spell level (does not affect fail rate but does affect MP cost, but nowadays MP cost is fixed anyway, so no effect). */
+#define WIELD_BOOKS
+
 
 
 /* ------------------------------------------------------------------------------------------------- */

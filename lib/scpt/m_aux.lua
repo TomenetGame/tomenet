@@ -352,7 +352,7 @@ function use_power(i, s, s_ptr, no_cost, other)
 		else
 			msg_print(i, "\255yYou failed to get the power "..power(s).name.." off!")
 			-- Reduce mana
-			adjust_power(i, s, -get_mana(i, s))
+			adjust_power(i, s, -power_get_mana(i, s))
 			use  = TRUE
 		end
 	else

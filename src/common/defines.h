@@ -3265,6 +3265,7 @@
 /* some masks (originally just is_armour for XBM control) - C. Blue */
 #define is_ammo(tval)	(((tval) == TV_SHOT) || ((tval) == TV_ARROW) || ((tval) == TV_BOLT))
 #define is_melee_weapon(tval)	(((tval) == TV_SWORD) || ((tval) == TV_BLUNT) || ((tval) == TV_AXE) || ((tval) == TV_POLEARM))
+#define is_melee_item(tval)	(is_melee_weapon(tval) || ((tval) == TV_MSTAFF))
 #define is_ranged_weapon(tval)	((tval) == TV_BOW || (tval) == TV_BOOMERANG)
 #define is_throwing_weapon(o_ptr) ( \
 	((o_ptr)->tval == TV_SWORD && ((o_ptr)->sval == SV_DAGGER || (o_ptr)->sval == SV_MAIN_GAUCHE)) || \

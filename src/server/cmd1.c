@@ -2954,6 +2954,9 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 	long int kl;
 	player_type *q_ptr;
 	object_type *o_ptr = NULL;
+#ifdef WIELD_BOOKS
+	object_type forge_zero = { 0 }; /* Simulate an empty inventory slot, specifically 'wield' slot. */
+#endif
 	char q_name[NAME_LEN], hit_desc[MAX_CHARS_WIDE];
 	bool do_quake = FALSE;
 	struct worldpos *wpos = &p_ptr->wpos;
@@ -2966,7 +2969,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 	bool		stab_skill = (bs_skill != 0 && !p_ptr->rogue_heavyarmor);
 	bool		sleep_stab = TRUE, cloaked_stab = (p_ptr->cloaked == 1), shadow_stab = (p_ptr->shadow_running); /* can player backstab the monster? */
 	bool		backstab = FALSE, stab_fleeing = FALSE; /* does player backstab the player? */
-	bool		primary_wield = (p_ptr->inventory[INVEN_WIELD].k_idx != 0);
+	bool		primary_wield = is_melee_item(p_ptr->inventory[INVEN_WIELD].tval);
 	bool		secondary_wield = (p_ptr->inventory[INVEN_ARM].k_idx != 0 && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD);
 	bool		dual_wield = primary_wield && secondary_wield && p_ptr->dual_mode; /* Note: primary_wield && secondary_wield == p_ptr->dual_wield (from xtra1.c) actually. */
 	int		dual_stab = (dual_wield ? 1 : 0); /* organizer variable for dual-wield backstab */
@@ -3193,6 +3196,12 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 		}
 
 		o_ptr = &p_ptr->inventory[slot];
+#ifdef WIELD_BOOKS
+		/* We _are_ wielding an item, but it does _not_ count in any way for melee attacking?
+		   (Unlike for exaple a Mage Staff, which does count; it has dice and can be enchanted even.)
+		   Then hack it to point to an empty item (same as an empty wield slot): */
+		if (!primary_wield && slot == INVEN_WIELD && o_ptr->tval) o_ptr = &forge_zero;
+#endif
 
 		/* Manage backstabbing and 'flee-stabbing' */
 		//todo: vortices, oozes, elementals, constructs, undead, plants, swarms, some undead maybe, incorporeal undead if you aren't incorporeal
@@ -4111,6 +4120,9 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 #endif
 	long int	kl;
 	object_type	*o_ptr = NULL;
+#ifdef WIELD_BOOKS
+	object_type forge_zero = { 0 }; /* Simulate an empty inventory slot, specifically 'wield' slot. */
+#endif
 	bool		do_quake = FALSE;
 
 	char		m_name[MNAME_LEN], m_name_raw[MNAME_LEN], hit_desc[MAX_CHARS_WIDE], mbname[MNAME_LEN];
@@ -4124,7 +4136,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	bool		stab_skill = (bs_skill != 0 && !p_ptr->rogue_heavyarmor);
 	bool		sleep_stab = TRUE, cloaked_stab = (p_ptr->cloaked == 1), shadow_stab = (p_ptr->shadow_running); /* can player backstab the monster? */
 	bool		backstab = FALSE, stab_fleeing = FALSE; /* does player backstab the monster? */
-	bool		primary_wield = (p_ptr->inventory[INVEN_WIELD].k_idx != 0);
+	bool		primary_wield = is_melee_item(p_ptr->inventory[INVEN_WIELD].tval);
 	bool		secondary_wield = (p_ptr->inventory[INVEN_ARM].k_idx != 0 && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD);
 	bool		dual_wield = primary_wield && secondary_wield && p_ptr->dual_mode; /* Note: primary_wield && secondary_wield == p_ptr->dual_wield (from xtra1.c) actually. */
 	int		dual_stab = (dual_wield ? 1 : 0); /* organizer variable for dual-wield backstab */
@@ -4379,7 +4391,13 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 			}
 		}
 
+#ifdef WIELD_BOOKS
+		/* We _are_ wielding an item, but it does _not_ count in any way for melee attacking?
+		   (Unlike for exaple a Mage Staff, which does count; it has dice and can be enchanted even.)
+		   Then hack it to point to an empty item (same as an empty wield slot): */
 		o_ptr = &p_ptr->inventory[slot];
+		if (!primary_wield && slot == INVEN_WIELD && o_ptr->tval) o_ptr = &forge_zero;
+#endif
 
 		/* Manage backstabbing and 'flee-stabbing' */
 		if (stab_skill && /* Need appropriate melee weapon or martial arts to backstab */

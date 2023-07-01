@@ -3185,7 +3185,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 
 		/* Check if we're out of mana (or other problem), to handle 'fallback' to melee  --
 		   in any case suppress OoM message (which would be displayed if do_cmd_mimic() gets called) */
-		res = exec_lua(Ind, format("return test_school_spell(%d, %d)", Ind, spell));
+		res = exec_lua(Ind, format("return test_school_spell(%d, %d, %d)", Ind, spell, item));
 		if (res) {
 			if (!fallback || p_ptr->fail_no_melee) {
 #ifndef AUTORET_FAIL_FREE

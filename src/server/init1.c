@@ -2900,6 +2900,10 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 	++k_head->name_size;
 	++k_head->text_size;
 
+#ifdef WIELD_BOOKS
+	for (i = 1; i < MAX_K_IDX; i++)
+		if (k_info[i].tval == TV_BOOK) k_info[i].flags4 |= TR4_MUST2H;
+#endif
 
 	/* No version yet */
 	if (!okay) return(2);
