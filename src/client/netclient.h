@@ -28,6 +28,7 @@ int Receive_subinven(void);
 #endif
 int Receive_inven_wide(void);
 int Receive_equip(void);
+int Receive_equip_wide(void);
 int Receive_char_info(void);
 int Receive_various(void);
 int Receive_mimic(void);

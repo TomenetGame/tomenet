@@ -6392,6 +6392,78 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, name);
 }
 
+/* Added for WIELD_BOOKS */
+int Send_equip_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name) {
+	char uses_dir = 0;
+	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
+	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
+	int slot = INVEN_WIELD + pos - 'a';
+	bool forward = FALSE;
+
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	/* Send to mindlinker instead? */
+	if (p_ptr->window & PW_ALLITEMS_FWD) forward = TRUE;
+
+	/* Mark activatable items that require a direction */
+	if (activation_requires_direction(o_ptr)
+	    //appearently not for A'able items >_>	    || !object_aware_p(Ind, o_ptr))
+	    ) {
+		uses_dir = 1;
+	}
+
+	uses_dir |= ((object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x2 : 0x0) | ((object_fully_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x4 : 0x0);
+	/* Also encode equipment-set indicator to visually confirm set luck boni */
+	//-- currently not working; timing issues with setting equip_set[] in calc_boni() vs calling Send_equip, and not every slot has correct equip_set[] value..
+	if (is_atleast(&p_ptr->version, 4, 8, 1, 0, 0, 0)) uses_dir |= p_ptr->equip_set[pos - 'a'] << 4;
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for equip (%d.%d.%d)",
+			Ind, connp->state, connp->id));
+		return(0);
+	}
+
+	/* for characters in forms that cannot use full equipment */
+	if (!item_tester_hook_wear(Ind, slot)) {
+		attr = TERM_L_DARK;
+		name = "(unavailable)";
+	}
+	/* hack: display INVEN_ARM slot as unavailable for 2-h weapons */
+	else if (slot == INVEN_ARM && p_ptr->inventory[INVEN_WIELD].k_idx && (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & TR4_MUST2H)) {
+		attr = TERM_L_DARK;
+		//name = "(occupied)";
+		name = "-";
+	}
+	/* hack: display secondary weapon 'greyed out' if flexibility is encumbered */
+	else if (slot == INVEN_ARM &&
+	    p_ptr->inventory[INVEN_WIELD].k_idx &&
+	    p_ptr->inventory[INVEN_ARM].k_idx && k_info[p_ptr->inventory[INVEN_ARM].k_idx].tval != TV_SHIELD &&
+	    p_ptr->rogue_heavyarmor)
+		attr = TERM_L_DARK;
+	/* hack: grey out climbing set if in monster form that doesn't allow it (compare calc_boni()!) */
+	else if (slot == INVEN_TOOL &&
+	    k_info[p_ptr->inventory[INVEN_TOOL].k_idx].tval == TV_TOOL &&
+	    k_info[p_ptr->inventory[INVEN_TOOL].k_idx].sval == SV_TOOL_CLIMB &&
+	    p_ptr->body_monster && !(r_info[p_ptr->body_monster].body_parts[BODY_FINGER] && r_info[p_ptr->body_monster].body_parts[BODY_ARMS]))
+		attr = TERM_L_DARK;
+
+	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
+		connp2 = Conn[p_ptr2->conn];
+		if (is_newer_than(&p_ptr2->version, 4, 9, 0, 5, 0, 1))
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I%hd%hd%hd%hd%hd%hd%hd%hd%hd", PKT_EQUIP_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval,
+			    o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name,
+			    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9);
+	}
+
+	if (forward) return(0);
+
+	if (is_newer_than(&p_ptr->version, 4, 9, 0, 5, 0, 1))
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I%hd%hd%hd%hd%hd%hd%hd%hd%hd", PKT_EQUIP_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval,
+		    o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name,
+		    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9);
+	return(0);
+}
+
 int Send_equip_availability(int Ind, int slot) {
 	char o_name[ONAME_LEN];
 	object_type *o_ptr = &Players[Ind]->inventory[slot];
@@ -6406,7 +6478,11 @@ int Send_equip_availability(int Ind, int slot) {
 
 	wgt = o_ptr->weight;
 
-	return Send_equip(Ind, 'a' + slot - INVEN_WIELD, attr, wgt, o_ptr, o_name);
+	/* Maybe not needed to use equip_wide just for changing the slot availability colour! */
+	if (((o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) && (o_ptr->tval != TV_SPECIAL || o_ptr->sval != SV_CUSTOM_OBJECT)) || !is_newer_than(&Players[Ind]->version, 4, 9, 0, 5, 0, 1))
+		return Send_equip(Ind, 'a' + slot - INVEN_WIELD, attr, wgt, o_ptr, o_name);
+	else
+		return Send_equip_wide(Ind, 'a' + slot - INVEN_WIELD, attr, wgt, o_ptr, o_name);
 }
 
 int Send_title(int Ind, cptr title) {

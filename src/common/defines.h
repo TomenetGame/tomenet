@@ -41,7 +41,7 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		9
 #define VERSION_PATCH		0
-#define VERSION_EXTRA		5
+#define VERSION_EXTRA		6
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -66,11 +66,11 @@
 
 /* Server release version tag (such as "a", "b" etc), or empty if none:
    Minimum client version tag required to "play 100%". */
-#define SERVER_VERSION_TAG	"c"
+#define SERVER_VERSION_TAG	"d"
 
 /* Client-side only: Client release version tag, or empty if none
    (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_TAG		"c"
+#define CLIENT_TAG		"d"
 #ifndef TEST_CLIENT
  #define CLIENT_VERSION_TAG	CLIENT_TAG
 #else

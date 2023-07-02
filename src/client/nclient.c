@@ -338,6 +338,7 @@ static void Receive_init(void) {
 #endif
 	receive_tbl[PKT_SPECIAL_LINE_POS]	= Receive_special_line_pos;
 	receive_tbl[PKT_VERSION]		= Receive_version;
+	receive_tbl[PKT_EQUIP_WIDE]	= Receive_equip_wide;
 }
 
 
@@ -2376,6 +2377,78 @@ int Receive_equip(void) {
 	inventory[pos - 'a' + INVEN_WIELD].uses_dir = uses_dir & 0x1;
 	inventory[pos - 'a' + INVEN_WIELD].ident = uses_dir & 0x6; //new hack in 4.7.1.2+ for ITH_ID/ITH_STARID
 	equip_set[pos - 'a'] = (uses_dir & 0xF0) >> 4;
+
+#if defined(POWINS_DYNAMIC) && defined(POWINS_DYNAMIC_CLIENTSIDE)
+	/* Strip "@&" markers, as these are a purely server-side thing */
+	while ((insc = strstr(name, "@&"))) {
+		strcpy(tmp, insc + 2);
+		strcpy(insc, tmp);
+	}
+	/* Strip "@^" markers, as these are a purely server-side thing */
+	while ((insc = strstr(name, "@&"))) {
+		strcpy(tmp, insc + 2);
+		strcpy(insc, tmp);
+	}
+#endif
+
+	if (!strcmp(name, "(nothing)"))
+		strcpy(inventory_name[pos - 'a' + INVEN_WIELD], equipment_slot_names[pos - 'a']);
+	else
+		strncpy(inventory_name[pos - 'a' + INVEN_WIELD], name, ONAME_LEN - 1);
+
+	/* new hack for '(unavailable)' equipment slots: handle INVEN_ARM slot a bit cleaner: */
+	if (pos == 'a') {
+		if (!strcmp(name, "(unavailable)")) equip_no_weapon = TRUE;
+		else equip_no_weapon = FALSE;
+	} else if (pos == 'b' && equip_no_weapon && !strcmp(name, "(nothing)"))
+		strcpy(inventory_name[INVEN_ARM], "(shield)");
+
+	/* Window stuff */
+	p_ptr->window |= (PW_EQUIP);
+
+	return(1);
+}
+
+/* Added for WIELD_BOOKS */
+int Receive_equip_wide(void) {
+	int n;
+	char ch;
+	char pos, attr, tval, sval, uses_dir;
+	s16b xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9;
+	s16b wgt, amt, pval, name1 = 0;
+	char name[ONAME_LEN];
+#if defined(POWINS_DYNAMIC) && defined(POWINS_DYNAMIC_CLIENTSIDE)
+	char tmp[ONAME_LEN];
+#endif
+
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%hd%c%I%hd%hd%hd%hd%hd%hd%hd%hd%hd",
+	    &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, &name1, &uses_dir, name,
+	    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9)) <= 0)
+		return(n);
+
+	/* Check that the equipment slot is valid - mikaelh */
+	if (pos < 'a' || pos > 'n') return(0);
+
+	inventory[pos - 'a' + INVEN_WIELD].sval = sval;
+	inventory[pos - 'a' + INVEN_WIELD].tval = tval;
+	inventory[pos - 'a' + INVEN_WIELD].pval = pval;
+	inventory[pos - 'a' + INVEN_WIELD].name1 = name1;
+	inventory[pos - 'a' + INVEN_WIELD].attr = attr;
+	inventory[pos - 'a' + INVEN_WIELD].weight = wgt;
+	inventory[pos - 'a' + INVEN_WIELD].number = amt;
+	inventory[pos - 'a' + INVEN_WIELD].uses_dir = uses_dir & 0x1;
+	inventory[pos - 'a' + INVEN_WIELD].ident = uses_dir & 0x6; //new hack in 4.7.1.2+ for ITH_ID/ITH_STARID
+	equip_set[pos - 'a'] = (uses_dir & 0xF0) >> 4;
+
+	inventory[pos - 'a' + INVEN_WIELD].xtra1 = xtra1;
+	inventory[pos - 'a' + INVEN_WIELD].xtra2 = xtra2;
+	inventory[pos - 'a' + INVEN_WIELD].xtra3 = xtra3;
+	inventory[pos - 'a' + INVEN_WIELD].xtra4 = xtra4;
+	inventory[pos - 'a' + INVEN_WIELD].xtra5 = xtra5;
+	inventory[pos - 'a' + INVEN_WIELD].xtra6 = xtra6;
+	inventory[pos - 'a' + INVEN_WIELD].xtra7 = xtra7;
+	inventory[pos - 'a' + INVEN_WIELD].xtra8 = xtra8;
+	inventory[pos - 'a' + INVEN_WIELD].xtra9 = xtra9;
 
 #if defined(POWINS_DYNAMIC) && defined(POWINS_DYNAMIC_CLIENTSIDE)
 	/* Strip "@&" markers, as these are a purely server-side thing */

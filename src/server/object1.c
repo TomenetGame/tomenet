@@ -6541,8 +6541,11 @@ void display_equip(int Ind) {
 		//wgt = o_ptr->weight; <- shows wrongly for ammunition!
 
 		/* Send the info off */
-		//Send_equip(Ind, tmp_val[0], attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->pval, o_name);
-		Send_equip(Ind, tmp_val[0], attr, wgt, o_ptr, o_name);
+		if (((o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) && (o_ptr->tval != TV_SPECIAL || o_ptr->sval != SV_CUSTOM_OBJECT)) || !is_newer_than(&p_ptr->version, 4, 9, 0, 5, 0, 1))
+			//Send_equip(Ind, tmp_val[0], attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->pval, o_name);
+			Send_equip(Ind, tmp_val[0], attr, wgt, o_ptr, o_name);
+		else
+			Send_equip_wide(Ind, tmp_val[0], attr, wgt, o_ptr, o_name);
 	}
 
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
@@ -6648,8 +6651,11 @@ void display_invenequip(int Ind) {
 		//wgt = o_ptr->weight; <- shows wrongly for ammunition!
 
 		/* Send the info off */
-		//Send_equip(Ind, tmp_val[0], attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->pval, o_name);
-		Send_equip(Ind, tmp_val[0], attr, wgt, o_ptr, o_name);
+		if (((o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) && (o_ptr->tval != TV_SPECIAL || o_ptr->sval != SV_CUSTOM_OBJECT)) || !is_newer_than(&p_ptr->version, 4, 9, 0, 5, 0, 1))
+			//Send_equip(Ind, tmp_val[0], attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->pval, o_name);
+			Send_equip(Ind, tmp_val[0], attr, wgt, o_ptr, o_name);
+		else
+			Send_equip_wide(Ind, tmp_val[0], attr, wgt, o_ptr, o_name);
 	}
 }
 

@@ -270,6 +270,7 @@
 #define PKT_SPECIAL_LINE_POS	206
 #define PKT_VERSION		207
 #define PKT_FONT		208	/* Main screen font */
+#define PKT_EQUIP_WIDE		209
 
 
 /*
