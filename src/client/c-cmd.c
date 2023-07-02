@@ -7411,7 +7411,7 @@ void cmd_browse(int item) {
 
 	if (item == -1) {
 #ifdef ENABLE_SUBINVEN
-		get_item_hook_find_obj_what = "Book/satchel name? ";
+		get_item_hook_find_obj_what = "Book/container name? ";
 		get_item_extra_hook = get_item_hook_find_obj;
 
 		item_tester_hook = item_tester_browsable;
