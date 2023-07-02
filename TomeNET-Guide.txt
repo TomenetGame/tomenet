@@ -20023,8 +20023,15 @@ exactly as if you were fighting bare-handed (and martial arts skills won't
 be applied).
 
 All spells in that book will receive some boni when you cast them. Usually:
- - 20% reduced MP cost (rounded up, so you won't notice this below 5 MP cost)
- - 5% reduced failure rate
+ - 20% reduced MP cost (rounded up when browsing the book, but actually has a
+                       chance to cost 1 less MP depending on the fraction, so
+                       on average it is actually always applied correctly!
+                       Example: A spell with a base cost of 2 MP would have a
+                       40% chance for 1 MP and 60% for 2 MP, on each cast.
+                       However, the cost for a spell can never go below 1 MP.)
+
+ - 5% reduced failure rate (cannot go below zero of course.)
+
  - +1 effective spell level (increasing the spell's power, much like the
       skill 'Spell-power' does - only works on spells that you alread know!)
 

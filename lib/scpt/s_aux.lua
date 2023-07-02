@@ -308,13 +308,6 @@ function get_mana(i, s, inven_slot)
 	--round up? - we need to use this, because this function is also called for spell information when browsing, so it must not be random
 	if (inven_slot == INVEN_WIELD) then lcost = ((lcost * 80) + 99) / 100 end
 
-	--allow fractions of MP, conferred as +1 being applied at appropriate chance. Never go below 1 MP cost though.
-	--if (inven_slot == INVEN_WIELD and lcost > 1) then
-	--	lcostr = mod(lcost, 5)
-	--	lcost = (lcost * 80) / 100 --LUA will round down (int)
-	--	if (lcostr ~= 0 and randint(5) > lcostr) then lcost = lcost + 1 end
-	--end
-
 	return lcost
 end
 
@@ -829,7 +822,13 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 
 		-- Invoke the spell effect
 		if (magik(spell_chance(i, s, other.book)) == FALSE) then
-			local mp_cost = get_mana(i, s, other.book)
+			local mp_cost = get_mana(i, s, -1) --actually DON'T apply WIELD_BOOKS bonus here yet, we do it below, for fractional chance..
+			--allow fractions of MP, conferred as +1 being applied at appropriate chance. Never go below 1 MP cost though.
+			if (other.book == INVEN_WIELD and mp_cost > 1) then
+				local mp_costr = mod(mp_cost, 5)
+				mp_cost = (mp_cost * 80) / 100 --LUA will round down (int)
+				if (mp_costr ~= 0 and randint(5) > mp_costr) then mp_cost = mp_cost + 1 end
+			end
 
 			msg_print(i, "You successfully cast the spell "..spell(s).name..".")
 
