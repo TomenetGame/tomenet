@@ -259,7 +259,7 @@ void install_client(GtkButton *button, gpointer label) {
 	fprintf(fp, "cd %s\n", out_val);
 	fprintf(fp, "rm %s\n", clname);
 	fprintf(fp, "rm updater/result.tmp\n");
-	fprintf(fp, "wget %s%s\n", _download, clname);
+	fprintf(fp, "wget --connect-timeout=3 %s%s\n", _download, clname);
 	fprintf(fp, "RETVAL=$?\n");
 	fprintf(fp, "echo $RETVAL > updater/result.tmp\n");
 	fprintf(fp, "tar xvjf %s --strip-components 1\n", clname);
@@ -370,7 +370,7 @@ exit(0);
 		    GTK_BUTTONS_CLOSE,
 		    "Error - the download server received too many requests\n" \
 		    "and responded with a captcha request which this\n" \
-		    "downloader currently does not support, sorry!\n \nPlease just try again later.");
+		    "downloader currently does not support, sorry!\n \nTry the button \"Go to sound pack download\" instead.");
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
 
@@ -455,7 +455,7 @@ exit(0);
 	remove("TomeNET-soundpack.7z");
 
 	/* download */
-	sprintf(tmp, "wget -O temp.html --dot-style=mega %s", _soundpack);
+	sprintf(tmp, "wget --connect-timeout=3 -O temp.html --dot-style=mega %s", _soundpack);
 	system(tmp);
 	fp = fopen("temp.html", "r");
 	out_val[0] = out_val[1] = 0;
@@ -486,7 +486,7 @@ exit(0);
 		    GTK_BUTTONS_CLOSE,
 		    "Error - the download server received too many requests\n" \
 		    "and responded with a captcha request which this\n" \
-		    "downloader currently does not support, sorry!\n \nPlease just try again later.");
+		    "downloader currently does not support, sorry!\n \nTry the button \"Go to sound pack download\" instead.");
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
 
@@ -497,7 +497,7 @@ exit(0);
 		return;
 	}
 	remove("temp.html");
-	//system(format("wget --dot-style=mega %s", path));
+	//system(format("wget --connect-timeout=3 --dot-style=mega %s", path));
 
 	/* download */
 	/* get own app path and prepare path'ed batch file */
@@ -510,7 +510,7 @@ exit(0);
 	/* download */
 	fprintf(fp, "cd %s/updater\n", out_val);
 	fprintf(fp, "rm result.tmp\n");
-	fprintf(fp, "wget --dot-style=mega %s", path);
+	fprintf(fp, "wget --connect-timeout=3 --dot-style=mega %s", path);
 	/* move to correct location and extract */
 	fprintf(fp, "mv TomeNET-soundpack.7z ..\n");
 	fprintf(fp, "mkdir -p %s/lib/xtra\n", out_val); /* in case someone deleted his whole lib folder */
@@ -617,7 +617,7 @@ void install_music(GtkButton *button, gpointer label) {
 		    GTK_BUTTONS_CLOSE,
 		    "Error - the download server received too many requests\n" \
 		    "and responded with a captcha request which this\n" \
-		    "downloader currently does not support, sorry!\n \nPlease just try again later.");
+		    "downloader currently does not support, sorry!\n \nTry the button \"Go to music pack download\" instead.");
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
 
@@ -702,7 +702,7 @@ void install_music(GtkButton *button, gpointer label) {
 	remove("TomeNET-musicpack.7z");
 
 	/* download */
-	sprintf(tmp, "wget -O temp.html --dot-style=mega %s", _musicpack);
+	sprintf(tmp, "wget --connect-timeout=3 -O temp.html --dot-style=mega %s", _musicpack);
 	system(tmp);
 	fp = fopen("temp.html", "r");
 	out_val[0] = out_val[1] = 0;
@@ -733,7 +733,7 @@ void install_music(GtkButton *button, gpointer label) {
 		    GTK_BUTTONS_CLOSE,
 		    "Error - the download server received too many requests\n" \
 		    "and responded with a captcha request which this\n" \
-		    "downloader currently does not support, sorry!\n \nPlease just try again later.");
+		    "downloader currently does not support, sorry!\n \nTry the button \"Go to music pack download\" instead.");
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
 
@@ -744,7 +744,7 @@ void install_music(GtkButton *button, gpointer label) {
 		return;
 	}
 	remove("temp.html");
-	//system(format("wget --dot-style=mega %s", path));
+	//system(format("wget --connect-timeout=3 --dot-style=mega %s", path));
 
 	/* download */
 	/* get own app path and prepare path'ed batch file */
@@ -757,7 +757,7 @@ void install_music(GtkButton *button, gpointer label) {
 	/* download */
 	fprintf(fp, "cd %s/updater\n", out_val);
 	fprintf(fp, "rm result.tmp\n");
-	fprintf(fp, "wget --dot-style=mega %s", path);
+	fprintf(fp, "wget --connect-timeout=3 --dot-style=mega %s", path);
 	/* move to correct location and extract */
 	fprintf(fp, "mv TomeNET-musicpack.7z ..\n");
 	fprintf(fp, "mkdir -p %s/lib/xtra\n", out_val); /* in case someone deleted his whole lib folder */
@@ -837,7 +837,7 @@ void install_guide(GtkButton *button, gpointer label) {
 	char out_val[3];
 
 	remove("TomeNET-Guide.txt");
-	system("wget https://www.tomenet.eu/TomeNET-Guide.txt");
+	system("wget --connect-timeout=3 https://www.tomenet.eu/TomeNET-Guide.txt"); //something changed in the web server's cfg; curl still works fine, but now wget needs the timeout setting; wget.exe for Windows still works!
 
 	fp = fopen("TomeNET-Guide.txt", "r");
 	if (fp) {//~paranoia?
