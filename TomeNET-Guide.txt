@@ -20028,6 +20028,10 @@ All spells in that book will receive some boni when you cast them. Usually:
  - +1 effective spell level (increasing the spell's power, much like the
       skill 'Spell-power' does - only works on spells that you alread know!)
 
+      (Note about 'Astral' spells: These often use the 'Astral level' instead
+      of spell level to calculate certain spell aspects. The Astral level,
+      however, is unchanged by this bonus spell level bonus.)
+
 This quirk might be useful for certain lower level characters, but might lose
 its appeal at higher levels where you find other powerful items to wield
 instead, such as highly enchanted mage staves or weapons.
