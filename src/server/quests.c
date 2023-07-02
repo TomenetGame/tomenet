@@ -378,7 +378,7 @@ static cave_type **quest_prepare_zcave(struct worldpos *wpos, bool stat, cptr tp
 /* Replace placeholders $$<letter> / $$<capital letter> in a string,
    thereby personalising it for dialogues and narrations.
    Examples:
-    $$P (party members, 0 = no party, 1 = only yourself, 2+..).
+    $$P (party members, 0 = no party, 1 = only yourself, 2+..). Same for $$G for guild members.
     $$E (trait-/class-affected race, eg Enlightened/Corrupted, empty for Hell Knight/Death Knight, else same as race)
 
    Note that similar placeholders are already used in other places exclusively:
