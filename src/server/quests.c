@@ -375,9 +375,11 @@ static cave_type **quest_prepare_zcave(struct worldpos *wpos, bool stat, cptr tp
 	return getcave(wpos);
 }
 
-/* Replace placeholders $$n/N, $$t/T, $$r/R, $$a/A and $$c/C in a string,
+/* Replace placeholders $$<letter> / $$<capital letter> in a string,
    thereby personalising it for dialogues and narrations.
-   New addition: $$P (party members, 0 = no party, 1 = only yourself, 2+..).
+   Examples:
+    $$P (party members, 0 = no party, 1 = only yourself, 2+..).
+    $$E (trait-/class-affected race, eg Enlightened/Corrupted, empty for Hell Knight/Death Knight, else same as race)
 
    Note that similar placeholders are already used in other places exclusively:
    $$p1..5 for randomized passwords.
