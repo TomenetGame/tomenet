@@ -544,7 +544,7 @@ function book_spells_num2(inven_slot, sval)
 		book = sval
 	end
 
-	-- Hack if the book is 255 it is a random book
+	-- Hack: if the book sval is 255 it is a spell scroll, which always has exactly 1 spell
 	if book == 255 then
 		return 1
 	end
