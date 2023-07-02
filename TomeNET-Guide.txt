@@ -20032,6 +20032,9 @@ All spells in that book will receive some boni when you cast them. Usually:
       of spell level to calculate certain spell aspects. The Astral level,
       however, is unchanged by this bonus spell level bonus.)
 
+If you have duplicates of a spell, both in your inventory and equipped, then
+the equipped and therefore boosted version will take precedence.
+
 This quirk might be useful for certain lower level characters, but might lose
 its appeal at higher levels where you find other powerful items to wield
 instead, such as highly enchanted mage staves or weapons.
@@ -20040,9 +20043,9 @@ As this quirk is classified as 'experimental', the effects might be subject
 to change, which will probably appear as a note in the message of the day (~f).
 
 With a somewhat recent client up to version 4.9.0c you can use this quirk just
-fine, but you won't be able to browse the equipped book, and you can only cast
-from it by using the macro wizard (or manually creating macros that cast spells
-by their name).
+fine except for custom books, and you won't be able to browse the equipped book
+and you can only cast from it by using the macro wizard (or manually creating
+macros that cast spells by their name).
 If you use the latest github code or a client of version higher than 4.9.0c
 these limitations will be fixed.
 
