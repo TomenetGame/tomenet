@@ -304,7 +304,16 @@ function get_mana(i, s, inven_slot)
 	__cur_inven_slot = inven_slot
 	local lcost = spell(s).mana + get_level(i, s, spell(s).mana_max - spell(s).mana, 0)
 	__cur_inven_slot = __prev_inven_slot
+
+	--round up? - we need to use this, because this function is also called for spell information when browsing, so it must not be random
 	if (inven_slot == INVEN_WIELD) then lcost = ((lcost * 80) + 99) / 100 end
+
+	--allow fractions of MP, conferred as +1 being applied at appropriate chance. Never go below 1 MP cost though.
+	--if (inven_slot == INVEN_WIELD and lcost > 1) then
+	--	lcostr = mod(lcost, 5)
+	--	lcost = (lcost * 80) / 100 --LUA will round down (int)
+	--	if (lcostr ~= 0 and randint(5) > lcostr) then lcost = lcost + 1 end
+	--end
 
 	return lcost
 end
