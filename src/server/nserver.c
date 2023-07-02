@@ -6472,7 +6472,8 @@ int Send_equip_availability(int Ind, int slot) {
 
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
-	attr = get_attr_from_tval(o_ptr);
+	if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr); /* WIELD_BOOKS */
+	else attr = get_attr_from_tval(o_ptr);
 	/* Hack -- fake monochrome */
 	if (!use_color) attr = TERM_WHITE;
 

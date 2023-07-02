@@ -6528,7 +6528,8 @@ void display_equip(int Ind) {
 		o_name[ONAME_LEN - 1] = 0; //fix in case our 4 spaces caused the string to exceed ONAME_LEN
 
 		/* Get the color */
-		attr = get_attr_from_tval(o_ptr);
+		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr); /* WIELD_BOOKS */
+		else attr = get_attr_from_tval(o_ptr);
 
 		/* You can inscribe with !U to force TERM_L_DARK colouring (more visibility tuning!) */
 		if (check_guard_inscription(o_ptr->note, 'U')) attr = TERM_L_DARK;
@@ -6638,7 +6639,8 @@ void display_invenequip(int Ind) {
 		//n = strlen(o_name);
 
 		/* Get the color */
-		attr = get_attr_from_tval(o_ptr);
+		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr); /* WIELD_BOOKS */
+		else attr = get_attr_from_tval(o_ptr);
 
 		/* You can inscribe with !U to force TERM_L_DARK colouring (more visibility tuning!) */
 		if (check_guard_inscription(o_ptr->note, 'U')) attr = TERM_L_DARK;
