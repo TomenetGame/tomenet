@@ -946,6 +946,9 @@ bool get_item_hook_find_spell(int *item, int mode) {
 			exact_match = TRUE;
 	}
 
+	/* Note about WIELD_BOOKS: This inventory iteration does not break if it finds a match,
+	   so any spells at INVEN_WIELD will override their equivalents up to INVEN_PACK,
+	   hence the search order from inven slot 0 upwards is correct. */
 	for (i = 0; i < INVEN_TOTAL; i++) {
 		o_ptr = &inventory[i];
 		if (o_ptr->tval != TV_BOOK) continue;
