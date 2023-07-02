@@ -304,7 +304,7 @@ function get_mana(i, s, inven_slot)
 	__cur_inven_slot = inven_slot
 	local lcost = spell(s).mana + get_level(i, s, spell(s).mana_max - spell(s).mana, 0)
 	__cur_inven_slot = __prev_inven_slot
-	if (inven_slot == INVEN_WIELD) then lcost = (lcost * 80) / 100 end
+	if (inven_slot == INVEN_WIELD) then lcost = ((lcost * 80) + 99) / 100 end
 
 	return lcost
 end
