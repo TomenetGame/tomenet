@@ -1937,7 +1937,8 @@ extern bool merchant_mail_carry(int Ind, int i);
 extern bool suppress_message, suppress_boni;
 /* The next buffers are for catching the chat */
 extern char last_chat_line[MSG_LEN]; /* What was said */
-extern char last_chat_owner[NAME_LEN]; /* Who said it */
+extern char last_chat_owner[CNAME_LEN]; /* Who said it */
+extern char last_chat_account[ACCNAME_LEN]; /* Who said it */
 // extern char last_chat_prev[MSG_LEN]; /* What was said before the above*/
 
 extern void check_dodge(int Ind);
@@ -2449,6 +2450,7 @@ int lua_get_mon_lev(int r_idx);
 char *lua_get_mon_name(int r_idx);
 char *lua_get_last_chat_owner();
 char *lua_get_last_chat_line();
+char *lua_get_last_chat_account();
 extern bool first_player_joined;
 void lua_towns_treset(void);
 long lua_player_exp(int level, int expfact);

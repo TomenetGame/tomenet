@@ -371,6 +371,7 @@ extern void lua_fix_spellbooks2(int sold, int snew, int swap);
 extern void lua_arts_fix(int Ind);
 extern char* lua_get_last_chat_line();
 extern char* lua_get_last_chat_owner();
+extern char* lua_get_last_chat_account();
 extern void lua_get_pgestat(int Ind, int n);
 extern void lua_start_global_event(int Ind, int evtype, char *parm);
 extern void lua_apply_item_changes(int Ind, int changes);

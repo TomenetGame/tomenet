@@ -5020,8 +5020,9 @@ static void player_talk_aux(int Ind, char *message) {
 
 	/* tBot's stuff */
 	/* moved here to allow tbot to see fake pvt messages. -Molt */
-	strncpy(last_chat_owner, sender, NAME_LEN);
+	strncpy(last_chat_owner, sender, CNAME_LEN);
 	strncpy(last_chat_line, message, MSG_LEN);
+	strncpy(last_chat_account, p_ptr->accountname, ACCNAME_LEN); // <- added this for chat-AI 1000 years later :) - C. Blue
 	/* do exec_lua() not here instead of in dungeon.c - mikaelh */
 
 	/* '-:' at beginning of message sends to normal chat, cancelling special chat modes - C. Blue */
@@ -5868,8 +5869,9 @@ static void console_talk_aux(char *message) {
 
 	/* tBot's stuff */
 	/* moved here to allow tbot to see fake pvt messages. -Molt */
-	strncpy(last_chat_owner, sender, NAME_LEN);
+	strncpy(last_chat_owner, sender, CNAME_LEN);
 	strncpy(last_chat_line, message, MSG_LEN);
+	strncpy(last_chat_account, "", ACCNAME_LEN); // <- added this for chat-AI 1000 years later :) - C. Blue
 
 	/* no big brother */
 	if (cfg.log_u && log) s_printf("[%s] %s\n", sender, message);

@@ -821,6 +821,11 @@ char *lua_get_last_chat_owner() {
 	return(last_chat_owner);
 }
 
+/* Return the last person's account name who said the last chat line */
+char *lua_get_last_chat_account() {
+	return(last_chat_account);
+}
+
 /* Reset all towns */
 void lua_towns_treset(void) {
 	int x, y;

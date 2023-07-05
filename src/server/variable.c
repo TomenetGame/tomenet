@@ -952,7 +952,8 @@ int firework_dungeon = 0, firework_dungeon_chance = 0;
 #endif
 
 char last_chat_line[MSG_LEN];  /* What was said */
-char last_chat_owner[NAME_LEN]; /* Who said it */
+char last_chat_owner[CNAME_LEN]; /* Who said it */
+char last_chat_account[ACCNAME_LEN]; /* Who said it */
 // char last_chat_prev[MSG_LEN];  /* What was said before the above*/
 
 auction_type *auctions;
