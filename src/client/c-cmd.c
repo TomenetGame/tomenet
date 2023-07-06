@@ -370,15 +370,21 @@ void process_command() {
 	case KTRL('T'): xhtml_screenshot("screenshot????", FALSE); break;
 	case KTRL('I'): cmd_lagometer(); break;
 
+//#define CTRLC_DEBUG /* Use CTRL-C for some special debug stuff instead of its normal function (audio shortcut)? */
+
 #ifdef USE_SOUND_2010
 	case KTRL('U'): interact_audio(); break;
 	//case KTRL('M'): //this is same as '\r' and hence doesn't work..
+ #ifndef CTRLC_DEBUG
 	case KTRL('C'): toggle_music(FALSE); break;
+ #endif
 	case KTRL('N'): toggle_master(FALSE); break;
 #else
 	case KTRL('U'):
 	//case KTRL('M'): //this is same as '\r' and hence doesn't work..
+ #ifndef CTRLC_DEBUG
 	case KTRL('C'):
+ #endif
 	case KTRL('N'):
 		c_msg_print("This key is unused in clients without SDL-sound support.  Hit '?' for help.");
 		break;
@@ -390,8 +396,11 @@ void process_command() {
 #else /* For debugging */
 		c_msg_format("%d->%d", TERMX_BLUE, term2attr(TERMX_BLUE)); break;
 #endif
-#if 0 /* only for debugging purpose - dump some client-side special config */
-	case KTRL('C'): c_msg_format("Client FPS: %d", cfg_client_fps); break;
+#ifdef CTRLC_DEBUG /* only for debugging purpose - dump some client-side special config */
+	case KTRL('C'):
+		//c_msg_format("Client FPS: %d", cfg_client_fps);
+		handle_process_font_file();
+		break;
 #endif
 	default: cmd_raw_key(command_cmd); break;
 	}
