@@ -10105,12 +10105,13 @@ Reward deeds:
     small temporary luck bonus that lasts about 30 minutes (45 on the Ironman
     server); multiple deed buffs do stack in duration up to ~ 1 hour, provided
     it's the same buff power (ie same tier of deed). Contender deeds are not
-    tradable so they can only be redeemer by the character that received them.
+    tradable so they can only be redeemed by the character that received them.
 
     Further information
     -------------------
     The luck buffs are on hold while on the world surface, so you won't lose
     buff time from running around in the town area or travelling to dungeons.
+    This also means that the buffs are not applied while on the world surface.
     For details about luck, see LUCK flag in (5.8).
 
     Highlander Tournament rewards can theoretically end up with a higher item
@@ -12836,7 +12837,8 @@ Deeds           Some of the parchments are deeds, which are used as rewards
                 to ~ 1 hour as long as their buff power is the same, and also
                 will end prematurely when you log out before the buff ran out.
                 The luck buffs are on hold while on the world surface, so you
-                won't lose buff time from running around.
+                won't lose buff time from running around. (Of course this also
+                means that the luck effect is not being applied.)
 *Destruction*   Causes a local earthquake, nearly completely wiping the area
                 of monsters and objects (see (5.11) about earthquakes).
                 Extremely powerful magic which causes a searing blast of light

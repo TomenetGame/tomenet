@@ -5911,11 +5911,7 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Temporary blessing of luck */
 	if (p_ptr->bless_temp_luck
-#if 0
-	    && !istownarea(&p_ptr->wpos, MAX_TOWNAREA))
-#else
 	    && p_ptr->wpos.wz)
-#endif
 		(void)bless_temp_luck(Ind, -1, p_ptr->bless_temp_luck - 1);
 
 	/* Temporary auras */
@@ -9428,6 +9424,9 @@ void process_player_change_wpos(int Ind) {
 
 	/* daylight problems for vampires */
 	if (!p_ptr->wpos.wz && p_ptr->prace == RACE_VAMPIRE) calc_boni(Ind);
+	/* temp luck blessings are on hold while on the surface - which is applied in calc_boni(): */
+	else if (p_ptr->bless_temp_luck) calc_boni(Ind);
+
 
 	/* moved here, since it simplifies the wpos-changing process and
 	   should keep it highly consistent and linear.
