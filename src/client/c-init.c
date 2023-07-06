@@ -3183,7 +3183,8 @@ static void Input_loop(void) {
 	in_game = TRUE;
 	prev_cname[0] = 0; //(re)init
 
-#if 1 /* requires in_game == TRUE in handle_process_font_file() */
+#if 0 /* 0: moved to a hack 'fix_custom_font_after_startup'. */
+	/* requires in_game == TRUE in handle_process_font_file() */
 	/* ---- TODO: A little order glitch, that we workaround here - should fix this in a cleaner manner probably: ----     - C. Blue
 	        The visual modules (init_x11() / init_gcu() / init_windows()) are loaded BEFORE client_init() is called.
 	        That means the init_stuff()->init_file_paths() has't been done yet, and and custom fonts won't initialize their
@@ -3194,7 +3195,7 @@ static void Input_loop(void) {
 	/* Reload custom font prefs on main screen font change */
 	//WINDOWS: if (td == &data[0])
 	//POSIX: if (td == &screen)
-	handle_process_font_file();
+	//handle_process_font_file();
 #endif
 
 	for (;;) {
