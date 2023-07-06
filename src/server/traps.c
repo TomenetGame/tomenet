@@ -94,6 +94,7 @@ bool do_player_drop_items(int Ind, int chance, bool trap) {
 #else
 	if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION) chance = (chance * (100 - TOOL_SAFETY_CHANCE / 2)) / 100;
 #endif
+	if (!chance) chance = 1;
 
 	for (i = 0; i < INVEN_PACK; i++) {
 		tmp_obj = p_ptr->inventory[i];
@@ -127,6 +128,14 @@ bool do_player_scatter_items(int Ind, int chance, int rad) {
 	zcave = getcave(&p_ptr->wpos);
 
 	if (p_ptr->inval) return(FALSE);
+
+	/* Specialty: Make theft prevention devices actually help us a bit: Reduce drop chance multiplicatively by 50% of its usual protection chance. */
+#ifndef TOOL_NOTHEFT_COMBO
+	if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION) chance >>= 1;
+#else
+	if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION) chance = (chance * (100 - TOOL_SAFETY_CHANCE / 2)) / 100;
+#endif
+	if (!chance) chance = 1;
 
 	for (i = 0; i < INVEN_PACK; i++) {
 		if (!p_ptr->inventory[i].k_idx) continue;
@@ -2431,8 +2440,14 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				o_ptr = &p_ptr->inventory[i];
 
 				if (!o_ptr->k_idx) continue;
-				if (o_ptr->tval != TV_POTION && o_ptr->tval != TV_POTION2)
-					continue;
+				if (o_ptr->tval != TV_POTION && o_ptr->tval != TV_POTION2) continue;
+
+				/* Specialty: Make theft prevention devices actually help us a bit: Reduce drop chance multiplicatively by 50% of its usual protection chance. */
+#ifndef TOOL_NOTHEFT_COMBO
+				if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION && rand_int(2)) continue;
+#else
+				if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION && magik(TOOL_SAFETY_CHANCE / 2)) continue;
+#endif
 
 				ident = TRUE;
 				//vanish = 90;
@@ -2547,6 +2562,13 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				if (q_ptr->lev > 20) amt *= q_ptr->lev - 20;
 				if (amt > max_amt) amt = max_amt;
 				if (amt < 100) continue;
+
+#ifndef TOOL_NOTHEFT_COMBO
+				if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION) amt >>= 1;
+#else
+				if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION) amt = (amt * (100 - TOOL_SAFETY_CHANCE / 2)) / 100;
+#endif
+				if (amt < 50) continue;
 
 				p_ptr->au -= amt;
 				/* hack: prevent s32b overflow */

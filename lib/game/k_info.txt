@@ -7053,9 +7053,9 @@ I:12:4:0
 W:35:0:12:15000
 A:35/20
 F:EASY_KNOW
-$TOOL_NOTHEFT_COMBO!D:When equipped it protects your inventory items from thieves.
+$TOOL_NOTHEFT_COMBO!D:When equipped it protects your inventory items from thieves and traps.
 $TOOL_NOTHEFT_COMBO$D:When equipped it very efficiently protects the items in your
-$TOOL_NOTHEFT_COMBO$D:inventory as well as the money in your purse from thieves.
+$TOOL_NOTHEFT_COMBO$D:inventory and the money in your purse from thieves and traps.
 
 N:906:& Tarpaulin~
 G:`:D

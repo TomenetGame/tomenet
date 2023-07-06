@@ -13110,8 +13110,8 @@ Backpack safety lock
                     When equipped it has a very high chance to prevent thieves
                     from stealing items from your backpack or money from your
                     purse.
-                    Also reduces the chance of dropping items when triggering
-                    any sort of trap that causes some of your items to drop.
+                    Also somewhat protects against traps that cause your items
+                    to drop or that somehow try to steal your items (thirst).
 Empty bottles       You can /fill these at fountains to turn them into
                     potions. (See (0.2b) for more details.)
 Firestones          These can be eaten by Draconians and players in dragon
