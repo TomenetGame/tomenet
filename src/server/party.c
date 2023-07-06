@@ -1755,9 +1755,14 @@ int party_create(int Ind, cptr name) {
 	}
 
 	/* If he's party owner, it's name change */
-	if (streq(parties[p_ptr->party].owner, p_ptr->name)) {
+	if (p_ptr->party) {
 		if (parties[p_ptr->party].mode & PA_IRONTEAM) {
-			msg_print(Ind, "\377yYour party is an Iron Team. Choose '2) Create an Iron Team' instead.");
+			msg_print(Ind, "\377yYour party is an Iron Team. Choose '(2) Create or rename an iron team' instead.");
+			return(FALSE);
+		}
+
+		if (!streq(parties[p_ptr->party].owner, p_ptr->name)) {
+			msg_print(Ind, "\377yYou must be the party owner to rename the party.");
 			return(FALSE);
 		}
 
@@ -1856,6 +1861,27 @@ int party_create_ironteam(int Ind, cptr name) {
 	if ((p_ptr->mode & MODE_SOLO)) {
 		msg_print(Ind, "\377ySoloist characters may not create a party.");
 		return(FALSE);
+	}
+
+	/* If he's party owner, it's name change -- check that he is already in a party though! */
+	if (p_ptr->party) {
+		if (!(parties[p_ptr->party].mode & PA_IRONTEAM)) {
+			msg_print(Ind, "\377yYour party is not an Iron Team. Choose '(1) Create or rename a party' instead.");
+			return(FALSE);
+		}
+
+		if (!streq(parties[p_ptr->party].owner, p_ptr->name)) {
+			msg_print(Ind, "\377yYou must be the iron team's owner to rename the team.");
+			return(FALSE);
+		}
+
+		strcpy(parties[p_ptr->party].name, temp);
+
+		/* Tell the party about its new name */
+		party_msg_format(p_ptr->party, "\377%cYour iron team is now called '%s'.", COLOUR_CHAT_GUILD, temp);
+
+		Send_party(Ind, FALSE, FALSE);
+		return(TRUE);
 	}
 
 	/* Only newly created characters can create an iron team */
