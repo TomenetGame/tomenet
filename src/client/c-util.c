@@ -9900,13 +9900,15 @@ void do_cmd_options(void) {
 			while (TRUE) {
 				for (l = 0; l < OPT_MAX; l++) {
 					if (!option_info[l].o_desc) continue; //option exists?
-					if (!option_info[l].o_enabled) continue; //option is eligible?
+					if (!option_info[l].o_enabled) continue; //option is disabled? not eligible for searching then
 					if (!my_strcasestr(option_info[l].o_text, src)) continue; //(partial) match?
 
 					found = TRUE;
 					k = 0;
-					for (m = 0; m < l; m++)
+					for (m = 0; m < l; m++) {
+						if (!option_info[m].o_enabled) continue; //option is disabled? not listed then
 						if (option_info[m].o_page == option_info[l].o_page) k++;
+					}
 
 					switch(option_info[l].o_page) {
 					case 1:	m = do_cmd_options_aux(1, "User Interface Options 1", k); break;
