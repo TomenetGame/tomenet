@@ -16174,6 +16174,15 @@ stated.
                                 Like sling ammo, boomerangs can ricochet.
                                 You can apply !R inscription to disable it.
 
+                                It is harder for monsters to intercept your
+                                attempt of throwing a boomerang, than it is for
+                                shooting with a sling, bow or crossbow.
+                                Also unlike those ranged weapons, boomerangs
+                                cannot be deflected by reflecting monsters.
+                                Last but not least, boomerangs are the only
+                                allowed weapon for martial artists - they will
+                                not negatively impact martial arts in any way.
+
                                 Increases ranged to-damage bonus when wielding
                                 a boomerang by +1 for every 2.500 increase.
 
