@@ -4468,7 +4468,12 @@ void prt_lnum(cptr header, s32b num, int row, int col, byte color) {
 	char out_val[32];
 
 	put_str(header, row, col);
-	if (c_cfg.colourize_bignum && color != TERM_L_UMBER) colour_bignum(num, -1, out_val, 1, TRUE);
+	if (c_cfg.colourize_bignum && color != TERM_L_UMBER) {
+		/* Drained value? */
+		if (color == TERM_YELLOW) colour_bignum(num, -1, out_val, 3, TRUE);
+		/* Normal value */
+		else colour_bignum(num, -1, out_val, 1, TRUE);
+	}
 	else (void)sprintf(out_val, "%10d", (int)num); /* Increased form 9 to 10 just for gold (~2 billion limit) */
 	c_put_str(color, out_val, row, col + len);
 }
@@ -11551,6 +11556,8 @@ void clear_macros(void) {
 #define COLBIGNUM_B2S "\377G"
 #define COLBIGNUM_M1S "\377u"
 #define COLBIGNUM_M2S "\377U"
+#define COLBIGNUM_C1S "\377W"
+#define COLBIGNUM_C2S "\377y"
 
 #define COLBIGNUM_DARK_A1S "\377s"
 #define COLBIGNUM_DARK_A2S "\377D"
@@ -11603,6 +11610,24 @@ void colour_bignum(s32b bn, s32b bn_max, char *out_val, byte method, bool afford
 #else
 				/* Since they are constants, just display it all in one colour, cannot be misinterpreted */
 				sprintf(out_val, COLBIGNUM_M2S "%9d", bn);
+#endif
+			}
+			break;
+		case 3:
+			/* Like 1, but for drained values */
+			if (bn != bn_max) {
+				/* Assume max of 4 triplets aka 12-digit number */
+				if (bn >= 1000000000) sprintf(out_val, COLBIGNUM_C1S "%1d" COLBIGNUM_C2S "%03d" COLBIGNUM_C1S "%03d" COLBIGNUM_C2S "%03d", bn / 1000000000, (bn % 1000000000) / 1000000, (bn % 1000000) / 1000, bn % 1000);
+				else if (bn >= 1000000) sprintf(out_val, COLBIGNUM_C2S "%4d" COLBIGNUM_C1S "%03d" COLBIGNUM_C2S "%03d", bn / 1000000, (bn % 1000000) / 1000, bn % 1000);
+				else if (bn >= 1000) sprintf(out_val, COLBIGNUM_C1S "%7d" COLBIGNUM_C2S "%03d", bn / 1000, bn % 1000);
+				else sprintf(out_val, COLBIGNUM_C2S "%10d", bn);
+			} else {
+#ifndef FIXED_PY_MAX_XXX
+				/* Alternating umber tones for PY_MAX_GOLD/PY_MAX_EXP */
+				sprintf(out_val, COLBIGNUM_M2S "%1d" COLBIGNUM_M1S "%03d" COLBIGNUM_M2S "%03d" COLBIGNUM_M1S "%03d", bn / 1000000000, (bn % 1000000000) / 1000000, (bn % 1000000) / 1000, bn % 1000);
+#else
+				/* Since they are constants, just display it all in one colour, cannot be misinterpreted */
+				sprintf(out_val, COLBIGNUM_M2S "%10d", bn);
 #endif
 			}
 			break;
