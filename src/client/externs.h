@@ -1231,3 +1231,5 @@ extern int food_warn_once_timer;
 extern int prev_huge_cmp, prev_huge_mmp;
 extern int prev_huge_csn, prev_huge_msn;
 extern int prev_huge_chp, prev_huge_mhp;
+
+extern bool fix_custom_font_after_startup;

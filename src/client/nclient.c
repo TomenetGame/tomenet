@@ -3607,6 +3607,12 @@ int Receive_line_info(void) {
 
 	if ((n = Packet_scanf(&rbuf, "%c%hd", &ch, &y)) <= 0) return(n);
 
+	/* Bad hack to fix the timing issue of sometimes not loading a custom font's prf file: */
+	if (fix_custom_font_after_startup) {
+		fix_custom_font_after_startup = FALSE;
+		handle_process_font_file();
+	}
+
 	if (screen_icky && ch != PKT_MINI_MAP) Term_switch(0);
 
 	/* If this is the mini-map, discard package if we already left the minimap screen again!

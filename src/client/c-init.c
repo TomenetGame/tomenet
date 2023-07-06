@@ -3739,6 +3739,9 @@ void client_init(char *argv1, bool skip) {
 	rl_connection_destroyed = FALSE;
 	rl_connection_destructible = FALSE;
 	if (rl_auto_relogin) skip = TRUE;
+
+	/* Hack-fix custom font loading once more after this next login */
+	fix_custom_font_after_startup = TRUE;
 #endif
 
 	/* Get character name and pass */
