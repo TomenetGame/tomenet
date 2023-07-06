@@ -7307,7 +7307,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		int Ind2 = 0 - c_ptr->m_idx;
 		bool blocks_important_feat = FALSE; /* does the player block an important feature, like staircases in towns? - C. Blue
 						       always make them 'switch places' instead of bumping. */
-		bool remain_in_store = FALSE;
+		bool remain_in_store = FALSE, replace_in_store = FALSE;
 
 		switch (c_ptr->feat) {
 		case FEAT_SHOP:
@@ -7315,6 +7315,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 			if (GetCS(c_ptr, CS_SHOP)->sc.omni != 7
 			    && q_ptr->store_num != -1) { /* except if the player isn't actually shopping but just blocking the store entrance! */
 				if (!q_ptr->admin_dm) remain_in_store = TRUE; /* Player is genuinely shopping, don't swap him off the store grid! */
+				else replace_in_store = TRUE;
 				break;
 			}
 			/* Fall through */
@@ -7358,7 +7359,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		    q_ptr->admin_dm || blocks_important_feat || (c_ptr->info & CAVE_SWITCH))
 		    /* don't switch someone 'out' of a shop, except for the Inn
 		       or if the player isn't actually 'visiting' the shop but just glitched onto the grid: */
-		    && !remain_in_store
+		    && !remain_in_store && !replace_in_store
 //moved above	    && !(f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) /* never swich places into perma wall (only case possible: if target player is admin) */
 		    && (f_info[c_ptr->feat].flags1 & FF1_SWITCH_MASK) /* never swich places into perma wall */
 		    && !(p_ptr->admin_dm && !(q_ptr->admin_dm || q_ptr->admin_wiz))) /* dm shouldn't switch with non-dms ever */
