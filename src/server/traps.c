@@ -88,6 +88,13 @@ bool do_player_drop_items(int Ind, int chance, bool trap) {
 
 	if (p_ptr->inval) return(FALSE);
 
+	/* Specialty: Make theft prevention devices actually help us a bit: Reduce drop chance multiplicatively by 50% of its usual protection chance. */
+#ifndef TOOL_NOTHEFT_COMBO
+	if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION) chance >>= 1;
+#else
+	if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION) chance = (chance * (100 - TOOL_SAFETY_CHANCE / 2)) / 100;
+#endif
+
 	for (i = 0; i < INVEN_PACK; i++) {
 		tmp_obj = p_ptr->inventory[i];
 #ifdef ENABLE_SUBINVEN
