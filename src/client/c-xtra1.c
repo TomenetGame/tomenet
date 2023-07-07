@@ -2540,12 +2540,7 @@ void check_for_playerlist(void) {
 		if (!(window_flag[j] & PW_PLAYERLIST)) continue;
 
 		/* Window set to invisible aka deactivated */
-#ifdef WINDOWS
-		if (!data[j].visible) continue;
-#endif
-#ifdef USE_X11
-		if (!term_prefs[j].visible) continue;
-#endif
+		if (!term_get_visibility(j)) continue;
 
 		break;
 	}
