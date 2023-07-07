@@ -9610,13 +9610,23 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	/* Do this before placing a dungeon boss, so the boss doesn't accidentally get steamrolled and erased */
 	dun->l_ptr->sanc_x = 0;
 	if (in_irondeepdive(wpos) && !town && !(dun_lev % 10)) {
-		int x1 = rand_int(dun->l_ptr->wid - 2 - 25) + 1, y1 = rand_int(dun->l_ptr->hgt - 2 - 17) + 1 + 17;
+		int x1 = rand_int(dun->l_ptr->wid - 2 - 25) + 1, y1 = rand_int(dun->l_ptr->hgt - 2 - 17) + 1;
+		if (x1 < dun->l_ptr->wid - 1 - 25 && y1 < dun->l_ptr->hgt - 1 - 17) {
+			int x2, y2;
 
-		if (x1 < dun->l_ptr->wid - 1 - 25 && y1 >= 1 + 17) {
+			/* Bulldoze: Erase any monsters that were already placed here */
+			for (x2 = x1; x2 < x1 + 25; x2++) {
+				for (y2 = y1; y2 < y1 - 17; y2++) {
+					if (zcave[y2][x2].m_idx > 0) delete_monster_idx(zcave[y2][x2].m_idx, TRUE);
+				}
+			}
+
+			x2 = x1;
+			y2 = y1;
 			//i = process_dungeon_file("t_sanctuary.txt", wpos, &y1, &x1, 17, 25, TRUE);
 			i = process_dungeon_file("t_sanctuary.txt", wpos, &y1, &x1, dun->l_ptr->hgt - 1, dun->l_ptr->wid - 1, TRUE);
-			dun->l_ptr->sanc_x = x1 + 14;
-			dun->l_ptr->sanc_y = y1 - 9;
+			dun->l_ptr->sanc_x = x2 + 14;
+			dun->l_ptr->sanc_y = y2 + 8;
 		} else i = -99;
 		s_printf("IDDC-Sanctuary %d (%d,%d) [%d,%d] <%d,%d> -> %d\n", dun_lev, x1, y1, dun->l_ptr->wid, dun->l_ptr->hgt, dun->l_ptr->sanc_x, dun->l_ptr->sanc_y, i);
 	}
