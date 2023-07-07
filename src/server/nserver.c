@@ -1571,7 +1571,12 @@ static void Delete_player(int Ind) {
 		cave_midx_debug(wpos, p_ptr->py, p_ptr->px, -Ind);
 
 		p_ptr = Players[NumPlayers];
+
+		/* Update */
+		Send_playerlist(0, Ind, 2);
 	}
+	/* Remove the final entry */
+	Send_playerlist(0, NumPlayers, 3);
 
 	if (Conn[Players[Ind]->conn]->id != -1)
 		GetInd[Conn[Players[Ind]->conn]->id] = Ind;
@@ -3692,6 +3697,8 @@ static int Handle_login(int ind) {
 	/* Done everything that required checking whether we logged in once since last server restart?
 	   Then adjust our 'runtime' tracker to this server session, by imprinting it. */
 	acc_set_runtime(p_ptr->accountname, runtime_server);
+
+	Send_playerlist(NumPlayers, 0, 1);
 
 	/* Handle the cfg_secret_dungeon_master option: Only tell other admins. */
 	if (p_ptr->admin_dm && (cfg.secret_dungeon_master)) {
@@ -9725,13 +9732,15 @@ int Send_indicators(int Ind, u32b indicators) {
 	return Packet_printf(&connp->c, "%c%d", PKT_INDICATORS, indicators);
 }
 
-/* mode:
+/* Ind:
+   0 = everyone
+   mode:
    0 = delete list ('i' has no effect)
    1 = init list with all players (ie after logging in) ('i' has no effect)
    2 = add entry 'i'
    3 = delete entry 'i' (only contains char name, for matching)
 */
-int Send_playerlist(int Ind, int i, int mode) {
+static int Send_playerlist_aux(int Ind, int i, int mode) {
 	char playerinfo[MAX_CHARS_WIDE];
 	connection_t *connp = Conn[Players[Ind]->conn];
 	bool start = TRUE;
@@ -9762,7 +9771,7 @@ int Send_playerlist(int Ind, int i, int mode) {
 			Packet_printf(&connp->c, "%s%s", Players[i]->name, playerinfo);
 		}
 		/* terminate */
-		if (!start) Packet_printf(&connp->c, "%s", "");
+		if (!start) Packet_printf(&connp->c, "%s%s", "", "");
 		break;
 	case 2: /* add/update */
 		write_player_info(Ind, i, playerinfo);
@@ -9783,6 +9792,24 @@ int Send_playerlist(int Ind, int i, int mode) {
 	}
 
 	return(1);
+}
+
+/* Ind:
+   0 = everyone
+   mode:
+   0 = delete list ('i' has no effect)
+   1 = init list with all players (ie after logging in) ('i' has no effect)
+   2 = add entry 'i'
+   3 = delete entry 'i' (only contains char name, for matching)
+*/
+int Send_playerlist(int Ind, int i, int mode) {
+	if (!Ind) {
+		int p;
+
+		for (p = 1; p <= NumPlayers; p++)
+			Send_playerlist_aux(p, i, mode);
+		return(1);
+	} else return Send_playerlist_aux(Ind, i, mode);
 }
 
 int Send_weather_colouring(int Ind, byte col_raindrop, byte col_snowflake, byte col_sandgrain, char c_sandgrain) {
