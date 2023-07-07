@@ -3,7 +3,7 @@
 
 /* Purpose: global constants and macro definitions for player.pre lua file */
 
-#define PW_PLAYER	8
+#define PW_PLAYER	4
 
 #define PY_FOOD_MAX	15000	/* Food value (Bloated) */
 #define PY_FOOD_FULL	10000	/* Food value (Normal) */
