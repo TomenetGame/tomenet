@@ -1892,7 +1892,7 @@ extern void view_highest_levels(int Ind);
 
 #ifdef AUCTION_SYSTEM
 extern void process_auctions();
-extern char *auction_format_time();
+extern char *auction_format_time(time_t t);
 extern bool auction_mode_check(int Ind, int auction_id);
 extern void auction_player_joined(int Ind);
 extern void auction_player_death(s32b id);
