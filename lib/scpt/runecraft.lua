@@ -6,6 +6,8 @@ R1 = bshl(255,0)
 R2 = bshl(255,8)
 PROJ = bor(R1,R2)
 MODE = bshl(255,16)
+-- This causes a runetime error in script.c btw. as this value exceeds the int type used by LUA:
+--  "server/script.c:88:1: runtime error: left shift of 255 by 24 places cannot be represented in type 'int'"
 TYPE = bshl(255,24)
 WARN = 0
 
