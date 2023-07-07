@@ -1967,8 +1967,8 @@ void write_player_info(int Ind, int i, char *pinfo) {
 	}
 	strcat(pinfo, buf);
 
-	/* Cut off at hostname, line gets too long */
-	if ((c = strchr(pinfo, '('))) *c = 0;
+	//if ((c = strchr(pinfo, '('))) *c = 0; /* Cut off at hostname, line gets too long */
+	if ((c = strchr(pinfo, ',')) && (c = strchr(c + 1, ','))) *c = 0; /* Already cut off at depth */
 
 	my_fclose(fff);
 }

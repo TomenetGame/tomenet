@@ -4822,6 +4822,9 @@ void check_experience(int Ind) {
 		clockin(Ind, 1);
 	}
 
+	/* Update his level in everyone's player-list subwindow */
+	Send_playerlist(0, Ind, 2);
+
 	if (!newlv) {
 		/* Handle stuff */
 		handle_stuff(Ind);
