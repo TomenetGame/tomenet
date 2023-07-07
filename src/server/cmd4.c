@@ -1900,7 +1900,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 }
 
 void write_player_info(int Ind, int i, char *pinfo) {
-	char buf[MSG_LEN], *c;
+	char buf[MSG_LEN], *c1, *c2;
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	int k;
 
@@ -1967,8 +1967,27 @@ void write_player_info(int Ind, int i, char *pinfo) {
 	}
 	strcat(pinfo, buf);
 
+#if 0
 	//if ((c = strchr(pinfo, '('))) *c = 0; /* Cut off at hostname, line gets too long */
 	if ((c = strchr(pinfo, ',')) && (c = strchr(c + 1, ','))) *c = 0; /* Already cut off at depth */
+	strcpy(buf, pinfo);
+	c = strchr(buf + (c - pinfo), ' ');
+	strcat(pinfo, c);
+#else
+	/* If before the 2nd comma there's a colour coded asterisk, continue normally. Else crop the range from 2nd comma till before colour code. */
+	c1 = strchr(pinfo, ',');
+	if (c1) c1 = strchr(c1 + 1, ',');
+	c2 = strchr(pinfo, '*');
+	if (!c2) {
+		if (c1) *c1 = 0;
+	} else {
+		if (c1) {
+			strcpy(buf, c2 - 2);
+			*c1 = ' ';
+			strcpy(c1 + 1, buf);
+		}
+	}
+#endif
 
 	my_fclose(fff);
 }
