@@ -23,8 +23,6 @@
 #define MACRO_USE_STD	0x02
 #define MACRO_USE_HYB	0x04
 
-#define NR_OPTIONS_SHOWN	9 /* # of possible sub-window types, see window_flag_desc[]) */
-
 /* Have the Macro Wizard generate target code in
    the form *tXXX- instead of XXX*t? - C. Blue */
 #define MACRO_WIZARD_SMART_TARGET
@@ -8478,7 +8476,7 @@ static void do_cmd_options_win(void) {
 
 	bool go = TRUE;
 
-	u32b old_flag[8];
+	u32b old_flag[ANGBAND_TERM_MAX];
 
 
 	/* Memorize old flags */
@@ -8506,7 +8504,7 @@ static void do_cmd_options_win(void) {
 			if (c_cfg.use_color && (j == x)) a = TERM_L_BLUE;
 
 			/* Window name, staggered, centered */
-			Term_putstr(35 + j * 5 - strlen(s) / 2, vertikal_offset + j % 2, -1, a, (char*)s);
+			Term_putstr(30 + j * 5 - strlen(s) / 2, vertikal_offset + j % 2, -1, a, (char*)s);
 		}
 
 		/* Display the options */
@@ -8538,12 +8536,12 @@ static void do_cmd_options_win(void) {
 				}
 
 				/* Flag value */
-				Term_putch(35 + j * 5, i + vertikal_offset + 2, a, c);
+				Term_putch(30 + j * 5, i + vertikal_offset + 2, a, c);
 			}
 		}
 
 		/* Place Cursor */
-		Term_gotoxy(35 + x * 5, y + vertikal_offset + 2);
+		Term_gotoxy(30 + x * 5, y + vertikal_offset + 2);
 
 		/* Get key */
 		ch = inkey();
@@ -8612,7 +8610,7 @@ static void do_cmd_options_win(void) {
 		default:
 			d = keymap_dirs[ch & 0x7F];
 
-			x = (x + ddx[d] + 6) % 7 + 1;
+			x = (x + ddx[d] + ANGBAND_TERM_MAX - 2) % (ANGBAND_TERM_MAX - 1) + 1;
 			y = (y + ddy[d] + NR_OPTIONS_SHOWN) % NR_OPTIONS_SHOWN;
 
 			if (!d) bell();

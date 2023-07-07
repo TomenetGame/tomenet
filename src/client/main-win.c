@@ -134,6 +134,8 @@
 #define IDM_TEXT_TERM_5			206
 #define IDM_TEXT_TERM_6			207
 #define IDM_TEXT_TERM_7			208
+#define IDM_TEXT_TERM_8			209
+#define IDM_TEXT_TERM_9			210
 
 #define IDM_WINDOWS_SCREEN		211
 #define IDM_WINDOWS_MIRROR		212
@@ -143,12 +145,14 @@
 #define IDM_WINDOWS_TERM_5		216
 #define IDM_WINDOWS_TERM_6		217
 #define IDM_WINDOWS_TERM_7		218
+#define IDM_WINDOWS_TERM_8		219
+#define IDM_WINDOWS_TERM_9		220
 
-#define IDM_OPTIONS_GRAPHICS	221
+#define IDM_OPTIONS_GRAPHICS		221
 #define IDM_OPTIONS_SOUND		222
 #define IDM_OPTIONS_UNUSED		231
 #define IDM_OPTIONS_SAVER		232
-#define IDM_OPTIONS_SAVEPREF	241
+#define IDM_OPTIONS_SAVEPREF		241
 
 #define IDM_HELP_GENERAL		901
 #define IDM_HELP_SPOILERS		902
@@ -610,11 +614,6 @@ static void recreateGraphicsObjects(term_data *td) {
 }
 
 #endif
-
-/*
- * Maximum number of windows XXX XXX XXX XXX
- */
-#define MAX_TERM_DATA 8
 
 /*
  * An array of term_data's
@@ -1171,6 +1170,8 @@ static void save_prefs(void) {
 	save_prefs_aux(&data[5], "Term-5 window");
 	save_prefs_aux(&data[6], "Term-6 window");
 	save_prefs_aux(&data[7], "Term-7 window");
+	save_prefs_aux(&data[8], "Term-8 window");
+	save_prefs_aux(&data[9], "Term-9 window");
 }
 
 
@@ -1336,6 +1337,8 @@ static void load_prefs(void) {
 	load_prefs_aux(&data[5], "Term-5 window");
 	load_prefs_aux(&data[6], "Term-6 window");
 	load_prefs_aux(&data[7], "Term-7 window");
+	load_prefs_aux(&data[8], "Term-8 window");
+	load_prefs_aux(&data[9], "Term-9 window");
 
 	bigmap_hint = (GetPrivateProfileInt("Base", "HintBigmap", 1, ini_file) != 0);
 	if (!bigmap_hint) firstrun = FALSE;
@@ -2847,6 +2850,8 @@ static void process_menus(WORD wCmd) {
 		case IDM_TEXT_TERM_5:
 		case IDM_TEXT_TERM_6:
 		case IDM_TEXT_TERM_7:
+		case IDM_TEXT_TERM_8:
+		case IDM_TEXT_TERM_9:
 			i = wCmd - IDM_TEXT_SCREEN;
 
 			if ((i < 0) || (i >= MAX_TERM_DATA)) break;
@@ -2863,6 +2868,8 @@ static void process_menus(WORD wCmd) {
 		case IDM_WINDOWS_TERM_5:
 		case IDM_WINDOWS_TERM_6:
 		case IDM_WINDOWS_TERM_7:
+		case IDM_WINDOWS_TERM_8:
+		case IDM_WINDOWS_TERM_9:
 			i = wCmd - IDM_WINDOWS_SCREEN;
 
 			if ((i < 0) || (i >= MAX_TERM_DATA)) break;

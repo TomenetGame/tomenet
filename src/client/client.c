@@ -398,12 +398,10 @@ static bool read_mangrc(cptr filename) {
 				read_mangrc_aux(6, buf);
 			if (!strncmp(buf, "Term-7window", 12))
 				read_mangrc_aux(7, buf);
-#if 0 /* keep n/a for now, not really needed */
 			if (!strncmp(buf, "Term-8window", 12))
 				read_mangrc_aux(8, buf);
 			if (!strncmp(buf, "Term-9window", 12))
 				read_mangrc_aux(9, buf);
-#endif
 
 			/* big_map hint */
 			if (!strncmp(buf, "hintBigmap", 10)) {
@@ -617,12 +615,10 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 								write_mangrc_aux_line(6, "Term-6window", buf);
 							else if (!strncmp(buf, "Term-7window", 12))
 								write_mangrc_aux_line(7, "Term-7window", buf);
- #if 0 /* keep n/a for now, not really needed */
 							else if (!strncmp(buf, "Term-8window", 12))
 								write_mangrc_aux_line(8, "Term-8window", buf);
 							else if (!strncmp(buf, "Term-9window", 12))
 								write_mangrc_aux_line(9, "Term-9window", buf);
- #endif
 						}
 #endif /* USE_X11 */
 					}
@@ -793,10 +789,8 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 				write_mangrc_aux(5, "Term-5window", config2);
 				write_mangrc_aux(6, "Term-6window", config2);
 				write_mangrc_aux(7, "Term-7window", config2);
- #if 0 /* keep n/a for now, not really needed */
 				write_mangrc_aux(8, "Term-8window", config2);
 				write_mangrc_aux(9, "Term-9window", config2);
- #endif
 			}
 #endif
 

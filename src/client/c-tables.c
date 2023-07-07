@@ -86,7 +86,9 @@ char ang_term_name[ANGBAND_TERM_MAX][40] = {
 	"Chat",
 	"Equipment",
 	"Term-6",
-	"Term-7"
+	"Term-7",
+	"Term-8",
+	"Term-9"
 };
 
 /*
@@ -139,7 +141,7 @@ cptr window_flag_desc[32] = {
 	NULL
 };
 #else
-cptr window_flag_desc[9] = {
+cptr window_flag_desc[NR_OPTIONS_SHOWN] = {
 	"Display inven/equip",
 	"Display equip/inven",
 	"Display character",
@@ -149,6 +151,7 @@ cptr window_flag_desc[9] = {
 	"Display mini-map",
 	"Display lag-o-meter",
 	"Display player list",
+	"Display character boni",
 };
 #endif
 

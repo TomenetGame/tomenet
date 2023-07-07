@@ -22,8 +22,8 @@ extern char pass[40];
 extern bool server_shutdown;
 extern bool force_cui;
 
-extern term *ang_term[8];
-extern u32b window_flag[8];
+extern term *ang_term[ANGBAND_TERM_MAX];
+extern u32b window_flag[ANGBAND_TERM_MAX];
 
 extern cptr ANGBAND_SYS;
 

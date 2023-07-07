@@ -2523,6 +2523,38 @@ void fix_playerlist(void) {
 	}
 }
 
+
+/*
+ * Display last character sheet in sub-windows
+ */
+static void fix_player2(void) {
+	int j;
+
+	/* Scan windows */
+	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
+		term *old = Term;
+
+		/* No window */
+		if (!ang_term[j]) continue;
+
+		/* No relevant flags */
+		if (!(window_flag[j] & PW_PLAYER2)) continue;
+
+		/* Activate */
+		Term_activate(ang_term[j]);
+
+		/* Display character */
+		display_player(2);
+
+		/* Fresh */
+		Term_fresh();
+
+		/* Restore */
+		Term_activate(old);
+	}
+}
+
+
 /*
  * Hack -- pass color info around this file
  */
@@ -4429,6 +4461,7 @@ void window_stuff(void) {
 	if (p_ptr->window & PW_PLAYER) {
 		p_ptr->window &= (~PW_PLAYER);
 		fix_player();
+		fix_player2();
 	}
 
 	/* Display messages */

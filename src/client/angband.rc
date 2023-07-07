@@ -17,6 +17,8 @@ BEGIN
 			MENUITEM "Term-5 Window"	216
 			MENUITEM "Term-6 Window"	217
 			MENUITEM "Term-7 Window"	218
+			MENUITEM "Term-8 Window"	219
+			MENUITEM "Term-9 Window"	220
 		END
 		POPUP "&Font..."
 		BEGIN
@@ -28,6 +30,8 @@ BEGIN
 			MENUITEM "Term-5 Window"	206
 			MENUITEM "Term-6 Window"	207
 			MENUITEM "Term-7 Window"	208
+			MENUITEM "Term-8 Window"	209
+			MENUITEM "Term-9 Window"	210
 		END
 	END
 	POPUP "&Option"

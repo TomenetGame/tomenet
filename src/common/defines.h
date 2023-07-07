@@ -70,11 +70,13 @@
 
 /* Client-side only: Client release version tag, or empty if none
    (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_TAG		"d"
-#ifndef TEST_CLIENT
- #define CLIENT_VERSION_TAG	CLIENT_TAG
-#else
- #define CLIENT_VERSION_TAG	CLIENT_TAG"-Test"
+#ifdef CLIENT_SIDE
+ #define CLIENT_TAG		"d"
+ #ifndef TEST_CLIENT
+  #define CLIENT_VERSION_TAG	CLIENT_TAG
+ #else
+  #define CLIENT_VERSION_TAG	CLIENT_TAG"-Test"
+ #endif
 #endif
 
 /* Minimum client version required to be allowed to log in */
@@ -281,8 +283,14 @@
 #define META_UPDATE	0x04
 
 
-/* Client-side: Maximum amount of terminal windows the client may have. */
-#define ANGBAND_TERM_MAX 8
+#ifdef CLIENT_SIDE
+ /* Client-side: Maximum amount of terminal windows the client may have. */
+ #define ANGBAND_TERM_MAX 10	/* POSIX X11 version */
+ #define MAX_TERM_DATA 10	/* Win version */
+ #define MAX_TERM_DATA_GCU 4	/* POSIX GCU version */
+
+ #define NR_OPTIONS_SHOWN	10 /* # of possible sub-window types, see window_flag_desc[]) */
+#endif
 
 
 /* Traditional hard-coded number of grids used to display the dungeon,
@@ -541,8 +549,10 @@
 /* Max ego base type restrictions */
 #define MAX_EGO_BASETYPES	10
 
-/* Client-side unique list */
-#define MAX_UNIQUES		300
+#ifdef CLIENT_SIDE
+ /* Client-side unique list */
+ #define MAX_UNIQUES		300
+#endif
 
 
 /*
@@ -4798,7 +4808,8 @@
 #define PW_MINIMAP	0x00000040L	/* Display minimap */
 #define PW_LAGOMETER	0x00000080L	/* Display the lag-o-meter */
 #define PW_PLAYERLIST	0x00000100L	/* Display player list */
-/* flags currently not used by the client */
+#define PW_PLAYER2	0x00000200L	/* Display boni & resistances page of the character sheet ("Chh") */
+/* flags currently not used by the client: */
 #define PW_OVERHEAD	0x00001000L	/* Display overhead view */
 #define PW_MONSTER	0x00002000L	/* Display monster recall */
 #define PW_OBJECT	0x00004000L	/* Display object recall */
@@ -6880,18 +6891,21 @@
 
 /*** Macro Definitions ***/
 
-
-/*
- * Hack -- Old-style names
- */
-#define term_screen	(ang_term[0])
-#define term_mirror	(ang_term[1])
-#define term_recall	(ang_term[2])
-#define term_choice	(ang_term[3])
-#define term_term_4     (ang_term[4])
-#define term_term_5     (ang_term[5])
-#define term_term_6     (ang_term[6])
-#define term_term_7     (ang_term[7])
+#ifdef CLIENT_SIDE
+ /*
+  * Hack -- Old-style names for X11 clients
+  */
+ #define term_screen	(ang_term[0])
+ #define term_mirror	(ang_term[1])
+ #define term_recall	(ang_term[2])
+ #define term_choice	(ang_term[3])
+ #define term_term_4	(ang_term[4])
+ #define term_term_5	(ang_term[5])
+ #define term_term_6	(ang_term[6])
+ #define term_term_7	(ang_term[7])
+ #define term_term_8	(ang_term[8])
+ #define term_term_9	(ang_term[9])
+#endif
 
 
 /*
@@ -7736,10 +7750,12 @@ extern int PlayerUID;
  #define SFX_SHRIEK_VOLUME	50
 #endif
 
-//defines.h: (for client-side, from angband)
-/* Given an array, determine how many elements are in it: */
-//note: appearently doesnt work for the main purpose ie sound_modules -_- -C. Blue
-#define N_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+#ifdef CLIENT_SIDE
+ //defines.h: (for client-side, from angband)
+ /* Given an array, determine how many elements are in it: */
+ //note: appearently doesnt work for the main purpose ie sound_modules -_- -C. Blue
+ #define N_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+#endif
 
 
 /*
@@ -9075,9 +9091,11 @@ extern int PlayerUID;
 #define INVENTORY_CHANGE_ERASE	3
 
 
-/* Client-side auto inscriptions - doubled to 200 after introduction of auto-pickup/destroy in 4.7.4;
-   increased to 500 on player request, whatever. */
-#define MAX_AUTO_INSCRIPTIONS	500
+#ifdef CLIENT_SIDE
+ /* Client-side auto inscriptions - doubled to 200 after introduction of auto-pickup/destroy in 4.7.4;
+    increased to 500 on player request, whatever. */
+ #define MAX_AUTO_INSCRIPTIONS	500
+#endif
 
 /* Maximum amount of ping reception times logged for each player */
 #define MAX_PING_RECVS_LOGGED	10

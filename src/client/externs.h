@@ -103,7 +103,7 @@ extern option_type option_info[];
 extern cptr stat_names[6];
 extern cptr stat_names_reduced[6];
 extern char ang_term_name[ANGBAND_TERM_MAX][40];
-extern cptr window_flag_desc[9];
+extern cptr window_flag_desc[NR_OPTIONS_SHOWN];
 extern monster_spell_type monster_spells4[32];
 extern monster_spell_type monster_spells5[32];
 extern monster_spell_type monster_spells6[32];

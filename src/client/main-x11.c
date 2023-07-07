@@ -1214,10 +1214,12 @@ static term_data term_4;
 static term_data term_5;
 static term_data term_6;
 static term_data term_7;
+static term_data term_8;
+static term_data term_9;
 
-static term_data *x11_terms_term_data[ANGBAND_TERM_MAX] = {&screen, &mirror, &recall, &choice, &term_4, &term_5, &term_6, &term_7};
-static char *x11_terms_font_env[ANGBAND_TERM_MAX] = {"TOMENET_X11_FONT_SCREEN", "TOMENET_X11_FONT_MIRROR", "TOMENET_X11_FONT_RECALL", "TOMENET_X11_FONT_CHOICE", "TOMENET_X11_FONT_TERM_4", "TOMENET_X11_FONT_TERM_5", "TOMENET_X11_FONT_TERM_6", "TOMENET_X11_FONT_TERM_7"};
-static char *x11_terms_font_default[ANGBAND_TERM_MAX] = {DEFAULT_X11_FONT_SCREEN, DEFAULT_X11_FONT_MIRROR, DEFAULT_X11_FONT_RECALL, DEFAULT_X11_FONT_CHOICE, DEFAULT_X11_FONT_TERM_4, DEFAULT_X11_FONT_TERM_5, DEFAULT_X11_FONT_TERM_6, DEFAULT_X11_FONT_TERM_7};
+static term_data *x11_terms_term_data[ANGBAND_TERM_MAX] = {&screen, &mirror, &recall, &choice, &term_4, &term_5, &term_6, &term_7, &term_8, &term_9};
+static char *x11_terms_font_env[ANGBAND_TERM_MAX] = {"TOMENET_X11_FONT_SCREEN", "TOMENET_X11_FONT_MIRROR", "TOMENET_X11_FONT_RECALL", "TOMENET_X11_FONT_CHOICE", "TOMENET_X11_FONT_TERM_4", "TOMENET_X11_FONT_TERM_5", "TOMENET_X11_FONT_TERM_6", "TOMENET_X11_FONT_TERM_7", "TOMENET_X11_FONT_TERM_8", "TOMENET_X11_FONT_TERM_9"};
+static char *x11_terms_font_default[ANGBAND_TERM_MAX] = {DEFAULT_X11_FONT_SCREEN, DEFAULT_X11_FONT_MIRROR, DEFAULT_X11_FONT_RECALL, DEFAULT_X11_FONT_CHOICE, DEFAULT_X11_FONT_TERM_4, DEFAULT_X11_FONT_TERM_5, DEFAULT_X11_FONT_TERM_6, DEFAULT_X11_FONT_TERM_7, DEFAULT_X11_FONT_TERM_8, DEFAULT_X11_FONT_TERM_9};
 
 /*
  * Set the size hints of Infowin
@@ -1558,6 +1560,32 @@ static errr CheckEvent(bool wait) {
 		td = &term_7;
 		iwin = td->outer;
 		t_idx = 7;
+	}
+
+	/* Other window, inner window */
+	else if (term_term_8 && xev->xany.window == term_8.inner->win) {
+		td = &term_8;
+		iwin = td->inner;
+		t_idx = 8;
+	}
+	/* Other window, outer window */
+	else if (term_term_8 && xev->xany.window == term_8.outer->win) {
+		td = &term_8;
+		iwin = td->outer;
+		t_idx = 8;
+	}
+
+	/* Other window, inner window */
+	else if (term_term_9 && xev->xany.window == term_9.inner->win) {
+		td = &term_9;
+		iwin = td->inner;
+		t_idx = 9;
+	}
+	/* Other window, outer window */
+	else if (term_term_9 && xev->xany.window == term_9.outer->win) {
+		td = &term_9;
+		iwin = td->outer;
+		t_idx = 9;
 	}
 
 
@@ -2441,6 +2469,18 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 		n = getenv("TOMENET_X11_HGT_TERM_7");
 		if (n) win_lines = atoi(n);
 	}
+	if (!strcmp(name, ang_term_name[8])) {
+		n = getenv("TOMENET_X11_WID_TERM_8");
+		if (n) win_cols = atoi(n);
+		n = getenv("TOMENET_X11_HGT_TERM_8");
+		if (n) win_lines = atoi(n);
+	}
+	if (!strcmp(name, ang_term_name[9])) {
+		n = getenv("TOMENET_X11_WID_TERM_9");
+		if (n) win_cols = atoi(n);
+		n = getenv("TOMENET_X11_HGT_TERM_9");
+		if (n) win_lines = atoi(n);
+	}
 
 	/* Reset timers just to be sure. */
 	td->resize_timer.tv_sec=0;
@@ -2658,6 +2698,8 @@ static term_data* term_idx_to_term_data(int term_idx) {
 	case 5: td = &term_5; break;
 	case 6: td = &term_6; break;
 	case 7: td = &term_7; break;
+	case 8: td = &term_8; break;
+	case 9: td = &term_9; break;
 	}
 
 	return(td);
@@ -2672,6 +2714,8 @@ static int term_data_to_term_idx(term_data *td) {
 	if (td == &term_5) return 5;
 	if (td == &term_6) return 6;
 	if (td == &term_7) return 7;
+	if (td == &term_8) return 8;
+	if (td == &term_9) return 9;
 	return(-1);
 }
 
