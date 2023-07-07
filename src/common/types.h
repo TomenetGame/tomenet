@@ -1895,6 +1895,9 @@ struct dun_level {
 
 	int fake_town_num;	/* for dungeon stores: which town we abuse the stores from */
 
+	/* for IDDC_SANCTUARIES */
+	byte sanc_x, sanc_y;
+
 	/* for obtaining statistical IDDC information: */
 	int monsters_generated, monsters_spawned, monsters_killed;
 };
@@ -3691,6 +3694,7 @@ struct player_type {
 	bool IDDC_found_rndtown;	/* prevent multiple random towns within one 'interval' */
 	bool IDDC_logscum;		/* prevent log-scumming instead of proceeding downwards */
 	byte IDDC_flags;		/* added for IDDC special hack: Make it easier to find up to two speed rings */
+	bool IDDC_sanctuary;
 	/* For IDDC_IRON_COOP || IRON_IRON_TEAM : */
 	s32b iron_trade;		/* Needed for the last survivor after a party was erased: Former party of the last player who picked it up */
 	/* ..and for IDDC_RESTRICTED_TRADING : */

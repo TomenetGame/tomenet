@@ -2561,10 +2561,6 @@ static void player_setup(int Ind, bool new) {
 		player_dungeontown(Ind);
 	}
 
-	/* blink by 1 if standing on a shop grid (in town) */
-	if (zcave[p_ptr->py][p_ptr->px].feat == FEAT_SHOP)
-		teleport_player_force(Ind, 1);
-
 	if (new) {
 #if 0
 		p_ptr->py = level_down_y(wpos);
@@ -2577,6 +2573,16 @@ static void player_setup(int Ind, bool new) {
 
 #endif	// 0
 	}
+
+	/* If player was inside an IDDC sanctuary, try to move him into it again if we're not already in one */
+	if (in_irondeepdive(&p_ptr->wpos) && p_ptr->IDDC_sanctuary && l_ptr && l_ptr->sanc_x && !(zcave[p_ptr->py][p_ptr->px].info & CAVE_SANCTUARY)) {
+		p_ptr->px = l_ptr->sanc_x;
+		p_ptr->py = l_ptr->sanc_y;
+	}
+
+	/* blink by 1 if standing on a shop grid (in town) */
+	if (zcave[p_ptr->py][p_ptr->px].feat == FEAT_SHOP)
+		teleport_player_force(Ind, 1);
 
 	/* Hack be sure the player is inbounds */
 	if (p_ptr->px < 1) p_ptr->px = 1;

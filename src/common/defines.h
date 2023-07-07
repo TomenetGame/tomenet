@@ -93,7 +93,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	9
-#define SF_VERSION_PATCH	1
+#define SF_VERSION_PATCH	2
 #define SF_VERSION_EXTRA	0 /* <- not used in version checks! */
 
 /* For quests savefile purpose only */
@@ -2494,16 +2494,17 @@
 #define FEAT_BARS_V		0x75
 #define FEAT_BARS_DS		0x76
 #define FEAT_BARS_DB		0x77
-#define FEAT_BARS_N		0x78
-
-/* Features 0x74 - 0x9E -- unused */
+#define FEAT_BARS_N		0x78 /* 120 */
 
 #define FEAT_INN		134
 
 #define FEAT_CYCLIC_LESS	135
 #define FEAT_CYCLIC_MORE	136
+#define FEAT_FLOOR_PERMANENT	137
 
-#define FEAT_PERM_MAGMA		0x9F
+//hole
+
+#define FEAT_PERM_MAGMA		0x9F /* 159 */
 #define FEAT_BETWEEN		0xA0 /* 160 */
 
 /* Altars */
@@ -4561,6 +4562,7 @@
 
 #define CAVE_NO_MONSTER	0x10000000	/* protected from monster-spawn + cannot be monster teleport/summon/movement destination */
 #define CAVE_SLIPPERY	0x20000000	/* Some oil on the ground made this grid slippery (compare FEAT_ICE maybe) */
+#define CAVE_SANCTUARY	0x40000000	/* IDDC sanctuary grid */
 
 /* Hack for p_ptr->cave_flag, which is only 1 byte in size: */
 #define CAVE_AOVL	CAVE_TEMP	/* Mark grid if it displays an overlay visual that could get auto-updated, ie monsters: A monster can move away automatically, rendering the overlay out of date. */
