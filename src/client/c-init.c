@@ -227,6 +227,7 @@ void initialize_main_pref_files(void) {
 	}
 
 
+#if 0 /* New flags were added meanwhile, this seems invalid now -- when backward compatibility goes too far, maybe.. */
 	/* Hack: Convert old window.prf or user.prf files that
 	   were made < 4.4.7.1. - C. Blue */
 	for (i = 0; i < ANGBAND_TERM_MAX; i++) {
@@ -254,6 +255,7 @@ void initialize_main_pref_files(void) {
 		/* and.. save them! */
 		(void)options_dump("global.opt");
 	}
+#endif
 }
 
 void initialize_player_pref_files(void) {

@@ -2528,6 +2528,31 @@ void fix_playerlist(void) {
 	}
 }
 
+void check_for_playerlist(void) {
+	int j;
+
+	/* Scan windows */
+	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
+		/* No window */
+		if (!ang_term[j]) continue;
+
+		/* No relevant flags */
+		if (!(window_flag[j] & PW_PLAYERLIST)) continue;
+
+		/* Window set to invisible aka deactivated */
+#ifdef WINDOWS
+		if (!data[j].visible) continue;
+#endif
+#ifdef USE_X11
+		if (!term_prefs[j].visible) continue;
+#endif
+
+		break;
+	}
+
+	Send_plistw_notify(j != ANGBAND_TERM_MAX);
+}
+
 
 /*
  * Display last character sheet in sub-windows

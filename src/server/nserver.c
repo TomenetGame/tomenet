@@ -411,6 +411,7 @@ static void Init_receive(void) {
 #endif
 	playing_receive[PKT_VERSION]		= Receive_version;
 	playing_receive[PKT_FONT]		= Receive_font;
+	playing_receive[PKT_PLISTW_NOTIFY]	= Receive_plistw_notify;
 }
 
 static int Init_setup(void) {
@@ -9741,10 +9742,11 @@ int Send_indicators(int Ind, u32b indicators) {
    3 = delete entry 'i' (only contains char name, for matching)
 */
 static int Send_playerlist_aux(int Ind, int i, int mode) {
-	char playerinfo[MAX_CHARS_WIDE];
 	connection_t *connp = Conn[Players[Ind]->conn];
+	char playerinfo[MAX_CHARS_WIDE];
 	bool start = TRUE;
 
+	if (!Players[Ind]->player_list_window) return(1);
 	if (is_older_than(&Players[Ind]->version, 4, 9, 0, 7, 0, 0)) return(1);
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
@@ -14654,6 +14656,25 @@ static int Receive_version(int ind) {
 			fake_waitpid_clver = 0;
 			fake_waitpid_clver_timer = 0;
 		}
+	}
+
+	return(1);
+}
+
+static int Receive_plistw_notify(int ind) {
+	connection_t *connp = Conn[ind];
+	player_type *p_ptr = NULL;
+	char ch;
+	int n, player = -1;
+
+	if (connp->id != -1) {
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+	}
+
+	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &p_ptr->player_list_window)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return(n);
 	}
 
 	return(1);

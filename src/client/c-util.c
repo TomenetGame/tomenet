@@ -8643,6 +8643,8 @@ static void do_cmd_options_win(void) {
 	/* Update windows */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP);//PW_LAGOMETER is called automatically, no need.
 	window_stuff();
+
+	check_for_playerlist();
 }
 
 #ifdef ENABLE_SUBWINDOW_MENU
@@ -9001,6 +9003,8 @@ static void do_cmd_options_fonts(void) {
 
 	/* restore responsiveness to hybrid macros */
 	inkey_msg = inkey_msg_old;
+
+	check_for_playerlist();
 }
  #endif /* WINDOWS || USE_X11 */
 #endif /* ENABLE_SUBWINDOW_MENU */

@@ -1080,6 +1080,7 @@ errr process_pref_file_aux(char *buf, byte fmt) {
 		if (tokenize(buf + 2, 2, zz) == 2) {
 			i = (byte)strtol(zz[0], NULL, 0);
 			window_flag[i] = 1L << ((byte)strtol(zz[1], NULL, 0));
+			check_for_playerlist();
 			return(0);
 		}
 	}

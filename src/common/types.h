@@ -3778,6 +3778,8 @@ struct player_type {
 	u32b buffed_pc;
 	u64b total_damage_melee, total_damage_ranged, total_damage_devices, total_damage_magic, total_heal_consumables, total_heal_devices, total_heal_magic;
 #endif
+
+	bool player_list_window; /* Has configured one of his subwindows to be a live-updated player list window */
 };
 
 /* For Monk martial arts */

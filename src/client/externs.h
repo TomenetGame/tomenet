@@ -774,6 +774,7 @@ extern int cloud_x1[10], cloud_y1[10], cloud_x2[10], cloud_y2[10], cloud_dsum[10
 extern int cloud_xm100[10], cloud_ym100[10], cloud_xfrac[10], cloud_yfrac[10];
 
 extern void fix_playerlist(void);
+extern void check_for_playerlist(void);
 extern void do_animate_lightning(bool reset);
 extern void do_animate_screenflash(bool reset);
 extern bool fullscreen_weather; //RAINY_TOMB
@@ -928,6 +929,7 @@ extern int Send_subinven_move(int item);
 extern int Send_subinven_remove(int item);
 #endif
 extern int Send_version(void);
+extern int Send_plistw_notify(bool on);
 
 /* skills.c */
 extern s16b get_skill(int skill);

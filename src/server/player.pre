@@ -928,6 +928,8 @@ struct player_type
 	s16b steamblast_timer;
 	s16b steamblast_x;
 	s16b steamblast_y;
+
+	bool player_list_window;
 };
 
 //extern int hack_force_spell_level; /* LIMIT_SPELLS client-side */

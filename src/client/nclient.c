@@ -6510,6 +6510,13 @@ int Send_version(void) {
 	return(1);
 }
 
+int Send_plistw_notify(bool on) {
+	int n;
+
+	if ((n = Packet_printf(&wbuf, "%c%c", PKT_PLISTW_NOTIFY, on)) <= 0) return(n);
+	return(1);
+}
+
 
 
 /* ------------------------------------------------------------------------- */
