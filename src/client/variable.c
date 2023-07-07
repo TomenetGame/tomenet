@@ -699,7 +699,7 @@ bool within_cmd_player = FALSE;
 int within_cmd_player_ticks;
 
 int NumPlayers = 0;
-char playerlist[1000][MAX_CHARS_WIDE * 2];
+char playerlist_name[MAX_PLAYERS_LISTED][NAME_LEN], playerlist[MAX_PLAYERS_LISTED][MAX_CHARS_WIDE];
 
 byte col_raindrop = TERM_BLUE, col_snowflake = TERM_WHITE, col_sandgrain = TERM_L_UMBER;
 char c_sandgrain = '+';

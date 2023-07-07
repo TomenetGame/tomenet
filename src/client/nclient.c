@@ -5759,11 +5759,59 @@ int Receive_indicators(void) {
 }
 
 int Receive_playerlist(void) {
-	int i, n;
-	char ch;
+	int i, n, mode;
+	char ch, tmp_n[NAME_LEN], tmp[MAX_CHARS_WIDE];
 
-	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &NumPlayers)) <= 0) return(n);
-	for (i = 0; i < NumPlayers; i++) Packet_scanf(&rbuf, "%s", playerlist[i]);
+	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &mode)) <= 0) return(n);
+
+	switch (mode) {
+	case 0:
+		/* clear */
+		for (i = 0; i < MAX_PLAYERS_LISTED; i++) playerlist_name[i][0] = 0;
+		NumPlayers = 0;
+		break;
+	case 1:
+		/* Implies 'clear' */
+		for (i = 0; i < MAX_PLAYERS_LISTED; i++) playerlist_name[i][0] = 0;
+		i = 0;
+		/* Receive complete list (initial login) */
+		while (TRUE) {
+			Packet_scanf(&rbuf, "%s%s", tmp_n, tmp);
+			if (!tmp_n[0]) break;
+
+			if (i < MAX_PLAYERS_LISTED) {
+				strcpy(playerlist_name[i], tmp_n);
+				strcpy(playerlist[i], tmp);
+				i++;
+			}
+		}
+		NumPlayers = i;
+		break;
+	case 2:
+		/* Add/update a specific player */
+		Packet_scanf(&rbuf, "%s%s", tmp_n, tmp);
+		for (i = 0; i < MAX_PLAYERS_LISTED; i++) {
+			if (!playerlist_name[i][0]) {
+				strcpy(playerlist_name[i], tmp_n);
+				strcpy(playerlist[i], tmp);
+				NumPlayers++;
+				break;
+			}
+		}
+		break;
+	case 3:
+		/* remove player, only the raw name is given */
+		Packet_scanf(&rbuf, "%s", tmp_n);
+		for (i = 0; i < MAX_PLAYERS_LISTED; i++) {
+			//if (!playerlist_name[i][0]) break; --todo: move the rest down one
+			if (streq(playerlist_name[i], tmp_n)) {
+				playerlist_name[i][0] = 0;
+				NumPlayers--;
+				break;
+			}
+		}
+		break;
+	}
 
 	fix_playerlist();
 

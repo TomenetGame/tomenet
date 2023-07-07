@@ -41,7 +41,7 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		9
 #define VERSION_PATCH		0
-#define VERSION_EXTRA		6
+#define VERSION_EXTRA		7
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -9095,6 +9095,11 @@ extern int PlayerUID;
  /* Client-side auto inscriptions - doubled to 200 after introduction of auto-pickup/destroy in 4.7.4;
     increased to 500 on player request, whatever. */
  #define MAX_AUTO_INSCRIPTIONS	500
+
+ #define AUTOINS_MATCH_LEN 55
+ #define AUTOINS_TAG_LEN 19
+
+ #define MAX_PLAYERS_LISTED 100
 #endif
 
 /* Maximum amount of ping reception times logged for each player */
@@ -9404,8 +9409,3 @@ extern int PlayerUID;
 
 /* For debugging - fixed */
 //#define __GRID_DEBUG(Ind, wpos, feat, location, info)	if ((feat) == FEAT_XPROTECT && !in_trainingtower(wpos)) s_printf("__GRID_DEBUG: %s, %d - (%d) '%s' (%d,%d,%d)\n", location, info, Ind, (Ind) > 0 ? Players[Ind]->name : "-", (wpos)->wx, (wpos)->wy, (wpos)->wz);
-
-#ifdef CLIENT_SIDE
- #define AUTOINS_MATCH_LEN 55
- #define AUTOINS_TAG_LEN 19
-#endif

@@ -3708,6 +3708,8 @@ static int Handle_login(int ind) {
 			} else
 				msg_format(i, "\374\377%c%s%s has entered the game.", COLOUR_SERVER, title, p_ptr->name);
 			if (msgbuf[0] && Players[i]->guild == p_ptr->guild) msg_print(i, msgbuf);
+
+			Send_playerlist(i, NumPlayers, 2);
 		}
 		return(0);
 	}
@@ -3735,6 +3737,8 @@ static int Handle_login(int ind) {
 
 		/* print notification message about guild-auto-add now */
 		if (msgbuf[0] && Players[i]->guild == p_ptr->guild) msg_print(i, msgbuf);
+
+		Send_playerlist(i, NumPlayers, 2);
 	}
 
 #ifdef TOMENET_WORLDS
@@ -9721,10 +9725,18 @@ int Send_indicators(int Ind, u32b indicators) {
 	return Packet_printf(&connp->c, "%c%d", PKT_INDICATORS, indicators);
 }
 
-int Send_playerlist(int Ind) {
-	int i;
-	char playerinfo[MAX_CHARS_WIDE * 2];
+/* mode:
+   0 = delete list ('i' has no effect)
+   1 = init list with all players (ie after logging in) ('i' has no effect)
+   2 = add entry 'i'
+   3 = delete entry 'i' (only contains char name, for matching)
+*/
+int Send_playerlist(int Ind, int i, int mode) {
+	char playerinfo[MAX_CHARS_WIDE];
 	connection_t *connp = Conn[Players[Ind]->conn];
+	bool start = TRUE;
+
+	if (is_older_than(&Players[Ind]->version, 4, 9, 0, 7, 0, 0)) return(1);
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -9733,11 +9745,43 @@ int Send_playerlist(int Ind) {
 		return(0);
 	}
 
-	Packet_printf(&connp->c, "%c%d", PKT_PLAYERLIST, NumPlayers);
-	for (i = 1; i < NumPlayers; i++) {
-		write_player_info(i, playerinfo);
-		Packet_printf(&connp->c, "%s", playerinfo);
+	switch (mode) {
+	case 0: /* clear */
+		start = FALSE;
+		Packet_printf(&connp->c, "%c%d", PKT_PLAYERLIST, mode);
+		break;
+	case 1: /* transmit all eligible, implies 'clear' */
+		for (i = 1; i <= NumPlayers; i++) {
+			write_player_info(Ind, i, playerinfo);
+			if (!playerinfo[0]) continue;
+
+			if (start) {
+				start = FALSE;
+				Packet_printf(&connp->c, "%c%d", PKT_PLAYERLIST, mode);
+			}
+			Packet_printf(&connp->c, "%s%s", Players[i]->name, playerinfo);
+		}
+		/* terminate */
+		if (!start) Packet_printf(&connp->c, "%s", "");
+		break;
+	case 2: /* add/update */
+		write_player_info(Ind, i, playerinfo);
+		if (playerinfo[0]) {
+			start = FALSE;
+			Packet_printf(&connp->c, "%c%d", PKT_PLAYERLIST, mode);
+			Packet_printf(&connp->c, "%s%s", Players[i]->name, playerinfo);
+		}
+		break;
+	case 3: /* remove */
+		write_player_info(Ind, i, playerinfo);
+		if (playerinfo[0]) {
+			start = FALSE;
+			Packet_printf(&connp->c, "%c%d", PKT_PLAYERLIST, mode);
+			Packet_printf(&connp->c, "%s", Players[i]->name); //just the name is sufficient
+		}
+		break;
 	}
+
 	return(1);
 }
 

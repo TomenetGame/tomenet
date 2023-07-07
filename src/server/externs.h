@@ -758,7 +758,7 @@ extern void do_cmd_check_other(int Ind, int line, char *srcstr);
 extern void do_cmd_check_other_prepare(int Ind, char *path, char *title);
 extern void do_cmd_check_extra_info(int Ind, bool admin);
 extern void show_autoret(int Ind, byte typ, bool verbose);
-extern void write_player_info(int Ind, char *pinfo);
+extern void write_player_info(int Ind, int i, char *pinfo);
 
 /* cmd5.c */
 extern bool check_antimagic(int Ind, int percentage);
@@ -1297,6 +1297,7 @@ extern int Send_indicators(int Ind, u32b indicators);
 extern int Send_weather_colouring(int Ind, byte col_raindrop, byte col_snowflake, byte col_sandgrain, char c_sandgrain);
 extern int Send_whats_under_you_feet(int Ind, char *o_name, bool crossmod_item, bool cant_see, bool on_pile);
 extern int Send_version(int Ind);
+extern int Send_playerlist(int Ind, int i, int mode);
 
 /* object1.c */
 extern bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id);

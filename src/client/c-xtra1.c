@@ -2494,7 +2494,7 @@ static void fix_lagometer(void) {
 }
 
 void fix_playerlist(void) {
-	int i, j;
+	int i, j, p, y = 0;
 
 	/* Scan windows */
 	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
@@ -2511,9 +2511,14 @@ void fix_playerlist(void) {
 
 		/* List players */
 		Term_clear();
-		prt("- [Players Online] -", 1, 30);
-		for (i = 0; i < NumPlayers; i++)
-			prt(playerlist[i], 3 + i, 30);
+		prt(format("- [Players Online (%d)] -", NumPlayers), 1, 10);
+		p = NumPlayers;
+		if (p > MAX_PLAYERS_LISTED) p = MAX_PLAYERS_LISTED;
+		for (i = 0; i < p; i++) {
+			if (!playerlist_name[i][0]) continue;
+			c_put_str(TERM_WHITE, playerlist[i], 3 + y, 3);
+			y++;
+		}
 
 		/* Fresh */
 		Term_fresh();

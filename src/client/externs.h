@@ -1203,7 +1203,7 @@ extern char cfg_soundpackfolder[1024];
 extern char cfg_musicpackfolder[1024];
 
 extern int NumPlayers;
-extern char playerlist[1000][MAX_CHARS_WIDE * 2];
+extern char playerlist_name[MAX_PLAYERS_LISTED][NAME_LEN], playerlist[MAX_PLAYERS_LISTED][MAX_CHARS_WIDE];
 
 extern byte col_raindrop, col_snowflake, col_sandgrain;
 extern char c_sandgrain;
