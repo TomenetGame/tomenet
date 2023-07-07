@@ -9217,6 +9217,9 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 
 			//if (init_flags & INIT_GET_SIZE) continue;
 
+			/* Allow transparent layouts to get loaded over existing floors */
+			if (letter[idx].feature == 0) continue;
+
 			/* use the plasma generator wilderness */
 			//if (((!dun_level) || (!letter[idx].defined)) && (idx == ' ')) continue;
 #if 1 /* use this! (see explanation below) */
