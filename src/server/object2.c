@@ -8020,7 +8020,7 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 		}
 	}
 
-#ifdef IDDC_ID_BOOST /* experimental */
+#ifdef IDDC_ID_BOOST /* experimental - replace insignificant loot with an ID scroll sometimes */
 	if ((resf & RESF_COND_MASK) == 0x0 && in_irondeepdive(wpos) && !forge.name1 && !forge.name2
 	    /* However, don't overwrite Word of Recall scrolls at deeper levels, since they're needed to get out eventually! */
 	    && !(forge.tval == TV_SCROLL && forge.sval == SV_SCROLL_WORD_OF_RECALL && dlev >= 100)
