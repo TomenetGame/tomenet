@@ -208,7 +208,7 @@ function get_level_school(i, s, max, min, inven_slot)
 		num = num + 1
 	end
 
-	-- / 10 because otherwise we can overflow a s32b and we can use a u32b because the value can be negative
+	-- / 10 because otherwise we can overflow a s32b and we cannot use a u32b because the value can be negative
 	-- The loss of information should be negligible since 1 skill = 1000 internaly
 	lvl = (lvl / num) / 10
 	if not min then
