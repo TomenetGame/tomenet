@@ -1557,6 +1557,9 @@ static void Delete_player(int Ind) {
 			global_event[i].extra[5] = Ind;
 	}
 
+	/* Remove */
+	Send_playerlist(0, Ind, 3);
+
 	/* Swap entry number 'Ind' with the last one */
 	/* Also, update the "player_index" on the cave grids */
 	if (Ind != NumPlayers) {
@@ -1572,12 +1575,7 @@ static void Delete_player(int Ind) {
 		cave_midx_debug(wpos, p_ptr->py, p_ptr->px, -Ind);
 
 		p_ptr = Players[NumPlayers];
-
-		/* Update */
-		Send_playerlist(0, Ind, 2);
 	}
-	/* Remove the final entry */
-	Send_playerlist(0, NumPlayers, 3);
 
 	if (Conn[Players[Ind]->conn]->id != -1)
 		GetInd[Conn[Players[Ind]->conn]->id] = Ind;
@@ -3699,6 +3697,8 @@ static int Handle_login(int ind) {
 	   Then adjust our 'runtime' tracker to this server session, by imprinting it. */
 	acc_set_runtime(p_ptr->accountname, runtime_server);
 
+	/* Can be too early, if client hasn't had a chance to run check_for_playerlist() yet and notify us about it!
+	   We do it in Receive_plistw_notify() again, which we need anyway (every time the player toggles it). */
 	Send_playerlist(NumPlayers, 0, 1);
 
 	/* Handle the cfg_secret_dungeon_master option: Only tell other admins. */
@@ -9738,8 +9738,8 @@ int Send_indicators(int Ind, u32b indicators) {
    mode:
    0 = delete list ('i' has no effect)
    1 = init list with all players (ie after logging in) ('i' has no effect)
-   2 = add entry 'i'
-   3 = delete entry 'i' (only contains char name, for matching)
+   2 = add/update entry 'i'
+   3 = delete an entry (only contains char name, for matching)
 */
 static int Send_playerlist_aux(int Ind, int i, int mode) {
 	connection_t *connp = Conn[Players[Ind]->conn];
@@ -9775,20 +9775,18 @@ static int Send_playerlist_aux(int Ind, int i, int mode) {
 		/* terminate */
 		if (!start) Packet_printf(&connp->c, "%s%s", "", "");
 		break;
-	case 2: /* add/update */
+	case 2: /* add name/update his info */
 		write_player_info(Ind, i, playerinfo);
 		if (playerinfo[0]) {
 			start = FALSE;
-			Packet_printf(&connp->c, "%c%d", PKT_PLAYERLIST, mode);
-			Packet_printf(&connp->c, "%s%s", Players[i]->name, playerinfo);
+			Packet_printf(&connp->c, "%c%d%s%s", PKT_PLAYERLIST, mode, Players[i]->name, playerinfo);
 		}
 		break;
 	case 3: /* remove */
 		write_player_info(Ind, i, playerinfo);
 		if (playerinfo[0]) {
 			start = FALSE;
-			Packet_printf(&connp->c, "%c%d", PKT_PLAYERLIST, mode);
-			Packet_printf(&connp->c, "%s", Players[i]->name); //just the name is sufficient
+			Packet_printf(&connp->c, "%c%d%s", PKT_PLAYERLIST, mode, Players[i]->name);
 		}
 		break;
 	}
@@ -9801,8 +9799,8 @@ static int Send_playerlist_aux(int Ind, int i, int mode) {
    mode:
    0 = delete list ('i' has no effect)
    1 = init list with all players (ie after logging in) ('i' has no effect)
-   2 = add entry 'i'
-   3 = delete entry 'i' (only contains char name, for matching)
+   2 = add/update entry 'i'
+   3 = delete an entry (only contains char name, for matching)
 */
 int Send_playerlist(int Ind, int i, int mode) {
 	if (!Ind) {
@@ -14666,15 +14664,22 @@ static int Receive_plistw_notify(int ind) {
 	player_type *p_ptr = NULL;
 	char ch;
 	int n, player = -1;
+	bool old;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
 		p_ptr = Players[player];
-	}
+		old = p_ptr->player_list_window;
+	} else return(1); //paranoia
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &p_ptr->player_list_window)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
 		return(n);
+	}
+
+	if (old != p_ptr->player_list_window) {
+		if (old) Send_playerlist(player, 0, 0); /* Disable -> clear */
+		else Send_playerlist(player, 0, 1); /* Enable -> init with full list */
 	}
 
 	return(1);

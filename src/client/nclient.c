@@ -5791,6 +5791,12 @@ int Receive_playerlist(void) {
 		/* Add/update a specific player */
 		Packet_scanf(&rbuf, "%s%s", tmp_n, tmp);
 		for (i = 0; i < MAX_PLAYERS_LISTED; i++) {
+			/* update */
+			if (streq(playerlist_name[i], tmp_n)) {
+				strcpy(playerlist[i], tmp);
+				break;
+			}
+			/* add */
 			if (!playerlist_name[i][0]) {
 				strcpy(playerlist_name[i], tmp_n);
 				strcpy(playerlist[i], tmp);
@@ -5800,15 +5806,20 @@ int Receive_playerlist(void) {
 		}
 		break;
 	case 3:
-		/* remove player, only the raw name is given */
+		/* Remove player */
 		Packet_scanf(&rbuf, "%s", tmp_n);
-		for (i = 0; i < MAX_PLAYERS_LISTED; i++) {
-			//if (!playerlist_name[i][0]) break; --todo: move the rest down one
-			if (streq(playerlist_name[i], tmp_n)) {
-				playerlist_name[i][0] = 0;
-				NumPlayers--;
-				break;
+		for (i = 0; i < NumPlayers; i++) {
+			if (strcmp(playerlist_name[i], tmp_n)) continue;
+
+			/* Slide the rest down */
+			for (n = i; n < NumPlayers - 1; n++) {
+				strcpy(playerlist_name[n], playerlist_name[n + 1]);
+				strcpy(playerlist[n], playerlist[n + 1]);
 			}
+
+			playerlist_name[n][0] = 0;
+			NumPlayers--;
+			break;
 		}
 		break;
 	}
