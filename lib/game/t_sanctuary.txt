@@ -1,0 +1,31 @@
+# Mini sanctuary to be generated randomly on normal IDDC floors, every 500 ft that doesn't already have a normal town, to allow selling loot and very basic restocking.
+
+%:t_pref.txt
+
+# Floor
+F:x:0:3
+#F: :1:3
+F: :137:3
+F:#:63:3
+
+# Size: 25 x 17
+
+D:xxxx             xxxxxxxx
+D:xx    ########      x   x
+D:x   #####1#########   #  
+D:                      ## 
+D: #########   #######  ## 
+D: ###         #   6##  ## 
+D: ##      ##      ###  ## 
+D: ####   ####          ## 
+D:  ###    ##       #   #  
+D:   ##             #     x
+D:xx         ##     ##     
+D:x   ###     #     2#   # 
+D:  ###       ########   # 
+D:  #3                   # 
+D:  ##   ######   ####   # 
+D:x  #####      x  ##  x   
+D:xx        xxxxxx    xxxxx
+
+P:14:8

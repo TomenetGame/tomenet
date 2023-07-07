@@ -9606,6 +9606,19 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			zcave[y][x].feat = FEAT_PERM_FILL;
 #endif
 
+#ifdef IRONDEEPDIVE_SANCTUARIES
+	/* Do this before placing a dungeon boss, so the boss doesn't accidentally get steamrolled and erased */
+	if (in_irondeepdive(wpos) && !town && !(dun_lev % 10)) {
+		int x1 = rand_int(dun->l_ptr->wid - 2 - 25) + 1, y1 = rand_int(dun->l_ptr->hgt - 2 - 17) + 1;
+
+		if (x1 < dun->l_ptr->wid - 1 - 25 && y1 < dun->l_ptr->hgt - 1 - 17)
+			//i = process_dungeon_file("t_sanctuary.txt", wpos, &y1, &x1, 17, 25, TRUE);
+			i = process_dungeon_file("t_sanctuary.txt", wpos, &y1, &x1, dun->l_ptr->hgt - 1, dun->l_ptr->wid - 1, TRUE);
+		else i = -99;
+		s_printf("IDDC-Sanctuary %d (%d,%d) [%d,%d] -> %d\n", dun_lev, x1, y1, dun->l_ptr->wid, dun->l_ptr->hgt, i);
+	}
+#endif
+
 	/* Possibly create dungeon boss aka FINAL_GUARDIAN.
 	   Rarity 1 in r_info.txt for those bosses now means:
 	   1 in <rarity> chance to generate the boss. - C. Blue */

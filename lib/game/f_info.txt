@@ -999,8 +999,15 @@ G:>:w
 F:FLOOR | PERMANENT | NOTICE | SUPPORT_LIGHT | REMEMBER | CAN_RUN
 D:0:A staircase leading out
 
+# Permanent floor, added for t_sanctuary.txt, just to prevent monster spawn (cave_naked_bold() avoids PERMANENT)
+N:137:open floor
+G:.:w
+M:1
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW | PERMANENT
+F:NO_ARTICLE
 
-# HOLE 137..158 -------------------------------------------------------------
+
+# HOLE 138..158 -------------------------------------------------------------
 
 
 #permanent magma vein
