@@ -1905,7 +1905,6 @@ void write_player_info(int Ind, int i, char *pinfo) {
 	int k;
 
 	bool admin = is_admin(p_ptr);
-	char flag_str[12];
 	bool iddc;
 
 	FILE *fff;
@@ -1918,7 +1917,6 @@ void write_player_info(int Ind, int i, char *pinfo) {
 	k = i;
 	{
 		q_ptr = Players[k];
-		flag_str[0] = '\0';
 		byte attr = 'w';
 
 		if (q_ptr->conn == NOT_CONNECTED) return;
