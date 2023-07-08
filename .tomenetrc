@@ -197,3 +197,21 @@ Term-7window_Y			0
 Term-7window_Columns		80
 Term-7window_Lines		24
 Term-7window_Font		5x8
+
+## unnamed, term-8
+Term-8window_Title		Term-8
+Term-8window_Visible		0
+Term-8window_X			0
+Term-8window_Y			0
+Term-8window_Columns		80
+Term-8window_Lines		24
+Term-8window_Font		5x8
+
+## unnamed, term-9
+Term-9window_Title		Term-9
+Term-9window_Visible		0
+Term-9window_X			0
+Term-9window_Y			0
+Term-9window_Columns		80
+Term-9window_Lines		24
+Term-9window_Font		5x8

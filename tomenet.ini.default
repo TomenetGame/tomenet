@@ -189,3 +189,25 @@ Columns=80
 Rows=24
 Font=5X8.FON
 Graf=8X13.BMP
+
+[Term-8 window]
+WindowNumber=8
+WindowTitle=Term-8
+Visible=0
+PositionX=184
+PositionY=549
+Columns=80
+Rows=24
+Font=5X8.FON
+Graf=8X13.BMP
+
+[Term-9 window]
+WindowNumber=9
+WindowTitle=Term-9
+Visible=0
+PositionX=676
+PositionY=548
+Columns=80
+Rows=24
+Font=5X8.FON
+Graf=8X13.BMP
