@@ -227,8 +227,8 @@ void do_cmd_check_artifacts(int Ind, int line, char *srcstr) {
 				else if (timeout < (60 * 2) / divisor) sprintf(timeleft, "\377r%3dm", timeout);
 				else if (timeout < (60 * 24 * 2) / divisor) sprintf(timeleft, "\377y%3dh", timeout / 60);
 				else if (timeout < (long_timeout * 24 * (FLUENT_ARTIFACT_WEEKS * 7 - 1)) / divisor)
-					sprintf(timeleft, "\377s%3dd", timeout / 60 / 24);
-				else sprintf(timeleft, "\377G%3dd", timeout / 60 / 24); /* indicate very recently found arts */
+					sprintf(timeleft, "\377s%3dd", timeout / 60 / 24); /* silyl compiler warning */
+				else sprintf(timeleft, "\377G%3dd", timeout / 60 / 24); /* indicate very recently found arts -- silyl compiler warning */
 
 				if (a_ptr->cur_num != 1 && !multiple_artifact_p(&forge)) c = 'r';
 				else if (admin_artifact_p(&forge)) c = 'y';
