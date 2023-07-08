@@ -6524,6 +6524,7 @@ int Send_version(void) {
 int Send_plistw_notify(bool on) {
 	int n;
 
+	if (is_older_than(&server_version, 4, 9, 0, 7, 0, 0)) return(1);
 	if ((n = Packet_printf(&wbuf, "%c%c", PKT_PLISTW_NOTIFY, on)) <= 0) return(n);
 	return(1);
 }
