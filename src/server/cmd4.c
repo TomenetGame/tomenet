@@ -1965,7 +1965,9 @@ void write_player_info(int Ind, int i, char *pinfo) {
 		my_fclose(fff);
 		return;
 	}
-	strcat(pinfo, buf);
+	/* +2: Trim left side a bit, to omit 'I'/'O' tags for invalid/outdated, or the empty spaces if none of both. */
+	if (buf[2] != ' ') strcat(pinfo, buf + 4); /* This pos would have a colour code if invalid or outdated, ie 'y' or 'D' */
+	else strcat(pinfo, buf + 2);
 
 #if 0
 	//if ((c = strchr(pinfo, '('))) *c = 0; /* Cut off at hostname, line gets too long */
@@ -1974,6 +1976,8 @@ void write_player_info(int Ind, int i, char *pinfo) {
 	c = strchr(buf + (c - pinfo), ' ');
 	strcat(pinfo, c);
 #else
+	/* Truncate trailing '(AFK)' state */
+	if ((c1 = strstr(pinfo, "(AFK)"))) *c1 = 0;
 	/* If before the 2nd comma there's a colour coded asterisk, continue normally. Else crop the range from 2nd comma till before colour code. */
 	c1 = strchr(pinfo, ',');
 	if (c1) c1 = strchr(c1 + 1, ',');
@@ -1987,6 +1991,8 @@ void write_player_info(int Ind, int i, char *pinfo) {
 			strcpy(c1 + 1, buf);
 		}
 	}
+	/* terminate after the "(<hostname>)" */
+	if ((c1 = strchr(pinfo, ')'))) *(c1 + 1) = 0;
 #endif
 
 	my_fclose(fff);
