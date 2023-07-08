@@ -2483,8 +2483,8 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	}
 
 	/* Reset timers just to be sure. */
-	td->resize_timer.tv_sec=0;
-	td->resize_timer.tv_usec=0;
+	td->resize_timer.tv_sec = 0;
+	td->resize_timer.tv_usec = 0;
 
 	/* Hack -- Assume full size windows */
 	wid = win_cols * td->fnt->wid;
