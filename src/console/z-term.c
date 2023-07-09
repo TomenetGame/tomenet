@@ -516,32 +516,32 @@ byte flick_colour(byte attr) {
 	case TERM_BNWM:
 		switch (randint(3)) {
 		case 1: return TERM_L_DARK;
-		case 2: return TERM_L_SLATE;
+		case 2: return TERM_WHITE;
 		case 3: return flick_colour(TERM_HOLYFIRE);
 		}
 	case TERM_BNWSR:
 		switch (randint(3)) {
 		case 1: return TERM_L_DARK;
-		case 2: return TERM_L_SLATE;
+		case 2: return TERM_WHITE;
 		case 3: return TERM_BLUE;
 		}
 	case TERM_BNWKS:
 		switch (randint(3)) {
 		case 1: return TERM_L_DARK;
-		case 2: return TERM_L_SLATE;
+		case 2: return TERM_WHITE;
 		case 3: return flick_colour(TERM_PSI);
 		}
 	case TERM_BNWKS2:
 		switch (randint(3)) {
 		case 1: return TERM_L_DARK;
-		case 2: return TERM_L_SLATE;
+		case 2: return TERM_WHITE;
 		case 3: return TERM_ORANGE;
 		}
 	/* flickering from 'pvp' flag? */
 	case TERM_PVPBB:
 		switch (randint(3)) {
 		case 1: return TERM_L_DARK;
-		case 2: return TERM_L_SLATE;
+		case 2: return TERM_SLATE;
 		case 3: return TERM_YELLOW;
 		}
 	case TERM_PVP:
