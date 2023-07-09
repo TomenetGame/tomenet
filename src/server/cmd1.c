@@ -8261,16 +8261,16 @@ static void run_init(int Ind, int dir) {
 
 	/* Check for walls */
 	/* When in the town/wilderness, don't break left/right. -APD- */
-	if (see_wall(Ind, cycle[i+1], p_ptr->py, p_ptr->px)) {
+	if (see_wall(Ind, cycle[i + 1], p_ptr->py, p_ptr->px)) {
 		/* if in the dungeon */
-//		if (p_ptr->wpos.wz)
+		//if (p_ptr->wpos.wz)
 		{
 			p_ptr->find_breakleft = TRUE;
 			shortleft = TRUE;
 		}
-	} else if (see_wall(Ind, cycle[i+1], row, col)) {
+	} else if (see_wall(Ind, cycle[i + 1], row, col)) {
 		/* if in the dungeon */
-//		if (p_ptr->wpos.wz)
+		//if (p_ptr->wpos.wz)
 		{
 			p_ptr->find_breakleft = TRUE;
 			deepleft = TRUE;
@@ -8278,16 +8278,16 @@ static void run_init(int Ind, int dir) {
 	}
 
 	/* Check for walls */
-	if (see_wall(Ind, cycle[i-1], p_ptr->py, p_ptr->px)) {
+	if (see_wall(Ind, cycle[i - 1], p_ptr->py, p_ptr->px)) {
 		/* if in the dungeon */
-//		if (p_ptr->wpos.wz)
+		//if (p_ptr->wpos.wz)
 		{
 			p_ptr->find_breakright = TRUE;
 			shortright = TRUE;
 		}
-	} else if (see_wall(Ind, cycle[i-1], row, col)) {
+	} else if (see_wall(Ind, cycle[i - 1], row, col)) {
 		/* if in the dungeon */
-//		if (p_ptr->wpos.wz)
+		//if (p_ptr->wpos.wz)
 		{
 			p_ptr->find_breakright = TRUE;
 			deepright = TRUE;
@@ -8297,7 +8297,7 @@ static void run_init(int Ind, int dir) {
 	if (p_ptr->find_breakleft && p_ptr->find_breakright) {
 		/* Not looking for open area */
 		/* In the town/wilderness, always in an open area */
-//		if (p_ptr->wpos.wz)
+		//if (p_ptr->wpos.wz)
 			p_ptr->find_openarea = FALSE;
 
 		/* Hack -- allow angled corridor entry */

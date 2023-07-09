@@ -165,8 +165,8 @@ bool askfor_aux(char *buf, int len, char private)
 			Term_erase(x, y, len);
 			Term_putstr(x, y, -1, TERM_WHITE, buf);
 		} else {
-			Term_erase(x+k, y, len-k);
-			if (k) Term_putch(x+k-1, y, TERM_WHITE, 'x');
+			Term_erase(x + k, y, len - k);
+			if (k) Term_putch(x + k - 1, y, TERM_WHITE, 'x');
 		}
 	}
 

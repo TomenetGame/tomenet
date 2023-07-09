@@ -358,8 +358,8 @@ errr check_load_init(void) {
 
 	char buf[1024];
 
-	char temphost[MAXHOSTNAMELEN+1];
-	char thishost[MAXHOSTNAMELEN+1];
+	char temphost[MAXHOSTNAMELEN + 1];
+	char thishost[MAXHOSTNAMELEN + 1];
 
 
 	/* Build the filename */
@@ -1874,7 +1874,7 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 	if (i > to) i = to;
 
 	/* Show 5 per page, until "done" */
-	for (j = from, place = j+1; j < i; j++, place++) {
+	for (j = from, place = j + 1; j < i; j++, place++) {
 		int pr, pc, clev, mlev, cdun, mdun;
 		byte modebuf;
 		char modestr[20], modecol[5];
@@ -2707,7 +2707,7 @@ void wipeout_needless_objects() {
 				d_ptr = w_ptr->dungeon;
 				for (z = 1; z <= d_ptr->maxdepth; z++) {
 					cwpos.wz = -z;
-					if (d_ptr->level[z-1].ondepth && d_ptr->level[z-1].cave)
+					if (d_ptr->level[z - 1].ondepth && d_ptr->level[z - 1].cave)
 						wipe_o_list(&cwpos);
 				}
 			}
@@ -2715,7 +2715,7 @@ void wipeout_needless_objects() {
 				d_ptr = w_ptr->tower;
 				for (z = 1; z <= d_ptr->maxdepth; z++) {
 					cwpos.wz = z;
-					if (d_ptr->level[z-1].ondepth && d_ptr->level[z-1].cave)
+					if (d_ptr->level[z - 1].ondepth && d_ptr->level[z - 1].cave)
 						wipe_o_list(&cwpos);
 				}
 			}

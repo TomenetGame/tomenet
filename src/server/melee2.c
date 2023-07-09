@@ -8706,8 +8706,8 @@ static bool get_moves_pet(int Ind, int m_idx, int *mm) {
 
 	if (!(inarea(&m_ptr->wpos, (tm_idx > 0) ? &m_list[tm_idx].wpos : &Players[-tm_idx]->wpos))) return(FALSE);
 
-	y2 = (tm_idx > 0)?m_list[tm_idx].fy:Players[-tm_idx]->py;
-	x2 = (tm_idx > 0)?m_list[tm_idx].fx:Players[-tm_idx]->px;
+	y2 = (tm_idx > 0) ? m_list[tm_idx].fy : Players[-tm_idx]->py;
+	x2 = (tm_idx > 0) ? m_list[tm_idx].fx : Players[-tm_idx]->px;
 
 	/* Extract the "pseudo-direction" */
 	y = m_ptr->fy - y2;
@@ -8916,8 +8916,8 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm) {
 
 	if (!(inarea(&m_ptr->wpos, (tm_idx > 0) ? &m_list[tm_idx].wpos : &Players[-tm_idx]->wpos))) return(FALSE);
 
-	y2 = (tm_idx > 0)?m_list[tm_idx].fy:Players[-tm_idx]->py;
-	x2 = (tm_idx > 0)?m_list[tm_idx].fx:Players[-tm_idx]->px;
+	y2 = (tm_idx > 0) ? m_list[tm_idx].fy : Players[-tm_idx]->py;
+	x2 = (tm_idx > 0) ? m_list[tm_idx].fx : Players[-tm_idx]->px;
 
 	/* Extract the "pseudo-direction" */
 	y = m_ptr->fy - y2;
@@ -11667,7 +11667,7 @@ static void process_monster_pet(int Ind, int m_idx) {
 		if (!find_player(m_ptr->owner)) return; //hack: the owner must be online please. taking this out -> panic()
 		/* the player is in the way.  attack him. */
 		if (do_move && (c_ptr->m_idx < 0) && (c_ptr->m_idx >= -NumPlayers)) {
-			player_type *p_ptr = Players[0-c_ptr->m_idx];
+			player_type *p_ptr = Players[0 - c_ptr->m_idx];
 
 			/* sanity check */
 			if (p_ptr->id != m_ptr->owner &&
@@ -11678,7 +11678,7 @@ static void process_monster_pet(int Ind, int m_idx) {
 			}
 			/* do the attack only if hostile... */
 			if (p_ptr->id != m_ptr->owner &&
-			    check_hostile(0-c_ptr->m_idx, find_player(m_ptr->owner))) {
+			    check_hostile(0 - c_ptr->m_idx, find_player(m_ptr->owner))) {
 				(void)make_attack_melee(0 - c_ptr->m_idx, m_idx);
 				do_move = FALSE;
 				do_turn = TRUE;
@@ -12110,9 +12110,9 @@ static void process_monster_golem(int Ind, int m_idx) {
 
 		/* The player is in the way.  Attack him. */
 		if (do_move && (c_ptr->m_idx < 0)
-		    && Ind_owner && check_hostile(0-c_ptr->m_idx, Ind_owner)) {
+		    && Ind_owner && check_hostile(0 - c_ptr->m_idx, Ind_owner)) {
 			/* Do the attack */
-			if (Players[0-c_ptr->m_idx]->id != m_ptr->owner) (void)make_attack_melee(0 - c_ptr->m_idx, m_idx);
+			if (Players[0 - c_ptr->m_idx]->id != m_ptr->owner) (void)make_attack_melee(0 - c_ptr->m_idx, m_idx);
 
 			/* Do not move */
 			do_move = FALSE;

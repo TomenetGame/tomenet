@@ -120,7 +120,7 @@ int ListAccounts(int fpos) {
 	mvwaddstr(listwin, 0, 55, "Qui");
 	mvwaddstr(listwin, 0, 59, "Ban");
 	mvwaddstr(listwin, 0, 64, "Account ID");
-	if (fpos > LINES-11) {
+	if (fpos > LINES - 11) {
 		ifpos = fpos - (LINES - 11);
 	}
 	while (!quit) {
@@ -129,7 +129,7 @@ int ListAccounts(int fpos) {
 			for (i = 0; i < (LINES - 10); i++) {
 				x = fread(&c_acc, sizeof(struct account), 1, fp);
 				if (x == 0) break;
-				mvwprintw(listwin, i+1, 5, "%-22s%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c%.10d%10s", c_acc.name,
+				mvwprintw(listwin, i + 1, 5, "%-22s%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c%.10d%10s", c_acc.name,
 				c_acc.flags & ACC_TRIAL ? '.' : 'Y',
 				c_acc.flags & ACC_ADMIN ? 'Y' : '.',
 				c_acc.flags & ACC_NOSCORE ? '.' : 'Y',

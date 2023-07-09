@@ -1447,7 +1447,7 @@ static void process_effects(void) {
 							c_ptr->effect_xtra = 2;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
-						if (i == e_ptr->cx - mirrored * (4+1) && j == e_ptr->cy + 3) {
+						if (i == e_ptr->cx - mirrored * (4 + 1) && j == e_ptr->cy + 3) {
 							c_ptr->effect_xtra = 2;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
@@ -1457,7 +1457,7 @@ static void process_effects(void) {
 							c_ptr->effect_xtra = -mirrored;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
-						if (i == e_ptr->cx - mirrored * (3+1) && j == e_ptr->cy + 3) {
+						if (i == e_ptr->cx - mirrored * (3 + 1) && j == e_ptr->cy + 3) {
 							c_ptr->effect_xtra = 2;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
@@ -1467,7 +1467,7 @@ static void process_effects(void) {
 							c_ptr->effect_xtra = 2;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
-						if (i == e_ptr->cx - mirrored * (2+1) && j == e_ptr->cy + 3) {
+						if (i == e_ptr->cx - mirrored * (2 + 1) && j == e_ptr->cy + 3) {
 							c_ptr->effect_xtra = mirrored;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}

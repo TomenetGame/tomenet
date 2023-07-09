@@ -241,7 +241,7 @@ static void store_examine(void) {
 		sprintf(out_val, "Which item do you want to examine? ");
 
 	/* Get the item number to be bought */
-	if (!get_stock(&item, out_val, 0, i-1)) return;
+	if (!get_stock(&item, out_val, 0, i - 1)) return;
 
 	/* Get the actual index */
 	item = item + store_top;
@@ -291,7 +291,7 @@ static void store_purchase(bool one) {
 		sprintf(out_val, "Which item are you interested in? ");
 
 	/* Get the item number to be bought */
-	if (!get_stock(&item, out_val, 0, i-1)) return;
+	if (!get_stock(&item, out_val, 0, i - 1)) return;
 
 	/* Get the actual index */
 	item = item + store_top;

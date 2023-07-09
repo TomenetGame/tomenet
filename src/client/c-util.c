@@ -3561,7 +3561,7 @@ void c_message_add(cptr str) {
 		message__tail = message__head + n + 1;
 
 		/* Advance tail while possible past first "nul" */
-		while (message__buf[message__tail-1]) message__tail++;
+		while (message__buf[message__tail - 1]) message__tail++;
 
 		/* Kill all "dead" messages */
 		for (i = message__last; TRUE; i++) {
@@ -3730,7 +3730,7 @@ void c_message_add_chat(cptr str) {
 		message__tail_chat = message__head_chat + n + 1;
 
 		/* Advance tail while possible past first "nul" */
-		while (message__buf_chat[message__tail_chat-1]) message__tail_chat++;
+		while (message__buf_chat[message__tail_chat - 1]) message__tail_chat++;
 
 		/* Kill all "dead" messages */
 		for (i = message__last_chat; TRUE; i++) {
@@ -3892,7 +3892,7 @@ void c_message_add_msgnochat(cptr str) {
 		message__tail_msgnochat = message__head_msgnochat + n + 1;
 
 		/* Advance tail while possible past first "nul" */
-		while (message__buf_msgnochat[message__tail_msgnochat-1]) message__tail_msgnochat++;
+		while (message__buf_msgnochat[message__tail_msgnochat - 1]) message__tail_msgnochat++;
 
 		/* Kill all "dead" messages */
 		for (i = message__last_msgnochat; TRUE; i++) {
@@ -4059,7 +4059,7 @@ void c_message_add_impscroll(cptr str) {
 		message__tail_impscroll = message__head_impscroll + n + 1;
 
 		/* Advance tail while possible past first "nul" */
-		while (message__buf_impscroll[message__tail_impscroll-1]) message__tail_impscroll++;
+		while (message__buf_impscroll[message__tail_impscroll - 1]) message__tail_impscroll++;
 
 		/* Kill all "dead" messages */
 		for (i = message__last_impscroll; TRUE; i++) {
@@ -9127,7 +9127,7 @@ errr options_dump(cptr fname) {
 
 static void do_cmd_options_install_audio_packs(void) {
 	FILE *fff;
-	char path[1024], out_val[1024+28];
+	char path[1024], out_val[1024 + 28];
 	char c, ch, pack_name[1024];
 	int r;
 	bool picked = FALSE;
@@ -10089,7 +10089,7 @@ static void center_string_short(char *buf, cptr str) {
  */
 /* ToME parts. */
 #define STONE_COL 11
-#define STONE_COL_SHORT (11+6)
+#define STONE_COL_SHORT (11 + 6)
 static void print_tomb(cptr reason) {
 	bool done = FALSE;
 
@@ -10193,20 +10193,20 @@ static void print_tomb(cptr reason) {
 #if 0
 		(void)sprintf(tmp, "Level: %d", (int)p_ptr->lev);
 		center_string_short(buf, tmp);
-		c_put_str(TERM_L_UMBER, buf, 11-2, STONE_COL_SHORT);
+		c_put_str(TERM_L_UMBER, buf, 11 - 2, STONE_COL_SHORT);
 
 		(void)sprintf(tmp, "Exp: %d", p_ptr->exp);
 		center_string_short(buf, tmp);
-		c_put_str(TERM_L_UMBER, buf, 12-2, STONE_COL_SHORT);
+		c_put_str(TERM_L_UMBER, buf, 12 - 2, STONE_COL_SHORT);
 #else
 		(void)sprintf(tmp, "Lv: %d, Exp: %d", (int)p_ptr->lev, p_ptr->exp);
 		center_string(buf, tmp);
-		c_put_str(TERM_L_UMBER, buf, 11-2, STONE_COL);
+		c_put_str(TERM_L_UMBER, buf, 11 - 2, STONE_COL);
 #endif
 		/* XXX usually 0 */
 		(void)sprintf(tmp, "AU: %d", p_ptr->au);
 		center_string_short(buf, tmp);
-		c_put_str(TERM_L_UMBER, buf, 12-2, STONE_COL_SHORT);
+		c_put_str(TERM_L_UMBER, buf, 12 - 2, STONE_COL_SHORT);
 
 		/* Location */
 		if (c_cfg.depth_in_feet)
@@ -10214,7 +10214,7 @@ static void print_tomb(cptr reason) {
 		else
 			(void)sprintf(tmp, "Died on Lv %d %s", p_ptr->wpos.wz, location_pre);
 		center_string(buf, tmp);
-		c_put_str(TERM_L_UMBER, buf, 13-1, STONE_COL);
+		c_put_str(TERM_L_UMBER, buf, 13 - 1, STONE_COL);
 
 		if (location_name2[0])
 			sprintf(tmp, "%s", location_name2);
@@ -10223,12 +10223,12 @@ static void print_tomb(cptr reason) {
 		else
 			sprintf(tmp, "world map region (%d,%d)", p_ptr->wpos.wx, p_ptr->wpos.wy);
 		center_string(buf, tmp);
-		c_put_str(TERM_L_UMBER, buf, 14-1, STONE_COL);
+		c_put_str(TERM_L_UMBER, buf, 14 - 1, STONE_COL);
 
 		/* Time of death */
 		(void)sprintf(tmp, "%-.24s", ctime(&ct));
 		center_string(buf, tmp);
-		c_put_str(TERM_L_UMBER, buf, 17-3, STONE_COL);
+		c_put_str(TERM_L_UMBER, buf, 17 - 3, STONE_COL);
 
 		/* Death cause */
 		strcpy(reason2, reason);
@@ -10260,20 +10260,20 @@ static void print_tomb(cptr reason) {
 				strcpy(reason2, buf);
 			}
 			center_string(buf, "Killed by");
-			c_put_str(TERM_L_UMBER, buf, 18-3, STONE_COL);
+			c_put_str(TERM_L_UMBER, buf, 18 - 3, STONE_COL);
 			center_string(buf, reason2 + 10);
-			c_put_str(TERM_L_UMBER, buf, 21-5, STONE_COL);
+			c_put_str(TERM_L_UMBER, buf, 21 - 5, STONE_COL);
 		} else if (strstr(reason2, "Committed suicide")) {
 			if (p_ptr->total_winner) {
 				center_string(buf, "Died from ripe old age");
-				c_put_str(TERM_L_UMBER, buf, 19-3, STONE_COL);
+				c_put_str(TERM_L_UMBER, buf, 19 - 3, STONE_COL);
 			} else {
 				center_string(buf, "Committed suicide");
-				c_put_str(TERM_L_UMBER, buf, 19-3, STONE_COL);
+				c_put_str(TERM_L_UMBER, buf, 19 - 3, STONE_COL);
 			}
 		} else {
 			center_string(buf, reason2);
-			c_put_str(TERM_L_UMBER, buf, 21-5, STONE_COL);
+			c_put_str(TERM_L_UMBER, buf, 21 - 5, STONE_COL);
 		}
 	}
 }
@@ -11425,7 +11425,7 @@ u32b parse_color_code(const char *str) {
 /* Load the graphics pref file "graphics-{graphic_tiles}.pref" aka
    "Access the "graphic visual" system pref file (if any)". */
 static void handle_process_graphics_file(void) {
-	char fname[255+13+1];
+	char fname[255 + 13 + 1];
 	/* Figure out graphics prefs file name to be loaded. */
 	sprintf(fname, "graphics-%s.prf", graphic_tiles);
 	/* Access the "graphic visual" system pref file (if any). */

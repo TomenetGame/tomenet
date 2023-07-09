@@ -36,7 +36,7 @@
  * Note: rand_range(0,N-1) == rand_int(N)
  */
 #define rand_range(A,B) \
-	((A) + (rand_int(1+(B)-(A))))
+	((A) + (rand_int(1 + (B) - (A))))
 
 /*
  * Generate a random long integer X where A-D<=X<=A+D
@@ -44,7 +44,7 @@
  * Note: rand_spread(A,D) == rand_range(A-D,A+D)
  */
 #define rand_spread(A,D) \
-	((A) + (rand_int(1+(D)+(D))) - (D))
+	((A) + (rand_int(1 + (D) + (D))) - (D))
 
 
 /*

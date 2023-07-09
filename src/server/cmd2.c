@@ -5826,7 +5826,7 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 
 		if (p_ptr->easy_disarm_montraps) {
 			/* Get requested grid */
-			c_ptr = &zcave[p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];
+			c_ptr = &zcave[p_ptr->py + ddy[dir]][p_ptr->px + ddx[dir]];
 
 			if (!c_ptr->m_idx) {
 			    //&& !c_ptr->o_idx
@@ -5919,12 +5919,11 @@ int do_cmd_run(int Ind, int dir) {
 			/* Handle the cfg_door_bump option */
 			if (cfg.door_bump_open && p_ptr->easy_open && !CANNOT_OPERATE_SPECTRAL && !CANNOT_OPERATE_FORM) { /* players in WRAITHFORM can't open doors - mikaelh */
 				/* Get requested grid */
-				c_ptr = &zcave[p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];
+				c_ptr = &zcave[p_ptr->py + ddy[dir]][p_ptr->px + ddx[dir]];
 
 				if (((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 				      (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
-				    ((c_ptr->feat == FEAT_HOME)))
-				{
+				    ((c_ptr->feat == FEAT_HOME))) {
 					/* Check if we have enough energy to open the door */
 					if (p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 						/* If so, open it. */

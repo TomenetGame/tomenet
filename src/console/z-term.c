@@ -561,9 +561,9 @@ byte flick_colour(byte attr) {
 		else
 		return((randint(2) == 1) ? TERM_L_RED : TERM_ORANGE);
 */		switch (randint(3)) {
-		case 1:return TERM_VIOLET;
-		case 2:return TERM_L_RED;
-		case 3:return TERM_ORANGE;
+		case 1: return TERM_VIOLET;
+		case 2: return TERM_L_RED;
+		case 3: return TERM_ORANGE;
 		}
 	}
 	if (attr == TERM_SHIELDI) {
@@ -587,13 +587,13 @@ byte flick_colour(byte attr) {
 			return(randint(15));
 			break;	/* unnecessary breaks ;) */
 		case TERM_FIRE:
-			return(randint(7)>6?TERM_YELLOW:rand_int(3)>1?TERM_RED:TERM_L_RED);
+			return(randint(7) > 6 ? TERM_YELLOW : rand_int(3) > 1 ? TERM_RED : TERM_L_RED);
 			break;
 		case TERM_POIS:
-			return(randint(5)>3?TERM_GREEN:TERM_L_GREEN);
+			return(randint(5) > 3 ? TERM_GREEN : TERM_L_GREEN);
 			break;
 		case TERM_COLD:
-			return(randint(5)>3?TERM_WHITE:TERM_L_WHITE);
+			return(randint(5) > 3 ? TERM_WHITE : TERM_L_WHITE);
 			break;
 		case TERM_ELEC:
 			return(randint(7) > 6 ? TERM_WHITE : (randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE));

@@ -508,7 +508,7 @@ static int adjust_stat(int Ind, int value, s16b amount, int auto_roll) {
 	if (amount < 0) {
 		/* Apply penalty */
 		for (i = 0; i < (0 - amount); i++) {
-			if (value >= 18+10)
+			if (value >= 18 + 10)
 				value -= 10;
 			else if (value > 18)
 				value = 18;
@@ -521,16 +521,11 @@ static int adjust_stat(int Ind, int value, s16b amount, int auto_roll) {
 	else if (amount > 0) {
 		/* Apply reward */
 		for (i = 0; i < amount; i++) {
-			if (value < 18)
-				value++;
-			else if (p_ptr->maximize)
-				value += 10;
-			else if (value < 18+70)
-				value += ((auto_roll ? 15 : randint(15)) + 5);
-			else if (value < 18+90)
-				value += ((auto_roll ? 6 : randint(6)) + 2);
-			else if (value < 18+100)
-				value++;
+			if (value < 18) value++;
+			else if (p_ptr->maximize) value += 10;
+			else if (value < 18 + 70) value += ((auto_roll ? 15 : randint(15)) + 5);
+			else if (value < 18 + 90) value += ((auto_roll ? 6 : randint(6)) + 2);
+			else if (value < 18 + 100) value++;
 		}
 	}
 
@@ -605,7 +600,7 @@ static bool get_stats(int Ind, int stat_order[6]) {
 		/* Acquire the stats */
 		for (i = 0; i < 6; i++) {
 			/* Extract 5 + 1d3 + 1d4 + 1d5 */
-			j = 5 + dice[3*i] + dice[3*i+1] + dice[3*i+2];
+			j = 5 + dice[3 * i] + dice[3 * i + 1] + dice[3 * i + 2];
 
 			/* Save that value */
 			stats[i] = j;
@@ -777,7 +772,7 @@ static void get_extra(int Ind) {
 			   smaller random range - C. Blue
 			j = randint(p_ptr->hitdie);*/
 			j = 2 + randint(p_ptr->hitdie - 4);
-			p_ptr->player_hp[i] = p_ptr->player_hp[i-1] + j;
+			p_ptr->player_hp[i] = p_ptr->player_hp[i - 1] + j;
 		}
 
 		/* Require "valid" hitpoints at kinging level */
@@ -973,7 +968,7 @@ void get_history(int Ind) {
 	n = strlen(s);
 
 	/* Kill trailing spaces */
-	while ((n > 0) && (s[n-1] == ' ')) s[--n] = '\0';
+	while ((n > 0) && (s[n - 1] == ' ')) s[--n] = '\0';
 
 
 	/* Start at first line */
@@ -994,13 +989,13 @@ void get_history(int Ind) {
 		}
 
 		/* Find a reasonable break-point */
-		for (n = 60; ((n > 0) && (s[n-1] != ' ')); n--) /* loop */;
+		for (n = 60; ((n > 0) && (s[n - 1] != ' ')); n--) /* loop */;
 
 		/* Save next location */
 		t = s + n;
 
 		/* Wipe trailing spaces */
-		while ((n > 0) && (s[n-1] == ' ')) s[--n] = '\0';
+		while ((n > 0) && (s[n - 1] == ' ')) s[--n] = '\0';
 
 		/* Save one line of history */
 		strcpy(p_ptr->history[i++], s);
@@ -1044,14 +1039,14 @@ static void get_money(int Ind) {
 	int	i, gold;
 
 	/* Social Class determines starting gold */
-/*	gold = (p_ptr->sc * 6) + randint(100) + 300; - the suicide spam to get more gold was annoying.. */
+	/*gold = (p_ptr->sc * 6) + randint(100) + 300; - the suicide spam to get more gold was annoying.. */
 	gold = randint(20) + 350;
 
 	/* Process the stats */
 	for (i = 0; i < 6; i++) {
 		/* Mega-Hack -- reduce gold for high stats */
-		if (stat_use[i] >= 18+50) gold -= 150;
-		else if (stat_use[i] >= 18+20) gold -= 100;
+		if (stat_use[i] >= 18 + 50) gold -= 150;
+		else if (stat_use[i] >= 18 + 20) gold -= 100;
 		else if (stat_use[i] > 18) gold -= 50;
 		else gold -= (stat_use[i] - 8) * 5;
 	}

@@ -80,17 +80,17 @@ static int errorfb (lua_State *L) {
       luaL_addstring(&b, "stack traceback:\n");
     else if (level > LEVELS1 && firstpart) {
       /* no more than `LEVELS2' more levels? */
-      if (!lua_getstack(L, level+LEVELS2, &ar))
+      if (!lua_getstack(L, level + LEVELS2, &ar))
         level--;  /* keep going */
       else {
         luaL_addstring(&b, "       ...\n");  /* too many levels */
-        while (lua_getstack(L, level+LEVELS2, &ar))  /* find last levels */
+        while (lua_getstack(L, level + LEVELS2, &ar))  /* find last levels */
           level++;
       }
       firstpart = 0;
       continue;
     }
-    sprintf(buff, "%4d:  ", level-1);
+    sprintf(buff, "%4d:  ", level - 1);
     luaL_addstring(&b, buff);
     lua_getinfo(L, "Snl", &ar);
     switch (*ar.namewhat) {
@@ -504,7 +504,7 @@ bool pern_dofile(int Ind, char *file) {
 	error = lua_dofile(L, buf);
 	lua_settop(L, oldtop);
 
-	return(error?TRUE:FALSE);
+	return(error ? TRUE : FALSE);
 }
 
 int exec_lua(int Ind, char *file) {

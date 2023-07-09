@@ -1902,7 +1902,7 @@ void select_bounties(void) {
 		s16b val;
 
 		if (lev < 1) lev = 1;
-		if (lev >= MAX_DEPTH) lev = MAX_DEPTH-1;
+		if (lev >= MAX_DEPTH) lev = MAX_DEPTH - 1;
 
 		/* We don't want to duplicate entries in the list */
 		while (TRUE) {

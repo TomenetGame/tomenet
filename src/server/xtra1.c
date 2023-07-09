@@ -105,7 +105,7 @@ s16b modify_stat_value(int value, int amount) {
 		/* Apply each point */
 		for (i = 0; i < (0 - amount); i++) {
 			/* Ten points at a time */
-			if (value >= 18+10) value -= 10;
+			if (value >= 18 + 10) value -= 10;
 
 			/* Hack -- prevent weirdness */
 			else if (value > 18) value = 18;
@@ -7784,7 +7784,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 
 		strcpy(ge->title, "Arena Monster Challenge");
 		strcpy(ge->description[0], " During the duration of Bree's Arena Monster Challenge, you just type  ");
-		strcpy(ge->description[1], format(" '\377U/evsign %d <Monster Name>\377w' and you'll have a chance to challenge  ", n+1));
+		strcpy(ge->description[1], format(" '\377U/evsign %d <Monster Name>\377w' and you'll have a chance to challenge  ", n + 1));
 		strcpy(ge->description[2], " it for an illusion death match in Bree's upper training tower floor.  ");
 		strcpy(ge->description[3], " Neither the monster nor you will really die in person, just illusions ");
 		strcpy(ge->description[4], " of you, created by the wizards of 'Arena Monster Challenge (tm)' will ");
@@ -7792,7 +7792,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 		strcpy(ge->description[6], " completely real to you though, and you can even use and consume items!");
 		strcpy(ge->description[7], " (PvP-mode characters are an exception and will actually die for real!)");
 		//strcpy(ge->description[7], " (Note: Some creatures might be beyond the wizards' abilities.)");
-		strcpy(ge->description[8], format(" (Example: '\377U/evsign %d black orc vet\377w' gets you a veteran archer!)", n+1));
+		strcpy(ge->description[8], format(" (Example: '\377U/evsign %d black orc vet\377w' gets you a veteran archer!)", n + 1));
 		ge->end_turn = ge->start_turn + cfg.fps * 60 * 30 ; /* 30 minutes max. duration, insta-start */
 #if 0
 		switch (rand_int(2)) { /* Determine terrain type! */
@@ -7867,9 +7867,9 @@ int start_global_event(int Ind, int getype, char *parm) {
  */
 void stop_global_event(int Ind, int n) {
 	global_event_type *ge = &global_event[n];
-	if (Ind) msg_format(Ind, "Wiping event #%d of type %d.", n+1, ge->getype);
-	s_printf("%s EVENT_STOP: #%d of type %d\n", showtime(), n+1, ge->getype);
-	if (ge->getype) msg_broadcast_format(0, "\377y[Event '%s' (%d) was cancelled.]", ge->title, n+1);
+	if (Ind) msg_format(Ind, "Wiping event #%d of type %d.", n + 1, ge->getype);
+	s_printf("%s EVENT_STOP: #%d of type %d\n", showtime(), n + 1, ge->getype);
+	if (ge->getype) msg_broadcast_format(0, "\377y[Event '%s' (%d) was cancelled.]", ge->title, n + 1);
 #if 0
 	ge->getype = GE_NONE;
 	for (i = 1; i <= NumPlayers; i++) Players[i]->global_event_type[n] = GE_NONE;
@@ -7991,7 +7991,7 @@ void global_event_signup(int Ind, int n, cptr parm) {
 			return;
 		}
 		if ((parm == NULL) || !strlen(parm)) {
-			msg_format(Ind, "\377yYou have to specify a monster name:  /evsign %d monstername", n+1);
+			msg_format(Ind, "\377yYou have to specify a monster name:  /evsign %d monstername", n + 1);
 			return;
 		}
 

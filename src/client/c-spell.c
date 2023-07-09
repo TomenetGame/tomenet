@@ -347,7 +347,7 @@ int get_spell(s32b *sn, cptr prompt, int book) {
 		/* uppercase... hope this is portable. */
 		else if (isupper(choice)) {
 			i = (choice - 'A') + 64;
-			if (i-64 >= num) i = -1;
+			if (i - 64 >= num) i = -1;
 		}
 		else i = -1;
 

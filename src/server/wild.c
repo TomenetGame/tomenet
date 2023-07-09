@@ -91,7 +91,7 @@ int world_index(int world_x, int world_y) {
 	if (!ring) return(0);
 
 	/* calculate the base offset of this ring */
-	base = 2*ring*(ring-1) + 1;
+	base = 2 * ring * (ring - 1) + 1;
 
 	/* calculate the offset within this ring */
 	if (world_x >= 0) offset = ring - world_y;
@@ -183,14 +183,14 @@ void addtown(int y, int x, int base, u16b flags, int type) {
 	int n;
 
 	if (numtowns)
-		GROW(town, numtowns, numtowns+1, struct town_type);
+		GROW(town, numtowns, numtowns + 1, struct town_type);
 	else
 		MAKE(town, struct town_type);
 	town[numtowns].x = x;
 	town[numtowns].y = y;
 	town[numtowns].baselevel = base;
 	town[numtowns].flags = flags;
-//	town[numtowns].num_stores = MAX_BASE_STORES;
+	//town[numtowns].num_stores = MAX_BASE_STORES;
 	town[numtowns].num_stores = max_st_idx;
 	town[numtowns].type = type;
 	wild_info[y][x].type = WILD_TOWN;
@@ -198,7 +198,7 @@ void addtown(int y, int x, int base, u16b flags, int type) {
 	wild_info[y][x].radius = base;
 	alloc_stores(numtowns);
 	/* Initialize the stores */
-//	for (n = 0; n < MAX_BASE_STORES; n++)
+	//for (n = 0; n < MAX_BASE_STORES; n++)
 	for (n = 0; n < max_st_idx; n++) {
 		/* make shop remember the town its in - C. Blue */
 		town[numtowns].townstore[n].town = numtowns;
@@ -208,11 +208,11 @@ void addtown(int y, int x, int base, u16b flags, int type) {
 		store_init(&town[numtowns].townstore[n]);
 
 		/* Ignore home and auction house */
-//		if ((n == MAX_BASE_STORES - 2) || (n == MAX_BASE_STORES - 1)) continue;
+		//if ((n == MAX_BASE_STORES - 2) || (n == MAX_BASE_STORES - 1)) continue;
 
 		/* Maintain the shop */
 		store_maint(&town[numtowns].townstore[n]);
-//		for (i = 0; i < 10; i++) store_maint(&town[numtowns].townstore[n]);
+		//for (i = 0; i < 10; i++) store_maint(&town[numtowns].townstore[n]);
 	}
 	numtowns++;
 }
@@ -1356,7 +1356,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 		house_ylen = rand_int(4) + 4;
 #endif
 	}
-	area = (house_xlen-2) * (house_ylen-2);
+	area = (house_xlen - 2) * (house_ylen - 2);
 
 	/* find the dimensions of the "lawn" the house is built on */
 #ifdef __DISABLE_HOUSEBOOST
@@ -2238,8 +2238,8 @@ static void wild_add_hotspot(struct worldpos *wpos) {
 	/* hack -- minimum hotspot radius of 3 */
 	while (magnitude < 3) {
 		/* determine the rough "coordinates" of the feature */
-		x_cen = rand_int(MAX_WID-11) + 5;
-		y_cen = rand_int(MAX_HGT-11) + 5;
+		x_cen = rand_int(MAX_WID - 11) + 5;
+		y_cen = rand_int(MAX_HGT - 11) + 5;
 
 		/* determine the maximum size of the feature, which is its distance to
 		its closest edge.
@@ -3409,8 +3409,8 @@ static void wilderness_gen_hack(struct worldpos *wpos) {
 		/* turn single deep water fields to shallow */
 		if (c_ptr->feat == FEAT_DEEP_WATER) {
 			found_more_water = 0;
-			for (y2 = y-1; y2 <= y+1; y2++)
-			for (x2 = x-1; x2 <= x+1; x2++) {
+			for (y2 = y - 1; y2 <= y + 1; y2++)
+			for (x2 = x - 1; x2 <= x + 1; x2++) {
 				c2_ptr = &zcave[y2][x2];
 				if (y2 == y && x2 == x) continue;
 				if (!in_bounds(y2, x2)) {
@@ -3430,8 +3430,8 @@ static void wilderness_gen_hack(struct worldpos *wpos) {
 		/* turn single non-<deep water> fields to deep water */
 		else if (c_ptr->feat != FEAT_DEEP_WATER) {
 			found_more_water = 0;
-			for (y2 = y-1; y2 <= y+1; y2++)
-			for (x2 = x-1; x2 <= x+1; x2++) {
+			for (y2 = y - 1; y2 <= y + 1; y2++)
+			for (x2 = x - 1; x2 <= x + 1; x2++) {
 				c2_ptr = &zcave[y2][x2];
 				if (y2 == y && x2 == x) continue;
 				if (!in_bounds(y2, x2)) {
@@ -3754,7 +3754,7 @@ void wilderness_gen(struct worldpos *wpos) {
 		c_ptr->feat = FEAT_PERM_CLEAR;
 
 		/* South wall */
-		c_ptr = &zcave[MAX_HGT-1][x];
+		c_ptr = &zcave[MAX_HGT - 1][x];
 
 		/* Clear previous contents, add "clear" perma-wall */
 		c_ptr->feat = FEAT_PERM_CLEAR;
@@ -3774,7 +3774,7 @@ void wilderness_gen(struct worldpos *wpos) {
 		c_ptr->info |= (CAVE_GLOW);*/
 
 		/* East wall */
-		c_ptr = &zcave[y][MAX_WID-1];
+		c_ptr = &zcave[y][MAX_WID - 1];
 
 		/* Clear previous contents, add "clear" perma-wall */
 		c_ptr->feat = FEAT_PERM_CLEAR;
@@ -3820,7 +3820,7 @@ void wilderness_gen(struct worldpos *wpos) {
 		if ((wpos->wy > 0) && magik(30) &&
 		    wild_info[wpos->wy - 1][wpos->wx].type != w_ptr->type) {
 			w_ptr2 = &wild_info[wpos->wy - 1][wpos->wx];
-			c_ptr = &zcave[MAX_HGT-2][x];
+			c_ptr = &zcave[MAX_HGT - 2][x];
 			/* Don't cover stairs - mikaelh */
 			if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_LESS) continue;
 			bleed_warn_feat(w_ptr2->type, c_ptr);
@@ -3830,7 +3830,7 @@ void wilderness_gen(struct worldpos *wpos) {
 		if ((wpos->wx < MAX_WID - 1) && magik(30) &&
 		    wild_info[wpos->wy][wpos->wx + 1].type != w_ptr->type) {
 			w_ptr2 = &wild_info[wpos->wy][wpos->wx + 1];
-			c_ptr = &zcave[y][MAX_WID-2];
+			c_ptr = &zcave[y][MAX_WID - 2];
 			/* Don't cover stairs - mikaelh */
 			if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_LESS) continue;
 			bleed_warn_feat(w_ptr2->type, c_ptr);
@@ -4037,7 +4037,7 @@ static bool adddesert() {
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
 		} while (wild_info[y][x].type != WILD_GRASSLAND);
-		if (island(y, x, WILD_DESERT, WILD_GRASSLAND, (1 << (MAXDESERT - 1)) + rand_int((1 << (MAXDESERT-1))) - 1)) added = TRUE;
+		if (island(y, x, WILD_DESERT, WILD_GRASSLAND, (1 << (MAXDESERT - 1)) + rand_int((1 << (MAXDESERT - 1))) - 1)) added = TRUE;
 		//if (island(y, x, WILD_DESERT, WILD_GRASSLAND, rand_int((1 << MAXDESERT) - 1))) added = TRUE;
 	}
 	return(added);

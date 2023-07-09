@@ -256,7 +256,7 @@ errr path_parse(char *buf, int max, cptr file) {
 	}
 
 	/* Point at the user */
-	u = file+1;
+	u = file + 1;
 
 	/* Look for non-user portion of the file */
 	s = strstr(u, PATH_SEP);
@@ -265,8 +265,7 @@ errr path_parse(char *buf, int max, cptr file) {
 	if (s && (s >= u + sizeof(user))) return(1);
 
 	/* Extract a user name */
-	if (s)
-	{
+	if (s) {
 		int i;
 
 		for (i = 0; u < s; ++i) user[i] = *u++;
@@ -6521,7 +6520,7 @@ int get_playerslot_loose(int Ind, char *iname) {
 	for (i = 0; i < INVEN_TOTAL; i++) {
 		if (!Players[Ind]->inventory[i].k_idx) continue;
 
-		object_desc(0, o_name, &Players[Ind]->inventory[i], FALSE, 3+16+32);
+		object_desc(0, o_name, &Players[Ind]->inventory[i], FALSE, 0x01 + 0x02 + 0x10 + 0x20);
 		for (j = 0; o_name[j]; j++) o_name[j] = tolower(o_name[j]);
 
 		if (strstr(o_name, i_name)) return(i);

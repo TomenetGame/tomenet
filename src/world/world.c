@@ -363,7 +363,7 @@ void wproto(struct client *ccl) {
 		}
 
 		if (ccl->blen>sizeof(struct wpacket))
-			memcpy(ccl->buf, ccl->buf+sizeof(struct wpacket), ccl->blen-sizeof(struct wpacket));
+			memcpy(ccl->buf, ccl->buf + sizeof(struct wpacket), ccl->blen - sizeof(struct wpacket));
 
 		ccl->blen -= sizeof(struct wpacket);
 	}

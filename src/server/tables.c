@@ -2429,7 +2429,7 @@ player_class class_info[MAX_CLASS] = {
 	{ "Warrior",
 		TERM_UMBER, FALSE, 0,
 		{ 5, -2, -2, 2, 2, -1},
-		{ 22+100, 0, 0, 10+100, 0, 0},
+		{ 22 + 100, 0, 0, 10 + 100, 0, 0},
 		20, 18, 18, 1,  14, 2, 70, 55,
 		10, 8,  10, 0,  0,  0,  45, 40,
 		10, 0,//6,  10,//9, 10,
@@ -2537,7 +2537,7 @@ player_class class_info[MAX_CLASS] = {
 	{ "Istar",
 		TERM_RED, FALSE, 0,
 		{-5, 3, 0, 1, -2, 1},
-		{0, 0+100, 0, 0, 0, 0},
+		{0, 0 + 100, 0, 0, 0, 0},
 		30, 36, 30, 2,  16, 20, 34, 20,
 		7,  10, 9,  0,  0,  0,  15, 15,
 		0, 35,//0,30
@@ -2642,9 +2642,9 @@ player_class class_info[MAX_CLASS] = {
 		TERM_GREEN, FALSE, 0,
 		{-1, -3, 3, -1, 0, 2},
 #if 0 /* disabled recommendations for STR/DEX because STR cannot even be reached by dwarven priests.. */
-		{19, 0, 0+100, 10, 0, 0},
+		{19, 0, 0 + 100, 10, 0, 0},
 #else
-		{0, 0, 0+100, 0, 0, 0},
+		{0, 0, 0 + 100, 0, 0, 0},
 #endif
 		25, 25, 32, 2,  16, 8, 48, 35,
 		7,   9, 12, 0,  0,  0, 20, 15,
@@ -2730,7 +2730,7 @@ player_class class_info[MAX_CLASS] = {
 	{ "Rogue",
 		TERM_BLUE, FALSE, 0,
 		{ 2, 1, -2, 3, 1, -1},
-		{15, 0, 0, 19+100, 0, 0},
+		{15, 0, 0, 19 + 100, 0, 0},
 		45, 28, 28, 5, 32, 24, 60, 66,
 		15, 9, 10, 0, 10, 10, 40, 40,// ..0,0,40,30
 		5, 15, //3, 25,//5, 25
@@ -2862,7 +2862,7 @@ player_class class_info[MAX_CLASS] = {
 		 TERM_L_WHITE, FALSE, 0, //confusing colour
 		// TERM_ORANGE, <- more confusing since they're supposed to use a monster form
 		{ 1, 0, 0, 1, 1, -4},
-		{19+100, 0, 0, 10+100, 0, 0},//21,19
+		{19 + 100, 0, 0, 10 + 100, 0, 0},//21,19
 		25, 30, 28, 1, 18, 18, 60, 46,
 		 9, 9, 10, 0,  0,  0, 40, 25,
 		6, 30,//3, 40,//4, 25
@@ -2966,7 +2966,7 @@ player_class class_info[MAX_CLASS] = {
 	{ "Archer",
 		TERM_ORANGE, FALSE, 0,
 		{ 1, 0, 2, 3, 1, -1},
-		{0, 0, 0, 18+100, 0, 0},
+		{0, 0, 0, 18 + 100, 0, 0},
 		30, 22, 28, 2,  24, 20, 56, 72,
 		8,  8, 10, 0,  0,  0,  30, 50,
 		5, 10,//3, 15,//5, 15
@@ -3057,7 +3057,7 @@ player_class class_info[MAX_CLASS] = {
 	{ "Paladin",
 		TERM_YELLOW, FALSE, 0,
 		{ 3, -3, 1, 0, 2, 2},
-		{20+100, 0, 0+100, 10, 0, 0},
+		{20 + 100, 0, 0 + 100, 10, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
@@ -3163,7 +3163,7 @@ player_class class_info[MAX_CLASS] = {
 	{ "Ranger",
 		TERM_L_UMBER, FALSE, 0,
 		{ 2, 2, -1, 1, 2, 0},
-		{19+100, 0+100, 0, 10+100, 0, 0},//21,19
+		{19 + 100, 0 + 100, 0, 10 + 100, 0, 0},//21,19
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
@@ -3532,7 +3532,7 @@ player_class class_info[MAX_CLASS] = {
 	{ "Druid",	/* by the_sandman -- w00t w00t -- a shapechanger+magical class */
 		TERM_L_GREEN, FALSE, 0,
 		{ 1, 0, 2, -2, -2, 1},
-		{0, 0, 0+100, 0, 0, 0},
+		{0, 0, 0 + 100, 0, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
@@ -3887,7 +3887,7 @@ player_class class_info[MAX_CLASS] = {
 			 */
 		TERM_L_BLUE, FALSE, 0,
 		{ 0, 2, -2, 2, -2, 0}, //More towards rogue for STR/WIS, but more like an istar for CON. - Kurzel
-		{15, 0+100, 0, 19+100, 0, 0},
+		{15, 0 + 100, 0, 19 + 100, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
@@ -4024,8 +4024,8 @@ player_class class_info[MAX_CLASS] = {
 		TERM_SLATE, FALSE, 0,
 		//{ -1, 3, 0, -1, -1, 1},
 		{ 2, 2, 0, 0, 0, 1},
-		//{21+100, 0+100, 0, 19+100, 0, 0}, 18/30;10 pretty unreachable with {0,2,0,0,0,1}
-		{19+100, 0+100, 0, 10+100, 0, 0},
+		//{21 + 100, 0 + 100, 0, 19 + 100, 0, 0}, 18/30;10 pretty unreachable with {0,2,0,0,0,1}
+		{19 + 100, 0 + 100, 0, 10 + 100, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
@@ -4147,7 +4147,7 @@ player_class class_info[MAX_CLASS] = {
 	{ "Death Knight",
 		TERM_L_DARK, TRUE, 6,
 		{ 3, -3, 1, 0, 2, 2},
-		{20+100, 0, 0+100, 10, 0, 0},
+		{20 + 100, 0, 0 + 100, 10, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
@@ -4261,7 +4261,7 @@ player_class class_info[MAX_CLASS] = {
 	{ "Hell Knight",
 		TERM_L_DARK, TRUE, 6,
 		{ 3, -3, 1, 0, 2, 2},
-		{20+100, 0, 0+100, 10, 0, 0},
+		{20 + 100, 0, 0 + 100, 10, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
@@ -4393,9 +4393,9 @@ player_class class_info[MAX_CLASS] = {
 		TERM_GREEN, TRUE, 2,
 		{-1, -3, 3, -1, 0, 2},
 #if 0 /* disabled recommendations for STR/DEX because STR cannot even be reached by dwarven priests.. */
-		{19, 0, 0+100, 10, 0, 0},
+		{19, 0, 0 + 100, 10, 0, 0},
 #else
-		{0, 0, 0+100, 0, 0, 0},
+		{0, 0, 0 + 100, 0, 0, 0},
 #endif
 		25, 25, 32, 2,  16, 8, 48, 35,
 		7,   9, 12, 0,  0,  0, 20, 15,

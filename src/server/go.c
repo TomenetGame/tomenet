@@ -98,7 +98,7 @@
 
 /* # of buffer lines for GTP responses: 9 lines,2 coordinate lines, +1, +1 for msg hack.
    Could probably be reduced now that we have board_line..[] helper vars. */
-#define MAX_GTP_LINES (9+2+1+1)
+#define MAX_GTP_LINES (9 + 2 + 1 + 1)
 
 /* Screen absolute x,y coordinates of the Go board */
 #define GO_BOARD_X	34

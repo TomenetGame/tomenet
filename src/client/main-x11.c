@@ -2882,7 +2882,7 @@ errr init_x11(void) {
 			/* Allocate color for each pixel and rewrite in image */
 			for (y = 0; y < height; y++) {
 				for (x = 0; x < width; x++) {
-					XPutPixel(graphics_image, x, y, create_pixel(Metadpy->dpy, data[4*(x+y*width)], data[4*(x+y*width)+1], data[4*(x+y*width)+2]));
+					XPutPixel(graphics_image, x, y, create_pixel(Metadpy->dpy, data[4 * (x + y * width)], data[4 * (x + y * width) + 1], data[4 * (x + y * width) + 2]));
 				}
 			}
 		}
@@ -3508,7 +3508,7 @@ void set_palette(byte c, byte r, byte g, byte b) {
 		if (!term_get_visibility(0)) return;
 		if (term_prefs[0].x == -32000 || term_prefs[0].y == -32000) return;
 		Term_activate(&term_idx_to_term_data(0)->t);
-		Term_redraw_section(0, 0, Term->wid-1, Term->hgt-1);
+		Term_redraw_section(0, 0, Term->wid - 1, Term->hgt - 1);
 		Term_activate(&old_td->t);
 		return;
 	}
@@ -3628,12 +3628,12 @@ int get_misc_fonts(char *output_list, int max_fonts, int max_font_name_length) {
 		while (fgets(tmp, 256, fff)) {
 			if (strncmp(tmp, "REGEXP=", 7)) continue;
 			tmp[strlen(tmp) - 1] = 0; //remove trailing \n
-			status = regcomp(&re, tmp + 7, REG_EXTENDED|REG_NOSUB|REG_ICASE);
+			status = regcomp(&re, tmp + 7, REG_EXTENDED | REG_NOSUB | REG_ICASE);
 			break;
 		}
 		fclose(fff);
 	}
-	if (status == -999) status = regcomp(&re, "^[0-9]+x[0-9]+[a-z]?[a-z]?(bold)?$", REG_EXTENDED|REG_NOSUB|REG_ICASE);
+	if (status == -999) status = regcomp(&re, "^[0-9]+x[0-9]+[a-z]?[a-z]?(bold)?$", REG_EXTENDED | REG_NOSUB | REG_ICASE);
 
 	if (status != 0) {
 		fprintf(stderr, "regcomp returned %d\n", status);

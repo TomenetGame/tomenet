@@ -31,19 +31,19 @@
     o1 + o2 = ULTRA_COMPACT_PLAYERLIST */
 /* use more compact @-list to get more information displayed?
    NOTE: Requires ABUNDANT_TITLES! (in do_write_others_attributes()) */
-#define COMPACT_PLAYERLIST
+ #define COMPACT_PLAYERLIST
 /* if COMPACT_PLAYERLIST is enabled, this will switch to an even denser layout,
    which in exchange displays the hostnames to all players again (tradition). */
-#define COMPACT_ALT
+ #define COMPACT_ALT
 
 /* use ultra compact @-list that uses only 2 lines per entry.
    NOTE: COMPACT_PLAYERLIST must be disabled when using this! */
-//#define ULTRA_COMPACT_PLAYERLIST
+ //#define ULTRA_COMPACT_PLAYERLIST
 
 /* print compressed gender in 1st line. If disabled, gender might instead get
    printed in the 2nd line, depending on the actual display mode.
    This can be optionally added to either COMPACT_PLAYERLIST or ULTRA_COMPACT_PLAYERLIST. */
-//#define COMPACT_GENDER
+ //#define COMPACT_GENDER
 #endif
 
 /* Allow to inspect light source and ammo quiver too while target wears mummy wrapping? */
@@ -1041,7 +1041,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 			fprintf(fff, "%s", get_prace2(q_ptr));
 			fprintf(fff, "%s", class_info[q_ptr->pclass].title);
 #ifdef ENABLE_SUBCLASS_TITLE
-			if (q_ptr->sclass) fprintf(fff, "%s", class_info[q_ptr->sclass-1].title);
+			if (q_ptr->sclass) fprintf(fff, "%s", class_info[q_ptr->sclass - 1].title);
 #endif
 
 			/* location */
@@ -1293,7 +1293,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 			default:
 				fprintf(fff, "%s", class_info[q_ptr->pclass].title);
 #ifdef ENABLE_SUBCLASS_TITLE
-				if (q_ptr->sclass) fprintf(fff, "%s", class_info[q_ptr->sclass-1].title);
+				if (q_ptr->sclass) fprintf(fff, "%s", class_info[q_ptr->sclass - 1].title);
 #endif
         break;
 			}
@@ -3798,7 +3798,7 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 	do_cmd_time(Ind);
 
 	if (!(p_ptr->mode & (MODE_EVERLASTING | MODE_PVP | MODE_NO_GHOST)))
-		msg_format(Ind, "You have %d %s left.", p_ptr->lives-1-1, p_ptr->lives-1-1 > 1 ? "resurrections" : "resurrection");
+		msg_format(Ind, "You have %d %s left.", p_ptr->lives-1-1, p_ptr->lives - 1 - 1 > 1 ? "resurrections" : "resurrection");
 
 #ifdef ENABLE_INSTANT_RES
 	if (p_ptr->insta_res) {

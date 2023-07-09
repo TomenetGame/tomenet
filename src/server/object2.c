@@ -9711,13 +9711,13 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 				s_printf(" REWARD_WIPED (impossible - we failed completely!\n");
 				return;
 			}
-			object_desc(0, o_name, o_ptr, TRUE, 2+8+16);
+			object_desc(0, o_name, o_ptr, TRUE, 0x02 + 0x08 + 0x10);
 			s_printf(" REWARD_CREATED: (%s) %s\n", p_ptr->name, o_name);
 		}
 	}
 
 	/* more loggin' */
-	object_desc(0, o_name, o_ptr, TRUE, 2+8+16);
+	object_desc(0, o_name, o_ptr, TRUE, 0x02 + 0x08 + 0x10);
 	s_printf(" REWARD_CREATED: (%s) %s\n", p_ptr->name, o_name);
 
 	/* Give the object to the player who is to be rewarded */
@@ -9789,7 +9789,7 @@ void place_gold(int Ind, struct worldpos *wpos, int y, int x, int mult, int bonu
 	invcopy(&forge, k_idx);
 
 	/* Hack -- Base coin cost */
-	//base = k_info[OBJ_GOLD_LIST+i].cost;
+	//base = k_info[OBJ_GOLD_LIST + i].cost;
 	base = k_info[k_idx].cost;
 
 	/* Determine how much the treasure is "worth" */
@@ -11597,7 +11597,7 @@ void combine_pack(int Ind) {
 				/* Slide everything down */
 				for (k = i; k < INVEN_PACK; k++) {
 					/* Structure copy */
-					p_ptr->inventory[k] = p_ptr->inventory[k+1];
+					p_ptr->inventory[k] = p_ptr->inventory[k + 1];
 				}
 
 				/* Update inventory indices - mikaelh */
@@ -11765,7 +11765,7 @@ void reorder_pack(int Ind) {
 		/* Structure slide (make room) */
 		for (k = i; k > j; k--) {
 			/* Slide the item */
-			p_ptr->inventory[k] = p_ptr->inventory[k-1];
+			p_ptr->inventory[k] = p_ptr->inventory[k - 1];
 		}
 
 		/* Insert the moved item */

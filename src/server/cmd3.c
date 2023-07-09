@@ -4172,8 +4172,8 @@ void do_cmd_look(int Ind, int dir) {
 	c_ptr = &zcave[y][x];
 
 	/* Another player */
-	if (c_ptr->m_idx < 0 && p_ptr->play_vis[0-c_ptr->m_idx] &&
-	    (!Players[0-c_ptr->m_idx]->admin_dm || player_sees_dm(Ind))) {
+	if (c_ptr->m_idx < 0 && p_ptr->play_vis[0 - c_ptr->m_idx] &&
+	    (!Players[0 - c_ptr->m_idx]->admin_dm || player_sees_dm(Ind))) {
 		char extrainfo[MAX_CHARS] = { 0 };
 		char attr;
 

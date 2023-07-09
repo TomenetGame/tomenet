@@ -342,7 +342,7 @@ bool create_garden(int Ind, int chance) {
 				if (randint(100) < chance) {
 					/* Delete the object (if any) */
 					delete_object(wpos, y, x, TRUE);
-					cave_set_feat_live(&p_ptr->wpos, y, x, magik(50)?FEAT_TREE:FEAT_BUSH);
+					cave_set_feat_live(&p_ptr->wpos, y, x, magik(50) ? FEAT_TREE : FEAT_BUSH);
 					//c_ptr->feat = feat;
 				}
 			}
@@ -7403,7 +7403,7 @@ bool fire_shot(int Ind, int typ, int dir, int dx, int dy, int rad, int num, char
 		/* Fire the bolts, skip dead targets */
 		if (g) { //fix div/0, ask Kurzel about details regarding target_who/col/row settings, for now just adding this 'else' branch here to mitigate.
 			d = 0;
-			for (i = 0; i < num+d; i++) {
+			for (i = 0; i < num + d; i++) {
 				j = (i % g);
 				p_ptr->target_col = x = gx[j];
 				p_ptr->target_row = y = gy[j];

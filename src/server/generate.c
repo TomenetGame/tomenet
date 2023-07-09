@@ -513,10 +513,10 @@ static int next_to_walls(struct worldpos *wpos, int y, int x) {
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
-	if (f_info[zcave[y+1][x].feat].flags1 & FF1_WALL) k++;
-	if (f_info[zcave[y-1][x].feat].flags1 & FF1_WALL) k++;
-	if (f_info[zcave[y][x+1].feat].flags1 & FF1_WALL) k++;
-	if (f_info[zcave[y][x-1].feat].flags1 & FF1_WALL) k++;
+	if (f_info[zcave[y + 1][x].feat].flags1 & FF1_WALL) k++;
+	if (f_info[zcave[y - 1][x].feat].flags1 & FF1_WALL) k++;
+	if (f_info[zcave[y][x + 1].feat].flags1 & FF1_WALL) k++;
+	if (f_info[zcave[y][x - 1].feat].flags1 & FF1_WALL) k++;
 	return(k);
 }
 
@@ -2420,15 +2420,15 @@ static void build_type1(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 	/* Walls around the room */
 	for (y = y1 - 1; y <= y2 + 1; y++) {
-		c_ptr = &zcave[y][x1-1];
+		c_ptr = &zcave[y][x1 - 1];
 		c_ptr->feat = feat_wall_outer;
-		c_ptr = &zcave[y][x2+1];
+		c_ptr = &zcave[y][x2 + 1];
 		c_ptr->feat = feat_wall_outer;
 	}
 	for (x = x1 - 1; x <= x2 + 1; x++) {
-		c_ptr = &zcave[y1-1][x];
+		c_ptr = &zcave[y1 - 1][x];
 		c_ptr->feat = feat_wall_outer;
-		c_ptr = &zcave[y2+1][x];
+		c_ptr = &zcave[y2 + 1][x];
 		c_ptr->feat = feat_wall_outer;
 	}
 
@@ -2534,29 +2534,29 @@ static void build_type2(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 	/* Place the walls around room "a" */
 	for (y = y1a - 1; y <= y2a + 1; y++) {
-		c_ptr = &zcave[y][x1a-1];
+		c_ptr = &zcave[y][x1a - 1];
 		c_ptr->feat = feat_wall_outer;
-		c_ptr = &zcave[y][x2a+1];
+		c_ptr = &zcave[y][x2a + 1];
 		c_ptr->feat = feat_wall_outer;
 	}
 	for (x = x1a - 1; x <= x2a + 1; x++) {
-		c_ptr = &zcave[y1a-1][x];
+		c_ptr = &zcave[y1a - 1][x];
 		c_ptr->feat = feat_wall_outer;
-		c_ptr = &zcave[y2a+1][x];
+		c_ptr = &zcave[y2a + 1][x];
 		c_ptr->feat = feat_wall_outer;
 	}
 
 	/* Place the walls around room "b" */
 	for (y = y1b - 1; y <= y2b + 1; y++) {
-		c_ptr = &zcave[y][x1b-1];
+		c_ptr = &zcave[y][x1b - 1];
 		c_ptr->feat = feat_wall_outer;
-		c_ptr = &zcave[y][x2b+1];
+		c_ptr = &zcave[y][x2b + 1];
 		c_ptr->feat = feat_wall_outer;
 	}
 	for (x = x1b - 1; x <= x2b + 1; x++) {
-		c_ptr = &zcave[y1b-1][x];
+		c_ptr = &zcave[y1b - 1][x];
 		c_ptr->feat = feat_wall_outer;
-		c_ptr = &zcave[y2b+1][x];
+		c_ptr = &zcave[y2b + 1][x];
 		c_ptr->feat = feat_wall_outer;
 	}
 
@@ -2659,29 +2659,29 @@ static void build_type3(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 	/* Place the walls around room "a" */
 	for (y = y1a - 1; y <= y2a + 1; y++) {
-		c_ptr = &zcave[y][x1a-1];
+		c_ptr = &zcave[y][x1a - 1];
 		c_ptr->feat = feat_wall_outer;
-		c_ptr = &zcave[y][x2a+1];
+		c_ptr = &zcave[y][x2a + 1];
 		c_ptr->feat = feat_wall_outer;
 	}
 	for (x = x1a - 1; x <= x2a + 1; x++) {
-		c_ptr = &zcave[y1a-1][x];
+		c_ptr = &zcave[y1a - 1][x];
 		c_ptr->feat = feat_wall_outer;
-		c_ptr = &zcave[y2a+1][x];
+		c_ptr = &zcave[y2a + 1][x];
 		c_ptr->feat = feat_wall_outer;
 	}
 
 	/* Place the walls around room "b" */
 	for (y = y1b - 1; y <= y2b + 1; y++) {
-		c_ptr = &zcave[y][x1b-1];
+		c_ptr = &zcave[y][x1b - 1];
 		c_ptr->feat = feat_wall_outer;
-		c_ptr = &zcave[y][x2b+1];
+		c_ptr = &zcave[y][x2b + 1];
 		c_ptr->feat = feat_wall_outer;
 	}
 	for (x = x1b - 1; x <= x2b + 1; x++) {
-		c_ptr = &zcave[y1b-1][x];
+		c_ptr = &zcave[y1b - 1][x];
 		c_ptr->feat = feat_wall_outer;
-		c_ptr = &zcave[y2b+1][x];
+		c_ptr = &zcave[y2b + 1][x];
 		c_ptr->feat = feat_wall_outer;
 	}
 
@@ -2858,15 +2858,15 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 	/* Outer Walls */
 	for (y = y1 - 1; y <= y2 + 1; y++) {
-		c_ptr = &zcave[y][x1-1];
+		c_ptr = &zcave[y][x1 - 1];
 		c_ptr->feat = feat_wall_outer;
-		c_ptr = &zcave[y][x2+1];
+		c_ptr = &zcave[y][x2 + 1];
 		c_ptr->feat = feat_wall_outer;
 	}
 	for (x = x1 - 1; x <= x2 + 1; x++) {
-		c_ptr = &zcave[y1-1][x];
+		c_ptr = &zcave[y1 - 1][x];
 		c_ptr->feat = feat_wall_outer;
-		c_ptr = &zcave[y2+1][x];
+		c_ptr = &zcave[y2 + 1][x];
 		c_ptr->feat = feat_wall_outer;
 	}
 
@@ -2879,15 +2879,15 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 	/* The inner walls */
 	for (y = y1 - 1; y <= y2 + 1; y++) {
-		c_ptr = &zcave[y][x1-1];
+		c_ptr = &zcave[y][x1 - 1];
 		c_ptr->feat = feat_wall_inner;
-		c_ptr = &zcave[y][x2+1];
+		c_ptr = &zcave[y][x2 + 1];
 		c_ptr->feat = feat_wall_inner;
 	}
 	for (x = x1 - 1; x <= x2 + 1; x++) {
-		c_ptr = &zcave[y1-1][x];
+		c_ptr = &zcave[y1 - 1][x];
 		c_ptr->feat = feat_wall_inner;
-		c_ptr = &zcave[y2+1][x];
+		c_ptr = &zcave[y2 + 1][x];
 		c_ptr->feat = feat_wall_inner;
 	}
 
@@ -3001,16 +3001,16 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		if (rand_int(3) == 0) {
 			/* Long horizontal walls */
 			for (x = xval - 5; x <= xval + 5; x++) {
-				c_ptr = &zcave[yval-1][x];
+				c_ptr = &zcave[yval - 1][x];
 				c_ptr->feat = feat_wall_inner;
-				c_ptr = &zcave[yval+1][x];
+				c_ptr = &zcave[yval + 1][x];
 				c_ptr->feat = feat_wall_inner;
 			}
 
 			/* Close off the left/right edges */
-			c_ptr = &zcave[yval][xval-5];
+			c_ptr = &zcave[yval][xval - 5];
 			c_ptr->feat = feat_wall_inner;
-			c_ptr = &zcave[yval][xval+5];
+			c_ptr = &zcave[yval][xval + 5];
 			c_ptr->feat = feat_wall_inner;
 
 			/* Secret doors (random top/bottom) */
@@ -3603,15 +3603,15 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 	/* Place the outer walls */
 	for (y = y1 - 1; y <= y2 + 1; y++) {
-		c_ptr = &zcave[y][x1-1];
+		c_ptr = &zcave[y][x1 - 1];
 		c_ptr->feat = feat_wall_outer;
-		c_ptr = &zcave[y][x2+1];
+		c_ptr = &zcave[y][x2 + 1];
 		c_ptr->feat = feat_wall_outer;
 	}
 	for (x = x1 - 1; x <= x2 + 1; x++) {
-		c_ptr = &zcave[y1-1][x];
+		c_ptr = &zcave[y1 - 1][x];
 		c_ptr->feat = feat_wall_outer;
-		c_ptr = &zcave[y2+1][x];
+		c_ptr = &zcave[y2 + 1][x];
 		c_ptr->feat = feat_wall_outer;
 	}
 
@@ -3624,15 +3624,15 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 	/* The inner walls */
 	for (y = y1 - 1; y <= y2 + 1; y++) {
-		c_ptr = &zcave[y][x1-1];
+		c_ptr = &zcave[y][x1 - 1];
 		c_ptr->feat = feat_wall_inner;
-		c_ptr = &zcave[y][x2+1];
+		c_ptr = &zcave[y][x2 + 1];
 		c_ptr->feat = feat_wall_inner;
 	}
 	for (x = x1 - 1; x <= x2 + 1; x++) {
-		c_ptr = &zcave[y1-1][x];
+		c_ptr = &zcave[y1 - 1][x];
 		c_ptr->feat = feat_wall_inner;
-		c_ptr = &zcave[y2+1][x];
+		c_ptr = &zcave[y2 + 1][x];
 		c_ptr->feat = feat_wall_inner;
 	}
 
@@ -3869,15 +3869,15 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 	/* Place the outer walls */
 	for (y = y1 - 1; y <= y2 + 1; y++) {
-		c_ptr = &zcave[y][x1-1];
+		c_ptr = &zcave[y][x1 - 1];
 		c_ptr->feat = feat_wall_outer;
-		c_ptr = &zcave[y][x2+1];
+		c_ptr = &zcave[y][x2 + 1];
 		c_ptr->feat = feat_wall_outer;
 	}
 	for (x = x1 - 1; x <= x2 + 1; x++) {
-		c_ptr = &zcave[y1-1][x];
+		c_ptr = &zcave[y1 - 1][x];
 		c_ptr->feat = feat_wall_outer;
-		c_ptr = &zcave[y2+1][x];
+		c_ptr = &zcave[y2 + 1][x];
 		c_ptr->feat = feat_wall_outer;
 	}
 
@@ -3902,15 +3902,15 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 	/* The inner walls */
 	for (y = y1 - 1; y <= y2 + 1; y++) {
-		c_ptr = &zcave[y][x1-1];
+		c_ptr = &zcave[y][x1 - 1];
 		c_ptr->feat = feat_wall_inner;
-		c_ptr = &zcave[y][x2+1];
+		c_ptr = &zcave[y][x2 + 1];
 		c_ptr->feat = feat_wall_inner;
 	}
 	for (x = x1 - 1; x <= x2 + 1; x++) {
-		c_ptr = &zcave[y1-1][x];
+		c_ptr = &zcave[y1 - 1][x];
 		c_ptr->feat = feat_wall_inner;
-		c_ptr = &zcave[y2+1][x];
+		c_ptr = &zcave[y2 + 1][x];
 		c_ptr->feat = feat_wall_inner;
 	}
 
@@ -4141,7 +4141,7 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		for (i = 0; i < 8; i++) {
 			if (what[i] == 709) {
 				/* make one 'Hru' the top entry, all following entries weaker than 'Hru' */
-				for (j = 7; j >= 7-i; j--) what[j] = what[i+j-7];
+				for (j = 7; j >= 7 - i; j--) what[j] = what[i + j - 7];
 				break;
 			}
 		}
@@ -4150,7 +4150,7 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		for (i = 1; i < 7; i++) {
 			if (what[i] == 709) {
 				/* Copy over the following entries (duplicating the last entry effectively) */
-				for (j = i; j >= 1; j--) what[j] = what[j-1];
+				for (j = i; j >= 1; j--) what[j] = what[j - 1];
 			}
 		}
 		/* Check for Greater Titan at positions below #2 or #3 (leaving out the last entry, shouldn't occur there really) */
@@ -4159,7 +4159,7 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 			if (what[i] == 702) {
 				/* Copy over the following entries (duplicating the last entry effectively) */
 				for (j = i; j >= 1; j--) {
-					what[j] = what[j-1];
+					what[j] = what[j - 1];
 			}
 		}
 		/* Check for Lesser Titan at positions below #2 or #3 (leaving out the last entry, shouldn't occur there really) */
@@ -4168,7 +4168,7 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 			if (what[i] == 634) {
 				/* Copy over the following entries (duplicating the last entry effectively) */
 				for (j = i; j >= 1; j--) {
-					what[j] = what[j-1];
+					what[j] = what[j - 1];
 			}
 		}
 	}
@@ -4180,7 +4180,7 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		for (i = 0; i < 8; i++) {
 			if (what[i] == 709) {
 				/* make one 'Hru' the top entry, all following entries weaker than 'Hru' */
-				for (j = 7; j >= 7-i; j--) what[j] = what[i+j-7];
+				for (j = 7; j >= 7 - i; j--) what[j] = what[i + j - 7];
 				break;
 			}
 		}
@@ -4189,11 +4189,11 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 			if (what[i] == 702) {
 				if (what[7] == 709) { /* Is a 'Hru' at the top? */
 					/* make 'Greater Titan' the second to top entry, all following entries weaker than 'Greater Titan' */
-					for (j = 6; j >= 6-i; j--) what[j] = what[i+j-6];
+					for (j = 6; j >= 6 - i; j--) what[j] = what[i + j - 6];
 					break;
 				} else {
 					/* make one 'Greater Titan' the top entry, all following entries weaker than 'Greater Titan' */
-					for (j = 7; j >= 7-i; j--) what[j] = what[i+j-7];
+					for (j = 7; j >= 7 - i; j--) what[j] = what[i + j - 7];
 					break;
 				}
 			}
@@ -4204,15 +4204,15 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 				if (what[6] == 702) { /* Is a 'Greater Titan' already occupying the second to top position? */
 					/* Remove either 'Lesser Titan' or 'Greater Titan' since 6 of them would be too many */
 					if (magik(50)) what[i] = 702;
-					for (j = 6; j >= 6-i; j--) what[j] = what[i+j-6];
+					for (j = 6; j >= 6 - i; j--) what[j] = what[i + j - 6];
 					break;
 				} else if (what[7] == 702 || what[7] == 709) {
 					/* make one 'Lesser Titan' the second to top entry, all following entries weaker than 'Lesser Titan' */
-					for (j = 6; j >= 6-i; j--) what[j] = what[i+j-6];
+					for (j = 6; j >= 6 - i; j--) what[j] = what[i + j - 6];
 					break;
 				} else {
 					/* make one 'Lesser Titan' the top entry, all following entries weaker than 'Lesser Titan' */
-					for (j = 7; j >= 7-i; j--) what[j] = what[i+j-7];
+					for (j = 7; j >= 7 - i; j--) what[j] = what[i + j - 7];
 					break;
 				}
 			}
@@ -4226,7 +4226,7 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		for (i = 0; i < 8; i++) {
 			if (what[i] == 709) {
 				/* make next entry the top entry, removing the 'Hru' */
-				for (j = 7; j >= i; j--) what[j] = what[i-1];
+				for (j = 7; j >= i; j--) what[j] = what[i - 1];
 				break;
 			}
 		}
@@ -4234,7 +4234,7 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		for (i = 0; i < 8; i++) {
 			if (what[i] == 702) {
 				/* make next entry the top entry, removing the 'Greater Titan' */
-				for (j = 7; j >= i; j--) what[j] = what[i-1];
+				for (j = 7; j >= i; j--) what[j] = what[i - 1];
 				break;
 			}
 		}
@@ -4242,7 +4242,7 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		for (i = 0; i < 8; i++) {
 			if (what[i] == 634) {
 				/* make next entry the top entry, removing the 'Lesser Titan' */
-				for (j = 7; j >= i; j--) what[j] = what[i-1];
+				for (j = 7; j >= i; j--) what[j] = what[i - 1];
 				break;
 			}
 		}
@@ -4370,8 +4370,8 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 		if (!(v_ptr->flags1 & VF1_NO_ROTATE) && magik(30)) rotate = TRUE;
 	}
 
-	cx = xval - ((rotate?ymax:xmax) / 2) * (mirrorlr?-1:1);
-	cy = yval - ((rotate?xmax:ymax) / 2) * (mirrorud?-1:1);
+	cx = xval - ((rotate ? ymax : xmax) / 2) * (mirrorlr ? -1 : 1);
+	cy = yval - ((rotate ? xmax : ymax) / 2) * (mirrorud ? -1 : 1);
 
 	/* At least 1/4 should be genetated */
 	if (!in_bounds_floor(l_ptr, cy, cx))
@@ -4405,8 +4405,8 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 			/* Extract the location */
 /*			x = xval - (xmax / 2) + dx;
 			y = yval - (ymax / 2) + dy;	*/
-			x = cx + (rotate?dy:dx) * (mirrorlr?-1:1);
-			y = cy + (rotate?dx:dy) * (mirrorud?-1:1);
+			x = cx + (rotate ? dy : dx) * (mirrorlr ? -1 : 1);
+			y = cy + (rotate ? dx : dy) * (mirrorud ? -1 : 1);
 
 			/* FIXME - find a better solution */
 			/* Is this any better? */
@@ -4588,8 +4588,8 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 			/* Extract the location */
 /*			x = xval - (xmax / 2) + dx;
 			y = yval - (ymax / 2) + dy;	*/
-			x = cx + (rotate?dy:dx) * (mirrorlr?-1:1);
-			y = cy + (rotate?dx:dy) * (mirrorud?-1:1);
+			x = cx + (rotate ? dy : dx) * (mirrorlr ? -1 : 1);
+			y = cy + (rotate ? dx : dy) * (mirrorud ? -1 : 1);
 
 			/* FIXME - find a better solution */
 			/* Is this any better? */
@@ -4687,8 +4687,8 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 				/* Extract the location */
 				/*x = xval - (xmax / 2) + dx;
 				y = yval - (ymax / 2) + dy; */
-				x = cx + (rotate?dy:dx) * (mirrorlr?-1:1);
-				y = cy + (rotate?dx:dy) * (mirrorud?-1:1);
+				x = cx + (rotate ? dy : dx) * (mirrorlr ? -1 : 1);
+				y = cy + (rotate ? dx : dy) * (mirrorud ? -1 : 1);
 
 				/* FIXME - find a better solution */
 				/* Is this any better? */
@@ -5407,7 +5407,7 @@ static void build_type10(worldpos *wpos, int by0, int bx0, player_type *p_ptr) {
 	ysize = randint(15) * 2 + 6;
 
 	/* Try to allocate space for room.  If fails, exit */
-	if (!room_alloc(wpos, xsize+1, ysize+1, FALSE, by0, bx0, &x0, &y0)) return;
+	if (!room_alloc(wpos, xsize + 1, ysize + 1, FALSE, by0, bx0, &x0, &y0)) return;
 
 	light = done = FALSE;
 	room = TRUE;
@@ -5768,10 +5768,10 @@ static void build_bubble_vault(worldpos *wpos, int x0, int y0, int xsize, int ys
 			 * SCSCSC: was feat_wall_outer
 			 */
 			if (((min2 - min1) <= 2) && (!(min1 < 3)))
-				place_filler(wpos, y+y0-yhsize, x+x0-xhsize);
+				place_filler(wpos, y + y0 - yhsize, x + x0 - xhsize);
 			/* Middle of a bubble */
 			else
-				place_floor(wpos, y+y0-yhsize, x+x0-xhsize);
+				place_floor(wpos, y + y0 - yhsize, x + x0 - xhsize);
 
 			/* Clean up rest of flags */
 			c_ptr->info |= (CAVE_ROOM | CAVE_ICKY);
@@ -7549,13 +7549,13 @@ static bool possible_doorway(struct worldpos *wpos, int y, int x) {
 	/* Count the adjacent corridors */
 	if (next_to_corr(wpos, y, x) >= 2) {
 		/* Check Vertical */
-		if ((zcave[y-1][x].feat >= FEAT_MAGMA) &&
-		    (zcave[y+1][x].feat >= FEAT_MAGMA))
+		if ((zcave[y - 1][x].feat >= FEAT_MAGMA) &&
+		    (zcave[y + 1][x].feat >= FEAT_MAGMA))
 			return(TRUE);
 
 		/* Check Horizontal */
-		if ((zcave[y][x-1].feat >= FEAT_MAGMA) &&
-		    (zcave[y][x+1].feat >= FEAT_MAGMA))
+		if ((zcave[y][x - 1].feat >= FEAT_MAGMA) &&
+		    (zcave[y][x + 1].feat >= FEAT_MAGMA))
 			return(TRUE);
 	}
 
@@ -7571,39 +7571,39 @@ static int possible_doorway(struct worldpos *wpos, int y, int x) {
 	/* Count the adjacent corridors */
 	if (next_to_corr(wpos, y, x) >= 2) {
 		/* Hack -- avoid doors next to doors */
-		if (is_door(zcave[y-1][x].feat) ||
-			is_door(zcave[y+1][x].feat) ||
-			is_door(zcave[y][x-1].feat) ||
-			is_door(zcave[y][x+1].feat))
+		if (is_door(zcave[y - 1][x].feat) ||
+			is_door(zcave[y + 1][x].feat) ||
+			is_door(zcave[y][x - 1].feat) ||
+			is_door(zcave[y][x + 1].feat))
 			return(-1);
 
 		/* Check Vertical */
-		if ((zcave[y-1][x].feat >= FEAT_MAGMA) &&
-		    (zcave[y+1][x].feat >= FEAT_MAGMA))
+		if ((zcave[y - 1][x].feat >= FEAT_MAGMA) &&
+		    (zcave[y + 1][x].feat >= FEAT_MAGMA))
 			return(8);
 #if 1
-		if (in_bounds(y-2, x) &&
-			(zcave[y-2][x].feat >= FEAT_MAGMA) &&
-		    (zcave[y+1][x].feat >= FEAT_MAGMA))
+		if (in_bounds(y - 2, x) &&
+			(zcave[y - 2][x].feat >= FEAT_MAGMA) &&
+		    (zcave[y + 1][x].feat >= FEAT_MAGMA))
 			return(1);
-		if (in_bounds(y+2, x) &&
-			(zcave[y-1][x].feat >= FEAT_MAGMA) &&
-		    (zcave[y+2][x].feat >= FEAT_MAGMA))
+		if (in_bounds(y + 2, x) &&
+			(zcave[y - 1][x].feat >= FEAT_MAGMA) &&
+		    (zcave[y + 2][x].feat >= FEAT_MAGMA))
 			return(0);
 #endif	/* 0 */
 
 		/* Check Horizontal */
-		if ((zcave[y][x-1].feat >= FEAT_MAGMA) &&
-		    (zcave[y][x+1].feat >= FEAT_MAGMA))
+		if ((zcave[y][x - 1].feat >= FEAT_MAGMA) &&
+		    (zcave[y][x + 1].feat >= FEAT_MAGMA))
 			return(8);
 #if 1
-		if (in_bounds(y, x-2) &&
-			(zcave[y][x-2].feat >= FEAT_MAGMA) &&
-		    (zcave[y][x+1].feat >= FEAT_MAGMA))
+		if (in_bounds(y, x - 2) &&
+			(zcave[y][x - 2].feat >= FEAT_MAGMA) &&
+		    (zcave[y][x + 1].feat >= FEAT_MAGMA))
 			return(3);
-		if (in_bounds(y, x+2) &&
-			(zcave[y][x-1].feat >= FEAT_MAGMA) &&
-		    (zcave[y][x+2].feat >= FEAT_MAGMA))
+		if (in_bounds(y, x + 2) &&
+			(zcave[y][x - 1].feat >= FEAT_MAGMA) &&
+		    (zcave[y][x + 2].feat >= FEAT_MAGMA))
 			return(2);
 #endif	/* 0 */
 	}
@@ -9248,8 +9248,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			dun->door_n = 0;
 
 			/* Hack -- connect the first room to the last room */
-			y = dun->cent[dun->cent_n-1].y;
-			x = dun->cent[dun->cent_n-1].x;
+			y = dun->cent[dun->cent_n - 1].y;
+			x = dun->cent[dun->cent_n - 1].x;
 
 			/* Connect all the rooms together */
 			for (i = 0; i < dun->cent_n; i++) {
@@ -11035,7 +11035,7 @@ static void town_gen(struct worldpos *wpos) {
 		c_ptr->info |= (CAVE_GLOW | CAVE_MARK);*/
 
 		/* South wall */
-		c_ptr = &zcave[MAX_HGT-1][x];
+		c_ptr = &zcave[MAX_HGT - 1][x];
 
 		/* Clear previous contents, add "clear" perma-wall */
 		c_ptr->feat = FEAT_PERM_CLEAR;
@@ -11056,7 +11056,7 @@ static void town_gen(struct worldpos *wpos) {
 		c_ptr->info |= (CAVE_GLOW);*/
 
 		/* East wall */
-		c_ptr = &zcave[y][MAX_WID-1];
+		c_ptr = &zcave[y][MAX_WID - 1];
 
 		/* Clear previous contents, add "clear" perma-wall */
 		c_ptr->feat = FEAT_PERM_CLEAR;
@@ -11107,7 +11107,7 @@ static void town_gen(struct worldpos *wpos) {
 			   c_ptr->info |= (CAVE_GLOW | CAVE_MARK);*/
 
 			/* South wall */
-			c_ptr = &zcave[MAX_HGT-2][x];
+			c_ptr = &zcave[MAX_HGT - 2][x];
 
 			/* Clear previous contents, add "clear" perma-wall */
 			c_ptr->feat = FEAT_GRASS;
@@ -11128,7 +11128,7 @@ static void town_gen(struct worldpos *wpos) {
 			   c_ptr->info |= (CAVE_GLOW);*/
 
 			/* East wall */
-			c_ptr = &zcave[y][MAX_WID-2];
+			c_ptr = &zcave[y][MAX_WID - 2];
 
 			/* Clear previous contents, add "clear" perma-wall */
 			c_ptr->feat = FEAT_GRASS;

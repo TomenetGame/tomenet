@@ -951,7 +951,7 @@ bool check_dir(cptr s) {
 	i = strlen(path);
 
 	/* Remove trailing backslash */
-	if (i && (path[i-1] == '\\')) path[--i] = '\0';
+	if (i && (path[i - 1] == '\\')) path[--i] = '\0';
 
 #ifdef WIN32
 
@@ -1417,7 +1417,7 @@ static void new_palette(void) {
 		LPPALETTEENTRY p;
 
 		/* Access the entry */
-		p = &(pLogPal->palPalEntry[i+nEntries]);
+		p = &(pLogPal->palPalEntry[i + nEntries]);
 
 		/* Save the colors */
 		p->peRed = GetRValue(win_clr[i]);
@@ -1504,7 +1504,7 @@ static void new_palette_ps(void) {
 		LPPALETTEENTRY p;
 
 		/* Access the entry */
-		p = &(pLogPal->palPalEntry[i+nEntries]);
+		p = &(pLogPal->palPalEntry[i + nEntries]);
 
 		/* Save the colors */
 		p->peRed = GetRValue(win_clr[i]);
@@ -3737,7 +3737,7 @@ void init_stuff(void) {
 	if (!i) quit("LibPath shouldn't be empty in ANGBAND.INI");
 
 	/* Nuke terminal backslash */
-	if (i && (path[i-1] != '\\')) {
+	if (i && (path[i - 1] != '\\')) {
 		path[i++] = '\\';
 		path[i] = '\0';
 	}

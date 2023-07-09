@@ -2867,14 +2867,14 @@ struct player_type {
 	s16b screen_hgt;
 
 	/* What he should be seeing */
-	cave_view_type scr_info_guard_before[MAX_WINDOW_WID+1]; /* overflow protection */
+	cave_view_type scr_info_guard_before[MAX_WINDOW_WID + 1]; /* overflow protection */
 	cave_view_type scr_info[MAX_WINDOW_HGT][MAX_WINDOW_WID]; /* Hard-coded Y*X display */
-	cave_view_type scr_info_guard_after[MAX_WINDOW_WID+1]; /* overflow protection */
+	cave_view_type scr_info_guard_after[MAX_WINDOW_WID + 1]; /* overflow protection */
 
 	/* Overlay layer used for detection */
-	cave_view_type ovl_info_guard_before[MAX_WINDOW_WID+1]; /* overflow protection */
+	cave_view_type ovl_info_guard_before[MAX_WINDOW_WID + 1]; /* overflow protection */
 	cave_view_type ovl_info[MAX_WINDOW_HGT][MAX_WINDOW_WID]; /* Hard-coded Y*X display */
-	cave_view_type ovl_info_guard_after[MAX_WINDOW_WID+1]; /* overflow protection */
+	cave_view_type ovl_info_guard_after[MAX_WINDOW_WID + 1]; /* overflow protection */
 
 	s32b mimic_seed;		/* seed for random mimic immunities etc. */
 	char mimic_immunity;		/* preferred immunity when mimicking (overrides mimic_seed); hack in 4.7.3a: use remaining bits for chosen breath element */

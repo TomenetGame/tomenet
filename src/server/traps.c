@@ -1687,7 +1687,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			else {
 				cptr name;
 
-				name = deity_info[p_ptr->pgod-1].name;
+				name = deity_info[p_ptr->pgod - 1].name;
 				msg_format(Ind, "You feel you have angered %s.", name);
 				set_grace(p_ptr->grace - 3000);
 			}
@@ -1702,7 +1702,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			else {
 				cptr name;
 
-				name = deity_info[p_ptr->pgod-1].name;
+				name = deity_info[p_ptr->pgod - 1].name;
 
 				msg_format(Ind, "%s quakes in rage: ``Thou art supremely insolent, mortal!!''", name);
 				nasty_side_effect();

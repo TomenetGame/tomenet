@@ -3685,7 +3685,7 @@ bool dec_stat(int Ind, int stat, int amount, int mode) {
 			/* Hack -- Decrement by a random amount between one-quarter */
 			/* and one-half of the stat bonus times the percentage, with a */
 			/* minimum damage of half the percentage. -CWS */
-			loss = (((cur-18) / 2 + 1) / 2 + 1);
+			loss = (((cur - 18) / 2 + 1) / 2 + 1);
 
 			/* Paranoia */
 			if (loss < 1) loss = 1;
@@ -11548,7 +11548,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (p_ptr->chp - dummy < 1) dummy = p_ptr->chp - 1;
 			msg_print(Ind, "You feel your life fade away!");
 			bypass_invuln = TRUE;
-			take_hit(Ind, dummy, Players[0-who]->name, -who);
+			take_hit(Ind, dummy, Players[0 - who]->name, -who);
 			bypass_invuln = FALSE;
 			curse_equipment(Ind, 100, 20);
 		}

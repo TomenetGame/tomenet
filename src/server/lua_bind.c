@@ -686,9 +686,9 @@ void lua_recalc_char(int Ind) {
 	while (--tries) {
 		/* Roll the hitpoint values */
 		for (i = 1; i < PY_MAX_LEVEL; i++) {
-//			j = randint(p_ptr->hitdie);
+			//j = randint(p_ptr->hitdie);
 			j = 2 + randint(p_ptr->hitdie - 4);
-			p_ptr->player_hp[i] = p_ptr->player_hp[i-1] + j;
+			p_ptr->player_hp[i] = p_ptr->player_hp[i - 1] + j;
 		}
 		/* XXX Could also require acceptable "mid-level" hitpoints */
 

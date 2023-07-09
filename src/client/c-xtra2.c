@@ -1035,7 +1035,7 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color) {
 	/* Dump up to 20 lines of messages */
 	for (j = 0; j + s < MIN(n, lines); j++) {
 		msg2 = msg;
-		msg = message_recall[MIN(n, lines) - (j+s) - 1];
+		msg = message_recall[MIN(n, lines) - (j + s) - 1];
 
 		/* Handle repeated messages */
 		if (msg == msg2) {

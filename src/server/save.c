@@ -671,8 +671,8 @@ static void wr_house(house_type *house) {
 		do {
 			i += 2;
 			wr_byte(house->coords.poly[i]);
-			wr_byte(house->coords.poly[i+1]);
-		} while (house->coords.poly[i] || house->coords.poly[i+1]);
+			wr_byte(house->coords.poly[i + 1]);
+		} while (house->coords.poly[i] || house->coords.poly[i + 1]);
 	}
 
 	wr_byte(house->colour);

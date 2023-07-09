@@ -3018,24 +3018,24 @@ void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *lim
 		/* Add a random pval-affected ability */
 		/* This might cause boots with + to blows */
 		switch (randint(6)) {
-		case 1:a_ptr->flags1 |= TR1_STEALTH; break;
-		case 2:a_ptr->flags1 |= TR1_SEARCH; break;
-		case 3:a_ptr->flags1 |= TR1_INFRA; break;
-		case 4:a_ptr->flags1 |= TR1_TUNNEL; break;
-		case 5:a_ptr->flags1 |= TR1_SPEED; break;
-		case 6:a_ptr->flags1 |= TR1_BLOWS; break;
+		case 1: a_ptr->flags1 |= TR1_STEALTH; break;
+		case 2: a_ptr->flags1 |= TR1_SEARCH; break;
+		case 3: a_ptr->flags1 |= TR1_INFRA; break;
+		case 4: a_ptr->flags1 |= TR1_TUNNEL; break;
+		case 5: a_ptr->flags1 |= TR1_SPEED; break;
+		case 6: a_ptr->flags1 |= TR1_BLOWS; break;
 		}
 
 	}
 	if (fego1 & ETR1_R_STAT) {
 		/* Add a random stat */
 		switch (randint(6)) {
-		case 1:a_ptr->flags1 |= TR1_STR; break;
-		case 2:a_ptr->flags1 |= TR1_INT; break;
-		case 3:a_ptr->flags1 |= TR1_WIS; break;
-		case 4:a_ptr->flags1 |= TR1_DEX; break;
-		case 5:a_ptr->flags1 |= TR1_CON; break;
-		case 6:a_ptr->flags1 |= TR1_CHR; break;
+		case 1: a_ptr->flags1 |= TR1_STR; break;
+		case 2: a_ptr->flags1 |= TR1_INT; break;
+		case 3: a_ptr->flags1 |= TR1_WIS; break;
+		case 4: a_ptr->flags1 |= TR1_DEX; break;
+		case 5: a_ptr->flags1 |= TR1_CON; break;
+		case 6: a_ptr->flags1 |= TR1_CHR; break;
 		}
 	}
 	if (fego1 & ETR1_R_STAT_SUST) {

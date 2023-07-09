@@ -229,7 +229,7 @@ void rd_string(char *str, int max) {
 	}
 
 	/* Terminate */
-	str[max-1] = '\0';
+	str[max - 1] = '\0';
 }
 
 
@@ -1592,7 +1592,7 @@ static void rd_house(int n) {
 			/* add dna to static levels */
 			if ((cs_ptr = GetCS(&zcave[house_ptr->dy][house_ptr->dx], CS_DNADOOR)))
 				cs_ptr->sc.ptr = house_ptr->dna;
-			else if ((cs_ptr = AddCS(&zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx], CS_DNADOOR)))
+			else if ((cs_ptr = AddCS(&zcave[house_ptr->y + house_ptr->dy][house_ptr->x + house_ptr->dx], CS_DNADOOR)))
 				cs_ptr->sc.ptr = house_ptr->dna;
 		}
 	}
@@ -1868,10 +1868,10 @@ static bool rd_extra(int Ind) {
 	p_ptr->max_lev = 1;
 #ifndef ALT_EXPRATIO
 	while ((p_ptr->max_lev < (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL)) &&
-	    (p_ptr->max_exp >= ((s64b)(((s64b)player_exp[p_ptr->max_lev-1] * (s64b)p_ptr->expfact) / 100L))))
+	    (p_ptr->max_exp >= ((s64b)(((s64b)player_exp[p_ptr->max_lev - 1] * (s64b)p_ptr->expfact) / 100L))))
 #else
 	while ((p_ptr->max_lev < (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL)) &&
-	    (p_ptr->max_exp >= (s64b)player_exp[p_ptr->max_lev-1]))
+	    (p_ptr->max_exp >= (s64b)player_exp[p_ptr->max_lev - 1]))
 #endif
 	{
 		/* Gain a level */
@@ -1938,9 +1938,9 @@ static bool rd_extra(int Ind) {
 	p_ptr->lives = tmp8u;
 
 	/* hack, if save file was from an older version we need to convert it: */
-	if (cfg.lifes && !p_ptr->lives) p_ptr->lives = cfg.lifes+1;
+	if (cfg.lifes && !p_ptr->lives) p_ptr->lives = cfg.lifes + 1;
 	/* If the server's life amount was reduced, apply it to players */
-	if (cfg.lifes && (p_ptr->lives > cfg.lifes+1)) p_ptr->lives = cfg.lifes+1;
+	if (cfg.lifes && (p_ptr->lives > cfg.lifes + 1)) p_ptr->lives = cfg.lifes + 1;
 
 	if (!older_than(4, 2, 0)) {
 		rd_byte(&p_ptr->houses_owned);
@@ -2220,7 +2220,7 @@ if (p_ptr->updated_savegame == 0) {
     p_ptr->max_exp = (s32b)i;
     p_ptr->max_lev = 1;
     while ((p_ptr->max_lev < (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL)) &&
-	(p_ptr->max_exp >= (s64b)player_exp[p_ptr->max_lev-1]))
+	(p_ptr->max_exp >= (s64b)player_exp[p_ptr->max_lev - 1]))
     {
 	/* Gain a level */
 	p_ptr->max_lev++;
@@ -3286,7 +3286,7 @@ static errr rd_savefile_new_aux(int Ind) {
 #endif
 
 	/* Hack -- no ghosts */
-	r_info[MAX_R_IDX-1].max_num = 0;
+	r_info[MAX_R_IDX - 1].max_num = 0;
 
 	/* Initialize a little more */
 	p_ptr->ignore = NULL;
@@ -3825,7 +3825,7 @@ errr rd_server_savefile() {
 	if (!s_older_than(4, 6, 8)) rd_mail();
 
 	/* Hack -- no ghosts */
-	r_info[MAX_R_IDX-1].max_num = 0;
+	r_info[MAX_R_IDX - 1].max_num = 0;
 
 	/* Free the buffer */
 	C_FREE(fff_buf, MAX_BUF_SIZE, char);

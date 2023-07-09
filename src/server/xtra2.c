@@ -4649,10 +4649,10 @@ void check_experience(int Ind) {
 	/* Lose levels while possible */
 #ifndef ALT_EXPRATIO
 	while ((p_ptr->lev > 1) &&
-	    (p_ptr->exp < ((s64b)((s64b)player_exp[p_ptr->lev-2] * (s64b)p_ptr->expfact / 100L))))
+	    (p_ptr->exp < ((s64b)((s64b)player_exp[p_ptr->lev - 2] * (s64b)p_ptr->expfact / 100L))))
 #else
 	while ((p_ptr->lev > 1) &&
-	    (p_ptr->exp < (s64b)player_exp[p_ptr->lev-2]))
+	    (p_ptr->exp < (s64b)player_exp[p_ptr->lev - 2]))
 #endif
 	{
 		/* Lose a level */
@@ -4666,10 +4666,10 @@ void check_experience(int Ind) {
 	/* Remember maximum level (the one displayed if life levels were restored right now) */
 #ifndef ALT_EXPRATIO
 	while ((p_ptr->max_lev > 1) &&
-	    (p_ptr->max_exp < ((s64b)((s64b)player_exp[p_ptr->max_lev-2] * (s64b)p_ptr->expfact / 100L))))
+	    (p_ptr->max_exp < ((s64b)((s64b)player_exp[p_ptr->max_lev - 2] * (s64b)p_ptr->expfact / 100L))))
 #else
 	while ((p_ptr->max_lev > 1) &&
-	    (p_ptr->max_exp < (s64b)player_exp[p_ptr->max_lev-2]))
+	    (p_ptr->max_exp < (s64b)player_exp[p_ptr->max_lev - 2]))
 #endif
 	{
 		/* Lose a level */
@@ -4682,10 +4682,10 @@ void check_experience(int Ind) {
 	/* Gain levels while possible */
 #ifndef ALT_EXPRATIO
 	while ((p_ptr->lev < (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL)) &&
-	    (p_ptr->exp >= ((s64b)(((s64b)player_exp[p_ptr->lev-1] * (s64b)p_ptr->expfact) / 100L))))
+	    (p_ptr->exp >= ((s64b)(((s64b)player_exp[p_ptr->lev - 1] * (s64b)p_ptr->expfact) / 100L))))
 #else
 	while ((p_ptr->lev < (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL)) &&
-	    (p_ptr->exp >= (s64b)player_exp[p_ptr->lev-1]))
+	    (p_ptr->exp >= (s64b)player_exp[p_ptr->lev - 1]))
 #endif
 	{
 		if (p_ptr->inval && p_ptr->lev >= 25) {
@@ -4725,7 +4725,7 @@ void check_experience(int Ind) {
 			distribution so that characters gain 250..300
 			skill points in total (TLRanger..YeekWarrior)*/
 			for (i = 50; i < 69; i++) {
-				if ((((s64b)player_exp[i-1] * (s64b)p_ptr->expfact) / 100L) > 21240000) break;
+				if ((((s64b)player_exp[i - 1] * (s64b)p_ptr->expfact) / 100L) > 21240000) break;
 			}
 			i--;/* i now contains the maximum reachable level for
 			    this character, due to exp cap 21240000 */
@@ -4778,10 +4778,10 @@ void check_experience(int Ind) {
 	/* Remember maximum level (the one displayed if life levels were restored right now) */
 #ifndef ALT_EXPRATIO
 	while ((p_ptr->max_lev < (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL)) &&
-	    (p_ptr->max_exp >= ((s64b)(((s64b)player_exp[p_ptr->max_lev-1] * (s64b)p_ptr->expfact) / 100L))))
+	    (p_ptr->max_exp >= ((s64b)(((s64b)player_exp[p_ptr->max_lev - 1] * (s64b)p_ptr->expfact) / 100L))))
 #else
 	while ((p_ptr->max_lev < (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL)) &&
-	    (p_ptr->max_exp >= (s64b)player_exp[p_ptr->max_lev-1]))
+	    (p_ptr->max_exp >= (s64b)player_exp[p_ptr->max_lev - 1]))
 #endif
 	{
 		/* Gain a level */
@@ -8984,8 +8984,9 @@ void player_death(int Ind) {
 
 #ifdef RPG_SERVER
 	if (p_ptr->wpos.wz != 0) {
-		for (i = m_top-1; i >= 0; i--) {
+		for (i = m_top - 1; i >= 0; i--) {
 			monster_type *m_ptr = &m_list[i];
+
 			if (m_ptr->owner == p_ptr->id && m_ptr->pet) {
 				m_ptr->pet = 0; //default behaviour!
 				m_ptr->owner = 0;
@@ -9910,11 +9911,11 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d de
 				char funky_msg[20];
 
 				switch (randint(5)) {
-				case 1:strcpy(funky_msg, "wasted");break;
-				case 2:strcpy(funky_msg, "crushed");break;
-				case 3:strcpy(funky_msg, "shredded");break;
-				case 4:strcpy(funky_msg, "torn up");break;
-				case 5:strcpy(funky_msg, "crushed");break; /* again :) */
+				case 1: strcpy(funky_msg, "wasted");break;
+				case 2: strcpy(funky_msg, "crushed");break;
+				case 3: strcpy(funky_msg, "shredded");break;
+				case 4: strcpy(funky_msg, "torn up");break;
+				case 5: strcpy(funky_msg, "crushed");break; /* again :) */
 				}
 				msg_format(Ind, "\374\377%c**\377rYou have been %s by %s.\377%c**", msg_layout, funky_msg, p_ptr->died_from, msg_layout);
 				if (cfg.unikill_format) {
@@ -10758,13 +10759,13 @@ void resurrect_player(int Ind, int loss_factor) {
 	/* Tell him his remaining lifes */
 	if (!(p_ptr->mode & MODE_EVERLASTING)
 	    && !(p_ptr->mode & MODE_PVP)) {
-		if (p_ptr->lives > 1+1) p_ptr->lives--;
+		if (p_ptr->lives > 1 + 1) p_ptr->lives--;
 		if (cfg.lifes) {
-			if (p_ptr->lives == 1+1)
+			if (p_ptr->lives == 1 + 1)
 				msg_print(Ind, "\376\377GYou have no more resurrections left!");
 			else {
-				if (p_ptr->lives-1-1 == 1) msg_print(Ind, "\376\377GYou have 1 resurrection left.");
-				else msg_format(Ind, "\376\377GYou have %d resurrections left.", p_ptr->lives-1-1);
+				if (p_ptr->lives - 1 - 1 == 1) msg_print(Ind, "\376\377GYou have 1 resurrection left.");
+				else msg_format(Ind, "\376\377GYou have %d resurrections left.", p_ptr->lives - 1 - 1);
 			}
 		}
 	}
@@ -12508,7 +12509,7 @@ void ang_sort_aux(int Ind, vptr u, vptr v, int p, int q) {
 	ang_sort_aux(Ind, u, v, p, b);
 
 	/* Recurse right side */
-	ang_sort_aux(Ind, u, v, b+1, q);
+	ang_sort_aux(Ind, u, v, b + 1, q);
 }
 
 void ang_sort_extra_aux(int Ind, vptr u, vptr v, vptr w, int p, int q) {
@@ -12546,7 +12547,7 @@ void ang_sort_extra_aux(int Ind, vptr u, vptr v, vptr w, int p, int q) {
 	ang_sort_extra_aux(Ind, u, v, w, p, b);
 
 	/* Recurse right side */
-	ang_sort_extra_aux(Ind, u, v, w, b+1, q);
+	ang_sort_extra_aux(Ind, u, v, w, b + 1, q);
 }
 
 
@@ -12560,7 +12561,7 @@ void ang_sort_extra_aux(int Ind, vptr u, vptr v, vptr w, int p, int q) {
  */
 void ang_sort(int Ind, vptr u, vptr v, int n) {
 	/* Sort the array */
-	ang_sort_aux(Ind, u, v, 0, n-1);
+	ang_sort_aux(Ind, u, v, 0, n - 1);
 }
 
 /* Added this for further sorting the all monsters that are *closest* to
@@ -12568,7 +12569,7 @@ void ang_sort(int Ind, vptr u, vptr v, int n) {
    waking up sleeping ones. Suggested by Caine/Ifrit - C. Blue */
 void ang_sort_extra(int Ind, vptr u, vptr v, vptr w, int n) {
 	/* Sort the array */
-	ang_sort_extra_aux(Ind, u, v, w, 0, n-1);
+	ang_sort_extra_aux(Ind, u, v, w, 0, n - 1);
 }
 
 /* returns our max times 100 divided by our current...*/
@@ -12605,22 +12606,22 @@ static void wounded_player_target_sort(int Ind, vptr sx, vptr sy, vptr id, int n
 	byte swpb;
 
 	/* num equals our max index */
-	num = n-1;
+	num = n - 1;
 
 	while (num > 0) {
 		for (c = 0; c < num; c++) {
-			if (player_wounded(idx[c+1]) > player_wounded(idx[c])) {
+			if (player_wounded(idx[c + 1]) > player_wounded(idx[c])) {
 				swp = idx[c];
-				idx[c] = idx[c+1];
-				idx[c+1] = swp;
+				idx[c] = idx[c + 1];
+				idx[c + 1] = swp;
 
 				swpb = x[c];
-				x[c] = x[c+1];
-				x[c+1] = swpb;
+				x[c] = x[c + 1];
+				x[c + 1] = swpb;
 
 				swpb = y[c];
-				y[c] = y[c+1];
-				y[c+1] = swpb;
+				y[c] = y[c + 1];
+				y[c + 1] = swpb;
 			}
 		}
 	num--;
@@ -14284,7 +14285,7 @@ bool do_scroll_life(int Ind) {
 
 	for (y = -1; y <= 1; y++) {
 		for (x = -1; x <= 1; x++) {
-			c_ptr = &zcave[p_ptr->py+y][p_ptr->px+x];
+			c_ptr = &zcave[p_ptr->py + y][p_ptr->px + x];
 			if (c_ptr->m_idx < 0) {
 				q_ptr = Players[0 - c_ptr->m_idx];
 				if (q_ptr->ghost) {
@@ -14321,7 +14322,7 @@ bool do_restoreXP_other(int Ind) {
 	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 	for (y = -1; y <= 1; y++) {
 		for (x = -1; x <= 1; x++) {
-			c_ptr = &zcave[p_ptr->py+y][p_ptr->px+x];
+			c_ptr = &zcave[p_ptr->py + y][p_ptr->px + x];
 
 			if (c_ptr->m_idx < 0) {
 				if (Players[0 - c_ptr->m_idx]->exp < Players[0 - c_ptr->m_idx]->max_exp) {

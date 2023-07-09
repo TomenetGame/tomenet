@@ -408,7 +408,7 @@ bool pern_dofile(int Ind, char *file) {
 	error = lua_dofile(L, buf);
 	lua_settop(L, oldtop);
 
-	return(error?TRUE:FALSE);
+	return(error ? TRUE : FALSE);
 }
 
 int exec_lua(int Ind, char *file) {

@@ -219,9 +219,9 @@ static bool enter_password(void) {
 	 /* Re-Draw the password as 'x's (in light blue) */
 	for (c = 0; c < strlen(pass); c++)
 #ifndef SIMPLE_LOGIN
-		Term_putch(15+c, 3, TERM_L_BLUE, 'x');
+		Term_putch(15 + c, 3, TERM_L_BLUE, 'x');
 #else
-		Term_putch(15+c, LOGIN_ROW + 5, TERM_L_BLUE, 'x');
+		Term_putch(15 + c, LOGIN_ROW + 5, TERM_L_BLUE, 'x');
 #endif
 
 	/* Erase the prompt, etc */

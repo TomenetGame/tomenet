@@ -1478,7 +1478,7 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 
 		/* Slide the others up */
 		for (i = st_ptr->stock_num; i > slot; i--)
-			st_ptr->stock[i] = st_ptr->stock[i-1];
+			st_ptr->stock[i] = st_ptr->stock[i - 1];
 	} else { /* is museum -> don't order items! */
 		slot = st_ptr->stock_num;
 	}
@@ -3436,7 +3436,7 @@ void store_stole(int Ind, int item) {
 		/* Describe the final result */
 		object_desc(Ind, o_name, &p_ptr->inventory[item_new], TRUE, 3);
 
-		//s_printf("Stealing: %s (%d) succ. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance<10?10:chance), chance);
+		//s_printf("Stealing: %s (%d) succ. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance < 10 ? 10 : chance), chance);
 		/* let's instead display the chance without regards to 5% chance to fail, since very small % numbers become more accurate! */
 #if 0 /* omit logging successful stealing of trivial items? */
 		if (chance > 10)
@@ -3487,8 +3487,8 @@ void store_stole(int Ind, int item) {
 			gain_exp(Ind, 1);
 		}
 	} else {
-//s_printf("Stealing: %s (%d) fail. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance<10?10:chance), chance);
-s_printf("Stealing: %s (%d) fail. %s (chance %ld%%0 (%ld) %d,%d,%d).\n", p_ptr->name, p_ptr->lev, o_name, 10000 / (chance<10?10:chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+//s_printf("Stealing: %s (%d) fail. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance < 10 ? 10 : chance), chance);
+s_printf("Stealing: %s (%d) fail. %s (chance %ld%%0 (%ld) %d,%d,%d).\n", p_ptr->name, p_ptr->lev, o_name, 10000 / (chance < 10 ? 10 : chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		/* Complain */
 		// say_comment_4();
 		msg_print(Ind, "\"\377yBastard\377L!!!\377w\" - The angry shopkeeper throws you out!");
@@ -6010,7 +6010,7 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr) {
 
 	/* Slide the others up */
 	for (i = h_ptr->stock_num; i > slot; i--)
-		h_ptr->stock[i] = h_ptr->stock[i-1];
+		h_ptr->stock[i] = h_ptr->stock[i - 1];
 
 	/* More stuff now */
 	h_ptr->stock_num++;

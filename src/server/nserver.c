@@ -485,7 +485,7 @@ void init_players() {
 	/* Last player is the DM Edit player ! */
 	/* As no extra connection is required, */
 	/* we need only allocate the player_type for it */
-	C_MAKE(Players, max_connections+1, player_type *);
+	C_MAKE(Players, max_connections + 1, player_type *);
 }
 
 
@@ -1624,7 +1624,7 @@ bool Destroy_connection(int ind, char *reason_orig) {
 	char		pkt[MAX_CHARS_WIDE];
 	char		*reason;
 	int		i, player = 0;
-	char		traffic[50+1];
+	char		traffic[50 + 1];
 	player_type	*p_ptr = NULL;
 	struct account acc;
 
@@ -3036,7 +3036,7 @@ static int Handle_login(int ind) {
 	bool options[OPT_MAX], greeting;
 	char msgbuf[80], o_name[ONAME_LEN];
 	cptr title = "";
-	char traffic[50+1];
+	char traffic[50 + 1];
 	bool newly_created_msg = FALSE;
 
 	if (Id >= MAX_ID) {
@@ -3372,16 +3372,16 @@ static int Handle_login(int ind) {
 #if 0
 		/* if total_winner char was loaded from old save game that
 		   didn't reduce his/her lifes to 1 on winning, do that now: */
-		if (p_ptr->total_winner && (p_ptr->lives > 1+1)) {
+		if (p_ptr->total_winner && (p_ptr->lives > 1 + 1)) {
 			msg_print(NumPlayers, "\377yTake care! As a winner, you have no more resurrections left!");
-			p_ptr->lives = 1+1;
+			p_ptr->lives = 1 + 1;
 		}
 #endif
-		if (p_ptr->lives-1 == 1)
+		if (p_ptr->lives - 1 == 1)
 			msg_print(NumPlayers, "\377GYou have no more resurrections left!");
 		else {
-			if (p_ptr->lives-1-1 == 1) msg_print(NumPlayers, "\377GYou have 1 resurrection left.");
-			else msg_format(NumPlayers, "\377GYou have %d resurrections left.", p_ptr->lives-1-1);
+			if (p_ptr->lives - 1 - 1 == 1) msg_print(NumPlayers, "\377GYou have 1 resurrection left.");
+			else msg_format(NumPlayers, "\377GYou have %d resurrections left.", p_ptr->lives - 1 - 1);
 		}
 	}
 
@@ -4977,10 +4977,10 @@ static int Receive_login(int ind) {
 	return(0);
 }
 
-#define RECEIVE_PLAY_SIZE_462 (2*6+OPT_MAX+8+2*(TV_MAX+MAX_F_IDX+MAX_K_IDX+MAX_R_IDX)) /*todo: fix*/
-#define RECEIVE_PLAY_SIZE (2*6+OPT_MAX+2*(TV_MAX+MAX_F_IDX_COMPAT+MAX_K_IDX_COMPAT+MAX_R_IDX_COMPAT))
-#define RECEIVE_PLAY_SIZE_OPTMAXCOMPAT (2*6+OPT_MAX_COMPAT+2*(TV_MAX+MAX_F_IDX_COMPAT+MAX_K_IDX_COMPAT+MAX_R_IDX_COMPAT))
-#define RECEIVE_PLAY_SIZE_OPTMAXOLD (2*6+OPT_MAX_OLD+2*(TV_MAX+MAX_F_IDX_COMPAT+MAX_K_IDX_COMPAT+MAX_R_IDX_COMPAT))
+#define RECEIVE_PLAY_SIZE_462		(2 * 6 + OPT_MAX + 8    + 2 * (TV_MAX + MAX_F_IDX        + MAX_K_IDX +        MAX_R_IDX)) /*todo: fix*/
+#define RECEIVE_PLAY_SIZE		(2 * 6 + OPT_MAX        + 2 * (TV_MAX + MAX_F_IDX_COMPAT + MAX_K_IDX_COMPAT + MAX_R_IDX_COMPAT))
+#define RECEIVE_PLAY_SIZE_OPTMAXCOMPAT	(2 * 6 + OPT_MAX_COMPAT + 2 * (TV_MAX + MAX_F_IDX_COMPAT + MAX_K_IDX_COMPAT + MAX_R_IDX_COMPAT))
+#define RECEIVE_PLAY_SIZE_OPTMAXOLD	(2 * 6 + OPT_MAX_OLD    + 2 * (TV_MAX + MAX_F_IDX_COMPAT + MAX_K_IDX_COMPAT + MAX_R_IDX_COMPAT))
 //#define STRICT_RECEIVE_PLAY
 static int Receive_play(int ind) {
 	connection_t *connp = Conn[ind];
@@ -5490,7 +5490,7 @@ static int Receive_file(int ind) {
 				printf("unknown file transfer packet\n");
 				x = 0;
 		}
-		Packet_printf(&connp->c, "%c%c%hd", PKT_FILE, x?PKT_FILE_ACK:PKT_FILE_ERR, fnum);
+		Packet_printf(&connp->c, "%c%c%hd", PKT_FILE, x ? PKT_FILE_ACK : PKT_FILE_ERR, fnum);
 	}
 	return(1);
 }
@@ -5836,8 +5836,8 @@ int Send_skill_init(int Ind, u16b i) {
 	return(Packet_printf(&connp->c, "%c%hd%hd%hd%hd%d%c%S%S%S",
 		PKT_SKILL_INIT, i,
 		s_info[i].father, s_info[i].order, mkey,
-		s_info[i].flags1, s_info[i].tval, s_name+s_info[i].name,
-		s_text+s_info[i].desc, tmp ? tmp : "" ));
+		s_info[i].flags1, s_info[i].tval, s_name + s_info[i].name,
+		s_text + s_info[i].desc, tmp ? tmp : "" ));
 
 }
 

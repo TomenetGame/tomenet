@@ -2954,7 +2954,7 @@ static errr init_alloc(void) {
 	/* Collect the level indexes */
 	for (i = 1; i < 256; i++) {
 		/* Group by level */
-		num[i] += num[i-1];
+		num[i] += num[i - 1];
 	}
 
 	/* Paranoia */
@@ -2986,7 +2986,7 @@ static errr init_alloc(void) {
 				p = (10000 / k_ptr->chance[j]);
 
 				/* Skip entries preceding our locale */
-				y = (x > 0) ? num[x-1] : 0;
+				y = (x > 0) ? num[x - 1] : 0;
 
 				/* Skip previous entries at this locale */
 				z = y + aux[x];
@@ -3051,7 +3051,7 @@ static errr init_alloc(void) {
 	/* Collect the level indexes */
 	for (i = 1; i < 256; i++) {
 		/* Group by level */
-		num[i] += num[i-1];
+		num[i] += num[i - 1];
 	}
 
 	/* Paranoia */
@@ -3097,7 +3097,7 @@ static errr init_alloc(void) {
 			if (p == 0) continue;
 
 			/* Skip entries preceding our locale */
-			y = (x > 0) ? num[x-1] : 0;
+			y = (x > 0) ? num[x - 1] : 0;
 
 			/* Skip previous entries at this locale */
 			z = y + aux[x];

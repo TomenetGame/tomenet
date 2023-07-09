@@ -148,13 +148,11 @@ int monster_check_experience(int m_idx, bool silent) {
 		}
 
 		/* Gain ac */
-		if (magik(30)) {
-			m_ptr->ac += (r_ptr->ac / 15)?r_ptr->ac / 15:1;
-		}
+		if (magik(30)) m_ptr->ac += (r_ptr->ac / 15) ? r_ptr->ac / 15 : 1;
 
 		/* Gain melee power */
 		/* XXX 20d1 monster can be too horrible (20d5) */
-//		if (magik(50))
+		//if (magik(50))
 		if (magik(80)) levels_gained++;
 	}
 
@@ -166,7 +164,7 @@ int monster_check_experience(int m_idx, bool silent) {
 	/* L+40 -> x25, L+35 -> x20, L+30 -> x16, L+25 -> x12, L+20 -> x9, L+15 -> x6, L+10 -> x4, L+5 -> x2 */
 	if (levels_gained != 0) levels_gained = 100000 / ((100000 / levels_gained) + 1000);
 	/* cap stronger for higher monsters */
-//	if (levels_gained != 0) levels_gained = 100000 / ((100000 / levels_gained) + 1000 - (10000/(r_ptr->level+10)));
+	//if (levels_gained != 0) levels_gained = 100000 / ((100000 / levels_gained) + 1000 - (10000 / (r_ptr->level + 10)));
 
 	/* for more accurate results, add 2 figures */
 	levels_gained *= 100;
@@ -176,7 +174,7 @@ int monster_check_experience(int m_idx, bool silent) {
 	levels_gained += 100;
 
 	/* very low level monsters get a boost for damage output */
-//	levels_gained += 1600 / (r_ptr->level + 10);
+	//levels_gained += 1600 / (r_ptr->level + 10);
 	levels_gained += ((levels_gained - 100) * 57) / (r_ptr->level + 10);
 
 	/* calculate square root of the factor, to apply to dice & dice sides - C. Blue */

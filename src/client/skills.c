@@ -564,7 +564,7 @@ static int do_cmd_activate_skill_aux() {
 			/* Take a screenshot */
 			xhtml_screenshot("screenshot????", FALSE);
 		} else if (which == '*' || which == '?' || which == ' ') {
-			mode = (mode)?FALSE:TRUE;
+			mode = (mode) ? FALSE : TRUE;
 			if (!mode && term_saved) {
 				Term_load();
 				term_saved = FALSE;

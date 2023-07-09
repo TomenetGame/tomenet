@@ -2816,7 +2816,7 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 			int i;
 
 			/* XXX XXX XXX Simply read each number following a colon */
-			for (i = 0, s = buf+1; s && (s[0] == ':') && s[1]; ++i) {
+			for (i = 0, s = buf + 1; s && (s[0] == ':') && s[1]; ++i) {
 				/* Sanity check */
 				if (i >= 4) {
 					s_printf("Warning: Too many allocation entries on line %hd of 'k_info.txt'.\n", error_line);
@@ -2827,17 +2827,17 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 				k_ptr->chance[i] = 1;
 
 				/* Store the attack damage index */
-				k_ptr->locale[i] = atoi(s+1);
+				k_ptr->locale[i] = atoi(s + 1);
 
 				/* Find the slash */
-				t = strchr(s+1, '/');
+				t = strchr(s + 1, '/');
 
 				/* Find the next colon */
-				s = strchr(s+1, ':');
+				s = strchr(s + 1, ':');
 
 				/* If the slash is "nearby", use it */
 				if (t && (!s || t < s)) {
-					int chance = atoi(t+1);
+					int chance = atoi(t + 1);
 
 					k_ptr->chance[i] = chance;
 				}
@@ -3923,7 +3923,7 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 			/* Save the values */
 			/* e_ptr->slot = slot; */
 			e_ptr->rating = rating;
-			e_ptr->before = (pos == 'B')?TRUE:FALSE;
+			e_ptr->before = (pos == 'B') ? TRUE : FALSE;
 
 			/* Next... */
 			continue;
@@ -4567,7 +4567,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 	/* XXX XXX XXX XXX The ghost is unused */
 
 	/* Mega-Hack -- acquire "ghost" */
-	r_ptr = &r_info[MAX_R_IDX-1];
+	r_ptr = &r_info[MAX_R_IDX - 1];
 
 	/* Acquire the next index */
 	r_ptr->name = r_head->name_size;
@@ -5205,7 +5205,7 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 			re_ptr->rarity = rar;
 			re_ptr->weight = (wt << 2) + monster_ego_modify(mwt);
 			re_ptr->mexp = (exp << 2) + monster_ego_modify(mexp);
-			re_ptr->before = (pos == 'B')?TRUE:FALSE;
+			re_ptr->before = (pos == 'B') ? TRUE : FALSE;
 
 			/* Next... */
 			continue;
@@ -9474,7 +9474,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			char i;
 
 			/* Acquire the text */
-			char *s = buf+4;
+			char *s = buf + 4;
 			int y = *yval;
 
 			for (x = 0; x < max_wild_x; x++) {
@@ -9488,7 +9488,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 		}
 		/* Process "M:<plus>:<line>" -- move line lines */
 		else if (buf[2] == 'M') {
-			if (tokenize(buf+4, 2, zz, ':', '/') == 2) {
+			if (tokenize(buf + 4, 2, zz, ':', '/') == 2) {
 				if (atoi(zz[0])) (*yval) += atoi(zz[1]);
 				else (*yval) -= atoi(zz[1]);
 			} else return(1);
@@ -9498,7 +9498,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 		else if (buf[2] == 'P') {
 			if ((p_ptr->wilderness_x == 0) &&
 			    (p_ptr->wilderness_y == 0)) {
-				if (tokenize(buf+4, 2, zz, ':', '/') == 2) {
+				if (tokenize(buf + 4, 2, zz, ':', '/') == 2) {
 					p_ptr->wilderness_x = atoi(zz[0]);
 					p_ptr->wilderness_y = atoi(zz[1]);
 				} else return(1);
@@ -9508,7 +9508,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 		}
 		/* Process "W:E:<dungeon>:<y>:<x> - entrance to the dungeon <dungeon> */
 		else if (buf[2] == 'E') {
-			if (tokenize(buf+4, 3, zz, ':', '/') == 3)
+			if (tokenize(buf + 4, 3, zz, ':', '/') == 3)
 				wild_map[atoi(zz[1])][atoi(zz[2])].entrance = 1000 + atoi(zz[0]);
 			else
 				return(1);
@@ -9817,55 +9817,55 @@ static cptr process_dungeon_file_expr(char **sp, char *fp) {
 		/* Variable */
 		if (*b == '$') {
 			/* System */
-			if (streq(b+1, "SYS"))
+			if (streq(b + 1, "SYS"))
 				v = ANGBAND_SYS;
 
 			/* Graphics */
-			else if (streq(b+1, "GRAF"))
+			else if (streq(b + 1, "GRAF"))
 				v = ANGBAND_GRAF;
 
 			/* Race */
-			else if (streq(b+1, "RACE"))
+			else if (streq(b + 1, "RACE"))
 				v = rp_ptr->title + rp_name;
 
 			/* Race Mod */
-			else if (streq(b+1, "RACEMOD"))
+			else if (streq(b + 1, "RACEMOD"))
 				v = rmp_ptr->title + rmp_name;
 
 			/* Class */
-			else if (streq(b+1, "CLASS"))
+			else if (streq(b + 1, "CLASS"))
 				v = cp_ptr->title + c_name;
 
 			/* Player */
-			else if (streq(b+1, "PLAYER"))
+			else if (streq(b + 1, "PLAYER"))
 				v = player_base;
 
 			/* Town */
-			else if (streq(b+1, "TOWN")) {
+			else if (streq(b + 1, "TOWN")) {
 				strnfmt(pref_tmp_value, 8, "%d", p_ptr->town_num);
 				v = pref_tmp_value;
 			}
 
 			/* Town destroyed */
-			else if (prefix(b+1, "TOWN_DESTROY")) {
+			else if (prefix(b + 1, "TOWN_DESTROY")) {
 				strnfmt(pref_tmp_value, 8, "%d", town_info[atoi(b + 13)].destroyed);
 				v = pref_tmp_value;
 			}
 
 			/* Current quest number */
-			else if (streq(b+1, "QUEST_NUMBER")) {
+			else if (streq(b + 1, "QUEST_NUMBER")) {
 				strnfmt(pref_tmp_value, 8, "%d", p_ptr->inside_quest);
 				v = pref_tmp_value;
 			}
 
 			/* Number of last quest */
-			else if (streq(b+1, "LEAVING_QUEST")) {
+			else if (streq(b + 1, "LEAVING_QUEST")) {
 				strnfmt(pref_tmp_value, 8, "%d", leaving_quest);
 				v = pref_tmp_value;
 			}
 
 			/* DAYTIME status */
-			else if (prefix(b+1, "DAYTIME")) {
+			else if (prefix(b + 1, "DAYTIME")) {
 				if ((bst(HOUR, turn) >= SUNRISE) && (bst(HOUR, turn) < NIGHTFALL))
 					v = "1";
 				else
@@ -9873,10 +9873,10 @@ static cptr process_dungeon_file_expr(char **sp, char *fp) {
 			}
 
 			/* Quest status */
-			else if (prefix(b+1, "QUEST")) {
+			else if (prefix(b + 1, "QUEST")) {
 				/* "QUEST" uses a special parameter to determine the number of the quest */
 				if (*(b + 6) != '"')
-					strnfmt(pref_tmp_value, 8, "%d", quest[atoi(b+6)].status);
+					strnfmt(pref_tmp_value, 8, "%d", quest[atoi(b + 6)].status);
 				else {
 					char c[80];
 					int i;
@@ -9899,10 +9899,10 @@ static cptr process_dungeon_file_expr(char **sp, char *fp) {
 			}
 
 			/* Variant name */
-			else if (streq(b+1, "VARIANT")) v = "ToME";
+			else if (streq(b + 1, "VARIANT")) v = "ToME";
 
 			/* Wilderness */
-			else if (streq(b+1, "WILDERNESS")) {
+			else if (streq(b + 1, "WILDERNESS")) {
 				if (vanilla_town) v = "NONE";
 				else v = "NORMAL";
 			}

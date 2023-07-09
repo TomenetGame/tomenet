@@ -995,6 +995,7 @@ static char *t_crypt(char *inbuf, cptr salt) {
 	static char out[64];
  #if 1 /* fix for len-1 names */
 	char setting[3];
+
 	/* only 1 character long salt? expand to 2 chars length */
 	if (!salt[1]) {
 		setting[0] = '.';

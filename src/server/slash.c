@@ -2054,8 +2054,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if (strcmp(Players[Ind]->accountname, "The_sandman") || !p_ptr->privileged) return;
 			msg_print(Ind, "\377RYou abandon your pet! You cannot have anymore pets!");
 //			if (Players[Ind]->wpos.wz != 0) {
-				for (i = m_top-1; i >= 0; i--) {
+				for (i = m_top - 1; i >= 0; i--) {
 					monster_type *m_ptr = &m_list[i];
+
 					if (!m_ptr->pet) continue;
 					if (find_player(m_ptr->owner) == Ind) {
 						m_ptr->pet = 0; //default behaviour!
@@ -3062,27 +3063,28 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "\377d ");
 			} else if ((k < 1) || (k > MAX_GLOBAL_EVENTS)) {
 				msg_format(Ind, "Usage: /evinfo    or    /evinfo 1..%d", MAX_GLOBAL_EVENTS);
-			} else if ((global_event[k-1].getype == GE_NONE) && (global_event[k-1].hidden == FALSE || admin)) {
+			} else if ((global_event[k - 1].getype == GE_NONE) && (global_event[k - 1].hidden == FALSE || admin)) {
 				msg_print(Ind, "\377yThere is currently no running event of that number.");
 			} else {
 				/* determine if we can still sign up, to display the appropriate signup-command too */
 				char signup[MAX_CHARS];
-				int at = global_event[k-1].announcement_time - (turn - global_event[k-1].start_turn) / cfg.fps;
-				int as = global_event[k-1].signup_time - (turn - global_event[k-1].start_turn) / cfg.fps;
+				int k0 = k - 1;
+				int at = global_event[k0].announcement_time - (turn - global_event[k0].start_turn) / cfg.fps;
+				int as = global_event[k0].signup_time - (turn - global_event[k0].start_turn) / cfg.fps;
 
 				signup[0] = '\0';
-				if (!(global_event[k-1].signup_time == -1) &&
-				    !(!global_event[k-1].signup_time &&
-				     (!global_event[k-1].announcement_time ||
+				if (!(global_event[k0].signup_time == -1) &&
+				    !(!global_event[k0].signup_time &&
+				     (!global_event[k0].announcement_time ||
 				     at <= 0)) &&
-				    !(global_event[k-1].signup_time &&
+				    !(global_event[k0].signup_time &&
 				     as <= 0))
 					strcpy(signup, format(" Type \377U/evsign %d\377W to sign up!", k));
 
-				msg_format(Ind, "\377sInfo on event #%d '\377s%s\377s':", k, global_event[k-1].title);
-				for (i = 0; i < 10; i++) if (strcmp(global_event[k-1].description[i], ""))
-					msg_print(Ind, global_event[k-1].description[i]);
-				if (global_event[k-1].noghost) msg_print(Ind, "\377RIn this event death is permanent - if you die your character will be erased!");
+				msg_format(Ind, "\377sInfo on event #%d '\377s%s\377s':", k, global_event[k0].title);
+				for (i = 0; i < 10; i++) if (strcmp(global_event[k0].description[i], ""))
+					msg_print(Ind, global_event[k0].description[i]);
+				if (global_event[k0].noghost) msg_print(Ind, "\377RIn this event death is permanent - if you die your character will be erased!");
 
 //				msg_print(Ind, "\377d ");
 				if (at >= 120) {
@@ -3097,9 +3099,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				strcpy(ppl, "\377WSubscribers: ");
 				for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
-					if (!global_event[k-1].participant[j]) continue;
+					if (!global_event[k0].participant[j]) continue;
 					for (i = 1; i <= NumPlayers; i++) {
-						if (global_event[k-1].participant[j] == Players[i]->id) {
+						if (global_event[k0].participant[j] == Players[i]->id) {
 							if (found) strcat(ppl, ", ");
 							strcat(ppl, Players[i]->name);
 							found = TRUE;
@@ -3112,6 +3114,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 		else if (prefix(messagelc, "/evsign")) { /* sign up for a global event */
+			int k0 = k - 1;
+
 			/* get some 'real' event index number for our example ;) */
 			for (i = 0; i < MAX_GLOBAL_EVENTS; i++)
 				if (global_event[i].getype != GE_NONE) break;
@@ -3119,36 +3123,38 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if ((tk < 1) || (k < 1) || (k > MAX_GLOBAL_EVENTS)) {
 				msg_format(Ind, "Usage:    /evsign 1..%d [options..]    -- Also try: /evinfo", MAX_GLOBAL_EVENTS);
 				msg_format(Ind, "Example:  /evsign %d", i == MAX_GLOBAL_EVENTS ? randint(MAX_GLOBAL_EVENTS): i + 1);
-			} else if ((global_event[k-1].getype == GE_NONE) && (global_event[k-1].hidden == FALSE || admin))
+			} else if ((global_event[k0].getype == GE_NONE) && (global_event[k0].hidden == FALSE || admin))
 				msg_print(Ind, "\377yThere is currently no running event of that number.");
-			else if (global_event[k-1].signup_time == -1)
+			else if (global_event[k0].signup_time == -1)
 				msg_print(Ind, "\377yThat event doesn't offer to sign up.");
-			else if (!global_event[k-1].signup_time &&
-				    (!global_event[k-1].announcement_time ||
-				    (global_event[k-1].announcement_time - (turn - global_event[k-1].start_turn) / cfg.fps <= 0)))
+			else if (!global_event[k0].signup_time &&
+				    (!global_event[k0].announcement_time ||
+				    (global_event[k0].announcement_time - (turn - global_event[k0].start_turn) / cfg.fps <= 0)))
 				msg_print(Ind, "\377yThat event has already started.");
-			else if (global_event[k-1].signup_time &&
-				    (global_event[k-1].signup_time - (turn - global_event[k-1].start_turn) / cfg.fps <= 0))
+			else if (global_event[k0].signup_time &&
+				    (global_event[k0].signup_time - (turn - global_event[k0].start_turn) / cfg.fps <= 0))
 				msg_print(Ind, "\377yThat event does not allow signing up anymore now.");
 			else {
-				if (tk < 2) global_event_signup(Ind, k - 1, NULL);
-				else global_event_signup(Ind, k - 1, message3 + 1 + strlen(format("%d", k)));
+				if (tk < 2) global_event_signup(Ind, k0, NULL);
+				else global_event_signup(Ind, k0, message3 + 1 + strlen(format("%d", k)));
 			}
 			return;
 		}
 		else if (prefix(messagelc, "/evunsign")) {
+			int k0 = k - 1;
+
 			if ((tk < 1) || (k < 1) || (k > MAX_GLOBAL_EVENTS))
 				msg_format(Ind, "Usage:    /evunsign 1..%d", MAX_GLOBAL_EVENTS);
-			else if ((global_event[k-1].getype == GE_NONE) && (global_event[k-1].hidden == FALSE || admin))
+			else if ((global_event[k0].getype == GE_NONE) && (global_event[k0].hidden == FALSE || admin))
 				msg_print(Ind, "\377yThere is currently no event of that number.");
-			else if (global_event[k-1].signup_time == -1)
+			else if (global_event[k0].signup_time == -1)
 				msg_print(Ind, "\377yThat event doesn't offer to sign up.");
-			else if (!global_event[k-1].signup_time &&
-				    (!global_event[k-1].announcement_time ||
-				    (global_event[k-1].announcement_time - (turn - global_event[k-1].start_turn) / cfg.fps <= 0)))
+			else if (!global_event[k0].signup_time &&
+				    (!global_event[k0].announcement_time ||
+				    (global_event[k0].announcement_time - (turn - global_event[k0].start_turn) / cfg.fps <= 0)))
 				msg_print(Ind, "\377yThat event has already started.");
 			else {
-				global_event_type *ge = &global_event[k - 1];
+				global_event_type *ge = &global_event[k0];
 
 				for (i = 0; i < MAX_GE_PARTICIPANTS; i++) {
 					if (ge->participant[i] != p_ptr->id) continue;
@@ -3156,7 +3162,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_format(Ind, "\374\377s>>You have signed off from %s!<<", ge->title);
 					msg_broadcast_format(Ind, "\374\377s%s signed off from %s.", p_ptr->name, ge->title);
 					ge->participant[i] = 0;
-					p_ptr->global_event_type[k - 1] = GE_NONE;
+					p_ptr->global_event_type[k0] = GE_NONE;
 
 					return;
 				}
@@ -4998,7 +5004,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 		else if (prefix(messagelc, "/qdrop")) { /* drop a quest we're on */
-			int qa = 0;
+			int qa = 0, k0 = k - 1;
 
 			if (tk != 1) {
 				msg_print(Ind, "Usage: \377s/qdrop number\377w, * for all. Warning: Quests might not be re-acquirable!");
@@ -5022,12 +5028,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "\377yThe quest number must be from 1 to 5!");
 				return;
 			}
-			if (p_ptr->quest_idx[k - 1] == -1) {
+			if (p_ptr->quest_idx[k0] == -1) {
 				msg_format(Ind, "\377yYou are not pursing a quest numbered %d.", k);
 				return;
 			}
-			msg_format(Ind, "You are no longer pursuing the quest '%s'!", q_name + q_info[p_ptr->quest_idx[k - 1]].name);
-			quest_abandon(Ind, k - 1);
+			msg_format(Ind, "You are no longer pursuing the quest '%s'!", q_name + q_info[p_ptr->quest_idx[k0]].name);
+			quest_abandon(Ind, k0);
 			return;
 		}
 		else if (prefix(messagelc, "/who")) { /* returns account name to which the given character name belongs -- user version of /characc[l] */
@@ -9214,75 +9220,77 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_format(Ind, "Usage: /gestop 1..%d", MAX_GLOBAL_EVENTS);
 					return;
 				}
-				if (global_event[k-1].getype == GE_NONE) {
+				if (global_event[k - 1].getype == GE_NONE) {
 					msg_print(Ind, "No such event.");
 					return;
 				}
-				stop_global_event(Ind, k-1);
+				stop_global_event(Ind, k - 1);
 				return;
 			}
 			else if (prefix(messagelc, "/gepause")) {
+				int k0 = k - 1;
+
 				if (tk < 1 || k < 1 || k > MAX_GLOBAL_EVENTS) {
 					msg_format(Ind, "Usage: /gepause 1..%d", MAX_GLOBAL_EVENTS);
 					return;
 				}
-				if (global_event[k-1].getype == GE_NONE) {
+				if (global_event[k0].getype == GE_NONE) {
 					msg_print(Ind, "No such event.");
 					return;
 				}
-				if (global_event[k-1].paused == FALSE) {
-					global_event[k-1].paused = TRUE;
-					msg_format(Ind, "Global event #%d of type %d is now paused.", k, global_event[k-1].getype);
+				if (global_event[k0].paused == FALSE) {
+					global_event[k0].paused = TRUE;
+					msg_format(Ind, "Global event #%d of type %d is now paused.", k, global_event[k0].getype);
 				} else {
-					global_event[k-1].paused = FALSE;
-					msg_format(Ind, "Global event #%d of type %d has been resumed.", k, global_event[k-1].getype);
+					global_event[k0].paused = FALSE;
+					msg_format(Ind, "Global event #%d of type %d has been resumed.", k, global_event[k0].getype);
 				}
 				return;
 			}
 			else if (prefix(messagelc, "/geretime")) { /* skip the announcements, start NOW */
 				/* (or optionally specfiy new remaining announce time in seconds) */
-				int t = 10;
+				int t = 10, k0 = k - 1;
 
 				if (tk < 1 || k < 1 || k > MAX_GLOBAL_EVENTS) {
 					msg_format(Ind, "Usage: /geretime 1..%d [<new T-x>]", MAX_GLOBAL_EVENTS);
 					return;
 				}
-				if (global_event[k-1].getype == GE_NONE) {
+				if (global_event[k0].getype == GE_NONE) {
 					msg_print(Ind, "No such event.");
 					return;
 				}
 				if (tk == 2) t = atoi(token[2]);
 				/* only if announcement phase isn't over yet, we don't want to mess up a running event */
-				if ((turn - global_event[k-1].start_turn) / cfg.fps < global_event[k-1].announcement_time) {
-					global_event[k-1].announcement_time = (turn - global_event[k-1].start_turn) / cfg.fps + t;
-					announce_global_event(k-1);
+				if ((turn - global_event[k0].start_turn) / cfg.fps < global_event[k0].announcement_time) {
+					global_event[k0].announcement_time = (turn - global_event[k0].start_turn) / cfg.fps + t;
+					announce_global_event(k0);
 				}
 				return;
 			}
 			else if (prefix(messagelc, "/gefforward")) { /* skip some running time - C. Blue */
 				/* (use negative parameter to go back in time) (in seconds) */
-				int t = 60;
+				int t = 60, k0 = k - 1;
 
 				if (tk < 1 || k < 1 || k > MAX_GLOBAL_EVENTS) {
 					msg_format(Ind, "Usage: /gefforward 1..%d [<new T-x>]", MAX_GLOBAL_EVENTS);
 					return;
 				}
-				if (global_event[k-1].getype == GE_NONE) {
+				if (global_event[k0].getype == GE_NONE) {
 					msg_print(Ind, "No such event.");
 					return;
 				}
 				if (tk == 2) t = atoi(token[2]);
 
 				/* fix time overflow if set beyond actual end time */
-				if (global_event[k-1].end_turn &&
-				    (turn + t * cfg.fps >= global_event[k-1].end_turn)) { /* end at 1 turn before actual end for safety */
-					t = global_event[k-1].end_turn - turn - 1;
+				if (global_event[k0].end_turn &&
+				    (turn + t * cfg.fps >= global_event[k0].end_turn)) { /* end at 1 turn before actual end for safety */
+					t = global_event[k0].end_turn - turn - 1;
 				}
 
 				/* dance the timewarp */
-				global_event[k-1].start_turn = global_event[k-1].start_turn - cfg.fps * t;
-				if (global_event[k-1].end_turn)
-					global_event[k-1].end_turn = global_event[k-1].end_turn - cfg.fps * t;
+				global_event[k0].start_turn = global_event[k0].start_turn - cfg.fps * t;
+				if (global_event[k0].end_turn)
+					global_event[k0].end_turn = global_event[k0].end_turn - cfg.fps * t;
 				return;
 			}
 			else if (prefix(messagelc, "/gesign")) { /* admin debug command - sign up for a global event and start it right the next turn */
@@ -11826,7 +11834,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/qaquest") || prefix(messagelc, "/qaq")) { /* drop a quest a player is on */
-				int q = -1, p;
+				int q = -1, p, k0 = k - 1;
 
 				if (!tk) {
 					msg_print(Ind, "Usage: /qaquest [<quest>] <character name>");
@@ -11876,13 +11884,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "\377yThe quest number must be from 1 to 5!");
 					return;
 				}
-				if (p_ptr->quest_idx[k - 1] == -1) {
+				if (p_ptr->quest_idx[k0] == -1) {
 					msg_format(Ind, "\377y%s is not pursing a quest numbered %d.", p_ptr->name, k);
 					return;
 				}
-				msg_format(Ind, "%s is no longer pursuing the quest '%s'!", p_ptr->name, q_name + q_info[p_ptr->quest_idx[k - 1]].name);
-				j = p_ptr->quest_idx[k - 1];
-				p_ptr->quest_idx[k - 1] = -1;
+				msg_format(Ind, "%s is no longer pursuing the quest '%s'!", p_ptr->name, q_name + q_info[p_ptr->quest_idx[k0]].name);
+				j = p_ptr->quest_idx[k0];
+				p_ptr->quest_idx[k0] = -1;
 				/* give him 'quest done' credit if he cancelled it too late (ie after rewards were handed out)? */
 				if (q_info[j].quest_done_credit_stage <= quest_get_stage(Ind, j) && p_ptr->quest_done[j] < 10000) p_ptr->quest_done[j]++;
 				return;

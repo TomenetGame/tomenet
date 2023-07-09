@@ -1147,13 +1147,13 @@ void do_mimic_power_aux(int Ind, int dir) {
     case 45:
 	break;
 /* RF5_BA_NUKE */
-    case 32+14:
+    case 32 + 14:
 	sprintf(p_ptr->attacker, " invokes radiation for");
 	msg_print(Ind, "You invoke radiation.");
 	fire_ball(Ind, GF_NUKE, dir, (rlev + damroll(10, 6)) + rlev_bonus, 2, p_ptr->attacker);
 	break;
 /* RF5_BA_CHAO */
-    case 32+15:
+    case 32 + 15:
 	sprintf(p_ptr->attacker, " invokes raw chaos for");
 	msg_print(Ind, "You invoke raw chaos.");
 	fire_ball(Ind, GF_CHAOS, dir, (rlev * 2) + damroll(10, 10) + rlev_bonus, 4, p_ptr->attacker);
