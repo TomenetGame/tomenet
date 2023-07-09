@@ -9758,7 +9758,6 @@ static int Send_playerlist_aux(int Ind, int i, int mode) {
 
 	switch (mode) {
 	case 0: /* clear */
-		start = FALSE;
 		Packet_printf(&connp->c, "%c%d", PKT_PLAYERLIST, mode);
 		break;
 	case 1: /* transmit all eligible, implies 'clear' */
@@ -9777,17 +9776,11 @@ static int Send_playerlist_aux(int Ind, int i, int mode) {
 		break;
 	case 2: /* add name/update his info */
 		write_player_info(Ind, i, playerinfo);
-		if (playerinfo[0]) {
-			start = FALSE;
-			Packet_printf(&connp->c, "%c%d%s%s", PKT_PLAYERLIST, mode, Players[i]->name, playerinfo);
-		}
+		if (playerinfo[0]) Packet_printf(&connp->c, "%c%d%s%s", PKT_PLAYERLIST, mode, Players[i]->name, playerinfo);
 		break;
 	case 3: /* remove */
 		write_player_info(Ind, i, playerinfo);
-		if (playerinfo[0]) {
-			start = FALSE;
-			Packet_printf(&connp->c, "%c%d%s", PKT_PLAYERLIST, mode, Players[i]->name);
-		}
+		if (playerinfo[0]) Packet_printf(&connp->c, "%c%d%s", PKT_PLAYERLIST, mode, Players[i]->name);
 		break;
 	}
 
