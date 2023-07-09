@@ -443,7 +443,6 @@ static bool read_mangrc(cptr filename) {
 #ifdef USE_X11
 /* linux clients: save subwindow prefs to .tomenetrc - C. Blue */
 static void write_mangrc_aux(int t, cptr sec_name, FILE *cfg_file) {
-
 	if (t != 0) {
 		fputs(format("%s_Title\t%s\n", sec_name, ang_term_name[t]), cfg_file);
 		fputs(format("%s_Visible\t%c\n", sec_name, term_prefs[t].visible ? '1' : '0'), cfg_file);
