@@ -466,9 +466,9 @@ static void write_mangrc_aux(int t, cptr sec_name, FILE *cfg_file) {
 /* linux clients: save one line of subwindow prefs to .tomenetrc - C. Blue */
 static void write_mangrc_aux_line(int t, cptr sec_name, char *buf_org) {
 	char buf[1024], *ter_name = buf_org + strlen(sec_name);
-#if 0 /* we still want to save at least the new visibility state, if it was toggled via in-game menu */
+ #if 0 /* we still want to save at least the new visibility state, if it was toggled via in-game menu */
 	if (!c) return; /* invisible window? */
-#endif
+ #endif
 
 	/* no line that gets modified? then keep original! */
 	strcpy(buf, buf_org);
