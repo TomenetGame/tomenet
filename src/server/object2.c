@@ -10079,6 +10079,7 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 #ifdef DROP_ON_STAIRS_IN_EMERGENCY
 		     && !(allow_stairs && is_stair(c_ptr->feat))
 #endif
+		    && c_ptr->feat != FEAT_FLOOR_PERMANENT /* special IDDC_REFUGES floor */
 		     ))
 			continue;
 
