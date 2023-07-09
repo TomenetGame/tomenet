@@ -9769,14 +9769,14 @@ static int Send_playerlist_aux(int Ind, int i, int mode) {
 				start = FALSE;
 				Packet_printf(&connp->c, "%c%d", PKT_PLAYERLIST, mode);
 			}
-			Packet_printf(&connp->c, "%s%s", Players[i]->name, playerinfo);
+			Packet_printf(&connp->c, "%s%I", Players[i]->name, playerinfo);
 		}
 		/* terminate */
-		if (!start) Packet_printf(&connp->c, "%s%s", "", "");
+		if (!start) Packet_printf(&connp->c, "%s%I", "", "");
 		break;
 	case 2: /* add name/update his info */
 		write_player_info(Ind, i, playerinfo);
-		if (playerinfo[0]) Packet_printf(&connp->c, "%c%d%s%s", PKT_PLAYERLIST, mode, Players[i]->name, playerinfo);
+		if (playerinfo[0]) Packet_printf(&connp->c, "%c%d%s%I", PKT_PLAYERLIST, mode, Players[i]->name, playerinfo);
 		break;
 	case 3: /* remove */
 		write_player_info(Ind, i, playerinfo);

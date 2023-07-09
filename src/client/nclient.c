@@ -5776,7 +5776,7 @@ int Receive_playerlist(void) {
 		i = 0;
 		/* Receive complete list (initial login) */
 		while (TRUE) {
-			Packet_scanf(&rbuf, "%s%s", tmp_n, tmp);
+			Packet_scanf(&rbuf, "%s%I", tmp_n, tmp);
 			if (!tmp_n[0]) break;
 
 			if (i < MAX_PLAYERS_LISTED) {
@@ -5789,7 +5789,7 @@ int Receive_playerlist(void) {
 		break;
 	case 2:
 		/* Add/update a specific player */
-		Packet_scanf(&rbuf, "%s%s", tmp_n, tmp);
+		Packet_scanf(&rbuf, "%s%I", tmp_n, tmp);
 		for (i = 0; i < MAX_PLAYERS_LISTED; i++) {
 			/* update */
 			if (streq(playerlist_name[i], tmp_n)) {
