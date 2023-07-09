@@ -9972,7 +9972,7 @@ void do_cmd_options(void) {
 		} else if (k == 'T') {
 			if (!strcmp(ANGBAND_SYS, "gcu")) {
 				c_message_add("\377ySorry, windows are not available in the GCU (command-line) client.");
-				return;
+				continue;
 			}
 #ifdef WINDOWS
 			save_term_data_to_term_prefs();
