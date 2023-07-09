@@ -10074,6 +10074,8 @@ void dungeon(void) {
 					/* Remove all linebreaks or LUA will break */
 					c = str - 1;
 					while(*(++c)) if (*c == '\n' || *c == '\r') *c = ' ';
+					/* Trim trailing spaces */
+					while (c[strlen(c) - 1] == ' ') c[strlen(c) - 1] = 0;
 
 					open_parenthesis = strchr(str, '(');
 
