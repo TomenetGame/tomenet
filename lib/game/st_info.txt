@@ -1582,3 +1582,13 @@ W:24
 # End of pseudo town stores
 ##################################################################################################
 
+# She's a supplier of the black market, and she's bound for town to deliver the goods, so she's not selling you anything!
+# However, she might buy some of your stuff! (Kurzel's lore idea^^)
+N:80:Merchant heading up
+# note: having action 3 (examine) is pointless, as dungeon merchants currently don't store items that you sell them
+A:0:0:1:0:0:0
+O:39:40:41:70:40:41
+G:+:D
+F:BUY50
+W:120
+#todo maybe: listen to rumour :-p

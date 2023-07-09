@@ -1462,6 +1462,47 @@ static cptr st_info_flags1[] = {
 	"SELL67",
 	"ZEROLEVEL"
 };
+static cptr st_info_flags2[] = {
+	"BUY50",
+	"",
+	"",
+	"",
+
+	"",
+	"",
+	"",
+	"",
+
+	"",
+	"",
+	"",
+	"",
+
+	"",
+	"",
+	"",
+	"",
+
+	"",
+	"",
+	"",
+	"",
+
+	"",
+	"",
+	"",
+	"",
+
+	"",
+	"",
+	"",
+	"",
+
+	"",
+	"",
+	"",
+	""
+};
 
 /*** Initialize from ascii template files ***/
 
@@ -6486,6 +6527,10 @@ static errr grab_one_store_flag(store_info_type *st_ptr, cptr what) {
 	for (i = 0; i < 32; i++) {
 		if (streq(what, st_info_flags1[i])) {
 			st_ptr->flags1 |= (1U << i);
+			return(0);
+		}
+		if (streq(what, st_info_flags2[i])) {
+			st_ptr->flags2 |= (1U << i);
 			return(0);
 		}
 	}

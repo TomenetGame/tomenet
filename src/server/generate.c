@@ -9608,7 +9608,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 #ifdef IRONDEEPDIVE_SANCTUARIES
 	/* Do this before placing a dungeon boss, so the boss doesn't accidentally get steamrolled and erased */
-	dun->l_ptr->sanc_x = 0;
+	dun->l_ptr->refuge_x = 0;
 	if (in_irondeepdive(wpos) && !town && !(dun_lev % 10)) {
 		int x1 = rand_int(dun->l_ptr->wid - 2 - 25) + 1, y1 = rand_int(dun->l_ptr->hgt - 2 - 17) + 1;
 		if (x1 < dun->l_ptr->wid - 1 - 25 && y1 < dun->l_ptr->hgt - 1 - 17) {
@@ -9623,12 +9623,12 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 			x2 = x1;
 			y2 = y1;
-			//i = process_dungeon_file("t_sanctuary.txt", wpos, &y1, &x1, 17, 25, TRUE);
-			i = process_dungeon_file("t_sanctuary.txt", wpos, &y1, &x1, dun->l_ptr->hgt - 1, dun->l_ptr->wid - 1, TRUE);
-			dun->l_ptr->sanc_x = x2 + 14;
-			dun->l_ptr->sanc_y = y2 + 8;
+			//i = process_dungeon_file("t_refuge.txt", wpos, &y1, &x1, 17, 25, TRUE);
+			i = process_dungeon_file("t_refuge.txt", wpos, &y1, &x1, dun->l_ptr->hgt - 1, dun->l_ptr->wid - 1, TRUE);
+			dun->l_ptr->refuge_x = x2 + 14;
+			dun->l_ptr->refuge_y = y2 + 8;
 		} else i = -99;
-		s_printf("IDDC-Sanctuary %d (%d,%d) [%d,%d] <%d,%d> -> %d\n", dun_lev, x1, y1, dun->l_ptr->wid, dun->l_ptr->hgt, dun->l_ptr->sanc_x, dun->l_ptr->sanc_y, i);
+		s_printf("IDDC-refuge %d (%d,%d) [%d,%d] <%d,%d> -> %d\n", dun_lev, x1, y1, dun->l_ptr->wid, dun->l_ptr->hgt, dun->l_ptr->refuge_x, dun->l_ptr->refuge_y, i);
 	}
 #endif
 

@@ -792,14 +792,14 @@ static void wr_extra(int Ind) {
 	tmp8u |= (p_ptr->event_participated ? 0x10 : 0x0);
 	tmp8u |= (p_ptr->IDDC_found_rndtown ? 0x20 : 0x0); //superfluous?
 	tmp8u |= (p_ptr->IDDC_logscum ? 0x40 : 0x0); //superfluous?
-	/* Save if we're currently in an IDDC sanctuary */
+	/* Save if we're currently in an IDDC refuge */
 	if (in_irondeepdive(&p_ptr->wpos)) {
 		cave_type **zcave = getcave(&p_ptr->wpos);
 
 		if (zcave) {
 			cave_type *c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
-			if (c_ptr->info & CAVE_SANCTUARY) tmp8u |= 0x80;
+			if (c_ptr->info & CAVE_REFUGE) tmp8u |= 0x80;
 		}
 	}
 	wr_byte(tmp8u);
@@ -1240,9 +1240,9 @@ static void wr_floor(struct worldpos *wpos) {
 			wr_u32b(l_ptr->flags2);
 			wr_byte(l_ptr->hgt);
 			wr_byte(l_ptr->wid);
-			/* IDDC_SANCTUARIES */
-			wr_byte(l_ptr->sanc_x);
-			wr_byte(l_ptr->sanc_y);
+			/* IDDC_REFUGES */
+			wr_byte(l_ptr->refuge_x);
+			wr_byte(l_ptr->refuge_y);
 		}
 	}
 

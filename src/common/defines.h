@@ -1680,10 +1680,13 @@
 #define SF1_SPECIAL		0x08000000L	/* Store doesn't have an inventory but prints arbitrary text to screen instead */
 #define SF1_BUY67		0x10000000L	/* Shop buys for 67% of value */
 #define SF1_NO_DISCOUNT1	0x20000000L	/* no 20+% discounts even */
-#define SF1_SELL67		0x40000000L	/* Store sells for 67% of value */
+#define SF1_SELL67		0x40000000L	/* Store sells for 67% of value (can be combined with BUY50, for 1/3 sell value) */
 #define SF1_ZEROLEVEL		0x80000000L	/* all items are level 0 and can't be traded */
 
 #define SF1_NO_DISCOUNT3	(SF1_NO_DISCOUNT1 | SF1_NO_DISCOUNT2)	/* Hack: Reduce discounts somewhat */
+
+#define SF2_BUY50		0x00000001L	/* Shop buys for 50% of value (can be combined with BUY66, for 1/3 sell value) */
+
 
 /* This seems to be bad, but backported once anyway;
  * consider removing them later */
@@ -4572,7 +4575,7 @@
 
 #define CAVE_NO_MONSTER	0x10000000	/* protected from monster-spawn + cannot be monster teleport/summon/movement destination */
 #define CAVE_SLIPPERY	0x20000000	/* Some oil on the ground made this grid slippery (compare FEAT_ICE maybe) */
-#define CAVE_SANCTUARY	0x40000000	/* IDDC sanctuary grid */
+#define CAVE_REFUGE	0x40000000	/* IDDC refuge grid */
 
 /* Hack for p_ptr->cave_flag, which is only 1 byte in size: */
 #define CAVE_AOVL	CAVE_TEMP	/* Mark grid if it displays an overlay visual that could get auto-updated, ie monsters: A monster can move away automatically, rendering the overlay out of date. */

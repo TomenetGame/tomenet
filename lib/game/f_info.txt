@@ -999,7 +999,7 @@ G:>:w
 F:FLOOR | PERMANENT | NOTICE | SUPPORT_LIGHT | REMEMBER | CAN_RUN
 D:0:A staircase leading out
 
-# Permanent floor, added for t_sanctuary.txt, just to prevent monster spawn (cave_naked_bold() avoids PERMANENT)
+# Permanent floor, added for t_refuge.txt, just to prevent monster spawn (cave_naked_bold() avoids PERMANENT)
 N:137:open floor
 G:.:w
 M:1

@@ -1844,7 +1844,7 @@ static bool rd_extra(int Ind) {
 		p_ptr->event_participated = tmp8u & 0x10;
 		p_ptr->IDDC_found_rndtown = tmp8u & 0x20; //superfluous?
 		p_ptr->IDDC_logscum = tmp8u & 0x40; //superfluous?
-		p_ptr->IDDC_sanctuary = tmp8u & 0x80;
+		p_ptr->IDDC_refuge = tmp8u & 0x80;
 	} else if (p_ptr->max_exp) p_ptr->event_participated = TRUE;
 	//these are zero if read from old save file < 4,9,0 :
 	rd_u16b(&p_ptr->event_participated_flags);
@@ -2780,8 +2780,8 @@ static errr rd_floor(void) {
 
 		if (!s_older_than(4, 9, 2)) {
 			/* IDDC_SANCTUARIES */
-			rd_byte(&l_ptr->sanc_x);
-			rd_byte(&l_ptr->sanc_y);
+			rd_byte(&l_ptr->refuge_x);
+			rd_byte(&l_ptr->refuge_y);
 		}
 	}
 

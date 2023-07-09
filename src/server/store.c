@@ -325,13 +325,16 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) price = price_poly_ring(Ind, o_ptr, 0);
 
 		/* Mega-Hack -- Black market sucks */
-		if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) price /= 4;
+		if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) price = (price + 3) / 4;
 
 		/* Seasoned Tradesman et al don't pay very much either, they know the customers can't disagree.. */
-		if (st_info[st_ptr->st_idx].flags1 & SF1_BUY67) price = (price * 2) / 3;
+		if (st_info[st_ptr->st_idx].flags1 & SF1_BUY67) price = (price * 2 + 1) / 3;
+
+		/* Seasoned Tradesman et al don't pay very much either, they know the customers can't disagree.. */
+		if (st_info[st_ptr->st_idx].flags2 & SF2_BUY50) price = (price + 1) / 2;
 
 		/* You're not a welcomed customer.. */
-		if (p_ptr->tim_blacklist) price = price / 4;
+		if (p_ptr->tim_blacklist) price = (price + 3) / 4;
 	}
 
 	/* Shop is selling */
