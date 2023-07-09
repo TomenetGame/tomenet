@@ -1895,7 +1895,7 @@ struct dun_level {
 
 	int fake_town_num;	/* for dungeon stores: which town we abuse the stores from */
 
-	/* for IDDC_SANCTUARIES */
+	/* for IDDC_REFUGES */
 	byte refuge_x, refuge_y;
 
 	/* for obtaining statistical IDDC information: */

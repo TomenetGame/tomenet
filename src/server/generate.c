@@ -9606,7 +9606,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			zcave[y][x].feat = FEAT_PERM_FILL;
 #endif
 
-#ifdef IRONDEEPDIVE_SANCTUARIES
+#ifdef IDDC_REFUGES
 	/* Do this before placing a dungeon boss, so the boss doesn't accidentally get steamrolled and erased */
 	dun->l_ptr->refuge_x = 0;
 	if (in_irondeepdive(wpos) && !town && !(dun_lev % 10)) {

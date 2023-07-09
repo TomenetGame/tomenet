@@ -2779,7 +2779,7 @@ static errr rd_floor(void) {
 		rd_byte(&l_ptr->wid);
 
 		if (!s_older_than(4, 9, 2)) {
-			/* IDDC_SANCTUARIES */
+			/* IDDC_REFUGES */
 			rd_byte(&l_ptr->refuge_x);
 			rd_byte(&l_ptr->refuge_y);
 		}
