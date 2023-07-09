@@ -4777,13 +4777,7 @@ void calc_boni(int Ind) {
 	}
 
 	if (p_ptr->cloaked) {
-#if 0 /* for now, light is simply dimmed in cloaking mode, instead of breaking it. */
-	/*  might need to give rogues a special ability to see in the dark like vampires. or not, pft. - C. Blue */
-	/* cannot be cloaked if wielding a (real, not vampire vision) light source */
-		if (p_ptr->cur_lite) break_cloaking(Ind, 0);
-#else
-		if (p_ptr->cur_lite) p_ptr->cur_lite = 1; /* dim it */
-#endif
+		if (p_ptr->cur_lite) p_ptr->cur_lite = 1; /* dim it greatly */
 	}
 	if (p_ptr->cloaked == 1) {
 		p_ptr->pspeed -= 10 - get_skill_scale(p_ptr, SKILL_SNEAKINESS, 3);
