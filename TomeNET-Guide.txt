@@ -752,10 +752,11 @@ V       V       enter/leave 'cloaking mode'. This can only be used by rogues.
                 The duration of cloaking being weakened will vary depending on
                 which action you performed.
 
-                Cloaking will always reduce your light radius to 1. It will in
-                turn increase your searching, greatly increase your stealth,
-                but decrease your speed. Sneakiness skill may very slightly
-                reduce the speed decrease.
+                Cloaking will always reduce your light radius to 1. Darkvision
+                however is not affected by this and retains its normal radius.
+                Cloaking will in turn increase your searching, greatly increase
+                your stealth, but decrease your speed. Sneakiness skill may
+                very slightly reduce the speed decrease.
 
                 Note: Cloaking has no effect on shoplifting; it breaks on
                 entering any shop.
