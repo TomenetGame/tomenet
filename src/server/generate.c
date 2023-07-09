@@ -9611,6 +9611,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	dun->l_ptr->refuge_x = 0;
 	if (in_irondeepdive(wpos) && !town && !(dun_lev % 10)) {
 		int x1 = rand_int(dun->l_ptr->wid - 2 - 25) + 1, y1 = rand_int(dun->l_ptr->hgt - 2 - 17) + 1;
+
 		if (x1 < dun->l_ptr->wid - 1 - 25 && y1 < dun->l_ptr->hgt - 1 - 17) {
 			int x2, y2;
 
