@@ -1900,7 +1900,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 }
 
 void write_player_info(int Ind, int i, char *pinfo) {
-	char buf[MSG_LEN], *c1, *c2;
+	char buf[MSG_LEN], buf2[MSG_LEN], *c;
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	int k;
 
@@ -1957,41 +1957,44 @@ void write_player_info(int Ind, int i, char *pinfo) {
 		my_fclose(fff);
 		return;
 	}
-	strcat(pinfo, buf);
 
-	if (my_fgets(fff, buf, MSG_LEN, FALSE)) {
+	if (my_fgets(fff, buf2, MSG_LEN, FALSE)) {
 		my_fclose(fff);
 		return;
 	}
-	/* +2: Trim left side a bit, to omit 'I'/'O' tags for invalid/outdated, or the empty spaces if none of both. */
-	if (buf[2] != ' ') strcat(pinfo, buf + 4); /* This pos would have a colour code if invalid or outdated, ie 'y' or 'D' */
-	else strcat(pinfo, buf + 2);
 
-#if 0
-	//if ((c = strchr(pinfo, '('))) *c = 0; /* Cut off at hostname, line gets too long */
-	if ((c = strchr(pinfo, ',')) && (c = strchr(c + 1, ','))) *c = 0; /* Already cut off at depth */
-	strcpy(buf, pinfo);
-	c = strchr(buf + (c - pinfo), ' ');
-	strcat(pinfo, c);
-#else
+
+	/* Process line 1: */
+
 	/* Truncate trailing '(AFK)' state */
-	if ((c1 = strstr(pinfo, "(AFK)"))) *c1 = 0;
-	/* If before the 2nd comma there's a colour coded asterisk, continue normally. Else crop the range from 2nd comma till before colour code. */
-	c1 = strchr(pinfo, ',');
-	if (c1) c1 = strchr(c1 + 1, ',');
-	c2 = strchr(pinfo, '*');
-	if (!c2) {
-		if (c1) *c1 = 0;
-	} else {
-		if (c1) {
-			strcpy(buf, c2 - 2);
-			*c1 = ' ';
-			strcpy(c1 + 1, buf);
-		}
+	if ((c = strstr(buf, " (AFK)"))) *c = 0;
+
+	/* If there's a 2nd comma ie more info, just trim/discard all of it */
+	c = strchr(buf, ',');
+	if (c && (c = strchr(c + 1, ','))) *c = 0;
+
+
+	/* Process line 2: */
+
+	/* Trim left side a bit, to omit 'I'/'O' tags for invalid/outdated, or the empty spaces if none of both. */
+	c = buf2 + 1; //starts on a space;
+	if (*c == '\377') c += 3; // \yI
+	else c++; // make sure we start on only ONE space
+	if (*c == '\377') { // \DO or \oT (mutually exclusive,as 'T' is not applied depending on VERSION_BUILD or TEST flag, but just on version being > than 'latest')
+		c += 2; // pseudo-move the space from the beginning of the line to our location, so we always come out of these two 'if' clauses with starting on a space.. -_-' */
+		*c = ' ';
 	}
+
+
+	/* Build final line from line 1 and 2: */
+
+	/* Actually start with the mode/char icon part, then follow up with the first line, finally the rest of the 2nd line */
+	strncpy(pinfo, c, 7);
+	strcpy(pinfo + 7, buf);
+	strcat(pinfo, c + 7);
+
 	/* terminate after the "(<hostname>)" */
-	if ((c1 = strchr(pinfo, ')'))) *(c1 + 1) = 0;
-#endif
+	if ((c = strchr(pinfo, ')'))) *(c + 1) = 0;
 
 	my_fclose(fff);
 }
