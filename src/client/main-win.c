@@ -1126,7 +1126,7 @@ static void save_prefs_aux(term_data *td, cptr sec_name) {
  *
  * We assume that the windows have all been initialized
  */
-static void save_prefs(void) {
+void save_prefs(void) {
 #if defined(USE_GRAPHICS) || defined(USE_SOUND)
 	char       buf[32];
 #endif
@@ -3508,6 +3508,24 @@ static void hook_plog(cptr str) {
 	if (str) MessageBox(data[0].w, str, "Warning", MB_OK);
 }
 
+
+void save_term_data_to_term_prefs(void) {
+	RECT rc;
+	int i;
+
+	/* Main window */
+	GetWindowRect(data[0].w, &rc);
+	data[0].pos_x = rc.left;
+	data[0].pos_y = rc.top;
+	/* Sub-Windows */
+	for (i = MAX_TERM_DATA - 1; i >= 1; i--) {
+		GetWindowRect(data[i].w, &rc);
+		data[i].pos_x = rc.left;
+		data[i].pos_y = rc.top;
+	}
+
+	save_prefs();
+}
 
 /*
  * Quit with error message -- See "z-util.c"

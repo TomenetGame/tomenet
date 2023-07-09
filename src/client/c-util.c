@@ -9821,6 +9821,10 @@ void do_cmd_options(void) {
 		l++;
 		Term_putstr(2, l++, -1, TERM_WHITE, "(\377os\377w/\377oS\377w)     Save all options & flags / Save to global.opt file (account-wide)");
 		Term_putstr(2, l++, -1, TERM_WHITE, "(\377ol\377w)       Load all options & flags");
+		if (strcmp(ANGBAND_SYS, "gcu"))
+			Term_putstr(2, l++, -1, TERM_WHITE, "(\377oT\377w)       Save current window positions and size to current config file");
+		else
+			Term_putstr(2, l++, -1, TERM_L_DARK, "(\377oT\377D)       Save current window positions and size - NOT AVAILABLE ON GCU");
 
 		l++;
 		Term_putstr(2, l++, -1, TERM_L_DARK, "----------------------------------------------------------------------------");
@@ -9965,6 +9969,21 @@ void do_cmd_options(void) {
 
 			/* Dump the macros */
 			(void)options_dump(tmp);
+		} else if (k == 'T') {
+			if (!strcmp(ANGBAND_SYS, "gcu")) {
+				c_message_add("\377ySorry, windows are not available in the GCU (command-line) client.");
+				return;
+			}
+#ifdef WINDOWS
+			save_term_data_to_term_prefs();
+			c_msg_format("\377wSaved current configuration to %s.", ini_file);
+#elif USE_X11
+			all_term_data_to_term_prefs();
+			write_mangrc(FALSE, FALSE, FALSE);
+			c_msg_format("\377wSaved current configuration to %s.", mangrc_filename);
+#else
+			c_msg_print("\377wCannot save configuration from menu, please quit to save.");
+#endif
 		}
 		/* Load a pref file */
 		else if (k == 'l') {

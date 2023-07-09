@@ -1035,6 +1035,11 @@ extern int stricmp(cptr a, cptr b);
 /* extern void main(void); */
 #endif
 
+#ifdef USE_X11
+/* main-x11.c */
+void all_term_data_to_term_prefs(void);
+#endif
+
 #ifdef WINDOWS
 /* main-win.c */
 /* extern int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, ...); */
@@ -1053,6 +1058,8 @@ extern void set_palette(byte c, byte r, byte g, byte b);
 extern void get_palette(byte c, byte *r, byte *g, byte *b);
 extern void refresh_palette(void);
 extern void store_audiopackfolders(void);
+extern void save_term_data_to_term_prefs(void);
+extern void save_prefs(void);
 #endif
 extern void store_crecedentials(void);
 

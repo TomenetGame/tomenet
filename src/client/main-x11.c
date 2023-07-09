@@ -1843,6 +1843,16 @@ static void term_data_to_term_prefs(int term_idx) {
 	}
 }
 
+/* For saving all window layout while client is still running (from within = menu) */
+void all_term_data_to_term_prefs(void) {
+	int n;
+
+	for (n = 0; n < ANGBAND_TERM_MAX; n++) {
+		if (!term_get_visibility(n)) continue;
+		term_data_to_term_prefs(n);
+	}
+}
+
 /*
  * Handle destruction of a term.
  * Here we should properly destroy all windows and resources for terminal.
@@ -1850,13 +1860,12 @@ static void term_data_to_term_prefs(int term_idx) {
  */
 static void Term_nuke_x11(term *t) {
 	term_data *td = (term_data*)(t->data);
+	int term_idx;
 
 	/* special hack: this window was invisible, but we just toggled it to become visible on next client start. */
-	if (!td->fnt) {
-		return;
-	}
+	if (!td->fnt) return;
 
-	int term_idx = term_data_to_term_idx(td);
+	term_idx = term_data_to_term_idx(td);
 	if (term_idx < 0) {
 		fprintf(stderr, "Error getting terminal index from term_data\n");
 		return;
