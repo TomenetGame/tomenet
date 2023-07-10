@@ -1678,9 +1678,12 @@ static int Net_packet(void) {
 #endif	/* DEBUG_LEVEL */
 		if (receive_tbl[type] == NULL) {
 			errno = 0;
-#ifndef WIN32 /* suppress annoying msg boxes in windows clients, when unknown-packet-errors occur. */
-			plog(format("Received unknown packet type (%d, %d), dropping",
-				type, prev_type));
+#if 0
+ #ifndef WIN32 /* suppress annoying msg boxes in windows clients, when unknown-packet-errors occur. -- why just on Windows? */
+			//plog(format("Received unknown packet type (%d, %d), dropping", type, prev_type));
+ #endif
+#else
+			c_msg_format("\377RReceived unknown packet type (%d, %d), dropping", type, prev_type);
 #endif
 			/* hack: redraw after a packet was dropped, to make sure we didn't miss something important */
 			Send_redraw(0);
