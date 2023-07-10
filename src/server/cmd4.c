@@ -1996,6 +1996,9 @@ void write_player_info(int Ind, int i, char *pinfo) {
 	/* terminate after the "(<hostname>)" */
 	if ((c = strchr(pinfo, ')'))) *(c + 1) = 0;
 
+	/* Ensure conforming to %I specs of Send_playerlist() aka same size as MAX_CHARS_WIDE, used over there */
+	pinfo[ONAME_LEN - 1] = 0;
+
 	my_fclose(fff);
 }
 
