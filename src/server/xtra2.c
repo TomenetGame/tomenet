@@ -10368,18 +10368,21 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 	p_ptr->safe_sane = FALSE;
 
 #if (MAX_PING_RECVS_LOGGED > 0)
-	/* Print last ping reception times */
-	struct timeval now;
-	gettimeofday(&now, NULL);
-	s_printf("PING_RECEIVED:");
-	/* Starting from latest */
-	for (i = 0; i < MAX_PING_RECVS_LOGGED; i++) {
-		j = (p_ptr->pings_received_head - i + MAX_PING_RECVS_LOGGED) % MAX_PING_RECVS_LOGGED;
-		if (p_ptr->pings_received[j].tv_sec) {
-			s_printf(" %s", timediff(&p_ptr->pings_received[j], &now));
+	{
+		/* Print last ping reception times */
+		struct timeval now;
+
+		gettimeofday(&now, NULL);
+		s_printf("PING_RECEIVED:");
+		/* Starting from latest */
+		for (i = 0; i < MAX_PING_RECVS_LOGGED; i++) {
+			j = (p_ptr->pings_received_head - i + MAX_PING_RECVS_LOGGED) % MAX_PING_RECVS_LOGGED;
+			if (p_ptr->pings_received[j].tv_sec) {
+				s_printf(" %s", timediff(&p_ptr->pings_received[j], &now));
+			}
 		}
+		s_printf("\n");
 	}
-	s_printf("\n");
 #endif
 
 	/* Turn him into a ghost */
@@ -10387,7 +10390,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 #ifdef USE_SOUND_2010
 	handle_music(Ind); //possibly ghostly music!
 #endif
-	/* Prevent accidental floating up/downwards depending on client option. - C. Blue */
+	/* Prevent accidental floating up/downwards as a ghost, thereby losing the floor, depending on client option. - C. Blue */
 	if (p_ptr->safe_float) p_ptr->safe_float_turns = 5;
 
 	/* Hack -- drop bones :) */
