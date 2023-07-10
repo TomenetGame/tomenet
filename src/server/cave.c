@@ -9160,30 +9160,36 @@ void slippery_floor(int oily, struct worldpos *wpos, int x, int y) {
 	c_ptr = &zcave[y][x];
 
 	switch (c_ptr->feat) {
+
+
 	/* easily affected */
-	case FEAT_ICE: //already slippery anyway.. non-temporarily even
+	case FEAT_ICE: //already slippery anyway.. non-temporarily even. However, should it get melted, the slipperyness will remain!
 	case FEAT_FLOOR:
 	case FEAT_LOOSE_DIRT:
 	case FEAT_IVY: //leaves should be slippery anyway
 	case FEAT_FLOWER:
-		if (oily < 4500) return; //brass lantern that is lowish on fuel
+	case FEAT_GRASS:
+		c_ptr->slippery += oily / 4;
 		break;
+
 	/* not easily affected */
 	case FEAT_CROP:
 	case FEAT_ASH:
 	case FEAT_SNOW:
 	case FEAT_DIRT:
 	case FEAT_WEB:
-	case FEAT_GRASS:
-		if (oily < 7500) return; //oil flask
+		c_ptr->slippery += oily / 7;
 		break;
+
 	/* unaffected */
-	default: /* Also spare staircases for now >_> */
+	default: /* Also spare staircases/gates for now >_> */
+	//water, lava of course unaffected
 	//case FEAT_MUD:
 	//case FEAT_SAND:
 	//case FEAT_DARK_PIT:
-		return;
+		break;
 	}
 
-	c_ptr->info |= CAVE_SLIPPERY;
+	/* Cap (this/1000 times) */
+	if (c_ptr->slippery > 3000) c_ptr->slippery = 3000;
 }

@@ -10191,7 +10191,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 
 	/* Occasionally 'slip' on icy floor, similar to player in move_player() */
-	if ((c_ptr->feat == FEAT_ICE || (c_ptr->info & CAVE_SLIPPERY)) &&
+	if ((c_ptr->feat == FEAT_ICE || c_ptr->slippery) &&
 	    !(m_ptr->r_idx == 52 || m_ptr->r_idx == 141 || m_ptr->r_idx == 179 || m_ptr->r_idx == 224) &&
 	    !(r_ptr->flags7 & RF7_CAN_FLY) && !(r_ptr->flags2 & RF2_PASS_WALL) &&
 	    /* Except for /animals/monsters/ that are used to cold, especially Yeti and co */
@@ -10200,8 +10200,8 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		if (magik(70 - r_ptr->level)) {
 			force_random_movement = TRUE;
 			/* Oily floor */
-			if (c_ptr->info & CAVE_SLIPPERY) {
-				c_ptr->info &= ~CAVE_SLIPPERY;
+			if (c_ptr->slippery) {
+				c_ptr->slippery--;
 				msg_print_near_monster(m_idx, "slips on the oily floor.");
 				/* Additionally confuse for a moment */
 				if (m_ptr->confused < 3 &&

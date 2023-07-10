@@ -637,6 +637,8 @@ struct cave_type {
 #endif
 
 	byte temp;		/* Temporary value for cave building process in generate_hmap() */
+
+	u16b slippery;		/* Slippery for this/1000 turns */
 };
 
 /* ToME parts, arranged */
