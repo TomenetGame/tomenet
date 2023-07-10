@@ -740,6 +740,9 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 #endif
 		if (old_value < 100 && new_value >= 100)
 			msg_print(Ind, "\374\377GYou learn how to use the fighting technique 'Steam Blast'!");
+		if (old_value < 110 && new_value >= 110
+		    && get_skill(p_ptr, SKILL_DIVINATION) < 50) //auto-id
+			msg_print(Ind, "\374\377GYou got better at recognizing the power of unknown traps.");
 		break;
 	case SKILL_DEVICE:
 		if (old_value < 20 && new_value >= 20 && p_ptr->newbie_hints)
