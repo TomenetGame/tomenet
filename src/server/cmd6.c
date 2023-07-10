@@ -1931,6 +1931,9 @@ void do_cmd_empty_potion(int Ind, int slot) {
 #else
 		p_ptr->window |= PW_INVEN;
 #endif
+
+		/* Combine / Reorder the pack (later) */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 		return;
 	}
 
