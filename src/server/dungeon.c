@@ -97,8 +97,11 @@ static void process_weather_control(void);
 /*
  * Return a "feeling" (or NULL) about an item.  Method 1 (Heavy).
  */
+
+/* Feel 'combat' strongly (heavy) - always gives a result! */
 cptr value_check_aux1(object_type *o_ptr) {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+	u32b v;
 
 	/* Artifacts */
 	if (artifact_p(o_ptr)) {
@@ -114,29 +117,20 @@ cptr value_check_aux1(object_type *o_ptr) {
 		/* Hack for Stormbringer, so it doesn't show as "worthless" */
 		if (o_ptr->name2 == EGO_STORMBRINGER) return("terrible");
 
-#if 0
-		/* Cursed/Broken */
-		if (cursed_p(o_ptr) || broken_p(o_ptr)) return("worthless");
-#else
 		/* Cursed items */
 		if (cursed_p(o_ptr)) return("cursed");
 
 		/* Broken items */
 		if (broken_p(o_ptr)) return("worthless");
-#endif
 
-		/* Normal */
+		v = object_value(0, o_ptr);
+		if (!v) return("worthless");
 
-		/* All exploding or ego-ammo is excellent.. */
-		if (is_ammo(o_ptr->tval) && (o_ptr->pval || o_ptr->name2 || o_ptr->name2b)) {
-			/* ..except for zero-money ego: Backbiting ammo! */
-			if (o_ptr->name2 && !e_info[o_ptr->name2].cost) return("worthless");
-			if (o_ptr->name2b && !e_info[o_ptr->name2b].cost) return("worthless");
-			return("excellent");
-		}
+		/* Exploding ammo counts as pseudo-ego and is excellent */
+		if (is_ammo(o_ptr->tval) && o_ptr->pval) return("excellent");
 
-		if (!object_value(0, o_ptr)) return("worthless");
-		if (object_value(0, o_ptr) < 4000) return("good");
+		if (v < 4000) return("good");
+
 		return("excellent");
 	}
 
@@ -144,14 +138,23 @@ cptr value_check_aux1(object_type *o_ptr) {
 	if (cursed_p(o_ptr)) return("cursed");
 
 	/* Broken items */
-	if (broken_p(o_ptr)) return("broken");
+	if (broken_p(o_ptr)) return("worthless");
+
+	/* All exploding or ego-ammo is excellent.. */
+	if (is_ammo(o_ptr->tval) && (o_ptr->pval || o_ptr->name2 || o_ptr->name2b)) {
+		/* ..except for zero-money ego: Backbiting ammo! */
+		if (o_ptr->name2 && !e_info[o_ptr->name2].cost) return("worthless");
+		if (o_ptr->name2b && !e_info[o_ptr->name2b].cost) return("worthless");
+		return("excellent");
+	}
 
 	/* Valid "tval" codes */
 	switch (o_ptr->tval) {
-	case TV_DIGGING:
 	case TV_BLUNT:
 	case TV_POLEARM:
 	case TV_SWORD:
+	case TV_AXE:
+
 	case TV_BOOTS:
 	case TV_GLOVES:
 	case TV_HELM:
@@ -161,12 +164,16 @@ cptr value_check_aux1(object_type *o_ptr) {
 	case TV_SOFT_ARMOR:
 	case TV_HARD_ARMOR:
 	case TV_DRAG_ARMOR:
-	case TV_AXE:
+
+	case TV_DIGGING:
+
 	case TV_SHOT:
 	case TV_ARROW:
 	case TV_BOLT:
 	case TV_BOW:
 	case TV_BOOMERANG:
+
+	case TV_TRAPKIT:
 		/* Good "armor" bonus */
 		if ((o_ptr->to_a > k_ptr->to_a) &&
 		    (o_ptr->to_a > 0)) return("good");
@@ -186,24 +193,30 @@ cptr value_check_aux1(object_type *o_ptr) {
 	return("average");
 }
 
+/* Feel 'magic' strongly (heavy) - always gives a result! */
 cptr value_check_aux1_magic(object_type *o_ptr) {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
-
+	u32b v;
 
 	switch (o_ptr->tval) {
 	/* Scrolls, Potions, Wands, Staves and Rods */
 	case TV_SCROLL:
 		/* hack for cheques */
-		if (k_ptr->sval == SV_SCROLL_CHEQUE) return("good");
+		if (k_ptr->sval == SV_SCROLL_CHEQUE) {
+			v = ps_get_cheque_value(o_ptr);
+			if (v < 10000) return("good");
+			return("excellent");
+		}
 		/* Fall through */
 	case TV_POTION:
 	case TV_POTION2:
+
 	case TV_WAND:
 	case TV_STAFF:
 	case TV_ROD:
 	case TV_ROD_MAIN:
 		/* "Cursed" scrolls/potions have a cost of 0 */
-		if (k_ptr->cost == 0) return("bad");//"terrible");
+		if (k_ptr->cost == 0) return("bad");
 
 		/* Artifacts */
 		if (artifact_p(o_ptr)) return("special");
@@ -220,36 +233,57 @@ cptr value_check_aux1_magic(object_type *o_ptr) {
 		/* Enchant Armor, *Identify*, Restore Stat, etc. */
 		if (k_ptr->cost < 4000) return("good");
 
-		/* Acquirement, Deincarnation, Strength, Blood of Life, ... */
-		if (k_ptr->cost >= 4000) return("excellent");
+		/* Acquirement, Artifact Creation... */
+		return("excellent");
 
-		break;
+	case TV_RING:
+	case TV_AMULET:
+		/* Artifacts */
+		if (artifact_p(o_ptr)) {
+			/* Cursed/Broken */
+			if (cursed_p(o_ptr) || broken_p(o_ptr)) return("terrible");
+
+			/* Normal */
+			return("special");
+		}
+
+		/* Cursed items */
+		if (cursed_p(o_ptr)) return("cursed");
+
+		/* Broken items -- doesn't exist for jewelry though, as this is an ego power, not in k_info */
+		if (broken_p(o_ptr)) return("worthless");
+
+		v = object_value(0, o_ptr);
+		if (!v) return("bad");
+		else if (v <= 20) return("worthless"); //adornment
+		else if (v < 1000) return("average");
+		else if (v < 10000) return("good"); //jewelry tends to be expensivo in general
+		return("excellent");
+
 	/* Food */
 	case TV_FOOD:
 		/* "Cursed" food */
-		if (k_ptr->cost == 0) return("bad");//"terrible");
+		if (k_ptr->cost == 0) return("bad");
 
 		/* Artifacts */
 		if (artifact_p(o_ptr)) return("special");
 
-		/* Normal food (no magical properties) */
-		if (k_ptr->cost <= 10) return("average");
-
-		/* Everything else is good */
+		/* Food with magical properties */
 		if (k_ptr->cost > 10) return("good");
 
 		break;
 	}
 
-	/* No feeling */
-//	return("");
-	return(NULL);
+	/* Default */
+	return("average");
 }
 
 
 /*
  * Return a "feeling" (or NULL) about an item.  Method 2 (Light).
  */
+
+/* Feel 'combat' lightly - 'average' in heavy becomes just <no result> here! */
 cptr value_check_aux2(object_type *o_ptr) {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
@@ -257,23 +291,26 @@ cptr value_check_aux2(object_type *o_ptr) {
 	if (cursed_p(o_ptr)) return("cursed");
 
 	/* Broken items (all of them) */
-	if (broken_p(o_ptr)) return("broken");
+	if (broken_p(o_ptr)) return("worthless");
 
 	/* Artifacts -- except cursed/broken ones */
 	if (artifact_p(o_ptr)) return("good");
 
 	/* Ego-Items -- except cursed/broken ones */
-	if (!k_ptr->cost) return("broken");
+	if (!k_ptr->cost) return("worthless");
 	if (ego_item_p(o_ptr)) {
 		if (!object_value(0, o_ptr)) return("worthless");
 		return("good");
 	}
+	/* Exploding ammo counts as pseudo-ego */
+	if (is_ammo(o_ptr->tval) && o_ptr->pval) return("good");
 
 	switch (o_ptr->tval) {
-	case TV_DIGGING:
 	case TV_BLUNT:
 	case TV_POLEARM:
 	case TV_SWORD:
+	case TV_AXE:
+
 	case TV_BOOTS:
 	case TV_GLOVES:
 	case TV_HELM:
@@ -283,12 +320,16 @@ cptr value_check_aux2(object_type *o_ptr) {
 	case TV_SOFT_ARMOR:
 	case TV_HARD_ARMOR:
 	case TV_DRAG_ARMOR:
-	case TV_AXE:
+
+	case TV_DIGGING:
+
 	case TV_SHOT:
 	case TV_ARROW:
 	case TV_BOLT:
 	case TV_BOW:
 	case TV_BOOMERANG:
+
+	case TV_TRAPKIT:
 		/* Good "armor" bonus */
 		if (o_ptr->to_a > k_ptr->to_a
 		    && o_ptr->to_a > 0 /* for rusty armour....*/
@@ -310,9 +351,10 @@ cptr value_check_aux2(object_type *o_ptr) {
 	return(NULL);
 }
 
+/* Feel 'magic' lightly - 'average' in heavy becomes just <no result> here! */
 cptr value_check_aux2_magic(object_type *o_ptr) {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
-
+	u32b v;
 
 	switch (o_ptr->tval) {
 	/* Scrolls, Potions, Wands, Staves and Rods */
@@ -322,51 +364,53 @@ cptr value_check_aux2_magic(object_type *o_ptr) {
 		/* Fall through */
 	case TV_POTION:
 	case TV_POTION2:
+
 	case TV_WAND:
 	case TV_STAFF:
 	case TV_ROD:
-		/* "Cursed" scrolls/potions have a cost of 0 */
-		if (k_ptr->cost == 0) return("bad");//"cursed");
+		/* Bad scrolls/potions have a cost of 0 */
+		if (k_ptr->cost == 0) return("worthless");
+
+		/* Artifacts (doesn't exist for these item types) */
+		if (artifact_p(o_ptr)) return("good");
+
+		if (k_ptr->cost >= 1000) return("good");
+
+		break;
+
+	case TV_RING:
+	case TV_AMULET:
+		/* Cursed items */
+		if (cursed_p(o_ptr)) return("cursed");
+
+		/* Broken items -- doesn't exist for jewelry though, as this is an ego power, not in k_info */
+		if (broken_p(o_ptr)) return("worthless");
 
 		/* Artifacts */
 		if (artifact_p(o_ptr)) return("good");
 
-		/* Scroll of Nothing, Apple Juice, etc. */
-		if (k_ptr->cost < 3) return("average");//or "worthless"
-
-		/*
-		 * Identify, Phase Door, Cure Light Wounds, etc. are
-		 * just average
-		 */
-		if (k_ptr->cost < 100) return("average");
-
-		/* Enchant Armor, *Identify*, Restore Stat, etc. */
-		if (k_ptr->cost < 4000) return("good");
-
-		/* Acquirement, Deincarnation, Strength, Blood of Life, ... */
-		if (k_ptr->cost >= 4000) return("good");
+		v = object_value(0, o_ptr);
+		if (!v) return("worthless");
+		if (ego_item_p(o_ptr)) return("good");
 
 		break;
 
 	/* Food */
 	case TV_FOOD:
 		/* "Cursed" food */
-		if (k_ptr->cost == 0) return("bad");//"cursed");
+		if (k_ptr->cost == 0) return("worthless");
 
-		/* Artifacts */
+		/* Artifacts (doesn't exist) */
 		if (artifact_p(o_ptr)) return("good");
 
-		/* Normal food (no magical properties) */
-		if (k_ptr->cost <= 10) return("average");
-
-		/* Everything else is good */
-		if (k_ptr->cost > 10) return("good");
+		/* Mushroom of Restoring detected (spoilery, but potions/devices have a value->good check, so there should be one in food too probably, pft) */
+		if (k_ptr->cost >= 1000) return("good");
 
 		break;
 	}
 
 	/* No feeling */
-//	return("");
+	//return("");
 	return(NULL);
 }
 
@@ -488,16 +532,14 @@ static void sense_inventory(int Ind) {
 		case TV_BOOMERANG:
 			if (fail && !heavy) continue; //finally fail
 			if (ok_combat) {
-				feel = (heavy ? value_check_aux1(o_ptr) :
-						value_check_aux2(o_ptr));
+				feel = (heavy ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
 				if (heavy) felt_heavy = TRUE;
 			}
 			break;
 		case TV_MSTAFF:
 			if (fail && !heavy_magic) continue; //finally fail
 			if (ok_magic) {
-				feel = (heavy_magic ? value_check_aux1(o_ptr) :
-						value_check_aux2(o_ptr));
+				feel = (heavy_magic ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
 				if (heavy_magic) felt_heavy = TRUE;
 			}
 			break;
@@ -510,10 +552,11 @@ static void sense_inventory(int Ind) {
 		case TV_WAND:
 		case TV_STAFF:
 		case TV_ROD:
+		case TV_RING: /* finally these two, in 2023 */
+		case TV_AMULET:
 			if (fail && !heavy_magic) continue; //finally fail
 			if (ok_magic && !object_aware_p(Ind, o_ptr)) {
-				feel = (heavy_magic ? value_check_aux1_magic(o_ptr) :
-				    value_check_aux2_magic(o_ptr));
+				feel = (heavy_magic ? value_check_aux1_magic(o_ptr) : value_check_aux2_magic(o_ptr));
 				if (heavy_magic) felt_heavy = TRUE;
 			}
 			break;
@@ -523,24 +566,21 @@ static void sense_inventory(int Ind) {
 		case TV_BOW:
 			if (fail && !heavy_archery) continue; //finally fail
 			if (ok_archery || (ok_combat && magik(25))) {
-				feel = (heavy_archery ? value_check_aux1(o_ptr) :
-				    value_check_aux2(o_ptr));
+				feel = (heavy_archery ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
 				if (heavy_archery) felt_heavy = TRUE;
 			}
 			break;
 		case TV_TRAPKIT:
 			if (fail && !heavy_traps) continue; //finally fail
 			if (ok_traps) {
-				feel = (heavy_traps ? value_check_aux1(o_ptr) :
-						value_check_aux2(o_ptr));
+				feel = (heavy_traps ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
 				if (heavy_traps) felt_heavy = TRUE;
 			}
 			break;
-		case TV_FOOD: /* dual! Uses auxX_magic, which contains the food-specific values */
+		case TV_FOOD: /* dual! Uses auxX_magic, which contains the food-specific values. Since potions are 'magic' too, food seems not misplaced.. */
 			if (fail && !heavy_magic && !heavy) continue; //finally fail
 			if ((ok_combat || ok_magic) && !object_aware_p(Ind, o_ptr)) {
-				feel = ((heavy || heavy_magic) ? value_check_aux1_magic(o_ptr) :
-						value_check_aux2_magic(o_ptr));
+				feel = ((heavy || heavy_magic) ? value_check_aux1_magic(o_ptr) : value_check_aux2_magic(o_ptr));
 				if (heavy || heavy_magic) felt_heavy = TRUE;
 			}
 			break;
@@ -590,13 +630,15 @@ static void sense_inventory(int Ind) {
 		   Remember static items seen in shops just by feeling before having IDed one. :)
 		    - C. Blue */
 		switch (o_ptr->tval) {
+		case TV_SCROLL:
+		case TV_POTION:
+		case TV_POTION2:
 		case TV_WAND:
 		case TV_STAFF:
 		case TV_ROD:
 		case TV_ROD_MAIN:
-		case TV_SCROLL:
-		case TV_POTION:
-		case TV_POTION2:
+		//case TV_RING: - no, as they might have 'cursed' ego power
+		//case TV_AMULET: - no, as they might have 'cursed' ego power
 		case TV_FOOD:
 			p_ptr->obj_felt[o_ptr->k_idx] = TRUE;
 			if (felt_heavy) p_ptr->obj_felt_heavy[o_ptr->k_idx] = TRUE;
@@ -649,142 +691,6 @@ static void sense_inventory(int Ind) {
 	}
 }
 
-#if 0 /* the results might be too incorrect! for example 'average' can still mean enchantment, etc. */
-/* for NEW_ID_SCREEN's pseudo-id handling: */
-
-static int quality_check_aux1(object_type *o_ptr) {
-	object_kind *k_ptr = &k_info[o_ptr->k_idx];
-
-	if (artifact_p(o_ptr)) return(3);
-
-	if (ego_item_p(o_ptr)) {
-		if (o_ptr->name2 == EGO_STORMBRINGER) return(3);
-		if (cursed_p(o_ptr) || broken_p(o_ptr)) return(2);
-		if (is_ammo(o_ptr->tval) && (o_ptr->pval || o_ptr->name2 || o_ptr->name2b)) return(2);
-		if (object_value(0, o_ptr) < 4000) return(1);
-		return(2);
-	}
-
-	if (cursed_p(o_ptr)) return(-1);
-	if (broken_p(o_ptr)) return(-1);
-
-	switch (o_ptr->tval) {
-	case TV_DIGGING:
-	case TV_BLUNT:
-	case TV_POLEARM:
-	case TV_SWORD:
-	case TV_BOOTS:
-	case TV_GLOVES:
-	case TV_HELM:
-	case TV_CROWN:
-	case TV_SHIELD:
-	case TV_CLOAK:
-	case TV_SOFT_ARMOR:
-	case TV_HARD_ARMOR:
-	case TV_DRAG_ARMOR:
-	case TV_AXE:
-	case TV_SHOT:
-	case TV_ARROW:
-	case TV_BOLT:
-	case TV_BOW:
-	case TV_BOOMERANG:
-		if ((o_ptr->ident & ID_SENSE_GOOD)) return(1);
-		break;
-	default:
-		if ((o_ptr->ident & ID_SENSE_GOOD)) return(1);
-	}
-
-	return(0);
-}
-
-/*
- * Return a "feeling" (or NULL) about an item.  Method 2 (Light).
- */
-static int quality_check_aux2(object_type *o_ptr) {
-	object_kind *k_ptr = &k_info[o_ptr->k_idx];
-
-	if (cursed_p(o_ptr)) return(-1);
-	if (broken_p(o_ptr)) return(-1);
-	if (artifact_p(o_ptr)) return(1);
-	if (!k_ptr->cost) return(-1);
-	if (ego_item_p(o_ptr)) {
-		return(1);
-	}
-
-	switch (o_ptr->tval) {
-	case TV_DIGGING:
-	case TV_BLUNT:
-	case TV_POLEARM:
-	case TV_SWORD:
-	case TV_BOOTS:
-	case TV_GLOVES:
-	case TV_HELM:
-	case TV_CROWN:
-	case TV_SHIELD:
-	case TV_CLOAK:
-	case TV_SOFT_ARMOR:
-	case TV_HARD_ARMOR:
-	case TV_DRAG_ARMOR:
-	case TV_AXE:
-	case TV_SHOT:
-	case TV_ARROW:
-	case TV_BOLT:
-	case TV_BOW:
-	case TV_BOOMERANG:
-		if ((o_ptr->ident & ID_SENSE_GOOD)) return(1);
-		break;
-	default:
-		if ((o_ptr->ident & ID_SENSE_GOOD)) return(1);
-	}
-
-	return(0);
-}
-
-int pseudo_id_result(object_type *o_ptr) {
-	int quality = 0;
-
-	switch (o_ptr->tval) {
-	case TV_DIGGING:
-	case TV_BLUNT:
-	case TV_POLEARM:
-	case TV_SWORD:
-	case TV_BOOTS:
-	case TV_GLOVES:
-	case TV_HELM:
-	case TV_CROWN:
-	case TV_SHIELD:
-	case TV_CLOAK:
-	case TV_SOFT_ARMOR:
-	case TV_HARD_ARMOR:
-	case TV_DRAG_ARMOR:
-	case TV_AXE:
-	case TV_TRAPKIT:
-
-	case TV_MSTAFF:
-
-	case TV_SHOT:
-	case TV_ARROW:
-	case TV_BOLT:
-	case TV_BOW:
-	case TV_BOOMERANG:
-		quality = ((o_ptr->ident & ID_SENSE_HEAVY) ? quality_check_aux1(o_ptr) :
-		    quality_check_aux2(o_ptr));
-		break;
-
-	case TV_SCROLL:
-	case TV_POTION:
-	case TV_POTION2:
-	case TV_WAND:
-	case TV_STAFF:
-	case TV_ROD:
-	case TV_FOOD:
-		return(0);
-	}
-
-	return(quality);
-}
-#endif
-
 /*
  * Regenerate hit points				-RAK-
  */
@@ -817,7 +723,6 @@ static void regenhp(int Ind, int percent) {
 
 	p_ptr->test_heal = freeze_test_heal;
 }
-
 
 /*
  * Regenerate mana points				-RAK-

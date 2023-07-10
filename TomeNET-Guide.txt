@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 9. July 2023 - written by C. Blue (c_blue@gmx.net)        |
+| Latest update: 10. July 2023 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.0c - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -12116,14 +12116,14 @@ just 'good') feelings about magic items, potions and scrolls.
 
 Items display the following pseudo-id tags:
 
--Basic items, non-magical:      {average}
--Magically enchanted items      {good}
--Excellent magical items        {excellent}
--Artifacts (random & static)    {special}
--Cursed items                   {cursed}
--Useless items (often cursed)   {worthless}
--Useless items (not cursed)     {broken}
--Cursed artifacts / egos        {terrible}
+-Basic items, non-magical:         {average}
+-Valuable / enchanted items        {good}
+-Very valuable items (often ego)   {excellent}
+-Artifacts (random & static)       {special}
+-Cursed artifacts / Stormbringer   {terrible}
+-Cursed items                      {cursed}
+-Harmful items (but not cursed)    {bad}
+-Useless or very cheap items       {worthless}
 
 'Terrible' doesn't need to mean useless. Some cursed artifacts can be very
 powerful, rings of power dropped by Nazgul especially. Also, heavily cursed
@@ -12131,14 +12131,6 @@ items, including artifacts (and excluding weapons of nothingness) will flip
 their negative values into positive ones when equipped by a true vampire (ie
 excluding mimicked ones) or hell knight (again excluding mimicry forms).
 Note that this flipping can sometimes fail for random artifacts though!
-
-('worthless' and 'broken' sort of overlap, depending on item base type.
-For example rods without value will be worthless instead of broken, while
-armour will be broken, and ego armour without value will be worthless again.)
-
-Note that potions don't have 'egos' or 'artifacts', scrolls don't have
-artifacts either, but some of the potions and scrolls show similar pseudo-id
-tags.
 
 Again - if you want to look up what certain special items can/cannot do, see
 the spoiler files section (8.4) or further explanations in (5.8) and (5.9).
