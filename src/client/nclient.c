@@ -6856,6 +6856,12 @@ void do_ping(void) {
  #ifdef WINDOWS
   #include <process.h>	/* use spawn() instead of normal system() (WINE bug/Win inconsistency even maybe) */
  #endif
+
+ /* Enable debug mode? */
+ #ifdef TEST_CLIENT
+  //#define DEBUG_PING
+ #endif
+
 /* Note: At this early stage of the game (viewing meta server list) do_keepalive() and do_ping() are not yet called,
    so this function must be called in do_flicker() or update_ticks() instead, of which update_ticks() is preferable
    as its calling frequency is fixed and predictable (100ms).
@@ -6866,7 +6872,7 @@ static void do_meta_pings(void) {
 #ifdef WINDOWS
 	char buf[1024]; /* if we use windows-specific ReadFile() we might read the whole file at once */
 #else
-	char buf[MAX_CHARS]; /* read line by line */
+	char buf[MAX_CHARS_WIDE]; /* read line by line */
 #endif
 	static FILE *fff;
 	static char alt = 1, reload_metalist = 0; /* <- Only truly needed static var, the rest is static just for execution time optimization */
@@ -6978,6 +6984,9 @@ static void do_meta_pings(void) {
   #endif
  #else /* assume POSIX */
 			r = system(format("ping -c 1 -w 1 %s > %s &", meta_pings_server_name[i], path));
+  #ifdef DEBUG_PING
+printf("SENT  i=%d : <ping -c 1 -w 1 %s > %s &>\n", i, meta_pings_server_name[i], path);
+  #endif
 			(void)r; //slay compiler warning;
  #endif
 		}
@@ -7040,7 +7049,10 @@ if (exit_code != STILL_ACTIVE) {
 			/* Parse OS specific 'ping' command response; win: 'time=NNNms', posix: 'time=NNN.NN ms',
 			   BUT.. have to watch out that "time" label can be OS-language specific!
 			   For that reason we first look for 'ttl' (posix) and 'TTL' (windows) which are always the same. */
-			while (my_fgets(fff, buf, MAX_CHARS) == 0) {
+			while (my_fgets(fff, buf, MAX_CHARS_WIDE) == 0) {
+  #ifdef DEBUG_PING
+printf("REPLY i=%d : <%s>\n", i, buf);
+  #endif
 				meta_pings_stuck[i] = FALSE; /* Yay, we can read the results finally.. */
 
 //printf("p[%d: <%s>\n", i, buf);
