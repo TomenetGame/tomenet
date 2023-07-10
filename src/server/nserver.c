@@ -412,6 +412,7 @@ static void Init_receive(void) {
 	playing_receive[PKT_VERSION]		= Receive_version;
 	playing_receive[PKT_FONT]		= Receive_font;
 	playing_receive[PKT_PLISTW_NOTIFY]	= Receive_plistw_notify;
+	playing_receive[PKT_UNKNOWNPACKET]	= Receive_unknownpacket;
 }
 
 static int Init_setup(void) {
@@ -14674,6 +14675,27 @@ static int Receive_plistw_notify(int ind) {
 		if (old) Send_playerlist(player, 0, 0); /* Disable -> clear */
 		else Send_playerlist(player, 0, 1); /* Enable -> init with full list */
 	}
+
+	return(1);
+}
+
+static int Receive_unknownpacket(int ind) {
+	connection_t *connp = Conn[ind];
+	player_type *p_ptr = NULL;
+	char ch;
+	int n, player = -1, type, prev_type;
+
+	if (connp->id != -1) {
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+	} else return(1); //paranoia
+
+	if ((n = Packet_scanf(&connp->r, "%c%d%d", &ch, &type, &prev_type)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return(n);
+	}
+
+	s_printf("%s - RUPT: <%s:%s> (%d,%d)\n", showtime(), p_ptr->name, p_ptr->accountname, type, prev_type);
 
 	return(1);
 }

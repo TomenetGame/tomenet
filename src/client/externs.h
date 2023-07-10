@@ -930,6 +930,7 @@ extern int Send_subinven_remove(int item);
 #endif
 extern int Send_version(void);
 extern int Send_plistw_notify(bool on);
+extern int Send_unknownpacket(int type, int prev_type);
 
 /* skills.c */
 extern s16b get_skill(int skill);

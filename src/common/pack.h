@@ -272,6 +272,7 @@
 #define PKT_FONT		208	/* Main screen font */
 #define PKT_EQUIP_WIDE		209
 #define PKT_PLISTW_NOTIFY	210
+#define PKT_UNKNOWNPACKET	211
 
 
 /*

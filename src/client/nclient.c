@@ -1683,6 +1683,7 @@ static int Net_packet(void) {
 			//plog(format("Received unknown packet type (%d, %d), dropping", type, prev_type));
  #endif
 #else
+			Send_unknownpacket(type, prev_type);
 			c_msg_format("\377RReceived unknown packet type (%d, %d), dropping", type, prev_type);
 #endif
 			/* hack: redraw after a packet was dropped, to make sure we didn't miss something important */
@@ -6529,6 +6530,13 @@ int Send_plistw_notify(bool on) {
 
 	if (is_older_than(&server_version, 4, 9, 0, 7, 0, 0)) return(1);
 	if ((n = Packet_printf(&wbuf, "%c%c", PKT_PLISTW_NOTIFY, on)) <= 0) return(n);
+	return(1);
+}
+
+int Send_unknownpacket(int type, int prev_type) {
+	int n;
+
+	if ((n = Packet_printf(&wbuf, "%c%d%d", PKT_UNKNOWNPACKET, type, prev_type)) <= 0) return(n);
 	return(1);
 }
 
