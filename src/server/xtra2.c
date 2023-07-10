@@ -9155,6 +9155,9 @@ void player_death(int Ind) {
 		msg_layout = 'L';
 	}
 
+	/* Remove all pending player actions, in case we died while being paralyzed and the command queue is full of stuff (quaff, read, etc) */
+	Handle_clear_buffer(Ind);
+
 	/* Hack -- amulet of life saving */
 	if (!p_ptr->suicided && !erase && (secure ||
 	    (p_ptr->inventory[INVEN_NECK].k_idx &&
