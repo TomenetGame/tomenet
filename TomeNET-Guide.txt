@@ -16831,13 +16831,14 @@ stated.
                                 experience you gain from manually disarming
                                 traps is not affected by the skill but only by
                                 the traps' level).
-                                The chance to identify the type of a trap on
-                                disarming it will also increase with higher
-                                Trapping skill.
+                                You also will get a chance to identify the type
+                                of a trap on disarming, increasing with skill.
 
-                                And being more proficient in trapping will also
+                                Being more proficient in trapping will also
                                 increase your chances of spotting traps, ie
-                                improving your 'Searching' ability.
+                                improving your 'Searching' ability. And should
+                                you still trigger a trap accidentally, your
+                                chances of avoiding it will increase too!
 
                                 At 10.000 Trapping you will learn the fighting
                                 technique 'Steam Blast' which can blast open
