@@ -95,7 +95,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	9
-#define SF_VERSION_PATCH	2
+#define SF_VERSION_PATCH	3
 #define SF_VERSION_EXTRA	0 /* <- not used in version checks! */
 
 /* For quests savefile purpose only */
@@ -442,6 +442,10 @@
   #define MAX_RACE	16
  #endif
 #endif
+
+
+/* Amount of RF4_TRAPS casts after which disarming those traps will no longer yield XP (continously dropping) */
+#define MAX_CLONE_TRAPPING 5
 
 
 /*

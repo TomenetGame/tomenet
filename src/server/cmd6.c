@@ -2661,7 +2661,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			break;
 
 		case SV_SCROLL_TRAP_CREATION:
-			if (trap_creation(Ind, 5, 1)) ident = TRUE;
+			if (trap_creation(Ind, 5, 1, 0)) ident = TRUE;
 			break;
 
 		case SV_SCROLL_PHASE_DOOR:

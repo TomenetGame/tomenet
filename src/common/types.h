@@ -582,11 +582,10 @@ struct trap_kind{
 typedef struct c_special c_special;
 struct c_special{
 	unsigned char type;
-	union	/* 32bits -> 64bits (rune) */
-	{
-		void *ptr;		/* lazy - refer to other arrays or sth */
-		s32b omni;		/* needless of other arrays? k, add here! */
-		struct { byte t_idx; bool found; } trap;
+	union { /* 32bits -> 64bits (rune) */
+		void *ptr; /* lazy - refer to other arrays or sth */
+		s32b omni; /* needless of other arrays? k, add here! */
+		struct { byte t_idx; bool found; byte clone;} trap;
 		struct { byte fy, fx; } between; /* or simply 'dpos'? */
 		struct { byte wx, wy; s16b wz; } wpos;	/* XXX */
 		struct { byte type, rest; bool known; } fountain;
@@ -1609,6 +1608,8 @@ struct monster_type {
 
 	bool no_esp_phase;		/* for WEIRD_MIND esp flickering */
 	s16b stuck;			/* energy to track spellcasting possibility after monster was just stuck in terrain or between other monsters */
+
+	byte clone_trapping;		/* Traps laid out by this monster will have diminishing returns in XP gain for disarming (eg for Robin Hood in the IDDC) */
 };
 
 typedef struct monster_ego monster_ego;

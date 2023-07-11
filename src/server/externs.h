@@ -1802,7 +1802,7 @@ extern bool cure_serious_wounds_proj(int Ind, int dir);
 extern bool cure_critical_wounds_proj(int Ind, int dir);
 extern bool heal_other_proj(int Ind, int dir);
 extern bool door_creation(int Ind);
-extern bool trap_creation(int Ind, int mod, int rad);
+extern bool trap_creation(int Ind, int mod, int rad, int clone);
 extern bool destroy_doors_touch(int Ind, int rad);
 extern bool destroy_traps_touch(int Ind, int rad);
 extern bool destroy_traps_doors_touch(int Ind, int rad);
@@ -2375,7 +2375,7 @@ extern bool do_player_drop_items(int Ind, int chance, bool trap);
 extern bool do_player_scatter_items(int Ind, int chance, int rad);
 extern bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int item);
 extern void player_activate_door_trap(int Ind, s16b y, s16b x);
-extern void place_trap(struct worldpos *wpos, int y, int x, int mod);
+extern void place_trap(struct worldpos *wpos, int y, int x, int modx);
 extern void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found);
 
 extern void place_trap_object(object_type *o_ptr);

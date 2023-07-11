@@ -198,11 +198,14 @@ void tload(c_special *cs_ptr) {
 	rd_byte(&cs_ptr->sc.trap.t_idx);
 	rd_byte(&tmp8u);
 	cs_ptr->sc.trap.found = tmp8u;
+	if (s_older_than(4, 9, 3)) return;
+	rd_byte(&cs_ptr->sc.trap.clone);
 }
 
 void tsave(c_special *cs_ptr) {
 	wr_byte(cs_ptr->sc.trap.t_idx);
 	wr_byte(cs_ptr->sc.trap.found);
+	wr_byte(cs_ptr->sc.trap.clone);
 }
 void tsee(c_special *cs_ptr, char32_t *c, byte *a, int Ind) {
 //	printf("tsee %d\n", Ind);

@@ -2772,10 +2772,11 @@ void player_activate_door_trap(int Ind, s16b y, s16b x) {
  * mod: -1 means no multiplication trap allowed.
  */
 // FEAT_DOOR stuffs should be revised after f_info reform	- Jir -
-void place_trap(struct worldpos *wpos, int y, int x, int mod) {
+void place_trap(struct worldpos *wpos, int y, int x, int modx) {
 	bool more = TRUE;
 	s16b trap, lv;
 	trap_kind *t_ptr;
+	int mod = modx % 1000, clone_trapping = modx / 1000;
 
 	s16b cnt = 0;
 	u32b flags;
@@ -2785,9 +2786,7 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod) {
 
 	/* Paranoia -- verify location */
 	cave_type **zcave;
-
 	struct dun_level *l_ptr = getfloor(wpos);
-
 
 #ifdef ARCADE_SERVER
 	return;
@@ -2814,9 +2813,7 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod) {
 	/* Require empty, clean, floor grid */
 	/* Hack - '+1' for secret doors */
 	if (cave_floor_grid(c_ptr) || c_ptr->feat == FEAT_DEEP_WATER) flags = FTRAP_FLOOR;
-	else if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-		    (c_ptr->feat <= FEAT_DOOR_TAIL + 1))
-		flags = FTRAP_DOOR;
+	else if ((c_ptr->feat >= FEAT_DOOR_HEAD) && (c_ptr->feat <= FEAT_DOOR_TAIL + 1)) flags = FTRAP_DOOR;
 	else return;
 
 #if 0 //allow?
@@ -2848,8 +2845,7 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod) {
 	   (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
 	*/
 #if 0
-	if (f_info[c_ptr->feat].flags1 & FF1_DOOR)
-		flags = FTRAP_DOOR;
+	if (f_info[c_ptr->feat].flags1 & FF1_DOOR) flags = FTRAP_DOOR;
 	else flags = FTRAP_FLOOR;
 #endif	// 0
 
@@ -2887,6 +2883,7 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod) {
 			cs_ptr->sc.trap.t_idx = trap;
 			cs_ptr->sc.trap.found = FALSE;
 			//c_ptr = &zcave[y][x];
+			cs_ptr->sc.trap.clone = clone_trapping;
 		}
 	}
 

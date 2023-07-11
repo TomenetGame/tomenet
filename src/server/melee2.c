@@ -2479,7 +2479,8 @@ bool make_attack_spell(int Ind, int m_idx) {
 		if (blind) msg_format(Ind, "%^s cackles evilly.", m_name);
 		else msg_format(Ind, "%^s pulls some wires and cackles evilly.", m_name);
 #endif
-		(void)trap_creation(Ind, 3, magik(rlev) ? (magik(30) ? 3 : 2) : 1);
+		(void)trap_creation(Ind, 3, magik(rlev) ? (magik(30) ? 3 : 2) : 1, m_ptr->clone_trapping);
+		if (m_ptr->clone_trapping < MAX_CLONE_TRAPPING) m_ptr->clone_trapping++;
 		break;
 
 	/* RF4_ROCKET */
@@ -4728,7 +4729,8 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		if (blind) msg_format(Ind, "%^s cackles evilly.", m_name);
 		else msg_format(Ind, "%^s pulls some wires and cackles evilly.", m_name);
 #endif
-		(void)trap_creation(Ind, 3, magik(rlev) ? (magik(30) ? 3 : 2) : 1);
+		(void)trap_creation(Ind, 3, magik(rlev) ? (magik(30) ? 3 : 2) : 1, m_ptr->clone_trapping);
+		if (m_ptr->clone_trapping < MAX_CLONE_TRAPPING) m_ptr->clone_trapping++;
 		break;
 
 	/* RF4_ROCKET */

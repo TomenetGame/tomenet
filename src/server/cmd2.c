@@ -5174,7 +5174,7 @@ void do_cmd_disarm(int Ind, int dir) {
 					//NOTE: In theory this can be abused to transfer gold cross-mode/to soloists even, but the amount is negligible.
 
 				/* Reward */
-				if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, TRAP_EXP(t_idx, getlevel(&p_ptr->wpos)));
+				if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (TRAP_EXP(t_idx, getlevel(&p_ptr->wpos)) * (MAX_CLONE_TRAPPING - cs_ptr->sc.trap.clone)) / MAX_CLONE_TRAPPING);
 
 				/* Try to identify it */
 				do_id_trap(Ind, t_idx);

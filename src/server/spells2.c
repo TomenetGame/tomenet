@@ -7768,11 +7768,11 @@ bool door_creation(int Ind) {
 	return(project(0 - Ind, 1, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_MAKE_DOOR, flg, ""));
 }
 
-bool trap_creation(int Ind, int mod, int rad) {
+bool trap_creation(int Ind, int mod, int rad, int clone_trapping) {
 	player_type *p_ptr = Players[Ind];
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE | PROJECT_NODF | PROJECT_NODO;
 
-	return(project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, mod, GF_MAKE_TRAP, flg, ""));
+	return(project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, mod + (clone_trapping * 1000), GF_MAKE_TRAP, flg, ""));
 }
 
 bool destroy_doors_touch(int Ind, int rad) {

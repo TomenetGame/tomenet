@@ -4322,6 +4322,7 @@ int divide_spell_damage(int dam, int div, int typ) {
 	case GF_CURE_PLAYER:
 	case GF_CURING:
 	case GF_STASIS: /* uses +1000 as hack - could be hacked like GF_DARK_WEAK etc if we really need ball-style stasis, but for now this is fine */
+	case GF_MAKE_TRAP: /* encodes +clone_trapping * 1000 */
 		return(dam);
 
 	/* These are reduced despite 'dam' storing functionality - it is carefully calculated around that. */
