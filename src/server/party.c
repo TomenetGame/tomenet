@@ -1836,10 +1836,10 @@ int party_create(int Ind, cptr name) {
 
 	/* Add the owner as a member */
 	p_ptr->party = index;
+	clockin(Ind, 2);
 	parties[index].members = 1;
 	p_ptr->iron_trade = parties[index].iron_trade;
 	p_ptr->iron_turn = turn;
-	clockin(Ind, 2);
 
 	/* Set the "creation time" */
 	parties[index].created = turn;
@@ -1954,10 +1954,10 @@ int party_create_ironteam(int Ind, cptr name) {
 
 	/* Add the owner as a member */
 	p_ptr->party = index;
+	clockin(Ind, 2);
 	parties[index].members = 1;
 	p_ptr->iron_trade = parties[index].iron_trade;
 	p_ptr->iron_turn = turn;
-	clockin(Ind, 2);
 
 	/* Set the "creation time" */
 	parties[index].created = turn;
@@ -2436,9 +2436,9 @@ int party_add(int adder, cptr name) {
 
 	/* Set his party number */
 	p_ptr->party = party_id;
+	clockin(Ind, 2);
 	p_ptr->iron_trade = parties[party_id].iron_trade;
 	p_ptr->iron_turn = turn;
-	clockin(Ind, 2);
 
 	/* Resend info */
 	Send_party(Ind, FALSE, FALSE);
@@ -2579,9 +2579,9 @@ int party_add_self(int Ind, cptr party) {
 
 	/* Set his party number */
 	p_ptr->party = party_id;
+	clockin(Ind, 2);
 	p_ptr->iron_trade = parties[party_id].iron_trade;
 	p_ptr->iron_turn = turn;
-	clockin(Ind, 2);
 
 	/* Resend info */
 	Send_party(Ind, FALSE, FALSE);
@@ -2852,8 +2852,10 @@ void guild_timeout(int id) {
  * Design improvement
  */
 void del_party(int id) {
-	int i;
+	int i, j;
 	bool sent = FALSE;
+	player_type *p_ptr;
+
 	/* Remove the party altogether */
 	kill_houses(id, OT_PARTY);
 
@@ -2880,11 +2882,20 @@ void del_party(int id) {
 				Send_party(i, FALSE, TRUE);
 				sent = TRUE;
 			}
-			Players[i]->party = 0;
+
+			p_ptr = Players[i];
+
+			/* Set his party number back to "neutral" */
+			p_ptr->party = 0;
 			clockin(i, 2);
+			p_ptr->iron_trade = 0;
+			for (j = 0; j < INVEN_TOTAL; j++)
+				p_ptr->inventory[j].iron_trade = 0;
+			/* and for client-side visual iddc-tradable marker, redraw: */
+			if (in_irondeepdive(&p_ptr->wpos)) p_ptr->window |= PW_INVEN | PW_EQUIP;
 
 			/* Re-check house permissions, to display doors in correct colour */
-			if (!Players[i]->wpos.wz) Players[i]->redraw |= PR_MAP;
+			if (!p_ptr->wpos.wz) p_ptr->redraw |= PR_MAP;
 
 			if (parties[id].mode & PA_IRONTEAM)
 				msg_print(i, "\374\377yYour iron team has been disbanded.");
@@ -3049,10 +3060,12 @@ int party_remove(int remover, cptr name) {
 
 	/* Set his party number back to "neutral" */
 	p_ptr->party = 0;
-	p_ptr->iron_trade = 0;
 	clockin(Ind, 2);
+	p_ptr->iron_trade = 0;
 	for (i = 0; i < INVEN_TOTAL; i++)
 		p_ptr->inventory[i].iron_trade = 0;
+	/* and for client-side visual iddc-tradable marker, redraw: */
+	if (in_irondeepdive(&p_ptr->wpos)) p_ptr->window |= PW_INVEN | PW_EQUIP;
 
 	/* Re-check house permissions, to display doors in correct colour */
 	if (!p_ptr->wpos.wz) p_ptr->redraw |= PR_MAP;
@@ -3178,10 +3191,12 @@ void party_leave(int Ind, bool voluntarily) {
 
 	/* Set him back to "neutral" */
 	p_ptr->party = 0;
-	p_ptr->iron_trade = 0;
 	clockin(Ind, 2);
+	p_ptr->iron_trade = 0;
 	for (i = 0; i < INVEN_TOTAL; i++)
 		p_ptr->inventory[i].iron_trade = 0;
+	/* and for client-side visual iddc-tradable marker, redraw: */
+	if (in_irondeepdive(&p_ptr->wpos)) p_ptr->window |= PW_INVEN | PW_EQUIP;
 
 	/* Re-check house permissions, to display doors in correct colour */
 	if (!p_ptr->wpos.wz) p_ptr->redraw |= PR_MAP;

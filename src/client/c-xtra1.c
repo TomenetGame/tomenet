@@ -1615,7 +1615,12 @@ static void display_inven(void) {
 				(void)sprintf(tmp_val, "%3li.%1li lb ", wgt / 10, wgt % 10);
 			else
 				(void)sprintf(tmp_val, "%3lik%1li lb ", wgt / 10000, (wgt % 10000) / 1000);
-			Term_putstr(71, i, -1, TERM_WHITE, tmp_val);
+
+			/* We're in the IDDC and this item is untradable to party members? */
+			if (o_ptr->iron_trade)
+				Term_putstr(71, i - INVEN_WIELD, -1, TERM_SLATE, tmp_val);
+			else
+				Term_putstr(71, i, -1, TERM_WHITE, tmp_val);
 		}
 	}
 
@@ -1691,8 +1696,11 @@ static void display_equip(void) {
 			else
 				(void)sprintf(tmp_val, "%3lik%1li lb ", wgt / 10000, (wgt % 10000) / 1000);
 
+			/* We're in the IDDC and this item is untradable to party members? */
+			if (o_ptr->iron_trade)
+				Term_putstr(71, i - INVEN_WIELD, -1, TERM_SLATE, tmp_val);
 			/* for 'greyed out' flexibility hack */
-			if (o_ptr->attr == TERM_L_DARK)
+			else if (o_ptr->attr == TERM_L_DARK)
 				Term_putstr(71, i - INVEN_WIELD, -1, TERM_L_DARK, tmp_val);
 			else
 				Term_putstr(71, i - INVEN_WIELD, -1, c_cfg.equip_text_colour ? EQUIP_TEXT_COLOUR2 : EQUIP_TEXT_COLOUR, tmp_val);
@@ -1899,7 +1907,13 @@ void show_inven(void) {
 				(void)sprintf(tmp_val, "%3li.%1li lb", wgt / 10, wgt % 10);
 			else
 				(void)sprintf(tmp_val, "%3lik%1li lb", wgt / 10000, (wgt % 10000) / 1000);
-			put_str(tmp_val, j + 1, 71);
+
+			/* We're in the IDDC and this item is untradable to party members? */
+			if (o_ptr->iron_trade)
+				c_put_str(TERM_SLATE, tmp_val, j + 1, 71);
+			else
+				put_str(tmp_val, j + 1, 71);
+
 			totalwgt += wgt;
 #ifdef ENABLE_SUBINVEN
 			if (o_ptr->tval == TV_SUBINVEN) {
@@ -2071,7 +2085,13 @@ void show_subinven(int islot) {
 				(void)sprintf(tmp_val, "%3li.%1li lb", wgt / 10, wgt % 10);
 			else
 				(void)sprintf(tmp_val, "%3lik%1li lb", wgt / 10000, (wgt % 10000) / 1000);
-			put_str(tmp_val, j + 1, 71);
+
+			/* We're in the IDDC and this item is untradable to party members? */
+			if (o_ptr->iron_trade)
+				c_put_str(TERM_SLATE, tmp_val, j + 1, 71);
+			else
+				put_str(tmp_val, j + 1, 71);
+
 			totalwgt += wgt;
 		}
 	}
@@ -2226,8 +2246,11 @@ void show_equip(void) {
 			else
 				(void)sprintf(tmp_val, "%3lik%1li lb", wgt / 10000, (wgt % 10000) / 1000);
 
+			/* We're in the IDDC and this item is untradable to party members? */
+			if (o_ptr->iron_trade)
+				c_put_str(TERM_SLATE, tmp_val, j + 1, 71);
 			/* for 'greyed out' flexibility hack */
-			if (o_ptr->attr == TERM_L_DARK)
+			else if (o_ptr->attr == TERM_L_DARK)
 				c_put_str(TERM_L_DARK, tmp_val, j + 1, 71);
 			else
 				put_str(tmp_val, j + 1, 71);

@@ -2109,6 +2109,7 @@ int Receive_inven(void) {
 	inventory[pos - 'a'].number = amt;
 	inventory[pos - 'a'].uses_dir = uses_dir & 0x1;
 	inventory[pos - 'a'].ident = uses_dir & 0x6; //new hack in 4.7.1.2+ for ITH_ID/ITH_STARID
+	inventory[pos - 'a'].iron_trade = uses_dir & 0x8;
 
 #if defined(POWINS_DYNAMIC) && defined(POWINS_DYNAMIC_CLIENTSIDE)
 	/* Strip "@&" markers, as these are a purely server-side thing */
@@ -2174,6 +2175,7 @@ int Receive_subinven(void) {
 	subinventory[ipos][pos - 'a'].number = amt;
 	subinventory[ipos][pos - 'a'].uses_dir = uses_dir & 0x1;
 	subinventory[ipos][pos - 'a'].ident = uses_dir & 0x6; //new hack in 4.7.1.2+ for ITH_ID/ITH_STARID
+	subinventory[ipos][pos - 'a'].iron_trade = uses_dir & 0x8;
 
  #if defined(POWINS_DYNAMIC) && defined(POWINS_DYNAMIC_CLIENTSIDE)
 	/* Strip "@&" markers, as these are a purely server-side thing */
@@ -2222,7 +2224,7 @@ int Receive_inven_wide(void) {
 	char tmp[ONAME_LEN];
 #endif
 
-//add uses_dir, for SV_CUSTOM_OBJECT
+	/* hack in 4.9.0.7, no protocol change needed :) Instead of uses_dir, we encode everything into ident this time, both are %c (for SV_CUSTOM_OBJECT and for iron_trade) */
 	if (is_newer_than(&server_version, 4, 7, 1, 1, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I%c", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, &name1,
 		    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9, name, &ident)) <= 0)
@@ -2268,7 +2270,9 @@ int Receive_inven_wide(void) {
 	inventory[pos - 'a'].attr = attr;
 	inventory[pos - 'a'].weight = wgt;
 	inventory[pos - 'a'].number = amt;
-	inventory[pos - 'a'].ident = ident;
+	inventory[pos - 'a'].uses_dir = ident & 0x1;
+	inventory[pos - 'a'].ident = ident & 0x6; //new hack in 4.7.1.2+ for ITH_ID/ITH_STARID
+	inventory[pos - 'a'].iron_trade = ident & 0x8;
 
 	inventory[pos - 'a'].xtra1 = xtra1;
 	inventory[pos - 'a'].xtra2 = xtra2;
@@ -2381,6 +2385,7 @@ int Receive_equip(void) {
 	inventory[pos - 'a' + INVEN_WIELD].uses_dir = uses_dir & 0x1;
 	inventory[pos - 'a' + INVEN_WIELD].ident = uses_dir & 0x6; //new hack in 4.7.1.2+ for ITH_ID/ITH_STARID
 	equip_set[pos - 'a'] = (uses_dir & 0xF0) >> 4;
+	inventory[pos - 'a' + INVEN_WIELD].iron_trade = uses_dir & 0x8;
 
 #if defined(POWINS_DYNAMIC) && defined(POWINS_DYNAMIC_CLIENTSIDE)
 	/* Strip "@&" markers, as these are a purely server-side thing */
@@ -2443,6 +2448,7 @@ int Receive_equip_wide(void) {
 	inventory[pos - 'a' + INVEN_WIELD].uses_dir = uses_dir & 0x1;
 	inventory[pos - 'a' + INVEN_WIELD].ident = uses_dir & 0x6; //new hack in 4.7.1.2+ for ITH_ID/ITH_STARID
 	equip_set[pos - 'a'] = (uses_dir & 0xF0) >> 4;
+	inventory[pos - 'a' + INVEN_WIELD].iron_trade = uses_dir & 0x8;
 
 	inventory[pos - 'a' + INVEN_WIELD].xtra1 = xtra1;
 	inventory[pos - 'a' + INVEN_WIELD].xtra2 = xtra2;

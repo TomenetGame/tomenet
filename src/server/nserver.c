@@ -6174,12 +6174,19 @@ int Send_history(int Ind, int line, cptr hist) {
  * otherwise you can use badly-cracked client :)	- Jir -
  */
 int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name) {
+	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
-	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 	char uses_dir = 0; /* flag whether a rod requires a direction for zapping or not */
 	s16b pval = 0;
 
-	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for inven (%d.%d.%d)",
+		    Ind, connp->state, connp->id));
+		return(0);
+	}
+
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 
 	/* Mark rods that require a direction */
 	if (o_ptr->tval == TV_ROD && rod_requires_direction(Ind, o_ptr))
@@ -6188,20 +6195,16 @@ int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 	/* Mark activatable items that require a direction */
 	if (activation_requires_direction(o_ptr)
 	    //appearently not for A'able items >_>	    || !object_aware_p(Ind, o_ptr))
-	    ) {
+	    )
 		uses_dir = 1;
-	}
 
 	/* Hack: Abuse uses_dir to also store ID / *ID* status */
-	if (is_newer_than(&Players[Ind]->version, 4, 7, 1, 1, 0, 0))
+	if (is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0))
 		uses_dir |= ((object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x2 : 0x0) | ((object_fully_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x4 : 0x0);
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
-		errno = 0;
-		plog(format("Connection not ready for inven (%d.%d.%d)",
-		    Ind, connp->state, connp->id));
-		return(0);
-	}
+	/* Also encode iddc-tradability, no protocol compat needed! (started in 4.9.0.7)  */
+	if (in_irondeepdive(&p_ptr->wpos))
+		uses_dir |= !p_ptr->iron_trade || (o_ptr->iron_trade != p_ptr->iron_trade) ? 0x8 : 0x0;
 
 	if (o_ptr->tval == TV_BOOK) pval = o_ptr->pval;
 #ifdef ENABLE_SUBINVEN
@@ -6220,11 +6223,11 @@ int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, name);
 	}
 
-	if (is_newer_than(&Players[Ind]->version, 4, 5, 2, 0, 0, 0))
+	if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0))
 		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
-	else if (is_newer_than(&Players[Ind]->version, 4, 4, 5, 10, 0, 0))
+	else if (is_newer_than(&p_ptr->version, 4, 4, 5, 10, 0, 0))
 		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, uses_dir, name);
-	else if (is_newer_than(&Players[Ind]->version, 4, 4, 4, 2, 0, 0))
+	else if (is_newer_than(&p_ptr->version, 4, 4, 4, 2, 0, 0))
 		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, name);
 	else
 		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, pval, name);
@@ -6232,23 +6235,9 @@ int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 
 #ifdef ENABLE_SUBINVEN
 int Send_subinven(int Ind, char ipos, char pos, byte attr, int wgt, object_type *o_ptr, cptr name) {
-	connection_t *connp = Conn[Players[Ind]->conn];
+	player_type *p_ptr = Players[Ind];
+	connection_t *connp = Conn[p_ptr->conn];
 	char uses_dir = 0; /* flag whether a rod requires a direction for zapping or not */
-
-	if (is_older_than(&Players[Ind]->version, 4, 7, 4, 5, 0, 0)) return(0);
-
-	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
-
-	/* Mark rods that require a direction */
-	if (o_ptr->tval == TV_ROD && rod_requires_direction(Ind, o_ptr))
-		uses_dir = 1;
-
-	/* Mark activatable items that require a direction */
-	if (activation_requires_direction(o_ptr)
-	    //appearently not for A'able items >_>	    || !object_aware_p(Ind, o_ptr))
-	    ) {
-		uses_dir = 1;
-	}
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -6257,6 +6246,28 @@ int Send_subinven(int Ind, char ipos, char pos, byte attr, int wgt, object_type 
 		return(0);
 	}
 
+	if (is_older_than(&p_ptr->version, 4, 7, 4, 5, 0, 0)) return(0);
+
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+
+	/* Mark rods that require a direction */
+	if (o_ptr->tval == TV_ROD && rod_requires_direction(Ind, o_ptr))
+		uses_dir = 1;
+
+	/* Mark activatable items that require a direction */
+	if (activation_requires_direction(o_ptr)
+	    //appearently not for A'able items >_>	    || !object_aware_p(Ind, o_ptr))
+	    )
+		uses_dir = 1;
+
+	/* Hack: Abuse uses_dir to also store ID / *ID* status */
+	if (is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0))
+		uses_dir |= ((object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x2 : 0x0) | ((object_fully_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x4 : 0x0);
+
+	/* Also encode iddc-tradability, no protocol compat needed! (started in 4.9.0.7)  */
+	if (in_irondeepdive(&p_ptr->wpos))
+		uses_dir |= !p_ptr->iron_trade || (o_ptr->iron_trade != p_ptr->iron_trade) ? 0x8 : 0x0;
+
 //s_printf("%d %d %d %d %hu %hd %d %d %hd %hd %d %s \n", PKT_SI_MOVE, ipos, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
 	return Packet_printf(&connp->c, "%c%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_SI_MOVE, ipos, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
 }
@@ -6264,11 +6275,11 @@ int Send_subinven(int Ind, char ipos, char pos, byte attr, int wgt, object_type 
 
 /* Added for custom books */
 int Send_inven_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name) {
-	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
-	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
-	char ident = 0;
+	player_type *p_ptr2 = NULL, *p_ptr = Players[Ind];
+	connection_t *connp = Conn[p_ptr->conn], *connp2;
+	char ident = 0; // instead of 'uses_dir' like in Send_inven, Send_equip and Send_equip_wide, we abuse 'ident'
 
-	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -6277,8 +6288,19 @@ int Send_inven_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 		return(0);
 	}
 
-	/* Also send ID / *ID* status */
-	ident += (object_known_p(Ind, o_ptr) ? 2 : 0) + (object_fully_known_p(Ind, o_ptr) ? 4 : 0);
+	/* Mark activatable items that require a direction */
+	if (activation_requires_direction(o_ptr)
+	    //appearently not for A'able items >_>	    || !object_aware_p(Ind, o_ptr))
+	    )
+		ident = 1;
+
+	/* Hack: Abuse ident to also store ID / *ID* status */
+	if (is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0))
+		ident |= ((object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x2 : 0x0) | ((object_fully_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x4 : 0x0);
+
+	/* Also encode iddc-tradability, no protocol compat needed! (started in 4.9.0.7)  */
+	if (in_irondeepdive(&p_ptr->wpos))
+		ident |= !p_ptr->iron_trade || (o_ptr->iron_trade != p_ptr->iron_trade) ? 0x8 : 0x0;
 
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
@@ -6302,19 +6324,19 @@ int Send_inven_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 			    o_ptr->xtra1 & 0xFF, o_ptr->xtra2 & 0xFF, o_ptr->xtra3 & 0xFF, o_ptr->xtra4 & 0xFF, o_ptr->xtra5 & 0xFF, o_ptr->xtra6 & 0xFF, o_ptr->xtra7 & 0xFF, o_ptr->xtra8 & 0xFF, o_ptr->xtra9 & 0xFF, name);
 	}
 
-	if (is_newer_than(&Players[Ind]->version, 4, 7, 1, 1, 0, 0))
+	if (is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0))
 		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I%c", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval,
 		    o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0,
 		    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9, name, ident);
-	else if (is_newer_than(&Players[Ind]->version, 4, 7, 0, 0, 0, 0))
+	else if (is_newer_than(&p_ptr->version, 4, 7, 0, 0, 0, 0))
 		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval,
 		    o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0,
 		    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9, name);
-	else if (is_newer_than(&Players[Ind]->version, 4, 5, 2, 0, 0, 0))
+	else if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0))
 		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%c%c%c%c%c%c%c%c%I", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval,
 		    o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0,
 		    o_ptr->xtra1 & 0xFF, o_ptr->xtra2 & 0xFF, o_ptr->xtra3 & 0xFF, o_ptr->xtra4 & 0xFF, o_ptr->xtra5 & 0xFF, o_ptr->xtra6 & 0xFF, o_ptr->xtra7 & 0xFF, o_ptr->xtra8 & 0xFF, o_ptr->xtra9 & 0xFF, name);
-	else if (is_newer_than(&Players[Ind]->version, 4, 4, 4, 2, 0, 0))
+	else if (is_newer_than(&p_ptr->version, 4, 4, 4, 2, 0, 0))
 		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%I", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0,
 		    o_ptr->xtra1 & 0xFF, o_ptr->xtra2 & 0xFF, o_ptr->xtra3 & 0xFF, o_ptr->xtra4 & 0xFF, o_ptr->xtra5 & 0xFF, o_ptr->xtra6 & 0xFF, o_ptr->xtra7 & 0xFF, o_ptr->xtra8 & 0xFF, o_ptr->xtra9 & 0xFF, name);
 	else
@@ -6325,21 +6347,27 @@ int Send_inven_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 //int Send_equip(int Ind, char pos, byte attr, int wgt, byte tval, cptr name)
 int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name) {
 	char uses_dir = 0;
-	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
+	connection_t *connp = Conn[p_ptr->conn], *connp2;
 	int slot = INVEN_WIELD + pos - 'a';
 	bool forward = FALSE;
 
-	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for equip (%d.%d.%d)",
+			Ind, connp->state, connp->id));
+		return(0);
+	}
+
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	/* Send to mindlinker instead? */
 	if (p_ptr->window & PW_ALLITEMS_FWD) forward = TRUE;
 
 	/* Mark activatable items that require a direction */
 	if (activation_requires_direction(o_ptr)
 	    //appearently not for A'able items >_>	    || !object_aware_p(Ind, o_ptr))
-	    ) {
+	    )
 		uses_dir = 1;
-	}
 
 	/* Hack: Abuse uses_dir to also store ID / *ID* status */
 	if (is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0))
@@ -6348,12 +6376,9 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 	//-- currently not working; timing issues with setting equip_set[] in calc_boni() vs calling Send_equip, and not every slot has correct equip_set[] value..
 	if (is_atleast(&p_ptr->version, 4, 8, 1, 0, 0, 0)) uses_dir |= p_ptr->equip_set[pos - 'a'] << 4;
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
-		errno = 0;
-		plog(format("Connection not ready for equip (%d.%d.%d)",
-			Ind, connp->state, connp->id));
-		return(0);
-	}
+	/* Also encode iddc-tradability, no protocol compat needed! (started in 4.9.0.7)  */
+	if (in_irondeepdive(&p_ptr->wpos))
+		uses_dir |= !p_ptr->iron_trade || (o_ptr->iron_trade != p_ptr->iron_trade) ? 0x8 : 0x0;
 
 	/* for characters in forms that cannot use full equipment */
 	if (!item_tester_hook_wear(Ind, slot)) {
@@ -6408,26 +6433,10 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 /* Added for WIELD_BOOKS */
 int Send_equip_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name) {
 	char uses_dir = 0;
-	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
+	connection_t *connp = Conn[p_ptr->conn], *connp2;
 	int slot = INVEN_WIELD + pos - 'a';
 	bool forward = FALSE;
-
-	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
-	/* Send to mindlinker instead? */
-	if (p_ptr->window & PW_ALLITEMS_FWD) forward = TRUE;
-
-	/* Mark activatable items that require a direction */
-	if (activation_requires_direction(o_ptr)
-	    //appearently not for A'able items >_>	    || !object_aware_p(Ind, o_ptr))
-	    ) {
-		uses_dir = 1;
-	}
-
-	uses_dir |= ((object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x2 : 0x0) | ((object_fully_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x4 : 0x0);
-	/* Also encode equipment-set indicator to visually confirm set luck boni */
-	//-- currently not working; timing issues with setting equip_set[] in calc_boni() vs calling Send_equip, and not every slot has correct equip_set[] value..
-	if (is_atleast(&p_ptr->version, 4, 8, 1, 0, 0, 0)) uses_dir |= p_ptr->equip_set[pos - 'a'] << 4;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -6435,6 +6444,25 @@ int Send_equip_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 			Ind, connp->state, connp->id));
 		return(0);
 	}
+
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	/* Send to mindlinker instead? */
+	if (p_ptr->window & PW_ALLITEMS_FWD) forward = TRUE;
+
+	/* Mark activatable items that require a direction */
+	if (activation_requires_direction(o_ptr)
+	    //appearently not for A'able items >_>	    || !object_aware_p(Ind, o_ptr))
+	    )
+		uses_dir = 1;
+
+	uses_dir |= ((object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x2 : 0x0) | ((object_fully_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x4 : 0x0);
+	/* Also encode equipment-set indicator to visually confirm set luck boni */
+	//-- currently not working; timing issues with setting equip_set[] in calc_boni() vs calling Send_equip, and not every slot has correct equip_set[] value..
+	if (is_atleast(&p_ptr->version, 4, 8, 1, 0, 0, 0)) uses_dir |= p_ptr->equip_set[pos - 'a'] << 4;
+
+	/* Also encode iddc-tradability, no protocol compat needed! (started in 4.9.0.7)  */
+	if (in_irondeepdive(&p_ptr->wpos))
+		uses_dir |= !p_ptr->iron_trade || (o_ptr->iron_trade != p_ptr->iron_trade) ? 0x8 : 0x0;
 
 	/* for characters in forms that cannot use full equipment */
 	if (!item_tester_hook_wear(Ind, slot)) {
