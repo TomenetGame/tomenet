@@ -1802,7 +1802,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		}
 #endif
 #ifdef IDDC_RESTRICTED_TRADING
-		if (o_ptr->owner && o_ptr->owner != p_ptr->id && in_irondeepdive(&p_ptr->wpos)) {
+		if (o_ptr->owner && o_ptr->owner != p_ptr->id && in_irondeepdive(&p_ptr->wpos) && !o_ptr->xtra3) { //xtra3: money from chests is exempt
 			msg_print(Ind, "\377yYou cannot transfer money in the Ironman Deep Dive Challenge.");
 			if (!is_admin(p_ptr)) return;
 		}

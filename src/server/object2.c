@@ -9808,10 +9808,13 @@ void place_gold(int Ind, struct worldpos *wpos, int y, int x, int mult, int bonu
 	if (Ind) {
 		forge.killer = Players[Ind]->id;
 		if (opening_chest) {
+			/* Gold in the IDDC is untradable, add special marker to circumvent this for money from chests.
+			   We still need to set its trade-flags here though to keep sharing it restricted to the party, which is easier than just not pre-owning it! */
 			forge.owner = forge.killer;
 			forge.mode = Players[Ind]->mode;
 			forge.iron_trade = Players[Ind]->iron_trade; /* gold cannot be traded in IDDC anyway, so this has no effect.. */
 			forge.iron_turn = opening_chest;
+			if (forge.tval == TV_GOLD) forge.xtra3 = 1; /* mark as exception for trading in the IDDC */
 		}
 	}
 
