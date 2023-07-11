@@ -6583,7 +6583,7 @@
 #define FF1_CAN_CLIMB		0x00004000L
 #define FF1_TUNNELABLE		0x00008000L
 #define FF1_WEB			0x00010000L
-#define FF1_ATTR_MULTI		0x00020000L
+#define FF1_ALLOW_TELE		0x00020000L
 #define FF1_SLOW_RUNNING_1	0x00040000L	/* half speed */
 #define FF1_SLOW_RUNNING_2	0x00080000L	/* quarter speed */
 #define FF1_SLOW_LEVITATING_1	0x00100000L
@@ -6615,6 +6615,7 @@
 #define FF2_GLOW		0x00000100L	/* Always visible, lit via CAVE_GLOW */
 #define FF2_ENTER_FROM_SPECIAL	0x00000200L	/* This grid can only be entered if the player is standing on CAVE_ICKY or FF1_PROTECTED */
 #define FF2_NO_PROB		0x00000400L	/* Don't allow probability travel onto this grid */
+#define FF2_ATTR_MULTI		0x00000800L
 //hole
 #define FF2_BOUNDARY		0x80000000L	/* Is permanent wall that serves as boundary of a dungeon level - cannot even be crossed by admins */
 
@@ -7244,7 +7245,7 @@
 /* For teleportation maybe: allow landing on items? */
 #define cave_free_bold(ZCAVE,Y,X) \
 	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR) && \
-	 !(f_info[ZCAVE[Y][X].feat].flags1 & FF1_PERMANENT) && \
+	 (!(f_info[ZCAVE[Y][X].feat].flags1 & FF1_PERMANENT) || f_info[ZCAVE[Y][X].feat].flags1 & FF1_ALLOW_TELE) && \
 	  (ZCAVE[Y][X].m_idx == 0))
 
 #if 0

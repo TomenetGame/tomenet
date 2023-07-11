@@ -1003,8 +1003,8 @@ D:0:A staircase leading out
 N:137:open floor
 G:.:w
 M:1
-F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW | PERMANENT
-F:NO_ARTICLE
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW
+F:PERMANENT | ALLOW_TELE | NO_ARTICLE
 
 
 # HOLE 138..158 -------------------------------------------------------------

@@ -1111,7 +1111,7 @@ static cptr f_info_flags1[] = {
 	"TUNNELABLE",
 
 	"WEB",
-	"ATTR_MULTI",
+	"ALLOW_TELE",
 	"SLOW_RUNNING_1",
 	"SLOW_RUNNING_2",
 
@@ -1145,7 +1145,7 @@ static cptr f_info_flags2[] = {
 	"GLOW",
 	"ENTER_FROM_SPECIAL",
 	"NO_PROB",
-	"XXX",
+	"ATTR_MULTI",
 
 	"XXX",
 	"XXX",

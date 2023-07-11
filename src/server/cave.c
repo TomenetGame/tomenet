@@ -3325,7 +3325,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 		/* TODO: this should be done in client-side too, so that
 		 * they shimmer when player isn't moving.
 		   -- Well, actually for water at least that would be kinda annoying though to look at, too flickery! */
-		else if (f_ptr->flags1 & FF1_ATTR_MULTI) {
+		else if (f_ptr->flags2 & FF2_ATTR_MULTI) {
 			a = f_ptr->shimmer[rand_int(7)];
 
 			if (rand_int(8) != 1)
