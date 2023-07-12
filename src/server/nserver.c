@@ -9831,7 +9831,8 @@ int Send_playerlist(int Ind, int i, int mode) {
 		for (p = 1; p <= NumPlayers; p++)
 			Send_playerlist_aux(p, i, mode);
 		return(1);
-	} else return Send_playerlist_aux(Ind, i, mode);
+	}
+	return Send_playerlist_aux(Ind, i, mode);
 }
 
 int Send_weather_colouring(int Ind, byte col_raindrop, byte col_snowflake, byte col_sandgrain, char c_sandgrain) {
