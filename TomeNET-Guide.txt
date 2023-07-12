@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 10. July 2023 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 12. July 2023 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.0c - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -21360,7 +21360,7 @@ In general, mindcraft schools are less affected by anti-magic fields.)
                     done. Example inscription: @PGandalf
                     Required skill level for first spell level: 35.
                     Shared spell (see above): Psycho-power / Attunement.
-                    (Telekinesis II is a Wizardry spell, not in Mindcraft.)
+                    (Telekinesis I is a Wizardry spell, not in Mindcraft.)
 
     Kinetic Shield  Uses telekinetic force to set up a shield around you that
                     has a good chance to repel physical attacks or projectiles,
