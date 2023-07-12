@@ -1,6 +1,9 @@
 -- $Id: c-init.lua,v 1.8 2002/09/03 14:01:38 darkgod Exp $
 -- Client side LUA initialization of TomeNET
 
+-- Ensure backward client compatibility for renaming of this skill
+SKILL_ATTUNEMENT=SKILL_TCONTACT
+
 -- Beware of the scary undefined globals
 function safe_getglobal(x)
 	local v = rawget(globals(), x)
