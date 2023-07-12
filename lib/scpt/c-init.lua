@@ -2,7 +2,9 @@
 -- Client side LUA initialization of TomeNET
 
 -- Ensure backward client compatibility for renaming of this skill
-SKILL_ATTUNEMENT=SKILL_TCONTACT
+if SKILL_TCONTACT ~= nil then
+    SKILL_ATTUNEMENT=SKILL_TCONTACT
+end
 
 -- Beware of the scary undefined globals
 function safe_getglobal(x)
