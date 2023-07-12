@@ -4823,7 +4823,7 @@ void check_experience(int Ind) {
 	}
 
 	/* Update his level in everyone's player-list subwindow */
-	Send_playerlist(0, Ind, 2);
+	if (reglv || newlv) Send_playerlist(0, Ind, 2);
 
 	if (!newlv) {
 		/* Handle stuff */
