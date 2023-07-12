@@ -6892,7 +6892,7 @@ else s_printf("\n");
 	}
 #endif
 
-	//if (get_skill(p_ptr, SKILL_TCONTACT) >= thresh_spell) { r_ptr->flags6 |= RF6_HASTE; magicness++; } -- we already copy the max speed flatly
+	//if (get_skill(p_ptr, SKILL_ATTUNEMENT) >= thresh_spell) { r_ptr->flags6 |= RF6_HASTE; magicness++; } -- we already copy the max speed flatly
 
 #ifdef SIMPLE_RI_MIRROR_CHECKFORSPELLS
 	if (check_for_spell(p_ptr, "MMINDBLAST_I") || check_for_spell(p_ptr, "MMINDBLAST_II") || check_for_spell(p_ptr, "MMINDBLAST_III") ||

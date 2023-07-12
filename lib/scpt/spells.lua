@@ -110,9 +110,9 @@ SCHOOL_PPOWER = add_school {
 	["name"] = "Psycho-power",
 	["skill"] = SKILL_PPOWER,
 }
-SCHOOL_TCONTACT = add_school {
+SCHOOL_ATTUNEMENT = add_school {
 	["name"] = "Attunement",
-	["skill"] = SKILL_TCONTACT,
+	["skill"] = SKILL_ATTUNEMENT,
 }
 SCHOOL_MINTRUSION = add_school {
 	["name"] = "Mental intrusion",
@@ -170,7 +170,7 @@ pern_dofile(Ind, "dr_physical.lua")
 
 __lua_M_FIRST = __tmp_spells_num
 pern_dofile(Ind, "m_ppower.lua")
-pern_dofile(Ind, "m_tcontact.lua")
+pern_dofile(Ind, "m_attunement.lua")
 pern_dofile(Ind, "m_mintrusion.lua")
 __lua_M_LAST = __tmp_spells_num - 1
 

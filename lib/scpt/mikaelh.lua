@@ -71,7 +71,7 @@ function showskills(name)
 	if get_skill_value(p, SKILL_DRUID_PHYSICAL) > 0 then	msg_print(Ind, "     . Physical Lore              " .. get_skill_formatted(p, SKILL_DRUID_PHYSICAL)) end
 	if get_skill_value(p, SKILL_ASTRAL) > 0 then		msg_print(Ind, "     . Astral Knowledge           " .. get_skill_formatted(p, SKILL_ASTRAL)) end
 	if get_skill_value(p, SKILL_PPOWER) > 0 then		msg_print(Ind, "     . Psycho-Power               " .. get_skill_formatted(p, SKILL_PPOWER)) end
-	if get_skill_value(p, SKILL_TCONTACT) > 0 then		msg_print(Ind, "     . Attunement                 " .. get_skill_formatted(p, SKILL_TCONTACT)) end
+	if get_skill_value(p, SKILL_ATTUNEMENT) > 0 then	msg_print(Ind, "     . Attunement                 " .. get_skill_formatted(p, SKILL_ATTUNEMENT)) end
 	if get_skill_value(p, SKILL_MINTRUSION) > 0 then	msg_print(Ind, "     . Mental Intrusion           " .. get_skill_formatted(p, SKILL_MINTRUSION)) end
 	if get_skill_value(p, SKILL_OSHADOW) > 0 then		msg_print(Ind, "     . Shadow                     " .. get_skill_formatted(p, SKILL_OSHADOW)) end
 	if get_skill_value(p, SKILL_OSPIRIT) > 0 then		msg_print(Ind, "     . Spirit                     " .. get_skill_formatted(p, SKILL_OSPIRIT)) end

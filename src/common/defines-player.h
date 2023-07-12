@@ -202,7 +202,7 @@
 #define SKILL_STANCE		79 /* combat stances for warriors */
 
 #define SKILL_PPOWER		80 /* the new mindcrafter skills */
-#define SKILL_TCONTACT		81 /* the new mindcrafter skills */
+#define SKILL_ATTUNEMENT	81 /* the new mindcrafter skills */
 #define SKILL_MINTRUSION	82 /* the new mindcrafter skills */
 
 /* Dummy skills - just to make the mass of schools appear more ordered - C. Blue */

@@ -28,7 +28,7 @@ __update_table = {
 	"scpt/d_astral.lua",
 
 	"scpt/m_ppower.lua",
-	"scpt/m_tcontact.lua",
+	"scpt/m_attunement.lua",
 	"scpt/m_mintrusion.lua",
 
 	"scpt/meta.lua",

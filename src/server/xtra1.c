@@ -1395,9 +1395,8 @@ void calc_mana(int Ind) {
 
 	/* Only mindcraft-users are affected (CLASS_MINDCRAFTER) */
 	if (get_skill(p_ptr, SKILL_PPOWER) ||
-	    get_skill(p_ptr, SKILL_TCONTACT) ||
-	    get_skill(p_ptr, SKILL_MINTRUSION))
-	{
+	    get_skill(p_ptr, SKILL_ATTUNEMENT) ||
+	    get_skill(p_ptr, SKILL_MINTRUSION)) {
 		/* Assume player is not encumbered by helm */
 		p_ptr->cumber_helm = FALSE;
 
