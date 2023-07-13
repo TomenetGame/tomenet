@@ -442,7 +442,6 @@ function quest_towneltalk(Ind, msg, topic)
 	end
 
 	--- Done ---
-
 	if hinted == 0 then
 		msg_print(Ind, "\252\255UYou seem to be doing fine, "..msg..".")
 	end
