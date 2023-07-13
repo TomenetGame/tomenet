@@ -866,7 +866,7 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 #ifdef USE_SOUND_2010
 				sound(Ind, "success", NULL, SFX_TYPE_MISC, FALSE);
 #endif
-				s_printf("%s EVENT_WON: %s wins %d (%s)\n", showtime(), p_ptr->name, d + 1, ge->title);
+				s_printf("%s EVENT_WON: %s wins %d '%s'(%d)\n", showtime(), p_ptr->name, d + 1, ge->title, ge->getype);
 				//l_printf("%s \\{s%s has won %s\n", showdate(), p_ptr->name, ge->title);
 				p_ptr->event_won_flags |= 1 << (GE_DUNGEON_KEEPER - 1);
 

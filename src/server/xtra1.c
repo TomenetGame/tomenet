@@ -7840,7 +7840,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 		}
 	}
 #endif
-	s_printf("%s EVENT_CREATE: #%d of type %d parms='%s'\n", showtime(), n + 1, getype, parm);
+	s_printf("%s EVENT_CREATE: #%d '%s'(%d) parms='%s'\n", showtime(), n + 1, ge->title, getype, parm);
 
 	/* extra announcement if announcement time isn't the usual multiple of announcement intervals */
 #if 1 /* this is ok, and leaving it for now */
@@ -7862,7 +7862,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 void stop_global_event(int Ind, int n) {
 	global_event_type *ge = &global_event[n];
 	if (Ind) msg_format(Ind, "Wiping event #%d of type %d.", n + 1, ge->getype);
-	s_printf("%s EVENT_STOP: #%d of type %d\n", showtime(), n + 1, ge->getype);
+	s_printf("%s EVENT_STOP: #%d '%s'(%d)\n", showtime(), n + 1, ge->title, ge->getype);
 	if (ge->getype) msg_broadcast_format(0, "\377y[Event '%s' (%d) was cancelled.]", ge->title, n + 1);
 #if 0
 	ge->getype = GE_NONE;
@@ -8229,8 +8229,8 @@ void global_event_signup(int Ind, int n, cptr parm) {
 		break;
 	}
 
-	if (parm_log[0]) s_printf("%s EVENT_SIGNUP: %d (%s): %s (%s).\n", showtime(), n + 1, ge->title, p_ptr->name, parm_log);
-	else s_printf("%s EVENT_SIGNUP: %d (%s): %s.\n", showtime(), n + 1, ge->title, p_ptr->name);
+	if (parm_log[0]) s_printf("%s EVENT_SIGNUP: %d '%s'(%d): %s (%s).\n", showtime(), n + 1, ge->title, ge->getype, p_ptr->name, parm_log);
+	else s_printf("%s EVENT_SIGNUP: %d '%s'(%d): %s.\n", showtime(), n + 1, ge->title, ge->getype, p_ptr->name);
 	if (fake_signup) return;
 
 	/* currently no warning/error/solution if you try to sign on for multiple events at the same time :|
@@ -8375,7 +8375,7 @@ static void process_global_event(int ge_id) {
 				/* not enough participants? Don't hand out reward for free to someone. */
 				if (ge->min_participants && (participants < ge->min_participants)) {
 					msg_broadcast_format(0, "\377y%s needs at least %d participant%s.", ge->title, ge->min_participants, ge->min_participants == 1 ? "" : "s");
-					s_printf("%s EVENT_NOPLAYERS: %d (%s) has only %d/%d participants.\n", showtime(), ge_id + 1, ge->title, participants, ge->min_participants);
+					s_printf("%s EVENT_NOPLAYERS: %d '%s'(%d) has only %d/%d participants.\n", showtime(), ge_id + 1, ge->title, ge->getype, participants, ge->min_participants);
 					/* remove players who DID sign up from being 'participants' */
 					for (j = 1; j <= NumPlayers; j++)
 						if (Players[j]->global_event_type[ge_id] == ge->getype) {
@@ -8388,7 +8388,7 @@ static void process_global_event(int ge_id) {
 
 				/* Participants are ok, event now starts! */
 				} else {
-					s_printf("%s EVENT_STARTS: %d (%s) has %d participants.\n", showtime(), ge_id + 1, ge->title, participants);
+					s_printf("%s EVENT_STARTS: %d '%s'(%d) has %d participants.\n", showtime(), ge_id + 1, ge->title, ge->getype, participants);
 					msg_broadcast_format(0, "\374\377U[>>\377C%s (\377U%d\377C) starts now!\377U<<]", ge->title, ge_id + 1);
 
 					/* memorize each character's participation */
@@ -8426,7 +8426,7 @@ static void process_global_event(int ge_id) {
 		    (ge->ending && now >= ge->ending)) {
 			ge->state[0] = 255; /* state[0] is used as indicator for clean-up phase of any event */
 			msg_broadcast_format(0, "\377y>>%s ends due to time limit!<<", ge->title);
-			s_printf("%s EVENT_TIMEOUT: %d - %s.\n", showtime(), ge_id + 1, ge->title);
+			s_printf("%s EVENT_TIMEOUT: %d - %s(%d).\n", showtime(), ge_id + 1, ge->title, ge->getype);
 		}
 		/* Time warning at T-5minutes! (only if the whole event lasts MORE THAN 10 minutes) */
 		/* Note: paused turns will be added to the running time, IF the event end is given in "turns" */
@@ -8782,7 +8782,7 @@ static void process_global_event(int ge_id) {
 			//o_ptr->note = quark_add("Tournament reward");
 			inven_carry(j, o_ptr);
 
-			s_printf("%s EVENT_WON: %s wins %d (%s)\n", showtime(), p_ptr->name, ge_id + 1, ge->title);
+			s_printf("%s EVENT_WON: %s wins %d '%s'(%d)\n", showtime(), p_ptr->name, ge_id + 1, ge->title, ge->getype);
 			l_printf("%s \\{s%s has won %s\n", showdate(), p_ptr->name, ge->title);
 
 			/* avoid him dying */
@@ -9351,7 +9351,7 @@ static void process_global_event(int ge_id) {
 	/* Check for end of event */
 	if (ge->getype == GE_NONE) {
 		msg_broadcast_format(0, "\374\377W[%s has ended]", ge->title);
-		s_printf("%s EVENT_END: %d - '%s'.\n", showtime(), ge_id + 1, ge->title);
+		s_printf("%s EVENT_END: %d - '%s'(%d).\n", showtime(), ge_id + 1, ge->title, ge->getype);
 	}
 }
 
