@@ -1109,7 +1109,7 @@ static void teleport_objects_away(struct worldpos *wpos, s16b x, s16b y, int dis
 
 		if (!in_bounds(cy, cx)) continue;
 		if (!cave_floor_bold(zcave, cy, cx) ||
-		    cave_perma_bold(zcave, cy, cx)) continue;
+		    cave_perma_bold2(zcave, cy, cx)) continue;
 
 //		(void)floor_carry(cy, cx, &tmp_obj);
 		drop_near(TRUE, 0, &tmp_obj, 0, wpos, cy, cx);
@@ -1125,7 +1125,7 @@ static void teleport_objects_away(struct worldpos *wpos, s16b x, s16b y, int dis
 
 		if (!in_bounds(cy, cx)) continue;
 		if (!cave_floor_bold(zcave, cy, cx) ||
-		    cave_perma_bold(zcave, cy, cx)) continue;
+		    cave_perma_bold2(zcave, cy, cx)) continue;
 
 		/* no idea if this works */
 		if (!cave_naked_bold(zcave, cy, cx)) continue;

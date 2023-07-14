@@ -7146,6 +7146,7 @@
 /* a 'wall los' which ignores non-perma-walls (for los_wall()) */
 #define cave_los_wall(ZCAVE,Y,X) \
 	(!(f_info[ZCAVE[Y][X].feat].flags1 & FF1_PERMANENT))
+//hm, isn't this needed?:  || !(f_info[ZCAVE[Y][X].feat].flags1 & FF1_WALL))
 
 /* Replaces cave_los() for projection-blockade checks, so project() can directly target
    certain wall-like feats that aren't really walls, such as mountains and trees */
@@ -7286,6 +7287,9 @@
 			(ZCAVE[Y][X].feat <= FEAT_HOME_TAIL)))
 #endif	/* 0 */
 
+#define cave_perma_bold2(ZCAVE,Y,X) \
+	 ((f_info[ZCAVE[Y][X].feat].flags1 & FF1_PERMANENT) && !(f_info[ZCAVE[Y][X].feat].flags1 & FF1_ALLOW_TELE))
+
 /*
  * Is a given location "valid" for placing things?
  *
@@ -7301,7 +7305,7 @@
  * Line 4 -- forbit house doors
  */
 #if 0	/* moved to cave.c */
-#define cave_valid_bold(ZCAVE,Y,X) \
+ #define cave_valid_bold(ZCAVE,Y,X) \
     (!cave_perma_bold(ZCAVE,Y,X) && \
      (!ZCAVE[Y][X].o_idx || \
       !artifact_p(&o_list[ZCAVE[Y][X].o_idx])))

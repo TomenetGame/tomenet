@@ -924,26 +924,20 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 			/* Ignore illegal locations */
 			if (!in_bounds_floor(l_ptr, y, x)) continue;
 
-			if (!left_shop && !town) {
-				/* Require floor space if not ghost */
-				if (!p_ptr->ghost && !cave_free_bold(zcave, y, x)) continue;
-
-				/* never teleport onto perma-walls (happens to ghosts in khazad) */
-				if (cave_perma_bold(zcave, y, x)) continue;
+			/* Require floor space if not ghost */
+			if (!p_ptr->ghost) {
+				/* Never teleport onto walls, permanent floor feats that don't specifically have ALLOW_TELE, or 'into' other creatures */
+				if (!cave_free_bold(zcave, y, x)) continue;
 			} else {
-				/* Require floor space if not ghost */
-				if (!p_ptr->ghost && !cave_free_bold(zcave, y, x)
-				    && !player_can_enter(Ind, zcave[y][x].feat, TRUE))
-					continue;
-
 				/* never teleport onto perma-walls (happens to ghosts in khazad) */
-				if (cave_perma_bold(zcave, y, x)
-				    && !player_can_enter(Ind, zcave[y][x].feat, TRUE))
-					continue;
+				if (cave_perma_bold2(zcave, y, x)) continue;
+				/* Never teleport 'into' another creature! */
+				if (zcave[y][x].m_idx) continue;
 			}
 
-			/* Require empty space if a ghost too */
-			if (p_ptr->ghost && zcave[y][x].m_idx) continue;
+			/* In case of shopping or in towns, pay extra attention to land on non-damaging floor.
+			   Or shop scumming in dungeon towns might destroy a lot of inventory.. */
+			if ((left_shop || town) && !player_can_enter(Ind, zcave[y][x].feat, TRUE)) continue;
 
 			/* No teleporting into vaults and such */
 			if (zcave[y][x].info & CAVE_ICKY) continue;
@@ -1249,7 +1243,7 @@ void teleport_player_to(int Ind, int ny, int nx, bool forced) {
 			if (!p_ptr->ghost && !cave_free_bold(zcave, y, x)) continue;
 
 			/* never teleport onto perma-walls (happens to ghosts in khazad) */
-			if (cave_perma_bold(zcave, y, x)
+			if (cave_perma_bold2(zcave, y, x)
 			    && !player_can_enter(Ind, zcave[y][x].feat, TRUE))
 				continue;
 
@@ -5647,7 +5641,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 					if (!in_bounds(cy, cx)) continue;
 					if (!cave_floor_bold(zcave, cy, cx) ||
-					    cave_perma_bold(zcave, cy, cx)) continue;
+					    cave_perma_bold2(zcave, cy, cx)) continue;
 
 					//(void)floor_carry(cy, cx, &tmp_obj);
 					drop_near(TRUE, 0, &tmp_obj, 0, wpos, cy, cx);

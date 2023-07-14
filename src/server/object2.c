@@ -10078,7 +10078,7 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 		if (!cave_floor_bold(zcave, ny, nx) ||
 		    /* Usually cannot drop items on permanent features,
 		       exception for stairs/gates though in case of emergency */
-		    (cave_perma_bold(zcave, ny, nx)
+		    (cave_perma_bold2(zcave, ny, nx)
 #ifdef DROP_ON_STAIRS_IN_EMERGENCY
 		     && !(allow_stairs && is_stair(c_ptr->feat))
 #endif
