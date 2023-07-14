@@ -9829,7 +9829,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 	/* Handle "sleep" */
 	if (m_ptr->csleep) {
-		u32b notice = 0;
+		u32b notice = 0, noise;
 		bool aggravated = FALSE;
 
 		/* Hack -- handle non-aggravation */
@@ -9870,7 +9870,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		p_ptr = Players[m_ptr->closest_player];
 
 		/* Calculate the "player noise" */
-		u32b noise = (1U << (30 - p_ptr->skill_stl));
+		noise = (1U << (30 - p_ptr->skill_stl));
 
 		/* Hack -- See if monster "notices" player */
 		if ((notice * notice * notice) <= noise || aggravated) {
