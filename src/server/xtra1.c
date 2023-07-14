@@ -6651,7 +6651,7 @@ void calc_boni(int Ind) {
 	/* Limit Skill -- stealth from 0 to 30 */
 	if (p_ptr->skill_stl > 30) p_ptr->skill_stl = 30;
 	if (p_ptr->skill_stl < 0) p_ptr->skill_stl = 0;
-	if (p_ptr->aggravate) p_ptr->skill_stl = 0;
+	if (p_ptr->aggravate) p_ptr->skill_stl = -1; //was 0, but -1 will actually display "Very Bad" instead of just "Bad", without causing any problems (only thing affected is actually [pvp-]stealing a little bit) :)
 
 	/* Limit Skill -- digging from 1 up */
 	if (p_ptr->skill_dig < 1) p_ptr->skill_dig = 1;
