@@ -1839,8 +1839,8 @@ static char *object_desc_int(char *t, sint v) {
 }
 
 /*
- * Print an unsigned number "n" into a string "t", as if by
- * sprintf(t, "%u%%", n), and return a pointer to the terminator.
+ * Print a signed number "n" into a string "t", as if by
+ * sprintf(t, "%+u%%", n), and return a pointer to the terminator.
  */
 static char *object_desc_per(char *t, sint v) {
 	uint p, n;
@@ -1883,6 +1883,58 @@ static char *object_desc_per(char *t, sint v) {
 	/* Result */
 	return(t);
 }
+
+#ifdef WEAPONS_NO_AC
+/*
+ * Print an unsigned number "n" into a string "t", as if by
+ * sprintf(t, "%u%%", n), and return a pointer to the terminator.
+ * Note that we always print a sign, either "+" or "-".
+ */
+static char *object_desc_intper(char *t, sint v) {
+	uint p, n;
+
+	/* Negative */
+	if (v < 0) {
+		/* Take the absolute value */
+		n = 0 - v;
+
+		/* Use a "minus" sign */
+		*t++ = '-';
+	}
+	/* Positive (or zero) */
+	else {
+		/* Use the actual number */
+		n = v;
+
+		/* Use a "plus" sign */
+		*t++ = '+';
+	}
+
+	/* Find "size" of "n" */
+	for (p = 1; n >= p * 10; p = p * 10) /* loop */;
+
+	/* Dump each digit */
+	while (p >= 1) {
+		/* Dump the digit */
+		*t++ = '0' + n / p;
+
+		/* Remove the digit */
+		n = n % p;
+
+		/* Process next digit */
+		p = p / 10;
+	}
+
+	/* Use a "percent" sign */
+	*t++ = '%';
+
+	/* Terminate */
+	*t = '\0';
+
+	/* Result */
+	return(t);
+}
+#endif
 
 
 
@@ -2913,13 +2965,24 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			t = object_desc_per(t, o_ptr->ac);
 			t = object_desc_chr(t, b2);
 #endif
-		}
 		/* No base armor, but does increase armor */
-		else if (o_ptr->to_a) {
-			if (!(mode & 8)) t = object_desc_chr(t, ' ');
-			t = object_desc_chr(t, b1);
-			t = object_desc_int(t, o_ptr->to_a);
-			t = object_desc_chr(t, b2);
+		} else if (o_ptr->to_a) {
+#ifdef WEAPONS_NO_AC
+			if (is_melee_weapon(o_ptr->tval)) {
+				/* Weapons give to parry chance instead? */
+				if (!(mode & 8)) t = object_desc_chr(t, ' ');
+				t = object_desc_chr(t, b1);
+				t = object_desc_intper(t, o_ptr->to_a >> WEAPONS_NO_AC);
+				t = object_desc_chr(t, b2);
+			} else {
+#endif
+				if (!(mode & 8)) t = object_desc_chr(t, ' ');
+				t = object_desc_chr(t, b1);
+				t = object_desc_int(t, o_ptr->to_a);
+				t = object_desc_chr(t, b2);
+#ifdef WEAPONS_NO_AC
+			}
+#endif
 		}
 	}
 	/* Hack -- always show base armor */

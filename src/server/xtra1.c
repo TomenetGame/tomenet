@@ -2993,6 +2993,9 @@ void calc_boni(int Ind) {
 
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	s16b pval;
+#ifdef WEAPONS_NO_AC
+	s16b extra_weapon_parry = 0;
+#endif
 
 	bool old_auto_id = p_ptr->auto_id;
 	bool old_dual_wield = p_ptr->dual_wield;
@@ -4446,18 +4449,44 @@ void calc_boni(int Ind) {
 #ifndef NEW_SHIELDS_NO_AC
 		/* Apply the bonuses to armor class */
 		if (o_ptr->tval == TV_SHIELD) may_to_a += o_ptr->to_a;
+ #ifndef WEAPONS_NO_AC
 		else p_ptr->to_a += o_ptr->to_a;
+ #else
+		else if (!is_melee_weapon(o_ptr->tval) p_ptr->to_a += o_ptr->to_a;
+		else extra_weapon_parry += o_ptr->to_a >> WEAPONS_NO_AC;
+ #endif
 #else
-		if (o_ptr->tval != TV_SHIELD) p_ptr->to_a += o_ptr->to_a;
+		if (o_ptr->tval != TV_SHIELD)
+ #ifndef WEAPONS_NO_AC
+			p_ptr->to_a += o_ptr->to_a;
+ #else
+		{
+			if (!is_melee_weapon(o_ptr->tval)) p_ptr->to_a += o_ptr->to_a;
+			else extra_weapon_parry += o_ptr->to_a >> WEAPONS_NO_AC;
+		}
+ #endif
 #endif
 
 		/* Apply the mental bonuses to armor class, if known */
 		if (object_known_p(Ind, o_ptr)) {
 #ifndef NEW_SHIELDS_NO_AC
 			if (o_ptr->tval == TV_SHIELD) may_dis_to_a += o_ptr->to_a;
+ #ifndef WEAPONS_NO_AC
 			else p_ptr->dis_to_a += o_ptr->to_a;
+ #else
+			else if (!is_melee_weapon(o_ptr->tval)) p_ptr->dis_to_a += o_ptr->to_a;
+			//note: ATM we always tell the player his true parry chance, even though we'd need a 'dis_to_parry' here for unidentified weapons that give hidden +parry chance!
+ #endif
 #else
-			if (o_ptr->tval != TV_SHIELD) p_ptr->dis_to_a += o_ptr->to_a;
+			if (o_ptr->tval != TV_SHIELD)
+ #ifndef WEAPONS_NO_AC
+				p_ptr->dis_to_a += o_ptr->to_a;
+ #else
+			{
+				if (!is_melee_weapon(o_ptr->tval)) p_ptr->dis_to_a += o_ptr->to_a;
+				//note: ATM we always tell the player his true parry chance, even though we'd need a 'dis_to_parry' here for unidentified weapons that give hidden +parry chance!
+			}
+ #endif
 #endif
 		}
 
@@ -5528,7 +5557,11 @@ void calc_boni(int Ind) {
 	p_ptr->heavy_wield = FALSE;
 #ifdef USE_PARRYING
 	/* Do we have a weapon equipped at all? */
-	if (o_ptr->k_idx) {
+	if (o_ptr->k_idx
+ #ifdef WIELD_BOOKS
+	    && o_ptr->tval != TV_BOOK
+ #endif
+	    ) {
 		if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H) {
 			p_ptr->weapon_parry = 10 + get_skill_scale(p_ptr, SKILL_MASTERY, 20);
 		} else if (k_info[o_ptr->k_idx].flags4 & TR4_SHOULD2H) {
@@ -5550,6 +5583,14 @@ void calc_boni(int Ind) {
 		    )
 			//p_ptr->weapon_parry += 5 + get_skill_scale(p_ptr, SKILL_MASTERY, 5);//was +0(+10)
 			p_ptr->weapon_parry += 10;//pretty high, because independent of mastery skill^^
+
+ #ifdef WEAPONS_NO_AC
+		/* Apply weapons' magical +parry boni */
+		if (p_ptr->dual_wield) extra_weapon_parry >>= 1; /* Two weapons? Apply the averaged parry bonus from both (as they were both added to extra_weapon_parry previously) */
+		p_ptr->weapon_parry += extra_weapon_parry;
+		/* Note: We don't give reduced chance for awkward_wield, icky_wield or heavy_wield here, for now, as these will cut down the total weapon_parry chance anyway, further below.
+		   Currently though only heavy_wield applies a parry penalty, the other two don't. */
+ #endif
 
 		/* adjust class-dependantly! */
 		switch (p_ptr->pclass) {
