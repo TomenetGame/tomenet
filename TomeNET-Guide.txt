@@ -22611,8 +22611,10 @@ such as pvp or defending from a trap you accidentally set off.
 
 More on Parrying
 ----------------
-The larger a weapon, the more you can parry. Without a weapon, you cannot
-parry at all.
+The only items that allow you to parry are melee weapons. Their parry chance
+only depends on their handedness - the larger a weapon, the more you can parry.
+Without a weapon, you cannot parry at all (item weight will have no effect):
+
 A 1-handed weapon will parry less often than a 1 1/2-hander (SHOULD2H), and
 that one less often than a 2-handed weapon (MUST2H).
 If you wield a 1-hand weapon WITHOUT a shield which "feels especially easy to
@@ -22620,9 +22622,22 @@ swing" (COULD2H), you'll also get an extra parry bonus.
 Increasing weaponmastery improves your parry chance; dual-wielding improves it
 too, provided that you aren't 'flexibility-encumbered' (compare (5.5)).
 
+There is an exception: Depending on the server settings, some weapons give a
+special bonus to parry chance. This is displayed in brackets, eg:
+a Quarterstaff {+,3} (4d4) (+0,+0) [+10%]
+This quarterstaff actually increases your raw base parry chance (before your
+class is factored in, same way as block chance calculation is done for shields)
+by an extra 10%.
+
 
 More on Blocking
 ----------------
+The only items that allow you to block are shields. They display their base
+block chance in brackets, eg:
+a Small Metal Shield {+,3} [17%]
+This shield provides a raw base block chance of 17%, that gets modified by
+your class, status effects and attack circumstances as described.
+
 Some effects that normal armour usually doesn't protect from can actually be
 blocked, for example magical breath, ball or bolt attacks.
 The bigger a shield, the more you can block. Depending on server settings,
