@@ -3466,8 +3466,8 @@ void calc_boni(int Ind) {
 			p_ptr->can_swim = TRUE; csheet_boni[14].cb[12] |= CB13_XSWIM; /* wood? */
 			p_ptr->pass_trees = TRUE; csheet_boni[14].cb[12] |= CB13_XTREE;
 			/* tree bark is  harder than skin */
-			p_ptr->to_a += 5;
-			p_ptr->dis_to_a += 5;
+			p_ptr->to_a += 3;
+			p_ptr->dis_to_a += 3;
 		} else { p_ptr->pspeed -= 1; csheet_boni[14].spd -= 1; } /* it's cost of ent's power, isn't it? */
 
 		if (p_ptr->lev >= 4) { p_ptr->see_inv = TRUE; csheet_boni[14].cb[4] |= CB5_RSINV; }
