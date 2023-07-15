@@ -3228,23 +3228,24 @@ void msg_format(int Ind, cptr fmt, ...) {
 }
 
 /*
- * Send a message to everyone on a floor.
+ * Send a message to everyone on a floor, optionally except to Ind [or 0]
  */
-static void floor_msg(struct worldpos *wpos, cptr msg) {
+static void floor_msg(int Ind, struct worldpos *wpos, cptr msg) {
 	int i;
 
 //system-msg, currently unused anyway-	if (cfg.log_u) s_printf("[%s] %s\n", Players[sender]->name, msg);
 	/* Check for this guy */
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (i == Ind) continue;
 		/* Check this guy */
 		if (inarea(wpos, &Players[i]->wpos)) msg_print(i, msg);
 	}
 }
 /*
- * Send a formatted message to everyone on a floor. (currently unused)
+ * Send a formatted message to everyone on a floor, optionally except to Ind [or 0]
  */
-void floor_msg_format(struct worldpos *wpos, cptr fmt, ...) {
+void floor_msg_format(int Ind, struct worldpos *wpos, cptr fmt, ...) {
 	va_list vp;
 	char buf[1024];
 
@@ -3255,10 +3256,10 @@ void floor_msg_format(struct worldpos *wpos, cptr fmt, ...) {
 	/* End the Varargs Stuff */
 	va_end(vp);
 	/* Display */
-	floor_msg(wpos, buf);
+	floor_msg(Ind, wpos, buf);
 }
 /*
- * Send a message to everyone on a floor, considering ignorance.
+ * Send a message from sender to everyone on a floor including himself, considering ignorance.
  */
 #if 0 /* currently unused, just killing compiler warning.. */
 static void floor_msg_ignoring(int sender, struct worldpos *wpos, cptr msg) {
@@ -3287,7 +3288,7 @@ static void floor_msg_ignoring2(int sender, struct worldpos *wpos, cptr msg, cpt
 	}
 }
 /*
- * Send a formatted message to everyone on a floor, considering ignorance.
+ * Send a formatted message from sender to everyone on a floor including himself, considering ignorance.
  */
 #if 0 /* currently unused, just killing compiler warning.. */
 static void floor_msg_format_ignoring(int sender, struct worldpos *wpos, cptr fmt, ...) {

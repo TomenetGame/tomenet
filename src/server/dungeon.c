@@ -7534,9 +7534,9 @@ static void process_various(void) {
 			nether_realm_collapsing--;
 
 			/* Give warning in the meantime */
-			if (nether_realm_collapsing == 10) floor_msg_format(&wpos, "\377RThis plane of the nether realm seems to be in the process of collapsing..");
-			else if (nether_realm_collapsing == 5) floor_msg_format(&wpos, "\377RThis plane of the nether realm seems to be on the verge of collapsing, beware!");
-			else if (nether_realm_collapsing == 1) floor_msg_format(&wpos, "\377lThis plane of the nether realm will collapse any moment, get out while you can!");
+			if (nether_realm_collapsing == 10) floor_msg_format(0, &wpos, "\377RThis plane of the nether realm seems to be in the process of collapsing..");
+			else if (nether_realm_collapsing == 5) floor_msg_format(0, &wpos, "\377RThis plane of the nether realm seems to be on the verge of collapsing, beware!");
+			else if (nether_realm_collapsing == 1) floor_msg_format(0, &wpos, "\377lThis plane of the nether realm will collapse any moment, get out while you can!");
 
 			/* Eventually collapse! */
 			if (!nether_realm_collapsing) {

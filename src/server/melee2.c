@@ -9703,7 +9703,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 			m_ptr->extra++; //we begin here at 3 basically
 			if (m_ptr->extra == 10) {
-				floor_msg_format(wpos, "\377BThe guy in blue robes mumbles something about having a \377ccold \377Lcave brew\377B..");
+				floor_msg_format(0, wpos, "\377BThe guy in blue robes mumbles something about having a \377ccold \377Lcave brew\377B..");
 				for (i = 1; i <= NumPlayers; i++) {
 					player_type *q_ptr = Players[i];
 
@@ -9780,10 +9780,13 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 				m_ptr->extra3++;
 				switch (m_ptr->extra3) {
 				case 25:
-					floor_msg_format(wpos, "\377BThe guy in blue robes raises an eyebrow.");
+					floor_msg_format(0, wpos, "\377BThe guy in blue robes raises an eyebrow.");
 					break;
-				case 75:
-					floor_msg_format(wpos, "\377BThe guy in blue robes asks if you are planning to keep displaying that decree..");
+				case 65:
+					if (p_ptr->inventory[INVEN_NECK].tval == TV_AMULET && p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_INVINCIBILITY) {
+						msg_format(m_ptr->strongest_los, "\377BThe guy in blue robes asks if you are planning to keep displaying that decree..");
+						floor_msg_format(m_ptr->strongest_los, wpos, "\377BThe guy in blue robes asks %s if %s is planning to keep displaying that decree..", Players[m_ptr->strongest_los]->name, Players[m_ptr->strongest_los]->male? "he" : "she");
+					}
 					break;
 				}
 			}
@@ -12670,23 +12673,28 @@ void process_monsters(void) {
 			/* Only check him if he is playing */
 			if (p_ptr->conn == NOT_CONNECTED) continue;
 
+			/* Hack -- Ignore players that have died or left
+			 * as suggested by PowerWyrm - mikaelh */
+			if (p_ptr->suicided || p_ptr->death || p_ptr->new_level_flag) continue;
+
 			/* Make sure he's on the same dungeon level */
 			if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
 
 			/* Hack for RI_MIRROR */
 			if (p_ptr->paralyzed == 255) continue;
 
+			/* Hack -- make the dungeon master invisible to monsters */
+			if ((p_ptr->admin_dm
+			/* Skip if player wears amulet of invincibility - C. Blue */
+			    || p_ptr->admin_invinc)
+			    && (!m_ptr->owner || (m_ptr->owner != p_ptr->id))) { /* for Dungeon Master GF_DOMINATE */
+				if (los(&p_ptr->wpos, p_ptr->py, p_ptr->px, fy, fx) && j <= MAX_SIGHT) m_ptr->strongest_los = pl;
+				continue;
+			}
+
 			/* Hack -- Skip him if he's shopping -
 			   in a town, so dungeon stores aren't cheezy */
 			if ((p_ptr->store_num != -1) && (p_ptr->wpos.wz == 0)) continue;
-
-			/* Hack -- make the dungeon master invisible to monsters */
-			if (p_ptr->admin_dm && (!m_ptr->owner || (m_ptr->owner != p_ptr->id))) continue; /* for Dungeon Master GF_DOMINATE */
-
-			/*
-			 * Hack -- Ignore players that have died or left
-			 * as suggested by PowerWyrm - mikaelh */
-			if (p_ptr->suicided || p_ptr->death || p_ptr->new_level_flag) continue;
 
 			/* Monsters serve a king on his land they dont attack him */
 			// if (player_is_king(pl)) continue;
@@ -12793,22 +12801,16 @@ void process_monsters(void) {
 
 			/* Glaur. Check that the closest VISIBLE target gets selected,
 			   if no visible one available just take the closest*/
-			if (((blos >= new_los) && (j > dis_to_closest)) || (blos > new_los))
-				continue;
+			if (((blos >= new_los) && (j > dis_to_closest)) || (blos > new_los)) continue;
 
 			/* Glaur. Skip if same distance and stronger and same visibility*/
-			if ((j == dis_to_closest) && (p_ptr->chp > lowhp) && (blos == new_los))
-				continue;
+			if ((j == dis_to_closest) && (p_ptr->chp > lowhp) && (blos == new_los)) continue;
 
-			/* Skip if player wears amulet of invincibility - C. Blue */
-			if ((p_ptr->admin_invinc
 #ifdef TELEPORT_SURPRISES
-			    || TELEPORT_SURPRISED(p_ptr, r_ptr)
-#endif
-			    ) && (!m_ptr->owner || (m_ptr->owner != p_ptr->id))) { /* for Dungeon Master GF_DOMINATE */
-				if (new_los && j <= MAX_SIGHT) m_ptr->strongest_los = pl;
+			if (TELEPORT_SURPRISED(p_ptr, r_ptr)
+			    && (!m_ptr->owner || (m_ptr->owner != p_ptr->id))) /* for Dungeon Master GF_DOMINATE */
 				continue;
-			}
+#endif
 
 			/* For Arena Monster Challenge: Skip observers in the corners */
 			if ((zcave = getcave(&p_ptr->wpos)) && zcave[p_ptr->py][p_ptr->px].feat == FEAT_XPROTECT) continue;

@@ -6124,7 +6124,7 @@ bool monster_death(int Ind, int m_idx) {
 				dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
 				l_ptr->flags1 |= LF1_IRON_RECALL;
-				floor_msg_format(&p_ptr->wpos, "\374\377gYou don't sense a magic barrier here!");
+				floor_msg_format(0, &p_ptr->wpos, "\374\377gYou don't sense a magic barrier here!");
 			}
 		}
 
@@ -6951,7 +6951,7 @@ if (cfg.unikill_format) {
 			/* Allow exceptional recalling.. */
 			l_ptr->flags1 |= LF1_IRON_RECALL;
 			/* ..and notify everyone on the level about it */
-			floor_msg_format(&p_ptr->wpos, "\374\377gYou don't sense a magic barrier here!");
+			floor_msg_format(0, &p_ptr->wpos, "\374\377gYou don't sense a magic barrier here!");
 		}
 	}
 	else if (is_Sauron) {
@@ -6965,7 +6965,7 @@ if (cfg.unikill_format) {
 			dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
 			l_ptr->flags1 |= LF1_IRON_RECALL;
-			floor_msg_format(&p_ptr->wpos, "\374\377gYou don't sense a magic barrier here!");
+			floor_msg_format(0, &p_ptr->wpos, "\374\377gYou don't sense a magic barrier here!");
 		}
 
 		/* for The One Ring.. */
