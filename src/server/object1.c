@@ -5243,6 +5243,11 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 
 	if (is_throwing_weapon(o_ptr)) fprintf(fff, "It can be used as an effective throwing weapon.\n");
 
+#ifdef WEAPONS_NO_AC
+	/* Optional. Shields don't say block chance, weapons don't say to-hit/to-dam either. These are assumed to be understood. */
+	//if (id && is_melee_weapon(o_ptr->tval) && o_ptr->to_a) fprintf(fff, "It increases your chance to parry by %+d%%.\n", o_ptr->to_a);
+#endif
+
 	/* Kings/Queens only warning */
 	if (f5 & TR5_WINNERS_ONLY) fprintf(fff, "\377vIt is to be used by royalties exclusively.\377w\n");
 	/* Morgoth crown hardcoded note to give a warning!- C. Blue */
