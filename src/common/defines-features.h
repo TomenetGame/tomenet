@@ -620,9 +620,9 @@
   #define USE_PARRYING
  #endif
  #ifdef USE_PARRYING
-  /* Chance +AC enchantment on weapons to a bonus in parry chance? Requires USE_PARRYING to be enabled. Also specifies the rightshifts to translate +AC to +parry. [0]
+  /* Chance +AC enchantment on weapons to a bonus in parry chance? Requires USE_PARRYING to be enabled. Also specifies the divisor*10 to translate +AC to +parry. [10]
      A drawback currently: The player can always know his true parry chance via checking in 'm' menu, even if the weapon hasn't been identified yet. */
-  #define WEAPONS_NO_AC 0
+  #define WEAPONS_NO_AC 10
  #endif
 #endif
 

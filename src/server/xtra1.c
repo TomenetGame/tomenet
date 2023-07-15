@@ -4453,7 +4453,7 @@ void calc_boni(int Ind) {
 		else p_ptr->to_a += o_ptr->to_a;
  #else
 		else if (!is_melee_weapon(o_ptr->tval) p_ptr->to_a += o_ptr->to_a;
-		else extra_weapon_parry += o_ptr->to_a >> WEAPONS_NO_AC;
+		else extra_weapon_parry += (o_ptr->to_a * 10 + WEAPONS_NO_AC - 10) / WEAPONS_NO_AC;
  #endif
 #else
 		if (o_ptr->tval != TV_SHIELD)
@@ -4462,7 +4462,7 @@ void calc_boni(int Ind) {
  #else
 		{
 			if (!is_melee_weapon(o_ptr->tval)) p_ptr->to_a += o_ptr->to_a;
-			else extra_weapon_parry += o_ptr->to_a >> WEAPONS_NO_AC;
+			else extra_weapon_parry += (o_ptr->to_a * 10 + WEAPONS_NO_AC - 10) / WEAPONS_NO_AC;
 		}
  #endif
 #endif

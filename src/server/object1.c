@@ -2972,7 +2972,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 				/* Weapons give to parry chance instead? */
 				if (!(mode & 8)) t = object_desc_chr(t, ' ');
 				t = object_desc_chr(t, b1);
-				t = object_desc_intper(t, o_ptr->to_a >> WEAPONS_NO_AC);
+				t = object_desc_intper(t, (o_ptr->to_a * 10 + WEAPONS_NO_AC - 10) / WEAPONS_NO_AC);
 				t = object_desc_chr(t, b2);
 			} else {
 #endif
