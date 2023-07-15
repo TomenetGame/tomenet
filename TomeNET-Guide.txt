@@ -8469,30 +8469,31 @@ so its final floor will be -700 ft which is of the same difficulty level as
 NOTE: Minimum level requirements for entering are usually disabled in normal
       server settings, so you can enter any dungeon anytime, if you dare.
 
-Dungeon                        |   Depth / Level       | Min. required player
-                               |   relative to Lv.1    | level to enter (*)
--------------------------------+-----------------------+---------------------
-Death Fate            (**)     |    50..  50/  1..1    |        1
-The Halls of Mandos   (*****)  |    50..5000/  1..100  |        1
-The Orc Cave                   |   500..1150/ 10..23   |        3
-Mirkwood                       |   550..1700/ 11..34   |        5
-The Old Forest                 |   650..1300/ 13..26   |        5
-The Helcaraxe                  |  1000..2050/ 20..41   |       10
-The Sandworm Lair              |  1100..1500/ 22..30   |       12
-The Heart of the Earth         |  1250..1850/ 25..37   |       10
-The Maze                       |  1250..1900/ 25..38   |       15
-Cirith Ungol                   |  1250..2550/ 25..51   |       10
-The Land of Rhun               |  1300..2050/ 26..41   |       13
-The Mines of Moria             |  1500..2500/ 30..50   |       15
-The Small Water Cave           |  1600..1750/ 32..35   |       15
-Submerged Ruins                |  1750..2550/ 35..51   |       15
-The Illusory Castle            |  1750..2600/ 35..52   |       10
-The Sacred Land of Mountains   |  2000..2250/ 40..45   |       20
-Erebor                         |  2500..3050/ 50..61   |       35
-Dol Guldur                     |  2850..3550/ 57..71   |       28
-Mount Doom                     |  4250..4950/ 85..99   |       38
-The Cloud Planes               |  6500..7450/130..149  |       40  (***)
-Nether Realm                   |  8300..9800/166..196  |       40  (****)
+Dungeon                        |          Depth / Level    |   Maximum Depth
+                               |        relative to Lv.1   |      (local)
+-------------------------------+---------------------------+-------------------
+Death Fate            (**)     |    50..  50 ft /  1..1    |        50 ft
+The Halls of Mandos   (*****)  |    50..5000 ft /  1..100  |      5000 ft
+The Orc Cave                   |   500..1150 ft / 10..23   |       700 ft
+Mirkwood                       |   550..1700 ft / 11..34   |      1200 ft
+The Old Forest                 |   650..1300 ft / 13..26   |       700 ft
+The Helcaraxe                  |  1000..2050 ft / 20..41   |      1100 ft
+The Sandworm Lair              |  1100..1500 ft / 22..30   |       450 ft
+The Heart of the Earth         |  1250..1850 ft / 25..37   |       650 ft
+The Maze                       |  1250..1900 ft / 25..38   |       700 ft
+Cirith Ungol                   |  1250..2550 ft / 25..51   |      1350 ft
+The Land of Rhun               |  1300..2050 ft / 26..41   |       800 ft
+The Mines of Moria             |  1500..2500 ft / 30..50   |      1050 ft
+The Small Water Cave           |  1600..1750 ft / 32..35   |       200 ft
+Submerged Ruins                |  1750..2550 ft / 35..51   |       850 ft
+The Illusory Castle            |  1750..2600 ft / 35..52   |       900 ft
+The Sacred Land of Mountains   |  2000..2250 ft / 40..45   |       300 ft
+Erebor                         |  2500..3050 ft / 50..61   |       600 ft
+Dol Guldur                     |  2850..3550 ft / 57..71   |       750 ft
+Mount Doom                     |  4250..4950 ft / 85..99   |       750 ft
+The Cloud Planes      (***)    |  6500..7450 ft /130..149  |      1000 ft
+Nether Realm          (****)   |  8300..9800 ft /166..196  |      1550 ft
+Ironman Deep Dive Challenge (*)|    50..6350 ft /  1..127  |      6350 ft
 
 The official main server usually has one or several 'ironman' dungeons
 (see (4.8)), their entrances (stairs) waiting to be discovered by some bold
@@ -8510,8 +8511,9 @@ There may or may not be further special/exotic dungeons that are not part of
 the "normal" game or gameplay.
 See (4.3) under "Dungeon Types" -> "Experimental dungeons" for more details.
 
-(*) Minimum level requirements are usually disabled, so you can actually
- enter any dungeon you like at any character level.
+(*) The Ironman Deep Dive Challenge or short IDDC is a special, independant
+dungeon, that has a special ruleset and is distinct from the rest of the game.
+For more information, see (4.13), Ironman Challenge.
 
 (**) Death Fate:
  Will this be the end of you as you cannot seem to spot a way to escape? Or is
@@ -10126,10 +10128,11 @@ available challenge that waits for you to tackle it:
 Ironman Deep Dive Challenge (IDDC)
   Structure, getting out:
     This is a special, gigantic ironman dungeon (or tower) which is 127 levels
-    in size and does not allow recalling in between, except for in the two
-    'dungeon towns' which will be generated at dungeon level 40 (Menegroth) and
-    80 (Nargothrond). There are two additional dungeon towns at level 20 and 60
-    but these won't allow recalling.
+    in size (-50 ft till -6350 ft, or positive if a tower) and does not allow
+    recalling in between, except for in the two 'dungeon towns' which will be
+    generated at dungeon level 40 (Menegroth) and 80 (Nargothrond).
+    There are two additional dungeon towns at level 20 and 60 but these won't
+    allow recalling.
     If you recall from a town it counts as withdrawing from the challenge and
     you won't make it on the leaderboard that can be viewed at the
     mayor's office in Bree.
