@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 15. July 2023 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 20. July 2023 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.0c - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -20003,18 +20003,32 @@ receive the spell effect.
 Just for completeness: Rune magic that can affect other players does so
 automatically too, same as school magic.
 
-Shared school spells:
+
+Shared spells:
+--------------
 Some spells are shared between different schools, occuring possibly but not
-necessarily in both of the schools. When a spell is shared between two schools
-it means that training in one of those schools will increase the spell level
-by only half that amount. So if you want to increase a shared spell by say 5
-points, you either have to increase both of its schools by 5, or one of them
-by 10.
+necessarily in all of the involved schools and thereby in the related tomes
+(as tomes are books that exactly contain all highest-tier versions of all
+spells of a specific school.)
+
+When a spell is shared between schools it means that training in one of those
+schools will increase the spell level by only half (if shared between two) or
+by a third (if shared between 3) etc. of that amount.
+
+Example - A spell that is shared between two schools:
+If you want to increase this spell by say 5 points, you either have to increase
+both of its schools by 5 each, or one of them by 10.
+
 However, you don't need to train all involved schools necessarily. As long as
 you manage to increase the spell level to at least 1, you become able to use it
 even if you only trained one of all involved schools.
+However, some shared spells will have too high a starter level to become
+accessible by training only one of its schools.
+Some shared spells might involve a non-school skill even, eg Necromancy skill.
+
 
 Spell tiers:
+------------
 Some spells have multiple tiers, usually two or three, denoted by roman numbers
 after the spell name.
 Higher tiers usually have greater effect but also cost more mana than lower
