@@ -3081,8 +3081,7 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 									fputc(id & 0xff, gfp);
 								}
 							}
-						}
-						else{
+						} else {
 							c_ptr->feat = fgetc(((struct guildsave*)data)->fp);
 							//if (c_ptr->feat > FEAT_INVIS)
 							if (!cave_plain_floor_grid(c_ptr)) c_ptr->info &= ~(CAVE_ROOM);

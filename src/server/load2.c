@@ -1125,6 +1125,7 @@ static errr rd_store(store_type *st_ptr) {
 	byte num;
 	u16b own;
 
+
 	/* Read the basic info */
 	rd_s32b(&st_ptr->store_open);
 	rd_s16b(&st_ptr->insult_cur);
@@ -1280,6 +1281,7 @@ static void rd_mail() {
 	object_type dummy_o;
 	byte tmp8u;
 
+
 #ifdef ENABLE_MERCHANT_MAIL
 	rd_s16b(&j);
 	for (i = 0; i < j; i++) {
@@ -1327,6 +1329,7 @@ static void rd_mail() {
 
 static void rd_xorders() {
 	int i;
+
 	rd_s16b(&questid);
 	for (i = 0; i < MAX_XORDERS; i++) {
 		rd_u16b(&xorders[i].active);
@@ -1435,6 +1438,7 @@ static void rd_quests() {
 static void rd_guilds() {
 	int i;
 	u16b tmp16u;
+
 	rd_u16b(&tmp16u);
 	if (tmp16u > MAX_GUILDS) {
 		s_printf("Too many guilds (%d)\n", tmp16u);
@@ -1669,6 +1673,7 @@ static bool rd_extra(int Ind) {
 	u32b tmp32u;
 	s32b tmp32s;
 
+
 	/* 'Savegame filename character conversion' exploit fix - C. Blue */
 	strcpy(login_char_name, p_ptr->name);
 	rd_string(p_ptr->name, 32);
@@ -1688,11 +1693,8 @@ static bool rd_extra(int Ind) {
 	for (i = 0; i < 4; i++)
 		rd_string(p_ptr->history[i], 60);
 
-	if (older_than(4, 2, 7)) {
-		p_ptr->has_pet = 0; //assume no pet
-	} else {
-		rd_byte(&p_ptr->has_pet);
-	}
+	if (older_than(4, 2, 7)) p_ptr->has_pet = 0; //assume no pet
+	else rd_byte(&p_ptr->has_pet);
 
 	/* Divinity has been absorbed by traits (ptrait) now */
 	if (older_than(4, 4, 12)) {
@@ -2213,6 +2215,7 @@ static bool rd_extra(int Ind) {
 #if 0 /* ALT_EXPRATIO conversion: */
 if (p_ptr->updated_savegame == 0) {
     s64b i, i100, ief;
+
     i = (s64b)p_ptr->max_exp;
     i100 = (s64b)100;
     ief = (s64b)p_ptr->expfact;
@@ -4147,6 +4150,7 @@ void load_guildhalls(struct worldpos *wpos) {
 	struct guildsave data;
 	char buf[1024];
 	char fname[30];
+
 	data.mode = 0;
 	for (i = 0; i < num_houses; i++) {
 		if ((houses[i].dna->owner_type == OT_GUILD) && (inarea(wpos, &houses[i].wpos))) {
@@ -4155,7 +4159,7 @@ void load_guildhalls(struct worldpos *wpos) {
 			s_printf("load guildhall %d\n", i);
 #endif
 			sprintf(fname, "guild%.4d.data", i);
-//			path_build(buf, 1024, ANGBAND_DIR_DATA, fname);
+			//path_build(buf, 1024, ANGBAND_DIR_DATA, fname);
 			path_build(buf, 1024, ANGBAND_DIR_SAVE, fname);/* moved this 'file spam' over to save... C. Blue */
 			gfp = fopen(buf, "rb");
 			if (gfp == (FILE*)NULL) continue;
@@ -4172,6 +4176,7 @@ void save_guildhalls(struct worldpos *wpos) {
 	struct guildsave data;
 	char buf[1024];
 	char fname[30];
+
 	data.mode = 1;
 	for (i = 0; i < num_houses; i++) {
 		if ((houses[i].dna->owner_type == OT_GUILD) && (inarea(wpos, &houses[i].wpos))) {
@@ -4180,7 +4185,7 @@ void save_guildhalls(struct worldpos *wpos) {
 			s_printf("save guildhall %d\n", i);
 #endif
 			sprintf(fname, "guild%.4d.data", i);
-//			path_build(buf, 1024, ANGBAND_DIR_DATA, fname);
+			//path_build(buf, 1024, ANGBAND_DIR_DATA, fname);
 			path_build(buf, 1024, ANGBAND_DIR_SAVE, fname); /* moved this 'file spam' over to save... C. Blue */
 			gfp = fopen(buf, "rb+");
 			if (gfp == (FILE*)NULL) {
@@ -4331,6 +4336,7 @@ void fix_max_depth_towerdungeon(int Ind) {
 }
 void condense_max_depth(player_type *p_ptr) {
 	int i, j, k, d;
+
 	/* moar fixing old bugginess: remove all 0,0,0 entries between valid entries
 	   (empty entries aka 0,0,0 should only occur tailing the other entries) */
 	for (i = 0; i < MAX_D_IDX * 2; i++) {
