@@ -1931,8 +1931,9 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		/* Describe the object */
 		if ((!pickup && !force_pickup) || forbidden) {
 			char pseudoid[13];
+			cptr feel;
 
-			strcpy(pseudoid, "");
+			pseudoid[0] = 0;
 			/* felt an (non-changing!) object of same kind before via pseudo-id? then remember.
 			   Note: currently all objects for which that is true are 'magic', hence we only
 			   use object_value_auxX_MAGIC() below. */
@@ -1941,11 +1942,13 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			    && o_ptr->tval != TV_RING && o_ptr->tval != TV_AMULET) {
 				if (!object_felt_heavy_p(Ind, o_ptr)) {
 					/* only show pseudoid if its current inscription doesn't already tell us! */
-					if (!o_ptr->note || strcmp(quark_str(o_ptr->note), value_check_aux2_magic(o_ptr)))
+					feel = value_check_aux2_magic(o_ptr);
+					if (feel && (!o_ptr->note || strcmp(quark_str(o_ptr->note), feel)))
 						sprintf(pseudoid, " {%s}", value_check_aux2_magic(o_ptr));
 				} else {
+					feel = value_check_aux1_magic(o_ptr);
 					/* only show pseudoid if its current inscription doesn't already tell us! */
-					if (!o_ptr->note || strcmp(quark_str(o_ptr->note), value_check_aux1_magic(o_ptr)))
+					if (feel && (!o_ptr->note || strcmp(quark_str(o_ptr->note), feel)))
 						sprintf(pseudoid, " {%s}", value_check_aux1_magic(o_ptr));
 				}
 			}
@@ -8840,26 +8843,33 @@ bool remember_sense(int Ind, int slot, object_type *o_ptr) {
 		/* Also, rings and amulets aren't covered by auxX_magic, so we have to exempt them (null string!): */
 		if (o_ptr->tval != TV_RING && o_ptr->tval != TV_AMULET) {
 			char o_name[ONAME_LEN];
+			cptr feel;
 
 			object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 			if (!object_felt_heavy_p(Ind, o_ptr)) {
+				feel = value_check_aux2_magic(o_ptr);
 				/* at least give a notice */
-				msg_format(Ind, "You remember %s (%c) in your pack %s %s.",
-				    o_name, index_to_label(slot), ((o_ptr->number != 1) ? "were" : "was"), value_check_aux2_magic(o_ptr));
-				/* otherwise inscribe it textually */
-				if (!o_ptr->note) {
-					o_ptr->note = quark_add(value_check_aux2_magic(o_ptr));
-					o_ptr->auto_insc = TRUE;
+				if (feel) {
+					msg_format(Ind, "You remember %s (%c) in your pack %s %s.",
+					    o_name, index_to_label(slot), ((o_ptr->number != 1) ? "were" : "was"), feel);
+					/* otherwise inscribe it textually */
+					if (!o_ptr->note) {
+						o_ptr->note = quark_add(feel);
+						o_ptr->auto_insc = TRUE;
+					}
 				}
 			} else {
+				feel = value_check_aux1_magic(o_ptr);
 				/* at least give a notice */
-				msg_format(Ind, "You remember %s (%c) in your pack %s %s.",
-				    o_name, index_to_label(slot), ((o_ptr->number != 1) ? "were" : "was"), value_check_aux1_magic(o_ptr));
-				/* otherwise inscribe it textually */
-				if (!o_ptr->note) {
-					o_ptr->note = quark_add(value_check_aux1_magic(o_ptr));
-					o_ptr->auto_insc = TRUE;
+				if (feel) {
+					msg_format(Ind, "You remember %s (%c) in your pack %s %s.",
+					    o_name, index_to_label(slot), ((o_ptr->number != 1) ? "were" : "was"), feel);
+					/* otherwise inscribe it textually */
+					if (!o_ptr->note) {
+						o_ptr->note = quark_add(feel);
+						o_ptr->auto_insc = TRUE;
+					}
 				}
 			}
 			return(TRUE);
