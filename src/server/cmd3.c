@@ -2240,6 +2240,9 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 	}
 
 	/* -- bpval/pval mods -- */
+	/* For Witan boots, that have intrinsic -Stealth, for visual consistency list Stl first,
+	   as the bpval (-Stealth) is displayed before the pval (+speed) too */
+	if (o_ptr->tval == TV_BOOTS && o_ptr->sval == SV_PAIR_OF_WITAN_BOOTS) strcat(powins, "Stl");
 	if (f1 & (TR1_LIFE)) strcat(powins, "HP");
 	if (f1 & (TR1_MANA)) strcat(powins, "MP");
 	//if (f1 & (TR1_SPELL)) strcat(powins, "Sp");
@@ -2247,7 +2250,9 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 	if (f1 & (TR1_BLOWS)) strcat(powins, "Att");
 	if (f5 & (TR5_CRIT)) strcat(powins, "Crt");
 	if (f1 & (TR1_STEALTH)) {
-		if (o_ptr->tval != TV_TRAPKIT) strcat(powins, "Stl");
+		if (o_ptr->tval != TV_TRAPKIT &&
+		    !(o_ptr->tval == TV_BOOTS && o_ptr->sval == SV_PAIR_OF_WITAN_BOOTS))
+			strcat(powins, "Stl");
 	}
 #if 0
 #ifdef ART_WITAN_STEALTH
