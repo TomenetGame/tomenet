@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 20. July 2023 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 29. July 2023 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.0c - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -16297,7 +16297,7 @@ stated.
                                 skill and the target's level. To get maximum
                                 drain, the skill should be at least half as
                                 high as the monster level. There is always
-                                a gain of at least +1 HP and +1 SP.
+                                a gain of at least +1 HP and +1 MP.
                                 Necromancy has no effect on undead and
                                 nonliving (constructs) monsters.
 
