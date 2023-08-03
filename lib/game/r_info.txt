@@ -10869,7 +10869,7 @@ D:countenance glares at you in disdain.
 
 N:661:Archon
 G:A:y
-I:130:100d40:30:140:255
+I:130:100d40:30:70:255
 W:55:5:3200:6000
 E:1:1:2:2:1:2
 O:0:100:0:0
