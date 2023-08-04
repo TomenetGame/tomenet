@@ -1868,7 +1868,7 @@ void handle_music(int Ind) {
 	if (p_ptr->wpos.wz == 0) {
 		/* Jail hack */
 		if (p_ptr->music_monster == -5) {
-			Send_music(Ind, 87, 46, 46);
+			Send_music(Ind, 87, 13, 13);
 			return;
 		}
 
@@ -2159,7 +2159,8 @@ void handle_music(int Ind) {
 		switch (i) {
 		default:
 		case 0:
-			if (d_ptr->flags2 & DF2_NO_DEATH) Send_music(Ind, 12, 11, 11);//note: music file (dungeon_generic_nodeath) is identical to the one of the Training Tower
+			if (d_ptr->flags3 & DF3_JAIL_DUNGEON) Send_music(Ind, 178, 14, 14); //take precedence over DF2_IRON for jail-specific dungeons; also, use hellish/forcedown for a change (as replacement) as it's underused..
+			else if (d_ptr->flags2 & DF2_NO_DEATH) Send_music(Ind, 12, 11, 11);//note: music file (dungeon_generic_nodeath) is identical to the one of the Training Tower
 			else if (d_ptr->flags2 & DF2_IRON) Send_music(Ind, 13, 11, 11);
 			else if ((d_ptr->flags2 & DF2_HELL) || (d_ptr->flags1 & DF1_FORCE_DOWN)) Send_music(Ind, 14, 11, 11);
 			else Send_music(Ind, 11, 0, 0); //dungeon, generic
