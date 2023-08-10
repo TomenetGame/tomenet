@@ -86,6 +86,29 @@ extern int s_printf(const char *str, ...) {
 extern int x_printf(const char *str, ...) {
 	char path[MAX_PATH_LENGTH];
 	va_list va;
+	struct stat filestat;
+	bool fail = FALSE;
+
+
+	/* First, check if SSH connection to process external.log even exists right now. */
+	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "external.lock");
+	/* Check file stats, for change time (via 'touch' from client-side polling script) */
+	if (stat(path, &filestat) == -1) {
+		/* No file at all even? Easy abort. */
+		s_printf("File 'external.lock' doesn't exist yet.\n");
+		fail = TRUE;
+	}
+	/* Check that we're within close time diff (measured in seconds) at most! */
+	if (time(NULL) - filestat.st_ctime > 30) {
+		s_printf("File 'external.lock' is out of date.\n");
+		fail = TRUE;
+	}
+	/* Give same reply as client-side polling script would, if it cannot access the AI momentarily */
+	if (fail) {
+		exec_lua(0, format("eight_ball(\"<Sorry, no response available. Auxiliary brain currently offline.>\")"));
+		return(FALSE);
+	}
+
 
 	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "external.log");
 
