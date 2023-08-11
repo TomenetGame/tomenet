@@ -9262,8 +9262,12 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 
 			//if (init_flags & INIT_GET_SIZE) continue;
 
+#if 0 /* wrong! this introduces bugs for dungeon towns (' ' empty floor aka 0 ending up as feat 81, boundary steep mountain chain) */
 			/* Allow transparent layouts to get loaded over existing floors */
 			if (letter[idx].feature == 0) continue;
+#else /* Just use a dedicated floor code for 'alpha transparency'! */
+			if (letter[idx].feature == FEAT_ALPHA) continue;
+#endif
 
 			/* use the plasma generator wilderness */
 			//if (((!dun_level) || (!letter[idx].defined)) && (idx == ' ')) continue;

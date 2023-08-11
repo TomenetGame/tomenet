@@ -2518,6 +2518,7 @@
 #define FEAT_CYCLIC_LESS	135
 #define FEAT_CYCLIC_MORE	136
 #define FEAT_FLOOR_PERMANENT	137
+#define FEAT_ALPHA		138	/* Transparent, keeps previously existing floor. Used as 'mask for merging' when loading t_*.prf layers on top of already existing floors. */
 
 //hole
 

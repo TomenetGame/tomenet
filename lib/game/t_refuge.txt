@@ -3,7 +3,7 @@
 %:t_pref.txt
 
 # Transparent
-F:x:0:3
+F:x:138:3
 
 # Floor and wall area
 F: :137:1073741827

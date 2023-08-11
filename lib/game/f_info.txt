@@ -22,6 +22,7 @@ V:4.0.0
 
 
 # 0x00 --> nothing
+# Note: For transparency of t_*.prf files loaded over existing floors etc, use special feat FEAT_ALPHA! (138 / 8A)
 
 N:0:nothing
 G: :w
@@ -1006,8 +1007,13 @@ M:1
 F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW
 F:PERMANENT | ALLOW_TELE | NO_ARTICLE
 
+# Special floor that gets ignored in init1.c -> process_dungeon_file_aux() -> 'D:' lines
+N:138:alpha-transparent floor
+G:.:m
+F:FLOOR
 
-# HOLE 138..158 -------------------------------------------------------------
+
+# HOLE 139..158 -------------------------------------------------------------
 
 
 #permanent magma vein
