@@ -3177,11 +3177,34 @@ static int Handle_login(int ind) {
 	for (i = 0; i < MAX_NOTES; i++) {
 		if (!strcasecmp(priv_note_target[i], connp->nick)) { /* <- sent to an account name, case-independant */
 			msg_format(NumPlayers, "\374\377RNote from %s: %s", priv_note_sender[i], p_ptr->censor_swearing ? priv_note[i] : priv_note_u[i]);
+			p_ptr->tmp_y = 1; //hack: Marker for 'we received at least one note'
+			/* Also notify sender if online right now */
+			for (j = 1; j < NumPlayers; j++) { //skip ourself (Ind is NumPlayers)
+				if (Players[j]->tmp_x) break;
+				if (strcmp(Players[j]->name, priv_note_sender[i])) continue;
+				if (p_ptr->admin_dm && !p_ptr->admin_dm_chat && !is_admin(Players[j]) && !may_address_dm(Players[j])) continue;
+				Players[j]->tmp_x = 1; //hack: Marker for 'at least one of our notes was received'
+				msg_format(j, "\374\377yYour notes to %s have been received.", priv_note_target[i]);
+#ifdef USE_SOUND_2010
+				//sound(j, "item_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
+				sound(j, "store_paperwork", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+				break;
+			}
+
 			strcpy(priv_note_sender[i], "");
 			strcpy(priv_note_target[i], "");
 			strcpy(priv_note[i], "");
 		}
 	}
+#ifdef USE_SOUND_2010
+	if (p_ptr->tmp_y)
+		//sound(NumPlayers, "item_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
+		sound(NumPlayers, "store_paperwork", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+	for (j = 1; j < NumPlayers; j++) Players[j]->tmp_x = 0; //skip ourself (Ind is NumPlayers)
+	p_ptr->tmp_y = 0;
+
 	if (p_ptr->party) for (i = 0; i < MAX_PARTYNOTES; i++) {
 		if (!strcmp(party_note_target[i], parties[p_ptr->party].name)) {
 			if (strcmp(party_note[i], ""))

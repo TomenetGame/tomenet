@@ -2695,7 +2695,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					notes++;
 				}
 			}
-			if (notes > 0) msg_format(Ind, "\377oYou wrote %d currently pending notes:", notes);
+			if (notes > 0) {
+				msg_format(Ind, "\377oYou wrote %d currently pending notes:", notes);
+#ifdef USE_SOUND_2010
+				sound(Ind, "item_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+			}
 			else msg_print(Ind, "\377oYou didn't write any pending notes.");
 			for (i = 0; i < MAX_NOTES; i++) {
 				/* search for pending notes of this player */
@@ -2743,7 +2748,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					}
 				}
 				if (!notes) msg_format(Ind, "\377oYou don't have any pending notes.");
-				else msg_format(Ind, "\377oDeleted %d notes.", notes);
+				else {
+					msg_format(Ind, "\377oDeleted %d notes.", notes);
+#ifdef USE_SOUND_2010
+					//sound(Ind, "item_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
+					sound(Ind, "store_paperwork", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+				}
 				return;
 			}
 
@@ -2768,7 +2779,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 								strcpy(priv_note[i], "");
 							}
 						}
-						if (notes) msg_format(Ind, "\377oAutomatically deleted %d notes adressed to this receipient.", notes);
+						if (notes) {
+							msg_format(Ind, "\377oAutomatically deleted %d notes adressed to this receipient.", notes);
+#ifdef USE_SOUND_2010
+							//sound(Ind, "item_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
+							sound(Ind, "store_paperwork", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+						}
 						return;
 					}
 				} else {
@@ -2842,7 +2859,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					}
 				}
 				if (!notes) msg_format(Ind, "\377oYou don't have any pending notes to player %s.", tname);
-				else msg_format(Ind, "\377oDeleted %d notes to player %s.", notes, tname);
+				else {
+					msg_format(Ind, "\377oDeleted %d notes to player %s.", notes, tname);
+#ifdef USE_SOUND_2010
+					//sound(Ind, "item_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
+					sound(Ind, "store_paperwork", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+				}
 				return;
 			}
 
@@ -2882,17 +2905,21 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			message2[j + MSG_LEN - 1] = '\0';
 
 			/* Check whether target is actually online by now :) */
-			if ((i = name_lookup(Ind, tname, FALSE, FALSE, TRUE))
+			if ((i = find_player_name(tname)) // <- doesn't check for admin-dm, which this does: name_lookup(Ind, tname, FALSE, FALSE, TRUE))
 			    && !check_ignore(i, Ind)) {
 				player_type *q_ptr = Players[i];
 
-				if ((q_ptr->page_on_privmsg ||
-				    (q_ptr->page_on_afk_privmsg && q_ptr->afk)) &&
+				if (q_ptr != p_ptr &&
+				    (q_ptr->page_on_privmsg || (q_ptr->page_on_afk_privmsg && q_ptr->afk)) &&
 				    q_ptr->paging == 0)
 					q_ptr->paging = 1;
 
 				tpname = strchr(message2_u, ':'); //abuse tpname; note that this care is paranoia, because it's certain at this point that message2_u has a ':' in it
 				msg_format(i, "\374\377RNote from %s: %s", p_ptr->name, censor ? message2 + j + 1 : (tpname ? tpname + 1: message2 + j + 1));
+#ifdef USE_SOUND_2010
+				//sound(i, "item_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
+				sound(Ind, "store_paperwork", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
 				//return; //so double-msg him just to be safe he sees it
 			}
 
@@ -2901,6 +2928,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			strcpy(priv_note[found_note], message2 + j + 1);
 			strcpy(priv_note_u[found_note], tpname ? tpname + 1 : message2 + j + 1);
 			msg_format(Ind, "\377yNote for account '%s' has been stored.", priv_note_target[found_note]);
+#ifdef USE_SOUND_2010
+			//sound(Ind, "item_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
+			sound(Ind, "store_paperwork", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
 			return;
 		}
 		else if (prefix(messagelc, "/play") /* for joining games - mikaelh */

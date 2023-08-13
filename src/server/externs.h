@@ -2100,6 +2100,7 @@ extern void verify_subinven_size(int Ind, int slot, bool check);
 extern int get_subinven_group(int sval);
 #endif
 extern int cclen(cptr str);
+extern bool may_address_dm(player_type *p_ptr);
 
 
 /* world.c */

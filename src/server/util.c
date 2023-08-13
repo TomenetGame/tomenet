@@ -4935,7 +4935,7 @@ void handle_punish(int Ind, int level) return(0);
 
 /* Helper function for player_talk_aux():
    Allow privileged player accounts of administrators to address hidden dungeon masters via private chat */
-static bool may_address_dm(player_type *p_ptr) {
+bool may_address_dm(player_type *p_ptr) {
 	/* DMs aren't hidden on this server? */
 	if (!cfg.secret_dungeon_master) return(TRUE);
 	/* Need to be privileged, simply to avoid someone creating such a name for the purpose of circumventing the rules. */
