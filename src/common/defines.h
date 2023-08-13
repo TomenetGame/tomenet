@@ -6145,7 +6145,7 @@
 #define RF8_PSEUDO_UNIQUE	0x04000000	/* Not a unique monster (does not appear in the uniques list), but named/looks like one (added for Santa Claus); monster form cannot be learnt by mimics. Cannot be cloned. */
 #define RF8_GENO_PERSIST	0x08000000	/* Don't automatically genocide/compact this monster */
 #define RF8_GENO_NO_THIN		0x10000000	/* Don't genocide this monster when thinning out surface spawns */
-#define RF8_FINAL_GUARDIAN		0x20000000	/* monster is defined as FINAL_GUARDIAN_ in d_info.txt */
+#define RF8_FINAL_GUARDIAN		0x20000000	/* Note! This flag is NOT set/used in r_info.txt! Instead, the monster is defined as FINAL_GUARDIAN_ in d_info.txt! */
 #define RF8_WILD_SWAMP			0x40000000	/* ToDo: Implement Swamp */
 #define RF8_WILD_TOO			0x80000000
 
