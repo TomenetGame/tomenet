@@ -4679,6 +4679,9 @@ static int Receive_login(int ind) {
 #ifdef LIMIT_SPELLS
 			sflags1 |= SFLG1_LIMIT_SPELLS;
 #endif
+#ifdef WEAPONS_NO_AC
+			sflags1 |= SFLG1_WEAPONS_NO_AC;
+#endif
 
 			/* Set temporary flags */
 			sflags2 = sflags_TEMP;

@@ -165,6 +165,7 @@
 #define SFLG1_BIG_MAP		0x00000002
 #define SFLG1_NEW_SHIELDS_NO_AC	0x00000004
 #define SFLG1_LIMIT_SPELLS	0x00000008
+#define SFLG1_WEAPONS_NO_AC	0x00000010
 
 
 /* Determine fundamental server type (Normal, RPG, Arcade, Fun flagged). */
