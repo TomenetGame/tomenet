@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 3. August 2023 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 13. August 2023 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.0c - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -6902,41 +6902,40 @@ actually turn orange, since it's also used as a Word of Recall indicator.)
 Here is a list of this relation between character level and the minimum dungeon
 level required for normal, non-penalised experience gain, showing some steps:
 
-    Character level     |     Dungeon level
-------------------------------------------------
-        1..19                 decent exp is
-                            gained everywhere
-         20                         15
-         23                         17
-         25                         18
-         28                         22
-         30                         25
-         35                         30
-         38                         36
-         40                         40
-         41                         43
-         42                         46
-         43                         50
-         44                         54
-         45                         59
-         46                         65
-         47                         72
-         48                         81
-         49                         92
- ------  50                        100  ------
-         55                        110
-         60                        120
-      /  65                        130  \
-      |  66                        134  |
-      |  70                        150  |
-      |  74                        166  |
-      \  75                        170  /
-         80                        175
-         85                        180
-         90                        185
-         95                        190
-         98                        193
-         99                   no exp gained
+ Character level  |  Dungeon level
+-------------------------------------------------------------------------------
+         1..19       optimum exp is gained anywhere, depth doesn't factor in!
+          20             15  \ exponential increase of optimal depth
+          23             17  |
+          25             18  |
+          28             22  |
+          30             25  |
+          35             30  |
+          38             36  |
+          40             40  |
+          41             43  |
+          42             46  |
+          43             50  |
+          44             54  |
+          45             59  |
+          46             65  |
+          47             72  |
+          48             81  |
+          49             92  /
+ -------  50  --------  100  \ -------  Must beat Morgoth to reach level 51+!
+          55            110  | medium linear increase (moderate depth increase)
+          60            120  /
+          65            130  \ fast linear increase (steep depth increase)
+          66            134  |
+          70            150  |
+          74            166  /
+          75            170  \ slow linear increase (easygoing depth increase)
+          80            175  |
+          85            180  |
+          90            185  |
+          95            190  |
+          98            193  /
+          99         no exp gained (this the maximum reachable player level)
 
 If you are below the optimum depth, your experience gain will decrease.
 The experience gained will be multiplied by 2 / (2 + leveldifference).
