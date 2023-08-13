@@ -2561,7 +2561,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 					strcpy(info, info_tmp);
 					if (v_acx) {
 						if (is_melee_weapon(tval) && (sflags1 & SFLG1_WEAPONS_NO_AC))
-							strcpy(info_tmp, format(". Parry bonus: \377%c[%s%d]\377%c",
+							strcpy(info_tmp, format(". Parry bonus: \377%c[%s%d%%]\377%c",
 							    a_val, v_acx < 0 ? "" : "+", v_acx, a_key));
 						else
 							strcpy(info_tmp, format(". AC bonus: \377%c[%s%d]\377%c",
