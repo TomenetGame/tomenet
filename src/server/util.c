@@ -6132,6 +6132,7 @@ bool is_a_vowel(int ch) {
  * 2) Ignoring a whole party
  * 3) Sending a message to a party (only possible from outside for admins)
  * NOTE: Now that we have guilds too, this might be deprecated kind of? Or should be extended in all 3 points for guilds too?..hmm
+ * Note: Will fail if a non-admin tries to address an admin and requirements for that aren't met.
  */
 int name_lookup_loose(int Ind, cptr name, u16b party, bool include_account_names, bool quiet) {
 	int i, j, len, target = 0;
