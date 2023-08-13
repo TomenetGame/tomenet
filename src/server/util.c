@@ -6284,7 +6284,8 @@ int name_lookup_loose(int Ind, cptr name, u16b party, bool include_account_names
 	return(target);
 }
 
-/* copy/pasted from name_lookup_loose(), just without being loose.. */
+/* copy/pasted from name_lookup_loose(), just without being loose..
+   Note: Will fail if a non-admin tries to address an admin and requirements for that aren't met. */
 int name_lookup(int Ind, cptr name, u16b party, bool include_account_names, bool quiet) {
 	int i, j, len, target = 0;
 	player_type *q_ptr, *p_ptr;
