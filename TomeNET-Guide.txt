@@ -12247,16 +12247,17 @@ FEATHER ('It makes you fall down gently like a feather.')
         Prevents you from slipping on icy floor.
         Lets you float down gently if you accidentally stumble into trap doors,
         pits or chasms, preventing any fall damage, including inventory damage.
-        Enables you to cross 'dark pits' terrain type (see (4.4)).
+        Enables you to cross 'dark pits' terrain type (see (4.4)) which is a
+        very common feature in the dungeon 'Paths of the Dead'.
         Lets you resist gravitation damage somewhat.
 LEVITATE
         ('It allows you to levitate.')
+        Levitation implicitely grants Feather Falling too, so you get all of
+        the boni listed above for FEATHER, and additionally...
         Allows you to cross over water areas very swiftly and without drowning
         or your inventory or equipment taking damage.
         Lets you cross over rubble.
         Enables you to hover high enough to pass trees and bushes easily.
-        Note that levitation automatically also gives feather falling, so see
-        'FEATHER' above for further benefits granted by that ability.
 XTRA_SHOTS
         ('It fires missiles excessively fast.')
         This ranged weapon can fire an extra shot per round, see your number of
