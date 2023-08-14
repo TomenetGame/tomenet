@@ -7106,21 +7106,35 @@ Notes: If a player enters a static-by-death floor, the floor timer will be
 What happens to your loot
 -------------------------
 If you die, all of your items are dropped to the floor at the place of your
-death. Some items from your inventory or even an item from your equipment might
-get lost, but most of it should be waiting for you to pick it up again after
-someone came and revived you.
+death. Additionally, 0-4 random items from your inventory and sometimes even
+one random item from your equipment might get destroyed on death, but most of
+it is waiting for you to pick it up again after someone came and revived you.
+
 Note however that if you float up or down with your ghost while noone stays on
 the level to keep it, the level will usually immediately change and be lost and
 all your items with it!
 (Only a ghost's death or death of a character which has only 1 life will turn a
 floor static as described further above.)
+
 If you stood in a place where there is no room for your items to drop, for
 example inside a dense forest (green tree fields) or mountain regions (brown ^
 fields) then your items will be scattered randomly over the whole level.
 
+Watch out for nearby monsters that have the ability to pick up items, they
+might pick up your loot too, and they don't always drop all items they picked
+up again when you slay them, possibly resulting in more permanent item loss.
+
 Last but not least, non-validated players and characters below level 3 don't
 drop their items on death, their loot will vanish forever. (The level depends
 on server settings, so check them via ~i to verify.)
+
+If you are an everlasting-mode player you can enable 'instant resurrection' in
+any town's temple (see (4.5a)) in which case you will not drop your items on
+death but just respawn near the temple on death, provided you had enough funds
+at the time of death to pay the fee of getting automatically resurrected.
+The usual loss of 0-4 inventory items and sometimes one equipment piece will
+still occur though as it cannot be avoided. And the experience loss is even
+greater with instant resurrection than with normal deaths.
 
 
 Ghosts
@@ -7138,6 +7152,7 @@ limited there.
 
 That will bring you back to life at the cost of experience (35% usually).
 There are 3 ways to be revived:
+
 -the ghost can visit a temple (green '4' in town). The temple priest will also
  give him some money. The temple priest will turn the ghost away without
  resurrecting it, if the town isn't the last one visited by the player when
@@ -7145,8 +7160,10 @@ There are 3 ways to be revived:
  If you want to do this but don't want to lose your items that dropped in the
  dungeon where you died, either have someone wait down there for your return or
  ask someone to pick up your items before your ghost leaves the dungeon level.
+
 -wait down there for another player to come to your ghost and (doesn't work
  inside vaults!) read a 'Scroll of Life' when standing directly next to you.
+
 -wait down there for another player to come to your ghost and (doesn't work
  inside vaults!) speak a prayer of 'Resurrection' when standing directly next
  to you. This method costs you the least amount of experience penalty, which
