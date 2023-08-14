@@ -5588,6 +5588,7 @@ void calc_boni(int Ind) {
 		/* Apply weapons' magical +parry boni */
 		if (p_ptr->dual_wield) extra_weapon_parry >>= 1; /* Two weapons? Apply the averaged parry bonus from both (as they were both added to extra_weapon_parry previously) */
 		p_ptr->weapon_parry += extra_weapon_parry;
+		if (p_ptr->weapon_parry < 0) p_ptr->weapon_parry = 0;
 		/* Note: We don't give reduced chance for awkward_wield, icky_wield or heavy_wield here, for now, as these will cut down the total weapon_parry chance anyway, further below.
 		   Currently though only heavy_wield applies a parry penalty, the other two don't. */
  #endif
