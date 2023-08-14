@@ -9635,7 +9635,7 @@ traps or elemental attacks you suffer (possibly from terrain too).
 Drain effects caused by items:
 ------------------------------
 Experience drain ('Drains your life force')
-    Having 'Hold Life' does not protect against this..
+    Having 'Hold Life' does not protect against this.
     If you equip multiple items that drain experience, the total drain will
     diminish with each further item though instead of adding up, so for example
     using two rings of power will be less severe than than one might expect.
@@ -9644,8 +9644,12 @@ Experience drain ('Drains your life force')
     however, that you are not hit by another life draining effect that lowers
     your experience further below the level threshold, or the experience drain
     will kick in again.
+    While the player is on the world surface, the effect is lessened compared
+    to being inside a dungeon/tower.
     Experience drain is on hold while you are in town areas, this includes
     dungeon towns.
+    Having an anti-magic field will further reduce the frequency of draining
+    by half of the anti-magic field strength (75% / 2 = 37.5% slower drain).
     All the rings of power that are dropped by Nazgul drain experience (and
     turn you invisible). Note that having multiple items that drain experience
     will not result in a linear increase of the drained amount. Instead, each
@@ -9654,9 +9658,13 @@ Experience drain ('Drains your life force')
     The higher the experience gain ratio of a character is (depending on its
     race/class combination) the worse it will be hit by experience drain from
     items, with Maiar being the class that has the most trouble compensating.
+    Vampire race characters suffer half as much from exp drain as anyone else.
 
 Mana drain ('Drains your magic')
     Drains your mana pool over time while you have this item equipped.
+    Can be countered if your MP regeneration happens to be faster than the
+    drain. Multiple items draining mana will stack linearly.
+    Warriors and archers are not affected as they don't have any MP.
 
 Hit point drain ('Drains your hit points')
     Drains your hit points down to zero, then stops. This means that this
@@ -9664,7 +9672,7 @@ Hit point drain ('Drains your hit points')
     unsafe place, as any further damage you suffer from whatever reason would
     finish you off. Well, going AFK in an unsafe place can kill you anyway.
 
-    HP drain stacks and is given by:
+    HP drain stacks linearly and is given by:
      -Items that just drain your HP
      -Items that have strong good powers and you use them as a Vampire
      -The sun, when it's day and you're a Vampire and out in the open without
@@ -9680,6 +9688,9 @@ Hit point drain ('Drains your hit points')
      -Nature school spell
      -Biofeedback from fire stones
     which all stack too.
+
+    Note that vampire race characters are immune to specifically the DRAIN_HP
+    effect on 'Spectral' ego weapons.
 
 Also see (5.15) for how these drain effects stack or may be cancelled out.
 
@@ -12273,40 +12284,25 @@ REGEN   ('It speeds your hit point regeneration.')
 REGEN_MANA ('It speeds your mana recharging.')
         Your base MP regeneration speed will double.
 DRAIN_MANA ('It drains your magic')
-        Slowly drains your MP over time down to zero. Can be countered if your
-        MP regeneration happens to be faster than the drain.
-        Multiple items draining mana will stack linearly.
+        Slowly drains your MP over time down to zero.
+        Warriors and archers are not affected as they don't have any MP.
 DRAIN_HP ('It drains your health')
         Slowly drains your HP over time down to zero, but you cannot actually
         die from this as it will stop at zero, and a character is still alive
         at that point, as death occurs when your HP drop _below_ zero.
-        This effect can be countered if your HP regeneration happens to be
-        faster than the drain.
-        Multiple items draining HP will stack linearly.
-        Note that vampire race characters are immune to specifically the
-        DRAIN_HP effect on 'Spectral' ego weapons.
+        For more information see (4.11a).
 DRAIN_EXP ('It drains your life force')
         Your experience points are drained in random intervals. This effect
-        actually drains your maximum XP too, so it cannot be restored! To make
-        up for the lost XP you wil have to gain new XP, eg by killing monsters.
-        This effect will however stop at the level threshold, so it will not
-        delevel you. However, if your XP happen to fall below the threshold,
-        for example by suffering from temporary XP drain effects (for example
-        by monsters that attack in melee for XP drain, or a potion of lose
-        memory, or an unresisted nether attack etc..) so that you temporarily
-        lose a level, the DRAIN_EXP effect will kick in again (!) and further
-        drain your exp down to the next level threshold. For this reason it is
-        imperative to cure any temporary XP drain as soon as possible while
-        wearing DRAIN_EXP items.
-        Multiple items draining XP will stack with diminishing returns, meaning
-        that each further item will add less additional drain effect, making it
-        more feasible to for example equip two rings of power (obtained from
-        Nazguls) at the same time.
-        While the player is on the world surface, the effect is lessened
-        compared to being inside a dungeon/tower.
+        actually drains your maximum XP too, so it cannot be restored!
+        It will however stop at the level threshold, so it will not delevel
+        you. BUt if your XP happen to fall below the threshold (ie from some
+        other attack/effect you suffer) the DRAIN_EXP effect will kick in again
+        and further drain your exp down to the next level threshold.
+        This effect stacks with diminishing returns, so eg wearing two items
+        that drain exp will drain less than twice the amount one item drains.
         While in town areas (that means dungeon towns, normal towns and the
         surrounding housing area) the drain effect will be on hold!
-        Vampire race characters suffer half as much from this effect as others.
+        For more information see (4.11a).
 LUCK ('It affects your luck.')
         If you are lucky, your chance to find better items increases.
         Luck caps at 40 (and -10 downwards), having higher bonus won't help any
