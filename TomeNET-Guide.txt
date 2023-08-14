@@ -12354,9 +12354,12 @@ BLESSED ('It has been blessed by the gods')
         These weapons resist cursing. Priests can use blessed weapons
         without penalties, even if they are not blunt. They will get their
         'Blunt-mastery' skill applied to any blessed weapon, even if it isn't
-        actually blunt-type but a sword, axe or polearm instead.
-        Blessed weapons will have adverse effects on corrupted characters and
-        on characters of vampire race or hell knight class.
+        actually blunt-type but a sword, axe or polearm instead. This specialty
+        about weapon skill only affects priests.
+        Blessed weapons will have adverse effects on corrupted (the Maia trait)
+        characters and on characters of vampire race or hell knight class.
+        Everyone else can use blessed weapons just the same way as any other
+        weapons.
 VAMPIRIC ('It drains life from your foes')
         Drains life from your victim, which heals you slightly.
         For details see '(5.13) Vampirism'.
