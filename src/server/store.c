@@ -310,7 +310,10 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 	/* Shop is buying */
 	if (flip) {
 		/* Adjust for greed */
-		adjust = 100000000 / (greed * factor);
+		/* Note about adjustment from 100M to 90M:
+		   Correct bad-case prices to what they were before (minus erroneous edge case implosions to 1 Au of course),
+		   and slightly correcting 'normal' prices to make good CHR work better in intermediately favouring pricing ranges. */
+		adjust = 90000000 / (greed * factor);
 
 		/* Never get "silly" */
 		if (adjust > 100 - STORE_BENEFIT) adjust = 100 - STORE_BENEFIT;
@@ -335,6 +338,8 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 	/* Shop is selling */
 	else {
 		/* Adjust for greed */
+		/* Note about possible adjustment from '10000' to '10500': Brings worst case prices in line (only +5% instead of +11%), but on the downside reduces normal prices by 5% in turn.
+		   As worst case prices were excessively imploding down to 1 (<=0) before this fix anyway, this should probably be left at 10000 to avoid a generic normal pricing reduction all over the place. */
 		adjust = (greed * factor) / 10000;
 
 		/* Never get "silly" */
