@@ -304,18 +304,13 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 		factor = ot_ptr->costs[STORE_NORMAL];
 
 	/* Add in the charisma factor */
-	factor += adj_chr_gold[p_ptr->stat_ind[A_CHR]];
+	factor *= adj_chr_gold[p_ptr->stat_ind[A_CHR]];
 
 
 	/* Shop is buying */
 	if (flip) {
 		/* Adjust for greed */
-		adjust = 100 + (300 - (greed + factor));//greed+factor: 150..250 (flip=TRUE)
-
-#if 0 /* disabled for now to make things look more consistent (eg law dsm of def selling for less than law dsm) */
-		/* Hack -- Shopkeepers hate higher level-requirement */
-		adjust += (20 - o_ptr->level) / 2 ;
-#endif
+		adjust = 100000000 / (greed * factor);
 
 		/* Never get "silly" */
 		if (adjust > 100 - STORE_BENEFIT) adjust = 100 - STORE_BENEFIT;
@@ -340,7 +335,7 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 	/* Shop is selling */
 	else {
 		/* Adjust for greed */
-		adjust = 100 + ((greed + factor) - 300);
+		adjust = (greed * factor) / 10000;
 
 		/* Never get "silly" */
 		if (adjust < 100 + STORE_BENEFIT) adjust = 100 + STORE_BENEFIT;
@@ -1626,20 +1621,17 @@ static bool black_market_crap(object_type *o_ptr, int st_idx) {
 	if (o_ptr->to_h > 0) return(FALSE);
 	if (o_ptr->to_d > 0) return(FALSE);
 
-#if 0 /* Would mess up at least the dungeon BMs, and was buggy all the time anyway \
-       * (returned FALSE instead of TRUE), so disabling it altogether. \
-       */
+#if 0	/* Would mess up at least the dungeon BMs, and was buggy all the time anyway \
+	 * (returned FALSE instead of TRUE), so disabling it altogether. */
 	/* Don't allow items in black markets that are listed in other BMs' templates already */
 	/* check individual store would be better. *later* */
 	for (i = 0; i < max_st_idx; i++) {
 		if (st_info[i].flags1 & SF1_ALL_ITEM) {
 			for (j = 0; j < st_info[i].table_num; j++) {
 				if (st_info[i].table[j][0] >= 10000) {
-					if (o_ptr->tval == st_info[i].table[j][0] - 10000)
-						return(TRUE);
+					if (o_ptr->tval == st_info[i].table[j][0] - 10000) return(TRUE);
 				} else {
-					if (o_ptr->k_idx == st_info[i].table[j][0])
-						return(TRUE);
+					if (o_ptr->k_idx == st_info[i].table[j][0]) return(TRUE);
 				}
 			}
 		}
