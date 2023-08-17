@@ -12673,24 +12673,15 @@ void process_monsters(void) {
 			/* Only check him if he is playing */
 			if (p_ptr->conn == NOT_CONNECTED) continue;
 
+			/* Make sure he's on the same dungeon level */
+			if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
+
 			/* Hack -- Ignore players that have died or left
 			 * as suggested by PowerWyrm - mikaelh */
 			if (p_ptr->suicided || p_ptr->death || p_ptr->new_level_flag) continue;
 
-			/* Make sure he's on the same dungeon level */
-			if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
-
 			/* Hack for RI_MIRROR */
 			if (p_ptr->paralyzed == 255) continue;
-
-			/* Hack -- make the dungeon master invisible to monsters */
-			if ((p_ptr->admin_dm
-			/* Skip if player wears amulet of invincibility - C. Blue */
-			    || p_ptr->admin_invinc)
-			    && (!m_ptr->owner || (m_ptr->owner != p_ptr->id))) { /* for Dungeon Master GF_DOMINATE */
-				if (los(&p_ptr->wpos, p_ptr->py, p_ptr->px, fy, fx) && j <= MAX_SIGHT) m_ptr->strongest_los = pl;
-				continue;
-			}
 
 			/* Hack -- Skip him if he's shopping -
 			   in a town, so dungeon stores aren't cheezy */
@@ -12701,6 +12692,15 @@ void process_monsters(void) {
 
 			/* Compute distance */
 			j = distance(p_ptr->py, p_ptr->px, fy, fx);
+
+			/* Hack -- make the dungeon master invisible to monsters */
+			if ((p_ptr->admin_dm
+			/* Skip if player wears amulet of invincibility - C. Blue */
+			    || p_ptr->admin_invinc)
+			    && (!m_ptr->owner || (m_ptr->owner != p_ptr->id))) { /* for Dungeon Master GF_DOMINATE */
+				if (los(&p_ptr->wpos, p_ptr->py, p_ptr->px, fy, fx) && j <= MAX_SIGHT) m_ptr->strongest_los = pl;
+				continue;
+			}
 
 			/* Change monster's highest player encounter - mode 3: monster is awake and player is within its area of awareness */
 			if (cfg.henc_strictness == 3 && !m_ptr->csleep) {
