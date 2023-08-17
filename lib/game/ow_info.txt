@@ -257,7 +257,6 @@ L:Maia | High-Elf | Half-Elf | Elf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:38:Gary Gygaz(Half-Troll)
-#I:30000:250:150:10:5
 I:30000:200:120:10:5
 C:120:100:80
 #L:Rogue
@@ -265,20 +264,20 @@ L:Maia | Half-Orc | Half-Troll | Goblin
 H:Gnome | Dwarf | Human | Elf | Half-Elf | High-Elf
 
 N:39:Histor the Goblin(Goblin)
-I:20000:250:150:10:5
+I:20000:220:125:10:5
 C:120:100:80
 #L:Rogue
 #H:Gnome
 H:Dwarf | Human | Elf | Half-Elf | High-Elf | Vampire
 
 N:40:Zorak the Smart(Dwarf)
-I:30000:250:150:10:5
+I:30000:220:125:10:5
 C:120:100:80
 #L:Rogue
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:41:Tipo the Fair(Human)
-I:30000:250:150:10:5
+I:30000:200:115:10:5
 C:120:100:80
 #L:Rogue
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
@@ -460,7 +459,7 @@ H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 #added a truly neutral one.. - C. Blue
 N:70:Garaic the Neutral (Draconian)
-I:25000:200:150:10:5
+I:25000:200:120:10:5
 #I:20000:140:110:7:19 --adjusted to fit 39 and 40 better (they team up for BMs)
 C:120:100:80
 
