@@ -1434,12 +1434,11 @@ static cptr st_info_flags1[] = {
 	"DEEP_LEVEL",
 	"RARE",
 	"VERY_RARE",
-	//"COMMON",
 	"FLAT_BASE",
 	"ALL_ITEM",
 	"RANDOM",
 	"FORCE_LEVEL",
-	"MUSEUM",
+	"BUY50",
 	"NO_DISCOUNT",
 	"NO_DISCOUNT2",
 	"EGO",
@@ -1463,7 +1462,8 @@ static cptr st_info_flags1[] = {
 	"ZEROLEVEL"
 };
 static cptr st_info_flags2[] = {
-	"BUY50",
+	//"COMMON",
+	"MUSEUM",
 	"",
 	"",
 	"",

@@ -329,7 +329,7 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 		if (st_info[st_ptr->st_idx].flags1 & SF1_BUY67) price = (price * 2 + 1) / 3;
 
 		/* Seasoned Tradesman et al don't pay very much either, they know the customers can't disagree.. */
-		if (st_info[st_ptr->st_idx].flags2 & SF2_BUY50) price = (price + 1) / 2;
+		if (st_info[st_ptr->st_idx].flags1 & SF1_BUY50) price = (price + 1) / 2;
 
 		/* You're not a welcomed customer.. */
 		if (p_ptr->tim_blacklist) price = (price + 3) / 4;
@@ -850,7 +850,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 #endif
 
 	/* Hack: The Mathom House */
-	if (st_info[p_ptr->store_num].flags1 & SF1_MUSEUM) {
+	if (st_info[p_ptr->store_num].flags2 & SF2_MUSEUM) {
 		/* Museums won't buy true artifacts, since they'd be
 		   conserved and out of reach for players thereby. */
 		if (true_artifact_p(o_ptr)) return(FALSE);
@@ -1360,7 +1360,7 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 	if (!st_ptr->player_owner) /* allow 100% off items in player stores */
 #endif
 	if (value <= 0 &&
-	    !(st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM))
+	    !(st_info[st_ptr->st_idx].flags2 & SF2_MUSEUM))
 		return(-1);
 
 	/* All store items are fully *identified* */
@@ -1376,7 +1376,7 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 	if (!st_ptr->player_owner) /* don't erase inscriptions in player stores */
 #endif
 #ifndef TEST_SERVER /* redundant? inscription is already erased on selling an item in store_sell()! */
-	if (!(st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM)) {
+	if (!(st_info[st_ptr->st_idx].flags2 & SF2_MUSEUM)) {
 		o_ptr->note = 0;
 		o_ptr->note_utag = 0;
 	}
@@ -1410,7 +1410,7 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 	if (st_ptr->stock_num >= st_ptr->stock_size) return(-1);
 
 
-	if (!(st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM)
+	if (!(st_info[st_ptr->st_idx].flags2 & SF2_MUSEUM)
 #ifdef PLAYER_STORES
 	    /* Don't sort store signs */
 	    && !(st_ptr->player_owner && o_ptr->tval == TV_JUNK && o_ptr->sval == SV_WOOD_PIECE && o_ptr->note && strstr(quark_str(o_ptr->note), "@S:"))
@@ -2579,7 +2579,7 @@ static void display_entry(int Ind, int pos) {
 #endif
 	{
 		st_ptr = &town[i].townstore[p_ptr->store_num];
-		museum = (st_info[p_ptr->store_num].flags1 & SF1_MUSEUM) ? TRUE : FALSE;
+		museum = (st_info[p_ptr->store_num].flags2 & SF2_MUSEUM) ? TRUE : FALSE;
 	}
 
 	//ot_ptr = &owners[p_ptr->store_num][st_ptr->owner];
@@ -2917,7 +2917,7 @@ static void display_store(int Ind) {
 		show_building(Ind, st_ptr);
 
 		/* Hack -- Museum doesn't have owner */
-		if (st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM) owner_name = "";
+		if (st_info[st_ptr->st_idx].flags2 & SF2_MUSEUM) owner_name = "";
 
 #ifdef PLAYER_STORES
 		if (p_ptr->store_num <= -2) {
@@ -3576,7 +3576,7 @@ void store_purchase(int Ind, int item, int amt) {
 		return;
 	}
 
-	if ((st_info[p_ptr->store_num].flags1 & SF1_MUSEUM) && !is_admin(p_ptr)) {
+	if ((st_info[p_ptr->store_num].flags2 & SF2_MUSEUM) && !is_admin(p_ptr)) {
 		msg_print(Ind, "Only authorised personnel may transfer items from the mathom house.");
 		return;
 	}
@@ -4202,7 +4202,7 @@ void store_sell(int Ind, int item, int amt) {
 
 	/* Museum */
 //	if (p_ptr->store_num == STORE_MATHOM_HOUSE)
-	if (st_info[p_ptr->store_num].flags1 & SF1_MUSEUM) {
+	if (st_info[p_ptr->store_num].flags2 & SF2_MUSEUM) {
 		/* Save the info for the confirmation */
 		p_ptr->current_selling = item;
 		p_ptr->current_sell_amt = amt;
@@ -4261,7 +4261,7 @@ void store_confirm(int Ind) {
 		return;
 	}
 
-	museum = (st_info[p_ptr->store_num].flags1 & SF1_MUSEUM) ? TRUE : FALSE;
+	museum = (st_info[p_ptr->store_num].flags2 & SF2_MUSEUM) ? TRUE : FALSE;
 
 	/* Restore the variables */
 	item = p_ptr->current_selling;
@@ -5183,7 +5183,7 @@ void store_maint(store_type *st_ptr) {
 #endif
 
 	/* Ignore Museum */
-	if (st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM) return;
+	if (st_info[st_ptr->st_idx].flags2 & SF2_MUSEUM) return;
 
 	/* Make sure no one is in the store */
 #if 0 /* not used (cf.st_ptr->last_visit) */

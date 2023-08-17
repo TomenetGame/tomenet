@@ -1660,12 +1660,11 @@
 #define SF1_DEEP_LEVEL		0x00000008L	/* Add much to minimum item level */
 #define SF1_RARE		0x00000010L	/* k-chance must be >= 3 */
 #define SF1_VERY_RARE		0x00000020L	/* k-chance must be >= 8 */
-//#define SF1_COMMON		0x00000040L	/* Currently no effect */
 #define SF1_FLAT_BASE		0x00000040L	/* a) prevent rare base item types, b) give all base item types same probability */
 #define SF1_ALL_ITEM		0x00000080L	/* Works as the BM */
 #define SF1_RANDOM		0x00000100L	/* Sets level to 0 for apply_magic() if it isn't increased by ..._LEVEL store flags anyway. */
 #define SF1_FORCE_LEVEL		0x00000200L	/* Prevent items of much lower kind level than store level. Applies to T-256 wildcard only. */
-#define SF1_MUSEUM		0x00000400L
+#define SF1_BUY50		0x00000400L	/* Shop buys for 50% of value (can be combined with BUY66, for 1/3 sell value) */
 #define SF1_NO_DISCOUNT		0x00000800L	/* no discount at all */
 #define SF1_NO_DISCOUNT2	0x00001000L	/* no 50%/75%/90% off */
 #define SF1_EGO			0x00002000L	/* often has ego items (should go with SF1_GOOD and SF1_GREAT) */
@@ -1690,7 +1689,8 @@
 
 #define SF1_NO_DISCOUNT3	(SF1_NO_DISCOUNT1 | SF1_NO_DISCOUNT2)	/* Hack: Reduce discounts somewhat */
 
-#define SF2_BUY50		0x00000001L	/* Shop buys for 50% of value (can be combined with BUY66, for 1/3 sell value) */
+#define SF2_MUSEUM		0x00000001L
+//#define SF2_COMMON		0x0000000L	/* Currently no effect */
 
 
 /* This seems to be bad, but backported once anyway;
