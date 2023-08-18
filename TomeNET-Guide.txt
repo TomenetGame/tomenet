@@ -20100,7 +20100,7 @@ fine except for custom books, and you won't be able to browse the equipped book
 and you can only cast from it by using the macro wizard (or manually creating
 macros that cast spells by their name).
 If you use the latest github code or a client of version higher than 4.9.0c
-these limitations will be fixed.
+these limitations will be lifted.
 
 
 - Wizardry -
