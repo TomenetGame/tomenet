@@ -10287,7 +10287,7 @@ Ironman Deep Dive Challenge (IDDC)
     Rogues should be aware that it's not possible to steal from general store,
     weaponsmith, armoury, temple, magic shop, black market and the special
     potion store in the dungeon towns.
-    This leaves only the Hidden Library, Herbalist, Alchemist and the Library
+    This leaves only the hidden Library, herbalist, alchemist and the library
     to steal from.
 
     If you use stolen enchant scrolls on an item while you are in a town,
@@ -14389,8 +14389,8 @@ Enchanting restrictions:
     - Normal items that have the NO_ENCHANT flag, which are Dark Swords and all
       three types of "Magic" ammo.
 
-To enchant an item, you can either use scrolls (available at the Alchemist or
-the Black Market) or enchantment shop services (see (4.5a)).
+To enchant an item, you can either use scrolls (available at the alchemist or
+the black market) or enchantment shop services (see (4.5a)).
 There are big differences between the effects:
  - Shop services always enchant one of your equipped items (which is eligible
    for enchanting) to 5 + (yourlevel / 5), capping at 20. So you reach that
