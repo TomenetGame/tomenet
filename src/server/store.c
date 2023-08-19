@@ -338,9 +338,8 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 	/* Shop is selling */
 	else {
 		/* Adjust for greed */
-		/* Note about possible adjustment from '10000' to '10500': Brings worst case prices in line (only +5% instead of +11%), but on the downside reduces normal prices by 5% in turn.
-		   As worst case prices were excessively imploding down to 1 (<=0) before this fix anyway, this should probably be left at 10000 to avoid a generic normal pricing reduction all over the place. */
-		adjust = (greed * factor) / 10000;
+		/* Note about adjustment from 10000 to 9230: Match previous top-priced items. Has virtually no effect on lower priced items. */
+		adjust = (greed * factor) / 9230;
 
 		/* Never get "silly" */
 		if (adjust < 100 + STORE_BENEFIT) adjust = 100 + STORE_BENEFIT;
