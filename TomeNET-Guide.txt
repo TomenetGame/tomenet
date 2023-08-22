@@ -8933,8 +8933,8 @@ other weapon.
 
 Trap kits can have special (ego) powers:
 
-Pprefixes:
-----------
+Prefixes:
+---------
 Automatic       - Can set off up to 99 times, with a 20% chance each time of
                   ceasing to function. Requires the according amount of ammo
                   though, if it's not a device trap kit. (AUTOMATIC_5 flag.)
