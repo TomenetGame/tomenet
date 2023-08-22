@@ -426,7 +426,7 @@ compile the game under '(2.1) Installing/updating TomeNET'.
           world location in the player list (accessed with '@' key).
           (SHIFT+O if you are using rogue-like key map.)
  SHIFT+L  look around the map. Very useful to locate team mates ;).
-          (SHIFT+W if you are using rogue-like key map.)
+          (CTRL+W if you are using rogue-like key map.)
  CTRL+U   the audio mixer menu (the hotkeys for toggling master/music work
           outside of this menu too).
           (CTRL+F if you are using rogue-like key map.)
@@ -699,7 +699,8 @@ K       CTRL+C  forcibly combines a level 0 item in your inventory with other
 
 C       C       see a character overview.
 
-L       CTRL+W  look around your current sector/floor (use direction keys).
+L       CTRL+W  look around your current sector/floor, using direction keys.
+                Hit ESC to exit this 'locate' mode again.
 
 M       M       display either the world map if you're not in a town or in a
                 dungeon, otherwise display a minimap of the town or of your
@@ -2615,8 +2616,8 @@ ESP         Extrasensory perception. ESP is a telepathic power that allows you
              trolls are not a major threat, the ESP can be utilized for finding
              troll pits! These usually yield major amounts of experience in the
              early gameplay. Typically, the player would enter a dungeon floor
-             and use Shift+L (Shift+W RL keymap) to scan the whole floor for a
-             possible troll pit.
+             and use Shift+L (CTRL+W for Roguelike keymap) to scan the whole
+             floor for a possible troll pit.
 
             Note that the rogue ability 'Cloaking' overrides ESP, so a cloaked
             target cannot be spotted by ESP.
@@ -2877,6 +2878,9 @@ RoP         Ring of Power. While these also includes the true artifact rings of
 Scumming    Repeatedly using staircases up/downwards to make a level become
             recreated. Usually in hope of finding a specific monster on that
             depth. ('I scum 450..500 ft for Wormy'.)
+            Use 'locate' (SHIFT+L or CTRL+W depending on key map) to quickly
+            'scan' the floor for your desired monsters, provided you have the
+            required type of ESP to see them.
 
 SI          See invisible. (See (5.14) for details about invisibility.)
 
@@ -4251,7 +4255,7 @@ self-explaining or that are especially important are listed in detail here:
     Alert on taking damage while you are AFK (alert_afk_dam) and
     alert on taking damage while looking around the map via 'locate' command
     (alert_offpanel_dam). (The locate command is invoked with SHIFT+L on normal
-    key map and SHIFT+W on rogue-like key map.)
+    key map and CTRL+W on rogue-like key map.)
 
     A bunch of options for special visual effects and lighting.
         These options change how lighting is applied to lamp light and walls,
@@ -10651,7 +10655,7 @@ While this seems sort of obvious, it is easy to miss that for example in the
 to you are actually diagonal of you! So now it might become clear how to do
 that event in the most effective way..
 
-Note that the map coordinates you see when pressing SHIFT+L (SHIFT+W with rogue
+Note that the map coordinates you see when pressing SHIFT+L (CTRL+W with rogue
 like keymap) can differ depending on if you have 'big_map' setting enabled or
 not via  = b  .
 
