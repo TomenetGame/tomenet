@@ -3726,43 +3726,43 @@ void display_player(int hist) {
 				}
 
 				/* ESP and slay flags, white for anything */
-				if (csheet_boni[i].cb[7] & CB8_ESPID) { c_put_str(TERM_WHITE, "e", 1, 65 + i); header_color[3][0] = TERM_WHITE; }
-				if (csheet_boni[i].cb[7] & CB8_EANIM) { c_put_str(TERM_WHITE, "e", 2, 65 + i); header_color[3][1] = TERM_WHITE; }
-				if (csheet_boni[i].cb[7] & CB8_SANIM) { c_put_str(TERM_WHITE, "s", 2, 65 + i); header_color[3][1] = TERM_WHITE; }
+				if (csheet_boni[i].cb[7] & CB8_ESPID) { c_put_str(TERM_L_BLUE, "E", 1, 65 + i); header_color[3][0] = TERM_WHITE; }
+				if (csheet_boni[i].cb[7] & CB8_EANIM) { c_put_str(TERM_L_BLUE, "E", 2, 65 + i); header_color[3][1] = TERM_WHITE; }
+				if (csheet_boni[i].cb[7] & CB8_SANIM) { c_put_str(TERM_YELLOW, "s", 2, 65 + i); header_color[3][1] = TERM_WHITE; }
 				if ((csheet_boni[i].cb[7] & CB8_EANIM) && (csheet_boni[i].cb[7] & CB8_SANIM)) c_put_str(TERM_WHITE, "+", 2, 65 + i);
-				if (csheet_boni[i].cb[7] & CB8_EORCS) { c_put_str(TERM_WHITE, "e", 3, 65 + i); header_color[3][2] = TERM_WHITE; }
-				if (csheet_boni[i].cb[7] & CB8_SORCS) { c_put_str(TERM_WHITE, "s", 3, 65 + i); header_color[3][2] = TERM_WHITE; }
+				if (csheet_boni[i].cb[7] & CB8_EORCS) { c_put_str(TERM_L_BLUE, "E", 3, 65 + i); header_color[3][2] = TERM_WHITE; }
+				if (csheet_boni[i].cb[7] & CB8_SORCS) { c_put_str(TERM_YELLOW, "s", 3, 65 + i); header_color[3][2] = TERM_WHITE; }
 				if ((csheet_boni[i].cb[7] & CB8_EORCS) && (csheet_boni[i].cb[7] & CB8_SORCS)) c_put_str(TERM_WHITE, "+", 3, 65 + i);
-				if (csheet_boni[i].cb[7] & CB8_ETROL) { c_put_str(TERM_WHITE, "e", 4, 65 + i); header_color[3][3] = TERM_WHITE; }
-				if (csheet_boni[i].cb[7] & CB8_STROL) { c_put_str(TERM_WHITE, "s", 4, 65 + i); header_color[3][3] = TERM_WHITE; }
+				if (csheet_boni[i].cb[7] & CB8_ETROL) { c_put_str(TERM_L_BLUE, "E", 4, 65 + i); header_color[3][3] = TERM_WHITE; }
+				if (csheet_boni[i].cb[7] & CB8_STROL) { c_put_str(TERM_YELLOW, "s", 4, 65 + i); header_color[3][3] = TERM_WHITE; }
 				if ((csheet_boni[i].cb[7] & CB8_ETROL) && (csheet_boni[i].cb[7] & CB8_STROL)) c_put_str(TERM_WHITE, "+", 4, 65 + i);
-				if (csheet_boni[i].cb[7] & CB8_EGIAN) { c_put_str(TERM_WHITE, "e", 5, 65 + i); header_color[3][4] = TERM_WHITE; }
+				if (csheet_boni[i].cb[7] & CB8_EGIAN) { c_put_str(TERM_L_BLUE, "E", 5, 65 + i); header_color[3][4] = TERM_WHITE; }
 
-				if (csheet_boni[i].cb[8] & CB9_SGIAN) { c_put_str(TERM_WHITE, "s", 5, 65 + i); header_color[3][4] = TERM_WHITE; }
+				if (csheet_boni[i].cb[8] & CB9_SGIAN) { c_put_str(TERM_YELLOW, "s", 5, 65 + i); header_color[3][4] = TERM_WHITE; }
 				if ((csheet_boni[i].cb[7] & CB8_EGIAN) && (csheet_boni[i].cb[8] & CB9_SGIAN)) c_put_str(TERM_WHITE, "+", 5, 65 + i);
-				if (csheet_boni[i].cb[8] & CB9_EDRGN) { c_put_str(TERM_WHITE, "e", 6, 65 + i); header_color[3][5] = TERM_WHITE; }
-				if (csheet_boni[i].cb[8] & CB9_SDRGN) { c_put_str(TERM_WHITE, "s", 6, 65 + i); header_color[3][5] = TERM_WHITE; }
+				if (csheet_boni[i].cb[8] & CB9_EDRGN) { c_put_str(TERM_L_BLUE, "E", 6, 65 + i); header_color[3][5] = TERM_WHITE; }
+				if (csheet_boni[i].cb[8] & CB9_SDRGN) { c_put_str(TERM_YELLOW, "s", 6, 65 + i); header_color[3][5] = TERM_WHITE; }
 				if (csheet_boni[i].cb[8] & CB9_KDRGN) { c_put_str(TERM_WHITE, "k", 6, 65 + i); header_color[3][5] = TERM_WHITE; }
 				if ((csheet_boni[i].cb[8] & CB9_EDRGN) && (csheet_boni[i].cb[8] & CB9_SDRGN)) c_put_str(TERM_WHITE, "+", 6, 65 + i);
 				if ((csheet_boni[i].cb[8] & CB9_EDRGN) && (csheet_boni[i].cb[8] & CB9_KDRGN)) c_put_str(TERM_WHITE, "*", 6, 65 + i);
-				if (csheet_boni[i].cb[8] & CB9_EDEMN) { c_put_str(TERM_WHITE, "e", 7, 65 + i); header_color[3][6] = TERM_WHITE; }
-				if (csheet_boni[i].cb[8] & CB9_SDEMN) { c_put_str(TERM_WHITE, "s", 7, 65 + i); header_color[3][6] = TERM_WHITE; }
+				if (csheet_boni[i].cb[8] & CB9_EDEMN) { c_put_str(TERM_L_BLUE, "E", 7, 65 + i); header_color[3][6] = TERM_WHITE; }
+				if (csheet_boni[i].cb[8] & CB9_SDEMN) { c_put_str(TERM_YELLOW, "s", 7, 65 + i); header_color[3][6] = TERM_WHITE; }
 				if (csheet_boni[i].cb[8] & CB9_KDEMN) { c_put_str(TERM_WHITE, "k", 7, 65 + i); header_color[3][6] = TERM_WHITE; }
 				if ((csheet_boni[i].cb[8] & CB9_EDEMN) && (csheet_boni[i].cb[8] & CB9_SDEMN)) c_put_str(TERM_WHITE, "+", 7, 65 + i);
 				if ((csheet_boni[i].cb[8] & CB9_EDEMN) && (csheet_boni[i].cb[8] & CB9_KDEMN)) c_put_str(TERM_WHITE, "*", 7, 65 + i);
-				if (csheet_boni[i].cb[8] & CB9_EUNDD) { c_put_str(TERM_WHITE, "e", 8, 65 + i); header_color[3][7] = TERM_WHITE; }
+				if (csheet_boni[i].cb[8] & CB9_EUNDD) { c_put_str(TERM_L_BLUE, "E", 8, 65 + i); header_color[3][7] = TERM_WHITE; }
 
-				if (csheet_boni[i].cb[9] & CB10_SUNDD) { c_put_str(TERM_WHITE, "s", 8, 65 + i); header_color[3][7] = TERM_WHITE; }
+				if (csheet_boni[i].cb[9] & CB10_SUNDD) { c_put_str(TERM_YELLOW, "s", 8, 65 + i); header_color[3][7] = TERM_WHITE; }
 				if (csheet_boni[i].cb[9] & CB10_KUNDD) { c_put_str(TERM_WHITE, "k", 8, 65 + i); header_color[3][7] = TERM_WHITE; }
 				if ((csheet_boni[i].cb[8] & CB9_EUNDD) && (csheet_boni[i].cb[9] & CB10_SUNDD)) c_put_str(TERM_WHITE, "+", 8, 65 + i);
 				if ((csheet_boni[i].cb[8] & CB9_EUNDD) && (csheet_boni[i].cb[9] & CB10_KUNDD)) c_put_str(TERM_WHITE, "*", 8, 65 + i);
-				if (csheet_boni[i].cb[9] & CB10_EEVIL) { c_put_str(TERM_WHITE, "e", 9, 65 + i); header_color[3][8] = TERM_WHITE; }
-				if (csheet_boni[i].cb[9] & CB10_SEVIL) { c_put_str(TERM_WHITE, "s", 9, 65 + i); header_color[3][8] = TERM_WHITE; }
+				if (csheet_boni[i].cb[9] & CB10_EEVIL) { c_put_str(TERM_L_BLUE, "E", 9, 65 + i); header_color[3][8] = TERM_WHITE; }
+				if (csheet_boni[i].cb[9] & CB10_SEVIL) { c_put_str(TERM_YELLOW, "s", 9, 65 + i); header_color[3][8] = TERM_WHITE; }
 				if ((csheet_boni[i].cb[9] & CB10_EEVIL) && (csheet_boni[i].cb[9] & CB10_SEVIL)) c_put_str(TERM_WHITE, "+", 9, 65 + i);
-				if (csheet_boni[i].cb[9] & CB10_EDGRI) { c_put_str(TERM_WHITE, "e", 10, 65 + i); header_color[3][9] = TERM_WHITE; }
-				if (csheet_boni[i].cb[9] & CB10_EGOOD) { c_put_str(TERM_WHITE, "e", 11, 65 + i); header_color[3][10] = TERM_WHITE; }
-				if (csheet_boni[i].cb[9] & CB10_ENONL) { c_put_str(TERM_WHITE, "e", 12, 65 + i); header_color[3][11] = TERM_WHITE; }
-				if (csheet_boni[i].cb[9] & CB10_EUNIQ) { c_put_str(TERM_WHITE, "e", 13, 65 + i); header_color[3][12] = TERM_WHITE; }
+				if (csheet_boni[i].cb[9] & CB10_EDGRI) { c_put_str(TERM_L_BLUE, "E", 10, 65 + i); header_color[3][9] = TERM_WHITE; }
+				if (csheet_boni[i].cb[9] & CB10_EGOOD) { c_put_str(TERM_L_BLUE, "E", 11, 65 + i); header_color[3][10] = TERM_WHITE; }
+				if (csheet_boni[i].cb[9] & CB10_ENONL) { c_put_str(TERM_L_BLUE, "E", 12, 65 + i); header_color[3][11] = TERM_WHITE; }
+				if (csheet_boni[i].cb[9] & CB10_EUNIQ) { c_put_str(TERM_L_BLUE, "E", 13, 65 + i); header_color[3][12] = TERM_WHITE; }
 
 				if (csheet_boni[i].cb[10] & CB11_BFIRE) { c_put_str(TERM_WHITE, "b", 14, 65 + i); header_color[3][13] = TERM_WHITE; }
 				if (csheet_boni[i].cb[10] & CB11_AFIRE) { c_put_str(TERM_WHITE, "a", 14, 65 + i); header_color[3][13] = TERM_WHITE; }
@@ -4283,43 +4283,43 @@ void display_player(int hist) {
 				}
 
 				/* ESP and slay flags, white for anything */
-				if (csheet_boni[i].cb[7] & CB8_ESPID) { c_put_str(TERM_WHITE, "e", 6 + i, 1 + 19 * 3 + x_offset); header_color[0][19 * 3 + 0] = TERM_WHITE; }
-				if (csheet_boni[i].cb[7] & CB8_EANIM) { c_put_str(TERM_WHITE, "e", 6 + i, 2 + 19 * 3 + x_offset); header_color[0][19 * 3 + 1] = TERM_WHITE; }
-				if (csheet_boni[i].cb[7] & CB8_SANIM) { c_put_str(TERM_WHITE, "s", 6 + i, 2 + 19 * 3 + x_offset); header_color[0][19 * 3 + 1] = TERM_WHITE; }
+				if (csheet_boni[i].cb[7] & CB8_ESPID) { c_put_str(TERM_L_BLUE, "E", 6 + i, 1 + 19 * 3 + x_offset); header_color[0][19 * 3 + 0] = TERM_WHITE; }
+				if (csheet_boni[i].cb[7] & CB8_EANIM) { c_put_str(TERM_L_BLUE, "E", 6 + i, 2 + 19 * 3 + x_offset); header_color[0][19 * 3 + 1] = TERM_WHITE; }
+				if (csheet_boni[i].cb[7] & CB8_SANIM) { c_put_str(TERM_YELLOW, "s", 6 + i, 2 + 19 * 3 + x_offset); header_color[0][19 * 3 + 1] = TERM_WHITE; }
 				if ((csheet_boni[i].cb[7] & CB8_EANIM) && (csheet_boni[i].cb[7] & CB8_SANIM)) c_put_str(TERM_WHITE, "+", 6 + i, 2 + 19 * 3 + x_offset);
-				if (csheet_boni[i].cb[7] & CB8_EORCS) { c_put_str(TERM_WHITE, "e", 6 + i, 3 + 19 * 3 + x_offset); header_color[0][19 * 3 + 2] = TERM_WHITE; }
-				if (csheet_boni[i].cb[7] & CB8_SORCS) { c_put_str(TERM_WHITE, "s", 6 + i, 3 + 19 * 3 + x_offset); header_color[0][19 * 3 + 2] = TERM_WHITE; }
+				if (csheet_boni[i].cb[7] & CB8_EORCS) { c_put_str(TERM_L_BLUE, "E", 6 + i, 3 + 19 * 3 + x_offset); header_color[0][19 * 3 + 2] = TERM_WHITE; }
+				if (csheet_boni[i].cb[7] & CB8_SORCS) { c_put_str(TERM_YELLOW, "s", 6 + i, 3 + 19 * 3 + x_offset); header_color[0][19 * 3 + 2] = TERM_WHITE; }
 				if ((csheet_boni[i].cb[7] & CB8_EORCS) && (csheet_boni[i].cb[7] & CB8_SORCS)) c_put_str(TERM_WHITE, "+", 6 + i, 3 + 19 * 3 + x_offset);
-				if (csheet_boni[i].cb[7] & CB8_ETROL) { c_put_str(TERM_WHITE, "e", 6 + i, 4 + 19 * 3 + x_offset); header_color[0][19 * 3 + 3] = TERM_WHITE; }
-				if (csheet_boni[i].cb[7] & CB8_STROL) { c_put_str(TERM_WHITE, "s", 6 + i, 4 + 19 * 3 + x_offset); header_color[0][19 * 3 + 3] = TERM_WHITE; }
+				if (csheet_boni[i].cb[7] & CB8_ETROL) { c_put_str(TERM_L_BLUE, "E", 6 + i, 4 + 19 * 3 + x_offset); header_color[0][19 * 3 + 3] = TERM_WHITE; }
+				if (csheet_boni[i].cb[7] & CB8_STROL) { c_put_str(TERM_YELLOW, "s", 6 + i, 4 + 19 * 3 + x_offset); header_color[0][19 * 3 + 3] = TERM_WHITE; }
 				if ((csheet_boni[i].cb[7] & CB8_ETROL) && (csheet_boni[i].cb[7] & CB8_STROL)) c_put_str(TERM_WHITE, "+", 6 + i, 4 + 19 * 3 + x_offset);
-				if (csheet_boni[i].cb[7] & CB8_EGIAN) { c_put_str(TERM_WHITE, "e", 6 + i, 5 + 19 * 3 + x_offset); header_color[0][19 * 3 + 4] = TERM_WHITE; }
+				if (csheet_boni[i].cb[7] & CB8_EGIAN) { c_put_str(TERM_L_BLUE, "E", 6 + i, 5 + 19 * 3 + x_offset); header_color[0][19 * 3 + 4] = TERM_WHITE; }
 
-				if (csheet_boni[i].cb[8] & CB9_SGIAN) { c_put_str(TERM_WHITE, "s", 6 + i, 5 + 19 * 3 + x_offset); header_color[0][19 * 3 + 4] = TERM_WHITE; }
+				if (csheet_boni[i].cb[8] & CB9_SGIAN) { c_put_str(TERM_YELLOW, "s", 6 + i, 5 + 19 * 3 + x_offset); header_color[0][19 * 3 + 4] = TERM_WHITE; }
 				if ((csheet_boni[i].cb[7] & CB8_EGIAN) && (csheet_boni[i].cb[8] & CB9_SGIAN)) c_put_str(TERM_WHITE, "+", 6 + i, 5 + 19 * 3 + x_offset);
-				if (csheet_boni[i].cb[8] & CB9_EDRGN) { c_put_str(TERM_WHITE, "e", 6 + i, 6 + 19 * 3 + x_offset); header_color[0][19 * 3 + 5] = TERM_WHITE; }
-				if (csheet_boni[i].cb[8] & CB9_SDRGN) { c_put_str(TERM_WHITE, "s", 6 + i, 6 + 19 * 3 + x_offset); header_color[0][19 * 3 + 5] = TERM_WHITE; }
+				if (csheet_boni[i].cb[8] & CB9_EDRGN) { c_put_str(TERM_L_BLUE, "E", 6 + i, 6 + 19 * 3 + x_offset); header_color[0][19 * 3 + 5] = TERM_WHITE; }
+				if (csheet_boni[i].cb[8] & CB9_SDRGN) { c_put_str(TERM_YELLOW, "s", 6 + i, 6 + 19 * 3 + x_offset); header_color[0][19 * 3 + 5] = TERM_WHITE; }
 				if (csheet_boni[i].cb[8] & CB9_KDRGN) { c_put_str(TERM_WHITE, "k", 6 + i, 6 + 19 * 3 + x_offset); header_color[0][19 * 3 + 5] = TERM_WHITE; }
 				if ((csheet_boni[i].cb[8] & CB9_EDRGN) && (csheet_boni[i].cb[8] & CB9_SDRGN)) c_put_str(TERM_WHITE, "+", 6 + i, 6 + 19 * 3 + x_offset);
 				if ((csheet_boni[i].cb[8] & CB9_EDRGN) && (csheet_boni[i].cb[8] & CB9_KDRGN)) c_put_str(TERM_WHITE, "*", 6 + i, 6 + 19 * 3 + x_offset);
-				if (csheet_boni[i].cb[8] & CB9_EDEMN) { c_put_str(TERM_WHITE, "e", 6 + i, 7 + 19 * 3 + x_offset); header_color[0][19 * 3 + 6] = TERM_WHITE; }
-				if (csheet_boni[i].cb[8] & CB9_SDEMN) { c_put_str(TERM_WHITE, "s", 6 + i, 7 + 19 * 3 + x_offset); header_color[0][19 * 3 + 6] = TERM_WHITE; }
+				if (csheet_boni[i].cb[8] & CB9_EDEMN) { c_put_str(TERM_L_BLUE, "E", 6 + i, 7 + 19 * 3 + x_offset); header_color[0][19 * 3 + 6] = TERM_WHITE; }
+				if (csheet_boni[i].cb[8] & CB9_SDEMN) { c_put_str(TERM_YELLOW, "s", 6 + i, 7 + 19 * 3 + x_offset); header_color[0][19 * 3 + 6] = TERM_WHITE; }
 				if (csheet_boni[i].cb[8] & CB9_KDEMN) { c_put_str(TERM_WHITE, "k", 6 + i, 7 + 19 * 3 + x_offset); header_color[0][19 * 3 + 6] = TERM_WHITE; }
 				if ((csheet_boni[i].cb[8] & CB9_EDEMN) && (csheet_boni[i].cb[8] & CB9_SDEMN)) c_put_str(TERM_WHITE, "+", 6 + i, 7 + 19 * 3 + x_offset);
 				if ((csheet_boni[i].cb[8] & CB9_EDEMN) && (csheet_boni[i].cb[8] & CB9_KDEMN)) c_put_str(TERM_WHITE, "*", 6 + i, 7 + 19 * 3 + x_offset);
-				if (csheet_boni[i].cb[8] & CB9_EUNDD) { c_put_str(TERM_WHITE, "e", 6 + i, 8 + 19 * 3 + x_offset); header_color[0][19 * 3 + 7] = TERM_WHITE; }
+				if (csheet_boni[i].cb[8] & CB9_EUNDD) { c_put_str(TERM_L_BLUE, "E", 6 + i, 8 + 19 * 3 + x_offset); header_color[0][19 * 3 + 7] = TERM_WHITE; }
 
-				if (csheet_boni[i].cb[9] & CB10_SUNDD) { c_put_str(TERM_WHITE, "s", 6 + i, 8 + 19 * 3 + x_offset); header_color[0][19 * 3 + 7] = TERM_WHITE; }
+				if (csheet_boni[i].cb[9] & CB10_SUNDD) { c_put_str(TERM_YELLOW, "s", 6 + i, 8 + 19 * 3 + x_offset); header_color[0][19 * 3 + 7] = TERM_WHITE; }
 				if (csheet_boni[i].cb[9] & CB10_KUNDD) { c_put_str(TERM_WHITE, "k", 6 + i, 8 + 19 * 3 + x_offset); header_color[0][19 * 3 + 7] = TERM_WHITE; }
 				if ((csheet_boni[i].cb[8] & CB9_EUNDD) && (csheet_boni[i].cb[9] & CB10_SUNDD)) c_put_str(TERM_WHITE, "+", 6 + i, 8 + 19 * 3 + x_offset);
 				if ((csheet_boni[i].cb[8] & CB9_EUNDD) && (csheet_boni[i].cb[9] & CB10_KUNDD)) c_put_str(TERM_WHITE, "*", 6 + i, 8 + 19 * 3 + x_offset);
-				if (csheet_boni[i].cb[9] & CB10_EEVIL) { c_put_str(TERM_WHITE, "e", 6 + i, 9 + 19 * 3 + x_offset); header_color[0][19 * 3 + 8] = TERM_WHITE; }
-				if (csheet_boni[i].cb[9] & CB10_SEVIL) { c_put_str(TERM_WHITE, "s", 6 + i, 9 + 19 * 3 + x_offset); header_color[0][19 * 3 + 8] = TERM_WHITE; }
+				if (csheet_boni[i].cb[9] & CB10_EEVIL) { c_put_str(TERM_L_BLUE, "E", 6 + i, 9 + 19 * 3 + x_offset); header_color[0][19 * 3 + 8] = TERM_WHITE; }
+				if (csheet_boni[i].cb[9] & CB10_SEVIL) { c_put_str(TERM_YELLOW, "s", 6 + i, 9 + 19 * 3 + x_offset); header_color[0][19 * 3 + 8] = TERM_WHITE; }
 				if ((csheet_boni[i].cb[9] & CB10_EEVIL) && (csheet_boni[i].cb[9] & CB10_SEVIL)) c_put_str(TERM_WHITE, "+", 6 + i, 9 + 19 * 3 + x_offset);
-				if (csheet_boni[i].cb[9] & CB10_EDGRI) { c_put_str(TERM_WHITE, "e", 6 + i, 10 + 19 * 3 + x_offset); header_color[0][19 * 3 + 9] = TERM_WHITE; }
-				if (csheet_boni[i].cb[9] & CB10_EGOOD) { c_put_str(TERM_WHITE, "e", 6 + i, 11 + 19 * 3 + x_offset); header_color[0][19 * 3 + 10] = TERM_WHITE; }
-				if (csheet_boni[i].cb[9] & CB10_ENONL) { c_put_str(TERM_WHITE, "e", 6 + i, 12 + 19 * 3 + x_offset); header_color[0][19 * 3 + 11] = TERM_WHITE; }
-				if (csheet_boni[i].cb[9] & CB10_EUNIQ) { c_put_str(TERM_WHITE, "e", 6 + i, 13 + 19 * 3 + x_offset); header_color[0][19 * 3 + 12] = TERM_WHITE; }
+				if (csheet_boni[i].cb[9] & CB10_EDGRI) { c_put_str(TERM_L_BLUE, "E", 6 + i, 10 + 19 * 3 + x_offset); header_color[0][19 * 3 + 9] = TERM_WHITE; }
+				if (csheet_boni[i].cb[9] & CB10_EGOOD) { c_put_str(TERM_L_BLUE, "E", 6 + i, 11 + 19 * 3 + x_offset); header_color[0][19 * 3 + 10] = TERM_WHITE; }
+				if (csheet_boni[i].cb[9] & CB10_ENONL) { c_put_str(TERM_L_BLUE, "E", 6 + i, 12 + 19 * 3 + x_offset); header_color[0][19 * 3 + 11] = TERM_WHITE; }
+				if (csheet_boni[i].cb[9] & CB10_EUNIQ) { c_put_str(TERM_L_BLUE, "E", 6 + i, 13 + 19 * 3 + x_offset); header_color[0][19 * 3 + 12] = TERM_WHITE; }
 
 				if (csheet_boni[i].cb[10] & CB11_BFIRE) { c_put_str(TERM_WHITE, "b", 6 + i, 14 + 19 * 3 + x_offset); header_color[0][19 * 3 + 13] = TERM_WHITE; }
 				if (csheet_boni[i].cb[10] & CB11_AFIRE) { c_put_str(TERM_WHITE, "a", 6 + i, 14 + 19 * 3 + x_offset); header_color[0][19 * 3 + 13] = TERM_WHITE; }
