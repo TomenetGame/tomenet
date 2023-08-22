@@ -3716,6 +3716,13 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					fallback_uppercase = 4;
 					continue;
 				}
+				if (my_strcasestr(buf, "pow") && my_strcasestr(buf, "ins")) {
+					strcpy(buf, "ITEM POWER INSCRIPTION");
+					fallback = TRUE;
+					fallback_uppercase = 4;
+					continue;
+				}
+
 
 			    /* Handle temp_priority[] at this point: */
 			    if (temp_priority[0]) {
