@@ -34,7 +34,7 @@ V:4.0.0
 
 N:1:Combat
 D:Improves fighting and allows wearing heavier armour (Martial Arts excepted).
-D:Pseudo-ID weapons/armour faster; more detailed at 11, ranged at 31, magic at 41.
+D:Pseudo-ID weapon/armour/food faster. Detailed at 11, ranged at 31, curses at 41.
 A:14:Check parry/block chance
 I:1000:0
 
@@ -98,7 +98,8 @@ I:1000:0
 N:12:Magic
 D:Increases your max mana by +4 per point.
 #outdated (pre-lua): and spell-casting chance.
-D:Allows you to pseudo-id magical items faster and (at 11+) in more detail.
+D:Pseudo-ID magical items, curses and food faster and (at 11+) in more detail.
+#^not actually enchanted items (eg weapons), but items from treasure/magic classes mostly
 #A:4:Toggle fire-till-kill mode
 I:1000:0
 
@@ -307,8 +308,9 @@ I:1000:0
 #F:HIDDEN
 
 N:46:Trapping
-D:Ability to set and pseudo-ID monster traps, disarm any traps and pick locks.
+D:Ability to set and pseudo-ID traps (detailed at 11+), disarm traps, pick locks.
 D:Increases chance to not get hindered by monsters when trying to lay a trap.
+#also improves chance to avoid traps on touching them
 A:10:Set trap
 I:1000:46
 F:MKEY_HARDCODE

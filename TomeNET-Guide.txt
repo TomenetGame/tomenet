@@ -2005,7 +2005,7 @@ They all start with a slash '/' hence they're called slash commands:
 
 /untag *    Will remove all inscriptions from all items in your inventory.
 
-/untag p    Will remove all pseudo-id tags from your inventory items.
+/untag p    Will remove all pseudo-ID tags from your inventory items.
             Note: This will work on equipped items too!
 
 /untag u    Will remove all unique-loot tags from your inventory items.
@@ -2814,8 +2814,8 @@ Pre-King    The life of a character within the level range 1 to 50.
 
 Pseudo-ID   If a player keeps an unidentified item for a longer time he might
             'feel' if the item is average, good, cursed or special. The item
-            will automatically receive a 'pseudo-id inscription' then.
-            Pseudo-id intensity and speed depend on various skills in regards
+            will automatically receive a 'pseudo-ID inscription' then.
+            Pseudo-ID intensity and speed depend on various skills in regards
             to the type of item: 'Combat', 'Archery', 'Magic' or 'Trapping'.
             It does not matter whether the player is acting, afk or idle.
             See (5.7) for more information about identification.
@@ -12135,17 +12135,17 @@ See (5.9b) for more information about artifacts.
 If a player holds an unidentified item long enough he/she might get
 a 'feeling' about it. The more points in 'Combat' skill the player has
 the faster and clearer he can feel the items value. This is called
-'pseudo-identifying'. Warriors are more likely to pseudo-id than casters.
-If a player pseudo-ids an item, the 'feeling' will be appended in { }
+'pseudo-identifying'. Warriors are more likely to pseudo-ID than casters.
+If a player pseudo-IDs an item, the 'feeling' will be appended in { }
 brackets to the item name.
-Note that archers or casters will also become better at pseudo-id'ing,
+Note that archers or casters will also become better at pseudo-ID'ing,
 if they train the 'Archery' or 'Magic' skill respectively.
 'Archery' at level 11 helps to get more detailed ('excellent' too instead of
 just 'good') feelings about ranged weapons and ammunition.
 'Magic' at level 11 helps to get more detailed ('excellent' too, instead of
 just 'good') feelings about magic items, potions and scrolls.
 
-Items display the following pseudo-id tags:
+Items display the following pseudo-ID tags:
 
 -Basic items, non-magical:         {average}
 -Valuable / enchanted items        {good}
@@ -13791,7 +13791,7 @@ to 50.000 or if he is in wraithform, these two stack for 3/4 reduction total.
 Several items you find will be {cursed}!
 Cursed items usually have bad effects that outweigh or dominate their useful
 abilities, and you cannot take them off once you equipped them, as long as
-the curse isn't broken. Cursed artifacts and ego items are pseudo-id'ed as
+the curse isn't broken. Cursed artifacts and ego items are pseudo-ID'ed as
 {terrible}. Shops won't buy cursed items, they might buy the item after the
 curse is broken, however.
 If you equip an unidentified item and it carries a curse your character will
@@ -15690,7 +15690,7 @@ stated.
                                 average, good, excellent or special.
                                 At the beginning you will only feel 'cursed'
                                 or 'good', and only for melee weapons, armour
-                                and boomerangs -  and food.
+                                and boomerangs - and food.
                                 Raise combat skill to at least 11 to get
                                 more distinctive feelings about melee weapons,
                                 armour and boomerangs.
@@ -15701,7 +15701,7 @@ stated.
                                 A very powerful one (combat 41) can also notice
                                 curses on all kinds of items.
                                 The further you train Combat, the faster you
-                                will pseudo-id items.
+                                will pseudo-ID items.
 
                                 Increases Fear/Stun/Confuse duration of the
                                 target (if attacking causes those).
@@ -16138,9 +16138,9 @@ stated.
                                 At 20 the quality of your handmade ammunition
                                 becomes remarkably better.
 
-                                Lets you pseudo-id shooting weapons and
+                                Lets you pseudo-ID shooting weapons and
                                 ammunition more often the higher the skill.
-                                If increased to at least 11, pseudo-id will
+                                If increased to at least 11, pseudo-ID will
                                 give you much more distinctive feelings about
                                 the items. Before that, you can only
                                 distinguish between cursed and good.
@@ -16216,7 +16216,7 @@ stated.
                                 Artifact boomerangs always return reliably.
 
                                 (Note that your 'Combat' skill determines your
-                                ability to pseudo-id Boomerangs.)
+                                ability to pseudo-ID Boomerangs.)
 
 << For more information about learning spells, see (7.8)
    Most spells will increase in power in one way or the other when you increase
@@ -16224,13 +16224,16 @@ stated.
 
 +Magic                          Increases your base mana by +4 per point.
  (0.250)
-                                Lets you pseudo-id magic itemsfaster the higher
-                                your skill is. Magic items are:
-                                Mage staves, potions, scrolls, food (hybrid),
-                                and magic devices (wands, rods, staves).
+                                Lets you pseudo-ID magic items faster the
+                                higher your skill is. Magic items are:
+                                Mage staves, potions, scrolls, food (!),
+                                rings, amulets and magic devices (wands,
+                                rods, staves).
+
+                                You can also sense curses on any kind of item.
 
                                 If 'Magic' is at least at 11 points, you will
-                                get more distinctive feelings from pseudo-id,
+                                get more distinctive feelings from pseudo-ID,
                                 before that you only sense 'good' or 'cursed'.
 
     +Wizardry
@@ -16831,9 +16834,9 @@ stated.
                                 See (4.7) for details about monster traps.
 
                                 Improves your ability to recognize traps:
-                                Lets you pseudo-id trap kits, the more often
+                                Lets you pseudo-ID trap kits, the more often
                                 the higher your skill.
-                                If increased to at least 11, pseudo-id will
+                                If increased to at least 11, pseudo-ID will
                                 give you more distinctive feelings instead of
                                 just 'good' or 'cursed'.
 
@@ -23681,7 +23684,7 @@ Mistakes / Carelessness:
 
 -If you are surrounded by huge piles of loot from dead monsters you might be
  tempted to drop cheaper items like phase door scrolls to make room for the
- precious loot, and go /afk to wait for pseudo-id. However, know that you
+ precious loot, and go /afk to wait for pseudo-ID. However, know that you
  _can_ all of a sudden be ambushed during that time by enemies. By enemies
  that _require_ you to use phase door..
 
