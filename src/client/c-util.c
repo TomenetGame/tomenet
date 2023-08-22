@@ -9828,7 +9828,6 @@ void do_cmd_options(void) {
 
 		l++;
 		Term_putstr(2, l++, -1, TERM_L_DARK, "----------------------------------------------------------------------------");
-		l++;
 
 		Term_putstr(2, l++, -1, TERM_SLATE, "The following settings are mostly saved automatically on quitting via CTRL+Q:");
 		l++;
@@ -9856,6 +9855,11 @@ void do_cmd_options(void) {
 
 		Term_putstr(2, l++, -1, TERM_WHITE, "(\377UA\377w) Account Options");
 		Term_putstr(2, l++, -1, TERM_WHITE, "(\377UI\377w) Install sound/music pack from 7z-file you placed in your TomeNET folder");
+#ifdef WINDOWS
+		Term_putstr(2, l++, -1, TERM_WHITE, "(\377UU\377w) Update the TomeNET Guide (downloads and reinits the Guide).");
+#else
+		Term_putstr(2, l++, -1, TERM_WHITE, "(\377UU\377w) Update the TomeNET Guide (requires 'wget' package to be installed).");
+#endif
 
 		/* hide cursor */
 		Term->scr->cx = Term->wid;
@@ -10004,6 +10008,44 @@ void do_cmd_options(void) {
 
 		/* Account options */
 		else if (k == 'A') do_cmd_options_acc();
+
+		/* Update the TomeNET Guide */
+		else if (k == 'U') {
+			int res;
+#ifdef WINDOWS
+			char _latest_install[1024];
+
+			strcpy(_latest_install, "https://www.tomenet.eu/TomeNET-Guide.txt");
+			remove("TomeNET-Guide.txt");
+			res = _spawnl(_P_WAIT, "updater\\wget.exe", "wget.exe", "--dot-style=mega", _latest_install, NULL);
+			if (res != 0) c_msg_print("\377oFailed to download the Guide.");
+			else {
+				c_msg_print("\377gSuccessfully updated the Guide.");
+				init_guide();
+				//c_msg_format("Guide reinitialized. (errno %d,lastline %d,endofcontents %d,chapters %d)", guide_errno, guide_lastline, guide_endofcontents, guide_chapters);
+			}
+#else
+			FILE *fp;
+			char out_val[3];
+
+			remove("TomeNET-Guide.txt");
+			system("wget --connect-timeout=3 https://www.tomenet.eu/TomeNET-Guide.txt"); //something changed in the web server's cfg; curl still works fine, but now wget needs the timeout setting; wget.exe for Windows still works!
+
+			fp = fopen("TomeNET-Guide.txt", "r");
+			if (fp) {//~paranoia?
+				out_val[0] = 0;
+				fgets(out_val, 2, fp);
+				fclose(fp);
+				res = (out_val[0] < 32);
+				if (res != 0) c_msg_print("\377oFailed to update the Guide.");
+				else {
+					c_msg_print("\377gSuccessfully updated the Guide.");
+					init_guide();
+					//c_msg_format("Guide reinitialized. (errno %d,lastline %d,endofcontents %d,chapters %d)", guide_errno, guide_lastline, guide_endofcontents, guide_chapters);
+				}
+			} else c_msg_print("\377oFailed to download the Guide.");
+#endif
+		}
 
 		/* Window flags */
 		else if (k == 'w') {
