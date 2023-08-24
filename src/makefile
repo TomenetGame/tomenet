@@ -289,7 +289,7 @@ SERVER_EXTRA_LIBS = -lcrypt
 
 # With SDL2
 #  With sdl2-config
-CFLAGS = -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl2-config --cflags` -D_DEFAULT_SOURCE -DACC32 -fPIE -fsigned-char -Wno-format-truncation
+CFLAGS = -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -D_DEFAULT_SOURCE -DACC32 -fPIE -fsigned-char -Wno-format-truncation
 # Note: -fsigned-char is important for ARM64, as there 'char' is by default unsigned, while on x86/AM64 it is by default signed!
 #  With manually set prefix
 #CFLAGS = -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL -I/usr/local/include/SDL2 -I/usr/include/SDL2 -D_REENTRANT -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
@@ -413,12 +413,12 @@ LDFLAGS += -Wl,-z,relro -Wl,-z,now
 #LIBS = -L/usr/openwin/lib -R/usr/openwin/lib -lX11 -lsocket -lnsl -lcurses
 
 # Normal (non-test) client uses optimizations
-tomenet: CFLAGS += -g -O2
+tomenet: CFLAGS += -g -O2 -DSOUND_SDL `sdl2-config --cflags` 
 # Compile a client with 'test client' version/tag
 #tomenet.test: CFLAGS += -DTEST_CLIENT -g3 -O0
 #disable 3 warning spams: 'accessing n bytes in a region of size m', '_FORTIFY_SOURCE requires compiling with optimization', 'directive writing up to 159 bytes into a region of size'
-tomenet.test: CFLAGS += -DTEST_CLIENT -g3 -O0 -Wno-stringop-overflow -Wno-cpp -Wno-format-overflow
-tomenet.test: PPFLAGS = -DTEST_CLIENT
+tomenet.test: CFLAGS += -DTEST_CLIENT -g3 -O0 -Wno-stringop-overflow -Wno-cpp -Wno-format-overflow -DSOUND_SDL `sdl2-config --cflags` 
+tomenet.test: PPFLAGS = -DTEST_CLIENT -DSOUND_SDL `sdl2-config --cflags` 
 # Server is compiled with optimizations
 tomenet.server: CFLAGS += -g -O2
 accedit: CFLAGS += -g -O2
@@ -475,8 +475,8 @@ preproc/preproc: preproc/preproc.o
 #
 
 tomenet.server: $(SERV_OBJS) $(TOLUA)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o tomenet.server $(SERV_OBJS) $(LIBS) $(SERVER_EXTRA_LIBS)
-
+	$(CC) $(CFLAGS) $(LDFLAGS) -o tomenet.server $(SERV_OBJS) $(SERVER_EXTRA_LIBS)
+# $(LIBS)
 
 #
 # Build the evileye meta client
