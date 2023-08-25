@@ -12303,7 +12303,9 @@ LIFE ('It affects your hit points.')
         usually only affect player characters who are royalty ie winners who
         have beaten Morgoth and hence have a violet coloured name in chat.
 AGGRAVATE ('It aggravates nearby creatures.')
-        Wakes up all monsters in whose radius of awareness you are.
+        Wakes up all monsters in whose radius of awareness you are, but at
+        least all monsters in radius 50. It also increases any monster's radius
+        of awareness to 50 if it was actually smaller than that.
         (Does not haste them unlike scrolls, shriek ability, traps or /scream
         command do, compare (5.9)).
 REGEN   ('It speeds your hit point regeneration.')
@@ -16594,9 +16596,11 @@ stated.
                                 mode, and very slightly while in rogues'
                                 cloaking mode.
 
-    .Stealth                    Increases your stealth, which determines
-     (2.000)                    if monsters can hear you from a distance
-                                or if you can sneak past them.
+    .Stealth                    Increases your stealth, which determines how
+     (2.000)                    fast sleeping monsters on your dungeon level
+                                will wake up. Important if you don't like to
+                                wake up everything at once and prefer to sneak
+                                past monsters or pick your fights one by one.
                                 The stealth gain is half as much as from items
                                 that give +Stealth.
 
