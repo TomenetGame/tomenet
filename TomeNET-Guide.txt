@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 22. August 2023 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 25. August 2023 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.0c - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2490,6 +2490,7 @@ Regexps are always parsed case-insensitively.
 Auto-inscription files can be saved and will be loaded automatically in the
 same manner as macro files, if the filename matches your race, trait, class or
 character name (compare (3.6), 'Loading macros automatically').
+The only exception are form-name specific ins-files, these don't work.
 If multiple matching files are found, the game will attempt to merge them
 accordingly.
 
@@ -6075,6 +6076,9 @@ all characters of yours.
 You can also save macros to <racename>.prf, to <classname>.prf and to
 <traitname>.prf, like Warrior.prf to have them being auto-loaded on all
 characters of that class/race/trait.
+Last but not least, characters that change shape (Mimicry) can autoload macro
+files that depend on their form name (in addition to their character name) by
+naming them <character name>_<form name>.prf, eg "Gandalf_Black orc.prf".
 Priority order (latter one overrides prior one):
 
 These files are meant to store client options and configuration,
@@ -6096,10 +6100,11 @@ These files can be used for saving your macros to without problems:
 <race>.prf (for the specific race)
 <trait>.prf (for the specific trait, particularly useful for Maiar)
 <class>.prf (for the specific class)
+<character name>_<form name>.prf (for that character and its current form)
 <character name>.prf (for the specific character the player logged in with)
 
-It is recommended to use only race/trait/class/character preference files
-for storing your macros.
+It is recommended to use only race/trait/class/character/character+form
+preference files for storing your macros.
 
 
 Command macros:
@@ -25483,6 +25488,7 @@ Solution:   Macros or client options can be saved to various .prf files which
             automatically load the files called 'Human.prf' and 'Warrior.prf'
             if those exist and also try to load a .prf file named like your
             account name.
+            For details please see "Loading macros automatically" in (3.6).
 
 PROBLEM 32: After logging on, the file 'audio.lua' was updated automatically.
             Now the wrong sound effects seem to be played for game events.
