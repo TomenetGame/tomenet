@@ -563,6 +563,9 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 
 	{ &c_cfg.flash_player2,		FALSE,	6,	0, 151, TRUE,
 	    "flash_player2",		"Flash own character icon after close relocation" },
+
+	{ &c_cfg.load_form_macros,	TRUE,	8,	0, 152, TRUE,
+	    "load_form_macros",		"Automatically load form-specific macros on change" },
 };
 
 cptr melee_techniques[16] = {

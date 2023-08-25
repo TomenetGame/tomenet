@@ -4711,7 +4711,7 @@ void interact_macros(void) {
 		/* Selections */
 		l = 2;
 		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377yz\377B) Invoke macro wizard         *** Recommended ***");
-		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377ys\377B/\377yS\377B) Save macros to a pref file / to the global.prf file");
+		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377ys\377B/\377yS\377B/\377yF\377B) Save macros to named / global.prf / form-named pref file");
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yl\377w) Load macros from a pref file");
 		l++;
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yd\377w) Delete a macro from a key   (restores a key's normal behaviour)");
@@ -4782,7 +4782,7 @@ void interact_macros(void) {
 		/* Save a 'macro' file */
 		else if (i == 's') {
 			/* Prompt */
-			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Save a macro file ('global.prf' for account-wide)");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Save a macro file (use 'global.prf' for account-wide)");
 
 			/* Get a filename, handle ESCAPE */
 			Term_putstr(0, l + 1, -1, TERM_WHITE, "File: ");
@@ -4802,13 +4802,32 @@ void interact_macros(void) {
 		/* Save a 'macro' file as 'global.prf' */
 		else if (i == 'S') {
 			/* Prompt */
-			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Save a macro file to global.prf");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Save a macro file to global.prf (account-wide)");
 
 			/* Get a filename, handle ESCAPE */
 			Term_putstr(0, l + 1, -1, TERM_WHITE, "File: ");
 
 			/* Default filename */
 			strcpy(tmp, "global.prf");
+
+			/* Ask for a file */
+			if (!askfor_aux(tmp, 70, 0)) continue;
+
+			/* Dump the macros */
+			(void)macro_dump(tmp);
+		}
+
+		/* Save a 'macro' file as <cname>_<form name> pref file, or revert to just cname if in player form */
+		else if (i == 'F') {
+			/* Prompt */
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Save a macro file named for form (or 'global.prf' for account-wide)");
+
+			/* Get a filename, handle ESCAPE */
+			Term_putstr(0, l + 1, -1, TERM_WHITE, "File: ");
+
+			/* Default filename */
+			if (strcmp(c_p_ptr->body_name, "Player")) sprintf(tmp, "%s_%s.prf", cname, c_p_ptr->body_name);
+			else sprintf(tmp, "%s.prf", cname);
 
 			/* Ask for a file */
 			if (!askfor_aux(tmp, 70, 0)) continue;
@@ -8099,6 +8118,7 @@ void auto_inscriptions(void) {
 	static bool changed1, changed2, changed3;
 	static bool changed4a, changed4b, changed4c;
 	static bool changed5, changed5a, changed6;
+	static bool changed7;
 
 	if (init) {
 		changed1 = c_cfg.exp_need; changed2 = c_cfg.exp_bar; changed3 = c_cfg.font_map_solid_walls;
@@ -8106,6 +8126,7 @@ void auto_inscriptions(void) {
 		changed5 = c_cfg.equip_text_colour;
 		changed5a = c_cfg.equip_set_colour;
 		changed6 = c_cfg.colourize_bignum;
+		changed7 = c_cfg.load_form_macros;
 		return;
 	}
 
@@ -8128,6 +8149,13 @@ void auto_inscriptions(void) {
 	if (changed6 != c_cfg.colourize_bignum) {
 		prt_gold(p_ptr->au);
 		prt_level(p_ptr->lev, p_ptr->max_lev, p_ptr->max_plv, p_ptr->max_exp, p_ptr->exp, exp_adv, exp_adv_prev);
+	}
+	if (changed7 != c_cfg.load_form_macros && c_cfg.load_form_macros) {
+		char tmp[MAX_CHARS];
+
+		if (strcmp(c_p_ptr->body_name, "Player")) sprintf(tmp, "%s_%s.prf", cname, c_p_ptr->body_name);
+		else sprintf(tmp, "%s.prf", cname);
+		(void)process_pref_file(tmp);
 	}
 }
 

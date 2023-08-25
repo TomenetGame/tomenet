@@ -4218,6 +4218,7 @@ struct client_opts {
 	bool clone_to_stdout;
 	bool clone_to_file;
 	bool mp_huge_bar, sn_huge_bar, hp_huge_bar;
+	bool load_form_macros;
 };
 
 /*

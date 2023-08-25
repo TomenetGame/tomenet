@@ -2575,6 +2575,14 @@ int Receive_various(void) {
 	p_ptr->wt = wgt;
 	p_ptr->age = age;
 	p_ptr->sc = sc;
+
+	if (c_cfg.load_form_macros && strcmp(c_p_ptr->body_name, buf)) {
+		char tmp[MAX_CHARS];
+
+		if (strcmp(buf, "Player")) sprintf(tmp, "%s_%s.prf", cname, buf);
+		else sprintf(tmp, "%s.prf", cname);
+		(void)process_pref_file(tmp);
+	}
 	strcpy(c_p_ptr->body_name, buf);
 
 	/*printf("Received various info: height %d, weight %d, age %d, sc %d\n", hgt, wgt, age, sc);*/
