@@ -6060,6 +6060,7 @@ bool png_screenshot(void) {
 		} else {
 			//k = system("firefox --version --headless");  -- error 9009 "file not found" wut? due to bad path escaping/quoting without using a .bat file probably
 			k = system("reg query \"HKEY_CURRENT_USER\\Software\\Mozilla\\Firefox\" /v OldDefaultBrowserCommand");
+			//HKEY_CURRENT_USER\Software\Mozilla\Firefox\Launcher
 			if (!k) {
 				/* Obtain path to browser */
 				system("reg query \"HKEY_CLASSES_ROOT\\Applications\\firefox.exe\\shell\\open\\command\" /ve > __temp__");
