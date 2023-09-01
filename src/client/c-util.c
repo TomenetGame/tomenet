@@ -451,6 +451,8 @@ void sync_sleep(int milliseconds) {
 			/* Erase the spinner */
 			Term_erase(Term->wid - 1, 0, 1);
 			inkey_sleep = FALSE;
+			/* For chained macros: Need to reset the semaphore, as we could meet another \w directive later on in the same macro we're still processing */
+			inkey_sleep_semaphore = FALSE;
 			return;
 		}
 
@@ -602,6 +604,8 @@ void sync_xsleep(int milliseconds) {
 			/* Erase the spinner */
 			Term_erase(Term->wid - 1, 0, 1);
 			inkey_sleep = FALSE;
+			/* For chained macros: Need to reset the semaphore, as we could meet another \w directive later on in the same macro we're still processing */
+			inkey_sleep_semaphore = FALSE;
 			return;
 		}
 
