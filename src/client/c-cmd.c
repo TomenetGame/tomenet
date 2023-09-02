@@ -7019,6 +7019,10 @@ void cmd_message(void) {
 			c_msg_format("Guide reinitialized. (errno %d,lastline %d,endofcontents %d,chapters %d)", guide_errno, guide_lastline, guide_endofcontents, guide_chapters);
 			inkey_msg = FALSE;
 			return;
+		} else if (!strcasecmp(buf, "/reinit_audio")) { /* Undocumented: Re-init the audio system. Same as pressing CTRL+R in the mixer UI. */
+			if (re_init_sound() == 0) c_message_add("Audio packs have been reloaded and audio been reinitialized successfully.");
+			inkey_msg = FALSE;
+			return;
 		}
 
 		Send_msg(buf);
