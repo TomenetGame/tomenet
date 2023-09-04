@@ -20888,7 +20888,7 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
     Sense Monsters  Gives full temporary ESP.
                     Required skill level for first spell level: 33.
 
-    BONI:           Completely Suppresses DG_CURSE and TY_CURSE at 40.
+    BONI:           Completely suppresses DG_CURSE and TY_CURSE at 40.
                     Keeps the hunger satisfied all the time at 50
                     (you also cannot become gorged anymore).
 
