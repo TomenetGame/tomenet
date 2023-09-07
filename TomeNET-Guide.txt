@@ -20687,9 +20687,11 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
     Protection from evil
                     Evil creatures that try to attack you in melee might get
                     repelled, thereby preventing them from actually hitting
-                    you.
+                    you (same as the scroll effect).
                     Works very well, as long as the creature isn't of a higher
-                    r-level than you (same as the scroll effect).
+                    r-level than your character level.
+                    Doesn't work at all on monsters of an r-level more than 10
+                    levels higher than your character level.
                     Required skill level for first spell level: 12.
 
     Dispel Magic    Removes magical influences.
