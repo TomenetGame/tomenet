@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 25. August 2023 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 8. September 2023 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.0c - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -6450,6 +6450,22 @@ NOTE: Whenever the macro wizard asks you to enter a partial name of an item to
       the potion name or part of it you may instead just enter:   @q1
       and the resulting macro will attempt to quaff potions inscribed @q1.
 
+Note about spell-cast macros regarding spell tiers:
+---------------------------------------------------
+Since the macro wizard uses spell names you should be aware how spell tiers
+will be handled:
+If you specify a particlar tier, eg "Manathrust II" (tier 2, as denoted by the
+roman number II), then the macro will only work if you carry exactly this spell
+with you (and have learned it, of course). However, if you do not specify a
+spell tier but just the generic name, eg just enter "Manathrust" for the spell
+name then the macro will attempt to automatically cast the highest spell tier
+currently available (that means it is in your inventory and you have learned it
+and so could in theory cast it, provided you have enough MP and are not blinded
+or confused etc) to you. So if you carry for example Manathrust I but also
+the 2nd tier Manathrust II and your 'Mana' school is trained high enough to
+unlock Manathrust II then it will automatically attempt to cast II (and fail
+the attempt if you don't have enough MP for it or are blinded etc!).
+
 
 (3.7d) Specifying directions and targets
 ----------------------------------------
@@ -6826,6 +6842,19 @@ Note that since it's really just all about partial-text-matching, you could
 inscribe some other rods 'Gold-Pl' so the text matching would succeed, although
 they aren't 'real' Gold-Plated rods. (!)
 
+Note about spell-cast macros regarding spell tiers:
+---------------------------------------------------
+If you specify a particlar tier, eg "Manathrust II" (tier 2, as denoted by the
+roman number II), then the macro will only work if you carry exactly this spell
+with you (and have learned it, of course). However, if you do not specify a
+spell tier but just the generic name, eg just enter "Manathrust" for the spell
+name then the macro will attempt to automatically cast the highest spell tier
+currently available (that means it is in your inventory and you have learned it
+and so could in theory cast it, provided you have enough MP and are not blinded
+or confused etc) to you. So if you carry for example Manathrust I but also
+the 2nd tier Manathrust II and your 'Mana' school is trained high enough to
+unlock Manathrust II then it will automatically attempt to cast II (and fail
+the attempt if you don't have enough MP for it or are blinded etc!).
 
 
 (3.10) Experience, level-ups and skill points
