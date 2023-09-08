@@ -20103,6 +20103,10 @@ Magic, holy and occult schools give certain permanent boni and abilities to
 the player, when trained to a certain extent. The boni are listed below each
 school.
 
+When casting a spell by name (usually via macro) and omitting a tier, it will
+automatically try to cast the highest learned tier of that spell that is found
+in your inventory.
+
 
 Experimental Quirk: Wielding a spell book
 -----------------------------------------
