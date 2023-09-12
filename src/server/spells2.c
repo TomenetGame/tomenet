@@ -9443,9 +9443,9 @@ void mix_chemicals(int Ind, int item) {
 			    && as + mh + me + mc + vi + ru + lo + wa + sw + ac == 0) {
 				q_ptr->tval = TV_SCROLL;
 				q_ptr->sval = SV_SCROLL_FIREWORK;
-				// random for now..
-				q_ptr->xtra1 = rand_int(3); //size
-				q_ptr->xtra2 = rand_int(FIREWORK_COLOURS); //colour
+				if (o2_ptr->sval == SV_SCROLL_FIRE) q_ptr->xtra1 = 2; //big one
+				else q_ptr->xtra1 = rand_int(3); //random size
+				q_ptr->xtra2 = rand_int(FIREWORK_COLOURS); //random colour for now
 				q_ptr->level = 1;
 				msg_print(Ind, "You create harmless fireworks from the flash bomb mixture..");
 				i = -2;
