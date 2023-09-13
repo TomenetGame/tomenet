@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 8. September 2023 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 13. September 2023 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.9.0c - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -11810,7 +11810,12 @@ Nexus           Nexus attacks can have extremely nasty side-effects if you
                  for a 'good' scramble result eventually.
                  If you have maximized your stats with stat potions, the stat
                  swapping will not affect you anymore, since it does not swap
-                 the race/class boni, but just your base stats.
+                 the race/class boni, but just your base stats. So while very
+                 inconvenient at first, in the long run (ie as soon as you
+                 maxed all stats to 'bronze' via potions) the scrambling will
+                 have no negative effect on your character's stats at all
+                 anymore as they internally will all end up at <18/100> (before
+                 then being modified by race/class/item boni and mali).
                 -Destroy items in your inventory.
                  ("Your backpack starts to scramble")
                 Resistance will cut damage to 6/7..6/12.
