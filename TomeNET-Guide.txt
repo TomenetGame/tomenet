@@ -11816,6 +11816,10 @@ Nexus           Nexus attacks can have extremely nasty side-effects if you
                  have no negative effect on your character's stats at all
                  anymore as they internally will all end up at <18/100> (before
                  then being modified by race/class/item boni and mali).
+                 If you want to get re-scrambled by another player's nexus
+                 attacks instead of a monster, you must not be in a special
+                 event location and your character mode must not be 'PvP'.
+                 Use a blood bond scroll to become hostile so spells will hit.
                 -Destroy items in your inventory.
                  ("Your backpack starts to scramble")
                 Resistance will cut damage to 6/7..6/12.
