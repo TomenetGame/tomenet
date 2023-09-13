@@ -4130,7 +4130,10 @@ static void apply_nexus(int Ind, monster_type *m_ptr, int Ind_attacker) {
 	if (IS_PLAYER(Ind_attacker))
 		s_printf("APPLY_NEXUS_PY: %s by %s\n", p_ptr->name, Players[Ind_attacker]->name);
 
-	switch (randint((safe_area(Ind) || (p_ptr->mode & MODE_PVP)) ? 5 : 8)) { /* don't do baaad things in Monster Arena Challenge */
+	/* don't do baaad things in Monster Arena Challenge -
+	   and prevent ez pvp madness from nexus-spamming -
+	   but leave it in for blood bond to try and un-scramble an important stat again!*/
+	switch (randint((safe_area(Ind) || (p_ptr->mode & MODE_PVP)) ? 5 : 8)) {
 	case 4: case 5:
 		if (p_ptr->anti_tele) {
 			msg_print(Ind, "You are unaffected!");
