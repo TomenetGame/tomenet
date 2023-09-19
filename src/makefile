@@ -475,8 +475,8 @@ preproc/preproc: preproc/preproc.o
 #
 
 tomenet.server: $(SERV_OBJS) $(TOLUA)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o tomenet.server $(SERV_OBJS) $(SERVER_EXTRA_LIBS)
-# $(LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o tomenet.server $(SERV_OBJS) $(SERVER_EXTRA_LIBS) $(LIBS)
+#note: $(LIBS) is required for tolua compilation, for linking mathlib (-lm)
 
 #
 # Build the evileye meta client
