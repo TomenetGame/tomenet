@@ -294,7 +294,7 @@ CFLAGS = -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c
 #  With manually set prefix
 #CFLAGS = -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL -I/usr/local/include/SDL2 -I/usr/include/SDL2 -D_REENTRANT -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
 #  With sdl2-config
-LIBS = -L/usr/pkg/lib -lX11 -lncurses -lm
+LIBS = -L/usr/pkg/lib -lncurses -lm
 #  With manually set prefix
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lm -L/usr/local/lib -L/usr/lib -pthread -lSDL2 -lSDL2_mixer
 
