@@ -4267,6 +4267,9 @@ void do_cmd_look(int Ind, int dir) {
 		if ((r_info[m_ptr->r_idx].flags1 & RF1_UNIQUE) && p_ptr->r_killed[m_ptr->r_idx] == 1) done_unique = TRUE;
 		else done_unique = FALSE;
 
+		/* also abuse done_unique for visually marking 100% clones, if we have divi to 'know' that. Those give absolutely no credit/loot of any sorts. */
+		if (divi && m_ptr->clone == 100) done_unique = TRUE;
+
 		/* Track health */
 		health_track(Ind, c_ptr->m_idx);
 
