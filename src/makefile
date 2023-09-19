@@ -289,7 +289,7 @@ SERVER_EXTRA_LIBS = -lcrypt
 
 # With SDL2
 #  With sdl2-config
-CFLASG = -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -D_DEFAULT_SOURCE -DACC32 -fPIE -fsigned-char -Wno-format-truncation
+CFLAGS = -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -D_DEFAULT_SOURCE -DACC32 -fPIE -fsigned-char -Wno-format-truncation
 # Note: -fsigned-char is important for ARM64, as there 'char' is by default unsigned, while on x86/AM64 it is by default signed!
 #  With manually set prefix
 #CFLAGS = -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL -I/usr/local/include/SDL2 -I/usr/include/SDL2 -D_REENTRANT -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
