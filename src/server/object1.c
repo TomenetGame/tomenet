@@ -5328,8 +5328,12 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	    ) {
 #if 1 /* display breakage for ammo and trigger chance for magic devices even if not *id*ed? */
 		if (eff_full) {
-			if (wield_slot(0, o_ptr) == INVEN_AMMO)
-				fprintf(fff, "\377WIt has %d%% chances to break upon hit///.\n", breakage_chance(o_ptr));
+			if (wield_slot(0, o_ptr) == INVEN_AMMO) {
+				byte chance, permille;
+				chance = breakage_chance_with_skill(pt_ptr->Ind, o_ptr, &permille);
+				if (permille == 0) fprintf(fff, "\377WIt has a %d%% chance to break upon hit///.\n", chance);
+				else fprintf(fff, "\377WIt has a %d.%d%% chance to break upon hit///.\n", chance, permille);
+			}
 
  #if 1 /* display trigger chance for magic devices? */
 			if ((is_magic_device(o_ptr->tval) || (f3 & TR3_ACTIVATE))
@@ -5987,6 +5991,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (eff_full && wield_slot(0, o_ptr) == INVEN_AMMO) {
 		u32b shooter_f1 = 0, dummy;
 		object_type *x_ptr = &pt_ptr->inventory[INVEN_BOW];
+		byte chance, permille;
 
 		if (x_ptr->k_idx && x_ptr->tval == TV_BOW &&
 		    (((x_ptr->sval == SV_SHORT_BOW || x_ptr->sval == SV_LONG_BOW) && o_ptr->tval == TV_ARROW) ||
@@ -6018,7 +6023,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 			}
 		}
 
-		fprintf(fff, "\377WIt has %d%% chances to break upon hit.\n", breakage_chance(o_ptr));
+		chance = breakage_chance_with_skill(pt_ptr->Ind, o_ptr, &permille);
+		if (permille == 0) fprintf(fff, "\377WIt has a %d%% chance to break upon hit.\n", chance);
+		else fprintf(fff, "\377WIt has a %d.%d%% chance to break upon hit.\n", chance, permille);
+
 		/* TODO: 3rd party observe via Ind_target */
 		display_ammo_damage(Ind_target ? Ind_target : Ind, &forge, fff, f1, shooter_f1);
 	}
@@ -6727,6 +6735,29 @@ void display_invenequip(int Ind) {
 		else
 			Send_equip_wide(Ind, tmp_val[0], attr, wgt, o_ptr, o_name);
 	}
+}
+
+/* Computes ammo breakage chance after skill has been factored in. */
+int breakage_chance_with_skill(int Ind, object_type *o_ptr, int *permille) {
+	if (wield_slot(0, o_ptr) != INVEN_AMMO) return -1;
+
+	player_type *p_ptr = Players[Ind];
+	int base_percentage = breakage_chance(o_ptr);
+	int archery = get_archery_skill_from_ammo(o_ptr);
+	int j = base_percentage * 100;
+	j = (j * (100 - get_skill_scale(p_ptr, archery, 90))) / 100;
+
+	*permille = (j % 100) / 10;
+	return j / 100;
+}
+
+/* Takes an ammo object and returns the relevant skill, without relying
+   on what's equipped, since breakage chance doesn't depend on shooter. */
+int get_archery_skill_from_ammo(object_type *o_ptr) {
+	if (o_ptr->tval == TV_ARROW) return SKILL_BOW;
+	if (o_ptr->tval == TV_BOLT) return SKILL_XBOW;
+	if (o_ptr->tval == TV_SHOT) return SKILL_SLING;
+	else return -1;
 }
 
 /* Attempts to convert owner of item to player, if allowed.
