@@ -5329,10 +5329,11 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 #if 1 /* display breakage for ammo and trigger chance for magic devices even if not *id*ed? */
 		if (eff_full) {
 			if (wield_slot(0, o_ptr) == INVEN_AMMO) {
-				byte chance, permille;
+				byte chance, permille, vowel;
 				chance = breakage_chance_with_skill(pt_ptr->Ind, o_ptr, &permille);
-				if (permille == 0) fprintf(fff, "\377WIt has a %d%% chance to break upon hit///.\n", chance);
-				else fprintf(fff, "\377WIt has a %d.%d%% chance to break upon hit///.\n", chance, permille);
+				vowel = (chance == 8) || (chance == 11) || (chance == 18); /* 1 <= chance <= 20 */
+				if (permille == 0) fprintf(fff, "\377WIt has a%s %d%% chance to break upon hit///.\n", vowel ? "n" : "", chance);
+				else fprintf(fff, "\377WIt has a%s %d.%d%% chance to break upon hit///.\n", vowel ? "n" : "", chance, permille);
 			}
 
  #if 1 /* display trigger chance for magic devices? */
@@ -5991,7 +5992,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (eff_full && wield_slot(0, o_ptr) == INVEN_AMMO) {
 		u32b shooter_f1 = 0, dummy;
 		object_type *x_ptr = &pt_ptr->inventory[INVEN_BOW];
-		byte chance, permille;
+		byte chance, permille, vowel;
 
 		if (x_ptr->k_idx && x_ptr->tval == TV_BOW &&
 		    (((x_ptr->sval == SV_SHORT_BOW || x_ptr->sval == SV_LONG_BOW) && o_ptr->tval == TV_ARROW) ||
@@ -6024,8 +6025,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		}
 
 		chance = breakage_chance_with_skill(pt_ptr->Ind, o_ptr, &permille);
-		if (permille == 0) fprintf(fff, "\377WIt has a %d%% chance to break upon hit.\n", chance);
-		else fprintf(fff, "\377WIt has a %d.%d%% chance to break upon hit.\n", chance, permille);
+		vowel = (chance == 8) || (chance == 11) || (chance == 18);
+		if (permille == 0) fprintf(fff, "\377WIt has a%s %d%% chance to break upon hit.\n", vowel ? "n" : "", chance);
+		else fprintf(fff, "\377WIt has a%s %d.%d%% chance to break upon hit.\n", vowel ? "n" : "", chance, permille);
 
 		/* TODO: 3rd party observe via Ind_target */
 		display_ammo_damage(Ind_target ? Ind_target : Ind, &forge, fff, f1, shooter_f1);
