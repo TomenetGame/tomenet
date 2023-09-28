@@ -1308,7 +1308,7 @@ extern void discharge_rod(object_type *o_ptr, int c);
 extern s32b unique_quark;
 extern void object_copy(object_type *o_ptr, object_type *j_ptr);
 extern void object_wipe(object_type *o_ptr);
-extern int breakage_chance_with_skill(int Ind, object_type *o_ptr, int *permille);
+extern int breakage_chance_with_skill(int Ind, object_type *o_ptr, byte *permille);
 extern int get_archery_skill_from_ammo(object_type *o_ptr);
 extern bool can_use(int Ind, object_type *o_ptr);
 extern bool can_use_verbose(int Ind, object_type *o_ptr);
