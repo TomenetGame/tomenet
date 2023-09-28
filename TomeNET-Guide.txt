@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 13. September 2023 - written by C. Blue (c_blue@gmx.net)  |
+| Latest update: 28. September 2023 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.9.0c - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -7943,6 +7943,17 @@ Temple          4       Player ghosts will be revived here, and receive some
                         have enough funds. Or if you aren't in a dungeon it
                         will instead display the maximum dungeon level your
                         current funds would suffice for.
+
+                        Some example fees for quick reference:
+                        Barrow-Downs -1000 ft     4010 Au
+                        Barrow-Downs bottom      12260 Au
+                        Orc Caves bottom          5300 Au
+                        Mordor bottom            43570 Au
+                        Mount Doom bottom        98020 Au
+                        Angband bottom          161300 Au
+                        Cloud Planes top        222020 Au
+                        Nether Realm -50 ft     275570 Au
+                        Nether Realm bottom     384170 Au
 
 Alchemist       5       Sells various scrolls and potions.
 
