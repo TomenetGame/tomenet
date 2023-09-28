@@ -3936,6 +3936,7 @@ static void output_boomerang_dam(int Ind, FILE *fff, object_type *o_ptr, int mul
 
 	dam = ((o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5L * mult) / FACTOR_MULT;
 	dam += (o_ptr->to_d + p_ptr->to_d_ranged + bonus) * 10;
+	dam = dam * (10 + p_ptr->xtra_might) / 10;
 	if (dam > 0) {
 		if (dam % 10)
 			fprintf(fff, "    %d.%d", dam / 10, dam % 10);
@@ -3948,6 +3949,7 @@ static void output_boomerang_dam(int Ind, FILE *fff, object_type *o_ptr, int mul
 		fprintf(fff, "\n");
 		dam = ((o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5L * mult2) / FACTOR_MULT;
 		dam += (o_ptr->to_d + p_ptr->to_d_ranged + bonus2) * 10;
+		dam = dam * (10 + p_ptr->xtra_might) / 10;
 		if (dam > 0) {
 			if (dam % 10)
 				fprintf(fff, "    %d.%d", dam / 10, dam % 10);
