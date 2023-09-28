@@ -6740,7 +6740,7 @@ void display_invenequip(int Ind) {
 }
 
 /* Computes ammo breakage chance after skill has been factored in. */
-int breakage_chance_with_skill(int Ind, object_type *o_ptr, int *permille) {
+int breakage_chance_with_skill(int Ind, object_type *o_ptr, byte *permille) {
 	if (wield_slot(0, o_ptr) != INVEN_AMMO) return -1;
 
 	player_type *p_ptr = Players[Ind];
