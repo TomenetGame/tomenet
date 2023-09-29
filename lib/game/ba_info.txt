@@ -180,12 +180,12 @@ I:6:0:x:0
 # Restrict to liked/normal
 N:36:Get an extermination order
 C:0:0:0
-I:46:1:x:0
+I:47:1:x:0
 
 #	--unused
 N:37:Get an extermination order
 C:0:0:0
-I:47:0:x:0
+I:48:0:x:0
 
 #	--unused
 N:38:Get an extermination order
