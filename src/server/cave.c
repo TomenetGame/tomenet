@@ -1911,7 +1911,7 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 	}
 
 	/* Special attr/char codes */
-	else if (c > MAX_FONT_CHAR) {
+	else if ((a & 0x80) && (c & 0x80)) {
 		/* Use char */
 		(*cp) = c;
 
