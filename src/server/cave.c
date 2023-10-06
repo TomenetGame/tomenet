@@ -1910,15 +1910,6 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 		(*ap) = a;
 	}
 
-	/* Special attr/char codes */
-	else if ((a & 0x80) && (c & 0x80)) {
-		/* Use char */
-		(*cp) = c;
-
-		/* Use attr */
-		(*ap) = a;
-	}
-
 #ifdef M_EGO_NEW_FLICKER
 	/* Hack -- Unique/Ego 'glitters' sometimes */
 	else if ((((r_ptr->flags1 & RF1_UNIQUE) && magik(30)) ||
