@@ -8224,8 +8224,8 @@ extern int PlayerUID;
 #define is_admin(p_ptr) (p_ptr->admin_wiz || p_ptr->admin_dm)
 #define admin_p(Ind) (Players[Ind]->admin_wiz || Players[Ind]->admin_dm)
 
-#define TOOL_EQUIPPED(p_ptr) (p_ptr->inventory[INVEN_TOOL].k_idx && \
-		p_ptr->inventory[INVEN_TOOL].tval == TV_TOOL ? \
+#define TOOL_EQUIPPED(p_ptr) ((p_ptr->inventory[INVEN_TOOL].k_idx && \
+		p_ptr->inventory[INVEN_TOOL].tval == TV_TOOL) ? \
 		p_ptr->inventory[INVEN_TOOL].sval : -1)
 
 /* complete weight of all equipment parts */
