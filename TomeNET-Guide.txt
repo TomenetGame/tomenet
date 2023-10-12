@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 28. September 2023 - written by C. Blue (c_blue@gmx.net)  |
+| Latest update: 13. October 2023 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.0c - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2538,7 +2538,6 @@ Auto-ID     A special ability of some items. If you equip an item that grants
             you 'Auto-ID' all items you touch will automatically be
             identified! Items who grant their wielder Auto-Identification are
             highly sought after. Randart helmets or gloves sometimes have it.
-            Training 'Divination' school to 50.000 also grants auto-ID.
             See (5.7) for more information about identification.
 
 BD          Barrow-Downs. The main starter dungeon in the town of Bree, located
