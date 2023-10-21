@@ -10196,27 +10196,29 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 
 	/* Occasionally 'slip' on icy floor, similar to player in move_player() */
-	if ((c_ptr->feat == FEAT_ICE || c_ptr->slippery) &&
+	if ((c_ptr->feat == FEAT_ICE || c_ptr->slippery >= 1000) &&
 	    !(m_ptr->r_idx == 52 || m_ptr->r_idx == 141 || m_ptr->r_idx == 179 || m_ptr->r_idx == 224) &&
 	    !(r_ptr->flags7 & RF7_CAN_FLY) && !(r_ptr->flags2 & RF2_PASS_WALL) &&
 	    /* Except for /animals/monsters/ that are used to cold, especially Yeti and co */
 	    !(r_ptr->flags3 & RF3_IM_COLD)) {
 	    //(r_info[p_ptr->body_monster].flags3 & (RF3_ANIMAL | RF3_IM_COLD)) == (RF3_ANIMAL | RF3_IM_COLD)))) {
-		if (magik(70 - r_ptr->level)) {
+		if (magik(70 - r_ptr->level //ie doesn't work on monsters of level 70+, for now
+		    - (m_ptr->r_idx == 564 || (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_BLUE && r_ptr->level >= 23) ? r_ptr->level / 2 : 0) //nightblade, master rogues+ (ninjas have CAN_FLY anyway)
+		    )) {
 			force_random_movement = TRUE;
 			/* Oily floor */
-			if (c_ptr->slippery) {
-				c_ptr->slippery--;
+			if (c_ptr->slippery >= 1000) {
+				c_ptr->slippery -= 1000;
 				msg_print_near_monster(m_idx, "slips on the oily floor.");
-				/* Additionally confuse for a moment */
+				/* Additionally confuse for a moment, so this oil slip effect is stronger than ice slip effect! :o */
 				if (m_ptr->confused < 3 &&
 				    !m_ptr->questor_invincible && !(r_ptr->flags7 & RF7_NO_DEATH) &&
 				    !(r_ptr->flags3 & RF3_NO_CONF) && !(r_ptr->flags4 & RF4_BR_CONF) &&
 				    !(r_ptr->flags4 & RF4_BR_CHAO) && !(r_ptr->flags9 & RF9_RES_CHAOS))
 					m_ptr->confused = 3;
-			/* Icy floor */
+			/* Icy floor - just random movemenet, no confusion, for now */
 			} else msg_print_near_monster(m_idx, "slips on the icy floor.");
-		}
+		} /* for now, don't decrease slipperyness if we didn't slip */
 	}
 
 	/* Confused -- 100% random */

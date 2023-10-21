@@ -7190,25 +7190,26 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	/* Slip on icy floor */
-	if ((c_ptr->feat == FEAT_ICE || c_ptr->slippery) && (!p_ptr->feather_fall && !p_ptr->levitate && !p_ptr->tim_wraith &&
+	if ((c_ptr->feat == FEAT_ICE || c_ptr->slippery >= 1000) && (!p_ptr->feather_fall && !p_ptr->levitate && !p_ptr->tim_wraith &&
 	    /* Except for /animals/monsters/ that are used to cold, especially Yeti and co */
 	    !(p_ptr->body_monster && //(r_info[p_ptr->body_monster].flags3 & (RF3_ANIMAL | RF3_IM_COLD)) == (RF3_ANIMAL | RF3_IM_COLD)))) {
 	    (r_info[p_ptr->body_monster].flags3 & RF3_IM_COLD)))) {
-		if (magik(70 - p_ptr->lev)) {
+		//if (magik(70 - p_ptr->lev)) {
+		//if (magik(55 - (p_ptr->lev > 50 ? 50 : p_ptr->lev) / 2 - (7 - 128 + adj_dex_th[p_ptr->stat_ind[A_DEX]]))) { //DEX adjustment: 0..27
+		if (magik(2 * (35 - (p_ptr->lev > 50 ? 50 : p_ptr->lev) / 3 - (4 - 128 + adj_dex_ta[p_ptr->stat_ind[A_DEX]])))) { //DEX adjustment: 0..18
 			iterations = 10;//not strictly needed here, but anyway
 			do {
 				i = randint(9);
 				y = p_ptr->py + ddy[i];
 				x = p_ptr->px + ddx[i];
 			} while (i == 5 && --iterations > 0);
-			if (c_ptr->slippery) {
-				c_ptr->slippery--;
-				msg_print(Ind, "You slip on the oily floor.");
+			if (c_ptr->slippery >= 1000) {
+				c_ptr->slippery -= 1000;
+				msg_print(Ind, "You slip on the oily floor."); //no confusion effect, unlike for monsters
 			} else msg_print(Ind, "You slip on the icy floor.");
-		}
+		} /* for now, don't decrease slipperyness if we didn't slip */
 #if 0
-		else
-			tmp = dir;
+		else tmp = dir;
 #endif
 	}
 
