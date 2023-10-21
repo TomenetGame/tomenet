@@ -2819,6 +2819,14 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 				a = p_ptr->f_attr_solid[feat];
 			}
 
+			/* Oil slick on the floor? -- indicate that it's enough oil (1000+) to actually cause slipping */
+			if (c_ptr->slippery >= 1000)
+#if 1
+				a = TERM_L_UMBER; /* static colour */
+#else
+				a = TERM_CONF; /* animated colour */
+#endif
+
 			/* Hack to display monster traps */
 			/* Illusory wall masks everythink */
 			if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP)) && c_ptr->feat != FEAT_ILLUS_WALL) {
@@ -3295,9 +3303,9 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 	/**** Apply special random effects ****/
 	/*if (!avoid_other) */
 	if (((*w_ptr & CAVE_MARK) ||
-	((((c_ptr->info & CAVE_LITE) && (*w_ptr & CAVE_VIEW)) ||
-	  ((c_ptr->info & CAVE_GLOW) && (*w_ptr & CAVE_VIEW))) &&
-	 !p_ptr->blind)) || (p_ptr->admin_dm)) {
+	    ((((c_ptr->info & CAVE_LITE) && (*w_ptr & CAVE_VIEW)) ||
+	      ((c_ptr->info & CAVE_GLOW) && (*w_ptr & CAVE_VIEW))) &&
+	     !p_ptr->blind)) || (p_ptr->admin_dm)) {
 		f_ptr = &f_info[feat];
 
 		/* Special terrain effect */
@@ -9155,6 +9163,7 @@ void slippery_floor(int oily, struct worldpos *wpos, int x, int y) {
 
 	/* easily affected */
 	case FEAT_ICE: //already slippery anyway.. non-temporarily even. However, should it get melted, the slipperyness will remain!
+		/* TODO maybe, NOTE: If it happens to turn into non-slippery-possible floor ('default:' branch below), it should set c_ptr->slippery = 0 of course! */
 	case FEAT_FLOOR:
 	case FEAT_LOOSE_DIRT:
 	case FEAT_IVY: //leaves should be slippery anyway
