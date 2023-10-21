@@ -5332,6 +5332,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		if (eff_full) {
 			if (wield_slot(0, o_ptr) == INVEN_AMMO) {
 				byte chance, permille, vowel;
+
 				chance = breakage_chance_with_skill(pt_ptr->Ind, o_ptr, &permille);
 				vowel = (chance == 8) || (chance == 11) || (chance == 18); /* 0 <= chance <= 20 */
 				if (permille == 0) fprintf(fff, "\377WIt has a%s %d%% chance to break upon hit///.\n", vowel ? "n" : "", chance);
@@ -6743,14 +6744,14 @@ void display_invenequip(int Ind) {
 
 /* Computes ammo breakage chance after skill has been factored in. */
 int breakage_chance_with_skill(int Ind, object_type *o_ptr, byte *permille) {
-	if (wield_slot(0, o_ptr) != INVEN_AMMO) return -1;
-
 	player_type *p_ptr = Players[Ind];
 	int base_percentage = breakage_chance(o_ptr);
 	int archery = get_archery_skill_from_ammo(o_ptr);
 	int j = base_percentage * 100;
-	j = (j * (100 - get_skill_scale(p_ptr, archery, 90))) / 100;
 
+	if (wield_slot(0, o_ptr) != INVEN_AMMO) return -1;
+
+	j = (j * (100 - get_skill_scale(p_ptr, archery, 90))) / 100;
 	*permille = (j % 100) / 10;
 	return j / 100;
 }
