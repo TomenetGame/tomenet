@@ -2308,13 +2308,14 @@ bool askfor_aux(char *buf, int len, char mode) {
 			if (mode & ASKFOR_CHATTING) {
 				/* Change chatting mode - mikaelh */
 				chat_mode++;
+				if (chat_mode == CHAT_MODE_PARTY && !party_info_name[0]) chat_mode++; /* chat mode index order matters: party < guild */
+				if (chat_mode == CHAT_MODE_GUILD && !guild_info_name[0]) chat_mode++;
 				if (chat_mode > CHAT_MODE_GUILD) chat_mode = CHAT_MODE_NORMAL;
 
 				/* HACK - Change the prompt */
 				switch (chat_mode) {
 				case CHAT_MODE_PARTY:
 					c_prt(C_COLOUR_CHAT_PARTY, "Party: ", 0, 0);
-
 					/* Recalculate visible length */
 					vis_len = wid - 1 - sizeof("Party: ");
 					break;
@@ -2348,6 +2349,8 @@ bool askfor_aux(char *buf, int len, char mode) {
 			if (mode & ASKFOR_CHATTING) {
 				/* Reverse change chatting mode */
 				chat_mode--;
+				if (chat_mode == CHAT_MODE_GUILD && !guild_info_name[0]) chat_mode--; /* chat mode index order matters: guild > party */
+				if (chat_mode == CHAT_MODE_PARTY && !party_info_name[0]) chat_mode--;
 				if (chat_mode < CHAT_MODE_NORMAL) chat_mode = CHAT_MODE_GUILD;
 
 				/* HACK - Change the prompt */

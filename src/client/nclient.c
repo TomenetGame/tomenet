@@ -4676,6 +4676,8 @@ int Receive_party(void) {
 	strcpy(party_info_members, pmembers);
 	strcpy(party_info_owner, powner);
 
+	if (chat_mode == CHAT_MODE_PARTY && !party_info_name[0]) chat_mode = CHAT_MODE_NORMAL;
+
 	/* Check for iron team state */
 	if (!strncmp(party_info_name, "Iron Team", 9)) party_info_mode = PA_IRONTEAM; /* Normal (open) iron team */
 	else if (!strncmp(party_info_name + 2, "Iron Team", 9)) party_info_mode = (PA_IRONTEAM | PA_IRONTEAM_CLOSED); /* Prefixed colour code indicates 'closed' iron team */
@@ -4724,6 +4726,8 @@ int Receive_guild(void) {
 	strcpy(guild_info_name, gname);
 	strcpy(guild_info_members, gmembers);
 	strcpy(guild_info_owner, gowner);
+
+	if (chat_mode == CHAT_MODE_GUILD && !guild_info_name[0]) chat_mode = CHAT_MODE_NORMAL;
 
 	/* Re-show party info */
 	if (party_mode) {
