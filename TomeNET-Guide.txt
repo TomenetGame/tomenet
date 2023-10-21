@@ -6077,7 +6077,7 @@ You can also save macros to <racename>.prf, to <classname>.prf and to
 characters of that class/race/trait.
 Last but not least, characters that change shape (Mimicry) can autoload macro
 files that depend on their form name (in addition to their character name) by
-naming them <character name>_<form name>.prf, eg "Gandalf_Black orc.prf".
+naming them '<character name>^<form name>.prf' eg "Gandalf^Greater Balrog.prf".
 Priority order (latter one overrides prior one):
 
 These files are meant to store client options and configuration,
@@ -6099,7 +6099,7 @@ These files can be used for saving your macros to without problems:
 <race>.prf (for the specific race)
 <trait>.prf (for the specific trait, particularly useful for Maiar)
 <class>.prf (for the specific class)
-<character name>_<form name>.prf (for that character and its current form)
+<character name>^<form name>.prf (for that character and its current form)
 <character name>.prf (for the specific character the player logged in with)
 
 It is recommended to use only race/trait/class/character/character+form

@@ -4833,7 +4833,7 @@ void interact_macros(void) {
 			Term_putstr(0, l + 1, -1, TERM_WHITE, "File: ");
 
 			/* Default filename */
-			if (strcmp(c_p_ptr->body_name, "Player")) sprintf(tmp, "%s_%s.prf", cname, c_p_ptr->body_name);
+			if (strcmp(c_p_ptr->body_name, "Player")) sprintf(tmp, "%s%c%s.prf", cname, PRF_BODY_SEPARATOR, c_p_ptr->body_name);
 			else sprintf(tmp, "%s.prf", cname);
 
 			/* Ask for a file */
@@ -8160,7 +8160,7 @@ void auto_inscriptions(void) {
 	if (changed7 != c_cfg.load_form_macros && c_cfg.load_form_macros) {
 		char tmp[MAX_CHARS];
 
-		if (strcmp(c_p_ptr->body_name, "Player")) sprintf(tmp, "%s_%s.prf", cname, c_p_ptr->body_name);
+		if (strcmp(c_p_ptr->body_name, "Player")) sprintf(tmp, "%s%c%s.prf", cname, PRF_BODY_SEPARATOR, c_p_ptr->body_name);
 		else sprintf(tmp, "%s.prf", cname);
 		(void)process_pref_file(tmp);
 	}

@@ -9423,3 +9423,7 @@ extern int PlayerUID;
 
 /* For debugging - fixed */
 //#define __GRID_DEBUG(Ind, wpos, feat, location, info)	if ((feat) == FEAT_XPROTECT && !in_trainingtower(wpos)) s_printf("__GRID_DEBUG: %s, %d - (%d) '%s' (%d,%d,%d)\n", location, info, Ind, (Ind) > 0 ? Players[Ind]->name : "-", (wpos)->wx, (wpos)->wy, (wpos)->wz);
+
+#ifdef CLIENT_SIDE
+ #define PRF_BODY_SEPARATOR '^'
+#endif
