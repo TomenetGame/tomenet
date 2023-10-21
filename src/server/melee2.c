@@ -10202,7 +10202,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	    /* Except for /animals/monsters/ that are used to cold, especially Yeti and co */
 	    !(r_ptr->flags3 & RF3_IM_COLD)) {
 	    //(r_info[p_ptr->body_monster].flags3 & (RF3_ANIMAL | RF3_IM_COLD)) == (RF3_ANIMAL | RF3_IM_COLD)))) {
-		if (magik(70 - r_ptr->level //ie doesn't work on monsters of level 70+, for now
+		if (magik(70 - r_ptr->level / 6 - (r_ptr->weight / 50) * (r_ptr->flags2 & RF2_POWERFUL ? 2 : 1)
 		    - (m_ptr->r_idx == 564 || (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_BLUE && r_ptr->level >= 23) ? r_ptr->level / 2 : 0) //nightblade, master rogues+ (ninjas have CAN_FLY anyway)
 		    )) {
 			force_random_movement = TRUE;
@@ -10219,6 +10219,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 			/* Icy floor - just random movemenet, no confusion, for now */
 			} else msg_print_near_monster(m_idx, "slips on the icy floor.");
 		} /* for now, don't decrease slipperyness if we didn't slip */
+
+		/* Fire/elec aura: burn up all the oil immediately; for now no fire effects or anything */
+		if (r_ptr->flags2 & (RF2_AURA_FIRE | RF2_AURA_ELEC)) c_ptr->slippery = 0;
 	}
 
 	/* Confused -- 100% random */

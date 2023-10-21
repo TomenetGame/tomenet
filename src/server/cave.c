@@ -9158,8 +9158,13 @@ void slippery_floor(int oily, struct worldpos *wpos, int x, int y) {
 	if (!zcave) return;
 	c_ptr = &zcave[y][x];
 
-	switch (c_ptr->feat) {
+	/* Fire/elec aura: burn up all the oil immediately; for now no fire effects or anything */
+	if (c_ptr->m_idx < 0 && (Players[-c_ptr->m_idx]->sh_fire || Players[-c_ptr->m_idx]->sh_elec)) {
+		msg_print(-c_ptr->m_idx, "Your aura burns up all spilled oil immediately.");
+		return;
+	}
 
+	switch (c_ptr->feat) {
 
 	/* easily affected */
 	case FEAT_ICE: //already slippery anyway.. non-temporarily even. However, should it get melted, the slipperyness will remain!

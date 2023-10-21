@@ -7211,6 +7211,9 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 #if 0
 		else tmp = dir;
 #endif
+
+		/* Fire/elec aura: burn up all the oil immediately; for now no fire effects or anything */
+		if (p_ptr->sh_fire || p_ptr->sh_elec) c_ptr->slippery = 0;
 	}
 
 	/* Update wilderness positions */
