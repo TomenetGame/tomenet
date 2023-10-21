@@ -3581,7 +3581,7 @@ static void do_cmd_refill_lamp(int Ind, int item) {
 		return;
 	}
 
-	if (check_guard_inscription(o_ptr->note, 'F')) {
+	if (check_guard_inscription(o_ptr->note, 'F') || check_guard_inscription(o_ptr->note, 'k')) {
 		msg_print(Ind, "The item's incription prevents it.");
 		return;
 	}
@@ -3736,7 +3736,7 @@ static void do_cmd_refill_torch(int Ind, int item) {
 		return;
 	}
 
-	if (check_guard_inscription(o_ptr->note, 'F')) {
+	if (check_guard_inscription(o_ptr->note, 'F') || check_guard_inscription(o_ptr->note, 'k')) {
 		msg_print(Ind, "The item's incription prevents it.");
 		return;
 	}
@@ -3843,10 +3843,12 @@ bool do_auto_refill(int Ind) {
 	/* Get the light */
 	o_ptr = &(p_ptr->inventory[INVEN_LITE]);
 
+#if 0 /* The light we're wielding shouldn't care about !F inscription, as that one is only for preventing destroying a light by using it to refuel _the_ light we're wielding */
 	if (check_guard_inscription(o_ptr->note, 'F')) {
 		//msg_print(Ind, "The item's incription prevents it.");
 		return(FALSE);
 	}
+#endif
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
@@ -3859,7 +3861,7 @@ bool do_auto_refill(int Ind) {
 			j_ptr = &(p_ptr->inventory[i]);
 			if (!item_tester_hook(j_ptr)) continue;
 			if (artifact_p(j_ptr) || ego_item_p(j_ptr)) continue;
-			if (check_guard_inscription(j_ptr->note, 'F')) continue;
+			if (check_guard_inscription(j_ptr->note, 'F') || check_guard_inscription(j_ptr->note, 'k')) continue;
 
 			do_cmd_refill_lamp(Ind, i);
 			return(TRUE);
@@ -3875,7 +3877,7 @@ bool do_auto_refill(int Ind) {
 			j_ptr = &(p_ptr->inventory[i]);
 			if (!item_tester_hook(j_ptr)) continue;
 			if (artifact_p(j_ptr) || ego_item_p(j_ptr)) continue;
-			if (check_guard_inscription(j_ptr->note, 'F')) continue;
+			if (check_guard_inscription(j_ptr->note, 'F') || check_guard_inscription(j_ptr->note, 'k')) continue;
 
 			do_cmd_refill_torch(Ind, i);
 			return(TRUE);
