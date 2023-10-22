@@ -12293,12 +12293,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					if (h_ptr->wpos.wx != p_ptr->wpos.wx || h_ptr->wpos.wy != p_ptr->wpos.wy ||
 					    h_ptr->dx != x || h_ptr->dy != y)
 						continue;
+#if 0 /* hrm? */
 					if (h_ptr->flags & HF_STOCK) {
 						//msg_print(Ind, "\377oThat house may not be destroyed. (HF_STOCK)");
 						msg_format(Ind, "\377oThat house %d (dna: c=%d o=%s ot=%s; dx,dy=%d,%d) is not eligible.", i, h_ptr->dna->creator, owner, owner_type, h_ptr->dx, h_ptr->dy);
 						//return;
 						continue;
 					}
+#endif
 					switch (h_ptr->dna->owner_type) {
 					case OT_PLAYER:
 						strcpy(owner, lookup_player_name(h_ptr->dna->owner));
