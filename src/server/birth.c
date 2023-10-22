@@ -3800,6 +3800,17 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	/* To find out which characters crash the server */
 	s_printf("Logged in with character %s.\n", name);
 
+	/* Finally clear name reservation if we had one, as we now succeeded with the complete login process */
+	for (i = 0; i < MAX_RESERVED_NAMES; i++) {
+		if (!reserved_name_character[i][0]) break;
+		if (strcasecmp(reserved_name_character[i], name)) continue;
+		/* No need to check account-relation, as we cannot have gotten this far if it wasn't tied to our account */
+
+		reserved_name_character[i][0] = '\0'; //clear reservation
+		s_printf("Reserved name cleared.\n");
+		break;
+	}
+
 	/* for "warning_pvp" */
 	p_ptr->newly_created = TRUE;
 
@@ -3809,8 +3820,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 
 /* Disallow non-authorized admin (improvement needed!!) */
 /* returns FALSE if bogus admin - Jir - */
-bool confirm_admin(int Ind)
-{
+bool confirm_admin(int Ind) {
 	struct account acc;
 	player_type *p_ptr = Players[Ind];
 	bool admin = FALSE;

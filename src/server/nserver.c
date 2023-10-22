@@ -4952,8 +4952,9 @@ static int Receive_login(int ind) {
 			if (strcasecmp(reserved_name_character[i], choice)) continue;
 
 			if (!strcmp(reserved_name_account[i], connp->nick)) {
-				reserved_name_character[i][0] = '\0'; //clear reservation
-				s_printf("Found on reserved names list - passed, cleared.\n");
+				//reserved_name_character[i][0] = '\0'; //clear reservation
+				//s_printf("Found on reserved names list - passed, cleared.\n");
+				s_printf("Found on reserved names list - passed\n");
 				took_reservation = TRUE;
 				break;
 			}
