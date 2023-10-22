@@ -4429,7 +4429,7 @@ bool project_los_wall(int Ind, int typ, int dam, int time, int interval, char *a
 	struct worldpos *wpos = &p_ptr->wpos;
 	int		i, x, y;
 	int		flg = PROJECT_NORF | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO;
-  bool		obvious = FALSE;
+	bool		obvious = FALSE;
 	char		pattacker[80];
 
 	if (Ind) snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
@@ -7045,7 +7045,7 @@ bool cast_fireworks(worldpos *wpos, int x, int y, int typ) {
 	/* Fireworks flies lower inside dungeons */
 	if (wpos->wz && !(d_ptr && d_ptr->type == DI_CLOUD_PLANES)) project_time = 4 + 4;
 	else project_time = 8 + 8; /* X units to rise into the air, X units to explode */
-	//if (project_time_effect == EFF_FIREWORKS3) project_time += 2 + 2;
+	//if (project_time_effect & EFF_FIREWORKS3) project_time += 2 + 2;
 #endif
 
 	return(project(PROJECTOR_EFFECT, 0, wpos, y, x, 0, typ, flg, pattacker)); /* typ -> colour */

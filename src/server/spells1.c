@@ -1648,6 +1648,7 @@ byte spell_color(int type) {
 	case GF_INERTIA:	return(randint(5) < 3 ? TERM_SLATE : TERM_L_WHITE);
 	case GF_GRAVITY:	return(randint(3) == 1? TERM_L_UMBER : TERM_UMBER);
 	case GF_TIME:		return(randint(3) == 1? TERM_GREEN : TERM_L_BLUE);
+	case GF_FLARE:		return(TERM_LITE);
 	case GF_LITE_WEAK:	return(TERM_LITE);
 	case GF_LITE:		return(TERM_LITE);
 	case GF_DARK_WEAK:	return(TERM_DARKNESS);
@@ -1719,6 +1720,7 @@ bool spell_color_animation(int type) {
 	case GF_INERTIA:	return(TRUE);//(randint(5)<3?TERM_SLATE:TERM_L_WHITE);
 	case GF_GRAVITY:	return(TRUE);//(randint(3)==1?TERM_L_UMBER:TERM_UMBER);
 	case GF_TIME:		return(TRUE);//(randint(3)==1?TERM_GREEN:TERM_L_BLUE);
+	case GF_FLARE:		return(FALSE);
 	case GF_LITE_WEAK:	return(FALSE);
 	case GF_LITE:		return(FALSE);
 	case GF_DARK_WEAK:	return(FALSE);
@@ -1793,6 +1795,7 @@ byte spell_color(int type) {
 	case GF_GRAVITY:	return(TERM_GRAV);
 	case GF_TIME:		return(TERM_TIME);
 	case GF_STARLITE:	return(TERM_STARLITE);
+	case GF_FLARE:		return(TERM_LITE);
 	case GF_LITE_WEAK:	return(TERM_LITE);
 	case GF_LITE:		return(TERM_LITE);
 	case GF_DARK_WEAK:	return(TERM_DARKNESS);
@@ -4347,6 +4350,39 @@ int divide_spell_damage(int dam, int div, int typ) {
 	return(dam / div);
 }
 
+/* Note: Currently no recursion protection, against network overload when the full level goes up in a flarestorm, luls. */
+static void light_oil(cave_type **zcave, struct worldpos *wpos, int x, int y, int recursion) {
+	int effect, i, xa, ya;
+	cave_type *c_ptr = &zcave[y][x];
+	int who = (c_ptr->m_idx < 0 ? -c_ptr->m_idx : PROJECTOR_EFFECT);
+
+	/* Add lasting fire effect */
+	project_time_effect = EFF_WALL | EFF_SELF; /* The resulting burning oil will hurt the flare-caster himself too! (Similar to how potion_smash_effect() hurts the thrower, eg of detonation potions). */
+	project_time = 7 + c_ptr->slippery / 400;
+	project_interval = 9;
+	effect = new_effect(who, GF_FIRE, 10 + rand_int(3), project_time, project_interval, wpos, y, x, 0, project_time_effect);
+	if (effect != -1) {
+		c_ptr->effect = effect;
+		everyone_lite_spot(wpos, y, x);
+	}
+
+#ifdef USE_SOUND_2010
+	sound_near_site(y, x, wpos, 0, "cast_cloud", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+
+	/* Just say that all oil is consumed by the fire */
+	c_ptr->slippery = 0;
+
+	/* Also light all adjacent oil slicks, for chain-reaction (might need recursion limit as spam-protection) */
+	if (recursion == 10) return;
+	for (i = 7; i >= 0; i--) {
+		xa = x + ddx_ddd[i];
+		ya = y + ddy_ddd[i];
+		if (!in_bounds(ya, xa)) continue;
+		if (zcave[ya][xa].slippery < 1000) continue;
+		light_oil(zcave, wpos, xa, ya, recursion + 1);
+	}
+}
 
 
 /*
@@ -4355,7 +4391,6 @@ int divide_spell_damage(int dam, int div, int typ) {
 static int project_m_n;
 static int project_m_x;
 static int project_m_y;
-
 
 
 /*
@@ -4446,8 +4481,11 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			cave_set_feat_live(wpos, y, x, FEAT_DIRT);
 		break;
 	case GF_ELEC:
+	case GF_THUNDER:	/* a gestalt now, to remove hacky tri-bolt on thunderstorm -- ? */
+		/* Light up oil patches! */
+		if (c_ptr->slippery >= 1000) light_oil(zcave, wpos, x, y, 0);
+		break;
 	case GF_COLD:
-	case GF_THUNDER:	/* a gestalt now, to remove hacky tri-bolt on thunderstorm */
 	case GF_SOUND:
 	case GF_MANA: /* <- no web/flower destructing abilities at this time? :-p */
 	case GF_HOLY_ORB:
@@ -4512,6 +4550,9 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Burn trees, grass, etc. depending on specific fire type */
 	case GF_HOLY_FIRE:
+		/* Light up oil patches! */
+		if (c_ptr->slippery >= 1000) light_oil(zcave, wpos, x, y, 0);
+
 		if (!allow_terraforming(wpos, FEAT_TREE)) break;
 		/* Holy Fire doesn't destroy trees! */
 		/* spider webs (Cirith Ungol!) */
@@ -4536,6 +4577,10 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	case GF_HELLFIRE:
 	case GF_INFERNO:
 	//GF_DETONATION and GF_ROCKET disintegrate anyway
+
+		/* Light up oil patches! */
+		if (c_ptr->slippery >= 1000) light_oil(zcave, wpos, x, y, 0);
+
 		if (!allow_terraforming(wpos, FEAT_TREE)) break;
 		/* Destroy trees */
 		if (c_ptr->feat == FEAT_TREE ||
@@ -5038,6 +5083,14 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 	/* Lite up the grid */
+	case GF_FLARE: /* Sort of a 'gf_fire_weak' just to light up oil patches, combined with (weak) light */
+		/* Exception: Bolt-type spells have no special effect */
+		if (!(flg & (PROJECT_NORF | PROJECT_JUMP))) break;
+
+		/* Light up oil patches! */
+		if (c_ptr->slippery >= 1000) light_oil(zcave, wpos, x, y, 0);
+
+		/* Fall through */
 	case GF_STARLITE:
 	case GF_LITE_WEAK:
 	case GF_LITE:
@@ -7707,6 +7760,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		break;
 
 	/* Lite, but only hurts susceptible creatures */
+	case GF_FLARE:
+		/* Super-weak fire, just enough to light up oil slicks on the ground, don't affect monsters for now, no even SUSC_COLD ones.. */
+
+		/* Fall Through */
 	case GF_LITE_WEAK:
 		/* Hurt by light */
 		if (r_ptr->flags3 & RF3_HURT_LITE) {
@@ -12229,6 +12286,12 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	   reduce their time by 1 to make up for it, so the total # of damage applications is correct. */
 	if ((flg & PROJECT_BEAM) && (project_time_effect & EFF_WALL)) project_time--;
 
+	/* Translate an effect-causing (PROJECT_STAY) self-harming (PROJECT_SELF) projection forward to create self-harming effect (EFF_SELF), too! (Eg Firestorm demolition charge.) */
+	if ((flg & (PROJECT_STAY | PROJECT_SELF)) == (PROJECT_STAY | PROJECT_SELF)) {
+msg_format(-who, "SELF!");
+		project_time_effect |= EFF_SELF;
+	}
+
 	/* Project until done --
 	   aka travel to target destination,
 	   then 'explode' there later with radius 'rad' (0 for bolts/beams) */
@@ -12663,7 +12726,6 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 
 	/* Novas */
 	if ((flg & PROJECT_STAR) && (project_time_effect & EFF_WALL)) {
-
 		/* Epicenter */
 		effect = new_effect(who, typ, dam, project_time, project_interval, wpos, y, x, 0, project_time_effect);
 		if (effect != -1) zcave[y][x].effect = effect;
@@ -13911,9 +13973,12 @@ int approx_damage(int m_idx, int dam, int typ) {
 		dam = j + k;
 		break;
 
+	case GF_FLARE:
+		/* Super-weak fire, just enough to light up oil slicks on the ground, don't affect monsters for now, no even SUSC_COLD ones.. */
+
+		/* Fall Through */
 	case GF_LITE_WEAK:
-		if (!(r_ptr->flags3 & RF3_HURT_LITE))
-			dam = 0;
+		if (!(r_ptr->flags3 & RF3_HURT_LITE)) dam = 0;
 		else if (r_ptr->flags2 & RF2_REFLECTING) dam /= 2;
 		break;
 

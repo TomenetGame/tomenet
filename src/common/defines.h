@@ -2618,6 +2618,7 @@
 #define EFF_SEEKER		0x00000200	/* Real-time-moving homing projectile */
 #define EFF_METEOR		0x00000400	/* Announce that a meteor will be landing here, then have it crash down */
 
+#define EFF_SELF		0x00100000	/* Pendant to PROJECT_SELF: Effects created by projections with this flag receive EFF_SELF, to remain harmful to the caster himself too. */
 #define EFF_DUMMY		0x00200000	/* Effect deals no damage to anything */
 #define EFF_FALLING_STAR	0x00400000
 #define EFF_THUNDER_VISUAL	0x00800000	/* For 'Thunderstorm' spell electrocution */
@@ -5058,6 +5059,7 @@
 #define GF_CHARMIGNORE		161
 #define GF_STOP			162 /* special fx: scroll of rune of protection in a monster trap - C. Blue */
 #define GF_CAUSE		163 /* 'Curse' actually, the monster spell */
+#define GF_FLARE		164 /* Combination of LITE_WEAK and FIRE damage, for Flare Missile */
 
 #define GF_THUNDER		189 /* To replace the hacky 'triple-bolt' of the thunderstorm spell */
 #define GF_ANNIHILATION		192 /* To differentiate drain effect from hacky non-drain effect for wands */

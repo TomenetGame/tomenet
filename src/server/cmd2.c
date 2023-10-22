@@ -7811,7 +7811,9 @@ void do_cmd_fire(int Ind, int dir) {
 	if (p_ptr->ranged_flare && !boomerang) {
 		if (!hit_body && !ranged_flare_body) {
 			object_type forge;
-			(void)project(0 - Ind, 2, wpos, y, x, damroll(2, 6), GF_LITE_WEAK, PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_NODO, "");
+
+			(void)project(0 - Ind, 2, wpos, y, x, damroll(2, 6), GF_FLARE, PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_NODO, "");
+
 #ifndef PY_FIRE_ON_WALL
 			lite_room(Ind, wpos, y, x); //lite_area()?
 #else

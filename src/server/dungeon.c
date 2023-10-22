@@ -908,6 +908,9 @@ static void process_effects(void) {
 		//not sure whether the mod_ball_spell_flags() should be used actually:
 		flg = mod_ball_spell_flags(e_ptr->type, PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP | PROJECT_NODO | PROJECT_NODF);
 
+		/* New: EFF_SELF transports PROJECT_SELF aka self-harming spells, which we now translate back into PROJECT_SELF to inflict the periodic projection of this effect. */
+		if (e_ptr->flags & EFF_SELF) flg |= PROJECT_SELF;
+
 #ifdef ARCADE_SERVER
  #if 0
 		if ((e_ptr->flags & EFF_CROSSHAIR_A) || (e_ptr->flags & EFF_CROSSHAIR_B) || (e_ptr->flags & EFF_CROSSHAIR_C)) {
@@ -963,10 +966,11 @@ static void process_effects(void) {
 		e_ptr->time--;
 
 		/* effect belongs to a non-player? */
-		if (e_ptr->who > 0) who = e_ptr->who;
+		if (e_ptr->who > 0 || e_ptr->who <= PROJECTOR_UNUSUAL) who = e_ptr->who;
 		else { /* or to a player? */
 			/* Make the effect friendly after logging out - mikaelh */
-			who = PROJECTOR_PLAYER;
+			if (!(e_ptr->flags & EFF_SELF)) who = PROJECTOR_PLAYER;
+			else who = PROJECTOR_EFFECT; /* Make effect harmful to players instead */
 
 			/* XXX Hack -- is the trapper online? */
 			for (i = 1; i <= NumPlayers; i++) {
@@ -1036,7 +1040,8 @@ static void process_effects(void) {
 					if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
 					    Players[0 - who]->conn == NOT_CONNECTED) {
 						/* Make the effect friendly after death - mikaelh */
-						who = PROJECTOR_PLAYER;
+						if (!(e_ptr->flags & EFF_SELF)) who = PROJECTOR_PLAYER;
+						else who = PROJECTOR_EFFECT; /* Make effect harmful to players instead */
 					}
 					/* Storms end instantly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
 					if (((e_ptr->flags & EFF_STORM) || (e_ptr->flags & EFF_VORTEX))
@@ -1496,7 +1501,8 @@ static void process_effects(void) {
 					if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
 					    Players[0 - who]->conn == NOT_CONNECTED) {
 						/* Make the effect friendly after death - mikaelh */
-						who = PROJECTOR_PLAYER;
+						if (!(e_ptr->flags & EFF_SELF)) who = PROJECTOR_PLAYER;
+						else who = PROJECTOR_EFFECT; /* Make effect harmful to players instead */
 					}
 					/* Storms end instantly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
 					if (((e_ptr->flags & EFF_STORM) || (e_ptr->flags & EFF_VORTEX))
