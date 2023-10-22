@@ -3025,6 +3025,47 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			if (line < 0) line = 0;
 			continue;
 
+		/* Initiate '/?' command from client-side, for chapter-and-more combo search */
+		case 'C':
+			marking = marking_after = FALSE; //clear hack
+#ifdef REGEX_SEARCH
+			search_regexp = FALSE;
+#endif
+			Term_erase(0, bottomline, 80);
+			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter topic to search for: ");
+#if 0
+			buf[0] = 0;
+#else
+			strcpy(buf, lastchapter); //a small life hack
+#endif
+			inkey_msg_old = inkey_msg;
+			inkey_msg = TRUE;
+			if (*buf_override) {
+				strcpy(buf, buf_override);
+				*buf_override = 0;
+			} else {
+				//askfor_aux(buf, 7, 0)); //was: numerical chapters only
+				askfor_aux(buf, MAX_CHARS - 1, 0); //allow entering chapter terms too
+			}
+			inkey_msg = inkey_msg_old;
+			if (!buf[0]) continue;
+
+			/* Emulate /? */
+			Send_msg(format("/? %s", buf));
+
+#if 1 /* Close the guide screen before it gets reinvoked by the server, like for '/?' ? */
+ #ifndef BUFFER_GUIDE
+			my_fclose(fff);
+ #endif
+			Term_load();
+ #ifdef REGEX_SEARCH
+			if (!ires) regfree(&re_src);
+ #endif
+			return;
+#else
+			continue;
+#endif
+
 		/* seach for 'chapter': can be either a numerical one or a main term, such as race/class/skill names. */
 		case 'c':
 			marking = marking_after = FALSE; //clear hack
@@ -4164,10 +4205,10 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 #endif
 			Term_putstr( 0, i++, -1, TERM_WHITE, " 'a' / 'A'      : Mark old/new search results on currently visible guide part.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " 'S'            : ..resets screen to where you were before you did a search.");
-			Term_putstr( 0, i++, -1, TERM_WHITE, " 'c'            : Chapter Search. This is a special search that will skip most");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "                  basic text and only match specific topics and keywords.");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "                  Use this when searching for races, classes, skills, spells,");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "                  schools, techniques, dungeons, bosses, events, lineages,");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 'c' / 'C'      : Chapter Search. A special search that skips most basic text");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "                  to only match specific topics and keywords. 'C' is like '/?'");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "                  command, encompassing more. Use 'c' for race, classe, skill,");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "                  spell, school, technique, dungeon, bosses, events, lineage,");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "                  depths, stair types, or actual chapter titles or indices.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " '#'            : Jump to a specific line number.");
 #ifdef GUIDE_BOOKMARKS
