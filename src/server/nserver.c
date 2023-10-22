@@ -4478,151 +4478,152 @@ static int Receive_login(int ind) {
 
 		/* Added this anti-check particularly for "***" reorder hack above,
 		   because connp->pass got already cleared again after successful verification */
-	    if (!connp->password_verified) {
+		if (!connp->password_verified) {
 
-		/* security check: a bugged client might try to send the character name, but allows an 'empty' name!
-		   Here, the server would think that 'choice' being empty is signaling a different login stage.
-		   However, if the client was really trying to send an (empty) character name, at least connp->pass
-		   would be 0x0 at this point, causing the server to segfault! - C. Blue */
-		if (!connp->pass ||//<-important check
-		    !connp->nick || !connp->real || !connp->host || !connp->addr) {//<-just paranoia checks
-			Destroy_connection(ind, "Unexpected login error. Please contact an administrator.");
-			return(-1);
-		}
+			/* security check: a bugged client might try to send the character name, but allows an 'empty' name!
+			   Here, the server would think that 'choice' being empty is signaling a different login stage.
+			   However, if the client was really trying to send an (empty) character name, at least connp->pass
+			   would be 0x0 at this point, causing the server to segfault! - C. Blue */
+			if (!connp->pass ||//<-important check
+			    !connp->nick || !connp->real || !connp->host || !connp->addr) {//<-just paranoia checks
+				Destroy_connection(ind, "Unexpected login error. Please contact an administrator.");
+				return(-1);
+			}
 
-		/* remove disallowed chars and spaces at the end */
-		Trim_name(connp->nick);
+			/* remove disallowed chars and spaces at the end */
+			Trim_name(connp->nick);
 
-		/* Check if player tries to create an account of the same name as
-		   an already existing character - give an error message.
-		   (Mostly for new feat 'privmsg to account name' - C. Blue) */
-		if ((p_id = lookup_player_id(connp->nick))) { /* character name identical to this account name already exists? */
-			/* That character doesn't belong to our account? Forbid creating an account of this name then. */
-			if (lookup_accountname(p_id) && //<- avoid panic save if tomenet.acc file has been deleted for some reason. NOTE: Missing tomenet.acc still causes *problems*, so don't do that.
-			    strcmp(lookup_accountname(p_id), connp->nick)) {
-				/* However, if our account already exists then allow it to continue existing. */
-				if (!Admin_GetAccount(&acc, connp->nick)) {
-					Destroy_connection(ind, "Name already in use.");
-					Sockbuf_flush(&connp->w);
-					return(0);
+			/* Check if player tries to create an account of the same name as
+			   an already existing character - give an error message.
+			   (Mostly for new feat 'privmsg to account name' - C. Blue) */
+			if ((p_id = lookup_player_id(connp->nick))) { /* character name identical to this account name already exists? */
+				/* That character doesn't belong to our account? Forbid creating an account of this name then. */
+				if (lookup_accountname(p_id) && //<- avoid panic save if tomenet.acc file has been deleted for some reason. NOTE: Missing tomenet.acc still causes *problems*, so don't do that.
+				    strcmp(lookup_accountname(p_id), connp->nick)) {
+					/* However, if our account already exists then allow it to continue existing. */
+					if (!Admin_GetAccount(&acc, connp->nick)) {
+						Destroy_connection(ind, "Name already in use.");
+						Sockbuf_flush(&connp->w);
+						return(-1);
+					}
+					WIPE(&acc, struct account);
 				}
-				WIPE(&acc, struct account);
 			}
-		}
 
-		/* check if player tries to use one of the temporarily reserved character names as this account name */
-		for (i = 0; i < MAX_RESERVED_NAMES; i++) {
-			if (!reserved_name_character[i][0]) break;
+			/* check if player tries to use one of the temporarily reserved character names as this account name */
+			for (i = 0; i < MAX_RESERVED_NAMES; i++) {
+				if (!reserved_name_character[i][0]) break;
 
-			/* new: also for 'similar' names that don't belong to us */
-			condense_name(tmp_name, reserved_name_character[i]);
-			condense_name(tmp_name2, connp->nick);
-			if (!strcmp(tmp_name, tmp_name2) &&
-			    strcmp(reserved_name_account[i], connp->nick)) {
+				/* new: also for 'similar' names that don't belong to us */
+				condense_name(tmp_name, reserved_name_character[i]);
+				condense_name(tmp_name2, connp->nick);
+				if (!strcmp(tmp_name, tmp_name2) &&
+				    strcmp(reserved_name_account[i], connp->nick)) {
+					Destroy_connection(ind, "Name already in use.");
+					return(-1);
+				}
+
+				if (strcmp(reserved_name_character[i], connp->nick)) continue;
+
+				if (!strcmp(reserved_name_account[i], connp->nick)) {
+					//s_printf("RESERVED_NAMES_MATCH: Account '%s' matches '%s' (#%d).\n", connp->nick, reserved_name_character[i], i);
+					s_printf("RESERVED_NAMES_MATCH: Account '%s' cleared '%s' (#%d).\n", connp->nick, reserved_name_character[i], i);
+					reserved_name_character[i][0] = '\0'; //clear reservation
+					break;
+				}
+
 				Destroy_connection(ind, "Name already in use.");
-				return(-0);
+				return(-1);
 			}
 
-			if (strcmp(reserved_name_character[i], connp->nick)) continue;
+			/* Check if an account name already exists that is too similar to the new account name to be created --
+			   must be called before GetAccount() is called, because that function
+			   imprints the condensed name onto a newly created account.
+			   Don't prevent already existing accounts from logging in though. */
+			if (!Admin_GetAccount(&acc, connp->nick) && lookup_similar_account(connp->nick, NULL)) {
+				//Destroy_connection(ind, "A too similar name is already in use. Check lower/upper case."); //<- if not doing any 'similar' checks, it makes sense to point out case-sensitivity
+				Destroy_connection(ind, "A too similar name is already in use, or you made a typo in name or password.");
+				return(-1);
+			}
+			WIPE(&acc, struct account);
 
-			if (!strcmp(reserved_name_account[i], connp->nick)) {
-				s_printf("RESERVED_NAMES_MATCH: Account '%s' cleared '%s' (#%d).\n", connp->nick, reserved_name_character[i], i);
-				reserved_name_character[i][0] = '\0'; //clear reservation
-				break;
+			if (!connp->nick[0]) {
+				Destroy_connection(ind, "Pick a name and password!"); //for older clients up to 4.6.1a which didn't prevent entering empty creds
+				return(-1);
+			}
+			if (!connp->pass[0]) {
+				Destroy_connection(ind, "You must enter a password too!");
+				return(-1);
 			}
 
-			Destroy_connection(ind, "Name already in use.");
-			return(-0);
-		}
+			if (strlen(connp->pass) < PASSWORD_MIN_LEN) {
+				/* For now only restrict pw len for newly created accounts, so people can still log in with their old (too short) passwords */
+				if (!Admin_GetAccount(&acc, connp->nick)) {
+					Destroy_connection(ind, format("Password length must be at least %d!", PASSWORD_MIN_LEN));
+					return(-1);
+				}
+			}
 
-		/* Check if an account name already exists that is too similar to the new account name to be created --
-		   must be called before GetAccount() is called, because that function
-		   imprints the condensed name onto a newly created account.
-		   Don't prevent already existing accounts from logging in though. */
-		if (!Admin_GetAccount(&acc, connp->nick) && lookup_similar_account(connp->nick, NULL)) {
-			//Destroy_connection(ind, "A too similar name is already in use. Check lower/upper case."); //<- if not doing any 'similar' checks, it makes sense to point out case-sensitivity
-			Destroy_connection(ind, "A too similar name is already in use, or you made a typo in name or password.");
-			return(-1);
-		}
-		WIPE(&acc, struct account);
+			if ((res = Check_names(connp->nick, connp->real, connp->host, connp->addr, FALSE)) != SUCCESS) {
+				if (res == E_LETTER)
+					Destroy_connection(ind, "Your accountname must start on a letter (A-Z).");
+				else if (res == E_LENGTH)
+					Destroy_connection(ind, format("Account and character names must be at least %d characters long.", ACC_CHAR_MIN_LEN));
+				else
+					Destroy_connection(ind, "Your accountname, username or hostname contains invalid characters");
+				return(-1);
+			}
 
-		if (!connp->nick[0]) {
-			Destroy_connection(ind, "Pick a name and password!"); //for older clients up to 4.6.1a which didn't prevent entering empty creds
-			return(-1);
-		}
-		if (!connp->pass[0]) {
-			Destroy_connection(ind, "You must enter a password too!");
-			return(-1);
-		}
-
-		if (strlen(connp->pass) < PASSWORD_MIN_LEN) {
-			/* For now only restrict pw len for newly created accounts, so people can still log in with their old (too short) passwords */
+			/* Forbid certain special characters for newly created accounts */
 			if (!Admin_GetAccount(&acc, connp->nick)) {
-				Destroy_connection(ind, format("Password length must be at least %d!", PASSWORD_MIN_LEN));
+				char *cp;
+
+				if (strchr(connp->nick, '|')) {
+					Destroy_connection(ind, "Invalid character '|' in your account name.");
+					return(-1);
+				}
+				if ((cp = strchr(connp->nick, '$')) && strchr(cp + 1, '$')) {
+					Destroy_connection(ind, "There may only be up to one occurance of the '$' character in your account name.");
+					return(-1);
+				}
+				if ((cp = strchr(connp->nick, '#')) && strchr(cp + 1, '#')) {
+					Destroy_connection(ind, "There may only be up to one occurance of the '#' character in your account name.");
+					return(-1);
+				}
+				if ((cp = strchr(connp->nick, '%')) && strchr(cp + 1, '%')) {
+					Destroy_connection(ind, "There may only be up to one occurance of the '%' character in your account name.");
+					return(-1);
+				}
+			}
+			/* For skip-motd hack for persistent message log across relogs -
+			   we need to do this here before calling GetAccount() for password verification further below
+			   as that will actually timestamp the account anew (if the password is successfully verified). */
+			connp->laston_real = acc.acc_laston_real;
+			WIPE(&acc, struct account);
+
+			/* Check for forbidden names (swearing): */
+
+			/* Check account name for swearing.. */
+			strcpy(tmp_name, connp->nick);
+			if (handle_censor(tmp_name)) {
+				Destroy_connection(ind, "This account name is not available. Please choose a different name.");
 				return(-1);
 			}
-		}
-
-		if ((res = Check_names(connp->nick, connp->real, connp->host, connp->addr, FALSE)) != SUCCESS) {
-			if (res == E_LETTER)
-				Destroy_connection(ind, "Your accountname must start on a letter (A-Z).");
-			else if (res == E_LENGTH)
-				Destroy_connection(ind, format("Account and character names must be at least %d characters long.", ACC_CHAR_MIN_LEN));
-			else
-				Destroy_connection(ind, "Your accountname, username or hostname contains invalid characters");
-			return(-1);
-		}
-
-		/* Forbid certain special characters for newly created accounts */
-		if (!Admin_GetAccount(&acc, connp->nick)) {
-			char *cp;
-
-			if (strchr(connp->nick, '|')) {
-				Destroy_connection(ind, "Invalid character '|' in your account name.");
+#if 1			/* Check hostname too for swearing? */
+			strcpy(tmp_name_wide, connp->host);
+			if (handle_censor(tmp_name_wide)) {
+				Destroy_connection(ind, format("Your host name is '%s' which is deemed offensive. Please change it.", connp->host));
 				return(-1);
 			}
-			if ((cp = strchr(connp->nick, '$')) && strchr(cp + 1, '$')) {
-				Destroy_connection(ind, "There may only be up to one occurance of the '$' character in your account name.");
-				return(-1);
-			}
-			if ((cp = strchr(connp->nick, '#')) && strchr(cp + 1, '#')) {
-				Destroy_connection(ind, "There may only be up to one occurance of the '#' character in your account name.");
-				return(-1);
-			}
-			if ((cp = strchr(connp->nick, '%')) && strchr(cp + 1, '%')) {
-				Destroy_connection(ind, "There may only be up to one occurance of the '%' character in your account name.");
-				return(-1);
-			}
-		}
-		/* For skip-motd hack for persistent message log across relogs -
-		   we need to do this here before calling GetAccount() for password verification further below
-		   as that will actually timestamp the account anew (if the password is successfully verified). */
-		connp->laston_real = acc.acc_laston_real;
-		WIPE(&acc, struct account);
-
-		/* Check for forbidden names (swearing): */
-
-		/* Check account name for swearing.. */
-		strcpy(tmp_name, connp->nick);
-		if (handle_censor(tmp_name)) {
-			Destroy_connection(ind, "This account name is not available. Please choose a different name.");
-			return(-1);
-		}
-#if 1		/* Check hostname too for swearing? */
-		strcpy(tmp_name_wide, connp->host);
-		if (handle_censor(tmp_name_wide)) {
-			Destroy_connection(ind, format("Your host name is '%s' which is deemed offensive. Please change it.", connp->host));
-			return(-1);
-		}
 #endif
-		/* (Note: since 'real' name is always replaced by "PLAYER", we don't need to check that one for swearing.) */
+			/* (Note: since 'real' name is always replaced by "PLAYER", we don't need to check that one for swearing.) */
 
-		/* Password obfuscation introduced in pre-4.4.1a client or 4.4.1.1 */
-		if (connp->pass && is_newer_than(&connp->version, 4, 4, 1, 0, 0, 0)) {
-			/* Use memfrob for the password - mikaelh */
-			my_memfrob(connp->pass, strlen(connp->pass));
+			/* Password obfuscation introduced in pre-4.4.1a client or 4.4.1.1 */
+			if (connp->pass && is_newer_than(&connp->version, 4, 4, 1, 0, 0, 0)) {
+				/* Use memfrob for the password - mikaelh */
+				my_memfrob(connp->pass, strlen(connp->pass));
+			}
 		}
-	    }
 
 		accfail = FALSE;
 		if ((connp->password_verified || /* <- for "***" reorder hack! Original connp->pass has long been free'd again. */
@@ -4772,7 +4773,7 @@ static int Receive_login(int ind) {
 			return(-1);
 		}
 		Sockbuf_flush(&connp->w);
-		return(0);
+		return(-1);
 
 	} else if (connp->password_verified) { /* we have entered a character name */
 		int check_account_reason = 0, err_Ind;
@@ -4814,23 +4815,6 @@ static int Receive_login(int ind) {
 			return(-1);
 		}
 
-		/* check if player tries to use one of the temporarily reserved character names */
-		for (i = 0; i < MAX_RESERVED_NAMES; i++) {
-			if (!reserved_name_character[i][0]) break;
-			if (strcasecmp(reserved_name_character[i], choice)) continue;
-
-			if (!strcmp(reserved_name_account[i], connp->nick)) {
-				reserved_name_character[i][0] = '\0'; //clear reservation
-				s_printf("Found on reserved names list - passed.\n");
-				took_reservation = TRUE;
-				break;
-			}
-
-			s_printf("Found on reserved names list - unauthorized.\n");
-			Destroy_connection(ind, "Name already in use by another player.");
-			return(-1);
-		}
-
 		/* Forbid certain special characters for newly created characters */
 		if (!lookup_player_id(choice)) {
 			char *cp;
@@ -4851,19 +4835,6 @@ static int Receive_login(int ind) {
 				Destroy_connection(ind, "There may only be up to one occurance of the '%' character in your name.");
 				return(-1);
 			}
-		}
-
-		/* Check if an account name already exists that is too similar to the new character name to be created.
-		   Only for characters that don't exist yet and would be newly created. */
-		if (!lookup_player_id(choice) && lookup_similar_account(choice, connp->nick)
-		    /* exception! reserved character names have priority.
-		       Otherwise someone could create an account meanwhile to block this player's reincarnation.
-		       Actually this happens sometimes, not on purpose, but account name is just sort of similar (need to make checks less strict maybe) */
-		    && !took_reservation
-		    /* Exempt similar-checking for when the character name is exactly the same as his account name - that should always be allowed! */
-		    && strcmp(choice, connp->nick)) {
-			Destroy_connection(ind, "A too similar name exists. Please choose a different name.");
-			return(-1);
 		}
 
 		/* at this point, we are authorised as the owner
@@ -4975,6 +4946,36 @@ static int Receive_login(int ind) {
 			return(-1);
 		}
 
+		/* check if player tries to use one of the temporarily reserved character names */
+		for (i = 0; i < MAX_RESERVED_NAMES; i++) {
+			if (!reserved_name_character[i][0]) break;
+			if (strcasecmp(reserved_name_character[i], choice)) continue;
+
+			if (!strcmp(reserved_name_account[i], connp->nick)) {
+				reserved_name_character[i][0] = '\0'; //clear reservation
+				s_printf("Found on reserved names list - passed, cleared.\n");
+				took_reservation = TRUE;
+				break;
+			}
+
+			s_printf("Found on reserved names list - unauthorized.\n");
+			Destroy_connection(ind, "Name already in use by another player.");
+			return(-1);
+		}
+
+		/* Check if an account name already exists that is too similar to the new character name to be created.
+		   Only for characters that don't exist yet and would be newly created. */
+		if (!lookup_player_id(choice) && lookup_similar_account(choice, connp->nick)
+		    /* exception! reserved character names have priority.
+		       Otherwise someone could create an account meanwhile to block this player's reincarnation.
+		       Actually this happens sometimes, not on purpose, but account name is just sort of similar (need to make checks less strict maybe) */
+		    && !took_reservation
+		    /* Exempt similar-checking for when the character name is exactly the same as his account name - that should always be allowed! */
+		    && strcmp(choice, connp->nick)) {
+			Destroy_connection(ind, "A too similar name exists. Please choose a different name.");
+			return(-1);
+		}
+
 #if 1
 		/* Optional: Additionally check for similar character names? */
 		if (lookup_similar_character(choice, connp->nick)
@@ -4987,7 +4988,6 @@ static int Receive_login(int ind) {
 			return(-1);
 		}
 #endif
-
 
 		Packet_printf(&connp->c, "%c", lookup_player_id(choice) ? SUCCESS : E_NEED_INFO);
 		/* Player now initiated character creation (or picked an existing character).
