@@ -645,7 +645,8 @@ struct cave_type {
 /* Lasting spell effects(clouds, ..) */
 typedef struct effect_type effect_type;
 struct effect_type {
-	s32b who;		/* Who caused this effect (0-id if player) */
+	int who;		/* Who caused this effect, PROJECTOR_xxx, player (-p_ptr->Ind) or monster (m_idx). */
+	s32b who_id;		/* Who caused this effect (0...'p_ptr->id' if player) */
 	worldpos wpos;		/* Where in the world */
 
 	s16b interval;		/* How quickly does it tick (10 = normal, once per 10 frames at 0 ft depth) */

@@ -8756,32 +8756,24 @@ bool is_xorder(struct worldpos *wpos) {
 /*
  * handle spell effects
  */
-static int effect_pop(int who) {
+static int effect_pop(int who_id) {
 	int i, cnt = 0;
 
 	for (i = 1; i < MAX_EFFECTS; i++) { /* effects[0] is not used */
 		if (!effects[i].time) return(i);
-		if (effects[i].who == who) {
-			if (++cnt > MAX_EFFECTS_PLAYER) return(-1);
-		}
+		if (effects[i].who_id != who_id) continue;
+		if (++cnt > MAX_EFFECTS_PLAYER) return(-1);
 	}
 	return(-1);
 }
 
 int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpos, int cy, int cx, int rad, s32b flags) {
-	int i, who2 = who;
-/*	player_type *p_ptr = NULL; */
-#if 0 /* isn't this wrong? */
-	if (who < 0 && who != PROJECTOR_EFFECT)
-		who2 = 0 - Players[0 - who]->id;
-#else
-	if (who < 0 && who > PROJECTOR_UNUSUAL)
-		who2 = 0 - Players[0 - who]->id;
-#endif
+	int i;
+	s32b who_id = 0;
 
-//s_printf("eff %d,%d\n", who, who2);
-	if ((i = effect_pop(who2)) == -1) return(-1);
-//s_printf("eff %d\n", i);
+	if (who < 0 && who > PROJECTOR_UNUSUAL) who_id = Players[0 - who]->id;
+
+	if ((i = effect_pop(who_id)) == -1) return(-1);
 	effects[i].interval = interval;
 	effects[i].type = type;
 	effects[i].dam = dam;
@@ -8790,6 +8782,7 @@ int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpo
 	effects[i].whot = 0;
 	effects[i].cx = cx;
 	effects[i].cy = cy;
+
 	if ((project_time_effect & EFF_VORTEX) && (who < 0 && who > PROJECTOR_UNUSUAL)) {
 		if (target_okay(0 - who)) {
 			effects[i].whot = Players[0 - who]->target_who;
@@ -8807,23 +8800,24 @@ int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpo
 	else if (project_time_effect & EFF_METEOR) {
 		effects[i].whot = PROJECTOR_UNUSUAL; //could be replaced by m_idx for better kill msg
 	}
+
 	effects[i].rad = rad;
-	effects[i].who = who2;
+	effects[i].who = who;
+	effects[i].who_id = who_id;
 	wpcopy(&effects[i].wpos, wpos);
+
 #ifdef ARCADE_SERVER
-if (type == 209)
-{
-msg_broadcast(0, "mh");
-if (flags > 0)
-msg_broadcast(0, "some flags");
-else
-msg_broadcast(0, "no flags");
-}
-/*	if ((flags & EFF_CROSSHAIR_A) || (flags & EFF_CROSSHAIR_B) || (flags & EFF_CROSSHAIR_C))
-	{
-	msg_broadcast(0, "making an effect");
-	player_type *pfft_ptr = Players[interval];
-	pfft_ptr->e = i;
+	if (type == 209) {
+		msg_broadcast(0, "mh");
+		if (flags > 0)
+			msg_broadcast(0, "some flags");
+		else
+			msg_broadcast(0, "no flags");
+	}
+	/*if ((flags & EFF_CROSSHAIR_A) || (flags & EFF_CROSSHAIR_B) || (flags & EFF_CROSSHAIR_C)) {
+		player_type *pfft_ptr = Players[interval];
+		msg_broadcast(0, "making an effect");
+		pfft_ptr->e = i;
 	} */
 #endif
 

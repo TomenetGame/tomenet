@@ -834,7 +834,7 @@ static void apply_effect(int k, int *who, struct worldpos *wpos, int x, int y, c
 		project(*who, 0, wpos, y, x, e_ptr->dam, e_ptr->type, flg, "");
 
 		/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
-		if (*who < 0 && *who != PROJECTOR_EFFECT && *who != PROJECTOR_PLAYER &&
+		if (*who < 0 && *who > PROJECTOR_UNUSUAL &&
 		    Players[0 - *who]->conn == NOT_CONNECTED) {
 			/* Make the effect friendly after death - mikaelh */
 			*who = PROJECTOR_PLAYER;
@@ -880,12 +880,13 @@ static void process_effects(void) {
 	worldpos *wpos;
 	cave_type **zcave;
 	cave_type *c_ptr;
-	int who = PROJECTOR_EFFECT;
+	int who;
 	player_type *p_ptr;
 	monster_type *m_ptr;
 	effect_type *e_ptr;
 	int flg;
 	bool skip;
+	bool is_player;
 
 	for (k = 0; k < MAX_EFFECTS; k++) {
 		e_ptr = &effects[k];
@@ -965,30 +966,37 @@ static void process_effects(void) {
 		/* Reduce duration */
 		e_ptr->time--;
 
-		/* effect belongs to a non-player? */
+		/* effect belongs to a non-player? (Assume unchanging who, aka PROJECTOR_xxx values, not m_idx indices, or we'd have to verify if the monster is actually still alive!) */
 		if (e_ptr->who > 0 || e_ptr->who <= PROJECTOR_UNUSUAL) who = e_ptr->who;
-		else { /* or to a player? */
+		/* or to a player? Confirm his Ind then, in case it meanwhile changed! */
+		else {
+			/* --- At first, assume Ind is no longer valid and replace by PROJECTOR_xxx: --- */
+
 			/* Make the effect friendly after logging out - mikaelh */
 			if (!(e_ptr->flags & EFF_SELF)) who = PROJECTOR_PLAYER;
-			else who = PROJECTOR_EFFECT; /* Make effect harmful to players instead */
+			/* Or make the effect harmful to players instead, if the original projection was harmful too (PROJECT_SELF->EFF_SELF) */
+			else who = PROJECTOR_EFFECT;
 
-			/* XXX Hack -- is the trapper online? */
+			/* --- Now verify player existance and reinstantiate his Ind if valid: --- */
+
+			/* Hack -- is the trapper online? (Why call him 'trapper' specifically?) */
 			for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
 
 				/* Check if they are in here */
-				if (e_ptr->who != 0 - p_ptr->id) continue;
+				if (e_ptr->who_id != p_ptr->id) continue;
 
 				/* additionally check if player left level --
 				   avoids panic save on killing a dungeon boss with a lasting effect while
 				   already having been prematurely recalled to town meanwhile (insta-res!) - C. Blue */
 				if (!inarea(&p_ptr->wpos, wpos)) break;
 
-				/* it's fine */
+				/* it's fine, player still exists here, verify the Ind and proceed */
 				who = 0 - i;
 				break;
 			}
 		}
+		is_player = (who < 0 && who > PROJECTOR_UNUSUAL);
 
 		/* Storm ends if the cause is gone */
 		if (((e_ptr->flags & EFF_STORM) || (e_ptr->flags & EFF_VORTEX))
@@ -1037,15 +1045,14 @@ static void process_effects(void) {
 					project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
 
 					/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
-					if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
-					    Players[0 - who]->conn == NOT_CONNECTED) {
+					if (is_player && Players[0 - who]->conn == NOT_CONNECTED) {
 						/* Make the effect friendly after death - mikaelh */
 						if (!(e_ptr->flags & EFF_SELF)) who = PROJECTOR_PLAYER;
 						else who = PROJECTOR_EFFECT; /* Make effect harmful to players instead */
 					}
 					/* Storms end instantly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
 					if (((e_ptr->flags & EFF_STORM) || (e_ptr->flags & EFF_VORTEX))
-					    && (who == PROJECTOR_PLAYER || Players[0 - who]->death)) {
+					    && (who == PROJECTOR_PLAYER || (is_player && Players[0 - who]->death))) {
 						erase_effects(k);
 						break;
 					}
@@ -1498,15 +1505,14 @@ static void process_effects(void) {
 					project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
 
 					/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
-					if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
-					    Players[0 - who]->conn == NOT_CONNECTED) {
+					if (is_player && Players[0 - who]->conn == NOT_CONNECTED) {
 						/* Make the effect friendly after death - mikaelh */
 						if (!(e_ptr->flags & EFF_SELF)) who = PROJECTOR_PLAYER;
 						else who = PROJECTOR_EFFECT; /* Make effect harmful to players instead */
 					}
 					/* Storms end instantly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
 					if (((e_ptr->flags & EFF_STORM) || (e_ptr->flags & EFF_VORTEX))
-					    && (who == PROJECTOR_PLAYER || Players[0 - who]->death)) {
+					    && (who == PROJECTOR_PLAYER || (is_player && Players[0 - who]->death))) {
 						erase_effects(k);
 						break;
 					}
@@ -1525,7 +1531,10 @@ static void process_effects(void) {
 #endif
 
 			/* We lost our caster for some reason? (Died to projection) */
-			if (!who) break;
+			if (!who) {
+				is_player = FALSE;
+				break;
+			}
 		}
 
 		/* --- Imprint simple non-damaging effects on grid (project() was already called above in the loop).
@@ -1536,7 +1545,7 @@ static void process_effects(void) {
 		if (e_ptr->flags & (EFF_WAVE | EFF_THINWAVE)) e_ptr->rad++;
 
 		/* Creates a "storm" effect*/
-		else if ((e_ptr->flags & EFF_STORM) && who > PROJECTOR_EFFECT) { //todo: the player-checks are paranoia? We already checked this far above
+		else if ((e_ptr->flags & EFF_STORM) && is_player) { //todo: the player-checks are paranoia? We already checked this far above
 			p_ptr = Players[0 - who];
 
 			e_ptr->cy = p_ptr->py;
@@ -1566,7 +1575,7 @@ static void process_effects(void) {
 		}
 
 		/* Maintain a "vortex" effect - Kurzel */
-		else if ((e_ptr->flags & EFF_VORTEX) && who > PROJECTOR_EFFECT) {
+		else if ((e_ptr->flags & EFF_VORTEX) && who > PROJECTOR_EFFECT) {  // TODO: verify this PROJECTOR_EFFECT comparison for correctness
 			e_ptr->rad = 0; //Hack: Fix strange EFF_VORTEX behavior...
 			if (e_ptr->whot > 0) {
 				m_ptr = &m_list[e_ptr->whot];
