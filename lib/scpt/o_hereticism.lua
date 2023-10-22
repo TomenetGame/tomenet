@@ -151,7 +151,7 @@ FIRERES = add_spell {
 	["spell"] = 	function()
 		local dur
 		dur = randint(15) + 20 + get_level(Ind, FIRERES, 25)
-		if get_level(Ind, FIRERES, 50) >= 17 then
+		if get_level(Ind, FIRERES, 50) >= 21 then
 			set_melee_brand(Ind, dur, TBRAND_HELLFIRE, 10, TRUE, TRUE)
 		else
 			set_melee_brand(Ind, dur, TBRAND_FIRE, 10, TRUE, TRUE)
@@ -166,7 +166,7 @@ FIRERES = add_spell {
 	["desc"] = 	{
 		"It temporarily brands your melee weapons with fire.",
 		"At level 7 it grants temporary fire resistance.",
-		"At level 17 the flame turns into hellfire instead.",
+		"At level 21 the flame turns into hellfire instead.",
 	}
 }
 

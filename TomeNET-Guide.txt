@@ -21187,7 +21187,7 @@ All Unlife spells are Wisdom-based.)
 
     Wrathflame      It temporarily brands your melee weapons with fire.
                     Lv  7: Grants temporary fire resistance.
-                    Lv 17: The brand is now hellfire instead of normal fire.
+                    Lv 21: The brand is now hellfire instead of normal fire.
                     Required skill level for first spell level: 8.
 
     Flame Wave      Eradicates critters beneath your notice that dare trifle
