@@ -17147,7 +17147,7 @@ initiation, depending on their alignment. All the changes are listed here:
 
 Enlightened:
     Gain time resistance and they no longer have any need for worldly food.
-    Susceptible to evil-based attacks. Using a demon mimicry form drains mana.
+    Susceptible to evil-based attacks. Using a greater demon form drains mana.
     Able to almost instantly sense curses on items.
     Able to see invisible and resisting light.
     Intrinsic light aura that adds to any light source's radius, starting at +1
@@ -17166,7 +17166,7 @@ Enlightened:
 
 Corrupted:
     Gain time resistance and they no longer have any need for worldly food.
-    Susceptible to good-based attacks. Using a good mimicry form drains mana.
+    Susceptible to good-based attacks. Using an angelic form drains mana.
     Able to take off lightly cursed items.
     Resist fire and darkness.
     +2 bonus HP for each level above 20, up to level 50, then +1 bonus HP
