@@ -17147,7 +17147,7 @@ initiation, depending on their alignment. All the changes are listed here:
 
 Enlightened:
     Gain time resistance and they no longer have any need for worldly food.
-    Susceptible to evil-based attacks. Using an evil mimicry form drains mana.
+    Susceptible to evil-based attacks. Using a demon mimicry form drains mana.
     Able to almost instantly sense curses on items.
     Able to see invisible and resisting light.
     Intrinsic light aura that adds to any light source's radius, starting at +1
