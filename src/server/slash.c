@@ -7998,7 +7998,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					/* search for pending admin notes */
 					if (strcmp(admin_note[i], "")) {
 						/* found a matching note */
-						msg_format(Ind, "\377o%d\377s %s", i, admin_note[i]);
+						msg_format(Ind, "\377o%d\377s%s", i, admin_note[i]);
 					}
 				}
 				return;
