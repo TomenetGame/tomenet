@@ -9226,10 +9226,10 @@ void player_death(int Ind) {
 					}
 				}
 				if (k) { /* usual */
-					msg_broadcast_format(0, "\376\377A** %s has defeated %s! **", m_name_extra, p_ptr->name);
+					msg_broadcast_format(0, "\374\377A** %s has defeated %s! **", m_name_extra, p_ptr->name);
 					s_printf("EVENT_RESULT: %s has defeated %s (%d) (%d damage).\n", m_name_extra, p_ptr->name, p_ptr->lev, p_ptr->deathblow);
 				} else { /* can happen if monster dies first, then player dies to monster DoT */
-					msg_broadcast_format(0, "\376\377A** %s didn't survive! **", p_ptr->name);
+					msg_broadcast_format(0, "\374\377A** %s didn't survive! **", p_ptr->name);
 					s_printf("EVENT_RESULT: %s (%d) was defeated (%d damage).\n", p_ptr->name, p_ptr->lev, p_ptr->deathblow);
 				}
 				recall_player(Ind, "\377oYou die.. at least it felt like you did..!");
