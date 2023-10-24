@@ -3599,7 +3599,7 @@ void calc_boni(int Ind) {
 			p_ptr->resist_time = TRUE; csheet_boni[14].cb[3] |= CB4_RTIME;
 
 			/* Uncomfortable with evil forms */
-			if (p_ptr->body_monster && (r_ptr->flags3 & RF3_EVIL)) p_ptr->drain_mana++;
+			if (p_ptr->body_monster && (r_ptr->flags3 & RF3_DEMON)) p_ptr->drain_mana++;
 			break;
 		case TRAIT_CORRUPTED:
 			if (p_ptr->lev >= 20) csheet_boni[14].cb[6] |= CB7_IFOOD;
