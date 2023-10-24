@@ -3547,7 +3547,7 @@ void do_cmd_knowledge_traps(int Ind) {
 }
 
 /*
- * Display motd, same as /motd command
+ * Display motd, same as /motd command, but as a file, invoked from ~ knowledge menu.
  */
 void show_motd2(int Ind) {
 	player_type *p_ptr = Players[Ind];
@@ -3567,7 +3567,7 @@ void show_motd2(int Ind) {
 	/* Scan the lines */
 	for (k = 0; k < MAX_ADMINNOTES; k++) {
 		if (!strcmp(admin_note[k], "")) continue;
-		fprintf(fff, "\375\377sMotD: %s\n", admin_note[k]);
+		fprintf(fff, "\377s %s\n", admin_note[k]);
 		shown = TRUE;
 	}
 	fprintf(fff, "\n");

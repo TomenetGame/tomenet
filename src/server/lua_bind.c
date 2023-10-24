@@ -564,11 +564,18 @@ void lua_del_anotes(void) {
 }
 void lua_broadcast_motd(void) {
 	int p, i;
+	bool first = TRUE;
 
-	for (i = 0; i < MAX_ADMINNOTES; i++)
-		if (strcmp(admin_note[i], ""))
+	for (i = 0; i < MAX_ADMINNOTES; i++) {
+		if (!strcmp(admin_note[i], "")) continue;
+		if (first) {
+			first = FALSE;
 			for (p = 1; p <= NumPlayers; p++)
-				msg_format(p, "\375\377sMotD: %s", admin_note[i]);
+				msg_print(p, "\375\377sMotD:");
+		}
+		for (p = 1; p <= NumPlayers; p++)
+			msg_format(p, "\375\377s %s", admin_note[i]);
+	}
 
 	if (server_warning[0])
 		for (p = 1; p <= NumPlayers; p++)

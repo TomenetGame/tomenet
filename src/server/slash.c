@@ -2675,11 +2675,16 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 		}
 		else if (prefix(messagelc, "/snotes") ||
-			prefix(messagelc, "/motd")) { /* same as /anotes for admins basically */
+		    prefix(messagelc, "/motd")) { /* same as /anotes for admins basically */
+			bool first = TRUE;
+
 			for (i = 0; i < MAX_ADMINNOTES; i++) {
-				if (strcmp(admin_note[i], "")) {
-					msg_format(Ind, "\375\377sMotD: %s", admin_note[i]);
+				if (!strcmp(admin_note[i], "")) continue;
+				if (first) {
+					first = FALSE;
+					msg_print(Ind, "\375\377sMotD:");
 				}
+				msg_format(Ind, "\375\377s %s", admin_note[i]);
 			}
 			if (server_warning[0]) msg_format(Ind, "\377R*** Note: %s ***", server_warning);
 			return;
@@ -7993,7 +7998,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					/* search for pending admin notes */
 					if (strcmp(admin_note[i], "")) {
 						/* found a matching note */
-						msg_format(Ind, "\377o(#%d)- %s", i, admin_note[i]);
+						msg_format(Ind, "\377o%d\377s %s", i, admin_note[i]);
 					}
 				}
 				return;
@@ -8054,10 +8059,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				} else msg_format(Ind, "\377oSorry, the server reached the maximum of %d pending admin notes.", MAX_ADMINNOTES);
 				return;
 			}
-			else if (prefix(messagelc, "/broadcast-anotes")) { /* Display all admin notes to all players NOW! :) */
-				for (i = 0; i < MAX_ADMINNOTES; i++)
-					if (strcmp(admin_note[i], ""))
-						msg_broadcast_format(0, "\377sGlobal Admin Note: %s", admin_note[i]);
+			else if (prefix(messagelc, "/broadcast-motd")) { /* Display all admin notes aka motd, plus any shutrec-warning, to all players. */
+				lua_broadcast_motd();
 				return;
 			}
 			else if (prefix(messagelc, "/swarn")) { /* Send a global server warning everyone */

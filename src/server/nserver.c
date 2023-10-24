@@ -3038,7 +3038,7 @@ static int Handle_login(int ind) {
 	char msgbuf[80], o_name[ONAME_LEN];
 	cptr title = "";
 	char traffic[50 + 1];
-	bool newly_created_msg = FALSE;
+	bool newly_created_msg = FALSE, first = TRUE;
 
 	if (Id >= MAX_ID) {
 		errno = 0;
@@ -3167,8 +3167,12 @@ static int Handle_login(int ind) {
 	   To handle this we check if the time between relogging is < 1 minute, and in that case skip the motd (aka admin-notes). */
 	if (time(NULL) - connp->laston_real >= 60 || acc_get_runtime(p_ptr->accountname) != runtime_server)
 	for (i = 0; i < MAX_ADMINNOTES; i++) {
-		if (strcmp(admin_note[i], ""))
-			msg_format(NumPlayers, "\375\377sMotD: %s", admin_note[i]);
+		if (!strcmp(admin_note[i], "")) continue;
+		if (first) {
+			first = FALSE;
+			msg_print(NumPlayers, "\375\377sMotD:");
+		}
+		msg_format(NumPlayers, "\375\377s %s", admin_note[i]);
 	}
 	/* Hack: In case no message at all is sent, client will not call fix_message() in that case to re-display the old messages, instead leaving the window blank.
 	   We prevent that by this hack that causes the (4.7.3+) clients to call fix_message() to ensure 'reinit' of all message windows after a relog. */
