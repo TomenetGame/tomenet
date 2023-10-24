@@ -1,8 +1,8 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 21. October 2023 - written by C. Blue (c_blue@gmx.net)    |
-| for TomeNET version v4.9.0c - official websites are:                     :
+| Latest update: 24. October 2023 - written by C. Blue (c_blue@gmx.net)    |
+| for TomeNET version v4.9.1 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
 | Runes & Runemastery sections by Kurzel (kurzel.tomenet@gmail.com)
@@ -17147,9 +17147,9 @@ initiation, depending on their alignment. All the changes are listed here:
 
 Enlightened:
     Gain time resistance and they no longer have any need for worldly food.
+    Susceptible to evil-based attacks. Using an evil mimicry form drains mana.
     Able to almost instantly sense curses on items.
-    Able to see invisible and resisting light, while being susceptible to
-    evil-based attacks.
+    Able to see invisible and resisting light.
     Intrinsic light aura that adds to any light source's radius, starting at +1
     and growing by +1 every 6 levels above 20.
     +1 bonus AC for every 2 levels above 20 (caps at 50).
@@ -17166,8 +17166,9 @@ Enlightened:
 
 Corrupted:
     Gain time resistance and they no longer have any need for worldly food.
+    Susceptible to good-based attacks. Using a good mimicry form drains mana.
     Able to take off lightly cursed items.
-    Resist fire and darkness while being susceptible to good-based attacks.
+    Resist fire and darkness.
     +2 bonus HP for each level above 20, up to level 50, then +1 bonus HP
     for each level above 50.
     At level 50 they will become resistant to poison, immune to fire, and
