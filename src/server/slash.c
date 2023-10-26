@@ -337,6 +337,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 #ifdef TEST_SERVER
 	/* All slash commands have admin-status by default */
+	if (!p_ptr->inval) /* Simple safety check, just so new players cannot obtain DM status completely on their own on a test server */
 	admin = TRUE;
 #endif
 	/* Deliberately use non-admin slash commands as an admin by prefixing them with '!', eg '/!rec' */
