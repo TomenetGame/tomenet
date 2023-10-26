@@ -2679,7 +2679,7 @@ Ironman     This typically describes a gameplay scenario where you cannot
                diving experience, be it solo or in a party.
                For details about its ruleset see (4.13).
 
-kinging     The process of beating Morgoth, the game boss, and thereby
+Kinging     The process of beating Morgoth, the game boss, and thereby
             acquiring a royal title (king/queen/emperor/empress).
             Such player characters are also referred to as 'winners'.
             A player must be at least level 40 to get credit for beating
@@ -2840,7 +2840,7 @@ Randart     Randomly generated artifact. As opposed to 'Truearts' which are
             this section for more information.
             See (5.9b) for more information about artifacts.
 
-rekinging   Fallen winners, ie players who beat Morgoth but later on died and
+Rekinging   Fallen winners, ie players who beat Morgoth but later on died and
             thereby lost their royal title again, can attempt to regain it by
             teaming up with someone who has not yet defeated Morgoth.
             The player who has NOT yet killed Morgoth (check ~ 3 b to verify)
@@ -2857,7 +2857,7 @@ Res         Resistance.
 RFE         A request for enhancement, ie a suggestion, that players can send
             to the game admins using the "/rfe" command.
 
-rll         Restore Life Levels. A potion (can be bought in the temple) or
+RLL         Restore Life Levels. A potion (can be bought in the temple) or
             magic that will restore drained experience points. (If drained xp
             can be restored this will be indicated by a yellow XP bar/value).
 
@@ -3217,59 +3217,8 @@ Khamul the Black Easterling and The Witch-King of Angmar.
 Morgoth has the ability to summon these, so you should destroy them all
 before facing him.
 
-Morgoth is also able to summon other powerful unique beings, so one of your
-tasks to prevail against him will be to kill off as many of the powerful unique
-foes as you can before facing him.
-
-Morgoth, the god of destruction, has reinforced his surroundings to be
-especially devastating to all living beings:
-If you get killed on a level where Morgoth, Lord of Darkness walks, your
-ghost will be destroyed too, even if you are everlasting! Beware! Even after
-Morgoth is no longer there the floor will still keep this deadly property.
-You will get a floor feeling warning you whenever you enter a floor where
-Morgoth resides, see (4.8).
-Note that on a floor where Morgoth currently resides, all vaults will turn into
-no-teleport vaults.
-
-If you team up against him, he will grow stronger for every additional player
-who enters his dungeon level. Growing stronger in fact means that he gains a
-hit point and speed bonus. If a player leaves his level, he will weaken again.
-See the following paragraph (1.3b) for more information.
-
-When a player lands the killing blow on Morgoth, everyone else who is in the
-same party will get credit for winning the game too and receive a royal title
-accordingly, provided the player is currently on the actual dungeon floor where
-Morgoth falls of course. Note that for Morgoth the partied players don't need
-to be within the usual 7 character levels of each other to get kill credit.
-Even 'fallen winners' (players who have beaten Morgoth already but lost their
-royal title to death) can regain their title this way - by partying up with
-someone who hasn't defeated Morgoth yet and making sure that that player lands
-the killing blow.
-However: Each player must be at least level 40 to get credit for beating
-Morgoth and obtaining the royal title accordingly!
-A new (experimental) way to obtain a lost royal title again is to donate and
-pray in 'The Mirror' in Lothlorien, see (4.5a) for details.
-
-Morgoth always drops his crown and hammer. If he is defeated by a party, he
-will drop exactly one crown and one hammer per party member, so everyone in the
-party can get both items.
-In addition to Crowns, Hammers and a bunch of random loot, he will also drop
-specifically one additional random 'great' item per player in the party which
-defeated him (similar to items obtained by Acquirement scrolls, but with an
-even higher chance to turn out quite expensive). If it was just a solo player
-he will receive one such item.
-For _unworldy_ parties that defeat him, there are further special drops added:
-For a party of at least 2 players, an extra randart will drop.
-For a party of at least 3 players, he will even - for each player above 2 -
-drop one scroll of Artifact Creation. So 3 players -> 1 scroll, 4 -> 2, etc.
-These party rewards require the appropriate number of players to be all present
-on the floor when he is defeated, of course.
-Note that everlasting parties are already rewarded indirectly by obtaining the
-possibility for easy "rekinging", as only the player who gets the final blow
-will get the actual kill credit, meaning that the other players can still make
-Morgoth spawn again, should the need arise to regain their royal titles,
-without having to resort to donating at "The Mirror" (compare (4.5a)).
-
+About Nazgul:
+-------------
 A very dangerous thing about the Nazgul is that weapons get quickly destroyed
 if they come in contact with these corrupted beings.
 If you are a spell-caster who doesn't use his weapon to fight but just to
@@ -3327,6 +3276,8 @@ will always provide invisibility (5.14) and experience drain (5.16). They are
 also always heavily cursed, cannot be dropped while cursed, and can re-curse
 themselves (5.12).
 
+About Sauron:
+-------------
 In order to find Morgoth, players have to defeat Sauron, the Sorceror first,
 Morgoth's servant, who dwells at the bottom of Mount Doom. A player must get
 the killing blow on Sauron to get kill credit, so if you are in a party of
@@ -3334,12 +3285,77 @@ several players who all haven't killed him yet, you must seek him out multiple
 times for every single party member who then has to get the last hit to get the
 kill credited.
 
-For more information about encountering Morgoth, see next paragraph (1.3b).
 It is noteworthy that Sauron is able to boost his own spell-casting speed for
 as long as he finds himself or the area around his target blocked by Glyphs of
 Warding (also called Runes of Protection).
 Also, he might try to avoid going into melee range of players who he deems good
 at close quarters combat. In general, do not underestimate Sauron's power!
+
+About Morgoth:
+--------------
+Morgoth, the god of destruction, has reinforced his surroundings to be
+especially devastating to all living beings:
+If you get killed on a level where Morgoth, Lord of Darkness walks, your
+ghost will be destroyed too, even if you are everlasting! Beware! Even after
+Morgoth is no longer there the floor will still keep this deadly property.
+You will get a floor feeling warning you whenever you enter a floor where
+Morgoth resides, see (4.8).
+Note that on a floor where Morgoth currently resides, all vaults will turn into
+no-teleport vaults.
+
+Morgoth is also able to summon other powerful unique beings, so one of your
+tasks to prevail against him will be to kill off as many of the powerful unique
+foes as you can before facing him, including of course all his Nazgul.
+
+When a player lands the killing blow on Morgoth, everyone else who is in the
+same party and on the dungeon floor where and when Morgoth dies, will get
+credit for winning the game too and receive a royal title accordingly, this is
+often dubbed 'kinging' and the players are also dubbed 'winners'.
+Note that for Morgoth the partied players don't need to be within the usual 7
+character levels of each other to get kill credit.
+Even 'fallen winners' (players who have beaten Morgoth already but lost their
+royal title to death) can regain their title this way - by partying up with
+someone who hasn't defeated Morgoth yet and making sure that that player lands
+the killing blow.
+However: Each player must be at least level 40 to get credit for beating
+Morgoth and obtaining the royal title accordingly!
+A new (experimental) way to obtain a lost royal title again is to donate and
+pray in 'The Mirror' in Lothlorien, see (4.5a) for details.
+
+In addition to some random loot, Morgoth always drops his crown and hammer.
+Both of which cannot be worn by players without royal title. Attempting to
+wear the crown without title will even instantly kill the player!
+
+Morgoth scaling with player team size:
+--------------------------------------
+If you team up against him, he will grow stronger for every additional player
+who enters his dungeon level. Growing stronger in fact means that he gains a
+hit point bonus of +2/3 of his base HP, and a +6 speed bonus, for each extra
+player after the first one. His base HP is 30000 HP, so for example for a party
+of two players he gains an extra +20000 HP and +6 speed.
+If a player leaves his level, he will weaken again.
+
+If he is defeated by a party, he will drop exactly one crown and one hammer
+per party member, so everyone in the party can get both items.
+In addition to Crowns, Hammers and a bunch of random loot, he will also drop
+specifically one additional random 'great' item per player in the party which
+defeated him (similar to items obtained by Acquirement scrolls, but with an
+even higher chance to turn out quite expensive). If it was just a solo player
+he will receive one such item.
+For _unworldy_ parties that defeat him, there are further special drops added:
+For a party of at least 2 players, an extra randart will drop.
+For a party of at least 3 players, he will even - for each player above 2 -
+drop one scroll of Artifact Creation. So 3 players -> 1 scroll, 4 -> 2, etc.
+These party rewards require the appropriate number of players to be all present
+on the floor when he is defeated, of course.
+Note that everlasting parties are already rewarded indirectly by obtaining the
+possibility for easy "rekinging", as only the player who gets the final blow
+will get the actual kill credit, meaning that the other players can still make
+Morgoth spawn again, should the need arise to regain their royal titles,
+without having to resort to donating at "The Mirror" (compare (4.5a)).
+For more information about encountering Morgoth, see next paragraph (1.3b).
+
+See the following paragraph (1.3b) for more information on Morgoth.
 
 
 (1.3b) How to encounter the final boss: Morgoth, Lord of Darkness
@@ -3358,8 +3374,9 @@ at close quarters combat. In general, do not underestimate Sauron's power!
 -If more than one player is on his floor, he will be a bit thougher than he
  appears to a solo player, depending on the number of players facing him.
  In details, for each additional player besides the first player joining his
- level, Morgoth gains +20000 hit points and +6 speed. So if a team of three
- challenges him, he will have 30000+2*20000 = 70000 HP and 30+2*6 = 42 speed.
+ level, Morgoth (assuming his defined base HP is 30000) gains +20000 hit points
+ (ie +2/3 of his base HP) and +6 speed. So if a team of three challenges him,
+ he will have 30000 + 2 * 20000 = 70000 HP and 30 + 2 * 6 = 42 speed.
  Everyone who is at least level 40 and on the same dungeon floor and in the
  same party as the player who lands the killing blow will get credit for
  winning the game and receive a royal title accordingly.
@@ -3374,7 +3391,7 @@ at close quarters combat. In general, do not underestimate Sauron's power!
  You will get a floor feeling to warn you of this whenever you enter a floor
  where Morgoth resides on, see (4.8).
 
-See (1.3a) for more information about Morgoth.
+(Also see (1.3a) for more information about Morgoth.)
 
 There are rumours of even more powerful beings than the Lord Of Darkness.
 Kings and Queens who seek new challenges shall try to enter the Cloud Planes
