@@ -8823,7 +8823,7 @@ static void display_diz_death(int Ind) {
 
 	if (streq(p_ptr->died_from, "It") ||
 	    streq(p_ptr->died_from, "insanity") ||
-	    streq(p_ptr->died_from, "poison") || streq(p_ptr->died_from, "disease")
+	    streq(p_ptr->died_from, "poison") || streq(p_ptr->died_from, "disease") || streq(p_ptr->died_from, "a fatal wound")
 	    || streq(p_ptr->died_from, "indecisiveness")
 	    || streq(p_ptr->died_from, "indetermination")
 	    || streq(p_ptr->died_from, "starvation")
