@@ -3060,7 +3060,7 @@ void init_guide(void) {
 		guide_errno = errno;
 		if (errno == ENOENT) {
 			c_msg_format("\377yThe file TomeNET-Guide.txt wasn't found in your TomeNET folder.");
-			c_message_add("\377y Try updating it with the TomeNET-Updater or download it manually.");
+			c_message_add("\377y Try updating it via =U or the TomeNET-Updater or download it manually.");
 		} else c_msg_format("\377yThe file TomeNET-Guide.txt couldn't be opened from your TomeNET folder (%d).", errno);
 		return;
 	}
@@ -3128,7 +3128,7 @@ void init_guide(void) {
 	/* empty file? */
 	if (guide_lastline == -1) {
 		c_message_add("\377yThe file TomeNET-Guide.txt seems to be empty.");
-		c_message_add("\377y Try updating it with the TomeNET-Updater or download it manually.");
+		c_message_add("\377y Try updating it via =U or the TomeNET-Updater or download it manually.");
 		return;
 	}
 
