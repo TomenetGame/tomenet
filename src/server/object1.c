@@ -5348,7 +5348,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 				if (!get_skill(pt_ptr, SKILL_ANTIMAGIC)) {
 					byte chance, permille;
 
-					chance = activate_magic_device_chance(pt_ptr->Ind, o_ptr, &permille);
+					chance = activate_magic_device_chance(pt_ptr->Ind, o_ptr, &permille, is_magic_device(o_ptr->tval) && slot == INVEN_WIELD);
 					if (chance == 99) fprintf(fff, "\377WYou have a 99.%d%% chance to successfully activate this magic device.\n", permille);
 					else fprintf(fff, "\377WYou have a %d%% chance to successfully activate this magic device.\n", chance);
 				} else
@@ -6045,7 +6045,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		if (!get_skill(pt_ptr, SKILL_ANTIMAGIC)) {
 			byte chance, permille;
 
-			chance = activate_magic_device_chance(p_ptr->Ind, o_ptr, &permille);
+			chance = activate_magic_device_chance(p_ptr->Ind, o_ptr, &permille, is_magic_device(o_ptr->tval) && slot == INVEN_WIELD);
 			if (chance == 99) fprintf(fff, "\377WYou have a 99.%d%% chance to successfully activate this magic device.\n", permille);
 			else fprintf(fff, "\377WYou have a %d%% chance to successfully activate this magic device.\n", chance);
 		} else

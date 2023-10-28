@@ -9211,8 +9211,8 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 	return(chance);
 }
 
-/* just for display purpose, return an actual average percentage value */
-int activate_magic_device_chance(int Ind, object_type *o_ptr, byte *permille) {
+/* just for display purpose, return an actual average percentage value. ('bonus' is for WIELD_DEVICES.) */
+int activate_magic_device_chance(int Ind, object_type *o_ptr, byte *permille, bool bonus) {
 	int chance = magic_device_base_chance(Ind, o_ptr);
 
 	if (o_ptr->tval == TV_RUNE) return(chance); // Hack: Rune Boni - Kurzel
@@ -9227,6 +9227,7 @@ int activate_magic_device_chance(int Ind, object_type *o_ptr, byte *permille) {
 	/* 100% possible to reach: */
 	*permille = (1000 - ((USE_DEVICE - 1) * 1000) / chance + (chance * 10) / 11) % 10;
 	chance = 100 - ((USE_DEVICE - 1) * 100) / chance + chance / 11;
+	if (bonus) chance += 30; //WIELD_DEVICES flat bonus for wands/staves/rods
 	if (chance >= 100) {
 		chance = 100;
 		*permille = 0;
@@ -9238,10 +9239,10 @@ int activate_magic_device_chance(int Ind, object_type *o_ptr, byte *permille) {
 	return(chance);
 }
 
-bool activate_magic_device(int Ind, object_type *o_ptr) {
+bool activate_magic_device(int Ind, object_type *o_ptr, bool bonus) {
 	player_type *p_ptr = Players[Ind];
 	byte permille;
-	int chance = activate_magic_device_chance(Ind, o_ptr, &permille);
+	int chance = activate_magic_device_chance(Ind, o_ptr, &permille, bonus);
 
 	if (o_ptr->tval == TV_RUNE) return(magik(chance));
 

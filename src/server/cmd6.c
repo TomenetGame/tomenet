@@ -3827,7 +3827,7 @@ void do_cmd_use_staff(int Ind, int item) {
 	/* Not identified yet */
 	ident = FALSE;
 
-	if (!activate_magic_device(Ind, o_ptr)) {
+	if (!activate_magic_device(Ind, o_ptr, is_magic_device(o_ptr->tval) && item == INVEN_WIELD)) {
 		msg_format(Ind, "\377%cYou failed to use the staff properly." , COLOUR_MD_FAIL);
 #ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
@@ -4126,7 +4126,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 		return;
 	}
 
-	if (!activate_magic_device(Ind, o_ptr)) {
+	if (!activate_magic_device(Ind, o_ptr, is_magic_device(o_ptr->tval) && item == INVEN_WIELD)) {
 		msg_format(Ind, "\377%cYou failed to use the wand properly." , COLOUR_MD_FAIL);
 #ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
@@ -4772,7 +4772,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 		return;
 	}
 
-	if (!activate_magic_device(Ind, o_ptr)) {
+	if (!activate_magic_device(Ind, o_ptr, is_magic_device(o_ptr->tval) && item == INVEN_WIELD)) {
 		msg_format(Ind, "\377%cYou failed to use the rod properly." , COLOUR_MD_FAIL);
 #ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
@@ -5045,7 +5045,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	}
 
 	/* Roll for usage */
-	if (!activate_magic_device(Ind, o_ptr)) {
+	if (!activate_magic_device(Ind, o_ptr, is_magic_device(o_ptr->tval) && item == INVEN_WIELD)) {
 		msg_format(Ind, "\377%cYou failed to use the rod properly." , COLOUR_MD_FAIL);
 #ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
@@ -5840,7 +5840,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			}
 		}
 #endif
-	} else if (!activate_magic_device(Ind, o_ptr)) {
+	} else if (!activate_magic_device(Ind, o_ptr, FALSE)) {
 		msg_format(Ind, "\377%cYou failed to activate it properly.", COLOUR_MD_FAIL);
 #ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);

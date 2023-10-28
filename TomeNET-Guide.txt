@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 24. October 2023 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 28. October 2023 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.1 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -22667,6 +22667,34 @@ Equippable items and true artifacts may have higher levels in general, but are
 actually much easier to activate than normal magic devices. (For true artifacts
 their base level from a_info.txt counts, ie what is displayed at
 'Found around depth:' in ~6.)
+
+Experimental Quirk: Wielding a magic device
+-------------------------------------------
+Depending on the server settings, an experimental quirk might be enabled:
+You can 'w' (wield) a wand, staff or rod like a 2-handed weapon. Such an
+equipped device will not count as melee weapon, so any melee combat you engage
+in will work exactly as if you were fighting bare-handed (and martial arts
+skills won't be applied).
+
+The device will receive some boni when you use it. Usually:
+ - 30% increased activation chance, flat on top of your usual, final chance.
+
+ - 20% chance to actually retain the charge/energy of the device instead of
+   spending it, but at the cost of your own MP.
+   The cost depends on the item k-level (at least 1 MP), if you don't have
+   enough MP then you will not retain the charge/energy.
+
+If you have duplicates of a device, both in your inventory and equipped, then
+the equipped and therefore boosted version will take precedence.
+
+This quirk might be useful for certain lower level characters, but might lose
+its appeal at higher levels where you find other powerful items to wield
+instead, such as highly enchanted mage staves or weapons.
+
+As this quirk is classified as 'experimental', the effects might be subject
+to change, which will probably appear as a note in the message of the day (~f).
+
+You might need a client of version greater than 4.9.0c to use this quirk.
 
 
 

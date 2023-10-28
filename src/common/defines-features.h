@@ -373,6 +373,7 @@
 #define WIELD_BOOKS
 /* Allow wielding magic devices: Wands, Staves, Rods, in the manner of WIELD_BOOKS?
    Boni:
+    30% reduced fail chance, flat on top,
     20% chance to retain the charge/energy at the cost of MP (depending on the device level). */
 #define WIELD_DEVICES
 
