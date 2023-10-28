@@ -158,8 +158,13 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 			cave_type **zcave;
 
 			if (!(zcave = getcave(wpos))) return(TRUE); //paranoia
-			if (zcave[y][x].feat == FEAT_ICE_WALL) { //100% chance for now, beats fire magic o_O
-				if (who < 0 && who > PROJECTOR_UNUSUAL) msg_print(-who, "The ice wall melts.");
+			if (zcave[y][x].feat == FEAT_ICE_WALL) {
+				if (!rand_int(3)) {
+					if (who < 0 && who > PROJECTOR_UNUSUAL) msg_print(-who, "The ice wall melts.");
+					cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
+				}
+			} else if (zcave[y][x].feat == FEAT_ICE) {
+				if (who < 0 && who > PROJECTOR_UNUSUAL) msg_print(-who, "The ice melts.");
 				cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
 			}
 		}
@@ -4471,8 +4476,13 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			cave_set_feat_live(wpos, y, x, FEAT_DIRT);
 		break;
 
+	case GF_COLD:
 	case GF_ICE:
 	case GF_ICEPOISON:
+		/* misc flavour: turn shallow water into ice? */
+		if (((c_ptr->feat == FEAT_SHAL_WATER) || (c_ptr->feat == FEAT_TAINTED_WATER)) && rand_int(10 + dam / 100) > 7) cave_set_feat_live(wpos, y, x, FEAT_ICE);
+		if (typ == GF_COLD) break;
+		//fall through
 	case GF_SHARDS:
 	case GF_FORCE:
 		if (!allow_terraforming(wpos, FEAT_TREE)) break;
@@ -4485,7 +4495,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Light up oil patches! */
 		if (c_ptr->slippery >= 1000) light_oil(zcave, wpos, x, y, 0);
 		break;
-	case GF_COLD:
 	case GF_SOUND:
 	case GF_MANA: /* <- no web/flower destructing abilities at this time? :-p */
 	case GF_HOLY_ORB:
@@ -4554,20 +4563,25 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (c_ptr->slippery >= 1000) light_oil(zcave, wpos, x, y, 0);
 
 		if (!allow_terraforming(wpos, FEAT_TREE)) break;
-		/* Holy Fire doesn't destroy trees! */
-		/* spider webs (Cirith Ungol!) */
-		if (c_ptr->feat == FEAT_WEB)
-			cave_set_feat_live(wpos, y, x, FEAT_ASH);
 
-		if (c_ptr->feat == FEAT_DEAD_TREE) { //dead trees only^^
+		switch (c_ptr->feat) {
+		/* Holy Fire doesn't destroy trees! */
+		case FEAT_WEB: /* spider webs (Cirith Ungol!) */
+			cave_set_feat_live(wpos, y, x, FEAT_ASH);
+			break;
+		case FEAT_DEAD_TREE: //dead trees only^^
 			/* Destroy the tree */
 			cave_set_feat_live(wpos, y, x, FEAT_ASH);
-		}
-
+			break;
 #if 1		/* FEAT_ICE_WALL are tunneable, so probably no harm in making them meltable too */
-		if (c_ptr->feat == FEAT_ICE_WALL && !rand_int((410 - (dam < 370 ? dam : 370)) / 4))
-			cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
+		case FEAT_ICE_WALL:
+			if (!rand_int((410 - (dam < 370 ? dam : 370)) / 4)) cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
+			break;
+		case FEAT_ICE:
+			if (!rand_int((610 - (dam < 370 ? dam : 370)) / 120)) cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
+			break;
 #endif
+		}
 		break;
 
 	case GF_HAVOC:
@@ -4582,10 +4596,12 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (c_ptr->slippery >= 1000) light_oil(zcave, wpos, x, y, 0);
 
 		if (!allow_terraforming(wpos, FEAT_TREE)) break;
+
+		switch (c_ptr->feat) {
 		/* Destroy trees */
-		if (c_ptr->feat == FEAT_TREE ||
-		    c_ptr->feat == FEAT_BUSH ||
-		    c_ptr->feat == FEAT_DEAD_TREE) {
+		case FEAT_TREE:
+		case FEAT_BUSH:
+		case FEAT_DEAD_TREE:
 #if 0 /* no need for message spam maybe - and spot is note'd in cave_set_feat_live already */
 			/* Hack -- special message */
 			if (!quiet && player_can_see_bold(Ind, y, x)) {
@@ -4628,23 +4644,34 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				//spammy- s_printf("CHEMICAL: %s found charcoal (feat).\n", p_ptr->name);
 			}
 #endif
-		}
+			break;
 
 		/* Burn grass, spider webs (Cirith Ungol!) and more.. */
-		if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_IVY ||
-		    c_ptr->feat == FEAT_WEB ||
-		    c_ptr->feat == FEAT_CROP || c_ptr->feat == FEAT_FLOWER /* :( */)
+		case FEAT_GRASS:
+		case FEAT_IVY:
+		case FEAT_WEB:
+		case FEAT_CROP:
+		case FEAT_FLOWER: /* :( */
 			cave_set_feat_live(wpos, y, x, FEAT_ASH);
+			break;
 
 		/* misc flavour: turn mud to dirt and/or shallow water into nothing (steam)? */
-		if (c_ptr->feat == FEAT_MUD && rand_int(10 + dam / 100) > 7) cave_set_feat_live(wpos, y, x, FEAT_DIRT);
-		if (c_ptr->feat == FEAT_SHAL_WATER && rand_int(10 + dam / 100) > 7) cave_set_feat_live(wpos, y, x, FEAT_MUD);
-
+		case FEAT_MUD:
+			if (rand_int(10 + dam / 100) > 7) cave_set_feat_live(wpos, y, x, FEAT_DIRT);
+			break;
+		case FEAT_SHAL_WATER:
+			if (rand_int(10 + dam / 100) > 7) cave_set_feat_live(wpos, y, x, FEAT_MUD);
+			break;
 #if 1
 		/* FEAT_ICE_WALL are tunneable, so probably no harm in making them meltable too */
-		if (c_ptr->feat == FEAT_ICE_WALL && !rand_int((410 - (dam < 370 ? dam : 370)) / 4))
-			cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
+		case FEAT_ICE_WALL:
+			if (!rand_int((410 - (dam < 370 ? dam : 370)) / 4)) cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
+			break;
+		case FEAT_ICE:
+			if (!rand_int((610 - (dam < 370 ? dam : 370)) / 120)) cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
+			break;
 #endif
+		}
 		break;
 
 	/* Destroy locks and traps */
