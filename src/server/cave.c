@@ -7296,10 +7296,7 @@ void map_area(int Ind) {
 }
 
 /* Mindcrafter's magic mapping spell - C. Blue */
-/* This spell's behaviour:
-   easy, old: like magic mapping, combined with short-time esp
-   good, new: like magic mapping, without any esp */
-#define MML_NEW
+#define NO_LITE_SPOT /* This is apparently required for some player(s) or they get d/c'ed from too many detected grids (Nether Realm) */
 void mind_map_level(int Ind, int pow) {
 	player_type *p_ptr = Players[Ind];
 	int m, y, x, rad;
@@ -7351,7 +7348,7 @@ void mind_map_level(int Ind, int pow) {
 		if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
 
 		/* sleeping */
-//hypnosis yay		if (m_ptr->csleep) continue;
+		//hypnosis yay		if (m_ptr->csleep) continue;
 
 		/* no mind */
 		if ((r_ptr->flags9 & RF9_IM_PSI) ||
@@ -7387,46 +7384,18 @@ void mind_map_level(int Ind, int pow) {
 				}
 			}
 
-#if 0 /* like wiz-lite? */
- #if 1 /* should be enabled too if CAVE_MARK below is enabled.. */
-			/* perma-lite grid? */
-			c_ptr->info |= (CAVE_GLOW);
- #endif
- #if 1
-			/* Process all non-walls */
-			//if (c_ptr->feat < FEAT_SECRET)
-			{
-				/* Memorize normal features */
-//				if (c_ptr->feat > FEAT_INVIS)
-				if (!cave_plain_floor_grid(c_ptr)) {
-					for (i = 0; i < plist_size; i++) {
-						/* Memorize the grid */
-						Players[plist[i]]->cave_flag[y][x] |= CAVE_MARK;
-					}
-				}
-
-				/* Normally, memorize floors (see above) */
-				else if (p_ptr->view_perma_grids && !p_ptr->view_torch_grids) {
-					for (i = 0; i < plist_size; i++) {
-						/* Memorize the grid */
-						Players[plist[i]]->cave_flag[y][x] |= CAVE_MARK;
-					}
-				}
-			}
- #endif
-#else /* like magic mapping? */
 			/* All non-walls are "checked" */
-//			if (c_ptr->feat < FEAT_SECRET)
+			//if (c_ptr->feat < FEAT_SECRET)
 			if (!is_wall(c_ptr)) {
 				/* Memorize normal features */
-//				if (c_ptr->feat > FEAT_INVIS) {
+				//if (c_ptr->feat > FEAT_INVIS) {
 				if (!cave_plain_floor_grid(c_ptr)) {
 					for (i = 0; i < plist_size; i++) {
 						/* Memorize the feature */
 						Players[plist[i]]->cave_flag[y][x] |= CAVE_MARK;
- #ifdef MML_NEW
+#ifndef NO_LITE_SPOT
 						lite_spot(plist[i], y, x);
- #endif
+#endif
 					}
 				}
 
@@ -7435,41 +7404,29 @@ void mind_map_level(int Ind, int pow) {
 					if (!in_bounds(y + ddy_ddd[j], x + ddx_ddd[j])) continue;
 
 					/* Memorize walls (etc) */
-//					if (c_ptr->feat >= FEAT_SECRET)
+					//if (c_ptr->feat >= FEAT_SECRET)
 					if (is_wall(&zcave[y + ddy_ddd[j]][x + ddx_ddd[j]])) {
 						for (i = 0; i < plist_size; i++) {
 							/* Memorize the walls */
 							Players[plist[i]]->cave_flag[y + ddy_ddd[j]][x + ddx_ddd[j]] |= CAVE_MARK;
- #ifdef MML_NEW
+#ifndef NO_LITE_SPOT
 							lite_spot(plist[i], y + ddy_ddd[j], x + ddx_ddd[j]);
- #endif
+#endif
 						}
 					}
 				}
 			}
-#endif
 		}
 
-#if 0 /* this will be overheady, since it requires prt_map() here as a bad \
-	 hack, and PR_MAP/PU_MONSTERS commented out in for-loop below. \
-	 See same for-loop for clean solution as good alternative! */
-		prt_map(plist[i], FALSE); /* bad hack */
 		/* like detect_creatures(), not excluding invisible monsters though */
 		for (i = 0; i < plist_size; i++) {
 			if (Players[plist[i]]->mon_vis[m_fast[m]]) continue;
 			Players[plist[i]]->mon_vis[m_fast[m]] = TRUE;
+#ifndef NO_LITE_SPOT
 			lite_spot(plist[i], m_ptr->fy, m_ptr->fx);
-			Players[plist[i]]->mon_vis[m_fast[m]] = FALSE; /* the usual hack: don't update screen after this */
-		}
-#elif defined(MML_NEW) /* new attempt */
-		/* like detect_creatures(), not excluding invisible monsters though */
-		for (i = 0; i < plist_size; i++) {
-			if (Players[plist[i]]->mon_vis[m_fast[m]]) continue;
-			Players[plist[i]]->mon_vis[m_fast[m]] = TRUE;
-			lite_spot(plist[i], m_ptr->fy, m_ptr->fx);
-			Players[plist[i]]->mon_vis[m_fast[m]] = FALSE; /* the usual hack: don't update screen after this */
-		}
 #endif
+			Players[plist[i]]->mon_vis[m_fast[m]] = FALSE; /* the usual hack: don't update screen after this */
+		}
 	}
 
 	/* Specialty: Detect all dungeon stores! */
@@ -7479,24 +7436,18 @@ void mind_map_level(int Ind, int pow) {
 			if (zcave[y][x].feat != FEAT_SHOP) continue;
 			for (i = 0; i < plist_size; i++) {
 				Players[plist[i]]->cave_flag[y][x] |= CAVE_MARK;
+#ifndef NO_LITE_SPOT
 				lite_spot(plist[i], y, x);
+#endif
 			}
 		}
 
-#ifndef MML_NEW
+#ifdef NO_LITE_SPOT
 	for (i = 0; i < plist_size; i++) {
- #if 1
-		/* clean solution instead: give some temporary ESP (makes sense also).
-		 Note however: this is thereby becoming an auto-projectable ESP spell^^ */
-		set_tim_esp(plist[i], 10);
- #endif
-
 		/* Update the monsters */
 		Players[plist[i]]->update |= (PU_MONSTERS);
 		/* Redraw map */
 		Players[plist[i]]->redraw |= (PR_MAP);
-		/* Window stuff */
-		Players[plist[i]]->window |= (PW_OVERHEAD);
 	}
 #endif
 }
