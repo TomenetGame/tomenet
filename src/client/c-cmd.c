@@ -1514,7 +1514,8 @@ void cmd_aim_wand(void) {
 	get_item_hook_find_obj_what = "Wand name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Aim which wand? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG))) {
+	if (!c_get_item(&item, "Aim which wand? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG
+	    | USE_EQUIP))) { //WIELD_DEVICES
 		if (item == -2) c_msg_print("You don't have any wands.");
 		return;
 	}
@@ -1533,9 +1534,11 @@ void cmd_use_staff(void) {
 	get_item_extra_hook = get_item_hook_find_obj;
 
 #ifdef ENABLE_SUBINVEN
-	if (!c_get_item(&item, "Use which staff? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG | USE_SUBINVEN))) {
+	if (!c_get_item(&item, "Use which staff? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG | USE_SUBINVEN
+	    | USE_EQUIP))) { //WIELD_DEVICES
 #else
-	if (!c_get_item(&item, "Use which staff? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG))) {
+	if (!c_get_item(&item, "Use which staff? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG
+	    | USE_EQUIP))) { //WIELD_DEVICES
 #endif
 		if (item == -2) c_msg_print("You don't have any staves.");
 		return;
@@ -1556,9 +1559,11 @@ void cmd_zap_rod(void) {
 	get_item_extra_hook = get_item_hook_find_obj;
 
 #ifdef ENABLE_SUBINVEN
-	if (!c_get_item(&item, "Zap which rod? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG | USE_SUBINVEN))) {
+	if (!c_get_item(&item, "Zap which rod? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG | USE_SUBINVEN
+	    | USE_EQUIP))) { //WIELD_DEVICES
 #else
-	if (!c_get_item(&item, "Zap which rod? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG))) {
+	if (!c_get_item(&item, "Zap which rod? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG
+	    | USE_EQUIP))) { //WIELD_DEVICES
 #endif
 		if (item == -2) c_msg_print("You don't have any rods.");
 		return;

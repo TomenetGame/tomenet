@@ -3923,9 +3923,17 @@ void do_cmd_use_staff(int Ind, int item) {
 	stop_shooting_till_kill(Ind);
 #endif
 
+	//WIELD_DEVICE: (re-use 'rad')
+	rad = (k_info[o_ptr->k_idx].level + 20);
+	rad = ((rad * rad * rad) / 9000 + 3) / 4;
+	if (item == INVEN_WIELD && !rand_int(5) && p_ptr->cmp >= rad) {
+		p_ptr->cmp -= rad;
+		p_ptr->redraw |= PR_MANA;
+		use_charge = FALSE;
+	}
+
 	/* Hack -- some uses are "free" */
 	if (!use_charge) return;
-
 
 	/* Use a single charge */
 	o_ptr->pval--;
@@ -4407,17 +4415,6 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
-
-	/* Use a single charge */
-	o_ptr->pval--;
-
-	/* Describe the charges in the pack */
-	if (item >= 0)
-		inven_item_charges(Ind, item);
-	/* Describe the charges on the floor */
-	else
-		floor_item_charges(0 - item);
-
 	if (p_ptr->shooty_till_kill) {
 #if 0
 		/* To continue shooting_till_kill, check if spell requires clean LOS to target
@@ -4440,6 +4437,25 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 		p_ptr->shoot_till_kill_rcraft = FALSE;
 		p_ptr->shoot_till_kill_rod = 0;
 	}
+
+	//WIELD_DEVICE: (re-use 'lev')
+	lev = (k_info[o_ptr->k_idx].level + 20);
+	lev = ((lev * lev * lev) / 9000 + 3) / 4;
+	if (item == INVEN_WIELD && !rand_int(5) && p_ptr->cmp >= lev) {
+		p_ptr->cmp -= lev;
+		p_ptr->redraw |= PR_MANA;
+		return; // 'use_charge = FALSE'
+	}
+
+	/* Use a single charge */
+	o_ptr->pval--;
+
+	/* Describe the charges in the pack */
+	if (item >= 0)
+		inven_item_charges(Ind, item);
+	/* Describe the charges on the floor */
+	else
+		floor_item_charges(0 - item);
 }
 
 
@@ -4846,6 +4862,15 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+	//WIELD_DEVICE: (re-use 'energy')
+	energy = (k_info[o_ptr->k_idx].level + 20);
+	energy = ((energy * energy * energy) / 9000 + 3) / 4;
+	if (item == INVEN_WIELD && !rand_int(5) && p_ptr->cmp >= energy) {
+		p_ptr->cmp -= energy;
+		p_ptr->redraw |= PR_MANA;
+		use_charge = FALSE;
+	}
 
 	/* Hack -- deal with cancelled zap */
 	if (!use_charge) {
@@ -5331,6 +5356,15 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+	//WIELD_DEVICE: (re-use 'energy')
+	energy = (k_info[o_ptr->k_idx].level + 20);
+	energy = ((energy * energy * energy) / 9000 + 3) / 4;
+	if (item == INVEN_WIELD && !rand_int(5) && p_ptr->cmp >= energy) {
+		p_ptr->cmp -= energy;
+		p_ptr->redraw |= PR_MANA;
+		use_charge = FALSE;
+	}
 
 	/* Hack -- deal with cancelled zap */
 	if (!use_charge) {

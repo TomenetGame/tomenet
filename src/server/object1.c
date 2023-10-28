@@ -6277,6 +6277,12 @@ s16b wield_slot(int Ind, object_type *o_ptr) {
 	case TV_BOOK:
 		return(INVEN_WIELD);
 #endif
+#ifdef WIELD_DEVICES
+	case TV_WAND:
+	case TV_STAFF:
+	case TV_ROD:
+		return(INVEN_WIELD);
+#endif
 	}
 
 	/* No slot available */

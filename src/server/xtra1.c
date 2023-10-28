@@ -5567,6 +5567,9 @@ void calc_boni(int Ind) {
  #ifdef WIELD_BOOKS
 	    && o_ptr->tval != TV_BOOK
  #endif
+ #ifdef WIELD_DEVICES
+	    && !is_magic_device(o_ptr->tval)
+ #endif
 	    ) {
 		if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H) {
 			p_ptr->weapon_parry = 10 + get_skill_scale(p_ptr, SKILL_MASTERY, 20);

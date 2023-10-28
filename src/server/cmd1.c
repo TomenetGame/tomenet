@@ -2965,7 +2965,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 	long int kl;
 	player_type *q_ptr;
 	object_type *o_ptr = NULL;
-#ifdef WIELD_BOOKS
+#if defined(WIELD_BOOKS) || defined(WIELD_DEVICES)
 	object_type forge_zero = { 0 }; /* Simulate an empty inventory slot, specifically 'wield' slot. */
 #endif
 	char q_name[NAME_LEN], hit_desc[MAX_CHARS_WIDE];
@@ -3222,7 +3222,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 		}
 
 		o_ptr = &p_ptr->inventory[slot];
-#ifdef WIELD_BOOKS
+#if defined(WIELD_BOOKS) || defined(WIELD_DEVICES)
 		/* We _are_ wielding an item, but it does _not_ count in any way for melee attacking?
 		   (Unlike for exaple a Mage Staff, which does count; it has dice and can be enchanted even.)
 		   Then hack it to point to an empty item (same as an empty wield slot): */
@@ -4146,7 +4146,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 #endif
 	long int	kl;
 	object_type	*o_ptr = NULL;
-#ifdef WIELD_BOOKS
+#if defined(WIELD_BOOKS) || defined(WIELD_DEVICES)
 	object_type forge_zero = { 0 }; /* Simulate an empty inventory slot, specifically 'wield' slot. */
 #endif
 	bool		do_quake = FALSE;
@@ -4435,7 +4435,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 		}
 
 		o_ptr = &p_ptr->inventory[slot];
-#ifdef WIELD_BOOKS
+#if defined(WIELD_BOOKS) || defined(WIELD_DEVICES)
 		/* We _are_ wielding an item, but it does _not_ count in any way for melee attacking?
 		   (Unlike for exaple a Mage Staff, which does count; it has dice and can be enchanted even.)
 		   Then hack it to point to an empty item (same as an empty wield slot): */

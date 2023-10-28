@@ -1257,6 +1257,9 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	if (slot == INVEN_AMMO) num = o_ptr->number;
 	tmp_obj.number = num;
 
+	//WIELD_DEVICES: Can only wield ONE at a time, so have to split stacks
+	if (is_magic_device(o_ptr->tval)) divide_charged_item(&tmp_obj, o_ptr, 1);
+
 	/* Decrease the item (from the pack) */
 	if (item >= 0) {
 		inven_item_increase(Ind, item, -num);
@@ -1283,6 +1286,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	} else {
 		/* Hack for exchanging a 2h-weapon with a shield (or secondary weapon), while the primary wield slot is empty */
 		object_type *ot_ptr;
+
 		if (!takeoff_slot) takeoff_slot = slot;
 		ot_ptr = &(p_ptr->inventory[takeoff_slot]);
 
