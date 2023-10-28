@@ -536,7 +536,7 @@ char *my_strcasestr_skipcol(const char *big, const char *littlex, byte strict) {
    next_start [NULL] = returns next position in 'buf2' to start subsequent search or -1 for once-per-line matches (^/$) */
 bool my_strregexp_skipcol(char *buf2, regex_t re_src, char *searchstr_re, char *withinsearch, int *next_start) {
 	int i, i2;
-	char buf2_skipcol[MAX_CHARS * 2 + 1], *c_skipcol, offset[MAX_CHARS * 2 + 1];
+	char buf2_skipcol[MSG_LEN], *c_skipcol, offset[MSG_LEN];
 	regmatch_t pmatch[REGEX_ARRAY_SIZE + 1];
 
 	/* Don't confuse the regexp-matcher with colour codes */
