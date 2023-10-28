@@ -7783,8 +7783,9 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 		case FEAT_SAND:
 		case FEAT_ASH:
 		case FEAT_MUD:
-	/*	case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
-		case FEAT_FLOWER: feat = FEAT_NETHER_MIST;
+		/* case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
+		case FEAT_FLOWER:
+			feat = FEAT_NETHER_MIST;
 	}
 	/* in SR/SWC floor is always deep water */
 	if (deep_water) switch (feat) {
@@ -7798,8 +7799,9 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 		case FEAT_SAND:
 		case FEAT_ASH:
 		case FEAT_MUD:
-	/*	case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
-		case FEAT_FLOWER: feat = FEAT_DEEP_WATER;
+		/* case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
+		case FEAT_FLOWER:
+			feat = FEAT_DEEP_WATER;
 	}
 
 	/* Change the feature */
@@ -8056,8 +8058,9 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 		case FEAT_SAND:
 		case FEAT_ASH:
 		case FEAT_MUD:
-	/*	case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
-		case FEAT_FLOWER: feat = FEAT_NETHER_MIST;
+		/* case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
+		case FEAT_FLOWER:
+			feat = FEAT_NETHER_MIST;
 	}
 	/* in SR/SWC floor is always deep water */
 	if (deep_water) switch (feat) {
@@ -8071,8 +8074,9 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 		case FEAT_SAND:
 		case FEAT_ASH:
 		case FEAT_MUD:
-	/*	case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
-		case FEAT_FLOWER: feat = FEAT_DEEP_WATER;
+		/* case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
+		case FEAT_FLOWER:
+			feat = FEAT_DEEP_WATER;
 	}
 
 
