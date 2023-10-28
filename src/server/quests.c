@@ -4860,6 +4860,7 @@ void quest_statuseffect(int Ind, int fx) {
 	int k_idx = k_info_num[fx];
 	int tv = k_info[k_idx].tval, sv = k_info[k_idx].sval;
 	bool dummy;
+	object_type dummy_forge;
 
 	/* special effects, not in k_info */
 	if (fx < 0) switch (-fx) {
@@ -4880,7 +4881,7 @@ void quest_statuseffect(int Ind, int fx) {
 	if (tv == TV_FOOD) (void)eat_food(Ind, sv, NULL, &dummy);
 	else if (tv == TV_POTION || tv == TV_POTION2) (void)quaff_potion(Ind, tv, sv, -257);
 	else if (tv == TV_SCROLL) (void)read_scroll(Ind, tv, sv, NULL, 0, &dummy, &dummy);
-	else if (tv == TV_ROD) (void)zap_rod(Ind, sv, DEFAULT_RADIUS, NULL, &dummy);
+	else if (tv == TV_ROD) (void)zap_rod(Ind, sv, DEFAULT_RADIUS, &dummy_forge, &dummy);
 	else if (tv == TV_STAFF) (void)use_staff(Ind, sv, DEFAULT_RADIUS, FALSE, &dummy);
 	//not implemented--
 	//else if ((k_info[k_idx].flags3 & TR3_ACTIVATE)) (void)activate_item(Ind, tv, sv, DEFAULT_RADIUS, FALSE);
