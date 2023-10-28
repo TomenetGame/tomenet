@@ -223,11 +223,6 @@
 #define ACCFILE_NAME_LEN	30
 #define ACCFILE_PASSWD_LEN	20
 
-/* 4.6.2: Allow to retry login, for re-entering invalid account/character names or after death. */
-#ifdef CLIENT_SIDE
- #define RETRY_LOGIN
-#endif
-
 /*
  * Maximum message length
  */

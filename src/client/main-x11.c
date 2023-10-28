@@ -237,6 +237,9 @@ struct infofnt {
 };
 
 
+// (prototype)
+static unsigned long create_pixel(Display *dpy, byte red, byte green, byte blue);
+
 
 
 
@@ -484,6 +487,12 @@ static errr Metadpy_init_2(Display *dpy, cptr name) {
 	/* Guess at the desired 'fg' and 'bg' Pixell's */
 	m->bg = m->black;
 	m->fg = m->white;
+
+#ifdef CUSTOMIZE_COLOURS_FREELY
+	/* Actually use fg-colour of index #0 (usually black) as the bg colour. */
+	Pixell pixel = create_pixel(m->dpy, (client_color_map[0] & 0xFF0000) >> 16, (client_color_map[0] & 0x00FF00) >> 8, client_color_map[0] & 0x0000FF);
+	m->bg = pixel;
+#endif
 
 	/* Calculate the Maximum allowed Pixel value.  */
 	m->zg = (1 << m->depth) - 1;
@@ -3513,6 +3522,47 @@ void set_palette(byte c, byte r, byte g, byte b) {
 #ifdef PALANIM_OPTIMIZED
 	/* Check for refresh market at the end of a palette data transmission */
 	if (c == 127 || c == 128) {
+ #if 0 /* todo: fix/implement live-updating of 'bg' colour (tethered to colour #0) */
+ #ifdef CUSTOMIZE_COLOURS_FREELY
+	/* Handle change of colour #0, which also serves as the designated bg colour now */
+	//if (!c) {
+	if (TRUE) {
+		Pixell pixel = create_pixel(Metadpy->dpy, (client_color_map[0] & 0xFF0000) >> 16, (client_color_map[0] & 0x00FF00) >> 8, client_color_map[0] & 0x0000FF);
+		Metadpy->bg = pixel;
+		Metadpy_update(1, 1, 1);
+
+	int i;
+	Infoclr_init_ccn ("fg", "bg", "xor", 0);
+
+	/* Prepare the colors (including "black") */
+	for (i = 0; i < CLIENT_PALETTE_SIZE; ++i) {
+		cptr cname = color_name[0];
+
+		MAKE(clr[i], infoclr);
+		Infoclr_set(clr[i]);
+		if (Metadpy->color) cname = color_name[i];
+		else if (i) cname = color_name[1];
+		Infoclr_init_ccn (cname, "bg", "cpy", 0);
+	}
+
+ #ifdef EXTENDED_BG_COLOURS
+	/* Prepare the extended background-using colors */
+	for (i = 0; i < TERMX_AMT; ++i) {
+		cptr cname = color_name[0], cname2 = color_name[0];
+
+		MAKE(clr[CLIENT_PALETTE_SIZE + i], infoclr);
+		Infoclr_set(clr[CLIENT_PALETTE_SIZE + i]);
+		if (Metadpy->color) {
+			cname = color_ext_name[i][0];
+			cname2 = color_ext_name[i][1];
+		}
+		Infoclr_init_ccn (cname, cname2, "cpy", 0);
+	}
+ #endif
+	}
+ #endif
+ #endif
+
 		/* Refresh aka redraw the main window with new colour */
 		if (!term_get_visibility(0)) return;
 		if (term_prefs[0].x == -32000 || term_prefs[0].y == -32000) return;

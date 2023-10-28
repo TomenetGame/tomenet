@@ -9678,7 +9678,13 @@ static void do_cmd_options_colourblindness(void) {
 
 		Term_putstr(60, 1, -1, TERM_L_WHITE, " Current palette:");
 		/* Note: colour 0 is always fixed, unchangeable 0x000000, so we just skip it */
+#ifndef CUSTOMIZE_COLOURS_FREELY
 		for (i = 1; i < BASE_PALETTE_SIZE; i++) {
+#else
+		for (i = 0; i < BASE_PALETTE_SIZE; i++) {
+			if (!i) Term_putstr(55, 2 + i, -1, 1, format("%2d %s", i, colour_name[i]));
+			else
+#endif
 			Term_putstr(55, 2 + i, -1, i, format("%2d %s", i, colour_name[i]));
 			Term_putstr(66, 2 + i, -1, TERM_WHITE, format("%3d, %3d, %3d",
 			    (client_color_map[i] & 0xFF0000) >> 16,
@@ -9732,6 +9738,7 @@ static void do_cmd_options_colourblindness(void) {
 		case 'c':
 			if (!c_cfg.palette_animation) continue;
 			l = OCB_CMD_Y;
+#ifndef CUSTOMIZE_COLOURS_FREELY
 			Term_putstr(0, l, -1, TERM_L_WHITE, "Enter the colour index (1-15): ");
 			strcpy(buf, "1");
 			if (!askfor_aux(buf, 2, 0)) {
@@ -9743,6 +9750,19 @@ static void do_cmd_options_colourblindness(void) {
 				Term_putstr(0, l, -1, TERM_WHITE, "                                     ");
 				continue;
 			}
+#else
+			Term_putstr(0, l, -1, TERM_L_WHITE, "Enter the colour index (0-15): ");
+			strcpy(buf, "1");
+			if (!askfor_aux(buf, 2, 0)) {
+				Term_putstr(0, l, -1, TERM_WHITE, "                                     ");
+				continue;
+			}
+			i = atoi(buf);
+			if (i < 0 || i > 15) {
+				Term_putstr(0, l, -1, TERM_WHITE, "                                     ");
+				continue;
+			}
+#endif
 			Term_putstr(0, l, -1, TERM_WHITE, "                                     ");
 
 			Term_putstr(0, l, -1, TERM_L_RED, "Enter new RED value (0-255)  : ");
@@ -9784,15 +9804,28 @@ static void do_cmd_options_colourblindness(void) {
 			}
 			Term_putstr(0, l, -1, TERM_WHITE, "                                     ");
 
-
+#ifndef CUSTOMIZE_COLOURS_FREELY
 			/* Black is not allowed (to prevent the user from locking himself out visually =p not a great help but pft) */
 			if (!r && !g && !b) {
 				Term_putstr(0, l, -1, TERM_YELLOW, "Sorry, setting any colour to black (0,0,0) is not allowed.");
 				c_message_add("\377ySorry, setting any colour to black (0,0,0) is not allowed.");
 				continue;
 			}
+#endif
 
 			client_color_map[i] = (r << 16) | (g << 8) | b;
+#ifdef CUSTOMIZE_COLOURS_FREELY
+			/* Safe-fail: Never allow colours 0 (bg) and 1 (fg) to be identical */
+			if (client_color_map[0] == client_color_map[1]) {
+				if (i == 0) client_color_map[1] = 0xFFFFFF - client_color_map[0];
+				else if (i == 1) client_color_map[0] = 0xFFFFFF - client_color_map[1];
+			}
+			/* Until live-'bg'-modification to new colour #0 values is fixed in set_palette(), hint to user to save and restart ASAP to fix the visuals */
+			if (!i) {
+				c_msg_print("\377RYou changed colour #0! To avoid messed up visuals, press 's' now");
+				c_msg_print("\377R to save this palette to your current config file and restart your client!");
+			}
+#endif
 			set_palette(i, r, g, b);
 			refresh_palette();
 			break;
@@ -9846,7 +9879,11 @@ static void do_cmd_options_colourblindness(void) {
 		case 's':
 			if (!c_cfg.palette_animation) continue;
 #ifdef WINDOWS
+ #ifndef CUSTOMIZE_COLOURS_FREELY
 			for (i = 1; i < BASE_PALETTE_SIZE; i++) {
+ #else
+			for (i = 0; i < BASE_PALETTE_SIZE; i++) {
+ #endif
 				sprintf(buf, "Colormap_%d", i);
 				c = client_color_map[i];
 				sprintf(bufc,  "#%06lx", c);

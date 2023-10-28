@@ -846,7 +846,11 @@ bool write_mangrc_colourmap(void) {
 				/* Insert colourmap info here */
 				if ((!buf[0] || buf[0] == '\n') && found_start && !found) {
 					found = TRUE;
+#ifndef CUSTOMIZE_COLOURS_FREELY
 					for (i = 1; i < BASE_PALETTE_SIZE; i++) {
+#else
+					for (i = 0; i < BASE_PALETTE_SIZE; i++) {
+#endif
 						c = client_color_map[i];
 						sprintf(buf, "colormap_%d\t\t#%06lx\n", i, c);
 						fputs(buf, config2);
@@ -862,7 +866,11 @@ bool write_mangrc_colourmap(void) {
 			/* Just append new colourmap? */
 			if (!found) {
 				fputs("\n", config2);
-				for (i = 1; i < BASE_PALETTE_SIZE; i++) {
+#ifndef CUSTOMIZE_COLOURS_FREELY
+					for (i = 1; i < BASE_PALETTE_SIZE; i++) {
+#else
+					for (i = 0; i < BASE_PALETTE_SIZE; i++) {
+#endif
 					c = client_color_map[i];
 					sprintf(buf, "colormap_%d\t\t#%06lx\n", i, c);
 					fputs(buf, config2);

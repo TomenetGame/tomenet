@@ -583,6 +583,9 @@
  /* Atmospheric login screens, with animation, sound and music? */
  #define ATMOSPHERIC_INTRO
 
+/* 4.6.2: Allow to retry login, for re-entering invalid account/character names or after death. */
+ #define RETRY_LOGIN
+
  /* Buffer guide in RAM, to reduce searching times (especially on Windows OS, not really bad on Linux) */
  #define BUFFER_GUIDE
  #ifdef BUFFER_GUIDE
@@ -602,6 +605,9 @@
  #ifdef TEST_CLIENT
   #define ENABLE_SHIFT_SPECIALKEYS
  #endif
+
+ /* Allow redefining black colour (#0) too, and allow redefining any colour to #000000 (aka allow redefining all colours completely and freely)? */
+ #define CUSTOMIZE_COLOURS_FREELY
 #endif
 
 
