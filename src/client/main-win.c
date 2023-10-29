@@ -1822,8 +1822,12 @@ static HDC myGetDC(HWND hWnd) {
 		oldDC = GetDC(hWnd);
 
 		/* The background color and the font is always the same */
+ #ifndef CUSTOMIZE_COLOURS_FREELY
+		SetBkColor(oldDC, RGB(0, 0, 0));
+ #else
 		SetBkColor(oldDC, RGB(color_table[0][1], color_table[0][2], color_table[0][3]));
 		//SetBkColor(oldDC, RGB(GetRValue(win_clr[i]), GetGValue(win_clr[i]), GetBValue(win_clr[i]));
+ #endif
 		SelectObject(oldDC, td->font_id);
 
 		/* Foreground color not set */
