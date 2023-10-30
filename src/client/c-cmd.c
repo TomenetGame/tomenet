@@ -1514,7 +1514,8 @@ void cmd_aim_wand(void) {
 	get_item_hook_find_obj_what = "Wand name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Aim which wand? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG))) {
+	if (!c_get_item(&item, "Aim which wand? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG
+	    | USE_EQUIP))) { //WIELD_DEVICES
 		if (item == -2) c_msg_print("You don't have any wands.");
 		return;
 	}
@@ -1533,9 +1534,11 @@ void cmd_use_staff(void) {
 	get_item_extra_hook = get_item_hook_find_obj;
 
 #ifdef ENABLE_SUBINVEN
-	if (!c_get_item(&item, "Use which staff? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG | USE_SUBINVEN))) {
+	if (!c_get_item(&item, "Use which staff? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG | USE_SUBINVEN
+	    | USE_EQUIP))) { //WIELD_DEVICES
 #else
-	if (!c_get_item(&item, "Use which staff? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG))) {
+	if (!c_get_item(&item, "Use which staff? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG
+	    | USE_EQUIP))) { //WIELD_DEVICES
 #endif
 		if (item == -2) c_msg_print("You don't have any staves.");
 		return;
@@ -1556,9 +1559,11 @@ void cmd_zap_rod(void) {
 	get_item_extra_hook = get_item_hook_find_obj;
 
 #ifdef ENABLE_SUBINVEN
-	if (!c_get_item(&item, "Zap which rod? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG | USE_SUBINVEN))) {
+	if (!c_get_item(&item, "Zap which rod? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG | USE_SUBINVEN
+	    | USE_EQUIP))) { //WIELD_DEVICES
 #else
-	if (!c_get_item(&item, "Zap which rod? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG))) {
+	if (!c_get_item(&item, "Zap which rod? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG
+	    | USE_EQUIP))) { //WIELD_DEVICES
 #endif
 		if (item == -2) c_msg_print("You don't have any rods.");
 		return;
@@ -2081,11 +2086,11 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 	if (guide_lastline == -1) {
 		if (guide_errno <= 0) {
 			c_message_add("\377yThe file TomeNET-Guide.txt seems to be empty.");
-			c_message_add("\377y Try updating it with the TomeNET-Updater or download it manually.");
+			c_message_add("\377y Try updating it via =U or the TomeNET-Updater or download it manually.");
 		} else {
 			if (guide_errno == ENOENT) {
 				c_msg_format("\377yThe file TomeNET-Guide.txt wasn't found in your TomeNET folder.");
-				c_message_add("\377y Try updating it with the TomeNET-Updater or download it manually.");
+				c_message_add("\377y Try updating it via =U or the TomeNET-Updater or download it manually.");
 			} else c_msg_format("\377yThe file TomeNET-Guide.txt couldn't be opened from your TomeNET folder (%d).", guide_errno);
 		}
 		return;
@@ -2098,7 +2103,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 	/* mysteriously can't open file anymore? */
 	if (!fff) {
 		c_msg_format("\377yThe file TomeNET-Guide.txt was not found in your TomeNET folder anymore (%d).", errno);
-		if (errno == ENOENT) c_message_add("\377y Try updating it with the TomeNET-Updater or download it manually.");
+		if (errno == ENOENT) c_message_add("\377y Try updating it via =U or the TomeNET-Updater or download it manually.");
 		return;
 	}
 #endif
@@ -3024,6 +3029,47 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			line = guide_lastline - maxlines + 1;
 			if (line < 0) line = 0;
 			continue;
+
+		/* Initiate '/?' command from client-side, for chapter-and-more combo search */
+		case 'C':
+			marking = marking_after = FALSE; //clear hack
+#ifdef REGEX_SEARCH
+			search_regexp = FALSE;
+#endif
+			Term_erase(0, bottomline, 80);
+			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter topic to search for: ");
+#if 0
+			buf[0] = 0;
+#else
+			strcpy(buf, lastchapter); //a small life hack
+#endif
+			inkey_msg_old = inkey_msg;
+			inkey_msg = TRUE;
+			if (*buf_override) {
+				strcpy(buf, buf_override);
+				*buf_override = 0;
+			} else {
+				//askfor_aux(buf, 7, 0)); //was: numerical chapters only
+				askfor_aux(buf, MAX_CHARS - 1, 0); //allow entering chapter terms too
+			}
+			inkey_msg = inkey_msg_old;
+			if (!buf[0]) continue;
+
+			/* Emulate /? */
+			Send_msg(format("/? %s", buf));
+
+#if 1 /* Close the guide screen before it gets reinvoked by the server, like for '/?' ? */
+ #ifndef BUFFER_GUIDE
+			my_fclose(fff);
+ #endif
+			Term_load();
+ #ifdef REGEX_SEARCH
+			if (!ires) regfree(&re_src);
+ #endif
+			return;
+#else
+			continue;
+#endif
 
 		/* seach for 'chapter': can be either a numerical one or a main term, such as race/class/skill names. */
 		case 'c':
@@ -4164,10 +4210,10 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 #endif
 			Term_putstr( 0, i++, -1, TERM_WHITE, " 'a' / 'A'      : Mark old/new search results on currently visible guide part.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " 'S'            : ..resets screen to where you were before you did a search.");
-			Term_putstr( 0, i++, -1, TERM_WHITE, " 'c'            : Chapter Search. This is a special search that will skip most");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "                  basic text and only match specific topics and keywords.");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "                  Use this when searching for races, classes, skills, spells,");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "                  schools, techniques, dungeons, bosses, events, lineages,");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 'c' / 'C'      : Chapter Search. A special search that skips most basic text");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "                  to only match specific topics and keywords. 'C' is like '/?'");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "                  command, encompassing more. Use 'c' for race, classe, skill,");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "                  spell, school, technique, dungeon, bosses, events, lineage,");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "                  depths, stair types, or actual chapter titles or indices.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " '#'            : Jump to a specific line number.");
 #ifdef GUIDE_BOOKMARKS
@@ -7769,13 +7815,10 @@ static void cmd_master_aux_level(void) {
 		Term_putstr(5, 6, -1, TERM_WHITE, "(3) Add dungeon");
 		Term_putstr(5, 7, -1, TERM_WHITE, "(4) Remove dungeon");
 		Term_putstr(5, 8, -1, TERM_WHITE, "(5) Town generation");
-		Term_putstr(5,  9, -1, TERM_WHITE, "(6) Save level to module file");
-		Term_putstr(5, 10, -1, TERM_WHITE, "(7) Load level from module file");
-		Term_putstr(5, 11, -1, TERM_WHITE, "(8) Generate a blank level");
-		Term_putstr(5, 12, -1, TERM_WHITE, "(9) Set entry position");
+
 
 		/* Prompt */
-		Term_putstr(0, 14, -1, TERM_WHITE, "Command: ");
+		Term_putstr(0, 9, -1, TERM_WHITE, "Command: ");
 
 		/* Get a key */
 		i = inkey();
@@ -7895,27 +7938,6 @@ static void cmd_master_aux_level(void) {
 		else if (i == '5') {
 			buf[0] = 'T';
 			buf[1] = c_get_quantity("Base level: ", 127);
-			Send_master(MASTER_LEVEL, buf);
-		}
-
-		/* Kurzel - save/load a module file (or create a blank to begin with) */
-		else if (i == '6') {
-			buf[0] = 'S';
-			get_string("Save module name (max 19 char):", &buf[1], 19);
-			Send_master(MASTER_LEVEL, buf);
-		}
-		else if (i == '7') {
-			buf[0] = 'L';
-			get_string("Load module name (max 19 char):", &buf[1], 19);
-			Send_master(MASTER_LEVEL, buf);
-		}
-		else if (i == '8') {
-			buf[0] = 'B';
-			get_string("WxH string (eg. 1x1-5x5):", &buf[1], 19);
-			Send_master(MASTER_LEVEL, buf);
-		}
-		else if (i == '9') {
-			get_string("Set level entry (> < or +):", &buf[0], 1);
 			Send_master(MASTER_LEVEL, buf);
 		}
 
@@ -8360,7 +8382,7 @@ static void cmd_master_aux_summon(void) {
 		Term_putstr(5, 5, -1, TERM_WHITE, "(2) Low Undead");
 		Term_putstr(5, 6, -1, TERM_WHITE, "(3) High Undead");
 		Term_putstr(5, 7, -1, TERM_WHITE, "(4) Depth");
-		Term_putstr(5, 8, -1, TERM_WHITE, "(5) By (ego) name");
+		Term_putstr(5, 8, -1, TERM_WHITE, "(5) Specific");
 		Term_putstr(5, 9, -1, TERM_WHITE, "(6) Obliteration");
 		Term_putstr(5, 10, -1, TERM_WHITE, "(7) Summoning mode off");
 
@@ -8428,8 +8450,7 @@ static void cmd_master_aux_summon(void) {
 		case '5':
 			buf[2] = 's';
 			buf[3] = 0;
-			// get_string("Summon which monster or character? ", &buf[3], 79 - 3);
-			get_string("Summon a monster by what (ego) name? ", &buf[3], 79 - 3);
+			get_string("Summon which monster or character? ", &buf[3], 79 - 3);
 			if (!buf[3]) redo_hack = 1;
 			break;
 

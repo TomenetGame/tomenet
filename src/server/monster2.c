@@ -4026,37 +4026,6 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 	return(0);
 }
 
-//Kurzel - add ego version
-int place_monster_ego(struct worldpos *wpos, int y, int x, int r_idx, int e_idx, bool slp, bool grp, int clo, int clone_summoning) {
-	int i;
-	monster_race *r_ptr = &r_info[r_idx];
-	cave_type **zcave;
-	int dlevel = getlevel(wpos), res;
-
-	if (!(zcave = getcave(wpos))) return(-1);
-#ifdef ARCADE_SERVER
-	if (in_trainingtower(wpos)) return(-2);
-#endif
-
-	if (!(summon_override_checks & SO_SURFACE)) {
-		/* Do not allow breeders to spawn in the wilderness - the_sandman */
-		if ((r_ptr->flags7 & RF7_MULTIPLY) && !(wpos->wz)) return(-3);
-	}
-
-	/* Place one monster, or fail */
-	if ((res = place_monster_one(wpos, y, x, r_idx, e_idx, 0, slp, clo, clone_summoning)) != 0) {
-		// DEBUG
-		/* s_printf("place_monster_one failed at (%d, %d, %d), y = %d, x = %d, r_idx = %d, feat = %d\n",
-			wpos->wx, wpos->wy, wpos->wz, y, x, r_idx, zcave[y][x].feat); */
-		/* Failure (!=0) */
-		return(res);
-	}
-	/* Success (==0) */
-
-	/* Success */
-	return(0);
-}
-
 
 /*
  * Hack -- attempt to place a monster at the given location
@@ -4804,49 +4773,6 @@ bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, int 
 		if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE,
 		    s_clone == 101 ? 100 : s_clone, s_clone == 101 ? 1000 : 0) != 0)
 			return(FALSE);
-
-	}
-
-	/* Success */
-	return(TRUE);
-}
-
-//Kurzel - add ego version
-bool summon_detailed_race(struct worldpos *wpos, int y1, int x1, int r_idx, int e_idx, int s_clone, unsigned char size) {
-	int c, i, x, y;
-	cave_type **zcave;
-
-	if (!(zcave = getcave(wpos))) return(FALSE);
-
-	/* Handle failure */
-	if (!r_idx) return(FALSE);
-
-	/* for each monster we are summoning */
-	for (c = 0; c < size; c++) {
-		/* Look for a location */
-		for (i = 0; i < 200; ++i) {
-			/* Pick a distance */
-			int d = (i / 15) + 1;
-
-			/* Pick a location */
-			scatter(wpos, &y, &x, y1, x1, d, 0);
-
-			/* Require "empty" floor grid */
-			if (!cave_empty_bold(zcave, y, x)) continue;
-
-			/* Hack -- no summon on glyph of warding */
-			if (zcave[y][x].feat == FEAT_GLYPH) continue;
-			if (zcave[y][x].feat == FEAT_RUNE) continue;
-
-			/* Okay */
-			break;
-		}
-
-		/* Failure */
-		if (i == 20) return(FALSE);
-
-		/* Attempt to place the monster (awake, don't allow groups) */
-		if (place_monster_one(wpos, y, x, r_idx, e_idx,0,0,0,0) != 0) return(FALSE);
 
 	}
 

@@ -1910,15 +1910,6 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 		(*ap) = a;
 	}
 
-	/* Special attr/char codes */
-	else if (c > MAX_FONT_CHAR) {
-		/* Use char */
-		(*cp) = c;
-
-		/* Use attr */
-		(*ap) = a;
-	}
-
 #ifdef M_EGO_NEW_FLICKER
 	/* Hack -- Unique/Ego 'glitters' sometimes */
 	else if ((((r_ptr->flags1 & RF1_UNIQUE) && magik(30)) ||
@@ -2828,6 +2819,14 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 				a = p_ptr->f_attr_solid[feat];
 			}
 
+			/* Oil slick on the floor? -- indicate that it's enough oil (1000+) to actually cause slipping */
+			if (c_ptr->slippery >= 1000)
+#if 1
+				a = TERM_L_UMBER; /* static colour */
+#else
+				a = TERM_CONF; /* animated colour */
+#endif
+
 			/* Hack to display monster traps */
 			/* Illusory wall masks everythink */
 			if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP)) && c_ptr->feat != FEAT_ILLUS_WALL) {
@@ -3304,9 +3303,9 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 	/**** Apply special random effects ****/
 	/*if (!avoid_other) */
 	if (((*w_ptr & CAVE_MARK) ||
-	((((c_ptr->info & CAVE_LITE) && (*w_ptr & CAVE_VIEW)) ||
-	  ((c_ptr->info & CAVE_GLOW) && (*w_ptr & CAVE_VIEW))) &&
-	 !p_ptr->blind)) || (p_ptr->admin_dm)) {
+	    ((((c_ptr->info & CAVE_LITE) && (*w_ptr & CAVE_VIEW)) ||
+	      ((c_ptr->info & CAVE_GLOW) && (*w_ptr & CAVE_VIEW))) &&
+	     !p_ptr->blind)) || (p_ptr->admin_dm)) {
 		f_ptr = &f_info[feat];
 
 		/* Special terrain effect */
@@ -7297,10 +7296,7 @@ void map_area(int Ind) {
 }
 
 /* Mindcrafter's magic mapping spell - C. Blue */
-/* This spell's behaviour:
-   easy, old: like magic mapping, combined with short-time esp
-   good, new: like magic mapping, without any esp */
-#define MML_NEW
+#define NO_LITE_SPOT /* This is apparently required for some player(s) or they get d/c'ed from too many detected grids (Nether Realm) */
 void mind_map_level(int Ind, int pow) {
 	player_type *p_ptr = Players[Ind];
 	int m, y, x, rad;
@@ -7352,7 +7348,7 @@ void mind_map_level(int Ind, int pow) {
 		if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
 
 		/* sleeping */
-//hypnosis yay		if (m_ptr->csleep) continue;
+		//hypnosis yay		if (m_ptr->csleep) continue;
 
 		/* no mind */
 		if ((r_ptr->flags9 & RF9_IM_PSI) ||
@@ -7388,46 +7384,18 @@ void mind_map_level(int Ind, int pow) {
 				}
 			}
 
-#if 0 /* like wiz-lite? */
- #if 1 /* should be enabled too if CAVE_MARK below is enabled.. */
-			/* perma-lite grid? */
-			c_ptr->info |= (CAVE_GLOW);
- #endif
- #if 1
-			/* Process all non-walls */
-			//if (c_ptr->feat < FEAT_SECRET)
-			{
-				/* Memorize normal features */
-//				if (c_ptr->feat > FEAT_INVIS)
-				if (!cave_plain_floor_grid(c_ptr)) {
-					for (i = 0; i < plist_size; i++) {
-						/* Memorize the grid */
-						Players[plist[i]]->cave_flag[y][x] |= CAVE_MARK;
-					}
-				}
-
-				/* Normally, memorize floors (see above) */
-				else if (p_ptr->view_perma_grids && !p_ptr->view_torch_grids) {
-					for (i = 0; i < plist_size; i++) {
-						/* Memorize the grid */
-						Players[plist[i]]->cave_flag[y][x] |= CAVE_MARK;
-					}
-				}
-			}
- #endif
-#else /* like magic mapping? */
 			/* All non-walls are "checked" */
-//			if (c_ptr->feat < FEAT_SECRET)
+			//if (c_ptr->feat < FEAT_SECRET)
 			if (!is_wall(c_ptr)) {
 				/* Memorize normal features */
-//				if (c_ptr->feat > FEAT_INVIS) {
+				//if (c_ptr->feat > FEAT_INVIS) {
 				if (!cave_plain_floor_grid(c_ptr)) {
 					for (i = 0; i < plist_size; i++) {
 						/* Memorize the feature */
 						Players[plist[i]]->cave_flag[y][x] |= CAVE_MARK;
- #ifdef MML_NEW
+#ifndef NO_LITE_SPOT
 						lite_spot(plist[i], y, x);
- #endif
+#endif
 					}
 				}
 
@@ -7436,41 +7404,29 @@ void mind_map_level(int Ind, int pow) {
 					if (!in_bounds(y + ddy_ddd[j], x + ddx_ddd[j])) continue;
 
 					/* Memorize walls (etc) */
-//					if (c_ptr->feat >= FEAT_SECRET)
+					//if (c_ptr->feat >= FEAT_SECRET)
 					if (is_wall(&zcave[y + ddy_ddd[j]][x + ddx_ddd[j]])) {
 						for (i = 0; i < plist_size; i++) {
 							/* Memorize the walls */
 							Players[plist[i]]->cave_flag[y + ddy_ddd[j]][x + ddx_ddd[j]] |= CAVE_MARK;
- #ifdef MML_NEW
+#ifndef NO_LITE_SPOT
 							lite_spot(plist[i], y + ddy_ddd[j], x + ddx_ddd[j]);
- #endif
+#endif
 						}
 					}
 				}
 			}
-#endif
 		}
 
-#if 0 /* this will be overheady, since it requires prt_map() here as a bad \
-	 hack, and PR_MAP/PU_MONSTERS commented out in for-loop below. \
-	 See same for-loop for clean solution as good alternative! */
-		prt_map(plist[i], FALSE); /* bad hack */
 		/* like detect_creatures(), not excluding invisible monsters though */
 		for (i = 0; i < plist_size; i++) {
 			if (Players[plist[i]]->mon_vis[m_fast[m]]) continue;
 			Players[plist[i]]->mon_vis[m_fast[m]] = TRUE;
+#ifndef NO_LITE_SPOT
 			lite_spot(plist[i], m_ptr->fy, m_ptr->fx);
-			Players[plist[i]]->mon_vis[m_fast[m]] = FALSE; /* the usual hack: don't update screen after this */
-		}
-#elif defined(MML_NEW) /* new attempt */
-		/* like detect_creatures(), not excluding invisible monsters though */
-		for (i = 0; i < plist_size; i++) {
-			if (Players[plist[i]]->mon_vis[m_fast[m]]) continue;
-			Players[plist[i]]->mon_vis[m_fast[m]] = TRUE;
-			lite_spot(plist[i], m_ptr->fy, m_ptr->fx);
-			Players[plist[i]]->mon_vis[m_fast[m]] = FALSE; /* the usual hack: don't update screen after this */
-		}
 #endif
+			Players[plist[i]]->mon_vis[m_fast[m]] = FALSE; /* the usual hack: don't update screen after this */
+		}
 	}
 
 	/* Specialty: Detect all dungeon stores! */
@@ -7480,24 +7436,18 @@ void mind_map_level(int Ind, int pow) {
 			if (zcave[y][x].feat != FEAT_SHOP) continue;
 			for (i = 0; i < plist_size; i++) {
 				Players[plist[i]]->cave_flag[y][x] |= CAVE_MARK;
+#ifndef NO_LITE_SPOT
 				lite_spot(plist[i], y, x);
+#endif
 			}
 		}
 
-#ifndef MML_NEW
+#ifdef NO_LITE_SPOT
 	for (i = 0; i < plist_size; i++) {
- #if 1
-		/* clean solution instead: give some temporary ESP (makes sense also).
-		 Note however: this is thereby becoming an auto-projectable ESP spell^^ */
-		set_tim_esp(plist[i], 10);
- #endif
-
 		/* Update the monsters */
 		Players[plist[i]]->update |= (PU_MONSTERS);
 		/* Redraw map */
 		Players[plist[i]]->redraw |= (PR_MAP);
-		/* Window stuff */
-		Players[plist[i]]->window |= (PW_OVERHEAD);
 	}
 #endif
 }
@@ -7727,8 +7677,7 @@ void wiz_dark(int Ind) {
 	}
 }
 
-//#ifdef ARCADE_SERVER
-// Used for module.lua - Kurzel
+#ifdef ARCADE_SERVER
 extern int check_feat(worldpos *wpos, int y, int x) {
 	cave_type **zcave;
 	cave_type *c_ptr;
@@ -7740,53 +7689,7 @@ extern int check_feat(worldpos *wpos, int y, int x) {
 	c_ptr = &zcave[y][x];
 	return(c_ptr->feat);
 }
-extern int dun_get_wid(worldpos *wpos) {
-	struct dun_level *l_ptr;
-
-	if (!(l_ptr = getfloor(wpos))) return(0);
-
-	return(l_ptr->wid);
-}
-extern int dun_get_hgt(worldpos *wpos) {
-	struct dun_level *l_ptr;
-
-	if (!(l_ptr = getfloor(wpos))) return(0);
-
-	return(l_ptr->hgt);
-}
-extern int check_monster(worldpos *wpos, int y, int x) {
-	cave_type **zcave;
-	cave_type *c_ptr;
-	monster_type *m_ptr;
-
-	if (!(zcave = getcave(wpos))) return(0);
-
-	if (!in_bounds(y, x)) return(0);
-
-	c_ptr = &zcave[y][x];
-	if (c_ptr->m_idx) {
-		m_ptr = &m_list[c_ptr->m_idx];
-		return(m_ptr->r_idx);
-	} else {
-		return 0;
-	}
-}
-extern int check_monster_ego(worldpos *wpos, int y, int x) {
-	cave_type **zcave;
-	cave_type *c_ptr;
-	monster_type *m_ptr;
-
-	if (!(zcave = getcave(wpos))) return(0);
-
-	if (!in_bounds(y, x)) return(0);
-
-	c_ptr = &zcave[y][x];
-	if (c_ptr->m_idx) {
-		m_ptr = &m_list[c_ptr->m_idx];
-		return (m_ptr->ego);
-	} else return 0;
-}
-//#endif
+#endif
 
 /*
  * Change the "feat" flag for a grid, and notice/redraw the grid
@@ -7831,8 +7734,9 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 		case FEAT_SAND:
 		case FEAT_ASH:
 		case FEAT_MUD:
-	/*	case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
-		case FEAT_FLOWER: feat = FEAT_NETHER_MIST;
+		/* case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
+		case FEAT_FLOWER:
+			feat = FEAT_NETHER_MIST;
 	}
 	/* in SR/SWC floor is always deep water */
 	if (deep_water) switch (feat) {
@@ -7846,8 +7750,9 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 		case FEAT_SAND:
 		case FEAT_ASH:
 		case FEAT_MUD:
-	/*	case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
-		case FEAT_FLOWER: feat = FEAT_DEEP_WATER;
+		/* case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
+		case FEAT_FLOWER:
+			feat = FEAT_DEEP_WATER;
 	}
 
 	/* Change the feature */
@@ -8104,8 +8009,9 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 		case FEAT_SAND:
 		case FEAT_ASH:
 		case FEAT_MUD:
-	/*	case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
-		case FEAT_FLOWER: feat = FEAT_NETHER_MIST;
+		/* case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
+		case FEAT_FLOWER:
+			feat = FEAT_NETHER_MIST;
 	}
 	/* in SR/SWC floor is always deep water */
 	if (deep_water) switch (feat) {
@@ -8119,8 +8025,9 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 		case FEAT_SAND:
 		case FEAT_ASH:
 		case FEAT_MUD:
-	/*	case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
-		case FEAT_FLOWER: feat = FEAT_DEEP_WATER;
+		/* case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
+		case FEAT_FLOWER:
+			feat = FEAT_DEEP_WATER;
 	}
 
 
@@ -8804,32 +8711,24 @@ bool is_xorder(struct worldpos *wpos) {
 /*
  * handle spell effects
  */
-static int effect_pop(int who) {
+static int effect_pop(int who_id) {
 	int i, cnt = 0;
 
 	for (i = 1; i < MAX_EFFECTS; i++) { /* effects[0] is not used */
 		if (!effects[i].time) return(i);
-		if (effects[i].who == who) {
-			if (++cnt > MAX_EFFECTS_PLAYER) return(-1);
-		}
+		if (effects[i].who_id != who_id) continue;
+		if (++cnt > MAX_EFFECTS_PLAYER) return(-1);
 	}
 	return(-1);
 }
 
 int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpos, int cy, int cx, int rad, s32b flags) {
-	int i, who2 = who;
-/*	player_type *p_ptr = NULL; */
-#if 0 /* isn't this wrong? */
-	if (who < 0 && who != PROJECTOR_EFFECT)
-		who2 = 0 - Players[0 - who]->id;
-#else
-	if (who < 0 && who > PROJECTOR_UNUSUAL)
-		who2 = 0 - Players[0 - who]->id;
-#endif
+	int i;
+	s32b who_id = 0;
 
-//s_printf("eff %d,%d\n", who, who2);
-	if ((i = effect_pop(who2)) == -1) return(-1);
-//s_printf("eff %d\n", i);
+	if (who < 0 && who > PROJECTOR_UNUSUAL) who_id = Players[0 - who]->id;
+
+	if ((i = effect_pop(who_id)) == -1) return(-1);
 	effects[i].interval = interval;
 	effects[i].type = type;
 	effects[i].dam = dam;
@@ -8838,6 +8737,7 @@ int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpo
 	effects[i].whot = 0;
 	effects[i].cx = cx;
 	effects[i].cy = cy;
+
 	if ((project_time_effect & EFF_VORTEX) && (who < 0 && who > PROJECTOR_UNUSUAL)) {
 		if (target_okay(0 - who)) {
 			effects[i].whot = Players[0 - who]->target_who;
@@ -8855,23 +8755,24 @@ int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpo
 	else if (project_time_effect & EFF_METEOR) {
 		effects[i].whot = PROJECTOR_UNUSUAL; //could be replaced by m_idx for better kill msg
 	}
+
 	effects[i].rad = rad;
-	effects[i].who = who2;
+	effects[i].who = who;
+	effects[i].who_id = who_id;
 	wpcopy(&effects[i].wpos, wpos);
+
 #ifdef ARCADE_SERVER
-if (type == 209)
-{
-msg_broadcast(0, "mh");
-if (flags > 0)
-msg_broadcast(0, "some flags");
-else
-msg_broadcast(0, "no flags");
-}
-/*	if ((flags & EFF_CROSSHAIR_A) || (flags & EFF_CROSSHAIR_B) || (flags & EFF_CROSSHAIR_C))
-	{
-	msg_broadcast(0, "making an effect");
-	player_type *pfft_ptr = Players[interval];
-	pfft_ptr->e = i;
+	if (type == 209) {
+		msg_broadcast(0, "mh");
+		if (flags > 0)
+			msg_broadcast(0, "some flags");
+		else
+			msg_broadcast(0, "no flags");
+	}
+	/*if ((flags & EFF_CROSSHAIR_A) || (flags & EFF_CROSSHAIR_B) || (flags & EFF_CROSSHAIR_C)) {
+		player_type *pfft_ptr = Players[interval];
+		msg_broadcast(0, "making an effect");
+		pfft_ptr->e = i;
 	} */
 #endif
 
@@ -9206,11 +9107,17 @@ void slippery_floor(int oily, struct worldpos *wpos, int x, int y) {
 	if (!zcave) return;
 	c_ptr = &zcave[y][x];
 
-	switch (c_ptr->feat) {
+	/* Fire/elec aura: burn up all the oil immediately; for now no fire effects or anything */
+	if (c_ptr->m_idx < 0 && (Players[-c_ptr->m_idx]->sh_fire || Players[-c_ptr->m_idx]->sh_elec)) {
+		msg_print(-c_ptr->m_idx, "Your aura burns up all spilled oil immediately.");
+		return;
+	}
 
+	switch (c_ptr->feat) {
 
 	/* easily affected */
 	case FEAT_ICE: //already slippery anyway.. non-temporarily even. However, should it get melted, the slipperyness will remain!
+		/* TODO maybe, NOTE: If it happens to turn into non-slippery-possible floor ('default:' branch below), it should set c_ptr->slippery = 0 of course! */
 	case FEAT_FLOOR:
 	case FEAT_LOOSE_DIRT:
 	case FEAT_IVY: //leaves should be slippery anyway

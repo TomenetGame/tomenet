@@ -8823,7 +8823,7 @@ static void display_diz_death(int Ind) {
 
 	if (streq(p_ptr->died_from, "It") ||
 	    streq(p_ptr->died_from, "insanity") ||
-	    streq(p_ptr->died_from, "poison") || streq(p_ptr->died_from, "disease")
+	    streq(p_ptr->died_from, "poison") || streq(p_ptr->died_from, "disease") || streq(p_ptr->died_from, "a fatal wound")
 	    || streq(p_ptr->died_from, "indecisiveness")
 	    || streq(p_ptr->died_from, "indetermination")
 	    || streq(p_ptr->died_from, "starvation")
@@ -9226,10 +9226,10 @@ void player_death(int Ind) {
 					}
 				}
 				if (k) { /* usual */
-					msg_broadcast_format(0, "\376\377A** %s has defeated %s! **", m_name_extra, p_ptr->name);
+					msg_broadcast_format(0, "\374\377A** %s has defeated %s! **", m_name_extra, p_ptr->name);
 					s_printf("EVENT_RESULT: %s has defeated %s (%d) (%d damage).\n", m_name_extra, p_ptr->name, p_ptr->lev, p_ptr->deathblow);
 				} else { /* can happen if monster dies first, then player dies to monster DoT */
-					msg_broadcast_format(0, "\376\377A** %s didn't survive! **", p_ptr->name);
+					msg_broadcast_format(0, "\374\377A** %s didn't survive! **", p_ptr->name);
 					s_printf("EVENT_RESULT: %s (%d) was defeated (%d damage).\n", p_ptr->name, p_ptr->lev, p_ptr->deathblow);
 				}
 				recall_player(Ind, "\377oYou die.. at least it felt like you did..!");
@@ -14575,36 +14575,6 @@ bool master_level(int Ind, char * parms) {
 			dealloc_dungeon_level(&twpos);
 
 		break; }
-
-	/* Kurzel - save/load a module file (or create a blank to begin with) */
-	case 'S': {
-		exec_lua(Ind, format("return module_save(%d, \"%s\")", Ind, &parms[1]));
-	break; }
-	case 'L': {
-		exec_lua(Ind, format("return module_load(%d, \"%s\")", Ind, &parms[1]));
-	break; }
-	case 'B': {
-		// s_printf("parms[1]: %s\n",&parms[1]);
-		// s_printf("parms[1]: %cxxx%c\n",(&parms[1])[0],(&parms[1])[2]);
-		int W = (&parms[1])[0] - 48; // '1' -> 1
-		int H = (&parms[1])[2] - 48; // '1' -> 1
-		// s_printf("parms[1]: %dxx%d\n",W,H);
-		generate_cave_blank(p_ptr->wpos.wx,p_ptr->wpos.wy,p_ptr->wpos.wz,5-W,5-H);
-	break; }
-	/* Place entrance location from <, > or random entry (eg. WoR) */
-	case '>': {
-		new_level_up_x(&p_ptr->wpos,p_ptr->px);
-		new_level_up_y(&p_ptr->wpos,p_ptr->py);
-	break; }
-	case '<': {
-		new_level_down_x(&p_ptr->wpos,p_ptr->px);
-		new_level_down_y(&p_ptr->wpos,p_ptr->py);
-	break; }
-	case '+': {
-		new_level_rand_x(&p_ptr->wpos,p_ptr->px);
-		new_level_rand_y(&p_ptr->wpos,p_ptr->py);
-	break; }
-
 	/* default -- do nothing. */
 	default: break;
 	}
@@ -14754,381 +14724,6 @@ static bool master_summon_specific_aux(int r_idx) {
 	return(FALSE);
 }
 
-//Kurzel - global_event_signup() AMC case clone function for DM race+ego summon
-static int ego_index(cptr parm) { //return e_idx as race_index() returns m_idx
-	int i, p, max_p;
-
-	/* for monster type: */
-	char c[80], parm2[80], *cp, *p2p;
-	int r_found = 0;
-
-	/* for ego monsters: */
-	int re_found = 0, re_r = 0;//compiler warning
-	bool re_impossible = FALSE, no_ego = FALSE, perfect_ego = FALSE;
-	char ce[80], *cep, parm2e[80], *p2ep;
-	char *separator;
-
-	int r_found_tmp = 0, re_found_tmp = 0, re_r_tmp = 0;
-	int r_found_tmp_len = 0, r_found_len = 0;
-
-	/* lower case */
-	strcpy(parm2, parm);
-	p2p = parm2;
-	while (*p2p) {*p2p = tolower(*p2p); p2p++;}
-
-	/* trim spaces .. and also quotes */
-	p2p = parm2;
-	while (*p2p == ' ' || *p2p == '"') p2p++;
-	while (p2p[strlen(p2p) - 1] == ' ' || p2p[strlen(p2p) - 1] == '"') p2p[strlen(p2p) - 1] = 0;
-
-	/* Scan the monster races */
-	for (i = 1; i < MAX_R_IDX - 1; i++) {
-		/* get monster race name */
-		strcpy(c, r_info[i].name + r_name);
-		if (!strlen(c)) continue;
-
-		/* lower case */
-		cp = c;
-		while (*cp) {*cp = tolower(*cp); cp++;}
-
-
-		/* exact match? */
-		if (!strcmp(p2p, c)) {
-			r_found = i;
-			no_ego = TRUE;
-			re_found = 0;
-
-			/* done. No room for ego power. */
-			break;
-		}
-
-		/* partial match? could have ego power too. */
-		if ((separator = strstr(p2p, c))) {
-			/* test for ego power for the rest of the string */
-			if (separator == p2p) { /* monster name begins with race name? */
-				strcpy(parm2e, p2p + strlen(c)); /* then ego power begins afterwards and goes till the end of the monster name */
-			} else if (strlen(separator) < strlen(c)) { /* error: race name has chars before AND afterwards */
-				continue;
-			} else { /* monster name ends with race name? */
-				strncpy(parm2e, p2p, strlen(p2p) - strlen(c)); /* then ego power starts at the beginning of the monster name */
-				parm2e[strlen(p2p) - strlen(c)] = 0;
-			}
-
-			/* if we already found both, a matching monster + ego, be wary of this new result!
-				 Otherwise, 'black orc vet' will result in a plain 'Black' getting spawned.. */
-			if (r_found && re_found) {
-				r_found_tmp = r_found;
-				re_found_tmp = re_found;
-				re_r_tmp = re_r;
-			} else if (r_found) {
-				r_found_tmp = r_found;
-				r_found_tmp_len = r_found_len;
-			}
-
-			/* remember choice in case we don't find anything better */
-			r_found = i;
-			r_found_len = strlen(c);
-
-			/* check ego power - if exact match then we're done */
-			/* trim spaces just to be sure */
-			p2ep = parm2e;
-			while (*p2ep == ' ') p2ep++;
-			while (p2ep[strlen(p2ep) - 1] == ' ') p2ep[strlen(p2ep) - 1] = 0;
-
-			/* IMPOSSIBLE-- no ego power specified, it was just spaces? */
-			//if (!strlen(parm2e))
-
-			for (p = 1; p < MAX_RE_IDX; p++) {
-				/* get monster ego name */
-				strcpy(ce, re_info[p].name + re_name);
-
-				/* lower case */
-				cep = ce;
-				while (*cep) {*cep = tolower(*cep); cep++;}
-
-				/* exact match? */
-				if (!strcmp(p2ep, ce)) {
-					if (mego_ok(i, p)) {
-						/* done, success */
-						re_impossible = FALSE;
-						re_found = p;
-						re_r = i;
-						perfect_ego = TRUE;
-
-#if 1
-						/* special hack: check all remaining races and prefer them if EXACT match - added for 'Fallen Angel'! */
-						//actually, with ne addition of 'r_found_len' this should now be obsolete?
-						while (++i < MAX_R_IDX - 1) {
-							/* get monster race name */
-							strcpy(c, r_info[i].name + r_name);
-							if (!strlen(c)) continue;
-
-							/* lower case */
-							cp = c;
-							while (*cp) {*cp = tolower(*cp); cp++;}
-
-							/* exact match? */
-							if (!strcmp(p2p, c)) {
-								// if (!is_admin(p_ptr) &&
-										// ((r_info[i].flags1 & RF1_UNIQUE) ||
-										// // (r_info[i].flags1 & RF1_QUESTOR) ||
-										// (r_info[i].flags2 & RF2_NEVER_ACT) ||
-										// (r_info[i].flags7 & RF7_PET) ||
-										// (r_info[i].flags7 & RF7_NEUTRAL) ||
-										// (r_info[i].flags7 & RF7_FRIENDLY) ||
-										// (r_info[i].flags8 & RF8_JOKEANGBAND) ||
-										// (r_info[i].rarity == 255)))
-									// continue;
-
-								/* done. Discard perfect 'ego power+base race' in favour for just plain perfect base race,
-									 to allow 'Fallen Angel' base monster instead of 'Fallen' ego type on 'Angel' base monster. */
-								r_found = i;
-								r_found_len = strlen(c);
-								no_ego = TRUE;
-								re_found = 0;
-								break;
-							}
-						}
-#endif
-
-
-						break;
-					}
-					/* impossible ego power -- keep searching in case we find something better */
-					re_impossible = TRUE;
-				} else if (re_impossible) continue; /* don't allow partial matches if an exact match already failed us */
-
-				/* partial match? */
-				//else if (strstr(p2ep, ce)) {
-				else if (strstr(ce, p2ep)) {
-					if (mego_ok(i, p)) {
-						/* remember choice in case we don't find anything better */
-						re_found = p;
-						re_r = i;
-					}
-				}
-			}
-			if (perfect_ego) break;
-		}
-
-		/* if we already found both, a matching monster + ego, be wary of this new result!
-			 Otherwise, 'black orc vet' will result in a plain 'Black' getting spawned.. */
-		if (r_found_tmp && re_found_tmp && !re_found) {
-			r_found = r_found_tmp;
-			re_found = re_found_tmp;
-			re_r = re_r_tmp;
-		}
-		/* if we still found no ego power, at least choose the base type that matches a longer string.
-			 Otherwise 'black orc vet' will result in a Black spawning.. */
-		else if (r_found_tmp && !re_found_tmp && !re_found && r_found_tmp_len > r_found_len)
-			r_found = r_found_tmp;
-	}
-	
-	/* if we found a race and ego that somewhat fit, prefer that over just a race without ego, that somewhat fits */
-	if (re_found) r_found = re_r;
-	
-	// /* base monster type is not allowed? */
-	// if (!is_admin(p_ptr) &&
-			// // ((r_info[r_found].flags1 & (RF1_UNIQUE | RF1_QUESTOR)) ||
-			// ((r_info[r_found].flags1 & RF1_UNIQUE) ||
-			// (r_info[r_found].flags2 & (RF2_NEVER_ACT)) ||
-			// (r_info[r_found].flags7 & (RF7_NO_DEATH | RF7_PET | RF7_NEUTRAL | RF7_FRIENDLY)) ||
-			// (r_info[r_found].flags8 & (RF8_GENO_NO_THIN | RF8_JOKEANGBAND)) ||
-			// (r_info[r_found].rarity == 255))) {
-		// msg_print(Ind, "\377ySorry, that creature is beyond the wizards' abilities.");
-		// return;
-
-	// s_printf("ego: %d\n",re_found);
-	return re_found;
-}
-
-static int ego_race_index(cptr parm) { //return m_idx as race_index(), but w/o exact race name (eg. including ego)
-	int i, p, max_p;
-
-	/* for monster type: */
-	char c[80], parm2[80], *cp, *p2p;
-	int r_found = 0;
-
-	/* for ego monsters: */
-	int re_found = 0, re_r = 0;//compiler warning
-	bool re_impossible = FALSE, no_ego = FALSE, perfect_ego = FALSE;
-	char ce[80], *cep, parm2e[80], *p2ep;
-	char *separator;
-
-	int r_found_tmp = 0, re_found_tmp = 0, re_r_tmp = 0;
-	int r_found_tmp_len = 0, r_found_len = 0;
-
-	/* lower case */
-	strcpy(parm2, parm);
-	p2p = parm2;
-	while (*p2p) {*p2p = tolower(*p2p); p2p++;}
-
-	/* trim spaces .. and also quotes */
-	p2p = parm2;
-	while (*p2p == ' ' || *p2p == '"') p2p++;
-	while (p2p[strlen(p2p) - 1] == ' ' || p2p[strlen(p2p) - 1] == '"') p2p[strlen(p2p) - 1] = 0;
-
-	/* Scan the monster races */
-	for (i = 1; i < MAX_R_IDX - 1; i++) {
-		/* get monster race name */
-		strcpy(c, r_info[i].name + r_name);
-		if (!strlen(c)) continue;
-
-		/* lower case */
-		cp = c;
-		while (*cp) {*cp = tolower(*cp); cp++;}
-
-
-		/* exact match? */
-		if (!strcmp(p2p, c)) {
-			r_found = i;
-			no_ego = TRUE;
-			re_found = 0;
-
-			/* done. No room for ego power. */
-			break;
-		}
-
-		/* partial match? could have ego power too. */
-		if ((separator = strstr(p2p, c))) {
-			/* test for ego power for the rest of the string */
-			if (separator == p2p) { /* monster name begins with race name? */
-				strcpy(parm2e, p2p + strlen(c)); /* then ego power begins afterwards and goes till the end of the monster name */
-			} else if (strlen(separator) < strlen(c)) { /* error: race name has chars before AND afterwards */
-				continue;
-			} else { /* monster name ends with race name? */
-				strncpy(parm2e, p2p, strlen(p2p) - strlen(c)); /* then ego power starts at the beginning of the monster name */
-				parm2e[strlen(p2p) - strlen(c)] = 0;
-			}
-
-			/* if we already found both, a matching monster + ego, be wary of this new result!
-				 Otherwise, 'black orc vet' will result in a plain 'Black' getting spawned.. */
-			if (r_found && re_found) {
-				r_found_tmp = r_found;
-				re_found_tmp = re_found;
-				re_r_tmp = re_r;
-			} else if (r_found) {
-				r_found_tmp = r_found;
-				r_found_tmp_len = r_found_len;
-			}
-
-			/* remember choice in case we don't find anything better */
-			r_found = i;
-			r_found_len = strlen(c);
-
-			/* check ego power - if exact match then we're done */
-			/* trim spaces just to be sure */
-			p2ep = parm2e;
-			while (*p2ep == ' ') p2ep++;
-			while (p2ep[strlen(p2ep) - 1] == ' ') p2ep[strlen(p2ep) - 1] = 0;
-
-			/* IMPOSSIBLE-- no ego power specified, it was just spaces? */
-			//if (!strlen(parm2e))
-
-			for (p = 1; p < MAX_RE_IDX; p++) {
-				/* get monster ego name */
-				strcpy(ce, re_info[p].name + re_name);
-
-				/* lower case */
-				cep = ce;
-				while (*cep) {*cep = tolower(*cep); cep++;}
-
-				/* exact match? */
-				if (!strcmp(p2ep, ce)) {
-					if (mego_ok(i, p)) {
-						/* done, success */
-						re_impossible = FALSE;
-						re_found = p;
-						re_r = i;
-						perfect_ego = TRUE;
-
-#if 1
-						/* special hack: check all remaining races and prefer them if EXACT match - added for 'Fallen Angel'! */
-						//actually, with ne addition of 'r_found_len' this should now be obsolete?
-						while (++i < MAX_R_IDX - 1) {
-							/* get monster race name */
-							strcpy(c, r_info[i].name + r_name);
-							if (!strlen(c)) continue;
-
-							/* lower case */
-							cp = c;
-							while (*cp) {*cp = tolower(*cp); cp++;}
-
-							/* exact match? */
-							if (!strcmp(p2p, c)) {
-								// if (!is_admin(p_ptr) &&
-										// ((r_info[i].flags1 & RF1_UNIQUE) ||
-										// // (r_info[i].flags1 & RF1_QUESTOR) ||
-										// (r_info[i].flags2 & RF2_NEVER_ACT) ||
-										// (r_info[i].flags7 & RF7_PET) ||
-										// (r_info[i].flags7 & RF7_NEUTRAL) ||
-										// (r_info[i].flags7 & RF7_FRIENDLY) ||
-										// (r_info[i].flags8 & RF8_JOKEANGBAND) ||
-										// (r_info[i].rarity == 255)))
-									// continue;
-
-								/* done. Discard perfect 'ego power+base race' in favour for just plain perfect base race,
-									 to allow 'Fallen Angel' base monster instead of 'Fallen' ego type on 'Angel' base monster. */
-								r_found = i;
-								r_found_len = strlen(c);
-								no_ego = TRUE;
-								re_found = 0;
-								break;
-							}
-						}
-#endif
-
-
-						break;
-					}
-					/* impossible ego power -- keep searching in case we find something better */
-					re_impossible = TRUE;
-				} else if (re_impossible) continue; /* don't allow partial matches if an exact match already failed us */
-
-				/* partial match? */
-				//else if (strstr(p2ep, ce)) {
-				else if (strstr(ce, p2ep)) {
-					if (mego_ok(i, p)) {
-						/* remember choice in case we don't find anything better */
-						re_found = p;
-						re_r = i;
-					}
-				}
-			}
-			if (perfect_ego) break;
-		}
-
-		/* if we already found both, a matching monster + ego, be wary of this new result!
-			 Otherwise, 'black orc vet' will result in a plain 'Black' getting spawned.. */
-		if (r_found_tmp && re_found_tmp && !re_found) {
-			r_found = r_found_tmp;
-			re_found = re_found_tmp;
-			re_r = re_r_tmp;
-		}
-		/* if we still found no ego power, at least choose the base type that matches a longer string.
-			 Otherwise 'black orc vet' will result in a Black spawning.. */
-		else if (r_found_tmp && !re_found_tmp && !re_found && r_found_tmp_len > r_found_len)
-			r_found = r_found_tmp;
-	}
-	
-	/* if we found a race and ego that somewhat fit, prefer that over just a race without ego, that somewhat fits */
-	if (re_found) r_found = re_r;
-	
-	// /* base monster type is not allowed? */
-	// if (!is_admin(p_ptr) &&
-			// // ((r_info[r_found].flags1 & (RF1_UNIQUE | RF1_QUESTOR)) ||
-			// ((r_info[r_found].flags1 & RF1_UNIQUE) ||
-			// (r_info[r_found].flags2 & (RF2_NEVER_ACT)) ||
-			// (r_info[r_found].flags7 & (RF7_NO_DEATH | RF7_PET | RF7_NEUTRAL | RF7_FRIENDLY)) ||
-			// (r_info[r_found].flags8 & (RF8_GENO_NO_THIN | RF8_JOKEANGBAND)) ||
-			// (r_info[r_found].rarity == 255))) {
-		// msg_print(Ind, "\377ySorry, that creature is beyond the wizards' abilities.");
-		// return;
-
-	// s_printf("race: %d\n",r_found);
-	return r_found;
-}
-
 /* Auxillary function to master_summon, determine the exact type of monster
  * to summon from a more general description.
  */
@@ -15257,7 +14852,6 @@ bool master_summon(int Ind, char * parms) {
 	static char summon_type = 0; /* what kind to summon -- x right here, group at random location, etc */
 	static char summon_parms = 0; /* arguments to previous byte */
 	static u16b r_idx = 0; /* which monser to actually summon, from previous variables */
-	static u16b e_idx = 0;
 	unsigned char size = 0;  /* how many monsters to actually summon */
 
 	if (!is_admin(p_ptr) && (!player_is_king(Ind))) return(FALSE);
@@ -15272,9 +14866,6 @@ bool master_summon(int Ind, char * parms) {
 		monster_type = parms[2];
 		/* Hack -- since monster_parms is a string, throw it on the end */
 		strcpy(monster_parms, &parms[3]);
-		r_idx = ego_race_index(monster_parms); /* race string detection, copied from AMC - Kurzel */
-		e_idx = ego_index(monster_parms); /* ego string detection, copied from AMC - Kurzel */
-		// s_printf("master_summon, race, ego: %s, %d, %d\n",monster_parms,r_idx,e_idx);
 	}
 
 	switch (summon_type) {
@@ -15283,11 +14874,10 @@ bool master_summon(int Ind, char * parms) {
 		/* for each monster we are summoning */
 		for (c = 0; c < summon_parms; c++) {
 			/* figure out who to summon */
-			// r_idx = master_summon_aux_monster_type(Ind, monster_type, monster_parms);
+			r_idx = master_summon_aux_monster_type(Ind, monster_type, monster_parms);
 
 			/* summon the monster, if we have a valid one */
-			if (e_idx) summon_detailed_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, r_idx, e_idx, 0, 1);
-			else if (r_idx) summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, r_idx, 0, 1);
+			if (r_idx) summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, r_idx, 0, 1);
 		}
 		break;
 
@@ -15295,11 +14885,10 @@ bool master_summon(int Ind, char * parms) {
 	case 'X':
 		for (c = 0; c < summon_parms; c++) {
 			/* figure out who to summon */
-			// r_idx = master_summon_aux_monster_type(Ind, monster_type, monster_parms);
+			r_idx = master_summon_aux_monster_type(Ind, monster_type, monster_parms);
 
 			/* summon the monster at a random location */
-			if (e_idx) summon_detailed_one_somewhere(&p_ptr->wpos, r_idx, e_idx, 0, 0);
-			else if (r_idx) summon_specific_race_somewhere(&p_ptr->wpos,r_idx, 0, 1);
+			if (r_idx) summon_specific_race_somewhere(&p_ptr->wpos,r_idx, 0, 1);
 		}
 		break;
 
