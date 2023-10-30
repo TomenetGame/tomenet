@@ -3597,9 +3597,6 @@ void calc_boni(int Ind) {
 
 			/* Both initiated sides get time resistance now */
 			p_ptr->resist_time = TRUE; csheet_boni[14].cb[3] |= CB4_RTIME;
-
-			/* Uncomfortable with evil forms */
-			//if (p_ptr->body_monster && (r_ptr->flags3 & RF3_DEMON) && (r_ptr->d_char == 'U')) p_ptr->drain_mana++;
 			break;
 		case TRAIT_CORRUPTED:
 			if (p_ptr->lev >= 20) csheet_boni[14].cb[6] |= CB7_IFOOD;
@@ -3623,9 +3620,6 @@ void calc_boni(int Ind) {
 
 			/* Both initiated sides get time resistance now */
 			p_ptr->resist_time = TRUE; csheet_boni[14].cb[3] |= CB4_RTIME;
-
-			/* Uncomfortable with good forms */
-			//if (p_ptr->body_monster && (r_ptr->flags3 & RF3_GOOD) && (r_ptr->d_char == 'A')) p_ptr->drain_mana++;
 			break;
 		default:
 			/* Uninitiated yet */
@@ -5566,9 +5560,6 @@ void calc_boni(int Ind) {
 	if (o_ptr->k_idx
  #ifdef WIELD_BOOKS
 	    && o_ptr->tval != TV_BOOK
- #endif
- #ifdef WIELD_DEVICES
-	    && !is_magic_device(o_ptr->tval)
  #endif
 	    ) {
 		if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H) {
@@ -7873,6 +7864,22 @@ int start_global_event(int Ind, int getype, char *parm) {
 		ge->min_participants = 1; /* EXPERIMENTAL */
 		if (atoi(parm)) ge->announcement_time = atoi(parm);
 		break;
+	/* Adventure Modules - Challenging or themed areas designed by a DM for specific level ranges or party play. */
+	case GE_ADVENTURE: /* Adventure Module */
+		//LUA - Kurzel
+		strcpy(ge->title, "Forbidding Grotto"); /* Timed exploration event. Test for zcave save/load, GE_MODULE_XXX */
+		strcpy(ge->description[0], " Characters up to level 7 are eligible to sign up for this adventure module, ");
+		strcpy(ge->description[1], " designed to take a party of 2-6 characters up to level 20 within 30 minutes. ");
+		strcpy(ge->description[2], " Some areas may be inaccessible to parties with fewer players. ");
+		strcpy(ge->description[3], "  \377yCross-mode play is enabled once within the dungeon! ");
+		strcpy(ge->description[4], " Shipwrecked, you wash ashore a sea cave amidst burning flotsam... ");
+		strcpy(ge->description[5], " ...but the dark grotto you find yourself in is far from uninhabited!");
+		ge->noghost = FALSE; /* EXPERIMENTAL */
+		ge->end_turn = ge->start_turn + cfg.fps * 60 * 60; /* 60m duration, 30m delving time */
+		ge->extra[0] = 95; /* there are no objects of lvl 96..99 anyways */
+		ge->min_participants = 1; /* EXPERIMENTAL */
+		if (atoi(parm)) ge->announcement_time = atoi(parm);
+		break;
 	}
 
 	/* Fix limits */
@@ -8278,6 +8285,24 @@ void global_event_signup(int Ind, int n, cptr parm) {
 			if (!is_admin(p_ptr)) return;
 		}
 		break;
+	case GE_ADVENTURE: /* Adventure Module */
+		if (p_ptr->mode & MODE_DED_IDDC) {
+			msg_print(Ind, "\377ySorry, as a dedicated ironman deep diver you may not participate.");
+			if (!is_admin(p_ptr)) return;
+		}
+		if (p_ptr->mode & MODE_PVP) {
+			msg_print(Ind, "\377ySorry, PvP characters may not participate.");
+			if (!is_admin(p_ptr)) return;
+		}
+		if (p_ptr->max_plv > 7) { // TODO - Kurzel - use module.lua to get adventure specifics
+			msg_print(Ind, "\377ySorry, you must be at most level 7 to sign up for this event.");
+			if (!is_admin(p_ptr)) return;
+		}
+		if (p_ptr->ghost) {
+			msg_print(Ind, "\377ySorry, ghosts may not participate in this event.");
+			if (!is_admin(p_ptr)) return;
+		}
+		break;
 	}
 
 	if (parm_log[0]) s_printf("%s EVENT_SIGNUP: %d '%s'(%d): %s (%s).\n", showtime(), n + 1, ge->title, ge->getype, p_ptr->name, parm_log);
@@ -8397,6 +8422,29 @@ static void process_global_event(int ge_id) {
 						if ((p_ptr->max_plv > 14) && !is_admin(p_ptr)) {
 							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' no longer eligible.\n", p_ptr->name);
 							msg_print(j, "\377oCharacters need to have 0 experience to be eligible.");
+							msg_broadcast_format(j, "\377s%s is no longer eligible due to character level.", p_ptr->name);
+#ifdef USE_SOUND_2010
+							sound(j, "failure", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+							p_ptr->global_event_type[ge_id] = GE_NONE;
+							ge->participant[i] = 0;
+							continue;
+						}
+						if (!can_use_wordofrecall(p_ptr)) {
+							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' stuck in dungeon.\n", p_ptr->name);
+							msg_print(j, "\377oEvent participation failed because your dungeon doesn't allow recalling.");
+							msg_broadcast_format(j, "\377s%s isn't allowed to leave the dungeon to participate.", p_ptr->name);
+#ifdef USE_SOUND_2010
+							sound(j, "failure", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+							p_ptr->global_event_type[ge_id] = GE_NONE;
+							ge->participant[i] = 0;
+							continue;
+						}
+						break;
+					case GE_ADVENTURE: /* Adventure Module  */
+						if ((p_ptr->max_plv > 7) && !is_admin(p_ptr)) { //LUA
+							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' no longer eligible.\n", p_ptr->name);
 							msg_broadcast_format(j, "\377s%s is no longer eligible due to character level.", p_ptr->name);
 #ifdef USE_SOUND_2010
 							sound(j, "failure", NULL, SFX_TYPE_MISC, FALSE);

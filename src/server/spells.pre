@@ -40,9 +40,6 @@ typedef unsigned int u32b;
 // Argh, I need cave_set_feat for arcade stuff. -Moltor
 extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
 extern void warding_glyph(int Ind);
-#ifdef ARCADE_SERVER
-extern int check_feat(worldpos *wpos, int y, int x);
-#endif
 
 /* cmd2.c */
 extern void do_cmd_fusion(int Ind);
@@ -50,9 +47,31 @@ extern void do_cmd_fusion(int Ind);
 /* generate.c */
 extern void place_up_stairs(worldpos *wpos, int y, int x);
 
-#ifdef ARCADE_SERVER
-extern void arcade_wipe(worldpos *wpos);
-#endif
+// #ifdef ARCADE_SERVER
+// Used for module.lua save/load - Kurzel
+// extern char *path_build(char *buf, int max, cptr path, cptr file); // how?
+// Dungeon
+extern int check_feat(worldpos *wpos, int y, int x);
+extern int dun_get_wid(worldpos *wpos);
+extern int dun_get_hgt(worldpos *wpos);
+extern void generate_cave_blank(int wx, int wy, int wz, int W, int H); // wpos
+extern void new_level_up_x(worldpos *wpos, int pos);
+extern void new_level_up_y(worldpos *wpos, int pos);
+extern void new_level_down_x(worldpos *wpos, int pos);
+extern void new_level_down_y(worldpos *wpos, int pos);
+extern void new_level_rand_x(worldpos *wpos, int pos);
+extern void new_level_rand_y(worldpos *wpos, int pos);
+extern byte level_up_x(struct worldpos *wpos);
+extern byte level_up_y(struct worldpos *wpos);
+extern byte level_down_x(struct worldpos *wpos);
+extern byte level_down_y(struct worldpos *wpos);
+extern byte level_rand_x(struct worldpos *wpos);
+extern byte level_rand_y(struct worldpos *wpos);
+// Monsters
+extern int check_monster(worldpos *wpos, int y, int x);
+extern int check_monster_ego(worldpos *wpos, int y, int x);
+extern int place_monster_one(worldpos *wpos, int y, int x, int r_idx, int ego, int randuni, bool slp, int clo, int clone_summoning);
+// #endif
 
 /* spells1.c */
 extern byte spell_color(int type);

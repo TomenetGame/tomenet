@@ -541,9 +541,13 @@ extern dun_level *getfloor(struct worldpos *wpos);
 extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
 extern bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat);
 extern bool cave_set_feat_live_ok(worldpos *wpos, int y, int x, int feat);
-#ifdef ARCADE_SERVER
+// #ifdef ARCADE_SERVER
+// Used for module.lua - Kurzel
 extern int check_feat(worldpos *wpos, int y, int x);
-#endif
+extern int dun_get_wid(worldpos *wpos);
+extern int dun_get_hgt(worldpos *wpos);
+extern int check_monster(worldpos *wpos, int y, int x);
+// #endif
 extern struct dungeon_type *getdungeon(struct worldpos *wpos);
 extern bool can_go_up(struct worldpos *wpos, byte mode);
 extern bool can_go_down(struct worldpos *wpos, byte mode);
@@ -948,6 +952,7 @@ extern void rem_dungeon(struct worldpos *wpos, bool tower);
 extern void alloc_dungeon_level(struct worldpos *wpos);
 extern void dealloc_dungeon_level(struct worldpos *wpos);
 extern void generate_cave(struct worldpos *wpos, player_type *p_ptr);
+extern void generate_cave_blank(int wx, int wy, int wz, int W, int H);
 extern void regenerate_cave(struct worldpos *wpos);
 extern bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, player_type *p_ptr);
 extern void place_fountain(struct worldpos *wpos, int y, int x);
@@ -1103,6 +1108,7 @@ extern void update_player(int Ind);
 extern void update_player_flicker(int Ind);
 extern void update_players(void);
 extern int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool grp, int clo, int clone_summoning);
+extern int place_monster_ego(struct worldpos *wpos, int y, int x, int r_idx, int e_idx, bool slp, bool grp, int clo, int clone_summoning);
 extern int place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, int randuni, bool slp, int clo, int clone_summoning);
 extern bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp);
 #ifdef RPG_SERVER
@@ -1112,6 +1118,7 @@ extern bool alloc_monster(struct worldpos *wpos, int dis, int slp);
 extern int alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp);
 extern bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone, int type, int allow_sidekicks, int clone_summoning);
 extern bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, int s_clone, unsigned char num);
+extern bool summon_detailed_race(struct worldpos *wpos, int y1, int x1, int r_idx, int e_idx, int s_clone, unsigned char size);
 extern bool summon_specific_race_somewhere(struct worldpos *wpos, int r_idx, int s_clone, unsigned char num);
 extern int summon_detailed_one_somewhere(struct worldpos *wpos, int r_idx, int ego, bool slp, int s_clone);
 extern bool multiply_monster(int m_idx);
@@ -1308,8 +1315,6 @@ extern void discharge_rod(object_type *o_ptr, int c);
 extern s32b unique_quark;
 extern void object_copy(object_type *o_ptr, object_type *j_ptr);
 extern void object_wipe(object_type *o_ptr);
-extern int breakage_chance_with_skill(int Ind, object_type *o_ptr, byte *permille);
-extern int get_archery_skill_from_ammo(object_type *o_ptr);
 extern bool can_use(int Ind, object_type *o_ptr);
 extern bool can_use_verbose(int Ind, object_type *o_ptr);
 extern bool can_use_admin(int Ind, object_type *o_ptr);
@@ -2087,8 +2092,8 @@ extern void log_floor_coverage(dun_level *l_ptr, struct worldpos *wpos);
 extern void grid_affects_player(int Ind, int ox, int oy);
 extern bool exceptionally_shareable_item(object_type *o_ptr);
 extern bool shareable_starter_item(object_type *o_ptr);
-extern int activate_magic_device_chance(int Ind, object_type *o_ptr, byte *permille, bool bonus);
-extern bool activate_magic_device(int Ind, object_type *o_ptr, bool bonus);
+extern int activate_magic_device_chance(int Ind, object_type *o_ptr, byte *permille);
+extern bool activate_magic_device(int Ind, object_type *o_ptr);
 extern void condense_name(char *condensed, cptr name);
 extern int similar_names(const char *name1, const char *name2);
 extern void verify_expfact(int Ind, int p);

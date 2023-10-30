@@ -11775,6 +11775,109 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr) {
 	(void)num; //suppress 'unused' compiler warning
 }
 
+// Generate an empty floor (minus 0-4 half panel sizes), for DMs - Kurzel
+void generate_cave_blank(int wx, int wy, int wz, int W, int H) {
+	if (!wz) return; // paranoia - do not resize the surface!
+	// s_printf("BLANK (W,H): (%d,%d)\n",W,H);
+	struct worldpos twpos;
+	twpos.wx = wx;
+	twpos.wy = wy;
+	twpos.wz = wz;
+
+	/* Get it ready, remove everybody, static it - Kurzel */
+	unstatic_level(&twpos);
+	if (getcave(&twpos)) dealloc_dungeon_level(&twpos);
+	alloc_dungeon_level(&twpos);
+	new_players_on_depth(&twpos,1,TRUE);
+
+	int x,y;
+	cave_type **zcave = getcave(&twpos);
+
+	/* Start with a blank cave */
+	for (y = 0; y < MAX_HGT; y++) {
+		/* Wipe a whole row at a time */
+		C_WIPE(zcave[y], MAX_WID, cave_type);
+	}
+
+	/* Fill it */
+	for (x = 0; x < MAX_WID; x++)
+		for (y = 0; y < MAX_HGT; y++)
+			zcave[y][x].feat = FEAT_FLOOR;
+
+	/* Draw boundaries, handle smaller floors */
+
+	int meta_width = MAX_WID - W * (SCREEN_WID / 2);
+	int meta_height = MAX_HGT - H * (SCREEN_HGT / 2);
+
+	// /* Oops, a dungeon floor is not just a cave - Kurzel */
+	// dun_data dun_body;
+	// /* Wipe the dun_data structure - mikaelh */
+	// WIPE(&dun_body, dun_data);
+	// /* Global data */
+	// dun = &dun_body;
+	// dun->l_ptr = getfloor(&twpos);
+	// dun->l_ptr->flags1 = 0;
+	// dun->l_ptr->flags2 = 0;
+	// dun->l_ptr->monsters_generated = dun->l_ptr->monsters_spawned = dun->l_ptr->monsters_killed = 0;
+  // /* Important - restrict out of bounds behavior, eg. recall/looking - Kurzel */
+	// dun->l_ptr->wid = meta_width;
+	// dun->l_ptr->hgt = meta_height;
+
+	/* Oops, a dungeon floor is not just a cave, it is part of the world? - Kurzel */
+	struct wilderness_type *wild;
+	wild = &wild_info[wy][wx];
+	if (wz > 0) {
+		wild->tower->level[wz - 1].flags1 = 0;
+		wild->tower->level[wz - 1].flags2 = 0;
+		// wild->tower->level[wz - 1].flags2 = (LF2_NO_TELE | LF2_NO_DETECT | LF2_NO_ESP | LF2_NO_SUMMON); /* module.lua ? */
+		wild->tower->level[wz - 1].monsters_generated = wild->tower->level[wz - 1].monsters_spawned = wild->tower->level[wz - 1].monsters_killed = 0;
+		/* Important - restrict out of bounds behavior, eg. recall/looking - Kurzel */
+		wild->tower->level[wz - 1].wid = meta_width;
+		wild->tower->level[wz - 1].hgt = meta_height;
+	}	else {
+		wild->dungeon->level[ABS(wz) - 1].flags1 = 0;
+		wild->dungeon->level[ABS(wz) - 1].flags2 = 0;
+		// wild->dungeon->level[ABS(wz) - 1].flags2 = (LF2_NO_TELE | LF2_NO_DETECT | LF2_NO_ESP | LF2_NO_SUMMON); /* module.lua ? */
+		wild->dungeon->level[ABS(wz) - 1].monsters_generated = wild->dungeon->level[ABS(wz) - 1].monsters_spawned = wild->dungeon->level[ABS(wz) - 1].monsters_killed = 0;
+		/* Important - restrict out of bounds behavior, eg. recall/looking - Kurzel */
+		wild->dungeon->level[ABS(wz) - 1].wid = meta_width;
+		wild->dungeon->level[ABS(wz) - 1].hgt = meta_height;
+	}
+		
+	/* Fill rest of map with perma clear walls if specific size was given */
+	if (meta_width)
+		for (x = meta_width; x < MAX_WID; x++)
+			for (y = 0; y < MAX_HGT; y++)
+				zcave[y][x].feat = FEAT_PERM_FILL;
+	if (meta_height)
+		for (y = meta_height; y < MAX_HGT; y++)
+			for (x = 0; x < MAX_WID; x++)
+				zcave[y][x].feat = FEAT_PERM_FILL;
+
+	int meta_boundary = FEAT_PERM_SOLID;
+	// int meta_boundary = 1; // Floor - to draw your own / mix and match? crashes
+
+	/* Replace FEAT_PERM_SOLID or whatever default boundary wall is used by a specific one? */
+	if (meta_boundary) {
+		int mx = meta_width ? meta_width : MAX_WID;
+		int my = meta_height ? meta_height : MAX_HGT;
+
+		for (x = 0; x < mx; x++) {
+			zcave[0][x].feat = meta_boundary;
+			zcave[my - 1][x].feat = meta_boundary;
+		}
+		for (y = 1; y < my - 1; y++) {
+			zcave[y][0].feat = meta_boundary;
+			zcave[y][mx - 1].feat = meta_boundary;
+		}
+		
+		/* ENABLE place_monster_one() */
+		summon_override_checks = SO_ALL;
+	}
+	
+	// msg_format(Ind, "A blank level %s has been generated.", wpos_format(Ind, &twpos));
+}
+
 /* (Can ONLY be used on surface worldmap sectors.)
    Rebuilds a level, without re-adding dungeons, because this
    function assumes that the level has already been generated.
