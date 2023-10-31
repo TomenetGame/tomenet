@@ -10169,7 +10169,7 @@ void do_cmd_options(void) {
 #ifdef WINDOWS
 			char _latest_install[1024];
 
-			strcpy(_latest_install, "http://www.tomenet.eu/TomeNET-Guide.txt"); //argh, note that wget.exe doesn't support https protocol! need to use http
+			strcpy(_latest_install, "https://www.tomenet.eu/TomeNET-Guide.txt"); //argh, note that wget.exe doesn't support https protocol! need to use http
 			remove("TomeNET-Guide.txt");
 			res = _spawnl(_P_WAIT, "updater\\wget.exe", "wget.exe", "--dot-style=mega", _latest_install, NULL);
 			if (res != 0) c_msg_print("\377oFailed to download the Guide.");

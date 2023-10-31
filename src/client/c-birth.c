@@ -69,7 +69,7 @@ static void choose_name(void) {
 	/* Prompt and ask */
 #ifndef SIMPLE_LOGIN
 	c_put_str(TERM_SLATE, "If you are new to TomeNET, read this:", 7, 2);
-	prt("http://www.tomenet.eu/guide.php", 8, 2);
+	prt("https://www.tomenet.eu/guide.php", 8, 2);
 	c_put_str(TERM_SLATE, "*** Logging in with an account ***", 12, 2);
 	prt("In order to play, you need to create an account.", 14, 2);
 	prt("Your account can hold a maximum of 7 different characters to play with!", 15, 2);
@@ -102,7 +102,7 @@ static void choose_name(void) {
 	c_put_str(TERM_SLATE, "If you don't have an account yet, just enter one of your choice. Remember", LOGIN_ROW + 1, 2);
 	c_put_str(TERM_SLATE, "your name and password. Players may only own one account each at a time.", LOGIN_ROW + 2, 2);
 	c_put_str(TERM_SLATE, "If you are new to TomeNET, this guide may prove useful:", LOGIN_ROW + 9, 2);
-	prt("http://www.tomenet.eu/guide.php", LOGIN_ROW + 10, 2);
+	prt("https://www.tomenet.eu/guide.php", LOGIN_ROW + 10, 2);
 #endif
 #ifndef SIMPLE_LOGIN
 	prt("Enter your account name above.", 21, 2);

@@ -6622,7 +6622,7 @@ void cmd_check_misc(void) {
 			FILEMAN(ANGBAND_DIR_XTRA);
 			break;
 		case 'G':
-			URLMAN("http://github.com/TomenetGame/");
+			URLMAN("https://github.com/TomenetGame/");
 			break;
 		case 'W':
 			/* Le quality de liferino~ */
@@ -6638,7 +6638,7 @@ void cmd_check_misc(void) {
 			URLMAN("https://muuttuja.org/tomenet/monsters/index.php");
 			break;
 		case 'L': //ow http
-			URLMAN("http://angband.oook.cz/ladder-browse.php?v=TomeNET");
+			URLMAN("http://angband.oook.cz/ladder-browse.php?v=TomeNET"); //https fails, NET::ERR_CERT_COMMON_NAME_INVALID
 			break;
 #else
 		/* USE_GCU (without USE_X11) and any other unknown OS.. */
