@@ -357,6 +357,7 @@ int main(int argc, char *argv[]) {
 		/* gcc 4.8.0 now puts an URL in the top comment, on which tolua
 		   chokes, sigh. */
 		if ((cptr = strstr(line_mod, "http://www.gnu.org"))) cptr[5] = ':';
+		if ((cptr = strstr(line_mod, "https://www.gnu.org"))) cptr[6] = ':';
 
 		/* on to the actual work.. */
 
