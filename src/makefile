@@ -203,7 +203,8 @@ CLI_LUAOBJS = \
 #
 # This is my compiler of choice, it seems to work most everywhere
 #
-CC = gcc
+#CC = gcc
+CC = clang
 
 # For allowing #if..#else..#endif constructs in LUA files - C. Blue
 # Note: The flags must contain
@@ -224,7 +225,8 @@ CPP = cpp
 #thing is, that the correctly transcribed URL will actually make tolua choke.
 #So, -nostdinc will prevent the whole own comment blob of cpp to get generated
 #in the first place, as we never asked for it:
-CPPFLAGS = -C -P -nostdinc
+#CPPFLAGS = -C -P -nostdinc
+CPPFLAGS = -x c -E -Wp,-C,-P,-nostdinc,-Wno-format-overflow
 
 # gcc variant:
 #CPP = gcc
@@ -289,7 +291,7 @@ SERVER_EXTRA_LIBS = -lcrypt
 
 # With SDL2
 #  With sdl2-config
-CFLAGS = -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -D_DEFAULT_SOURCE -DACC32 -fPIE -fsigned-char -Wno-format-truncation
+CFLAGS = -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -D_DEFAULT_SOURCE -DACC32 -fPIE -fsigned-char
 # Note: -fsigned-char is important for ARM64, as there 'char' is by default unsigned, while on x86/AM64 it is by default signed!
 #  With manually set prefix
 #CFLAGS = -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL -I/usr/local/include/SDL2 -I/usr/include/SDL2 -D_REENTRANT -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
@@ -306,7 +308,7 @@ ifneq (${HAVE_TINFO}, 0)
 endif
 
 # Security hardening
-CFLAGS += -fstack-protector -D_FORTIFY_SOURCE=2 -pie -fPIE
+CFLAGS += -fstack-protector -D_FORTIFY_SOURCE=2 -fPIE
 LDFLAGS += -Wl,-z,relro -Wl,-z,now
 
 # Optional: Compile with Link Time Optimization (LTO)
