@@ -119,8 +119,7 @@ extern char *strrchr();
 
 
 
-#if !defined(linux) && !defined(__MWERKS__) && !defined(ACORN) && \
-    !defined(__FreeBSD__)
+#if !defined(linux) && !defined(__MWERKS__) && !defined(ACORN) && !defined(USE_GCU) && !defined(USE_X11) && !defined(__FreeBSD__)
 extern long atol();
 #endif
 
