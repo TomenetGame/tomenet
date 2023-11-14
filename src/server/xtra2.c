@@ -6612,7 +6612,11 @@ bool monster_death(int Ind, int m_idx) {
 #endif
 
 	/* Rogues can harvest poison for their Apply Poison technique */
-	if ((p_ptr->melee_techniques & MT_POISON) && (r_ptr->flags4 & RF4_BR_POIS) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically, but also Aklash (exactly 4000)!
+	if ((p_ptr->melee_techniques & MT_POISON) && (r_ptr->flags4 & RF4_BR_POIS) && !p_ptr->IDDC_logscum
+	    && (r_ptr->weight >= 4000 /* Dragon-league basically, but also Aklash (exactly 4000)! */
+	     || (r_ptr->weight >= 400 &&
+	      ((r_ptr->d_char != 'w' && r_ptr->d_char != 'I' && r_ptr->d_char != 'Z') || (!(r_ptr->flags7 & RF7_MULTIPLY) && !(r_ptr->flags1 & RF1_FRIENDS)))))
+	    ) {
 		/* Actually require weapons though so martial arts rogues don't get potion spammed for nothing */
 		if ((p_ptr->inventory[INVEN_WIELD].k_idx || (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) &&
 		    !p_ptr->suppress_ingredients && rand_int(7) < 3 * r_ptr->weight / 1000) {
