@@ -436,6 +436,8 @@ struct player_type
 #endif
 	s16b current_curse;
 
+	bool suppress_ingredients;
+
 	s16b current_selling;
 	s16b current_sell_amt;
 	int current_sell_price;
