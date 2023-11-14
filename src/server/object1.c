@@ -1936,6 +1936,36 @@ static char *object_desc_intper(char *t, sint v) {
 }
 #endif
 
+#if 0 /* could be used for really long timeouts > 99999 */
+/*
+ * Print an unsigned large number "n" into a string "t", as if by
+ * sprintf(t, "%u", n), and return a pointer to the terminator.
+ */
+static char *object_desc_lnum(char *t, uint n) {
+	uint p;
+
+	/* Find "size" of "n" */
+	for (p = 1; n >= p * 10; p = p * 10) /* loop */;
+
+	/* Dump each digit */
+	while (p >= 1) {
+		/* Dump the digit */
+		*t++ = '0' + n / p;
+
+		/* Remove the digit */
+		n = n % p;
+
+		/* Process next digit */
+		p = p / 10;
+	}
+
+	/* Terminate */
+	*t = '\0';
+
+	/* Result */
+	return(t);
+}
+#endif
 
 
 /*
@@ -2504,6 +2534,24 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		/* Hack -- single items get no prefix */
 		else {
 			/* Nothing */
+
+#if 0
+			/* Special: Shorten 'heavy' for heavy armour, if we already omit 'the' or anything -- for now only for Antiriad */
+			if ((mode & 8) && o_ptr->name1 == ART_ANTIRIAD && known) { //not for ART_ANTIRIAD_DEPLETED actually
+				if (strstr(k_name + k_ptr->name, "Heavy Adam") == k_name + k_ptr->name) {
+					s += 6 + 10 + 1;
+					t = object_desc_str(t, "H.Adamant.");
+				}
+				else if (strstr(k_name + k_ptr->name, "Heavy Ribbed Adam") == k_name + k_ptr->name) {
+					s += 6 + 7 + 10 + 1;
+					t = object_desc_str(t, "H.Ribbed Adamant.");
+				}
+				else if (strstr(k_name + k_ptr->name, "Heavy Mith") == k_name + k_ptr->name) {
+					s += 6;
+					t = object_desc_str(t, "H.");
+				}
+			}
+#endif
 		}
 	}
 
@@ -3196,6 +3244,17 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		t = object_desc_str(t, !(mode & 8) ? " (charging)" : "(#)");
 	}
 
+	/* Special case: Sacred Armour of Antiriad */
+	if (known && (o_ptr->name1 == ART_ANTIRIAD || o_ptr->name1 == ART_ANTIRIAD_DEPLETED)) {
+		t = object_desc_str(t, !(mode & 8) ? " (" : "(");
+#if 0
+		t = object_desc_lnum(t, o_ptr->timeout);
+		t = object_desc_str(t, !(mode & 8) ? " turns of energy)" : "t)"); /* 1 turn is ~ 1/2 s real-time */
+#else
+		t = object_desc_num(t, o_ptr->timeout);
+		t = object_desc_str(t, !(mode & 8) ? " hours of energy)" : "h)"); /* 1 real-time hour is ~ 2 turns, but in-game time runs at 20x speed, so 2 * 3600 / 20 = 360 turns of energy are 1 (in-game) hour of energy */
+#endif
+	}
 
 	/* No more details wanted */
 	if ((mode & 7) < 3) {
@@ -3560,7 +3619,7 @@ cptr item_activation(object_type *o_ptr) {
 	case ART_LEBOHAUM:
 		return("singing a cheerful song every 30 turns");
 	case ART_HAVOC:
-		return("invoking a force bolt (8..24d8) every 1+d2 turns");
+		return("invoking a force bolt (8..24d8) every d2 turns");
 	case ART_SMASHER:
 		return("destroying doors every 10..15+d3 turns");
 	case ART_FIST:
@@ -3569,6 +3628,8 @@ cptr item_activation(object_type *o_ptr) {
 		return("teleport-to every 15..40+d5 turns");
 	case ART_SEVENLEAGUE:
 		return("teleportation every 5..15 turns");
+	case ART_ANTIRIAD:
+		return("fire a plasma bolt (50..65d20) every 4 turns");
 
 #if 0 /* no, eg randart serpent amulet should retain basic activation! */
 	/* For the moment ignore (non-ego) randarts */
@@ -3727,6 +3788,9 @@ cptr item_activation(object_type *o_ptr) {
 
 	if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_GLASS_SHARD)
 		return("altering a death fate");
+
+	if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_ENERGY_CELL)
+		return("delivering a full energy recharge");
 
 #if 0
 	if (o_ptr->tval == TV_PARCHMENT && o_ptr->sval == SV_PARCHMENT_DEATH)

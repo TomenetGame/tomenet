@@ -2926,6 +2926,8 @@
 #define ART_UTUMNO		281
 #define ART_ANCHORING		282
 #define ART_SEVENLEAGUE		283
+#define ART_ANTIRIAD		284
+#define ART_ANTIRIAD_DEPLETED	285
 /* #define ART_ANGTIRCALAD	*/
 
 
@@ -3418,6 +3420,7 @@
 #define SV_EMPTY_BOTTLE			1
 
 /* sval for TV_JUNK */
+#define SV_ENERGY_CELL			2
 #define SV_POTTERY			3
 #define SV_GLASS_SHARD			5	/* remains of the grand mirror */
 #define SV_WOODEN_STICK			6
@@ -5594,14 +5597,17 @@
 
 /* Item-generation restriction flags */
 #define RESF_NONE		0x00000000
+
 #define RESF_WINNER		0x00000001	/* allow TR5_WINNERS_ONLY items */
 #define RESF_NOTRUEART		0x00000002	/* prevent true artifacts */
 #define RESF_NORANDART		0x00000004	/* prevent random artifacts */
 #define RESF_NODOUBLEEGO	0x00000008	/* prevent double ego items */
+
 #define RESF_NOHIDSM		0x00000010	/* prevent generation of high dragon scale mails: Only base elements + poison, metallics and pseudo. */
 #define RESF_LOWSPEED		0x00000020	/* not more than +4 speed */
 #define RESF_NOHISPEED		0x00000040	/* not more than +6 speed */
 #define RESF_LOWVALUE		0x00000080	/* no items worth more than 35000 Au */
+
 #define RESF_MIDVALUE		0x00000100	/* no items worth more than 50000 Au */
 #define RESF_NOHIVALUE		0x00000200	/* no items worth more than 100000 Au */
 
@@ -5623,15 +5629,18 @@
 #define RESF_DEBUG_ITEM		0x00020000	/* generate a certain item (k_idx) for debugging purpose */
 #define RESF_STOREFLAT		0x00040000	/* generate all base item types with same probability */
 #define RESF_FORCERANDART	0x00080000	/* generate a random artifact */
+
 #define RESF_NO_ENCHANT		0x00100000	/* generate an 'average' item (no enchantments/ego powers/artifacts) */
 #define RESF_SAURON		0x00200000	/* don't generate The One Ring, as player has already slain Sauron. -- This flag is abused for no_soloist drops eg from Santa Claus! */
 
 #define RESF_COND_SWORD		0x00400000	/* don't allow weapons besides a sword (swordmen, rogues) */
 #define RESF_COND_DARKSWORD	0x00800000	/* don't allow weapons besides a dark sword (unbelievers) */
+
 #define RESF_COND_BLUNT		0x01000000	/* don't allow weapons besides a blunt weapon (priests) */
 #define RESF_CONDF_NOSWORD	0x02000000	/* don't allow swords (shamans) -- */
 #define RESF_CONDF_MSTAFF	0x04000000	/* force a mage staff (mages) */
 #define RESF_COND_SLING		0x08000000	/* don't allow weapons besides a sling (clears condition) or ammo (doesn't clear condition) (slingers) */
+
 #define RESF_COND_RANGED	0x10000000	/* don't allow weapons besides ranged weapons (clear condition) or ammo (doesn't clear condition) (archers) */
 #define RESF_CONDF_RUNE		0x20000000	/* force a rune (runemasters) */
 #define RESF_COND2_LARMOUR	0x40000000	/* mostly avoid dropping heavy armour (persistent) */

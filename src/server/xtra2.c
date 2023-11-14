@@ -7631,6 +7631,7 @@ if (cfg.unikill_format) {
 				/* No winner arts for this.. */
 				if (a_ptr->flags5 & TR5_WINNERS_ONLY) continue;
 
+				/* (ART_ANTIRIAD is ruled out via HEAVY_CURSE check already, so no DI_MT_DOOM check is needed) */
 
 				/* SUCCESS */
 
@@ -7858,6 +7859,15 @@ if (cfg.unikill_format) {
 			/* hack ego power */
 			qq_ptr->name2 = EGO_RISTARI;
 			qq_ptr->name2b = 0;
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
+
+			/* recharge cell */
+			object_wipe(qq_ptr);
+			invcopy(qq_ptr, lookup_kind(TV_JUNK, SV_ENERGY_CELL));
+			qq_ptr->number = 1;
+			qq_ptr->note = local_quark;
+			qq_ptr->note_utag = strlen(quark_str(local_quark));
+			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NONE);
 			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
 		/* dungeon boss, but drops multiple items */

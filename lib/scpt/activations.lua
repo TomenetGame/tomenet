@@ -87,15 +87,15 @@ true_art_activation = {
 --case ART_DAL:--61
 {61, "removing fear and curing poison every 5 turns"},
 --case ART_NARTHANC:--66
-{66, "a fire bolt (9..29d8) every 2..8+d8 turns"},
+{66, "a fire bolt (9..29d8) every 2..8+d4 turns"},
 --case ART_NIMTHANC:--67
-{67, "a frost bolt (6..26d8) every 2..7+d7 turns"},
+{67, "a frost bolt (6..26d8) every 2..7+d3 turns"},
 --case ART_DETHANC:--68
-{68, "a lightning bolt (4..24d8) every 2..6+d6 turns"},
+{68, "a lightning bolt (4..24d8) every 2..6+d3 turns"},
 --case ART_RILIA:--69
-{69, "a stinking cloud (4..11) every 2..4+d4 turns"},
+{69, "a stinking cloud (4..11) every 10..15+d4 turns"},
 --case ART_BELANGIL:--70
-{70, "a frost ball (48..108) every 2..5+d5 turns"},
+{70, "a frost ball (48..108) every 2..5+d2 turns"},
 --case ART_ARUNRUTH:--72
 {72, "a frost bolt (12..27d8) every 100..500 turns"},
 --case ART_RINGIL:--82
@@ -113,7 +113,7 @@ true_art_activation = {
 --case ART_EONWE:--102
 {102, "obliteration every 500..1000 turns"},
 --case ART_LOTHARANG:--104
-{104, "curing wounds (4d8..4d28) every 1..3+d3 turns"},
+{104, "curing wounds (4d8..4d28) every 0..2+d3 turns"},
 --case ART_ULMO:--108
 {108, "teleporting away every 50..150 turns"},
 --case ART_AVAVIR:--109
@@ -224,6 +224,8 @@ music_info[10].desc},
 {280, "teleport-to every 15..40+d5 turns"},
 --case ART_SEVENLEAGUE:--283
 {283, "teleportation every 5..15 turns"},
+--case ART_ANTIRIAD:--284
+{284, "fire a plasma bolt (50..65d20) every 4 turn"},
 }
 
 activation_info = { }

@@ -5592,6 +5592,7 @@ bool activation_requires_direction(object_type *o_ptr) {
 		case ART_HELLFIRE:
 		case ART_HAVOC:
 		case ART_WARPSPEAR:
+		case ART_ANTIRIAD:
 			return(TRUE);
 		}
 	}
@@ -5718,7 +5719,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	    && !(o_ptr->tval == TV_TOOL && o_ptr->sval == SV_TOOL_GRINDER)
 #endif
 	    && !(o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && !(o_ptr->xtra3 & 0x0050))
-	    && !(o_ptr->tval == TV_JUNK && o_ptr->sval == SV_GLASS_SHARD)
+	    && !(o_ptr->tval == TV_JUNK && (o_ptr->sval == SV_GLASS_SHARD || o_ptr->sval == SV_ENERGY_CELL))
 	    ) {
 		if (p_ptr->anti_magic) {
 			msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
@@ -6025,6 +6026,12 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		return;
 	}
 
+	if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_ENERGY_CELL) {
+		recharge(Ind, 10000 + get_skill_scale(p_ptr, SKILL_DEVICE, 100)); //10000: Hack, marker that it's not a normal recharging
+		p_ptr->using_up_item = item;
+		return;
+	}
+
 	/* add a single spell to the player's customizable tome */
 	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval)) {
 		/* free space left? */
@@ -6243,7 +6250,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			msg_print(Ind, "Your battle axe radiates deep purple...");
 			hp_player(Ind, damroll(4, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)), FALSE, FALSE);
 			if (p_ptr->cut < CUT_MORTAL_WOUND) (void)set_cut(Ind, p_ptr->cut - 50, p_ptr->cut_attacker);
-			o_ptr->recharging = rand_int(3) + 3 - get_skill_scale(p_ptr, SKILL_DEVICE, 2);//o_o
+			o_ptr->recharging = randint(3) + 2 - get_skill_scale(p_ptr, SKILL_DEVICE, 2);//o_o
 			break;
 		case ART_CUBRAGOL:
 			(void)brand_bolts(Ind);
@@ -6349,7 +6356,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_HOLHENNETH:
 			msg_print(Ind, "An image forms in your mind...");
 			detection(Ind, DEFAULT_RADIUS * 2);
-			o_ptr->recharging = rand_int(25) + 55 - get_skill_scale(p_ptr, SKILL_DEVICE, 40);
+			o_ptr->recharging = randint(25) + 55 - get_skill_scale(p_ptr, SKILL_DEVICE, 40);
 			break;
 		case ART_GONDOR:
 			msg_print(Ind, "\377GYou feel a warm tingling inside...");
@@ -6384,7 +6391,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				take_hit(Ind, dam, "The Phial of Galadriel", 0);
 			}
 			if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
-			o_ptr->recharging = rand_int(10) + 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
+			o_ptr->recharging = randint(10) + 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
 			break;
 		case ART_ELENDIL:
 			msg_print(Ind, "The star shines brightly...");
@@ -6396,14 +6403,14 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			}
 			if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 			map_area(Ind);
-			o_ptr->recharging = rand_int(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 40);
+			o_ptr->recharging = randint(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 40);
 			break;
 		case ART_THRAIN:
 			msg_print(Ind, "The stone glows a deep green...");
 			wiz_lite(Ind);
 			(void)detect_sdoor(Ind, DEFAULT_RADIUS * 2);
 			(void)detect_trap(Ind, DEFAULT_RADIUS * 2);
-			o_ptr->recharging = rand_int(150) + 1000 - get_skill_scale(p_ptr, SKILL_DEVICE, 800);
+			o_ptr->recharging = randint(150) + 1000 - get_skill_scale(p_ptr, SKILL_DEVICE, 800);
 			break;
 		case ART_INGWE:
 			msg_print(Ind, "An aura of good floods the area...");
@@ -6413,7 +6420,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, "The Amulet of Ingwe", 0);
 			}
-			o_ptr->recharging = rand_int(150) + 300 - get_skill_scale(p_ptr, SKILL_DEVICE, 250);
+			o_ptr->recharging = randint(150) + 300 - get_skill_scale(p_ptr, SKILL_DEVICE, 250);
 			break;
 		case ART_CARLAMMAS:
 			msg_print(Ind, "The amulet lets out a shrill wail...");
@@ -6424,12 +6431,12 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			} else {
 				(void)set_protevil(Ind, randint(15) + 30); /* removed stacking */
 			}
-			o_ptr->recharging = rand_int(125) + 225 - get_skill_scale(p_ptr, SKILL_DEVICE, 200);
+			o_ptr->recharging = randint(125) + 225 - get_skill_scale(p_ptr, SKILL_DEVICE, 200);
 			break;
 		case ART_TULKAS:
 			msg_print(Ind, "The ring glows brightly...");
 			(void)set_fast(Ind, randint(50) + 75, 15); /* removed stacking */
-			o_ptr->recharging = rand_int(100) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
+			o_ptr->recharging = randint(100) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;
 		case ART_NARYA:
 			msg_print(Ind, "The ring glows deep red...");
@@ -6454,20 +6461,20 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_GILGALAD:
 			for (k = 1; k < 10; k++)
 				if (k - 5) fire_beam(Ind, GF_LITE, k, 75 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), " emits a beam of light for");
-			o_ptr->recharging = rand_int(50) + 75 - get_skill_scale(p_ptr, SKILL_DEVICE, 60);
+			o_ptr->recharging = randint(50) + 75 - get_skill_scale(p_ptr, SKILL_DEVICE, 60);
 			break;
 		case ART_CELEBRIMBOR:
 			set_tim_esp(Ind, p_ptr->tim_esp + randint(20) + 20);
 			 /* not removed stacking */
-			o_ptr->recharging = rand_int(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
+			o_ptr->recharging = randint(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 			break;
 		case ART_SKULLCLEAVER:
 			destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR, 120);
-			o_ptr->recharging = rand_int(200) + 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
+			o_ptr->recharging = randint(200) + 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;
 		case ART_HARADRIM:
 			set_shero(Ind, randint(25) + 25); /* removed stacking */
-			o_ptr->recharging = rand_int(40) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 35);
+			o_ptr->recharging = randint(40) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 35);
 			break;
 		case ART_FUNDIN:
 			dispel_evil(Ind, p_ptr->lev * 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 400));
@@ -6476,7 +6483,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, "the Ball-and-Chain of Fundin Bluecloak", 0);
 			}
-			o_ptr->recharging = rand_int(50) + 100 - get_skill_scale(p_ptr, SKILL_DEVICE, 80);
+			o_ptr->recharging = randint(50) + 100 - get_skill_scale(p_ptr, SKILL_DEVICE, 80);
 			break;
 		case ART_NAIN:
 		case ART_EOL:
@@ -6540,10 +6547,10 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			r_ptr->r_flags9 = r_ptr->flags9;
  #endif
 
-			o_ptr->recharging = rand_int(200) + 500 - get_skill_scale(p_ptr, SKILL_DEVICE, 350);
+			o_ptr->recharging = randint(200) + 500 - get_skill_scale(p_ptr, SKILL_DEVICE, 350);
 #else
 			probing(Ind);
-			o_ptr->recharging = rand_int(200) + 300 - get_skill_scale(p_ptr, SKILL_DEVICE, 250);
+			o_ptr->recharging = randint(200) + 300 - get_skill_scale(p_ptr, SKILL_DEVICE, 250);
 #endif
 			break;
 		case ART_KNOWLEDGE:
@@ -6551,7 +6558,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			msg_print(Ind, "\377RYou hear horrible, otherworldy sounds of the dead in your head..");
 			take_sanity_hit(Ind, damroll(2, 7), "the sounds of the dead", 0);
 			//take_hit(Ind, damroll(10, 7), "the sounds of the dead", 0);
-			o_ptr->recharging = rand_int(100) + 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
+			o_ptr->recharging = randint(100) + 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;
 		case ART_UNDEATH:
 			msg_print(Ind, "The phial wells with dark light...");
@@ -6567,7 +6574,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				(void)dec_stat(Ind, A_CHR, 25, STAT_DEC_PERMANENT);
 				(void)dec_stat(Ind, A_INT, 25, STAT_DEC_PERMANENT);
 			}
-			o_ptr->recharging = rand_int(10) + 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
+			o_ptr->recharging = randint(10) + 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
 			break;
 		case ART_HIMRING:
 			if (p_ptr->suscep_good) {
@@ -6577,7 +6584,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			} else {
 				(void)set_protevil(Ind, randint(15) + 30); /* removed stacking */
 			}
-			o_ptr->recharging = rand_int(125) + 225 - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
+			o_ptr->recharging = randint(125) + 225 - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
 			break;
 		case ART_FLAR:
 #if 0
@@ -6606,7 +6613,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_BARAHIR:
 			msg_print(Ind, "You exterminate small life.");
 			(void)dispel_monsters(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300));
-			o_ptr->recharging = rand_int(55) + 55 - get_skill_scale(p_ptr, SKILL_DEVICE, 40);
+			o_ptr->recharging = randint(55) + 55 - get_skill_scale(p_ptr, SKILL_DEVICE, 40);
 			break;
 		/* The Stone of Lore is perilous, for the sake of game balance. */
 		case ART_STONE_LORE:
@@ -6781,7 +6788,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			(void)detect_trap(Ind, DEFAULT_RADIUS * 2);
 			(void)detect_sdoor(Ind, DEFAULT_RADIUS * 2);
 			//(void)detect_stair(Ind);
-			o_ptr->recharging = rand_int(150) + 1000 - get_skill_scale(p_ptr, SKILL_DEVICE, 800);
+			o_ptr->recharging = randint(150) + 1000 - get_skill_scale(p_ptr, SKILL_DEVICE, 800);
 			break;
 #if 0	// Instruments
 		case ART_ROBINTON:
@@ -6838,7 +6845,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_HURIN:
 			(void)set_fast(Ind, randint(50) + 50, 10); /* removed stacking */
 			set_shero(Ind, randint(50) + 50); /* removed stacking */
-			o_ptr->recharging = rand_int(75) + 175 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
+			o_ptr->recharging = randint(75) + 175 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;
 		case ART_AXE_GOTHMOG:
 			msg_print(Ind, "Your lochaber axe erupts in fire...");
@@ -6969,7 +6976,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			break;
 		case ART_FIST:
 			set_melee_brand(Ind, 30 + rand_int(5) + get_skill_scale(p_ptr, SKILL_DEVICE, 10), TBRAND_HELLFIRE, 10, TRUE, FALSE);
-			o_ptr->recharging = 350 - get_skill_scale(p_ptr, SKILL_DEVICE, 200) + rand_int(50);
+			o_ptr->recharging = 350 - get_skill_scale(p_ptr, SKILL_DEVICE, 200) + randint(50);
 			break;
 		case ART_WARPSPEAR:
 			p_ptr->current_activation = item;
@@ -7298,28 +7305,28 @@ void do_cmd_activate_dir(int Ind, int dir) {
 		case ART_NARTHANC:
 			sprintf(p_ptr->attacker, " fires a fire bolt for");
 			fire_bolt(Ind, GF_FIRE, dir, damroll(9 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-			o_ptr->recharging = rand_int(4) + 8 - get_skill_scale(p_ptr, SKILL_DEVICE, 6);
+			o_ptr->recharging = randint(4) + 8 - get_skill_scale(p_ptr, SKILL_DEVICE, 6);
 			break;
 		case ART_NIMTHANC:
 			sprintf(p_ptr->attacker, " fires a frost bolt for");
 			fire_bolt(Ind, GF_COLD, dir, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-			o_ptr->recharging = rand_int(3) + 7 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
+			o_ptr->recharging = randint(3) + 7 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
 			break;
 		case ART_DETHANC:
 			sprintf(p_ptr->attacker, " fires a lightning bolt for");
 			fire_bolt(Ind, GF_ELEC, dir, damroll(4 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-			o_ptr->recharging = rand_int(3) + 6 - get_skill_scale(p_ptr, SKILL_DEVICE, 4);
+			o_ptr->recharging = randint(3) + 6 - get_skill_scale(p_ptr, SKILL_DEVICE, 4);
 			break;
 		case ART_RILIA:
 			sprintf(p_ptr->attacker, " casts a stinking cloud for");
 			//fire_ball(Ind, GF_POIS, dir, 12 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 3, p_ptr->attacker);
 			fire_cloud(Ind, GF_POIS, dir, 4 + get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7), 3, 4, 9, p_ptr->attacker);
-			o_ptr->recharging = rand_int(2) + 4 - get_skill_scale(p_ptr, SKILL_DEVICE, 2);
+			o_ptr->recharging = randint(4) + 15 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
 			break;
 		case ART_BELANGIL:
 			sprintf(p_ptr->attacker, " casts a cold ball for");
 			fire_ball(Ind, GF_COLD, dir, 48 + get_skill_scale(p_ptr, SKILL_DEVICE, 60), 2, p_ptr->attacker);
-			o_ptr->recharging = rand_int(2) + 5 - get_skill_scale(p_ptr, SKILL_DEVICE, 3);
+			o_ptr->recharging = randint(2) + 5 - get_skill_scale(p_ptr, SKILL_DEVICE, 3);
 			break;
 		case ART_RINGIL:
 			sprintf(p_ptr->attacker, " casts a cold ball for");
@@ -7376,46 +7383,46 @@ void do_cmd_activate_dir(int Ind, int dir) {
 		case ART_PAURHACH:
 			sprintf(p_ptr->attacker, " fires a fire bolt for");
 			fire_bolt(Ind, GF_FIRE, dir, damroll(9 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-			o_ptr->recharging = rand_int(4) + 8 - get_skill_scale(p_ptr, SKILL_DEVICE, 6);
+			o_ptr->recharging = randint(4) + 8 - get_skill_scale(p_ptr, SKILL_DEVICE, 6);
 			break;
 		case ART_PAURNIMMEN:
 			sprintf(p_ptr->attacker, " fires a frost bolt for");
 			fire_bolt(Ind, GF_COLD, dir, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-			o_ptr->recharging = rand_int(3) + 7 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
+			o_ptr->recharging = randint(3) + 7 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
 			break;
 		case ART_PAURAEGEN:
 			sprintf(p_ptr->attacker, " fires a lightning bolt for");
 			fire_bolt(Ind, GF_ELEC, dir, damroll(4 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-			o_ptr->recharging = rand_int(3) + 6 - get_skill_scale(p_ptr, SKILL_DEVICE, 4);
+			o_ptr->recharging = randint(3) + 6 - get_skill_scale(p_ptr, SKILL_DEVICE, 4);
 			break;
 		case ART_PAURNEN:
 			sprintf(p_ptr->attacker, " fires an acid bolt for");
 			fire_bolt(Ind, GF_ACID, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-			o_ptr->recharging = rand_int(2) + 5 - get_skill_scale(p_ptr, SKILL_DEVICE, 3);
+			o_ptr->recharging = randint(2) + 5 - get_skill_scale(p_ptr, SKILL_DEVICE, 3);
 			break;
 		case ART_FINGOLFIN:
 			sprintf(p_ptr->attacker, " fires an arrow for");
 			fire_bolt(Ind, GF_ARROW, dir, 150, p_ptr->attacker);
-			o_ptr->recharging = rand_int(30) + 90 - get_skill_scale(p_ptr, SKILL_DEVICE, 75);
+			o_ptr->recharging = randint(30) + 90 - get_skill_scale(p_ptr, SKILL_DEVICE, 75);
 			break;
 		case ART_NARYA:
 			sprintf(p_ptr->attacker, " casts a fire ball for");
 			fire_ball(Ind, GF_FIRE, dir, 120 + get_skill_scale(p_ptr, SKILL_DEVICE, 250), 3, p_ptr->attacker);
-			o_ptr->recharging = rand_int(75) + 225 - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
+			o_ptr->recharging = randint(75) + 225 - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
 			break;
 		case ART_NENYA:
 			sprintf(p_ptr->attacker, " casts a cold ball for");
 			fire_ball(Ind, GF_COLD, dir, 200 + get_skill_scale(p_ptr, SKILL_DEVICE, 250), 3, p_ptr->attacker);
-			o_ptr->recharging = rand_int(125) + 325 - get_skill_scale(p_ptr, SKILL_DEVICE, 225);
+			o_ptr->recharging = randint(125) + 325 - get_skill_scale(p_ptr, SKILL_DEVICE, 225);
 			break;
 		case ART_VILYA:
 			sprintf(p_ptr->attacker, " casts a lightning ball for");
 			fire_ball(Ind, GF_ELEC, dir, 250 + get_skill_scale(p_ptr, SKILL_DEVICE, 250), 3, p_ptr->attacker);
-			o_ptr->recharging = rand_int(175) + 425 - get_skill_scale(p_ptr, SKILL_DEVICE, 325);
+			o_ptr->recharging = randint(175) + 425 - get_skill_scale(p_ptr, SKILL_DEVICE, 325);
 			break;
 		case ART_POWER:
 			ring_of_power(Ind, dir);
-			o_ptr->recharging = rand_int(450) + 450;// - get_skill_scale(p_ptr, SKILL_DEVICE, 225);
+			o_ptr->recharging = randint(450) + 450;// - get_skill_scale(p_ptr, SKILL_DEVICE, 225);
 			break;
 		case ART_MEDIATOR:
 			msg_print(Ind, "You breathe the elements.");
@@ -7441,7 +7448,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 		case ART_AXE_GOTHMOG:
 			sprintf(p_ptr->attacker, " casts a fireball for");
 			fire_ball(Ind, GF_FIRE, dir, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 300), 4, p_ptr->attacker);
-			o_ptr->recharging = 200 + rand_int(200) - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
+			o_ptr->recharging = 200 + randint(200) - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
 			break;
 		case ART_MELKOR:
 			sprintf(p_ptr->attacker, " casts a darkness storm for");
@@ -7460,17 +7467,17 @@ void do_cmd_activate_dir(int Ind, int dir) {
 		}
 		case ART_NAIN:
 			wall_to_mud(Ind, dir);
-			o_ptr->recharging = rand_int(5) + 7 - get_skill_scale(p_ptr, SKILL_DEVICE, 3);
+			o_ptr->recharging = randint(5) + 7 - get_skill_scale(p_ptr, SKILL_DEVICE, 3);
 			break;
 		case ART_EOL:
 			sprintf(p_ptr->attacker, " fires a mana bolt for");
 			fire_bolt(Ind, GF_MANA, dir, damroll(9 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-			o_ptr->recharging = rand_int(3) + 7 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
+			o_ptr->recharging = randint(3) + 7 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
 			break;
 		case ART_UMBAR:
 			sprintf(p_ptr->attacker, " fires a missile for");
 			fire_bolt(Ind, GF_MISSILE, dir, damroll(10 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 10), p_ptr->attacker);
-			o_ptr->recharging = rand_int(10) + 20 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
+			o_ptr->recharging = randint(10) + 20 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
 			break;
 		case ART_HELLFIRE:
 			sprintf(p_ptr->attacker, " conjures up hellfire for");
@@ -7480,11 +7487,16 @@ void do_cmd_activate_dir(int Ind, int dir) {
 		case ART_HAVOC:
 			sprintf(p_ptr->attacker, " casts a force bolt for");
 			fire_bolt(Ind, GF_FORCE, dir, damroll(8 + get_skill_scale(p_ptr, SKILL_DEVICE, 16), 8), p_ptr->attacker);
-			o_ptr->recharging = rand_int(2) + 1;
+			o_ptr->recharging = randint(2);
 			break;
 		case ART_WARPSPEAR:
 			project_hook(Ind, GF_TELE_TO, dir, 1, PROJECT_STOP | PROJECT_KILL, "");
-			o_ptr->recharging = rand_int(5) + 40 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
+			o_ptr->recharging = randint(5) + 40 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
+			break;
+		case ART_ANTIRIAD:
+			sprintf(p_ptr->attacker, " fires a plasma bolt for");
+			fire_bolt(Ind, GF_PLASMA, dir, damroll(50 + get_skill_scale(p_ptr, SKILL_DEVICE, 15), 20), p_ptr->attacker);
+			o_ptr->recharging = 4;
 			break;
 		default: done = FALSE;
 		}
@@ -7744,7 +7756,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			}
 			break;
 		}
-		o_ptr->recharging = 250 + rand_int(20) - get_skill_scale(p_ptr, SKILL_DEVICE, 230);//pretty big effect^^
+		o_ptr->recharging = 250 + randint(20) - get_skill_scale(p_ptr, SKILL_DEVICE, 230);//pretty big effect^^
 	}
 
 	/* Hack -- Amulet of the Serpents can be activated as well */
@@ -7752,7 +7764,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 		msg_print(Ind, "You breathe venom...");
 		sprintf(p_ptr->attacker, " breathes venom for");
 		fire_ball(Ind, GF_POIS, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 2, p_ptr->attacker);
-		o_ptr->recharging = rand_int(60) + 40 - get_skill_scale(p_ptr, SKILL_DEVICE, 30);
+		o_ptr->recharging = randint(60) + 40 - get_skill_scale(p_ptr, SKILL_DEVICE, 30);
 	}
 	else if (!done && o_ptr->tval == TV_RING) {
 		switch (o_ptr->sval) {
@@ -7761,28 +7773,28 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			sprintf(p_ptr->attacker, " casts a lightning ball for");
 			fire_ball(Ind, GF_ELEC, dir, 50 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 2, p_ptr->attacker);
 			(void)set_oppose_elec(Ind, randint(20) + 20); /* removed stacking */
-			o_ptr->recharging = rand_int(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
+			o_ptr->recharging = randint(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 			break;
 		case SV_RING_ACID:
 			/* Get a direction for breathing (or abort) */
 			sprintf(p_ptr->attacker, " casts an acid ball for");
 			fire_ball(Ind, GF_ACID, dir, 50 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 2, p_ptr->attacker);
 			(void)set_oppose_acid(Ind, randint(20) + 20); /* removed stacking */
-			o_ptr->recharging = rand_int(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
+			o_ptr->recharging = randint(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 			break;
 		case SV_RING_ICE:
 			/* Get a direction for breathing (or abort) */
 			sprintf(p_ptr->attacker, " casts a frost ball for");
 			fire_ball(Ind, GF_COLD, dir, 50 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 2, p_ptr->attacker);
 			(void)set_oppose_cold(Ind, randint(20) + 20); /* removed stacking */
-			o_ptr->recharging = rand_int(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
+			o_ptr->recharging = randint(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 			break;
 		case SV_RING_FLAMES:
 			/* Get a direction for breathing (or abort) */
 			sprintf(p_ptr->attacker, " casts a fire ball for");
 			fire_ball(Ind, GF_FIRE, dir, 50 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 2, p_ptr->attacker);
 			(void)set_oppose_fire(Ind, randint(20) + 20); /* removed stacking */
-			o_ptr->recharging = rand_int(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
+			o_ptr->recharging = randint(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 			break;
 		}
 	}

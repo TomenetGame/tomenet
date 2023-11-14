@@ -4212,6 +4212,9 @@ static void log_arts(int a_idx, struct worldpos *wpos) {
 	case ART_DREADNOUGHT:
 		s_printf("ARTIFACT: 'Dreadnought' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
 		return;
+	case ART_ANTIRIAD:
+		s_printf("ARTIFACT: 'Antiriad' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
+		return;
 #if 0
 	case ART_NARYA:
 		s_printf("ARTIFACT: 'Narya' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
@@ -4296,6 +4299,7 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 #endif
 	artifact_type *a_ptr;
 	int im, a_map[MAX_A_IDX];
+	dungeon_type *d_ptr = getdungeon(wpos);
 
 	/* Check if artifact generation is currently disabled -
 	   added this for maintenance reasons -C. Blue */
@@ -4336,6 +4340,9 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 
 		/* Sauron-slayers and players currently in Mt Doom can't find The One Ring (anymore) */
 		if (i == ART_POWER && (resf & RESF_SAURON)) continue;
+
+		/* Hack: Assume that ART_ANTIRIAD is the only insta-art that is also winners-only */
+		if ((k_info[k_idx].flags5 & TR5_WINNERS_ONLY) && (k_info[k_idx].flags3 & TR3_INSTA_ART) && (!d_ptr || d_ptr->type != DI_MT_DOOM)) continue;
 
 		/* Artifact "rarity roll" */
 #ifdef IDDC_EASY_TRUE_ARTIFACTS
@@ -6085,6 +6092,9 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 
 		/* Fuelable artifact lights shouldn't always start at 0 energy */
 		if (o_ptr->tval == TV_LITE) a_m_aux_4(o_ptr, lev, power, resf);
+
+		/* Specialty: Charge with starting energy */
+		if (o_ptr->name1 == ART_ANTIRIAD) o_ptr->timeout = 7000 + rand_int(499);
 
 		/* clear flags from pre-artified item, simulating
 		   generation of a brand new object. */
@@ -7955,6 +7965,9 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 
 			if ((k_info[k_idx].flags5 & TR5_FORCE_DEPTH) && dlev < k_info[k_idx].level) continue;
 
+			/* Hack: Assume that ART_ANTIRIAD is the only insta-art that is also winners-only */
+			if ((k_info[k_idx].flags5 & TR5_WINNERS_ONLY) && (k_info[k_idx].flags3 & TR3_INSTA_ART) && (!d_ptr || d_ptr->type != DI_MT_DOOM)) continue;
+
 			/* Allow all other items here - mikaelh */
 			break;
 		} while (tries < 10);
@@ -8237,6 +8250,9 @@ void generate_object(int Ind, object_type *o_ptr, struct worldpos *wpos, bool go
 			if ((resf & RESF_NOTRUEART) && (k_info[k_idx].flags3 & TR3_INSTA_ART)) continue;
 
 			if (!(resf & RESF_WINNER) && (k_info[k_idx].flags5 & TR5_WINNERS_ONLY)) continue;
+
+			/* Hack: Assume that ART_ANTIRIAD is the only insta-art that is also winners-only */
+			if ((k_info[k_idx].flags5 & TR5_WINNERS_ONLY) && (k_info[k_idx].flags3 & TR3_INSTA_ART) && (!d_ptr || d_ptr->type != DI_MT_DOOM)) continue;
 
 			/* Allow all other items here - mikaelh */
 			break;
@@ -12525,6 +12541,14 @@ int get_artifact_timeout(int a_idx) {
    to counter long-time hoarding of artifacts. - C. Blue */
 void determine_artifact_timeout(int a_idx, struct worldpos *wpos) {
 	a_info[a_idx].timeout = get_artifact_timeout(a_idx);
+
+	/* Specialty hacks */
+	if (a_idx == ART_ANTIRIAD) {
+		a_info[ART_ANTIRIAD_DEPLETED].timeout = a_info[a_idx].timeout;
+		a_info[ART_ANTIRIAD_DEPLETED].carrier = a_info[a_idx].carrier;
+		if (wpos) a_info[ART_ANTIRIAD_DEPLETED].iddc = in_irondeepdive(wpos);
+		a_info[ART_ANTIRIAD_DEPLETED].winner = FALSE;
+	}
 
 //debug
 s_printf("A_TIMEOUT: Called (%d)!\n", a_idx);

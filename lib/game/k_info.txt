@@ -4456,7 +4456,28 @@ A:127/0
 F:HIDE_TYPE
 D:Prevents hit points, sanity or experience from dropping below zero.
 
-# HOLE 517-520 (1st hole)
+#turquoise recharge cell
+N:517:& Energy Cell~
+G:*:B
+I:11:2:0
+W:127:0:3:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW | ACTIVATE | EASY_USE
+D:A strange container of turquoise metal that has crackling energy stored inside.
+
+# Made for Mt Doom depths, pseudo-H.Adam.P.A.
+N:518:Heavy Adamantite Plate Armour~
+G:[:v
+I:37:40:0
+W:85:0:380:50000
+#A:85/48
+A:85/1
+P:76:4d4:-6:0:10
+F:IGNORE_ACID | IGNORE_WATER | IGNORE_MANA | WINNERS_ONLY | FORCE_DEPTH | INSTA_ART
+
+
+# HOLE 519-520 (1st hole)
 ### Room for new objects added after 511 (Zangband 2.1.0): 512-575
 
 

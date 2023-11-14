@@ -4187,6 +4187,54 @@ bool identify_fully_object_quiet(int Ind, object_type *o_ptr) {
 	return(TRUE);
 }
 
+
+static bool recharge_antiriad(int Ind, int item, int num) {
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr;
+
+	item_tester_hook = NULL;
+
+	/* Get the item (in the pack) */
+	if (item >= 0) o_ptr = &p_ptr->inventory[item];
+	/* Get the item (on the floor) */
+	else {
+		p_ptr->using_up_item = -1;
+		return(FALSE);//o_ptr = &o_list[0 - item];
+	}
+
+	if (o_ptr->name1 != ART_ANTIRIAD && o_ptr->name1 != ART_ANTIRIAD_DEPLETED) {
+		msg_print(Ind, "You cannot recharge that item.");
+		get_item(Ind, ITH_NONE);
+		return(FALSE);
+	}
+
+	if (p_ptr->using_up_item < 0) return(FALSE); //paranoia
+	if (p_ptr->inventory[p_ptr->using_up_item].tval != TV_JUNK || p_ptr->inventory[p_ptr->using_up_item].sval != SV_ENERGY_CELL) return(FALSE); //paranoia?
+
+	msg_print(Ind, "The Sacred Armour of Antiriad is reenergized!");
+	inven_item_increase(Ind, p_ptr->using_up_item, -1);
+	inven_item_describe(Ind, p_ptr->using_up_item);
+	inven_item_optimize(Ind, p_ptr->using_up_item);
+	p_ptr->using_up_item = -1;
+	o_ptr->name1 = ART_ANTIRIAD;
+	o_ptr->weight = a_info[o_ptr->name1].weight;
+	/* Combine / Reorder the pack (later) */
+	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+	/* Re-power the suit */
+	o_ptr->timeout = 14500 + randint(499);
+	if (item == INVEN_BODY) p_ptr->update |= PU_BONUS; //handle_stuff(Ind); mh~
+
+	determine_artifact_timeout(ART_ANTIRIAD, &p_ptr->wpos);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP);
+	/* We no longer have a recharge in progress */
+	p_ptr->current_recharge = 0;
+	/* Successful renenergization */
+	return(TRUE);
+}
+
 /*
  * Hook for "get_item()".  Determine if something is rechargable.
  */
@@ -4207,10 +4255,14 @@ bool item_tester_hook_recharge(object_type *o_ptr) {
 	return(FALSE);
 }
 
-
 bool recharge(int Ind, int num) {
 	player_type *p_ptr = Players[Ind];
 
+	/* Special marker hack? */
+	if (num >= 10000) get_item(Ind, ITH_NONE);
+	else
+
+	/* Normal recharging routine */
 	get_item(Ind, ITH_RECHARGE);
 
 	/* Clear any other pending actions - mikaelh */
@@ -4254,6 +4306,8 @@ bool recharge_aux(int Ind, int item, int pow) {
 	int i, t, lev, dr;
 	object_type *o_ptr;
 
+	/* Special hack marker */
+	if (pow >= 10000) return(recharge_antiriad(Ind, item, pow));
 
 	/* Only accept legal items */
 	item_tester_hook = item_tester_hook_recharge;

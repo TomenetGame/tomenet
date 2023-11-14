@@ -4789,6 +4789,7 @@ static bool process_player_end_aux(int Ind) {
 #if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
 	bool		intrinsic_regen = FALSE;
 #endif
+	bool		timeout_handled;
 
 	int minus = 1;
 	int minus_magic = 1;
@@ -5845,50 +5846,121 @@ static bool process_player_end_aux(int Ind) {
 		if (!p_ptr->support_timer) p_ptr->supp = p_ptr->supp_top = 0;
 	}
 
-#if POLY_RING_METHOD == 0
-	/* Check polymorph rings with timeouts */
-	for (i = INVEN_LEFT; i <= INVEN_RIGHT; i++) {
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
+		if (i == INVEN_LITE) i++; /* Handled further down */
+
+		timeout_handled = FALSE;
 		o_ptr = &p_ptr->inventory[i];
-		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH) && (o_ptr->timeout_magic > 0) &&
-		    (p_ptr->body_monster == o_ptr->pval)) {
-			/* Decrease life-span */
-			o_ptr->timeout_magic--;
+
+#if POLY_RING_METHOD == 0
+		/* Check polymorph rings with timeouts */
+		if (i == INVEN_LEFT || i == INVEN_RIGHT) {
+			if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH) && (o_ptr->timeout_magic > 0) &&
+			    (p_ptr->body_monster == o_ptr->pval)) {
+				timeout_handled = TRUE;
+
+				/* Decrease life-span */
+				o_ptr->timeout_magic--;
  #ifndef LIVE_TIMEOUTS
-			/* Hack -- notice interesting energy steps */
-			if ((o_ptr->timeout_magic < 100) || (!(o_ptr->timeout_magic % 100)))
+				/* Hack -- notice interesting energy steps */
+				if ((o_ptr->timeout_magic < 100) || (!(o_ptr->timeout_magic % 100)))
  #else
-			if (p_ptr->live_timeouts_magic || (o_ptr->timeout_magic < 100) || (!(o_ptr->timeout_magic % 100)))
+				if (p_ptr->live_timeouts || (o_ptr->timeout_magic < 100) || (!(o_ptr->timeout_magic % 100)))
  #endif
+				{
+					/* Window stuff */
+					p_ptr->window |= PW_EQUIP;
+				}
+
+				/* Hack -- notice interesting fuel steps */
+				if ((o_ptr->timeout_magic > 0) && (o_ptr->timeout_magic < 100) && !(o_ptr->timeout_magic % 10)) {
+					if (p_ptr->disturb_minor) disturb(Ind, 0, 0);
+					msg_print(Ind, "\376\377LYour ring flickers and fades, flashes of light run over its surface.");
+					/* Window stuff */
+					p_ptr->window |= PW_EQUIP;
+				} else if (o_ptr->timeout_magic == 0) {
+					disturb(Ind, 0, 0);
+					msg_print(Ind, "\376\377LYour ring disintegrates!");
+
+					if ((p_ptr->body_monster == o_ptr->pval) &&
+					    ((p_ptr->r_mimicry[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
+					    (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level))) {
+						/* If player hasn't got high enough kill count anymore now, poly back to player form! */
+						msg_print(Ind, "You polymorph back to your normal form.");
+						do_mimic_change(Ind, 0, TRUE);
+					}
+
+					/* Decrease the item, optimize. */
+					inven_item_increase(Ind, i, -1);
+					inven_item_optimize(Ind, i);
+				}
+			}
+		}
+#endif
+
+		/* Yet-to-add "Ethereal" or other timed items, that live only until running out of energy. Added for ART_ANTIRIAD, the first of this sort. */
+		if (o_ptr->timeout && !timeout_handled) {
+			/* Decrease life-span */
+			/* Decrease in in-game hours (aka 360 in-game turns: ~2/s * 3600 / 20 (20x in-game-time vs real-time)) ? */
+			if (o_ptr->name1 == ART_ANTIRIAD) {
+				o_ptr->xtra9++;
+				if (o_ptr->xtra9 == 360) {
+					o_ptr->xtra9 = 0;
+					o_ptr->timeout--;
+				} else continue; /* No visible change yet */
+			}
+			/* Decrease in in-game (character) turns */
+			else o_ptr->timeout--;
+
+#ifndef LIVE_TIMEOUTS
+			/* Hack -- notice interesting energy steps */
+			if ((o_ptr->timeout < 100) || (!(o_ptr->timeout % 100)))
+#else
+			if (p_ptr->live_timeouts || (o_ptr->timeout < 100) || (!(o_ptr->timeout % 100)))
+#endif
 			{
 				/* Window stuff */
 				p_ptr->window |= PW_EQUIP;
 			}
 
 			/* Hack -- notice interesting fuel steps */
-			if ((o_ptr->timeout_magic > 0) && (o_ptr->timeout_magic < 100) && !(o_ptr->timeout_magic % 10)) {
+			if ((o_ptr->timeout > 0) && (o_ptr->timeout < 100) && !(o_ptr->timeout % 10)) {
 				if (p_ptr->disturb_minor) disturb(Ind, 0, 0);
-				msg_print(Ind, "\376\377LYour ring flickers and fades, flashes of light run over its surface.");
 				/* Window stuff */
 				p_ptr->window |= PW_EQUIP;
-			} else if (o_ptr->timeout_magic == 0) {
-				disturb(Ind, 0, 0);
-				msg_print(Ind, "\376\377LYour ring disintegrates!");
 
-				if ((p_ptr->body_monster == o_ptr->pval) &&
-				    ((p_ptr->r_mimicry[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
-				    (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level))) {
-					/* If player hasn't got high enough kill count anymore now, poly back to player form! */
-					msg_print(Ind, "You polymorph back to your normal form.");
-					do_mimic_change(Ind, 0, TRUE);
+				if (o_ptr->name1 != ART_ANTIRIAD) {
+					char o_name[ONAME_LEN];
+
+					object_desc(Ind, o_name, o_ptr, TRUE, 3);
+					msg_format(Ind, "\376\377LYour %s flickers and flashes...", o_name);
+				}
+			} else if (o_ptr->timeout == 0) {
+				disturb(Ind, 0, 0);
+
+				if (o_ptr->name1 != ART_ANTIRIAD) {
+					char o_name[ONAME_LEN];
+
+					object_desc(Ind, o_name, o_ptr, TRUE, 3);
+					msg_format(Ind, "\376\377LYour %s disintegrates!", o_name);
+
+					/* Decrease the item, optimize. */
+					inven_item_increase(Ind, i, -1);
+					inven_item_optimize(Ind, i);
+				} else {
+					msg_format(Ind, "\376\377LYour armour is out of energy and suddenly becomes almost impossible to move!");
+					o_ptr->name1 = ART_ANTIRIAD_DEPLETED;
+					o_ptr->weight = a_info[o_ptr->name1].weight;
+					//handle_art_i(ART_ANTIRIAD_DEPLETED);
+					//handle_art_d(ART_ANTIRIAD);
+					p_ptr->window |= (PW_INVEN | PW_EQUIP); //todo: weight doesn't update!
 				}
 
-				/* Decrease the item, optimize. */
-				inven_item_increase(Ind, i, -1);
-				inven_item_optimize(Ind, i);
+				p_ptr->update |= PU_BONUS;
+				handle_stuff(Ind);
 			}
 		}
 	}
-#endif
 
 	/* Don't accidentally float after dying */
 	if (p_ptr->safe_float_turns) p_ptr->safe_float_turns--;

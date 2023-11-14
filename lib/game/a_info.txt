@@ -3485,6 +3485,7 @@ D:and along its surface, emitting a constant hum, some call it the singing
 D:spear. It feels surprisingly light. At first the wielder may not notice how
 D:deeply imbued by corruption this spear is.
 
+
 # The Rhomphaia of Utumno
 
 N:281:of Utumno
@@ -3509,6 +3510,7 @@ F:HIDE_TYPE
 D:These massive boots seem like they would make each attempt to move a chore,
 D:but as you try and take a step it feels surprisingly swift and sure!
 
+
 # The Pair of Soft Leather Boots 'Seven-league Boots'
 
 N:283:'Seven-league Boots'
@@ -3519,6 +3521,31 @@ F:SPEED | ACTIVATE
 D:Taking seven leagues per stride seems outrageous. Whether doing so be possible
 D:or not, it cannot be denied that the wearer of this magical footwear gains
 D:great speed. The seven leagues however might just be a teleportation trick!
+
+
+# The Heavy Adamantite Plate Armour of Antiriad
+N:284:of Antiriad
+#its real base type is something findable in an old volcano (aka mt doom), creating pseudo 'Heavy Adamantite Plate Armour'
+I:37:40:40
+W:85:40:270:300000
+P:90:4d4:-6:0:0
+F:INSTA_ART
+F:WINNERS_ONLY | IM_POISON | IM_ELEC | RES_ACID | IM_FIRE | IM_COLD
+F:RES_LITE | RES_DARK | RES_SHARDS | LEVITATE | ACTIVATE | REGEN
+F:SUST_STR | SUST_CON | SUST_DEX | SUST_CHR | INFRA | STR
+D:A sacred armour of massive, dark gleaming metal plating covered by an eerie
+D:purple hue. It seems to be powered by an inner kind of unknown magic, allowing
+D:its wearer to levitate easily and command some unexpected fire power as well.
+
+# The Heavy Adamantite Plate Armour of Antiriad, depleted version (out of energy)
+N:285:of Antiriad
+I:37:40:0
+W:127:255:2000:60000
+P:90:4d4:-6:0:0
+F:WINNERS_ONLY | RES_POIS | RES_ELEC | RES_ACID | RES_FIRE | RES_COLD
+F:RES_SHARDS
+D:A sacred armour of massive, dark gleaming metal plating covered by an eerie
+D:purple hue. It seems to be unpowered, lacking energy to be worn and used.
 
 
 
