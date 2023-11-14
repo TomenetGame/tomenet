@@ -8829,7 +8829,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			/* Move to a specific floor (x,y) position on the current level */
-			else if (prefix(messagelc, "/loc") || prefix(messagelc, "/locate")) {
+			else if ((prefix(messagelc, "/loc") || prefix(messagelc, "/locate"))
+			    && !prefix(messagelc, "/locateart")) {
 				int x, y, ox, oy;
 				cave_type **zcave;
 
