@@ -3479,15 +3479,8 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 #endif
 	/* Don't EVER stack questors oO */
 	if (o_ptr->questor) return(FALSE);
-	/* Don't ever stack special quest items */
-	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST) return(FALSE);
 	/* Don't stack quest items if not from same quest AND stage! */
 	if (o_ptr->quest != j_ptr->quest || o_ptr->quest_stage != j_ptr->quest_stage) return(FALSE);
-
-
-	/* Don't stack potions of blood because of their timeout */
-	if ((o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) && o_ptr->timeout) return(FALSE);
-
 
 	/* Require identical object types */
 	if (o_ptr->k_idx != j_ptr->k_idx) return(FALSE);
@@ -3528,7 +3521,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 	/* Analyze the items */
 	switch (o_ptr->tval) {
 		case TV_SPECIAL:
-			/* quest items -- redundant, these are already excluded above */
+			/* quest items */
 			if (o_ptr->sval == SV_QUEST) {
 				if ((o_ptr->pval != j_ptr->pval) ||
 				    (o_ptr->xtra1 != j_ptr->xtra1) ||
@@ -3593,6 +3586,9 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 			/* Hack for ego foods :) */
 			if (o_ptr->name2 != j_ptr->name2) return(FALSE);
 			if (o_ptr->name2b != j_ptr->name2b) return(FALSE);
+
+			/* Don't stack potions of blood because of their timeout */
+			if (o_ptr->timeout) return(FALSE);
 
 			/* Assume okay */
 			break;
@@ -3823,7 +3819,11 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 			break;
 #endif
 
-		/* Various */
+		case TV_JUNK:
+			if (o_ptr->sval == SV_ENERGY_CELL) return(FALSE);
+			break;
+
+		/* Various -- todo: verify if this is really correct */
 		default:
 			/* Require knowledge */
 			if (!unknown && /* added this just for the EASY_KNOW check it contains */
