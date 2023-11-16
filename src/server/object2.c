@@ -3460,7 +3460,6 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 	bool unknown = !((k_info[o_ptr->k_idx].flags3 & TR3_EASY_KNOW) && (k_info[j_ptr->k_idx].flags3 & TR3_EASY_KNOW))
 	    && (!Ind || !object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr));
 
-
 	/* In general, incompatible modes never stack.
 	   Also takes care of unowned everlasting items in shops after a now-dead
 	   everlasting player sold an item to the shop before he died :) */
@@ -3520,320 +3519,318 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 
 	/* Analyze the items */
 	switch (o_ptr->tval) {
-		case TV_SPECIAL:
-			/* quest items */
-			if (o_ptr->sval == SV_QUEST) {
-				if ((o_ptr->pval != j_ptr->pval) ||
-				    (o_ptr->xtra1 != j_ptr->xtra1) ||
-				    (o_ptr->xtra2 != j_ptr->xtra2) ||
-				    (o_ptr->weight != j_ptr->weight) ||
-				    (o_ptr->quest != j_ptr->quest) ||
-				    (o_ptr->quest_stage != j_ptr->quest_stage))
-					return(FALSE);
-				break;
-			}
-
-			/* allow practically-identical 'custom' items to stack */
-			if (o_ptr->sval == SV_CUSTOM_OBJECT &&
-			    o_ptr->pval == j_ptr->pval &&
-			    o_ptr->bpval == j_ptr->bpval &&
-			    o_ptr->pval2 == j_ptr->pval2 &&
-			    o_ptr->pval3 == j_ptr->pval3 &&
-			    o_ptr->xtra1 == j_ptr->xtra1 &&
-			    o_ptr->xtra2 == j_ptr->xtra2 &&
-			    o_ptr->xtra3 == j_ptr->xtra3 &&
-			    o_ptr->xtra4 == j_ptr->xtra4 &&
-			    o_ptr->xtra5 == j_ptr->xtra5 &&
-			    o_ptr->xtra6 == j_ptr->xtra6 &&
-			    o_ptr->xtra7 == j_ptr->xtra7 &&
-			    o_ptr->xtra8 == j_ptr->xtra8 &&
-			    o_ptr->xtra9 == j_ptr->xtra9 &&
-			    o_ptr->sseed == j_ptr->sseed &&
-			    o_ptr->name1 == j_ptr->name1 &&
-			    o_ptr->name2 == j_ptr->name2 &&
-			    o_ptr->name2b == j_ptr->name2b &&
-			    o_ptr->name3 == j_ptr->name3 &&
-			    o_ptr->name4 == j_ptr->name4 &&
-			    o_ptr->to_h == j_ptr->to_h &&
-			    o_ptr->to_d == j_ptr->to_d &&
-			    o_ptr->to_a == j_ptr->to_a &&
-			    o_ptr->ac == j_ptr->ac &&
-			    o_ptr->dd == j_ptr->dd &&
-			    o_ptr->ds == j_ptr->ds)
-				break;
-
-			return(FALSE);
-
-		/* Chests */
-		case TV_KEY:
-		case TV_CHEST:
-			/* Never okay */
-			return(FALSE);
-
-		/* Food and Potions and Scrolls */
-		case TV_SCROLL:
-			/* cheques may have different value, so they must not stack */
-			if (o_ptr->sval == SV_SCROLL_CHEQUE) return(FALSE);
-			/* fireworks of different type */
-			if (o_ptr->sval == SV_SCROLL_FIREWORK &&
-			    (o_ptr->xtra1 != j_ptr->xtra1 ||
-			    o_ptr->xtra2 != j_ptr->xtra2))
-				return(FALSE);
-			/* Fall through */
-		case TV_FOOD:
-		case TV_POTION:
-		case TV_POTION2:
-			/* Hack for ego foods :) */
-			if (o_ptr->name2 != j_ptr->name2) return(FALSE);
-			if (o_ptr->name2b != j_ptr->name2b) return(FALSE);
-
-			/* Don't stack potions of blood because of their timeout */
-			if (o_ptr->timeout) return(FALSE);
-
-			/* Assume okay */
-			break;
-
-		/* Staffs and Wands */
-		case TV_WAND:
-			/* Require either knowledge or known empty for both wands. */
-			if ((!(o_ptr->ident & (ID_EMPTY)) &&
-			    (!Ind || !object_known_p(Ind, o_ptr))) ||
-			    (!(j_ptr->ident & (ID_EMPTY)) &&
-			    (!Ind || !object_known_p(Ind, j_ptr)))) return(FALSE);
-
-			/* Beware artifacts should not combine with "lesser" thing */
-			if (o_ptr->name1 != j_ptr->name1) return(FALSE);
-			if (!Ind || !p_ptr->stack_allow_devices) return(FALSE);
-
-			/* Do not combine recharged ones with non recharged ones. */
-			//if ((f4 & TR4_RECHARGED) != (f14 & TR4_RECHARGED)) return(FALSE);
-
-			/* Do not combine different ego or normal ones */
-			if (o_ptr->name2 != j_ptr->name2) return(FALSE);
-
-			/* Do not combine different ego or normal ones */
-			if (o_ptr->name2b != j_ptr->name2b) return(FALSE);
-
-			/* Assume okay */
-			break;
-
-		case TV_STAFF:
-			/* Require knowledge */
-			//if (!Ind || !object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr)) return(FALSE);
-			if ((!(o_ptr->ident & (ID_EMPTY)) &&
-			    (!Ind || !object_known_p(Ind, o_ptr))) ||
-			    (!(j_ptr->ident & (ID_EMPTY)) &&
-			    (!Ind || !object_known_p(Ind, j_ptr)))) return(FALSE);
-
-			if (o_ptr->name1 != j_ptr->name1) return(FALSE);
-			if (!Ind || !p_ptr->stack_allow_devices) return(FALSE);
-
-#ifndef NEW_MDEV_STACKING
-			/* Require identical charges */
-			if (o_ptr->pval != j_ptr->pval) return(FALSE);
-#endif
-
-			if (o_ptr->name2 != j_ptr->name2) return(FALSE);
-			if (o_ptr->name2b != j_ptr->name2b) return(FALSE);
-
-			/* Probably okay */
-			break;
-
-			/* Fall through */
-			/* NO MORE FALLING THROUGH! MUHAHAHA the_sandman */
-
-		/* Staffs and Wands and Rods */
-		case TV_ROD:
-			/* Overpoweredness, Hello! - the_sandman */
-#if 1
-			if (o_ptr->sval == SV_ROD_HAVOC) return(FALSE);
-#else
-			if (o_ptr->sval == SV_ROD_HAVOC && o_ptr->number + j_ptr->number > 3) return(FALSE); //hm
-#endif
-
-			/* Require permission */
-			if (!Ind || !p_ptr->stack_allow_devices) return(FALSE);
-			if (o_ptr->name1 != j_ptr->name1) return(FALSE);
-
-#ifndef NEW_MDEV_STACKING
-			/* this is only for rods... the_sandman */
-			if (o_ptr->pval == 0 && j_ptr->pval != 0) return(FALSE); //lol :)
-#endif
-
-			if (o_ptr->name2 != j_ptr->name2) return(FALSE);
-			if (o_ptr->name2b != j_ptr->name2b) return(FALSE);
-
-			/* Probably okay */
-			break;
-
-		/* Weapons and Armor */
-		case TV_DRAG_ARMOR:	return(FALSE);
-		case TV_BOW:
-		case TV_BOOMERANG:
-		case TV_DIGGING:
-		case TV_BLUNT:
-		case TV_POLEARM:
-		case TV_SWORD:
-		case TV_AXE:
-		case TV_MSTAFF:
-		case TV_BOOTS:
-		case TV_GLOVES:
-		case TV_HELM:
-		case TV_CROWN:
-		case TV_SHIELD:
-		case TV_CLOAK:
-		case TV_SOFT_ARMOR:
-		case TV_HARD_ARMOR:
-		case TV_TRAPKIT: /* so they don't stack carelessly - the_sandman */
-			/* Require permission */
-			if (!Ind || !p_ptr->stack_allow_items) return(FALSE);
-
-			/* XXX XXX XXX Require identical "sense" status */
-			/* if ((o_ptr->ident & ID_SENSE) != */
-			/*     (j_ptr->ident & ID_SENSE)) return(FALSE); */
-
-			/* Costumes must be for same monster */
-			if ((o_ptr->tval == TV_SOFT_ARMOR) && (o_ptr->sval == SV_COSTUME)) {
-				if (o_ptr->bpval != j_ptr->bpval) return(FALSE);
-			}
-
-			/* Fall through */
-
-		/* Rings, Amulets, Lites */
-		case TV_RING:
-			/* no more, due to their 'timeout' ! */
-			if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) return(FALSE);
-			/* Fall through */
-		case TV_AMULET:
-		case TV_LITE:
-		case TV_TOOL:
-		case TV_BOOK:	/* Books can be 'fireproof' */
-			/* custom tomes which appear identical, spell-wise too, may stack */
-			if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval) &&
-			    ((o_ptr->xtra1 != j_ptr->xtra1) ||
+	case TV_SPECIAL:
+		/* quest items */
+		if (o_ptr->sval == SV_QUEST) {
+			if ((o_ptr->pval != j_ptr->pval) ||
+			    (o_ptr->xtra1 != j_ptr->xtra1) ||
 			    (o_ptr->xtra2 != j_ptr->xtra2) ||
-			    (o_ptr->xtra3 != j_ptr->xtra3) ||
-			    (o_ptr->xtra4 != j_ptr->xtra4) ||
-			    (o_ptr->xtra5 != j_ptr->xtra5) ||
-			    (o_ptr->xtra6 != j_ptr->xtra6) ||
-			    (o_ptr->xtra7 != j_ptr->xtra7) ||
-			    (o_ptr->xtra8 != j_ptr->xtra8) ||
-			    (o_ptr->xtra9 != j_ptr->xtra9)))
+			    (o_ptr->weight != j_ptr->weight) ||
+			    (o_ptr->quest != j_ptr->quest) ||
+			    (o_ptr->quest_stage != j_ptr->quest_stage))
 				return(FALSE);
+			break;
+		}
 
-//			if (o_ptr->tval == TV_BOOK) { /* this was probably only meant for books..? */
-			/* Require full knowledge of both items */
-			if (unknown) return(FALSE);
+		/* allow practically-identical 'custom' items to stack */
+		if (o_ptr->sval == SV_CUSTOM_OBJECT &&
+		    o_ptr->pval == j_ptr->pval &&
+		    o_ptr->bpval == j_ptr->bpval &&
+		    o_ptr->pval2 == j_ptr->pval2 &&
+		    o_ptr->pval3 == j_ptr->pval3 &&
+		    o_ptr->xtra1 == j_ptr->xtra1 &&
+		    o_ptr->xtra2 == j_ptr->xtra2 &&
+		    o_ptr->xtra3 == j_ptr->xtra3 &&
+		    o_ptr->xtra4 == j_ptr->xtra4 &&
+		    o_ptr->xtra5 == j_ptr->xtra5 &&
+		    o_ptr->xtra6 == j_ptr->xtra6 &&
+		    o_ptr->xtra7 == j_ptr->xtra7 &&
+		    o_ptr->xtra8 == j_ptr->xtra8 &&
+		    o_ptr->xtra9 == j_ptr->xtra9 &&
+		    o_ptr->sseed == j_ptr->sseed &&
+		    o_ptr->name1 == j_ptr->name1 &&
+		    o_ptr->name2 == j_ptr->name2 &&
+		    o_ptr->name2b == j_ptr->name2b &&
+		    o_ptr->name3 == j_ptr->name3 &&
+		    o_ptr->name4 == j_ptr->name4 &&
+		    o_ptr->to_h == j_ptr->to_h &&
+		    o_ptr->to_d == j_ptr->to_d &&
+		    o_ptr->to_a == j_ptr->to_a &&
+		    o_ptr->ac == j_ptr->ac &&
+		    o_ptr->dd == j_ptr->dd &&
+		    o_ptr->ds == j_ptr->ds)
+			break;
 
-			/* different bpval? */
+		return(FALSE);
+
+	/* Chests */
+	case TV_KEY:
+	case TV_CHEST:
+		/* Never okay */
+		return(FALSE);
+
+	/* Food and Potions and Scrolls */
+	case TV_SCROLL:
+		/* cheques may have different value, so they must not stack */
+		if (o_ptr->sval == SV_SCROLL_CHEQUE) return(FALSE);
+		/* fireworks of different type */
+		if (o_ptr->sval == SV_SCROLL_FIREWORK &&
+		    (o_ptr->xtra1 != j_ptr->xtra1 ||
+		    o_ptr->xtra2 != j_ptr->xtra2))
+			return(FALSE);
+		/* Fall through */
+	case TV_FOOD:
+	case TV_POTION:
+	case TV_POTION2:
+		/* Hack for ego foods :) */
+		if (o_ptr->name2 != j_ptr->name2) return(FALSE);
+		if (o_ptr->name2b != j_ptr->name2b) return(FALSE);
+
+		/* Don't stack potions of blood because of their timeout */
+		if (o_ptr->timeout) return(FALSE);
+
+		/* Assume okay */
+		break;
+
+	/* Staffs, Wands and Rods (magic devices) */
+	case TV_WAND:
+		/* Require either knowledge or known empty for both wands. */
+		if ((!(o_ptr->ident & (ID_EMPTY)) &&
+		    (!Ind || !object_known_p(Ind, o_ptr))) ||
+		    (!(j_ptr->ident & (ID_EMPTY)) &&
+		    (!Ind || !object_known_p(Ind, j_ptr)))) return(FALSE);
+
+		/* Beware artifacts should not combine with "lesser" thing */
+		if (o_ptr->name1 != j_ptr->name1) return(FALSE);
+		if (!Ind || !p_ptr->stack_allow_devices) return(FALSE);
+
+		/* Do not combine recharged ones with non recharged ones. */
+		//if ((f4 & TR4_RECHARGED) != (f14 & TR4_RECHARGED)) return(FALSE);
+
+		/* Do not combine different ego or normal ones */
+		if (o_ptr->name2 != j_ptr->name2) return(FALSE);
+
+		/* Do not combine different ego or normal ones */
+		if (o_ptr->name2b != j_ptr->name2b) return(FALSE);
+
+		/* Assume okay */
+		break;
+
+	case TV_STAFF:
+		/* Require knowledge */
+		//if (!Ind || !object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr)) return(FALSE);
+		if ((!(o_ptr->ident & (ID_EMPTY)) &&
+		    (!Ind || !object_known_p(Ind, o_ptr))) ||
+		    (!(j_ptr->ident & (ID_EMPTY)) &&
+		    (!Ind || !object_known_p(Ind, j_ptr)))) return(FALSE);
+
+		if (o_ptr->name1 != j_ptr->name1) return(FALSE);
+		if (!Ind || !p_ptr->stack_allow_devices) return(FALSE);
+
+#ifndef NEW_MDEV_STACKING
+		/* Require identical charges */
+		if (o_ptr->pval != j_ptr->pval) return(FALSE);
+#endif
+
+		if (o_ptr->name2 != j_ptr->name2) return(FALSE);
+		if (o_ptr->name2b != j_ptr->name2b) return(FALSE);
+
+		/* Probably okay */
+		break;
+
+		/* Fall through */
+		/* NO MORE FALLING THROUGH! MUHAHAHA the_sandman */
+
+	case TV_ROD:
+		/* Overpoweredness, Hello! - the_sandman */
+#if 1
+		if (o_ptr->sval == SV_ROD_HAVOC) return(FALSE);
+#else
+		if (o_ptr->sval == SV_ROD_HAVOC && o_ptr->number + j_ptr->number > 3) return(FALSE); //hm
+#endif
+
+		/* Require permission */
+		if (!Ind || !p_ptr->stack_allow_devices) return(FALSE);
+		if (o_ptr->name1 != j_ptr->name1) return(FALSE);
+
+#ifndef NEW_MDEV_STACKING
+		/* this is only for rods... the_sandman */
+		if (o_ptr->pval == 0 && j_ptr->pval != 0) return(FALSE); //lol :)
+#endif
+
+		if (o_ptr->name2 != j_ptr->name2) return(FALSE);
+		if (o_ptr->name2b != j_ptr->name2b) return(FALSE);
+
+		/* Probably okay */
+		break;
+
+	/* Weapons and Armor */
+	case TV_DRAG_ARMOR:	return(FALSE);
+	case TV_BOW:
+	case TV_BOOMERANG:
+	case TV_DIGGING:
+	case TV_BLUNT:
+	case TV_POLEARM:
+	case TV_SWORD:
+	case TV_AXE:
+	case TV_MSTAFF:
+	case TV_BOOTS:
+	case TV_GLOVES:
+	case TV_HELM:
+	case TV_CROWN:
+	case TV_SHIELD:
+	case TV_CLOAK:
+	case TV_SOFT_ARMOR:
+	case TV_HARD_ARMOR:
+	case TV_TRAPKIT: /* so they don't stack carelessly - the_sandman */
+		/* Require permission */
+		if (!Ind || !p_ptr->stack_allow_items) return(FALSE);
+
+		/* XXX XXX XXX Require identical "sense" status */
+		/* if ((o_ptr->ident & ID_SENSE) != */
+		/*     (j_ptr->ident & ID_SENSE)) return(FALSE); */
+
+		/* Costumes must be for same monster */
+		if ((o_ptr->tval == TV_SOFT_ARMOR) && (o_ptr->sval == SV_COSTUME)) {
 			if (o_ptr->bpval != j_ptr->bpval) return(FALSE);
+		}
 
-			/* Fall through */
+		/* Fall through */
 
-		/* Missiles */
-		case TV_BOLT:
-		case TV_ARROW:
-		case TV_SHOT:
-			/* Fall through */
+	/* Rings, Amulets, Lites */
+	case TV_RING:
+		/* no more, due to their 'timeout' ! */
+		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) return(FALSE);
+		/* Fall through */
+	case TV_AMULET:
+	case TV_LITE:
+	case TV_TOOL:
+	case TV_BOOK:	/* Books can be 'fireproof' */
+		/* custom tomes which appear identical, spell-wise too, may stack */
+		if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval) &&
+		    ((o_ptr->xtra1 != j_ptr->xtra1) ||
+		    (o_ptr->xtra2 != j_ptr->xtra2) ||
+		    (o_ptr->xtra3 != j_ptr->xtra3) ||
+		    (o_ptr->xtra4 != j_ptr->xtra4) ||
+		    (o_ptr->xtra5 != j_ptr->xtra5) ||
+		    (o_ptr->xtra6 != j_ptr->xtra6) ||
+		    (o_ptr->xtra7 != j_ptr->xtra7) ||
+		    (o_ptr->xtra8 != j_ptr->xtra8) ||
+		    (o_ptr->xtra9 != j_ptr->xtra9)))
+			return(FALSE);
 
-			/* ---- All above items that made it through to here: ---- */
+		//if (o_ptr->tval == TV_BOOK) { /* this was probably only meant for books..? */
+		/* Require full knowledge of both items */
+		if (unknown) return(FALSE);
+
+		/* different bpval? */
+		if (o_ptr->bpval != j_ptr->bpval) return(FALSE);
+
+		/* Fall through */
+
+	/* Missiles */
+	case TV_BOLT:
+	case TV_ARROW:
+	case TV_SHOT:
+		/* Fall through */
+
+		/* ---- All above items that made it through to here: ---- */
 
 #if 0 /* no, because then if you find a stack of unidentified ammo and you shoot those arrows and pick them up again they won't stack anymore! */
-			/* For ammo too! */
-			if (unknown) return(FALSE);
+		/* For ammo too! */
+		if (unknown) return(FALSE);
 #endif
 
-			/* Verify matching (+hit,+dam) enchantment: */
+		/* Verify matching (+hit,+dam) enchantment: */
 
-			/* Ammo has special 0x1 tolerance option (exclusively for !M inscribed ammo so far) */
-			if (is_ammo(o_ptr->tval)) {
-				if (!((tolerance & 0x1) && !(cursed_p(o_ptr) || cursed_p(j_ptr) || artifact_p(o_ptr) || artifact_p(j_ptr))) ||
-				    (!check_guard_inscription(o_ptr->note, 'M') && !check_guard_inscription(j_ptr->note, 'M'))) {
-					if (o_ptr->to_h != j_ptr->to_h) return(FALSE);
-					if (o_ptr->to_d != j_ptr->to_d) return(FALSE);
-				}
-			}
-			/* Trapkits have special 0x2 tolerance option (that is also used for stacking level 0 items in general) */
-			else if (o_ptr->tval == TV_TRAPKIT) {
-				if (!((tolerance & 0x2) && !(cursed_p(o_ptr) || cursed_p(j_ptr) || artifact_p(o_ptr) || artifact_p(j_ptr)))) {
-					if (o_ptr->to_h != j_ptr->to_h) return(FALSE);
-					if (o_ptr->to_d != j_ptr->to_d) return(FALSE);
-				}
-			}
-			/* All other items */
-			else {
+		/* Ammo has special 0x1 tolerance option (exclusively for !M inscribed ammo so far) */
+		if (is_ammo(o_ptr->tval)) {
+			if (!((tolerance & 0x1) && !(cursed_p(o_ptr) || cursed_p(j_ptr) || artifact_p(o_ptr) || artifact_p(j_ptr))) ||
+			    (!check_guard_inscription(o_ptr->note, 'M') && !check_guard_inscription(j_ptr->note, 'M'))) {
 				if (o_ptr->to_h != j_ptr->to_h) return(FALSE);
-				if (o_ptr->to_d != j_ptr->to_d) return(FALSE);
+			if (o_ptr->to_d != j_ptr->to_d) return(FALSE);
 			}
-
-			/* Verify further enchantments matching.. */
-
-			if (o_ptr->to_a != j_ptr->to_a) return(FALSE);
-
-			/* Require identical "pval" code */
-			if (o_ptr->pval != j_ptr->pval) return(FALSE);
-
-			/* Require identical "artifact" names <- this shouldnt happen right? */
-			if (o_ptr->name1 != j_ptr->name1) return(FALSE);
-
-			/* Require identical "ego-item" names.
-			   Allow swapped ego powers: Ie Arrow (SlayDragon,Ethereal) combines with Arrow (Ethereal,SlayDragon).
-			   Note: This code assumes there's no ego power which can be both prefix and postfix. */
-			/* This one only allows name2 and name2b to be swapped */
-			if (! ((o_ptr->name2 == j_ptr->name2b) && (o_ptr->name2b == j_ptr->name2))) {
-				if (o_ptr->name2 != j_ptr->name2) return(FALSE);
-				if (o_ptr->name2b != j_ptr->name2b) return(FALSE);
+		}
+		/* Trapkits have special 0x2 tolerance option (that is also used for stacking level 0 items in general) */
+		else if (o_ptr->tval == TV_TRAPKIT) {
+			if (!((tolerance & 0x2) && !(cursed_p(o_ptr) || cursed_p(j_ptr) || artifact_p(o_ptr) || artifact_p(j_ptr)))) {
+				if (o_ptr->to_h != j_ptr->to_h) return(FALSE);
+			if (o_ptr->to_d != j_ptr->to_d) return(FALSE);
 			}
+		}
+		/* All other items */
+		else {
+			if (o_ptr->to_h != j_ptr->to_h) return(FALSE);
+			if (o_ptr->to_d != j_ptr->to_d) return(FALSE);
+		}
 
-			/* Require identical random seeds */
-			if (o_ptr->name3 != j_ptr->name3
-			    && !is_ammo(o_ptr->tval) /* hack: fix 'old' ammo that didn't have NO_SEED flag yet.. */
-			    && o_ptr->tval != TV_TRAPKIT) /* doh, also fix trapkits */
-				return(FALSE);
+		/* Verify further enchantments matching.. */
 
-			/* Hack -- Never stack "powerful" items */
-			//if (o_ptr->xtra1 || j_ptr->xtra1) return(FALSE);
+		if (o_ptr->to_a != j_ptr->to_a) return(FALSE);
 
-			/* Hack -- Never stack recharging items */
-			if (o_ptr->timeout != j_ptr->timeout) return(FALSE);
-			if (o_ptr->timeout_magic != j_ptr->timeout_magic) return(FALSE);
-			if (o_ptr->recharging != j_ptr->recharging) return(FALSE);
+		/* Require identical "pval" code */
+		if (o_ptr->pval != j_ptr->pval) return(FALSE);
 
-			/* Require identical "values" */
-			if (o_ptr->ac != j_ptr->ac) return(FALSE);
-			if (o_ptr->dd != j_ptr->dd) return(FALSE);
-			if (o_ptr->ds != j_ptr->ds) return(FALSE);
+		/* Require identical "artifact" names <- this shouldnt happen right? */
+		if (o_ptr->name1 != j_ptr->name1) return(FALSE);
 
-			/* Probably okay */
-			break;
+		/* Require identical "ego-item" names.
+		   Allow swapped ego powers: Ie Arrow (SlayDragon,Ethereal) combines with Arrow (Ethereal,SlayDragon).
+		   Note: This code assumes there's no ego power which can be both prefix and postfix. */
+		/* This one only allows name2 and name2b to be swapped */
+		if (! ((o_ptr->name2 == j_ptr->name2b) && (o_ptr->name2b == j_ptr->name2))) {
+			if (o_ptr->name2 != j_ptr->name2) return(FALSE);
+			if (o_ptr->name2b != j_ptr->name2b) return(FALSE);
+		}
 
-		case TV_GOLEM:
-			if (o_ptr->pval != j_ptr->pval) return(FALSE);
-			break;
+		/* Require identical random seeds */
+		if (o_ptr->name3 != j_ptr->name3
+		    && !is_ammo(o_ptr->tval) /* hack: fix 'old' ammo that didn't have NO_SEED flag yet.. */
+		    && o_ptr->tval != TV_TRAPKIT) /* doh, also fix trapkits */
+			return(FALSE);
+
+		/* Hack -- Never stack "powerful" items */
+		//if (o_ptr->xtra1 || j_ptr->xtra1) return(FALSE);
+
+		/* Hack -- Never stack recharging items */
+		if (o_ptr->timeout != j_ptr->timeout) return(FALSE);
+		if (o_ptr->timeout_magic != j_ptr->timeout_magic) return(FALSE);
+		if (o_ptr->recharging != j_ptr->recharging) return(FALSE);
+
+		/* Require identical "values" */
+		if (o_ptr->ac != j_ptr->ac) return(FALSE);
+		if (o_ptr->dd != j_ptr->dd) return(FALSE);
+		if (o_ptr->ds != j_ptr->ds) return(FALSE);
+
+		/* Probably okay */
+		break;
+
+	case TV_GOLEM:
+		if (o_ptr->pval != j_ptr->pval) return(FALSE);
+		break;
 
 #ifdef ENABLE_DEMOLITIONIST
-		case TV_CHEMICAL:
-			if (o_ptr->xtra1 != j_ptr->xtra1) return(FALSE);
-			if (o_ptr->xtra2 != j_ptr->xtra2) return(FALSE);
-			if (o_ptr->xtra3 != j_ptr->xtra3) return(FALSE);
-			break;
+	case TV_CHEMICAL:
+		if (o_ptr->xtra1 != j_ptr->xtra1) return(FALSE);
+		if (o_ptr->xtra2 != j_ptr->xtra2) return(FALSE);
+		if (o_ptr->xtra3 != j_ptr->xtra3) return(FALSE);
+		break;
 #endif
 
-		case TV_JUNK:
-			if (o_ptr->sval == SV_ENERGY_CELL) return(FALSE);
-			break;
+	case TV_JUNK:
+		if (o_ptr->sval == SV_ENERGY_CELL) return(FALSE);
+		break;
 
-		/* Various -- todo: verify if this is really correct */
-		default:
-			/* Require knowledge */
-			if (!unknown && /* added this just for the EASY_KNOW check it contains */
-			    Ind && (!object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr)))
-				return(FALSE);
+	/* Various -- todo: verify if this is really correct */
+	default:
+		/* Require knowledge */
+		if (!unknown && /* added this just for the EASY_KNOW check it contains */
+		    Ind && (!object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr)))
+			return(FALSE);
 
-			/* Probably okay */
-			break;
+		/* Probably okay */
+		break;
 	}
-
 
 	/* Hack -- Require identical "cursed" status */
 	if ((o_ptr->ident & ID_CURSED) != (j_ptr->ident & ID_CURSED)) return(FALSE);
@@ -3863,7 +3860,6 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 	/* Hack -- normally require matching "discounts" */
 	if (!(tolerance & 0x4) && (!Ind || !p_ptr->stack_force_costs) && (o_ptr->discount != j_ptr->discount))
 		return(FALSE);
-
 
 	/* Maximal "stacking" limit */
 	if (total >= MAX_STACK_SIZE) return(FALSE);
