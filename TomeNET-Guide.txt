@@ -7913,7 +7913,7 @@ Dungeon towns behave like normal towns in these regards.
 -------------------------------
 Each town has several shops, displayed as numbers '1'..'9' and some '+'.
 (There are some special variations of these shops too, located in dungeons.)
-The 1-9 standard shops that recur in every town are..
+The 1-9 standard shops that recur in almost every town are..
 
 General Store   1       Sells food, lanterns, ammunition, cloaks and shrooms.
 
