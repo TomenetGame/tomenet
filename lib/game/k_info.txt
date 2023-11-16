@@ -4470,9 +4470,7 @@ D:A strange container of turquoise metal that has crackling energy stored inside
 N:518:Heavy Adamantite Plate Armour~
 G:[:v
 I:37:40:0
-W:85:0:380:50000
-#A:85/48
-A:85/1
+W:85:0:270:50000
 P:76:4d4:-6:0:10
 F:IGNORE_ACID | IGNORE_WATER | IGNORE_MANA | WINNERS_ONLY | FORCE_DEPTH | INSTA_ART
 
@@ -8315,8 +8313,8 @@ D:(This is a quest item)
 #N:(No.):(name)
 #G:(appearence):(colour)
 #I:tval:sval:pval  [ie. TV_SHIELD, SV_SMALL_LEATHER_SHIELD, +0] (defines.h)
-#W:(depth):(rarity[arts only] 0..255):(weight):(price)
-#A:(depth)/(chance[1/value])   [multiple definitions are possible; chance=0 makes the item unfindable]
+#W:(depth):(rarity[arts only] 0..255):(weight):(price)  --  depth, rarity and weight have no effect on INSTA_ARTs; price has effect while the item is not known, otherwise it gets overridden by a_ptr->price.
+#A:(depth)/(chance[1/value])   [multiple definitions are possible; chance=0 makes the item unfindable]  -- this line has no effect on INSTA_ARTs
 #P:(AC):(base dam.):(to-hit):(to-dam):(+AC)
 #F:(Flag) |...
 # Note that W and A lines are not in effect for INSTA_ARTs. Only a_info counts for those.
