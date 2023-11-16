@@ -4291,11 +4291,11 @@ s_printf("TRUEART_R-OOD: %d failed, a %d vs d %d (%d%%)\n", aidx, alev, dlev, d)
  * Note -- see "make_artifact()" and "apply_magic()"
  */
 static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32b resf) {
-	int	i, dlev = getlevel(wpos);
-	int	k_idx = 0;
+	int i, dlev = getlevel(wpos);
+	int k_idx = 0;
 	bool winner_arts_only = ((resf & RESF_NOTRUEART) && (resf & RESF_WINNER));
 #ifdef IDDC_EASY_TRUE_ARTIFACTS
-	int	difficulty = in_irondeepdive(wpos) ? 1 : 0;
+	int difficulty = in_irondeepdive(wpos) ? 1 : 0;
 #endif
 	artifact_type *a_ptr;
 	int im, a_map[MAX_A_IDX];
@@ -4341,8 +4341,8 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 		/* Sauron-slayers and players currently in Mt Doom can't find The One Ring (anymore) */
 		if (i == ART_POWER && (resf & RESF_SAURON)) continue;
 
-		/* Hack: Assume that ART_ANTIRIAD is the only insta-art that is also winners-only */
-		if ((k_info[k_idx].flags5 & TR5_WINNERS_ONLY) && (k_info[k_idx].flags3 & TR3_INSTA_ART) && (!d_ptr || d_ptr->type != DI_MT_DOOM)) continue;
+		/* Found nearby an old volcano~ */
+		if (i == ART_ANTIRIAD && (!d_ptr || d_ptr->type != DI_MT_DOOM)) continue;
 
 		/* Artifact "rarity roll" */
 #ifdef IDDC_EASY_TRUE_ARTIFACTS
@@ -4444,8 +4444,7 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf) 
 			if (a_ptr->flags4 & TR4_SPECIAL_GENE) continue;
 
 			/* Allow non-dropchosen/specialgene winner arts */
-			if (winner_arts_only && !(a_ptr->flags5 & TR5_WINNERS_ONLY))
-				continue;
+			if (winner_arts_only && !(a_ptr->flags5 & TR5_WINNERS_ONLY)) continue;
 
 			/* Must have the correct fields */
 			if (a_ptr->tval != o_ptr->tval) continue;
@@ -6094,7 +6093,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		if (o_ptr->tval == TV_LITE) a_m_aux_4(o_ptr, lev, power, resf);
 
 		/* Specialty: Charge with starting energy */
-		if (o_ptr->name1 == ART_ANTIRIAD) o_ptr->timeout = 7000 + rand_int(499);
+		if (o_ptr->name1 == ART_ANTIRIAD) o_ptr->timeout = 3500 + rand_int(499);
 
 		/* clear flags from pre-artified item, simulating
 		   generation of a brand new object. */
@@ -7965,9 +7964,6 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 
 			if ((k_info[k_idx].flags5 & TR5_FORCE_DEPTH) && dlev < k_info[k_idx].level) continue;
 
-			/* Hack: Assume that ART_ANTIRIAD is the only insta-art that is also winners-only */
-			if ((k_info[k_idx].flags5 & TR5_WINNERS_ONLY) && (k_info[k_idx].flags3 & TR3_INSTA_ART) && (!d_ptr || d_ptr->type != DI_MT_DOOM)) continue;
-
 			/* Allow all other items here - mikaelh */
 			break;
 		} while (tries < 10);
@@ -8250,9 +8246,6 @@ void generate_object(int Ind, object_type *o_ptr, struct worldpos *wpos, bool go
 			if ((resf & RESF_NOTRUEART) && (k_info[k_idx].flags3 & TR3_INSTA_ART)) continue;
 
 			if (!(resf & RESF_WINNER) && (k_info[k_idx].flags5 & TR5_WINNERS_ONLY)) continue;
-
-			/* Hack: Assume that ART_ANTIRIAD is the only insta-art that is also winners-only */
-			if ((k_info[k_idx].flags5 & TR5_WINNERS_ONLY) && (k_info[k_idx].flags3 & TR3_INSTA_ART) && (!d_ptr || d_ptr->type != DI_MT_DOOM)) continue;
 
 			/* Allow all other items here - mikaelh */
 			break;

@@ -1219,6 +1219,11 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 		}
 	}
 
+#if 1
+	/* Activation tax */
+	if (o_ptr->name1 == ART_ANTIRIAD && o_ptr->timeout > 1) o_ptr->timeout--;
+#endif
+
 	/* display some warnings if the item will severely conflict with Martial Arts skill */
 	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS)) {
 		if ((is_melee_weapon(o_ptr->tval) ||

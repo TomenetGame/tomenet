@@ -4222,7 +4222,7 @@ static bool recharge_antiriad(int Ind, int item, int num) {
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
 	/* Re-power the suit */
-	o_ptr->timeout = 14500 + randint(499);
+	o_ptr->timeout = 7500 + randint(499);
 	if (item == INVEN_BODY) p_ptr->update |= PU_BONUS; //handle_stuff(Ind); mh~
 
 	determine_artifact_timeout(ART_ANTIRIAD, &p_ptr->wpos);
