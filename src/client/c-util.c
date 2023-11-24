@@ -10183,12 +10183,16 @@ void do_cmd_options(void) {
 			char out_val[3];
 
 			remove("TomeNET-Guide.txt");
-			system("wget --connect-timeout=3 https://www.tomenet.eu/TomeNET-Guide.txt"); //something changed in the web server's cfg; curl still works fine, but now wget needs the timeout setting; wget.exe for Windows still works!
+			(void)system("wget --connect-timeout=3 https://www.tomenet.eu/TomeNET-Guide.txt"); //something changed in the web server's cfg; curl still works fine, but now wget needs the timeout setting; wget.exe for Windows still works!
 
 			fp = fopen("TomeNET-Guide.txt", "r");
 			if (fp) {//~paranoia?
 				out_val[0] = 0;
-				fgets(out_val, 2, fp);
+				if (!fgets(out_val, 2, fp)) { //paranoia: guide is write-protected?
+					fclose(fp);
+					c_msg_print("\377oFailed to download the Guide contents. Maybe file is write-protected.");
+					continue;
+				}
 				fclose(fp);
 				res = (out_val[0] < 32);
 				if (res != 0) c_msg_print("\377oFailed to update the Guide.");
