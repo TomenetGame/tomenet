@@ -1438,6 +1438,8 @@ void prt_extra_status(cptr status) {
    is same as if we had 450+ ms lag anyway, so no harm.*/
 /* Enable bright red colour for actual packet loss? */
 #define BRIGHTRED_PACKETLOSS
+/* (Mini) Lag-o-meter bars: Use 100/3ms steps (new, makes sense for EU vs APAC server) instead of 50ms steps (old, for 1 global server location only) */
+#define STEPS33
 void prt_lagometer(int lag) {
 	int attr = TERM_L_GREEN;
 	int num;
@@ -1472,16 +1474,27 @@ void prt_lagometer(int lag) {
 		num = 10;
 	} else {
 #endif
+#ifndef STEPS33 /* 50ms steps */
 		num = lag / 50 + 1;
+#else /* 33.3ms steps */
+		num = (lag * 10 + 3) / 333 + 1;
+#endif
 		if (num > 10) num = 10;
 
 		/* hack: we have previous packet assumed to be lost? */
 		if (lag == 9999) num = 10;
 
+#ifndef STEPS33 /* 50ms steps; colours: <100, <200, <300, <400 */
 		if (num >= 9) attr = TERM_RED;
 		else if (num >= 7) attr = TERM_ORANGE;
 		else if (num >= 5) attr = TERM_YELLOW;
 		else if (num >= 3) attr = TERM_GREEN;
+#else /* 33.3ms steps; colours: <67, <133, <200, <300 */
+		if (num >= 10) attr = TERM_RED;
+		else if (num >= 7) attr = TERM_ORANGE;
+		else if (num >= 5) attr = TERM_YELLOW;
+		else if (num >= 3) attr = TERM_GREEN;
+#endif
 #ifdef BRIGHTRED_PACKETLOSS
 	}
 #endif
@@ -2681,6 +2694,17 @@ static cptr likert(int x, int y, int max) {
  * Draws the lag-o-meter.
  */
 #define COLOURED_LAGOMETER
+#ifndef STEPS33
+ #define STEP_RED 400
+ #define STEP_ORANGE 300
+ #define STEP_YELLOW 200
+ #define STEP_GREEN 100
+#else
+ #define STEP_RED 300
+ #define STEP_ORANGE 200
+ #define STEP_YELLOW 133
+ #define STEP_GREEN 67
+#endif
 void display_lagometer(bool display_commands) {
 	int i, cnt, sum, cur, min, max, avg, x, y, packet_loss, height;
 	char tmp[80];
@@ -2765,10 +2789,10 @@ void display_lagometer(bool display_commands) {
 #else
  #if 0 /* doesn't take care of correct '_' colouring */
 		cur_lag = (max * (16 - y)) / 16;
-		if (cur_lag >= 400) attr = TERM_RED;
-		else if (cur_lag >= 300) attr = TERM_ORANGE;
-		else if (cur_lag >= 200) attr = TERM_YELLOW;
-		else if (cur_lag >= 100) attr = attr1;
+		if (cur_lag >= STEP_RED) attr = TERM_RED;
+		else if (cur_lag >= STEP_ORANGE) attr = TERM_ORANGE;
+		else if (cur_lag >= STEP_YELLOW) attr = TERM_YELLOW;
+		else if (cur_lag >= STEP_GREEN) attr = attr1;
 		else attr = attr0;
 		c_prt(attr, graph[y], 3 + y, 10);
  #else /* does take care */
@@ -2780,10 +2804,10 @@ void display_lagometer(bool display_commands) {
 			underscore2 = strchr(underscore, '_');
 			if (!underscore2) underscore2 = graph[y] + 60;
 			cur_lag = (max * (16 - y)) / 16;
-			if (cur_lag >= 400) attrc = 'r';
-			else if (cur_lag >= 300) attrc = 'o';
-			else if (cur_lag >= 200) attrc = 'y';
-			else if (cur_lag >= 100) attrc = attrc1;
+			if (cur_lag >= STEP_RED) attrc = 'r';
+			else if (cur_lag >= STEP_ORANGE) attrc = 'o';
+			else if (cur_lag >= STEP_YELLOW) attrc = 'y';
+			else if (cur_lag >= STEP_GREEN) attrc = attrc1;
 			else attrc = attrc0;
 			if (underscore2 - underscore) {
 				/* avoid 'skipping' a colour level, for better visuals ;) */
@@ -2814,10 +2838,10 @@ void display_lagometer(bool display_commands) {
 				if (underscore2a < underscore2) underscore2 = underscore2a;
 				for (underscore2a = underscore; underscore2a < underscore2; underscore2a++) {
 					cur_lag = ping_times[59 - (underscore2a - graph[y])];
-					if (cur_lag >= 400) attrc = 'r';
-					else if (cur_lag >= 300) attrc = 'o';
-					else if (cur_lag >= 200) attrc = 'y';
-					else if (cur_lag >= 100) attrc = attrc1;
+					if (cur_lag >= STEP_RED) attrc = 'r';
+					else if (cur_lag >= STEP_ORANGE) attrc = 'o';
+					else if (cur_lag >= STEP_YELLOW) attrc = 'y';
+					else if (cur_lag >= STEP_GREEN) attrc = attrc1;
 					else attrc = attrc0;
 					strcat(c_graph, format("\377%c%c", attrc, *underscore2a));
 				}
@@ -2865,10 +2889,10 @@ void display_lagometer(bool display_commands) {
 	prt("Cur:", 20, 2);
 	if (cur != -1) {
 		sprintf(tmp, "%5dms", cur);
-		if (cur >= 400) attr = TERM_RED;
-		else if (cur >= 300) attr = TERM_ORANGE;
-		else if (cur >= 200) attr = TERM_YELLOW;
-		else if (cur >= 100) attr = TERM_GREEN;
+		if (cur >= STEP_RED) attr = TERM_RED;
+		else if (cur >= STEP_ORANGE) attr = TERM_ORANGE;
+		else if (cur >= STEP_YELLOW) attr = TERM_YELLOW;
+		else if (cur >= STEP_GREEN) attr = TERM_GREEN;
 		else attr = TERM_L_GREEN;
 	}
 	else tmp[0] = '\0';
@@ -2877,10 +2901,10 @@ void display_lagometer(bool display_commands) {
 	prt("Avg:", 20, 17);
 	if (avg != -1) {
 		sprintf(tmp, "%5dms", avg);
-		if (avg >= 400) attr = TERM_RED;
-		else if (avg >= 300) attr = TERM_ORANGE;
-		else if (avg >= 200) attr = TERM_YELLOW;
-		else if (avg >= 100) attr = TERM_GREEN;
+		if (avg >= STEP_RED) attr = TERM_RED;
+		else if (avg >= STEP_ORANGE) attr = TERM_ORANGE;
+		else if (avg >= STEP_YELLOW) attr = TERM_YELLOW;
+		else if (avg >= STEP_GREEN) attr = TERM_GREEN;
 		else attr = TERM_L_GREEN;
 	}
 	else tmp[0] = '\0';
@@ -2890,10 +2914,10 @@ void display_lagometer(bool display_commands) {
 	prt("10-min cleaned avg:", 21, 2);
 	if (ping_avg != -1) {
 		sprintf(tmp, "%5dms", ping_avg);
-		if (ping_avg >= 400) attr = TERM_RED;
-		else if (ping_avg >= 300) attr = TERM_ORANGE;
-		else if (ping_avg >= 200) attr = TERM_YELLOW;
-		else if (ping_avg >= 100) attr = TERM_GREEN;
+		if (ping_avg >= STEP_RED) attr = TERM_RED;
+		else if (ping_avg >= STEP_ORANGE) attr = TERM_ORANGE;
+		else if (ping_avg >= STEP_YELLOW) attr = TERM_YELLOW;
+		else if (ping_avg >= STEP_GREEN) attr = TERM_GREEN;
 		else attr = TERM_L_GREEN;
 	}
 	else tmp[0] = '\0';
@@ -2903,10 +2927,10 @@ void display_lagometer(bool display_commands) {
 	prt("Min:", 20, 32);
 	if (min != -1) {
 		sprintf(tmp, "%5dms", min);
-		if (min >= 400) attr = TERM_RED;
-		else if (min >= 300) attr = TERM_ORANGE;
-		else if (min >= 200) attr = TERM_YELLOW;
-		else if (min >= 100) attr = TERM_GREEN;
+		if (min >= STEP_RED) attr = TERM_RED;
+		else if (min >= STEP_ORANGE) attr = TERM_ORANGE;
+		else if (min >= STEP_YELLOW) attr = TERM_YELLOW;
+		else if (min >= STEP_GREEN) attr = TERM_GREEN;
 		else attr = TERM_L_GREEN;
 	}
 	else tmp[0] = '\0';
@@ -2915,10 +2939,10 @@ void display_lagometer(bool display_commands) {
 	prt("Max:", 20, 47);
 	if (max != -1) {
 		sprintf(tmp, "%5dms", max);
-		if (max >= 400) attr = TERM_RED;
-		else if (max >= 300) attr = TERM_ORANGE;
-		else if (max >= 200) attr = TERM_YELLOW;
-		else if (max >= 100) attr = TERM_GREEN;
+		if (max >= STEP_RED) attr = TERM_RED;
+		else if (max >= STEP_ORANGE) attr = TERM_ORANGE;
+		else if (max >= STEP_YELLOW) attr = TERM_YELLOW;
+		else if (max >= STEP_GREEN) attr = TERM_GREEN;
 		else attr = TERM_L_GREEN;
 	}
 	else tmp[0] = '\0';
