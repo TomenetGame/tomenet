@@ -2508,7 +2508,7 @@ static void fadein_next_music(void) {
 	/* Catch music_next == -1, this can now happen with shuffle_music or play_all option, since songs are no longer looped if it's enabled */
 	if ((c_cfg.shuffle_music || c_cfg.play_all) && music_next == -1) {
 		int tries, mcs;
-		int n, initials = 0, noinit_map[MAX_SONGS], ni = 0;
+		int n, noinit_map[MAX_SONGS], ni = 0;
 
 		/* We're not currently playing any music? -- This can happen when we quickly exit the game and return to music-less account screen
 		   and would cause a segfault when trying to access songs[-1]: */
@@ -2521,10 +2521,7 @@ static void fadein_next_music(void) {
 
 		/* don't sequence-shuffle 'initial' songs */
 		for (n = 0; n < songs[music_cur].num; n++) {
-			if (songs[music_cur].initial[n]) {
-				initials++;
-				continue;
-			}
+			if (songs[music_cur].initial[n]) continue;
 			noinit_map[ni] = n;
 			ni++;
 		}
