@@ -24,7 +24,7 @@
 
 /* macro to determine the way stat gets reduced by element attacks */
 #define	DAM_STAT_TYPE(inv) \
-	(magik(inv*25) ? STAT_DEC_NORMAL : STAT_DEC_TEMPORARY)
+	(magik(inv * 25) ? STAT_DEC_NORMAL : STAT_DEC_TEMPORARY)
 
 /*
  * Maximum lower limit for player teleportation.	[30]
