@@ -3994,13 +3994,75 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f
 	suppress_boni = FALSE;
 }
 
+/*
+ * Compute the probability (as a fraction of denominator die1 * die2)
+ * that a die roll of d(die1) + d(die2) + bonus will have a result
+ * less than target.
+ */
+static long two_dice_cdf(int die1, int die2, int bonus, int target) {
+	if (die1 < die2) { // Swap to guarantee that die1 > die2 without requiring it of the user of the function.
+		int temp = die2;
+		die2 = die1;
+		die1 = temp;
+	}
+	if (target <= bonus + 2) return 0;
+	if (target <= die2 + bonus + 1) return (long)(target - bonus - 2) * (target - bonus - 1) / 2;
+	if (target <= die1 + bonus + 1) {
+		return ((long)(target - die2 - bonus - 1) * die2 + (long)(die2 - 1) * die2 / 2);
+	}
+	if (target <= die1 + die2 + bonus) {
+		return (long) die1 * die2 - (long) (die1 + die2 + bonus - target + 1) * (die1 + die2 + bonus - target + 2) / 2;
+	}
+	return (long) die1 * die2;
+}
+
+/*
+ * Compute the expected damage value of a ranged critical hit,
+ * given base damage and some other relevant parameters.
+ * Bonus is equal to ammo weight + 2 * archery skill.
+ * Crit die size follows a formula that has doubly diminishing returns with xtra_crit:
+ * 600 - (12000 / (BOOST_CRIT(p_ptr->xtra_crit) + 20))
+ * See also cmd1's critical_shot and cmd2's do_cmd_fire for more information.
+ */
+static int ranged_crit_dam(int dam, int bonus, int crit_die) {
+	long denominator = 700L * crit_die; // This can in principle exceed 2^15, so it should be long.
+	long great_chance = denominator - two_dice_cdf(700, crit_die, bonus, 350);
+	long superb_chance = denominator - two_dice_cdf(700, crit_die, bonus, 650);
+	long greater_chance = denominator - two_dice_cdf(700, crit_die, bonus, 900);
+	long superber_chance = denominator - two_dice_cdf(700, crit_die, bonus, 1100);
+
+	// Checked the math for the largest possible values of damage and crit die,
+	// and we get uncomfortably close to the 32-bit max value, so I'm playing it safe.
+	u64b crit_dam = (u64b) denominator * (4 * dam + 15);
+	crit_dam += (u64b) great_chance * (dam + 15);
+	crit_dam += (u64b) superb_chance * dam;
+	crit_dam += (u64b) greater_chance * dam;
+	crit_dam += (u64b) superber_chance * (dam + 15);
+	crit_dam /= (3 * denominator);
+
+	return ((int) crit_dam);
+}
+
 static void output_boomerang_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, int bonus, int bonus2, cptr against, cptr against2) {
 	player_type *p_ptr = Players[Ind];
 	int dam;
 
+	int critical_chance = o_ptr->weight + // Chance out of 3500.
+		5 * (p_ptr->to_h + p_ptr->to_h_ranged + o_ptr->to_h) +
+		50 * BOOST_CRIT(p_ptr->xtra_crit);
+	int crit_flat_bonus = o_ptr->weight;
+	int crit_die_size = 600 - (12000 / (BOOST_CRIT(p_ptr->xtra_crit) + 20));
+	long critical_damage;
+
 	dam = ((o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5L * mult) / FACTOR_MULT;
 	dam += (o_ptr->to_d + p_ptr->to_d_ranged + bonus) * 10;
 	dam = dam * (10 + p_ptr->xtra_might) / 10;
+
+	// expected damage IF it crits
+	critical_damage = ranged_crit_dam(dam, crit_flat_bonus, crit_die_size);
+	// expected damage factoring in crits
+	dam = (((long) critical_chance) * critical_damage + (3500L - critical_chance) * dam) / 3500;
+
 	if (dam > 0) {
 		if (dam % 10)
 			fprintf(fff, "    %d.%d", dam / 10, dam % 10);
@@ -4014,6 +4076,12 @@ static void output_boomerang_dam(int Ind, FILE *fff, object_type *o_ptr, int mul
 		dam = ((o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5L * mult2) / FACTOR_MULT;
 		dam += (o_ptr->to_d + p_ptr->to_d_ranged + bonus2) * 10;
 		dam = dam * (10 + p_ptr->xtra_might) / 10;
+
+		// expected damage IF it crits
+		critical_damage = ranged_crit_dam(dam, crit_flat_bonus, crit_die_size);
+		// expected damage factoring in crits
+		dam = (((long) critical_chance) * critical_damage + (3500L - critical_chance) * dam) / 3500;
+
 		if (dam > 0) {
 			if (dam % 10)
 				fprintf(fff, "    %d.%d", dam / 10, dam % 10);
@@ -4099,6 +4167,14 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 	object_type *b_ptr = &p_ptr->inventory[INVEN_BOW];
 	int tmul = get_shooter_mult(b_ptr) + p_ptr->xtra_might;
 
+	int critical_chance = o_ptr->weight + // Chance out of 3500.
+		5 * (p_ptr->to_h + p_ptr->to_h_ranged + o_ptr->to_h) +
+		get_skill_scale(p_ptr, SKILL_ARCHERY, 150) +
+		50 * BOOST_CRIT(p_ptr->xtra_crit);
+	int crit_flat_bonus = o_ptr->weight + get_skill_scale(p_ptr, SKILL_ARCHERY, 100);
+	int crit_die_size = 600 - (12000 / (BOOST_CRIT(p_ptr->xtra_crit) + 20));
+	long critical_damage;
+
 	dam = (o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5;
 	dam *= FACTOR_MULT + ((mult - FACTOR_MULT) * 2) / 5;
 	dam /= FACTOR_MULT;
@@ -4106,6 +4182,12 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 	dam += (o_ptr->to_d + b_ptr->to_d) * 10;
 	dam += (p_ptr->to_d_ranged) * 10;
 	dam *= tmul;
+
+	// expected damage IF it crits
+	critical_damage = ranged_crit_dam(dam, crit_flat_bonus, crit_die_size);
+	// expected damage factoring in crits
+	dam = (((long) critical_chance) * critical_damage + (3500L - critical_chance) * dam) / 3500;
+
 	if (dam > 0) {
 		if (dam % 10)
 			fprintf(fff, "    %d.%d", dam / 10, dam % 10);
@@ -4123,6 +4205,12 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 		dam += (o_ptr->to_d + b_ptr->to_d) * 10;
 		dam += (p_ptr->to_d_ranged) * 10;
 		dam *= tmul;
+
+		// expected damage IF it crits
+		critical_damage = ranged_crit_dam(dam, crit_flat_bonus, crit_die_size);
+		// expected damage factoring in crits
+		dam = (((long) critical_chance) * critical_damage + (3500L - critical_chance) * dam) / 3500;
+
 		if (dam > 0) {
 			if (dam % 10)
 				fprintf(fff, "    %d.%d", dam / 10, dam % 10);
