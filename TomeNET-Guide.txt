@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 28. October 2023 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 24. November 2023 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.1 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -16106,14 +16106,8 @@ stated.
                                 by increasing your Martial Arts skill, as if
                                 'Dodging' was a parent skill of Martial Arts.
 
-                                Lets you attack with special combat styles.
-                                You get +1 extra attack at 1,10,20,30,40,45,50
+                                Grants +1 extra attack at 1,10,20,30,40,45,50
                                 each, so up to +7 blows per round in total.
-                                These MA techniques are used automatically and
-                                semi-randomly (algorithmically chosen) by your
-                                character during combat, they are not player-
-                                controllable so you don't have to worry about
-                                them. For a list and effects see (5.3a).
 
                                 At 10 you gain Feather Falling (see (5.8)).
                                 At 15 you gain fear resistance.
@@ -16124,17 +16118,19 @@ stated.
                                 At 50 a martial artist will learn the
                                 technique of levitation (see (5.8)).
 
-                                The dice of martial arts special moves
-                                (which your character will use automatically
-                                depending on your MA skill) are affected by
-                                elemental brands, but slightly less than
-                                normal weapons (2/3 as much).
+                                Lets you attack with special fighting moves.
+                                These MA techniques are used automatically and
+                                semi-randomly (algorithmically chosen, mostly
+                                the most powerful moves available are picked)
+                                by your character during combat, they are not
+                                player-controllable so you don't have to worry
+                                about them. For a list and effects see (5.3a).
+                                The dice of these martial arts special moves
+                                are affected by elemental brands, but slightly
+                                less than normal weapons (2/3 as much).
                                 Martial arts moves can have high damage dice
                                 of up to 8d7. Some moves have special effects
                                 such as slowing or stunning your opponent.
-                                Your character will use his martial arts moves
-                                automatically and somewhat randomly, but mostly
-                                choose the most powerful moves available.
 
                                 Under certain conditions (encumberment) MA
                                 abilities cannot be used and lose their effect.
