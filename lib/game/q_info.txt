@@ -372,17 +372,14 @@ y:-1:-1:-:*advice*
 yY:*advise*
 yR:-://quest_towneltalk("$$c", -1)
 #yR:-:Hm hm, what do you need advice on?  --moved to quest_towneltalk() actually, as it depends on above function call to sound proper.
-#yR:-:How to properly [[prepare]] yourself for venturing into the unknown?, picking
-#yR:-:an unknown dungeon to [[explore]]? Honing your [[skills]]?
-#yR:-:Or are you wondering about the public [[events]] that are taking place from
-#yR:-:time to time? You might also be interested in forming a [[party]] with fellow
+#yR:-:Honing your [[skills]]?
+#yR:-:You might also be interested in forming a [[party]] with fellow
 #yR:-:adventurers, as it tends to increase chances of survival!
-#yR:-:I could also have a look at your [[equipment]] and [[status]] of your
-#yR:-:well-being in general.
 yR:-:How to properly [[prepare]] yourself for venturing into the unknown?
 yR:-:Choosing a fitting dungeon to [[explore]]? Or are you wondering about
-yR:-:the public [[events]] that are taking place from time to time? I could
-yR:-:also have a look at your [[equipment]] if you like.
+yR:-:the public [[events]] that are taking place from time to time?
+yR:-:I could also check on your [[equipment]] or [[status]] of your well-being.
+yR:-:From time to time, public [[events]] are taking place too. Participate maybe!
 
 Y:0:0:-:*prep*:-:255
 Y:0:0:-:*inv*:-:255

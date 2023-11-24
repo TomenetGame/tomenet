@@ -260,6 +260,8 @@ struct player_type
 
 	s16b stat_max[6];	/* Current "maximal" stat values */
 	s16b stat_cur[6];	/* Current "natural" stat values */
+	s16b stat_los[6];	/* Temporary stat loss - amount */
+	s16b stat_cnt[6];	/* Temporary stat loss - duration */
 
 	unsigned char wild_map[MAX_WILD_8]; /* the wilderness we have explored */
 

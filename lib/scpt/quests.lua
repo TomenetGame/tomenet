@@ -22,7 +22,7 @@ function quest_towneltalk(Ind, msg, topic)
 	if admin == 1 then msg_print(Ind, "Topic = "..topic) end
 
 	--*** generic advice that is so important that it's always given ***
-	if topic == -1 then
+	if topic == -1 or topic == 3 then -- include topic 3 here too, as it is 'status' aka "well-being" check
 		--We're dead :p prioritize and discard all other info..
 		if player.ghost ~= 0 and admin == 0 then
 			msg_print(Ind, "\252\255UOh "..msg..", I have bad news - for you seem to have died and are now a ghost!")
@@ -91,18 +91,20 @@ function quest_towneltalk(Ind, msg, topic)
 			--Critical encumberments:
 		end
 
-		--Give proper question about advice topics
-		--msg_print(Ind, " ")
-		if hinted == 1 then
-			msg_print(Ind, "\252 ");
-			msg_print(Ind, "\252\255UIs there anything else you need advice on?")
-		else
-			--Print a message that looks as if it came straight from q_info.txt, sort of ^^
-			msg_print(Ind, "\252\255UHm hm, what do you need advice on?")
-		end
+		if topic ~= 3 then
+			--Give proper question about advice topics
+			--msg_print(Ind, " ")
+			if hinted == 1 then
+				msg_print(Ind, "\252 ");
+				msg_print(Ind, "\252\255UIs there anything else you need advice on?")
+			else
+				--Print a message that looks as if it came straight from q_info.txt, sort of ^^
+				msg_print(Ind, "\252\255UHm hm, what do you need advice on?")
+			end
 
-		--Don't visit any of the other topics after this, as this '-1' topic is always called automatically when branching to 'advice' keyword
-		return
+			--Don't visit any of the other topics after this, as this '-1' topic is always called automatically when branching to 'advice' keyword
+			return
+		end
 	end
 
 	--*** preparation/inventory ***
@@ -422,7 +424,72 @@ function quest_towneltalk(Ind, msg, topic)
 	--*** status ***
 	if topic == 3 or topic == -2 then
 		--check for rather low attributes, eg CON, with advice how to improve it. Also stealth. And drained stats.
-		
+		--drained stats:
+		if player.stat_cur[1] < player.stat_max[1] then
+			if player.stat_los[1] == player.stat_max[1] - player.stat_cur[1] then
+				msg_print(Ind, "\252\255UYour strength is drained! Luckily just a temporary effect this time. But if you");
+				msg_print(Ind, "\252\255Udon't want to sit it out, buy a potion of restore strength from the alchemist.");
+			else
+				msg_print(Ind, "\252\255UYour strength has been drained! You could fix it with a potion of restore");
+				msg_print(Ind, "\252\255Ustrength that you can buy from the alchemist in town (store number 5).");
+			end
+			hinted = 1
+		end
+		if player.stat_cur[2] < player.stat_max[2] then
+			if player.stat_los[2] == player.stat_max[2] - player.stat_cur[2] then
+				msg_print(Ind, "\252\255UYour intelligence is drained! Luckily just a temporary effect this time. But if");
+				msg_print(Ind, "\252\255Uyou don't want to wait buy a potion of restore intelligence from the alchemist.");
+			else
+				msg_print(Ind, "\252\255UYour intelligence has been drained! You could fix it with a potion of restore");
+				msg_print(Ind, "\252\255Uintelligence that you can buy from the alchemist in town (store number 5).");
+			end
+			hinted = 1
+		end
+		if player.stat_cur[3] < player.stat_max[3] then
+			if player.stat_los[3] == player.stat_max[3] - player.stat_cur[3] then
+				msg_print(Ind, "\252\255UYour wisdom is drained! Luckily just a temporary effect this time. But if you");
+				msg_print(Ind, "\252\255Udon't want to sit it out, buy a potion of restore wisdom from the alchemist.");
+			else
+				msg_print(Ind, "\252\255UYour wisdom has been drained! You could fix it with a potion of restore");
+				msg_print(Ind, "\252\255Uwisdom that you can buy from the alchemist in town (store number 5).");
+			end
+			hinted = 1
+		end
+		if player.stat_cur[4] < player.stat_max[4] then
+			if player.stat_los[4] == player.stat_max[4] - player.stat_cur[4] then
+				msg_print(Ind, "\252\255UYour dexterity is drained! Luckily just a temporary effect this time. But if you");
+				msg_print(Ind, "\252\255Udon't want to sit it out, buy a potion of restore dexterity from the alchemist.");
+			else
+				msg_print(Ind, "\252\255UYour dexterity has been drained! You could fix it with a potion of restore");
+				msg_print(Ind, "\252\255Udexterity that you can buy from the alchemist in town (store number 5).");
+			end
+			hinted = 1
+		end
+		if player.stat_cur[5] < player.stat_max[5] then
+			if player.stat_los[5] == player.stat_max[5] - player.stat_cur[5] then
+				msg_print(Ind, "\252\255UYour constitution is drained! Luckily just a temporary effect this time. But if");
+				msg_print(Ind, "\252\255Uyou don't want to wait buy a potion of restore constitution from the alchemist.");
+			else
+				msg_print(Ind, "\252\255UYour constitution has been drained! You could fix it with a potion of restore");
+				msg_print(Ind, "\252\255Uconstitution that you can buy from the alchemist in town (store number 5).");
+			end
+			hinted = 1
+		end
+		if player.stat_cur[6] < player.stat_max[6] then
+			if player.stat_los[6] == player.stat_max[6] - player.stat_cur[6] then
+				msg_print(Ind, "\252\255UYour charisma is drained! Luckily just a temporary effect this time. But if you");
+				msg_print(Ind, "\252\255Udon't want to sit it out, buy a potion of restore charisma from the alchemist.");
+			else
+				msg_print(Ind, "\252\255UYour charisma has been drained! You could fix it with a potion of restore");
+				msg_print(Ind, "\252\255Ucharisma that you can buy from the alchemist in town (store number 5).");
+			end
+			hinted = 1
+		end
+		if player.exp < player.max_exp then
+			msg_print(Ind, "\252\255UYour experience has been drained! You could fix it with a potion of restore");
+			msg_print(Ind, "\252\255Ulife levels that you can buy from the temple in town (store number 4).");
+			hinted = 1
+		end
 	end
 
 	--*** partying ***
