@@ -3832,6 +3832,67 @@ cptr item_activation(object_type *o_ptr) {
 	return(NULL);
 }
 
+/*
+ * Compute the probability (as a fraction of denominator die)
+ * that a die roll of d(die) + bonus will have a result
+ * less than target. This is trivial, but exists in analogy
+ * with the much more involved two_dice_cdf below.
+ */
+static long one_die_cdf(int die, int bonus, int target) {
+	if (target <= bonus + 1) return 0;
+	if (target <= die + bonus) return (target - bonus - 1);
+	return die;
+}
+
+/*
+ * Compute the probability (as a fraction of denominator die1 * die2)
+ * that a die roll of d(die1) + d(die2) + bonus will have a result
+ * less than target.
+ */
+static long two_dice_cdf(int die1, int die2, int bonus, int target) {
+	if (die1 < die2) { // Swap to guarantee that die1 > die2 without requiring it of the user of the function.
+		int temp = die2;
+		die2 = die1;
+		die1 = temp;
+	}
+	if (target <= bonus + 2) return 0;
+	if (target <= die2 + bonus + 1) return (long)(target - bonus - 2) * (target - bonus - 1) / 2;
+	if (target <= die1 + bonus + 1) {
+		return ((long)(target - die2 - bonus - 1) * die2 + (long)(die2 - 1) * die2 / 2);
+	}
+	if (target <= die1 + die2 + bonus) {
+		return (long) die1 * die2 - (long) (die1 + die2 + bonus - target + 1) * (die1 + die2 + bonus - target + 2) / 2;
+	}
+	return (long) die1 * die2;
+}
+
+/*
+ * Compute the expected damage value of a melee critical hit,
+ * given base damage and some other relevant parameters.
+ * Bonus is equal to weapon weight + a quantity depending on +crits.
+ * Crit die size is 0 if the player cannot use their weapon in a way
+ * that utilizes the critical hits skill, and scales with that skill
+ * up to 900 otherwise.
+ * See also cmd1's critical_melee and py_attack_mon for more information.
+ */
+static int melee_crit_dam(int dam, int bonus, int crit_die) {
+	long denominator = crit_die ? (700L * crit_die) : 700L; // This can in principle exceed 2^15, so it should be long.
+	long great_chance = denominator - (crit_die ? two_dice_cdf(700, crit_die, bonus, 400) : one_die_cdf(700, bonus, 400));
+	long superb_chance = denominator - (crit_die ? two_dice_cdf(700, crit_die, bonus, 700) : one_die_cdf(700, bonus, 700));
+	long greater_chance = denominator - (crit_die ? two_dice_cdf(700, crit_die, bonus, 900) : one_die_cdf(700, bonus, 900));
+	long superber_chance = denominator - (crit_die ? two_dice_cdf(700, crit_die, bonus, 1300) : one_die_cdf(700, bonus, 1300));
+
+	// Checked the math for the largest possible values of damage and crit die,
+	// and we get uncomfortably close to the 32-bit max value, so I'm playing it safe.
+	u64b crit_dam = (u64b) denominator * (4 * dam + 15);
+	crit_dam += (u64b) great_chance * (dam + 15);
+	crit_dam += (u64b) superb_chance * (dam + 15);
+	crit_dam += (u64b) greater_chance * (dam + 15);
+	crit_dam += (u64b) superber_chance * (dam + 15);
+	crit_dam /= (3 * denominator);
+
+	return ((int) crit_dam);
+}
 
 /*
  * Display the damage done with a multiplier
@@ -3841,9 +3902,28 @@ static void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mul
 	player_type *p_ptr = Players[Ind];
 	int dam;
 
+	bool allow_skill_crit = rogue_armed_melee(o_ptr, p_ptr);
+	int plus_crit = p_ptr->xtra_crit + calc_crit_obj(o_ptr);
+	int w = (o_ptr->weight > 100) ? 10 : ((o_ptr->weight < 10) ? 10 : (110 - o_ptr->weight));
+	int critical_chance = 2 * w + // Chance out of 5000.
+		5 * (p_ptr->to_h + p_ptr->to_h_melee + o_ptr->to_h) +
+		get_skill_scale(p_ptr, SKILL_MASTERY, 150) +
+		50 * BOOST_CRIT(plus_crit) +
+		(allow_skill_crit ? get_skill_scale(p_ptr, SKILL_CRITS, 2000) : 0);
+	int crit_flat_bonus = o_ptr->weight +
+		500 - (10000 / (BOOST_CRIT(p_ptr->xtra_crit) + 20));
+	int crit_die_size = get_skill_scale(p_ptr, SKILL_CRITS, 900) ? get_skill_scale(p_ptr, SKILL_CRITS, 900) : 1; //randint(0)=1
+	long critical_damage;
+
 	dam = ((o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5L * mult) / FACTOR_MULT;
 	dam += (o_ptr->to_d + p_ptr->to_d + p_ptr->to_d_melee + bonus) * 10;
 	dam *= p_ptr->num_blow;
+
+	// expected damage IF it crits
+	critical_damage = melee_crit_dam(dam, crit_flat_bonus, allow_skill_crit ? crit_die_size : 0);
+	// expected damage factoring in crits
+	dam = (((long) critical_chance) * critical_damage + (5000L - critical_chance) * dam) / 5000;
+
 	if (dam > 0) {
 		if (dam % 10)
 			fprintf(fff, "    %d.%d", dam / 10, dam % 10);
@@ -3857,6 +3937,12 @@ static void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mul
 		dam = ((o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5L * mult2) / FACTOR_MULT;
 		dam += (o_ptr->to_d + p_ptr->to_d + p_ptr->to_d_melee + bonus2) * 10;
 		dam *= p_ptr->num_blow;
+
+		// expected damage IF it crits
+		critical_damage = melee_crit_dam(dam, crit_flat_bonus, allow_skill_crit ? crit_die_size : 0);
+		// expected damage factoring in crits
+		dam = (((long) critical_chance) * critical_damage + (5000L - critical_chance) * dam) / 5000;
+
 		if (dam > 0) {
 			if (dam % 10)
 				fprintf(fff, "    %d.%d", dam / 10, dam % 10);
@@ -3992,28 +4078,6 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f
 
 	suppress_message = FALSE;
 	suppress_boni = FALSE;
-}
-
-/*
- * Compute the probability (as a fraction of denominator die1 * die2)
- * that a die roll of d(die1) + d(die2) + bonus will have a result
- * less than target.
- */
-static long two_dice_cdf(int die1, int die2, int bonus, int target) {
-	if (die1 < die2) { // Swap to guarantee that die1 > die2 without requiring it of the user of the function.
-		int temp = die2;
-		die2 = die1;
-		die1 = temp;
-	}
-	if (target <= bonus + 2) return 0;
-	if (target <= die2 + bonus + 1) return (long)(target - bonus - 2) * (target - bonus - 1) / 2;
-	if (target <= die1 + bonus + 1) {
-		return ((long)(target - die2 - bonus - 1) * die2 + (long)(die2 - 1) * die2 / 2);
-	}
-	if (target <= die1 + die2 + bonus) {
-		return (long) die1 * die2 - (long) (die1 + die2 + bonus - target + 1) * (die1 + die2 + bonus - target + 2) / 2;
-	}
-	return (long) die1 * die2;
 }
 
 /*
