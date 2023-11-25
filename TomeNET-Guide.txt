@@ -5185,7 +5185,7 @@ This line consists of the following icons that may show up:
     Red /          Your weapon is way too heavy for you.
                    You will receive extreme penalties on melee combat.
     Orange \       Your weapon isn't fit for your character (e.g. priest
-                   using non-edged non-blessed weapons like swords).
+                   using edged non-blessed weapons such as swords).
                    You'll receive a big penalty on hit chance and damage.
                    An orange warning message will display:
                    "You do not feel comfortable with your weapon."
