@@ -5824,7 +5824,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	/* Roll for usage */
 	if (o_ptr->tval == TV_BOOK /* hack: blank books can always be 'activated' */
 #ifdef ENABLE_DEMOLITIONIST
-	/* Alchemy has nothing to do with magic device skills, and especially shouldn't set command_rep or we may run into weirdness!: */
+	    || (o_ptr->tval == TV_JUNK && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END)
+	    /* Alchemy has nothing to do with magic device skills, and especially shouldn't set command_rep or we may run into weirdness!: */
 	    || o_ptr->tval == TV_CHEMICAL
 	    || o_ptr->tval == TV_CHARGE
 	    || (o_ptr->tval == TV_TOOL && o_ptr->sval == SV_TOOL_GRINDER)
@@ -5897,6 +5898,10 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	switch (o_ptr->tval) {
 	case TV_RUNE: msg_print(Ind, "The rune glows with power!"); break;
 	case TV_BOOK: msg_print(Ind, "You open the book to add a new spell.."); break;
+	case TV_JUNK:
+		if (o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END) msg_print(Ind, "You prepare the gift wrapping...");
+		msg_print(Ind, "You activate it...");
+		break;
 #ifdef ENABLE_DEMOLITIONIST
 	case TV_CHEMICAL: case TV_CHARGE: break;
 	case TV_TOOL: if (o_ptr->sval == SV_TOOL_GRINDER) break; //else: fall through
@@ -6029,6 +6034,14 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_ENERGY_CELL) {
 		recharge(Ind, 10000 + get_skill_scale(p_ptr, SKILL_DEVICE, 100)); //10000: Hack, marker that it's not a normal recharging
 		p_ptr->using_up_item = item;
+		return;
+	}
+
+	/* Gift wrappings */
+	if (o_ptr->tval == TV_JUNK && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END) {
+		clear_current(Ind);
+		p_ptr->current_activation = item;
+		get_item(Ind, ITH_NONE);
 		return;
 	}
 

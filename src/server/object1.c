@@ -3792,6 +3792,9 @@ cptr item_activation(object_type *o_ptr) {
 	if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_ENERGY_CELL)
 		return("delivering a full energy recharge");
 
+	if (o_ptr->tval == TV_JUNK && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END)
+		return("wrapping a present");
+
 #if 0
 	if (o_ptr->tval == TV_PARCHMENT && o_ptr->sval == SV_PARCHMENT_DEATH)
 		return("Spiritual recall");

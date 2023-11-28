@@ -10329,6 +10329,10 @@ void detonate_charge(int o_idx) {
 }
 #endif
 
+void wrap_gift(int Ind, int item) {
+	//player_type *p_ptr = Players[Ind];
+}
+
 /* Returns FALSE if we notice any effect, TRUE if we don't (for UNMAGIC). */
 bool do_mstopcharm(int Ind) {
 	player_type *p_ptr = Players[Ind];
