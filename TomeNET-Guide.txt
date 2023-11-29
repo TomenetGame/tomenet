@@ -1488,7 +1488,7 @@ They all start with a slash '/' hence they're called slash commands:
             see (4.14) for details.
             (Note that the server also has a type of internal turn counter,
             which counts a different sort of turns, one each frame. Usually,
-            the server will run at 100 fps, so these turns pass much faster.
+            the server will run at 60 fps, so these turns pass much faster.
             It might be a bit confusing that both these units are just called
             'turns' although they don't correlate, but you won't really have to
             worry about internal turns at any point, only the 'character turns'
