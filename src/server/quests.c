@@ -4198,11 +4198,8 @@ static bool quest_goal_matches_object(int q_idx, int stage, int goal, object_typ
 
 	/* First let's find out the object's attr..which is uggh not so cool (from cave.c).
 	   Note that d_attr has the correct get base colour, especially for flavoured items! */
-#if 0
-	attr = k_ptr->k_attr;
-#else /* this is correct */
 	attr = k_ptr->d_attr;
-#endif
+
 	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval))
 		attr = get_book_name_color(o_ptr);
 	/* hack: colour of fancy shirts or custom objects can vary  */
