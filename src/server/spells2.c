@@ -10372,6 +10372,21 @@ void wrap_gift(int Ind, int item) {
 		return;
 	}
 
+	/* Don't wrap an already wrapped gift (or seals), it'll kill the item info */
+	if (o_ptr->tval == TV_SPECIAL) {
+		if (o_ptr->sval == SV_SEAL) {
+			msg_print(Ind, "Sorry, you cannot wrap magic seals.");
+			clear_current(Ind); /* <- not required actually */
+			s_printf("..failed(5)\n");
+			return;
+		} else if (o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END) {
+			msg_print(Ind, "Sorry, you cannot wrap already wrapped gifts.");
+			clear_current(Ind); /* <- not required actually */
+			s_printf("..failed(6)\n");
+			return;
+		}
+	}
+
 #if 0
 	/* Don't use the wrapping on itself */
 	if (empty) {
