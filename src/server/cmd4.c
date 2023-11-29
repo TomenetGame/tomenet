@@ -1589,7 +1589,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 						fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
 
 					/* Print questing flag */
-					if (q_ptr->xorder_id) fprintf(fff, " X");
+					//if (q_ptr->xorder_id) fprintf(fff, " X");
 				}
 				/* If both are in IDDC, display depth, for easier floor management */
 				else if (iddc && in_irondeepdive(&p_ptr->wpos)) fprintf(fff, "%s", wpos_format(-Ind, &q_ptr->wpos));
@@ -1684,7 +1684,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 					else fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
 
 					/* Print questing flag */
-					if (q_ptr->xorder_id) fprintf(fff, " X");
+					//if (q_ptr->xorder_id) fprintf(fff, " X");
 				}
 				/* If both are in IDDC, display depth, for easier floor management */
 				else if (iddc && in_irondeepdive(&p_ptr->wpos)) fprintf(fff, "%s", wpos_format(-Ind, &q_ptr->wpos));
@@ -1838,7 +1838,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 				else if (iddc && in_irondeepdive(&p_ptr->wpos)) fprintf(fff, "%s", wpos_format(-Ind, &q_ptr->wpos));
 
 				/* Quest flag */
-				fprintf(fff, " %c", (q_ptr->xorder_id ? 'X' : ' '));
+				//fprintf(fff, " %c", (q_ptr->xorder_id ? 'X' : ' '));
 
 				if ((!q_ptr->afk) || !strlen(q_ptr->afk_msg)) {
 					if (!q_ptr->info_msg[0]) fprintf(fff, "\n\n");
