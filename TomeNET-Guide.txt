@@ -12700,6 +12700,12 @@ Weapons of Nothingness
                 it, do NOT take it off as that will make it recurse itself, but
                 instead 'd'rop it straight to the ground or simply destroy it
                 with 'k' right away!
+Shattered weapons
+                Weapons that have the prefix "shattered" deal less damage than
+                usual, in most cases the +hit and +dam values are in negative
+                numbers.
+                However, other than bad damage, the weapon is not cursed or
+                impared in any way.
 Weapons of Slaying
  (SLAY_WEAP)    These weapons can have greatly boosted damage dice and
                 sometimes poison brand.
@@ -12717,14 +12723,13 @@ Silver ammunition
                 *Slays* undead.
 Ethereal ammunition
                 Magically returns after being fired, has a small chance to fade
-                away instead though.
+                away instead though. Cannot be enchanted.
 
 Blasted armour  Armour that has the prefix "blasted" has much less +AC bonus
                 than usual, in most cases the +AC value is deeply in the
                 negative numbers.
                 However, other than bad +AC the armour is not cursed or impared
-                in any way, and may still be usable, especially if you use
-                scrolls of enchant armour to 'repair' it.
+                in any way.
 Dragonrider Coat
                 Resists heat & cold.
 Elven Cloak     Increases your stealth and luck.
