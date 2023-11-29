@@ -3426,7 +3426,7 @@
 #define SV_WOODEN_STICK			6
 #define SV_WOOD_PIECE			7
 #define SV_GIFT_WRAPPING_START		10
-#define SV_GIFT_WRAPPING_END		19	/* only svals 10..15 exist atm though */
+#define SV_GIFT_WRAPPING_END		15
 
 /* svals for TV_KEY */
 #define SV_HOUSE_KEY			1
