@@ -5788,6 +5788,7 @@ bool monster_death(int Ind, int m_idx) {
 	bool is_Sauron = (m_ptr->r_idx == RI_SAURON);
 	bool is_ZuAon = (m_ptr->r_idx == RI_ZU_AON);
 	bool is_Pumpkin = (m_ptr->r_idx == RI_PUMPKIN);
+	bool is_Santa = (m_ptr->r_idx == RI_SANTA1 || m_ptr->r_idx == RI_SANTA2);
 	int credit_idx = r_ptr->dup_idx ? r_ptr->dup_idx : m_ptr->r_idx;
 	int r_idx = m_ptr->r_idx;
 	//bool visible = (p_ptr->mon_vis[m_idx] || (r_ptr->flags1 & RF1_UNIQUE));
@@ -5904,8 +5905,7 @@ bool monster_death(int Ind, int m_idx) {
 			strcpy(great_pumpkin_killer2, p_ptr->accountname);
 		}
 	} else if (season_xmas) {
-		if ((r_idx == RI_SANTA1 || r_idx == RI_SANTA2)
-		    && !m_ptr->clone) {
+		if (is_Santa && !m_ptr->clone) {
 			msg_broadcast_format(0, "\374\377L**\377oSanta dropped the presents near %s!\377L**", p_ptr->name);
 #ifdef TOMENET_WORLDS
 			if (cfg.worldd_events) world_msg(format("\374\377L**\377oSanta dropped the presents near %s!\377L**", p_ptr->name));
@@ -6113,7 +6113,7 @@ bool monster_death(int Ind, int m_idx) {
 #ifdef DED_IDDC_MANDOS
 	    && !in_hallsofmandos(&p_ptr->wpos)
 #endif
-	    && r_ptr->mexp) /* Allow kills in Bree */
+	    && r_ptr->mexp) /* Allow normal townie kills in Bree */
 		return(FALSE);
 	/* clones don't drop treasure or complete quests.. */
 	if (m_ptr->clone) {
@@ -6134,7 +6134,8 @@ bool monster_death(int Ind, int m_idx) {
 	/* ..neither do cheezed kills */
 	if (henc_cheezed &&
 	    !is_Morgoth && /* make exception for Morgoth, so hi-lvl fallen kings can re-king */
-	    !is_Pumpkin /* allow a mixed hunting group */
+	    !is_Pumpkin && /* allow a mixed hunting group */
+	    !is_Santa /* allow a mixed hunting group */
 #ifndef NO_HENC_CHEEZED_LOOT
 	    /* ..however, never have henc'ed unique monsters drop loot, since kill credit won't be given for them, so could repeatedly loot them */
 	    && (m_ptr->questor || (r_ptr->flags1 & RF1_UNIQUE))
@@ -6164,6 +6165,10 @@ bool monster_death(int Ind, int m_idx) {
 		tmp_luck += 20;
 		/* luck caps at 40 */
 		if (tmp_luck > 40) tmp_luck = 40;
+	} else if (is_Santa) {
+		/* Hack: Abuse unique quark marker to generate presents */
+		local_quark = quark_add(r_name + r_ptr->name);
+		unique_quark = local_quark;
 	}
 
 	/* Questors: Usually drop no items, except if specified */

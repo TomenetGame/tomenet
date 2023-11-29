@@ -8097,6 +8097,18 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 	if (forge.tval == TV_SHOT && forge.sval == SV_AMMO_HEAVY) s_printf("DROP: %d Mithril Shots\n", forge.number);
 #endif
 
+	/* Unhack Santa Claus hack to generate presents */
+	if (forge.note && streq(quark_str(forge.note), "Santa Claus")) {
+		forge.tval2 = forge.tval;
+		forge.sval2 = forge.sval;
+		forge.number2 = forge.number;
+		forge.number = 1; // one gift may contain a stack of items, but in turn, gifts aren't stackable of course
+		forge.tval = TV_SPECIAL;
+		forge.sval = SV_GIFT_WRAPPING_START + rand_int(SV_GIFT_WRAPPING_END - SV_GIFT_WRAPPING_START + 1);
+		forge.k_idx = lookup_kind(TV_SPECIAL, forge.sval);
+		forge.weight += 1; /* Gift wrapping paper is added */
+	}
+
 	forge.marked2 = removal_marker;
 	forge.discount = object_discount; /* usually 0, except for creation from stolen acquirement scrolls */
 	drop_near(TRUE, 0, &forge, -1, wpos, y, x);

@@ -5430,6 +5430,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 static bool item_tester_hook_activate(int Ind, object_type *o_ptr) {
 	u32b f3, dummy;
 
+	/* Can always open gift wrappings =_= */
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END) return(TRUE);
+
 	/* Not known */
 	if (!object_known_p(Ind, o_ptr)) return(FALSE);
 
