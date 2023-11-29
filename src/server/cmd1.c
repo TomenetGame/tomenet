@@ -2160,7 +2160,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 		/* Wrapped gifts: Totally enforce level restrictions */
 		if (o_ptr->tval == TV_SPECIAL && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END
-		    && (o_ptr->owner) && (o_ptr->owner != p_ptr->id) && p_ptr->lev < o_ptr->level) {
+		    && o_ptr->owner && o_ptr->owner != p_ptr->id && p_ptr->lev < o_ptr->level) {
 			msg_print(Ind, "Your level must at least be the same as the gift in order to pick it up.");
 			if (!is_admin(p_ptr)) return;
 		}
@@ -2174,7 +2174,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 /* the_sandman: item lvl restrictions are disabled in rpg */
 #ifndef RPG_SERVER
-		if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) &&
+		if (o_ptr->owner && o_ptr->owner != p_ptr->id &&
 		    (o_ptr->level > p_ptr->lev || o_ptr->level == 0) &&
 		    !in_irondeepdive(&p_ptr->wpos)) {
 			if (cfg.anti_cheeze_pickup) {

@@ -2620,8 +2620,8 @@ static void display_entry(int Ind, int pos) {
 		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
 
 		/* grey out if level requirements don't meet */
-		if (((!o_ptr->level) || (o_ptr->level > p_ptr->lev)) &&
-		    (o_ptr->owner) && (o_ptr->owner != p_ptr->id))
+		if ((!o_ptr->level || o_ptr->level > p_ptr->lev) &&
+		    o_ptr->owner && o_ptr->owner != p_ptr->id)
 			attr = TERM_L_DARK;
 
 		/* grey out if mode doesn't meet */
@@ -2739,8 +2739,8 @@ static void display_entry(int Ind, int pos) {
 		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
 
 		/* grey out if level requirements don't meet */
-		if (((!o_ptr->level) || (o_ptr->level > p_ptr->lev)) &&
-		    (o_ptr->owner) && (o_ptr->owner != p_ptr->id))
+		if ((!o_ptr->level || o_ptr->level > p_ptr->lev) &&
+		    o_ptr->owner && o_ptr->owner != p_ptr->id)
 			attr = TERM_L_DARK;
 
 		/* grey out if mode doesn't meet */
@@ -3779,7 +3779,7 @@ void store_purchase(int Ind, int item, int amt) {
 	}
 
 	/* Check if the player is powerful enough for that item */
-	if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) &&
+	if (o_ptr->owner && o_ptr->owner != p_ptr->id &&
 	    (o_ptr->level > p_ptr->lev || o_ptr->level == 0)) {
 		if (cfg.anti_cheeze_pickup) {
 			if (!o_ptr->level) msg_print(Ind, "Only its owner can pick up that item!");
@@ -6415,7 +6415,7 @@ void home_purchase(int Ind, int item, int amt) {
 #endif
 
 	/* Check if the player is powerful enough for that item */
-	if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) &&
+	if (o_ptr->owner && o_ptr->owner != p_ptr->id &&
 	    (o_ptr->level > p_ptr->lev || o_ptr->level == 0)) {
 		if (cfg.anti_cheeze_pickup) {
 			if (o_ptr->level) {
