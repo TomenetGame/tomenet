@@ -12,12 +12,12 @@ OFEAR_I = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-		fire_bolt(Ind, GF_TURN_ALL, args.dir, 5 + get_level(Ind, OFEAR_I, 65), "hisses")
+		fire_ball(Ind, GF_TURN_ALL, 0, 5 + get_level(Ind, OFEAR_I, 65), 1, "hisses")
 	end,
 	["info"] = 	function()
 		return "power "..(5 + get_level(Ind, OFEAR_I, 65))
 	end,
-	["desc"] = { "Temporarily scares a target.", }
+	["desc"] = { "Temporarily scares all adjacent creatures.", }
 }
 __lua_OFEAR = OFEAR_I
 OFEAR_II = add_spell {

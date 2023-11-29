@@ -35,12 +35,12 @@ MSCARE_I = add_spell {
 	["fail"] = 	10,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-				fire_grid_bolt(Ind, GF_TURN_ALL, args.dir, 5 + get_level(Ind, MSCARE_I, 80), "stares deep into your eyes")
+				fire_ball(Ind, GF_TURN_ALL, 0, 5 + get_level(Ind, MSCARE_I, 80), 1, "stares deep into your eyes")
 			end,
 	["info"] = 	function()
 				return "power "..(5 + get_level(Ind, MSCARE_I, 80))
 			end,
-	["desc"] = 	{ "Tries to manipulate the mind of a monster to scare it.", }
+	["desc"] = 	{ "Tries to manipulate the mind of adjacent monsters to scare them.", }
 }
 __lua_MSCARE = MSCARE_I
 MSCARE_II = add_spell {
