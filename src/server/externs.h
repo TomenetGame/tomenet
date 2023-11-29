@@ -1827,6 +1827,7 @@ extern void arm_charge_dir_and_fuse(object_type *o2_ptr, int dir);
 extern void detonate_charge(int o_idx);
 #endif
 extern void wrap_gift(int Ind, int item);
+extern void unwrap_gift(int Ind, int item);
 
 extern bool create_garden(int Ind, int level);
 extern bool do_banish_animals(int Ind, int chance);

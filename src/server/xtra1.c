@@ -10205,12 +10205,26 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			return;
 		}
 
+#if 1
+		/* Wrapped gifts: Totally enforce level restrictions */
+		if (o_ptr->tval == TV_SPECIAL && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END
+		    && o_ptr->owner && o_ptr->owner != pid && plev < o_ptr->level) {
+			msg_print(Ind, "Sorry, but the taget's level does not meet this gift's level.");
+			return;
+		}
+#else
+		/* Wrapped gifts: Must be given manually (>'')> -- not for mail, seems reasonable to send gifts ^^ */
+		if (o_ptr->tval == TV_SPECIAL && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END) {
+			msg_print(Ind, "Sorry, but we do not accept pre-wrapped packages.");
+			if (!is_admin(p_ptr)) return;
+		}
+#endif
 
 		/* le paranoid double-check */
 		for (i = 0; i < MAX_MERCHANT_MAILS; i++)
 			if (!mail_sender[i][0]) break;
 		if (i == MAX_MERCHANT_MAILS) {
-			msg_print(Ind, "\377yWe're very sorry, our service is currently overloaded! Please try again later.");
+			msg_print(Ind, "\377yWe're very sorry, our service is currently overbooked! Please try again later.");
 			return;
 		}
 

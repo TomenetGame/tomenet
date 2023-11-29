@@ -95,7 +95,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	9
-#define SF_VERSION_PATCH	3
+#define SF_VERSION_PATCH	4
 #define SF_VERSION_EXTRA	0 /* <- not used in version checks! */
 
 /* For quests savefile purpose only */
@@ -4537,6 +4537,7 @@
 						   xtra5 = custom fake k-info diz via LUA custom_object_diz().
 						   (xtra6/7/8/9 = reserved for xtra3 & 0x200, see above.) */
 #define SV_QUEST			2	/* a custom quest item (not to be confused with questors) */
+//SV_GIFT_WRAPPING_START..SV_GIFT_WRAPPING_END: 10..19 (used up to 15)	/* An item wrapped as a gift */
 
 
 /*** General flag values ***/

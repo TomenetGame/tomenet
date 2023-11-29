@@ -694,8 +694,9 @@ struct object_type {
 
 	byte tval;			/* Item type (from kind) */
 	byte sval;			/* Item sub-type (from kind) */
-	byte tval2;			/* normally unused (except for item-invalid-seal) */
-	byte sval2;			/* normally unused (except for item-invalid-seal) */
+	byte tval2;			/* normally unused (except for item-invalid-seal and gifts) */
+	byte sval2;			/* normally unused (except for item-invalid-seal and gifts) */
+	byte number2;			/* normally unused (except for gifts) */
 
 	s32b bpval;			/* Base item extra-parameter */
 	s32b pval;			/* Extra enchantment item extra-parameter (name1 or name2) */

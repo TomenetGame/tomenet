@@ -2158,6 +2158,13 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			if (!is_admin(p_ptr)) return;
 		}
 
+		/* Wrapped gifts: Totally enforce level restrictions */
+		if (o_ptr->tval == TV_SPECIAL && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END
+		    && (o_ptr->owner) && (o_ptr->owner != p_ptr->id) && p_ptr->lev < o_ptr->level) {
+			msg_print(Ind, "Your level must at least be the same as the gift in order to pick it up.");
+			if (!is_admin(p_ptr)) return;
+		}
+
 #ifdef ENABLE_DEMOLITIONIST
 		if (o_ptr->tval == TV_CHARGE && o_ptr->timeout) {
 			msg_print(Ind, "\377yYou must disarm the charge before picking it up!");

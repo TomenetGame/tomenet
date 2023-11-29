@@ -2558,7 +2558,10 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 		case TV_FIRESTONE: item = "firestone"; break;
 		case TV_SPIKE: item = "spike"; break;
 		case TV_CHEST: item = "chest"; break;
-		case TV_JUNK: item = "junk"; break;
+		case TV_JUNK:
+			if (sval >= SV_GIFT_WRAPPING_START && sval <= SV_GIFT_WRAPPING_END) item = "scroll";
+			else item = "junk";
+			break;
 		case TV_GAME:
 			if (sval == SV_GAME_BALL) {
 				item = "ball_pass"; break; }
@@ -2587,7 +2590,12 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 		case TV_SPECIAL:
 			switch (sval) {
 			case SV_SEAL: item = "seal"; break;
+			case SV_CUSTOM_OBJECT:
+				//todo maybe:
+				//if (o_ptr->xtra3 & 0x0200) sound_item(Ind, o_ptr->tval2, o_ptr->sval2, action);
+				break;
 			}
+			if (sval >= SV_GIFT_WRAPPING_START && sval <= SV_GIFT_WRAPPING_END) item = "scroll";
 			break;
 #ifdef ENABLE_SUBINVEN
 		case TV_SUBINVEN:

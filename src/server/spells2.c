@@ -10329,8 +10329,180 @@ void detonate_charge(int o_idx) {
 }
 #endif
 
+/* Remotely similar to sealing/unsealing.
+   NOTE: WINNERS_ONLY items are currently not checked.
+         This isn't exploitable, as they cannot be wielded anyway, but should perhaps get added.
+         Code locs: Store buying/stealing (store.c), telekinesis (xtra2.c), picking up the gift (cmd1.c). */
 void wrap_gift(int Ind, int item) {
-	//player_type *p_ptr = Players[Ind];
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr = &p_ptr->inventory[item], *ow_ptr = &p_ptr->inventory[p_ptr->current_activation], forge;
+	bool empty = (item == p_ptr->current_activation);
+
+	s_printf("GIFTWRAPPING: %d, %d", o_ptr->tval, o_ptr->sval);
+
+	if (o_ptr->questor || ow_ptr->questor) {
+		msg_print(Ind, "You cannot use questor items for gift wrapping.");
+		clear_current(Ind); /* <- not required actually */
+		s_printf("..failed(1)\n");
+		return;
+	}
+
+	/* Most items with live-timeouts cannot be wrapped */
+	if ((o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) ||
+	    (o_ptr->tval == TV_POTION && o_ptr->sval == SV_POTION_BLOOD)) {
+		msg_print(Ind, "For sanitary reasons, perishable goods may not be gift-wrapped."); //>,>'
+		clear_current(Ind); /* <- not required actually */
+		s_printf("..failed(2)\n");
+		return;
+	}
+
+	/* severe error: gift wrapping no longer there */
+	if (ow_ptr->tval != TV_JUNK || ow_ptr->sval < SV_GIFT_WRAPPING_START || ow_ptr->sval > SV_GIFT_WRAPPING_END) {
+		/* completely start from scratch (have to re-'activate') */
+		msg_print(Ind, "The gift wrapping's inventory location was changed, please retry!");
+		clear_current(Ind); /* <- not required actually */
+		s_printf("..failed(3)\n");
+		return;
+	}
+
+	if (!o_ptr->level) {
+		msg_print(Ind, "You cannot wrap zero-level items.");
+		clear_current(Ind); /* <- not required actually */
+		s_printf("..failed(4)\n");
+		return;
+	}
+
+#if 0
+	/* Don't use the wrapping on itself */
+	if (empty) {
+		msg_print(Ind, "You cannot create empty gifts.");
+		clear_current(Ind); /* <- not required actually */
+		s_printf("..failed(0)\n");
+		return;
+	}
+#else
+	/* Create an empty gift D: */
+	if (empty) {
+		if (o_ptr->number == 1) msg_print(Ind, "You make an empty gift.");
+		else msg_print(Ind, "You take one gift wrapping and wrap the remaining ones with it.");
+		s_printf("..success (EMPTY)\n");
+
+		forge = *o_ptr;
+
+		/* One gift wrapping gone */
+		inven_item_increase(Ind, p_ptr->current_activation, -o_ptr->number);
+		inven_item_describe(Ind, p_ptr->current_activation);
+		inven_item_optimize(Ind, p_ptr->current_activation);
+
+		o_ptr = &forge;
+		o_ptr->tval2 = o_ptr->tval;
+		o_ptr->sval2 = o_ptr->sval;
+		/* (weight stays the same) */
+		o_ptr->number2 = o_ptr->number - 1;
+		o_ptr->number = 1; // one gift may contain a stack of items, but in turn, gifts aren't stackable of course
+		o_ptr->tval = TV_SPECIAL;
+		/* (sval stays the same) */
+		o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
+#ifdef USE_SOUND_2010
+		sound(Ind, "read_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
+		/* Overwrite 'item' to reuse it, as we don't need it anymore */
+		item = inven_carry(Ind, &forge);
+		if (item >= 0) {
+			char o_name[ONAME_LEN];
+
+			object_desc(Ind, o_name, &forge, TRUE, 3);
+			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item));
+		}
+		p_ptr->window |= PW_INVEN;
+		handle_stuff(Ind);
+		return;
+	} else
+#endif
+	s_printf("..success\n");
+#ifdef USE_SOUND_2010
+	sound(Ind, "read_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
+	o_ptr->tval2 = o_ptr->tval;
+	o_ptr->sval2 = o_ptr->sval;
+	o_ptr->number2 = o_ptr->number;
+	o_ptr->number = 1; // one gift may contain a stack of items, but in turn, gifts aren't stackable of course
+	o_ptr->tval = TV_SPECIAL;
+	o_ptr->sval = p_ptr->inventory[p_ptr->current_activation].sval;
+	o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
+	o_ptr->weight += ow_ptr->weight; /* Gift wrapping paper is added */
+
+	/* One gift wrapping gone */
+	inven_item_increase(Ind, p_ptr->current_activation, -1);
+	inven_item_describe(Ind, p_ptr->current_activation);
+
+	/* Don't just unhack the tval,sval etc, but actually erase and re-insert the item newly,
+	   Because this way, we put it into the correct inventory slot. */
+	forge = *o_ptr;
+	inven_item_increase(Ind, item, -1);
+	if (p_ptr->current_activation > item) {
+		inven_item_optimize(Ind, p_ptr->current_activation);
+		inven_item_optimize(Ind, item);
+	} else {
+		inven_item_optimize(Ind, item);
+		inven_item_optimize(Ind, p_ptr->current_activation);
+	}
+	/* Overwrite 'item' to reuse it, as we don't need it anymore */
+	item = inven_carry(Ind, &forge);
+	if (item >= 0) {
+		char o_name[ONAME_LEN];
+
+		object_desc(Ind, o_name, &forge, TRUE, 3);
+		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item));
+	}
+	p_ptr->window |= PW_INVEN;
+	handle_stuff(Ind);
+}
+void unwrap_gift(int Ind, int item) {
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr = &p_ptr->inventory[item], forge;
+
+	s_printf("GIFTUNWRAPPING: %d, %d\n", o_ptr->tval, o_ptr->sval);
+#ifdef USE_SOUND_2010
+	sound(Ind, "read_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
+	/* Don't just unhack the tval,sval etc, but actually erase and re-insert the item newly,
+	   Because this way, we put it into the correct inventory slot. */
+	forge = *o_ptr;
+	inven_item_increase(Ind, item, -1);
+	//inven_item_describe(Ind, item); -- pft, we know it's no longer gift-wrapped
+	inven_item_optimize(Ind, item);
+	o_ptr = &forge;
+
+	o_ptr->weight -= k_info[lookup_kind(TV_JUNK, o_ptr->sval)].weight; /* Gift wrapping paper is removed */
+	o_ptr->tval = o_ptr->tval2;
+	o_ptr->sval = o_ptr->sval2;
+	o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
+	o_ptr->number = o_ptr->number2;
+	o_ptr->tval2 = 0;
+	o_ptr->sval2 = 0;
+	o_ptr->number2 = 0;
+
+	/* Handle empty gifts */
+	if (!forge.number) {
+		msg_print(Ind, " it was empty.");
+		p_ptr->window |= PW_INVEN;
+		handle_stuff(Ind);
+		return;
+	}
+	/* Overwrite 'item' to reuse it, as we don't need it anymore */
+	item = inven_carry(Ind, &forge);
+	if (item >= 0) {
+		char o_name[ONAME_LEN];
+
+		object_desc(Ind, o_name, &forge, TRUE, 3);
+		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item));
+	}
+	p_ptr->window |= PW_INVEN;
+	handle_stuff(Ind);
 }
 
 /* Returns FALSE if we notice any effect, TRUE if we don't (for UNMAGIC). */

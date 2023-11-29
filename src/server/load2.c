@@ -332,7 +332,7 @@ static void rd_item(object_type *o_ptr) {
 		rd_byte(&o_ptr->tval2);
 		rd_byte(&o_ptr->sval2);
 	}
-
+	if (!older_than(4, 9, 4)) rd_byte(&o_ptr->number2);
 
 	/* Base pval */
 	rd_s32b(&o_ptr->bpval);
@@ -4407,6 +4407,7 @@ void excise_obsolete_max_depth(player_type *p_ptr) {
 }
 
 #ifdef SEAL_INVALID_OBJECTS
+/* Note: Sealing a questor item might have unforeseen consequences, maybe prohibit or erase? */
 static void seal_object(object_type *o_ptr) {
  #if 1 /* convert DDSM to EDSM */
 	if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_DEATH) {
@@ -4433,10 +4434,13 @@ static void unseal_object(object_type *o_ptr) {
 	o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 	o_ptr->note = 0;
 	o_ptr->note_utag = 0;
+	o_ptr->tval2 = 0;
+	o_ptr->sval2 = 0;
 	s_printf("UNSEALING: %d, %d\n", o_ptr->tval, o_ptr->sval);
 }
 /* Seal or unseal an object as required,
    or return(FALSE) if object no longer exists - C. Blue */
+/* Note: Sealing a questor item might have unforeseen consequences, maybe prohibit or erase? */
 bool seal_or_unseal_object(object_type *o_ptr) {
 	/* Object does no longer exist? (for example now commented out, in k_info)
 	   - turn it into a 'seal' instead of deleting it! */
@@ -4475,6 +4479,8 @@ bool seal_or_unseal_object(object_type *o_ptr) {
 			o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 			o_ptr->note = 0;
 			o_ptr->note_utag = 0;
+			o_ptr->tval2 = 0;
+			o_ptr->sval2 = 0;
 			return(TRUE);
 		}
  #endif

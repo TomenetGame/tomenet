@@ -3520,6 +3520,8 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 	/* Analyze the items */
 	switch (o_ptr->tval) {
 	case TV_SPECIAL:
+		/* Gifts can contain a stack of items, so they themselves must not be stackable, or inven space limits could be badly exploited */
+		if (o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END) return(FALSE);
 		/* quest items */
 		if (o_ptr->sval == SV_QUEST) {
 			if ((o_ptr->pval != j_ptr->pval) ||

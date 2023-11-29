@@ -5518,7 +5518,7 @@ P:0:0d0:0:0:0
 
 #red,green,yellow,blue,orange,purple ; copper,silver,golden
 N:655:& Red Gift Wrapping~
-G:~:r
+G:~:R
 I:11:10:0
 W:0:0:1:5
 A:127/0
@@ -5526,7 +5526,7 @@ P:0:1d1:0:0:0
 F:ACTIVATE
 
 N:656:& Orange Gift Wrapping~
-G:~:r
+G:~:o
 I:11:11:0
 W:0:0:1:5
 A:127/0
@@ -5534,7 +5534,7 @@ P:0:1d1:0:0:0
 F:ACTIVATE
 
 N:657:& Yellow Gift Wrapping~
-G:~:r
+G:~:y
 I:11:12:0
 W:0:0:1:5
 A:127/0
@@ -5542,7 +5542,7 @@ P:0:1d1:0:0:0
 F:ACTIVATE
 
 N:658:& Green Gift Wrapping~
-G:~:r
+G:~:G
 I:11:13:0
 W:0:0:1:5
 A:127/0
@@ -5550,7 +5550,7 @@ P:0:1d1:0:0:0
 F:ACTIVATE
 
 N:659:& Blue Gift Wrapping~
-G:~:r
+G:~:B
 I:11:14:0
 W:0:0:1:5
 A:127/0
@@ -5558,7 +5558,7 @@ P:0:1d1:0:0:0
 F:ACTIVATE
 
 N:660:& Purple Gift Wrapping~
-G:~:r
+G:~:v
 I:11:15:0
 W:0:0:1:5
 A:127/0
@@ -6206,48 +6206,48 @@ F:IGNORE_WATER | EASY_KNOW
 
 #red,green,yellow,blue,orange,purple ; copper,silver,golden
 N:743:& Gift~, Wrapped in Red Paper
-G:~:r
-I:11:20:0
+G:&:R
+I:127:10:0
 W:0:0:1:5
 A:127/0
 P:0:1d1:0:0:0
 F:ACTIVATE
 
 N:744:& Gift~, Wrapped in Orange Paper
-G:~:r
-I:11:21:0
+G:&:o
+I:127:11:0
 W:0:0:1:5
 A:127/0
 P:0:1d1:0:0:0
 F:ACTIVATE
 
 N:745:& Gift~, Wrapped in Yellow Paper
-G:~:r
-I:11:22:0
+G:&:y
+I:127:12:0
 W:0:0:1:5
 A:127/0
 P:0:1d1:0:0:0
 F:ACTIVATE
 
 N:746:& Gift~, Wrapped in Green Paper
-G:~:r
-I:11:23:0
+G:&:G
+I:127:13:0
 W:0:0:1:5
 A:127/0
 P:0:1d1:0:0:0
 F:ACTIVATE
 
 N:747:& Gift~, Wrapped in Blue Paper
-G:~:r
-I:11:24:0
+G:&:B
+I:127:14:0
 W:0:0:1:5
 A:127/0
 P:0:1d1:0:0:0
 F:ACTIVATE
 
 N:748:& Gift~, Wrapped in Purple Paper
-G:~:r
-I:11:25:0
+G:&:v
+I:127:15:0
 W:0:0:1:5
 A:127/0
 P:0:1d1:0:0:0

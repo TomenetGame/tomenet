@@ -13429,10 +13429,6 @@ void Handle_item(int Ind, int item) {
 	} else if (p_ptr->inventory[p_ptr->current_activation].tval == TV_JUNK &&
 	    p_ptr->inventory[p_ptr->current_activation].tval >= SV_GIFT_WRAPPING_START &&
 	    p_ptr->inventory[p_ptr->current_activation].tval <= SV_GIFT_WRAPPING_END) {
-		/* swap-hack: activating a gift wrapping uses up the TARGET item
-		   (well, and converts the wrapping to a packaged gift) */
-		//i = p_ptr->using_up_item;
-		//p_ptr->using_up_item = item;
 		wrap_gift(Ind, item);
 	}
 

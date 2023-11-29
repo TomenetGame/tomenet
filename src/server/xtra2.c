@@ -13905,7 +13905,7 @@ void telekinesis_aux(int Ind, int item) {
 
 	/* the_sandman: item lvl restrictions are disabled in rpg */
 #ifndef RPG_SERVER
-	if ((q_ptr->owner) && (q_ptr->owner != p2_ptr->id) &&
+	if (q_ptr->owner && q_ptr->owner != p2_ptr->id &&
 	    (q_ptr->level > p2_ptr->lev || q_ptr->level == 0)) {
 		if (cfg.anti_cheeze_telekinesis) {
 			msg_print(Ind, "The target isn't powerful enough yet to receive that item!");
@@ -13929,6 +13929,21 @@ void telekinesis_aux(int Ind, int item) {
 		msg_print(Ind, "Only royalties are powerful enough to receive that item!");
 		if (!is_admin(p_ptr)) return;
 	}
+
+#if 0
+	/* Wrapped gifts: Totally enforce level restrictions */
+	if (q_ptr->tval == TV_SPECIAL && q_ptr->sval >= SV_GIFT_WRAPPING_START && q_ptr->sval <= SV_GIFT_WRAPPING_END
+	    && q_ptr->owner && q_ptr->owner != p2_ptr->id && p2_ptr->lev < q_ptr->level) {
+		msg_print(Ind, "The taget's level must meet the gift's level to receive it.");
+		return;
+	}
+#else
+	/* Wrapped gifts: Must be given manually (>'')> */
+	if (q_ptr->tval == TV_SPECIAL && q_ptr->sval >= SV_GIFT_WRAPPING_START && q_ptr->sval <= SV_GIFT_WRAPPING_END) {
+		msg_print(Ind, "Gifts cannot be sent via telekinesis.");
+		if (!is_admin(p_ptr)) return;
+	}
+#endif
 
 	if (cfg.anti_arts_send && artifact_p(q_ptr) && !is_admin(p_ptr)) {
 		msg_print(Ind, "The artifact resists telekinesis!");

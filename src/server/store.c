@@ -665,6 +665,8 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr) {
 	if (o_ptr->questor) return(FALSE);
 	/* Don't ever stack special quest items */
 	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST) return(FALSE);
+	/* Gifts can contain a stack of items, so they themselves must not be stackable, or inven space limits could be badly exploited */
+	if (o_ptr->tval == TV_SPECIAL && (o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END)) return(FALSE);
 	/* Don't stack quest items if not from same quest AND stage! */
 	if (o_ptr->quest != j_ptr->quest || o_ptr->quest_stage != j_ptr->quest_stage) return(FALSE);
 
@@ -3235,6 +3237,13 @@ void store_stole(int Ind, int item) {
 		if (!is_admin(p_ptr)) return;
 	}
 
+	/* Wrapped gifts: Totally enforce level restrictions */
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END
+		&& o_ptr->owner && o_ptr->owner != p_ptr->id && p_ptr->lev < o_ptr->level) {
+		msg_print(Ind, "Your level must at least be the same as the gift in order to steal it.");
+		return;
+	}
+
 	if (compat_pomode(Ind, o_ptr)) {
 		msg_format(Ind, "You cannot take items of %s players!", compat_pomode(Ind, o_ptr));
 		return;
@@ -3795,6 +3804,12 @@ void store_purchase(int Ind, int item, int amt) {
 		if (!is_admin(p_ptr)) return;
 	}
 
+	/* Wrapped gifts: Totally enforce level restrictions */
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END
+	    && o_ptr->owner && o_ptr->owner != p_ptr->id && p_ptr->lev < o_ptr->level) {
+		msg_print(Ind, "Your level must at least be the same as the gift in order to buy it.");
+		return;
+	}
 
 	if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
 	    && o_ptr->owner && o_ptr->owner != p_ptr->id) {
@@ -6430,6 +6445,13 @@ void home_purchase(int Ind, int item, int amt) {
 	    ) {
 		msg_print(Ind, "Only royalties are powerful enough to pick up that item!");
 		if (!is_admin(p_ptr)) return;
+	}
+
+	/* Wrapped gifts: Totally enforce level restrictions */
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END
+	    && o_ptr->owner && o_ptr->owner != p_ptr->id && p_ptr->lev < o_ptr->level) {
+		msg_print(Ind, "Your level must at least be the same as the gift in order to pick it up.");
+		return;
 	}
 
 	/* Assume the player wants just one of them */
