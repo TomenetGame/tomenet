@@ -697,6 +697,8 @@ struct object_type {
 	byte tval2;			/* normally unused (except for item-invalid-seal and gifts) */
 	byte sval2;			/* normally unused (except for item-invalid-seal and gifts) */
 	byte number2;			/* normally unused (except for gifts) */
+	u32b note2;			/* Inscription index */
+	char note2_utag;		/* Added for making pseudo-id overwrite unique loot tags */
 
 	s32b bpval;			/* Base item extra-parameter */
 	s32b pval;			/* Extra enchantment item extra-parameter (name1 or name2) */
