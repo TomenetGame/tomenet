@@ -132,7 +132,7 @@ D:Drains constitution and inflicts damage.
 N:11:Restore Constitution
 G:,:d
 I:80:18:500
-W:10:0:1:350
+W:10:0:1:200
 A:10/1
 #D:Restores drained constitution.
 
@@ -183,7 +183,7 @@ A:8/1
 N:18:Restore Strength
 G:,:d
 I:80:17:500
-W:10:0:1:350
+W:10:0:1:200
 A:10/1
 #D:Restores drained strength.
 
