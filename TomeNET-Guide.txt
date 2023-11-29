@@ -1525,6 +1525,9 @@ They all start with a slash '/' hence they're called slash commands:
             - whether you still have an active item oder and in which store in
               which town.
 
+            And for Maiar who aren't initiated yet it will display the current
+            status of their initiation career, see 'Maia' in (7.4).
+
 /exit
 /leave
 /quit       Leaves the game, same as pressing CTRL+Q.
