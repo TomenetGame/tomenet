@@ -10222,6 +10222,20 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 			    o_name);
 		}
 
+		/* Catch items that got lost when dropped into full houses */
+		if (!o_ptr->name1 && o_ptr->owner) {
+			cptr name = lookup_player_name(o_ptr->owner);
+			int lev = lookup_player_level(o_ptr->owner);
+			char o_name[ONAME_LEN];
+
+			object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
+
+			s_printf("%s object failed to drop by %s(%d) at (%d,%d,%d):\n  %s\n",
+			    showtime(), name ? name : "(Dead player)", lev,
+			    wpos->wx, wpos->wy, wpos->wz,
+			    o_name);
+		}
+
 		return(-2);
 	}
 
@@ -10587,12 +10601,14 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 			}
 
 			/* Extra logging for those cases of "where did my randart disappear to??1" */
-			if (o_ptr->name1 == ART_RANDART) {
+			//if (o_ptr->name1 == ART_RANDART)
+			{
 				char o_name[ONAME_LEN];
 
 				object_desc(0, o_name, o_ptr, TRUE, 3);
 
-				s_printf("%s drop_near couldn't allocate random artifact at (%d,%d,%d):\n  %s\n",
+				//s_printf("%s drop_near couldn't allocate random artifact at (%d,%d,%d):\n  %s\n",
+				s_printf("%s drop_near couldn't allocate object at (%d,%d,%d):\n  %s\n",
 				    showtime(),
 				    wpos->wx, wpos->wy, wpos->wz,
 				    o_name);
@@ -10631,8 +10647,7 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
  * code, which should also check for "trap doors" on quest levels.
  */
 /* The note above is completely obsoleted.	- Jir -	*/
-void pick_trap(struct worldpos *wpos, int y, int x)
-{
+void pick_trap(struct worldpos *wpos, int y, int x) {
 	//int feat;
 	//int tries = 100;
 
