@@ -16767,7 +16767,7 @@ stated.
                                 !Speed: 200 Au.
                                 !Restore stat: 300 Au.
                                 !Healing, ?Teleportation: 400 Au.
-                                !Resistance, !Restore Mana, ,Athelas: 450 Au.
+                                !Resistance, !Restore Mana, Athelas: 450 Au.
                                 ?Wilderness Mapping: 500 Au.
 
                                 Trying to 'steal back' an item that was already
