@@ -2846,8 +2846,8 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				dam = damroll(5, 3);
 				msg_format(Ind, "You are hit by a blessing for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, o_ptr ? "a Scroll of Blessing" : "a blessing", 0);
-			} else if (p_ptr->blessed_power <= 8) {
-				p_ptr->blessed_power = 8;
+			} else if (p_ptr->blessed_power <= 6) {
+				p_ptr->blessed_power = 6;
 				if (set_blessed(Ind, randint(12) + 6)) ident = TRUE; /* removed stacking */
 			}
 			break;
@@ -2858,8 +2858,8 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				dam = damroll(10, 3);
 				msg_format(Ind, "You are hit by a blessing for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, o_ptr ? "a Scroll of Holy Chant" : "a chant", 0);
-			} else if (p_ptr->blessed_power <= 14) {
-				p_ptr->blessed_power = 14;
+			} else if (p_ptr->blessed_power <= 10) {
+				p_ptr->blessed_power = 10;
 				if (set_blessed(Ind, randint(24) + 12)) ident = TRUE; /* removed stacking */
 			}
 			break;
@@ -2870,8 +2870,8 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				dam = damroll(30, 3);
 				msg_format(Ind, "You are hit by a blessing for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, o_ptr ? "a Scroll of Holy Prayer" : "a holy prayer", 0);
-			} else if (p_ptr->blessed_power <= 20) {
-				p_ptr->blessed_power = 20;
+			} else if (p_ptr->blessed_power <= 16) {
+				p_ptr->blessed_power = 16;
 				if (set_blessed(Ind, randint(48) + 24)) ident = TRUE; /* removed stacking */
 			}
 			break;
@@ -6923,9 +6923,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				msg_format(Ind, "You are hit by a blessing for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, "The Set of Leather Gloves 'Soul Grip'", 0);
 				o_ptr->recharging = 150 + randint(100) - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
-			} else if (p_ptr->blessed_power <= 20) {
+			} else if (p_ptr->blessed_power <= 16) {
 				msg_print(Ind, "Your gloves glow golden...");
-				p_ptr->blessed_power = 20;
+				p_ptr->blessed_power = 16;
 				set_blessed(Ind, randint(48) + 24); /* removed stacking */
 				o_ptr->recharging = 150 + randint(100) - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			} else {
@@ -7452,7 +7452,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			fire_ball(Ind, GF_MISSILE, dir, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 300), 4, p_ptr->attacker);
 			msg_print(Ind, "Your armour glows in many colours...");
 			(void)set_shero(Ind, randint(50) + 50); /* removed stacking */
-			//p_ptr->blessed_power = 20;
+			//p_ptr->blessed_power = 16;
 			//(void)set_blessed(Ind, randint(50) + 50); /* removed stacking */
 			(void)set_oppose_acid(Ind, randint(50) + 50); /* removed stacking */
 			(void)set_oppose_elec(Ind, randint(50) + 50);

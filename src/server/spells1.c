@@ -10845,9 +10845,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 	case GF_BLESS_PLAYER:
-		if (dam < 18) p_ptr->blessed_power = 8;
-		else if (dam < 33) p_ptr->blessed_power = 14;
-		else p_ptr->blessed_power = 20;
+		if (dam < 18) p_ptr->blessed_power = 6;
+		else if (dam < 33) p_ptr->blessed_power = 10;
+		else p_ptr->blessed_power = 16;
 		(void)set_blessed(Ind, dam);
 		dam = 0;
 		break;
