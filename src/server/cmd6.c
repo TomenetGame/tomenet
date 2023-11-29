@@ -2705,7 +2705,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			ident = TRUE;
 			if (p_ptr->current_item != -1) (void)identify_fully(Ind); /* XID */
 			else { /* Manual usage */
-				msg_print(Ind, "This is an *identify* scroll.");
+				msg_print(Ind, "This is an *Identify* scroll.");
 				(void)identify_fully(Ind);
 				*used_up = FALSE;
 			}
