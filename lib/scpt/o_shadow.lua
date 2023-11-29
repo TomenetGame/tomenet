@@ -248,8 +248,8 @@ SHADOWGATE = add_spell {
 	["am"] = 	75,
 	["spell_power"] = 0,
 	["level"] = 	20,
-	["mana"] = 	20,
-	["mana_max"] = 	20,
+	["mana"] = 	6,
+	["mana_max"] = 	6,
 	["fail"] = 	-30,
 	["spell"] = 	function()
 		--begin at ANNOY_DISTANCE as a minimum, to overcome
