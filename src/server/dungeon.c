@@ -11968,6 +11968,17 @@ s_printf("updating weather for player %d.\n", i);
 /* calculate slow-downs of running speed due to environmental circumstances / grid features - C. Blue
    Note: a.t.m. Terrain-related slowdowns take precedence over wind-related slowdowns, cancelling them. */
 void eff_running_speed(int *real_speed, player_type *p_ptr, cave_type *c_ptr) {
+	int impair = 100;
+
+	/* Shadow school: Especially fast at world surface at night, for travelling QoL, negating any terrain-induced slowdowns even! */
+	if (!p_ptr->wpos.wz && night_surface && (impair = 100 - get_skill_scale(p_ptr, SKILL_OSHADOW, 108))) {
+		int boost = 100 + get_skill_scale(p_ptr, SKILL_OSHADOW, 60);
+
+		if (impair < 25) impair = 25; /* up to 75% impairment reduction, reached at skill ~35 */
+		if (boost > 130) boost = 130; /* up to 30% faster running speed, reached at skill 25 already */
+		*real_speed = (*real_speed * boost) / 100;
+	}
+
 #if 1 /* NEW_RUNNING_FEAT */
 	if (!is_admin(p_ptr) && !p_ptr->ghost && !p_ptr->tim_wraith) {
 		/* are we in fact running-levitating? */
@@ -11975,22 +11986,22 @@ void eff_running_speed(int *real_speed, player_type *p_ptr, cave_type *c_ptr) {
 		if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_LEVITATE | FF1_CAN_RUN))) {
 			/* Allow level 50 druids to run at full speed */
 			if (!(p_ptr->pclass == CLASS_DRUID &&  p_ptr->lev >= 50)) {
-				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_LEVITATING_1) *real_speed /= 2;
-				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_LEVITATING_2) *real_speed /= 4;
+				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_LEVITATING_1) *real_speed = (*real_speed * 100) / (100 + impair); // -50% speed
+				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_LEVITATING_2) *real_speed = (*real_speed * 100) / (100 + (300 * impair) / 100); // -75% speed
 			}
 		}
 	    /* or running-swimming? */
 		else if ((c_ptr->feat == FEAT_SHAL_WATER || c_ptr->feat == FEAT_GLIT_WATER || c_ptr->feat == FEAT_TAINTED_WATER || c_ptr->feat == FEAT_DEEP_WATER) && p_ptr->can_swim) {
 			/* Allow Aquatic players run/swim at full speed */
 			if (!(r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC)) {
-				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) *real_speed /= 2;
-				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_2) *real_speed /= 4;
+				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) *real_speed = (*real_speed * 100) / (100 + impair); // -50% speed
+				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_2) *real_speed = (*real_speed * 100) / (100 + (300 * impair) / 100); // -75% speed
 			}
 		}
 		/* or just normally running? */
 		else {
-			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_1) *real_speed /= 2;
-			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_2) *real_speed /= 4;
+			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_1) *real_speed = (*real_speed * 100) / (100 + impair); // -50% speed
+			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_2) *real_speed = (*real_speed * 100) / (100 + (300 * impair) / 100); // -75% speed
 		}
 	}
 #endif
