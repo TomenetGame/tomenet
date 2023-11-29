@@ -2637,12 +2637,7 @@ void do_cmd_uninscribe(int Ind, int item) {
 
 	/* No custom objects, seals, cheques */
 	if (((o_ptr->tval == TV_SPECIAL && (o_ptr->sval == SV_CUSTOM_OBJECT || o_ptr->sval == SV_SEAL)) ||
-	    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE) ||
-	     /* No gift-wrapped custom objects, seals, shirts, cheques */
-	    (o_ptr->tval == TV_SPECIAL && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END &&
-	     ((o_ptr->tval2 == TV_SPECIAL && (o_ptr->sval2 == SV_CUSTOM_OBJECT || o_ptr->sval2 == SV_SEAL)) ||
-	      (o_ptr->tval2 == TV_SCROLL && o_ptr->sval2 == SV_SCROLL_CHEQUE) ||
-	      (o_ptr->tval2 == TV_SOFT_ARMOR && o_ptr->sval2 == SV_SHIRT))))
+	    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE))
 	    && !is_admin(p_ptr)) {
 		msg_print(Ind, "Cannot uninscribe this item.");
 		return;
@@ -2692,12 +2687,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 
 	/* No custom objects, seals, cheques */
 	if (((o_ptr->tval == TV_SPECIAL && (o_ptr->sval == SV_CUSTOM_OBJECT || o_ptr->sval == SV_SEAL)) ||
-	    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE) ||
-	     /* No gift-wrapped custom objects, seals, shirts, cheques */
-	    (o_ptr->tval == TV_SPECIAL && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END &&
-	     ((o_ptr->tval2 == TV_SPECIAL && (o_ptr->sval2 == SV_CUSTOM_OBJECT || o_ptr->sval2 == SV_SEAL)) ||
-	      (o_ptr->tval2 == TV_SCROLL && o_ptr->sval2 == SV_SCROLL_CHEQUE) ||
-	      (o_ptr->tval2 == TV_SOFT_ARMOR && o_ptr->sval2 == SV_SHIRT))))
+	    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE))
 	    && !is_admin(p_ptr)) {
 		msg_print(Ind, "Cannot uninscribe this item.");
 		return;

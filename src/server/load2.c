@@ -333,6 +333,14 @@ static void rd_item(object_type *o_ptr) {
 		rd_byte(&o_ptr->sval2);
 	}
 	if (!older_than(4, 9, 4)) rd_byte(&o_ptr->number2);
+	if (!older_than(4, 9, 5)) {
+		/* Inscription */
+		rd_string(note, 128);
+		/* Save the inscription */
+		if (note[0]) o_ptr->note2 = quark_add(note);
+		rd_byte(&tmpbyte);
+		o_ptr->note2_utag = tmpbyte;
+	}
 
 	/* Base pval */
 	rd_s32b(&o_ptr->bpval);

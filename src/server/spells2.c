@@ -10402,10 +10402,6 @@ void wrap_gift(int Ind, int item) {
 		else msg_print(Ind, "You take one gift wrapping and wrap the remaining ones with it.");
 		s_printf("..success (EMPTY)\n");
 
-		/* Item inscription gets overridden by gift wrapping inscription */
-		o_ptr->note = ow_ptr->note;
-		o_ptr->note_utag = ow_ptr->note;
-
 		forge = *o_ptr;
 
 		/* One gift wrapping gone */
@@ -10414,14 +10410,21 @@ void wrap_gift(int Ind, int item) {
 		inven_item_optimize(Ind, p_ptr->current_activation);
 
 		o_ptr = &forge;
+
 		o_ptr->tval2 = o_ptr->tval;
 		o_ptr->sval2 = o_ptr->sval;
-		/* (weight stays the same) */
 		o_ptr->number2 = o_ptr->number - 1;
-		o_ptr->number = 1; // one gift may contain a stack of items, but in turn, gifts aren't stackable of course
+		o_ptr->note2 = o_ptr->note;
+		o_ptr->note2_utag = o_ptr->note_utag;
+
 		o_ptr->tval = TV_SPECIAL;
 		/* (sval stays the same) */
 		o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
+		/* (weight stays the same) */
+		o_ptr->number = 1; // one gift may contain a stack of items, but in turn, gifts aren't stackable of course
+		o_ptr->note = ow_ptr->note;
+		o_ptr->note_utag = ow_ptr->note_utag;
+
 #ifdef USE_SOUND_2010
 		sound(Ind, "read_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
@@ -10447,25 +10450,20 @@ void wrap_gift(int Ind, int item) {
 	o_ptr->tval2 = o_ptr->tval;
 	o_ptr->sval2 = o_ptr->sval;
 	o_ptr->number2 = o_ptr->number;
-	o_ptr->number = 1; // one gift may contain a stack of items, but in turn, gifts aren't stackable of course
+	o_ptr->note2 = o_ptr->note;
+	o_ptr->note2_utag = o_ptr->note_utag;
+
 	o_ptr->tval = TV_SPECIAL;
 	o_ptr->sval = p_ptr->inventory[p_ptr->current_activation].sval;
 	o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 	o_ptr->weight += ow_ptr->weight; /* Gift wrapping paper is added */
+	o_ptr->number = 1; // one gift may contain a stack of items, but in turn, gifts aren't stackable of course
+	o_ptr->note = ow_ptr->note;
+	o_ptr->note_utag = ow_ptr->note_utag;
 
 	/* One gift wrapping gone */
 	inven_item_increase(Ind, p_ptr->current_activation, -1);
 	inven_item_describe(Ind, p_ptr->current_activation);
-
-	/* Item inscription gets overridden by gift wrapping inscription.
-	   Some exceptions, that have protected inscriptions, and hence require the gift wrapping to be uninscribable, and the original's item inscription is kept:
-	   Custom objects, seals, cheques, shirts (paranoia: seals cannot be gift-wrapped anyway) */
-	if (!((o_ptr->tval2 == TV_SPECIAL && (o_ptr->sval2 == SV_CUSTOM_OBJECT || o_ptr->sval2 == SV_SEAL)) ||
-	    (o_ptr->tval2 == TV_SCROLL && o_ptr->sval2 == SV_SCROLL_CHEQUE) ||
-	     (o_ptr->tval2 == TV_SOFT_ARMOR && o_ptr->sval2 == SV_SHIRT))) {
-		o_ptr->note = ow_ptr->note;
-		o_ptr->note_utag = ow_ptr->note;
-	}
 
 	/* Don't just unhack the tval,sval etc, but actually erase and re-insert the item newly,
 	   Because this way, we put it into the correct inventory slot. */
@@ -10511,9 +10509,14 @@ void unwrap_gift(int Ind, int item) {
 	o_ptr->sval = o_ptr->sval2;
 	o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 	o_ptr->number = o_ptr->number2;
+	o_ptr->note = o_ptr->note2;
+	o_ptr->note_utag = o_ptr->note2_utag;
+
 	o_ptr->tval2 = 0;
 	o_ptr->sval2 = 0;
 	o_ptr->number2 = 0;
+	o_ptr->note2 = 0;
+	o_ptr->note2_utag = 0;
 
 	/* Handle empty gifts */
 	if (!forge.number) {
