@@ -2759,7 +2759,15 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		/* -TM- Hack -- Add false-artifact names */
 		/* Dagger inscribed {@w0#of Smell} will be named
 		 * Dagger of Smell {@w0} */
-		if (o_ptr->note && !(o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT)) {
+		if (o_ptr->note &&
+		    /* Not for custom objects! As their inscription is actually their item name! */
+		    !(o_ptr->tval == TV_SPECIAL &&
+		     (o_ptr->sval == SV_CUSTOM_OBJECT ||
+		     /* Not for gift-wrapped custom objects, seals, cheques, shirts either, as their inscriptions are fixed and part of their item name, too, and give the contents away */
+		     (o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END &&
+		      ((o_ptr->tval2 == TV_SPECIAL && (o_ptr->sval2 == SV_CUSTOM_OBJECT || o_ptr->sval2 == SV_SEAL)) ||
+		      (o_ptr->tval2 == TV_SCROLL && o_ptr->sval2 == SV_SCROLL_CHEQUE) ||
+		      (o_ptr->tval2 == TV_SOFT_ARMOR && o_ptr->sval2 == SV_SHIRT)))))) {
 			cptr str = strchr(quark_str(o_ptr->note), '#');
 
 			/* Add the false name */

@@ -10402,6 +10402,10 @@ void wrap_gift(int Ind, int item) {
 		else msg_print(Ind, "You take one gift wrapping and wrap the remaining ones with it.");
 		s_printf("..success (EMPTY)\n");
 
+		/* Item inscription gets overridden by gift wrapping inscription */
+		o_ptr->note = ow_ptr->note;
+		o_ptr->note_utag = ow_ptr->note;
+
 		forge = *o_ptr;
 
 		/* One gift wrapping gone */
@@ -10452,6 +10456,16 @@ void wrap_gift(int Ind, int item) {
 	/* One gift wrapping gone */
 	inven_item_increase(Ind, p_ptr->current_activation, -1);
 	inven_item_describe(Ind, p_ptr->current_activation);
+
+	/* Item inscription gets overridden by gift wrapping inscription.
+	   Some exceptions, that have protected inscriptions, and hence require the gift wrapping to be uninscribable, and the original's item inscription is kept:
+	   Custom objects, seals, cheques, shirts (paranoia: seals cannot be gift-wrapped anyway) */
+	if (!((o_ptr->tval2 == TV_SPECIAL && (o_ptr->sval2 == SV_CUSTOM_OBJECT || o_ptr->sval2 == SV_SEAL)) ||
+	    (o_ptr->tval2 == TV_SCROLL && o_ptr->sval2 == SV_SCROLL_CHEQUE) ||
+	     (o_ptr->tval2 == TV_SOFT_ARMOR && o_ptr->sval2 == SV_SHIRT))) {
+		o_ptr->note = ow_ptr->note;
+		o_ptr->note_utag = ow_ptr->note;
+	}
 
 	/* Don't just unhack the tval,sval etc, but actually erase and re-insert the item newly,
 	   Because this way, we put it into the correct inventory slot. */
