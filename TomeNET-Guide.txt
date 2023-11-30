@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 29. November 2023 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 30. November 2023 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.1 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -20984,7 +20984,7 @@ All Unlife spells are Wisdom-based.)
 
 - Shadow            [Spells are INT-based unless noted otherwise.]
 
-    Cause Fear      Scares your target.
+    Cause Fear      Scares all adjacent creatures.
                     (This spell uses WISDOM to determine fail-rates!)
                     Required skill level for first spell level: 1.
 
@@ -21019,15 +21019,26 @@ All Unlife spells are Wisdom-based.)
                     Lv 10: Additionally grants temporary poison resistance.
                     Required skill level for first spell level: 10.
 
+    Retreat         Swiftly jump backwards from your current adjacent target,
+                    if any. Note that while this is actually ignores a lot of
+                    anti-teleport effects, it does get cancelled by no-teleport
+                    floor grids, eg those inside no-teleport vaults, because
+                    the still air on these will prevent your shadowy moves.
+                    Required skill level for first spell level: 13.
+
     Darkness        Causes a burst of darkness around you, possibly blinding
                     nearby creatures.
                     If you are a trapper, you are probably aware that monster
                     traps on non-lit grids have a significantly reduced chance
                     to get disarmed by monsters (compare (4.7)).
-                    Required skill level for first spell level: 17.
+                    Required skill level for first spell level: 16.
+
+    Shadow Stream   Grants feather falling.
+                    At level 10 the stream is sufficient to grant levitation.
+                    Required skill level for first spell level: 18.
 
     Shadow Gate     Teleports you to the nearest opponent in line of sight.
-                    Required skill level for first spell level: 26.
+                    Required skill level for first spell level: 20.
                     Shared spell (see above): O.Shadow, Conveyance.
                     This spell cannot be found in the Conveyance tome.
 
@@ -21040,6 +21051,17 @@ All Unlife spells are Wisdom-based.)
                     Shared spell (see above): O.Shadow, H.Offense.
                     This spell cannot be found in the Holy Offense tome.
                     (Note: There is a spell of the same name in 'Hereticism'.)
+
+    Dispersion      Enters a shadow form, evading 100% melee attacks and bolt
+                    attacks at the cost of your stamina. The spell will end
+                    automatically if stamina is depleted.
+                    The probability for each evaded attack to cost you 1 ST
+                    starts at 50% and goes down to 25% the further the spell
+                    is trained.
+                    (This spell uses WISDOM to determine fail-rates!)
+                    Required skill level for first spell level: 33.
+    Stop Dispersion
+                    Ends an active 'Dispersion' spell.
 
     Drain Life      Drains life from a non-undead and non-nonliving creature
                     and returns a part of it to your hit points.
@@ -21197,11 +21219,12 @@ All Unlife spells are Wisdom-based.)
 
 - Hereticism        [Spells are WIS-based unless noted otherwise.]
 
-    Terror          Casts fear and confusion into the hearts of others.
+    Terror          Casts fear and confusion into the hearts of others,
+                    specifically your current target.
                     Required skill level for first spell level: 3.
 
                     Tier II: Level 13.
-                    Affects all opponents surrounding you.
+                    Affects all adjacent creatures.
 
     Ignore Fear     Temporarily removes the ignorant weakness known as fear.
                     Required skill level for first spell level: 6.
@@ -21580,7 +21603,7 @@ In general, mindcraft schools are less affected by anti-magic fields.)
 
                     Tier III: Level 40.
 
-    Scare           Infuses your target's mind with fear.
+    Scare           Infuses all adjacent minds with fear.
                     Required skill level for first spell level: 1.
 
                     Tier II: Level 10.

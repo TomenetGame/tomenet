@@ -6595,7 +6595,7 @@ void do_cmd_fire(int Ind, int dir) {
 			msg_print(Ind, "Your ammo's inscription (!k) prevents using it as flare missile.");
 			p_ptr->ranged_flare = FALSE;
 		} else {
-			p_ptr->cst -= 2;
+			use_stamina(p_ptr, 2);
 			msg_format_near(Ind, "%s fires a flare missile.", p_ptr->name);
 		}
 	}
@@ -6606,7 +6606,7 @@ void do_cmd_fire(int Ind, int dir) {
 		} else if (p_ptr->cst < 7) {
 			msg_print(Ind, "Not enough stamina for a precision shot.");
 			p_ptr->ranged_precision = FALSE;
-		} else p_ptr->cst -= 7;
+		} else use_stamina(p_ptr, 7);
 	}
 	if (p_ptr->ranged_double) {
 		if (boomerang) {
@@ -6631,7 +6631,7 @@ void do_cmd_fire(int Ind, int dir) {
 			msg_print(Ind, "Not enough stamina for barrage.");
 			p_ptr->ranged_barrage = FALSE;
 		} else {
-			p_ptr->cst -= 9;
+			use_stamina(p_ptr, 9);
 			msg_format_near(Ind, "%s fires a multi-shot barrage!", p_ptr->name);
 		}
 	}
@@ -6656,8 +6656,7 @@ void do_cmd_fire(int Ind, int dir) {
 		if (p_ptr->ranged_double_used >= thits) p_ptr->ranged_double_used = 0;
 
 		if (!p_ptr->ranged_double_used) {
-			if (!rand_int(5)) p_ptr->cst--; /* artificially: slow drain */
-			p_ptr->redraw |= PR_STAMINA;
+			if (!rand_int(5)) use_stamina(p_ptr, 1); /* artificially: slow drain */
 			p_ptr->ranged_double_used = thits;
 		}
 		p_ptr->ranged_double_used--;
@@ -7059,6 +7058,13 @@ void do_cmd_fire(int Ind, int dir) {
 								continue;
 							}
 #endif
+
+							if (p_ptr->dispersion && p_ptr->cst) {
+								msg_format(0 - c_ptr->m_idx, "\377%cYou disperse around the projectile!", COLOUR_DODGE_GOOD);
+								if (visible) msg_format(Ind, "\377%c%s disperses around %s.", COLOUR_DODGE_NEAR, p_name, o_name);
+								if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
+								continue;
+							}
 
 #ifdef USE_BLOCKING /* Parry/Block - belongs to new-NR-viability changes */
 							/* choose whether to attempt to block or to parry (can't do both at once),
@@ -9482,7 +9488,7 @@ void shadow_run(int Ind) {
 
 	if (p_ptr->cst < 10) { msg_print(Ind, "Not enough stamina!"); return; }
 
-	p_ptr->cst -= 10;
+	use_stamina(p_ptr, 10);
 	un_afk_idle(Ind);
 	disturb(Ind, 1, 0); /* stop resting, searching and running */
 

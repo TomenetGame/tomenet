@@ -1029,6 +1029,12 @@ bool make_attack_melee(int Ind, int m_idx) {
 			}
 #endif
 
+			if (p_ptr->dispersion && p_ptr->cst) {
+				msg_format(Ind, "\377%cYou disperse around %s attack!", COLOUR_DODGE_GOOD, m_name_gen);
+				if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
+				continue;
+			}
+
 #if 0 /* let's make it more effective */
  #ifdef USE_BLOCKING
 			/* Parry/Block - belongs to new-NR-viability changes */

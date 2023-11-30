@@ -2302,6 +2302,50 @@ bool set_blessed(int Ind, int v) {
 	return(TRUE);
 }
 
+bool set_dispersion(int Ind, byte v) {
+	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > 127) ? 127 : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->dispersion) {
+			msg_format_near(Ind, "%s turns into a shadowy, dispersing form.", p_ptr->name);
+			msg_print(Ind, "You enter a shadowy form, dispersing on any harmful impact.");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->dispersion) {
+			msg_format_near(Ind, "%s no longer has a shadowy form.", p_ptr->name);
+			msg_print(Ind, "You leave your shadowy form, no longer dispersing.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->dispersion = v;
+
+	/* Nothing to notice */
+	if (!notice) return(FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Recalculate boni */
+	p_ptr->update |= (PU_BONUS);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return(TRUE);
+}
+
 bool set_res_fear(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;

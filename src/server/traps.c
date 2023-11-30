@@ -494,6 +494,12 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval, s16b sval, 
 			continue;
 		}
 
+		if (p_ptr->dispersion && p_ptr->cst) {
+			msg_format(Ind, "\377%cYou disperse around the attack!", COLOUR_DODGE_GOOD);
+			if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
+			continue;
+		}
+
 		dam = damroll(dd, ds);
 		msg_format(Ind, "You are hit for \377o%d\377w damage!", dam);
 		take_hit(Ind, dam, format("a %s", name), 0);

@@ -824,7 +824,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 #if defined(USE_SOUND_2010) || defined(ENABLE_SELF_FLASHING)
 	int org_dis = dis;
 #endif
-	int d, i, min, ox, oy, x = p_ptr->py, y = p_ptr->px;
+	int d, i, min, ox, oy, x = p_ptr->px, y = p_ptr->py;
 	int xx , yy, m_idx, max_dis = 150, tries = 3000; /* (max_dis was 200 at some point) */
 	worldpos *wpos = &p_ptr->wpos;
 	dun_level *l_ptr;
@@ -1609,6 +1609,163 @@ void teleport_players_level(struct worldpos *wpos) {
 		p_ptr->new_level_flag = TRUE;
 		new_players_on_depth(&new_wpos, 1, TRUE);
 	}
+}
+
+/* Jump backwards 'dis' grids from your current target, if any */
+bool retreat_player(int Ind, int dis) {
+	player_type *p_ptr = Players[Ind];
+	int d, ox, oy, x = p_ptr->px, y = p_ptr->py, tx = x, ty = y;
+	int xx , yy;
+	worldpos *wpos = &p_ptr->wpos;
+	dun_level *l_ptr;
+
+	bool look = TRUE;
+
+	/* Space/Time Anchor */
+	cave_type **zcave;
+
+
+	if (!(zcave = getcave(wpos))) return(FALSE);
+	l_ptr = getfloor(wpos);
+
+	if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) return(FALSE);
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return(FALSE);
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_TELE)) return(FALSE);
+
+	/* Check if we have an adjacent target, otherwise there is nothing to retreat from */
+	if (!(target_okay(Ind) && distance(p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col) <= 1)) return(FALSE);
+
+	if (p_ptr->mode & MODE_PVP) {
+#ifdef HOSTILITY_ABORTS_RUNNING
+		/* hack: cut down jump range in pvp, since rules dont allow running anymore */
+		dis /= 2;
+#endif
+	}
+
+	if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px)) {
+		msg_print(Ind, "\377oYou are surrounded by an anti-teleportation field!");
+		s_printf("%s TELEPORT_FAIL: Anti-Tele for %s.\n", showtime(), p_ptr->name);
+		return(FALSE);
+	}
+	if (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) {
+		msg_print(Ind, "\377RThis location suppresses teleportation!");
+		s_printf("%s TELEPORT_FAIL: Cave-Stck for %s.\n", showtime(), p_ptr->name);
+		return(FALSE);
+	}
+
+#ifdef AUTO_RET_NEW
+	/* Don't allow phase/teleport for auto-retaliation methods */
+	if (p_ptr->auto_retaliaty) {
+		msg_print(Ind, "\377yYou cannot use means of self-translocation for auto-retaliation.");
+		return(FALSE);
+	}
+#endif
+	//if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
+
+	xx = p_ptr->px - p_ptr->target_col;
+	yy = p_ptr->py - p_ptr->target_row;
+	/* Look until done */
+	while (look) {
+		x += xx;
+		y += yy;
+
+		d = distance(p_ptr->py, p_ptr->px, y, x);
+		if (d >= dis) break;
+
+		/* Ignore illegal locations */
+		if (!in_bounds_floor(l_ptr, y, x)) break;
+
+		/* Require floor space if not ghost */
+		if (!p_ptr->ghost) {
+			/* Never teleport onto walls, permanent floor feats that don't specifically have ALLOW_TELE, or 'into' other creatures */
+			if (!cave_free_bold(zcave, y, x)) break;
+		} else {
+			/* never teleport onto perma-walls (happens to ghosts in khazad) */
+			if (cave_perma_bold2(zcave, y, x)) break;
+			/* Never teleport 'into' another creature! */
+			if (zcave[y][x].m_idx) break;
+		}
+
+		/* This prevents teleporting into broken vaults where layouts overlap :/ annoying bug */
+		if (zcave[y][x].info & CAVE_STCK) break;
+		/* For instant-resurrection into sickbay: avoid ppl blinking into there on purpose, disturbing the patients -_- */
+		if (zcave[y][x].info & CAVE_PROT) break;
+		if (f_info[zcave[y][x].feat].flags1 & FF1_PROTECTED) break;
+
+		/* Prevent landing onto a store entrance */
+		if (zcave[y][x].feat == FEAT_SHOP) break;
+		/* Prevent landing onto closed doors just because it's a bit ugly style-wise :-s */
+		if (zcave[y][x].feat == FEAT_HOME || /* House door */
+		    (zcave[y][x].feat >= FEAT_DOOR_HEAD && zcave[y][x].feat <= FEAT_DOOR_TAIL) || /* Normal doors, closed and locked */
+		    zcave[y][x].feat == FEAT_SECRET) /* Include secret door */
+			break;
+
+		/* This grid looks still fine -- continue looping! */
+		tx = x;
+		ty = y;
+	}
+	/* Use last valid values */
+	x = tx;
+	y = ty;
+
+	/* No movement path? */
+	if (p_ptr->px == x && p_ptr->py == y) return(FALSE);
+
+	break_cloaking(Ind, 7);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
+
+	store_exit(Ind);
+
+	/* Get him out of any pending quest input prompts */
+	if (p_ptr->request_id >= RID_QUEST && p_ptr->request_id <= RID_QUEST_ACQUIRE + MAX_Q_IDX - 1) {
+		Send_request_abort(Ind);
+		p_ptr->request_id = RID_NONE;
+	}
+
+	/* Save the old location */
+	oy = p_ptr->py;
+	ox = p_ptr->px;
+
+#ifdef USE_SOUND_2010
+	sound(Ind, "phase_door", NULL, SFX_TYPE_COMMAND, TRUE);
+#endif
+
+	/* Move the player */
+	p_ptr->py = y;
+	p_ptr->px = x;
+
+	grid_affects_player(Ind, ox, oy);
+
+	/* The player isn't on his old spot anymore */
+	zcave[oy][ox].m_idx = 0;
+
+	/* The player is on his new spot */
+	zcave[y][x].m_idx = 0 - Ind;
+	cave_midx_debug(wpos, y, x, -Ind);
+
+	/* Redraw the old spot */
+	everyone_lite_spot(wpos, oy, ox);
+
+	/* Redraw the new spot */
+	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
+
+	/* Check for new panel (redraw map) */
+	verify_panel(Ind);
+
+	/* Update stuff */
+	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+
+	/* Update the monsters */
+	p_ptr->update |= (PU_DISTANCE);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD);
+
+	/* Handle stuff XXX XXX XXX */
+	if (!p_ptr->death) handle_stuff(Ind);
+
+	return(TRUE);
 }
 
 #ifndef EXTENDED_TERM_COLOURS
@@ -9783,28 +9940,26 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 #ifndef NEW_DODGING
 	/* Bolt attack from a monster, a player or a trap */
-	//if ((!rad) && get_skill(p_ptr, SKILL_DODGE) && (who > 0))
 	/* Hack -- HIDE(direct) spell cannot be dodged */
 	if (!friendly_player &&
-	    get_skill(p_ptr, SKILL_DODGE) && !(flg & PROJECT_HIDE | PROJECT_JUMP | PROJECT_NODO))
-	{
-		if ((!rad) && (who >= PROJECTOR_TRAP)) {
-			//		int chance = (p_ptr->dodge_level - ((r_info[who].level * 5) / 6)) / 3;
+	    get_skill(p_ptr, SKILL_DODGE) && !(flg & PROJECT_HIDE | PROJECT_JUMP | PROJECT_NODO)) {
+		if (!rad && who >= PROJECTOR_TRAP) {
+			//int chance = (p_ptr->dodge_level - ((r_info[who].level * 5) / 6)) / 3;
 			/* Hack -- let's use 'dam' for now */
 			int chance = (p_ptr->dodge_level - dam / 6) / 3;
 
-			if ((chance > 0) && magik(chance)) {
+			if (chance > 0 && magik(chance)) {
 				//msg_print(Ind, "You dodge a magical attack!");
 				msg_format(Ind, "\377%cYou dodge the projectile!", COLOUR_DODGE_GOOD);
 				return(TRUE);
 			}
 		}
 		/* MEGAHACK -- allow to dodge 'bolt' traps */
-		else if ((rad < 2) && (who == PROJECTOR_TRAP)) {
+		else if (rad < 2 && who == PROJECTOR_TRAP) {
 			/* Hack -- let's use 'dam' for now */
 			int chance = (p_ptr->dodge_level - dam / 4) / 4;
 
-			if ((chance > 0) && magik(chance)) {
+			if (chance > 0 && magik(chance)) {
 				msg_format(Ind, "\377%cYou dodge a magical attack!", COLOUR_DODGE_GOOD);
 				return(TRUE);
 			}
@@ -9812,20 +9967,37 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	}
 #else
 	/* Bolt attack from a monster, a player or a trap */
-	//if (!p_ptr->blind && !(flg & (PROJECT_HIDE | PROJECT_GRID | PROJECT_JUMP)) && magik(apply_dodge_chance(Ind, getlevel(wpos) + 1000))) { /* hack - more difficult to dodge ranged attacks */
 	if (!friendly_player &&
 	    !p_ptr->blind && !(flg & (PROJECT_HIDE | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODO)) && magik(apply_dodge_chance(Ind, getlevel(wpos)))) {
-		if ((!rad) && (who >= PROJECTOR_TRAP)) {
+		if (!rad && who >= PROJECTOR_TRAP) {
 			msg_format(Ind, "\377%cYou dodge %s projectile!", COLOUR_DODGE_GOOD, m_name_gen);
 			return(TRUE);
 		}
 		/* MEGAHACK -- allow to dodge 'bolt' traps */
-		else if ((rad < 2) && (who == PROJECTOR_TRAP)) {
+		else if (rad < 2 && who == PROJECTOR_TRAP) {
 			msg_format(Ind, "\377%cYou dodge %s magical attack!", COLOUR_DODGE_GOOD, m_name_gen);
 			return(TRUE);
 		}
 	}
 #endif
+
+
+	/* Dispersion aka shadow form - currently put here, after dodging but before reflection/shield checks. */
+	/* Bolt attack from a monster, a player or a trap */
+	if (p_ptr->dispersion && !friendly_player && p_ptr->cst && // !p_ptr->blind &&
+	    !(flg & (PROJECT_HIDE | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODO))) {
+		if (!rad && who >= PROJECTOR_TRAP) {
+			msg_format(Ind, "\377%cYou disperse around %s projectile!", COLOUR_DODGE_GOOD, m_name_gen);
+			if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
+			return(TRUE);
+		}
+		/* MEGAHACK -- allow to dodge 'bolt' traps */
+		else if (rad < 2 && who == PROJECTOR_TRAP) {
+			msg_format(Ind, "\377%cYou disperse around %s magical attack!", COLOUR_DODGE_GOOD, m_name_gen);
+			if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
+			return(TRUE);
+		}
+	}
 
 
 	/* Reflection */

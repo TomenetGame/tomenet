@@ -827,6 +827,7 @@ extern void do_pick_breath(int Ind, int element);
 extern void create_sling_ammo_aux(int Ind);
 extern bool create_snowball(int Ind, cave_type *c_ptr);
 extern void do_steamblast(int Ind, int x, int y);
+extern void use_stamina(player_type *p_ptr, byte st);
 
 /* control.c */
 extern void SGWHit(int fd, int arg);
@@ -1636,6 +1637,7 @@ extern void teleport_player_force(int Ind, int dis);
 extern void teleport_player_to(int Ind, int ny, int nx, bool forced);
 extern void teleport_player_level(int Ind, bool force);
 extern void teleport_players_level(struct worldpos *wpos);
+extern bool retreat_player(int Ind, int dis);
 extern bool bypass_invuln;
 extern bool melee_hit;
 extern int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker);
@@ -2207,6 +2209,7 @@ extern bool set_tim_ffall(int Ind, int v);
 extern bool set_tim_lev(int Ind, int v);
 extern bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2);
 extern bool set_blessed(int Ind, int v);
+extern bool set_dispersion(int Ind, byte v);
 extern bool set_res_fear(int Ind, int v);
 extern bool set_hero(int Ind, int v);
 extern bool set_shero(int Ind, int v);

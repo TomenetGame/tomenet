@@ -480,6 +480,7 @@ struct player_type
 	s16b tim_regen_pow;		/* Timed extra regen power */
 	s16b blessed;			/* Timed -- Blessed */
 	s16b blessed_power;
+	byte dispersion;
 	s16b tim_invis;			/* Timed -- See Invisible */
 	s16b tim_infra;			/* Timed -- Infra Vision */
 	s16b tim_wraith;		/* Timed -- Wraithform */

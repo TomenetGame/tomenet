@@ -241,6 +241,24 @@ POISONRES = add_spell {
 	}
 }
 
+OBLINK = add_spell {
+	["name"] = 	"Retreat",
+	["name2"] = 	"Retr",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["level"] = 	13,
+	["mana"] = 	6,
+	["mana_max"] = 	6,
+	["fail"] = 	10,
+	["spell"] = 	function()
+		local dist = 3 + get_level(Ind, OBLINK, 69) / 17
+		retreat_player(Ind, dist)
+	end,
+	["info"] = 	function()
+		return "distance "..(3 + get_level(Ind, OBLINK, 69) / 17)
+	end,
+	["desc"] = 	{ "Fade away from your current target, if any.", },
+}
+
 SHADOWGATE = add_spell {
 	["name"] = 	"Shadow Gate",
 	["name2"] = 	"SGate",
@@ -259,6 +277,28 @@ SHADOWGATE = add_spell {
 		return "range "..(4 + get_level(Ind, SHADOWGATE, 12))
 		end,
 	["desc"] = 	{ "Teleports you to the nearest opponent in line of sight.", }
+}
+
+OLEVITATION = add_spell {
+	["name"] = 	"Shadow Stream",
+	["name2"] = 	"Stream",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["level"] = 	18,
+	["mana"] = 	14,
+	["mana_max"] = 	14,
+	["fail"] = 	70,
+	["spell"] = 	function()
+		if get_level(Ind, OLEVITATION, 50) >= 10 then set_tim_lev(Ind, randint(10) + 5 + get_level(Ind, OLEVITATION, 25))
+		else set_tim_ffall(Ind, randint(10) + 5 + get_level(Ind, OLEVITATION, 25))
+		end
+	end,
+	["info"] = 	function()
+		return "dur "..(5 + get_level(Ind, OLEVITATION, 25)).."+d10"
+	end,
+	["desc"] = 	{
+		"Grants you feather falling.",
+		"At level 10 it grants you levitation on a stream of shadows."
+	}
 }
 
 OINVIS = add_spell {
@@ -311,6 +351,43 @@ CHAOSBOLT = add_spell {
 		return "dam "..x.."d"..y
 	end,
 	["desc"] = 	{ "Channels the powers of chaos into a bolt.", }
+}
+
+DISPERSION = add_spell {
+	["name"] = 	"Dispersion",
+	["name2"] = 	"Disp",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["level"] = 	33,
+	["mana"] = 	40,
+	["mana_max"] = 	40,
+	["fail"] = 	-30,
+	["spell"] = 	function()
+		set_dispersion(Ind, 50 - get_level(Ind, DISPERSION, 72));
+	end,
+	["info"] = 	function()
+		return "1 ST cost: "..(50 - get_level(Ind, DISPERSION, 72)).."%"
+	end,
+	["desc"] = 	{
+		"Evade melee and bolt attacks by dispersing into shadow form",
+		"at the cost of your stamina, per evaded attack.",
+		"Automatically ends when stamina is depleted.",
+	}
+}
+STOPDISPERSION = add_spell {
+	["name"] = 	"Stop Dispersion",
+	["name2"] = 	"SDisp",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["level"] = 	33,
+	["mana"] = 	0,
+	["mana_max"] = 	0,
+	["fail"] = 	101,
+	["spell"] = 	function()
+		set_dispersion(Ind, 0);
+	end,
+	["info"] = 	function()
+		return ""
+	end,
+	["desc"] = 	{ "Stop dispersion into shadow form.", }
 }
 
 ODRAINLIFE = add_spell {

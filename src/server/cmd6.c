@@ -816,12 +816,28 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 					msg_print(Ind, "You burp.");
 					msg_format_near(Ind, "%s burps.", p_ptr->name);
 				}
+#if 0 /* disable because of 'Dispersion' spell! */
 				if (p_ptr->cst < p_ptr->mst && !p_ptr->shadow_running) {
 					msg_print(Ind, "You feel refreshed.");
 					p_ptr->cst = p_ptr->mst;
 					p_ptr->cst_frac = 0;
 					p_ptr->redraw |= PR_STAMINA;
 				}
+#else
+				restore_level(Ind);
+				if (p_ptr->cmp < p_ptr->mmp
+ #ifdef MARTYR_NO_MANA
+				    && !p_ptr->martyr
+ #endif
+				    ) {
+					p_ptr->cmp += 500;
+					if (p_ptr->cmp > p_ptr->mmp) p_ptr->cmp = p_ptr->mmp;
+					msg_print(Ind, "You feel your head clearing!");
+					p_ptr->redraw |= (PR_MANA);
+					p_ptr->window |= (PW_PLAYER);
+					ident = TRUE;
+				}
+#endif
 			}
 			break;
 		case SV_POTION_INFRAVISION:
@@ -932,6 +948,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 				p_ptr->black_breath = FALSE;
 				msg_print(Ind, "The hold of the Black Breath on you is broken!");
 			}
+#if 0 /* disable because of 'Dispersion' spell! */
 			if (!p_ptr->suscep_life &&
 			    p_ptr->cst < p_ptr->mst && !p_ptr->shadow_running) {
 				msg_print(Ind, "You feel refreshed.");
@@ -939,6 +956,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 				p_ptr->cst_frac = 0;
 				p_ptr->redraw |= PR_STAMINA;
 			}
+#endif
 			ident = TRUE;
 			break;
 		case SV_POTION_RESTORE_MANA:
@@ -7866,6 +7884,7 @@ bool unmagic(int Ind) {
 		set_fast(Ind, 0, 0) +
 		set_shield(Ind, 0, 0, SHIELD_NONE, 0, 0) +
 		set_blessed(Ind, 0) +
+		set_dispersion(Ind, 0) +
 		set_hero(Ind, 0) +
 		set_shero(Ind, 0) +
 		set_fury(Ind, 0) +
@@ -8634,7 +8653,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 	switch (technique) {
 	case 0:	if (!(p_ptr->melee_techniques & MT_SPRINT)) return; /* Sprint */
 		if (p_ptr->cst < 7) { msg_print(Ind, "Not enough stamina!"); return; }
-		p_ptr->cst -= 7;
+		use_stamina(p_ptr, 7);
 		un_afk_idle(Ind);
 		break_cloaking(Ind, 0);
 		break_shadow_running(Ind);
@@ -8649,7 +8668,7 @@ s_printf("TECHNIQUE_MELEE: %s - sprint\n", p_ptr->name);
 		if (p_ptr->cst < 2) { msg_print(Ind, "Not enough stamina!"); return; }
 		//if (p_ptr->energy < level_speed(&p_ptr->wpos) / 4) return;
 		if (p_ptr->energy <= 0) return;
-		p_ptr->cst -= 2;
+		use_stamina(p_ptr, 2);
 		p_ptr->energy -= level_speed(&p_ptr->wpos) / 4; /* doing it while fighting no prob */
 		un_afk_idle(Ind);
 		break_cloaking(Ind, 0);
@@ -8663,7 +8682,7 @@ s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
 
 	case 2:	if (!(p_ptr->melee_techniques & MT_DIRT)) return; /* Throw Dirt */
 		if (p_ptr->cst < 3) { msg_print(Ind, "Not enough stamina!"); return; }
-		p_ptr->cst -= 3;
+		use_stamina(p_ptr, 3);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);// / 2
 		un_afk_idle(Ind);
 		break_cloaking(Ind, 0);
@@ -8692,7 +8711,7 @@ s_printf("TECHNIQUE_MELEE: %s - throw dirt\n", p_ptr->name);
 
 	case 4:	if (!(p_ptr->melee_techniques & MT_DISTRACT)) return; /* Distract */
 		if (p_ptr->cst < 1) { msg_print(Ind, "Not enough stamina!"); return; }
-		p_ptr->cst -= 1;
+		use_stamina(p_ptr, 1);
 		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2; /* just a quick grimace and mimicking ;) */
 		un_afk_idle(Ind);
 		break_cloaking(Ind, 0);
@@ -8716,7 +8735,7 @@ s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 			    ((p_ptr->inventory[i].tval == TV_POTION && p_ptr->inventory[i].sval == SV_POTION_POISON) ||
 			    (p_ptr->inventory[i].tval == TV_FOOD &&
 			    (p_ptr->inventory[i].sval == SV_FOOD_POISON || p_ptr->inventory[i].sval == SV_FOOD_UNHEALTH)))) {
-				//p_ptr->cst -= 2;
+				//use_stamina(p_ptr, 2);
 				inven_item_increase(Ind, i, -1);
 				inven_item_describe(Ind, i);
 				inven_item_optimize(Ind, i);
@@ -8738,7 +8757,7 @@ s_printf("TECHNIQUE_MELEE: %s - apply poison\n", p_ptr->name);
 
 	case 6:	if (!(p_ptr->melee_techniques & MT_TRACKANIM)) return; /* Track Animals */
 		if (p_ptr->cst < 3) { msg_print(Ind, "Not enough stamina!"); return; }
-		p_ptr->cst -= 3;
+		use_stamina(p_ptr, 3);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		(void)detect_creatures_xxx(Ind, RF3_ANIMAL);
 s_printf("TECHNIQUE_MELEE: %s - track animals\n", p_ptr->name);
@@ -8747,7 +8766,7 @@ s_printf("TECHNIQUE_MELEE: %s - track animals\n", p_ptr->name);
 
 	case 7:	if (!(p_ptr->melee_techniques & MT_DETNOISE)) return; /* Perceive Noise */
 		if (p_ptr->cst < 2) { msg_print(Ind, "Not enough stamina!"); return; }
-		p_ptr->cst -= 2;
+		use_stamina(p_ptr, 2);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		detect_noise(Ind);
 s_printf("TECHNIQUE_MELEE: %s - perceive noise\n", p_ptr->name);
@@ -8758,7 +8777,7 @@ s_printf("TECHNIQUE_MELEE: %s - perceive noise\n", p_ptr->name);
 		if (p_ptr->cst < 4) { msg_print(Ind, "Not enough stamina!"); return; }
 		//if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 		if (p_ptr->energy <= 0) return;
-		p_ptr->cst -= 4;
+		use_stamina(p_ptr, 4);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		un_afk_idle(Ind);
 		break_cloaking(Ind, 0);
@@ -8816,7 +8835,7 @@ s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
 			return;
 		}
 		if (p_ptr->energy < level_speed(&p_ptr->wpos)) return; // ?
-		p_ptr->cst -= 5;
+		use_stamina(p_ptr, 5);
 		un_afk_idle(Ind);
 		break_cloaking(Ind, 0);
 		break_shadow_running(Ind);
@@ -8860,7 +8879,7 @@ s_printf("TECHNIQUE_MELEE: %s - assassinate\n", p_ptr->name);
 		stop_precision(Ind);
 		stop_shooting_till_kill(Ind);
 
-		p_ptr->cst -= 10;
+		use_stamina(p_ptr, 10);
 		un_afk_idle(Ind);
 		set_shero(Ind, randint(5) + 15);
 s_printf("TECHNIQUE_MELEE: %s - berserk\n", p_ptr->name);
@@ -8952,7 +8971,7 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 #endif
 		for (i = 0; i < INVEN_WIELD; i++)
 			if (p_ptr->inventory[i].tval == TV_FLASK && p_ptr->inventory[i].sval == SV_FLASK_OIL) {
-				//p_ptr->cst -= 2;
+				//use_stamina(p_ptr, 2);
 				p_ptr->ranged_flare = TRUE;
 				inven_item_increase(Ind, i, -1);
 				inven_item_describe(Ind, i);
@@ -8978,7 +8997,7 @@ s_printf("TECHNIQUE_RANGED: %s - flare missile\n", p_ptr->name);
 			return;
 		}
 		if (p_ptr->cst < 7) { msg_print(Ind, "Not enough stamina!"); return; }
-		//p_ptr->cst -= 7;
+		//use_stamina(p_ptr, 7);
 		break_shadow_running(Ind);
 		stop_shooting_till_kill(Ind);
 		p_ptr->ranged_flare = FALSE; p_ptr->ranged_double = FALSE; p_ptr->ranged_barrage = FALSE;
@@ -9021,7 +9040,7 @@ s_printf("TECHNIQUE_RANGED: %s - double\n", p_ptr->name);
 			msg_print(Ind, "You need at least 6 projectiles for a barrage!");
 			return;
 		}
-		//p_ptr->cst -= 9;
+		//use_stamina(p_ptr, 9);
 		break_shadow_running(Ind);
 		stop_shooting_till_kill(Ind);
 		p_ptr->ranged_flare = FALSE; p_ptr->ranged_precision = FALSE; p_ptr->ranged_double = FALSE;
@@ -9097,7 +9116,7 @@ void do_steamblast(int Ind, int x, int y) {
 		return;
 	}
 
-	//p_ptr->cst -= 3;
+	//use_stamina(p_ptr, 3);
 	inven_item_increase(Ind, t, -1);
 	inven_item_increase(Ind, p, -1);
 	if (t > p) { //higher value (lower in inventory) first; to preserve indices
@@ -9249,7 +9268,7 @@ void do_cmd_breathe_aux(int Ind, int dir) {
 	un_afk_idle(Ind);
 	disturb(Ind, 1, 0); /* stop things like running, resting.. */
 
-	p_ptr->cst -= 3;
+	use_stamina(p_ptr, 3);
 	p_ptr->redraw |= PR_STAMINA;
 	p_ptr->current_breath = 0;
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -9371,4 +9390,10 @@ bool create_snowball(int Ind, cave_type *c_ptr) {
 		return(TRUE);
 	}
 	return(FALSE);
+}
+
+void use_stamina(player_type *p_ptr, byte st) {
+	p_ptr->cst -= st;
+	p_ptr->redraw |= PR_STAMINA;
+	if (!p_ptr->cst && p_ptr->dispersion) set_dispersion(p_ptr->Ind, 0);
 }

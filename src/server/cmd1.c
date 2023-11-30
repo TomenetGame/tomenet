@@ -3176,7 +3176,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 			p_ptr->piercing_charged = FALSE;
 			p_ptr->piercing = 0;
 		} else {
-			p_ptr->cst -= 9;
+			use_stamina(p_ptr, 9);
 		}
 	}
 
@@ -3349,6 +3349,13 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				continue;
 			}
 #endif
+
+			if (p_ptr->dispersion && p_ptr->cst) {
+				msg_format(Ind, "\377%c%s disperses around your attack!", COLOUR_BLOCK_PLY, q_name);
+				msg_format(0 - c_ptr->m_idx, "\377%cYou disperse around %s's attack!", COLOUR_DODGE_GOOD, p_ptr->name);
+				if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
+				continue;
+			}
 
 #ifdef USE_BLOCKING
 			/* Parry/Block - belongs to new-NR-viability changes */
@@ -4382,7 +4389,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 			p_ptr->piercing_charged = FALSE;
 			p_ptr->piercing = 0;
 		} else {
-			p_ptr->cst -= 9;
+			use_stamina(p_ptr, 9);
 			p_ptr->redraw |= PR_STAMINA;
 		}
 	}
@@ -5631,7 +5638,7 @@ void py_bash_mon(int Ind, int y, int x) {
 		return;
 	}
 #ifndef TEST_SERVER
-	p_ptr->cst -= 6;
+	use_stamina(p_ptr, 6);
 	p_ptr->redraw |= PR_STAMINA;
 	redraw_stuff(Ind);
 #endif
@@ -5975,7 +5982,7 @@ void py_bash_py(int Ind, int y, int x) {
 		msg_print(Ind, "Not enough stamina!");
 		return;
 	}
-	p_ptr->cst -= 6;
+	use_stamina(p_ptr, 6);
 	p_ptr->redraw |= PR_STAMINA;
 	redraw_stuff(Ind);
 

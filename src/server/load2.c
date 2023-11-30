@@ -2033,6 +2033,7 @@ static bool rd_extra(int Ind) {
 	rd_u16b(&p_ptr->tim_pkill);
 	rd_s16b(&p_ptr->tim_wraith);
 	rd_byte((byte *)&p_ptr->wraith_in_wall);
+	if (!older_than(4, 9, 6)) rd_byte(&p_ptr->dispersion);
 	rd_byte(&p_ptr->searching);
 	rd_byte(&p_ptr->maximize);
 	rd_byte(&p_ptr->preserve);
