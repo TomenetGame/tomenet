@@ -1075,7 +1075,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 #endif
   #endif
 
-				fprintf(fff, " [%d,%d]", q_ptr->panel_row, q_ptr->panel_col);
+				fprintf(fff, " [%d,%d]", q_ptr->panel_col, q_ptr->panel_row);
 
 				/* Quest flag */
 				//fprintf(fff, " %c", (q_ptr->xorder_id ? 'X' : ' '));
@@ -1562,7 +1562,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 					if (admin)
 #ifdef ADMIN_EXTRA_STATISTICS
  #ifdef USE_SOUND_2010
-						fprintf(fff, "%s [%d,%d] (%s)%s%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col, q_ptr->hostname,
+						fprintf(fff, "%s [%d,%d] (%s)%s%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row, q_ptr->hostname,
 						    !q_ptr->exp_bar ?
   #if 0
 						    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+\377-" : "")) :
@@ -1572,7 +1572,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 						    (q_ptr->audio_mus ? "\377G*\377-" : (q_ptr->audio_sfx > 4 ? "\377y*\377-" : "\377B-\377-"))
   #endif
  #else
-						fprintf(fff, "%s [%d,%d] (%s)%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col, q_ptr->hostname
+						fprintf(fff, "%s [%d,%d] (%s)%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row, q_ptr->hostname
  #endif
  #if 0
 						    , q_ptr->custom_font ? "\377wf\377-" : "", ""
@@ -1582,11 +1582,11 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
  #endif
 						    );
 #else
-						fprintf(fff, "%s [%d,%d] (%s)", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col, q_ptr->hostname);
+						fprintf(fff, "%s [%d,%d] (%s)", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row, q_ptr->hostname);
 #endif
 					else
   #endif
-						fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
+						fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row);
 
 					/* Print questing flag */
 					//if (q_ptr->xorder_id) fprintf(fff, " X");
@@ -1659,7 +1659,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 					if (admin)
 #ifdef ADMIN_EXTRA_STATISTICS
  #ifdef USE_SOUND_2010
-						fprintf(fff, "%s [%d,%d]%s%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col,
+						fprintf(fff, "%s [%d,%d]%s%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row,
 						    !q_ptr->exp_bar ?
   #if 0
 						    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+\377-" : "")) :
@@ -1669,7 +1669,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 						    (q_ptr->audio_mus > 0 ? "\377G*\377-" : (q_ptr->audio_sfx > 4 ? "\377y*\377-" : "\377B-\377-"))
   #endif
  #else
-						fprintf(fff, "%s [%d,%d]%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col
+						fprintf(fff, "%s [%d,%d]%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row
  #endif
  #if 0
 						    , q_ptr->custom_font ? "\377wf\377-" : "", ""
@@ -1679,9 +1679,9 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
  #endif
 						    );
 #else
-						fprintf(fff, "%s [%d,%d]", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
+						fprintf(fff, "%s [%d,%d]", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row);
 #endif
-					else fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
+					else fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row);
 
 					/* Print questing flag */
 					//if (q_ptr->xorder_id) fprintf(fff, " X");
@@ -1798,7 +1798,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 				    || ((p_ptr->pkill & PKILL_SET) && (q_ptr->pkill & PKILL_SET))
 #endif
 				    ) && !admin) {
-					fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
+					fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row);
 				}
 				/* Print extra info if these people are in the same party */
 				/* Hack -- always show extra info to dungeon master */
@@ -1810,7 +1810,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 					if (admin) fprintf(fff, "%s", wpos_format(Ind, &q_ptr->wpos));
 					else fprintf(fff, "%s", wpos_format(-Ind, &q_ptr->wpos));
 
-					fprintf(fff, " [%d,%d]", q_ptr->panel_row, q_ptr->panel_col);
+					fprintf(fff, " [%d,%d]", q_ptr->panel_col, q_ptr->panel_row);
 #ifdef ADMIN_EXTRA_STATISTICS
  #ifdef USE_SOUND_2010
 					if (admin) fprintf(fff, "%s%s%s",
