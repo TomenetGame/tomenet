@@ -8421,7 +8421,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/chouse")) { /* count houses/castles -- USE THIS TO FIX BUGS LIKE "character cannot own more than 1" but has actually 0 houses */
-				/* However, if a character owns a 'ghost house' that isn't generated in the game world, use /unownhouse to remove it from his list first, then run this. */
+				/* However, if a character owns a 'ghost house' that isn't generated in the game world, use /unownhouse to remove it from his list first, then run this.
+				   Use /ahl to fix account-house miscount. */
 				if (!tk) {
 					msg_print(Ind, "Usage: /chouse <character name>");
 					return;
