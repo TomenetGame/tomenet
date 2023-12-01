@@ -248,7 +248,7 @@ OBLINK = add_spell {
 	["level"] = 	13,
 	["mana"] = 	6,
 	["mana_max"] = 	6,
-	["fail"] = 	10,
+	["fail"] = 	-20,
 	["spell"] = 	function()
 		local dist = 3 + get_level(Ind, OBLINK, 69) / 17
 		retreat_player(Ind, dist)
@@ -286,7 +286,7 @@ OLEVITATION = add_spell {
 	["level"] = 	18,
 	["mana"] = 	14,
 	["mana_max"] = 	14,
-	["fail"] = 	70,
+	["fail"] = 	-20,
 	["spell"] = 	function()
 		if get_level(Ind, OLEVITATION, 50) >= 10 then set_tim_lev(Ind, randint(10) + 5 + get_level(Ind, OLEVITATION, 25))
 		else set_tim_ffall(Ind, randint(10) + 5 + get_level(Ind, OLEVITATION, 25))
