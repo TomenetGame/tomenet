@@ -6539,7 +6539,31 @@ int Send_version(void) {
 	int n;
 
 	if (!is_newer_than(&server_version, 4, 8, 0, 0, 0, 0)) return(1);
-	if ((n = Packet_printf(&wbuf, "%c%s%s", PKT_VERSION, longVersion, os_version)) <= 0) return(n);
+	if (!is_newer_than(&server_version, 4, 9, 1, 0, 0, 0)) {
+		if ((n = Packet_printf(&wbuf, "%c%s%s", PKT_VERSION, longVersion, os_version)) <= 0) return(n);
+	} else {
+		int cnt, sum, min, max, i, avg;
+
+		/* Find min and max and calculate avg */
+		cnt = sum = 0;
+		min = max = -1;
+		for (i = 0; i < 60; i++) {
+			if (ping_times[i] > 0) {
+				if (min == -1) min = ping_times[i];
+				else if (ping_times[i] < min) min = ping_times[i];
+
+				if (max == -1) max = ping_times[i];
+				else if (ping_times[i] > max) max = ping_times[i];
+
+				cnt++;
+				sum += ping_times[i];
+			}
+		}
+		if (cnt) avg = sum / cnt;
+		else avg = -1;
+
+		if ((n = Packet_printf(&wbuf, "%c%s%s%d", PKT_VERSION, longVersion, os_version, avg)) <= 0) return(n);
+	}
 	return(1);
 }
 
