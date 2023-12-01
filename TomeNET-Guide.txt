@@ -21339,7 +21339,8 @@ All Unlife spells are Wisdom-based.)
     Nether Sap      Draws from nether undercurrents to continuously replenish
                     your health at the cost of draining your mana.
                     The duration and conversion ratio of the spell depend on
-                    the current spell level.
+                    the current spell level. The spell ends prematurely if you
+                    run out of mana. Having full HP will not cancel the spell.
                     Required skill level for first spell level: 22.
                     --- This spell is only usable by true vampires! ---
 

@@ -317,7 +317,7 @@ bool set_tim_regen(int Ind, int v, int p) {
 	return(TRUE);
 }
 /* Variant of set_tim_regen() that drains MP to replenish HP, for Unlife school: */
-bool set_tim_mp2hp(int Ind, int v, int p) {
+bool set_tim_mp2hp(int Ind, int v, int p, int c) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -346,6 +346,7 @@ bool set_tim_mp2hp(int Ind, int v, int p) {
 	/* Use the value */
 	p_ptr->tim_regen = v;
 	p_ptr->tim_regen_pow = -p;
+	p_ptr->tim_regen_cost = c;
 
 	/* Nothing to notice */
 	if (!notice) return(FALSE);

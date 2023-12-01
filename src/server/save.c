@@ -918,6 +918,7 @@ static void wr_extra(int Ind) {
 	wr_s16b(p_ptr->tim_ffall);
 	wr_s16b(p_ptr->tim_regen);
 	wr_s16b(p_ptr->tim_regen_pow);
+	wr_s16b(p_ptr->tim_regen_cost);
 	wr_s16b(p_ptr->blessed);
 	wr_s16b(p_ptr->tim_invis);
 	wr_byte(p_ptr->go_level_top);//ENABLE_GO_GAME

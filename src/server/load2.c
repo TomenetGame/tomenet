@@ -2006,6 +2006,7 @@ static bool rd_extra(int Ind) {
 		rd_s16b(&p_ptr->tim_ffall);
 		rd_s16b(&p_ptr->tim_regen);
 		rd_s16b(&p_ptr->tim_regen_pow);
+		if (!older_than(4, 9, 7)) rd_s16b(&p_ptr->tim_regen_cost);
 	}
 	rd_s16b(&p_ptr->blessed);
 	rd_s16b(&p_ptr->tim_invis);

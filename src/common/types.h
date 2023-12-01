@@ -3033,6 +3033,7 @@ struct player_type {
 	s16b shield_power_opt2;		/* Timed -- Shield Spell Power */
 	s16b tim_regen;			/* Timed extra regen */
 	s16b tim_regen_pow;		/* Timed extra regen power */
+	s16b tim_regen_cost;		/* Timed extra regen power MP cost (mp2hp spell only) */
 	s16b blessed;			/* Timed -- Blessed */
 	s16b blessed_power;		/* Timed -- Blessed */
 	s16b tim_invis;			/* Timed -- See Invisible */

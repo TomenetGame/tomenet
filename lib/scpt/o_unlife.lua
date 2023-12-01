@@ -113,7 +113,7 @@ OREGEN = add_spell {
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			if player.prace == RACE_VAMPIRE then
-				set_tim_mp2hp(Ind, randint(5) + 10 + get_level(Ind, OREGEN, 30), 200 + get_level(Ind, OREGEN, 500))
+				set_tim_mp2hp(Ind, randint(5) + 10 + get_level(Ind, OREGEN, 30), 200 + get_level(Ind, OREGEN, 500), 10)
 			else
 				msg_print(Ind, "You shudder, as nether streams envelope you and quickly dissipate again..");
 			end
@@ -121,7 +121,7 @@ OREGEN = add_spell {
 	["info"] = 	function()
 			local p = 200 + get_level(Ind, OREGEN, 500)
 			p = p / 10
-			return "dur "..(10 + get_level(Ind, OREGEN, 30)).."+d5 heal "..p
+			return "dur "..(10 + get_level(Ind, OREGEN, 30)).."+d5 "..p.."HP/10MP tick"
 	end,
 	["desc"] = 	{
 			"Draws from nether undercurrents to replenish your health.",
