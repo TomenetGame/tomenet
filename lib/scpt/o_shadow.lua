@@ -288,12 +288,12 @@ OLEVITATION = add_spell {
 	["mana_max"] = 	14,
 	["fail"] = 	-20,
 	["spell"] = 	function()
-		if get_level(Ind, OLEVITATION, 50) >= 10 then set_tim_lev(Ind, randint(10) + 5 + get_level(Ind, OLEVITATION, 25))
-		else set_tim_ffall(Ind, randint(10) + 5 + get_level(Ind, OLEVITATION, 25))
+		if get_level(Ind, OLEVITATION, 50) >= 10 then set_tim_lev(Ind, randint(10) + 10 + get_level(Ind, OLEVITATION, 25))
+		else set_tim_ffall(Ind, randint(10) + 10 + get_level(Ind, OLEVITATION, 25))
 		end
 	end,
 	["info"] = 	function()
-		return "dur "..(5 + get_level(Ind, OLEVITATION, 25)).."+d10"
+		return "dur "..(10 + get_level(Ind, OLEVITATION, 25)).."+d10"
 	end,
 	["desc"] = 	{
 		"Grants you feather falling.",
