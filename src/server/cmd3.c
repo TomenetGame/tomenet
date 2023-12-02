@@ -4807,11 +4807,11 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 		o_ptr = &p_ptr->subinventory[sslot][i];
 		if (o_ptr->tval) {
 			/* Slot has no more stacking capacity? */
-			if (o_ptr->number == 99) continue;
+			if (o_ptr->number == MAX_STACK_SIZE - 1) continue;
 
 			forge_part.tval = 0;
 			/* Hack 'number' to allow merging stacks partially */
-			xnum = 99 - o_ptr->number;
+			xnum = MAX_STACK_SIZE - 1 - o_ptr->number;
 			if (i_ptr->number > xnum) {
 				/* need to divide wand/staff charges */
 				if (is_magic_device(i_ptr->tval)) {
@@ -4951,9 +4951,9 @@ bool subinven_move_aux(int Ind, int islot, int sslot) {
 		o_ptr = &p_ptr->subinventory[sslot][i];
 		if (o_ptr->tval) {
 			/* Slot has no more stacking capacity? */
-			if (o_ptr->number == 99) continue;
+			if (o_ptr->number == MAX_STACK_SIZE - 1) continue;
 			/* Hack 'number' to allow merging stacks partially */
-			if (i_ptr->number + o_ptr->number > 99) i_ptr->number = 99 - o_ptr->number;
+			if (i_ptr->number + o_ptr->number >= MAX_STACK_SIZE) i_ptr->number = MAX_STACK_SIZE - 1 - o_ptr->number;
 			/* Merge partially or fully */
 			if (object_similar(Ind, o_ptr, i_ptr, 0x4)) {
 				object_absorb(Ind, o_ptr, i_ptr);

@@ -2233,7 +2233,7 @@ Rods only:
     !C          Will notify you when the rod finished recharging.
 
 Wands and directional rods:
-    !K          Will enable fire-till-kill mode for this item, provided that
+    !F          Will enable fire-till-kill mode for this item, provided that
                 you have turned on fire-till-kill mode the usual way ('m' key).
 
 Wands and staves:
@@ -2276,18 +2276,31 @@ Scrolls/spell books of Identify (except for bag-ID), Rods/Staves of Perception:
                 no automatic retry, you will have to ID it manually.
                 See (5.7) for more information about identification.
 
-Empty bottles:
-    !Mn         Will auto-destroy any further empty bottles you acquire beyond
-                the amount of n bottles. Example:  !M10
-                This is mainly useful for when 'keep_bottle' option is enabled,
-                to prevent uncontrolled amassment of empty bottles.
-
 Bags (subinventory):
-    !S          Do not auto-stow items into this bag.
+    !A          Do not auto-stow items into this bag.
     !O          Do not auto-stow unowned items (ie new loot) into this bag.
 
-Any item:
-    !S          Prevents an item from stacking with other items in any case.
+Any item in your inventory:
+    !G[n]       Prevents an item from stacking with other items in any case.
+                If an optional number n is given, it will stack items up to
+                this stack size, at most 99. Usage examples: !G  or  !G34  .
+                If picking up items that are inscribed !Gn and matching items
+                in your inventory are also inscribed !Gn then the lower n value
+                of the two is used. n must be at least 1 or it is same as !G.
+                If picking up a pile of items that exceeds the n value of a
+                matching stack in your inventory, then only the fitting amount
+                to saturate your inventory stack is picked up and the rest of
+                the pile will remain on the ground. So after that if you press
+                'g' again to pick up the rest...
+                If you pick up a pile of items when a matching stack in your
+                inventory is already fully saturated, then the pile (or single
+                item, whatever) is placed into a new inventory slot.
+    !Kn         Inscribed on an inventory item, will auto-destroy any further
+                items you acquire beyond the amount of n.
+                Use this mainly for empty bottles, especially in conjunction
+                with the 'keep_bottle' option enabled, to prevent uncontrolled
+                amassment of empty bottles. Example:  !M10
+                (This inscription does not work on artifacts or ego items.)
     !%          This will not actually be inscribed. The item will keep
                 its current inscription (or remain uninscribed if it was).
                 Instead, the item's discount will be set to 100%, making
@@ -22929,7 +22942,7 @@ The techniques are as follows:
     Apply Poison        -
         Searches your inventory for a potion of poison or a mushroom of poison,
         or of unhealth, and spends it to apply poison to any melee weapon that
-        you have equipped.
+        you have equipped. Items inscribed '!k' will be skipped.
         If you have two weapons equipped, it is applied to both. This technique
         does not work without a weapon. If you take off a weapon the poison
         branding will fade away.

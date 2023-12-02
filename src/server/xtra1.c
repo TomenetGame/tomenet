@@ -9691,8 +9691,8 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			while (*str2ptr >= '0' && *str2ptr <= '9') str2ptr++;
 			if (*str2ptr == ' ') str2ptr++;
 		} else num = 1;
-		if (num > 99) {
-			msg_print(Ind, "Sorry, you can order a stack of up to 99 items at most.");
+		if (num >= MAX_STACK_SIZE) {
+			msg_format(Ind, "Sorry, you can order a stack of up to %d items at most.", MAX_STACK_SIZE - 1);
 			return;
 		}
 

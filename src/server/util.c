@@ -2691,27 +2691,33 @@ cptr quark_str(s32b i) {
  * Check to make sure they haven't inscribed an item against what
  * they are trying to do -Crimson
  * look for "!*Erm" type, and "!* !A !f" type.
+ * New (2023): Encode TRUE directly as -1 instead, and if TRUE and there's a number behind
+ *             the inscription still within this same !-'segment', return that number + 1 (to encode a value of 0 too). -C. Blue
+ *             Added this for !M and !G handling.
  */
-
-bool check_guard_inscription(s16b quark, char what) {
+int check_guard_inscription(s16b quark, char what) {
 	const char *ax = quark_str(quark);
+	int n;
 
 	if (ax == NULL) return(FALSE);
 
 	while ((ax = strchr(ax, '!')) != NULL) {
 		while (ax++ != NULL) {
-			if (*ax == 0)  {
-				return(FALSE); /* end of quark, stop */
+			if (*ax == 0) return(FALSE); /* end of quark, stop */
+			if (*ax == ' ' || *ax == '@' || *ax == '#' || *ax == '-') break; /* end of segment, stop */
+			if (*ax == what) { /* exact match, accept */
+				/* Additionally scan for any 'amount' in case this inscription uses one */
+				while (++ax != NULL) {
+					if (*ax == ' ' || *ax == '@' || *ax == '#' || *ax == '-') return(-1); /* end of segment, stop */
+					/* Check for number (Note: Evaluate atoi first, in case it's a number != 0 but with leading '0'. -0 and +0 will also be caught fine as simply 0.) */
+					if ((n = atoi(ax)) || *ax == '0') return(n + 1); /* '+1' hack: Allow specifying '0' too, still distinguishing it from pure inscription w/o a number specified. */
+				}
+				return(-1); /* end of quark, stop */
 			}
-			if (*ax == ' ' || *ax == '@' || *ax == '#' || *ax == '-') {
-				break; /* end of segment, stop */
-			}
-			if (*ax == what) {
-				return(TRUE); /* exact match, stop */
-			}
+			/* '!*' special combo inscription */
 			if (*ax == '*') {
 				/* why so much hassle? * = all, that's it */
-/*				return(TRUE); -- well, !'B'ash if it's on the ground sucks ;) */
+				/*return(TRUE); -- well, !'B'ash if it's on the ground sucks ;) */
 
 				switch (what) { /* check for paranoid tags */
 				case 'd': /* no drop */
@@ -2724,13 +2730,14 @@ bool check_guard_inscription(s16b quark, char what) {
 				case 'w': /* no wear/wield */
 				case 't': /* no take off */
 #endif
-					return(TRUE);
+					return(-1);
 				}
 				//return(FALSE);
 			}
+			/* '!+' special combo inscription */
 			if (*ax == '+') {
 				/* why so much hassle? * = all, that's it */
-/*				return(TRUE); -- well, !'B'ash if it's on the ground sucks ;) */
+				/*return(TRUE); -- well, !'B'ash if it's on the ground sucks ;) */
 
 				switch (what) { /* check for paranoid tags */
 				case 'h': /* (obsolete) no house ( sell a a key ) */
@@ -2742,7 +2749,7 @@ bool check_guard_inscription(s16b quark, char what) {
 				case 'w': /* no wear/wield */
 				case 't': /* no take off */
 #endif
-					return(TRUE);
+					return(-1);
 				}
 				//return(FALSE);
 			}
@@ -6777,8 +6784,6 @@ cptr get_day(int day) {
 int gold_colour(s32b amt, bool fuzzy, bool compact) {
 	s32b i;
 	int unit = 1;
-
-	//for (i = amt; i > 99; i >>= 1, unit++) /* naught */; --old
 
 #if 1
 	/* Limit to avoid overflow freeze */

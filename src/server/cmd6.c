@@ -4039,7 +4039,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 		p_ptr->shooty_till_kill = TRUE; /* so for now we are just ATTEMPTING to shoot till kill (assumed we have a monster for target) */
 	}
 	if (p_ptr->shooty_till_kill) {
-		if (dir == 5 && check_guard_inscription(o_ptr->note, 'K')) {
+		if (dir == 5 && check_guard_inscription(o_ptr->note, 'F')) {
 			/* We lost our target? (monster dead?) */
 			if (target_okay(Ind)) {
 				/* To continue shooting_till_kill, check if spell requires clean LOS to target
@@ -4975,7 +4975,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 		p_ptr->shooty_till_kill = TRUE; /* so for now we are just ATTEMPTING to shoot till kill (assumed we have a monster for target) */
 	}
 	if (p_ptr->shooty_till_kill) {
-		if (dir == 5 && check_guard_inscription(o_ptr->note, 'K')) {
+		if (dir == 5 && check_guard_inscription(o_ptr->note, 'F')) {
 			/* We lost our target? (monster dead?) */
 			if (target_okay(Ind)) {
 				/* To continue shooting_till_kill, check if spell requires clean LOS to target
@@ -8184,7 +8184,7 @@ void do_cmd_fletchery(int Ind) {
 		//q_ptr->number = (byte)rand_range(15,25);
 		invcopy(q_ptr, lookup_kind(TV_SHOT, SV_AMMO_LIGHT));
 		q_ptr->number = (p_ptr->inventory[item].weight * 2) / (q_ptr->weight + 1) + randint(5);
-		if (q_ptr->number > 99) q_ptr->number = 99;
+		if (q_ptr->number >= MAX_STACK_SIZE) q_ptr->number = MAX_STACK_SIZE - 1;
 		raw_amount = q_ptr->number * raw_materials;
 		do_fletchery_aux();
 
@@ -8202,9 +8202,9 @@ void do_cmd_fletchery(int Ind) {
 		q_ptr->iron_trade = p_ptr->iron_trade;
 		q_ptr->iron_turn = turn;
 
-		while (raw_amount > 99) {
-			q_ptr->number = 99;
-			raw_amount -= 99;
+		while (raw_amount >= MAX_STACK_SIZE) {
+			q_ptr->number = MAX_STACK_SIZE - 1;
+			raw_amount -= MAX_STACK_SIZE - 1;
 			(void)inven_carry(Ind, q_ptr);
 		}
 		if (raw_amount) {
@@ -8243,7 +8243,7 @@ void do_cmd_fletchery(int Ind) {
 		//q_ptr->number = (byte)rand_range(15,25);
 		invcopy(q_ptr, lookup_kind(TV_ARROW, m_bonus(1, tlev) + 1));
 		q_ptr->number = p_ptr->inventory[item].weight / q_ptr->weight + randint(5);
-		if (q_ptr->number > 99) q_ptr->number = 99;
+		if (q_ptr->number >= MAX_STACK_SIZE) q_ptr->number = MAX_STACK_SIZE - 1;
 		raw_amount = q_ptr->number * raw_materials;
 		do_fletchery_aux();
 
@@ -8261,9 +8261,9 @@ void do_cmd_fletchery(int Ind) {
 		q_ptr->iron_trade = p_ptr->iron_trade;
 		q_ptr->iron_turn = turn;
 
-		while (raw_amount > 99) {
-			q_ptr->number = 99;
-			raw_amount -= 99;
+		while (raw_amount >= MAX_STACK_SIZE) {
+			q_ptr->number = MAX_STACK_SIZE - 1;
+			raw_amount -= MAX_STACK_SIZE - 1;
 			(void)inven_carry(Ind, q_ptr);
 		}
 		if (raw_amount) {
@@ -8302,7 +8302,7 @@ void do_cmd_fletchery(int Ind) {
 		invcopy(q_ptr, lookup_kind(TV_BOLT, m_bonus(1, tlev) + 1));
 		//q_ptr->number = (byte)rand_range(15,25);
 		q_ptr->number = p_ptr->inventory[item].weight / q_ptr->weight + randint(5);
-		if (q_ptr->number > 99) q_ptr->number = 99;
+		if (q_ptr->number >= MAX_STACK_SIZE) q_ptr->number = MAX_STACK_SIZE - 1;
 		raw_amount = q_ptr->number * raw_materials;
 		do_fletchery_aux();
 
@@ -8320,9 +8320,9 @@ void do_cmd_fletchery(int Ind) {
 		q_ptr->iron_trade = p_ptr->iron_trade;
 		q_ptr->iron_turn = turn;
 
-		while (raw_amount > 99) {
-			q_ptr->number = 99;
-			raw_amount -= 99;
+		while (raw_amount >= MAX_STACK_SIZE) {
+			q_ptr->number = MAX_STACK_SIZE - 1;
+			raw_amount -= MAX_STACK_SIZE - 1;
 			(void)inven_carry(Ind, q_ptr);
 		}
 		if (raw_amount) {
@@ -8732,6 +8732,7 @@ s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 		for (i = 0; i < INVEN_WIELD; i++)
 			if (//object_known_p(Ind, &p_ptr->inventory[i]) && /* skip unknown items */
 			    object_aware_p(Ind, &p_ptr->inventory[i]) && /* skip unknown items */
+			    !check_guard_inscription(p_ptr->inventory[INVEN_AMMO].note, 'k') &&
 			    ((p_ptr->inventory[i].tval == TV_POTION && p_ptr->inventory[i].sval == SV_POTION_POISON) ||
 			    (p_ptr->inventory[i].tval == TV_FOOD &&
 			    (p_ptr->inventory[i].sval == SV_FOOD_POISON || p_ptr->inventory[i].sval == SV_FOOD_UNHEALTH)))) {

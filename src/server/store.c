@@ -774,7 +774,7 @@ static void store_object_absorb(object_type *o_ptr, object_type *j_ptr) {
 
 	/* Combine quantity, lose excess items */
 	total = o_ptr->number + j_ptr->number;
-	if (total > 99) total = 99;
+	if (total >= MAX_STACK_SIZE) total = MAX_STACK_SIZE - 1;
 
 	if (o_ptr->tval == TV_ROD) {
 #ifdef NEW_MDEV_STACKING
@@ -1299,12 +1299,12 @@ int player_store_base(object_type *o_ptr) {
 
 	/* No specific amount specified? Default to 1 */
 	if (c[4] != ';' && c[5] != ';') keep = 1;
-	/* Specified an amount, must range from 1 to 99 */
+	/* Specified an amount, must range from 1 to 99 [MAX_STACK_SIZE-1] */
 	else keep = atoi(c + 3);
 
 	if (keep >= o_ptr->number) return(-o_ptr->number); /* Object must have bigger amount provided than we want to keep as base stock, to be eligible for sale */
 	if (keep < 1) return(1);
-	if (keep > 99) return(99);
+	if (keep >= MAX_STACK_SIZE) return(MAX_STACK_SIZE - 1);
 	return(keep);
 }
 #endif
@@ -3643,7 +3643,7 @@ void store_purchase(int Ind, int item, int amt) {
 
 	/* Hack (for SUBINVEN_LIMIT_GROUP especially! But also good to apply in general):
 	   Some objects are not allowed to stack in the player's inventory, but can be offered stackedly in stores. */
-	if (!object_similar(Ind, o_ptr, o_ptr, tolerance | 0x20)) amt = 1;
+	if (!object_similar(Ind, o_ptr, o_ptr, tolerance | 0x80)) amt = 1;
 
 #ifdef PLAYER_STORES
 	/* Consistency check: Make sure noone inside a mang-house store
@@ -5544,9 +5544,6 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 	int qlev = 100;
 	if (o_ptr->owner) qlev = lookup_player_level(j_ptr->owner);
 
-	/* Specific anti-stacking inscription */
-	if (check_guard_inscription(o_ptr->note, 'S') || check_guard_inscription(j_ptr->note, 'S')) return(FALSE); // !S is also used for custom bags, but those don't stack anyway
-
 	/* In general, incompatible modes never stack.
 	   Also no stacks of unowned everlasting items in shops after a now-dead
 	   everlasting player sold an item to the shop before he died :) */
@@ -6318,16 +6315,17 @@ void home_sell(int Ind, int item, int amt) {
 void home_purchase(int Ind, int item, int amt) {
 	player_type *p_ptr = Players[Ind];
 
-	int			i;
-	int			item_new;
+	int i;
+	int item_new;
 	int h_idx;
 
-	object_type		sell_obj;
-	object_type		*o_ptr;
+	object_type sell_obj;
+	object_type *o_ptr;
 
-	char		o_name[ONAME_LEN];
+	char o_name[ONAME_LEN];
 
 	house_type *h_ptr;
+
 
 	if (amt < 1) {
 		s_printf("$INTRUSION(HOME)$ Bad amount %d! (Home) Bought by %s.", amt, p_ptr->name);
@@ -6355,8 +6353,7 @@ void home_purchase(int Ind, int item, int amt) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (item < 0 || item >= h_ptr->stock_size)
-		return;
+	if (item < 0 || item >= h_ptr->stock_size) return;
 
 	/* Get the actual item */
 	o_ptr = &h_ptr->stock[item];
@@ -6369,7 +6366,7 @@ void home_purchase(int Ind, int item, int amt) {
 
 	/* Hack (for SUBINVEN_LIMIT_GROUP especially! But also good to apply in general):
 	   Some objects are not allowed to stack in the player's inventory, but can be stored stackedly in homes. */
-	if (!object_similar(Ind, o_ptr, o_ptr, 0x20)) amt = 1;
+	if (!object_similar(Ind, o_ptr, o_ptr, 0x80)) amt = 1;
 
 	/* check whether client tries to buy more than the store has */
 	if (o_ptr->number < amt) {
@@ -6456,6 +6453,10 @@ void home_purchase(int Ind, int item, int amt) {
 		msg_print(Ind, "Your level must at least be the same as the gift in order to pick it up.");
 		return;
 	}
+
+	/* Handle !Gn inscription */
+	if ((i = inven_carry_okay(Ind, o_ptr, 0x20)) > 0) amt = i;
+	if (!amt) return;
 
 	/* Assume the player wants just one of them */
 	/*amt = 1;*/

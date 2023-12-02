@@ -2470,7 +2470,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			}
 
 			if (bottles) {
-				if (bottles > 99) bottles = 99;
+				if (bottles >= MAX_STACK_SIZE) bottles = MAX_STACK_SIZE - 1;
 
 				invcopy(q_ptr, lookup_kind(TV_BOTTLE, 1));
 				q_ptr->number = bottles;

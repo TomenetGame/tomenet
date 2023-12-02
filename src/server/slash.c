@@ -7072,7 +7072,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					while (*str2ptr >= '0' && *str2ptr <= '9') str2ptr++;
 					if (*str2ptr == ' ') str2ptr++;
 				} else num = 1;
-				if (num > 99) num = 99;
+				if (num >= MAX_STACK_SIZE) num = MAX_STACK_SIZE - 1;
 
 				strcpy(str, str2ptr);
 
@@ -13132,7 +13132,7 @@ extern void wish(int Ind, struct worldpos *wpos, int tval, int sval, int number,
 		if (Ind) msg_print(Ind, "Amount may not be zero.");
 		return;
 	}
-	if (number < 0 || number > 99) {
+	if (number < 0 || number >= MAX_STACK_SIZE) {
 		if (Ind) msg_print(Ind, "Amount out of bounds.");
 		return;
 	}

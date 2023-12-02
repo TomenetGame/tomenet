@@ -3444,24 +3444,27 @@ s64b object_value(int Ind, object_type *o_ptr) {
  * j_ptr should be the new item or level-reqs gets meanless.
  *
  * 'tolerance' flag:
- * 0	- no tolerance
- * +0x1	- tolerance for ammo to_h and to_d enchantment
- * +0x2	- manual 'force stack' by the player: tolerance for level 0 items (starter items)
-          and for trapping kits with different (+h,+d) enchantments (like !M works for ammo)
- * +0x4 - tolerance for discount and inscription
- *        (added for dropping items on top of stacks inside houses)
- * +0x8 - ignore non-matching inscriptions. For player stores, which erase inscriptions on purchase anyway!
+ * 0x0   - no tolerance
+ * +0x1  - tolerance for ammo to_h and to_d enchantment
+ * +0x2  - manual 'force stack' by the player: tolerance for level 0 items (starter items)
+           and for trapping kits with different (+h,+d) enchantments (like !M works for ammo)
+ * +0x4  - tolerance for discount and inscription
+ *         (added for dropping items on top of stacks inside houses)
+ * +0x8  - ignore non-matching inscriptions. For player stores, which erase inscriptions on purchase anyway!
  * +0x10 - item is dropped on the floor, not in player's inventory (SUBINVEN_LIMIT_GROUP)
+ * +0x20 - also perform !Gn checks with specified n amount here, in preparation for manual pickup (aka 'g' key)
+ *         Changed function type to int for this to return the amount of acceptable items for an inventory stack.
+ *         Instead of TRUE, now -1 is returned directly.
+ * +0x40 - also for !Gn check: Treat !G as 'FALSE' as usual, but now treat too big stacks as non-working,
+ *         instead of preparing for partial merging as with 0x20 tolerance.
+ * +0x80 - hack for subinventory stuff (work in progress) some items can be stacked in stores but not in inventory.
  * -- C. Blue
  */
-bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolerance) {
+int object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolerance) {
 	player_type *p_ptr = NULL;
-	int total = (j_ptr == o_ptr ? o_ptr->number : o_ptr->number + j_ptr->number);
+	int total = (j_ptr == o_ptr ? o_ptr->number : o_ptr->number + j_ptr->number), i;
 	bool unknown = !((k_info[o_ptr->k_idx].flags3 & TR3_EASY_KNOW) && (k_info[j_ptr->k_idx].flags3 & TR3_EASY_KNOW))
 	    && (!Ind || !object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr));
-
-	/* Specific anti-stacking inscription */
-	if (check_guard_inscription(o_ptr->note, 'S') || check_guard_inscription(j_ptr->note, 'S')) return(FALSE); // !S is also used for custom bags, but those don't stack anyway
 
 	/* In general, incompatible modes never stack.
 	   Also takes care of unowned everlasting items in shops after a now-dead
@@ -3472,7 +3475,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 	if (o_ptr->tval == TV_GOLD && j_ptr->tval == TV_GOLD) {
 		/* special exception: pile colour from coin-type monsters is immutable! */
 		if (o_ptr->sval != j_ptr->sval && (o_ptr->xtra2 || j_ptr->xtra2)) return(FALSE);
-		return(TRUE);
+		return(-1);
 	}
 
 #ifdef SUBINVEN_LIMIT_GROUP
@@ -3770,7 +3773,6 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		}
 
 		/* Verify further enchantments matching.. */
-
 		if (o_ptr->to_a != j_ptr->to_a) return(FALSE);
 
 		/* Require identical "pval" code */
@@ -3858,13 +3860,45 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 			return(FALSE);
 
 		/* Hack -- normally require matching "inscriptions" */
-		if (!(tolerance & 0x4) && (!Ind || !p_ptr->stack_force_notes) && (o_ptr->note != j_ptr->note))
-			return(FALSE);
+		if (!(tolerance & 0x4) && (!Ind || !p_ptr->stack_force_notes) && (o_ptr->note != j_ptr->note)) return(FALSE);
 	}
 
 	/* Hack -- normally require matching "discounts" */
-	if (!(tolerance & 0x4) && (!Ind || !p_ptr->stack_force_costs) && (o_ptr->discount != j_ptr->discount))
-		return(FALSE);
+	if (!(tolerance & 0x4) && (!Ind || !p_ptr->stack_force_costs) && (o_ptr->discount != j_ptr->discount)) return(FALSE);
+
+	/* ('Gain') QoL hack for limiting stack size of specific items, mostly consumables on restocking -
+	   we only handle the generic "don't allow any stacking" cases here though! The rest is handled by carry(). */
+	if ((i = check_guard_inscription(o_ptr->note, 'G'))) {
+		/* No optional amount specified. (Also, specifying 0 doesn't make sense.) */
+		if (i == -1) return(FALSE); /* (We just ignore the number==0 aka 'no more scrolls...' feature edge case here, too much hassle) */
+
+		/* The other syntax (specifying a limit atmount) is also handled by inven_carry_okay() and carry(),
+		   specifying the 0x20 tolerance marker for explicit-pickups only (aka player pressing 'g' key). */
+		if (tolerance & 0x20) {
+			/* Unhack value from +1 state */
+			i--;
+			/* Treat pointless case !G0 same as just !G */
+			if (!i) return(FALSE);
+			/* Sanity checks */
+			if (i >= MAX_STACK_SIZE) i = MAX_STACK_SIZE - 1;
+			/* Already reached the max amount on this inventory stack? */
+			if (o_ptr->number >= i) return(FALSE);
+			/* How many to additionally pick up? */
+			return(i - o_ptr->number);
+		}
+		/* Treat stacks that exceed the total desired number simply as 'skip' instead of preparing for partial merge as with tolerance 0x20 above. */
+		else if (tolerance & 0x40) {
+			/* Unhack value from +1 state */
+			i--;
+			/* Treat pointless case !G0 same as just !G */
+			if (!i) return(FALSE);
+			/* Sanity checks */
+			if (i >= MAX_STACK_SIZE) i = MAX_STACK_SIZE - 1;
+			/* Already reached the max amount on this inventory stack? */
+			if (o_ptr->number + j_ptr->number > i) return(FALSE);
+			/* Allow and fall through */
+		}
+	}
 
 	/* Maximal "stacking" limit */
 	if (total >= MAX_STACK_SIZE) return(FALSE);
@@ -3883,21 +3917,21 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 	}
 
 	/* They match, so they must be similar */
-	return(TRUE);
+	return(-1);
 }
 
 
 /*
  * Allow one item to "absorb" another, assuming they are similar.
+ * This function is only called after successful object_similar() check or for the Highlander Tournament amulets.
  * Note: j_ptr is the 'new' item that gets dropped/added to an existing one:
  * o_ptr = dest, j_ptr = src.
  */
 void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
-	int total = o_ptr->number + j_ptr->number;
+	int total = o_ptr->number + j_ptr->number, i;
 #ifndef NEW_MDEV_STACKING
 	int onum = o_ptr->number, jnum = j_ptr->number;
 #endif
-	const char *c;
 
 	/* Prepare ammo for possible combining */
 	//int o_to_h, o_to_d;
@@ -3921,15 +3955,15 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 	/* Add together the item counts */
 	o_ptr->number = ((total < MAX_STACK_SIZE) ? total : (MAX_STACK_SIZE - 1));
 
-	/* QoL hack for amassing empty bottles, mainly via keep_bottle option.. */
-	if (o_ptr->tval == TV_BOTTLE && o_ptr->sval == SV_EMPTY_BOTTLE && o_ptr->note
-	    && (c = strstr(quark_str(o_ptr->note), "!M"))) {
-		int i = atoi(c + 2);
-
+	/* ('Max') QoL hack for amassing empty bottles, mainly via keep_bottle option.
+	   Artifact paranoia check (cannot have more than 1 anyway), and prohibiting costly accidents;
+	   questor items are already exempt in object_similar() so we don't need to check for them again here. */
+	if (!(o_ptr->name1 || j_ptr->name1 || o_ptr->name2 || j_ptr->name2 || o_ptr->name2b || j_ptr->name2b) &&
+	    (i = check_guard_inscription(o_ptr->note, 'K')) > 1) {
+		i--; //unhack
 		/* Sanity checks, and apply! */
-		if (i > 99) i = 99;
-		if (i > 0 && o_ptr->number > i) o_ptr->number = i;
-
+		if (i >= MAX_STACK_SIZE) i = MAX_STACK_SIZE - 1;
+		if (o_ptr->number > i) o_ptr->number = i;
 		if (Ind) Players[Ind]->warning_limitbottles = 1;
 	}
 
@@ -10159,7 +10193,7 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 		if (!arts && crash) continue;
 
 		/* Paranoia */
-		if (k > 99) continue;
+		if (k >= MAX_STACK_SIZE) continue; /* Note: We ab-/re-use MAX_STACK_SIZE for actual max _pile_ size here, where a pile of items can contain many different items actually. */
 
 		/* Calculate score */
 		s = 10000 - (d + k * 5 + (crash ? 2000 : 0));
@@ -11152,9 +11186,9 @@ void auto_inscribe(int Ind, object_type *o_ptr, int flags) {
 /*
  * Check if we have space for an item in the pack without overflow
  */
-bool inven_carry_okay(int Ind, object_type *o_ptr, byte tolerance) {
+int inven_carry_okay(int Ind, object_type *o_ptr, byte tolerance) {
 	player_type *p_ptr = Players[Ind];
-	int i;
+	int i, r;
 	object_type *j_ptr;
 
 #if 0 /* Allow carrying multiple redundant bags, but just don't utilize them */
@@ -11164,8 +11198,8 @@ bool inven_carry_okay(int Ind, object_type *o_ptr, byte tolerance) {
 	if (subinven_group == -1)
 #endif
 #endif
-	/* Empty slot? */
-	if (p_ptr->inven_cnt < INVEN_PACK) return(TRUE);
+	/* Empty slot? - Only accept it right away if we're not looking to partially stack items in inventory via !Gn inscription.*/
+	if (p_ptr->inven_cnt < INVEN_PACK && !(tolerance & 0x20)) return(-1);
 
 	/* Similar slot? */
 	for (i = 0; i < INVEN_PACK; i++) {
@@ -11174,23 +11208,24 @@ bool inven_carry_okay(int Ind, object_type *o_ptr, byte tolerance) {
 
 #if 0 /* See comment above */
 #ifdef SUBINVEN_LIMIT_GROUP
-		if (subinven_group != -1 && j_ptr->tval == TV_SUBINVEN && get_subinven_group(j_ptr->sval) == subinven_group) return(FALSE);
+		/* For tolerance 0x20 check we postponed the inven_cnt check, so we have to do it here too, instead of returning just FALSE */
+		if (subinven_group != -1 && j_ptr->tval == TV_SUBINVEN && get_subinven_group(j_ptr->sval) == subinven_group) return(p_ptr->inven_cnt < INVEN_PACK ? -1 : FALSE);
 #endif
 #endif
-		/* Check if the two items can be combined */
-		if (object_similar(Ind, j_ptr, o_ptr, tolerance)) return(TRUE);
+		/* Check if the two items can be combined - here we can also check for !Gn inscription via 0x20 tolerance */
+		if ((r = object_similar(Ind, j_ptr, o_ptr, tolerance))) return(r);
 	}
 #if 0 /* See comment above */
 #ifdef SUBINVEN_LIMIT_GROUP
-	if (p_ptr->inven_cnt < INVEN_PACK) return(TRUE);
+	if (p_ptr->inven_cnt < INVEN_PACK) return(-1);
 #endif
 #endif
 
 	/* Hack -- try quiver slot (see inven_carry) */
-	//if (object_similar(Ind, &p_ptr->inventory[INVEN_AMMO], o_ptr, 0x0)) return(TRUE);
+	//if (object_similar(Ind, &p_ptr->inventory[INVEN_AMMO], o_ptr, 0x0)) return(-1);
 
-	/* Nope */
-	return(FALSE);
+	/* Nope -- but for the tolerance 0x20 check we postponed the inven_cnt check, so we have to do it here too, instead of returning just FALSE */
+	return(p_ptr->inven_cnt < INVEN_PACK ? -1 : FALSE);
 }
 /*
  * Check if an item will not take up any further inven space because it can just be merged into a stack.
@@ -11287,8 +11322,8 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 		/* Hack -- track last item */
 		n = j;
 
-		/* Check if the two items can be combined */
-		if (object_similar(Ind, j_ptr, o_ptr, 0x0)) {
+		/* Check if the two items can be combined - with regards to !G inscriptions */
+		if (object_similar(Ind, j_ptr, o_ptr, 0x40)) {
 			/* Check whether this item was requested by an item-retrieval quest.
 			   Note about quest_credited check: inven_carry() is also called by carry(),
 			   resulting in double crediting otherwise! */
@@ -11622,7 +11657,8 @@ void combine_pack(int Ind) {
 			if (!j_ptr->k_idx) continue;
 
 			/* Can we drop "o_ptr" onto "j_ptr"? */
-			if (object_similar(Ind, j_ptr, o_ptr, p_ptr->current_force_stack - 1 == i ? 0x2 : 0x0)) {
+			/* 0x40: Handle !G inscription - prevents any partial combining aka partial stack-shifting across slots too though, atm :/ but that's maybe not really an issue. */
+			if (object_similar(Ind, j_ptr, o_ptr, (p_ptr->current_force_stack - 1 == i ? 0x2 : 0x0) | 0x40)) {
 				/* clear if used */
 				if (p_ptr->current_force_stack - 1 == i) p_ptr->current_force_stack = 0;
 

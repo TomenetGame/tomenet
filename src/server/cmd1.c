@@ -1575,7 +1575,7 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 		if (s_ptr->sval != sub_sval) continue;
 
 		/* Player disabled auto-stow via bag inscription? */
-		if (check_guard_inscription(s_ptr->note, 'S') ||
+		if (check_guard_inscription(s_ptr->note, 'A') ||
 		    (check_guard_inscription(s_ptr->note, 'O') && !o_ptr->owner)) {
  #ifdef SUBINVEN_LIMIT_GROUP
 			break;
@@ -1645,6 +1645,7 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
  *             2 = explicit pickup ('g' key)
  * 'pick_one': Only pick up one piece from a stack of same item type
  *             (currently not implemented for ammo)
+ * 'confirm':  Not implemented. Would ask the player if he really wants to.
  */
 /* Prevent characters in Bree from taking gold/items while they cannot drop
    them again due to being lower level than cfg.newbies_cannot_drop? */
@@ -1669,7 +1670,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 	/* stuff for 'pick_one' hack: */
 	int num_org;
 	bool try_pickup = TRUE;
-	bool delete_it;
+	bool delete_it = TRUE; /* usually, the item is fully picked up and therefore deleted from the floor */
 
 
 	if (!(zcave = getcave(wpos))) return;
@@ -1700,7 +1701,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 	/* Get the object */
 	o_ptr = &o_list[c_ptr->o_idx];
-	num_org = o_ptr->number;
+	num_org = o_ptr->number; /* Hack in case 'pick_one' or 'pick_some' are invoked */
 
 	if (nothing_test(o_ptr, p_ptr, &p_ptr->wpos, p_ptr->px, p_ptr->py, 9)) return; //was 1
 
@@ -1924,6 +1925,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		    && p_ptr->id == o_ptr->owner && !p_ptr->ghost;
 		bool auto_load = check_guard_inscription(o_ptr->note, 'L')
 		    && p_ptr->id == o_ptr->owner && !p_ptr->ghost;
+		int pick_some = FALSE;
 
 		/* Hack -- disturb */
 		disturb(Ind, 0, 0);
@@ -2137,16 +2139,6 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			}
 		}
 
-/*#ifdef RPG_SERVER -- let's do this also for normal server */
-#if 1
-		/* Turn level 0 food into level 1 food - mikaelh */
-		if (o_ptr->owner && o_ptr->owner != p_ptr->id && o_ptr->level == 0 &&
-		    shareable_starter_item(o_ptr)) {
-			o_ptr->level = 1;
-			o_ptr->discount = 100;
-		}
-#endif
-
 		if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) &&
 #ifdef FALLEN_WINNERSONLY
 		    !p_ptr->once_winner
@@ -2169,6 +2161,16 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		if (o_ptr->tval == TV_CHARGE && o_ptr->timeout) {
 			msg_print(Ind, "\377yYou must disarm the charge before picking it up!");
 			if (!is_admin(p_ptr)) return;
+		}
+#endif
+
+/*#ifdef RPG_SERVER -- let's do this also for normal server */
+#if 1
+		/* Turn level 0 food into level 1 food - mikaelh */
+		if (o_ptr->owner && o_ptr->owner != p_ptr->id && o_ptr->level == 0 &&
+		    shareable_starter_item(o_ptr)) {
+			o_ptr->level = 1;
+			o_ptr->discount = 100;
 		}
 #endif
 
@@ -2215,6 +2217,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			}
 		}
 #endif
+
 		/* Save old inscription in case pickup fails */
 		old_note = o_ptr->note;
 		old_note_utag = o_ptr->note_utag;
@@ -2507,8 +2510,8 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		/* hack for 'pick_one' (needed for inven_carry_okay() too, or rather for the object_similar() check inside of it */
 		if (pick_one) o_ptr->number = 1;
 
-		/* Note that the pack is too full */
-		if (try_pickup && !inven_carry_okay(Ind, o_ptr, 0x0)) {
+		/* Note that the pack is too full - here we check for !Gn inscription for specific amount, via 0x20 tolerance marker */
+		if (try_pickup && !(pick_some = inven_carry_okay(Ind, o_ptr, (pickup == 2) ? 0x20 : 0x0))) {
 			msg_format(Ind, "You have no room for %s.", o_name);
 			Send_floor(Ind, o_ptr->tval);
 
@@ -2521,8 +2524,9 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 			return;
 		}
+
 		/* Actually ensure that there is at least one slot left in case we filled the whole inventory with CURSE_NO_DROP items */
-		if (try_pickup && !inven_carry_cursed_okay(Ind, o_ptr, 0x0)) {
+		if (try_pickup && pick_some == -1 && !inven_carry_cursed_okay(Ind, o_ptr, 0x0)) {
 			/* Give a somewhat misleading message, to not spoil him that he actually was protected */
 			msg_print(Ind, "A divine force stops you from picking up that item!");
 			s_printf("NO_PICKUP_CURSE_NO_DROP: Player '%s', item '%s'.\n", p_ptr->name, o_name);
@@ -2540,14 +2544,24 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		/* Pick up the item (if requested and allowed) */
 		else if (try_pickup) {
 			int okay = TRUE;
+			object_type forge, *o_floor_ptr = o_ptr; //for creating a structure copy to 'forge' for 'pick_one'/'pick_some' hacks
 
-			object_type forge, *o_floor_ptr = o_ptr; //structure copy for hacking 'pick_one'
+			/* Use i as check just for 'normal picking up' (0) vs 'pickup specific amount' (>0) from now on,
+			   so we discard the third value here (-1) as we have already checked for 'no room' above (was '0')
+			   and therefore no longer need the distinction of -1 and 0. */
+			if (pick_some == -1) pick_some = 0;
+			else if (pick_some) o_ptr->number = pick_some;
 
 			/* hack 'pick_one' */
 			if (pick_one) {
 				forge = (*o_floor_ptr);
-				if (num_org == 1) delete_it = TRUE;
-				else delete_it = FALSE;
+				delete_it = (num_org == 1);
+				/* use the new temporary forge object for reference */
+				o_ptr = &forge;
+			/* We re-use/clone the 'pick_one' hack for the new pick_some aka !Gn inscription with n specified (and > 0) */
+			} else if (pick_some) {
+				forge = (*o_floor_ptr);
+				delete_it = (num_org == pick_some);
 				/* use the new temporary forge object for reference */
 				o_ptr = &forge;
 			} else delete_it = TRUE; //delete the object from the floor, sinc we fully picked it up (in case of stack of items)
@@ -2560,7 +2574,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				snprintf(out_val, ONAME_LEN, "Pick up %s? ", o_name);
 				Send_pickup_check(Ind, out_val);
 
-				/* unhack 'pick_one' */
+				/* unhack 'pick_one'/'pick_some' */
 				o_floor_ptr->number = num_org;
 				return;
 			}
@@ -2570,11 +2584,17 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			if (okay) {
 				int slot;
 
-				/* for pick_one: need to divide wand/staff charges - thanks Dj_Wolf */
+				/* For pick_one/pick_some (otherwise delete_it would be TRUE here):
+				   Need to divide wand/staff charges - thanks Dj_Wolf */
 				if (!delete_it && is_magic_device(o_ptr->tval)) {
-					o_floor_ptr->number = num_org; //temporarily unhack pick_one
-					divide_charged_item(o_ptr, o_floor_ptr, 1);
-					o_floor_ptr->number = 1; //rehack pick_one
+					o_floor_ptr->number = num_org; //temporarily unhack pick_one/pick_some
+					if (pick_one) {
+						divide_charged_item(o_ptr, o_floor_ptr, 1);
+						o_floor_ptr->number = 1; //rehack pick_one
+					} else if (pick_some) {
+						divide_charged_item(o_ptr, o_floor_ptr, pick_some);
+						o_floor_ptr->number = pick_some; //rehack pick_some
+					}
 				}
 
 				/* Check whether this item was requested by an item-retrieval quest */
@@ -2837,8 +2857,10 @@ s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr
 					Send_floor(Ind, 0);
 				} else if (pick_one) /* unhack 'pick_one' - we picked up one item off the pile */
 					o_floor_ptr->number = num_org - 1;
+				else if (pick_some)
+					o_floor_ptr->number = num_org - pick_some;
 			} else { /* not 'okay', currently dead code here, since it's always TRUE, but for paranoia's sake: */
-				/* unhack 'pick_one' */
+				/* unhack 'pick_one'/'pick_some' */
 				o_floor_ptr->number = num_org;
 			}
 		}
