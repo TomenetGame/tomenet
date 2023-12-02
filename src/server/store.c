@@ -3819,7 +3819,7 @@ void store_purchase(int Ind, int item, int amt) {
 	}
 
 	/* Handle !Gn inscription */
-	if ((i = inven_carry_okay(Ind, o_ptr, 0x20)) > 0) amt = i;
+	if ((i = inven_carry_okay(Ind, o_ptr, 0x20)) > 0 && i < amt) amt = i;
 	if (!amt) return;
 
 	/* Hack -- get a "sample" object */
@@ -6460,7 +6460,7 @@ void home_purchase(int Ind, int item, int amt) {
 	}
 
 	/* Handle !Gn inscription */
-	if ((i = inven_carry_okay(Ind, o_ptr, 0x20)) > 0) amt = i;
+	if ((i = inven_carry_okay(Ind, o_ptr, 0x20)) > 0 && i < amt) amt = i;
 	if (!amt) return;
 
 	/* Assume the player wants just one of them */
