@@ -6221,6 +6221,9 @@ static int percent_damage(int hp, int dam) {
  *
  * IMPORTANT: Keep approx_damage() in sync with this.
  */
+/* Shots that the player deflected and that are now bouncing elsewhere
+   will not hit sleeping monsters, to avoid waking them up unintendely? */
+//#define DEFLECTING_SKIPS_SLEEPING
 static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struct worldpos *wpos, int y, int x, int dam, int typ, int flg) {
 	int i = 0, div, k, k_elec, k_sound, k_lite;
 
@@ -6307,6 +6310,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* A dead monster that drops a potion that smashes cannot get hit by that very effect */
 	if (m_ptr->dead) return(FALSE);
+
+#ifdef DEFLECTING_SKIPS_SLEEPING
+	if (m_ptr->csleep && (flg & PROJECT_BOUN)) return(FALSE);
+#endif
 
 	/* Prevent recursively afflicted potion_smash_effect() hits */
 	if (mon_hit_proj_id != mon_hit_proj_id2) {
