@@ -3460,6 +3460,9 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 	bool unknown = !((k_info[o_ptr->k_idx].flags3 & TR3_EASY_KNOW) && (k_info[j_ptr->k_idx].flags3 & TR3_EASY_KNOW))
 	    && (!Ind || !object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr));
 
+	/* Specific anti-stacking inscription */
+	if (check_guard_inscription(o_ptr->note, 'S') || check_guard_inscription(j_ptr->note, 'S')) return(FALSE); // !S is also used for custom bags, but those don't stack anyway
+
 	/* In general, incompatible modes never stack.
 	   Also takes care of unowned everlasting items in shops after a now-dead
 	   everlasting player sold an item to the shop before he died :) */

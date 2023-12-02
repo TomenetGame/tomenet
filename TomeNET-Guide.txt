@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 30. November 2023 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 2. December 2023 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.1 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2169,13 +2169,6 @@ If you use a sling, bow or crossbow and rather worthless ammo that you don't
 intend to pick up again, you may inscribe the ammo to make it disappear:
     !g          Makes ammo always break and never drop to the floor.
 
-For magic devices:
-    !B          Will play a beep sound if you either fail the activation roll
-                to use the device or if the device is out of charges or still
-                not charged up respectively, depending on the type of device.
-                For all other cases of activation failure this inscription has
-                no effect.
-
 Other ! inscriptions:
     !T          Prevent taking off a secondary item.
     !F          Prevent using up this light source or fuel item to fuel your
@@ -2228,6 +2221,13 @@ Weapons/ammo, devices and spells:
                 targets that are standing directly adjacent to you.
                 For details about auto-retaliation and the different types of
                 @O... inscriptions, see (4.1a)!
+
+For magic devices:
+    !B          Will play a beep sound if you either fail the activation roll
+                to use the device or if the device is out of charges or still
+                not charged up respectively, depending on the type of device.
+                For all other cases of activation failure this inscription has
+                no effect.
 
 Rods only:
     !C          Will notify you when the rod finished recharging.
@@ -2287,6 +2287,7 @@ Bags (subinventory):
     !O          Do not auto-stow unowned items (ie new loot) into this bag.
 
 Any item:
+    !S          Prevents an item from stacking with other items in any case.
     !%          This will not actually be inscribed. The item will keep
                 its current inscription (or remain uninscribed if it was).
                 Instead, the item's discount will be set to 100%, making

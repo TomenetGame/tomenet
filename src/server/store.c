@@ -5544,6 +5544,9 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 	int qlev = 100;
 	if (o_ptr->owner) qlev = lookup_player_level(j_ptr->owner);
 
+	/* Specific anti-stacking inscription */
+	if (check_guard_inscription(o_ptr->note, 'S') || check_guard_inscription(j_ptr->note, 'S')) return(FALSE); // !S is also used for custom bags, but those don't stack anyway
+
 	/* In general, incompatible modes never stack.
 	   Also no stacks of unowned everlasting items in shops after a now-dead
 	   everlasting player sold an item to the shop before he died :) */
