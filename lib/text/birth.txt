@@ -68,7 +68,7 @@ will be described more completely below.
 
 Each character may have one or more "racially intrinsic skills", based on
 the race of the character.  These may include special resistances, or even
-abilities such as infravision.
+abilities such as infra-vision.
 
 Each character has experience, which increases as the character becomes more
 experienced, and a level, which is based on experience, and also on race and
@@ -141,7 +141,7 @@ have intrinsic abilities.
                ing, disarming, perception, and stealth; so they make excel-
                lent rogues, but prefer to be called burglars.  They will be
                much weaker than humans, and no good at melee fighting.
-               Halflings have fair infravision, so they can detect warm
+               Halflings have fair infra-vision, so they can detect warm
                creatures at a distance.  Hobbits can choose between being a
                warrior, mage, or rogue.  They have their dexterity sustained.
  

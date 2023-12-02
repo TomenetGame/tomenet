@@ -3134,7 +3134,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 					} else if (k_ptr->flags5 & (TR5_CRIT)) t = object_desc_str(t, !(mode & 8) ? " critical hits" : "crt");
 					else if (k_ptr->flags1 & TR1_STEALTH) t = object_desc_str(t, !(mode & 8) ? " to stealth" : "stl");
 					else if (k_ptr->flags1 & TR1_SEARCH) t = object_desc_str(t, !(mode & 8) ? " to searching" : "srch");
-					else if (k_ptr->flags1 & TR1_INFRA) t = object_desc_str(t, !(mode & 8) ? " to infravision" : "infr");
+					else if (k_ptr->flags1 & TR1_INFRA) t = object_desc_str(t, !(mode & 8) ? " to infra-vision" : "infr");
 					else if (k_ptr->flags5 & TR5_LUCK) t = object_desc_str(t, !(mode & 8) ? " to luck" : "luck");
 					else if (k_ptr->flags1 & TR1_TUNNEL) {}
 				}
@@ -3197,7 +3197,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 				}
 				/* Infravision */
 				else if (f1 & TR1_INFRA) {
-					t = object_desc_str(t, !(mode & 8) ? " to infravision" : "infr");
+					t = object_desc_str(t, !(mode & 8) ? " to infra-vision" : "infr");
 				}
 				else if (f5 & TR5_LUCK) {
 					t = object_desc_str(t, !(mode & 8) ? " to luck" : "luck");
@@ -5599,7 +5599,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (f5 & (TR5_DISARM))
 		fprintf(fff, "It affects your disarming.\n");
 	if (f1 & (TR1_INFRA))
-		fprintf(fff, "It affects your infravision.\n");
+		fprintf(fff, "It affects your infra-vision.\n");
 	if (f1 & (TR1_TUNNEL))
 		fprintf(fff, "It affects your ability to tunnel.\n");
 	if (f1 & (TR1_SPEED))

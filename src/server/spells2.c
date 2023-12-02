@@ -1606,7 +1606,7 @@ void self_knowledge(int Ind) {
 	if (f1 & TR1_STEALTH) fprintf(fff, "Your stealth is affected by your equipment.\n");
 	if (f1 & TR1_SEARCH) fprintf(fff, "Your searching ability is affected by your equipment.\n");
 	if (f5 & TR5_DISARM) fprintf(fff, "Your disarming ability is affected by your equipment.\n");
-	if (f1 & TR1_INFRA) fprintf(fff, "Your infravision is affected by your equipment.\n");
+	if (f1 & TR1_INFRA) fprintf(fff, "Your infra-vision is affected by your equipment.\n");
 	if (f1 & TR1_TUNNEL) fprintf(fff, "Your digging ability is affected by your equipment.\n");
 	if (f1 & TR1_SPEED) fprintf(fff, "Your speed is affected by your equipment.\n");
 	if (f1 & TR1_BLOWS) fprintf(fff, "Your melee attack speed is affected by your equipment.\n");

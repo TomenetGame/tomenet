@@ -4072,7 +4072,7 @@ W:10:0:3:600
 A:10/3
 F:REGEN | EASY_KNOW
 
-N:470:Infravision
+N:470:Infra-vision
 G:":d
 I:40:26:0
 W:5:0:3:200

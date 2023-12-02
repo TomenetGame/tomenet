@@ -347,7 +347,7 @@ F:SEARCH | RES_BLIND | SEE_INVIS
 R:10
 F:R_ESP
 
-N:31:of Infravision
+N:31:of Infra-vision
 X:A:33:11
 W:0:3:32:500
 C:0:0:0:5
@@ -1599,14 +1599,19 @@ F:RES_LITE
 N:141:Enchanted
 X:B:0:20
 T:39:1:1
-W:0:3:10:1000
+#W:0:3:10:1000
+W:0:3:10:2000
 C:0:0:0:5
 R:100
 F:SEARCH | NO_DOUBLE_EGO
+#Added Infra-vision ego to this one
+F:INFRA
 
-N:142:of Infravision
+#No longer eligible for brass lanterns, combined to 'Enchanted' for those now
+N:142:of Infra-vision
 X:A:0:3
-T:39:0:99
+T:39:0:0
+T:39:2:99
 W:0:1:10:2000
 C:0:0:0:3
 R:100
