@@ -3533,9 +3533,10 @@ F:INSTA_ART
 F:WINNERS_ONLY | IM_POISON | IM_ELEC | RES_ACID | IM_FIRE | IM_COLD
 F:RES_LITE | RES_DARK | RES_SHARDS | LEVITATE | ACTIVATE | REGEN
 F:SUST_STR | SUST_CON | SUST_DEX | SUST_CHR | INFRA | STR
-D:A sacred armour of massive, dark gleaming metal plating covered by an eerie
-D:purple hue. It seems to be powered by an inner kind of unknown magic, allowing
-D:its wearer to levitate easily and command some unexpected fire power as well.
+D:A sacred armour that was lying abandoned near an old volcano. Massive, dark
+D:gleaming metal plating covered by an eerie purple hue. It seems to be powered
+D:by an inner kind of unknown magic, allowing its wearer to move and levitate
+D:surprisingly easily and command some unexpected fire power as well.
 
 # The Heavy Adamantite Plate Armour of Antiriad, depleted version (out of energy)
 N:285:of Antiriad
