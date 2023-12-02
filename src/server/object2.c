@@ -3884,7 +3884,10 @@ int object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b toleran
 			/* Already reached the max amount on this inventory stack? */
 			if (o_ptr->number >= i) return(FALSE);
 			/* How many to additionally pick up? */
-			return(i - o_ptr->number);
+			i = i - o_ptr->number;
+			/* Cannot pick up more than available */
+			if (i > j_ptr->number) i = j_ptr->number;
+			return(i);
 		}
 		/* Treat stacks that exceed the total desired number simply as 'skip' instead of preparing for partial merge as with tolerance 0x20 above. */
 		else if (tolerance & 0x40) {
