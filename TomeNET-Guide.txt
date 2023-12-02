@@ -2295,6 +2295,9 @@ Any item in your inventory:
                 If you pick up a pile of items when a matching stack in your
                 inventory is already fully saturated, then the pile (or single
                 item, whatever) is placed into a new inventory slot.
+                This inscription works with picking up items from the floor,
+                purchasing items from a store, stealing items from a store and
+                taking items from a list house (shop-style house).
     !Kn         Inscribed on an inventory item, will auto-destroy any further
                 items you acquire beyond the amount of n.
                 Use this mainly for empty bottles, especially in conjunction
