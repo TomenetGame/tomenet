@@ -2283,11 +2283,26 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 	/* Searching for a slash command? Always translate to uppercase 's'earch */
 	if (init_search_string && init_search_string[0] == '/') init_search_type = 2;
+#if 0
 	/* Searching for a predefined inscriptions? Always translate to uppercase 's'earch  */
 	if (init_search_string && (init_search_string[0] == '@' || init_search_string[0] == '!') && !init_search_string[2]) {
 		init_search_type = 2;
 		force_uppercase = TRUE; //insc might not be alphanum, so force anyway, eg !*
 	}
+#else
+	/* Hack: Inscriptions: Find either !<lowercase> or !<uppercase>, as specified */
+	if (init_search_string && (init_search_string[0] == '@' || init_search_string[0] == '!') && !init_search_string[2]) {
+		if (init_search_string[1] == toupper(init_search_string[1])) {
+			init_search_type = 2;
+			force_uppercase = TRUE;
+		} else {
+			init_search_type = 1;
+			force_uppercase = FALSE;
+			search_uppercase = 1;
+		}
+	}
+#endif
+
 #if 0 /* go to 'command-line options' instead */
 	/* Searching for client commandline args? Always translate to uppercase 's'earch  */
 	if (init_search_string && init_search_string[0] == '-' && !init_search_string[2]) {
@@ -3908,8 +3923,16 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			   exception from exception: Allow upper-case search for slash commands!
 			   exception 2: Allow upper-case search for predefined inscriptions: */
 			if (!isalphanum(searchstr[0]) && searchstr[0] != '/' && searchstr[0] != '*' && !((searchstr[0] == '!' || searchstr[0] == '@') && !searchstr[2])) search_uppercase_ok = FALSE; /* slash cmd, *destruction*, !x / @x inscription */
+#if 0
 			/* Hack: Inscriptions: Find both !<lowercase> and !<uppercase> */
-			if ((searchstr[0] == '!' || searchstr[0] == '@') && !searchstr[2]) search_uppercase = 2; /* skip tier 4 and 3 (all-uppercase in actual text), start with 2 instead */
+			if ((searchstr[0] == '!' || searchstr[0] == '@') && !searchstr[2])) search_uppercase = 1; /* skip tier 4 and 3 and 2 (all-uppercase in actual text), start with 1 instead */
+#else
+			/* Hack: Inscriptions: Find either !<lowercase> or !<uppercase>, as specified */
+			if ((searchstr[0] == '!' || searchstr[0] == '@') && !searchstr[2]) {
+				if (searchstr[1] == toupper(searchstr[1])) search_uppercase = 2; /* skip tier 4 and 3 (all-uppercase in actual text), start with 2 instead */
+				else search_uppercase = 1;
+			}
+#endif
 #if 0 /* go to 'command-line options' instead */
 			/* Hack: Commandline parm: Find both -<lowercase> and -<uppercase> */
 			if (searchstr[0] == '-' && !searchstr[2]) search_uppercase = 2; /* skip tier 4 and 3 (all-uppercase in actual text), start with 2 instead */

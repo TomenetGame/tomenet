@@ -447,7 +447,8 @@ char *my_strcasestr_skipcol(const char *big, const char *littlex, byte strict) {
 	L = strlen(little);
 
 	if (strict) { /* switch to strict mode */
-		bool just_spaces = (strict == 4 ? FALSE : TRUE);
+		bool just_spaces = (strict == 4 ? FALSE : TRUE), testfirstalphachar = (strict >= 2);
+
 		do {
 			/* Skip colour codes */
 			while (big[cnt] == '\377') {
@@ -457,9 +458,6 @@ char *my_strcasestr_skipcol(const char *big, const char *littlex, byte strict) {
 			if (!big[cnt]) return(NULL);
 			if (big[cnt] != ' ') just_spaces = FALSE;
 
-			/* Should not start on a lower-case letter, so we know we're not just in the middle of some random text.. */
-			if (strict >= 2 && isalpha(big[cnt]) && big[cnt] == tolower(big[cnt])) return(NULL);
-
 			cnt2 = cnt_offset = 0;
 			l = 0;
 			while (little[cnt2] != 0) {
@@ -468,7 +466,13 @@ char *my_strcasestr_skipcol(const char *big, const char *littlex, byte strict) {
 					cnt_offset++;
 					if (big[cnt + cnt2 + cnt_offset] != 0) cnt_offset++; //paranoia: broken colour code
 				}
-				if (!big[cnt + cnt2 + cnt_offset]) return(NULL);
+				if (!big[cnt + cnt2 + cnt_offset]) return(NULL); /* Was only colour codes, no text oO */
+
+				/* Should not start on a lower-case letter, so we know we're not just in the middle of some random text.. */
+				if (testfirstalphachar && isalpha(big[cnt + cnt2 + cnt_offset])) {
+					if (big[cnt + cnt2 + cnt_offset] == tolower(big[cnt + cnt2 + cnt_offset])) return(NULL);
+					testfirstalphachar = FALSE;
+				}
 
 				if (strict >= 3) { /* Case-sensitive: Caps only (the needle is actually all-caps) */
 					if (big[cnt + cnt2 + cnt_offset] == little[cnt2]) l++;
