@@ -10346,13 +10346,6 @@ void wrap_gift(int Ind, int item) {
 		return;
 	}
 
-	if (cursed_p(o_ptr)) {
-		msg_print(Ind, "Oops, the item accidentally ripped the gift wrapping."); //=p
-		clear_current(Ind); /* <- not required actually */
-		s_printf("..failed(7)\n");
-		return;
-	}
-
 	/* Most items with live-timeouts cannot be wrapped */
 	if ((o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) ||
 	    (o_ptr->tval == TV_POTION && o_ptr->sval == SV_POTION_BLOOD)) {
@@ -10375,6 +10368,18 @@ void wrap_gift(int Ind, int item) {
 		msg_print(Ind, "You cannot wrap zero-level items.");
 		clear_current(Ind); /* <- not required actually */
 		s_printf("..failed(4)\n");
+		return;
+	}
+
+	if (cursed_p(o_ptr)) {
+		msg_print(Ind, "Oops, the item accidentally ripped the gift wrapping."); //=p
+		/* One gift wrapping gone */
+		inven_item_increase(Ind, p_ptr->current_activation, -o_ptr->number);
+		inven_item_describe(Ind, p_ptr->current_activation);
+		inven_item_optimize(Ind, p_ptr->current_activation);
+
+		clear_current(Ind); /* <- not required actually */
+		s_printf("..failed(7)\n");
 		return;
 	}
 
