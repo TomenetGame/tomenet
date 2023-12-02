@@ -10347,6 +10347,13 @@ void wrap_gift(int Ind, int item) {
 		return;
 	}
 
+	if (cursed_p(o_ptr)) {
+		msg_print(Ind, "Oops, the item accidentally ripped the gift wrapping."); //=p
+		clear_current(Ind); /* <- not required actually */
+		s_printf("..failed(7)\n");
+		return;
+	}
+
 	/* Most items with live-timeouts cannot be wrapped */
 	if ((o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) ||
 	    (o_ptr->tval == TV_POTION && o_ptr->sval == SV_POTION_BLOOD)) {
