@@ -3168,8 +3168,7 @@ void store_stole(int Ind, int item) {
 	st_ptr = &town[i].townstore[st];
 
 	/* Sanity check - mikaelh */
-	if (item < 0 || item >= st_ptr->stock_size)
-		return;
+	if (item < 0 || item >= st_ptr->stock_size) return;
 
 	/* Get the actual item */
 	o_ptr = &st_ptr->stock[item];
@@ -3329,6 +3328,8 @@ void store_stole(int Ind, int item) {
 	old_note = sell_obj.note;
 	sell_obj.discount = 100;
 	sell_obj.note = quark_add("stolen");
+
+	/* Regarding !Gn inscription: As we only steal 1 item at a time, it already works with inven_carry_okay() without further code here. :) */
 
 	/* Hack -- require room in pack */
 	if (!inven_carry_okay(Ind, &sell_obj, tolerance)) {
@@ -3816,6 +3817,10 @@ void store_purchase(int Ind, int item, int amt) {
 		msg_print(Ind, "\377yYou cannot purchase used goods or your life would be forfeit.");
 		return;
 	}
+
+	/* Handle !Gn inscription */
+	if ((i = inven_carry_okay(Ind, o_ptr, 0x20)) > 0) amt = i;
+	if (!amt) return;
 
 	/* Hack -- get a "sample" object */
 	sell_obj = *o_ptr;
