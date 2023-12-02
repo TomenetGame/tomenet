@@ -10025,19 +10025,18 @@ bool arm_charge_conditions(int Ind, object_type *o_ptr, bool thrown) {
 }
 /* Set direction (if applicable) and light the fuse at given length on a trap, arming it */
 void arm_charge_dir_and_fuse(object_type *o2_ptr, int dir) {
-	char *c;
 	int fuse;
 
 	/* Set 'dir' if any (for fire-wall charge) (NOTE: This collides with inventory_loss_starteritems marker ^^) */
 	o2_ptr->xtra9 = dir;
 
 	/* Hack: Allow setting custom fuse length via '!Fxx' inscription! */
-	if (o2_ptr->note && (c = strchr(quark_str(o2_ptr->note), '!')) && (c[1] == 'F')) {
-		fuse = atoi(c + 2);
-
-		/* Limits: Fuse duration must be between 1s and 15s */
+	if (o2_ptr->note && (fuse = check_guard_inscription(o2_ptr->note, 'F'))) {
+		fuse--; //unhack value
+		/* Limits: Fuse duration must be between 0s and 15s. */
 		if (fuse > 15) fuse = 15;
-		if (fuse < 1) fuse = 1;
+		if (fuse == 0) fuse = -1; /* hack: encode instant boom as '-1', as 0 stands for 'unlit'. */
+		else if (fuse < 0) fuse = 15; /* catch user errors leniently */
 	}
 	/* Otherwise use default fuse length */
 	else fuse = o2_ptr->pval;

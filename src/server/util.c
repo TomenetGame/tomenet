@@ -2692,7 +2692,8 @@ cptr quark_str(s32b i) {
  * they are trying to do -Crimson
  * look for "!*Erm" type, and "!* !A !f" type.
  * New (2023): Encode TRUE directly as -1 instead, and if TRUE and there's a number behind
- *             the inscription still within this same !-'segment', return that number + 1 (to encode a value of 0 too). -C. Blue
+ *             the inscription still within this same !-'segment', return that number + 1 (to encode a value of 0 too),
+ *             just negative values aren't possible as -1 would interfere with 'FALSE'. -C. Blue
  *             Added this for !M and !G handling.
  */
 int check_guard_inscription(s16b quark, char what) {

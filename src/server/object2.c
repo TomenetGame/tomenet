@@ -11900,12 +11900,20 @@ void process_objects(void) {
 		}
 
 #ifdef ENABLE_DEMOLITIONIST
-		/* specialty: process these 1/s instead of 1/dungeonturn */
-		if (!(turn % cfg.fps) && o_ptr->tval == TV_CHARGE && o_ptr->timeout) {
-			o_ptr->timeout--;
-			if (!o_ptr->timeout) {
+		if (o_ptr->tval == TV_CHARGE) {
+			/* New: Allow insta-blowup aka 0s fuse */
+			if (o_ptr->timeout == -1) {
+				o_ptr->timeout = 0;
 				detonate_charge(i); //also calls delete_object_idx() on it
 				continue;
+			}
+			/* specialty: process these 1/s instead of 1/dungeonturn */
+			else if (!(turn % cfg.fps) && o_ptr->timeout) {
+				o_ptr->timeout--;
+				if (!o_ptr->timeout) {
+					detonate_charge(i); //also calls delete_object_idx() on it
+					continue;
+				}
 			}
 		}
 #endif

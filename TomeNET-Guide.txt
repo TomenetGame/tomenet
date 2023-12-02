@@ -2176,7 +2176,7 @@ Other ! inscriptions:
                 implies this too.)
     !Fnn        If the server has the (experimental) Demolitionist perk enabled
                 this inscription can be used on blast charges to customize the
-                fuse length to nn seconds, where nn must be within 1 to 15.
+                fuse length to nn seconds, where nn must be within 0 to 15.
     !E          Prevent eating this food item.
     !q          Prevent quaffing this potion.
     !r          Prevent reading this scroll.
