@@ -39,15 +39,24 @@ static bool item_tester_oils(object_type *o_ptr) {
 }
 
 static void cmd_all_in_one(void) {
-	int item, dir;
+	int item, dir, tval;
 
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Use which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA)))
+#ifdef ENABLE_SUBINVEN
+	if (!c_get_item(&item, "Use which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | USE_SUBINVEN))) {
+#else
+	if (!c_get_item(&item, "Use which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA))) {
+#endif
+		if (item == -2) c_msg_print("You don't have any items.");
 		return;
-
-	if (INVEN_WIELD <= item) {
+	}
+#ifdef ENABLE_SUBINVEN
+	if (item >= 100) tval = subinventory[item / 100 - 1][item % 100].tval;
+	else
+#endif
+	if (item >= INVEN_WIELD) {
 		/* Does item require aiming? (Always does if not yet identified) */
 		if (inventory[item].uses_dir == 0) {
 			/* (also called if server is outdated, since uses_dir will be 0 then) */
@@ -57,9 +66,9 @@ static void cmd_all_in_one(void) {
 			Send_activate_dir(item, dir);
 		}
 		return;
-	}
+	} else tval = inventory[item].tval;
 
-	switch (inventory[item].tval) {
+	switch (tval) {
 	case TV_POTION:
 	case TV_POTION2:
 		Send_quaff(item);
@@ -77,6 +86,10 @@ static void cmd_all_in_one(void) {
 		break;
 	case TV_ROD:
 		/* Does rod require aiming? (Always does if not yet identified) */
+#ifdef ENABLE_SUBINVEN
+		if (item >= 100) Send_zap(item);
+		else
+#endif
 		if (inventory[item].uses_dir == 0) {
 			/* (also called if server is outdated, since uses_dir will be 0 then) */
 			Send_zap(item);
@@ -92,6 +105,9 @@ static void cmd_all_in_one(void) {
 			Send_wield(item);
 		break;
 	case TV_FLASK:
+#ifdef ENABLE_SUBINVEN
+		if (item >= 100) return;
+#endif
 		if (inventory[item].sval == SV_FLASK_OIL) Send_fill(item);
 		break;
 	case TV_FOOD:
@@ -152,6 +168,10 @@ static void cmd_all_in_one(void) {
 	    {
 		int i;
 		bool done = FALSE;
+
+#ifdef ENABLE_SUBINVEN
+		if (item >= 100) return;
+#endif
 
 		for (i = 1; i < MAX_SKILLS; i++) {
 			if (s_info[i].tval == inventory[item].tval &&
@@ -1554,9 +1574,6 @@ void cmd_use_staff(void) {
 
 void cmd_zap_rod(void) {
 	int item, dir;
-#ifdef ENABLE_SUBINVEN
-	int sub = -1;
-#endif
 
 	item_tester_tval = TV_ROD;
 	get_item_hook_find_obj_what = "Rod name? ";
@@ -1573,16 +1590,15 @@ void cmd_zap_rod(void) {
 		return;
 	}
 #ifdef ENABLE_SUBINVEN
-	if (sub != -1) {
+	if (item >= 100) {
 		/* Send it */
 		/* Does item require aiming? (Always does if not yet identified) */
-		if (subinventory[sub][item % 100].uses_dir == 0) {
+		if (subinventory[item / 100 - 1][item % 100].uses_dir == 0) {
 			/* (also called if server is outdated, since uses_dir will be 0 then) */
-			using_subinven_item = item; /* allow mixing chemicals directly from satchels */
-			Send_activate(item);
+			Send_zap(item);
 		} else { /* Actually directional rods are not allowed to be used from within a subinventory, but anyway.. */
 			if (!get_dir(&dir)) return;
-			Send_activate_dir(item, dir);
+			Send_zap_dir(item, dir);
 		}
 		return;
 	}
