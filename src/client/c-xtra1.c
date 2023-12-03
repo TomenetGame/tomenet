@@ -1439,7 +1439,7 @@ void prt_extra_status(cptr status) {
 /* Enable bright red colour for actual packet loss? */
 #define BRIGHTRED_PACKETLOSS
 /* (Mini) Lag-o-meter bars: Use 100/3ms steps (new, makes sense for EU vs APAC server) instead of 50ms steps (old, for 1 global server location only) */
-#define STEPS33
+//#define STEPS33
 void prt_lagometer(int lag) {
 	int attr = TERM_L_GREEN;
 	int num;
