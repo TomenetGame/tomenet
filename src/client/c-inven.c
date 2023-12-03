@@ -876,6 +876,10 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	if (mode & USE_LIMIT) limit = TRUE;
 	if (mode & EQUIP_FIRST) equip_first = TRUE;
 #ifdef ENABLE_SUBINVEN
+	/* Hack: Always enable subinven when we also have inven enabled, for now.
+	   The idea is future client compatibility in case more custom bags are added, so items are already compatible. */
+	if (inven) mode |= USE_SUBINVEN;
+
 	if (mode & USE_SUBINVEN) subinven = extra = TRUE; /* Since we cannot list normal inven + subinven at the same time, we NEED 'extra' access via item name */
 #endif
 
