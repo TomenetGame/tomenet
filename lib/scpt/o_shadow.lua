@@ -360,7 +360,7 @@ DISPERSION = add_spell {
 	["level"] = 	33,
 	["mana"] = 	40,
 	["mana_max"] = 	40,
-	["fail"] = 	-30,
+	["fail"] = 	-60,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 		set_dispersion(Ind, 50 - get_level(Ind, DISPERSION, 72));
