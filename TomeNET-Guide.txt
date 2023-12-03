@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 2. December 2023 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 3. December 2023 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.1 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2251,7 +2251,7 @@ Ammunition:
                 cursed or artifact ammo.) Wield the !M stack first, then also
                 wield the stack you want to merge with the equipped ammo.
 
-Ammunition and boomerangs:
+Ammunition, boomerangs, (throwing) weapons:
     !L          Inscribe stacks of ammo in your inventory !L to make them be
                 automatically reloaded into your quiver as soon as the ammo
                 you're currently using runs out.
@@ -2260,6 +2260,12 @@ Ammunition and boomerangs:
 
                 The !L inscription also works for boomerangs (eg in case your
                 boomerang drops to the floor instead of returning to you).
+
+                Last but not least it also works on any kind of weapons,
+                specifically useful for throwing weapons, but also to recover
+                faster from disarming attacks if your weapon dropped to the
+                ground. Just inscribe it !L= for auto-pickup and auto-equip.
+                Note that !L only works when picking up an item from the floor!
 
 Sling ammunition and boomerangs:
     !R          Prevents ricochetting.

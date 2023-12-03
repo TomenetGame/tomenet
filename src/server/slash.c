@@ -1242,7 +1242,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					if (ws == INVEN_WIELD && dual) ws = INVEN_ARM; /* we just equipped an item in the primary wield slot, so move this one to secondary slot */
 					if (ws != i) continue;
 
-					do_cmd_wield(Ind, j, 0x0);
+					(void)do_cmd_wield(Ind, j, 0x0);
 
 					/* MEGAHACK -- tweak to handle rings right */
 					if (o_ptr->tval == TV_RING && !gauche) {

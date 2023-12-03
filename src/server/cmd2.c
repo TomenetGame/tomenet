@@ -6377,7 +6377,7 @@ void do_cmd_fire(int Ind, int dir) {
 				/* Hack: Reduce energy cost in do_cmd_wield() by half a turn */
 				p_ptr->energy += level_speed(&p_ptr->wpos) / 2;
 #endif
-				do_cmd_wield(Ind, i, 0x0);
+				(void)do_cmd_wield(Ind, i, 0x0);
 				break;
 			}
 		}
@@ -6409,7 +6409,7 @@ void do_cmd_fire(int Ind, int dir) {
 				/* Hack: Reduce energy cost in do_cmd_wield() by half a turn */
 				p_ptr->energy += level_speed(&p_ptr->wpos) / 2;
 #endif
-				do_cmd_wield(Ind, i, 0x0);
+				(void)do_cmd_wield(Ind, i, 0x0);
 				break;
 			}
 		}

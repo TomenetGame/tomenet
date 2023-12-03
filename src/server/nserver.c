@@ -11345,7 +11345,7 @@ static int Receive_wield(int ind) {
 			return(1);
 		}
 
-		do_cmd_wield(player, item, 0x0);
+		(void)do_cmd_wield(player, item, 0x0);
 		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd", ch, item);
@@ -13908,7 +13908,7 @@ static int Receive_wield2(int ind) {
 			return(1);
 		}
 
-		do_cmd_wield(player, item, 0x2);
+		(void)do_cmd_wield(player, item, 0x2);
 		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd", ch, item);
@@ -13942,7 +13942,7 @@ static int Receive_wield3(int ind) {
 			msg_print(player, "Command failed because item is gone.");
 			return(1);
 		}
-		do_cmd_wield(player, INVEN_WIELD, 0x8); //slot is just a dummy
+		(void)do_cmd_wield(player, INVEN_WIELD, 0x8); //slot is just a dummy
 		return(2);
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c", ch);
