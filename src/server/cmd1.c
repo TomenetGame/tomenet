@@ -2851,8 +2851,15 @@ s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr
 					}
 				}
 
+				if (o_ptr->tval == TV_SUBINVEN) {
+					if (is_older_than(&p_ptr->version, 4, 8, 0, 0, 0, 0))
+						msg_print(Ind, "\377oYou need to use at least client version \377R4.8.0\377o to use this bag! Your current client won't work!");
+					if (o_ptr->sval == SV_SI_POTION_BELT && !is_newer_than(&p_ptr->version, 4, 9, 1, 0, 0, 0))
+						msg_print(Ind, "\377oYou need to use at least the \377RTEST client 4.9.1\377o or a higher client version to use this bag! Your current client won't work!");
+				}
+
 				/* Delete original */
-//				delete_object(wpos, p_ptr->py, p_ptr->px);
+				//delete_object(wpos, p_ptr->py, p_ptr->px);
 				if (delete_it) {
 					delete_object_idx(c_ptr->o_idx, FALSE);
 

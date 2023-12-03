@@ -3950,7 +3950,9 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 				/* ..And actually give an outdated-client warning for the bag purchase itself.. */
 				case TV_SUBINVEN:
 					if (is_older_than(&p_ptr->version, 4, 8, 0, 0, 0, 0))
-						msg_print(Ind, "\377oYou need to use at least client version \377R4.8.0\377o to use this bag!");
+						msg_print(Ind, "\377oYou need to use at least client version \377R4.8.0\377o to use this bag! Your current client won't work!");
+					if (o_ptr->sval == SV_SI_POTION_BELT && !is_newer_than(&p_ptr->version, 4, 9, 1, 0, 0, 0))
+						msg_print(Ind, "\377oYou need to use at least the \377RTEST client 4.9.1\377o or a higher client version to use this bag! Your current client won't work!");
 					break;
 				case TV_CHEMICAL: /* DEMOLITIONIST stuff */
 					(void)auto_stow(Ind, SV_SI_SATCHEL, o_ptr, -1, FALSE);
