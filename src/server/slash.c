@@ -1360,7 +1360,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* Turn off resting mode */
 				disturb(Ind, 0, 0);
 
-//				for (i = 0; i < INVEN_PACK; i++)
+				//for (i = 0; i < INVEN_PACK; i++)
 				for (i = 0; i < INVEN_TOTAL; i++) { /* allow to activate equipped items for recall (some art(s)!) */
 					o_ptr = &(p_ptr->inventory[i]);
 					if (!o_ptr->tval) continue;
