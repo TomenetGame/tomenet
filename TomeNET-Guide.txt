@@ -2153,8 +2153,9 @@ The ! inscriptions:
     either inscribe it   !dsvk   or just   !*   (implies != too, but whatever).
 
     !+ inscription:
-        Does the same as !* except that it does not prevent dropping an item,
-        so it does not imply !d but just !ksv=h (with 'h' being obsolete).
+        Implies !d, !k, !s, !=, !h.
+        So it does the same as !* except that it does not prevent dropping or
+        throwing an item. This can be useful for throwing weapons for example.
 
 A very useful inscription for (heavily) cursed items:
     !w          Prevent wielding/wearing an item. This is very useful if you

@@ -2744,7 +2744,6 @@ int check_guard_inscription(s16b quark, char what) {
 				case 'h': /* (obsolete) no house ( sell a a key ) */
 				case 'k': /* no destroy */
 				case 's': /* no sell */
-				case 'v': /* no thowing */
 				case '=': /* force pickup */
 #if 0
 				case 'w': /* no wear/wield */
