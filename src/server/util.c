@@ -2703,17 +2703,17 @@ int check_guard_inscription(s16b quark, char what) {
 	if (ax == NULL) return(FALSE);
 
 	while ((ax = strchr(ax, '!')) != NULL) {
-		while (ax++ != NULL) {
-			if (*ax == 0) return(FALSE); /* end of quark, stop */
+		while (++ax) {
+			if (*ax == 0) return(FALSE); /* end of quark, exit */
 			if (*ax == ' ' || *ax == '@' || *ax == '#' || *ax == '-') break; /* end of segment, stop */
 			if (*ax == what) { /* exact match, accept */
 				/* Additionally scan for any 'amount' in case this inscription uses one */
-				while (++ax != NULL) {
-					if (*ax == ' ' || *ax == '@' || *ax == '#' || *ax == '-') return(-1); /* end of segment, stop */
+				while (++ax) {
+					if (*ax == ' ' || *ax == '@' || *ax == '#' || *ax == '-') return(-1); /* end of segment, accepted, so exit */
 					/* Check for number (Note: Evaluate atoi first, in case it's a number != 0 but with leading '0'. -0 and +0 will also be caught fine as simply 0.) */
 					if ((n = atoi(ax)) || *ax == '0') return(n + 1); /* '+1' hack: Allow specifying '0' too, still distinguishing it from pure inscription w/o a number specified. */
 				}
-				return(-1); /* end of quark, stop */
+				return(-1); /* end of quark, exit */
 			}
 			/* '!*' special combo inscription */
 			if (*ax == '*') {
