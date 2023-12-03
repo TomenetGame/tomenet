@@ -285,7 +285,7 @@
  #define MAX_TERM_DATA 10	/* Win version */
  #define MAX_TERM_DATA_GCU 4	/* POSIX GCU version */
 
- #define NR_OPTIONS_SHOWN	10 /* # of possible sub-window types, see window_flag_desc[]) */
+ #define NR_OPTIONS_SHOWN	11 /* # of possible sub-window types, see window_flag_desc[]) */
 #endif
 
 
@@ -4821,6 +4821,7 @@
 #define PW_LAGOMETER	0x00000080L	/* Display the lag-o-meter */
 #define PW_PLAYERLIST	0x00000100L	/* Display player list */
 #define PW_PLAYER2	0x00000200L	/* Display boni & resistances page of the character sheet ("Chh") */
+#define PW_SUBINVEN	0x00000400L	/* Display subinventory contents */
 /* flags currently not used by the client: */
 #define PW_OVERHEAD	0x00001000L	/* Display overhead view */
 #define PW_MONSTER	0x00002000L	/* Display monster recall */

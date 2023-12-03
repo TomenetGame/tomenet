@@ -1567,6 +1567,7 @@ static void display_inven(void) {
 	char	o_name[ONAME_LEN];
 	char	tmp_val[80];
 
+
 	/* Find the "final" slot */
 	for (i = 0; i < INVEN_PACK; i++) {
 		o_ptr = &inventory[i];
@@ -1644,6 +1645,123 @@ static void display_inven(void) {
 	}
 }
 
+#ifdef ENABLE_SUBINVEN
+/*
+ * Choice window "shadow" of the "show_subinven()" function.
+ */
+static void display_subinven(void) {
+	int n, islot;
+
+	char o_name[ONAME_LEN];
+	char tmp_val[80];
+
+	int i, k = 0, last_k = 0, z;
+	long int wgt;
+
+	object_type *o_ptr, *i_ptr;
+	int subinven_size;
+
+
+	/* Determine, which subinventory to display:
+	   A) Potion Belt first, Magic Device bag next, Trap kit bag, then Satchel, last are Chests.
+	   B) Just display them in the order in inventory! (We do it this way for now.) */
+
+	for (islot = 0; islot < INVEN_PACK; islot++) {
+		if (inventory[islot].tval != TV_SUBINVEN) continue;
+
+		i_ptr = &inventory[islot];
+		subinven_size = i_ptr->pval;
+
+		/* Describe the subinventory type itself in one extra line*/
+		strcpy(o_name, inventory_name[islot]);
+		o_name[0] = toupper(o_name[0]);
+		o_name[ONAME_LEN - 3] = 0; //prevent overflow
+		strcat(o_name, " :");
+		/* Obtain length of description */
+		n = strlen(o_name);
+		Term_putstr(2, last_k, n, i_ptr->attr, o_name);
+		/* Erase the rest of the line */
+		Term_erase(2 + n, last_k, 255);
+		/* account for this extra line */
+		last_k++;
+
+		/* Find the "final" slot */
+		z = 0;
+		for (i = 0; i < subinven_size; i++) {
+			o_ptr = &subinventory[islot][i];
+
+			/* Track non-empty slots */
+			if (o_ptr->tval) z = i + 1;
+		}
+
+		/* Display the inventory */
+		k = last_k;
+		for (i = 0; i < z; i++) {
+			/* Track total amount of lines displayed, for all the subinventories. */
+			k++;
+
+			o_ptr = &subinventory[islot][i];
+
+			/* Start with an empty "index" */
+			tmp_val[0] = tmp_val[1] = tmp_val[2] = ' ';
+
+			/* Terminate - Term_putstr could otherwise read past the end of the buffer
+			 * when it looks for a color code (valgrind complained about that). - mikaelh */
+			tmp_val[3] = '\0';
+
+			/* Prepare an "index" */
+			tmp_val[0] = index_to_label(i);
+
+			/* Bracket the "index" --(-- */
+			tmp_val[1] = ')';
+
+			/* Display the index */
+			Term_putstr(0, last_k + i, 3, TERM_WHITE, tmp_val);
+
+			/* Describe the object */
+			strcpy(o_name, subinventory_name[islot][i]);
+
+			/* Obtain length of description */
+			n = strlen(o_name);
+			if (n > MAX_CHARS - 3) n = MAX_CHARS - 3; //cut off, can't read it anyway
+
+			Term_putstr(3, last_k + i, n, o_ptr->attr, o_name);
+
+			/* Erase the rest of the line */
+			Term_erase(3 + n, last_k + i, 255);
+
+			/* Display the weight if needed */
+			if (c_cfg.show_weights && o_ptr->weight) {
+				wgt = o_ptr->weight * o_ptr->number;
+				if (wgt < 10000) /* still fitting into 3 digits? */
+					(void)sprintf(tmp_val, "%3li.%1li lb ", wgt / 10, wgt % 10);
+				else
+					(void)sprintf(tmp_val, "%3lik%1li lb ", wgt / 10000, (wgt % 10000) / 1000);
+
+				/* We're in the IDDC and this item is untradable to party members? */
+				if (o_ptr->iron_trade)
+					Term_putstr(71, last_k + i - INVEN_WIELD, -1, TERM_SLATE, tmp_val);
+				else
+					Term_putstr(71, last_k + i, -1, TERM_WHITE, tmp_val);
+			}
+		}
+		last_k = k;
+
+		/* Display a line if inventory is actually empty */
+		if (!z) Term_putstr(0, last_k++, -1, TERM_WHITE, "(This container is empty)                                                       ");
+	}
+
+	/* Erase the rest of the window */
+	for (i = k; i < Term->hgt; i++) {
+		/* Erase the line */
+		Term_erase(0, i, 255);
+	}
+
+	/* hack: hide cursor */
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
+}
+#endif
 
 /*
  * Choice window "shadow" of the "show_equip()" function.
@@ -2343,6 +2461,43 @@ static void fix_inven(void) {
 	command_confirmed = PKT_UNDEFINED; //..we don't know which one (doesn't matter)
 }
 
+#ifdef ENABLE_SUBINVEN
+/*
+ * Display inventory in sub-windows
+ */
+static void fix_subinven(void) {
+	int j;
+
+	/* Scan windows */
+	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
+		term *old = Term;
+
+		/* No window */
+		if (!ang_term[j]) continue;
+
+		/* No relevant flags */
+		if (!(window_flag[j] & PW_SUBINVEN)) continue;
+
+		/* Activate */
+		Term_activate(ang_term[j]);
+
+		/* Display inventory */
+		display_subinven();
+
+		/* Fresh */
+		Term_fresh();
+
+		/* Restore */
+		Term_activate(old);
+	}
+
+	//show_subinven(using_subinven);
+	//show_inven();
+
+	/* Assume that this could've been in response to a wield/takeoff/swap command we issued */
+	//command_confirmed = PKT_UNDEFINED; //..we don't know which one (doesn't matter)
+}
+#endif
 
 /*
  * Display equipment in sub-windows
@@ -4526,6 +4681,14 @@ void window_stuff(void) {
 		p_ptr->window &= ~(PW_INVEN);
 		fix_inven();
 	}
+
+#ifdef ENABLE_SUBINVEN
+	/* Display inventory */
+	if (p_ptr->window & PW_SUBINVEN) {
+		p_ptr->window &= ~(PW_SUBINVEN);
+		fix_subinven();
+	}
+#endif
 
 	/* Display equipment */
 	if (p_ptr->window & PW_EQUIP) {

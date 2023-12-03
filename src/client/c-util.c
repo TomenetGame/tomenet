@@ -8701,7 +8701,7 @@ static void do_cmd_options_win(void) {
 			window_flag[x] |= (1L << y);
 
 			/* Update windows */
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP);//PW_LAGOMETER is called automatically, no need.
+			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP | PW_SUBINVEN);//PW_LAGOMETER is called automatically, no need.
 			window_stuff();
 			break;
 
@@ -8711,7 +8711,7 @@ static void do_cmd_options_win(void) {
 			window_flag[x] &= ~(1L << y);
 
 			/* Update windows */
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP);//PW_LAGOMETER is called automatically, no need.
+			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP | PW_SUBINVEN);//PW_LAGOMETER is called automatically, no need.
 			window_stuff();
 			break;
 
@@ -8720,7 +8720,7 @@ static void do_cmd_options_win(void) {
 			window_flag[x] ^= (1L << y);
 
 			/* Update windows */
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP);//PW_LAGOMETER is called automatically, no need.
+			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP | PW_SUBINVEN);//PW_LAGOMETER is called automatically, no need.
 			window_stuff();
 			break;
 
@@ -8758,7 +8758,7 @@ static void do_cmd_options_win(void) {
 	}
 
 	/* Update windows */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP);//PW_LAGOMETER is called automatically, no need.
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP | PW_SUBINVEN);//PW_LAGOMETER is called automatically, no need.
 	window_stuff();
 
 	check_for_playerlist();

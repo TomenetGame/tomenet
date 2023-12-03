@@ -2207,6 +2207,8 @@ int Receive_subinven(void) {
 	//maybe this, bad style?
 	if (using_subinven != -1) show_subinven(ipos);
 
+	p_ptr->window |= (PW_SUBINVEN);
+
 	return(1);
 }
 #endif

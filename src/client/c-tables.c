@@ -152,6 +152,7 @@ cptr window_flag_desc[NR_OPTIONS_SHOWN] = {
 	"Display lag-o-meter",
 	"Display player list",
 	"Display character boni",
+	"Display subinventory",
 };
 #endif
 

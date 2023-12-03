@@ -3375,7 +3375,7 @@ void term_toggle_visibility(int term_idx) {
 	term_prefs[term_idx].visible = true;
 
 	/* Mark all windows for content refresh. */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP);//PW_LAGOMETER is called automatically, no need.
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP | PW_SUBINVEN);//PW_LAGOMETER is called automatically, no need.
 }
 
 /* Returns true if terminal window specified by term_idx is currently visible. */
