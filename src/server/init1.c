@@ -6667,7 +6667,7 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 		if (!st_ptr) return(3);
 
 		/* Process 'I' for "Items" (multiple lines) */
-		if (buf[0] == 'I') {
+		if (buf[0] == 'I' && item_idx < STORE_CHOICES) {
 			/* Find the colon before the name */
 			s = strchr(buf + 2, ':');
 
@@ -6693,7 +6693,7 @@ errr init_st_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* Process 'T' for "Tval/sval" */
-		if (buf[0] == 'T') {
+		if (buf[0] == 'T' && item_idx < STORE_CHOICES) {
 			int tv1, sv1, rar1;
 
 			/* Scan for the values */
