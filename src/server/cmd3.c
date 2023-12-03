@@ -1188,7 +1188,7 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	{
 		/* Verify with the player */
 		if (other_query_flag &&
-		    !get_check(Ind, "Your pack may overflow.  Continue? ")) return(-2);
+		    !get_check(Ind, "Your pack may overflow.  Continue? ")) return(-1);
 	}
 #endif
 

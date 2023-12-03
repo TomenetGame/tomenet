@@ -2759,9 +2759,9 @@ s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr
 				/* Carry the item */
 				o_ptr->quest_credited = TRUE; //hack: avoid double-crediting
 				/* 'Auto-load' throwing weapons? To make it fair, works on all weapons. Ez disarm-recovery possible! */
-				if (auto_load && is_weapon(o_ptr->tval) && object_known_p(Ind, o_ptr)) slot = do_cmd_wield(Ind, -c_ptr->o_idx, 4);
+				if (!(auto_load && is_weapon(o_ptr->tval) && object_known_p(Ind, o_ptr) && (slot = do_cmd_wield(Ind, -c_ptr->o_idx, 4)) != -1))
 				/* Normal pick-up */
-				else slot = inven_carry(Ind, o_ptr);
+				slot = inven_carry(Ind, o_ptr);
 #ifdef USE_SOUND_2010
 				inven_carried = TRUE;
 #endif
