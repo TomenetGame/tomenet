@@ -8427,9 +8427,10 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 #ifndef PVP_AC_REDUCTION
 				if (test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible)) {
 #else
-//				if (test_hit_fire(chance - cur_dis, ((q_ptr->ac + q_ptr->to_a) * 2) / 3, visible)) {
+				//if (test_hit_fire(chance - cur_dis, ((q_ptr->ac + q_ptr->to_a) * 2) / 3, visible)) {
 				if (test_hit_fire(chance - cur_dis,
-				    ((q_ptr->ac + q_ptr->to_a > AC_CAP) ? AC_CAP : q_ptr->ac + q_ptr->to_a) / (throwing_weapon ? 2 : 1), /* Special perk: Throwing weapons effectively halve the target's AC! */
+				    /* Special perks: Heavy throwing weapons are efficient vs target's AC. Another halving happens if the target is fleeing from us. */
+				    (((q_ptr->ac + q_ptr->to_a > AC_CAP) ? AC_CAP : q_ptr->ac + q_ptr->to_a) * 10) / (throwing_weapon ? 10 + o_ptr->weight / 30 : 10) / (q_ptr->afraid ? 2 : 1),
 				    visible)) {
 #endif
 					char p_name[80];
@@ -8514,7 +8515,10 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 			hit_body = TRUE;
 
 			/* Did we hit it (penalize range) */
-			if (test_hit_fire(chance - cur_dis, m_ptr->ac, visible)) {
+			if (test_hit_fire(chance - cur_dis,
+			    /* Special perks: Heavy throwing weapons are efficient vs target's AC. Another halving happens if the target is fleeing from us. */
+			    (m_ptr->ac * 10) / (throwing_weapon ? 10 + o_ptr->weight / 30 : 10) / (m_ptr->monfear ? 2 : 1),
+			    visible)) {
 				bool fear = FALSE;
 				char m_name[MNAME_LEN];
 
