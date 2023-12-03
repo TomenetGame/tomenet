@@ -11208,10 +11208,12 @@ things to know about throwing:
 
 Damage of thrown items depends on their damage dice, to-damage enchantment and
 the thrower's strength. Throwing distance depends on item weight and strength.
-Effective throwing weapons can be thrown especially far and will also deal
-somewhat more damage if they weigh more. While under the effect of Berserk,
-the range is further increased. Note that the max range is always capped,
-however, and this cap cannot be extended by berserk effects either.
+Effective throwing weapons can be thrown especially far and unlike for other
+items or weapons their weight will additionally increase the damage dealt.
+While under the effect of Berserk, the range is further increased. Note that
+the max range is always capped, however, and this cap cannot be extended by
+berserk effects either. Throwing weapons can be thrown up to 15 grids far and
+other items up to 10 grids.
 
 The effect a shattered potion applies is in general the same that a fumes trap
 loaded with that potion would cause, just that the fumes from the trap are

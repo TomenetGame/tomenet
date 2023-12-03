@@ -8141,7 +8141,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	if (bashing) {
 		if ((o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH)
 		    || is_cheap_misc(o_ptr->tval))
-//		    || is_ammo(o_ptr->tval))
+		    // || is_ammo(o_ptr->tval))
 			moved_number = o_ptr->number;
 	}
 	throw_obj.number = moved_number;
@@ -8177,6 +8177,13 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	/* Use the local object */
 	o_ptr = &throw_obj;
 	throwing_weapon = is_throwing_weapon(o_ptr);
+	if (throwing_weapon) {
+		/* Check is same as for heavy_wield */
+		if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10) {
+			msg_print(Ind, "\377yYou have trouble throwing such a heavy weapon effectively.");
+			throwing_weapon = FALSE;
+		}
+	}
 
 	/* Description */
 	object_desc(Ind, o_name, o_ptr, FALSE, 3);
@@ -8224,7 +8231,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 #endif
 
 	/* Max distance of 10 for not effectively throwable weapons */
-	if (is_throwing_weapon(o_ptr)) {
+	if (throwing_weapon) {
 		if (tdis > 15) tdis = 15;
 	} else {
 		if (tdis > 10) tdis = 10;
@@ -8422,13 +8429,15 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 #else
 //				if (test_hit_fire(chance - cur_dis, ((q_ptr->ac + q_ptr->to_a) * 2) / 3, visible)) {
 				if (test_hit_fire(chance - cur_dis,
-				    (q_ptr->ac + q_ptr->to_a > AC_CAP) ? AC_CAP : q_ptr->ac + q_ptr->to_a,
+				    ((q_ptr->ac + q_ptr->to_a > AC_CAP) ? AC_CAP : q_ptr->ac + q_ptr->to_a) / (throwing_weapon ? 2 : 1), /* Special perk: Throwing weapons effectively halve the target's AC! */
 				    visible)) {
 #endif
 					char p_name[80];
 
 					/* Get his name */
 					strcpy(p_name, q_ptr->name);
+
+					// TODO: Handle reflect/block/dodging
 
 					/* Hack -- Base damage from thrown object */
 					tdam = damroll(o_ptr->dd, o_ptr->ds);
@@ -8437,8 +8446,17 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					/* Specialty: Only daggers (includes main gauche), axes and spears/tridents can be thrown effectively) */
 					if (throwing_weapon) {
 						tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
+#if 0
 						/* About adding weight-damage, we have to be a bit careful, as heavier weapons already receive greater melee damage dice anyway: */
 						tdam += (50 / (380 / (o_ptr->weight + 5) + 4)) - 1;
+#else
+						/* Weight has a larger effect on the damage output,
+						   as you can basically hold 15 daggers at the same weight cost as 1 heavy weapon,
+						   so it needs some more advantage */
+						tdam += o_ptr->weight / 10;
+						/* And even add the dice AGAIN! */
+						tdam += damroll(o_ptr->dd, o_ptr->ds);
+#endif
 					} else if (is_weapon(o_ptr->tval)) {
 						tdam = (tdam * 2) / 3; /* assumption: Weapon dice/damage are meant for 'proper use', while other items get dice defined in k_info exactly for the purpose of throwing! */
 						tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128) / 2;
@@ -8564,12 +8582,21 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, TRUE);
 				tdam += o_ptr->to_d;
 				/* Specialty: Only daggers (includes main gauche), axes and spears/tridents can be thrown effectively) */
-				if (is_throwing_weapon(o_ptr)) {
+				if (throwing_weapon) {
 					tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
+#if 0
 					/* About adding weight-damage, we have to be a bit careful, as heavier weapons already receive greater melee damage dice anyway: */
 					tdam += (50 / (380 / (o_ptr->weight + 5) + 4)) - 1;//^^ ->
 					//(10~) dagger +0, 30 (main gauche) +2, 60 (spears/tomahawk) +4 (!), 90 (trident/broad spear) +5, 120 (trifurcate spear, light war axe) +6, 170 (battle axe) +7, 240 (heavy war axe) +8, 380 (thunder axe) +9
 					//(note: no axe near 90 lbs for the +5 dmg; tomahawk is 80 lbs.)
+#else
+					/* Weight has a larger effect on the damage output,
+					   as you can basically hold 15 daggers at the same weight cost as 1 heavy weapon,
+					   so it needs some more advantage */
+					tdam += o_ptr->weight / 10;
+					/* And even add the dice AGAIN! */
+					tdam += damroll(o_ptr->dd, o_ptr->ds);
+#endif
 				} else if (is_weapon(o_ptr->tval)) {
 					tdam = (tdam * 2) / 3; /* assumption: Weapon dice/damage are meant for 'proper use', while other items get dice defined in k_info exactly for the purpose of throwing! */
 					tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128) / 2;
