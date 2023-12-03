@@ -2603,6 +2603,7 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 			case SV_SI_SATCHEL:
 			case SV_SI_TRAPKIT_BAG:
 			case SV_SI_MDEVP_WRAPPING:
+			case SV_SI_POTION_BELT:
 				item = "armour_light"; //a textile bag, basically
 				break;
 			case SV_SI_CHEST_SMALL_WOODEN:
@@ -9638,20 +9639,29 @@ bool verify_inven_item(int Ind, int item) {
 
 /* Get an item in the player's inventory or (for /dis and /xdis) on the floor.
    NOTE: We assume the item is legal as a previous verify_inven_item() happened in nserver.c!
-         So it is not neccesary to check if -item >= o_max. */
-void get_inven_item(int Ind, int item, object_type **o_ptr) {
+         So it is not neccesary to check if -item >= o_max.
+   Returns TRUE if ok, FALSE if item doesn't exist (floor items only, paranoia?). */
+bool get_inven_item(int Ind, int item, object_type **o_ptr) {
 #ifdef ENABLE_SUBINVEN
 	/* This function can be used for subinventories too, if using get_subinven_item() were overkill. */
 	if (item >= 100) {
+		//if (item / 100 - 1 > INVEN_PACK || item % 100 > SUBINVEN_PACK) return(FALSE); -- already done in verify_inven_item()
 		*o_ptr = &Players[Ind]->subinventory[item / 100 - 1][item % 100];
-		return;
+		return(TRUE);
 	}
 #endif
 
 	/* Get the item (in the pack) */
-	if (item >= 0) *o_ptr = &Players[Ind]->inventory[item];
+	if (item >= 0) {
+		//if (item >= INVEN_TOTAL) return(FALSE); -- already done in verify_inven_item()
+		*o_ptr = &Players[Ind]->inventory[item];
+	}
 	/* Get the item (on the floor) */
-	else *o_ptr = &o_list[0 - item];
+	else {
+		if (-item > o_max) return(FALSE);// actually already done in verify_inven_item(), which prohibits floor items in general for now, as that feature is not used
+		*o_ptr = &o_list[0 - item];
+	}
+	return(TRUE);
 }
 
 #ifdef ENABLE_SUBINVEN
@@ -9797,6 +9807,7 @@ int get_subinven_group(int sval) {
 	case SV_SI_SATCHEL:
 	case SV_SI_TRAPKIT_BAG:
 	case SV_SI_MDEVP_WRAPPING:
+	case SV_SI_POTION_BELT:
 		return(sval); //identity
 	default:
 		//combine multiple choices to a single group, using the first element as its identifier

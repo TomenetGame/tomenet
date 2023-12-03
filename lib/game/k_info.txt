@@ -4475,9 +4475,19 @@ P:76:4d4:-6:0:10
 F:IGNORE_ACID | IGNORE_WATER | IGNORE_MANA | WINNERS_ONLY | FORCE_DEPTH | INSTA_ART
 
 
-# HOLE 519-520 (1st hole)
+# HOLE 519 (1st hole)
 ### Room for new objects added after 511 (Zangband 2.1.0): 512-575
 
+
+$ENABLE_SUBINVEN$N:520:& Potion Belt~
+$ENABLE_SUBINVEN$G:~:B
+$ENABLE_SUBINVEN$I:126:3:5
+$ENABLE_SUBINVEN$W:1:0:50:1000
+#$ENABLE_SUBINVEN$A:127/0
+$ENABLE_SUBINVEN$A:10/10:20/20
+$ENABLE_SUBINVEN$P:0:1d1:0:0:0
+$ENABLE_SUBINVEN$F:EASY_KNOW
+$ENABLE_SUBINVEN$D:A utility belt that holds potions ready for you to quaff on demand.
 
 #521 and 522 cannot have EASY_KNOW because they may be cursed
 # ^ atm Anti-Magic amulet is never cursed, so EASY_KNOW now

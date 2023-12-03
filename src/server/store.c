@@ -971,7 +971,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		switch (o_ptr->tval) {
 #ifdef ENABLE_SUBINVEN
 		case TV_SUBINVEN:
-			if (o_ptr->sval != SV_SI_SATCHEL) return(FALSE);
+			if (o_ptr->sval != SV_SI_SATCHEL && o_ptr->sval != SV_SI_POTION_BELT) return(FALSE);
 			break;
 #endif
 #ifdef ENABLE_DEMOLITIONIST
@@ -3965,6 +3965,9 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 				case TV_STAFF:
 					(void)auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, -1, FALSE);
 					break;
+				case TV_POTION: case TV_POTION2:
+					(void)auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE);
+					break;
 				}
 
 				/* If we couldn't stow everything, pick up the rest normally */
@@ -6561,6 +6564,9 @@ void home_purchase(int Ind, int item, int amt) {
 		/* fall through */
 	case TV_STAFF:
 		(void)auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, -1, FALSE);
+		break;
+	case TV_POTION: case TV_POTION2:
+		(void)auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE);
 		break;
 	}
 

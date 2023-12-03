@@ -5539,6 +5539,10 @@ There are four categories of subinventories:
   If you pick up fitting magical devices they will be auto-stowed into this bag
   unless inscribed (see further down).
 
+- Potion Belt
+  This utility belt can hold potions for you, ready to use on demand, thereby
+  alleviating the load on your precious inventory space.
+
 As you noticed, for now from outside the subinventory you cannot access any
 items inside except if you use the '@' (call by item name) feature in the item
 prompt. This might get improved in a future (maintenance) release. But since

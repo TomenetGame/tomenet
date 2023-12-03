@@ -10794,7 +10794,7 @@ void divide_charged_item(object_type *onew_ptr, object_type *o_ptr, int amt) {
 void inven_item_charges(int Ind, int item) {
 	object_type *o_ptr;
 
-	get_inven_item(Ind, item, &o_ptr);
+	if (!get_inven_item(Ind, item, &o_ptr)) return;
 
 	/* Require staff/wand */
 	if ((o_ptr->tval != TV_STAFF) && (o_ptr->tval != TV_WAND)) return;
@@ -10823,7 +10823,7 @@ void inven_item_describe(int Ind, int item) {
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
 
-	get_inven_item(Ind, item, &o_ptr);
+	if (!get_inven_item(Ind, item, &o_ptr)) return;
 
 	/* Hack -- suppress msg */
 	if (p_ptr->taciturn_messages) return;

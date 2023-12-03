@@ -1474,7 +1474,11 @@ void cmd_quaff(void) {
 	get_item_hook_find_obj_what = "Potion name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
+#ifdef ENABLE_SUBINVEN
+	if (!c_get_item(&item, "Quaff which potion? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG | USE_SUBINVEN))) {
+#else
 	if (!c_get_item(&item, "Quaff which potion? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG))) {
+#endif
 		if (item == -2) c_msg_print("You don't have any potions.");
 		return;
 	}

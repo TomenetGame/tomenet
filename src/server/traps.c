@@ -3280,11 +3280,11 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 		return;
 	}
 #endif
-	get_inven_item(Ind, item_kit, &o_ptr);
+	if (!get_inven_item(Ind, item_kit, &o_ptr)) return;
 	if (!can_use_verbose(Ind, o_ptr)) return;
 
 	if (!verify_inven_item(Ind, item_load)) return;
-	get_inven_item(Ind, item_load, &j_ptr);
+	if (!get_inven_item(Ind, item_load, &j_ptr)) return;
 	if (!can_use_verbose(Ind, j_ptr)) return;
 
 	/* Trap kits need a second object */
@@ -3510,6 +3510,11 @@ void do_cmd_disarm_mon_trap_aux(int Ind, worldpos *wpos, int y, int x) {
 				}
 				else if (q_ptr->tval == TV_STAFF || (q_ptr->tval == TV_ROD && !rod_requires_direction(Ind, o_ptr))) {
 					(void)auto_stow(Ind, SV_SI_MDEVP_WRAPPING, q_ptr, -1, FALSE);
+					/* If we could stow it, we're done with this item */
+					if (!q_ptr->number) continue;
+				}
+				else if (q_ptr->tval == TV_POTION || q_ptr->tval == TV_POTION2) {
+					(void)auto_stow(Ind, SV_SI_POTION_BELT, q_ptr, -1, FALSE);
 					/* If we could stow it, we're done with this item */
 					if (!q_ptr->number) continue;
 				}

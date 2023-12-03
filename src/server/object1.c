@@ -7049,6 +7049,7 @@ byte get_attr_from_tval(object_type *o_ptr) {
 		case SV_SI_SATCHEL: return(tval_to_attr[TV_CHEMICAL]);
 		case SV_SI_TRAPKIT_BAG: return(TERM_BLUE); //rogueish
 		case SV_SI_MDEVP_WRAPPING: return(TERM_L_WHITE);
+		case SV_SI_POTION_BELT: return(tval_to_attr[TV_POTION]);
 	}
  #endif
 #endif

@@ -11036,7 +11036,7 @@ static int Receive_quaff(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (item >= INVEN_PACK) return(1);
+	if (!verify_inven_item(player, item)) return(1);
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);

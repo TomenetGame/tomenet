@@ -355,7 +355,7 @@ int inven_drop(bool handle_d, int Ind, int item, int amt, bool force) {
 
 
 	/* Access the slot to be dropped */
-	get_inven_item(Ind, item, &o_ptr);
+	if (!get_inven_item(Ind, item, &o_ptr)) return(-1);
 
 	/* Not too many */
 	if (amt > o_ptr->number) amt = o_ptr->number;
@@ -1592,7 +1592,7 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 	cave_type **zcave = getcave(&p_ptr->wpos);
 
 	/* Access the object from the item index */
-	get_inven_item(Ind, item, &o_ptr);
+	if (!get_inven_item(Ind, item, &o_ptr)) return;
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
@@ -1886,7 +1886,7 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	/* Get the item (in the pack, or when called by /dis or /xdis on the floor!) */
-	get_inven_item(Ind, item, &o_ptr);
+	if (!get_inven_item(Ind, item, &o_ptr)) return(FALSE);
 
 	/* Describe the object */
 	old_number = o_ptr->number;
@@ -2623,7 +2623,7 @@ void do_cmd_uninscribe(int Ind, int item) {
 	object_type *o_ptr;
 
 	/* Get the item (in the pack) */
-	get_inven_item(Ind, item, &o_ptr);
+	if (!get_inven_item(Ind, item, &o_ptr)) return;
 
 	/* Nothing to remove */
 	if (!o_ptr->note) {
@@ -2679,7 +2679,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 	char *c;
 
 	/* Get the item (in the pack) */
-	get_inven_item(Ind, item, &o_ptr);
+	if (!get_inven_item(Ind, item, &o_ptr)) return;
 
 	/* small hack, make shirt logos permanent */
 	if (o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT && !is_admin(p_ptr)) {
@@ -5121,6 +5121,9 @@ void do_cmd_subinven_move(int Ind, int islot) {
  #endif
 			/* Note that unknown rods will automatically return(TRUE) for requiring direction, even if they really don't. */
 			if (i_ptr->tval != TV_STAFF && (i_ptr->tval != TV_ROD || rod_requires_direction(Ind, i_ptr))) continue;
+			break;
+		case SV_SI_POTION_BELT:
+			if (i_ptr->tval != TV_POTION && i_ptr->tval != TV_POTION2) continue;
 			break;
 		default:
 			continue;

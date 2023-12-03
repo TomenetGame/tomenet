@@ -499,13 +499,7 @@ void do_cmd_eat_food(int Ind, int item) {
 	/* Restrict choices to food */
 	item_tester_tval = TV_FOOD;
 
-	/* Get the item (in the pack) */
-	if (item >= 0) o_ptr = &p_ptr->inventory[item];
-	/* Get the item (on the floor) */
-	else {
-		if (-item >= o_max) return; /* item doesn't exist */
-		o_ptr = &o_list[0 - item];
-	}
+	if (!get_inven_item(Ind, item, &o_ptr)) return;
 
 	if (check_guard_inscription(o_ptr->note, 'E')) {
 		msg_print(Ind, "The item's inscription prevents it.");
@@ -1272,13 +1266,22 @@ void do_cmd_quaff_potion(int Ind, int item) {
 	/* Restrict choices to potions (apparently meanless) */
 	item_tester_tval = TV_POTION;
 
-	/* Get the item (in the pack) */
-	if (item >= 0) o_ptr = &p_ptr->inventory[item];
-	/* Get the item (on the floor) */
-	else {
-		if (-item >= o_max) return; /* item doesn't exist */
-		o_ptr = &o_list[0 - item];
+	if (!get_inven_item(Ind, item, &o_ptr)) return;
+
+#ifdef ENABLE_SUBINVEN
+	if (item >= 100) {
+		/* Sanity checks */
+		if (p_ptr->inventory[item / 100 - 1].tval != TV_SUBINVEN) {
+			msg_print(Ind, "ERROR: Not a subinventory.");
+			s_printf("ERROR: Not a subinventory. (%s, %i)\n", p_ptr->name, item / 100 - 1);
+			return;
+		}
+		if (p_ptr->inventory[item / 100 - 1].sval != SV_SI_POTION_BELT) {
+			msg_print(Ind, "\377yPotion belts are the only eligible sub-containers for quaffing potions.");
+			return;
+		}
 	}
+#endif
 
 	/* Hack -- allow to quaff ale/wine */
 	if (o_ptr->tval == TV_FOOD) {
@@ -1408,6 +1411,11 @@ void do_cmd_quaff_potion(int Ind, int item) {
 		} else drop_near(TRUE, 0, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 		//if (item >= 0) inven_item_describe(Ind, item);
 	}
+
+#ifdef ENABLE_SUBINVEN
+	/* Redraw subinven item */
+//	if (item >= 100) display_subinven_aux(Ind, item / 100 - 1, item % 100);
+#endif
 }
 
 #ifdef FOUNTAIN_GUARDS
@@ -3245,15 +3253,7 @@ void do_cmd_read_scroll(int Ind, int item) {
 	/* Restrict choices to scrolls */
 	item_tester_tval = TV_SCROLL;
 
-	/* Get the item (in the pack) */
-	if (item >= 0) o_ptr = &p_ptr->inventory[item];
-	/* Get the item (on the floor) */
-	else {
-		if (-item >= o_max)
-			return; /* item doesn't exist */
-
-		o_ptr = &o_list[0 - item];
-	}
+	if (!get_inven_item(Ind, item, &o_ptr)) return;
 
 	if (no_lite(Ind) && !(p_ptr->ghost && (o_ptr->tval == TV_PARCHMENT) && (o_ptr->sval == SV_PARCHMENT_DEATH))) {
 		msg_print(Ind, "You have no light to read by.");
@@ -3753,8 +3753,18 @@ void do_cmd_use_staff(int Ind, int item) {
 		return;
 	}
 
-	/* Restrict choices to wands */
+	/* Restrict choices to staves */
 	item_tester_tval = TV_STAFF;
+
+	if (!get_inven_item(Ind, item, &o_ptr)) {
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
+		return; /* item doesn't exist */
+	}
 
 #ifdef ENABLE_SUBINVEN
 	if (item >= 100) {
@@ -3770,18 +3780,6 @@ void do_cmd_use_staff(int Ind, int item) {
 		}
 	}
 #endif
-
-	get_inven_item(Ind, item, &o_ptr);
-
-	if (-item >= o_max) {
-#ifdef ENABLE_XID_MDEV
- #ifndef XID_REPEAT
-		p_ptr->current_item = -1;
-		XID_paranoia(p_ptr);
- #endif
-#endif
-		return; /* item doesn't exist */
-	}
 
 	if (check_guard_inscription(o_ptr->note, 'u')) {
 		msg_print(Ind, "The item's inscription prevents it.");
@@ -4017,16 +4015,8 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 	object_type *o_ptr;
 	bool flipped = FALSE;
 
-	/* Get the item (in the pack) */
-	if (item >= 0) o_ptr = &p_ptr->inventory[item];
-	/* Get the item (on the floor) */
-	else {
-		if (-item >= o_max) {
-			p_ptr->shooting_till_kill = FALSE;
-			return; /* item doesn't exist */
-		}
-		o_ptr = &o_list[0 - item];
-	}
+	if (!get_inven_item(Ind, item, &o_ptr)) return;
+
 	if (o_ptr->tval != TV_WAND) {
 //(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to use non-wand!");
 		p_ptr->shooting_till_kill = FALSE;
@@ -4662,7 +4652,15 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 	/* Restrict choices to rods */
 	item_tester_tval = TV_ROD;
 
-	get_inven_item(Ind, item, &o_ptr);
+	if (!get_inven_item(Ind, item, &o_ptr)) {
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
+		return;
+	}
 
 #ifdef ENABLE_SUBINVEN
 	if (item >= 100) {
@@ -4678,16 +4676,6 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 		}
 	}
 #endif
-
-	if (-item >= o_max) {
-#ifdef ENABLE_XID_MDEV
- #ifndef XID_REPEAT
-		p_ptr->current_item = -1;
-		XID_paranoia(p_ptr);
- #endif
-#endif
-		return; /* item doesn't exist */
-	}
 
 	if (check_guard_inscription(o_ptr->note, 'z')) {
 		msg_print(Ind, "The item's inscription prevents it.");
@@ -4956,11 +4944,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	/* Paranoia - no directional rods from within bags */
 	if (item >= 100) return;
 #endif
-	get_inven_item(Ind, item, &o_ptr);
-
-	if (-item >= o_max) {
+	if (!get_inven_item(Ind, item, &o_ptr)) {
 		p_ptr->shooting_till_kill = FALSE;
-		return; /* item doesn't exist */
+		return;
 	}
 
 	if (o_ptr->tval != TV_ROD) {
@@ -5692,7 +5678,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		set_tim_wraith(Ind, 0);
 #endif	// 0
 
-	get_inven_item(Ind, item, &o_ptr);
+	if (!get_inven_item(Ind, item, &o_ptr)) return;
+
 #ifdef ENABLE_SUBINVEN
 	if (item >= 100) {
 		/* For now, only allow demo-alch from here */

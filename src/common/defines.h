@@ -1619,7 +1619,7 @@
 #define MAX_STORE_OWNERS	6	/* Max size for st_ptr->owners[] */
 
 #define STORE_INVEN_MAX		120		/* Max number of discrete objs in inven [48] */
-#define STORE_CHOICES		56 /*34*/	/* Number of items to choose stock from */
+#define STORE_CHOICES		64 /*34 -> 56*/	/* Number of items to choose stock from (defined in st_info.txt) */
 #define STORE_OBJ_LEVEL		5		/* Magic Level for normal stores */
 #define STORE_TURNOVER_DIV	3		/* Normal shop turnover, per day (stock_size / this = randint(amount of items to turnover)) */
 #if 0
@@ -4502,6 +4502,7 @@
 #define SV_SI_SATCHEL			0	/* Stores DEMOLITIONIST ingredients */
 #define SV_SI_TRAPKIT_BAG		1
 #define SV_SI_MDEVP_WRAPPING		2
+#define SV_SI_POTION_BELT		3
 #define SV_SI_CHEST_CONVERSION		100	/* marker for converting looted chests to subinven-chests. Chests should be the last items in the inventory sorting order, so items get stowed into their specific bags first. */
 #define SV_SI_CHEST_SMALL_WOODEN	101	/* TV_CHEST option: Convert tval on opening one successfully (ie not ruined) to TV_SUBINVEN */
 #define SV_SI_CHEST_SMALL_IRON		102
