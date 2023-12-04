@@ -2656,6 +2656,13 @@ void do_cmd_uninscribe(int Ind, int item) {
 	/* Todo: PN_COMBINE aka combine_pack() for subinven */
 	if (item >= 100) {
 		display_subinven_aux(Ind, item / 100 - 1, item % 100);
+
+		/* Combine the pack */
+		p_ptr->notice |= (PN_COMBINE);
+
+		/* Window stuff */
+		//p_ptr->window |= (PW_INVEN | PW_EQUIP); --todo: implement PW_SUBINVEN --- done in combine_pack() for now
+
 		return;
 	}
 #endif
@@ -2863,6 +2870,13 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 	/* Todo: PN_COMBINE aka combine_pack() for subinven */
 	if (item >= 100) {
 		display_subinven_aux(Ind, item / 100 - 1, item % 100);
+
+		/* Combine the pack */
+		p_ptr->notice |= (PN_COMBINE);
+
+		/* Window stuff */
+		//p_ptr->window |= (PW_INVEN | PW_EQUIP); --todo: implement PW_SUBINVEN --- done in combine_pack() for now
+
 		return;
 	}
 #endif

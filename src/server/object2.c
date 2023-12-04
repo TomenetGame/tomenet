@@ -11659,13 +11659,106 @@ void combine_pack(int Ind) {
 
 
 	/* Combine the pack (backwards) */
+#ifdef ENABLE_SUBINVEN
+	for (i = INVEN_PACK; i >= 0; i--) {
+		/* Get the item -- the top-most item cannot be combined with anything as there is nothing above it,
+		   but we still have to process it in case it is a subinventory, and inside of it might be things that need combining. */
+		o_ptr = &p_ptr->inventory[i];
+		if (!i && o_ptr->tval != TV_SUBINVEN) break;
+#else
 	for (i = INVEN_PACK; i > 0; i--) {
 		/* Get the item */
 		o_ptr = &p_ptr->inventory[i];
+#endif
 
 		/* Skip empty items */
 		if (!o_ptr->k_idx) continue;
 
+#ifdef ENABLE_SUBINVEN
+		if (o_ptr->tval == TV_SUBINVEN) {
+			/* Simply cloned the complete loop in here, pfft */
+			int bagsize = o_ptr->bpval, s;
+			bool redraw = FALSE; /* We do that here, as we're missing a PW_SUBINVEN flag - TODO: Implement that flag. */
+
+			/* Combine the pack (backwards) */
+			for (s = bagsize; s > 0; s--) {
+				/* Get the item */
+				o_ptr = &p_ptr->subinventory[i][s];
+
+				/* Skip empty items */
+				if (!o_ptr->k_idx) continue;
+
+				/* Auto id ? */
+				if (p_ptr->auto_id) {
+					object_aware(Ind, o_ptr);
+					object_known(o_ptr);
+
+					/* Window stuff */
+					//p_ptr->window |= (PW_INVEN | PW_EQUIP);
+					redraw = TRUE;
+				}
+
+				/* Scan the items above that item */
+				for (j = 0; j < s; j++) {
+					/* Get the item */
+					j_ptr = &p_ptr->subinventory[i][j];
+
+					/* Skip empty items */
+					if (!j_ptr->k_idx) continue;
+
+					/* Can we drop "o_ptr" onto "j_ptr"? */
+					/* 0x40: Handle !G inscription - prevents any partial combining aka partial stack-shifting across slots too though, atm :/ but that's maybe not really an issue. */
+					if (object_similar(Ind, j_ptr, o_ptr, (p_ptr->current_force_stack - 1 == i ? 0x2 : 0x0) | 0x40)) {
+						/* clear if used */
+						if (p_ptr->current_force_stack - 1 == i) p_ptr->current_force_stack = 0;
+
+						/* Take note */
+						flag = TRUE;
+
+						/* Add together the item counts */
+						object_absorb(Ind, j_ptr, o_ptr);
+
+ #if 0 /* We are not in the normal inventory! */
+						/* One object is gone */
+						p_ptr->inven_cnt--;
+ #endif
+
+						/* Slide everything down */
+						for (k = s; k < bagsize; k++) {
+							/* Structure copy */
+							p_ptr->subinventory[i][k] = p_ptr->subinventory[i][k + 1];
+						}
+
+ #if 0 /* not implemented for subinventories */
+						/* Update inventory indices - mikaelh */
+						inven_index_move(Ind, j, i);
+						inven_index_slide(Ind, i + 1, -1, INVEN_PACK);
+ #endif
+						/* Erase the "final" slot */
+						invwipe(&p_ptr->subinventory[i][k]);
+
+						/* Window stuff */
+						//p_ptr->window |= (PW_INVEN | PW_EQUIP);
+						redraw = TRUE;
+
+						if (p_ptr->subinventory[i][j].auto_insc) {
+							p_ptr->subinventory[i][i].auto_insc = TRUE;
+							p_ptr->subinventory[i][j].auto_insc = FALSE;
+						}
+
+						/* Done */
+						break;
+					}
+				}
+			}
+
+			/* Emulate a 'PW_SUBINVEN' */
+			if (redraw) display_subinven(Ind, i);
+
+			/* End of cloned loop */
+			continue;
+		}
+#endif
 
 		/* Auto id ? */
 		if (p_ptr->auto_id) {
