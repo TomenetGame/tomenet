@@ -1677,7 +1677,7 @@ static void display_subinven(void) {
 
 		/* Add slot index label */
 		sprintf(o_name, "<%c>", index_to_label(islot));
-		Term_putstr(2, last_k, n, i_ptr->attr, o_name);
+		Term_putstr(2, last_k, -1, i_ptr->attr, o_name);
 
 		/* Add bag object name */
 		strcpy(o_name, inventory_name[islot]);
