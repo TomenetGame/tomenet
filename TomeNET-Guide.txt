@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 3. December 2023 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 4. December 2023 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.1 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2309,7 +2309,7 @@ Any item in your inventory:
                 items you acquire beyond the amount of n.
                 Use this mainly for empty bottles, especially in conjunction
                 with the 'keep_bottle' option enabled, to prevent uncontrolled
-                amassment of empty bottles. Example:  !M10
+                amassment of empty bottles. Example:  !K10
                 (This inscription does not work on artifacts or ego items.)
     !%          This will not actually be inscribed. The item will keep
                 its current inscription (or remain uninscribed if it was).
@@ -5542,6 +5542,10 @@ There are four categories of subinventories:
 - Potion Belt
   This utility belt can hold potions for you, ready to use on demand, thereby
   alleviating the load on your precious inventory space.
+  To quaff them you must use the '@' feature (call by item name) in the prompt,
+  or simply create a macro using the macro wizard, which does it this way too.
+  If you pick up potions, they will be auto-stowed into this bag unless
+  inscribed (see further down).
 
 As you noticed, for now from outside the subinventory you cannot access any
 items inside except if you use the '@' (call by item name) feature in the item
@@ -5560,7 +5564,7 @@ A few generic commands are always available in any subinventory:
   - Unstow item, ie put it back to inventory (t).
 
 There are also two inscriptions that can be put onto these bags:
-  !S  Do not auto-stow items into this bag.
+  !A  Do not auto-stow items into this bag.
   !O  Do not auto-stow unowned items (ie new loot) into this bag.
 
 
