@@ -6266,9 +6266,9 @@ int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 
 #ifdef ENABLE_SUBINVEN
 int Send_subinven(int Ind, char ipos, char pos, byte attr, int wgt, object_type *o_ptr, cptr name) {
-	player_type *p_ptr = Players[Ind];
-	connection_t *connp = Conn[p_ptr->conn];
-	char uses_dir = 0; /* flag whether a rod requires a direction for zapping or not */
+	player_type *p_ptr2 = NULL, *p_ptr = Players[Ind];
+	connection_t *connp = Conn[p_ptr->conn], *connp2;
+	char uses_dir = 0, uses_dir2, uses_dir_mod; /* flag whether a rod requires a direction for zapping or not */
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -6291,15 +6291,21 @@ int Send_subinven(int Ind, char ipos, char pos, byte attr, int wgt, object_type 
 	    )
 		uses_dir = 1;
 
-	/* Hack: Abuse uses_dir to also store ID / *ID* status */
-	if (is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0))
-		uses_dir |= ((object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x2 : 0x0) | ((object_fully_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x4 : 0x0);
-
 	/* Also encode iddc-tradability, no protocol compat needed! (started in 4.9.0.7)  */
 	if (in_irondeepdive(&p_ptr->wpos))
 		uses_dir |= !p_ptr->iron_trade || (o_ptr->iron_trade != p_ptr->iron_trade) ? 0x8 : 0x0;
 
-//s_printf("%d %d %d %d %hu %hd %d %d %hd %hd %d %s \n", PKT_SI_MOVE, ipos, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
+	/* Hack: Abuse uses_dir to also store ID / *ID* status */
+	uses_dir_mod = ((object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x2 : 0x0) | ((object_fully_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x4 : 0x0);
+
+	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2) && !is_older_than(&p_ptr2->version, 4, 7, 4, 5, 0, 0)) {
+		connp2 = Conn[p_ptr2->conn];
+		uses_dir2 = uses_dir;
+		if (is_newer_than(&p_ptr2->version, 4, 7, 1, 1, 0, 0)) uses_dir2 |= uses_dir_mod;
+		Packet_printf(&connp2->c, "%c%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_SI_MOVE, ipos, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir2, name);
+	}
+
+	if (is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0)) uses_dir |= uses_dir_mod;
 	return Packet_printf(&connp->c, "%c%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_SI_MOVE, ipos, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
 }
 #endif
@@ -6314,8 +6320,7 @@ int Send_inven_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
-		plog(format("Connection not ready for inven (%d.%d.%d)",
-			Ind, connp->state, connp->id));
+		plog(format("Connection not ready for inven (%d.%d.%d)", Ind, connp->state, connp->id));
 		return(0);
 	}
 
