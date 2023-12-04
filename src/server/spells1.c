@@ -16,6 +16,10 @@
 #include "angband.h"
 
 
+/* Shots that the player deflected and that are now bouncing elsewhere
+   will not hit sleeping monsters, to avoid waking them up unintendely? */
+//#define DEFLECTING_SKIPS_SLEEPING
+
 /* 1/x chance of reducing stats (for elemental attacks) */
 #define HURT_CHANCE 16
 
@@ -42,16 +46,6 @@
 /* Is a hurt monster allowed to teleport out of (non no-tele) vaults? */
 #define HURT_MONSTER_ICKY_TELEPORT
 
-/* Macro to test in project_p() whether we are hurt by a PvP
-   (player vs player) or a normal PvM (player vs monster) attack */
-#define IS_PVP	(who < 0 && who >= -NumPlayers)
-/* Similar purpose macro (also for take_hit)
-   (Note: While i > 0 can also mean special PROJECTOR_... causes,
-   i < 0 is exclusively reserved for monsters.) */
-#define IS_PLAYER(i)		((i) > 0 && (i) <= NumPlayers)
-#define IS_OTHER_PLAYER(i, Ind)	((i) > 0 && (i) <= NumPlayers && (i) != Ind)
-#define IS_MONSTER(i)		((i) < 0)
-
 /* Take damage before applying polymorph effect?
    Traditionally, polymorph would cancel damage instead. - C. Blue */
 #define DAMAGE_BEFORE_POLY
@@ -65,6 +59,18 @@
 
 /* Sleep power of any GF_OLD_SLEEP spell [500] */
 #define GF_OLD_SLEEP_DUR 300
+
+
+/* Macro to test in project_p() whether we are hurt by a PvP
+   (player vs player) or a normal PvM (player vs monster) attack */
+#define IS_PVP	(who < 0 && who >= -NumPlayers)
+/* Similar purpose macro (also for take_hit)
+   (Note: While i > 0 can also mean special PROJECTOR_... causes,
+   i < 0 is exclusively reserved for monsters.) */
+#define IS_PLAYER(i)		((i) > 0 && (i) <= NumPlayers)
+#define IS_OTHER_PLAYER(i, Ind)	((i) > 0 && (i) <= NumPlayers && (i) != Ind)
+#define IS_MONSTER(i)		((i) < 0)
+
 
 
  /*
@@ -6221,9 +6227,6 @@ static int percent_damage(int hp, int dam) {
  *
  * IMPORTANT: Keep approx_damage() in sync with this.
  */
-/* Shots that the player deflected and that are now bouncing elsewhere
-   will not hit sleeping monsters, to avoid waking them up unintendely? */
-//#define DEFLECTING_SKIPS_SLEEPING
 static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struct worldpos *wpos, int y, int x, int dam, int typ, int flg) {
 	int i = 0, div, k, k_elec, k_sound, k_lite;
 

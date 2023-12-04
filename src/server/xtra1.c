@@ -34,6 +34,11 @@
  #define MIMIC_TO_D_DENTHACK /* should always be on */
 #endif
 
+/* Do not lower HP of mimics if the monster form has lower HP than their @ form. - C. Blue
+   Currently also works for to-dam, could be extended to even Speed maybe. Shouldn't be extended onto AC. */
+#define MIMICRY_BOOST_WEAK_FORM
+
+
 /* Announce global events every 900 seconds */
 #define GE_ANNOUNCE_INTERVAL 900
 
@@ -42,10 +47,6 @@
 
 /* Allow ego monsters in Arena Challenge global event? */
 #define GE_ARENA_ALLOW_EGO
-
-/* Do not lower HP of mimics if the monster form has lower HP than their @ form. - C. Blue
-   Currently also works for to-dam, could be extended to even Speed maybe. Shouldn't be extended onto AC. */
-#define MIMICRY_BOOST_WEAK_FORM
 
 /* Enable to allow '..' inscription, for suppressing TELEPORT flag on non-cursed items.
    This is a bit ugly and there is no reason to have this enabled as long as the

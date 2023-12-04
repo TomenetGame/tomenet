@@ -51,6 +51,7 @@
    can read what they supposedly do. */
 //#define DETECT_ABSENCE
 
+
 #ifdef ENABLE_MAIA
 /*
  * For angelic beings, this spell will gather any party

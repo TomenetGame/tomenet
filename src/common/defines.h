@@ -7707,6 +7707,7 @@ extern int PlayerUID;
 #define FONT_MAP_VEIN_WIN	1	/* Drawn as a diamond, for walls/bars */
 #define FONT_MAP_VEIN_X11	1	/* Drawn as a diamond, for walls/bars */
 
+
 /*** Sound constants ***/
 /*
  * Mega-Hack -- some primitive sound support (see "main-win.c")
@@ -7726,6 +7727,9 @@ extern int PlayerUID;
  */
 #define SOUND_MAX	8
 
+
+/* New sound system I added in 2010, using SDL, and in 2022 migrated to SDL2. - C. Blue
+   The above sound constants of the old system have no meaning anymore if this is active. */
 #ifdef USE_SOUND_2010
  /* Volume sliders all go from 0 to 100, with [70] being default */
  #define AUDIO_VOLUME_DEFAULT 70
@@ -7774,6 +7778,7 @@ extern int PlayerUID;
  /* Play slightly quieter shriek sfx to not blast people's ear drums =P [0..100] */
  #define SFX_SHRIEK_VOLUME	50
 #endif
+
 
 #ifdef CLIENT_SIDE
  //defines.h: (for client-side, from angband)
