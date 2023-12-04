@@ -1672,18 +1672,26 @@ static void display_subinven(void) {
 		i_ptr = &inventory[islot];
 		subinven_size = i_ptr->pval;
 
+
 		/* Describe the subinventory type itself in one extra line*/
+
+		/* Add slot index label */
+		sprintf(o_name, "<%c>", index_to_label(islot));
+		Term_putstr(2, last_k, n, i_ptr->attr, o_name);
+
+		/* Add bag object name */
 		strcpy(o_name, inventory_name[islot]);
-		o_name[0] = toupper(o_name[0]);
+		//o_name[0] = toupper(o_name[0]);
 		o_name[ONAME_LEN - 3] = 0; //prevent overflow
 		strcat(o_name, " :");
 		/* Obtain length of description */
 		n = strlen(o_name);
-		Term_putstr(2, last_k, n, i_ptr->attr, o_name);
+		Term_putstr(2 + 4, last_k, n, i_ptr->attr, o_name);
 		/* Erase the rest of the line */
-		Term_erase(2 + n, last_k, 255);
+		Term_erase(2 + 4 + n, last_k, 255);
 		/* account for this extra line */
 		last_k++;
+
 
 		/* Find the "final" slot */
 		z = 0;
