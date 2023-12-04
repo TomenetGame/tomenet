@@ -2653,6 +2653,7 @@ void do_cmd_uninscribe(int Ind, int item) {
 	o_ptr->note_utag = 0;
 
 #ifdef ENABLE_SUBINVEN
+	/* Todo: PN_COMBINE aka combine_pack() for subinven */
 	if (item >= 100) {
 		display_subinven_aux(Ind, item / 100 - 1, item % 100);
 		return;
@@ -2859,6 +2860,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 		msg_print(Ind, "\377yNote: Retaliator-inscriptions are spelled with the letter O, not the number 0.");
 
 #ifdef ENABLE_SUBINVEN
+	/* Todo: PN_COMBINE aka combine_pack() for subinven */
 	if (item >= 100) {
 		display_subinven_aux(Ind, item / 100 - 1, item % 100);
 		return;
@@ -4795,12 +4797,12 @@ void do_cmd_query_symbol(int Ind, char sym) {
 #ifdef ENABLE_SUBINVEN
 /* Attempt to stow as much as possible of an object (stack) from OUTSIDE our inventory into a subinventory container.
    Increases player's total_weight. Does not delete source item if moved, just reduces its number (down to 0).
-   Returns TRUE if fully stowed. */
+   Returns TRUE if fully stowed. (Note: There is no function subinven_stow() actually.) */
 bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 	player_type *p_ptr = Players[Ind];
 	object_type *s_ptr = &p_ptr->inventory[sslot];
 	object_type *o_ptr, forge_copy, forge_part, *i_ptr_tmp = i_ptr;
-	int i, inum = i_ptr->number, xnum;
+	int i, inum = i_ptr->number, xnum, Gnum;
 	char o_name[ONAME_LEN];
 	u32b f3 = 0x0, dummy;
 
@@ -4814,6 +4816,12 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 			forge_part.tval = 0;
 			/* Hack 'number' to allow merging stacks partially */
 			xnum = MAX_STACK_SIZE - 1 - o_ptr->number;
+			/* For !Gn inscription, super hack to modify xnum further if required */
+			i_ptr->number = xnum;
+			Gnum = object_similar(Ind, o_ptr, i_ptr, 0x4 | 0x20);
+			i_ptr->number = inum;
+			if (Gnum > 0 && Gnum < xnum) xnum = Gnum;
+			/* Hack it! */
 			if (i_ptr->number > xnum) {
 				/* need to divide wand/staff charges */
 				if (is_magic_device(i_ptr->tval)) {
@@ -4827,7 +4835,7 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 				} else i_ptr->number = xnum; /* Hack 'number' */
 			}
 			/* Merge partially or fully */
-			if (object_similar(Ind, o_ptr, i_ptr, 0x4)) {
+			if (Gnum) {
 				/* Check whether this item was requested by an item-retrieval quest.
 				   Note about quest_credited check: inven_carry() is also called by carry(),
 				   resulting in double crediting otherwise! */
@@ -4945,7 +4953,7 @@ bool subinven_move_aux(int Ind, int islot, int sslot) {
 	object_type *i_ptr = &p_ptr->inventory[islot];
 	object_type *s_ptr = &p_ptr->inventory[sslot];
 	object_type *o_ptr;
-	int i, inum = i_ptr->number, wgt = p_ptr->total_weight;
+	int i, inum = i_ptr->number, wgt = p_ptr->total_weight, Gnum;
 	char o_name[ONAME_LEN];
 
 	/* Look for free spaces or spaces to merge with */
@@ -4956,8 +4964,11 @@ bool subinven_move_aux(int Ind, int islot, int sslot) {
 			if (o_ptr->number == MAX_STACK_SIZE - 1) continue;
 			/* Hack 'number' to allow merging stacks partially */
 			if (i_ptr->number + o_ptr->number >= MAX_STACK_SIZE) i_ptr->number = MAX_STACK_SIZE - 1 - o_ptr->number;
+			/* For !Gn inscription, super hack to modify xnum further if required */
+			Gnum = object_similar(Ind, o_ptr, i_ptr, 0x4 | 0x20);
+			if (Gnum > 0 && Gnum < i_ptr->number) i_ptr->number = Gnum;
 			/* Merge partially or fully */
-			if (object_similar(Ind, o_ptr, i_ptr, 0x4)) {
+			if (Gnum) {
 				object_absorb(Ind, o_ptr, i_ptr);
 				/* Describe the object */
 				object_desc(Ind, o_name, o_ptr, TRUE, 3);

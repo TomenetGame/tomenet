@@ -3443,7 +3443,7 @@ s64b object_value(int Ind, object_type *o_ptr) {
  * o_ptr and j_ptr no longer are simmetric;
  * j_ptr should be the new item or level-reqs gets meanless.
  *
- * 'tolerance' flag:
+ * 'tolerance' flag (C. Blue):
  * 0x0   - no tolerance
  * +0x1  - tolerance for ammo to_h and to_d enchantment
  * +0x2  - manual 'force stack' by the player: tolerance for level 0 items (starter items)
@@ -3458,7 +3458,9 @@ s64b object_value(int Ind, object_type *o_ptr) {
  * +0x40 - also for !Gn check: Treat !G as 'FALSE' as usual, but now treat too big stacks as non-working,
  *         instead of preparing for partial merging as with 0x20 tolerance.
  * +0x80 - hack for subinventory stuff (work in progress) some items can be stacked in stores but not in inventory.
- * -- C. Blue
+ *
+ * Returns 0 if not similar, -1 if whole stack can be merged (similar, normal case), or...
+ * a number how many items are acceptable, specifically for !Gn inscription.
  */
 int object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolerance) {
 	player_type *p_ptr = NULL;
@@ -3868,11 +3870,15 @@ int object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b toleran
 
 	/* ('Gain') QoL hack for limiting stack size of specific items, mostly consumables on restocking -
 	   we only handle the generic "don't allow any stacking" cases here though! The rest is handled by carry(). */
-	if ((i = check_guard_inscription(o_ptr->note, 'G'))) {
+	if ((i = check_guard_inscription(o_ptr->note, 'G'))
+	    /* For combine_pack(): The player might just as well have erased an inscription of an item that is
+	       above the !G item inside the inventory, instead of just one that is located below the !G item.
+	       So we have to check both ways for !Gn in this case, as the j_ptr vs o_ptr priority is no longer clear but they are equals in this special case. */
+	    || ((tolerance & 0x40) && (i = check_guard_inscription(j_ptr->note, 'G')))) {
 		/* No optional amount specified. (Also, specifying 0 doesn't make sense.) */
 		if (i == -1) return(FALSE); /* (We just ignore the number==0 aka 'no more scrolls...' feature edge case here, too much hassle) */
 
-		/* The other syntax (specifying a limit atmount) is also handled by inven_carry_okay() and carry(),
+		/* The other syntax (specifying a limit atmount) is also handled by inven_carry_okay(), carry() and subinven_stow_aux(),
 		   specifying the 0x20 tolerance marker for explicit-pickups only (aka player pressing 'g' key). */
 		if (tolerance & 0x20) {
 			/* Unhack value from +1 state */
@@ -11188,6 +11194,7 @@ void auto_inscribe(int Ind, object_type *o_ptr, int flags) {
 
 /*
  * Check if we have space for an item in the pack without overflow
+ * Returns -1 if yes, 0 if no, or -for a !Gn inscription found- the amount of items that we may pickup regarding a possible !Gn inscription.
  */
 int inven_carry_okay(int Ind, object_type *o_ptr, byte tolerance) {
 	player_type *p_ptr = Players[Ind];
@@ -11215,6 +11222,24 @@ int inven_carry_okay(int Ind, object_type *o_ptr, byte tolerance) {
 		if (subinven_group != -1 && j_ptr->tval == TV_SUBINVEN && get_subinven_group(j_ptr->sval) == subinven_group) return(p_ptr->inven_cnt < INVEN_PACK ? -1 : FALSE);
 #endif
 #endif
+
+#ifdef ENABLE_SUBINVEN
+		/* Specifically for !Gn inscription inside subinventories:
+		   TODO: Allow an empty and eligible slot in the subinventory to cause inven_carry_okay() and then picking up to succeed, even if normal inventory is full. */
+		if (j_ptr->tval == TV_SUBINVEN) {
+			int j;
+			object_type *k_ptr;
+
+			for (j = 0; j < j_ptr->bpval; j++) {
+				k_ptr = &p_ptr->subinventory[i][j];
+				if (!k_ptr->tval) break;
+				/* Check if the two items can be combined - here we can also check for !Gn inscription via 0x20 tolerance.
+				   We do not check the actual bag type, as we can assume that if a similar-enough item exists in that bag, we must be compatible with the bag type too. */
+				if ((r = object_similar(Ind, k_ptr, o_ptr, tolerance))) return(r);
+			}
+		}
+#endif
+
 		/* Check if the two items can be combined - here we can also check for !Gn inscription via 0x20 tolerance */
 		if ((r = object_similar(Ind, j_ptr, o_ptr, tolerance))) return(r);
 	}
