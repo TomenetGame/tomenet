@@ -1065,6 +1065,8 @@ static void fix_player(int Ind) {
 static void fix_allitems(int Ind) {
 	/* Resend the inventory */
 	display_invenequip(Ind);
+	/* Also re-use for resending subinventories after link-end */
+	fix_subinven(Ind);
 }
 
 
@@ -7597,6 +7599,11 @@ void redraw2_stuff(int Ind) {
 		/* Hack: Receiving the title will cause a big_map client to erase the unused
 		   part of the map for visual clarity if linked target isn't using big_map */
 		prt_title(Ind);
+#ifdef ENABLE_SUBINVEN
+		/* Also abuse this to refresh subinventories */
+		//if (p_ptr->window & PW_SUBINVEN) { p_ptr->window &= ~(PW_SUBINVEN); }
+		fix_subinven(Ind);
+#endif
 	}
 
 	if (p_ptr->redraw2 & PR2_MAP_SCR) {

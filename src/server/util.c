@@ -9694,7 +9694,7 @@ void get_subinven_item(int Ind, int item, object_type **o_ptr, int *sitem, int *
 	/* Optionally set o_ptr already for convenience */
 	if (Ind && o_ptr && sitem && iitem) *o_ptr = &Players[Ind]->subinventory[*sitem][*iitem];
 }
-/* Reduce the size of a subinventory if it was an older version while the newer ones have less capacity.
+/* Reduce the size of a subinventory if it was from an outdated k_info.txt file version while the newer ones have less capacity.
    If 'check' is TRUE, the subinventory will be scanned for current usage. This must be done whenever it is
    not guaranteed to currently carry at most as many items as the new limit. */
 void verify_subinven_size(int Ind, int slot, bool check) {
