@@ -1686,9 +1686,10 @@ static void display_subinven(void) {
 		strcat(o_name, " :");
 		/* Obtain length of description */
 		n = strlen(o_name);
-		Term_putstr(2 + 4, last_k, n, i_ptr->attr, o_name);
+		if (n > MAX_CHARS - 7) n = MAX_CHARS - 7;
+		Term_putstr(6, last_k, n, i_ptr->attr, o_name);
 		/* Erase the rest of the line */
-		Term_erase(2 + 4 + n, last_k, 255);
+		Term_erase(6 + n, last_k, 255);
 		/* account for this extra line */
 		last_k++;
 
@@ -1731,7 +1732,7 @@ static void display_subinven(void) {
 
 			/* Obtain length of description */
 			n = strlen(o_name);
-			if (n > MAX_CHARS - 3) n = MAX_CHARS - 3; //cut off, can't read it anyway
+			if (n > MAX_CHARS - 4) n = MAX_CHARS - 4; //cut off, can't read it anyway
 
 			Term_putstr(3, last_k + i, n, o_ptr->attr, o_name);
 
