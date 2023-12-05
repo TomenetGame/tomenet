@@ -10839,6 +10839,19 @@ void inven_item_describe(int Ind, int item) {
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 	/* Print a message */
+	if (o_ptr->temp == 1) {
+		/* Hack for running-low warning from !Wn inscription */
+		msg_format(Ind, "You have \377R%s.", o_name);
+#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
+		Send_warning_beep(Ind);
+		//sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
+ #else
+		if (p_ptr->paging == 0) p_ptr->paging = 1;
+ #endif
+#endif
+		o_ptr->temp = 0;
+	} else
 	msg_format(Ind, "You have %s.", o_name);
 }
 
@@ -10847,6 +10860,7 @@ void inven_item_describe(int Ind, int item) {
  * Increase the "number" of an item in the inventory
  */
 void inven_item_increase(int Ind, int item, int num) {
+	int i;
 	player_type *p_ptr = Players[Ind];
 #ifdef ENABLE_SUBINVEN
 	object_type *o_ptr;
@@ -10882,6 +10896,10 @@ void inven_item_increase(int Ind, int item, int num) {
 
 #ifdef ENABLE_SUBINVEN
 		if (item >= 100) {
+			/* If we lose an item, prepare for a warning, given in subsequent inven_item_describe() call */
+			if (num < 0 && (i = check_guard_inscription(o_ptr->note, 'W')) && o_ptr->number <= (i == -1 ? 10 : i - 1)) o_ptr->temp = 1;
+			else o_ptr->temp = 0; //paranoia
+
 			/* Update the slot 'manually' */
 			display_subinven_aux(Ind, item / 100 - 1, item % 100);
 

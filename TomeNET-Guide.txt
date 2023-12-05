@@ -2136,6 +2136,9 @@ of the official TomeNET Discord server! So they are 'Discord commands' sort of.
 To inscribe an item, press the { key. To uninscribe, press }.
 You can also mass-inscribe/uninscribe items by using the commands /tag or /t
 and /untag or /ut respectively (see (0.2b) for command details).
+Brackets [ ] are not to be typed in actually, but just indicate that the
+parameter inside them is optional, meaning you may or may not specify it, as
+you prefer.
 
 The ! inscriptions:
     Inscribing an item with an '!' followed by a key will - for most keys -
@@ -2153,7 +2156,7 @@ The ! inscriptions:
     You can inscribe an item by pressing '{' and uninscribe it with '}'.
 
     !* inscription, this is a "combo" shortcut inscription.
-        '*'     is a 'wild card' which stands for multiple inscriptions at,
+        *       is a 'wild card' which stands for multiple inscriptions at,
                 once inscribing an item '!*' will do ALL of these checks:
         !d      Prevent dropping an item.
         !k      Prevent killing (destroying) an item. (Note that '!k' on a
@@ -2178,6 +2181,16 @@ A very useful inscription for (heavily) cursed items:
                 carry a cursed item in your inventory that you really don't
                 want to equip by accident.
 
+    !W[n]       Give a warning (message colour and sfx) when the stack size aka
+                amount of this item reaches or goes lower than n.
+                If n isn't specified it will use the default value '10'.
+                This is useful for consumables such as healing potions, to
+                draw your attention to them when you're running low.
+                (This warning can only get triggered when the count of the item
+                stack is reduced, eg when an item is consumed.)
+                WARNING: Don't confuse this inscription with !w. It does NOT
+                prevent wielding an item!
+
 Useful for characters who wield a boomerang not for throwing it, but rather
 because it provides magical boni:
     !f          Prevent firing an item (ie your equipped ranged weapon).
@@ -2191,9 +2204,9 @@ Other ! inscriptions:
     !F          Prevent using up this light source or fuel item to fuel your
                 currently equipped light source. (Note that !k inscription
                 implies this too.)
-    !Fnn        If the server has the (experimental) Demolitionist perk enabled
+    !Fn         If the server has the (experimental) Demolitionist perk enabled
                 this inscription can be used on blast charges to customize the
-                fuse length to nn seconds, where nn must be within 0 to 15.
+                fuse length to n seconds, where nn must be within 0 to 15.
     !E          Prevent eating this food item.
     !q          Prevent quaffing this potion.
     !r          Prevent reading this scroll.
