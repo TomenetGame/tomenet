@@ -1424,7 +1424,7 @@ char roguelike_commands(char command) {
 	/* Oops, audio mixer */
 	case KTRL('F'): return(KTRL('U'));
 	case KTRL('V'): return(KTRL('N'));
-	case KTRL('X'): return(KTRL('C'));
+	//case KTRL('X'): return(KTRL('C')); --we use ctrl+x for ghost powers and are out of keys, so this just doesn't exist in rogue-like key set :/
 
 	/* Hack -- Commit suicide */
 	/* ..instead display fps */
@@ -1438,6 +1438,8 @@ char roguelike_commands(char command) {
 	/* Allow use of the "destroy" command */
 	case KTRL('D'): return('k');
 
+	/* Ghost powers (formerly 'Undead powers', but we have Vampire race now ^^) */
+	case KTRL('X'): return('U');
 	/* Locate player on map */
 	case KTRL('W'): return('L');
 	/* Browse a book (Peruse) */
@@ -10844,9 +10846,10 @@ void interact_audio(void) {
 			if (c_cfg.no_weather) Term_putstr(2, 7, -1, TERM_L_RED, "Weather disabled by 'no_weather' option.");
 
 			if (c_cfg.rogue_like_commands)
-				Term_putstr(3, y_label + 2, -1, TERM_SLATE, "Outside of this mixer you can toggle audio and music by CTRL+V and CTRL+Q.");
+				//Term_putstr(3, y_label + 2, -1, TERM_SLATE, "Outside of this mixer you can toggle audio and music via CTRL+V and CTRL+X.");
+				Term_putstr(3, y_label + 2, -1, TERM_SLATE, "Outside of this mixer you can toggle audio via CTRL+V.");//we needed ctrl+x for ghost powers, out of keys... -_-
 			else
-				Term_putstr(3, y_label + 2, -1, TERM_SLATE, "Outside of this mixer you can toggle audio and music by CTRL+N and CTRL+C.");
+				Term_putstr(3, y_label + 2, -1, TERM_SLATE, "Outside of this mixer you can toggle audio and music via CTRL+N and CTRL+C.");
 
 			/* draw mixer */
 			Term_putstr(item_x[0], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_master ? "\377GX\377w" : " "));
@@ -10856,7 +10859,8 @@ void interact_audio(void) {
 				Term_putstr(item_x[0], y_toggle + 3, -1, TERM_SLATE, "CTRL+N");
 			Term_putstr(item_x[1], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_music ? "\377GX\377w" : " "));
 			if (c_cfg.rogue_like_commands)
-				Term_putstr(item_x[1], y_toggle + 3, -1, TERM_SLATE, "CTRL+Q");
+				//Term_putstr(item_x[1], y_toggle + 3, -1, TERM_SLATE, "CTRL+X"); out of keys, we need this for ghost powers -_-
+				Term_putstr(item_x[1], y_toggle + 3, -1, TERM_SLATE, "CTRL+C"); //just display the normal-map key, as it actually works inside the mixer in rl-keymap mode too
 			else
 				Term_putstr(item_x[1], y_toggle + 3, -1, TERM_SLATE, "CTRL+C");
 			Term_putstr(item_x[2], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_sound ? "\377GX\377w" : " "));
@@ -10975,7 +10979,7 @@ void interact_audio(void) {
 			toggle_master(TRUE);
 			break;
 		case KTRL('C'):
-		case KTRL('X'): //rl
+		//case KTRL('X'): //rl --out of keys, used for ghost powers instead -_-
 		case 'c':
 		case 'm':
 			toggle_music(TRUE);

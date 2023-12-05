@@ -7509,9 +7509,10 @@ void cmd_browse(int item) {
 		Flush_queue();
 	}
 
-/* commented out because first, admins are usually ghosts;
-   second, we might want a 'ghost' tome or something later,
-   kind of to bring back 'undead powers' :) - C. Blue */
+	/* commented out because first, admins are usually ghosts;
+	   second, we might want a 'ghost' tome or something later,
+	   kind of to bring back 'undead powers',
+	   as 'ghost powers' though since the regular vampire race is undead too, pft. :) - C. Blue */
 #if 0
 	if (p_ptr->ghost) {
 		show_browse(NULL);

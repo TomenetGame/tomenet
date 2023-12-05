@@ -205,7 +205,7 @@ that you can always, for example, use "\" + "." + "6", to specify "run east".
  /  (unused)                             ?  Help
 
  \h buy or sell a house
- \U use undead powers
+ \U use ghost powers
  \# view score list
  \N activate class powers
 

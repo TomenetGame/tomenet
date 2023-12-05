@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 4. December 2023 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 5. December 2023 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.1 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -549,9 +549,10 @@ Command keys
 ------------
 
 Key combinations with CTRL key can be entered in the macro menu by prefixing
-the key with a '^' symbol. For example, a swap-macro in normal key set could be
-'x0', but in rogue-like key set (where swap is CTRL+A instead of x) it will be
-'^a0' instead (or with capital letter: '^A0', it's all the same for ^ codes).
+the key with a '^' symbol. For example, a macro to force-stack an item in
+normal key set could be 'K0', but in rogue-like key set (where force-stack
+is CTRL+C instead of K) it will be '^c0' instead (or you can use a capital
+letter: '^c0', it's actually the same when using ^ codes).
 
 Keys:
 The first key is of the 'original Angband key set', the second key is of the
@@ -564,6 +565,15 @@ Walk into a direction:
         7   8   9               y   k   u               Y   K   U
         4       6               h       l               H       L
         1   2   3               b   j   n               B   J   N
+
+In addition, the rogue-like key set has tunneling on the movement keys if
+the CTRL key is pressed together with one. CTRL is expressed by prefixing
+the key with '^', so the rogue-like key set for tunneling is:
+        ^y  ^k  ^u
+        ^h      ^l
+        ^b  ^j  ^n
+(The normal key set has no directional keys for tunneling, so you'd have
+to create macros if you want that.)
 
 You can also use the arrow keys instead of the Numpad keys for movement.
 (Pressing '5' will make your character try and pick up an item, same as
@@ -588,7 +598,7 @@ i       i       display your inventory. You can then press SHIFT + inventory
                 slot letter to paste that item name into chat.
                 You can also type \\<slot letter> shortcut in chat to paste an
                 item right into some text you are writing, eg "\\a" for the
-6                item in your inventory slot 'a)'.
+                item in your inventory slot 'a)'.
 
 e       e       display your equipment. You can then press SHIFT + equipment
                 slot letter to paste that item name into chat.
@@ -821,11 +831,16 @@ l       x       look at a player/monster/object (use direction keys for
 
 j       CTRL+A  attempt to steal from players (not recommended!).
 
-U       O       use undead powers (use this if you died and became a ghost).
-                Using these will drain your experience. If you ran out of
-                experience points, your ghost fades away (= you character will
-                be completely erased).
-                NOTE: Undead powers are currently not available.
+U       CTRL+X  use Ghost powers. These are only usable by player-ghosts ie by
+                players who died and because of that turned into a ghost.
+                Using these will drain your experience (XP points) permanently.
+                So using up too much XP may reduce your character's level
+                permanently in turn.
+                If you run out of XP points, your ghost fades away and cannot
+                be resurrected again, which means your character will be
+                permanently erased, same as on a ghost-death or an unworldy
+                character's death.
+                NOTE: Ghost powers are currently not available.
 
 CTRL+S          spike a door (using iron spikes, the door will be jammed).
 
@@ -870,15 +885,16 @@ CTRL+U  CTRL+F  Displays/exits the audio mixer settings. (Also see (2.1a).)
                 TomeNET homepage for official packs, or look in the forum for
                 user-made packs).
 
-CTRL+C  CTRL+X  Toggles music. Shortcut for toggling it in the mixer settings.
-                This hotkey works outside of the mixer screen too.
-
 CTRL+N  CTRL+V  Toggles audio. Shortcut for master toggle in the mixer
                 settings. This hotkey works outside of the mixer screen too.
 
                 Note: If you press this while in chat prompt, you will instead
                 cycle forwards through lines you previously typed - also see
                 CTRL+P key, which cycles backwards.
+
+CTRL+C          Toggles music. Shortcut for toggling it in the mixer settings.
+                This hotkey works outside of the mixer screen too.
+                NOT AVAILABLE IN ROGUE-LIKE KEY SET.
 
 
 SPACE   Stop executing repeatable actions such as searching, tunnelling or
@@ -7280,9 +7296,13 @@ Ghosts have some special abilities, these are
 -they cannot use items
 -they cannot carry items except for the Book Of The Dead.
 
-Ghosts can access undead powers with 'U' (currently not available, sorry).
-Those powers drain your experience. If you use them too often and run out
-of experience you will fade away (your character is erased then).
+Ghosts can access ghost powers with 'U' (currently not available, sorry) or
+with CTRL+X if using rogue-like key map.
+Those powers drain your experience. If you use them too often you might lose
+character levels even, and if you eventually run out of experience you will
+fade away and permanently cease to exist without a chance of resurrection
+(which means your character is erased then same as on ghost-death or unworldy
+character's death).
 
 
 Getting help
