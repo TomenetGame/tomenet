@@ -4226,6 +4226,9 @@ bool apply_discharge(int Ind, int dam) {
 
 	return(damaged_any);
 }
+/* Discharge an item that is NOT in the player inventory
+   (important, as ethereal arrows getting destroyed would have to reduce the player's weight,
+   which this function doesn't/cannot do. That's what apply_discharge() does). */
 bool apply_discharge_item(int o_idx, int dam) {
 	int	chance = 95;
 	bool	damaged = FALSE;
