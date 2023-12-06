@@ -4552,6 +4552,21 @@ self-explaining or that are especially important are listed in detail here:
     You can actually refer 'big_map' via /opt commands even though it's not a
     real option (anymore)!
 
+    big_map will not just increase the map size, but due to the increased game
+    window size you gain access to additional features for which there is not
+    enough room in non-big_map mode:
+    - Indicators for temporary elemental resistances (base, poison, mana).
+      Those will be displayed below the (xx,yy) world map coordinates:
+      Red "F" or fire, white "C" for cold, slate "A" for acid, blue "E"
+      for electricity, green "P" for posion, violet "M" for mana.
+    - Indicator for temporary ESP: "ESP" (in white colour).
+      This will be displayed below the temp elemental resistance indicators.
+    - hp/mp/sn/_huge_bar options (in = 3).
+      These huge bars for easy tracking are displayed over almost half the big
+      main window size, in the otherwise unused bottom part, below the temp ESP
+      indicator.
+    - The minimap (~0) will display a legend of all symbols on the bottom left.
+
  (A) Account options
     Here you can see if your account is valid. Invalid accounts are also
     indicated by a yellow 'I' in the players list you get with '@' key.
