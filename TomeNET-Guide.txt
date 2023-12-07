@@ -10224,7 +10224,7 @@ Dungeon Keeper (everyone can win, 1+ participants)
     When the event starts, all participants are (if word-of-recall is legal at
     their current position) are transported into a labyrinth of rooms made of
     impenetrable walls but connected by doors or even void jump gates.
-    The goal is to find one of four escape beacon, which is a light green '>'.
+    The goal is to find one of four escape beacons, which are light green '>'.
     Everyone who steps on an escape beacon and presses the '>' key will be
     teleported to Bree and has thereby successfully escaped the maze and
     receive a winner's deed they can turn in at the mayor's office in Bree.
