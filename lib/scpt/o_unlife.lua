@@ -185,7 +185,7 @@ OUNLIFERES = add_spell {
 	["level"] = 	35,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
-	["fail"] = 	-55,
+	["fail"] = 	-70,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			if player.prace == RACE_VAMPIRE then
