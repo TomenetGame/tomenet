@@ -3798,7 +3798,7 @@ void calc_boni(int Ind) {
 			/* Modify the stats for "race" */
 			/* yeek mimic no longer rocks too much */
 			//if (!p_ptr->body_monster) p_ptr->stat_add[i] += (p_ptr->rp_ptr->r_adj[i]);
-//done in calc_body_bonus()!			p_ptr->stat_add[i] += (p_ptr->rp_ptr->r_adj[i]) * 3 / (p_ptr->body_monster ? 4 : 3);
+			//done in calc_body_bonus()!	p_ptr->stat_add[i] += (p_ptr->rp_ptr->r_adj[i]) * 3 / (p_ptr->body_monster ? 4 : 3);
 			p_ptr->stat_add[i] += p_ptr->rp_ptr->r_adj[i];
 			p_ptr->stat_add[i] += p_ptr->cp_ptr->c_adj[i];
 		}
@@ -6756,6 +6756,11 @@ void calc_boni(int Ind) {
 	   so we can just cap it. */
 	if (p_ptr->see_infra > MAX_SIGHT) p_ptr->see_infra = MAX_SIGHT;
 
+	/* Stop any contradicting buffs on form change */
+	if (p_ptr->suscep_good || p_ptr->suscep_life) {
+		if (p_ptr->blessed) set_blessed(Ind, 0);
+		if (p_ptr->protevil) set_protevil(Ind, 0);
+	}
 
 
 
