@@ -5254,7 +5254,7 @@ D:It is a strange pulsing mound of flesh.
 
 N:343:Sasquatch
 G:Y:W
-I:120:20d19:15:30:10
+I:118:20d19:15:30:10
 W:20:3:3500:180
 E:1:1:2:2:1:2
 O:0:0:0:0
