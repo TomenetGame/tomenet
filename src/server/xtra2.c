@@ -3981,6 +3981,10 @@ bool set_sh_elec_tim(int Ind, int v) {
 	return(TRUE);
 }
 
+/* Shadow Shroud: Grants AC bonus while standing on unlit floor grid.
+   Cannot coexist with 'reactive shield' magic though;
+   however, the only currently available spell of that sort is Fiery Shield.
+   Currently unused. */
 void set_shroud(int Ind, int v, int p) {
 	player_type *p_ptr = Players[Ind];
 

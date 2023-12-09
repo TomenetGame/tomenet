@@ -301,6 +301,7 @@ OLEVITATION = add_spell {
 	}
 }
 
+-- Grants invisibility (and the 'Shrouded' effect on unlit grids, currently disabled)
 OINVIS = add_spell {
 	["name"] = 	"Shadow Shroud",
 	["name2"] = 	"Shroud",
@@ -316,7 +317,8 @@ OINVIS = add_spell {
 		--set_shroud(Ind, dur, 10 + get_level(Ind, OINVIS, 50) / 2)
 	end,
 	["info"] = 	function()
-		return "dur "..(15 + get_level(Ind, OINVIS, 50)).."+d20 power "..(20 + get_level(Ind, OINVIS, 50)).."/"..(10 + get_level(Ind, OINVIS, 50) / 2)
+		return "dur "..(15 + get_level(Ind, OINVIS, 50)).."+d20 power "..(20 + get_level(Ind, OINVIS, 50))
+		--.."/"..(10 + get_level(Ind, OINVIS, 50) / 2)
 	end,
 	["desc"] = 	{
 		"Grants invisibility.",
