@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 5. December 2023 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 9. December 2023 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.1 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -5251,9 +5251,13 @@ as long as your encumberment bar doesn't show any icons in it, and continue
 reading at (3.3) down below.
 
 This line consists of the following icons that may show up:
-(Order: From left to right)
+(Order: From left to right; program code 'nicknames' added in parentheses)
     Brown (        Your armour is too heavy (tohit/sneakiness penalty).
+                   (cumber_armor)
     Red /          Your weapon is way too heavy for you.
+                   (heavy_wield)
+    Red \          Your tool is way too heavy for you.
+                   (heavy_tool)
                    You will receive extreme penalties on melee combat.
     Orange \       Your weapon isn't fit for your character (e.g. priest
                    using edged non-blessed weapons such as swords, vampires
@@ -5262,39 +5266,52 @@ This line consists of the following icons that may show up:
                    and an increase to spell casting failure rate.
                    An orange warning message will display:
                    "You do not feel comfortable with your weapon."
+                   (icky_wield)
     Yellow /       You are using a 1,5-h weapon together with a shield.
                    This is possible, but you will receive a penalty on
                    hit chance and damage.
+                   (awkward_wield)
     Green |        You are using a 1h weapon two-handed and get a small
                    bonus from that (works only for some of the weapons).
+                   (easy_wield)
     Red [          Your shield is way too heavy for you.
                    You will receive extreme penalties on block chance.
+                   (heavy_shield)
     Red }          Your ranged weapon is way too heavy for you.
                    You will receive extreme penalties on ranged combat.
+                   (heavy_shoot)
     Yellow }       You are using a shield on your arm, reducing your
                    accuracy with your ranged weapon.
+                   (awkward_shoot)
     Light-red 'F'  You are Martial Arts user and your backpack is too
                    heavy, so that you don't receive Free Action from MA!
                    See (5.3a) for more detailed information.
+                   (cumber_weight)
     Yellow (       You are Martial Arts user and your armour is too heavy.
                    You might receive various penalties (see (5.3a)).
                    NOTE: Up to client version 4.4.2 this can stand for both,
                    the meaning described above and the meaning of 'Blue ('
                    described below. Starting with 4.4.2a, these two were
                    separated into yellow and blue '(' icon.
+                   (monk_heavyarmor)
     Blue (         You're a rogue or using primarily rogueish skills such
                    as dodging or Dual-wield which depend on especially
                    flexible armour (meaning: Your total armour weight must not
                    be too high), but your armour is exceeding that limit!
                    You will lose some of the benefits, see (5.5)!
+                   (rogue_heavyarmor)
     Violet (       Your armour is so heavy that it reduces your MP.
                    This only affects classes that have a mana pool.
+                   (awkward_armor)
     Violet ]    a) Your gloves are not made for spellcasting or too heavy,
                    reducing your MP.
+                   (cumber_glove)
                 b) Your headgear is too heavy, impacting your ability to cast
                    mindcrafter school spells, reducing your MP. Only affects
                    characters who have trained in one or more of the
                    mindcrafter schools.
+                   (cumber_helm)
+
 Also see (5.3a) and especially (5.5) for more information about encumberment,
 and for specific details about penalties that are applied.
 
