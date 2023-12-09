@@ -930,6 +930,9 @@ bool set_melee_brand(int Ind, int v, u16b t, int p, bool cast, bool weapons_only
 	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS | PU_MONSTERS);
 
+	/* Redraw indicator */
+	p_ptr->redraw2 |= (PR2_INDICATORS);
+
 	/* Handle stuff */
 	handle_stuff(Ind);
 

@@ -1135,16 +1135,17 @@ void prt_bpr(byte bpr, byte attr) {
 }
 
 void prt_indicators(u32b indicators) {
-	prt_res_fire((indicators & IND_RES_FIRE) != 0);
-	prt_res_cold((indicators & IND_RES_COLD) != 0);
-	prt_res_elec((indicators & IND_RES_ELEC) != 0);
-	prt_res_acid((indicators & IND_RES_ACID) != 0);
-	prt_res_pois((indicators & IND_RES_POIS) != 0);
-	prt_res_divine((indicators & IND_RES_DIVINE) != 0);
-	prt_esp((indicators & IND_ESP) != 0);
+	prt_indicator_res_fire((indicators & IND_RES_FIRE) != 0);
+	prt_indicator_res_cold((indicators & IND_RES_COLD) != 0);
+	prt_indicator_res_elec((indicators & IND_RES_ELEC) != 0);
+	prt_indicator_res_acid((indicators & IND_RES_ACID) != 0);
+	prt_indicator_res_pois((indicators & IND_RES_POIS) != 0);
+	prt_indicator_res_divine((indicators & IND_RES_DIVINE) != 0);
+	prt_indicator_esp((indicators & IND_ESP) != 0);
+	prt_indicator_melee_brand((indicators & IND_MELEE_BRAND) != 0);
 }
 
-void prt_res_fire(bool is_resisted) {
+void prt_indicator_res_fire(bool is_resisted) {
 	int x, y;
 
 	/* Only visible in BIG_MAP mode, othewise it would overwrite other indicators */
@@ -1160,7 +1161,7 @@ void prt_res_fire(bool is_resisted) {
 	Term_gotoxy(x, y);
 }
 
-void prt_res_cold(bool is_resisted) {
+void prt_indicator_res_cold(bool is_resisted) {
 	int x, y;
 
 	/* Only visible in BIG_MAP mode, othewise it would overwrite other indicators */
@@ -1176,7 +1177,7 @@ void prt_res_cold(bool is_resisted) {
 	Term_gotoxy(x, y);
 }
 
-void prt_res_elec(bool is_resisted) {
+void prt_indicator_res_elec(bool is_resisted) {
 	int x, y;
 
 	/* Only visible in BIG_MAP mode, othewise it would overwrite other indicators */
@@ -1192,7 +1193,7 @@ void prt_res_elec(bool is_resisted) {
 	Term_gotoxy(x, y);
 }
 
-void prt_res_acid(bool is_resisted) {
+void prt_indicator_res_acid(bool is_resisted) {
 	int x, y;
 
 	/* Only visible in BIG_MAP mode, othewise it would overwrite other indicators */
@@ -1208,7 +1209,7 @@ void prt_res_acid(bool is_resisted) {
 	Term_gotoxy(x, y);
 }
 
-void prt_res_pois(bool is_resisted) {
+void prt_indicator_res_pois(bool is_resisted) {
 	int x, y;
 
 	/* Only visible in BIG_MAP mode, othewise it would overwrite other indicators */
@@ -1224,7 +1225,7 @@ void prt_res_pois(bool is_resisted) {
 	Term_gotoxy(x, y);
 }
 
-void prt_res_divine(bool is_resisted) {
+void prt_indicator_res_divine(bool is_resisted) {
 	int x, y;
 
 	/* Only visible in BIG_MAP mode, othewise it would overwrite other indicators */
@@ -1240,7 +1241,7 @@ void prt_res_divine(bool is_resisted) {
 	Term_gotoxy(x, y);
 }
 
-void prt_esp(bool is_full_esp) {
+void prt_indicator_esp(bool is_full_esp) {
 	int x, y;
 
 	/* Only visible in BIG_MAP mode, othewise it would overwrite other indicators */
@@ -1251,6 +1252,22 @@ void prt_esp(bool is_full_esp) {
 
 	if (is_full_esp) c_put_str(TERM_WHITE, "ESP", ROW_TEMP_ESP, COL_TEMP_ESP);
 	else c_put_str(TERM_WHITE, "   ", ROW_TEMP_ESP, COL_TEMP_ESP);
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
+}
+
+void prt_indicator_melee_brand(bool is_melee_brand) {
+	int x, y;
+
+	/* Only visible in BIG_MAP mode, othewise it would overwrite other indicators */
+	if (screen_hgt != MAX_SCREEN_HGT) return;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
+	if (is_melee_brand) c_put_str(TERM_ORANGE, "MB", ROW_TEMP_TBRAND, COL_TEMP_TBRAND);
+	else c_put_str(TERM_WHITE, "   ", ROW_TEMP_TBRAND, COL_TEMP_TBRAND);
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);

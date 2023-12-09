@@ -743,13 +743,14 @@ extern void update_lagometer(void);
 extern void prt_lagometer(int lag);
 
 extern void prt_indicators(u32b indicators);
-extern void prt_res_fire(bool is_resisted);
-extern void prt_res_cold(bool is_resisted);
-extern void prt_res_elec(bool is_resisted);
-extern void prt_res_acid(bool is_resisted);
-extern void prt_res_pois(bool is_resisted);
-extern void prt_res_divine(bool is_resisted);
-extern void prt_esp(bool is_full_esp);
+extern void prt_indicator_res_fire(bool is_resisted);
+extern void prt_indicator_res_cold(bool is_resisted);
+extern void prt_indicator_res_elec(bool is_resisted);
+extern void prt_indicator_res_acid(bool is_resisted);
+extern void prt_indicator_res_pois(bool is_resisted);
+extern void prt_indicator_res_divine(bool is_resisted);
+extern void prt_indicator_esp(bool is_full_esp);
+extern void prt_indicator_melee_brand(bool is_melee_brand);
 
 extern void prt_whats_under_your_feet(char *o_name, bool crossmod_item, bool cant_see, bool on_pile);
 extern char whats_under_your_feet[ONAME_LEN];
