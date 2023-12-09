@@ -4959,6 +4959,33 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 	return(FALSE);
 }
 
+/* Just check if this object can stack with an existing item in this subinventory. */
+bool subinven_can_stack(int Ind, object_type *i_ptr, int sslot) {
+	player_type *p_ptr = Players[Ind];
+	object_type *s_ptr = &p_ptr->inventory[sslot], *o_ptr;
+	int i, inum = i_ptr->number, xnum, Gnum;
+
+	/* Look for free spaces or spaces to merge with */
+	for (i = 0; i < s_ptr->bpval; i++) {
+		o_ptr = &p_ptr->subinventory[sslot][i];
+		if (!o_ptr->tval) continue;
+
+		/* Slot has no more stacking capacity? */
+		if (o_ptr->number == MAX_STACK_SIZE - 1) continue;
+
+		/* Hack 'number' to allow merging stacks partially */
+		xnum = MAX_STACK_SIZE - 1 - o_ptr->number;
+		/* For !Gn inscription, super hack to modify xnum further if required */
+		i_ptr->number = xnum;
+		Gnum = object_similar(Ind, o_ptr, i_ptr, 0x4 | 0x20);
+		i_ptr->number = inum;
+
+		/* Stack aka merge partially or fully */
+		if (Gnum) return(TRUE);
+	}
+	return(FALSE);
+}
+
 /* Attempt to move as much as possible of an inventory item stack into a subinventory container.
    Keeps total weight constant. Deletes source inventory item on successful complete move.
    Returns TRUE if fully stowed. */

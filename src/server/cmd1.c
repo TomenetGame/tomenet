@@ -1543,10 +1543,10 @@ void whats_under_your_feet(int Ind, bool force) {
    If the item was from the floor, o_idx must be specified, otherwise it must be -1.
    Returns TRUE if we have to set try_pickup = FALSE in carry() */
 bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought) {
-	int i, num;
+	int i, num, a, o, s = 0;
 	object_type *s_ptr, forge_one, *o_ptr_tmp = o_ptr;
 	player_type *p_ptr = Players[Ind];
-	bool delete_it, fully_stowed = FALSE;
+	bool delete_it, fully_stowed = FALSE, allow;
 
 	/* Don't auto-stow unidentified items */
 	if (!object_known_p(Ind, o_ptr) || !object_aware_p(Ind, o_ptr)) return(FALSE);
@@ -1575,13 +1575,18 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 		if (s_ptr->sval != sub_sval) continue;
 
 		/* Player disabled auto-stow via bag inscription? */
-		if (check_guard_inscription(s_ptr->note, 'A') ||
-		    (check_guard_inscription(s_ptr->note, 'O') && !o_ptr->owner) ||
-		    (check_guard_inscription(s_ptr->note, 'S') && !store_bought)) {
+		allow = FALSE;
+		if ((a = check_guard_inscription(s_ptr->note, 'A')) ||
+		    ((o = check_guard_inscription(s_ptr->note, 'O')) && !o_ptr->owner) ||
+		    ((s = check_guard_inscription(s_ptr->note, 'S')) && !store_bought)) {
+			if ((a == 1 || o == 1) && subinven_can_stack(Ind, o_ptr, i)) allow = TRUE;
+			if (s == 1 && !subinven_can_stack(Ind, o_ptr, i)) allow = FALSE;
+			if (!allow) {
  #ifdef SUBINVEN_LIMIT_GROUP
-			break;
+				break;
  #endif
-			continue;
+				continue;
+			}
 		}
 
 		/* Eligible subinventory found, try to move as much as possible */

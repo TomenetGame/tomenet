@@ -5626,10 +5626,15 @@ A few generic commands are always available in any subinventory:
   - Pasting an item into chat via SHIFT+slot.
   - Unstow item, ie put it back to inventory (t).
 
-There are also two inscriptions that can be put onto these bags:
+There are also inscriptions that can be put onto these bags (don't mix them):
   !A  Do not auto-stow items into this bag.
+  !A0 ..except if this item can stack with already existing items in the bag.
+
   !O  Do not auto-stow unowned items (ie new loot) into this bag.
+  !O0 ..except if this item can stack with already existing items in the bag.
+
   !S  Only auto-stow items into this bag when buying from a store.
+  !S0 ..and only if this item can stack with already existing items in the bag.
 
 
 (3.4a) Start-up equipment
