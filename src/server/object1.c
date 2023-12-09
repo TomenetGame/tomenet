@@ -5338,9 +5338,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	else if (f4 & TR4_MUST2H) fprintf(fff, "It must be wielded two-handed.\n");
 	else if (f4 & TR4_COULD2H) {
 		if (o_ptr->weight <= DUAL_MAX_WEIGHT)
-			fprintf(fff, "It can be wielded one-handed, two-handed or dual.\n");
+	fprintf(fff, "It can be wielded one-handed, two-handed or dual.\n");
 		else
-			fprintf(fff, "It can be wielded one-handed or two-handed.\n");
+	fprintf(fff, "It can be wielded one-handed or two-handed.\n");
 	}
 	else if (is_melee_weapon(o_ptr->tval) && o_ptr->weight <= DUAL_MAX_WEIGHT) fprintf(fff, "It can be wielded one-handed or dual.\n");
 	else if (is_melee_weapon(o_ptr->tval)) fprintf(fff, "It is wielded one-handed.\n");
@@ -5355,9 +5355,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	/* Kings/Queens only warning */
 	if (f5 & TR5_WINNERS_ONLY) fprintf(fff, "\377vIt is to be used by royalties exclusively.\377w\n");
 	/* Morgoth crown hardcoded note to give a warning!- C. Blue */
-	else if (o_ptr->name1 == ART_MORGOTH && full) {
-		fprintf(fff, "\377vIt may only be worn by kings and queens!\377w\n");
-	}
+	else if (o_ptr->name1 == ART_MORGOTH && full) fprintf(fff, "\377vIt may only be worn by kings and queens!\377w\n");
 
 	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, &forge, fff, Ind_target);
 	else if (is_melee_weapon(o_ptr->tval)) display_weapon_handling(Ind, &forge, fff, Ind_target);
@@ -5531,17 +5529,13 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		if (radius > LITE_CAP) radius = LITE_CAP; /* LITE_MAX ? */
 
 		//maybe todo: distinguish TR5_WHITE_LIGHT?
-		if (f4 & TR4_FUEL_LITE)
-			fprintf(fff, "It provides %slight (radius %d) when fueled.\n", (f5 & TR5_WHITE_LIGHT) ? "white " : "", radius);
-		else if (radius)
-			fprintf(fff, "It provides %slight (radius %d) forever.\n", (f5 & TR5_WHITE_LIGHT) ? "white " : "", radius);
-		else
-			fprintf(fff, "It never provides light.\n");
+		if (f4 & TR4_FUEL_LITE) fprintf(fff, "It provides %slight (radius %d) when fueled.\n", (f5 & TR5_WHITE_LIGHT) ? "white " : "", radius);
+		else if (radius) fprintf(fff, "It provides %slight (radius %d) forever.\n", (f5 & TR5_WHITE_LIGHT) ? "white " : "", radius);
+		else fprintf(fff, "It never provides light.\n");
 	}
 
 	/* Mega Hack^3 -- describe the Anchor of Space-time */
-	if (o_ptr->name1 == ART_ANCHOR && full)
-		fprintf(fff, "When activated prevents the space-time continuum from being disrupted.\n");
+	if (o_ptr->name1 == ART_ANCHOR && full) fprintf(fff, "When activated prevents the space-time continuum from being disrupted.\n");
 
 	am = ((f4 & (TR4_ANTIMAGIC_50)) ? 50 : 0)
 	    + ((f4 & (TR4_ANTIMAGIC_30)) ? 30 : 0)
@@ -5569,142 +5563,80 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 
 	/* And then describe it fully */
 
-	if (f1 & (TR1_LIFE))
-		fprintf(fff, "It affects your hit points%s.\n", o_ptr->name1 == ART_RANDART ? " \377v(royalties only)\377w" : "");
-	if (f1 & (TR1_STR))
-		fprintf(fff, "It affects your strength.\n");
-	if (f1 & (TR1_INT))
-		fprintf(fff, "It affects your intelligence.\n");
-	if (f1 & (TR1_WIS))
-		fprintf(fff, "It affects your wisdom.\n");
-	if (f1 & (TR1_DEX))
-		fprintf(fff, "It affects your dexterity.\n");
-	if (f1 & (TR1_CON))
-		fprintf(fff, "It affects your constitution.\n");
-	if (f1 & (TR1_CHR))
-		fprintf(fff, "It affects your charisma.\n");
+	if (f1 & (TR1_LIFE)) fprintf(fff, "It affects your hit points%s.\n", o_ptr->name1 == ART_RANDART ? " \377v(royalties only)\377w" : "");
+	if (f1 & (TR1_STR)) fprintf(fff, "It affects your strength.\n");
+	if (f1 & (TR1_INT)) fprintf(fff, "It affects your intelligence.\n");
+	if (f1 & (TR1_WIS)) fprintf(fff, "It affects your wisdom.\n");
+	if (f1 & (TR1_DEX)) fprintf(fff, "It affects your dexterity.\n");
+	if (f1 & (TR1_CON)) fprintf(fff, "It affects your constitution.\n");
+	if (f1 & (TR1_CHR)) fprintf(fff, "It affects your charisma.\n");
 
 	if (f1 & (TR1_STEALTH)) {
-		if (o_ptr->tval != TV_TRAPKIT)
-			fprintf(fff, "It affects your stealth.\n");
-		else
-			fprintf(fff, "It is well-hidden.\n");
+		if (o_ptr->tval != TV_TRAPKIT) fprintf(fff, "It affects your stealth.\n");
+		else fprintf(fff, "It is well-hidden.\n");
 	}
 #ifdef ART_WITAN_STEALTH
-	else if (o_ptr->name1 && o_ptr->tval == TV_BOOTS && o_ptr->sval == SV_PAIR_OF_WITAN_BOOTS)
-		fprintf(fff, "It affects your stealth.\n");
+	else if (o_ptr->name1 && o_ptr->tval == TV_BOOTS && o_ptr->sval == SV_PAIR_OF_WITAN_BOOTS) fprintf(fff, "It affects your stealth.\n");
 #endif
-	if (f1 & (TR1_SEARCH))
-		fprintf(fff, "It affects your searching.\n");
-	if (f5 & (TR5_DISARM))
-		fprintf(fff, "It affects your disarming.\n");
-	if (f1 & (TR1_INFRA))
-		fprintf(fff, "It affects your infra-vision.\n");
-	if (f1 & (TR1_TUNNEL))
-		fprintf(fff, "It affects your ability to tunnel.\n");
-	if (f1 & (TR1_SPEED))
-		fprintf(fff, "It affects your speed.\n");
-	if (f1 & (TR1_BLOWS))
-		fprintf(fff, "It affects your melee attack speed.\n");
-	if (f5 & (TR5_CRIT))
-		fprintf(fff, "It affects your ability to score critical hits.\n");
-	if (f5 & (TR5_LUCK))
-		fprintf(fff, "It affects your luck.\n");
+	if (f1 & (TR1_SEARCH)) fprintf(fff, "It affects your searching.\n");
+	if (f5 & (TR5_DISARM)) fprintf(fff, "It affects your disarming.\n");
+	if (f1 & (TR1_INFRA)) fprintf(fff, "It affects your infra-vision.\n");
+	if (f1 & (TR1_TUNNEL)) fprintf(fff, "It affects your ability to tunnel.\n");
+	if (f1 & (TR1_SPEED)) fprintf(fff, "It affects your speed.\n");
+	if (f1 & (TR1_BLOWS)) fprintf(fff, "It affects your melee attack speed.\n");
+	if (f5 & (TR5_CRIT)) fprintf(fff, "It affects your ability to score critical hits.\n");
+	if (f5 & (TR5_LUCK)) fprintf(fff, "It affects your luck.\n");
 
-	if (f1 & (TR1_BRAND_ACID))
-		fprintf(fff, "It does extra damage from acid.\n");
-	if (f1 & (TR1_BRAND_ELEC))
-		fprintf(fff, "It does extra damage from electricity.\n");
-	if (f1 & (TR1_BRAND_FIRE))
-		fprintf(fff, "It does extra damage from fire.\n");
-	if (f1 & (TR1_BRAND_COLD))
-		fprintf(fff, "It does extra damage from frost.\n");
-	if (f1 & (TR1_BRAND_POIS))
-		fprintf(fff, "It poisons your foes.\n");
-	if (f5 & (TR5_CHAOTIC))
-		fprintf(fff, "It produces chaotic effects.\n");
-	if (f1 & (TR1_VAMPIRIC))
-		fprintf(fff, "It drains life from your foes.\n");
-	if (f5 & (TR5_IMPACT))
-		fprintf(fff, "It can cause earthquakes.\n");
-	if (f5 & (TR5_VORPAL))
-		fprintf(fff, "It is very sharp and can cut your foes.\n");
-	/*if (f5 & (TR5_WOUNDING))
-		fprintf(fff, "It is very sharp and makes your foes bleed.\n");*/
-	if (f1 & (TR1_SLAY_ORC))
-		fprintf(fff, "It is especially deadly against orcs.\n");
-	if (f1 & (TR1_SLAY_TROLL))
-		fprintf(fff, "It is especially deadly against trolls.\n");
-	if (f1 & (TR1_SLAY_GIANT))
-		fprintf(fff, "It is especially deadly against giants.\n");
-	if (f1 & (TR1_SLAY_ANIMAL))
-		fprintf(fff, "It is especially deadly against natural creatures.\n");
-	if (f1 & (TR1_KILL_UNDEAD))
-		fprintf(fff, "It is a great bane of undead.\n");
-	else if (f1 & (TR1_SLAY_UNDEAD))
-		fprintf(fff, "It strikes at undead with holy wrath.\n");
-	if (f1 & (TR1_KILL_DEMON))
-		fprintf(fff, "It is a great bane of demons.\n");
-	else if (f1 & (TR1_SLAY_DEMON))
-		fprintf(fff, "It strikes at demons with holy wrath.\n");
-	if (f1 & (TR1_KILL_DRAGON))
-		fprintf(fff, "It is a great bane of dragons.\n");
-	else if (f1 & (TR1_SLAY_DRAGON))
-		fprintf(fff, "It is especially deadly against dragons.\n");
-	if (f1 & (TR1_SLAY_EVIL))
-		fprintf(fff, "It fights against evil with holy fury.\n");
-	if (f1 & (TR1_MANA))
-		fprintf(fff, "It affects your mana capacity.\n");
-	if (f1 & (TR1_SPELL))
-		fprintf(fff, "It affects your spell power.\n");
-	if (f5 & (TR5_INVIS))
-		fprintf(fff, "It makes you invisible.\n");
+	if (f1 & (TR1_BRAND_ACID)) fprintf(fff, "It does extra damage from acid.\n");
+	if (f1 & (TR1_BRAND_ELEC)) fprintf(fff, "It does extra damage from electricity.\n");
+	if (f1 & (TR1_BRAND_FIRE)) fprintf(fff, "It does extra damage from fire.\n");
+	if (f1 & (TR1_BRAND_COLD)) fprintf(fff, "It does extra damage from frost.\n");
+	if (f1 & (TR1_BRAND_POIS)) fprintf(fff, "It poisons your foes.\n");
+	if (f5 & (TR5_CHAOTIC)) fprintf(fff, "It produces chaotic effects.\n");
+	if (f1 & (TR1_VAMPIRIC)) fprintf(fff, "It drains life from your foes.\n");
+	if (f5 & (TR5_IMPACT)) fprintf(fff, "It can cause earthquakes.\n");
+	if (f5 & (TR5_VORPAL)) fprintf(fff, "It is very sharp and can cut your foes.\n");
+	/*if (f5 & (TR5_WOUNDING)) fprintf(fff, "It is very sharp and makes your foes bleed.\n");*/
+	if (f1 & (TR1_SLAY_ORC)) fprintf(fff, "It is especially deadly against orcs.\n");
+	if (f1 & (TR1_SLAY_TROLL)) fprintf(fff, "It is especially deadly against trolls.\n");
+	if (f1 & (TR1_SLAY_GIANT)) fprintf(fff, "It is especially deadly against giants.\n");
+	if (f1 & (TR1_SLAY_ANIMAL)) fprintf(fff, "It is especially deadly against natural creatures.\n");
+	if (f1 & (TR1_KILL_UNDEAD)) fprintf(fff, "It is a great bane of undead.\n");
+	else if (f1 & (TR1_SLAY_UNDEAD)) fprintf(fff, "It strikes at undead with holy wrath.\n");
+	if (f1 & (TR1_KILL_DEMON)) fprintf(fff, "It is a great bane of demons.\n");
+	else if (f1 & (TR1_SLAY_DEMON)) fprintf(fff, "It strikes at demons with holy wrath.\n");
+	if (f1 & (TR1_KILL_DRAGON)) fprintf(fff, "It is a great bane of dragons.\n");
+	else if (f1 & (TR1_SLAY_DRAGON)) fprintf(fff, "It is especially deadly against dragons.\n");
+	if (f1 & (TR1_SLAY_EVIL)) fprintf(fff, "It fights against evil with holy fury.\n");
+	if (f1 & (TR1_MANA)) fprintf(fff, "It affects your mana capacity.\n");
+	if (f1 & (TR1_SPELL)) fprintf(fff, "It affects your spell power.\n");
+	if (f5 & (TR5_INVIS)) fprintf(fff, "It makes you invisible.\n");
 	if (o_ptr->tval != TV_TRAPKIT) {
-		if (f2 & (TR2_SUST_STR))
-			fprintf(fff, "It sustains your strength.\n");
-		if (f2 & (TR2_SUST_INT))
-			fprintf(fff, "It sustains your intelligence.\n");
-		if (f2 & (TR2_SUST_WIS))
-			fprintf(fff, "It sustains your wisdom.\n");
-		if (f2 & (TR2_SUST_DEX))
-			fprintf(fff, "It sustains your dexterity.\n");
-		if (f2 & (TR2_SUST_CON))
-			fprintf(fff, "It sustains your constitution.\n");
-		if (f2 & (TR2_SUST_CHR))
-			fprintf(fff, "It sustains your charisma.\n");
-		if (f2 & (TR2_IM_FIRE))
-			fprintf(fff, "It provides \377Uimmunity\377- to fire.\n");
-		if (f2 & (TR2_IM_COLD))
-			fprintf(fff, "It provides \377Uimmunity\377- to cold.\n");
-		if (f2 & (TR2_IM_ELEC))
-			fprintf(fff, "It provides \377Uimmunity\377- to electricity.\n");
-		if (f2 & (TR2_IM_ACID))
-			fprintf(fff, "It provides \377Uimmunity\377- to acid.\n");
+		if (f2 & (TR2_SUST_STR)) fprintf(fff, "It sustains your strength.\n");
+		if (f2 & (TR2_SUST_INT)) fprintf(fff, "It sustains your intelligence.\n");
+		if (f2 & (TR2_SUST_WIS)) fprintf(fff, "It sustains your wisdom.\n");
+		if (f2 & (TR2_SUST_DEX)) fprintf(fff, "It sustains your dexterity.\n");
+		if (f2 & (TR2_SUST_CON)) fprintf(fff, "It sustains your constitution.\n");
+		if (f2 & (TR2_SUST_CHR)) fprintf(fff, "It sustains your charisma.\n");
+		if (f2 & (TR2_IM_FIRE)) fprintf(fff, "It provides \377Uimmunity\377- to fire.\n");
+		if (f2 & (TR2_IM_COLD)) fprintf(fff, "It provides \377Uimmunity\377- to cold.\n");
+		if (f2 & (TR2_IM_ELEC)) fprintf(fff, "It provides \377Uimmunity\377- to electricity.\n");
+		if (f2 & (TR2_IM_ACID)) fprintf(fff, "It provides \377Uimmunity\377- to acid.\n");
 	}
 #if 1
 	else {
-		if (f2 & (TRAP2_AUTOMATIC_5))
-			fprintf(fff, "It can rearm itself.\n");
-		if (f2 & (TRAP2_AUTOMATIC_99))
-			fprintf(fff, "It rearms itself.\n");
-		if (f2 & (TRAP2_KILL_GHOST))
-			fprintf(fff, "It can affect wraithed creatures too.\n");
-		if (f2 & (TRAP2_TELEPORT_TO))
-			fprintf(fff, "It can teleport monsters to you.\n");
-		if (f2 & (TRAP2_ONLY_DRAGON))
-			fprintf(fff, "It can only be set off by dragons.\n");
-		if (f2 & (TRAP2_ONLY_DEMON))
-			fprintf(fff, "It can only be set off by demons.\n");
-		if (f2 & (TRAP2_ONLY_UNDEAD))
-			fprintf(fff, "It can only be set off by undead.\n");
-		if (f2 & (TRAP2_ONLY_ANIMAL))
-			fprintf(fff, "It can only be set off by animals.\n");
-		if (f2 & (TRAP2_ONLY_EVIL))
-			fprintf(fff, "It can only be set off by evil creatures.\n");
+		if (f2 & (TRAP2_AUTOMATIC_5)) fprintf(fff, "It can rearm itself.\n");
+		if (f2 & (TRAP2_AUTOMATIC_99)) fprintf(fff, "It rearms itself.\n");
+		if (f2 & (TRAP2_KILL_GHOST)) fprintf(fff, "It can affect wraithed creatures too.\n");
+		if (f2 & (TRAP2_TELEPORT_TO)) fprintf(fff, "It can teleport monsters to you.\n");
+		if (f2 & (TRAP2_ONLY_DRAGON)) fprintf(fff, "It can only be set off by dragons.\n");
+		if (f2 & (TRAP2_ONLY_DEMON)) fprintf(fff, "It can only be set off by demons.\n");
+		if (f2 & (TRAP2_ONLY_UNDEAD)) fprintf(fff, "It can only be set off by undead.\n");
+		if (f2 & (TRAP2_ONLY_ANIMAL)) fprintf(fff, "It can only be set off by animals.\n");
+		if (f2 & (TRAP2_ONLY_EVIL)) fprintf(fff, "It can only be set off by evil creatures.\n");
 	}
 #endif
-	if (f2 & (TR2_IM_POISON))
-		fprintf(fff, "It provides \377Uimmunity\377- to poison.\n");
+	if (f2 & (TR2_IM_POISON)) fprintf(fff, "It provides \377Uimmunity\377- to poison.\n");
 
 	if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED) {
 		if (!(f2 & (TR2_IM_FIRE))) {
@@ -5732,72 +5664,43 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		   resistance AND immunity to the same element. This can
 		   happen if art/ego gives IM, while base item type
 		   already has RES. */
-		if ((f2 & (TR2_RES_FIRE)) && !(f2 & (TR2_IM_FIRE)))
-			fprintf(fff, "It provides resistance to fire.\n");
-		if ((f2 & (TR2_RES_COLD)) && !(f2 & (TR2_IM_COLD)))
-			fprintf(fff, "It provides resistance to cold.\n");
-		if ((f2 & (TR2_RES_ELEC)) && !(f2 & (TR2_IM_ELEC)))
-			fprintf(fff, "It provides resistance to electricity.\n");
-		if ((f2 & (TR2_RES_ACID)) && !(f2 & (TR2_IM_ACID)))
-			fprintf(fff, "It provides resistance to acid.\n");
-		if ((f2 & (TR2_RES_POIS)) && !(f2 & (TR2_IM_POISON)))
-			fprintf(fff, "It provides resistance to poison.\n");
+		if ((f2 & (TR2_RES_FIRE)) && !(f2 & (TR2_IM_FIRE))) fprintf(fff, "It provides resistance to fire.\n");
+		if ((f2 & (TR2_RES_COLD)) && !(f2 & (TR2_IM_COLD))) fprintf(fff, "It provides resistance to cold.\n");
+		if ((f2 & (TR2_RES_ELEC)) && !(f2 & (TR2_IM_ELEC))) fprintf(fff, "It provides resistance to electricity.\n");
+		if ((f2 & (TR2_RES_ACID)) && !(f2 & (TR2_IM_ACID))) fprintf(fff, "It provides resistance to acid.\n");
+		if ((f2 & (TR2_RES_POIS)) && !(f2 & (TR2_IM_POISON))) fprintf(fff, "It provides resistance to poison.\n");
 	}
 
-	if (f2 & (TR2_IM_WATER))
-		fprintf(fff, "It provides \377Ucomplete protection\377- from unleashed water.\n");
-	else if (f2 & (TR2_RES_WATER))
-		fprintf(fff, "It provides resistance to unleashed water.\n");
-	if (f2 & (TR2_IM_NETHER))
-		fprintf(fff, "It provides \377Uimmunity\377- to nether.\n");
-	else if (f2 & (TR2_RES_NETHER))
-		fprintf(fff, "It provides resistance to nether.\n");
+	if (f2 & (TR2_IM_WATER)) fprintf(fff, "It provides \377Ucomplete protection\377- from unleashed water.\n");
+	else if (f2 & (TR2_RES_WATER)) fprintf(fff, "It provides resistance to unleashed water.\n");
+	if (f2 & (TR2_IM_NETHER)) fprintf(fff, "It provides \377Uimmunity\377- to nether.\n");
+	else if (f2 & (TR2_RES_NETHER)) fprintf(fff, "It provides resistance to nether.\n");
 
-	if (f2 & (TR2_RES_NEXUS))
-		fprintf(fff, "It provides resistance to nexus.\n");
-	if (f2 & (TR2_RES_CHAOS))
-		fprintf(fff, "It provides resistance to chaos.\n");
-	if (f2 & (TR2_RES_DISEN))
-		fprintf(fff, "It provides resistance to disenchantment.\n");
-	if (f2 & (TR2_RES_SOUND))
-		fprintf(fff, "It provides resistance to sound.\n");
-	if (f2 & (TR2_RES_SHARDS))
-		fprintf(fff, "It provides resistance to shards.\n");
+	if (f2 & (TR2_RES_NEXUS)) fprintf(fff, "It provides resistance to nexus.\n");
+	if (f2 & (TR2_RES_CHAOS)) fprintf(fff, "It provides resistance to chaos.\n");
+	if (f2 & (TR2_RES_DISEN)) fprintf(fff, "It provides resistance to disenchantment.\n");
+	if (f2 & (TR2_RES_SOUND)) fprintf(fff, "It provides resistance to sound.\n");
+	if (f2 & (TR2_RES_SHARDS)) fprintf(fff, "It provides resistance to shards.\n");
 
-	if (f5 & (TR5_RES_TIME))
-		fprintf(fff, "It provides resistance to time.\n");
-	if (f5 & (TR5_RES_MANA))
-		fprintf(fff, "It provides resistance to magical energy.\n");
+	if (f5 & (TR5_RES_TIME)) fprintf(fff, "It provides resistance to time.\n");
+	if (f5 & (TR5_RES_MANA)) fprintf(fff, "It provides resistance to magical energy.\n");
 	if (f5 & TR5_RES_TELE) fprintf(fff, "It provides resistance to teleportation attacks.\n");
 
-	if (f2 & (TR2_RES_LITE))
-		fprintf(fff, "It provides resistance to light.\n");
-	if (f2 & (TR2_RES_DARK))
-		fprintf(fff, "It provides resistance to dark.\n");
-	if (f2 & (TR2_RES_BLIND))
-		fprintf(fff, "It provides resistance to blindness.\n");
+	if (f2 & (TR2_RES_LITE)) fprintf(fff, "It provides resistance to light.\n");
+	if (f2 & (TR2_RES_DARK)) fprintf(fff, "It provides resistance to dark.\n");
+	if (f2 & (TR2_RES_BLIND)) fprintf(fff, "It provides resistance to blindness.\n");
 
-	if (f2 & (TR2_RES_FEAR))
-		fprintf(fff, "It makes you completely fearless.\n");
-	if (f2 & (TR2_FREE_ACT))
-		fprintf(fff, "It provides immunity to paralysis.\n");
-	if (f2 & (TR2_RES_CONF))
-		fprintf(fff, "It provides resistance to confusion.\n");
-	if (f2 & (TR2_HOLD_LIFE))
-		fprintf(fff, "It provides resistance to life draining attacks.\n");
-	if (f3 & (TR3_SEE_INVIS))
-		fprintf(fff, "It allows you to see invisible monsters.\n");
+	if (f2 & (TR2_RES_FEAR)) fprintf(fff, "It makes you completely fearless.\n");
+	if (f2 & (TR2_FREE_ACT)) fprintf(fff, "It provides immunity to paralysis.\n");
+	if (f2 & (TR2_RES_CONF)) fprintf(fff, "It provides resistance to confusion.\n");
+	if (f2 & (TR2_HOLD_LIFE)) fprintf(fff, "It provides resistance to life draining attacks.\n");
+	if (f3 & (TR3_SEE_INVIS)) fprintf(fff, "It allows you to see invisible monsters.\n");
 
-	if (f3 & (TR3_FEATHER))
-		fprintf(fff, "It slows down your fall gently.\n");
-	if (f4 & (TR4_LEVITATE))
-		fprintf(fff, "It allows you to levitate.\n");
-	if (f5 & (TR5_PASS_WATER))
-		fprintf(fff, "It allows you to swim easily.\n");
-	if (f4 & (TR4_CLIMB))
-		fprintf(fff, "It allows you to climb high mountains.\n");
-	if (f3 & (TR3_WRAITH))
-		fprintf(fff, "It renders you incorporeal.\n");
+	if (f3 & (TR3_FEATHER)) fprintf(fff, "It slows down your fall gently.\n");
+	if (f4 & (TR4_LEVITATE)) fprintf(fff, "It allows you to levitate.\n");
+	if (f5 & (TR5_PASS_WATER)) fprintf(fff, "It allows you to swim easily.\n");
+	if (f4 & (TR4_CLIMB)) fprintf(fff, "It allows you to climb high mountains.\n");
+	if (f3 & (TR3_WRAITH)) fprintf(fff, "It renders you incorporeal.\n");
 	if ((o_ptr->tval != TV_LITE) && ((f3 & (TR3_LITE1)) || (f4 & (TR4_LITE2)) || (f4 & (TR4_LITE3))))
 		fprintf(fff, "It provides %slight.\n", (f5 & TR5_WHITE_LIGHT) ? "white " : "");
 	if (esp) {
@@ -5818,59 +5721,32 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 			if (esp & ESP_UNIQUE) fprintf(fff, "It allows you to sense the presence of unique beings.\n");
 		}
 	}
-	if (f3 & (TR3_SLOW_DIGEST))
-		fprintf(fff, "It slows your metabolism.\n");
-	if (f3 & (TR3_REGEN))
-		fprintf(fff, "It speeds your hit point regeneration.\n");
-	if (f3 & (TR3_REGEN_MANA))
-		fprintf(fff, "It speeds your mana recharging.\n");
-	if (f5 & (TR5_REFLECT))
-		fprintf(fff, "It reflects bolts and arrows.\n");
-	if (f3 & (TR3_SH_FIRE))
-		fprintf(fff, "It produces a fiery aura.\n");
-	if (f3 & (TR3_SH_COLD))
-		fprintf(fff, "It produces an icy aura.\n");
-	if (f3 & (TR3_SH_ELEC))
-		fprintf(fff, "It produces an electric aura.\n");
-	if (f3 & (TR3_NO_MAGIC))
-		fprintf(fff, "It produces an anti-magic shell.\n");
+	if (f3 & (TR3_SLOW_DIGEST)) fprintf(fff, "It slows your metabolism.\n");
+	if (f3 & (TR3_REGEN)) fprintf(fff, "It speeds your hit point regeneration.\n");
+	if (f3 & (TR3_REGEN_MANA)) fprintf(fff, "It speeds your mana recharging.\n");
+	if (f5 & (TR5_REFLECT)) fprintf(fff, "It reflects bolts and arrows.\n");
+	if (f3 & (TR3_SH_FIRE)) fprintf(fff, "It produces a fiery aura.\n");
+	if (f3 & (TR3_SH_COLD)) fprintf(fff, "It produces an icy aura.\n");
+	if (f3 & (TR3_SH_ELEC)) fprintf(fff, "It produces an electric aura.\n");
+	if (f3 & (TR3_NO_MAGIC)) fprintf(fff, "It produces an anti-magic shell.\n");
+	if (f3 & (TR3_BLESSED)) fprintf(fff, "It has been blessed by the gods.\n");
+	if (f4 & (TR4_AUTO_ID)) fprintf(fff, "It identifies all items for you.\n");
 
-	if (f3 & (TR3_BLESSED)) {
-#if 0 /* already given under red 'encumberments' above these lines.. */
-		/* BLESSED items give icky_wield to Corrupted? */
-		if (pt_ptr->ptrait == TRAIT_CORRUPTED) fprintf(fff, "\377oIt has been blessed by the gods.\n");
-		else
-#endif
-		fprintf(fff, "It has been blessed by the gods.\n");
-	}
-
-	if (f4 & (TR4_AUTO_ID))
-		fprintf(fff, "It identifies all items for you.\n");
-
-	if (f3 & (TR3_XTRA_MIGHT))
-		fprintf(fff, "It fires missiles with extra might.\n");
+	if (f3 & (TR3_XTRA_MIGHT)) fprintf(fff, "It fires missiles with extra might.\n");
 	if (f3 & (TR3_XTRA_SHOTS)) {
-		if (o_ptr->tval == TV_BOOMERANG)
-			fprintf(fff, "It flies excessively fast.\n");
-		else
-			fprintf(fff, "It fires missiles excessively fast.\n");
+		if (o_ptr->tval == TV_BOOMERANG) fprintf(fff, "It flies excessively fast.\n");
+		else fprintf(fff, "It fires missiles excessively fast.\n");
 	}
 
 	if (f6 & TR6_RETURNING) fprintf(fff, "It returns to you when thrown while equipped.\n");
 
-	if (f4 & (TR4_EASY_USE))
-		fprintf(fff, "It is especially easy to activate.\n");
-	if (f4 & (TR4_CAPACITY))
-		fprintf(fff, "It can hold more mana.\n");
-	if (f4 & (TR4_CHEAPNESS))
-		fprintf(fff, "It can cast spells for a lesser mana cost.\n");
-	if (f4 & (TR4_FAST_CAST))
-		fprintf(fff, "It can cast spells faster.\n");
-	if (f4 & (TR4_CHARGING))
-		fprintf(fff, "It regenerates its mana faster.\n");
+	if (f4 & (TR4_EASY_USE)) fprintf(fff, "It is especially easy to activate.\n");
+	if (f4 & (TR4_CAPACITY)) fprintf(fff, "It can hold more mana.\n");
+	if (f4 & (TR4_CHEAPNESS)) fprintf(fff, "It can cast spells for a lesser mana cost.\n");
+	if (f4 & (TR4_FAST_CAST)) fprintf(fff, "It can cast spells faster.\n");
+	if (f4 & (TR4_CHARGING)) fprintf(fff, "It regenerates its mana faster.\n");
 
-	if (f3 & (TR3_TELEPORT))
-		fprintf(fff, "It induces random teleportation.\n");
+	if (f3 & (TR3_TELEPORT)) fprintf(fff, "It induces random teleportation.\n");
 
 	/* exploding ammo */
 	if (is_ammo(o_ptr->tval) && (o_ptr->pval != 0))
@@ -5919,10 +5795,8 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	    )
 		fprintf(fff, "It drops a veil of sleep over all your surroundings.\n");
 
-	if (f3 & (TR3_NO_TELE))
-		fprintf(fff, "\377DIt prevents teleportation.\n");
-	if (f5 & (TR5_DRAIN_MANA))
-		fprintf(fff, "\377DIt drains your magic.\n");
+	if (f3 & (TR3_NO_TELE)) fprintf(fff, "\377DIt prevents teleportation.\n");
+	if (f5 & (TR5_DRAIN_MANA)) fprintf(fff, "\377DIt drains your magic.\n");
 
 	if (f5 & (TR5_DRAIN_HP)) {
 		/* Note: This assumes that there is no possible double-ego power that also has DRAIN_HP besides 'Spectral', otherwise this message might turn out incorrect.. */
@@ -5931,42 +5805,25 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		else fprintf(fff, "\377DIt drains your health.\n");
 	}
 
-	if (f3 & (TR3_DRAIN_EXP))
-		fprintf(fff, "\377DIt drains your life force.\n");
-	if (f3 & (TR3_AGGRAVATE))
-		fprintf(fff, "\377DIt aggravates nearby creatures.\n");
-
-
-	if (f4 & (TR4_NEVER_BLOW))
-		fprintf(fff, "\377DIt can't attack.\n");
-
-	if (f4 & (TR4_BLACK_BREATH))
-		fprintf(fff, "\377DIt fills you with the Black Breath.\n");
-	if (f4 & (TR4_CLONE))
-		fprintf(fff, "\377DIt can clone monsters.\n");
+	if (f3 & (TR3_DRAIN_EXP)) fprintf(fff, "\377DIt drains your life force.\n");
+	if (f3 & (TR3_AGGRAVATE)) fprintf(fff, "\377DIt aggravates nearby creatures.\n");
+	if (f4 & (TR4_NEVER_BLOW)) fprintf(fff, "\377DIt can't attack.\n");
+	if (f4 & (TR4_BLACK_BREATH)) fprintf(fff, "\377DIt fills you with the Black Breath.\n");
+	if (f4 & (TR4_CLONE)) fprintf(fff, "\377DIt can clone monsters.\n");
 
 	if (cursed_p(o_ptr) && aware_cursed) {
-		if (f3 & (TR3_PERMA_CURSE))
-			fprintf(fff, "\377DIt is permanently cursed.\n");
-		else if (f3 & (TR3_HEAVY_CURSE))
-			fprintf(fff, "\377DIt is heavily cursed.\n");
-		else
-			fprintf(fff, "\377DIt is cursed.\n");
+		if (f3 & (TR3_PERMA_CURSE)) fprintf(fff, "\377DIt is permanently cursed.\n");
+		else if (f3 & (TR3_HEAVY_CURSE)) fprintf(fff, "\377DIt is heavily cursed.\n");
+		else fprintf(fff, "\377DIt is cursed.\n");
 
-		if (f3 & (TR3_TY_CURSE))
-			fprintf(fff, "\377DIt carries an ancient foul curse.\n");
-
-		if (f4 & (TR4_DG_CURSE))
-			fprintf(fff, "\377DIt carries an ancient morgothian curse.\n");
-		if (f4 & (TR4_CURSE_NO_DROP))
-			fprintf(fff, "\377DIt cannot be dropped while cursed.\n");
+		if (f3 & (TR3_TY_CURSE)) fprintf(fff, "\377DIt carries an ancient foul curse.\n");
+		if (f4 & (TR4_DG_CURSE)) fprintf(fff, "\377DIt carries an ancient morgothian curse.\n");
+		if (f4 & (TR4_CURSE_NO_DROP)) fprintf(fff, "\377DIt cannot be dropped while cursed.\n");
 	}
-	if (f3 & (TR3_AUTO_CURSE))
-		fprintf(fff, "\377DIt can re-curse itself.\n");
+	if (f3 & (TR3_AUTO_CURSE)) fprintf(fff, "\377DIt can re-curse itself.\n");
 
 	/* Stormbringer hardcoded note to give a warning!- C. Blue */
-	if (o_ptr->name2 == EGO_STORMBRINGER)
-		fprintf(fff, "\377DIt's possessed by mad wrath!\n");
+	if (o_ptr->name2 == EGO_STORMBRINGER) fprintf(fff, "\377DIt's possessed by mad wrath!\n");
 
 	/* also show anti-undead/demon life drain */
 	switch ((j = anti_undead(o_ptr, pt_ptr))) {
@@ -5979,25 +5836,15 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	case 2: //fprintf(fff, "\377oIts power is adverse to demons, preventing your health from regenerating.\n"); break;
 		fprintf(fff, "\377oIts power is adverse to demons, hampering your health regeneration.\n"); break;
 	}
-	/* BLESSED items harm all Corrupted beings in general? */
-#if 0 /* 0ed: just make it icky_wield instead */
-	if (!j && pt_ptr->ptrait == TRAIT_CORRUPTED && (f3 & TR3_BLESSED))
-		//fprintf(fff, "\377oIts power is adverse to corruption, draining your health.\n");
-		fprintf(fff, "\377oIts power is adverse to corruption, hampering your health regeneration.\n");
-#endif
 
 	/* magically returning ranged weapon? */
-	if (o_ptr->tval == TV_BOOMERANG && o_ptr->name1)
-		fprintf(fff, "\377WIt always returns to your quiver.\n");
+	if (o_ptr->tval == TV_BOOMERANG && o_ptr->name1) fprintf(fff, "\377WIt always returns to your quiver.\n");
 	else if (is_ammo(o_ptr->tval)) {
-		if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL)
-			fprintf(fff, "\377WIt magically returns to your quiver most of the time.\n");
-		else if (o_ptr->sval == SV_AMMO_MAGIC || o_ptr->name1)
-			fprintf(fff, "\377WIt always magically returns to your quiver.\n");
+		if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) fprintf(fff, "\377WIt magically returns to your quiver most of the time.\n");
+		else if (o_ptr->sval == SV_AMMO_MAGIC || o_ptr->name1) fprintf(fff, "\377WIt always magically returns to your quiver.\n");
 	}
 
-	if (((f5 & TR5_NO_ENCHANT) || o_ptr->name1)
-	    && is_enchantable(o_ptr))
+	if (((f5 & TR5_NO_ENCHANT) || o_ptr->name1) && is_enchantable(o_ptr))
 		fprintf(fff, "\377WIt cannot be enchanted by any means.\n");
 
 	strcpy(buf_tmp, "\377WUnaffected by ");
