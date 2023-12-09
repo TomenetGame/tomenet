@@ -109,7 +109,7 @@ OREGEN = add_spell {
 	["level"] = 	22,
 	["mana"] = 	10,
 	["mana_max"] = 	10,
-	["fail"] = 	0,
+	["fail"] = 	-10,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			if player.prace == RACE_VAMPIRE then
@@ -218,7 +218,7 @@ ODRAINLIFE2 = add_spell {
 	["level"] = 	37,
 	["mana"] = 	30,
 	["mana_max"] = 	30,
-	["fail"] = 	-60,
+	["fail"] = 	-70,
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
