@@ -750,6 +750,7 @@ static void prt_indicators(int Ind) {
 	if (p_ptr->divine_xtra_res) indicators |= IND_RES_DIVINE;
 	if (p_ptr->tim_esp) indicators |= IND_ESP;
 	if (p_ptr->melee_brand) indicators |= IND_MELEE_BRAND;
+	if (p_ptr->tim_regen) indicators |= IND_REGEN;
 	if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 0)) Send_indicators(Ind, indicators);
 }
 
@@ -976,7 +977,7 @@ static void prt_frame_basic(int Ind) {
 	/* Special */
 	health_redraw(Ind);
 
-	/* Temporary stuff: resistances, melee brand and ESP  */
+	/* Temporary stuff: resistances, melee brand, regen and ESP  */
 	prt_indicators(Ind);
 }
 

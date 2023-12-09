@@ -310,6 +310,9 @@ bool set_tim_regen(int Ind, int v, int p) {
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
+	/* Redraw indicator */
+	p_ptr->redraw2 |= (PR2_INDICATORS);
+
 	/* Handle stuff */
 	handle_stuff(Ind);
 
@@ -353,6 +356,9 @@ bool set_tim_mp2hp(int Ind, int v, int p, int c) {
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Redraw indicator */
+	p_ptr->redraw2 |= (PR2_INDICATORS);
 
 	/* Handle stuff */
 	handle_stuff(Ind);

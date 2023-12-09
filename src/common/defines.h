@@ -2355,8 +2355,11 @@
 #define ROW_TEMP_ESP		25
 #define COL_TEMP_ESP		1
 
+#define ROW_TEMP_REGEN		24
+#define COL_TEMP_REGEN		1
+
 #define ROW_TEMP_TBRAND		24
-#define COL_TEMP_TBRAND		1
+#define COL_TEMP_TBRAND		5
 
 
 /*** Terrain Feature Indexes (see "lib/edit/f_info.txt") ***/
@@ -4809,6 +4812,7 @@
 #define IND_RES_DIVINE  0x00000020L /* Active timed divine resistances (currently it's only mana res) */
 #define IND_ESP         0x00000040L /* Active timed full ESP */
 #define IND_MELEE_BRAND	0x00000080L /* Active timed melee weapon brand */
+#define IND_REGEN	0x00000100L /* Active timed hp regeneration boost */
 
 /*
  * Bit flags for the "p_ptr->window" variable (etc)
