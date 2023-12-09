@@ -3955,20 +3955,20 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 						msg_print(Ind, "\377oYou need to use at least the \377RTEST client 4.9.1\377o or a higher client version to use this bag! Your current client won't work!");
 					break;
 				case TV_CHEMICAL: /* DEMOLITIONIST stuff */
-					(void)auto_stow(Ind, SV_SI_SATCHEL, o_ptr, -1, FALSE);
+					(void)auto_stow(Ind, SV_SI_SATCHEL, o_ptr, -1, FALSE, TRUE);
 					break;
 				case TV_TRAPKIT:
-					(void)auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, -1, FALSE);
+					(void)auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, -1, FALSE, TRUE);
 					break;
 				case TV_ROD:
 					/* Unknown rods cannot be stowed as we don't want to reveal whether they need an activation or not */
 					if (rod_requires_direction(Ind, o_ptr)) break;
 					/* fall through */
 				case TV_STAFF:
-					(void)auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, -1, FALSE);
+					(void)auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, -1, FALSE, TRUE);
 					break;
 				case TV_POTION: case TV_POTION2:
-					(void)auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE);
+					(void)auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, TRUE);
 					break;
 				}
 
@@ -6555,20 +6555,20 @@ void home_purchase(int Ind, int item, int amt) {
 	/* Try to put into a specialized bag automatically */
 	switch (o_ptr->tval) {
 	case TV_CHEMICAL: /* DEMOLITIONIST stuff */
-		(void)auto_stow(Ind, SV_SI_SATCHEL, o_ptr, -1, FALSE);
+		(void)auto_stow(Ind, SV_SI_SATCHEL, o_ptr, -1, FALSE, TRUE);
 		break;
 	case TV_TRAPKIT:
-		(void)auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, -1, FALSE);
+		(void)auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, -1, FALSE, TRUE);
 		break;
 	case TV_ROD:
 		/* Unknown rods cannot be stowed as we don't want to reveal whether they need an activation or not */
 		if (rod_requires_direction(Ind, o_ptr)) break;
 		/* fall through */
 	case TV_STAFF:
-		(void)auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, -1, FALSE);
+		(void)auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, -1, FALSE, TRUE);
 		break;
 	case TV_POTION: case TV_POTION2:
-		(void)auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE);
+		(void)auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, TRUE);
 		break;
 	}
 

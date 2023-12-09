@@ -1542,7 +1542,7 @@ void whats_under_your_feet(int Ind, bool force) {
 /* Try to put a newly acquired item into a specialized bag automatically.
    If the item was from the floor, o_idx must be specified, otherwise it must be -1.
    Returns TRUE if we have to set try_pickup = FALSE in carry() */
-bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one) {
+bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought) {
 	int i, num;
 	object_type *s_ptr, forge_one, *o_ptr_tmp = o_ptr;
 	player_type *p_ptr = Players[Ind];
@@ -1576,7 +1576,8 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 
 		/* Player disabled auto-stow via bag inscription? */
 		if (check_guard_inscription(s_ptr->note, 'A') ||
-		    (check_guard_inscription(s_ptr->note, 'O') && !o_ptr->owner)) {
+		    (check_guard_inscription(s_ptr->note, 'O') && !o_ptr->owner) ||
+		    (check_guard_inscription(s_ptr->note, 'S') && !store_bought)) {
  #ifdef SUBINVEN_LIMIT_GROUP
 			break;
  #endif
@@ -2492,20 +2493,20 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		/* Try to put into a specialized bag automatically */
 		switch (o_ptr->tval) {
 		case TV_CHEMICAL: /* DEMOLITIONIST stuff */
-			if (auto_stow(Ind, SV_SI_SATCHEL, o_ptr, c_ptr->o_idx, pick_one)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
+			if (auto_stow(Ind, SV_SI_SATCHEL, o_ptr, c_ptr->o_idx, pick_one, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
 			break;
 		case TV_TRAPKIT:
-			if (auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, c_ptr->o_idx, pick_one)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
+			if (auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, c_ptr->o_idx, pick_one, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
 			break;
 		case TV_ROD:
 			/* Note that this returns FALSE too if rod is of a flavour yet unknown to the player, covering that case on the fly! :) */
 			if (rod_requires_direction(Ind, o_ptr)) break;
 			/* Fall through */
 		case TV_STAFF:
-			if (auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, c_ptr->o_idx, pick_one)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
+			if (auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, c_ptr->o_idx, pick_one, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
 			break;
 		case TV_POTION: case TV_POTION2:
-			if (auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, c_ptr->o_idx, pick_one)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
+			if (auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, c_ptr->o_idx, pick_one, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
 			break;
 		}
 #endif

@@ -3504,17 +3504,17 @@ void do_cmd_disarm_mon_trap_aux(int Ind, worldpos *wpos, int y, int x) {
 				/* Try to just place it into the inventory, or drop it to the floor if full */
 #ifdef ENABLE_SUBINVEN
 				if (q_ptr->tval == TV_TRAPKIT) {
-					(void)auto_stow(Ind, SV_SI_TRAPKIT_BAG, q_ptr, -1, FALSE);
+					(void)auto_stow(Ind, SV_SI_TRAPKIT_BAG, q_ptr, -1, FALSE, FALSE);
 					/* If we could stow it, we're done with this item */
 					if (!q_ptr->number) continue;
 				}
 				else if (q_ptr->tval == TV_STAFF || (q_ptr->tval == TV_ROD && !rod_requires_direction(Ind, o_ptr))) {
-					(void)auto_stow(Ind, SV_SI_MDEVP_WRAPPING, q_ptr, -1, FALSE);
+					(void)auto_stow(Ind, SV_SI_MDEVP_WRAPPING, q_ptr, -1, FALSE, FALSE);
 					/* If we could stow it, we're done with this item */
 					if (!q_ptr->number) continue;
 				}
 				else if (q_ptr->tval == TV_POTION || q_ptr->tval == TV_POTION2) {
-					(void)auto_stow(Ind, SV_SI_POTION_BELT, q_ptr, -1, FALSE);
+					(void)auto_stow(Ind, SV_SI_POTION_BELT, q_ptr, -1, FALSE, FALSE);
 					/* If we could stow it, we're done with this item */
 					if (!q_ptr->number) continue;
 				}

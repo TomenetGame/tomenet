@@ -655,7 +655,7 @@ extern void py_bash(int Ind, int y, int x);
 extern void py_bash_mon(int Ind, int y, int x);
 extern void py_bash_py(int Ind, int y, int x);
 #ifdef ENABLE_SUBINVEN
-extern bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one);
+extern bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought);
 #endif
 
 /* cmd2.c */

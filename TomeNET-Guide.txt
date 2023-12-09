@@ -5610,6 +5610,7 @@ A few generic commands are always available in any subinventory:
 There are also two inscriptions that can be put onto these bags:
   !A  Do not auto-stow items into this bag.
   !O  Do not auto-stow unowned items (ie new loot) into this bag.
+  !S  Only auto-stow items into this bag when buying from a store.
 
 
 (3.4a) Start-up equipment
