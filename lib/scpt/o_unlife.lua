@@ -239,7 +239,7 @@ OIMBUE = add_spell {
 	["level"] = 	42,
 	["mana"] = 	40,
 	["mana_max"] = 	40,
-	["fail"] = 	-70,
+	["fail"] = 	-80,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			set_melee_brand(Ind, randint(5) + 14 + get_level(Ind, OIMBUE, 69), TBRAND_VAMPIRIC, 10, TRUE, FALSE)
@@ -257,7 +257,7 @@ OWRAITHSTEP = add_spell {
 	["level"] = 	46,
 	["mana"] = 	45,
 	["mana_max"] = 	45,
-	["fail"] = 	-80,
+	["fail"] = 	-85,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			set_tim_wraithstep(Ind, randint(30) + 20 + get_level(Ind, OWRAITHSTEP, 40))
