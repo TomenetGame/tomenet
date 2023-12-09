@@ -5256,8 +5256,10 @@ This line consists of the following icons that may show up:
     Red /          Your weapon is way too heavy for you.
                    You will receive extreme penalties on melee combat.
     Orange \       Your weapon isn't fit for your character (e.g. priest
-                   using edged non-blessed weapons such as swords).
-                   You'll receive a big penalty on hit chance and damage.
+                   using edged non-blessed weapons such as swords, vampires
+                   or hell knights using blessed weapons in turn).
+                   You'll receive a big penalty on hit chance and damage
+                   and an increase to spell casting failure rate.
                    An orange warning message will display:
                    "You do not feel comfortable with your weapon."
     Yellow /       You are using a 1,5-h weapon together with a shield.
