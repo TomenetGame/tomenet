@@ -736,6 +736,8 @@ static void regenmana(int Ind, int percent) {
 	if (p_ptr->martyr) return;
 #endif
 
+	//if (p_ptr->no_mp_regen) return;
+
 	old_cmp = p_ptr->cmp;
 	new_mana = ((s32b)p_ptr->mmp) * percent + PY_REGEN_MNBASE;
 

@@ -12546,13 +12546,14 @@ ANTIMAGIC ('Anti-magic field')
         Your party members are not affected by your anti-magic field.
         Also see "Dark Sword" details in (5.9).
 BLESSED ('It has been blessed by the gods')
-        These weapons resist cursing. Priests can use blessed weapons
+        These weapons resist cursing. Priests can use blessed melee weapons
         without penalties, even if they are not blunt. They will get their
         'Blunt-mastery' skill applied to any blessed weapon, even if it isn't
         actually blunt-type but a sword, axe or polearm instead. This specialty
         about weapon skill only affects priests.
         Blessed weapons will have adverse effects on corrupted (the Maia trait)
-        characters and on characters of vampire race or hell knight class.
+        characters and on characters of vampire race or hell knight class. If
+        they are melee weapons they will increase spell casting failure chance.
         Everyone else can use blessed weapons just the same way as any other
         weapons.
 VAMPIRIC ('It drains life from your foes')
@@ -17877,7 +17878,8 @@ create a character!):
     (radius of 3 or more, artifact lights, or light sources that are blessed,
     evil-slaying or undead-slaying or give off pure white light). Asides from
     light sources aside they fear all items that are blessed or *slay undead*.
-    Any such item will burn them, draining their hit points. Exceptions are
+    Any such item that is adverse to undead will burn them, draining their hit
+    points, or draining their mana if worn on head or hands. Exceptions are
     cursed items, chaotic items and the "Stone of Lore", these are always safe.
     Vampires start with a mummy wrapping, because it can protect them from the
     sunlight. If they are moving on the world surface (meaning not in a dungeon
@@ -18436,8 +18438,9 @@ create a character!):
     either, and some randarts may fail to flip.) See the end of (5.12) for
     details on item-flipping.
     Also similar to how vampires can be affected by items that are adverse to
-    undead, inflicting hit point drain by burning them, hell knights can be
-    affected in the same manner by items that are adverse to demons.
+    undead, inflicting hit point drain by burning them or mana drain if worn
+    on the head or hands, hell knights can be affected in the same manner by
+    items that are adverse to demons.
     Hell Knights have a very high chance to resist the adverse effects of
     encountering an eldritch horror (see (7.3) under 'Saving Throw' for details
     on those).

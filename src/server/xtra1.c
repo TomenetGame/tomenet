@@ -3322,7 +3322,7 @@ void calc_boni(int Ind) {
 	p_ptr->admin_immort = p_ptr->admin_invuln = p_ptr->admin_invinc = FALSE;
 
 	p_ptr->no_heal = FALSE;
-	p_ptr->no_hp_regen = FALSE;
+	p_ptr->no_hp_regen = p_ptr->no_mp_regen = FALSE;
 
 
 	/* Not a limit, but good place maybe */
@@ -4303,16 +4303,20 @@ void calc_boni(int Ind) {
 			if (!(f4 & TR4_FUEL_LITE)) csheet_boni[i-INVEN_WIELD].cb[12] |= CB13_XLITE;
 		}
 
-		/* powerful lights and anti-undead/evil items damage undead */
-		switch (anti_undead(o_ptr, p_ptr)) {
-		case 1: p_ptr->drain_life++; break;
-		case 2: p_ptr->no_hp_regen = TRUE; break;
-		}
-
-		/* powerful lights and anti-demon/evil items damage hell knights and (mimicked) demons */
-		switch (anti_demon(o_ptr, p_ptr)) {
-		case 1: p_ptr->drain_life++; break;
-		case 2: p_ptr->no_hp_regen = TRUE; break;
+		/* powerful lights and anti-undead/evil items damage [mimicked] undead,
+		   while anti-demon/evil items damage hell knights and (mimicked) demons */
+		j = anti_undead(o_ptr, p_ptr);
+		hold = anti_demon(o_ptr, p_ptr);
+		if (hold > j) j = hold;
+		switch (j) {
+		case 1:
+			if (i == INVEN_HEAD || i == INVEN_HANDS) p_ptr->drain_mana++;
+			else p_ptr->drain_life++;
+			break;
+		case 2:
+			if (i == INVEN_HEAD || i == INVEN_HANDS) p_ptr->no_mp_regen = TRUE;
+			else p_ptr->no_hp_regen = TRUE;
+			break;
 		}
 
 		/* Immunity flags */
@@ -6646,6 +6650,15 @@ void calc_boni(int Ind) {
 			p_ptr->drain_life = 1;
 
 			p_ptr->regenerate = TRUE;
+			//csheet_boni[14].cb[5] |= CB6_RRGHP; /* don't display this maybe */
+		}
+	}
+	/* Same hack as bove for no_mp_regen */
+	if (p_ptr->no_mp_regen) {
+		if (!p_ptr->drain_mana) {
+			p_ptr->drain_mana = 1;
+
+			p_ptr->regen_mana = TRUE;
 			//csheet_boni[14].cb[5] |= CB6_RRGHP; /* don't display this maybe */
 		}
 	}

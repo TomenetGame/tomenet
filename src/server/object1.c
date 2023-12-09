@@ -4953,7 +4953,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	object_type forge;
 	bool am_unknown = FALSE;
 #endif
-	int j, am;
+	int j, k, am;
 	u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5 = 0, f6 = 0, esp = 0;
 	FILE *fff;
 	char buf[1024], o_name[ONAME_LEN];
@@ -5826,15 +5826,19 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (o_ptr->name2 == EGO_STORMBRINGER) fprintf(fff, "\377DIt's possessed by mad wrath!\n");
 
 	/* also show anti-undead/demon life drain */
-	switch ((j = anti_undead(o_ptr, pt_ptr))) {
-	case 1: fprintf(fff, "\377oIts power is adverse to undead, draining your health.\n"); break;
-	case 2: //fprintf(fff, "\377oIts power is adverse to undead, preventing your health from regenerating.\n"); break;
-		fprintf(fff, "\377oIts power is adverse to undead, hampering your health regeneration.\n"); break;
-	}
-	if (!j) switch ((j = anti_demon(o_ptr, pt_ptr))) {
-	case 1: fprintf(fff, "\377oIts power is adverse to demons, draining your health.\n"); break;
-	case 2: //fprintf(fff, "\377oIts power is adverse to demons, preventing your health from regenerating.\n"); break;
-		fprintf(fff, "\377oIts power is adverse to demons, hampering your health regeneration.\n"); break;
+	j = anti_undead(o_ptr, pt_ptr);
+	k = anti_demon(o_ptr, pt_ptr);
+	am = wield_slot(Ind, o_ptr); //abuse am
+	am = (am == INVEN_HEAD || am == INVEN_HANDS);
+	if (j >= k) switch (j) {
+		case 1: fprintf(fff, "\377oIts power is adverse to undead, draining your %s.\n", am ? "mana" : "health"); break;
+		case 2: //fprintf(fff, "\377oIts power is adverse to undead, preventing your %s from regenerating.\n", am ? "mana" : "health"); break;
+			fprintf(fff, "\377oIts power is adverse to undead, hampering your %s regeneration.\n", am ? "mana" : "health"); break;
+		}
+	else switch (k) {
+		case 1: fprintf(fff, "\377oIts power is adverse to demons, draining your %s.\n", am ? "mana" : "health"); break;
+		case 2: //fprintf(fff, "\377oIts power is adverse to demons, preventing your %s from regenerating.\n", am ? "mana" : "health"); break;
+			fprintf(fff, "\377oIts power is adverse to demons, hampering your %s regeneration.\n", am ? "mana" : "health"); break;
 	}
 
 	/* magically returning ranged weapon? */
