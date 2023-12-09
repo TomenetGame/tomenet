@@ -4525,7 +4525,7 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff, int 
 			if (k_info[o_ptr->k_idx].flags4 & TR4_COULD2H) fprintf(fff, "\377r    Wielding it two-handedly might make it even more effective.\n");
 			if (p_ptr->heavy_wield && !old_heavy_wield) fprintf(fff, "\377r    Your strength is insufficient to hold it properly.\n");
 			if (p_ptr->icky_wield && !old_icky_wield) {
-				if (p_ptr->bless_blade && (
+				if (p_ptr->blessed_weapon && (
 				    p_ptr->prace == RACE_VAMPIRE
 				    || p_ptr->ptrait == TRAIT_CORRUPTED
 #ifdef ENABLE_CPRIEST

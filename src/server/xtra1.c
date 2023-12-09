@@ -3152,7 +3152,7 @@ void calc_boni(int Ind) {
 	p_ptr->drain_exp = 0;
 	p_ptr->drain_mana = 0;
 	p_ptr->drain_life = 0;
-	p_ptr->bless_blade = FALSE;
+	p_ptr->blessed_weapon = FALSE;
 	p_ptr->xtra_might = 0;
 	p_ptr->impact = FALSE;
 	p_ptr->see_inv = FALSE;
@@ -4243,7 +4243,6 @@ void calc_boni(int Ind) {
 			if (j > p_ptr->tim_invis_power) p_ptr->tim_invis_power = j;
 			csheet_boni[i-INVEN_WIELD].cb[4] |= CB5_RINVS;
 		}
-		if (f3 & TR3_BLESSED) p_ptr->bless_blade = TRUE;
 		if (f3 & TR3_XTRA_MIGHT) { p_ptr->xtra_might++; csheet_boni[i-INVEN_WIELD].migh++; }
 		if (f3 & TR3_SLOW_DIGEST) { p_ptr->slow_digest = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RFOOD; }
 		if (f3 & TR3_REGEN) { p_ptr->regenerate = TRUE; csheet_boni[i-INVEN_WIELD].cb[5] |= CB6_RRGHP; }
@@ -4313,11 +4312,6 @@ void calc_boni(int Ind) {
 		case 1: p_ptr->drain_life++; break;
 		case 2: p_ptr->no_hp_regen = TRUE; break;
 		}
-
-#if 0 /* 0ed: get icky_wield instead */
-		/* BLESSED items are adverse to Corrupted beings in general? */
-		if (p_ptr->ptrait == TRAIT_CORRUPTED && (f3 & TR3_BLESSED)) p_ptr->no_hp_regen++;
-#endif
 
 		/* Immunity flags */
 		if (f2 & TR2_IM_FIRE) { p_ptr->immune_fire = TRUE; csheet_boni[i-INVEN_WIELD].cb[0] |= CB1_IFIRE; }
@@ -4543,6 +4537,12 @@ void calc_boni(int Ind) {
 			if (f1 & TR1_BLOWS) csheet_boni[i-INVEN_WIELD].blow += pval;
 			if (f5 & TR5_CRIT) csheet_boni[i-INVEN_WIELD].crit += pval;
 			if (f1 & TR1_VAMPIRIC) csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RVAMP;
+
+			/* Ultrahack: BLESSED was meant for melee weapons (originally swords), especially for priests.
+			   Now BLESSED can also appear on boomerangs, but we don't want to count those for blessing at this time!
+			   They would just negatively impact spell fail rate, and they have no influence on priest's weapon-usability either.
+			   So here, only for wield/altwield slots: */
+			if (f3 & TR3_BLESSED) p_ptr->blessed_weapon = TRUE;
 			continue;
 		}
 
@@ -6000,15 +6000,15 @@ void calc_boni(int Ind) {
 
 	/* Priest weapon penalty for non-blessed edged weapons (assumes priests cannot dual-wield) */
 	if (p_ptr->inventory[INVEN_WIELD].k_idx && (
-	    (p_ptr->pclass == CLASS_PRIEST && !p_ptr->bless_blade &&
+	    (p_ptr->pclass == CLASS_PRIEST && !p_ptr->blessed_weapon &&
 	    (o_ptr->tval == TV_SWORD || o_ptr->tval == TV_POLEARM || o_ptr->tval == TV_AXE))
-	    || (p_ptr->prace == RACE_VAMPIRE && p_ptr->bless_blade)
-	    || (p_ptr->ptrait == TRAIT_CORRUPTED && p_ptr->bless_blade)
+	    || (p_ptr->prace == RACE_VAMPIRE && p_ptr->blessed_weapon)
+	    || (p_ptr->ptrait == TRAIT_CORRUPTED && p_ptr->blessed_weapon)
 #ifdef ENABLE_CPRIEST
-	    || (p_ptr->pclass == CLASS_CPRIEST && p_ptr->bless_blade)
+	    || (p_ptr->pclass == CLASS_CPRIEST && p_ptr->blessed_weapon)
 #endif
 #ifdef ENABLE_HELLKNIGHT
-	    || (p_ptr->pclass == CLASS_HELLKNIGHT && p_ptr->bless_blade)
+	    || (p_ptr->pclass == CLASS_HELLKNIGHT && p_ptr->blessed_weapon)
 #endif
 	    )) {
 		/* Reduce the real bonuses */

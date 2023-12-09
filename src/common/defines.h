@@ -2999,7 +2999,7 @@
 #define EGO_ANNOYANCE		64
 #define EGO_HA			65
 #define EGO_DF			66
-#define EGO_BLESS_BLADE		67
+#define EGO_BLESSED_WEAPON	67
 #define EGO_LIFE		68
 #define EGO_WEST		69
 #define EGO_ATTACKS		70

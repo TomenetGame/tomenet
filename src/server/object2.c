@@ -4867,9 +4867,9 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 				if (i == EGO_CHAOTIC) continue;
 				break;
 			case EGO_MORGUL:
-				if (i == EGO_BLESS_BLADE) continue;
+				if (i == EGO_BLESSED_WEAPON) continue;
 				break;
-			case EGO_BLESS_BLADE:
+			case EGO_BLESSED_WEAPON:
 				if (i == EGO_MORGUL) continue;
 				break;
 			}

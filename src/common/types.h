@@ -3223,7 +3223,7 @@ struct player_type {
 	bool hold_life;			/* Resist life draining */
 	u32b telepathy;			/* Telepathy */
 	bool slow_digest;		/* Slower digestion */
-	bool bless_blade;		/* Blessed blade */
+	bool blessed_weapon;		/* Blessed melee weapon */
 	byte xtra_might;		/* Extra might bow */
 	bool impact;			/* Earthquake blows */
 	bool auto_id;			/* Pickup = Id */
