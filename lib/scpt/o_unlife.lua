@@ -242,10 +242,10 @@ OIMBUE = add_spell {
 	["fail"] = 	-70,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			set_melee_brand(Ind, randint(10) + 10 + get_level(Ind, OIMBUE, 25), TBRAND_VAMPIRIC, 10, TRUE, FALSE)
+			set_melee_brand(Ind, randint(5) + 14 + get_level(Ind, OIMBUE, 69), TBRAND_VAMPIRIC, 10, TRUE, FALSE)
 			end,
 	["info"] = 	function()
-			return "dur "..(10 + get_level(Ind, OIMBUE, 25)).."+d10"
+			return "dur "..(14 + get_level(Ind, OIMBUE, 69)).."+d5"
 			end,
 	["desc"] = 	{ "Temporarily imbue your melee attacks with vampiric power.", }
 }
