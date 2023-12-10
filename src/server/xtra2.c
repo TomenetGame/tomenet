@@ -2266,10 +2266,14 @@ bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2) {
 
 /*
  * Set "p_ptr->blessed", notice observable changes
+ * 'own': FALSE if from external source aka scroll; TRUE if via Holy School prayer that we cast.
+ *        own spells will work even with evil/undead mimic forms.
  */
-bool set_blessed(int Ind, int v) {
+bool set_blessed(int Ind, int v, bool own) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
+
+	if (!own && (p_ptr->suscep_good || p_ptr->suscep_life)) return(FALSE);
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -2295,6 +2299,7 @@ bool set_blessed(int Ind, int v) {
 
 	/* Use the value */
 	p_ptr->blessed = v;
+	p_ptr->blessed_own = own;
 
 	/* Nothing to notice */
 	if (!notice) return(FALSE);
@@ -2556,6 +2561,8 @@ bool set_melee_sprint(int Ind, int v) {
 bool set_protevil(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
+
+	if (!own && p_ptr->suscep_good) return(FALSE);
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;

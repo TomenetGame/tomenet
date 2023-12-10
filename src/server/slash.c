@@ -8373,7 +8373,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(j, "\377ySomething invisible is cheering for you!");
 				msg_format_near(j, "\377yYou hear something invisible cheering for %s!", Players[j]->name);
 				Players[j]->blessed_power = 10;
-				set_blessed(j, randint(5) + 15);
+				set_blessed(j, randint(5) + 15, TRUE);
 				return;
 			}
 			else if (prefix(messagelc, "/aapplaud")) {

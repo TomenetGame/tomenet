@@ -5654,7 +5654,7 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Blessed */
 	if (p_ptr->blessed)
-		(void)set_blessed(Ind, p_ptr->blessed - 1);
+		(void)set_blessed(Ind, p_ptr->blessed - 1, p_ptr->blessed_own);
 
 	/* Shield */
 	if (p_ptr->shield)

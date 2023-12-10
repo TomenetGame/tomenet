@@ -16,7 +16,7 @@ HBLESSING_I = add_spell {
 				local dur
 				player.blessed_power = 8
 				dur = 9 + randint(get_level(Ind, HBLESSING_I, 25))
-				set_blessed(Ind, dur)
+				set_blessed(Ind, dur, TRUE)
 				fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, 2, " recites a blessing.")
 			end
 	end,
@@ -46,7 +46,7 @@ HBLESSING_II = add_spell {
 				local dur
 				player.blessed_power = 14
 				dur = 17 + randint(get_level(Ind, HBLESSING_I, 25))
-				set_blessed(Ind, dur)
+				set_blessed(Ind, dur, TRUE)
 				fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, 2, " chants.")
 			end
 	end,
@@ -75,7 +75,7 @@ HBLESSING_III = add_spell {
 				local dur
 				player.blessed_power = 20
 				dur = 32 + randint(get_level(Ind, HBLESSING_I, 25))
-				set_blessed(Ind, dur)
+				set_blessed(Ind, dur, TRUE)
 				fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, 2, " speaks a holy prayer.")
 			end
 	end,

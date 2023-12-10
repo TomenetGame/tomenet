@@ -6772,7 +6772,7 @@ void calc_boni(int Ind) {
 
 	/* Stop any contradicting buffs on form change */
 	if (p_ptr->suscep_good || p_ptr->suscep_life) {
-		if (p_ptr->blessed) set_blessed(Ind, 0);
+		if (p_ptr->blessed && !p_ptr->blessed_own) set_blessed(Ind, 0, FALSE);
 		if (p_ptr->protevil) set_protevil(Ind, 0);
 	}
 

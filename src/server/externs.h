@@ -2209,7 +2209,7 @@ extern bool set_tim_mp2hp(int Ind, int v, int p, int c);
 extern bool set_tim_ffall(int Ind, int v);
 extern bool set_tim_lev(int Ind, int v);
 extern bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2);
-extern bool set_blessed(int Ind, int v);
+extern bool set_blessed(int Ind, int v, bool own);
 extern bool set_dispersion(int Ind, byte v);
 extern bool set_res_fear(int Ind, int v);
 extern bool set_hero(int Ind, int v);

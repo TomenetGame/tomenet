@@ -1245,7 +1245,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			do_xtra_stats(Ind, 4, 8, 20 + rand_int(5));
 			set_shero(Ind, 20); /* -AC cancelled by blessing below */
 			p_ptr->blessed_power = 35;
-			set_blessed(Ind, 20);
+			set_blessed(Ind, 20, FALSE);
 			break;
 		}
 	}
@@ -2874,7 +2874,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				take_hit(Ind, dam, o_ptr ? "a Scroll of Blessing" : "a blessing", 0);
 			} else if (p_ptr->blessed_power <= 6) {
 				p_ptr->blessed_power = 6;
-				if (set_blessed(Ind, randint(12) + 6)) ident = TRUE; /* removed stacking */
+				if (set_blessed(Ind, randint(12) + 6, FALSE)) ident = TRUE; /* removed stacking */
 			}
 			break;
 
@@ -2886,7 +2886,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				take_hit(Ind, dam, o_ptr ? "a Scroll of Holy Chant" : "a chant", 0);
 			} else if (p_ptr->blessed_power <= 10) {
 				p_ptr->blessed_power = 10;
-				if (set_blessed(Ind, randint(24) + 12)) ident = TRUE; /* removed stacking */
+				if (set_blessed(Ind, randint(24) + 12), FALSE) ident = TRUE; /* removed stacking */
 			}
 			break;
 
@@ -2898,7 +2898,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				take_hit(Ind, dam, o_ptr ? "a Scroll of Holy Prayer" : "a holy prayer", 0);
 			} else if (p_ptr->blessed_power <= 16) {
 				p_ptr->blessed_power = 16;
-				if (set_blessed(Ind, randint(48) + 24)) ident = TRUE; /* removed stacking */
+				if (set_blessed(Ind, randint(48) + 24), FALSE) ident = TRUE; /* removed stacking */
 			}
 			break;
 
@@ -2938,8 +2938,8 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 
 		case SV_SCROLL_DISPEL_UNDEAD:
 			if (dispel_undead(Ind, 100 + p_ptr->lev * 8)) ident = TRUE;
-			//if (p_ptr->suscep_life)
-			if (p_ptr->prace == RACE_VAMPIRE) {
+			if (p_ptr->suscep_life) {
+			//if (p_ptr->prace == RACE_VAMPIRE) {
 				dam = damroll(30, 3);
 				msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, o_ptr ? "a Scroll of Dispel Undead" : "undead-dispelling magic", 0);
@@ -6404,7 +6404,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			msg_print(Ind, "Your armour glows in many colours...");
 			(void)set_shero(Ind, randint(50) + 50); /* removed stacking */
 			//p_ptr->blessed_power = 20;
-			//(void)set_blessed(Ind, randint(50) + 50); /* removed stacking */
+			//(void)set_blessed(Ind, randint(50) + 50, FALSE); /* removed stacking */
 			(void)set_oppose_acid(Ind, randint(50) + 50); /* removed stacking */
 			(void)set_oppose_elec(Ind, randint(50) + 50);
 			(void)set_oppose_fire(Ind, randint(50) + 50);
@@ -6934,7 +6934,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			} else if (p_ptr->blessed_power <= 16) {
 				msg_print(Ind, "Your gloves glow golden...");
 				p_ptr->blessed_power = 16;
-				set_blessed(Ind, randint(48) + 24); /* removed stacking */
+				set_blessed(Ind, randint(48) + 24, FALSE); /* removed stacking */
 				o_ptr->recharging = 150 + randint(100) - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			} else {
 				msg_print(Ind, "Your gloves shimmer..");
@@ -7461,7 +7461,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			msg_print(Ind, "Your armour glows in many colours...");
 			(void)set_shero(Ind, randint(50) + 50); /* removed stacking */
 			//p_ptr->blessed_power = 16;
-			//(void)set_blessed(Ind, randint(50) + 50); /* removed stacking */
+			//(void)set_blessed(Ind, randint(50) + 50, FALSE); /* removed stacking */
 			(void)set_oppose_acid(Ind, randint(50) + 50); /* removed stacking */
 			(void)set_oppose_elec(Ind, randint(50) + 50);
 			(void)set_oppose_fire(Ind, randint(50) + 50);
@@ -7870,7 +7870,7 @@ bool unmagic(int Ind) {
 		set_tim_wraith(Ind, 0) +
 		set_fast(Ind, 0, 0) +
 		set_shield(Ind, 0, 0, SHIELD_NONE, 0, 0) +
-		set_blessed(Ind, 0) +
+		set_blessed(Ind, 0, FALSE) +
 		set_dispersion(Ind, 0) +
 		set_hero(Ind, 0) +
 		set_shero(Ind, 0) +

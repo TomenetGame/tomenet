@@ -11033,7 +11033,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (dam < 18) p_ptr->blessed_power = 6;
 		else if (dam < 33) p_ptr->blessed_power = 10;
 		else p_ptr->blessed_power = 16;
-		(void)set_blessed(Ind, dam);
+		(void)set_blessed(Ind, dam, FALSE);
 		dam = 0;
 		break;
 

@@ -698,7 +698,7 @@ extern bool set_image(int Ind, int v);
 extern bool set_fast(int Ind, int v);
 extern bool set_slow(int Ind, int v);
 extern bool set_shield(int Ind, int v);
-extern bool set_blessed(int Ind, int v);
+extern bool set_blessed(int Ind, int v, bool own);
 extern bool set_hero(int Ind, int v);
 extern bool set_shero(int Ind, int v);
 extern bool set_protevil(int Ind, int v);
