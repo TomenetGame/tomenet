@@ -196,7 +196,7 @@ HPROTEVIL = add_spell {
 	["fail"] = 	20,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			set_protevil(Ind, 20 + randint(10) + get_level(Ind, HPROTEVIL, 50))
+			set_protevil(Ind, 20 + randint(10) + get_level(Ind, HPROTEVIL, 50), TRUE)
 	end,
 	["info"] = 	function()
 			return "dur "..20 + get_level(Ind, HPROTEVIL, 50)..".."..30 + get_level(Ind, HPROTEVIL, 50)

@@ -701,7 +701,7 @@ extern bool set_shield(int Ind, int v);
 extern bool set_blessed(int Ind, int v, bool own);
 extern bool set_hero(int Ind, int v);
 extern bool set_shero(int Ind, int v);
-extern bool set_protevil(int Ind, int v);
+extern bool set_protevil(int Ind, int v, bool own);
 extern bool set_zeal(int Ind, int p, int v);
 extern bool set_martyr(int Ind, int v);
 extern bool set_invuln(int Ind, int v);

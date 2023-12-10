@@ -2557,12 +2557,18 @@ bool set_melee_sprint(int Ind, int v) {
 
 /*
  * Set "p_ptr->protevil", notice observable changes
+ * 'own': FALSE if from external source aka scroll; TRUE if via Holy School prayer that we cast.
+ *        own spells will work even with evil/undead mimic forms.
  */
-bool set_protevil(int Ind, int v) {
+bool set_protevil(int Ind, int v, bool own) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
+#if 0	/* Actually, after some reading work, it seems it might be allowed! See SV_SCROLL_PROTECTION_FROM_EVIL notes. - C. Blue */
+	if (p_ptr->suscep_good) return(FALSE); /* Never work, even if cast by ourselves via prayer */
+#else
 	if (!own && p_ptr->suscep_good) return(FALSE);
+#endif
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -2585,6 +2591,7 @@ bool set_protevil(int Ind, int v) {
 
 	/* Use the value */
 	p_ptr->protevil = v;
+	p_ptr->protevil_own = own;
 
 	/* Nothing to notice */
 	if (!notice) return(FALSE);

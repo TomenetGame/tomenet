@@ -2886,7 +2886,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				take_hit(Ind, dam, o_ptr ? "a Scroll of Holy Chant" : "a chant", 0);
 			} else if (p_ptr->blessed_power <= 10) {
 				p_ptr->blessed_power = 10;
-				if (set_blessed(Ind, randint(24) + 12), FALSE) ident = TRUE; /* removed stacking */
+				if (set_blessed(Ind, randint(24) + 12, FALSE)) ident = TRUE; /* removed stacking */
 			}
 			break;
 
@@ -2898,7 +2898,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				take_hit(Ind, dam, o_ptr ? "a Scroll of Holy Prayer" : "a holy prayer", 0);
 			} else if (p_ptr->blessed_power <= 16) {
 				p_ptr->blessed_power = 16;
-				if (set_blessed(Ind, randint(48) + 24), FALSE) ident = TRUE; /* removed stacking */
+				if (set_blessed(Ind, randint(48) + 24, FALSE)) ident = TRUE; /* removed stacking */
 			}
 			break;
 
@@ -2911,13 +2911,18 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			break;
 
 		case SV_SCROLL_PROTECTION_FROM_EVIL:
+			/* C. Blue: In theory, it may be allowed for an evil creature to utilize the protective aura against other evil.
+				    Debatable, but the spell is actually allowed for mimics in evil/undead form for now. Just the scroll isn't.
+				    Also maybe very significant (from an interwebs pro D&D discussion, omitting source =p):
+				    "Any creature with an evil alignment, or the evil subtype regardless of alignment (such as a redeemed succubus), is warded against by the protection from evil spell."
+				    Which could indicate, that a mimic using 'just' an evil form should in turn not be affected negatively. */
 			if (p_ptr->suscep_good || p_ptr->suscep_life) {
 			//if (p_ptr->prace == RACE_VAMPIRE) {
 				dam = damroll(10, 3);
 				msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, o_ptr ? "a Scroll of Protection from Evil" : "evil-repelling magic", 0);
 			} else {
-				if (set_protevil(Ind, randint(15) + 30)) ident = TRUE; /* removed stacking */
+				if (set_protevil(Ind, randint(15) + 30, FALSE)) ident = TRUE; /* removed stacking */
 			}
 			break;
 
@@ -3629,14 +3634,15 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 
 	case SV_STAFF_HOLINESS:
 		if (dispel_undead(Ind, 200 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
-		if (p_ptr->suscep_life) {
+		//if (p_ptr->suscep_life) {
+		if (p_ptr->suscep_good || p_ptr->suscep_life) { /* Added suscep_good check for the set_protevil() effect, also see SV_SCROLL_PROTECTION_FROM_EVIL notes! */
 			dam = damroll(50, 3);
 			msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
 			take_hit(Ind, dam, msg ? "a staff of holiness" : "holy aura", 0);
 			ident = TRUE;
 		} else {
 			k = get_skill_scale(p_ptr, SKILL_DEVICE, 25);
-			if (set_protevil(Ind, randint(15) + 30 + k)) ident = TRUE; /* removed stacking */
+			if (set_protevil(Ind, randint(15) + 30 + k, FALSE)) ident = TRUE; /* removed stacking */
 			if (set_afraid(Ind, 0)) ident = TRUE;
 			/* Uh, this stuff, really? Rather set un-confused maybe. */
 			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
@@ -6454,12 +6460,12 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			break;
 		case ART_CARLAMMAS:
 			msg_print(Ind, "The amulet lets out a shrill wail...");
-			if (p_ptr->suscep_good) {
+			if (p_ptr->suscep_good) { /* No dispel, just PfE, actually. See SV_SCROLL_PROTECTION_FROM_EVIL notes, might be debatable. */
 				dam = damroll(10, 3);
 				msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, "The Amulet of Carlammas", 0);
 			} else {
-				(void)set_protevil(Ind, randint(15) + 30); /* removed stacking */
+				(void)set_protevil(Ind, randint(15) + 30, FALSE); /* removed stacking */
 			}
 			o_ptr->recharging = randint(125) + 225 - get_skill_scale(p_ptr, SKILL_DEVICE, 200);
 			break;
@@ -6607,12 +6613,12 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			o_ptr->recharging = randint(10) + 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
 			break;
 		case ART_HIMRING:
-			if (p_ptr->suscep_good) {
+			if (p_ptr->suscep_good) { /* No dispel, just PfE, actually. See SV_SCROLL_PROTECTION_FROM_EVIL notes, might be debatable. */
 				dam = damroll(10, 3);
 				msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, "The Hard Leather Armour of Himring", 0);
 			} else {
-				(void)set_protevil(Ind, randint(15) + 30); /* removed stacking */
+				(void)set_protevil(Ind, randint(15) + 30, FALSE); /* removed stacking */
 			}
 			o_ptr->recharging = randint(125) + 225 - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
 			break;
@@ -7875,7 +7881,7 @@ bool unmagic(int Ind) {
 		set_hero(Ind, 0) +
 		set_shero(Ind, 0) +
 		set_fury(Ind, 0) +
-		set_protevil(Ind, 0) +
+		set_protevil(Ind, 0, FALSE) +
 		set_invuln(Ind, 0) +
 		set_tim_invis(Ind, 0) +
 		set_tim_infra(Ind, 0) +

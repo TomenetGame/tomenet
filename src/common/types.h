@@ -3008,6 +3008,7 @@ struct player_type {
 	s16b focus_val;
 
 	s16b protevil;			/* Timed -- Protection */
+	bool protevil_own;
 	s16b zeal;			/* timed EA bonus */
 	s16b zeal_power;
 	byte hate_prolong;		/* For dark Zeal version 'Boundless Hate', feedback with Traumaturgy */
@@ -3036,6 +3037,7 @@ struct player_type {
 	s16b tim_regen_cost;		/* Timed extra regen power MP cost (mp2hp spell only) */
 	s16b blessed;			/* Timed -- Blessed */
 	s16b blessed_power;		/* Timed -- Blessed */
+	bool blessed_own;		/* Our own spell vs external source */
 	s16b tim_invis;			/* Timed -- See Invisible */
 	s16b tim_infra;			/* Timed -- Infra Vision */
 	s16b tim_wraith;		/* Timed -- Wraithform */

@@ -5570,7 +5570,7 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Protection from evil */
 	if (p_ptr->protevil)
-		(void)set_protevil(Ind, p_ptr->protevil - minus_magic);
+		(void)set_protevil(Ind, p_ptr->protevil - minus_magic, p_ptr->protevil_own);
 
 	/* Holy Zeal - EA bonus */
 	if (p_ptr->zeal) {
