@@ -1987,7 +1987,9 @@ static bool rd_extra(int Ind) {
 	rd_s16b(&p_ptr->stun);
 	rd_s16b(&p_ptr->poisoned);
 	rd_s16b(&p_ptr->image);
-	rd_s16b(&p_ptr->protevil);
+	rd_s16b(&tmp16s);
+	p_ptr->protevil = tmp16s % 10000;
+	p_ptr->protevil_own = tmp16s / 10000;
 	rd_s16b(&p_ptr->invuln);
 	rd_s16b(&p_ptr->hero);
 	rd_s16b(&p_ptr->shero);
@@ -2008,7 +2010,10 @@ static bool rd_extra(int Ind) {
 		rd_s16b(&p_ptr->tim_regen_pow);
 		if (!older_than(4, 9, 7)) rd_s16b(&p_ptr->tim_regen_cost);
 	}
-	rd_s16b(&p_ptr->blessed);
+	rd_s16b(&tmp16s);
+	p_ptr->blessed = tmp16s % 100;
+	p_ptr->blessed_power = (tmp16s % 10000) / 100;
+	p_ptr->blessed_own = (tmp16s / 10000);
 	rd_s16b(&p_ptr->tim_invis);
 	rd_byte(&tmp8u);
 	p_ptr->go_level_top = tmp8u; //ENABLE_GO_GAME
