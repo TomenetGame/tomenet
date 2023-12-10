@@ -3844,7 +3844,8 @@ bool do_divine_xtra_res(int Ind, int v) {
 #endif
 
 /*
- * Set "p_ptr->tim_deflect", notice observable changes
+ * Set "p_ptr->tim_deflect", notice observable changes  --  currently unused
+ * This just grants REFLECTION flag.
  */
 bool set_tim_deflect(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
