@@ -3003,6 +3003,7 @@ struct player_type {
 	byte xtrastat_tim;		/* timed temp +stats */
 	byte xtrastat_pow;		/* power */
 	s16b xtrastat_which;		/* which */
+	bool xtrastat_demonic;
 
 	s16b focus_time;		/* focus */
 	s16b focus_val;

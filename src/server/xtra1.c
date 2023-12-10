@@ -6779,6 +6779,7 @@ void calc_boni(int Ind) {
 		if (p_ptr->blessed && !p_ptr->blessed_own) set_blessed(Ind, 0, FALSE);
 		if (p_ptr->protevil && !p_ptr->protevil_own) set_protevil(Ind, 0, FALSE);
 	}
+	if (p_ptr->suscep_evil && (p_ptr->xtrastat_demonic)) do_xtra_stats(Ind, 0, 0, 0, FALSE);
 	if (old_suscep_good != p_ptr->suscep_good) {
 		if (get_skill(p_ptr, SKILL_HOFFENSE) >= 50) {
 			if (p_ptr->suscep_good) msg_print(Ind, "\375\377yYour intrinsic evil-slaying effect is inactive while in evil form.");

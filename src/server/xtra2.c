@@ -1205,7 +1205,7 @@ bool set_tim_manashield(int Ind, int v) {
 }
 
 /*
- * Set "p_ptr->tim_traps", notice observable changes
+ * Set "p_ptr->tim_traps", notice observable changes -- currently unused!
  */
 bool set_tim_traps(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
@@ -4008,8 +4008,9 @@ bool set_sh_elec_tim(int Ind, int v) {
    Cannot coexist with 'reactive shield' magic though;
    however, the only currently available spell of that sort is Fiery Shield.
    Currently unused. */
-void set_shroud(int Ind, int v, int p) {
+bool set_shroud(int Ind, int v, int p) {
 	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -4022,7 +4023,7 @@ void set_shroud(int Ind, int v, int p) {
 			p_ptr->shroud_power = p;
 
 			p_ptr->unlit_grid = no_real_lite(Ind);
-			if (p_ptr->unlit_grid) calc_boni(Ind);
+			if (p_ptr->unlit_grid) notice = TRUE;
 		} else {
 			bool old_unlit_grid = p_ptr->unlit_grid;
 
@@ -4030,12 +4031,28 @@ void set_shroud(int Ind, int v, int p) {
 			p_ptr->shroud_power = p;
 
 			p_ptr->unlit_grid = no_real_lite(Ind);
-			if (p_ptr->unlit_grid != old_unlit_grid) calc_boni(Ind);
+			if (p_ptr->unlit_grid != old_unlit_grid) notice = TRUE;
 		}
 	} else {
-		p_ptr->shrouded = 0;
-		p_ptr->shroud_power = 0;
+		if (p_ptr->shrouded) {
+			p_ptr->shrouded = 0;
+			p_ptr->shroud_power = 0;
+
+			p_ptr->unlit_grid = no_real_lite(Ind);
+			if (p_ptr->unlit_grid) notice = TRUE;
+		}
 	}
+
+	/* Nothing to notice */
+	if (!notice) return(FALSE);
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+	/* Recalculate boni */
+	p_ptr->update |= (PU_BONUS);
+	/* Handle stuff */
+	handle_stuff(Ind);
+	/* Result */
+	return(TRUE);
 }
 
 

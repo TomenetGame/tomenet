@@ -11267,8 +11267,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		dam = 0;
 		break;
 
-	case GF_EXTRA_STATS: //unused
-		do_xtra_stats(Ind, dam / 100, dam % 100, 10 + rand_int(5) + (dam % 100) * 2);
+	case GF_EXTRA_STATS: //unused - +n*100 = encode stats to raise, +1000 = encode 'demonic' source, +i = value by how much to increase; duration is derived from 'i'.
+		do_xtra_stats(Ind, (dam % 1000) / 100, dam % 100, 10 + rand_int(5) + (dam % 100) * 2, dam % 1000);
 		dam = 0;
 		break;
 

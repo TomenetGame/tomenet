@@ -775,7 +775,7 @@ extern void do_cmd_cast_aux(int Ind, int dir);
 extern void do_cmd_sorc(int Ind, int book, int spell);
 extern void do_cmd_sorc_aux(int Ind, int dir);
 extern bool mimic_power_hindered(int Ind);
-extern void do_mimic_change(int Ind, int r_idx, bool force);
+extern bool do_mimic_change(int Ind, int r_idx, bool force);
 extern void do_mimic_power_aux(int Ind, int dir);
 extern void do_cmd_mimic(int Ind, int spell, int dir);/*w0t0w*/
 extern void do_cmd_pray(int Ind, int book, int spell);
@@ -1836,7 +1836,7 @@ extern bool create_garden(int Ind, int level);
 extern bool do_banish_animals(int Ind, int chance);
 extern bool do_banish_undead(int Ind, int chance);
 extern bool do_banish_dragons(int Ind, int chance);
-extern bool do_xtra_stats(int Ind, int s, int p, int v);
+extern bool do_xtra_stats(int Ind, int s, int p, int v, bool demonic);
 extern bool do_focus(int Ind, int p, int v);
 
 extern void divine_vengeance(int Ind, int power);
@@ -2188,7 +2188,7 @@ extern bool set_mimic(int Ind, int v, int p);
 extern bool set_tim_traps(int Ind, int v);
 extern bool set_tim_manashield(int Ind, int v);
 extern bool set_invis(int Ind, int v, int p);
-extern void set_shroud(int Ind, int v, int p);
+extern bool set_shroud(int Ind, int v, int p);
 extern bool set_fury(int Ind, int v);
 extern bool set_tim_meditation(int Ind, int v);
 extern bool set_tim_wraith(int Ind, int v);

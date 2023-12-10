@@ -5500,11 +5500,11 @@ static bool process_player_end_aux(int Ind) {
 		(void)set_blind(Ind, p_ptr->blind - adjust);
 	}
 
-	/* Times see-invisible */
+	/* Timed see-invisible */
 	if (p_ptr->tim_invis)
 		(void)set_tim_invis(Ind, p_ptr->tim_invis - minus_magic);
 
-	/* Times invisibility */
+	/* Timed invisibility */
 	if (p_ptr->tim_invisibility) {
 		if (p_ptr->aggravate) {
 			msg_print(Ind, "Your invisibility is broken by your aggravation.");
@@ -5566,7 +5566,7 @@ static bool process_player_end_aux(int Ind) {
 
 	/* xtra stats? - the_sandman */
 	if (p_ptr->xtrastat_tim)
-		(void)do_xtra_stats(Ind, p_ptr->xtrastat_which, p_ptr->xtrastat_pow, p_ptr->xtrastat_tim - minus_magic);
+		(void)do_xtra_stats(Ind, p_ptr->xtrastat_which, p_ptr->xtrastat_pow, p_ptr->xtrastat_tim - minus_magic, p_ptr->xtrastat_demonic);
 
 	/* Protection from evil */
 	if (p_ptr->protevil)

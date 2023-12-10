@@ -463,9 +463,11 @@ struct player_type
 	s16b stun;			/* Timed -- Stun */
 
 	s16b xtrastat_tim;		/* Timed temp +stats */
+	bool xtrastat_demonic;
 	s16b focus_time;		/* Timed temp +spr */
 
 	s16b protevil;			/* Timed -- Protection */
+	bool protevil_own;
 	s16b zeal;
 	s16b zeal_power;
 	s16b martyr;
@@ -481,6 +483,7 @@ struct player_type
 	s16b tim_regen_cost;		/* Timed extra regen MP cost (only for mp2hp spell) */
 	s16b blessed;			/* Timed -- Blessed */
 	s16b blessed_power;
+	bool blessed_own;
 	byte dispersion;
 	s16b tim_invis;			/* Timed -- See Invisible */
 	s16b tim_infra;			/* Timed -- Infra Vision */
@@ -991,7 +994,7 @@ struct player_trait
 };
 extern player_trait trait_info[MAX_TRAIT];
 
-extern void do_mimic_change(int Ind, int r_idx, bool force);
+extern bool do_mimic_change(int Ind, int r_idx, bool force);
 extern void shape_Maia_skills(int Ind, bool live);
 extern void gain_exp(int Ind, int amount);
 

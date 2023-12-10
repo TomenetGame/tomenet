@@ -1242,7 +1242,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 		case SV_POTION2_AMBER:
 			ident = TRUE;
 			msg_print(Ind, "Your muscles bulge, and your skin turns to amber!");
-			do_xtra_stats(Ind, 4, 8, 20 + rand_int(5));
+			do_xtra_stats(Ind, 4, 8, 20 + rand_int(5), FALSE);
 			set_shero(Ind, 20); /* -AC cancelled by blessing below */
 			p_ptr->blessed_power = 35;
 			set_blessed(Ind, 20, FALSE);
@@ -7858,23 +7858,25 @@ bool unmagic(int Ind) {
 		set_adrenaline(Ind, 0) +
 		set_biofeedback(Ind, 0) +
 		set_tim_esp(Ind, 0) +
-		set_st_anchor(Ind, 0) +
+		//set_st_anchor(Ind, 0) +  --external force, much like rune of protection for set_stopped()
 		set_prob_travel(Ind, 0) +
-		set_ammo_brand(Ind, 0, p_ptr->ammo_brand_t, 0) +
+		//set_ammo_brand(Ind, 0, p_ptr->ammo_brand_t, 0) +   --considered external effect for now
+		//set_melee_brand(Ind, 0, p_ptr->melee_brand_t, 0, FALSE, FALSE) +   --considered external effect for now
 		set_nimbus(Ind, 0, 0, 0) +
-#if 0
-		set_mimic(Ind, 0, 0) +
-#endif
-#if 0
-		(p_ptr->body_monster) +
-	if (p_ptr->tim_mimic) do_mimic_change(Ind, 0, TRUE)
-#endif
+		((p_ptr->tim_mimic && p_ptr->body_monster == p_ptr->tim_mimic_what) ? do_mimic_change(Ind, 0, TRUE) : 0) +
 		set_tim_manashield(Ind, 0) +
-		set_tim_traps(Ind, 0) +
+		set_tim_traps(Ind, 0) + //unused
 		set_invis(Ind, 0, 0) +
 		set_tim_meditation(Ind, 0) +
 		set_tim_wraith(Ind, 0) +
 		set_fast(Ind, 0, 0) +
+		set_slow(Ind, 0) +
+		//set_afraid(Ind, 0) -- fear isn't considered magical for this purpose ^^
+		//set_confused(Ind, 0) -- neither is confusion
+		//set_blind(Ind, 0) -- nor blindness
+		//set_image(Ind, 0) -- nor hallucinations
+		set_paralyzed(Ind, 0) + //..but let paralyzation be affected, for off-chance of odd turnarounds! oO
+		//set_stopped(Ind, 0) + -- no, it's a rune of protection that locks us down, not an internal effect
 		set_shield(Ind, 0, 0, SHIELD_NONE, 0, 0) +
 		set_blessed(Ind, 0, FALSE) +
 		set_dispersion(Ind, 0) +
@@ -7902,9 +7904,19 @@ bool unmagic(int Ind) {
 		set_savingthrow(Ind, 0) +
 		set_spirit_shield(Ind, 0, 0) +
 #endif
-		set_tim_deflect(Ind, 0)
+		set_tim_deflect(Ind, 0) +
+		set_tim_ffall(Ind, 0) +
+		set_tim_lev(Ind, 0) +
+		set_tim_regen(Ind, 0, 0) +
+		set_tim_thunder(Ind, 0, 0, 0) +
+		set_res_fear(Ind, 0) +
+		do_focus(Ind, 0, 0) +
+		do_xtra_stats(Ind, 0, 0, 0, FALSE) +
+		do_divine_xtra_res(Ind, 0) +
+		do_divine_hp(Ind, 0, 0) +
+		do_divine_crit(Ind, 0, 0) +
+		set_shroud(Ind, 0, 0)
 	) ident = TRUE;
-	set_shroud(Ind, 0, 0); /* (this function is type void) */
 
 	if (p_ptr->word_recall) ident |= set_recall_timer(Ind, 0);
 

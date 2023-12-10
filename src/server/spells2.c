@@ -430,9 +430,14 @@ bool do_focus(int Ind, int p, int v) {
  * At the moment it is +1 for every 7.
  * Druidry. - the_sandman
  */
-bool do_xtra_stats(int Ind, int s, int p, int v) {
+bool do_xtra_stats(int Ind, int s, int p, int v, bool demonic) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = (FALSE);
+
+	if (p_ptr->suscep_evil && demonic) {
+		msg_print(Ind, "\375\377yDemonic Strength has no effect while using a good-aligned form!");
+		return(FALSE);
+	}
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -463,6 +468,7 @@ bool do_xtra_stats(int Ind, int s, int p, int v) {
 	}
 
 	p_ptr->xtrastat_tim = v;
+	p_ptr->xtrastat_demonic = demonic;
 
 	/* Nothing to notice */
 	if (!notice) return(FALSE);

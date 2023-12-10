@@ -1393,23 +1393,23 @@ void do_mimic_power_aux(int Ind, int dir) {
 #endif
 }
 
-void do_mimic_change(int Ind, int r_idx, bool force) {
+bool do_mimic_change(int Ind, int r_idx, bool force) {
 	player_type *p_ptr = Players[Ind];
 
 	if (p_ptr->body_monster == r_idx) {
 		//already using this form
 		Send_confirm(Ind, PKT_ACTIVATE_SKILL);
-		return;
+		return(FALSE);
 	}
 
 	/* Insufficient skill */
 	if (!force && r_info[r_idx].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100)) {
 		msg_print(Ind, "You do need a higher mimicry skill to use that shape.");
 		Send_confirm(Ind, PKT_ACTIVATE_SKILL);
-		return;
+		return(FALSE);
 	}
 
-	if (!force && mimic_power_hindered(Ind)) return;
+	if (!force && mimic_power_hindered(Ind)) return(FALSE);
 
 #if 1
 	/* Corrupted Priest: Reverse all heavy-cursed boni for true demon form - the only time during which they too get flipped item boni. */
@@ -1480,6 +1480,7 @@ void do_mimic_change(int Ind, int r_idx, bool force) {
 	p_ptr->tim_mimic_what = 0;
 #endif
 #endif
+	return(TRUE);
 }
 
 void do_cmd_mimic(int Ind, int spell, int dir) {
