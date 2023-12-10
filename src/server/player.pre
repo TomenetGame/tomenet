@@ -608,7 +608,9 @@ struct player_type
 	bool suscep_pois;	/* Poison does more damage on the player */
 	bool suscep_lite;
 	bool suscep_good;
+	bool suscep_evil;
 	bool suscep_life;
+	bool demon;
 
 	bool reflect;		/* Reflect 'bolt' attacks */
 	byte shield_deflect;	/* Deflect various attacks (ranged), needs USE_BLOCKING */
