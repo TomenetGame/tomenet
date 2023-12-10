@@ -12501,7 +12501,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 
 	/* Translate an effect-causing (PROJECT_STAY) self-harming (PROJECT_SELF) projection forward to create self-harming effect (EFF_SELF), too! (Eg Firestorm demolition charge.) */
 	if ((flg & (PROJECT_STAY | PROJECT_SELF)) == (PROJECT_STAY | PROJECT_SELF)) {
-msg_format(-who, "SELF!");
+//msg_format(-who, "SELF!");
 		project_time_effect |= EFF_SELF;
 	}
 
