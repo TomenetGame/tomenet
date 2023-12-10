@@ -4977,7 +4977,7 @@ bool subinven_can_stack(int Ind, object_type *i_ptr, int sslot, bool store_bough
 		if (a == -1 || o == -1 || s == -1) return(FALSE);
 
 		new_stack = FALSE;
-		allow_new_stack = (a == 2 || o == 2 | s == 2);
+		allow_new_stack = (a == 2 || o == 2 || s == 2);
 	}
 
 	/* Look for free spaces or spaces to merge with */
