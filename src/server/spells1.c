@@ -11226,7 +11226,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		break;
 
-	/* The druid spell; Note that it _damages_ undead-players instead of healing :-) - the_sandman */
+	/* The druid spell; Note that it _damages_ undead-players instead of healing :-) - the_sandman
+	   Now also used by Holy Curing school. - C. Blue */
 	case GF_HEALINGCLOUD:
 		if (p_ptr->ghost || p_ptr->suscep_life) {
 			if (rand_int(100) < p_ptr->skill_sav)
