@@ -1932,6 +1932,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	/* If in the player body nothing have to be done */
 	if (!p_ptr->body_monster) return;
 
+
 	immunity[1] = 0; immunity[2] = 0; immunity[3] = 0;
 	immunity[4] = 0; immunity[5] = 0; immunity[6] = 0;
 	immrand = 0;
@@ -3008,6 +3009,7 @@ void calc_boni(int Ind) {
 
 	bool old_sun_burn;
 	bool old_black_breath = p_ptr->black_breath_tmp;
+	bool old_suscep_good = p_ptr->suscep_good, old_suscep_life = p_ptr->suscep_life, old_demon = p_ptr->demon;
 
 	int lite_inc_norm = 0, lite_inc_white = 0, old_lite_type;
 
@@ -6298,10 +6300,10 @@ void calc_boni(int Ind) {
 	if (get_skill(p_ptr, SKILL_HSUPPORT) >= 50) csheet_boni[14].cb[6] |= CB7_IFOOD;
 
 	/* slay/brand boni check here... */
-	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 30) { p_ptr->slay |= TR1_SLAY_UNDEAD; csheet_boni[14].cb[9] |= CB10_SUNDD; }
-	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 40) { p_ptr->slay |= TR1_SLAY_DEMON; csheet_boni[14].cb[8] |= CB9_SDEMN; }
-	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 50) { p_ptr->slay |= TR1_SLAY_EVIL; csheet_boni[14].cb[9] |= CB10_SEVIL; }
-	if (get_skill(p_ptr, SKILL_HCURING) >= 50) { p_ptr->slay_melee |= TR1_SLAY_UNDEAD; } //prob: it's melee only: csheet_boni[14].cb[9] |= CB10_SUNDD;
+	if (!p_ptr->suscep_life && get_skill(p_ptr, SKILL_HOFFENSE) >= 30) { p_ptr->slay |= TR1_SLAY_UNDEAD; csheet_boni[14].cb[9] |= CB10_SUNDD; }
+	if (!p_ptr->demon && get_skill(p_ptr, SKILL_HOFFENSE) >= 40) { p_ptr->slay |= TR1_SLAY_DEMON; csheet_boni[14].cb[8] |= CB9_SDEMN; }
+	if (!p_ptr->suscep_good && get_skill(p_ptr, SKILL_HOFFENSE) >= 50) { p_ptr->slay |= TR1_SLAY_EVIL; csheet_boni[14].cb[9] |= CB10_SEVIL; }
+	if (!p_ptr->suscep_life && get_skill(p_ptr, SKILL_HCURING) >= 50) { p_ptr->slay_melee |= TR1_SLAY_UNDEAD; } //prob: it's melee only: csheet_boni[14].cb[9] |= CB10_SUNDD;
 
 #ifdef ENABLE_OCCULT /* Occult */
 	/* Should Occult schools really give boni? */
@@ -6770,12 +6772,35 @@ void calc_boni(int Ind) {
 	   so we can just cap it. */
 	if (p_ptr->see_infra > MAX_SIGHT) p_ptr->see_infra = MAX_SIGHT;
 
-	/* Stop any contradicting buffs on form change */
+	/* Stop any contradicting buffs on form change - debatable though, see SV_SCROLL_PROTECTION_FROM_EVIL notes! - C. Blue
+	   This can only really be triggered via form changes, but it is clunkier
+	   to actually put it into calc_body_bonus() instead of just doing it here. */
 	if (p_ptr->suscep_good || p_ptr->suscep_life) {
 		if (p_ptr->blessed && !p_ptr->blessed_own) set_blessed(Ind, 0, FALSE);
 		if (p_ptr->protevil && !p_ptr->protevil_own) set_protevil(Ind, 0, FALSE);
 	}
-
+	if (old_suscep_good != p_ptr->suscep_good) {
+		if (get_skill(p_ptr, SKILL_HOFFENSE) >= 50) {
+			if (p_ptr->suscep_good) msg_print(Ind, "\375\377yYour intrinsic evil-slaying effect is inactive while in evil form.");
+			else msg_print(Ind, "\375\377gYour intrinsic evil-slaying effect is active again.");
+		}
+	}
+	if (old_suscep_life != p_ptr->suscep_life) {
+		if (get_skill(p_ptr, SKILL_HOFFENSE) >= 30) {
+			if (p_ptr->suscep_life) msg_print(Ind, "\375\377yYour intrinsic undead-slaying effect is inactive while in undead form.");
+			else msg_print(Ind, "\375\377gYour intrinsic undead-slaying effect is active again.");
+		}
+		else if (get_skill(p_ptr, SKILL_HCURING) >= 50) {
+			if (p_ptr->suscep_life) msg_print(Ind, "\375\377yYour intrinsic unead-slaying melee effect is inactive while in undead form.");
+			else msg_print(Ind, "\375\377gYour intrinsic undead-slaying melee effect is active again.");
+		}
+	}
+	if (old_demon != p_ptr->demon) {
+		if (get_skill(p_ptr, SKILL_HOFFENSE) >= 40) {
+			if (p_ptr->demon) msg_print(Ind, "\375\377yYour intrinsic demon-slaying effect is inactive while in demon form.");
+			else msg_print(Ind, "\375\377gYour intrinsic demon-slaying effect is active again.");
+		}
+	}
 
 
 	/* Determine colour of our light radius */

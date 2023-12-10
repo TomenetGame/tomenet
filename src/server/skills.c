@@ -534,6 +534,9 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 	case SKILL_META: /* + continuous effect */
 		break;
 	case SKILL_HOFFENSE:
+		//bad hack to display warnings if slays aren't active due to conflicting form alignment:
+		p_ptr->suscep_life = p_ptr->suscep_good = p_ptr->demon = FALSE;
+
 		if (old_value < 300 && new_value >= 300)
 			msg_print(Ind, "\374\377GYou fight against undead with holy wrath.");
 		if (old_value < 400 && new_value >= 400)
@@ -555,6 +558,9 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		if (old_value < 400 && new_value >= 400)
 			msg_print(Ind, "\374\377GYou feel strong against stun and cuts.");
 		if (old_value < 500 && new_value >= 500) {
+			//bad hack to display warnings if slay-undead isn't active due to conflicting form alignment:
+			p_ptr->suscep_life = FALSE;
+
 			msg_print(Ind, "\374\377GYou feel strong against hallucination and black breath.");
 			msg_print(Ind, "\374\377GYour melee attacks inflict greater damage on undead.");
 			msg_print(Ind, "\374\377GYour soul escapes less quickly on death.");

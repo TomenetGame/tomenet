@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 9. December 2023 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 10. December 2023 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.1 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -20861,6 +20861,8 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
 
     BONI:           Adds slay undead at 30, slay demon at 40, slay evil at 50
                     to all (physical) melee and ranged attacks.
+                    Note that these effects will be inactive if you are using
+                    an undead, demonic or evil form respectively.
 
 
 - Holy Defense      [Spells are WIS-based unless noted otherwise.]
@@ -21022,7 +21024,8 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
                     30 (blindness, poison, disease) / 40 (stun, cuts) / 50
                     (hallucination).
                     Less frequent suffering from black breath,
-                    adds slay undead to all (physical) melee attacks and
+                    adds slay undead to all (physical) melee attacks (note that
+                    this effect will be inactive if you use an undead form) and
                     -5% experience loss on getting revived (by whatever means,
                     but never goes below 30% total exp loss) at 50.
 
