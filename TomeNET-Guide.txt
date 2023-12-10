@@ -21367,6 +21367,8 @@ All Unlife spells are Wisdom-based.)
                     Temporarily increases and sustains strength and
                     constitution. Also grants HP regeneration (same as for
                     example an amulet of regeneration, so it doesn't stack).
+                    This spell cannot be used while in a form that has 'GOOD'
+                    flag ie is adverse to evil, or by an enlightened Maia.
                     Required skill level for first spell level: 23.
 
     Boundless Rage  Your melee strikes are furious, granting you one
