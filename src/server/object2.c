@@ -3458,6 +3458,9 @@ s64b object_value(int Ind, object_type *o_ptr) {
  * +0x40 - also for !Gn check: Treat !G as 'FALSE' as usual, but now treat too big stacks as non-working,
  *         instead of preparing for partial merging as with 0x20 tolerance.
  * +0x80 - hack for subinventory stuff (work in progress) some items can be stacked in stores but not in inventory.
+ * +0x100- ignore stack sizes, so a 99 stack + another 99 stack can still be 'similar' even though they couldn't really stack.
+ *         This mustn't be used without +0x20 at the same time!
+ * +0x200- store_bought marker, for passing it through to subinven_can_stack() in inven_carry_okay().
  *
  * Returns 0 if not similar, -1 if whole stack can be merged (similar, normal case), or...
  * a number how many items are acceptable, specifically for !Gn inscription.
@@ -3878,7 +3881,7 @@ int object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b toleran
 		/* No optional amount specified. (Also, specifying 0 doesn't make sense.) */
 		if (i == -1) return(FALSE); /* (We just ignore the number==0 aka 'no more scrolls...' feature edge case here, too much hassle) */
 
-		/* The other syntax (specifying a limit atmount) is also handled by inven_carry_okay(), carry() and subinven_stow_aux(),
+		/* The other syntax (specifying a limit amount) is also handled by inven_carry_okay(), carry() and subinven_stow_aux(),
 		   specifying the 0x20 tolerance marker for explicit-pickups only (aka player pressing 'g' key). */
 		if (tolerance & 0x20) {
 			/* Unhack value from +1 state */
@@ -3888,7 +3891,10 @@ int object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b toleran
 			/* Sanity checks */
 			if (i >= MAX_STACK_SIZE) i = MAX_STACK_SIZE - 1;
 			/* Already reached the max amount on this inventory stack? */
-			if (o_ptr->number >= i) return(FALSE);
+			if (o_ptr->number >= i) {
+				if (tolerance & 0x100) return(-1); /* Fallback to hack: 'item type exists, but we must create a new stack' */
+				return(FALSE);
+			}
 			/* How many to additionally pick up? */
 			i = i - o_ptr->number;
 			/* Cannot pick up more than available */
@@ -3910,7 +3916,10 @@ int object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b toleran
 	}
 
 	/* Maximal "stacking" limit */
-	if (total >= MAX_STACK_SIZE) return(FALSE);
+	if (total >= MAX_STACK_SIZE) {
+		if ((tolerance & (0x20 | 0x100)) != (0x20 | 0x100)) return(FALSE); /* normal case */
+		/* else -> Fallback to hack: 'item type exists, but we must create a new stack' */
+	}
 
 	/* An everlasting player will have _his_ items stack w/ non-everlasting stuff
 	   (especially new items bought in the shops) and convert them all to everlasting */
@@ -11214,7 +11223,7 @@ void auto_inscribe(int Ind, object_type *o_ptr, int flags) {
  * Check if we have space for an item in the pack without overflow
  * Returns -1 if yes, 0 if no, or -for a !Gn inscription found- the amount of items that we may pickup regarding a possible !Gn inscription.
  */
-int inven_carry_okay(int Ind, object_type *o_ptr, byte tolerance) {
+int inven_carry_okay(int Ind, object_type *o_ptr, s16b tolerance) {
 	player_type *p_ptr = Players[Ind];
 	int i, r;
 	object_type *j_ptr;
@@ -11251,6 +11260,7 @@ int inven_carry_okay(int Ind, object_type *o_ptr, byte tolerance) {
 			for (j = 0; j < j_ptr->bpval; j++) {
 				k_ptr = &p_ptr->subinventory[i][j];
 				if (!k_ptr->tval) break;
+				if (!subinven_can_stack(Ind, o_ptr, i, tolerance & 0x200)) continue;
 				/* Check if the two items can be combined - here we can also check for !Gn inscription via 0x20 tolerance.
 				   We do not check the actual bag type, as we can assume that if a similar-enough item exists in that bag, we must be compatible with the bag type too. */
 				if ((r = object_similar(Ind, k_ptr, o_ptr, tolerance))) return(r);
@@ -11277,7 +11287,7 @@ int inven_carry_okay(int Ind, object_type *o_ptr, byte tolerance) {
  * Check if an item will not take up any further inven space because it can just be merged into a stack.
  * Additionally check if there will be still one more inventory slot left that doesn't have CURSE_NO_DROP!
  */
-bool inven_carry_cursed_okay(int Ind, object_type *o_ptr, byte tolerance) {
+bool inven_carry_cursed_okay(int Ind, object_type *o_ptr, s16b tolerance) {
 	player_type *p_ptr = Players[Ind];
 	int i, cursed = 0;
 	bool add_cursed;

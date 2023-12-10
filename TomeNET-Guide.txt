@@ -2313,8 +2313,15 @@ Scrolls/spell books of Identify (except for bag-ID), Rods/Staves of Perception:
                 See (5.7) for more information about identification.
 
 Bags (subinventory):
-    !A          Do not auto-stow items into this bag.
-    !O          Do not auto-stow unowned items (ie new loot) into this bag.
+    !A[0|1]     Do not auto-stow items into this bag.
+                0: Except if they stack with existing items.
+                1: Except if they are at least similar to existing items.
+    !O[0|1]     Do not auto-stow unowned items (ie new loot) into this bag.
+                0: Except if they stack with existing items.
+                1: Except if they are at least similar to existing items.
+    !S[0|1]     Only auto-stow items into this bag when buying from store.
+                0: And only if they stack with existing items.
+                1: And only if they are at least similar to existing items.
 
 Any item in your inventory:
     !G[n]       Prevents an item from stacking with other items in any case.
@@ -5629,12 +5636,15 @@ A few generic commands are always available in any subinventory:
 There are also inscriptions that can be put onto these bags (don't mix them):
   !A  Do not auto-stow items into this bag.
   !A0 ..except if this item can stack with already existing items in the bag.
+  !A1 ..except if they are at least similar to existing items.
 
   !O  Do not auto-stow unowned items (ie new loot) into this bag.
   !O0 ..except if this item can stack with already existing items in the bag.
+  !O1 ..except if they are at least similar to existing items.
 
   !S  Only auto-stow items into this bag when buying from a store.
   !S0 ..and only if this item can stack with already existing items in the bag.
+  !S1 ..and only if they are at least similar to existing items.
 
 
 (3.4a) Start-up equipment

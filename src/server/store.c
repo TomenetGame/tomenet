@@ -3137,7 +3137,7 @@ void store_stole(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 
 	int st = p_ptr->store_num;
-	byte tolerance = 0x0;
+	s16b tolerance = 0x0;
 
 	store_type *st_ptr;
 	//owner_type *ot_ptr;
@@ -3332,7 +3332,7 @@ void store_stole(int Ind, int item) {
 	/* Regarding !Gn inscription: As we only steal 1 item at a time, it already works with inven_carry_okay() without further code here. :) */
 
 	/* Hack -- require room in pack */
-	if (!inven_carry_okay(Ind, &sell_obj, tolerance)) {
+	if (!inven_carry_okay(Ind, &sell_obj, tolerance | 0x200)) {
 		msg_print(Ind, "You cannot carry that many different items.");
 		return;
 	}
@@ -3567,7 +3567,7 @@ void store_purchase(int Ind, int item, int amt) {
 
 	int i, choice;
 	int item_new;
-	byte tolerance = 0x0;
+	s16b tolerance = 0x0;
 
 	s64b price, best;
 
@@ -3819,7 +3819,7 @@ void store_purchase(int Ind, int item, int amt) {
 	}
 
 	/* Handle !Gn inscription */
-	if ((i = inven_carry_okay(Ind, o_ptr, 0x20)) > 0 && i < amt) amt = i;
+	if ((i = inven_carry_okay(Ind, o_ptr, 0x20 | 0x200)) > 0 && i < amt) amt = i;
 	if (!amt) return;
 
 	/* Hack -- get a "sample" object */
@@ -3835,7 +3835,7 @@ void store_purchase(int Ind, int item, int amt) {
 	if (is_magic_device(o_ptr->tval)) divide_charged_item(&sell_obj, o_ptr, amt);
 
 	/* Hack -- require room in pack */
-	if (!inven_carry_okay(Ind, &sell_obj, tolerance)) {
+	if (!inven_carry_okay(Ind, &sell_obj, tolerance | 0x200)) {
 		msg_print(Ind, "You cannot carry that many different items.");
 		return;
 	}
@@ -4929,17 +4929,17 @@ void do_cmd_store(int Ind) {
 			/* early delivery! (ie item appeared in regular stock meanwhile) */
 			if (num) {
  #ifndef PARTIAL_ITEM_DELIVERY
-				no_space = !inven_carry_okay(Ind, &forge, 0x0);
+				no_space = !inven_carry_okay(Ind, &forge, 0x200);
 				if (no_space) msg_print(Ind, "\377GYour order has arrived earlier than expected but your inventory is full!");
 				else msg_print(Ind, "\377GYour order has arrived earlier than expected! Here, take it.");
  #else
 				if (num < p_ptr->item_order_forge.number) {
 					forge.number = num;
-					no_space = !inven_carry_okay(Ind, &forge, 0x0);
+					no_space = !inven_carry_okay(Ind, &forge, 0x200);
 					if (no_space) msg_print(Ind, "\377GPart of your order has arrived earlier than expected but your inventory is full!");
 					else msg_print(Ind, "\377GPart of your order has arrived earlier than expected! Here, take it.");
 				} else {
-					no_space = !inven_carry_okay(Ind, &forge, 0x0);
+					no_space = !inven_carry_okay(Ind, &forge, 0x200);
 					if (no_space) msg_print(Ind, "\377GYour order has arrived earlier than expected but your inventory is full!");
 					else msg_print(Ind, "\377GYour order has arrived earlier than expected! Here, take it.");
 				}
@@ -4947,7 +4947,7 @@ void do_cmd_store(int Ind) {
 			}
 			/* normal, full delivery */
 			else {
-				no_space = !inven_carry_okay(Ind, &forge, 0x0);
+				no_space = !inven_carry_okay(Ind, &forge, 0x200);
 				if (no_space) msg_print(Ind, "\377GYour order has arrived but your inventory is full!");
 				else msg_print(Ind, "\377GYour order has arrived! Here, take it.");
 			}
@@ -6465,7 +6465,7 @@ void home_purchase(int Ind, int item, int amt) {
 	}
 
 	/* Handle !Gn inscription */
-	if ((i = inven_carry_okay(Ind, o_ptr, 0x20)) > 0 && i < amt) amt = i;
+	if ((i = inven_carry_okay(Ind, o_ptr, 0x20 | 0x200)) > 0 && i < amt) amt = i;
 	if (!amt) return;
 
 	/* Assume the player wants just one of them */
@@ -6484,7 +6484,7 @@ void home_purchase(int Ind, int item, int amt) {
 	if (is_magic_device(o_ptr->tval)) divide_charged_item(&sell_obj, o_ptr, amt);
 
 	/* Hack -- require room in pack */
-	if (!inven_carry_okay(Ind, &sell_obj, 0x0)) {
+	if (!inven_carry_okay(Ind, &sell_obj, 0x200)) {
 		msg_print(Ind, "You cannot carry that many different items.");
 		return;
 	}
