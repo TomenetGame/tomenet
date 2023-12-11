@@ -2296,6 +2296,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		else if (!strcasecmp(buf, "bl")) strcpy(init_search_string, "blacklist");
 		else if (!strcasecmp(buf, "!")) strcpy(init_search_string, "! inscription");
 		else if (!strcasecmp(buf, "@")) strcpy(init_search_string, "macro");
+		else if (!strcasecmp(buf, "slays") || !strcasecmp(buf, "brands") || !strcasecmp(buf, "brand")) strcpy(init_search_string, "slay"); //will actually invoke "Slaying vs brands"
 
 		/* clean up */
 		buf[0] = 0;
