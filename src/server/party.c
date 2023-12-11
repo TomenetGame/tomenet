@@ -5341,7 +5341,8 @@ void checkexpiry(int Ind, int days) {
 		ptr = hash_table[slot];
 		while (ptr) {
 			expire = CHARACTER_EXPIRY_DAYS * 86400 - now + ptr->laston;
-			if (ptr->laston && expire < days * 86400) {
+			if (ptr->laston && expire < days * 86400
+			    && !(cfg.admins_never_expire && ptr->admin)) {
 				if (expire < 86400)
 					msg_format(Ind, "\377rPlayer %s (accid %d) will expire in less than a day!", ptr->name, ptr->account);
 				else if (expire < 7 * 86400)
@@ -5361,31 +5362,48 @@ void checkexpiry(int Ind, int days) {
  */
 void account_checkexpiry(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	int slot, expire;
+	int i, expire;
 	hash_entry *ptr;
 	time_t now;
+	struct account acc;
+	int *id_list, ids;
+	bool success;
 
 #ifdef PLAYERS_NEVER_EXPIRE
 	return;
 #else
 	if (cfg.players_never_expire) return;
 #endif
+
 	now = time(NULL);
 
-	for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
-		ptr = hash_table[slot];
-		while (ptr) {
-			if (p_ptr->id != ptr->id && p_ptr->account == ptr->account && ptr->laston) {
-				expire = CHARACTER_EXPIRY_DAYS * 86400 - now + ptr->laston;
+	success  = GetAccount(&acc, p_ptr->accountname, NULL, FALSE);
+	/* paranoia */
+	if (!success) {
+		/* uhh.. */
+		msg_print(Ind, "Sorry, character expiry check has failed.");
+		return;
+	}
 
-				if (expire < 86400)
+	ids = player_id_list(&id_list, acc.id);
+	for (i = 0; i < ids; i++) {
+		ptr = lookup_player(id_list[i]);
+		if (p_ptr->id != ptr->id && ptr->laston) {
+			expire = CHARACTER_EXPIRY_DAYS * 86400 - now + ptr->laston;
+			if (expire < 86400) {
+				if (cfg.admins_never_expire && ptr->admin)
+					msg_format(Ind, "\374\377y(Your character %s would be removed \377rvery soon\377y if it wasn't an admin.)", ptr->name, expire / 86400);
+				else
 					msg_format(Ind, "\374\377yYour character %s will be removed \377rvery soon\377y!", ptr->name, expire / 86400);
-				else if (expire < 60 * 86400)
+			} else if (expire < 60 * 86400) {
+				if (cfg.admins_never_expire && ptr->admin)
+					msg_format(Ind, "\374\377y(Your character %s would be removed in %d days if it wasn't an admin.)", ptr->name, expire / 86400);
+				else
 					msg_format(Ind, "\374\377yYour character %s will be removed in %d days.", ptr->name, expire / 86400);
 			}
-			ptr = ptr->next;
 		}
 	}
+	if (ids) C_KILL(id_list, ids, int);
 }
 
 /*

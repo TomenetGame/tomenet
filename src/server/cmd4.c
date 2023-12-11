@@ -2557,7 +2557,8 @@ void do_cmd_check_server_settings(int Ind) {
 		fprintf(fff, "Inactive characters or accounts will not be deleted.\n");
 	} else {
 		fprintf(fff, "Inactive characters will be deleted after %d days.\n", CHARACTER_EXPIRY_DAYS);
-		fprintf(fff, "Accounts without characters will be deleted after %d days.\n", ACCOUNT_EXPIRY_DAYS);
+		fprintf(fff, "Player accounts without characters will be deleted after %d days.\n", ACCOUNT_EXPIRY_DAYS);
+		if (is_admin(p_ptr) && cfg.admins_never_expire) fprintf(fff, "\377UAdmin characters (dungeon masters/wizards) never expire, however.!\n");
 	}
 	fprintf(fff, "Game speed(FPS): %d (%+d%%)\n", cfg.fps, ((cfg.fps - 60) * 100) / 60);
 	fprintf(fff, "\n");
@@ -2926,7 +2927,7 @@ void do_cmd_check_server_settings(int Ind) {
 		/* Output color byte */
 		//fprintf(fff, "%c\n", 'w');
 
-		if (cfg.admins_never_expire) fprintf(fff, "Admin characters (dungeon wizards/masters) never expire.\n");
+		//if (cfg.admins_never_expire) fprintf(fff, "Admin characters (dungeon wizards/masters) never expire.\n"); //done above
 
 		fprintf(fff, "dun_unusual: %d (default = 200)\n", cfg.dun_unusual);
 		fprintf(fff, "Stores change their inventory every ~%d seconds.\n", (cfg.store_turns * 10) / cfg.fps);
