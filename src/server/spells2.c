@@ -10438,7 +10438,7 @@ void wrap_gift(int Ind, int item) {
 		o_ptr->tval = TV_SPECIAL;
 		/* (sval stays the same) */
 		o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
-		/* (weight stays the same) */
+		o_ptr->weight = o_ptr->weight * o_ptr->number; /* Potential stack will be shrunk to just 1 item in next line, and the one gift wrapping paper we used is included */
 		o_ptr->number = 1; // one gift may contain a stack of items, but in turn, gifts aren't stackable of course
 		o_ptr->note = ow_ptr->note;
 		o_ptr->note_utag = ow_ptr->note_utag;
@@ -10474,7 +10474,7 @@ void wrap_gift(int Ind, int item) {
 	o_ptr->tval = TV_SPECIAL;
 	o_ptr->sval = p_ptr->inventory[p_ptr->current_activation].sval;
 	o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
-	o_ptr->weight += ow_ptr->weight; /* Gift wrapping paper is added */
+	o_ptr->weight = o_ptr->weight * o_ptr->number + ow_ptr->weight; /* Potential stack will be shrunk to just 1 item in next line, and gift wrapping paper is added */
 	o_ptr->number = 1; // one gift may contain a stack of items, but in turn, gifts aren't stackable of course
 	o_ptr->note = ow_ptr->note;
 	o_ptr->note_utag = ow_ptr->note_utag;
@@ -10522,7 +10522,7 @@ void unwrap_gift(int Ind, int item) {
 	inven_item_optimize(Ind, item);
 	o_ptr = &forge;
 
-	o_ptr->weight -= k_info[lookup_kind(TV_JUNK, o_ptr->sval)].weight; /* Gift wrapping paper is removed */
+	o_ptr->weight = (o_ptr->weight - k_info[lookup_kind(TV_JUNK, o_ptr->sval)].weight) / o_ptr->number2; /* Gift wrapping paper is removed, stack of items may appear instead of just one item. */
 	o_ptr->tval = o_ptr->tval2;
 	o_ptr->sval = o_ptr->sval2;
 	o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
