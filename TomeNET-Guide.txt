@@ -2195,10 +2195,6 @@ Useful for characters who wield a boomerang not for throwing it, but rather
 because it provides magical boni:
     !f          Prevent firing an item (ie your equipped ranged weapon).
 
-If you use a sling, bow or crossbow and rather worthless ammo that you don't
-intend to pick up again, you may inscribe the ammo to make it disappear:
-    !g          Makes ammo always break and never drop to the floor.
-
 Other ! inscriptions:
     !T          Prevent taking off a secondary item.
     !F          Prevent using up this light source or fuel item to fuel your
@@ -2274,7 +2270,9 @@ Wands and staves:
 Ammunition:
     !=          Will make your character auto-pickup the ammo from the floor.
     !g          Will make your ammunition break. Rather disadvantageous but
-                maybe useful if you don't like littering the floor with it.
+                maybe useful if you use rather worthless ammo that you don't
+                want to pick up again and don't like littering the floor with
+                it.
     !M          Makes ammunition stacks of same base type and same ego power
                 stack even if +hit or +dam enchantments are not equal. Those
                 will be averaged and rounded downwards. (Doesn't work for
