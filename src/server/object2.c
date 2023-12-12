@@ -11496,6 +11496,17 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 			if (o_sv < j_sv) break;
 			if (o_sv > j_sv) continue;
 
+#ifdef ENABLE_SUBINVEN
+#ifdef SUBINVEN_LIMIT_GROUP
+			/* Ignore any other sorting, especially discounted-value sorting (the rest is probably mostly paranoia),
+			   to sort in identical subinven bags _AFTER_ any already existing ones, so they remain unusable
+			   and don't move into the first slot of that subinven type, which would make them usable too. */
+			if (j_ptr->tval == TV_SUBINVEN && o_ptr->tval == TV_SUBINVEN &&
+			    get_subinven_group(j_ptr->tval) == get_subinven_group(o_ptr->tval))
+				continue;
+#endif
+#endif
+
 			/* Level 0 items owned by the player come first */
 			if (o_ptr->level == 0 && o_ptr->owner == p_ptr->id && j_ptr->level != 0) break;
 			if (j_ptr->level == 0 && j_ptr->owner == p_ptr->id && o_ptr->level != 0) continue;
@@ -11957,6 +11968,17 @@ void reorder_pack(int Ind) {
 			/* Objects sort by increasing sval */
 			if (o_sv < j_sv) break;
 			if (o_sv > j_sv) continue;
+
+#ifdef ENABLE_SUBINVEN
+#ifdef SUBINVEN_LIMIT_GROUP
+			/* Ignore any other sorting, especially discounted-value sorting (the rest is probably mostly paranoia),
+			   to sort in identical subinven bags _AFTER_ any already existing ones, so they remain unusable
+			   and don't move into the first slot of that subinven type, which would make them usable too. */
+			if (j_ptr->tval == TV_SUBINVEN && o_ptr->tval == TV_SUBINVEN &&
+			    get_subinven_group(j_ptr->tval) == get_subinven_group(o_ptr->tval))
+				continue;
+#endif
+#endif
 
 			/* Level 0 items owned by the player come first */
 			if (o_ptr->level == 0 && o_ptr->owner == p_ptr->id && j_ptr->level != 0) break;
