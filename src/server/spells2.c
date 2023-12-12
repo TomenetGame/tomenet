@@ -9906,6 +9906,9 @@ void grind_chemicals(int Ind, int item) {
 		q_ptr->iron_turn = o_ptr->iron_turn;
 
 		/* Give us the result */
+#ifdef ENABLE_SUBINVEN
+		if (auto_stow(Ind, SV_SI_SATCHEL, q_ptr, -1, FALSE, FALSE)) return;
+#endif
 		i = inven_carry(Ind, q_ptr);
 		if (i != -1) {
 			object_desc(Ind, o_name, &forge, TRUE, 3);
@@ -9944,6 +9947,9 @@ void grind_chemicals(int Ind, int item) {
 		q_ptr->iron_turn = o_ptr->iron_turn;
 
 		/* Give us the result */
+#ifdef ENABLE_SUBINVEN
+		if (auto_stow(Ind, SV_SI_SATCHEL, q_ptr, -1, FALSE, FALSE)) return;
+#endif
 		i = inven_carry(Ind, q_ptr);
 		if (i != -1) {
 			object_desc(Ind, o_name, &forge, TRUE, 3);
