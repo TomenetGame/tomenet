@@ -3382,10 +3382,10 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 			}
 #endif
 
-			if (p_ptr->dispersion && p_ptr->cst) {
+			if (q_ptr->dispersion && q_ptr->cst) {
 				msg_format(Ind, "\377%c%s disperses around your attack!", COLOUR_BLOCK_PLY, q_name);
 				msg_format(0 - c_ptr->m_idx, "\377%cYou disperse around %s's attack!", COLOUR_DODGE_GOOD, p_ptr->name);
-				if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
+				if (magik(q_ptr->dispersion)) use_stamina(q_ptr, 1);
 				continue;
 			}
 

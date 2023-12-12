@@ -7084,10 +7084,10 @@ void do_cmd_fire(int Ind, int dir) {
 							}
 #endif
 
-							if (p_ptr->dispersion && p_ptr->cst) {
+							if (q_ptr->dispersion && q_ptr->cst) {
 								msg_format(0 - c_ptr->m_idx, "\377%cYou disperse around the projectile!", COLOUR_DODGE_GOOD);
 								if (visible) msg_format(Ind, "\377%c%s disperses around %s.", COLOUR_DODGE_NEAR, p_name, o_name);
-								if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
+								if (magik(q_ptr->dispersion)) use_stamina(q_ptr, 1);
 								continue;
 							}
 
