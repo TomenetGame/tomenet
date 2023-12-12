@@ -11369,7 +11369,6 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 #ifdef SUBINVEN_LIMIT_GROUP
 		if (!p_ptr->warning_subinven && !excess &&
 		    j_ptr->tval == TV_SUBINVEN && o_ptr->tval == TV_SUBINVEN &&
-		    j_ptr->tval == TV_SUBINVEN && o_ptr->tval == TV_SUBINVEN &&
 		    get_subinven_group(j_ptr->tval) == get_subinven_group(o_ptr->tval))
 			excess = TRUE;
 #endif
