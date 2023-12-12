@@ -1693,7 +1693,7 @@ static void display_subinven(void) {
 	long int wgt;
 
 	object_type *o_ptr, *i_ptr;
-	int subinven_size;
+	int subinven_size, bagheader_x, bagheader_y;
 
 
 	/* Determine, which subinventory to display:
@@ -1709,15 +1709,18 @@ static void display_subinven(void) {
 
 		/* Describe the subinventory type itself in one extra line*/
 
+		bagheader_y = last_k;
 		/* Add slot index label */
-		sprintf(o_name, "<%c>", index_to_label(islot));
-		Term_putstr(2, last_k, -1, i_ptr->attr, o_name);
+		sprintf(o_name, "  <%c>", index_to_label(islot));
+		Term_putstr(0, last_k, -1, i_ptr->attr, o_name);
+		/* Erase the rest of the line */
+		Term_erase(5, last_k, 255);
 
 		/* Add bag object name */
 		strcpy(o_name, inventory_name[islot]);
 		//o_name[0] = toupper(o_name[0]);
 		o_name[ONAME_LEN - 3] = 0; //prevent overflow
-		strcat(o_name, " :");
+		//strcat(o_name, " :");
 		/* Obtain length of description */
 		n = strlen(o_name);
 		if (n > MAX_CHARS - 7) n = MAX_CHARS - 7;
@@ -1726,6 +1729,7 @@ static void display_subinven(void) {
 		Term_erase(6 + n, last_k, 255);
 		/* account for this extra line */
 		last_k++;
+		bagheader_x = 6 + n;
 
 
 		/* Find the "final" slot */
@@ -1736,6 +1740,13 @@ static void display_subinven(void) {
 			/* Track non-empty slots */
 			if (o_ptr->tval) z = i + 1;
 		}
+
+		/* Display bag fill state */
+		sprintf(tmp_val, " (%d/%d):", z, subinven_size);
+		Term_putstr(bagheader_x, bagheader_y, -1, i_ptr->attr, tmp_val);
+
+		/* Display a line if inventory is actually empty */
+		if (!z) Term_putstr(0, last_k++, -1, TERM_WHITE, "(This container is empty)                                                       ");
 
 		/* Display the inventory */
 		k = last_k;
@@ -1789,9 +1800,6 @@ static void display_subinven(void) {
 			}
 		}
 		last_k = k;
-
-		/* Display a line if inventory is actually empty */
-		if (!z) Term_putstr(0, last_k++, -1, TERM_WHITE, "(This container is empty)                                                       ");
 	}
 
 	/* Erase the rest of the window */
