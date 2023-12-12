@@ -1699,6 +1699,9 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 	if (nothing_test(o_ptr, p_ptr, &p_ptr->wpos, p_ptr->px, p_ptr->py, 9)) return; //was 1
 
+	/* Hack: !g inscription induces pick_one! */
+	if (check_guard_inscription(o_ptr->note, 'g')) pick_one = TRUE;
+
 	/* Cannot pick up stuff in leaderless guild halls */
 	if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_GUILD_SUS) &&
 	    /* exception: Guild Keys can always be picked up, since they make you the new guild master

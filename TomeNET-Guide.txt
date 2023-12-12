@@ -2223,6 +2223,9 @@ Mainly for consumable items:
     !Q          will not print a message how many you have left after consuming
                 one (like if 'taciturn_messages' were enabled). For example use
                 on ID scrolls in combination:  !XQ
+Mainly for consumable items stored in piles:
+    !g          trying to pick up this pile will only grab 1 item, as if the
+                player pressed CTRL+G (or CTRL+Z with rogue-like key map).
 
 The # inscription:
     This one makes all following inscription be appended directly behind the
