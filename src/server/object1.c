@@ -3901,7 +3901,8 @@ static void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mul
 		(allow_skill_crit ? get_skill_scale(p_ptr, SKILL_CRITS, 2000) : 0);
 	int crit_flat_bonus = o_ptr->weight +
 		500 - (10000 / (BOOST_CRIT(p_ptr->xtra_crit) + 20));
-	int crit_die_size = get_skill_scale(p_ptr, SKILL_CRITS, 900) ? get_skill_scale(p_ptr, SKILL_CRITS, 900) : 1; //randint(0)=1
+	int scaled_crit_skill = get_skill_scale(p_ptr, SKILL_CRITS, 900);
+	int crit_die_size = scaled_crit_skill ? scaled_crit_skill : 1; //randint(0)=1
 	long critical_damage;
 
 	dam = ((o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5L * mult) / FACTOR_MULT;
