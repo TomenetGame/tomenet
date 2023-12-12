@@ -5614,10 +5614,15 @@ void do_cmd_bash(int Ind, int dir) {
 bool get_something_tval(int Ind, int tval, int *ip) {
 	player_type *p_ptr = Players[Ind];
 	int i;
+	object_type *o_ptr;
+#ifdef ENABLE_SUBINVEN
+	int k;
+	object_type *s_ptr;
+#endif
 
 	/* Check every item in the pack */
 	for (i = 0; i < INVEN_PACK; i++) {
-		object_type *o_ptr = &(p_ptr->inventory[i]);
+		o_ptr = &(p_ptr->inventory[i]);
 
 		/* Check the "tval" code */
 		if (o_ptr->tval == tval) {
@@ -5629,6 +5634,26 @@ bool get_something_tval(int Ind, int tval, int *ip) {
 			/* Success */
 			return(TRUE);
 		}
+
+#ifdef ENABLE_SUBINVEN
+		if (o_ptr->tval == TV_SUBINVEN) {
+			for (k = 0; k < o_ptr->bpval; k++) { /* bpval is subinven size */
+				s_ptr = &p_ptr->subinventory[i][k];
+				if (!s_ptr->tval) break;
+
+				/* Check the "tval" code */
+				if (s_ptr->tval == tval) {
+					if (!can_use_admin(Ind, s_ptr)) continue;
+
+					/* Save the spike index */
+					(*ip) = (i + 1) * 100 + k;
+
+					/* Success */
+					return(TRUE);
+				}
+			}
+		}
+#endif
 	}
 
 	/* Oops */

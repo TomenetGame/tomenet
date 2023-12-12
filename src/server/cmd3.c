@@ -5196,7 +5196,7 @@ void do_cmd_subinven_move(int Ind, int islot) {
 			if (i_ptr->tval != TV_STAFF && (i_ptr->tval != TV_ROD || rod_requires_direction(Ind, i_ptr))) continue;
 			break;
 		case SV_SI_POTION_BELT:
-			if (i_ptr->tval != TV_POTION && i_ptr->tval != TV_POTION2) continue;
+			if (i_ptr->tval != TV_POTION && i_ptr->tval != TV_POTION2 && i_ptr->tval != TV_BOTTLE) continue;
 			break;
 		default:
 			continue;

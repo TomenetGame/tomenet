@@ -1714,6 +1714,7 @@ void do_cmd_fill_bottle(int Ind) {
 	object_type *q_ptr, forge;
 	//cptr q, s;
 
+
 	if (p_ptr->IDDC_logscum) {
 		msg_print(Ind, "\377oThis floor has become stale, take a staircase to move on!");
 		return;
@@ -1806,8 +1807,19 @@ void do_cmd_fill_bottle(int Ind) {
 		q_ptr->iron_trade = p_ptr->iron_trade;
 		q_ptr->iron_turn = turn;
 
+		//#ifdef ENABLE_SUBINVEN -- not atm, see further below for comments regarding apply_XID() etc.
 		item = inven_carry(Ind, q_ptr);
-		if (item >= 0) inven_item_describe(Ind, item);
+		if (item >= 0) {
+#if 0
+			inven_item_describe(Ind, item);
+#else
+			char o_name[ONAME_LEN];
+
+			q_ptr = &p_ptr->inventory[item];
+			object_desc(Ind, o_name, q_ptr, TRUE, 3);
+			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item));
+#endif
+		}
 
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		return;
@@ -1885,7 +1897,21 @@ void do_cmd_fill_bottle(int Ind) {
 #endif
 	q_ptr->iron_trade = p_ptr->iron_trade;
 	q_ptr->iron_turn = turn;
+
+//#ifdef ENABLE_SUBINVEN
+#if 0 /* Not for now, as neither apply_XID() nor remember_sense() can handle subinventory items atm */
+	(void)auto_stow(Ind, SV_SI_POTION_BELT, q_ptr, -1, FALSE, TRUE);
+	/* If we couldn't auto-stow, pick it up normally */
+	if (o_ptr->number) {
+		item = inven_carry(Ind, q_ptr);
+		//object_desc(Ind, o_name, &p_ptr->inventory[item], TRUE, 3);
+		//msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item));
+	}
+#else
 	item = inven_carry(Ind, q_ptr);
+	//object_desc(Ind, o_name, &p_ptr->inventory[item], TRUE, 3);
+	//msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item));
+#endif
 
 	s_printf("FOUNTAIN_FILL: %s: %s\n", p_ptr->name, k_name + k_info[k_idx].name);
 
@@ -1893,7 +1919,16 @@ void do_cmd_fill_bottle(int Ind) {
 		q_ptr = &p_ptr->inventory[item];
 		if (!object_aware_p(Ind, q_ptr) || !object_known_p(Ind, q_ptr)) /* was just object_known_p */
 			apply_XID(Ind, q_ptr, item);
-		if (!remember_sense(Ind, item, q_ptr)) inven_item_describe(Ind, item);
+		if (!remember_sense(Ind, item, q_ptr)) {
+#if 0
+			inven_item_describe(Ind, item);
+#else
+			char o_name[ONAME_LEN];
+
+			object_desc(Ind, o_name, q_ptr, TRUE, 3);
+			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item));
+#endif
+		}
 	}
 
 	cs_ptr->sc.fountain.rest--;

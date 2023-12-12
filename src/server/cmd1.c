@@ -2483,7 +2483,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		}
 
 #ifdef ENABLE_SUBINVEN
-		/* Try to put into a specialized bag automatically */
+		/* Try to put into a specialized bag automatically -- note that this currently means that apply_XID() isn't called (which cannot handle subinventory items atm anyway) */
 		switch (o_ptr->tval) {
 		case TV_CHEMICAL: /* DEMOLITIONIST stuff */
 			if (auto_stow(Ind, SV_SI_SATCHEL, o_ptr, c_ptr->o_idx, pick_one, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
@@ -2498,7 +2498,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		case TV_STAFF:
 			if (auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, c_ptr->o_idx, pick_one, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
 			break;
-		case TV_POTION: case TV_POTION2:
+		case TV_POTION: case TV_POTION2: case TV_BOTTLE:
 			if (auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, c_ptr->o_idx, pick_one, FALSE)) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
 			break;
 		}
