@@ -1401,6 +1401,9 @@ void do_cmd_quaff_potion(int Ind, int item) {
 		o_ptr->iron_turn = turn;
 		/* If we have no space, drop it to the ground instead of overflowing inventory */
 		if (inven_carry_okay(Ind, o_ptr, 0x0)) {
+#ifdef ENABLE_SUBINVEN
+			if (auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, FALSE)) return;
+#endif
 			item = inven_carry(Ind, o_ptr);
 			if (!p_ptr->warning_limitbottles && p_ptr->inventory[item].number > 25) {
 				msg_print(Ind, "\374\377yHINT: You can inscribe your stack of empty bottles \377o!Mn\377y to limit their amount");
@@ -2026,14 +2029,18 @@ void do_cmd_empty_potion(int Ind, int slot) {
 	/* let the player carry the bottle */
 	q_ptr->iron_trade = p_ptr->iron_trade;
 	q_ptr->iron_turn = turn;
-	slot = inven_carry(Ind, q_ptr);
-	if (slot >= 0) inven_item_describe(Ind, slot);
 
 	/* S(he) is no longer afk */
 	un_afk_idle(Ind);
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
+
+#ifdef ENABLE_SUBINVEN
+	if (auto_stow(Ind, SV_SI_POTION_BELT, q_ptr, -1, FALSE, FALSE)) return;
+#endif
+	slot = inven_carry(Ind, q_ptr);
+	if (slot >= 0) inven_item_describe(Ind, slot);
 }
 
 
