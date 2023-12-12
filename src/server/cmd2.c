@@ -7837,7 +7837,7 @@ void do_cmd_fire(int Ind, int dir) {
 #endif /* OPTIMIZED_ANIMATIONS */
 
 	/* Hack -- "Never litter the floor" inscription {!g} */
-	if (check_guard_inscription(o_ptr->note, 'g'))
+	if (check_guard_inscription(o_ptr->note, 'b'))
 	    //|| p_ptr->max_plv < cfg.newbies_cannot_drop)
 		breakage = 101;
 

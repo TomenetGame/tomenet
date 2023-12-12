@@ -2269,7 +2269,7 @@ Wands and staves:
 
 Ammunition:
     !=          Will make your character auto-pickup the ammo from the floor.
-    !g          Will make your ammunition break. Rather disadvantageous but
+    !b          Will make your ammunition break. Rather disadvantageous but
                 maybe useful if you use rather worthless ammo that you don't
                 want to pick up again and don't like littering the floor with
                 it.
