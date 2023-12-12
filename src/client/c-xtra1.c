@@ -1746,7 +1746,10 @@ static void display_subinven(void) {
 		Term_putstr(bagheader_x, bagheader_y, -1, i_ptr->attr, tmp_val);
 
 		/* Display a line if inventory is actually empty */
-		if (!z) Term_putstr(0, last_k++, -1, TERM_WHITE, "(This container is empty)                                                       ");
+		if (!z) Term_putstr(0, last_k++, -1, (i_ptr->attr == TERM_L_DARK) ? TERM_L_DARK : TERM_L_WHITE,
+		    (i_ptr->attr == TERM_L_DARK) ? /* Use colour sent by server as indicator for SUBINVEN_LIMIT_GROUP */
+		    "(This container is of duplicate type and therefore unusable)                    " :
+		    "(This container is empty)                                                       ");
 
 		/* Display the inventory */
 		k = last_k;
