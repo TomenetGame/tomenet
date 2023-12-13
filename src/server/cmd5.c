@@ -51,6 +51,7 @@ static int find_realm_skill(int realm) {
 
 /*
  * Returns spell chance of failure for spell		-RAK-
+ * unused! as we use adj_int_pow[] now - C. BLue
  */
 static s16b spell_chance(int Ind, int realm, magic_type *s_ptr) {
 	player_type *p_ptr = Players[Ind];
