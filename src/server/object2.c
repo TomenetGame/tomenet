@@ -4870,8 +4870,14 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 				}
 				break;
 			case EGO_CHAOTIC:
-				if (i == EGO_HA) continue;
+				if (i == EGO_HA || i == EGO_LIFE) continue;
 				break;
+			case EGO_SPECTRAL:
+				if (i == EGO_LIFE) continue;
+				break;
+			case EGO_LIFE:
+				if (i == EGO_SPECTRAL) continue;
+				/* Fall through */
 			case EGO_HA:
 				if (i == EGO_CHAOTIC) continue;
 				break;
@@ -4882,6 +4888,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 				if (i == EGO_MORGUL) continue;
 				break;
 			}
+			/* (Note: We allow two mods that both have BLESSED, eg Blessed of Aman etc) */
 
 			/* Hack: If we upgraded the first ego power, the second one hasn't become set.
 			   In that case i == 0 here. */
