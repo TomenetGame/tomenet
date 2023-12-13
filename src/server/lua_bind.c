@@ -44,6 +44,7 @@ int get_magic_power_lua(int *sn, magic_power *powers, int max_powers, char *info
 	return(get_magic_power(sn, powers, max_powers, magic_power_info_lua, plev, cast_stat));
 }
 
+/* unused */
 bool lua_spell_success(magic_power *spell, int stat, char *oups_fct) {
 	int             chance;
 	int             minfail = 0;
