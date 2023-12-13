@@ -6887,6 +6887,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (!e1) e1 = e2;
 				o_ptr->name2 = e1;
 				o_ptr->name2b = e2;
+				/* Piece together a 32-bit random seed? */
+				if (!e1 || ((e_info[e1].fego1[0] & ETR1_NO_SEED) && (!e2 || (e_info[e2].fego1[0] & ETR1_NO_SEED)))) o_ptr->name3 = 0;
+				else {
+					o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
+					o_ptr->name3 += rand_int(0xFFFF);
+				}
 
 				//apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, RESF_NONE);
 				apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, o_ptr->name1 || o_ptr->name2, o_ptr->name1 || o_ptr->name2, FALSE, RESF_NONE);
