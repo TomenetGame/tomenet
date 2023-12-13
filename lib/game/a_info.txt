@@ -921,7 +921,7 @@ D:his right hand in the pits of Thangorodrim.
 
 N:65:'Angrist'
 I:23:4:4
-W:20:20:12:65000
+W:20:20:30:65000
 P:0:2d4:10:15:5
 F:DEX | HIDE_TYPE | STEALTH | SEARCH | BRAND_POIS |
 F:SLAY_EVIL | SLAY_TROLL | SLAY_ORC | BRAND_ACID |
@@ -935,7 +935,7 @@ D:ordinary metal as easily as its title, "Iron Cleaver", suggests.
 
 N:66:'Narthanc'
 I:23:4:0
-W:6:10:12:20000
+W:6:10:30:20000
 P:0:1d4:8:12:0
 F:BRAND_FIRE | IM_FIRE | ACTIVATE | SHOW_MODS | LITE1 | LEVELS
 D:A fiery dagger finely balanced for deadly throws.
@@ -945,7 +945,7 @@ D:A fiery dagger finely balanced for deadly throws.
 
 N:67:'Nimthanc'
 I:23:4:0
-W:6:10:12:16000
+W:6:10:30:16000
 P:0:1d4:8:12:0
 F:BRAND_COLD | IM_COLD | ACTIVATE | SHOW_MODS | LEVELS
 D:A frosty dagger finely balanced for deadly throws.
@@ -955,7 +955,7 @@ D:A frosty dagger finely balanced for deadly throws.
 
 N:68:'Dethanc'
 I:23:4:0
-W:6:10:12:15000
+W:6:10:30:15000
 P:0:1d4:8:12:0
 F:BRAND_ELEC | IM_ELEC | ACTIVATE | SHOW_MODS | LEVELS
 D:A dagger covered in sparks and finely balanced for deadly throws.
@@ -965,7 +965,7 @@ D:A dagger covered in sparks and finely balanced for deadly throws.
 
 N:69:of Rilia
 I:23:4:0
-W:8:20:12:35000
+W:8:20:30:35000
 P:0:2d4:9:11:0
 F:SLAY_ORC | IM_POISON | RES_DISEN | ACTIVATE | SHOW_MODS | BRAND_POIS
 D:A large stiletto dagger that glistens with odorless poison, to which the
@@ -977,7 +977,7 @@ D:wearer seems oddly immune.
 
 N:70:'Belangil'
 I:23:4:2
-W:18:25:12:65000
+W:18:25:30:65000
 P:0:2d4:6:9:0
 F:DEX | HIDE_TYPE | SPEED | BLOWS |
 F:BRAND_COLD | RES_COLD |
@@ -1780,7 +1780,7 @@ D:shoot bolts that blaze with flame unquenchable.
 
 N:127:of Gandalf
 I:6:1:12
-W:127:255:20:9000000
+W:127:255:120:9000000
 P:0:1d1:-19:-19:0
 F:INT | CHR | WIS | MANA | ACTIVATE | HIDE_TYPE
 #SPELL |
@@ -1798,7 +1798,7 @@ D:except that it pulses with overwhelming power.
 
 N:128:of Beor
 I:15:4:2
-W:20:10:20:50000
+W:20:10:40:50000
 P:0:3d4:8:12:0
 F:DEX | SPEED | HIDE_TYPE
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | SPECIAL_GENE
@@ -1810,7 +1810,7 @@ D:and as hard to harm.
 
 N:129:'Glimdrir'
 I:15:4:3
-W:30:25:20:50000
+W:30:25:40:50000
 P:0:3d5:15:16:0
 F:DEX | SPEED | FREE_ACT | BRAND_POIS | SLAY_EVIL | SLAY_UNDEAD | REGEN
 F:HIDE_TYPE | RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_SOUND
@@ -2952,7 +2952,7 @@ D:and without fail strikes the vital points of any creature.
 
 N:236:of Hellfire
 I:6:1:12
-W:70:60:12:150000
+W:70:60:90:150000
 P:0:1d5:0:0:0
 F:MANA | IM_FIRE | RES_DISEN | AUTO_ID | REGEN_MANA |
 F:RES_ELEC | SEE_INVIS | ESP_EVIL
@@ -2963,7 +2963,7 @@ D:The ebony staff crowned by three rubies, which evoked the hellraiser's power.
 
 N:237:'Cobalt Focus'
 I:6:1:10
-W:60:60:12:100000
+W:60:60:90:100000
 P:0:1d5:0:0:0
 F:MANA | IM_COLD | REGEN_MANA | RES_ELEC | RES_MANA |
 F:SEE_INVIS | RES_FEAR
@@ -3399,7 +3399,7 @@ D:Whatever the foe, if it has a skull it better watch out.
 
 N:274:of Havoc
 I:6:1:10
-W:57:60:20:150000
+W:57:60:120:150000
 P:0:1d5:0:0:0
 F:MANA | REGEN_MANA | ACTIVATE
 F:RES_DARK | RES_NETHER | RES_ELEC | RES_COLD | ESP_GOOD
