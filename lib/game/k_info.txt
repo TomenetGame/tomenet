@@ -272,7 +272,7 @@ F:INSTA_ART
 N:30:& Broken Dagger~
 G:|:D
 I:23:1:0
-W:0:0:5:1
+W:0:0:20:1
 A:0/2:5/2
 P:0:1d1:-2:-4:0
 F:SHOW_MODS
@@ -409,7 +409,7 @@ F:SHOW_MODS
 N:47:& Broken Sword~
 G:|:D
 I:23:2:0
-W:0:0:30:2
+W:0:0:50:2
 A:0/2:5/2
 P:0:1d2:-2:-4:0
 F:SHOW_MODS
