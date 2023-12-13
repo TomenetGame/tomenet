@@ -3711,6 +3711,23 @@ player_class class_info[MAX_CLASS] = {
 			'+', 1000,
 			'+', 900, },
  #endif
+ #if 1 // Non-mana runes, the primal elements of Shaman wizardry. - Kurzel
+ 		{ SKILL_R_LITE,
+			'+', 0,
+			'+', 800, }, // Lesser of the ratio of prayer schools.
+		{ SKILL_R_DARK,
+			'+', 0,
+			'+', 800, },
+		{ SKILL_R_NEXU,
+			'+', 0,
+			'+', 700, }, // Worse at temporal, balancing inertia/gravity/time/sound.
+		{ SKILL_R_NETH,
+			'+', 0,
+			'+', 800, },
+		{ SKILL_R_CHAO,
+			'+', 0,
+			'+', 800, },
+ #endif
 		{ SKILL_MIMIC,
 			'+', 1000,
 			'+', 800,
@@ -3839,6 +3856,23 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_OSPIRIT,
 			'+', 1000,
 			'+', 900, },
+ #endif
+ #if 1 // Non-mana runes, the primal elements of Shaman wizardry. - Kurzel
+ 		{ SKILL_R_LITE,
+			'+', 0,
+			'+', 800, }, // Lesser of the ratio of prayer schools.
+		{ SKILL_R_DARK,
+			'+', 0,
+			'+', 800, },
+		{ SKILL_R_NEXU,
+			'+', 0,
+			'+', 700, }, // Worse at temporal, balancing inertia/gravity/time/sound.
+		{ SKILL_R_NETH,
+			'+', 0,
+			'+', 800, },
+		{ SKILL_R_CHAO,
+			'+', 0,
+			'+', 800, },
  #endif
 		{ SKILL_MIMIC,
 			'+', 1000,
