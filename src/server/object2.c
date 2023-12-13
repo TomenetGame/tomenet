@@ -6260,8 +6260,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		/* Hack -- analyze ego-items */
 		//else if (o_ptr->name2)
 		if (o_ptr->name2 && !o_ptr->name1) {
-			artifact_type *a_ptr;
-			a_ptr = ego_make(o_ptr);
+			artifact_type *a_ptr = ego_make(o_ptr);
 
 			/* Extract the other fields */
 			if ((o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH)
@@ -6294,7 +6293,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 			}
 
 			/* Hack -- acquire "cursed" flag */
-			//		if (f3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);	// this should be done here!
+			//if (f3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);	// this should be done here!
 			if (a_ptr->flags3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);
 		}
 #endif	// 1
@@ -6306,6 +6305,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		/* Examine real objects */
 		if (o_ptr->k_idx) {
 			object_kind *k_ptr = &k_info[o_ptr->k_idx];
+
 			/* Hack -- acquire "broken" flag */
 			if (!k_ptr->cost) o_ptr->ident |= ID_BROKEN;
 			/* Hack -- acquire "cursed" flag */
