@@ -4869,6 +4869,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 					break;
 				}
 				break;
+			case EGO_CORRUPTED:
 			case EGO_CHAOTIC:
 				if (i == EGO_HA || i == EGO_LIFE) continue;
 				break;
@@ -4879,7 +4880,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 				if (i == EGO_SPECTRAL) continue;
 				/* Fall through */
 			case EGO_HA:
-				if (i == EGO_CHAOTIC) continue;
+				if (i == EGO_CHAOTIC || i == EGO_CORRUPTED) continue;
 				break;
 			case EGO_MORGUL:
 				if (i == EGO_BLESSED_WEAPON) continue;
