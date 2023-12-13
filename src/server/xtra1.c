@@ -4620,7 +4620,7 @@ void calc_boni(int Ind) {
 	for (i = 0; i < INVEN_TOTAL - INVEN_WIELD; i++) {
 		/* remember for things like admin command checking or visual indicator in client's equipment window */
 		p_ptr->equip_set[i] = equipment_set_amount[i];
-		if (equip_set_old[i] != p_ptr->equip_set[i]) p_ptr->inventory[INVEN_WIELD + i].temp = 1; //force-update this equipment slot
+		if (equip_set_old[i] != p_ptr->equip_set[i]) p_ptr->inventory[INVEN_WIELD + i].temp |= 0x01; //force-update this equipment slot
 
 		if (!equipment_set[i]) continue;
 		if (equipment_set_amount[i] > equipment_set_bonus)
