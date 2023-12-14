@@ -38,7 +38,7 @@ function module_save(Ind,name)
 
   -- features
   for x = 1, MAX_WID do
-		for y = 1, MAX_HGT do
+    for y = 1, MAX_HGT do
       f = check_feat(players(Ind).wpos,y-1,x-1)
       write(f.."\n")
     end
@@ -63,7 +63,7 @@ function module_save(Ind,name)
   
   -- monster races
   for x = 1, MAX_WID do
-		for y = 1, MAX_HGT do
+    for y = 1, MAX_HGT do
       r = check_monster(players(Ind).wpos,y-1,x-1)
       write(r.."\n")
       e = check_monster_ego(players(Ind).wpos,y-1,x-1)
@@ -108,7 +108,7 @@ function module_load(Ind,name)
   tmp.wy = wy
   tmp.wz = wz
   for x = 1, MAX_WID do
-		for y = 1, MAX_HGT do
+    for y = 1, MAX_HGT do
       f = read("*n")
       -- msg_print(Ind,"READ feat: "..f) -- crashes client
       cave_set_feat(tmp,y-1,x-1,f)
@@ -134,7 +134,7 @@ function module_load(Ind,name)
 
   -- monster races, summon = target empty grid, always awake
   for x = 1, MAX_WID do
-		for y = 1, MAX_HGT do
+    for y = 1, MAX_HGT do
       r,e = 0,0
       r = read("*n")
       e = read("*n")
