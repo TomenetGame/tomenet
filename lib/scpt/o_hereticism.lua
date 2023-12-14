@@ -182,7 +182,7 @@ OEXTRASTATS = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			do_xtra_stats(Ind, 4, 2 + get_level(Ind, OEXTRASTATS, 50) / 7, rand_int(7) + 22 + get_level(Ind, OEXTRASTATS, 17))
+			do_xtra_stats(Ind, 4, 2 + get_level(Ind, OEXTRASTATS, 50) / 7, rand_int(7) + 22 + get_level(Ind, OEXTRASTATS, 17), -1)
 			end,
 	["info"] = 	function()
 			return "+" .. (2 + get_level(Ind, OEXTRASTATS, 50) / 7) .. " dur d7+" .. (22 + get_level(Ind, OEXTRASTATS, 17))

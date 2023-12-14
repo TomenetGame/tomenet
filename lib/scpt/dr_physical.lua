@@ -173,9 +173,9 @@ EXTRASTATS_I = add_spell {
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			if (get_level(Ind, EXTRASTATS_I, 50) >= 5) then
-				do_xtra_stats(Ind, 1, 1 + get_level(Ind, EXTRASTATS_I, 50) / 9, rand_int(5) + 17 + get_level(Ind, EXTRASTATS_I, 10))
+				do_xtra_stats(Ind, 1, 1 + get_level(Ind, EXTRASTATS_I, 50) / 9, rand_int(5) + 17 + get_level(Ind, EXTRASTATS_I, 10), 0)
 			else
-				do_xtra_stats(Ind, 0, 1 + get_level(Ind, EXTRASTATS_I, 50) / 9, rand_int(5) + 17 + get_level(Ind, EXTRASTATS_I, 10))
+				do_xtra_stats(Ind, 0, 1 + get_level(Ind, EXTRASTATS_I, 50) / 9, rand_int(5) + 17 + get_level(Ind, EXTRASTATS_I, 10), 0)
 			end
 			end,
 	["info"] = 	function()
@@ -199,9 +199,9 @@ EXTRASTATS_II = add_spell {
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			if (get_level(Ind, EXTRASTATS_II, 50) >= 11) then
-				do_xtra_stats(Ind, 3, 1 + get_level(Ind, EXTRASTATS_I, 50) / 9, rand_int(5) + 17 + get_level(Ind, EXTRASTATS_I, 10))
+				do_xtra_stats(Ind, 3, 1 + get_level(Ind, EXTRASTATS_I, 50) / 9, rand_int(5) + 17 + get_level(Ind, EXTRASTATS_I, 10), 0)
 			else
-				do_xtra_stats(Ind, 2, 1 + get_level(Ind, EXTRASTATS_I, 50) / 9, rand_int(5) + 17 + get_level(Ind, EXTRASTATS_I, 10))
+				do_xtra_stats(Ind, 2, 1 + get_level(Ind, EXTRASTATS_I, 50) / 9, rand_int(5) + 17 + get_level(Ind, EXTRASTATS_I, 10), 0)
 			end
 			end,
 	["info"] = 	function()
