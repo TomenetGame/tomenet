@@ -4028,10 +4028,9 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 
 // Added an ego version for modules - Kurzel
 int place_monster_ego(struct worldpos *wpos, int y, int x, int r_idx, int e_idx, bool slp, bool grp, int clo, int clone_summoning) {
-	int i;
 	monster_race *r_ptr = &r_info[r_idx];
 	cave_type **zcave;
-	int dlevel = getlevel(wpos), res;
+	int res;
 
 	if (!(zcave = getcave(wpos))) return(-1);
 #ifdef ARCADE_SERVER
