@@ -4648,7 +4648,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 		if (good && (!e_ptr->cost)) continue;
 		if ((!good) && e_ptr->cost) continue;
 
-		/* (Handling of TR6_EVIL is done via e_info.txt tval/sval restriction entry instead of a check here, unlike for randarts) */
+		/* (Handling of TR6_UNBLESSED is done via e_info.txt tval/sval restriction entry instead of a check here, unlike for randarts) */
 
 		/* ok */
 		ok_ego[ok_num++] = e_tval[tval][i];
