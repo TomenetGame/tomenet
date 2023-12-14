@@ -14699,6 +14699,38 @@ bool master_level(int Ind, char * parms) {
 			dealloc_dungeon_level(&twpos);
 
 		break; }
+
+#ifdef DM_MODULES
+	/* Kurzel - save/load a module file (or create a blank to begin with) */
+	case 'S': {
+		exec_lua(Ind, format("return module_save(%d, \"%s\")", Ind, &parms[1]));
+	break; }
+	case 'L': {
+		exec_lua(Ind, format("return module_load(%d, \"%s\")", Ind, &parms[1]));
+	break; }
+	case 'B': {
+		// s_printf("parms[1]: %s\n",&parms[1]);
+		// s_printf("parms[1]: %cxxx%c\n",(&parms[1])[0],(&parms[1])[2]);
+		int W = (&parms[1])[0] - 48; // '1' -> 1
+		int H = (&parms[1])[2] - 48; // '1' -> 1
+		// s_printf("parms[1]: %dxx%d\n",W,H);
+		generate_cave_blank(p_ptr->wpos.wx,p_ptr->wpos.wy,p_ptr->wpos.wz,5-W,5-H);
+	break; }
+	/* Place entrance location from <, > or random entry (eg. WoR) */
+	case '>': {
+		new_level_up_x(&p_ptr->wpos,p_ptr->px);
+		new_level_up_y(&p_ptr->wpos,p_ptr->py);
+	break; }
+	case '<': {
+		new_level_down_x(&p_ptr->wpos,p_ptr->px);
+		new_level_down_y(&p_ptr->wpos,p_ptr->py);
+	break; }
+	case '+': {
+		new_level_rand_x(&p_ptr->wpos,p_ptr->px);
+		new_level_rand_y(&p_ptr->wpos,p_ptr->py);
+	break; }
+#endif
+
 	/* default -- do nothing. */
 	default: break;
 	}

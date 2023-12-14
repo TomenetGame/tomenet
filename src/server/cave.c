@@ -7677,7 +7677,8 @@ void wiz_dark(int Ind) {
 	}
 }
 
-#ifdef ARCADE_SERVER
+// #ifdef ARCADE_SERVER
+// Also used for module.lua - Kurzel
 extern int check_feat(worldpos *wpos, int y, int x) {
 	cave_type **zcave;
 	cave_type *c_ptr;
@@ -7689,7 +7690,56 @@ extern int check_feat(worldpos *wpos, int y, int x) {
 	c_ptr = &zcave[y][x];
 	return(c_ptr->feat);
 }
-#endif
+// #endif
+// #ifdef DM_MODULES
+extern int dun_get_wid(worldpos *wpos) {
+	struct dun_level *l_ptr;
+
+	if (!(l_ptr = getfloor(wpos))) return(0);
+
+	return(l_ptr->wid);
+}
+extern int dun_get_hgt(worldpos *wpos) {
+	struct dun_level *l_ptr;
+
+	if (!(l_ptr = getfloor(wpos))) return(0);
+
+	return(l_ptr->hgt);
+}
+extern int check_monster(worldpos *wpos, int y, int x) {
+	cave_type **zcave;
+	cave_type *c_ptr;
+	monster_type *m_ptr;
+
+	if (!(zcave = getcave(wpos))) return(0);
+
+	if (!in_bounds(y, x)) return(0);
+
+	c_ptr = &zcave[y][x];
+	if (c_ptr->m_idx) {
+		m_ptr = &m_list[c_ptr->m_idx];
+		return(m_ptr->r_idx);
+	} else {
+		return 0;
+	}
+}
+extern int check_monster_ego(worldpos *wpos, int y, int x) {
+	cave_type **zcave;
+	cave_type *c_ptr;
+	monster_type *m_ptr;
+
+	if (!(zcave = getcave(wpos))) return(0);
+
+	if (!in_bounds(y, x)) return(0);
+
+	c_ptr = &zcave[y][x];
+	if (c_ptr->m_idx) {
+		m_ptr = &m_list[c_ptr->m_idx];
+		return (m_ptr->ego);
+	} else return 0;
+}
+// #endif
+// LUA would miss these without #define ?
 
 /*
  * Change the "feat" flag for a grid, and notice/redraw the grid

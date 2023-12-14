@@ -7860,10 +7860,17 @@ static void cmd_master_aux_level(void) {
 		Term_putstr(5, 6, -1, TERM_WHITE, "(3) Add dungeon");
 		Term_putstr(5, 7, -1, TERM_WHITE, "(4) Remove dungeon");
 		Term_putstr(5, 8, -1, TERM_WHITE, "(5) Town generation");
-
+#ifdef DM_MODULES
+		Term_putstr(5, 9, -1, TERM_WHITE, "(6) Save level to module file");
+		Term_putstr(5, 10, -1, TERM_WHITE, "(7) Load level from module file");
+		Term_putstr(5, 11, -1, TERM_WHITE, "(8) Generate a blank level");
+		Term_putstr(5, 12, -1, TERM_WHITE, "(9) Set entry position");
 
 		/* Prompt */
-		Term_putstr(0, 9, -1, TERM_WHITE, "Command: ");
+		Term_putstr(0, 14, -1, TERM_WHITE, "Command: ");
+#else
+		Term_putstr(0, 10, -1, TERM_WHITE, "Command: ");
+#endif
 
 		/* Get a key */
 		i = inkey();
@@ -7985,6 +7992,29 @@ static void cmd_master_aux_level(void) {
 			buf[1] = c_get_quantity("Base level: ", 127);
 			Send_master(MASTER_LEVEL, buf);
 		}
+
+#ifdef DM_MODULES
+		/* Kurzel - save/load a module file (or create a blank to begin with) */
+		else if (i == '6') {
+			buf[0] = 'S';
+			get_string("Save module name (max 19 char):", &buf[1], 19);
+			Send_master(MASTER_LEVEL, buf);
+		}
+		else if (i == '7') {
+			buf[0] = 'L';
+			get_string("Load module name (max 19 char):", &buf[1], 19);
+			Send_master(MASTER_LEVEL, buf);
+		}
+		else if (i == '8') {
+			buf[0] = 'B';
+			get_string("WxH string (eg. 1x1-5x5):", &buf[1], 19);
+			Send_master(MASTER_LEVEL, buf);
+		}
+		else if (i == '9') {
+			get_string("Set level entry (> < or +):", &buf[0], 1);
+			Send_master(MASTER_LEVEL, buf);
+		}
+#endif
 
 		/* Oops */
 		else {

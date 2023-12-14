@@ -541,9 +541,16 @@ extern dun_level *getfloor(struct worldpos *wpos);
 extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
 extern bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat);
 extern bool cave_set_feat_live_ok(worldpos *wpos, int y, int x, int feat);
-#ifdef ARCADE_SERVER
+// #ifdef ARCADE_SERVER
+// Also used for module.lua - Kurzel
 extern int check_feat(worldpos *wpos, int y, int x);
-#endif
+// #endif
+// #ifdef DM_MODULES
+extern int dun_get_wid(worldpos *wpos);
+extern int dun_get_hgt(worldpos *wpos);
+extern int check_monster(worldpos *wpos, int y, int x);
+// #endif
+// LUA would miss these without #define ?
 extern struct dungeon_type *getdungeon(struct worldpos *wpos);
 extern bool can_go_up(struct worldpos *wpos, byte mode);
 extern bool can_go_down(struct worldpos *wpos, byte mode);
