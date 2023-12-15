@@ -2140,6 +2140,11 @@ int Receive_inven(void) {
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN);
 
+#ifdef ENABLE_SUBINVEN
+	/* Update subinven subterm too if it's a bag */
+	if (tval == TV_SUBINVEN) p_ptr->window |= PW_SUBINVEN;
+#endif
+
 	return(1);
 }
 

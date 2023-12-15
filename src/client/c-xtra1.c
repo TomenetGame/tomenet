@@ -1267,7 +1267,7 @@ void prt_indicator_melee_brand(bool is_active) {
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
-	if (is_active) c_put_str(TERM_ORANGE, "MB", ROW_TEMP_TBRAND, COL_TEMP_TBRAND);
+	if (is_active) c_put_str(TERM_YELLOW, "MB", ROW_TEMP_TBRAND, COL_TEMP_TBRAND);
 	else c_put_str(TERM_WHITE, "   ", ROW_TEMP_TBRAND, COL_TEMP_TBRAND);
 
 	/* restore cursor position */
@@ -1692,8 +1692,8 @@ static void display_subinven(void) {
 	int i, k = 0, last_k = 0, z;
 	long int wgt;
 
-	object_type *o_ptr, *i_ptr;
-	int subinven_size, bagheader_x, bagheader_y;
+	object_type *o_ptr, *i_ptr = NULL;
+	int subinven_size, bagheader_x, bagheader_y, k_idx;
 
 
 	/* Determine, which subinventory to display:
@@ -1709,12 +1709,20 @@ static void display_subinven(void) {
 
 		/* Describe the subinventory type itself in one extra line*/
 
+		/* i_ptr->k_idx is not transmitted, only tval,sval are. So we have to loop through all. */
+		for (k_idx = 0; k_idx < MAX_K_IDX; k_idx++)
+			if (kind_list_tval[k_idx] == i_ptr->tval && kind_list_sval[k_idx] == i_ptr->sval) {
+				i = color_char_to_attr(kind_list_attr[k_idx]);
+				break;
+			}
+
 		bagheader_y = last_k;
 		/* Add slot index label */
-		sprintf(o_name, "  <%c>", index_to_label(islot));
-		Term_putstr(0, last_k, -1, i_ptr->attr, o_name);
+		sprintf(o_name, "[%c]", index_to_label(islot));
+		//Term_putstr(0, last_k, -1, i_ptr->attr, o_name);
+		Term_putstr(0, last_k, -1, i, o_name);
 		/* Erase the rest of the line */
-		Term_erase(5, last_k, 255);
+		Term_erase(3, last_k, 255);
 
 		/* Add bag object name */
 		strcpy(o_name, inventory_name[islot]);
@@ -1723,13 +1731,15 @@ static void display_subinven(void) {
 		//strcat(o_name, " :");
 		/* Obtain length of description */
 		n = strlen(o_name);
-		if (n > MAX_CHARS - 7) n = MAX_CHARS - 7;
-		Term_putstr(6, last_k, n, i_ptr->attr, o_name);
+		if (n > MAX_CHARS - 5) n = MAX_CHARS - 5;
+		Term_putstr(4, last_k, n, i_ptr->attr, o_name);
+		//Term_putstr(4, last_k, n, TERM_L_WHITE, o_name);
+		//Term_putstr(4, last_k, n, i, o_name);
 		/* Erase the rest of the line */
-		Term_erase(6 + n, last_k, 255);
+		Term_erase(4 + n, last_k, 255);
 		/* account for this extra line */
 		last_k++;
-		bagheader_x = 6 + n;
+		bagheader_x = 4 + n;
 
 
 		/* Find the "final" slot */
@@ -1746,10 +1756,12 @@ static void display_subinven(void) {
 		Term_putstr(bagheader_x, bagheader_y, -1, i_ptr->attr, tmp_val);
 
 		/* Display a line if inventory is actually empty */
-		if (!z) Term_putstr(0, last_k++, -1, (i_ptr->attr == TERM_L_DARK) ? TERM_L_DARK : TERM_L_WHITE,
+		//if (!z) Term_putstr(0, last_k++, -1, (i_ptr->attr == TERM_L_DARK) ? TERM_L_DARK : TERM_L_WHITE,
+		if (!z) Term_putstr(0, last_k++, -1, TERM_L_DARK,
 		    (i_ptr->attr == TERM_L_DARK) ? /* Use colour sent by server as indicator for SUBINVEN_LIMIT_GROUP */
-		    "(This container is of duplicate type and therefore unusable)                    " :
-		    "(This container is empty)                                                       ");
+		    "     (This container is of duplicate type and therefore unusable)               " :
+		    "     (empty)                                                                    ");
+		    //"     (This container is empty)                                                  ");
 
 		/* Display the inventory */
 		k = last_k;
@@ -1760,32 +1772,32 @@ static void display_subinven(void) {
 			o_ptr = &subinventory[islot][i];
 
 			/* Start with an empty "index" */
-			tmp_val[0] = tmp_val[1] = tmp_val[2] = ' ';
+			tmp_val[0] = tmp_val[1] = tmp_val[2] = tmp_val[3] = tmp_val[4] = ' ';
 
 			/* Terminate - Term_putstr could otherwise read past the end of the buffer
 			 * when it looks for a color code (valgrind complained about that). - mikaelh */
-			tmp_val[3] = '\0';
+			tmp_val[5] = '\0';
 
 			/* Prepare an "index" */
-			tmp_val[0] = index_to_label(i);
+			tmp_val[2] = index_to_label(i);
 
 			/* Bracket the "index" --(-- */
-			tmp_val[1] = ')';
+			tmp_val[3] = ')';
 
 			/* Display the index */
-			Term_putstr(0, last_k + i, 3, TERM_WHITE, tmp_val);
+			Term_putstr(0, last_k + i, 5, TERM_WHITE, tmp_val);
 
 			/* Describe the object */
 			strcpy(o_name, subinventory_name[islot][i]);
 
 			/* Obtain length of description */
 			n = strlen(o_name);
-			if (n > MAX_CHARS - 4) n = MAX_CHARS - 4; //cut off, can't read it anyway
+			if (n > MAX_CHARS - 6) n = MAX_CHARS - 6; //cut off, can't read it anyway
 
-			Term_putstr(3, last_k + i, n, o_ptr->attr, o_name);
+			Term_putstr(5, last_k + i, n, o_ptr->attr, o_name);
 
 			/* Erase the rest of the line */
-			Term_erase(3 + n, last_k + i, 255);
+			Term_erase(5 + n, last_k + i, 255);
 
 			/* Display the weight if needed */
 			if (c_cfg.show_weights && o_ptr->weight) {
@@ -1803,6 +1815,12 @@ static void display_subinven(void) {
 			}
 		}
 		last_k = k;
+	}
+
+	/* No subinventories? */
+	if (!i_ptr) {
+		Term_putstr(0, 0, -1, TERM_L_DARK, "(You don't carry any special bags)");
+		k = 1;
 	}
 
 	/* Erase the rest of the window */
@@ -2294,9 +2312,9 @@ void show_subinven(int islot) {
 	}
 
 	/* Mention the two basic commands for handling subinventories */
-	//c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - 't': unstow, 'a': container-dependant activate.", k, inventory[islot].pval), 0, 0);
-	if (i_ptr->sval == SV_SI_SATCHEL) c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - ESC: exit, t: unstow, a: mix chemicals, x/d/k/{/}.", k, inventory[islot].pval), 0, 0);
-	else c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - ESC: exit, t: unstow, x/d/k/{/}.", k, inventory[islot].pval), 0, 0);
+	//c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - 's': unstow, 'a': container-dependant activate.", k, inventory[islot].pval), 0, 0);
+	if (i_ptr->sval == SV_SI_SATCHEL) c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - ESC: exit, s: unstow, a: mix chemicals, x/d/k/{/}.", k, inventory[islot].pval), 0, 0);
+	else c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - ESC: exit, s: unstow, x/d/k/{/}.", k, inventory[islot].pval), 0, 0);
 
 	/* Make a "shadow" below the list (only if needed) */
 	if (j && (j < 23)) prt("", j + 1, col ? col - 2 : col);

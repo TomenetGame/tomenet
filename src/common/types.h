@@ -794,7 +794,11 @@ struct object_type {
 	bool changed;			/* dummy flag to refresh item if o_name changed, but memory copy didn't */
 	bool NR_tradable;		/* for ALLOW_NR_CROSS_ITEMS */
 	bool no_soloist;		/* item may not be picked up by Soloists. Used for "unpersonalized" event rewards eg Santa drops. */
-	byte temp;			/* any local hacks */
+	byte temp;			/* any local hacks:
+					    0x01 is used to force-update an equipment slot (by simply causing memcmp to not match anymore due to the flipped bit!).
+					    0x02 is used for !W inscription to set the alarm for this object,
+					    0x04 too, for preventing the !W induced alarm if the object was dropped by the player.
+					*/
 	/* For IDDC_IRON_COOP || IRON_IRON_TEAM : */
 	s32b iron_trade;		/* Needed for the last survivor after a party was erased: Former party of the last player who picked it up */
 	/* ..and for IDDC_RESTRICTED_TRADING : */

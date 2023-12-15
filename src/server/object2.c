@@ -10855,10 +10855,18 @@ void inven_item_describe(int Ind, int item) {
 	/* Get a description */
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
-	/* Print a message */
+	/* Hack for running-low warning from !Wn inscription */
 	if (o_ptr->temp & 0x02) {
-		/* Hack for running-low warning from !Wn inscription */
-		msg_format(Ind, "You have \377R%s.", o_name);
+		char *c = strchr(o_name, '{');
+
+		if (!c) msg_format(Ind, "You have \377o%s.", o_name);
+		else {
+			char tmp[ONAME_LEN];
+
+			strcpy(tmp, c);
+			*c = 0;
+			msg_format(Ind, "You have \377o%s\377w%s.", o_name, tmp);
+		}
 #ifdef USE_SOUND_2010
  #ifdef USE_SOUND_2010
 		Send_warning_beep(Ind);
@@ -10867,8 +10875,9 @@ void inven_item_describe(int Ind, int item) {
 		if (!p_ptr->paging) p_ptr->paging = 1;
  #endif
 #endif
-		o_ptr->temp &= ~0x02;
+		o_ptr->temp &= ~(0x02 | 0x04);
 	} else
+	/* Print a message */
 	msg_format(Ind, "You have %s.", o_name);
 }
 
@@ -10914,8 +10923,8 @@ void inven_item_increase(int Ind, int item, int num) {
 #ifdef ENABLE_SUBINVEN
 		if (item >= 100) {
 			/* If we lose an item, prepare for a warning, given in subsequent inven_item_describe() call */
-			if (num < 0 && (i = check_guard_inscription(o_ptr->note, 'W')) && o_ptr->number <= (i == -1 ? 10 : i - 1)) o_ptr->temp |= 0x02;
-			else o_ptr->temp &= ~0x02; //paranoia
+			if (!(o_ptr->temp & 0x04) && num < 0 && (i = check_guard_inscription(o_ptr->note, 'W')) && o_ptr->number <= (i == -1 ? 10 : i - 1)) o_ptr->temp |= 0x02;
+			else o_ptr->temp &= ~(0x02 | 0x04);
 
 			/* Update the slot 'manually' */
 			display_subinven_aux(Ind, item / 100 - 1, item % 100);
@@ -10943,8 +10952,8 @@ void inven_item_increase(int Ind, int item, int num) {
 	}
 
 	/* If we lose an item, prepare for a warning, given in subsequent inven_item_describe() call */
-	if (num < 0 && (i = check_guard_inscription(o_ptr->note, 'W')) && o_ptr->number <= (i == -1 ? 10 : i - 1)) o_ptr->temp |= 0x02;
-	else o_ptr->temp &= ~0x02; //paranoia
+	if (!(o_ptr->temp & 0x04) && num < 0 && (i = check_guard_inscription(o_ptr->note, 'W')) && o_ptr->number <= (i == -1 ? 10 : i - 1)) o_ptr->temp |= 0x02;
+	else o_ptr->temp &= ~(0x02 | 0x04);
 
 	/* If losing quest items, the quest goal might get unset again! */
 	if ((p_ptr->quest_any_r || p_ptr->quest_any_r_target) && num < 0) quest_check_ungoal_r(Ind, o_ptr, -num);

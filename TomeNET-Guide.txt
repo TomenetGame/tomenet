@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 10. December 2023 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 15. December 2023 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.1 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -5556,7 +5556,7 @@ To stow items from your inventory into a subinventory, press 'i' first to
 invoke your inventory, then 's' to stow an item or stack of items.
 
 Subinventories can be browsed via 'b' (same key as used for browsing books).
-While browsing a subinventory, you can press 't' to unstow an item or stack,
+While browsing a subinventory, you can press 's' to unstow an item or stack,
 putting it back into your (normal) inventory.
 Alternatively, just for a quick check of contents, you can inspect (SHIFT+i) a
 subinventory container. You cannot interact with the contents this way though.
@@ -5632,7 +5632,7 @@ A few generic commands are always available in any subinventory:
   - Destroy (kill) an item (k or CTRL+D).
   - Inscribe or uninscribe an item ({ or }).
   - Pasting an item into chat via SHIFT+slot.
-  - Unstow item, ie put it back to inventory (t).
+  - Unstow item, ie put it back to inventory (s).
 
 There are also inscriptions that can be put onto these bags (don't mix them):
   !A  Do not auto-stow items into this bag.
