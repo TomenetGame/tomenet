@@ -1030,8 +1030,8 @@ void cmd_subinven(int islot) {
 
 		/* Additional commands specifically replacing/allowing backpack-related commands for subinventories: */
 
-		/* Move item to backpack inventory - let's abuse equipment-related commands for the heck of it */
-		case 't': cmd_subinven_remove(using_subinven); continue;
+		/* Move item to backpack inventory */
+		case 's': cmd_subinven_remove(using_subinven); continue;
 
 		/* More basic functions */
 		//postponed
