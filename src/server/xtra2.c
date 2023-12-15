@@ -15008,6 +15008,9 @@ bool master_summon(int Ind, char * parms) {
 	static char summon_type = 0; /* what kind to summon -- x right here, group at random location, etc */
 	static char summon_parms = 0; /* arguments to previous byte */
 	static u16b r_idx = 0; /* which monser to actually summon, from previous variables */
+#ifdef DM_MODULES
+	static u16b e_idx = 0; /* ego is possible */
+#endif
 	unsigned char size = 0;  /* how many monsters to actually summon */
 
 	if (!is_admin(p_ptr) && (!player_is_king(Ind))) return(FALSE);
@@ -15022,6 +15025,13 @@ bool master_summon(int Ind, char * parms) {
 		monster_type = parms[2];
 		/* Hack -- since monster_parms is a string, throw it on the end */
 		strcpy(monster_parms, &parms[3]);
+#ifdef DM_MODULES
+		e_idx = 0; // Paranoia - reset static from last call? - Kurzel
+		char * ptr = strchr(monster_parms, ' '); // Locate first space, if any
+		if (ptr) e_idx = atoi(&ptr[1]); // Convert a string after the space
+		if (e_idx <= 0) e_idx = 0; // Ignore bad atoi() conversions
+#endif
+
 	}
 
 	switch (summon_type) {
@@ -15033,6 +15043,10 @@ bool master_summon(int Ind, char * parms) {
 			r_idx = master_summon_aux_monster_type(Ind, monster_type, monster_parms);
 
 			/* summon the monster, if we have a valid one */
+#ifdef DM_MODULES
+			if (e_idx) summon_detailed_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, r_idx, e_idx, 0, 1);
+			else
+#endif
 			if (r_idx) summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, r_idx, 0, 1);
 		}
 		break;

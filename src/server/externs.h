@@ -1118,6 +1118,9 @@ extern void update_players(void);
 extern int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool grp, int clo, int clone_summoning);
 extern int place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, int randuni, bool slp, int clo, int clone_summoning);
 extern bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp);
+#ifdef DM_MODULES
+extern int place_monster_ego(struct worldpos *wpos, int y, int x, int r_idx, int e_idx, bool slp, bool grp, int clo, int clone_summoning);
+#endif
 #ifdef RPG_SERVER
 extern bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx);
 #endif
@@ -1125,6 +1128,9 @@ extern bool alloc_monster(struct worldpos *wpos, int dis, int slp);
 extern int alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp);
 extern bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone, int type, int allow_sidekicks, int clone_summoning);
 extern bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, int s_clone, unsigned char num);
+#ifdef DM_MODULES
+extern bool summon_detailed_race(struct worldpos *wpos, int y1, int x1, int r_idx, int e_idx, int s_clone, unsigned char size);
+#endif
 extern bool summon_specific_race_somewhere(struct worldpos *wpos, int r_idx, int s_clone, unsigned char num);
 extern int summon_detailed_one_somewhere(struct worldpos *wpos, int r_idx, int ego, bool slp, int s_clone);
 extern bool multiply_monster(int m_idx);

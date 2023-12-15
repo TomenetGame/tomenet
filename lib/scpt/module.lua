@@ -139,7 +139,7 @@ function module_load(Ind,name)
       r = read("*n")
       e = read("*n")
       if r ~= 0 then
-        place_monster_one(tmp,y-1,x-1,r,e,0,1,0,0) -- sleep 1
+        place_monster_ego(tmp,y-1,x-1,r,e,1,0,0,0) -- sleep 1
       end
     end
   end
