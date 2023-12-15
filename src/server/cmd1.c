@@ -1445,7 +1445,7 @@ void search(int Ind) {
 				}
 
 				/* Invisible trap */
-//				if (c_ptr->feat == FEAT_INVIS)
+				//if (c_ptr->feat == FEAT_INVIS)
 				if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
 					if (!cs_ptr->sc.trap.found) {
 						/* Pick a trap */
@@ -1472,7 +1472,7 @@ void search(int Ind) {
 				/* Search chests */
 				else if (o_ptr->tval == TV_CHEST) {
 					/* Examine chests for traps */
-//					if (!object_known_p(Ind, o_ptr) && (t_info[o_ptr->pval]))
+					//if (!object_known_p(Ind, o_ptr) && (t_info[o_ptr->pval]))
 					if (!object_known_p(Ind, o_ptr) && (o_ptr->pval)) {
 						/* Message */
 						msg_print(Ind, "You have discovered a trap on the chest!");
@@ -1546,7 +1546,7 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 	int i, num;
 	object_type *s_ptr, forge_one, *o_ptr_tmp = o_ptr;
 	player_type *p_ptr = Players[Ind];
-	bool delete_it, fully_stowed = FALSE;
+	bool delete_it, fully_stowed = FALSE, stowed_some = FALSE;
 
 	/* Don't auto-stow unidentified items */
 	if (!object_known_p(Ind, o_ptr) || !object_aware_p(Ind, o_ptr)) return(FALSE);
@@ -1578,6 +1578,7 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 		if (!subinven_can_stack(Ind, o_ptr, i, store_bought)) continue;
 
 		/* Eligible subinventory found, try to move as much as possible */
+		stowed_some = TRUE;
 		if ((fully_stowed = subinven_stow_aux(Ind, o_ptr, i))) break; /* If complete stack was moved, we're done */
  #ifdef SUBINVEN_LIMIT_GROUP
 		break;
@@ -1616,6 +1617,16 @@ bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 
 		return(TRUE);
 	} else if (!pick_one) {
+		if (check_guard_inscription(s_ptr->note, 'A') >= 1 ||
+		    check_guard_inscription(s_ptr->note, 'O') >= 1 ||
+		    check_guard_inscription(s_ptr->note, 'S') >= 1) {
+			/* As long as we did stow some, stop for now. If the player wants to pick up the
+			   rest of the stack, he'll have to reissue the pickup command.
+			   Reasoning: !An, !On, !Sn are usually used for managing restocking of the bag.
+			              Therefore it is unlikely that the player intends to pick up the
+			              remaining stack into his normal inventory. */
+			return(stowed_some);
+		}
 		/* There are still items left in the stack, and we didn't try to pick up just one,
 		   so additionally try now to pick up the rest of this pile normally */
 		//o_ptr = &o_list[o_idx];

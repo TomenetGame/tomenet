@@ -4816,12 +4816,13 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 	player_type *p_ptr = Players[Ind];
 	object_type *s_ptr = &p_ptr->inventory[sslot];
 	object_type *o_ptr, forge_copy, forge_part, *i_ptr_tmp = i_ptr;
-	int i, inum = i_ptr->number, xnum, Gnum;
+	int i, inum, inum_org = i_ptr->number, xnum, Gnum;
 	char o_name[ONAME_LEN];
 	u32b f3 = 0x0, dummy;
 
 	/* Look for free spaces or spaces to merge with */
 	for (i = 0; i < s_ptr->bpval; i++) {
+		inum = i_ptr->number;
 		o_ptr = &p_ptr->subinventory[sslot][i];
 		if (o_ptr->tval) {
 			/* Slot has no more stacking capacity? */
@@ -4877,6 +4878,15 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 				display_subinven_aux(Ind, sslot, i);
 				/* That was the rest of the stack? Done. */
 				if (!i_ptr->number) break;
+
+				/* For !X0 (X being one from A,O,S) inscriptions, actually stop even if there is still a rest left:
+				   If the player wants to pick up the rest of the stack, he'll have to reissue the pickup command.
+				   Reasoning: !A0, !O0, !S0 are usually used for managing restocking of the bag.
+				              Therefore it is unlikely that the player intends to pick up the
+				              remaining stack into his normal inventory. */
+				if (check_guard_inscription(s_ptr->note, 'A') == 1 ||
+				    check_guard_inscription(s_ptr->note, 'O') == 1 ||
+				    check_guard_inscription(s_ptr->note, 'S') == 1) break;
 			} else { /* Couldn't use this slot at all */
 				/* Magic device? */
 				if (forge_part.tval) {
@@ -4944,10 +4954,10 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 	}
 
 	/* No free space at all? */
-	if (inum == i_ptr->number) return(FALSE);
+	if (inum_org == i_ptr->number) return(FALSE);
 
 	/* Assume object got added from outside to our inventory. */
-	p_ptr->total_weight += (inum - i_ptr->number) * i_ptr->weight;
+	p_ptr->total_weight += (inum_org - i_ptr->number) * i_ptr->weight;
 
 	/* Managed to merge fully? Erase source object then. */
 	if (!i_ptr->number) {
@@ -4960,32 +4970,39 @@ bool subinven_stow_aux(int Ind, object_type *i_ptr, int sslot) {
 }
 
 /* Just check if this object can stack with an existing item in this subinventory.
-   'allow_new_stack': Return TRUE too if there is no existing stack that has space left, but there is an object_similar() item in the bag at least. */
+   For !X0: Return TRUE only if there is an existing stack that has any space left (even if only for partial merging).
+   For !X1: Return TRUE too if there is no existing stack that has space left, but there is an object_similar() item in the bag at least.
+   (...with 'X' being one of A,S,O) */
 bool subinven_can_stack(int Ind, object_type *i_ptr, int sslot, bool store_bought) {
 	player_type *p_ptr = Players[Ind];
 	object_type *s_ptr = &p_ptr->inventory[sslot], *o_ptr;
 	int i, inum = i_ptr->number, xnum, Gnum, maxG;
-	bool new_stack = TRUE, allow_new_stack = FALSE;
+	bool new_stack = FALSE, allow_new_stack = FALSE;
 	int a, o, s;
 
 	/* Player disabled auto-stow via bag inscription? */
-	a = o = s = 0;
-	if ((a = check_guard_inscription(s_ptr->note, 'A')) ||
-	    ((o = check_guard_inscription(s_ptr->note, 'O')) && !i_ptr->owner) ||
-	    ((s = check_guard_inscription(s_ptr->note, 'S')) && !store_bought)) {
-		/* Assume it's not accepted to use multiple !A, !O or !S inscriptions on the same item */
-		if (a == -1 || o == -1 || s == -1) return(FALSE);
+	a = check_guard_inscription(s_ptr->note, 'A');
+	o = check_guard_inscription(s_ptr->note, 'O');
+	if (i_ptr->owner) o = 0; /* Allow again */
+	s = check_guard_inscription(s_ptr->note, 'S');
+	if (store_bought) s = 0; /* Allow again */
 
-		new_stack = FALSE;
-		allow_new_stack = (a == 2 || o == 2 || s == 2);
-	}
+	/* Assume it's not accepted to use multiple 'pure' (without 0/1 parm) !A, !O or !S inscriptions on the same item */
+
+	/* Don't auto-stow items in here at all! */
+	if (a == -1 || o == -1 || s == -1) return(FALSE);
+	/* Allowed to auto-stow in any case? */
+	if (!a && !o && !s) return(TRUE);
+
+	/* Check for !X1 aka 'allow creating a new stack, as long as we have a similar object in the bag already'. */
+	allow_new_stack = (a == 2 || o == 2 || s == 2);
 
 	/* Look for free spaces or spaces to merge with */
 	for (i = 0; i < s_ptr->bpval; i++) {
 		o_ptr = &p_ptr->subinventory[sslot][i];
 		if (!o_ptr->tval) break;
 
-		/* Slot has no more stacking capacity? */
+		/* Slot has no more stacking capacity ie has reached max stack size? */
 		if (o_ptr->number == MAX_STACK_SIZE - 1 ||
 		    ((maxG = check_guard_inscription(o_ptr->note, 'G')) && o_ptr->number >= maxG - 1)) {
 			if (!allow_new_stack) continue;
@@ -4993,7 +5010,6 @@ bool subinven_can_stack(int Ind, object_type *i_ptr, int sslot, bool store_bough
 			new_stack = TRUE; /* At this point, object_similar() must've returned the '-1' hack for 'create a new stack' via 0x100 tolerance. */
 			continue;
 		}
-
 		/* Hack 'number' to allow merging stacks partially */
 		xnum = MAX_STACK_SIZE - 1 - o_ptr->number;
 		/* For !Gn inscription, super hack to modify xnum further if required */
@@ -5003,7 +5019,6 @@ bool subinven_can_stack(int Ind, object_type *i_ptr, int sslot, bool store_bough
 		/* Stack aka merge partially or fully */
 		if (Gnum) return(TRUE);
 	}
-	i_ptr->number = inum;
 	return(new_stack && i < s_ptr->bpval); /* Can only create a new stack if there is at least one free slot left in the bag. */
 }
 
