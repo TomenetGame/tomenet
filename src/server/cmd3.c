@@ -1791,6 +1791,9 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 	/* Take a partial turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 
+	/* Mark as forcibly dropped, to suppress !W triggering */
+	o_ptr->temp |= 0x04;
+
 	/* Drop (some of) the item */
 	inven_drop(TRUE, Ind, item, quantity, FALSE);
 }
