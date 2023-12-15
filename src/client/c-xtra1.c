@@ -1267,7 +1267,7 @@ void prt_indicator_melee_brand(bool is_active) {
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
-	if (is_active) c_put_str(TERM_ORANGE, "MB", ROW_TEMP_TBRAND, COL_TEMP_TBRAND);
+	if (is_active) c_put_str(TERM_YELLOW, "MB", ROW_TEMP_TBRAND, COL_TEMP_TBRAND);
 	else c_put_str(TERM_WHITE, "   ", ROW_TEMP_TBRAND, COL_TEMP_TBRAND);
 
 	/* restore cursor position */
@@ -2306,9 +2306,9 @@ void show_subinven(int islot) {
 	}
 
 	/* Mention the two basic commands for handling subinventories */
-	//c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - 't': unstow, 'a': container-dependant activate.", k, inventory[islot].pval), 0, 0);
-	if (i_ptr->sval == SV_SI_SATCHEL) c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - ESC: exit, t: unstow, a: mix chemicals, x/d/k/{/}.", k, inventory[islot].pval), 0, 0);
-	else c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - ESC: exit, t: unstow, x/d/k/{/}.", k, inventory[islot].pval), 0, 0);
+	//c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - 's': unstow, 'a': container-dependant activate.", k, inventory[islot].pval), 0, 0);
+	if (i_ptr->sval == SV_SI_SATCHEL) c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - ESC: exit, s: unstow, a: mix chemicals, x/d/k/{/}.", k, inventory[islot].pval), 0, 0);
+	else c_put_str(TERM_L_BLUE, format("Container contents (%d/%d) - ESC: exit, s: unstow, x/d/k/{/}.", k, inventory[islot].pval), 0, 0);
 
 	/* Make a "shadow" below the list (only if needed) */
 	if (j && (j < 23)) prt("", j + 1, col ? col - 2 : col);
