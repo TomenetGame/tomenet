@@ -1692,7 +1692,7 @@ static void display_subinven(void) {
 	int i, k = 0, last_k = 0, z;
 	long int wgt;
 
-	object_type *o_ptr, *i_ptr;
+	object_type *o_ptr, *i_ptr = NULL;
 	int subinven_size, bagheader_x, bagheader_y, k_idx;
 
 
@@ -1815,6 +1815,12 @@ static void display_subinven(void) {
 			}
 		}
 		last_k = k;
+	}
+
+	/* No subinventories? */
+	if (!i_ptr) {
+		Term_putstr(0, 0, -1, TERM_L_DARK, "(You don't carry any special bags)");
+		k = 1;
 	}
 
 	/* Erase the rest of the window */
