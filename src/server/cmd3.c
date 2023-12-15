@@ -2662,6 +2662,7 @@ void do_cmd_uninscribe(int Ind, int item) {
 
 		/* Window stuff */
 		//p_ptr->window |= (PW_INVEN | PW_EQUIP); --todo: implement PW_SUBINVEN --- done in combine_pack() for now
+		p_ptr->window |= PW_SUBINVEN;
 
 		return;
 	}
@@ -2876,6 +2877,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 
 		/* Window stuff */
 		//p_ptr->window |= (PW_INVEN | PW_EQUIP); --todo: implement PW_SUBINVEN --- done in combine_pack() for now
+		p_ptr->window |= PW_SUBINVEN;
 
 		return;
 	}

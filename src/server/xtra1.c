@@ -1039,6 +1039,7 @@ static void fix_inven(int Ind) {
 	/* Refresh subinventory */
 static void fix_subinven(int Ind) {
 	int i;
+	bool none = TRUE;
 	player_type *p_ptr = Players[Ind];
 
 	/* Currently only purpose: Initially send him the character-loaded subinventories.
@@ -1046,6 +1047,16 @@ static void fix_subinven(int Ind) {
 	for (i = 0; i < INVEN_PACK; i++) {
 		if (p_ptr->inventory[i].tval != TV_SUBINVEN) continue;
 		display_subinven(Ind, i);
+		none = FALSE;
+	}
+	if (none) {
+		/* Workaround for visual bug: Clear all remains from old bag in same slot by 'erasing' the first bag slot. */
+		object_type forge;
+
+		forge.tval = 0;
+		forge.sval = 0;
+		forge.k_idx = 0;
+		Send_subinven(Ind, 0, 'a', TERM_WHITE, 0, &forge, "");
 	}
 }
 #endif
@@ -7757,6 +7768,15 @@ void window_stuff(int Ind) {
 	if (p_ptr->window & PW_ALLITEMS_FWD) {
 		fix_allitems(Ind); //Send_equip() checks p_ptr->window for PW_ALLITEMS_FWD
 		p_ptr->window &= ~(PW_ALLITEMS_FWD);
+	}
+
+	if (p_ptr->window & PW_SUBINVEN) {
+		p_ptr->window &= ~PW_SUBINVEN;
+
+#ifdef ENABLE_SUBINVEN
+		//if (p_ptr->window & PW_SUBINVEN) { p_ptr->window &= ~(PW_SUBINVEN); }
+		fix_subinven(Ind);
+#endif
 	}
 }
 
