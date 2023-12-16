@@ -7712,10 +7712,9 @@ extern int check_monster(worldpos *wpos, int y, int x) {
 	monster_type *m_ptr;
 
 	if (!(zcave = getcave(wpos))) return(0);
-
 	if (!in_bounds(y, x)) return(0);
-
 	c_ptr = &zcave[y][x];
+
 	if (c_ptr->m_idx) {
 		m_ptr = &m_list[c_ptr->m_idx];
 		return(m_ptr->r_idx);
@@ -7729,14 +7728,51 @@ extern int check_monster_ego(worldpos *wpos, int y, int x) {
 	monster_type *m_ptr;
 
 	if (!(zcave = getcave(wpos))) return(0);
-
 	if (!in_bounds(y, x)) return(0);
-
 	c_ptr = &zcave[y][x];
+
 	if (c_ptr->m_idx) {
 		m_ptr = &m_list[c_ptr->m_idx];
 		return (m_ptr->ego);
 	} else return 0;
+}
+extern int check_item_tval(worldpos *wpos, int y, int x) {
+	cave_type **zcave;
+	cave_type *c_ptr;
+	object_type *o_ptr;
+
+	if (!(zcave = getcave(wpos))) return(0);
+	if (!in_bounds(y, x)) return(0);
+	c_ptr = &zcave[y][x];
+
+	if (!c_ptr->o_idx) return(0);
+	o_ptr = &o_list[c_ptr->o_idx];	
+	if (!o_ptr) return(0);
+	
+	return (o_ptr->tval);
+}
+extern int check_item_sval(worldpos *wpos, int y, int x) {
+	cave_type **zcave;
+	cave_type *c_ptr;
+	object_type *o_ptr;
+
+	if (!(zcave = getcave(wpos))) return(0);
+	if (!in_bounds(y, x)) return(0);
+	c_ptr = &zcave[y][x];
+
+	if (!c_ptr->o_idx) return(0);
+	o_ptr = &o_list[c_ptr->o_idx];	
+	if (!o_ptr) return(0);
+	
+	return (o_ptr->sval);
+}
+extern void place_item_vals(worldpos *wpos, int y, int x, int tval, int sval) {
+	object_type forge;
+	object_wipe(&forge);
+	invcopy(&forge, lookup_kind(tval, sval));
+	forge.number = 1;
+	apply_magic(wpos, &forge, -2, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
+	drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 }
 // #endif
 // LUA would miss these without #define ?

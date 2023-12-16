@@ -549,6 +549,10 @@ extern int check_feat(worldpos *wpos, int y, int x);
 extern int dun_get_wid(worldpos *wpos);
 extern int dun_get_hgt(worldpos *wpos);
 extern int check_monster(worldpos *wpos, int y, int x);
+extern int check_monster_ego(worldpos *wpos, int y, int x);
+extern int check_item_tval(worldpos *wpos, int y, int x);
+extern int check_item_sval(worldpos *wpos, int y, int x);
+extern void place_item_vals(worldpos *wpos, int y, int x, int tval, int sval);
 // #endif
 // LUA would miss these without #define ?
 extern struct dungeon_type *getdungeon(struct worldpos *wpos);
@@ -959,7 +963,6 @@ extern void dealloc_dungeon_level(struct worldpos *wpos);
 extern void generate_cave(struct worldpos *wpos, player_type *p_ptr);
 #ifdef DM_MODULES
 extern void generate_cave_blank(int wx, int wy, int wz, int W, int H); // wpos
-extern int check_monster_ego(worldpos *wpos, int y, int x);
 #endif
 extern void regenerate_cave(struct worldpos *wpos);
 extern bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, player_type *p_ptr);

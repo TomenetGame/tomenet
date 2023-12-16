@@ -56,16 +56,19 @@ extern void new_level_down_x(worldpos *wpos, int pos);
 extern void new_level_down_y(worldpos *wpos, int pos);
 extern void new_level_rand_x(worldpos *wpos, int pos);
 extern void new_level_rand_y(worldpos *wpos, int pos);
-extern byte level_up_x(struct worldpos *wpos);
-extern byte level_up_y(struct worldpos *wpos);
-extern byte level_down_x(struct worldpos *wpos);
-extern byte level_down_y(struct worldpos *wpos);
-extern byte level_rand_x(struct worldpos *wpos);
-extern byte level_rand_y(struct worldpos *wpos);
+extern byte level_up_x(worldpos *wpos);
+extern byte level_up_y(worldpos *wpos);
+extern byte level_down_x(worldpos *wpos);
+extern byte level_down_y(worldpos *wpos);
+extern byte level_rand_x(worldpos *wpos);
+extern byte level_rand_y(worldpos *wpos);
 // Monsters
 extern int check_monster(worldpos *wpos, int y, int x);
 extern int check_monster_ego(worldpos *wpos, int y, int x);
-extern int place_monster_ego(struct worldpos *wpos, int y, int x, int r_idx, int e_idx, bool slp, bool grp, int clo, int clone_summoning);
+extern int check_item_tval(worldpos *wpos, int y, int x);
+extern int check_item_sval(worldpos *wpos, int y, int x);
+extern void place_item_vals(worldpos *wpos, int y, int x, int tval, int sval);
+extern int place_monster_ego(worldpos *wpos, int y, int x, int r_idx, int e_idx, bool slp, bool grp, int clo, int clone_summoning);
 // #endif
 // LUA would miss these without #define ?
 

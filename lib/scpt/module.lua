@@ -71,6 +71,16 @@ function module_save(Ind,name)
     end
   end
 
+  -- item tval/sval
+  for x = 1, MAX_WID do
+    for y = 1, MAX_HGT do
+      tval = check_item_tval(players(Ind).wpos,y-1,x-1)
+      write(tval.."\n")
+      sval =check_item_sval(players(Ind).wpos,y-1,x-1)
+      write(sval.."\n")
+    end
+  end
+
   closefile(file)
 
   return 0
@@ -140,6 +150,18 @@ function module_load(Ind,name)
       e = read("*n")
       if r ~= 0 then
         place_monster_ego(tmp,y-1,x-1,r,e,1,0,0,0) -- sleep 1
+      end
+    end
+  end
+
+  -- item tval/sval - apply_magic() level depends on depth
+  for x = 1, MAX_WID do
+    for y = 1, MAX_HGT do
+      tval,sval = 0,0
+      tval = read("*n")
+      sval = read("*n")
+      if tval ~= 0 then
+        place_item_vals(tmp,y-1,x-1,tval,sval)
       end
     end
   end
