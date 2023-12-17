@@ -9803,6 +9803,7 @@ void dungeon(void) {
 				invcopy(&forge, lookup_kind(TV_SCROLL, SV_SCROLL_FIREWORK));
 				forge.number = 1;
 				apply_magic(&wpos, &forge, -1, FALSE, FALSE, FALSE, FALSE, RESF_NONE);
+				forge.level = 1;
 
 				/* The inn in Bree, hardcoded coordinates ugh */
 				while (--t) {

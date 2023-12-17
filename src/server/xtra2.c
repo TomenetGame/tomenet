@@ -8244,10 +8244,11 @@ if (cfg.unikill_format) {
 		/* Get local object */
 		qq_ptr = &forge;
 
-		/* Prepare to make some Firestone */
+		/* Prepare to make some Firework */
 		invcopy(qq_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_FIREWORK));
 		qq_ptr->number = 1;
 		apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
+		qq_ptr->level = 1;
 
 		s_printf("NEWYEARSEVE: Dropped fireworks (%d,%d) for '%s'.\n", qq_ptr->xtra1, qq_ptr->xtra2, p_ptr->name);
 		drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
