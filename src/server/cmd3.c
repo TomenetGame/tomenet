@@ -2054,6 +2054,9 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 	if (o_ptr->tval == TV_SUBINVEN && item >= 0 && quantity >= o_ptr->number) empty_subinven(Ind, item, FALSE);
 #endif
 
+	/* Mark as forcibly dropped, to suppress !W triggering */
+	o_ptr->temp |= 0x04;
+
 	/* Eliminate the item (from the pack) */
 	if (item >= 0) {
 		inven_item_increase(Ind, item, -quantity);
