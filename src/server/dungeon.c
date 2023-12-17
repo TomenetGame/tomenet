@@ -10058,7 +10058,7 @@ void dungeon(void) {
 				char strbase[AI_MAXLEN], *str, *c, strtmp[1024], *open_parenthesis, *o, *p;
 				bool within_parentheses = FALSE;
 				/* Cut message of at MSG_LEN minus "\374\377y[8ball] " chat prefix length: */
-				int maxlen = MSG_LEN - 1 - 10;
+				int maxlen = MSG_LEN - 1 - 10; /* and note that this maxlen is the real content length, not a null-terminated string length */
 #if AI_MULTILINE > 0
 				char strm[AI_MULTILINE][MSG_LEN], c1;
 				int m_max = 0;
@@ -10084,8 +10084,8 @@ void dungeon(void) {
 					   only treat the last one with shortening/cutting procedures. */
 					while (strlen(str) > maxlen && m_max < AI_MULTILINE - 1) {
 						/* Fill a chat line, cutting off the rest */
-						strncpy(strm[m_max], str, MSG_LEN);
-						strm[m_max][MSG_LEN - 1] = 0;
+						strncpy(strm[m_max], str, maxlen);
+						strm[m_max][maxlen] = 0; /* remember note: content length, no null-termination needed (so no '-1') */
 						/* Try not to cut off the line within a word */
 						do {
 							c = strm[m_max] + strlen(strm[m_max]) - 1;
@@ -10131,7 +10131,7 @@ void dungeon(void) {
 					}
 
 					/* Truncate so we don't exceed our maximum message length! (Panic save ensues) */
-					str[maxlen] = 0;
+					str[maxlen] = 0; /* remember note: content length, no null-termination needed (so no '-1') */
 
 					/* Special maintenance/status response given by control scripts? */
 					if (!((*str == '<' && str[strlen(str) - 1] == '>') || (*str == '[' && str[strlen(str) - 1] == ']'))) {
