@@ -10057,8 +10057,8 @@ void dungeon(void) {
 			if (!feof(fp)) {
 				char strbase[AI_MAXLEN], *str, *c, strtmp[1024], *open_parenthesis, *o, *p;
 				bool within_parentheses = FALSE;
-				/* Cut message of at MSG_LEN minus "\374\377y[8ball] " chat prefix length: */
-				int maxlen = MSG_LEN - 1 - 10; /* and note that this maxlen is the real content length, not a null-terminated string length */
+				/* Cut message of at MSG_LEN minus "\374\377y[8ball] " chat prefix length, and -4 for world-broadcast server prefix eg '[1] ': */
+				int maxlen = MSG_LEN - 1 - 10 - 4; /* and note that this maxlen is the real content length, not a null-terminated string length */
 #if AI_MULTILINE > 0
 				char strm[AI_MULTILINE][MSG_LEN], c1;
 				int m_max = 0;
