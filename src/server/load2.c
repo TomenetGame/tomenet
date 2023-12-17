@@ -791,6 +791,8 @@ static void rd_item(object_type *o_ptr) {
 #else
 	if (o_ptr->tval == TV_POTION2 && o_ptr->sval == SV_POTION2_LEARNING && o_ptr->level) o_ptr->xtra1 = 1;
 #endif
+	/* Ensure old potions of invulnerability are level 0 - actually they should probably be made unusable like potions of learning. */
+	if (o_ptr->tval == TV_POTION && o_ptr->sval == SV_POTION_INVULNERABILITY && o_ptr->level) o_ptr->level = 0;
 
 #ifdef USE_NEW_SHIELDS
 	/* Cap all old shields' +ac - C. Blue */
