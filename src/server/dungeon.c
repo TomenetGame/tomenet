@@ -10050,18 +10050,26 @@ void dungeon(void) {
 		}
 
 		/* EXPERIMENTAL: Poll for AI responses, output them through 8ball. - C. Blue */
+#define AI_MAXLEN 4096 /* Maximum length of AI's response string to read */
+#define AI_MULTILINE 2 /* Allow AI responses to be multiple [2] chat lines long */
 		path_build(buf, 1024, ANGBAND_DIR_DATA, "external-response.log");
 		if ((fp = fopen(buf, "r")) != NULL) {
 			if (!feof(fp)) {
-				char strbase[1024], *str, *c, strtmp[1024], *open_parenthesis, *o, *p;
+				char strbase[AI_MAXLEN], *str, *c, strtmp[1024], *open_parenthesis, *o, *p;
 				bool within_parentheses = FALSE;
 				/* Cut message of at MSG_LEN minus "\374\377y[8ball] " chat prefix length: */
 				int maxlen = MSG_LEN - 1 - 10;
+#if AI_MULTILINE > 0
+				char strm[AI_MULTILINE][MSG_LEN], c1;
+				int m_max = 0;
+#endif
 
-				if (fgets(strbase, 1024, fp) != NULL) {
+				if (fgets(strbase, AI_MAXLEN, fp) != NULL) {
+					strbase[AI_MAXLEN - 1] = 0;
 					str = strbase;
 					/* Trim leading spaces */
 					while (*str == ' ') str++;
+
 					/* Change all " into ' to avoid conflict with lua eight_ball("..") command syntax. */
 					c = str - 1;
 					while(*(++c)) if (*c == '"') *c = '\'';
@@ -10070,6 +10078,30 @@ void dungeon(void) {
 					while(*(++c)) if (*c == '\n' || *c == '\r') *c = ' ';
 					/* Trim trailing spaces */
 					while (c[strlen(c) - 1] == ' ') c[strlen(c) - 1] = 0;
+
+#if AI_MULTILINE > 0
+					/* Dissect -possibly very long- response string into multiple chat messages if required;
+					   only treat the last one with shortening/cutting procedures. */
+					while (strlen(str) > maxlen && m_max < AI_MULTILINE - 1) {
+						/* Fill a chat line, cutting off the rest */
+						strncpy(strm[m_max], str, MSG_LEN);
+						strm[m_max][MSG_LEN - 1] = 0;
+						/* Try not to cut off the line within a word */
+						do {
+							c = strm[m_max] + strlen(strm[m_max]) - 1;
+							c1 = tolower(*c);
+							if (c1 < 'a' || c1 > 'z') break;
+							*c = 0;
+						} while (TRUE);
+
+						/* Prepare to fill another chat line if needed */
+						str = str + strlen(strm[m_max]);
+						m_max++;
+
+						/* Trim trailing spaces of the strm[] we just finished now (so we actually discard spaces completely, instead of them going into the next strm[]) */
+						while (strm[m_max - 1][strlen(strm[m_max - 1]) - 1] == ' ') strm[m_max - 1][strlen(strm[m_max - 1]) - 1] = 0;
+					}
+#endif
 
 					open_parenthesis = strchr(str, '(');
 
@@ -10152,7 +10184,16 @@ void dungeon(void) {
 						while (str[strlen(str) - 1] == ' ' || (str[strlen(str) - 1] == '.' && (str[strlen(str) - 2] == '.' || str[strlen(str) - 2] == ' ' || str[strlen(str) - 2] == '?' || str[strlen(str) - 2] == '!'))) str[strlen(str) - 1] = 0;
 					}
 
+#if AI_MULTILINE > 0
+					/* Add the treated 'str' to our multiline array too, just to make it look orderly ^^ */
+					strcpy(strm[m_max], str);
+					m_max++;
+					/* ..and output all lines */
+					for (c1 = 0; c1 < m_max; c1++)
+						exec_lua(0, format("eight_ball(\"%s\")", strm[(int)c1])); //don't cry, compiler -_- @(int)
+#else
 					exec_lua(0, format("eight_ball(\"%s\")", str));
+#endif
 				}
 			}
 			fclose(fp);
