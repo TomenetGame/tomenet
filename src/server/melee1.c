@@ -963,20 +963,20 @@ bool make_attack_melee(int Ind, int m_idx) {
 						}
 
 						/* assume that if kinetic shield failed, pfe will also fail: ... */
-						done = TRUE;
+						if (!p_ptr->spirit_shield) done = TRUE;
 					}
 				}
 				if (!done) {
 					/* protection from evil, static and temporary: */
 #if 0
 					if (((p_ptr->protevil > 0) && (r_ptr->flags3 & RF3_EVIL) &&
-						(p_ptr->lev >= rlev) && ((rand_int(100) + p_ptr->lev) > 50)) ||
+					    (p_ptr->lev >= rlev) && ((rand_int(100) + p_ptr->lev) > 50)) ||
 					    ((get_skill(p_ptr, SKILL_HDEFENSE) >= 30) && (r_ptr->flags3 & RF3_UNDEAD) &&
-						(p_ptr->lev * 2 >= rlev) && (rand_int(100) + p_ptr->lev > 50 + rlev)) ||
+					    (p_ptr->lev * 2 >= rlev) && (rand_int(100) + p_ptr->lev > 50 + rlev)) ||
 					    ((get_skill(p_ptr, SKILL_HDEFENSE) >= 40) && (r_ptr->flags3 & RF3_DEMON) &&
-						(p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev)) ||
+					    (p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev)) ||
 					    ((get_skill(p_ptr, SKILL_HDEFENSE) >= 50) && (r_ptr->flags3 & RF3_EVIL) &&
-						(p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev)))
+					    (p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev)))
 #else
 					prot = FALSE;
 					if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 30) && (r_ptr->flags3 & RF3_UNDEAD)) {

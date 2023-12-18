@@ -3579,6 +3579,9 @@ bool set_kinetic_shield(int Ind, int v) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->kinetic_shield) {
+			/* Mutually exclusive */
+			if (p_ptr->spirit_shield) set_spirit_shield(Ind, 0, 0);
+
 			msg_print(Ind, "\376\377wYou create a kinetic barrier.");
 			notice = TRUE;
 		} else if (p_ptr->kinetic_shield > 10 && v <= 10) {
@@ -3659,6 +3662,9 @@ bool set_spirit_shield(int Ind, int power, int v) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->spirit_shield) {
+			/* Mutually exclusive */
+			if (p_ptr->kinetic_shield) set_kinetic_shield(Ind, 0);
+
 			p_ptr->spirit_shield_pow = power;
 			msg_print(Ind, "\376\377wYou feel the spirits watching over you.");
 			notice = TRUE;

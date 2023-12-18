@@ -191,9 +191,9 @@ HPROTEVIL = add_spell {
 	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	12,
-	["mana"] = 	20,
-	["mana_max"] = 	20,
-	["fail"] = 	20,
+	["mana"] = 	15,
+	["mana_max"] = 	15,
+	["fail"] = 	0,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			set_protevil(Ind, 20 + randint(10) + get_level(Ind, HPROTEVIL, 50), TRUE)
