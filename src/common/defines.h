@@ -4564,6 +4564,11 @@
 #define CAVE_TEMP	0x00000040	/* temp flag */
 #define CAVE_XTRA	0x00000080	/* misc flag, used for temporary short-term operations just like CAVE_TEMP. Hance not feasible for actual storage of any info. */
 
+/* Hack for p_ptr->cave_flag, which is only 1 byte in size: */
+#define CAVE_AOVL	CAVE_TEMP	/* Mark grid if it displays an overlay visual that could get auto-updated, ie monsters: A monster can move away automatically, rendering the overlay out of date. */
+
+/* -- note: p_ptr->cave_flag[] is only 1 byte in size, so it uses only the above flags. The rest are for c_ptr->info which is 4 bytes. -- */
+
 #define CAVE_NOPK	0x00000100	/* no pkill (arena?, tavern) */
 #define CAVE_STCK	0x00000200	/* sticky (no-tele vault), not icky (prison?) */
 #define CAVE_DARKEN	0x00000400	/* world surface at night - change colours to darker variants */
@@ -4590,11 +4595,11 @@
 #define CAVE_NO_PROB	0x08000000	/* Cannot enter this grid via Probability Travel (but can exit) */
 
 #define CAVE_NO_MONSTER	0x10000000	/* protected from monster-spawn + cannot be monster teleport/summon/movement destination */
+#define CAVE_SCRT	0x20000000	/* Secret grid, cannot be uncovered by magic mapping or similar means, but only manually by looking at it directly via line of sight. */
 //hole
 #define CAVE_REFUGE	0x40000000	/* IDDC refuge grid */
-
-/* Hack for p_ptr->cave_flag, which is only 1 byte in size: */
-#define CAVE_AOVL	CAVE_TEMP	/* Mark grid if it displays an overlay visual that could get auto-updated, ie monsters: A monster can move away automatically, rendering the overlay out of date. */
+//hole
+//super hypothetical: maybe add CAVE_LITE_MON in the future, for monster-lit grids.
 
 #if 0	/* for future expansion.. */
 /* To what extent shall we enlarge it?
