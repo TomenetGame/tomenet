@@ -7197,7 +7197,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/enlight") || prefix(messagelc, "/en")) {
-				wiz_lite(Ind);
+				wiz_lite_extra(Ind);
 				//(void)detect_treasure(Ind, DEFAULT_RADIUS * 2);
 				//(void)detect_object(Ind, DEFAULT_RADIUS * 2);
 				(void)detect_treasure_object(Ind, DEFAULT_RADIUS * 2);

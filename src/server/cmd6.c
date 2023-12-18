@@ -1032,7 +1032,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			(void)set_image(Ind, 0);
 			identify_pack(Ind);
 			msg_print(Ind, "An image of your surroundings forms in your mind...");
-			wiz_lite(Ind);
+			wiz_lite_extra(Ind);
 			ident = TRUE;
 			break;
 		case SV_POTION_STAR_ENLIGHTENMENT:
@@ -1045,7 +1045,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 #endif
 			msg_print(Ind, "You begin to feel more enlightened...");
 			msg_print(Ind, NULL);
-			wiz_lite(Ind);
+			wiz_lite_extra(Ind);
 			(void)do_inc_stat(Ind, A_INT);
 			(void)do_inc_stat(Ind, A_WIS);
 			//(void)detect_treasure(Ind, DEFAULT_RADIUS * 2);
@@ -6859,8 +6859,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 #endif
 			o_ptr->recharging = 1000 - get_skill_scale(p_ptr, SKILL_DEVICE, 500);
 			break;
+		case ART_PALANTIR_ORTHANC:
 		case ART_PALANTIR_ITHIL:
-		case ART_PALANTIR:
 			msg_print(Ind, "The stone glows a deep green...");
 			wiz_lite_extra(Ind);
 			(void)detect_trap(Ind, DEFAULT_RADIUS * 2);

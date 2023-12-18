@@ -11172,8 +11172,7 @@ static void town_gen(struct worldpos *wpos) {
 		return;
 	}
 #else
-	process_dungeon_file("t_info.txt", wpos, &ystart, &xstart,
-				MAX_HGT, MAX_WID, TRUE);
+	process_dungeon_file("t_info.txt", wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
 #endif
 
 	switchable_shop_grids(zcave);

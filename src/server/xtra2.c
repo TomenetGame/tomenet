@@ -9456,7 +9456,7 @@ void player_death(int Ind) {
 		recall_player(Ind, "");
 
 		/* Allow him to find the stairs quickly for re-entering highlander dungeon */
-		wiz_lite(Ind);
+		wiz_lite_extra(Ind);
 
 		/* Teleport him */
 		teleport_player(Ind, 200, TRUE);

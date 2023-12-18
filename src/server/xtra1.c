@@ -8815,7 +8815,7 @@ static void process_global_event(int ge_id) {
 			for (i = 1; i <= NumPlayers; i++)
 				if (inarea(&Players[i]->wpos, &wpos)) {
 					p_ptr = Players[i];
-					wiz_lite(i); /* no tourneys at night, chars with low IV lose */
+					wiz_lite_extra(i); /* no tourneys at night, chars with low IV lose */
 					teleport_player(i, 200, TRUE);
 					/* in case some player waited in a NO_TELE vault..!: */
 					if (p_ptr->wpos.wz && !p_ptr->admin_dm) {

@@ -3566,7 +3566,7 @@ cptr item_activation(object_type *o_ptr) {
 		//return("summon a dragonrider every 1000 turns");
 		return("banishing dragons (100..130) every 500..1000 turns");
 	case ART_PALANTIR_ITHIL:
-	case ART_PALANTIR:
+	case ART_PALANTIR_ORTHANC:
 		return("clairvoyance every 200..1000+d150 turns");
 #if 0
 	case ART_ROBINTON:

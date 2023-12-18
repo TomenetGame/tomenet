@@ -7263,26 +7263,26 @@ void map_area(int Ind) {
 			w_ptr = &p_ptr->cave_flag[y][x];
 
 			/* All non-walls are "checked" */
-			//if (c_ptr->feat < FEAT_SECRET)
-			if (!is_wall(c_ptr)) {
-				/* Memorize normal features */
-				//if (c_ptr->feat > FEAT_INVIS)
-				if (!cave_plain_floor_grid(c_ptr)) {
-					/* Memorize the object */
+			//if (c_ptr->feat >= FEAT_SECRET) continue;
+			if (is_wall(c_ptr) || !(c_ptr->info & CAVE_SCRT)) continue;
+
+			/* Memorize normal features */
+			//if (c_ptr->feat > FEAT_INVIS)
+			if (!cave_plain_floor_grid(c_ptr)) {
+				/* Memorize the object */
+				*w_ptr |= CAVE_MARK;
+			}
+
+			/* Memorize known walls */
+			for (i = 0; i < 8; i++) {
+				c_ptr = &zcave[y + ddy_ddd[i]][x + ddx_ddd[i]];
+				w_ptr = &p_ptr->cave_flag[y + ddy_ddd[i]][x + ddx_ddd[i]];
+
+				/* Memorize walls (etc) */
+				//if (c_ptr->feat >= FEAT_SECRET)
+				if (is_wall(c_ptr)) {
+					/* Memorize the walls */
 					*w_ptr |= CAVE_MARK;
-				}
-
-				/* Memorize known walls */
-				for (i = 0; i < 8; i++) {
-					c_ptr = &zcave[y + ddy_ddd[i]][x + ddx_ddd[i]];
-					w_ptr = &p_ptr->cave_flag[y + ddy_ddd[i]][x + ddx_ddd[i]];
-
-					/* Memorize walls (etc) */
-					//if (c_ptr->feat >= FEAT_SECRET)
-					if (is_wall(c_ptr)) {
-						/* Memorize the walls */
-						*w_ptr |= CAVE_MARK;
-					}
 				}
 			}
 		}
@@ -7347,8 +7347,16 @@ void mind_map_level(int Ind, int pow) {
 
 		if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
 
-		/* sleeping */
-		//hypnosis yay		if (m_ptr->csleep) continue;
+		/* Sleeping monsters */
+#if 0		/* Wake them up from it? >:) */
+		m_ptr->csleep = 0;
+#elif 0		/* 0'ed to allow watching even if asleep, assuming it's just 'hypnosis' in that moment as an excuse? */
+		if (m_ptr->csleep) continue;
+#endif
+
+#if 1		/* Disallow telepathic contact for this particular purpose of mapping even? */
+		if (zcave[m_ptr->fy][m_ptr->fx].info & CAVE_SCRT) continue;
+#endif
 
 		/* no mind */
 		if ((r_ptr->flags9 & RF9_IM_PSI) ||
@@ -7429,11 +7437,15 @@ void mind_map_level(int Ind, int pow) {
 		}
 	}
 
-	/* Specialty: Detect all dungeon stores! */
-	//TODO: Store the 1 or maybe 2 stores in the l_ptr array instead -_-' */
+	/* Specialty: Detect all dungeon stores!
+	   Basically as 'telepathic detection of the shopkeeper' - but what if it was a golem? :-p */
+	//TODO: Store the 1 or maybe 2 dungeon stores that would occur on a floor in the l_ptr array instead -_-' */
 	for (y = 0; y < MAX_HGT; y++)
 		for (x = 0; x < MAX_WID; x++) {
 			if (zcave[y][x].feat != FEAT_SHOP) continue;
+#if 1			/* Disallow telepathic contact for this particular purpose of mapping even? */
+			if (zcave[y][x].info & CAVE_SCRT) continue;
+#endif
 			for (i = 0; i < plist_size; i++) {
 				Players[plist[i]]->cave_flag[y][x] |= CAVE_MARK;
 #ifndef NO_LITE_SPOT
@@ -7453,7 +7465,7 @@ void mind_map_level(int Ind, int pow) {
 }
 
 /*
- * Light up the dungeon using "claravoyance"
+ * Light up the dungeon using "clairvoyance"
  *
  * This function "illuminates" every grid in the dungeon, memorizes all
  * "objects", memorizes all grids as with magic mapping, and, under the
@@ -7467,21 +7479,27 @@ void mind_map_level(int Ind, int pow) {
  * Note that if "view_torch_grids" is set, we do not memorize floor grids,
  * since this would prevent the use of "view_torch_grids" as a method to
  * keep track of what grids have been observed directly.
+ *
+ * Local effects: It gives item/map info only to the calling player.
+ * Global effects: It illuminates all map grids. So all players will find the floors/rooms lit after it was cast.
+ *
+ * Called by Potions, Thrain artifact.
  */
 void wiz_lite(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	int	     y, x, i;
+	int y, x, i;
 
-	cave_type       *c_ptr;
-	byte	    *w_ptr;
+	cave_type *c_ptr;
+	byte *w_ptr;
 
-	/*dungeon_type	*d_ptr = getdungeon(&p_ptr->wpos); */
+	/*dungeon_type *d_ptr = getdungeon(&p_ptr->wpos); */
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 
 	/* don't ruin the mood ^^ */
 	bool mood = (wpos->wz == 0 && (season_halloween || season_newyearseve));
+
 
 	if (!(zcave = getcave(wpos))) return;
 
@@ -7495,91 +7513,159 @@ void wiz_lite(int Ind) {
 		for (x = 1; x < p_ptr->cur_wid - 1; x++) {
 			/* Access the grid */
 			c_ptr = &zcave[y][x];
+
+			if (c_ptr->info & CAVE_SCRT) continue;
+
+			/* No disturbance of nightly town/surface events */
 			if (mood && !(c_ptr->info & CAVE_ICKY)) continue;
-			w_ptr = &p_ptr->cave_flag[y][x];
 
 			/* Memorize all objects */
 			if (c_ptr->o_idx) {
 				/* Memorize */
-				p_ptr->obj_vis[c_ptr->o_idx]= TRUE;
+				p_ptr->obj_vis[c_ptr->o_idx] = TRUE;
 			}
 
-			/* Process all non-walls */
-			//if (c_ptr->feat < FEAT_SECRET) <- deprecated; use next line if you want "clean" wizlite ;) - C. Blue
-			//if (!(f_info[c_ptr->feat].flags1 & FF1_WALL))
-			{
-				/* Scan all neighbors */
-				for (i = 0; i < 9; i++) {
-					int yy = y + ddy_ddd[i];
-					int xx = x + ddx_ddd[i];
+			/* Process only non-walls */
+			//if (c_ptr->feat >= FEAT_SECRET) continue; //<- deprecated; use next line if you want "clean" wizlite ;) - C. Blue
+			if (f_info[c_ptr->feat].flags1 & FF1_WALL) continue;
 
-					/* Get the grid */
-					c_ptr = &zcave[yy][xx];
-					if (mood && !(c_ptr->info & CAVE_ICKY)) continue; //if this were commented out, house walls would be *bright*
-					w_ptr = &p_ptr->cave_flag[yy][xx];
+			w_ptr = &p_ptr->cave_flag[y][x];
 
-					/* Perma-lite the grid */
-					c_ptr->info |= (CAVE_GLOW);
+			/* Scan all neighbors */
+			for (i = 0; i < 9; i++) {
+				int yy = y + ddy_ddd[i];
+				int xx = x + ddx_ddd[i];
 
-					/* Memorize normal features */
-					//if (c_ptr->feat > FEAT_INVIS)
-					if (!cave_plain_floor_grid(c_ptr)) {
-						/* Memorize the grid */
-						*w_ptr |= CAVE_MARK;
-					}
+				/* Get the grid */
+				c_ptr = &zcave[yy][xx];
+				if (mood && !(c_ptr->info & CAVE_ICKY)) continue; //if this were commented out, house walls would be *bright*
 
-					/* Normally, memorize floors (see above) */
-					if (p_ptr->view_perma_grids && !p_ptr->view_torch_grids) {
-						/* Memorize the grid */
-						*w_ptr |= CAVE_MARK;
-					}
+				/* Perma-lite the grid */
+				c_ptr->info |= (CAVE_GLOW);
+
+				w_ptr = &p_ptr->cave_flag[yy][xx];
+
+				/* Memorize normal features */
+				//if (c_ptr->feat > FEAT_INVIS)
+				if (!cave_plain_floor_grid(c_ptr)) {
+					/* Memorize the grid */
+					*w_ptr |= CAVE_MARK;
+				}
+
+				/* Normally, memorize floors (see above) */
+				if (p_ptr->view_perma_grids && !p_ptr->view_torch_grids) {
+					/* Memorize the grid */
+					*w_ptr |= CAVE_MARK;
 				}
 			}
 		}
 	}
 
-	/* Update the monsters */
-	p_ptr->update |= (PU_MONSTERS);
+	for (x = 1; x <= NumPlayers; x++) {
+		p_ptr = Players[x];
 
-	/* Redraw map */
-	p_ptr->redraw |= (PR_MAP);
+		/* Only works for players on the level */
+		if (!inarea(wpos, &p_ptr->wpos)) continue;
 
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD);
-
+		/* Update some things */
+		p_ptr->update |= (PU_VIEW | PU_DISTANCE);
+		p_ptr->redraw |= PR_MAP;
+		p_ptr->window |= PW_OVERHEAD;
+	}
 }
 
 
-/* from PernA	- Jir - */
+/* Same as wiz_lite() and additionally lights up ALL grids, that includes all walls.
+   Called by spells and Palantirs. */
 void wiz_lite_extra(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int y, x;
-	struct worldpos *wpos = &p_ptr->wpos;
-	//dun_level *l_ptr = getfloor(wpos);
-	cave_type **zcave;
+
 	cave_type *c_ptr;
+	byte *w_ptr;
+
+	/*dungeon_type *d_ptr = getdungeon(&p_ptr->wpos); */
+	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+	struct worldpos *wpos = &p_ptr->wpos;
+	cave_type **zcave;
 
 	/* don't ruin the mood ^^ */
 	bool mood = (wpos->wz == 0 && (season_halloween || season_newyearseve));
 
+
 	if (!(zcave = getcave(wpos))) return;
 
 	/*if (d_ptr && d_ptr->flags & DUNGEON_NO_MAP) return; */
+	if (l_ptr && l_ptr->flags1 & LF1_NO_MAGIC_MAP) return;
+	if (in_sector00(wpos) && (sector00flags1 & LF1_NO_MAGIC_MAP)) return;
 
+	/* Scan all normal grids */
 	for (y = 0; y < p_ptr->cur_hgt; y++) {
+		/* Scan all normal grids */
 		for (x = 0; x < p_ptr->cur_wid; x++) {
+			/* Access the grid */
 			c_ptr = &zcave[y][x];
+
+			/* Problem: Since we uncover the WHOLE map, we cannot just leave out secret grids,
+			   as they would be easily distinguishable as dark spots on the map. We need to fill them inconspicuously somehow.
+			   Until there is a good way to mimic solid wall/filler areas plausibly, maybe player-invoked wiz lite should always be the normal wiz_lite() instead of this function!
+			   Then again, wraithform is a thing. So might need to set floors to no-wraith additionally. Or maybe just cannot wraith into unknown walls/map any new feats while in wraithform(!). */
+#if 1
+			if (c_ptr->info & CAVE_SCRT) continue;
+#else /* This needs reworking - especially, CS_MIMIC should be applied on dungeon generation (or process_dungeon_file()) time, and then using correct fill_type-s for mimicking, etc. */
+			if (c_ptr->info & CAVE_SCRT) {
+				if (!GetCS(c_ptr, CS_MIMIC)) {
+					struct c_special *cs_ptr;
+
+					if ((cs_ptr = AddCS(c_ptr, CS_MIMIC))) {
+						int d, x2, y2, feat_adjacent[8], feats_adjacent = 0;
+
+						for (d = 0; d < 8; d++) {
+							x2 = x + ddx_cyc[d];
+							y2 = y + ddy_cyc[d];
+							if (!in_bounds_array(y2, x2)) continue;
+
+							//fill_type[rand_int(1000)];
+							//d_ptr->fill_type[0..5]
+							//fill_lim[];
+							feat_adjacent[feats_adjacent] = zcave[y2][x2];
+							feats_adjacent++;
+						}
+
+						cs_ptr->sc.omni = feat_adjacent[rand_int(feats_adjacent)];
+					}
+				}
+			}
+#endif
+
+			/* No disturbance of nightly town/surface events */
 			if (mood && !(c_ptr->info & CAVE_ICKY)) continue;
-			/* ligten up all grids and remember features */
-			//c_ptr->info |= (CAVE_GLOW | CAVE_MARK);
-			/* lighten up all grids */
-			c_ptr->info |= CAVE_GLOW;
+
+			/* Memorize all objects */
+			if (c_ptr->o_idx) {
+				/* Memorize */
+				p_ptr->obj_vis[c_ptr->o_idx] = TRUE;
+			}
+
+			/* Perma-lite the grid */
+			c_ptr->info |= (CAVE_GLOW);
+
+			w_ptr = &p_ptr->cave_flag[y][x];
+
+			/* Memorize normal features */
+			//if (c_ptr->feat > FEAT_INVIS)
+			if (!cave_plain_floor_grid(c_ptr)) {
+				/* Memorize the grid */
+				*w_ptr |= CAVE_MARK;
+			}
+
+			/* Normally, memorize floors (see above) */
+			if (p_ptr->view_perma_grids && !p_ptr->view_torch_grids) {
+				/* Memorize the grid */
+				*w_ptr |= CAVE_MARK;
+			}
 		}
 	}
-
-	/* remember features too? */
-	//if (!(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC_MAP))
-	wiz_lite(Ind);
 
 	for (x = 1; x <= NumPlayers; x++) {
 		p_ptr = Players[x];

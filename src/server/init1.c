@@ -9419,13 +9419,8 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			if (artifact_index) {
 #if 0
 				int I_kind = 0;
-
 				artifact_type *a_ptr = &a_info[artifact_index];
-
-				object_type forge;
-
-				/* Get local object */
-				object_type *q_ptr = &forge;
+				object_type forge, *q_ptr = &forge;
 
 				a_allow_special[artifact_index] = TRUE;
 

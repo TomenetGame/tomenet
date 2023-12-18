@@ -3889,7 +3889,7 @@ static void process_player_begin(int Ind) {
 		zcave[20][65].feat = FEAT_GLIT_WATER;
 		/* Some lil hacks */
 		msg_format(Ind, "\377%cYou enter the shores of Valinor..", COLOUR_DUNGEON);
-		wiz_lite(Ind);
+		wiz_lite_extra(Ind);
 		/* Move @ to designated starting position (level_rand_x/y()) and redraw */
 		oy = p_ptr->py;
 		ox = p_ptr->px;
@@ -9440,7 +9440,7 @@ void process_player_change_wpos(int Ind) {
 
 	/* Brightly lit Arena Monster Challenge */
 	if (ge_special_sector && in_arena(&p_ptr->wpos)) {
-		wiz_lite(Ind);
+		wiz_lite_extra(Ind);
 		/* Also tell him about this place */
 		for (j = 0; j < MAX_GLOBAL_EVENTS; j++) {
 			if (global_event[j].getype != GE_ARENA_MONSTER) continue;
@@ -9455,7 +9455,7 @@ void process_player_change_wpos(int Ind) {
 		   so stairs won't be camped */
 		teleport_player(Ind, 200, TRUE);
 		/* Brightly lit PvP Arena */
-		wiz_lite(Ind);
+		wiz_lite_extra(Ind);
 	}
 
 	/* PvP-Mode specialties: */
@@ -9554,7 +9554,7 @@ void process_player_change_wpos(int Ind) {
 		p_ptr->warning_wor = p_ptr->warning_wor2 = 1;
 	}
 
-	if (in_deathfate_x(wpos)) wiz_lite(Ind);
+	if (in_deathfate_x(wpos)) wiz_lite_extra(Ind);
 }
 
 
