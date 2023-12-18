@@ -603,6 +603,7 @@ extern void map_area(int Ind);
 extern void mind_map_level(int Ind, int pow);
 extern void wiz_lite(int Ind);
 extern void wiz_lite_extra(int Ind);
+extern void wiz_lite_spell(int Ind);
 extern void wiz_dark(int Ind);
 extern void mmove2(int *y, int *x, int y1, int x1, int y2, int x2);
 extern bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range);

@@ -187,6 +187,7 @@ extern void map_area(int Ind);
 extern void mind_map_level(int Ind, int pow);
 extern void wiz_lite(int Ind);
 extern void wiz_lite_extra(int Ind);
+extern void wiz_lite_spell(int Ind);
 extern void wiz_dark(int Ind);
 extern bool detect_creatures_xxx(int Ind, u32b match_flag);
 extern bool detect_creatures(int Ind);

@@ -109,7 +109,7 @@ VISION_II = add_spell {
 	["fail"] = 	-30,
 	["spell"] = 	function()
 			fire_ball(Ind, GF_SEEMAP_PLAYER, 0, 1, 2, "")
-			wiz_lite_extra(Ind)
+			wiz_lite_spell(Ind)
 	end,
 	["info"] = 	function()
 			return ""

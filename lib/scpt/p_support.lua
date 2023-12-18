@@ -120,7 +120,7 @@ HSENSE_II = add_spell {
 	["fail"] = 	-65,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			wiz_lite_extra(Ind)
+			wiz_lite_spell(Ind)
 	end,
 	["info"] = 	function()
 			return ""

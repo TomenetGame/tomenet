@@ -7680,6 +7680,12 @@ void wiz_lite_extra(int Ind) {
 	}
 }
 
+/* Just for spell-casting - to switch between wiz_lite...() variants w/o modifying lua scripts every time. */
+void wiz_lite_spell(int Ind) {
+	//wiz_lite_extra(Ind);
+	wiz_lite(Ind);
+}
+
 /*
  * Forget the dungeon map (ala "Thinking of Maud...").
  */
