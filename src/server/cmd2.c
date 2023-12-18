@@ -146,6 +146,8 @@ void do_cmd_go_up(int Ind) {
 #ifdef DED_IDDC_AWARE
 	bool obtained = FALSE;
 #endif
+	bool iddc = (p_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y && 1 == WPOS_IRONDEEPDIVE_Z);
+	bool mandos = (p_ptr->wpos.wx == hallsofmandos_wpos_x && p_ptr->wpos.wy == hallsofmandos_wpos_y && 1 == hallsofmandos_wpos_z);
 
 	if (!(zcave = getcave(wpos))) return;
 #ifdef NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
@@ -157,9 +159,9 @@ void do_cmd_go_up(int Ind) {
 	if (wpos->wz == 0) surface = TRUE;
 
 	if ((p_ptr->mode & MODE_DED_IDDC) && surface) {
-		if ((p_ptr->wpos.wx != WPOS_IRONDEEPDIVE_X || p_ptr->wpos.wy != WPOS_IRONDEEPDIVE_Y || 1 != WPOS_IRONDEEPDIVE_Z)
+		if (!iddc
 #ifdef DED_IDDC_MANDOS
-		    && (p_ptr->wpos.wx != hallsofmandos_wpos_x || p_ptr->wpos.wy != hallsofmandos_wpos_y || 1 != hallsofmandos_wpos_z)
+		    && !mandos
 #endif
 		    ) {
 #ifdef DED_IDDC_MANDOS
@@ -170,9 +172,11 @@ void do_cmd_go_up(int Ind) {
 			return;
 		}
 #ifdef DED_IDDC_AWARE
-		for (i = 0; i < MAX_K_IDX; i++)
-			if (magik(DED_IDDC_AWARE)) p_ptr->obj_aware[i] = TRUE;
-		obtained = TRUE;
+		if (iddc) {
+			for (i = 0; i < MAX_K_IDX; i++)
+				if (magik(DED_IDDC_AWARE)) p_ptr->obj_aware[i] = TRUE;
+			obtained = TRUE;
+		}
 #endif
 	}
 
@@ -377,6 +381,7 @@ void do_cmd_go_up(int Ind) {
 #ifndef ARCADE_SERVER
 	if (surface) {
 		dungeon_type *d_ptr = wild_info[wpos->wy][wpos->wx].tower;
+
  #ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
 		//if (d_ptr->baselevel-p_ptr->max_dlv>2) {
 		//if ((!d_ptr->type && d_ptr->baselevel - p_ptr->max_dlv > 10) ||
@@ -405,7 +410,7 @@ void do_cmd_go_up(int Ind) {
 		return;
 	}
 
-	if (surface && p_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y && WPOS_IRONDEEPDIVE_Z > 0) {
+	if (surface && iddc) {
 		if (p_ptr->mode & MODE_PVP) {
 			msg_format(Ind, "\377DPvP-mode characters are not eligible to enter the Ironman Deep Dive Challenge!");
 			if (!is_admin(p_ptr)) return;
@@ -794,7 +799,7 @@ static bool between_effect(int Ind, cave_type *c_ptr) {
 
 	msg_print(Ind, "You fall into the void. Brrrr! It's deadly cold.");
 
-//	if (PRACE_FLAG(PR1_TP))
+	//if (PRACE_FLAG(PR1_TP))
 	if (p_ptr->prace == RACE_DRACONIAN) {
 		int dam = (p_ptr->mhp * 50) / (100 + p_ptr->ac + p_ptr->to_a + p_ptr->lev * 2);
 
@@ -932,6 +937,8 @@ void do_cmd_go_down(int Ind) {
 	bool obtained = FALSE;
 #endif
 	dungeon_type *d_ptr = NULL;
+	bool iddc = (p_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y && 0 -1 == WPOS_IRONDEEPDIVE_Z);
+	bool mandos = (p_ptr->wpos.wx == hallsofmandos_wpos_x && p_ptr->wpos.wy == hallsofmandos_wpos_y && -1 == hallsofmandos_wpos_z);
 
 	if (!(zcave = getcave(wpos))) return;
 #ifdef NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
@@ -1003,9 +1010,9 @@ void do_cmd_go_down(int Ind) {
 	}
 
 	if ((p_ptr->mode & MODE_DED_IDDC) && surface) {
-		if ((p_ptr->wpos.wx != WPOS_IRONDEEPDIVE_X || p_ptr->wpos.wy != WPOS_IRONDEEPDIVE_Y || -1 != WPOS_IRONDEEPDIVE_Z)
+		if (!iddc
 #ifdef DED_IDDC_MANDOS
-		    && (p_ptr->wpos.wx != hallsofmandos_wpos_x || p_ptr->wpos.wy != hallsofmandos_wpos_y || -1 != hallsofmandos_wpos_z)
+		    && !mandos
 #endif
 		    ) {
 #ifdef DED_IDDC_MANDOS
@@ -1016,9 +1023,11 @@ void do_cmd_go_down(int Ind) {
 			return;
 		}
 #ifdef DED_IDDC_AWARE
-		for (i = 0; i < MAX_K_IDX; i++)
-			if (magik(DED_IDDC_AWARE)) p_ptr->obj_aware[i] = TRUE;
-		obtained = TRUE;
+		if (iddc) {
+			for (i = 0; i < MAX_K_IDX; i++)
+				if (magik(DED_IDDC_AWARE)) p_ptr->obj_aware[i] = TRUE;
+			obtained = TRUE;
+		}
 #endif
 	}
 
@@ -1277,6 +1286,7 @@ void do_cmd_go_down(int Ind) {
 #ifndef ARCADE_SERVER
 	if (surface) {
 		dungeon_type *d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
+
  #ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
 		//if (d_ptr->baselevel-p_ptr->max_dlv>2) {
 		//if (d_ptr->baselevel-p_ptr->max_dlv>2 ||
@@ -1307,7 +1317,7 @@ void do_cmd_go_down(int Ind) {
 		return;
 	}
 
-	if (surface && p_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y && WPOS_IRONDEEPDIVE_Z < 0) {
+	if (surface && iddc) {
 		if (p_ptr->mode & MODE_PVP) {
 			msg_format(Ind, "\377DPvP-mode characters are not eligible to enter the Ironman Deep Dive Challenge!");
 			if (!is_admin(p_ptr)) return;
