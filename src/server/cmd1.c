@@ -7023,44 +7023,47 @@ static void moved_player(int Ind, player_type *p_ptr, cave_type **zcave, int ox,
 				s_printf("warning_staircase: %s\n", p_ptr->name);
 				//p_ptr->warning_staircase = 1;
 			}
-			if (!p_ptr->warning_staircase_oneway) {
+
+			if (!p_ptr->warning_staircase_iddc && on_irondeepdive(&p_ptr->wpos) &&
+			    ((WPOS_IRONDEEPDIVE_Z > 0 && (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)) ||
+			    (WPOS_IRONDEEPDIVE_Z < 0 && (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE)))) {
+				msg_print(Ind, "\374\377oWARNING: \377yThe dark grey staircase indicates an 'Ironman' dungeon,");
+				msg_print(Ind, "\374\377y         this particular one being the 'Ironman Deep Dive Challenge'!");
+				if (p_ptr->mode & MODE_DED_IDDC)
+					msg_print(Ind, "\374\377y         If you enter, you cannot escape until you make it to the bottom!");
+				else
+					msg_print(Ind, "\374\377y         If you enter, you cannot escape until you reach Menegroth!");
+				s_printf("warning_staircase_iddc: %s\n", p_ptr->name);
+				p_ptr->warning_staircase_iddc = 1;
+			}
+			/* Give a special hint for the Halls of Mandos, so DED_IDDC people aren't nervous they got the wrong dungeon aka "did I turn off the stove?" */
+			else if (!p_ptr->warning_staircase_mandos && hallsofmandos_wpos_x == p_ptr->wpos.wx && hallsofmandos_wpos_y == p_ptr->wpos.wy
+			    && ((hallsofmandos_wpos_z > 0 && (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)) ||
+			    (hallsofmandos_wpos_z < 0 && (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE)))) {
+				msg_print(Ind, "\374\377oWARNING: \377yThe dark grey staircase indicates an 'Ironman' dungeon,");
+				msg_print(Ind, "\374\377y         this particular one being the otherworldly Halls of Mandos!");
+				msg_print(Ind, "\374\377y         If you enter, you cannot escape until you make it to the bottom!");
+				s_printf("warning_staircase_mandos: %s\n", p_ptr->name);
+				p_ptr->warning_staircase_mandos = 1;
+			}
+			else if (!p_ptr->warning_staircase_oneway) {
 				if (d_ptr->flags2 & DF2_IRON) {
-					if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y &&
-					    ((WPOS_IRONDEEPDIVE_Z > 0 && (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)) ||
-					    (WPOS_IRONDEEPDIVE_Z < 0 && (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE)))) {
-						msg_print(Ind, "\374\377oWARNING: \377yThe dark grey staircase indicates an 'Ironman' dungeon,");
-						msg_print(Ind, "\374\377y         this particular one being the 'Ironman Deep Dive Challenge'!");
-						if (p_ptr->mode & MODE_DED_IDDC)
-							msg_print(Ind, "\374\377y         If you enter, you cannot escape until you make it to the bottom!");
-						else
-							msg_print(Ind, "\374\377y         If you enter, you cannot escape until you reach Menegroth!");
-#ifdef DED_IDDC_MANDOS
-					/* Give a special hint for the Halls of Mandos, so DED_IDDC people aren't nervous they got the wrong dungeon aka "did I turn off the stove?" */
-					} else if (wpos->wx == hallsofmandos_wpos_x && wpos->wy == hallsofmandos_wpos_y &&
-					    ((hallsofmandos_wpos_z > 0 && (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)) ||
-					    (hallsofmandos_wpos_z < 0 && (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE)))) {
-						msg_print(Ind, "\374\377oWARNING: \377yThe dark grey staircase indicates an 'Ironman' dungeon,");
-						msg_print(Ind, "\374\377y         this particular one being the otherworldly Halls of Mandos!");
-						msg_print(Ind, "\374\377y         If you enter, you cannot escape until you make it to the bottom!");
-#endif
-					} else {
-						msg_print(Ind, "\374\377oWARNING: \377yThe dark grey staircase indicates an 'Ironman' dungeon!");
-						msg_print(Ind, "\374\377y         That means that you cannot escape until you reach the bottom and");
-						msg_print(Ind, "\374\377y         read a scroll of word-of-recall there! Also, death is \377opermanent\377y!");
-					}
-					s_printf("warning_staircase_oneway: %s\n", p_ptr->name);
+					msg_print(Ind, "\374\377oWARNING: \377yThe dark grey staircase indicates an 'Ironman' dungeon!");
+					msg_print(Ind, "\374\377y         That means that you cannot escape until you reach the bottom and");
+					msg_print(Ind, "\374\377y         read a scroll of word-of-recall there! Also, death is \377opermanent\377y!");
+					s_printf("warning_staircase_oneway(iron): %s\n", p_ptr->name);
 					p_ptr->warning_staircase_oneway = 1;
 				} else if (d_ptr->flags1 & DF1_NO_UP) {
 					msg_print(Ind, "\374\377oWARNING: \377yThe orange staircase indicates a 'No-up' dungeon!");
 					msg_print(Ind, "\374\377y         That means that you cannot take a staircase back up. You can");
 					msg_print(Ind, "\374\377y         only escape by reading a scroll of word-of-recall!");
-					s_printf("warning_staircase_oneway: %s\n", p_ptr->name);
+					s_printf("warning_staircase_oneway(no_up): %s\n", p_ptr->name);
 					p_ptr->warning_staircase_oneway = 1;
 				} else if (d_ptr->flags1 & DF1_FORCE_DOWN) {
 					msg_print(Ind, "\374\377oWARNING: \377yThe light red staircase indicates a 'Force-down' dungeon!");
 					msg_print(Ind, "\374\377y         That means that you cannot escape until you reach the bottom and");
 					msg_print(Ind, "\374\377y         read a scroll of word-of-recall there!");
-					s_printf("warning_staircase_oneway: %s\n", p_ptr->name);
+					s_printf("warning_staircase_oneway(force_down): %s\n", p_ptr->name);
 					p_ptr->warning_staircase_oneway = 1;
 				}
 			}

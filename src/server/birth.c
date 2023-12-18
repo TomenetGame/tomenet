@@ -2962,6 +2962,8 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_voidjumpgate = 1;
 		p_ptr->warning_staircase = 1;
 		p_ptr->warning_staircase_oneway = 1;
+		p_ptr->warning_staircase_iddc = 1;
+		p_ptr->warning_staircase_mandos = 1;
 		p_ptr->warning_worldmap = 1;
 		p_ptr->warning_dungeon = 1;
 		p_ptr->warning_tunnel = p_ptr->warning_tunnel2 = p_ptr->warning_tunnel3 = p_ptr->warning_tunnel4 = p_ptr->warning_tunnel_hidden = 1;
@@ -3124,6 +3126,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_bpr3 = 1;
 		p_ptr->warning_ammotype = 1;
 		p_ptr->warning_wield = 1;
+		p_ptr->warning_staircase_iddc = 1; //cannot enter the IDDC anymore at this point anyway! Keep mandos warning forever though, as it is accessible forever.
 	}
 	if (p_ptr->max_plv > 2) {
 		p_ptr->warning_wield_combat = 1;
@@ -3171,13 +3174,13 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_dual_mode = 1;
 		p_ptr->warning_hungry = 2;
 		p_ptr->warning_lite_refill = 1;
-		p_ptr->warning_staircase_oneway = 1;
 		p_ptr->warning_repair = 1;
 		//p_ptr->warning_blastcharge = 1; //instead, we save/load it!
 		p_ptr->warning_ingredients = 1;
 	}
 	if (p_ptr->max_plv >= 25) {
 		p_ptr->warning_ai_annoy = 1; /* mimics, as the latest learners, learn sprint at 15 and taunt at 20 */
+		p_ptr->warning_staircase_oneway = 1;
 	}
 	if (p_ptr->max_plv > 30) {
 		p_ptr->warning_instares = 1;
