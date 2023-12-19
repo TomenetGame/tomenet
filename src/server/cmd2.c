@@ -3467,13 +3467,13 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	/* check if our weapons can help hacking down wood etc */
 	if (o2_ptr->k_idx && !p_ptr->heavy_wield) {
 		switch (o2_ptr->tval) {
-		case TV_AXE: wood_power = 40; break;
-		case TV_SWORD: wood_power = 20; break;
+		case TV_AXE: wood_power = 40 + o2_ptr->weight / 10; break;
+		case TV_SWORD: wood_power = 20 + o2_ptr->weight / 20; break;
 		case TV_POLEARM:
 			if (o2_ptr->sval == SV_SCYTHE ||
 			    o2_ptr->sval == SV_SCYTHE_OF_SLICING ||
 			    o2_ptr->sval == SV_SICKLE)
-				fibre_power = 40;
+				fibre_power = 40 + o2_ptr->weight / 10;
 			break;
 		}
 		if ((k_info[o2_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))
@@ -3484,13 +3484,13 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	}
 	if (o3_ptr->k_idx && !p_ptr->heavy_wield) {
 		switch (o3_ptr->tval) {
-		case TV_AXE: if (wood_power < 40) wood_power = 40; break;
-		case TV_SWORD: if (wood_power < 20) wood_power = 20; break;
+		case TV_AXE: if (wood_power < 40) wood_power = 40 + o3_ptr->weight / 10; break;
+		case TV_SWORD: if (wood_power < 20) wood_power = 20 + o3_ptr->weight / 20; break;
 		case TV_POLEARM:
-			if (o2_ptr->sval == SV_SCYTHE ||
-			    o2_ptr->sval == SV_SCYTHE_OF_SLICING ||
-			    o2_ptr->sval == SV_SICKLE)
-				fibre_power = 40;
+			if (o3_ptr->sval == SV_SCYTHE ||
+			    o3_ptr->sval == SV_SCYTHE_OF_SLICING ||
+			    o3_ptr->sval == SV_SICKLE)
+				fibre_power = 40 + o3_ptr->weight / 10;
 			break;
 		}
 	}
@@ -3921,7 +3921,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 						msg_print(Ind, "You have uncovered a stairway!");
 						s_printf("DIGGING: %s found a staircase.\n", p_ptr->name);
 					} else {
-//								s_printf("DIGGING: %s found water/lava.\n", p_ptr->name);
+						//s_printf("DIGGING: %s found water/lava.\n", p_ptr->name);
 					}
 				} else if (special_k_idx) {
 					/* no golem body pieces from rubble, instead allow limbs! */
@@ -3933,7 +3933,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					invcopy(&forge, special_k_idx);
 					apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 					forge.number = 1;
-//							forge.level = ;
+					//forge.level = ;
 					forge.marked2 = ITEM_REMOVAL_NORMAL;
 					msg_print(Ind, "You have found something!");
 					drop_near(TRUE, 0, &forge, -1, wpos, y, x);
