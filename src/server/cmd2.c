@@ -3383,6 +3383,7 @@ bool twall(int Ind, int y, int x, byte feat) {
 #define RUNE_CHANCE 1000
 /* Actually give special message to indicate when we have zero chance to tunnel through a specific material */
 #define INDICATE_IMPOSSIBLE "You cannot seem to make a dent in the"
+/* TODO: Make shovels and picks actually rather inefficient vs plants: Increase plants' digging difficulties and in turn raise wood_power and fibre_power for proper weapons. */
 void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &p_ptr->inventory[INVEN_TOOL];
@@ -3467,13 +3468,17 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	/* check if our weapons can help hacking down wood etc */
 	if (o2_ptr->k_idx && !p_ptr->heavy_wield) {
 		switch (o2_ptr->tval) {
-		case TV_AXE: wood_power = 40 + o2_ptr->weight / 10; break;
-		case TV_SWORD: wood_power = 20 + o2_ptr->weight / 20; break;
+		case TV_AXE:
+			fibre_power = 20 + o2_ptr->weight / 20 + (o2_ptr->to_h + o2_ptr->to_d) / 3;
+			wood_power = 40 + o2_ptr->weight / 10 + (o2_ptr->to_h + o2_ptr->to_d) / 2; break;
+		case TV_SWORD:
+			fibre_power = 40 + o2_ptr->weight / 40 + (o2_ptr->to_h + o2_ptr->to_d) / 2;
+			wood_power = 20 + o2_ptr->weight / 20 + (o2_ptr->to_h + o2_ptr->to_d) / 3; break;
 		case TV_POLEARM:
 			if (o2_ptr->sval == SV_SCYTHE ||
 			    o2_ptr->sval == SV_SCYTHE_OF_SLICING ||
 			    o2_ptr->sval == SV_SICKLE)
-				fibre_power = 40 + o2_ptr->weight / 10;
+				fibre_power = 40 + o2_ptr->weight / 10 + (o2_ptr->to_h + o2_ptr->to_d) / 2;
 			break;
 		}
 		if ((k_info[o2_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))
@@ -3483,19 +3488,26 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		}
 	}
 	if (o3_ptr->k_idx && !p_ptr->heavy_wield) {
+		int wp, fp;
+
 		switch (o3_ptr->tval) {
-		case TV_AXE: if (wood_power < 40) wood_power = 40 + o3_ptr->weight / 10; break;
-		case TV_SWORD: if (wood_power < 20) wood_power = 20 + o3_ptr->weight / 20; break;
+		case TV_AXE:
+			fp = 20 + o3_ptr->weight / 20 + (o3_ptr->to_h + o3_ptr->to_d) / 3;
+			wp = 40 + o3_ptr->weight / 10 + (o3_ptr->to_h + o3_ptr->to_d) / 2; break;
+		case TV_SWORD:
+			fp = 40 + o3_ptr->weight / 10 + (o3_ptr->to_h + o3_ptr->to_d) / 2;
+			wp = 20 + o3_ptr->weight / 20 + (o3_ptr->to_h + o3_ptr->to_d) / 3; break;
 		case TV_POLEARM:
 			if (o3_ptr->sval == SV_SCYTHE ||
 			    o3_ptr->sval == SV_SCYTHE_OF_SLICING ||
 			    o3_ptr->sval == SV_SICKLE)
-				fibre_power = 40 + o3_ptr->weight / 10;
+				fp = 40 + o3_ptr->weight / 10 + (o3_ptr->to_h + o3_ptr->to_d) / 2;
 			break;
 		}
+
+		if (wp > wood_power) wood_power = wp;
+		if (fp > fibre_power) fibre_power = fp;
 	}
-	/* axes/swords help as well as certain slicing polearms against webs */
-	if (wood_power > fibre_power) fibre_power = wood_power;
 
 	/* find highest rune skill to determine our rune-proficiency */
 	if (p_ptr->s_info[SKILL_R_LITE].value > rune_proficiency) rune_proficiency = p_ptr->s_info[SKILL_R_LITE].value;
@@ -3890,6 +3902,11 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		special_k_idx = tval = 0;
 	}
 
+#if 0
+#ifdef TEST_SERVER
+	s_printf("digging: power=%d, wood_power=%d, fibre_power=%d\n", power, wood_power, fibre_power);
+#endif
+#endif
 
 	/* Ok, we may finally tunnel.. */
 	if (p_ptr->taciturn_messages) suppress_message = TRUE;
