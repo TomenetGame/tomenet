@@ -847,13 +847,6 @@ struct object_type_v5 {
 	byte tval2;			/* normally unused (except for item-invalid-seal and gifts) */
 	byte sval2;			/* normally unused (except for item-invalid-seal and gifts) */
 
-/* -- these 3 should actually NOT be in here, but they must be, because creating a new v6 type was accidentally forgotten atthe time of their addition,
-   so some backed up estate info could be corrupted otherwise -_-:
-   AFTER RESTORING ALL SAVEGAMES FROM THE BUGGED TIME PERIOD (around end of nov 2023), this data type must be corrected and these three vars REMOVED! */
-	byte number2;			/* normally unused (except for gifts) */
-	u32b note2;			/* Inscription index */
-	char note2_utag;		/* Added for making pseudo-id overwrite unique loot tags */
-
 	s32b bpval;			/* Base item extra-parameter */
 	s32b pval;			/* Extra enchantment item extra-parameter (name1 or name2) */
 	s32b pval2;			/* Item extra-parameter for some special items - this was only used in old, disabled code. Using it now for INVERSE_CURSED_RANDARTS */
