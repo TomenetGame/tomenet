@@ -9094,6 +9094,11 @@ void grid_affects_player(int Ind, int ox, int oy) {
 		calc_boni(Ind);
 	}
 
+	if (!p_ptr->warning_secret_area && ((zcave[y][x].info & CAVE_SCRT) && (ox == -1 || !(zcave[oy][ox].info & CAVE_SCRT)))) {
+		p_ptr->warning_secret_area = TRUE;
+		msg_print(Ind, "\377yYou have discovered a secret area!");
+	}
+
 	/* Handle entering/leaving no-teleport area */
 	if ((zcave[y][x].info & CAVE_STCK) && (ox == -1 || !(zcave[oy][ox].info & CAVE_STCK))) {
 		msg_print(Ind, "\377DThe air in here feels very still.");

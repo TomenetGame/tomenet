@@ -3799,6 +3799,7 @@ struct player_type {
 	char warning_sellunid, warning_edmt, warning_stealing;
 	char warning_powins, warning_drop_town, warning_subinven, warning_limitbottles, warning_ingredients, warning_id;
 	char warning_sanity;
+	char warning_secret_area;
 
 #ifdef USE_SOUND_2010
 	int music_current, musicalt_current, musicalt2_current, music_monster; //background music currently playing for him/her; an overriding monster music

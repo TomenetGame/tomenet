@@ -9555,6 +9555,9 @@ void process_player_change_wpos(int Ind) {
 	}
 
 	if (in_deathfate_x(wpos)) wiz_lite_extra(Ind);
+
+	/* Display this warning at most once per floor. Once per secret area would be nice but requires some non-trivial coding... */
+	p_ptr->warning_secret_area = FALSE;
 }
 
 
