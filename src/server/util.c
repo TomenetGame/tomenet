@@ -7872,7 +7872,7 @@ bool gain_au(int Ind, u32b amt, bool quiet, bool exempt) {
 
 /* backup all house prices and contents for all players to lib/save/estate/.
    partial: don't stop with failure if a character files can't be read. */
-#define ESTATE_BACKUP_VERSION "v5"
+#define ESTATE_BACKUP_VERSION "v6"
 bool backup_estate(bool partial) {
 	FILE *fp;
 	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], savefile[CNAME_LEN], c;
@@ -8218,6 +8218,7 @@ void restore_estate(int Ind) {
 	object_type forge, *o_ptr = &forge;
 	bool gained_anything = FALSE;
 	int conversion = 0;
+	object_type_v5 forge_v5, *o_ptr_v5 = &forge_v5;
 	object_type_v4 forge_v4, *o_ptr_v4 = &forge_v4;
 	object_type_v3 forge_v3, *o_ptr_v3 = &forge_v3;
 	object_type_v2 forge_v2, *o_ptr_v2 = &forge_v2;
@@ -8254,6 +8255,7 @@ void restore_estate(int Ind) {
 	if (streq(version, "v2b")) conversion = 3;
 	if (streq(version, "v3")) conversion = 4;
 	if (streq(version, "v4")) conversion = 5;
+	if (streq(version, "v5")) conversion = 6;
 
 	/* open temporary file for writing the stuff the player left over */
 	strcpy(buf2, buf);
@@ -8402,6 +8404,9 @@ void restore_estate(int Ind) {
 				o_ptr->iron_trade = o_ptr_v2->iron_trade;
 				o_ptr->iron_turn = o_ptr_v2->iron_turn;
 				o_ptr->embed = 0; //convert
+				//convert:
+				o_ptr->number2 = 0;
+				o_ptr->note2 = o_ptr->note2_utag = 0;
 				break;
 			case 2: r = fread(o_ptr_v2a, sizeof(object_type_v2a), 1, fp);
 				o_ptr->owner = o_ptr_v2a->owner;
@@ -8488,6 +8493,9 @@ void restore_estate(int Ind) {
 				o_ptr->iron_trade = o_ptr_v2a->iron_trade;
 				o_ptr->iron_turn = 0;		//convert
 				o_ptr->embed = 0; //convert
+				//convert:
+				o_ptr->number2 = 0;
+				o_ptr->note2 = o_ptr->note2_utag = 0;
 				break;
 			case 3: r = fread(o_ptr_v2b, sizeof(object_type_v2b), 1, fp);
 				o_ptr->owner = o_ptr_v2b->owner;
@@ -8574,6 +8582,9 @@ void restore_estate(int Ind) {
 				o_ptr->iron_trade = o_ptr_v2b->iron_trade;
 				o_ptr->iron_turn = o_ptr_v2b->iron_turn;
 				o_ptr->embed = 0; //convert
+				//convert:
+				o_ptr->number2 = 0;
+				o_ptr->note2 = o_ptr->note2_utag = 0;
 				break;
 			case 4: r = fread(o_ptr_v3, sizeof(object_type_v3), 1, fp);
 				o_ptr->owner = o_ptr_v3->owner;
@@ -8660,6 +8671,9 @@ void restore_estate(int Ind) {
 				o_ptr->iron_trade = o_ptr_v3->iron_trade;
 				o_ptr->iron_turn = o_ptr_v3->iron_turn;
 				o_ptr->embed = 0; //convert
+				//convert:
+				o_ptr->number2 = 0;
+				o_ptr->note2 = o_ptr->note2_utag = 0;
 				break;
 			case 5: r = fread(o_ptr_v4, sizeof(object_type_v4), 1, fp);
 				o_ptr->owner = o_ptr_v4->owner;
@@ -8747,6 +8761,9 @@ void restore_estate(int Ind) {
 				o_ptr->iron_turn = o_ptr_v4->iron_turn;
 				o_ptr->embed = o_ptr_v4->embed;
 				//convert:
+				o_ptr->number2 = 0;
+				o_ptr->note2 = o_ptr->note2_utag = 0;
+				//convert:
 				o_ptr->id = o_ptr->f_id = o_ptr->f_name[0] = 0; //don't generate an id here, whatever
 				o_ptr->f_turn = o_ptr->f_time = 0;
 				o_ptr->f_wpos = (struct worldpos){ 0, 0, 0 };
@@ -8754,6 +8771,108 @@ void restore_estate(int Ind) {
 				o_ptr->f_player = o_ptr->f_player_turn = 0;
 				o_ptr->f_ridx = o_ptr->f_reidx = 0;
 				o_ptr->f_special = o_ptr->f_reward = 0;
+				break;
+			case 6: r = fread(o_ptr_v5, sizeof(object_type_v5), 1, fp);
+				o_ptr->owner = o_ptr_v5->owner;
+				o_ptr->killer = o_ptr_v5->killer;
+				o_ptr->level = o_ptr_v5->level;
+				o_ptr->k_idx = o_ptr_v5->k_idx;
+				o_ptr->h_idx = o_ptr_v5->h_idx;
+				o_ptr->wpos = o_ptr_v5->wpos;
+				o_ptr->iy = o_ptr_v5->iy;
+				o_ptr->ix = o_ptr_v5->ix;
+				o_ptr->tval = o_ptr_v5->tval;
+				o_ptr->sval = o_ptr_v5->sval;
+				o_ptr->tval2 = o_ptr_v5->tval2;
+				o_ptr->sval2 = o_ptr_v5->sval2;
+				o_ptr->bpval = o_ptr_v5->bpval;
+				o_ptr->pval = o_ptr_v5->pval;
+				o_ptr->pval2 = o_ptr_v5->pval2;
+				o_ptr->pval3 = o_ptr_v5->pval3;
+				o_ptr->pval_org = o_ptr_v5->pval_org;
+				o_ptr->bpval_org = o_ptr_v5->bpval_org;
+				o_ptr->to_h_org = o_ptr_v5->to_h_org;
+				o_ptr->to_d_org = o_ptr_v5->to_d_org;
+				o_ptr->to_a_org = o_ptr_v5->to_a_org;
+				o_ptr->sigil = o_ptr_v5->sigil;
+				o_ptr->sseed = o_ptr_v5->sseed;
+				o_ptr->discount = o_ptr_v5->discount;
+				o_ptr->number = o_ptr_v5->number;
+				o_ptr->weight = o_ptr_v5->weight;
+				o_ptr->name1 = o_ptr_v5->name1;
+				o_ptr->name2 = o_ptr_v5->name2;
+				o_ptr->name2b = o_ptr_v5->name2b;
+				o_ptr->name3 = o_ptr_v5->name3;
+				o_ptr->name4 = o_ptr_v5->name4;
+				o_ptr->attr = o_ptr_v5->attr;
+				o_ptr->mode = o_ptr_v5->mode;
+				o_ptr->xtra1 = o_ptr_v5->xtra1;
+				o_ptr->xtra2 = o_ptr_v5->xtra2;
+				o_ptr->xtra3 = o_ptr_v5->xtra3;
+				o_ptr->xtra4 = o_ptr_v5->xtra4;
+				o_ptr->xtra5 = o_ptr_v5->xtra5;
+				o_ptr->xtra6 = o_ptr_v5->xtra6;
+				o_ptr->xtra7 = o_ptr_v5->xtra7;
+				o_ptr->xtra8 = o_ptr_v5->xtra8;
+				o_ptr->xtra9 = o_ptr_v5->xtra9;
+				o_ptr->uses_dir = o_ptr_v5->uses_dir;
+#ifdef PLAYER_STORES
+				o_ptr->ps_idx_x = o_ptr_v5->ps_idx_x;
+				o_ptr->ps_idx_y = o_ptr_v5->ps_idx_y;
+				o_ptr->appraised_value = o_ptr_v5->appraised_value;
+#endif
+				o_ptr->to_h = o_ptr_v5->to_h;
+				o_ptr->to_d = o_ptr_v5->to_d;
+				o_ptr->to_a = o_ptr_v5->to_a;
+				o_ptr->ac = o_ptr_v5->ac;
+				o_ptr->dd = o_ptr_v5->dd;
+				o_ptr->ds = o_ptr_v5->ds;
+				o_ptr->ident = o_ptr_v5->ident;
+				o_ptr->timeout = o_ptr_v5->timeout;
+				o_ptr->timeout_magic = o_ptr_v5->timeout_magic;
+				o_ptr->recharging = o_ptr_v5->recharging;
+				o_ptr->marked = o_ptr_v5->marked;
+				o_ptr->marked2 = o_ptr_v5->marked2;
+				o_ptr->questor = o_ptr_v5->questor;
+				o_ptr->quest = o_ptr_v5->quest;
+				o_ptr->quest_stage = o_ptr_v5->quest_stage;
+				o_ptr->questor_idx = o_ptr_v5->questor_idx;
+				o_ptr->questor_invincible = o_ptr_v5->questor_invincible;
+				o_ptr->quest_credited = o_ptr_v5->quest_credited;
+				o_ptr->note = o_ptr_v5->note;
+				o_ptr->note_utag = o_ptr_v5->note_utag;
+				o_ptr->inven_order = o_ptr_v5->inven_order;
+				o_ptr->next_o_idx = o_ptr_v5->next_o_idx;
+				o_ptr->held_m_idx = o_ptr_v5->held_m_idx;
+				o_ptr->auto_insc = o_ptr_v5->auto_insc;
+				o_ptr->stack_pos = o_ptr_v5->stack_pos;
+				o_ptr->cheeze_dlv = o_ptr_v5->cheeze_dlv;
+				o_ptr->cheeze_plv = o_ptr_v5->cheeze_plv;
+				o_ptr->cheeze_plv_carry = o_ptr_v5->cheeze_plv_carry;
+				o_ptr->housed = o_ptr_v5->housed;
+				o_ptr->changed = o_ptr_v5->changed;
+				o_ptr->NR_tradable = o_ptr_v5->NR_tradable;
+				o_ptr->no_soloist = o_ptr_v5->no_soloist;
+				o_ptr->temp = o_ptr_v5->temp;
+				o_ptr->iron_trade = o_ptr_v5->iron_trade;
+				o_ptr->iron_turn = o_ptr_v5->iron_turn;
+				o_ptr->embed = o_ptr_v5->embed;
+				o_ptr->id = o_ptr_v5->id;
+				o_ptr->f_id = o_ptr_v5->f_id;
+				strcpy(o_ptr->f_name, o_ptr_v5->f_name);
+				o_ptr->f_turn = o_ptr_v5->f_turn;
+				o_ptr->f_time = o_ptr_v5->f_time;
+				o_ptr->f_wpos = o_ptr_v5->f_wpos;
+				o_ptr->f_dun = o_ptr_v5->f_dun;
+				o_ptr->f_player = o_ptr_v5->f_player;
+				o_ptr->f_player_turn = o_ptr_v5->f_player_turn;
+				o_ptr->f_ridx = o_ptr_v5->f_ridx;
+				o_ptr->f_reidx = o_ptr_v5->f_reidx;
+				o_ptr->f_special = o_ptr_v5->f_special;
+				o_ptr->f_reward = o_ptr_v5->f_reward;
+				//convert:
+				o_ptr->number2 = 0;
+				o_ptr->note2 = o_ptr->note2_utag = 0;
 				break;
 			}
 			if (r == 0) {
@@ -8833,6 +8952,9 @@ void restore_estate(int Ind) {
 					case 5:
 						(void)fwrite(o_ptr_v4, sizeof(object_type_v4), 1, fp_tmp);
 						break;
+					case 6:
+						(void)fwrite(o_ptr_v5, sizeof(object_type_v5), 1, fp_tmp);
+						break;
 					}
 #endif
 
@@ -8878,6 +9000,9 @@ void restore_estate(int Ind) {
 					break;
 				case 5:
 					(void)fwrite(o_ptr_v4, sizeof(object_type_v4), 1, fp_tmp);
+					break;
+				case 6:
+					(void)fwrite(o_ptr_v5, sizeof(object_type_v5), 1, fp_tmp);
 					break;
 				}
 
