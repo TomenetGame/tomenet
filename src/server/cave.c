@@ -7264,7 +7264,7 @@ void map_area(int Ind) {
 
 			/* All non-walls are "checked" */
 			//if (c_ptr->feat >= FEAT_SECRET) continue;
-			if (is_wall(c_ptr) || !(c_ptr->info & CAVE_SCRT)) continue;
+			if (is_wall(c_ptr) || (c_ptr->info & CAVE_SCRT)) continue;
 
 			/* Memorize normal features */
 			//if (c_ptr->feat > FEAT_INVIS)
