@@ -3488,7 +3488,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		}
 	}
 	if (o3_ptr->k_idx && !p_ptr->heavy_wield) {
-		int wp, fp;
+		int wp = 0, fp = 0;
 
 		switch (o3_ptr->tval) {
 		case TV_AXE:
