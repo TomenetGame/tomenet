@@ -1600,6 +1600,10 @@ static void display_inven(void) {
 
 	char	o_name[ONAME_LEN];
 	char	tmp_val[80];
+#ifdef ENABLE_SUBINVEN
+	object_type *o2_ptr;
+	long int subwgt;
+#endif
 
 
 	/* Find the "final" slot */
@@ -1627,6 +1631,9 @@ static void display_inven(void) {
 		/* Bracket the "index" --(-- */
 		tmp_val[1] = ')';
 
+		/* Clear the line */
+		Term_erase(0, i, 255);
+
 		/* Is this item acceptable? */
 		if (item_tester_okay(o_ptr)) {
 			/* Display the index */
@@ -1638,6 +1645,35 @@ static void display_inven(void) {
 
 		/* Describe the object */
 		strcpy(o_name, inventory_name[i]);
+
+		/* Display the weight if needed */
+		if (c_cfg.show_weights && o_ptr->weight) {
+			wgt = o_ptr->weight * o_ptr->number;
+#ifdef ENABLE_SUBINVEN
+			subwgt = 0;
+			if (o_ptr->tval == TV_SUBINVEN) {
+				for (z = 0; z < o_ptr->pval; z++) {
+					o2_ptr = &subinventory[i][z];
+					subwgt += o2_ptr->weight * o2_ptr->number;
+				}
+				wgt += subwgt;
+
+				/* Add fill state to subinven bag name? */
+				strcat(o_name, format(" [%d/%d]", z, o_ptr->pval));
+				//o_name[MSG_LEN] = 0; /* Ensure overflow protection */
+			}
+#endif
+			if (wgt < 10000) /* still fitting into 3 digits? */
+				(void)sprintf(tmp_val, "%3li.%1li lb ", wgt / 10, wgt % 10);
+			else
+				(void)sprintf(tmp_val, "%3lik%1li lb ", wgt / 10000, (wgt % 10000) / 1000);
+
+			/* We're in the IDDC and this item is untradable to party members? */
+			if (o_ptr->iron_trade)
+				Term_putstr(71, i - INVEN_WIELD, -1, TERM_SLATE, tmp_val);
+			else
+				Term_putstr(71, i, -1, TERM_WHITE, tmp_val);
+		}
 
 		/* Obtain length of description */
 		n = strlen(o_name);
@@ -1652,24 +1688,6 @@ static void display_inven(void) {
 		/* Clear the line with the (possibly indented) index */
 		Term_putstr(3, i, n, o_ptr->attr, o_name);
 #endif
-
-		/* Erase the rest of the line */
-		Term_erase(3 + n, i, 255);
-
-		/* Display the weight if needed */
-		if (c_cfg.show_weights && o_ptr->weight) {
-			wgt = o_ptr->weight * o_ptr->number;
-			if (wgt < 10000) /* still fitting into 3 digits? */
-				(void)sprintf(tmp_val, "%3li.%1li lb ", wgt / 10, wgt % 10);
-			else
-				(void)sprintf(tmp_val, "%3lik%1li lb ", wgt / 10000, (wgt % 10000) / 1000);
-
-			/* We're in the IDDC and this item is untradable to party members? */
-			if (o_ptr->iron_trade)
-				Term_putstr(71, i - INVEN_WIELD, -1, TERM_SLATE, tmp_val);
-			else
-				Term_putstr(71, i, -1, TERM_WHITE, tmp_val);
-		}
 	}
 
 	/* Erase the rest of the window */
@@ -1753,7 +1771,7 @@ static void display_subinven(void) {
 
 		/* Display bag fill state */
 		sprintf(tmp_val, " (%d/%d):", z, subinven_size);
-		Term_putstr(bagheader_x, bagheader_y, -1, i_ptr->attr, tmp_val);
+		Term_putstr(bagheader_x, bagheader_y, -1, z == subinven_size ? TERM_ORANGE : i_ptr->attr, tmp_val);
 
 		/* Display a line if inventory is actually empty */
 		//if (!z) Term_putstr(0, last_k++, -1, (i_ptr->attr == TERM_L_DARK) ? TERM_L_DARK : TERM_L_WHITE,
@@ -2007,6 +2025,10 @@ void show_inven(void) {
 	int	i, j, k, l, z = 0;
 	int	col, len, lim;
 	long int wgt, totalwgt = 0;
+#ifdef ENABLE_SUBINVEN
+	object_type *o2_ptr;
+	long int subwgt;
+#endif
 
 	object_type *o_ptr;
 
@@ -2100,12 +2122,24 @@ void show_inven(void) {
 		/* Clear the line with the (possibly indented) index */
 		put_str(tmp_val, j + 1, col);
 
-		/* Display the entry itself */
-		c_put_str(out_color[j], out_desc[j], j + 1, col + 3);
-
 		/* Display the weight if needed */
 		if (c_cfg.show_weights && o_ptr->weight) {
 			wgt = o_ptr->weight * o_ptr->number;
+#ifdef ENABLE_SUBINVEN
+			subwgt = 0;
+			if (o_ptr->tval == TV_SUBINVEN) {
+				for (z = 0; z < o_ptr->pval; z++) {
+					o2_ptr = &subinventory[i][z];
+					subwgt += o2_ptr->weight * o2_ptr->number;
+				}
+				totalwgt += subwgt;
+				wgt += subwgt;
+
+				/* Add fill state to subinven bag name? */
+				strcat(out_desc[j], format(" [%d/%d]", z, o_ptr->pval));
+				out_desc[j][lim] = 0; /* Ensure overflow protection */
+			}
+#endif
 			if (wgt < 10000) /* still fitting into 3 digits? */
 				(void)sprintf(tmp_val, "%3li.%1li lb", wgt / 10, wgt % 10);
 			else
@@ -2118,17 +2152,10 @@ void show_inven(void) {
 				put_str(tmp_val, j + 1, 71);
 
 			totalwgt += wgt;
-#ifdef ENABLE_SUBINVEN
-			if (o_ptr->tval == TV_SUBINVEN) {
-				object_type *o2_ptr;;
-
-				for (z = 0; z < o_ptr->pval; z++) {
-					o2_ptr = &subinventory[i][z];
-					totalwgt += o2_ptr->weight * o2_ptr->number;
-				}
-			}
-#endif
 		}
+
+		/* Display the entry itself */
+		c_put_str(out_color[j], out_desc[j], j + 1, col + 3);
 	}
 
 	/* Display the weight if needed */
