@@ -3465,7 +3465,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					strcpy(chapter, "The Helcaraxe   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Sandw") || my_strcasestr(buf, "Lair") || !strcasecmp(buf, "swl") || !strcasecmp(buf, "sl")) {
+				if (my_strcasestr(buf, "Sandw") || (my_strcasestr(buf, "Lair") && !my_strcasestr(buf, "clair")) || !strcasecmp(buf, "swl") || !strcasecmp(buf, "sl")) {
 					strcpy(chapter, "The Sandworm Lair   ");
 					continue;
 				}
