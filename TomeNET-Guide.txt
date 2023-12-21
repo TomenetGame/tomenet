@@ -2632,11 +2632,16 @@ Cheeze      Questionable action, not quite cheating but close to it.
             depending on the severity or if it's already going into "Cheating"
             territory).
 
+Clairy      Nickname for clairvoyance/enlightenment spells that map and light
+            the complete floor.
+
 DEW         Dark-elven warlock. A very deadly monster that comes in packs and
             shoots high-damage mana bolts, glass cannon style.
 
 Dive        A trip into the dungeon, usually quite deep compared to the
             diver's character level.
+
+DS          Disruption shield. A must-have spell for istari (mages).
 
 DSM         Dragon Scale Mail. Legendary pieces of armour.
 
@@ -2647,6 +2652,10 @@ EA          Extra Attacks. Rings, gloves or weapons which increase your number
 
 EL          Everlasting. This refers to the character mode that the player
             chooses during character creation. For details see (3.1).
+
+EoS         Essence of Speed, a haste spell in the temporal school.
+
+ES          Elemental Shield, a multi-school-spanning protective spell.
 
 ESP         Extrasensory perception. ESP is a telepathic power that allows you
             to sense monsters even though they aren't in your line of sight but
@@ -2688,7 +2697,8 @@ ESP         Extrasensory perception. ESP is a telepathic power that allows you
 
 FA          Free Action (immunity to paralysis).
 
-FF          Feather falling.
+FF          1) Feather falling.
+            2) Fire Flash. A holy-fire spell, good against evil creatures.
 
 GoI         Globe of invulnerability. This only exists as 'Stair GoI', see
             further below.
@@ -2700,6 +2710,8 @@ GV          Greater Vault. (See (4.6))
 
 GCV         Greater Checkerboard Vault (looks remotely like a checkerboard).
 
+Haste       Any kind of speed spell, can be a player or monster spell.
+
 HP          Hit points, the amount of damage your character can take before it
             dies. Actually you are still alive at 0 HP. Death occurs when you
             drop below 0.
@@ -2708,8 +2720,8 @@ HP          Hit points, the amount of damage your character can take before it
             quick-access these tables by searching the guide for chapter key
             words (or "/?" command) "race tab" and "class tab" respectively.
 
-ID, *ID*    Identify and *Identify* magic respectively, which is used to
-            reveal magic properties of unknown items. Scrolls of ID can be
+ID          Identify and *Identify* magic respectively, which is used to
+*ID*        reveal magic properties of unknown items. Scrolls of ID can be
             bought in store 5.
             See (5.7) for more information about identification.
 
@@ -2850,8 +2862,8 @@ OC          The Orc Caves. A very commonly sought dungeon which is usually
 
 olevel      see klevel.
 
-OoD         Out-of-depth. Means a monster or an item encounter that happened at
-            a surprisingly shallow level, opposed to the base level for that
+OoD         1) Out-of-depth. Means a monster or an item encounter that happened
+            at a surprisingly shallow level, opposed to the base level for that
             monster (shown in ~7) or item (given in k_info.txt) where
             you would usually start expecting to find it.
             Vaults often containing OoD monsters and items, increasing threat
@@ -2861,13 +2873,13 @@ OoD         Out-of-depth. Means a monster or an item encounter that happened at
             (even in vaults) and, as a specialty, Great Wyrms of Power can only
             ever occur up to 10 levels OoD.
 
+            2) Orb of Draining. A powerful holy spell, especially against evil.
+
 Party       A group of players who fight together and share experience.
             In a party you will share experience points if you are within 7
             character levels to each other and on the same dungeon/tower level
             respectively the same worldmap/wilderness sector.
             You can invoke the party menu with shift+p key. See (7.9).
-
-Phase Door  A short-range teleportation.
 
 Pit         Pits contain monsters of a certain type, for example 'demon pits'
             or 'orc pits', with the monsters in them being placed in a somewhat
@@ -2876,6 +2888,9 @@ Pit         Pits contain monsters of a certain type, for example 'demon pits'
 
 Post-King   The life of a character within the level range above level 50.
 Pre-King    The life of a character within the level range 1 to 50.
+
+Prob        Probability Travel. A magic spell for fast movement over obstacles
+Probtravel  as well as floating upwards or downwards.
 
 Pseudo-ID   If a player keeps an unidentified item for a longer time he might
             'feel' if the item is average, good, cursed or special. The item
@@ -2904,6 +2919,9 @@ Randart     Randomly generated artifact. As opposed to 'Truearts' which are
             this section for more information.
             See (5.9b) for more information about artifacts.
 
+RC          Remove Curses and *Remove Curses* (for heavy curses) respectively.
+*RC*        Available as scrolls or spells.
+
 Rekinging   Fallen winners, ie players who beat Morgoth but later on died and
             thereby lost their royal title again, can attempt to regain it by
             teaming up with someone who has not yet defeated Morgoth.
@@ -2916,7 +2934,11 @@ Rekinging   Fallen winners, ie players who beat Morgoth but later on died and
             donate and pray in 'The Mirror' in Lothlorien, see (4.5a) for
             details. (Also see 'kinging'.)
 
-Res         Resistance.
+Res         1) Resistance. Will reduce damage and/or prevent status effects
+            from a particular element when hit by it.
+
+            2) Resurrection. A spell to revive player ghosts, also available
+            as 'Scroll of Life' or temple service in town.
 
 RFE         A request for enhancement, ie a suggestion, that players can send
             to the game admins using the "/rfe" command.
