@@ -1857,6 +1857,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		msg_format(Ind, "You have found %d gold pieces worth of %s.", amount, o_name);
 #ifdef USE_SOUND_2010
 		sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
+		inven_carried = TRUE;
 #endif
 		if ((c_ptr->info & CAVE_MINED) && !p_ptr->warning_tunnel_hidden) {
 			msg_print(Ind, "\374\377yHINT: Mining hidden veins yields more than the right away spottable ones!");
@@ -2771,6 +2772,7 @@ s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr
 				/* Normal pick-up */
 				slot = inven_carry(Ind, o_ptr);
 #ifdef USE_SOUND_2010
+				/* We already carried the item, don't play another (->redundant) sfx later! */
 				inven_carried = TRUE;
 #endif
 				o_ptr->quest_credited = FALSE; //unhack.
@@ -2895,11 +2897,9 @@ s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr
 	/* splash! harm equipments */
 	if (c_ptr->feat == FEAT_DEEP_WATER &&
 	    TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
-//			magik(WATER_ITEM_DAMAGE_CHANCE))
-	    magik(3) && !p_ptr->levitate && !p_ptr->immune_water && !(p_ptr->resist_water && magik(50)))
-	{
-		if (!magik(get_skill_scale(p_ptr, SKILL_SWIM, 4900)))
-			inven_damage(Ind, set_water_destroy, 1);
+	    //magik(WATER_ITEM_DAMAGE_CHANCE))
+	    magik(3) && !p_ptr->levitate && !p_ptr->immune_water && !(p_ptr->resist_water && magik(50))) {
+		if (!magik(get_skill_scale(p_ptr, SKILL_SWIM, 4900))) inven_damage(Ind, set_water_destroy, 1);
 		equip_damage(Ind, GF_WATER);
 	}
 
@@ -3325,6 +3325,8 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 			if (magik(q_ptr->dispersion)) use_stamina(q_ptr, 1);
 			continue;
 		}
+
+		/* TODO: Add 'outer' shields: Kinetic, Spirit, PfE, Invuln; right here. */
 
 		/* Test for hit */
 		pierced = FALSE;
