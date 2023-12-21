@@ -1654,6 +1654,7 @@ static void display_inven(void) {
 			if (o_ptr->tval == TV_SUBINVEN) {
 				for (n = 0; n < o_ptr->pval; n++) {
 					o2_ptr = &subinventory[i][n];
+					if (!o2_ptr->tval) break;
 					subwgt += o2_ptr->weight * o2_ptr->number;
 				}
 				wgt += subwgt;
@@ -1982,6 +1983,7 @@ void show_inven_header(void) {
 
 			for (z = 0; z < o_ptr->pval; z++) {
 				o2_ptr = &subinventory[i][z];
+				if (!o2_ptr->tval) break;
 				totalwgt += o2_ptr->weight * o2_ptr->number;
 			}
 		}
@@ -2127,6 +2129,7 @@ void show_inven(void) {
 			if (o_ptr->tval == TV_SUBINVEN) {
 				for (l = 0; l < o_ptr->pval; l++) {
 					o2_ptr = &subinventory[i][l];
+					if (!o2_ptr->tval) break;
 					subwgt += o2_ptr->weight * o2_ptr->number;
 				}
 				totalwgt += subwgt;
