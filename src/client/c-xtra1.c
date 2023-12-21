@@ -1647,6 +1647,7 @@ static void display_inven(void) {
 		strcpy(o_name, inventory_name[i]);
 
 		/* Display the weight if needed */
+		wgt = 0;
 		if (c_cfg.show_weights && o_ptr->weight) {
 			wgt = o_ptr->weight * o_ptr->number;
 #ifdef ENABLE_SUBINVEN
@@ -1668,12 +1669,6 @@ static void display_inven(void) {
 				(void)sprintf(tmp_val, "%3li.%1li lb ", wgt / 10, wgt % 10);
 			else
 				(void)sprintf(tmp_val, "%3lik%1li lb ", wgt / 10000, (wgt % 10000) / 1000);
-
-			/* We're in the IDDC and this item is untradable to party members? */
-			if (o_ptr->iron_trade)
-				Term_putstr(71, i - INVEN_WIELD, -1, TERM_SLATE, tmp_val);
-			else
-				Term_putstr(71, i, -1, TERM_WHITE, tmp_val);
 		}
 
 		/* Obtain length of description */
@@ -1689,6 +1684,13 @@ static void display_inven(void) {
 		/* Clear the line with the (possibly indented) index */
 		Term_putstr(3, i, n, o_ptr->attr, o_name);
 #endif
+		if (wgt) {
+			/* We're in the IDDC and this item is untradable to party members? */
+			if (o_ptr->iron_trade)
+				Term_putstr(71, i - INVEN_WIELD, -1, TERM_SLATE, tmp_val);
+			else
+				Term_putstr(71, i, -1, TERM_WHITE, tmp_val);
+		}
 	}
 
 	/* Erase the rest of the window */
@@ -2122,6 +2124,7 @@ void show_inven(void) {
 		put_str(tmp_val, j + 1, col);
 
 		/* Display the weight if needed */
+		wgt = 0;
 		if (c_cfg.show_weights && o_ptr->weight) {
 			wgt = o_ptr->weight * o_ptr->number;
 #ifdef ENABLE_SUBINVEN
@@ -2144,18 +2147,19 @@ void show_inven(void) {
 				(void)sprintf(tmp_val, "%3li.%1li lb", wgt / 10, wgt % 10);
 			else
 				(void)sprintf(tmp_val, "%3lik%1li lb", wgt / 10000, (wgt % 10000) / 1000);
-
-			/* We're in the IDDC and this item is untradable to party members? */
-			if (o_ptr->iron_trade)
-				c_put_str(TERM_SLATE, tmp_val, j + 1, 71);
-			else
-				put_str(tmp_val, j + 1, 71);
-
 			totalwgt += wgt;
 		}
 
 		/* Display the entry itself */
 		c_put_str(out_color[j], out_desc[j], j + 1, col + 3);
+
+		if (wgt) {
+			/* We're in the IDDC and this item is untradable to party members? */
+			if (o_ptr->iron_trade)
+				c_put_str(TERM_SLATE, tmp_val, j + 1, 71);
+			else
+				put_str(tmp_val, j + 1, 71);
+		}
 	}
 
 	/* Display the weight if needed */
