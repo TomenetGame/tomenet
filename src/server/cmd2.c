@@ -7033,8 +7033,11 @@ void do_cmd_fire(int Ind, int dir) {
 					if (!p_ptr->ammo_brand || (p_ptr->ammo_brand_t != TBRAND_VORP)) break;
 				} else {
 					cave_type *c_ptr = &zcave[y][x];
+					char p_name[80];
 
 					q_ptr = Players[0 - c_ptr->m_idx];
+					/* Get the name */
+					strcpy(p_name, q_ptr->name);
 
 					p_ptr->test_attacks++;
 					/* AD hack -- "pass over" players in same party */
@@ -7054,7 +7057,7 @@ void do_cmd_fire(int Ind, int dir) {
 						/* Check the visibility */
 						visible = p_ptr->play_vis[0 - c_ptr->m_idx];
 
-						/* Note the collision */
+						/* Note the -potential- collision (still have to check if we passed AC) */
 						hit_body = TRUE;
 
 #ifndef KURZEL_PK
@@ -7069,8 +7072,14 @@ void do_cmd_fire(int Ind, int dir) {
 						}
 #endif
 
-						/* Did we hit it (penalize range) */
+						if (q_ptr->dispersion && q_ptr->cst) {
+							msg_format(0 - c_ptr->m_idx, "\377%cYou disperse around the projectile!", COLOUR_DODGE_GOOD);
+							if (visible) msg_format(Ind, "\377%c%s disperses around %s.", COLOUR_DODGE_NEAR, p_name, o_name);
+							if (magik(q_ptr->dispersion)) use_stamina(q_ptr, 1);
+							continue;
+						}
 
+						/* Did we hit it (penalize range) */
 #ifndef PVP_AC_REDUCTION
 						if ((test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible)
 						    || (p_ptr->ranged_precision && visible))
@@ -7082,11 +7091,7 @@ void do_cmd_fire(int Ind, int dir) {
 						    visible) || (p_ptr->ranged_precision && visible))
 						    && (!q_ptr->shadow_running || !rand_int(3))) {
 #endif
-							char p_name[80];
 							bool dodged = FALSE;
-
-							/* Get the name */
-							strcpy(p_name, q_ptr->name);
 
 #ifndef NEW_DODGING
 							if (get_skill(q_ptr, SKILL_DODGE)) {
@@ -7110,13 +7115,6 @@ void do_cmd_fire(int Ind, int dir) {
 								continue;
 							}
 #endif
-
-							if (q_ptr->dispersion && q_ptr->cst) {
-								msg_format(0 - c_ptr->m_idx, "\377%cYou disperse around the projectile!", COLOUR_DODGE_GOOD);
-								if (visible) msg_format(Ind, "\377%c%s disperses around %s.", COLOUR_DODGE_NEAR, p_name, o_name);
-								if (magik(q_ptr->dispersion)) use_stamina(q_ptr, 1);
-								continue;
-							}
 
 #ifdef USE_BLOCKING /* Parry/Block - belongs to new-NR-viability changes */
 							/* choose whether to attempt to block or to parry (can't do both at once),

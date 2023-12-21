@@ -745,6 +745,14 @@ bool make_attack_melee(int Ind, int m_idx) {
 		if (!bypass_protection) {
 			bool done = FALSE;
 
+			/* Now here, taking precedence before almost anything else, even AC (check_hit()).
+			   Only the 'outer' shields take precedence. */
+			if (p_ptr->dispersion && p_ptr->cst) {
+				msg_format(Ind, "\377%cYou disperse around %s attack!", COLOUR_DODGE_GOOD, m_name_gen);
+				if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
+				continue;
+			}
+
 			/* kinetic shield: (requires mana to work) */
 			if (p_ptr->kinetic_shield
 #ifdef ENABLE_OCCULT
@@ -818,14 +826,6 @@ bool make_attack_melee(int Ind, int m_idx) {
 					/* Hack -- Next attack */
 					continue;
 				}
-			}
-
-			/* Now here, taking precedence before almost anything else, even AC (check_hit()).
-			   Only the 'outer' shields take precedence. */
-			if (p_ptr->dispersion && p_ptr->cst) {
-				msg_format(Ind, "\377%cYou disperse around %s attack!", COLOUR_DODGE_GOOD, m_name_gen);
-				if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
-				continue;
 			}
 		}
 

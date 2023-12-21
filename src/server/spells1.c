@@ -9468,7 +9468,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	int k = 0;
 	int div, k_elec, k_sound, k_lite;
-	bool physical_shield;
+	bool physical_shield = FALSE;
 
 	/* Hack -- assume obvious */
 	bool obvious = TRUE;
@@ -9951,6 +9951,23 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	}
 
 
+	/* Dispersion aka shadow form - now put here, before all other defenses such as dodging, reflection/shield checks, even 'outer' shields. */
+	/* Bolt attack from a monster, a player or a trap */
+	if (!physical_shield && p_ptr->dispersion && !friendly_player && p_ptr->cst && // !p_ptr->blind &&
+	    !(flg & (PROJECT_HIDE | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODO))) {
+		if (!rad && who >= PROJECTOR_TRAP) {
+			msg_format(Ind, "\377%cYou disperse around %s projectile!", COLOUR_DODGE_GOOD, m_name_gen);
+			if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
+			return(TRUE);
+		}
+		/* MEGAHACK -- allow to dodge 'bolt' traps */
+		else if (rad < 2 && who == PROJECTOR_TRAP) {
+			msg_format(Ind, "\377%cYou disperse around %s magical attack!", COLOUR_DODGE_GOOD, m_name_gen);
+			if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
+			return(TRUE);
+		}
+	}
+
 	/* Physical-attack shield spells don't reflect all the time..! */
 #ifdef ENABLE_OCCULT
 	physical_shield = (p_ptr->kinetic_shield ? (rand_int(2) == 0) : FALSE) || (p_ptr->spirit_shield ? magik(p_ptr->spirit_shield_pow) : FALSE);
@@ -9967,23 +9984,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			p_ptr->cmp -= dam / 7;
 			p_ptr->redraw |= PR_MANA;
 		} else physical_shield = FALSE; /* failure to apply the shield to this particular attack */
-	}
-
-	/* Dispersion aka shadow form - now put here, before all other defenses such as dodging, reflection/shield checks, except for the 'outer' shields. */
-	/* Bolt attack from a monster, a player or a trap */
-	if (!physical_shield && p_ptr->dispersion && !friendly_player && p_ptr->cst && // !p_ptr->blind &&
-	    !(flg & (PROJECT_HIDE | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODO))) {
-		if (!rad && who >= PROJECTOR_TRAP) {
-			msg_format(Ind, "\377%cYou disperse around %s projectile!", COLOUR_DODGE_GOOD, m_name_gen);
-			if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
-			return(TRUE);
-		}
-		/* MEGAHACK -- allow to dodge 'bolt' traps */
-		else if (rad < 2 && who == PROJECTOR_TRAP) {
-			msg_format(Ind, "\377%cYou disperse around %s magical attack!", COLOUR_DODGE_GOOD, m_name_gen);
-			if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
-			return(TRUE);
-		}
 	}
 
 #ifndef NEW_DODGING

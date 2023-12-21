@@ -449,6 +449,12 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval, s16b sval, 
 		msg_format(Ind, "Suddenly %s are shot at you!", i_name);
 
 	for (i = 0; i < num; i++) {
+		/* Take precedence over all other means of defense */
+		if (p_ptr->dispersion && p_ptr->cst) {
+			msg_format(Ind, "\377%cYou disperse around the attack!", COLOUR_DODGE_GOOD);
+			if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
+			continue;
+		}
 		if ((p_ptr->kinetic_shield
 #ifdef ENABLE_OCCULT
 		    || p_ptr->spirit_shield
@@ -476,12 +482,6 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval, s16b sval, 
 				continue;
 			}
 #endif
-		}
-		/* Only thing taking precedence over shadow dispersion is the 'outer' shield, kinetic shield. */
-		if (p_ptr->dispersion && p_ptr->cst) {
-			msg_format(Ind, "\377%cYou disperse around the attack!", COLOUR_DODGE_GOOD);
-			if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
-			continue;
 		}
 		if (p_ptr->reflect && magik(60)) {
 			msg_print(Ind, "You deflect the attack!");
