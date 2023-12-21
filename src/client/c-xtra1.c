@@ -1728,6 +1728,7 @@ static void display_subinven(void) {
 		/* Describe the subinventory type itself in one extra line*/
 
 		/* i_ptr->k_idx is not transmitted, only tval,sval are. So we have to loop through all. */
+		i = i_ptr->attr; /* base init, to slay compiler warning (and was old way actually) */
 		for (k_idx = 0; k_idx < MAX_K_IDX; k_idx++)
 			if (kind_list_tval[k_idx] == i_ptr->tval && kind_list_sval[k_idx] == i_ptr->sval) {
 				i = color_char_to_attr(kind_list_attr[k_idx]);
@@ -1737,7 +1738,6 @@ static void display_subinven(void) {
 		bagheader_y = last_k;
 		/* Add slot index label */
 		sprintf(o_name, "[%c]", index_to_label(islot));
-		//Term_putstr(0, last_k, -1, i_ptr->attr, o_name);
 		Term_putstr(0, last_k, -1, i, o_name);
 		/* Erase the rest of the line */
 		Term_erase(3, last_k, 255);
@@ -1746,13 +1746,10 @@ static void display_subinven(void) {
 		strcpy(o_name, inventory_name[islot]);
 		//o_name[0] = toupper(o_name[0]);
 		o_name[ONAME_LEN - 3] = 0; //prevent overflow
-		//strcat(o_name, " :");
 		/* Obtain length of description */
 		n = strlen(o_name);
 		if (n > MAX_CHARS - 5) n = MAX_CHARS - 5;
 		Term_putstr(4, last_k, n, i_ptr->attr, o_name);
-		//Term_putstr(4, last_k, n, TERM_L_WHITE, o_name);
-		//Term_putstr(4, last_k, n, i, o_name);
 		/* Erase the rest of the line */
 		Term_erase(4 + n, last_k, 255);
 		/* account for this extra line */
