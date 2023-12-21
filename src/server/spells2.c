@@ -1766,9 +1766,9 @@ bool detect_treasure(int Ind, int rad) {
 	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return(FALSE);
 
 	/* Scan the current panel */
-//	for (y = p_ptr->panel_row_min; y <= p_ptr->panel_row_max; y++)
+	//for (y = p_ptr->panel_row_min; y <= p_ptr->panel_row_max; y++)
 	for (y = py - rad; y <= py + rad; y++) {
-//		for (x = p_ptr->panel_col_min; x <= p_ptr->panel_col_max; x++)
+		//for (x = p_ptr->panel_col_min; x <= p_ptr->panel_col_max; x++)
 		for (x = px - rad; x <= px + rad; x++) {
 			/* Reject locations outside of dungeon */
 			if (!in_bounds_floor(l_ptr, y, x)) continue;
@@ -1777,6 +1777,8 @@ bool detect_treasure(int Ind, int rad) {
 			if (distance(py, px, y, x) > rad) continue;
 
 			c_ptr = &zcave[y][x];
+			if (c_ptr->info & CAVE_SCRT) continue;
+
 			w_ptr = &p_ptr->cave_flag[y][x];
 
 			o_ptr = &o_list[c_ptr->o_idx];
@@ -1861,6 +1863,7 @@ bool floor_detect_treasure(int Ind) {
 			if (!in_bounds_floor(l_ptr, y, x)) continue;
 
 			c_ptr = &zcave[y][x];
+			if (c_ptr->info & CAVE_SCRT) continue;
 			w_ptr = &p_ptr->cave_flag[y][x];
 			o_ptr = &o_list[c_ptr->o_idx];
 
@@ -1924,7 +1927,7 @@ bool detect_magic(int Ind, int rad) {
 
 	struct worldpos *wpos = &p_ptr->wpos;
 	dun_level *l_ptr;
-//	int py = p_ptr->py, px = p_ptr->px;
+	//int py = p_ptr->py, px = p_ptr->px;
 
 	int	i, j, tv;
 	bool	detect = FALSE;
@@ -1933,6 +1936,7 @@ bool detect_magic(int Ind, int rad) {
 	object_type	*o_ptr;
 
 	cave_type **zcave;
+
 
 	/* anti-exploit */
 	if (!local_panel(Ind)) return(FALSE);
@@ -1956,6 +1960,7 @@ bool detect_magic(int Ind, int rad) {
 
 			/* Access the grid and object */
 			c_ptr = &zcave[i][j];
+			if (c_ptr->info & CAVE_SCRT) continue;
 			o_ptr = &o_list[c_ptr->o_idx];
 
 			/* Nothing there */
@@ -1970,10 +1975,9 @@ bool detect_magic(int Ind, int rad) {
 			    is_magic_device(tv) ||
 			    (tv == TV_SCROLL) || (tv == TV_POTION) ||
 			    ((o_ptr->to_a > 0) || (o_ptr->to_h + o_ptr->to_d > 0)))
-			{
-				/* Note new items */
-				if (!(p_ptr->obj_vis[c_ptr->o_idx]))
 				{
+				/* Note new items */
+				if (!(p_ptr->obj_vis[c_ptr->o_idx])) {
 					/* Detect */
 					detect = TRUE;
 
@@ -2003,9 +2007,12 @@ bool detect_creatures_xxx(int Ind, u32b match_flag) {
 	cptr desc_monsters = "weird monsters";
 
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+	cave_type **zcave = getcave(&p_ptr->wpos);
 
 	/* anti-exploit */
 	if (!local_panel(Ind)) return(FALSE);
+	/* paranoia */
+	if (!zcave) return(FALSE);
 
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return(FALSE);
 	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return(FALSE);
@@ -2036,6 +2043,7 @@ bool detect_creatures_xxx(int Ind, u32b match_flag) {
 
 		/* Detect evil monsters */
 		if (!panel_contains(y, x)) continue;
+		if (zcave[y][x].info & CAVE_SCRT) continue;
 
 		/* Detect evil monsters */
 		if (!match_flag || /* hack: all */
@@ -2066,6 +2074,8 @@ bool detect_creatures_xxx(int Ind, u32b match_flag) {
 
 		int py = q_ptr->py;
 		int px = q_ptr->px;
+
+		if (zcave[py][px].info & CAVE_SCRT) continue;
 
 		/* Skip disconnected players */
 		if (q_ptr->conn == NOT_CONNECTED) continue;
@@ -2202,9 +2212,13 @@ bool detect_invisible(int Ind) {
 	bool flag = FALSE;
 
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+	cave_type **zcave = getcave(&p_ptr->wpos);
+
 
 	/* anti-exploit */
 	if (!local_panel(Ind)) return(FALSE);
+	/* paranoia */
+	if (!zcave) return(FALSE);
 
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return(FALSE);
 	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return(FALSE);
@@ -2228,6 +2242,8 @@ bool detect_invisible(int Ind) {
 
 		/* Skip monsters not on this depth */
 		if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
+
+		if (zcave[fy][fx].info & CAVE_SCRT) continue;
 
 		/* Detect all invisible monsters */
 		if (panel_contains(fy, fx) && (r_ptr->flags2 & RF2_INVISIBLE)) {
@@ -2276,6 +2292,8 @@ bool detect_invisible(int Ind) {
 
 		/* Skip the dungeon master */
 		if (q_ptr->admin_dm && !player_sees_dm(Ind)) continue;
+
+		if (zcave[py][px].info & CAVE_SCRT) continue;
 
 		/* Detect all invisible players */
 		if (panel_contains(py, px) && q_ptr->invis)  {
@@ -2333,9 +2351,13 @@ bool detect_creatures(int Ind) {
 	bool	flag = FALSE;
 
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+	cave_type **zcave = getcave(&p_ptr->wpos);
+
 
 	/* anti-exploit */
 	if (!local_panel(Ind)) return(FALSE);
+	/* paranoia */
+	if (!zcave) return(FALSE);
 
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return(FALSE);
 	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return(FALSE);
@@ -2359,6 +2381,8 @@ bool detect_creatures(int Ind) {
 
 		/* Skip monsters not on this depth */
 		if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
+
+		if (zcave[fy][fx].info & CAVE_SCRT) continue;
 
 		/* Detect all non-invisible monsters */
 		if (panel_contains(fy, fx) && (!(r_ptr->flags2 & RF2_INVISIBLE))) {
@@ -2402,6 +2426,8 @@ bool detect_creatures(int Ind) {
 
 		/* Skip visible players */
 		if (p_ptr->play_vis[i]) continue;
+
+		if (zcave[py][px].info & CAVE_SCRT) continue;
 
 		/* Detect all non-invisible players */
 		if (panel_contains(py, px) && !q_ptr->invis) {
@@ -2455,9 +2481,12 @@ bool detect_noise(int Ind) {
 	int	i;
 	bool	flag = FALSE;
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+	cave_type **zcave = getcave(&p_ptr->wpos);
 
 	/* anti-exploit */
 	if (!local_panel(Ind)) return(FALSE);
+	/* paranoia */
+	if (!zcave) return(FALSE);
 
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return(FALSE);
 	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return(FALSE);
@@ -2478,6 +2507,8 @@ bool detect_noise(int Ind) {
 		if (p_ptr->mon_vis[i]) continue;
 		/* Skip monsters not on this depth */
 		if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
+
+		if (zcave[fy][fx].info & CAVE_SCRT) continue;
 
 		/* Specialties for noise-detection: don't detect monsters in noiseless state */
 		if (m_ptr->csleep && r_ptr->d_char != 'E' && //elementals always give off some sort of noise ;)
@@ -2528,6 +2559,8 @@ bool detect_noise(int Ind) {
 		/* Specialties for noise-detection */
 		if (p_ptr->skill_stl >= 14 /*30*/) continue; //don't detect Heroic/Legendary stealth
 
+		if (zcave[py][px].info & CAVE_SCRT) continue;
+
 		/* Detect all non-invisible players */
 		if (panel_contains(py, px) && !q_ptr->invis) {
 			byte a;
@@ -2577,9 +2610,12 @@ bool detect_living(int Ind) {
 	int	i;
 	bool	flag = FALSE;
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+	cave_type **zcave = getcave(&p_ptr->wpos);
 
 	/* anti-exploit */
 	if (!local_panel(Ind)) return(FALSE);
+	/* paranoia */
+	if (!zcave) return(FALSE);
 
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return(FALSE);
 	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return(FALSE);
@@ -2606,6 +2642,8 @@ bool detect_living(int Ind) {
 		   This makes sense but they are often treated as an exception in the code,
 		   eg for vampirism application. */
 		if ((r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_DEMON)) || r_ptr->d_char == 'A') continue;
+
+		if (zcave[fy][fx].info & CAVE_SCRT) continue;
 
 		/* Detect all monsters */
 		if (panel_contains(fy, fx)) {
@@ -2644,6 +2682,8 @@ bool detect_living(int Ind) {
 
 		/* Life force specialty! */
 		if (p_ptr->prace == RACE_VAMPIRE) continue;
+
+		if (zcave[py][px].info & CAVE_SCRT) continue;
 
 		/* Detect all players */
 		if (panel_contains(py, px)) {
@@ -2752,6 +2792,7 @@ bool detect_bounty(int Ind, int rad) {
 
 			/* Access the grid */
 			c_ptr = &zcave[i][j];
+			if (c_ptr->info & CAVE_SCRT) continue;
 			w_ptr = &p_ptr->cave_flag[i][j];
 
 			o_ptr = &o_list[c_ptr->o_idx];
@@ -2767,7 +2808,7 @@ bool detect_bounty(int Ind, int rad) {
 				/* Know the trap */
 				object_known(o_ptr);
 				/* Notice it */
-//				disturb(Ind, 0, 0);
+				//disturb(Ind, 0, 0);
 				detect = TRUE;
 			}
 
@@ -2924,9 +2965,9 @@ bool detect_object(int Ind, int rad) {
 	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return(FALSE);
 
 	/* Scan the current panel */
-//	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
+	//for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
 	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++) {
-//		for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
+		//for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
 		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++) {
 			/* Reject locations outside of dungeon */
 			if (!in_bounds_floor(l_ptr, i, j)) continue;
@@ -2935,7 +2976,7 @@ bool detect_object(int Ind, int rad) {
 			if (distance(p_ptr->py, p_ptr->px, i, j) > rad) continue;
 
 			c_ptr = &zcave[i][j];
-
+			if (c_ptr->info & CAVE_SCRT) continue;
 			o_ptr = &o_list[c_ptr->o_idx];
 
 			/* Nothing here */
@@ -2996,13 +3037,13 @@ bool detect_treasure_object(int Ind, int rad) {
 			if (distance(py, px, y, x) > rad) continue;
 
 			c_ptr = &zcave[y][x];
+			if (c_ptr->info & CAVE_SCRT) continue;
 			w_ptr = &p_ptr->cave_flag[y][x];
 
 			/* Magma/Quartz + Known Gold */
 			if ((c_ptr->feat == FEAT_MAGMA_K) ||
 			    (c_ptr->feat == FEAT_QUARTZ_K) ||
-			    (c_ptr->feat == FEAT_SANDWALL_K))
-			{
+			    (c_ptr->feat == FEAT_SANDWALL_K)) {
 				/* Notice detected gold */
 				if (!(*w_ptr & CAVE_MARK)) {
 					/* Detect */
@@ -3019,8 +3060,7 @@ bool detect_treasure_object(int Ind, int rad) {
 			/* Notice embedded gold */
 			if ((c_ptr->feat == FEAT_MAGMA_H) ||
 			    (c_ptr->feat == FEAT_QUARTZ_H) ||
-			    (c_ptr->feat == FEAT_SANDWALL_H))
-			{
+			    (c_ptr->feat == FEAT_SANDWALL_H)) {
 				/* Expose the gold */
 				c_ptr->feat += 0x02;
 
@@ -3065,7 +3105,7 @@ bool detect_trap(int Ind, int rad) {
 
 	struct worldpos *wpos = &p_ptr->wpos;
 	dun_level *l_ptr;
-//	int	py = p_ptr->py, px = p_ptr->px;
+	//int py = p_ptr->py, px = p_ptr->px;
 
 	int	i, j, t_idx;
 	bool	detect = FALSE;
@@ -3103,6 +3143,7 @@ bool detect_trap(int Ind, int rad) {
 
 			/* Access the grid */
 			c_ptr = &zcave[i][j];
+			if (c_ptr->info & CAVE_SCRT) continue;
 			w_ptr = &p_ptr->cave_flag[i][j];
 
 			/* Hack - traps on undetected doors cannot be found */
@@ -3230,6 +3271,7 @@ bool detect_sdoor(int Ind, int rad) {
 
 			/* Access the grid and object */
 			c_ptr = &zcave[i][j];
+			if (c_ptr->info & CAVE_SCRT) continue;
 			w_ptr = &p_ptr->cave_flag[i][j];
 
 			/* Hack -- detect secret doors */

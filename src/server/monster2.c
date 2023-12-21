@@ -2697,9 +2697,16 @@ void update_player(int Ind) {
 							easy = flag = TRUE;
 						}
 					}
-
 				} /* end yucky hack */
+				else { /* Not in LoS! Important for CAVE_SCRT! */
+					/* If the player is in a secret area, other players can never see her if they're not in a secret area, even if in the same party! */
+					if ((c_ptr->info & CAVE_SCRT) &&
+					    !(zcave[p_ptr->py][p_ptr->px].info & CAVE_SCRT)) continue;
+				}
 			}
+
+			/* No LoS! Can't ESP _anything_ that is in secret areas. */
+			if (c_ptr->info & CAVE_SCRT) continue;
 
 			/* Telepathy can see all players */
 			if ((p_ptr->telepathy & ESP_ALL) || (p_ptr->prace == RACE_DRACONIAN)) {
