@@ -581,7 +581,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 	char	ddesc[MNAME_LEN];
 	char	dam_msg[MAX_CHARS_WIDE] = { '\0' };
 
-	bool	blinked, prot = FALSE;
+	bool	blinked;
 
 	bool touched = FALSE, fear = FALSE, alive = TRUE;
 	bool explode = FALSE, gone = FALSE;
@@ -635,7 +635,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 		bool bypass_shield = FALSE;
 		bool bypass_weapon = FALSE;
 
-		//bool bypass_protection = FALSE; //covered by bypass_ac and touched
+		bool bypass_protection = FALSE;
 		bool invuln_applied = FALSE;
 
 		int power = 0;
@@ -670,65 +670,163 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 		/* Extract the attack "power" */
 		switch (effect) {
-			case RBE_HURT:		power = 60; break;
-			case RBE_POISON:	power =  5; break;
-			case RBE_UN_BONUS:	power = 20; break;
-			case RBE_UN_POWER:	power = 15; break;
-			case RBE_EAT_GOLD:	power =  5; break;
-			case RBE_EAT_ITEM:	power =  5; break;
-			case RBE_EAT_FOOD:	power =  5; break;
-			case RBE_EAT_LITE:	power =  5; break;
-			case RBE_ACID:		power =  0; break;
-			case RBE_ELEC:		power = 10; break;
-			case RBE_FIRE:		power = 10; break;
-			case RBE_COLD:		power = 10; break;
-			case RBE_BLIND:		power =  2; break;
-			case RBE_CONFUSE:	power = 10; break;
-			case RBE_TERRIFY:	power = 10; break;
-			case RBE_PARALYZE:	power =  2; break;
-			case RBE_LOSE_STR:	power =  0; break;
-			case RBE_LOSE_DEX:	power =  0; break;
-			case RBE_LOSE_CON:	power =  0; break;
-			case RBE_LOSE_INT:	power =  0; break;
-			case RBE_LOSE_WIS:	power =  0; break;
-			case RBE_LOSE_CHR:	power =  0; break;
-			case RBE_LOSE_ALL:	power =  2; break;
-			case RBE_SHATTER:	power = 60; break;
-			case RBE_EXP_10:	power =  5; break;
-			case RBE_EXP_20:	power =  5; break;
-			case RBE_EXP_40:	power =  5; break;
-			case RBE_EXP_80:	power =  5; break;
-			case RBE_DISEASE:	power =  5; break;
-			case RBE_TIME:		power =  5; break;
-			case RBE_SANITY:	power = 60; break;
-			case RBE_HALLU:		power = 10; break;
-			case RBE_PARASITE:	power =  5; break;
-			case RBE_DISARM:	power = 60; break;
-			case RBE_FAMINE:	power = 20; break;
-			case RBE_SEDUCE:	power = 80; break;
-			case RBE_EAT_MANA:	power = 10; break;
+		case RBE_HURT:		power = 60; break;
+		case RBE_POISON:	power =  5; break;
+		case RBE_UN_BONUS:	power = 20; break;
+		case RBE_UN_POWER:	power = 15; break;
+		case RBE_EAT_GOLD:	power =  5; break;
+		case RBE_EAT_ITEM:	power =  5; break;
+		case RBE_EAT_FOOD:	power =  5; break;
+		case RBE_EAT_LITE:	power =  5; break;
+		case RBE_ACID:		power =  0; break;
+		case RBE_ELEC:		power = 10; break;
+		case RBE_FIRE:		power = 10; break;
+		case RBE_COLD:		power = 10; break;
+		case RBE_BLIND:		power =  2; break;
+		case RBE_CONFUSE:	power = 10; break;
+		case RBE_TERRIFY:	power = 10; break;
+		case RBE_PARALYZE:	power =  2; break;
+		case RBE_LOSE_STR:	power =  0; break;
+		case RBE_LOSE_DEX:	power =  0; break;
+		case RBE_LOSE_CON:	power =  0; break;
+		case RBE_LOSE_INT:	power =  0; break;
+		case RBE_LOSE_WIS:	power =  0; break;
+		case RBE_LOSE_CHR:	power =  0; break;
+		case RBE_LOSE_ALL:	power =  2; break;
+		case RBE_SHATTER:	power = 60; break;
+		case RBE_EXP_10:	power =  5; break;
+		case RBE_EXP_20:	power =  5; break;
+		case RBE_EXP_40:	power =  5; break;
+		case RBE_EXP_80:	power =  5; break;
+		case RBE_DISEASE:	power =  5; break;
+		case RBE_TIME:		power =  5; break;
+		case RBE_SANITY:	power = 60; break;
+		case RBE_HALLU:		power = 10; break;
+		case RBE_PARASITE:	power =  5; break;
+		case RBE_DISARM:	power = 60; break;
+		case RBE_FAMINE:	power = 20; break;
+		case RBE_SEDUCE:	power = 80; break;
+		case RBE_EAT_MANA:	power = 10; break;
 		}
 
+		/* Pre-check attack method for bypassing various means of defense */
 		switch (method) {
-			case RBM_GAZE://too crazy vs the big bosses..  if (p_ptr->blind) continue; /* :-D */
-			case RBM_WAIL:
-			case RBM_BEG:
-			case RBM_INSULT:
-			case RBM_MOAN:
-			case RBM_SHOW:
-			case RBM_WHISPER:
-				//bypass_protection = TRUE; /* mystic shield doesn't block light/sound waves */
-				/* Fall through */
-			case RBM_SPORE:
-				bypass_shield = TRUE; /* can't be blocked */
-				/* Fall through */
-			case RBM_EXPLODE:
-				bypass_ac = TRUE; /* means it always hits and can't be dodged or parried either.
-						     Damage can still be reduced though (if RBE_HURT eg). */
-				/* Fall through */
-			case RBM_DROOL:
-				bypass_weapon = TRUE; /* can't be parried */
-				break;
+		case RBM_GAZE://too crazy vs the big bosses..  if (p_ptr->blind) continue; /* :-D */
+		case RBM_WAIL:
+		case RBM_BEG:
+		case RBM_INSULT:
+		case RBM_MOAN:
+		case RBM_SHOW:
+		case RBM_WHISPER:
+			bypass_protection = TRUE; /* mystic shield/shadow dispersion doesn't block light/sound waves */
+			/* Fall through */
+		case RBM_SPORE:
+			bypass_shield = TRUE; /* can't be blocked */
+			/* Fall through */
+		case RBM_EXPLODE:
+			bypass_ac = TRUE; /* means it always hits and can't be dodged or parried either.
+					     Damage can still be reduced though (if RBE_HURT eg). */
+			/* Fall through */
+		case RBM_DROOL:
+			bypass_weapon = TRUE; /* can't be parried */
+			break;
+		}
+
+		/* Stair-GoI now also works on physical attacks! */
+		if (p_ptr->invuln && (!bypass_invuln)) {// && !p_ptr->invuln_applied) {
+			if (magik(40)) {
+				msg_print(Ind, "The attack is fully deflected by a magic shield.");
+				//if (who != PROJECTOR_TERRAIN) break_cloaking(Ind, 0);
+				continue;
+			}
+			invuln_applied = TRUE;
+		}
+
+		if (!bypass_protection) {
+			bool done = FALSE;
+
+			/* kinetic shield: (requires mana to work) */
+			if (p_ptr->kinetic_shield
+#ifdef ENABLE_OCCULT
+			    || p_ptr->spirit_shield
+#endif
+			    ) {
+				int cost = m_ptr->level / 10, clog, clog_dam;
+
+				if (damage > 45) {
+					clog_dam = (damage * 100) / 38;
+					clog = 0;
+					while ((clog_dam = (clog_dam * 10) / 12) >= 100) clog++;
+					cost += clog;
+					//adds +0 (up to 45 damage) ..+3 (70 dam) ..+7 (150 dam) ..+13 (500 dam) ..+17 (1000 dam, hypothetically)
+				}
+				if (p_ptr->cmp >= cost) {
+					/* test if it repelled the blow */
+					int chance = (p_ptr->lev * ((r_ptr->flags2 & RF2_POWERFUL) ? 67 : 100)) / r_ptr->level, max_chance;
+					// ^= usually 50% chance vs all mobs you'd encounter at your level, 33% vs double-level POWERFUL
+
+					/* drains mana on hit */
+					p_ptr->cmp -= cost;
+					p_ptr->redraw |= PR_MANA;
+
+					/* spirit shield is usually weaker than kinetic shield */
+#ifdef ENABLE_OCCULT
+					if (p_ptr->kinetic_shield) max_chance = 50;
+					else max_chance = p_ptr->spirit_shield_pow;
+#else
+					max_chance = 50;
+#endif
+
+					if (magik(chance > max_chance ? max_chance : chance)) {
+						msg_format(Ind, "%^s is repelled.", m_name);
+						continue;
+					}
+
+					/* assume that if kinetic shield failed, pfe will also fail: ... */
+					if (!p_ptr->spirit_shield) done = TRUE;
+				}
+			}
+			if (!done) {
+				bool prot = FALSE;
+
+				/* protection from evil, static and temporary: */
+				if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 30) && (r_ptr->flags3 & RF3_UNDEAD)) {
+					if ((p_ptr->lev * 2 >= rlev) && (rand_int(100) + p_ptr->lev > 50 + rlev))
+						prot = TRUE;
+				} else if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 40) && (r_ptr->flags3 & RF3_DEMON)) {
+					if ((p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev))
+						prot = TRUE;
+				} else if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 50) && (r_ptr->flags3 & RF3_EVIL)) {
+					if ((p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev))
+						prot = TRUE;
+				}
+				/* 'else' here to avoid crazy stacking */
+				else if ((p_ptr->protevil > 0) && (r_ptr->flags3 & RF3_EVIL) &&
+				    (((p_ptr->lev >= rlev) && ((rand_int(100) + p_ptr->lev) > 50)) || /* extra usefulness added (mostly for low levels): */
+				     ((p_ptr->lev < rlev) && (p_ptr->lev + 10 >= rlev) && (rand_int(24) > 12 + rlev - p_ptr->lev)))) {
+					prot = TRUE;
+				}
+
+				if (prot) {
+#ifdef OLD_MONSTER_LORE
+					/* Remember the Evil-ness */
+					if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags3 |= RF3_EVIL;
+#endif
+					/* Message */
+					msg_format(Ind, "%^s is repelled.", m_name);
+
+					/* Hack -- Next attack */
+					continue;
+				}
+			}
+
+			/* Now here, taking precedence before almost anything else, even AC (check_hit()).
+			   Only the 'outer' shields take precedence. */
+			if (p_ptr->dispersion && p_ptr->cst) {
+				msg_format(Ind, "\377%cYou disperse around %s attack!", COLOUR_DODGE_GOOD, m_name_gen);
+				if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
+				continue;
+			}
 		}
 
 		/* Monster hits player */
@@ -740,171 +838,136 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 			/* Describe the attack method */
 			switch (method) {
-				case RBM_HIT:
-					act = "hits you";
+			case RBM_HIT:
+				act = "hits you";
 #ifdef NORMAL_HIT_NO_STUN
-					do_cut = 1;
+				do_cut = 1;
 #else
-					do_cut = do_stun = 1;
+				do_cut = do_stun = 1;
 #endif	// NORMAL_HIT_NO_STUN
-					touched = TRUE;
-					break;
-
-				case RBM_TOUCH:
-					act = "touches you";
-					touched = TRUE;
-					break;
-
-				case RBM_PUNCH:
-					act = "punches you";
-					do_stun = 1;
-					touched = TRUE;
-					break;
-
-				case RBM_KICK:
-					act = "kicks you";
-					do_stun = 1;
-					touched = TRUE;
-					break;
-
-				case RBM_CLAW:
-					act = "claws you";
-					do_cut = 1;
-					touched = TRUE;
-					break;
-
-				case RBM_BITE:
-					act = "bites you";
-					do_cut = 1;
-					touched = TRUE;
-					break;
-
-				case RBM_STING:
-					act = "stings you";
-					touched = TRUE;
-					break;
-
-				case RBM_XXX1:
-					act = "XXX1's you";
-					break;
-
-				case RBM_BUTT:
-					act = "butts you";
-					do_stun = 1;
-					touched = TRUE;
-					break;
-
-				case RBM_CRUSH:
-					act = "crushes you";
-					do_stun = 1;
-					touched = TRUE;
-					break;
-
-				case RBM_ENGULF:
-					act = "engulfs you";
-					touched = TRUE;
-					break;
+				touched = TRUE;
+				break;
+			case RBM_TOUCH:
+				act = "touches you";
+				touched = TRUE;
+				break;
+			case RBM_PUNCH:
+				act = "punches you";
+				do_stun = 1;
+				touched = TRUE;
+				break;
+			case RBM_KICK:
+				act = "kicks you";
+				do_stun = 1;
+				touched = TRUE;
+				break;
+			case RBM_CLAW:
+				act = "claws you";
+				do_cut = 1;
+				touched = TRUE;
+				break;
+			case RBM_BITE:
+				act = "bites you";
+				do_cut = 1;
+				touched = TRUE;
+				break;
+			case RBM_STING:
+				act = "stings you";
+				touched = TRUE;
+				break;
+			case RBM_XXX1:
+				act = "XXX1's you";
+				break;
+			case RBM_BUTT:
+				act = "butts you";
+				do_stun = 1;
+				touched = TRUE;
+				break;
+			case RBM_CRUSH:
+				act = "crushes you";
+				do_stun = 1;
+				touched = TRUE;
+				break;
+			case RBM_ENGULF:
+				act = "engulfs you";
+				touched = TRUE;
+				break;
 #if 0
-				case RBM_XXX2:
-					act = "XXX2's you";
-					break;
+			case RBM_XXX2:
+				act = "XXX2's you";
+				break;
 #endif	// 0
-
-				case RBM_CHARGE:
-					act = "charges you";
-					touched = TRUE;
+			case RBM_CHARGE:
+				act = "charges you";
+				touched = TRUE;
 #ifdef USE_SOUND_2010
 #else
-//					sound(SOUND_BUY); /* Note! This is "charges", not "charges at". */
+				//sound(SOUND_BUY); /* Note! This is "charges", not "charges at". */
 #endif
-					break;
-
-				case RBM_CRAWL:
-					act = "crawls on you";
-					touched = TRUE;
-					break;
-
-				case RBM_DROOL:
-					act = "drools on you";
-					break;
-
-				case RBM_SPIT:
-					act = "spits on you";
-					break;
-
+				break;
+			case RBM_CRAWL:
+				act = "crawls on you";
+				touched = TRUE;
+				break;
+			case RBM_DROOL:
+				act = "drools on you";
+				break;
+			case RBM_SPIT:
+				act = "spits on you";
+				break;
 #if 0
-				case RBM_XXX3:
-					act = "XXX3's on you";
-					break;
+			case RBM_XXX3:
+				act = "XXX3's on you";
+				break;
 #endif	// 0
-				case RBM_EXPLODE:
-					act = "explodes";
-					explode = TRUE;
-					break;
-
-				case RBM_GAZE:
-					act = "gazes at you";
-					break;
-
-				case RBM_WAIL:
-					act = "wails at you";
-					break;
-
-				case RBM_SPORE:
-					act = "releases spores at you";
-					break;
-
-				case RBM_XXX4:
-					act = "projects XXX4's at you";
-					break;
-
-				case RBM_BEG:
-					act = "begs you for money.";
-					break;
-
-				case RBM_INSULT:
-					act = desc_insult[rand_int(8)];
-					break;
-
-				case RBM_MOAN:
-					if (season_halloween)
-						act = desc_moan_halloween[rand_int(4)];
-					else if (season_xmas)
-						act = desc_moan_xmas[rand_int(5)];
-					else
-						act = desc_moan[rand_int(4)];
-					break;
-
+			case RBM_EXPLODE:
+				act = "explodes";
+				explode = TRUE;
+				break;
+			case RBM_GAZE:
+				act = "gazes at you";
+				break;
+			case RBM_WAIL:
+				act = "wails at you";
+				break;
+			case RBM_SPORE:
+				act = "releases spores at you";
+				break;
+			case RBM_XXX4:
+				act = "projects XXX4's at you";
+				break;
+			case RBM_BEG:
+				act = "begs you for money.";
+				break;
+			case RBM_INSULT:
+				act = desc_insult[rand_int(8)];
+				break;
+			case RBM_MOAN:
+				if (season_halloween)
+					act = desc_moan_halloween[rand_int(4)];
+				else if (season_xmas)
+					act = desc_moan_xmas[rand_int(5)];
+				else
+					act = desc_moan[rand_int(4)];
+				break;
 #if 0
-				case RBM_XXX5:
-					act = "XXX5's you";
-					break;
+			case RBM_XXX5:
+				act = "XXX5's you";
+				break;
 #endif	// 0
-
-				case RBM_SHOW:
-					if (randint(3) == 1)
-						act = "sings 'We are a happy family'.";
-					else
-						act = "sings 'I love you, you love me'.";
+			case RBM_SHOW:
+				if (randint(3) == 1)
+					act = "sings 'We are a happy family'.";
+				else
+					act = "sings 'I love you, you love me'.";
 #ifdef USE_SOUND_2010
 #else
-//					sound(SOUND_SHOW);
+				//sound(SOUND_SHOW);
 #endif
-					break;
-
-				case RBM_WHISPER:
-					act = desc_whisper[rand_int(MAX_WHISPERS)];
-					break;
-			}
-
-			/* Stair-GoI now also works on physical attacks! */
-			if (p_ptr->invuln && (!bypass_invuln)) {// && !p_ptr->invuln_applied) {
-				if (magik(40)) {
-					msg_print(Ind, "The attack is fully deflected by a magic shield.");
-					//if (who != PROJECTOR_TERRAIN) break_cloaking(Ind, 0);
-					continue;
-				}
-				invuln_applied = TRUE;
+				break;
+			case RBM_WHISPER:
+				act = desc_whisper[rand_int(MAX_WHISPERS)];
+				break;
 			}
 
 			/* Roll out the damage in advance, since it might be required in the avoidance-calcs below (Kinetic Shield) */
@@ -918,100 +981,6 @@ bool make_attack_melee(int Ind, int m_idx) {
 			/* to prevent cloaking mode from breaking (break_cloaking) if an attack didn't do damage */
 			if (!d_dice && !d_side) no_dam = TRUE;
 #endif
-
-			/* Hack -- Apply "protection from evil" as well as "kinetic shield" */
-			if (touched) {
-				bool done = FALSE;
-
-				prot = FALSE;
-
-				/* kinetic shield: (requires mana to work) */
-				if (p_ptr->kinetic_shield
-#ifdef ENABLE_OCCULT
-				    || p_ptr->spirit_shield
-#endif
-				    ) {
-					int cost = m_ptr->level / 10, clog, clog_dam;
-
-					if (damage > 45) {
-						clog_dam = (damage * 100) / 38;
-						clog = 0;
-						while ((clog_dam = (clog_dam * 10) / 12) >= 100) clog++;
-						cost += clog;
-						//adds +0 (up to 45 damage) ..+3 (70 dam) ..+7 (150 dam) ..+13 (500 dam) ..+17 (1000 dam, hypothetically)
-					}
-					if (p_ptr->cmp >= cost) {
-						/* test if it repelled the blow */
-						int chance = (p_ptr->lev * ((r_ptr->flags2 & RF2_POWERFUL) ? 67 : 100)) / r_ptr->level, max_chance;
-						// ^= usually 50% chance vs all mobs you'd encounter at your level, 33% vs double-level POWERFUL
-
-						/* drains mana on hit */
-						p_ptr->cmp -= cost;
-						p_ptr->redraw |= PR_MANA;
-
-						/* spirit shield is usually weaker than kinetic shield */
-#ifdef ENABLE_OCCULT
-						if (p_ptr->kinetic_shield) max_chance = 50;
-						else max_chance = p_ptr->spirit_shield_pow;
-#else
-						max_chance = 50;
-#endif
-
-						if (magik(chance > max_chance ? max_chance : chance)) {
-							msg_format(Ind, "%^s is repelled.", m_name);
-							continue;
-						}
-
-						/* assume that if kinetic shield failed, pfe will also fail: ... */
-						if (!p_ptr->spirit_shield) done = TRUE;
-					}
-				}
-				if (!done) {
-					/* protection from evil, static and temporary: */
-#if 0
-					if (((p_ptr->protevil > 0) && (r_ptr->flags3 & RF3_EVIL) &&
-					    (p_ptr->lev >= rlev) && ((rand_int(100) + p_ptr->lev) > 50)) ||
-					    ((get_skill(p_ptr, SKILL_HDEFENSE) >= 30) && (r_ptr->flags3 & RF3_UNDEAD) &&
-					    (p_ptr->lev * 2 >= rlev) && (rand_int(100) + p_ptr->lev > 50 + rlev)) ||
-					    ((get_skill(p_ptr, SKILL_HDEFENSE) >= 40) && (r_ptr->flags3 & RF3_DEMON) &&
-					    (p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev)) ||
-					    ((get_skill(p_ptr, SKILL_HDEFENSE) >= 50) && (r_ptr->flags3 & RF3_EVIL) &&
-					    (p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev)))
-#else
-					prot = FALSE;
-					if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 30) && (r_ptr->flags3 & RF3_UNDEAD)) {
-						if ((p_ptr->lev * 2 >= rlev) && (rand_int(100) + p_ptr->lev > 50 + rlev))
-							prot = TRUE;
-					} else if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 40) && (r_ptr->flags3 & RF3_DEMON)) {
-						if ((p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev))
-							prot = TRUE;
-					} else if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 50) && (r_ptr->flags3 & RF3_EVIL)) {
-						if ((p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev))
-							prot = TRUE;
-					}
-					/* 'else' here to avoid crazy stacking */
-					else if ((p_ptr->protevil > 0) && (r_ptr->flags3 & RF3_EVIL) &&
-					    (((p_ptr->lev >= rlev) && ((rand_int(100) + p_ptr->lev) > 50)) || /* extra usefulness added (mostly for low levels): */
-					     ((p_ptr->lev < rlev) && (p_ptr->lev + 10 >= rlev) && (rand_int(24) > 12 + rlev - p_ptr->lev)))) {
-						prot = TRUE;
-					}
-
-					if (prot)
-#endif
-					{
-#ifdef OLD_MONSTER_LORE
-						/* Remember the Evil-ness */
-						if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags3 |= RF3_EVIL;
-#endif
-
-						/* Message */
-						msg_format(Ind, "%^s is repelled.", m_name);
-
-						/* Hack -- Next attack */
-						continue;
-					}
-				}
-			}
 
 #ifndef NEW_DODGING
 			chance = p_ptr->dodge_level - ((rlev * 5) / 6);
@@ -1028,12 +997,6 @@ bool make_attack_melee(int Ind, int m_idx) {
 				continue;
 			}
 #endif
-
-			if (p_ptr->dispersion && p_ptr->cst) {
-				msg_format(Ind, "\377%cYou disperse around %s attack!", COLOUR_DODGE_GOOD, m_name_gen);
-				if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
-				continue;
-			}
 
 #if 0 /* let's make it more effective */
  #ifdef USE_BLOCKING
@@ -2688,9 +2651,8 @@ bool make_attack_melee(int Ind, int m_idx) {
 					break;
 
 				case RBE_DISARM: /* Note: Shields cannot be disarmed, only weapons can */
-				{
 					/* We assume it's a critical attack that does not get mitigated by armour. */
-
+				{
 					int slot = INVEN_WIELD;
 					u32b f1, f2, f3, f4, f5, f6, esp;
 					object_type *o_ptr;
@@ -3079,14 +3041,14 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 				/* Roll for damage */
 				switch (tmp) {
-					case 0: k = 0; break;
-					case 1: k = randint(5); break;
-					case 2: k = randint(5) + 5; break;
-					case 3: k = randint(20) + 20; break;
-					case 4: k = randint(50) + 50; break;
-					case 5: k = randint(100) + 100; break;
-					case 6: k = 300; break;
-					default: k = 500; break;
+				case 0: k = 0; break;
+				case 1: k = randint(5); break;
+				case 2: k = randint(5) + 5; break;
+				case 3: k = randint(20) + 20; break;
+				case 4: k = randint(50) + 50; break;
+				case 5: k = randint(100) + 100; break;
+				case 6: k = 300; break;
+				default: k = 500; break;
 				}
 
 				/* Apply the cut */
@@ -3117,16 +3079,16 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 				/* Roll for damage */
 				switch (tmp) {
-					case 0: k = 0; break;
-					case 1: k = randint(5); break;
-					case 2: k = randint(10) + 5; break;
-					case 3: k = randint(15) + 10; break;
-					case 4: k = randint(15) + 20; break;
-					case 5: k = randint(15) + 30; break;
-					case 6: k = randint(15) + 40; break;
-					case 7: k = randint(10) + 55; break;
-					case 8: k = randint(5) + 70; break;
-					default: k = 100; break; /* currently 8 is max, so this cannot happen */
+				case 0: k = 0; break;
+				case 1: k = randint(5); break;
+				case 2: k = randint(10) + 5; break;
+				case 3: k = randint(15) + 10; break;
+				case 4: k = randint(15) + 20; break;
+				case 5: k = randint(15) + 30; break;
+				case 6: k = randint(15) + 40; break;
+				case 7: k = randint(10) + 55; break;
+				case 8: k = randint(5) + 70; break;
+				default: k = 100; break; /* currently 8 is max, so this cannot happen */
 				}
 
 				/* Apply the stun */
@@ -3145,6 +3107,10 @@ bool make_attack_melee(int Ind, int m_idx) {
 			}
 
 			if (touched) {
+				/* Check if our 'intrinsic' (Blood Magic, not from item/external spell) auras were suppressed by our own antimagic field. */
+				bool aura_ok = !magik((p_ptr->antimagic * 8) / 5);
+				int auras_failed = 0;
+
 				/* Apply monster-vampirism (2023! just for mirror fight ~_~ - C. Blue) */
 				if ((r_ptr->flags9 & RF9_VAMPIRIC) && m_ptr->hp < m_ptr->maxhp) {
 					/* Heal */
@@ -3154,10 +3120,6 @@ bool make_attack_melee(int Ind, int m_idx) {
 					/* Redraw (later) if needed */
 					update_health(m_idx);
 				}
-
-				/* Check if our 'intrinsic' (Blood Magic, not from item/external spell) auras were suppressed by our own antimagic field. */
-				bool aura_ok = !magik((p_ptr->antimagic * 8) / 5);
-				int auras_failed = 0;
 
 				/*
 				 * Apply non-skill auras
@@ -3434,23 +3396,22 @@ bool make_attack_melee(int Ind, int m_idx) {
 		else {
 			/* Analyze failed attacks */
 			switch (method) {
-				case RBM_HIT:
-				case RBM_TOUCH:
-				case RBM_PUNCH:
-				case RBM_KICK:
-				case RBM_CLAW:
-				case RBM_BITE:
-				case RBM_STING:
-				case RBM_XXX1:
-				case RBM_BUTT:
-				case RBM_CRUSH:
-				case RBM_ENGULF:
-//				case RBM_XXX2:
-				case RBM_CHARGE:
+			case RBM_HIT:
+			case RBM_TOUCH:
+			case RBM_PUNCH:
+			case RBM_KICK:
+			case RBM_CLAW:
+			case RBM_BITE:
+			case RBM_STING:
+			case RBM_XXX1:
+			case RBM_BUTT:
+			case RBM_CRUSH:
+			case RBM_ENGULF:
+			//case RBM_XXX2:
+			case RBM_CHARGE:
 
 				/* Visible monsters */
-				if (p_ptr->mon_vis[m_idx])
-				{
+				if (p_ptr->mon_vis[m_idx]) {
 					/* Disturbing */
 					disturb(Ind, 1, 0);
 

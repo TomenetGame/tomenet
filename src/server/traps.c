@@ -477,6 +477,12 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval, s16b sval, 
 			}
 #endif
 		}
+		/* Only thing taking precedence over shadow dispersion is the 'outer' shield, kinetic shield. */
+		if (p_ptr->dispersion && p_ptr->cst) {
+			msg_format(Ind, "\377%cYou disperse around the attack!", COLOUR_DODGE_GOOD);
+			if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
+			continue;
+		}
 		if (p_ptr->reflect && magik(60)) {
 			msg_print(Ind, "You deflect the attack!");
 			continue;
@@ -491,12 +497,6 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval, s16b sval, 
 		}
 		if ((dodge > 0) && magik(dodge)) {
 			msg_format(Ind, "\377%cYou dodge the attack!", COLOUR_DODGE_GOOD);
-			continue;
-		}
-
-		if (p_ptr->dispersion && p_ptr->cst) {
-			msg_format(Ind, "\377%cYou disperse around the attack!", COLOUR_DODGE_GOOD);
-			if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
 			continue;
 		}
 

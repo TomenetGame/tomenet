@@ -3317,6 +3317,15 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 		if (p_ptr->blind) chance >>= 1;
 
 		p_ptr->test_attacks++;
+
+		/* Shadow Dispersion: Take precedence even before AC check (aka test_hit_melee()) now. */
+		if (q_ptr->dispersion && q_ptr->cst) {
+			msg_format(Ind, "\377%c%s disperses around your attack!", COLOUR_BLOCK_PLY, q_name);
+			msg_format(0 - c_ptr->m_idx, "\377%cYou disperse around %s's attack!", COLOUR_DODGE_GOOD, p_ptr->name);
+			if (magik(q_ptr->dispersion)) use_stamina(q_ptr, 1);
+			continue;
+		}
+
 		/* Test for hit */
 		pierced = FALSE;
 #ifndef PVP_AC_REDUCTION
@@ -3392,13 +3401,6 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				continue;
 			}
 #endif
-
-			if (q_ptr->dispersion && q_ptr->cst) {
-				msg_format(Ind, "\377%c%s disperses around your attack!", COLOUR_BLOCK_PLY, q_name);
-				msg_format(0 - c_ptr->m_idx, "\377%cYou disperse around %s's attack!", COLOUR_DODGE_GOOD, p_ptr->name);
-				if (magik(q_ptr->dispersion)) use_stamina(q_ptr, 1);
-				continue;
-			}
 
 #ifdef USE_BLOCKING
 			/* Parry/Block - belongs to new-NR-viability changes */

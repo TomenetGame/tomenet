@@ -9951,6 +9951,41 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	}
 
 
+	/* Physical-attack shield spells don't reflect all the time..! */
+#ifdef ENABLE_OCCULT
+	physical_shield = (p_ptr->kinetic_shield ? (rand_int(2) == 0) : FALSE) || (p_ptr->spirit_shield ? magik(p_ptr->spirit_shield_pow) : FALSE);
+#else
+	physical_shield = (p_ptr->kinetic_shield ? (rand_int(2) == 0) : FALSE);
+#endif
+	/* pre-calc kinetic/spirit shield mana tax before doing the reflection check below */
+	if (physical_shield) {
+		if (!friendly_player && (typ == GF_SHOT || typ == GF_ARROW || typ == GF_BOLT || typ == GF_BOULDER || typ == GF_MISSILE)
+		    && p_ptr->cmp >= dam / 7 &&
+		    !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
+		    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO))) { //why all of NORF+NODF+NODO checks though?
+			/* drain mana */
+			p_ptr->cmp -= dam / 7;
+			p_ptr->redraw |= PR_MANA;
+		} else physical_shield = FALSE; /* failure to apply the shield to this particular attack */
+	}
+
+	/* Dispersion aka shadow form - now put here, before all other defenses such as dodging, reflection/shield checks, except for the 'outer' shields. */
+	/* Bolt attack from a monster, a player or a trap */
+	if (!physical_shield && p_ptr->dispersion && !friendly_player && p_ptr->cst && // !p_ptr->blind &&
+	    !(flg & (PROJECT_HIDE | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODO))) {
+		if (!rad && who >= PROJECTOR_TRAP) {
+			msg_format(Ind, "\377%cYou disperse around %s projectile!", COLOUR_DODGE_GOOD, m_name_gen);
+			if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
+			return(TRUE);
+		}
+		/* MEGAHACK -- allow to dodge 'bolt' traps */
+		else if (rad < 2 && who == PROJECTOR_TRAP) {
+			msg_format(Ind, "\377%cYou disperse around %s magical attack!", COLOUR_DODGE_GOOD, m_name_gen);
+			if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
+			return(TRUE);
+		}
+	}
+
 #ifndef NEW_DODGING
 	/* Bolt attack from a monster, a player or a trap */
 	/* Hack -- HIDE(direct) spell cannot be dodged */
@@ -9994,45 +10029,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	}
 #endif
 
-
-	/* Dispersion aka shadow form - currently put here, after dodging but before reflection/shield checks. */
-	/* Bolt attack from a monster, a player or a trap */
-	if (p_ptr->dispersion && !friendly_player && p_ptr->cst && // !p_ptr->blind &&
-	    !(flg & (PROJECT_HIDE | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODO))) {
-		if (!rad && who >= PROJECTOR_TRAP) {
-			msg_format(Ind, "\377%cYou disperse around %s projectile!", COLOUR_DODGE_GOOD, m_name_gen);
-			if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
-			return(TRUE);
-		}
-		/* MEGAHACK -- allow to dodge 'bolt' traps */
-		else if (rad < 2 && who == PROJECTOR_TRAP) {
-			msg_format(Ind, "\377%cYou disperse around %s magical attack!", COLOUR_DODGE_GOOD, m_name_gen);
-			if (magik(p_ptr->dispersion)) use_stamina(p_ptr, 1);
-			return(TRUE);
-		}
-	}
-
-
 	/* Reflection */
-
-	/* Physical-attack shield spells don't reflect all the time..! */
-#ifdef ENABLE_OCCULT
-	physical_shield = (p_ptr->kinetic_shield ? (rand_int(2) == 0) : FALSE) || (p_ptr->spirit_shield ? magik(p_ptr->spirit_shield_pow) : FALSE);
-#else
-	physical_shield = (p_ptr->kinetic_shield ? (rand_int(2) == 0) : FALSE);
-#endif
-	/* pre-calc kinetic/spirit shield mana tax before doing the reflection check below */
-	if (physical_shield) {
-		if (!friendly_player && (typ == GF_SHOT || typ == GF_ARROW || typ == GF_BOLT || typ == GF_BOULDER || typ == GF_MISSILE)
-		    && p_ptr->cmp >= dam / 7 &&
-		    !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
-		    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO))) { //why all of NORF+NODF+NODO checks though?
-			/* drain mana */
-			p_ptr->cmp -= dam / 7;
-			p_ptr->redraw |= PR_MANA;
-		} else physical_shield = FALSE; /* failure to apply the shield to this particular attack */
-	}
-
 	/* Effects done by the plane cannot bounce,
 	   balls / clouds / storms / walls (and beams atm too) cannot bounce - C. Blue */
 	if (!friendly_player && (
