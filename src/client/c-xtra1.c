@@ -1652,14 +1652,14 @@ static void display_inven(void) {
 #ifdef ENABLE_SUBINVEN
 			subwgt = 0;
 			if (o_ptr->tval == TV_SUBINVEN) {
-				for (z = 0; z < o_ptr->pval; z++) {
-					o2_ptr = &subinventory[i][z];
+				for (n = 0; n < o_ptr->pval; n++) {
+					o2_ptr = &subinventory[i][n];
 					subwgt += o2_ptr->weight * o2_ptr->number;
 				}
 				wgt += subwgt;
 
 				/* Add fill state to subinven bag name? */
-				strcat(o_name, format(" [%d/%d]", z, o_ptr->pval));
+				strcat(o_name, format(" [%d/%d]", n, o_ptr->pval));
 				//o_name[MSG_LEN] = 0; /* Ensure overflow protection */
 			}
 #endif
@@ -2125,15 +2125,15 @@ void show_inven(void) {
 #ifdef ENABLE_SUBINVEN
 			subwgt = 0;
 			if (o_ptr->tval == TV_SUBINVEN) {
-				for (z = 0; z < o_ptr->pval; z++) {
-					o2_ptr = &subinventory[i][z];
+				for (l = 0; l < o_ptr->pval; l++) {
+					o2_ptr = &subinventory[i][l];
 					subwgt += o2_ptr->weight * o2_ptr->number;
 				}
 				totalwgt += subwgt;
 				wgt += subwgt;
 
 				/* Add fill state to subinven bag name? */
-				strcat(out_desc[j], format(" [%d/%d]", z, o_ptr->pval));
+				strcat(out_desc[j], format(" [%d/%d]", l, o_ptr->pval));
 				out_desc[j][lim] = 0; /* Ensure overflow protection */
 			}
 #endif
