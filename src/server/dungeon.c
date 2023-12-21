@@ -4878,6 +4878,7 @@ static bool process_player_end_aux(int Ind) {
 				//note: if hit was 1, this can each result in 0 aka no hit!
 				hit = (hit * (80 - adj_str_wgt[p_ptr->stat_ind[A_CON]])) / 75;
 				if (p_ptr->suscep_life) hit >>= 1;
+				else if (p_ptr->demon) hit >>= 1;
 
 				/* temporary abs weight calc */
 				if (p_ptr->wt + p_ptr->total_weight / 10 > 170 + swim * 2) { // 190

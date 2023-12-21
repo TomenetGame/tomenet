@@ -19647,7 +19647,7 @@ All undead creatures
                 However, at the same time they become gorged less quickly when
                 for example quaffing lots of healing potions quickly.
                 Take 2x damage from holy orbs or holy fire and suffer
-                from many 'good' effects/spells (even more so than demons).
+                from many 'good' effects/spells.
                 Suffer less often from black breath infection and consequences.
 All ghosts      See 'All undead creatures' above, but ghosts gain +5
                 Infra-vision instead of just +2.
@@ -19661,9 +19661,11 @@ All greater undead creatures
                 Infra-vision instead of just +2.
 All demons      Take 2x damage from holy orbs or holy fire and suffer
                 from a couple of 'good' effects/spells (similar to undead).
+                Drowning damage is halved.
 All greater demons (capital 'U')
                 See 'All demons' above, and in addition they
-                resist poison (usually immunity, depends on ~7 flags) and time.
+                resist poison (usually immunity, depends on ~7 flags), time
+                and chaos.
 All non-living creatures
                 Resist poison (usually even immune, depends on ~7 flags)
                 and fear; insanity attacks are reduced somewhat (see (7.6)).
