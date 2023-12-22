@@ -5347,7 +5347,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
 	/* Very good */
 	if (power > 1) {
 #if 0
-		if (!rand_int(RANDART_JEWEL)) create_artifact(o_ptr, FALSE, TRUE);
+		if (!rand_int(RANDART_JEWEL)) create_artifact(o_ptr, FALSE);
 		else
 #endif
 		/* Make ego item */
@@ -5827,7 +5827,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, u32b resf) {
 	/* Very good */
 	if (power > 1) {
 		/* Make ego item */
-		//if (!rand_int(RANDART_JEWEL) && (o_ptr->tval == TV_LITE)) create_artifact(o_ptr, FALSE, TRUE);	else
+		//if (!rand_int(RANDART_JEWEL) && (o_ptr->tval == TV_LITE)) create_artifact(o_ptr, FALSE); else
 		make_ego_item(level, o_ptr, TRUE, resf);
 	} else if (power < -1) {
 		/* Make ego item */

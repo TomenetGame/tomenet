@@ -2616,9 +2616,9 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			ident = TRUE;
 			/* check for 'no +LIFE' inscription */
 			if (o_ptr->note && check_guard_inscription(o_ptr->note, 'L'))
-				(void)create_artifact(Ind, TRUE);
+				create_artifact(Ind, TRUE);
 			else
-				(void)create_artifact(Ind, FALSE);
+				create_artifact(Ind, FALSE);
 			*used_up = FALSE;
 			p_ptr->using_up_item = item;
 			break;

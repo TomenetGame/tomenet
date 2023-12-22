@@ -13411,7 +13411,16 @@ void Handle_item(int Ind, int item) {
 	} else if (p_ptr->current_recharge) {
 		recharge_aux(Ind, item, p_ptr->current_recharge);
 	} else if (p_ptr->current_artifact) {
-		create_artifact_aux(Ind, item);
+		if (!create_artifact_aux(Ind, item)) {
+			/* Restore the scroll! */
+			if (p_ptr->using_up_item &&
+			    p_ptr->inventory[p_ptr->using_up_item].tval == TV_SCROLL &&
+			    p_ptr->inventory[p_ptr->using_up_item].sval == SV_SCROLL_ARTIFACT_CREATION) {
+				p_ptr->inventory[p_ptr->using_up_item].number++;
+				inven_item_describe(Ind, p_ptr->using_up_item);
+				p_ptr->window |= PW_INVEN;
+			}
+		}
 	} else if (p_ptr->current_telekinesis != NULL) {
 		telekinesis_aux(Ind, item);
 	} else if (p_ptr->current_curse != 0) {

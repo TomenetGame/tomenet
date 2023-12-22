@@ -13714,10 +13714,8 @@ bool get_aim_dir(int Ind) {
 }
 
 
-bool get_item(int Ind, signed char tester_hook) { //paranoia @ 'signed' char =-p
+void get_item(int Ind, signed char tester_hook) { //paranoia @ 'signed' char =-p
 	Send_item_request(Ind, tester_hook);
-
-	return(TRUE);
 }
 
 /*

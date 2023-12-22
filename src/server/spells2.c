@@ -3641,7 +3641,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 	return(TRUE);
 }
 
-bool create_artifact(int Ind, bool nolife) {
+void create_artifact(int Ind, bool nolife) {
 	player_type *p_ptr = Players[Ind];
 
 	/* just in case */
@@ -3652,8 +3652,6 @@ bool create_artifact(int Ind, bool nolife) {
 	p_ptr->current_artifact = TRUE;
 	p_ptr->current_artifact_nolife = nolife;
 	get_item(Ind, ITH_NONE);
-
-	return(TRUE);
 }
 
 bool create_artifact_aux(int Ind, int item) {
@@ -3680,18 +3678,21 @@ bool create_artifact_aux(int Ind, int item) {
 	    (o_ptr->tval == TV_SPECIAL)) /* <- must be checked here, not in randart_make() due to seals, see randart_make(). */
 	     && !is_admin(p_ptr)) {
 		msg_print(Ind, "\376\377yThe item appears unchanged!");
+		s_printf("ART_CREATION failed: %s (1): %s\n", p_ptr->name, o_name);
 		return(FALSE);
 	}
 	if (o_ptr->name1) {
 		msg_print(Ind, "\376\377yThe creation fails due to the powerful magic of the target object!");
+		s_printf("ART_CREATION failed: %s (2): %s\n", p_ptr->name, o_name);
 		return(FALSE);
 	}
 	if (o_ptr->name2 || o_ptr->name2b) {
 		msg_print(Ind, "\376\377yThe creation fails due to the strong magic of the target object!");
+		s_printf("ART_CREATION failed: %s (3): %s\n", p_ptr->name, o_name);
 		return(FALSE);
-		o_ptr->name2 = 0;
-		o_ptr->name2b = 0;
-		msg_print(Ind, "The strong magic of that object dissolves!");
+		//o_ptr->name2 = 0;
+		//o_ptr->name2b = 0;
+		//msg_print(Ind, "The strong magic of that object dissolves!");
 	}
 	if (o_ptr->number > 1) {
 		/*msg_print(Ind, "The creation fails because the magic is split to multiple targets!");
@@ -3724,6 +3725,7 @@ bool create_artifact_aux(int Ind, int item) {
 			o_ptr->name3 = 0L;
 
 			msg_print(Ind, "The item appears unchanged!");
+			s_printf("ART_CREATION failed: %s (4): %s\n", p_ptr->name, o_name);
 			return(FALSE);
 		}
 
@@ -3751,13 +3753,13 @@ bool create_artifact_aux(int Ind, int item) {
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 	/* Art creation finished */
-	p_ptr->current_artifact = FALSE;
+	p_ptr->current_artifact = 0;
 	p_ptr->current_artifact_nolife = FALSE;
 
 	/* Log it (security) */
 	/* Description */
 	object_desc(Ind, o_name, o_ptr, FALSE, 3);
-	s_printf("ART_CREATION succeeded: %s\n", o_name);
+	s_printf("ART_CREATION succeeded: %s: %s\n", p_ptr->name, o_name);
 
 	/* Did we use up an item? (minus 1 art scroll) */
 	if (p_ptr->using_up_item >= 0) {

@@ -1833,7 +1833,7 @@ extern bool destroy_doors_touch(int Ind, int rad);
 extern bool destroy_traps_touch(int Ind, int rad);
 extern bool destroy_traps_doors_touch(int Ind, int rad);
 extern bool sleep_monsters_touch(int Ind);
-extern bool create_artifact(int Ind, bool nolife);
+extern void create_artifact(int Ind, bool nolife);
 extern bool create_artifact_aux(int Ind, int item);
 extern bool curse_spell(int Ind);
 extern bool curse_spell_aux(int Ind, int item);
@@ -2310,7 +2310,7 @@ extern bool target_set(int Ind, int dir);
  extern bool target_set_friendly(int Ind, int dir);
 #endif
 extern bool get_aim_dir(int Ind/*, int *dp*/);
-extern bool get_item(int Ind, signed char tester_hook); //paranoia @ 'signed' char =-p
+extern void get_item(int Ind, signed char tester_hook); //paranoia @ 'signed' char =-p
 extern bool do_scroll_life(int Ind);
 extern bool do_restoreXP_other(int Ind);
 #ifdef TELEKINESIS_GETITEM_SERVERSIDE
