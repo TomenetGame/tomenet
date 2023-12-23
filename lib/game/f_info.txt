@@ -1012,8 +1012,24 @@ N:138:alpha-transparent floor
 G:.:m
 F:FLOOR
 
+# xmas tree
+N:139:an evergreen conifer
+G:#:g
+F:WALL | NO_WALK | NO_VISION | PERMANENT | GLOW
+F:DONT_NOTICE_RUNNING
+D:1:This evergreen conifer is surprisingly hard.
+D:2:An evergreen conifer, blocking your way
 
-# HOLE 139..158 -------------------------------------------------------------
+# for xmas tree top
+N:140:decorative glowing sphere
+G:*:L
+F:WALL | NO_WALK | NO_VISION | PERMANENT | GLOW
+F:DONT_NOTICE_RUNNING
+D:1:This spere on top of a conifer is far too hard.
+D:2:a light sphere on top of a conifer, blocking your way
+
+
+# HOLE 141..158 -------------------------------------------------------------
 
 
 #permanent magma vein
