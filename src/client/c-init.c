@@ -1920,7 +1920,7 @@ static void init_artifact_list() {
 		else artifact_list_rarity[artifact_list_idx] = ((10000 / kind_list_rarity[i]) * (10000 / rar)) / 100;
 #else /* bad hack: manipulate rarity so that if either k-rarity or a-rarity is very high, it outweighs the other one -_- */
 		/* hack: recognize insta-arts and calculate their rarity in a funny way (scale up into our 10000 array) */
-		if (!kind_list_rarity[i]) artifact_list_rarity[artifact_list_idx] = ((10000 / rar) * (10000 / rar)) / 100;
+		if (i >= MAX_K_IDX || !kind_list_rarity[i]) artifact_list_rarity[artifact_list_idx] = ((10000 / rar) * (10000 / rar)) / 100;
 		/* normal artifacts: */
 		else {
 			int krar = kind_list_rarity[i], krar_boost, rar_boost;
