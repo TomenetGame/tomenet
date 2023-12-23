@@ -14,7 +14,7 @@
 #endif
 
 
-#define BASE_PALETTE_SIZE 16
+#define BASE_PALETTE_SIZE 16	/* Basic palette size, of non-animated colours (TERM_MULTI being the first animated one) */
 #ifdef EXTENDED_COLOURS_PALANIM
  #define CLIENT_PALETTE_SIZE (BASE_PALETTE_SIZE * 2)
 #else

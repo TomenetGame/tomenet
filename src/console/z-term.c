@@ -642,7 +642,7 @@ void flicker() {
 		Term_activate(tterm);
 		for (y = 0; y < tterm->hgt; y++) {
 			for (x = 0; x < tterm->wid; x++) {
-				if (tterm->scr->a[y][x] < TERM_MULTI) continue;
+				if (tterm->scr->a[y][x] < BASE_PALETTE_SIZE) continue;
 #ifdef EXTENDED_COLOURS_PALANIM
 				if (tterm->scr->a[y][x] >= TERMA_OFFSET && tterm->scr->a[y][x] < TERMA_OFFSET + BASE_PALETTE_SIZE) continue;
 #endif

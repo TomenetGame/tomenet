@@ -263,7 +263,7 @@ static bool term_nanim(byte ta) {
 #ifdef EXTENDED_COLOURS_PALANIM
 	if (ta >= TERMA_OFFSET && ta < TERMA_OFFSET + BASE_PALETTE_SIZE) return(TRUE);
 #endif
-	if (ta < TERM_MULTI) return(TRUE);
+	if (ta < BASE_PALETTE_SIZE) return(TRUE);
 
 	return(FALSE);
 }
