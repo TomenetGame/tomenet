@@ -9051,6 +9051,13 @@ static int meta_width = 0, meta_height = 0, meta_boundary = 0;
 
 static dungeon_grid letter[255];
 
+/* Same as slash commands /loadmap and /lloadmap, added as function here for use from LUA. */
+extern void loadmap(cptr name, int wx, int wy, int wz, int x, int y) {
+	struct worldpos wpos = { wx, wy, wz };
+
+	process_dungeon_file(format("t_%s.txt", name), &wpos, &y, &x, MAX_HGT, MAX_WID, TRUE);
+}
+
 /*
  * Parse a sub-file of the "extra info"
  */

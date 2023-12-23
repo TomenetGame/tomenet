@@ -1026,6 +1026,7 @@ extern errr init_s_info_txt(FILE *fp, char *buf);
 extern errr init_q_info_txt(FILE *fp, char *buf);
 
 /* init.c (init1.c , init2.c)*/
+extern void loadmap(cptr name, int wx, int wy, int wz, int x, int y);
 extern errr process_dungeon_file(cptr name, worldpos *wpos, int *yval, int *xval, int ymax, int xmax, bool init);
 extern void init_file_paths(char *path);
 extern void init_some_arrays(void);
