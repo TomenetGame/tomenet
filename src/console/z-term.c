@@ -644,7 +644,7 @@ void flicker() {
 			for (x = 0; x < tterm->wid; x++) {
 				if (tterm->scr->a[y][x] < TERM_MULTI) continue;
 #ifdef EXTENDED_COLOURS_PALANIM
-				if (tterm->scr->a[y][x] >= TERMA_DARK && tterm->scr->a[y][x] <= TERMA_L_UMBER) continue;
+				if (tterm->scr->a[y][x] >= TERMA_OFFSET && tterm->scr->a[y][x] < TERMA_OFFSET + BASE_PALETTE_SIZE) continue;
 #endif
 				ch = tterm->scr->c[y][x];
 				attr = flick_colour(tterm->scr->a[y][x]);
@@ -785,7 +785,7 @@ static void Term_fresh_row_text_wipe(int y) {
 			}
 			/* Save the new color */
 #ifdef EXTENDED_COLOURS_PALANIM
-			if (na >= TERMA_DARK && na <= TERMA_L_UMBER) fa = na - TERMA_OFFSET + 16; /* Translate to actual extended terminal colour (16..31) */
+			if (na >= TERMA_OFFSET && na < TERMA_OFFSET + BASE_PALETTE_SIZE) fa = na - TERMA_OFFSET + 16; /* Translate to actual extended terminal colour (16..31) */
 			else
 #endif
 			if (na >= TERM_MULTI) fa = flick_colour(na);

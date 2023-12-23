@@ -1899,7 +1899,7 @@ void xhtml_screenshot(cptr name, byte redux) {
 
 	cur_attr = Term->scr->a[0][0];
 #ifdef EXTENDED_COLOURS_PALANIM
-	if (cur_attr >= TERMA_DARK && cur_attr <= TERMA_L_UMBER) cur_attr = cur_attr - TERMA_OFFSET; /* Use the basic colours instead of the palette-animated ones */
+	if (cur_attr >= TERMA_OFFSET && cur_attr < TERMA_OFFSET + BASE_PALETTE_SIZE) cur_attr -= TERMA_OFFSET; /* Use the basic colours instead of the palette-animated ones */
 #endif
 	prt_attr = term2attr(cur_attr);
 	/* safe-fail: can happen if an EXTENDED_BG_COLOUR is used but not defined here (see color_table[] above): */
@@ -1958,7 +1958,7 @@ void xhtml_screenshot(cptr name, byte redux) {
 			if (scr_aa[x] != cur_attr) {
 				cur_attr = scr_aa[x];
 #ifdef EXTENDED_COLOURS_PALANIM
-				if (cur_attr >= TERMA_DARK && cur_attr <= TERMA_L_UMBER) cur_attr = cur_attr - TERMA_OFFSET; /* Use the basic colours instead of the palette-animated ones */
+				if (cur_attr >= TERMA_OFFSET && cur_attr < TERMA_OFFSET + BASE_PALETTE_SIZE) cur_attr -= TERMA_OFFSET; /* Use the basic colours instead of the palette-animated ones */
 #endif
 
 				strcpy(&buf[bytes], "</span><span style=\"color: ");
