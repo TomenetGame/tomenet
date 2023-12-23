@@ -3008,7 +3008,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 
 #if 1
 			/* Use palette-animated colours if available (even if we don't apply manipulation here) */
-			if (palanim && !keep) a += TERMA_OFFSET;
+			if (palanim && !keep && a < BASE_PALETTE_SIZE) a += TERMA_OFFSET;
 #endif
 
 			/* The attr */
@@ -3269,7 +3269,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 
 #if 1
 			/* Use palette-animated colours if available (even if we don't apply manipulation here) */
-			if (palanim && !keep) a += TERMA_OFFSET;
+			if (palanim && !keep && a < BASE_PALETTE_SIZE) a += TERMA_OFFSET;
 #endif
 
 			/* The attr */
@@ -3332,7 +3332,7 @@ void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 
 #if 1
 			/* Use palette-animated colours if available (even if we don't apply manipulation here) */
-			if (palanim && !keep) a += TERMA_OFFSET;
+			if (palanim && !keep && a < BASE_PALETTE_SIZE) a += TERMA_OFFSET;
 #endif
 
 			(*ap) = a;
