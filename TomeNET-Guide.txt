@@ -14075,6 +14075,8 @@ TY_CURSE        "It carries an ancient foul curse."
 DG_CURSE        "It carries an ancient morgothian curse."
                 Rarely summons a random non-unique monster on you, even if
                 uncursed. The monster will yield no credit, xp or loot.
+                Monster groups (escorts or friends) cannot be summoned by this
+                curse, so it will always just be a single monster.
                 The maximum (randomized) monster level will be..
                 (player level * 7 / 5 + dungeon_level) / 2 + 5.
                 (DG_CURSE will stay, even if the 'normal' curse is broken!)
