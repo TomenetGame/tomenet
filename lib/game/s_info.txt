@@ -161,10 +161,7 @@ I:1000:0
 #I:1000:0
 
 N:21:Sneakiness
-#D:General ability at your sneakiness skills, and improves perception
-#D:General ability at your sneakiness skills
-#D:It allows to act carefully and somewhat quickly
-D:Allows you to move faster and be more aware.
+D:Allows you to move faster and improves your searching abilities.
 D:Slightly reduces speed penalty while searching or being cloaked.
 I:1000:0
 
