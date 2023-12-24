@@ -9055,7 +9055,8 @@ static dungeon_grid letter[255];
 extern void loadmap(cptr name, int wx, int wy, int wz, int x, int y) {
 	struct worldpos wpos = { wx, wy, wz };
 
-	process_dungeon_file(format("t_%s.txt", name), &wpos, &y, &x, MAX_HGT, MAX_WID, TRUE);
+	s_printf("loadmap('%s') returned %d.\n", name,
+	    process_dungeon_file(format("t_%s.txt", name), &wpos, &y, &x, MAX_HGT, MAX_WID, TRUE));
 }
 
 /*
