@@ -1001,6 +1001,12 @@ static void rd_monster(monster_type *m_ptr) {
 
 	/* Read the monster race */
 	rd_s16b(&m_ptr->r_idx);
+	/* Event monsters: Adjust temporary state checking variables to existance, to avoid spawning unwanted duplicates etc. */
+	if (season_xmas && m_ptr->r_idx == RI_SANTA2) santa_claus_timer = -1;
+	if (season_halloween && m_ptr->r_idx == RI_PUMPKIN) {
+		great_pumpkin_timer = -1;
+		great_pumpkin_duration = 60;
+	}
 
 	/* Read the other information */
 	rd_byte(&m_ptr->fy);
