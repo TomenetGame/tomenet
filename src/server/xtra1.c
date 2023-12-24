@@ -10566,6 +10566,13 @@ void handle_request_return_num(int Ind, int id, int num) {
 		if (num <= 0) {
 			msg_print(Ind, "You decide not to donate at this time.");
 			msg_print(Ind, "You pray to the gods.");
+			/* Check how far we are away from rekinging actually */
+			if (p_ptr->once_winner && !p_ptr->total_winner) {
+				if (p_ptr->solo_reking_au) msg_format(Ind, "You still need to donate %d AU for your fate to change.", p_ptr->solo_reking_au);
+				else msg_print(Ind, "You do not require to donate any more AU for your fate to change.");
+				if (p_ptr->solo_reking) msg_format(Ind, "You still need to gain %d XP for your fate to change.", p_ptr->solo_reking);
+				else msg_print(Ind, "You do not require to gain any more XP for your fate to change.");
+			}
 			return;
 		}
 
