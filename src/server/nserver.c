@@ -6440,8 +6440,13 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 	    p_ptr->rogue_heavyarmor)
 		attr = TERM_L_DARK;
 	/* hack: when dual-wielding is possible in general, display empty INVEN_ARM slot in yellow if we're using a SHOULD2H weapon */
-	else if (slot == INVEN_ARM && !p_ptr->inventory[INVEN_ARM].k_idx && get_skill(p_ptr, SKILL_DUAL) && (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & TR4_SHOULD2H))
+	else if (slot == INVEN_ARM && !p_ptr->inventory[INVEN_ARM].k_idx && get_skill(p_ptr, SKILL_DUAL) && (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & TR4_SHOULD2H)) {
 		attr = TERM_YELLOW;
+#if 1
+		/* ..actually just display (shield) instead of (weapon / shield) in that case, as we cannot dual-wield with a 1.5hander, but we can use a shield with one (at a penalty). */
+		name = "(shield)";
+#endif
+	}
 	/* hack: grey out climbing set if in monster form that doesn't allow it (compare calc_boni()!) */
 	else if (slot == INVEN_TOOL &&
 	    k_info[p_ptr->inventory[INVEN_TOOL].k_idx].tval == TV_TOOL &&
@@ -6533,8 +6538,13 @@ int Send_equip_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 	    p_ptr->rogue_heavyarmor)
 		attr = TERM_L_DARK;
 	/* hack: when dual-wielding is possible in general, display empty INVEN_ARM slot in yellow if we're using a SHOULD2H weapon */
-	else if (slot == INVEN_ARM && !p_ptr->inventory[INVEN_ARM].k_idx && get_skill(p_ptr, SKILL_DUAL) && (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & TR4_SHOULD2H))
+	else if (slot == INVEN_ARM && !p_ptr->inventory[INVEN_ARM].k_idx && get_skill(p_ptr, SKILL_DUAL) && (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & TR4_SHOULD2H)) {
 		attr = TERM_YELLOW;
+#if 1
+		/* ..actually just display (shield) instead of (weapon / shield) in that case, as we cannot dual-wield with a 1.5hander, but we can use a shield with one (at a penalty). */
+		name = "(shield)";
+#endif
+	}
 	/* hack: grey out climbing set if in monster form that doesn't allow it (compare calc_boni()!) */
 	else if (slot == INVEN_TOOL &&
 	    k_info[p_ptr->inventory[INVEN_TOOL].k_idx].tval == TV_TOOL &&
