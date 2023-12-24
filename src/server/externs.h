@@ -669,6 +669,7 @@ extern void py_bash_py(int Ind, int y, int x);
 #ifdef ENABLE_SUBINVEN
 extern bool auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought);
 #endif
+extern int search_chance(player_type *p_ptr);
 
 /* cmd2.c */
 extern cptr get_house_owner(struct c_special *cs_ptr);
@@ -1400,7 +1401,7 @@ extern void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, b
 extern void give_reward(int Ind, u32b resf, cptr quark, int level, int discount);
 extern void place_gold(int Ind, struct worldpos *wpos, int y, int x, int mult, int bonus);
 extern int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
-extern void pick_trap(struct worldpos *wpos, int y, int x);
+extern void trap_found(struct worldpos *wpos, int y, int x);
 extern void compact_objects(int size, bool purge);
 extern int o_pop(void);
 extern errr get_obj_num_prep(u32b resf);
@@ -1740,7 +1741,7 @@ extern bool detect_creatures(int Ind);
 extern bool detect_living(int Ind);
 extern bool detect_noise(int Ind);
 extern bool detection(int Ind, int rad);
-extern bool detect_bounty(int Ind);
+extern void detect_bounty(int Ind);
 extern bool detect_trap(int Ind, int rad);
 extern bool detect_sdoor(int Ind, int rad);
 extern void stair_creation(int Ind);

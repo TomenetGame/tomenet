@@ -2761,8 +2761,8 @@ void player_activate_door_trap(int Ind, s16b y, s16b x) {
 	//msg_print(Ind, "You found a trap!");
 	msg_print(Ind, "You triggered a trap!");
 
-	/* Pick a trap */
-	pick_trap(&p_ptr->wpos, y, x);
+	/* Mark trap as found */
+	trap_found(&p_ptr->wpos, y, x);
 
 	/* Hit the trap */
 	ident = player_activate_trap_type(Ind, y, x, NULL, -1);

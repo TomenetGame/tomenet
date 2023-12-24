@@ -223,8 +223,8 @@ int thit(c_special *cs_ptr, int y, int x, int Ind) {
 			/* Message */
 			msg_print(Ind, "You triggered a trap!");
 
-			/* Pick a trap */
-			pick_trap(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+			/* Mark trap as found */
+			trap_found(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 		}
 		else if (magik(get_skill_scale(p_ptr, SKILL_DISARM, 90)
 					- UNAWARENESS(p_ptr)))

@@ -1384,15 +1384,30 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 	return(bonus + ((tdam * mult) / FACTOR_MULT));
 }
 
+int search_chance(player_type *p_ptr) {
+	/* Start with base search ability */
+	int chance = p_ptr->skill_srh;
+
+	/* Penalize various conditions */
+	if (p_ptr->blind || no_lite(p_ptr->Ind)) chance = chance / 10;
+	if (p_ptr->confused || p_ptr->image) chance = chance / 10;
+
+	return(chance);
+}
 /*
  * Searches for hidden things.                  -RAK-
  */
-
+/* Disallow discovering a secret AND a trap in one search attempt? Problem if enabled: Inconsistencies with detect_bounty(),
+   as there are 4 more things (7 total) it searches for, compared to just 3 here [DISABLED]: */
+//#define NO_COMBO_FINDINGS /* keep consistent with detect_bounty() ! Keep disabled, because it's not implemented in detect_bounty() atm! */
 void search(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	int           y, x, chance;
-	cave_type    *c_ptr;
-	object_type  *o_ptr;
+	int y, x, chance;
+#ifdef NO_COMBO_FINDINGS
+	int findings, finding[3];
+#endif
+	cave_type *c_ptr;
+	object_type *o_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 	struct c_special *cs_ptr;
@@ -1402,88 +1417,102 @@ void search(int Ind) {
 	/* Admin doesn't */
 	if (p_ptr->admin_dm) return;
 
-	/* Start with base search ability */
-	chance = p_ptr->skill_srh;
-
-	/* Penalize various conditions */
-	if (p_ptr->blind || no_lite(Ind)) chance = chance / 10;
-	if (p_ptr->confused || p_ptr->image) chance = chance / 10;
+	chance = search_chance(p_ptr);
 
 	/* Search the nearby grids, which are always in bounds */
 
 	for (y = (p_ptr->py - 1); y <= (p_ptr->py + 1); y++) {
 		for (x = (p_ptr->px - 1); x <= (p_ptr->px + 1); x++) {
 			/* Sometimes, notice things */
-			if (rand_int(100) < chance) {
-				/* Access the grid */
-				c_ptr = &zcave[y][x];
+			if (!magik(chance)) continue;
 
-				/* Access the object */
-				o_ptr = &o_list[c_ptr->o_idx];
+			/* Access the grid */
+			c_ptr = &zcave[y][x];
 
-				/* Secret door */
-				if (c_ptr->feat == FEAT_SECRET) {
-					struct c_special *cs_ptr;
+			/* Access the object */
+			o_ptr = &o_list[c_ptr->o_idx];
 
-					/* Message */
-					msg_print(Ind, "You have found a secret door.");
+#ifdef NO_COMBO_FINDINGS
+			findings = 0;
+			/* Secret door */
+			if (c_ptr->feat == FEAT_SECRET) {
+				finding[findings] = 0;
+				findings++;
+			}
+			/* Invisible trap */
+			//if (c_ptr->feat == FEAT_INVIS) &&
+			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && !cs_ptr->sc.trap.found) {
+				finding[findings] = 1;
+				findings++;
+			}
+			/* Search chests */
+			if (o_ptr->tval == TV_CHEST /* Examine chests for traps */
+			    //&& !object_known_p(Ind, o_ptr) && t_info[o_ptr->pval])
+			    && !object_known_p(Ind, o_ptr) && o_ptr->pval) {
+				finding[findings] = 2;
+				findings++;
+			}
+			if (!findings) continue;
 
-					/* Pick a door XXX XXX XXX */
-					c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+			switch(finding[rand_int(findings)]) {
+			case 0:
+#else
+			/* Secret door */
+			if (c_ptr->feat == FEAT_SECRET) {
+#endif
+				/* Message */
+				msg_print(Ind, "You have found a secret door.");
+				/* Pick a door XXX XXX XXX */
+				c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+				/* Clear mimic feature */
+				if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
+				/* Notice */
+				note_spot_depth(wpos, y, x);
+				/* Redraw */
+				everyone_lite_spot(wpos, y, x);
+				/* Disturb */
+				disturb(Ind, 0, 0);
+#ifdef NO_COMBO_FINDINGS
+				break;
+			case 1:
+#else
+			}
+			/* Invisible trap */
+			//if (c_ptr->feat == FEAT_INVIS) &&
+			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && !cs_ptr->sc.trap.found) {
+#endif
+				/* Mark trap as found */
+				trap_found(wpos, y, x);
+				/* Display it */
+				if (c_ptr->o_idx && !c_ptr->m_idx) {
+					byte a = get_trap_color(Ind, cs_ptr->sc.trap.t_idx, c_ptr->feat);
 
-					/* Clear mimic feature */
-					if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
-						cs_erase(c_ptr, cs_ptr);
-
-					/* Notice */
-					note_spot_depth(wpos, y, x);
-
-					/* Redraw */
-					everyone_lite_spot(wpos, y, x);
-					/* Disturb */
-					disturb(Ind, 0, 0);
+					/* Hack - Always show traps under items when detecting - mikaelh */
+					draw_spot_ovl(Ind, y, x, a, '^');
+				} else {
+					/* Normal redraw */
+					lite_spot(Ind, y, x);
 				}
-
-				/* Invisible trap */
-				//if (c_ptr->feat == FEAT_INVIS)
-				if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
-					if (!cs_ptr->sc.trap.found) {
-						/* Pick a trap */
-						pick_trap(wpos, y, x);
-
-						if (c_ptr->o_idx && !c_ptr->m_idx) {
-							byte a = get_trap_color(Ind, cs_ptr->sc.trap.t_idx, c_ptr->feat);
-
-							/* Hack - Always show traps under items when detecting - mikaelh */
-							draw_spot_ovl(Ind, y, x, a, '^');
-						} else {
-							/* Normal redraw */
-							lite_spot(Ind, y, x);
-						}
-
-						/* Message */
-						msg_print(Ind, "You have found a trap.");
-
-						/* Disturb */
-						disturb(Ind, 0, 0);
-					}
-				}
-
-				/* Search chests */
-				else if (o_ptr->tval == TV_CHEST) {
-					/* Examine chests for traps */
-					//if (!object_known_p(Ind, o_ptr) && (t_info[o_ptr->pval]))
-					if (!object_known_p(Ind, o_ptr) && (o_ptr->pval)) {
-						/* Message */
-						msg_print(Ind, "You have discovered a trap on the chest!");
-
-						/* Know the trap */
-						object_known(o_ptr);
-
-						/* Notice it */
-						disturb(Ind, 0, 0);
-					}
-				}
+				/* Message */
+				msg_print(Ind, "You have found a trap.");
+				/* Disturb */
+				disturb(Ind, 0, 0);
+#ifdef NO_COMBO_FINDINGS
+				break;
+			case 2:
+#else
+			}
+			/* Search chests */
+			else if (o_ptr->tval == TV_CHEST /* Examine chests for traps */
+			    //&& !object_known_p(Ind, o_ptr) && t_info[o_ptr->pval])
+			    && !object_known_p(Ind, o_ptr) && o_ptr->pval) {
+#endif
+				/* Message */
+				msg_print(Ind, "You have discovered a trap on the chest!");
+				/* Know the trap */
+				object_known(o_ptr);
+				/* Notice it */
+				disturb(Ind, 0, 0);
 			}
 		}
 	}
@@ -7101,8 +7130,8 @@ static void moved_player(int Ind, player_type *p_ptr, cave_type **zcave, int ox,
 				/* Message */
 				msg_print(Ind, "You triggered a trap!");
 
-				/* Pick a trap */
-				pick_trap(&p_ptr->wpos, y, x);
+				/* Mark trap as found */
+				trap_found(&p_ptr->wpos, y, x);
 			}
 #ifndef ARCADE_SERVER
 			else if (magik(get_skill_scale(p_ptr, SKILL_TRAPPING, 90) - UNAWARENESS(p_ptr))) {

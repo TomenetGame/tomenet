@@ -10701,26 +10701,14 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 
 
 
-/*
- * Hack -- instantiate a trap
- *
- * XXX XXX XXX This routine should be redone to reflect trap "level".
- * That is, it does not make sense to have spiked pits at 50 feet.
- * Actually, it is not this routine, but the "trap instantiation"
- * code, which should also check for "trap doors" on quest levels.
- */
-/* The note above is completely obsoleted.	- Jir -	*/
-void pick_trap(struct worldpos *wpos, int y, int x) {
-	//int feat;
-	//int tries = 100;
-
+/* Mark a trap as 'found' */
+void trap_found(struct worldpos *wpos, int y, int x) {
 	cave_type **zcave;
 	cave_type *c_ptr;
 	struct c_special *cs_ptr;
 
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
-
 	/* Paranoia */
 	if (!(cs_ptr = GetCS(c_ptr, CS_TRAPS))) return;
 
@@ -10728,7 +10716,6 @@ void pick_trap(struct worldpos *wpos, int y, int x) {
 
 	/* Notice */
 	note_spot_depth(wpos, y, x);
-
 	/* Redraw */
 	everyone_lite_spot(wpos, y, x);
 }

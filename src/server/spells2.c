@@ -2746,43 +2746,53 @@ bool detection(int Ind, int rad) {
 	return(detect);
 }
 
-#if 1
 /*
  * Detect bounty, a rogue's skill
  */
-bool detect_bounty(int Ind) {
+#define NEW_BOUNTY_CHANCE /* use the normal search chance for bounty detection too, so there's an incentive to improve and not every rogue is equal at the same level. */
+//#define NO_COMBO_FINDINGS /* keep consistent with search() ! -- NOT IMPLEMENTED HERE atm, so keep [DISABLED]! */
+void detect_bounty(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	//Radius of 5 ... 15 squares
-	int rad = (p_ptr->lev / 5) + 5);
-	// 10 ... 60 % of auto-detecting "stuff"
-	int chance = (p_ptr->lev) + 10;
+	int rad = (p_ptr->lev / 5) + 5;
 
-	struct worldpos *wpos = &p_ptr->wpos;
-	dun_level *l_ptr;
+	int normal_chance = search_chance(p_ptr);
+#ifdef NEW_BOUNTY_CHANCE
+	int bounty_chance = normal_chance >> 1;
+#else
+	int bounty_chance = (p_ptr->lev / 2) + 5; // 5 ... 30 % of auto-detecting "stuff"
+#endif
+	int chance;
+	bool detect = FALSE, detect_trap = FALSE;
+	bool range;
 
 	int i, j, t_idx = 0;
-
-	bool detect = FALSE;
-	bool detect_trap = FALSE;
-
+	struct worldpos *wpos = &p_ptr->wpos;
+	dun_level *l_ptr;
 	cave_type  *c_ptr;
 	byte *w_ptr;
 	cave_type **zcave;
 	struct c_special *cs_ptr;
-
 	object_type *o_ptr;
 
 
+//msg_format(Ind, "src=%d,bou=%d", normal_chance, bounty_chance);
+
 	/* anti-exploit */
-	if (!local_panel(Ind)) return(FALSE);
+	if (!local_panel(Ind)) {
+		search(Ind); //fall back to normal search instead of doing nothing, maybe
+		return;
+	}
 
-	if (!(zcave = getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return;
 
+	/* If the floor/circumstances don't allow range-searching, fall back to normal search()-style searching! */
 	l_ptr = getfloor(wpos);
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return(FALSE);
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return(FALSE);
-
+	if ((l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) || (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT))) {
+		search(Ind);
+		return;
+	}
 
 	/* Scan the current panel */
 	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++) {
@@ -2796,15 +2806,66 @@ bool detect_bounty(int Ind) {
 			/* Access the grid */
 			c_ptr = &zcave[i][j];
 			if (c_ptr->info & CAVE_SCRT) continue;
+
 			w_ptr = &p_ptr->cave_flag[i][j];
+
+			/* Within normal search() radius aka 'adjacent grids' use the normal search-chance if it's better than our bounty-ranged-detection-chance,
+                           (or it would be inconsistent and disadvantageous to be worse at searching now than non-rogues with the same skill_srh). */
+			if (distance(p_ptr->py, p_ptr->px, i, j) <= 1) {
+				range = FALSE;
+#ifdef NEW_BOUNTY_CHANCE
+				chance = normal_chance;
+#else
+				chance = (normal_chance > bounty_chance ? normal_chance : bounty_chance);
+#endif
+
+				/* Emulate search() behaviour for adjacent grids: If we succeed the roll, we can find a secret door AND a trap (chest or floor) together! */
+				if (!magik(chance)) continue;
+				chance = 100;
+			} else {
+				range = TRUE;
+				chance = bounty_chance;
+			}
 
 			o_ptr = &o_list[c_ptr->o_idx];
 
 			detect_trap = FALSE;
 
+			/* Detect secret doors */
+			if (c_ptr->feat == FEAT_SECRET && magik(chance)) {
+				struct c_special *cs_ptr;
+
+				/* Clear mimic feature */
+				if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
+				/* Find the door XXX XXX XXX */
+				c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+
+				/* Memorize the door */
+				*w_ptr |= CAVE_MARK;
+				/* Obvious */
+				detect = TRUE;
+			}
+
+			/* Detect invisible traps */
+			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && magik(chance)) {
+				t_idx = cs_ptr->sc.trap.t_idx;
+
+				if (!cs_ptr->sc.trap.found) {
+					/* Mark trap as found */
+					trap_found(wpos, i, j);
+				}
+
+				/* Hack -- memorize it */
+				*w_ptr |= CAVE_MARK;
+
+				/* Obvious */
+				detect = TRUE;
+				detect_trap = TRUE;
+			}
+
 			/* Detect traps on chests */
-			if ((c_ptr->o_idx) && (o_ptr->tval == TV_CHEST)
-			    && p_ptr->obj_vis[c_ptr->o_idx] && (o_ptr->pval)
+			else if (c_ptr->o_idx && o_ptr->tval == TV_CHEST
+			    && p_ptr->obj_vis[c_ptr->o_idx] && o_ptr->pval
 			    && !object_known_p(Ind, o_ptr) && magik(chance)) {
 				/* Message =-p */
 				msg_print(Ind, "You have discovered a trap on the chest!");
@@ -2815,25 +2876,15 @@ bool detect_bounty(int Ind) {
 				detect = TRUE;
 			}
 
-			/* Detect invisible traps */
-			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && magik(chance)) {
-				t_idx = cs_ptr->sc.trap.t_idx;
-
-				if (!cs_ptr->sc.trap.found) {
-					/* Pick a trap */
-					pick_trap(wpos, i, j);
-				}
-
-				/* Hack -- memorize it */
-				*w_ptr |= CAVE_MARK;
-
-				/* Obvious */
-				detect = TRUE;
-				detect_trap = TRUE;
-			}
+			/* ----- Some extra stuff that normal search() doesn't search for: ----- */
+#ifdef NEW_BOUNTY_CHANCE
+			chance = (range ? bounty_chance : normal_chance);
+#else
+			chance = (range ? bounty_chance : (normal_chance > bounty_chance ? normal_chance : bounty_chance));
+#endif
 
 			/* PvP: Detect hostile monster-traps */
-			if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP))) {
+			if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP)) && magik(chance)) {
 				object_type *kit_o_ptr = &o_list[cs_ptr->sc.montrap.trap_kit];
 				int p;
 
@@ -2842,24 +2893,20 @@ bool detect_bounty(int Ind) {
 					if (p == Ind) continue;
 					if (kit_o_ptr->owner == Players[p]->id) break;
 				}
-
 				if (p != NumPlayers + 1 && !cs_ptr->sc.montrap.found && check_hostile(Ind, p)) {
-					if (magik(chance)) {
-						cs_ptr->sc.montrap.found = TRUE;
-						note_spot_depth(wpos, i, j);
-						everyone_lite_spot(wpos, i, j);
-					}
+					cs_ptr->sc.montrap.found = TRUE;
+					note_spot_depth(wpos, i, j);
+					everyone_lite_spot(wpos, i, j);
 				}
 
 				/* Hack -- memorize it */
 				*w_ptr |= CAVE_MARK;
-
 				/* Obvious */
 				detect = TRUE;
 				detect_trap = TRUE;
 			}
 			/* PvP: Detect hostile runes */
-			if ((cs_ptr = GetCS(c_ptr, CS_RUNE))) {
+			if ((cs_ptr = GetCS(c_ptr, CS_RUNE)) && magik(chance)) {
 				int p;
 
 				/* is the runemaster online? Otherwise not hostile as we cannot know */
@@ -2867,49 +2914,25 @@ bool detect_bounty(int Ind) {
 					if (p == Ind) continue;
 					if (cs_ptr->sc.rune.id == Players[p]->id) break;
 				}
-
 				if (p != NumPlayers + 1 && !cs_ptr->sc.rune.found && check_hostile(Ind, p)) {
-					if (magik(chance)) {
-						cs_ptr->sc.rune.found = TRUE;
-						note_spot_depth(wpos, i, j);
-						everyone_lite_spot(wpos, i, j);
-					}
+					cs_ptr->sc.rune.found = TRUE;
+					note_spot_depth(wpos, i, j);
+					everyone_lite_spot(wpos, i, j);
 				}
 
 				/* Hack -- memorize it */
 				*w_ptr |= CAVE_MARK;
-
 				/* Obvious */
 				detect = TRUE;
 				detect_trap = TRUE;
 			}
 
-			/* Detect secret doors */
-			if (c_ptr->feat == FEAT_SECRET && magik(chance)) {
-				struct c_special *cs_ptr;
-
-				/* Clear mimic feature */
-				if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
-					cs_erase(c_ptr, cs_ptr);
-
-				/* Find the door XXX XXX XXX */
-				c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
-
-				/* Memorize the door */
-				*w_ptr |= CAVE_MARK;
-
-				/* Obvious */
-				detect = TRUE;
-			}
-
 			// You feel a gust of air from nearby ...
 			if (((c_ptr->feat == FEAT_LESS) || (c_ptr->feat == FEAT_MORE) ||
 			    (c_ptr->feat == FEAT_WAY_LESS) || (c_ptr->feat == FEAT_WAY_MORE))
-				&& magik(chance)) {
-
+			    && magik(chance)) {
 				/* Memorize the stairs */
 				*w_ptr |= CAVE_MARK;
-
 				/* Obvious */
 				detect = TRUE;
 			}
@@ -2918,10 +2941,12 @@ bool detect_bounty(int Ind) {
 			if (c_ptr->feat == FEAT_SHOP && magik(chance)) {
 				/* Memorize the stairs */
 				*w_ptr |= CAVE_MARK;
-
 				/* Obvious */
 				detect = TRUE;
 			}
+
+			/* ----- Evaluate findings some more: ----- */
+
 			if (detect) lite_spot(Ind, i, j);
 			if (detect_trap) {
 				if (c_ptr->o_idx && !c_ptr->m_idx) {
@@ -2936,9 +2961,8 @@ bool detect_bounty(int Ind) {
 			}
 		}
 	}
-	return(detect);
+	return;
 }
-#endif
 
 /*
  * Detect all objects on the current panel		-RAK-
@@ -3167,8 +3191,8 @@ bool detect_trap(int Ind, int rad) {
 				t_idx = cs_ptr->sc.trap.t_idx;
 
 				if (!cs_ptr->sc.trap.found) {
-					/* Pick a trap */
-					pick_trap(wpos, i, j);
+					/* Mark trap as found */
+					trap_found(wpos, i, j);
 
 					/* New trap detected */
 					detect = TRUE;
