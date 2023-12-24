@@ -9713,7 +9713,9 @@ void dungeon(void) {
 		/* Process fallen winners */
 		for (i = 1; i <= NumPlayers; i++) {
 			if (!Players[i]->solo_reking) continue;
+
 			Players[i]->solo_reking -= 250; // 1 min = 250 au
+			if (Players[i]->solo_reking < 0) Players[i]->solo_reking = 0;
 		}
 #endif
 
