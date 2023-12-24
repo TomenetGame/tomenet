@@ -309,7 +309,7 @@ I:1000:0
 
 N:46:Trapping
 D:Ability to set and pseudo-ID traps (detailed at 11+), disarm traps, pick locks.
-D:Increases chance to not get hindered by monsters when trying to lay a trap.
+D:Improves searching. Adjacent monsters interfere less when trying to lay a trap.
 #also improves chance to avoid traps on touching them
 A:10:Set trap
 I:1000:46
