@@ -691,14 +691,16 @@ void wipe_m_list(struct worldpos *wpos) {
 	for (i = m_max - 1; i >= 1; i--) {
 		monster_type *m_ptr = &m_list[i];
 
-		if (inarea(&m_ptr->wpos,wpos)) {
-			if (season_halloween && m_ptr->r_idx == RI_PUMPKIN) {
-				great_pumpkin_duration = 0;
-				great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
-				//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
-			}
-			delete_monster_idx(i, TRUE);
+		if (!inarea(&m_ptr->wpos,wpos)) continue;
+
+		if (season_halloween && m_ptr->r_idx == RI_PUMPKIN) {
+			great_pumpkin_duration = 0;
+			great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
+			//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
 		}
+		if (season_xmas && m_ptr->r_idx == RI_SANTA2) santa_claus_timer = 1; /* fast respawn if not killed! */
+
+		delete_monster_idx(i, TRUE);
 	}
 
 	/* Compact the monster list */
@@ -714,14 +716,16 @@ void wipe_m_list_admin(struct worldpos *wpos) {
 
 		if (m_ptr->pet || m_ptr->special || m_ptr->questor) continue;
 
-		if (inarea(&m_ptr->wpos,wpos)) {
-			if (season_halloween && m_ptr->r_idx == RI_PUMPKIN) {
-				great_pumpkin_duration = 0;
-				great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
-				//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
-			}
-			delete_monster_idx(i, TRUE);
+		if (!inarea(&m_ptr->wpos,wpos)) continue;
+
+		if (season_halloween && m_ptr->r_idx == RI_PUMPKIN) {
+			great_pumpkin_duration = 0;
+			great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
+			//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
 		}
+		if (season_xmas && m_ptr->r_idx == RI_SANTA2) santa_claus_timer = 1; /* fast respawn if not killed! */
+
+		delete_monster_idx(i, TRUE);
 	}
 
 	/* Compact the monster list */
@@ -739,14 +743,16 @@ void wipe_m_list_special(struct worldpos *wpos) {
 	for (i = m_max - 1; i >= 1; i--) {
 		monster_type *m_ptr = &m_list[i];
 
-		if (inarea(&m_ptr->wpos,wpos)) {
-			if (season_halloween && m_ptr->r_idx == RI_PUMPKIN) {
-				great_pumpkin_duration = 0;
-				great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
-				//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
-			}
-			delete_monster_idx(i, TRUE);
+		if (!inarea(&m_ptr->wpos,wpos)) continue;
+
+		if (season_halloween && m_ptr->r_idx == RI_PUMPKIN) {
+			great_pumpkin_duration = 0;
+			great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
+			//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
 		}
+		if (season_xmas && m_ptr->r_idx == RI_SANTA2) santa_claus_timer = 1; /* fast respawn if not killed! */
+
+		delete_monster_idx(i, TRUE);
 	}
 
 	/* Compact the monster list */
@@ -792,10 +798,10 @@ void thin_surface_spawns() {
 			great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
 			//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
 		}
+		if (season_xmas && m_ptr->r_idx == RI_SANTA2) santa_claus_timer = 1; /* fast respawn if not killed! */
 
 		/* hack: don't affect non-townies in Bree at all */
-		if (in_bree(&m_ptr->wpos) && m_ptr->level)
-			continue;
+		if (in_bree(&m_ptr->wpos) && m_ptr->level) continue;
 
 		/* erase the monster, poof */
 		delete_monster_idx(i, TRUE);
@@ -812,15 +818,16 @@ void geno_towns() {
 	for (i = m_max - 1; i >= 1; i--) {
 		monster_type *m_ptr = &m_list[i];
 
-		if (istown(&m_ptr->wpos) &&
-		    !(r_info[m_ptr->r_idx].flags8 & RF8_GENO_PERSIST)) {
-			if (season_halloween && /* hardcoded -_- */ m_ptr->r_idx == RI_PUMPKIN) {
-				great_pumpkin_duration = 0;
-				great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
-				//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
-			}
-			delete_monster_idx(i, TRUE);
+		if (!istown(&m_ptr->wpos) || (r_info[m_ptr->r_idx].flags8 & RF8_GENO_PERSIST)) continue;
+
+		if (season_halloween && /* hardcoded -_- */ m_ptr->r_idx == RI_PUMPKIN) {
+			great_pumpkin_duration = 0;
+			great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
+			//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
 		}
+		if (season_xmas && m_ptr->r_idx == RI_SANTA2) santa_claus_timer = 1; /* fast respawn if not killed! */
+
+		delete_monster_idx(i, TRUE);
 	}
 
 	/* Compact the monster list */
@@ -836,10 +843,9 @@ void wipe_m_list_roaming(struct worldpos *wpos) {
 	for (i = m_max - 1; i >= 1; i--) {
 		monster_type *m_ptr = &m_list[i];
 
-		if (inarea(&m_ptr->wpos,wpos)) {
-			if (zcave[m_ptr->fy][m_ptr->fx].info & CAVE_ICKY) continue;
-			delete_monster_idx(i, TRUE);
-		}
+		if (!inarea(&m_ptr->wpos,wpos)) continue;
+		if (zcave[m_ptr->fy][m_ptr->fx].info & CAVE_ICKY) continue;
+		delete_monster_idx(i, TRUE);
 	}
 	/* Compact the monster list */
 	compact_monsters(0, FALSE);
