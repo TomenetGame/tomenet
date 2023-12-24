@@ -7688,7 +7688,8 @@ static void process_various(void) {
 							break;
 						}
 					}
-					if (!tries) santa_claus_timer = 1; /* fast respawn, probably paranoia */
+					/* Still no Santa? Induce fast respawn, probably paranoia */
+					if (santa_claus_timer == 0) santa_claus_timer = 1;
 				}
 			}
 		}
