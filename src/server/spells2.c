@@ -10592,7 +10592,7 @@ void unwrap_gift(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &p_ptr->inventory[item], forge;
 
-	s_printf("GIFTUNWRAPPING: %d, %d\n", o_ptr->tval, o_ptr->sval);
+	s_printf("GIFTUNWRAPPING: %s: %d, %d\n", p_ptr->name, o_ptr->tval, o_ptr->sval);
 #ifdef USE_SOUND_2010
 	sound(Ind, "read_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
