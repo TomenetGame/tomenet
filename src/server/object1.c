@@ -2028,6 +2028,7 @@ static char *object_desc_lnum(char *t, uint n) {
  * +1024 - Assume that no flavours are known by the player (added for exporting player store item list)
  *         ONLY works with Ind == 0.
  * +2048 - Do not display anything referring to the base item (for seals and wrapped gifts). Add +32 too when using this.
+ * +4096 - Assume item is not "known", even if Ind is 0.
  *
  * If the strings created with mode 0-3 are too long, this function is called
  * again with 8 added to 'mode' and attempt to 'abbreviate' the strings. -Jir-
@@ -2092,6 +2093,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		/* Assume aware and known */
 		aware = known = TRUE;
 		if (mode & 1024) aware = FALSE; //don't spoil flavours in player shop export list!
+		if (mode & 4096) known = FALSE;
 	}
 	/* Never use short item names in flavour knowledge list */
 	if ((mode & 512)) short_item_names = FALSE;
