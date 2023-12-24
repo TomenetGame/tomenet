@@ -6741,8 +6741,10 @@ void do_cmd_fire(int Ind, int dir) {
 
 #if (STARTEQ_TREATMENT > 1)
 	if (o_ptr->owner == p_ptr->id && p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
-	    o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && o_ptr->tval != TV_SPECIAL) {
-		/* not for basic arrows, a bit too silyl compared to the annoyment/newbie confusion */
+	    //o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && --cannot fire keys or chests oO
+	    o_ptr->tval != TV_SPECIAL) {
+		/* Not for basic arrows, a bit too silyl compared to the annoyment/newbie confusion.
+		   Basically, we want to turn everything level 0 that he could buy in town shops and then drop for someone else to pick up and utilize/monetize. */
 		if (!is_ammo(o_ptr->tval) || o_ptr->name1 || o_ptr->name2) o_ptr->level = 0;
 		o_ptr->xtra9 = 1; //mark as unsellable
 	}
@@ -8166,8 +8168,9 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 #if (STARTEQ_TREATMENT > 1)
 		if (o_ptr->owner == p_ptr->id && p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
 		    o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && o_ptr->tval != TV_SPECIAL) {
-			/* not for basic arrows, a bit too silyl compared to the annoyment/newbie confusion */
-			if (!is_ammo(o_ptr->tval) || o_ptr->name1 || o_ptr->name2) o_ptr->level = 0;
+			/* not for basic arrows, a bit too silyl compared to the annoyment/newbie confusion.
+			   Basically, we want to turn everything level 0 that he could buy in town shops and then drop for someone else to pick up and utilize/monetize. */
+			if ((!is_ammo(o_ptr->tval) || o_ptr->name1 || o_ptr->name2) && o_ptr->tval != TV_CHEST) o_ptr->level = 0;
 			o_ptr->xtra9 = 1; //mark as unsellable
 		}
 #endif

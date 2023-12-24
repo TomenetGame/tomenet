@@ -1773,16 +1773,18 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 #if (STARTEQ_TREATMENT > 1)
  #ifndef RPG_SERVER
 	if (o_ptr->owner == p_ptr->id && p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
-	    o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && o_ptr->tval != TV_SPECIAL) {
-		/* not for basic arrows, a bit too silyl compared to the annoyment/newbie confusion */
-		if (!is_ammo(o_ptr->tval) || o_ptr->name1 || o_ptr->name2) o_ptr->level = 0;
+	    o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && o_ptr->tval != TV_SPECIAL && o_ptr->tval != TV_CHEST) {
+		/* Not for basic arrows, a bit too silyl compared to the annoyment/newbie confusion.
+                   Basically, we want to turn everything level 0 that he could buy in town shops and then drop for someone else to pick up and utilize/monetize. */
+		if ((!is_ammo(o_ptr->tval) || o_ptr->name1 || o_ptr->name2) && o_ptr->tval != TV_CHEST) o_ptr->level = 0;
 		o_ptr->xtra9 = 1; //mark as unsellable
 	}
  #else
 	if (o_ptr->owner == p_ptr->id && p_ptr->max_plv < 2 && !is_admin(p_ptr) &&
 	    o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && o_ptr->tval != TV_SPECIAL) {
-		/* not for basic arrows, a bit too silyl compared to the annoyment/newbie confusion */
-		if (!is_ammo(o_ptr->tval) || o_ptr->name1 || o_ptr->name2) o_ptr->level = 0;
+		/* Not for basic arrows, a bit too silyl compared to the annoyment/newbie confusion
+		   Basically, we want to turn everything level 0 that he could buy in town shops and then drop for someone else to pick up and utilize/monetize. */
+		if ((!is_ammo(o_ptr->tval) || o_ptr->name1 || o_ptr->name2) && o_ptr->tval != TV_CHEST) o_ptr->level = 0;
 		o_ptr->xtra9 = 1; //mark as unsellable
 	}
  #endif
