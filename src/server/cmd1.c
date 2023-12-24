@@ -7871,19 +7871,12 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		zcave[y][x].m_idx = 0 - Ind;
 
 		/* Spontaneous Searching */
-		if ((p_ptr->skill_fos >= 75) ||
-		    (0 == rand_int(76 - p_ptr->skill_fos))) {
-			search(Ind);
-		}
+		if ((p_ptr->skill_fos >= 75) || (0 == rand_int(76 - p_ptr->skill_fos))) search(Ind);
 
 		/* Continuous Searching */
 		if (p_ptr->searching) {
-			if (p_ptr->pclass == CLASS_ROGUE && !p_ptr->rogue_heavyarmor) {
-				//Radius of 5 ... 15 squares
-				detect_bounty(Ind, (p_ptr->lev / 5) + 5);
-			} else {
-				search(Ind);
-			}
+			if (p_ptr->pclass == CLASS_ROGUE && !p_ptr->rogue_heavyarmor) detect_bounty(Ind);
+			else search(Ind);
 		}
 
 		/* Handle "objects" */

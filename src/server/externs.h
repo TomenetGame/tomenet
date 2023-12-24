@@ -1740,7 +1740,7 @@ extern bool detect_creatures(int Ind);
 extern bool detect_living(int Ind);
 extern bool detect_noise(int Ind);
 extern bool detection(int Ind, int rad);
-extern bool detect_bounty(int Ind, int rad);
+extern bool detect_bounty(int Ind);
 extern bool detect_trap(int Ind, int rad);
 extern bool detect_sdoor(int Ind, int rad);
 extern void stair_creation(int Ind);

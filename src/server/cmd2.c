@@ -1693,12 +1693,8 @@ void do_cmd_search(int Ind) {
 	if (p_ptr->always_repeat) p_ptr->command_rep = PKT_SEARCH;
 
 	/* Search */
-	if (p_ptr->pclass == CLASS_ROGUE && !p_ptr->rogue_heavyarmor) {
-		//Radius of 5 ... 15 squares
-		detect_bounty(Ind, (p_ptr->lev/5) + 5);
-	} else {
-		search(Ind);
-	}
+	if (p_ptr->pclass == CLASS_ROGUE && !p_ptr->rogue_heavyarmor) detect_bounty(Ind);
+	else search(Ind);
 }
 
 
@@ -6050,12 +6046,10 @@ void do_cmd_stay(int Ind, int pickup, bool one) {
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	/* Spontaneous Searching */
-	if ((p_ptr->skill_fos >= 75) || (0 == rand_int(76 - p_ptr->skill_fos)))
-		search(Ind);
+	if ((p_ptr->skill_fos >= 75) || (0 == rand_int(76 - p_ptr->skill_fos))) search(Ind);
 
 	/* Continuous Searching */
-	if (p_ptr->searching)
-		search(Ind);
+	if (p_ptr->searching) search(Ind);
 #endif
 
 

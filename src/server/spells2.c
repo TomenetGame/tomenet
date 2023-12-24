@@ -2750,9 +2750,11 @@ bool detection(int Ind, int rad) {
 /*
  * Detect bounty, a rogue's skill
  */
-bool detect_bounty(int Ind, int rad) {
+bool detect_bounty(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
+	//Radius of 5 ... 15 squares
+	int rad = (p_ptr->lev / 5) + 5);
 	// 10 ... 60 % of auto-detecting "stuff"
 	int chance = (p_ptr->lev) + 10;
 
@@ -2761,15 +2763,16 @@ bool detect_bounty(int Ind, int rad) {
 
 	int i, j, t_idx = 0;
 
-	bool	detect = FALSE;
-	bool	detect_trap = FALSE;
+	bool detect = FALSE;
+	bool detect_trap = FALSE;
 
 	cave_type  *c_ptr;
 	byte *w_ptr;
 	cave_type **zcave;
 	struct c_special *cs_ptr;
 
-	object_type	*o_ptr;
+	object_type *o_ptr;
+
 
 	/* anti-exploit */
 	if (!local_panel(Ind)) return(FALSE);
