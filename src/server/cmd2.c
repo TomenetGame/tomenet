@@ -1788,15 +1788,15 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
 
 		/* Drop some objects (non-chests) */
 		for (; number > 0; --number) {
-				/* Small chests often drop gold */
-				if (small && magik(75))
-					place_gold(Ind, wpos, y, x, 1, cash);
-				else if (!small && magik(20))
-					place_gold(Ind, wpos, y, x, 1, cash);
-				/* Otherwise drop an item */
-				else
-					/* mostly DROP_GOOD */
-					place_object(Ind, wpos, y, x, magik(75) ? TRUE : FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NORMAL, TRUE);
+			/* Small chests often drop gold */
+			if (small && magik(75))
+				place_gold(Ind, wpos, y, x, 1, (cash * (80 + rand_int(41))) / 100);
+			else if (!small && magik(20))
+				place_gold(Ind, wpos, y, x, 1, (cash * (80 + rand_int(41))) / 100);
+			/* Otherwise drop an item */
+			else
+				/* mostly DROP_GOOD */
+				place_object(Ind, wpos, y, x, magik(75) ? TRUE : FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NORMAL, TRUE);
 		}
 
 		/* Reset the object level */

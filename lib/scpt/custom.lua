@@ -239,7 +239,7 @@ end
 --[[
  For chests:
   xtra1 = call on acivate trap, xtra2 = call on opening, xtra3: 0x1 = destroy on trap trigger, 0x2 = destroy on ruination by trap trigger, 0x4 = destroy on opening, 0x8 = skip normal trap routines
-  xtra4 = number of objects to drop + 1 (ie 1 = no drops!), xtra5 = cash to drop per pile, xtra6 = rand_int addition to xtra5 (randomized anew for each pile dropped).
+  xtra4 = number of objects to drop + 1 (ie 1 = no drops!), xtra5 = cash to drop per pile (usual +/-20% random modifier included).
   <index> is xtra1 (for trap) or xtra2 (for open) respectively.
 ]]
 function custom_chest_trap(Ind, index)
