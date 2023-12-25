@@ -226,7 +226,7 @@ ENTPOTION = add_spell {
 	["fail"] = 	20,
 	["spell"] = 	function()
 				fire_ball(Ind, GF_SATHUNGER_PLAYER, 0, 1, 2, "")
-				--if player.suscep_life == false then
+				--if player.suscep_life == FALSE then
 				if player.prace ~= RACE_VAMPIRE then
 					set_food(Ind, PY_FOOD_MAX - 1)
 					msg_print(Ind, "The Ent's Potion fills your stomach.")
