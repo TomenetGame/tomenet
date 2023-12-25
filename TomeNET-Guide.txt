@@ -18520,7 +18520,9 @@ create a character!):
 
     Buy arrows (to use with your bow) in store 1 or store 3 in town and put
     them in your quiver (w key). If you instead get a crossbow you will need
-    bolts instead of arrows, and slings would need shots or pebbles.
+    bolts instead of arrows, and slings would need shots or pebbles. Inscribe
+    the ammunition  !=  to pick it up automatically from the floor by simply
+    walking over it.
 
     Hints:
     Make sure to create a macro for your fighting techniques 'Sprint' and
