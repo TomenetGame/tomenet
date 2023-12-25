@@ -8167,6 +8167,7 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 		/* Spoiler for contents of the gift wrapping, otherwise nobody will ever get anything useful */
 		object_desc(0, o_name_short, &forge, TRUE, 256 + 4096);
 		forge.note = quark_add(o_name_short);
+		forge.note_utag = 0;
 
 		forge.tval2 = forge.tval;
 		forge.sval2 = forge.sval;
