@@ -231,9 +231,18 @@ end
 
 --For usable custom objects:
 function custom_object(Ind, item, dir)
-
 end
 --For usable custom objects, emulate k_info diz. Index is 1..n.
 function custom_object_diz(index)
+end
 
+--[[
+ For chests:
+  xtra1 = call on acivate trap, xtra2 = call on opening, xtra3: 0x1 = destroy on trap trigger, 0x2 = destroy on ruination by trap trigger, 0x4 = destroy on opening, 0x8 = skip normal trap routines
+  xtra4 = number of objects to drop + 1 (ie 1 = no drops!), xtra5 = cash to drop per pile, xtra6 = rand_int addition to xtra5 (randomized anew for each pile dropped).
+  <index> is xtra1 (for trap) or xtra2 (for open) respectively.
+]]
+function custom_chest_trap(Ind, index)
+end
+function custom_chest_open(Ind, index, small, number)
 end

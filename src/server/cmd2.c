@@ -1752,8 +1752,8 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 
-	//int i, d, ny, nx;
-	int number, little;
+	bool small;
+	int number;
 	long cash;
 
 	if (!(zcave = getcave(wpos))) return;
@@ -1762,15 +1762,20 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
 	if (o_ptr->tval != TV_CHEST) return;
 
 	/* Small chests often hold "gold" */
-	little = (o_ptr->sval < SV_CHEST_MIN_LARGE);
+	small = (o_ptr->sval < SV_CHEST_MIN_LARGE);
 
 	/* Determine how much to drop (see above) */
 	number = (o_ptr->sval % SV_CHEST_MIN_LARGE) * 2;
+
+	/* Custom LUA hacks */
+	if (o_ptr->xtra2) exec_lua(0, format("custom_chest_open(%d,%d,%d,%d)", Ind, o_ptr->xtra2, small, number));
+	if (o_ptr->xtra4) number = o_ptr->xtra2 - 1;
 
 	/* Generate some treasure */
 	if (o_ptr->pval && (number > 0)) {
 		/* let's not be scrooges =) - C. Blue */
 		cash = (((o_ptr->level + 10) * (o_ptr->level + 10)) * 3) / number;
+		if (o_ptr->xtra5) cash = o_ptr->xtra5; //(note btw: 'xtraN' are s16b)
 
 		/* Opening a chest -- this hack makes sure we don't find a chest in a chest, even though yo like chests */
 		if (!o_ptr->iron_turn) opening_chest = turn; //by now all existing chests should long have iron_turn set to something, so this check might not be needed anymore
@@ -1784,9 +1789,9 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
 		/* Drop some objects (non-chests) */
 		for (; number > 0; --number) {
 				/* Small chests often drop gold */
-				if (little && magik(75))
+				if (small && magik(75))
 					place_gold(Ind, wpos, y, x, 1, cash);
-				else if (!little && magik(20))
+				else if (!small && magik(20))
 					place_gold(Ind, wpos, y, x, 1, cash);
 				/* Otherwise drop an item */
 				else
@@ -1834,7 +1839,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
  * Exploding chest destroys contents (and traps).
  * Note that the chest itself is never destroyed.
  */
-static void chest_trap(int Ind, int y, int x, int o_idx) {
+static bool chest_trap(int Ind, int y, int x, int o_idx) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &o_list[o_idx];
 
@@ -1842,10 +1847,10 @@ static void chest_trap(int Ind, int y, int x, int o_idx) {
 	bool ident = FALSE;
 
 	/* Only analyze chests */
-	if (o_ptr->tval != TV_CHEST) return;
+	if (o_ptr->tval != TV_CHEST) return(FALSE);
 
 	/* Ignore disarmed chests */
-	if (o_ptr->pval <= 0) return;
+	if (o_ptr->pval <= 0) return(FALSE);
 
 	/* Obtain the trap */
 	trap = o_ptr->pval;
@@ -1858,6 +1863,11 @@ static void chest_trap(int Ind, int y, int x, int o_idx) {
 	sound(Ind, "trap_setoff", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 
+	/* Custom LUA hacks */
+	if (o_ptr->xtra1) exec_lua(0, format("custom_chest_trap(%d,%d)", Ind, o_ptr->xtra1));
+	/* Skip normal trap routines? */
+	if (o_ptr->xtra4 & 0x8) return(TRUE);
+
 	/* Set off trap */
 	ident = player_activate_trap_type(Ind, y, x, o_ptr, o_idx);
 
@@ -1865,6 +1875,8 @@ static void chest_trap(int Ind, int y, int x, int o_idx) {
 		p_ptr->trap_ident[trap] = TRUE;
 		msg_format(Ind, "You identified the trap as %s.", t_name + t_info[trap].name);
 	}
+
+	return(TRUE);
 }
 
 
@@ -2845,11 +2857,13 @@ void do_cmd_open(int Ind, int dir) {
 
 			/* Allowed to open */
 			if (flag) {
+				bool trp;
+
 #ifdef USE_SOUND_2010
 				sound(Ind, "open_chest", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 				/* Apply chest traps, if any */
-				chest_trap(Ind, y, x, c_ptr->o_idx);
+				trp = chest_trap(Ind, y, x, c_ptr->o_idx);
 
 				break_cloaking(Ind, 3);
 				break_shadow_running(Ind);
@@ -2857,9 +2871,19 @@ void do_cmd_open(int Ind, int dir) {
 				stop_shooting_till_kill(Ind);
 
 				/* Some traps might destroy the chest on setting off */
-				if (o_ptr->sval != SV_CHEST_RUINED)
+				if (o_ptr->sval != SV_CHEST_RUINED) {
 					/* Let the Chest drop items */
 					chest_death(Ind, y, x, o_ptr);
+					if (o_ptr->xtra3 & 0x4) { /* Erase chest on successful opening */
+						delete_object_idx(c_ptr->o_idx, FALSE);
+						trp = FALSE; /* Don't try to delete an already deleted object! */
+					}
+				}
+				if (trp) {
+					if ((o_ptr->xtra3 & 0x1) || /* Erase chest whenever the trap was set off */
+					    (o_ptr->sval == SV_CHEST_RUINED && (o_ptr->xtra3 & 0x2))) /* Erase the chest if it got ruined by the trap */
+						delete_object_idx(c_ptr->o_idx, FALSE);
+				}
 			}
 		}
 
@@ -4987,7 +5011,7 @@ void do_cmd_disarm(int Ind, int dir) {
 			t_ptr = &t_info[o_ptr->pval];
 
 			/* Disarm the chest */
-//			more = do_cmd_disarm_chest(y, x, c_ptr->o_idx);
+			//more = do_cmd_disarm_chest(y, x, c_ptr->o_idx);
 
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -5047,16 +5071,20 @@ void do_cmd_disarm(int Ind, int dir) {
 
 			/* Failure -- Set off the trap */
 			else {
-				/* S(he) is no longer afk */
-				un_afk_idle(Ind);
-				p_ptr->warning_trap = 1;
-
-				msg_print(Ind, "You set off a trap!");
-				chest_trap(Ind, y, x, c_ptr->o_idx);
-				break_cloaking(Ind, 0);
-				break_shadow_running(Ind);
-				stop_precision(Ind);
-				stop_shooting_till_kill(Ind);
+				/* Paranoia to have a separate 'if' for this - at this point, the chest must be validly trapped */
+				if (chest_trap(Ind, y, x, c_ptr->o_idx)) {
+					/* S(he) is no longer afk */
+					un_afk_idle(Ind);
+					p_ptr->warning_trap = 1;
+					msg_print(Ind, "You set off a trap!");
+					if ((o_ptr->xtra3 & 0x1) || /* Erase chest whenever the trap was set off */
+					    (o_ptr->sval == SV_CHEST_RUINED && (o_ptr->xtra3 & 0x2))) /* Erase the chest if it got ruined by the trap */
+						delete_object_idx(c_ptr->o_idx, FALSE);
+					break_cloaking(Ind, 0);
+					break_shadow_running(Ind);
+					stop_precision(Ind);
+					stop_shooting_till_kill(Ind);
+				}
 				done = TRUE;
 			}
 
@@ -5132,7 +5160,7 @@ void do_cmd_disarm(int Ind, int dir) {
 			else
 				name = "unknown trap";
 
-//			cptr name = (f_name + f_info[c_ptr->feat].name);
+			//cptr name = (f_name + f_info[c_ptr->feat].name);
 
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
