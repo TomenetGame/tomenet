@@ -18397,13 +18397,17 @@ create a character!):
 
     The first thing you should do when you created your character is making
     a macro for firing your bow. Press % and then z to start the macro wizard,
-    and then c to create a firing macro.
+    and then c to create a firing macro. The F1 key already has such a macro
+    predefined on it (if you didn't change it), test it in town on some townie
+    or one of the target dummies.
+
     Even though archers start out with just a long bow for ranged weapon, they
     also get one of each of the 3 base types of ammo in the game (magic arrow
     for bow, magic bolt for crossbow, magic shot for sling) so you can buy any
     ranged weapon of your choice in the town stores and will have the matching
     type of ammo to go with it right from the start - press 'w' key to load it
-    into your quiver.
+    into your quiver. Magic ammunition always returns to you so you only need
+    one, except if it gets destroyed by some elemental attack.
 
     Hints:
     Enchanting your ranged weapon to-damage is especially effective because
@@ -18511,11 +18515,14 @@ create a character!):
     If you're planning to make use of ranged weapons, the first thing you
     should do when you created your character is making a macro for firing your
     bow. Press % and then z to start the macro wizard, and then c to create a
-    firing macro. Buy arrows (to use with your bow) in store 1 or store 3 in
-    town and put them in your quiver (w key). If you instead get a crossbow you
-    will need bolts instead of arrows, and slings would need shots or pebbles.
+    firing macro. The F1 key already has such a macro predefined on it (if you
+    didn't change it), test it in town on some townie or a target dummy.
 
-    Hint:
+    Buy arrows (to use with your bow) in store 1 or store 3 in town and put
+    them in your quiver (w key). If you instead get a crossbow you will need
+    bolts instead of arrows, and slings would need shots or pebbles.
+
+    Hints:
     Make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, which you do pretty early on. They are great
     for catching annoying monsters that try to keep their distance to you.
