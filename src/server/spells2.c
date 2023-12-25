@@ -4834,6 +4834,7 @@ void aggravate_monsters(int Ind, int who) {
 			if (m_ptr->csleep) {
 				/* Wake up */
 				m_ptr->csleep = 0;
+				if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", Ind, i, m_ptr->custom_lua_awoke));
 				sleep = TRUE;
 			}
 		}
@@ -4894,6 +4895,7 @@ void wakeup_monsters(int Ind, int who) {
 			if (m_ptr->csleep) {
 				/* Wake up */
 				m_ptr->csleep = 0;
+				if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", Ind, i, m_ptr->custom_lua_awoke));
 				sleep = TRUE;
 			}
 		}
@@ -4911,10 +4913,11 @@ void wakeup_monsters_somewhat(int Ind, int who) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 	bool sleep = FALSE;
+	monster_type *m_ptr;
 
 	/* Aggravate everyone nearby */
 	for (i = 1; i < m_max; i++) {
-		monster_type *m_ptr = &m_list[i];
+		m_ptr = &m_list[i];
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
@@ -4938,6 +4941,7 @@ void wakeup_monsters_somewhat(int Ind, int who) {
 				if (m_ptr->csleep <= 0) {
 					m_ptr->csleep = 0;
 					sleep = TRUE;
+					if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", Ind, i, m_ptr->custom_lua_awoke));
 				}
 			}
 		}
@@ -4976,7 +4980,10 @@ static void throw_dirt_aux(int Ind, int m_idx) {
 	r_ptr = race_inf(m_ptr);
 	monster_desc(Ind, m_name, m_idx, 0);
 
-	m_ptr->csleep = 0; //wake up from this
+	if (m_ptr->csleep) {
+		m_ptr->csleep = 0; //wake up from this
+		if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", Ind, m_idx, m_ptr->custom_lua_awoke));
+	}
 
 	/* Monster is unaffected? */
 	if (!blindable_monster(r_ptr)) {
@@ -5216,6 +5223,7 @@ void taunt_monsters(int Ind) {
 			if (m_ptr->csleep) {
 				m_ptr->csleep = 0;
 				sleep = TRUE;
+				if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", Ind, i, m_ptr->custom_lua_awoke));
 			}
 #endif
 
@@ -5239,10 +5247,11 @@ void taunt_monsters(int Ind) {
 /* Need it for detonation pots in potion_smash_effect - C. Blue */
 void aggravate_monsters_floorpos(worldpos *wpos, int x, int y) {
 	int i;
+	monster_type *m_ptr;
 
 	/* Aggravate everyone nearby */
 	for (i = 1; i < m_max; i++) {
-		monster_type	*m_ptr = &m_list[i];
+		m_ptr = &m_list[i];
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
@@ -5260,6 +5269,7 @@ void aggravate_monsters_floorpos(worldpos *wpos, int x, int y) {
 			if (m_ptr->csleep) {
 				/* Wake up */
 				m_ptr->csleep = 0;
+				if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", 0, i, m_ptr->custom_lua_awoke));
 			}
 		}
 	}
@@ -5280,7 +5290,7 @@ void wake_minions(int Ind, int who) {
 	int i;
 
 	bool sleep = FALSE;
-//	bool speed = FALSE;
+	//bool speed = FALSE;
 
 
 	monster_desc(Ind, mw_name, who, 0x00);
@@ -5342,6 +5352,7 @@ void wake_minions(int Ind, int who) {
 				/* Wake up */
 				m_ptr->csleep = 0;
 				sleep = TRUE;
+				if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", Ind, i, m_ptr->custom_lua_awoke));
 			}
 		}
 #if 0
@@ -6255,7 +6266,10 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 					damage = (sn ? damroll(4, 8) : 200);
 
 					/* Monster is certainly awake */
-					m_ptr->csleep = 0;
+					if (m_ptr->csleep) {
+						m_ptr->csleep = 0;
+						if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", 0, c_ptr->m_idx, m_ptr->custom_lua_awoke));
+					}
 
 					/* Apply damage directly */
 					m_ptr->hp -= damage;
@@ -6462,6 +6476,7 @@ static void cave_temp_room_lite(int Ind) {
 			if (m_ptr->csleep && (rand_int(100) < chance)) {
 				/* Wake up! */
 				m_ptr->csleep = 0;
+				if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", Ind, c_ptr->m_idx, m_ptr->custom_lua_awoke));
 
 				/* Notice the "waking up" */
 				if (p_ptr->mon_vis[c_ptr->m_idx]) {
@@ -6648,7 +6663,10 @@ static void global_cave_temp_room_lite(worldpos *wpos) {
 			if (r_ptr->flags2 & RF2_SMART) chance = 100;
 
 			/* Sometimes monsters wake up */
-			if (m_ptr->csleep && (rand_int(100) < chance)) m_ptr->csleep = 0;
+			if (m_ptr->csleep && (rand_int(100) < chance)) {
+				m_ptr->csleep = 0;
+				if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", 0, c_ptr->m_idx, m_ptr->custom_lua_awoke));
+			}
 		}
 
 		/* Note */
@@ -8406,6 +8424,7 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 
 	/* Assume no sleeping */
 	m_ptr->csleep = 0;
+	//if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", 0, c_ptr->m_idx, m_ptr->custom_lua_awoke)); //not really needed here?
 
 	/* STR */
 	for (j = 0; j < 4; j++) {
@@ -8561,6 +8580,7 @@ bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx) {
 
 	/* Assume no sleeping */
 	m_ptr->csleep = 0;
+	//if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", 0, c_ptr->m_idx, m_ptr->custom_lua_awoke)); //not really needed here?
 
 	/* STR */
 	for (j = 0; j < 4; j++) {
@@ -8888,6 +8908,8 @@ void golem_creation(int Ind, int max) {
 
 	/* Assume no sleeping */
 	m_ptr->csleep = 0;
+	//if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", Ind, c_ptr->m_idx, m_ptr->custom_lua_awoke)); //not really needed here?
+
 	wpcopy(&m_ptr->wpos, &p_ptr->wpos);
 
 	/* No "damage" yet */

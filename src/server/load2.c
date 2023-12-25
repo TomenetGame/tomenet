@@ -1064,6 +1064,12 @@ static void rd_monster(monster_type *m_ptr) {
 		rd_s16b(&m_ptr->determination);
 		rd_s16b(&m_ptr->limit_hp);
 	}
+	if (!s_older_than(4, 9, 8)) {
+		rd_s16b(&m_ptr->custom_lua_death);
+		rd_s16b(&m_ptr->custom_lua_deletion);
+		rd_s16b(&m_ptr->custom_lua_awoke);
+		rd_s16b(&m_ptr->custom_lua_sighted);
+	}
 }
 
 

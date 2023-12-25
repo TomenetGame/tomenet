@@ -5933,6 +5933,9 @@ bool monster_death(int Ind, int m_idx) {
 		m_ptr->charmedignore = 0;
 	}
 
+	/* Custom LUA hacks? */
+	if (m_ptr->custom_lua_death) exec_lua(0, format("custom_monster_death(%d,%d,%d)", Ind, m_idx, m_ptr->custom_lua_death));
+
 	if (m_ptr->special) s_printf("MONSTER_DEATH: Golem of '%s' by '%s'.\n", lookup_player_name(m_ptr->owner), p_ptr->name);
 #ifdef RPG_SERVER
 	else if (m_ptr->pet) s_printf("MONSTER_DEATH: Pet of '%s' by '%s'\n", lookup_player_name(m_ptr->owner), p_ptr->name);
@@ -11351,7 +11354,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	}
 #endif
 
-	if (m_ptr->status == M_STATUS_FRIENDLY) return(FALSE);
+	if (m_ptr->status & M_STATUS_FRIENDLY) return(FALSE);
 
 	if (m_ptr->r_idx == RI_BLUE) {
 		if (m_ptr->extra > 1) return(FALSE); //paranoia?
@@ -11486,7 +11489,10 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	}
 
 	/* Wake it up */
-	m_ptr->csleep = 0;
+	if (m_ptr->csleep) {
+		m_ptr->csleep = 0;
+		if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", Ind, m_idx, m_ptr->custom_lua_awoke));
+	}
 
 	/* Some monsters are immune to death */
 	if (r_ptr->flags7 & RF7_NO_DEATH) return(FALSE);
@@ -12167,11 +12173,14 @@ bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note) {
 	update_health(m_idx);
 
 	/* Wake it up */
-	m_ptr->csleep = 0;
+	if (m_ptr->csleep) {
+		m_ptr->csleep = 0;
+		if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", 0, m_idx, m_ptr->custom_lua_awoke));
+	}
 
 	/* Some monsters are immune to death */
 	if (r_ptr->flags7 & RF7_NO_DEATH) return(FALSE);
-	if (m_ptr->status == M_STATUS_FRIENDLY) return(FALSE);
+	if (m_ptr->status & M_STATUS_FRIENDLY) return(FALSE);
 
 	/* Hurt it */
 	m_ptr->hp -= dam;
@@ -13020,7 +13029,7 @@ bool target_able(int Ind, int m_idx) {
 #endif
 		if (r_ptr->flags7 & RF7_NO_TARGET) return(FALSE);
 
-		if (m_ptr->status == M_STATUS_FRIENDLY) return(FALSE);
+		if (m_ptr->status & M_STATUS_FRIENDLY) return(FALSE);
 
 		/* Assume okay */
 		return(TRUE);

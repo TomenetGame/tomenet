@@ -3438,7 +3438,7 @@ static bool auto_retaliate_test(int Ind) {
 			/* Stop annoying auto-retaliation against certain 'monsters' */
 			if (r_ptr0->flags8 & RF8_NO_AUTORET) continue;
 
-			if (m_ptr->status == M_STATUS_FRIENDLY) continue;
+			if (m_ptr->status & M_STATUS_FRIENDLY) continue;
 
 #ifdef EXPENSIVE_NO_TARGET_TEST
 			/* Skip monsters we cannot actually target! (Sparrows) */

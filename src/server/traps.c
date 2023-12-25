@@ -319,7 +319,10 @@ static bool do_player_trap_call_out(int Ind) {
 		everyone_lite_spot(&p_ptr->wpos, cy, cx);
 
 		/* Actually wake it up... */
-		m_ptr->csleep = 0;
+		if (m_ptr->csleep) {
+			m_ptr->csleep = 0;
+			if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", Ind, h_index, m_ptr->custom_lua_awoke));
+		}
 
 		monster_desc(Ind, m_name, h_index, 0x08);
 		msg_format(Ind, "You hear a rapid-shifting wail, and %s appears!",m_name);
@@ -5049,10 +5052,13 @@ bool mon_hit_trap(int m_idx) {
 
 						/* Some mosnters are immune to death */
 						if (r_ptr->flags7 & RF7_NO_DEATH) dam = 0;
-						if (m_ptr->status == M_STATUS_FRIENDLY) dam = 0;
+						if (m_ptr->status & M_STATUS_FRIENDLY) dam = 0;
 
 						/* Wake the monster up */
-						m_ptr->csleep = 0;
+						if (m_ptr->csleep) {
+							m_ptr->csleep = 0;
+							if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", 0, m_idx, m_ptr->custom_lua_awoke));
+						}
 
 						/* Hurt the monster */
 						m_ptr->hp -= dam;

@@ -7349,7 +7349,10 @@ void mind_map_level(int Ind, int pow) {
 
 		/* Sleeping monsters */
 #if 0		/* Wake them up from it? >:) */
-		m_ptr->csleep = 0;
+		if (m_ptr->csleep) {
+			m_ptr->csleep = 0;
+			if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", Ind, m_fast[m], m_ptr->custom_lua_awoke));
+		}
 #elif 0		/* 0'ed to allow watching even if asleep, assuming it's just 'hypnosis' in that moment as an excuse? */
 		if (m_ptr->csleep) continue;
 #endif

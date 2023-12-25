@@ -1765,6 +1765,11 @@ struct monster_type {
 	s16b stuck;			/* energy to track spellcasting possibility after monster was just stuck in terrain or between other monsters */
 
 	byte clone_trapping;		/* Traps laid out by this monster will have diminishing returns in XP gain for disarming (eg for Robin Hood in the IDDC) */
+
+	s16b custom_lua_death;		/* Runs custom lua script on death */
+	s16b custom_lua_deletion;	/* Runs custom lua script on deletion */
+	s16b custom_lua_awoke;		/* Runs custom lua script on waking up (only the 1st time) */
+	s16b custom_lua_sighted;	/* Runs custom lua script on LoS to player (only the 1st time) */
 };
 
 typedef struct monster_ego monster_ego;

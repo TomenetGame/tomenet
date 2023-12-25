@@ -355,6 +355,11 @@ static void wr_monster(monster_type *m_ptr) {
 	wr_s16b(m_ptr->desty);
 	wr_s16b(m_ptr->determination);
 	wr_s16b(m_ptr->limit_hp);
+
+	wr_s16b(m_ptr->custom_lua_death);
+	wr_s16b(m_ptr->custom_lua_deletion);
+	wr_s16b(m_ptr->custom_lua_awoke);
+	wr_s16b(m_ptr->custom_lua_sighted);
 }
 
 /*

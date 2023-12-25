@@ -7992,7 +7992,7 @@ bool interfere(int Ind, int chance) {
 			/* monster doesn't act? */
 			if (r_ptr->flags2 & RF2_NEVER_MOVE) continue;
 			if (r_ptr->flags2 & RF2_NEVER_ACT) continue;
-			if (m_ptr->status == M_STATUS_FRIENDLY) continue;
+			if (m_ptr->status & M_STATUS_FRIENDLY) continue;
 			/* Sleeping etc.. monsters don't interfere o_O - C. Blue */
 			if (m_ptr->csleep || m_ptr->monfear || m_ptr->stunned || m_ptr->confused)
 				continue;

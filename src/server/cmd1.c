@@ -4310,7 +4310,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	r_ptr = race_inf(m_ptr);
 	helpless = (m_ptr->csleep || m_ptr->stunned > 100 || m_ptr->confused);
 
-	if (m_ptr->status == M_STATUS_FRIENDLY) return;
+	if (m_ptr->status & M_STATUS_FRIENDLY) return;
 
 	if ((r_ptr->flags3 & RF3_UNDEAD) ||
 	    //(r_ptr->flags3 & RF3_DEMON) ||
@@ -4456,7 +4456,10 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 	/* Disturb the monster */
-	m_ptr->csleep = 0;
+	if (m_ptr->csleep) {
+		m_ptr->csleep = 0;
+		if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", Ind, c_ptr->m_idx, m_ptr->custom_lua_awoke));
+	}
 
 	/* Re-check piercing */
 	if (p_ptr->piercing_charged) {
@@ -5609,7 +5612,7 @@ void py_bash_mon(int Ind, int y, int x) {
 	/* Track a new monster */
 	if (p_ptr->mon_vis[c_ptr->m_idx]) health_track(Ind, c_ptr->m_idx);
 
-	if (m_ptr->status == M_STATUS_FRIENDLY) return;
+	if (m_ptr->status & M_STATUS_FRIENDLY) return;
 
 	/* is it a unique we already got kill credit for? */
 	if ((r_ptr->flags1 & RF1_UNIQUE) &&
@@ -5727,7 +5730,10 @@ s_printf("TECHNIQUE_MELEE: %s - bash\n", p_ptr->name);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 	/* Disturb the monster */
-	m_ptr->csleep = 0;
+	if (m_ptr->csleep) {
+		m_ptr->csleep = 0;
+		if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", Ind, c_ptr->m_idx, m_ptr->custom_lua_awoke));
+	}
 
 	/* Calculate damage from shield weight (50..120,160 for AA) and strength */
 	k = 0;

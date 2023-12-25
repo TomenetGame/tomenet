@@ -9907,6 +9907,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 			else {
 				/* Reset sleep counter */
 				m_ptr->csleep = 0;
+				if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", Ind, m_idx, m_ptr->custom_lua_awoke));
 
 				/* Notice the "waking up" */
 				msg_print_near_monster(m_idx, "wakes up.");
@@ -12366,7 +12367,7 @@ void process_monsters(void) {
 			else m_ptr->suspended = 0;
 		}
 		/* And for death fate */
-		if (m_ptr->status == M_STATUS_FRIENDLY) {
+		if (m_ptr->status & M_STATUS_FRIENDLY) {
 			cave_type *c_ptr;
 			int j, x = m_ptr->fx, y = m_ptr->fy, d = 0;
 
@@ -12782,6 +12783,8 @@ void process_monsters(void) {
 				sound_floor_vol(&m_ptr->wpos, "monster_roar", NULL, SFX_TYPE_MISC, 100);
 			}
 #endif
+
+			if (new_los && m_ptr->custom_lua_sighted) exec_lua(0, format("custom_monster_sighted(%d,%d,%d)", pl, i, m_ptr->custom_lua_sighted));
 
 #ifdef DOUBLE_LOS_SAFETY
 			/* los() may actually fail sometimes in both directions,

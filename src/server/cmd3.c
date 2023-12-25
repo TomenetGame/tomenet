@@ -3033,7 +3033,10 @@ void do_cmd_steal_from_monster(int Ind, int dir) {
 			energy_use = 100;
 
 			/* Wake up */
-			m_ptr->csleep = 0;
+			if (m_ptr->csleep) {
+				m_ptr->csleep = 0;
+				if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", Ind, c_ptr->m_idx, m_ptr->custom_lua_awoke));
+			}
 
 			/* Speed up because monsters are ANGRY when you try to thief them */
 			if (m_ptr->mspeed < m_ptr->speed + 15) m_ptr->speed += 5;

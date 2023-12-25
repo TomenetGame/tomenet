@@ -95,7 +95,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	9
-#define SF_VERSION_PATCH	7
+#define SF_VERSION_PATCH	8
 #define SF_VERSION_EXTRA	0 /* <- not used in version checks! */
 
 /* For quests savefile purpose only */
@@ -9444,9 +9444,9 @@ extern int PlayerUID;
 /* More readable than !is_older_than (in common/common.c) */
 #define is_atleast(vtptr, ma, mi, pa, ex, br, bu) (!is_older_than(vtptr, ma, mi, pa, ex, br, bu))
 
-/* Monster special 'status' */
+/* Monster special 'status' (s16b) */
 #define M_STATUS_NONE		0
-#define M_STATUS_FRIENDLY	1
+#define M_STATUS_FRIENDLY	0x0001	/* Monster is friendy */
 
 
 /* Helper function */

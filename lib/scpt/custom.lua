@@ -229,20 +229,29 @@ function beta(Ind, code)
 	--msg_print(Ind, "beta="..code)
 end
 
---For usable custom objects:
+-- For usable custom objects:
 function custom_object(Ind, item, dir)
 end
---For usable custom objects, emulate k_info diz. Index is 1..n.
+-- For usable custom objects, emulate k_info diz. Index is 1..n.
 function custom_object_diz(index)
 end
 
---[[
- For chests:
+--[[ For chests:
   xtra1 = call on acivate trap, xtra2 = call on opening, xtra3: 0x1 = destroy on trap trigger, 0x2 = destroy on ruination by trap trigger, 0x4 = destroy on opening, 0x8 = skip normal trap routines
   xtra4 = number of objects to drop + 1 (ie 1 = no drops!), xtra5 = cash to drop per pile (usual +/-20% random modifier included).
-  <index> is xtra1 (for trap) or xtra2 (for open) respectively.
-]]
+  <index> is xtra1 (for trap) or xtra2 (for open) respectively. ]]
 function custom_chest_trap(Ind, index)
 end
 function custom_chest_open(Ind, index, small, number)
+end
+
+-- Custom monsters:
+function custom_monster_death(Ind, m_idx, index)
+end
+function custom_monster_deletion(m_idx, index)
+end
+-- Ind can be 0 for generic waking effects.
+function custom_monster_awoke(Ind, m_idx, index)
+end
+function custom_monster_sighted(Ind, m_idx, index)
 end

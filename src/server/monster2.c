@@ -343,6 +343,9 @@ void delete_monster_idx(int i, bool unfound_arts) {
 
 	monster_race *r_ptr = race_inf(m_ptr);
 
+	/* Custom LUA hacks? */
+	if (m_ptr->custom_lua_deletion) exec_lua(0, format("custom_monster_deletion(%d,%d)", i, m_ptr->custom_lua_deletion));
+
 	/* Get location */
 	y = m_ptr->fy;
 	x = m_ptr->fx;
@@ -364,8 +367,7 @@ void delete_monster_idx(int i, bool unfound_arts) {
 	/* Hack -- count the number of "reproducers" */
 	if (r_ptr->flags7 & RF7_MULTIPLY) num_repro--;
 
-
-	/* Remove him from everybody's view */
+	/* Remove it from everybody's view */
 	for (Ind = 1; Ind <= NumPlayers; Ind++) {
 		/* Skip this player if he isn't playing */
 		if (Players[Ind]->conn == NOT_CONNECTED) continue;
@@ -448,9 +450,10 @@ void delete_monster(struct worldpos *wpos, int y, int x, bool unfound_arts) {
 		if (c_ptr->m_idx > 0) delete_monster_idx(c_ptr->m_idx, unfound_arts);
 	} else { /* still delete the monster, just slower method */
 		int i;
+		monster_type *m_ptr;
 
 		for (i = 1; i < m_max; i++) {
-			monster_type *m_ptr = &m_list[i];
+			m_ptr = &m_list[i];
 			if (m_ptr->r_idx && inarea(wpos, &m_ptr->wpos)) {
 				if (y == m_ptr->fy && x == m_ptr->fx)
 					delete_monster_idx(i, unfound_arts);
@@ -3645,13 +3648,13 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 
 	/* Assume no sleeping */
 	m_ptr->csleep = 0;
-
 	/* Enforce sleeping if needed */
 	if (slp && r_ptr->sleep) {
 		int val = r_ptr->sleep;
 
 		m_ptr->csleep = ((val * 2) + randint(val * 10));
 	}
+	//if (!m_ptr->csleep && m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", 0, c_ptr->m_idx, m_ptr->custom_lua_awoke)); //not needed here?
 
 	/*if (m_ptr->hold_o_idx) {
 		s_printf("AHA! monster created with an object in hand!\n");

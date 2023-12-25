@@ -915,7 +915,7 @@ static void health_redraw(int Ind) {
 
 		/* Monster never dies? */
 		if ((r_info[m_ptr->r_idx].flags7 & RF7_NO_DEATH)
-		    || m_ptr->status == M_STATUS_FRIENDLY)
+		    || m_ptr->status & M_STATUS_FRIENDLY)
 			attr = TERM_L_UMBER;
 
 		/* Convert percent into "health" */
