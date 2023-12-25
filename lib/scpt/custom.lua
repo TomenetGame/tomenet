@@ -45,7 +45,7 @@ function playloop_startup(timestamp, h, m, s, dwd, dd, dm, dy)
 	--[[automatically fix season if required, for example if server
 	    was down for 24+ hours while a season change date occured.
 	    see cron_24h() for details and to keep values synchronized.]]
-	if FALSE then
+	if (1 == 0) then
 		-- seasons follow northern hemisphere seasons in real-time
 
 		if (season ~= 0) then -- spring
@@ -191,7 +191,7 @@ function cron_24h(timestamp, h, m, s, dwd, dd, dm, dy)
 	--[[season changes (averaged, may in reality vary +/- 1 day:
 	    spring 1. march, summer 1. june,
 	    autumn 23. september, winter 22. december ]]
-	if FALSE then
+	if (1 == 0) then
 		-- seasons follow northern hemisphere seasons in real-time
 
 		if (dd == 1 and dm == 3) then lua_season_change(0, 0) end -- spring
