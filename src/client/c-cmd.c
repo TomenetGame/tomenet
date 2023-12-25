@@ -725,8 +725,12 @@ void cmd_locate(void) {
 			if (ch == ESCAPE || ch == ' ' || ch == (c_cfg.rogue_like_commands ? 'W' : 'L')) break;
 
 			/* Take a screenshot */
-			if (ch == KTRL('T'))
-				xhtml_screenshot("screenshot????", FALSE);
+			if (ch == KTRL('T')) xhtml_screenshot("screenshot????", FALSE);
+
+			if (ch == ':') {
+				cmd_message();
+				inkey_msg = TRUE; /* And suppress macros again.. */
+			}
 
 			/* Extract direction */
 			dir = keymap_dirs[ch & 0x7F];
@@ -1794,6 +1798,10 @@ void cmd_look(void) {
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????", FALSE);
 			break;
+		case ':':
+			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
+			break;
 		case 'p':
 			/* Toggle manual ground-targetting */
 			position = !position;
@@ -1823,6 +1831,10 @@ void cmd_look(void) {
 			return;
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????", FALSE);
+			break;
+		case ':':
+			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
 			break;
 		case 'p':
 			/* Toggle manual ground-targetting */
@@ -7672,6 +7684,10 @@ static void cmd_house_chown(int dir) {
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????", 2);
 			break;
+		case ':':
+			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
+			break;
 		default:
 			bell();
 		}
@@ -7814,6 +7830,10 @@ void cmd_purchase_house(void) {
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????", 2);
 			break;
+		case ':':
+			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
+			break;
 		default:
 			bell();
 		}
@@ -7880,6 +7900,10 @@ static void cmd_master_aux_level(void) {
 
 		/* Take a screenshot */
 		else if (i == KTRL('T')) xhtml_screenshot("screenshot????", 2);
+		else if (i == ':') {
+			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
+		}
 		/* static the current level */
 		else if (i == '1') Send_master(MASTER_LEVEL, "s");
 		/* unstatic the current level */
@@ -8059,7 +8083,10 @@ static void cmd_master_aux_generate_vault(void) {
 
 		/* Take a screenshot */
 		if (i == KTRL('T')) xhtml_screenshot("screenshot????", 2);
-
+		else if (i == ':') {
+			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
+		}
 		/* Generate by number */
 		else if (i == '1') {
 			buf[1] = '#';
@@ -8067,14 +8094,12 @@ static void cmd_master_aux_generate_vault(void) {
 			if (!buf[2]) redo_hack = 1;
 			buf[3] = 0;
 		}
-
 		/* Generate by name */
 		else if (i == '2') {
 			buf[1] = 'n';
 			get_string("Enter vault name: ", &buf[2], 77);
 			if (!buf[2]) redo_hack = 1;
 		}
-
 		/* Oops */
 		else {
 			/* Ring bell */
@@ -8117,10 +8142,13 @@ static void cmd_master_aux_generate(void) {
 
 		/* Take a screenshot */
 		else if (i == KTRL('T')) xhtml_screenshot("screenshot????", 2);
-
+		/* Chat */
+		else if (i == ':') {
+			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
+		}
 		/* Generate a vault */
 		else if (i == '1') cmd_master_aux_generate_vault();
-
 		/* Oops */
 		else
 			/* Ring bell */
@@ -8176,6 +8204,10 @@ static void cmd_master_aux_build(void) {
 
 		switch (i) {
 		/* Take a screenshot */
+		case ':':
+			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
+			break;
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????", 2);
 			break;
@@ -8263,6 +8295,10 @@ static char * cmd_master_aux_summon_orcs(void) {
 
 		/* get the type of orc */
 		switch (i) {
+		case ':':
+			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
+			break;
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????", 2);
 			break;
@@ -8329,6 +8365,10 @@ static char * cmd_master_aux_summon_undead_low(void) {
 
 		/* get the type of undead */
 		switch (i) {
+		case ':':
+			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
+			break;
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????", 2);
 			break;
@@ -8404,6 +8444,10 @@ static char * cmd_master_aux_summon_undead_high(void) {
 
 		/* get the type of undead */
 		switch (i) {
+		case ':':
+			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
+			break;
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????", 2);
 			break;
@@ -8474,6 +8518,10 @@ static void cmd_master_aux_summon(void) {
 
 		/* get the type of monster to summon */
 		switch (i) {
+		case ':':
+			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
+			break;
 		/* Take a screenshot */
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????", 2);
@@ -8591,6 +8639,10 @@ static void cmd_master_aux_summon(void) {
 
 			/* get the type of summoning */
 			switch (i) {
+			case ':':
+				cmd_message();
+				inkey_msg = TRUE; /* And suppress macros again.. */
+				break;
 			case KTRL('T'):
 				xhtml_screenshot("screenshot????", 2);
 				break;
@@ -8652,6 +8704,10 @@ static void cmd_master_aux_player() {
 		i = inkey();
 		buf[0] = '\0';
 		switch (i) {
+		case ':':
+			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
+			break;
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????", 2);
 			break;
@@ -8765,6 +8821,10 @@ static void cmd_master_aux_system() {
 		/* Get a key */
 		i = inkey();
 		switch (i) {
+		case ':':
+			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
+			break;
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????", 2);
 			break;
@@ -8829,6 +8889,10 @@ static void cmd_master(void) {
 		i = inkey();
 
 		switch (i) {
+		case ':':
+			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
+			break;
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????", 2);
 			break;
@@ -8945,6 +9009,10 @@ void cmd_lagometer(void) {
 		if (k == ESCAPE || k == KTRL('Q') || k == KTRL('I')) break;
 
 		switch (k) {
+		case ':':
+			cmd_message();
+			inkey_msg = TRUE; /* And suppress macros again.. */
+			break;
 		/* Take a screenshot */
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????", 2);
