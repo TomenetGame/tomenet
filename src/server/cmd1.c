@@ -2663,7 +2663,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 					if (value >= min_value)
 						s_printf("EXPENSIVE_ITEM: %s (%ld Au) found by %s(lv %d) at %d,%d,%d%s%s (dlv %d)\n",
 						    o_name_real, value, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
-						    (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", dlev);
+						    (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", dlev);
 #endif
 
 					if (true_artifact_p(o_ptr)) {
@@ -2671,7 +2671,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 						determine_artifact_timeout(o_ptr->name1, wpos);
 #if CHEEZELOG_LEVEL > 2
 						s_printf("%s Artifact %d found by %s(lv %d) at %d,%d,%d%s%s: %s\n",
-						    showtime(), o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
+						    showtime(), o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
 #endif
 						/* Log top arts (except Grond/Crown of course) - atm this excludes Razorback and Mediator */
 						if ((a_info[o_ptr->name1].level >= 100 || o_ptr->name1 == ART_DWARVEN_ALE)
@@ -2684,7 +2684,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 					}
 #if CHEEZELOG_LEVEL > 2
 					else if (o_ptr->name1 == ART_RANDART) s_printf("%s Randart found by %s(lv %d) at %d,%d,%d%s%s : %s\n",
-					    showtime(), p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
+					    showtime(), p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
 
 #endif
 					/* log the encounters of players with special heavy armour, just for informative purpose */
@@ -2770,11 +2770,11 @@ s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr
 				else {
 					if (true_artifact_p(o_ptr))
 						s_printf("%s Artifact %d picked up by %s(lv %d) at %d,%d,%d%s%s: %s\n",
-						    showtime(), o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
+						    showtime(), o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
  #if 0 /* pointless spam */
 					else if (o_ptr->name1 == ART_RANDART)
 						s_printf("%s Randart found by %s(lv %d) at %d,%d,%d%s%s : %s\n",
-						    showtime(), p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
+						    showtime(), p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
  #endif
 				}
 #endif
@@ -2782,7 +2782,7 @@ s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr
 				/* log special objects, except for seals */
 				if (o_ptr->tval == TV_SPECIAL && o_ptr->sval) {
 					s_printf("%s Special object '%s' sv=%d,x1=%d,x2=%d,q=%d,qs=%d picked up by %s(lv %d) at %d,%d,%d%s%s : %s\n",
-					    showtime(), o_name_real, o_ptr->sval, o_ptr->xtra1, o_ptr->xtra2, o_ptr->quest, o_ptr->quest_stage, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
+					    showtime(), o_name_real, o_ptr->sval, o_ptr->xtra1, o_ptr->xtra2, o_ptr->quest, o_ptr->quest_stage, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
 				}
 
 				can_use(Ind, o_ptr);
