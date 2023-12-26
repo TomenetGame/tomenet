@@ -6644,10 +6644,12 @@
 #define FF2_NO_LITE_WHITEN	0x00000020L	/* Won't change to WHITE or L_WHITE lamp light colour. For tiles that are affected from yellow light but retain their colour in white light. */
 #define FF2_LAMP_LITE_OPTIONAL	0x00000040L	/* For more floor/wall grids: Get coloured by floor/wall_lighting, if user has toggled the according option. */
 #define FF2_NO_ARTICLE		0x00000080L	/* floor feat doesn't have an article ('a(n)'/'the') in front of it when being described */
-#define FF2_GLOW		0x00000100L	/* Always visible, lit via CAVE_GLOW */
+#define FF2_GLOW		0x00000100L	/* Always visible, lit via CAVE_GLOW. */
 #define FF2_ENTER_FROM_SPECIAL	0x00000200L	/* This grid can only be entered if the player is standing on CAVE_ICKY or FF1_PROTECTED */
 #define FF2_NO_PROB		0x00000400L	/* Don't allow probability travel onto this grid */
-#define FF2_ATTR_MULTI		0x00000800L
+#define FF2_ATTR_MULTI		0x00000800L	/* Ignore feat's base colour, instead cycle through the S-line colours each time the player refreshes his view on the feat. */
+#define FF2_SHINE		0x00001000L	/* Shines light on surrounding grids, causing (CAVE_GLOW_HACK | CAVE_GLOW) on them and itself, for permanent lighting. */
+#define FF2_SHINE_FIRE		0x00002000L	/* Shines fiery light on surrounding grids, causing (CAVE_GLOW_HACK_LAMP | CAVE_GLOW) on them and itself, for permanent fire-style lighting. */
 //hole
 #define FF2_BOUNDARY		0x80000000L	/* Is permanent wall that serves as boundary of a dungeon level - cannot even be crossed by admins */
 

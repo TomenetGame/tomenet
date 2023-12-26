@@ -1707,7 +1707,8 @@ static void lake_level(struct worldpos *wpos) {
 					c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
 
 					/* No longer illuminated or known */
-					if (!(f_info[c_ptr->feat].flags2 & FF2_GLOW))
+					if (!(f_info[c_ptr->feat].flags2 & FF2_GLOW)
+					    && !(c_ptr->info & (CAVE_GLOW_HACK | CAVE_GLOW_HACK_LAMP)))
 						c_ptr->info &= ~CAVE_GLOW;
 				}
 			}
@@ -1784,7 +1785,8 @@ static void destroy_level(struct worldpos *wpos) {
 					c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
 
 					/* No longer illuminated or known */
-					if (!(f_info[c_ptr->feat].flags2 & FF2_GLOW))
+					if (!(f_info[c_ptr->feat].flags2 & FF2_GLOW)
+					    && !(c_ptr->info & (CAVE_GLOW_HACK | CAVE_GLOW_HACK_LAMP)))
 						c_ptr->info &= ~CAVE_GLOW;
 				}
 			}
@@ -2247,7 +2249,7 @@ static void recursive_river(worldpos *wpos, int x1,int y1, int x2, int y2,
 					if (distance(ty, tx, y, x) > width) cave_set_feat(wpos, ty, tx, feat2);
 					else cave_set_feat(wpos, ty, tx, feat1);
 
-					/* Lava terrain glows */
+					/* Lava terrain glows - redundant, done by cave_set_feat() as long as lava has GLOW flag in f_info? */
 					if ((feat1 == FEAT_DEEP_LAVA) ||
 					    (feat1 == FEAT_SHAL_LAVA))
 						zcave[ty][tx].info |= CAVE_GLOW;

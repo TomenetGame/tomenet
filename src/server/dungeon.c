@@ -2020,7 +2020,8 @@ void world_surface_night(struct worldpos *wpos) {
 		/* darken all */
 		if (!(f_info[c_ptr->feat].flags1 & FF1_PROTECTED) &&
 		    !(c_ptr->info & CAVE_ROOM) && /* keep houses' contents lit */
-		    !(f_info[c_ptr->feat].flags2 & FF2_GLOW)) {
+		    !(f_info[c_ptr->feat].flags2 & FF2_GLOW) &&
+		    !(c_ptr->info & (CAVE_GLOW_HACK | CAVE_GLOW_HACK_LAMP))) {
 			c_ptr->info &= ~CAVE_GLOW;
 			c_ptr->info |= CAVE_DARKEN;
 		}

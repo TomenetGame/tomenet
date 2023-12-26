@@ -1476,8 +1476,7 @@ bool player_can_see_bold(int Ind, int y, int x) {
 	w_ptr = &p_ptr->cave_flag[y][x];
 
 	/* Note that "torch-lite" yields "illumination" */
-	if ((c_ptr->info & CAVE_LITE) && (*w_ptr & CAVE_VIEW))
-		return(TRUE);
+	if ((c_ptr->info & CAVE_LITE) && (*w_ptr & CAVE_VIEW)) return(TRUE);
 
 	/* Require line of sight to the grid */
 	if (!player_has_los_bold(Ind, y, x)) return(FALSE);
@@ -7745,7 +7744,9 @@ void wiz_dark(int Ind) {
 
 				/* Process the grid */
 				*w_ptr &= ~CAVE_MARK;
-				if (!(f_info[c_ptr->feat].flags2 & FF2_GLOW)) c_ptr->info &= ~CAVE_GLOW;
+				if (!(f_info[c_ptr->feat].flags2 & FF2_GLOW)
+				    && !(c_ptr->info & (CAVE_GLOW_HACK | CAVE_GLOW_HACK_LAMP)))
+					c_ptr->info &= ~CAVE_GLOW;
 
 				/* Forget every object */
 				if (c_ptr->o_idx) {
@@ -7939,6 +7940,20 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 	/* Change the feature */
 	c_ptr->feat = feat;
 	if (f_info[feat].flags2 & FF2_GLOW) c_ptr->info |= CAVE_GLOW;
+	if (f_info[feat].flags2 & FF2_SHINE) {
+		for (i = 0; i < 8; i++) {
+			if (!in_bounds_array(y + ddy_ddd[i], x + ddx_ddd[i])) continue;
+			zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].info |= CAVE_GLOW | CAVE_GLOW_HACK;
+		}
+		zcave[y][x].info |= CAVE_GLOW | CAVE_GLOW_HACK;
+	}
+	if (f_info[feat].flags2 & FF2_SHINE_FIRE) {
+		for (i = 0; i < 8; i++) {
+			if (!in_bounds_array(y + ddy_ddd[i], x + ddx_ddd[i])) continue;
+			zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].info |= CAVE_GLOW | CAVE_GLOW_HACK_LAMP;
+		}
+		zcave[y][x].info |= CAVE_GLOW | CAVE_GLOW_HACK_LAMP;
+	}
 	aquatic_terrain_hack(zcave, x, y);
 
 	if (level_generation_time) return;
@@ -8230,6 +8245,20 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	if (c_ptr->feat != feat) c_ptr->info &= ~(CAVE_NEST_PIT | CAVE_ENCASED); /* clear teleport protection for nest grid if it gets changed; clear treasure vein remote-flag too */
 	c_ptr->feat = feat;
 	if (f_info[feat].flags2 & FF2_GLOW) c_ptr->info |= CAVE_GLOW;
+	if (f_info[feat].flags2 & FF2_SHINE) {
+		for (i = 0; i < 8; i++) {
+			if (!in_bounds_array(y + ddy_ddd[i], x + ddx_ddd[i])) continue;
+			zcave[y + ddy_ddd[i]][x + ddx_ddd[i]]. info |= CAVE_GLOW | CAVE_GLOW_HACK;
+		}
+		zcave[y][x].info |= CAVE_GLOW | CAVE_GLOW_HACK;
+	}
+	if (f_info[feat].flags2 & FF2_SHINE_FIRE) {
+		for (i = 0; i < 8; i++) {
+			if (!in_bounds_array(y + ddy_ddd[i], x + ddx_ddd[i])) continue;
+			zcave[y + ddy_ddd[i]][x + ddx_ddd[i]]. info |= CAVE_GLOW | CAVE_GLOW_HACK_LAMP;
+		}
+		zcave[y][x].info |= CAVE_GLOW | CAVE_GLOW_HACK_LAMP;
+	}
 
 	/* Area of view for a player might have changed, among other consequences.. */
 	for (i = 1; i <= NumPlayers; i++) {

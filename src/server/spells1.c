@@ -5324,7 +5324,9 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (!quiet && player_can_see_bold(Ind, y, x)) obvious = TRUE;
 
 		/* Turn off the light. */
-		if (!(f_info[c_ptr->feat].flags2 & FF2_GLOW)) c_ptr->info &= ~CAVE_GLOW;
+		if (!(f_info[c_ptr->feat].flags2 & FF2_GLOW)
+		    && !(c_ptr->info & (CAVE_GLOW_HACK | CAVE_GLOW_HACK_LAMP)))
+			c_ptr->info &= ~CAVE_GLOW;
 
 		/* Hack -- Forget "boring" grids */
 		    //if (c_ptr->feat <= FEAT_INVIS)

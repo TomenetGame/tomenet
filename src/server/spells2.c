@@ -5853,11 +5853,14 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 			if ((cs_ptr = GetCS(c_ptr, CS_KEYDOOR))) continue;
 
 			/* Lose light and knowledge */
-			c_ptr->info &= ~(CAVE_GLOW);
+			if (!(f_info[c_ptr->feat].flags2 & FF2_GLOW)
+			    && !(c_ptr->info & (CAVE_GLOW_HACK | CAVE_GLOW_HACK_LAMP)))
+				c_ptr->info &= ~CAVE_GLOW;
+
 			everyone_forget_spot(wpos, y, x);
 
 			/* Hack -- Skip the epicenter */
-			if ((y == y1) && (x == x1)) continue;
+			if (y == y1 && x == x1) continue;
 
 			/* Destroy "valid" grids */
 			//if ((cave_valid_bold(zcave, y, x)) && !(c_ptr->info & CAVE_ICKY))
@@ -5965,9 +5968,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 
 	/* Clear the "maximal blast" area */
 	for (y = 0; y < 32; y++) {
-		for (x = 0; x < 32; x++) {
-			map[y][x] = FALSE;
-		}
+		for (x = 0; x < 32; x++) map[y][x] = FALSE;
 	}
 
 	/* No one has taken any damage from this earthquake yet - mikaelh */
@@ -6020,7 +6021,9 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 #endif
 
 			/* Lose light */
-			c_ptr->info &= ~(CAVE_GLOW);
+			if (!(f_info[c_ptr->feat].flags2 & FF2_GLOW)
+			    && !(c_ptr->info & (CAVE_GLOW_HACK | CAVE_GLOW_HACK_LAMP)))
+				c_ptr->info &= ~CAVE_GLOW;
 
 			/* This can be really annoying and frustrating - mikaelh */
 			//everyone_forget_spot(wpos, y, x);
@@ -6531,7 +6534,9 @@ static void cave_temp_room_unlite(int Ind) {
 		c_ptr->info &= ~CAVE_TEMP;
 
 		/* Darken the grid */
-		if (!(f_info[c_ptr->feat].flags2 & FF2_GLOW)) c_ptr->info &= ~CAVE_GLOW;
+		if (!(f_info[c_ptr->feat].flags2 & FF2_GLOW)
+		    && !(c_ptr->info & (CAVE_GLOW_HACK | CAVE_GLOW_HACK_LAMP)))
+			c_ptr->info &= ~CAVE_GLOW;
 
 		/* Hack -- Forget "boring" grids */
 		//if (c_ptr->feat <= FEAT_INVIS)

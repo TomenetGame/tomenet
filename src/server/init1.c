@@ -1147,8 +1147,8 @@ static cptr f_info_flags2[] = {
 	"NO_PROB",
 	"ATTR_MULTI",
 
-	"XXX",
-	"XXX",
+	"SHINE",
+	"SHINE_FIRE",
 	"XXX",
 	"XXX",
 
@@ -2568,8 +2568,10 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 	max_f_idx = ++error_idx;
 
 	/* implied flags */
-	for (i = 0; i < max_f_idx; i++)
+	for (i = 0; i < max_f_idx; i++) {
 		if ((f_info[i].flags2 & FF2_BOUNDARY)) f_info[i].flags1 |= FF1_PERMANENT;
+		//if ((f_info[i].flags2 & (FF2_SHINE | FF2_SHINE_FIRE))) f_info[i].flags2 |= FF2_GLOW;
+	}
 
 	/* Success */
 	return(0);
