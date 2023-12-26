@@ -1262,13 +1262,11 @@ D:0:Oh, an underground tunnel!
 
 # Fire
 N:205:blazing fire
-G:%:y
-S:y:y:y:R:r:y:R
+G:%:f
 E:2d5:2:FIRE
 D:0:The blazing fire burns you!
-F:ATTR_MULTI
-F:FLOOR | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | GLOW
-F:DONT_NOTICE_RUNNING
+F:FLOOR | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | SHINE_FIRE
+F:DONT_NOTICE_RUNNING | NOTICE
 
 # Permanent rubble -- town use
 N:206:pile of rubble
