@@ -14825,7 +14825,6 @@ bool master_build(int Ind, char * parms) {
 	cave_type **zcave;
 
 	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
-
 	if (!is_admin(p_ptr) && (!player_is_king(Ind)) && (!guild_build(Ind))) return(FALSE);
 
 	/* extract arguments, otherwise build a wall of type new_feat */
@@ -14846,7 +14845,7 @@ bool master_build(int Ind, char * parms) {
 	if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) return(FALSE);
 
 	/* This part to be rewritten for stacked CS */
-	c_ptr->feat = new_feat;
+	cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, new_feat);
 	if (c_ptr->feat == FEAT_HOME) {
 		struct c_special *cs_ptr;
 		/* new special door creation (with keys) */
@@ -14865,8 +14864,7 @@ bool master_build(int Ind, char * parms) {
 		if (cs_ptr) cs_ptr->sc.ptr = key;
 		else KILL(key, struct key_type);
 		p_ptr->master_move_hook = NULL;	/*buggers up if not*/
-	}
-	if (c_ptr->feat == FEAT_SIGN) {
+	} else if (c_ptr->feat == FEAT_SIGN) {
 		struct c_special *cs_ptr;
 		struct floor_insc *sign;
 
