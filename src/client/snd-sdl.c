@@ -2031,7 +2031,7 @@ void weather_handle_fading(void) {
 	}
 }
 
-/* Overlay an ambient sound effect */
+/* Overlay a global, looping, ambient sound effect */
 static void play_sound_ambient(int event) {
 	Mix_Chunk *wave = NULL;
 	int s, new_ac, vols = 100;
