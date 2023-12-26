@@ -9264,6 +9264,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			int object_index = letter[idx].object;
 			int monster_index = letter[idx].monster;/* rudimentary support till actual code (see further below what i mean) has been looked at, too lazy atm - C. Blue */
 			int random = letter[idx].random;
+			int ego_index = letter[idx].ego;
 			int artifact_index = letter[idx].artifact;
 
 			if (!letter[idx].ok) s_printf("Warning '%c' not defined but used.\n", idx);
@@ -9412,6 +9413,8 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 #else /* rudimentary support yada yada yada - C. Blue */
 			else if (object_index) {
 				object_type *o_ptr = &object_type_body;
+				int k;
+
 				object_prep(o_ptr, object_index);
 				if (o_ptr->tval == TV_GOLD) {
 					o_ptr->pval = letter[idx].special; /* support for 'money' objects ^^ */
@@ -9419,14 +9422,20 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 					o_ptr->sval = k_info[o_ptr->k_idx].sval;
 				}
 				apply_magic(wpos, o_ptr, dun_level, FALSE, TRUE, FALSE, FALSE, RESF_NONE);
-				drop_near(TRUE, 0, o_ptr, -1, wpos, y, x);
+				k = drop_near(TRUE, 0, o_ptr, -1, wpos, y, x);
+				if (k > 0) o_list[k].marked2 = ITEM_REMOVAL_NEVER;
+				else s_printf("Failed to place object %d (%d,%d).\n", object_index, o_ptr->tval, o_ptr->sval);
 			}
 #endif	// 0
+
+			/* Ego item */
+			if (ego_index) {
+			}
 
 			/* Artifact */
 			if (artifact_index) {
 #if 0
-				int I_kind = 0;
+				int I_kind = 0, k;
 				artifact_type *a_ptr = &a_info[artifact_index];
 				object_type forge, *q_ptr = &forge;
 
@@ -9461,7 +9470,9 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 				a_allow_special[artifact_index] = FALSE;
 
 				/* Drop the artifact */
-				drop_near(TRUE, 0, q_ptr, -1, y, x);
+				k = drop_near(TRUE, 0, q_ptr, -1, y, x);
+				if (k > 0) o_list[k].marked2 = ITEM_REMOVAL_NEVER;
+				else s_printf("Failed to place artifact %d (%d,%d).\n", artifact_index, q_ptr->tval, q_ptr->sval);
 #endif
 			}
 
