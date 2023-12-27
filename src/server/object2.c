@@ -11457,8 +11457,8 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 
 #ifdef ENABLE_DEMOLITIONIST
 		/* Hack so they don't end up too close to orange amulets sometimes */
-		if (o_tv == TV_CHARGE) o_tv = 9;
-		if (o_tv == TV_CHEMICAL) o_tv = 10;
+		if (o_tv == TV_CHARGE) o_tv = TV_CORPSE;
+		if (o_tv == TV_CHEMICAL) o_tv = TV_EGG;
 #endif
 
 		if (o_tv == TV_SPECIAL && o_sv == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200) {
@@ -11486,8 +11486,8 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 
 #ifdef ENABLE_DEMOLITIONIST
 			/* Hack so they don't end up too close to orange amulets sometimes */
-			if (j_tv == TV_CHARGE) j_tv = 9;
-			if (j_tv == TV_CHEMICAL) j_tv = 10;
+			if (j_tv == TV_CHARGE) j_tv = TV_CORPSE;
+			if (j_tv == TV_CHEMICAL) j_tv = TV_EGG;
 #endif
 
 			if (j_tv == TV_SPECIAL && j_sv == SV_CUSTOM_OBJECT && j_ptr->xtra3 & 0x0200) {
@@ -11929,8 +11929,8 @@ void reorder_pack(int Ind) {
 
 #ifdef ENABLE_DEMOLITIONIST
 		/* Hack so they don't end up too close to orange amulets sometimes */
-		if (o_tv == TV_CHARGE) o_tv = 9;
-		if (o_tv == TV_CHEMICAL) o_tv = 10;
+		if (o_tv == TV_CHARGE) o_tv = TV_CORPSE;
+		if (o_tv == TV_CHEMICAL) o_tv = TV_EGG;
 #endif
 
 		if (o_tv == TV_SPECIAL && o_sv == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200) {
@@ -11959,8 +11959,8 @@ void reorder_pack(int Ind) {
 
 #ifdef ENABLE_DEMOLITIONIST
 			/* Hack so they don't end up too close to orange amulets sometimes */
-			if (j_tv == TV_CHARGE) j_tv = 9;
-			if (j_tv == TV_CHEMICAL) j_tv = 10;
+			if (j_tv == TV_CHARGE) j_tv = TV_CORPSE;
+			if (j_tv == TV_CHEMICAL) j_tv = TV_EGG;
 #endif
 
 			if (j_tv == TV_SPECIAL && j_sv == SV_CUSTOM_OBJECT && j_ptr->xtra3 & 0x0200) {
