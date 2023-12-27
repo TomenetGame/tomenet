@@ -7768,8 +7768,9 @@ extern int PlayerUID;
  #define SFX_TYPE_WEATHER	7	/* sfx uses 'weather' mixer settings instead of 'sound' */
  #define SFX_TYPE_AMBIENT	8
  #define SFX_TYPE_STOP		9	/* stop playing this sfx, if it is. stop playing any SFX_TYPE_NO_OVERLAP sfx if no sfx is specified. */
+ #define SFX_TYPE_AMBIENT_LOCAL	10	/* Play a looping, local ambient sound effect, that changes panning for each player accordingly to their positions */
 
- /* new in 2013: for ambient sound fx channel (inn fireplace!) -- all 'persistent' ambient sfx. */
+ /* new in 2013: for dedicated ambient sound fx channel only (inn fireplace!) -- all 'persistent' ambient sfx. */
  #define SFX_AMBIENT_NONE	-1
  #define SFX_AMBIENT_FIREPLACE	0
  #define SFX_AMBIENT_SHORE	1

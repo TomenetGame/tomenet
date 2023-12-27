@@ -1314,6 +1314,10 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 		}
 	}
 
+	if (type == SFX_TYPE_AMBIENT_LOCAL) {
+		//todo
+	}
+
 	/* Paranoia */
 	if (event < 0 || event >= SOUND_MAX_2010) return(FALSE);
 
