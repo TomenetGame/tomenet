@@ -11243,7 +11243,7 @@ int inven_carry_okay(int Ind, object_type *o_ptr, s16b tolerance) {
 	int i, r;
 	object_type *j_ptr;
 
-#if 0 /* Allow carrying multiple redundant bags, but just don't utilize them */
+#if 0 /* Allow carrying multiple redundant bags, but just don't utilize them (1/3) */
 #ifdef SUBINVEN_LIMIT_GROUP /* By having this check here, we don't need it in telekinesis_aux() actually */
 	int subinven_group = (o_ptr->tval == TV_SUBINVEN) ? get_subinven_group(o_ptr->sval) : -1;
 
@@ -11258,7 +11258,7 @@ int inven_carry_okay(int Ind, object_type *o_ptr, s16b tolerance) {
 		/* Get that item */
 		j_ptr = &p_ptr->inventory[i];
 
-#if 0 /* See comment above */
+#if 0 /* Allow carrying multiple redundant bags, but just don't utilize them (2/3) */
 #ifdef SUBINVEN_LIMIT_GROUP
 		/* For tolerance 0x20 check we postponed the inven_cnt check, so we have to do it here too, instead of returning just FALSE */
 		if (subinven_group != -1 && j_ptr->tval == TV_SUBINVEN && get_subinven_group(j_ptr->sval) == subinven_group) return(p_ptr->inven_cnt < INVEN_PACK ? -1 : FALSE);
@@ -11286,7 +11286,7 @@ int inven_carry_okay(int Ind, object_type *o_ptr, s16b tolerance) {
 		/* Check if the two items can be combined - here we can also check for !Gn inscription via 0x20 tolerance */
 		if ((r = object_similar(Ind, j_ptr, o_ptr, tolerance))) return(r);
 	}
-#if 0 /* See comment above */
+#if 0 /* Allow carrying multiple redundant bags, but just don't utilize them (3/3) */
 #ifdef SUBINVEN_LIMIT_GROUP
 	if (p_ptr->inven_cnt < INVEN_PACK) return(-1);
 #endif
