@@ -9362,8 +9362,10 @@ void slippery_floor(int oily, struct worldpos *wpos, int x, int y) {
 	if (c_ptr->slippery > 3000) c_ptr->slippery = 3000;
 
 	if (Ind) {
-		if (c_ptr->slippery > old_slippery)
+		if (c_ptr->slippery > old_slippery + 1300)
 			msg_print(Ind, "The floor becomes more slippery.");
+		else if (c_ptr->slippery > old_slippery)
+			msg_print(Ind, "The floor becomes somewhat more slippery.");
 		else
 			msg_print(Ind, "The floor is already completely covered in oil.");
 	}
