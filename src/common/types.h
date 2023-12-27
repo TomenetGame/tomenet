@@ -640,9 +640,9 @@ struct cave_type {
 
 	u16b slippery;		/* Slippery for this/1000 turns */
 
-	s16b custom_lua_tunnel_hand;		/* only if dug manually (excluding quiet_borer aka mimic forms) */
-	s16b custom_lua_tunnel;			/* any kind of tunneling success */
-	s16b custom_lua_search;			/* cave is now searchable, trigger when searched successfully */
+	s16b custom_lua_tunnel_hand;		/* only if dug manually (excluding quiet_borer aka mimic forms); negative value: just the attempt is enough (value is given to LUA as positive!) */
+	s16b custom_lua_tunnel;			/* any kind of tunneling success; negative value: just the attempt is enough (value is given to LUA as positive!) */
+	s16b custom_lua_search;			/* cave is now searchable, trigger when searched successfully; negative value: just the attempt is enough (value is given to LUA as positive!) */
 	byte custom_lua_search_diff_minus;	/* search difficulty, 0..100 subtracted from chance */
 	byte custom_lua_search_diff_chance;	/* search difficulty, 0..100% multiplied by chance */
 	s16b custom_lua_newfeat;		/* when cave's feat is terraformed/changed */

@@ -3376,6 +3376,9 @@ bool twall(int Ind, int y, int x, byte feat) {
  *
  * Digging is very difficult without a "digger" weapon, but can be
  * accomplished by strong players using heavy weapons.
+ *
+ * quiet_borer: KILL_WALL form that instantly removes the feat.
+ *
  */
 /* XXX possibly wrong */
 /* New Digging features: Uncover features or find objects - (C. Blue)
@@ -3622,6 +3625,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	/* Check the floor-hood */
 	old_floor = cave_floor_bold(zcave, y, x);
 
+	if (c_ptr->custom_lua_tunnel < 0) exec_lua(0, format("custom_tunnel(%d,%d,%d)", Ind, c_ptr->m_idx, -c_ptr->custom_lua_tunnel));
+	if (c_ptr->custom_lua_tunnel_hand < 0 && !quiet_borer) exec_lua(0, format("custom_tunnel_hand(%d,%d,%d)", Ind, c_ptr->m_idx, -c_ptr->custom_lua_tunnel_hand));
 
 	/* No tunnelling through empty air, but allow 'tunneling' the floor we're standing on to cause quakes */
 	if ((cave_floor_bold(zcave, y, x)) || (cfeat == FEAT_PERM_CLEAR)) {
