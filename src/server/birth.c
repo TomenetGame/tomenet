@@ -2936,7 +2936,11 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_lite = 1;
 		p_ptr->warning_lite_refill = 1;
 		p_ptr->warning_wield_combat = 1;
+#if WARNING_REST_TIMES == 0
+		if (!p_ptr->warning_rest) p_ptr->warning_rest = 1;
+#else
 		p_ptr->warning_rest = WARNING_REST_TIMES;
+#endif
 		p_ptr->warning_mimic = 1;
 		p_ptr->warning_dual = 1;
 		p_ptr->warning_dual_mode = 1;
@@ -3159,7 +3163,11 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 	}
 	if (p_ptr->max_plv > 15) {
 		p_ptr->warning_bpr = 1;
+#if WARNING_REST_TIMES == 0
+		if (!p_ptr->warning_rest) p_ptr->warning_rest = 1;
+#else
 		p_ptr->warning_rest = WARNING_REST_TIMES;
+#endif
 		p_ptr->warning_hungry = 1;
 		p_ptr->warning_macros = 1;
 		p_ptr->warning_edmt = 1;

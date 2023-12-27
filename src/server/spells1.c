@@ -2334,7 +2334,11 @@ destined_defeat:
 		return;
 	}
 
+#if WARNING_REST_TIMES == 0
+	if (!p_ptr->warning_rest && p_ptr->warning_rest_cooldown < 10) p_ptr->warning_rest_cooldown = 10;
+#else
 	if (p_ptr->warning_rest != WARNING_REST_TIMES && p_ptr->warning_rest_cooldown < 10) p_ptr->warning_rest_cooldown = 10;
+#endif
 }
 
 

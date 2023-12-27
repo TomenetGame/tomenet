@@ -12707,8 +12707,12 @@ static int Receive_rest(int ind) {
 			/* Set flag */
 			p_ptr->resting = TRUE;
 			/* Actually don't clear warning completely =p. Keep +1 warning in reserve..uhh */
+#if WARNING_REST_TIMES > 0
 			if (p_ptr->warning_rest < WARNING_REST_TIMES - 1) p_ptr->warning_rest = WARNING_REST_TIMES - 1;
 			else p_ptr->warning_rest = WARNING_REST_TIMES;
+#else
+			if (!p_ptr->warning_rest) p_ptr->warning_rest = 1;
+#endif
 
 			/* Make sure we aren't running */
 			p_ptr->running = FALSE;

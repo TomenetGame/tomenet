@@ -10837,15 +10837,19 @@ void process_timers() {
 		if (p_ptr->conn == NOT_CONNECTED) continue;
 		if (p_ptr->warning_rest_cooldown) {
 			p_ptr->warning_rest_cooldown--;
+//#if WARNING_REST_TIMES > 0 /* comment in, then move this to Receive_run() and Receive_walk()? */
 			if (!p_ptr->warning_rest_cooldown &&
 			    ((p_ptr->chp * 10) / p_ptr->mhp <= 5 || (p_ptr->mmp && ((p_ptr->cmp * 10) / p_ptr->mmp <= 2)))) {
 				msg_print(i, "\374\377RHINT: Press \377oSHIFT+r\377R to rest, so your hit points will");
 				msg_print(i, "\374\377R      regenerate faster! Also true for mana and stamina!");
-				p_ptr->warning_rest++;
 				p_ptr->warning_rest_cooldown = 60;
+ #if WARNING_REST_TIMES > 0
+				p_ptr->warning_rest++;
 				if (p_ptr->warning_rest == WARNING_REST_TIMES) acc_set_flags(p_ptr->accountname, ACC_WARN_REST, TRUE);
+ #endif
 				s_printf("warning_rest: %s\n", p_ptr->name);
 			}
+//#endif
 		}
 	}
 
