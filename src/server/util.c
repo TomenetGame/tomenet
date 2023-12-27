@@ -2699,7 +2699,7 @@ cptr quark_str(s32b i) {
  */
 int check_guard_inscription(s16b quark, char what) {
 	const char *ax = quark_str(quark);
-	int n;
+	int n = 0; //paranoia initialization
 
 	if (ax == NULL) return(FALSE);
 
