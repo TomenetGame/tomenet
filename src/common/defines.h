@@ -9102,31 +9102,39 @@ extern int PlayerUID;
 
 
 /* Hard-coded coordinates keeping track of special worldmap locations */
-#define WPOS_SECTOR00_X		0       /* location of our protected and used-for-special-cases sector 'sector00' */
+/* Location of our protected and used-for-special-cases sector 'sector00'. Make sure that events that use this sector don't collide! */
+#define WPOS_SECTOR00_X		0
 #define WPOS_SECTOR00_Y		0
 #define WPOS_SECTOR00_Z		0
+/* Location of the special-events sector's dungeon (must be either -1 or 1, for dungeon or tower): */
 #define WPOS_SECTOR00_Z_DUN	-1
-#define WPOS_SECTOR00_ADJAC_X	1	/* if we want to get out of sector00, what coord can be used for x? */
-#define WPOS_SECTOR00_ADJAC_Y	1	/* if we want to get out of sector00, what coord can be used for y? */
+/* If we want to get out of sector00, what coords can be used? (Used to kick/keep players out who don't participate): */
+#define WPOS_SECTOR00_ADJAC_X	1
+#define WPOS_SECTOR00_ADJAC_Y	1
 
-#define WPOS_HIGHLANDER_X	0	/* deathmatch location of global event 'Highlander Tournament' */
-#define WPOS_HIGHLANDER_Y	0
-#define WPOS_HIGHLANDER_Z	0
-#define WPOS_HIGHLANDER_DUN_Z	-1	/* dungeon location of global event 'Highlander Tournament' */
+/* Deathmatch location of global event 'Highlander Tournament': */
+#define WPOS_HIGHLANDER_X	WPOS_SECTOR00_X
+#define WPOS_HIGHLANDER_Y	WPOS_SECTOR00_Y
+#define WPOS_HIGHLANDER_Z	WPOS_SECTOR00_Z
+#define WPOS_HIGHLANDER_DUN_Z	WPOS_SECTOR00_Z_DUN	/* ...and preparation dungeon location. */
 
 /* important: note connection of WPOS_ARENA_ and 'ge_special_sector' */
-#define WPOS_ARENA_X		cfg.town_x	/* location of global event 'Arena Monster Challenge' */
-#define WPOS_ARENA_Y		cfg.town_y
-#define WPOS_ARENA_Z		2
+#define WPOS_ARENA_X		(cfg.town_x)		/* location of global event 'Arena Monster Challenge' */
+#define WPOS_ARENA_Y		(cfg.town_y)
+#define WPOS_ARENA_Z		2			/* Use top-most floor of the 'Training Tower' dungeon located at that x,y sector (Bree) */
 
-#define WPOS_PVPARENA_X		0	/* location of pvp arena for MODE_PVP players */
-#define WPOS_PVPARENA_Y		0
-#define WPOS_PVPARENA_Z		1
+#define WPOS_PVPARENA_X		WPOS_SECTOR00_X		/* location of pvp arena for MODE_PVP players */
+#define WPOS_PVPARENA_Y		WPOS_SECTOR00_Y
+#define WPOS_PVPARENA_Z		(-WPOS_SECTOR00_Z_DUN)	/* use opposite side of the sector00-dungeon, as to not interfere with any events! Because the PvP arena must be available 24/7! */
+
+/* Location of the Modules dungeon, also located in the event sector 0,0,
+   but on the opposite side of the event dungeon and above the PvP-Arena, so they don't collide: */
+#define WPOS_SECTOR00_Z_MODULE	(2 * (-WPOS_SECTOR00_Z_DUN))
 
 #ifdef ARCADE_SERVER
- #define WPOS_ARCADE_X		32
- #define WPOS_ARCADE_Y		32
- #define WPOS_ARCADE_Z		11
+ #define WPOS_ARCADE_X		(cfg.town_x)
+ #define WPOS_ARCADE_Y		(cfg.town_y)
+ #define WPOS_ARCADE_Z		3		/* one floor higher than where the 'Training Tower' town dungeon ends */
 #endif
 
 /* WPOS_IRONDEEPDIVE_X/Y are defined in defines-local.h,
@@ -9325,6 +9333,8 @@ extern int PlayerUID;
 	(sector00separation && (wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y && (wpos)->wz == WPOS_SECTOR00_Z)
 #define in_sector00_dun(wpos) \
 	(sector00separation && (wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y && (wpos)->wz * WPOS_SECTOR00_Z_DUN > 0)
+#define in_sector00_module(wpos) \
+	(sector00separation && (wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y && (wpos)->wz * SGN(WPOS_SECTOR00_Z_MODULE) >= WPOS_SECTOR00_Z_MODULE)
 
 /* in the arena monster challenge? (which should be in TT) */
 #define in_arena(wpos) \

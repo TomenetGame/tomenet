@@ -105,7 +105,7 @@
  * Non-typed sign extractor macro
  */
 #undef SGN
-#define SGN(a)		(((a) < 0)   ? (-1) : ((a) != 0))
+#define SGN(a)		(((a) < 0) ? (-1) : (((a) > 0) ? 1 : 0))
 
 
 /*
