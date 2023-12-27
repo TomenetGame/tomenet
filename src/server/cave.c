@@ -9313,13 +9313,16 @@ bool sustained_wpos(struct worldpos *wpos) {
    let's just say for now that the effect simply ends when someone slips on it. */
 void slippery_floor(int oily, struct worldpos *wpos, int x, int y) {
 	cave_type **zcave = getcave(wpos), *c_ptr;
+	int old_slippery, Ind = 0;
 
 	if (!zcave) return;
 	c_ptr = &zcave[y][x];
+	if (c_ptr->m_idx < 0) Ind = -c_ptr->m_idx;
+	old_slippery = c_ptr->slippery;
 
 	/* Fire/elec aura: burn up all the oil immediately; for now no fire effects or anything */
-	if (c_ptr->m_idx < 0 && (Players[-c_ptr->m_idx]->sh_fire || Players[-c_ptr->m_idx]->sh_elec)) {
-		msg_print(-c_ptr->m_idx, "Your aura burns up all spilled oil immediately.");
+	if (Ind && (Players[Ind]->sh_fire || Players[Ind]->sh_elec)) {
+		msg_print(Ind, "Your aura burns up all spilled oil immediately.");
 		return;
 	}
 
@@ -9351,9 +9354,17 @@ void slippery_floor(int oily, struct worldpos *wpos, int x, int y) {
 	//case FEAT_MUD:
 	//case FEAT_SAND:
 	//case FEAT_DARK_PIT:
+		if (Ind) msg_print(Ind, "The oil is completely absorbed into the ground, leaving no trace.");
 		break;
 	}
 
 	/* Cap (this/1000 times) */
 	if (c_ptr->slippery > 3000) c_ptr->slippery = 3000;
+
+	if (Ind) {
+		if (c_ptr->slippery > old_slippery)
+			msg_print(Ind, "The floor becomes more slippery.");
+		else
+			msg_print(Ind, "The floor is already completely covered in oil.");
+	}
 }
