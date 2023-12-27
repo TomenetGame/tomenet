@@ -11479,6 +11479,11 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 			j_tv = j_ptr->tval;
 			j_sv = j_ptr->sval;
 
+			if (j_tv == TV_SPECIAL && j_sv == SV_CUSTOM_OBJECT && j_ptr->xtra3 & 0x0200) {
+				j_tv = j_ptr->tval2;
+				j_sv = j_ptr->sval2;
+			}
+
 #ifdef ENABLE_SUBINVEN
 			/* Hack so subinventories are placed at the very first slots even before custom objects */
 			if (j_tv == TV_SUBINVEN) j_tv = TV_MAX + 1;
@@ -11489,11 +11494,6 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 			if (j_tv == TV_CHARGE) j_tv = TV_CORPSE;
 			if (j_tv == TV_CHEMICAL) j_tv = TV_EGG;
 #endif
-
-			if (j_tv == TV_SPECIAL && j_sv == SV_CUSTOM_OBJECT && j_ptr->xtra3 & 0x0200) {
-				j_tv = j_ptr->tval2;
-				j_sv = j_ptr->sval2;
-			}
 
 			/* Objects sort by decreasing type */
 			if (o_tv > j_tv) break;
@@ -11952,6 +11952,11 @@ void reorder_pack(int Ind) {
 			j_tv = j_ptr->tval;
 			j_sv = j_ptr->sval;
 
+			if (j_tv == TV_SPECIAL && j_sv == SV_CUSTOM_OBJECT && j_ptr->xtra3 & 0x0200) {
+				j_tv = j_ptr->tval2;
+				j_sv = j_ptr->sval2;
+			}
+
 #ifdef ENABLE_SUBINVEN
 			/* Hack so subinventories are placed at the very first slots even before custom objects */
 			if (j_tv == TV_SUBINVEN) j_tv = TV_MAX + 1;
@@ -11962,11 +11967,6 @@ void reorder_pack(int Ind) {
 			if (j_tv == TV_CHARGE) j_tv = TV_CORPSE;
 			if (j_tv == TV_CHEMICAL) j_tv = TV_EGG;
 #endif
-
-			if (j_tv == TV_SPECIAL && j_sv == SV_CUSTOM_OBJECT && j_ptr->xtra3 & 0x0200) {
-				j_tv = j_ptr->tval2;
-				j_sv = j_ptr->sval2;
-			}
 
 			/* Objects sort by decreasing type */
 			if (o_tv > j_tv) break;

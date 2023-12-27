@@ -1426,6 +1426,11 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 			j_tv = j_ptr->tval;
 			j_sv = j_ptr->sval;
 
+			if (j_tv == TV_SPECIAL && j_sv == SV_CUSTOM_OBJECT && j_ptr->xtra3 & 0x0200) {
+				j_tv = j_ptr->tval2;
+				j_sv = j_ptr->sval2;
+			}
+
 #ifdef ENABLE_SUBINVEN
 			/* Hack so subinventories are placed at the very first slots even before custom objects */
 			if (j_tv == TV_SUBINVEN) j_tv = TV_MAX + 1;
@@ -1436,11 +1441,6 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 			if (j_tv == TV_CHARGE) j_tv = TV_CORPSE;
 			if (j_tv == TV_CHEMICAL) j_tv = TV_EGG;
 #endif
-
-			if (j_tv == TV_SPECIAL && j_sv == SV_CUSTOM_OBJECT && j_ptr->xtra3 & 0x0200) {
-				j_tv = j_ptr->tval2;
-				j_sv = j_ptr->sval2;
-			}
 
 #ifdef PLAYER_STORES
 			/* Always skip store signs, since they are usually 'titles', aka above objects they describe */
@@ -5960,6 +5960,11 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr) {
 			j_tv = j_ptr->tval;
 			j_sv = j_ptr->sval;
 
+			if (j_tv == TV_SPECIAL && j_sv == SV_CUSTOM_OBJECT && j_ptr->xtra3 & 0x0200) {
+				j_tv = j_ptr->tval2;
+				j_sv = j_ptr->sval2;
+			}
+
 #ifdef ENABLE_SUBINVEN
 			/* Hack so subinventories are placed at the very first slots even before custom objects */
 			if (j_tv == TV_SUBINVEN) j_tv = TV_MAX + 1;
@@ -5970,11 +5975,6 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr) {
 			if (j_tv == TV_CHARGE) j_tv = TV_CORPSE;
 			if (j_tv == TV_CHEMICAL) j_tv = TV_EGG;
 #endif
-
-			if (j_tv == TV_SPECIAL && j_sv == SV_CUSTOM_OBJECT && j_ptr->xtra3 & 0x0200) {
-				j_tv = j_ptr->tval2;
-				j_sv = j_ptr->sval2;
-			}
 
 #ifdef PLAYER_STORES
 			/* Always skip store signs, since they are usually 'titles', aka above objects they describe */
