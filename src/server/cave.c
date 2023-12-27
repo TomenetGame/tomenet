@@ -8291,6 +8291,8 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 		    p_ptr->px == x && p_ptr->py == y)
 			set_tim_wraithstep(i, 0);
 	}
+
+	if (c_ptr->custom_lua_newfeat) exec_lua(0, format("custom_newfeat(%d,%d,%d)", 0, c_ptr->m_idx, c_ptr->custom_lua_newfeat));
 	return(TRUE);
 }
 

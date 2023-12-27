@@ -3442,7 +3442,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	int rune_proficiency = 0;
 
 	cave_type *c_ptr;
-	bool old_floor = FALSE, more = FALSE, no_quake = FALSE;
+	bool old_floor = FALSE, more = FALSE, no_quake = FALSE, door = FALSE;
 	feature_type *f_ptr;
 	cave_type **zcave;
 
@@ -3625,8 +3625,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	/* Check the floor-hood */
 	old_floor = cave_floor_bold(zcave, y, x);
 
-	if (c_ptr->custom_lua_tunnel < 0) exec_lua(0, format("custom_tunnel(%d,%d,%d)", Ind, c_ptr->m_idx, -c_ptr->custom_lua_tunnel));
-	if (c_ptr->custom_lua_tunnel_hand < 0 && !quiet_borer) exec_lua(0, format("custom_tunnel_hand(%d,%d,%d)", Ind, c_ptr->m_idx, -c_ptr->custom_lua_tunnel_hand));
+	if (c_ptr->custom_lua_tunnel < 0 && exec_lua(0, format("custom_tunnel(%d,%d,%d)", Ind, c_ptr->m_idx, c_ptr->custom_lua_tunnel))) return;
+	if (c_ptr->custom_lua_tunnel_hand < 0 && !quiet_borer && exec_lua(0, format("custom_tunnel_hand(%d,%d,%d)", Ind, c_ptr->m_idx, c_ptr->custom_lua_tunnel_hand))) return;
 
 	/* No tunnelling through empty air, but allow 'tunneling' the floor we're standing on to cause quakes */
 	if ((cave_floor_bold(zcave, y, x)) || (cfeat == FEAT_PERM_CLEAR)) {
@@ -4650,6 +4650,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 			note_spot_depth(wpos, y, x);
 			everyone_lite_spot(wpos, y, x);
+			door = TRUE;
+			if (c_ptr->custom_lua_search > 0 && exec_lua(0, format("custom_search(%d,%d,%d)", Ind, c_ptr->m_idx, c_ptr->custom_lua_search))) return;
 		} else {
 			msg_print(Ind, f_text + f_info[featm].tunnel);
 			more = TRUE;
@@ -4669,6 +4671,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			player_activate_door_trap(Ind, y, x);
 			/* got disturbed! */
 			more = FALSE;
+			door = TRUE;
 #ifdef TRAP_REVEALS_DOOR
 			/* Message */
 			msg_print(Ind, "You have found a secret door.");
@@ -4682,10 +4685,12 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			/* Redraw */
 			everyone_lite_spot(wpos, y, x);
 #endif
+			if (c_ptr->custom_lua_search > 0 && exec_lua(0, format("custom_search(%d,%d,%d)", Ind, c_ptr->m_idx, c_ptr->custom_lua_search))) return;
 		}
-
+#if 0 /* keep tunneling, as the player cannot know he's actually searching now: The feat still appears like solid wall. */
 		/* Hack -- Search */
 		if (more) search(Ind);
+#endif
 	}
 	/* Granite + misc (Ice..) */
 	else if (cfeat >= FEAT_WALL_EXTRA) {
@@ -4860,8 +4865,13 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	}
 
 	/* Cancel repetition unless we can continue */
-	if (!more) disturb(Ind, 0, 0);
-	else if (p_ptr->always_repeat) p_ptr->command_rep = PKT_TUNNEL;
+	if (!more) {
+		disturb(Ind, 0, 0);
+		if (!door) {
+			if (c_ptr->custom_lua_tunnel > 0) exec_lua(0, format("custom_tunnel(%d,%d,%d)", Ind, c_ptr->m_idx, c_ptr->custom_lua_tunnel));
+			if (c_ptr->custom_lua_tunnel_hand > 0 && !quiet_borer) exec_lua(0, format("custom_tunnel_hand(%d,%d,%d)", Ind, c_ptr->m_idx, c_ptr->custom_lua_tunnel_hand));
+		}
+	} else if (p_ptr->always_repeat) p_ptr->command_rep = PKT_TUNNEL;
 
 #ifdef EQUIPPABLE_DIGGERS
 	if (swapped) {

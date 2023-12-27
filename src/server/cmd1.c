@@ -1423,11 +1423,15 @@ void search(int Ind) {
 
 	for (y = (p_ptr->py - 1); y <= (p_ptr->py + 1); y++) {
 		for (x = (p_ptr->px - 1); x <= (p_ptr->px + 1); x++) {
-			/* Sometimes, notice things */
-			if (!magik(chance)) continue;
-
 			/* Access the grid */
 			c_ptr = &zcave[y][x];
+
+			if (c_ptr->custom_lua_search < 0 && exec_lua(0, format("custom_search(%d,%d,%d)", Ind, c_ptr->m_idx, c_ptr->custom_lua_search))) return;
+			if (c_ptr->custom_lua_search_diff_minus) chance -= c_ptr->custom_lua_search_diff_minus;
+			if (c_ptr->custom_lua_search_diff_chance) chance = (chance * c_ptr->custom_lua_search_diff_chance) / 100;
+
+			/* Sometimes, notice things */
+			if (!magik(chance)) continue;
 
 			/* Access the object */
 			o_ptr = &o_list[c_ptr->o_idx];
@@ -1452,6 +1456,7 @@ void search(int Ind) {
 				finding[findings] = 2;
 				findings++;
 			}
+			if (c_ptr->custom_lua_search > 0 && exec_lua(0, format("custom_search(%d,%d,%d)", Ind, c_ptr->m_idx, c_ptr->custom_lua_search))) return;
 			if (!findings) continue;
 
 			switch(finding[rand_int(findings)]) {
@@ -1514,6 +1519,8 @@ void search(int Ind) {
 				/* Notice it */
 				disturb(Ind, 0, 0);
 			}
+
+			if (c_ptr->custom_lua_search > 0 && exec_lua(0, format("custom_search(%d,%d,%d)", Ind, c_ptr->m_idx, c_ptr->custom_lua_search))) return;
 		}
 	}
 }
