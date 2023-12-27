@@ -3625,8 +3625,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	/* Check the floor-hood */
 	old_floor = cave_floor_bold(zcave, y, x);
 
-	if (c_ptr->custom_lua_tunnel < 0 && exec_lua(0, format("custom_tunnel(%d,%d,%d)", Ind, c_ptr->m_idx, c_ptr->custom_lua_tunnel))) return;
-	if (c_ptr->custom_lua_tunnel_hand < 0 && !quiet_borer && exec_lua(0, format("custom_tunnel_hand(%d,%d,%d)", Ind, c_ptr->m_idx, c_ptr->custom_lua_tunnel_hand))) return;
+	if (c_ptr->custom_lua_tunnel < 0 && exec_lua(0, format("custom_tunnel(%d,%d)", Ind, c_ptr->custom_lua_tunnel))) return;
+	if (c_ptr->custom_lua_tunnel_hand < 0 && !quiet_borer && exec_lua(0, format("custom_tunnel_hand(%d,%d)", Ind, c_ptr->custom_lua_tunnel_hand))) return;
 
 	/* No tunnelling through empty air, but allow 'tunneling' the floor we're standing on to cause quakes */
 	if ((cave_floor_bold(zcave, y, x)) || (cfeat == FEAT_PERM_CLEAR)) {
@@ -4651,7 +4651,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			note_spot_depth(wpos, y, x);
 			everyone_lite_spot(wpos, y, x);
 			door = TRUE;
-			if (c_ptr->custom_lua_search > 0 && exec_lua(0, format("custom_search(%d,%d,%d)", Ind, c_ptr->m_idx, c_ptr->custom_lua_search))) return;
+			if (c_ptr->custom_lua_search > 0 && exec_lua(0, format("custom_search(%d,%d)", Ind, c_ptr->custom_lua_search))) return;
 		} else {
 			msg_print(Ind, f_text + f_info[featm].tunnel);
 			more = TRUE;
@@ -4685,7 +4685,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			/* Redraw */
 			everyone_lite_spot(wpos, y, x);
 #endif
-			if (c_ptr->custom_lua_search > 0 && exec_lua(0, format("custom_search(%d,%d,%d)", Ind, c_ptr->m_idx, c_ptr->custom_lua_search))) return;
+			if (c_ptr->custom_lua_search > 0 && exec_lua(0, format("custom_search(%d,%d)", Ind, c_ptr->custom_lua_search))) return;
 		}
 #if 0 /* keep tunneling, as the player cannot know he's actually searching now: The feat still appears like solid wall. */
 		/* Hack -- Search */
@@ -4868,8 +4868,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	if (!more) {
 		disturb(Ind, 0, 0);
 		if (!door) {
-			if (c_ptr->custom_lua_tunnel > 0) exec_lua(0, format("custom_tunnel(%d,%d,%d)", Ind, c_ptr->m_idx, c_ptr->custom_lua_tunnel));
-			if (c_ptr->custom_lua_tunnel_hand > 0 && !quiet_borer) exec_lua(0, format("custom_tunnel_hand(%d,%d,%d)", Ind, c_ptr->m_idx, c_ptr->custom_lua_tunnel_hand));
+			if (c_ptr->custom_lua_tunnel > 0) exec_lua(0, format("custom_tunnel(%d,%d)", Ind, c_ptr->custom_lua_tunnel));
+			if (c_ptr->custom_lua_tunnel_hand > 0 && !quiet_borer) exec_lua(0, format("custom_tunnel_hand(%d,%d)", Ind, c_ptr->custom_lua_tunnel_hand));
 		}
 	} else if (p_ptr->always_repeat) p_ptr->command_rep = PKT_TUNNEL;
 

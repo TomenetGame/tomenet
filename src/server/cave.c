@@ -8090,7 +8090,7 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	cave_type **zcave;
 	cave_type *c_ptr;
 	struct c_special *cs_ptr;
-	int i;
+	int i, old_feat;
 	bool wall;
 	//struct town_type *t_ptr; /* have town keep track of number of feature changes (not yet implemented) */
 
@@ -8243,6 +8243,7 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 
 	/* Change the feature */
 	if (c_ptr->feat != feat) c_ptr->info &= ~(CAVE_NEST_PIT | CAVE_ENCASED); /* clear teleport protection for nest grid if it gets changed; clear treasure vein remote-flag too */
+	old_feat = c_ptr->feat;
 	c_ptr->feat = feat;
 	if (f_info[feat].flags2 & FF2_GLOW) c_ptr->info |= CAVE_GLOW;
 	if (f_info[feat].flags2 & FF2_SHINE) {
@@ -8292,7 +8293,7 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 			set_tim_wraithstep(i, 0);
 	}
 
-	if (c_ptr->custom_lua_newfeat) exec_lua(0, format("custom_newfeat(%d,%d,%d)", 0, c_ptr->m_idx, c_ptr->custom_lua_newfeat));
+	if (c_ptr->custom_lua_newlivefeat) exec_lua(0, format("custom_newlivefeat(%d,%d,%d)", old_feat, feat, c_ptr->custom_lua_newlivefeat));
 	return(TRUE);
 }
 

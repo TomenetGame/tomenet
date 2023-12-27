@@ -645,7 +645,7 @@ struct cave_type {
 	s16b custom_lua_search;			/* cave is now searchable, trigger when searched successfully; negative value: just the attempt is enough. */
 	byte custom_lua_search_diff_minus;	/* search difficulty, 0..100 subtracted from chance */
 	byte custom_lua_search_diff_chance;	/* search difficulty, 0..100% multiplied by chance */
-	s16b custom_lua_newfeat;		/* when cave's feat is terraformed/changed */
+	s16b custom_lua_newlivefeat;		/* when cave's feat is terraformed/changed */
 };
 
 /* ToME parts, arranged */

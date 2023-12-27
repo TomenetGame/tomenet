@@ -255,3 +255,13 @@ function custom_monster_awoke(Ind, m_idx, index)
 end
 function custom_monster_sighted(Ind, m_idx, index)
 end
+
+-- Custom grids:
+function custom_tunnel_hand(Ind, index)
+end
+function custom_tunnel(Ind, index)
+end
+function custom_search(Ind, index)
+end
+function custom_newlivefeat(old_feat, new_feat, index);
+end
