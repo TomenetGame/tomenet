@@ -2769,3 +2769,5 @@ extern bool pvp_disabled;
 extern s16b global_temp_n;
 extern byte global_temp_y[TEMP_MAX];
 extern byte global_temp_x[TEMP_MAX];
+
+extern bool restart_panic, restart_unstatice_bree, restart_unstatice_towns, restart_unstatice_surface, restart_unstatice_dungeons;

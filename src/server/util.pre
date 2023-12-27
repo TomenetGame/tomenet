@@ -453,3 +453,8 @@ extern s32b m_top;
 
 extern void verify_expfact(int Ind, int p);
 extern void loadmap(cptr name, int wx, int wy, int wz, int x, int y);
+extern bool restart_panic;
+extern bool restart_unstatice_bree;
+extern bool restart_unstatice_towns;
+extern bool restart_unstatice_surface;
+extern bool restart_unstatice_dungeons;

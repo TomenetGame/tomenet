@@ -1086,3 +1086,5 @@ char fake_waitxxx_ipaddr[MAX_CHARS] = { 0 };
 s16b global_temp_n;
 byte global_temp_y[TEMP_MAX];
 byte global_temp_x[TEMP_MAX];
+
+bool restart_panic = FALSE, restart_unstatice_bree = FALSE, restart_unstatice_towns = FALSE, restart_unstatice_surface = FALSE, restart_unstatice_dungeons = FALSE;

@@ -1690,7 +1690,7 @@ static bool rd_extra(int Ind) {
 	char login_char_name[80];
 
 	byte tmp8u;
-	u16b tmp16u, panic;
+	u16b tmp16u, restart_info;
 	s16b tmp16s;
 	u32b tmp32u;
 	s32b tmp32s;
@@ -2299,8 +2299,8 @@ if (p_ptr->updated_savegame == 0) {
 	else p_ptr->martyr_timeout = 0;
 
 	/* Special stuff */
-	rd_u16b(&panic);
-	if (panic) {
+	rd_u16b(&restart_info);
+	if (restart_info & 0x0001) {
 		Players[Ind]->panic = TRUE;
 		s_printf("loaded a panic-saved player %s\n", Players[Ind]->name);
 	}
@@ -3411,7 +3411,7 @@ errr rd_server_savefile() {
 
 	char savefile[MAX_PATH_LENGTH];
 
-	byte tmp8u, panic = 0;
+	byte tmp8u, restart_info = 0;
 	u16b tmp16u;
 	s16b tmp16s;
 	u32b tmp32u;
@@ -3470,8 +3470,29 @@ errr rd_server_savefile() {
 	rd_u16b(&sf_saves);
 
 	/* Was the last shutdown a panic save? - C. Blue */
-	if (!s_older_than(4, 2, 2)) rd_byte(&panic); /* no further use yet */
-	if (panic) s_printf("Last server shutdown was a panic save.\n");
+	if (!s_older_than(4, 2, 2)) rd_byte(&restart_info); /* no further use yet */
+	if (restart_info & 0x01) {
+		restart_panic = TRUE;
+		s_printf("Last server shutdown was a panic save.\n");
+	}
+	/* Two ways to implement this: 1) don't save the sectors in question, 2) don't load the sectors in question.
+	   Currenly we do it by method 1. So the job is already done and these restart_unstatice_... variables here must NOT be set. */
+	if (restart_info & 0x02) {
+		s_printf("Last server shutdown force-unstaticed Bree.\n");
+		//restart_unstatice_bree = TRUE;
+	}
+	if (restart_info & 0x04) {
+		s_printf("Last server shutdown force-unstaticed all surface towns.\n");
+		//restart_unstatice_towns = TRUE;
+	}
+	if (restart_info & 0x08) {
+		s_printf("Last server shutdown force-unstaticed all world surface.\n");
+		//restart_unstatice_surface = TRUE;
+	}
+	if (restart_info & 0x10) {
+		s_printf("Last server shutdown force-unstaticed Bree.\n");
+		//restart_unstatice_dungeons = TRUE;
+	}
 
 	/* read server state regarding any updates (for lua) - C. Blue */
 	if (!s_older_than(4, 3, 19)) {

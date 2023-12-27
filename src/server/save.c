@@ -707,7 +707,7 @@ static void wr_extra(int Ind) {
 
 	int i, j;
 	int k;
-	u16b tmp16u = 0;
+	u16b tmp16u = 0, restart_info = panic_save ? 0x0001 : 0x0000;
 	byte tmp8u = 0;
 
 	dungeon_type *d_ptr;
@@ -1037,7 +1037,7 @@ static void wr_extra(int Ind) {
 	wr_s16b(p_ptr->martyr_timeout);
 
 	/* Special stuff */
-	wr_u16b(panic_save);
+	wr_u16b(restart_info);
 	wr_u16b(p_ptr->total_winner);
 	wr_u16b(p_ptr->once_winner);
 	wr_byte(p_ptr->iron_winner);
@@ -2195,7 +2195,7 @@ static bool wr_server_savefile() {
 	int i;
 	u32b now;
 
-	byte tmp8u;
+	byte tmp8u, restart_info = 0x00;
 	u16b tmp16u;
 	u32b tmp32u;
 
@@ -2246,7 +2246,13 @@ static bool wr_server_savefile() {
 	wr_u16b(sf_saves);
 
 	/* Is this a panic save? - C. Blue */
-	if (panic_save) wr_byte(1); else wr_byte(0);
+	if (panic_save) restart_info |= 0x01;
+	/* Just for logging purpose, some unstatice flags: */
+	if (restart_unstatice_bree) restart_info |= 0x02;
+	if (restart_unstatice_towns) restart_info |= 0x04;
+	if (restart_unstatice_surface) restart_info |= 0x08;
+	if (restart_unstatice_dungeons) restart_info |= 0x10;
+	wr_byte(restart_info);
 
 	/* save server state regarding updates (lua) */
 	wr_s16b(updated_server);
@@ -2452,40 +2458,51 @@ static void new_wr_wild() {
 static void new_wr_floors() {
 	struct worldpos cwpos;
 	wilderness_type *w_ptr;
+	struct dungeon_type *d_ptr;
 	int x, y, z;
+	bool omit;
 
-	cwpos.wz = 0;
 	for (y = 0; y < MAX_WILD_Y; y++) {
 		cwpos.wy = y;
 		for (x = 0; x < MAX_WILD_X; x++) {
 			cwpos.wx = x;
 			w_ptr = &wild_info[y][x];
+			cwpos.wz = 0;
 			save_guildhalls(&cwpos);
+
 			/*
 			 * One problem here; if a wilderness tower/dungeon exists, and
 			 * the surface is not static, stair/recall informations are lost
 			 * and cause crash/infinite-loop next time.		FIXME
 			 */
-			if (getcave(&cwpos) && players_on_depth(&cwpos)) wr_floor(&cwpos);
-			if (w_ptr->flags & WILD_F_DOWN) {
-				struct dungeon_type *d_ptr = w_ptr->dungeon;
+			omit = FALSE;
+			if (restart_unstatice_bree && x == cfg.town_x && y == cfg.town_y) {
+				omit = TRUE;
+				s_printf("wr_floors(): Omitting Bree.\n");
+			}
+			if (restart_unstatice_towns && istown(&cwpos)) {
+				omit = TRUE;
+				s_printf("wr_floors(): Omitting town (%d,%d).\n", x, y);
+			}
+			if (restart_unstatice_surface) omit = TRUE; /* No log message, too spammy */
+			if (!omit) if (getcave(&cwpos) && players_on_depth(&cwpos)) wr_floor(&cwpos);
 
-				for (z = 1; z <= d_ptr->maxdepth; z++) {
-					cwpos.wz = -z;
-					if (d_ptr->level[z - 1].ondepth && d_ptr->level[z - 1].cave)
-						wr_floor(&cwpos);
+			if (!restart_unstatice_dungeons) { /* No log message, too spammy */
+				if (w_ptr->flags & WILD_F_DOWN) {
+					d_ptr = w_ptr->dungeon;
+					for (z = 1; z <= d_ptr->maxdepth; z++) {
+						cwpos.wz = -z;
+						if (d_ptr->level[z - 1].ondepth && d_ptr->level[z - 1].cave) wr_floor(&cwpos);
+					}
+				}
+				if (w_ptr->flags & WILD_F_UP) {
+					d_ptr = w_ptr->tower;
+					for (z = 1; z <= d_ptr->maxdepth; z++) {
+						cwpos.wz = z;
+						if (d_ptr->level[z - 1].ondepth && d_ptr->level[z - 1].cave) wr_floor(&cwpos);
+					}
 				}
 			}
-			if (w_ptr->flags & WILD_F_UP) {
-				struct dungeon_type *d_ptr = w_ptr->tower;
-
-				for (z = 1; z <= d_ptr->maxdepth; z++) {
-					cwpos.wz = z;
-					if (d_ptr->level[z - 1].ondepth && d_ptr->level[z - 1].cave)
-						wr_floor(&cwpos);
-				}
-			}
-			cwpos.wz = 0;
 		}
 	}
 	wr_s16b(0x7fff);	/* this could fail if we had 32767^3 areas */
