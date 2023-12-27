@@ -608,7 +608,8 @@ struct sfunc {
 struct cave_type {
 	u32b info;		/* Hack -- cave flags */
 	byte feat;		/* Hack -- feature type */
-	byte feat_org;		/* Feature type backup (todo: for wall-created grids to revert to original feat when tunneled!) */
+	byte feat_org;		/* UNUSED -- Feature type backup (TODO: for wall-created grids to revert to original feat when tunneled! Add to save/load!) */
+
 	u16b o_idx;		/* Item index (in o_list) or zero */
 	s16b m_idx;		/* Monster index (in m_list) or zero */
 				/* or negative if a player */
@@ -639,14 +640,12 @@ struct cave_type {
 
 	u16b slippery;		/* Slippery for this/1000 turns */
 
-#if 0 /* preps for lua-hacks, event maps etc */
-	s16b custom_lua_tunnel_hand;	/* only if dug manually (excluding quiet_borer aka mimic forms) */
-	s16b custom_lua_tunnel;		/* any kind of tunneling success */
-	s16b custom_lua_search;		/* cave is now searchable, trigger when searched successfully */
+	s16b custom_lua_tunnel_hand;		/* only if dug manually (excluding quiet_borer aka mimic forms) */
+	s16b custom_lua_tunnel;			/* any kind of tunneling success */
+	s16b custom_lua_search;			/* cave is now searchable, trigger when searched successfully */
 	byte custom_lua_search_diff_minus;	/* search difficulty, 0..100 subtracted from chance */
 	byte custom_lua_search_diff_chance;	/* search difficulty, 0..100% multiplied by chance */
-	s16b custom_lua_newfeat;	/* when cave's feat is terraformed/changed */
-#endif
+	s16b custom_lua_newfeat;		/* when cave's feat is terraformed/changed */
 };
 
 /* ToME parts, arranged */

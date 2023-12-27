@@ -2751,13 +2751,20 @@ static errr rd_floor(void) {
 	u16b max_y, max_x;
 
 	int i;
-	byte k, y, x;
+	byte k, y, x, n;
 	cave_type *c_ptr;
 	dun_level *l_ptr;
+	struct c_special *cs_ptr;
 
 	unsigned char runlength, feature;
 	u16b tmpinfo;
 	u32b info;
+	s16b custom_lua_tunnel_hand = 0;
+	s16b custom_lua_tunnel = 0;
+	s16b custom_lua_search = 0;
+	byte custom_lua_search_diff_minus = 0;
+	byte custom_lua_search_diff_chance = 0;
+	s16b custom_lua_newfeat = 0;
 
 
 	/*** Depth info ***/
@@ -2766,8 +2773,7 @@ static errr rd_floor(void) {
 	rd_s16b(&wpos.wx);
 	rd_s16b(&wpos.wy);
 	rd_s16b(&wpos.wz);
-	if (wpos.wx == 0x7fff && wpos.wy == 0x7fff && wpos.wz == 0x7fff)
-		return(1);
+	if (wpos.wx == 0x7fff && wpos.wy == 0x7fff && wpos.wz == 0x7fff) return(1);
 	rd_u16b(&max_y);
 	rd_u16b(&max_x);
 
@@ -2796,7 +2802,7 @@ static errr rd_floor(void) {
 	rd_byte(&tmp);
 	new_level_rand_x(&wpos, tmp);
 
-	if (l_ptr) {
+	if (l_ptr) { /* Actually well-defined here: Always TRUE for all wpos.wz != 0, ie dungeons and towers; always FALSE for world surface. */
 		time_t now;
 
 		now = time(&now);
@@ -2815,7 +2821,7 @@ static errr rd_floor(void) {
 			rd_byte(&l_ptr->refuge_x);
 			rd_byte(&l_ptr->refuge_y);
 		}
-	}
+	} //else strip_bytes(16); //wrong, while l_ptr is exactly saved for non-world-surface
 
 	/*** Run length decoding ***/
 
@@ -2830,6 +2836,14 @@ static errr rd_floor(void) {
 		else {
 			rd_u16b(&tmpinfo);
 			info = (u32b)tmpinfo;
+		}
+		if (!s_older_than(4, 9, 9)) {
+			rd_s16b(&custom_lua_tunnel_hand);
+			rd_s16b(&custom_lua_tunnel);
+			rd_s16b(&custom_lua_search);
+			rd_byte(&custom_lua_search_diff_minus);
+			rd_byte(&custom_lua_search_diff_chance);
+			rd_s16b(&custom_lua_newfeat);
 		}
 
 		/* Apply the RLE info */
@@ -2879,6 +2893,14 @@ static errr rd_floor(void) {
 			/* set flags */
 			c_ptr->info = info;
 
+			/* restore custom lua hacks */
+			c_ptr->custom_lua_tunnel_hand = custom_lua_tunnel_hand;
+			c_ptr->custom_lua_tunnel = custom_lua_tunnel;
+			c_ptr->custom_lua_search = custom_lua_search;
+			c_ptr->custom_lua_search_diff_minus = custom_lua_search_diff_minus;
+			c_ptr->custom_lua_search_diff_chance = custom_lua_search_diff_chance;
+			c_ptr->custom_lua_newfeat = custom_lua_newfeat;
+
 			/* increment our position */
 			x++;
 			if (x >= max_x) {
@@ -2890,24 +2912,19 @@ static errr rd_floor(void) {
 	}
 
 	/*** another run for c_special ***/
-	{
-		struct c_special *cs_ptr;
-		byte n;
+	while (TRUE) {
+		rd_byte(&x);
+		rd_byte(&y);
+		rd_byte(&n);	/* Number of c_special to add */
 
-		while (TRUE) {
-			rd_byte(&x);
-			rd_byte(&y);
-			rd_byte(&n);	/* Number of c_special to add */
+		/* terminated? */
+		if (x == 255 && y == 255 && n == 255) break;
 
-			/* terminated? */
-			if (x == 255 && y == 255 && n == 255) break;
-
-			c_ptr = &zcave[y][x];
-			while (n--) {
-				rd_byte(&k);
-				cs_ptr = ReplaceCS(c_ptr, k);
-				csfunc[k].load(cs_ptr);
-			}
+		c_ptr = &zcave[y][x];
+		while (n--) {
+			rd_byte(&k);
+			cs_ptr = ReplaceCS(c_ptr, k);
+			csfunc[k].load(cs_ptr);
 		}
 	}
 

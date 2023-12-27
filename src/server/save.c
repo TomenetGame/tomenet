@@ -1209,11 +1209,22 @@ static void wr_hostilities(int Ind) {
 
 static void wr_floor(struct worldpos *wpos) {
 	int y, x, i;
-	byte prev_feature = 0xff, n;
-	u32b prev_info = 0xffffffff;
+	byte n;
+
 	unsigned char runlength;
+	byte prev_feature = 0xff;
+	u32b prev_info = 0xffffffff;
+	s16b prev_custom_lua_tunnel_hand = 0xffff;
+	s16b prev_custom_lua_tunnel = 0xffff;
+	s16b prev_custom_lua_search = 0xffff;
+	byte prev_custom_lua_search_diff_minus = 0xff;
+	byte prev_custom_lua_search_diff_chance = 0xff;
+	s16b prev_custom_lua_newfeat = 0xffff;
+
 	struct c_special *cs_ptr;
 	cave_type *c_ptr, **zcave;
+	dun_level *l_ptr;
+
 
 	if (!(zcave = getcave(wpos))) return;
 #if DEBUG_LEVEL > 1
@@ -1245,19 +1256,17 @@ static void wr_floor(struct worldpos *wpos) {
 	wr_byte(level_rand_y(wpos));
 	wr_byte(level_rand_x(wpos));
 
-	{
-		dun_level *l_ptr = getfloor(wpos);
-		if (l_ptr) {
-			wr_u32b(l_ptr->id);
-			wr_u32b(l_ptr->flags1);
-			wr_u32b(l_ptr->flags2);
-			wr_byte(l_ptr->hgt);
-			wr_byte(l_ptr->wid);
-			/* IDDC_REFUGES */
-			wr_byte(l_ptr->refuge_x);
-			wr_byte(l_ptr->refuge_y);
-		}
-	}
+	l_ptr = getfloor(wpos);
+	if (l_ptr) { /* Actually well-defined here: Always TRUE for all wpos.wz != 0, ie dungeons and towers; always FALSE for world surface. */
+		wr_u32b(l_ptr->id);
+		wr_u32b(l_ptr->flags1);
+		wr_u32b(l_ptr->flags2);
+		wr_byte(l_ptr->hgt);
+		wr_byte(l_ptr->wid);
+		/* IDDC_REFUGES */
+		wr_byte(l_ptr->refuge_x);
+		wr_byte(l_ptr->refuge_y);
+	} //else for (i = 0; i < 16; i++) wr_byte(0); //wrong while l_ptr is exactly saved for non-world-surface
 
 	/*** Simple "Run-Length-Encoding" of cave ***/
 	/* for each each row */
@@ -1270,19 +1279,36 @@ static void wr_floor(struct worldpos *wpos) {
 			c_ptr = &zcave[y][x];
 
 			/* if we are starting a new run */
-			if ((!runlength) || (c_ptr->feat != prev_feature) || (c_ptr->info != prev_info)
-					|| (runlength > 254))
-			{
+			if (!runlength || runlength > 254 ||
+			    c_ptr->feat != prev_feature || c_ptr->info != prev_info ||
+			    prev_custom_lua_tunnel_hand != c_ptr->custom_lua_tunnel_hand ||
+			    prev_custom_lua_tunnel != c_ptr->custom_lua_tunnel ||
+			    prev_custom_lua_search != c_ptr->custom_lua_search ||
+			    prev_custom_lua_search_diff_minus != c_ptr->custom_lua_search_diff_minus ||
+			    prev_custom_lua_search_diff_chance != c_ptr->custom_lua_search_diff_chance ||
+			    prev_custom_lua_newfeat != c_ptr->custom_lua_newfeat) {
 				if (runlength) {
 					/* if we just finished a run, write it */
 					wr_byte(runlength);
 					wr_byte(prev_feature);
 					wr_u32b(prev_info);
+					wr_s16b(prev_custom_lua_tunnel_hand);
+					wr_s16b(prev_custom_lua_tunnel);
+					wr_s16b(prev_custom_lua_search);
+					wr_byte(prev_custom_lua_search_diff_minus);
+					wr_byte(prev_custom_lua_search_diff_chance);
+					wr_s16b(prev_custom_lua_newfeat);
 				}
 
 				/* start a new run */
 				prev_feature = c_ptr->feat;
 				prev_info = c_ptr->info;
+				prev_custom_lua_tunnel_hand = c_ptr->custom_lua_tunnel_hand;
+				prev_custom_lua_tunnel = c_ptr->custom_lua_tunnel;
+				prev_custom_lua_search = c_ptr->custom_lua_search;
+				prev_custom_lua_search_diff_minus = c_ptr->custom_lua_search_diff_minus;
+				prev_custom_lua_search_diff_chance = c_ptr->custom_lua_search_diff_chance;
+				prev_custom_lua_newfeat = c_ptr->custom_lua_newfeat;
 				runlength = 1;
 			}
 			/* otherwise continue our current run */
@@ -1292,6 +1318,12 @@ static void wr_floor(struct worldpos *wpos) {
 		wr_byte(runlength);
 		wr_byte(prev_feature);
 		wr_u32b(prev_info);
+		wr_s16b(prev_custom_lua_tunnel_hand);
+		wr_s16b(prev_custom_lua_tunnel);
+		wr_s16b(prev_custom_lua_search);
+		wr_byte(prev_custom_lua_search_diff_minus);
+		wr_byte(prev_custom_lua_search_diff_chance);
+		wr_s16b(prev_custom_lua_newfeat);
 	}
 
 	/*** another scan for c_special ***/
