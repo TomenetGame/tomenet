@@ -12965,6 +12965,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 #endif
+			else if (prefix(messagelc, "/reorder")) {
+				reorder_pack(Ind);
+				return;
+			}
 		}
 	}
 
