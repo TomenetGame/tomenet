@@ -1330,6 +1330,11 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 	object_type *j_ptr;
 	s16b o_tv = o_ptr->tval, o_sv = o_ptr->sval, j_tv, j_sv;
 
+	if (o_tv == TV_SPECIAL && o_sv == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200) {
+		o_tv = o_ptr->tval2;
+		o_sv = o_ptr->sval2;
+	}
+
 #ifdef ENABLE_SUBINVEN
 	/* Hack so subinventories are placed at the very first slots even before custom objects */
 	if (o_tv == TV_SUBINVEN) o_tv = TV_MAX + 1;
@@ -1340,11 +1345,6 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 	if (o_tv == TV_CHARGE) o_tv = TV_CORPSE;
 	if (o_tv == TV_CHEMICAL) o_tv = TV_EGG;
 #endif
-
-	if (o_tv == TV_SPECIAL && o_sv == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200) {
-		o_tv = o_ptr->tval2;
-		o_sv = o_ptr->sval2;
-	}
 
 	/* Evaluate the object */
 #ifdef PSTORE_SOLDOUT
@@ -5909,6 +5909,11 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr) {
 	object_type *j_ptr;
 	s16b o_tv = o_ptr->tval, o_sv = o_ptr->sval, j_tv, j_sv;
 
+	if (o_tv == TV_SPECIAL && o_sv == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200) {
+		o_tv = o_ptr->tval2;
+		o_sv = o_ptr->sval2;
+	}
+
 #ifdef ENABLE_SUBINVEN
 	/* Hack so subinventories are placed at the very first slots even before custom objects */
 	if (o_tv == TV_SUBINVEN) o_tv = TV_MAX + 1;
@@ -5919,11 +5924,6 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr) {
 	if (o_tv == TV_CHARGE) o_tv = TV_CORPSE;
 	if (o_tv == TV_CHEMICAL) o_tv = TV_EGG;
 #endif
-
-	if (o_tv == TV_SPECIAL && o_sv == SV_CUSTOM_OBJECT && o_ptr->xtra3 & 0x0200) {
-		o_tv = o_ptr->tval2;
-		o_sv = o_ptr->sval2;
-	}
 
 	/* Check each existing item (try to combine) */
 	for (slot = 0; slot < h_ptr->stock_num; slot++) {
