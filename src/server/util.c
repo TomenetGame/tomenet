@@ -2704,7 +2704,8 @@ int check_guard_inscription(s16b quark, char what) {
 	if (ax == NULL) return(FALSE);
 
 	while ((ax = strchr(ax, '!')) != NULL) {
-		while (*(++ax)) {
+		while (++ax) {
+			if (*ax == 0) return(FALSE); /* end of quark, exit */
 			if (*ax == ' ' || *ax == '@' || *ax == '#' || *ax == '-') break; /* end of segment, stop */
 			if (*ax == what) { /* exact match, accept */
 				/* Additionally scan for any 'amount' in case this inscription uses one */
@@ -2755,7 +2756,7 @@ int check_guard_inscription(s16b quark, char what) {
 			}
 		}
 	}
-	return(FALSE); /* end of quark, exit */
+	return(FALSE);
 }
 
 
