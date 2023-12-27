@@ -11364,12 +11364,10 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 	int i, j, k;
 	int n = -1;
-#ifdef ENABLE_SUBINVEN
- #ifdef SUBINVEN_LIMIT_GROUP
+#ifdef SUBINVEN_LIMIT_GROUP
 	bool excess = FALSE;
- #endif
-	object_type forge;
 #endif
+	object_type forge;
 	object_type *j_ptr;
 	u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5, f6 = 0, esp = 0;
 
@@ -11380,13 +11378,11 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 		/* Skip empty items */
 		if (!j_ptr->k_idx) continue;
 
-#ifdef ENABLE_SUBINVEN
- #ifdef SUBINVEN_LIMIT_GROUP
+#ifdef SUBINVEN_LIMIT_GROUP
 		if (!p_ptr->warning_subinven && !excess &&
 		    j_ptr->tval == TV_SUBINVEN && o_ptr->tval == TV_SUBINVEN &&
 		    get_subinven_group(j_ptr->tval) == get_subinven_group(o_ptr->tval))
 			excess = TRUE;
- #endif
 #endif
 
 		/* Hack -- track last item */
@@ -11445,7 +11441,8 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 	i = j;
 
 
-	/* Hack -- pre-reorder the pack */
+	/* Hack -- pre-reorder the pack.
+           Note: We skip the INVEN_PACK overflow slot, so an overflow-added item is kept in the last slot and doesn't get sorted in 'properly', hm. */
 	if (i < INVEN_PACK) {
 		s64b o_value, j_value;
 		u16b o_tv = o_ptr->tval, o_sv = o_ptr->sval, j_tv, j_sv;
@@ -11511,7 +11508,6 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 			if (o_sv < j_sv) break;
 			if (o_sv > j_sv) continue;
 
-#ifdef ENABLE_SUBINVEN
 #ifdef SUBINVEN_LIMIT_GROUP
 			/* Ignore any other sorting, especially discounted-value sorting (the rest is probably mostly paranoia),
 			   to sort in identical subinven bags _AFTER_ any already existing ones, so they remain unusable
@@ -11519,7 +11515,6 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 			if (j_ptr->tval == TV_SUBINVEN && o_ptr->tval == TV_SUBINVEN &&
 			    get_subinven_group(j_ptr->tval) == get_subinven_group(o_ptr->tval))
 				continue;
-#endif
 #endif
 
 			/* Level 0 items owned by the player come first */
@@ -11643,13 +11638,11 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 #endif
 	Send_item_newest(Ind, i);
 
-#ifdef ENABLE_SUBINVEN
 #ifdef SUBINVEN_LIMIT_GROUP
 	if (excess) {
 		msg_print(Ind, "\377yYou can only use one of each subinventory type at a time.");
 		p_ptr->warning_subinven = 1;
 	}
-#endif
 #endif
 
 #ifdef ENABLE_SUBINVEN
@@ -11892,27 +11885,18 @@ void combine_pack(int Ind) {
  */
 void reorder_pack(int Ind) {
 	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr, *j_ptr, temp;
 
-	int		i, j, k;
-
-	s64b	o_value;
-	s64b	j_value;
-
-	object_type *o_ptr;
-	object_type *j_ptr;
-
-	object_type	temp;
-
-	bool	flag = FALSE;
-
+	int i, j, k;
 	s16b o_tv, o_sv, j_tv, j_sv;
+	s64b o_value, j_value;
+
+	bool flag = FALSE;
 
 
-	/* Re-order the pack (forwards) */
+	/* Re-order the pack (forwards).
+           Note: We skip the INVEN_PACK overflow slot, so an overflow-added item is kept in the last slot and doesn't get sorted in 'properly', hm. */
 	for (i = 0; i < INVEN_PACK; i++) {
-		/* Mega-Hack -- allow "proper" over-flow */
-		if ((i == INVEN_PACK) && (p_ptr->inven_cnt == INVEN_PACK)) break;
-
 		/* Get the item */
 		o_ptr = &p_ptr->inventory[i];
 
@@ -11984,7 +11968,6 @@ void reorder_pack(int Ind) {
 			if (o_sv < j_sv) break;
 			if (o_sv > j_sv) continue;
 
-#ifdef ENABLE_SUBINVEN
 #ifdef SUBINVEN_LIMIT_GROUP
 			/* Ignore any other sorting, especially discounted-value sorting (the rest is probably mostly paranoia),
 			   to sort in identical subinven bags _AFTER_ any already existing ones, so they remain unusable
@@ -11992,7 +11975,6 @@ void reorder_pack(int Ind) {
 			if (j_ptr->tval == TV_SUBINVEN && o_ptr->tval == TV_SUBINVEN &&
 			    get_subinven_group(j_ptr->tval) == get_subinven_group(o_ptr->tval))
 				continue;
-#endif
 #endif
 
 			/* Level 0 items owned by the player come first */

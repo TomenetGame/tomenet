@@ -10779,12 +10779,10 @@ void pack_overflow(int Ind) {
 		}
 
 		if (!j) i = INVEN_PACK;
-#ifdef ENABLE_SUBINVEN
- #ifdef SUBINVEN_LIMIT_GROUP
+#ifdef SUBINVEN_LIMIT_GROUP
 		/* Be on the safe side, do NOT potentially drop a bag in use for another bag we just picked up:
 		   Too annoying to lose all its contents too, for zero potential value from the new bag item. */
 		else if (p_ptr->inventory[INVEN_PACK].tval == TV_SUBINVEN) i = INVEN_PACK;
- #endif
 #endif
 
 		/* Access the slot to be dropped */

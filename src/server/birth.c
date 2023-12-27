@@ -2170,6 +2170,8 @@ static void player_setup(int Ind, bool new) {
 
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
+	object_kind *k_ptr;
+
 
 	/* initialise "not in a store" very early on up here,
 	  for some teleport_player() calls that may follow soon */
@@ -2647,7 +2649,7 @@ static void player_setup(int Ind, bool new) {
 	everyone_lite_spot(wpos, y, x);
 	/* Hack -- Give him "awareness" of certain objects */
 	for (i = 1; i < max_k_idx; i++) {
-		object_kind *k_ptr = &k_info[i];
+		k_ptr = &k_info[i];
 
 		/* Skip "empty" objects */
 		if (!k_ptr->name) continue;

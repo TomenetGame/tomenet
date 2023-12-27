@@ -4850,10 +4850,8 @@ void observe_aux(int Ind, object_type *o_ptr) {
  #ifdef ENABLE_DEMOLITIONIST
 	if (o_ptr->tval == TV_CHARGE) msg_format(Ind, "\377s  Its default fuse length will burn down in %d seconds.", o_ptr->pval);
  #endif
- #ifdef ENABLE_SUBINVEN
-  #ifdef SUBINVEN_LIMIT_GROUP
+ #ifdef SUBINVEN_LIMIT_GROUP
 	if (o_ptr->tval == TV_SUBINVEN) msg_format(Ind, "\377s  You cannot use more than one of this type of container.");
-  #endif
  #endif
 	switch (o_ptr->tval) {
 	case TV_BLUNT:
@@ -5220,10 +5218,8 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	}
 #endif
 
-#ifdef ENABLE_SUBINVEN
- #ifdef SUBINVEN_LIMIT_GROUP
+#ifdef SUBINVEN_LIMIT_GROUP
 	if (o_ptr->tval == TV_SUBINVEN) fprintf(fff, "\377WYou cannot use more than one of this type of container at a time.\n");
- #endif
 #endif
 
 	/* Questor object! */
