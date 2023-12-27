@@ -11925,8 +11925,8 @@ void reorder_pack(int Ind) {
 		/* Get the "value" of the item */
 		o_value = object_value(Ind, o_ptr);
 
-		/* Scan every occupied slot */
-		for (j = 0; j < INVEN_PACK; j++) {
+		/* Scan every occupied slot, but stop before i, because we never move an item downwards! */
+		for (j = 0; j < i; j++) {
 			/* Get the item already there */
 			j_ptr = &p_ptr->inventory[j];
 
@@ -11996,9 +11996,8 @@ void reorder_pack(int Ind) {
 			if (o_value > j_value) break;
 			if (o_value < j_value) continue;
 		}
-
-		/* Never move down */
-		if (j >= i) continue;
+		/* Nothing found to break for and move upwards? */
+		if (j == i) continue;
 
 		/* Take note */
 		flag = TRUE;
