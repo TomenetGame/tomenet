@@ -7773,36 +7773,36 @@ void wiz_dark(int Ind) {
 	}
 }
 
-// #ifdef ARCADE_SERVER
-// Also used for module.lua - Kurzel
+#if defined(ARCADE_SERVER) || defined(DM_MODULES)
 extern int check_feat(worldpos *wpos, int y, int x) {
 	cave_type **zcave;
 	cave_type *c_ptr;
 
 	if (!(zcave = getcave(wpos))) return(0);
 
-	if (!in_bounds(y, x)) return(0);
+	if (!in_bounds_array(y, x)) return(0); // include BOUNDARY feats - Kurzel
 
 	c_ptr = &zcave[y][x];
 	return(c_ptr->feat);
 }
-// #endif
-// #ifdef DM_MODULES
-extern int dun_get_wid(worldpos *wpos) {
+#endif
+
+#ifdef DM_MODULES
+int dun_get_wid(worldpos *wpos) {
 	struct dun_level *l_ptr;
 
 	if (!(l_ptr = getfloor(wpos))) return(0);
 
 	return(l_ptr->wid);
 }
-extern int dun_get_hgt(worldpos *wpos) {
+int dun_get_hgt(worldpos *wpos) {
 	struct dun_level *l_ptr;
 
 	if (!(l_ptr = getfloor(wpos))) return(0);
 
 	return(l_ptr->hgt);
 }
-extern int check_monster(worldpos *wpos, int y, int x) {
+int check_monster(worldpos *wpos, int y, int x) {
 	cave_type **zcave;
 	cave_type *c_ptr;
 	monster_type *m_ptr;
@@ -7818,7 +7818,7 @@ extern int check_monster(worldpos *wpos, int y, int x) {
 		return 0;
 	}
 }
-extern int check_monster_ego(worldpos *wpos, int y, int x) {
+int check_monster_ego(worldpos *wpos, int y, int x) {
 	cave_type **zcave;
 	cave_type *c_ptr;
 	monster_type *m_ptr;
@@ -7832,7 +7832,7 @@ extern int check_monster_ego(worldpos *wpos, int y, int x) {
 		return (m_ptr->ego);
 	} else return 0;
 }
-extern int check_item_tval(worldpos *wpos, int y, int x) {
+int check_item_tval(worldpos *wpos, int y, int x) {
 	cave_type **zcave;
 	cave_type *c_ptr;
 	object_type *o_ptr;
@@ -7847,7 +7847,7 @@ extern int check_item_tval(worldpos *wpos, int y, int x) {
 	
 	return (o_ptr->tval);
 }
-extern int check_item_sval(worldpos *wpos, int y, int x) {
+int check_item_sval(worldpos *wpos, int y, int x) {
 	cave_type **zcave;
 	cave_type *c_ptr;
 	object_type *o_ptr;
@@ -7862,16 +7862,21 @@ extern int check_item_sval(worldpos *wpos, int y, int x) {
 	
 	return (o_ptr->sval);
 }
-extern void place_item_vals(worldpos *wpos, int y, int x, int tval, int sval) {
+
+// Basic wish, then drop the item. - Kurzel
+void place_item_module(worldpos *wpos, int y, int x, int tval, int sval) {
 	object_type forge;
-	object_wipe(&forge);
-	invcopy(&forge, lookup_kind(tval, sval));
-	forge.number = 1;
-	apply_magic(wpos, &forge, -2, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
-	drop_near(TRUE, 0, &forge, -1, wpos, y, x);
+	object_type *o_ptr = &forge;
+	object_wipe(o_ptr);
+	invcopy(o_ptr, lookup_kind(tval, sval));
+	o_ptr->number = 1;
+	o_ptr->marked2 = ITEM_REMOVAL_NEVER; // do NOT move, plx (thx C.Blue)
+	apply_magic(wpos, o_ptr,
+		(in_module(wpos) ? exec_lua(0, format("return adventure_locale(%d, 1)", wpos->wz)) : -2),
+		TRUE, TRUE, FALSE, FALSE, RESF_NONE); // use native depth if not loading as an event
+	drop_near(TRUE, 0, o_ptr, -1, wpos, y, x);
 }
-// #endif
-// LUA would miss these without #define ?
+#endif
 
 /*
  * Change the "feat" flag for a grid, and notice/redraw the grid
@@ -7890,7 +7895,15 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 	bool deep_water = l_ptr && (l_ptr->flags1 & LF1_DEEP_WATER);
 
 	if (!(zcave = getcave(wpos))) return;
+#ifdef DM_MODULES
+	if (!(wpos->wz) && !in_bounds(y, x)) return; // surface fix, eg. Bree!
+	if (!in_bounds_array(y, x)) return; // include BOUNDARY feats - Kurzel
+	/* Handle Fountains */
+	if (feat == FEAT_FOUNTAIN) return place_fountain(wpos, y, x);
+	if (feat == FEAT_FOUNTAIN_BLOOD) return place_fountain_of_blood(wpos, y, x);
+#else
 	if (!in_bounds(y, x)) return;
+#endif
 	c_ptr = &zcave[y][x];
 
 	/* Trees in greater fire become dead trees at once */
@@ -9203,6 +9216,20 @@ void player_weather(int Ind, bool entered_level, bool weather_changed, bool pane
 
 	/* running custom weather for debugging purpose? */
 	if (p_ptr->custom_weather) return;
+
+#ifdef DM_MODULES
+	if (in_module(&p_ptr->wpos)) {
+		w = ((entered_level) ? ((exec_lua(0, format("return adventure_weather(%d, 1)", p_ptr->wpos.wz))) ? 200 : -1) : 0);
+		Send_weather(Ind,
+				((w == -1) ? -1 : (exec_lua(0, format("return adventure_weather(%d, 1)", p_ptr->wpos.wz)))), // weather: 200 + 0 or 1,2,3
+				exec_lua(0, format("return adventure_weather(%d, 2)", p_ptr->wpos.wz)), // wind: 0 or 3 (default: 0)
+				exec_lua(0, format("return adventure_weather(%d, 3)", p_ptr->wpos.wz)), // gen_speed: 5 or 8 (default: WEATHER_GEN_TICKS)
+				exec_lua(0, format("return adventure_weather(%d, 4)", p_ptr->wpos.wz)), // intensity: 9, 3 or 2 (default: WEATHER_GEN_TICKS)
+				exec_lua(0, format("return adventure_weather(%d, 5)", p_ptr->wpos.wz)), // speed: 9 or 3 (default: WEATHER_GEN_TICKS)
+				FALSE, TRUE);
+		return;
+	}
+#endif
 
 	/* not in dungeon? erase weather and exit */
 	if (p_ptr->wpos.wz) {
