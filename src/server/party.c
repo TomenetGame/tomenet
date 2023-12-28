@@ -2404,6 +2404,9 @@ int party_add(int adder, cptr name) {
 	    !on_irondeepdive(&p_ptr->wpos) &&
  #endif
 #endif
+#ifdef MODULE_ALLOW_INCOMPAT
+	    !in_module(&p_ptr->wpos) &&
+#endif
 	/* Everlasting and other chars cannot be in the same party */
 	    (compat_mode(parties[party_id].cmode, p_ptr->mode))) {
 		msg_format(adder, "\377yYou cannot form a party with %s characters.", compat_mode(parties[party_id].cmode, p_ptr->mode));
@@ -2466,7 +2469,7 @@ int party_add_self(int Ind, cptr party) {
 #endif
 	struct account acc;
 	bool success;
-#ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
+#if defined(IRONDEEPDIVE_ALLOW_INCOMPAT) || defined(MODULE_ALLOW_INCOMPAT)
 	struct worldpos wpos_other = { -1, -1, -1};
 #endif
 
@@ -2499,7 +2502,7 @@ int party_add_self(int Ind, cptr party) {
 	ids = player_id_list(&id_list, acc.id);
 	for (i = 0; i < ids; i++) {
 		if (lookup_player_party(id_list[i]) == party_id) {
-#ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
+#if defined(IRONDEEPDIVE_ALLOW_INCOMPAT) || defined(MODULE_ALLOW_INCOMPAT)
 			wpos_other = lookup_player_wpos(id_list[i]);
 #endif
 #ifdef IRON_TEAM_LEVEL9
@@ -2532,6 +2535,9 @@ int party_add_self(int Ind, cptr party) {
  #else
 	    !(on_irondeepdive(&p_ptr->wpos) && on_irondeepdive(&wpos_other)) &&
  #endif
+#endif
+#ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
+			!(in_module(&p_ptr->wpos) && in_module(&wpos_other)) &&
 #endif
 	    compat_mode(p_ptr->mode, parties[party_id].cmode)) {
 		msg_format(Ind, "\377yYou cannot join %s parties.", compat_mode(p_ptr->mode, parties[party_id].cmode));
