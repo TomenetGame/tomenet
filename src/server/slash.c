@@ -3073,6 +3073,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				for (i = 0; i < MAX_GLOBAL_EVENTS; i++) if ((global_event[i].getype != GE_NONE) && (global_event[i].hidden == FALSE || admin)) {
 					n++;
 					if (n == 1) msg_print(Ind, "\377WCurrently ongoing events:");
+#ifdef DM_MODULES
+					if ((global_event[i].getype == GE_ADVENTURE) && (global_event[i].state[1] == 1)) {
+						msg_format(Ind, "  \377U%d\377W) '%s' accepts challengers indefinitely.", i+1, global_event[i].title);
+						continue;
+					}
+#endif
 					/* Event still in announcement phase? */
 					at = global_event[i].announcement_time - (turn - global_event[i].start_turn) / cfg.fps;
 					if (at > 0) {
@@ -3119,11 +3125,21 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					strcpy(signup, format(" Type \377U/evsign %d\377W to sign up!", k));
 
 				msg_format(Ind, "\377sInfo on event #%d '\377s%s\377s':", k, global_event[k0].title);
+#ifdef DM_MODULES
+				if (global_event[k0].getype == GE_ADVENTURE) {
+					msg_print(Ind, " BETA: This event is an \"Adventure Module\" - a dungeon filled with   ");
+					msg_print(Ind, "       challenges designed for characters in a specific level range!   ");
+					msg_print(Ind, "                                                                       ");
+				}
+#endif
 				for (i = 0; i < 10; i++) if (strcmp(global_event[k0].description[i], ""))
 					msg_print(Ind, global_event[k0].description[i]);
 				if (global_event[k0].noghost) msg_print(Ind, "\377RIn this event death is permanent - if you die your character will be erased!");
 
 //				msg_print(Ind, "\377d ");
+#ifdef DM_MODULES
+				if ((global_event[k0].getype == GE_ADVENTURE) && (global_event[k0].state[1] == 1)) return;
+#endif
 				if (at >= 120) {
 					msg_format(Ind, "\377WThis event will start in %ld minute%s.%s", at / 60, at / 60 == 1 ? "" : "s", signup);
 				} else if (at > 0) {
@@ -3165,6 +3181,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (global_event[k0].signup_time == -1)
 				msg_print(Ind, "\377yThat event doesn't offer to sign up.");
 			else if (!global_event[k0].signup_time &&
+#ifdef DM_MODULES
+						((global_event[k0].getype == GE_ADVENTURE) &&
+						!(global_event[k0].state[1] == 1)) &&
+#endif
 				    (!global_event[k0].announcement_time ||
 				    (global_event[k0].announcement_time - (turn - global_event[k0].start_turn) / cfg.fps <= 0)))
 				msg_print(Ind, "\377yThat event has already started.");
@@ -3178,6 +3198,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 		else if (prefix(messagelc, "/evunsign")) {
+#ifdef DM_MODULES
+			int n = 0;
+#endif
 			int k0 = k - 1;
 
 			if ((tk < 1) || (k < 1) || (k > MAX_GLOBAL_EVENTS))
@@ -3187,6 +3210,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (global_event[k0].signup_time == -1)
 				msg_print(Ind, "\377yThat event doesn't offer to sign up.");
 			else if (!global_event[k0].signup_time &&
+#ifdef DM_MODULES
+						((global_event[k0].getype == GE_ADVENTURE) &&
+						!(global_event[k0].state[1] == 1)) &&
+#endif
 				    (!global_event[k0].announcement_time ||
 				    (global_event[k0].announcement_time - (turn - global_event[k0].start_turn) / cfg.fps <= 0)))
 				msg_print(Ind, "\377yThat event has already started.");
@@ -3200,6 +3227,26 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_broadcast_format(Ind, "\374\377s%s signed off from %s.", p_ptr->name, ge->title);
 					ge->participant[i] = 0;
 					p_ptr->global_event_type[k0] = GE_NONE;
+
+#ifdef DM_MODULES
+					/* If the adventure is pending, possibly retract sign-up phase */
+					if (ge->state[1] == 2) {
+						n = 0;
+						for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
+							if (!ge->participant[j]) continue;
+							for (i = 1; i <= NumPlayers; i++) {
+								if (Players[i]->id != ge->participant[j]) continue;
+								n++;
+							}
+							
+						}
+						if (!n) { // if zero participants, reset
+							for (j = 0; j < MAX_GE_PARTICIPANTS; j++) ge->participant[j] = 0; // remove offline participants
+							ge->state[1] = 1;
+							announce_global_event(k0);
+						}
+					}
+#endif
 
 					return;
 				}
@@ -3302,7 +3349,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* actually create temporary Arena tower at reserved wilderness sector 0,0! */
 			apos.wx = 0; apos.wy = 0; apos.wz = 0;
 			if (!wild_info[apos.wy][apos.wx].tower) {
+#ifdef DM_MODULES
+				add_dungeon(&apos, 1, 10, DF1_NO_RECALL | DF1_SMALLEST, // 1 pvp arena, 9 floors for modules - Kurzel
+#else
 				add_dungeon(&apos, 1, 1, DF1_NO_RECALL | DF1_SMALLEST,
+#endif
 				    DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK | DF2_RANDOM, DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS, TRUE, 0, 0, 0, 0);
 				fresh_arena = TRUE;
 			}
@@ -7197,7 +7248,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/enlight") || prefix(messagelc, "/en")) {
-				wiz_lite_extra(Ind);
+				wiz_lite(Ind);
 				//(void)detect_treasure(Ind, DEFAULT_RADIUS * 2);
 				//(void)detect_object(Ind, DEFAULT_RADIUS * 2);
 				(void)detect_treasure_object(Ind, DEFAULT_RADIUS * 2);
@@ -9129,21 +9180,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "done (%d).", i);
 				return;
 			}
-			/* local loadmap (at admin position, top left = x,y) */
-			else if (prefix(messagelc, "/lloadmap")) {
-				int xstart = p_ptr->px, ystart = p_ptr->py;
-
-				if (tk < 1) {
-					msg_print(Ind, "Usage: /lloadmap t_<mapname>.txt");
-					return;
-				}
-				msg_print(Ind, "Trying to load map locally..");
-
-				i = process_dungeon_file(format("t_%s.txt", message3), &p_ptr->wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
-				wpos_apply_season_daytime(&p_ptr->wpos, getcave(&p_ptr->wpos));
-				msg_format(Ind, "done (%d).", i);
-				return;
-			}
 			else if (prefix(messagelc, "/lqm")) { //load quest map
 				int xstart = p_ptr->px, ystart = p_ptr->py;
 
@@ -9269,6 +9305,29 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				while (message3[msgpos] && message3[msgpos] != 32) msgpos++;
 				if (message3[msgpos] && message3[++msgpos]) strcpy(message4, message3 + msgpos);
 				else strcpy(message4, "");
+#ifdef DM_MODULES
+				// Hack - /gestart <adventure title> - Kurzel
+				if (!(atoi(token[1]) > 0)) {
+					// Catch typos in the title by checking whether it was indexed?
+					if (!exec_lua(0, format("return adventure_extra(\"%s\", 1)", message3))) {
+						msg_print(Ind, "Error: adventure not found!");
+						return;
+					}
+					// Forbid running duplicate adventures for now, due to identical LOCALE_00 placement!
+					for (i = 0; i < MAX_GLOBAL_EVENTS; i++) {
+						if (global_event[i].getype != GE_ADVENTURE) continue;
+						// s_printf("strcmp(message3,global_event[i].title) %d\n",strcmp(message3,global_event[i].title));
+						if (!(strcmp(message3,global_event[i].title) == 0)) continue; // strcmp() returns 0 if equal
+						// s_printf("global_event: i %d global_event[i].getype %d global_event[i].title %s global_event[i].state[0] %d\n",i,global_event[i].getype,global_event[i].title, global_event[i].state[0]);
+						if (global_event[i].state[0] || global_event[i].state[1]) {
+							msg_print(Ind, "Error: adventure already running!");
+							return;
+						}
+					}
+					err = start_global_event(Ind, GE_ADVENTURE, message3);
+					return;
+				} else
+#endif
 				err = start_global_event(Ind, atoi(token[1]), message4);
 				if (err) msg_print(Ind, "Error: no more global events.");
 				return;
@@ -12965,10 +13024,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 #endif
-			else if (prefix(messagelc, "/reorder")) {
-				reorder_pack(Ind);
-				return;
-			}
 		}
 	}
 
