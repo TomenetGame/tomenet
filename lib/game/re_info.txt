@@ -749,7 +749,7 @@ F:R_CHAR_o
 
 #Various types of troll king, pretty rare.
 N:60:King
-G:T:*
+G:*:*
 I:+10:%200d%200:+0:+0:=0
 W:+15:50:+0:%500:A
 F:R_CHAR_T
