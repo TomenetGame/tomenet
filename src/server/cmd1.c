@@ -862,6 +862,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 		//else: impossible to reach as there is no shard-immunity
 	}
 
+#if 0
 #ifdef TEST_SERVER
 	msg_format(Ind, "bonus %d, tdam %d, mult %d, FAC-MUL %d, thr: %d, ammo: %d, MA: %d, weap: %d", bonus, tdam, mult, FACTOR_MULT,
 	    (tdam * (((mult - FACTOR_MULT) * 10L) / 4 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT),
@@ -872,6 +873,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 	else if (o_ptr && is_ammo(o_ptr->tval)) msg_print(Ind, "shot");
 	else if (!o_ptr || !o_ptr->k_idx) msg_print(Ind, "ma/bare");
 	else msg_print(Ind, "weapon");
+#endif
 #endif
 
 	/* If the object was thrown, reduce brand effect by 75%
@@ -7859,6 +7861,8 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 						msg_print(Ind, "There is a mountain blocking your way.");
 					} else if (c_ptr->feat == FEAT_ABYSS || c_ptr->feat == FEAT_ABYSS_BOUNDARY) {
 						msg_print(Ind, "There is an endless abyss blocking your way.");
+					} else if (c_ptr->feat == FEAT_GLIT_WATER) { // BOUNDARY flavor - Kurzel
+						msg_print(Ind, "There is endless glittering water blocking your way.");
 					} else if (c_ptr->feat == FEAT_CLOUDYSKY) {
 						msg_print(Ind, "There is an endless depth below the clouds, blocking your way.");
 					} else if (c_ptr->feat == FEAT_SICKBAY_DOOR) {
