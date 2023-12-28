@@ -1006,6 +1006,10 @@
    (form party, trade items) while inside the Ironman Deep Dive Challenge? */
 #define IRONDEEPDIVE_ALLOW_INCOMPAT
 
+#ifdef DM_MODULES
+ #define MODULE_ALLOW_INCOMPAT // See also ALLOW_NR_CROSS_PARTIES - Kurzel
+#endif
+
 /* Real Iron: Un-cheeze IDDC, also indirectly removing shop-scumming craziness from infinite money supplies:
    - Allow forming a party _outside_ of the IDDC but within the IDDC sector.
    - Cannot re-party inside the IDDC.
@@ -8975,6 +8979,9 @@ extern int PlayerUID;
 #define GE_ARENA_MONSTER	3	/* Areana Monster Challenge */
 #define GE_GAME_RUGBY		4	/* [NOT YET IMPLEMENTED] Evileye's good ole game of rugby, now in event-form ;) */
 #define GE_DUNGEON_KEEPER	5	/* 'Dungeon Keeper' Labyrinth */
+#ifdef DM_MODULES
+ #define GE_ADVENTURE	6	/* Load DM modules as part of an adventure! - Kurzel */
+#endif
 
 /* player flags while participating in global events (p_ptr->global_event_temp) */
 #define PEVF_NONE		0x00000000
@@ -9335,6 +9342,10 @@ extern int PlayerUID;
 	(sector00separation && (wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y && (wpos)->wz * WPOS_SECTOR00_Z_DUN > 0)
 #define in_sector00_module(wpos) \
 	((wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y && (wpos)->wz * SGN(WPOS_SECTOR00_Z_MODULE) >= WPOS_SECTOR00_Z_MODULE)
+#ifdef DM_MODULES
+#define in_sector00_xy(wpos) \
+	(sector00separation && (wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y)
+#endif
 
 /* in the arena monster challenge? (which should be in TT) */
 #define in_arena(wpos) \
@@ -9380,6 +9391,11 @@ extern int PlayerUID;
 	((wpos)->wx == WPOS_DF_X && (wpos)->wy == WPOS_DF_Y && (wpos)->wz == -WPOS_DF_Z)
 #define in_deathfate_x(wpos) \
 	((wpos)->wx == WPOS_DF_X && (wpos)->wy == WPOS_DF_Y && (wpos)->wz)
+
+#ifdef DM_MODULES
+ #define in_module(wpos) \
+  ((wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y && (wpos)->wz > WPOS_PVPARENA_Z)
+#endif
 
 /* constants for get_item() to be transmitted to the client for choosing an item_tester_hook */
 #define ITH_NONE	0
