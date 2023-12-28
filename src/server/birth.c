@@ -1824,6 +1824,7 @@ static void player_outfit(int Ind) {
 		(void)inven_carry(Ind, o_ptr);
 	}
 
+#if 0
 #ifdef TEST_SERVER
 	invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_DEATH));
 	o_ptr->discount = 100;
@@ -1834,6 +1835,7 @@ static void player_outfit(int Ind) {
 	object_aware(Ind, o_ptr);
 	o_ptr->ident |= ID_MENTAL;
 	(void)inven_carry(Ind, o_ptr);
+#endif
 #endif
 
 	//admin_outfit(Ind);
@@ -2228,7 +2230,32 @@ static void player_setup(int Ind, bool new) {
 	   with a certain character during highlander tourneys and continue to level it up
 	   infinitely! :) So, who gets disconnected will be removed from the event! */
 	//if (sector00separation && ...) {
+#ifdef DM_MODULES
+	/* count validate participation in any active events, otherwise kick */
+	count = 0;
+	if (in_module(wpos)) {
+		global_event_type *ge;
+		for (x = 0; x < MAX_GLOBAL_EVENTS; x++) {
+			ge = &global_event[x];
+			if (!ge->getype) continue;
+			for (y = 0; y < MAX_GE_PARTICIPANTS; y++) {
+				if (!ge->participant[y]) continue;
+				count++;
+				/* must reapply this? */
+				if (ge->noghost) p_ptr->global_event_temp |= PEVF_NOGHOST_00;
+			}
+		}
+	}
+	if (!count) {
+ #ifdef MODULE_ALLOW_INCOMPAT
+		/* need to leave party, since we might be teamed up with incompatible char mode players! */
+		if (p_ptr->party && !p_ptr->admin_dm && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)) party_leave(i, FALSE);
+ #endif
+	}
+	if (!count && wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y) {
+#else
 	if (wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y) {
+#endif
 		/* Teleport him out of the event area */
 #if 0
 		switch rand_int(3) {
