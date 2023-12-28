@@ -541,20 +541,18 @@ extern dun_level *getfloor(struct worldpos *wpos);
 extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
 extern bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat);
 extern bool cave_set_feat_live_ok(worldpos *wpos, int y, int x, int feat);
-// #ifdef ARCADE_SERVER
-// Also used for module.lua - Kurzel
+#if defined(ARCADE_SERVER) || defined(DM_MODULES)
 extern int check_feat(worldpos *wpos, int y, int x);
-// #endif
-// #ifdef DM_MODULES
+#endif
+#ifdef DM_MODULES
 extern int dun_get_wid(worldpos *wpos);
 extern int dun_get_hgt(worldpos *wpos);
 extern int check_monster(worldpos *wpos, int y, int x);
 extern int check_monster_ego(worldpos *wpos, int y, int x);
 extern int check_item_tval(worldpos *wpos, int y, int x);
 extern int check_item_sval(worldpos *wpos, int y, int x);
-extern void place_item_vals(worldpos *wpos, int y, int x, int tval, int sval);
-// #endif
-// LUA would miss these without #define ?
+extern void place_item_module(worldpos *wpos, int y, int x, int tval, int sval);
+#endif
 extern struct dungeon_type *getdungeon(struct worldpos *wpos);
 extern bool can_go_up(struct worldpos *wpos, byte mode);
 extern bool can_go_down(struct worldpos *wpos, byte mode);
@@ -964,11 +962,14 @@ extern void alloc_dungeon_level(struct worldpos *wpos);
 extern void dealloc_dungeon_level(struct worldpos *wpos);
 extern void generate_cave(struct worldpos *wpos, player_type *p_ptr);
 #ifdef DM_MODULES
-extern void generate_cave_blank(int wx, int wy, int wz, int W, int H); // wpos
+extern struct worldpos make_wpos(int wx, int wy, int wz);
+extern void summon_override(bool force);
+extern void generate_cave_blank(worldpos *wpos, int W, int H, bool light);
 #endif
 extern void regenerate_cave(struct worldpos *wpos);
 extern bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, player_type *p_ptr);
 extern void place_fountain(struct worldpos *wpos, int y, int x);
+extern void place_fountain_of_blood(struct worldpos *wpos, int y, int x);
 extern bool place_between_targetted(struct worldpos *, int y, int x, int ty, int tx);
 extern bool place_between_dummy(struct worldpos *wpos, int y, int x);
 extern void place_between_ext(struct worldpos *wpos, int y, int x, int hgt, int wid);
