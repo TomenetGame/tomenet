@@ -7946,6 +7946,36 @@ int start_global_event(int Ind, int getype, char *parm) {
 		ge->min_participants = 1; /* EXPERIMENTAL */
 		if (atoi(parm)) ge->announcement_time = atoi(parm);
 		break;
+#ifdef DM_MODULES
+	case GE_ADVENTURE: /* DM Adventure Modules - Kurzel */
+		/* parameters: ie. /gestart <predefined type> [parameters...]
+		[<str>]		"Adventure Module" title definition from adventures.lua */
+
+		// strcpy(ge->title, format("Adventure Module - %s", parm));
+		strcpy(ge->title, format("%s", parm));
+
+		// GE_TYPE announcement_time signup_time end_turn min_participants limited noghost challenge
+		ge->announcement_time = 60 * exec_lua(0, format("return adventure_type(\"%s\", 1)", parm));
+		ge->signup_time = 60 * exec_lua(0, format("return adventure_type(\"%s\", 2)", parm));
+		ge->end_turn = ge->start_turn + cfg.fps * 60 * exec_lua(0, format("return adventure_type(\"%s\", 3)", parm));
+
+		ge->min_participants = exec_lua(0, format("return adventure_type(\"%s\", 4)", parm));
+		ge->limited = exec_lua(0, format("return adventure_type(\"%s\", 5)", parm));
+		ge->noghost = exec_lua(0, format("return adventure_type(\"%s\", 6)", parm));
+		// Provides the /evinfo warning, check applies PEVF_NOGHOST_00 elsewhere - Kurzel
+
+		// Indefinite "challenge" events, managed by a DM. Use /gestop to cancel.
+		ge->state[1] = exec_lua(0, format("return adventure_type(\"%s\", 7)", parm));
+		if (ge->state[1] == 1) announce_global_event(n);
+
+		for (i = 0; i < 64; i++) // GE_EXTRA in adventures.lua (default 0)
+			ge->extra[i] = exec_lua(0, format("return adventure_extra(\"%s\", %d)", parm, i+1));
+
+		for (i = 0; i < 10; i++) // GE_DESCRIPTION in adventures.lua (default "")
+			strcpy(ge->description[i], string_exec_lua(0, format("return adventure_description(\"%s\", %d)", parm, i+1)));
+
+		break;
+#endif
 	}
 
 	/* Fix limits */
@@ -7999,6 +8029,9 @@ void stop_global_event(int Ind, int n) {
 	ge->start_turn = turn;
 	ge->announcement_time = -1; /* enter the processing phase, */
  #endif
+#ifdef DM_MODULES
+  if (ge->getype == GE_ADVENTURE) ge->state[1] = 0; /* signal cancellation */
+#endif
 	ge->state[0] = 255; /* ..and process clean-up! */
 #endif
 	return;
@@ -8007,6 +8040,13 @@ void stop_global_event(int Ind, int n) {
 void announce_global_event(int ge_id) {
 	global_event_type *ge = &global_event[ge_id];
 	int time_left = ge->announcement_time - ((turn - ge->start_turn) / cfg.fps);
+
+#ifdef DM_MODULES
+	if ((ge->getype == GE_ADVENTURE) && (ge->state[1] == 1)) {
+		msg_broadcast_format(0, "\374\377W[%s (\377U%d\377W) is accepting challengers]", ge->title, ge_id + 1);
+		return;
+	}
+#endif
 
 	/* display minutes, if at least 120s left */
 	//if (time_left >= 120) msg_broadcast_format(0, "\374\377W[%s (%d) starts in %d minutes. See \377s/evinfo\377W]", ge->title, ge_id + 1, time_left / 60);
@@ -8351,6 +8391,64 @@ void global_event_signup(int Ind, int n, cptr parm) {
 			if (!is_admin(p_ptr)) return;
 		}
 		break;
+#ifdef DM_MODULES
+	case GE_ADVENTURE:
+
+		/* Disqualified? */
+		if (p_ptr->mode & MODE_DED_IDDC) {
+			msg_print(Ind, "\377ySorry, as a dedicated ironman deep diver you may not participate.");
+			if (!is_admin(p_ptr)) return;
+		}
+		if (p_ptr->mode & MODE_PVP) {
+			msg_print(Ind, "\377ySorry, PvP characters may not participate.");
+			if (!is_admin(p_ptr)) return;
+		}
+		if (!(ge->extra[1]) && (p_ptr->max_exp > 0 || p_ptr->max_plv > 1)) { // GE_EXTRA - adventures.lua
+			msg_print(Ind, "\377ySorry, only newly created characters may sign up for this event.");
+			if (!is_admin(p_ptr)) return;
+		}
+		if (p_ptr->max_plv < ge->extra[1]) { // GE_EXTRA - adventures.lua
+			msg_format(Ind, "\377ySorry, you must be at least level %d to sign up for this event.", ge->extra[1]); // GE_EXTRA - adventures.lua
+			if (!is_admin(p_ptr)) return;
+		}
+		if (p_ptr->max_plv > ge->extra[2]) { // GE_EXTRA - adventures.lua
+			msg_format(Ind, "\377ySorry, you must be at most level %d to sign up for this event.", ge->extra[2]); // GE_EXTRA - adventures.lua
+			if (!is_admin(p_ptr)) return;
+		}
+		if (p_ptr->ghost) {
+			msg_print(Ind, "\377ySorry, ghosts may not participate in this event.");
+			if (!is_admin(p_ptr)) return;
+		}
+		if (!in_bree(&p_ptr->wpos)) {
+			msg_print(Ind, "\377yYou have to be in Bree to sign up for this event!");
+			if (!is_admin(p_ptr)) return;
+		}
+
+		/* If the adventure is ongoing, begin sign-up phase! */
+		if (ge->state[1] == 1) {
+
+			/* Stall for any real player presence, eg. DM or testers but NOT static counter */
+			n = 0;
+			for (i = 1; i <= NumPlayers; i++)
+				if (in_module(&Players[i]->wpos) && (Players[i]->wpos.wz >= ge->extra[3]) && (Players[i]->wpos.wz <= ge->extra[4])) n++; // GE_EXTRA - adventures.lua
+			if (n) {
+				msg_print(Ind, "\377ySorry, this event is currently undergoing renovations.");
+				return;
+			}
+
+			/* HACK - restart timers */
+			ge->start_turn = turn + (cfg.fps - (turn % cfg.fps));
+			time(&ge->started);
+			ge->announcement_time = 60 * exec_lua(0, format("return adventure_type(\"%s\", 1)", ge->title));
+			ge->end_turn = ge->start_turn + cfg.fps * 60 * exec_lua(0, format("return adventure_type(\"%s\", 3)", ge->title));
+
+			/* Begin! */
+			ge->state[1] = 2;
+
+		}
+
+		break;
+#endif
 	}
 
 	if (parm_log[0]) s_printf("%s EVENT_SIGNUP: %d '%s'(%d): %s (%s).\n", showtime(), n + 1, ge->title, ge->getype, p_ptr->name, parm_log);
@@ -8406,6 +8504,10 @@ static void process_global_event(int ge_id) {
 		ge->announcement_time = -1; /* enter the processing phase, */
 		ge->state[0] = 255; /* ..and process clean-up! */
 	}
+
+#ifdef DM_MODULES
+	if ((ge->getype == GE_ADVENTURE) && (ge->state[1] == 1)) return; /* waiting for first participant to signup */
+#endif
 
 	/* extra warning at T - x min for last minute subscribers */
 	if (ge->announcement_time * cfg.fps - elapsed_turns == GE_FINAL_ANNOUNCEMENT * cfg.fps) {
@@ -8490,6 +8592,36 @@ static void process_global_event(int ge_id) {
 							continue;
 						}
 						break;
+#ifdef DM_MODULES
+					case GE_ADVENTURE:
+						if (!(ge->extra[1]) && (p_ptr->max_exp > 0 || p_ptr->max_plv > 1) && !is_admin(p_ptr)) { // GE_EXTRA - adventures.lua
+							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' no longer eligible.\n", p_ptr->name);
+							msg_format(j, "\377oCharacters need to have 0 experience to be eligible.");
+							msg_broadcast_format(j, "\377s%s is no longer eligible due to character level.", p_ptr->name);
+						} else if ((p_ptr->max_plv > ge->extra[2]) && !is_admin(p_ptr)) { // GE_EXTRA - adventures.lua
+								s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' no longer eligible.\n", p_ptr->name);
+								msg_format(j, "\377oCharacters must not have been experience beyond level %d to be eligible.", ge->extra[1]); // GE_EXTRA - adventures.lua
+								msg_broadcast_format(j, "\377s%s is no longer eligible due to character level.", p_ptr->name);
+	 #ifdef USE_SOUND_2010
+								sound(j, "failure", NULL, SFX_TYPE_MISC, FALSE);
+	 #endif
+								p_ptr->global_event_type[ge_id] = GE_NONE;
+								ge->participant[j] = 0;
+								continue;
+							}
+						if (!can_use_wordofrecall(p_ptr) && !is_admin(p_ptr)) {
+							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' stuck in dungeon.\n", p_ptr->name);
+							msg_print(j, "\377oEvent participation failed because your dungeon doesn't allow recalling.");
+							msg_broadcast_format(j, "\377s%s isn't allowed to leave the dungeon to participate.", p_ptr->name);
+ #ifdef USE_SOUND_2010
+							sound(j, "failure", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+							p_ptr->global_event_type[ge_id] = GE_NONE;
+							ge->participant[j] = 0;
+							continue;
+						}
+						break;
+#endif
 					}
 
 					/* Player is valid for entering */
@@ -8508,6 +8640,13 @@ static void process_global_event(int ge_id) {
 							sound(j, "failure", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 						}
+#ifdef DM_MODULES
+					/* If the adventure is pending, retract sign-up phase! */
+					if (ge->state[1] == 2) {
+						ge->state[1] = 1;
+						announce_global_event(ge_id);
+					} else
+#endif
 					ge->getype = GE_NONE;
 
 				/* Participants are ok, event now starts! */
@@ -9463,6 +9602,108 @@ static void process_global_event(int ge_id) {
 			break;
 		}
 		break;
+
+#ifdef DM_MODULES
+	case GE_ADVENTURE:
+		switch (ge->state[0]) {
+		case 0: /* prepare a dungeon */
+			ge->cleanup = 1;
+
+			sector00separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
+			// sector00flags1 = sector00flags2 = 0x0;
+
+			if (!wild_info[wpos.wy][wpos.wx].tower) {
+				s_printf("EVENT_LAYOUT: Adding tower (no entry).\n");
+
+				// slash.c PvP ARENA for reference... sharing tower for now - Kurzel
+				// add_dungeon(&apos, 1, 10, DF1_NO_RECALL | DF1_SMALLEST,
+					// DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK | DF2_RANDOM, DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS, TRUE, 0, 0, 0, 0);
+				add_dungeon(&wpos, 1, 10, DF1_NO_RECALL | DF1_SMALLEST,
+					DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK | DF2_RANDOM,
+					DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS, TRUE, 0, 0, 0, 0);
+
+			} else {
+				s_printf("EVENT_LAYOUT: Dungeon already in place.\n");
+			}
+
+			/* clean any static module floors from server crashes, remove idle DMs */
+			for (j = ge->extra[3]; j <= ge->extra[4]; j++) { // GE_EXTRA - adventures.lua
+				wpos.wz = j;
+				s_printf("DM_MODULES: Cleaning wpos (%d,%d,%d).\n",wpos.wx,wpos.wy,wpos.wz);
+				wipe_m_list(&wpos); /* clear any (powerful) spawns */
+				wipe_o_list_safely(&wpos); /* and objects too */
+				unstatic_level(&wpos);
+			}
+
+			/* teleport the participants into the dungeon */
+			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
+				if (!ge->participant[j]) continue;
+				for (i = 1; i <= NumPlayers; i++) {
+					if (Players[i]->id != ge->participant[j]) continue;
+					if (ge->noghost) Players[i]->global_event_temp |= PEVF_NOGHOST_00;
+					exec_lua(0, format("return adventure_start(%d, \"%s\")", i, ge->title));
+				}
+			}
+
+			ge->state[0] = 1;
+			break;
+	  case 1: /* monitor for participation */
+			n = 0;
+			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
+				if (!ge->participant[j]) continue;
+				n++; // Count participants even if offline / logged out! Dead players would be 0'd.
+				// for (i = 1; i <= NumPlayers; i++) { // OR ... count present players only! (disabled for now) - Kurzel
+					// if (Players[i]->id != ge->participant[j]) continue;
+					// p_ptr = Players[i];
+					// if (in_module(&p_ptr->wpos) && (p_ptr->wpos.wz >= ge->extra[3]) && (p_ptr->wpos.wz <= ge->extra[4])) n++; // GE_EXTRA - adventures.lua
+				// }
+			}
+			if (!n) ge->state[0] = 255;
+		break;
+		case 255: /* clean-up or restart */
+
+			/* wipe participation */
+			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
+				if (!ge->participant[j]) continue;
+				for (i = 1; i <= NumPlayers; i++) {
+					if (Players[i]->id != ge->participant[j]) continue;
+					p_ptr = Players[i];
+					p_ptr->global_event_type[ge_id] = GE_NONE;
+					if (in_module(&p_ptr->wpos) && ((p_ptr->wpos.wz >= ge->extra[3]) && (p_ptr->wpos.wz <= ge->extra[4]))) { // GE_EXTRA - adventures.lua
+						p_ptr->recall_pos.wx = cfg.town_x;
+						p_ptr->recall_pos.wy = cfg.town_y;
+						p_ptr->recall_pos.wz = 0;
+						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+						p_ptr->global_event_temp = PEVF_PASS_00; /* clear all other flags, allow a final recall out */
+						recall_player(i, "");
+ #ifdef MODULE_ALLOW_INCOMPAT
+						/* need to leave party, since we might be teamed up with incompatible char mode players! */
+						if (p_ptr->party && !p_ptr->admin_dm && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)) party_leave(i, FALSE);
+ #endif
+					}
+				}
+				ge->participant[j] = 0;
+			}
+
+			sector00separation--; /* separate sector 0,0 from the worldmap - participants have access ONLY */
+			// sector00flags1 = sector00flags2 = 0x0;
+
+			// Don't wipe it once generated, avoiding conflicts with PVPARENA / other modules - Kurzel
+			// if (wild_info[wpos.wy][wpos.wx].tower) rem_dungeon(&wpos, TRUE);
+
+			/* restart challenge announcement */
+			if (ge->state[1] == 2) {
+				ge->state[0] = 0;
+				ge->state[1] = 1;
+				announce_global_event(ge_id);
+				break;
+			}
+
+			ge->getype = GE_NONE; /* end of event */
+			break;
+		}
+		break;
+#endif
 
 	default: /* generic clean-up routine for untitled events */
 		switch (ge->state[0]) {
