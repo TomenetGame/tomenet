@@ -849,20 +849,14 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 #endif
 
 	/* Beacons in sector00 lead to Bree transportation */
-#ifdef DM_MODULES
 	if (in_sector00_xy(&p_ptr->wpos)) {
-#else
-	if (in_sector00(&p_ptr->wpos)) {
-#endif
 		for (d = 0; d < MAX_GLOBAL_EVENTS; d++) {
 			ge = &global_event[d];
 
-#ifdef DM_MODULES
 			// unsign, they have left the event, in case of ongoing events - Kurzel
 			for (k = 0; k < MAX_GE_PARTICIPANTS; k++)
 				if (ge->participant[k] == p_ptr->id)
 					ge->participant[k] = 0;
-#endif
 
 			/* player might have signed up for an event that is now no longer available/cancelled,
 			   resulting in a 'duplicate ghost win' if it was Dungeon Keeper too. */
