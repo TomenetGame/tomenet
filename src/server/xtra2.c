@@ -8590,6 +8590,20 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 	int i;
 	int *id_list, ids;
 
+#ifdef DM_MODULES
+	/* Remove ID from any ongoing events in case a new/same player takes ID */
+	int k;
+	global_event_type *ge;
+	for (i = 0; i < MAX_GLOBAL_EVENTS; i++) {
+		ge = &global_event[i];
+		if (!ge->getype) continue;
+		for (k = 0; k < MAX_GE_PARTICIPANTS; k++) {
+			if (!ge->participant[k]) continue;
+			if (ge->participant[k] == p_ptr->id) ge->participant[k] = 0;
+		}
+	}
+#endif
+
 #ifdef SAFETY_BACKUP_PLAYER
 	int j = p_ptr->max_lev;
 
@@ -14717,18 +14731,17 @@ bool master_level(int Ind, char * parms) {
 #ifdef DM_MODULES
 	/* Kurzel - save/load a module file (or create a blank to begin with) */
 	case 'S': {
-		exec_lua(Ind, format("return module_save(%d, \"%s\")", Ind, &parms[1]));
+		exec_lua(Ind, format("return module_save(%d, %d, %d, \"%s\")",
+			p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, &parms[1]));
 	break; }
 	case 'L': {
-		exec_lua(Ind, format("return module_load(%d, \"%s\")", Ind, &parms[1]));
+		exec_lua(Ind, format("return module_load(%d, %d, %d, \"%s\", 0)",
+			p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, &parms[1]));
 	break; }
 	case 'B': {
-		// s_printf("parms[1]: %s\n",&parms[1]);
-		// s_printf("parms[1]: %cxxx%c\n",(&parms[1])[0],(&parms[1])[2]);
 		int W = (&parms[1])[0] - 48; // '1' -> 1
 		int H = (&parms[1])[2] - 48; // '1' -> 1
-		// s_printf("parms[1]: %dxx%d\n",W,H);
-		generate_cave_blank(p_ptr->wpos.wx,p_ptr->wpos.wy,p_ptr->wpos.wz,5-W,5-H);
+		generate_cave_blank(&p_ptr->wpos, 5-W, 5-H, 0);
 	break; }
 	/* Place entrance location from <, > or random entry (eg. WoR) */
 	case '>': {
@@ -15043,7 +15056,6 @@ bool master_summon(int Ind, char * parms) {
 		if (ptr) e_idx = atoi(&ptr[1]); // Convert a string after the space
 		if (e_idx <= 0) e_idx = 0; // Ignore bad atoi() conversions
 #endif
-
 	}
 
 	switch (summon_type) {
