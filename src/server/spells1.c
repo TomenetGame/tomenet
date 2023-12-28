@@ -1379,9 +1379,9 @@ void teleport_player_level(int Ind, bool force) {
 	if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) && !force) return;
 	//if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
 
-	if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) return;
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return;
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_TELE)) return;
+	if ((p_ptr->global_event_temp & PEVF_NOTELE_00) && !force) return;
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE) && !force) return;
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_TELE) && !force) return;
 
 	/* Space/Time Anchor */
 	if ((p_ptr->anti_tele || check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) && !force) return;
