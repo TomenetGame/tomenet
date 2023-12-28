@@ -265,6 +265,8 @@ void dealloc_stores(int townval) {
  * Since greed/charisma/racial adjustments are centered at 100, we need
  * to adjust (by 200) to extract a usable multiplier.  Note that the
  * "greed" value is always something (?).
+ *
+ * flip: TRUE = player sells to store, FALSE = player buys from store.
  */
 s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 	player_type *p_ptr = Players[Ind];
@@ -383,7 +385,15 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 	}
 
 	/* Compute the final price (with rounding) */
+#if 0 /* debug print, for checking practicability of rounding offsets */
+if (o_ptr->tval == TV_ARROW)
+msg_format(Ind, "0: %d, 10: %d, 20: %d, 30: %d, 40: %d", (price * adjust + 0L) / 100L, (price * adjust + 10L) / 100L, (price * adjust + 20L) / 100L, (price * adjust + 30L) / 100L, (price * adjust + 40L) / 100L, (price * adjust + 40L) / 100L);
+#endif
+#if 0 /* classical rounding (only really affects ammo, all other items are more expensive so this fraction becomes irrelevant) */
 	price = (price * adjust + 50L) / 100L;
+#else /* more easy-going for ammo, for races that are hated by most shopkeepers -> rounding resulting in double cost is too much */
+	price = (price * adjust + 30L) / 100L;
+#endif
 
 	/* Note -- Never become "free" */
 	if (price <= 0L) return(1L);
