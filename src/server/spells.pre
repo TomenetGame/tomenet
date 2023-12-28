@@ -40,37 +40,35 @@ typedef unsigned int u32b;
 // Argh, I need cave_set_feat for arcade stuff. -Moltor
 extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
 extern void warding_glyph(int Ind);
-// #ifdef ARCADE_SERVER
-// Also used for module.lua - Kurzel
+// #if defined(ARCADE_SERVER) || defined(DM_MODULES)
 extern int check_feat(worldpos *wpos, int y, int x);
-// #endif
-// extern char *path_build(char *buf, int max, cptr path, cptr file); // how?
-// Dungeon
 // #ifdef DM_MODULES
 extern int dun_get_wid(worldpos *wpos);
 extern int dun_get_hgt(worldpos *wpos);
-extern void generate_cave_blank(int wx, int wy, int wz, int W, int H); // wpos
-extern void new_level_up_x(worldpos *wpos, int pos);
-extern void new_level_up_y(worldpos *wpos, int pos);
-extern void new_level_down_x(worldpos *wpos, int pos);
-extern void new_level_down_y(worldpos *wpos, int pos);
-extern void new_level_rand_x(worldpos *wpos, int pos);
-extern void new_level_rand_y(worldpos *wpos, int pos);
-extern byte level_up_x(worldpos *wpos);
-extern byte level_up_y(worldpos *wpos);
-extern byte level_down_x(worldpos *wpos);
-extern byte level_down_y(worldpos *wpos);
-extern byte level_rand_x(worldpos *wpos);
-extern byte level_rand_y(worldpos *wpos);
-// Monsters
 extern int check_monster(worldpos *wpos, int y, int x);
 extern int check_monster_ego(worldpos *wpos, int y, int x);
 extern int check_item_tval(worldpos *wpos, int y, int x);
 extern int check_item_sval(worldpos *wpos, int y, int x);
-extern void place_item_vals(worldpos *wpos, int y, int x, int tval, int sval);
+extern void place_item_module(worldpos *wpos, int y, int x, int tval, int sval);
 extern int place_monster_ego(worldpos *wpos, int y, int x, int r_idx, int e_idx, bool slp, bool grp, int clo, int clone_summoning);
+extern int players_on_depth(struct worldpos *wpos);
+extern byte level_up_x(struct worldpos *wpos);
+extern byte level_up_y(struct worldpos *wpos);
+extern byte level_down_x(struct worldpos *wpos);
+extern byte level_down_y(struct worldpos *wpos);
+extern byte level_rand_x(struct worldpos *wpos);
+extern byte level_rand_y(struct worldpos *wpos);
+extern void new_level_up_x(struct worldpos *wpos, int x);
+extern void new_level_up_y(struct worldpos *wpos, int y);
+extern void new_level_down_x(struct worldpos *wpos, int x);
+extern void new_level_down_y(struct worldpos *wpos, int y);
+extern void new_level_rand_x(struct worldpos *wpos, int x);
+extern void new_level_rand_y(struct worldpos *wpos, int y);
+/* generate.c */
+extern struct worldpos make_wpos(int wx, int wy, int wz);
+extern void summon_override(bool force);
+extern void generate_cave_blank(worldpos *twpos, int W, int H, bool light);
 // #endif
-// LUA would miss these without #define ?
 
 /* cmd2.c */
 extern void do_cmd_fusion(int Ind);
