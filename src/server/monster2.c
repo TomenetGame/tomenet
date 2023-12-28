@@ -4042,8 +4042,8 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 	return(0);
 }
 
-// Added an ego version for modules - Kurzel
-int place_monster_ego(struct worldpos *wpos, int y, int x, int r_idx, int e_idx, bool slp, bool grp, int clo, int clone_summoning) {
+#ifdef DM_MODULES
+int place_monster_ego(worldpos *wpos, int y, int x, int r_idx, int e_idx, bool slp, bool grp, int clo, int clone_summoning) {
 	monster_race *r_ptr = &r_info[r_idx];
 	cave_type **zcave;
 	int res;
@@ -4071,6 +4071,7 @@ int place_monster_ego(struct worldpos *wpos, int y, int x, int r_idx, int e_idx,
 	/* Success */
 	return(0);
 }
+#endif
 
 /*
  * Hack -- attempt to place a monster at the given location
