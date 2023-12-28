@@ -4285,7 +4285,7 @@ void recall_player(int Ind, char *message) {
 			break;
 		}
 
-#ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
+#if defined(IRONDEEPDIVE_ALLOW_INCOMPAT) || defined(MODULE_ALLOW_INCOMPAT)
 		/* need to leave party, since we might be teamed up with incompatible char mode players! */
 		if (p_ptr->party && !p_ptr->admin_dm &&
 		    compat_mode(p_ptr->mode, parties[p_ptr->party].cmode))
