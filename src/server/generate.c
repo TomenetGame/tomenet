@@ -622,7 +622,16 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 	/* Place the fountain */
 	if (randint(100) < 20) { /* 30 */
 		/* XXX Empty fountain doesn't need 'type', does it? */
+#ifdef DM_MODULES
+		// Hack - Retain FEAT_FOUNTAIN so it persists thru module_save() - Kurzel
+		c_ptr->feat = FEAT_FOUNTAIN;
+		// Make it drinkable...
+		if (!(cs_ptr = AddCS(c_ptr, CS_FOUNTAIN))) return;
+		cs_ptr->sc.fountain.type = SV_POTION_WATER;
+		cs_ptr->sc.fountain.rest = damroll(1, 5);
+#else
 		cave_set_feat(wpos, y, x, FEAT_EMPTY_FOUNTAIN);
+#endif
 /*		c_ptr->special2 = 0; */
 		return;
 	}
@@ -662,7 +671,11 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 	if (maxsval == 0) return;
 	else {
 		/* TODO: rarity should be counted in? */
+#ifdef DM_MODULES // cave_set_feat() calls this!
+		c_ptr->feat = FEAT_FOUNTAIN;
+#else
 		cave_set_feat(wpos, y, x, FEAT_FOUNTAIN);
+#endif
 		if (!(cs_ptr = AddCS(c_ptr, CS_FOUNTAIN))) return;
 
 		if (!maxsval || magik(20)) /* often water */
@@ -738,7 +751,11 @@ void place_fountain_of_blood(struct worldpos *wpos, int y, int x) {
 	if (c_ptr->special) return;
 
 	/* TODO: rarity should be counted in? */
+#ifdef DM_MODULES // cave_set_feat() calls this!
+	c_ptr->feat = FEAT_FOUNTAIN_BLOOD;
+#else
 	cave_set_feat(wpos, y, x, FEAT_FOUNTAIN_BLOOD);
+#endif
 	if (!(cs_ptr = AddCS(c_ptr, CS_FOUNTAIN))) return;
 	cs_ptr->sc.fountain.type = SV_POTION_BLOOD;
 	cs_ptr->sc.fountain.rest = damroll(1, 5);
@@ -11777,23 +11794,70 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr) {
 }
 
 #ifdef DM_MODULES
-// Generate an empty floor (minus 0-4 half panel sizes), for DMs - Kurzel
-void generate_cave_blank(int wx, int wy, int wz, int W, int H) {
-	if (!wz) return; // paranoia - do not resize the surface!
-	// s_printf("BLANK (W,H): (%d,%d)\n",W,H);
-	struct worldpos twpos;
-	twpos.wx = wx;
-	twpos.wy = wy;
-	twpos.wz = wz;
+// Allow LUA to pass a wpos structure back to C ! - Kurzel
+struct worldpos make_wpos(int wx, int wy, int wz) {
+	struct worldpos wpos;
+	wpos.wx = wx;
+	wpos.wy = wy;
+	wpos.wz = wz;
+	return wpos;
+}
 
-	/* Get it ready, remove everybody, static it - Kurzel */
-	unstatic_level(&twpos);
-	if (getcave(&twpos)) dealloc_dungeon_level(&twpos);
-	alloc_dungeon_level(&twpos);
-	new_players_on_depth(&twpos,1,TRUE);
+void summon_override(bool force) {
+	if (force) summon_override_checks = SO_ALL;
+	else summon_override_checks = SO_NONE;
+}
+
+u32b adventure_flags1(int wz) { // LOCALE_00, GE_DESCRIPTION -- adventures.lua
+	switch (wz) {
+		// Under Elmoth
+		case 2:
+			return (LF1_NO_GENO | LF1_NO_MAGIC_MAP | LF1_NO_DESTROY);
+		// Isle
+		case 3:
+			return (LF1_NO_GENO | LF1_NO_DESTROY);
+		// Unoccupied
+		default:
+			return (0);
+	}
+}
+
+u32b adventure_flags2(int wz) { // LOCALE_00, GE_DESCRIPTION -- adventures.lua
+	switch (wz) {
+		// Under Elmoth
+		case 2:
+			return (LF2_NO_DETECT | LF2_NO_ESP | LF2_NO_LIVE_SPAWN);
+		// Isle
+		case 3:
+			return (LF2_NO_LIVE_SPAWN);
+		// Unoccupied
+		default:
+			return (0);
+	}
+}
+
+// Generate an empty floor (minus 0-4 half panel sizes), for DMs - Kurzel
+void generate_cave_blank(worldpos *twpos, int W, int H, bool light) {
+	struct worldpos pos;
+	wpcopy(&pos,twpos); // copy of DM wpos, as DM wpos could / will change
+	struct worldpos *wpos = &pos; // avoid uninitialized wpcopy() warning
+	if (!wpos->wz) return; // paranoia - no surface modules, yet
+	// PARANOIA - bad input from junk strings? default to smallest
+	if ((W < 0) || (W > 4)) W = 4;
+	if ((H < 0) || (H > 4)) H = 4;
+	// s_printf("BLANK (W,H): (%d,%d)\n",W,H);
+
+	/* Get it ready, remove everything, everybody, static it - Kurzel */
+	wipe_m_list(wpos); /* clear any (powerful) spawns */
+	wipe_o_list_safely(wpos); /* and objects too */
+	unstatic_level(wpos); // problem - this changes the DM wpos, see above
+	if (getcave(wpos)) dealloc_dungeon_level(wpos);
+	alloc_dungeon_level(wpos);
+	new_players_on_depth(wpos,1,TRUE);
 
 	int x,y;
-	cave_type **zcave = getcave(&twpos);
+	cave_type **zcave = getcave(wpos);
+	cave_type *c_ptr;
 
 	/* Start with a blank cave */
 	for (y = 0; y < MAX_HGT; y++) {
@@ -11803,47 +11867,34 @@ void generate_cave_blank(int wx, int wy, int wz, int W, int H) {
 
 	/* Fill it */
 	for (x = 0; x < MAX_WID; x++)
-		for (y = 0; y < MAX_HGT; y++)
-			zcave[y][x].feat = FEAT_FLOOR;
+		for (y = 0; y < MAX_HGT; y++) {
+			c_ptr = &zcave[y][x];
+			c_ptr->feat = FEAT_FLOOR;
+			if (light) c_ptr->info |= CAVE_GLOW;
+		}
 
 	/* Draw boundaries, handle smaller floors */
 
 	int meta_width = MAX_WID - W * (SCREEN_WID / 2);
 	int meta_height = MAX_HGT - H * (SCREEN_HGT / 2);
 
-	// /* Oops, a dungeon floor is not just a cave - Kurzel */
-	// dun_data dun_body;
-	// /* Wipe the dun_data structure - mikaelh */
-	// WIPE(&dun_body, dun_data);
-	// /* Global data */
-	// dun = &dun_body;
-	// dun->l_ptr = getfloor(&twpos);
-	// dun->l_ptr->flags1 = 0;
-	// dun->l_ptr->flags2 = 0;
-	// dun->l_ptr->monsters_generated = dun->l_ptr->monsters_spawned = dun->l_ptr->monsters_killed = 0;
-  // /* Important - restrict out of bounds behavior, eg. recall/looking - Kurzel */
-	// dun->l_ptr->wid = meta_width;
-	// dun->l_ptr->hgt = meta_height;
-
 	/* Oops, a dungeon floor is not just a cave, it is part of the world? - Kurzel */
 	struct wilderness_type *wild;
-	wild = &wild_info[wy][wx];
-	if (wz > 0) {
-		wild->tower->level[wz - 1].flags1 = 0;
-		wild->tower->level[wz - 1].flags2 = 0;
-		// wild->tower->level[wz - 1].flags2 = (LF2_NO_TELE | LF2_NO_DETECT | LF2_NO_ESP | LF2_NO_SUMMON); /* module.lua ? */
-		wild->tower->level[wz - 1].monsters_generated = wild->tower->level[wz - 1].monsters_spawned = wild->tower->level[wz - 1].monsters_killed = 0;
+	wild = &wild_info[wpos->wy][wpos->wx];
+	if (wpos->wz > 0) { // paranoia - all modules are in_module(wpos) above PVPARENA_Z (for now)
+		wild->tower->level[wpos->wz - 1].flags1 = (in_module(wpos) ? adventure_flags1(wpos->wz) : 0);
+		wild->tower->level[wpos->wz - 1].flags2 = (in_module(wpos) ? adventure_flags2(wpos->wz) : (LF2_NO_LIVE_SPAWN)); // Summoning OK? Disabled actually. - Kurzel
+		wild->tower->level[wpos->wz - 1].monsters_generated = wild->tower->level[wpos->wz - 1].monsters_spawned = wild->tower->level[wpos->wz - 1].monsters_killed = 0;
 		/* Important - restrict out of bounds behavior, eg. recall/looking - Kurzel */
-		wild->tower->level[wz - 1].wid = meta_width;
-		wild->tower->level[wz - 1].hgt = meta_height;
+		wild->tower->level[wpos->wz - 1].wid = meta_width;
+		wild->tower->level[wpos->wz - 1].hgt = meta_height;
 	}	else {
-		wild->dungeon->level[ABS(wz) - 1].flags1 = 0;
-		wild->dungeon->level[ABS(wz) - 1].flags2 = 0;
-		// wild->dungeon->level[ABS(wz) - 1].flags2 = (LF2_NO_TELE | LF2_NO_DETECT | LF2_NO_ESP | LF2_NO_SUMMON); /* module.lua ? */
-		wild->dungeon->level[ABS(wz) - 1].monsters_generated = wild->dungeon->level[ABS(wz) - 1].monsters_spawned = wild->dungeon->level[ABS(wz) - 1].monsters_killed = 0;
+		wild->dungeon->level[ABS(wpos->wz) - 1].flags1 = (0);
+		wild->dungeon->level[ABS(wpos->wz) - 1].flags2 = (LF2_NO_LIVE_SPAWN); // Don't interrupt the architect, please. - Kurzel
+		wild->dungeon->level[ABS(wpos->wz) - 1].monsters_generated = wild->dungeon->level[ABS(wpos->wz) - 1].monsters_spawned = wild->dungeon->level[ABS(wpos->wz) - 1].monsters_killed = 0;
 		/* Important - restrict out of bounds behavior, eg. recall/looking - Kurzel */
-		wild->dungeon->level[ABS(wz) - 1].wid = meta_width;
-		wild->dungeon->level[ABS(wz) - 1].hgt = meta_height;
+		wild->dungeon->level[ABS(wpos->wz) - 1].wid = meta_width;
+		wild->dungeon->level[ABS(wpos->wz) - 1].hgt = meta_height;
 	}
 		
 	/* Fill rest of map with perma clear walls if specific size was given */
@@ -11873,11 +11924,7 @@ void generate_cave_blank(int wx, int wy, int wz, int W, int H) {
 			zcave[y][mx - 1].feat = meta_boundary;
 		}
 		
-		/* ENABLE place_monster_one() */
-		summon_override_checks = SO_ALL;
 	}
-	
-	// msg_format(Ind, "A blank level %s has been generated.", wpos_format(Ind, &twpos));
 }
 #endif
 
