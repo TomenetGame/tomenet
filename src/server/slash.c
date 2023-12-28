@@ -3230,7 +3230,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 #ifdef DM_MODULES
 					/* If the adventure is pending, possibly retract sign-up phase */
-					if (ge->state[1] == 2) {
+					if ((ge->getype == GE_ADVENTURE) && (ge->state[1] == 2)) {
 						n = 0;
 						for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
 							if (!ge->participant[j]) continue;
@@ -7248,7 +7248,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/enlight") || prefix(messagelc, "/en")) {
-				wiz_lite(Ind);
+				wiz_lite_extra(Ind);
 				//(void)detect_treasure(Ind, DEFAULT_RADIUS * 2);
 				//(void)detect_object(Ind, DEFAULT_RADIUS * 2);
 				(void)detect_treasure_object(Ind, DEFAULT_RADIUS * 2);
@@ -9175,6 +9175,21 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 
 				//process_dungeon_file(format("t_%s.txt", message3), &p_ptr->wpos, &ystart, &xstart, 20+1, 32+34, TRUE);
+				i = process_dungeon_file(format("t_%s.txt", message3), &p_ptr->wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
+				wpos_apply_season_daytime(&p_ptr->wpos, getcave(&p_ptr->wpos));
+				msg_format(Ind, "done (%d).", i);
+				return;
+			}
+			/* local loadmap (at admin position, top left = x,y) */
+			else if (prefix(messagelc, "/lloadmap")) {
+				int xstart = p_ptr->px, ystart = p_ptr->py;
+
+				if (tk < 1) {
+					msg_print(Ind, "Usage: /lloadmap t_<mapname>.txt");
+					return;
+				}
+				msg_print(Ind, "Trying to load map locally..");
+
 				i = process_dungeon_file(format("t_%s.txt", message3), &p_ptr->wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
 				wpos_apply_season_daytime(&p_ptr->wpos, getcave(&p_ptr->wpos));
 				msg_format(Ind, "done (%d).", i);
@@ -13024,6 +13039,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 #endif
+			else if (prefix(messagelc, "/reorder")) {
+				reorder_pack(Ind);
+				return;
+			}
 		}
 	}
 
