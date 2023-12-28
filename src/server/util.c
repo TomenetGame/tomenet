@@ -1777,6 +1777,13 @@ void handle_music(int Ind) {
 		p_ptr->music_monster = -2;
 		Send_music(Ind, 8, 1, 1); //Valinor
 		return;
+#ifdef DM_MODULES
+	} else if (in_module(&p_ptr->wpos)) {
+		//hack: init music as 'higher priority than boss-specific':
+		p_ptr->music_monster = -2;
+		Send_music(Ind, exec_lua(0, format("return adventure_locale(%d, 4)", p_ptr->wpos.wz)), 0, 0);
+		return;
+#endif
 	} else if (in_pvparena(&p_ptr->wpos)) {
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
@@ -2231,6 +2238,11 @@ void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos, bool s
 	if (in_valinor(wpos)) {
 		Send_sfx_ambient(Ind, SFX_AMBIENT_SHORE, TRUE);
 		return;
+#ifdef DM_MODULES
+	} else if (in_module(wpos)) {
+		Send_sfx_ambient(Ind, exec_lua(0, format("return adventure_locale(%d, 5)", wpos->wz)), TRUE);
+		return;
+#endif
 	}
 
 	/* don't play outdoor (or any other) ambient sfx if we're in a special pseudo-indoors sector */
@@ -7016,6 +7028,13 @@ cptr compat_pmode(int Ind1, int Ind2, bool strict) {
 		return(NULL);
 #endif
 
+#ifdef MODULE_ALLOW_INCOMPAT
+	if (!strict &&
+	    in_module(&p1_ptr->wpos) &&
+	    in_module(&p2_ptr->wpos))
+		return(NULL);
+#endif
+
 	if (p1_ptr->mode & MODE_PVP) {
 		if (!(p2_ptr->mode & MODE_PVP)) {
 			return("non-pvp");
@@ -7042,6 +7061,12 @@ cptr compat_pomode(int Ind, object_type *o_ptr) {
 	/* EXPERIMENTAL */
 	if (in_irondeepdive(&p_ptr->wpos) &&
 	    in_irondeepdive(&o_ptr->wpos))
+		return(NULL);
+#endif
+
+#ifdef MODULE_ALLOW_INCOMPAT
+	if (in_module(&p_ptr->wpos) &&
+	    in_module(&o_ptr->wpos))
 		return(NULL);
 #endif
 
@@ -7083,6 +7108,12 @@ cptr compat_omode(object_type *o1_ptr, object_type *o2_ptr) {
 	/* EXPERIMENTAL */
 	if ((in_irondeepdive(&o1_ptr->wpos)) &&
 	    in_irondeepdive(&o2_ptr->wpos))
+		return(NULL);
+#endif
+
+#ifdef MODULE_ALLOW_INCOMPAT
+	if ((in_module(&o1_ptr->wpos)) &&
+	    in_module(&o2_ptr->wpos))
 		return(NULL);
 #endif
 
