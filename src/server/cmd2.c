@@ -849,9 +849,20 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 #endif
 
 	/* Beacons in sector00 lead to Bree transportation */
+#ifdef DM_MODULES
+	if (in_sector00_xy(&p_ptr->wpos)) {
+#else
 	if (in_sector00(&p_ptr->wpos)) {
+#endif
 		for (d = 0; d < MAX_GLOBAL_EVENTS; d++) {
 			ge = &global_event[d];
+
+#ifdef DM_MODULES
+			// unsign, they have left the event, in case of ongoing events - Kurzel
+			for (k = 0; k < MAX_GE_PARTICIPANTS; k++)
+				if (ge->participant[k] == p_ptr->id)
+					ge->participant[k] = 0;
+#endif
 
 			/* player might have signed up for an event that is now no longer available/cancelled,
 			   resulting in a 'duplicate ghost win' if it was Dungeon Keeper too. */
@@ -861,6 +872,22 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 			}
 
 			switch (p_ptr->global_event_type[d]) {
+#ifdef DM_MODULES
+			case GE_ADVENTURE:
+			/* tell everyone + himself that he won */
+				sprintf(buf, "\374\377a>>%s completed %s!<<", p_ptr->name, ge->title);
+				msg_broadcast(0, buf);
+ #ifdef TOMENET_WORLDS
+				if (cfg.worldd_events) world_msg(buf);
+ #endif
+ #ifdef USE_SOUND_2010
+				sound(Ind, "success", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+				s_printf("%s EVENT_WON: %s wins %d '%s'(%d)\n", showtime(), p_ptr->name, d + 1, ge->title, ge->getype);
+				p_ptr->event_won_flags |= 1 << (GE_ADVENTURE - 1 + ge->extra[0]); // HACK - Paranoia - Kurzel
+
+				break; // No additional rewards for now. - Kurzel
+#endif
 			case GE_DUNGEON_KEEPER:
 				/* tell everyone + himself that he won */
 				sprintf(buf, "\374\377a>>%s wins %s!<<", p_ptr->name, ge->title);
@@ -907,6 +934,10 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 		p_ptr->global_event_temp = PEVF_PASS_00; /* clear all other flags, allow a final recall out */
 		recall_player(Ind, "");
+#ifdef MODULE_ALLOW_INCOMPAT
+		/* need to leave party, since we might be teamed up with incompatible char mode players! */
+		if (p_ptr->party && !p_ptr->admin_dm && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)) party_leave(Ind, FALSE);
+#endif
 		return(TRUE);
 	}
 
