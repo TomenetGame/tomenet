@@ -19,79 +19,70 @@ function lua_path_build(name) -- LUA (Kurzel?) has trouble passing by reference!
 end
 
 -- save a floor
-function module_save(Ind,name)
-  -- msg_print(Ind,"LUA: ".._VERSION)
+function module_save(wx,wy,wz,name)
+  wpos = make_wpos(wx,wy,wz)
   path = lua_path_build(name)
 
-  msg_print(Ind,"Saving Module File: "..path)
-  
-  msg_print(Ind,"DM @ wpos: "..players(Ind).name.." @ ("..players(Ind).wpos.wx..","..players(Ind).wpos.wy..","..players(Ind).wpos.wz..")")
+  -- msg_print(Ind,"Saving Module File: "..path)
+  -- msg_print(Ind,"wpos: ("..wx..","..wy..","..wz..")")
   
   file = writeto(""..path, "w");
 
   -- dimensions
-  w = dun_get_wid(players(Ind).wpos)
-  h = dun_get_hgt(players(Ind).wpos)
+  w = dun_get_wid(wpos)
+  h = dun_get_hgt(wpos)
   -- msg_print(Ind,"WRITE (w,h): ("..w..","..h..")")
   write(w.."\n")
   write(h.."\n")
 
-  -- features
-  for x = 1, MAX_WID do
-    for y = 1, MAX_HGT do
-      f = check_feat(players(Ind).wpos,y-1,x-1)
+  -- features, monsters, items
+  for x = 0, MAX_WID do
+    for y = 0, MAX_HGT do
+      f,r,e,t,s = 0,0,0,0,0
+      f = check_feat(wpos,y,x)
       write(f.."\n")
+      r = check_monster(wpos,y,x)
+      write(r.."\n")
+      e = check_monster_ego(wpos,y,x)
+      write(e.."\n")
+      t = check_item_tval(wpos,y,x)
+      write(t.."\n")
+      s = check_item_sval(wpos,y,x)
+      write(s.."\n")
     end
   end
 
   -- entry positions
-  ux = level_up_x(players(Ind).wpos)
-  uy = level_up_y(players(Ind).wpos)
+  ux = level_up_x(wpos)
+  ux = level_up_x(wpos)
+  uy = level_up_y(wpos)
   -- msg_print(Ind,"WRITE (ux,uy): ("..ux..","..uy..")")
   write(ux.."\n")
   write(uy.."\n")
-  dx = level_down_x(players(Ind).wpos)
-  dy = level_down_y(players(Ind).wpos)
+  dx = level_down_x(wpos)
+  dy = level_down_y(wpos)
   -- msg_print(Ind,"WRITE (dx,dy): ("..dx..","..dy..")")
   write(dx.."\n")
   write(dy.."\n")
-  rx = level_rand_x(players(Ind).wpos)
-  ry = level_rand_y(players(Ind).wpos)
+  rx = level_rand_x(wpos)
+  ry = level_rand_y(wpos)
   -- msg_print(Ind,"WRITE (rx,ry): ("..rx..","..ry..")")
   write(rx.."\n")
   write(ry.."\n")
   
-  -- monster races
-  for x = 1, MAX_WID do
-    for y = 1, MAX_HGT do
-      r = check_monster(players(Ind).wpos,y-1,x-1)
-      write(r.."\n")
-      e = check_monster_ego(players(Ind).wpos,y-1,x-1)
-      write(e.."\n")
-    end
-  end
-
-  -- item tval/sval
-  for x = 1, MAX_WID do
-    for y = 1, MAX_HGT do
-      tval = check_item_tval(players(Ind).wpos,y-1,x-1)
-      write(tval.."\n")
-      sval =check_item_sval(players(Ind).wpos,y-1,x-1)
-      write(sval.."\n")
-    end
-  end
-
   closefile(file)
 
   return 0
 end
 
 -- load a floor
-function module_load(Ind,name)
+function module_load(wx,wy,wz,name,light)
+  if wz == 0 then return 1 end -- paranoia - no surface modules, yet
+  wpos = make_wpos(wx,wy,wz)
   path = lua_path_build(name)
 
-  msg_print(Ind,"Loading Module File: "..path)
-  msg_print(Ind,"DM @ wpos: "..players(Ind).name.." @ ("..players(Ind).wpos.wx..","..players(Ind).wpos.wy..","..players(Ind).wpos.wz..")")
+  -- msg_print(Ind,"Loading Module File: "..path)
+  -- msg_print(Ind,"wpos: ("..wx..","..wy..","..wz..")")
 
   file = readfrom(""..path, "r");
 
@@ -103,73 +94,44 @@ function module_load(Ind,name)
   H = (MAX_HGT - h) * 2 / SCREEN_HGT
   -- msg_print(Ind,"READ (W,H): ("..W..","..H..")")
 
-  -- no better way to pass wpos? LUA doesn't pass by reference / C structs
-  wx = players(Ind).wpos.wx
-  wy = players(Ind).wpos.wy
-  wz = players(Ind).wpos.wz
-  generate_cave_blank(wx,wy,wz,W,H) -- summon_override_checks = SO_ALL;
-  -- no longer on floor
-  twx = players(Ind).wpos.wx
-  twy = players(Ind).wpos.wy
-  twz = players(Ind).wpos.wz
-  -- hijack the DM wpos to target the floor wpos for cave_set_feat()
-  tmp = players(Ind).wpos
-  tmp.wx = wx
-  tmp.wy = wy
-  tmp.wz = wz
-  for x = 1, MAX_WID do
-    for y = 1, MAX_HGT do
+  generate_cave_blank(wpos,W,H,light)
+  summon_override(1) -- SO_ALL
+  for x = 0, MAX_WID do
+    for y = 0, MAX_HGT do
       f = read("*n")
-      -- msg_print(Ind,"READ feat: "..f) -- crashes client
-      cave_set_feat(tmp,y-1,x-1,f)
+      cave_set_feat(wpos,y,x,f)
+      r,e = 0,0
+      r = read("*n")
+      e = read("*n")
+      if r ~= 0 then
+        place_monster_ego(wpos,y,x,r,e,1,0,0,0) -- sleep 1
+      end
+      t,s = 0,0
+      t = read("*n")
+      s = read("*n")
+      if t ~= 0 then
+        place_item_module(wpos,y,x,t,s)
+      end
     end
   end
+  summon_override(0) -- SO_NONE
 
   -- entry positions
   ux = read("*n")
   uy = read("*n")
   -- msg_print(Ind,"READ (ux,uy): ("..ux..","..uy..")")
-  new_level_up_x(players(Ind).wpos,ux)
-  new_level_up_y(players(Ind).wpos,uy)
+  new_level_up_x(wpos,ux)
+  new_level_up_y(wpos,uy)
   dx = read("*n")
   dy = read("*n")
   -- msg_print(Ind,"READ (dx,dy): ("..dx..","..dy..")")
-  new_level_down_x(players(Ind).wpos,dx)
-  new_level_down_y(players(Ind).wpos,dy)
+  new_level_down_x(wpos,dx)
+  new_level_down_y(wpos,dy)
   rx = read("*n")
   ry = read("*n")
   -- msg_print(Ind,"READ (rx,ry): ("..rx..","..ry..")")
-  new_level_rand_x(players(Ind).wpos,rx)
-  new_level_rand_y(players(Ind).wpos,ry)
-
-  -- monster races, summon = target empty grid, always awake
-  for x = 1, MAX_WID do
-    for y = 1, MAX_HGT do
-      r,e = 0,0
-      r = read("*n")
-      e = read("*n")
-      if r ~= 0 then
-        place_monster_ego(tmp,y-1,x-1,r,e,1,0,0,0) -- sleep 1
-      end
-    end
-  end
-
-  -- item tval/sval - apply_magic() level depends on depth
-  for x = 1, MAX_WID do
-    for y = 1, MAX_HGT do
-      tval,sval = 0,0
-      tval = read("*n")
-      sval = read("*n")
-      if tval ~= 0 then
-        place_item_vals(tmp,y-1,x-1,tval,sval)
-      end
-    end
-  end
-
-  -- restore the DM
-  tmp.wx = twx
-  tmp.wy = twy
-  tmp.wz = twz
+  new_level_rand_x(wpos,rx)
+  new_level_rand_y(wpos,ry)
 
   closefile(file)
 
