@@ -623,15 +623,16 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 	if (randint(100) < 20) { /* 30 */
 		/* XXX Empty fountain doesn't need 'type', does it? */
 #ifdef DM_MODULES
-		// Hack - Retain FEAT_FOUNTAIN so it persists thru module_save() - Kurzel
-		c_ptr->feat = FEAT_FOUNTAIN;
-		// Make it drinkable...
-		if (!(cs_ptr = AddCS(c_ptr, CS_FOUNTAIN))) return;
-		cs_ptr->sc.fountain.type = SV_POTION_WATER;
-		cs_ptr->sc.fountain.rest = damroll(1, 5);
-#else
-		cave_set_feat(wpos, y, x, FEAT_EMPTY_FOUNTAIN);
+		if (in_module(wpos)) { // Just edit modules w/ fountains in sector00 tower
+			// Hack - Retain FEAT_FOUNTAIN so it persists thru module_save() - Kurzel
+			c_ptr->feat = FEAT_FOUNTAIN;
+			// Make it drinkable...
+			if (!(cs_ptr = AddCS(c_ptr, CS_FOUNTAIN))) return;
+			cs_ptr->sc.fountain.type = SV_POTION_WATER;
+			cs_ptr->sc.fountain.rest = damroll(1, 5);
+		} else
 #endif
+		cave_set_feat(wpos, y, x, FEAT_EMPTY_FOUNTAIN);
 /*		c_ptr->special2 = 0; */
 		return;
 	}
@@ -671,11 +672,8 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 	if (maxsval == 0) return;
 	else {
 		/* TODO: rarity should be counted in? */
-#ifdef DM_MODULES // cave_set_feat() calls this!
-		c_ptr->feat = FEAT_FOUNTAIN;
-#else
-		cave_set_feat(wpos, y, x, FEAT_FOUNTAIN);
-#endif
+		c_ptr->feat = FEAT_FOUNTAIN; // cave_set_feat() can now place_fountain() - Kurzel
+		// cave_set_feat(wpos, y, x, FEAT_FOUNTAIN);
 		if (!(cs_ptr = AddCS(c_ptr, CS_FOUNTAIN))) return;
 
 		if (!maxsval || magik(20)) /* often water */
@@ -751,11 +749,8 @@ void place_fountain_of_blood(struct worldpos *wpos, int y, int x) {
 	if (c_ptr->special) return;
 
 	/* TODO: rarity should be counted in? */
-#ifdef DM_MODULES // cave_set_feat() calls this!
-	c_ptr->feat = FEAT_FOUNTAIN_BLOOD;
-#else
-	cave_set_feat(wpos, y, x, FEAT_FOUNTAIN_BLOOD);
-#endif
+	c_ptr->feat = FEAT_FOUNTAIN_BLOOD; // cave_set_feat() can now place_fountain_blood() - Kurzel
+	// cave_set_feat(wpos, y, x, FEAT_FOUNTAIN_BLOOD);
 	if (!(cs_ptr = AddCS(c_ptr, CS_FOUNTAIN))) return;
 	cs_ptr->sc.fountain.type = SV_POTION_BLOOD;
 	cs_ptr->sc.fountain.rest = damroll(1, 5);
