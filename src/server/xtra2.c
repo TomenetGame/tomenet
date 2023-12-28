@@ -8590,7 +8590,6 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 	int i;
 	int *id_list, ids;
 
-#ifdef DM_MODULES
 	/* Remove ID from any ongoing events in case a new/same player takes ID */
 	int k;
 	global_event_type *ge;
@@ -8602,7 +8601,6 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 			if (ge->participant[k] == p_ptr->id) ge->participant[k] = 0;
 		}
 	}
-#endif
 
 #ifdef SAFETY_BACKUP_PLAYER
 	int j = p_ptr->max_lev;
