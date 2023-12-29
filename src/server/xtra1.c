@@ -9609,15 +9609,12 @@ static void process_global_event(int ge_id) {
 			sector00separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
 			// sector00flags1 = sector00flags2 = 0x0;
 
-			if (!wild_info[wpos.wy][wpos.wx].tower) {
-				s_printf("EVENT_LAYOUT: Adding tower (no entry).\n");
+			s_printf("EVENT_LAYOUT: Adding tower (no entry).\n");
 
-				// slash.c PvP ARENA for reference... sharing tower for now - Kurzel
-				add_dungeon(&wpos, 1, 1 + DM_MODULES_DUNGEON_SIZE, DF1_NO_RECALL | DF1_SMALLEST,
-					DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK | DF2_RANDOM,
-					DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS, TRUE, 0, 0, 0, 0);
-
-			} else s_printf("EVENT_LAYOUT: Tower already in place.\n");
+			// slash.c PvP ARENA for reference... sharing tower for now - Kurzel
+			verify_dungeon(&wpos, 1, 1 + DM_MODULES_DUNGEON_SIZE, DF1_NO_RECALL | DF1_SMALLEST,
+				DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK | DF2_RANDOM,
+				DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS, TRUE, 0, 0, 0, 0);
 
 			/* clean any static module floors from server crashes, remove idle DMs */
 			for (j = ge->extra[3]; j <= ge->extra[4]; j++) { // GE_EXTRA - adventures.lua

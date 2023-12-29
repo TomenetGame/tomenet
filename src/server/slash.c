@@ -3348,15 +3348,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			/* actually create temporary Arena tower at reserved wilderness sector 0,0! */
 			apos.wx = 0; apos.wy = 0; apos.wz = 0;
-			if (!wild_info[apos.wy][apos.wx].tower) {
 #ifdef DM_MODULES
-				add_dungeon(&apos, 1, 1 + DM_MODULES_DUNGEON_SIZE, DF1_NO_RECALL | DF1_SMALLEST, // 1 pvp arena, n floors for modules - Kurzel
+			verify_dungeon(&apos, 1, 1 + DM_MODULES_DUNGEON_SIZE, DF1_NO_RECALL | DF1_SMALLEST, // 1 pvp arena, n floors for modules - Kurzel
 #else
-				add_dungeon(&apos, 1, 1, DF1_NO_RECALL | DF1_SMALLEST,
+			verify_dungeon(&apos, 1, 1, DF1_NO_RECALL | DF1_SMALLEST,
 #endif
-				    DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK | DF2_RANDOM, DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS, TRUE, 0, 0, 0, 0);
-				fresh_arena = TRUE;
-			}
+			    DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK | DF2_RANDOM, DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS, TRUE, 0, 0, 0, 0);
+
 			apos.wz = 1;
 			if (!getcave(&apos)) {
 				alloc_dungeon_level(&apos);

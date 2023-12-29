@@ -3969,14 +3969,14 @@ static void process_player_begin(int Ind) {
 		//switch dungeon - assume that there is no other dungeon/tower on same wpos as Death Fate!
 		if (p_ptr->wpos.wz < 0) {
 			p_ptr->recall_pos.wz = 1;
-			//add the temporary 'mirror' dungeon
+			//add the temporary 'mirror' dungeon -- maybe use verify_dungeon() instead
 			if (!(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_UP))
 				add_dungeon(&p_ptr->wpos, 1, 2, DF1_NO_RECALL, DF2_IRON | DF2_NO_EXIT_MASK |
 				    DF2_NO_ENTRY_MASK | DF2_RANDOM,
 				    DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS | DF3_EXP_20, TRUE, 0, DI_DEATH_FATE, 0, 0);
 		} else {
 			p_ptr->recall_pos.wz = -1;
-			//add the temporary 'mirror' dungeon
+			//add the temporary 'mirror' dungeon -- maybe use verify_dungeon() instead
 			if (!(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_DOWN))
 				add_dungeon(&p_ptr->wpos, 1, 2, DF1_NO_RECALL, DF2_IRON | DF2_NO_EXIT_MASK |
 				    DF2_NO_ENTRY_MASK | DF2_RANDOM,

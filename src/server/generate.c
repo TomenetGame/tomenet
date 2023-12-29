@@ -11571,7 +11571,7 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, 
 			/* hack - exempt the Shores of Valinor! */
 			if (d_ptr->baselevel != 200) {
 				d_ptr->flags2 |= DF2_IRON | DF2_IRONRND1;
-//				d_ptr->flags1 |= DF1_NO_UP;
+				//d_ptr->flags1 |= DF1_NO_UP;
 			}
 		}
 	}
@@ -11594,6 +11594,117 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, 
 	}
 
 	s_printf("add_dungeon completed (type %d, %s).\n", type, tower ? "tower" : "dungeon");
+}
+
+/* Check if an existing dungeon is still large enough and has the correct parameters - does not erase dungeon knowledge (unlike deleting + re-adding would do). */
+void verify_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, u32b flags2, u32b flags3, bool tower, int type, int theme, int quest, int quest_stage) {
+#ifdef RPG_SERVER
+	bool found_town = FALSE;
+#endif
+	int i;
+	wilderness_type *wild;
+	struct dungeon_type *d_ptr;
+	wild = &wild_info[wpos->wy][wpos->wx];
+
+	int old_maxdepth;
+
+	/* Hack -- override the specification */
+	if (type) tower = (d_info[type].flags1 & DF1_TOWER) ? TRUE : FALSE;
+
+	if (!(wild->flags & (tower ? WILD_F_UP : WILD_F_DOWN))) {
+		s_printf("verify_dungeon (type %d, %s) adds it again as it doesn't exist.\n", type, tower ? "tower" : "dungeon");
+		add_dungeon(wpos, baselevel, maxdep, flags1, flags2, flags3, tower, type, theme, quest, quest_stage);
+		return;
+	}
+	if (!(tower ? wild->tower : wild->dungeon)) {
+		s_printf("verify_dungeon (type %d, %s) adds it again as it doesn't exist.\n", type, tower ? "tower" : "dungeon");
+		add_dungeon(wpos, baselevel, maxdep, flags1, flags2, flags3, tower, type, theme, quest, quest_stage);
+		return;
+	}
+
+	d_ptr = (tower ? wild->tower : wild->dungeon);
+
+	old_maxdepth = d_ptr->maxdepth;
+
+	d_ptr->type = type;
+	d_ptr->theme = theme;
+	d_ptr->quest = quest;
+	d_ptr->quest_stage = quest_stage;
+
+	if (type) {
+		/* XXX: flags1, flags2 can be affected if specified so? */
+		d_ptr->baselevel = d_info[type].mindepth;
+		d_ptr->maxdepth = d_info[type].maxdepth - d_ptr->baselevel + 1;
+		d_ptr->flags1 = d_info[type].flags1 | flags1;
+		d_ptr->flags2 = d_info[type].flags2 | flags2 | DF2_RANDOM;
+		d_ptr->flags3 = d_info[type].flags3 | flags3;
+	} else {
+		d_ptr->baselevel = baselevel;
+		d_ptr->flags1 = flags1;
+		d_ptr->flags2 = flags2;
+		d_ptr->flags3 = flags3;
+		d_ptr->maxdepth = maxdep;
+	}
+	/* It's the Ironman Deep Dive Challenge? */
+	if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y &&
+	    (tower ? (WPOS_IRONDEEPDIVE_Z > 0) : (WPOS_IRONDEEPDIVE_Z < 0))) {
+		/* Set special IDDC flags */
+		d_ptr->flags3 |= DF3_NO_DUNGEON_BONUS | DF3_EXP_20 | DF3_LUCK_PROG_IDDC;
+	}
+
+#ifdef RPG_SERVER /* Make towers/dungeons harder - C. Blue */
+	/* If this dungeon was originally intended to be 'real' ironman,
+	   don't make it EASIER by this! (by applying either IRONFIX or IRONRND flags) */
+	if (!(flags2 & DF2_IRON)) {
+		for (i = 0; i < numtowns; i++)
+			if (town[i].x == wpos->wx && town[i].y == wpos->wy) {
+				found_town = TRUE;
+				/* Bree has special rules: */
+				if (in_bree(wpos)) {
+					/* exempt training tower, since it's empty anyway
+					   (ie monster/item spawn is prevented) and we
+					   need it for "arena monster challenge" event */
+					if (tower) continue;
+
+					d_ptr->flags2 |= DF2_IRON;
+				} else {
+					/* any other town.. */
+					d_ptr->flags2 |= DF2_IRON | DF2_IRONFIX2;
+				}
+			}
+		if (!found_town) {
+			/* hack - exempt the Shores of Valinor! */
+			if (d_ptr->baselevel != 200) {
+				d_ptr->flags2 |= DF2_IRON | DF2_IRONRND1;
+				//d_ptr->flags1 |= DF1_NO_UP;
+			}
+		}
+	}
+#endif
+
+#if 0	/* unused - mikaelh */
+	for (i = 0; i < 10; i++) {
+		d_ptr->r_char[i] = '\0';
+		d_ptr->nr_char[i] = '\0';
+	}
+	if (race != (char*)NULL)
+		strcpy(d_ptr->r_char, race);
+	if (exclude != (char*)NULL)
+		strcpy(d_ptr->nr_char, exclude);
+#endif
+
+	if (old_maxdepth > d_ptr->maxdepth) {
+		s_printf("verify_dungeon (type %d, %s) : Shrinking dungeon from %d to %d floors.\n", type, tower ? "tower" : "dungeon", old_maxdepth, d_ptr->maxdepth);
+		for (i = d_ptr->maxdepth; i < old_maxdepth; i++)
+			C_KILL(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
+		SHRINK(d_ptr->level, old_maxdepth, d_ptr->maxdepth, struct dun_level);
+	} else if (old_maxdepth < d_ptr->maxdepth) {
+		s_printf("verify_dungeon (type %d, %s) : Growing dungeon from %d to %d floors.\n", type, tower ? "tower" : "dungeon", old_maxdepth, d_ptr->maxdepth);
+		GROW(d_ptr->level, old_maxdepth, d_ptr->maxdepth, struct dun_level);
+		for (i = old_maxdepth; i < d_ptr->maxdepth; i++)
+			C_MAKE(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
+	}
+	//else s_printf("verify_dungeon (type %d, %s) completed without size change.\n", type, tower ? "tower" : "dungeon");
 }
 
 /*
