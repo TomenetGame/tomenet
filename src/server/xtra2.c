@@ -14854,7 +14854,8 @@ bool master_build(int Ind, char * parms) {
 	if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) return(FALSE);
 
 	/* This part to be rewritten for stacked CS */
-	cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, new_feat);
+	cave_set_feat(&p_ptr->wpos, p_ptr->py, p_ptr->px, new_feat);
+	// cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, new_feat);
 	if (c_ptr->feat == FEAT_HOME) {
 		struct c_special *cs_ptr;
 		/* new special door creation (with keys) */
