@@ -263,5 +263,5 @@ function custom_tunnel(Ind, index)
 end
 function custom_search(Ind, index)
 end
-function custom_newlivefeat(old_feat, new_feat, index);
+function custom_newlivefeat(old_feat, new_feat, index)
 end
