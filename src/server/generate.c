@@ -625,7 +625,7 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 #ifdef DM_MODULES
 		if (in_module(wpos)) { // Just edit modules w/ fountains in sector00 tower
 			// Hack - Retain FEAT_FOUNTAIN so it persists thru module_save() - Kurzel
-			c_ptr->feat = FEAT_FOUNTAIN;
+			cave_set_feat(wpos, y, x, FEAT_FOUNTAIN);
 			// Make it drinkable...
 			if (!(cs_ptr = AddCS(c_ptr, CS_FOUNTAIN))) return;
 			cs_ptr->sc.fountain.type = SV_POTION_WATER;
@@ -633,7 +633,7 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 		} else
 #endif
 		cave_set_feat(wpos, y, x, FEAT_EMPTY_FOUNTAIN);
-/*		c_ptr->special2 = 0; */
+		/*c_ptr->special2 = 0; */
 		return;
 	}
 
@@ -672,8 +672,7 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 	if (maxsval == 0) return;
 	else {
 		/* TODO: rarity should be counted in? */
-		c_ptr->feat = FEAT_FOUNTAIN; // cave_set_feat() can now place_fountain() - Kurzel
-		// cave_set_feat(wpos, y, x, FEAT_FOUNTAIN);
+		cave_set_feat(wpos, y, x, FEAT_FOUNTAIN);
 		if (!(cs_ptr = AddCS(c_ptr, CS_FOUNTAIN))) return;
 
 		if (!maxsval || magik(20)) /* often water */
@@ -685,10 +684,10 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 		/* Some hacks: */
 		if (cs_ptr->sc.fountain.type <= SV_POTION_LAST)
 			switch (cs_ptr->sc.fountain.type) {
-/*			case SV_POTION_NEW_LIFE:
+			/*case SV_POTION_NEW_LIFE:
 				cs_ptr->sc.fountain.rest = 1;
-				break;
-*/			case SV_POTION_INC_STR:	case SV_POTION_INC_INT:
+				break;*/
+			case SV_POTION_INC_STR:	case SV_POTION_INC_INT:
 			case SV_POTION_INC_WIS:	case SV_POTION_INC_DEX:
 			case SV_POTION_INC_CON:	case SV_POTION_INC_CHR:
 			case SV_POTION_STAR_RESTORE_MANA:
@@ -734,7 +733,7 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 #endif	/* 0 */
 	}
 
-/*	c_ptr->special = svals[rand_int(maxsval)]; */
+	/*c_ptr->special = svals[rand_int(maxsval)]; */
 }
 
 /* Place a fountain of blood, for Vampires, as suggested by Mark -  C. Blue */
@@ -749,8 +748,7 @@ void place_fountain_of_blood(struct worldpos *wpos, int y, int x) {
 	if (c_ptr->special) return;
 
 	/* TODO: rarity should be counted in? */
-	c_ptr->feat = FEAT_FOUNTAIN_BLOOD; // cave_set_feat() can now place_fountain_blood() - Kurzel
-	// cave_set_feat(wpos, y, x, FEAT_FOUNTAIN_BLOOD);
+	cave_set_feat(wpos, y, x, FEAT_FOUNTAIN_BLOOD);
 	if (!(cs_ptr = AddCS(c_ptr, CS_FOUNTAIN))) return;
 	cs_ptr->sc.fountain.type = SV_POTION_BLOOD;
 	cs_ptr->sc.fountain.rest = damroll(1, 5);

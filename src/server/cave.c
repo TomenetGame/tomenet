@@ -7895,11 +7895,7 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 	bool deep_water = l_ptr && (l_ptr->flags1 & LF1_DEEP_WATER);
 
 	if (!(zcave = getcave(wpos))) return;
-	if (!(wpos->wz) && !in_bounds(y, x)) return; // no surface BOUNDARY bugs
-	if (!in_bounds_array(y, x)) return; // include BOUNDARY feats - Kurzel
-	/* Handle Fountains */
-	if (feat == FEAT_FOUNTAIN) return place_fountain(wpos, y, x);
-	if (feat == FEAT_FOUNTAIN_BLOOD) return place_fountain_of_blood(wpos, y, x);
+	if (!in_bounds_array(y, x)) return;
 	c_ptr = &zcave[y][x];
 
 	/* Trees in greater fire become dead trees at once */
@@ -7992,7 +7988,7 @@ bool cave_set_feat_live_ok(worldpos *wpos, int y, int x, int feat) {
 	//struct town_type *t_ptr; /* have town keep track of number of feature changes (not yet implemented) */
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
-	if (!in_bounds(y, x)) return(FALSE);
+	if (!in_bounds_array(y, x)) return(FALSE);
 	c_ptr = &zcave[y][x];
 
 	/* apply town-specific restrictions, preserving the intended town layout */
