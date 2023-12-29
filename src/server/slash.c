@@ -3350,7 +3350,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			apos.wx = 0; apos.wy = 0; apos.wz = 0;
 			if (!wild_info[apos.wy][apos.wx].tower) {
 #ifdef DM_MODULES
-				add_dungeon(&apos, 1, 1 + DM_MODULES_DUNGEON_SIZE, DF1_NO_RECALL | DF1_SMALLEST, // 1 pvp arena, 9 floors for modules - Kurzel
+				add_dungeon(&apos, 1, 1 + DM_MODULES_DUNGEON_SIZE, DF1_NO_RECALL | DF1_SMALLEST, // 1 pvp arena, n floors for modules - Kurzel
 #else
 				add_dungeon(&apos, 1, 1, DF1_NO_RECALL | DF1_SMALLEST,
 #endif
@@ -3390,7 +3390,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "Usage: /remdun (d/t)");
 				return;
 			}
-			rem_dungeon(&p_ptr->wpos, token[1][0] != 'd');
+			msg_format(Ind, "Dungeon removal %s.", rem_dungeon(&p_ptr->wpos, token[1][0] != 'd') ? "succeeded" : "failed");
 			return;
 		}
 #ifdef AUCTION_SYSTEM
@@ -9322,7 +9322,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				else strcpy(message4, "");
 #ifdef DM_MODULES
 				// Hack - /gestart <adventure title> - Kurzel
-				if (!(atoi(token[1]) > 0)) {
+				if (!atoi(token[1])) {
 					// Catch typos in the title by checking whether it was indexed?
 					if (!exec_lua(0, format("return adventure_extra(\"%s\", 1)", message3))) {
 						msg_print(Ind, "Error: adventure not found!");

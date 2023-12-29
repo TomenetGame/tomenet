@@ -2546,7 +2546,7 @@ static void quest_remove_dungeons(int q_idx) {
 
 	for (i = 0; i < q_ptr->stages; i++) {
 		if (!q_ptr->stage[i].dun_base) continue;
-		rem_dungeon(&q_ptr->stage[i].dun_wpos, FALSE);
+		(void)rem_dungeon(&q_ptr->stage[i].dun_wpos, FALSE);
 	}
 }
 /* Remove the dungeon of a specific quest stage */
@@ -2554,7 +2554,7 @@ static void quest_remove_dungeon(int q_idx, int stage) {
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 
 	if (!q_stage->dun_base || q_stage->dun_keep) return;
-	rem_dungeon(&q_stage->dun_wpos, FALSE);
+	(void)rem_dungeon(&q_stage->dun_wpos, FALSE);
 }
 /* Helper vars for quest_aux(), sigh.. TODO: some other way? ^^ */
 static cptr quest_aux_name = NULL;

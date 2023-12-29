@@ -11016,7 +11016,7 @@ static void town_gen_hack(struct worldpos *wpos) {
 
 static void town_gen(struct worldpos *wpos) {
 	int y, x, type = -1, i;
-	int xstart = 0, ystart = 0;	/* dummy, for now */
+	int xstart = 0, ystart = 0;
 
 	cave_type	*c_ptr;
 	cave_type	**zcave;
@@ -11177,11 +11177,9 @@ static void town_gen(struct worldpos *wpos) {
 			break;
 		default:
 			town_gen_hack(wpos);
-			return;
 		}
 	} else {
 		town_gen_hack(wpos);
-		return;
 	}
 #else
 	process_dungeon_file("t_info.txt", wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
@@ -11344,7 +11342,7 @@ void dealloc_dungeon_level(struct worldpos *wpos) {
 
 /* added 'force' to delete it even if someone is still inside,
    that player gets recalled to surface in that case. - C. Blue */
-static void del_dungeon(struct worldpos *wpos, bool tower, bool force) {
+static bool del_dungeon(struct worldpos *wpos, bool tower, bool force) {
 	struct dungeon_type *d_ptr;
 	int i, j;
 	struct worldpos twpos;
@@ -11358,7 +11356,7 @@ static void del_dungeon(struct worldpos *wpos, bool tower, bool force) {
 
 	if (!d_ptr) { /* just in case */
 		s_printf(" error: does not exist.\n");
-		return;
+		return(FALSE);
 	}
 
 	if (d_ptr->flags2 & DF2_DELETED) {
@@ -11416,7 +11414,7 @@ static void del_dungeon(struct worldpos *wpos, bool tower, bool force) {
 			if (d_ptr->level[i].ondepth) { /* someone is still inside! */
 				if (force) s_printf("Dungeon deletion: ondepth on floor %d - forcing out.\n", i);
 				else s_printf("Dungeon deletion: ondepth on floor %d - cancelling.\n", i);
-				if (!force) return;
+				if (!force) return(TRUE); //we still deleted the dungeon..half-way? TODO: fix this, ew
 				for (j = 1; j <= NumPlayers; j++) {
 					p_ptr = Players[j];
 					if (inarea(&p_ptr->wpos, &twpos)) {
@@ -11450,14 +11448,15 @@ static void del_dungeon(struct worldpos *wpos, bool tower, bool force) {
 	/* Release the lock */
 	wild->flags &= ~(tower ? WILD_F_LOCKUP : WILD_F_LOCKDOWN);
 #endif
+	return(TRUE);
 }
 
-void rem_dungeon(struct worldpos *wpos, bool tower) {
+bool rem_dungeon(struct worldpos *wpos, bool tower) {
 	struct dungeon_type *d_ptr;
 	wilderness_type *wild = &wild_info[wpos->wy][wpos->wx];
 
 	d_ptr = (tower ? wild->tower : wild->dungeon);
-	if (!d_ptr) return;
+	if (!d_ptr) return(FALSE);
 #if 0
 	/* Lock so that dungeon cannot be overwritten while in use */
 	wild->flags |= (tower ? WILD_F_LOCKUP : WILD_F_LOCKDOWN);
@@ -11466,7 +11465,7 @@ void rem_dungeon(struct worldpos *wpos, bool tower) {
 	wild->flags &= ~(tower ? WILD_F_UP : WILD_F_DOWN);
 
 	d_ptr->flags2 |= DF2_DELETED;
-	del_dungeon(wpos, tower, TRUE);	/* Hopefully first time */
+	return(del_dungeon(wpos, tower, TRUE));	/* Hopefully first time */
 }
 
 /* 'type' refers to t_info[] */

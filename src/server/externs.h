@@ -957,7 +957,7 @@ extern bool dungeon_aux(int r_idx);
 extern bool xorder_aux(int r_idx);
 extern bool xorder_aux_extra;
 extern void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, u32b flags2, u32b flags3, bool tower, int type, int theme, int quest, int quest_stage);
-extern void rem_dungeon(struct worldpos *wpos, bool tower);
+extern bool rem_dungeon(struct worldpos *wpos, bool tower);
 extern void alloc_dungeon_level(struct worldpos *wpos);
 extern void dealloc_dungeon_level(struct worldpos *wpos);
 extern void generate_cave(struct worldpos *wpos, player_type *p_ptr);

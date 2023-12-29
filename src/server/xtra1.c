@@ -8795,9 +8795,7 @@ static void process_global_event(int ge_id) {
 						p_ptr->recall_pos.wx = WPOS_HIGHLANDER_X;
 						p_ptr->recall_pos.wy = WPOS_HIGHLANDER_Y;
 						p_ptr->recall_pos.wz = WPOS_HIGHLANDER_DUN_Z;
-						p_ptr->global_event_temp = PEVF_PASS_00 | PEVF_NOGHOST_00 |
-						    PEVF_SAFEDUN_00 | PEVF_SEPDUN_00;
-						//p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+						p_ptr->global_event_temp = PEVF_NOGHOST_00 | PEVF_SAFEDUN_00 | PEVF_SEPDUN_00;
 						p_ptr->new_level_method = LEVEL_RAND;
 						recall_player(i, "");
 					}
@@ -9082,7 +9080,7 @@ static void process_global_event(int ge_id) {
 					p_ptr->recall_pos.wy = cfg.town_y;
 					p_ptr->recall_pos.wz = 0;
 					p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
-					p_ptr->global_event_temp = PEVF_PASS_00; /* clear all other flags, allow a final recall out */
+					p_ptr->global_event_temp = 0x0; /* clear all flags */
 					recall_player(i, "");
 					/* required, or the double-wpos-change in below's 'unstatic_level()' call will cause
 					   panic save due to old wpos possibly still being in non-existant highlander dungeon */
@@ -9104,7 +9102,7 @@ static void process_global_event(int ge_id) {
 
 			/* remove temporary Highlander dungeon! */
 			if (wild_info[wpos.wy][wpos.wx].dungeon)
-				rem_dungeon(&wpos, FALSE);
+				(void)rem_dungeon(&wpos, FALSE);
 
 			wild_info[wpos.wy][wpos.wx].type = ge->extra[1];
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
@@ -9470,8 +9468,7 @@ static void process_global_event(int ge_id) {
 						p_ptr->recall_pos.wx = WPOS_SECTOR00_X;
 						p_ptr->recall_pos.wy = WPOS_SECTOR00_Y;
 						p_ptr->recall_pos.wz = WPOS_SECTOR00_Z;
-						p_ptr->global_event_temp = PEVF_PASS_00;
-						//p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+						p_ptr->global_event_temp = 0x0;
 						if (!WPOS_SECTOR00_Z) p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 						else p_ptr->new_level_method = LEVEL_RAND;
 						/* don't spawn them too close to a beacon */
@@ -9616,15 +9613,11 @@ static void process_global_event(int ge_id) {
 				s_printf("EVENT_LAYOUT: Adding tower (no entry).\n");
 
 				// slash.c PvP ARENA for reference... sharing tower for now - Kurzel
-				// add_dungeon(&apos, 1, 10, DF1_NO_RECALL | DF1_SMALLEST,
-					// DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK | DF2_RANDOM, DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS, TRUE, 0, 0, 0, 0);
 				add_dungeon(&wpos, 1, 1 + DM_MODULES_DUNGEON_SIZE, DF1_NO_RECALL | DF1_SMALLEST,
 					DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK | DF2_RANDOM,
 					DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS, TRUE, 0, 0, 0, 0);
 
-			} else {
-				s_printf("EVENT_LAYOUT: Dungeon already in place.\n");
-			}
+			} else s_printf("EVENT_LAYOUT: Tower already in place.\n");
 
 			/* clean any static module floors from server crashes, remove idle DMs */
 			for (j = ge->extra[3]; j <= ge->extra[4]; j++) { // GE_EXTRA - adventures.lua
@@ -9674,7 +9667,7 @@ static void process_global_event(int ge_id) {
 						p_ptr->recall_pos.wy = cfg.town_y;
 						p_ptr->recall_pos.wz = 0;
 						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
-						p_ptr->global_event_temp = PEVF_PASS_00; /* clear all other flags, allow a final recall out */
+						p_ptr->global_event_temp = 0x0; /* clear all flags */
 						recall_player(i, "");
 					}
 				}
@@ -9685,7 +9678,7 @@ static void process_global_event(int ge_id) {
 			// sector00flags1 = sector00flags2 = 0x0;
 
 			// Don't wipe it once generated, avoiding conflicts with PVPARENA / other modules - Kurzel
-			// if (wild_info[wpos.wy][wpos.wx].tower) rem_dungeon(&wpos, TRUE);
+			// if (wild_info[wpos.wy][wpos.wx].tower) (void)rem_dungeon(&wpos, TRUE);
 
 			/* restart challenge announcement */
 			if (ge->state[1] == 2) {

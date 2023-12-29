@@ -925,7 +925,7 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 		p_ptr->recall_pos.wy = cfg.town_y;
 		p_ptr->recall_pos.wz = 0;
 		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
-		p_ptr->global_event_temp = PEVF_PASS_00; /* clear all other flags, allow a final recall out */
+		p_ptr->global_event_temp = 0x0; /* clear all flags */
 		recall_player(Ind, "");
 		return(TRUE);
 	}
@@ -1077,9 +1077,9 @@ void do_cmd_go_down(int Ind) {
 			set_invuln_short(Ind, STAIR_GOI_LENGTH);
 			if (!players_on_depth(&old_wpos)) {
 				if (old_wpos.wz > 0) {
-					if (wild_info[old_wpos.wy][old_wpos.wx].tower) rem_dungeon(&old_wpos, TRUE);
+					if (wild_info[old_wpos.wy][old_wpos.wx].tower) (void)rem_dungeon(&old_wpos, TRUE);
 				} else {
-					if (wild_info[old_wpos.wy][old_wpos.wx].dungeon) rem_dungeon(&old_wpos, FALSE);
+					if (wild_info[old_wpos.wy][old_wpos.wx].dungeon) (void)rem_dungeon(&old_wpos, FALSE);
 				}
 			}
 			return;

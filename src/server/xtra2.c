@@ -9471,7 +9471,6 @@ void player_death(int Ind) {
 		p_ptr->recall_pos.wx = 0;
 		p_ptr->recall_pos.wy = 0;
 		p_ptr->recall_pos.wz = 0;
-		p_ptr->global_event_temp |= PEVF_PASS_00; /* pass through sector00separation */
 		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 		recall_player(Ind, "");
 
@@ -14673,22 +14672,22 @@ bool master_level(int Ind, char * parms) {
 				p_ptr->recall_pos.wy = p_ptr->wpos.wy;
 				p_ptr->recall_pos.wz = 0;
 				recall_player(Ind, "");
-				rem_dungeon(&p_ptr->wpos, FALSE);
+				(void)rem_dungeon(&p_ptr->wpos, FALSE);
 			} else {
 				p_ptr->recall_pos.wx = p_ptr->wpos.wx;
 				p_ptr->recall_pos.wy = p_ptr->wpos.wy;
 				p_ptr->recall_pos.wz = 0;
 				recall_player(Ind, "");
-				rem_dungeon(&p_ptr->wpos, TRUE);
+				(void)rem_dungeon(&p_ptr->wpos, TRUE);
 			}
 		} else { /* or the one whose entrance staircase we're standing on */
 			switch (zcave[p_ptr->py][p_ptr->px].feat) {
 			case FEAT_MORE:
-				rem_dungeon(&p_ptr->wpos, FALSE);
+				(void)rem_dungeon(&p_ptr->wpos, FALSE);
 				zcave[p_ptr->py][p_ptr->px].feat = FEAT_GRASS;
 				break;
 			case FEAT_LESS:
-				rem_dungeon(&p_ptr->wpos, TRUE);
+				(void)rem_dungeon(&p_ptr->wpos, TRUE);
 				zcave[p_ptr->py][p_ptr->px].feat = FEAT_GRASS;
 				break;
 			default:
