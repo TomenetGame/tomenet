@@ -158,14 +158,7 @@ function adventure_start(Ind,t)
   players(Ind).recall_pos.wy = 0
   players(Ind).recall_pos.wz = GE_EXTRA[t][6]
   players(Ind).new_level_method = LEVEL_RAND
-  -- hack - ignore xtra1.c / slash.c DF2_NO_ENTRY_MASK in dungeon.c
-  if players(Ind).admin_wiz == 0 then
-    players(Ind).admin_wiz = 1
-    recall_player(Ind, "")
-    players(Ind).admin_wiz = 0
-  else
-    recall_player(Ind, "")
-  end
+  recall_player(Ind, "")
 
   -- msg_print(Ind,"Thanks for testing!")
 end
