@@ -1,9 +1,8 @@
 # Christmas Tree - C. Blue
 
-F: :138:3
 F:#:139:3
 F:*:140:3
 
-D: # 
+D:&#&
 D:#*#
-D: # 
+D:&#&

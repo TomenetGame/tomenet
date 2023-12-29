@@ -1,8 +1,7 @@
 # To undo the christmas tree and replace it with normal trees again - C. Blue
 
-F: :138:3
 F:#:96:3
 
-D: # 
+D:&#&
 D:###
-D: # 
+D:&#&
