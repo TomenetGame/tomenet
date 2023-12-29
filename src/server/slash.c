@@ -3230,7 +3230,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 #ifdef DM_MODULES
 					/* If the adventure is pending, possibly retract sign-up phase */
-					if ((ge->getype == GE_ADVENTURE) && (ge->state[1] == 2)) {
+					if (ge->getype == GE_ADVENTURE && ge->state[1] == 2) {
 						n = 0;
 						for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
 							if (!ge->participant[j]) continue;
@@ -3350,7 +3350,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			apos.wx = 0; apos.wy = 0; apos.wz = 0;
 			if (!wild_info[apos.wy][apos.wx].tower) {
 #ifdef DM_MODULES
-				add_dungeon(&apos, 1, 10, DF1_NO_RECALL | DF1_SMALLEST, // 1 pvp arena, 9 floors for modules - Kurzel
+				add_dungeon(&apos, 1, 1 + DM_MODULES_DUNGEON_SIZE, DF1_NO_RECALL | DF1_SMALLEST, // 1 pvp arena, 9 floors for modules - Kurzel
 #else
 				add_dungeon(&apos, 1, 1, DF1_NO_RECALL | DF1_SMALLEST,
 #endif

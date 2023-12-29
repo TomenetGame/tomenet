@@ -386,6 +386,9 @@
 /* Enable DM "adventure" modules, including save/load of entire cave floor files from the ] menu client-side.
    Multiple modules could be loaded with the quest/event frameworks for detailed adventure sites. - Kurzel */
 #define DM_MODULES
+#ifdef DM_MODULES
+ #define DM_MODULES_DUNGEON_SIZE 9	/* Number of dungeon floors required to host all the modules */
+#endif
 
 /* Allow to press alt-wield (shift+W) to equip a digging tool into the weapon slot! (4.7.4b+ test).
    Note that digging tools must all receive MUST2H flag for this. - C. Blue */
