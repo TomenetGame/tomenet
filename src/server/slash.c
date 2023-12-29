@@ -9322,7 +9322,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				else strcpy(message4, "");
 #ifdef DM_MODULES
 				// Hack - /gestart <adventure title> - Kurzel
-				if (!atoi(token[1])) {
+				if (!(atoi(token[1]) > 0)) { // if not a number
 					// Catch typos in the title by checking whether it was indexed?
 					if (!exec_lua(0, format("return adventure_extra(\"%s\", 1)", message3))) {
 						msg_print(Ind, "Error: adventure not found!");
