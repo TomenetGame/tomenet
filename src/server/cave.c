@@ -7895,15 +7895,11 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 	bool deep_water = l_ptr && (l_ptr->flags1 & LF1_DEEP_WATER);
 
 	if (!(zcave = getcave(wpos))) return;
-#ifdef DM_MODULES
-	if (!(wpos->wz) && !in_bounds(y, x)) return; // surface fix, eg. Bree!
+	if (!(wpos->wz) && !in_bounds(y, x)) return; // no surface BOUNDARY bugs
 	if (!in_bounds_array(y, x)) return; // include BOUNDARY feats - Kurzel
 	/* Handle Fountains */
 	if (feat == FEAT_FOUNTAIN) return place_fountain(wpos, y, x);
 	if (feat == FEAT_FOUNTAIN_BLOOD) return place_fountain_of_blood(wpos, y, x);
-#else
-	if (!in_bounds(y, x)) return;
-#endif
 	c_ptr = &zcave[y][x];
 
 	/* Trees in greater fire become dead trees at once */
