@@ -11790,10 +11790,12 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr) {
 // Allow LUA to pass a wpos structure back to C ! - Kurzel
 struct worldpos make_wpos(int wx, int wy, int wz) {
 	struct worldpos wpos;
+
 	wpos.wx = wx;
 	wpos.wy = wy;
 	wpos.wz = wz;
-	return wpos;
+
+	return(wpos);
 }
 
 void summon_override(bool force) {
@@ -11803,37 +11805,47 @@ void summon_override(bool force) {
 
 u32b adventure_flags1(int wz) { // LOCALE_00, GE_DESCRIPTION -- adventures.lua
 	switch (wz) {
-		// Under Elmoth
-		case 2:
-			return (LF1_NO_GENO | LF1_NO_MAGIC_MAP | LF1_NO_DESTROY);
-		// Isle
-		case 3:
-			return (LF1_NO_GENO | LF1_NO_DESTROY);
-		// Unoccupied
-		default:
-			return (0);
+	// Under Elmoth
+	case 2:
+		return (LF1_NO_GENO | LF1_NO_MAGIC_MAP | LF1_NO_DESTROY);
+	// Isle
+	case 3:
+		return (LF1_NO_GENO | LF1_NO_DESTROY);
+	// Unoccupied
+	default:
+		return (0);
 	}
 }
 
 u32b adventure_flags2(int wz) { // LOCALE_00, GE_DESCRIPTION -- adventures.lua
 	switch (wz) {
-		// Under Elmoth
-		case 2:
-			return (LF2_NO_DETECT | LF2_NO_ESP | LF2_NO_LIVE_SPAWN);
-		// Isle
-		case 3:
-			return (LF2_NO_LIVE_SPAWN);
-		// Unoccupied
-		default:
-			return (0);
+	// Under Elmoth
+	case 2:
+		return (LF2_NO_DETECT | LF2_NO_ESP | LF2_NO_LIVE_SPAWN);
+	// Isle
+	case 3:
+		return (LF2_NO_LIVE_SPAWN);
+	// Unoccupied
+	default:
+		return (0);
 	}
 }
 
 // Generate an empty floor (minus 0-4 half panel sizes), for DMs - Kurzel
 void generate_cave_blank(worldpos *twpos, int W, int H, bool light) {
-	struct worldpos pos;
+	int x, y;
+	cave_type **zcave, *c_ptr;
+	struct worldpos pos, *wpos = &pos;
+
+	int meta_width = MAX_WID - W * (SCREEN_WID / 2);
+	int meta_height = MAX_HGT - H * (SCREEN_HGT / 2);
+	int meta_boundary = FEAT_PERM_SOLID;
+	// int meta_boundary = 1; // Floor - to draw your own / mix and match? crashes
+
+	struct wilderness_type *wild;
+
+
 	wpcopy(&pos,twpos); // copy of DM wpos, as DM wpos could / will change
-	struct worldpos *wpos = &pos; // avoid uninitialized wpcopy() warning
 	if (!wpos->wz) return; // paranoia - no surface modules, yet
 	// PARANOIA - bad input from junk strings? default to smallest
 	if ((W < 0) || (W > 4)) W = 4;
@@ -11846,11 +11858,8 @@ void generate_cave_blank(worldpos *twpos, int W, int H, bool light) {
 	unstatic_level(wpos); // problem - this changes the DM wpos, see above
 	if (getcave(wpos)) dealloc_dungeon_level(wpos);
 	alloc_dungeon_level(wpos);
+	if (!(zcave = getcave(wpos))) return;
 	new_players_on_depth(wpos,1,TRUE);
-
-	int x,y;
-	cave_type **zcave = getcave(wpos);
-	cave_type *c_ptr;
 
 	/* Start with a blank cave */
 	for (y = 0; y < MAX_HGT; y++) {
@@ -11868,11 +11877,7 @@ void generate_cave_blank(worldpos *twpos, int W, int H, bool light) {
 
 	/* Draw boundaries, handle smaller floors */
 
-	int meta_width = MAX_WID - W * (SCREEN_WID / 2);
-	int meta_height = MAX_HGT - H * (SCREEN_HGT / 2);
-
 	/* Oops, a dungeon floor is not just a cave, it is part of the world? - Kurzel */
-	struct wilderness_type *wild;
 	wild = &wild_info[wpos->wy][wpos->wx];
 	if (wpos->wz > 0) { // paranoia - all modules are in_module(wpos) above PVPARENA_Z (for now)
 		wild->tower->level[wpos->wz - 1].flags1 = (in_module(wpos) ? adventure_flags1(wpos->wz) : 0);
@@ -11881,7 +11886,7 @@ void generate_cave_blank(worldpos *twpos, int W, int H, bool light) {
 		/* Important - restrict out of bounds behavior, eg. recall/looking - Kurzel */
 		wild->tower->level[wpos->wz - 1].wid = meta_width;
 		wild->tower->level[wpos->wz - 1].hgt = meta_height;
-	}	else {
+	} else {
 		wild->dungeon->level[ABS(wpos->wz) - 1].flags1 = (0);
 		wild->dungeon->level[ABS(wpos->wz) - 1].flags2 = (LF2_NO_LIVE_SPAWN); // Don't interrupt the architect, please. - Kurzel
 		wild->dungeon->level[ABS(wpos->wz) - 1].monsters_generated = wild->dungeon->level[ABS(wpos->wz) - 1].monsters_spawned = wild->dungeon->level[ABS(wpos->wz) - 1].monsters_killed = 0;
@@ -11889,7 +11894,7 @@ void generate_cave_blank(worldpos *twpos, int W, int H, bool light) {
 		wild->dungeon->level[ABS(wpos->wz) - 1].wid = meta_width;
 		wild->dungeon->level[ABS(wpos->wz) - 1].hgt = meta_height;
 	}
-		
+
 	/* Fill rest of map with perma clear walls if specific size was given */
 	if (meta_width)
 		for (x = meta_width; x < MAX_WID; x++)
@@ -11899,9 +11904,6 @@ void generate_cave_blank(worldpos *twpos, int W, int H, bool light) {
 		for (y = meta_height; y < MAX_HGT; y++)
 			for (x = 0; x < MAX_WID; x++)
 				zcave[y][x].feat = FEAT_PERM_FILL;
-
-	int meta_boundary = FEAT_PERM_SOLID;
-	// int meta_boundary = 1; // Floor - to draw your own / mix and match? crashes
 
 	/* Replace FEAT_PERM_SOLID or whatever default boundary wall is used by a specific one? */
 	if (meta_boundary) {
@@ -11927,7 +11929,6 @@ void generate_cave_blank(worldpos *twpos, int W, int H, bool light) {
    Used for season change. - C. Blue */
 void regenerate_cave(struct worldpos *wpos) {
 	cave_type **zcave;
-
 	int i;
 	player_type *p_ptr;
 

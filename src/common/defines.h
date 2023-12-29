@@ -8980,7 +8980,7 @@ extern int PlayerUID;
 #define GE_GAME_RUGBY		4	/* [NOT YET IMPLEMENTED] Evileye's good ole game of rugby, now in event-form ;) */
 #define GE_DUNGEON_KEEPER	5	/* 'Dungeon Keeper' Labyrinth */
 #ifdef DM_MODULES
- #define GE_ADVENTURE	6	/* Load DM modules as part of an adventure! - Kurzel */
+ #define GE_ADVENTURE		6	/* Load DM modules as part of an adventure! - Kurzel */
 #endif
 
 /* player flags while participating in global events (p_ptr->global_event_temp) */
@@ -9340,11 +9340,11 @@ extern int PlayerUID;
 	(sector00separation && (wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y && (wpos)->wz == WPOS_SECTOR00_Z)
 #define in_sector00_dun(wpos) \
 	(sector00separation && (wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y && (wpos)->wz * WPOS_SECTOR00_Z_DUN > 0)
-#define in_sector00_module(wpos) \
-	((wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y && (wpos)->wz * SGN(WPOS_SECTOR00_Z_MODULE) >= WPOS_SECTOR00_Z_MODULE)
 #ifdef DM_MODULES
-#define in_sector00_xy(wpos) \
+ #define in_sector00_xy(wpos) \
 	(sector00separation && (wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y)
+ #define in_module(wpos) \
+	((wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y && (wpos)->wz * SGN(WPOS_SECTOR00_Z_MODULE) >= WPOS_SECTOR00_Z_MODULE)
 #endif
 
 /* in the arena monster challenge? (which should be in TT) */
@@ -9391,11 +9391,6 @@ extern int PlayerUID;
 	((wpos)->wx == WPOS_DF_X && (wpos)->wy == WPOS_DF_Y && (wpos)->wz == -WPOS_DF_Z)
 #define in_deathfate_x(wpos) \
 	((wpos)->wx == WPOS_DF_X && (wpos)->wy == WPOS_DF_Y && (wpos)->wz)
-
-#ifdef DM_MODULES
- #define in_module(wpos) \
-  ((wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y && (wpos)->wz > WPOS_PVPARENA_Z)
-#endif
 
 /* constants for get_item() to be transmitted to the client for choosing an item_tester_hook */
 #define ITH_NONE	0

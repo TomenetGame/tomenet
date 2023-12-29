@@ -3486,9 +3486,9 @@ static int Handle_login(int ind) {
 			msg_format(Ind, "  \377U%d\377W) '%s' recruits for %d more minutes.",
 			    i + 1, global_event[i].title, (global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps)) / 60);
  #else
-	#ifdef DM_MODULES
+  #ifdef DM_MODULES
 			if ((global_event[i].getype == GE_ADVENTURE) && (global_event[i].state[1] == 1)) continue;
-	#endif
+  #endif
 			if (time_left >= 120) msg_format(NumPlayers, "\374\377W[%s (\377U%d\377W) starts in %d minutes]", global_event[i].title, i + 1, time_left / 60);
 			else msg_format(NumPlayers, "\374\377W[%s (%d) starts in %d seconds!]", global_event[i].title, i + 1, time_left);
  #endif

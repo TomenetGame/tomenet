@@ -8587,12 +8587,11 @@ void merchant_mail_death(const char pname[CNAME_LEN]) {
 static void erase_player(int Ind, int death_type, bool static_floor) {
 	player_type *p_ptr = Players[Ind];
 	char buf[1024];
-	int i;
+	int i, k;
 	int *id_list, ids;
+	global_event_type *ge;
 
 	/* Remove ID from any ongoing events in case a new/same player takes ID */
-	int k;
-	global_event_type *ge;
 	for (i = 0; i < MAX_GLOBAL_EVENTS; i++) {
 		ge = &global_event[i];
 		if (!ge->getype) continue;
@@ -15042,6 +15041,11 @@ bool master_summon(int Ind, char * parms) {
 
 	/* extract arguments.  If none are found, summon previous type. */
 	if (parms) {
+#ifdef DM_MODULES
+		e_idx = 0; // Paranoia - reset static from last call? - Kurzel
+		char *ptr;
+
+#endif
 		/* the first character specifies the type of monster */
 		summon_type = parms[0];
 		summon_parms = parms[1];
@@ -15050,7 +15054,7 @@ bool master_summon(int Ind, char * parms) {
 		strcpy(monster_parms, &parms[3]);
 #ifdef DM_MODULES
 		e_idx = 0; // Paranoia - reset static from last call? - Kurzel
-		char * ptr = strchr(monster_parms, ' '); // Locate first space, if any
+		ptr = strchr(monster_parms, ' '); // Locate first space, if any
 		if (ptr) e_idx = atoi(&ptr[1]); // Convert a string after the space
 		if (e_idx <= 0) e_idx = 0; // Ignore bad atoi() conversions
 #endif
