@@ -9618,7 +9618,7 @@ static void process_global_event(int ge_id) {
 				// slash.c PvP ARENA for reference... sharing tower for now - Kurzel
 				// add_dungeon(&apos, 1, 10, DF1_NO_RECALL | DF1_SMALLEST,
 					// DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK | DF2_RANDOM, DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS, TRUE, 0, 0, 0, 0);
-				add_dungeon(&wpos, 1, 10, DF1_NO_RECALL | DF1_SMALLEST,
+				add_dungeon(&wpos, 1, 1 + DM_MODULES_DUNGEON_SIZE, DF1_NO_RECALL | DF1_SMALLEST,
 					DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK | DF2_RANDOM,
 					DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS, TRUE, 0, 0, 0, 0);
 
@@ -9659,7 +9659,7 @@ static void process_global_event(int ge_id) {
 				// }
 			}
 			if (!n) ge->state[0] = 255;
-		break;
+			break;
 		case 255: /* clean-up or restart */
 
 			/* wipe participation */
@@ -9676,10 +9676,6 @@ static void process_global_event(int ge_id) {
 						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 						p_ptr->global_event_temp = PEVF_PASS_00; /* clear all other flags, allow a final recall out */
 						recall_player(i, "");
- #ifdef MODULE_ALLOW_INCOMPAT
-						/* need to leave party, since we might be teamed up with incompatible char mode players! */
-						if (p_ptr->party && !p_ptr->admin_dm && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)) party_leave(i, FALSE);
- #endif
 					}
 				}
 				ge->participant[j] = 0;
