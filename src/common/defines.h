@@ -9133,9 +9133,10 @@ extern int PlayerUID;
 #define WPOS_PVPARENA_X		WPOS_SECTOR00_X		/* location of pvp arena for MODE_PVP players */
 #define WPOS_PVPARENA_Y		WPOS_SECTOR00_Y
 #define WPOS_PVPARENA_Z		(-WPOS_SECTOR00_Z_DUN)	/* use opposite side of the sector00-dungeon, as to not interfere with any events! Because the PvP arena must be available 24/7! */
+/* Note: PvP-Arena MUST be at 1st floor of its dungeon/tower, because DM_MODULES count on that and sit on it. (see below) ^^ */
 
 /* Location of the Modules dungeon, also located in the event sector 0,0,
-   but on the opposite side of the event dungeon and above the PvP-Arena, so they don't collide: */
+   but on the opposite side of the event dungeon and above the PvP-Arena (counting on pvp-arena always being on 1st floor!), so they don't collide: */
 #define WPOS_SECTOR00_Z_MODULE	(2 * (-WPOS_SECTOR00_Z_DUN))
 
 #ifdef ARCADE_SERVER
@@ -9344,7 +9345,9 @@ extern int PlayerUID;
  #define in_sector00_xy(wpos) \
 	(sector00separation && (wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y)
  #define in_module(wpos) \
-	((wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y && (wpos)->wz * SGN(WPOS_SECTOR00_Z_MODULE) >= WPOS_SECTOR00_Z_MODULE)
+	((wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y && \
+	(wpos)->wz * SGN(WPOS_SECTOR00_Z_MODULE) >= WPOS_SECTOR00_Z_MODULE * SGN(WPOS_SECTOR00_Z_MODULE) && /* pseudo-EQV, lul */ \
+	(wpos)->wz * SGN(WPOS_SECTOR00_Z_MODULE) <= WPOS_SECTOR00_Z_MODULE * SGN(WPOS_SECTOR00_Z_MODULE + DM_MODULES_DUNGEON_SIZE - 1))
 #endif
 
 /* in the arena monster challenge? (which should be in TT) */
