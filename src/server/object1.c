@@ -6706,20 +6706,20 @@ int breakage_chance_with_skill(int Ind, object_type *o_ptr, byte *permille) {
 	int archery = get_archery_skill_from_ammo(o_ptr);
 	int j = base_percentage * 100;
 
-	if (wield_slot(0, o_ptr) != INVEN_AMMO) return -1;
+	if (wield_slot(0, o_ptr) != INVEN_AMMO) return(-1);
 
 	j = (j * (100 - get_skill_scale(p_ptr, archery, 90))) / 100;
 	*permille = (j % 100) / 10;
-	return j / 100;
+	return(j / 100);
 }
 
 /* Takes an ammo object and returns the relevant skill, without relying
    on what's equipped, since breakage chance doesn't depend on shooter. */
 int get_archery_skill_from_ammo(object_type *o_ptr) {
-	if (o_ptr->tval == TV_ARROW) return SKILL_BOW;
-	if (o_ptr->tval == TV_BOLT) return SKILL_XBOW;
-	if (o_ptr->tval == TV_SHOT) return SKILL_SLING;
-	else return -1;
+	if (o_ptr->tval == TV_ARROW) return(SKILL_BOW);
+	if (o_ptr->tval == TV_BOLT) return(SKILL_XBOW);
+	if (o_ptr->tval == TV_SHOT) return(SKILL_SLING);
+	else return(-1);
 }
 
 /* Attempts to convert owner of item to player, if allowed.
