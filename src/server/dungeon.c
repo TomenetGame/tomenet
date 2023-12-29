@@ -4219,8 +4219,7 @@ void recall_player(int Ind, char *message) {
 		    (1U << ((p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) % 8));
 
 	/* Did we really make it through all floors of the ironman challenge dungeon? */
-	if (in_irondeepdive(&old_wpos)
-	    && !is_admin(p_ptr)) {
+	if (in_irondeepdive(&old_wpos) && !is_admin(p_ptr)) {
 		int i, j;
 
 #ifdef IRONDEEPDIVE_FIXED_TOWN_WITHDRAWAL
@@ -4285,7 +4284,7 @@ void recall_player(int Ind, char *message) {
 			break;
 		}
 
-#if defined(IRONDEEPDIVE_ALLOW_INCOMPAT) || defined(MODULE_ALLOW_INCOMPAT)
+#ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
 		/* need to leave party, since we might be teamed up with incompatible char mode players! */
 		if (p_ptr->party && !p_ptr->admin_dm &&
 		    compat_mode(p_ptr->mode, parties[p_ptr->party].cmode))
@@ -4389,8 +4388,7 @@ void recall_player(int Ind, char *message) {
 	/* Specialty: Did we make it through the Halls of Mandos?
 	   Those are now ironman, so they're a 'pure', traditional ironman challenge.
 	   However, this dungeon can be entered at any level, so it might be less of a challenge. */
-	if (in_hallsofmandos(&old_wpos)
-	    && !is_admin(p_ptr)) {
+	if (in_hallsofmandos(&old_wpos) && !is_admin(p_ptr)) {
 		msg_print(Ind, "\374\377a***\377sYou made it through the Halls of Mandos!\377a***");
 		sprintf(buf, "\374\377a***\377s%s made it through the Halls of Mandos!\377a***", p_ptr->name);
 		msg_broadcast(Ind, buf);
@@ -4423,6 +4421,15 @@ void recall_player(int Ind, char *message) {
 		}
 #endif
 	}
+
+#ifdef MODULE_ALLOW_INCOMPAT
+	if (in_module(&old_wpos) && !is_admin(p_ptr)) {
+		/* need to leave party, since we might be teamed up with incompatible char mode players! */
+		if (p_ptr->party && !p_ptr->admin_dm &&
+		    compat_mode(p_ptr->mode, parties[p_ptr->party].cmode))
+			party_leave(Ind, FALSE);
+	}
+#endif
 }
 
 
