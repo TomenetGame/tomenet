@@ -879,11 +879,6 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
  #endif
 				s_printf("%s EVENT_WON: %s wins %d '%s'(%d)\n", showtime(), p_ptr->name, d + 1, ge->title, ge->getype);
 				p_ptr->event_won_flags |= 1 << (GE_ADVENTURE - 1 + ge->extra[0]); // HACK - Paranoia - Kurzel
-
- #ifdef MODULE_ALLOW_INCOMPAT
-				/* need to leave party, since we might be teamed up with incompatible char mode players! */
-				if (p_ptr->party && !p_ptr->admin_dm && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)) party_leave(Ind, FALSE);
- #endif
 				break; // No additional rewards for now. - Kurzel
 #endif
 			case GE_DUNGEON_KEEPER:
