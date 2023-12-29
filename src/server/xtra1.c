@@ -8030,7 +8030,7 @@ void stop_global_event(int Ind, int n) {
 	ge->announcement_time = -1; /* enter the processing phase, */
  #endif
 #ifdef DM_MODULES
-  if (ge->getype == GE_ADVENTURE) ge->state[1] = 0; /* signal cancellation */
+	if (ge->getype == GE_ADVENTURE) ge->state[1] = 0; /* signal cancellation */
 #endif
 	ge->state[0] = 255; /* ..and process clean-up! */
 #endif
@@ -8642,7 +8642,7 @@ static void process_global_event(int ge_id) {
 						}
 #ifdef DM_MODULES
 					/* If the adventure is pending, retract sign-up phase! */
-					if (ge->state[1] == 2) {
+					if (ge->getype == GE_ADVENTURE && ge->state[1] == 2) {
 						ge->state[1] = 1;
 						announce_global_event(ge_id);
 					} else
@@ -9647,7 +9647,7 @@ static void process_global_event(int ge_id) {
 
 			ge->state[0] = 1;
 			break;
-	  case 1: /* monitor for participation */
+		case 1: /* monitor for participation */
 			n = 0;
 			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
 				if (!ge->participant[j]) continue;
