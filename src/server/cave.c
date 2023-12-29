@@ -7887,7 +7887,6 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 	player_type *p_ptr;
 	cave_type **zcave;
 	cave_type *c_ptr;
-	//struct c_special *cs_ptr;
 	int i;
 
 	/* for Submerged Ruins: ensure all deep water; also affects Small Water Cave. */
@@ -8104,7 +8103,7 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	bool deep_water = l_ptr && (l_ptr->flags1 & LF1_DEEP_WATER);
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
-	if (!in_bounds(y, x)) return(FALSE);
+	if (!in_bounds_array(y, x)) return(FALSE);
 	c_ptr = &zcave[y][x];
 
 	/* apply town-specific restrictions, preserving the intended town layout */
@@ -8240,8 +8239,7 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 		feat = FEAT_DEAD_TREE;
 
 	/* Clear mimic feature left by a secret door - mikaelh */
-	if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
-		cs_erase(c_ptr, cs_ptr);
+	if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
 
 	/* For Wraithstep check below */
 	wall = !cave_floor_grid(c_ptr);
