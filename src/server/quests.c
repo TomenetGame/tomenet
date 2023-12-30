@@ -1279,6 +1279,7 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 		for (cx = x - lite_rad; cx <= x + lite_rad; cx++)
 		for (cy = y - lite_rad; cy <= y + lite_rad; cy++) {
 			if (distance(cy, cx, y, x) > lite_rad) continue;
+			//TODO: Check LoS to each grid, light might be blocked by walls
 			zcave[cy][cx].info |= lite_type;
 			everyone_lite_spot(&wpos, cy, cx);
 		}

@@ -6653,7 +6653,8 @@
 #define FF2_NO_PROB		0x00000400L	/* Don't allow probability travel onto this grid */
 #define FF2_ATTR_MULTI		0x00000800L	/* Ignore feat's base colour, instead cycle through the S-line colours each time the player refreshes his view on the feat. */
 #define FF2_SHINE		0x00001000L	/* Shines light on surrounding grids, causing (CAVE_GLOW_HACK | CAVE_GLOW) on them and itself, for permanent lighting. */
-#define FF2_SHINE_FIRE		0x00002000L	/* Shines fiery light on surrounding grids, causing (CAVE_GLOW_HACK_LAMP | CAVE_GLOW) on them and itself, for permanent fire-style lighting. */
+#define FF2_SHINE_FIRE		0x00002000L	/* Changes FF2_SHINE effect to fiery light (instead of neutral aka white light). */
+#define FF2_SHINE2		0x00004000L	/* rad 2. Stacks with FF2_SHINE. */
 //hole
 #define FF2_BOUNDARY		0x80000000L	/* Is permanent wall that serves as boundary of a dungeon level - cannot even be crossed by admins */
 

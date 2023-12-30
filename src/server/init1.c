@@ -1149,7 +1149,7 @@ static cptr f_info_flags2[] = {
 
 	"SHINE",
 	"SHINE_FIRE",
-	"XXX",
+	"SHINE2",
 	"XXX",
 
 	"XXX",
@@ -2570,7 +2570,7 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 	/* implied flags */
 	for (i = 0; i < max_f_idx; i++) {
 		if ((f_info[i].flags2 & FF2_BOUNDARY)) f_info[i].flags1 |= FF1_PERMANENT;
-		//if ((f_info[i].flags2 & (FF2_SHINE | FF2_SHINE_FIRE))) f_info[i].flags2 |= FF2_GLOW;
+		//if ((f_info[i].flags2 & (FF2_SHINE | FF2_SHINE2))) f_info[i].flags2 |= FF2_GLOW;
 	}
 
 	/* Success */

@@ -723,7 +723,7 @@ F:LAMP_LITE_OPTIONAL
 N:94:mud
 G:~:u
 F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | SUPPORT_LIGHT | NO_ARTICLE
-F:LAMP_LITE_SNOW
+F:LAMP_LITE_SNOW | LAMP_LITE_OPTIONAL
 #F:LAMP_LITE_OPTIONAL | NO_SHADE | NO_LITE_WHITEN --maybe not so cool, confusing with ~ feats/objects?
 
 N:95:ice wall
@@ -959,7 +959,6 @@ G:o:w
 F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
 D:1:You cannot break down this marble balustrade.
 
-#--visual bug: gets shaded outside of lamp rad
 # Fireplace (Inn)
 N:131:hearthfire
 G:*:f
@@ -968,7 +967,8 @@ D:0:The blazing fire burns you!
 F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
 F:GLOW | NO_SHADE
 D:0:The inn's hearthfire.
-#--visual bug: gets shaded outside of lamp rad
+
+# Fireplace (Inn)
 N:132:hearthfire's embers
 #using hellfire instead of embers for the ash-grey part ^^
 G:*:X
@@ -1265,7 +1265,7 @@ N:205:blazing fire
 G:%:f
 E:2d5:2:FIRE
 D:0:The blazing fire burns you!
-F:FLOOR | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | SHINE_FIRE
+F:FLOOR | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | SHINE | SHINE2 | SHINE_FIRE
 F:DONT_NOTICE_RUNNING | NOTICE
 
 # Permanent rubble -- town use

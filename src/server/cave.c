@@ -5041,12 +5041,80 @@ void do_cmd_view_map(int Ind, char mode) {
 }
 
 
+/* Perma-self-illuminate map grids around some static environmental light source, independant of any players.
+   Added at first for Blazing Fire feat. Originated (rad 1 only) from the Town Elder quest code. */
+void cave_illuminate_rad(cave_type **zcave, s16b x, s16b y, int rad, u32b flags) {
+	static int i, dist, xx, yy, min_x, min_y, max_x, max_y, dx, dy;
 
+	/* Rad 0 */
+	zcave[y][x].info |= flags;
+	if (!rad) return;
 
+	/* Rad 1 */
+	for (i = 0; i < 8; i++) {
+		if (!in_bounds_array(y + ddy_ddd[i], x + ddx_ddd[i])) continue;
+		zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].info |= flags;
+	}
+	if (rad == 1) return;
 
+//TODO: also check LoS for every grid, in case wall blocks light!
 
+	/* Rad 2 */
+	if (in_bounds_array(y + 2, x)) zcave[y + 2][x].info |= flags;
+	if (in_bounds_array(y + 2, x + 1)) zcave[y + 2][x + 1].info |= flags;
+	if (in_bounds_array(y + 2, x - 1)) zcave[y + 2][x - 1].info |= flags;
 
+	if (in_bounds_array(y - 2, x)) zcave[y - 2][x].info |= flags;
+	if (in_bounds_array(y - 2, x + 1)) zcave[y - 2][x + 1].info |= flags;
+	if (in_bounds_array(y - 2, x - 1)) zcave[y - 2][x - 1].info |= flags;
 
+	if (in_bounds_array(y, x + 2)) zcave[y][x + 2].info |= flags;
+	if (in_bounds_array(y + 1, x + 2)) zcave[y + 1][x + 2].info |= flags;
+	if (in_bounds_array(y - 1, x + 2)) zcave[y - 1][x + 2].info |= flags;
+
+	if (in_bounds_array(y, x - 2)) zcave[y][x - 2].info |= flags;
+	if (in_bounds_array(y + 1, x - 2)) zcave[y + 1][x - 2].info |= flags;
+	if (in_bounds_array(y - 1, x - 2)) zcave[y - 1][x - 2].info |= flags;
+	if (rad == 2) return;
+
+	/* Radius 3+ */
+	//if (rad > LITE_CAP) rad = LITE_CAP;
+
+	if (in_bounds_array(y + 1, x + 1)) zcave[y + 2][x + 2].info |= flags;
+	if (in_bounds_array(y + 1, x - 1)) zcave[y + 2][x - 2].info |= flags;
+	if (in_bounds_array(y - 1, x + 1)) zcave[y - 2][x + 2].info |= flags;
+	if (in_bounds_array(y - 1, x - 1)) zcave[y - 2][x - 2].info |= flags;
+
+	/* Maximal north */
+	min_y = y - rad;
+	if (min_y < 0) min_y = 0;
+	/* Maximal south */
+	max_y = y + rad;
+	if (max_y >= MAX_HGT) max_y = MAX_HGT - 1;
+	/* Maximal west */
+	min_x = x - rad;
+	if (min_x < 0) min_x = 0;
+	/* Maximal east */
+	max_x = x + rad;
+	if (max_x >= MAX_WID) max_x = MAX_WID - 1;
+
+	/* Scan the maximal box */
+	for (yy = min_y; yy <= max_y; yy++) {
+		for (xx = min_x; xx <= max_x; xx++) {
+			dy = (y > yy) ? (y - yy) : (yy - y);
+			dx = (x > xx) ? (x - xx) : (xx - x);
+			/* Skip the "central" grids (above) */
+			if ((dy <= 2) && (dx <= 2)) continue;
+			/* Hack -- approximate the distance */
+			dist = (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
+			/* Skip distant grids */
+			if (dist > rad) continue;
+
+			/* Viewable, nearby, grids get "torch lit" */
+			if (in_bounds_array(yy, xx)) zcave[yy][xx].info |= flags;
+		}
+	}
+}
 
 
 /*
@@ -7887,7 +7955,7 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 	player_type *p_ptr;
 	cave_type **zcave;
 	cave_type *c_ptr;
-	int i;
+	int i, rad = 0;
 
 	/* for Submerged Ruins: ensure all deep water; also affects Small Water Cave. */
 	dun_level *l_ptr = getfloor(wpos);
@@ -7944,20 +8012,9 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 	/* Change the feature */
 	c_ptr->feat = feat;
 	if (f_info[feat].flags2 & FF2_GLOW) c_ptr->info |= CAVE_GLOW;
-	if (f_info[feat].flags2 & FF2_SHINE) {
-		for (i = 0; i < 8; i++) {
-			if (!in_bounds_array(y + ddy_ddd[i], x + ddx_ddd[i])) continue;
-			zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].info |= CAVE_GLOW | CAVE_GLOW_HACK;
-		}
-		zcave[y][x].info |= CAVE_GLOW | CAVE_GLOW_HACK;
-	}
-	if (f_info[feat].flags2 & FF2_SHINE_FIRE) {
-		for (i = 0; i < 8; i++) {
-			if (!in_bounds_array(y + ddy_ddd[i], x + ddx_ddd[i])) continue;
-			zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].info |= CAVE_GLOW | CAVE_GLOW_HACK_LAMP;
-		}
-		zcave[y][x].info |= CAVE_GLOW | CAVE_GLOW_HACK_LAMP;
-	}
+	if (f_info[feat].flags2 & FF2_SHINE) rad++;
+	if (f_info[feat].flags2 & FF2_SHINE2) rad += 2;
+	if (rad) cave_illuminate_rad(zcave, x, y, rad, CAVE_GLOW | ((f_info[feat].flags2 & FF2_SHINE_FIRE) ? CAVE_GLOW_HACK_LAMP : CAVE_GLOW_HACK));
 	aquatic_terrain_hack(zcave, x, y);
 
 	if (level_generation_time) return;
@@ -8094,7 +8151,7 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	cave_type **zcave;
 	cave_type *c_ptr;
 	struct c_special *cs_ptr;
-	int i, old_feat;
+	int i, rad = 0, old_feat;
 	bool wall;
 	//struct town_type *t_ptr; /* have town keep track of number of feature changes (not yet implemented) */
 
@@ -8249,20 +8306,9 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	old_feat = c_ptr->feat;
 	c_ptr->feat = feat;
 	if (f_info[feat].flags2 & FF2_GLOW) c_ptr->info |= CAVE_GLOW;
-	if (f_info[feat].flags2 & FF2_SHINE) {
-		for (i = 0; i < 8; i++) {
-			if (!in_bounds_array(y + ddy_ddd[i], x + ddx_ddd[i])) continue;
-			zcave[y + ddy_ddd[i]][x + ddx_ddd[i]]. info |= CAVE_GLOW | CAVE_GLOW_HACK;
-		}
-		zcave[y][x].info |= CAVE_GLOW | CAVE_GLOW_HACK;
-	}
-	if (f_info[feat].flags2 & FF2_SHINE_FIRE) {
-		for (i = 0; i < 8; i++) {
-			if (!in_bounds_array(y + ddy_ddd[i], x + ddx_ddd[i])) continue;
-			zcave[y + ddy_ddd[i]][x + ddx_ddd[i]]. info |= CAVE_GLOW | CAVE_GLOW_HACK_LAMP;
-		}
-		zcave[y][x].info |= CAVE_GLOW | CAVE_GLOW_HACK_LAMP;
-	}
+	if (f_info[feat].flags2 & FF2_SHINE) rad++;
+	if (f_info[feat].flags2 & FF2_SHINE2) rad += 2;
+	if (rad) cave_illuminate_rad(zcave, x, y, rad, CAVE_GLOW | ((f_info[feat].flags2 & FF2_SHINE_FIRE) ? CAVE_GLOW_HACK_LAMP : CAVE_GLOW_HACK));
 
 	/* Area of view for a player might have changed, among other consequences.. */
 	for (i = 1; i <= NumPlayers; i++) {
