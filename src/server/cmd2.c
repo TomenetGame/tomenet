@@ -854,9 +854,12 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 			ge = &global_event[d];
 
 			// unsign, they have left the event, in case of ongoing events - Kurzel
-			for (k = 0; k < MAX_GE_PARTICIPANTS; k++)
-				if (ge->participant[k] == p_ptr->id)
+			for (k = 0; k < MAX_GE_PARTICIPANTS; k++) {
+				if (ge->participant[k] == p_ptr->id) {
 					ge->participant[k] = 0;
+					break;
+				}
+			}
 
 			/* player might have signed up for an event that is now no longer available/cancelled,
 			   resulting in a 'duplicate ghost win' if it was Dungeon Keeper too. */
