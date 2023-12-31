@@ -77,7 +77,7 @@
 
 /* Copy-paste from cave.c (at cave_illuminate_rad()): */
 #define CAVE_ILLUM_MACRO(zcave, x_org, y_org, x, y, flags) \
-	if (in_bounds_array(y, x) && los_zcave(zcave, y_org, x_org, y, x)) zcave[y][x].info |= flags;
+	if (in_bounds_array(y, x) && los_zcave(zcave, y_org, x_org, y, x)) { zcave[y][x].info |= flags; everyone_lite_spot(&wpos, cy, cx); }
 
 
 static void quest_goal_check_reward(int pInd, int q_idx);
@@ -1083,9 +1083,7 @@ static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
 		for (cx = x - lite_rad; cx <= x + lite_rad; cx++)
 		for (cy = y - lite_rad; cy <= y + lite_rad; cy++) {
 			if (distance(cy, cx, y, x) > lite_rad) continue;
-			//zcave[cy][cx].info |= lite_type;
 			CAVE_ILLUM_MACRO(zcave, x, y, cx, cy, lite_type)
-			everyone_lite_spot(&wpos, cy, cx);
 		}
 	}
 
@@ -1284,9 +1282,7 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 		for (cx = x - lite_rad; cx <= x + lite_rad; cx++)
 		for (cy = y - lite_rad; cy <= y + lite_rad; cy++) {
 			if (distance(cy, cx, y, x) > lite_rad) continue;
-			//zcave[cy][cx].info |= lite_type;
 			CAVE_ILLUM_MACRO(zcave, x, y, cx, cy, lite_type)
-			everyone_lite_spot(&wpos, cy, cx);
 		}
 	}
 

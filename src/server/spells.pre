@@ -35,7 +35,7 @@ typedef unsigned int u32b;
 /* These should not directly be used from LUA, because at least cave_set_feat_live()
    assumes that allow_terraforming() has been checked before!
 	extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
-	extern void cave_set_feat_live(worldpos *wpos, int y, int x, int feat);
+	extern bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat);
    Instead, for Glyphs we use the following one cleanly: */
 // Argh, I need cave_set_feat for arcade stuff. -Moltor
 extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);

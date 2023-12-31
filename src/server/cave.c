@@ -5206,8 +5206,8 @@ void do_cmd_view_map(int Ind, char mode) {
 /* Perma-self-illuminate map grids around some static environmental light source, independant of any players.
    Added at first for Blazing Fire feat. Originated (rad 1 only) from the Town Elder quest code. */
 #define CAVE_ILLUM_MACRO(zcave, x_org, y_org, x, y, flags) \
-	if (in_bounds_array(y, x) && los_zcave(zcave, y_org, x_org, y, x)) zcave[y][x].info |= flags;
-void cave_illuminate_rad(cave_type **zcave, s16b x, s16b y, int rad, u32b flags) {
+	if (in_bounds_array(y, x) && los_zcave(zcave, y_org, x_org, y, x)) { zcave[y][x].info |= flags; everyone_lite_spot(wpos, y, x); }
+void cave_illuminate_rad(struct worldpos *wpos, cave_type **zcave, s16b x, s16b y, int rad, u32b flags) {
 	static int i, dist, xx, yy, min_x, min_y, max_x, max_y, dx, dy;
 
 	/* Our goal is to illuminate, so these are a given (self-illuminated, start in lit state) */
@@ -5527,6 +5527,8 @@ void forget_lite(int Ind) {
 			p_ptr->cave_flag[y][x] &= ~CAVE_LITE;
 			c_ptr->info &= ~(CAVE_LITE | CAVE_LITE_VAMP | CAVE_LITE_WHITE);
 		}
+		/* Restore white-light flag, in case a player with fiery light overwrote (aka deleted) it before */
+		else if (c_ptr->info & CAVE_GLOW_HACK) c_ptr->info |= CAVE_LITE_WHITE;
 
 		for (j = 1; j <= NumPlayers; j++) {
 			/* Make sure player is connected */
@@ -5653,6 +5655,8 @@ void update_lite(int Ind) {
 			p_ptr->cave_flag[y][x] &= ~CAVE_LITE;
 			c_ptr->info &= ~(CAVE_LITE | CAVE_LITE_VAMP | CAVE_LITE_WHITE);
 		}
+		/* Restore white-light flag, in case a player with fiery light overwrote (aka deleted) it before */
+		else if (c_ptr->info & CAVE_GLOW_HACK) c_ptr->info |= CAVE_LITE_WHITE;
 
 		for (j = 1; j <= NumPlayers; j++) {
 			/* Make sure player is connected */
@@ -8184,7 +8188,7 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 	if (f_info[feat].flags2 & FF2_GLOW) c_ptr->info |= CAVE_GLOW;
 	if (f_info[feat].flags2 & FF2_SHINE) rad++;
 	if (f_info[feat].flags2 & FF2_SHINE2) rad += 2;
-	if (rad) cave_illuminate_rad(zcave, x, y, rad, (f_info[feat].flags2 & FF2_SHINE_FIRE) ? CAVE_GLOW_HACK_LAMP : CAVE_GLOW_HACK);
+	if (rad) cave_illuminate_rad(wpos, zcave, x, y, rad, (f_info[feat].flags2 & FF2_SHINE_FIRE) ? CAVE_GLOW_HACK_LAMP : CAVE_GLOW_HACK);
 	aquatic_terrain_hack(zcave, x, y);
 
 	if (level_generation_time) return;
@@ -8478,7 +8482,7 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	if (f_info[feat].flags2 & FF2_GLOW) c_ptr->info |= CAVE_GLOW;
 	if (f_info[feat].flags2 & FF2_SHINE) rad++;
 	if (f_info[feat].flags2 & FF2_SHINE2) rad += 2;
-	if (rad) cave_illuminate_rad(zcave, x, y, rad, (f_info[feat].flags2 & FF2_SHINE_FIRE) ? CAVE_GLOW_HACK_LAMP : CAVE_GLOW_HACK);
+	if (rad) cave_illuminate_rad(wpos, zcave, x, y, rad, (f_info[feat].flags2 & FF2_SHINE_FIRE) ? CAVE_GLOW_HACK_LAMP : CAVE_GLOW_HACK);
 
 	/* Area of view for a player might have changed, among other consequences.. */
 	for (i = 1; i <= NumPlayers; i++) {
