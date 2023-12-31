@@ -5528,27 +5528,30 @@ void forget_lite(int Ind) {
 			c_ptr->info &= ~(CAVE_LITE | CAVE_LITE_VAMP | CAVE_LITE_WHITE);
 		}
 		/* Restore white-light flag, in case a player with fiery light overwrote (aka deleted) it before */
-		else if (c_ptr->info & CAVE_GLOW_HACK) c_ptr->info |= CAVE_LITE_WHITE;
+		else if ((c_ptr->info & CAVE_GLOW_HACK) && !(c_ptr->info & CAVE_LITE_WHITE)) c_ptr->info |= CAVE_LITE_WHITE;
 
 		for (j = 1; j <= NumPlayers; j++) {
 			/* Make sure player is connected */
-			if (Players[j]->conn == NOT_CONNECTED)
-				continue;
+			if (Players[j]->conn == NOT_CONNECTED) continue;
 
 			/* Make sure player is on the level */
-			if (!inarea(wpos, &Players[j]->wpos))
-				continue;
+			if (!inarea(wpos, &Players[j]->wpos)) continue;
 
 			/* Ignore the player that we're updating */
-			if (j == Ind)
-				continue;
+			if (j == Ind) continue;
 
 			/* If someone else also lites this spot relite it */
 			if (Players[j]->cave_flag[y][x] & CAVE_LITE) {
-				c_ptr->info |= CAVE_LITE;
 				switch (Players[j]->lite_type) {
+#if 0
 				case 1: c_ptr->info |= CAVE_LITE_VAMP; break;
 				case 2: c_ptr->info |= CAVE_LITE_WHITE; break;
+#else /* Update static-whitelight (and potentially vamp-light, not a thing though) grids that the Ind-player's light temporarily overlapped, but he left now. */
+				case 0: c_ptr->info &= ~(CAVE_LITE_WHITE | CAVE_LITE_VAMP); break;
+				case 1: if (!(c_ptr->info & CAVE_LITE)) c_ptr->info |= CAVE_LITE_VAMP; break; /* still having CAVE_LITE implies already having CAVE_LITE_VAMP or CAVE_LITE_WHITE (which overrides vamp) anyway at this point */
+				case 2: if (!(c_ptr->info & CAVE_LITE) || (c_ptr->info & CAVE_LITE_VAMP)) c_ptr->info |= CAVE_LITE_WHITE; break;
+#endif
+				c_ptr->info |= CAVE_LITE;
 				}
 			}
 		}
@@ -5656,20 +5659,17 @@ void update_lite(int Ind) {
 			c_ptr->info &= ~(CAVE_LITE | CAVE_LITE_VAMP | CAVE_LITE_WHITE);
 		}
 		/* Restore white-light flag, in case a player with fiery light overwrote (aka deleted) it before */
-		else if (c_ptr->info & CAVE_GLOW_HACK) c_ptr->info |= CAVE_LITE_WHITE;
+		else if ((c_ptr->info & CAVE_GLOW_HACK) && !(c_ptr->info & CAVE_LITE_WHITE)) c_ptr->info |= CAVE_LITE_WHITE | CAVE_LITE_TYPE_CHANGED;
 
 		for (j = 1; j <= NumPlayers; j++) {
 			/* Make sure player is connected */
-			if (Players[j]->conn == NOT_CONNECTED)
-				continue;
+			if (Players[j]->conn == NOT_CONNECTED) continue;
 
 			/* Make sure player is on the level */
-			if (!inarea(wpos, &Players[j]->wpos))
-				continue;
+			if (!inarea(wpos, &Players[j]->wpos)) continue;
 
 			/* Ignore the player that we're updating */
-			if (j == Ind)
-				continue;
+			if (j == Ind) continue;
 
 			/* If someone else also lites this spot relite it */
 			if (Players[j]->cave_flag[y][x] & CAVE_LITE) {
@@ -5846,6 +5846,13 @@ void update_lite(int Ind) {
 		/* No longer in the array */
 		zcave[y][x].info &= ~CAVE_TEMP;
 
+		/* Update static-whitelight grids that the player's fiery light temporarily coloured fiery, but he left now. */
+		if (zcave[y][x].info & CAVE_LITE_TYPE_CHANGED) {
+			zcave[y][x].info &= ~CAVE_LITE_TYPE_CHANGED;
+			everyone_lite_spot(wpos, y, x);
+			continue;
+		}
+
 		/* Update stale grids */
 		if (p_ptr->cave_flag[y][x] & CAVE_LITE) continue;
 
@@ -5868,7 +5875,7 @@ void update_lite(int Ind) {
  */
 void forget_view(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	int i;
+	int i, x, y;
 
 	byte *w_ptr;
 
@@ -5877,8 +5884,8 @@ void forget_view(int Ind) {
 
 	/* Clear them all */
 	for (i = 0; i < p_ptr->view_n; i++) {
-		int y = p_ptr->view_y[i];
-		int x = p_ptr->view_x[i];
+		y = p_ptr->view_y[i];
+		x = p_ptr->view_x[i];
 
 		/* Access the grid */
 		w_ptr = &p_ptr->cave_flag[y][x];

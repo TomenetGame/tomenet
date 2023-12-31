@@ -4608,9 +4608,8 @@
 
 #define CAVE_NO_MONSTER	0x10000000	/* protected from monster-spawn + cannot be monster teleport/summon/movement destination */
 #define CAVE_SCRT	0x20000000	/* Secret grid, cannot be uncovered by magic mapping or similar means, but only manually by looking at it directly via line of sight. */
-//hole
 #define CAVE_REFUGE	0x40000000	/* IDDC refuge grid */
-//hole
+#define CAVE_LITE_TYPE_CHANGED	0x80000000	/* Temp flag for lighting code: Required when when player with non-CAVE_LITE_WHITE light source crosses static CAVE_LITE_WHITE grids, or they won't be redrawn after re-receiving their CAVE_LITE_WHITE colour. - C. Blue */
 //super hypothetical: maybe add CAVE_LITE_MON in the future, for monster-lit grids.
 
 #if 0	/* for future expansion.. */
