@@ -489,7 +489,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 void do_cmd_eat_food(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 
-	int ident, lev;
+	int ident, klev;
 	int feed = 0;
 
 	object_type *o_ptr;
@@ -548,7 +548,8 @@ void do_cmd_eat_food(int Ind, int item) {
 	ident = FALSE;
 
 	/* Object level */
-	lev = k_info[o_ptr->k_idx].level;
+	klev = k_info[o_ptr->k_idx].level;
+	if (klev == 127) klev = 0; /* non-findable flavour items shouldn't give excessive XP (level 127 -> clev1->5). Actuall give 0, so fireworks can be used in town by IDDC chars for example. */
 
 	/* (not quite) Normal foods */
 	if (o_ptr->tval == TV_FOOD) ident = eat_food(Ind, o_ptr->sval, o_ptr, &keep);
@@ -624,7 +625,7 @@ void do_cmd_eat_food(int Ind, int item) {
 		/* The player is now aware of the object */
 		if (ident && !object_aware_p(Ind, o_ptr)) {
 			flipped = object_aware(Ind, o_ptr);
-			if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
+			if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (klev + (p_ptr->lev >> 1)) / p_ptr->lev);
 		}
 
 		/* We have tried it */
@@ -1259,7 +1260,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
  */
 void do_cmd_quaff_potion(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-	int ident, lev;
+	int ident, klev;
 	object_type *o_ptr, forge;
 	bool flipped = FALSE;
 
@@ -1319,7 +1320,8 @@ void do_cmd_quaff_potion(int Ind, int item) {
 	ident = FALSE;
 
 	/* Object level */
-	lev = k_info[o_ptr->k_idx].level;
+	klev = k_info[o_ptr->k_idx].level;
+	if (klev == 127) klev = 0; /* non-findable flavour items shouldn't give excessive XP (level 127 -> clev1->5). Actuall give 0, so fireworks can be used in town by IDDC chars for example. */
 
 	process_hooks(HOOK_QUAFF, "d", Ind);
 
@@ -1334,7 +1336,7 @@ void do_cmd_quaff_potion(int Ind, int item) {
 		if (ident && !object_aware_p(Ind, o_ptr)) {
 			flipped = object_aware(Ind, o_ptr);
 			//object_known(o_ptr);//only for object1.c artifact potion description... maybe obsolete
-			if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
+			if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (klev + (p_ptr->lev >> 1)) / p_ptr->lev);
 		}
 
 		/* The item has been tried */
@@ -3279,7 +3281,7 @@ void do_cmd_read_scroll(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	//cave_type * c_ptr;
 
-	int	ident, lev;
+	int	ident, klev;
 	bool	used_up, keep = FALSE, flipped = FALSE;
 
 	object_type	*o_ptr;
@@ -3401,7 +3403,8 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 	ident = FALSE;
 
 	/* Object level */
-	lev = k_info[o_ptr->k_idx].level;
+	klev = k_info[o_ptr->k_idx].level;
+	if (klev == 127) klev = 0; /* non-findable flavour items shouldn't give excessive XP (level 127 -> clev1->5). Actuall give 0, so fireworks can be used in town by IDDC chars for example. */
 
 	process_hooks(HOOK_READ, "d", Ind);
 
@@ -3432,7 +3435,7 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 		/* An identification was made */
 		if (ident && !object_aware_p(Ind, o_ptr)) {
 			flipped = object_aware(Ind, o_ptr);
-			if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
+			if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (klev + (p_ptr->lev >> 1)) / p_ptr->lev);
 		}
 
 		/* The item was tried */
@@ -3733,7 +3736,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
  */
 void do_cmd_use_staff(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-	int lev, ident, rad = DEFAULT_RADIUS_DEV(p_ptr);
+	int klev, ident, rad = DEFAULT_RADIUS_DEV(p_ptr);
 	object_type *o_ptr;
 
 	/* Hack -- let staffs of identify get aborted */
@@ -3966,12 +3969,13 @@ void do_cmd_use_staff(int Ind, int item) {
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
 	/* Extract the item level */
-	lev = k_info[o_ptr->k_idx].level;
+	klev = k_info[o_ptr->k_idx].level;
+	if (klev == 127) klev = 0; /* non-findable flavour items shouldn't give excessive XP (level 127 -> clev1->5). Actuall give 0, so fireworks can be used in town by IDDC chars for example. */
 
 	/* An identification was made */
 	if (ident && !object_aware_p(Ind, o_ptr)) {
 		flipped = object_aware(Ind, o_ptr);
-		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
+		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (klev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
 
 	/* Tried the item */
@@ -4059,7 +4063,7 @@ void do_cmd_use_staff(int Ind, int item) {
  */
 void do_cmd_aim_wand(int Ind, int item, int dir) {
 	player_type *p_ptr = Players[Ind];
-	int lev, ident, sval;
+	int klev, ident, sval;
 	object_type *o_ptr;
 	bool flipped = FALSE;
 
@@ -4457,12 +4461,13 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
 	/* Extract the item level */
-	lev = k_info[o_ptr->k_idx].level;
+	klev = k_info[o_ptr->k_idx].level;
+	if (klev == 127) klev = 0; /* non-findable flavour items shouldn't give excessive XP (level 127 -> clev1->5). Actuall give 0, so fireworks can be used in town by IDDC chars for example. */
 
 	/* Apply identification */
 	if (ident && !object_aware_p(Ind, o_ptr)) {
 		flipped = object_aware(Ind, o_ptr);
-		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
+		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (klev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
 
 	/* Mark it as tried */
@@ -4494,11 +4499,11 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 		p_ptr->shoot_till_kill_rod = 0;
 	}
 
-	//WIELD_DEVICE: (re-use 'lev')
-	lev = (k_info[o_ptr->k_idx].level + 20);
-	lev = ((lev * lev * lev) / 9000 + 3) / 4;
-	if (item == INVEN_WIELD && !rand_int(5) && p_ptr->cmp >= lev) {
-		p_ptr->cmp -= lev;
+	//WIELD_DEVICE: (re-use 'klev')
+	klev = (k_info[o_ptr->k_idx].level + 20);
+	klev = ((klev * klev * klev) / 9000 + 3) / 4;
+	if (item == INVEN_WIELD && !rand_int(5) && p_ptr->cmp >= klev) {
+		p_ptr->cmp -= klev;
 		p_ptr->redraw |= PR_MANA;
 		return; // 'use_charge = FALSE'
 	}
@@ -4657,7 +4662,7 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
  */
 void do_cmd_zap_rod(int Ind, int item, int dir) {
 	player_type *p_ptr = Players[Ind];
-	int lev, ident, rad = DEFAULT_RADIUS_DEV(p_ptr), energy;
+	int klev, ident, rad = DEFAULT_RADIUS_DEV(p_ptr), energy;
 	object_type *o_ptr;
 	u32b f4, dummy;
 #ifdef NEW_MDEV_STACKING
@@ -4903,12 +4908,13 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
 	/* Extract the item level */
-	lev = k_info[o_ptr->k_idx].level;
+	klev = k_info[o_ptr->k_idx].level;
+	if (klev == 127) klev = 0; /* non-findable flavour items shouldn't give excessive XP (level 127 -> clev1->5). Actuall give 0, so fireworks can be used in town by IDDC chars for example. */
 
 	/* Successfully determined the object function */
 	if (ident && !object_aware_p(Ind, o_ptr)) {
 		flipped = object_aware(Ind, o_ptr);
-		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
+		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (klev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
 
 	/* Tried the object */
@@ -4976,7 +4982,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
  */
 void do_cmd_zap_rod_dir(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
-	int lev, item, ident, rad = DEFAULT_RADIUS_DEV(p_ptr), energy;
+	int klev, item, ident, rad = DEFAULT_RADIUS_DEV(p_ptr), energy;
 	int i, dam;
 	object_type *o_ptr;
 	u32b f4, dummy;
@@ -5395,12 +5401,13 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
 	/* Extract the item level */
-	lev = k_info[o_ptr->k_idx].level;
+	klev = k_info[o_ptr->k_idx].level;
+	if (klev == 127) klev = 0; /* non-findable flavour items shouldn't give excessive XP (level 127 -> clev1->5). Actuall give 0, so fireworks can be used in town by IDDC chars for example. */
 
 	/* Successfully determined the object function */
 	if (ident && !object_aware_p(Ind, o_ptr)) {
 		flipped = object_aware(Ind, o_ptr);
-		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
+		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (klev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
 
 	/* Tried the object */
