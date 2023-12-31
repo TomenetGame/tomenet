@@ -5211,7 +5211,8 @@ void cave_illuminate_rad(cave_type **zcave, s16b x, s16b y, int rad, u32b flags)
 	static int i, dist, xx, yy, min_x, min_y, max_x, max_y, dx, dy;
 
 	/* Our goal is to illuminate, so these are a given (self-illuminated, start in lit state) */
-	flags |= CAVE_GLOW | CAVE_LITE;
+	if (flags & CAVE_GLOW_HACK) flags |= CAVE_GLOW | CAVE_LITE | CAVE_LITE_WHITE;
+	else flags |= CAVE_GLOW | CAVE_LITE;
 
 	/* Rad 0 */
 

@@ -1076,8 +1076,26 @@ G:~:L
 F:FLOOR | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | SHINE2 | SHINE_FIRE
 F:DONT_NOTICE_RUNNING | NOTICE
 
+# Light
+N:147:small glowing sphere
+G:&:0
+F:FLOOR | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | SHINE
+F:DONT_NOTICE_RUNNING | NOTICE
 
-# HOLE 147..158 -------------------------------------------------------------
+# Light
+N:148:glowing sphere
+G:&:0
+F:FLOOR | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | SHINE2
+F:DONT_NOTICE_RUNNING | NOTICE
+
+# Light
+N:149:large glowing sphere
+G:&:0
+F:FLOOR | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | SHINE | SHINE2
+F:DONT_NOTICE_RUNNING | NOTICE
+
+
+# HOLE 150..158 -------------------------------------------------------------
 
 
 #permanent magma vein
