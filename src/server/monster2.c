@@ -5913,9 +5913,15 @@ bool monster_can_cross_terrain(byte feat, monster_race *r_ptr, bool spawn, u32b 
 		if (!spawn && is_always_passable(feat) && (info & CAVE_WATERY)) return(TRUE);
 		else return(FALSE);
 	}
-	/* Lava */
+	/* Lava OR fire damage */
 	else if (feat == FEAT_SHAL_LAVA ||
 	    feat == FEAT_DEEP_LAVA ||
+	    feat == FEAT_EMBERS ||
+	    feat == FEAT_SMALL_FIRE ||
+	    feat == FEAT_SMALL_CAMPFIRE ||
+	    feat == FEAT_CAMPFIRE ||
+	    // feat == FEAT_BURNING_TORCH ||
+	    // feat == FEAT_BURNING_LAMP ||
 	    feat == FEAT_FIRE ||
 	    feat == FEAT_GREAT_FIRE) {
 		if ((r_ptr->flags3 & RF3_IM_FIRE) ||
