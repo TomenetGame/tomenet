@@ -1028,8 +1028,56 @@ F:DONT_NOTICE_RUNNING
 D:1:This spere on top of a conifer is far too hard.
 D:2:a light sphere on top of a conifer, blocking your way
 
+# Fire
+N:141:embers
+G:%:Z
+E:1d3:2:FIRE
+D:0:The fiery embers burn you!
+F:FLOOR | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | SHINE | SHINE_FIRE
+F:DONT_NOTICE_RUNNING | NOTICE | NO_ARTICLE
 
-# HOLE 141..158 -------------------------------------------------------------
+# Fire
+N:142:small fire
+G:%:f
+E:2d4:2:FIRE
+D:0:The fire burns you!
+F:FLOOR | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | SHINE2 | SHINE_FIRE
+F:DONT_NOTICE_RUNNING | NOTICE
+
+# Fire
+N:143:small campfire
+G:%:f
+E:2d3:2:FIRE
+D:0:The fire burns you!
+F:FLOOR | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | SHINE | SHINE_FIRE
+F:DONT_NOTICE_RUNNING | NOTICE
+
+# Fire
+N:144:campfire
+G:%:f
+E:2d4:2:FIRE
+D:0:The fire burns you!
+F:FLOOR | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | SHINE2 | SHINE_FIRE
+F:DONT_NOTICE_RUNNING | NOTICE
+
+# Fire
+N:145:burning torch
+G:~:f
+#E:2d2:2:FIRE
+#D:0:The fire burns you!
+F:FLOOR | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | SHINE | SHINE_FIRE
+F:DONT_NOTICE_RUNNING | NOTICE
+
+# Fire
+N:146:burning oil lamp
+G:~:L
+#E:2d3:2:FIRE
+#D:0:The oil burns you!
+F:FLOOR | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | SHINE2 | SHINE_FIRE
+F:DONT_NOTICE_RUNNING | NOTICE
+
+
+# HOLE 147..158 -------------------------------------------------------------
 
 
 #permanent magma vein
@@ -1110,11 +1158,11 @@ D:1:The lava is far too hot to tunnel into it.
 D:2:a lava wall blocking your way
 
 N:178:great fire
-G:%:v
-S:R:R:y:v:y:v:R
+G:%:X
+#S:R:R:y:v:y:v:R
 E:150d2:10:HELLFIRE
-F:ATTR_MULTI
-F:FLOOR | REMEMBER | NOTICE | PERMANENT | GLOW
+#F:ATTR_MULTI
+F:FLOOR | REMEMBER | NOTICE | PERMANENT | SHINE | SHINE2 | SHINE_FIRE
 D:0:This fire is so powerful it could destroy even the most powerful artifacts.
 
 N:179:path to the next area
