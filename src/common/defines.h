@@ -2527,14 +2527,12 @@
 #define FEAT_FLOOR_PERMANENT	137
 #define FEAT_ALPHA		138	/* Transparent, keeps previously existing floor. Used as 'mask for merging' when loading t_*.prf layers on top of already existing floors. */
 
-//hole
-
-#define FEAT_EMBERS   141
-#define FEAT_SMALL_FIRE   142
-#define FEAT_SMALL_CAMPFIRE   143
-#define FEAT_CAMPFIRE   144
-#define FEAT_BURNING_TORCH   145
-#define FEAT_BURNING_LAMP   146
+#define FEAT_EMBERS		141
+#define FEAT_SMALL_FIRE		142
+#define FEAT_SMALL_CAMPFIRE	143
+#define FEAT_CAMPFIRE		144
+#define FEAT_BURNING_TORCH	145
+#define FEAT_BURNING_LAMP	146
 
 #define FEAT_PERM_MAGMA		0x9F /* 159 */
 #define FEAT_BETWEEN		0xA0 /* 160 */
