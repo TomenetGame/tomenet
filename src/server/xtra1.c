@@ -7859,7 +7859,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 	ge->limited = 0; /* no maximum */
 	ge->cleanup = 0; /* no cleaning up needed so far (for when the event ends) */
 	ge->noghost = FALSE;
-	for (i = 0; i < 64; i++) {
+	for (i = 0; i < 128; i++) {
 		ge->beacon_wpos[i] = (worldpos) { WPOS_SECTOR00_X, WPOS_SECTOR00_Y, 32767 }; /* 32767 = unused; assume default values, events have to set them to the correct ones */
 		ge->beacon_parm[i] = 0;
 	}
