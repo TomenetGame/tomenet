@@ -855,15 +855,21 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 	if (!ev_idx) return(FALSE); /* orphaned beacon */
 	ge = &global_event[ev_idx];
 
-	// unsign, they have left the event, in case of ongoing events - Kurzel
+	/* Unsign, they have left the event, in case of ongoing events - Kurzel */
 	for (k = 0; k < MAX_GE_PARTICIPANTS; k++)
 		if (ge->participant[k] == p_ptr->id) {
 			ge->participant[k] = 0;
 			break;
 		}
+	/* Player is not participant of the event belonging to this beacon? oO */
+	if (k == MAX_GE_PARTICIPANTS) {
+		s_printf("beacon_effect: player '%s' is not participant of event #%d!\n", p_ptr->name, ev_idx);
+#if 0 /* allow this for now ;) if only for admin-controlled testing of events */
+		return(FALSE);
+#endif
+	}
 
-	/* player might have signed up for an event that is now no longer available/cancelled,
-	   resulting in a 'duplicate ghost win' if it was Dungeon Keeper too. */
+	/* Paranoia: Player might have signed up for an event that is now no longer available/cancelled. */
 	if (!ge->getype) {
 		p_ptr->global_event_type[ev_idx] = GE_NONE; /* no longer participant */
 		return(FALSE);
@@ -872,7 +878,7 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 	switch (p_ptr->global_event_type[ev_idx]) {
 #ifdef DM_MODULES
 	case GE_ADVENTURE:
-	/* tell everyone + himself that he won */
+		/* tell everyone + himself that he won */
 		sprintf(buf, "\374\377a>>%s completed %s!<<", p_ptr->name, ge->title);
 		msg_broadcast(0, buf);
  #ifdef TOMENET_WORLDS
