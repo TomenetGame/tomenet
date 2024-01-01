@@ -636,9 +636,6 @@ struct cave_type {
 	byte colour;	/* colour that overrides the usual colour of a feature */
 #endif
 
-	signed char quest_event;	/* For beacon_effect() (FEAT_BEACON) etc: Negative -> quest ID, positive -> Event ID */
-	signed char quest_event_parm;	/* Optional additional parameter for quest or event. */
-
 	byte htemp;		/* Temporary value for cave building process in generate_hmap() */
 
 	u16b slippery;		/* Slippery for this/1000 turns */
@@ -4476,6 +4473,8 @@ struct school_type {
 typedef struct global_event_type global_event_type;
 struct global_event_type {
 	int getype;		/* Type of the event (or quest) */
+	struct worldpos beacon_wpos[128];	/* Exit beacon wpos, arbitrary amount, basically: Each participant could have his own floor, in the same event, competing! Or a level 127 dungeon could have a beacon on each floor! */
+	s16b beacon_parm[128];			/* Each beacon can have an optional parameter to be evaluated on player taking the beacon. */
 	bool paused;		/* Is the event currently paused? (special admin command) */
 	s32b paused_turns;	/* Keeps track of turns the event was actually frozen */
 	s32b state[64];		/* progress (zero'ed on event start) */

@@ -839,7 +839,8 @@ static bool between_effect(int Ind, cave_type *c_ptr) {
    and [successfully] terminates all global events for him. */
 static bool beacon_effect(int Ind, cave_type *c_ptr) {
 	player_type *p_ptr = Players[Ind];
-	signed char ev_idx, k;
+	signed char ev_idx;
+	s16b k, parm;
 	char buf[1024];
 	global_event_type *ge;
 	object_type forge, *o_ptr = &forge;
@@ -851,9 +852,19 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 	/* Beacons in sector00 lead to Bree transportation; other beacons aren't used atm. */
 	if (!in_sector00_xy(&p_ptr->wpos)) return(FALSE);
 
-	ev_idx = c_ptr->quest_event;
-	if (!ev_idx) return(FALSE); /* orphaned beacon */
-	ge = &global_event[ev_idx];
+	for (ev_idx = 0; ev_idx < MAX_GLOBAL_EVENTS; ev_idx++) {
+		ge = &global_event[ev_idx];
+		if (ge->getype == GE_NONE) continue; /* This event is not active */
+		for (k = 0; k < 128; k++) {
+			if (ge->beacon_wpos[k].wz == 32767) continue; /* Marker for 'unused' beacon_wpos slot. */
+			if (!inarea(&ge->beacon_wpos[k], &p_ptr->wpos)) continue; /* This event has no beacon located here */
+			parm = ge->beacon_parm[k];
+			break;
+		}
+		if (k != 128) break;
+	}
+	if (ev_idx == MAX_GLOBAL_EVENTS) return(FALSE); /* orphaned beacon */
+	(void)parm; /* slay compiler warning 'unused' */
 
 	/* Unsign, they have left the event, in case of ongoing events - Kurzel */
 	for (k = 0; k < MAX_GE_PARTICIPANTS; k++)

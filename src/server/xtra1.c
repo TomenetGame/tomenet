@@ -7859,6 +7859,10 @@ int start_global_event(int Ind, int getype, char *parm) {
 	ge->limited = 0; /* no maximum */
 	ge->cleanup = 0; /* no cleaning up needed so far (for when the event ends) */
 	ge->noghost = FALSE;
+	for (i = 0; i < 64; i++) {
+		ge->beacon_wpos[i] = (worldpos) { WPOS_SECTOR00_X, WPOS_SECTOR00_Y, 32767 }; /* 32767 = unused; assume default values, events have to set them to the correct ones */
+		ge->beacon_parm[i] = 0;
+	}
 
 	/* IMPORTANT: state[0] == 255 is used as indicator that cleaning-up must be done, event has ended. */
 	switch (getype) {
@@ -7945,6 +7949,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 		ge->extra[0] = 95; /* there are no objects of lvl 96..99 anyways */
 		ge->min_participants = 1; /* EXPERIMENTAL */
 		if (atoi(parm)) ge->announcement_time = atoi(parm);
+		ge->beacon_wpos[0].wz = 0;
 		break;
 #ifdef DM_MODULES
 	case GE_ADVENTURE: /* DM Adventure Modules - Kurzel */
@@ -7953,6 +7958,8 @@ int start_global_event(int Ind, int getype, char *parm) {
 
 		// strcpy(ge->title, format("Adventure Module - %s", parm));
 		strcpy(ge->title, format("%s", parm));
+
+//		ge->beacon_wpos[0].wz = ;
 
 		// GE_TYPE announcement_time signup_time end_turn min_participants limited noghost challenge
 		ge->announcement_time = 60 * exec_lua(0, format("return adventure_type(\"%s\", 1)", parm));
@@ -9432,7 +9439,6 @@ static void process_global_event(int ge_id) {
 				}
 				if (!n) continue;
 				cave_set_feat_live(&wpos, y, x, FEAT_BEACON);
-				zcave[y][x].quest_event = ge_id;
 				bx[k] = x; by[k] = y;
 				k++;
 			}
