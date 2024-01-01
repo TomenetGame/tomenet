@@ -855,7 +855,7 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 
 			// unsign, they have left the event, in case of ongoing events - Kurzel
 			for (k = 0; k < MAX_GE_PARTICIPANTS; k++) {
-				if (ge->participant[k] == p_ptr->id) {
+				if (ge->participant[k] == p_ptr->id && inarea(&ge->beacon_wpos, &p_ptr->wpos)) {
 					ge->participant[k] = 0;
 					break;
 				}

@@ -4472,20 +4472,21 @@ struct school_type {
    schedule. Timing is possible too. Might want to make use of AT_... sequences. */
 typedef struct global_event_type global_event_type;
 struct global_event_type {
-	int getype;			/* Type of the event (or quest) */
+	int getype;		/* Type of the event (or quest) */
+	struct worldpos beacon_wpos;	/* Location of the event taking place, for handling escape beacons. */
 	bool paused;		/* Is the event currently paused? (special admin command) */
-	s32b paused_turns;		/* Keeps track of turns the event was actually frozen */
+	s32b paused_turns;	/* Keeps track of turns the event was actually frozen */
 	s32b state[64];		/* progress (zero'ed on event start) */
 	s32b extra[64];		/* extra info (zero'ed on event start) */
 	s32b participant[MAX_GE_PARTICIPANTS];	/* player IDs */
-	s32b creator;       	/* Player ID or 0L */
+	s32b creator;		/* Player ID or 0L */
 	long int announcement_time;	/* for how many seconds the event will be announced until it actually starts */
 	long int signup_time;	/* for how many seconds the event will allow signing up:
 				   -1 = this event doesn't allow signing up at all!
 				   0 = same as announcement_time, ie during the announcement phase
 				   >0 = designated time instead of announcement_time. */
 	bool first_announcement;	/* just keep track of first advertisement, and add additional info that time */
-	s32b start_turn;	  	/* quest started */
+	s32b start_turn;	/* quest started */
 	s32b end_turn;		/* quest will end */
 	time_t started;		/* quest started */
 	time_t ending;		/* quest will end */

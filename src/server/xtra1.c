@@ -7859,6 +7859,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 	ge->limited = 0; /* no maximum */
 	ge->cleanup = 0; /* no cleaning up needed so far (for when the event ends) */
 	ge->noghost = FALSE;
+	ge->beacon_wpos = (worldpos) { WPOS_SECTOR00_X, WPOS_SECTOR00_Y, WPOS_SECTOR00_Z }; /* assume default values, events have to set them to the correct ones */
 
 	/* IMPORTANT: state[0] == 255 is used as indicator that cleaning-up must be done, event has ended. */
 	switch (getype) {
@@ -7953,6 +7954,8 @@ int start_global_event(int Ind, int getype, char *parm) {
 
 		// strcpy(ge->title, format("Adventure Module - %s", parm));
 		strcpy(ge->title, format("%s", parm));
+
+		//ge->beacon_wpos.wz = ;
 
 		// GE_TYPE announcement_time signup_time end_turn min_participants limited noghost challenge
 		ge->announcement_time = 60 * exec_lua(0, format("return adventure_type(\"%s\", 1)", parm));
