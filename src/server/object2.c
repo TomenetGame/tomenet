@@ -10337,6 +10337,12 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 		break;
 	case FEAT_SHAL_LAVA:
 	case FEAT_DEEP_LAVA:
+	case FEAT_EMBERS:
+	case FEAT_SMALL_FIRE:
+	case FEAT_SMALL_CAMPFIRE:
+	case FEAT_CAMPFIRE:
+	// case FEAT_BURNING_TORCH:
+	// case FEAT_BURNING_LAMP:
 	case FEAT_FIRE:
 	case FEAT_GREAT_FIRE:
 		if (hates_fire(o_ptr)) {
