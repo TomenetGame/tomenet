@@ -839,7 +839,7 @@ static bool between_effect(int Ind, cave_type *c_ptr) {
    and [successfully] terminates all global events for him. */
 static bool beacon_effect(int Ind, cave_type *c_ptr) {
 	player_type *p_ptr = Players[Ind];
-	int d, k;
+	signed char ev_idx, k;
 	char buf[1024];
 	global_event_type *ge;
 	object_type forge, *o_ptr = &forge;
@@ -848,92 +848,90 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 	sound(Ind, "recall", NULL, SFX_TYPE_COMMAND, TRUE); //"teleport"
 #endif
 
-	/* Beacons in sector00 lead to Bree transportation */
-	if (in_sector00_xy(&p_ptr->wpos)) {
-		for (d = 0; d < MAX_GLOBAL_EVENTS; d++) {
-			ge = &global_event[d];
+	/* Beacons in sector00 lead to Bree transportation; other beacons aren't used atm. */
+	if (!in_sector00_xy(&p_ptr->wpos)) return(FALSE);
 
-			// unsign, they have left the event, in case of ongoing events - Kurzel
-			for (k = 0; k < MAX_GE_PARTICIPANTS; k++) {
-				if (ge->participant[k] == p_ptr->id && inarea(&ge->beacon_wpos, &p_ptr->wpos)) {
-					ge->participant[k] = 0;
-					break;
-				}
-			}
+	ev_idx = c_ptr->quest_event;
+	if (!ev_idx) return(FALSE); /* orphaned beacon */
+	ge = &global_event[ev_idx];
 
-			/* player might have signed up for an event that is now no longer available/cancelled,
-			   resulting in a 'duplicate ghost win' if it was Dungeon Keeper too. */
-			if (!ge->getype) {
-				p_ptr->global_event_type[d] = GE_NONE; /* no longer participant */
-				continue;
-			}
-
-			switch (p_ptr->global_event_type[d]) {
-#ifdef DM_MODULES
-			case GE_ADVENTURE:
-			/* tell everyone + himself that he won */
-				sprintf(buf, "\374\377a>>%s completed %s!<<", p_ptr->name, ge->title);
-				msg_broadcast(0, buf);
- #ifdef TOMENET_WORLDS
-				if (cfg.worldd_events) world_msg(buf);
- #endif
- #ifdef USE_SOUND_2010
-				sound(Ind, "success", NULL, SFX_TYPE_MISC, FALSE);
- #endif
-				s_printf("%s EVENT_WON: %s wins %d '%s'(%d)\n", showtime(), p_ptr->name, d + 1, ge->title, ge->getype);
-				p_ptr->event_won_flags |= 1 << (GE_ADVENTURE - 1 + ge->extra[0]); // HACK - Paranoia - Kurzel
-				break; // No additional rewards for now. - Kurzel
-#endif
-			case GE_DUNGEON_KEEPER:
-				/* tell everyone + himself that he won */
-				sprintf(buf, "\374\377a>>%s wins %s!<<", p_ptr->name, ge->title);
-				msg_broadcast(0, buf);
-#ifdef TOMENET_WORLDS
-				if (cfg.worldd_events) world_msg(buf);
-#endif
-#ifdef USE_SOUND_2010
-				sound(Ind, "success", NULL, SFX_TYPE_MISC, FALSE);
-#endif
-				s_printf("%s EVENT_WON: %s wins %d '%s'(%d)\n", showtime(), p_ptr->name, d + 1, ge->title, ge->getype);
-				//l_printf("%s \\{s%s has won %s\n", showdate(), p_ptr->name, ge->title);
-				p_ptr->event_won_flags |= 1 << (GE_DUNGEON_KEEPER - 1);
-
-				/* boost him to level 3, so he can distribute enough skills for the reward creation to work */
-				if (p_ptr->max_lev < 3) gain_exp_to_level(Ind, 3);
-				/* extra optional niceness :-p boost already-level-3 chars to level 4 just for the heck of it.. */
-				else gain_exp_to_level(Ind, 4);
-
-				/* create reward parchment */
-				k = lookup_kind(TV_PARCHMENT, SV_DEED_DUNGEONKEEPER);
-				invcopy(o_ptr, k);
-				o_ptr->number = 1;
-				object_aware(Ind, o_ptr);
-				object_known(o_ptr);
-				o_ptr->discount = 0;
-				o_ptr->level = 0;
-				o_ptr->ident |= ID_MENTAL;
-				//o_ptr->note = quark_add("Dungeon Keeper reward");
-				inven_carry(Ind, o_ptr);
-				break;
-			case GE_NONE:
-			default:
-				break;
-			}
-
-			p_ptr->global_event_type[d] = GE_NONE; /* no longer participant */
+	// unsign, they have left the event, in case of ongoing events - Kurzel
+	for (k = 0; k < MAX_GE_PARTICIPANTS; k++)
+		if (ge->participant[k] == p_ptr->id) {
+			ge->participant[k] = 0;
+			break;
 		}
 
-		msg_print(Ind, "\377GYou are transported out of here and far away!");
-		p_ptr->recall_pos.wx = cfg.town_x;
-		p_ptr->recall_pos.wy = cfg.town_y;
-		p_ptr->recall_pos.wz = 0;
-		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
-		p_ptr->global_event_temp = 0x0; /* clear all flags */
-		recall_player(Ind, "");
-		return(TRUE);
+	/* player might have signed up for an event that is now no longer available/cancelled,
+	   resulting in a 'duplicate ghost win' if it was Dungeon Keeper too. */
+	if (!ge->getype) {
+		p_ptr->global_event_type[ev_idx] = GE_NONE; /* no longer participant */
+		return(FALSE);
 	}
 
-	return(FALSE);
+	switch (p_ptr->global_event_type[ev_idx]) {
+#ifdef DM_MODULES
+	case GE_ADVENTURE:
+	/* tell everyone + himself that he won */
+		sprintf(buf, "\374\377a>>%s completed %s!<<", p_ptr->name, ge->title);
+		msg_broadcast(0, buf);
+ #ifdef TOMENET_WORLDS
+		if (cfg.worldd_events) world_msg(buf);
+ #endif
+ #ifdef USE_SOUND_2010
+		sound(Ind, "success", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+		s_printf("%s EVENT_WON: %s wins %d '%s'(%d)\n", showtime(), p_ptr->name, ev_idx + 1, ge->title, ge->getype);
+		p_ptr->event_won_flags |= 1 << (GE_ADVENTURE - 1 + ge->extra[0]); // HACK - Paranoia - Kurzel
+		break; // No additional rewards for now. - Kurzel
+#endif
+	case GE_DUNGEON_KEEPER:
+		/* tell everyone + himself that he won */
+		sprintf(buf, "\374\377a>>%s wins %s!<<", p_ptr->name, ge->title);
+		msg_broadcast(0, buf);
+#ifdef TOMENET_WORLDS
+		if (cfg.worldd_events) world_msg(buf);
+#endif
+#ifdef USE_SOUND_2010
+		sound(Ind, "success", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+		s_printf("%s EVENT_WON: %s wins %d '%s'(%d)\n", showtime(), p_ptr->name, ev_idx + 1, ge->title, ge->getype);
+		//l_printf("%s \\{s%s has won %s\n", showdate(), p_ptr->name, ge->title);
+		p_ptr->event_won_flags |= 1 << (GE_DUNGEON_KEEPER - 1);
+
+		/* boost him to level 3, so he can distribute enough skills for the reward creation to work */
+		if (p_ptr->max_lev < 3) gain_exp_to_level(Ind, 3);
+		/* extra optional niceness :-p boost already-level-3 chars to level 4 just for the heck of it.. */
+		else gain_exp_to_level(Ind, 4);
+
+		/* create reward parchment */
+		k = lookup_kind(TV_PARCHMENT, SV_DEED_DUNGEONKEEPER);
+		invcopy(o_ptr, k);
+		o_ptr->number = 1;
+		object_aware(Ind, o_ptr);
+		object_known(o_ptr);
+		o_ptr->discount = 0;
+		o_ptr->level = 0;
+		o_ptr->ident |= ID_MENTAL;
+		//o_ptr->note = quark_add("Dungeon Keeper reward");
+		inven_carry(Ind, o_ptr);
+		break;
+	case GE_NONE:
+	default:
+		break;
+	}
+
+	p_ptr->global_event_type[ev_idx] = GE_NONE; /* no longer participant */
+
+	msg_print(Ind, "\377GYou are transported out of here and far away!");
+	p_ptr->recall_pos.wx = cfg.town_x;
+	p_ptr->recall_pos.wy = cfg.town_y;
+	p_ptr->recall_pos.wz = 0;
+	p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+	p_ptr->global_event_temp = 0x0; /* clear all flags */
+	recall_player(Ind, "");
+
+	return(TRUE);
 }
 
 /*

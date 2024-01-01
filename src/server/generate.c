@@ -4882,7 +4882,7 @@ static void store_height(worldpos *wpos, int x, int y, int x0, int y0, byte val,
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Only write to points that are "blank" */
-	if (zcave[y+ y0 - yhsize][x + x0 - xhsize].temp != 255) return;
+	if (zcave[y+ y0 - yhsize][x + x0 - xhsize].htemp != 255) return;
 
 	 /* If on boundary set val > cutoff so walls are not as square */
 	if (((x == 0) || (y == 0) || (x == xhsize * 2) || (y == yhsize * 2)) &&
@@ -4890,7 +4890,7 @@ static void store_height(worldpos *wpos, int x, int y, int x0, int y0, byte val,
 
 	/* Store the value in height-map format */
 	/* Meant to be temporary, hence no cave_set_feat */
-	zcave[y + y0 - yhsize][x + x0 - xhsize].temp = val;
+	zcave[y + y0 - yhsize][x + x0 - xhsize].htemp = val;
 
 	return;
 }
@@ -4960,7 +4960,11 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 	 */
 	u16b xstep, xhstep, ystep, yhstep, i, j, diagsize, xxsize, yysize;
 
-	cave_type **zcave;
+	cave_type **zcave, *c_ptr;
+
+	cave_type *l, *r, *u, *d;
+	cave_type *ul, *dl, *ur, *dr;
+	byte val;
 
 
 	if (!(zcave = getcave(wpos))) return;
@@ -4996,13 +5000,11 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 	/* Clear the section */
 	for (i = 0; i <= xsize; i++) {
 		for (j = 0; j <= ysize; j++) {
-			cave_type *c_ptr;
-
 			/* Access the grid */
 			c_ptr = &zcave[j + y0 - yhsize][i + x0 - xhsize];
 
 			/* 255 is a flag for "not done yet" */
-			c_ptr->temp = 255;
+			c_ptr->htemp = 255;
 
 			/* Clear icky flag because may be redoing the cave */
 			c_ptr->info &= ~(CAVE_ICKY);
@@ -5043,9 +5045,6 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 				if (xhstep / 256 > grd)
 					store_height(wpos, i / 256, j / 256, x0, y0, randint(maxsize), xhsize, yhsize, cutoff);
 				else {
-					cave_type *l, *r;
-					byte val;
-
 					/* Left point */
 					l = &zcave[j / 256 + y0 - yhsize][(i - xhstep) / 256 + x0 - xhsize];
 
@@ -5053,7 +5052,7 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 					r = &zcave[j / 256 + y0 - yhsize][(i + xhstep) / 256 + x0 - xhsize];
 
 					/* Average of left and right points + random bit */
-					val = (l->temp + r->temp) / 2 +
+					val = (l->htemp + r->htemp) / 2 +
 						  (randint(xstep / 256) - xhstep / 256) * roug / 16;
 
 					store_height(wpos, i / 256, j / 256, x0, y0, val,
@@ -5069,9 +5068,6 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 				if (xhstep / 256 > grd)
 					store_height(wpos, i / 256, j / 256, x0, y0, randint(maxsize), xhsize, yhsize, cutoff);
 				else {
-					cave_type *u, *d;
-					byte val;
-
 					/* Up point */
 					u = &zcave[(j - yhstep) / 256 + y0 - yhsize][i / 256 + x0 - xhsize];
 
@@ -5079,7 +5075,7 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 					d = &zcave[(j + yhstep) / 256 + y0 - yhsize][i / 256 + x0 - xhsize];
 
 					/* Average of up and down points + random bit */
-					val = (u->temp + d->temp) / 2 +
+					val = (u->htemp + d->htemp) / 2 +
 						  (randint(ystep / 256) - yhstep / 256) * roug / 16;
 
 					store_height(wpos, i / 256, j / 256, x0, y0, val,
@@ -5095,9 +5091,6 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 				if (xhstep / 256 > grd)
 					store_height(wpos, i / 256, j / 256, x0, y0, randint(maxsize), xhsize, yhsize, cutoff);
 				else {
-					cave_type *ul, *dl, *ur, *dr;
-					byte val;
-
 					/* Up-left point */
 					ul = &zcave[(j - yhstep) / 256 + y0 - yhsize][(i - xhstep) / 256 + x0 - xhsize];
 
@@ -5115,7 +5108,7 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 					 * reduce the effect of the square grid on the shape
 					 * of the fractal
 					 */
-					val = (ul->temp + dl->temp + ur->temp + dr->temp) / 4 +
+					val = (ul->htemp + dl->htemp + ur->htemp + dr->htemp) / 4 +
 					      (randint(xstep / 256) - xhstep / 256) *
 						  (diagsize / 16) / 256 * roug;
 
@@ -5143,7 +5136,7 @@ static bool hack_isnt_wall(worldpos *wpos, int y, int x, int cutoff) {
 	zcave[y][x].info |= (CAVE_ICKY);
 
 	/* If less than cutoff then is a floor */
-	if (zcave[y][x].temp <= cutoff) {
+	if (zcave[y][x].htemp <= cutoff) {
 		place_floor(wpos, y, x);
 		return(TRUE);
 	}
