@@ -8421,6 +8421,12 @@ void global_event_signup(int Ind, int n, cptr parm) {
 			msg_format(Ind, "\377ySorry, you must be at most level %d to sign up for this event.", ge->extra[2]); // GE_EXTRA - adventures.lua
 			if (!is_admin(p_ptr)) return;
 		}
+#if 1 /* Forbidden as +10 spd is too unbalanced! - Kurzel */
+		if (p_ptr->fruit_bat == 1) { /* 1 = native bat, 2 = from chauve-souris */
+			msg_print(Ind, "\377ySorry, native fruit bats are not eligible to join this event.");
+			if (!is_admin(p_ptr)) return;
+		}
+#endif
 		if (p_ptr->ghost) {
 			msg_print(Ind, "\377ySorry, ghosts may not participate in this event.");
 			if (!is_admin(p_ptr)) return;
@@ -8600,21 +8606,20 @@ static void process_global_event(int ge_id) {
 						break;
 #ifdef DM_MODULES
 					case GE_ADVENTURE:
-						if (!(ge->extra[1]) && (p_ptr->max_exp > 0 || p_ptr->max_plv > 1) && !is_admin(p_ptr)) { // GE_EXTRA - adventures.lua
+						if (((!(ge->extra[1]) && (p_ptr->max_exp > 0 || p_ptr->max_plv > 1)) || (p_ptr->max_plv > ge->extra[2])) && !is_admin(p_ptr)) { // GE_EXTRA - adventures.lua
 							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' no longer eligible.\n", p_ptr->name);
-							msg_format(j, "\377oCharacters need to have 0 experience to be eligible.");
-							msg_broadcast_format(j, "\377s%s is no longer eligible due to character level.", p_ptr->name);
-						} else if ((p_ptr->max_plv > ge->extra[2]) && !is_admin(p_ptr)) { // GE_EXTRA - adventures.lua
-								s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' no longer eligible.\n", p_ptr->name);
+							if (!(ge->extra[1]) && (p_ptr->max_exp > 0 || p_ptr->max_plv > 1))
+								msg_format(j, "\377oCharacters need to have 0 experience to be eligible.");
+							else if (p_ptr->max_plv > ge->extra[2])
 								msg_format(j, "\377oCharacters must not have been experience beyond level %d to be eligible.", ge->extra[1]); // GE_EXTRA - adventures.lua
-								msg_broadcast_format(j, "\377s%s is no longer eligible due to character level.", p_ptr->name);
-	 #ifdef USE_SOUND_2010
-								sound(j, "failure", NULL, SFX_TYPE_MISC, FALSE);
-	 #endif
-								p_ptr->global_event_type[ge_id] = GE_NONE;
-								ge->participant[j] = 0;
-								continue;
-							}
+							msg_broadcast_format(j, "\377s%s is no longer eligible due to character level.", p_ptr->name);
+ #ifdef USE_SOUND_2010
+							sound(j, "failure", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+							p_ptr->global_event_type[ge_id] = GE_NONE;
+							ge->participant[j] = 0;
+							continue;
+						}
 						if (!can_use_wordofrecall(p_ptr) && !is_admin(p_ptr)) {
 							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' stuck in dungeon.\n", p_ptr->name);
 							msg_print(j, "\377oEvent participation failed because your dungeon doesn't allow recalling.");
@@ -8639,13 +8644,17 @@ static void process_global_event(int ge_id) {
 					msg_broadcast_format(0, "\377y%s needs at least %d participant%s.", ge->title, ge->min_participants, ge->min_participants == 1 ? "" : "s");
 					s_printf("%s EVENT_NOPLAYERS: %d '%s'(%d) has only %d/%d participants.\n", showtime(), ge_id + 1, ge->title, ge->getype, participants, ge->min_participants);
 					/* remove players who DID sign up from being 'participants' */
-					for (j = 1; j <= NumPlayers; j++)
-						if (Players[j]->global_event_type[ge_id] == ge->getype) {
+					for (i = 0; i < MAX_GE_PARTICIPANTS; i++) {
+						if (!ge->participant[i]) continue;
+						for (j = 1; j <= NumPlayers; j++) {
+							if (ge->participant[i] != j) continue;
 							Players[j]->global_event_type[ge_id] = GE_NONE;
+							ge->participant[j] = 0; // wipe participant list - Kurzel
 #ifdef USE_SOUND_2010
 							sound(j, "failure", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 						}
+					}
 #ifdef DM_MODULES
 					/* If the adventure is pending, retract sign-up phase! */
 					if (ge->getype == GE_ADVENTURE && ge->state[1] == 2) {
@@ -9609,7 +9618,21 @@ static void process_global_event(int ge_id) {
 #ifdef DM_MODULES
 	case GE_ADVENTURE:
 		switch (ge->state[0]) {
-		case 0: /* prepare a dungeon */
+		case 0: /* require active participation to start */
+			n = 0;
+			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
+				if (!ge->participant[j]) continue;
+				// n++; // Count participants even if offline / logged out! Dead players would be 0'd.
+				for (i = 1; i <= NumPlayers; i++) { // OR ... count present players only! (disabled for now) - Kurzel
+					if (Players[i]->id != ge->participant[j]) continue;
+					p_ptr = Players[i];
+					if (in_module(&p_ptr->wpos) && (p_ptr->wpos.wz >= ge->extra[3]) && (p_ptr->wpos.wz <= ge->extra[4])) n++; // GE_EXTRA - adventures.lua
+				}
+			}
+			if (!n) ge->state[0] = 255;
+			else ge->state[0] = 1; // begin!
+		break;
+		case 1: /* prepare a dungeon */
 			ge->cleanup = 1;
 
 			s_printf("EVENT_LAYOUT: Adding tower (no entry).\n");
@@ -9638,9 +9661,9 @@ static void process_global_event(int ge_id) {
 				}
 			}
 
-			ge->state[0] = 1;
+			ge->state[0] = 2;
 			break;
-		case 1: /* monitor for participation */
+		case 2: /* monitor for participation */
 			n = 0;
 			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
 				if (!ge->participant[j]) continue;
