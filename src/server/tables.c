@@ -4794,17 +4794,15 @@ cptr player_title[MAX_CLASS][11][4] = {
 
 	/* Ranger */
 	{
-		{"Rookie", "Rookie", "Rookie", "Rookie", },
 		{"Path Finder", "Path Finder", "Path Finder", "Path Finder", },
-		{"Deputy", "Deputy", "Deputy", "Deputy", },
-		{"Guard", "Guard", "Guard", "Guard", },
 		{"Scout", "Scout", "Scout", "Scout", },
+		{"Guard", "Guard", "Guard", "Guard", },
 		{"Sentry", "Sentry", "Sentry", "Sentry", },
-		{"Overseer", "Overseer", "Overseer", "Overseer", },
-		{"Guard Captain", "Guard Captain", "Guard Captain", "Guard Captain", },
-		//removed 'Ranger' and added 'Ranger Champion'
+		{"Ranger", "Ranger", "Ranger", "Ranger", },
+		{"Deputy", "Deputy", "Deputy", "Deputy", },
+		{"Sheriff", "Sheriff", "Sheriff", "Sheriff", },
+		{"Marshall", "Marshall", "Marshall", "Marshall", },
 		{"Supervisor", "Supervisor", "Supervisor", "Supervisor", },
-		//{"Ranger", "Ranger", "Ranger", "Ranger", },
 		{"High Ranger", "High Ranger", "High Ranger", "High Ranger", },
 		//{"Ranger Champion", "Ranger Champion", },
 		{"Ranger Chieftain", "Ranger Chieftain", "Ranger Chief", "Ranger Chief", }, /* to check: Isn't it Chief Ranger rather? */
