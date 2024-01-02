@@ -233,7 +233,7 @@ F:LAMP_LITE | NO_SHADE
 
 N:30:wooden table
 G:=:u
-F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
+F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING
 
 N:31:open floor
 G:.:5
@@ -1079,20 +1079,26 @@ F:DONT_NOTICE_RUNNING | NOTICE
 # Light
 N:147:small glowing sphere
 G:&:0
-F:FLOOR | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | SHINE
-F:DONT_NOTICE_RUNNING | NOTICE
+# = wall?
+F:WALL | NO_WALK | LOS
+# = floor?
+#F:FLOOR | CAN_LEVITATE
+# definite common mods:
+F:DONT_NOTICE_RUNNING | NOTICE | REMEMBER | SUPPORT_LIGHT | SHINE
+# questionable common mods:
+#F:PERMANENT
 
-# Light
+# Light - also see flag comments of feat 147 regarding this!
 N:148:glowing sphere
 G:&:0
-F:FLOOR | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | SHINE2
-F:DONT_NOTICE_RUNNING | NOTICE
+F:WALL | NO_WALK | LOS
+F:DONT_NOTICE_RUNNING | NOTICE | REMEMBER | SUPPORT_LIGHT | SHINE2
 
-# Light
+# Light - also see flag comments of feat 147 regarding this!
 N:149:large glowing sphere
 G:&:0
-F:FLOOR | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | SHINE | SHINE2
-F:DONT_NOTICE_RUNNING | NOTICE
+F:WALL | NO_WALK | LOS
+F:DONT_NOTICE_RUNNING | NOTICE | REMEMBER | SUPPORT_LIGHT | SHINE | SHINE2
 
 
 # HOLE 150..158 -------------------------------------------------------------
