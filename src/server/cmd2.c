@@ -884,7 +884,8 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 	if (!ge->getype) {
 		p_ptr->global_event_type[ev_idx] = GE_NONE; /* no longer participant */
 		return(FALSE);
-	}
+	} else p_ptr->global_event_type[ev_idx] = ge->getype; // Paranoia - reset unexpected 0 here - Kurzel
+
 
 	switch (p_ptr->global_event_type[ev_idx]) {
 #ifdef DM_MODULES
