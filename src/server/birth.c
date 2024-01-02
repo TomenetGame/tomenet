@@ -2162,6 +2162,9 @@ static void player_setup(int Ind, bool new) {
 
 	//bool unstaticed = FALSE;
 	bool panic = p_ptr->panic;
+#ifdef DM_MODULES
+	bool found_module = FALSE;
+#endif
 
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
@@ -2225,7 +2228,6 @@ static void player_setup(int Ind, bool new) {
 	//if (sector00separation && ...) {
 #ifdef DM_MODULES
 	/* count validate participation in any active events, otherwise kick */
-	bool found = FALSE;
 	if (in_module(wpos)) {
 		global_event_type *ge;
 
@@ -2234,21 +2236,23 @@ static void player_setup(int Ind, bool new) {
 			if (!ge->getype) continue;
 			for (y = 0; y < MAX_GE_PARTICIPANTS; y++) {
 				if (ge->participant[y] != p_ptr->id) continue;
-				found = TRUE;
+				found_module = TRUE;
 				/* must reapply this? */
 				if (ge->noghost) p_ptr->global_event_temp |= PEVF_NOGHOST_00;
 				break;
 			}
-			if (found) break;
+			if (found_module) break;
+		}
+		/* We didn't find a valid adventure he belongs to, yet he is inside the adventure module */
+		if (!found_module) {
+ #ifdef MODULE_ALLOW_INCOMPAT
+			/* need to leave party, since we might be teamed up with incompatible char mode players! */
+			if (p_ptr->party && !p_ptr->admin_dm && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)) party_leave(i, FALSE);
+ #endif
 		}
 	}
-	if (!found) {
- #ifdef MODULE_ALLOW_INCOMPAT
-		/* need to leave party, since we might be teamed up with incompatible char mode players! */
-		if (p_ptr->party && !p_ptr->admin_dm && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)) party_leave(i, FALSE);
- #endif
-	}
-	if (!found && wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y) {
+	/* Standard check for everyone - just skip it if he is inside an eligible adventure module (TODO: maybe also skip if he is in an eligible global event). */
+	if (!found_module && wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y) {
 #else
 	if (wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y) {
 #endif
