@@ -255,7 +255,7 @@ school_book[25] = { OSENSELIFE, OVERMINCONTROL, OSLOWMONSTER_II, OREGEN, OSUBJUG
 
 -- Handbooks:
 
--- Create the book of beginner's cantrip
+-- Create the book of beginner's cantrip (mage starter book)
 school_book[50] = { MANATHRUST_I, GLOBELIGHT_I, BLINK, DETECTMONSTERS, SENSEHIDDEN_I, ENTPOTION }
 -- Create the elementalist's handbook
 school_book[51] = {
@@ -273,7 +273,7 @@ school_book[54] = {
 }
 -- Create the destroyer's handbook
 school_book[55] = { TIDALWAVE_II, HELLFIRE_II, FIREBALL_II, SHAKE, THUNDERSTORM, HDRAINCLOUD, EARTHQUAKE, CHAOSBOLT, CHAOSBOLT2, FLAMEWAVE_II, NETHERBOLT } --todo: possibly add OUNLIFE spells, maybe to other books too
--- Create the handbook of novice etiquette
+-- Create the handbook of novice etiquette (priest starter book)
 school_book[56] = { HDELFEAR, HBLESSING_I, HCURING_I, HGLOBELIGHT_I, HDETECTEVIL, HHEALING_I}
 ---- Create the handbook for rogues (of deception)
 --school_book[57] = { BLINK, POISONFOG_III, OFEAR_II, OBLIND_II, DETECTINVIS, SENSEHIDDEN_II, REVEALWAYS, VISION_II, OINVIS, INVISIBILITY }
@@ -286,7 +286,7 @@ school_book[59] = { MEDITATION, IDENTIFY_III, STARIDENTIFY, SENSEHIDDEN_II, DETE
 school_book[60] = {
     --TELEAWAY_I, MTELEAWAY,
     BLINK, TELEPORT, RECALL, TELEKINESIS, MBLINK, MTELEPORT, MTELETOWARDS, MTELEKINESIS, RELOCATION, GATEWAY, SHADOWGATE }
--- Create the handbook of first visions
+-- Create the handbook of first visions (shaman starter book)
 school_book[61] = { OCURSEDD_I, ODELFEAR, STARLIGHT_I, MEDITATION, OFEAR_I, DETECTINVIS, HDETECTEVIL, SENSEHIDDEN_I }
 
 -- Create the handbook of alleviation
@@ -295,3 +295,23 @@ school_book[62] = { ODELFEAR, HERBALTEA, MEDITATION, DISPELMAGIC, HCUREWOUNDS_II
 school_book[63] = { MDISARM, MSILENCE, MSCARE_II, MCONFUSE_II, MSLEEP_II, MSLOWMONSTER_II, MTELEAWAY, MCHARM, MSTOPCHARM, MTELEKINESIS }
 -- Create the handbook of wind and weather
 school_book[64] = { THUNDERSTORM, AIRWINGS, TIDALWAVE_I, VAPOR_II, LIGHTNINGBOLT_II, ICESTORM_I, FROSTBALL_I, FROSTBOLT_II, WATERBOLT_II }
+
+-- Create the handbook of rough ideas (mindcrafter starter book)
+--school_book[65] = { MBOOST, MCURE,  MSCARE_I, MCONFUSE_I, MSLEEP_I, MMINDBLAST_I,  MBASH, MDISARM }
+--<MAYBE ENABLE> school_book[65] = { MCURE, MSCARE_I, MCONFUSE_I, MBASH }
+-- Create the handbook of simple tricks (rogue starter book)
+--school_book[66] = { BLINK, OFEAR_I, OBLIND_I, OSLEEP_I }
+--<MAYBE ENABLE>school_book[66] = { BLINK, OFEAR_I, OBLIND_I }
+--[[	--rangers use the same book as mages, just cant use manathrust (no HEALING_I nature spell in it, but not needed)
+-- Create the handbook of outdoor activity (ranger starter book)
+--school_book[67] = { GLOBELIGHT_I, BLINK, DETECTMONSTERS, HEALING_I, VAPOR_I, LIGHTNINGBOLT_I }
+school_book[67] = { GLOBELIGHT_I, BLINK, DETECTMONSTERS, HEALING_I, LIGHTNINGBOLT_I }
+]]
+--[[	--basically same as priest starter book?
+-- Create the handbook of commencing duty (paladin starter book)
+school_book[68] = { HDELFEAR, HBLESSING_I, HGLOBELIGHT_I, HDETECTEVIL, HSANCTUARY_I }
+]]
+--[[	--druids have only 3 early spells in total, and they are especially powerful early on - no point in druid starter book!
+-- Create the handbook of herbs and plants (druid starter book)
+school_book[69] = { FOCUS, HERBALTEA, WATERPOISON_I }
+]]

@@ -1259,6 +1259,7 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		//{ TV_SCROLL, SV_SCROLL_PHASE_DOOR, 0 },
 		{ TV_TRAPKIT, SV_TRAPKIT_POTION, 0 },
 		//{ TV_BOOK, SV_SPELLBOOK, 21 }, /* Spellbook of Phase Door */
+		//{ TV_BOOK, 66, 0 },
 	},
 
 	{
@@ -1342,6 +1343,7 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR, 0 },
 		{ TV_SCROLL, SV_SCROLL_TELEPORT, 0 },
 		{ 255, 255, 0 },
+		//{ TV_BOOK, 65, 0 },
 	},
 
 #ifdef ENABLE_DEATHKNIGHT
@@ -1411,6 +1413,7 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		/* Rogue */
 		{ TV_HELM, SV_HARD_LEATHER_CAP, 0 },
 		{ 255, 255, 0 },
+		//{ TV_BOOK, 66, 0 },
 		{ TV_CLOAK, SV_CLOAK, 0 },
 		{ TV_TRAPKIT, SV_TRAPKIT_SLING, 0 },
 		//{ TV_SCROLL, SV_SCROLL_PHASE_DOOR, 0 },
@@ -1498,6 +1501,7 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		{ TV_CLOAK, SV_CLOAK, 0 },
 		{ TV_SCROLL, SV_SCROLL_TELEPORT, 0 },
 		{ 255, 255, 0 },
+		//{ TV_BOOK, 65, 0 },
 	},
 #ifdef ENABLE_DEATHKNIGHT
 	{
@@ -1533,41 +1537,30 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 #endif
     }
 };
+
+/* hack: make sure spellbook constants are correct.
+   actually this could be done once in init_lua,
+   but since the array player_init is static, we
+   just do it here. - C. Blue */
 void init_player_outfits(void) {
-	/* hack: make sure spellbook constants are correct.
-	   actually this could be done once in init_lua,
-	   but since the array player_init is static, we
-	   just do it here. - C. Blue */
+	int s;
 
-	//player_init[0][CLASS_PRIEST][2][2] = __lua_HHEALING;
-	//player_init[0][CLASS_PALADIN][3][2] = __lua_HBLESSING;
-	player_init[0][CLASS_PALADIN][3][2] = __lua_HDELFEAR;
+	for (s = 0; s <= 1; s++) {
+		//player_init[s][CLASS_PRIEST][2][2] = __lua_HHEALING;
+		//player_init[s][CLASS_PALADIN][3][2] = __lua_HBLESSING;
+		player_init[s][CLASS_PALADIN][3][2] = __lua_HDELFEAR;
 #ifdef ENABLE_DEATHKNIGHT
-	player_init[0][CLASS_DEATHKNIGHT][3][2] = __lua_OFEAR;
+		player_init[s][CLASS_DEATHKNIGHT][3][2] = __lua_OFEAR;
 #endif
 #ifdef ENABLE_HELLKNIGHT
-	player_init[0][CLASS_HELLKNIGHT][3][2] = __lua_OFEAR; //just placeholder, since class can't be "created"
+		player_init[s][CLASS_HELLKNIGHT][3][2] = __lua_OFEAR; //just placeholder, since class can't be "created"
 #endif
 #ifdef ENABLE_CPRIEST
-	player_init[0][CLASS_CPRIEST][2][2] = __lua_OFEAR; //just placeholder, since class can't be "created"
+		player_init[s][CLASS_CPRIEST][2][2] = __lua_OFEAR; //just placeholder, since class can't be "created"
 #endif
-	player_init[0][CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
-	player_init[0][CLASS_DRUID][3][2] = __lua_FOCUS;
-
-	//player_init[1][CLASS_PRIEST][2][2] = __lua_HHEALING;
-	//player_init[1][CLASS_PALADIN][3][2] = __lua_HBLESSING;
-	player_init[1][CLASS_PALADIN][3][2] = __lua_HDELFEAR;
-#ifdef ENABLE_DEATHKNIGHT
-	player_init[1][CLASS_DEATHKNIGHT][3][2] = __lua_OFEAR;
-#endif
-#ifdef ENABLE_HELLKNIGHT
-	player_init[1][CLASS_HELLKNIGHT][3][2] = __lua_OFEAR; //just placeholder, since class can't be "created"
-#endif
-#ifdef ENABLE_CPRIEST
-	player_init[1][CLASS_CPRIEST][2][2] = __lua_OFEAR; //just placeholder, since class can't be "created"
-#endif
-	player_init[1][CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
-	player_init[1][CLASS_DRUID][3][2] = __lua_FOCUS;
+		player_init[s][CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
+		player_init[s][CLASS_DRUID][3][2] = __lua_FOCUS;
+	}
 }
 
 #define BARD_INIT_NUM	15
