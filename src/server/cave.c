@@ -6159,6 +6159,7 @@ void update_view(int Ind) {
 
 	if (p_ptr->wpos.wz) {
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
 		if (l_ptr && l_ptr->flags1 & LF1_NO_MAP) unmap = TRUE;
 	}
 
@@ -6580,7 +6581,7 @@ void update_view(int Ind) {
 	/* None left */
 	p_ptr->temp_n = 0;
 }
-#else	/* USE_OLD_UPDATE_VIEW */
+#else	/* !USE_OLD_UPDATE_VIEW */
 /* New update_view code from ToME... but it was slower than ours in fact.
  * pfft
  */
