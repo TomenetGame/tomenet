@@ -7959,8 +7959,6 @@ int start_global_event(int Ind, int getype, char *parm) {
 		// strcpy(ge->title, format("Adventure Module - %s", parm));
 		strcpy(ge->title, format("%s", parm));
 
-//		ge->beacon_wpos[0].wz = ;
-
 		// GE_TYPE announcement_time signup_time end_turn min_participants limited noghost challenge
 		ge->announcement_time = 60 * exec_lua(0, format("return adventure_type(\"%s\", 1)", parm));
 		ge->signup_time = 60 * exec_lua(0, format("return adventure_type(\"%s\", 2)", parm));
@@ -7977,6 +7975,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 
 		for (i = 0; i < 64; i++) // GE_EXTRA in adventures.lua (default 0)
 			ge->extra[i] = exec_lua(0, format("return adventure_extra(\"%s\", %d)", parm, i+1));
+		ge->beacon_wpos[0].wz = ge->extra[6]; // Required to exit the event!
 
 		for (i = 0; i < 10; i++) // GE_DESCRIPTION in adventures.lua (default "")
 			strcpy(ge->description[i], string_exec_lua(0, format("return adventure_description(\"%s\", %d)", parm, i+1)));

@@ -34,6 +34,8 @@ INTENSE_RAIN = 2
 SPEED_SNOW = 9
 SPEED_RAIN = 3
 
+-- STORE_HIDDENLIBRARY = 65 -- TODO - place_store() where cs.omni = this int
+
 -- TABLES
 
 LOCALE_00 = { -- dlvl loc_pre desc music ambient
@@ -68,12 +70,12 @@ WEATHER_00 = { -- weather wind season intensity speed
 
 GE_TYPE = { -- announcement_time signup_time end_turn min_participants limited noghost challenge
 ["Under Elmoth"] = {5,0,35,0,0,1,1}, -- ge->state[1] = (challenge ? 1 : 0)
-["Shipwrecked!"] = {15,0,45,2,6,0,0}
+["Stormy Isle"] = {1,0,45,1,6,0,0}
 } -- time in minutes; "sensible announcement_time" of 5m minimum avoids double announce
 
-GE_EXTRA = { -- INDEX level req. (min,max) 00depth (min,max,entry)
-["Under Elmoth"] = {1,0,1,2,2,2}, -- min 0 = newly created level 1 only
-["Shipwrecked!"] = {2,14,21,3,3,3}
+GE_EXTRA = { -- INDEX level req. (min,max) 00depth (min,max,entry,exit)
+["Under Elmoth"] = {1,0,1,2,2,2,2}, -- min 0 = newly created level 1 only
+["Stormy Isle"] = {2,1,21,3,3,3,3}
 } -- reordering this ? find GE_EXTRA to update ge->extra[i-1] hardcode, xtra1.c
 
 GE_DESCRIPTION = { -- description (lines [0,9])
@@ -90,7 +92,7 @@ GE_DESCRIPTION = { -- description (lines [0,9])
 "        Try various strategies or participate in a group to succeed!   ",
 "                                                                       "},
 
-["Shipwrecked!"] = {
+["Stormy Isle"] = {
 " Form an expedition team of 2-6 experienced characters and explore a   ",
 " stormy islet off the southern coast of Middle-earth.                  ",
 "                                                                       ",
