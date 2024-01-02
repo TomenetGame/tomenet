@@ -1075,6 +1075,7 @@ void lua_arts_fix(int Ind) {
 /* Display a player's global_event status */
 void lua_get_pgestat(int Ind, int n) {
 	player_type *p_ptr = Players[Ind];
+
 	msg_format(Ind, "%s: #%d, type %d, signup %ld, started %ld,",
 		    p_ptr->name, n, p_ptr->global_event_type[n], (long)p_ptr->global_event_signup[n], (long)p_ptr->global_event_started[n]);
 	msg_format(Ind, "  progress: %d,%d,%d,%d", p_ptr->global_event_progress[n][0], p_ptr->global_event_progress[n][1],
