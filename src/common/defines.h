@@ -2631,7 +2631,8 @@
 #define EFF_VORTEX		0x00000100	/* The area follows the target - Kurzel */
 #define EFF_SEEKER		0x00000200	/* Real-time-moving homing projectile */
 #define EFF_METEOR		0x00000400	/* Announce that a meteor will be landing here, then have it crash down */
-
+#define EFF_TEMP		0x00000800	/* Arbitrary temporary flag for extra functionality, for example for casting a one-time sfx */
+//hole
 #define EFF_SELF		0x00100000	/* Pendant to PROJECT_SELF: Effects created by projections with this flag receive EFF_SELF, to remain harmful to the caster himself too. */
 #define EFF_DUMMY		0x00200000	/* Effect deals no damage to anything */
 #define EFF_FALLING_STAR	0x00400000

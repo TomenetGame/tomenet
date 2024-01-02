@@ -1133,7 +1133,8 @@ static void process_effects(void) {
 					/* explosion is faster than flying upwards */
 					//doesn't work-   e_ptr->interval = 2;
 #ifdef USE_SOUND_2010
-					if (e_ptr->rad == e_ptr->time + 1) {
+					if (e_ptr->rad == e_ptr->time + 1 && !(e_ptr->flags & EFF_TEMP)) {
+						e_ptr->flags |= EFF_TEMP; /* Play the sfx only during this one frame, not during ALL frames of this current e_ptr->rad period. Those would stack terribly (if ovl_sfx_misc isn't disabled). */
 						if ((e_ptr->flags & EFF_FIREWORKS3))
 							//sound_near_site(e_ptr->cy, e_ptr->cx, wpos, 0, "fireworks_big", "", SFX_TYPE_MISC, FALSE);
 							sound_floor_vol(wpos, "fireworks_big", "", SFX_TYPE_MISC, randint(26) + 75);
