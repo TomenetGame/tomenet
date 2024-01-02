@@ -8021,6 +8021,7 @@ int start_global_event(int Ind, int getype, char *parm) {
  */
 void stop_global_event(int Ind, int n) {
 	global_event_type *ge = &global_event[n];
+
 	if (Ind) msg_format(Ind, "Wiping event #%d of type %d.", n + 1, ge->getype);
 	s_printf("%s EVENT_STOP: #%d '%s'(%d)\n", showtime(), n + 1, ge->title, ge->getype);
 	if (ge->getype) msg_broadcast_format(0, "\377y[Event '%s' (%d) was cancelled.]", ge->title, n + 1);
@@ -9002,7 +9003,7 @@ static void process_global_event(int ge_id) {
 			/* if tournament runs for too long without result, spice it up by
 			   throwing in some nasty baddy (Bad Luck Bat from Hell): */
 			/* TODO: also spawn something if a player is AFK (or highlandering himself on friend's account -_-) */
-//			if (elapsed_turns - (ge->announcement_time * cfg.fps) - 600 == 600) { /* after 10 minutes of deathmatch phase */
+			//if (elapsed_turns - (ge->announcement_time * cfg.fps) - 600 == 600) { /* after 10 minutes of deathmatch phase */
 			if ((!ge->state[3]) && ((turn - ge->start_turn) - ge->state[2] >= 600 * cfg.fps)) {
 				msg_broadcast(0, "\377aThe gods of highlands are displeased by the lack of blood flowing.");
 				summon_override_checks = SO_ALL & ~(SO_GRID_EMPTY);
@@ -9612,9 +9613,6 @@ static void process_global_event(int ge_id) {
 		case 0: /* prepare a dungeon */
 			ge->cleanup = 1;
 
-			sector00separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
-			// sector00flags1 = sector00flags2 = 0x0;
-
 			s_printf("EVENT_LAYOUT: Adding tower (no entry).\n");
 
 			// slash.c PvP ARENA for reference... sharing tower for now - Kurzel
@@ -9664,21 +9662,18 @@ static void process_global_event(int ge_id) {
 				for (i = 1; i <= NumPlayers; i++) {
 					if (Players[i]->id != ge->participant[j]) continue;
 					p_ptr = Players[i];
-					p_ptr->global_event_type[ge_id] = GE_NONE;
 					if (in_module(&p_ptr->wpos) && ((p_ptr->wpos.wz >= ge->extra[3]) && (p_ptr->wpos.wz <= ge->extra[4]))) { // GE_EXTRA - adventures.lua
 						p_ptr->recall_pos.wx = cfg.town_x;
 						p_ptr->recall_pos.wy = cfg.town_y;
 						p_ptr->recall_pos.wz = 0;
 						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+						p_ptr->global_event_type[ge_id] = GE_NONE; /* no longer a participant */
 						p_ptr->global_event_temp = 0x0; /* clear all flags */
 						recall_player(i, "");
 					}
 				}
 				ge->participant[j] = 0;
 			}
-
-			sector00separation--; /* separate sector 0,0 from the worldmap - participants have access ONLY */
-			// sector00flags1 = sector00flags2 = 0x0;
 
 			// Don't wipe it once generated, avoiding conflicts with PVPARENA / other modules - Kurzel
 			// if (wild_info[wpos.wy][wpos.wx].tower) (void)rem_dungeon(&wpos, TRUE);
