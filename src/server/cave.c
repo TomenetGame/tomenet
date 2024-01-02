@@ -5551,8 +5551,8 @@ void forget_lite(int Ind) {
 				case 1: if (!(c_ptr->info & CAVE_LITE)) c_ptr->info |= CAVE_LITE_VAMP; break; /* still having CAVE_LITE implies already having CAVE_LITE_VAMP or CAVE_LITE_WHITE (which overrides vamp) anyway at this point */
 				case 2: if (!(c_ptr->info & CAVE_LITE) || (c_ptr->info & CAVE_LITE_VAMP)) c_ptr->info |= CAVE_LITE_WHITE; break;
 #endif
-				c_ptr->info |= CAVE_LITE;
 				}
+				c_ptr->info |= CAVE_LITE;
 			}
 		}
 
