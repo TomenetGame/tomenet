@@ -7972,13 +7972,14 @@ int start_global_event(int Ind, int getype, char *parm) {
 		ge->state[1] = exec_lua(0, format("return adventure_type(\"%s\", 7)", parm));
 		if (ge->state[1] == 1) announce_global_event(n);
 
-		for (i = 0; i < 64; i++) // GE_EXTRA in adventures.lua (default 0)
-			ge->extra[i] = exec_lua(0, format("return adventure_extra(\"%s\", %d)", parm, i+1));
+		for (i = 0; i < 64; i++) // GE_EXTRA in adventures.lua (default 0)   ---- TODO?: in adventure_extra() -> GE_EXTRA there are way less than 64 fields defined!
+			ge->extra[i] = exec_lua(0, format("return adventure_extra(\"%s\", %d)", parm, i + 1));
 		ge->beacon_wpos[0].wz = ge->extra[6]; // Required to exit the event!
 
 		for (i = 0; i < 10; i++) // GE_DESCRIPTION in adventures.lua (default "")
-			strcpy(ge->description[i], string_exec_lua(0, format("return adventure_description(\"%s\", %d)", parm, i+1)));
+			strcpy(ge->description[i], string_exec_lua(0, format("return adventure_description(\"%s\", %d)", parm, i + 1)));
 
+s_printf("state0=%d\n", ge->state[0]);
 		break;
 #endif
 	}
@@ -8002,16 +8003,12 @@ int start_global_event(int Ind, int getype, char *parm) {
 	s_printf("%s EVENT_CREATE: #%d '%s'(%d) parms='%s'\n", showtime(), n + 1, ge->title, getype, parm);
 
 	/* extra announcement if announcement time isn't the usual multiple of announcement intervals */
-#if 1 /* this is ok, and leaving it for now */
-	if ((ge->announcement_time % GE_ANNOUNCE_INTERVAL) && (ge->announcement_time % GE_FINAL_ANNOUNCEMENT)) announce_global_event(n);
-#else /* this would be even finer, but actually it's not needed as long as start_global_event() is called with sensible announcement_time :) */
-/* note that this else-branch is missing the GE_FINAL_ANNOUNCEMENT-check atm */
-	if (ge->announcement_time >= 120 && !(GE_ANNOUNCE_INTERVAL % 60)) { /* if we announce in x-minute-steps, and have at least 2 minutes left.. */
+	if (ge->announcement_time <= GE_FINAL_ANNOUNCEMENT) announce_global_event(n);
+	else if (ge->announcement_time >= 120 && !(GE_ANNOUNCE_INTERVAL % 60)) { /* if we announce in x-minute-steps, and have at least 2 minutes left.. */
 		if ((ge->announcement_time / 60) % (GE_ANNOUNCE_INTERVAL / 60)) announce_global_event(n); /* ..then don't double-announce for this whole minute */
 	} else { /* if we announce in second-steps or weird fractions of minutes, or if we display the remaining time in seconds anyway because it's <120s.. */
 		if (ge->announcement_time % GE_ANNOUNCE_INTERVAL) announce_global_event(n);/* ..then don't double-announce just for this second */
 	}
-#endif
 	return(0);
 }
 
@@ -9618,7 +9615,8 @@ static void process_global_event(int ge_id) {
 #ifdef DM_MODULES
 	case GE_ADVENTURE:
 		switch (ge->state[0]) {
-		case 0: /* require active participation to start */
+		case 0: /* require active participation to start <- what does this mean? */
+ #if 0 /* eligibility check has just been done above; and also, this check is wrong */
 			n = 0;
 			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
 				if (!ge->participant[j]) continue;
@@ -9626,11 +9624,14 @@ static void process_global_event(int ge_id) {
 				for (i = 1; i <= NumPlayers; i++) { // OR ... count present players only! (disabled for now) - Kurzel
 					if (Players[i]->id != ge->participant[j]) continue;
 					p_ptr = Players[i];
+					// we want players who signed up, ie who are OUTSIDE the event? nobody can be inside already at this point? this line seems wrong:
 					if (in_module(&p_ptr->wpos) && (p_ptr->wpos.wz >= ge->extra[3]) && (p_ptr->wpos.wz <= ge->extra[4])) n++; // GE_EXTRA - adventures.lua
 				}
 			}
 			if (!n) ge->state[0] = 255;
-			else ge->state[0] = 1; // begin!
+			else
+ #endif
+			ge->state[0] = 1; // begin!
 		break;
 		case 1: /* prepare a dungeon */
 			ge->cleanup = 1;
