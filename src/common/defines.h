@@ -6617,7 +6617,7 @@
 #define FF1_WALL		0x00000020L
 #define FF1_PERMANENT		0x00000040L
 #define FF1_CAN_LEVITATE	0x00000080L
-#define FF1_REMEMBER		0x00000100L
+#define FF1_REMEMBER		0x00000100L	/* Causes cave_plain_floor_grid() to be false, ie it's not a plain, boring grid but something to remember, ie getting/keeping CAVE_MARK. */
 #define FF1_NOTICE		0x00000200L	/* Will be eligible target of 'l'ook command */
 #define FF1_DONT_NOTICE_RUNNING	0x00000400L
 #define FF1_CAN_RUN		0x00000800L
@@ -6661,6 +6661,7 @@
 #define FF2_NO_PROB		0x00000400L	/* Don't allow probability travel onto this grid */
 #define FF2_ATTR_MULTI		0x00000800L	/* Ignore feat's base colour, instead cycle through the S-line colours each time the player refreshes his view on the feat. */
 #define FF2_SHINE		0x00001000L	/* Shines light on surrounding grids, causing (CAVE_GLOW_HACK | CAVE_GLOW) on them and itself, for permanent lighting. */
+    /* TODO: unlight shine'd upon grids upon destruction of this grid; handle live-causes of LoS-blocking between this grid and the shine'd upon grids (eg someone tree'ing, quake..)! */
 #define FF2_SHINE_FIRE		0x00002000L	/* Changes FF2_SHINE effect to fiery light (instead of neutral aka white light). */
 #define FF2_SHINE2		0x00004000L	/* rad 2. Stacks with FF2_SHINE. */
 //hole
