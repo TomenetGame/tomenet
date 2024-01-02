@@ -9629,10 +9629,10 @@ static void process_global_event(int ge_id) {
 			}
 			if (!n) ge->state[0] = 255;
 			else
- #endif
 			ge->state[0] = 1; // begin!
 		break;
 		case 1: /* prepare a dungeon */
+ #endif /* ... move directly into 'case 1', or there'd be a second of delay, looking weird. */
 			ge->cleanup = 1;
 
 			s_printf("EVENT_LAYOUT: Adding tower (no entry).\n");
