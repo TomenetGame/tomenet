@@ -2228,6 +2228,7 @@ static void player_setup(int Ind, bool new) {
 	count = 0;
 	if (in_module(wpos)) {
 		global_event_type *ge;
+
 		for (x = 0; x < MAX_GLOBAL_EVENTS; x++) {
 			ge = &global_event[x];
 			if (!ge->getype) continue;

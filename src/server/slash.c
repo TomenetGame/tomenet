@@ -3084,6 +3084,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					if (at > 0) {
 						/* are we signed up for it? Mark it then to indicate that */
 						global_event_type *ge = &global_event[i];
+
 						for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
 							if (!ge->participant[j]) continue;
 							if (p_ptr->id == ge->participant[j]) break;
