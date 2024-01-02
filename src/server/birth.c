@@ -2225,7 +2225,7 @@ static void player_setup(int Ind, bool new) {
 	//if (sector00separation && ...) {
 #ifdef DM_MODULES
 	/* count validate participation in any active events, otherwise kick */
-	int found = 0;
+	bool found = FALSE;
 	if (in_module(wpos)) {
 		global_event_type *ge;
 
@@ -2233,11 +2233,13 @@ static void player_setup(int Ind, bool new) {
 			ge = &global_event[x];
 			if (!ge->getype) continue;
 			for (y = 0; y < MAX_GE_PARTICIPANTS; y++) {
-				if (!ge->participant[y]) continue;
-				count++;
+				if (ge->participant[y] != p_ptr->id) continue;
+				found = TRUE;
 				/* must reapply this? */
 				if (ge->noghost) p_ptr->global_event_temp |= PEVF_NOGHOST_00;
+				break;
 			}
+			if (found) break;
 		}
 	}
 	if (!found) {
