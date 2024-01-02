@@ -8596,7 +8596,6 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 		ge = &global_event[i];
 		if (!ge->getype) continue;
 		for (k = 0; k < MAX_GE_PARTICIPANTS; k++) {
-			if (!ge->participant[k]) continue;
 			if (ge->participant[k] == p_ptr->id) ge->participant[k] = 0;
 		}
 	}
