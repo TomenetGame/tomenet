@@ -2287,7 +2287,6 @@ static void player_setup(int Ind, bool new) {
 	/* If he's in the training tower of Bree, check for running global events accordingly */
 	if (in_arena(wpos)) {
 		for (d = 0; d < MAX_GLOBAL_EVENTS; d++)
-		if (p_ptr->global_event_type[d] != GE_NONE)
 		switch (p_ptr->global_event_type[d]) {
 		case GE_ARENA_MONSTER:
 			wpos->wx = cfg.town_x;
