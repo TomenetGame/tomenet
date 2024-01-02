@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 24. December 2023 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 1. January 2024 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.1 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -11419,7 +11419,7 @@ the type of sling, bow or crossbow).
 ---------------------------
 The "auto-retaliator" (see (4.1a)) also works if you fight bare-handed.
 
-Training Martial Arts will give you..
+Training Martial Arts will give you (see (7.2) for details on these)...
 -a bonus to-hit and to-dam.
 -special combat moves which your character will use automatically.
  These moves do a lot of extra damage and often additionally stun or slow
@@ -11431,6 +11431,7 @@ Training Martial Arts will give you..
  and still benefit from its AC.
 -a chance to grab your enemies to prevent them from casting or teleporting.
  (This chance adds to your interception skill.)
+-extra attacks.
 
 However, to use the full potential of martial arts you will need to take care
 of several points..
@@ -11542,11 +11543,11 @@ dexterity (unlike characters that use weapons):
 (The attack number can be increased further by items like rings of extra
 attacks or by magical influence like priest prayer 'Zeal'.)
 Note that EA effects (like EA ring or Zeal prayer) won't work on characters
-who fight barehanded without having Martial Arts skill at 01.000 or higher!
+who fight barehanded without having Martial Arts skill at 1.000 or higher!
 
 Martial Arts skill level        Attacks per round
 -------------------------------------------------
-             1                          2
+             2                          2
             10                          3
             20                          4
             30                          5
@@ -16257,7 +16258,7 @@ stated.
                                 by increasing your Martial Arts skill, as if
                                 'Dodging' was a parent skill of Martial Arts.
 
-                                Grants +1 extra attack at 1,10,20,30,40,45,50
+                                Grants +1 extra attack at 2,10,20,30,40,45,50
                                 each, so up to +7 blows per round in total.
 
                                 At 10 you gain Feather Falling (see (5.8)).
@@ -17135,15 +17136,15 @@ stated.
                                 weight and to better protect your items from
                                 water.
 
-                                Skill maxes at 01.000, with the ability to
-                                swim improving steadily while increasing it.
+                                Skill maxes at 1.000, with the ability to swim
+                                improving steadily while increasing it.
                                 At 0.700 you become able to swim very swiftly
                                 if no monsters are within sight, enabling you
                                 to 'run' through water.
 
                                 For more details about swimming see (4.15).
 
-    .Climbing                   You need this at 01.000 to be able to climb.
+    .Climbing                   You need this at 1.000 to be able to climb.
                                 Climbing allows you to pass mountain terrain
                                 without the need for a climbing set, special
                                 boots or magical means.
@@ -21119,7 +21120,7 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
                     Friendly players around the caster that are affected by the
                     spell may receive up to +2 EA depending on spell tier.
                     Note: The EA effect won't be applied to barehanded players
-                    if they don't have Martial Arts skill of at least 01.000.
+                    if they don't have Martial Arts skill of at least 1.000.
                     Required skill level for first spell level: 27.
 
                     Tier II: Level 37.                         (auto-project)

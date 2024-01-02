@@ -5777,14 +5777,13 @@ void calc_boni(int Ind) {
 		p_ptr->num_blow = 0;
 
 		/*the_sandman for the RPG server (might as well stay for all servers ^^ - C. Blue) */
-		if (marts >  0) { p_ptr->num_blow++; csheet_boni[14].blow++; }
-		if (marts >  9) { p_ptr->num_blow++; csheet_boni[14].blow++; }
-		if (marts > 19) { p_ptr->num_blow++; csheet_boni[14].blow++; }
-		if (marts > 29) { p_ptr->num_blow++; csheet_boni[14].blow++; }
-		//if (marts > 34) p_ptr->num_blow++; csheet_boni[14].blow++; } /* This _could_ be added if really required */
-		if (marts > 39) { p_ptr->num_blow++; csheet_boni[14].blow++; }
-		if (marts > 44) { p_ptr->num_blow++; csheet_boni[14].blow++; }
-		if (marts > 49) { p_ptr->num_blow++; csheet_boni[14].blow++; }
+		if (marts >=  2) { p_ptr->num_blow++; csheet_boni[14].blow++; }
+		if (marts >= 10) { p_ptr->num_blow++; csheet_boni[14].blow++; }
+		if (marts >= 20) { p_ptr->num_blow++; csheet_boni[14].blow++; }
+		if (marts >= 30) { p_ptr->num_blow++; csheet_boni[14].blow++; }
+		if (marts >= 40) { p_ptr->num_blow++; csheet_boni[14].blow++; }
+		if (marts >= 45) { p_ptr->num_blow++; csheet_boni[14].blow++; }
+		if (marts >= 50) { p_ptr->num_blow++; csheet_boni[14].blow++; }
 
 		if (monk_heavy_armor(p_ptr)) p_ptr->num_blow /= 2;
 

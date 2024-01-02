@@ -246,12 +246,13 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			p_ptr->warning_bpr3 = 1;
 		}
 		if (old_value < 10 && new_value >= 10) { /* the_sandman */
-//			msg_print(Ind, "\374\377GYou feel as if you could take on the world!");
+			//msg_print(Ind, "\374\377GYou feel as if you could take on the world!");
 			msg_print(Ind, "\374\377GYou learn to use punching techniques.");
+		}
+		if (old_value < 20 && new_value >= 20) {
+			msg_print(Ind, "\374\377GYou get the hang of using kicks.");
 			msg_print(Ind, "\374\377GYour melee attack speed has become faster due to your training!");
 		}
-		if (old_value < 20 && new_value >= 20)
-			msg_print(Ind, "\374\377GYou get the hang of using kicks.");
 		if (old_value < 30 && new_value >= 30)
 			msg_print(Ind, "\374\377GYou get the hang of using hand side strikes.");
 		if (old_value < 50 && new_value >= 50)
