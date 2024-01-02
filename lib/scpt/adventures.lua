@@ -69,9 +69,9 @@ WEATHER_00 = { -- weather wind season intensity speed
 }
 
 GE_TYPE = { -- announcement_time signup_time end_turn min_participants limited noghost challenge
-["Under Elmoth"] = {5,0,35,0,0,1,1}, -- ge->state[1] = (challenge ? 1 : 0)
-["Stormy Isle"] = {1,0,45,1,6,0,0}
-} -- time in minutes; "sensible announcement_time" of 5m minimum avoids double announce
+["Under Elmoth"] = {5,0,35,1,6,1,1}, -- ge->state[1] = (challenge ? 1 : 0)
+["Stormy Isle"] = {5,0,45,1,0,0,0}
+} -- time in minutes; "sensible announcement_time" of 5m minimum avoids double announce and uninitialized ge->*
 
 GE_EXTRA = { -- INDEX level req. (min,max) 00depth (min,max,entry,exit)
 ["Under Elmoth"] = {1,0,1,2,2,2,2}, -- min 0 = newly created level 1 only
