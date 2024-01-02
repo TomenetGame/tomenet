@@ -7979,7 +7979,6 @@ int start_global_event(int Ind, int getype, char *parm) {
 		for (i = 0; i < 10; i++) // GE_DESCRIPTION in adventures.lua (default "")
 			strcpy(ge->description[i], string_exec_lua(0, format("return adventure_description(\"%s\", %d)", parm, i + 1)));
 
-s_printf("state0=%d\n", ge->state[0]);
 		break;
 #endif
 	}
