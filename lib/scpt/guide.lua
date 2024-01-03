@@ -167,7 +167,7 @@ guide_school = {
     "Unlife",
 }
 
-guide_spells = 187
+guide_spells = 191
 guide_spell = {
     "Manathrust",
     "Recharge",
@@ -381,4 +381,10 @@ guide_spell = {
     "Siphon Life",
     "Touch of Hunger",
     "Wraithstep", --187
+
+    --additional Shadow spells
+    "Retreat",
+    "Shadow Stream",
+    "Dispersion",
+    "Stop Dispersion", --191
 }
